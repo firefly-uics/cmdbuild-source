@@ -308,6 +308,7 @@
 		RECIPIENT_ADDRESS: 'recipientAddress',
 		RECORD: 'record',
 		REFERENCE: 'reference',
+		REFRESH_BEHAVIOUR: 'refreshBehaviour',
 		REJECT_NOT_MATCHING: 'rejectNotMatching',
 		REJECTED_FOLDER: 'rejectedFolder',
 		RELATION: 'relation',

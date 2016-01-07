@@ -16,6 +16,13 @@
 		parentDelegate: undefined,
 
 		/**
+		 * @cfg {Boolean}
+		 *
+		 * @private
+		 */
+		alreadyDisplayed: false,
+
+		/**
 		 * @property {CMDBuild.model.CMActivityInstance or Ext.data.Model}
 		 */
 		card: undefined,
@@ -41,6 +48,7 @@
 			'widgetConfigurationIsAttributeEmpty = widgetCustomFormConfigurationIsAttributeEmpty',
 			'widgetConfigurationSet = widgetCustomFormConfigurationSet',
 			'widgetControllerPropertyGet = widgetCustomFormControllerPropertyGet',
+			'widgetCustomFormAlreadyDisplayedGet',
 			'widgetCustomFormDataGet',
 			'widgetCustomFormModelStoreBuilder',
 			'widgetCustomFormViewSetLoading'
@@ -50,6 +58,23 @@
 		 * @property {CMDBuild.view.management.common.widgets.customForm.CustomFormView}
 		 */
 		view: undefined,
+
+		// AlreadyDisplayed property methods
+			/**
+			 * @returns {Boolean} alreadyDisplayed
+			 *
+			 * @private
+			 */
+			isAlreadyDisplayed: function() {
+				return this.alreadyDisplayed;
+			},
+
+			/**
+			 * @private
+			 */
+			alreadyDisplayedSet: function() {
+				this.alreadyDisplayed = true;
+			},
 
 		/**
 		 * @param {Array or String} target
@@ -132,9 +157,9 @@
 
 			// Execute template resolver on variables property
 			if (
-				Ext.isEmpty(this.cmfg('widgetCustomFormConfigurationGet', CMDBuild.core.proxy.CMProxyConstants.DATA))
-				&& this.cmfg('widgetCustomFormInstancesDataStorageIsEmpty')
-				&& !Ext.isEmpty(this.cmfg('widgetCustomFormConfigurationGet', CMDBuild.core.proxy.CMProxyConstants.FUNCTION_DATA))
+				Ext.isEmpty(this.cmfg('widgetCustomFormConfigurationGet', CMDBuild.core.proxy.CMProxyConstants.DATA)) // Widget configuration data property is empty
+				&& this.cmfg('widgetCustomFormInstancesDataStorageIsEmpty') // Local store buffer is empty
+				&& !this.cmfg('widgetCustomFormConfigurationIsAttributeEmpty', CMDBuild.core.proxy.CMProxyConstants.FUNCTION_DATA)
 			) {
 				this.cmfg('widgetCustomFormConfigurationSet', {
 					configurationObject: this.applyTemplateResolverToObject(this.widgetConfiguration[CMDBuild.core.proxy.CMProxyConstants.VARIABLES]),
@@ -159,14 +184,13 @@
 		},
 
 		/**
-		 * @param {Function} callback
-		 *
 		 * @private
 		 */
-		buildDataConfigurationFromFunction: function(callback) {
-			callback = Ext.isFunction(callback) ? callback : Ext.emptyFn;
-
-			if (!this.cmfg('widgetCustomFormConfigurationIsAttributeEmpty', CMDBuild.core.proxy.CMProxyConstants.FUNCTION_DATA)) {
+		buildDataConfigurationFromFunction: function() {
+			if (
+				!this.cmfg('widgetCustomFormConfigurationIsAttributeEmpty', CMDBuild.core.proxy.CMProxyConstants.FUNCTION_DATA)
+				&& this.isRefreshNeeded()
+			) {
 				var params = {};
 				params[CMDBuild.core.proxy.CMProxyConstants.FUNCTION] = this.cmfg('widgetCustomFormConfigurationGet', CMDBuild.core.proxy.CMProxyConstants.FUNCTION_DATA);
 				params[CMDBuild.core.proxy.CMProxyConstants.PARAMS] = Ext.encode(this.cmfg('widgetCustomFormConfigurationGet', CMDBuild.core.proxy.CMProxyConstants.VARIABLES));
@@ -212,6 +236,8 @@
 				}
 
 				this.controllerLayout.cmfg('onWidgetCustomFormShow');
+
+				this.alreadyDisplayedSet();
 			}
 		},
 
@@ -249,6 +275,29 @@
 			}
 
 			return output;
+		},
+
+		/**
+		 * Refresh behaviour manage method
+		 *
+		 * @returns {Boolean}
+		 *
+		 * @private
+		 */
+		isRefreshNeeded: function() {
+			switch (
+				this.delegate.cmfg('widgetCustomFormConfigurationGet', [
+					CMDBuild.core.proxy.CMProxyConstants.CAPABILITIES,
+					CMDBuild.core.proxy.CMProxyConstants.REFRESH_BEHAVIOUR
+				])
+			) {
+				case 'firstTime':
+					return !this.isAlreadyDisplayed();
+
+				case 'everyTime':
+				default:
+					return true;
+			}
 		},
 
 		/**
