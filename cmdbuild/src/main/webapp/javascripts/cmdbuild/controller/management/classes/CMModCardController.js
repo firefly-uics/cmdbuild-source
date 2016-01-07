@@ -390,21 +390,24 @@
 		 * Forward onAbortCardClick event to email tab controller
 		 */
 		onAbortCardClick: function() {
-			this.controllerTabEmail.onAbortCardClick();
+			if (!Ext.isEmpty(this.controllerTabEmail) && Ext.isFunction(this.controllerTabEmail.onAbortCardClick))
+				this.controllerTabEmail.onAbortCardClick();
 		},
 
 		/**
 		 * Forward onModifyCardClick event to email tab controller
 		 */
 		onModifyCardClick: function() {
-			this.controllerTabEmail.onModifyCardClick();
+			if (!Ext.isEmpty(this.controllerTabEmail) && Ext.isFunction(this.controllerTabEmail.onModifyCardClick))
+				this.controllerTabEmail.onModifyCardClick();
 		},
 
 		/**
 		 * Forward onSaveCardClick event to email tab controller
 		 */
 		onSaveCardClick: function() {
-			this.controllerTabEmail.onSaveCardClick();
+			if (!Ext.isEmpty(this.controllerTabEmail) && Ext.isFunction(this.controllerTabEmail.onSaveCardClick))
+				this.controllerTabEmail.onSaveCardClick();
 		},
 
 		/**
