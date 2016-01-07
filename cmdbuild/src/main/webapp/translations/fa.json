@@ -1,7 +1,7 @@
 {
 	"description": "Persian",
-		"release": "2.4-dev",
-		"administration": {
+	"release": "2.4-dev",
+	"administration": {
 		"description": "ماژول ادمین",
 		"modClass": {
 			"add_class": "اضافه کردن کلاس",
