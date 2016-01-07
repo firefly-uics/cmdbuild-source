@@ -71,26 +71,26 @@
 		}
 	});
 
-	Ext.define('Ext.locale.cn.view.View', {
+	Ext.define('Ext.locale.zh_CN.view.View', {
 		override: 'Ext.view.View',
 
 		emptyText: ''
 	});
 
-	Ext.define('Ext.locale.cn.grid.plugin.DragDrop', {
+	Ext.define('Ext.locale.zh_CN.grid.plugin.DragDrop', {
 		override: 'Ext.grid.plugin.DragDrop',
 
 		dragText: '{0} selected row{1}'
 	});
 
 	// changing the msg text below will affect the LoadMask
-	Ext.define('Ext.locale.cn.view.AbstractView', {
+	Ext.define('Ext.locale.zh_CN.view.AbstractView', {
 		override: 'Ext.view.AbstractView',
 
 		msg: '加载...'
 	});
 
-	Ext.define('Ext.locale.cn.picker.Date', {
+	Ext.define('Ext.locale.zh_CN.picker.Date', {
 		override: 'Ext.picker.Date',
 
 		todayText: '今天',
@@ -108,14 +108,14 @@
 		startDay: 0
 	});
 
-	Ext.define('Ext.locale.cn.picker.Month', {
+	Ext.define('Ext.locale.zh_CN.picker.Month', {
 			override: 'Ext.picker.Month',
 
 		okText: '&#160;OK&#160;',
 		cancelText: '取消'
 	});
 
-	Ext.define('Ext.locale.cn.toolbar.Paging', {
+	Ext.define('Ext.locale.zh_CN.toolbar.Paging', {
 		override: 'Ext.PagingToolbar',
 
 		beforePageText: '页',
@@ -129,19 +129,19 @@
 		emptyMsg: 'No data to display'
 	});
 
-	Ext.define('Ext.locale.cn.form.Basic', {
+	Ext.define('Ext.locale.zh_CN.form.Basic', {
 		override: 'Ext.form.Basic',
 
 		waitTitle: '请稍等...'
 	});
 
-	Ext.define('Ext.locale.cn.form.field.Base', {
+	Ext.define('Ext.locale.zh_CN.form.field.Base', {
 		override: 'Ext.form.field.Base',
 
 		invalidText: '此字段的值无效'
 	});
 
-	Ext.define('Ext.locale.cn.form.field.Text', {
+	Ext.define('Ext.locale.zh_CN.form.field.Text', {
 		override: 'Ext.form.field.Text',
 
 		minLengthText: '此字段最小长度是 {0}',
@@ -151,7 +151,7 @@
 		emptyText: null
 	});
 
-	Ext.define('Ext.locale.cn.form.field.Number', {
+	Ext.define('Ext.locale.zh_CN.form.field.Number', {
 		override: 'Ext.form.field.Number',
 
 		decimalSeparator: '.',
@@ -161,7 +161,7 @@
 		nanText: '{0} 不是一个有效值'
 	});
 
-	Ext.define('Ext.locale.cn.form.field.Date', {
+	Ext.define('Ext.locale.zh_CN.form.field.Date', {
 		override: 'Ext.form.field.Date',
 
 		disabledDaysText: '不可用',
@@ -173,7 +173,7 @@
 		altFormats: 'm/d/Y|m-d-y|m-d-Y|m/d|m-d|md|mdy|mdY|d|Y-m-d'
 	});
 
-	Ext.define('Ext.locale.cn.form.field.ComboBox', {
+	Ext.define('Ext.locale.zh_CN.form.field.ComboBox', {
 		override: 'Ext.form.field.ComboBox',
 
 		valueNotFoundText: undefined
@@ -183,7 +183,7 @@
 		});
 	});
 
-	Ext.define('Ext.locale.cn.form.field.HtmlEditor', {
+	Ext.define('Ext.locale.zh_CN.form.field.HtmlEditor', {
 		override: 'Ext.form.field.HtmlEditor',
 		createLinkText: 'Please enter the URL for the link:'
 	}, function() {
@@ -263,7 +263,7 @@
 		});
 	});
 
-	Ext.define('Ext.locale.cn.grid.header.Container', {
+	Ext.define('Ext.locale.zh_CN.grid.header.Container', {
 		override: 'Ext.grid.header.Container',
 
 		sortAscText: '升序排序',
@@ -271,7 +271,7 @@
 		columnsText: '列'
 	});
 
-	Ext.define('Ext.locale.cn.grid.GroupingFeature', {
+	Ext.define('Ext.locale.zh_CN.grid.GroupingFeature', {
 		override: 'Ext.grid.GroupingFeature',
 
 		emptyGroupText: '(None)',
@@ -279,7 +279,7 @@
 		showGroupsText: 'Show in Groups'
 	});
 
-	Ext.define('Ext.locale.cn.grid.PropertyColumnModel', {
+	Ext.define('Ext.locale.zh_CN.grid.PropertyColumnModel', {
 		override: 'Ext.grid.PropertyColumnModel',
 
 		nameText: '名称',
@@ -289,7 +289,7 @@
 		falseText: '错误'
 	});
 
-	Ext.define('Ext.locale.cn.grid.BooleanColumn', {
+	Ext.define('Ext.locale.zh_CN.grid.BooleanColumn', {
 		override: 'Ext.grid.BooleanColumn',
 
 		trueText: '正确',
@@ -297,19 +297,19 @@
 		undefinedText: '&#160;'
 	});
 
-	Ext.define('Ext.locale.cn.grid.NumberColumn', {
+	Ext.define('Ext.locale.zh_CN.grid.NumberColumn', {
 		override: 'Ext.grid.NumberColumn',
 
 		format: '0,000.00'
 	});
 
-	Ext.define('Ext.locale.cn.grid.DateColumn', {
+	Ext.define('Ext.locale.zh_CN.grid.DateColumn', {
 		override: 'Ext.grid.DateColumn',
 
 		format: 'm/d/Y'
 	});
 
-	Ext.define('Ext.locale.cn.form.field.Time', {
+	Ext.define('Ext.locale.zh_CN.form.field.Time', {
 		override: 'Ext.form.field.Time',
 
 		minText: '此字段的时间必须等于或晚于{0}',
@@ -319,20 +319,20 @@
 		altFormats: 'g:ia|g:iA|g:i a|g:i A|h:i|g:i|H:i|ga|ha|gA|h a|g a|g A|gi|hi|gia|hia|g|H'
 	});
 
-	Ext.define('Ext.locale.cn.form.CheckboxGroup', {
+	Ext.define('Ext.locale.zh_CN.form.CheckboxGroup', {
 		override: 'Ext.form.CheckboxGroup',
 
 		blankText: '在此组中你必须选择一项'
 	});
 
-	Ext.define('Ext.locale.cn.form.RadioGroup', {
+	Ext.define('Ext.locale.zh_CN.form.RadioGroup', {
 		override: 'Ext.form.RadioGroup',
 
 		blankText: '在此组中你必须选择一项'
 	});
 
 	// This is needed until we can refactor all of the locales into individual files
-	Ext.define('Ext.locale.cn.Component', {
+	Ext.define('Ext.locale.zh_CN.Component', {
 		override: 'Ext.Component'
 	});
 
