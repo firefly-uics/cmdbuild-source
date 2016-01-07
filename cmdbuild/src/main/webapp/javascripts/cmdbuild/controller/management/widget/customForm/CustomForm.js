@@ -16,6 +16,13 @@
 		parentDelegate: undefined,
 
 		/**
+		 * @cfg {Boolean}
+		 *
+		 * @private
+		 */
+		alreadyDisplayed: false,
+
+		/**
 		 * @property {CMDBuild.model.CMActivityInstance or Ext.data.Model}
 		 */
 		card: undefined,
@@ -46,6 +53,7 @@
 			'widgetConfigurationIsEmpty = widgetCustomFormConfigurationIsEmpty',
 			'widgetConfigurationSet = widgetCustomFormConfigurationSet',
 			'widgetControllerPropertyGet = widgetCustomFormControllerPropertyGet',
+			'widgetCustomFormAlreadyDisplayedGet',
 			'widgetCustomFormGetData = getData',
 			'widgetCustomFormIsValid = isValid',
 			'widgetCustomFormLayoutControllerDataGet -> controllerLayout',
@@ -63,6 +71,23 @@
 		 * @cfg {String}
 		 */
 		widgetConfigurationModelClassName: 'CMDBuild.model.widget.customForm.Configuration',
+
+		// AlreadyDisplayed property methods
+			/**
+			 * @returns {Boolean} alreadyDisplayed
+			 *
+			 * @private
+			 */
+			isAlreadyDisplayed: function() {
+				return this.alreadyDisplayed;
+			},
+
+			/**
+			 * @private
+			 */
+			alreadyDisplayedSet: function() {
+				this.alreadyDisplayed = true;
+			},
 
 		/**
 		 * @param {Array or String} target
@@ -121,7 +146,7 @@
 
 						// Apply change event to reset data property in widgetConfiguration to avoid sql function server call
 						templateResolver.bindLocalDepsChange(function() {
-							this.widgetConfiguration[CMDBuild.core.constants.Proxy.DATA] = null;
+							this.instancesDataStorageSet(); // Reset widget instance data storage
 						}, this);
 					}
 				});
@@ -130,14 +155,13 @@
 		},
 
 		/**
-		 * @param {Function} callback
-		 *
 		 * @private
 		 */
-		buildDataConfigurationFromFunction: function(callback) {
-			callback = Ext.isFunction(callback) ? callback : Ext.emptyFn;
-
-			if (!this.cmfg('widgetCustomFormConfigurationIsEmpty', CMDBuild.core.constants.Proxy.FUNCTION_DATA)) {
+		buildDataConfigurationFromFunction: function() {
+			if (
+				!this.cmfg('widgetCustomFormConfigurationIsEmpty', CMDBuild.core.constants.Proxy.FUNCTION_DATA)
+				&& this.isRefreshNeeded()
+			) {
 				var params = {};
 				params[CMDBuild.core.constants.Proxy.FUNCTION] = this.cmfg('widgetCustomFormConfigurationGet', CMDBuild.core.constants.Proxy.FUNCTION_DATA);
 				params[CMDBuild.core.constants.Proxy.PARAMS] = Ext.encode(this.cmfg('widgetCustomFormConfigurationGet', CMDBuild.core.constants.Proxy.VARIABLES));
@@ -147,9 +171,6 @@
 					scope: this,
 					success: function(response, options, decodedResponse) {
 						decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.CARDS];
-
-						// Save function response to configuration's data property
-						this.widgetConfiguration[CMDBuild.core.constants.Proxy.DATA] = decodedResponse;
 
 						// Save function response to instance data storage
 						this.instancesDataStorageSet(decodedResponse);
@@ -186,6 +207,31 @@
 				}
 
 				this.controllerLayout.cmfg('onWidgetCustomFormShow');
+
+				this.alreadyDisplayedSet();
+			}
+		},
+
+		/**
+		 * Refresh behaviour manage method
+		 *
+		 * @returns {Boolean}
+		 *
+		 * @private
+		 */
+		isRefreshNeeded: function() {
+			switch (
+				this.delegate.cmfg('widgetCustomFormConfigurationGet', [
+					CMDBuild.core.proxy.CMProxyConstants.CAPABILITIES,
+					CMDBuild.core.proxy.CMProxyConstants.REFRESH_BEHAVIOUR
+				])
+			) {
+				case 'firstTime':
+					return !this.isAlreadyDisplayed();
+
+				case 'everyTime':
+				default:
+					return true;
 			}
 		},
 
@@ -204,8 +250,8 @@
 
 			// Execute template resolver on variables property
 			if (
-				Ext.isEmpty(this.cmfg('widgetCustomFormConfigurationGet', CMDBuild.core.constants.Proxy.DATA))
-				&& this.cmfg('widgetCustomFormInstancesDataStorageIsEmpty')
+				Ext.isEmpty(this.cmfg('widgetCustomFormConfigurationGet', CMDBuild.core.constants.Proxy.DATA)) // Widget configuration data property is empty
+				&& this.cmfg('widgetCustomFormInstancesDataStorageIsEmpty') // Local store buffer is empty
 				&& !Ext.isEmpty(this.cmfg('widgetCustomFormConfigurationGet', CMDBuild.core.constants.Proxy.FUNCTION_DATA))
 			) {
 				this.cmfg('widgetCustomFormConfigurationSet', {
@@ -287,15 +333,6 @@
 		widgetCustomFormIsValid: function() {
 			return Ext.isEmpty(this.controllerLayout) ? this.isValid() : this.cmfg('widgetCustomFormLayoutControllerIsValid');
 		},
-
-//		/**
-//		 * Forwarder method
-//		 *
-//		 * @returns {Array}
-//		 */
-//		widgetCustomFormLayoutControllerDataGet: function() {
-//			return this.controllerLayout.getData();
-//		},
 
 		/**
 		 * @returns {Ext.data.ArrayStore}

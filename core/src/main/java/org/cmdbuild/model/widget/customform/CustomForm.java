@@ -34,6 +34,7 @@ public class CustomForm extends Widget {
 		private boolean importDisabled;
 		private boolean modifyDisabled;
 		private boolean cloneDisabled;
+		private String refreshBehaviour;
 
 		public boolean isReadOnly() {
 			return readOnly;
@@ -89,6 +90,14 @@ public class CustomForm extends Widget {
 
 		public void setCloneDisabled(final boolean cloneDisabled) {
 			this.cloneDisabled = cloneDisabled;
+		}
+
+		public String getRefreshBehaviour() {
+			return refreshBehaviour;
+		}
+
+		public void setRefreshBehaviour(final String refreshBehaviour) {
+			this.refreshBehaviour = refreshBehaviour;
 		}
 
 		@Override

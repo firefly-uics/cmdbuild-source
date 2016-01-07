@@ -201,7 +201,7 @@
 			var me = this;
 			var masterAndSlave = getMasterAndSlave(model.src);
 			var domain = _CMCache.getDomainById(model.dom_id);
-			var classData = _CMCache.getClassById(model.dst_cid);
+			var classData = _CMCache.getEntryTypeById(model.dst_cid);
 			var isMany = false;
 			var destination = model[CMDBuild.core.constants.Proxy.DOMAIN_SOURCE] == '_1' ? '_2' : '_1'; // Probably tells in witch direction of relation you are looking at
 
@@ -346,7 +346,7 @@
 		onEditRelationClick: function(model) {
 			var me = this;
 			var data = model.raw || model.getData();
-			var classData = _CMCache.getClassById(model.get('dst_cid'));
+			var classData = _CMCache.getEntryTypeById(model.get('dst_cid'));
 			var domain = _CMCache.getDomainById(model.get('dom_id'));
 			var masterAndSlave = getMasterAndSlave(model.get(CMDBuild.core.constants.Proxy.SOURCE));
 
