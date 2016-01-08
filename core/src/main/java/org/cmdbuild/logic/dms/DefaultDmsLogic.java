@@ -1,6 +1,11 @@
 package org.cmdbuild.logic.dms;
 
 import static com.google.common.collect.FluentIterable.from;
+import static org.cmdbuild.dao.driver.postgres.Const.ID_ATTRIBUTE;
+import static org.cmdbuild.dao.query.clause.AnyAttribute.anyAttribute;
+import static org.cmdbuild.dao.query.clause.QueryAliasAttribute.attribute;
+import static org.cmdbuild.dao.query.clause.where.EqualsOperatorAndValue.eq;
+import static org.cmdbuild.dao.query.clause.where.SimpleWhereClause.condition;
 import static org.cmdbuild.data.store.lookup.Predicates.lookupActive;
 import static org.cmdbuild.logic.dms.Utils.valueForCategory;
 
@@ -14,10 +19,10 @@ import javax.activation.DataHandler;
 
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.view.CMDataView;
+import org.cmdbuild.data.store.lookup.Lookup;
 import org.cmdbuild.data.store.lookup.LookupImpl;
 import org.cmdbuild.data.store.lookup.LookupStore;
 import org.cmdbuild.data.store.lookup.LookupType;
-import org.cmdbuild.data.store.lookup.Lookup;
 import org.cmdbuild.dms.DefaultDefinitionsFactory;
 import org.cmdbuild.dms.DefinitionsFactory;
 import org.cmdbuild.dms.DmsConfiguration;
@@ -201,14 +206,24 @@ public class DefaultDmsLogic implements DmsLogic {
 	public void upload(final String author, final String className, final Long cardId, final InputStream inputStream,
 			final String fileName, final String category, final String description,
 			final Iterable<MetadataGroup> metadataGroups) throws IOException, CMDBException {
-		final StorableDocument document = createDocumentFactory(className) //
-				.createStorableDocument(author, className, cardId, inputStream, fileName, category, description,
+		final CMClass type = dataView.findClass(className);
+		final String realClassName = dataView //
+				.select(anyAttribute(type)) //
+				.from(type) //
+				.where(condition(attribute(type, ID_ATTRIBUTE), eq(cardId))) //
+				.run() //
+				.getOnlyRow() //
+				.getCard(type) //
+				.getType() //
+				.getName();
+		final StorableDocument document = createDocumentFactory(realClassName) //
+				.createStorableDocument(author, realClassName, cardId, inputStream, fileName, category, description,
 						metadataGroups);
 		try {
 			service.upload(document);
 		} catch (final Exception e) {
 			final String message = String.format("error uploading file '%s' to card '%s' with id '%d'", //
-					fileName, className, cardId);
+					fileName, realClassName, cardId);
 			logger.error(message, e);
 			throw DmsException.Type.DMS_ATTACHMENT_UPLOAD_ERROR.createException();
 		}

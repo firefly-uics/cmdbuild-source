@@ -1,9 +1,9 @@
 (function() {
 
 	Ext.define('CMDBuild.controller.administration.localization.Localization', {
-		extend: 'CMDBuild.controller.common.AbstractBasePanelController',
+		extend: 'CMDBuild.controller.common.abstract.BasePanel',
 
-		requires: ['CMDBuild.core.proxy.Constants'],
+		requires: ['CMDBuild.core.constants.Proxy'],
 
 		/**
 		 * @cfg {Object}
@@ -23,7 +23,7 @@
 		/**
 		 * Setup view items and controllers on accordion click
 		 *
-		 * @param {CMDBuild.view.common.CMAccordionStoreModel} parameters
+		 * @param {CMDBuild.model.common.accordion.Generic} parameters
 		 *
 		 * @override
 		 */
@@ -33,7 +33,7 @@ _debug('CMDBuild', CMDBuild);
 _debug('parameters', parameters);
 				this.view.removeAll(true);
 
-				switch(parameters.get(CMDBuild.core.proxy.Constants.ID)) {
+				switch(parameters.get(CMDBuild.core.constants.Proxy.SECTION_HIERARCHY)[0]) {
 					case 'advancedTranslationsTable': {
 						this.sectionController = Ext.create('CMDBuild.controller.administration.localization.advancedTable.AdvancedTable', { parentDelegate: this });
 					} break;
@@ -46,7 +46,7 @@ _debug('parameters', parameters);
 
 				this.view.add(this.sectionController.getView());
 
-				this.setViewTitle(parameters.get(CMDBuild.core.proxy.Constants.TEXT));
+				this.setViewTitle(parameters.get(CMDBuild.core.constants.Proxy.TEXT));
 
 				this.callParent(arguments);
 			}

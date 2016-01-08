@@ -9,7 +9,17 @@
 
 	var lookupAttributeStoreMap = {};
 
-	Ext.require('CMDBuild.core.proxy.lookup.Lookup');
+	Ext.define('CMDBuild.model.cache.LookupFieldStore', {
+		extend: 'Ext.data.Model',
+
+		fields: [
+			{ name: 'Description', type: 'string' },
+			{ name: 'Id', type: 'int', defaultValue: '' },
+			{ name: 'Number', type: 'int' },
+			{ name: 'ParentId', type: 'int' },
+			{ name: 'TranslationUuid', type: 'string' }
+		]
+	});
 
 	Ext.define("CMDBUild.cache.CMCacheLookupFunctions", {
 
@@ -82,7 +92,28 @@
 
 		getLookupStore: function(type) {
 			if (!lookupAttributeStoreMap[type]) {
-				lookupAttributeStoreMap[type] = CMDBuild.core.proxy.lookup.Lookup.getFieldStore(type);
+				lookupAttributeStoreMap[type] =Ext.create('Ext.data.Store', {
+					autoLoad: true,
+					model: 'CMDBuild.model.cache.LookupFieldStore',
+					proxy: {
+						type: 'ajax',
+						url: CMDBuild.core.proxy.Index.lookup.readAll,
+						reader: {
+							type: 'json',
+							root: 'rows'
+						},
+						extraParams: {
+							type: type,
+							active: true,
+							short: true
+						},
+						actionMethods: 'POST' // Lookup types can have UTF-8 names  not handled correctly
+					},
+					sorters: [
+						{ property: 'Number', direction: 'ASC' },
+						{ property: 'Description', direction: 'ASC' }
+					]
+				});
 			}
 			return lookupAttributeStoreMap[type];
 		},

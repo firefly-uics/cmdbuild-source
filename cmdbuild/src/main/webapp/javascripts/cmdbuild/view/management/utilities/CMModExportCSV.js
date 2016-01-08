@@ -69,6 +69,11 @@ Ext.define("CMDBuild.view.management.utilities.CMModExportCSV", {
 
 		Ext.apply(this, {
 			title: CMDBuild.Translation.management.modutilities.csv.title_export,
+			tools: [
+				Ext.create('CMDBuild.view.common.panel.gridAndForm.tools.Properties', {
+					style: {} // Reset margin setup
+				})
+			],
 			items:[this.form]
 		});
 

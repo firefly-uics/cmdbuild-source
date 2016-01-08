@@ -137,7 +137,7 @@
 			});
 
 			this.attributeDescription = Ext.create('CMDBuild.view.common.field.translatable.Text', {
-				name: CMDBuild.core.proxy.Constants.DESCRIPTION,
+				name: CMDBuild.core.constants.Proxy.DESCRIPTION,
 				fieldLabel: CMDBuild.Translation.descriptionLabel,
 				labelWidth: CMDBuild.LABEL_WIDTH,
 				width: CMDBuild.ADM_BIG_FIELD_WIDTH,
@@ -148,10 +148,10 @@
 					scope: this,
 					enable: function(field, eOpts) { // TODO: on creation, classObj should be already known (refactor)
 						field.translationFieldConfig = {
-							type: CMDBuild.core.proxy.Constants.ATTRIBUTE_CLASS,
-							owner: { sourceType: 'model', key: CMDBuild.core.proxy.Constants.NAME, source: this.classObj },
-							identifier: { sourceType: 'form', key: CMDBuild.core.proxy.Constants.NAME, source: this },
-							field: CMDBuild.core.proxy.Constants.DESCRIPTION
+							type: CMDBuild.core.constants.Proxy.ATTRIBUTE_CLASS,
+							owner: { sourceType: 'model', key: CMDBuild.core.constants.Proxy.NAME, source: this.classObj },
+							identifier: { sourceType: 'form', key: CMDBuild.core.constants.Proxy.NAME, source: this },
+							field: CMDBuild.core.constants.Proxy.DESCRIPTION
 						};
 
 						field.translationsRead();
@@ -266,7 +266,7 @@
 			});
 
 			this.preselectIfUniqueCheckbox = Ext.create('Ext.form.field.Checkbox', {
-				name: CMDBuild.core.proxy.Constants.PRESELECT_IF_UNIQUE,
+				name: CMDBuild.core.constants.Proxy.PRESELECT_IF_UNIQUE,
 				fieldLabel: CMDBuild.Translation.preselectIfUnique,
 				labelWidth: CMDBuild.LABEL_WIDTH
 			});
@@ -493,7 +493,7 @@
 				this.showContextualFieldsByType(attribute.get("type"));
 
 				this.referenceFilterMetadata = attribute.raw.meta || {};
-				this.preselectIfUniqueCheckbox.setValue(attribute.raw.meta['system.type.reference.' + CMDBuild.core.proxy.Constants.PRESELECT_IF_UNIQUE]);
+				this.preselectIfUniqueCheckbox.setValue(attribute.raw.meta['system.type.reference.' + CMDBuild.core.constants.Proxy.PRESELECT_IF_UNIQUE]);
 			}
 		},
 

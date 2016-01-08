@@ -1,6 +1,8 @@
 (function() {
 
-	// TODO: use CMDBuild.model.CMModelFunctions.list and delete this one
+	/**
+	 * @deprecated new class (CMDBuild.view.common.field.filter.advanced.Advanced)
+	 */
 	Ext.define('Functions', {
 		extend: 'Ext.data.Model',
 		fields: [
@@ -9,16 +11,19 @@
 	});
 
 	var functionsStore = Ext.create('Ext.data.Store', {
+		autoLoad: true,
 		model: 'Functions',
 		proxy: {
 			type: 'ajax',
-			url: CMDBuild.ServiceProxy.url.functions.getFunctions,
+			url: CMDBuild.ServiceProxy.url.functions.readAll,
 			reader: {
 					type: 'json',
 					root: 'response'
 			}
 		},
-		autoLoad: true
+		sorters: [
+			{ property: 'name', direction: 'ASC' }
+		]
 	});
 
 	Ext.define('CMDBuild.view.management.common.filter.CMFunctions', {

@@ -18,6 +18,7 @@
 		 */
 		readOnly: false,
 
+		bodyPadding: '0 15 0 0',
 		frame: true,
 		margin: 5,
 
@@ -38,7 +39,7 @@
 						scope: this,
 
 						handler: function(button, e) {
-							this.delegate.cmfg('onAttachmentDownloadButtonClick', this);
+							this.delegate.cmfg('onTabEmailAttachmentDownloadButtonClick', this);
 						}
 					}),
 					Ext.create('CMDBuild.core.buttons.iconized.Delete', {
@@ -47,7 +48,7 @@
 						scope: this,
 
 						handler: function(button, e) {
-							this.delegate.cmfg('onAttachmentRemoveButtonClick', this);
+							this.delegate.cmfg('onTabEmailAttachmentRemoveButtonClick', this);
 						}
 					})
 				]

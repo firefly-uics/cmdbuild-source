@@ -9,7 +9,7 @@
 
 		requires: [
 			'CMDBuild.core.proxy.Card',
-			'CMDBuild.core.proxy.Constants',
+			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.model.widget.ModelLinkCards',
 		],
 
@@ -120,17 +120,17 @@
 
 			// Try to get targetClassName from a source (widgetConf.className or widgetConf.filter)
 			if (
-				!Ext.isEmpty(this.widgetConf[CMDBuild.core.proxy.Constants.CLASS_NAME])
-				&& _CMCache.isEntryTypeByName(this.widgetConf[CMDBuild.core.proxy.Constants.CLASS_NAME])
+				!Ext.isEmpty(this.widgetConf[CMDBuild.core.constants.Proxy.CLASS_NAME])
+				&& _CMCache.isEntryTypeByName(this.widgetConf[CMDBuild.core.constants.Proxy.CLASS_NAME])
 			) {
-				targetClassName = this.widgetConf[CMDBuild.core.proxy.Constants.CLASS_NAME];
+				targetClassName = this.widgetConf[CMDBuild.core.constants.Proxy.CLASS_NAME];
 			} else if (
-				!Ext.isEmpty(this.widgetConf[CMDBuild.core.proxy.Constants.FILTER])
+				!Ext.isEmpty(this.widgetConf[CMDBuild.core.constants.Proxy.FILTER])
 				&& _CMCache.isEntryTypeByName(
-					this.getClassNameFromFilterString(this.widgetConf[CMDBuild.core.proxy.Constants.FILTER])
+					this.getClassNameFromFilterString(this.widgetConf[CMDBuild.core.constants.Proxy.FILTER])
 				)
 			) {
-				targetClassName = this.getClassNameFromFilterString(this.widgetConf[CMDBuild.core.proxy.Constants.FILTER]);
+				targetClassName = this.getClassNameFromFilterString(this.widgetConf[CMDBuild.core.constants.Proxy.FILTER]);
 			} else {
 				return CMDBuild.Msg.error(
 					CMDBuild.Translation.error,
@@ -143,8 +143,8 @@
 			this.targetClass = _CMCache.getEntryTypeByName(targetClassName);
 			_CMCardModuleState.setEntryType(this.targetClass, null, null, false);
 
-			this.singleSelect = this.widgetConf[CMDBuild.core.proxy.Constants.SINGLE_SELECT];
-			this.readOnly = this.widgetConf[CMDBuild.core.proxy.Constants.READ_ONLY];
+			this.singleSelect = this.widgetConf[CMDBuild.core.constants.Proxy.SINGLE_SELECT];
+			this.readOnly = this.widgetConf[CMDBuild.core.constants.Proxy.READ_ONLY];
 
 			this.view.delegate = this;
 			this.grid = this.view.grid;
@@ -218,21 +218,21 @@
 		 */
 		_extractVariablesForTemplateResolver: function() {
 			var variables = {};
-			variables[CMDBuild.core.proxy.Constants.DEFAULT_SELECTION] = this.widgetConf[CMDBuild.core.proxy.Constants.DEFAULT_SELECTION];
-			variables[CMDBuild.core.proxy.Constants.FILTER] = this.widgetConf[CMDBuild.core.proxy.Constants.FILTER];
+			variables[CMDBuild.core.constants.Proxy.DEFAULT_SELECTION] = this.widgetConf[CMDBuild.core.constants.Proxy.DEFAULT_SELECTION];
+			variables[CMDBuild.core.constants.Proxy.FILTER] = this.widgetConf[CMDBuild.core.constants.Proxy.FILTER];
 
-			Ext.apply(variables, this.widgetConf[CMDBuild.core.proxy.Constants.TEMPLATES] || {});
+			Ext.apply(variables, this.widgetConf[CMDBuild.core.constants.Proxy.TEMPLATES] || {});
 
 			return variables;
 		},
 
 		alertIfNeeded: function() {
 			if (this.alertIfChangeDefaultSelection) {
-				CMDBuild.Msg.warn(
+				CMDBuild.core.Message.warning(
 					null,
 					Ext.String.format(
 						CMDBuild.Translation.warnings.link_cards_changed_values,
-						this.widgetConf[CMDBuild.core.proxy.Constants.LABEL] || this.view.id
+						this.widgetConf[CMDBuild.core.constants.Proxy.LABEL] || this.view.id
 					),
 					false
 				);
@@ -250,23 +250,21 @@
 			if (!Ext.isEmpty(this.targetClass)) {
 				var me = this;
 				var classId = this.targetClass.getId();
-				var cqlQuery = this.widgetConf[CMDBuild.core.proxy.Constants.FILTER];
+				var cqlQuery = this.widgetConf[CMDBuild.core.constants.Proxy.FILTER];
 
 				// Disable toggle grid filter button
 				if (
-					this.widgetConf.hasOwnProperty(CMDBuild.core.proxy.Constants.DISABLE_GRID_FILTER_TOGGLER)
-					&& this.widgetConf[CMDBuild.core.proxy.Constants.DISABLE_GRID_FILTER_TOGGLER]
+					this.widgetConf.hasOwnProperty(CMDBuild.core.constants.Proxy.DISABLE_GRID_FILTER_TOGGLER)
+					&& this.widgetConf[CMDBuild.core.constants.Proxy.DISABLE_GRID_FILTER_TOGGLER]
 				) {
 					this.view.toggleGridFilterButton.setDisabled(true);
 				}
 
 				// Hide checkcolumn if readonly mode
-				this.grid.getSelectionModel().setLocked(this.widgetConf[CMDBuild.core.proxy.Constants.READ_ONLY]);
+				this.grid.getSelectionModel().setLocked(this.widgetConf[CMDBuild.core.constants.Proxy.READ_ONLY]);
 
 				new _CMUtils.PollingFunction({
 					success: function() {
-						me.alertIfChangeDefaultSelection = true;
-
 						// CQL filter and regular filter cannot be merged now.
 						// The filter button should be enabled only if no other filter is present.
 						if (cqlQuery) {
@@ -353,7 +351,7 @@
 
 			if (!this.readOnly) {
 				var modelSelections = this.model.getSelections();
-				var widgetConfMetadata = this.widgetConf[CMDBuild.core.proxy.Constants.METADATA];
+				var widgetConfMetadata = this.widgetConf[CMDBuild.core.constants.Proxy.METADATA];
 
 				// Output metadata codification only for single select mode
 				if (this.singleSelect && !Ext.Object.isEmpty(widgetConfMetadata)) {
@@ -363,8 +361,8 @@
 								var selectionKey = Ext.Object.getKeys(modelSelections)[0];
 
 								if (!Ext.Object.isEmpty(modelSelections[selectionKey])) {
-									var lat = modelSelections[selectionKey][CMDBuild.core.proxy.Constants.LATITUDE];
-									var lon = modelSelections[selectionKey][CMDBuild.core.proxy.Constants.LONGITUDE];
+									var lat = modelSelections[selectionKey][CMDBuild.core.constants.Proxy.LATITUDE];
+									var lon = modelSelections[selectionKey][CMDBuild.core.constants.Proxy.LONGITUDE];
 
 									modelSelections[selectionKey] = {};
 									modelSelections[selectionKey][confIndex] = new OpenLayers.Geometry.Point(lon, lat).toString();
@@ -378,8 +376,8 @@
 				}
 
 				out = {};
-				out[CMDBuild.core.proxy.Constants.OUTPUT] = modelSelections;
-				out[CMDBuild.core.proxy.Constants.METADATA_OUTPUT] = this.widgetConf[CMDBuild.core.proxy.Constants.METADATA_OUTPUT]; // Simple property echo
+				out[CMDBuild.core.constants.Proxy.OUTPUT] = modelSelections;
+				out[CMDBuild.core.constants.Proxy.METADATA_OUTPUT] = this.widgetConf[CMDBuild.core.constants.Proxy.METADATA_OUTPUT]; // Simple property echo
 			}
 
 			return out;
@@ -407,7 +405,7 @@
 		 * @override
 		 */
 		isValid: function() {
-			if (!this.readOnly && this.widgetConf[CMDBuild.core.proxy.Constants.REQUIRED]) {
+			if (!this.readOnly && this.widgetConf[CMDBuild.core.constants.Proxy.REQUIRED]) {
 				return this.model.hasSelection();
 			} else {
 				return true;
@@ -434,7 +432,7 @@
 
 			for (var index in modelSelections)
 				this.grid.getSelectionModel().select(
-					this.grid.getStore().find(CMDBuild.core.proxy.Constants.ID, index)
+					this.grid.getStore().find(CMDBuild.core.constants.Proxy.ID, index)
 				);
 		},
 
@@ -450,13 +448,13 @@
 
 			if (!Ext.isEmpty(lastSelectionId)) {
 				var params = {};
-				params[CMDBuild.core.proxy.Constants.CARD_ID] = lastSelectionId;
-				params[CMDBuild.core.proxy.Constants.CLASS_NAME] = this.widgetConf[CMDBuild.core.proxy.Constants.CLASS_NAME];
-				params[CMDBuild.core.proxy.Constants.RETRY_WITHOUT_FILTER] = false;
-				params[CMDBuild.core.proxy.Constants.SORT] = Ext.encode(this.grid.getStore().sorters.getRange());
+				params[CMDBuild.core.constants.Proxy.CARD_ID] = lastSelectionId;
+				params[CMDBuild.core.constants.Proxy.CLASS_NAME] = this.widgetConf[CMDBuild.core.constants.Proxy.CLASS_NAME];
+				params[CMDBuild.core.constants.Proxy.RETRY_WITHOUT_FILTER] = false;
+				params[CMDBuild.core.constants.Proxy.SORT] = Ext.encode(this.grid.getStore().sorters.getRange());
 
 				if (!disableFilter)
-					params[CMDBuild.core.proxy.Constants.FILTER] = this.grid.getStore().getProxy().extraParams[CMDBuild.core.proxy.Constants.FILTER];
+					params[CMDBuild.core.constants.Proxy.FILTER] = this.grid.getStore().getProxy().extraParams[CMDBuild.core.constants.Proxy.FILTER];
 
 				this.model._silent = true;
 
@@ -475,7 +473,7 @@
 									scope: this,
 									cb: function() {
 										this.grid.getSelectionModel().select(
-											this.grid.getStore().find(CMDBuild.core.proxy.Constants.ID, lastSelectionId)
+											this.grid.getStore().find(CMDBuild.core.constants.Proxy.ID, lastSelectionId)
 										);
 
 										// Retry without grid store filter or server answer out of filter
@@ -540,7 +538,7 @@
 		 */
 		onToggleGridFilterButtonClick: function(forceState) {
 			var classId = this.targetClass.getId();
-			var cqlQuery = this.widgetConf[CMDBuild.core.proxy.Constants.FILTER];
+			var cqlQuery = this.widgetConf[CMDBuild.core.constants.Proxy.FILTER];
 
 			if (!Ext.isEmpty(forceState))
 				this.view.toggleGridFilterButton.filterEnabled = !forceState;
@@ -590,9 +588,9 @@
 			this.alertIfNeeded();
 
 			this.templateResolver.resolveTemplates({
-				attributes: [CMDBuild.core.proxy.Constants.DEFAULT_SELECTION],
+				attributes: [CMDBuild.core.constants.Proxy.DEFAULT_SELECTION],
 				callback: function(out, ctx) {
-					var defaultSelection = me.templateResolver.buildCQLQueryParameters(out[CMDBuild.core.proxy.Constants.DEFAULT_SELECTION], ctx);
+					var defaultSelection = me.templateResolver.buildCQLQueryParameters(out[CMDBuild.core.constants.Proxy.DEFAULT_SELECTION], ctx);
 
 					// Do the request only if there are a default selection
 					if (defaultSelection) {
@@ -644,7 +642,7 @@
 			var me = this;
 
 			this.templateResolver.resolveTemplates({
-				attributes: [CMDBuild.core.proxy.Constants.FILTER],
+				attributes: [CMDBuild.core.constants.Proxy.FILTER],
 				callback: function(out, ctx) {
 					var cardReqParams = me.templateResolver.buildCQLQueryParameters(cqlQuery, ctx);
 					me.updateViewGrid(classId, cardReqParams);

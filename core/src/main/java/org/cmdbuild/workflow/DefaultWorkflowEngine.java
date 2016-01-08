@@ -5,6 +5,8 @@ import static java.util.Collections.emptyMap;
 import static org.apache.commons.lang3.ObjectUtils.defaultIfNull;
 import static org.cmdbuild.common.Constants.ROLE_CLASS_NAME;
 import static org.cmdbuild.model.widget.Widget.SUBMISSION_PARAM;
+import static org.cmdbuild.workflow.service.WSProcessInstanceState.ABORTED;
+import static org.cmdbuild.workflow.service.WSProcessInstanceState.OPEN;
 
 import java.util.Map;
 
@@ -210,7 +212,7 @@ public class DefaultWorkflowEngine implements QueryableUserWorkflowEngine {
 
 					@Override
 					public WSProcessInstanceState state() {
-						return WSProcessInstanceState.OPEN;
+						return OPEN;
 					}
 
 					@Override
@@ -331,6 +333,21 @@ public class DefaultWorkflowEngine implements QueryableUserWorkflowEngine {
 		logger.info(marker, "aborting process instance for class '{}' and id '{}'", //
 				processInstance.getType().getName(), processInstance.getCardId());
 		service.abortProcessInstance(processInstance.getProcessInstanceId());
+		persistence.updateProcessInstance(processInstance, new ForwardingProcessData() {
+			
+			private final ProcessData delegate = NoProcessData.getInstance();
+			
+			@Override
+			protected ProcessData delegate() {
+				return delegate;
+			}
+			
+			@Override
+			public WSProcessInstanceState state() {
+				return ABORTED;
+			}
+			
+		});
 	}
 
 	@Override
@@ -545,7 +562,7 @@ public class DefaultWorkflowEngine implements QueryableUserWorkflowEngine {
 
 			@Override
 			public WSProcessInstanceState state() {
-				return WSProcessInstanceState.ABORTED;
+				return ABORTED;
 			}
 
 		});

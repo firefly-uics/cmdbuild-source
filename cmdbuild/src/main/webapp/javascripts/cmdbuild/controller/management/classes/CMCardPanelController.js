@@ -54,7 +54,7 @@
 					return;
 				}
 
-				CMDBuild.LoadMask.get().show();
+				CMDBuild.core.LoadMask.show();
 				CMDBuild.ServiceProxy.card.remove({
 					params : {
 						IdClass: idClass,
@@ -64,7 +64,7 @@
 						me.fireEvent(me.CMEVENTS.cardRemoved, idCard, idClass);
 					},
 					callback : function() {
-						CMDBuild.LoadMask.get().hide();
+						CMDBuild.core.LoadMask.hide();
 					}
 				});
 			};
@@ -140,9 +140,9 @@
 		onPrintCardMenuClick: function(format) {
 			if (!Ext.isEmpty(format)) {
 				var params = {};
-				params[CMDBuild.core.proxy.Constants.CLASS_NAME] = this.entryType.get(CMDBuild.core.proxy.Constants.NAME);
-				params[CMDBuild.core.proxy.Constants.CARD_ID] = this.card.get(CMDBuild.core.proxy.Constants.ID);
-				params[CMDBuild.core.proxy.Constants.FORMAT] = format;
+				params[CMDBuild.core.constants.Proxy.CLASS_NAME] = this.entryType.get(CMDBuild.core.constants.Proxy.NAME);
+				params[CMDBuild.core.constants.Proxy.CARD_ID] = this.card.get(CMDBuild.core.constants.Proxy.ID);
+				params[CMDBuild.core.constants.Proxy.FORMAT] = format;
 
 				Ext.create('CMDBuild.controller.common.entryTypeGrid.printTool.PrintWindow', {
 					parentDelegate: this,

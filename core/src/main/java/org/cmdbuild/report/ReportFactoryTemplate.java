@@ -1,7 +1,6 @@
 package org.cmdbuild.report;
 
 import static java.lang.String.format;
-import static org.cmdbuild.spring.SpringIntegrationUtils.applicationContext;
 
 import java.awt.Color;
 import java.io.File;
@@ -35,13 +34,15 @@ import net.sf.jasperreports.engine.type.PositionTypeEnum;
 import org.cmdbuild.config.CmdbuildConfiguration;
 import org.cmdbuild.dao.driver.postgres.query.QueryCreator;
 import org.cmdbuild.dao.entrytype.CMAttribute;
-import org.cmdbuild.dao.entrytype.CMEntryType;
 import org.cmdbuild.dao.entrytype.attributetype.CMAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.ForeignKeyAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.LookupAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.ReferenceAttributeType;
+import org.cmdbuild.dao.query.clause.alias.Alias;
+import org.cmdbuild.dao.query.clause.alias.AliasVisitor;
+import org.cmdbuild.dao.query.clause.alias.EntryTypeAlias;
+import org.cmdbuild.dao.query.clause.alias.NameAlias;
 import org.cmdbuild.dao.view.CMDataView;
-import org.cmdbuild.logger.Log;
 import org.cmdbuild.services.FilesStore;
 
 import com.google.common.collect.Maps;
@@ -53,6 +54,7 @@ public abstract class ReportFactoryTemplate extends ReportFactory {
 	private static Pattern PARAM_PATTERN = Pattern.compile("([^\\?]+)?(\\?)?");
 
 	protected final CMDataView dataView;
+	protected final FilesStore filesStore;
 	private final Map<String, Object> jasperFillManagerParameters;
 
 	public abstract JasperDesign getJasperDesign();
@@ -60,10 +62,12 @@ public abstract class ReportFactoryTemplate extends ReportFactory {
 	public ReportFactoryTemplate( //
 			final DataSource dataSource, //
 			final CmdbuildConfiguration configuration, //
-			final CMDataView dataView //
+			final CMDataView dataView, //
+			final FilesStore filesStore //
 	) {
 		super(dataSource, configuration);
 		this.dataView = dataView;
+		this.filesStore = filesStore;
 		this.jasperFillManagerParameters = Maps.newLinkedHashMap();
 	}
 
@@ -75,8 +79,6 @@ public abstract class ReportFactoryTemplate extends ReportFactory {
 	}
 
 	public String getReportDirectory() {
-		// FIXME
-		final FilesStore filesStore = applicationContext().getBean("rootFilesStore", FilesStore.class);
 		return filesStore.getAbsoluteRootDirectory() + File.separator + REPORT_DIR_NAME + File.separator;
 	}
 
@@ -104,7 +106,7 @@ public abstract class ReportFactoryTemplate extends ReportFactory {
 		}
 
 		final String compiledQuery = queryStringBuilder.toString();
-		Log.REPORT.debug("report query: {}", compiledQuery);
+		logger.debug("report query: {}", compiledQuery);
 		return compiledQuery;
 	}
 
@@ -123,17 +125,12 @@ public abstract class ReportFactoryTemplate extends ReportFactory {
 	 * For lookup, reference and foreign key add the suffix to have the
 	 * Description instead of the Id
 	 */
-	protected String getAttributeName( //
-			final String attributeName, //
-			final CMAttributeType<?> cmAttributeType) {
-
+	protected String getAttributeName(final String attributeName, final CMAttributeType<?> cmAttributeType) {
 		String out = attributeName;
 		if (cmAttributeType instanceof LookupAttributeType || cmAttributeType instanceof ReferenceAttributeType
 				|| cmAttributeType instanceof ForeignKeyAttributeType) {
-
 			out += "#Description";
 		}
-
 		return out;
 	}
 
@@ -285,11 +282,13 @@ public abstract class ReportFactoryTemplate extends ReportFactory {
 
 	/**
 	 * Create report fields
+	 * 
+	 * @param alias
 	 */
-	protected void setFields(final Iterable<? extends CMAttribute> attributes) throws JRException {
+	protected void setFields(final Iterable<? extends CMAttribute> attributes, final Alias alias) throws JRException {
 		deleteAllFields();
 		for (final CMAttribute cmAttribute : attributes) {
-			getJasperDesign().addField(createDesignField(cmAttribute));
+			getJasperDesign().addField(createDesignField(alias, cmAttribute));
 		}
 	}
 
@@ -313,10 +312,12 @@ public abstract class ReportFactoryTemplate extends ReportFactory {
 
 	/**
 	 * Create report field for attribute
+	 * 
+	 * @param alias
 	 */
-	private JRDesignField createDesignField(final CMAttribute cmAttribute) {
+	private JRDesignField createDesignField(final Alias alias, final CMAttribute cmAttribute) {
 		final JRDesignField field = new JRDesignField();
-		final String fieldName = fieldNameFromCMAttribute(cmAttribute);
+		final String fieldName = fieldNameFromCMAttribute(alias, cmAttribute);
 
 		field.setName(fieldName);
 		field.setDescription(cmAttribute.getDescription());
@@ -325,11 +326,44 @@ public abstract class ReportFactoryTemplate extends ReportFactory {
 		return field;
 	}
 
-	protected String fieldNameFromCMAttribute(final CMAttribute cmAttribute) {
-		final CMEntryType attributeOwner = cmAttribute.getOwner();
-		final String fieldName = getAttributeName(
-				attributeOwner.getIdentifier().getLocalName() + "#" + cmAttribute.getName(), cmAttribute.getType());
-		return fieldName;
+	protected final String fieldNameFromCMAttribute(final Alias alias, final CMAttribute cmAttribute) {
+		final StringBuilder fieldName = new StringBuilder();
+		alias.accept(new AliasVisitor() {
+
+			@Override
+			public void visit(final EntryTypeAlias alias) {
+				fieldName.append(alias.getEntryType().getIdentifier().getLocalName());
+			}
+
+			@Override
+			public void visit(final NameAlias alias) {
+				fieldName.append(alias.getName());
+			}
+
+		});
+		fieldName.append("#").append(cmAttribute.getName());
+		return getAttributeName(fieldNameFromCMAttribute(alias, cmAttribute.getName()), cmAttribute.getType());
+	}
+
+	protected final String fieldNameFromCMAttribute(final Alias alias, final String name) {
+		final StringBuilder fieldName = new StringBuilder();
+		alias.accept(new AliasVisitor() {
+
+			@Override
+			public void visit(final EntryTypeAlias alias) {
+				fieldName.append(alias.getEntryType().getIdentifier().getLocalName());
+			}
+
+			@Override
+			public void visit(final NameAlias alias) {
+				fieldName.append(alias.getName());
+			}
+
+		});
+		return fieldName //
+				.append("#") //
+				.append(name) //
+				.toString();
 	}
 
 	private JRDesignField createDesignField( //

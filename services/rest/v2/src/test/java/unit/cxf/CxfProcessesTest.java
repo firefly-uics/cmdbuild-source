@@ -2,6 +2,7 @@ package unit.cxf;
 
 import static com.google.common.collect.Iterables.get;
 import static java.util.Arrays.asList;
+import static java.util.Collections.emptyList;
 import static org.cmdbuild.service.rest.v2.model.Models.newProcessStatus;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasSize;
@@ -132,6 +133,8 @@ public class CxfProcessesTest {
 			when(foo.getDescription()).thenReturn("Foo");
 			when(foo.isSuperclass()).thenReturn(true);
 			when(foo.getParent()).thenReturn(null);
+			doReturn(emptyList()) //
+					.when(foo).getActiveAttributes();
 		}
 		doReturn(foo) //
 				.when(workflowLogic).findProcessClass(anyString());

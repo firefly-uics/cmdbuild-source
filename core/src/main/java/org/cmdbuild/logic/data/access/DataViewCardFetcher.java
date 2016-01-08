@@ -1,23 +1,20 @@
 package org.cmdbuild.logic.data.access;
 
 import static com.google.common.collect.Iterables.isEmpty;
-import static org.apache.commons.lang3.ObjectUtils.defaultIfNull;
+import static com.google.common.collect.Lists.newArrayList;
 import static org.cmdbuild.dao.query.clause.AnyAttribute.anyAttribute;
 import static org.cmdbuild.dao.query.clause.alias.EntryTypeAlias.canonicalAlias;
 import static org.cmdbuild.dao.query.clause.join.Over.over;
 import static org.cmdbuild.dao.query.clause.where.AndWhereClause.and;
 import static org.cmdbuild.dao.query.clause.where.TrueWhereClause.trueWhereClause;
 
-import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 
 import org.apache.commons.lang3.builder.Builder;
 import org.cmdbuild.common.utils.PagedElements;
 import org.cmdbuild.dao.entry.CMCard;
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.entrytype.CMDomain;
-import org.cmdbuild.dao.function.CMFunction;
 import org.cmdbuild.dao.query.CMQueryResult;
 import org.cmdbuild.dao.query.CMQueryRow;
 import org.cmdbuild.dao.query.QuerySpecsBuilder;
@@ -31,8 +28,6 @@ import org.cmdbuild.logic.mapping.FilterMapper;
 import org.cmdbuild.logic.mapping.SorterMapper;
 import org.cmdbuild.logic.mapping.json.JsonFilterMapper;
 import org.cmdbuild.logic.mapping.json.JsonSorterMapper;
-
-import com.google.common.collect.Lists;
 
 public class DataViewCardFetcher {
 
@@ -92,16 +87,11 @@ public class DataViewCardFetcher {
 	@Deprecated
 	public static class SqlQuerySpecsBuilderBuilder extends AbstractQuerySpecsBuilderBuilder {
 
-		private static final Map<String, Object> NO_PARAMETERS = Collections.emptyMap();
-
-		private CMFunction fetchedFunction;
-		private Map<String, Object> parameters;
+		private FunctionCall functionCall;
 		private Alias functionAlias;
 
 		@Override
 		public QuerySpecsBuilder build() {
-			final FunctionCall functionCall = FunctionCall.call(fetchedFunction,
-					defaultIfNull(parameters, NO_PARAMETERS));
 			final FilterMapper filterMapper = JsonFilterMapper.newInstance() //
 					.withDataView(dataView) //
 					.withDataView(systemDataView) //
@@ -113,7 +103,7 @@ public class DataViewCardFetcher {
 			final WhereClause whereClause = isEmpty(whereClauses) ? trueWhereClause() : and(whereClauses);
 			final Iterable<FilterMapper.JoinElement> joinElements = filterMapper.joinElements();
 			final QuerySpecsBuilder querySpecsBuilder = dataView //
-					.select(anyAttribute(fetchedFunction, functionAlias)) //
+					.select(anyAttribute(functionCall.getFunction(), functionAlias)) //
 					.from(functionCall, functionAlias) //
 					.where(whereClause) //
 					.limit(queryOptions.getLimit()) //
@@ -150,13 +140,8 @@ public class DataViewCardFetcher {
 			return (SqlQuerySpecsBuilderBuilder) super.withQueryOptions(value);
 		}
 
-		public SqlQuerySpecsBuilderBuilder withFunction(final CMFunction value) {
-			fetchedFunction = value;
-			return this;
-		}
-
-		public SqlQuerySpecsBuilderBuilder withParameters(final Map<String, Object> value) {
-			parameters = value;
+		public SqlQuerySpecsBuilderBuilder withFunction(final FunctionCall value) {
+			functionCall = value;
 			return this;
 		}
 
@@ -208,18 +193,18 @@ public class DataViewCardFetcher {
 		this.dataView = builder.dataView;
 		this.className = builder.className;
 		this.queryOptions = builder.queryOptions;
-		querySpecsBuilderFiller = new QuerySpecsBuilderFiller(dataView, queryOptions, className);
+		querySpecsBuilderFiller = new QuerySpecsBuilderFiller(dataView, queryOptions, dataView.findClass(className));
 	}
 
 	public PagedElements<CMCard> fetch() {
 		final CMQueryResult result = querySpecsBuilderFiller.create() //
 				.count() //
 				.run();
-		final List<CMCard> filteredCards = Lists.newArrayList();
-		final CMClass sourceClass = querySpecsBuilderFiller.getSourceClass();
+		final List<CMCard> filteredCards = newArrayList();
+		final Alias alias = querySpecsBuilderFiller.getAlias();
 		for (final CMQueryRow row : result) {
-			if (row.hasCard(sourceClass)) {
-				filteredCards.add(row.getCard(sourceClass));
+			if (row.hasCard(alias)) {
+				filteredCards.add(row.getCard(alias));
 			}
 		}
 		return new PagedElements<CMCard>(filteredCards, result.totalSize());

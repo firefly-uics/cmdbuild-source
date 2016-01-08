@@ -1,11 +1,11 @@
 (function() {
 
 	Ext.define('CMDBuild.controller.common.field.translatable.Window', {
-		extend: 'CMDBuild.controller.common.AbstractController',
+		extend: 'CMDBuild.controller.common.abstract.Base',
 
 		requires: [
 			'CMDBuild.core.Message',
-			'CMDBuild.core.proxy.Constants',
+			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.proxy.localization.Localization'
 		],
 
@@ -61,7 +61,7 @@
 		},
 
 		buildTranslationsFields: function() {
-			var enabledLanguagesObjects = Ext.Object.getValues(CMDBuild.configuration[CMDBuild.core.proxy.Constants.LOCALIZATION].getEnabledLanguages());
+			var enabledLanguagesObjects = Ext.Object.getValues(CMDBuild.configuration.localization.getEnabledLanguages());
 
 			// Sort languages with description alphabetical order
 			CMDBuild.core.Utils.objectArraySort(enabledLanguagesObjects);
@@ -70,11 +70,11 @@
 				if (!Ext.isEmpty(this.form)) {
 					this.form.add(
 						Ext.create('Ext.form.field.Text', {
-							name: language.get(CMDBuild.core.proxy.Constants.TAG),
-							fieldLabel: language.get(CMDBuild.core.proxy.Constants.DESCRIPTION),
+							name: language.get(CMDBuild.core.constants.Proxy.TAG),
+							fieldLabel: language.get(CMDBuild.core.constants.Proxy.DESCRIPTION),
 							labelWidth: CMDBuild.LABEL_WIDTH,
 							padding: '3 5',
-							labelClsExtra: 'ux-flag-' + language.get(CMDBuild.core.proxy.Constants.TAG),
+							labelClsExtra: 'ux-flag-' + language.get(CMDBuild.core.constants.Proxy.TAG),
 							labelStyle: 'background-repeat: no-repeat; background-position: left; padding-left: 22px;'
 						})
 					);

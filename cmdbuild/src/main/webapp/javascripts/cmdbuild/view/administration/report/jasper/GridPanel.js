@@ -5,7 +5,7 @@
 
 		requires: [
 			'CMDBuild.core.Message',
-			'CMDBuild.core.proxy.Constants',
+			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.proxy.report.Jasper'
 		],
 
@@ -15,7 +15,9 @@
 		delegate: undefined,
 
 		border: false,
+		cls: 'cmborderbottom',
 		frame: false,
+		split: true,
 
 		initComponent: function() {
 			var store = CMDBuild.core.proxy.report.Jasper.getStore();
@@ -24,7 +26,7 @@
 				dockedItems: [
 					Ext.create('Ext.toolbar.Paging', {
 						dock: 'bottom',
-						itemId: CMDBuild.core.proxy.Constants.TOOLBAR_BOTTOM,
+						itemId: CMDBuild.core.constants.Proxy.TOOLBAR_BOTTOM,
 						store: store,
 						displayInfo: true,
 						displayMsg: '{0} - {1} ' + CMDBuild.Translation.common.display_topic_of + ' {2}',
@@ -33,12 +35,12 @@
 				],
 				columns: [
 					{
-						dataIndex: CMDBuild.core.proxy.Constants.TITLE,
+						dataIndex: CMDBuild.core.constants.Proxy.TITLE,
 						text: CMDBuild.Translation.name,
 						flex: 1
 					},
 					{
-						dataIndex: CMDBuild.core.proxy.Constants.DESCRIPTION,
+						dataIndex: CMDBuild.core.constants.Proxy.DESCRIPTION,
 						text: CMDBuild.Translation.descriptionLabel,
 						flex: 1
 					},
@@ -86,24 +88,6 @@
 
 			select: function(row, record, index) {
 				this.delegate.cmfg('onReportsJasperRowSelected');
-			},
-
-			// Event to load store on view display and first row selection as CMDbuild standard
-			viewready: function(panel, eOpts) {
-				this.getStore().load({
-					scope: this,
-					callback: function(records, operation, success) {
-						if (success) {
-							if (!this.getSelectionModel().hasSelection())
-								this.getSelectionModel().select(0, true);
-						} else {
-							CMDBuild.core.Message.error(null, {
-								text: CMDBuild.Translation.errors.unknown_error,
-								detail: operation.error
-							});
-						}
-					}
-				});
 			}
 		}
 	});

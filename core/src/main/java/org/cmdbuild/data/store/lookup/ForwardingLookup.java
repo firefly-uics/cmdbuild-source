@@ -1,5 +1,7 @@
 package org.cmdbuild.data.store.lookup;
 
+import org.cmdbuild.services.localization.LocalizableStorableVisitor;
+
 import com.google.common.collect.ForwardingObject;
 
 public abstract class ForwardingLookup extends ForwardingObject implements Lookup {
@@ -12,6 +14,11 @@ public abstract class ForwardingLookup extends ForwardingObject implements Looku
 
 	@Override
 	protected abstract Lookup delegate();
+
+	@Override
+	public void accept(final LocalizableStorableVisitor visitor) {
+		visitor.visit(this);
+	}
 
 	@Override
 	public String code() {

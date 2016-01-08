@@ -8,7 +8,9 @@ public enum PrivilegedObjectType {
 
 	CLASS("Class"), //
 	VIEW("View"), //
-	FILTER("Filter");
+	FILTER("Filter"), //
+	CUSTOMPAGE("CustomPage"), //
+	;
 
 	private String value;
 

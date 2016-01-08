@@ -4,8 +4,9 @@
 		extend: 'Ext.panel.Panel',
 
 		requires: [
-			'CMDBuild.core.proxy.Constants',
-			'CMDBuild.core.Message'
+			'CMDBuild.core.constants.Proxy',
+			'CMDBuild.core.Message',
+			'CMDBuild.model.menu.TreeStore'
 		],
 
 		/**
@@ -24,14 +25,19 @@
 		availableItemsTreePanel: undefined,
 
 		/**
-		 * @property {Object}
-		 */
-		translatableAttributesConfigurationsBuffer: {},
-
-		/**
 		 * @property {Ext.tree.Panel}
 		 */
 		menuTreePanel: undefined,
+
+		/**
+		 * @property {CMDBuild.core.buttons.iconized.MoveRight}
+		 */
+		removeItemButton: undefined,
+
+		/**
+		 * @property {Object}
+		 */
+		translatableAttributesConfigurationsBuffer: {},
 
 		bodyCls: 'cmgraypanel',
 		border: false,
@@ -49,7 +55,7 @@
 				dockedItems: [
 					Ext.create('Ext.toolbar.Toolbar', {
 						dock: 'top',
-						itemId: CMDBuild.core.proxy.Constants.TOOLBAR_TOP,
+						itemId: CMDBuild.core.constants.Proxy.TOOLBAR_TOP,
 
 						items: [
 							this.addFolderField = Ext.create('Ext.form.field.Trigger', {
@@ -74,7 +80,7 @@
 					}),
 					Ext.create('Ext.toolbar.Toolbar', {
 						dock: 'bottom',
-						itemId: CMDBuild.core.proxy.Constants.TOOLBAR_BOTTOM,
+						itemId: CMDBuild.core.constants.Proxy.TOOLBAR_BOTTOM,
 						ui: 'footer',
 
 						layout: {
@@ -118,7 +124,7 @@
 						columns: [
 							{
 								xtype: 'treecolumn',
-								dataIndex: CMDBuild.core.proxy.Constants.TEXT,
+								dataIndex: CMDBuild.core.constants.Proxy.TEXT,
 								flex: 1,
 
 								editor: {
@@ -139,7 +145,7 @@
 										scope: this,
 
 										getClass: function(value, metadata, record, rowIndex, colIndex, store) { // Hides icon in root node or if no translations enabled
-											return (record.isRoot() || !CMDBuild.configuration[CMDBuild.core.proxy.Constants.LOCALIZATION].hasEnabledLanguages()) ? '' : 'translate';
+											return (record.isRoot() || !CMDBuild.configuration.localization.hasEnabledLanguages()) ? '' : 'translate';
 										},
 
 										handler: function(grid, rowIndex, colIndex, node, e, record, rowNode) {
@@ -149,16 +155,16 @@
 												Ext.create('CMDBuild.controller.common.field.translatable.NoFieldWindow', {
 													buffer: this.translatableAttributesConfigurationsBuffer,
 													translationFieldConfig: {
-														type: CMDBuild.core.proxy.Constants.MENU_ITEM,
+														type: CMDBuild.core.constants.Proxy.MENU_ITEM,
 														identifier: record.get('uuid'),
-														field: CMDBuild.core.proxy.Constants.DESCRIPTION
+														field: CMDBuild.core.constants.Proxy.DESCRIPTION
 													}
 												});
 											}
 										},
 
 										isDisabled: function(grid, rowIndex, colIndex, item, record) { // Disable icons in root node or if no translations enabled to avoid click action
-											return record.isRoot() || !CMDBuild.configuration[CMDBuild.core.proxy.Constants.LOCALIZATION].hasEnabledLanguages();
+											return record.isRoot() || !CMDBuild.configuration.localization.hasEnabledLanguages();
 										}
 									})
 								]
@@ -180,7 +186,25 @@
 							})
 						],
 
-						store: this.delegate.cmfg('onMenuGroupBuildTreeStore')
+						store: Ext.create('Ext.data.TreeStore', {
+							model: 'CMDBuild.model.menu.TreeStore',
+
+							root: {
+								text: '',
+								expanded: true,
+								children: []
+							}
+						}),
+
+						listeners: {
+							scope: this,
+							beforeselect: function(treePanel, record, index, eOpts) {
+								return this.delegate.cmfg('onMenuGroupMenuTreeBeforeselect', record);
+							},
+							selectionchange: function(treePanel, selected, eOpts) {
+								this.delegate.cmfg('onMenuGroupMenuTreeSelectionchange');
+							}
+						}
 					}),
 					{
 						xtype: 'panel',
@@ -196,9 +220,10 @@
 						},
 
 						items: [
-							Ext.create('CMDBuild.core.buttons.iconized.MoveRight', {
+							this.removeItemButton = Ext.create('CMDBuild.core.buttons.iconized.MoveRight', {
 								tooltip: CMDBuild.Translation.remove,
 								scope: this,
+								disabled: true,
 
 								handler: function(button, e) {
 									this.delegate.cmfg('onMenuGroupRemoveItemButtonClick');
@@ -218,7 +243,15 @@
 							]
 						},
 
-						store: this.delegate.cmfg('onMenuGroupBuildTreeStore')
+						store: Ext.create('Ext.data.TreeStore', {
+							model: 'CMDBuild.model.menu.TreeStore',
+
+							root: {
+								text: '',
+								expanded: true,
+								children: []
+							}
+						})
 					})
 				]
 			});

@@ -18,7 +18,7 @@ public class Stores {
 		}
 
 		@Override
-		public void create(final Entry<? extends Type> entry) {
+		public void create(final Entry entry) {
 			try {
 				logger.debug("creating entry '{}'", entry);
 				super.create(entry);
@@ -29,7 +29,7 @@ public class Stores {
 		}
 
 		@Override
-		public Iterable<Entry<?>> readAll() {
+		public Iterable<Entry> readAll() {
 			try {
 				logger.debug("reading all entries");
 				return super.readAll();
@@ -40,7 +40,7 @@ public class Stores {
 		}
 
 		@Override
-		public void update(final Entry<? extends Type> entry) {
+		public void update(final Entry entry) {
 			try {
 				logger.debug("updating entry '{}'", entry);
 				super.update(entry);
@@ -51,7 +51,7 @@ public class Stores {
 		}
 
 		@Override
-		public void delete(final Entry<? extends Type> entry) {
+		public void delete(final Entry entry) {
 			try {
 				logger.debug("deleting entry '{}'", entry);
 				super.delete(entry);

@@ -15,8 +15,9 @@
 
 	<bean id="cmdbf" class="org.cmdbuild.cmdbf.cmdbmdr.CmdbMDR" scope="prototype">
 		<constructor-arg ref="xmlRegistry" />
+		<constructor-arg ref="lookupLogic" />
 		<constructor-arg>
-			<bean factory-bean="userDataAccessLogicBuilder" factory-method="build"
+			<bean factory-bean="webServiceDataAccessLogicBuilder" factory-method="build"
 				scope="prototype" />
 		</constructor-arg>
 		<constructor-arg ref="privilegedDmsLogic" />

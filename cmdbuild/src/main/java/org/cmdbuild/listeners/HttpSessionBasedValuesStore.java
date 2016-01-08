@@ -1,5 +1,8 @@
 package org.cmdbuild.listeners;
 
+import static com.google.common.base.Optional.absent;
+import static com.google.common.base.Optional.of;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
@@ -9,8 +12,6 @@ import com.google.common.base.Optional;
 import com.google.common.base.Supplier;
 
 public class HttpSessionBasedValuesStore implements ValuesStore {
-
-	private static final Optional<HttpSession> ABSENT = Optional.absent();
 
 	private final Supplier<Optional<HttpServletRequest>> supplier;
 	private final CmdbuildConfiguration configuration;
@@ -44,27 +45,23 @@ public class HttpSessionBasedValuesStore implements ValuesStore {
 	}
 
 	private Optional<HttpSession> session() {
-		final Optional<HttpSession> session;
+		final Optional<HttpSession> output;
 		final Optional<HttpServletRequest> optional = supplier.get();
 		if (optional.isPresent()) {
 			final HttpServletRequest element = optional.get();
-			HttpSession _session = element.getSession(false);
-			if (_session == null) {
-				_session = element.getSession(true);
-				initialize(_session);
+			HttpSession session = element.getSession(false);
+			if (session == null) {
+				session = element.getSession(true);
+				final int sessionTimeout = configuration.getSessionTimoutOrZero();
+				if (sessionTimeout > 0) {
+					session.setMaxInactiveInterval(sessionTimeout);
+				}
 			}
-			session = Optional.of(_session);
+			output = of(session);
 		} else {
-			session = ABSENT;
+			output = absent();
 		}
-		return session;
-	}
-
-	private void initialize(final HttpSession session) {
-		final int sessionTimeout = configuration.getSessionTimoutOrZero();
-		if (sessionTimeout > 0) {
-			session.setMaxInactiveInterval(sessionTimeout);
-		}
+		return output;
 	}
 
 }

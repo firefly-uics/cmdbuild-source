@@ -1,6 +1,6 @@
 package unit;
 
-import static org.cmdbuild.dao.query.clause.FunctionCall.call;
+import static org.cmdbuild.dao.query.clause.Clauses.call;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.junit.Assert.assertThat;
@@ -39,7 +39,7 @@ public class FunctionCallTest {
 
 	@Test(expected = NullPointerException.class)
 	public void functionMustBeProvided() {
-		FunctionCall.call(null, new Object[0]);
+		call(null, new Object[0]);
 	}
 
 	@Test(expected = IllegalArgumentException.class)
@@ -49,7 +49,7 @@ public class FunctionCallTest {
 		when(inputParams.size()).thenReturn(2);
 		when(function.getInputParameters()).thenReturn(inputParams);
 
-		FunctionCall.call(function, new Object[1]);
+		call(function, new Object[1]);
 	}
 
 	@Test

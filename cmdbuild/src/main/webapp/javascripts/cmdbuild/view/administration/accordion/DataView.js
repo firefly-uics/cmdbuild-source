@@ -1,34 +1,47 @@
 (function() {
 
 	Ext.define('CMDBuild.view.administration.accordion.DataView', {
-		extend: 'CMDBuild.view.common.CMBaseAccordion',
+		extend: 'CMDBuild.view.common.abstract.Accordion',
+
+		/**
+		 * @cfg {CMDBuild.controller.common.abstract.Accordion}
+		 */
+		delegate: undefined,
+
+		/**
+		 * @cfg {String}
+		 */
+		cmName: undefined,
 
 		title: CMDBuild.Translation.views,
 
-		constructor: function(){
-			this.callParent(arguments);
-
-			this.updateStore();
-		},
-
 		/**
+		 * @param {Number} nodeIdToSelect
+		 *
 		 * @override
 		 */
-		updateStore: function() {
-			this.store.getRootNode().appendChild([
+		updateStore: function(nodeIdToSelect) {
+			this.getStore().getRootNode().removeAll();
+			this.getStore().getRootNode().appendChild([
 				{
-					id: 'filter',
-					cmName: 'dataview',
-					leaf: true,
-					text: CMDBuild.Translation.filterView
+					cmName: this.cmName,
+					text: CMDBuild.Translation.filterView,
+					description: CMDBuild.Translation.filterView,
+					id: this.delegate.cmfg('accordionBuildId', { components: 'filter' }),
+					sectionHierarchy: ['filter'],
+					leaf: true
 				},
 				{
-					id: 'sql',
-					cmName: 'dataview',
-					leaf: true,
+					cmName: this.cmName,
 					text: CMDBuild.Translation.sqlView,
+					description: CMDBuild.Translation.sqlView,
+					id: this.delegate.cmfg('accordionBuildId', { components: 'sql' }),
+					sectionHierarchy: ['sql'],
+					leaf: true
 				}
 			]);
+
+			this.callParent(arguments);
 		}
 	});
 

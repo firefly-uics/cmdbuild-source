@@ -1,6 +1,8 @@
 package org.cmdbuild.report;
 
-import static org.cmdbuild.report.CustomProperties.REQUIRED;
+import static org.apache.commons.lang3.StringUtils.defaultString;
+import static org.cmdbuild.common.Constants.DATETIME_TWO_DIGIT_YEAR_FORMAT;
+import static org.cmdbuild.common.Constants.DATE_FOUR_DIGIT_YEAR_FORMAT;
 import groovy.lang.GroovyShell;
 import groovy.lang.Script;
 
@@ -10,9 +12,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import net.sf.jasperreports.engine.JRParameter;
-import net.sf.jasperreports.engine.JRPropertiesMap;
 
-import org.cmdbuild.common.Constants;
 import org.cmdbuild.exception.ReportException.ReportExceptionType;
 
 /**
@@ -31,11 +31,12 @@ import org.cmdbuild.exception.ReportException.ReportExceptionType;
  */
 public abstract class ReportParameter {
 
-	private JRParameter jrParameter;
-	private Object parameterValue;
-
-	// regular expression matching lookup and reference parameters format
-	protected static final String regExpLR = "[\\w\\s]*\\.\\w*\\.[\\w\\s]*";
+	/**
+	 * @deprecated regular expression matching lookup and reference parameters
+	 *             format.
+	 */
+	@Deprecated
+	private static final String LEGACY_NAME_PATTERN = "[\\w\\s]*\\.\\w*\\.[\\w\\s]*";
 
 	// create the right subclass
 	public static ReportParameter parseJrParameter(final JRParameter jrParameter) {
@@ -44,20 +45,45 @@ public abstract class ReportParameter {
 		}
 
 		final String iReportParamName = jrParameter.getName();
+		final ReportParameter output;
 		if (iReportParamName.indexOf(".") == -1) {
-			return new RPSimple(jrParameter);
+			final CustomProperties customProperties = new CustomProperties(jrParameter.getPropertiesMap());
+			if (customProperties.hasLookupType()) {
+				final String lookupType = customProperties.getLookupType();
+				output = new RPLookup(jrParameter, iReportParamName, lookupType);
+			} else if (customProperties.hasTargetClass()) {
+				final String targetClass = customProperties.getTargetClass();
+				output = new RPReference(jrParameter, iReportParamName, targetClass);
+			} else {
+				output = new RPSimple(jrParameter, iReportParamName);
+			}
 		} else {
-			if (!iReportParamName.matches(regExpLR)) {
+			/*
+			 * LEGACY
+			 */
+			if (!iReportParamName.matches(LEGACY_NAME_PATTERN)) {
 				throw ReportExceptionType.REPORT_INVALID_PARAMETER_FORMAT.createException();
 			}
-
 			final String[] split = iReportParamName.split("\\.");
 			if (split[1].equalsIgnoreCase("lookup")) {
-				return new RPLookup(jrParameter);
+				output = new RPLookup(jrParameter, split[0], split[2]);
 			} else {
-				return new RPReference(jrParameter);
+				output = new RPReference(jrParameter, split[0], split[1]);
 			}
 		}
+		return output;
+	}
+
+	private final JRParameter jrParameter;
+	private final String name;
+	private Object parameterValue;
+
+	/**
+	 * Usable by subclasses only.
+	 */
+	protected ReportParameter(final JRParameter jrParameter, final String name) {
+		this.jrParameter = jrParameter;
+		this.name = name;
 	}
 
 	public abstract void accept(ReportParameterVisitor visitor);
@@ -69,21 +95,14 @@ public abstract class ReportParameter {
 			final Object result = sc.run();
 
 			if (result != null) {
-				// date
 				if (jrParameter.getValueClass() == Date.class) {
-					final SimpleDateFormat sdf = new SimpleDateFormat(Constants.DATE_FOUR_DIGIT_YEAR_FORMAT);
+					final SimpleDateFormat sdf = new SimpleDateFormat(DATE_FOUR_DIGIT_YEAR_FORMAT);
+					return sdf.format(result);
+				} else if (jrParameter.getValueClass() == Timestamp.class || jrParameter.getValueClass() == Time.class) {
+					final SimpleDateFormat sdf = new SimpleDateFormat(DATETIME_TWO_DIGIT_YEAR_FORMAT);
 					return sdf.format(result);
 				}
-
-				// timestamp
-				else if (jrParameter.getValueClass() == Timestamp.class || jrParameter.getValueClass() == Time.class) {
-					final SimpleDateFormat sdf = new SimpleDateFormat(Constants.DATETIME_TWO_DIGIT_YEAR_FORMAT);
-					return sdf.format(result);
-				}
-
-				// other
 				return result.toString();
-
 			}
 		}
 		return null;
@@ -95,33 +114,20 @@ public abstract class ReportParameter {
 				.getDefaultValueExpression().getText().equals(""));
 	}
 
-	public void setJrParameter(final JRParameter jrParameter) {
-		this.jrParameter = jrParameter;
-	}
-
 	public JRParameter getJrParameter() {
 		return jrParameter;
 	}
 
 	public String getName() {
-		return getFullNameSplit()[0];
+		return name;
 	}
 
 	public String getFullName() {
 		return jrParameter.getName();
 	}
 
-	public String[] getFullNameSplit() {
-		return getFullName().split("\\.");
-	}
-
 	public String getDescription() {
-		final String desc = jrParameter.getDescription();
-		if (desc == null || desc.equals("")) {
-			return getName();
-		} else {
-			return desc;
-		}
+		return defaultString(jrParameter.getDescription(), getName());
 	}
 
 	public void parseValue(final Object newValue) {
@@ -137,12 +143,7 @@ public abstract class ReportParameter {
 	}
 
 	public boolean isRequired() {
-		final JRPropertiesMap properties = jrParameter.getPropertiesMap();
-		final String required = properties.getProperty(REQUIRED);
-		if (required != null && required.equalsIgnoreCase("false")) {
-			return false;
-		}
-		return true;
+		return new CustomProperties(jrParameter.getPropertiesMap()).isRequired();
 	}
 
 }

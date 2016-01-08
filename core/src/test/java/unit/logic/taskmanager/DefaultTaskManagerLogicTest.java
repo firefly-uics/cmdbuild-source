@@ -6,6 +6,7 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyLong;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.mock;
@@ -15,6 +16,8 @@ import static org.mockito.Mockito.when;
 import org.cmdbuild.data.store.Storable;
 import org.cmdbuild.data.store.task.TaskStore;
 import org.cmdbuild.data.store.task.TaskVisitor;
+import org.cmdbuild.logic.email.EmailLogic;
+import org.cmdbuild.logic.email.EmailLogic.Email;
 import org.cmdbuild.logic.taskmanager.DefaultTaskManagerLogic;
 import org.cmdbuild.logic.taskmanager.ScheduledTask;
 import org.cmdbuild.logic.taskmanager.Task;
@@ -79,6 +82,7 @@ public class DefaultTaskManagerLogicTest {
 	private TaskStore store;
 	private SchedulerFacade scheduledTaskFacade;
 	private SynchronousEventFacade synchronousEventFacade;
+	private EmailLogic emailLogic;
 	private DefaultTaskManagerLogic taskManagerLogic;
 
 	@Before
@@ -103,7 +107,10 @@ public class DefaultTaskManagerLogicTest {
 
 		synchronousEventFacade = mock(SynchronousEventFacade.class);
 
-		taskManagerLogic = new DefaultTaskManagerLogic(converter, store, scheduledTaskFacade, synchronousEventFacade);
+		emailLogic = mock(EmailLogic.class);
+
+		taskManagerLogic = new DefaultTaskManagerLogic(converter, store, scheduledTaskFacade, synchronousEventFacade,
+				emailLogic);
 	}
 
 	@Test(expected = IllegalArgumentException.class)
@@ -151,7 +158,7 @@ public class DefaultTaskManagerLogicTest {
 
 		// then
 		final InOrder inOrder = inOrder(converter, logicAsSourceConverter, storeAsSourceConverter, store,
-				scheduledTaskFacade, synchronousEventFacade);
+				scheduledTaskFacade, synchronousEventFacade, emailLogic);
 		inOrder.verify(store).readAll();
 		inOrder.verify(converter, times(2)).from(any(org.cmdbuild.data.store.task.Task.class));
 		inOrder.verify(storeAsSourceConverter).toLogic();
@@ -179,7 +186,7 @@ public class DefaultTaskManagerLogicTest {
 
 		// then
 		final InOrder inOrder = inOrder(converter, logicAsSourceConverter, storeAsSourceConverter, store,
-				scheduledTaskFacade, synchronousEventFacade);
+				scheduledTaskFacade, synchronousEventFacade, emailLogic);
 		inOrder.verify(store).readAll();
 		inOrder.verify(converter, times(2)).from(any(org.cmdbuild.data.store.task.Task.class));
 		inOrder.verify(storeAsSourceConverter).toLogic();
@@ -206,7 +213,7 @@ public class DefaultTaskManagerLogicTest {
 
 		// then
 		final InOrder inOrder = inOrder(converter, logicAsSourceConverter, storeAsSourceConverter, store,
-				scheduledTaskFacade, synchronousEventFacade);
+				scheduledTaskFacade, synchronousEventFacade, emailLogic);
 		inOrder.verify(converter).from(task);
 		inOrder.verify(logicAsSourceConverter).toStore();
 		inOrder.verify(store).read(any(org.cmdbuild.data.store.task.Task.class));
@@ -257,7 +264,7 @@ public class DefaultTaskManagerLogicTest {
 		taskManagerLogic.create(newOne);
 
 		final InOrder inOrder = inOrder(converter, logicAsSourceConverter, storeAsSourceConverter, store,
-				scheduledTaskFacade, synchronousEventFacade);
+				scheduledTaskFacade, synchronousEventFacade, emailLogic);
 		inOrder.verify(converter).from(newOne);
 		inOrder.verify(logicAsSourceConverter).toStore();
 		inOrder.verify(store).create(DUMMY_STORABLE_TASK);
@@ -290,7 +297,7 @@ public class DefaultTaskManagerLogicTest {
 		// then
 		final ArgumentCaptor<ScheduledTask> scheduledTaskCaptor = ArgumentCaptor.forClass(ScheduledTask.class);
 		final InOrder inOrder = inOrder(converter, logicAsSourceConverter, storeAsSourceConverter, store,
-				scheduledTaskFacade, synchronousEventFacade);
+				scheduledTaskFacade, synchronousEventFacade, emailLogic);
 		inOrder.verify(converter).from(task);
 		inOrder.verify(logicAsSourceConverter).toStore();
 		inOrder.verify(store).read(DUMMY_STORABLE_TASK);
@@ -311,13 +318,20 @@ public class DefaultTaskManagerLogicTest {
 		final ScheduledTask task = ReadEmailTask.newInstance() //
 				.withId(ID) //
 				.build();
+		final Email first = mock(Email.class);
+		final Email second = mock(Email.class);
+		when(emailLogic.readAll(anyLong())) //
+				.thenReturn(asList(first, second));
 
 		// when
 		taskManagerLogic.delete(task);
 
 		// then
 		final InOrder inOrder = inOrder(converter, logicAsSourceConverter, storeAsSourceConverter, store,
-				scheduledTaskFacade, synchronousEventFacade);
+				scheduledTaskFacade, synchronousEventFacade, emailLogic);
+		inOrder.verify(emailLogic).readAll(ID);
+		inOrder.verify(emailLogic).deleteWithNoChecks(first);
+		inOrder.verify(emailLogic).deleteWithNoChecks(second);
 		inOrder.verify(scheduledTaskFacade).delete(task);
 		inOrder.verify(converter).from(task);
 		inOrder.verify(logicAsSourceConverter).toStore();
@@ -345,7 +359,7 @@ public class DefaultTaskManagerLogicTest {
 
 		// then
 		final InOrder inOrder = inOrder(converter, logicAsSourceConverter, storeAsSourceConverter, store,
-				scheduledTaskFacade, synchronousEventFacade);
+				scheduledTaskFacade, synchronousEventFacade, emailLogic);
 		inOrder.verify(store).read(eq(42L));
 		inOrder.verify(converter).from(stored);
 		inOrder.verify(storeAsSourceConverter).toLogic();
@@ -377,7 +391,7 @@ public class DefaultTaskManagerLogicTest {
 				.forClass(org.cmdbuild.data.store.task.Task.class);
 		final ArgumentCaptor<ScheduledTask> scheduledTaskCaptor = ArgumentCaptor.forClass(ScheduledTask.class);
 		final InOrder inOrder = inOrder(converter, logicAsSourceConverter, storeAsSourceConverter, store,
-				scheduledTaskFacade, synchronousEventFacade);
+				scheduledTaskFacade, synchronousEventFacade, emailLogic);
 		inOrder.verify(store).read(eq(ID));
 		inOrder.verify(store).update(storedTaskCaptor.capture());
 		inOrder.verify(converter).from(storedTaskCaptor.capture());
@@ -418,7 +432,7 @@ public class DefaultTaskManagerLogicTest {
 
 		// then
 		final InOrder inOrder = inOrder(converter, logicAsSourceConverter, storeAsSourceConverter, store,
-				scheduledTaskFacade, synchronousEventFacade);
+				scheduledTaskFacade, synchronousEventFacade, emailLogic);
 		inOrder.verify(store).read(eq(42L));
 		inOrder.verify(converter).from(stored);
 		inOrder.verify(storeAsSourceConverter).toLogic();
@@ -450,7 +464,7 @@ public class DefaultTaskManagerLogicTest {
 				.forClass(org.cmdbuild.data.store.task.Task.class);
 		final ArgumentCaptor<ScheduledTask> scheduledTaskCaptor = ArgumentCaptor.forClass(ScheduledTask.class);
 		final InOrder inOrder = inOrder(converter, logicAsSourceConverter, storeAsSourceConverter, store,
-				scheduledTaskFacade, synchronousEventFacade);
+				scheduledTaskFacade, synchronousEventFacade, emailLogic);
 		inOrder.verify(store).read(eq(ID));
 		inOrder.verify(store).update(storedTaskCaptor.capture());
 		inOrder.verify(converter).from(storedTaskCaptor.capture());
@@ -490,7 +504,7 @@ public class DefaultTaskManagerLogicTest {
 		taskManagerLogic.create(newOne);
 
 		final InOrder inOrder = inOrder(converter, logicAsSourceConverter, storeAsSourceConverter, store,
-				scheduledTaskFacade, synchronousEventFacade);
+				scheduledTaskFacade, synchronousEventFacade, emailLogic);
 		inOrder.verify(converter).from(newOne);
 		inOrder.verify(logicAsSourceConverter).toStore();
 		inOrder.verify(store).create(DUMMY_STORABLE_TASK);
@@ -522,7 +536,7 @@ public class DefaultTaskManagerLogicTest {
 		// then
 		final ArgumentCaptor<SynchronousEventTask> taskCaptor = ArgumentCaptor.forClass(SynchronousEventTask.class);
 		final InOrder inOrder = inOrder(converter, logicAsSourceConverter, storeAsSourceConverter, store,
-				scheduledTaskFacade, synchronousEventFacade);
+				scheduledTaskFacade, synchronousEventFacade, emailLogic);
 		inOrder.verify(converter).from(task);
 		inOrder.verify(logicAsSourceConverter).toStore();
 		inOrder.verify(store).read(DUMMY_STORABLE_TASK);
@@ -543,13 +557,20 @@ public class DefaultTaskManagerLogicTest {
 		final SynchronousEventTask task = SynchronousEventTask.newInstance() //
 				.withId(ID) //
 				.build();
+		final Email first = mock(Email.class);
+		final Email second = mock(Email.class);
+		when(emailLogic.readAll(anyLong())) //
+				.thenReturn(asList(first, second));
 
 		// when
 		taskManagerLogic.delete(task);
 
 		// then
 		final InOrder inOrder = inOrder(converter, logicAsSourceConverter, storeAsSourceConverter, store,
-				scheduledTaskFacade, synchronousEventFacade);
+				scheduledTaskFacade, synchronousEventFacade, emailLogic);
+		inOrder.verify(emailLogic).readAll(ID);
+		inOrder.verify(emailLogic).deleteWithNoChecks(first);
+		inOrder.verify(emailLogic).deleteWithNoChecks(second);
 		inOrder.verify(synchronousEventFacade).delete(task);
 		inOrder.verify(converter).from(task);
 		inOrder.verify(logicAsSourceConverter).toStore();
@@ -577,7 +598,7 @@ public class DefaultTaskManagerLogicTest {
 
 		// then
 		final InOrder inOrder = inOrder(converter, logicAsSourceConverter, storeAsSourceConverter, store,
-				scheduledTaskFacade, synchronousEventFacade);
+				scheduledTaskFacade, synchronousEventFacade, emailLogic);
 		inOrder.verify(store).read(eq(42L));
 		inOrder.verify(converter).from(stored);
 		inOrder.verify(storeAsSourceConverter).toLogic();
@@ -609,7 +630,7 @@ public class DefaultTaskManagerLogicTest {
 				.forClass(org.cmdbuild.data.store.task.Task.class);
 		final ArgumentCaptor<SynchronousEventTask> taskCaptor = ArgumentCaptor.forClass(SynchronousEventTask.class);
 		final InOrder inOrder = inOrder(converter, logicAsSourceConverter, storeAsSourceConverter, store,
-				scheduledTaskFacade, synchronousEventFacade);
+				scheduledTaskFacade, synchronousEventFacade, emailLogic);
 		inOrder.verify(store).read(eq(ID));
 		inOrder.verify(store).update(storedTaskCaptor.capture());
 		inOrder.verify(converter).from(storedTaskCaptor.capture());
@@ -650,7 +671,7 @@ public class DefaultTaskManagerLogicTest {
 
 		// then
 		final InOrder inOrder = inOrder(converter, logicAsSourceConverter, storeAsSourceConverter, store,
-				scheduledTaskFacade, synchronousEventFacade);
+				scheduledTaskFacade, synchronousEventFacade, emailLogic);
 		inOrder.verify(store).read(eq(42L));
 		inOrder.verify(converter).from(stored);
 		inOrder.verify(storeAsSourceConverter).toLogic();
@@ -682,7 +703,7 @@ public class DefaultTaskManagerLogicTest {
 				.forClass(org.cmdbuild.data.store.task.Task.class);
 		final ArgumentCaptor<SynchronousEventTask> taskCaptor = ArgumentCaptor.forClass(SynchronousEventTask.class);
 		final InOrder inOrder = inOrder(converter, logicAsSourceConverter, storeAsSourceConverter, store,
-				scheduledTaskFacade, synchronousEventFacade);
+				scheduledTaskFacade, synchronousEventFacade, emailLogic);
 		inOrder.verify(store).read(eq(ID));
 		inOrder.verify(store).update(storedTaskCaptor.capture());
 		inOrder.verify(converter).from(storedTaskCaptor.capture());

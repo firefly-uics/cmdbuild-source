@@ -152,7 +152,7 @@
 							!Ext.isEmpty(combo.getStore())
 							&& !Ext.isEmpty(this.attribute)
 							&& !Ext.isEmpty(this.attribute.meta)
-							&& this.attribute.meta['system.type.reference.' + CMDBuild.core.proxy.Constants.PRESELECT_IF_UNIQUE] === 'true'
+							&& this.attribute.meta['system.type.reference.' + CMDBuild.core.constants.Proxy.PRESELECT_IF_UNIQUE] === 'true'
 							&& combo.getStore().getCount() == 1
 						) {
 							combo.setValue(records[0].get('Id'));
@@ -201,11 +201,11 @@
 				&& this.getStore().find(this.valueField, value) == -1
 				&& !Ext.isEmpty(this.attribute)
 				&& !Ext.isEmpty(this.attribute.meta)
-				&& this.attribute.meta['system.type.reference.' + CMDBuild.core.proxy.Constants.PRESELECT_IF_UNIQUE] !== 'true'
+				&& this.attribute.meta['system.type.reference.' + CMDBuild.core.constants.Proxy.PRESELECT_IF_UNIQUE] !== 'true'
 			) {
 				var params = Ext.apply({ cardId: value }, this.getStore().baseParams);
 
-				CMDBuild.Ajax.request({
+				CMDBuild.core.interfaces.Ajax.request({
 					method: 'GET',
 					url: 'services/json/management/modcard/getcard',
 					params: params,
@@ -283,7 +283,7 @@
 								!Ext.isEmpty(this.getStore())
 								&& !Ext.isEmpty(this.attribute)
 								&& !Ext.isEmpty(this.attribute.meta)
-								&& this.attribute.meta['system.type.reference.' + CMDBuild.core.proxy.Constants.PRESELECT_IF_UNIQUE] === 'true'
+								&& this.attribute.meta['system.type.reference.' + CMDBuild.core.constants.Proxy.PRESELECT_IF_UNIQUE] === 'true'
 								&& this.getStore().getCount() == 1
 							) {
 								this.setValue(records[0].get('Id'));

@@ -38,7 +38,7 @@
 			poid: basePoid
 		};
 
-		CMDBuild.LoadMask.get().show();
+		CMDBuild.core.LoadMask.show();
 		CMDBuild.bim.proxy.fetchJsonForBimViewer({
 			params: {
 				baseProjectId: basePoid, //
@@ -52,7 +52,7 @@
 					}
 			},
 			failure: function() {
-				CMDBuild.LoadMask.get().hide();
+				CMDBuild.core.LoadMask.hide();
 			}
 		});
 	};
@@ -84,7 +84,7 @@
 
 	BIMProjectLoader.prototype.loadGeometry = function(roid, serializerOid) {
 		if (this.typeDownloadQueue.length == 0) {
-			CMDBuild.LoadMask.get().hide();
+			CMDBuild.core.LoadMask.hide();
 			return;
 		}
 		var className = this.typeDownloadQueue[0];
@@ -158,7 +158,7 @@
 	BIMProjectLoader.prototype.loadGeometryForType = function(typeName) {
 		this.typeDownloadQueue = [typeName];
 		var me = this;
-		CMDBuild.LoadMask.get().show();
+		CMDBuild.core.LoadMask.show();
 		window._BIM_SERVER_API.call("PluginInterface", "getSerializerByPluginClassName", {
 			pluginClassName : "org.bimserver.geometry.json.JsonGeometrySerializerPlugin"
 		}, function(serializer) {

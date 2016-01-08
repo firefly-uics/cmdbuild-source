@@ -4,8 +4,21 @@
 
 	Ext.define("CMDBuild.controller.administration.CMBaseAttributesController", {
 		constructor: function(view) {
-			this.view = view;
+			if (Ext.isEmpty(view)) {
+				this.view = new CMDBuild.view.administration.classes.CMClassAttributesPanel({
+					title: CMDBuild.Translation.administration.modClass.tabs.attributes,
+					border: false,
+					disabled: true
+				});
+			} else {
+				this.view = view;
+			}
+
 			this.getGrid().on("cm_attribute_moved", this.onAttributeMoved, this);
+		},
+
+		getView: function() {
+			return this.view;
 		},
 
 		onAttributeMoved: function() {
@@ -50,7 +63,7 @@
 	Ext.define("CMDBuild.controller.administration.classes.CMClassAttributeController", {
 		extend: "CMDBuild.controller.administration.CMBaseAttributesController",
 
-		requires: ['CMDBuild.core.proxy.Constants'],
+		requires: ['CMDBuild.core.constants.Proxy'],
 
 		constructor: function(view) {
 			this.callParent(arguments);
@@ -113,14 +126,14 @@
 		}
 
 		// External metadata injection
-		this.view.formPanel.referenceFilterMetadata['system.type.reference.' + CMDBuild.core.proxy.Constants.PRESELECT_IF_UNIQUE] = this.view.formPanel.preselectIfUniqueCheckbox.getValue();
+		this.view.formPanel.referenceFilterMetadata['system.type.reference.' + CMDBuild.core.constants.Proxy.PRESELECT_IF_UNIQUE] = this.view.formPanel.preselectIfUniqueCheckbox.getValue();
 
 		var data = this.view.formPanel.getData(withDisabled = true);
-		data[CMDBuild.core.proxy.Constants.CLASS_NAME] = _CMCache.getEntryTypeNameById(this.currentClassId);
-		data[CMDBuild.core.proxy.Constants.META] = Ext.JSON.encode(this.view.formPanel.referenceFilterMetadata);
+		data[CMDBuild.core.constants.Proxy.CLASS_NAME] = _CMCache.getEntryTypeNameById(this.currentClassId);
+		data[CMDBuild.core.constants.Proxy.META] = Ext.JSON.encode(this.view.formPanel.referenceFilterMetadata);
 
 		var me = this;
-		CMDBuild.LoadMask.get().show();
+		CMDBuild.core.LoadMask.show();
 		_CMProxy.attributes.update({
 			params : data,
 			success : function(form, action, decoded) {
@@ -129,7 +142,7 @@
 				CMDBuild.view.common.field.translatable.Utils.commit(me.view.formPanel);
 			},
 			callback: function() {
-				CMDBuild.LoadMask.get().hide();
+				CMDBuild.core.LoadMask.hide();
 			}
 		});
 	}
@@ -168,11 +181,11 @@
 		params[parameterNames.NAME] = me.currentAttribute.get("name");
 		params[parameterNames.CLASS_NAME] = _CMCache.getEntryTypeNameById(me.currentClassId);
 
-		CMDBuild.LoadMask.get().show();
+		CMDBuild.core.LoadMask.show();
 		CMDBuild.ServiceProxy.attributes.remove({
 			params: params,
 			callback : function() {
-				CMDBuild.LoadMask.get().hide();
+				CMDBuild.core.LoadMask.hide();
 				me.view.formPanel.reset();
 				me.view.formPanel.disableModify();
 				me.view.gridPanel.refreshStore(me.currentClassId);

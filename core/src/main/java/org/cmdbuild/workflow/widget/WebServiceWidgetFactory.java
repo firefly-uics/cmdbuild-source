@@ -1,7 +1,5 @@
 package org.cmdbuild.workflow.widget;
 
-import java.util.Map;
-
 import org.cmdbuild.model.widget.WebService;
 import org.cmdbuild.model.widget.Widget;
 import org.cmdbuild.notification.Notifier;
@@ -46,21 +44,21 @@ public class WebServiceWidgetFactory extends ValuePairWidgetFactory {
 	}
 
 	@Override
-	protected Widget createWidget(final Map<String, Object> valueMap) {
+	protected Widget createWidget(final WidgetDefinition definition) {
 		final WebService webService = new WebService();
-		webService.setEndPoint(readString(valueMap.get(ENDPOINT)));
-		webService.setMethod(readString(valueMap.get(METHOD)));
-		webService.setNameSpacePrefix(readString(valueMap.get(NS_PREFIX)));
-		webService.setNameSpaceURI(readString(valueMap.get(NS_URI)));
-		webService.setNodesToUseAsRows(readCommaSeparatedString(valueMap.get(NODES_TO_USE_AS_ROWS)));
-		webService.setNodesToUseAsColumns(readCommaSeparatedString(valueMap.get(NODES_TO_USE_AS_COLUMNS)));
-		webService.setMandatory(readBooleanFalseIfMissing(valueMap.get(MANDATORY)));
-		webService.setSingleSelect(readBooleanFalseIfMissing(valueMap.get(SINGLE_SELECT)));
-		webService.setReadOnly(readBooleanFalseIfMissing(valueMap.get(READ_ONLY)));
-		webService.setOutputSeparator(readString(valueMap.get(OUTPUT_SEPARATOR)));
+		webService.setEndPoint(readString(definition.get(ENDPOINT)));
+		webService.setMethod(readString(definition.get(METHOD)));
+		webService.setNameSpacePrefix(readString(definition.get(NS_PREFIX)));
+		webService.setNameSpaceURI(readString(definition.get(NS_URI)));
+		webService.setNodesToUseAsRows(readCommaSeparatedString(definition.get(NODES_TO_USE_AS_ROWS)));
+		webService.setNodesToUseAsColumns(readCommaSeparatedString(definition.get(NODES_TO_USE_AS_COLUMNS)));
+		webService.setMandatory(readBooleanFalseIfMissing(definition.get(MANDATORY)));
+		webService.setSingleSelect(readBooleanFalseIfMissing(definition.get(SINGLE_SELECT)));
+		webService.setReadOnly(readBooleanFalseIfMissing(definition.get(READ_ONLY)));
+		webService.setOutputSeparator(readString(definition.get(OUTPUT_SEPARATOR)));
 
-		webService.setOutputName(readString(valueMap.get(OUTPUT_KEY)));
-		webService.setCallParameters(extractUnmanagedStringParameters(valueMap, //
+		webService.setOutputName(readString(definition.get(OUTPUT_KEY)));
+		webService.setCallParameters(extractUnmanagedStringParameters(definition, //
 				BUTTON_LABEL, //
 				ENDPOINT, //
 				METHOD, //

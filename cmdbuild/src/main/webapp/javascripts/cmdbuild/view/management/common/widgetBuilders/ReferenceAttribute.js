@@ -128,7 +128,19 @@ CMDBuild.WidgetBuilders.ReferenceAttribute.prototype.buildReadOnlyField = functi
 		fieldLabel: attribute.description || attribute.name,
 		submitValue: false,
 		name: attribute.name,
-		disabled: false
+		disabled: false,
+
+		/**
+		 * Validate also display field
+		 *
+		 * @override
+		 */
+		isValid: function() {
+			if (this.allowBlank)
+				return true;
+
+			return !Ext.isEmpty(this.getValue());
+		}
 	});
 
 	var subFields = getSubFields(attribute, display = true);
@@ -137,12 +149,12 @@ CMDBuild.WidgetBuilders.ReferenceAttribute.prototype.buildReadOnlyField = functi
 	var originalSetValue = field.setValue;
 	field.setValue = function(value) {
 		if (!Ext.isEmpty(value)) {
-			if (value.hasOwnProperty(CMDBuild.core.proxy.Constants.DESCRIPTION)) {
-				value = value[CMDBuild.core.proxy.Constants.DESCRIPTION];
+			if (value.hasOwnProperty(CMDBuild.core.constants.Proxy.DESCRIPTION)) {
+				value = value[CMDBuild.core.constants.Proxy.DESCRIPTION];
 			} else if (value.hasOwnProperty('Description')) {
 				value = value['Description'];
-			} else if (value.hasOwnProperty(CMDBuild.core.proxy.Constants.ID)) {
-				value = value[CMDBuild.core.proxy.Constants.ID];
+			} else if (value.hasOwnProperty(CMDBuild.core.constants.Proxy.ID)) {
+				value = value[CMDBuild.core.constants.Proxy.ID];
 			} else if (value.hasOwnProperty('Id')) {
 				value = value['Id'];
 			} else if (typeof value == 'string' && !isNaN(parseInt(value))) {
@@ -151,14 +163,14 @@ CMDBuild.WidgetBuilders.ReferenceAttribute.prototype.buildReadOnlyField = functi
 
 			if (!Ext.isEmpty(value) && typeof value == 'number') {
 				var params = {};
-				params[CMDBuild.core.proxy.Constants.CARD_ID] = value;
-				params[CMDBuild.core.proxy.Constants.CLASS_NAME] = _CMCache.getEntryTypeNameById(attribute['idClass']);
+				params[CMDBuild.core.constants.Proxy.CARD_ID] = value;
+				params[CMDBuild.core.constants.Proxy.CLASS_NAME] = _CMCache.getEntryTypeNameById(attribute['idClass']);
 
 				CMDBuild.ServiceProxy.card.get({
 					scope: this,
 					params: params,
 					success: function(response, options, decodedResponse) {
-						decodedResponse = decodedResponse[CMDBuild.core.proxy.Constants.CARD];
+						decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.CARD];
 
 						originalSetValue.call(field, decodedResponse['Description']);
 					}
@@ -188,7 +200,7 @@ CMDBuild.WidgetBuilders.ReferenceAttribute.prototype.buildReadOnlyField = functi
 		});
 
 	} else {
-		return field;
+		return this.markAsRequired(field, attribute);
 	}
 };
 

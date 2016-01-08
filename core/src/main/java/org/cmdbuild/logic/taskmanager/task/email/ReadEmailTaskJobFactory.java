@@ -373,7 +373,7 @@ public class ReadEmailTaskJobFactory extends AbstractJobFactory<ReadEmailTask> {
 								.withHook(new Hook() {
 
 									@Override
-									public void started(final UserProcessInstance userProcessInstance) {
+									public void created(final UserProcessInstance userProcessInstance) {
 										stored.setReference(userProcessInstance.getCardId());
 										emailStore.update(stored);
 
@@ -387,6 +387,11 @@ public class ReadEmailTaskJobFactory extends AbstractJobFactory<ReadEmailTask> {
 													.build() //
 													.execute();
 										}
+									}
+
+									@Override
+									public void advanced(final UserProcessInstance userProcessInstance) {
+										// nothing to do
 									}
 
 								}) //

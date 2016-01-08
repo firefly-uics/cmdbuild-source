@@ -152,7 +152,7 @@
 	Ext.define('CMDBuild.view.administration.tasks.event.asynchronous.CMStep4', {
 		extend: 'Ext.panel.Panel',
 
-		requires: ['CMDBuild.core.proxy.Constants'],
+		requires: ['CMDBuild.core.constants.Proxy'],
 
 		/**
 		 * @cfg {CMDBuild.view.administration.tasks.event.asynchronous.CMStep4Delegate}
@@ -182,7 +182,7 @@
 
 				this.notificationFieldset = Ext.create('Ext.form.FieldSet', {
 					title: tr.notificationForm.title,
-					checkboxName: CMDBuild.core.proxy.Constants.NOTIFICATION_ACTIVE,
+					checkboxName: CMDBuild.core.constants.Proxy.NOTIFICATION_ACTIVE,
 					checkboxToggle: true,
 					collapsed: true,
 					collapsible: true,
@@ -196,7 +196,7 @@
 			// Workflow configuration
 				this.workflowForm = Ext.create('CMDBuild.view.administration.tasks.common.workflowForm.CMWorkflowForm', {
 					combo: {
-						name: CMDBuild.core.proxy.Constants.WORKFLOW_CLASS_NAME
+						name: CMDBuild.core.constants.Proxy.WORKFLOW_CLASS_NAME
 					}
 				});
 

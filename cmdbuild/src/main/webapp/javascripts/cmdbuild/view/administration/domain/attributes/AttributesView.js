@@ -19,13 +19,13 @@
 		initComponent: function() {
 			Ext.apply(this, {
 				items: [
-					this.form = Ext.create('CMDBuild.view.administration.domain.attributes.FormPanel', {
-						region: 'center'
-					}),
 					this.grid = Ext.create('CMDBuild.view.administration.domain.attributes.GridPanel', {
 						region: 'north',
 						split: true,
 						height: '30%'
+					}),
+					this.form = Ext.create('CMDBuild.view.administration.domain.attributes.FormPanel', {
+						region: 'center'
 					})
 				]
 			});
@@ -38,12 +38,6 @@
 		onAddAttributeClick: function() {
 			this.form.onAddAttributeClick(params=null, enableAll=true);
 			this.grid.getSelectionModel().deselectAll();
-		},
-
-		onDomainSelected: function(id) {
-			this.enable();
-			this.form.onDomainSelected(id);
-			this.grid.onDomainSelected(id);
 		}
 	});
 

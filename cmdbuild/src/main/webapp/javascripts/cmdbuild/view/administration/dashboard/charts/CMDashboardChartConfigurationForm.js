@@ -213,7 +213,7 @@
 
 			me.descriptionArea = Ext.create('Ext.form.field.TextArea', {
 				fieldLabel: tr.fields.description,
-				name: CMDBuild.core.proxy.Constants.DESCRIPTION,
+				name: CMDBuild.core.constants.Proxy.DESCRIPTION,
 				labelWidth: CMDBuild.LABEL_WIDTH,
 				width: CMDBuild.ADM_BIG_FIELD_WIDTH,
 				disabled: true

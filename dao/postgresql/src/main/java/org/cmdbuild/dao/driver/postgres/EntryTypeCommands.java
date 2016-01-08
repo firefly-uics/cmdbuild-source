@@ -1,13 +1,20 @@
 package org.cmdbuild.dao.driver.postgres;
 
 import static com.google.common.base.Joiner.on;
+import static com.google.common.collect.FluentIterable.from;
+import static com.google.common.collect.Lists.newArrayList;
 import static com.google.common.collect.Maps.newLinkedHashMap;
 import static java.lang.String.format;
 import static java.util.Collections.emptyList;
+import static org.apache.commons.lang3.BooleanUtils.toStringTrueFalse;
 import static org.apache.commons.lang3.ObjectUtils.defaultIfNull;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.apache.commons.lang3.StringUtils.defaultIfBlank;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
+import static org.cmdbuild.dao.driver.postgres.CommentMappers.ATTRIBUTE_COMMENT_MAPPER;
+import static org.cmdbuild.dao.driver.postgres.CommentMappers.CLASS_COMMENT_MAPPER;
+import static org.cmdbuild.dao.driver.postgres.CommentMappers.DOMAIN_COMMENT_MAPPER;
+import static org.cmdbuild.dao.driver.postgres.CommentMappers.FUNCTION_COMMENT_MAPPER;
 import static org.cmdbuild.dao.driver.postgres.Const.DOMAIN_PREFIX;
 import static org.cmdbuild.dao.driver.postgres.SqlType.createAttributeType;
 import static org.cmdbuild.dao.driver.postgres.SqlType.getSqlTypeString;
@@ -25,6 +32,7 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.Validate;
 import org.cmdbuild.dao.driver.DBDriver;
 import org.cmdbuild.dao.driver.postgres.logging.LoggingSupport;
@@ -57,8 +65,10 @@ import org.cmdbuild.dao.view.DBDataView.DBDomainDefinition;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowCallbackHandler;
 import org.springframework.jdbc.core.RowMapper;
+import org.springframework.util.StringUtils;
 
-import com.google.common.collect.Lists;
+import com.google.common.base.Function;
+import com.google.common.collect.Iterables;
 
 public class EntryTypeCommands implements LoggingSupport {
 
@@ -208,8 +218,7 @@ public class EntryTypeCommands implements LoggingSupport {
 	}
 
 	private String typeFrom(final boolean isHoldingHistory) {
-		return CommentMappers.CLASS_COMMENT_MAPPER.getCommentValueFromMeta("TYPE", //
-				Boolean.valueOf(isHoldingHistory).toString());
+		return CLASS_COMMENT_MAPPER.getCommentValueFromMeta("TYPE", Boolean.valueOf(isHoldingHistory).toString());
 	}
 
 	public void deleteClass(final DBClass dbClass) {
@@ -221,7 +230,7 @@ public class EntryTypeCommands implements LoggingSupport {
 
 	public DBAttribute createAttribute(final DBAttributeDefinition definition) {
 		final DBEntryType owner = definition.getOwner();
-		final String comment = commentFrom(definition);
+		final String comment = on(SEPARATOR).join(commentFrom(definition));
 		final String domainPrefixForLog = owner instanceof DBDomain ? "Map_" : EMPTY;
 		final String logString = definition.getDefaultValue() != null ? "SELECT * FROM cm_create_attribute('\"%s%s\"'::regclass,'%s','%s','%s',%b,%b,'%s');"
 				: "SELECT * FROM cm_create_attribute('\"%s%s\"'::regclass,'%s','%s',%s,%b,%b,'%s');";
@@ -275,13 +284,14 @@ public class EntryTypeCommands implements LoggingSupport {
 
 	public DBAttribute updateAttribute(final DBAttributeDefinition definition) {
 		final DBEntryType owner = definition.getOwner();
-		final String comment = commentFrom(definition);
+		final Iterable<String> commentParts = commentFrom(definition);
 		final String updatedDefaultValue = definition.getDefaultValue();
 		final String existingDefaultValue = owner.getAttribute(definition.getName()).getDefaultValue();
 		final boolean isDefaultValueChanged = isDefaultValueChanged(updatedDefaultValue, existingDefaultValue);
 		final String domainPrefixForLog = owner instanceof DBDomain ? "Map_" : EMPTY;
 		final String logString = definition.getDefaultValue() != null ? "SELECT * FROM cm_modify_attribute('\"%s%s\"'::regclass,'%s','%s','%s',%b,%b,'%s');" //
-				: "SELECT * FROM cm_modify_attribute('\"%s%s\"'::regclass,'%s','%s',%s,%b,%b,'%s');";
+				: "SELECT * FROM cm_modify_attribute('\"%s%s\"'::regclass,'%s','%s',%s,%b,%b,ARRAY%s::text[],ARRAY%s::text[]);";
+		final Iterable<String> classes = emptyList();
 		dataDefinitionSqlLogger.info(String.format(logString, //
 				domainPrefixForLog, //
 				owner.getName(), //
@@ -290,9 +300,10 @@ public class EntryTypeCommands implements LoggingSupport {
 				definition.getDefaultValue(), //
 				definition.isMandatory(), //
 				definition.isUnique(), //
-				comment));
+				quote(commentParts), //
+				quote(classes)));
 		jdbcTemplate.queryForObject( //
-				"SELECT * FROM cm_modify_attribute(?,?,?,?,?,?,?)", //
+				"SELECT * FROM cm_modify_attribute(?,?,?,?,?,?,?,?)", //
 				Object.class, //
 				new Object[] { //
 				owner.getId(), //
@@ -301,9 +312,11 @@ public class EntryTypeCommands implements LoggingSupport {
 						isDefaultValueChanged ? updatedDefaultValue : existingDefaultValue, //
 						definition.isMandatory(), //
 						definition.isUnique(), //
-						comment //
+						new PostgreSQLArray(from(commentParts).toArray(String.class)), //
+						new PostgreSQLArray(from(classes).toArray(String.class)) //
 				});
-		final AttributeMetadata attributeMetadata = attributeCommentToMetadata(comment);
+		final AttributeMetadata attributeMetadata = attributeCommentToMetadata(commentForAttribute(owner.getId(),
+				definition.getName()));
 		attributeMetadata.put(AttributeMetadata.DEFAULT, isDefaultValueChanged ? updatedDefaultValue
 				: existingDefaultValue);
 		attributeMetadata.put(AttributeMetadata.MANDATORY, "" + definition.isMandatory());
@@ -315,6 +328,17 @@ public class EntryTypeCommands implements LoggingSupport {
 		sqlLogger.trace("assigning updated attribute to owner '{}'", nameFrom(owner.getIdentifier()));
 		owner.addAttribute(newAttribute);
 		return newAttribute;
+	}
+
+	private static Iterable<String> quote(final Iterable<String> arrayElements) {
+
+		return Iterables.transform(arrayElements, new Function<String, String>() {
+
+			@Override
+			public String apply(final String input) {
+				return String.format("'%s'", StringUtils.replace(input, "'", "''"));
+			}
+		});
 	}
 
 	private static boolean isDefaultValueChanged(final String newValue, final String existingValue) {
@@ -375,12 +399,12 @@ public class EntryTypeCommands implements LoggingSupport {
 				);
 	}
 
-	private String commentFrom(final DBAttributeDefinition definition) {
+	private Iterable<String> commentFrom(final DBAttributeDefinition definition) {
 		return new ForwardingAttributeTypeVisitor() {
 
 			private final CMAttributeTypeVisitor DELEGATE = NullAttributeTypeVisitor.getInstance();
 
-			private final Collection<String> elements = Lists.newArrayList();
+			private final Collection<String> elements = newArrayList();
 
 			@Override
 			protected CMAttributeTypeVisitor delegate() {
@@ -389,17 +413,17 @@ public class EntryTypeCommands implements LoggingSupport {
 
 			@Override
 			public void visit(final ForeignKeyAttributeType attributeType) {
-				append(DBAttribute.AttributeMetadata.FK_TARGET_CLASS, attributeType.getForeignKeyDestinationClassName());
+				add(AttributeMetadata.FK_TARGET_CLASS, attributeType.getForeignKeyDestinationClassName());
 			}
 
 			@Override
 			public void visit(final IpAddressAttributeType attributeType) {
-				append(DBAttribute.AttributeMetadata.IP_TYPE, attributeType.getType().name().toLowerCase());
+				add(AttributeMetadata.IP_TYPE, attributeType.getType().name().toLowerCase());
 			}
 
 			@Override
 			public void visit(final LookupAttributeType attributeType) {
-				append(DBAttribute.AttributeMetadata.LOOKUP_TYPE, attributeType.getLookupTypeName());
+				add(AttributeMetadata.LOOKUP_TYPE, attributeType.getLookupTypeName());
 			}
 
 			@Override
@@ -407,40 +431,59 @@ public class EntryTypeCommands implements LoggingSupport {
 				final CMIdentifier identifier = attributeType.getIdentifier();
 				final CMDomain domain = driver.findDomain(identifier.getLocalName(), identifier.getNameSpace());
 				Validate.notNull(domain, "unexpected domain not found");
-				// TODO really needed?
-				append(DBAttribute.AttributeMetadata.REFERENCE_DIRECT, "false");
-				append(DBAttribute.AttributeMetadata.REFERENCE_DOMAIN, nameFrom(identifier));
-				// TODO really needed?
-				append(DBAttribute.AttributeMetadata.REFERENCE_TYPE, "restrict");
+				add(AttributeMetadata.REFERENCE_DOMAIN, nameFrom(identifier));
+				{
+					/*
+					 * TODO really needed?
+					 */
+					add(AttributeMetadata.REFERENCE_DIRECT, "false");
+					add(AttributeMetadata.REFERENCE_TYPE, "restrict");
+				}
 				if (definition.getFilter() != null) {
-					append(DBAttribute.AttributeMetadata.FILTER, definition.getFilter());
+					add(AttributeMetadata.FILTER, definition.getFilter());
 				}
 			}
 
 			@Override
 			public void visit(final TextAttributeType attributeType) {
-				append(DBAttribute.AttributeMetadata.EDITOR_TYPE, definition.getEditorType());
+				if (definition.getEditorType() != null) {
+					add(AttributeMetadata.EDITOR_TYPE, definition.getEditorType());
+				}
 			}
 
-			private void append(final String key, final String value) {
-				final CommentMapper commentMapper = CommentMappers.ATTRIBUTE_COMMENT_MAPPER;
+			public Collection<String> build(final DBAttributeDefinition definition) {
+				definition.getType().accept(this);
+				if (definition.isActive() != null) {
+					add(EntryTypeMetadata.ACTIVE, BooleanUtils.toString(definition.isActive(), "active", "noactive"));
+				}
+				if (definition.isDisplayableInList() != null) {
+					add(AttributeMetadata.BASEDSP, toStringTrueFalse(definition.isDisplayableInList()));
+				}
+				if (definition.getClassOrder() != null) {
+					add(AttributeMetadata.CLASSORDER, Integer.toString(definition.getClassOrder()));
+				}
+				if (definition.getDescription() != null) {
+					add(EntryTypeMetadata.DESCRIPTION, definition.getDescription());
+				}
+				if (definition.getGroup() != null) {
+					add(AttributeMetadata.GROUP, definition.getGroup());
+				}
+				if (definition.getIndex() != null) {
+					add(AttributeMetadata.INDEX, Integer.toString(definition.getIndex()));
+				}
+				if (definition.getMode() != null) {
+					add(EntryTypeMetadata.MODE, definition.getMode().toString().toLowerCase());
+				}
+				if (definition.getMode() != null) {
+					add(DBAttribute.AttributeMetadata.FIELD_MODE, definition.getMode().toString().toLowerCase());
+				}
+				return elements;
+			}
+
+			private void add(final String key, final String value) {
+				final CommentMapper commentMapper = ATTRIBUTE_COMMENT_MAPPER;
 				final String commentKey = commentMapper.getCommentNameFromMeta(key);
 				elements.add(format("%s: %s", commentKey, value));
-			}
-
-			public String build(final DBAttributeDefinition definition) {
-				definition.getType().accept(this);
-				append(EntryTypeMetadata.ACTIVE, definition.isActive() ? "active" : "noactive");
-				append(DBAttribute.AttributeMetadata.BASEDSP, Boolean.toString(definition.isDisplayableInList()));
-				append(DBAttribute.AttributeMetadata.CLASSORDER, Integer.toString(definition.getClassOrder()));
-				append(EntryTypeMetadata.DESCRIPTION, definition.getDescription());
-				if (definition.getGroup() != null) {
-					append(DBAttribute.AttributeMetadata.GROUP, definition.getGroup());
-				}
-				append(DBAttribute.AttributeMetadata.INDEX, Integer.toString(definition.getIndex()));
-				append(EntryTypeMetadata.MODE, definition.getMode().toString().toLowerCase());
-				append(DBAttribute.AttributeMetadata.FIELD_MODE, definition.getMode().toString().toLowerCase());
-				return on(SEPARATOR).join(elements);
 			}
 
 		} //
@@ -619,6 +662,31 @@ public class EntryTypeCommands implements LoggingSupport {
 		return entityTypeAttributes;
 	}
 
+	/**
+	 * Returns user-only entry type attributes (so, not {@code reserved}
+	 * attributes).
+	 * 
+	 * @param entryTypeId
+	 *            is the id of he entry type (e.g. {@link DBClass},
+	 *            {@link DBDomain}).
+	 * 
+	 * @return a list of user attributes.
+	 */
+	private String commentForAttribute(final long entryTypeId, final String name) {
+		sqlLogger.trace("getting comment for for entry type '{}' with name '{}'", entryTypeId, name);
+		return from(jdbcTemplate.query( //
+				"SELECT _cm_comment_for_attribute(?, ?) as comment", //
+				new Object[] { entryTypeId, name }, //
+				new RowMapper<String>() {
+					@Override
+					public String mapRow(final ResultSet rs, final int rowNum) throws SQLException {
+						return rs.getString("comment");
+					}
+				})) //
+				.first() //
+				.get();
+	}
+
 	private enum InputOutput {
 		i, o, io;
 	}
@@ -691,25 +759,25 @@ public class EntryTypeCommands implements LoggingSupport {
 
 	private static ClassMetadata classCommentToMetadata(final String comment) {
 		final ClassMetadata meta = new ClassMetadata();
-		extractCommentToMetadata(comment, meta, CommentMappers.CLASS_COMMENT_MAPPER);
+		extractCommentToMetadata(comment, meta, CLASS_COMMENT_MAPPER);
 		return meta;
 	}
 
 	private static AttributeMetadata attributeCommentToMetadata(final String comment) {
 		final AttributeMetadata meta = new AttributeMetadata();
-		extractCommentToMetadata(comment, meta, CommentMappers.ATTRIBUTE_COMMENT_MAPPER);
+		extractCommentToMetadata(comment, meta, ATTRIBUTE_COMMENT_MAPPER);
 		return meta;
 	}
 
 	private static DomainMetadata domainCommentToMetadata(final String comment) {
 		final DomainMetadata meta = new DomainMetadata();
-		extractCommentToMetadata(comment, meta, CommentMappers.DOMAIN_COMMENT_MAPPER);
+		extractCommentToMetadata(comment, meta, DOMAIN_COMMENT_MAPPER);
 		return meta;
 	}
 
 	private static FunctionMetadata functionCommentToMetadata(final String comment) {
 		final FunctionMetadata meta = new FunctionMetadata();
-		extractCommentToMetadata(comment, meta, CommentMappers.FUNCTION_COMMENT_MAPPER);
+		extractCommentToMetadata(comment, meta, FUNCTION_COMMENT_MAPPER);
 		return meta;
 	}
 

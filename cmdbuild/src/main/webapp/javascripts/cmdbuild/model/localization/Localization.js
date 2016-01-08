@@ -1,13 +1,13 @@
 (function() {
 
+	Ext.require('CMDBuild.core.constants.Proxy');
+
 	Ext.define('CMDBuild.model.localization.Localization', {
 		extend: 'Ext.data.Model',
 
-		requires: ['CMDBuild.core.proxy.Constants'],
-
 		fields: [
-			{ name: CMDBuild.core.proxy.Constants.DESCRIPTION,  type: 'string' },
-			{ name: CMDBuild.core.proxy.Constants.TAG, type: 'string' },
+			{ name: CMDBuild.core.constants.Proxy.DESCRIPTION,  type: 'string' },
+			{ name: CMDBuild.core.constants.Proxy.TAG, type: 'string' },
 		]
 	});
 

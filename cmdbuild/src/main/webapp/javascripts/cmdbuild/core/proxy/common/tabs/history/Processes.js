@@ -7,7 +7,7 @@
 
 		requires: [
 			'CMDBuild.core.proxy.common.tabs.history.Classes',
-			'CMDBuild.model.common.tabs.history.processes.CardRecord'
+			'CMDBuild.model.workflow.tabs.history.CardRecord'
 		],
 
 		singleton: true,
@@ -46,7 +46,7 @@
 		getStore: function() {
 			return Ext.create('Ext.data.Store', {
 				autoLoad: false,
-				model: 'CMDBuild.model.common.tabs.history.processes.CardRecord',
+				model: 'CMDBuild.model.workflow.tabs.history.CardRecord',
 				proxy: {
 					type: 'ajax',
 					url: CMDBuild.core.proxy.Index.history.processes.getProcessHistory,
@@ -56,7 +56,7 @@
 					}
 				},
 				sorters: [ // Setup sorters, also if server returns ordered collection
-					{ property: CMDBuild.core.proxy.Constants.BEGIN_DATE, direction: 'DESC' }
+					{ property: CMDBuild.core.constants.Proxy.BEGIN_DATE, direction: 'DESC' }
 				]
 			});
 		}

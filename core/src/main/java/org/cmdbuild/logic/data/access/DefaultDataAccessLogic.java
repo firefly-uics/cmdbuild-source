@@ -4,8 +4,12 @@ import static com.google.common.base.Predicates.not;
 import static com.google.common.collect.FluentIterable.from;
 import static com.google.common.collect.Iterables.filter;
 import static com.google.common.collect.Iterables.size;
+import static com.google.common.collect.Maps.newHashMap;
 import static java.lang.String.format;
 import static java.util.Arrays.asList;
+import static java.util.Collections.emptyList;
+import static java.util.Collections.emptyMap;
+import static org.apache.commons.lang3.ObjectUtils.defaultIfNull;
 import static org.apache.commons.lang3.RandomStringUtils.randomAlphanumeric;
 import static org.apache.commons.lang3.StringUtils.isEmpty;
 import static org.cmdbuild.dao.constants.Cardinality.CARDINALITY_1N;
@@ -16,13 +20,15 @@ import static org.cmdbuild.dao.entrytype.Predicates.attributeTypeInstanceOf;
 import static org.cmdbuild.dao.entrytype.Predicates.disabledClass;
 import static org.cmdbuild.dao.entrytype.Predicates.domainFor;
 import static org.cmdbuild.dao.entrytype.Predicates.usableForReferences;
+import static org.cmdbuild.dao.guava.Functions.toValueSet;
 import static org.cmdbuild.dao.query.clause.AnyAttribute.anyAttribute;
 import static org.cmdbuild.dao.query.clause.AnyClass.anyClass;
 import static org.cmdbuild.dao.query.clause.ClassHistory.history;
+import static org.cmdbuild.dao.query.clause.Clauses.call;
 import static org.cmdbuild.dao.query.clause.DomainHistory.history;
 import static org.cmdbuild.dao.query.clause.QueryAliasAttribute.attribute;
+import static org.cmdbuild.dao.query.clause.alias.Aliases.as;
 import static org.cmdbuild.dao.query.clause.alias.Aliases.name;
-import static org.cmdbuild.dao.query.clause.alias.Utils.as;
 import static org.cmdbuild.dao.query.clause.join.Over.over;
 import static org.cmdbuild.dao.query.clause.where.AndWhereClause.and;
 import static org.cmdbuild.dao.query.clause.where.EqualsOperatorAndValue.eq;
@@ -31,7 +37,6 @@ import static org.cmdbuild.data.store.Storables.storableOf;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
@@ -42,10 +47,12 @@ import javax.activation.DataHandler;
 
 import org.cmdbuild.auth.user.OperationUser;
 import org.cmdbuild.common.Constants;
+import org.cmdbuild.common.collect.ChainablePutMap;
 import org.cmdbuild.common.utils.PagedElements;
 import org.cmdbuild.dao.entry.CMCard;
 import org.cmdbuild.dao.entry.CMRelation;
 import org.cmdbuild.dao.entry.CMRelation.CMRelationDefinition;
+import org.cmdbuild.dao.entry.CMValueSet;
 import org.cmdbuild.dao.entry.IdAndDescription;
 import org.cmdbuild.dao.entrytype.CMAttribute;
 import org.cmdbuild.dao.entrytype.CMClass;
@@ -128,25 +135,25 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 
 	};
 
+	private static final String USER = "__user__";
+	private static final String ROLE = "__role__";
+
 	private final CMDataView systemDataView;
 	private final LookupStore lookupStore;
 	private final CMDataView dataView;
-	private final CMDataView strictDataView;
 	private final OperationUser operationUser;
 	private final LockLogic lockLogic;
 
 	public DefaultDataAccessLogic( //
 			final CMDataView systemDataView, //
 			final LookupStore lookupStore, //
-			final CMDataView view, //
-			final CMDataView strictDataView, //
+			final CMDataView dataView, //
 			final OperationUser operationUser, //
 			final LockLogic lockLogic //
 	) {
 		this.systemDataView = systemDataView;
-		this.dataView = view;
+		this.dataView = dataView;
 		this.lookupStore = lookupStore;
-		this.strictDataView = strictDataView;
 		this.operationUser = operationUser;
 		this.lockLogic = lockLogic;
 	}
@@ -157,7 +164,10 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 	}
 
 	private DataViewStore<Card> storeOf(final Card card) {
-		return DataViewStore.newInstance(strictDataView, CardStorableConverter.of(card));
+		return DataViewStore.<Card> newInstance() //
+				.withDataView(dataView) //
+				.withStorableConverter(CardStorableConverter.of(card)) //
+				.build();
 	}
 
 	@Override
@@ -178,24 +188,24 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 
 	@Override
 	public GetRelationListResponse getRelationListEmptyForWrongId(final Card srcCard, final DomainWithSource dom) {
-		return new GetRelationList(strictDataView).emptyForWrongId().exec(srcCard, dom,
-				QueryOptions.newQueryOption().build());
+		return new GetRelationList(dataView).emptyForWrongId()
+				.exec(srcCard, dom, QueryOptions.newQueryOption().build());
 	}
 
 	@Override
 	public GetRelationListResponse getRelationList(final CMDomain domain, final QueryOptions queryOptions) {
-		return new GetRelationList(strictDataView).exec(domain, queryOptions);
+		return new GetRelationList(dataView).exec(domain, queryOptions);
 	}
 
 	@Override
 	public Optional<RelationInfo> getRelation(final String domain, final Long id) {
-		final CMDomain _domain = strictDataView.findDomain(domain);
+		final CMDomain _domain = dataView.findDomain(domain);
 		return getRelation(_domain, id);
 	}
 
 	@Override
 	public Optional<RelationInfo> getRelation(final CMDomain domain, final Long id) {
-		return new GetRelationSingle(strictDataView).exec(domain, id);
+		return new GetRelationSingle(dataView).exec(domain, id);
 	}
 
 	@Override
@@ -210,8 +220,8 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 
 	@Override
 	public Optional<RelationInfo> getHistoricRelation(final String domain, final Long id) {
-		final CMDomain target = strictDataView.findDomain(domain);
-		return new GetRelationSingle(strictDataView).exec(history(target), id);
+		final CMDomain target = dataView.findDomain(domain);
+		return new GetRelationSingle(dataView).exec(history(target), id);
 	}
 
 	@Override
@@ -260,7 +270,7 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 	 */
 	@Override
 	public Iterable<? extends CMClass> findActiveClasses() {
-		return from(strictDataView.findClasses()) //
+		return from(dataView.findClasses()) //
 				.filter(activeOnes());
 	}
 
@@ -270,7 +280,7 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 	 */
 	@Override
 	public Iterable<? extends CMDomain> findAllDomains() {
-		return strictDataView.findDomains();
+		return dataView.findDomains();
 	}
 
 	/**
@@ -492,23 +502,14 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 	}
 
 	private PagedElements<Card> fetchCardsWithClassName(final String className, final QueryOptions queryOptions) {
-		final CMClass fetchedClass = strictDataView.findClass(className);
-		final PagedElements<CMCard> fetchedCards;
-		final Iterable<Card> cards;
-		if (fetchedClass != null) {
-			fetchedCards = DataViewCardFetcher.newInstance() //
-					.withDataView(strictDataView) //
-					.withClassName(className) //
-					.withQueryOptions(queryOptions) //
-					.build() //
-					.fetch();
-
-			cards = resolveCardForeignReferences(fetchedClass, fetchedCards);
-
-		} else {
-			cards = Collections.emptyList();
-			fetchedCards = new PagedElements<CMCard>(Collections.<CMCard> emptyList(), 0);
-		}
+		final CMClass fetchedClass = dataView.findClass(className);
+		final PagedElements<CMCard> fetchedCards = DataViewCardFetcher.newInstance() //
+				.withDataView(dataView) //
+				.withClassName(className) //
+				.withQueryOptions(queryOptions) //
+				.build() //
+				.fetch();
+		final Iterable<Card> cards = resolveCardForeignReferences(fetchedClass, fetchedCards);
 		return new PagedElements<Card>(cards, fetchedCards.totalSize());
 	}
 
@@ -539,7 +540,7 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 
 	private PagedElements<Card> fetchCardsWithoutClassName(final QueryOptions queryOptions) {
 		final PagedElements<CMCard> fetchedCards = DataViewCardFetcher.newInstance() //
-				.withDataView(strictDataView) //
+				.withDataView(dataView) //
 				.withQueryOptions(queryOptions) //
 				.build() //
 				.fetch();
@@ -558,6 +559,8 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 		return new PagedElements<Card>(cards, fetchedCards.totalSize());
 	}
 
+	private static final Map<String, Object> NO_PARAMETERS = emptyMap();
+
 	/**
 	 * Execute a given SQL function to select a set of rows Return these rows as
 	 * fake cards
@@ -569,33 +572,37 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 	@Override
 	public PagedElements<Card> fetchSQLCards(final String functionName, final QueryOptions queryOptions) {
 		final CMFunction fetchedFunction = dataView.findFunctionByName(functionName);
-		final Alias functionAlias = name("f");
-
 		if (fetchedFunction == null) {
-			final List<Card> emptyCardList = Collections.emptyList();
+			final List<Card> emptyCardList = emptyList();
 			return new PagedElements<Card>(emptyCardList, 0);
 		}
-
+		final Map<String, Object> parameters = ChainablePutMap
+				.of(newHashMap(defaultIfNull(queryOptions.getParameters(), NO_PARAMETERS))) //
+				.chainablePut(USER, operationUser.getAuthenticatedUser().getId()) //
+				.chainablePut(ROLE, operationUser.getPreferredGroup().getId());
+		final Alias functionAlias = name("f");
 		final CMQueryResult queryResult = new DataViewCardFetcher.SqlQuerySpecsBuilderBuilder() //
 				.withDataView(dataView) //
 				.withSystemDataView(systemDataView) //
 				.withQueryOptions(queryOptions) //
-				.withFunction(fetchedFunction) //
-				.withParameters(queryOptions.getParameters()) //
+				.withFunction(call(fetchedFunction, parameters)) //
 				.withAlias(functionAlias) //
 				.build() //
 				.count() //
 				.run();
-		final List<Card> filteredCards = Lists.newArrayList();
+		final Iterable<Card> filteredCards = from(queryResult) //
+				.transform(toValueSet(functionAlias)) //
+				.transform(new Function<CMValueSet, Card>() {
 
-		for (final CMQueryRow row : queryResult) {
-			filteredCards.add( //
-					Card.newInstance() //
-							.withClassName(functionName) //
-							.withAllAttributes(row.getValueSet(functionAlias).getValues()) //
-							.build());
-		}
+					@Override
+					public Card apply(final CMValueSet input) {
+						return Card.newInstance() //
+								.withClassName(functionName) //
+								.withAllAttributes(input.getValues()) //
+								.build();
+					}
 
+				});
 		return new PagedElements<Card>(filteredCards, queryResult.totalSize());
 	}
 
@@ -621,11 +628,11 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 	@Override
 	public PagedElements<CMCardWithPosition> fetchCardsWithPosition(final String className,
 			final QueryOptions queryOptions, final Long cardId) {
-		final CMClass fetchedClass = strictDataView.findClass(className);
+		final CMClass fetchedClass = dataView.findClass(className);
 		final PagedElements<CMQueryRow> rows = DataViewCardFetcher.newInstance() //
 				.withClassName(className) //
 				.withQueryOptions(queryOptions) //
-				.withDataView(strictDataView) //
+				.withDataView(dataView) //
 				.build() //
 				.fetchNumbered(condition(attribute(fetchedClass, ID_ATTRIBUTE), eq(cardId)));
 		return new PagedElements<CMCardWithPosition>( //
@@ -653,7 +660,7 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 	@Override
 	@Transactional
 	public Long createCard(final Card userGivenCard, final boolean manageAlsoDomainsAttributes) {
-		final CMClass entryType = strictDataView.findClass(userGivenCard.getClassName());
+		final CMClass entryType = dataView.findClass(userGivenCard.getClassName());
 		if (entryType == null) {
 			throw NotFoundExceptionType.CLASS_NOTFOUND.createException(userGivenCard.getClassName());
 		}
@@ -821,11 +828,13 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 		final Long userGivenCardAttributeValue = getReferenceCardIdAsLong( //
 		userGivenCard.getAttribute(referenceAttributeName));
 
+		boolean output;
 		if (fetchedCardAttributeValue == null) {
-			return userGivenCard != null;
+			output = (userGivenCard != null);
 		} else {
-			return !fetchedCardAttributeValue.equals(userGivenCardAttributeValue);
+			output = !fetchedCardAttributeValue.equals(userGivenCardAttributeValue);
 		}
+		return output;
 	}
 
 	private Long getReferenceCardIdAsLong(final Object value) {

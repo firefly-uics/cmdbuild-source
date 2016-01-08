@@ -20,6 +20,7 @@ import org.cmdbuild.logic.data.lookup.LookupLogic;
 import org.cmdbuild.logic.privileges.DefaultSecurityLogic;
 import org.cmdbuild.logic.privileges.SecurityLogic;
 import org.cmdbuild.services.cache.wrappers.CachingStore;
+import org.cmdbuild.services.errors.management.CustomExceptionHandlerDataView;
 import org.cmdbuild.services.localization.LocalizedDataView;
 import org.cmdbuild.services.localization.LocalizedStorableConverter;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,6 +31,9 @@ import org.springframework.context.annotation.Scope;
 
 @Configuration
 public class Data {
+
+	@Autowired
+	private CustomPages customPages;
 
 	@Autowired
 	private DBDriver dbDriver;
@@ -55,12 +59,15 @@ public class Data {
 	@Bean
 	protected StorableConverter<Lookup> lookupStorableConverter() {
 		return new LocalizedStorableConverter<Lookup>(new LookupStorableConverter(), translation.translationFacade(),
-				_systemDataView(), report.reportLogic());
+				dbDataView(), report.reportLogic());
 	}
 
 	@Bean
 	protected DataViewStore<Lookup> baseLookupStore() {
-		return DataViewStore.newInstance(_systemDataView(), lookupStorableConverter());
+		return DataViewStore.<Lookup> newInstance() //
+				.withDataView(dbDataView()) //
+				.withStorableConverter(lookupStorableConverter()) //
+				.build();
 	}
 
 	@Bean
@@ -88,7 +95,8 @@ public class Data {
 	@Bean
 	@Scope(PROTOTYPE)
 	public SecurityLogic securityLogic() {
-		return new DefaultSecurityLogic(systemDataView(), view.viewConverter(), filter.dataViewFilterStore());
+		return new DefaultSecurityLogic(systemDataView(), view.viewConverter(), filter.dataViewFilterStore(),
+				customPages.defaultCustomPagesLogic());
 	}
 
 	@Bean
@@ -97,7 +105,6 @@ public class Data {
 		return new SystemDataAccessLogicBuilder( //
 				systemDataView(), //
 				lookupStore(), //
-				systemDataView(), //
 				systemDataView(), //
 				userStore.getUser(), //
 				lock.dummyLockLogic());
@@ -108,14 +115,24 @@ public class Data {
 	@Bean(name = BEAN_SYSTEM_DATA_VIEW)
 	@Qualifier(SYSTEM)
 	public CMDataView systemDataView() {
+		return customExceptionHandlerDataView();
+	}
+
+	@Bean
+	protected CMDataView customExceptionHandlerDataView() {
+		return new CustomExceptionHandlerDataView(localizedDataView());
+	}
+
+	@Bean
+	protected CMDataView localizedDataView() {
 		return new LocalizedDataView( //
-				_systemDataView(), //
+				dbDataView(), //
 				translation.translationFacade(), //
 				lookupStore());
 	}
 
 	@Bean
-	protected DBDataView _systemDataView() {
+	protected CMDataView dbDataView() {
 		return new DBDataView(dbDriver);
 	}
 

@@ -1,13 +1,13 @@
 (function () {
 
 	Ext.define('CMDBuild.controller.management.common.tabs.email.Grid', {
-		extend: 'CMDBuild.controller.common.AbstractController',
+		extend: 'CMDBuild.controller.common.abstract.Base',
 
 		requires: [
 			'CMDBuild.controller.management.common.tabs.email.Email',
-			'CMDBuild.core.proxy.Constants',
-			'CMDBuild.core.proxy.common.tabs.email.Email',
-			'CMDBuild.core.Message'
+			'CMDBuild.core.constants.Proxy',
+			'CMDBuild.core.Message',
+			'CMDBuild.core.proxy.common.tabs.email.Email'
 		],
 
 		/**
@@ -19,31 +19,29 @@
 		 * @cfg {Array}
 		 */
 		cmfgCatchedFunctions: [
-			'onGridAddEmailButtonClick',
-			'onGridDeleteEmailButtonClick',
-			'onGridEditEmailButtonClick',
-			'onGridItemDoubleClick',
-			'onGridRegenerationEmailButtonClick',
-			'onGridReplyEmailButtonClick',
-			'onGridSendEmailButtonClick',
-			'onGridViewEmailButtonClick',
-			'sendAll',
-			'setUiState',
-			'storeLoad'
+			'onTabEmailGridAddEmailButtonClick',
+			'onTabEmailGridDeleteEmailButtonClick',
+			'onTabEmailGridEditEmailButtonClick',
+			'onTabEmailGridItemDoubleClick',
+			'onTabEmailGridRegenerationEmailButtonClick',
+			'onTabEmailGridReplyEmailButtonClick',
+			'onTabEmailGridSendEmailButtonClick',
+			'onTabEmailGridViewEmailButtonClick',
+			'tabEmailGridDraftEmailsGet',
+			'tabEmailGridDraftEmailsIsEmpty',
+			'tabEmailGridRecordAdd',
+			'tabEmailGridRecordEdit',
+			'tabEmailGridRecordIsEditable',
+			'tabEmailGridRecordIsRegenerable',
+			'tabEmailGridRecordIsSendable',
+			'tabEmailGridRecordRemove',
+			'tabEmailGridSendAll',
+			'tabEmailGridStoreLoad',
+			'tabEmailGridUiStateSet'
 		],
 
 		/**
-		 * @cfg {CMDBuild.controller.management.common.tabs.email.EmailWindow}
-		 */
-		controllerEmailWindow: undefined,
-
-		/**
-		 * @property {Mixed}
-		 */
-		emailWindow: undefined,
-
-		/**
-		 * @property {CMDBuild.controller.management.common.tabs.email.Grid}
+		 * @property {CMDBuild.view.management.common.tabs.email.GridPanel}
 		 */
 		view: undefined,
 
@@ -54,90 +52,15 @@
 		constructor: function(configurationObject) {
 			this.callParent(arguments);
 
-			this.view = Ext.create('CMDBuild.view.management.common.tabs.email.GridPanel', {
-				delegate: this
-			});
-		},
-
-		/**
-		 * @param {Mixed} record
-		 * @param {Array} regenerationTrafficLightArray
-		 * @param {Function} success
-		 */
-		addRecord: function(record, regenerationTrafficLightArray, success) {
-			if (!Ext.Object.isEmpty(record)) {
-				CMDBuild.core.proxy.common.tabs.email.Email.create({
-					params: record.getAsParams(),
-					scope: this,
-					loadMask: this.cmfg('getGlobalLoadMask'),
-					failure: function(response, options, decodedResponse) {
-						CMDBuild.core.Message.error(CMDBuild.Translation.common.failure, CMDBuild.Translation.errors.emailCreate, false);
-					},
-					success: success || function(response, options, decodedResponse) {
-						if (CMDBuild.controller.management.common.tabs.email.Email.trafficLightArrayCheck(record, regenerationTrafficLightArray))
-							this.storeLoad();
-					}
-				});
-			} else {
-				_warning('tried to add empty record', this);
-
-				this.storeLoad();
-			}
-		},
-
-		/**
-		 * Creates email model with default attributes setup
-		 *
-		 * @param {Object} recordValues
-		 *
-		 * @return {Mixed}
-		 */
-		createRecord: function(recordValues) {
-			recordValues = recordValues || {};
-			recordValues[CMDBuild.core.proxy.Constants.KEEP_SYNCHRONIZATION] = false;
-			recordValues[CMDBuild.core.proxy.Constants.NO_SUBJECT_PREFIX] = recordValues.hasOwnProperty(CMDBuild.core.proxy.Constants.NO_SUBJECT_PREFIX) ? recordValues[CMDBuild.core.proxy.Constants.NO_SUBJECT_PREFIX] : this.cmfg('configurationGet')[CMDBuild.core.proxy.Constants.NO_SUBJECT_PREFIX];
-			recordValues[CMDBuild.core.proxy.Constants.REFERENCE] = this.cmfg('selectedEntityIdGet');
-			recordValues[CMDBuild.core.proxy.Constants.TEMPORARY] = this.cmfg('selectedEntityIdGet') < 0; // Setup temporary parameter
-
-			return Ext.create('CMDBuild.model.common.tabs.email.Email', recordValues);
-		},
-
-		/**
-		 * @param {Mixed} record
-		 * @param {Array} regenerationTrafficLightArray
-		 */
-		editRecord: function(record, regenerationTrafficLightArray) {
-			if (!Ext.Object.isEmpty(record)) {
-				CMDBuild.core.proxy.common.tabs.email.Email.update({
-					params: record.getAsParams(),
-					scope: this,
-					loadMask: this.cmfg('getGlobalLoadMask'),
-					failure: function(response, options, decodedResponse) {
-						CMDBuild.core.Message.error(CMDBuild.Translation.common.failure, CMDBuild.Translation.errors.emailUpdate, false);
-					},
-					success: function(response, options, decodedResponse) {
-						if (CMDBuild.controller.management.common.tabs.email.Email.trafficLightArrayCheck(record, regenerationTrafficLightArray))
-							this.storeLoad();
-					}
-				});
-			} else {
-				_warning('tried to edit empty record', this);
-
-				this.storeLoad();
-			}
-		},
-
-		/**
-		 * @return {Array}
-		 */
-		getDraftEmails: function() {
-			return this.getEmailsByGroup(CMDBuild.core.proxy.Constants.DRAFT);
+			this.view = Ext.create('CMDBuild.view.management.common.tabs.email.GridPanel', { delegate: this });
 		},
 
 		/**
 		 * @param {String} group
 		 *
-		 * @return {Array}
+		 * @returns {Array}
+		 *
+		 * @private
 		 */
 		getEmailsByGroup: function(group) {
 			var out = this.view.getStore().getGroups(group);
@@ -149,45 +72,39 @@
 		},
 
 		/**
-		 * @param {Mixed} record
-		 *
-		 * @return {Boolean}
+		 * Creates a new email to generate an emailId
 		 */
-		isRegenerable: function(record) {
-			return !Ext.isEmpty(record.get(CMDBuild.core.proxy.Constants.TEMPLATE));
-		},
+		onTabEmailGridAddEmailButtonClick: function() {
+			var record = this.recordCreate();
 
-		onGridAddEmailButtonClick: function() {
-			var me = this;
-			var record = this.createRecord();
+			this.cmfg('tabEmailGridRecordAdd', {
+				record: record,
+				scope: this,
+				success: function(response, options, decodedResponse) { // Success function override
+					decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.RESPONSE];
 
-			this.addRecord( // To generate an emailId
-				record,
-				null,
-				function(response, options, decodedResponse) { // Success function override
-					record.set(CMDBuild.core.proxy.Constants.ID, decodedResponse.response);
+					record.set(CMDBuild.core.constants.Proxy.ID, decodedResponse);
 
 					Ext.create('CMDBuild.controller.management.common.tabs.email.EmailWindow', {
-						parentDelegate: me,
+						parentDelegate: this,
 						record: record
 					});
 
-					this.storeLoad();
+					this.cmfg('tabEmailGridStoreLoad');
 				}
-			);
+			});
 		},
 
 		/**
 		 * @param {Mixed} record
 		 */
-		onGridDeleteEmailButtonClick: function(record) {
+		onTabEmailGridDeleteEmailButtonClick: function(record) {
 			Ext.Msg.confirm(
 				CMDBuild.Translation.common.confirmpopup.title,
 				CMDBuild.Translation.common.confirmpopup.areyousure,
-
 				function(btn) {
 					if (btn == 'yes')
-						this.removeRecord(record);
+						this.cmfg('tabEmailGridRecordRemove', record);
 				},
 				this
 			);
@@ -196,7 +113,7 @@
 		/**
 		 * @param {Mixed} record
 		 */
-		onGridEditEmailButtonClick: function(record) {
+		onTabEmailGridEditEmailButtonClick: function(record) {
 			Ext.create('CMDBuild.controller.management.common.tabs.email.EmailWindow', {
 				parentDelegate: this,
 				record: record,
@@ -207,66 +124,86 @@
 		/**
 		 * @param {Mixed} record
 		 */
-		onGridItemDoubleClick: function(record) {
+		onTabEmailGridItemDoubleClick: function(record) {
 			if (
-				!this.cmfg('configurationGet')[CMDBuild.core.proxy.Constants.READ_ONLY]
-				&& this.cmfg('editModeGet')
-				&& this.recordIsEditable(record)
+				!this.cmfg('tabEmailConfigurationGet', CMDBuild.core.constants.Proxy.READ_ONLY)
+				&& this.cmfg('tabEmailEditModeGet')
+				&& this.cmfg('tabEmailGridRecordIsEditable', record)
 			) {
-				this.onGridEditEmailButtonClick(record);
+				this.onTabEmailGridEditEmailButtonClick(record);
 			} else {
-				this.onGridViewEmailButtonClick(record);
+				this.onTabEmailGridViewEmailButtonClick(record);
 			}
 		},
 
 		/**
 		 * @param {Mixed} record
 		 */
-		onGridRegenerationEmailButtonClick: function(record) {
-			if (!Ext.isEmpty(record.get(CMDBuild.core.proxy.Constants.TEMPLATE)))
-				this.cmfg('regenerateSelectedEmails', [record]);
+		onTabEmailGridRegenerationEmailButtonClick: function(record) {
+			if (!Ext.isEmpty(record.get(CMDBuild.core.constants.Proxy.TEMPLATE)))
+				this.cmfg('tabEmailRegenerateSelectedEmails', [record]);
 		},
 
 		/**
+		 * Creates reply email object
+		 *
 		 * @param {Mixed} record
 		 */
-		onGridReplyEmailButtonClick: function(record) {
-			var content = '<p>'
-					+ CMDBuild.Translation.onDay + ' ' + record.get(CMDBuild.core.proxy.Constants.DATE)
-					+ ', <' + record.get(CMDBuild.core.proxy.Constants.FROM) + '> ' + CMDBuild.Translation.hasWrote
+		onTabEmailGridReplyEmailButtonClick: function(record) {
+			if (!Ext.Object.isEmpty(record)) {
+				var content = '<p>'
+					+ CMDBuild.Translation.onDay + ' ' + record.get(CMDBuild.core.constants.Proxy.DATE)
+					+ ', <' + record.get(CMDBuild.core.constants.Proxy.FROM) + '> ' + CMDBuild.Translation.hasWrote
 				+ ':</p>'
-				+ '<blockquote>' + record.get(CMDBuild.core.proxy.Constants.BODY) + '</blockquote>';
+				+ '<blockquote>' + record.get(CMDBuild.core.constants.Proxy.BODY) + '</blockquote>';
 
-			var replyRecordData = {};
-			replyRecordData[CMDBuild.core.proxy.Constants.ACCOUNT] = record.get(CMDBuild.core.proxy.Constants.ACCOUNT);
-			replyRecordData[CMDBuild.core.proxy.Constants.BCC] = record.get(CMDBuild.core.proxy.Constants.BCC);
-			replyRecordData[CMDBuild.core.proxy.Constants.BODY] = content;
-			replyRecordData[CMDBuild.core.proxy.Constants.CC] = record.get(CMDBuild.core.proxy.Constants.CC);
-			replyRecordData[CMDBuild.core.proxy.Constants.KEEP_SYNCHRONIZATION] = false;
-			replyRecordData[CMDBuild.core.proxy.Constants.NOTIFY_WITH] = record.get(CMDBuild.core.proxy.Constants.NOTIFY_WITH);
-			replyRecordData[CMDBuild.core.proxy.Constants.NO_SUBJECT_PREFIX] = record.get(CMDBuild.core.proxy.Constants.NO_SUBJECT_PREFIX);
-			replyRecordData[CMDBuild.core.proxy.Constants.REFERENCE] = this.cmfg('selectedEntityIdGet');
-			replyRecordData[CMDBuild.core.proxy.Constants.SUBJECT] = 'RE: ' + record.get(CMDBuild.core.proxy.Constants.SUBJECT);
-			replyRecordData[CMDBuild.core.proxy.Constants.TO] = record.get(CMDBuild.core.proxy.Constants.FROM) || record.get(CMDBuild.core.proxy.Constants.TO);
+				var replyRecordData = {};
+				replyRecordData[CMDBuild.core.constants.Proxy.ACCOUNT] = record.get(CMDBuild.core.constants.Proxy.ACCOUNT);
+				replyRecordData[CMDBuild.core.constants.Proxy.BCC] = record.get(CMDBuild.core.constants.Proxy.BCC);
+				replyRecordData[CMDBuild.core.constants.Proxy.BODY] = content;
+				replyRecordData[CMDBuild.core.constants.Proxy.CC] = record.get(CMDBuild.core.constants.Proxy.CC);
+				replyRecordData[CMDBuild.core.constants.Proxy.KEEP_SYNCHRONIZATION] = false;
+				replyRecordData[CMDBuild.core.constants.Proxy.NOTIFY_WITH] = record.get(CMDBuild.core.constants.Proxy.NOTIFY_WITH);
+				replyRecordData[CMDBuild.core.constants.Proxy.NO_SUBJECT_PREFIX] = record.get(CMDBuild.core.constants.Proxy.NO_SUBJECT_PREFIX);
+				replyRecordData[CMDBuild.core.constants.Proxy.REFERENCE] = this.cmfg('tabEmailSelectedEntityGet', CMDBuild.core.constants.Proxy.ID);
+				replyRecordData[CMDBuild.core.constants.Proxy.SUBJECT] = 'RE: ' + record.get(CMDBuild.core.constants.Proxy.SUBJECT);
+				replyRecordData[CMDBuild.core.constants.Proxy.TO] = record.get(CMDBuild.core.constants.Proxy.FROM) || record.get(CMDBuild.core.constants.Proxy.TO);
 
-			Ext.create('CMDBuild.controller.management.common.tabs.email.EmailWindow', {
-				parentDelegate: this,
-				record: Ext.create('CMDBuild.model.common.tabs.email.Email', replyRecordData),
-				windowMode: 'reply'
-			});
+				var record = this.recordCreate(replyRecordData);
+
+				this.cmfg('tabEmailGridRecordAdd', {
+					record: record,
+					scope: this,
+					success: function(response, options, decodedResponse) { // Success function override
+						decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.RESPONSE];
+
+						record.set(CMDBuild.core.constants.Proxy.ID, decodedResponse);
+
+						Ext.create('CMDBuild.controller.management.common.tabs.email.EmailWindow', {
+							parentDelegate: this,
+							record: record,
+							windowMode: 'reply'
+						});
+
+						this.cmfg('tabEmailGridStoreLoad');
+					}
+				});
+			} else {
+				_error('empty record parameter on reply button click', this);
+			}
 		},
 
 		/**
 		 * @param {Mixed} record
 		 */
-		onGridSendEmailButtonClick: function(record) {
-			this.sendRecord(record);
+		onTabEmailGridSendEmailButtonClick: function(record) {
+			this.recordSend(record);
 		},
 
 		/**
 		 * @param {Mixed} record
 		 */
-		onGridViewEmailButtonClick: function(record) {
+		onTabEmailGridViewEmailButtonClick: function(record) {
 			Ext.create('CMDBuild.controller.management.common.tabs.email.EmailWindow', {
 				parentDelegate: this,
 				record: record,
@@ -275,76 +212,22 @@
 		},
 
 		/**
-		 * @param {Mixed} record
+		 * Creates email model with default attributes setup
 		 *
-		 * @return {Boolean}
-		 */
-		recordIsEditable: function(record) {
-			return record.get(CMDBuild.core.proxy.Constants.STATUS) == CMDBuild.core.proxy.Constants.DRAFT;
-		},
-
-		/**
-		 * @param {Mixed} record
+		 * @param {Object} recordValues
 		 *
-		 * @return {Boolean}
+		 * @returns {Mixed}
+		 *
+		 * @private
 		 */
-		recordIsSendable: function(record) {
-			return (
-				!Ext.isEmpty(record.get(CMDBuild.core.proxy.Constants.TO))
-				&& !Ext.isEmpty(record.get(CMDBuild.core.proxy.Constants.SUBJECT))
-				&& record.get(CMDBuild.core.proxy.Constants.STATUS) != CMDBuild.core.proxy.Constants.OUTGOING
-				&& record.get(CMDBuild.core.proxy.Constants.STATUS) != CMDBuild.core.proxy.Constants.SENT
-			);
-		},
+		recordCreate: function(recordValues) {
+			recordValues = Ext.Object.isEmpty(recordValues) ? {} : recordValues;
+			recordValues[CMDBuild.core.constants.Proxy.KEEP_SYNCHRONIZATION] = false;
+			recordValues[CMDBuild.core.constants.Proxy.NO_SUBJECT_PREFIX] = recordValues.hasOwnProperty(CMDBuild.core.constants.Proxy.NO_SUBJECT_PREFIX) ? recordValues[CMDBuild.core.constants.Proxy.NO_SUBJECT_PREFIX] : this.cmfg('tabEmailConfigurationGet', CMDBuild.core.constants.Proxy.NO_SUBJECT_PREFIX);
+			recordValues[CMDBuild.core.constants.Proxy.REFERENCE] = this.cmfg('tabEmailSelectedEntityGet', CMDBuild.core.constants.Proxy.ID);
+			recordValues[CMDBuild.core.constants.Proxy.TEMPORARY] = this.cmfg('tabEmailSelectedEntityGet', CMDBuild.core.constants.Proxy.ID) < 0; // Setup temporary parameter
 
-		/**
-		 * @param {Mixed} record
-		 * @param {Array} regenerationTrafficLightArray
-		 */
-		removeRecord: function(record, regenerationTrafficLightArray) {
-			if (!Ext.Object.isEmpty(record)) {
-				CMDBuild.core.proxy.common.tabs.email.Email.remove({
-					params: record.getAsParams([CMDBuild.core.proxy.Constants.ID, CMDBuild.core.proxy.Constants.TEMPORARY]),
-					scope: this,
-					loadMask: this.cmfg('getGlobalLoadMask'),
-					failure: function(response, options, decodedResponse) {
-						CMDBuild.core.Message.error(CMDBuild.Translation.common.failure, CMDBuild.Translation.errors.emailRemove, false);
-					},
-					success: function(response, options, decodedResponse) {
-						if (CMDBuild.controller.management.common.tabs.email.Email.trafficLightArrayCheck(record, regenerationTrafficLightArray))
-							this.storeLoad();
-					}
-				});
-			} else {
-				_warning('tried to remove empty record', this);
-
-				this.storeLoad();
-			}
-		},
-
-		/**
-		 * Disable topToolbar evaluating readOnly and edit mode (disable only when readOnly = false and editMode = true)
-		 */
-		setUiState: function() {
-			this.view.setDisabledTopBar(
-				!(
-					!this.cmfg('configurationGet')[CMDBuild.core.proxy.Constants.READ_ONLY]
-					&& this.cmfg('editModeGet')
-				)
-			);
-		},
-
-		/**
-		 * Send all draft email records
-		 */
-		sendAll: function() {
-			if (!Ext.isEmpty(this.getDraftEmails())) {
-				var updateTrafficLightArray = [];
-
-				Ext.Array.forEach(this.getDraftEmails(), function(email, i, allEmails) {
-					this.sendRecord(email, updateTrafficLightArray);
-				}, this);
-			}
+			return Ext.create('CMDBuild.model.common.tabs.email.Email', recordValues);
 		},
 
 		/**
@@ -352,42 +235,201 @@
 		 *
 		 * @param {Mixed} record
 		 * @param {Array} trafficLightArray
+		 *
+		 * @private
 		 */
-		sendRecord: function(record, trafficLightArray) {
+		recordSend: function(record, trafficLightArray) {
 			trafficLightArray = trafficLightArray || [];
 
 			if (!Ext.isEmpty(record)) {
-				record.set(CMDBuild.core.proxy.Constants.STATUS, CMDBuild.core.proxy.Constants.OUTGOING);
+				record.set(CMDBuild.core.constants.Proxy.STATUS, CMDBuild.core.constants.Proxy.OUTGOING);
 
-				this.editRecord(record, trafficLightArray);
+				this.cmfg('tabEmailGridRecordEdit', {
+					record: record,
+					regenerationTrafficLightArray: trafficLightArray
+				});
+			}
+		},
+
+		/**
+		 * @returns {Array}
+		 */
+		tabEmailGridDraftEmailsGet: function() {
+			return this.getEmailsByGroup(CMDBuild.core.constants.Proxy.DRAFT);
+		},
+
+		/**
+		 * @returns {Boolean}
+		 */
+		tabEmailGridDraftEmailsIsEmpty: function() {
+			return !Ext.isEmpty(this.cmfg('tabEmailGridDraftEmailsGet'));
+		},
+
+		/**
+		 * @param {Object} parameters
+		 * @param {Mixed} parameters.record
+		 * @param {Array} parameters.regenerationTrafficLightArray
+		 * @param {Object} parameters.scope
+		 * @param {Function} parameters.success
+		 */
+		tabEmailGridRecordAdd: function(parameters) {
+			if (!Ext.Object.isEmpty(parameters)) {
+				parameters.regenerationTrafficLightArray = Ext.isArray(parameters.regenerationTrafficLightArray) ? parameters.regenerationTrafficLightArray : [];
+				parameters.scope = Ext.isEmpty(parameters.scope) ? this : parameters.scope;
+
+				if (!Ext.Object.isEmpty(parameters.record)) {
+					CMDBuild.core.proxy.common.tabs.email.Email.create({
+						params: parameters.record.getAsParams(),
+						scope: parameters.scope,
+						loadMask: this.cmfg('tabEmailGlobalLoadMaskGet'),
+						failure: function(response, options, decodedResponse) {
+							CMDBuild.core.Message.error(CMDBuild.Translation.common.failure, CMDBuild.Translation.errors.emailCreate, false);
+						},
+						success: parameters.success || function(response, options, decodedResponse) {
+							if (CMDBuild.controller.management.common.tabs.email.Email.trafficLightArrayCheck(parameters.record, parameters.regenerationTrafficLightArray))
+								this.cmfg('tabEmailGridStoreLoad');
+						}
+					});
+				} else {
+					_warning('tried to add empty record', this);
+
+					this.cmfg('tabEmailGridStoreLoad');
+				}
+			}
+		},
+
+		/**
+		 * @param {Object} parameters
+		 * @param {Mixed} parameters.record
+		 * @param {Array} parameters.regenerationTrafficLightArray
+		 */
+		tabEmailGridRecordEdit: function(parameters) {
+			if (!Ext.Object.isEmpty(parameters)) {
+				parameters.regenerationTrafficLightArray = Ext.isArray(parameters.regenerationTrafficLightArray) ? parameters.regenerationTrafficLightArray : [];
+
+				if (!Ext.Object.isEmpty(parameters.record)) {
+					CMDBuild.core.proxy.common.tabs.email.Email.update({
+						params: parameters.record.getAsParams(),
+						scope: this,
+						loadMask: this.cmfg('tabEmailGlobalLoadMaskGet'),
+						failure: function(response, options, decodedResponse) {
+							CMDBuild.core.Message.error(CMDBuild.Translation.common.failure, CMDBuild.Translation.errors.emailUpdate, false);
+						},
+						success: function(response, options, decodedResponse) {
+							if (CMDBuild.controller.management.common.tabs.email.Email.trafficLightArrayCheck(parameters.record, parameters.regenerationTrafficLightArray))
+								this.cmfg('tabEmailGridStoreLoad');
+						}
+					});
+				} else {
+					_warning('tried to edit empty record', this);
+
+					this.cmfg('tabEmailGridStoreLoad');
+				}
+			}
+		},
+
+		/**
+		 * @param {Mixed} record
+		 *
+		 * @returns {Boolean}
+		 */
+		tabEmailGridRecordIsEditable: function(record) {
+			return record.get(CMDBuild.core.constants.Proxy.STATUS) == CMDBuild.core.constants.Proxy.DRAFT;
+		},
+
+		/**
+		 * @param {Mixed} record
+		 *
+		 * @returns {Boolean}
+		 */
+		tabEmailGridRecordIsRegenerable: function(record) {
+			return !Ext.isEmpty(record.get(CMDBuild.core.constants.Proxy.TEMPLATE));
+		},
+
+		/**
+		 * @param {Mixed} record
+		 *
+		 * @returns {Boolean}
+		 */
+		tabEmailGridRecordIsSendable: function(record) {
+			return (
+				!Ext.isEmpty(record.get(CMDBuild.core.constants.Proxy.TO))
+				&& !Ext.isEmpty(record.get(CMDBuild.core.constants.Proxy.SUBJECT))
+				&& record.get(CMDBuild.core.constants.Proxy.STATUS) != CMDBuild.core.constants.Proxy.OUTGOING
+				&& record.get(CMDBuild.core.constants.Proxy.STATUS) != CMDBuild.core.constants.Proxy.RECEIVED
+				&& record.get(CMDBuild.core.constants.Proxy.STATUS) != CMDBuild.core.constants.Proxy.SENT
+			);
+		},
+
+		/**
+		 * @param {Mixed} record
+		 * @param {Array} regenerationTrafficLightArray
+		 */
+		tabEmailGridRecordRemove: function(record, regenerationTrafficLightArray) {
+			if (!Ext.Object.isEmpty(record)) {
+				CMDBuild.core.proxy.common.tabs.email.Email.remove({
+					params: record.getAsParams([CMDBuild.core.constants.Proxy.ID, CMDBuild.core.constants.Proxy.TEMPORARY]),
+					scope: this,
+					loadMask: this.cmfg('tabEmailGlobalLoadMaskGet'),
+					failure: function(response, options, decodedResponse) {
+						CMDBuild.core.Message.error(CMDBuild.Translation.common.failure, CMDBuild.Translation.errors.emailRemove, false);
+					},
+					success: function(response, options, decodedResponse) {
+						if (CMDBuild.controller.management.common.tabs.email.Email.trafficLightArrayCheck(record, regenerationTrafficLightArray))
+							this.cmfg('tabEmailGridStoreLoad');
+					}
+				});
+			} else {
+				_warning('tried to remove empty record', this);
+
+				this.cmfg('tabEmailGridStoreLoad');
+			}
+		},
+
+		/**
+		 * Send all draft email records
+		 */
+		tabEmailGridSendAll: function() {
+			if (!this.cmfg('tabEmailGridDraftEmailsIsEmpty')) {
+				var updateTrafficLightArray = [];
+
+				Ext.Array.forEach(this.cmfg('tabEmailGridDraftEmailsGet'), function(email, i, allEmails) {
+					this.recordSend(email, updateTrafficLightArray);
+				}, this);
 			}
 		},
 
 		/**
 		 * Loads grid store with activityId parameter
 		 */
-		storeLoad: function() {
-			this.cmfg('busyStateSet', true); // Setup widget busy state and the begin of store load
+		tabEmailGridStoreLoad: function() {
+			this.cmfg('tabEmailBusyStateSet', true); // Setup widget busy state and the begin of store load
 
 			this.view.getStore().removeAll(); // Clear store before load new one
 
 			var params = {};
-			params[CMDBuild.core.proxy.Constants.REFERENCE] = this.cmfg('selectedEntityIdGet');
+			params[CMDBuild.core.constants.Proxy.REFERENCE] = this.cmfg('tabEmailSelectedEntityGet', CMDBuild.core.constants.Proxy.ID);
 
 			this.view.getStore().load({
 				params: params,
 				scope: this,
 				callback: function(records, operation, success) {
-					if (success) {
-						this.cmfg('getAllTemplatesData');
-					} else {
-						CMDBuild.core.Message.error(null, {
-							text: CMDBuild.Translation.errors.unknown_error,
-							detail: operation.error
-						});
-					}
+					if (success)
+						this.cmfg('tabEmailGetAllTemplatesData');
 				}
 			});
+		},
+
+		/**
+		 * Disable topToolbar evaluating readOnly and edit mode (disable only when readOnly = false and editMode = true)
+		 */
+		tabEmailGridUiStateSet: function() {
+			this.view.setDisabledTopBar(
+				!(
+					!this.cmfg('tabEmailConfigurationGet', CMDBuild.core.constants.Proxy.READ_ONLY)
+					&& this.cmfg('tabEmailEditModeGet')
+				)
+			);
 		}
 	});
 

@@ -1,10 +1,8 @@
 package org.cmdbuild.servlets.json.management;
 
 import static com.google.common.collect.Lists.newArrayList;
-import static com.google.common.collect.Lists.newLinkedList;
-import static com.google.common.collect.Maps.newHashMap;
+import static org.cmdbuild.dao.query.clause.Clauses.call;
 import static org.cmdbuild.logic.report.Predicates.currentGroupAllowed;
-import static org.cmdbuild.report.CustomProperties.FILTER_PREFIX;
 import static org.cmdbuild.servlets.json.CommunicationConstants.ATTRIBUTES;
 import static org.cmdbuild.servlets.json.CommunicationConstants.CARD_ID;
 import static org.cmdbuild.servlets.json.CommunicationConstants.CLASS_NAME;
@@ -12,23 +10,22 @@ import static org.cmdbuild.servlets.json.CommunicationConstants.CODE;
 import static org.cmdbuild.servlets.json.CommunicationConstants.EXTENSION;
 import static org.cmdbuild.servlets.json.CommunicationConstants.FILTER;
 import static org.cmdbuild.servlets.json.CommunicationConstants.FORMAT;
+import static org.cmdbuild.servlets.json.CommunicationConstants.FUNCTION;
 import static org.cmdbuild.servlets.json.CommunicationConstants.ID;
 import static org.cmdbuild.servlets.json.CommunicationConstants.LIMIT;
 import static org.cmdbuild.servlets.json.CommunicationConstants.SORT;
 import static org.cmdbuild.servlets.json.CommunicationConstants.START;
 import static org.cmdbuild.servlets.json.CommunicationConstants.STATE;
 import static org.cmdbuild.servlets.json.CommunicationConstants.TYPE;
+import static org.cmdbuild.servlets.json.schema.Utils.toIterable;
 
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Collection;
-import java.util.List;
 import java.util.Map;
 
 import javax.activation.DataHandler;
 import javax.activation.DataSource;
-
-import net.sf.jasperreports.engine.JRPropertiesMap;
 
 import org.cmdbuild.common.utils.TempDataSource;
 import org.cmdbuild.dao.entrytype.CMAttribute;
@@ -37,6 +34,7 @@ import org.cmdbuild.logger.Log;
 import org.cmdbuild.logic.data.QueryOptions;
 import org.cmdbuild.logic.data.QueryOptions.QueryOptionsBuilder;
 import org.cmdbuild.logic.mapping.json.JsonFilterHelper;
+import org.cmdbuild.report.CustomProperties;
 import org.cmdbuild.report.ReportFactory;
 import org.cmdbuild.report.ReportFactory.ReportExtension;
 import org.cmdbuild.report.ReportFactory.ReportType;
@@ -181,13 +179,8 @@ public class ModReport extends JSONBaseWithSpringContext {
 		final Collection<JSONObject> output = newArrayList();
 		for (final ReportParameter reportParameter : reportFactory.getReportParameters()) {
 			final CMAttribute attribute = ReportParameterConverter.of(reportParameter).toCMAttribute();
-			final Map<String, String> metadata = newHashMap();
-			final JRPropertiesMap propertiesMap = reportParameter.getJrParameter().getPropertiesMap();
-			for (final String name : propertiesMap.getPropertyNames()) {
-				if (name.startsWith(FILTER_PREFIX)) {
-					metadata.put(name.substring(FILTER_PREFIX.length()), propertiesMap.getProperty(name));
-				}
-			}
+			final Map<String, String> metadata = new CustomProperties(reportParameter.getJrParameter()
+					.getPropertiesMap()).getFilterParameters();
 			output.add(AttributeSerializer.newInstance() //
 					.withDataView(systemDataView()) //
 					.build()//
@@ -198,7 +191,7 @@ public class ModReport extends JSONBaseWithSpringContext {
 
 	/**
 	 * Set user-defined parameters and fill report
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	@JSONExported
@@ -224,7 +217,7 @@ public class ModReport extends JSONBaseWithSpringContext {
 
 	/**
 	 * Print report to output stream
-	 * 
+	 *
 	 * @param noDelete
 	 *            this may be requested for wf server side processing
 	 */
@@ -270,19 +263,16 @@ public class ModReport extends JSONBaseWithSpringContext {
 	 */
 	@JSONExported
 	public void printCurrentView( //
-			@Parameter("columns") final JSONArray columns, //
 			@Parameter(TYPE) final String type, //
 			@Parameter(value = CLASS_NAME) final String className, //
 			@Parameter(LIMIT) final int limit, //
 			@Parameter(START) final int offset, //
 			@Parameter(value = FILTER, required = false) final JSONObject filter, //
 			@Parameter(value = SORT, required = false) final JSONArray sorters, //
-			@Parameter(value = ATTRIBUTES, required = false) final JSONArray attributes, //
-			@Parameter(value = STATE, required = false) final String flowStatus) // for
-																					// processes
-																					// only
-			throws Exception {
-
+			@Parameter(ATTRIBUTES) final JSONArray attributes, //
+			// for processes only
+			@Parameter(value = STATE, required = false) final String flowStatus //
+	) throws Exception {
 		sessionVars().removeReportFactory();
 		final QueryOptionsBuilder queryOptionsBuilder = QueryOptions.newQueryOption() //
 				.limit(limit) //
@@ -294,29 +284,47 @@ public class ModReport extends JSONBaseWithSpringContext {
 		} else {
 			queryOptionsBuilder.filter(filter);
 		}
-
 		final QueryOptions queryOptions = queryOptionsBuilder.build();
-
-		final List<String> attributeOrder = jsonArrayToStringList(columns);
 		final ReportFactoryTemplateList rft = new ReportFactoryTemplateList( //
-				dataSource(), ReportExtension.valueOf(type.toUpperCase()), //
+				dataSource(), //
+				ReportExtension.valueOf(type.toUpperCase()), //
 				queryOptions, //
-				attributeOrder, //
-				className, //
-				userDataAccessLogic(), //
+				toIterable(attributes), //
+				userDataView().findClass(className), //
 				userDataView(), //
+				rootFilesStore(), //
 				cmdbuildConfiguration());
-
 		rft.fillReport();
 		sessionVars().setReportFactory(rft);
 	}
 
-	private List<String> jsonArrayToStringList(final JSONArray columns) throws JSONException {
-		final List<String> attributeOrder = newLinkedList();
-		for (int i = 0; i < columns.length(); ++i) {
-			attributeOrder.add(columns.getString(i));
-		}
-		return attributeOrder;
+	@JSONExported
+	public void printSqlView( //
+			@Parameter(TYPE) final String type, //
+			@Parameter(FUNCTION) final String function, //
+			@Parameter(ATTRIBUTES) final JSONArray attributes, //
+			@Parameter(LIMIT) final int limit, //
+			@Parameter(START) final int offset, //
+			@Parameter(value = FILTER, required = false) final JSONObject filter, //
+			@Parameter(value = SORT, required = false) final JSONArray sorters //
+	) throws Exception {
+		sessionVars().removeReportFactory();
+		final QueryOptions queryOptions = QueryOptions.newQueryOption() //
+				.limit(limit) //
+				.offset(offset) //
+				.orderBy(sorters) //
+				.filter(filter) //
+				.build();
+		final ReportFactoryTemplateList rft = new ReportFactoryTemplateList( //
+				dataSource(), ReportExtension.valueOf(type.toUpperCase()), //
+				queryOptions, //
+				toIterable(attributes), //
+				call(userDataView().findFunctionByName(function)), //
+				userDataView(), //
+				rootFilesStore(), //
+				cmdbuildConfiguration());
+		rft.fillReport();
+		sessionVars().setReportFactory(rft);
 	}
 
 	@JSONExported
@@ -330,6 +338,7 @@ public class ModReport extends JSONBaseWithSpringContext {
 				cardId, //
 				ReportExtension.valueOf(format.toUpperCase()), //
 				userDataView(), //
+				rootFilesStore(), //
 				userDataAccessLogic(), //
 				localization(), //
 				cmdbuildConfiguration());

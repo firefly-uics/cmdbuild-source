@@ -136,6 +136,12 @@ public class WsFluentApiExecutor implements FluentApiExecutor, LoggingSupport {
 	private static final String NO_FULLTEXT = null;
 	private static final CqlQuery NO_CQL = null;
 
+	private static final ReportParams UNUSED_REPORT_PARAMS = new ReportParams() {
+		{
+			setKey("__unused__");
+		}
+	};
+
 	private static final EntryTypeConverter IDENTITY_ENTRY_TYPE_CONVERTER = new EntryTypeConverter() {
 
 		public String toClientType(final EntryTypeAttribute entityAttribute, final String wsValue) {
@@ -404,7 +410,7 @@ public class WsFluentApiExecutor implements FluentApiExecutor, LoggingSupport {
 			reportParameters.add(parameter);
 		}
 		if (reportParameters.isEmpty()) {
-			reportParameters.add(new ReportParams());
+			reportParameters.add(UNUSED_REPORT_PARAMS);
 		}
 		return reportParameters;
 	}

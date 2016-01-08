@@ -40,6 +40,7 @@
 			<ref bean="v2_domains" />
 			<ref bean="v2_domainAttributes" />
 			<ref bean="v2_emailTemplates" />
+			<ref bean="v2_functions" />
 			<ref bean="v2_relations" />
 			<ref bean="v2_impersonate" />
 			<ref bean="v2_lookupTypes" />
@@ -50,7 +51,8 @@
 			<ref bean="v2_processesConfiguration" />
 			<ref bean="v2_processInstanceActivities" />
 			<ref bean="v2_processInstanceAttachments" />
-			<ref bean="v2_processInstanceEmails" />
+			<ref bean="v2_processInstanceEmails" />			
+			<ref bean="v2_processInstancePrivileges" />
 			<ref bean="v2_processInstances" />
 			<ref bean="v2_processStartActivities" />
 			<ref bean="v2_reports" />

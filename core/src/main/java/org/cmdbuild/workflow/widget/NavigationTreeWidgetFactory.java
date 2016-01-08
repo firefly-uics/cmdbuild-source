@@ -1,7 +1,5 @@
 package org.cmdbuild.workflow.widget;
 
-import java.util.Map;
-
 import org.apache.commons.lang3.Validate;
 import org.cmdbuild.model.widget.NavigationTree;
 import org.cmdbuild.model.widget.Widget;
@@ -33,26 +31,26 @@ public class NavigationTreeWidgetFactory extends ValuePairWidgetFactory {
 	}
 
 	@Override
-	protected Widget createWidget(final Map<String, Object> valueMap) {
-		final String filterType = readString(valueMap.get(NAVIGATION_TREE_FILTER_TYPE));
+	protected Widget createWidget(final WidgetDefinition definition) {
+		final String filterType = readString(definition.get(NAVIGATION_TREE_FILTER_TYPE));
 		if (filterType != null && CQLFILTERTYPE.equals(CQLFILTERTYPE)) {
 			/*
 			 * TODO Control on filter types At the moment there is only one
 			 * filter type and is 'cql'
 			 */
-			final String filter = readString(valueMap.get(NAVIGATION_TREE_FILTER));
+			final String filter = readString(definition.get(NAVIGATION_TREE_FILTER));
 			Validate.notEmpty(filter, NAVIGATION_TREE_FILTER + " is required");
 			final NavigationTree widget = new NavigationTree();
 			widget.setFilter(filter);
 			return widget;
 		} else {
-			final String navigationTreeName = readString(valueMap.get(NAVIGATION_TREE_NAME));
+			final String navigationTreeName = readString(definition.get(NAVIGATION_TREE_NAME));
 			Validate.notEmpty(navigationTreeName, NAVIGATION_TREE_NAME + " is required");
 			final NavigationTree widget = new NavigationTree();
 			widget.setNavigationTreeName(navigationTreeName);
-			widget.setPreset(extractUnmanagedParameters(valueMap, KNOWN_PARAMETERS));
-			widget.setOutputName(readString(valueMap.get(OUTPUT_KEY)));
-			widget.setDescription(readString(valueMap.get(DESCRIPTION)));
+			widget.setPreset(extractUnmanagedParameters(definition, KNOWN_PARAMETERS));
+			widget.setOutputName(readString(definition.get(OUTPUT_KEY)));
+			widget.setDescription(readString(definition.get(DESCRIPTION)));
 			return widget;
 		}
 	}

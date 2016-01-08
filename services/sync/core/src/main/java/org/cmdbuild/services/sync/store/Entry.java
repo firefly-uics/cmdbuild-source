@@ -2,9 +2,9 @@ package org.cmdbuild.services.sync.store;
 
 import java.util.Map;
 
-public interface Entry<T extends Type> {
+public interface Entry {
 
-	T getType();
+	Type getType();
 
 	Iterable<Map.Entry<String, Object>> getValues();
 

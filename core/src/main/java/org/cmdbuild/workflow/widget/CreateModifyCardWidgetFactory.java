@@ -41,18 +41,18 @@ public class CreateModifyCardWidgetFactory extends ValuePairWidgetFactory {
 	}
 
 	@Override
-	protected Widget createWidget(final Map<String, Object> valueMap) {
+	protected Widget createWidget(final WidgetDefinition definition) {
 		final CreateModifyCard widget = new CreateModifyCard();
-		if (valueMap.containsKey(OBJ_REF)) {
-			configureWidgetFromReference(widget, valueMap);
+		if (definition.containsKey(OBJ_REF)) {
+			configureWidgetFromReference(widget, definition);
 		} else {
-			configureWidgetFromClassName(widget, valueMap);
+			configureWidgetFromClassName(widget, definition);
 		}
 
-		widget.setAttributeMappingForCreation(extractUnmanagedParameters(valueMap, BUTTON_LABEL, OBJ_ID, OBJ_REF,
+		widget.setAttributeMappingForCreation(extractUnmanagedParameters(definition, BUTTON_LABEL, OBJ_ID, OBJ_REF,
 				CLASS_NAME, READONLY));
-		widget.setReadonly(valueMap.containsKey(READONLY));
-		widget.setOutputName(readString(valueMap.get(OUTPUT_KEY)));
+		widget.setReadonly(definition.containsKey(READONLY));
+		widget.setOutputName(readString(definition.get(OUTPUT_KEY)));
 
 		return widget;
 	}

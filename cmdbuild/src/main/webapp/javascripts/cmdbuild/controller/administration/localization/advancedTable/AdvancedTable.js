@@ -1,11 +1,12 @@
 (function() {
 
 	Ext.define('CMDBuild.controller.administration.localization.advancedTable.AdvancedTable', {
-		extend: 'CMDBuild.controller.common.AbstractController',
+		extend: 'CMDBuild.controller.common.abstract.Base',
 
 		requires: [
-			'CMDBuild.core.proxy.Constants',
-			'CMDBuild.model.localization.advancedTable.TreeStore'
+			'CMDBuild.core.constants.Proxy',
+			'CMDBuild.core.LoadMask',
+			'CMDBuild.model.localization.advancedTable.TreeStore',
 		],
 
 		/**
@@ -105,11 +106,11 @@
 		buildColumn: function(languageObject) {
 			if (!Ext.isEmpty(languageObject)) {
 				return Ext.create('Ext.grid.column.Column', {
-					dataIndex: languageObject.get(CMDBuild.core.proxy.Constants.TAG),
-					languageDescription: languageObject.get(CMDBuild.core.proxy.Constants.DESCRIPTION),
+					dataIndex: languageObject.get(CMDBuild.core.constants.Proxy.TAG),
+					languageDescription: languageObject.get(CMDBuild.core.constants.Proxy.DESCRIPTION),
 					text: '<img style="margin: 0px 5px 0px 0px;" src="images/icons/flags/'
-						+ languageObject.get(CMDBuild.core.proxy.Constants.TAG) + '.png" /> '
-						+ languageObject.get(CMDBuild.core.proxy.Constants.DESCRIPTION),
+						+ languageObject.get(CMDBuild.core.constants.Proxy.TAG) + '.png" /> '
+						+ languageObject.get(CMDBuild.core.constants.Proxy.DESCRIPTION),
 					width: 300,
 					sortable: false,
 					draggable: false,
@@ -127,11 +128,11 @@
 		 * @return {Array} columnsArray
 		 */
 		onLocalizationAdvancedTableBuildColumns: function() {
-			var enabledLanguages = CMDBuild.configuration[CMDBuild.core.proxy.Constants.LOCALIZATION].getEnabledLanguages();
+			var enabledLanguages = CMDBuild.configuration.localization.getEnabledLanguages();
 			var columnsArray = [
 				{
 					xtype: 'treecolumn',
-					dataIndex: CMDBuild.core.proxy.Constants.TEXT,
+					dataIndex: CMDBuild.core.constants.Proxy.TEXT,
 					text: '@@ Translation object',
 					width: 300,
 					// locked: true, // There is a performance issue in ExtJs 4.2.0 without locked columns all is fine
@@ -139,7 +140,7 @@
 					draggable: false
 				},
 				{
-					dataIndex: CMDBuild.core.proxy.Constants.DEFAULT,
+					dataIndex: CMDBuild.core.constants.Proxy.DEFAULT,
 					text: '@@ Default translation',
 					width: 300,
 					sortable: false,
@@ -177,10 +178,10 @@
 		 * @param {CMDBuild.view.administration.localization.common.AdvancedTableGrid}
 		 */
 		onLocalizationAdvancedTableCollapseAll: function(gridPanel) {
-			CMDBuild.LoadMask.get().show();
+			CMDBuild.core.LoadMask.show();
 			Ext.Function.defer(function() { // HACK: to fix expandAll bug that don't displays loeadMask
 				gridPanel.collapseAll(function() {
-					CMDBuild.LoadMask.get().hide();
+					CMDBuild.core.LoadMask.hide();
 				});
 			}, 100, this);
 		},
@@ -189,10 +190,10 @@
 		 * @param {CMDBuild.view.administration.localization.common.AdvancedTableGrid}
 		 */
 		onLocalizationAdvancedTableExpandAll: function(gridPanel) {
-			CMDBuild.LoadMask.get().show();
+			CMDBuild.core.LoadMask.show();
 			Ext.Function.defer(function() { // HACK: to fix expandAll bug that don't displays loeadMask
 				gridPanel.expandAll(function() {
-					CMDBuild.LoadMask.get().hide();
+					CMDBuild.core.LoadMask.hide();
 				});
 			}, 100, this);
 		},

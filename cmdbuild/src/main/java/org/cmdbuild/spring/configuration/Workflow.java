@@ -13,7 +13,6 @@ import org.cmdbuild.config.WorkflowConfiguration;
 import org.cmdbuild.logger.WorkflowLogger;
 import org.cmdbuild.logic.workflow.SystemWorkflowLogicBuilder;
 import org.cmdbuild.notification.Notifier;
-import org.cmdbuild.services.FilesStore;
 import org.cmdbuild.services.template.engine.EngineNames;
 import org.cmdbuild.workflow.ActivityPerformerTemplateResolverFactory;
 import org.cmdbuild.workflow.DataViewWorkflowPersistence;
@@ -59,7 +58,7 @@ public class Workflow {
 	private Email email;
 
 	@Autowired
-	private FilesStore filesStore;
+	private FileStore fileStore;
 
 	@Autowired
 	private Lock lock;
@@ -198,7 +197,7 @@ public class Workflow {
 				systemWorkflowEngineBuilder(), //
 				data.systemDataView(), //
 				workflowConfiguration, //
-				filesStore, //
+				fileStore.uploadFilesStore(), //
 				lock.dummyLockLogic());
 	}
 

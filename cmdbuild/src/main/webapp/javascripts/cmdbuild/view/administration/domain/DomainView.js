@@ -14,6 +14,11 @@
 		baseTitle: CMDBuild.Translation.domains,
 
 		/**
+		 * @cfg {String}
+		 */
+		cmName: undefined,
+
+		/**
 		 * @property {Ext.tab.Panel}
 		 */
 		tabPanel: undefined,
@@ -28,7 +33,7 @@
 				dockedItems: [
 					Ext.create('Ext.toolbar.Toolbar', {
 						dock: 'top',
-						itemId: CMDBuild.core.proxy.Constants.TOOLBAR_TOP,
+						itemId: CMDBuild.core.constants.Proxy.TOOLBAR_TOP,
 
 						items: [
 							Ext.create('CMDBuild.core.buttons.iconized.add.Add', {

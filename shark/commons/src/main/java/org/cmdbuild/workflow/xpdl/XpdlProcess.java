@@ -133,7 +133,7 @@ public class XpdlProcess implements XpdlActivityHolder, XpdlExtendedAttributesHo
 
 	public void addRoleParticipant(final String participantId) {
 		doc.turnReadWrite();
-		Participant p = (Participant) inner.getParticipants().generateNewElement();
+		final Participant p = (Participant) inner.getParticipants().generateNewElement();
 		p.setId(participantId);
 		// Default but better safe than sorry
 		p.getParticipantType().setTypeROLE();

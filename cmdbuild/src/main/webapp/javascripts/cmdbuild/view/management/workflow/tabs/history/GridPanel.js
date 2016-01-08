@@ -3,7 +3,7 @@
 	Ext.define('CMDBuild.view.management.workflow.tabs.history.GridPanel', {
 		extend: 'Ext.grid.Panel',
 
-		requires: ['CMDBuild.core.proxy.Constants'],
+		requires: ['CMDBuild.core.constants.Proxy'],
 
 		/**
 		 * @cfg {CMDBuild.controller.management.common.tabs.History}
@@ -31,6 +31,7 @@
 		autoScroll: true,
 		border: false,
 		cls: 'history_panel', // To apply right style to grid rows
+		disableSelection: true,
 		frame: false,
 
 		initComponent: function() {
@@ -38,7 +39,7 @@
 				dockedItems: [
 					Ext.create('Ext.toolbar.Toolbar', {
 						dock: 'top',
-						itemId: CMDBuild.core.proxy.Constants.TOOLBAR_TOP,
+						itemId: CMDBuild.core.constants.Proxy.TOOLBAR_TOP,
 
 						items: [
 							'->',
@@ -49,7 +50,7 @@
 								scope: this,
 
 								handler: function(checkbox, checked) {
-									this.delegate.cmfg('onProcessesTabHistoryIncludeSystemActivitiesCheck');
+									this.delegate.cmfg('onWorkflowTabHistoryIncludeSystemActivitiesCheck');
 								}
 							}),
 							this.includeRelationsCheckbox = Ext.create('Ext.form.field.Checkbox', {
@@ -65,15 +66,15 @@
 						]
 					})
 				],
-				columns: this.delegate.cmfg('getTabHistoryGridColumns'),
-				store: this.delegate.cmfg('getTabHistoryGridStore')
+				columns: this.delegate.cmfg('tabHistoryGridColumnsGet'),
+				store: this.delegate.cmfg('tabHistoryGridStoreGet')
 			});
 
 			this.callParent(arguments);
 
 			// Apply activitiesStore filter
 			this.getStore().on('load', function(store, records, successful, eOpts) {
-				this.delegate.cmfg('onProcessesTabHistoryIncludeSystemActivitiesCheck');
+				this.delegate.cmfg('onWorkflowTabHistoryIncludeSystemActivitiesCheck');
 			}, this);
 		},
 

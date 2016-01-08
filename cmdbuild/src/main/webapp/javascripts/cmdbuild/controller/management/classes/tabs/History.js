@@ -7,7 +7,8 @@
 		extend: 'CMDBuild.controller.management.common.tabs.History',
 
 		requires: [
-			'CMDBuild.core.proxy.Constants',
+			'CMDBuild.core.constants.Global',
+			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.proxy.common.tabs.history.Classes'
 		],
 
@@ -26,24 +27,23 @@
 		 * @cfg {Array}
 		 */
 		attributesKeysToFilter: [
-			'Code',
 			'Id',
 			'IdClass',
 			'IdClass_value',
-			CMDBuild.core.proxy.Constants.BEGIN_DATE,
-			CMDBuild.core.proxy.Constants.CLASS_NAME,
-			CMDBuild.core.proxy.Constants.ID,
-			CMDBuild.core.proxy.Constants.USER
+			CMDBuild.core.constants.Proxy.BEGIN_DATE,
+			CMDBuild.core.constants.Proxy.CLASS_NAME,
+			CMDBuild.core.constants.Proxy.ID,
+			CMDBuild.core.constants.Proxy.USER
 		],
 
 		/**
 		 * @cfg {Array}
 		 */
 		cmfgCatchedFunctions: [
-			'getTabHistoryGridColumns',
-			'getTabHistoryGridStore',
-			'onTabHistoryRowExpand',
 			'onTabHistoryPanelShow = onTabHistoryIncludeRelationCheck', // Reloads store to be consistent with includeRelationsCheckbox state
+			'onTabHistoryRowExpand',
+			'tabHistoryGridColumnsGet',
+			'tabHistoryGridStoreGet',
 			'tabHistorySelectedEntityGet',
 			'tabHistorySelectedEntitySet'
 		],
@@ -69,9 +69,7 @@
 
 			this.callParent(arguments);
 
-			this.grid = Ext.create('CMDBuild.view.management.classes.tabs.history.GridPanel', {
-				delegate: this
-			});
+			this.grid = Ext.create('CMDBuild.view.management.classes.tabs.history.GridPanel', { delegate: this });
 
 			this.view.add(this.grid);
 
@@ -84,6 +82,7 @@
 		 * TODO: should be better to refactor this method when a getCard service will returns a better model of card data
 		 *
 		 * @override
+		 * @private
 		 */
 		addCurrentCardToStore: function() {
 			var selectedEntityAttributes = {};
@@ -95,13 +94,18 @@
 					selectedEntityAttributes[key] = value;
 			}, this);
 
-			selectedEntityMergedData[CMDBuild.core.proxy.Constants.ID] = this.selectedEntity.get(CMDBuild.core.proxy.Constants.ID);
+			selectedEntityMergedData[CMDBuild.core.constants.Proxy.ID] = this.selectedEntity.get(CMDBuild.core.constants.Proxy.ID);
 
 			this.valuesFormattingAndCompare(selectedEntityAttributes); // Formats values only
 
 			this.clearStoreAdd(this.buildCurrentEntityModel(selectedEntityMergedData, selectedEntityAttributes));
+
+			this.callParent(arguments);
 		},
 
+		/**
+		 * @private
+		 */
 		buildCardModuleStateDelegate: function() {
 			var me = this;
 
@@ -131,20 +135,23 @@
 		 * @param {Object} entityData
 		 * @param {Object} entityAttributeData
 		 *
-		 * @return {CMDBuild.model.common.tabs.history.classes.CardRecord} currentEntityModel
+		 * @returns {CMDBuild.model.classes.tabs.history.CardRecord} currentEntityModel
+		 *
+		 * @private
 		 */
 		buildCurrentEntityModel: function(entityData, entityAttributeData) {
-			var currentEntityModel = Ext.create('CMDBuild.model.common.tabs.history.classes.CardRecord', entityData);
-			currentEntityModel.set(CMDBuild.core.proxy.Constants.VALUES, entityAttributeData);
+			var currentEntityModel = Ext.create('CMDBuild.model.classes.tabs.history.CardRecord', entityData);
+			currentEntityModel.set(CMDBuild.core.constants.Proxy.VALUES, entityAttributeData);
 			currentEntityModel.commit();
 
 			return currentEntityModel;
 		},
 
 		/**
-		 * @param {CMDBuild.model.common.tabs.history.classes.RelationRecord} record
+		 * @param {CMDBuild.model.classes.tabs.history.RelationRecord} record
 		 *
 		 * @override
+		 * @private
 		 */
 		currentCardRowExpand: function(record) {
 			var predecessorRecord = this.getRecordPredecessor(record);
@@ -157,33 +164,31 @@
 					selectedEntityAttributes[key] = value;
 			}, this);
 
-			selectedEntityMergedData[CMDBuild.core.proxy.Constants.ID] = this.selectedEntity.get(CMDBuild.core.proxy.Constants.ID);
+			selectedEntityMergedData[CMDBuild.core.constants.Proxy.ID] = this.selectedEntity.get(CMDBuild.core.constants.Proxy.ID);
 
 			if (!Ext.isEmpty(predecessorRecord)) {
 				var predecessorParams = {};
-				predecessorParams[CMDBuild.core.proxy.Constants.CARD_ID] = predecessorRecord.get(CMDBuild.core.proxy.Constants.ID); // Historic card ID
-				predecessorParams[CMDBuild.core.proxy.Constants.CLASS_NAME] = selectedEntityMergedData[CMDBuild.core.proxy.Constants.CLASS_NAME];
+				predecessorParams[CMDBuild.core.constants.Proxy.CARD_ID] = predecessorRecord.get(CMDBuild.core.constants.Proxy.ID); // Historic card ID
+				predecessorParams[CMDBuild.core.constants.Proxy.CLASS_NAME] = selectedEntityMergedData[CMDBuild.core.constants.Proxy.CLASS_NAME];
 
 				this.getProxy().getHistoric({
 					params: predecessorParams,
 					scope: this,
-					failure: function(response, options, decodedResponse) {
-						_error('get historic predecessor card failure', this);
-					},
 					success: function(response, options, decodedResponse) {
-						this.valuesFormattingAndCompare(selectedEntityAttributes, decodedResponse.response[CMDBuild.core.proxy.Constants.VALUES]);
+						this.valuesFormattingAndCompare(selectedEntityAttributes, decodedResponse.response[CMDBuild.core.constants.Proxy.VALUES]);
 
 						// Setup record property with historic card details to use XTemplate functionalities to render
-						record.set(CMDBuild.core.proxy.Constants.VALUES, selectedEntityAttributes);
+						record.set(CMDBuild.core.constants.Proxy.VALUES, selectedEntityAttributes);
 					}
 				});
 			}
 		},
 
 		/**
-		 * @return {CMDBuild.core.proxy.common.tabs.history.Classes}
+		 * @returns {CMDBuild.core.proxy.common.tabs.history.Classes}
 		 *
 		 * @override
+		 * @private
 		 */
 		getProxy: function() {
 			return CMDBuild.core.proxy.common.tabs.history.Classes;
@@ -193,12 +198,14 @@
 		 * @param {Object} card
 		 */
 		onCardSelected: function(card) {
-			this.tabHistorySelectedEntitySet(card);
+			if (!Ext.isEmpty(card)) {
+				this.tabHistorySelectedEntitySet(card);
 
-			if (!Ext.isEmpty(this.entryType) && this.entryType.get(CMDBuild.core.proxy.Constants.TABLE_TYPE) != 'simpletable') // SimpleTables hasn't history
-				this.view.setDisabled(Ext.isEmpty(this.tabHistorySelectedEntityGet()));
+				if (!Ext.isEmpty(this.entryType) && this.entryType.get(CMDBuild.core.constants.Proxy.TABLE_TYPE) != CMDBuild.core.constants.Global.getTableTypeSimpleTable()) // SimpleTables hasn't history
+					this.view.setDisabled(Ext.isEmpty(this.tabHistorySelectedEntityGet()));
 
-			this.cmfg('onTabHistoryPanelShow');
+				this.cmfg('onTabHistoryPanelShow');
+			}
 		},
 
 		/**
@@ -208,6 +215,88 @@
 			this.entryType = entryType;
 
 			this.view.disable();
+		},
+
+		/**
+		 * @override
+		 */
+		onTabHistoryPanelShow: function() {
+			if (this.view.isVisible()) {
+				// History record save
+				CMDBuild.global.navigation.Chronology.cmfg('navigationChronologyRecordSave', {
+					moduleId: 'class',
+					entryType: {
+						description: _CMCardModuleState.entryType.get(CMDBuild.core.constants.Proxy.TEXT),
+						id: _CMCardModuleState.entryType.get(CMDBuild.core.constants.Proxy.ID),
+						object: _CMCardModuleState.entryType
+					},
+					item: {
+						description: _CMCardModuleState.card.get('Description') || _CMCardModuleState.card.get('Code'),
+						id: _CMCardModuleState.card.get(CMDBuild.core.constants.Proxy.ID),
+						object: _CMCardModuleState.card
+					},
+					section: {
+						description: this.view.title,
+						object: this.view
+					}
+				});
+			}
+
+			this.callParent(arguments);
+		},
+
+		/**
+		 * @returns {Array} columns
+		 *
+		 * @override
+		 */
+		tabHistoryGridColumnsGet: function() {
+			var columns = this.callParent(arguments);
+
+			if (!CMDBuild.configuration.userInterface.get(CMDBuild.core.constants.Proxy.SIMPLE_HISTORY_MODE_FOR_CARD)) {
+				Ext.Array.push(columns, [
+					Ext.create('Ext.ux.grid.column.Tick', {
+						dataIndex: CMDBuild.core.constants.Proxy.IS_CARD,
+						text: CMDBuild.Translation.attributes,
+						iconAltText: CMDBuild.Translation.attributes,
+						width: 65,
+						align: 'center',
+						sortable: false,
+						hideable: false,
+						menuDisabled: true,
+						fixed: true
+					}),
+					Ext.create('Ext.ux.grid.column.Tick', {
+						dataIndex: CMDBuild.core.constants.Proxy.IS_RELATION,
+						text: CMDBuild.Translation.relation,
+						iconAltText: CMDBuild.Translation.relation,
+						width: 65,
+						align: 'center',
+						sortable: false,
+						hideable: false,
+						menuDisabled: true,
+						fixed: true
+					}),
+					{
+						dataIndex: CMDBuild.core.constants.Proxy.DOMAIN,
+						text: CMDBuild.Translation.domain,
+						sortable: false,
+						hideable: false,
+						menuDisabled: true,
+						flex: 1
+					},
+					{
+						dataIndex: CMDBuild.core.constants.Proxy.DESTINATION_DESCRIPTION,
+						text: CMDBuild.Translation.descriptionLabel,
+						sortable: false,
+						hideable: false,
+						menuDisabled: true,
+						flex: 1
+					}
+				]);
+			}
+
+			return columns;
 		}
 	});
 

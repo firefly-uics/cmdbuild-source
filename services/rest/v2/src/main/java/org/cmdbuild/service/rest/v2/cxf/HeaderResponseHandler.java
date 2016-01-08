@@ -1,6 +1,9 @@
 package org.cmdbuild.service.rest.v2.cxf;
 
 import static java.lang.String.format;
+import static java.net.URLEncoder.encode;
+
+import java.io.UnsupportedEncodingException;
 
 import javax.activation.DataHandler;
 import javax.ws.rs.core.Response;
@@ -19,8 +22,17 @@ public class HeaderResponseHandler implements ResponseHandler, LoggingSupport {
 		final Object entity = response.getEntity();
 		if (entity instanceof DataHandler) {
 			final DataHandler dataHandler = DataHandler.class.cast(entity);
-			output.header("Content-Disposition", format("inline; filename=\"" + dataHandler.getName() + "\""));
+			output.header("Content-Disposition", format("inline; filename=\"%s\"", _encode(dataHandler.getName())));
 		}
 		return output.build();
+	}
+
+	private static String _encode(final String name) {
+		try {
+			return encode(name, "UTF-8");
+		} catch (final UnsupportedEncodingException e) {
+			logger.error("error encoding name", e);
+			return name;
+		}
 	}
 }

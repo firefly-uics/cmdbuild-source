@@ -4,8 +4,8 @@
 		extend: 'Ext.form.field.ComboBox',
 
 		requires: [
-			'CMDBuild.core.proxy.Constants',
-			'CMDBuild.core.proxy.email.Accounts'
+			'CMDBuild.core.constants.Proxy',
+			'CMDBuild.core.proxy.email.Account'
 		],
 
 		/**
@@ -14,10 +14,10 @@
 		delegate: undefined,
 
 		fieldLabel: CMDBuild.Translation.administration.tasks.notificationForm.account,
-		name: CMDBuild.core.proxy.Constants.NOTIFICATION_EMAIL_ACCOUNT,
+		name: CMDBuild.core.constants.Proxy.NOTIFICATION_EMAIL_ACCOUNT,
 
-		valueField: CMDBuild.core.proxy.Constants.NAME,
-		displayField: CMDBuild.core.proxy.Constants.NAME,
+		valueField: CMDBuild.core.constants.Proxy.NAME,
+		displayField: CMDBuild.core.constants.Proxy.NAME,
 		labelWidth: CMDBuild.LABEL_WIDTH,
 		maxWidth: CMDBuild.ADM_BIG_FIELD_WIDTH,
 		forceSelection: true,
@@ -26,7 +26,7 @@
 
 		initComponent: function() {
 			Ext.apply(this, {
-				store: CMDBuild.core.proxy.email.Accounts.getStore()
+				store: CMDBuild.core.proxy.email.Account.getStore()
 			});
 
 			this.callParent(arguments);

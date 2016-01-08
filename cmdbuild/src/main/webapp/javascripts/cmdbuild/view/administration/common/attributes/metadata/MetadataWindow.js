@@ -4,7 +4,7 @@
 		extend: 'CMDBuild.core.PopupWindow',
 
 		requires: [
-			'CMDBuild.core.proxy.Constants',
+			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.model.common.attributes.Metadata'
 		],
 
@@ -29,14 +29,14 @@
 				columns: [
 					{
 						text: CMDBuild.Translation.key,
-						dataIndex: CMDBuild.core.proxy.Constants.KEY,
+						dataIndex: CMDBuild.core.constants.Proxy.KEY,
 						flex: 1,
 
 						editor: { xtype: 'textfield' }
 					},
 					{
 						text: CMDBuild.Translation.value,
-						dataIndex: CMDBuild.core.proxy.Constants.VALUE,
+						dataIndex: CMDBuild.core.constants.Proxy.VALUE,
 						flex: 1,
 
 						editor: { xtype: 'textfield' }
@@ -78,7 +78,7 @@
 				dockedItems: [
 					Ext.create('Ext.toolbar.Toolbar', {
 						dock: 'top',
-						itemId: CMDBuild.core.proxy.Constants.TOOLBAR_TOP,
+						itemId: CMDBuild.core.constants.Proxy.TOOLBAR_TOP,
 
 						items: [
 							Ext.create('CMDBuild.core.buttons.iconized.add.Add', {
@@ -92,7 +92,7 @@
 					}),
 					Ext.create('Ext.toolbar.Toolbar', {
 						dock: 'bottom',
-						itemId: CMDBuild.core.proxy.Constants.TOOLBAR_BOTTOM,
+						itemId: CMDBuild.core.constants.Proxy.TOOLBAR_BOTTOM,
 						ui: 'footer',
 
 						layout: {

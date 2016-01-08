@@ -7,7 +7,7 @@
 			this.callParent(arguments);
 
 			this.store = new Ext.data.Store ({
-				pageSize: getPageSize(),
+				pageSize: CMDBuild.configuration.instance.get(CMDBuild.core.constants.Proxy.ROW_LIMIT),
 				model: 'CMDBuild.view.management.CMMiniCardGridModel',
 				autoLoad: false,
 				remoteSort: false
@@ -19,7 +19,7 @@
 		},
 
 		/**
-		 * 
+		 *
 		 * @param {object} cardToLoad Object with an Id and an IdClass
 		 * attribute. Use it to load the full attributes of the card
 		 */
@@ -55,14 +55,4 @@
 		loadStoreForEntryTypeId: function(entryTypeId, cb) {}
 	});
 
-	function getPageSize() {
-		var pageSize;
-		try {
-			pageSize = parseInt(CMDBuild.Config.cmdbuild.rowlimit);
-		} catch (e) {
-			pageSize = 20;
-		}
-
-		return pageSize;
-	}
 })();

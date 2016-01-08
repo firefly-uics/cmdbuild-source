@@ -26,58 +26,62 @@
 		}
 	});
 
-	/**
-	 * Convenience methods to debug
-	 */
-	_debug = function() {
-		CMDBuild.log.debug.apply(CMDBuild.log, arguments);
-	};
+	// Convenience methods to debug
+		_debug = function() {
+			CMDBuild.log.debug.apply(CMDBuild.log, arguments);
+		};
 
-	/**
-	 * @param {String} message
-	 * @param {Mixed} classWithError
-	 */
-	_deprecated = function(method, classWithError) {
-		classWithError = typeof classWithError == 'string' ? classWithError : Ext.getClassName(classWithError);
+		/**
+		 * @param {String} message
+		 * @param {Mixed} classWithError
+		 */
+		_deprecated = function(method, classWithError) {
+			classWithError = typeof classWithError == 'string' ? classWithError : Ext.getClassName(classWithError);
 
-		if (!Ext.isEmpty(method))
-			CMDBuild.log.warn('DEPRECATED (' + classWithError + '): ' + method);
-	};
+			if (!Ext.isEmpty(method))
+				CMDBuild.log.warn.apply(
+					CMDBuild.log,
+					Ext.Array.insert(Ext.Array.slice(arguments, 1), 0, ['DEPRECATED (' + classWithError + '): ' + method]) // Slice arguments and prepend custom error message
+				);
+		};
 
-	/**
-	 * @param {String} message
-	 * @param {Mixed} classWithError
-	 */
-	_error = function(message, classWithError) {
-		classWithError = Ext.isString(classWithError) ? classWithError : Ext.getClassName(classWithError);
+		/**
+		 * @param {String} message
+		 * @param {Mixed} classWithError
+		 */
+		_error = function(message, classWithError) {
+			classWithError = Ext.isString(classWithError) ? classWithError : Ext.getClassName(classWithError);
 
-		if (!Ext.isEmpty(message))
-			CMDBuild.log.error(classWithError + ': ' + message);
-	};
+			if (!Ext.isEmpty(message))
+				CMDBuild.log.error.apply(
+					CMDBuild.log,
+					Ext.Array.insert(Ext.Array.slice(arguments, 1), 0, [classWithError + ': ' + message]) // Slice arguments and prepend custom error message
+				);
+		};
 
-	/**
-	 * @param {String} message
-	 */
-	_msg = function(message) {
-		CMDBuild.log.info.apply(CMDBuild.log, arguments);
-	};
+		_msg = function() {
+			CMDBuild.log.info.apply(CMDBuild.log, arguments);
+		};
 
-	_trace = function() {
-		CMDBuild.log.trace(arguments);
+		_trace = function() {
+			CMDBuild.log.trace(arguments);
 
-		if (console && Ext.isFunction(console.trace))
-			console.trace();
-	};
+			if (console && Ext.isFunction(console.trace))
+				console.trace();
+		};
 
-	/**
-	 * @param {String} message
-	 * @param {Mixed} classWithError
-	 */
-	_warning = function(message, classWithError) {
-		classWithError = Ext.isString(classWithError) ? classWithError : Ext.getClassName(classWithError);
+		/**
+		 * @param {String} message
+		 * @param {Mixed} classWithError
+		 */
+		_warning = function(message, classWithError) {
+			classWithError = Ext.isString(classWithError) ? classWithError : Ext.getClassName(classWithError);
 
-		if (!Ext.isEmpty(message))
-			CMDBuild.log.warn(classWithError + ': ' + message);
-	};
+			if (!Ext.isEmpty(message))
+				CMDBuild.log.warn.apply(
+					CMDBuild.log,
+					Ext.Array.insert(Ext.Array.slice(arguments, 1), 0, [classWithError + ': ' + message]) // Slice arguments and prepend custom error message
+				);
+		};
 
 })();

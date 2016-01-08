@@ -24,6 +24,8 @@ public interface SecurityLogic {
 
 	List<PrivilegeInfo> fetchFilterPrivilegesForGroup(Long groupId);
 
+	List<PrivilegeInfo> fetchCustomViewPrivilegesForGroup(Long groupId);
+
 	/*
 	 * FIXME
 	 * 
@@ -42,6 +44,8 @@ public interface SecurityLogic {
 	void saveViewPrivilege(PrivilegeInfo privilegeInfo);
 
 	void saveFilterPrivilege(PrivilegeInfo privilegeInfo);
+
+	void saveCustomPagePrivilege(PrivilegeInfo privilegeInfo);
 
 	UIConfiguration fetchGroupUIConfiguration(Long groupId);
 

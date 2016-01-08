@@ -4,14 +4,11 @@
 		extend: 'Ext.form.Panel',
 
 		requires: [
-			'CMDBuild.core.proxy.Constants',
-			'CMDBuild.core.proxy.lookup.Lookup',
-			'CMDBuild.model.lookup.Lookup'
+			'CMDBuild.core.constants.Proxy',
+			'CMDBuild.core.proxy.lookup.Lookup'
 		],
 
-		mixins: {
-			panelFunctions: 'CMDBuild.view.common.PanelFunctions'
-		},
+		mixins: ['CMDBuild.view.common.PanelFunctions'],
 
 		/**
 		 * @cfg {CMDBuild.controller.administration.lookup.List}
@@ -24,14 +21,14 @@
 		activeCheckbox: undefined,
 
 		/**
+		 * @property {CMDBuild.core.buttons.iconized.state.Double}
+		 */
+		enableDisableButton: undefined,
+
+		/**
 		 * @property {Ext.form.field.ComboBox}
 		 */
 		parentCombobox: undefined,
-
-		/**
-		 * @property {CMDBuild.core.buttons.iconized.Delete}
-		 */
-		toggleActiveStateButton: undefined,
 
 		bodyCls: 'cmgraypanel',
 		border: false,
@@ -50,7 +47,7 @@
 				dockedItems: [
 					Ext.create('Ext.toolbar.Toolbar', {
 						dock: 'top',
-						itemId: CMDBuild.core.proxy.Constants.TOOLBAR_TOP,
+						itemId: CMDBuild.core.constants.Proxy.TOOLBAR_TOP,
 
 						items: [
 							Ext.create('CMDBuild.core.buttons.iconized.Modify', {
@@ -61,19 +58,20 @@
 									this.delegate.cmfg('onLookupListModifyButtonClick');
 								}
 							}),
-							this.toggleActiveStateButton = Ext.create('CMDBuild.core.buttons.iconized.Delete', {
-								text: CMDBuild.Translation.disableLookup,
+							this.enableDisableButton = Ext.create('CMDBuild.core.buttons.iconized.state.Double', {
+								state1text: CMDBuild.Translation.disableLookup,
+								state2text: CMDBuild.Translation.enableLookup,
 								scope: this,
 
 								handler: function(button, e) {
-									this.delegate.cmfg('onLookupListToggleActiveStateButtonClick');
+									this.delegate.cmfg('onLookupListEnableDisableButtonClick', button.getClickedState());
 								}
 							})
 						]
 					}),
 					Ext.create('Ext.toolbar.Toolbar', {
 						dock: 'bottom',
-						itemId: CMDBuild.core.proxy.Constants.TOOLBAR_BOTTOM,
+						itemId: CMDBuild.core.constants.Proxy.TOOLBAR_BOTTOM,
 						ui: 'footer',
 
 						layout: {
@@ -102,26 +100,26 @@
 				],
 				items: [
 					Ext.create('Ext.form.field.Text', {
-						name: 'Code',
+						name: CMDBuild.core.constants.Proxy.CODE,
 						fieldLabel: CMDBuild.Translation.code,
 						labelWidth: CMDBuild.LABEL_WIDTH,
 						maxWidth: CMDBuild.ADM_BIG_FIELD_WIDTH
 					}),
 					Ext.create('CMDBuild.view.common.field.translatable.Text', {
-						name: 'Description',
+						name: CMDBuild.core.constants.Proxy.DESCRIPTION,
 						fieldLabel: CMDBuild.Translation.descriptionLabel,
 						labelWidth: CMDBuild.LABEL_WIDTH,
 						maxWidth: CMDBuild.ADM_BIG_FIELD_WIDTH,
 						allowBlank: false,
 
 						translationFieldConfig: {
-							type: CMDBuild.core.proxy.Constants.LOOKUP_VALUE,
-							identifier: { sourceType: 'form', key: 'TranslationUuid', source: this },
-							field: CMDBuild.core.proxy.Constants.DESCRIPTION
+							type: CMDBuild.core.constants.Proxy.LOOKUP_VALUE,
+							identifier: { sourceType: 'form', key: CMDBuild.core.constants.Proxy.TRANSLATION_UUID, source: this },
+							field: CMDBuild.core.constants.Proxy.DESCRIPTION
 						}
 					}),
 					this.parentCombobox = Ext.create('Ext.form.field.ComboBox', {
-						name: 'ParentId',
+						name: CMDBuild.core.constants.Proxy.PARENT_ID,
 						fieldLabel: CMDBuild.Translation.parentDescription,
 						labelWidth: CMDBuild.LABEL_WIDTH,
 						maxWidth: CMDBuild.ADM_BIG_FIELD_WIDTH,
@@ -134,13 +132,13 @@
 						queryMode: 'local'
 					}),
 					Ext.create('Ext.form.field.TextArea', {
-						name: 'Notes',
+						name: CMDBuild.core.constants.Proxy.NOTES,
 						fieldLabel: CMDBuild.Translation.notes,
 						labelWidth: CMDBuild.LABEL_WIDTH,
 						maxWidth: CMDBuild.ADM_BIG_FIELD_WIDTH
 					}),
 					this.activeCheckbox = Ext.create('Ext.form.field.Checkbox', {
-						name: 'Active',
+						name: CMDBuild.core.constants.Proxy.ACTIVE,
 						fieldLabel: CMDBuild.Translation.active,
 						labelWidth: CMDBuild.LABEL_WIDTH,
 						inputValue: true,
@@ -149,11 +147,11 @@
 					}),
 					{
 						xtype: 'hiddenfield',
-						name: 'Id'
+						name: CMDBuild.core.constants.Proxy.ID
 					},
 					{ // Used for translations
 						xtype: 'hiddenfield',
-						name: 'TranslationUuid'
+						name: CMDBuild.core.constants.Proxy.TRANSLATION_UUID
 					}
 				]
 			});

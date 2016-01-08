@@ -1,18 +1,12 @@
 package org.cmdbuild.service.rest.v1.cxf.configuration;
 
-import static java.util.Arrays.asList;
-
-import java.util.Collection;
-
-import org.cmdbuild.auth.DefaultAuthenticationService;
-import org.cmdbuild.auth.DefaultAuthenticationService.Configuration;
-import org.cmdbuild.auth.LegacyDBAuthenticator;
-import org.cmdbuild.auth.NotSystemUserFetcher;
+import org.cmdbuild.auth.TokenGenerator;
+import org.cmdbuild.auth.TokenManager;
 import org.cmdbuild.auth.UserStore;
-import org.cmdbuild.auth.acl.PrivilegeContextFactory;
+import org.cmdbuild.config.CmdbuildConfiguration;
 import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.logic.auth.AuthenticationLogic;
-import org.cmdbuild.logic.auth.DefaultAuthenticationLogic;
+import org.cmdbuild.logic.auth.RestAuthenticationLogicBuilder;
 import org.cmdbuild.logic.data.access.DataAccessLogic;
 import org.cmdbuild.logic.data.access.SystemDataAccessLogicBuilder;
 import org.cmdbuild.logic.data.access.WebServiceDataAccessLogicBuilder;
@@ -23,7 +17,6 @@ import org.cmdbuild.logic.menu.MenuLogic;
 import org.cmdbuild.logic.privileges.SecurityLogic;
 import org.cmdbuild.logic.workflow.WebserviceWorkflowLogicBuilder;
 import org.cmdbuild.logic.workflow.WorkflowLogic;
-import org.cmdbuild.privileges.DBGroupFetcher;
 import org.cmdbuild.services.meta.MetadataStoreFactory;
 import org.cmdbuild.workflow.LookupHelper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,33 +30,11 @@ public class ApplicationContextHelperV1 {
 	private ApplicationContext applicationContext;
 
 	public AuthenticationLogic authenticationLogic() {
-		/*
-		 * TODO
-		 * 
-		 * it could be DefaultAuthenticationLogic but at the moment we don't
-		 * want other authenticators than database one
-		 */
-		final LegacyDBAuthenticator databaseAuthenticator = applicationContext.getBean(LegacyDBAuthenticator.class);
-		final NotSystemUserFetcher notSystemUserFetcher = applicationContext.getBean(NotSystemUserFetcher.class);
-		final DBGroupFetcher dbGroupFetcher = applicationContext.getBean(DBGroupFetcher.class);
-		final DefaultAuthenticationService authenticationService = new DefaultAuthenticationService(
-				new Configuration() {
+		return applicationContext.getBean(RestAuthenticationLogicBuilder.class).build();
+	}
 
-					@Override
-					public Collection<String> getActiveAuthenticators() {
-						return asList(databaseAuthenticator.getName());
-					}
-
-				}, systemDataView());
-		authenticationService.setPasswordAuthenticators(databaseAuthenticator);
-		authenticationService.setUserFetchers(databaseAuthenticator, notSystemUserFetcher);
-		authenticationService.setGroupFetcher(dbGroupFetcher);
-		authenticationService.setUserStore(userStore());
-
-		final PrivilegeContextFactory privilegeContextFactory = applicationContext
-				.getBean(PrivilegeContextFactory.class);
-
-		return new DefaultAuthenticationLogic(authenticationService, privilegeContextFactory, systemDataView());
+	public CmdbuildConfiguration cmdbuildConfiguration() {
+		return applicationContext.getBean(CmdbuildConfiguration.class);
 	}
 
 	public DmsLogic dmsLogic() {
@@ -96,6 +67,14 @@ public class ApplicationContextHelperV1 {
 
 	public CMDataView systemDataView() {
 		return applicationContext.getBean("systemDataView", CMDataView.class);
+	}
+
+	public TokenGenerator tokenGenerator() {
+		return applicationContext.getBean(TokenGenerator.class);
+	}
+
+	public TokenManager tokenManager() {
+		return applicationContext.getBean(TokenManager.class);
 	}
 
 	public DataAccessLogic userDataAccessLogic() {

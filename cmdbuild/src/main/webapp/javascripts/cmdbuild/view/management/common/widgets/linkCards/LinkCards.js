@@ -4,7 +4,7 @@
 		extend: 'Ext.panel.Panel',
 
 		requires: [
-			'CMDBuild.core.proxy.Constants',
+			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.Utils'
 		],
 
@@ -53,8 +53,8 @@
 			var allowEditCard = false;
 			var allowShowCard = false;
 
-			if (this.widgetConf[CMDBuild.core.proxy.Constants.ALLOW_CARD_EDITING]) {
-				var priv = CMDBuild.core.Utils.getEntryTypePrivilegesByName(this.widgetConf[CMDBuild.core.proxy.Constants.CLASS_NAME]);
+			if (this.widgetConf[CMDBuild.core.constants.Proxy.ALLOW_CARD_EDITING]) {
+				var priv = CMDBuild.core.Utils.getEntryTypePrivilegesByName(this.widgetConf[CMDBuild.core.constants.Proxy.CLASS_NAME]);
 
 				if (priv && priv.write) {
 					allowEditCard = true;
@@ -67,7 +67,7 @@
 				dockedItems: [
 					Ext.create('Ext.toolbar.Toolbar', {
 						dock: 'top',
-						itemId: CMDBuild.core.proxy.Constants.TOOLBAR_TOP,
+						itemId: CMDBuild.core.constants.Proxy.TOOLBAR_TOP,
 
 						items: [
 							this.toggleGridFilterButton = Ext.create('Ext.button.Button', { // TODO: build toggle/cycle button class
@@ -82,7 +82,7 @@
 							}),
 							this.applyDefaultSelectionButton = Ext.create('CMDBuild.core.buttons.iconized.Reload', {
 								text: CMDBuild.Translation.applyDefaultSelection,
-								disabled: Ext.isEmpty(this.widgetConf[CMDBuild.core.proxy.Constants.DEFAULT_SELECTION]),
+								disabled: Ext.isEmpty(this.widgetConf[CMDBuild.core.constants.Proxy.DEFAULT_SELECTION]),
 								scope: this,
 
 								handler: function(button, e) {
@@ -105,7 +105,7 @@
 				]
 			});
 
-			if (this.widgetConf[CMDBuild.core.proxy.Constants.ENABLE_MAP] && CMDBuild.Config.gis.enabled)
+			if (this.widgetConf[CMDBuild.core.constants.Proxy.ENABLE_MAP] && CMDBuild.Config.gis.enabled)
 				this.buildMap();
 
 			this.callParent(arguments);
@@ -131,16 +131,16 @@
 				frame: false,
 				border: false,
 
-				lon: this.widgetConf[CMDBuild.core.proxy.Constants.START_MAP_WITH_LONGITUDE] || this.widgetConf[CMDBuild.core.proxy.Constants.MAP_LONGITUDE],
-				lat: this.widgetConf[CMDBuild.core.proxy.Constants.START_MAP_WITH_LATITUDE] || this.widgetConf[CMDBuild.core.proxy.Constants.MAP_LATITATUDE],
-				initialZoomLevel: this.widgetConf[CMDBuild.core.proxy.Constants.START_MAP_WITH_ZOOM] || this.widgetConf[CMDBuild.core.proxy.Constants.MAP_ZOOM]
+				lon: this.widgetConf[CMDBuild.core.constants.Proxy.START_MAP_WITH_LONGITUDE] || this.widgetConf[CMDBuild.core.constants.Proxy.MAP_LONGITUDE],
+				lat: this.widgetConf[CMDBuild.core.constants.Proxy.START_MAP_WITH_LATITUDE] || this.widgetConf[CMDBuild.core.constants.Proxy.MAP_LATITATUDE],
+				initialZoomLevel: this.widgetConf[CMDBuild.core.constants.Proxy.START_MAP_WITH_ZOOM] || this.widgetConf[CMDBuild.core.constants.Proxy.MAP_ZOOM]
 			});
 
 			Ext.apply(this, {
 				dockedItems: [
 					Ext.create('Ext.toolbar.Toolbar', {
 						dock: 'top',
-						itemId: CMDBuild.core.proxy.Constants.TOOLBAR_TOP,
+						itemId: CMDBuild.core.constants.Proxy.TOOLBAR_TOP,
 
 						items: [this.toggleGridFilterButton, '->', this.mapButton]
 					})
@@ -176,12 +176,12 @@
 		 * @return {CMDBuild.selection.CMMultiPageSelectionModel} single select or multi select
 		 */
 		getSelectionModel: function() {
-			if (this.widgetConf[CMDBuild.core.proxy.Constants.READ_ONLY])
+			if (this.widgetConf[CMDBuild.core.constants.Proxy.READ_ONLY])
 				return Ext.create('Ext.selection.RowModel');
 
 			return Ext.create('CMDBuild.selection.CMMultiPageSelectionModel', {
 				avoidCheckerHeader: true,
-				mode: this.widgetConf[CMDBuild.core.proxy.Constants.SINGLE_SELECT] ? 'SINGLE' : 'MULTI',
+				mode: this.widgetConf[CMDBuild.core.constants.Proxy.SINGLE_SELECT] ? 'SINGLE' : 'MULTI',
 				idProperty: 'Id' // Required to identify the records for the data and not the id of ext
 			});
 		},

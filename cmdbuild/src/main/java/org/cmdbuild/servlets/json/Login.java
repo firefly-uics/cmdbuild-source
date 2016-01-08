@@ -1,5 +1,6 @@
 package org.cmdbuild.servlets.json;
 
+import static org.cmdbuild.services.json.dto.JsonResponse.success;
 import static org.cmdbuild.spring.SpringIntegrationUtils.applicationContext;
 
 import java.util.Collection;
@@ -9,6 +10,7 @@ import org.cmdbuild.auth.GroupFetcher;
 import org.cmdbuild.auth.acl.CMGroup;
 import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.dao.view.DBDataView;
+import org.cmdbuild.listeners.CMDBContext;
 import org.cmdbuild.logger.Log;
 import org.cmdbuild.logic.auth.AuthenticationLogic;
 import org.cmdbuild.logic.auth.AuthenticationLogic.GroupInfo;
@@ -16,10 +18,13 @@ import org.cmdbuild.logic.auth.AuthenticationLogic.Response;
 import org.cmdbuild.logic.auth.LoginDTO;
 import org.cmdbuild.privileges.DBGroupFetcher;
 import org.cmdbuild.privileges.fetchers.factories.PrivilegeFetcherFactory;
+import org.cmdbuild.services.json.dto.JsonResponse;
 import org.cmdbuild.servlets.utils.Parameter;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import com.google.common.base.Optional;
 
 public class Login extends JSONBaseWithSpringContext {
 
@@ -32,7 +37,7 @@ public class Login extends JSONBaseWithSpringContext {
 			@Parameter(value = "username", required = false) final String loginString, //
 			@Parameter(value = "password", required = false) final String password, //
 			@Parameter(value = "role", required = false) final String groupName //
-	) throws JSONException {
+	) {
 		authLogic = authLogic();
 		final Response response = authLogic.login(LoginDTO.newInstance() //
 				.withLoginString(loginString)//
@@ -85,6 +90,16 @@ public class Login extends JSONBaseWithSpringContext {
 			jsonGroups.put(jsonGroup);
 		}
 		return jsonGroups;
+	}
+
+	@JSONExported
+	@Unauthorized
+	public JsonResponse logout() {
+		final Optional<CMDBContext> element = contextStore().get();
+		if (element.isPresent()) {
+			element.get().getRequest().getSession().invalidate();
+		}
+		return success();
 	}
 
 }

@@ -3,13 +3,17 @@ package unit.model.widget.customform;
 import static java.util.Arrays.asList;
 import static org.cmdbuild.model.widget.customform.CustomFormWidgetFactory.ADD_DISABLED;
 import static org.cmdbuild.model.widget.customform.CustomFormWidgetFactory.ATTRIBUTES_SEPARATOR;
+import static org.cmdbuild.model.widget.customform.CustomFormWidgetFactory.CLASS_ATTRIBUTES;
 import static org.cmdbuild.model.widget.customform.CustomFormWidgetFactory.CLASS_MODEL;
+import static org.cmdbuild.model.widget.customform.CustomFormWidgetFactory.CLONE_DISABLED;
 import static org.cmdbuild.model.widget.customform.CustomFormWidgetFactory.DATA_TYPE;
 import static org.cmdbuild.model.widget.customform.CustomFormWidgetFactory.DEFAULT_ATTRIBUTES_SEPARATOR;
 import static org.cmdbuild.model.widget.customform.CustomFormWidgetFactory.DEFAULT_KEY_VALUE_SEPARATOR;
 import static org.cmdbuild.model.widget.customform.CustomFormWidgetFactory.DEFAULT_ROWS_SEPARATOR;
 import static org.cmdbuild.model.widget.customform.CustomFormWidgetFactory.DELETE_DISABLED;
+import static org.cmdbuild.model.widget.customform.CustomFormWidgetFactory.EXPORT_DISABLED;
 import static org.cmdbuild.model.widget.customform.CustomFormWidgetFactory.FORM_MODEL;
+import static org.cmdbuild.model.widget.customform.CustomFormWidgetFactory.FUNCTION_ATTRIBUTES;
 import static org.cmdbuild.model.widget.customform.CustomFormWidgetFactory.FUNCTION_DATA;
 import static org.cmdbuild.model.widget.customform.CustomFormWidgetFactory.FUNCTION_MODEL;
 import static org.cmdbuild.model.widget.customform.CustomFormWidgetFactory.IMPORT_DISABLED;
@@ -20,6 +24,7 @@ import static org.cmdbuild.model.widget.customform.CustomFormWidgetFactory.RAW_D
 import static org.cmdbuild.model.widget.customform.CustomFormWidgetFactory.READ_ONLY;
 import static org.cmdbuild.model.widget.customform.CustomFormWidgetFactory.ROWS_SEPARATOR;
 import static org.cmdbuild.model.widget.customform.CustomFormWidgetFactory.SERIALIZATION_TYPE;
+import static org.cmdbuild.model.widget.customform.CustomFormWidgetFactory.TEMPLATE_RESOLVER;
 import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasSize;
@@ -316,6 +321,37 @@ public class CustomFormWidgetFactoryTest {
 	}
 
 	@Test
+	public void attributesForClassSuccessfullyFiltered() throws Exception {
+		// given
+		final String serialization = "" //
+				+ MODEL_TYPE + "=\"class\"\n" //
+				+ CLASS_MODEL + "=\"foo\"\n" //
+				+ CLASS_ATTRIBUTES + "=\" bar , baz\"\n" //
+		;
+		final CMClass target = mock(CMClass.class);
+		doReturn(target) //
+				.when(dataView).findClass(any(String.class));
+		final CMAttribute first = attribute(new TextAttributeType(), "bar");
+		final CMAttribute second = attribute(new TextAttributeType(), "lol");
+		final CMAttribute third = attribute(new TextAttributeType(), "baz");
+		doReturn(asList(first, second, third)) //
+				.when(target).getAttributes();
+
+		// when
+		final CustomForm created = (CustomForm) widgetFactory.createWidget(serialization, mock(CMValueSet.class));
+
+		// then
+		final List<Attribute> form = readJsonString(created.getModel());
+		assertThat(form, not(empty()));
+		assertThat(form, hasSize(2));
+		assertThat(form.get(0).getName(), equalTo("bar"));
+		// TODO test all attribute conversion
+		assertThat(form.get(1).getName(), equalTo("baz"));
+		verify(dataView).findClass(eq("foo"));
+		verifyNoMoreInteractions(templateRespository, notifier, dataView, metadataStoreFactory);
+	}
+
+	@Test
 	public void functionModelAndMissingFunctionProducesNoWidgetAndNotification() throws Exception {
 		// given
 		final String serialization = "" //
@@ -367,6 +403,37 @@ public class CustomFormWidgetFactoryTest {
 	}
 
 	@Test
+	public void attributesForFunctionSuccessfullyFiltered() throws Exception {
+		// given
+		final String serialization = "" //
+				+ MODEL_TYPE + "=\"function\"\n" //
+				+ FUNCTION_MODEL + "=\"foo\"\n" //
+				+ FUNCTION_ATTRIBUTES + "=\" bar , baz\"\n" //
+		;
+		final CMFunction target = mock(CMFunction.class);
+		doReturn(target) //
+				.when(dataView).findFunctionByName(any(String.class));
+		final CMFunctionParameter first = parameter(new TextAttributeType(), "bar");
+		final CMFunctionParameter second = parameter(new TextAttributeType(), "lol");
+		final CMFunctionParameter third = parameter(new TextAttributeType(), "baz");
+		doReturn(asList(first, second, third)) //
+				.when(target).getInputParameters();
+
+		// when
+		final CustomForm created = (CustomForm) widgetFactory.createWidget(serialization, mock(CMValueSet.class));
+
+		// then
+		final List<Attribute> form = readJsonString(created.getModel());
+		assertThat(form, not(empty()));
+		assertThat(form, hasSize(2));
+		assertThat(form.get(0).getName(), equalTo("bar"));
+		// TODO test all attribute conversion
+		assertThat(form.get(1).getName(), equalTo("baz"));
+		verify(dataView).findFunctionByName(eq("foo"));
+		verifyNoMoreInteractions(templateRespository, notifier, dataView, metadataStoreFactory);
+	}
+
+	@Test
 	public void capabilitiesAreNotDisabledByDefault() throws Exception {
 		// given
 		final String serialization = "" //
@@ -382,8 +449,10 @@ public class CustomFormWidgetFactoryTest {
 		assertThat(capabilities.isReadOnly(), equalTo(false));
 		assertThat(capabilities.isAddDisabled(), equalTo(false));
 		assertThat(capabilities.isDeleteDisabled(), equalTo(false));
+		assertThat(capabilities.isExportDisabled(), equalTo(false));
 		assertThat(capabilities.isImportDisabled(), equalTo(false));
 		assertThat(capabilities.isModifyDisabled(), equalTo(false));
+		assertThat(capabilities.isCloneDisabled(), equalTo(false));
 		verifyNoMoreInteractions(templateRespository, notifier, dataView, metadataStoreFactory);
 	}
 
@@ -396,6 +465,7 @@ public class CustomFormWidgetFactoryTest {
 				+ READ_ONLY + "\n" //
 				+ ADD_DISABLED + "\n" //
 				+ DELETE_DISABLED + "\n" //
+				+ EXPORT_DISABLED + "\n" //
 				+ IMPORT_DISABLED + "\n" //
 				+ MODIFY_DISABLED + "\n" //
 		;
@@ -408,6 +478,7 @@ public class CustomFormWidgetFactoryTest {
 		assertThat(capabilities.isReadOnly(), equalTo(false));
 		assertThat(capabilities.isAddDisabled(), equalTo(false));
 		assertThat(capabilities.isDeleteDisabled(), equalTo(false));
+		assertThat(capabilities.isExportDisabled(), equalTo(false));
 		assertThat(capabilities.isImportDisabled(), equalTo(false));
 		assertThat(capabilities.isModifyDisabled(), equalTo(false));
 		verifyNoMoreInteractions(templateRespository, notifier, dataView, metadataStoreFactory);
@@ -422,8 +493,10 @@ public class CustomFormWidgetFactoryTest {
 				+ READ_ONLY + "=true\n" //
 				+ ADD_DISABLED + "=true\n" //
 				+ DELETE_DISABLED + "=true\n" //
+				+ EXPORT_DISABLED + "=true\n" //
 				+ IMPORT_DISABLED + "=true\n" //
 				+ MODIFY_DISABLED + "=true\n" //
+				+ CLONE_DISABLED + "=true\n" //
 		;
 
 		// when
@@ -434,8 +507,10 @@ public class CustomFormWidgetFactoryTest {
 		assertThat(capabilities.isReadOnly(), equalTo(false));
 		assertThat(capabilities.isAddDisabled(), equalTo(false));
 		assertThat(capabilities.isDeleteDisabled(), equalTo(false));
+		assertThat(capabilities.isExportDisabled(), equalTo(false));
 		assertThat(capabilities.isImportDisabled(), equalTo(false));
 		assertThat(capabilities.isModifyDisabled(), equalTo(false));
+		assertThat(capabilities.isCloneDisabled(), equalTo(false));
 		verifyNoMoreInteractions(templateRespository, notifier, dataView, metadataStoreFactory);
 	}
 
@@ -448,8 +523,10 @@ public class CustomFormWidgetFactoryTest {
 				+ READ_ONLY + "=\"true\"\n" //
 				+ ADD_DISABLED + "=\"true\"\n" //
 				+ DELETE_DISABLED + "=\"true\"\n" //
+				+ EXPORT_DISABLED + "=\"true\"\n" //
 				+ IMPORT_DISABLED + "=\"true\"\n" //
 				+ MODIFY_DISABLED + "=\"true\"\n" //
+				+ CLONE_DISABLED + "=\"true\"\n" //
 		;
 
 		// when
@@ -460,8 +537,10 @@ public class CustomFormWidgetFactoryTest {
 		assertThat(capabilities.isReadOnly(), equalTo(true));
 		assertThat(capabilities.isAddDisabled(), equalTo(true));
 		assertThat(capabilities.isDeleteDisabled(), equalTo(true));
+		assertThat(capabilities.isExportDisabled(), equalTo(true));
 		assertThat(capabilities.isImportDisabled(), equalTo(true));
 		assertThat(capabilities.isModifyDisabled(), equalTo(true));
+		assertThat(capabilities.isCloneDisabled(), equalTo(true));
 		verifyNoMoreInteractions(templateRespository, notifier, dataView, metadataStoreFactory);
 	}
 
@@ -574,12 +653,31 @@ public class CustomFormWidgetFactoryTest {
 	}
 
 	@Test
-	public void dataFromFunctionAndMissingFunctionNameProducesNoWidget() throws Exception {
+	public void dataFromJsonRawSourceReturnsExpressionAsIs() throws Exception {
+		// given
+		final String serialization = "" //
+				+ MODEL_TYPE + "=\"form\"\n" //
+				+ FORM_MODEL + "=\"foo\"\n" //
+				+ DATA_TYPE + "=\"raw_json\"\n" //
+				+ RAW_DATA + "=\"foo bar baz\"\n" //
+		;
+
+		// when
+		final CustomForm created = (CustomForm) widgetFactory.createWidget(serialization, mock(CMValueSet.class));
+
+		// then
+		assertThat(created.getData(), equalTo("foo bar baz"));
+		verifyNoMoreInteractions(templateRespository, notifier, dataView, metadataStoreFactory);
+	}
+
+	@Test
+	public void dataFromFunctionWithNoTemplateResolverAndMissingFunctionNameProducesNoWidget() throws Exception {
 		// given
 		final String serialization = "" //
 				+ MODEL_TYPE + "=\"form\"\n" //
 				+ FORM_MODEL + "=\"foo\"\n" //
 				+ DATA_TYPE + "=\"function\"\n" //
+				+ TEMPLATE_RESOLVER + "=\"false\"\n" //
 		;
 
 		// when
@@ -594,13 +692,14 @@ public class CustomFormWidgetFactoryTest {
 	}
 
 	@Test
-	public void dataFromFunctionAndMissingFunctionProducesNoWidget() throws Exception {
+	public void dataFromFunctionWithNoTemplateResolverAndMissingFunctionProducesNoWidget() throws Exception {
 		// given
 		final String serialization = "" //
 				+ MODEL_TYPE + "=\"form\"\n" //
 				+ FORM_MODEL + "=\"foo\"\n" //
 				+ DATA_TYPE + "=\"function\"\n" //
 				+ FUNCTION_DATA + "=\"missing\"\n" //
+				+ TEMPLATE_RESOLVER + "=\"false\"\n" //
 		;
 		doReturn(null) //
 				.when(dataView).findFunctionByName(any(String.class));
@@ -616,6 +715,76 @@ public class CustomFormWidgetFactoryTest {
 						.getWidgetName())));
 		verifyNoMoreInteractions(templateRespository, notifier, dataView, metadataStoreFactory);
 	}
+
+	@Test
+	public void dataFromFunctionWithTemplateResolverAndMissingFunctionNameProducesNoWidget() throws Exception {
+		// given
+		final String serialization = "" //
+				+ MODEL_TYPE + "=\"form\"\n" //
+				+ FORM_MODEL + "=\"foo\"\n" //
+				+ DATA_TYPE + "=\"function\"\n" //
+		;
+		doReturn(null) //
+				.when(dataView).findFunctionByName(any(String.class));
+
+		// when
+		final CustomForm created = (CustomForm) widgetFactory.createWidget(serialization, mock(CMValueSet.class));
+
+		// then
+		assertThat(created, nullValue());
+		verify(notifier).warn(
+				eq(new CMDBWorkflowException(WorkflowExceptionType.WF_CANNOT_CONFIGURE_CMDBEXTATTR, widgetFactory
+						.getWidgetName())));
+		verifyNoMoreInteractions(templateRespository, notifier, dataView, metadataStoreFactory);
+	}
+
+	@Test
+	public void dataFromFunctionWithTemplateResolverAndEmptyFunctionNameProducesNoWidget() throws Exception {
+		// given
+		final String serialization = "" //
+				+ MODEL_TYPE + "=\"form\"\n" //
+				+ FORM_MODEL + "=\"foo\"\n" //
+				+ DATA_TYPE + "=\"function\"\n" //
+				+ FUNCTION_DATA + "=\"\"\n" //
+		;
+		doReturn(null) //
+				.when(dataView).findFunctionByName(any(String.class));
+
+		// when
+		final CustomForm created = (CustomForm) widgetFactory.createWidget(serialization, mock(CMValueSet.class));
+
+		// then
+		assertThat(created, nullValue());
+		verify(notifier).warn(
+				eq(new CMDBWorkflowException(WorkflowExceptionType.WF_CANNOT_CONFIGURE_CMDBEXTATTR, widgetFactory
+						.getWidgetName())));
+		verifyNoMoreInteractions(templateRespository, notifier, dataView, metadataStoreFactory);
+	}
+
+	@Test
+	public void dataFromFunctionWithTemplateResolver() throws Exception {
+		// given
+		final String serialization = "" //
+				+ MODEL_TYPE + "=\"form\"\n" //
+				+ FORM_MODEL + "=\"foo\"\n" //
+				+ DATA_TYPE + "=\"function\"\n" //
+				+ FUNCTION_DATA + "=\"some function\"\n" //
+		;
+		doReturn(null) //
+				.when(dataView).findFunctionByName(any(String.class));
+
+		// when
+		final CustomForm created = (CustomForm) widgetFactory.createWidget(serialization, mock(CMValueSet.class));
+
+		// then
+		assertThat(created.getData(), nullValue());
+		assertThat(created.getFunctionData(), equalTo("some function"));
+		verifyNoMoreInteractions(templateRespository, notifier, dataView, metadataStoreFactory);
+	}
+
+	/*
+	 * utilities
+	 */
 
 	private static CMAttribute attribute(final CMAttributeType<?> type, final String name) {
 		final CMAttribute output = mock(CMAttribute.class);

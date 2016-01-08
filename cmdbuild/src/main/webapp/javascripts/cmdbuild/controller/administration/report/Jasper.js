@@ -1,11 +1,11 @@
 (function() {
 
 	Ext.define('CMDBuild.controller.administration.report.Jasper', {
-		extend: 'CMDBuild.controller.common.AbstractController',
+		extend: 'CMDBuild.controller.common.abstract.Base',
 
 		requires: [
+			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.Message',
-			'CMDBuild.core.proxy.Constants',
 			'CMDBuild.core.proxy.Index',
 			'CMDBuild.core.proxy.report.Jasper',
 			'CMDBuild.model.report.Grid',
@@ -28,7 +28,8 @@
 			'onReportsJasperModifyButtonClick = onReportsJasperItemDoubleClick',
 			'onReportsJasperRemoveButtonClick',
 			'onReportsJasperRowSelected',
-			'onReportsJasperSaveButtonClick'
+			'onReportsJasperSaveButtonClick',
+			'onReportsJasperShow'
 		],
 
 		/**
@@ -86,14 +87,14 @@
 			this.grid = this.view.grid;
 		},
 
+		/**
+		 * @private
+		 */
 		import: function() {
-			CMDBuild.LoadMask.get().show();
 			CMDBuild.core.proxy.report.Jasper.import({
-				form: this.form.step2Panel,
+				form: this.form.step2Panel.getForm(),
 				scope: this,
-				failure: function(form, action) {
-					CMDBuild.LoadMask.get().hide();
-
+				failure: function(response, options, decodedResponse) {
 					CMDBuild.core.Message.error(CMDBuild.Translation.errors.error_message, CMDBuild.Translation.errors.reportsImportError, false);
 				},
 				success: this.success
@@ -137,14 +138,14 @@
 						frame: false,
 						readOnly: true,
 
-						value: record.get(CMDBuild.core.proxy.Constants.QUERY)
+						value: record.get(CMDBuild.core.constants.Proxy.QUERY)
 					})
 				],
 
 				dockedItems: [
 					Ext.create('Ext.toolbar.Toolbar', {
 						dock: 'bottom',
-						itemId: CMDBuild.core.proxy.Constants.TOOLBAR_BOTTOM,
+						itemId: CMDBuild.core.constants.Proxy.TOOLBAR_BOTTOM,
 						ui: 'footer',
 
 						layout: {
@@ -172,20 +173,20 @@
 		 */
 		onReportsJasperGenerateZipButtonClick: function(record) {
 			var params = {};
-			params[CMDBuild.core.proxy.Constants.ID] = record.get(CMDBuild.core.proxy.Constants.ID);
-			params[CMDBuild.core.proxy.Constants.TYPE] = record.get(CMDBuild.core.proxy.Constants.TYPE);
-			params[CMDBuild.core.proxy.Constants.EXTENSION] = CMDBuild.core.proxy.Constants.ZIP;
+			params[CMDBuild.core.constants.Proxy.ID] = record.get(CMDBuild.core.constants.Proxy.ID);
+			params[CMDBuild.core.constants.Proxy.TYPE] = record.get(CMDBuild.core.constants.Proxy.TYPE);
+			params[CMDBuild.core.constants.Proxy.EXTENSION] = CMDBuild.core.constants.Proxy.ZIP;
 
 			CMDBuild.core.proxy.report.Jasper.create({
 				params: params,
 				scope: this,
-				success: function(result, options, decodedResult) {
+				success: function(response, options, decodedResponse) {
 					params = {};
-					params[CMDBuild.core.proxy.Constants.FORCE_DOWNLOAD_PARAM_KEY] = true;
+					params[CMDBuild.core.constants.Proxy.FORCE_DOWNLOAD_PARAM_KEY] = true;
 
 					var form = Ext.create('Ext.form.Panel', {
 						standardSubmit: true,
-						url: CMDBuild.core.proxy.Index.reports.printReportFactory
+						url: CMDBuild.core.proxy.Index.report.printReportFactory
 					});
 
 					form.submit({
@@ -208,17 +209,18 @@
 			Ext.Msg.show({
 				title: CMDBuild.Translation.common.confirmpopup.title,
 				msg: CMDBuild.Translation.common.confirmpopup.areyousure,
-				scope: this,
 				buttons: Ext.Msg.YESNO,
-				fn: function(button) {
-					if (button == 'yes')
+				scope: this,
+
+				fn: function(buttonId, text, opt) {
+					if (buttonId == 'yes')
 						this.removeItem();
 				}
 			});
 		},
 
 		/**
-		 * TODO: server implementation to get a single view data
+		 * TODO: waiting for refactor (crud)
 		 */
 		onReportsJasperRowSelected: function() {
 			this.selectedReport = this.grid.getSelectionModel().getSelection()[0];
@@ -240,31 +242,26 @@
 		onReportsJasperSaveButtonClick: function() {
 			if (this.form.getLayout().getActiveItem() == this.form.step1Panel) { // We are on step1
 				var params = {};
-				params[CMDBuild.core.proxy.Constants.NAME] = this.form.step1Panel.name.getValue(); // TODO: needed a refactor because i read a title parameter but i write as name
-				params[CMDBuild.core.proxy.Constants.REPORT_ID] = this.form.step1Panel.reportId.getValue(); // TODO: needed a refactor because i read a id parameter but i write as reportId
+				params[CMDBuild.core.constants.Proxy.NAME] = this.form.step1Panel.name.getValue(); // TODO: waiting for refactor (read title parameter, write as name)
+				params[CMDBuild.core.constants.Proxy.REPORT_ID] = this.form.step1Panel.reportId.getValue() || -1; // TODO: waiting for refactor (read id parameter, write as reportId)
 
-				CMDBuild.LoadMask.get().show();
 				CMDBuild.core.proxy.report.Jasper.analize({
-					form: this.form.step1Panel,
+					form: this.form.step1Panel.getForm(),
 					params: params,
 					scope: this,
-					failure: function(form, action) {
-						CMDBuild.LoadMask.get().hide();
-
+					failure: function(response, options, decodedResponse) {
 						CMDBuild.core.Message.error(CMDBuild.Translation.errors.error_message, CMDBuild.Translation.errors.reportsAnalizeError, false);
 					},
-					success: function(form, action) {
-						CMDBuild.LoadMask.get().hide();
-
-						if (Ext.isBoolean(action.result.skipSecondStep) && action.result.skipSecondStep) {
+					success: function(response, options, decodedResponse) {
+						if (Ext.isBoolean(decodedResponse.skipSecondStep) && decodedResponse.skipSecondStep) {
 							CMDBuild.core.proxy.report.Jasper.save({
 								scope: this,
 								success: this.success
 							});
 						} else {
-							this.setFormDetails(action.result);
+							this.setFormDetails(decodedResponse);
 
-							if (this.form.step2Panel.items.items.length == 0) {
+							if (Ext.isEmpty(decodedResponse.images) && Ext.isEmpty(decodedResponse.subreports)) {
 								this.import();
 							} else {
 								this.form.getLayout().setActiveItem(1);
@@ -277,10 +274,23 @@
 			}
 		},
 
+		onReportsJasperShow: function() {
+			this.grid.getStore().load({
+				scope: this,
+				callback: function(records, operation, success) {
+					if (!this.grid.getSelectionModel().hasSelection())
+						this.grid.getSelectionModel().select(0, true);
+				}
+			});
+		},
+
+		/**
+		 * @private
+		 */
 		removeItem: function() {
 			if (!Ext.isEmpty(this.selectedReport)) {
 				var params = {};
-				params[CMDBuild.core.proxy.Constants.ID] = this.selectedReport.get(CMDBuild.core.proxy.Constants.ID);
+				params[CMDBuild.core.constants.Proxy.ID] = this.selectedReport.get(CMDBuild.core.constants.Proxy.ID);
 
 				CMDBuild.core.proxy.report.Jasper.remove({
 					params: params,
@@ -306,13 +316,6 @@
 									// If no selections disable all UI
 									if (!this.grid.getSelectionModel().hasSelection())
 										this.form.setDisabledModify(true, true, true, true);
-
-									_CMCache.reloadReportStores();
-								} else {
-									CMDBuild.core.Message.error(null, {
-										text: CMDBuild.Translation.errors.unknown_error,
-										detail: operation.error
-									});
 								}
 							}
 						});
@@ -322,44 +325,36 @@
 		},
 
 		/**
-		 * @param {Object} result
+		 * @param {Object} response
 		 * @param {Object} options
-		 * @param {Object} decodedResult
+		 * @param {Object} decodedResponse
+		 *
+		 * @private
 		 */
-		success: function(result, options, decodedResult) {
-			var me = this;
-
+		success: function(response, options, decodedResponse) {
 			this.grid.getStore().load({
+				scope: this,
 				callback: function(records, operation, success) {
-					CMDBuild.LoadMask.get().hide();
-
 					if (success) {
-						me.form.step2Panel.removeAll();
+						this.form.step2Panel.removeAll();
 
 						// Reset server session
 						CMDBuild.core.proxy.report.Jasper.resetSession({
-							scope: me,
+							scope: this,
 							success: function(response, options, decodedResponse) {
-								me.form.getLayout().setActiveItem(0);
+								this.form.getLayout().setActiveItem(0);
 							}
 						});
 
-						var rowIndex = this.find(
-							CMDBuild.core.proxy.Constants.NAME,
-							me.form.step1Panel.name.getValue()
+						var rowIndex = this.grid.getStore().find(
+							CMDBuild.core.constants.Proxy.NAME,
+							this.form.step1Panel.name.getValue()
 						);
 
-						me.grid.getSelectionModel().select(rowIndex, true);
-						me.form.setDisabledModify(true);
+						this.grid.getSelectionModel().select(rowIndex, true);
+						this.form.setDisabledModify(true);
 
-						_CMCache.reloadReportStores();
-
-						CMDBuild.view.common.field.translatable.Utils.commit(me.form.step1Panel);
-					} else {
-						CMDBuild.core.Message.error(null, {
-							text: CMDBuild.Translation.errors.unknown_error,
-							detail: operation.error
-						});
+						CMDBuild.view.common.field.translatable.Utils.commit(this.form.step1Panel);
 					}
 				}
 			});
@@ -368,6 +363,8 @@
 		// Step 2 methods
 			/**
 			 * @param {Object} results
+			 *
+			 * @private
 			 *
 			 * TODO: this functionality should be refactored because it's not so safe to apply server response like this way
 			 */
@@ -389,10 +386,7 @@
 							autoHeight: true,
 
 							items: [
-								{
-									xtype: 'label',
-									text: CMDBuild.Translation.warnings.reportsDuplicateImageFilename
-								}
+								{ xtype: 'label', text: CMDBuild.Translation.warnings.reportsDuplicateImageFilename }
 							]
 						})
 					);
@@ -405,15 +399,17 @@
 			/**
 			 * @param {Array} refer
 			 * @param {String} namePrefix
+			 *
+			 * @private
 			 */
 			buildFields: function(refer, namePrefix) {
 				if (!Ext.isEmpty(refer) && Ext.isArray(refer)) {
 					Ext.Array.forEach(refer, function(image, i, allImages) {
-						if (!Ext.isEmpty(image[CMDBuild.core.proxy.Constants.NAME])) {
+						if (!Ext.isEmpty(image[CMDBuild.core.constants.Proxy.NAME])) {
 							this.form.step2Panel.add(
 								Ext.create('Ext.form.field.File', {
 									name: namePrefix + i,
-									fieldLabel: image[CMDBuild.core.proxy.Constants.NAME],
+									fieldLabel: image[CMDBuild.core.constants.Proxy.NAME],
 									labelWidth: CMDBuild.LABEL_WIDTH,
 									maxWidth: CMDBuild.ADM_BIG_FIELD_WIDTH,
 									allowBlank: true

@@ -6,6 +6,8 @@
 
 	var CLASS_ID_AS_RETURNED_BY_GETCARDLIST = "IdClass";
 
+	Ext.require('CMDBuild.core.constants.Global');
+
 	Ext.define("CMDBuild.controller.management.common.widgets.manageRelation.CMCardRelationsController", {
 		extend: "CMDBuild.controller.management.classes.CMModCardSubController",
 
@@ -50,7 +52,7 @@
 
 			this.card = null;
 
-			if (!this.entryType || this.entryType.get("tableType") == "simpletable") {
+			if (!this.entryType || this.entryType.get("tableType") == CMDBuild.core.constants.Global.getTableTypeSimpleTable()) {
 				this.entryType = null;
 			}
 
@@ -78,7 +80,7 @@
 				currentClass = _CMCache.getEntryTypeById(classId);
 
 			if (this.currentClass != currentClass) {
-				if (!currentClass || currentClass.get("tableType") == "simpletable") {
+				if (!currentClass || currentClass.get("tableType") == CMDBuild.core.constants.Global.getTableTypeSimpleTable()) {
 					currentClass = null;
 				}
 				this.currentClass = currentClass;
@@ -239,13 +241,13 @@
 
 				params[parameterNames.ATTRIBUTES] = Ext.encode(attributes);
 
-				CMDBuild.LoadMask.get().show();
+				CMDBuild.core.LoadMask.show();
 				CMDBuild.ServiceProxy.relations.remove({
 					params: params,
 					scope: this,
 					success: this.onDeleteRelationSuccess,
 					callback: function() {
-						CMDBuild.LoadMask.get().hide();
+						CMDBuild.core.LoadMask.hide();
 						this.loadData();
 					}
 				});

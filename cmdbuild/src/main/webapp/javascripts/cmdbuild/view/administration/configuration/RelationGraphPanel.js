@@ -3,7 +3,9 @@
 	Ext.define('CMDBuild.view.administration.configuration.RelationGraphPanel', {
 		extend: 'Ext.form.Panel',
 
-		requires: ['CMDBuild.core.proxy.Constants'],
+		requires: ['CMDBuild.core.constants.Proxy'],
+
+		mixins: ['CMDBuild.view.common.PanelFunctions'],
 
 		/**
 		 * @cfg {CMDBuild.controller.administration.configuration.RelationGraph}
@@ -31,7 +33,7 @@
 				dockedItems: [
 					Ext.create('Ext.toolbar.Toolbar', {
 						dock: 'bottom',
-						itemId: CMDBuild.core.proxy.Constants.TOOLBAR_BOTTOM,
+						itemId: CMDBuild.core.constants.Proxy.TOOLBAR_BOTTOM,
 						ui: 'footer',
 
 						layout: {
@@ -60,13 +62,15 @@
 				],
 				items: [
 					{
-						xtype: 'xcheckbox',
-						name: CMDBuild.core.proxy.Constants.ENABLED,
-						fieldLabel: CMDBuild.Translation.enabled
+						xtype: 'checkbox',
+						name: CMDBuild.core.constants.Proxy.ENABLED,
+						fieldLabel: CMDBuild.Translation.enabled,
+						inputValue: true,
+						uncheckedValue: false
 					},
 					{
 						xtype: 'numberfield',
-						name: CMDBuild.core.proxy.Constants.BASE_LEVEL,
+						name: CMDBuild.core.constants.Proxy.BASE_LEVEL,
 						fieldLabel: CMDBuild.Translation.defaultLevel,
 						allowBlank: false,
 						minValue: 1,
@@ -74,7 +78,7 @@
 					},
 					{
 						xtype: 'numberfield',
-						name: CMDBuild.core.proxy.Constants.EXTENSION_MAXIMUM_LEVEL,
+						name: CMDBuild.core.constants.Proxy.EXTENSION_MAXIMUM_LEVEL,
 						fieldLabel: CMDBuild.Translation.maximumLevel,
 						allowBlank: false,
 						minValue: 1,
@@ -82,7 +86,7 @@
 					},
 					{
 						xtype: 'numberfield',
-						name: CMDBuild.core.proxy.Constants.CLUSTERING_THRESHOLD,
+						name: CMDBuild.core.constants.Proxy.CLUSTERING_THRESHOLD,
 						fieldLabel: CMDBuild.Translation.thresholdForClusteringNodes,
 						allowBlank: false,
 						minValue: 2,
@@ -92,6 +96,12 @@
 			});
 
 			this.callParent(arguments);
+		},
+
+		listeners: {
+			show: function(panel, eOpts) {
+				this.delegate.cmfg('onConfigurationRelationGraphTabShow');
+			}
 		}
 	});
 

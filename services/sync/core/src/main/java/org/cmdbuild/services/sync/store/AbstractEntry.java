@@ -1,6 +1,6 @@
 package org.cmdbuild.services.sync.store;
 
-abstract class AbstractEntry<T extends Type> implements Entry<T> {
+abstract class AbstractEntry implements Entry {
 
 	@Override
 	public final boolean equals(final Object obj) {

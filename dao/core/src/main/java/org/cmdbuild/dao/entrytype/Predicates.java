@@ -10,8 +10,11 @@ import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.cmdbuild.dao.entrytype.attributetype.CMAttributeType;
+import org.cmdbuild.dao.function.CMFunction;
+import org.cmdbuild.dao.function.CMFunction.CMFunctionParameter;
 
 import com.google.common.base.Predicate;
+import com.google.common.collect.ForwardingObject;
 
 public class Predicates {
 
@@ -244,6 +247,169 @@ public class Predicates {
 
 	public static Predicate<CMDomain> allDomains() {
 		return alwaysTrue();
+	}
+
+	private static abstract class AttributePredicate<T> extends ForwardingObject implements Predicate<CMAttribute> {
+
+		@Override
+		protected abstract Predicate<T> delegate();
+
+		protected abstract T value(CMAttribute input);
+
+		@Override
+		public final boolean apply(final CMAttribute input) {
+			return delegate().apply(value(input));
+		}
+
+	}
+
+	private static class Name extends AttributePredicate<String> {
+
+		private final Predicate<String> delegate;
+
+		public Name(final Predicate<String> delegate) {
+			this.delegate = delegate;
+		}
+
+		@Override
+		protected Predicate<String> delegate() {
+			return delegate;
+		}
+
+		@Override
+		protected String value(final CMAttribute input) {
+			return input.getName();
+		}
+
+	}
+
+	public static Predicate<CMAttribute> name(final Predicate<String> delegate) {
+		return new Name(delegate);
+	}
+
+	private static class ClassOrder extends AttributePredicate<Integer> {
+
+		private final Predicate<Integer> delegate;
+
+		public ClassOrder(final Predicate<Integer> delegate) {
+			this.delegate = delegate;
+		}
+
+		@Override
+		protected Predicate<Integer> delegate() {
+			return delegate;
+		}
+
+		@Override
+		protected Integer value(final CMAttribute input) {
+			return input.getClassOrder();
+		}
+
+	}
+
+	public static Predicate<CMAttribute> classOrder(final Predicate<Integer> delegate) {
+		return new ClassOrder(delegate);
+	}
+
+	private static class Mode extends AttributePredicate<org.cmdbuild.dao.entrytype.CMAttribute.Mode> {
+
+		private final Predicate<org.cmdbuild.dao.entrytype.CMAttribute.Mode> delegate;
+
+		public Mode(final Predicate<org.cmdbuild.dao.entrytype.CMAttribute.Mode> delegate) {
+			this.delegate = delegate;
+		}
+
+		@Override
+		protected Predicate<org.cmdbuild.dao.entrytype.CMAttribute.Mode> delegate() {
+			return delegate;
+		}
+
+		@Override
+		protected org.cmdbuild.dao.entrytype.CMAttribute.Mode value(final CMAttribute input) {
+			return input.getMode();
+		}
+
+	}
+
+	public static Predicate<CMAttribute> mode(final Predicate<org.cmdbuild.dao.entrytype.CMAttribute.Mode> delegate) {
+		return new Mode(delegate);
+	}
+
+	private static abstract class FunctionPredicate<T> extends ForwardingObject implements Predicate<CMFunction> {
+
+		@Override
+		protected abstract Predicate<T> delegate();
+
+		protected abstract T value(CMFunction input);
+
+		@Override
+		public final boolean apply(final CMFunction input) {
+			return delegate().apply(value(input));
+		}
+
+	}
+
+	private static class FunctionId extends FunctionPredicate<Long> {
+
+		private final Predicate<Long> delegate;
+
+		public FunctionId(final Predicate<Long> delegate) {
+			this.delegate = delegate;
+		}
+
+		@Override
+		protected Predicate<Long> delegate() {
+			return delegate;
+		}
+
+		@Override
+		protected Long value(final CMFunction input) {
+			return input.getId();
+		}
+
+	}
+
+	public static Predicate<CMFunction> functionId(final Predicate<Long> delegate) {
+		return new FunctionId(delegate);
+	}
+
+	private static abstract class FunctionParameterPredicate<T> extends ForwardingObject implements
+			Predicate<CMFunctionParameter> {
+
+		@Override
+		protected abstract Predicate<T> delegate();
+
+		protected abstract T value(CMFunctionParameter input);
+
+		@Override
+		public final boolean apply(final CMFunctionParameter input) {
+			return delegate().apply(value(input));
+		}
+
+	}
+
+	private static class FunctionParameterName extends FunctionParameterPredicate<String> {
+
+		private final Predicate<String> delegate;
+
+		public FunctionParameterName(final Predicate<String> delegate) {
+			this.delegate = delegate;
+		}
+
+		@Override
+		protected Predicate<String> delegate() {
+			return delegate;
+		}
+
+		@Override
+		protected String value(final CMFunctionParameter input) {
+			return input.getName();
+		}
+
+	}
+
+	public static Predicate<CMFunctionParameter> parameterName(final Predicate<String> delegate) {
+		return new FunctionParameterName(delegate);
 	}
 
 	private Predicates() {

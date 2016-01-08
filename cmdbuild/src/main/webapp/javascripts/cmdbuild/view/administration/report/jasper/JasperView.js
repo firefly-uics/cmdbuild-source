@@ -3,7 +3,7 @@
 	Ext.define('CMDBuild.view.administration.report.jasper.JasperView', {
 		extend: 'Ext.panel.Panel',
 
-		requires: ['CMDBuild.core.proxy.Constants'],
+		requires: ['CMDBuild.core.constants.Proxy'],
 
 		/**
 		 * @cfg {CMDBuild.controller.administration.report.Jasper}
@@ -29,7 +29,7 @@
 				dockedItems: [
 					Ext.create('Ext.toolbar.Toolbar', {
 						dock: 'top',
-						itemId: CMDBuild.core.proxy.Constants.TOOLBAR_TOP,
+						itemId: CMDBuild.core.constants.Proxy.TOOLBAR_TOP,
 
 						items: [
 							Ext.create('CMDBuild.core.buttons.iconized.add.Add', {
@@ -47,7 +47,6 @@
 					this.grid = Ext.create('CMDBuild.view.administration.report.jasper.GridPanel', {
 						delegate: this.delegate,
 						region: 'north',
-						split: true,
 						height: '30%'
 					}),
 					this.form = Ext.create('CMDBuild.view.administration.report.jasper.form.FormPanel', {
@@ -58,6 +57,12 @@
 			});
 
 			this.callParent(arguments);
+		},
+
+		listeners: {
+			show: function(panel, eOpts) {
+				this.delegate.cmfg('onReportsJasperShow');
+			}
 		}
 	});
 
