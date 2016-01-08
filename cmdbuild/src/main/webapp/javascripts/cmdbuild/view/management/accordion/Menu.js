@@ -4,6 +4,7 @@
 		extend: 'CMDBuild.view.common.AbstractAccordion',
 
 		requires: [
+			'CMDBuild.core.constants.ModuleIdentifiers',
 			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.proxy.CustomPage',
 			'CMDBuild.core.proxy.Menu',
@@ -181,7 +182,7 @@
 						var entryType = _CMCache.getEntryTypeByName(menuNodeObject[CMDBuild.core.constants.Proxy.REFERENCED_CLASS_NAME]);
 
 						if (!Ext.isEmpty(entryType)) {
-							nodeStructure['cmName'] = 'workflow';
+							nodeStructure['cmName'] = CMDBuild.core.constants.ModuleIdentifiers.getWorkflow();
 							nodeStructure['iconCls'] = 'cmdbuild-tree-' + (entryType.isSuperClass() ? 'super' : '') + menuNodeObject[CMDBuild.core.constants.Proxy.TYPE] +'-icon';
 							nodeStructure[CMDBuild.core.constants.Proxy.ENTITY_ID] = entryType.getId();
 							nodeStructure[CMDBuild.core.constants.Proxy.FILTER] = menuNodeObject[CMDBuild.core.constants.Proxy.FILTER];
@@ -235,7 +236,7 @@
 							} break;
 
 							case 'SQL': { // TODO: check if fill with SQL or do something else
-								nodeStructure['cmName'] = 'dataview';
+								nodeStructure['cmName'] = CMDBuild.core.constants.ModuleIdentifiers.getDataView();
 								nodeStructure[CMDBuild.core.constants.Proxy.ID] = this.delegate.cmfg('accordionBuildId', {
 									name: 'dataview-sql',
 									components: menuNodeObject[CMDBuild.core.constants.Proxy.INDEX]

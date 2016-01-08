@@ -4,6 +4,7 @@
 		extend: 'CMDBuild.controller.common.AbstractController',
 
 		requires: [
+			'CMDBuild.core.constants.ModuleIdentifiers',
 			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.proxy.userAndGroup.group.Group',
 			'CMDBuild.model.userAndGroup.group.Group'
@@ -158,7 +159,9 @@
 		 * @param {Object} decodedResult
 		 */
 		success: function(result, options, decodedResult) {
-			_CMMainViewportController.findAccordionByCMName('userandgroup').updateStore(decodedResult[CMDBuild.core.constants.Proxy.GROUP][CMDBuild.core.constants.Proxy.ID]);
+			_CMMainViewportController.findAccordionByCMName(CMDBuild.core.constants.ModuleIdentifiers.getUserAndGroup()).updateStore(
+				decodedResult[CMDBuild.core.constants.Proxy.GROUP][CMDBuild.core.constants.Proxy.ID]
+			);
 
 			this.form.setDisabledModify(true);
 		}

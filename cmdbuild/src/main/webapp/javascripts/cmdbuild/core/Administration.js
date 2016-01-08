@@ -7,6 +7,7 @@
 
 		requires: [
 			'CMDBuild.core.configurations.Timeout',
+			'CMDBuild.core.constants.ModuleIdentifiers',
 			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.proxy.Classes',
 			'CMDBuild.core.proxy.configuration.Configuration',
@@ -205,53 +206,53 @@
 							Ext.create('CMDBuild.view.administration.accordion.Classes', { cmName: 'class' })
 						,
 						CMDBuild.configuration.userInterface.get(CMDBuild.core.constants.Proxy.CLOUD_ADMIN) ? null :
-							Ext.create('CMDBuild.view.administration.accordion.Workflow', { cmName: 'workflow' })
+							Ext.create('CMDBuild.view.administration.accordion.Workflow', { cmName: CMDBuild.core.constants.ModuleIdentifiers.getWorkflow() })
 						,
 						CMDBuild.configuration.userInterface.get(CMDBuild.core.constants.Proxy.CLOUD_ADMIN) ? null :
-							Ext.create('CMDBuild.view.administration.accordion.Domain', { cmName: 'domain' })
+							Ext.create('CMDBuild.view.administration.accordion.Domain', { cmName: CMDBuild.core.constants.ModuleIdentifiers.getDomain() })
 						,
 						CMDBuild.configuration.userInterface.get(CMDBuild.core.constants.Proxy.CLOUD_ADMIN) ? null :
-							Ext.create('CMDBuild.view.administration.accordion.DataView', { cmName: 'dataview' })
+							Ext.create('CMDBuild.view.administration.accordion.DataView', { cmName: CMDBuild.core.constants.ModuleIdentifiers.getDataView() })
 						,
-						Ext.create('CMDBuild.view.administration.accordion.Filter', { cmName: 'filter' }),
+						Ext.create('CMDBuild.view.administration.accordion.Filter', { cmName: CMDBuild.core.constants.ModuleIdentifiers.getFilter() }),
 						CMDBuild.configuration.userInterface.get(CMDBuild.core.constants.Proxy.CLOUD_ADMIN) ? null :
 							Ext.create('CMDBuild.view.administration.accordion.NavigationTree', { cmName: 'navigationtree' })
 						,
-						Ext.create('CMDBuild.view.administration.accordion.Lookup', { cmName: 'lookuptype' }),
+						Ext.create('CMDBuild.view.administration.accordion.Lookup', { cmName: CMDBuild.core.constants.ModuleIdentifiers.getLookupType() }),
 						CMDBuild.configuration.userInterface.get(CMDBuild.core.constants.Proxy.CLOUD_ADMIN) ? null :
 							Ext.create('CMDBuild.view.administration.accordion.Dashboard', { cmName: 'dashboard' })
 						,
-						Ext.create('CMDBuild.view.administration.accordion.Report', { cmName: 'report' }),
-						Ext.create('CMDBuild.view.administration.accordion.Menu', { cmName: 'menu' }),
-						Ext.create('CMDBuild.view.administration.accordion.UserAndGroup', { cmName: 'userandgroup' }),
+						Ext.create('CMDBuild.view.administration.accordion.Report', { cmName: CMDBuild.core.constants.ModuleIdentifiers.getReport() }),
+						Ext.create('CMDBuild.view.administration.accordion.Menu', { cmName: CMDBuild.core.constants.ModuleIdentifiers.getMenu() }),
+						Ext.create('CMDBuild.view.administration.accordion.UserAndGroup', { cmName: CMDBuild.core.constants.ModuleIdentifiers.getUserAndGroup() }),
 						Ext.create('CMDBuild.view.administration.accordion.Task', { cmName: 'task' }),
-						Ext.create('CMDBuild.view.administration.accordion.Email', { cmName: 'email' }),
+						Ext.create('CMDBuild.view.administration.accordion.Email', { cmName: CMDBuild.core.constants.ModuleIdentifiers.getEmail() }),
 						Ext.create('CMDBuild.view.administration.accordion.Gis', { cmName: 'gis' }),
 						Ext.create('CMDBuild.view.administration.accordion.Bim', { cmName: 'bim' }),
-						Ext.create('CMDBuild.view.administration.accordion.Localization', { cmName: 'localizations' }),
-						Ext.create('CMDBuild.view.administration.accordion.Configuration', { cmName: 'configuration' })
+						Ext.create('CMDBuild.view.administration.accordion.Localization', { cmName: CMDBuild.core.constants.ModuleIdentifiers.getLocalization() }),
+						Ext.create('CMDBuild.view.administration.accordion.Configuration', { cmName: CMDBuild.core.constants.ModuleIdentifiers.getConfiguration() })
 					],
 					cmPanels: [
 						Ext.create('Ext.panel.Panel', { cls: 'empty_panel x-panel-body' }),
 						Ext.create('CMDBuild.view.administration.configuration.ConfigurationView', {
 							cmControllerType: 'CMDBuild.controller.administration.configuration.Configuration',
-							cmName: 'configuration'
+							cmName: CMDBuild.core.constants.ModuleIdentifiers.getConfiguration()
 						}),
 						Ext.create('CMDBuild.view.administration.dataView.DataViewView', {
 							cmControllerType: 'CMDBuild.controller.administration.dataView.DataView',
-							cmName: 'dataview'
+							cmName: CMDBuild.core.constants.ModuleIdentifiers.getDataView()
 						}),
 						Ext.create('CMDBuild.view.administration.domain.DomainView', {
 							cmControllerType: 'CMDBuild.controller.administration.domain.Domain',
-							cmName: 'domain'
+							cmName: CMDBuild.core.constants.ModuleIdentifiers.getDomain()
 						}),
 						Ext.create('CMDBuild.view.administration.email.EmailView', {
 							cmControllerType: 'CMDBuild.controller.administration.email.Email',
-							cmName: 'email'
+							cmName: CMDBuild.core.constants.ModuleIdentifiers.getEmail()
 						}),
 						Ext.create('CMDBuild.view.administration.filter.FilterView', {
 							cmControllerType: 'CMDBuild.controller.administration.filter.Filter',
-							cmName: 'filter'
+							cmName: CMDBuild.core.constants.ModuleIdentifiers.getFilter()
 						}),
 						Ext.create('CMDBuild.view.administration.gis.CMModGeoServer', {
 							cmControllerType: 'CMDBuild.controller.administration.gis.CMModGeoServerController',
@@ -263,19 +264,19 @@
 						}),
 						Ext.create('CMDBuild.view.administration.localization.LocalizationView', {
 							cmControllerType: 'CMDBuild.controller.administration.localization.Localization',
-							cmName: 'localizations'
+							cmName: CMDBuild.core.constants.ModuleIdentifiers.getLocalization()
 						}),
 						Ext.create('CMDBuild.view.administration.lookup.LookupView', {
 							cmControllerType: 'CMDBuild.controller.administration.lookup.Lookup',
-							cmName: 'lookuptype'
+							cmName: CMDBuild.core.constants.ModuleIdentifiers.getLookupType()
 						}),
 						Ext.create('CMDBuild.view.administration.menu.MenuView', {
 							cmControllerType: 'CMDBuild.controller.administration.menu.Menu',
-							cmName: 'menu'
+							cmName: CMDBuild.core.constants.ModuleIdentifiers.getMenu()
 						}),
 						Ext.create('CMDBuild.view.administration.report.ReportView', {
 							cmControllerType: 'CMDBuild.controller.administration.report.Report',
-							cmName: 'report'
+							cmName: CMDBuild.core.constants.ModuleIdentifiers.getReport()
 						}),
 						Ext.create('CMDBuild.view.administration.tasks.CMTasks', {
 							cmControllerType: 'CMDBuild.controller.administration.tasks.CMTasksController',
@@ -283,11 +284,11 @@
 						}),
 						Ext.create('CMDBuild.view.administration.userAndGroup.UserAndGroupView', {
 							cmControllerType: 'CMDBuild.controller.administration.userAndGroup.UserAndGroup',
-							cmName: 'userandgroup'
+							cmName: CMDBuild.core.constants.ModuleIdentifiers.getUserAndGroup()
 						}),
 						Ext.create('CMDBuild.view.administration.workflow.WorkflowView', {
 							cmControllerType: 'CMDBuild.controller.administration.workflow.Workflow',
-							cmName: 'workflow'
+							cmName: CMDBuild.core.constants.ModuleIdentifiers.getWorkflow()
 						}),
 						new CMDBuild.view.administration.bim.CMBIMPanel({
 							cmControllerType: CMDBuild.controller.administration.filter.CMBIMPanelController,
