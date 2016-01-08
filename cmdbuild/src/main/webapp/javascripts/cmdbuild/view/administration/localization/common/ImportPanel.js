@@ -6,7 +6,7 @@
 		requires: [
 			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.proxy.Csv',
-			'CMDBuild.core.proxy.localization.Localization'
+			'CMDBuild.core.proxy.localization.Import'
 		],
 
 		mixins: {
@@ -28,7 +28,7 @@
 
 		layout: {
 			type: 'vbox',
-			align:'stretch'
+			align: 'stretch'
 		},
 
 		initComponent: function() {
@@ -59,22 +59,23 @@
 				items: [
 					Ext.create('Ext.form.field.ComboBox', {
 						name: '@@ importFormat',
-						fieldLabel: '@@ Format',
+						fieldLabel: CMDBuild.Translation.format,
 						labelWidth: CMDBuild.LABEL_WIDTH,
 						maxWidth: CMDBuild.MEDIUM_FIELD_WIDTH,
 						displayField: CMDBuild.core.constants.Proxy.DESCRIPTION,
 						valueField: CMDBuild.core.constants.Proxy.NAME,
 						editable: false,
 						allowBlank: false,
+						disabled: true,
 
 						value: CMDBuild.core.constants.Proxy.CSV, // Default value
 
-						store: CMDBuild.core.proxy.localization.Localization.getFileFormatStore(),
+						store: CMDBuild.core.proxy.localization.Import.getStoreFileFormat(),
 						queryMode: 'local'
 					}),
 					Ext.create('Ext.form.field.File', {
 						name: CMDBuild.core.constants.Proxy.FILE,
-						fieldLabel: CMDBuild.Translation.csvFile,
+						fieldLabel: CMDBuild.Translation.file,
 						labelWidth: CMDBuild.LABEL_WIDTH,
 						maxWidth: CMDBuild.ADM_BIG_FIELD_WIDTH,
 						allowBlank: false
@@ -91,7 +92,7 @@
 
 						value: ';', // Default value
 
-						store: CMDBuild.core.proxy.Csv.getSeparatorStore(),
+						store: CMDBuild.core.proxy.Csv.getStoreSeparator(),
 						queryMode: 'local'
 					})
 				]

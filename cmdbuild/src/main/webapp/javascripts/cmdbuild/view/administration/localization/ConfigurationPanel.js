@@ -97,7 +97,17 @@
 								name: CMDBuild.core.constants.Proxy.DEFAULT_LANGUAGE,
 								fieldLabel: '@@ Default language',
 								labelWidth: CMDBuild.LABEL_WIDTH,
-								enableChangeLanguage: false
+								enableChangeLanguage: false,
+
+								listeners: {
+									scope: this,
+									change: function(field, newValue, oldValue, eOpts) {
+										this.delegate.cmfg('onLocalizationConfigurationDefaultLanguageChange', {
+											defaultLanguageTag: newValue,
+											oldDefaultLanguageTag: oldValue
+										});
+									}
+								}
 							}),
 							this.languagePromptCheckbox = Ext.create('Ext.form.field.Checkbox', {
 								name: CMDBuild.core.constants.Proxy.LANGUAGE_PROMPT,
