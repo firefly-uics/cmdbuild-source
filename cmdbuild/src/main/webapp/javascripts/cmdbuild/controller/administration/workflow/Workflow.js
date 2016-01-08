@@ -3,7 +3,10 @@
 	Ext.define('CMDBuild.controller.administration.workflow.Workflow', {
 		extend: 'CMDBuild.controller.common.AbstractBasePanelController',
 
-		requires: ['CMDBuild.core.constants.Proxy'],
+		requires: [
+			'CMDBuild.core.constants.ModuleIdentifiers',
+			'CMDBuild.core.constants.Proxy'
+		],
 
 		/**
 		 * @cfg {Object}
@@ -126,7 +129,7 @@
 		},
 
 		onWorkflowAddButtonClick: function() {
-			_CMMainViewportController.deselectAccordionByName('workflow');
+			_CMMainViewportController.deselectAccordionByName(CMDBuild.core.constants.ModuleIdentifiers.getWorkflow());
 
 			this.setViewTitle();
 
