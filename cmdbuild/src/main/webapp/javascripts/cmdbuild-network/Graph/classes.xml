@@ -1,0 +1,19 @@
+<DATA>
+	<params>
+		<type>div</type>
+	</params>
+	<div id="classesFormContainer">
+		<onInit>
+			<command>navigate</command>
+			<container>classesFormContainer</container>
+			<form>classesForm</form>
+		</onInit>
+		<form id="classesForm">
+	 		<params>
+				<type>tree</type>
+				<backend>ClassesNavigation</backend>
+				<nRows>10</nRows>
+			</params>
+		</form>
+	</div>
+</DATA>
