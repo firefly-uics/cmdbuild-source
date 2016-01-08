@@ -93,7 +93,7 @@
 			this.propertiesPanel.parentCombo.getStore().load({
 				scope: this,
 				callback: function(records, operation, success) {
-					Ext.Array.each(records, function(record, i, allRecords) {
+					this.propertiesPanel.parentCombo.getStore().each(function(record) {
 						if (record.get(CMDBuild.core.constants.Proxy.NAME) == 'Activity') {
 							this.propertiesPanel.parentCombo.setValue(record);
 
