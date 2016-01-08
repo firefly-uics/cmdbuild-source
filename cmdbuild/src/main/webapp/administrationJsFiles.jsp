@@ -59,9 +59,6 @@
 	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/navigationTrees/CMModNavigationTrees.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/navigationTrees/CMNavigationTreesTree.js"></script>
 
-	<!-- PROCESS -->
-	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/workflow/CMProcess.js"></script>
-
 <!-- CONTROLLERS -->
 	<!-- GIS -->
 	<script type="text/javascript" src="javascripts/cmdbuild/controller/administration/gis/CMModGISNavigationConfigurationController.js"></script>
@@ -93,9 +90,6 @@
 	<script type="text/javascript" src="javascripts/cmdbuild/controller/administration/navigationTrees/CMModNavigationTreesController.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/controller/administration/navigationTrees/CMNavigationTreesTreeController.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/controller/administration/navigationTrees/CMNavigationTreesFormController.js"></script>
-
-	<!-- PROCESS -->
-	<script type="text/javascript" src="javascripts/cmdbuild/controller/administration/workflow/CMProcessController.js"></script>
 
 <!-- BIM - ADMINISTRATION -->
 <script type="text/javascript" src="javascripts/cmdbuild/bim/administration/view/CMBIMPanel.js"></script>
