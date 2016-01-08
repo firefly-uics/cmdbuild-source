@@ -6,6 +6,7 @@
 		requires: [
 			'CMDBuild.core.configurations.DataFormat',
 			'CMDBuild.core.constants.Global',
+			'CMDBuild.core.constants.ModuleIdentifiers',
 			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.Utils'
 		],
@@ -50,7 +51,7 @@
 				case 'dashboard':
 					return 'cmdbuild-tree-dashboard-icon';
 
-				case 'workflow': {
+				case CMDBuild.core.constants.ModuleIdentifiers.getWorkflow(): {
 					var isSuperClass = record.get([CMDBuild.core.constants.Proxy.ENTRY_TYPE, CMDBuild.core.constants.Proxy.OBJECT, 'superclass']);
 
 					return isSuperClass ? 'cmdbuild-tree-superprocessclass-icon' : 'cmdbuild-tree-processclass-icon';
@@ -123,13 +124,13 @@
 						case 'dashboard':
 							return targetArray.push(CMDBuild.Translation.dashboard);
 
-						case 'dataview':
+						case CMDBuild.core.constants.ModuleIdentifiers.getDataView():
 							return targetArray.push(CMDBuild.Translation.views);
 
-						case 'report':
+						case CMDBuild.core.constants.ModuleIdentifiers.getReport():
 							return targetArray.push(CMDBuild.Translation.report);
 
-						case 'workflow':
+						case CMDBuild.core.constants.ModuleIdentifiers.getWorkflow():
 							return targetArray.push(CMDBuild.Translation.processes);
 					}
 			},

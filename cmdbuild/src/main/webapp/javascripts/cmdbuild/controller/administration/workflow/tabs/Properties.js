@@ -4,6 +4,7 @@
 		extend: 'CMDBuild.controller.common.AbstractController',
 
 		requires: [
+			'CMDBuild.core.constants.ModuleIdentifiers',
 			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.Message',
 			'CMDBuild.core.proxy.workflow.Workflow',
@@ -284,8 +285,8 @@
 						this.form.reset();
 						this.form.setDisabledModify(true, true, true, true);
 
-						_CMMainViewportController.findAccordionByCMName('workflow').deselect();
-						_CMMainViewportController.findAccordionByCMName('workflow').updateStore();
+						_CMMainViewportController.findAccordionByCMName(CMDBuild.core.constants.ModuleIdentifiers.getWorkflow()).deselect();
+						_CMMainViewportController.findAccordionByCMName(CMDBuild.core.constants.ModuleIdentifiers.getWorkflow()).updateStore();
 					}
 				});
 			}
@@ -305,7 +306,7 @@
 
 			CMDBuild.view.common.field.translatable.Utils.commit(this.propertiesPanel);
 
-			_CMMainViewportController.findAccordionByCMName('workflow').updateStore(
+			_CMMainViewportController.findAccordionByCMName(CMDBuild.core.constants.ModuleIdentifiers.getWorkflow()).updateStore(
 				formDataModel.get(CMDBuild.core.constants.Proxy.ID) || decodedResponse[CMDBuild.core.constants.Proxy.ID]
 			);
 		},
