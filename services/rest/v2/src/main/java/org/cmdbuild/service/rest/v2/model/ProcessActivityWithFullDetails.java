@@ -1,7 +1,6 @@
 package org.cmdbuild.service.rest.v2.model;
 
 import static org.cmdbuild.service.rest.v2.constants.Serialization.ATTRIBUTES;
-import static org.cmdbuild.service.rest.v2.constants.Serialization.DESCRIPTION;
 import static org.cmdbuild.service.rest.v2.constants.Serialization.INSTRUCTIONS;
 import static org.cmdbuild.service.rest.v2.constants.Serialization.WIDGETS;
 
@@ -15,7 +14,7 @@ import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 @XmlRootElement
-public class ProcessActivityWithFullDetails extends ModelWithStringId {
+public class ProcessActivityWithFullDetails extends ProcessActivityWithBasicDetails {
 
 	@XmlRootElement
 	public static class AttributeStatus extends ModelWithStringId {
@@ -81,22 +80,12 @@ public class ProcessActivityWithFullDetails extends ModelWithStringId {
 
 	}
 
-	private String description;
 	private String instructions;
 	private Collection<AttributeStatus> attributes;
 	private Collection<Widget> widgets;
 
 	ProcessActivityWithFullDetails() {
 		// package visibility
-	}
-
-	@XmlAttribute(name = DESCRIPTION)
-	public String getDescription() {
-		return description;
-	}
-
-	void setDescription(final String description) {
-		this.description = description;
 	}
 
 	@XmlAttribute(name = INSTRUCTIONS)
@@ -138,21 +127,20 @@ public class ProcessActivityWithFullDetails extends ModelWithStringId {
 		}
 
 		final ProcessActivityWithFullDetails other = ProcessActivityWithFullDetails.class.cast(obj);
-		return new EqualsBuilder() //
-				.append(this.getId(), other.getId()) //
-				.append(this.description, other.description) //
+		return super.doEquals(obj) && new EqualsBuilder() //
 				.append(this.instructions, other.instructions) //
 				.append(this.attributes, other.attributes) //
+				.append(this.widgets, other.widgets) //
 				.isEquals();
 	}
 
 	@Override
 	protected int doHashCode() {
 		return new HashCodeBuilder() //
-				.append(getId()) //
-				.append(description) //
+				.append(super.doHashCode()) //
 				.append(instructions) //
 				.append(attributes) //
+				.append(widgets) //
 				.toHashCode();
 	}
 

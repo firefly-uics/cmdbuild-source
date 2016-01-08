@@ -39,8 +39,6 @@ public class CxfProcessInstanceActivities implements ProcessInstanceActivities {
 	private static final ToProcessActivityWithBasicDetailsFromUserActivityInstance TO_OUTPUT = ToProcessActivityWithBasicDetailsFromUserActivityInstance
 			.newInstance() //
 			.build();
-	private static final ToProcessActivityDefinition TO_PROCESS_ACTIVITY = ToProcessActivityDefinition.newInstance() //
-			.build();
 
 	private final ErrorHandler errorHandler;
 	private final WorkflowLogic workflowLogic;
@@ -118,6 +116,9 @@ public class CxfProcessInstanceActivities implements ProcessInstanceActivities {
 				}
 
 			};
+			final ToProcessActivityDefinition TO_PROCESS_ACTIVITY = ToProcessActivityDefinition.newInstance() //
+					.withWritableStatus(activityInstance.isWritable()) //
+					.build();
 			return newResponseSingle(ProcessActivityWithFullDetails.class) //
 					.withElement(from(asList(foundActivity)) //
 							.filter(Predicates.notNull()) //
