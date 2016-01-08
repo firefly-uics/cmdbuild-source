@@ -25,6 +25,7 @@
 		 *
 		 * @param {CMDBuild.model.common.accordion.Generic} node
 		 *
+		 * @public
 		 * @override
 		 */
 		onViewOnFront: function(node) {
