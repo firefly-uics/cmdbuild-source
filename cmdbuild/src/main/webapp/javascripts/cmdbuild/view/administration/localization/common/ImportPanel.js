@@ -9,12 +9,10 @@
 			'CMDBuild.core.proxy.localization.Import'
 		],
 
-		mixins: {
-			panelFunctions: 'CMDBuild.view.common.PanelFunctions'
-		},
+		mixins: ['CMDBuild.view.common.PanelFunctions'],
 
 		/**
-		 * @cfg {CMDBuild.controller.administration.localizations.Advanced}
+		 * @cfg {CMDBuild.controller.administration.localization.Configuration}
 		 */
 		delegate: undefined,
 

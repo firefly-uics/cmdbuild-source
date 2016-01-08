@@ -39,7 +39,9 @@
 						autoCancel: false,
 
 						listeners: {
-							// Permits to edit only leaf nodes
+							/**
+							 * Permits to edit only leaf nodes
+							 */
 							beforeedit: function(editor, context, eOpts) {
 								if (!context.record.isLeaf())
 									return false;

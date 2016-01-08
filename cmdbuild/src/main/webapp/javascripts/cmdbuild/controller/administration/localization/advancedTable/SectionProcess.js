@@ -29,7 +29,7 @@
 		grid: undefined,
 
 		/**
-		 * @cfg {CMDBuild.view.administration.localization.advancedTable.SectionPanel}
+		 * @property {CMDBuild.view.administration.localization.advancedTable.SectionPanel}
 		 */
 		view: undefined,
 
@@ -59,13 +59,13 @@
 		 * @param {CMDBuild.model.localization.advancedTable.TreeStore} rootNode
 		 * @param {Array} fieldsArray
 		 *
+		 * @private
 		 * @override
 		 */
 		decodeStructureFields: function(rootNode, fieldsArray) {
 			if (
 				!Ext.isEmpty(rootNode)
-				&& !Ext.isEmpty(fieldsArray)
-				&& Ext.isArray(fieldsArray)
+				&& !Ext.isEmpty(fieldsArray) && Ext.isArray(fieldsArray)
 			) {
 				Ext.Array.forEach(fieldsArray, function(fieldObject, i, allFields) {
 					var entityFieldNodeObject = {};
@@ -90,7 +90,7 @@
 			} else {
 				rootNode.appendChild({}); // FIX: expandable property is bugged so i must build a fake node to make rootNode expandable
 			}
-		},
+		}
 	});
 
 })();

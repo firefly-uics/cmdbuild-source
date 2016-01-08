@@ -6,7 +6,7 @@
 		requires: ['CMDBuild.core.constants.Proxy'],
 
 		/**
-		 * @cfg {CMDBuild.controller.administration.localization.advancedTable.SectionClass}
+		 * @cfg {Mixed}
 		 */
 		delegate: undefined,
 
@@ -56,7 +56,7 @@
 							this.activeOnlyCheckbox = Ext.create('Ext.form.field.Checkbox', {
 								boxLabel: '@@ Only active',
 								boxLabelCls: 'cmtoolbaritem',
-								checked: true, // Default as true
+								checked: true, // Default
 								hidden: this.hideActiveOnlyCheckbox,
 								scope: this,
 

@@ -66,7 +66,7 @@
 		sectionControllerViews: undefined,
 
 		/**
-		 * @cfg {CMDBuild.view.administration.localization.advancedTable.AdvancedTableView}
+		 * @property {CMDBuild.view.administration.localization.advancedTable.AdvancedTableView}
 		 */
 		view: undefined,
 
@@ -79,9 +79,7 @@
 		constructor: function(configObject) {
 			this.callParent(arguments);
 
-			this.view = Ext.create('CMDBuild.view.administration.localization.advancedTable.AdvancedTableView', {
-				delegate: this
-			});
+			this.view = Ext.create('CMDBuild.view.administration.localization.advancedTable.AdvancedTableView', { delegate: this });
 
 			// Build tabs (in display order)
 			this.sectionControllerClasses = Ext.create('CMDBuild.controller.administration.localization.advancedTable.SectionClass', { parentDelegate: this });
@@ -101,10 +99,12 @@
 		/**
 		 * @param {CMDBuild.model.localization.Localization} languageObject
 		 *
-		 * @return {Ext.grid.column.Column} or null
+		 * @returns {Ext.grid.column.Column} or null
+		 *
+		 * @private
 		 */
 		buildColumn: function(languageObject) {
-			if (!Ext.isEmpty(languageObject)) {
+			if (!Ext.isEmpty(languageObject))
 				return Ext.create('Ext.grid.column.Column', {
 					dataIndex: languageObject.get(CMDBuild.core.constants.Proxy.TAG),
 					languageDescription: languageObject.get(CMDBuild.core.constants.Proxy.DESCRIPTION),
@@ -117,7 +117,6 @@
 
 					editor: { xtype: 'textfield' }
 				});
-			}
 
 			return null;
 		},
@@ -125,10 +124,9 @@
 		/**
 		 * Build TreePanel columns only with languages with translations
 		 *
-		 * @return {Array} columnsArray
+		 * @returns {Array} columnsArray
 		 */
 		onLocalizationAdvancedTableBuildColumns: function() {
-			var enabledLanguages = CMDBuild.configuration.localization.getEnabledLanguages();
 			var columnsArray = [
 				{
 					xtype: 'treecolumn',
@@ -149,7 +147,7 @@
 			];
 			var languagesColumnsArray = [];
 
-			Ext.Object.each(enabledLanguages, function(key, value, myself) {
+			Ext.Object.each(CMDBuild.configuration.localization.getEnabledLanguages(), function(key, value, myself) {
 				languagesColumnsArray.push(this.buildColumn(value));
 			}, this);
 
@@ -160,7 +158,7 @@
 		},
 
 		/**
-		 * @return {Ext.data.TreeStore}
+		 * @returns {Ext.data.TreeStore}
 		 */
 		onLocalizationAdvancedTableBuildStore: function() {
 			return Ext.create('Ext.data.TreeStore', {
@@ -179,6 +177,7 @@
 		 */
 		onLocalizationAdvancedTableCollapseAll: function(gridPanel) {
 			CMDBuild.core.LoadMask.show();
+
 			Ext.Function.defer(function() { // HACK: to fix expandAll bug that don't displays loeadMask
 				gridPanel.collapseAll(function() {
 					CMDBuild.core.LoadMask.hide();
@@ -191,6 +190,7 @@
 		 */
 		onLocalizationAdvancedTableExpandAll: function(gridPanel) {
 			CMDBuild.core.LoadMask.show();
+
 			Ext.Function.defer(function() { // HACK: to fix expandAll bug that don't displays loeadMask
 				gridPanel.expandAll(function() {
 					CMDBuild.core.LoadMask.hide();

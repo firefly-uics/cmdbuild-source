@@ -11,7 +11,7 @@
 		],
 
 		/**
-		 * @cfg {CMDBuild.controller.administration.localizations.Advanced}
+		 * @cfg {CMDBuild.controller.administration.localization.Configuration}
 		 */
 		delegate: undefined,
 

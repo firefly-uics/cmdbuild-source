@@ -34,7 +34,7 @@
 		grid: undefined,
 
 		/**
-		 * @cfg {CMDBuild.view.administration.localization.advancedTable.SectionPanel}
+		 * @property {CMDBuild.view.administration.localization.advancedTable.SectionPanel}
 		 */
 		view: undefined,
 

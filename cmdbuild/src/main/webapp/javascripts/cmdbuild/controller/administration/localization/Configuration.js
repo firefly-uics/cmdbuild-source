@@ -63,6 +63,8 @@
 		 * Uses configuration module proxy until configurations refactor
 		 *
 		 * TODO: refactor to use loadData methods
+		 *
+		 * @private
 		 */
 		configurationRead: function() {
 			CMDBuild.core.proxy.configuration.GeneralOptions.read({
@@ -146,7 +148,7 @@
 		},
 
 		onLocalizationConfigurationImportButtonClick: function() {
-			if (this.validate(this.view.importPanel)) {
+			if (this.validate(this.view.importPanel))
 				CMDBuild.core.proxy.localization.Import.imports({
 					form: this.view.importPanel.getForm(),
 					scope: this,
@@ -172,7 +174,6 @@
 						);
 					}
 				});
-			}
 		},
 
 		/**
@@ -183,16 +184,16 @@
 		onLocalizationConfigurationSaveButtonClick: function() {
 			CMDBuild.core.proxy.configuration.GeneralOptions.read({
 				scope: this,
-				success: function(result, options, decodedResult) { // TODO: rename parameters with "response"
-					var params = decodedResult.data; // TODO: proxy constants
+				success: function(response, options, decodedResponse) {
+					var params = decodedResponse[CMDBuild.core.constants.Proxy.DATA];
 					params['language'] = this.view.defaultLanguageCombobox.getValue();
 					params['languageprompt'] = this.view.languagePromptCheckbox.getValue();
 					params['enabled_languages'] = this.view.enabledLanguagesGrid.getValue().join(', ');
 
 					CMDBuild.core.proxy.configuration.GeneralOptions.update({
-						scope: this,
 						params: params,
-						success: function(result, options, decodedResult) {
+						scope: this,
+						success: function(response, options, decodedResponse) {
 							CMDBuild.core.Message.success();
 						}
 					});
