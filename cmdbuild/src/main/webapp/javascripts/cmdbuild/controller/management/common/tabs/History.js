@@ -4,7 +4,7 @@
 	 * @abstract
 	 */
 	Ext.define('CMDBuild.controller.management.common.tabs.History', {
-		extend: 'CMDBuild.controller.common.AbstractController',
+		extend: 'CMDBuild.controller.common.abstract.Base',
 
 		requires: [
 			'CMDBuild.core.configurations.DataFormat',

@@ -4,7 +4,7 @@
 	 * To get the result of filter window you need to implement "onFieldFilterAdvancedWindowgetEndpoint" in cmfg structure
 	 */
 	Ext.define('CMDBuild.controller.common.field.filter.advanced.window.Window', {
-		extend: 'CMDBuild.controller.common.AbstractController',
+		extend: 'CMDBuild.controller.common.abstract.Base',
 
 		requires: [
 			'CMDBuild.core.Message',

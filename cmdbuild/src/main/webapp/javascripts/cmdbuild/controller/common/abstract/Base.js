@@ -19,7 +19,7 @@
 	 *
 	 * @abstract
 	 */
-	Ext.define('CMDBuild.controller.common.AbstractController', {
+	Ext.define('CMDBuild.controller.common.abstract.Base', {
 
 		/**
 		 * @cfg {Object}

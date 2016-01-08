@@ -1,7 +1,7 @@
 (function() {
 
 	Ext.define('CMDBuild.view.administration.accordion.Lookup', {
-		extend: 'CMDBuild.view.common.AbstractAccordion',
+		extend: 'CMDBuild.view.common.abstract.Accordion',
 
 		requires: [
 			'CMDBuild.core.constants.Proxy',
@@ -10,7 +10,7 @@
 		],
 
 		/**
-		 * @cfg {CMDBuild.controller.common.AbstractAccordionController}
+		 * @cfg {CMDBuild.controller.common.abstract.Accordion}
 		 */
 		delegate: undefined,
 

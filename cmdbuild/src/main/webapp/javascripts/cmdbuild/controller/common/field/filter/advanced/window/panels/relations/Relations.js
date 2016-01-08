@@ -1,7 +1,7 @@
 (function() {
 
 	Ext.define('CMDBuild.controller.common.field.filter.advanced.window.panels.relations.Relations', {
-		extend: 'CMDBuild.controller.common.AbstractController',
+		extend: 'CMDBuild.controller.common.abstract.Base',
 
 		requires: [
 			'CMDBuild.core.constants.Global',

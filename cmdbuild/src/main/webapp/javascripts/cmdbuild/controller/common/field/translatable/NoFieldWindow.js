@@ -4,7 +4,7 @@
 	 * Customization of CMDBuild.controller.common.field.translatable.Window, mainly used in menu translations tree
 	 */
 	Ext.define('CMDBuild.controller.common.field.translatable.NoFieldWindow', {
-		extend: 'CMDBuild.controller.common.AbstractController',
+		extend: 'CMDBuild.controller.common.abstract.Base',
 
 		requires: [
 			'CMDBuild.core.Message',

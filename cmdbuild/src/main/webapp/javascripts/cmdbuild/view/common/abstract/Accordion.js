@@ -3,7 +3,7 @@
 	/**
 	 * @abstract
 	 */
-	Ext.define('CMDBuild.view.common.AbstractAccordion', {
+	Ext.define('CMDBuild.view.common.abstract.Accordion', {
 		extend: 'Ext.tree.Panel',
 
 		requires: [
@@ -19,7 +19,7 @@
 		/**
 		 * @cfg {String}
 		 */
-		delegateClassName: 'CMDBuild.controller.common.AbstractAccordionController',
+		delegateClassName: 'CMDBuild.controller.common.abstract.Accordion',
 
 		/**
 		 * @cfg {String}

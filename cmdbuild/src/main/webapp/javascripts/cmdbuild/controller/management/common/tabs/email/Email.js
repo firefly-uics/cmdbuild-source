@@ -6,7 +6,7 @@
 	 * @abstract
 	 */
 	Ext.define('CMDBuild.controller.management.common.tabs.email.Email', {
-		extend: 'CMDBuild.controller.common.AbstractController',
+		extend: 'CMDBuild.controller.common.abstract.Base',
 
 		requires: [
 			'CMDBuild.controller.management.common.widgets.CMWidgetController',

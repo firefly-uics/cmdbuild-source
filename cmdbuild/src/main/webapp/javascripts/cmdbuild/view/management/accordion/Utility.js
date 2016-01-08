@@ -1,10 +1,10 @@
 (function() {
 
 	Ext.define('CMDBuild.view.management.accordion.Utility', {
-		extend: 'CMDBuild.view.common.AbstractAccordion',
+		extend: 'CMDBuild.view.common.abstract.Accordion',
 
 		/**
-		 * @cfg {CMDBuild.controller.common.AbstractAccordionController}
+		 * @cfg {CMDBuild.controller.common.abstract.Accordion}
 		 */
 		delegate: undefined,
 

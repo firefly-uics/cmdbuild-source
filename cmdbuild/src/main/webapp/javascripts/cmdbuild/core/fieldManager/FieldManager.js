@@ -4,7 +4,7 @@
 	 * New implementation of field manager, builds fields starting from CMDBuild.model.common.attributes.Attribute model.
 	 */
 	Ext.define('CMDBuild.core.fieldManager.FieldManager', {
-		extend: 'CMDBuild.controller.common.AbstractController',
+		extend: 'CMDBuild.controller.common.abstract.Base',
 
 		requires: ['CMDBuild.core.constants.Proxy'],
 

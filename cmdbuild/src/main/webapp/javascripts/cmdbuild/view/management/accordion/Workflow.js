@@ -1,7 +1,7 @@
 (function() {
 
 	Ext.define('CMDBuild.view.management.accordion.Workflow', {
-		extend: 'CMDBuild.view.common.AbstractAccordion',
+		extend: 'CMDBuild.view.common.abstract.Accordion',
 
 		requires: [
 			'CMDBuild.core.constants.Global',
@@ -10,7 +10,7 @@
 		],
 
 		/**
-		 * @cfg {CMDBuild.controller.common.AbstractAccordionController}
+		 * @cfg {CMDBuild.controller.common.abstract.Accordion}
 		 */
 		delegate: undefined,
 

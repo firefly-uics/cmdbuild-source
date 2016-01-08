@@ -1,12 +1,13 @@
 (function () {
 
 	/**
-	 * Class to be extended in controllers witch creates a substrate to adapt AbstractController functionalities with old CMDBuild panel creation through CMMainViewport
+	 * Class to be extended in controllers witch creates a substrate to adapt CMDBuild.controller.common.abstract.Base functionalities
+	 * with old CMDBuild panel creation through CMMainViewport
 	 *
 	 * @abstract
 	 */
-	Ext.define('CMDBuild.controller.common.AbstractBasePanelController', {
-		extend: 'CMDBuild.controller.common.AbstractController',
+	Ext.define('CMDBuild.controller.common.abstract.BasePanel', {
+		extend: 'CMDBuild.controller.common.abstract.Base',
 
 		/**
 		 * @cfg {Object}
