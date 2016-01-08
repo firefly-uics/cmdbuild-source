@@ -7,6 +7,7 @@
 
 		requires: [
 			'CMDBuild.core.configurations.Timeout',
+			'CMDBuild.core.constants.ModuleIdentifiers',
 			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.proxy.Classes',
 			'CMDBuild.core.proxy.configuration.Configuration',
@@ -237,21 +238,21 @@
 			_CMMainViewportController = new CMDBuild.controller.CMMainViewportController(
 				new CMDBuild.view.CMMainViewport({
 					cmAccordions: [ // Display order
-						Ext.create('CMDBuild.view.management.accordion.Menu', { cmName: 'menu' }),
+						Ext.create('CMDBuild.view.management.accordion.Menu', { cmName: CMDBuild.core.constants.ModuleIdentifiers.getMenu() }),
 						CMDBuild.configuration.userInterface.isDisabledModule('class') ? null :
 							Ext.create('CMDBuild.view.management.accordion.Classes', { cmName: 'class' })
 						,
 						CMDBuild.configuration.userInterface.isDisabledModule('process') || !(CMDBuild.Config.workflow.enabled == 'true') ? null :
-							Ext.create('CMDBuild.view.management.accordion.Workflow', { cmName: 'workflow' })
+							Ext.create('CMDBuild.view.management.accordion.Workflow', { cmName: CMDBuild.core.constants.ModuleIdentifiers.getWorkflow() })
 						,
 						CMDBuild.configuration.userInterface.isDisabledModule(CMDBuild.core.constants.Proxy.DATA_VIEW) ? null :
-							Ext.create('CMDBuild.view.management.accordion.DataView', { cmName: 'dataview' })
+							Ext.create('CMDBuild.view.management.accordion.DataView', { cmName: CMDBuild.core.constants.ModuleIdentifiers.getDataView() })
 						,
 						CMDBuild.configuration.userInterface.isDisabledModule('dashboard') ? null :
 							Ext.create('CMDBuild.view.management.accordion.Dashboard', { cmName: 'dashboard' })
 						,
 						CMDBuild.configuration.userInterface.isDisabledModule('report') ? null :
-							Ext.create('CMDBuild.view.management.accordion.Report', { cmName: 'report' })
+							Ext.create('CMDBuild.view.management.accordion.Report', { cmName: CMDBuild.core.constants.ModuleIdentifiers.getReport() })
 						,
 						CMDBuild.configuration.userInterface.isDisabledModule(CMDBuild.core.constants.Proxy.CUSTOM_PAGES) ? null :
 							Ext.create('CMDBuild.view.management.accordion.CustomPage', { cmName: 'custompage' })
@@ -266,11 +267,11 @@
 						}),
 						Ext.create('CMDBuild.view.management.dataView.DataViewView', {
 							cmControllerType: 'CMDBuild.controller.management.dataView.DataView',
-							cmName: 'dataview'
+							cmName: CMDBuild.core.constants.ModuleIdentifiers.getDataView()
 						}),
 						Ext.create('CMDBuild.view.management.report.ReportView', {
 							cmControllerType: 'CMDBuild.controller.management.report.Report',
-							cmName: 'report'
+							cmName: CMDBuild.core.constants.ModuleIdentifiers.getReport()
 						}),
 						Ext.create('CMDBuild.view.management.report.SinglePanel', {
 							cmControllerType: 'CMDBuild.controller.management.report.Single',
@@ -282,7 +283,7 @@
 						}),
 						this.processPanel = new CMDBuild.view.management.workflow.CMModProcess({
 							cmControllerType: CMDBuild.controller.management.workflow.CMModWorkflowController,
-							cmName: 'workflow'
+							cmName: CMDBuild.core.constants.ModuleIdentifiers.getWorkflow()
 						}),
 						this.dashboardPanel = new CMDBuild.view.management.dashboard.CMModDashboard({
 							cmControllerType: CMDBuild.controller.management.dashboard.CMModDashboardController,

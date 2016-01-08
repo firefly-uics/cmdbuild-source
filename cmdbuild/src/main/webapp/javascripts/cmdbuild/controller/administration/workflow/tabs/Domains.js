@@ -5,6 +5,7 @@
 
 		requires: [
 			'CMDBuild.core.constants.Global',
+			'CMDBuild.core.constants.ModuleIdentifiers',
 			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.proxy.domain.Domain'
 		],
@@ -69,14 +70,14 @@
 		},
 
 		onWorkflowTabDomainsAddButtonClick: function() {
-			var domainAccordion = _CMMainViewportController.findAccordionByCMName('domain');
+			var domainAccordion = _CMMainViewportController.findAccordionByCMName(CMDBuild.core.constants.ModuleIdentifiers.getDomain());
 
 			if (!Ext.isEmpty(domainAccordion)) {
 				domainAccordion.deselect();
 
 				// Add action to act as expand callback
 				domainAccordion.on('selectionchange', function(accordion, eOpts) {
-					_CMMainViewportController.panelControllers['domain'].cmfg('onDomainAddButtonClick');
+					_CMMainViewportController.panelControllers[CMDBuild.core.constants.ModuleIdentifiers.getDomain()].cmfg('onDomainAddButtonClick');
 				}, this, { single: true });
 
 				domainAccordion.expand();
@@ -99,7 +100,7 @@
 
 		onWorkflowTabDomainsItemDoubleClick: function() {
 			if (!this.selectedDomainIsEmpty()) {
-				var domainAccordion = _CMMainViewportController.findAccordionByCMName('domain');
+				var domainAccordion = _CMMainViewportController.findAccordionByCMName(CMDBuild.core.constants.ModuleIdentifiers.getDomain());
 
 				if (!Ext.isEmpty(domainAccordion)) {
 					domainAccordion.expand();
@@ -110,7 +111,7 @@
 
 		onWorkflowTabDomainsModifyButtonClick: function() {
 			if (!this.selectedDomainIsEmpty()) {
-				var domainAccordion = _CMMainViewportController.findAccordionByCMName('domain');
+				var domainAccordion = _CMMainViewportController.findAccordionByCMName(CMDBuild.core.constants.ModuleIdentifiers.getDomain());
 
 				if (!Ext.isEmpty(domainAccordion)) {
 					domainAccordion.deselect();
@@ -118,7 +119,7 @@
 					// Add action to act as expand callback
 					domainAccordion.on('selectionchange', function(accordion, eOpts) {
 						Ext.Function.createDelayed(function() { // Delay needed because of server asynchronous call to get domain data
-							_CMMainViewportController.panelControllers['domain'].cmfg('onDomainModifyButtonClick');
+							_CMMainViewportController.panelControllers[CMDBuild.core.constants.ModuleIdentifiers.getDomain()].cmfg('onDomainModifyButtonClick');
 						}, 500, this)();
 					}, this, { single: true });
 

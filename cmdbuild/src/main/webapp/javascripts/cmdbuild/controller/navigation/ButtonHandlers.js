@@ -2,7 +2,10 @@
 
 	Ext.define('CMDBuild.controller.navigation.ButtonHandlers', {
 
-		requires: ['CMDBuild.core.constants.Proxy'],
+		requires: [
+			'CMDBuild.core.constants.ModuleIdentifiers',
+			'CMDBuild.core.constants.Proxy'
+		],
 
 		/**
 		 * @param {CMDBuild.model.navigation.chronology.Record} record
@@ -18,13 +21,13 @@
 				case 'dashboard':
 					return this.navigationChronologyButtonHandlerDefault(record);
 
-				case 'dataview':
+				case CMDBuild.core.constants.ModuleIdentifiers.getDataView():
 					return this.navigationChronologyButtonHandlerDefault(record);
 
-				case 'report':
+				case CMDBuild.core.constants.ModuleIdentifiers.getReport():
 					return this.navigationChronologyButtonHandlerDefault(record);
 
-				case 'workflow':
+				case CMDBuild.core.constants.ModuleIdentifiers.getWorkflow():
 					return this.navigationChronologyButtonHandlerWorkflow(record);
 			}
 		},
