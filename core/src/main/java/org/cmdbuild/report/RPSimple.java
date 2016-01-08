@@ -12,13 +12,11 @@ import net.sf.jasperreports.engine.JRParameter;
 
 import org.cmdbuild.common.Constants;
 import org.cmdbuild.exception.ReportException.ReportExceptionType;
-import org.cmdbuild.logger.Log;
 
-public class RPSimple extends ReportParameter {
+public class RPSimple extends ReportParameter implements LoggingSupport {
 
-	protected RPSimple(final JRParameter jrParameter) {
-		super();
-		setJrParameter(jrParameter);
+	protected RPSimple(final JRParameter jrParameter, final String name) {
+		super(jrParameter, name);
 		if (getJrParameter() == null || getFullName() == null || getFullName().equals("")) {
 			throw ReportExceptionType.REPORT_INVALID_PARAMETER_FORMAT.createException();
 		}
@@ -72,8 +70,8 @@ public class RPSimple extends ReportParameter {
 			}
 			setValue(output);
 		} catch (final Exception e) {
-			Log.REPORT.error("Invalid parameter value \"" + value + "\" for \"" + getJrParameter().getValueClass()
-					+ "\"", e);
+			logger.error("Invalid parameter value \"" + value + "\" for \"" + getJrParameter().getValueClass() + "\"",
+					e);
 			throw ReportExceptionType.REPORT_INVALID_PARAMETER_VALUE.createException();
 		}
 	}

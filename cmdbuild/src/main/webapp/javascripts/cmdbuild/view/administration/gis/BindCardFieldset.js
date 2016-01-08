@@ -117,8 +117,8 @@
 				labelSeparator: me.isFirst ? ':' : '',
 				labelWidth: CMDBuild.LABEL_WIDTH,
 				width: CMDBuild.ADM_BIG_FIELD_WIDTH,
-				valueField: CMDBuild.core.proxy.Constants.NAME,
-				displayField: CMDBuild.core.proxy.Constants.DESCRIPTION,
+				valueField: CMDBuild.core.constants.Proxy.NAME,
+				displayField: CMDBuild.core.constants.Proxy.DESCRIPTION,
 				editable: false,
 				margin: '0 5 0 0',
 

@@ -168,7 +168,8 @@ public class DefaultObserverFactory implements ObserverFactory {
 						.filter(new JsonFilterHelper(jsonFilter) //
 								.merge(CardIdFilterElementGetter.of(input))) //
 						.build();
-				final CMQueryResult result = new QuerySpecsBuilderFiller(dataView.get(), queryOptions, classname) //
+				final CMQueryResult result = new QuerySpecsBuilderFiller(dataView.get(), queryOptions, dataView.get()
+						.findClass(classname)) //
 						.create() //
 						.run();
 				return !isEmpty(result);

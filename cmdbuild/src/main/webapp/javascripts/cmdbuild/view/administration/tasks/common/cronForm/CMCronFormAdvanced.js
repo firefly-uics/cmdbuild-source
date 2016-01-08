@@ -5,7 +5,7 @@
 	Ext.define('CMDBuild.view.administration.tasks.common.cronForm.CMCronFormAdvanced', {
 		extend: 'Ext.panel.Panel',
 
-		requires: ['CMDBuild.core.proxy.Constants'],
+		requires: ['CMDBuild.core.constants.Proxy'],
 
 		/**
 		 * @cfg {CMDBuild.controller.administration.tasks.common.cronForm.CMCronFormController}
@@ -31,8 +31,8 @@
 			var me = this;
 
 			this.advanceRadio = Ext.create('Ext.form.field.Radio', {
-				name: CMDBuild.core.proxy.Constants.CRON_INPUT_TYPE,
-				inputValue: CMDBuild.core.proxy.Constants.ADVANCED,
+				name: CMDBuild.core.constants.Proxy.CRON_INPUT_TYPE,
+				inputValue: CMDBuild.core.constants.Proxy.ADVANCED,
 				boxLabel: tr.advanced,
 				width: CMDBuild.LABEL_WIDTH,
 
@@ -44,11 +44,11 @@
 			});
 
 			this.advancedFields = [
-				this.delegate.createCronField(CMDBuild.core.proxy.Constants.MINUTE, tr.minute),
-				this.delegate.createCronField(CMDBuild.core.proxy.Constants.HOUR, tr.hour),
-				this.delegate.createCronField(CMDBuild.core.proxy.Constants.DAY_OF_MOUNTH, tr.dayOfMounth),
-				this.delegate.createCronField(CMDBuild.core.proxy.Constants.MOUNTH, tr.mounth),
-				this.delegate.createCronField(CMDBuild.core.proxy.Constants.DAY_OF_WEEK, tr.dayOfWeek)
+				this.delegate.createCronField(CMDBuild.core.constants.Proxy.MINUTE, tr.minute),
+				this.delegate.createCronField(CMDBuild.core.constants.Proxy.HOUR, tr.hour),
+				this.delegate.createCronField(CMDBuild.core.constants.Proxy.DAY_OF_MONTH, tr.dayOfMonth),
+				this.delegate.createCronField(CMDBuild.core.constants.Proxy.MONTH, tr.month),
+				this.delegate.createCronField(CMDBuild.core.constants.Proxy.DAY_OF_WEEK, tr.dayOfWeek)
 			];
 
 			Ext.apply(this, {

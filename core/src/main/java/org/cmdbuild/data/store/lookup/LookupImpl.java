@@ -27,21 +27,6 @@ public final class LookupImpl implements Lookup {
 		private LookupBuilder() {
 		}
 
-		public LookupImpl.LookupBuilder clone(final Lookup lookup) {
-			this.id = lookup.getId();
-			this.code = lookup.code();
-			this.description = lookup.description();
-			this.notes = lookup.notes();
-			this.type = lookup.type();
-			this.number = lookup.number();
-			this.active = lookup.active();
-			this.isDefault = lookup.isDefault();
-			this.parentId = lookup.parentId();
-			this.parent = lookup.parent();
-			this.translationUuid = lookup.uuid();
-			return this;
-		}
-
 		public LookupImpl.LookupBuilder withId(final Long value) {
 			this.id = value;
 			return this;

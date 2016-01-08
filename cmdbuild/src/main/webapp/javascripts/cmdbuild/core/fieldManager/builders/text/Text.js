@@ -7,7 +7,7 @@
 	Ext.define('CMDBuild.core.fieldManager.builders.text.Text', {
 		extend: 'CMDBuild.core.fieldManager.builders.Abstract',
 
-		requires: ['CMDBuild.core.proxy.Constants'],
+		requires: ['CMDBuild.core.constants.Proxy'],
 
 		/**
 		 * @cfg {CMDBuild.core.fieldManager.FieldManager}
@@ -17,7 +17,7 @@
 		/**
 		 * @param {Boolean} withEditor
 		 *
-		 * @returns {Ext.grid.column.Column}
+		 * @returns {Ext.grid.column.Column or Object}
 		 */
 		buildColumn: function(withEditor) {
 			withEditor = Ext.isBoolean(withEditor) ? withEditor : false;
@@ -43,7 +43,7 @@
 		 * @returns {Mixed}
 		 */
 		buildSubFieldClass: function() {
-			switch (this.cmfg('attributeModelGet', CMDBuild.core.proxy.Constants.EDITOR_TYPE)) {
+			switch (this.cmfg('attributeModelGet', CMDBuild.core.constants.Proxy.EDITOR_TYPE)) {
 				case 'HTML':
 					return Ext.create('CMDBuild.core.fieldManager.builders.text.HtmlEditor', { parentDelegate: this });
 

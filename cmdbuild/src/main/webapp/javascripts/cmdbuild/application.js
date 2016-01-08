@@ -4,6 +4,7 @@
 
 	// Global constants
 	CMDBuild.LABEL_WIDTH = 150;
+	CMDBuild.LABEL_WIDTH_LOGIN = 100;
 
 	CMDBuild.BIG_FIELD_ONLY_WIDTH = 475;
 	CMDBuild.MEDIUM_FIELD_ONLY_WIDTH = 150;
@@ -22,15 +23,13 @@
 
 	// Custom widths
 	CMDBuild.HTML_EDITOR_WIDTH = CMDBuild.LABEL_WIDTH + 600;
+	CMDBuild.MENU_WIDTH = 600;
 
 	// Global object with runtime configuration
 	CMDBuild.configuration = {};
 	CMDBuild.Config = {}; // @deprecated
 
-	// Component masks are shown at 20000 z-index. This oddly fixes the problem of masks appearing on top of new windows.
-	// Ext.WindowMgr.zseed = 30000;
-
-	Ext.WindowManager.getNextZSeed();	// To increase the default zseed. Is needed for the combo on windoows probably it fix also the prev problem
+	Ext.WindowManager.getNextZSeed();	// To increase the default zseed. Is needed for the combo on windows probably it fix also the prev problem
 	Ext.enableFx = false;
 
 })();

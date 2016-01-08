@@ -1,13 +1,14 @@
 package utils;
 
+import static com.google.common.reflect.Reflection.newProxy;
 import static java.lang.String.format;
+import static org.cmdbuild.common.utils.Reflection.defaultValues;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Collections;
-import java.util.List;
 import java.util.Properties;
 
 import javax.sql.DataSource;
@@ -18,11 +19,35 @@ import org.cmdbuild.config.DatabaseProperties;
 import org.cmdbuild.dao.driver.AbstractDBDriver.DefaultTypeObjectCache;
 import org.cmdbuild.dao.driver.DBDriver;
 import org.cmdbuild.dao.driver.postgres.PostgresDriver;
+import org.cmdbuild.services.ForwardingPatchManager;
 import org.cmdbuild.services.PatchManager;
 import org.cmdbuild.services.Settings;
 import org.cmdbuild.services.database.DatabaseConfigurator;
 
 public class DBInitializer implements LoggingSupport {
+
+	private static class FakePatchManager extends ForwardingPatchManager {
+
+		private static final PatchManager DELEGATE = newProxy(PatchManager.class, defaultValues());
+
+		@Override
+		protected PatchManager delegate() {
+			return DELEGATE;
+		}
+
+		@Override
+		public Iterable<Patch> getAvaiblePatch() {
+			return Collections.emptyList();
+		}
+
+		@Override
+		public boolean isUpdated() {
+			return true;
+		}
+
+	}
+
+	private static final PatchManager FAKE_PATCH_MANAGER = new FakePatchManager();
 
 	private static final String DATABASE_PROPERTIES = "database.properties";
 	// TODO it's a little ugly, at the moment is ok
@@ -96,41 +121,10 @@ public class DBInitializer implements LoggingSupport {
 			}
 
 		};
-		patchManager = fakePatchManager();
+		patchManager = FAKE_PATCH_MANAGER;
 		final DatabaseConfiguration databaseConfiguration = new DatabaseProperties();
 		dbConfigurator = new DatabaseConfigurator(dbConfiguration, databaseConfiguration, patchManager);
 		pgDriver = new PostgresDriver(dbConfigurator.systemDataSource(), new DefaultTypeObjectCache());
-	}
-
-	private PatchManager fakePatchManager() {
-		return new PatchManager() {
-
-			@Override
-			public void reset() {
-				// nothing to do
-			}
-
-			@Override
-			public void applyPatchList() throws SQLException {
-				// nothing to do
-			}
-
-			@Override
-			public List<Patch> getAvaiblePatch() {
-				return Collections.emptyList();
-			}
-
-			@Override
-			public boolean isUpdated() {
-				return true;
-			}
-
-			@Override
-			public void createLastPatch() {
-				// nothing to do
-			}
-
-		};
 	}
 
 	private Properties readDatabaseProperties() {
@@ -184,13 +178,8 @@ public class DBInitializer implements LoggingSupport {
 	}
 
 	private void updateWithPatches() {
-		try {
-			if (!patchManager.isUpdated()) {
-				patchManager.applyPatchList();
-			}
-		} catch (final SQLException e) {
-			logger.error("error applying patches", e);
-			throw new Error(e);
+		if (!patchManager.isUpdated()) {
+			patchManager.applyPatchList();
 		}
 	}
 

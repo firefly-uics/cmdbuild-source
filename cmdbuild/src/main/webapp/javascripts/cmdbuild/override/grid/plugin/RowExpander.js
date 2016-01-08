@@ -4,15 +4,9 @@
 		override: 'Ext.grid.plugin.RowExpander',
 
 		collapseAll: function() {
-			Ext.Object.each(this.recordsExpanded, function(key, value, myself) {
-				if (value) {
-					var i = this.grid.getStore().findBy(function(record, id) {
-						return record.internalId == key;
-					}, this);
-
-					if (i >= 0)
-						this.toggleRow(i, this.grid.getStore().getAt(i));
-				}
+			Ext.Array.each(this.grid.getStore().getRange(), function(record, i, allRecords) {
+				if(this.recordsExpanded[record.internalId])
+					this.toggleRow(record.index, record);
 			}, this);
 		}
 	});

@@ -7,7 +7,6 @@ import java.util.Set;
 import java.util.regex.Pattern;
 
 import javax.xml.namespace.QName;
-import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.dmtf.schemas.cmdbf._1.tns.servicedata.ComparisonOperatorType;
@@ -42,10 +41,13 @@ public class CMDBfUtils {
 		if (record.getAny() != null) {
 			xml = record.getAny();
 		} else if (record.getPropertySet() != null) {
-			final Document doc = DocumentBuilderFactory.newInstance().newDocumentBuilder().newDocument();
-			xml = doc.createElementNS(record.getPropertySet().getNamespace(), record.getPropertySet().getLocalName());
 			for (final Object property : record.getPropertySet().getAny()) {
 				if (property instanceof Element) {
+					if (xml == null) {
+						final Document doc = ((Element) property).getOwnerDocument();
+						xml = doc.createElementNS(record.getPropertySet().getNamespace(), record.getPropertySet()
+								.getLocalName());
+					}
 					xml.appendChild((Element) property);
 				}
 			}

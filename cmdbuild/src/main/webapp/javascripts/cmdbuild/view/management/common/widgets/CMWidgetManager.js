@@ -118,10 +118,10 @@
 					 * @param {Object} widget
 					 * @param {CMDBuild.model.CMActivityInstance} activity
 					 *
-					 * @returns {CMDBuild.view.management.common.widgets.customForm.CustomFormView}
+					 * @returns {CMDBuild.view.management.widget.customForm.CustomFormView}
 					 */
 					'.CustomForm': function(widget, card) {
-						var w = Ext.create('CMDBuild.view.management.common.widgets.customForm.CustomFormView');
+						var w = Ext.create('CMDBuild.view.management.widget.customForm.CustomFormView');
 
 						me.widgetsContainer.addWidgt(w);
 

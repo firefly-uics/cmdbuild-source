@@ -1,8 +1,10 @@
 package org.cmdbuild.workflow.xpdl;
 
+import static java.util.Collections.emptyList;
+
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map.Entry;
+import java.util.Map;
 
 import org.apache.commons.lang3.Validate;
 import org.cmdbuild.common.annotations.Legacy;
@@ -15,21 +17,26 @@ public class XpdlActivityWrapper implements CMActivity {
 
 	private static CMValueSet UNAVAILABLE_PROCESS_INSTANCE = new CMValueSet() {
 
-		final String EXCEPTION = "Process instance not available";
+		private final Iterable<Map.Entry<String, Object>> NO_VALUES = emptyList();
 
 		@Override
 		public Object get(final String key) {
-			throw new UnsupportedOperationException(EXCEPTION);
+			return null;
 		}
 
 		@Override
 		public <T> T get(final String key, final Class<? extends T> requiredType) {
-			throw new UnsupportedOperationException(EXCEPTION);
+			return null;
 		}
 
 		@Override
-		public Iterable<Entry<String, Object>> getValues() {
-			throw new UnsupportedOperationException(EXCEPTION);
+		public <T> T get(final String key, final Class<? extends T> requiredType, final T defaultValue) {
+			return null;
+		}
+
+		@Override
+		public Iterable<Map.Entry<String, Object>> getValues() {
+			return NO_VALUES;
 		}
 
 	};

@@ -2,32 +2,19 @@ package org.cmdbuild.report;
 
 import net.sf.jasperreports.engine.JRParameter;
 
-import org.cmdbuild.dao.entrytype.attributetype.ForeignKeyAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.IntegerAttributeType;
 import org.cmdbuild.exception.ReportException.ReportExceptionType;
 
 public class RPReference extends ReportParameter {
 
-	public static class ReportReferenceAttributeType extends ForeignKeyAttributeType {
+	private final String className;
 
-		public ReportReferenceAttributeType(final String referencedClassName) {
-			super(referencedClassName);
-		}
-
-	}
-
-	protected RPReference(final JRParameter jrParameter) {
-		super();
-		setJrParameter(jrParameter);
-
-		if (getJrParameter() == null //
-				|| getFullName() == null //
-				|| getFullName().equals("") //
-				|| !getFullName().matches(regExpLR)) {
-
+	protected RPReference(final JRParameter jrParameter, final String name, final String className) {
+		super(jrParameter, name);
+		this.className = className;
+		if (getJrParameter() == null || getFullName() == null || getFullName().equals("")) {
 			throw ReportExceptionType.REPORT_INVALID_PARAMETER_FORMAT.createException();
 		}
-
 		if (getJrParameter().getValueClass() != Integer.class) {
 			throw ReportExceptionType.REPORT_INVALID_PARAMETER_REFERENCE_CLASS.createException();
 		}
@@ -39,11 +26,7 @@ public class RPReference extends ReportParameter {
 	}
 
 	public String getClassName() {
-		return getFullNameSplit()[1];
-	}
-
-	public String getAttributeName() {
-		return getFullNameSplit()[2];
+		return className;
 	}
 
 	@Override

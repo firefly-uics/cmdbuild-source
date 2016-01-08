@@ -4,8 +4,8 @@
 		extend: 'Ext.form.Panel',
 
 		requires: [
-			'CMDBuild.core.proxy.Constants',
-			'CMDBuild.core.proxy.widgets.OpenReport'
+			'CMDBuild.core.constants.Proxy',
+			'CMDBuild.core.proxy.widget.OpenReport'
 		],
 
 		/**
@@ -40,18 +40,18 @@
 			Ext.apply(this, {
 				items: [
 					this.formatCombo = Ext.create('Ext.form.field.ComboBox', {
-						name: CMDBuild.core.proxy.Constants.EXTENSION,
+						name: CMDBuild.core.constants.Proxy.EXTENSION,
 						fieldLabel: CMDBuild.Translation.format,
 						labelAlign: 'right',
 						labelWidth: CMDBuild.LABEL_WIDTH,
 						maxWidth: CMDBuild.MEDIUM_FIELD_WIDTH,
-						valueField: CMDBuild.core.proxy.Constants.VALUE,
-						displayField: CMDBuild.core.proxy.Constants.DESCRIPTION,
-						value: CMDBuild.core.proxy.Constants.PDF,
+						valueField: CMDBuild.core.constants.Proxy.VALUE,
+						displayField: CMDBuild.core.constants.Proxy.DESCRIPTION,
+						value: CMDBuild.core.constants.Proxy.PDF,
 						editable: false,
 						forceSelection: true,
 
-						store: CMDBuild.core.proxy.widgets.OpenReport.getFormatsStore(),
+						store: CMDBuild.core.proxy.widget.OpenReport.getStoreFormats(),
 						queryMode: 'local'
 					}),
 					this.fieldContainer = Ext.create('Ext.container.Container', { // To contains all non fixed fields

@@ -24,7 +24,7 @@
 			attr.len = this.MAXWIDTH + 1; // MAXWIDTH is the length for switching to a textarea
 			return CMDBuild.WidgetBuilders.TextAttribute.superclass.buildAttributeField(attr);
 		} else {
-			var editor = Ext.create('CMDBuild.view.common.field.CMHtmlEditorField', {
+			var editor = Ext.create('CMDBuild.view.common.field.HtmlEditor', {
 				labelAlign: 'right',
 				labelWidth: CMDBuild.LABEL_WIDTH,
 				width: CMDBuild.HTML_EDITOR_WIDTH,

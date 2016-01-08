@@ -19,7 +19,7 @@
 		list : function(p) {
 			p.method = "GET";
 			p.url = CMDBuild.ServiceProxy.url.Dashboard.list;
-	
+
 			CMDBuild.ServiceProxy.core.doRequest(p);
 		},
 
@@ -39,9 +39,14 @@
 				},
 				success: function(operation, configuration, decodedResponse) {
 					dashboardConfiguration.id = decodedResponse.response;
-					_debug(dashboardConfiguration);
+
 					success.apply(scope);
 
+					_CMMainViewportController.findAccordionByCMName('dashboard').updateStore(dashboardConfiguration.id);
+
+					/**
+					 * @deprecated
+					 */
 					_CMCache.addDashboard(dashboardConfiguration);
 				}
 			});
@@ -58,22 +63,11 @@
 				success: function(operation, configuration, decodedResponse) {
 					success.apply(scope);
 
-					_CMCache.modifyDashboard(dashboardConfiguration, dashboardId);
-				}
-			});
-		},
+					_CMMainViewportController.findAccordionByCMName('dashboard').updateStore(dashboardId);
 
-		modify : function(dashboardId, dashboardConfiguration, success, scope) {
-			CMDBuild.ServiceProxy.core.doRequest({
-				method: "POST",
-				url: CMDBuild.ServiceProxy.url.Dashboard.modify,
-				params: {
-					dashboardId: dashboardId,
-					dashboardConfiguration: Ext.encode(dashboardConfiguration)
-				},
-				success: function(operation, configuration, decodedResponse) {
-					success.apply(scope);
-
+					/**
+					 * @deprecated
+					 */
 					_CMCache.modifyDashboard(dashboardConfiguration, dashboardId);
 				}
 			});
@@ -107,9 +101,15 @@
 					dashboardId: dashboardId
 				},
 				success: function(operation, configuration, decodedResponse) {
-					 success.apply(scope);
+					success.apply(scope);
 
-					 _CMCache.removeDashboardWithId(dashboardId);
+					_CMMainViewportController.findAccordionByCMName('dashboard').deselect();
+					_CMMainViewportController.findAccordionByCMName('dashboard').updateStore();
+
+					/**
+					 * @deprecated
+					 */
+					_CMCache.removeDashboardWithId(dashboardId);
 				}
 			});
 		},
@@ -200,11 +200,11 @@
 							chart = fromDashboard.getChartWithId(chartId);
 							fromDashboard.removeChart(chartId);
 						}
-		
+
 						if (toDashboard && chart) {
 							toDashboard.addChart(chart);
 						}
-		
+
 						if (typeof cb == "function") {
 							cb();
 						}

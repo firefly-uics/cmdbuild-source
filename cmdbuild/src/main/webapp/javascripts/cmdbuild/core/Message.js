@@ -107,19 +107,6 @@
 				Ext.isBoolean(popup) ? popup : false,
 				Ext.MessageBox.WARNING
 			);
-		},
-
-		/**
-		 * @param {String} title
-		 * @param {Mixed} body
-		 * @param {Boolean} popup
-		 *
-		 * @deprecated
-		 */
-		warn: function(title, text, popup) {
-			_deprecated('warn', this);
-
-			this.warning(title, text, popup);
 		}
 	});
 
@@ -135,7 +122,7 @@ function buildDetaiWindow(detailBufferIndex) {
 		dockedItems: [
 			Ext.create('Ext.toolbar.Toolbar', {
 				dock: 'bottom',
-				itemId: CMDBuild.core.proxy.Constants.TOOLBAR_BOTTOM,
+				itemId: CMDBuild.core.constants.Proxy.TOOLBAR_BOTTOM,
 				ui: 'footer',
 
 				layout: {

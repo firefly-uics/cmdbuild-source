@@ -1,13 +1,11 @@
 package org.cmdbuild.dao.query.clause;
 
 import static com.google.common.collect.Iterables.transform;
-import static com.google.common.collect.Lists.newArrayList;
 import static com.google.common.collect.Lists.newArrayListWithCapacity;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
 
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 
 import org.apache.commons.lang3.Validate;
 import org.cmdbuild.dao.entrytype.CMAttribute;
@@ -125,7 +123,7 @@ public class FunctionCall implements CMFunctionCall {
 	final CMFunction function;
 	final List<Object> params;
 
-	private FunctionCall(final CMFunction function, final List<Object> params) {
+	FunctionCall(final CMFunction function, final List<Object> params) {
 		Validate.notNull(function);
 		Validate.isTrue(function.getInputParameters().size() == params.size(),
 				"Number of parameters not matching the function signature");
@@ -154,30 +152,6 @@ public class FunctionCall implements CMFunctionCall {
 	@Override
 	public List<Object> getParams() {
 		return params;
-	}
-
-	public static FunctionCall call(final CMFunction function, final Object... actualParameters) {
-		return new FunctionCall(function, newArrayList(actualParameters));
-	}
-
-	public static FunctionCall call(final CMFunction function, final Iterable<Object> actualParameters) {
-		return new FunctionCall(function, newArrayList(actualParameters));
-	}
-
-	public static FunctionCall call(final CMFunction function, final Map<String, Object> actualParametersMap) {
-		final List<CMFunctionParameter> formalParameters = function.getInputParameters();
-		final List<Object> actualParameters = buildActualParametersList(formalParameters, actualParametersMap);
-		return new FunctionCall(function, actualParameters);
-	}
-
-	private static List<Object> buildActualParametersList(final List<CMFunctionParameter> formalParameters,
-			final Map<String, Object> actualParametersMap) {
-		final List<Object> actualParameters = newArrayListWithCapacity(formalParameters.size());
-		for (final CMFunctionParameter fp : formalParameters) {
-			final Object ap = actualParametersMap.get(fp.getName());
-			actualParameters.add(ap);
-		}
-		return actualParameters;
 	}
 
 	@Override

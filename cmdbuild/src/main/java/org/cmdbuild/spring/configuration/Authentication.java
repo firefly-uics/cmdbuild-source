@@ -18,10 +18,12 @@ import org.cmdbuild.auth.UserStore;
 import org.cmdbuild.logic.auth.DefaultAuthenticationLogicBuilder;
 import org.cmdbuild.logic.auth.DefaultGroupsLogic;
 import org.cmdbuild.logic.auth.GroupsLogic;
+import org.cmdbuild.logic.auth.RestAuthenticationLogicBuilder;
 import org.cmdbuild.logic.auth.SoapAuthenticationLogicBuilder;
 import org.cmdbuild.logic.auth.TransactionalGroupsLogic;
 import org.cmdbuild.privileges.DBGroupFetcher;
 import org.cmdbuild.privileges.fetchers.factories.CMClassPrivilegeFetcherFactory;
+import org.cmdbuild.privileges.fetchers.factories.CustomPagePrivilegeFetcherFactory;
 import org.cmdbuild.privileges.fetchers.factories.FilterPrivilegeFetcherFactory;
 import org.cmdbuild.privileges.fetchers.factories.ViewPrivilegeFetcherFactory;
 import org.cmdbuild.services.soap.security.SoapConfiguration;
@@ -37,6 +39,9 @@ public class Authentication {
 
 	@Autowired
 	private AuthenticationStore authenticationStore;
+
+	@Autowired
+	private CustomPages customPages;
 
 	@Autowired
 	private Data data;
@@ -94,10 +99,11 @@ public class Authentication {
 	@Bean
 	@Scope(PROTOTYPE)
 	public DBGroupFetcher dbGroupFetcher() {
-		return new DBGroupFetcher(data.systemDataView(), Arrays.asList( //
-				new CMClassPrivilegeFetcherFactory(data.systemDataView()), //
-				new ViewPrivilegeFetcherFactory(data.systemDataView(), view.viewConverter()), //
-				new FilterPrivilegeFetcherFactory(data.systemDataView(), filter.dataViewFilterStore())));
+		return new DBGroupFetcher(data.systemDataView(), Arrays.asList(
+				new CMClassPrivilegeFetcherFactory(data.systemDataView()),
+				new ViewPrivilegeFetcherFactory(data.systemDataView(), view.viewConverter()),
+				new FilterPrivilegeFetcherFactory(data.systemDataView(), filter.dataViewFilterStore()),
+				new CustomPagePrivilegeFetcherFactory(data.systemDataView(), customPages.defaultCustomPagesLogic())));
 	}
 
 	@Bean
@@ -126,6 +132,18 @@ public class Authentication {
 	}
 
 	@Bean
+	public AuthenticationService restAuthenticationService() {
+		final DefaultAuthenticationService authenticationService = new DefaultAuthenticationService(
+				properties.authConf(), data.systemDataView());
+		authenticationService.setPasswordAuthenticators(dbAuthenticator(), ldapAuthenticator());
+		authenticationService.setClientRequestAuthenticators(headerAuthenticator(), casAuthenticator());
+		authenticationService.setUserFetchers(dbAuthenticator(), notSystemUserFetcher());
+		authenticationService.setGroupFetcher(dbGroupFetcher());
+		authenticationService.setUserStore(userStore);
+		return authenticationService;
+	}
+
+	@Bean
 	@Scope(PROTOTYPE)
 	public DefaultAuthenticationLogicBuilder defaultAuthenticationLogicBuilder() {
 		return new DefaultAuthenticationLogicBuilder( //
@@ -140,6 +158,15 @@ public class Authentication {
 	public SoapAuthenticationLogicBuilder soapAuthenticationLogicBuilder() {
 		return new SoapAuthenticationLogicBuilder( //
 				soapAuthenticationService(), //
+				privilegeManagement.privilegeContextFactory(), //
+				data.systemDataView());
+	}
+
+	@Bean
+	@Scope(PROTOTYPE)
+	public RestAuthenticationLogicBuilder restAuthenticationLogicBuilder() {
+		return new RestAuthenticationLogicBuilder( //
+				restAuthenticationService(), //
 				privilegeManagement.privilegeContextFactory(), //
 				data.systemDataView());
 	}

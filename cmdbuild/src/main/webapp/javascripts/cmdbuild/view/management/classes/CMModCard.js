@@ -9,9 +9,9 @@
 			uistatedelegate: "CMDBuild.state.UIStateDelegate"
 		},
 
-		cmName: "class",
-
 		whitMap: true,
+		layout: "border",
+		border: true,
 
 		constructor: function() {
 			this.CMEVENTS = {
@@ -61,31 +61,20 @@
 			});
 
 			Ext.apply(this, {
-				layout: "border",
-				border: true,
 				items: [this.centralPanel, this.cardTabPanel],
-				tools:[{
-					type:'minimize',
-					handler: function () {
-						_CMUIState.onlyForm();
-					}
-				},{
-					type:'maximize',
-					handler: function () {
-						_CMUIState.onlyGrid();
-					}
-				},{
-					type: "restore",
-					handler: function () {
-						_CMUIState.fullScreenOff();
-					}
-				}]
+				tools: [
+					Ext.create('CMDBuild.view.common.panel.gridAndForm.tools.Properties'),
+					Ext.create('CMDBuild.view.common.panel.gridAndForm.tools.Minimize'),
+					Ext.create('CMDBuild.view.common.panel.gridAndForm.tools.Maximize'),
+					Ext.create('CMDBuild.view.common.panel.gridAndForm.tools.Restore')
+				]
 			});
 
 			this.callParent(arguments);
 
 			_CMUtils.forwardMethods(this, this.cardTabPanel, [
 				"activateFirstTab",
+				"setActivateTab",
 				"getCardPanel",
 				"getNotePanel",
 				"getMDPanel",

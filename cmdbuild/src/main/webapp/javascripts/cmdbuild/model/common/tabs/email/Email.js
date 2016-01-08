@@ -1,31 +1,31 @@
 (function() {
 
+	Ext.require('CMDBuild.core.constants.Proxy');
+
 	Ext.define('CMDBuild.model.common.tabs.email.Email', {
 		extend: 'Ext.data.Model',
 
-		require: ['CMDBuild.core.proxy.Constants'],
-
 		fields: [
-			{ name: CMDBuild.core.proxy.Constants.ACCOUNT, type: 'string' },
-			{ name: CMDBuild.core.proxy.Constants.ATTACHMENTS, type: 'auto' },
-			{ name: CMDBuild.core.proxy.Constants.BCC, type: 'auto' },
-			{ name: CMDBuild.core.proxy.Constants.BODY, type: 'string' },
-			{ name: CMDBuild.core.proxy.Constants.CC, type: 'auto' },
-			{ name: CMDBuild.core.proxy.Constants.DATE, type: 'auto' },
-			{ name: CMDBuild.core.proxy.Constants.DELAY, type: 'int', useNull: true },
-			{ name: CMDBuild.core.proxy.Constants.FROM, type: 'auto' },
-			{ name: CMDBuild.core.proxy.Constants.ID, type: 'int', useNull: true },
-			{ name: CMDBuild.core.proxy.Constants.KEEP_SYNCHRONIZATION, type: 'boolean', defaultValue: true },
-			{ name: CMDBuild.core.proxy.Constants.KEY, type: 'string' },
-			{ name: CMDBuild.core.proxy.Constants.NOTIFY_WITH, type: 'string' },
-			{ name: CMDBuild.core.proxy.Constants.NO_SUBJECT_PREFIX, type: 'boolean', defaultValue: false },
-			{ name: CMDBuild.core.proxy.Constants.PROMPT_SYNCHRONIZATION, type: 'boolean', defaultValue: false },
-			{ name: CMDBuild.core.proxy.Constants.REFERENCE, type: 'int', useNull: true },
-			{ name: CMDBuild.core.proxy.Constants.STATUS, type: 'string', defaultValue: CMDBuild.core.proxy.Constants.DRAFT },
-			{ name: CMDBuild.core.proxy.Constants.SUBJECT, type: 'string' },
-			{ name: CMDBuild.core.proxy.Constants.TEMPLATE, type: 'string' },
-			{ name: CMDBuild.core.proxy.Constants.TEMPORARY, type: 'boolean', defaultValue: false },
-			{ name: CMDBuild.core.proxy.Constants.TO, type: 'auto' }
+			{ name: CMDBuild.core.constants.Proxy.ACCOUNT, type: 'string' },
+			{ name: CMDBuild.core.constants.Proxy.ATTACHMENTS, type: 'auto' },
+			{ name: CMDBuild.core.constants.Proxy.BCC, type: 'auto' },
+			{ name: CMDBuild.core.constants.Proxy.BODY, type: 'string' },
+			{ name: CMDBuild.core.constants.Proxy.CC, type: 'auto' },
+			{ name: CMDBuild.core.constants.Proxy.DATE, type: 'auto' },
+			{ name: CMDBuild.core.constants.Proxy.DELAY, type: 'int', useNull: true },
+			{ name: CMDBuild.core.constants.Proxy.FROM, type: 'auto' },
+			{ name: CMDBuild.core.constants.Proxy.ID, type: 'int', useNull: true },
+			{ name: CMDBuild.core.constants.Proxy.KEEP_SYNCHRONIZATION, type: 'boolean', defaultValue: true },
+			{ name: CMDBuild.core.constants.Proxy.KEY, type: 'string' },
+			{ name: CMDBuild.core.constants.Proxy.NOTIFY_WITH, type: 'string' },
+			{ name: CMDBuild.core.constants.Proxy.NO_SUBJECT_PREFIX, type: 'boolean', defaultValue: false },
+			{ name: CMDBuild.core.constants.Proxy.PROMPT_SYNCHRONIZATION, type: 'boolean', defaultValue: false },
+			{ name: CMDBuild.core.constants.Proxy.REFERENCE, type: 'int', useNull: true },
+			{ name: CMDBuild.core.constants.Proxy.STATUS, type: 'string', defaultValue: CMDBuild.core.constants.Proxy.DRAFT },
+			{ name: CMDBuild.core.constants.Proxy.SUBJECT, type: 'string' },
+			{ name: CMDBuild.core.constants.Proxy.TEMPLATE, type: 'string' },
+			{ name: CMDBuild.core.constants.Proxy.TEMPORARY, type: 'boolean', defaultValue: false },
+			{ name: CMDBuild.core.constants.Proxy.TO, type: 'auto' }
 		],
 
 		/**
@@ -44,10 +44,10 @@
 			} else {
 				// Or returns only required attributes
 				Ext.Array.forEach(requiredAttributes, function(item, index, allItems) {
-					if (item == CMDBuild.core.proxy.Constants.TEMPLATE) { // Support for template objects
-						params[CMDBuild.core.proxy.Constants.TEMPLATE] =
-							this.get(CMDBuild.core.proxy.Constants.TEMPLATE)[CMDBuild.core.proxy.Constants.NAME]
-						|| this.get(CMDBuild.core.proxy.Constants.TEMPLATE);
+					if (item == CMDBuild.core.constants.Proxy.TEMPLATE) { // Support for template objects
+						params[CMDBuild.core.constants.Proxy.TEMPLATE] =
+							this.get(CMDBuild.core.constants.Proxy.TEMPLATE)[CMDBuild.core.constants.Proxy.NAME]
+						|| this.get(CMDBuild.core.constants.Proxy.TEMPLATE);
 					} else {
 						params[item] = this.get(item) || null;
 					}

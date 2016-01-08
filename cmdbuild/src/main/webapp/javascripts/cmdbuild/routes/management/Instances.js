@@ -33,8 +33,7 @@
 					Ext.Function.createDelayed(function() {
 						_CMMainViewportController.openCard({
 							Id: this.instanceIdentifier,
-							IdClass: this.entryType.get(CMDBuild.core.proxy.Constants.ID),
-							activateFirstTab: true
+							IdClass: this.entryType.get(CMDBuild.core.constants.Proxy.ID)
 						});
 					}, 500, this)();
 				} else {
@@ -53,9 +52,9 @@
 		 * @return  {Boolean}
 		 */
 		paramsValidation: function(params) {
-			this.instanceIdentifier = params[CMDBuild.core.proxy.Constants.INSTANCE_IDENTIFIER];
-			this.processIdentifier = params[CMDBuild.core.proxy.Constants.PROCESS_IDENTIFIER];
-			this.clientFilterString = params[CMDBuild.core.proxy.Constants.CLIENT_FILTER];
+			this.instanceIdentifier = params[CMDBuild.core.constants.Proxy.INSTANCE_IDENTIFIER];
+			this.processIdentifier = params[CMDBuild.core.constants.Proxy.PROCESS_IDENTIFIER];
+			this.clientFilterString = params[CMDBuild.core.constants.Proxy.CLIENT_FILTER];
 
 			// Process identifier validation
 			if (

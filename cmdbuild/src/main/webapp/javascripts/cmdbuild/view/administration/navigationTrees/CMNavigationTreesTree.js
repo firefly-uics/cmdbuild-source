@@ -1,6 +1,6 @@
 (function() {
-	var DEFAULT_MENU_TEXT = CMDBuild.Translation.trees_navigation; 
-	
+	var DEFAULT_MENU_TEXT = CMDBuild.Translation.trees_navigation;
+
 	Ext.define("CMDBuild.view.administration.navigationTrees.CMNavigationTreesTree",{
 		extend: "Ext.panel.Panel",
 		treeName : undefined,
@@ -12,7 +12,7 @@
 
 			this.modifyButton = new Ext.button.Button({
 				iconCls : 'modify',
-				text: CMDBuild.Translation.tree_modify, 
+				text: CMDBuild.Translation.tree_modify,
 				scope: this,
 				handler: function() {
 					this.delegate.cmOn("onModifyButtonClick");
@@ -21,7 +21,7 @@
 
 			this.deleteButton = new Ext.button.Button({
 				iconCls : 'delete',
-				text: CMDBuild.Translation.tree_remove, 
+				text: CMDBuild.Translation.tree_remove,
 				scope: this,
 				handler: function() {
 					this.delegate.cmOn("onDeleteButtonClick");
@@ -72,7 +72,7 @@
 				bodyCls: 'cmgraypanel',
 				items: [this.treePanel]
 			});
-			
+
 			this.callParent(arguments);
 			this.mon(this.tree, "afteritemexpand", function(node) {
 				for (var i = 0; i < node.childNodes.length; i++) {
@@ -121,12 +121,12 @@
 		getData: function() {
 			return this.tree.getData();
 		},
-		
+
 		addDomainsAsNodeChildren: function(domains, node) {
 			return this.tree.addDomainsAsNodeChildren(domains, node);
 		},
 
-	});	
+	});
 	Ext.define('CMDBuild.model.NavigationTreeNodeModel', {
 		extend: 'Ext.data.Model',
 		fields: [{
@@ -194,7 +194,7 @@
 			});
 		return root;
 	}
-	
+
 	Ext.define("CMDBuild.view.administration.navigationTrees.CMTreePanel", {
 		extend: "Ext.tree.Panel",
         selModel: {
@@ -207,13 +207,13 @@
 
 			this.columns = [{
 				xtype: 'treecolumn',
-				text: CMDBuild.Translation.tree_navigation, 
+				text: CMDBuild.Translation.tree_navigation,
 				dataIndex: 'text',
 				flex: 3,
 				sortable: false
 			}, {
 				dataIndex: 'cqlNode',
-				text: CMDBuild.Translation.cql_filter, 
+				text: CMDBuild.Translation.cqlFilter,
 				flex: 2,
 				sortable: false,
 				field: {
@@ -228,7 +228,7 @@
 			}, this);
 
 		},
-		
+
 		onNavigationTreesItemChecked: function(node, checked) {
 			this.suspendEvents(false);
 			if (checked) {
@@ -239,12 +239,12 @@
 			}
 			this.resumeEvents();
 		},
-		
+
 		addDomainsAsFirstLevelChildren: function(domains) {
 			var r = this.getStore().getRootNode();
 			this.addDomainsAsNodeChildren(domains, r);
 		},
-		
+
 		openTreeForTreeType: function(tree) {
 			this.suspendEvents(false);
 			var thereAreChildren = false;
@@ -259,7 +259,7 @@
 			}
 			this.resumeEvents();
 		},
-		
+
 		addDomainsAsNodeChildren: function(domains, node) {
 			node.collapse();
 			for (var i=0, l=domains.length; i<l; ++i) {
@@ -281,7 +281,7 @@
 
 		openNodes: function(nodeSaved, parentComplete) {
 			var nodeFound = inChildrenNodes(nodeSaved, parentComplete);
-			
+
 			if (nodeFound) {
 				expandAllChildrenNodes(this, parentComplete);
 				var thereAreChildren = false;
@@ -324,7 +324,7 @@
 				children: getChildren(node)
 			};
 		}
-		
+
 	});
 
 	function retrieveDomainsWithDestinationForEntryType(entryType, domainName, onlyN_1) {
@@ -349,16 +349,16 @@
 				var cardinality = domain.get("cardinality");
 				if (cardinality == "1:N"
 					&& Ext.Array.contains(ids, domain.getSourceClassId())) {
-	
+
 					return true;
 				}
-	
+
 				if (cardinality == "N:1"
 					&& Ext.Array.contains(ids, domain.getDestinationClassId())) {
-	
+
 					return true;
 				}
-	
+
 				return false;
 			}
 		});
@@ -393,7 +393,7 @@
 		return undefined;
 	}
 	function isEqual(nodeSaved, node) {
-		return (nodeSaved.domainName == node.getDomain().get("name") && 
+		return (nodeSaved.domainName == node.getDomain().get("name") &&
 						(nodeSaved.targetClassName == node.getDomain().get("nameClass1") ||
 						nodeSaved.targetClassName == node.getDomain().get("nameClass2"))
 		);

@@ -7,7 +7,6 @@ import java.util.Map;
 
 import org.cmdbuild.logic.taskmanager.task.connector.ConnectorTask.ClassMapping;
 import org.cmdbuild.services.sync.store.Entry;
-import org.cmdbuild.services.sync.store.Type;
 
 import com.google.common.base.Function;
 
@@ -35,21 +34,21 @@ class ConnectorTaskPermission implements PermissionBasedStore.Permission {
 	}
 
 	@Override
-	public boolean allowsCreate(final Entry<? extends Type> entry) {
+	public boolean allowsCreate(final Entry entry) {
 		return mappingOf(entry).isCreate();
 	}
 
 	@Override
-	public boolean allowsUpdate(final Entry<? extends Type> entry) {
+	public boolean allowsUpdate(final Entry entry) {
 		return mappingOf(entry).isUpdate();
 	}
 
 	@Override
-	public boolean allowsDelete(final Entry<? extends Type> entry) {
+	public boolean allowsDelete(final Entry entry) {
 		return mappingOf(entry).isDelete();
 	}
 
-	private ClassMapping mappingOf(final Entry<? extends Type> entry) {
+	private ClassMapping mappingOf(final Entry entry) {
 		return defaultIfNull(classMappingByTypeName.get(entry.getType().getName()), ALWAYS_TRUE);
 	}
 

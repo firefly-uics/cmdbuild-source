@@ -20,6 +20,8 @@ BEGIN
 	PERFORM _cm_set_attribute_comment('"_Filter"'::regclass::oid, 'Filter',      'MODE: write|STATUS: active');
 	PERFORM _cm_set_attribute_comment('"_Filter"'::regclass::oid, 'ClassId',     'MODE: write|STATUS: active');
 	PERFORM _cm_set_attribute_comment('"_Filter"'::regclass::oid, 'Shared',      'MODE: write|STATUS: active');
+
+	UPDATE "_Filter" SET "UserId" = 0 WHERE "UserId" IS NULL;	
 END;
 $$ LANGUAGE PLPGSQL;
 

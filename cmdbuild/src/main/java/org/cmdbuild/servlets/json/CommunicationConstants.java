@@ -10,6 +10,7 @@ public class CommunicationConstants {
 			ACCOUNT = "account", //
 			ACTIVE = "active", //
 			ACTIVE_CAPITAL = "Active", //
+			ACTIVE_ONLY = ACTIVE + "Only", //
 			ACTIVITY_INSTANCE_ID = "activityInstanceId", //
 			ACTIVITY_NAME = "activityName", //
 			ADDRESS = "address", //
@@ -35,6 +36,7 @@ public class CommunicationConstants {
 			CARD = "card", //
 			CARD_ID = "cardId", //
 			CARDS = "cards", //
+			CATEGORY = "category", //
 			CC = "cc", //
 			CHARTNAME = "chartName", //
 			CLASS_ATTRIBUTE = "classAttribute", //
@@ -43,6 +45,7 @@ public class CommunicationConstants {
 			CLASS_ID = "classId", //
 			CLASS_MAPPING = "classMapping", //
 			CLASS_NAME = "className", //
+			CLASS_NAMES = "classNames", //
 			CODE_CAPITAL = "Code", //
 			CODE = "code", //
 			CONFIGURATION = "configuration", //
@@ -115,7 +118,6 @@ public class CommunicationConstants {
 			EXTENSION = "extension", //
 			FIELD = "field", //
 			FIELD_MODE = "fieldmode", //
-			FILE_CSV = "filecsv", //
 			FILE = "file", //
 			FILE_IFC = "fileIFC", //
 			FILE_NAME = "fileName", //
@@ -133,6 +135,7 @@ public class CommunicationConstants {
 			GROUP_ID = "groupId", //
 			GROUP_NAME = "groupName", //
 			GROUPS = "groups", //
+			HEADERS = "headers", //
 			HOST = "host", //
 			ICONNAME = "iconName", //
 			IMAP_PORT = "imapPort", //

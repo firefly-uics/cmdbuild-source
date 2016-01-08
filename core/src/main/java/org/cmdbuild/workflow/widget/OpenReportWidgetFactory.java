@@ -47,15 +47,15 @@ public class OpenReportWidgetFactory extends ValuePairWidgetFactory {
 	}
 
 	@Override
-	protected Widget createWidget(final Map<String, Object> valueMap) {
-		final String reportCode = readString(valueMap.get(REPORT_CODE));
+	protected Widget createWidget(final WidgetDefinition definition) {
+		final String reportCode = readString(definition.get(REPORT_CODE));
 		Validate.notEmpty(reportCode, REPORT_CODE + " is required");
 
 		final OpenReport widget = new OpenReport();
 		widget.setReportCode(reportCode);
-		widget.setPreset(extractUnmanagedParameters(valueMap, KNOWN_PARAMETERS));
-		forceFormat(valueMap, widget);
-		widget.setReadOnlyAttributes(readOnlyAttributesOf(readString(valueMap.get(READ_ONLY_ATTRIBUTES))));
+		widget.setPreset(extractUnmanagedParameters(definition, KNOWN_PARAMETERS));
+		forceFormat(definition, widget);
+		widget.setReadOnlyAttributes(readOnlyAttributesOf(readString(definition.get(READ_ONLY_ATTRIBUTES))));
 
 		return widget;
 	}

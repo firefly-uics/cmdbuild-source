@@ -98,6 +98,9 @@ public class ProcessStartActivitiesTest {
 		final ResponseSingle<ProcessActivityWithFullDetails> sentResponse = newResponseSingle(
 				ProcessActivityWithFullDetails.class) //
 				.withElement(firstActivity) //
+				.withMetadata(newMetadata() //
+						// nothing to add, just needed for simplify assertions
+						.build()) //
 				.build();
 		final ResponseSingle<ProcessActivityWithFullDetails> expectedResponse = sentResponse;
 		doReturn(sentResponse) //

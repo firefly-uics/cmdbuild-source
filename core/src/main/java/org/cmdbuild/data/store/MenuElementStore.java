@@ -19,6 +19,7 @@ import org.cmdbuild.dao.query.CMQueryResult;
 import org.cmdbuild.dao.query.CMQueryRow;
 import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.data.store.dao.StorableConverter;
+import org.cmdbuild.logic.custompages.CustomPagesLogic;
 import org.cmdbuild.model.view.View;
 import org.cmdbuild.services.store.menu.MenuCardFilter;
 import org.cmdbuild.services.store.menu.MenuElement;
@@ -34,9 +35,11 @@ public class MenuElementStore extends ForwardingStore<MenuElement> {
 	private final UserStore userStore;
 	private final StorableConverter<View> viewConverter;
 	private final Function<CMCard, MenuElement> CONVERT;
+	private final CustomPagesLogic customPagesLogic;
 
 	public MenuElementStore(final Store<MenuElement> delegate, final CMDataView dataView, final UserStore userStore,
-			final StorableConverter<View> viewConverter, final StorableConverter<MenuElement> converter) {
+			final StorableConverter<View> viewConverter, final StorableConverter<MenuElement> converter,
+			final CustomPagesLogic customPagesLogic) {
 		this.delegate = delegate;
 		this.dataView = dataView;
 		this.userStore = userStore;
@@ -48,6 +51,7 @@ public class MenuElementStore extends ForwardingStore<MenuElement> {
 				return converter.convert(input);
 			}
 		};
+		this.customPagesLogic = customPagesLogic;
 	}
 
 	@Override
@@ -64,7 +68,7 @@ public class MenuElementStore extends ForwardingStore<MenuElement> {
 				return userStore.getUser().getPrivilegeContext();
 			}
 
-		}, viewConverter, userStore);
+		}, viewConverter, userStore, customPagesLogic);
 		return from(menuCardFilter.filterReadableMenuCards(menuCards)) //
 				.transform(CONVERT);
 	}

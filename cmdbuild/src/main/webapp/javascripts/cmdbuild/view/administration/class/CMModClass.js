@@ -1,5 +1,4 @@
 (function() {
-	var tr = CMDBuild.Translation.administration.modClass;
 
 	Ext.define("CMDBuild.view.administration.classes.CMModClass", {
 		extend: "Ext.panel.Panel",
@@ -11,68 +10,28 @@
 
 			this.addClassButton = new Ext.button.Button({
 				iconCls : 'add',
-				text : tr.add_class
+				text : CMDBuild.Translation.administration.modClass.add_class
 			});
 
-			this.printSchema = Ext.create('CMDBuild.core.buttons.iconized.Print', {
+			this.printSchema = Ext.create('CMDBuild.core.buttons.iconized.split.Print', {
 				formatList: [
-					CMDBuild.core.proxy.Constants.PDF,
-					CMDBuild.core.proxy.Constants.ODT
+					CMDBuild.core.constants.Proxy.PDF,
+					CMDBuild.core.constants.Proxy.ODT
 				],
-				text: tr.print_schema
-			});
-
-			this.classForm = new CMDBuild.view.administration.classes.CMClassForm({
-				title: tr.tabs.properties,
-				border: false
-			});
-
-			this.attributesPanel = new CMDBuild.view.administration.classes.CMClassAttributesPanel({
-				title: tr.tabs.attributes,
-				border: false,
-				disabled: true
-			});
-
-			this.domainGrid = new CMDBuild.Administration.DomainGrid({
-				title : tr.tabs.domains,
-				border: false,
-				disabled: true
-			});
-
-			this.geoAttributesPanel = new CMDBuild.view.administration.classes.CMGeoAttributesPanel({
-				title: tr.tabs.geo_attributes,
-				disabled: true
-			});
-
-			this.layerVisibilityGrid = new CMDBuild.Administration.LayerVisibilityGrid({
-				title: tr.layers,
-				withCheckToHideLayer: true,
-				disabled: true
-			});
-
-			this.widgetPanel = new CMDBuild.view.administration.widget.CMWidgetDefinitionPanel({
-				disabled: true
+				mode: 'legacy',
+				text: CMDBuild.Translation.administration.modClass.print_schema
 			});
 
 			this.tabPanel = new Ext.tab.Panel({
 				frame: false,
 				border: false,
-				activeTab: 0,
-
-				items: [
-				 this.classForm
-				,this.attributesPanel
-				,this.domainGrid
-				,this.widgetPanel
-				,this.layerVisibilityGrid
-				,this.geoAttributesPanel
-				]
+				activeTab: 0
 			});
 
 			Ext.apply(this, {
 				tbar:[this.addClassButton, this.printSchema],
-				title : tr.title,
-				basetitle : tr.title+ ' - ',
+				title: CMDBuild.Translation.administration.modClass.title,
+				basetitle: CMDBuild.Translation.administration.modClass.title + ' - ',
 				layout: 'fit',
 				items: [this.tabPanel],
 				frame: false,
@@ -103,4 +62,5 @@
 
 		}
 	});
+
 })();

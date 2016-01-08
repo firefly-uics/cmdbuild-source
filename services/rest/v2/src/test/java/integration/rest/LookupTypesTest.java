@@ -89,6 +89,9 @@ public class LookupTypesTest {
 				.withElement(newLookupTypeDetail() //
 						.withName("foo") //
 						.build()) //
+				.withMetadata(newMetadata() //
+						// nothing to add, just needed for simplify assertions
+						.build()) //
 				.build();
 		when(service.read(anyString())) //
 				.thenReturn(expectedResponse);

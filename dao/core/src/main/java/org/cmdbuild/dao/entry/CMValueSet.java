@@ -36,6 +36,8 @@ public interface CMValueSet {
 	 */
 	<T> T get(String key, Class<? extends T> requiredType);
 
+	<T> T get(String key, Class<? extends T> requiredType, T defaultValue);
+
 	Iterable<Map.Entry<String, Object>> getValues();
 
 }

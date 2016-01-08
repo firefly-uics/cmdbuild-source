@@ -1,66 +1,91 @@
 (function() {
 
 	Ext.define('CMDBuild.view.administration.accordion.Configuration', {
-		extend: 'CMDBuild.view.common.CMBaseAccordion',
+		extend: 'CMDBuild.view.common.abstract.Accordion',
+
+		/**
+		 * @cfg {CMDBuild.controller.common.abstract.Accordion}
+		 */
+		delegate: undefined,
+
+		/**
+		 * @cfg {String}
+		 */
+		cmName: undefined,
 
 		title: CMDBuild.Translation.setup,
 
-		constructor: function() {
-			this.callParent(arguments);
-
-			this.updateStore();
-		},
-
 		/**
+		 * @param {Number} nodeIdToSelect
+		 *
 		 * @override
 		 */
-		updateStore: function() {
-			this.store.getRootNode().appendChild([{
-				id: 'generalOptions',
+		updateStore: function(nodeIdToSelect) {
+			var nodes = [{
+				cmName: this.cmName,
 				text: CMDBuild.Translation.generalOptions,
-				leaf: true,
-				cmName: 'configuration'
-			}]);
+				description: CMDBuild.Translation.generalOptions,
+				id: this.delegate.cmfg('accordionBuildId', { components: 'generalOptions' }),
+				sectionHierarchy: ['generalOptions'],
+				leaf: true
+			}];
 
-			if (!_CMUIConfiguration.isCloudAdmin())
-				this.store.getRootNode().appendChild([
+			if (!CMDBuild.configuration.userInterface.get(CMDBuild.core.constants.Proxy.CLOUD_ADMIN))
+				nodes = Ext.Array.push(nodes, [
 					{
-						id: 'workflow',
+						cmName: this.cmName,
 						text: CMDBuild.Translation.workflowEngine,
-						leaf: true,
-						cmName: 'configuration'
+						description: CMDBuild.Translation.workflowEngine,
+						id: this.delegate.cmfg('accordionBuildId', { components: 'workflow' }),
+						sectionHierarchy: ['workflow'],
+						leaf: true
 					},
 					{
-						id: 'relationGraph',
+						cmName: this.cmName,
 						text: CMDBuild.Translation.relationGraph,
-						leaf: true,
-						cmName: 'configuration'
+						description: CMDBuild.Translation.relationGraph,
+						id: this.delegate.cmfg('accordionBuildId', { components: 'relationGraph' }),
+						sectionHierarchy: ['relationGraph'],
+						leaf: true
 					},
 					{
-						id: 'alfresco',
+						cmName: this.cmName,
 						text: CMDBuild.Translation.alfresco,
-						leaf: true,
-						cmName: 'configuration'
+						description: CMDBuild.Translation.alfresco,
+						id: this.delegate.cmfg('accordionBuildId', { components: 'alfresco' }),
+						sectionHierarchy: ['alfresco'],
+						leaf: true
 					},
 					{
-						id: 'gis',
+						cmName: this.cmName,
 						text: CMDBuild.Translation.gis,
-						leaf: true,
-						cmName: 'configuration'
+						description: CMDBuild.Translation.gis,
+						id: this.delegate.cmfg('accordionBuildId', { components: 'gis' }),
+						sectionHierarchy: ['gis'],
+						leaf: true
 					},
 					{
-						id: 'bim',
+						cmName: this.cmName,
 						text: CMDBuild.Translation.bim,
-						leaf: true,
-						cmName: 'configuration'
+						description: CMDBuild.Translation.bim,
+						id: this.delegate.cmfg('accordionBuildId', { components: 'bim' }),
+						sectionHierarchy: ['bim'],
+						leaf: true
 					},
 					{
-						id: 'server',
+						cmName: this.cmName,
 						text: CMDBuild.Translation.serverManagement,
-						leaf: true,
-						cmName: 'configuration'
+						description: CMDBuild.Translation.serverManagement,
+						id: this.delegate.cmfg('accordionBuildId', { components: 'server' }),
+						sectionHierarchy: ['server'],
+						leaf: true
 					}
 				]);
+
+			this.getStore().getRootNode().removeAll();
+			this.getStore().getRootNode().appendChild(nodes);
+
+			this.callParent(arguments);
 		}
 	});
 

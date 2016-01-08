@@ -1,12 +1,14 @@
 (function() {
 
+	Ext.require('CMDBuild.core.constants.Global');
+
 	var NO_SELECTION = 'No selection';
 	var parameterNames = CMDBuild.ServiceProxy.parameter;
 
 	Ext.define('CMDBuild.view.management.classes.relations.CMEditRelationWindow', {
 		extend: 'CMDBuild.Management.CardListWindow', // To choose the card for the relation
 
-		requires: ['CMDBuild.core.proxy.Constants'],
+		requires: ['CMDBuild.core.constants.Proxy'],
 
 		successCb: Ext.emptyFn,
 
@@ -44,7 +46,7 @@
 
 			// Setup advancedFilter to exclude cards from hidden classes
 			var attributesAndConditionArray = [];
-			var disabledArray = this.classObject.get(CMDBuild.core.proxy.Constants.ID) == this.domain.get('idClass1') ? this.domain.get('disabled1') : this.domain.get('disabled2');
+			var disabledArray = this.classObject.get(CMDBuild.core.constants.Proxy.ID) == this.domain.get('idClass1') ? this.domain.get('disabled1') : this.domain.get('disabled2');
 
 			if (!Ext.isEmpty(disabledArray)) {
 				// HACK to avoid filter error for a and condition with only one parameter
@@ -52,7 +54,7 @@
 					'simple': {
 						'attribute': 'IdClass',
 						'operator': 'notequal',
-						'value': [parseInt(_CMCache.getEntryTypeByName(disabledArray[0]).get(CMDBuild.core.proxy.Constants.ID))]
+						'value': [parseInt(_CMCache.getEntryTypeByName(disabledArray[0]).get(CMDBuild.core.constants.Proxy.ID))]
 					}
 				});
 
@@ -61,7 +63,7 @@
 						'simple': {
 							'attribute': 'IdClass',
 							'operator': 'notequal',
-							'value': [parseInt(_CMCache.getEntryTypeByName(className).get(CMDBuild.core.proxy.Constants.ID))]
+							'value': [parseInt(_CMCache.getEntryTypeByName(className).get(CMDBuild.core.constants.Proxy.ID))]
 						}
 					});
 				}, this);
@@ -228,7 +230,7 @@
 			attributes[me.relation.slaveSide] = getSelections(me);
 		} catch (e) {
 			if (e == NO_SELECTION) {
-				var msg = Ext.String.format('<p class=\'{0}\'>{1}</p>', CMDBuild.Constants.css.error_msg, CMDBuild.Translation.errors.no_selections);
+				var msg = Ext.String.format('<p class=\'{0}\'>{1}</p>', CMDBuild.core.constants.Global.getErrorMsgCss(), CMDBuild.Translation.errors.no_selections);
 
 				CMDBuild.Msg.error(CMDBuild.Translation.common.failure, msg, false);
 			}
@@ -239,7 +241,7 @@
 		try {
 			attributes = Ext.apply(attributes, getData(me.attributesPanel));
 		} catch (e) {
-			var msg = Ext.String.format('<p class=\'{0}\'>{1}</p>', CMDBuild.Constants.css.error_msg, CMDBuild.Translation.errors.invalid_attributes);
+			var msg = Ext.String.format('<p class=\'{0}\'>{1}</p>', CMDBuild.core.constants.Global.getErrorMsgCss(), CMDBuild.Translation.errors.invalid_attributes);
 
 			CMDBuild.Msg.error(null, msg + e, false);
 

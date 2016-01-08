@@ -4,8 +4,9 @@
 		extend: 'Ext.grid.Panel',
 
 		requires: [
-			'CMDBuild.core.proxy.Constants',
-			'CMDBuild.core.proxy.filter.Groups'
+			'CMDBuild.core.constants.Proxy',
+			'CMDBuild.core.Message',
+			'CMDBuild.core.proxy.filter.Group'
 		],
 
 		/**
@@ -14,16 +15,17 @@
 		delegate: undefined,
 
 		border: false,
+		cls: 'cmborderbottom',
 		frame: false,
 
 		initComponent: function() {
-			var store = CMDBuild.core.proxy.filter.Groups.getStore();
+			var store = CMDBuild.core.proxy.filter.Group.getStore();
 
 			Ext.apply(this, {
 				dockedItems: [
 					Ext.create('Ext.toolbar.Paging', {
 						dock: 'bottom',
-						itemId: CMDBuild.core.proxy.Constants.TOOLBAR_BOTTOM,
+						itemId: CMDBuild.core.constants.Proxy.TOOLBAR_BOTTOM,
 						store: store,
 						displayInfo: true,
 						displayMsg: '{0} - {1} ' + CMDBuild.Translation.common.display_topic_of + ' {2}',
@@ -32,17 +34,17 @@
 				],
 				columns: [
 					{
-						dataIndex: CMDBuild.core.proxy.Constants.NAME,
+						dataIndex: CMDBuild.core.constants.Proxy.NAME,
 						text: CMDBuild.Translation.name,
 						flex: 1
 					},
 					{
-						dataIndex: CMDBuild.core.proxy.Constants.DESCRIPTION,
+						dataIndex: CMDBuild.core.constants.Proxy.DESCRIPTION,
 						text: CMDBuild.Translation.descriptionLabel,
 						flex: 1
 					},
 					{
-						dataIndex: CMDBuild.core.proxy.Constants.ENTRY_TYPE,
+						dataIndex: CMDBuild.core.constants.Proxy.ENTRY_TYPE,
 						text: CMDBuild.Translation.targetClass,
 						flex: 1
 					}
@@ -62,11 +64,11 @@
 				this.delegate.cmfg('onFilterGroupsRowSelected');
 			},
 
-			// Event to load store on view display and first row selection as CMDbuild standard
+			// Event to load store on view display and first row selection as CMDBuild standard
 			viewready: function() {
 				this.getStore().load({
 					scope: this,
-					callback: function() {
+					callback: function(records, operation, success) {
 						if (!this.getSelectionModel().hasSelection())
 							this.getSelectionModel().select(0, true);
 					}

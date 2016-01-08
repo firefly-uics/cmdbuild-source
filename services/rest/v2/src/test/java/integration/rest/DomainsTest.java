@@ -100,6 +100,9 @@ public class DomainsTest {
 				.withElement(newDomainWithFullDetails() //
 						.withName("foo") //
 						.build()) //
+				.withMetadata(newMetadata() //
+						// nothing to add, just needed for simplify assertions
+						.build()) //
 				.build();
 		when(service.read(anyString())) //
 				.thenReturn(expectedResponse);

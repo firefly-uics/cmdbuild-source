@@ -1,12 +1,13 @@
 (function() {
 
 	Ext.define('CMDBuild.controller.administration.localization.Configuration', {
-		extend: 'CMDBuild.controller.common.AbstractController',
+		extend: 'CMDBuild.controller.common.abstract.Base',
 
 		requires: [
+			'CMDBuild.core.constants.Proxy',
+			'CMDBuild.core.LoadMask',
 			'CMDBuild.core.Message',
-			'CMDBuild.core.proxy.Configuration',
-			'CMDBuild.core.proxy.Constants',
+			'CMDBuild.core.proxy.configuration.GeneralOptions',
 			'CMDBuild.core.proxy.localization.importExport.Csv',
 		],
 
@@ -32,10 +33,10 @@
 		 * @cfg {Array}
 		 */
 		activeOnlySections: [
-			CMDBuild.core.proxy.Constants.CLASS,
-			CMDBuild.core.proxy.Constants.DOMAIN,
-			CMDBuild.core.proxy.Constants.LOOKUP,
-			CMDBuild.core.proxy.Constants.PROCESS
+			CMDBuild.core.constants.Proxy.CLASS,
+			CMDBuild.core.constants.Proxy.DOMAIN,
+			CMDBuild.core.constants.Proxy.LOOKUP,
+			CMDBuild.core.constants.Proxy.PROCESS
 		],
 
 		/**
@@ -63,9 +64,8 @@
 		 * TODO: refactor to use loadData methods
 		 */
 		configurationRead: function() {
-			CMDBuild.core.proxy.Configuration.read({
+			CMDBuild.core.proxy.configuration.GeneralOptions.read({
 				scope: this,
-				loadMask: true,
 				success: function(result, options, decodedResult){
 					var decodedResult = decodedResult.data;
 
@@ -73,7 +73,7 @@
 					this.view.languagePromptCheckbox.setValue(decodedResult['languageprompt']);
 					this.view.enabledLanguagesGrid.setValue(decodedResult['enabled_languages'].split(', ')); // TODO: delete on server configuration refactor
 				}
-			}, 'cmdbuild');
+			});
 		},
 
 		onLocalizationConfigurationAbortButtonClick: function() {
@@ -83,10 +83,10 @@
 		onLocalizationConfigurationExportButtonClick: function() {
 			var formValues = this.view.exportPanel.getForm().getValues();
 			var params = {};
-			params[CMDBuild.core.proxy.Constants.TYPE] = formValues[CMDBuild.core.proxy.Constants.SECTION];
-			params[CMDBuild.core.proxy.Constants.SEPARATOR] = formValues[CMDBuild.core.proxy.Constants.SEPARATOR];
-			params[CMDBuild.core.proxy.Constants.ACTIVE] = formValues[CMDBuild.core.proxy.Constants.ACTIVE_ONLY];
-			params[CMDBuild.core.proxy.Constants.FORCE_DOWNLOAD_PARAM_KEY] = true;
+			params[CMDBuild.core.constants.Proxy.TYPE] = formValues[CMDBuild.core.constants.Proxy.SECTION];
+			params[CMDBuild.core.constants.Proxy.SEPARATOR] = formValues[CMDBuild.core.constants.Proxy.SEPARATOR];
+			params[CMDBuild.core.constants.Proxy.ACTIVE] = formValues[CMDBuild.core.constants.Proxy.ACTIVE_ONLY];
+			params[CMDBuild.core.constants.Proxy.FORCE_DOWNLOAD_PARAM_KEY] = true;
 
 			CMDBuild.core.proxy.localization.importExport.Csv.exports({
 				form: this.view.exportPanel.getForm(),
@@ -95,10 +95,10 @@
 				success: function(form, action) {
 					CMDBuild.core.Message.success();
 
-					CMDBuild.LoadMask.get().hide();
+					CMDBuild.core.LoadMask.hide();
 				},
 				failure: function(form, action) {
-					CMDBuild.LoadMask.get().hide();
+					CMDBuild.core.LoadMask.hide();
 
 					CMDBuild.core.Message.error(
 						CMDBuild.Translation.common.failure,
@@ -121,7 +121,7 @@
 
 		onLocalizationConfigurationImportButtonClick: function() {
 			if (this.validate(this.view.importPanel)) {
-				CMDBuild.LoadMask.get().show();
+				CMDBuild.core.LoadMask.show();
 				CMDBuild.core.proxy.localization.importExport.Csv.imports({
 					form: this.view.importPanel.getForm(),
 					scope: this,
@@ -139,10 +139,10 @@
 							);
 						}
 
-						CMDBuild.LoadMask.get().hide();
+						CMDBuild.core.LoadMask.hide();
 					},
 					failure: function(form, action) {
-						CMDBuild.LoadMask.get().hide();
+						CMDBuild.core.LoadMask.hide();
 
 						CMDBuild.core.Message.error(
 							CMDBuild.Translation.common.failure,
@@ -160,8 +160,8 @@
 		 * TODO: refactor to save directly only language configuration on another endpoint
 		 */
 		onLocalizationConfigurationSaveButtonClick: function() {
-			CMDBuild.LoadMask.get().show();
-			CMDBuild.core.proxy.Configuration.read({
+			CMDBuild.core.LoadMask.show();
+			CMDBuild.core.proxy.configuration.GeneralOptions.read({
 				scope: this,
 				success: function(result, options, decodedResult){
 					var params = decodedResult.data;
@@ -169,17 +169,17 @@
 					params['languageprompt'] = this.view.languagePromptCheckbox.getValue();
 					params['enabled_languages'] = this.view.enabledLanguagesGrid.getValue().join(', ');
 
-					CMDBuild.core.proxy.Configuration.save({
+					CMDBuild.core.proxy.configuration.GeneralOptions.save({
 						scope: this,
 						params: params,
 						success: function(result, options, decodedResult) {
-							CMDBuild.LoadMask.get().hide();
+							CMDBuild.core.LoadMask.hide();
 
 							CMDBuild.core.Message.success();
 						}
-					}, 'cmdbuild');
+					});
 				}
-			}, 'cmdbuild');
+			});
 		}
 	});
 

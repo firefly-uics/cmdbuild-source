@@ -1,10 +1,10 @@
 (function() {
 
 	Ext.define('CMDBuild.controller.management.report.Modal', {
-		extend: 'CMDBuild.controller.common.AbstractController',
+		extend: 'CMDBuild.controller.common.abstract.Base',
 
 		requires: [
-			'CMDBuild.core.proxy.Constants',
+			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.proxy.Index'
 		],
 
@@ -17,8 +17,8 @@
 		 * @cfg {Array}
 		 */
 		browserManagedFormats: [
-			CMDBuild.core.proxy.Constants.PDF,
-			CMDBuild.core.proxy.Constants.CSV
+			CMDBuild.core.constants.Proxy.PDF,
+			CMDBuild.core.constants.Proxy.CSV
 		],
 
 		/**
@@ -32,7 +32,7 @@
 		/**
 		 * @cfg {String}
 		 */
-		extension: CMDBuild.core.proxy.Constants.PDF,
+		extension: CMDBuild.core.constants.Proxy.PDF,
 
 		/**
 		 * @property {CMDBuild.view.management.report.ModalWindow}
@@ -48,7 +48,7 @@
 
 			this.view = Ext.create('CMDBuild.view.management.report.ModalWindow', { delegate: this });
 
-			this.setViewTitle(this.cmfg('currentReportRecordGet', CMDBuild.core.proxy.Constants.DESCRIPTION));
+			this.setViewTitle(this.cmfg('selectedReportRecordGet', CMDBuild.core.constants.Proxy.DESCRIPTION));
 
 			if (!Ext.isEmpty(this.view) && Ext.isString(this.extension) && Ext.Array.contains(this.browserManagedFormats, this.extension))
 				this.view.show();
@@ -67,7 +67,7 @@
 
 					autoEl: {
 						tag: 'iframe',
-						src: CMDBuild.core.proxy.Index.reports.printReportFactory + '?donotdelete=true' // Add parameter to avoid report delete
+						src: CMDBuild.core.proxy.Index.report.printReportFactory + '?donotdelete=true' // Add parameter to avoid report delete
 					}
 				});
 			}

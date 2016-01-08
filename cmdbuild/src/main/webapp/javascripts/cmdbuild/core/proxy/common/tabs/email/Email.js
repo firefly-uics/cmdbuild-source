@@ -3,7 +3,8 @@
 	Ext.define('CMDBuild.core.proxy.common.tabs.email.Email', {
 
 		requires: [
-			'CMDBuild.core.proxy.Constants',
+			'CMDBuild.core.interfaces.Ajax',
+			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.proxy.Index',
 			'CMDBuild.model.common.tabs.email.Email'
 		],
@@ -14,7 +15,7 @@
 		 * @param {Object} parameters
 		 */
 		create: function(parameters) {
-			CMDBuild.Ajax.request({
+			CMDBuild.core.interfaces.Ajax.request({
 				method: 'POST',
 				url: CMDBuild.core.proxy.Index.email.post,
 				params: parameters.params,
@@ -47,10 +48,10 @@
 					}
 				},
 				sorters: {
-					property: CMDBuild.core.proxy.Constants.STATUS,
+					property: CMDBuild.core.constants.Proxy.STATUS,
 					direction: 'ASC'
 				},
-				groupField: CMDBuild.core.proxy.Constants.STATUS
+				groupField: CMDBuild.core.constants.Proxy.STATUS
 			});
 		},
 
@@ -58,7 +59,7 @@
 		 * @param {Object} parameters
 		 */
 		isEmailEnabledForCard: function(parameters) {
-			CMDBuild.Ajax.request({
+			CMDBuild.core.interfaces.Ajax.request({
 				method: 'POST',
 				url: CMDBuild.core.proxy.Index.email.enabled,
 				params: parameters.params,
@@ -74,7 +75,7 @@
 		 * @param {Object} parameters
 		 */
 		remove: function(parameters) {
-			CMDBuild.Ajax.request({
+			CMDBuild.core.interfaces.Ajax.request({
 				method: 'POST',
 				url: CMDBuild.core.proxy.Index.email.remove,
 				params: parameters.params,
@@ -90,7 +91,7 @@
 		 * @param {Object} parameters
 		 */
 		update: function(parameters) {
-			CMDBuild.Ajax.request({
+			CMDBuild.core.interfaces.Ajax.request({
 				method: 'POST',
 				url: CMDBuild.core.proxy.Index.email.put,
 				params: parameters.params,

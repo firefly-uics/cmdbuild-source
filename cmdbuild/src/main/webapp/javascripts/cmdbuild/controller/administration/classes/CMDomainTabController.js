@@ -1,10 +1,19 @@
 (function() {
 	Ext.define("CMDBuild.controller.administration.classes.CMDomainTabController", {
 
-		requires: ['CMDBuild.core.proxy.Domain'],
+		requires: ['CMDBuild.core.proxy.domain.Domain'],
 
 		constructor: function(view) {
-			this.view = view;
+			if (Ext.isEmpty(view)) {
+				this.view = new CMDBuild.Administration.DomainGrid({
+					title : CMDBuild.Translation.administration.modClass.tabs.domains,
+					border: false,
+					disabled: true
+				});
+			} else {
+				this.view = view;
+			}
+
 			this.selection = null;
 
 			this.view.on("itemdblclick", onItemDoubleClick, this);
@@ -12,6 +21,10 @@
 			this.view.addDomainButton.on("click", onAddDomainButton, this);
 			this.view.modifyButton.on("click", onModifyDomainButton, this);
 			this.view.deleteButton.on("click", onDeleteDomainButton, this);
+		},
+
+		getView: function() {
+			return this.view;
 		},
 
 		onClassSelected: function(classId) {
@@ -26,11 +39,11 @@
 			var params = {};
 			params[_CMProxy.parameter.CLASS_NAME] = _CMCache.getEntryTypeNameById(classId);
 
-			CMDBuild.LoadMask.get().show();
+			CMDBuild.core.LoadMask.show();
 			view.store.load({
 				params: params,
 				callback: function() {
-					CMDBuild.LoadMask.get().hide();
+					CMDBuild.core.LoadMask.hide();
 					view.filterInherited(view.filtering);
 				}
 			});
@@ -96,7 +109,7 @@
 		var params = {};
 		params[_CMProxy.parameter.DOMAIN_NAME] = this.currentDomain.get("name");
 
-		CMDBuild.core.proxy.Domain.remove({
+		CMDBuild.core.proxy.domain.Domain.remove({
 			params: params,
 			scope: this,
 			success: function(response, options, decodedResponse) {
@@ -110,7 +123,7 @@
 	}
 
 	function onAddDomainButton() {
-		var domainAccordion = _CMMainViewportController.accordionControllers["domain"];
+		var domainAccordion = _CMMainViewportController.findAccordionByCMName("domain");
 		if (domainAccordion) {
 			domainAccordion.expandForAdd();
 		}

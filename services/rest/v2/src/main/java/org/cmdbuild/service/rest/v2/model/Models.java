@@ -22,11 +22,15 @@ import java.util.Map.Entry;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import org.cmdbuild.service.rest.v2.model.Attribute.Filter;
+import org.cmdbuild.service.rest.v2.model.ClassWithFullDetails.AttributeOrder;
+import org.cmdbuild.service.rest.v2.model.DetailResponseMetadata.Reference;
 import org.cmdbuild.service.rest.v2.model.ProcessActivityWithFullDetails.AttributeStatus;
 
 import com.google.common.base.Function;
 
 public class Models {
+
+	private static final Collection<AttributeOrder> NO_ORDER = emptyList();
 
 	private static abstract class ModelBuilder<T extends Model> implements org.apache.commons.lang3.builder.Builder<T> {
 
@@ -190,6 +194,7 @@ public class Models {
 		private Long precision;
 		private Long scale;
 		private String targetClass;
+		private String targetType;
 		private Long length;
 		private String editorType;
 		private String lookupType;
@@ -220,6 +225,7 @@ public class Models {
 			output.setPrecision(precision);
 			output.setScale(scale);
 			output.setTargetClass(targetClass);
+			output.setTargetType(targetType);
 			output.setLength(length);
 			output.setEditorType(editorType);
 			output.setLookupType(lookupType);
@@ -305,6 +311,11 @@ public class Models {
 			return this;
 		}
 
+		public AttributeBuilder withTargetType(final String targetType) {
+			this.targetType = targetType;
+			return this;
+		}
+
 		public AttributeBuilder withLength(final Long length) {
 			this.length = length;
 			return this;
@@ -337,6 +348,35 @@ public class Models {
 
 		public AttributeBuilder thatIsHidden(final Boolean hidden) {
 			this.hidden = hidden;
+			return this;
+		}
+
+	}
+
+	public static class AttributeOrderBuilder extends ModelBuilder<AttributeOrder> {
+
+		private String attribute;
+		private String direction;
+
+		private AttributeOrderBuilder() {
+			// use factory method
+		}
+
+		@Override
+		protected AttributeOrder doBuild() {
+			final AttributeOrder output = new AttributeOrder();
+			output.setAttribute(attribute);
+			output.setDirection(direction);
+			return output;
+		}
+
+		public AttributeOrderBuilder withAttribute(final String attribute) {
+			this.attribute = attribute;
+			return this;
+		}
+
+		public AttributeOrderBuilder withDirection(final String direction) {
+			this.direction = direction;
 			return this;
 		}
 
@@ -549,6 +589,7 @@ public class Models {
 		private String description;
 		private Boolean prototype;
 		private String descriptionAttributeName;
+		private Collection<AttributeOrder> defaultOrder;
 		private String parent;
 
 		private ClassWithFullDetailsBuilder() {
@@ -558,6 +599,7 @@ public class Models {
 		@Override
 		protected void doValidate() {
 			prototype = defaultIfNull(prototype, FALSE);
+			defaultOrder = defaultIfNull(defaultOrder, NO_ORDER);
 		}
 
 		@Override
@@ -568,6 +610,7 @@ public class Models {
 			output.setDescription(description);
 			output.setPrototype(prototype);
 			output.setDescriptionAttributeName(descriptionAttributeName);
+			output.setDefaultOrder(defaultOrder);
 			output.setParent(parent);
 			return output;
 
@@ -595,6 +638,11 @@ public class Models {
 
 		public ClassWithFullDetailsBuilder withDescriptionAttributeName(final String descriptionAttributeName) {
 			this.descriptionAttributeName = descriptionAttributeName;
+			return this;
+		}
+
+		public ClassWithFullDetailsBuilder withDefaultOrder(final Collection<AttributeOrder> defaultOrder) {
+			this.defaultOrder = defaultOrder;
 			return this;
 		}
 
@@ -995,6 +1043,78 @@ public class Models {
 
 	}
 
+	public static class FunctionWithBasicDetailsBuilder extends ModelBuilder<FunctionWithBasicDetails> {
+
+		private Long id;
+		private String name;
+		private String description;
+
+		private FunctionWithBasicDetailsBuilder() {
+			// use factory method
+		}
+
+		@Override
+		protected FunctionWithBasicDetails doBuild() {
+			final FunctionWithBasicDetails output = new FunctionWithBasicDetails();
+			output.setId(id);
+			output.setName(name);
+			output.setDescription(description);
+			return output;
+		}
+
+		public FunctionWithBasicDetailsBuilder withId(final Long id) {
+			this.id = id;
+			return this;
+		}
+
+		public FunctionWithBasicDetailsBuilder withName(final String name) {
+			this.name = name;
+			return this;
+		}
+
+		public FunctionWithBasicDetailsBuilder withDescription(final String description) {
+			this.description = description;
+			return this;
+		}
+
+	}
+
+	public static class FunctionWithFullDetailsBuilder extends ModelBuilder<FunctionWithFullDetails> {
+
+		private Long id;
+		private String name;
+		private String description;
+
+		private FunctionWithFullDetailsBuilder() {
+			// use factory method
+		}
+
+		@Override
+		protected FunctionWithFullDetails doBuild() {
+			final FunctionWithFullDetails output = new FunctionWithFullDetails();
+			output.setId(id);
+			output.setName(name);
+			output.setDescription(description);
+			return output;
+		}
+
+		public FunctionWithFullDetailsBuilder withId(final Long id) {
+			this.id = id;
+			return this;
+		}
+
+		public FunctionWithFullDetailsBuilder withName(final String name) {
+			this.name = name;
+			return this;
+		}
+
+		public FunctionWithFullDetailsBuilder withDescription(final String description) {
+			this.description = description;
+			return this;
+		}
+
+	}
+
 	public static class LongIdBuilder extends ModelBuilder<LongId> {
 
 		private Long id;
@@ -1228,9 +1348,11 @@ public class Models {
 	public static class MetadataBuilder extends ModelBuilder<DetailResponseMetadata> {
 
 		private static final Map<Long, Long> NO_POSITIONS = emptyMap();
+		private static final Map<Long, Reference> NO_REFERENCES = emptyMap();
 
 		private Long total;
 		private Map<Long, Long> positions;
+		private Map<Long, Reference> references;
 
 		private MetadataBuilder() {
 			// use factory method
@@ -1240,6 +1362,7 @@ public class Models {
 		protected void doValidate() {
 			super.doValidate();
 			positions = defaultIfNull(positions, NO_POSITIONS);
+			references = defaultIfNull(references, NO_REFERENCES);
 		}
 
 		@Override
@@ -1247,6 +1370,7 @@ public class Models {
 			final DetailResponseMetadata output = new DetailResponseMetadata();
 			output.setTotal(total);
 			output.setPositions(positions);
+			output.setReferences(references);
 			return output;
 		}
 
@@ -1262,6 +1386,11 @@ public class Models {
 
 		public MetadataBuilder withPositions(final Map<Long, Long> positions) {
 			this.positions = positions;
+			return this;
+		}
+
+		public MetadataBuilder withReferences(final Map<Long, Reference> references) {
+			this.references = references;
 			return this;
 		}
 
@@ -1422,6 +1551,27 @@ public class Models {
 			return this;
 		}
 
+	}
+
+	public static class ProcessInstancePrivilegesBuilder extends ModelBuilder<ProcessInstancePrivileges> {
+
+		private boolean stoppable;
+
+		private ProcessInstancePrivilegesBuilder() {
+			// use factory method
+		}
+
+		@Override
+		protected ProcessInstancePrivileges doBuild() {
+			final ProcessInstancePrivileges output = new ProcessInstancePrivileges();
+			output.setStoppable(stoppable);
+			return output;
+		}
+
+		public ProcessInstancePrivilegesBuilder stoppable(final boolean stoppable) {
+			this.stoppable = stoppable;
+			return this;
+		}
 	}
 
 	public static class ProcessInstanceAdvanceBuilder extends ModelBuilder<ProcessInstanceAdvanceable> {
@@ -1617,6 +1767,7 @@ public class Models {
 		private String descriptionAttributeName;
 		private Collection<Long> statuses;
 		private Long defaultStatus;
+		private Collection<AttributeOrder> defaultOrder;
 		private String parent;
 
 		private ProcessWithFullDetailsBuilder() {
@@ -1627,6 +1778,7 @@ public class Models {
 		protected void doValidate() {
 			prototype = defaultIfNull(prototype, FALSE);
 			statuses = defaultIfNull(statuses, NO_STATUSES);
+			defaultOrder = defaultIfNull(defaultOrder, NO_ORDER);
 		}
 
 		@Override
@@ -1639,6 +1791,7 @@ public class Models {
 			output.setDescriptionAttributeName(descriptionAttributeName);
 			output.setStatuses(statuses);
 			output.setDefaultStatus(defaultStatus);
+			output.setDefaultOrder(defaultOrder);
 			output.setParent(parent);
 			return output;
 		}
@@ -1678,7 +1831,37 @@ public class Models {
 			return this;
 		}
 
+		public ProcessWithFullDetailsBuilder withDefaultOrder(final Collection<AttributeOrder> defaultOrder) {
+			this.defaultOrder = defaultOrder;
+			return this;
+		}
+
 		public ProcessWithFullDetailsBuilder withParent(final String parent) {
+			this.parent = parent;
+			return this;
+		}
+
+	}
+
+	public static class ReferenceBuilder extends ModelBuilder<Reference> {
+
+		private String description;
+		private Long parent;
+
+		@Override
+		protected Reference doBuild() {
+			final Reference output = new Reference();
+			output.setDescription(description);
+			output.setParent(parent);
+			return output;
+		}
+
+		public ReferenceBuilder withDescription(final String description) {
+			this.description = description;
+			return this;
+		}
+
+		public ReferenceBuilder withParent(final Long parent) {
 			this.parent = parent;
 			return this;
 		}
@@ -1785,6 +1968,7 @@ public class Models {
 	public static class ResponseSingleBuilder<T> extends ModelBuilder<ResponseSingle<T>> {
 
 		private T element;
+		private DetailResponseMetadata metadata;
 
 		private ResponseSingleBuilder() {
 			// use factory method
@@ -1794,11 +1978,17 @@ public class Models {
 		protected ResponseSingle<T> doBuild() {
 			final ResponseSingle<T> output = new ResponseSingle<T>();
 			output.setElement(element);
+			output.setMetadata(metadata);
 			return output;
 		}
 
 		public ResponseSingleBuilder<T> withElement(final T element) {
 			this.element = element;
+			return this;
+		}
+
+		public ResponseSingleBuilder<T> withMetadata(final DetailResponseMetadata metadata) {
+			this.metadata = metadata;
 			return this;
 		}
 
@@ -2013,6 +2203,10 @@ public class Models {
 		return new AttributeBuilder();
 	}
 
+	public static AttributeOrderBuilder newAttributeOrder() {
+		return new AttributeOrderBuilder();
+	}
+
 	public static AttributeStatusBuilder newAttributeStatus() {
 		return new AttributeStatusBuilder();
 	}
@@ -2051,6 +2245,14 @@ public class Models {
 
 	public static FilterBuilder newFilter() {
 		return new FilterBuilder();
+	}
+
+	public static FunctionWithBasicDetailsBuilder newFunctionWithBasicDetails() {
+		return new FunctionWithBasicDetailsBuilder();
+	}
+
+	public static FunctionWithFullDetailsBuilder newFunctionWithFullDetails() {
+		return new FunctionWithFullDetailsBuilder();
 	}
 
 	public static LongIdBuilder newLongId() {
@@ -2093,6 +2295,10 @@ public class Models {
 		return new ProcessInstanceAdvanceBuilder();
 	}
 
+	public static ProcessInstancePrivilegesBuilder newProcessInstancePrivileges() {
+		return new ProcessInstancePrivilegesBuilder();
+	}
+
 	public static ProcessStatusBuilder newProcessStatus() {
 		return new ProcessStatusBuilder();
 	}
@@ -2103,6 +2309,10 @@ public class Models {
 
 	public static ProcessWithFullDetailsBuilder newProcessWithFullDetails() {
 		return new ProcessWithFullDetailsBuilder();
+	}
+
+	public static ReferenceBuilder newReference() {
+		return new ReferenceBuilder();
 	}
 
 	public static RelationBuilder newRelation() {

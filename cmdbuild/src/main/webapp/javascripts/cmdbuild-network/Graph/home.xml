@@ -1,0 +1,128 @@
+<DATA>
+	<params>
+		<type>div</type>
+	</params>
+	<div class="cmdbuild-grid-col cmdbuild-grid-span_8">
+		<canvas3d id="myFirstCanvas" class="canvas"/>
+	</div>
+	<div class="cmdbuild-grid-col cmdbuild-grid-span_4">
+		<div id="cmdbuildMainForm" class="cmdbuildMainColumnWrapper">
+			<div id="buttonsPanelContainer" class="ui-state-default ui-corner-all allWidth">
+				<span class="undo toolbarButton" tooltip="Undo the last operation">
+					<onClick>
+						<command>undo</command>
+					</onClick>
+				</span>
+				<span class="layout toolbarButton" tooltip="Apply the current layout">
+					<onClick>
+						<command>doLayout</command>
+					</onClick>
+				</span>
+				<span class="centerOnViewer toolbarButton" tooltip="Center the image">
+					<onClick>
+						<command>centerOnViewer</command>
+					</onClick>
+				</span>
+				<span class="centerOnSelection toolbarButton" tooltip="Center the layout on selection">
+					<onClick>
+						<command>zoomOn</command>
+						<node>$selectedForm.id</node>
+					</onClick>
+				</span>
+				<span class="stop toolbarButton" tooltip="Stop the current operation when possible">
+					<onClick>
+						<command>stopCommands</command>
+					</onClick>
+				</span>
+				<span class="selectAll toolbarButton" tooltip="Select all nodes">
+					<onClick>
+						<command>selectAll</command>
+					</onClick>
+				</span>
+				<span class="deleteSelected toolbarButton" tooltip="Delete selected nodes">
+					<onClick>
+						<command>deleteSelection</command>
+						<selected>true</selected>
+					</onClick>
+				</span>
+				<span class="deleteUnselected toolbarButton" tooltip="Delete unselected nodes">
+					<onClick>
+						<command>deleteSelection</command>
+						<selected>false</selected>
+					</onClick>
+				</span>
+				<span class="openCardsFromClass toolbarButton" tooltip="Open selected nodes">
+					<onClick>
+						<command>openSelection</command>
+					</onClick>
+				</span>
+				<span class="navigateOnNode toolbarButton" tooltip="Reopen the graph from this node">
+					<onClick>
+						<command>navigateOnNode</command>
+					</onClick>
+				</span>
+				<span class="subGraph toolbarButton" tooltip="Select the sub graph that contains the selected elements">
+					<onClick>
+						<command>connect</command>
+					</onClick>
+				</span>
+			</div>
+			<div id="commandPanelContainer">
+				<onInit>
+					<command>navigate</command>
+					<container>commandPanelContainer</container>
+					<form>commandPanelMain</form>
+				</onInit>
+				<form id="commandPanelMain">
+		 			<params>
+						<type>tabbed</type>
+					</params>
+					<form title="Classes" id="classesGrid" include="classes.xml" class="commandPanelWindow cmdbuildTabbedForm"/>
+					<form title="Card list" id="mainCardsGrid" include="mainCards.xml" class="commandPanelWindow cmdbuildTabbedForm"/>
+					<form title="Card detail" id="detail" include="detail.xml" class="commandPanelWindow cmdbuildTabbedForm"/>
+ 					<form title="Relations" id="relations" include="relations.xml" class="commandPanelWindow cmdbuildTabbedForm"/>  
+				</form>
+			</div>
+			<div id="statusPanelContainer">
+				<counter id="nodesCounter" text="Nodes:">
+		 			<params>
+						<type>nodes</type>
+					</params>
+				</counter>
+				<counter id="edgesCounter"  text="Edges:">
+		 			<params>
+						<type>edges</type>
+					</params>
+				</counter>
+				<counter id="selectedCounter"  text="Selected:">
+		 			<params>
+						<type>selected</type>
+					</params>
+				</counter>
+			</div>
+			<div id="optionsPanelContainer" class="cmdbuildGridFilterContainer ui-state-default ui-corner-all allWidth">
+				<span class="properties toolbarButton" tooltip="Open the properties panel">
+					<onClick>
+						<command>navigate</command>
+						<form>options</form>
+						<dialog>commandPanelDialog</dialog>
+					</onClick>
+				</span>
+				<spinner label="Open levels" id="explosionLevels" class="optionsSpinner">
+					<params>
+						<backend>Options</backend>
+						<type>explosionLevels</type>
+						<value>1</value>
+					</params>
+					<onChange>
+						<command>boolean</command>
+						<type>explosionLevels</type>
+					</onChange>
+				</spinner>
+			</div>
+		</div>
+		<form title="Command panel" id="commandPanel" include="commandPanel.xml" class="cmdbuildTabbedForm"/>
+		<form title="Options" id="options" include="options.xml" class="commandPanelWindow cmdbuildTabbedForm"/> 
+		<dialog id="commandPanelDialog"></dialog>
+	</div>
+</DATA>	

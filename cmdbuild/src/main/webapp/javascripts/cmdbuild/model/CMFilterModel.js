@@ -3,17 +3,17 @@
 	Ext.define('CMDBuild.model.CMFilterModel', {
 		extend: 'Ext.data.Model',
 
-		requires: ['CMDBuild.core.proxy.Constants'],
+		requires: ['CMDBuild.core.constants.Proxy'],
 
 		fields: [
-			{ name: CMDBuild.core.proxy.Constants.ID, type: 'string' },
-			{ name: CMDBuild.core.proxy.Constants.NAME, type: 'string' },
-			{ name: CMDBuild.core.proxy.Constants.DESCRIPTION, type: 'string' },
-			{ name: CMDBuild.core.proxy.Constants.CONFIGURATION, type: 'auto' },
-			{ name: CMDBuild.core.proxy.Constants.ENTRY_TYPE, type: 'string' },
-			{ name: CMDBuild.core.proxy.Constants.TEMPLATE, type: 'boolean' },
-			{ name: CMDBuild.core.proxy.Constants.APPLIED, type: 'boolean', persist: false }, // To know if this filter is currently applied
-			{ name: CMDBuild.core.proxy.Constants.LOCAL, type: 'boolean', persist: false } // To know if the filter is created client side, and is not sync with the server
+			{ name: CMDBuild.core.constants.Proxy.ID, type: 'string' },
+			{ name: CMDBuild.core.constants.Proxy.NAME, type: 'string' },
+			{ name: CMDBuild.core.constants.Proxy.DESCRIPTION, type: 'string' },
+			{ name: CMDBuild.core.constants.Proxy.CONFIGURATION, type: 'auto' },
+			{ name: CMDBuild.core.constants.Proxy.ENTRY_TYPE, type: 'string' },
+			{ name: CMDBuild.core.constants.Proxy.TEMPLATE, type: 'boolean' },
+			{ name: CMDBuild.core.constants.Proxy.APPLIED, type: 'boolean', persist: false }, // To know if this filter is currently applied
+			{ name: CMDBuild.core.constants.Proxy.LOCAL, type: 'boolean', persist: false } // To know if the filter is created client side, and is not sync with the server
 		],
 
 		/**
@@ -25,7 +25,7 @@
 		 */
 		copy: function() {
 			var dolly = new CMDBuild.model.CMFilterModel();
-			dolly.set(CMDBuild.core.proxy.Constants.ID, this.get(CMDBuild.core.proxy.Constants.ID));
+			dolly.set(CMDBuild.core.constants.Proxy.ID, this.get(CMDBuild.core.constants.Proxy.ID));
 			dolly.setName(this.getName());
 			dolly.setDescription(this.getDescription());
 			dolly.setConfiguration(Ext.apply({}, this.getConfiguration()));
@@ -44,23 +44,23 @@
 
 		// Getter and setter
 		getName: function() {
-			return this.get(CMDBuild.core.proxy.Constants.NAME) || '';
+			return this.get(CMDBuild.core.constants.Proxy.NAME) || '';
 		},
 
 		setName: function(name) {
-			this.set(CMDBuild.core.proxy.Constants.NAME, name);
+			this.set(CMDBuild.core.constants.Proxy.NAME, name);
 		},
 
 		getDescription: function() {
-			return this.get(CMDBuild.core.proxy.Constants.DESCRIPTION) || '';
+			return this.get(CMDBuild.core.constants.Proxy.DESCRIPTION) || '';
 		},
 
 		setDescription: function(description) {
-			this.set(CMDBuild.core.proxy.Constants.DESCRIPTION, description);
+			this.set(CMDBuild.core.constants.Proxy.DESCRIPTION, description);
 		},
 
 		getConfiguration: function() {
-			return this.get(CMDBuild.core.proxy.Constants.CONFIGURATION) || {};
+			return this.get(CMDBuild.core.constants.Proxy.CONFIGURATION) || {};
 		},
 
 		/**
@@ -81,7 +81,7 @@
 		},
 
 		setConfiguration: function(configuration) {
-			this.set(CMDBuild.core.proxy.Constants.CONFIGURATION, configuration);
+			this.set(CMDBuild.core.constants.Proxy.CONFIGURATION, configuration);
 		},
 
 		getAttributeConfiguration: function() {
@@ -98,7 +98,7 @@
 
 			if (Ext.isObject(conf) && Ext.Object.getKeys(conf).length > 0) {
 				configuration.attribute = conf;
-				this.set(CMDBuild.core.proxy.Constants.CONFIGURATION, configuration);
+				this.set(CMDBuild.core.constants.Proxy.CONFIGURATION, configuration);
 			}
 		},
 
@@ -130,7 +130,7 @@
 
 			if (Ext.isArray(conf) && conf.length > 0) {
 				configuration.relation = conf;
-				this.set(CMDBuild.core.proxy.Constants.CONFIGURATION, configuration);
+				this.set(CMDBuild.core.constants.Proxy.CONFIGURATION, configuration);
 			}
 		},
 
@@ -150,39 +150,39 @@
 				delete configuration.functions;
 			}
 
-			this.set(CMDBuild.core.proxy.Constants.CONFIGURATION, configuration);
+			this.set(CMDBuild.core.constants.Proxy.CONFIGURATION, configuration);
 		},
 
 		getEntryType: function() {
-			return this.get(CMDBuild.core.proxy.Constants.ENTRY_TYPE) || '';
+			return this.get(CMDBuild.core.constants.Proxy.ENTRY_TYPE) || '';
 		},
 
 		setEntryType: function(entryType) {
-			this.set(CMDBuild.core.proxy.Constants.ENTRY_TYPE, entryType);
+			this.set(CMDBuild.core.constants.Proxy.ENTRY_TYPE, entryType);
 		},
 
 		isTemplate: function() {
-			return this.get(CMDBuild.core.proxy.Constants.TEMPLATE) || false;
+			return this.get(CMDBuild.core.constants.Proxy.TEMPLATE) || false;
 		},
 
 		setTemplate: function(applied) {
-			this.set(CMDBuild.core.proxy.Constants.TEMPLATE, applied);
+			this.set(CMDBuild.core.constants.Proxy.TEMPLATE, applied);
 		},
 
 		isApplied: function() {
-			return this.get(CMDBuild.core.proxy.Constants.APPLIED) || false;
+			return this.get(CMDBuild.core.constants.Proxy.APPLIED) || false;
 		},
 
 		setApplied: function(applied) {
-			this.set(CMDBuild.core.proxy.Constants.APPLIED, applied);
+			this.set(CMDBuild.core.constants.Proxy.APPLIED, applied);
 		},
 
 		isLocal: function() {
-			return this.get(CMDBuild.core.proxy.Constants.LOCAL) || false;
+			return this.get(CMDBuild.core.constants.Proxy.LOCAL) || false;
 		},
 
 		setLocal: function(local) {
-			this.set(CMDBuild.core.proxy.Constants.LOCAL, local);
+			this.set(CMDBuild.core.constants.Proxy.LOCAL, local);
 		}
 	});
 

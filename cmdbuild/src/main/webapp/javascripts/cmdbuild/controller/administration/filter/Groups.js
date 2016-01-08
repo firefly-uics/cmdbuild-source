@@ -1,11 +1,12 @@
 (function() {
 
 	Ext.define('CMDBuild.controller.administration.filter.Groups', {
-		extend: 'CMDBuild.controller.common.AbstractController',
+		extend: 'CMDBuild.controller.common.abstract.Base',
 
 		requires: [
-			'CMDBuild.core.proxy.Constants',
-			'CMDBuild.core.proxy.filter.Groups',
+			'CMDBuild.core.constants.Proxy',
+			'CMDBuild.core.Message',
+			'CMDBuild.core.proxy.filter.Group',
 			'CMDBuild.view.common.field.translatable.Utils'
 		],
 
@@ -20,7 +21,6 @@
 		cmfgCatchedFunctions: [
 			'onFilterGroupsAbortButtonClick',
 			'onFilterGroupsAddButtonClick',
-			'onFilterGroupsClassesComboSelect',
 			'onFilterGroupsModifyButtonClick = onFilterGroupsItemDoubleClick',
 			'onFilterGroupsRemoveButtonClick',
 			'onFilterGroupsRowSelected',
@@ -38,7 +38,9 @@
 		grid: undefined,
 
 		/**
-		 * @property {CMDBuild.model.filter.Groups}
+		 * @property {CMDBuild.model.filter.group.SelectedFilter}
+		 *
+		 * @private
 		 */
 		selectedFilter: undefined,
 
@@ -56,9 +58,7 @@
 		constructor: function(configurationObject) {
 			this.callParent(arguments);
 
-			this.view = Ext.create('CMDBuild.view.administration.filter.groups.GroupsView', {
-				delegate: this
-			});
+			this.view = Ext.create('CMDBuild.view.administration.filter.groups.GroupsView', { delegate: this });
 
 			// Shorthands
 			this.form = this.view.form;
@@ -66,7 +66,7 @@
 		},
 
 		onFilterGroupsAbortButtonClick: function() {
-			if (!Ext.isEmpty(this.selectedFilter)) {
+			if (!this.filterGroupsSelectedFilterIsEmpty()) {
 				this.onFilterGroupsRowSelected();
 			} else {
 				this.form.reset();
@@ -77,23 +77,11 @@
 		onFilterGroupsAddButtonClick: function() {
 			this.grid.getSelectionModel().deselectAll();
 
-			this.selectedFilter = null;
+			this.filterGroupsSelectedFilterReset();
 
 			this.form.reset();
-			this.form.filterChooser.reset(); // Manual filter reset
 			this.form.setDisabledModify(false, true);
-			this.form.loadRecord(Ext.create('CMDBuild.model.filter.Groups'));
-		},
-
-		/**
-		 * @param {String} selectedClassName
-		 */
-		onFilterGroupsClassesComboSelect: function(selectedClassName) {
-			if (!Ext.isEmpty(selectedClassName)) {
-				this.form.filterChooser.setClassName(selectedClassName);
-			} else {
-				_error('empty selectedClassName in onFilterGroupsClassesComboSelect', this);
-			}
+			this.form.loadRecord(Ext.create('CMDBuild.model.filter.group.Store'));
 		},
 
 		onFilterGroupsModifyButtonClick: function() {
@@ -104,57 +92,69 @@
 			Ext.Msg.show({
 				title: CMDBuild.Translation.common.confirmpopup.title,
 				msg: CMDBuild.Translation.common.confirmpopup.areyousure,
-				scope: this,
 				buttons: Ext.Msg.YESNO,
-				fn: function(button) {
-					if (button == 'yes')
+				scope: this,
+
+				fn: function(buttonId, text, opt) {
+					if (buttonId == 'yes')
 						this.removeItem();
 				}
 			});
 		},
 
-		/**
-		 * TODO: server implementation to get a single view data
-		 */
 		onFilterGroupsRowSelected: function() {
-			this.selectedFilter = this.grid.getSelectionModel().getSelection()[0];
+			var selectedRecord = this.grid.getSelectionModel().getSelection()[0];
 
-			this.form.loadRecord(this.selectedFilter);
+			var params = {};
+			params[CMDBuild.core.constants.Proxy.ID] = selectedRecord.get(CMDBuild.core.constants.Proxy.ID);
 
-			// FilterChooser field setup
-			this.form.filterChooser.setClassName(this.selectedFilter.get(CMDBuild.core.proxy.Constants.ENTRY_TYPE));
-			this.form.filterChooser.setFilter(
-				Ext.create('CMDBuild.model.CMFilterModel', {
-					configuration: this.selectedFilter.get(CMDBuild.core.proxy.Constants.CONFIGURATION),
-					entryType: this.selectedFilter.get(CMDBuild.core.proxy.Constants.ENTRY_TYPE)
-				})
-			);
+			CMDBuild.core.proxy.filter.Group.read({ // TODO: waiting for refactor (CRUD)
+				params: params,
+				scope: this,
+				success: function(response, options, decodedResponse) {
+					decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.FILTERS];
 
-			this.form.setDisabledModify(true, true);
+					this.filterGroupsSelectedFilterSet({
+						value: Ext.Array.findBy(decodedResponse, function(filterObject, i) {
+							return selectedRecord.get(CMDBuild.core.constants.Proxy.ID) == filterObject[CMDBuild.core.constants.Proxy.ID];
+						}, this)
+					});
+
+					CMDBuild.core.proxy.filter.Group.getDefaults({
+						params: params,
+						scope: this,
+						success: function(response, options, decodedResponse) {
+							decodedResponse = decodedResponse.response.elements;
+
+							this.filterGroupsSelectedFilterSet({
+								propertyName: CMDBuild.core.constants.Proxy.DEFAULT_FOR_GROUPS,
+								value: decodedResponse
+							});
+
+							this.form.loadRecord(this.filterGroupsSelectedFilterGet());
+							this.form.setDisabledModify(true, true);
+						}
+					});
+				}
+			});
 		},
 
 		onFilterGroupsSaveButtonClick: function() {
-			// Validate before save
 			if (this.validate(this.form)) {
-				var formData = this.form.getData(true);
+				var formDataModel = Ext.create('CMDBuild.model.filter.group.Store', this.form.getData(true));
 
-				if (!Ext.isEmpty(this.form.filterChooser.getFilter()))
-					formData[CMDBuild.core.proxy.Constants.CONFIGURATION] = Ext.encode(this.form.filterChooser.getFilter().getConfiguration());
+				var params = formDataModel.getData();
+				params[CMDBuild.core.constants.Proxy.CONFIGURATION] = Ext.encode(params[CMDBuild.core.constants.Proxy.CONFIGURATION]);
+				params[CMDBuild.core.constants.Proxy.CLASS_NAME] = params[CMDBuild.core.constants.Proxy.ENTRY_TYPE]; // TODO: waiting for refactor (reads a entryType parameter but i write as className)
 
-				formData = Ext.create('CMDBuild.model.filter.Groups', formData); // Filter unwanted data of filterChooser internal fields
-
-				// TODO: needed a refactor because i read a entryType parameter but i write as className
-				var params = formData.getData();
-				params[CMDBuild.core.proxy.Constants.CLASS_NAME] = params[CMDBuild.core.proxy.Constants.ENTRY_TYPE];
-
-				if (Ext.isEmpty(formData.get(CMDBuild.core.proxy.Constants.ID))) {
-					CMDBuild.core.proxy.filter.Groups.create({
+				if (Ext.isEmpty(formDataModel.get(CMDBuild.core.constants.Proxy.ID))) {
+					CMDBuild.core.proxy.filter.Group.create({
 						params: params,
 						scope: this,
 						success: this.success
 					});
 				} else {
-					CMDBuild.core.proxy.filter.Groups.update({
+					CMDBuild.core.proxy.filter.Group.update({
 						params: params,
 						scope: this,
 						success: this.success
@@ -164,11 +164,11 @@
 		},
 
 		removeItem: function() {
-			if (!Ext.isEmpty(this.selectedFilter)) {
+			if (!this.filterGroupsSelectedFilterIsEmpty()) {
 				var params = {};
-				params[CMDBuild.core.proxy.Constants.ID] = this.selectedFilter.get(CMDBuild.core.proxy.Constants.ID);
+				params[CMDBuild.core.constants.Proxy.ID] = this.filterGroupsSelectedFilterGet(CMDBuild.core.constants.Proxy.ID);
 
-				CMDBuild.core.proxy.filter.Groups.remove({
+				CMDBuild.core.proxy.filter.Group.remove({
 					params: params,
 					scope: this,
 					success: function(response, options, decodedResponse) {
@@ -189,21 +189,73 @@
 			}
 		},
 
+		// SelectedFilter property methods
+			/**
+			 * @param {Array or String} attributePath
+			 *
+			 * @returns {Mixed or undefined}
+			 */
+			filterGroupsSelectedFilterGet: function(attributePath) {
+				var parameters = {};
+				parameters[CMDBuild.core.constants.Proxy.TARGET_VARIABLE_NAME] = 'selectedFilter';
+				parameters[CMDBuild.core.constants.Proxy.ATTRIBUTE_PATH] = attributePath;
+
+				return this.propertyManageGet(parameters);
+			},
+
+			/**
+			 * @param {Array or String} attributePath
+			 *
+			 * @returns {Boolean}
+			 */
+			filterGroupsSelectedFilterIsEmpty: function(attributePath) {
+				var parameters = {};
+				parameters[CMDBuild.core.constants.Proxy.TARGET_VARIABLE_NAME] = 'selectedFilter';
+				parameters[CMDBuild.core.constants.Proxy.ATTRIBUTE_PATH] = attributePath;
+
+				return this.propertyManageIsEmpty(parameters);
+			},
+
+			filterGroupsSelectedFilterReset: function() {
+				this.propertyManageReset('selectedFilter');
+			},
+
+			/**
+			 * @param {Object} parameters
+			 */
+			filterGroupsSelectedFilterSet: function(parameters) {
+				if (!Ext.Object.isEmpty(parameters)) {
+					parameters[CMDBuild.core.constants.Proxy.MODEL_NAME] = 'CMDBuild.model.filter.group.SelectedFilter';
+					parameters[CMDBuild.core.constants.Proxy.TARGET_VARIABLE_NAME] = 'selectedFilter';
+
+					this.propertyManageSet(parameters);
+				}
+			},
+
 		/**
 		 * @param {Object} result
 		 * @param {Object} options
 		 * @param {Object} decodedResult
+		 *
+		 * TODO: waiting for refactor (save all group attributes in one call)
 		 */
 		success: function(result, options, decodedResult) {
 			var me = this;
+			var savedFilterObject = decodedResult[CMDBuild.core.constants.Proxy.FILTER] || options.params;
 
 			CMDBuild.view.common.field.translatable.Utils.commit(this.view.form);
+
+			var params = {};
+			params[CMDBuild.core.constants.Proxy.FILTERS] = Ext.encode([savedFilterObject[CMDBuild.core.constants.Proxy.ID]]);
+			params[CMDBuild.core.constants.Proxy.GROUPS] = Ext.encode(this.form.defaultForGroupsField.getValue());
+
+			CMDBuild.core.proxy.filter.Group.setDefaults({ params: params });
 
 			this.grid.getStore().load({
 				callback: function(records, operation, success) {
 					var rowIndex = this.find(
-						CMDBuild.core.proxy.Constants.NAME,
-						me.form.getForm().findField(CMDBuild.core.proxy.Constants.NAME).getValue()
+						CMDBuild.core.constants.Proxy.NAME,
+						me.form.getForm().findField(CMDBuild.core.constants.Proxy.NAME).getValue()
 					);
 
 					me.grid.getSelectionModel().select(rowIndex, true);

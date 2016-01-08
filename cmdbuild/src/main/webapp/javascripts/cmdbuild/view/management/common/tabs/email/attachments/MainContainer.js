@@ -3,7 +3,7 @@
 	Ext.define('CMDBuild.view.management.common.tabs.email.attachments.MainContainer', {
 		extend: 'Ext.container.Container',
 
-		requires: ['CMDBuild.core.proxy.Constants'],
+		requires: ['CMDBuild.core.constants.Proxy'],
 
 		/**
 		 * @cfg {CMDBuild.controller.management.common.tabs.email.attachments.Attachments}
@@ -31,19 +31,18 @@
 		},
 
 		initComponent: function() {
-			if (CMDBuild.Config.dms.enabled) {
-				this.attachmentButtonsContainer = Ext.create('CMDBuild.view.management.common.tabs.email.attachments.ButtonsContainer', {
-					delegate: this.delegate,
-					readOnly: this.readOnly
-				});
-
-				this.attachmentPanelsContainer = Ext.create('Ext.container.Container', {
-					autoScroll: true,
-					flex: 1
-				});
-
+			if (CMDBuild.configuration.dms.get(CMDBuild.core.constants.Proxy.ENABLED)) {
 				Ext.apply(this, {
-					items: [this.attachmentButtonsContainer, this.attachmentPanelsContainer],
+					items: [
+						this.attachmentButtonsContainer = Ext.create('CMDBuild.view.management.common.tabs.email.attachments.ButtonsContainer', {
+							delegate: this.delegate,
+							readOnly: this.readOnly
+						}),
+						this.attachmentPanelsContainer = Ext.create('Ext.container.Container', {
+							overflowX: 'hidden',
+							flex: 1
+						})
+					],
 				});
 			}
 

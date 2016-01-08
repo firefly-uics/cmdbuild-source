@@ -41,6 +41,21 @@ public class Functions {
 
 	}
 
+	private static class CMEntyTypeAttribute implements Function<String, CMAttribute> {
+
+		private final CMEntryType entryType;
+
+		public CMEntyTypeAttribute(final CMEntryType entryType) {
+			this.entryType = entryType;
+		}
+
+		@Override
+		public CMAttribute apply(final String input) {
+			return entryType.getAttribute(input);
+		}
+
+	}
+
 	private static final CMClassAllParentsFunction ALL_PARENTS = new CMClassAllParentsFunction();
 	private static final CMEntyTypeName NAME = new CMEntyTypeName();
 	private static final CMEntyTypeNames NAMES = new CMEntyTypeNames();
@@ -55,6 +70,10 @@ public class Functions {
 
 	public static Function<Iterable<? extends CMEntryType>, Iterable<String>> names() {
 		return NAMES;
+	}
+
+	public static Function<String, CMAttribute> attribute(final CMEntryType entryType) {
+		return new CMEntyTypeAttribute(entryType);
 	}
 
 	private static final Function<CMAttribute, String> ATTRIBUTE_NAME = new Function<CMAttribute, String>() {

@@ -355,9 +355,13 @@ public class DefaultEmailLogic implements EmailLogic {
 		Validate.isTrue( //
 				contains(asList(draft()), read.getStatus()), //
 				"cannot delete e-mail '%s' due to an invalid status", read);
+		deleteWithNoChecks(read);
+	}
 
-		final org.cmdbuild.data.store.email.Email storable = LOGIC_TO_STORE.apply(read);
-		storeOf(read).delete(storable);
+	@Override
+	public void deleteWithNoChecks(final Email email) {
+		final org.cmdbuild.data.store.email.Email storable = LOGIC_TO_STORE.apply(email);
+		storeOf(email).delete(storable);
 	}
 
 	private Store<org.cmdbuild.data.store.email.Email> storeOf(final Email email) {

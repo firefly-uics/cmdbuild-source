@@ -4,6 +4,7 @@ import java.util.ArrayDeque;
 import java.util.Deque;
 
 import org.cmdbuild.dao.driver.DBDriver;
+import org.cmdbuild.dao.entry.CMEntry;
 import org.cmdbuild.dao.entry.DBEntry;
 import org.cmdbuild.dao.entrytype.CMAttribute.Mode;
 import org.cmdbuild.dao.entrytype.CMIdentifier;
@@ -264,7 +265,7 @@ public class GenericRollbackDriver implements DBDriver {
 				}
 
 				@Override
-				public boolean isDisplayableInList() {
+				public Boolean isDisplayableInList() {
 					return existingAttribute.isDisplayableInList();
 				}
 
@@ -279,7 +280,7 @@ public class GenericRollbackDriver implements DBDriver {
 				}
 
 				@Override
-				public boolean isActive() {
+				public Boolean isActive() {
 					return existingAttribute.isActive();
 				}
 
@@ -289,7 +290,7 @@ public class GenericRollbackDriver implements DBDriver {
 				}
 
 				@Override
-				public int getIndex() {
+				public Integer getIndex() {
 					return existingAttribute.getIndex();
 				}
 
@@ -299,7 +300,7 @@ public class GenericRollbackDriver implements DBDriver {
 				}
 
 				@Override
-				public int getClassOrder() {
+				public Integer getClassOrder() {
 					return existingAttribute.getClassOrder();
 				}
 
@@ -372,7 +373,7 @@ public class GenericRollbackDriver implements DBDriver {
 				}
 
 				@Override
-				public boolean isDisplayableInList() {
+				public Boolean isDisplayableInList() {
 					return dbAttribute.isDisplayableInList();
 				}
 
@@ -387,7 +388,7 @@ public class GenericRollbackDriver implements DBDriver {
 				}
 
 				@Override
-				public boolean isActive() {
+				public Boolean isActive() {
 					return dbAttribute.isActive();
 				}
 
@@ -397,7 +398,7 @@ public class GenericRollbackDriver implements DBDriver {
 				}
 
 				@Override
-				public int getIndex() {
+				public Integer getIndex() {
 					return dbAttribute.getIndex();
 				}
 
@@ -407,7 +408,7 @@ public class GenericRollbackDriver implements DBDriver {
 				}
 
 				@Override
-				public int getClassOrder() {
+				public Integer getClassOrder() {
 					return dbAttribute.getClassOrder();
 				}
 
@@ -763,7 +764,7 @@ public class GenericRollbackDriver implements DBDriver {
 	}
 
 	@Override
-	public void delete(final DBEntry entry) {
+	public void delete(final CMEntry entry) {
 		innerDriver.delete(entry);
 	}
 

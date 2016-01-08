@@ -3,7 +3,7 @@
 	Ext.define('CMDBuild.view.common.field.translatable.Base', {
 		extend: 'Ext.form.FieldContainer',
 
-		requires: ['CMDBuild.core.proxy.Constants'],
+		requires: ['CMDBuild.core.constants.Proxy'],
 
 		/**
 		 * @cfg {Boolean}
@@ -42,14 +42,12 @@
 		initComponent: function() {
 			this.field = this.createField();
 
-			if (CMDBuild.configuration[CMDBuild.core.proxy.Constants.LOCALIZATION].hasEnabledLanguages()) {
+			if (CMDBuild.configuration.localization.hasEnabledLanguages()) {
 				this.translationButton = Ext.create('CMDBuild.core.buttons.FieldTranslation', {
 					scope: this,
 
 					handler: function(button, e) {
-						Ext.create('CMDBuild.controller.common.field.translatable.Window', {
-							ownerField: this
-						});
+						Ext.create('CMDBuild.controller.common.field.translatable.Window', { ownerField: this });
 					}
 				});
 			}
@@ -91,13 +89,13 @@
 					&& !Ext.Object.isEmpty(this.translationFieldConfig)
 				) {
 					decodedConfigurationObject = {};
-					decodedConfigurationObject[CMDBuild.core.proxy.Constants.TYPE] = this.translationFieldConfig[CMDBuild.core.proxy.Constants.TYPE];
-					decodedConfigurationObject[CMDBuild.core.proxy.Constants.OWNER] = this.decodeConfigurationValue(CMDBuild.core.proxy.Constants.OWNER);
-					decodedConfigurationObject[CMDBuild.core.proxy.Constants.IDENTIFIER] = this.decodeConfigurationValue(CMDBuild.core.proxy.Constants.IDENTIFIER);
-					decodedConfigurationObject[CMDBuild.core.proxy.Constants.FIELD] = this.translationFieldConfig[CMDBuild.core.proxy.Constants.FIELD];
+					decodedConfigurationObject[CMDBuild.core.constants.Proxy.TYPE] = this.translationFieldConfig[CMDBuild.core.constants.Proxy.TYPE];
+					decodedConfigurationObject[CMDBuild.core.constants.Proxy.OWNER] = this.decodeConfigurationValue(CMDBuild.core.constants.Proxy.OWNER);
+					decodedConfigurationObject[CMDBuild.core.constants.Proxy.IDENTIFIER] = this.decodeConfigurationValue(CMDBuild.core.constants.Proxy.IDENTIFIER);
+					decodedConfigurationObject[CMDBuild.core.constants.Proxy.FIELD] = this.translationFieldConfig[CMDBuild.core.constants.Proxy.FIELD];
 
 					if (withTranslationsObject)
-						decodedConfigurationObject[CMDBuild.core.proxy.Constants.TRANSLATIONS] = this.translationsGet(translationsObjectEncoded);
+						decodedConfigurationObject[CMDBuild.core.constants.Proxy.TRANSLATIONS] = this.translationsGet(translationsObjectEncoded);
 				}
 
 				return decodedConfigurationObject;
@@ -111,9 +109,9 @@
 
 				return (
 					!Ext.Object.isEmpty(configuration)
-					&& !Ext.isEmpty(configuration[CMDBuild.core.proxy.Constants.TYPE])
-					&& !Ext.isEmpty(configuration[CMDBuild.core.proxy.Constants.IDENTIFIER])
-					&& !Ext.isEmpty(configuration[CMDBuild.core.proxy.Constants.FIELD])
+					&& !Ext.isEmpty(configuration[CMDBuild.core.constants.Proxy.TYPE])
+					&& !Ext.isEmpty(configuration[CMDBuild.core.constants.Proxy.IDENTIFIER])
+					&& !Ext.isEmpty(configuration[CMDBuild.core.constants.Proxy.FIELD])
 				);
 			},
 
@@ -218,12 +216,12 @@
 
 				if (
 					!Ext.isEmpty(this.translationFieldConfig)
-					&& this.translationFieldConfig.hasOwnProperty(CMDBuild.core.proxy.Constants.TRANSLATIONS)
+					&& this.translationFieldConfig.hasOwnProperty(CMDBuild.core.constants.Proxy.TRANSLATIONS)
 				) {
 					if (encoded)
-						return Ext.encode(this.translationFieldConfig[CMDBuild.core.proxy.Constants.TRANSLATIONS].getData());
+						return Ext.encode(this.translationFieldConfig[CMDBuild.core.constants.Proxy.TRANSLATIONS].getData());
 
-					return this.translationFieldConfig[CMDBuild.core.proxy.Constants.TRANSLATIONS];
+					return this.translationFieldConfig[CMDBuild.core.constants.Proxy.TRANSLATIONS];
 				}
 
 				return Ext.create('CMDBuild.model.common.field.translatable.Window');
@@ -247,7 +245,7 @@
 			 * @param {Object} translationsObject
 			 */
 			translationsSet: function(translationsObject) {
-				this.translationFieldConfig[CMDBuild.core.proxy.Constants.TRANSLATIONS] = Ext.create('CMDBuild.model.common.field.translatable.Window', translationsObject);
+				this.translationFieldConfig[CMDBuild.core.constants.Proxy.TRANSLATIONS] = Ext.create('CMDBuild.model.common.field.translatable.Window', translationsObject);
 			}
 	});
 

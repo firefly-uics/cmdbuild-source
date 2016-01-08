@@ -1,12 +1,9 @@
 (function() {
 
 	Ext.define('CMDBuild.controller.administration.configuration.Configuration', {
-		extend: 'CMDBuild.controller.common.AbstractBasePanelController',
+		extend: 'CMDBuild.controller.common.abstract.BasePanel',
 
-		requires: [
-			'CMDBuild.core.proxy.Constants',
-			'CMDBuild.core.proxy.Configuration'
-		],
+		requires: ['CMDBuild.core.constants.Proxy'],
 
 		/**
 		 * @cfg {Object}
@@ -14,102 +11,24 @@
 		delegate: undefined,
 
 		/**
-		 * @cfg {Array}
-		 */
-		cmfgCatchedFunctions: [
-			'onConfigurationRead',
-			'onConfigurationSave'
-		],
-
-		/**
 		 * @property {CMDBuild.view.administration.configuration.ConfigurationView}
 		 */
 		view: undefined,
 
 		/**
-		 * @param {Object} parameters
-		 * @param {String} parameters.fileName
-		 * @param {Mixed} parameters.view
-		 */
-		onConfigurationRead: function(parameters) {
-			if (
-				!Ext.isEmpty(parameters)
-				&& !Ext.isEmpty(parameters[CMDBuild.core.proxy.Constants.FILE_NAME])
-				&& !Ext.isEmpty(parameters[CMDBuild.core.proxy.Constants.VIEW])
-			) {
-				var fileName = parameters[CMDBuild.core.proxy.Constants.FILE_NAME];
-				var view = parameters[CMDBuild.core.proxy.Constants.VIEW];
-
-				CMDBuild.core.proxy.Configuration.read({
-					scope: this,
-					loadMask: true,
-					success: function(result, options, decodedResult){
-						var decodedResult = decodedResult.data;
-
-						// FIX bug with Firefox that breaks UI on fast configuration page switch
-						if (view.isVisible())
-							view.getForm().setValues(decodedResult);
-
-						if (Ext.isFunction(view.afterSubmit))
-							view.afterSubmit(decodedResult);
-					}
-				}, fileName);
-			}
-		},
-
-		/**
-		 * @param {Object} parameters
-		 * @param {String} parameters.fileName
-		 * @param {Mixed} parameters.view
-		 */
-		onConfigurationSave: function(parameters) {
-			if (
-				!Ext.isEmpty(parameters)
-				&& !Ext.isEmpty(parameters[CMDBuild.core.proxy.Constants.FILE_NAME])
-				&& !Ext.isEmpty(parameters[CMDBuild.core.proxy.Constants.VIEW])
-			) {
-				var fileName = parameters[CMDBuild.core.proxy.Constants.FILE_NAME];
-				var view = parameters[CMDBuild.core.proxy.Constants.VIEW];
-
-				CMDBuild.core.proxy.Configuration.read({
-					scope: this,
-					loadMask: true,
-					success: function(result, options, decodedResult){
-						var decodedResult = decodedResult.data;
-
-						Ext.apply(decodedResult, view.getValues());
-
-						CMDBuild.core.proxy.Configuration.save({
-							scope: this,
-							params: decodedResult,
-							loadMask: true,
-							success: function(result, options, decodedResult) {
-								this.onConfigurationRead(fileName, view);
-
-								CMDBuild.view.common.field.translatable.Utils.commit(view);
-
-								CMDBuild.core.Message.success();
-							}
-						}, fileName);
-					}
-				}, fileName);
-			}
-		},
-
-		/**
 		 * Setup view items on accordion click
 		 *
-		 * @param {CMDBuild.view.common.CMAccordionStoreModel} parameters
+		 * @param {CMDBuild.model.common.accordion.Generic} node
 		 *
 		 * @override
 		 */
-		onViewOnFront: function(parameters) {
-			if (!Ext.Object.isEmpty(parameters)) {
+		onViewOnFront: function(node) {
+			if (!Ext.Object.isEmpty(node)) {
 				this.view.removeAll(true);
 
-				switch(parameters.get(CMDBuild.core.proxy.Constants.ID)) {
+				switch(node.get(CMDBuild.core.constants.Proxy.SECTION_HIERARCHY)[0]) {
 					case 'alfresco': {
-						this.sectionController = Ext.create('CMDBuild.controller.administration.configuration.Alfresco', { parentDelegate: this });
+						this.sectionController = Ext.create('CMDBuild.controller.administration.configuration.Dms', { parentDelegate: this });
 					} break;
 
 					case 'bim': {
@@ -140,7 +59,9 @@
 
 				this.view.add(this.sectionController.getView());
 
-				this.setViewTitle(parameters.get(CMDBuild.core.proxy.Constants.TEXT));
+				this.setViewTitle(node.get(CMDBuild.core.constants.Proxy.TEXT));
+
+				this.sectionController.getView().fireEvent('show'); // Manual show event fire
 
 				this.callParent(arguments);
 			}

@@ -2,6 +2,7 @@ package org.cmdbuild.servlets.json;
 
 import static org.cmdbuild.servlets.json.CommunicationConstants.ADMIN_PASSWORD;
 import static org.cmdbuild.servlets.json.CommunicationConstants.ADMIN_USER;
+import static org.cmdbuild.servlets.json.CommunicationConstants.CATEGORY;
 import static org.cmdbuild.servlets.json.CommunicationConstants.DB_NAME;
 import static org.cmdbuild.servlets.json.CommunicationConstants.DB_TYPE;
 import static org.cmdbuild.servlets.json.CommunicationConstants.DESCRIPTION;
@@ -199,6 +200,7 @@ public class Configure extends JSONBaseWithSpringContext {
 			final JSONObject jsonPatch = new JSONObject();
 			jsonPatch.put(NAME, patch.getVersion());
 			jsonPatch.put(DESCRIPTION, patch.getDescription());
+			jsonPatch.put(CATEGORY, patch.getCategory());
 			serializer.append(PATCHES, jsonPatch);
 		}
 		return serializer;
@@ -208,7 +210,7 @@ public class Configure extends JSONBaseWithSpringContext {
 	@Unauthorized
 	public JSONObject applyPatches( //
 			final JSONObject serializer //
-	) throws SQLException, Exception {
+	) throws Exception {
 		startupLogic().migrate();
 		return serializer;
 	}

@@ -193,8 +193,6 @@
 	});
 	function buildFormPanel() {
 		return new Ext.form.FormPanel({
-			timeout : CMDBuild.Config.defaultTimeout * 1000,
-			monitorValid : true,
 			autoScroll : true,
 			frame : false,
 			border: false,

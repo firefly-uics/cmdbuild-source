@@ -4,10 +4,11 @@
 	 * @abstract
 	 */
 	Ext.define('CMDBuild.controller.management.common.tabs.History', {
-		extend: 'CMDBuild.controller.common.AbstractController',
+		extend: 'CMDBuild.controller.common.abstract.Base',
 
 		requires: [
-			'CMDBuild.core.proxy.Constants',
+			'CMDBuild.core.configurations.DataFormat',
+			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.proxy.Attributes'
 		],
 
@@ -45,17 +46,16 @@
 		constructor: function(configurationObject) {
 			this.callParent(arguments);
 
-			this.view = Ext.create('CMDBuild.view.management.common.tabs.history.HistoryView', {
-				delegate: this
-			});
+			this.view = Ext.create('CMDBuild.view.management.common.tabs.history.HistoryView', { delegate: this });
 		},
 
 		/**
-		 * Adds current card to history store for a better visualization of differences from last history record and current one.
-		 *
-		 * @abstract
+		 * Adds current card to history store for a better visualization of differences from last history record and current one. As last function called on store build
+		 * collapses all rows on store load.
 		 */
-		addCurrentCardToStore: Ext.emptyFn,
+		addCurrentCardToStore: function() {
+			this.getRowExpanderPlugin().collapseAll();
+		},
 
 		/**
 		 * Clear store and re-add all records to avoid RowExpander plugin bug that appens with store add action that won't manage correctly expand/collapse events
@@ -74,64 +74,6 @@
 		currentCardRowExpand: Ext.emptyFn,
 
 		/**
-		 * @return {Array} columns
-		 */
-		getExtraColumns: function() {
-			var columns = [];
-
-			if (!_CMUIConfiguration.isSimpleHistoryModeForCard()) {
-				columns = [
-					{
-						dataIndex: CMDBuild.core.proxy.Constants.IS_CARD,
-						text: CMDBuild.Translation.attributes,
-						width: 65,
-						align: 'center',
-						sortable: false,
-						hideable: false,
-						menuDisabled: true,
-						fixed: true,
-
-						renderer: function(value, metaData, record) {
-							return value ? '<img src="images/icons/tick.png" alt="' + CMDBuild.Translation.attributes + '" />' : null;
-						}
-					},
-					{
-						dataIndex: CMDBuild.core.proxy.Constants.IS_RELATION,
-						text: CMDBuild.Translation.relation,
-						width: 65,
-						align: 'center',
-						sortable: false,
-						hideable: false,
-						menuDisabled: true,
-						fixed: true,
-
-						renderer: function(value, metaData, record) {
-							return value ? '<img src="images/icons/tick.png" alt="' + CMDBuild.Translation.relation + '" />' : null;
-						}
-					},
-					{
-						dataIndex: CMDBuild.core.proxy.Constants.DOMAIN,
-						text: CMDBuild.Translation.domain,
-						sortable: false,
-						hideable: false,
-						menuDisabled: true,
-						flex: 1
-					},
-					{
-						dataIndex: CMDBuild.core.proxy.Constants.DESTINATION_DESCRIPTION,
-						text: CMDBuild.Translation.descriptionLabel,
-						sortable: false,
-						hideable: false,
-						menuDisabled: true,
-						flex: 1
-					}
-				];
-			}
-
-			return columns;
-		},
-
-		/**
 		 * @abstract
 		 */
 		getProxy: Ext.emptyFn,
@@ -139,9 +81,11 @@
 		/**
 		 * Finds same type (card or relation) current record predecessor
 		 *
-		 * @param {CMDBuild.model.common.tabs.history.classes.CardRecord or CMDBuild.model.common.tabs.history.classes.RelationRecord} record
+		 * @param {CMDBuild.model.classes.tabs.history.CardRecord or CMDBuild.model.classes.tabs.history.RelationRecord} record
 		 *
-		 * @return {CMDBuild.model.common.tabs.history.classes.CardRecord or CMDBuild.model.common.tabs.history.classes.RelationRecord} predecessor or null
+		 * @returns {CMDBuild.model.classes.tabs.history.CardRecord or CMDBuild.model.classes.tabs.history.RelationRecord} predecessor or null
+		 *
+		 * @private
 		 */
 		getRecordPredecessor: function(record) {
 			var i = this.grid.getStore().indexOf(record) + 1;
@@ -153,8 +97,8 @@
 
 					if (
 						!Ext.isEmpty(inspectedRecord)
-						&& record.get(CMDBuild.core.proxy.Constants.IS_CARD) == inspectedRecord.get(CMDBuild.core.proxy.Constants.IS_CARD)
-						&& record.get(CMDBuild.core.proxy.Constants.IS_RELATION) == inspectedRecord.get(CMDBuild.core.proxy.Constants.IS_RELATION)
+						&& record.get(CMDBuild.core.constants.Proxy.IS_CARD) == inspectedRecord.get(CMDBuild.core.constants.Proxy.IS_CARD)
+						&& record.get(CMDBuild.core.constants.Proxy.IS_RELATION) == inspectedRecord.get(CMDBuild.core.constants.Proxy.IS_RELATION)
 					) {
 						predecessor = inspectedRecord;
 					}
@@ -167,15 +111,16 @@
 		},
 
 		/**
-		 * @return {CMDBuild.view.management.common.tabs.history.RowExpander} or null
+		 * @returns {CMDBuild.view.management.common.tabs.history.RowExpander} or null
+		 *
+		 * @private
 		 */
 		getRowExpanderPlugin: function() {
 			var rowExpanderPlugin = null;
 
 			if (
 				!Ext.isEmpty(this.grid)
-				&& !Ext.isEmpty(this.grid.plugins)
-				&& Ext.isArray(this.grid.plugins)
+				&& !Ext.isEmpty(this.grid.plugins) && Ext.isArray(this.grid.plugins)
 			) {
 				Ext.Array.forEach(this.grid.plugins, function(plugin, i, allPlugins) {
 					if (plugin instanceof Ext.grid.plugin.RowExpander)
@@ -184,51 +129,6 @@
 			}
 
 			return rowExpanderPlugin;
-		},
-
-		/**
-		 * @return {Array}
-		 */
-		getTabHistoryGridColumns: function() {
-			var defaultColumns = [
-				Ext.create('Ext.grid.column.Date', {
-					dataIndex: CMDBuild.core.proxy.Constants.BEGIN_DATE,
-					text: CMDBuild.Translation.beginDate,
-					width: 140,
-					format:'d/m/Y H:i:s',
-					sortable: false,
-					hideable: false,
-					menuDisabled: true,
-					fixed: true
-				}),
-				Ext.create('Ext.grid.column.Date', {
-					dataIndex: CMDBuild.core.proxy.Constants.END_DATE,
-					text: CMDBuild.Translation.endDate,
-					width: 140,
-					format:'d/m/Y H:i:s',
-					sortable: false,
-					hideable: false,
-					menuDisabled: true,
-					fixed: true
-				}),
-				{
-					dataIndex: CMDBuild.core.proxy.Constants.USER,
-					text: CMDBuild.Translation.user,
-					sortable: false,
-					hideable: false,
-					menuDisabled: true,
-					flex: 1
-				}
-			];
-
-			return Ext.Array.push(defaultColumns, this.getExtraColumns());
-		},
-
-		/**
-		 * @return {Ext.data.Store}
-		 */
-		getTabHistoryGridStore: function() {
-			return this.getProxy().getStore();
 		},
 
 		onAddCardButtonClick: function() {
@@ -240,18 +140,18 @@
 		},
 
 		/**
-		 * @param {CMDBuild.model.common.tabs.history.classes.CardRecord or CMDBuild.model.common.tabs.history.classes.RelationRecord} record
+		 * @param {CMDBuild.model.classes.tabs.history.CardRecord or CMDBuild.model.classes.tabs.history.RelationRecord} record
 		 */
 		onTabHistoryRowExpand: function(record) {
 			if (!Ext.isEmpty(record)) {
 				var params = {};
 
-				if (record.get(CMDBuild.core.proxy.Constants.IS_CARD)) { // Card row expand
-					if (this.selectedEntity.get(CMDBuild.core.proxy.Constants.ID) == record.get(CMDBuild.core.proxy.Constants.ID)) { // Expanding current card
+				if (record.get(CMDBuild.core.constants.Proxy.IS_CARD)) { // Card row expand
+					if (this.selectedEntity.get(CMDBuild.core.constants.Proxy.ID) == record.get(CMDBuild.core.constants.Proxy.ID)) { // Expanding current card
 						this.currentCardRowExpand(record);
 					} else {
-						params[CMDBuild.core.proxy.Constants.CARD_ID] = record.get(CMDBuild.core.proxy.Constants.ID); // Historic card ID
-						params[CMDBuild.core.proxy.Constants.CLASS_NAME] = record.get(CMDBuild.core.proxy.Constants.CLASS_NAME);
+						params[CMDBuild.core.constants.Proxy.CARD_ID] = record.get(CMDBuild.core.constants.Proxy.ID); // Historic card ID
+						params[CMDBuild.core.constants.Proxy.CLASS_NAME] = record.get(CMDBuild.core.constants.Proxy.CLASS_NAME);
 
 						this.getProxy().getHistoric({ // Get expanded card data
 							params: params,
@@ -260,13 +160,13 @@
 								_error('get historic card failure', this);
 							},
 							success: function(response, options, decodedResponse) {
-								var cardValuesObject = decodedResponse.response[CMDBuild.core.proxy.Constants.VALUES];
+								var cardValuesObject = decodedResponse.response[CMDBuild.core.constants.Proxy.VALUES];
 								var predecessorRecord = this.getRecordPredecessor(record);
 
 								if (!Ext.isEmpty(predecessorRecord)) {
 									var predecessorParams = {};
-									predecessorParams[CMDBuild.core.proxy.Constants.CARD_ID] = predecessorRecord.get(CMDBuild.core.proxy.Constants.ID); // Historic card ID
-									predecessorParams[CMDBuild.core.proxy.Constants.CLASS_NAME] = record.get(CMDBuild.core.proxy.Constants.CLASS_NAME);
+									predecessorParams[CMDBuild.core.constants.Proxy.CARD_ID] = predecessorRecord.get(CMDBuild.core.constants.Proxy.ID); // Historic card ID
+									predecessorParams[CMDBuild.core.constants.Proxy.CLASS_NAME] = record.get(CMDBuild.core.constants.Proxy.CLASS_NAME);
 
 									this.getProxy().getHistoric({ // Get expanded predecessor's card data
 										params: predecessorParams,
@@ -275,38 +175,37 @@
 											_error('get historic predecessor card failure', this);
 										},
 										success: function(response, options, decodedResponse) {
-											this.valuesFormattingAndCompare(cardValuesObject, decodedResponse.response[CMDBuild.core.proxy.Constants.VALUES]);
+											decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.RESPONSE];
+
+											this.valuesFormattingAndCompare(cardValuesObject, decodedResponse[CMDBuild.core.constants.Proxy.VALUES]);
 
 											// Setup record property with historic card details to use XTemplate functionalities to render
-											record.set(CMDBuild.core.proxy.Constants.VALUES, cardValuesObject);
+											record.set(CMDBuild.core.constants.Proxy.VALUES, cardValuesObject);
 										}
 									});
 								} else {
 									this.valuesFormattingAndCompare(cardValuesObject);
 
 									// Setup record property with historic card details to use XTemplate functionalities to render
-									record.set(CMDBuild.core.proxy.Constants.VALUES, cardValuesObject);
+									record.set(CMDBuild.core.constants.Proxy.VALUES, cardValuesObject);
 								}
 							}
 						});
 					}
 				} else { // Relation row expand
-					params[CMDBuild.core.proxy.Constants.ID] = record.get(CMDBuild.core.proxy.Constants.ID); // Historic relation ID
-					params[CMDBuild.core.proxy.Constants.DOMAIN] = record.get(CMDBuild.core.proxy.Constants.DOMAIN);
+					params[CMDBuild.core.constants.Proxy.ID] = record.get(CMDBuild.core.constants.Proxy.ID); // Historic relation ID
+					params[CMDBuild.core.constants.Proxy.DOMAIN] = record.get(CMDBuild.core.constants.Proxy.DOMAIN);
 
 					this.getProxy().getRelationHistoric({
 						params: params,
 						scope: this,
-						failure: function(response, options, decodedResponse) {
-							_error('get historic relation failure', this);
-						},
 						success: function(response, options, decodedResponse) {
-							var cardValuesObject = decodedResponse.response[CMDBuild.core.proxy.Constants.VALUES];
+							var cardValuesObject = decodedResponse.response[CMDBuild.core.constants.Proxy.VALUES];
 
 							this.valuesFormattingAndCompare(cardValuesObject);
 
 							// Setup record property with historic relation details to use XTemplate functionalities to render
-							record.set(CMDBuild.core.proxy.Constants.VALUES, cardValuesObject);
+							record.set(CMDBuild.core.constants.Proxy.VALUES, cardValuesObject);
 						}
 					});
 				}
@@ -321,24 +220,24 @@
 
 			if (!Ext.isEmpty(this.selectedEntity) && this.view.isVisible()) {
 				var params = {};
-				params[CMDBuild.core.proxy.Constants.ACTIVE] = true;
-				params[CMDBuild.core.proxy.Constants.CLASS_NAME] = _CMCache.getEntryTypeNameById(this.selectedEntity.get('IdClass'));
+				params[CMDBuild.core.constants.Proxy.ACTIVE] = true;
+				params[CMDBuild.core.constants.Proxy.CLASS_NAME] = _CMCache.getEntryTypeNameById(this.selectedEntity.get('IdClass'));
 
 				// Request all class attributes
 				CMDBuild.core.proxy.Attributes.read({
 					params: params,
 					scope: this,
-					failure: function(response, options, decodedResponse) {
-						_error('get attributes failure', this);
-					},
 					success: function(response, options, decodedResponse) {
-						Ext.Array.forEach(decodedResponse[CMDBuild.core.proxy.Constants.ATTRIBUTES], function(attribute, i, allAttributes) {
-							this.entryTypeAttributes[attribute[CMDBuild.core.proxy.Constants.NAME]] = attribute;
+						decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.ATTRIBUTES];
+
+						Ext.Array.forEach(decodedResponse, function(attribute, i, allAttributes) {
+							if (attribute['fieldmode'] != 'hidden')
+								this.entryTypeAttributes[attribute[CMDBuild.core.constants.Proxy.NAME]] = attribute;
 						}, this);
 
 						params = {};
-						params[CMDBuild.core.proxy.Constants.CARD_ID] = this.selectedEntity.get(CMDBuild.core.proxy.Constants.ID);
-						params[CMDBuild.core.proxy.Constants.CLASS_NAME] = _CMCache.getEntryTypeNameById(this.selectedEntity.get('IdClass'));
+						params[CMDBuild.core.constants.Proxy.CARD_ID] = this.selectedEntity.get(CMDBuild.core.constants.Proxy.ID);
+						params[CMDBuild.core.constants.Proxy.CLASS_NAME] = _CMCache.getEntryTypeNameById(this.selectedEntity.get('IdClass'));
 
 						this.grid.getStore().load({
 							params: params,
@@ -354,14 +253,17 @@
 											_error('getCardRelationsHistory failure', this);
 										},
 										success: function(response, options, decodedResponse) {
-											var referenceElements = decodedResponse.response.elements;
+											decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.RESPONSE];
+											decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.ELEMENTS];
+
+											var referenceElementsModels = [];
 
 											// Build reference models
-											Ext.Array.forEach(referenceElements, function(element, i, allElements) {
-												referenceElements[i] = Ext.create('CMDBuild.model.common.tabs.history.classes.RelationRecord', element);
+											Ext.Array.forEach(decodedResponse, function(element, i, allElements) {
+												referenceElementsModels.push(Ext.create('CMDBuild.model.classes.tabs.history.RelationRecord', element));
 											});
 
-											this.clearStoreAdd(referenceElements);
+											this.clearStoreAdd(referenceElementsModels);
 
 											this.addCurrentCardToStore();
 										}
@@ -376,9 +278,52 @@
 			}
 		},
 
+		/**
+		 * @returns {Array}
+		 */
+		tabHistoryGridColumnsGet: function() {
+			return [
+				Ext.create('Ext.grid.column.Date', {
+					dataIndex: CMDBuild.core.constants.Proxy.BEGIN_DATE,
+					text: CMDBuild.Translation.beginDate,
+					width: 140,
+					format: CMDBuild.core.configurations.DataFormat.getDateTime(),
+					sortable: false,
+					hideable: false,
+					menuDisabled: true,
+					fixed: true
+				}),
+				Ext.create('Ext.grid.column.Date', {
+					dataIndex: CMDBuild.core.constants.Proxy.END_DATE,
+					text: CMDBuild.Translation.endDate,
+					width: 140,
+					format: CMDBuild.core.configurations.DataFormat.getDateTime(),
+					sortable: false,
+					hideable: false,
+					menuDisabled: true,
+					fixed: true
+				}),
+				{
+					dataIndex: CMDBuild.core.constants.Proxy.USER,
+					text: CMDBuild.Translation.user,
+					sortable: false,
+					hideable: false,
+					menuDisabled: true,
+					flex: 1
+				}
+			];
+		},
+
+		/**
+		 * @returns {Ext.data.Store}
+		 */
+		tabHistoryGridStoreGet: function() {
+			return this.getProxy().getStore();
+		},
+
 		// SelectedEntity property functions
 			/**
-			 * @return {Mixed}
+			 * @returns {Mixed}
 			 */
 			tabHistorySelectedEntityGet: function() {
 				return this.selectedEntity;
@@ -392,11 +337,19 @@
 			},
 
 		/**
-		 * Formats all object1 values as objects { {Boolean} changed: "...", {Mixed} description: "..." }. If value1 is different than value2
+		 * Formats all object1 values as objects:
+		 * 	{
+		 * 		{Boolean} changed
+		 * 		{Mixed} description
+		 * 	}
+		 *
+		 * If value1 is different than value2
 		 * modified is true, false otherwise. Strips also HTML tags from "description".
 		 *
 		 * @param {Object} object1 - currently expanded record
 		 * @param {Object} object2 - predecessor record
+		 *
+		 * @private
 		 */
 		valuesFormattingAndCompare: function(object1, object2) {
 			object1 = object1 || {};
@@ -406,14 +359,14 @@
 				Ext.Object.each(object1, function(key, value, myself) {
 					var changed = false;
 
-					// Get attribute's description
-					var attributeDescription = this.entryTypeAttributes.hasOwnProperty(key) ? this.entryTypeAttributes[key][CMDBuild.core.proxy.Constants.DESCRIPTION] : null;
-					var attributeIndex = this.entryTypeAttributes.hasOwnProperty(key) ? this.entryTypeAttributes[key][CMDBuild.core.proxy.Constants.INDEX] : 0;
+					// Get attribute's index and description
+					var attributeDescription = Ext.isEmpty(this.entryTypeAttributes[key]) ? null : this.entryTypeAttributes[key][CMDBuild.core.constants.Proxy.DESCRIPTION];
+					var attributeIndex = Ext.isEmpty(this.entryTypeAttributes[key]) ? 0 : this.entryTypeAttributes[key][CMDBuild.core.constants.Proxy.INDEX];
 
 					// Build object1 properties models
 					var attributeValues = Ext.isObject(value) ? value : { description: value };
-					attributeValues[CMDBuild.core.proxy.Constants.ATTRIBUTE_DESCRIPTION] = attributeDescription;
-					attributeValues[CMDBuild.core.proxy.Constants.INDEX] = attributeIndex;
+					attributeValues[CMDBuild.core.constants.Proxy.ATTRIBUTE_DESCRIPTION] = attributeDescription;
+					attributeValues[CMDBuild.core.constants.Proxy.INDEX] = attributeIndex;
 
 					object1[key] = Ext.create('CMDBuild.model.common.tabs.history.Attribute', attributeValues);
 
@@ -423,15 +376,15 @@
 							object2[key] = null;
 
 						attributeValues = Ext.isObject(object2[key]) ? object2[key] : { description: object2[key] };
-						attributeValues[CMDBuild.core.proxy.Constants.ATTRIBUTE_DESCRIPTION] = attributeDescription;
-						attributeValues[CMDBuild.core.proxy.Constants.INDEX] = attributeIndex;
+						attributeValues[CMDBuild.core.constants.Proxy.ATTRIBUTE_DESCRIPTION] = attributeDescription;
+						attributeValues[CMDBuild.core.constants.Proxy.INDEX] = attributeIndex;
 
 						object2[key] = Ext.create('CMDBuild.model.common.tabs.history.Attribute', attributeValues);
 					}
 
 					changed = Ext.Object.isEmpty(object2) ? false : !Ext.Object.equals(object1[key].getData(), object2[key].getData());
 
-					object1[key].set(CMDBuild.core.proxy.Constants.CHANGED, changed);
+					object1[key].set(CMDBuild.core.constants.Proxy.CHANGED, changed);
 				}, this);
 			}
 		}

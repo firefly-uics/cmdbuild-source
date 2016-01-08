@@ -3,7 +3,7 @@
 	Ext.define('CMDBuild.view.administration.localization.ConfigurationPanel', {
 		extend: 'Ext.form.Panel',
 
-		requires: ['CMDBuild.core.proxy.Constants'],
+		requires: ['CMDBuild.core.constants.Proxy'],
 
 		/**
 		 * @cfg {CMDBuild.controller.administration.localization.Configuration}
@@ -50,7 +50,7 @@
 				dockedItems: [
 					Ext.create('Ext.toolbar.Toolbar', {
 						dock: 'bottom',
-						itemId: CMDBuild.core.proxy.Constants.TOOLBAR_BOTTOM,
+						itemId: CMDBuild.core.constants.Proxy.TOOLBAR_BOTTOM,
 						ui: 'footer',
 
 						layout: {
@@ -94,12 +94,13 @@
 
 						items: [
 							this.defaultLanguageCombobox = Ext.create('CMDBuild.view.common.field.LanguageCombo', {
-								name: CMDBuild.core.proxy.Constants.DEFAULT_LANGUAGE,
+								name: CMDBuild.core.constants.Proxy.DEFAULT_LANGUAGE,
 								fieldLabel: '@@ Default language',
-								labelWidth: CMDBuild.LABEL_WIDTH
+								labelWidth: CMDBuild.LABEL_WIDTH,
+								enableChangeLanguage: false
 							}),
 							this.languagePromptCheckbox = Ext.create('Ext.form.field.Checkbox', {
-								name: CMDBuild.core.proxy.Constants.LANGUAGE_PROMPT,
+								name: CMDBuild.core.constants.Proxy.LANGUAGE_PROMPT,
 								fieldLabel: '@@ Show language choice',
 								labelWidth: CMDBuild.LABEL_WIDTH,
 								inputValue: true,

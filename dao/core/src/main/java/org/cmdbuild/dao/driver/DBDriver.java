@@ -1,5 +1,6 @@
 package org.cmdbuild.dao.driver;
 
+import org.cmdbuild.dao.entry.CMEntry;
 import org.cmdbuild.dao.entry.DBEntry;
 import org.cmdbuild.dao.entrytype.DBAttribute;
 import org.cmdbuild.dao.entrytype.DBClass;
@@ -146,7 +147,7 @@ public interface DBDriver {
 
 	void update(DBEntry entry);
 
-	void delete(DBEntry entry);
+	void delete(CMEntry entry);
 
 	void clear(DBEntryType type);
 

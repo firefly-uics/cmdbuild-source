@@ -1,3 +1,5 @@
+@import url("./flags.css");
+@import url("./grids.css");
 @import url("./icons.css");
 @import url("./trees.css");
 
@@ -18,6 +20,8 @@ body {
 	height: 100%;
 	width: 100%;
 }
+
+iframe { border: none; }
 
 em { font-style: oblique !important; }
 
@@ -424,87 +428,13 @@ em { font-style: oblique !important; }
 		text-decoration: underline;
 	}
 
-/* GRID ELEMENT*/
-	.x-grid3-dirty-cell { background-image: none !important; }
+/*trigger fields*/
+	.trigger-edit { background-image: url("../images/form/trigger-edit.png") !important; }
 
-	.x-grid3-row-alt { background-color: #f5f5f5 !important; }
-
-	.x-grid3-row td,.x-grid3-summary-row td { vertical-align: middle !important; }
-
-	.x-grid3-col-imagecolumn {
-		padding: 0 !important;
-		margin: 0;
-	}
-
-	.numeric_column{
-		text-align: right;
-		padding-right: 5px;
-	}
-
-/* to have a different background for the even rows*/
-	.x-grid-row-alt .x-grid-cell,
-	.x-grid-row-alt .x-grid-rowwrap-div {
-		background-color: #f5f5f5 !important;
-	}
+	.trigger-add { background-image: url("../images/form/trigger-add.png") !important; }
 
 /* Custom rule to fix collapsible tab panel tool */
 	.x-tab-panel-header .x-tool { display: none; }
-
-/* Grid actions*/
-
-.action-filter-set,
-.action-filter-remove
-{
-	padding-lef: 1em;
-	padding-right: 1em;
-	cursor: pointer;
-}
-
-/* Ext.ux.CheckColumn*/
-	.x-grid-checkheader {
-		height: 14px;
-		background-image: url("../images/checkcolumn/unchecked.gif");
-		background-position: 50% -2px;
-		background-repeat: no-repeat;
-		background-color: transparent;
-	}
-
-	.x-grid-checkheader-checked { background-image: url("../images/checkcolumn/checked.gif"); }
-
-	.x-grid-checkheader-editor .x-form-cb-wrap { text-align: center; }
-
-/*
- * Login flags
- */
-	.ux-flag-de { background-image: url("../images/icons/flags/de.png") !important; }
-
-	.ux-flag-en { background-image: url("../images/icons/flags/en.png") !important; }
-
-	.ux-flag-es { background-image: url("../images/icons/flags/es.png") !important; }
-
-	.ux-flag-fa { background-image:url("../images/icons/flags/fa.png") !important; }
-
-	.ux-flag-fr { background-image:url("../images/icons/flags/fr.png") !important; }
-
-	.ux-flag-hr { background-image:url("../images/icons/flags/hr.png") !important; }
-
-	.ux-flag-hu { background-image:url("../images/icons/flags/hu.png") !important; }
-
-	.ux-flag-it { background-image:url("../images/icons/flags/it.png") !important; }
-
-	.ux-flag-ja { background-image:url("../images/icons/flags/ja.png") !important; }
-
-	.ux-flag-pt_BR { background-image:url("../images/icons/flags/br.png") !important; }
-
-	.ux-flag-ru { background-image: url("../images/icons/flags/ru.png") !important; }
-
-	.ux-flag-sr_RS { background-image: url("../images/icons/flags/sr.png") !important; }
-
-	.ux-flag-sr { background-image: url("../images/icons/flags/sr.png") !important; }
-
-	.ux-flag-nl { background-image: url("../images/icons/flags/nl.png") !important; }
-
-	.ux-flag-vn { background-image: url("../images/icons/flags/vn.png") !important; }
 
 /*
  * For Ext.ux.plugins.IconCombo
@@ -677,53 +607,14 @@ em { font-style: oblique !important; }
 		background-repeat: no-repeat;
 	}
 
-/* custom icons */
-	.x-grid-cell-inner {
-		padding: 3px 6px;
-		height: 18px !important;
-		overflow: hidden !important;
-	}
+.cm-bold { font-weight: bold; }
 
-	.cm-grid-autoheight .x-grid-cell-inner { height: auto !important; }
+.cm-pre {
+	font-size: 1.2em;
+	padding: 0.5em;
+}
 
-	.x-grid-group-hd .x-grid-cell-inner {
-		height: 30px !important; /* to override the heigth setted in x-grid-cell-inner*/
-	}
-
-	.grid-button .x-grid-cell-inner { padding: 0px 6px; }
-
-	.cm-bold { font-weight: bold; }
-
-	.cm-pre {
-		font-size: 1.2em;
-		padding: 0.5em;
-	}
-
-	.cm-action-col-icon-spacer { margin: 0px 3px; }
-
-
-/* Activity rows*/
-	.x-grid-row-expander { margin: 0px !important; }
-
-	.cm_activity_row {
-		background: #fafafa;
-		border-top: 1px solid #eeeeee;
-		border-left: 0.5em solid #d1d1d1;
-		padding: 0.2em 0.2em 0.2em 1em !important;
-		margin: 0 !important;
-	}
-
-	.cm_activity_row_label { font-weight: bold; }
-
-	.cm_activity_row_selected {
-		background: #dfe8f6;
-		border-top: 1px dotted #a3bae9 !important;
-		border-bottom: 1px dotted #a3bae9 !important;
-	}
-
-	.cm_activity_row_over { background: #eeeeee; }
-
-	.cm_activity_row_not_editable { color: #666666; }
+.cm-action-col-icon-spacer { margin: 0px 3px; }
 
 /* Attachemnt window */
 	.cm_attachement_metadata_container {
@@ -758,51 +649,11 @@ em { font-style: oblique !important; }
 /* Other */
 	.cmdbuild-nodisplay { display: none !important; }
 
-/* filterMenuButtonGrid */
-	.filterMenuButtonGrid .x-grid-cell-inner {
-		height:  auto !important;
-		width:  auto !important;
-		overflow: hidden !important;
-	}
-
-	.filterMenuButtonGrid img { padding: 3px 2px; }
-
-	.filterMenuButtonGrid-name {
-		font-size: 1.1em;
-		margin: 0 !important;
-		padding: 0.2em 0 0.2em 0;
-	}
-
-	.filterMenuButtonGrid-description { color: #666666; }
-
 .bim-canvas
 {
 	height: 100%;
 	width: 100%;
 }
-
-/**
- * History items
- */
-.history_panel .x-grid-rowbody p {
-	white-space: nowrap;
-	padding: 0px 0px 0px 35px;
-	margin: 0px !important;
-}
-.history_panel .x-grid-rowbody p.changed {
-	background-color: #e9f4e7;
-	color: #0d5f07;
-}
-
-/**
- * Validation classes
- */
-.x-grid-invalid { border-color: #ff0000 !important; }
-
-/**
- * Grid classes
- */
-.grid-row-disabled { color: #666666 !important; }
 
 /* FIX: Fieldset label CheckBox */
 	.x-form-cb-wrap { height: auto !important; }
@@ -812,3 +663,6 @@ em { font-style: oblique !important; }
 
 /* FIX: empty ending row in grids */
 	.x-grid-row-summary { display: none; }
+
+/* Generic field invalid class */
+	.cm-form-invalid-field { border-color: #cc3300 !important; }

@@ -6,7 +6,7 @@
 
 		alias: "classform",
 
-		requires: ['CMDBuild.core.proxy.Constants'],
+		requires: ['CMDBuild.core.constants.Proxy'],
 
 		mixins: {
 			cmFormFunctions: "CMDBUild.view.common.CMFormFunctions"
@@ -95,11 +95,12 @@
 				scope: this
 			}),
 
-			this.printClassButton = Ext.create('CMDBuild.core.buttons.iconized.Print', {
+			this.printClassButton = Ext.create('CMDBuild.core.buttons.iconized.split.Print', {
 				formatList: [
-					CMDBuild.core.proxy.Constants.PDF,
-					CMDBuild.core.proxy.Constants.ODT
+					CMDBuild.core.constants.Proxy.PDF,
+					CMDBuild.core.constants.Proxy.ODT
 				],
+				mode: 'legacy',
 				text: tr.print_class
 			});
 
@@ -138,14 +139,14 @@
 				fieldLabel: tr.name,
 				labelWidth: CMDBuild.LABEL_WIDTH,
 				width: CMDBuild.ADM_BIG_FIELD_WIDTH,
-				name: CMDBuild.core.proxy.Constants.NAME,
+				name: CMDBuild.core.constants.Proxy.NAME,
 				allowBlank: false,
 				vtype: 'alphanum',
 				cmImmutable: true
 			});
 
 			this.classDescription = Ext.create('CMDBuild.view.common.field.translatable.Text', {
-				name: CMDBuild.core.proxy.Constants.TEXT,
+				name: CMDBuild.core.constants.Proxy.TEXT,
 				fieldLabel: CMDBuild.Translation.descriptionLabel,
 				labelWidth: CMDBuild.LABEL_WIDTH,
 				width: CMDBuild.ADM_BIG_FIELD_WIDTH,
@@ -153,9 +154,9 @@
 				vtype: 'cmdbcomment',
 
 				translationFieldConfig: {
-					type: CMDBuild.core.proxy.Constants.CLASS,
-					identifier: { sourceType: 'form', key: CMDBuild.core.proxy.Constants.NAME, source: this },
-					field: CMDBuild.core.proxy.Constants.DESCRIPTION
+					type: CMDBuild.core.constants.Proxy.CLASS,
+					identifier: { sourceType: 'form', key: CMDBuild.core.constants.Proxy.NAME, source: this },
+					field: CMDBuild.core.constants.Proxy.DESCRIPTION
 				}
 			});
 
@@ -176,7 +177,7 @@
 				fields: ['value', 'name'],
 				data : [
 					{"value":"standard", "name":tr.standard},
-					{"value":CMDBuild.Constants.cachedTableType.simpletable, "name":tr.simple}
+					{"value":'simpletable', "name":tr.simple}
 				]
 			});
 

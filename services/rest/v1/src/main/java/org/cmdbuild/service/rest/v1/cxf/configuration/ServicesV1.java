@@ -60,6 +60,7 @@ import org.cmdbuild.service.rest.v1.cxf.CxfSessions.LoginHandler;
 import org.cmdbuild.service.rest.v1.cxf.DefaultEncoding;
 import org.cmdbuild.service.rest.v1.cxf.DefaultProcessStatusHelper;
 import org.cmdbuild.service.rest.v1.cxf.ErrorHandler;
+import org.cmdbuild.service.rest.v1.cxf.HeaderResponseHandler;
 import org.cmdbuild.service.rest.v1.cxf.ProcessStatusHelper;
 import org.cmdbuild.service.rest.v1.cxf.TranslatingAttachmentsHelper;
 import org.cmdbuild.service.rest.v1.cxf.TranslatingAttachmentsHelper.Encoding;
@@ -68,8 +69,6 @@ import org.cmdbuild.service.rest.v1.cxf.service.InMemoryOperationUserStore;
 import org.cmdbuild.service.rest.v1.cxf.service.InMemorySessionStore;
 import org.cmdbuild.service.rest.v1.cxf.service.OperationUserStore;
 import org.cmdbuild.service.rest.v1.cxf.service.SessionStore;
-import org.cmdbuild.service.rest.v1.cxf.service.SimpleTokenGenerator;
-import org.cmdbuild.service.rest.v1.cxf.service.TokenGenerator;
 import org.cmdbuild.service.rest.v1.logging.LoggingSupport;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -265,8 +264,8 @@ public class ServicesV1 implements LoggingSupport {
 
 	@Bean
 	public Sessions v1_sessions() {
-		final CxfSessions service = new CxfSessions(v1_errorHandler(), v1_tokenGenerator(), v1_sessionStore(),
-				v1_loginHandler(), v1_operationUserStore());
+		final CxfSessions service = new CxfSessions(v1_errorHandler(), helper.tokenGenerator(), v1_sessionStore(),
+				v1_loginHandler(), v1_operationUserStore(), helper.tokenManager());
 		return proxy(Sessions.class, service);
 	}
 
@@ -276,18 +275,25 @@ public class ServicesV1 implements LoggingSupport {
 	}
 
 	@Bean
-	protected TokenGenerator v1_tokenGenerator() {
-		return new SimpleTokenGenerator();
-	}
-
-	@Bean
 	public SessionStore v1_sessionStore() {
-		return new InMemorySessionStore();
+		return new InMemorySessionStore(v1_configuration());
 	}
 
 	@Bean
 	protected SessionStore v1_impersonateSessionStore() {
-		return new InMemorySessionStore();
+		return new InMemorySessionStore(v1_configuration());
+	}
+
+	@Bean
+	protected InMemorySessionStore.Configuration v1_configuration() {
+		return new InMemorySessionStore.Configuration() {
+
+			@Override
+			public long timeout() {
+				return helper.cmdbuildConfiguration().getSessionTimoutOrZero() * 1000;
+			}
+
+		};
 	}
 
 	@Bean
@@ -329,6 +335,11 @@ public class ServicesV1 implements LoggingSupport {
 	@Bean
 	protected ErrorHandler v1_errorHandler() {
 		return new WebApplicationExceptionErrorHandler();
+	}
+
+	@Bean
+	public HeaderResponseHandler v1_headerResponseHandler() {
+		return new HeaderResponseHandler();
 	}
 
 }

@@ -4,8 +4,8 @@
 		extend: 'CMDBuild.core.PopupWindow',
 
 		requires: [
-			'CMDBuild.core.proxy.Constants',
-			'CMDBuild.model.common.filter.cql.Metadata'
+			'CMDBuild.core.constants.Proxy',
+			'CMDBuild.model.common.field.filter.cql.Metadata'
 		],
 
 		/**
@@ -18,6 +18,7 @@
 		 */
 		grid: undefined,
 
+		closeAction: 'hide',
 		title: CMDBuild.Translation.editMetadata,
 
 		initComponent: function() {
@@ -25,21 +26,21 @@
 				dockedItems: [
 					Ext.create('Ext.toolbar.Toolbar', {
 						dock: 'top',
-						itemId: CMDBuild.core.proxy.Constants.TOOLBAR_TOP,
+						itemId: CMDBuild.core.constants.Proxy.TOOLBAR_TOP,
 
 						items: [
-							Ext.create('CMDBuild.core.buttons.Add', {
+							Ext.create('CMDBuild.core.buttons.iconized.add.Add', {
 								scope: this,
 
 								handler: function(button, e) {
-									this.grid.getStore().insert(0, Ext.create('CMDBuild.model.common.filter.cql.Metadata'));
+									this.grid.getStore().insert(0, Ext.create('CMDBuild.model.common.field.filter.cql.Metadata'));
 								}
 							})
 						]
 					}),
 					Ext.create('Ext.toolbar.Toolbar', {
 						dock: 'bottom',
-						itemId: CMDBuild.core.proxy.Constants.TOOLBAR_BOTTOM,
+						itemId: CMDBuild.core.constants.Proxy.TOOLBAR_BOTTOM,
 						ui: 'footer',
 
 						layout: {
@@ -49,14 +50,14 @@
 						},
 
 						items: [
-							Ext.create('CMDBuild.core.buttons.Confirm', {
+							Ext.create('CMDBuild.core.buttons.text.Confirm', {
 								scope: this,
 
 								handler: function(button, e) {
 									this.delegate.cmfg('onMetadataWindowSaveButtonClick');
 								}
 							}),
-							Ext.create('CMDBuild.core.buttons.Abort', {
+							Ext.create('CMDBuild.core.buttons.text.Abort', {
 								scope: this,
 
 								handler: function(button, e) {
@@ -74,14 +75,14 @@
 						columns: [
 							{
 								text: CMDBuild.Translation.key,
-								dataIndex: CMDBuild.core.proxy.Constants.KEY,
+								dataIndex: CMDBuild.core.constants.Proxy.KEY,
 								flex: 1,
 
 								editor: { xtype: 'textfield' }
 							},
 							{
 								text: CMDBuild.Translation.value,
-								dataIndex: CMDBuild.core.proxy.Constants.VALUE,
+								dataIndex: CMDBuild.core.constants.Proxy.VALUE,
 								flex: 1,
 
 								editor: { xtype: 'textfield' }
@@ -108,7 +109,7 @@
 						],
 
 						store: Ext.create('Ext.data.Store', {
-							model: 'CMDBuild.model.common.filter.cql.Metadata',
+							model: 'CMDBuild.model.common.field.filter.cql.Metadata',
 							data: []
 						}),
 
@@ -126,15 +127,6 @@
 			show: function(window, eOpts) {
 				this.delegate.cmfg('onMetadataWindowShow');
 			}
-		},
-
-		/**
-		 * Override close action to avoid destroy action. Close is called by Esc button press and using top-right close toolButton.
-		 *
-		 * @override
-		 */
-		close: function() {
-			this.hide();
 		}
 	});
 

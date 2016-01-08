@@ -23,7 +23,7 @@
 
 		onClassSelected: Ext.emptyFn,
 
-		onDomainSelected: function(cmDomain) {
+		onDomainSelected: function(cmDomain) { // Probably not used
 			this.domainName = cmDomain.getName();
 			this.hideContextualFields();
 		},
@@ -54,7 +54,7 @@
 				items: [
 					this.attributeName,
 					this.attributeDescription = Ext.create('CMDBuild.view.common.field.translatable.Text', {
-						name: CMDBuild.core.proxy.Constants.DESCRIPTION,
+						name: CMDBuild.core.constants.Proxy.DESCRIPTION,
 						fieldLabel: CMDBuild.Translation.descriptionLabel,
 						labelWidth: CMDBuild.LABEL_WIDTH,
 						width: CMDBuild.ADM_BIG_FIELD_WIDTH,
@@ -65,10 +65,10 @@
 							scope: this,
 							enable: function(field, eOpts) { // TODO: on creation, domainName should be already known (refactor)
 								field.translationFieldConfig = {
-									type: CMDBuild.core.proxy.Constants.ATTRIBUTE_DOMAIN,
+									type: CMDBuild.core.constants.Proxy.ATTRIBUTE_DOMAIN,
 									owner: this.domainName,
-									identifier: { sourceType: 'form', key: CMDBuild.core.proxy.Constants.NAME, source: this },
-									field: CMDBuild.core.proxy.Constants.DESCRIPTION
+									identifier: { sourceType: 'form', key: CMDBuild.core.constants.Proxy.NAME, source: this },
+									field: CMDBuild.core.constants.Proxy.DESCRIPTION
 								};
 
 								field.translationsRead();

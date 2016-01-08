@@ -3,22 +3,12 @@
 	Ext.define('CMDBuild.view.administration.domain.enabledClasses.TreePanel', {
 		extend: 'Ext.tree.Panel',
 
-		requires: ['CMDBuild.core.proxy.Constants'],
+		requires: ['CMDBuild.core.constants.Proxy'],
 
 		/**
 		 * @cfg {CMDBuild.controller.administration.domain.EnabledClasses}
 		 */
 		delegate: undefined,
-
-		/**
-		 * @cfg {Array}
-		 */
-		disabledClasses: [],
-
-		/**
-		 * @cfg {String}
-		 */
-		type: undefined,
 
 		autoScroll: true,
 		border: true,
@@ -41,14 +31,14 @@
 					{
 						xtype: 'treecolumn',
 						text: CMDBuild.Translation.className,
-						dataIndex: CMDBuild.core.proxy.Constants.DESCRIPTION,
+						dataIndex: CMDBuild.core.constants.Proxy.DESCRIPTION,
 						flex: 1,
 						sortable: false,
 						draggable: false
 					},
 					Ext.create('Ext.grid.column.CheckColumn', {
 						text: CMDBuild.Translation.enabled,
-						dataIndex: CMDBuild.core.proxy.Constants.ENABLED,
+						dataIndex: CMDBuild.core.constants.Proxy.ENABLED,
 						width: 60,
 						align: 'center',
 						sortable: false,
@@ -56,7 +46,7 @@
 						menuDisabled: true,
 						fixed: true,
 
-						renderer: function(value, meta, record, rowIndex, colIndex, store, view, returna) {
+						renderer: function(value, meta, record, rowIndex, colIndex, store, view) {
 							if (record.childNodes.length > 0) {
 								return '';
 							} else {// HACK: to recreate original renderer method behaviour, callParent doesn't work
@@ -74,7 +64,17 @@
 						}
 					})
 				],
-				store: this.delegate.buildClassesStore(this.disabledClasses, this.type)
+				store: Ext.create('Ext.data.TreeStore', {
+					model: 'CMDBuild.model.Classes.domainsTreePanel',
+					root: {
+						text: 'ROOT',
+						expanded: true,
+						children: []
+					},
+					sorters: [
+						{ property: CMDBuild.ServiceProxy.parameter.DESCRIPTION, direction: 'ASC' }
+					]
+				})
 			});
 
 			this.callParent(arguments);

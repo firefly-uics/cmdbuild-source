@@ -5,7 +5,7 @@ import static org.cmdbuild.dao.query.clause.AnyClass.anyClass;
 import static org.cmdbuild.dao.query.clause.ClassHistory.history;
 import static org.cmdbuild.dao.query.clause.DomainHistory.history;
 import static org.cmdbuild.dao.query.clause.QueryAliasAttribute.attribute;
-import static org.cmdbuild.dao.query.clause.alias.Utils.as;
+import static org.cmdbuild.dao.query.clause.alias.Aliases.as;
 import static org.cmdbuild.dao.query.clause.join.Over.over;
 import static org.cmdbuild.dao.query.clause.where.AndWhereClause.and;
 import static org.cmdbuild.dao.query.clause.where.BeginsWithOperatorAndValue.beginsWith;
@@ -20,6 +20,7 @@ import static org.cmdbuild.dao.query.clause.where.NullOperatorAndValue.isNull;
 import static org.cmdbuild.dao.query.clause.where.OrWhereClause.or;
 import static org.cmdbuild.dao.query.clause.where.SimpleWhereClause.condition;
 import static org.cmdbuild.dao.query.clause.where.TrueWhereClause.trueWhereClause;
+import static org.cmdbuild.logic.data.lookup.LookupLogic.UNUSED_LOOKUP_QUERY;
 
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -41,6 +42,7 @@ import javax.xml.namespace.QName;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
+import org.apache.commons.lang3.ObjectUtils;
 import org.cmdbuild.auth.user.OperationUser;
 import org.cmdbuild.cmdbf.CMDBfId;
 import org.cmdbuild.cmdbf.CMDBfItem;
@@ -68,13 +70,28 @@ import org.cmdbuild.dao.entry.CMCard;
 import org.cmdbuild.dao.entry.CMEntry;
 import org.cmdbuild.dao.entry.CMRelation;
 import org.cmdbuild.dao.entry.IdAndDescription;
+import org.cmdbuild.dao.entry.LookupValue;
 import org.cmdbuild.dao.entrytype.CMAttribute;
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.entrytype.CMDomain;
 import org.cmdbuild.dao.entrytype.CMEntryType;
+import org.cmdbuild.dao.entrytype.attributetype.BooleanAttributeType;
+import org.cmdbuild.dao.entrytype.attributetype.CMAttributeTypeVisitor;
+import org.cmdbuild.dao.entrytype.attributetype.CharAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.DateAttributeType;
+import org.cmdbuild.dao.entrytype.attributetype.DateTimeAttributeType;
+import org.cmdbuild.dao.entrytype.attributetype.DecimalAttributeType;
+import org.cmdbuild.dao.entrytype.attributetype.DoubleAttributeType;
+import org.cmdbuild.dao.entrytype.attributetype.EntryTypeAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.ForeignKeyAttributeType;
+import org.cmdbuild.dao.entrytype.attributetype.IntegerAttributeType;
+import org.cmdbuild.dao.entrytype.attributetype.IpAddressAttributeType;
+import org.cmdbuild.dao.entrytype.attributetype.LookupAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.ReferenceAttributeType;
+import org.cmdbuild.dao.entrytype.attributetype.StringArrayAttributeType;
+import org.cmdbuild.dao.entrytype.attributetype.StringAttributeType;
+import org.cmdbuild.dao.entrytype.attributetype.TextAttributeType;
+import org.cmdbuild.dao.entrytype.attributetype.TimeAttributeType;
 import org.cmdbuild.dao.query.CMQueryRow;
 import org.cmdbuild.dao.query.QuerySpecsBuilder;
 import org.cmdbuild.dao.query.clause.AnyClass;
@@ -84,9 +101,10 @@ import org.cmdbuild.dao.query.clause.QueryAliasAttribute;
 import org.cmdbuild.dao.query.clause.QueryAttribute;
 import org.cmdbuild.dao.query.clause.QueryDomain.Source;
 import org.cmdbuild.dao.query.clause.alias.Alias;
-import org.cmdbuild.dao.query.clause.alias.EntryTypeAlias;
-import org.cmdbuild.dao.query.clause.alias.NameAlias;
+import org.cmdbuild.dao.query.clause.alias.Aliases;
 import org.cmdbuild.dao.query.clause.where.WhereClause;
+import org.cmdbuild.data.store.lookup.Lookup;
+import org.cmdbuild.data.store.lookup.LookupType;
 import org.cmdbuild.dms.DmsConfiguration;
 import org.cmdbuild.dms.DocumentTypeDefinition;
 import org.cmdbuild.dms.StoredDocument;
@@ -95,6 +113,7 @@ import org.cmdbuild.logic.GISLogic;
 import org.cmdbuild.logic.data.access.CardStorableConverter;
 import org.cmdbuild.logic.data.access.DataAccessLogic;
 import org.cmdbuild.logic.data.access.RelationDTO;
+import org.cmdbuild.logic.data.lookup.LookupLogic;
 import org.cmdbuild.logic.dms.DmsLogic;
 import org.cmdbuild.model.data.Card;
 import org.cmdbuild.model.gis.LayerMetadata;
@@ -157,8 +176,8 @@ import com.google.common.collect.Iterables;
 
 public class CmdbMDR implements ManagementDataRepository {
 
-	private static final Alias TARGET_ALIAS = NameAlias.as("TARGET");
-	private static final Alias DOMAIN_ALIAS = NameAlias.as("DOMAIN");
+	private static final Alias TARGET_ALIAS = Aliases.name("TARGET");
+	private static final Alias DOMAIN_ALIAS = Aliases.name("DOMAIN");
 	private static final String HISTORY_CURRENT_ID = "CurrentId";
 	private static final String ENTRY_RECORDID_PREFIX = "entry:";
 	private static final String DOCUMENT_RECORDID_PREFIX = "doc:";
@@ -169,6 +188,7 @@ public class CmdbMDR implements ManagementDataRepository {
 
 	private final XmlRegistry xmlRegistry;
 	private final MdrScopedIdRegistry aliasRegistry;
+	private final LookupLogic lookupLogic;
 	private final DataAccessLogic dataAccessLogic;
 	private final DmsLogic dmsLogic;
 	private final GISLogic gisLogic;
@@ -223,13 +243,124 @@ public class CmdbMDR implements ManagementDataRepository {
 			}
 		}
 	}
+	
+	private class FilterCMAttributeTypeVisitor implements CMAttributeTypeVisitor {
+		private Object newValue;
+		private Object value;
+		
+		public FilterCMAttributeTypeVisitor(Object value) {
+			this.value = value;
+		}
+		
+		public Object getNewValue() {
+			return newValue;
+		}
 
-	public CmdbMDR(final XmlRegistry xmlRegistry, final DataAccessLogic dataAccessLogic, final DmsLogic dmsLogic,
-			final GISLogic gisLogic, final GeoFeatureStore geoFeatureStore, final OperationUser operationUser,
-			final MdrScopedIdRegistry aliasRegistry, final CmdbfConfiguration cmdbfConfiguration,
-			final DmsConfiguration dmsConfiguration, final DatabaseConfiguration databaseConfiguration,
-			final PatchManager patchManager) {
+		@Override
+		public void visit(final TimeAttributeType attributeType) {
+			newValue = attributeType.convertValue(value);
+			if (newValue != null) {
+				newValue = ((DateTime) newValue).toDate();
+			}
+		}
+
+		@Override
+		public void visit(final TextAttributeType attributeType) {
+			newValue = attributeType.convertValue(value);
+		}
+
+		@Override
+		public void visit(final StringAttributeType attributeType) {
+			newValue = attributeType.convertValue(value);
+		}
+
+		@Override
+		public void visit(final ReferenceAttributeType attributeType) {
+			newValue = attributeType.convertValue(value);			
+		}
+
+		@Override
+		public void visit(final LookupAttributeType attributeType) {
+			Long lookupId = null;
+			LookupType lookupType = lookupLogic.typeFor(attributeType.getLookupTypeName());
+			for (final Lookup lookup : lookupLogic.getAllLookup(lookupType, true, UNUSED_LOOKUP_QUERY)) {
+				if (lookup.description() != null && ObjectUtils.equals(lookup.description(), value)) {
+					lookupId = lookup.getId();
+				}
+			}
+			if(lookupId != null)
+				newValue = new LookupValue(lookupId, (String)value, attributeType.getLookupTypeName(), null);
+		}
+
+		@Override
+		public void visit(final IpAddressAttributeType attributeType) {
+			newValue = attributeType.convertValue(value);
+		}
+
+		@Override
+		public void visit(final IntegerAttributeType attributeType) {
+			newValue = attributeType.convertValue(value);
+		}
+
+		@Override
+		public void visit(final ForeignKeyAttributeType attributeType) {
+			newValue = attributeType.convertValue(value);
+		}
+
+		@Override
+		public void visit(final DoubleAttributeType attributeType) {
+			newValue = attributeType.convertValue(value);
+		}
+
+		@Override
+		public void visit(final DecimalAttributeType attributeType) {
+			newValue = attributeType.convertValue(value);
+		}
+
+		@Override
+		public void visit(final DateAttributeType attributeType) {
+			newValue = attributeType.convertValue(value);
+			if (newValue != null) {
+				newValue = ((DateTime) newValue).toDate();
+			}
+		}
+
+		@Override
+		public void visit(final DateTimeAttributeType attributeType) {
+			newValue = attributeType.convertValue(value);
+			if (newValue != null) {
+				newValue = ((DateTime) newValue).toDate();
+			}
+		}
+
+		@Override
+		public void visit(final EntryTypeAttributeType attributeType) {
+			newValue = attributeType.convertValue(value);
+		}
+
+		@Override
+		public void visit(final BooleanAttributeType attributeType) {
+			newValue = attributeType.convertValue(value);
+		}
+
+		@Override
+		public void visit(final StringArrayAttributeType attributeType) {
+			newValue = attributeType.convertValue(value);
+		}
+
+		@Override
+		public void visit(final CharAttributeType attributeType) {
+			newValue = attributeType.convertValue(value);
+		}
+	}
+
+	public CmdbMDR(final XmlRegistry xmlRegistry, final LookupLogic lookupLogic, final DataAccessLogic dataAccessLogic,
+			final DmsLogic dmsLogic, final GISLogic gisLogic, final GeoFeatureStore geoFeatureStore,
+			final OperationUser operationUser, final MdrScopedIdRegistry aliasRegistry,
+			final CmdbfConfiguration cmdbfConfiguration, final DmsConfiguration dmsConfiguration,
+			final DatabaseConfiguration databaseConfiguration, final PatchManager patchManager) {
 		this.xmlRegistry = xmlRegistry;
+		this.lookupLogic = lookupLogic;
 		this.dataAccessLogic = dataAccessLogic;
 		this.dmsLogic = dmsLogic;
 		this.gisLogic = gisLogic;
@@ -852,6 +983,17 @@ public class CmdbMDR implements ManagementDataRepository {
 		if (card != null) {
 			final String recordId = aliasRegistry.getRecordId(instanceId);
 			if (recordId == null || recordId.startsWith(ENTRY_RECORDID_PREFIX)) {
+				final QName qname = xmlRegistry
+						.getTypeQName(new GeoClass(card.getType().getIdentifier().getLocalName()));
+				final GeoClass geoClass = (GeoClass) xmlRegistry.getType(qname);
+				if (geoClass != null) {
+					final JSONObject jsonObject = new JSONObject();
+					for (final LayerMetadata layer : geoClass.getLayers()) {
+						jsonObject.put(layer.getName(), "");
+					}
+					gisLogic.updateFeatures(Card.newInstance(card.getType()).withId(card.getId()).build(),
+							Collections.<String, Object> singletonMap("geoAttributes", jsonObject.toString()));
+				}
 				dataAccessLogic.deleteCard(card.getType().getIdentifier().getLocalName(), card.getId());
 			} else if (recordId.startsWith(DOCUMENT_RECORDID_PREFIX)) {
 				final String name = recordId.substring(DOCUMENT_RECORDID_PREFIX.length());
@@ -1193,54 +1335,74 @@ public class CmdbMDR implements ManagementDataRepository {
 			types.add(cmClass);
 		}
 
-		for (final CMClass type : types) {
-			final List<QueryAttribute> attributes = new ArrayList<QueryAttribute>();
-			if (properties != null && !properties.contains(new QName(""))) {
-				for (final QName property : properties) {
-					if (type.getAttribute(property.getLocalPart()) != null) {
-						attributes.add(attribute(type, property.getLocalPart()));
-					}
-				}
-			} else {
-				attributes.add(anyAttribute(type));
-			}
-
-			boolean isSatisfiable = true;
-			final List<WhereClause> conditions = new ArrayList<WhereClause>();
-			if (instanceId != null) {
-				if (type instanceof ClassHistory) {
-					isSatisfiable = applyIdFilter(attribute(type, HISTORY_CURRENT_ID), instanceId, conditions);
-				} else {
-					isSatisfiable = applyIdFilter(attribute(type, Constants.ID_ATTRIBUTE), instanceId, conditions);
-				}
-			}
-			if (filters != null) {
-				isSatisfiable &= applyPropertyFilter(type, null, filters, conditions);
-			}
-			if (isSatisfiable) {
-				final QuerySpecsBuilder queryBuilder = dataAccessLogic.getView().select(attributes.toArray())
-						.from(type);
-				if (!conditions.isEmpty()) {
-					if (conditions.size() == 1) {
-						queryBuilder.where(conditions.get(0));
-					} else if (conditions.size() == 2) {
-						queryBuilder.where(and(conditions.get(0), conditions.get(1)));
-					} else {
-						queryBuilder.where(and(conditions.get(0), conditions.get(1),
-								conditions.subList(2, conditions.size()).toArray(new WhereClause[0])));
-					}
-				} else {
-					queryBuilder.where(trueWhereClause());
-				}
-				for (final CMQueryRow row : queryBuilder.run()) {
-					CMCard card = row.getCard(type);
-					if (card.getEndDate() != null) {
-						card = new CMCardHistory(card);
-					}
-					cardList.add(card);
-				}
-			}
+		final Set<Long> instanceIdSet = new HashSet<Long>();
+		Iterator<Long> instanceIdIterator = null;
+		if (instanceId != null) {
+			instanceIdIterator = instanceId.iterator();
 		}
+
+		do {
+			for (final CMClass type : types) {
+				Collection<Long> instanceIdList = null;
+				if (instanceIdIterator != null) {
+					instanceIdList = new ArrayList<Long>();
+					for (int i = 0; i < 1000 && instanceIdIterator.hasNext(); i++) {
+						final Long id = instanceIdIterator.next();
+						if (instanceIdSet.add(id)) {
+							instanceIdList.add(id);
+						}
+					}
+				}
+
+				final List<QueryAttribute> attributes = new ArrayList<QueryAttribute>();
+				if (properties != null && !properties.contains(new QName(""))) {
+					for (final QName property : properties) {
+						if (type.getAttribute(property.getLocalPart()) != null) {
+							attributes.add(attribute(type, property.getLocalPart()));
+						}
+					}
+				} else {
+					attributes.add(anyAttribute(type));
+				}
+
+				boolean isSatisfiable = true;
+				final List<WhereClause> conditions = new ArrayList<WhereClause>();
+				if (instanceIdList != null) {
+					if (type instanceof ClassHistory) {
+						isSatisfiable = applyIdFilter(attribute(type, HISTORY_CURRENT_ID), instanceIdList, conditions);
+					} else {
+						isSatisfiable = applyIdFilter(attribute(type, Constants.ID_ATTRIBUTE), instanceIdList,
+								conditions);
+					}
+				}
+				if (filters != null) {
+					isSatisfiable &= applyPropertyFilter(type, null, filters, conditions);
+				}
+				if (isSatisfiable) {
+					final QuerySpecsBuilder queryBuilder = dataAccessLogic.getView().select(attributes.toArray())
+							.from(type);
+					if (!conditions.isEmpty()) {
+						if (conditions.size() == 1) {
+							queryBuilder.where(conditions.get(0));
+						} else if (conditions.size() == 2) {
+							queryBuilder.where(and(conditions.get(0), conditions.get(1)));
+						} else {
+							queryBuilder.where(and(conditions.get(0), conditions.get(1),
+									conditions.subList(2, conditions.size()).toArray(new WhereClause[0])));
+						}
+					} else {
+						queryBuilder.where(trueWhereClause());
+					}
+					for (final CMQueryRow row : queryBuilder.run()) {
+						CMCard card = row.getCard(type);
+						if (card.getEndDate() != null) {
+							card = new CMCardHistory(card);
+						}
+						cardList.add(card);
+					}
+				}
+			}
+		} while (instanceIdIterator != null && instanceIdIterator.hasNext());
 		return cardList;
 	}
 
@@ -1426,7 +1588,7 @@ public class CmdbMDR implements ManagementDataRepository {
 	private boolean applyPropertyFilter(final CMEntryType type, final Alias alias,
 			final Collection<PropertyValueType> propertyValueList, final List<WhereClause> conditions) {
 		boolean isSatisfiable = true;
-		final Alias typeAlias = alias != null ? alias : EntryTypeAlias.canonicalAlias(type);
+		final Alias typeAlias = alias != null ? alias : Aliases.canonical(type);
 		final Iterator<PropertyValueType> iterator = propertyValueList.iterator();
 		while (isSatisfiable && iterator.hasNext()) {
 			final PropertyValueType propertyValue = iterator.next();
@@ -1599,11 +1761,9 @@ public class CmdbMDR implements ManagementDataRepository {
 	}
 
 	private Object convertFilterValue(final CMAttribute attribute, final Object value) {
-		Object newValue = attribute.getType().convertValue(value);
-		if (newValue instanceof DateTime) {
-			newValue = ((DateTime) newValue).toDate();
-		}
-		return newValue;
+		FilterCMAttributeTypeVisitor visitor = new FilterCMAttributeTypeVisitor(value);
+		attribute.getType().accept(visitor);
+		return visitor.getNewValue();
 	}
 
 	private CMCard resolveItemAlias(final CMDBfItem item) throws Exception {

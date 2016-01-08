@@ -4,6 +4,7 @@ import static com.google.common.collect.Iterables.addAll;
 import static com.google.common.collect.Sets.newHashSet;
 import static java.lang.String.format;
 import static org.apache.commons.lang3.ObjectUtils.defaultIfNull;
+import static org.apache.commons.lang3.StringUtils.defaultIfBlank;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -92,12 +93,12 @@ public class SqlStore implements Store, LoggingSupport {
 	private static final String QUOTING_REGEX = "((\\w+)\\.)*(\\w+)";
 	private static final Pattern QUOTING_PATTERN = Pattern.compile(QUOTING_REGEX);
 
-	private static class ReadAll implements Action<Iterable<Entry<?>>> {
+	private static class ReadAll implements Action<Iterable<Entry>> {
 
 		private final JdbcTemplate jdbcTemplate;
 		private final Iterable<TableOrViewMapping> tableOrViewMappings;
 		private final SqlType type;
-		private final Collection<Entry<? extends Type>> entries;
+		private final Collection<Entry> entries;
 
 		public ReadAll(final JdbcTemplate jdbcTemplate, final Iterable<TableOrViewMapping> tableOrViewMappings,
 				final SqlType type) {
@@ -108,7 +109,7 @@ public class SqlStore implements Store, LoggingSupport {
 		}
 
 		@Override
-		public Iterable<Entry<?>> execute() {
+		public Iterable<Entry> execute() {
 			for (final TableOrViewMapping tableOrViewMapping : tableOrViewMappings) {
 				logger.debug(marker, "creating select statement for '{}'", tableOrViewMapping);
 				final String sql = selectAllFrom(tableOrViewMapping);
@@ -123,10 +124,28 @@ public class SqlStore implements Store, LoggingSupport {
 								final ClassType type = typeMapping.getType();
 								final CardEntry.Builder builder = CardEntry.newInstance().withType(type);
 								for (final AttributeMapping attributeMapping : typeMapping.getAttributeMappings()) {
-									builder.withValue(attributeMapping.to(), rs.getObject(attributeMapping.from()));
+									builder.withValue(attributeMapping.to(),
+											adjust(rs.getObject(attributeMapping.from())));
 								}
 								entries.add(builder.build());
 							}
+						}
+
+						/**
+						 * Adjusts some values, see details.
+						 */
+						private Object adjust(Object object) {
+							final Object output;
+							if (object instanceof String) {
+								/*
+								 * blank string are not stored from DAO, but
+								 * they are always I was treated as null.
+								 */
+								output = defaultIfBlank(String.class.cast(object), null);
+							} else {
+								output = object;
+							}
+							return output;
 						}
 
 					});
@@ -182,22 +201,22 @@ public class SqlStore implements Store, LoggingSupport {
 	}
 
 	@Override
-	public void create(final Entry<? extends Type> entry) {
+	public void create(final Entry entry) {
 		execute(UNSUPPORTED);
 	}
 
 	@Override
-	public Iterable<Entry<?>> readAll() {
+	public Iterable<Entry> readAll() {
 		return execute(doReadAll());
 	}
 
 	@Override
-	public void update(final Entry<? extends Type> entry) {
+	public void update(final Entry entry) {
 		execute(UNSUPPORTED);
 	}
 
 	@Override
-	public void delete(final Entry<? extends Type> entry) {
+	public void delete(final Entry entry) {
 		execute(UNSUPPORTED);
 	}
 

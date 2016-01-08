@@ -7,6 +7,8 @@ import static org.joda.time.DateTime.now;
 import org.apache.commons.lang3.Validate;
 import org.cmdbuild.data.store.Storable;
 import org.cmdbuild.data.store.task.TaskStore;
+import org.cmdbuild.logic.email.EmailLogic;
+import org.cmdbuild.logic.email.EmailLogic.Email;
 import org.cmdbuild.logic.taskmanager.event.SynchronousEventFacade;
 import org.cmdbuild.logic.taskmanager.scheduler.SchedulerFacade;
 import org.cmdbuild.logic.taskmanager.scheduler.SchedulerFacade.Callback;
@@ -467,17 +469,41 @@ public class DefaultTaskManagerLogic implements TaskManagerLogic {
 
 	}
 
+	private static class DeleteEmails implements Action<Void> {
+
+		private final EmailLogic emailLogic;
+		private final Task task;
+
+		public DeleteEmails(final EmailLogic emailLogic, final Task task) {
+			this.emailLogic = emailLogic;
+			this.task = task;
+		}
+
+		@Override
+		public Void execute() {
+			Validate.isTrue(task.getId() != null, "invalid id");
+			for (final Email element : emailLogic.readAll(task.getId())) {
+				emailLogic.deleteWithNoChecks(element);
+			}
+			return null;
+		}
+
+	}
+
 	private final LogicAndStoreConverter converter;
 	private final TaskStore store;
 	private final SchedulerFacade schedulerFacade;
 	private final SynchronousEventFacade synchronousEventFacade;
+	private final EmailLogic emailLogic;
 
 	public DefaultTaskManagerLogic(final LogicAndStoreConverter converter, final TaskStore store,
-			final SchedulerFacade schedulerFacade, final SynchronousEventFacade synchronousEventFacade) {
+			final SchedulerFacade schedulerFacade, final SynchronousEventFacade synchronousEventFacade,
+			final EmailLogic emailLogic) {
 		this.converter = converter;
 		this.store = store;
 		this.schedulerFacade = schedulerFacade;
 		this.synchronousEventFacade = synchronousEventFacade;
+		this.emailLogic = emailLogic;
 	}
 
 	@Override
@@ -513,6 +539,7 @@ public class DefaultTaskManagerLogic implements TaskManagerLogic {
 	@Override
 	public void delete(final Task task) {
 		logger.info(MARKER, "deleting an existing task '{}'", task);
+		execute(doDeleteEmails(task));
 		execute(doDelete(task));
 	}
 
@@ -558,6 +585,10 @@ public class DefaultTaskManagerLogic implements TaskManagerLogic {
 
 	private Deactivate doDeactivate(final Long id) {
 		return new Deactivate(converter, store, schedulerFacade, synchronousEventFacade, id);
+	}
+
+	private DeleteEmails doDeleteEmails(final Task task) {
+		return new DeleteEmails(emailLogic, task);
 	}
 
 	private <T> T execute(final Action<T> action) {

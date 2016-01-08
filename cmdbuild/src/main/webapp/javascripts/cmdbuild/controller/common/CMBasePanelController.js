@@ -1,7 +1,7 @@
 (function() {
 
 	/**
-	 * Use CMDBuild.controller.common.AbstractBasePanelController instead
+	 * Use CMDBuild.controller.common.abstract.BasePanel instead
 	 *
 	 * @deprecated
 	 */
@@ -17,7 +17,7 @@
 		},
 
 		callback: function() {
-			CMDBuild.LoadMask.get().hide();
+			CMDBuild.core.LoadMask.hide();
 		},
 
 		/**

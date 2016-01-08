@@ -66,16 +66,6 @@ public interface WorkflowLogic extends Logic {
 			Long processClassId //
 	) throws CMWorkflowException, CMDBWorkflowException;
 
-	/**
-	 * Returns the process start activity for the current user.
-	 * 
-	 * @param process
-	 *            class id
-	 * @return the start activity definition
-	 * @throws CMWorkflowException
-	 */
-	CMActivity getStartActivity(Long processClassId) throws CMWorkflowException;
-
 	UserProcessInstance getProcessInstance(String processClassName, Long cardId);
 
 	UserProcessInstance getProcessInstance(Long processClassId, Long cardId);

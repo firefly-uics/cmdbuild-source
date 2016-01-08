@@ -4,7 +4,8 @@
 		extend: 'Ext.grid.Panel',
 
 		requires: [
-			'CMDBuild.core.proxy.Constants',
+			'CMDBuild.core.constants.Proxy',
+			'CMDBuild.core.Message',
 			'CMDBuild.core.proxy.dataView.Sql'
 		],
 
@@ -14,23 +15,24 @@
 		delegate: undefined,
 
 		border: false,
+		cls: 'cmborderbottom',
 		frame: false,
 
 		initComponent: function() {
 			Ext.apply(this, {
 				columns: [
 					{
-						dataIndex: CMDBuild.core.proxy.Constants.NAME,
+						dataIndex: CMDBuild.core.constants.Proxy.NAME,
 						text: CMDBuild.Translation.name,
 						flex: 1
 					},
 					{
-						dataIndex: CMDBuild.core.proxy.Constants.DESCRIPTION,
+						dataIndex: CMDBuild.core.constants.Proxy.DESCRIPTION,
 						text: CMDBuild.Translation.descriptionLabel,
 						flex: 1
 					},
 					{
-						dataIndex: CMDBuild.core.proxy.Constants.SOURCE_FUNCTION,
+						dataIndex: CMDBuild.core.constants.Proxy.SOURCE_FUNCTION,
 						text: CMDBuild.Translation.dataSource,
 						flex: 1
 					}
@@ -50,11 +52,11 @@
 				this.delegate.cmfg('onDataViewSqlRowSelected');
 			},
 
-			// Event to load store on view display and first row selection as CMDbuild standard
+			// Event to load store on view display and first row selection as CMDBuild standard
 			viewready: function() {
 				this.getStore().load({
 					scope: this,
-					callback: function() {
+					callback: function(records, operation, success) {
 						if (!this.getSelectionModel().hasSelection())
 							this.getSelectionModel().select(0, true);
 					}

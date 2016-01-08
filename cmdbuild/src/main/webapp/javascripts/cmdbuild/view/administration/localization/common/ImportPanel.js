@@ -4,7 +4,7 @@
 		extend: 'Ext.form.Panel',
 
 		requires: [
-			'CMDBuild.core.proxy.Constants',
+			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.proxy.Csv',
 			'CMDBuild.core.proxy.localization.Localization'
 		],
@@ -36,7 +36,7 @@
 				dockedItems: [
 					Ext.create('Ext.toolbar.Toolbar', {
 						dock: 'bottom',
-						itemId: CMDBuild.core.proxy.Constants.TOOLBAR_BOTTOM,
+						itemId: CMDBuild.core.constants.Proxy.TOOLBAR_BOTTOM,
 						ui: 'footer',
 
 						layout: {
@@ -62,30 +62,30 @@
 						fieldLabel: '@@ Format',
 						labelWidth: CMDBuild.LABEL_WIDTH,
 						maxWidth: CMDBuild.MEDIUM_FIELD_WIDTH,
-						displayField: CMDBuild.core.proxy.Constants.DESCRIPTION,
-						valueField: CMDBuild.core.proxy.Constants.NAME,
+						displayField: CMDBuild.core.constants.Proxy.DESCRIPTION,
+						valueField: CMDBuild.core.constants.Proxy.NAME,
 						editable: false,
 						allowBlank: false,
 
-						value: CMDBuild.core.proxy.Constants.CSV, // Default value
+						value: CMDBuild.core.constants.Proxy.CSV, // Default value
 
 						store: CMDBuild.core.proxy.localization.Localization.getFileFormatStore(),
 						queryMode: 'local'
 					}),
 					Ext.create('Ext.form.field.File', {
-						name: CMDBuild.core.proxy.Constants.FILE,
+						name: CMDBuild.core.constants.Proxy.FILE,
 						fieldLabel: CMDBuild.Translation.csvFile,
 						labelWidth: CMDBuild.LABEL_WIDTH,
 						maxWidth: CMDBuild.ADM_BIG_FIELD_WIDTH,
 						allowBlank: false
 					}),
 					Ext.create('Ext.form.field.ComboBox', {
-						name: CMDBuild.core.proxy.Constants.SEPARATOR,
+						name: CMDBuild.core.constants.Proxy.SEPARATOR,
 						fieldLabel: CMDBuild.Translation.separator,
 						labelWidth: CMDBuild.LABEL_WIDTH,
 						maxWidth: 200,
-						valueField: CMDBuild.core.proxy.Constants.VALUE,
-						displayField: CMDBuild.core.proxy.Constants.VALUE,
+						valueField: CMDBuild.core.constants.Proxy.VALUE,
+						displayField: CMDBuild.core.constants.Proxy.VALUE,
 						editable: false,
 						allowBlank: false,
 

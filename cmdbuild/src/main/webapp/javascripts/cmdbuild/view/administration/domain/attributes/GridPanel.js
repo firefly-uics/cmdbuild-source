@@ -7,6 +7,7 @@
 		extend: "CMDBuild.view.administration.classes.CMAttributeGrid",
 
 		border: false,
+		cls: 'cmborderbottom',
 
 		buildColumnConf: function() {
 			this.columns = [{
@@ -56,7 +57,7 @@
 			this.tbar = [this.addAttributeButton];
 		},
 
-		onDomainSelected: function(domain) {
+		onDomainSelected: function(domain) { // Probably not used
 			this.refreshStore(domain, indexAttributeToSelectAfter = null);
 		},
 

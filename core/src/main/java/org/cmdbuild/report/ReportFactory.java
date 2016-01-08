@@ -48,9 +48,8 @@ import net.sf.jasperreports.engine.xml.JRXmlWriter;
 
 import org.apache.commons.lang3.ArrayUtils;
 import org.cmdbuild.config.CmdbuildConfiguration;
-import org.cmdbuild.logger.Log;
 
-public abstract class ReportFactory {
+public abstract class ReportFactory implements LoggingSupport {
 
 	/** Parameter name (replacement) for images name */
 	public static final String PARAM_IMAGE = "IMAGE";
@@ -94,18 +93,17 @@ public abstract class ReportFactory {
 			connection = dataSource.getConnection();
 			jasperPrint = JasperFillManager.fillReport(report, jasperFillManagerParameters, connection);
 		} catch (final Exception exception) {
-			if (Log.REPORT.isDebugEnabled()) {
+			if (logger.isDebugEnabled()) {
 				saveJRXMLTmpFile(report);
 			}
 			throw exception;
-		}
-		finally {
+		} finally {
 			if (connection != null) {
 				connection.close();
 			}
 		}
 
-		Log.REPORT.debug("REPORT fill time: " + (System.currentTimeMillis() - start) + " ms");
+		logger.debug("REPORT fill time: " + (System.currentTimeMillis() - start) + " ms");
 
 		return jasperPrint;
 	}
@@ -143,7 +141,7 @@ public abstract class ReportFactory {
 				try {
 					exporter.exportReport();
 				} catch (final Exception exception) {
-					if (Log.REPORT.isDebugEnabled()) {
+					if (logger.isDebugEnabled()) {
 						saveJRXMLTmpFile(jasperReport);
 					}
 					throw exception;
@@ -232,7 +230,7 @@ public abstract class ReportFactory {
 		}
 		subreportDir = subreportDir.replace("\"", ""); // deleting quotes
 		if (!subreportDir.trim().equals("")) {
-			Log.REPORT.debug("The directory of subreport is: " + subreportDir);
+			logger.debug("The directory of subreport is: " + subreportDir);
 		}
 
 		// Expressions
@@ -246,7 +244,7 @@ public abstract class ReportFactory {
 																		// found
 			}
 		}
-		Log.REPORT.debug("In the report there are " + subreportsList.size() + " subreports");
+		logger.debug("In the report there are " + subreportsList.size() + " subreports");
 
 		return subreportsList;
 	}
@@ -266,7 +264,7 @@ public abstract class ReportFactory {
 																	// founded
 			}
 		}
-		Log.REPORT.debug("In the report there are " + designImagesList.size() + " images");
+		logger.debug("In the report there are " + designImagesList.size() + " images");
 
 		return designImagesList;
 	}
@@ -430,7 +428,7 @@ public abstract class ReportFactory {
 		bands.add(jasperDesign.getLastPageFooter());
 		bands.add(jasperDesign.getSummary());
 		for (final JRGroup group : jasperDesign.getGroups()) {
-			for (final JRBand band : (JRBand[]) ArrayUtils.addAll(group.getGroupFooterSection().getBands(), group
+			for (final JRBand band : ArrayUtils.addAll(group.getGroupFooterSection().getBands(), group
 					.getGroupHeaderSection().getBands())) {
 				bands.add(band);
 			}
@@ -485,7 +483,7 @@ public abstract class ReportFactory {
 		JRXmlWriter.writeReport(report, fos, "UTF-8");
 		fos.flush();
 		fos.close();
-		Log.REPORT.debug("REPORT jrxml file: " + tmpFile.getAbsolutePath());
+		logger.debug("REPORT jrxml file: " + tmpFile.getAbsolutePath());
 		return tmpFile;
 	}
 

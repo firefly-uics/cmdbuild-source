@@ -3,7 +3,7 @@
 	Ext.define('CMDBuild.controller.administration.tasks.common.workflowForm.CMWorkflowFormController', {
 
 		requires: [
-			'CMDBuild.core.proxy.Constants',
+			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.proxy.CMProxyTasks'
 		],
 
@@ -73,8 +73,8 @@
 
 				this.gridField.columns[0].setEditor({
 					xtype: 'combo',
-					valueField: CMDBuild.core.proxy.Constants.VALUE,
-					displayField: CMDBuild.core.proxy.Constants.VALUE,
+					valueField: CMDBuild.core.constants.Proxy.VALUE,
+					displayField: CMDBuild.core.constants.Proxy.VALUE,
 					forceSelection: true,
 					editable: false,
 					allowBlank: false,
@@ -102,7 +102,7 @@
 			if (!Ext.isEmpty(attributes)) {
 				var store = Ext.create('Ext.data.Store', {
 					autoLoad: true,
-					fields: [CMDBuild.core.proxy.Constants.VALUE],
+					fields: [CMDBuild.core.constants.Proxy.VALUE],
 					data: []
 				});
 
@@ -162,10 +162,10 @@
 				// To validate and filter grid rows
 				this.gridField.getStore().each(function(record) {
 					if (
-						!Ext.isEmpty(record.get(CMDBuild.core.proxy.Constants.NAME))
-						&& !Ext.isEmpty(record.get(CMDBuild.core.proxy.Constants.VALUE))
+						!Ext.isEmpty(record.get(CMDBuild.core.constants.Proxy.NAME))
+						&& !Ext.isEmpty(record.get(CMDBuild.core.constants.Proxy.VALUE))
 					) {
-						data[record.get(CMDBuild.core.proxy.Constants.NAME)] = record.get(CMDBuild.core.proxy.Constants.VALUE);
+						data[record.get(CMDBuild.core.constants.Proxy.NAME)] = record.get(CMDBuild.core.constants.Proxy.VALUE);
 					}
 				});
 
@@ -195,7 +195,7 @@
 		 */
 		onBeforeEdit: function(fieldName, rowData) {
 			switch (fieldName) {
-				case CMDBuild.core.proxy.Constants.NAME: {
+				case CMDBuild.core.constants.Proxy.NAME: {
 					if (!this.isEmptyCombo()) {
 						this.buildWorkflowAtributesComboEditor();
 					} else {
@@ -287,8 +287,8 @@
 					for (var key in value) {
 						var recordConf = {};
 
-						recordConf[CMDBuild.core.proxy.Constants.NAME] = key;
-						recordConf[CMDBuild.core.proxy.Constants.VALUE] = value[key] || '';
+						recordConf[CMDBuild.core.constants.Proxy.NAME] = key;
+						recordConf[CMDBuild.core.constants.Proxy.VALUE] = value[key] || '';
 
 						store.add(recordConf);
 					}

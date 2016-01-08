@@ -1,8 +1,19 @@
 package org.cmdbuild.model.widget.customform;
 
+import static com.google.common.base.Predicates.alwaysTrue;
+import static com.google.common.base.Predicates.equalTo;
+import static com.google.common.base.Predicates.in;
+import static com.google.common.base.Predicates.not;
 import static com.google.common.collect.FluentIterable.from;
+import static com.google.common.collect.Iterables.isEmpty;
+import static com.google.common.collect.Lists.newArrayList;
+import static java.util.Collections.emptyList;
+import static org.apache.commons.lang3.ObjectUtils.defaultIfNull;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
+import static org.cmdbuild.dao.entrytype.CMAttribute.Mode.HIDDEN;
 import static org.cmdbuild.dao.entrytype.CMAttribute.Mode.WRITE;
+import static org.cmdbuild.dao.entrytype.Predicates.mode;
+import static org.cmdbuild.dao.entrytype.Predicates.name;
 
 import java.util.Collection;
 import java.util.Map;
@@ -35,25 +46,32 @@ import org.cmdbuild.data.store.metadata.Metadata;
 import org.cmdbuild.services.meta.MetadataStoreFactory;
 
 import com.google.common.base.Function;
+import com.google.common.base.Predicate;
 import com.google.common.collect.Maps;
 
 class ClassModelBuilder extends AttributesBasedModelBuilder {
 
+	private static final Iterable<String> NO_ATTRIBUTES = emptyList();
+	private static final Predicate<String> ANY = alwaysTrue();
+
 	private final CMDataView dataView;
 	private final MetadataStoreFactory metadataStoreFactory;
 	private final String className;
+	private final Collection<String> attributes;
 
 	public ClassModelBuilder(final CMDataView dataView, final MetadataStoreFactory metadataStoreFactory,
-			final String className) {
+			final String className, final Iterable<String> attributes) {
 		this.dataView = dataView;
 		this.metadataStoreFactory = metadataStoreFactory;
 		this.className = className;
+		this.attributes = newArrayList(defaultIfNull(attributes, NO_ATTRIBUTES));
 	}
 
 	@Override
 	public Iterable<Attribute> attributes() {
 		return from(dataView.findClass(className).getAttributes()) //
-				// TODO filter?
+				.filter(mode(not(equalTo(HIDDEN)))) //
+				.filter(name(isEmpty(attributes) ? ANY : in(attributes))) //
 				.transform(new Function<CMAttribute, Attribute>() {
 
 					@Override
@@ -147,6 +165,7 @@ class ClassModelBuilder extends AttributesBasedModelBuilder {
 						output.setUnique(input.isUnique());
 						output.setMandatory(input.isMandatory());
 						output.setWritable(WRITE.equals(input.getMode()));
+						output.setShowColumn(input.isDisplayableInList());
 						input.getType().accept(new ForwardingAttributeTypeVisitor() {
 
 							private final CMAttributeTypeVisitor DELEGATE = NullAttributeTypeVisitor.getInstance();

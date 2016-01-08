@@ -9,10 +9,10 @@ import static org.apache.commons.lang3.builder.ToStringStyle.SHORT_PREFIX_STYLE;
 import static org.cmdbuild.common.utils.guava.Functions.toKey;
 import static org.cmdbuild.common.utils.guava.Functions.toValue;
 import static org.cmdbuild.servlets.json.CommunicationConstants.ELEMENTS;
-import static org.cmdbuild.servlets.json.CommunicationConstants.FILE_CSV;
+import static org.cmdbuild.servlets.json.CommunicationConstants.ENTRIES;
+import static org.cmdbuild.servlets.json.CommunicationConstants.FILE;
 import static org.cmdbuild.servlets.json.CommunicationConstants.ID_CLASS;
 import static org.cmdbuild.servlets.json.CommunicationConstants.SEPARATOR;
-import static org.cmdbuild.servlets.json.CommunicationConstants.ENTRIES;
 
 import java.io.IOException;
 import java.util.Collections;
@@ -27,7 +27,6 @@ import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.cmdbuild.dao.entry.CMCard;
-import org.cmdbuild.dao.entry.DBCard;
 import org.cmdbuild.dao.entrytype.CMAttribute;
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.logic.data.access.CardStorableConverter;
@@ -37,6 +36,7 @@ import org.cmdbuild.servlets.json.JSONBaseWithSpringContext;
 import org.cmdbuild.servlets.json.management.dataimport.CardFiller;
 import org.cmdbuild.servlets.json.management.dataimport.csv.CSVCard;
 import org.cmdbuild.servlets.json.management.dataimport.csv.CSVData;
+import org.cmdbuild.servlets.json.management.dataimport.csv.CSVImporter.CsvCard;
 import org.cmdbuild.servlets.json.management.dataimport.csv.CsvReader;
 import org.cmdbuild.servlets.json.management.dataimport.csv.CsvReader.CsvLine;
 import org.cmdbuild.servlets.json.management.dataimport.csv.SuperCsvCsvReader;
@@ -193,7 +193,7 @@ public class ImportCSV extends JSONBaseWithSpringContext {
 
 	@JSONExported(forceContentType = true)
 	public JsonResponse readCsv( //
-			@Parameter(FILE_CSV) final FileItem file, //
+			@Parameter(FILE) final FileItem file, //
 			@Parameter(SEPARATOR) final String separator //
 	) throws IOException {
 		final CsvPreference importCsvPreferences = new CsvPreference('"', separator.charAt(0), "\n");
@@ -228,7 +228,7 @@ public class ImportCSV extends JSONBaseWithSpringContext {
 	 */
 	@JSONExported
 	public void uploadCSV( //
-			@Parameter(FILE_CSV) final FileItem file, //
+			@Parameter(FILE) final FileItem file, //
 			@Parameter(SEPARATOR) final String separatorString, //
 			@Parameter(ID_CLASS) final Long classId //
 	) throws IOException, JSONException {
@@ -250,7 +250,7 @@ public class ImportCSV extends JSONBaseWithSpringContext {
 		out.put("rows", rows);
 		final CSVData csvData = sessionVars().getCsvData();
 		final DataAccessLogic dataAccessLogic = systemDataAccessLogic();
-		out.put("headers", csvData.getHeaders());
+		out.put("headers", from(csvData.getHeaders()).toList());
 
 		final CMClass entryType = dataAccessLogic.findClass(csvData.getImportedClassName());
 		for (final CSVCard csvCard : csvData.getCards()) {
@@ -275,8 +275,7 @@ public class ImportCSV extends JSONBaseWithSpringContext {
 			final JSONObject jsonCard = jsonCards.getJSONObject(i);
 			final Long fakeId = jsonCard.getLong("Id");
 			final CSVCard csvCard = csvData.getCard(fakeId);
-			// ugly... it should not have knowledge of dao implementation
-			final DBCard mutableCard = (DBCard) csvCard.getCMCard();
+			final CsvCard mutableCard = csvCard.getCMCard();
 			for (final String attributeName : csvData.getHeaders()) {
 				if (jsonCard.has(attributeName)) {
 					final Object attributeValue = jsonCard.get(attributeName);

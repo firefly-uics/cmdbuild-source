@@ -7,8 +7,8 @@ public class CMProcessDefinitionException extends CMWorkflowException {
 	private static final long serialVersionUID = -780868577745391671L;
 
 	public CMProcessDefinitionException(final Throwable nativeException) {
-        super(nativeException);
-    }
+		super(nativeException);
+	}
 
 	public CMProcessDefinitionException(final String message) {
 		super(message);

@@ -1,5 +1,7 @@
 package org.cmdbuild.report;
 
+import static org.apache.commons.lang3.ObjectUtils.defaultIfNull;
+
 import org.cmdbuild.dao.entrytype.attributetype.BooleanAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.CMAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.CMAttributeTypeVisitor;
@@ -85,7 +87,7 @@ public class ReportAttributeSizeVisitor implements CMAttributeTypeVisitor {
 
 	@Override
 	public void visit(final StringAttributeType attributeType) {
-		final Integer l = attributeType.length;
+		final Integer l = defaultIfNull(attributeType.length, 40);
 		size = (l > 4 ? l : 4) > 40 ? 40 : (l > 4 ? l : 4);
 	}
 

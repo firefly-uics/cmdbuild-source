@@ -8,6 +8,8 @@ import org.cmdbuild.dao.entry.CMCard;
 import org.cmdbuild.dao.entry.CMCard.CMCardDefinition;
 import org.cmdbuild.dao.entry.CMRelation;
 import org.cmdbuild.dao.entry.CMRelation.CMRelationDefinition;
+import org.cmdbuild.dao.entry.ForwardingCard;
+import org.cmdbuild.dao.entry.ForwardingRelation;
 import org.cmdbuild.dao.entrytype.CMAttribute;
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.entrytype.CMClass.CMClassDefinition;
@@ -311,7 +313,23 @@ public class UserDataView extends AbstractDataView {
 	@Override
 	public void delete(final CMRelation relation) {
 		// TODO: check privileges
-		view.delete(relation);
+		view.delete(proxyUser(relation));
+	}
+
+	private CMRelation proxyUser(final CMRelation delegate) {
+		return new ForwardingRelation() {
+
+			@Override
+			protected CMRelation delegate() {
+				return delegate;
+			}
+
+			@Override
+			public String getUser() {
+				return operationUser.getAuthenticatedUser().getUsername();
+			}
+
+		};
 	}
 
 	@Override
@@ -322,7 +340,23 @@ public class UserDataView extends AbstractDataView {
 	@Override
 	public void delete(final CMCard card) {
 		// TODO: check privileges
-		view.delete(card);
+		view.delete(proxyUser(card));
+	}
+
+	private CMCard proxyUser(final CMCard delegate) {
+		return new ForwardingCard() {
+
+			@Override
+			protected CMCard delegate() {
+				return delegate;
+			}
+
+			@Override
+			public String getUser() {
+				return operationUser.getAuthenticatedUser().getUsername();
+			}
+
+		};
 	}
 
 	// TODO reconsider this solution

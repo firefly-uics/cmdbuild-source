@@ -17,26 +17,24 @@ import org.supercsv.io.CsvMapReader;
 import org.supercsv.io.ICsvMapReader;
 import org.supercsv.prefs.CsvPreference;
 
-import com.google.common.collect.ForwardingIterator;
 import com.google.common.collect.UnmodifiableIterator;
 
 public class SuperCsvCsvReader implements CsvReader {
 
-	private static class HeadersIterator extends ForwardingIterator<String> {
+	private static class Headers implements Iterable<String> {
 
-		private final Reader reader;
-		private final ICsvMapReader csvReader;
 		private final Iterable<String> headers;
 
-		public HeadersIterator(final DataHandler dataHandler, final CsvPreference preferences) throws IOException {
-			reader = new InputStreamReader(dataHandler.getInputStream());
-			csvReader = new CsvMapReader(reader, preferences);
+		public Headers(final DataHandler dataHandler, final CsvPreference preferences) throws IOException {
+			final Reader reader = new InputStreamReader(dataHandler.getInputStream());
+			final ICsvMapReader csvReader = new CsvMapReader(reader, preferences);
 			headers = newArrayList(csvReader.getCSVHeader(true));
 			csvReader.close();
+			reader.close();
 		}
 
 		@Override
-		protected Iterator<String> delegate() {
+		public Iterator<String> iterator() {
 			return headers.iterator();
 		}
 
@@ -73,6 +71,7 @@ public class SuperCsvCsvReader implements CsvReader {
 					next = csvReader.read(headers);
 					if (next == null) {
 						csvReader.close();
+						reader.close();
 						closed = true;
 					}
 					hasNext = (next != null);
@@ -146,15 +145,9 @@ public class SuperCsvCsvReader implements CsvReader {
 
 	@Override
 	public CsvData read(final DataHandler dataHandler) throws IOException {
-		final Iterator<String> headersIterator = new HeadersIterator(dataHandler, preferences);
+		final Iterable<String> headers = new Headers(dataHandler, preferences);
 		final Iterator<CsvLine> linesIterator = new LinesIterator(dataHandler, preferences);
-		return new CsvDataImpl(new Iterable<String>() {
-
-			@Override
-			public Iterator<String> iterator() {
-				return headersIterator;
-			}
-		}, new Iterable<CsvLine>() {
+		return new CsvDataImpl(headers, new Iterable<CsvLine>() {
 
 			@Override
 			public Iterator<CsvLine> iterator() {
