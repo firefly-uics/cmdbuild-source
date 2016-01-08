@@ -6,6 +6,7 @@
 		requires: [
 			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.proxy.Csv',
+			'CMDBuild.core.proxy.localization.Export',
 			'CMDBuild.core.proxy.localization.Localization'
 		],
 
@@ -21,15 +22,11 @@
 
 		bodyCls: 'cmgraypanel',
 		border: false,
-		encoding: 'multipart/form-data',
-		fileUpload: true,
 		frame: false,
-		monitorValid: true,
-		standardSubmit: true,
 
 		layout: {
 			type: 'vbox',
-			align:'stretch'
+			align: 'stretch'
 		},
 
 		initComponent: function() {
@@ -59,8 +56,8 @@
 				],
 				items: [
 					Ext.create('Ext.form.field.ComboBox', {
-						name: CMDBuild.core.constants.Proxy.SECTION,
-						fieldLabel: '@@ Export section',
+						name: CMDBuild.core.constants.Proxy.TYPE,
+						fieldLabel: '@@ Section',
 						labelWidth: CMDBuild.LABEL_WIDTH,
 						maxWidth: CMDBuild.MEDIUM_FIELD_WIDTH,
 						displayField: CMDBuild.core.constants.Proxy.DESCRIPTION,
@@ -70,7 +67,7 @@
 
 						value: CMDBuild.core.constants.Proxy.ALL, // Default value
 
-						store: CMDBuild.core.proxy.localization.Localization.getSectionsStore(),
+						store: CMDBuild.core.proxy.localization.Localization.getStoreSections(),
 						queryMode: 'local',
 
 						listeners: {
@@ -82,17 +79,18 @@
 					}),
 					Ext.create('Ext.form.field.ComboBox', {
 						name: '@@ exportFormat',
-						fieldLabel: '@@ Format',
+						fieldLabel: CMDBuild.Translation.format,
 						labelWidth: CMDBuild.LABEL_WIDTH,
 						maxWidth: CMDBuild.MEDIUM_FIELD_WIDTH,
 						displayField: CMDBuild.core.constants.Proxy.DESCRIPTION,
 						valueField: CMDBuild.core.constants.Proxy.NAME,
 						editable: false,
 						allowBlank: false,
+						disabled: true,
 
 						value: CMDBuild.core.constants.Proxy.CSV, // Default value
 
-						store: CMDBuild.core.proxy.localization.Localization.getFileFormatStore(),
+						store: CMDBuild.core.proxy.localization.Export.getStoreFileFormat(),
 						queryMode: 'local'
 					}),
 					Ext.create('Ext.form.field.ComboBox', {
@@ -107,7 +105,7 @@
 
 						value: ';', // Default value
 
-						store: CMDBuild.core.proxy.Csv.getSeparatorStore(),
+						store: CMDBuild.core.proxy.Csv.getStoreSeparator(),
 						queryMode: 'local'
 					}),
 					this.activeOnlyCheckbox = Ext.create('Ext.form.field.Checkbox', {
