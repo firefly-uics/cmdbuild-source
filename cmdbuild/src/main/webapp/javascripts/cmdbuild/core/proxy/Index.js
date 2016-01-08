@@ -473,16 +473,26 @@
 		},
 
 		workflow: {
+			create: 'services/json/schema/modclass/savetable', // TODO: waiting for refactor (crud)
+			read: 'services/json/schema/modclass/getallclasses', // TODO: waiting for refactor (crud)
+			update: 'services/json/schema/modclass/savetable', // TODO: waiting for refactor (crud)
+			remove: 'services/json/schema/modclass/deletetable',
+
+			readAll: 'services/json/schema/modclass/getallclasses', // TODO: waiting for refactor (crud)
+
 			abortProcess: 'services/json/workflow/abortprocess',
 			getActivityInstance: 'services/json/workflow/getactivityinstance',
 			getStartActivity: 'services/json/workflow/getstartactivity',
 			isProcessUpdated: 'services/json/workflow/isprocessupdated',
 			saveActivity: 'services/json/workflow/saveactivity',
 			synchronize: 'services/json/workflow/sync',
-			xpdlDownload: 'services/json/workflow/downloadxpdl',
-			xpdlDownloadTemplate: 'services/json/workflow/downloadxpdltemplate',
-			xpdlUpload: 'services/json/workflow/uploadxpdl',
-			xpdlVersions: 'services/json/workflow/xpdlversions'
+
+			xpdl: {
+				download: 'services/json/workflow/downloadxpdl',
+				downloadTemplate: 'services/json/workflow/downloadxpdltemplate',
+				upload: 'services/json/workflow/uploadxpdl',
+				versions: 'services/json/workflow/xpdlversions'
+			}
 		}
 	});
 

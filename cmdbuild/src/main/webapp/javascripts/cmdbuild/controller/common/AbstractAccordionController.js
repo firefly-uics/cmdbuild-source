@@ -101,8 +101,9 @@
 		},
 
 		onAccordionDeselect: function() {
-			this.cmfg('onAccordionSelectionChange');
 			this.view.getSelectionModel().deselectAll();
+
+			this.cmfg('onAccordionSelectionChange');
 		},
 
 		onAccordionExpand: function() {
@@ -225,7 +226,7 @@
 		 */
 		onAccordionUpdateStore: function(nodeIdToSelect) {
 			if (!Ext.isEmpty(nodeIdToSelect))
-				this.cmfg('onAccordionSelectNodeById', this.cmfg('accordionBuildId', nodeIdToSelect));
+				this.cmfg('onAccordionSelectNodeById', nodeIdToSelect);
 
 			// Select first selectable item if no selection and expanded
 			if (!this.view.getSelectionModel().hasSelection() && this.view.getCollapsed() === false)

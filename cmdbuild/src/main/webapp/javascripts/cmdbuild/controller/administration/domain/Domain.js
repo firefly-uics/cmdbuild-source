@@ -82,6 +82,8 @@
 		onDomainAddButtonClick: function() {
 			_CMMainViewportController.deselectAccordionByName(this.cmName);
 
+			this.setViewTitle();
+
 			this.controllerAttributes.cmfg('onDomainAddButtonClick');
 			this.controllerEnabledClasses.cmfg('onDomainEnabledClassesAddButtonClick');
 			this.controllerProperties.cmfg('onDomainPropertiesAddButtonClick');
@@ -99,7 +101,7 @@
 
 		onDomainRemoveButtonClick: function() {
 			Ext.Msg.show({
-				title: CMDBuild.Translation.deleteDomain,
+				title: CMDBuild.Translation.removeDomain,
 				msg: CMDBuild.Translation.common.confirmpopup.areyousure,
 				buttons: Ext.Msg.YESNO,
 				scope: this,

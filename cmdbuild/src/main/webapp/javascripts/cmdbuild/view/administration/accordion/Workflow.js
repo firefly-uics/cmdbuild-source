@@ -6,7 +6,7 @@
 		requires: [
 			'CMDBuild.core.constants.Global',
 			'CMDBuild.core.constants.Proxy',
-			'CMDBuild.core.proxy.Classes'
+			'CMDBuild.core.proxy.workflow.Workflow'
 		],
 
 		/**
@@ -30,7 +30,7 @@
 		updateStore: function(nodeIdToSelect) {
 			nodeIdToSelect = Ext.isNumber(nodeIdToSelect) ? nodeIdToSelect : null;
 
-			CMDBuild.core.proxy.Classes.readAll({
+			CMDBuild.core.proxy.workflow.Workflow.readAll({
 				loadMask: false,
 				scope: this,
 				success: function(response, options, decodedResponse) {

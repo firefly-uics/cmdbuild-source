@@ -48,7 +48,7 @@
 			'onUserAndGroupGroupSetActiveTab',
 			'userAndGroupGroupSelectedGroupGet',
 			'userAndGroupGroupSelectedGroupIsEmpty',
-			'userAndGroupGroupSelectedGroupSet',
+			'userAndGroupGroupSelectedGroupSet'
 		],
 
 		/**

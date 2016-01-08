@@ -62,7 +62,7 @@
 		 * @private
 		 */
 		interceptorCallback: function(action) {
-			return Ext.bind(this.self.adapterCallback, action.scope, [action.callback], true);
+			return Ext.bind(CMDBuild.core.interfaces.FormSubmit.adapterCallback, action.scope, [action.callback], true);
 		},
 
 		/**
@@ -74,7 +74,7 @@
 		 */
 		interceptorFailure: function(action) {
 			return Ext.Function.createSequence(
-				Ext.bind(this.self.adapterFailure, action.scope, [action.failure], true),
+				Ext.bind(CMDBuild.core.interfaces.FormSubmit.adapterFailure, action.scope, [action.failure], true),
 				action.callback,
 				action.scope
 			);
@@ -91,7 +91,7 @@
 		 */
 		interceptorSuccess: function(action) {
 			return Ext.Function.createSequence(
-				Ext.bind(this.self.adapterSuccess, action.scope, [action.success], true),
+				Ext.bind(CMDBuild.core.interfaces.FormSubmit.adapterSuccess, action.scope, [action.success], true),
 				action.callback,
 				action.scope
 			);
@@ -109,16 +109,17 @@
 		trapCallbacks: function(form, action, eOpts) {
 			CMDBuild.core.interfaces.service.LoadMask.manage(action.loadMask, true);
 
-			action.callback = this.self.interceptorCallback(action); // First of all because is related to others
-			action.failure = this.self.interceptorFailure(action);
-			action.success = this.self.interceptorSuccess(action);
+			action.callback = CMDBuild.core.interfaces.FormSubmit.interceptorCallback(action); // First of all because is related to others
+			action.failure = CMDBuild.core.interfaces.FormSubmit.interceptorFailure(action);
+			action.success = CMDBuild.core.interfaces.FormSubmit.interceptorSuccess(action);
 		},
 
 		/**
 		 * @param {Object} parameters
 		 * @param {String} parameters.method
 		 * @param {String} parameters.url
-		 * @param {String} parameters.buildForm
+		 * @param {String} parameters.buildRuntimeForm
+		 * @param {Ext.form.Basic} parameters.form
 		 * @param {Object} parameters.params
 		 * @param {Object} parameters.headers
 		 * @param {Object} parameters.scope
@@ -132,7 +133,7 @@
 			// Set default values
 			Ext.applyIf(parameters, {
 				method: 'POST',
-				buildForm: false,
+				buildRuntimeForm: false,
 				loadMask: true,
 				scope: this,
 				callback: Ext.emptyFn,
@@ -141,9 +142,9 @@
 			});
 
 			if (!Ext.isEmpty(parameters.form)) { // Submits existing form
-				parameters.form.on('beforeaction', this.self.trapCallbacks, this, { single: true });
+				parameters.form.on('beforeaction', CMDBuild.core.interfaces.FormSubmit.trapCallbacks, this, { single: true });
 				parameters.form.submit(parameters);
-			} else if (Ext.isEmpty(parameters.form) && parameters.buildForm) { // Submits a one time builded form
+			} else if (Ext.isEmpty(parameters.form) && parameters.buildRuntimeForm) { // Submits a one time builded form
 				parameters.params[CMDBuild.core.constants.Proxy.FORCE_DOWNLOAD_PARAM_KEY] = true;
 
 				var form = Ext.create('Ext.form.Panel', {

@@ -5,6 +5,7 @@
 
 		requires: [
 			'CMDBuild.core.constants.Proxy',
+			'CMDBuild.core.interfaces.FormSubmit',
 			'CMDBuild.core.Message',
 			'CMDBuild.core.proxy.Index',
 			'CMDBuild.core.proxy.report.Print'
@@ -61,6 +62,8 @@
 		/**
 		 * @param {Object} configurationObject
 		 * @param {Mixed} configurationObject.parentDelegate
+		 *
+		 * @override
 		 */
 		constructor: function(configurationObject) {
 			this.callParent(arguments);
@@ -149,19 +152,11 @@
 			params[CMDBuild.core.constants.Proxy.FORCE_DOWNLOAD_PARAM_KEY] = true;
 
 			if (this.forceDownload) { // Force download mode
-				var form = Ext.create('Ext.form.Panel', {
-					standardSubmit: true,
+				CMDBuild.core.interfaces.FormSubmit.submit({
+					buildRuntimeForm: true,
+					params: params,
 					url: CMDBuild.core.proxy.Index.report.printReportFactory
 				});
-
-				form.submit({
-					target: '_blank',
-					params: params
-				});
-
-				Ext.defer(function() { // Form cleanup
-					form.close();
-				}, 100);
 			} else { // Add to view display mode
 				this.view.removeAll();
 

@@ -20,6 +20,9 @@
 
 		title: CMDBuild.Translation.domains,
 
+		/**
+		 * @deprecated (Class domain tabs)
+		 */
 		expandForAdd: function() {
 			this.expand();
 

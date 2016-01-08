@@ -333,9 +333,12 @@
 		/**
 		 * Setup view panel title as a breadcrumbs component joining array items with titleSeparator.
 		 *
-		 * @param {String} titlePart
+		 * @param {Array or String} titlePart
 		 */
 		setViewTitle: function(titlePart) {
+			if (Ext.isEmpty(titlePart))
+				titlePart = [];
+
 			titlePart = Ext.isArray(titlePart) ? titlePart : [titlePart];
 
 			if (!Ext.isEmpty(this.view)) {
