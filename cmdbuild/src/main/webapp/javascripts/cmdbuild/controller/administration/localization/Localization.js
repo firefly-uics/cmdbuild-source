@@ -1,7 +1,7 @@
 (function() {
 
 	Ext.define('CMDBuild.controller.administration.localization.Localization', {
-		extend: 'CMDBuild.controller.common.AbstractBasePanelController',
+		extend: 'CMDBuild.controller.common.abstract.BasePanel',
 
 		requires: ['CMDBuild.core.constants.Proxy'],
 

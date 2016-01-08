@@ -1,10 +1,10 @@
 (function () {
 
 	Ext.define('CMDBuild.controller.management.common.tabs.email.EmailWindow', {
-		extend: 'CMDBuild.controller.common.AbstractController',
+		extend: 'CMDBuild.controller.common.abstract.Base',
 
 		requires: [
-			'CMDBuild.controller.common.AbstractWidgetController',
+			'CMDBuild.controller.common.abstract.Widget',
 			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.Message',
 			'CMDBuild.core.proxy.common.tabs.email.Attachment',
@@ -191,7 +191,7 @@
 				this.templateResolver = new CMDBuild.Management.TemplateResolver({
 					clientForm: this.cmfg('tabEmailGetFormForTemplateResolver'),
 					xaVars: xaVars,
-					serverVars: CMDBuild.controller.common.AbstractWidgetController.getTemplateResolverServerVars(
+					serverVars: CMDBuild.controller.common.abstract.Widget.getTemplateResolverServerVars(
 						this.cmfg('tabEmailSelectedEntityGet', CMDBuild.core.constants.Proxy.ENTITY)
 					)
 				});

@@ -1,7 +1,10 @@
 (function() {
 
-	Ext.define('CMDBuild.controller.common.AbstractAccordionController', {
-		extend: 'CMDBuild.controller.common.AbstractController',
+	/**
+	 * @abstract
+	 */
+	Ext.define('CMDBuild.controller.common.abstract.Accordion', {
+		extend: 'CMDBuild.controller.common.abstract.Base',
 
 		requires: ['CMDBuild.core.constants.Proxy'],
 

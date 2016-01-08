@@ -6,12 +6,12 @@
 	Ext.require(['CMDBuild.core.constants.Global']);
 
 	/**
-	 * Class to be extended in widget controllers to adapt AbstractController functionalities
+	 * Class to be extended in widget controllers to adapt CMDBuild.controller.common.abstract.Base functionalities
 	 *
 	 * @abstract
 	 */
-	Ext.define('CMDBuild.controller.common.AbstractWidgetController', {
-		extend: 'CMDBuild.controller.common.AbstractController',
+	Ext.define('CMDBuild.controller.common.abstract.Widget', {
+		extend: 'CMDBuild.controller.common.abstract.Base',
 
 		requires: ['CMDBuild.core.constants.Proxy'],
 

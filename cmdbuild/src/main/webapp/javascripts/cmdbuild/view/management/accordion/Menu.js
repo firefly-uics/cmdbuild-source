@@ -1,7 +1,7 @@
 (function() {
 
 	Ext.define('CMDBuild.view.management.accordion.Menu', {
-		extend: 'CMDBuild.view.common.AbstractAccordion',
+		extend: 'CMDBuild.view.common.abstract.Accordion',
 
 		requires: [
 			'CMDBuild.core.constants.ModuleIdentifiers',
@@ -12,7 +12,7 @@
 		],
 
 		/**
-		 * @cfg {CMDBuild.controller.common.AbstractAccordionController}
+		 * @cfg {CMDBuild.controller.common.abstract.Accordion}
 		 */
 		delegate: undefined,
 

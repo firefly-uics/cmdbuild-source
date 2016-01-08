@@ -1,7 +1,7 @@
 (function() {
 
 	Ext.define('CMDBuild.controller.login.Login', {
-		extend: 'CMDBuild.controller.common.AbstractController',
+		extend: 'CMDBuild.controller.common.abstract.Base',
 
 		requires: [
 			'CMDBuild.core.constants.Proxy',

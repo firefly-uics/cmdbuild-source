@@ -1,7 +1,7 @@
 (function() {
 
 	Ext.define('CMDBuild.controller.management.common.graph.Graph', {
-		extend: 'CMDBuild.controller.common.AbstractController',
+		extend: 'CMDBuild.controller.common.abstract.Base',
 
 		requires: [
 			'CMDBuild.core.constants.Proxy',

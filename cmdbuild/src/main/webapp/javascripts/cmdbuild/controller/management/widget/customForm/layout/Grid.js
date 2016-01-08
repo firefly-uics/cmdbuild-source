@@ -1,7 +1,7 @@
 (function() {
 
 	Ext.define('CMDBuild.controller.management.widget.customForm.layout.Grid', {
-		extend: 'CMDBuild.controller.common.AbstractController',
+		extend: 'CMDBuild.controller.common.abstract.Base',
 
 		requires: [
 			'CMDBuild.core.Message',
