@@ -17,7 +17,7 @@
 			parameters = Ext.isEmpty(parameters) ? {} : parameters;
 
 			Ext.apply(parameters, {
-				buildForm: true,
+				buildRuntimeForm: true,
 				url: CMDBuild.core.proxy.Index.csv.exports
 			});
 

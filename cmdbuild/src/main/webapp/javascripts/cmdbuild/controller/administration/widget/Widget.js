@@ -49,7 +49,7 @@
 		grid: undefined,
 
 		/**
-		 * @property {CMDBuild.model.common.Class}
+		 * @property {CMDBuild.model.classes.Class}
 		 *
 		 * @private
 		 */
@@ -414,7 +414,7 @@ _debug('widgetDefinition', widgetDefinition);
 			 */
 			classTabWidgetSelectedClassSet: function(parameters) {
 				if (!Ext.Object.isEmpty(parameters)) {
-					parameters[CMDBuild.core.constants.Proxy.MODEL_NAME] = 'CMDBuild.model.common.Class';
+					parameters[CMDBuild.core.constants.Proxy.MODEL_NAME] = 'CMDBuild.model.classes.Class';
 					parameters[CMDBuild.core.constants.Proxy.TARGET_VARIABLE_NAME] = 'selectedClass';
 
 					this.propertyManageSet(parameters);

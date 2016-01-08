@@ -285,6 +285,10 @@
 							cmControllerType: 'CMDBuild.controller.administration.userAndGroup.UserAndGroup',
 							cmName: 'userandgroup'
 						}),
+						Ext.create('CMDBuild.view.administration.workflow.WorkflowView', {
+							cmControllerType: 'CMDBuild.controller.administration.workflow.Workflow',
+							cmName: 'workflow'
+						}),
 						new CMDBuild.view.administration.bim.CMBIMPanel({
 							cmControllerType: CMDBuild.controller.administration.filter.CMBIMPanelController,
 							cmName: 'bim-project'
@@ -299,10 +303,6 @@
 						}),
 						new CMDBuild.view.administration.classes.CMModClass({
 							cmControllerType: CMDBuild.controller.administration.classes.CMModClassController
-						}),
-						new CMDBuild.view.administration.workflow.CMProcess({
-							cmControllerType: CMDBuild.controller.administration.workflow.CMProcessController,
-							cmName: 'workflow'
 						}),
 						new CMDBuild.Administration.ModIcons(),
 						new CMDBuild.view.administration.gis.CMModGISNavigationConfiguration({
