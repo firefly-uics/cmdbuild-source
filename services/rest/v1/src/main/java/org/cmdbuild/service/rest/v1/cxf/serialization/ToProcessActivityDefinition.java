@@ -34,6 +34,8 @@ public class ToProcessActivityDefinition implements Function<CMActivity, Process
 
 	public static class Builder implements org.apache.commons.lang3.builder.Builder<ToProcessActivityDefinition> {
 
+		private boolean writable;
+
 		private Builder() {
 			// use static method
 		}
@@ -48,20 +50,28 @@ public class ToProcessActivityDefinition implements Function<CMActivity, Process
 			// TODO Auto-generated method stub
 		}
 
+		public Builder withWritableStatus(final boolean writable) {
+			this.writable = writable;
+			return this;
+		}
+
 	}
 
 	public static Builder newInstance() {
 		return new Builder();
 	}
 
+	private final boolean writable;
+
 	private ToProcessActivityDefinition(final Builder builder) {
-		// TODO Auto-generated constructor stub
+		this.writable = builder.writable;
 	}
 
 	@Override
 	public ProcessActivityWithFullDetails apply(final CMActivity input) {
 		return newProcessActivityWithFullDetails() //
 				.withId(input.getId()) //
+				.withWritableStatus(writable) //
 				.withDescription(input.getDescription()) //
 				.withInstructions(input.getInstructions()) //
 				.withAttributes(safeAttributesOf(input)) //

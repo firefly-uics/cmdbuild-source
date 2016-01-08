@@ -1025,6 +1025,7 @@ public class Models {
 		private static final Collection<? extends Widget> NO_WIDGETS = emptyList();
 
 		private String id;
+		private boolean writable;
 		private String description;
 		private String instructions;
 		private final Collection<AttributeStatus> attributes = newArrayList();
@@ -1038,6 +1039,7 @@ public class Models {
 		protected ProcessActivityWithFullDetails doBuild() {
 			final ProcessActivityWithFullDetails output = new ProcessActivityWithFullDetails();
 			output.setId(id);
+			output.setWritable(writable);
 			output.setDescription(description);
 			output.setInstructions(instructions);
 			output.setAttributes(attributes);
@@ -1047,6 +1049,11 @@ public class Models {
 
 		public ProcessActivityWithFullDetailsBuilder withId(final String id) {
 			this.id = id;
+			return this;
+		}
+
+		public ProcessActivityWithFullDetailsBuilder withWritableStatus(final boolean writable) {
+			this.writable = writable;
 			return this;
 		}
 
