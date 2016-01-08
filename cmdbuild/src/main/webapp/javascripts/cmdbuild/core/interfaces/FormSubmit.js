@@ -118,28 +118,49 @@
 		 * @param {Object} parameters
 		 * @param {String} parameters.method
 		 * @param {String} parameters.url
+		 * @param {String} parameters.buildRuntimeForm
+		 * @param {Ext.form.Basic} parameters.form
 		 * @param {Object} parameters.params
 		 * @param {Object} parameters.headers
 		 * @param {Object} parameters.scope
 		 * @param {Function} parameters.callback
 		 * @param {Function} parameters.failure
 		 * @param {Function} parameters.success
+		 *
+		 * @public
 		 */
 		submit: function(parameters) {
-			if (!Ext.isEmpty(parameters.form)) {
-				// Set default values
-				Ext.applyIf(parameters, {
-					method: 'POST',
-					loadMask: true,
-					scope: this,
-					callback: Ext.emptyFn,
-					failure: Ext.emptyFn,
-					success: Ext.emptyFn
-				});
+			// Set default values
+			Ext.applyIf(parameters, {
+				method: 'POST',
+				buildRuntimeForm: false,
+				loadMask: true,
+				scope: this,
+				callback: Ext.emptyFn,
+				failure: Ext.emptyFn,
+				success: Ext.emptyFn
+			});
 
+			if (!Ext.isEmpty(parameters.form)) { // Submits existing form
 				parameters.form.on('beforeaction', CMDBuild.core.interfaces.FormSubmit.trapCallbacks, this, { single: true });
 				parameters.form.submit(parameters);
-			} else {
+			} else if (Ext.isEmpty(parameters.form) && parameters.buildRuntimeForm) { // Submits a one time builded form
+				parameters.params[CMDBuild.core.constants.Proxy.FORCE_DOWNLOAD_PARAM_KEY] = true;
+
+				var form = Ext.create('Ext.form.Panel', {
+					standardSubmit: true,
+					url: parameters.url
+				});
+
+				form.submit({
+					target: '_blank',
+					params: parameters.params
+				});
+
+				Ext.defer(function() { // Form cleanup
+					form.close();
+				}, 100);
+			} else{
 				_error('form object not managed', 'CMDBuild.core.interfaces.FormSubmit');
 			}
 		}

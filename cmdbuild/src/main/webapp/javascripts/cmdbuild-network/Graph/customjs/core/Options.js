@@ -1,21 +1,20 @@
 (function($) {
+	var INCLUDED_FILE = "NetworkConfigurationFile";
 	if (! $.Cmdbuild.g3d) {
 		$.Cmdbuild.g3d = {};
 	}
-	var defaultOptions = {
-		nodesTooltip: true,
-		edgesTooltip: true,
-		layoutType: "Hierarchical",
-		projectionType: "Projection",
-		explosionLevels: 1,
-		labels: false
-	};
 	var Options = function() {
 		this.observers = [];
 		this.init = function(name) {
 			return this[name];
 		};
-		$.extend(this, defaultOptions);
+		
+		if (! $.Cmdbuild.customvariables.options) {
+			$.Cmdbuild.customvariables.options = {};
+		}
+		for (var key in $.Cmdbuild.custom.configuration) {
+			this[key] = $.Cmdbuild.custom.configuration[key];
+		}
 		this.data = function(name) {
 			return this[name];
 		};
@@ -30,4 +29,41 @@
 		this.init();
 	};
 	$.Cmdbuild.g3d.Options = Options;	
+	//statics
+	$.Cmdbuild.g3d.Options.chargeConfiguration = function(configurationFile, callback, callbackScope) {
+		var fileName = $.Cmdbuild.appConfigUrl + configurationFile;
+		$.getJSON(fileName, {}, function(configuration) {
+			$.Cmdbuild.g3d.Options.includeFiles(configuration, function() {
+				callback.apply(callbackScope, [configuration]);
+			}, this);
+		}, this);
+	};
+	$.Cmdbuild.g3d.Options.includeFiles = function(configuration, callback, callbackScope) {
+		var filesToInclude = [];
+		for (var key in configuration) {
+			if (configuration[key][INCLUDED_FILE]) {
+				filesToInclude.push({
+					key: key,
+					fileName: configuration[key][INCLUDED_FILE] 
+				});
+			}
+		}
+		$.Cmdbuild.g3d.Options.chargeFiles(configuration, filesToInclude, function() {
+			callback.apply(callbackScope, [configuration]);
+		}), this;
+	};
+	$.Cmdbuild.g3d.Options.chargeFiles = function(configuration, filesToInclude, callback, callbackScope) {
+		if (filesToInclude.length == 0) {
+			callback.apply(callbackScope, [configuration]);
+			return;
+		}
+		var file = filesToInclude[0];
+		filesToInclude.splice(0, 1);
+		$.Cmdbuild.g3d.Options.chargeConfiguration(file.fileName, function(response) {
+			configuration[file.key] = response;
+			$.Cmdbuild.g3d.Options.chargeFiles(configuration, filesToInclude, function() {
+				callback.apply(callbackScope, [configuration]);
+			}), this;
+		}, this);
+	};
 })(jQuery);

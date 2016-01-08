@@ -30,9 +30,11 @@ public class CustomForm extends Widget {
 		private boolean readOnly;
 		private boolean addDisabled;
 		private boolean deleteDisabled;
-		private boolean importCsvDisabled;
+		private boolean exportDisabled;
+		private boolean importDisabled;
 		private boolean modifyDisabled;
 		private boolean cloneDisabled;
+		private String refreshBehaviour;
 
 		public boolean isReadOnly() {
 			return readOnly;
@@ -58,12 +60,20 @@ public class CustomForm extends Widget {
 			this.deleteDisabled = deleteDisabled;
 		}
 
-		public boolean isImportDisabled() {
-			return importCsvDisabled;
+		public boolean isExportDisabled() {
+			return exportDisabled;
 		}
 
-		public void setImportDisabled(final boolean importCsvDisabled) {
-			this.importCsvDisabled = importCsvDisabled;
+		public void setExportDisabled(final boolean exportDisabled) {
+			this.exportDisabled = exportDisabled;
+		}
+
+		public boolean isImportDisabled() {
+			return importDisabled;
+		}
+
+		public void setImportDisabled(final boolean importDisabled) {
+			this.importDisabled = importDisabled;
 		}
 
 		public Boolean isModifyDisabled() {
@@ -80,6 +90,14 @@ public class CustomForm extends Widget {
 
 		public void setCloneDisabled(final boolean cloneDisabled) {
 			this.cloneDisabled = cloneDisabled;
+		}
+
+		public String getRefreshBehaviour() {
+			return refreshBehaviour;
+		}
+
+		public void setRefreshBehaviour(final String refreshBehaviour) {
+			this.refreshBehaviour = refreshBehaviour;
 		}
 
 		@Override

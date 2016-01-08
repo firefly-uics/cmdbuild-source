@@ -3,8 +3,10 @@
 	Ext.define('CMDBuild.core.proxy.Csv', {
 
 		requires: [
-			'CMDBuild.core.interfaces.Ajax',
+			'CMDBuild.core.cache.Cache',
 			'CMDBuild.core.constants.Proxy',
+			'CMDBuild.core.interfaces.Ajax',
+			'CMDBuild.core.interfaces.FormSubmit',
 			'CMDBuild.core.LoadMask',
 			'CMDBuild.core.proxy.Index'
 		],
@@ -12,28 +14,25 @@
 		singleton: true,
 
 		/**
-		 * @return {Ext.data.ArrayStore}
+		 * @param {Object} parameters
 		 */
-		getImportModeStore: function() {
-			return Ext.create('Ext.data.ArrayStore', {
-				fields: [CMDBuild.core.constants.Proxy.DESCRIPTION, CMDBuild.core.constants.Proxy.VALUE],
-				data: [
-					[CMDBuild.Translation.add, 'add'],
-					[CMDBuild.Translation.replace , 'replace']
-				]
-			});
+		exports: function(parameters) {
+			parameters = Ext.isEmpty(parameters) ? {} : parameters;
+
+			Ext.apply(parameters, { url: CMDBuild.core.proxy.Index.csv.exports });
+
+			CMDBuild.core.interfaces.FormSubmit.submit(parameters);
 		},
 
 		/**
 		 * @param {Object} parameters
 		 */
 		getRecords: function(parameters) {
-			CMDBuild.core.interfaces.Ajax.request({
+			parameters = Ext.isEmpty(parameters) ? {} : parameters;
+
+			Ext.apply(parameters, {
 				method: 'GET',
 				url: CMDBuild.core.proxy.Index.csv.getCsvRecords,
-				scope: parameters.scope || this,
-				failure: parameters.failure || Ext.emptyFn,
-				success: parameters.success || Ext.emptyFn,
 				callback: function(options, success, response) { // Clears server session data
 					CMDBuild.core.interfaces.Ajax.request({
 						method: 'GET',
@@ -43,12 +42,39 @@
 					CMDBuild.core.LoadMask.hide();
 				}
 			});
+
+			CMDBuild.core.cache.Cache.request(CMDBuild.core.constants.Proxy.CSV, parameters);
+		},
+
+		/**
+		 * @param {Array} excludedValues
+		 *
+		 * @return {Ext.data.ArrayStore}
+		 */
+		getStoreImportMode: function(excludedValues) {
+			excludedValues = Ext.isArray(excludedValues) ? excludedValues : [];
+
+			var dataValues = [
+				[CMDBuild.Translation.replace , 'replace'],
+				[CMDBuild.Translation.add, 'add'],
+				[CMDBuild.Translation.merge , 'merge']
+			];
+
+			return Ext.create('Ext.data.ArrayStore', {
+				fields: [CMDBuild.core.constants.Proxy.DESCRIPTION, CMDBuild.core.constants.Proxy.VALUE],
+				data: Ext.Array.filter(dataValues, function(valueArray, i, allValueArrays) {
+					return !Ext.Array.contains(excludedValues, valueArray[1]);
+				}, this),
+				sorters: [
+					{ property: CMDBuild.core.constants.Proxy.DESCRIPTION, direction: 'ASC' }
+				]
+			});
 		},
 
 		/**
 		 * @return {Ext.data.ArrayStore}
 		 */
-		getSeparatorStore: function() {
+		getStoreSeparator: function() {
 			return Ext.create('Ext.data.ArrayStore', {
 				fields: [CMDBuild.core.constants.Proxy.VALUE],
 				data: [
@@ -63,30 +89,22 @@
 		 * @param {Object} parameters
 		 */
 		decode: function(parameters) {
-			parameters.form.submit({
-				form: parameters.form,
-				isUpload: true,
-				method: 'POST',
-				url: CMDBuild.core.proxy.Index.csv.readCsv,
-				scope: parameters.scope || this,
-				failure: parameters.failure || Ext.emptyFn,
-				success: parameters.success || Ext.emptyFn,
-				callback: parameters.callback || Ext.emptyFn
-			});
+			parameters = Ext.isEmpty(parameters) ? {} : parameters;
+
+			Ext.apply(parameters, { url: CMDBuild.core.proxy.Index.csv.readCsv });
+
+			CMDBuild.core.interfaces.FormSubmit.submit(parameters);
 		},
 
 		/**
 		 * @param {Object} parameters
 		 */
 		upload: function(parameters) {
-			parameters.form.submit({
-				method: 'POST',
-				url: CMDBuild.core.proxy.Index.csv.uploadCsv,
-				scope: parameters.scope || this,
-				failure: parameters.failure || Ext.emptyFn,
-				success: parameters.success || Ext.emptyFn,
-				callback: parameters.callback || Ext.emptyFn
-			});
+			parameters = Ext.isEmpty(parameters) ? {} : parameters;
+
+			Ext.apply(parameters, { url: CMDBuild.core.proxy.Index.csv.uploadCsv });
+
+			CMDBuild.core.interfaces.FormSubmit.submit(parameters);
 		}
 	});
 

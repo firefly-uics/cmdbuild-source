@@ -64,6 +64,18 @@
 			this.firstShow = true;
 		},
 
+		initComponent: function() {
+			Ext.apply(this, {
+				tools: [
+					Ext.create('CMDBuild.view.common.panel.gridAndForm.tools.Properties', {
+						style: {} // Reset margin setup
+					})
+				]
+			});
+
+			this.callParent(arguments);
+		},
+
 		beforeBringToFront : function() {
 			if (this.firstShow) {
 				this.classTree.updateStore();

@@ -55,6 +55,7 @@
 			'tabEmailGlobalLoadMaskSet',
 			'tabEmailRegenerateAllEmailsSet',
 			'tabEmailRegenerateSelectedEmails',
+			'tabEmailRegenerationEndPointCallbackReset',
 			'tabEmailRegenerationEndPointCallbackSet',
 			'tabEmailSelectedEntityGet',
 			'tabEmailSelectedEntityInit',
@@ -549,18 +550,6 @@
 			}
 		},
 
-// TODO: probably unused
-//		/**
-//		 * Reset configuration attributes
-//		 */
-//		reset: function() {
-//			this.tabEmailConfigurationReset();
-//			this.cmfg('tabEmailConfigurationSet', {
-//				propertyName: CMDBuild.core.constants.Proxy.TEMPLATES,
-//				value: []
-//			});
-//		},
-
 		/**
 		 * @param {Object} parameters
 		 * @param {Mixed} parameters.record
@@ -879,7 +868,7 @@
 					}
 				}, this);
 
-				this.relatedAttributeChanged = false; // Reset attribute changed flag // TODO
+				this.relatedAttributeChanged = false; // Reset attribute changed flag
 			}
 		},
 
@@ -888,6 +877,8 @@
 			 * @param {Array or String} attributePath
 			 *
 			 * @returns {Mixed or undefined}
+			 *
+			 * @private
 			 */
 			tabEmailRegenerationEndPointCallbackGet: function(attributePath) {
 				var parameters = {};
@@ -895,6 +886,10 @@
 				parameters[CMDBuild.core.constants.Proxy.ATTRIBUTE_PATH] = attributePath;
 
 				return this.propertyManageGet(parameters);
+			},
+
+			tabEmailRegenerationEndPointCallbackReset: function() {
+				this.controllerPropertyReset('regenerationEndPointCallback');
 			},
 
 			/**

@@ -113,43 +113,30 @@
 		}
 	};
 
-	ns.CMMainViewportController.prototype.addPanel = function(p) {
-		if (p) {
-			this.viewport.addPanel(p);
+	/**
+	 * @param {Object} parameters
+	 * @param {Boolean or Object} parameters.activateFirstTab - if object selects object as tab otherwise selects first one
+	 * @param {Number} parameters.Id - card id
+	 * @param {Number} parameters.IdClass
+	 */
+	ns.CMMainViewportController.prototype.openCard = function(parameters) {
+		if (
+			Ext.isObject(parameters) && !Ext.Object.isEmpty(parameters)
+			&& !Ext.isEmpty(parameters['Id'])
+			&& !Ext.isEmpty(parameters['IdClass'])
+		) {
+			parameters.activateFirstTab = Ext.isEmpty(parameters.activateFirstTab) ? true : parameters.activateFirstTab;
 
-			if (!Ext.isArray(p)) {
-				p = [p];
+			var accordion = this.getFirstAccordionWithANodeWithGivenId(parameters['IdClass']);
+
+			this.setDanglingCard(parameters);
+
+			if (!Ext.isEmpty(accordion) && Ext.isFunction(accordion.selectNodeById)) {
+				accordion.deselect(); // Required or selection doesn't work if exists another selection
+				accordion.selectNodeById(parameters['IdClass']);
 			}
-
-			for (var i=0, l=p.length; i<l; ++i) {
-				buildPanelController(this, p[i]);
-			}
-		}
-	};
-
-	/*
-	 * p = {
-			Id: the id of the card
-			IdClass: the id of the class which the card belongs,
-			activateFirstTab: true to force the tab panel to return to the first tab
-		}
-	*/
-	ns.CMMainViewportController.prototype.openCard = function(p) {
-		var accordion = this.getFirstAccordionWithANodeWithGivenId(p.IdClass);
-
-		this.setDanglingCard(p);
-
-		if (accordion.collapsed) {
-			// waiting for the rendering for select the node
-			accordion.mon(accordion, "afterlayout", function() {
-				accordion.deselect();
-				accordion.selectNodeById(p.IdClass);
-			}, null, {single: true});
-
-			accordion.expandSilently();
 		} else {
-			accordion.deselect();
-			accordion.selectNodeById(p.IdClass);
+			_error('malformed parameters in openCard method', this);
 		}
 	};
 

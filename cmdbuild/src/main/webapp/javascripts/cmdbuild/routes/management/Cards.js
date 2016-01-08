@@ -52,8 +52,7 @@
 					Ext.Function.createDelayed(function() {
 						_CMMainViewportController.openCard({
 							Id: this.cardIdentifier,
-							IdClass: this.entryType.get(CMDBuild.core.constants.Proxy.ID),
-							activateFirstTab: true
+							IdClass: this.entryType.get(CMDBuild.core.constants.Proxy.ID)
 						});
 					}, 500, this)();
 				} else if (

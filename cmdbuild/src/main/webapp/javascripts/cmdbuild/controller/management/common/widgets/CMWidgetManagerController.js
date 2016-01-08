@@ -17,7 +17,7 @@
 				controllerClasses: {
 					'.Calendar': CMDBuild.controller.management.common.widgets.CMCalendarController,
 					'.CreateModifyCard': CMDBuild.controller.management.common.widgets.CMCreateModifyCardController,
-					'.CustomForm': 'CMDBuild.controller.management.common.widgets.customForm.CustomForm',
+					'.CustomForm': 'CMDBuild.controller.management.widget.customForm.CustomForm',
 					'.Grid': 'CMDBuild.controller.management.common.widgets.grid.Grid',
 					'.LinkCards': CMDBuild.controller.management.common.widgets.linkCards.LinkCardsController,
 					'.ManageEmail': 'CMDBuild.controller.management.common.widgets.ManageEmail',
@@ -42,11 +42,19 @@
 		},
 
 		/**
-		 * @param {Object} widgetController
+		 * Forwarder method
+		 *
+		 * @param {Object} controller
 		 */
-		beforeHideView: function(widgetController) {
-			if (!Ext.isEmpty(widgetController) && Ext.isFunction(widgetController.beforeHideView))
-				widgetController.beforeHideView();
+		beforeHideView: function(controller) {
+			if (!Ext.isEmpty(controller)) {
+				// cmfg() implementation adapter
+				if (!Ext.isEmpty(controller.cmfg) && Ext.isFunction(controller.cmfg)) {
+					controller.cmfg('beforeHideView');
+				} else if (Ext.isFunction(controller.beforeHideView)) {
+					controller.beforeHideView();
+				}
+			}
 		},
 
 		buildControllers: function(card) {
@@ -76,38 +84,61 @@
 				var wc = me.controllers[me.getWidgetId(w)];
 				if (wc) {
 					me.view.showWidget(wc.view, me.getWidgetLable(w));
-					wc.beforeActiveView();
+
+					// cmfg() implementation adapter
+					if (!Ext.isEmpty(wc.cmfg) && Ext.isFunction(wc.cmfg)) {
+						wc.cmfg('beforeActiveView');
+					} else if (Ext.isFunction(wc.beforeActiveView)) {
+						wc.beforeActiveView();
+					}
 				}
 			}, 1);
 		},
 
+		/**
+		 * Forwarder method
+		 *
+		 * @public
+		 */
 		onCardGoesInEdit: function() {
-			for (var wc in this.controllers) {
-				wc = this.controllers[wc];
-				if (typeof wc.onEditMode == "function") {
-					wc.onEditMode();
+			Ext.Object.each(this.controllers, function(id, controller, myself) {
+				// cmfg() implementation adapter
+				if (!Ext.isEmpty(controller.cmfg) && Ext.isFunction(controller.cmfg)) {
+					controller.cmfg('onEditMode');
+				} else if (!Ext.isEmpty(controller.onEditMode) && Ext.isFunction(controller.onEditMode)) {
+					controller.onEditMode();
 				}
-			}
+			}, this);
 		},
 
-		getWrongWFAsHTML: function getWrongWFAsHTML() {
-			var out = "<ul>",
-				valid = true;
+		/**
+		 * @returns {String or null}
+		 *
+		 * @public
+		 */
+		getWrongWFAsHTML: function() {
+			var out = '';
+			var widgetsAreValid = true;
 
-			for (var wc in this.controllers) {
-				wc = this.controllers[wc];
-				if (!wc.isValid()) {
-					valid = false;
-					out += "<li>" + wc.getWidgetLabel() + "</li>";
+			Ext.Object.each(this.controllers, function(id, controller, myself) {
+				// cmfg() implementation adapter
+				if (
+					!Ext.isEmpty(controller.cmfg) && Ext.isFunction(controller.cmfg)
+					&& !controller.cmfg('isValid')
+				) {
+					widgetsAreValid = false;
+					out += '<li>' + controller.cmfg('getWidgetLabel') + '</li>';
+				} else if (
+					!Ext.isEmpty(controller.isValid) && Ext.isFunction(controller.isValid)
+					&& !Ext.isEmpty(controller.getWidgetLabel) && Ext.isFunction(controller.getWidgetLabel)
+					&& !controller.isValid()
+				) {
+					widgetsAreValid = false;
+					out += '<li>' + controller.getWidgetLabel() + '</li>';
 				}
-			}
-			out + "</ul>";
+			}, this);
 
-			if (valid) {
-				return null;
-			} else {
-				return out;
-			}
+			return widgetsAreValid ? null : '<ul>' + out + '</ul>';
 		},
 
 		removeAll: function clearWidgetControllers() {
@@ -120,37 +151,50 @@
 			}
 		},
 
-		areThereBusyWidget: function areThereBusyWidget() {
-			for (var wc in this.controllers) {
-				wc = this.controllers[wc];
-				if (wc.isBusy()) {
-					return true;
-				} else {
-					continue;
-				}
-			}
+		/**
+		 * @returns {Boolean} widgetsBusyState
+		 *
+		 * @private
+		 */
+		areThereBusyWidget: function() {
+			var widgetsBusyState = false;
 
-			return false;
+			Ext.Object.each(this.controllers, function(id, controller, myself) {
+				// cmfg() implementation adapter
+				if (!Ext.isEmpty(controller.cmfg) && Ext.isFunction(controller.cmfg)) {
+					widgetsBusyState = controller.cmfg('isBusy');
+
+					return !widgetsBusyState;
+				} else if (!Ext.isEmpty(controller.isValid) && Ext.isFunction(controller.isValid)) {
+					widgetsBusyState = wc.isBusy();
+
+					return !widgetsBusyState;
+				}
+			}, this);
+
+			return widgetsBusyState;
 		},
 
 		/**
 		 * Trigger onBeforeSave method on all widgets creating an execution chain on all widget onBeforeSave() functions
 		 *
 		 * @param {Function} lastCallback
+		 *
+		 * @private
 		 */
-		onBeforeSaveTrigger: function(lastCallback) {
+		beforeSaveTriggerManager: function(lastCallback) {
 			var controllersArray = Ext.Object.getValues(this.controllers);
 			var chainArray = [];
 
-			if (!Ext.isEmpty(lastCallback) && typeof lastCallback == 'function') {
-				if (Ext.isEmpty(controllersArray)) { // No activity widgets
+			if (!Ext.isEmpty(lastCallback) && Ext.isFunction(lastCallback)) {
+				if (Ext.Object.isEmpty(controllersArray)) { // No active widgets
 					return lastCallback();
 				} else {
 					Ext.Array.forEach(controllersArray, function(controller, i, allControllers) {
 						var nextControllerFunction = Ext.emptyFn;
 						var scope = this;
 
-						if (typeof controller.onBeforeSave == 'function') {
+						if (!Ext.isEmpty(controller.onBeforeSave) && Ext.isFunction(controller.onBeforeSave)) {
 							if (i + 1 < controllersArray.length) {
 								nextControllerFunction = controllersArray[i + 1].onBeforeSave;
 								scope = controllersArray[i + 1];
@@ -167,14 +211,14 @@
 					}, this);
 
 					// Execute first chain function
-					if (!Ext.isEmpty(controllersArray[0]) && typeof controllersArray[0].onBeforeSave == 'function') {
+					if (!Ext.isEmpty(controllersArray[0]) && Ext.isFunction(controllersArray[0].onBeforeSave)) {
 						controllersArray[0].onBeforeSave(chainArray, 0);
 					} else {
-						_msg('CMDBuild.controller.management.common.CMWidgetManagerController onBeforeSaveTrigger controllersArray head function error!');
+						_error('onBeforeSaveTrigger controllersArray head function error', this);
 					}
 				}
 			} else {
-				_msg('CMDBuild.controller.management.common.CMWidgetManagerController onBeforeSaveTrigger lastCallback function error!');
+				_error('onBeforeSaveTrigger lastCallback function error', this);
 			}
 		},
 
@@ -182,7 +226,7 @@
 			var me = this;
 
 			CMDBuild.core.LoadMask.show();
-			this.onBeforeSaveTrigger(
+			this.beforeSaveTriggerManager(
 				function() {
 					new _CMUtils.PollingFunction({
 						success: cb,
@@ -200,20 +244,34 @@
 			);
 		},
 
-		getData: function(advance) {
-			var ww = {};
-			for (var wc in this.controllers) {
-				wc = this.controllers[wc];
+		/**
+		 * Forwarder method
+		 *
+		 * @param {Object} parameters
+		 *
+		 * @returns {Object} widgetsData
+		 *
+		 * @public
+		 */
+		getData: function(parameters) {
+			var widgetsData = {};
 
-				if (typeof wc.getData == "function") {
-					var wcData = wc.getData(advance);
-					if (wcData != null) {
-						ww[wc.getWidgetId()] = wcData;
-					}
+			Ext.Object.each(this.controllers, function(id, controller, myself) {
+				// cmfg() implementation adapter
+				if (!Ext.isEmpty(controller.cmfg) && Ext.isFunction(controller.cmfg)) {
+					var widgetData = controller.cmfg('getData', parameters);
+
+					if (!Ext.isEmpty(widgetData))
+						widgetsData[id] = widgetData;
+				} else if (Ext.isFunction(controller.getData)) {
+					var widgetData = controller.getData(parameters);
+
+					if (!Ext.isEmpty(widgetData))
+						widgetsData[id] = widgetData;
 				}
-			}
+			}, this);
 
-			return ww;
+			return widgetsData;
 		},
 
 		hideWidgetsContainer: function() {

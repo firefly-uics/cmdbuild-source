@@ -49,9 +49,10 @@
 		 */
 		managedCacheGroupsArray: [
 			CMDBuild.core.constants.Proxy.GENERIC, // Default
+			CMDBuild.core.constants.Proxy.CLASS,
 			CMDBuild.core.constants.Proxy.GROUP,
 			CMDBuild.core.constants.Proxy.USER,
-			CMDBuild.core.constants.Proxy.CLASS
+			CMDBuild.core.constants.Proxy.WORKFLOW
 		],
 
 		/**

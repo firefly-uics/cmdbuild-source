@@ -70,6 +70,21 @@
 			} else {
 				enableStopButtonIfUserCanUseIt(this, processInstance);
 			}
+
+			// History record save
+			CMDBuild.global.navigation.Chronology.cmfg('navigationChronologyRecordSave', {
+				moduleId: 'workflow',
+				entryType: {
+					description: _CMWFState.getProcessClassRef().get(CMDBuild.core.constants.Proxy.TEXT),
+					id: _CMWFState.getProcessClassRef().get(CMDBuild.core.constants.Proxy.ID),
+					object: _CMWFState.getProcessClassRef()
+				},
+				item: {
+					description: _CMWFState.getProcessInstance().get(CMDBuild.core.constants.Proxy.TEXT),
+					id: _CMWFState.getProcessInstance().get(CMDBuild.core.constants.Proxy.ID),
+					object: _CMWFState.getProcessInstance()
+				}
+			});
 		},
 
 		// wfStateDelegate

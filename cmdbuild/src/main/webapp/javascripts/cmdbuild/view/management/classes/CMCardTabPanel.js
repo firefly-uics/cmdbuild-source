@@ -12,13 +12,59 @@
 				title: tr.tabs.card,
 				border: false,
 				withToolBar: true,
-				withButtons: true
+				withButtons: true,
+
+				listeners: {
+					show: function(panel, eOpts) {
+						// History record save
+						CMDBuild.global.navigation.Chronology.cmfg('navigationChronologyRecordSave', {
+							moduleId: 'class',
+							entryType: {
+								description: _CMCardModuleState.entryType.get(CMDBuild.core.constants.Proxy.TEXT),
+								id: _CMCardModuleState.entryType.get(CMDBuild.core.constants.Proxy.ID),
+								object: _CMCardModuleState.entryType
+							},
+							item: {
+								description: _CMCardModuleState.card.get('Description') || _CMCardModuleState.card.get('Code'),
+								id: _CMCardModuleState.card.get(CMDBuild.core.constants.Proxy.ID),
+								object: _CMCardModuleState.card
+							},
+							section: {
+								description: this.title,
+								object: this
+							}
+						});
+					}
+				}
 			});
 
 			this.cardNotesPanel = CMDBuild.configuration.userInterface.isDisabledCardTab(CMDBuild.core.constants.Proxy.CLASS_NOTE_TAB) ? null
 				: new CMDBuild.view.management.classes.CMCardNotesPanel({
 					title: tr.tabs.notes,
-					disabled: true
+					disabled: true,
+
+					listeners: {
+						show: function(panel, eOpts) {
+							// History record save
+							CMDBuild.global.navigation.Chronology.cmfg('navigationChronologyRecordSave', {
+								moduleId: 'class',
+								entryType: {
+									description: _CMCardModuleState.entryType.get(CMDBuild.core.constants.Proxy.TEXT),
+									id: _CMCardModuleState.entryType.get(CMDBuild.core.constants.Proxy.ID),
+									object: _CMCardModuleState.entryType
+								},
+								item: {
+									description: _CMCardModuleState.card.get('Description') || _CMCardModuleState.card.get('Code'),
+									id: _CMCardModuleState.card.get(CMDBuild.core.constants.Proxy.ID),
+									object: _CMCardModuleState.card
+								},
+								section: {
+									description: this.title,
+									object: this
+								}
+							});
+						}
+					}
 				})
 			;
 
@@ -26,21 +72,90 @@
 				: new CMDBuild.view.management.classes.CMCardRelationsPanel({
 					title: tr.tabs.relations,
 					border: false,
-					disabled: true
+					disabled: true,
+
+					listeners: {
+						show: function(panel, eOpts) {
+							// History record save
+							CMDBuild.global.navigation.Chronology.cmfg('navigationChronologyRecordSave', {
+								moduleId: 'class',
+								entryType: {
+									description: _CMCardModuleState.entryType.get(CMDBuild.core.constants.Proxy.TEXT),
+									id: _CMCardModuleState.entryType.get(CMDBuild.core.constants.Proxy.ID),
+									object: _CMCardModuleState.entryType
+								},
+								item: {
+									description: _CMCardModuleState.card.get('Description') || _CMCardModuleState.card.get('Code'),
+									id: _CMCardModuleState.card.get(CMDBuild.core.constants.Proxy.ID),
+									object: _CMCardModuleState.card
+								},
+								section: {
+									description: this.title,
+									object: this
+								}
+							});
+						}
+					}
 				})
 			;
 
 			this.mdPanel = CMDBuild.configuration.userInterface.isDisabledCardTab(CMDBuild.core.constants.Proxy.CLASS_DETAIL_TAB) ? null
 				: new CMDBuild.view.management.classes.masterDetails.CMCardMasterDetail({
 					title: tr.tabs.detail,
-					disabled: true
+					disabled: true,
+
+					listeners: {
+						show: function(panel, eOpts) {
+							// History record save
+							CMDBuild.global.navigation.Chronology.cmfg('navigationChronologyRecordSave', {
+								moduleId: 'class',
+								entryType: {
+									description: _CMCardModuleState.entryType.get(CMDBuild.core.constants.Proxy.TEXT),
+									id: _CMCardModuleState.entryType.get(CMDBuild.core.constants.Proxy.ID),
+									object: _CMCardModuleState.entryType
+								},
+								item: {
+									description: _CMCardModuleState.card.get('Description') || _CMCardModuleState.card.get('Code'),
+									id: _CMCardModuleState.card.get(CMDBuild.core.constants.Proxy.ID),
+									object: _CMCardModuleState.card
+								},
+								section: {
+									description: this.title,
+									object: this
+								}
+							});
+						}
+					}
 				})
 			;
 
 			this.attachmentPanel = CMDBuild.configuration.userInterface.isDisabledCardTab(CMDBuild.core.constants.Proxy.CLASS_ATTACHMENT_TAB) ? null
 				: new CMDBuild.view.management.classes.attachments.CMCardAttachmentsPanel({
 					title: tr.tabs.attachments,
-					disabled: true
+					disabled: true,
+
+					listeners: {
+						show: function(panel, eOpts) {
+							// History record save
+							CMDBuild.global.navigation.Chronology.cmfg('navigationChronologyRecordSave', {
+								moduleId: 'class',
+								entryType: {
+									description: _CMCardModuleState.entryType.get(CMDBuild.core.constants.Proxy.TEXT),
+									id: _CMCardModuleState.entryType.get(CMDBuild.core.constants.Proxy.ID),
+									object: _CMCardModuleState.entryType
+								},
+								item: {
+									description: _CMCardModuleState.card.get('Description') || _CMCardModuleState.card.get('Code'),
+									id: _CMCardModuleState.card.get(CMDBuild.core.constants.Proxy.ID),
+									object: _CMCardModuleState.card
+								},
+								section: {
+									description: this.title,
+									object: this
+								}
+							});
+						}
+					}
 				})
 			;
 
@@ -53,7 +168,7 @@
 		 * @param {Number} idClass
 		 */
 		reset: function(idClass) {
-			this.activateFirstTab();
+			this.activeTabSet();
 
 			this.items.each(function(item) {
 				if (item.reset)
@@ -62,10 +177,6 @@
 				if (item.onClassSelected)
 					item.onClassSelected(idClass);
 			});
-		},
-
-		activateRelationTab: function() {
-			this.setActiveTab(this.relationsPanel);
 		},
 
 		getCardPanel: function() {
@@ -108,6 +219,16 @@
 
 		activateFirstTab: function() {
 			this.setActiveTab(this.cardPanel);
+		},
+
+		/**
+		 * @param {Object} tab
+		 */
+		activeTabSet: function(tab) {
+			if (!Ext.Object.isEmpty(tab) && Ext.isObject(tab))
+				return this.setActiveTab(tab);
+
+			return this.setActiveTab(this.cardPanel);
 		}
 	});
 

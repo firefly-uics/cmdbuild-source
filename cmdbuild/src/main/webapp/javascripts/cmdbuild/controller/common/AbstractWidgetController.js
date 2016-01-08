@@ -86,7 +86,7 @@
 			 *
 			 * @param {Object} model
 			 *
-			 * @return {Object} out
+			 * @returns {Object} out
 			 */
 			getTemplateResolverServerVars: function(model) {
 				var out = {};
@@ -160,28 +160,30 @@
 		beforeHideView: Ext.emptyFn,
 
 		/**
-		 * @return {Object or null}
+		 * @returns {Object or null}
 		 */
 		getData: function() {
 			return null;
 		},
 
 		/**
-		 * @param {String} variableName
+		 * @returns {Number}
 		 *
-		 * @return {Mixed}
+		 * @private
 		 */
-		getVariable: function(variableName) {
-			if (!Ext.isEmpty(this.templateResolver) && Ext.isFunction(this.templateResolver.getVariable))
-				return this.templateResolver.getVariable(variableName);
-
-			_warning('templateResolver not instantiated', this);
-
-			return undefined;
+		getId: function() {
+			return this.widgetConfigurationGet(CMDBuild.core.constants.Proxy.ID);
 		},
 
 		/**
-		 * @return {Object}
+		 * @returns {String}
+		 */
+		getLabel: function() {
+			return this.widgetConfigurationGet(CMDBuild.core.constants.Proxy.LABEL);
+		},
+
+		/**
+		 * @returns {Object}
 		 */
 		getTemplateResolverServerVars: function() {
 			if (!Ext.isEmpty(this.card))
@@ -190,27 +192,13 @@
 			return {};
 		},
 
-		/**
-		 * @return {Number}
-		 */
-		getWidgetId: function() {
-			return this.widgetConfigurationGet(CMDBuild.core.constants.Proxy.ID);
-		},
-
-		/**
-		 * @param {String}
-		 */
-		getWidgetLabel: function() {
-			return this.widgetConfigurationGet(CMDBuild.core.constants.Proxy.LABEL);
-		},
-
 		// InstancesDataStorage methods (multiple widget instances support)
 			/**
 			 * @returns {Mixed} or null
 			 */
 			instancesDataStorageGet: function() {
-				if (!Ext.isEmpty(this.getWidgetId()) && !Ext.isEmpty(this.instancesDataStorage[this.getWidgetId()]))
-					return this.instancesDataStorage[this.getWidgetId()];
+				if (!Ext.isEmpty(this.getId()) && !Ext.isEmpty(this.instancesDataStorage[this.getId()]))
+					return this.instancesDataStorage[this.getId()];
 
 				return null;
 			},
@@ -219,8 +207,8 @@
 			 * @returns {Boolean}
 			 */
 			instancesDataStorageIsEmpty: function() {
-				if (!Ext.isEmpty(this.getWidgetId()))
-					return Ext.isEmpty(this.instancesDataStorage[this.getWidgetId()]);
+				if (!Ext.isEmpty(this.getId()))
+					return Ext.isEmpty(this.instancesDataStorage[this.getId()]);
 
 				return true;
 			},
@@ -233,19 +221,19 @@
 			 * @param {Mixed} instanceData
 			 */
 			instancesDataStorageSet: function(instanceData) {
-				if (!Ext.isEmpty(this.getWidgetId()) && !Ext.isEmpty(instanceData))
-					this.instancesDataStorage[this.getWidgetId()] = instanceData;
+				if (!Ext.isEmpty(this.getId()) && !Ext.isEmpty(instanceData))
+					this.instancesDataStorage[this.getId()] = instanceData;
 			},
 
 		/**
-		 * @return {Boolean}
+		 * @returns {Boolean}
 		 */
 		isBusy: function() {
 			return false;
 		},
 
 		/**
-		 * @return {Boolean}
+		 * @returns {Boolean}
 		 */
 		isValid: function() {
 			return true;
@@ -253,6 +241,8 @@
 
 		/**
 		 * @param {Array} callbackChainArray
+		 *
+		 * TODO: this one is called directly from outside without cmfg(), should be refactored
 		 */
 		onBeforeSave: function(callbackChainArray, i) {
 			if (!Ext.isEmpty(callbackChainArray[i])) {
@@ -263,6 +253,8 @@
 		},
 
 		/**
+		 * This method can't be called using cmfg functionalities because of his implementation
+		 *
 		 * @abstract
 		 */
 		onEditMode: Ext.emptyFn,

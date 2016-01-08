@@ -181,6 +181,9 @@
 				padding: '5 5 5 0',
 				frame: false,
 				border: false,
+				bodyStyle: {
+					border: '0px;'
+				},
 
 				layout: 'card',
 
@@ -226,18 +229,6 @@
 				});
 			}
 
-		},
-
-//		addAccordion: function(a) {
-//			Ext.suspendLayouts();
-//			this.cmAccordions.add(a);
-//			Ext.resumeLayouts();
-//		},
-
-		addPanel: function(p) {
-			Ext.suspendLayouts();
-			this.cmPanels.add(p);
-			Ext.resumeLayouts();
 		},
 
 		/*

@@ -26,7 +26,7 @@
 				var basePath = window.location.toString().split('/');
 				basePath = Ext.Array.slice(basePath, 0, basePath.length - 1).join('/');
 
-				this.setViewTitle(node.get(CMDBuild.core.constants.Proxy.TEXT));
+				this.setViewTitle(node.get(CMDBuild.core.constants.Proxy.DESCRIPTION));
 
 				this.view.removeAll();
 				this.view.add({
@@ -40,6 +40,18 @@
 							+ '&frameworkVersion=' + CMDBuild.core.configurations.CustomPages.getVersion()
 					}
 				});
+
+				// History record save
+				CMDBuild.global.navigation.Chronology.cmfg('navigationChronologyRecordSave', {
+					moduleId: this.cmName,
+					entryType: {
+						description: node.get(CMDBuild.core.constants.Proxy.DESCRIPTION),
+						id: node.get(CMDBuild.core.constants.Proxy.ID),
+						object: node
+					}
+				});
+
+				this.callParent(arguments);
 			}
 		}
 

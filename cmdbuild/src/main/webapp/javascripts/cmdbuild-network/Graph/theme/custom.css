@@ -10,8 +10,23 @@
 .cmdbuild-crt-toscana-theme .ui-widget-header .ui-state-default {
 	font-weight: normal;
 }
+.cmdbuildLabel {
+	width: 20px!important;
+	font-family: tahoma,arial,verdana,sans-serif;
+	font-size: 11px;
+}
 .optionsSpinner {
 	width: 20px!important;
+	text-align: left;
+}
+#mainCardsFormContainer .ui-tabs-anchor {
+	display:none;
+}
+#mainCardsFormContainer .ui-corner-top {
+	display:none;
+}
+.relationAttributes {
+	font-size: 9px;
 }
 .labelText {
 	position: absolute;
@@ -104,6 +119,9 @@ ui-selectmenu-button{
 	display: inline-block;
 	margin-left: 12px;
 }
+.properties {
+	background:transparent url("../images/gnome-display-properties.png") right 50% no-repeat;
+}
 .layout {
 	background:transparent url("../images/chart_organisation.png") right 50% no-repeat;
 }
@@ -111,7 +129,7 @@ ui-selectmenu-button{
 	background:transparent url("../images/four-arrows-pointing-to-center_318-34903.png") right 50% no-repeat;
 }
 .centerOnSelection {
-	background:transparent url("../images/arrow_in.png") right 50% no-repeat;
+	background:transparent url("../images/edit-find-9.png") right 50% no-repeat;
 }
 .deleteSelected {
 	background:transparent url("../images/application_form_delete.png") right 50% no-repeat;

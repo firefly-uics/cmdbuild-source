@@ -189,14 +189,17 @@
 			Ext.apply(this, {
 
 				/**
+				 * @param {Object} pcr
+				 * @param {Object} danglingCard
 				 * @param {Boolean} autoSetEmptyProcessInstace - avoids to set empty process instance on process change
+				 * @param {String} filter
 				 */
-				setProcessClassRef: function(pcr, danglingCard, autoSetEmptyProcessInstace) {
+				setProcessClassRef: function(pcr, danglingCard, autoSetEmptyProcessInstace, filter) {
 					autoSetEmptyProcessInstace = Ext.isEmpty(autoSetEmptyProcessInstace) ? true : autoSetEmptyProcessInstace;
 
 					if (pcr && (processClassRef !== pcr || danglingCard)) {
 						processClassRef = pcr;
-						this.notifyToDelegates("onProcessClassRefChange", [pcr, danglingCard]);
+						this.notifyToDelegates("onProcessClassRefChange", [pcr, danglingCard, filter]);
 
 						if (autoSetEmptyProcessInstace)
 							this.setProcessInstance(new CMDBuild.model.CMProcessInstance({

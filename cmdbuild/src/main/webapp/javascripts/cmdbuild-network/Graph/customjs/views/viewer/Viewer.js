@@ -1,4 +1,5 @@
 (function($) {
+	var CONFIGURATION_FILE = "configurations/configuration.json";
 	var OPTIONS_LABEL_ON_SELECTED = "Selected";
 	var OPTIONS_LABEL_ON_ALL = "All";
 	var MAX_DISTANCE_NODES = 10000;
@@ -22,6 +23,13 @@
 		var objects = [];
 		var edges = [];
 		this.init = function() {
+			$.Cmdbuild.g3d.Options.chargeConfiguration(CONFIGURATION_FILE, function(response) {
+				$.Cmdbuild.custom.configuration = response;
+				this.initCB();
+				animate();
+			}, this);
+		};
+		this.initCB = function() {
 			THREE.ImageUtils.crossOrigin = '';
 			thisViewer = this;
 			this.model = new $.Cmdbuild.g3d.Model();
@@ -142,7 +150,10 @@
 						domainList: params.domainList,
 						levels: params.levels
 					});
-			thisViewer.commandsManager.execute(explode, {});
+			thisViewer.commandsManager.execute(explode, {}, function() {
+				var nodes = $.Cmdbuild.customvariables.model.getNodes();
+				$.Cmdbuild.g3d.Model.removeGraphData(nodes, "exploded_children");
+			}, this);
 		};
 		this.moveEdgeTooltip = function(intersected, node, mouseX, mouseY) {
 			if (!$.Cmdbuild.customvariables.options["edgesTooltip"]) {
@@ -319,10 +330,10 @@
 					return;
 				}
 				offset.copy(intersects[0].point).sub(plane.position);
-				if (!event.ctrlKey) {
+				if (! event.ctrlKey) {
 					thisViewer.clearSelection();
 				}
-				thisViewer.setSelection(SELECTED.elementId);
+				thisViewer.setSelection(SELECTED.elementId, ! event.ctrlKey);
 				canvasDiv.style.cursor = 'move';
 				// ---->>> controls.set( SELECTED.position);
 			}
@@ -496,9 +507,13 @@
 				object.position.set(position.x, position.y, position.z);
 			}
 		};
-		this.setSelection = function(id) {
-			this.selected.select(id);
-			this.showSelected(id);
+		this.setSelection = function(id, select) {
+			if (select || ! this.selected.isSelect(id)) {
+				this.selected.select(id);
+				this.showSelected(id);
+			} else {
+				this.selected.unSelect(id);
+			}
 		};
 		// ZOOM ALL
 		this.boundingBox = function() {
@@ -591,9 +606,6 @@
 				vApp.copy(v);
 				matrixWorld.makeTranslation(0, 0, i * 10);
 				this.projectVector(vApp, projectionMatrix, matrixWorld);
-				console.log(vector.x + " - " + vector.y + " - " + vector.z
-						+ " -- " + vApp.x + " - " + vApp.y + " - " + vApp.z,
-						projectionMatrix, matrixWorld);
 			}
 			camera.matrixWorld.copy(matrixWorld);
 			vector.x = (vector.x * widthHalf) + widthHalf;
@@ -759,8 +771,6 @@
 			renderer.render(scene, camera);
 		};
 		this.init();
-		animate();
-		// statics
 	};
 	$.Cmdbuild.g3d.Viewer = Viewer;
 	function buildAxes(length) {

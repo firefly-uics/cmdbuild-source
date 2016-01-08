@@ -61,15 +61,21 @@
 			this.setCard(card);
 		},
 
+		/**
+		 * @param {Number} entryTypeId
+		 * @param {Object} dc
+		 * @param {String} filter
+		 */
 		setEntryType: function(entryTypeId, dc, filter) {
 			this.entryType = _CMCache.getEntryTypeById(entryTypeId);
 			this.setCard(null);
 			this.callForSubControllers('onEntryTypeSelected', [this.entryType, dc, filter]);
 
-			if (dc != null) {
-				if (dc.activateFirstTab) {
-					this.view.activateFirstTab();
-				}
+			if (
+				!Ext.isEmpty(dc)
+				&& !Ext.isEmpty(dc.activateFirstTab)
+			) {
+				this.view.cardTabPanel.activeTabSet(dc.activateFirstTab);
 			}
 		},
 
@@ -389,25 +395,32 @@
 		 * Forward onAbortCardClick event to email tab controller
 		 */
 		onAbortCardClick: function() {
-			this.controllerTabEmail.onAbortCardClick();
+			if (!Ext.isEmpty(this.controllerTabEmail) && Ext.isFunction(this.controllerTabEmail.onAbortCardClick))
+				this.controllerTabEmail.onAbortCardClick();
 		},
 
 		/**
 		 * Forward onModifyCardClick event to email tab controller
 		 */
 		onModifyCardClick: function() {
-			this.controllerTabEmail.cmfg('onTabEmailModifyCardClick');
+			if (!Ext.isEmpty(this.controllerTabEmail) && Ext.isFunction(this.controllerTabEmail.onModifyCardClick))
+				this.controllerTabEmail.onModifyCardClick();
 		},
 
 		/**
 		 * Forward onSaveCardClick event to email tab controller
 		 */
 		onSaveCardClick: function() {
-			this.controllerTabEmail.onSaveCardClick();
+			if (!Ext.isEmpty(this.controllerTabEmail) && Ext.isFunction(this.controllerTabEmail.onSaveCardClick))
+				this.controllerTabEmail.onSaveCardClick();
 		},
 
 		/**
 		 * Bind the CMCardModuleState
+		 *
+		 * @param {Number} entryTypeId
+		 * @param {Object} dc
+		 * @param {String} filter
 		 *
 		 * @override
 		 */
@@ -418,13 +431,27 @@
 			this.view.mapAddCardButton.updateForEntry(entryType);
 			this.view.updateTitleForEntry(entryType);
 
-			if (!Ext.isEmpty(dc) && dc.activateFirstTab)
-				this.view.activateFirstTab();
+			if (
+				!Ext.isEmpty(dc)
+				&& !Ext.isEmpty(dc.activateFirstTab)
+			) {
+				this.view.cardTabPanel.activeTabSet(dc.activateFirstTab);
+			}
 
 			_CMCardModuleState.setEntryType(entryType, dc, filter);
 			_CMUIState.onlyGridIfFullScreen();
 
 			this.changeClassUIConfigurationForGroup(entryTypeId);
+
+			// History record save
+			CMDBuild.global.navigation.Chronology.cmfg('navigationChronologyRecordSave', {
+				moduleId: 'class',
+				entryType: {
+					description: _CMCardModuleState.entryType.get(CMDBuild.core.constants.Proxy.TEXT),
+					id: _CMCardModuleState.entryType.get(CMDBuild.core.constants.Proxy.ID),
+					object: _CMCardModuleState.entryType
+				}
+			});
 		}
 	});
 

@@ -70,6 +70,11 @@
 							})
 						]
 					})
+				],
+				tools: [
+					Ext.create('CMDBuild.view.common.panel.gridAndForm.tools.Properties', {
+						style: {} // Reset margin setup
+					})
 				]
 			});
 

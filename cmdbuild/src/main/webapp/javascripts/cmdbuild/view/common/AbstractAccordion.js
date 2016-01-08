@@ -96,11 +96,11 @@
 		 */
 		getFirtsSelectableNode: function() {
 			if (!Ext.isEmpty(this.delegate))
-				return this.delegate.cmfg('onAccordionGetFirtsSelectableNode');;
+				return this.delegate.cmfg('onAccordionGetFirtsSelectableNode');
 		},
 
 		/**
-		 * @param {Number} id
+		 * @param {Number or String} id
 		 *
 		 * @returns {CMDBuild.model.common.accordion.Generic}
 		 */
@@ -133,7 +133,9 @@
 		},
 
 		/**
-		 * @param {Number} id
+		 * Expands accordion and select node with given id
+		 *
+		 * @param {Number or String} id
 		 */
 		selectNodeById: function(id) {
 			if (!Ext.isEmpty(this.delegate))
@@ -141,11 +143,11 @@
 		},
 
 		/**
-		 * @param {Number or String} nodeIdToSelect
+		 * @param {Number or String} id
 		 */
-		updateStore: function(nodeIdToSelect) {
+		updateStore: function(id) {
 			if (!Ext.isEmpty(this.delegate))
-				this.delegate.cmfg('onAccordionUpdateStore', nodeIdToSelect);
+				this.delegate.cmfg('onAccordionUpdateStore', id);
 		}
 	});
 

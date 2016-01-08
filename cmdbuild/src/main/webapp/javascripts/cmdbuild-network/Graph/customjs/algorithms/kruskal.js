@@ -10,13 +10,11 @@
 		var selectedEles = selected.getData();
 		this.execute = function() {
 			var nodes = this.model.getNodesFromIdsArray(selectedEles);
-			console.log("Kruskal " + nodes.length + " - " + selectedEles.length);
 			if (nodes.length < 2) {
 				alert("Kruskal works on two or more parameters");
 				return;
 			}
 			var path = this.model.kruskal();
-			console.log("kruskal ", path);
 			selected.erase();
 			for (var i = 0; i < path.length; i++) {
 				if (path[i].group() === 'nodes') {

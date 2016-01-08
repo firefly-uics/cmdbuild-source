@@ -4,7 +4,7 @@
 		extend: 'CMDBuild.core.buttons.Base',
 
 		iconCls: 'import',
-		textDefault: CMDBuild.Translation.common.buttons.importLabel
+		textDefault: CMDBuild.Translation.import
 	});
 
 })();

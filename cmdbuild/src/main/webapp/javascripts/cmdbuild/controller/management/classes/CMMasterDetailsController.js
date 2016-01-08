@@ -223,6 +223,15 @@
 			var w = new CMDBuild.view.management.common.CMAttachmentsWindow();
 			new CMDBuild.controller.management.common.CMAttachmentsWindowController(w,modelToCardInfo(model));
 			w.show();
+		},
+
+		onTabClick: onTabClick,
+
+		/**
+		 * @param {Mixed} tab
+		 */
+		activeTabSet: function(tab) {
+			return this.view.tabs.setActiveTab(tab);
 		}
 	});
 
@@ -302,6 +311,31 @@
 			detail = this.view.details[type][targetPanel.detailId];
 		this.view.addDetailButton.enable();
 		this.currentTab = tab;
+
+		// History record save
+		if (!Ext.isEmpty(_CMCardModuleState.card)) {
+			CMDBuild.global.navigation.Chronology.cmfg('navigationChronologyRecordSave', {
+				moduleId: 'class',
+				entryType: {
+					description: _CMCardModuleState.entryType.get(CMDBuild.core.constants.Proxy.TEXT),
+					id: _CMCardModuleState.entryType.get(CMDBuild.core.constants.Proxy.ID),
+					object: _CMCardModuleState.entryType
+				},
+				item: {
+					description: _CMCardModuleState.card.get('Description') || _CMCardModuleState.card.get('Code'),
+					id: _CMCardModuleState.card.get(CMDBuild.core.constants.Proxy.ID),
+					object: _CMCardModuleState.card
+				},
+				section: {
+					description: this.view.title,
+					object: this.view
+				},
+				subSection: {
+					description: this.currentTab[CMDBuild.core.constants.Proxy.TEXT],
+					object: this.currentTab.targetPanel
+				}
+			});
+		}
 
 		if (type == MD) {
 			selectDetail.call(this, detail);

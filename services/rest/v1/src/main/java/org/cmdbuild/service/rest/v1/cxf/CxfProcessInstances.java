@@ -134,7 +134,7 @@ public class CxfProcessInstances implements ProcessInstances {
 		}
 		// TODO do it better
 		// <<<<<
-		final String regex = "\"attribute\"[\\w]*:[\\w]*\"" + UNDERSCORED_STATUS + "\"";
+		final String regex = "\"attribute\"[\\s]*:[\\s]*\"" + UNDERSCORED_STATUS + "\"";
 		final String replacement = "\"attribute\":\"" + FlowStatus.dbColumnName() + "\"";
 		final String _filter = defaultString(filter).replaceAll(regex, replacement);
 		// <<<<<

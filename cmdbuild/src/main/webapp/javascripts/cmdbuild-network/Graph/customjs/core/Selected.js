@@ -25,14 +25,18 @@
 			return Object.keys(this.selected).length;
 		};
 		this.select = function(nodeId, noRefresh) {
-			this.selected[nodeId] = true;
-			if (! noRefresh) {
-				this.changed({});
+			if (! this.selected[nodeId] === true) {
+				this.selected[nodeId] = true;
+				if (! noRefresh) {
+					this.changed({});
+				}
 			}
 		};
 		this.unSelect = function(nodeId) {
-			delete this.selected[nodeId];
-			this.changed({});
+			if (this.selected[nodeId] === true) {
+				delete this.selected[nodeId];
+				this.changed({});
+			}
 		};
 		this.erase = function() {
 			this.selected = {};
@@ -44,7 +48,11 @@
 			var nodes = this.model.getNodes();
 			for (var i = 0; i < nodes.length; i++) {
 				if ($.Cmdbuild.g3d.Model.getGraphData(nodes[i], "className") == className) {
-					this.selected[nodes[i].id()] = true;
+					if (this.selected[nodes[i].id()] === true && event.ctrlKey) {
+						delete this.selected[nodes[i].id()];
+					} else {
+						this.selected[nodes[i].id()] = true;
+					}
 				}
 			}
 			this.changed({});

@@ -104,6 +104,16 @@
 
 				this.sectionController.cmfg('onReportShow');
 
+				// History record save
+				CMDBuild.global.navigation.Chronology.cmfg('navigationChronologyRecordSave', {
+					moduleId: this.cmName,
+					entryType: {
+						description: this.reportSelectedAccordionGet(CMDBuild.core.constants.Proxy.DESCRIPTION),
+						id: this.reportSelectedAccordionGet(CMDBuild.core.constants.Proxy.ID),
+						object: this.reportSelectedAccordionGet()
+					}
+				});
+
 				this.callParent(arguments);
 			}
 		}

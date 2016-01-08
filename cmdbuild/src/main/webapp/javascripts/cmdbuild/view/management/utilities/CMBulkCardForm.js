@@ -21,7 +21,7 @@ Ext.define("CMDBuild.view.management.utilities.CMBulkCardFormPanel", {
 		this.removeAll();
 		_CMCache.getAttributeList(classId, Ext.bind(fillForm, this));
 	},
-	
+
 	getCheckedValues: function() {
 		var out = {};
 		this.items.each(function(item) {

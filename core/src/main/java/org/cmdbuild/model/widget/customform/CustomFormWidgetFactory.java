@@ -32,6 +32,7 @@ public class CustomFormWidgetFactory extends ValuePairWidgetFactory {
 			CLONE_DISABLED = "CloneDisabled", //
 			DATA_TYPE = "DataType", //
 			DELETE_DISABLED = "DeleteDisabled", //
+			EXPORT_DISABLED = "ExportDisabled", //
 			FORM_MODEL = "FormModel", //
 			FUNCTION_ATTRIBUTES = "FunctionAttributes", //
 			FUNCTION_DATA = "FunctionData", //
@@ -43,18 +44,23 @@ public class CustomFormWidgetFactory extends ValuePairWidgetFactory {
 			MODIFY_DISABLED = "ModifyDisabled", //
 			RAW_DATA = "RawData", //
 			READ_ONLY = "ReadOnly", //
+			REFRESH_BEHAVIOUR = "RefreshBehaviour", //
 			REQUIRED = "Required", //
 			ROWS_SEPARATOR = "RowsSeparator", //
 			SERIALIZATION_TYPE = "SerializationType", //
 			TEMPLATE_RESOLVER = "TemplateResolver" // TODO use meaningful name
 			;
 
-	private static final String[] KNOWN_PARAMETERS = { BUTTON_LABEL, REQUIRED, //
-			MODEL_TYPE, FORM_MODEL, CLASS_MODEL, CLASS_ATTRIBUTES, FUNCTION_MODEL, FUNCTION_ATTRIBUTES, //
-			DATA_TYPE, RAW_DATA, FUNCTION_DATA, //
+	private static final String[] KNOWN_PARAMETERS = { BUTTON_LABEL,
+			REQUIRED, //
+			MODEL_TYPE, FORM_MODEL, CLASS_MODEL, CLASS_ATTRIBUTES, FUNCTION_MODEL,
+			FUNCTION_ATTRIBUTES, //
+			DATA_TYPE, RAW_DATA,
+			FUNCTION_DATA, //
 			TEMPLATE_RESOLVER, //
 			LAYOUT, //
-			READ_ONLY, ADD_DISABLED, DELETE_DISABLED, IMPORT_DISABLED, MODIFY_DISABLED, CLONE_DISABLED, //
+			READ_ONLY, ADD_DISABLED, DELETE_DISABLED, EXPORT_DISABLED, IMPORT_DISABLED, MODIFY_DISABLED,
+			CLONE_DISABLED, REFRESH_BEHAVIOUR, //
 			SERIALIZATION_TYPE, KEY_VALUE_SEPARATOR, ATTRIBUTES_SEPARATOR, ROWS_SEPARATOR //
 	};
 
@@ -191,9 +197,11 @@ public class CustomFormWidgetFactory extends ValuePairWidgetFactory {
 		output.setReadOnly(readBooleanFalseIfMissing(definition.get(READ_ONLY)));
 		output.setAddDisabled(readBooleanFalseIfMissing(definition.get(ADD_DISABLED)));
 		output.setDeleteDisabled(readBooleanFalseIfMissing(definition.get(DELETE_DISABLED)));
+		output.setExportDisabled(readBooleanFalseIfMissing(definition.get(EXPORT_DISABLED)));
 		output.setImportDisabled(readBooleanFalseIfMissing(definition.get(IMPORT_DISABLED)));
 		output.setModifyDisabled(readBooleanFalseIfMissing(definition.get(MODIFY_DISABLED)));
 		output.setCloneDisabled(readBooleanFalseIfMissing(definition.get(CLONE_DISABLED)));
+		output.setRefreshBehaviour(String.class.cast(definition.get(REFRESH_BEHAVIOUR)));
 		return output;
 	}
 

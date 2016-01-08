@@ -91,24 +91,26 @@
 		 * @param {Ext.data.Model} card
 		 */
 		onCardSelected: function(card) {
-			this.card = card;
+			if (!Ext.isEmpty(card)) {
+				this.card = card;
 
-			this.cmfg('tabEmailConfigurationSet', {
-				propertyName: CMDBuild.core.constants.Proxy.READ_ONLY,
-				value: false
-			});
+				this.cmfg('tabEmailConfigurationSet', {
+					propertyName: CMDBuild.core.constants.Proxy.READ_ONLY,
+					value: false
+				});
 
-			this.cmfg('tabEmailEditModeSet', false);
+				this.cmfg('tabEmailEditModeSet', false);
 
-			this.cmfg('tabEmailSelectedEntitySet', {
-				selectedEntity: this.card,
-				scope: this,
-				callbackFunction: function(options, success, response) {
-					this.cmfg('tabEmailRegenerateAllEmailsSet', Ext.isEmpty(this.card));
-					this.forceRegenerationSet(Ext.isEmpty(this.card));
-					this.cmfg('onTabEmailPanelShow');
-				}
-			});
+				this.cmfg('tabEmailSelectedEntitySet', {
+					selectedEntity: this.card,
+					scope: this,
+					callbackFunction: function(options, success, response) {
+						this.cmfg('tabEmailRegenerateAllEmailsSet', Ext.isEmpty(this.card));
+						this.forceRegenerationSet(Ext.isEmpty(this.card));
+						this.cmfg('onTabEmailPanelShow');
+					}
+				});
+			}
 		},
 
 		onCloneCard: function() {
@@ -183,6 +185,34 @@
 				this.cmfg('tabEmailRegenerateAllEmailsSet', true);
 				this.cmfg('onTabEmailPanelShow');
 			}
+		},
+
+		/**
+		 * @override
+		 */
+		onTabEmailPanelShow: function() {
+			if (this.view.isVisible()) {
+				// History record save
+				CMDBuild.global.navigation.Chronology.cmfg('navigationChronologyRecordSave', {
+					moduleId: 'class',
+					entryType: {
+						description: _CMCardModuleState.entryType.get(CMDBuild.core.constants.Proxy.TEXT),
+						id: _CMCardModuleState.entryType.get(CMDBuild.core.constants.Proxy.ID),
+						object: _CMCardModuleState.entryType
+					},
+					item: {
+						description: _CMCardModuleState.card.get('Description') || _CMCardModuleState.card.get('Code'),
+						id: _CMCardModuleState.card.get(CMDBuild.core.constants.Proxy.ID),
+						object: _CMCardModuleState.card
+					},
+					section: {
+						description: this.view.title,
+						object: this.view
+					}
+				});
+			}
+
+			this.callParent(arguments);
 		}
 	});
 

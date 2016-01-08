@@ -81,7 +81,7 @@
 								}
 							}),
 							Ext.create('CMDBuild.core.buttons.iconized.Delete', {
-								text: CMDBuild.Translation.deleteDomain,
+								text: CMDBuild.Translation.removeDomain,
 								scope: this,
 
 								handler: function(button, e) {

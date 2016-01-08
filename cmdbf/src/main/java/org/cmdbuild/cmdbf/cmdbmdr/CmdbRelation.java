@@ -16,7 +16,7 @@ public class CmdbRelation extends ForwardingEntry implements CMRelation {
 		this.card1ClassName = card1ClassName;
 		this.card2ClassName = card2ClassName;
 	}
-	
+
 	@Override
 	protected CMEntry delegate() {
 		return delegate;

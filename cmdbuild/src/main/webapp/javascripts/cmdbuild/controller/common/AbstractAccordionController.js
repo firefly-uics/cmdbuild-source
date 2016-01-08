@@ -101,8 +101,9 @@
 		},
 
 		onAccordionDeselect: function() {
-			this.cmfg('onAccordionSelectionChange');
 			this.view.getSelectionModel().deselectAll();
+
+			this.cmfg('onAccordionSelectionChange');
 		},
 
 		onAccordionExpand: function() {
@@ -203,18 +204,20 @@
 		 * @param {Number or String} id
 		 */
 		onAccordionSelectNodeById: function(id) {
-			var node = this.cmfg('onAccordionGetNodeById', id);
+			if (!Ext.isEmpty(id)) {
+				var node = this.cmfg('onAccordionGetNodeById', id);
 
-			if (!Ext.isEmpty(node)) {
-				// Expand fail if the accordion is not visible. I can't know when accordion's parent will be visible, so skip only the expand to avoid to fail
-				if (this.view.isVisible(true))
-					node.bubble(function() {
-						this.expand();
-					});
+				if (!Ext.isEmpty(node)) {
+					// Expand fail if the accordion is not visible. I can't know when accordion's parent will be visible, so skip only the expand to avoid to fail
+					if (this.view.isVisible(true))
+						node.bubble(function() {
+							this.expand();
+						});
 
-				this.view.getSelectionModel().select(node);
-			} else {
-				_warning('cannot find node with id "' + id + '"', this);
+					this.view.getSelectionModel().select(node);
+				} else {
+					_warning('cannot find node with id "' + id + '"', this);
+				}
 			}
 		},
 
@@ -223,7 +226,7 @@
 		 */
 		onAccordionUpdateStore: function(nodeIdToSelect) {
 			if (!Ext.isEmpty(nodeIdToSelect))
-				this.cmfg('onAccordionSelectNodeById', this.cmfg('accordionBuildId', nodeIdToSelect));
+				this.cmfg('onAccordionSelectNodeById', nodeIdToSelect);
 
 			// Select first selectable item if no selection and expanded
 			if (!this.view.getSelectionModel().hasSelection() && this.view.getCollapsed() === false)
