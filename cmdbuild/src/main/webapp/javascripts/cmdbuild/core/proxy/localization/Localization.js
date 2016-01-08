@@ -56,13 +56,13 @@
 				fields: [CMDBuild.core.constants.Proxy.DESCRIPTION, CMDBuild.core.constants.Proxy.NAME],
 				data: [
 					['@@ All', CMDBuild.core.constants.Proxy.ALL],
-					['@@ Class', CMDBuild.core.constants.Proxy.CLASS],
+					['@@ Classes', CMDBuild.core.constants.Proxy.CLASS],
 					['@@ Processes', CMDBuild.core.constants.Proxy.PROCESS],
 					['@@ Domains', CMDBuild.core.constants.Proxy.DOMAIN],
 					['@@ Views', CMDBuild.core.constants.Proxy.VIEW],
 					['@@ Search filters', CMDBuild.core.constants.Proxy.FILTER],
-					['@@ Lookup', CMDBuild.core.constants.Proxy.LOOKUP],
-					['@@ Reports', CMDBuild.core.constants.Proxy.REPORT],
+					['@@ Lookup types', CMDBuild.core.constants.Proxy.LOOKUP],
+					['@@ Report', CMDBuild.core.constants.Proxy.REPORT],
 					['@@ Menu', CMDBuild.core.constants.Proxy.MENU]
 				]
 			});
