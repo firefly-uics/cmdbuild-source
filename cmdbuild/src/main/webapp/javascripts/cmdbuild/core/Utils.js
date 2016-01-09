@@ -8,11 +8,35 @@
 		singleton: true,
 
 		/**
+		 * Decode variable as boolean ("true", "on", "false", "off") case unsensitive
+		 *
+		 * @param {Mixed} variable
+		 *
+		 * @returns {Boolean}
+		 */
+		decodeAsBoolean: function(variable) {
+			if (!Ext.isEmpty(variable)) {
+				switch (Ext.typeOf(variable)) {
+					case 'boolean':
+						return variable;
+
+					case 'number':
+						return variable != 0;
+
+					case 'string':
+						return variable.toLowerCase() == 'true' || variable.toLowerCase() == 'on';
+				}
+			}
+
+			return false;
+		},
+
+		/**
 		 * Clones a ExtJs store
 		 *
 		 * @param {Ext.data.Store} sourceStore
 		 *
-		 * @return {Ext.data.Store} clonedStore
+		 * @returns {Ext.data.Store} clonedStore
 		 */
 		deepCloneStore: function(sourceStore) {
 			var clonedStore = Ext.create('Ext.data.Store', {
@@ -32,7 +56,7 @@
 		/**
 		 * @param {CMDBuild.cache.CMEntryTypeModel} entryTypeId
 		 *
-		 * @return {Array} out
+		 * @returns {Array} out
 		 *
 		 * TODO: parseInt will be useless when model will be refactored
 		 */
@@ -75,7 +99,7 @@
 		 * 			{Boolean} release
 		 * 		}
 		 *
-		 * @return {String}
+		 * @returns {String}
 		 */
 		getExtJsVersion: function(format) {
 			format = format || {};
@@ -101,23 +125,6 @@
 				outputArray.push(extjsVersion.getRelease());
 
 			return outputArray.join(format.separator);
-		},
-
-		/**
-		 * Default pageSize value is set as 20
-		 *
-		 * @return {Int} pageSize
-		 */
-		getPageSize: function() {
-			var pageSize;
-
-			try {
-				pageSize = parseInt(CMDBuild.Config.cmdbuild.rowlimit);
-			} catch (e) {
-				pageSize = 20;
-			}
-
-			return pageSize;
 		},
 
 		/**
@@ -160,11 +167,56 @@
 		 *
 		 * @param {String} inputString
 		 *
-		 * @return {Boolean}
+		 * @returns {Boolean}
 		 */
 		hasHtmlTags: function(inputString) {
 			if (typeof inputString == 'string')
 				return /<[a-z][\s\S]*>/i.test(inputString);
+
+			return false;
+		},
+
+		/**
+		 * Evaluates is a string is JSON formatted or not.
+		 *
+		 * @param {String} string
+		 *
+		 * @returns {Boolean}
+		 */
+		isJsonString: function(string) {
+			if (Ext.isString(string))
+				return !(/[^,:{}\[\]0-9.\-+Eaeflnr-u \n\r\t]/.test(string.replace(/"(\\.|[^"\\])*"/g, ''))) && eval('(' + string + ')')
+
+			return false;
+		},
+
+		/**
+		 * @param {Object} object
+		 *
+		 * @returns {Boolean}
+		 */
+		isObjectEmpty: function(object) {
+			if (Ext.isObject(object)) {
+				var isEmpty = true;
+
+				Ext.Object.each(object, function(key, value, myself) {
+					if (Ext.isObject(value)) {
+						if (!Ext.Object.isEmpty(value)) {
+							isEmpty = false;
+
+							return false;
+						}
+					} else {
+						if (!Ext.isEmpty(value)) {
+							isEmpty = false;
+
+							return false;
+						}
+					}
+				}, this);
+
+				return isEmpty;
+			}
 
 			return false;
 		},
@@ -176,6 +228,8 @@
 		 * @param {String} attributeToSort - (Default) description
 		 * @param {String} direction - (Default) ASC
 		 * @param {Boolean} caseSensitive - (Default) true
+		 *
+		 * @returns {Array}
 		 */
 		objectArraySort: function(array, attributeToSort, direction, caseSensitive) {
 			attributeToSort = Ext.isString(attributeToSort) ? attributeToSort : CMDBuild.core.constants.Proxy.DESCRIPTION;
@@ -183,7 +237,7 @@
 			caseSensitive = Ext.isBoolean(caseSensitive) ? caseSensitive : false;
 
 			if (Ext.isArray(array)) {
-				Ext.Array.sort(array, function(item1, item2) {
+				return Ext.Array.sort(array, function(item1, item2) {
 					var attribute1 = undefined;
 					var attribute2 = undefined;
 
@@ -219,6 +273,8 @@
 					}
 				});
 			}
+
+			return array;
 		},
 
 		/**
@@ -226,7 +282,7 @@
 		 *
 		 * @param {String} string
 		 *
-		 * @return {String} string
+		 * @returns {String} string
 		 */
 		toTitleCase: function(string) {
 			if (typeof string == 'string')
@@ -362,7 +418,7 @@
 				var table = _CMCache.getEntryTypeById(id);
 
 				if (table) {
-					return table.data.tableType == CMDBuild.Constants.cachedTableType.simpletable;
+					return table.data.tableType == 'simpletable';
 				} else {
 					return false;
 				}
@@ -520,18 +576,6 @@
 			},
 
 			grid: {
-				getPageSize: function getPageSize() {
-					var pageSize;
-
-					try {
-						pageSize = parseInt(CMDBuild.Config.cmdbuild.rowlimit);
-					} catch (e) {
-						pageSize = 20;
-					}
-
-					return pageSize;
-				},
-
 				getPageNumber: function getPageNumber(cardPosition) {
 					var pageSize = parseInt(CMDBuild.Config.cmdbuild.rowlimit);
 					var pageNumber = 1;
@@ -560,12 +604,12 @@
 
 				this.run = function() {
 					if (this.maxTimes == DEFAULT_MAX_TIMES)
-						CMDBuild.LoadMask.get().show();
+						CMDBuild.core.LoadMask.show();
 
 					if (this.maxTimes > 0) {
 						if (this.checkFn.call(this.checkFnScope)) {
 							_debug("End polling with success");
-							CMDBuild.LoadMask.get().hide();
+							CMDBuild.core.LoadMask.hide();
 							this.success.call(this.cbScope);
 						} else {
 							this.maxTimes--;
@@ -573,7 +617,7 @@
 						}
 					} else {
 						_debug("End polling with failure");
-						CMDBuild.LoadMask.get().hide();
+						CMDBuild.core.LoadMask.hide();
 						this.failure.call();
 					}
 				};
@@ -582,30 +626,6 @@
 	})();
 
 	_CMUtils = CMDBuild.Utils;
-
-	Ext.define("CMDBuild.Utils.CMRequestBarrier", {
-		constructor: function(cb) {
-			var me = this;
-
-			this.dangling = 1;
-
-			this.cb = function () {
-				me.dangling--;
-
-				if (me.dangling == 0)
-					cb();
-			};
-		},
-
-		getCallback: function() {
-			this.dangling++;
-			return this.cb;
-		},
-
-		start: function() {
-			this.cb();
-		}
-	});
 
 	CMDBuild.extend = function(subClass, superClass) {
 		var ob = function() {};

@@ -6,12 +6,7 @@
 	ns.CMMainViewportController = function(viewport) {
 		this.viewport = viewport;
 
-		this.accordionControllers = {};
 		this.panelControllers = {};
-
-		this.viewport.foreachAccordion(function (accordion) {
-			buildAccordionController(this, accordion);
-		}, this);
 
 		this.viewport.foreachPanel(function(panel) {
 			buildPanelController(this, panel);
@@ -89,12 +84,15 @@
 	};
 
 	ns.CMMainViewportController.prototype.selectStartingClass = function() {
-		var startingClass = CMDBuild.Runtime.StartingClassId || CMDBuild.Config.cmdbuild.startingclass, // TODO check also the group starting class
-		a = startingClass ? this.getFirstAccordionWithANodeWithGivenId(startingClass) : undefined;
+		var startingClassId = (
+			CMDBuild.configuration.runtime.get(CMDBuild.core.constants.Proxy.STARTING_CLASS_ID) // Group's starting class
+			|| CMDBuild.configuration.instance.get(CMDBuild.core.constants.Proxy.STARTING_CLASS) // Main configuration's starting class
+		);
+		var accordionWithNode = Ext.isEmpty(startingClassId) ? undefined : this.getFirstAccordionWithANodeWithGivenId(startingClassId);
 
-		if (a) {
-			a.expandSilently();
-			a.selectNodeById(startingClass);
+		if (!Ext.isEmpty(accordionWithNode)) {
+			accordionWithNode.expand();
+			accordionWithNode.selectNodeById(startingClassId);
 		} else {
 			this.selectFirstSelectableLeaf();
 		}
@@ -115,75 +113,32 @@
 		}
 	};
 
-	ns.CMMainViewportController.prototype.addAccordion = function(a) {
-		if (a) {
-			if (!Ext.isArray(a)) {
-				a = [a];
-			}
-
-			for (var i=0, l=a.length; i<l; ++i) {
-				var accordion = a[i];
-				if (accordion != null) {
-					this.viewport.addAccordion(accordion);
-					buildAccordionController(this, accordion);
-				}
-			}
-		}
-	};
-
-	ns.CMMainViewportController.prototype.addPanel = function(p) {
-		if (p) {
-			this.viewport.addPanel(p);
-
-			if (!Ext.isArray(p)) {
-				p = [p];
-			}
-
-			for (var i=0, l=p.length; i<l; ++i) {
-				buildPanelController(this, p[i]);
-			}
-		}
-	};
-
-	/*
-	 * p = {
-			Id: the id of the card
-			IdClass: the id of the class which the card belongs,
-			activateFirstTab: true to force the tab panel to return to the first tab
-		}
-	*/
-	ns.CMMainViewportController.prototype.openCard = function(p) {
-		var accordion = this.getFirstAccordionWithANodeWithGivenId(p.IdClass);
-
-		this.setDanglingCard(p);
-
-		if (accordion.collapsed) {
-			// waiting for the rendering for select the node
-			accordion.mon(accordion, "afterlayout", function() {
-				accordion.deselect();
-				accordion.selectNodeById(p.IdClass);
-			}, null, {single: true});
-
-			accordion.expandSilently();
-		} else {
-			accordion.deselect();
-			accordion.selectNodeById(p.IdClass);
-		}
-	};
-
 	/**
-	 * @param {Object} me
-	 * @param {Object} accordion
+	 * @param {Object} parameters
+	 * @param {Boolean or Object} parameters.activateFirstTab - if object selects object as tab otherwise selects first one
+	 * @param {Number} parameters.Id - card id
+	 * @param {Number} parameters.IdClass
 	 */
-	function buildAccordionController(me, accordion) {
-		if (Ext.isFunction(accordion.cmControllerType)) {
-			me.accordionControllers[accordion.cmName] = new accordion.cmControllerType(accordion);
-		} else if (Ext.isString(accordion.cmControllerType)) { // To use Ext.loader to asynchronous load also controllers
-			me.accordionControllers[accordion.cmName] = Ext.create(accordion.cmControllerType, accordion);
+	ns.CMMainViewportController.prototype.openCard = function(parameters) {
+		if (
+			Ext.isObject(parameters) && !Ext.Object.isEmpty(parameters)
+			&& !Ext.isEmpty(parameters['Id'])
+			&& !Ext.isEmpty(parameters['IdClass'])
+		) {
+			parameters.activateFirstTab = Ext.isEmpty(parameters.activateFirstTab) ? true : parameters.activateFirstTab;
+
+			var accordion = this.getFirstAccordionWithANodeWithGivenId(parameters['IdClass']);
+
+			this.setDanglingCard(parameters);
+
+			if (!Ext.isEmpty(accordion) && Ext.isFunction(accordion.selectNodeById)) {
+				accordion.deselect(); // Required or selection doesn't work if exists another selection
+				accordion.selectNodeById(parameters['IdClass']);
+			}
 		} else {
-			me.accordionControllers[accordion.cmName] = new ns.accordion.CMBaseAccordionController(accordion);
+			_error('malformed parameters in openCard method', this);
 		}
-	}
+	};
 
 	/**
 	 * @param {Object} me

@@ -4,6 +4,7 @@
 		alternateClassName: 'CMDBuild.ServiceProxy.attributes', // Legacy class name
 
 		requires: [
+			'CMDBuild.core.interfaces.Ajax',
 			'CMDBuild.core.proxy.CMProxy',
 			'CMDBuild.core.proxy.Index'
 		],
@@ -14,7 +15,7 @@
 		 * @param {Object} parameters
 		 */
 		read: function(parameters) {
-			CMDBuild.Ajax.request({
+			CMDBuild.core.interfaces.Ajax.request({
 				method: 'GET',
 				url: CMDBuild.core.proxy.Index.attribute.read,
 				params: parameters.params,

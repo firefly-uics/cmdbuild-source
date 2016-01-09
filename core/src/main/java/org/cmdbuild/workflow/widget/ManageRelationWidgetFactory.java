@@ -46,23 +46,23 @@ public class ManageRelationWidgetFactory extends ValuePairWidgetFactory {
 	}
 
 	@Override
-	protected Widget createWidget(final Map<String, Object> valueMap) {
+	protected Widget createWidget(final WidgetDefinition definition) {
 		final String className;
 		final ManageRelation widget = new ManageRelation();
 
-		widget.setOutputName(readString(valueMap.get(OUTPUT_KEY)));
-		widget.setDomainName(readString(valueMap.get(DOMAIN)));
+		widget.setOutputName(readString(definition.get(OUTPUT_KEY)));
+		widget.setDomainName(readString(definition.get(DOMAIN)));
 
-		if (valueMap.containsKey(OBJ_REF)) {
-			className = configureWidgetFromReference(widget, valueMap);
+		if (definition.containsKey(OBJ_REF)) {
+			className = configureWidgetFromReference(widget, definition);
 		} else {
-			className = configureWidgetFromClassName(widget, valueMap);
+			className = configureWidgetFromClassName(widget, definition);
 		}
-		widget.setRequired(valueMap.containsKey(REQUIRED));
-		setSource(widget, valueMap.get(IS_DIRECT));
-		setEnabledFunctions(widget, readString(valueMap.get(FUNCTIONS)));
+		widget.setRequired(definition.containsKey(REQUIRED));
+		setSource(widget, definition.get(IS_DIRECT));
+		setEnabledFunctions(widget, readString(definition.get(FUNCTIONS)));
 
-		configureWidgetDestinationClassName(widget, readString(valueMap.get(DOMAIN)), className);
+		configureWidgetDestinationClassName(widget, readString(definition.get(DOMAIN)), className);
 
 		return widget;
 	}

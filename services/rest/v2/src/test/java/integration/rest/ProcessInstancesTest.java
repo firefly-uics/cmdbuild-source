@@ -86,6 +86,9 @@ public class ProcessInstancesTest {
 		// given
 		final ResponseSingle<Long> expectedResponse = newResponseSingle(Long.class) //
 				.withElement(123L) //
+				.withMetadata(newMetadata() //
+						// nothing to add, just needed for simplify assertions
+						.build()) //
 				.build();
 		doReturn(expectedResponse) //
 				.when(service).create(anyString(), any(ProcessInstanceAdvanceable.class));
@@ -126,6 +129,9 @@ public class ProcessInstancesTest {
 		// given
 		final ResponseSingle<Long> expectedResponse = newResponseSingle(Long.class) //
 				.withElement(123L) //
+				.withMetadata(newMetadata() //
+						// nothing to add, just needed for simplify assertions
+						.build()) //
 				.build();
 		doReturn(expectedResponse) //
 				.when(service).create(anyString(), any(ProcessInstanceAdvanceable.class));
@@ -168,6 +174,9 @@ public class ProcessInstancesTest {
 		// given
 		final ResponseSingle<Long> expectedResponse = newResponseSingle(Long.class) //
 				.withElement(123L) //
+				.withMetadata(newMetadata() //
+						// nothing to add, just needed for simplify assertions
+						.build()) //
 				.build();
 		doReturn(expectedResponse) //
 				.when(service).create(anyString(), any(ProcessInstanceAdvanceable.class));
@@ -232,9 +241,15 @@ public class ProcessInstancesTest {
 				.build();
 		final ResponseSingle<ProcessInstance> sentResponse = newResponseSingle(ProcessInstance.class) //
 				.withElement(processInstance) //
+				.withMetadata(newMetadata() //
+						// nothing to add, just needed for simplify assertions
+						.build()) //
 				.build();
 		final ResponseSingle<Map<String, Object>> expectedResponse = Models.<Map<String, Object>> newResponseSingle() //
 				.withElement(adapter.marshal(processInstance)) //
+				.withMetadata(newMetadata() //
+						// nothing to add, just needed for simplify assertions
+						.build()) //
 				.build();
 		doReturn(sentResponse) //
 				.when(service).read(anyString(), anyLong());

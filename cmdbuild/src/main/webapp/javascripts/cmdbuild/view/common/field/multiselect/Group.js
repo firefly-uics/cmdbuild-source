@@ -22,10 +22,9 @@
 
 		initComponent: function() {
 			Ext.apply(this, {
+				delegate: Ext.create('CMDBuild.controller.common.field.multiselect.Group', { view: this }),
 				store: CMDBuild.core.proxy.common.field.multiselect.Group.getStore()
 			});
-
-			this.delegate = Ext.create('CMDBuild.controller.common.field.multiselect.Group', { view: this });
 
 			this.callParent(arguments);
 		},

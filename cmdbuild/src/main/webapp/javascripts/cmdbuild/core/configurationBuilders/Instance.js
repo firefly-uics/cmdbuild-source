@@ -4,40 +4,73 @@
 
 		requires: [
 			'CMDBuild.core.constants.Proxy',
-			'CMDBuild.core.proxy.Configuration'
+			'CMDBuild.core.proxy.configuration.GeneralOptions'
 		],
 
-		constructor: function() {
-			if (
-				!Ext.isEmpty(CMDBuild)
-				&& !Ext.isEmpty(CMDBuild.configuration)
-			) {
-				CMDBuild.configuration[CMDBuild.core.constants.Proxy.INSTANCE] = Ext.create('CMDBuild.model.configuration.Instance'); // Instance configuration object
+		/**
+		 * @cfg {Function}
+		 */
+		callback: Ext.emptyFn,
 
-				var configurationObject = CMDBuild.configuration[CMDBuild.core.constants.Proxy.INSTANCE]; // Shorthand
+		/**
+		 * Enable or disable server calls (set as false within contexts where server calls aren't enabled)
+		 *
+		 * @cfg {Boolean}
+		 */
+		fullInit: true,
 
-				CMDBuild.core.proxy.Configuration.readMainConfiguration({
-					scope: this,
-					success: function(result, options, decodedResult) {
-						// TODO: waiting for refactor (server attributes translation)
-						configurationObject.set(CMDBuild.core.constants.Proxy.CARD_GRID_RATIO, decodedResult.data['grid_card_ratio']);
-						configurationObject.set(CMDBuild.core.constants.Proxy.CARD_LOCK_TIMEOUT, decodedResult.data['lockcardtimeout']);
-						configurationObject.set(CMDBuild.core.constants.Proxy.CARD_TABS_POSITION, decodedResult.data['card_tab_position']);
-						configurationObject.set(CMDBuild.core.constants.Proxy.DISPLAY_CARD_LOCKER_NAME, decodedResult.data['lockcarduservisible']);
-						configurationObject.set(CMDBuild.core.constants.Proxy.ENABLE_CARD_LOCK, decodedResult.data['lockcardenabled']);
-						configurationObject.set(CMDBuild.core.constants.Proxy.INSTANCE_NAME, decodedResult.data['instance_name']);
-						configurationObject.set(CMDBuild.core.constants.Proxy.POPUP_HEIGHT_PERCENTAGE, decodedResult.data['popuppercentageheight']);
-						configurationObject.set(CMDBuild.core.constants.Proxy.POPUP_WIDTH_PERCENTAGE, decodedResult.data['popuppercentagewidth']);
-						configurationObject.set(CMDBuild.core.constants.Proxy.REFERENCE_COMBO_STORE_LIMIT, decodedResult.data['referencecombolimit']);
-						configurationObject.set(CMDBuild.core.constants.Proxy.RELATION_LIMIT, decodedResult.data['relationlimit']);
-						configurationObject.set(CMDBuild.core.constants.Proxy.ROW_LIMIT, decodedResult.data['rowlimit']);
-						configurationObject.set(CMDBuild.core.constants.Proxy.SESSION_TIMEOUT, decodedResult.data['session.timeout']);
-						configurationObject.set(CMDBuild.core.constants.Proxy.STARTING_CLASS, decodedResult.data['startingclass']);
-					}
-				});
-			} else {
-				_error('CMDBuild or CMDBuild.configuration objects are empty', this);
+		statics: {
+			/**
+			 * Rebuild configuration object
+			 *
+			 * @param {Object} dataObject
+			 */
+			build: function(dataObject) {
+				if (!Ext.isEmpty(dataObject[CMDBuild.core.constants.Proxy.DATA]))
+					dataObject = dataObject[CMDBuild.core.constants.Proxy.DATA];
+
+				CMDBuild.configuration[CMDBuild.core.constants.Proxy.INSTANCE] = Ext.create('CMDBuild.model.configuration.instance.Instance', dataObject);
+			},
+
+			/**
+			 * Invalidate configuration object
+			 */
+			invalid: function() {
+				if (CMDBuild.core.configurationBuilders.Instance.isValid())
+					delete CMDBuild.configuration[CMDBuild.core.constants.Proxy.INSTANCE];
+			},
+
+			/**
+			 * @returns {Boolean}
+			 */
+			isValid: function() {
+				return !Ext.isEmpty(CMDBuild.configuration[CMDBuild.core.constants.Proxy.INSTANCE]);
 			}
+		},
+
+		/**
+		 * @param {Object} configuration
+		 * @param {Function} configuration.callback
+		 * @param {Boolean} configuration.fullInit
+		 */
+		constructor: function(configuration) {
+			Ext.apply(this, configuration); // Apply configurations
+
+			Ext.ns('CMDBuild.configuration');
+
+			CMDBuild.configuration[CMDBuild.core.constants.Proxy.INSTANCE] = Ext.create('CMDBuild.model.configuration.instance.Instance'); // Instance configuration object
+
+			if (this.fullInit)
+				CMDBuild.core.proxy.configuration.GeneralOptions.read({
+					loadMask: false,
+					scope: this,
+					success: function(response, options, decodedResponse) {
+						decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.DATA];
+
+						CMDBuild.core.configurationBuilders.Instance.build(decodedResponse);
+					},
+					callback: this.callback
+				});
 		}
 	});
 

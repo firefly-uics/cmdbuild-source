@@ -159,6 +159,9 @@ public class ToAttributeDetail implements Function<CMAttribute, Attribute> {
 				.thatIsHidden(HIDDEN.equals(input.getMode()));
 		new ForwardingAttributeTypeVisitor() {
 
+			private static final String CLASS = "class";
+			private static final String PROCESS = "process";
+
 			private final CMAttributeTypeVisitor DELEGATE = NullAttributeTypeVisitor.getInstance();
 
 			private CMAttribute attribute;
@@ -189,7 +192,9 @@ public class ToAttributeDetail implements Function<CMAttribute, Attribute> {
 					errorHandler.classNotFound(className);
 				}
 
-				builder.withTargetClass(found.getName());
+				builder.withTargetClass(found.getName()) //
+						.withTargetType(dataView.getActivityClass().isAncestorOf(found) ? PROCESS : CLASS);
+
 			}
 
 			@Override
@@ -219,6 +224,7 @@ public class ToAttributeDetail implements Function<CMAttribute, Attribute> {
 				}
 
 				builder.withTargetClass(target.getName()) //
+						.withTargetType(dataView.getActivityClass().isAncestorOf(target) ? PROCESS : CLASS) //
 						.withDomainName(domain.getName())
 						.withFilter(newFilter() //
 								.withText(attribute.getFilter()) //

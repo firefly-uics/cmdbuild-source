@@ -2,6 +2,8 @@
 
 	var tr = CMDBuild.Translation.management.modcard;
 
+	Ext.require('CMDBuild.core.constants.Global');
+
 	Ext.define("CMDBuild.controller.management.classes.attachments.CMCardAttachmentsController", {
 		extend: "CMDBuild.controller.management.classes.CMModCardSubController",
 
@@ -82,7 +84,7 @@
 		},
 
 		disableTheTabBeforeCardSelection: function(entryType) {
-			return (entryType && entryType.get("tableType") == CMDBuild.Constants.cachedTableType.simpletable);
+			return (entryType && entryType.get("tableType") == CMDBuild.core.constants.Global.getTableTypeSimpleTable());
 		},
 
 		onAddCardButtonClick: function(classIdOfNewCard) {
@@ -186,7 +188,7 @@
 			}
 
 			if (this.confirmStrategy) {
-				CMDBuild.LoadMask.get().show();
+				CMDBuild.core.LoadMask.show();
 				attachmentWindow.mask();
 				this.confirmStrategy.doRequest(attachmentWindow);
 			}
@@ -237,19 +239,19 @@
 		params[CMDBuild.ServiceProxy.parameter.CLASS_NAME] = _CMCache.getEntryTypeNameById(me.getClassId());
 		params[CMDBuild.ServiceProxy.parameter.CARD_ID] = me.getCardId();
 
-		CMDBuild.LoadMask.get().show();
+		CMDBuild.core.LoadMask.show();
 		CMDBuild.ServiceProxy.attachment.remove({
 			params: params,
 			success: function() {
 				// Defer the call because Alfresco is not responsive
 				Ext.Function.createDelayed(function deferredCall() {
-					CMDBuild.LoadMask.get().hide();
+					CMDBuild.core.LoadMask.hide();
 					me.view.reloadCard();
 				}, CMDBuild.Config.dms.delay, me)();
 			},
 
 			failure: function() {
-				CMDBuild.LoadMask.get().hide();
+				CMDBuild.core.LoadMask.hide();
 			}
 		});
 	}
@@ -289,12 +291,12 @@
 						me.ownerController.view.reloadCard();
 						attachmentWindow.unmask();
 						attachmentWindow.close();
-						CMDBuild.LoadMask.get().hide();
+						CMDBuild.core.LoadMask.hide();
 					}, CMDBuild.Config.dms.delay, this)();
 				},
 				failure: function(form, action) {
 					attachmentWindow.unmask();
-					CMDBuild.LoadMask.get().hide();
+					CMDBuild.core.LoadMask.hide();
 
 					// Workaround to show form submit error
 					if (action && action.result && action.result.errors && action.result.errors.length) {
@@ -339,12 +341,12 @@
 				var reason = error.reason;
 				if (reason) {
 					if (reason == 'AUTH_NOT_LOGGED_IN' || reason == 'AUTH_MULTIPLE_GROUPS') {
-						CMDBuild.app.Login.addAjaxOptions(options);
-						CMDBuild.app.Login.setAuthFieldsEnabled(reason == 'AUTH_NOT_LOGGED_IN');
-						CMDBuild.app.Login.show();
-						return;
+						Ext.create('CMDBuild.controller.common.sessionExpired.SessionExpired', {
+							ajaxParameters: options,
+							passwordFieldEnable: reason == 'AUTH_NOT_LOGGED_IN'
+						});
 					}
-					var translatedErrorString = CMDBuild.Ajax.formatError(reason, error.reasonParameters);
+					var translatedErrorString = CMDBuild.core.interfaces.Ajax.formatMessage(reason, error.reasonParameters);
 					if (translatedErrorString) {
 						errorBody.text = translatedErrorString;
 					}

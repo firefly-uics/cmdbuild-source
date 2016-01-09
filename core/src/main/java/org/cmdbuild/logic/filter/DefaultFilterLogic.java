@@ -162,6 +162,14 @@ public class DefaultFilterLogic implements FilterLogic {
 				return _filter.getConfiguration();
 			}
 
+			@Override
+			public Long getUserId() {
+				/*
+				 * if shared updates the user, else keeps the already stored one
+				 */
+				return isShared() ? _filter.getUserId() : super.getUserId();
+			}
+
 		};
 		store.update(notAllAttributesCanBeUpdated);
 	}

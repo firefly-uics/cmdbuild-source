@@ -32,27 +32,24 @@
 						itemId: CMDBuild.core.constants.Proxy.TOOLBAR_TOP,
 
 						items: [
-							Ext.create('CMDBuild.core.buttons.iconized.add.Add', {
+							this.buttonAdd = Ext.create('CMDBuild.core.buttons.iconized.add.Add', {
 								text: CMDBuild.Translation.composeEmail,
 								scope: this,
 
-								disabled: (
-									this.delegate.cmfg('configurationGet')[CMDBuild.core.constants.Proxy.READ_ONLY]
-									|| !this.delegate.cmfg('editModeGet')
-								),
-
 								handler: function(button, e) {
-									this.delegate.cmfg('onGridAddEmailButtonClick');
+									this.delegate.cmfg('onTabEmailGridAddEmailButtonClick');
+								},
+
+								isDisabled: function() {
+									return (
+										this.delegate.cmfg('tabEmailConfigurationGet', CMDBuild.core.constants.Proxy.READ_ONLY)
+										|| !this.delegate.cmfg('tabEmailEditModeGet')
+									);
 								}
 							}),
-							Ext.create('CMDBuild.core.buttons.email.Regenerate', {
+							this.buttonRegenerate = Ext.create('CMDBuild.core.buttons.email.Regenerate', {
 								text: CMDBuild.Translation.regenerateAllEmails,
 								scope: this,
-
-								disabled: (
-									this.delegate.cmfg('configurationGet')[CMDBuild.core.constants.Proxy.READ_ONLY]
-									|| !this.delegate.cmfg('editModeGet')
-								),
 
 								handler: function(button, e) {
 									Ext.Msg.show({ // Ask to the user if is sure to delete all the unsent e-mails before
@@ -60,12 +57,20 @@
 										msg: CMDBuild.Translation.emailRegenerationConfirmPopupText,
 										buttons: Ext.Msg.OKCANCEL,
 										icon: Ext.Msg.WARNING,
+										scope: this,
 
-										fn: function(btn) {
-											if (btn == 'ok')
-												me.delegate.cmfg('onGlobalRegenerationButtonClick');
+										fn: function(buttonId, text, opt) {
+											if (buttonId == 'ok')
+												this.delegate.cmfg('onTabEmailGlobalRegenerationButtonClick');
 										}
 									});
+								},
+
+								isDisabled: function() {
+									return (
+										this.delegate.cmfg('tabEmailConfigurationGet', CMDBuild.core.constants.Proxy.READ_ONLY)
+										|| !this.delegate.cmfg('tabEmailEditModeGet')
+									);
 								}
 							}),
 							Ext.create('CMDBuild.core.buttons.iconized.Reload', {
@@ -74,7 +79,7 @@
 								scope: this,
 
 								handler: function(button, e) {
-									this.delegate.cmfg('storeLoad');
+									this.delegate.cmfg('tabEmailGridStoreLoad');
 								}
 							})
 						]
@@ -130,15 +135,15 @@
 								scope: this,
 
 								handler: function(grid, rowIndex, colIndex, node, e, record, rowNode) {
-									this.delegate.cmfg('onGridRegenerationEmailButtonClick', record);
+									this.delegate.cmfg('onTabEmailGridRegenerationEmailButtonClick', record);
 								},
 
 								isDisabled: function(grid, rowIndex, colIndex, item, record) {
 									return (
-										this.delegate.cmfg('configurationGet')[CMDBuild.core.constants.Proxy.READ_ONLY]
-										|| !this.delegate.cmfg('editModeGet')
-										|| !this.delegate.recordIsEditable(record)
-										|| !this.delegate.isRegenerable(record)
+										this.delegate.cmfg('tabEmailConfigurationGet', CMDBuild.core.constants.Proxy.READ_ONLY)
+										|| !this.delegate.cmfg('tabEmailEditModeGet')
+										|| !this.delegate.cmfg('tabEmailGridRecordIsRegenerable', record)
+										|| !this.delegate.cmfg('tabEmailGridRecordIsEditable', record)
 										|| !record.get(CMDBuild.core.constants.Proxy.KEEP_SYNCHRONIZATION)
 									);
 								}
@@ -149,14 +154,14 @@
 								scope: this,
 
 								handler: function(grid, rowIndex, colIndex, node, e, record, rowNode) {
-									this.delegate.cmfg('onGridReplyEmailButtonClick', record);
+									this.delegate.cmfg('onTabEmailGridReplyEmailButtonClick', record);
 								},
 
 								isDisabled: function(grid, rowIndex, colIndex, item, record) {
 									return (
-										this.delegate.cmfg('configurationGet')[CMDBuild.core.constants.Proxy.READ_ONLY]
-										|| !this.delegate.cmfg('editModeGet')
-										|| this.delegate.recordIsEditable(record)
+										this.delegate.cmfg('tabEmailConfigurationGet', CMDBuild.core.constants.Proxy.READ_ONLY)
+										|| !this.delegate.cmfg('tabEmailEditModeGet')
+										|| this.delegate.cmfg('tabEmailGridRecordIsEditable', record)
 									);
 								}
 							}),
@@ -166,14 +171,14 @@
 								scope: this,
 
 								handler: function(grid, rowIndex, colIndex, node, e, record, rowNode) {
-									this.delegate.cmfg('onGridSendEmailButtonClick', record);
+									this.delegate.cmfg('onTabEmailGridSendEmailButtonClick', record);
 								},
 
 								isDisabled: function(grid, rowIndex, colIndex, item, record) {
 									return (
-										this.delegate.cmfg('configurationGet')[CMDBuild.core.constants.Proxy.READ_ONLY]
-										|| !this.delegate.cmfg('editModeGet')
-										|| !this.delegate.recordIsSendable(record)
+										this.delegate.cmfg('tabEmailConfigurationGet', CMDBuild.core.constants.Proxy.READ_ONLY)
+										|| !this.delegate.cmfg('tabEmailEditModeGet')
+										|| !this.delegate.cmfg('tabEmailGridRecordIsSendable', record)
 									);
 								}
 							}),
@@ -183,14 +188,14 @@
 								scope: this,
 
 								handler: function(grid, rowIndex, colIndex, node, e, record, rowNode) {
-									this.delegate.cmfg('onGridEditEmailButtonClick', record);
+									this.delegate.cmfg('onTabEmailGridEditEmailButtonClick', record);
 								},
 
 								isDisabled: function(grid, rowIndex, colIndex, item, record) {
 									return (
-										this.delegate.cmfg('configurationGet')[CMDBuild.core.constants.Proxy.READ_ONLY]
-										|| !this.delegate.cmfg('editModeGet')
-										|| !this.delegate.recordIsEditable(record)
+										this.delegate.cmfg('tabEmailConfigurationGet', CMDBuild.core.constants.Proxy.READ_ONLY)
+										|| !this.delegate.cmfg('tabEmailEditModeGet')
+										|| !this.delegate.cmfg('tabEmailGridRecordIsEditable', record)
 									);
 								}
 							}),
@@ -200,7 +205,7 @@
 								scope: this,
 
 								handler: function(grid, rowIndex, colIndex, node, e, record, rowNode) {
-									this.delegate.cmfg('onGridViewEmailButtonClick', record);
+									this.delegate.cmfg('onTabEmailGridViewEmailButtonClick', record);
 								}
 							}),
 							Ext.create('CMDBuild.core.buttons.email.Delete', {
@@ -209,14 +214,14 @@
 								scope: this,
 
 								handler: function(grid, rowIndex, colIndex, node, e, record, rowNode) {
-									this.delegate.cmfg('onGridDeleteEmailButtonClick', record);
+									this.delegate.cmfg('onTabEmailGridDeleteEmailButtonClick', record);
 								},
 
 								isDisabled: function(grid, rowIndex, colIndex, item, record) {
 									return (
-										this.delegate.cmfg('configurationGet')[CMDBuild.core.constants.Proxy.READ_ONLY]
-										|| !this.delegate.cmfg('editModeGet')
-										|| !this.delegate.recordIsEditable(record)
+										this.delegate.cmfg('tabEmailConfigurationGet', CMDBuild.core.constants.Proxy.READ_ONLY)
+										|| !this.delegate.cmfg('tabEmailEditModeGet')
+										|| !this.delegate.cmfg('tabEmailGridRecordIsEditable', record)
 									);
 								}
 							})
@@ -246,7 +251,7 @@
 
 		listeners: {
 			itemdblclick: function(grid, record, item, index, e, eOpts) {
-				this.delegate.cmfg('onGridItemDoubleClick', record);
+				this.delegate.cmfg('onTabEmailGridItemDoubleClick', record);
 			}
 		}
 	});

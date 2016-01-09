@@ -1,5 +1,7 @@
 package org.cmdbuild.report;
 
+import static org.cmdbuild.dao.query.clause.alias.Aliases.canonical;
+
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.LinkedList;
@@ -29,6 +31,7 @@ import org.cmdbuild.logic.data.access.DataAccessLogic;
 import org.cmdbuild.model.data.Card;
 import org.cmdbuild.report.ReportFactoryTemplateDetailSubreport.SubreportType;
 import org.cmdbuild.report.query.CardReportQuery;
+import org.cmdbuild.services.FilesStore;
 import org.cmdbuild.services.localization.Localization;
 
 public class ReportFactoryTemplateDetail extends ReportFactoryTemplate {
@@ -51,11 +54,12 @@ public class ReportFactoryTemplateDetail extends ReportFactoryTemplate {
 			final Long cardId, //
 			final ReportExtension reportExtension, //
 			final CMDataView dataView, //
+			final FilesStore filesStore, //
 			final DataAccessLogic dataAccessLogic, //
 			final Localization localization, //
 			final CmdbuildConfiguration configuration //
 	) throws JRException {
-		super(dataSource, configuration, dataView);
+		super(dataSource, configuration, dataView, filesStore);
 		this.reportExtension = reportExtension;
 		this.localization = localization;
 		this.configuration = configuration;
@@ -68,7 +72,7 @@ public class ReportFactoryTemplateDetail extends ReportFactoryTemplate {
 
 		// initialize design with the query
 		final String query = new CardReportQuery(card, dataView).toString();
-		Log.REPORT.debug(String.format("Card Report Query: %s", query));
+		logger.debug(String.format("Card Report Query: %s", query));
 
 		initDesign(query);
 	}
@@ -88,7 +92,7 @@ public class ReportFactoryTemplateDetail extends ReportFactoryTemplate {
 		final String tableName = table.getIdentifier().getLocalName();
 		jasperDesign.setName(tableName);
 		setQuery(query);
-		setFields(table.getActiveAttributes());
+		setFields(table.getActiveAttributes(), canonical(table));
 
 		// set detail band
 		setDetail();
@@ -116,6 +120,7 @@ public class ReportFactoryTemplateDetail extends ReportFactoryTemplate {
 				card.getType(), //
 				card, //
 				dataView, //
+				filesStore, //
 				localization, //
 				configuration);
 		final JasperReport compiledSubreport = rftds.compileReport();

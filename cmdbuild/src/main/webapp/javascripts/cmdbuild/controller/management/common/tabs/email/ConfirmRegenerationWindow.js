@@ -1,10 +1,11 @@
 (function () {
 
 	Ext.define('CMDBuild.controller.management.common.tabs.email.ConfirmRegenerationWindow', {
-		extend: 'CMDBuild.controller.common.AbstractController',
+		extend: 'CMDBuild.controller.common.abstract.Base',
 
 		requires: [
 			'CMDBuild.controller.management.common.tabs.email.Email',
+			'CMDBuild.core.LoadMask',
 			'CMDBuild.core.constants.Proxy'
 		],
 
@@ -94,7 +95,7 @@
 		 * Regenerates only selected records
 		 */
 		onConfirmRegenerationWindowConfirmButtonClick: function() {
-			this.cmfg('regenerateSelectedEmails', this.view.grid.getSelectionModel().getSelection());
+			this.cmfg('tabEmailRegenerateSelectedEmails', this.view.grid.getSelectionModel().getSelection());
 
 			this.view.hide();
 		},
@@ -116,7 +117,7 @@
 			var conditionEvalTrafficLightArray = [];
 
 			if (Ext.isArray(templatesToAdd) && !Ext.isEmpty(templatesToAdd)) {
-				CMDBuild.LoadMask.get().show();
+				CMDBuild.core.LoadMask.show();
 				Ext.Array.forEach(templatesToAdd, function(template, i, allTemplates) {
 
 					if (!Ext.Object.isEmpty(template)) {
@@ -134,7 +135,7 @@
 							attributes: Ext.Object.getKeys(xaVars),
 							callback: function(values, ctx) {
 								emailObject = Ext.create('CMDBuild.model.common.tabs.email.Email', values);
-								emailObject.set(CMDBuild.core.constants.Proxy.REFERENCE, me.cmfg('selectedEntityIdGet'));
+								emailObject.set(CMDBuild.core.constants.Proxy.REFERENCE, me.cmfg('tabEmailSelectedEntityGet', CMDBuild.core.constants.Proxy.ID));
 								emailObject.set(CMDBuild.core.constants.Proxy.TEMPLATE, template.get(CMDBuild.core.constants.Proxy.KEY));
 
 								me.gridStore.add(emailObject);
@@ -143,7 +144,7 @@
 									CMDBuild.controller.management.common.tabs.email.Email.trafficLightArrayCheck(template, conditionEvalTrafficLightArray)
 									|| Ext.isEmpty(conditionEvalTrafficLightArray)
 								) {
-									CMDBuild.LoadMask.get().hide();
+									CMDBuild.core.LoadMask.hide();
 									me.show();
 								}
 							}

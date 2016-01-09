@@ -62,6 +62,7 @@ import org.cmdbuild.logic.report.StringExtensionConverter;
 import org.cmdbuild.logic.workflow.WorkflowLogic;
 import org.cmdbuild.model.data.Card;
 import org.cmdbuild.report.ReportFactory;
+import org.cmdbuild.services.FilesStore;
 import org.cmdbuild.services.auth.PrivilegeManager.PrivilegeType;
 import org.cmdbuild.services.meta.MetadataService;
 import org.cmdbuild.services.meta.MetadataStoreFactory;
@@ -156,6 +157,7 @@ public class DataAccessLogicHelper implements SoapLogicHelper {
 	};
 
 	private final CMDataView dataView;
+	private final FilesStore filesStore;
 	private final DataAccessLogic dataAccessLogic;
 	private final WorkflowLogic workflowLogic;
 	private final OperationUser operationUser;
@@ -172,6 +174,7 @@ public class DataAccessLogicHelper implements SoapLogicHelper {
 
 	public DataAccessLogicHelper( //
 			final CMDataView dataView, //
+			final FilesStore filesStore, //
 			final DataAccessLogic datAccessLogic, //
 			final WorkflowLogic workflowLogic, //
 			final OperationUser operationUser, //
@@ -183,6 +186,7 @@ public class DataAccessLogicHelper implements SoapLogicHelper {
 			final ReportLogic reportLogic //
 	) {
 		this.dataView = dataView;
+		this.filesStore = filesStore;
 		this.dataAccessLogic = datAccessLogic;
 		this.workflowLogic = workflowLogic;
 		this.operationUser = operationUser;
@@ -527,7 +531,7 @@ public class DataAccessLogicHelper implements SoapLogicHelper {
 			UserActivityInstance activityInstance = null;
 			try {
 				activityInstance = workflowLogicHelper.selectActivityInstanceFor(processInstance);
-			} catch (final CMWorkflowException e) {
+			} catch (final Exception e) {
 				activityInstance = null;
 			}
 			addActivityExtras(activityInstance, cardExt);
@@ -827,7 +831,7 @@ public class DataAccessLogicHelper implements SoapLogicHelper {
 		try {
 			final BuiltInReport builtInReport = BuiltInReport.from(reportId);
 			final ReportFactory reportFactory = builtInReport //
-					.newBuilder(dataView, authenticationStore, configuration) //
+					.newBuilder(dataView, filesStore, authenticationStore, configuration) //
 					.withExtension(extension) //
 					.withProperties(propertiesFrom(params)) //
 					.withDataSource(dataSource) //

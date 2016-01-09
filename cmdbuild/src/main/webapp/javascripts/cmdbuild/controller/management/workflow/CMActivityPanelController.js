@@ -1,5 +1,7 @@
 (function() {
 
+	Ext.require('CMDBuild.core.constants.Global');
+
 	var ERROR_TEMPLATE = "<p class=\"{0}\">{1}</p>";
 
 	Ext.define("CMDBuild.controller.management.workflow.CMActivityPanelControllerDelegate", {
@@ -68,6 +70,21 @@
 			} else {
 				enableStopButtonIfUserCanUseIt(this, processInstance);
 			}
+
+			// History record save
+			CMDBuild.global.navigation.Chronology.cmfg('navigationChronologyRecordSave', {
+				moduleId: 'workflow',
+				entryType: {
+					description: _CMWFState.getProcessClassRef().get(CMDBuild.core.constants.Proxy.TEXT),
+					id: _CMWFState.getProcessClassRef().get(CMDBuild.core.constants.Proxy.ID),
+					object: _CMWFState.getProcessClassRef()
+				},
+				item: {
+					description: _CMWFState.getProcessInstance().get(CMDBuild.core.constants.Proxy.TEXT),
+					id: _CMWFState.getProcessInstance().get(CMDBuild.core.constants.Proxy.ID),
+					object: _CMWFState.getProcessInstance()
+				}
+			});
 		},
 
 		// wfStateDelegate
@@ -260,7 +277,7 @@
 				if (activityInstance.isNew()
 						|| processInstance.isStateOpen()) {
 
-					attributes = CMDBuild.controller.common.WorkflowStaticsController.filterAttributesInStep(attributes, variables);
+					attributes = CMDBuild.controller.management.workflow.StaticsController.filterAttributesInStep(attributes, variables);
 				} else {
 					// if here, we have a closed process, so show
 					// all the attributes
@@ -290,13 +307,17 @@
 			}
 		},
 
-		// override
+		/**
+		 * @override
+		 */
 		onShowGraphClick: function() {
 			var pi = _CMWFState.getProcessInstance();
-			var classId = pi.getClassId();
-			var cardId = pi.getId();
 
-			CMDBuild.Management.showGraphWindow(classId, cardId);
+			Ext.create('CMDBuild.controller.management.common.graph.Graph', {
+				parentDelegate: this,
+				classId: pi.getClassId(),
+				cardId: pi.getId()
+			});
 		},
 
 		onEditMode: function() {
@@ -325,19 +346,19 @@
 
 		this.clearView();
 
-		CMDBuild.LoadMask.get().show();
+		CMDBuild.core.LoadMask.show();
 		CMDBuild.ServiceProxy.workflow.terminateActivity({
 			params: {
 				classId: processInstance.getClassId(),
 				cardId: processInstance.getId()
 			},
 			success: function(response) {
-				CMDBuild.LoadMask.get().hide();
+				CMDBuild.core.LoadMask.hide();
 
 				me.fireEvent(me.CMEVENTS.cardRemoved);
 			},
 			failure: function() {
-				CMDBuild.LoadMask.get().hide();
+				CMDBuild.core.LoadMask.hide();
 			}
 		});
 	}
@@ -410,13 +431,13 @@
 				requestParams["ww"] = Ext.JSON.encode(this.widgetControllerManager.getData(me.advance));
 				_debug("save the process with params", requestParams);
 
-				CMDBuild.LoadMask.get().show();
+				CMDBuild.core.LoadMask.show();
 				CMDBuild.ServiceProxy.workflow.saveActivity({
 					params: requestParams,
 					scope : this,
 					clientValidation: this.isAdvance, //to force the save request
 					callback: function(operation, success, response) {
-						CMDBuild.LoadMask.get().hide();
+						CMDBuild.core.LoadMask.hide();
 					},
 					failure: function(response, options, decodedResponse) {
 						this.delegate.reload(); // Reload store also on failure
@@ -444,10 +465,10 @@
 
 	function validateForm(me) {
 		var form = me.view.getForm();
-		var invalidAttributes = CMDBuild.controller.common.CardStaticsController.getInvalidAttributeAsHTML(form);
+		var invalidAttributes = CMDBuild.controller.management.workflow.StaticsController.getInvalidAttributeAsHTML(form);
 
 		if (invalidAttributes != null) {
-			var msg = Ext.String.format("<p class=\"{0}\">{1}</p>", CMDBuild.Constants.css.error_msg, CMDBuild.Translation.errors.invalid_attributes);
+			var msg = Ext.String.format("<p class=\"{0}\">{1}</p>", CMDBuild.core.constants.Global.getErrorMsgCss(), CMDBuild.Translation.errors.invalid_attributes);
 			CMDBuild.Msg.error(null, msg + invalidAttributes, false);
 
 			return false;
@@ -463,7 +484,7 @@
 		if (wrongWidgets != null) {
 			valid = false;
 			var msg = Ext.String.format(ERROR_TEMPLATE
-					, CMDBuild.Constants.css.error_msg
+					, CMDBuild.core.constants.Global.getErrorMsgCss()
 					, CMDBuild.Translation.errors.invalid_extended_attributes);
 			CMDBuild.Msg.error(null, msg + wrongWidgets, popup = false);
 		}

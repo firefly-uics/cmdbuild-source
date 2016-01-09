@@ -3,7 +3,7 @@
 	// TODO: fix to use class property requires (unusable at the moment because of class wrong name)
 	Ext.require([
 		'CMDBuild.core.constants.Proxy',
-		'CMDBuild.core.proxy.group.DefaultFilters'
+		'CMDBuild.core.proxy.userAndGroup.group.DefaultFilters'
 	]);
 
 	Ext.define('CMDBuild.controller.management.common.CMModController', {
@@ -20,13 +20,14 @@
 		},
 
 		/**
-		 * @param {CMDBuild.view.common.CMAccordionStoreModel} entryType
+		 * @param {CMDBuild.model.common.accordion.Generic} entryType
 		 */
 		onViewOnFront: function(entryType) {
 			if (entryType) {
+				var idPropertyName = Ext.isEmpty(entryType.get(CMDBuild.core.constants.Proxy.ENTITY_ID)) ? CMDBuild.core.constants.Proxy.ID : CMDBuild.core.constants.Proxy.ENTITY_ID;
 				var dc = _CMMainViewportController.getDanglingCard();
 				var filter = entryType.get(CMDBuild.core.constants.Proxy.FILTER);
-				var newEntryId = entryType.get(CMDBuild.core.constants.Proxy.ID);
+				var newEntryId = entryType.get(idPropertyName);
 
 				// If we haven't a filter try to get default one from server
 				if (Ext.isEmpty(filter)) {
@@ -34,14 +35,15 @@
 					params[CMDBuild.core.constants.Proxy.CLASS_NAME] = entryType.get(CMDBuild.core.constants.Proxy.NAME);
 					params[CMDBuild.core.constants.Proxy.GROUP] = CMDBuild.Runtime.DefaultGroupName;
 
-					CMDBuild.core.proxy.group.DefaultFilters.read({
+					CMDBuild.core.proxy.userAndGroup.group.DefaultFilters.read({
 						params: params,
 						scope: this,
 						success: function(response, options, decodedResponse) {
 							decodedResponse = decodedResponse.response.elements[0];
 
 							if (!Ext.isEmpty(decodedResponse)) {
-								decodedResponse[CMDBuild.core.constants.Proxy.CONFIGURATION] = Ext.decode(decodedResponse[CMDBuild.core.constants.Proxy.CONFIGURATION]);
+								if (Ext.isString(decodedResponse))
+									decodedResponse[CMDBuild.core.constants.Proxy.CONFIGURATION] = Ext.decode(decodedResponse[CMDBuild.core.constants.Proxy.CONFIGURATION]);
 
 								filter = Ext.create('CMDBuild.model.CMFilterModel', decodedResponse);
 							}
@@ -59,15 +61,21 @@
 			this.setCard(card);
 		},
 
+		/**
+		 * @param {Number} entryTypeId
+		 * @param {Object} dc
+		 * @param {String} filter
+		 */
 		setEntryType: function(entryTypeId, dc, filter) {
 			this.entryType = _CMCache.getEntryTypeById(entryTypeId);
 			this.setCard(null);
 			this.callForSubControllers('onEntryTypeSelected', [this.entryType, dc, filter]);
 
-			if (dc != null) {
-				if (dc.activateFirstTab) {
-					this.view.activateFirstTab();
-				}
+			if (
+				!Ext.isEmpty(dc)
+				&& !Ext.isEmpty(dc.activateFirstTab)
+			) {
+				this.view.cardTabPanel.activeTabSet(dc.activateFirstTab);
 			}
 		},
 
@@ -201,6 +209,8 @@
 			buildBimController(this, this.view.getGrid());
 
 			Ext.resumeLayouts();
+
+			this.view.cardTabPanel.setActiveTab(0);
 		},
 
 		buildTabControllerAttachments: function() {
@@ -385,25 +395,32 @@
 		 * Forward onAbortCardClick event to email tab controller
 		 */
 		onAbortCardClick: function() {
-			this.controllerTabEmail.onAbortCardClick();
+			if (!Ext.isEmpty(this.controllerTabEmail) && Ext.isFunction(this.controllerTabEmail.onAbortCardClick))
+				this.controllerTabEmail.onAbortCardClick();
 		},
 
 		/**
 		 * Forward onModifyCardClick event to email tab controller
 		 */
 		onModifyCardClick: function() {
-			this.controllerTabEmail.onModifyCardClick();
+			if (!Ext.isEmpty(this.controllerTabEmail) && Ext.isFunction(this.controllerTabEmail.onModifyCardClick))
+				this.controllerTabEmail.onModifyCardClick();
 		},
 
 		/**
 		 * Forward onSaveCardClick event to email tab controller
 		 */
 		onSaveCardClick: function() {
-			this.controllerTabEmail.onSaveCardClick();
+			if (!Ext.isEmpty(this.controllerTabEmail) && Ext.isFunction(this.controllerTabEmail.onSaveCardClick))
+				this.controllerTabEmail.onSaveCardClick();
 		},
 
 		/**
 		 * Bind the CMCardModuleState
+		 *
+		 * @param {Number} entryTypeId
+		 * @param {Object} dc
+		 * @param {String} filter
 		 *
 		 * @override
 		 */
@@ -414,13 +431,27 @@
 			this.view.mapAddCardButton.updateForEntry(entryType);
 			this.view.updateTitleForEntry(entryType);
 
-			if (!Ext.isEmpty(dc) && dc.activateFirstTab)
-				this.view.activateFirstTab();
+			if (
+				!Ext.isEmpty(dc)
+				&& !Ext.isEmpty(dc.activateFirstTab)
+			) {
+				this.view.cardTabPanel.activeTabSet(dc.activateFirstTab);
+			}
 
 			_CMCardModuleState.setEntryType(entryType, dc, filter);
 			_CMUIState.onlyGridIfFullScreen();
 
 			this.changeClassUIConfigurationForGroup(entryTypeId);
+
+			// History record save
+			CMDBuild.global.navigation.Chronology.cmfg('navigationChronologyRecordSave', {
+				moduleId: 'class',
+				entryType: {
+					description: _CMCardModuleState.entryType.get(CMDBuild.core.constants.Proxy.TEXT),
+					id: _CMCardModuleState.entryType.get(CMDBuild.core.constants.Proxy.ID),
+					object: _CMCardModuleState.entryType
+				}
+			});
 		}
 	});
 

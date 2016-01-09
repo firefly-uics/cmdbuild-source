@@ -3,6 +3,7 @@
 	Ext.define('CMDBuild.core.proxy.domain.Properties', {
 
 		requires: [
+			'CMDBuild.core.constants.Global',
 			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.proxy.Index',
 			'CMDBuild.model.domain.ClassesStore'
@@ -47,7 +48,7 @@
 				},
 				filters: [
 					function(record) { // Filters simple classes
-						return record.get(CMDBuild.core.constants.Proxy.TABLE_TYPE) != CMDBuild.Constants.cachedTableType.simpletable;
+						return record.get(CMDBuild.core.constants.Proxy.TABLE_TYPE) != CMDBuild.core.constants.Global.getTableTypeSimpleTable();
 					}
 				],
 				sorters: [

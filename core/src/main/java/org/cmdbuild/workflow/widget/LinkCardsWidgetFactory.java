@@ -43,24 +43,24 @@ public class LinkCardsWidgetFactory extends ValuePairWidgetFactory {
 	}
 
 	@Override
-	protected Widget createWidget(final Map<String, Object> valueMap) {
+	protected Widget createWidget(final WidgetDefinition definition) {
 		final LinkCards widget = new LinkCards();
 
-		setFilterAndClassName(valueMap, widget);
-		widget.setOutputName(readString(valueMap.get(OUTPUT_KEY)));
-		widget.setDefaultSelection(readString(valueMap.get(DEFAULT_SELECTION)));
-		widget.setReadOnly(valueMap.containsKey(READ_ONLY));
-		widget.setSingleSelect(valueMap.containsKey(SINGLE_SELECT));
-		widget.setAllowCardEditing(valueMap.containsKey(ALLOW_CARD_EDITING));
-		widget.setEnableMap(valueMap.containsKey(WITH_MAP));
-		widget.setMapLatitude(readInteger(valueMap.get(MAP_LATITUDE)));
-		widget.setMapLongitude(readInteger(valueMap.get(MAP_LONGITUDE)));
-		widget.setMapZoom(readInteger(valueMap.get(MAP_ZOOM)));
-		widget.setRequired(valueMap.containsKey(REQUIRED));
-		widget.setMetadata(toMap(readString(valueMap.get(METADATA))));
-		widget.setMetadataOutput(readString(valueMap.get(METADATA_OUTPUT)));
-		widget.setDisableGridFilterToggler(readBooleanFalseIfMissing(valueMap.get(DISABLE_GRID_FILTER_TOGGLER)));
-		widget.setTemplates(extractUnmanagedStringParameters(valueMap, FILTER, CLASS_NAME, DEFAULT_SELECTION,
+		setFilterAndClassName(definition, widget);
+		widget.setOutputName(readString(definition.get(OUTPUT_KEY)));
+		widget.setDefaultSelection(readString(definition.get(DEFAULT_SELECTION)));
+		widget.setReadOnly(definition.containsKey(READ_ONLY));
+		widget.setSingleSelect(definition.containsKey(SINGLE_SELECT));
+		widget.setAllowCardEditing(definition.containsKey(ALLOW_CARD_EDITING));
+		widget.setEnableMap(definition.containsKey(WITH_MAP));
+		widget.setMapLatitude(readInteger(definition.get(MAP_LATITUDE)));
+		widget.setMapLongitude(readInteger(definition.get(MAP_LONGITUDE)));
+		widget.setMapZoom(readInteger(definition.get(MAP_ZOOM)));
+		widget.setRequired(definition.containsKey(REQUIRED));
+		widget.setMetadata(toMap(readString(definition.get(METADATA))));
+		widget.setMetadataOutput(readString(definition.get(METADATA_OUTPUT)));
+		widget.setDisableGridFilterToggler(readBooleanFalseIfMissing(definition.get(DISABLE_GRID_FILTER_TOGGLER)));
+		widget.setTemplates(extractUnmanagedStringParameters(definition, FILTER, CLASS_NAME, DEFAULT_SELECTION,
 				READ_ONLY, SINGLE_SELECT, ALLOW_CARD_EDITING, WITH_MAP, MAP_LATITUDE, MAP_LONGITUDE, MAP_ZOOM,
 				REQUIRED, BUTTON_LABEL, DISABLE_GRID_FILTER_TOGGLER));
 

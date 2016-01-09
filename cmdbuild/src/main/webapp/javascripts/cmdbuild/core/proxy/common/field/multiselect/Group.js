@@ -19,7 +19,7 @@
 				model: 'CMDBuild.model.common.field.multiselect.Group',
 				proxy: {
 					type: 'ajax',
-					url: CMDBuild.core.proxy.Index.group.getGroupList,
+					url: CMDBuild.core.proxy.Index.group.readAll,
 					reader: {
 						type: 'json',
 						root: CMDBuild.core.constants.Proxy.GROUPS
@@ -30,6 +30,11 @@
 						startParam: undefined
 					}
 				},
+				filters: [
+					function(record) { // Filters active groups only
+						return record.get(CMDBuild.core.constants.Proxy.IS_ACTIVE);
+					}
+				],
 				sorters: [
 					{ property: CMDBuild.core.constants.Proxy.DESCRIPTION, direction: 'ASC' }
 				]

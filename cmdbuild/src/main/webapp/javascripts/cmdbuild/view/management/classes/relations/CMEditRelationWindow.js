@@ -1,5 +1,7 @@
 (function() {
 
+	Ext.require('CMDBuild.core.constants.Global');
+
 	var NO_SELECTION = 'No selection';
 	var parameterNames = CMDBuild.ServiceProxy.parameter;
 
@@ -228,7 +230,7 @@
 			attributes[me.relation.slaveSide] = getSelections(me);
 		} catch (e) {
 			if (e == NO_SELECTION) {
-				var msg = Ext.String.format('<p class=\'{0}\'>{1}</p>', CMDBuild.Constants.css.error_msg, CMDBuild.Translation.errors.no_selections);
+				var msg = Ext.String.format('<p class=\'{0}\'>{1}</p>', CMDBuild.core.constants.Global.getErrorMsgCss(), CMDBuild.Translation.errors.no_selections);
 
 				CMDBuild.Msg.error(CMDBuild.Translation.common.failure, msg, false);
 			}
@@ -239,7 +241,7 @@
 		try {
 			attributes = Ext.apply(attributes, getData(me.attributesPanel));
 		} catch (e) {
-			var msg = Ext.String.format('<p class=\'{0}\'>{1}</p>', CMDBuild.Constants.css.error_msg, CMDBuild.Translation.errors.invalid_attributes);
+			var msg = Ext.String.format('<p class=\'{0}\'>{1}</p>', CMDBuild.core.constants.Global.getErrorMsgCss(), CMDBuild.Translation.errors.invalid_attributes);
 
 			CMDBuild.Msg.error(null, msg + e, false);
 

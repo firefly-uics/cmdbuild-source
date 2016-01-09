@@ -21,7 +21,7 @@
 
 		initComponent: function() {
 			Ext.apply(this, {
-				store: CMDBuild.core.proxy.localization.Localization.getLanguagesStore(),
+				store: CMDBuild.core.proxy.localization.Localization.getStoreLanguages(),
 				queryMode: 'local'
 			});
 

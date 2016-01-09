@@ -1,13 +1,20 @@
 (function() {
 
 	Ext.define('CMDBuild.controller.common.entryTypeGrid.printTool.PrintWindow', {
-		extend: 'CMDBuild.controller.common.AbstractController',
+		extend: 'CMDBuild.controller.common.abstract.Base',
 
 		requires: [
 			'CMDBuild.core.constants.Proxy',
+			'CMDBuild.core.interfaces.FormSubmit',
+			'CMDBuild.core.Message',
 			'CMDBuild.core.proxy.Index',
 			'CMDBuild.core.proxy.report.Print'
 		],
+
+		/**
+		 * @cfg {Mixed}
+		 */
+		parentDelegate: undefined,
 
 		/**
 		 * @cfg {Array}
@@ -16,11 +23,6 @@
 			'onPrintWindowDownloadButtonClick',
 			'onPrintWindowShow',
 		],
-
-		/**
-		 * @cfg {Mixed}
-		 */
-		parentDelegate: undefined,
 
 		/**
 		 * @cfg {Array}
@@ -60,22 +62,27 @@
 		/**
 		 * @param {Object} configurationObject
 		 * @param {Mixed} configurationObject.parentDelegate
+		 *
+		 * @override
 		 */
 		constructor: function(configurationObject) {
 			this.callParent(arguments);
 
-			this.view = Ext.create('CMDBuild.view.common.entryTypeGrid.printTool.PrintWindow', {
-				delegate: this
-			});
+			this.view = Ext.create('CMDBuild.view.common.entryTypeGrid.printTool.PrintWindow', { delegate: this });
 
 			if (!Ext.isEmpty(this.view) && Ext.isString(this.format))
 				if (Ext.Array.contains(this.browserManagedFormats, this.format)) { // With browser managed formats show modal pop-up
 					this.view.show();
 				} else { // Otherwise force file download
-					this.createDocument(true);
+					this.forceDownload = true;
+
+					this.createDocument();
 				}
 		},
 
+		/**
+		 * @private
+		 */
 		createDocument: function() {
 			var proxyCreateFunction = null;
 
@@ -86,6 +93,10 @@
 
 				case 'classSchema': {
 					proxyCreateFunction = CMDBuild.core.proxy.report.Print.createClassSchema;
+				} break;
+
+				case 'dataViewSql': {
+					proxyCreateFunction = CMDBuild.core.proxy.report.Print.createDataViewSqlSchema;
 				} break;
 
 				case 'schema': {
@@ -106,7 +117,7 @@
 					params: this.parameters,
 					scope: this,
 					failure: function(response, options, decodedResponse) {
-						CMDBuild.Msg.error(
+						CMDBuild.core.Message.error(
 							CMDBuild.Translation.error,
 							CMDBuild.Translation.errors.createReportFilure,
 							false
@@ -133,25 +144,19 @@
 
 		/**
 		 * Get created report from server and display it in iframe
+		 *
+		 * @private
 		 */
 		showReport: function() {
 			var params = {};
 			params[CMDBuild.core.constants.Proxy.FORCE_DOWNLOAD_PARAM_KEY] = true;
 
 			if (this.forceDownload) { // Force download mode
-				var form = Ext.create('Ext.form.Panel', {
-					standardSubmit: true,
-					url: CMDBuild.core.proxy.Index.reports.printReportFactory
+				CMDBuild.core.interfaces.FormSubmit.submit({
+					buildRuntimeForm: true,
+					params: params,
+					url: CMDBuild.core.proxy.Index.report.printReportFactory
 				});
-
-				form.submit({
-					target: '_blank',
-					params: params
-				});
-
-				Ext.defer(function() { // Form cleanup
-					form.close();
-				}, 100);
 			} else { // Add to view display mode
 				this.view.removeAll();
 
@@ -160,7 +165,7 @@
 
 					autoEl: {
 						tag: 'iframe',
-						src: CMDBuild.core.proxy.Index.reports.printReportFactory
+						src: CMDBuild.core.proxy.Index.report.printReportFactory
 					}
 				});
 			}

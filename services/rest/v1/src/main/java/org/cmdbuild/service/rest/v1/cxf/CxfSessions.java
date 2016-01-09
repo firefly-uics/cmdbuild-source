@@ -7,6 +7,8 @@ import static org.cmdbuild.service.rest.v1.constants.Serialization.GROUP;
 import static org.cmdbuild.service.rest.v1.model.Models.newResponseSingle;
 import static org.cmdbuild.service.rest.v1.model.Models.newSession;
 
+import org.cmdbuild.auth.TokenGenerator;
+import org.cmdbuild.auth.TokenManager;
 import org.cmdbuild.auth.UserStore;
 import org.cmdbuild.auth.acl.CMGroup;
 import org.cmdbuild.auth.acl.NullGroup;
@@ -17,7 +19,6 @@ import org.cmdbuild.logic.auth.LoginDTO;
 import org.cmdbuild.service.rest.v1.Sessions;
 import org.cmdbuild.service.rest.v1.cxf.service.OperationUserStore;
 import org.cmdbuild.service.rest.v1.cxf.service.SessionStore;
-import org.cmdbuild.service.rest.v1.cxf.service.TokenGenerator;
 import org.cmdbuild.service.rest.v1.logging.LoggingSupport;
 import org.cmdbuild.service.rest.v1.model.ResponseSingle;
 import org.cmdbuild.service.rest.v1.model.Session;
@@ -64,15 +65,17 @@ public class CxfSessions implements Sessions, LoggingSupport {
 	private final SessionStore sessionStore;
 	private final LoginHandler loginHandler;
 	private final OperationUserStore operationUserStore;
+	private final TokenManager tokenManager;
 
 	public CxfSessions(final ErrorHandler errorHandler, final TokenGenerator tokenGenerator,
 			final SessionStore sessionStore, final LoginHandler loginHandler,
-			final OperationUserStore operationUserStore) {
+			final OperationUserStore operationUserStore, final TokenManager tokenManager) {
 		this.errorHandler = errorHandler;
 		this.tokenGenerator = tokenGenerator;
 		this.sessionStore = sessionStore;
 		this.loginHandler = loginHandler;
 		this.operationUserStore = operationUserStore;
+		this.tokenManager = tokenManager;
 	}
 
 	@Override
@@ -118,39 +121,57 @@ public class CxfSessions implements Sessions, LoggingSupport {
 
 	@Override
 	public ResponseSingle<Session> update(final String id, final Session session) {
-		final Optional<Session> storedSession = sessionStore.get(id);
-		if (!storedSession.isPresent()) {
-			errorHandler.sessionNotFound(id);
+		final ResponseSingle<Session> output;
+		if (sessionStore.has(id)) {
+			final Optional<Session> storedSession = sessionStore.get(id);
+			final Optional<OperationUser> storedOperationUser = operationUserStore.of(storedSession.get()).get();
+			if (!storedOperationUser.isPresent()) {
+				errorHandler.userNotFound(id);
+			}
+			if (isBlank(session.getRole())) {
+				errorHandler.missingParam(GROUP);
+			}
+
+			final Session sessionWithGroup = newSession(storedSession.get()) //
+					.withRole(session.getRole()) //
+					.build();
+			final OperationUser user = loginHandler.login(LoginDTO.newInstance() //
+					.withLoginString(sessionWithGroup.getUsername()) //
+					.withPassword(sessionWithGroup.getPassword()) //
+					.withGroupName(sessionWithGroup.getRole()) //
+					.withServiceUsersAllowed(true) //
+					.build(), storedOperationUser.get());
+			final CMGroup group = user.getPreferredGroup();
+
+			final Session updatedSession = newSession(sessionWithGroup) //
+					.withRole(group.isActive() ? group.getName() : null) //
+					.build();
+
+			sessionStore.put(updatedSession);
+			operationUserStore.of(updatedSession).main(user);
+
+			output = newResponseSingle(Session.class) //
+					.withElement(noPassword(updatedSession)) //
+					.build();
+		} else {
+			final OperationUser user = tokenManager.getUser(id);
+			if (user == null || user.getAuthenticatedUser().isAnonymous()) {
+				errorHandler.sessionNotFound(id);
+				output = null;
+			} else {
+				final Session _session = newSession(session) //
+						.withId(id) //
+						.withAvailableRoles(user.getAuthenticatedUser().getGroupNames()) //
+						.withRole((user.getPreferredGroup() == null) ? null : user.getPreferredGroup().getName()) //
+						.build();
+				sessionStore.put(_session);
+				operationUserStore.of(_session).main(user);
+				output = newResponseSingle(Session.class) //
+						.withElement(noPassword(_session)) //
+						.build();
+			}
 		}
-		final Optional<OperationUser> storedOperationUser = operationUserStore.of(storedSession.get()).get();
-		if (!storedOperationUser.isPresent()) {
-			errorHandler.userNotFound(id);
-		}
-		if (isBlank(session.getRole())) {
-			errorHandler.missingParam(GROUP);
-		}
-
-		final Session sessionWithGroup = newSession(storedSession.get()) //
-				.withRole(session.getRole()) //
-				.build();
-		final OperationUser user = loginHandler.login(LoginDTO.newInstance() //
-				.withLoginString(sessionWithGroup.getUsername()) //
-				.withPassword(sessionWithGroup.getPassword()) //
-				.withGroupName(sessionWithGroup.getRole()) //
-				.withServiceUsersAllowed(true) //
-				.build(), storedOperationUser.get());
-		final CMGroup group = user.getPreferredGroup();
-
-		final Session updatedSession = newSession(sessionWithGroup) //
-				.withRole(group.isActive() ? group.getName() : null) //
-				.build();
-
-		sessionStore.put(updatedSession);
-		operationUserStore.of(updatedSession).main(user);
-
-		return newResponseSingle(Session.class) //
-				.withElement(noPassword(updatedSession)) //
-				.build();
+		return output;
 	}
 
 	@Override

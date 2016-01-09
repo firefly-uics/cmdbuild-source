@@ -1,7 +1,7 @@
 (function() {
 
 	Ext.define('CMDBuild.controller.administration.domain.Domain', {
-		extend: 'CMDBuild.controller.common.AbstractBasePanelController',
+		extend: 'CMDBuild.controller.common.abstract.BasePanel',
 
 		requires: [
 			'CMDBuild.core.constants.Proxy',
@@ -82,6 +82,8 @@
 		onDomainAddButtonClick: function() {
 			_CMMainViewportController.deselectAccordionByName(this.cmName);
 
+			this.setViewTitle();
+
 			this.controllerAttributes.cmfg('onDomainAddButtonClick');
 			this.controllerEnabledClasses.cmfg('onDomainEnabledClassesAddButtonClick');
 			this.controllerProperties.cmfg('onDomainPropertiesAddButtonClick');
@@ -99,12 +101,13 @@
 
 		onDomainRemoveButtonClick: function() {
 			Ext.Msg.show({
-				title: CMDBuild.Translation.deleteDomain,
+				title: CMDBuild.Translation.removeDomain,
 				msg: CMDBuild.Translation.common.confirmpopup.areyousure,
-				scope: this,
 				buttons: Ext.Msg.YESNO,
-				fn: function(button, e) {
-					if (button == 'yes')
+				scope: this,
+
+				fn: function(buttonId, text, opt) {
+					if (buttonId == 'yes')
 						this.removeItem();
 				}
 			});
@@ -134,18 +137,23 @@
 		},
 
 		/**
-		 * @param {CMDBuild.view.common.CMAccordionStoreModel} parameters
+		 * @param {CMDBuild.model.common.accordion.Generic} parameters
+		 *
+		 * TODO: waiting for refactor (crud)
 		 */
 		onViewOnFront: function(parameters) {
 			if (!Ext.isEmpty(parameters)) {
-				CMDBuild.core.proxy.domain.Domain.readAll({
+				var params = {};
+
+				CMDBuild.core.proxy.domain.Domain.read({
+					params: params,
 					scope: this,
 					success: function(response, options, decodedResponse) {
 						decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.DOMAINS];
 
 						this.domainSelectedDomainSet(
 							Ext.Array.findBy(decodedResponse, function(item, i) {
-								return parameters.get(CMDBuild.core.constants.Proxy.ID) == item[CMDBuild.core.constants.Proxy.ID_DOMAIN];
+								return parameters.get(CMDBuild.core.constants.Proxy.ENTITY_ID) == item[CMDBuild.core.constants.Proxy.ID_DOMAIN];
 							}, this)
 						);
 
@@ -173,6 +181,7 @@
 						this.controllerProperties.getView().form.setDisabledModify(true);
 
 						_CMCache.onDomainDeleted(this.domainSelectedDomainGet(CMDBuild.core.constants.Proxy.ID));
+						_CMMainViewportController.findAccordionByCMName(this.cmName).updateStore();
 					}
 				});
 			}
@@ -183,6 +192,7 @@
 			this.view.tabPanel.getActiveTab().form.setDisabledModify(true);
 
 			_CMCache.onDomainSaved(decodedResponse.domain);
+			_CMMainViewportController.findAccordionByCMName(this.cmName).updateStore(decodedResponse[CMDBuild.core.constants.Proxy.DOMAIN][CMDBuild.core.constants.Proxy.ID_DOMAIN]);
 
 			CMDBuild.view.common.field.translatable.Utils.commit(this.controllerProperties.getView().form);
 		},

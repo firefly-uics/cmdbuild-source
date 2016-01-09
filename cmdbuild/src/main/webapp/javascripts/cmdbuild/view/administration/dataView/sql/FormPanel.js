@@ -124,7 +124,7 @@
 						editable: false,
 						allowBlank: false,
 
-						store: _CMCache.getAvailableDataSourcesStore(),
+						store: CMDBuild.core.proxy.dataView.Sql.getStoreDataSources(),
 						queryMode: 'local',
 					}),
 					{

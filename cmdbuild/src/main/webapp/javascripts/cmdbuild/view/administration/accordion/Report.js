@@ -1,9 +1,12 @@
 (function() {
 
 	Ext.define('CMDBuild.view.administration.accordion.Report', {
-		extend: 'CMDBuild.view.common.CMBaseAccordion',
+		extend: 'CMDBuild.view.common.abstract.Accordion',
 
-		requires: ['CMDBuild.core.constants.Proxy'],
+		/**
+		 * @cfg {CMDBuild.controller.common.abstract.Accordion}
+		 */
+		delegate: undefined,
 
 		/**
 		 * @cfg {String}
@@ -12,25 +15,25 @@
 
 		title: CMDBuild.Translation.report,
 
-		constructor: function() {
-			this.callParent(arguments);
-
-			this.updateStore();
-		},
-
 		/**
+		 * @param {Number} nodeIdToSelect
+		 *
 		 * @override
 		 */
-		updateStore: function() {
+		updateStore: function(nodeIdToSelect) {
 			this.getStore().getRootNode().removeAll();
 			this.getStore().getRootNode().appendChild([
 				{
-					id: 'Jasper',
 					cmName: this.cmName,
-					leaf: true,
-					text: CMDBuild.Translation.reportMenuJasper
+					text: CMDBuild.Translation.reportMenuJasper,
+					description: CMDBuild.Translation.reportMenuJasper,
+					id: this.delegate.cmfg('accordionBuildId', { components: 'jasper' }),
+					sectionHierarchy: ['jasper'],
+					leaf: true
 				}
 			]);
+
+			this.callParent(arguments);
 		}
 	});
 

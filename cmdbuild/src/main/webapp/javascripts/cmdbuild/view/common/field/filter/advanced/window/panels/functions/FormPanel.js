@@ -32,12 +32,12 @@
 			Ext.apply(this, {
 				items: [
 					this.functionComboBox = Ext.create('CMDBuild.view.common.field.CMErasableCombo', {
-						name: CMDBuild.ServiceProxy.parameter.FUNCTION,
+						name: CMDBuild.core.constants.Proxy.FUNCTION,
 						fieldLabel: CMDBuild.Translation.functionLabel,
 						labelWidth: CMDBuild.LABEL_WIDTH,
 						maxWidth: CMDBuild.ADM_BIG_FIELD_WIDTH,
-						displayField: CMDBuild.ServiceProxy.parameter.NAME,
-						valueField: CMDBuild.ServiceProxy.parameter.NAME,
+						displayField: CMDBuild.core.constants.Proxy.NAME,
+						valueField: CMDBuild.core.constants.Proxy.NAME,
 						editable: false,
 						forceSelection: true,
 

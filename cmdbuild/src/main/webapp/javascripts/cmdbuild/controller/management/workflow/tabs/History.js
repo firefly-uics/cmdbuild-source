@@ -8,7 +8,7 @@
 
 		requires: [
 			'CMDBuild.core.proxy.common.tabs.history.Processes',
-			'CMDBuild.core.proxy.lookup.Type'
+			'CMDBuild.core.proxy.lookup.Lookup'
 		],
 
 		mixins: {
@@ -27,7 +27,6 @@
 		 * @cfg {Array}
 		 */
 		attributesKeysToFilter: [
-			'Code',
 			'Id',
 			'IdClass',
 			'IdClass_value',
@@ -40,11 +39,11 @@
 		 * @cfg {Array}
 		 */
 		cmfgCatchedFunctions: [
-			'getTabHistoryGridColumns',
-			'getTabHistoryGridStore',
-			'onProcessesTabHistoryIncludeSystemActivitiesCheck',
+			'onWorkflowTabHistoryIncludeSystemActivitiesCheck',
 			'onTabHistoryPanelShow = onTabHistoryIncludeRelationCheck', // Reloads store to be consistent with includeRelationsCheckbox state
 			'onTabHistoryRowExpand',
+			'tabHistoryGridColumnsGet',
+			'tabHistoryGridStoreGet',
 			'tabHistorySelectedEntityGet',
 			'tabHistorySelectedEntitySet'
 		],
@@ -90,9 +89,7 @@
 
 			this.statusBuildTranslationObject( ); // Build status translation object from lookup
 
-			this.grid = Ext.create('CMDBuild.view.management.workflow.tabs.history.GridPanel', {
-				delegate: this
-			});
+			this.grid = Ext.create('CMDBuild.view.management.workflow.tabs.history.GridPanel', { delegate: this });
 
 			this.view.add(this.grid);
 
@@ -103,6 +100,7 @@
 		 * It's implemented with ugly workarounds because of server side ugly code.
 		 *
 		 * @override
+		 * @private
 		 */
 		addCurrentCardToStore: function() {
 			var selectedEntityAttributes = {};
@@ -119,12 +117,16 @@
 			this.valuesFormattingAndCompare(selectedEntityAttributes); // Formats values only
 
 			this.clearStoreAdd(this.buildCurrentEntityModel(selectedEntityAttributes));
+
+			this.callParent(arguments);
 		},
 
 		/**
 		 * @param {Object} entityAttributeData
 		 *
-		 * @returns {CMDBuild.model.common.tabs.history.processes.CardRecord} currentEntityModel
+		 * @returns {CMDBuild.model.workflow.tabs.history.CardRecord} currentEntityModel
+		 *
+		 * @private
 		 */
 		buildCurrentEntityModel: function(entityAttributeData) {
 			var performers = [];
@@ -135,7 +137,7 @@
 					performers.push(activityObject[CMDBuild.core.constants.Proxy.PERFORMER_NAME]);
 			}, this);
 
-			var currentEntityModel = Ext.create('CMDBuild.model.common.tabs.history.processes.CardRecord', this.selectedEntity.getData());
+			var currentEntityModel = Ext.create('CMDBuild.model.workflow.tabs.history.CardRecord', this.selectedEntity.getData());
 			currentEntityModel.set(CMDBuild.core.constants.Proxy.ACTIVITY_NAME, this.selectedEntity.get(CMDBuild.core.constants.Proxy.VALUES)['Code']);
 			currentEntityModel.set(CMDBuild.core.constants.Proxy.PERFORMERS, performers);
 			currentEntityModel.set(CMDBuild.core.constants.Proxy.STATUS, this.statusTranslationGet(this.selectedEntity.get(CMDBuild.core.constants.Proxy.FLOW_STATUS)));
@@ -151,19 +153,21 @@
 		 * @param {Array or Object} itemsToAdd
 		 *
 		 * @override
+		 * @private
 		 */
 		clearStoreAdd: function(itemsToAdd) {
 			this.grid.getStore().clearFilter();
 
 			this.callParent(arguments);
 
-			this.onProcessesTabHistoryIncludeSystemActivitiesCheck();
+			this.onWorkflowTabHistoryIncludeSystemActivitiesCheck();
 		},
 
 		/**
-		 * @param {CMDBuild.model.common.tabs.history.classes.CardRecord} record
+		 * @param {CMDBuild.model.classes.tabs.history.CardRecord} record
 		 *
 		 * @override
+		 * @private
 		 */
 		currentCardRowExpand: function(record) {
 			var predecessorRecord = this.grid.getStore().getAt(1); // Get expanded record predecessor record
@@ -186,9 +190,6 @@
 				this.getProxy().getHistoric({
 					params: predecessorParams,
 					scope: this,
-					failure: function(response, options, decodedResponse) {
-						_error('get historic predecessor card failure', this);
-					},
 					success: function(response, options, decodedResponse) {
 						this.valuesFormattingAndCompare(selectedEntityAttributes, decodedResponse.response[CMDBuild.core.constants.Proxy.VALUES]);
 
@@ -203,49 +204,10 @@
 		 * @returns {CMDBuild.core.proxy.common.tabs.history.Classes}
 		 *
 		 * @override
+		 * @private
 		 */
 		getProxy: function() {
 			return CMDBuild.core.proxy.common.tabs.history.Processes;
-		},
-
-		/**
-		 * @returns {Array} columns
-		 *
-		 * @override
-		 */
-		getTabHistoryGridColumns: function() {
-			var columns = this.callParent(arguments);
-
-			if (!CMDBuild.configuration.userInterface.get(CMDBuild.core.constants.Proxy.SIMPLE_HISTORY_MODE_FOR_PROCESS)) {
-				Ext.Array.push(columns, [
-					{
-						dataIndex: CMDBuild.core.constants.Proxy.ACTIVITY_NAME,
-						text: CMDBuild.Translation.activityName,
-						sortable: false,
-						hideable: false,
-						menuDisabled: true,
-						flex: 1
-					},
-					{
-						dataIndex: CMDBuild.core.constants.Proxy.PERFORMERS,
-						text: CMDBuild.Translation.activityPerformer,
-						sortable: false,
-						hideable: false,
-						menuDisabled: true,
-						flex: 1
-					},
-					{
-						dataIndex: CMDBuild.core.constants.Proxy.STATUS,
-						text: CMDBuild.Translation.status,
-						sortable: false,
-						hideable: false,
-						menuDisabled: true,
-						flex: 1
-					}
-				]);
-			}
-
-			return columns;
 		},
 
 		/**
@@ -262,7 +224,7 @@
 		/**
 		 * Include or not System activities rows in history grid.
 		 */
-		onProcessesTabHistoryIncludeSystemActivitiesCheck: function() {
+		onWorkflowTabHistoryIncludeSystemActivitiesCheck: function() {
 			this.getRowExpanderPlugin().collapseAll();
 
 			if (this.grid.includeSystemActivitiesCheckbox.getValue()) { // Checked: Remove any filter from store
@@ -290,19 +252,48 @@
 			this.cmfg('onTabHistoryPanelShow');
 		},
 
+		/**
+		 * @override
+		 */
+		onTabHistoryPanelShow: function() {
+			if (this.view.isVisible()) {
+				// History record save
+				CMDBuild.global.navigation.Chronology.cmfg('navigationChronologyRecordSave', {
+					moduleId: 'workflow',
+					entryType: {
+						description: _CMWFState.getProcessClassRef().get(CMDBuild.core.constants.Proxy.TEXT),
+						id: _CMWFState.getProcessClassRef().get(CMDBuild.core.constants.Proxy.ID),
+						object: _CMWFState.getProcessClassRef()
+					},
+					item: {
+						description: _CMWFState.getProcessInstance().get(CMDBuild.core.constants.Proxy.TEXT),
+						id: _CMWFState.getProcessInstance().get(CMDBuild.core.constants.Proxy.ID),
+						object: _CMWFState.getProcessInstance()
+					},
+					section: {
+						description: this.view.title,
+						object: this.view
+					}
+				});
+			}
+
+			this.callParent(arguments);
+		},
+
 		// Status translation management
+			/**
+			 * @private
+			 */
 			statusBuildTranslationObject: function() {
 				var params = {};
 				params[CMDBuild.core.constants.Proxy.TYPE] = 'FlowStatus';
 				params[CMDBuild.core.constants.Proxy.ACTIVE] = true;
 				params[CMDBuild.core.constants.Proxy.SHORT] = false;
 
-				CMDBuild.core.proxy.lookup.Type.get({
+				CMDBuild.core.proxy.lookup.Lookup.readAll({
 					params: params,
+					loadMask: false,
 					scope: this,
-					failure: function(response, options, decodedResponse) {
-						_error('get lookup failure', this);
-					},
 					success: function(response, options, decodedResponse) {
 						Ext.Array.forEach(decodedResponse.rows, function(lookup, i, array) {
 							switch (lookup['Code']) {
@@ -335,13 +326,55 @@
 			 * @param {String} status
 			 *
 			 * @returns {String or null}
+			 *
+			 * @private
 			 */
 			statusTranslationGet: function(status) {
 				if (Ext.Array.contains(this.managedStatuses, status))
 					return this.statusTranslationObject[status];
 
 				return null;
+			},
+
+		/**
+		 * @returns {Array} columns
+		 *
+		 * @override
+		 */
+		tabHistoryGridColumnsGet: function() {
+			var columns = this.callParent(arguments);
+
+			if (!CMDBuild.configuration.userInterface.get(CMDBuild.core.constants.Proxy.SIMPLE_HISTORY_MODE_FOR_PROCESS)) {
+				Ext.Array.push(columns, [
+					{
+						dataIndex: CMDBuild.core.constants.Proxy.ACTIVITY_NAME,
+						text: CMDBuild.Translation.activityName,
+						sortable: false,
+						hideable: false,
+						menuDisabled: true,
+						flex: 1
+					},
+					{
+						dataIndex: CMDBuild.core.constants.Proxy.PERFORMERS,
+						text: CMDBuild.Translation.activityPerformer,
+						sortable: false,
+						hideable: false,
+						menuDisabled: true,
+						flex: 1
+					},
+					{
+						dataIndex: CMDBuild.core.constants.Proxy.STATUS,
+						text: CMDBuild.Translation.status,
+						sortable: false,
+						hideable: false,
+						menuDisabled: true,
+						flex: 1
+					}
+				]);
 			}
+
+			return columns;
+		}
 	});
 
 })();

@@ -3,9 +3,10 @@
 	Ext.define('CMDBuild.core.proxy.common.tabs.history.Classes', {
 
 		requires: [
+			'CMDBuild.core.interfaces.Ajax',
 			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.proxy.Index',
-			'CMDBuild.model.common.tabs.history.classes.CardRecord'
+			'CMDBuild.model.classes.tabs.history.CardRecord'
 		],
 
 		singleton: true,
@@ -14,7 +15,7 @@
 		 * @property {Object} parameters
 		 */
 		get: function(parameters) {
-			CMDBuild.Ajax.request({
+			CMDBuild.core.interfaces.Ajax.request({
 				method: 'POST',
 				url: CMDBuild.core.proxy.Index.history.classes.getCardHistory,
 				headers: parameters.headers,
@@ -31,7 +32,7 @@
 		 * @property {Object} parameters
 		 */
 		getHistoric: function(parameters) {
-			CMDBuild.Ajax.request({
+			CMDBuild.core.interfaces.Ajax.request({
 				method: 'POST',
 				url: CMDBuild.core.proxy.Index.history.classes.getHistoricCard,
 				headers: parameters.headers,
@@ -48,7 +49,7 @@
 		 * @property {Object} parameters
 		 */
 		getRelations: function(parameters) {
-			CMDBuild.Ajax.request({
+			CMDBuild.core.interfaces.Ajax.request({
 				method: 'POST',
 				url: CMDBuild.core.proxy.Index.history.classes.getRelationsHistory,
 				headers: parameters.headers,
@@ -65,7 +66,7 @@
 		 * @property {Object} parameters
 		 */
 		getRelationHistoric: function(parameters) {
-			CMDBuild.Ajax.request({
+			CMDBuild.core.interfaces.Ajax.request({
 				method: 'POST',
 				url: CMDBuild.core.proxy.Index.history.classes.getHistoricRelation,
 				headers: parameters.headers,
@@ -84,7 +85,7 @@
 		getStore: function() {
 			return Ext.create('Ext.data.Store', {
 				autoLoad: false,
-				model: 'CMDBuild.model.common.tabs.history.classes.CardRecord',
+				model: 'CMDBuild.model.classes.tabs.history.CardRecord',
 				proxy: {
 					type: 'ajax',
 					url: CMDBuild.core.proxy.Index.history.classes.getCardHistory,

@@ -1,11 +1,12 @@
 (function() {
 
 	Ext.define('CMDBuild.controller.administration.configuration.Server', {
-		extend: 'CMDBuild.controller.common.AbstractController',
+		extend: 'CMDBuild.controller.common.abstract.Base',
 
 		requires: [
-			'CMDBuild.core.proxy.CMProxyWorkflow',
+			'CMDBuild.core.Message',
 			'CMDBuild.core.proxy.Card',
+			'CMDBuild.core.proxy.CMProxyWorkflow',
 			'CMDBuild.core.proxy.Utils'
 		],
 
@@ -24,16 +25,6 @@
 		],
 
 		/**
-		 * Proxy parameters
-		 *
-		 * @cfg {Object}
-		 */
-		params: {
-			fileName: 'server',
-			view: undefined
-		},
-
-		/**
 		 * @property {CMDBuild.view.administration.configuration.ServerPanel}
 		 */
 		view: undefined,
@@ -47,13 +38,7 @@
 		constructor: function(configObject) {
 			this.callParent(arguments);
 
-			this.view = Ext.create('CMDBuild.view.administration.configuration.ServerPanel', {
-				delegate: this
-			});
-
-			this.params[CMDBuild.core.constants.Proxy.VIEW] = this.view;
-
-			this.cmfg('onConfigurationRead', this.params);
+			this.view = Ext.create('CMDBuild.view.administration.configuration.ServerPanel', { delegate: this });
 		},
 
 		onConfigurationServerClearCacheButtonClick: function() {

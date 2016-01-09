@@ -12,6 +12,7 @@
 		alternateClassName: 'CMDBuild.ServiceProxy.Filter', // Legacy class name
 
 		requires: [
+			'CMDBuild.core.interfaces.Ajax',
 			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.proxy.Index'
 		],
@@ -19,15 +20,15 @@
 		singleton: true,
 
 		create: function(filter, config) {
-			doRequest(filter, config, CMDBuild.core.proxy.Index.filter.create, 'POST', true);
+			doRequest(filter, config, CMDBuild.core.proxy.Index.filter.group.create, 'POST', true);
 		},
 
 		/**
 		 * @param {Object} parameters
 		 */
 		read: function(parameters) {
-			CMDBuild.Ajax.request({
-				url: CMDBuild.core.proxy.Index.filter.read,
+			CMDBuild.core.interfaces.Ajax.request({
+				url: CMDBuild.core.proxy.Index.filter.group.read,
 				params: parameters.params,
 				loadMask: Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : true,
 				scope: parameters.scope || this,
@@ -38,11 +39,11 @@
 		},
 
 		update: function(filter, config) {
-			doRequest(filter, config, CMDBuild.core.proxy.Index.filter.update, 'POST', true);
+			doRequest(filter, config, CMDBuild.core.proxy.Index.filter.group.update, 'POST', true);
 		},
 
 		remove: function(filter, config) {
-			doRequest(filter, config, CMDBuild.core.proxy.Index.filter.remove, 'POST', false);
+			doRequest(filter, config, CMDBuild.core.proxy.Index.filter.group.remove, 'POST', false);
 		},
 
 		/**
@@ -56,9 +57,9 @@
 			return Ext.create('Ext.data.Store', {
 				autoLoad: true,
 				model: 'CMDBuild.model.CMFilterModel',
-				pageSize: _CMUtils.grid.getPageSize(),
+				pageSize: CMDBuild.configuration.instance.get(CMDBuild.core.constants.Proxy.ROW_LIMIT),
 				proxy: {
-					url: CMDBuild.core.proxy.Index.filter.groupStore,
+					url: CMDBuild.core.proxy.Index.filter.group.readAll,
 					type: 'ajax',
 					reader: {
 						root: 'filters',
@@ -86,7 +87,7 @@
 				model: 'CMDBuild.model.CMFilterModel',
 				proxy: {
 					type: 'ajax',
-					url: CMDBuild.core.proxy.Index.filter.userStore,
+					url: CMDBuild.core.proxy.Index.filter.user.readAll,
 					reader: {
 						idProperty: 'id',
 						type: 'json',
@@ -109,9 +110,9 @@
 			return Ext.create('Ext.data.Store', {
 				autoLoad: true,
 				model: 'CMDBuild.model.CMFilterModel',
-				pageSize: _CMUtils.grid.getPageSize(),
+				pageSize: CMDBuild.configuration.instance.get(CMDBuild.core.constants.Proxy.ROW_LIMIT),
 				proxy: {
-					url: CMDBuild.core.proxy.Index.filter.read,
+					url: CMDBuild.core.proxy.Index.filter.group.read,
 					type: 'ajax',
 					reader: {
 						root: 'filters',
@@ -133,8 +134,8 @@
 		 * @param {Object} parameters
 		 */
 		getDefaults: function(parameters) {
-			CMDBuild.Ajax.request({
-				url: CMDBuild.core.proxy.Index.filter.defaultForGroups.read,
+			CMDBuild.core.interfaces.Ajax.request({
+				url: CMDBuild.core.proxy.Index.filter.group.defaults.read,
 				params: parameters.params,
 				loadMask: Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : true,
 				scope: parameters.scope || this,
@@ -148,8 +149,8 @@
 		 * @param {Object} parameters
 		 */
 		setDefaults: function(parameters) {
-			CMDBuild.Ajax.request({
-				url: CMDBuild.core.proxy.Index.filter.defaultForGroups.update,
+			CMDBuild.core.interfaces.Ajax.request({
+				url: CMDBuild.core.proxy.Index.filter.group.defaults.update,
 				params: parameters.params,
 				loadMask: Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : true,
 				scope: parameters.scope || this,
@@ -168,7 +169,7 @@
 			request.method = method;
 			request.params = getParams(filter, fullParams);
 
-			CMDBuild.Ajax.request(config);
+			CMDBuild.core.interfaces.Ajax.request(config);
 		}
 	}
 

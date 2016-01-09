@@ -30,16 +30,6 @@
 		layout: 'border',
 
 		initComponent: function() {
-			this.form = Ext.create('CMDBuild.view.management.common.tabs.email.emailWindow.EditForm', {
-				delegate: this.delegate,
-				region: 'center'
-			});
-
-			this.attachmentContainer = Ext.create('CMDBuild.view.management.common.tabs.email.attachments.MainContainer', {
-				height: '30%',
-				region: 'south'
-			});
-
 			Ext.apply(this, {
 				dockedItems: [
 					Ext.create('Ext.toolbar.Toolbar', {
@@ -76,23 +66,38 @@
 								scope: this,
 
 								handler: function(button, e) {
-									this.delegate.cmfg('onEmailWindowConfirmButtonClick');
+									this.delegate.cmfg('onTabEmailEmailWindowConfirmButtonClick');
 								}
 							}),
 							Ext.create('CMDBuild.core.buttons.text.Abort', {
 								scope: this,
 
 								handler: function(button, e) {
-									this.delegate.cmfg('onEmailWindowAbortButtonClick');
+									this.delegate.cmfg('onTabEmailEmailWindowAbortButtonClick');
 								}
 							})
 						]
 					})
 				],
-				items: [this.form, this.attachmentContainer]
+				items: [
+					this.form = Ext.create('CMDBuild.view.management.common.tabs.email.emailWindow.EditForm', {
+						delegate: this.delegate,
+						region: 'center'
+					}),
+					this.attachmentContainer = Ext.create('CMDBuild.view.management.common.tabs.email.attachments.MainContainer', {
+						height: '20%',
+						region: 'south'
+					})
+				]
 			});
 
 			this.callParent(arguments);
+		},
+
+		listeners: {
+			beforedestroy: function(window, eOpts) {
+				return this.delegate.cmfg('onTabEmailEmailWindowBeforeDestroy');
+			}
 		}
 	});
 

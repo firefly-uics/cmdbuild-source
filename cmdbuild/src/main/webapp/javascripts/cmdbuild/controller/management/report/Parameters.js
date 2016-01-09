@@ -1,10 +1,9 @@
 (function () {
 
 	Ext.define('CMDBuild.controller.management.report.Parameters', {
-		extend: 'CMDBuild.controller.common.AbstractController',
+		extend: 'CMDBuild.controller.common.abstract.Base',
 
 		requires: [
-			'CMDBuild.controller.common.AbstractBaseWidgetController',
 			'CMDBuild.core.Message',
 			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.proxy.Index',
@@ -65,29 +64,31 @@
 		},
 
 		buildFields: function() {
-			var me = this;
-
 			if (this.attributeList.length > 0) {
+				var fieldManager = Ext.create('CMDBuild.core.fieldManager.FieldManager', {
+					parentDelegate: this,
+					targetForm: this.form
+				});
+
 				Ext.Array.forEach(this.attributeList, function(attribute, i, allAttributes) {
-					new CMDBuild.Management.TemplateResolver({
-						clientForm: this.form.getForm(),
-						xaVars: attribute,
-						serverVars: CMDBuild.controller.common.AbstractBaseWidgetController.getTemplateResolverServerVars(attribute)
-					}).resolveTemplates({
-						attributes: Ext.Object.getKeys(attribute),
-						callback: function(out, ctx) {
-							var field = CMDBuild.Management.FieldManager.getFieldForAttr(out, false, false);
+					if (fieldManager.isAttributeManaged(attribute[CMDBuild.core.constants.Proxy.TYPE])) {
+						var attributeCustom = Ext.create('CMDBuild.model.common.attributes.Attribute', attribute);
+						attributeCustom.setAdaptedData(attribute);
 
-							if (!Ext.isEmpty(field)) {
-								field.maxWidth = field.width;
+						fieldManager.attributeModelSet(attributeCustom);
+						fieldManager.add(this.form, fieldManager.buildField());
+					} else { // @deprecated - Old field manager
+						var field = CMDBuild.Management.FieldManager.getFieldForAttr(attribute, false, false);
 
-								if (attribute.defaultvalue)
-									field.setValue(attribute.defaultvalue);
+						if (!Ext.isEmpty(field)) {
+							field.maxWidth = field.width;
 
-								me.form.add(field);
-							}
+							if (attribute.defaultvalue)
+								field.setValue(attribute.defaultvalue);
+
+							this.form.add(field);
 						}
-					});
+					}
 				}, this);
 			}
 		},
@@ -98,7 +99,7 @@
 
 		onReportParametersWindowPrintButtonClick: function() {
 			if (this.view.form.getForm().isValid()) {
-				this.cmfg('currentReportParametersSet', {
+				this.cmfg('selectedReportParametersSet', {
 					callIdentifier: 'update',
 					params: this.form.getValues()
 				});

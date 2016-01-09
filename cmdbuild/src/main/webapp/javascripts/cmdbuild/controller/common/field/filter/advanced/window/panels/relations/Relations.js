@@ -1,9 +1,12 @@
 (function() {
 
 	Ext.define('CMDBuild.controller.common.field.filter.advanced.window.panels.relations.Relations', {
-		extend: 'CMDBuild.controller.common.AbstractController',
+		extend: 'CMDBuild.controller.common.abstract.Base',
 
-		requires: ['CMDBuild.core.constants.Proxy'],
+		requires: [
+			'CMDBuild.core.constants.Global',
+			'CMDBuild.core.constants.Proxy'
+		],
 
 		/**
 		 * @cfg {CMDBuild.controller.common.field.filter.advanced.window.Window}
@@ -21,6 +24,7 @@
 			'onFieldFilterAdvancedWindowRelationsDomainSelect',
 			'onFieldFilterAdvancedWindowRelationsGetData',
 			'onFieldFilterAdvancedWindowRelationsSetData = onFieldFilterAdvancedWindowSetData',
+			'onFieldFilterAdvancedWindowRelationsShow',
 			'onFieldFilterAdvancedWindowRelationsTabBuild'
 		],
 
@@ -111,13 +115,13 @@
 
 		fillDomainGridStore: function() {
 			var domains = [];
-_debug('fillDomainGridStore 1');
+
 			this.gridDomain.getStore().removeAll();
 
 			if (!this.cmfg('fieldFilterAdvancedSelectedClassIsEmpty')) {
 				if (_CMCache.isEntryTypeByName(this.cmfg('fieldFilterAdvancedSelectedClassGet', CMDBuild.core.constants.Proxy.NAME)))
 					domains = _CMCache.getDirectedDomainsByEntryType(_CMCache.getEntryTypeByName(this.cmfg('fieldFilterAdvancedSelectedClassGet', CMDBuild.core.constants.Proxy.NAME)));
-_debug('fillDomainGridStore 2');
+
 				Ext.Array.forEach(domains, function(domainObject, i, allDomainObjects) {
 					var domain = _CMCache.getDomainById(domainObject['dom_id']);
 
@@ -150,7 +154,7 @@ _debug('fillDomainGridStore 2');
 				column.getEditor().getStore().clearFilter();
 				column.getEditor().getStore().filterBy(function(storeRecord, id) {
 					return (
-						storeRecord.get(CMDBuild.core.constants.Proxy.TABLE_TYPE) != CMDBuild.Constants.cachedTableType.simpletable
+						storeRecord.get(CMDBuild.core.constants.Proxy.TABLE_TYPE) != CMDBuild.core.constants.Global.getTableTypeSimpleTable()
 						&& (
 							storeRecord.get(CMDBuild.core.constants.Proxy.PARENT) == record.get(CMDBuild.core.constants.Proxy.DESTINATION).getId()
 							|| storeRecord.get(CMDBuild.core.constants.Proxy.ID) == record.get(CMDBuild.core.constants.Proxy.DESTINATION).getId()
@@ -312,16 +316,17 @@ _debug('fillDomainGridStore 2');
 			}
 		},
 
+		onFieldFilterAdvancedWindowRelationsShow: function() {
+			if (!this.cmfg('fieldFilterAdvancedFilterIsEmpty'))
+				this.onFieldFilterAdvancedWindowRelationsSetData(this.cmfg('fieldFilterAdvancedFilterGet'));
+		},
+
 		/**
 		 * Builds tab from filter value (preset values and add)
 		 */
 		onFieldFilterAdvancedWindowRelationsTabBuild: function() {
-			if (this.cmfg('fieldFilterAdvancedConfigurationIsPanelEnabled', 'relation')) {
+			if (this.cmfg('fieldFilterAdvancedConfigurationIsPanelEnabled', 'relation'))
 				this.cmfg('fieldFilterAdvancedWindowAddTab', this.buildView());
-
-				if (!this.cmfg('fieldFilterAdvancedFilterIsEmpty'))
-					this.onFieldFilterAdvancedWindowRelationsSetData(this.cmfg('fieldFilterAdvancedFilterGet'));
-			}
 		},
 
 		// SelectedDomain property methods

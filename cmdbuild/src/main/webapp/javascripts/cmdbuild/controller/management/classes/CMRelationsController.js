@@ -26,7 +26,7 @@
 			};
 
 			this.view.store.getRootNode().on('append', function(root, newNode) {
-				// The nodes with depth == 1 are the folders
+				// The nodes with depth == 1 are folders
 				if (newNode.get('depth') == 1)
 					newNode.on('expand', onDomainNodeExpand, this, {single: true});
 			}, this);
@@ -53,7 +53,7 @@
 			this.card = null;
 
 			// Set empty entryType on simple classes
-			if (!this.entryType || this.entryType.get(CMDBuild.core.constants.Proxy.TABLE_TYPE) == CMDBuild.Constants.cachedTableType.simpletable)
+			if (Ext.isEmpty(this.entryType) || this.entryType.get(CMDBuild.core.constants.Proxy.TABLE_TYPE) == 'simpletable')
 				this.entryType = null;
 
 			this.view.disable();
@@ -88,7 +88,7 @@
 			var currentClass = _CMCache.getEntryTypeById(classId);
 
 			if (this.currentClass != currentClass) {
-				if (!currentClass || currentClass.get(CMDBuild.core.constants.Proxy.TABLE_TYPE) == CMDBuild.Constants.cachedTableType.simpletable)
+				if (!currentClass || currentClass.get(CMDBuild.core.constants.Proxy.TABLE_TYPE) == 'simpletable')
 					currentClass = null;
 
 				this.currentClass = currentClass;
@@ -201,7 +201,7 @@
 			var me = this;
 			var masterAndSlave = getMasterAndSlave(model.src);
 			var domain = _CMCache.getDomainById(model.dom_id);
-			var classData = _CMCache.getClassById(model.dst_cid);
+			var classData = _CMCache.getEntryTypeById(model.dst_cid);
 			var isMany = false;
 			var destination = model[CMDBuild.core.constants.Proxy.DOMAIN_SOURCE] == '_1' ? '_2' : '_1'; // Probably tells in witch direction of relation you are looking at
 
@@ -346,7 +346,7 @@
 		onEditRelationClick: function(model) {
 			var me = this;
 			var data = model.raw || model.getData();
-			var classData = _CMCache.getClassById(model.get('dst_cid'));
+			var classData = _CMCache.getEntryTypeById(model.get('dst_cid'));
 			var domain = _CMCache.getDomainById(model.get('dom_id'));
 			var masterAndSlave = getMasterAndSlave(model.get(CMDBuild.core.constants.Proxy.SOURCE));
 
@@ -442,13 +442,13 @@
 
 					params[parameterNames.ATTRIBUTES] = Ext.encode(attributes);
 
-					CMDBuild.LoadMask.get().show();
+					CMDBuild.core.LoadMask.show();
 					CMDBuild.core.proxy.CMProxyRelations.remove({
 						params: params,
 						scope: this,
 						success: this.onDeleteRelationSuccess,
 						callback: function() {
-							CMDBuild.LoadMask.get().hide();
+							CMDBuild.core.LoadMask.hide();
 							this.loadData();
 						}
 					});

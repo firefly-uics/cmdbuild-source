@@ -13,15 +13,17 @@
 		/**
 		 * @param {Boolean} withEditor
 		 *
-		 * @returns {Ext.grid.column.CheckColumn}
+		 * @returns {Ext.grid.column.CheckColumn or Object}
 		 */
 		buildColumn: function(withEditor) {
 			withEditor = Ext.isBoolean(withEditor) ? withEditor : false;
 
-			return Ext.create('Ext.grid.column.CheckColumn', {
+		return this.cmfg('attributeModelGet', CMDBuild.core.constants.Proxy.HIDDEN) ? {} : Ext.create('Ext.grid.column.CheckColumn', {
 				dataIndex: this.cmfg('attributeModelGet', CMDBuild.core.constants.Proxy.NAME),
 				disabled: !this.cmfg('attributeModelGet', CMDBuild.core.constants.Proxy.WRITABLE),
 				flex: 1,
+				hidden: !this.cmfg('attributeModelGet', CMDBuild.core.constants.Proxy.SHOW_COLUMN),
+				scope: this,
 				sortable: true,
 				text: this.applyMandatoryLabelFlag(this.cmfg('attributeModelGet', CMDBuild.core.constants.Proxy.DESCRIPTION)),
 				width: this.cmfg('attributeModelGet', CMDBuild.core.constants.Proxy.NAME).length * 9
@@ -39,11 +41,13 @@
 					this.cmfg('attributeModelGet', CMDBuild.core.constants.Proxy.DESCRIPTION)
 					|| this.cmfg('attributeModelGet', CMDBuild.core.constants.Proxy.NAME)
 				),
+				hidden: this.cmfg('attributeModelGet', CMDBuild.core.constants.Proxy.HIDDEN),
+				inputValue: true,
 				labelAlign: 'right',
 				labelWidth: CMDBuild.LABEL_WIDTH,
 				name: this.cmfg('attributeModelGet', CMDBuild.core.constants.Proxy.NAME),
 				readOnly: !this.cmfg('attributeModelGet', CMDBuild.core.constants.Proxy.WRITABLE),
-				submitValue: false
+				uncheckedValue: false
 			});
 		},
 

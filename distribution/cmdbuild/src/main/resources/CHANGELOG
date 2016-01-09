@@ -1,3 +1,87 @@
+CMDBuild 2.3.4 (released 2015/10/21)
+
+
+NEW FEATURES
+
+ * Custom Pages
+
+ * LDAP authentication for REST web services
+
+ * Custom SQL exception messages showed in UI
+
+ * Default filter for a given group
+
+ * Additional patches management
+
+ * Filters for report and dashboard parameters
+
+ * User and group ids within functions used for SQL views
+
+ * Checkbox to include system filters in advanced filter window grid
+
+
+FIXES
+
+ * Wrong filenames with encoding
+
+ * Modal windows width problems
+
+ * Sorting superclass attributes loses some subclasses metadata
+
+ * UI configuration for enabling/disabling e-mail tab
+
+ * WidgetGrid - readOnly boolean field could be edited from grid
+
+ * WidgetGrid - HTML field shows space on top paragraph border in grid
+
+ * Wizard connector does not send email error notifications
+
+ * User not updated when deleting card
+
+ * Unrelated error when creating a card with an non-existing reference value
+
+ * Cannot update a process instance from Fluent API when locking is active
+
+ * If an error prevents to delete a card, the error is not propagate to caller
+
+ * "Is not null" operator for advanced filters
+
+ * Reports timeout
+
+ * Slow grid rendering when localization is enabled
+
+ * Login with multigroup user without selecting a group don't display error popup
+
+ * Relations tab enabled on simple classes
+
+ * Map mini card grid search not working
+
+ * Dashboards - preview error on template resolver class
+
+ * Permission's columns of group privileges are no more sortable
+
+ * Report's grid don't respect rowLimit
+
+ * Boolean parameters not submitted in parameters report window
+
+ * Task Manager - Connector updates blank (text) fields
+
+ * REST - Session timeout not working
+
+ * IE8 freezed on spalsh screen
+
+ * Task Manager - Cannot delete tasks when they sent e-mails
+
+ * Widget CustomForm - mandatory flag not displayed in reference fields
+
+ * Widget CustomForm - widget advance action is permitted also if mandatory fields are not filled
+
+ * Administration group filters functions combobox store not ordered
+
+
+
+
+
 CMDBuild 2.3.3 (released 2015/08/06)
 
 

@@ -1,7 +1,7 @@
 (function() {
 
 	Ext.define('CMDBuild.controller.administration.domain.EnabledClasses', {
-		extend: 'CMDBuild.controller.common.AbstractController',
+		extend: 'CMDBuild.controller.common.abstract.Base',
 
 		requires: [
 			'CMDBuild.core.constants.Proxy',
@@ -106,9 +106,9 @@
 
 						Ext.Array.forEach(decodedResponse.classes, function(classObject, index, allClasses) {
 							if (
-								classObject[CMDBuild.core.constants.Proxy.TYPE] == 'class' // Discard processes from visualization
+								classObject[CMDBuild.core.constants.Proxy.TYPE] == CMDBuild.core.constants.Global.getTableTypeClass() // Discard processes from visualization
 								&& classObject[CMDBuild.core.constants.Proxy.NAME] != 'Class' // Discard root class of all classes
-								&& classObject[CMDBuild.core.constants.Proxy.TABLE_TYPE] != CMDBuild.Constants.cachedTableType.simpletable // Discard simple classes
+								&& classObject[CMDBuild.core.constants.Proxy.TABLE_TYPE] != CMDBuild.core.constants.Global.getTableTypeSimpleTable() // Discard simple classes
 							) {
 								// Class node object
 								var classMainNodeObject = {};

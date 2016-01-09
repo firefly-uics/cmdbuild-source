@@ -25,6 +25,9 @@ import org.springframework.context.annotation.Scope;
 public class Menu {
 
 	@Autowired
+	private CustomPages customPages;
+
+	@Autowired
 	private DashboardLogic dashboardLogic;
 
 	@Autowired
@@ -64,7 +67,10 @@ public class Menu {
 
 	@Bean
 	protected DataViewStore<MenuElement> baseMenuElementStore() {
-		return DataViewStore.newInstance(data.systemDataView(), menuElementStorableConverter());
+		return DataViewStore.<MenuElement> newInstance() //
+				.withDataView(data.systemDataView()) //
+				.withStorableConverter(menuElementStorableConverter()) //
+				.build();
 	}
 
 	private MenuElementConverter menuElementConverter() {
@@ -85,6 +91,7 @@ public class Menu {
 				dashboardLogic, //
 				user.userDataAccessLogicBuilder(), //
 				view.viewLogic(), //
+				customPages.defaultCustomPagesLogic(), //
 				menuItemConverter(), //
 				userStore.getUser(), //
 				menuElementStore());
@@ -92,7 +99,7 @@ public class Menu {
 
 	private MenuElementStore menuElementStore() {
 		return new MenuElementStore(baseMenuElementStore(), data.systemDataView(), userStore, view.viewConverter(),
-				menuElementStorableConverter());
+				menuElementStorableConverter(), customPages.defaultCustomPagesLogic());
 	}
 
 }

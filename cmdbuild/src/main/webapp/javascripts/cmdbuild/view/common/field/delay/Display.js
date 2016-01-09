@@ -11,9 +11,7 @@
 		delegate: undefined,
 
 		initComponent: function() {
-			this.delegate = Ext.create('CMDBuild.controller.common.field.delay.Display', {
-				view: this
-			});
+			this.delegate = Ext.create('CMDBuild.controller.common.field.delay.Display', { view: this });
 
 			this.callParent(arguments);
 		},

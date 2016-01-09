@@ -30,8 +30,11 @@ public class CustomForm extends Widget {
 		private boolean readOnly;
 		private boolean addDisabled;
 		private boolean deleteDisabled;
-		private boolean importCsvDisabled;
+		private boolean exportDisabled;
+		private boolean importDisabled;
 		private boolean modifyDisabled;
+		private boolean cloneDisabled;
+		private String refreshBehaviour;
 
 		public boolean isReadOnly() {
 			return readOnly;
@@ -57,12 +60,20 @@ public class CustomForm extends Widget {
 			this.deleteDisabled = deleteDisabled;
 		}
 
-		public boolean isImportDisabled() {
-			return importCsvDisabled;
+		public boolean isExportDisabled() {
+			return exportDisabled;
 		}
 
-		public void setImportDisabled(final boolean importCsvDisabled) {
-			this.importCsvDisabled = importCsvDisabled;
+		public void setExportDisabled(final boolean exportDisabled) {
+			this.exportDisabled = exportDisabled;
+		}
+
+		public boolean isImportDisabled() {
+			return importDisabled;
+		}
+
+		public void setImportDisabled(final boolean importDisabled) {
+			this.importDisabled = importDisabled;
 		}
 
 		public Boolean isModifyDisabled() {
@@ -71,6 +82,22 @@ public class CustomForm extends Widget {
 
 		public void setModifyDisabled(final boolean modifyDisabled) {
 			this.modifyDisabled = modifyDisabled;
+		}
+
+		public boolean isCloneDisabled() {
+			return cloneDisabled;
+		}
+
+		public void setCloneDisabled(final boolean cloneDisabled) {
+			this.cloneDisabled = cloneDisabled;
+		}
+
+		public String getRefreshBehaviour() {
+			return refreshBehaviour;
+		}
+
+		public void setRefreshBehaviour(final String refreshBehaviour) {
+			this.refreshBehaviour = refreshBehaviour;
 		}
 
 		@Override
@@ -154,6 +181,7 @@ public class CustomForm extends Widget {
 	private boolean required;
 	private String model;
 	private String data;
+	private String functionData;
 	private String layout;
 	private Capabilities capabilities;
 	private Serialization serialization;
@@ -246,6 +274,14 @@ public class CustomForm extends Widget {
 
 	public void setData(final String data) {
 		this.data = data;
+	}
+
+	public String getFunctionData() {
+		return functionData;
+	}
+
+	public void setFunctionData(final String functionData) {
+		this.functionData = functionData;
 	}
 
 	public String getLayout() {

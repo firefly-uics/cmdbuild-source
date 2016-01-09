@@ -20,9 +20,9 @@
 			return Ext.create('Ext.data.Store', {
 				autoLoad: false,
 				model: 'CMDBuild.model.common.field.filter.advanced.Filter',
-				pageSize: CMDBuild.core.Utils.getPageSize(),
+				pageSize: CMDBuild.configuration.instance.get(CMDBuild.core.constants.Proxy.ROW_LIMIT),
 				proxy: {
-					url: CMDBuild.core.proxy.Index.filter.groupStore,
+					url: CMDBuild.core.proxy.Index.filter.group.readAll,
 					type: 'ajax',
 					reader: {
 						root: 'filters',

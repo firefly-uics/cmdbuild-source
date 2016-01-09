@@ -4,12 +4,12 @@
 	 * To get the result of filter window you need to implement "onFieldFilterAdvancedWindowgetEndpoint" in cmfg structure
 	 */
 	Ext.define('CMDBuild.controller.common.field.filter.advanced.window.Window', {
-		extend: 'CMDBuild.controller.common.AbstractController',
+		extend: 'CMDBuild.controller.common.abstract.Base',
 
 		requires: [
 			'CMDBuild.core.Message',
 			'CMDBuild.core.constants.Proxy',
-			'CMDBuild.core.proxy.filter.Groups'
+			'CMDBuild.core.proxy.filter.User'
 		],
 
 		/**
@@ -340,14 +340,14 @@
 		},
 
 		/**
-		 * Include in store also System filters to be consistent with checkbox state
+		 * Include in store also Users filters to be consistent with checkbox state
 		 */
 		onFieldFilterAdvancedWindowPresetGridStoreLoad: function() {
 			var params = {};
 			params[CMDBuild.core.constants.Proxy.CLASS_NAME] = this.cmfg('fieldFilterAdvancedSelectedClassGet', CMDBuild.core.constants.Proxy.NAME);
 
-			if (this.grid.includeSystemFiltersCheckbox.getValue())
-				CMDBuild.core.proxy.filter.Groups.readAll({
+			if (this.grid.includeUsersFiltersCheckbox.getValue())
+				CMDBuild.core.proxy.filter.User.read({
 					params: params,
 					scope: this,
 					success: function(response, options, decodedResponse) {
@@ -369,7 +369,7 @@
 
 			this.setViewTitle(this.cmfg('fieldFilterAdvancedSelectedClassGet', CMDBuild.core.constants.Proxy.TEXT)); // TODO: waiting for refactor (description)
 
-			// Refresh tab configuration (sorted)
+			// On window show rebuild all tab configuration (sorted)
 			this.tabPanel.removeAll(true);
 
 			this.controllerTabAttributes.cmfg('onFieldFilterAdvancedWindowAttributesTabBuild');
@@ -377,7 +377,10 @@
 			this.controllerTabRelations.cmfg('onFieldFilterAdvancedWindowRelationsTabBuild');
 			this.controllerTabFunctions.cmfg('onFieldFilterAdvancedWindowFunctionsTabBuild');
 
-			this.tabPanel.setActiveTab(0); // Configuration parameter doesn't work because panels are added
+			if (Ext.isEmpty(this.view.tabPanel.getActiveTab()))
+				this.tabPanel.setActiveTab(0); // Configuration parameter doesn't work because panels are added
+
+			this.view.tabPanel.getActiveTab().fireEvent('show'); // Manual show event fire because was already selected
 		},
 
 		/**

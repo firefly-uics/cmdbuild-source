@@ -3,7 +3,13 @@
 	Ext.define('CMDBuild.view.management.common.tabs.history.RowExpander', {
 		extend: 'Ext.grid.plugin.RowExpander',
 
+		requires: [
+			'CMDBuild.core.constants.Proxy',
+			'CMDBuild.core.Utils'
+		],
+
 		expandOnEnter: false,
+		selectRowOnExpand: false,
 
 		// XTemplate formats all values to an array of key-value objects before display
 		rowBodyTpl: new Ext.XTemplate(

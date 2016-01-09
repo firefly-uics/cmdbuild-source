@@ -1,15 +1,16 @@
 (function() {
 
+	Ext.require(['CMDBuild.core.constants.Proxy']);
+
 	Ext.define('CMDBuild.model.widget.customForm.Configuration', {
 		extend: 'Ext.data.Model',
-
-		requires: ['CMDBuild.core.constants.Proxy'],
 
 		fields: [
 			{ name: 'alwaysenabled', type: 'boolean' },
 			{ name: CMDBuild.core.constants.Proxy.ACTIVE, type: 'boolean' },
 			{ name: CMDBuild.core.constants.Proxy.CAPABILITIES, type: 'auto' }, // Object to gather all UI disable flags
 			{ name: CMDBuild.core.constants.Proxy.DATA, type: 'auto' }, // Encoded array of CMDBuild.model.common.Generic models strings
+			{ name: CMDBuild.core.constants.Proxy.FUNCTION_DATA, type: 'auto' }, // Function data to be resolved with TemplateResolver (data attribute alias)
 			{ name: CMDBuild.core.constants.Proxy.ID, type: 'string' },
 			{ name: CMDBuild.core.constants.Proxy.LABEL, type: 'string' },
 			{ name: CMDBuild.core.constants.Proxy.LAYOUT, type: 'string', defaultValue: 'grid' }, // Widget view mode [grid|form]
@@ -17,7 +18,6 @@
 			{ name: CMDBuild.core.constants.Proxy.REQUIRED, type: 'boolean' },
 			{ name: CMDBuild.core.constants.Proxy.TYPE, type: 'string' },
 			{ name: CMDBuild.core.constants.Proxy.VARIABLES, type: 'auto' } // Unmanaged variables
-
 		],
 
 		/**
@@ -45,38 +45,53 @@
 		 * @override
 		 */
 		set: function(fieldName, newValue) {
-			switch (fieldName) {
-				case CMDBuild.core.constants.Proxy.CAPABILITIES: {
-					newValue = Ext.create('CMDBuild.model.widget.customForm.Capabilities', newValue);
-				} break;
+			if (!Ext.isEmpty(newValue)) {
+				switch (fieldName) {
+					case CMDBuild.core.constants.Proxy.CAPABILITIES: {
+						newValue = Ext.create('CMDBuild.model.widget.customForm.Capabilities', newValue);
+					} break;
 
-				case CMDBuild.core.constants.Proxy.DATA: {
-					newValue = Ext.isString(newValue) ? Ext.decode(newValue) : newValue;
+					case CMDBuild.core.constants.Proxy.DATA: {
+						newValue = Ext.isString(newValue) ? Ext.decode(newValue) : newValue;
 
-					var attributesArray = [];
+						var attributesArray = [];
+						var attributesDataTypes = {};
 
-					Ext.Array.forEach(newValue, function(attributeObject, i, AllAttributesObjects) {
-						attributesArray.push(Ext.create('CMDBuild.model.common.Generic', attributeObject));
-					}, this);
+						// Build attributes dataTypes
+						Ext.Array.forEach(this.get(CMDBuild.core.constants.Proxy.MODEL), function(fieldModel, i, allfieldModels) {
+							attributesDataTypes[fieldModel.get(CMDBuild.core.constants.Proxy.NAME)] = fieldModel.get(CMDBuild.core.constants.Proxy.TYPE);
+						}, this);
 
-					newValue = attributesArray;
-				} break;
+						Ext.Array.forEach(newValue, function(attributeObject, i, allAttributeObjects) {
+							attributesArray.push(Ext.create('CMDBuild.model.common.Generic', {
+								data: attributeObject,
+								dataTypes: attributesDataTypes
+							}));
+						}, this);
 
-				case CMDBuild.core.constants.Proxy.MODEL: {
-					newValue = Ext.isString(newValue) ? Ext.decode(newValue) : newValue;
+						newValue = attributesArray;
+					} break;
 
-					var attributesArray = [];
+					/**
+					 * Uses custom Attribute model to adapt to old FieldManager implementation
+					 * TODO: delete on full FieldManager implementation
+					 */
+					case CMDBuild.core.constants.Proxy.MODEL: {
+						newValue = Ext.isString(newValue) ? Ext.decode(newValue) : newValue;
 
-					Ext.Array.forEach(newValue, function(attributeObject, i, AllAttributesObjects) {
-						attributesArray.push(Ext.create('CMDBuild.model.widget.customForm.Attribute', attributeObject));
-					}, this);
+						var attributesArray = [];
 
-					newValue = attributesArray;
-				} break;
+						Ext.Array.forEach(newValue, function(attributeObject, i, allAttributeObjects) {
+							attributesArray.push(Ext.create('CMDBuild.model.widget.customForm.Attribute', attributeObject));
+						}, this);
 
-				default: {
-					if (Ext.isString(newValue))
-						newValue = Ext.decode(newValue);
+						newValue = attributesArray;
+					} break;
+
+					default: {
+						if (Ext.isString(newValue))
+							newValue = Ext.decode(newValue);
+					}
 				}
 			}
 

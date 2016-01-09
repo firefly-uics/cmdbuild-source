@@ -1,7 +1,7 @@
 (function() {
 
 	Ext.define('CMDBuild.controller.administration.filter.Filter', {
-		extend: 'CMDBuild.controller.common.AbstractBasePanelController',
+		extend: 'CMDBuild.controller.common.abstract.BasePanel',
 
 		requires: ['CMDBuild.core.constants.Proxy'],
 
@@ -23,15 +23,15 @@
 		/**
 		 * Setup view items and controllers on accordion click
 		 *
-		 * @param {CMDBuild.view.common.CMAccordionStoreModel} parameters
+		 * @param {CMDBuild.model.common.accordion.Generic} node
 		 *
 		 * @override
 		 */
-		onViewOnFront: function(parameters) {
-			if (!Ext.Object.isEmpty(parameters)) {
+		onViewOnFront: function(node) {
+			if (!Ext.Object.isEmpty(node)) {
 				this.view.removeAll(true);
 
-				switch(parameters.get(CMDBuild.core.constants.Proxy.ID)) {
+				switch(node.get(CMDBuild.core.constants.Proxy.SECTION_HIERARCHY)[0]) {
 					case 'groups':
 					default: {
 						this.sectionController = Ext.create('CMDBuild.controller.administration.filter.Groups', { parentDelegate: this });
@@ -40,7 +40,7 @@
 
 				this.view.add(this.sectionController.getView());
 
-				this.setViewTitle(parameters.get(CMDBuild.core.constants.Proxy.TEXT));
+				this.setViewTitle(node.get(CMDBuild.core.constants.Proxy.TEXT));
 
 				this.callParent(arguments);
 			}

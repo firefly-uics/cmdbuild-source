@@ -1,5 +1,7 @@
 package org.cmdbuild.report;
 
+import static java.lang.String.format;
+
 import java.awt.Color;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -24,21 +26,20 @@ import net.sf.jasperreports.engine.xml.JRXmlLoader;
 import org.cmdbuild.config.CmdbuildConfiguration;
 import org.cmdbuild.dao.driver.postgres.query.QueryCreator;
 import org.cmdbuild.dao.entrytype.CMAttribute;
-import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.entrytype.CMEntryType;
 import org.cmdbuild.dao.query.QuerySpecsBuilder;
+import org.cmdbuild.dao.query.clause.alias.Alias;
 import org.cmdbuild.dao.view.CMDataView;
-import org.cmdbuild.logger.Log;
 import org.cmdbuild.logic.data.QueryOptions;
-import org.cmdbuild.logic.data.access.DataAccessLogic;
 import org.cmdbuild.logic.data.access.QuerySpecsBuilderFiller;
+import org.cmdbuild.services.FilesStore;
 
 public class ReportFactoryTemplateList extends ReportFactoryTemplate {
 
-	private final List<String> attributeNamesSorted;
+	private final Iterable<String> attributeNamesSorted;
 	private JasperDesign jasperDesign;
 	private final ReportExtension reportExtension;
-	private final CMClass table;
+	private final CMEntryType entryType;
 	private final static String REPORT_PDF = "CMDBuild_list.jrxml";
 	private final static String REPORT_CSV = "CMDBuild_list_csv.jrxml";
 
@@ -46,24 +47,26 @@ public class ReportFactoryTemplateList extends ReportFactoryTemplate {
 			final DataSource dataSource, //
 			final ReportExtension reportExtension, //
 			final QueryOptions queryOptions, //
-			final List<String> attributeOrder, //
-			final String className, //
-			final DataAccessLogic dataAccessLogic, //
+			final Iterable<String> attributeOrder, //
+			final CMEntryType entryType, //
 			final CMDataView dataView, //
+			final FilesStore filesStore, //
 			final CmdbuildConfiguration configuration //
 	) throws JRException {
-		super(dataSource, configuration, dataView);
+		super(dataSource, configuration, dataView, filesStore);
 
 		this.reportExtension = reportExtension;
 		this.attributeNamesSorted = attributeOrder;
 
-		table = dataAccessLogic.findClass(className);
-		final QuerySpecsBuilder querySpecsBuilder = new QuerySpecsBuilderFiller(dataView, queryOptions, className) //
+		this.entryType = entryType;
+		final QuerySpecsBuilderFiller querySpecsBuilderFiller = new QuerySpecsBuilderFiller(dataView, queryOptions,
+				entryType);
+		final QuerySpecsBuilder querySpecsBuilder = querySpecsBuilderFiller //
 				.create();
 
 		final QueryCreator queryCreator = new QueryCreator(querySpecsBuilder.build());
 		loadDesign(reportExtension);
-		initDesign(queryCreator);
+		initDesign(queryCreator, querySpecsBuilderFiller.getAlias());
 	}
 
 	private void loadDesign(final ReportExtension reportExtension) throws JRException {
@@ -84,11 +87,11 @@ public class ReportFactoryTemplateList extends ReportFactoryTemplate {
 		return reportExtension;
 	}
 
-	private void initDesign(final QueryCreator queryCreator) throws JRException {
+	private void initDesign(final QueryCreator queryCreator, final Alias alias) throws JRException {
 		setNameFromTable();
 		setQuery(queryCreator);
-		setAllTableFields();
-		setTextFieldsInDetailBand();
+		setAllTableFields(alias);
+		setTextFieldsInDetailBand(alias);
 		setColumnHeadersForNewFields();
 
 		if (reportExtension == ReportExtension.PDF) {
@@ -96,11 +99,11 @@ public class ReportFactoryTemplateList extends ReportFactoryTemplate {
 			updateImagesPath();
 		}
 
-		refreshLayout();
+		refreshLayout(alias);
 	}
 
 	private void setNameFromTable() {
-		jasperDesign.setName(table.getIdentifier().getLocalName());
+		jasperDesign.setName(entryType.getIdentifier().getLocalName());
 	}
 
 	protected void setQuery(final QueryCreator queryCreator) {
@@ -109,13 +112,13 @@ public class ReportFactoryTemplateList extends ReportFactoryTemplate {
 	}
 
 	private void setTitleFromTable() {
-		setTitle(table.getIdentifier().getLocalName());
+		setTitle(entryType.getIdentifier().getLocalName());
 	}
 
-	private void setAllTableFields() throws JRException {
+	private void setAllTableFields(final Alias alias) throws JRException {
 		final List<CMAttribute> fields = new LinkedList<CMAttribute>();
 		for (final String attributeName : attributeNamesSorted) {
-			final CMAttribute attribute = table.getAttribute(attributeName);
+			final CMAttribute attribute = entryType.getAttribute(attributeName);
 			// If try to take a reserved
 			// attribute form the table
 			// it returns null
@@ -124,21 +127,10 @@ public class ReportFactoryTemplateList extends ReportFactoryTemplate {
 			}
 		}
 
-		setFields(fields);
+		setFields(fields, alias);
 	}
 
-	@Override
-	protected String fieldNameFromCMAttribute(final CMAttribute cmAttribute) {
-		final CMEntryType attributeOwner = cmAttribute.getOwner();
-		final String attributeAlias = String.format("%s#%s", attributeOwner.getIdentifier().getLocalName(),
-				cmAttribute.getName());
-		final String fieldName = getAttributeName(attributeAlias, cmAttribute.getType());
-
-		Log.REPORT.debug(String.format("fieldNameFromCMAttribut: %s", fieldName));
-		return fieldName;
-	}
-
-	private void setTextFieldsInDetailBand() {
+	private void setTextFieldsInDetailBand(final Alias alias) {
 		final JRSection section = jasperDesign.getDetailSection();
 		final JRBand band = section.getBands()[0];
 		final List<JRChild> graphicVector = new ArrayList<JRChild>();
@@ -151,11 +143,10 @@ public class ReportFactoryTemplateList extends ReportFactoryTemplate {
 
 		final List<JRChild> detailVector = new ArrayList<JRChild>();
 		for (final String attributeName : attributeNamesSorted) {
-			final CMAttribute attribute = table.getAttribute(attributeName);
+			final CMAttribute attribute = entryType.getAttribute(attributeName);
 			if (attribute != null) {
-				final String attributeAlias = String.format("%s#%s", table.getIdentifier().getLocalName(),
-						attribute.getName());
-				Log.REPORT.debug(String.format("setTextFieldsInDetailBand: %s", attributeAlias));
+				final String attributeAlias = fieldNameFromCMAttribute(alias, attribute.getName());
+				logger.debug(format("setTextFieldsInDetailBand: %s", attributeAlias));
 				detailVector.add(createTextFieldForAttribute(attributeAlias, attribute.getType()));
 			}
 		}
@@ -180,7 +171,7 @@ public class ReportFactoryTemplateList extends ReportFactoryTemplate {
 
 		// create column headers
 		for (final String attribute : attributeNamesSorted) {
-			final CMAttribute cmAttribute = table.getAttribute(attribute);
+			final CMAttribute cmAttribute = entryType.getAttribute(attribute);
 			if (cmAttribute != null) {
 				String description = cmAttribute.getDescription();
 				if ("".equals(description) || description == null) {
@@ -201,7 +192,7 @@ public class ReportFactoryTemplateList extends ReportFactoryTemplate {
 	/*
 	 * Update position of report elements
 	 */
-	private void refreshLayout() {
+	private void refreshLayout(final Alias alias) {
 		// calculate weight of all elements
 		final Map<String, String> weight = new HashMap<String, String>();
 		int virtualWidth = 0;
@@ -211,7 +202,7 @@ public class ReportFactoryTemplateList extends ReportFactoryTemplate {
 		String key = "";
 		CMAttribute attribute = null;
 		for (final String attributeName : attributeNamesSorted) {
-			attribute = table.getAttribute(attributeName);
+			attribute = entryType.getAttribute(attributeName);
 			if (attribute == null) {
 				continue;
 			}
@@ -219,10 +210,7 @@ public class ReportFactoryTemplateList extends ReportFactoryTemplate {
 			size = getSizeFromAttribute(attribute);
 			virtualWidth += size;
 
-			key = getAttributeName( //
-					String.format("%s#%s", table.getIdentifier().getLocalName(), attribute.getName()), //
-					attribute.getType() //
-			);
+			key = fieldNameFromCMAttribute(alias, attribute);
 
 			weight.put(attribute.getName(), Integer.toString(size));
 			weight.put(key, Integer.toString(size));
@@ -231,7 +219,7 @@ public class ReportFactoryTemplateList extends ReportFactoryTemplate {
 
 		final int pageWidth = jasperDesign.getPageWidth();
 		final double cx = (pageWidth * 0.95) / virtualWidth;
-		Log.REPORT.debug("cx=" + cx + " pageWidth " + (pageWidth * 0.95) + " / virtualWidth " + virtualWidth);
+		logger.debug("cx=" + cx + " pageWidth " + (pageWidth * 0.95) + " / virtualWidth " + virtualWidth);
 		double doub = 0;
 		final JRSection section = jasperDesign.getDetailSection();
 		final JRBand detail = section.getBands()[0];
@@ -239,18 +227,18 @@ public class ReportFactoryTemplateList extends ReportFactoryTemplate {
 		JRDesignTextField dtf = null;
 		int x = 0;
 		final int y = 2;
-		Log.REPORT.debug("RF updateDesign DESIGN");
+		logger.debug("RF updateDesign DESIGN");
 		JRDesignExpression varExpr = null;
 		for (int i = 0; i < elements.length; i++) {
 			if (elements[i] instanceof JRDesignTextField) {
 				dtf = (JRDesignTextField) elements[i];
 				varExpr = (JRDesignExpression) dtf.getExpression();
 				key = varExpr.getText();
-				Log.REPORT.debug("text=" + key);
+				logger.debug("text=" + key);
 				key = key.substring(3, key.length() - 1);
-				Log.REPORT.debug("text=" + key);
+				logger.debug("text=" + key);
 				key = weight.get(key);
-				Log.REPORT.debug("kry=" + key);
+				logger.debug("kry=" + key);
 				try {
 					size = Integer.parseInt(key);
 				} catch (final NumberFormatException e) {
@@ -264,7 +252,7 @@ public class ReportFactoryTemplateList extends ReportFactoryTemplate {
 				dtf.setHeight(height);
 				dtf.setBlankWhenNull(true);
 				dtf.setStretchWithOverflow(true);
-				Log.REPORT.debug("RF updateDesign x=" + dtf.getX() + " Width=" + dtf.getWidth());
+				logger.debug("RF updateDesign x=" + dtf.getX() + " Width=" + dtf.getWidth());
 				x += size;
 			}
 		}
@@ -274,14 +262,14 @@ public class ReportFactoryTemplateList extends ReportFactoryTemplate {
 		elements = columnHeader.getElements();
 		JRDesignStaticText dst = null;
 		x = 0;
-		Log.REPORT.debug("RF updateDesign HEADER");
+		logger.debug("RF updateDesign HEADER");
 		for (int i = 0; i < elements.length; i++) {
 			if (elements[i] instanceof JRDesignStaticText) {
 				dst = (JRDesignStaticText) elements[i];
 				key = dst.getText();
-				Log.REPORT.debug("text=" + key);
+				logger.debug("text=" + key);
 				key = weight.get(key);
-				Log.REPORT.debug("key=" + key);
+				logger.debug("key=" + key);
 				size = Integer.parseInt(key);
 
 				doub = size * cx;
@@ -290,7 +278,7 @@ public class ReportFactoryTemplateList extends ReportFactoryTemplate {
 				dst.setX(x);
 				dst.setHeight(height);
 				dst.setWidth(size);
-				Log.REPORT.debug("RF updateDesign" + dst.getText() + " x=" + dst.getX() + " Width=" + dst.getWidth());
+				logger.debug("RF updateDesign" + dst.getText() + " x=" + dst.getX() + " Width=" + dst.getWidth());
 				x += size;
 			}
 		}

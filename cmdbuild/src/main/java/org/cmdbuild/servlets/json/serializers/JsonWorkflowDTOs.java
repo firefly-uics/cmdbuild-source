@@ -159,6 +159,10 @@ public class JsonWorkflowDTOs {
 		public String getEndDate() {
 			return formatDateTime(processInstance.getEndDate());
 		}
+		
+		public String getUser(){
+			return processInstance.getUser();
+		}
 
 		public Map<String, Object> getValues() {
 			final Map<String, Object> output = new HashMap<String, Object>();

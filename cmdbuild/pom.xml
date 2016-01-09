@@ -11,9 +11,6 @@
 	<artifactId>cmdbuild</artifactId>
 	<packaging>war</packaging>
 	<name>CMDBuild Webapp</name>
-	<properties>
-		<cmdbuild-graph.version>1.0</cmdbuild-graph.version>
-	</properties>
 
 	<dependencies>
 		<dependency> <!-- @Legacy remove when we get rid of CachedSharkWSFactory -->
@@ -25,12 +22,6 @@
 			<groupId>${project.groupId}</groupId>
 			<artifactId>cmdbuild-auth-default</artifactId>
 			<version>${project.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>${project.groupId}</groupId>
-			<artifactId>cmdbuild-graph</artifactId>
-			<version>${cmdbuild-graph.version}</version>
-			<type>swf</type>
 		</dependency>
 		<dependency>
 			<groupId>${project.groupId}</groupId>
@@ -196,7 +187,6 @@
 		<plugins>
 			<plugin>
 				<artifactId>maven-war-plugin</artifactId>
-				<version>${maven-war-plugin.version}</version>
 				<configuration>
 					<!-- Remove when not using Spring and not the context.xml -->
 					<packagingExcludes>WEB-INF/lib/postgresql-*.jar</packagingExcludes>
@@ -204,39 +194,12 @@
 						<manifest>
 							<addDefaultImplementationEntries>true</addDefaultImplementationEntries>
 						</manifest>
+						<manifestEntries>
+							<Implementation-Changeset>${changeSet}</Implementation-Changeset>
+						</manifestEntries>
 					</archive>
 					<attachClasses>true</attachClasses>
 				</configuration>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-dependency-plugin</artifactId>
-				<executions>
-					<execution>
-						<id>copy</id>
-						<phase>prepare-package</phase>
-						<goals>
-							<goal>copy</goal>
-						</goals>
-						<configuration>
-							<artifactItems>
-								<artifactItem>
-									<groupId>${project.groupId}</groupId>
-									<artifactId>cmdbuild-graph</artifactId>
-									<version>${cmdbuild-graph.version}</version>
-									<type>swf</type>
-									<outputDirectory>${project.build.directory}/${project.build.finalName}/flash
-									</outputDirectory>
-									<destFileName>graph.swf</destFileName>
-								</artifactItem>
-							</artifactItems>
-							<outputDirectory>${project.build.directory}/wars
-							</outputDirectory>
-							<overWriteReleases>false</overWriteReleases>
-							<overWriteSnapshots>true</overWriteSnapshots>
-						</configuration>
-					</execution>
-				</executions>
 			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>

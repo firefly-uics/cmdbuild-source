@@ -9,7 +9,7 @@ import static org.cmdbuild.dao.query.clause.where.EqualsOperatorAndValue.eq;
 import static org.cmdbuild.dao.query.clause.where.SimpleWhereClause.condition;
 
 import org.cmdbuild.dao.entry.CMCard;
-import org.cmdbuild.dao.entry.DBCard;
+import org.cmdbuild.dao.entry.CMCard.CMCardDefinition;
 import org.cmdbuild.dao.entry.IdAndDescription;
 import org.cmdbuild.dao.entry.LookupValue;
 import org.cmdbuild.dao.entrytype.CMAttribute;
@@ -68,7 +68,7 @@ public class CardFiller {
 	 * description and build a CardReference
 	 */
 	public void fillCardAttributeWithValue( //
-			final DBCard card, //
+			final CMCardDefinition card, //
 			final String attributeName, //
 			final Object value //
 	) throws CardFillerException, JSONException {
@@ -121,7 +121,7 @@ public class CardFiller {
 	}
 
 	private void manageLookupAttribute( //
-			final DBCard mutableCard, //
+			final CMCardDefinition mutableCard, //
 			final String attributeName, //
 			final Object value, //
 			final CMAttribute attribute //
@@ -154,7 +154,7 @@ public class CardFiller {
 	}
 
 	private void manageReferenceAttribute( //
-			final DBCard mutableCard, //
+			final CMCardDefinition mutableCard, //
 			final String attributeName, //
 			final Object value, //
 			final CMAttribute attribute //

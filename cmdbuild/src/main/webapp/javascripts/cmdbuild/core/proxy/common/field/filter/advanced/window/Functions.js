@@ -15,11 +15,11 @@
 		 */
 		getStore: function() {
 			return Ext.create('Ext.data.Store', {
-				autoLoad: true,
+				autoLoad: false,
 				model: 'CMDBuild.model.common.field.filter.advanced.window.Function',
 				proxy: {
 					type: 'ajax',
-					url: CMDBuild.core.proxy.Index.functions.getFunctions,
+					url: CMDBuild.core.proxy.Index.functions.readAll,
 					reader: {
 						type: 'json',
 						root: 'response'

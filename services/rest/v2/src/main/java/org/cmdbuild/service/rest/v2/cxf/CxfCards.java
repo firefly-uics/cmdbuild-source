@@ -10,10 +10,12 @@ import static com.google.common.collect.Maps.uniqueIndex;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.emptyMap;
 import static org.apache.commons.lang3.ObjectUtils.defaultIfNull;
+import static org.cmdbuild.dao.entrytype.Predicates.attributeTypeInstanceOf;
 import static org.cmdbuild.service.rest.v2.cxf.util.Json.safeJsonArray;
 import static org.cmdbuild.service.rest.v2.cxf.util.Json.safeJsonObject;
 import static org.cmdbuild.service.rest.v2.model.Models.newCard;
 import static org.cmdbuild.service.rest.v2.model.Models.newMetadata;
+import static org.cmdbuild.service.rest.v2.model.Models.newReference;
 import static org.cmdbuild.service.rest.v2.model.Models.newResponseMultiple;
 import static org.cmdbuild.service.rest.v2.model.Models.newResponseSingle;
 
@@ -23,9 +25,11 @@ import java.util.Set;
 
 import org.cmdbuild.common.utils.PagedElements;
 import org.cmdbuild.dao.entry.CMCard;
+import org.cmdbuild.dao.entry.IdAndDescription;
 import org.cmdbuild.dao.entrytype.CMAttribute;
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.entrytype.attributetype.CMAttributeType;
+import org.cmdbuild.dao.entrytype.attributetype.ReferenceAttributeType;
 import org.cmdbuild.exception.NotFoundException;
 import org.cmdbuild.logic.data.QueryOptions;
 import org.cmdbuild.logic.data.access.CMCardWithPosition;
@@ -34,6 +38,7 @@ import org.cmdbuild.service.rest.v2.Cards;
 import org.cmdbuild.service.rest.v2.cxf.serialization.DefaultConverter;
 import org.cmdbuild.service.rest.v2.logging.LoggingSupport;
 import org.cmdbuild.service.rest.v2.model.Card;
+import org.cmdbuild.service.rest.v2.model.DetailResponseMetadata.Reference;
 import org.cmdbuild.service.rest.v2.model.ResponseMultiple;
 import org.cmdbuild.service.rest.v2.model.ResponseSingle;
 
@@ -76,8 +81,24 @@ public class CxfCards implements Cards, LoggingSupport {
 					.withId(fetched.getId()) //
 					.withValues(adaptOutputValues(targetClass, fetched)) //
 					.build();
+			final Map<Long, Reference> references = newHashMap();
+			for (final CMAttribute _element : from(fetched.getType().getAllAttributes()) //
+					.filter(attributeTypeInstanceOf(ReferenceAttributeType.class))) {
+				final Object value = fetched.get(_element.getName());
+				if (value instanceof IdAndDescription) {
+					final IdAndDescription _value = IdAndDescription.class.cast(value);
+					if (_value.getId() != null) {
+						references.put(_value.getId(), newReference() //
+								.withDescription(_value.getDescription()) //
+								.build());
+					}
+				}
+			}
 			return newResponseSingle(Card.class) //
 					.withElement(element) //
+					.withMetadata(newMetadata() //
+							.withReferences(references) //
+							.build()) //
 					.build();
 		} catch (final NotFoundException e) {
 			errorHandler.cardNotFound(id);
@@ -123,6 +144,21 @@ public class CxfCards implements Cards, LoggingSupport {
 
 					});
 		}
+		final Map<Long, Reference> references = newHashMap();
+		for (final org.cmdbuild.model.data.Card element : response) {
+			for (final CMAttribute _element : from(element.getType().getAllAttributes()) //
+					.filter(attributeTypeInstanceOf(ReferenceAttributeType.class))) {
+				final Object value = element.getAttribute(_element.getName());
+				if (value instanceof IdAndDescription) {
+					final IdAndDescription _value = IdAndDescription.class.cast(value);
+					if (_value.getId() != null) {
+						references.put(_value.getId(), newReference() //
+								.withDescription(_value.getDescription()) //
+								.build());
+					}
+				}
+			}
+		}
 		final Iterable<Card> elements = from(response.elements()) //
 				.transform(new Function<org.cmdbuild.model.data.Card, Card>() {
 
@@ -141,6 +177,7 @@ public class CxfCards implements Cards, LoggingSupport {
 				.withMetadata(newMetadata() //
 						.withTotal(Long.valueOf(response.totalSize())) //
 						.withPositions(positions) //
+						.withReferences(references) //
 						.build()) //
 				.build();
 	}

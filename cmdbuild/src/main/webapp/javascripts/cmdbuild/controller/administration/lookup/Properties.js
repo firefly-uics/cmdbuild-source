@@ -1,7 +1,7 @@
 (function() {
 
 	Ext.define('CMDBuild.controller.administration.lookup.Properties', {
-		extend: 'CMDBuild.controller.common.AbstractController',
+		extend: 'CMDBuild.controller.common.abstract.Base',
 
 		requires: [
 			'CMDBuild.core.constants.Proxy',
@@ -20,9 +20,9 @@
 		cmfgCatchedFunctions: [
 			'onLookupPropertiesAbortButtonClick',
 			'onLookupPropertiesAddButtonClick',
+			'onLookupPropertiesLookupSelected = onLookupSelected',
 			'onLookupPropertiesModifyButtonClick',
-			'onLookupPropertiesSaveButtonClick',
-			'onLookupPropertiesTabShow'
+			'onLookupPropertiesSaveButtonClick'
 		],
 
 		/**
@@ -51,11 +51,11 @@
 		},
 
 		onLookupPropertiesAbortButtonClick: function() {
-			if (this.cmfg('selectedLookupTypeIsEmpty')) {
+			if (this.cmfg('lookupSelectedLookupTypeIsEmpty')) {
 				this.form.reset();
 				this.form.setDisabledModify(true, true, true);
 			} else {
-				this.onLookupPropertiesTabShow();
+				this.onLookupPropertiesLookupSelected();
 			}
 		},
 
@@ -65,45 +65,58 @@
 			this.form.loadRecord(Ext.create('CMDBuild.model.lookup.Type'));
 		},
 
+		onLookupPropertiesLookupSelected: function() {
+			this.view.setDisabled(this.cmfg('lookupSelectedLookupTypeIsEmpty'));
+
+			if (!this.cmfg('lookupSelectedLookupTypeIsEmpty')) {
+				this.form.reset();
+				this.form.setDisabledModify(true);
+				this.form.loadRecord(this.cmfg('lookupSelectedLookupTypeGet'));
+			}
+		},
+
 		onLookupPropertiesModifyButtonClick: function() {
 			this.form.setDisabledModify(false);
 		},
 
 		onLookupPropertiesSaveButtonClick: function() {
-			// Validate before save
 			if (this.validate(this.form)) {
-				var formData = this.form.getData(true);
-				formData['orig_type'] = formData[CMDBuild.core.constants.Proxy.ID]; // TODO: wrong server implementation to fix
+				var params = this.form.getData(true);
+				params['orig_type'] = params[CMDBuild.core.constants.Proxy.ID]; // TODO: wrong server implementation to fix
 
-				CMDBuild.core.proxy.lookup.Type.save({ // TODO: server side refactor needed to follow new CMDBuild standards (create/update)
-					params: formData,
-					scope: this,
-					success: this.success
-				});
-			}
-		},
-
-		onLookupPropertiesTabShow: function() {
-			if (!this.cmfg('selectedLookupTypeIsEmpty')) {
-				this.form.reset();
-				this.form.setDisabledModify(true);
-				this.form.loadRecord(this.cmfg('selectedLookupTypeGet'));
+				if (Ext.isEmpty(params[CMDBuild.core.constants.Proxy.ID])) {
+					CMDBuild.core.proxy.lookup.Type.create({
+						params: params,
+						scope: this,
+						success: this.success
+					});
+				} else {
+					CMDBuild.core.proxy.lookup.Type.update({
+						params: params,
+						scope: this,
+						success: this.success
+					});
+				}
 			}
 		},
 
 		/**
-		 * @param {Object} result
+		 * @param {Object} response
 		 * @param {Object} options
-		 * @param {Object} decodedResult
+		 * @param {Object} decodedResponse
 		 *
-		 * TODO: server side refactor needed to follow new CMDBuild standards
+		 * TODO: waiting for refactor (crud)
 		 */
-		success: function(result, options, decodedResult) {
-			if (!Ext.isEmpty(decodedResult.isNew)) {
-				_CMCache.onNewLookupType(decodedResult.lookup);
+		success: function(response, options, decodedResponse) {
+			if (!Ext.isEmpty(decodedResponse.isNew)) {
+				_CMCache.onNewLookupType(decodedResponse[CMDBuild.core.constants.Proxy.LOOKUP]);
 			} else {
-				_CMCache.onModifyLookupType(decodedResult.lookup);
+				_CMCache.onModifyLookupType(decodedResponse[CMDBuild.core.constants.Proxy.LOOKUP]);
 			}
+
+			_CMMainViewportController.findAccordionByCMName(this.cmfg('controllerPropertyGet', 'cmName')).updateStore(
+				decodedResponse[CMDBuild.core.constants.Proxy.LOOKUP][CMDBuild.core.constants.Proxy.ID]
+			);
 
 			this.form.setDisabledModify(true);
 		}

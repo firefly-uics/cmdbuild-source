@@ -11,11 +11,9 @@
 
 <!-- THE OTHERS -->
 <script type="text/javascript" src="javascripts/cmdbuild/view/administration/common/CMDomainGrid.js"></script> <!-- TODO move to common files -->
-<script type="text/javascript" src="javascripts/cmdbuild/controller/common/TemplateResolver.js"></script><!-- must be here -->
 <script type="text/javascript" src="javascripts/cmdbuild/view/management/common/graph/GraphWindow.js"></script>
 
 <!-- MODELS -->
-<script type="text/javascript" src="javascripts/cmdbuild/model/CMSetupModels.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/model/CMDomainModels.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/model/widget/CMWidgetReaders.js"></script>
 
@@ -63,11 +61,6 @@
 	<script type="text/javascript" src="javascripts/cmdbuild/view/management/classes/CMModCard.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/view/management/classes/CMCardPanel.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/view/management/classes/CMCardTabPanel.js"></script>
-	<script type="text/javascript" src="javascripts/cmdbuild/view/common/classes/CMClassAccordion.js"></script>
-
-		<!-- DATAVIEW -->
-		<script type="text/javascript" src="javascripts/cmdbuild/view/management/dataView/CMDataViewAccordion.js"></script>
-		<script type="text/javascript" src="javascripts/cmdbuild/view/management/dataView/CMModSqlDataView.js"></script>
 
 		<!-- RELATIONS -->
 		<script type="text/javascript" src="javascripts/cmdbuild/view/management/classes/relations/CMEditRelationWindow.js"> </script>
@@ -80,11 +73,9 @@
 		<script type="text/javascript" src="javascripts/cmdbuild/view/management/classes/attachments/CMEditAttachmentWindow.js"></script>
 
 	<!-- DASHBOARD -->
-	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/accordion/CMDashboardAccordion.js"></script> <!-- TODO: mone in commons file -->
 	<script type="text/javascript" src="javascripts/cmdbuild/view/management/dashboard/CMModDashbaord.js"></script>
 
 	<!-- UTILITIES -->
-	<script type="text/javascript" src="javascripts/cmdbuild/view/management/utilities/CMUtilitiesAccordion.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/view/management/utilities/CMModChangePassword.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/view/management/utilities/CMBulkCardForm.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/view/management/utilities/CMModBulkCardUpdate.js"></script>
@@ -102,9 +93,6 @@
 	<script type="text/javascript" src="javascripts/cmdbuild/view/management/common/widgets/CMWorkflow.js"></script>
 
 <!-- CONTROLLER -->
-	<!-- ACCORDION -->
-	<script type="text/javascript" src="javascripts/cmdbuild/controller/management/common/CMFakeIdAccordionController.js"></script>
-
 	<!-- COMMON -->
 	<script type="text/javascript" src="javascripts/cmdbuild/controller/management/classes/CMModCardSubController.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/controller/management/common/CMModClassAndWFCommons.js"></script>
@@ -149,9 +137,6 @@
 		<script type="text/javascript" src="javascripts/cmdbuild/controller/management/common/CMCardWindowController.js"></script>
 		<script type="text/javascript" src="javascripts/cmdbuild/controller/management/common/CMDetailWindowController.js"></script>
 		<script type="text/javascript" src="javascripts/cmdbuild/controller/management/common/CMAddDetailWindowController.js"></script>
-
-	<!-- DATA VIEW -->
-	<script type="text/javascript" src="javascripts/cmdbuild/controller/management/dataView/CMModSqlDataViewController.js"></script>
 
 	<!-- WORKFLOW -->
 	<script type="text/javascript" src="javascripts/cmdbuild/controller/management/workflow/CMModWorkflowController.js"></script>

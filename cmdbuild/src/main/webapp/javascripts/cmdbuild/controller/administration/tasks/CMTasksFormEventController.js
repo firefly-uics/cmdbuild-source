@@ -5,6 +5,7 @@
 
 		requires: [
 			'CMDBuild.core.constants.Proxy',
+			'CMDBuild.core.LoadMask',
 			'CMDBuild.core.proxy.CMProxyTasks'
 		],
 
@@ -202,7 +203,7 @@
 
 			// Validate before save
 			if (this.validate(formData[CMDBuild.core.constants.Proxy.ACTIVE], taskType)) {
-				CMDBuild.LoadMask.get().show();
+				CMDBuild.core.LoadMask.show();
 
 				// Form actions by type
 					switch (taskType) {
@@ -292,7 +293,7 @@
 		 */
 		removeItem: function() {
 			if (!Ext.isEmpty(this.selectedId)) {
-				CMDBuild.LoadMask.get().show();
+				CMDBuild.core.LoadMask.show();
 
 				CMDBuild.core.proxy.CMProxyTasks.remove({
 					type: this.selectedType,

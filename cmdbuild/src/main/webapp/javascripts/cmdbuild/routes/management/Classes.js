@@ -34,7 +34,7 @@
 				Ext.Function.createDelayed(function() {
 					this.entryType.set(CMDBuild.core.constants.Proxy.FILTER, this.clientFilter); // Inject filter in entryType object
 
-					_CMMainViewportController.panelControllers[CMDBuild.core.constants.Proxy.CLASS].onViewOnFront(this.entryType);
+					_CMMainViewportController.panelControllers['class'].onViewOnFront(this.entryType);
 				}, 1500, this)();
 		},
 
@@ -49,7 +49,8 @@
 			if (this.paramsValidation(params)) {
 				this.entryType = _CMCache.getEntryTypeByName(this.classIdentifier);
 
-				CMDBuild.Runtime.StartingClassId = this.entryType.get(CMDBuild.core.constants.Proxy.ID); // Use runtime configuration to select class
+				// Use runtime configuration to select class
+				CMDBuild.configuration.runtime.set(CMDBuild.core.constants.Proxy.STARTING_CLASS_ID, this.entryType.get(CMDBuild.core.constants.Proxy.ID));
 
 				this.applyClientFilter();
 			}
@@ -108,7 +109,7 @@
 			this.detail(params, path, router);
 
 			Ext.Function.createDelayed(function() {
-				_CMMainViewportController.panelControllers[CMDBuild.core.constants.Proxy.CLASS].gridController.onPrintGridMenuClick(this.printFormat);
+				_CMMainViewportController.panelControllers['class'].gridController.onPrintGridMenuClick(this.printFormat);
 			}, 500, this)();
 		}
 	});

@@ -4,7 +4,7 @@
 	 * @abstract
 	 */
 	Ext.define('CMDBuild.controller.administration.localization.advancedTable.SectionAbstract', {
-		extend: 'CMDBuild.controller.common.AbstractController',
+		extend: 'CMDBuild.controller.common.abstract.Base',
 
 		requires: [
 			'CMDBuild.core.constants.Proxy',
@@ -42,7 +42,7 @@
 		sectionId: undefined,
 
 		/**
-		 * @cfg {CMDBuild.view.administration.localization.advancedTable.SectionPanel}
+		 * @property {CMDBuild.view.administration.localization.advancedTable.SectionPanel}
 		 */
 		view: undefined,
 
@@ -52,6 +52,8 @@
 		 * @param {CMDBuild.model.localization.advancedTable.TreeStore} rootNode
 		 *
 		 * @returns {CMDBuild.model.localization.advancedTable.TreeStore}
+		 *
+		 * @private
 		 */
 		buildAttributesNode: function(rootNode) {
 			if (!Ext.isEmpty(rootNode)) {
@@ -69,6 +71,8 @@
 		/**
 		 * @param {CMDBuild.model.localization.advancedTable.TreeStore} rootNode
 		 * @param {Array} arrayToDecode
+		 *
+		 * @private
 		 */
 		decodeStructure: function(rootNode, arrayToDecode) {
 			if (
@@ -105,12 +109,13 @@
 		 *
 		 * @param {CMDBuild.model.localization.advancedTable.TreeStore} rootNode
 		 * @param {Array} attributesArray
+		 *
+		 * @private
 		 */
 		decodeStructureAttributes: function(rootNode, attributesArray) {
 			if (
 				!Ext.isEmpty(rootNode)
-				&& !Ext.isEmpty(attributesArray)
-				&& Ext.isArray(attributesArray)
+				&& !Ext.isEmpty(attributesArray) && Ext.isArray(attributesArray)
 			) {
 				rootNode = this.buildAttributesNode(rootNode);
 
@@ -137,12 +142,13 @@
 		 *
 		 * @param {CMDBuild.model.localization.advancedTable.TreeStore} rootNode
 		 * @param {Array} fieldsArray
+		 *
+		 * @private
 		 */
 		decodeStructureFields: function(rootNode, fieldsArray) {
 			if (
 				!Ext.isEmpty(rootNode)
-				&& !Ext.isEmpty(fieldsArray)
-				&& Ext.isArray(fieldsArray)
+				&& !Ext.isEmpty(fieldsArray) && Ext.isArray(fieldsArray)
 			) {
 				Ext.Array.forEach(fieldsArray, function(fieldObject, i, allFields) {
 					var entityFieldNodeObject = {};
@@ -172,6 +178,8 @@
 		/**
 		 * @param {Object} translationsSourceObject
 		 * @param {Object} targetObject
+		 *
+		 * @private
 		 */
 		fillWithTranslations: function(translationsSourceObject, targetObject) {
 			if (
@@ -182,7 +190,7 @@
 					targetObject[tag] = translation;
 				});
 			} else {
-				_debug('[' + this.getSectionId() + '] fillWithTranslations() - wrong parameters type', this);
+				_error('[' + this.getSectionId() + '] fillWithTranslations() - wrong parameters type', this);
 			}
 		},
 
@@ -191,9 +199,12 @@
 		 * @param {Number} levelToReach
 		 *
 		 * @returns {CMDBuild.model.localization.advancedTable.TreeStore} requestedNode or null
+		 *
+		 * @private
 		 */
 		getLevelNode: function(startNode, levelToReach) {
 			var requestedNode = startNode;
+
 			if (!Ext.isEmpty(requestedNode) && Ext.isNumber(levelToReach)) {
 				while (requestedNode.getDepth() > levelToReach) {
 					requestedNode = requestedNode.get(CMDBuild.core.constants.Proxy.PARENT);
@@ -207,6 +218,8 @@
 
 		/**
 		 * @returns {String}
+		 *
+		 * @private
 		 */
 		getSectionId: function() {
 			return this.sectionId;

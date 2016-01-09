@@ -112,7 +112,7 @@
 
 		deleteAttribute: function() {
 			if (!this.cmfg('domainSelectedDomainIsEmpty') && !Ext.isEmpty(this.currentAttribute)) {
-				CMDBuild.LoadMask.get().show();
+				CMDBuild.core.LoadMask.show();
 				CMDBuild.ServiceProxy.administration.domain.attribute.remove({
 					params: {
 						className: this.cmfg('domainSelectedDomainGet', CMDBuild.core.constants.Proxy.NAME),
@@ -130,7 +130,7 @@
 						this.currentAttribute = null;
 					},
 					callback: function() {
-						CMDBuild.LoadMask.get().hide();
+						CMDBuild.core.LoadMask.hide();
 					}
 				});
 			}
@@ -205,10 +205,11 @@
 			Ext.Msg.show({
 				title: CMDBuild.Translation.administration.modClass.attributeProperties.delete_attribute,
 				msg: CMDBuild.Translation.common.confirmpopup.areyousure,
-				scope: this,
 				buttons: Ext.Msg.YESNO,
-				fn: function(button) {
-					if (button == 'yes') {
+				scope: this,
+
+				fn: function(buttonId, text, opt) {
+					if (buttonId == 'yes') {
 						this.deleteAttribute();
 					}
 				}
@@ -242,7 +243,7 @@
 				return;
 			}
 
-			CMDBuild.LoadMask.get().show();
+			CMDBuild.core.LoadMask.show();
 			CMDBuild.ServiceProxy.administration.domain.attribute.save({
 				params: data,
 				scope: this,
@@ -259,7 +260,7 @@
 					CMDBuild.view.common.field.translatable.Utils.commit(this.form);
 				},
 				callback: function() {
-					CMDBuild.LoadMask.get().hide();
+					CMDBuild.core.LoadMask.hide();
 				}
 			});
 		},

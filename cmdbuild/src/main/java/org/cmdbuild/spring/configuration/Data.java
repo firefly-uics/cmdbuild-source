@@ -33,6 +33,9 @@ import org.springframework.context.annotation.Scope;
 public class Data {
 
 	@Autowired
+	private CustomPages customPages;
+
+	@Autowired
 	private DBDriver dbDriver;
 
 	@Autowired
@@ -92,7 +95,8 @@ public class Data {
 	@Bean
 	@Scope(PROTOTYPE)
 	public SecurityLogic securityLogic() {
-		return new DefaultSecurityLogic(systemDataView(), view.viewConverter(), filter.dataViewFilterStore());
+		return new DefaultSecurityLogic(systemDataView(), view.viewConverter(), filter.dataViewFilterStore(),
+				customPages.defaultCustomPagesLogic());
 	}
 
 	@Bean
@@ -101,7 +105,6 @@ public class Data {
 		return new SystemDataAccessLogicBuilder( //
 				systemDataView(), //
 				lookupStore(), //
-				systemDataView(), //
 				systemDataView(), //
 				userStore.getUser(), //
 				lock.dummyLockLogic());

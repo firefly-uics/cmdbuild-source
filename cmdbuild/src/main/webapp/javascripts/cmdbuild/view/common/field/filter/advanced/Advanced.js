@@ -63,6 +63,7 @@
 				]
 			});
 
+			// Delegate must be instantiated before fields creation because of button's state setup
 			this.delegate = Ext.create('CMDBuild.controller.common.field.filter.advanced.Advanced', { view: this });
 
 			this.callParent(arguments);

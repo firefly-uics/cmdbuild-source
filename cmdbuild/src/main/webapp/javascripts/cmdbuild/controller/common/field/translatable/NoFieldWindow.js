@@ -4,7 +4,7 @@
 	 * Customization of CMDBuild.controller.common.field.translatable.Window, mainly used in menu translations tree
 	 */
 	Ext.define('CMDBuild.controller.common.field.translatable.NoFieldWindow', {
-		extend: 'CMDBuild.controller.common.AbstractController',
+		extend: 'CMDBuild.controller.common.abstract.Base',
 
 		requires: [
 			'CMDBuild.core.Message',
@@ -50,11 +50,6 @@
 		translationFieldConfig: {},
 
 		/**
-		 * @cfg {String}
-		 */
-		titleSeparator: ' - ',
-
-		/**
 		 * @property {CMDBuild.view.common.field.translatable.window.Window}
 		 */
 		view: undefined,
@@ -87,7 +82,7 @@
 		},
 
 		buildTranslationsFields: function() {
-			var enabledLanguagesObjects = Ext.Object.getValues(CMDBuild.configuration[CMDBuild.core.constants.Proxy.LOCALIZATION].getEnabledLanguages());
+			var enabledLanguagesObjects = Ext.Object.getValues(CMDBuild.configuration.localization.getEnabledLanguages());
 
 			// Sort languages with description alphabetical order
 			CMDBuild.core.Utils.objectArraySort(enabledLanguagesObjects);
@@ -253,19 +248,6 @@
 			this.buffer[this.translationFieldConfig.identifier][CMDBuild.core.constants.Proxy.TRANSLATIONS] = this.translationFieldConfig[CMDBuild.core.constants.Proxy.TRANSLATIONS].getData();
 
 			this.onTranslatableWindowAbortButtonClick();
-		},
-
-		/**
-		 * Setup view panel title as a breadcrumbs component
-		 *
-		 * @param {String} titlePart
-		 */
-		setViewTitle: function(titlePart) {
-			if (Ext.isEmpty(titlePart)) {
-				this.view.setTitle(this.view.baseTitle);
-			} else {
-				this.view.setTitle(this.view.baseTitle + this.titleSeparator + titlePart);
-			}
 		},
 
 		// Translation method

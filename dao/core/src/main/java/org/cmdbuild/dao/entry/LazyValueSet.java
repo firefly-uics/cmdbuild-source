@@ -1,5 +1,7 @@
 package org.cmdbuild.dao.entry;
 
+import static org.apache.commons.lang3.ObjectUtils.defaultIfNull;
+
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -34,5 +36,11 @@ public abstract class LazyValueSet implements CMValueSet {
 		return requiredType.cast(value);
 	}
 
+	@Override
+	public <T> T get(final String key, final Class<? extends T> requiredType, final T defaultValue) {
+		return defaultIfNull(get(key, requiredType), defaultValue);
+	}
+
 	protected abstract Map<String, Object> load();
+
 }

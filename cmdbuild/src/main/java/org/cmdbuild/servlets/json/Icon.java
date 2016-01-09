@@ -10,8 +10,6 @@ import org.apache.commons.fileupload.FileItem;
 import org.cmdbuild.exception.AuthException;
 import org.cmdbuild.exception.ORMException;
 import org.cmdbuild.exception.ORMException.ORMExceptionType;
-import org.cmdbuild.services.CustomFilesStore;
-import org.cmdbuild.services.FilesStore;
 import org.cmdbuild.servlets.utils.Parameter;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -21,12 +19,11 @@ public class Icon extends JSONBaseWithSpringContext {
 
 	private static final String ps = File.separator;
 	private static final String UPLOADED_FILE_RELATIVE_PATH = "images" + ps + "gis";
-	private static final FilesStore iconsFileStore = new CustomFilesStore();
 
 	@JSONExported
 	public JSONObject list(final JSONObject serializer) throws JSONException, AuthException {
 
-		final String[] iconsFileList = iconsFileStore.list(UPLOADED_FILE_RELATIVE_PATH);
+		final String[] iconsFileList = uploadFilesStore().list(UPLOADED_FILE_RELATIVE_PATH);
 		final JSONArray rows = new JSONArray();
 		for (final String iconFileName : iconsFileList) {
 			rows.put(toJSON(iconFileName));
@@ -41,10 +38,10 @@ public class Icon extends JSONBaseWithSpringContext {
 			@Parameter(value = "description", required = true) final String fileName, final JSONObject serializer)
 			throws ORMException, FileNotFoundException, IOException {
 
-		final String relativePath = getRelativePath(fileName) + iconsFileStore.getExtension(file.getName());
+		final String relativePath = getRelativePath(fileName) + uploadFilesStore().getExtension(file.getName());
 
-		if (iconsFileStore.isImage(file)) {
-			iconsFileStore.save(file, relativePath);
+		if (uploadFilesStore().isImage(file)) {
+			uploadFilesStore().save(file, relativePath);
 		} else {
 			throw ORMExceptionType.ORM_ICONS_UNSUPPORTED_TYPE.createException();
 		}
@@ -57,17 +54,17 @@ public class Icon extends JSONBaseWithSpringContext {
 	public JSONObject update(@Parameter(value = "file", required = false) final FileItem file,
 			@Parameter(value = "name", required = true) final String fileName,
 			@Parameter(value = "description", required = true) final String newFileName, final JSONObject serializer)
-			throws JSONException, AuthException, ORMException, IOException {
+			throws AuthException, ORMException, IOException {
 
 		if (!"".equals(file.getName())) { // replace the file
-			if (iconsFileStore.isImage(file)) {
-				iconsFileStore.remove(getRelativePath(fileName));
-				iconsFileStore.save(file, getRelativePath(newFileName));
+			if (uploadFilesStore().isImage(file)) {
+				uploadFilesStore().remove(getRelativePath(fileName));
+				uploadFilesStore().save(file, getRelativePath(newFileName));
 			} else {
 				throw ORMExceptionType.ORM_ICONS_UNSUPPORTED_TYPE.createException();
 			}
 		} else { // rename the existing file
-			iconsFileStore.rename(getRelativePath(fileName), getRelativePath(newFileName));
+			uploadFilesStore().rename(getRelativePath(fileName), getRelativePath(newFileName));
 		}
 
 		return serializer;
@@ -75,10 +72,8 @@ public class Icon extends JSONBaseWithSpringContext {
 
 	@JSONExported
 	@Admin
-	public JSONObject remove(final JSONObject serializer, @Parameter("name") final String fileName)
-			throws JSONException {
-
-		iconsFileStore.remove(getRelativePath(fileName));
+	public JSONObject remove(final JSONObject serializer, @Parameter("name") final String fileName) {
+		uploadFilesStore().remove(getRelativePath(fileName));
 		return serializer;
 	}
 
@@ -90,13 +85,14 @@ public class Icon extends JSONBaseWithSpringContext {
 		final JSONObject jsonIcon = new JSONObject();
 		jsonIcon.put("name", iconFileName);
 
-		final String description = iconsFileStore.removeExtension(iconFileName);
+		final String description = uploadFilesStore().removeExtension(iconFileName);
 
 		jsonIcon.put(DESCRIPTION, description);
-		final String path = iconsFileStore.getRelativeRootDirectory() + getRelativePath(iconFileName);
-		jsonIcon.put("path", path.replace(File.separator, "/")); // because is
-																	// used as
-																	// URL
+		final String path = uploadFilesStore().getRelativeRootDirectory() + getRelativePath(iconFileName);
+		/*
+		 * because is used as URL
+		 */
+		jsonIcon.put("path", path.replace(File.separator, "/"));
 		return jsonIcon;
 	}
 }

@@ -77,6 +77,26 @@
 			}, this);
 		},
 
+		/**
+		 * Override to avoid full bottongroup container disabling
+		 *
+		 * @overrider
+		 */
+		disable: function() {
+			this.clearButton.disable();
+			this.showListButton.disable();
+		},
+
+		/**
+		 * Override to avoid full bottongroup container disabling
+		 *
+		 * @overrider
+		 */
+		enable: function() {
+			this.clearButton.enable();
+			this.showListButton.enable();
+		},
+
 		reconfigureForEntryType: function(entryType) {
 			this.entryType = entryType;
 			if (this.picker != null) {
@@ -280,7 +300,7 @@
 
 			if (fieldClassName == "Ext.form.field.TextArea") {
 				height += TEXT_FIELD_HEIGHT;
-			} else if (fieldClassName == "CMDBuild.view.common.field.CMHtmlEditorField") {
+			} else if (fieldClassName == "CMDBuild.view.common.field.HtmlEditor") {
 				height += HTML_FIELD_HEIGHT;
 			} else {
 				height += SIMPLE_FIELD_HEIGHT;

@@ -249,7 +249,7 @@
 		} catch (error) {
 			window._BIM_LOGGER.log(error);
 			window._BIM_LOGGER.log('...Errors occured');
-			CMDBuild.LoadMask.get().hide();
+			CMDBuild.core.LoadMask.hide();
 		}
 
 //		this.helpShortcuts('standard');

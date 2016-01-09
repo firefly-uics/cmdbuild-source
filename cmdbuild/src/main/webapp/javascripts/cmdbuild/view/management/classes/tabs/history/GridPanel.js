@@ -26,6 +26,7 @@
 		autoScroll: true,
 		border: false,
 		cls: 'history_panel', // To apply right style to grid rows
+		disableSelection: true,
 		frame: false,
 
 		initComponent: function() {
@@ -50,8 +51,8 @@
 						]
 					})
 				],
-				columns: this.delegate.cmfg('getTabHistoryGridColumns'),
-				store: this.delegate.cmfg('getTabHistoryGridStore')
+				columns: this.delegate.cmfg('tabHistoryGridColumnsGet'),
+				store: this.delegate.cmfg('tabHistoryGridStoreGet')
 			});
 
 			this.callParent(arguments);

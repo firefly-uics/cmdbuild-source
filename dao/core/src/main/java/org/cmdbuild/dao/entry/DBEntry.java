@@ -2,6 +2,7 @@ package org.cmdbuild.dao.entry;
 
 import static com.google.common.collect.FluentIterable.from;
 import static java.lang.String.format;
+import static org.apache.commons.lang3.ObjectUtils.defaultIfNull;
 
 import java.util.Map;
 import java.util.Map.Entry;
@@ -34,10 +35,12 @@ public abstract class DBEntry implements CMEntry, CMEntryDefinition {
 		this.id = id;
 	}
 
+	@Override
 	public CMEntryType getType() {
 		return type;
 	}
 
+	@Override
 	public final Long getId() {
 		return id;
 	}
@@ -48,6 +51,7 @@ public abstract class DBEntry implements CMEntry, CMEntryDefinition {
 		return this;
 	}
 
+	@Override
 	public String getUser() {
 		return user;
 	}
@@ -56,6 +60,7 @@ public abstract class DBEntry implements CMEntry, CMEntryDefinition {
 		this.beginDate = beginDate;
 	}
 
+	@Override
 	public DateTime getBeginDate() {
 		return beginDate;
 	}
@@ -64,6 +69,7 @@ public abstract class DBEntry implements CMEntry, CMEntryDefinition {
 		this.endDate = endDate;
 	}
 
+	@Override
 	public DateTime getEndDate() {
 		return endDate;
 	}
@@ -93,6 +99,11 @@ public abstract class DBEntry implements CMEntry, CMEntryDefinition {
 		return requiredType.cast(value);
 	}
 
+	@Override
+	public <T> T get(final String key, final Class<? extends T> requiredType, final T defaultValue) {
+		return defaultIfNull(get(key, requiredType), defaultValue);
+	}
+
 	private boolean isNew() {
 		return (id == null);
 	}
@@ -110,6 +121,7 @@ public abstract class DBEntry implements CMEntry, CMEntryDefinition {
 				});
 	}
 
+	@Override
 	public Iterable<Map.Entry<String, Object>> getAllValues() {
 		return values.entrySet();
 	}

@@ -28,8 +28,8 @@
 			var sd = new CMDBuild.state.CMWorkflowStateDelegate();
 			var me = this;
 
-			sd.onProcessClassRefChange = function(entryType, danglingCard) {
-				me.onEntryTypeSelected(entryType, danglingCard);
+			sd.onProcessClassRefChange = function(entryType, danglingCard, filter) {
+				me.onEntryTypeSelected(entryType, danglingCard, filter);
 			};
 
 			_CMWFState.addDelegate(sd);
@@ -47,7 +47,7 @@
 				classId: p.classId
 			}));
 
-			CMDBuild.LoadMask.get().show();
+			CMDBuild.core.LoadMask.show();
 
 			CMDBuild.ServiceProxy.workflow.getstartactivitytemplate(p.classId, {
 				scope: this,
@@ -56,7 +56,7 @@
 					_CMWFState.setActivityInstance(activity);
 				},
 				callback: function() {
-					CMDBuild.LoadMask.get().hide();
+					CMDBuild.core.LoadMask.hide();
 				},
 				important: true
 			});
@@ -80,7 +80,7 @@
 
 			updateViewSelection(activityInfoId, me);
 
-			CMDBuild.LoadMask.get().show();
+			CMDBuild.core.LoadMask.show();
 
 			CMDBuild.ServiceProxy.workflow.getActivityInstance(
 				{
@@ -90,7 +90,7 @@
 				},
 				{
 					success: function(response, request, decoded) {
-						CMDBuild.LoadMask.get().hide();
+						CMDBuild.core.LoadMask.hide();
 
 						var activity = new CMDBuild.model.CMActivityInstance(decoded.response || {});
 
@@ -116,7 +116,7 @@
 
 					this.lastActivityInfoId = null;
 
-					CMDBuild.LoadMask.get().show();
+					CMDBuild.core.LoadMask.show();
 
 					_CMWFState.setProcessInstance(pi, function() {
 						if (activities.length > 0) {
@@ -131,7 +131,7 @@
 							_debug('A proces without activities', pi);
 						}
 
-						CMDBuild.LoadMask.get().hide();
+						CMDBuild.core.LoadMask.hide();
 					});
 				}
 			}

@@ -210,7 +210,7 @@ public class XpdlManager extends AbstractProcessDefinitionManager {
 		}
 
 		@Override
-		public void visit(StringArrayAttributeType stringArrayAttributeType) {
+		public void visit(final StringArrayAttributeType stringArrayAttributeType) {
 			xpdlType = null; // TODO verity this
 		}
 	}

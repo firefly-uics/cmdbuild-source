@@ -5,6 +5,8 @@
 
 		requires: ['CMDBuild.core.constants.Proxy'],
 
+		mixins: ['CMDBuild.view.common.PanelFunctions'],
+
 		/**
 		 * @cfg {CMDBuild.controller.administration.configuration.Bim}
 		 */
@@ -27,11 +29,6 @@
 		},
 
 		initComponent: function() {
-			this.enabledCheckBox = Ext.create('Ext.ux.form.XCheckbox', {
-				name: CMDBuild.core.constants.Proxy.ENABLED,
-				fieldLabel: CMDBuild.Translation.enabled
-			});
-
 			Ext.apply(this, {
 				dockedItems: [
 					Ext.create('Ext.toolbar.Toolbar', {
@@ -64,7 +61,13 @@
 					})
 				],
 				items: [
-					this.enabledCheckBox,
+					{
+						xtype: 'checkbox',
+						name: CMDBuild.core.constants.Proxy.ENABLED,
+						fieldLabel: CMDBuild.Translation.enabled,
+						inputValue: true,
+						uncheckedValue: false
+					},
 					{
 						xtype: 'textfield',
 						name: CMDBuild.core.constants.Proxy.URL,
@@ -73,7 +76,7 @@
 					},
 					{
 						xtype: 'textfield',
-						name: 'username',
+						name: CMDBuild.core.constants.Proxy.USERNAME,
 						fieldLabel: CMDBuild.Translation.username
 					},
 					{
@@ -88,18 +91,9 @@
 			this.callParent(arguments);
 		},
 
-		/**
-		 * @param {Object} saveDataObject
-		 *
-		 * @override
-		 */
-		afterSubmit: function(saveDataObject) {
-			CMDBuild.Config.workflow.enabled = this.enabledCheckBox.getValue();
-
-			if (CMDBuild.Config.workflow.enabled) {
-				_CMMainViewportController.enableAccordionByName(this.delegate.configFileName);
-			} else {
-				_CMMainViewportController.disableAccordionByName(this.delegate.configFileName);
+		listeners: {
+			show: function(panel, eOpts) {
+				this.delegate.cmfg('onConfigurationBimTabShow');
 			}
 		}
 	});

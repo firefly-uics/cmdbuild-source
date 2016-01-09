@@ -1,7 +1,7 @@
 (function() {
 
 	Ext.define('CMDBuild.controller.administration.menu.Menu', {
-		extend: 'CMDBuild.controller.common.AbstractBasePanelController',
+		extend: 'CMDBuild.controller.common.abstract.BasePanel',
 
 		requires: ['CMDBuild.core.constants.Proxy'],
 
@@ -13,7 +13,9 @@
 		/**
 		 * @cfg {Array}
 		 */
-		cmfgCatchedFunctions: ['selectedMenuNameGet'],
+		cmfgCatchedFunctions: [
+			'selectedMenuNameGet'
+		],
 
 		/**
 		 * @property {CMDBuild.controller.administration.menu.Groups}
@@ -42,24 +44,19 @@
 		},
 
 		/**
-		 * @param {CMDBuild.model.common.AccordionStore} parameters
-		 *
-		 * @override
+		 * @param {CMDBuild.model.menu.accordion.Administration} node
 		 */
-		onViewOnFront: function(parameters) {
-			if (!Ext.isEmpty(parameters)) {
-				this.selectedMenuName = parameters.get(CMDBuild.core.constants.Proxy.NAME);
+		onViewOnFront: function(node) {
+			if (!Ext.isEmpty(node)) {
+				this.selectedMenuName = node.get(CMDBuild.core.constants.Proxy.ENTITY_ID);
 				this.sectionController = Ext.create('CMDBuild.controller.administration.menu.Group', { parentDelegate: this });
 
 				this.view.removeAll(true);
 				this.view.add(this.sectionController.getView());
 
-				this.setViewTitle(parameters.get(CMDBuild.core.constants.Proxy.TEXT));
+				this.setViewTitle(node.get(CMDBuild.core.constants.Proxy.TEXT));
 
-				if (!Ext.isEmpty(this.sectionController) && Ext.isFunction(this.sectionController.onViewOnFront))
-					this.sectionController.onViewOnFront();
-
-				this.callParent(arguments);
+				this.sectionController.cmfg('onMenuGroupMenuSelected');
 			}
 		},
 

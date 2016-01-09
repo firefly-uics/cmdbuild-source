@@ -1,10 +1,11 @@
 (function () {
 
 	Ext.define('CMDBuild.controller.management.common.widgets.grid.ImportCSV', {
-		extend: 'CMDBuild.controller.common.AbstractController',
+		extend: 'CMDBuild.controller.common.abstract.Base',
 
 		requires: [
 			'CMDBuild.core.constants.Proxy',
+			'CMDBuild.core.LoadMask',
 			'CMDBuild.core.proxy.Csv'
 		],
 
@@ -58,7 +59,7 @@
 		 * Uses importCSV calls to store and get CSV data from server and check if CSV has right fields
 		 */
 		onImportCSVUploadButtonClick: function() {
-			CMDBuild.LoadMask.get().show();
+			CMDBuild.core.LoadMask.show();
 			CMDBuild.core.proxy.Csv.upload({
 				form: this.view.csvUploadForm.getForm(),
 				scope: this,
@@ -76,7 +77,7 @@
 					});
 				},
 				failure: function(form, action) {
-					CMDBuild.LoadMask.get().hide();
+					CMDBuild.core.LoadMask.hide();
 
 					CMDBuild.Msg.error(
 						CMDBuild.Translation.common.failure,

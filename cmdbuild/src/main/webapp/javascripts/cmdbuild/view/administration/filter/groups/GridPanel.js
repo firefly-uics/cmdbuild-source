@@ -6,7 +6,7 @@
 		requires: [
 			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.Message',
-			'CMDBuild.core.proxy.filter.Groups'
+			'CMDBuild.core.proxy.filter.Group'
 		],
 
 		/**
@@ -15,10 +15,11 @@
 		delegate: undefined,
 
 		border: false,
+		cls: 'cmborderbottom',
 		frame: false,
 
 		initComponent: function() {
-			var store = CMDBuild.core.proxy.filter.Groups.getStore();
+			var store = CMDBuild.core.proxy.filter.Group.getStore();
 
 			Ext.apply(this, {
 				dockedItems: [
@@ -68,14 +69,6 @@
 				this.getStore().load({
 					scope: this,
 					callback: function(records, operation, success) {
-						// Store load errors manage
-						if (!success) {
-							CMDBuild.core.Message.error(null, {
-								text: CMDBuild.Translation.errors.unknown_error,
-								detail: operation.error
-							});
-						}
-
 						if (!this.getSelectionModel().hasSelection())
 							this.getSelectionModel().select(0, true);
 					}

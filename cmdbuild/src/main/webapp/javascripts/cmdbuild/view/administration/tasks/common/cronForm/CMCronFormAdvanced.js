@@ -46,8 +46,8 @@
 			this.advancedFields = [
 				this.delegate.createCronField(CMDBuild.core.constants.Proxy.MINUTE, tr.minute),
 				this.delegate.createCronField(CMDBuild.core.constants.Proxy.HOUR, tr.hour),
-				this.delegate.createCronField(CMDBuild.core.constants.Proxy.DAY_OF_MOUNTH, tr.dayOfMounth),
-				this.delegate.createCronField(CMDBuild.core.constants.Proxy.MOUNTH, tr.mounth),
+				this.delegate.createCronField(CMDBuild.core.constants.Proxy.DAY_OF_MONTH, tr.dayOfMonth),
+				this.delegate.createCronField(CMDBuild.core.constants.Proxy.MONTH, tr.month),
 				this.delegate.createCronField(CMDBuild.core.constants.Proxy.DAY_OF_WEEK, tr.dayOfWeek)
 			];
 

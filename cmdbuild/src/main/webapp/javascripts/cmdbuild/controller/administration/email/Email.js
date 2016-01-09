@@ -1,7 +1,7 @@
 (function() {
 
 	Ext.define('CMDBuild.controller.administration.email.Email', {
-		extend: 'CMDBuild.controller.common.AbstractBasePanelController',
+		extend: 'CMDBuild.controller.common.abstract.BasePanel',
 
 		requires: ['CMDBuild.core.constants.Proxy'],
 
@@ -23,35 +23,34 @@
 		/**
 		 * Setup view items and controllers on accordion click
 		 *
-		 * @param {CMDBuild.view.common.CMAccordionStoreModel} parameters
+		 * @param {CMDBuild.model.common.accordion.Generic} node
 		 *
 		 * @override
 		 */
-		onViewOnFront: function(parameters) {
-			if (!Ext.Object.isEmpty(parameters)) {
+		onViewOnFront: function(node) {
+			if (!Ext.Object.isEmpty(node)) {
 				this.view.removeAll(true);
 
-				switch(parameters.get(CMDBuild.core.constants.Proxy.ID)) {
+				switch (node.get(CMDBuild.core.constants.Proxy.SECTION_HIERARCHY)[0]) {
 					case 'queue': {
 						this.sectionController = Ext.create('CMDBuild.controller.administration.email.Queue', { parentDelegate: this });
 					} break;
 
 					case 'templates': {
-						this.sectionController = Ext.create('CMDBuild.controller.administration.email.templates.Templates', { parentDelegate: this });
+						this.sectionController = Ext.create('CMDBuild.controller.administration.email.template.Template', { parentDelegate: this });
 					} break;
 
 					case 'accounts':
 					default: {
-						this.sectionController = Ext.create('CMDBuild.controller.administration.email.Accounts', { parentDelegate: this });
+						this.sectionController = Ext.create('CMDBuild.controller.administration.email.Account', { parentDelegate: this });
 					}
 				}
 
+				this.setViewTitle(node.get(CMDBuild.core.constants.Proxy.DESCRIPTION));
+
 				this.view.add(this.sectionController.getView());
 
-				this.setViewTitle(parameters.get(CMDBuild.core.constants.Proxy.TEXT));
-
-				if (!Ext.isEmpty(this.sectionController) && Ext.isFunction(this.sectionController.onViewOnFront))
-					this.sectionController.onViewOnFront();
+				this.sectionController.getView().fireEvent('show');
 
 				this.callParent(arguments);
 			}

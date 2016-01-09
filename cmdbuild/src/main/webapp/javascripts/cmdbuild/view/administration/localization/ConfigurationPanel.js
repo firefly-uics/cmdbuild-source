@@ -88,7 +88,6 @@
 						},
 
 						defaults: {
-							labelWidth: CMDBuild.LABEL_WIDTH,
 							maxWidth: CMDBuild.MEDIUM_FIELD_WIDTH
 						},
 
@@ -97,7 +96,17 @@
 								name: CMDBuild.core.constants.Proxy.DEFAULT_LANGUAGE,
 								fieldLabel: '@@ Default language',
 								labelWidth: CMDBuild.LABEL_WIDTH,
-								enableChangeLanguage: false
+								enableChangeLanguage: false,
+
+								listeners: {
+									scope: this,
+									change: function(field, newValue, oldValue, eOpts) {
+										this.delegate.cmfg('onLocalizationConfigurationDefaultLanguageChange', {
+											defaultLanguageTag: newValue,
+											oldDefaultLanguageTag: oldValue
+										});
+									}
+								}
 							}),
 							this.languagePromptCheckbox = Ext.create('Ext.form.field.Checkbox', {
 								name: CMDBuild.core.constants.Proxy.LANGUAGE_PROMPT,
@@ -121,37 +130,28 @@
 						overflowY: 'auto',
 						frame: false,
 						border: false,
-
-						layout: {
-							type: 'hbox'
-						},
+						layout: 'hbox',
 
 						items: [
-							{
-								xtype: 'fieldset',
+							Ext.create('Ext.form.FieldSet', {
 								title: '@@ Import',
 								flex: 1,
 								overflowY: 'auto',
 
 								items: [
-									this.importPanel = Ext.create('CMDBuild.view.administration.localization.common.ImportPanel', {
-										delegate: this.delegate
-									})
+									this.importPanel = Ext.create('CMDBuild.view.administration.localization.common.ImportPanel', { delegate: this.delegate })
 								]
-							},
+							}),
 							{ xtype: 'splitter' },
-							{
-								xtype: 'fieldset',
+							Ext.create('Ext.form.FieldSet', {
 								title: '@@ Export',
 								flex: 1,
 								overflowY: 'auto',
 
 								items: [
-									this.exportPanel = Ext.create('CMDBuild.view.administration.localization.common.ExportPanel', {
-										delegate: this.delegate
-									})
+									this.exportPanel = Ext.create('CMDBuild.view.administration.localization.common.ExportPanel', { delegate: this.delegate })
 								]
-							}
+							})
 						]
 					})
 				]

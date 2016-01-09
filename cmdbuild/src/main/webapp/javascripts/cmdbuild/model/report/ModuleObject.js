@@ -1,5 +1,7 @@
 (function() {
 
+	Ext.require('CMDBuild.core.constants.Proxy');
+
 	/**
 	 * To build module report object on management side
 	 *
@@ -7,8 +9,6 @@
 	 */
 	Ext.define('CMDBuild.model.report.ModuleObject', {
 		extend: 'Ext.data.Model',
-
-		requires: ['CMDBuild.core.constants.Proxy'],
 
 		fields: [
 			{ name: CMDBuild.core.constants.Proxy.DESCRIPTION, type: 'string' },

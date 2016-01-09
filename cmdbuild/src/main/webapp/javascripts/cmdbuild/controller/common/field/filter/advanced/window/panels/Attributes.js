@@ -1,7 +1,7 @@
 (function() {
 
 	Ext.define('CMDBuild.controller.common.field.filter.advanced.window.panels.Attributes', {
-		extend: 'CMDBuild.controller.common.AbstractController',
+		extend: 'CMDBuild.controller.common.abstract.Base',
 
 		requires: [
 			'CMDBuild.core.constants.Proxy',
@@ -21,6 +21,7 @@
 			'onFieldFilterAdvancedWindowAttributesAddButtonSelect',
 			'onFieldFilterAdvancedWindowAttributesGetData',
 			'onFieldFilterAdvancedWindowAttributesSetData = onFieldFilterAdvancedWindowSetData',
+			'onFieldFilterAdvancedWindowAttributesShow',
 			'onFieldFilterAdvancedWindowAttributesTabBuild'
 		],
 
@@ -296,31 +297,34 @@
 			}
 		},
 
+		onFieldFilterAdvancedWindowAttributesShow: function() {
+			if (!this.cmfg('fieldFilterAdvancedFilterIsEmpty')) {
+				var params = {};
+				params[CMDBuild.core.constants.Proxy.ACTIVE] = true;
+				params[CMDBuild.core.constants.Proxy.CLASS_NAME] = this.cmfg('fieldFilterAdvancedSelectedClassGet', CMDBuild.core.constants.Proxy.NAME);
+
+
+				CMDBuild.core.proxy.Attributes.read({
+					params: params,
+					loadMask: true,
+					scope: this,
+					success: function(response, options, decodedResponse) {
+						decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.ATTRIBUTES];
+
+						this.selectedEntityAttributesSet(decodedResponse);
+						this.buildMenuButton();
+						this.onFieldFilterAdvancedWindowAttributesSetData(this.cmfg('fieldFilterAdvancedFilterGet'));
+					}
+				});
+			}
+		},
+
 		/**
 		 * Builds tab from filter value (preset values and add)
 		 */
 		onFieldFilterAdvancedWindowAttributesTabBuild: function() {
-			if (this.cmfg('fieldFilterAdvancedConfigurationIsPanelEnabled', 'attribute')) {
+			if (this.cmfg('fieldFilterAdvancedConfigurationIsPanelEnabled', 'attribute'))
 				this.cmfg('fieldFilterAdvancedWindowAddTab', this.buildView());
-
-				if (!this.cmfg('fieldFilterAdvancedFilterIsEmpty')) {
-					var params = {};
-					params[CMDBuild.core.constants.Proxy.ACTIVE] = true;
-					params[CMDBuild.core.constants.Proxy.CLASS_NAME] = this.cmfg('fieldFilterAdvancedSelectedClassGet', CMDBuild.core.constants.Proxy.NAME);
-
-					CMDBuild.core.proxy.Attributes.read({
-						params: params,
-						scope: this,
-						success: function(response, options, decodedResponse) {
-							decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.ATTRIBUTES];
-
-							this.selectedEntityAttributesSet(decodedResponse);
-							this.buildMenuButton();
-							this.onFieldFilterAdvancedWindowAttributesSetData(this.cmfg('fieldFilterAdvancedFilterGet'));
-						}
-					});
-				}
-			}
 		},
 
 		// SelectedEntityAttributes property methods

@@ -175,18 +175,16 @@
 		 * Forward onAbortCardClick event to email tab controller
 		 */
 		onAbortCardClick: function() {
-			_error('---------------> Process ABORTED ' + _CMWFState.getProcessInstance().get('className'));
-			_debug('aborted log: ', _CMWFState.getProcessInstance(), _CMWFState.getActivityInstance());
-			CMDBuild.core.Message.warning('WARNING', 'Modifica processo cancellata', true);
-
-			this.controllerTabEmail.onAbortCardClick();
+			if (!Ext.isEmpty(this.controllerTabEmail) && Ext.isFunction(this.controllerTabEmail.onAbortCardClick))
+				this.controllerTabEmail.onAbortCardClick();
 		},
 
 		/**
 		 * Forward onAddCardButtonClick event to email tab controller
 		 */
 		onAddCardButtonClick: function() {
-			this.controllerTabEmail.onAddCardButtonClick();
+			if (!Ext.isEmpty(this.controllerTabEmail) && Ext.isFunction(this.controllerTabEmail.onAddCardButtonClick))
+				this.controllerTabEmail.onAddCardButtonClick();
 		},
 
 		/**
@@ -221,32 +219,53 @@
 		 * Forward onModifyCardClick event to email tab controller
 		 */
 		onModifyCardClick: function() {
-			this.controllerTabEmail.onModifyCardClick();
+			if (!Ext.isEmpty(this.controllerTabEmail) && Ext.isFunction(this.controllerTabEmail.onModifyCardClick))
+				this.controllerTabEmail.onModifyCardClick();
 		},
 
 		/**
 		 * Forward onSaveCardClick event to email tab controller
 		 */
 		onSaveCardClick: function() {
-			this.controllerTabEmail.onSaveCardClick();
+			if (!Ext.isEmpty(this.controllerTabEmail) && Ext.isFunction(this.controllerTabEmail.onSaveCardClick))
+				this.controllerTabEmail.onSaveCardClick();
 		},
 
 		/**
 		 * Is called when the view is bring to front from the main viewport.
 		 * Set the entry type of the _CMWFState instead to store it inside this controller
 		 *
+		 * @param {Number} entryTypeId
+		 * @param {Object} danglingCard
+		 * @param {String} filter
+		 *
 		 * @override
 		 */
-		setEntryType: function(entryTypeId, danglingCard) {
+		setEntryType: function(entryTypeId, danglingCard, filter) {
 			var entryType = _CMCache.getEntryTypeById(entryTypeId);
 
-			_CMWFState.setProcessClassRef(entryType, danglingCard, false);
+			_CMWFState.setProcessClassRef(entryType, danglingCard, false, filter);
 
 			this.view.updateTitleForEntry(entryType);
 
 			_CMUIState.onlyGridIfFullScreen();
 
-			this.view.activateFirstTab();
+			if (
+				!Ext.isEmpty(danglingCard)
+				&& !Ext.isEmpty(danglingCard.activateFirstTab)
+			) {
+				this.view.cardTabPanel.activeTabSet(danglingCard.activateFirstTab);
+			}
+
+			// History record save
+			CMDBuild.global.navigation.Chronology.cmfg('navigationChronologyRecordSave', {
+				moduleId: this.view.cmName,
+				entryType: {
+					description: _CMWFState.getProcessClassRef().get(CMDBuild.core.constants.Proxy.TEXT),
+					id: _CMWFState.getProcessClassRef().get(CMDBuild.core.constants.Proxy.ID),
+					object: _CMWFState.getProcessClassRef()
+				}
+			});
 		}
 	});
 

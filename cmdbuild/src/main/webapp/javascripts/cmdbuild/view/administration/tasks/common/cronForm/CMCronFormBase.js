@@ -56,7 +56,7 @@
 					data: [
 						['0 * * * ?', tr.everyHour],
 						['0 0 * * ?', tr.everyDay],
-						['0 0 1 * ?', tr.everyMounth],
+						['0 0 1 * ?', tr.everyMonth],
 						['0 0 1 1 ?', tr.everyYear]
 					]
 				}),

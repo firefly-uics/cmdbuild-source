@@ -36,45 +36,44 @@
 		},
 
 		initComponent: function() {
-			this.attachmentAddFromDmsButton = Ext.create('Ext.button.Button', {
-				margin: '0 0 0 5',
-				text: CMDBuild.Translation.addAttachmentFromDms,
-				disabled: this.readOnly,
-				scope: this,
-
-				handler: function(button, e) {
-					this.delegate.cmfg('onAttachmentAddFromDmsButtonClick');
-				}
-			});
-
-			this.attachmentFileField = Ext.create('Ext.form.field.File', {
-				name: CMDBuild.core.constants.Proxy.FILE,
-				buttonText: CMDBuild.Translation.attachFile,
-				buttonOnly: true,
-				disabled: this.readOnly,
-				scope: this,
-
-				listeners: {
-					scope: this,
-					change: function(field, value, eOpts) {
-						this.delegate.cmfg('onAttachmentChangeFile');
-					}
-				}
-			});
-
-			this.attachmentUploadForm = Ext.create('Ext.form.Panel', {
-				frame: false,
-				border: false,
-				encoding: 'multipart/form-data',
-				fileUpload: true,
-				monitorValid: true,
-				bodyCls: 'x-panel-body-default-framed',
-
-				items: [this.attachmentFileField]
-			});
-
 			Ext.apply(this, {
-				items: [this.attachmentUploadForm, this.attachmentAddFromDmsButton],
+				items: [
+					this.attachmentUploadForm = Ext.create('Ext.form.Panel', {
+						frame: false,
+						border: false,
+						encoding: 'multipart/form-data',
+						fileUpload: true,
+						monitorValid: true,
+						bodyCls: 'x-panel-body-default-framed',
+
+						items: [
+							this.attachmentFileField = Ext.create('Ext.form.field.File', {
+								name: CMDBuild.core.constants.Proxy.FILE,
+								buttonText: CMDBuild.Translation.attachFile,
+								buttonOnly: true,
+								disabled: this.readOnly,
+								scope: this,
+
+								listeners: {
+									scope: this,
+									change: function(field, value, eOpts) {
+										this.delegate.cmfg('onTabEmailAttachmentChangeFile');
+									}
+								}
+							})
+						]
+					}),
+					this.attachmentAddFromDmsButton = Ext.create('Ext.button.Button', {
+						margin: '0 0 0 5',
+						text: CMDBuild.Translation.addAttachmentFromDms,
+						disabled: this.readOnly,
+						scope: this,
+
+						handler: function(button, e) {
+							this.delegate.cmfg('onTabEmailAttachmentAddFromDmsButtonClick');
+						}
+					})
+				]
 			});
 
 			this.callParent(arguments);

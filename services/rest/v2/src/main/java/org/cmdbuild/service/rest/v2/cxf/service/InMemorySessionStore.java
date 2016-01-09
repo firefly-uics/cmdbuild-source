@@ -1,46 +1,63 @@
 package org.cmdbuild.service.rest.v2.cxf.service;
 
-import static com.google.common.collect.Maps.newHashMap;
+import static com.google.common.base.Optional.fromNullable;
+import static java.util.concurrent.TimeUnit.MILLISECONDS;
+import static org.apache.commons.lang3.builder.ToStringBuilder.reflectionToString;
 import static org.apache.commons.lang3.builder.ToStringStyle.SHORT_PREFIX_STYLE;
-
-import java.util.Map;
 
 import org.apache.commons.lang3.Validate;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
-import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.cmdbuild.service.rest.v2.model.Session;
 
 import com.google.common.base.Optional;
+import com.google.common.cache.Cache;
+import com.google.common.cache.CacheBuilder;
 
 public class InMemorySessionStore implements SessionStore {
 
-	private static final Optional<Session> ABSENT = Optional.absent();
+	public static interface Configuration {
 
-	private final Map<String, Session> map;
+		long timeout();
 
-	public InMemorySessionStore() {
-		map = newHashMap();
+	}
+
+	private final Cache<String, Session> store;
+
+	public InMemorySessionStore(final Configuration configuration) {
+		if (configuration.timeout() > 0) {
+			store = CacheBuilder.newBuilder() //
+					.expireAfterAccess(configuration.timeout(), MILLISECONDS) //
+					.build();
+		} else {
+			store = CacheBuilder.newBuilder() //
+					.build();
+		}
+	}
+
+	@Override
+	public boolean has(final String id) {
+		return store.getIfPresent(id) != null;
+	}
+
+	@Override
+	public Optional<Session> get(final String id) {
+		Validate.notNull(id, "invalid id");
+		final Session value = store.getIfPresent(id);
+		return fromNullable(value);
 	}
 
 	@Override
 	public void put(final Session value) {
 		Validate.notNull(value, "invalid value");
 		Validate.notBlank(value.getId(), "invalid id");
-		map.put(value.getId(), value);
-	}
-
-	@Override
-	public Optional<Session> get(final String id) {
-		Validate.notNull(id, "invalid id");
-		final Session value = map.get(id);
-		return (value == null) ? ABSENT : Optional.of(value);
+		store.put(value.getId(), value);
 	}
 
 	@Override
 	public void remove(final String id) {
 		Validate.notNull(id, "invalid id");
-		map.remove(id);
+		store.invalidate(id);
 	}
 
 	@Override
@@ -53,19 +70,19 @@ public class InMemorySessionStore implements SessionStore {
 		}
 		final InMemorySessionStore other = InMemorySessionStore.class.cast(obj);
 		return new EqualsBuilder() //
-				.append(this.map, other.map).isEquals();
+				.append(this.store, other.store).isEquals();
 	}
 
 	@Override
 	public int hashCode() {
 		return new HashCodeBuilder() //
-				.append(map) //
+				.append(store) //
 				.toHashCode();
 	}
 
 	@Override
 	public final String toString() {
-		return ToStringBuilder.reflectionToString(this, SHORT_PREFIX_STYLE).toString();
+		return reflectionToString(this, SHORT_PREFIX_STYLE).toString();
 	}
 
 }

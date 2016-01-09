@@ -99,6 +99,9 @@ public class LookupTypeValuesTest {
 						.withParentType("parent_type") //
 						.withParentId(78L) //
 						.build()) //
+				.withMetadata(newMetadata() //
+						// nothing to add, just needed for simplify assertions
+						.build()) //
 				.build();
 		when(service.read(anyString(), anyLong())) //
 				.thenReturn(expectedResponse);

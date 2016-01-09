@@ -31,6 +31,7 @@
 		autoScroll: true,
 		border: false,
 		cls: 'history_panel', // To apply right style to grid rows
+		disableSelection: true,
 		frame: false,
 
 		initComponent: function() {
@@ -49,7 +50,7 @@
 								scope: this,
 
 								handler: function(checkbox, checked) {
-									this.delegate.cmfg('onProcessesTabHistoryIncludeSystemActivitiesCheck');
+									this.delegate.cmfg('onWorkflowTabHistoryIncludeSystemActivitiesCheck');
 								}
 							}),
 							this.includeRelationsCheckbox = Ext.create('Ext.form.field.Checkbox', {
@@ -65,15 +66,15 @@
 						]
 					})
 				],
-				columns: this.delegate.cmfg('getTabHistoryGridColumns'),
-				store: this.delegate.cmfg('getTabHistoryGridStore')
+				columns: this.delegate.cmfg('tabHistoryGridColumnsGet'),
+				store: this.delegate.cmfg('tabHistoryGridStoreGet')
 			});
 
 			this.callParent(arguments);
 
 			// Apply activitiesStore filter
 			this.getStore().on('load', function(store, records, successful, eOpts) {
-				this.delegate.cmfg('onProcessesTabHistoryIncludeSystemActivitiesCheck');
+				this.delegate.cmfg('onWorkflowTabHistoryIncludeSystemActivitiesCheck');
 			}, this);
 		},
 

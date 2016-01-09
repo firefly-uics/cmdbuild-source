@@ -3,7 +3,7 @@
 	/**
 	 * PanelFunction should be used (new implementation)
 	 *
-	 * @deprecated
+	 * @deprecated (CMDBuild.view.common.PanelFunctions)
 	 */
 	Ext.define("CMDBUild.view.common.CMFormFunctions", {
 

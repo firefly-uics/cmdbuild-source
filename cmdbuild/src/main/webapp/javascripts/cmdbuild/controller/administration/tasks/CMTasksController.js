@@ -4,7 +4,9 @@
 		extend: 'CMDBuild.controller.common.CMBasePanelController',
 
 		requires: [
+			'CMDBuild.core.constants.Global',
 			'CMDBuild.core.constants.Proxy',
+			'CMDBuild.core.LoadMask',
 			'CMDBuild.core.proxy.CMProxyTasks',
 			'CMDBuild.core.Utils'
 		],
@@ -28,11 +30,6 @@
 		 * @property {Ext.selection.Model}
 		 */
 		selectionModel: undefined,
-
-		/**
-		 * @cfg {String}
-		 */
-		titleSeparator: ' - ',
 
 		/**
 		 * Used to validate tasks
@@ -73,13 +70,14 @@
 		},
 
 		/**
-		 * @param {CMDBuild.view.common.CMAccordionStoreModel} parameters
+		 * @param {CMDBuild.model.common.accordion.Generic} parameters
 		 *
 		 * @override
 		 */
 		onViewOnFront: function(parameters) {
 			if (!Ext.isEmpty(parameters)) {
-				this.taskType = (this.correctTaskTypeCheck(parameters.internalId)) ? parameters.internalId : this.tasksDatas[0];
+				this.taskType = (this.correctTaskTypeCheck(parameters.get(CMDBuild.core.constants.Proxy.SECTION_HIERARCHY)[0]))
+					? parameters.get(CMDBuild.core.constants.Proxy.SECTION_HIERARCHY)[0] : this.tasksDatas[0];
 
 				this.grid.reconfigure(CMDBuild.core.proxy.CMProxyTasks.getStore(this.taskType));
 				this.grid.getStore().load({
@@ -285,7 +283,7 @@
 		 * @param {Object} record
 		 */
 		onStartButtonClick: function(record) {
-			CMDBuild.LoadMask.get().show();
+			CMDBuild.core.LoadMask.show();
 
 			CMDBuild.core.proxy.CMProxyTasks.start({
 				scope: this,
@@ -301,7 +299,7 @@
 		 * @param {Object} record
 		 */
 		onStopButtonClick: function(record) {
-			CMDBuild.LoadMask.get().show();
+			CMDBuild.core.LoadMask.show();
 
 			CMDBuild.core.proxy.CMProxyTasks.stop({
 				scope: this,
@@ -320,7 +318,7 @@
 		 */
 		setViewTitle: function(titlePart) {
 			if (!Ext.isEmpty(titlePart))
-				this.view.setTitle(this.view.baseTitle + this.titleSeparator + titlePart);
+				this.view.setTitle(this.view.baseTitle + CMDBuild.core.constants.Global.getTitleSeparator() + titlePart);
 		},
 
 		/**

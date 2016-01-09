@@ -139,11 +139,11 @@ public class InternalStore implements Store {
 
 	private static class Create extends Action<Void> implements TypeVisitor {
 
-		private final Entry<? extends Type> entry;
+		private final Entry entry;
 		private final AttributeValueAdapter attributeValueAdapter;
 
 		public Create(final CMDataView dataView, final AttributeValueAdapter attributeValueAdapter,
-				final Entry<? extends Type> entry) {
+				final Entry entry) {
 			super(dataView);
 			this.attributeValueAdapter = attributeValueAdapter;
 			this.entry = entry;
@@ -170,12 +170,12 @@ public class InternalStore implements Store {
 
 	}
 
-	private static class ReadAllByType extends Action<Iterable<Entry<?>>> implements TypeVisitor {
+	private static class ReadAllByType extends Action<Iterable<Entry>> implements TypeVisitor {
 
 		private final Cache<Key, Long> cache;
 		private final AttributeValueAdapter attributeValueAdapter;
 		private final Type type;
-		private final Collection<Entry<? extends Type>> entries;
+		private final Collection<Entry> entries;
 
 		public ReadAllByType(final CMDataView dataView, final Cache<Key, Long> cache,
 				final AttributeValueAdapter attributeValueAdapter, final Type type) {
@@ -187,7 +187,7 @@ public class InternalStore implements Store {
 		}
 
 		@Override
-		public Iterable<Entry<?>> execute() {
+		public Iterable<Entry> execute() {
 			type.accept(this);
 			return entries;
 		}
@@ -221,10 +221,10 @@ public class InternalStore implements Store {
 
 		private final Cache<Key, Long> cache;
 		private final AttributeValueAdapter attributeValueAdapter;
-		private final Entry<? extends Type> entry;
+		private final Entry entry;
 
 		public Update(final CMDataView dataView, final Cache<Key, Long> cache,
-				final AttributeValueAdapter attributeValueAdapter, final Entry<? extends Type> entry) {
+				final AttributeValueAdapter attributeValueAdapter, final Entry entry) {
 			super(dataView);
 			this.cache = cache;
 			this.attributeValueAdapter = attributeValueAdapter;
@@ -264,9 +264,9 @@ public class InternalStore implements Store {
 	private static class Delete extends Action<Void> implements TypeVisitor {
 
 		private final Cache<Key, Long> cache;
-		private final Entry<? extends Type> entry;
+		private final Entry entry;
 
-		public Delete(final CMDataView dataView, final Cache<Key, Long> cache, final Entry<? extends Type> entry) {
+		public Delete(final CMDataView dataView, final Cache<Key, Long> cache, final Entry entry) {
 			super(dataView);
 			this.cache = cache;
 			this.entry = entry;
@@ -312,31 +312,31 @@ public class InternalStore implements Store {
 	}
 
 	@Override
-	public void create(final Entry<? extends Type> entry) {
+	public void create(final Entry entry) {
 		execute(doCreate(entry));
 	}
 
 	@Override
-	public Iterable<Entry<?>> readAll() {
-		final Collection<Entry<?>> allEntries = newHashSet();
+	public Iterable<Entry> readAll() {
+		final Collection<Entry> allEntries = newHashSet();
 		for (final Type type : catalog.getTypes()) {
-			final Iterable<Entry<?>> entriesOfType = execute(doReadAll(type));
+			final Iterable<Entry> entriesOfType = execute(doReadAll(type));
 			addAll(allEntries, entriesOfType);
 		}
 		return allEntries;
 	}
 
 	@Override
-	public void update(final Entry<? extends Type> entry) {
+	public void update(final Entry entry) {
 		execute(doUpdate(entry));
 	}
 
 	@Override
-	public void delete(final Entry<? extends Type> entry) {
+	public void delete(final Entry entry) {
 		execute(doDelete(entry));
 	}
 
-	private Create doCreate(final Entry<? extends Type> entry) {
+	private Create doCreate(final Entry entry) {
 		return new Create(dataView, attributeValueAdapter, entry);
 	}
 
@@ -344,11 +344,11 @@ public class InternalStore implements Store {
 		return new ReadAllByType(dataView, cache, attributeValueAdapter, type);
 	}
 
-	private Update doUpdate(final Entry<? extends Type> entry) {
+	private Update doUpdate(final Entry entry) {
 		return new Update(dataView, cache, attributeValueAdapter, entry);
 	}
 
-	private Delete doDelete(final Entry<? extends Type> entry) {
+	private Delete doDelete(final Entry entry) {
 		return new Delete(dataView, cache, entry);
 	}
 

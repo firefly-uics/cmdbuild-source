@@ -186,10 +186,10 @@
 
 				var el = me.view.getEl();
 				if (el) {
-					el.mask(CMDBuild.Translation.common.wait_title);
+					el.mask(CMDBuild.Translation.pleaseWait);
 				}
 
-				CMDBuild.Ajax.request({
+				CMDBuild.core.interfaces.Ajax.request({
 					url: "services/json/modwidget/callwidget",
 					method: "GET",
 					params: {

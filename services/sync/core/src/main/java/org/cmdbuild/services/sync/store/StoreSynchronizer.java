@@ -62,10 +62,10 @@ public class StoreSynchronizer implements Synchronizer, LoggingSupport {
 		return new Builder();
 	}
 
-	private static Function<? super Entry<?>, Key> BY_KEY = new Function<Entry<?>, Key>() {
+	private static Function<? super Entry, Key> BY_KEY = new Function<Entry, Key>() {
 
 		@Override
-		public Key apply(final Entry<?> input) {
+		public Key apply(final Entry input) {
 			return input.getKey();
 		}
 
@@ -94,49 +94,49 @@ public class StoreSynchronizer implements Synchronizer, LoggingSupport {
 	}
 
 	private void doSync() {
-		final Map<Key, Entry<?>> sourceData = uniqueIndex(left.readAll(), BY_KEY);
+		final Map<Key, Entry> sourceData = uniqueIndex(left.readAll(), BY_KEY);
 		logger.trace(marker, "source data", sourceData);
 
-		final Map<Key, Entry<?>> targetData = uniqueIndex(right.readAll(), BY_KEY);
+		final Map<Key, Entry> targetData = uniqueIndex(right.readAll(), BY_KEY);
 		logger.trace(marker, "target data", targetData);
 
-		final MapDifference<Key, Entry<?>> mapDifference = difference(sourceData, targetData);
+		final MapDifference<Key, Entry> mapDifference = difference(sourceData, targetData);
 
-		final Map<Key, Entry<?>> toCreate = mapDifference.entriesOnlyOnLeft();
+		final Map<Key, Entry> toCreate = mapDifference.entriesOnlyOnLeft();
 		logger.trace(marker, "entries to be created...");
 		if (logger.isTraceEnabled()) {
-			for (final Entry<?> element : toCreate.values()) {
+			for (final Entry element : toCreate.values()) {
 				logger.trace(marker, "\t{}", element);
 			}
 		}
 
-		final Map<Key, ValueDifference<Entry<?>>> toUpdate = mapDifference.entriesDiffering();
+		final Map<Key, ValueDifference<Entry>> toUpdate = mapDifference.entriesDiffering();
 		logger.trace(marker, "entries to be updated...");
 		if (logger.isTraceEnabled()) {
-			for (final ValueDifference<Entry<?>> element : toUpdate.values()) {
+			for (final ValueDifference<Entry> element : toUpdate.values()) {
 				logger.trace(marker, "\t{} vs {}", element.leftValue(), element.rightValue());
 			}
 		}
 
-		final Map<Key, Entry<?>> toRemove = mapDifference.entriesOnlyOnRight();
+		final Map<Key, Entry> toRemove = mapDifference.entriesOnlyOnRight();
 		logger.trace(marker, "entries to be deleted...");
 		if (logger.isTraceEnabled()) {
-			for (final Entry<?> element : toRemove.values()) {
+			for (final Entry element : toRemove.values()) {
 				logger.trace(marker, "\t{}", element);
 			}
 		}
 
-		for (final Map.Entry<Key, Entry<?>> element : toCreate.entrySet()) {
-			final Entry<?> entry = element.getValue();
+		for (final Map.Entry<Key, Entry> element : toCreate.entrySet()) {
+			final Entry entry = element.getValue();
 			target.create(entry);
 		}
-		for (final Map.Entry<Key, ValueDifference<Entry<?>>> element : toUpdate.entrySet()) {
-			final ValueDifference<Entry<?>> valueDifference = element.getValue();
-			final Entry<?> entry = valueDifference.leftValue();
+		for (final Map.Entry<Key, ValueDifference<Entry>> element : toUpdate.entrySet()) {
+			final ValueDifference<Entry> valueDifference = element.getValue();
+			final Entry entry = valueDifference.leftValue();
 			target.update(entry);
 		}
-		for (final Map.Entry<Key, Entry<?>> element : toRemove.entrySet()) {
-			final Entry<?> entry = element.getValue();
+		for (final Map.Entry<Key, Entry> element : toRemove.entrySet()) {
+			final Entry entry = element.getValue();
 			target.delete(entry);
 		}
 	}

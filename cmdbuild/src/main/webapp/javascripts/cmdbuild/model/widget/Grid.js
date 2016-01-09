@@ -1,12 +1,12 @@
 (function() {
 
+	Ext.require('CMDBuild.core.constants.Proxy');
+
 	/**
 	 * Build grid model from class attributes
 	 */
 	Ext.define('CMDBuild.model.widget.Grid', {
 		extend: 'Ext.data.Model',
-
-		requires: ['CMDBuild.core.constants.Proxy'],
 
 		fields: [],
 

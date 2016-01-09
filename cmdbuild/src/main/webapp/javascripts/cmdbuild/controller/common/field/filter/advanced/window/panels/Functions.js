@@ -1,7 +1,7 @@
 (function() {
 
 	Ext.define('CMDBuild.controller.common.field.filter.advanced.window.panels.Functions', {
-		extend: 'CMDBuild.controller.common.AbstractController',
+		extend: 'CMDBuild.controller.common.abstract.Base',
 
 		requires: ['CMDBuild.core.constants.Proxy'],
 
@@ -16,6 +16,7 @@
 		cmfgCatchedFunctions: [
 			'onFieldFilterAdvancedWindowFunctionsGetData',
 			'onFieldFilterAdvancedWindowFunctionsSetData = onFieldFilterAdvancedWindowSetData',
+			'onFieldFilterAdvancedWindowFunctionsShow',
 			'onFieldFilterAdvancedWindowFunctionsTabBuild'
 		],
 
@@ -90,16 +91,23 @@
 			}
 		},
 
+		onFieldFilterAdvancedWindowFunctionsShow: function() {
+			if (!this.cmfg('fieldFilterAdvancedFilterIsEmpty')) {
+				this.form.functionComboBox.getStore().load({
+					scope: this,
+					callback: function(records, operation, success) {
+						this.onFieldFilterAdvancedWindowFunctionsSetData(this.cmfg('fieldFilterAdvancedFilterGet'));
+					}
+				});
+			}
+		},
+
 		/**
 		 * Builds tab from filter value (preset values and add)
 		 */
 		onFieldFilterAdvancedWindowFunctionsTabBuild: function() {
-			if (this.cmfg('fieldFilterAdvancedConfigurationIsPanelEnabled', 'function')) {
+			if (this.cmfg('fieldFilterAdvancedConfigurationIsPanelEnabled', 'function'))
 				this.cmfg('fieldFilterAdvancedWindowAddTab', this.buildView());
-
-				if (!this.cmfg('fieldFilterAdvancedFilterIsEmpty'))
-					this.onFieldFilterAdvancedWindowFunctionsSetData(this.cmfg('fieldFilterAdvancedFilterGet'));
-			}
 		},
 
 		viewReset: function() {

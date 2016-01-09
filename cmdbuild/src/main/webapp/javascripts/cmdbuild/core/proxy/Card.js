@@ -4,6 +4,7 @@
 		alternateClassName: 'CMDBuild.ServiceProxy.card', // Legacy class name
 
 		requires: [
+			'CMDBuild.core.interfaces.Ajax',
 			'CMDBuild.core.proxy.CMProxy',
 			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.proxy.Index'
@@ -35,7 +36,7 @@
 		 * @param {Object} parameters
 		 */
 		getList: function(parameters) {
-			CMDBuild.Ajax.request({
+			CMDBuild.core.interfaces.Ajax.request({
 				method: 'GET',
 				url: CMDBuild.core.proxy.Index.card.getList,
 				params: parameters.params,
@@ -84,7 +85,7 @@
 		remove: function(parameters) {
 			parameters.important = true;
 
-			CMDBuild.Ajax.request({
+			CMDBuild.core.interfaces.Ajax.request({
 				method: 'POST',
 				url: CMDBuild.core.proxy.Index.card.remove,
 				headers: parameters.headers,
@@ -101,7 +102,7 @@
 		 * @property {Object} parameters
 		 */
 		update: function(parameters) {
-			CMDBuild.Ajax.request({
+			CMDBuild.core.interfaces.Ajax.request({
 				method: 'POST',
 				url: CMDBuild.core.proxy.Index.card.update,
 				headers: parameters.headers,
@@ -119,7 +120,7 @@
 			 * @param {Object} parameters
 			 */
 			lock: function(parameters) {
-				CMDBuild.Ajax.request({
+				CMDBuild.core.interfaces.Ajax.request({
 					method: 'POST',
 					url: CMDBuild.core.proxy.Index.classes.cards.lock,
 					headers: parameters.headers,
@@ -136,7 +137,7 @@
 			 * @param {Object} parameters
 			 */
 			unlock: function(parameters) {
-				CMDBuild.Ajax.request({
+				CMDBuild.core.interfaces.Ajax.request({
 					method: 'POST',
 					url: CMDBuild.core.proxy.Index.classes.cards.unlock,
 					headers: parameters.headers,
@@ -153,7 +154,7 @@
 			 * @param {Object} parameters
 			 */
 			unlockAll: function(parameters) {
-				CMDBuild.Ajax.request({
+				CMDBuild.core.interfaces.Ajax.request({
 					method: 'POST',
 					url: CMDBuild.core.proxy.Index.classes.cards.unlockAll,
 					headers: parameters.headers,

@@ -4,16 +4,31 @@
 
 	Ext.define("CMDBuild.controller.administration.classes.CMClassFormController", {
 
-		requires: ['CMDBuild.view.common.field.translatable.Utils'],
+		requires: [
+			'CMDBuild.core.constants.Proxy',
+			'CMDBuild.view.common.field.translatable.Utils'
+		],
 
 		constructor: function(view) {
-			this.view = view;
+			if (Ext.isEmpty(view)) {
+				this.view = new CMDBuild.view.administration.classes.CMClassForm({
+					title: CMDBuild.Translation.administration.modClass.tabs.properties,
+					border: false
+				});
+			} else {
+				this.view = view;
+			}
+
 			this.selection = null;
 
 			this.view.abortButton.on("click", this.onAbortClick, this);
 			this.view.saveButton.on("click", this.onSaveClick, this);
 			this.view.deleteButton.on("click", this.onDeleteClick, this);
 			this.view.printClassButton.on("click", this.onPrintClass, this);
+		},
+
+		getView: function() {
+			return this.view;
 		},
 
 		onClassSelected: function(classId) {
@@ -29,7 +44,7 @@
 		},
 
 		onSaveClick: function() {
-			CMDBuild.LoadMask.get().show();
+			CMDBuild.core.LoadMask.show();
 
 			CMDBuild.ServiceProxy.classes.save({
 				params: this.buildSaveParams(),
@@ -39,14 +54,26 @@
 			});
 
 			function callback() {
-				CMDBuild.LoadMask.get().hide();
+				CMDBuild.core.LoadMask.hide();
 			}
 		},
 
-		saveSuccessCB: function(r) {
-			this.view.disableModify(enableCMTBar = true);
-			var result = Ext.JSON.decode(r.responseText);
-			this.selection = _CMCache.onClassSaved(result.table);
+		/**
+		 * @param {Object} response
+		 * @param {Object} options
+		 * @param {Object} decodedResponse
+		 */
+		saveSuccessCB: function(response, options, decodedResponse) {
+			decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.TABLE];
+
+			this.view.disableModify(true);
+
+			_CMMainViewportController.findAccordionByCMName('class').updateStore(decodedResponse[CMDBuild.core.constants.Proxy.ID]);
+
+			/**
+			 * @deprecated
+			 */
+			this.selection = _CMCache.onClassSaved(decodedResponse);
 
 			CMDBuild.view.common.field.translatable.Utils.commit(this.view.form);
 		},
@@ -84,7 +111,7 @@
 		},
 
 		deleteCurrentClass: function() {
-			CMDBuild.LoadMask.get().hide();
+			CMDBuild.core.LoadMask.hide();
 
 			var params = {};
 			params[_CMProxy.parameter.CLASS_NAME] = this.selection.get("name");
@@ -97,15 +124,27 @@
 			});
 
 			function callback() {
-				CMDBuild.LoadMask.get().hide();
+				CMDBuild.core.LoadMask.hide();
 				this.view.disableModify();
 				this.view.reset();
 			}
 
 		},
 
-		deleteSuccessCB: function(r) {
-			var removedClassId = this.selection.get("id");
+		/**
+		 * @param {Object} response
+		 * @param {Object} options
+		 * @param {Object} decodedResponse
+		 */
+		deleteSuccessCB: function(response, options, decodedResponse) {
+			var removedClassId = this.selection.get(CMDBuild.core.constants.Proxy.ID);
+
+			_CMMainViewportController.findAccordionByCMName('class').deselect();
+			_CMMainViewportController.findAccordionByCMName('class').updateStore();
+
+			/**
+			 * @deprecated
+			 */
 			_CMCache.onClassDeleted(removedClassId);
 			this.selection = null;
 		},

@@ -193,7 +193,7 @@ public class DataViewCardFetcher {
 		this.dataView = builder.dataView;
 		this.className = builder.className;
 		this.queryOptions = builder.queryOptions;
-		querySpecsBuilderFiller = new QuerySpecsBuilderFiller(dataView, queryOptions, className);
+		querySpecsBuilderFiller = new QuerySpecsBuilderFiller(dataView, queryOptions, dataView.findClass(className));
 	}
 
 	public PagedElements<CMCard> fetch() {
@@ -201,10 +201,10 @@ public class DataViewCardFetcher {
 				.count() //
 				.run();
 		final List<CMCard> filteredCards = newArrayList();
-		final CMClass sourceClass = querySpecsBuilderFiller.getSourceClass();
+		final Alias alias = querySpecsBuilderFiller.getAlias();
 		for (final CMQueryRow row : result) {
-			if (row.hasCard(sourceClass)) {
-				filteredCards.add(row.getCard(sourceClass));
+			if (row.hasCard(alias)) {
+				filteredCards.add(row.getCard(alias));
 			}
 		}
 		return new PagedElements<CMCard>(filteredCards, result.totalSize());

@@ -22,6 +22,7 @@ import org.cmdbuild.service.rest.v2.Cql;
 import org.cmdbuild.service.rest.v2.DomainAttributes;
 import org.cmdbuild.service.rest.v2.Domains;
 import org.cmdbuild.service.rest.v2.EmailTemplates;
+import org.cmdbuild.service.rest.v2.Functions;
 import org.cmdbuild.service.rest.v2.Impersonate;
 import org.cmdbuild.service.rest.v2.LookupTypeValues;
 import org.cmdbuild.service.rest.v2.LookupTypes;
@@ -30,6 +31,7 @@ import org.cmdbuild.service.rest.v2.ProcessAttributes;
 import org.cmdbuild.service.rest.v2.ProcessInstanceActivities;
 import org.cmdbuild.service.rest.v2.ProcessInstanceAttachments;
 import org.cmdbuild.service.rest.v2.ProcessInstanceEmails;
+import org.cmdbuild.service.rest.v2.ProcessInstancePrivileges;
 import org.cmdbuild.service.rest.v2.ProcessInstances;
 import org.cmdbuild.service.rest.v2.ProcessStartActivities;
 import org.cmdbuild.service.rest.v2.Processes;
@@ -50,6 +52,7 @@ import org.cmdbuild.service.rest.v2.cxf.CxfCql;
 import org.cmdbuild.service.rest.v2.cxf.CxfDomainAttributes;
 import org.cmdbuild.service.rest.v2.cxf.CxfDomains;
 import org.cmdbuild.service.rest.v2.cxf.CxfEmailTemplates;
+import org.cmdbuild.service.rest.v2.cxf.CxfFunctions;
 import org.cmdbuild.service.rest.v2.cxf.CxfImpersonate;
 import org.cmdbuild.service.rest.v2.cxf.CxfLookupTypeValues;
 import org.cmdbuild.service.rest.v2.cxf.CxfLookupTypes;
@@ -58,6 +61,7 @@ import org.cmdbuild.service.rest.v2.cxf.CxfProcessAttributes;
 import org.cmdbuild.service.rest.v2.cxf.CxfProcessInstanceActivities;
 import org.cmdbuild.service.rest.v2.cxf.CxfProcessInstanceAttachments;
 import org.cmdbuild.service.rest.v2.cxf.CxfProcessInstanceEmails;
+import org.cmdbuild.service.rest.v2.cxf.CxfProcessInstancePrivileges;
 import org.cmdbuild.service.rest.v2.cxf.CxfProcessInstances;
 import org.cmdbuild.service.rest.v2.cxf.CxfProcessStartActivities;
 import org.cmdbuild.service.rest.v2.cxf.CxfProcesses;
@@ -81,8 +85,6 @@ import org.cmdbuild.service.rest.v2.cxf.service.InMemoryOperationUserStore;
 import org.cmdbuild.service.rest.v2.cxf.service.InMemorySessionStore;
 import org.cmdbuild.service.rest.v2.cxf.service.OperationUserStore;
 import org.cmdbuild.service.rest.v2.cxf.service.SessionStore;
-import org.cmdbuild.service.rest.v2.cxf.service.SimpleTokenGenerator;
-import org.cmdbuild.service.rest.v2.cxf.service.TokenGenerator;
 import org.cmdbuild.service.rest.v2.logging.LoggingSupport;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -296,6 +298,14 @@ public class ServicesV2 implements LoggingSupport {
 
 	@Bean
 	@Scope(value = SCOPE_REQUEST, proxyMode = TARGET_CLASS)
+	public ProcessInstancePrivileges v2_processInstancePrivileges() {
+		final CxfProcessInstancePrivileges service = new CxfProcessInstancePrivileges(v2_errorHandler(),
+				helper.userWorkflowLogic());
+		return proxy(ProcessInstancePrivileges.class, service);
+	}
+
+	@Bean
+	@Scope(value = SCOPE_REQUEST, proxyMode = TARGET_CLASS)
 	public ProcessInstances v2_processInstances() {
 		final CxfProcessInstances service = new CxfProcessInstances(v2_errorHandler(), helper.userWorkflowLogic(),
 				helper.lookupHelper());
@@ -311,9 +321,16 @@ public class ServicesV2 implements LoggingSupport {
 	}
 
 	@Bean
+	@Scope(value = SCOPE_REQUEST, proxyMode = TARGET_CLASS)
+	public Functions v2_functions() {
+		final CxfFunctions service = new CxfFunctions(v2_errorHandler(), helper.userDataView());
+		return proxy(Functions.class, service);
+	}
+
+	@Bean
 	public Sessions v2_sessions() {
-		final CxfSessions service = new CxfSessions(v2_errorHandler(), v2_tokenGenerator(), v2_sessionStore(),
-				v2_loginHandler(), v2_operationUserStore());
+		final CxfSessions service = new CxfSessions(v2_errorHandler(), helper.tokenGenerator(), v2_sessionStore(),
+				v2_loginHandler(), v2_operationUserStore(), helper.tokenManager());
 		return proxy(Sessions.class, service);
 	}
 
@@ -323,18 +340,25 @@ public class ServicesV2 implements LoggingSupport {
 	}
 
 	@Bean
-	protected TokenGenerator v2_tokenGenerator() {
-		return new SimpleTokenGenerator();
-	}
-
-	@Bean
 	public SessionStore v2_sessionStore() {
-		return new InMemorySessionStore();
+		return new InMemorySessionStore(v2_configuration());
 	}
 
 	@Bean
 	protected SessionStore v2_impersonateSessionStore() {
-		return new InMemorySessionStore();
+		return new InMemorySessionStore(v2_configuration());
+	}
+
+	@Bean
+	protected InMemorySessionStore.Configuration v2_configuration() {
+		return new InMemorySessionStore.Configuration() {
+
+			@Override
+			public long timeout() {
+				return helper.cmdbuildConfiguration().getSessionTimoutOrZero() * 1000;
+			}
+
+		};
 	}
 
 	@Bean

@@ -42,14 +42,12 @@
 		initComponent: function() {
 			this.field = this.createField();
 
-			if (CMDBuild.configuration[CMDBuild.core.constants.Proxy.LOCALIZATION].hasEnabledLanguages()) {
+			if (CMDBuild.configuration.localization.hasEnabledLanguages()) {
 				this.translationButton = Ext.create('CMDBuild.core.buttons.FieldTranslation', {
 					scope: this,
 
 					handler: function(button, e) {
-						Ext.create('CMDBuild.controller.common.field.translatable.Window', {
-							ownerField: this
-						});
+						Ext.create('CMDBuild.controller.common.field.translatable.Window', { ownerField: this });
 					}
 				});
 			}

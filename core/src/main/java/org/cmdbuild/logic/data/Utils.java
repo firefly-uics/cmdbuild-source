@@ -1,7 +1,11 @@
 package org.cmdbuild.logic.data;
 
+import static org.apache.commons.lang3.ObjectUtils.notEqual;
+import static org.apache.commons.lang3.StringUtils.EMPTY;
+
+import org.apache.commons.lang3.BooleanUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.cmdbuild.dao.entry.CMCard;
-import org.cmdbuild.dao.entry.IdAndDescription;
 import org.cmdbuild.dao.entrytype.CMAttribute;
 import org.cmdbuild.dao.entrytype.CMAttribute.Mode;
 import org.cmdbuild.dao.entrytype.CMClass;
@@ -24,8 +28,94 @@ import org.joda.time.DateTime;
 
 public class Utils {
 
-	private Utils() {
-		// prevents instantiation
+	public static abstract class CMAttributeWrapper implements CMAttributeDefinition {
+
+		private final CMAttribute delegate;
+
+		protected CMAttributeWrapper(final CMAttribute delegate) {
+			this.delegate = delegate;
+		}
+
+		@Override
+		public String getName() {
+			return delegate.getName();
+		}
+
+		@Override
+		public CMEntryType getOwner() {
+			return delegate.getOwner();
+		}
+
+		@Override
+		public CMAttributeType<?> getType() {
+			return delegate.getType();
+		}
+
+		@Override
+		public String getDescription() {
+			return delegate.getDescription();
+		}
+
+		@Override
+		public String getDefaultValue() {
+			return delegate.getDefaultValue();
+		}
+
+		@Override
+		public Boolean isDisplayableInList() {
+			return delegate.isDisplayableInList();
+		}
+
+		@Override
+		public boolean isMandatory() {
+			return delegate.isMandatory();
+		}
+
+		@Override
+		public boolean isUnique() {
+			return delegate.isUnique();
+		}
+
+		@Override
+		public Boolean isActive() {
+			return delegate.isActive();
+		}
+
+		@Override
+		public Mode getMode() {
+			return delegate.getMode();
+		}
+
+		@Override
+		public Integer getIndex() {
+			return delegate.getIndex();
+		}
+
+		@Override
+		public String getGroup() {
+			return delegate.getGroup();
+		}
+
+		@Override
+		public Integer getClassOrder() {
+			return delegate.getClassOrder();
+		}
+
+		@Override
+		public String getEditorType() {
+			return delegate.getEditorType();
+		}
+
+		@Override
+		public String getFilter() {
+			return delegate.getFilter();
+		}
+
+		@Override
+		public String getForeignKeyDestinationClassName() {
+			return delegate.getForeignKeyDestinationClassName();
+		}
+
 	}
 
 	public static CMClassDefinition definitionForNew(final EntryType entryType, final CMClass parentClass) {
@@ -232,7 +322,7 @@ public class Utils {
 			}
 
 			@Override
-			public boolean isDisplayableInList() {
+			public Boolean isDisplayableInList() {
 				return attribute.isDisplayableInList();
 			}
 
@@ -247,7 +337,7 @@ public class Utils {
 			}
 
 			@Override
-			public boolean isActive() {
+			public Boolean isActive() {
 				return attribute.isActive();
 			}
 
@@ -257,7 +347,7 @@ public class Utils {
 			}
 
 			@Override
-			public int getIndex() {
+			public Integer getIndex() {
 				return attribute.getIndex();
 			}
 
@@ -267,7 +357,7 @@ public class Utils {
 			}
 
 			@Override
-			public int getClassOrder() {
+			public Integer getClassOrder() {
 				return attribute.getClassOrder();
 			}
 
@@ -289,373 +379,238 @@ public class Utils {
 		};
 	}
 
-	public static CMAttributeDefinition definitionForExisting( //
-			final Attribute attributeWithNewValues, //
-			final CMAttribute existingAttribute //
-	) {
-
-		return new CMAttributeDefinition() {
+	public static CMAttributeDefinition definitionForExisting(final CMAttribute delegate, final Attribute attribute) {
+		return new CMAttributeWrapper(delegate) {
 
 			@Override
-			public String getName() {
-				return existingAttribute.getName();
-			}
-
-			@Override
-			public CMEntryType getOwner() {
-				return existingAttribute.getOwner();
-			}
-
-			@Override
-			// Some info about the attributes are
-			// stored in the CMAttributeType, so for
-			// String, Lookup and Decimal use the
-			// new attribute type to update these info
+			/*
+			 * Some info about the attributes are stored in the CMAttributeType,
+			 * so for String, Lookup and Decimal use the new attribute type to
+			 * update these info
+			 */
 			public CMAttributeType<?> getType() {
-				if (existingAttribute.getType() instanceof LookupAttributeType
-						&& attributeWithNewValues.getType() instanceof LookupAttributeType) {
-
-					return attributeWithNewValues.getType();
-				} else if (existingAttribute.getType() instanceof StringAttributeType
-						&& attributeWithNewValues.getType() instanceof StringAttributeType) {
-
-					return attributeWithNewValues.getType();
-				} else if (existingAttribute.getType() instanceof DecimalAttributeType
-						&& attributeWithNewValues.getType() instanceof DecimalAttributeType) {
-
-					return attributeWithNewValues.getType();
-				} else if (existingAttribute.getType() instanceof IpAddressAttributeType
-						&& attributeWithNewValues.getType() instanceof IpAddressAttributeType) {
-
-					return attributeWithNewValues.getType();
+				if (delegate.getType() instanceof LookupAttributeType
+						&& attribute.getType() instanceof LookupAttributeType) {
+					return attribute.getType();
+				} else if (delegate.getType() instanceof StringAttributeType
+						&& attribute.getType() instanceof StringAttributeType) {
+					return attribute.getType();
+				} else if (delegate.getType() instanceof DecimalAttributeType
+						&& attribute.getType() instanceof DecimalAttributeType) {
+					return attribute.getType();
+				} else if (delegate.getType() instanceof IpAddressAttributeType
+						&& attribute.getType() instanceof IpAddressAttributeType) {
+					return attribute.getType();
 				} else {
-					return existingAttribute.getType();
+					return delegate.getType();
 				}
 			}
 
 			@Override
 			public String getDescription() {
-				return attributeWithNewValues.getDescription();
+				return notEqual(super.getDescription(), attribute.getDescription()) ? attribute.getDescription() : null;
 			}
 
 			@Override
-			public String getDefaultValue() {
-				return existingAttribute.getDefaultValue();
-			}
-
-			@Override
-			public boolean isDisplayableInList() {
-				return attributeWithNewValues.isDisplayableInList();
+			public Boolean isDisplayableInList() {
+				return notEqual(super.isDisplayableInList(), attribute.isDisplayableInList()) ? attribute
+						.isDisplayableInList() : null;
 			}
 
 			@Override
 			public boolean isMandatory() {
-				return attributeWithNewValues.isMandatory();
+				return attribute.isMandatory();
 			}
 
 			@Override
 			public boolean isUnique() {
-				return attributeWithNewValues.isUnique();
+				return attribute.isUnique();
 			}
 
 			@Override
-			public boolean isActive() {
-				return attributeWithNewValues.isActive();
+			public Boolean isActive() {
+				return notEqual(super.isActive(), attribute.isActive()) ? attribute.isActive() : null;
 			}
 
 			@Override
 			public Mode getMode() {
-				return attributeWithNewValues.getMode();
-			}
-
-			@Override
-			public int getIndex() {
-				return existingAttribute.getIndex();
+				return notEqual(super.getMode(), attribute.getMode()) ? attribute.getMode() : null;
 			}
 
 			@Override
 			public String getGroup() {
-				return attributeWithNewValues.getGroup();
+				return notEqual(super.getGroup(), attribute.getGroup()) ? attribute.getGroup() : null;
 			}
 
 			@Override
-			public int getClassOrder() {
-				return existingAttribute.getClassOrder();
+			public Integer getIndex() {
+				// not changed
+				return null;
+			}
+
+			@Override
+			public Integer getClassOrder() {
+				// not changed
+				return null;
 			}
 
 			@Override
 			public String getEditorType() {
-				return attributeWithNewValues.getEditorType();
+				return notEqual(super.getEditorType(), attribute.getEditorType()) ? attribute.getEditorType() : null;
 			}
 
 			@Override
 			public String getFilter() {
-				return attributeWithNewValues.getFilter();
-			}
-
-			@Override
-			public String getForeignKeyDestinationClassName() {
-				return existingAttribute.getForeignKeyDestinationClassName();
+				return notEqual(super.getFilter(), attribute.getFilter()) ? attribute.getFilter() : null;
 			}
 
 		};
 	}
 
-	public static CMAttributeDefinition definitionForReordering(final Attribute attribute,
-			final CMAttribute existingAttribute) {
-		return new CMAttributeDefinition() {
-
-			@Override
-			public String getName() {
-				return existingAttribute.getName();
-			}
-
-			@Override
-			public CMEntryType getOwner() {
-				return existingAttribute.getOwner();
-			}
-
-			@Override
-			public CMAttributeType<?> getType() {
-				return existingAttribute.getType();
-			}
+	public static CMAttributeDefinition withIndex(final CMAttribute delegate, final int index) {
+		return new CMAttributeWrapper(delegate) {
 
 			@Override
 			public String getDescription() {
-				return existingAttribute.getDescription();
+				// not changed
+				return null;
 			}
 
 			@Override
-			public String getDefaultValue() {
-				return existingAttribute.getDefaultValue();
-			}
-
-			@Override
-			public boolean isDisplayableInList() {
-				return existingAttribute.isDisplayableInList();
+			public Boolean isDisplayableInList() {
+				// not changed
+				return null;
 			}
 
 			@Override
 			public boolean isMandatory() {
-				return existingAttribute.isMandatory();
+				return delegate.isMandatory();
 			}
 
 			@Override
 			public boolean isUnique() {
-				return existingAttribute.isUnique();
+				return delegate.isUnique();
 			}
 
 			@Override
-			public boolean isActive() {
-				return existingAttribute.isActive();
+			public Boolean isActive() {
+				// not changed
+				return null;
 			}
 
 			@Override
 			public Mode getMode() {
-				return existingAttribute.getMode();
-			}
-
-			@Override
-			public int getIndex() {
-				return attribute.getIndex();
+				// not changed
+				return null;
 			}
 
 			@Override
 			public String getGroup() {
-				return existingAttribute.getGroup();
+				// not changed
+				return null;
 			}
 
 			@Override
-			public int getClassOrder() {
-				return existingAttribute.getClassOrder();
+			public Integer getClassOrder() {
+				// not changed
+				return null;
 			}
 
 			@Override
 			public String getEditorType() {
-				return existingAttribute.getEditorType();
+				// not changed
+				return null;
 			}
 
 			@Override
 			public String getFilter() {
-				return existingAttribute.getFilter();
+				// not changed
+				return null;
 			}
 
 			@Override
-			public String getForeignKeyDestinationClassName() {
-				return existingAttribute.getForeignKeyDestinationClassName();
+			public Integer getIndex() {
+				return index;
 			}
 
 		};
 	}
 
-	public static CMAttributeDefinition definitionForClassOrdering(final Attribute attribute,
-			final CMAttribute existingAttribute) {
-		return new CMAttributeDefinition() {
-
-			@Override
-			public String getName() {
-				return existingAttribute.getName();
-			}
-
-			@Override
-			public CMEntryType getOwner() {
-				return existingAttribute.getOwner();
-			}
-
-			@Override
-			public CMAttributeType<?> getType() {
-				return existingAttribute.getType();
-			}
+	public static CMAttributeDefinition withClassOrder(final CMAttribute delegate, final int classOrder) {
+		return new CMAttributeWrapper(delegate) {
 
 			@Override
 			public String getDescription() {
-				return existingAttribute.getDescription();
+				// not changed
+				return null;
 			}
 
 			@Override
-			public String getDefaultValue() {
-				return existingAttribute.getDefaultValue();
-			}
-
-			@Override
-			public boolean isDisplayableInList() {
-				return existingAttribute.isDisplayableInList();
+			public Boolean isDisplayableInList() {
+				// not changed
+				return null;
 			}
 
 			@Override
 			public boolean isMandatory() {
-				return existingAttribute.isMandatory();
+				return delegate.isMandatory();
 			}
 
 			@Override
 			public boolean isUnique() {
-				return existingAttribute.isUnique();
+				return delegate.isUnique();
 			}
 
 			@Override
-			public boolean isActive() {
-				return existingAttribute.isActive();
+			public Boolean isActive() {
+				// not changed
+				return null;
 			}
 
 			@Override
 			public Mode getMode() {
-				return existingAttribute.getMode();
-			}
-
-			@Override
-			public int getIndex() {
-				return existingAttribute.getIndex();
+				// not changed
+				return null;
 			}
 
 			@Override
 			public String getGroup() {
-				return existingAttribute.getGroup();
-			}
-
-			@Override
-			public int getClassOrder() {
-				return attribute.getClassOrder();
+				// not changed
+				return null;
 			}
 
 			@Override
 			public String getEditorType() {
-				return existingAttribute.getEditorType();
+				// not changed
+				return null;
 			}
 
 			@Override
 			public String getFilter() {
-				return existingAttribute.getFilter();
+				// not changed
+				return null;
 			}
 
 			@Override
-			public String getForeignKeyDestinationClassName() {
-				return existingAttribute.getForeignKeyDestinationClassName();
+			public Integer getIndex() {
+				// not changed
+				return null;
+			}
+
+			@Override
+			public Integer getClassOrder() {
+				return classOrder;
 			}
 
 		};
 	}
 
-	public static CMAttributeDefinition unactive(final CMAttribute existingAttribute) {
-		return new CMAttributeDefinition() {
+	public static CMAttributeDefinition unactive(final CMAttribute delegate) {
+		return new CMAttributeWrapper(delegate) {
 
 			@Override
-			public String getName() {
-				return existingAttribute.getName();
-			}
-
-			@Override
-			public CMEntryType getOwner() {
-				return existingAttribute.getOwner();
-			}
-
-			@Override
-			public CMAttributeType<?> getType() {
-				return existingAttribute.getType();
-			}
-
-			@Override
-			public String getDescription() {
-				return existingAttribute.getDescription();
-			}
-
-			@Override
-			public String getDefaultValue() {
-				return existingAttribute.getDefaultValue();
-			}
-
-			@Override
-			public boolean isDisplayableInList() {
-				return existingAttribute.isDisplayableInList();
-			}
-
-			@Override
-			public boolean isMandatory() {
-				return existingAttribute.isMandatory();
-			}
-
-			@Override
-			public boolean isUnique() {
-				return existingAttribute.isUnique();
-			}
-
-			@Override
-			public boolean isActive() {
+			public Boolean isActive() {
 				return false;
-			}
-
-			@Override
-			public Mode getMode() {
-				return existingAttribute.getMode();
-			}
-
-			@Override
-			public int getIndex() {
-				return existingAttribute.getIndex();
-			}
-
-			@Override
-			public String getGroup() {
-				return existingAttribute.getGroup();
-			}
-
-			@Override
-			public int getClassOrder() {
-				return existingAttribute.getClassOrder();
-			}
-
-			@Override
-			public String getEditorType() {
-				return existingAttribute.getEditorType();
-			}
-
-			@Override
-			public String getFilter() {
-				return existingAttribute.getFilter();
-			}
-
-			@Override
-			public String getForeignKeyDestinationClassName() {
-				return existingAttribute.getForeignKeyDestinationClassName();
 			}
 
 		};
@@ -827,14 +782,19 @@ public class Utils {
 	 * @param card
 	 * @param attributeName
 	 * @return
+	 * 
+	 * @deprecated use {@link StringUtils} functions.
 	 */
+	@Deprecated
 	public static String readString(final CMCard card, final String attributeName) {
 		final Object value = card.get(attributeName);
+		final String output;
 		if (value == null) {
-			return "";
+			output = EMPTY;
 		} else {
-			return (String) value;
+			output = (String) value;
 		}
+		return output;
 	}
 
 	/**
@@ -844,54 +804,19 @@ public class Utils {
 	 * @param card
 	 * @param attributeName
 	 * @return
+	 * 
+	 * @deprecated use {@link BooleanUtils} functions.
 	 */
+	@Deprecated
 	public static boolean readBoolean(final CMCard card, final String attributeName) {
 		final Object value = card.get(attributeName);
+		final boolean output;
 		if (value == null) {
-			return false;
+			output = false;
 		} else {
-			return (Boolean) value;
+			output = (Boolean) value;
 		}
-	}
-
-	/**
-	 * Read from the given card the attribute with the given name. If null
-	 * return null, otherwise try to cast the object to Long
-	 * 
-	 * @param card
-	 * @param attributeName
-	 * @return
-	 */
-	public static Long readLong(final CMCard card, final String attributeName) {
-		final Object value = card.get(attributeName);
-
-		if (value == null) {
-			return null;
-		} else if (value instanceof Long) {
-			return (Long) value;
-		} else if (value instanceof Number) {
-			return ((Number) value).longValue();
-		} else {
-			return null;
-		}
-	}
-
-	/**
-	 * Read from the given card the attribute with the given name. If null
-	 * return null, otherwise cast it to ReferenceCard
-	 * 
-	 * @param card
-	 * @param attributeName
-	 * @return
-	 */
-	public static IdAndDescription readCardReference(final CMCard card, final String attributeName) {
-		final Object value = card.get(attributeName);
-
-		if (value != null) {
-			return (IdAndDescription) value;
-		}
-
-		return null;
+		return output;
 	}
 
 	/**
@@ -912,6 +837,10 @@ public class Utils {
 		}
 
 		return null;
+	}
+
+	private Utils() {
+		// prevents instantiation
 	}
 
 }

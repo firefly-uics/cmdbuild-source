@@ -6,15 +6,16 @@ import org.cmdbuild.auth.AuthenticationStore;
 import org.cmdbuild.config.CmdbuildConfiguration;
 import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.report.ReportFactory;
+import org.cmdbuild.services.FilesStore;
 
 public enum BuiltInReport {
 
 	LIST("_list") {
 
 		@Override
-		public ReportFactoryBuilder<ReportFactory> newBuilder(final CMDataView dataView,
+		public ReportFactoryBuilder<ReportFactory> newBuilder(final CMDataView dataView, final FilesStore filesStore,
 				final AuthenticationStore authenticationStore, final CmdbuildConfiguration configuration) {
-			return new ListReportFactoryBuilder(dataView, authenticationStore, configuration);
+			return new ListReportFactoryBuilder(dataView, filesStore, authenticationStore, configuration);
 		}
 
 	},
@@ -35,7 +36,7 @@ public enum BuiltInReport {
 		throw new Error(format("undefined report '%s'", reportId));
 	}
 
-	public abstract ReportFactoryBuilder<ReportFactory> newBuilder(CMDataView dataView,
+	public abstract ReportFactoryBuilder<ReportFactory> newBuilder(CMDataView dataView, FilesStore filesStore,
 			AuthenticationStore authenticationStore, CmdbuildConfiguration configuration);
 
 }

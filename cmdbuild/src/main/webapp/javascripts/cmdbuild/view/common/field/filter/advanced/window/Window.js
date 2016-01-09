@@ -48,6 +48,8 @@
 		 */
 		tabPanel: undefined,
 
+		closeAction: 'hide',
+
 		initComponent: function() {
 			Ext.apply(this, {
 				dockedItems: [
@@ -152,15 +154,6 @@
 			show: function(window, eOpts) {
 				return this.delegate.cmfg('onFieldFilterAdvancedWindowShow');
 			}
-		},
-
-		/**
-		 * Override close action to avoid destroy action. Close is called by Esc button press and using top-right close toolButton.
-		 *
-		 * @override
-		 */
-		close: function() {
-			this.hide();
 		}
 	});
 

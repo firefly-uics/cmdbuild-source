@@ -2,6 +2,10 @@
 
 	/**
 	 * New class than will replace CMFormFunctions
+	 *
+	 * Specific properties:
+	 *  - {Boolean} considerAsFieldToDisable: enable setDisable function on processed item also if it's not inherits from Ext.form.Field
+	 * 	- {Boolean} disablePanelFunctions: disable PanelFunctions class actions on processed item
 	 */
 	Ext.define('CMDBuild.view.common.PanelFunctions', {
 
@@ -9,6 +13,8 @@
 
 		/**
 		 * @param {Boolean} withDisabled
+		 *
+		 * @returns {Array}
 		 */
 		getData: function(withDisabled) {
 			if (withDisabled) {
@@ -18,48 +24,57 @@
 					if (
 						!Ext.isEmpty(item)
 						&& Ext.isFunction(item.getValue)
-						&& (
-							item instanceof Ext.form.Field
-							|| item instanceof Ext.form.field.Base
-							|| item instanceof Ext.form.field.HtmlEditor
-							|| item instanceof Ext.form.FieldContainer
-						)
+						&& this.isManagedField(item)
+						&& !item.disablePanelFunctions
 					) {
 						data[item.name] = item.getValue();
 					}
 				}, this);
 
 				return data;
-			} else {
-				return this.getForm().getValues();
 			}
+
+			return this.getForm().getValues();
 		},
 
+		/**
+		 * @returns {Array} nonValidFields
+		 */
 		getNonValidFields: function() {
-			var data = [];
+			var nonValidFields = [];
 
 			this.cascade(function(item) {
 				if (
 					!Ext.isEmpty(item)
-					&& (
-						item instanceof Ext.form.Field
-						|| item instanceof Ext.form.field.Base
-						|| item instanceof Ext.form.FieldContainer
-					)
-					&& !item.disabled
-					&& !item.isValid()
-					&& !item.disableCascade // Property to disable cascade on fields
+					&& this.isManagedField(item)
+					&& Ext.isFunction(item.isDisabled) && !item.isDisabled()
+					&& Ext.isFunction(item.isHidden) && !item.isHidden()
+					&& Ext.isFunction(item.isValid) && !item.isValid()
+					&& !item.disablePanelFunctions
 				) {
-					data.push(item);
+					nonValidFields.push(item);
 				}
 			}, this);
 
-			return data;
+			return nonValidFields;
 		},
 
 		/**
-		 * Custom implementation of setValues and reset (to catch also non Ext.form.Fields items)
+		 * @param {Object} field
+		 *
+		 * @returns {Boolean}
+		 *
+		 * @private
 		 */
+		isManagedField: function(field) {
+			return (
+				field instanceof Ext.form.Field
+				|| field instanceof Ext.form.field.Base
+				|| field instanceof Ext.form.field.HtmlEditor
+				|| field instanceof Ext.form.FieldContainer
+			);
+		},
+
 		reset: function() {
 			// SetValues
 			this.cascade(function(item) {
@@ -72,6 +87,7 @@
 						|| item instanceof Ext.form.field.HtmlEditor
 						|| item instanceof Ext.form.FieldContainer
 					)
+					&& !item.disablePanelFunctions
 				) {
 					item.setValue();
 				}
@@ -88,6 +104,7 @@
 						|| item instanceof Ext.form.field.HtmlEditor
 						|| item instanceof Ext.form.FieldContainer
 					)
+					&& !item.disablePanelFunctions
 				) {
 					item.reset();
 				}
@@ -102,8 +119,13 @@
 
 			if (!Ext.isEmpty(bottomToolbar))
 				Ext.Array.forEach(bottomToolbar.items.items, function(button, i, allButtons) {
-					if (Ext.isFunction(button.setDisabled))
+					if (
+						!Ext.isEmpty(button)
+						&& Ext.isFunction(button.setDisabled)
+						&& !button.disablePanelFunctions
+					) {
 						button.setDisabled(state);
+					}
 				}, this);
 		},
 
@@ -120,13 +142,18 @@
 
 			// For Ext.form.field.Field objects
 			this.getForm().getFields().each(function(item, i, length) {
-				if (Ext.isFunction(item.setDisabled))
+				if (
+					!Ext.isEmpty(item)
+					&& Ext.isFunction(item.setDisabled)
+					&& !item.disablePanelFunctions
+				) {
 					if (state) {
 						item.setDisabled(state);
 					} else {
 						if ((allFields || !item.cmImmutable) && item.isVisible())
 							item.setDisabled(state);
 					}
+				}
 			}, this);
 
 			// For extra objects (Buttons and objects with considerAsFieldToDisable property)
@@ -138,6 +165,7 @@
 						item instanceof Ext.button.Button
 						|| item.considerAsFieldToDisable
 					)
+					&& !item.disablePanelFunctions
 				) {
 					if (state) {
 						item.setDisabled(state);
@@ -173,7 +201,11 @@
 
 			if (!Ext.isEmpty(topToolbar))
 				Ext.Array.forEach(topToolbar.items.items, function(button, i, allButtons) {
-					if (Ext.isFunction(button.setDisabled)) {
+					if (
+						!Ext.isEmpty(button)
+						&& Ext.isFunction(button.setDisabled)
+						&& !button.disablePanelFunctions
+					) {
 						if (Ext.isBoolean(button.forceDisabledState)) // Force disabled state implementation
 							state = button.forceDisabledState;
 

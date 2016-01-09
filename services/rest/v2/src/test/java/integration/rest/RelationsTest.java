@@ -93,6 +93,9 @@ public class RelationsTest {
 		// given
 		final ResponseSingle<Long> expectedResponse = newResponseSingle(Long.class) //
 				.withElement(123L) //
+				.withMetadata(newMetadata() //
+						// nothing to add, just needed for simplify assertions
+						.build()) //
 				.build();
 		doReturn(expectedResponse) //
 				.when(service).create(anyString(), any(Relation.class));
@@ -209,11 +212,17 @@ public class RelationsTest {
 				.build();
 		final ResponseSingle<Relation> sentResponse = newResponseSingle(Relation.class) //
 				.withElement(relation) //
+				.withMetadata(newMetadata() //
+						// nothing to add, just needed for simplify assertions
+						.build()) //
 				.build();
 		doReturn(sentResponse) //
 				.when(service).read(anyString(), anyLong());
 		final ResponseSingle<Map<String, Object>> expectedResponse = Models.<Map<String, Object>> newResponseSingle() //
 				.withElement(new RelationAdapter().marshal(relation)) //
+				.withMetadata(newMetadata() //
+						// nothing to add, just needed for simplify assertions
+						.build()) //
 				.build();
 
 		// when

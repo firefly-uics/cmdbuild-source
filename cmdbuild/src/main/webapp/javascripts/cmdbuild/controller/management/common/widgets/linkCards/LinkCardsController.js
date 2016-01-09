@@ -228,7 +228,7 @@
 
 		alertIfNeeded: function() {
 			if (this.alertIfChangeDefaultSelection) {
-				CMDBuild.Msg.warn(
+				CMDBuild.core.Message.warning(
 					null,
 					Ext.String.format(
 						CMDBuild.Translation.warnings.link_cards_changed_values,
@@ -265,8 +265,6 @@
 
 				new _CMUtils.PollingFunction({
 					success: function() {
-						me.alertIfChangeDefaultSelection = true;
-
 						// CQL filter and regular filter cannot be merged now.
 						// The filter button should be enabled only if no other filter is present.
 						if (cqlQuery) {

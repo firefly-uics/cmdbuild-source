@@ -24,7 +24,7 @@
 		grid: undefined,
 
 		/**
-		 * @cfg {CMDBuild.view.administration.localization.advancedTable.SectionPanel}
+		 * @property {CMDBuild.view.administration.localization.advancedTable.SectionPanel}
 		 */
 		view: undefined,
 
@@ -55,6 +55,8 @@
 		 * @param {CMDBuild.model.localization.advancedTable.TreeStore} rootNode
 		 *
 		 * @returns {CMDBuild.model.localization.advancedTable.TreeStore}
+		 *
+		 * @private
 		 */
 		buildChildrenNode: function(rootNode) {
 			if (!Ext.isEmpty(rootNode) && rootNode.getDepth() != 1) {
@@ -72,12 +74,13 @@
 		/**
 		 * @param {CMDBuild.model.localization.advancedTable.TreeStore} rootNode
 		 * @param {Array} arrayToDecode
+		 *
+		 * @private
 		 */
 		decodeStructure: function(rootNode, arrayToDecode) {
 			if (
 				!Ext.isEmpty(rootNode)
-				&& !Ext.isEmpty(arrayToDecode)
-				&& Ext.isArray(arrayToDecode)
+				&& !Ext.isEmpty(arrayToDecode) && Ext.isArray(arrayToDecode)
 			) {
 				Ext.Array.forEach(arrayToDecode, function(entityObject, i, allEntitiesObjects) {
 					if (!Ext.Array.contains(this.entityFilter, entityObject[CMDBuild.core.constants.Proxy.NAME].toLowerCase())) { // Discard unwanted entities
@@ -109,12 +112,13 @@
 		 *
 		 * @param {CMDBuild.model.localization.advancedTable.TreeStore} rootNode
 		 * @param {Array} attributesArray
+		 *
+		 * @private
 		 */
 		decodeStructureChildren: function(rootNode, attributesArray) {
 			if (
 				!Ext.isEmpty(rootNode)
-				&& !Ext.isEmpty(attributesArray)
-				&& Ext.isArray(attributesArray)
+				&& !Ext.isEmpty(attributesArray) && Ext.isArray(attributesArray)
 			) {
 				rootNode = this.buildChildrenNode(rootNode);
 
@@ -149,13 +153,13 @@
 		 * @param {CMDBuild.model.localization.advancedTable.TreeStore} rootNode
 		 * @param {Array} fieldsArray
 		 *
+		 * @private
 		 * @override
 		 */
 		decodeStructureFields: function(rootNode, fieldsArray) {
 			if (
 				!Ext.isEmpty(rootNode)
-				&& !Ext.isEmpty(fieldsArray)
-				&& Ext.isArray(fieldsArray)
+				&& !Ext.isEmpty(fieldsArray) && Ext.isArray(fieldsArray)
 			) {
 				Ext.Array.forEach(fieldsArray, function(fieldObject, i, allFields) {
 					var entityFieldNodeObject = {};

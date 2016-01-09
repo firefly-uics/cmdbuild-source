@@ -72,6 +72,9 @@ public class ProcessInstanceEmailsTest {
 		// given
 		final ResponseSingle<Long> expectedResponse = newResponseSingle(Long.class) //
 				.withElement(42L) //
+				.withMetadata(newMetadata() //
+						// nothing to add, just needed for simplify assertions
+						.build()) //
 				.build();
 		doReturn(expectedResponse) //
 				.when(service).create(anyString(), anyLong(), any(Email.class));
@@ -160,6 +163,9 @@ public class ProcessInstanceEmailsTest {
 		final ResponseSingle<Email> expectedResponse = newResponseSingle(Email.class) //
 				.withElement(newEmail() //
 						.withId(42L) //
+						.build()) //
+				.withMetadata(newMetadata() //
+						// nothing to add, just needed for simplify assertions
 						.build()) //
 				.build();
 		when(service.read(anyString(), anyLong(), anyLong())) //

@@ -1,5 +1,7 @@
 (function() {
 
+	Ext.require('CMDBuild.core.constants.Proxy');
+
 	Ext.define('CMDBuild.model.widget.ModelLinkCards', {
 		extend: 'Ext.util.Observable',
 
@@ -7,7 +9,6 @@
 		 * @property {Boolean}
 		 */
 		_freezed: {},
-
 
 		/**
 		 * @property {Int}

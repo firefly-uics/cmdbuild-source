@@ -8,6 +8,7 @@ import org.cmdbuild.auth.acl.PrivilegeContext;
 import org.cmdbuild.dao.entry.CMCard;
 import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.data.store.dao.StorableConverter;
+import org.cmdbuild.logic.custompages.CustomPagesLogic;
 import org.cmdbuild.model.view.View;
 
 import com.google.common.base.Predicate;
@@ -21,19 +22,22 @@ public class MenuCardFilter {
 	private final Supplier<PrivilegeContext> privilegeContext;
 	private final StorableConverter<View> viewConverter;
 	private final UserStore userStore;
+	private final CustomPagesLogic customPagesLogic;
 
 	public MenuCardFilter( //
 			final CMDataView dataView, //
 			final CMGroup group, //
 			final Supplier<PrivilegeContext> privilegeContext, //
 			final StorableConverter<View> viewConverter, //
-			final UserStore userStore //
+			final UserStore userStore, //
+			final CustomPagesLogic customPagesLogic //
 	) {
 		this.dataView = dataView;
 		this.group = group;
 		this.privilegeContext = privilegeContext;
 		this.viewConverter = viewConverter;
 		this.userStore = userStore;
+		this.customPagesLogic = customPagesLogic;
 	}
 
 	public Iterable<CMCard> filterReadableMenuCards(final Iterable<CMCard> notFilteredMenuCards) {
@@ -43,7 +47,8 @@ public class MenuCardFilter {
 				group, //
 				privilegeContext, //
 				viewConverter, //
-				userStore);
+				userStore, //
+				customPagesLogic);
 
 		for (final CMCard menuCard : notFilteredMenuCards) {
 			final Predicate<CMCard> predicate = predicateFactory.getPredicate(menuCard);

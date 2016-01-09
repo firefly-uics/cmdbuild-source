@@ -24,6 +24,11 @@
 
 			Ext.apply(this, {
 				title: tr.title,
+				tools: [
+					Ext.create('CMDBuild.view.common.panel.gridAndForm.tools.Properties', {
+						style: {} // Reset margin setup
+					})
+				],
 				items:[this.form, this.grid],
 				buttonAlign: "center",
 				buttons: [
@@ -75,7 +80,7 @@
 					labelWidth: CMDBuild.LABEL_WIDTH,
 					fieldLabel: tr.csvfile,
 					allowBlank: false,
-					name: 'filecsv'
+					name: 'file'
 				},
 
 				new Ext.form.ComboBox({

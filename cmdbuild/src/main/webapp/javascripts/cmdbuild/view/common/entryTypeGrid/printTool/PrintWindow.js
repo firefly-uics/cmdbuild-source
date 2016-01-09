@@ -10,7 +10,6 @@
 		 */
 		delegate: undefined,
 
-		autoScroll: true,
 		border: true,
 		frame: false,
 		layout: 'fit',

@@ -24,12 +24,10 @@
 
 		bodyCls: 'cmgraypanel',
 		border: false,
-		cls: 'x-panel-body-default-framed',
+		cls: 'x-panel-body-default-framed cmbordertop',
 		frame: false,
-		overflowY: 'auto',
-		split: true,
-
 		layout: 'card',
+		overflowY: 'auto',
 
 		initComponent: function() {
 			Ext.apply(this, {

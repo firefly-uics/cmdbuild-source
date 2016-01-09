@@ -13,12 +13,16 @@
 		/**
 		 * @property {Ext.form.field.Checkbox}
 		 */
-		includeSystemFiltersCheckbox: undefined,
+		includeUsersFiltersCheckbox: undefined,
 
 		border: false,
 		frame: false,
 
 		initComponent: function() {
+			Ext.apply(this, {
+				store: CMDBuild.core.proxy.common.field.filter.advanced.window.Window.getGroupStore()
+			});
+
 			Ext.apply(this, {
 				dockedItems: [
 					Ext.create('Ext.toolbar.Toolbar', {
@@ -26,8 +30,8 @@
 						itemId: CMDBuild.core.constants.Proxy.TOOLBAR_TOP,
 						items: [
 							'->',
-							this.includeSystemFiltersCheckbox = Ext.create('Ext.form.field.Checkbox', {
-								boxLabel: CMDBuild.Translation.includeSystemFilters,
+							this.includeUsersFiltersCheckbox = Ext.create('Ext.form.field.Checkbox', {
+								boxLabel: CMDBuild.Translation.includeUsersFilters,
 								boxLabelCls: 'cmtoolbaritem',
 								inputValue: true,
 								uncheckedValue: false,
@@ -60,8 +64,7 @@
 						dataIndex: CMDBuild.core.constants.Proxy.DESCRIPTION,
 						flex: 1
 					}
-				],
-				store: CMDBuild.core.proxy.common.field.filter.advanced.window.Window.getGroupStore()
+				]
 			});
 
 			this.callParent(arguments);

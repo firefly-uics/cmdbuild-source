@@ -28,14 +28,14 @@ public class PresetFromCardWidgetFactory extends ValuePairWidgetFactory {
 	}
 
 	@Override
-	protected Widget createWidget(final Map<String, Object> valueMap) {
+	protected Widget createWidget(final WidgetDefinition definition) {
 		final PresetFromCard widget = new PresetFromCard();
 
-		setFilterAndClassName(valueMap, widget);
-		widget.setPresetMapping(readPresets(valueMap));
+		setFilterAndClassName(definition, widget);
+		widget.setPresetMapping(readPresets(definition));
 		widget.setTemplates( //
 		extractUnmanagedStringParameters( //
-				valueMap, FILTER, CLASS_NAME, //
+				definition, FILTER, CLASS_NAME, //
 				BUTTON_LABEL, ATTRIBUTE_MAPPING //
 		) //
 		);

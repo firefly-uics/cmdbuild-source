@@ -4,9 +4,10 @@
 	 * @abstract
 	 */
 	Ext.define('CMDBuild.controller.management.common.tabs.History', {
-		extend: 'CMDBuild.controller.common.AbstractController',
+		extend: 'CMDBuild.controller.common.abstract.Base',
 
 		requires: [
+			'CMDBuild.core.configurations.DataFormat',
 			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.proxy.Attributes'
 		],
@@ -45,17 +46,16 @@
 		constructor: function(configurationObject) {
 			this.callParent(arguments);
 
-			this.view = Ext.create('CMDBuild.view.management.common.tabs.history.HistoryView', {
-				delegate: this
-			});
+			this.view = Ext.create('CMDBuild.view.management.common.tabs.history.HistoryView', { delegate: this });
 		},
 
 		/**
-		 * Adds current card to history store for a better visualization of differences from last history record and current one.
-		 *
-		 * @abstract
+		 * Adds current card to history store for a better visualization of differences from last history record and current one. As last function called on store build
+		 * collapses all rows on store load.
 		 */
-		addCurrentCardToStore: Ext.emptyFn,
+		addCurrentCardToStore: function() {
+			this.getRowExpanderPlugin().collapseAll();
+		},
 
 		/**
 		 * Clear store and re-add all records to avoid RowExpander plugin bug that appens with store add action that won't manage correctly expand/collapse events
@@ -81,9 +81,11 @@
 		/**
 		 * Finds same type (card or relation) current record predecessor
 		 *
-		 * @param {CMDBuild.model.common.tabs.history.classes.CardRecord or CMDBuild.model.common.tabs.history.classes.RelationRecord} record
+		 * @param {CMDBuild.model.classes.tabs.history.CardRecord or CMDBuild.model.classes.tabs.history.RelationRecord} record
 		 *
-		 * @returns {CMDBuild.model.common.tabs.history.classes.CardRecord or CMDBuild.model.common.tabs.history.classes.RelationRecord} predecessor or null
+		 * @returns {CMDBuild.model.classes.tabs.history.CardRecord or CMDBuild.model.classes.tabs.history.RelationRecord} predecessor or null
+		 *
+		 * @private
 		 */
 		getRecordPredecessor: function(record) {
 			var i = this.grid.getStore().indexOf(record) + 1;
@@ -110,14 +112,15 @@
 
 		/**
 		 * @returns {CMDBuild.view.management.common.tabs.history.RowExpander} or null
+		 *
+		 * @private
 		 */
 		getRowExpanderPlugin: function() {
 			var rowExpanderPlugin = null;
 
 			if (
 				!Ext.isEmpty(this.grid)
-				&& !Ext.isEmpty(this.grid.plugins)
-				&& Ext.isArray(this.grid.plugins)
+				&& !Ext.isEmpty(this.grid.plugins) && Ext.isArray(this.grid.plugins)
 			) {
 				Ext.Array.forEach(this.grid.plugins, function(plugin, i, allPlugins) {
 					if (plugin instanceof Ext.grid.plugin.RowExpander)
@@ -126,49 +129,6 @@
 			}
 
 			return rowExpanderPlugin;
-		},
-
-		/**
-		 * @returns {Array}
-		 */
-		getTabHistoryGridColumns: function() {
-			return [
-				Ext.create('Ext.grid.column.Date', {
-					dataIndex: CMDBuild.core.constants.Proxy.BEGIN_DATE,
-					text: CMDBuild.Translation.beginDate,
-					width: 140,
-					format:'d/m/Y H:i:s',
-					sortable: false,
-					hideable: false,
-					menuDisabled: true,
-					fixed: true
-				}),
-				Ext.create('Ext.grid.column.Date', {
-					dataIndex: CMDBuild.core.constants.Proxy.END_DATE,
-					text: CMDBuild.Translation.endDate,
-					width: 140,
-					format:'d/m/Y H:i:s',
-					sortable: false,
-					hideable: false,
-					menuDisabled: true,
-					fixed: true
-				}),
-				{
-					dataIndex: CMDBuild.core.constants.Proxy.USER,
-					text: CMDBuild.Translation.user,
-					sortable: false,
-					hideable: false,
-					menuDisabled: true,
-					flex: 1
-				}
-			];
-		},
-
-		/**
-		 * @returns {Ext.data.Store}
-		 */
-		getTabHistoryGridStore: function() {
-			return this.getProxy().getStore();
 		},
 
 		onAddCardButtonClick: function() {
@@ -180,7 +140,7 @@
 		},
 
 		/**
-		 * @param {CMDBuild.model.common.tabs.history.classes.CardRecord or CMDBuild.model.common.tabs.history.classes.RelationRecord} record
+		 * @param {CMDBuild.model.classes.tabs.history.CardRecord or CMDBuild.model.classes.tabs.history.RelationRecord} record
 		 */
 		onTabHistoryRowExpand: function(record) {
 			if (!Ext.isEmpty(record)) {
@@ -215,7 +175,9 @@
 											_error('get historic predecessor card failure', this);
 										},
 										success: function(response, options, decodedResponse) {
-											this.valuesFormattingAndCompare(cardValuesObject, decodedResponse.response[CMDBuild.core.constants.Proxy.VALUES]);
+											decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.RESPONSE];
+
+											this.valuesFormattingAndCompare(cardValuesObject, decodedResponse[CMDBuild.core.constants.Proxy.VALUES]);
 
 											// Setup record property with historic card details to use XTemplate functionalities to render
 											record.set(CMDBuild.core.constants.Proxy.VALUES, cardValuesObject);
@@ -237,9 +199,6 @@
 					this.getProxy().getRelationHistoric({
 						params: params,
 						scope: this,
-						failure: function(response, options, decodedResponse) {
-							_error('get historic relation failure', this);
-						},
 						success: function(response, options, decodedResponse) {
 							var cardValuesObject = decodedResponse.response[CMDBuild.core.constants.Proxy.VALUES];
 
@@ -268,12 +227,12 @@
 				CMDBuild.core.proxy.Attributes.read({
 					params: params,
 					scope: this,
-					failure: function(response, options, decodedResponse) {
-						_error('get attributes failure', this);
-					},
 					success: function(response, options, decodedResponse) {
-						Ext.Array.forEach(decodedResponse[CMDBuild.core.constants.Proxy.ATTRIBUTES], function(attribute, i, allAttributes) {
-							this.entryTypeAttributes[attribute[CMDBuild.core.constants.Proxy.NAME]] = attribute;
+						decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.ATTRIBUTES];
+
+						Ext.Array.forEach(decodedResponse, function(attribute, i, allAttributes) {
+							if (attribute['fieldmode'] != 'hidden')
+								this.entryTypeAttributes[attribute[CMDBuild.core.constants.Proxy.NAME]] = attribute;
 						}, this);
 
 						params = {};
@@ -294,14 +253,17 @@
 											_error('getCardRelationsHistory failure', this);
 										},
 										success: function(response, options, decodedResponse) {
-											var referenceElements = decodedResponse.response.elements;
+											decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.RESPONSE];
+											decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.ELEMENTS];
+
+											var referenceElementsModels = [];
 
 											// Build reference models
-											Ext.Array.forEach(referenceElements, function(element, i, allElements) {
-												referenceElements[i] = Ext.create('CMDBuild.model.common.tabs.history.classes.RelationRecord', element);
+											Ext.Array.forEach(decodedResponse, function(element, i, allElements) {
+												referenceElementsModels.push(Ext.create('CMDBuild.model.classes.tabs.history.RelationRecord', element));
 											});
 
-											this.clearStoreAdd(referenceElements);
+											this.clearStoreAdd(referenceElementsModels);
 
 											this.addCurrentCardToStore();
 										}
@@ -314,6 +276,49 @@
 					}
 				});
 			}
+		},
+
+		/**
+		 * @returns {Array}
+		 */
+		tabHistoryGridColumnsGet: function() {
+			return [
+				Ext.create('Ext.grid.column.Date', {
+					dataIndex: CMDBuild.core.constants.Proxy.BEGIN_DATE,
+					text: CMDBuild.Translation.beginDate,
+					width: 140,
+					format: CMDBuild.core.configurations.DataFormat.getDateTime(),
+					sortable: false,
+					hideable: false,
+					menuDisabled: true,
+					fixed: true
+				}),
+				Ext.create('Ext.grid.column.Date', {
+					dataIndex: CMDBuild.core.constants.Proxy.END_DATE,
+					text: CMDBuild.Translation.endDate,
+					width: 140,
+					format: CMDBuild.core.configurations.DataFormat.getDateTime(),
+					sortable: false,
+					hideable: false,
+					menuDisabled: true,
+					fixed: true
+				}),
+				{
+					dataIndex: CMDBuild.core.constants.Proxy.USER,
+					text: CMDBuild.Translation.user,
+					sortable: false,
+					hideable: false,
+					menuDisabled: true,
+					flex: 1
+				}
+			];
+		},
+
+		/**
+		 * @returns {Ext.data.Store}
+		 */
+		tabHistoryGridStoreGet: function() {
+			return this.getProxy().getStore();
 		},
 
 		// SelectedEntity property functions
@@ -332,11 +337,19 @@
 			},
 
 		/**
-		 * Formats all object1 values as objects { {Boolean} changed: "...", {Mixed} description: "..." }. If value1 is different than value2
+		 * Formats all object1 values as objects:
+		 * 	{
+		 * 		{Boolean} changed
+		 * 		{Mixed} description
+		 * 	}
+		 *
+		 * If value1 is different than value2
 		 * modified is true, false otherwise. Strips also HTML tags from "description".
 		 *
 		 * @param {Object} object1 - currently expanded record
 		 * @param {Object} object2 - predecessor record
+		 *
+		 * @private
 		 */
 		valuesFormattingAndCompare: function(object1, object2) {
 			object1 = object1 || {};
@@ -346,9 +359,9 @@
 				Ext.Object.each(object1, function(key, value, myself) {
 					var changed = false;
 
-					// Get attribute's description
-					var attributeDescription = this.entryTypeAttributes.hasOwnProperty(key) ? this.entryTypeAttributes[key][CMDBuild.core.constants.Proxy.DESCRIPTION] : null;
-					var attributeIndex = this.entryTypeAttributes.hasOwnProperty(key) ? this.entryTypeAttributes[key][CMDBuild.core.constants.Proxy.INDEX] : 0;
+					// Get attribute's index and description
+					var attributeDescription = Ext.isEmpty(this.entryTypeAttributes[key]) ? null : this.entryTypeAttributes[key][CMDBuild.core.constants.Proxy.DESCRIPTION];
+					var attributeIndex = Ext.isEmpty(this.entryTypeAttributes[key]) ? 0 : this.entryTypeAttributes[key][CMDBuild.core.constants.Proxy.INDEX];
 
 					// Build object1 properties models
 					var attributeValues = Ext.isObject(value) ? value : { description: value };

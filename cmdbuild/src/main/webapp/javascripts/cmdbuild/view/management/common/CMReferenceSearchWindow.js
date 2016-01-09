@@ -1,6 +1,9 @@
+/**
+ * @deprecated (CMDBuild.view.common.field.searchWindow.SearchWindow)
+ */
 Ext.define("CMDBuild.Management.ReferenceSearchWindow", {
 	extend: "CMDBuild.Management.CardListWindow",
-	
+
 	initComponent: function() {
 		this.selection = null;
 

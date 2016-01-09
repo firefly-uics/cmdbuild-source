@@ -60,7 +60,7 @@
 
 			CMDBuild.ServiceProxy.attributes.updateSortConfiguration({
 				params: params,
-				waitTitle: CMDBuild.Translation.common.wait_title,
+				waitTitle: CMDBuild.Translation.pleaseWait,
 				waitMsg: CMDBuild.Translation.common.wait_msg,
 				callback: function() {
 					me.onAbort();

@@ -19,16 +19,18 @@
 <script type="text/javascript" src="javascripts/cmdbuild/core/Utils.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/core/LoaderConfig.js"></script>
 
-<!-- OVERRIDES and FIXES -->
-<script type="text/javascript" src="javascripts/cmdbuild/override/JSON.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/override/data/proxy/FixServer.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/override/form/FixFieldSet.js"></script>
+<!-- OVERRIDES -->
+<script type="text/javascript" src="javascripts/cmdbuild/override/data/proxy/Server.js"></script>
+<script type="text/javascript" src="javascripts/cmdbuild/override/data/Store.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/override/form/field/Display.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/override/form/field/FixCheckbox.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/override/form/field/FixComboBox.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/override/form/field/VTypes.js"></script>
+<script type="text/javascript" src="javascripts/cmdbuild/override/form/FixFieldSet.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/override/grid/plugin/RowExpander.js"></script>
+<script type="text/javascript" src="javascripts/cmdbuild/override/JSON.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/override/layout/container/FixEditor.js"></script>
+<script type="text/javascript" src="javascripts/cmdbuild/override/selection/CheckboxModel.js"></script>
 
 <!--  PROXYES -->
 <script type="text/javascript" src="javascripts/cmdbuild/core/proxy/Index.js"></script>
@@ -43,7 +45,6 @@
 <script type="text/javascript" src="javascripts/cmdbuild/core/proxy/CMProxyGIS.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/core/proxy/CMProxyIcon.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/core/proxy/CMProxyNavigationTrees.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/core/proxy/CMProxyWidgetConfiguration.js"></script>
 
 <!-- MODELS -->
 <script type="text/javascript" src="javascripts/cmdbuild/model/report/Cache.js"></script>
@@ -60,9 +61,7 @@
 <script type="text/javascript" src="javascripts/cmdbuild/cache/CMCacheNavigationTreesFunctions.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/cache/CMCacheFilterFunctions.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/cache/CMCacheClassFunctions.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/cache/CMCacheReportFunctions.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/cache/CMCacheLookupFunctions.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/cache/CMCacheGroupsFunctions.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/cache/CMCacheDomainFunctions.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/cache/CMCacheDashboardFunctions.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/cache/CMCacheAttachmentCategoryFunctions.js"></script>
@@ -70,11 +69,10 @@
 <script type="text/javascript" src="javascripts/cmdbuild/cache/CMCache.js"></script>
 
 <!-- THE OTHERS -->
+<script type="text/javascript" src="javascripts/cmdbuild/controller/common/TemplateResolver.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/core/Message.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/core/PopupWindow.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/core/LoginWindow.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/core/Ajax.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/core/Constants.js"></script>
+<script type="text/javascript" src="javascripts/cmdbuild/core/interfaces/Ajax.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/core/CMDelegable.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/core/xml/XMLUtility.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/core/buttons/CMClassesMenuButton.js"></script>
@@ -118,7 +116,7 @@
 <script type="text/javascript" src="javascripts/cmdbuild/view/common/field/FieldManager.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/view/common/field/BooleanDisplayField.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/view/common/field/CMDisplayField.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/view/common/field/CMHtmlEditorField.js"></script>
+<script type="text/javascript" src="javascripts/cmdbuild/view/common/field/HtmlEditor.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/view/common/field/LookupField.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/view/common/field/GridSearchField.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/view/common/field/LocaleSearchField.js"></script>
@@ -134,11 +132,8 @@
 		<script type="text/javascript" src="javascripts/cmdbuild/delegate/common/filter/CMFilterMenuButtonDelegate.js"></script>
 
 <!--  VIEWS -->
-<script type="text/javascript" src="javascripts/cmdbuild/view/common/CMBaseAccordion.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/view/common/CMUnconfiguredModPanel.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/view/common/CMFormFuncions.js"></script>
-
-<script type="text/javascript" src="javascripts/cmdbuild/view/common/workflow/CMProcessAccordion.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/view/CMMainViewport.js"></script>
 
 <!-- TODO: remove from management -->
@@ -162,12 +157,11 @@
 	<script type="text/javascript" src="javascripts/cmdbuild/view/common/chart/CMChartPortlet.js"></script>
 
 <!--  CONTROLLERS -->
-<script type="text/javascript" src="javascripts/cmdbuild/controller/accordion/CMBaseAccordionController.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/controller/common/CMBasePanelController.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/controller/common/CMMainViewportController.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/controller/common/CMUnconfiguredModPanelController.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/controller/common/StaticsController.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/controller/common/WorkflowStaticsController.js"></script>
+<script type="text/javascript" src="javascripts/cmdbuild/controller/management/classes/StaticsController.js"></script>
+<script type="text/javascript" src="javascripts/cmdbuild/controller/management/workflow/StaticsController.js"></script>
 
 	<!-- DASHBOARD -->
 	<script type="text/javascript" src="javascripts/cmdbuild/controller/common/CMDashboardColumnController.js"></script>

@@ -1,65 +1,81 @@
 (function() {
 
 	Ext.define('CMDBuild.view.administration.accordion.Menu', {
-		extend: 'CMDBuild.view.common.accordion.Abstract',
+		extend: 'CMDBuild.view.common.abstract.Accordion',
 
 		requires: [
 			'CMDBuild.core.constants.Proxy',
-			'CMDBuild.core.proxy.group.Group',
-			'CMDBuild.core.Utils'
+			'CMDBuild.core.proxy.userAndGroup.group.Group',
+			'CMDBuild.core.Utils',
+			'CMDBuild.model.menu.accordion.Administration'
 		],
+
+		/**
+		 * @cfg {CMDBuild.controller.common.abstract.Accordion}
+		 */
+		delegate: undefined,
 
 		/**
 		 * @cfg {String}
 		 */
 		cmName: undefined,
 
+		/**
+		 * @cfg {String}
+		 */
+		storeModelName: 'CMDBuild.model.menu.accordion.Administration',
+
 		title: CMDBuild.Translation.menu,
 
 		/**
-		 * @param {Ext.panel.Panel} panel
-		 * @param {Boolean} animate
-		 * @param {Object} eOpts
+		 * @param {String} nodeIdToSelect
 		 *
 		 * @override
 		 */
-		beforeExpand: function(panel, animate, eOpts) {
-			CMDBuild.core.proxy.group.Group.readAll({
+		updateStore: function(nodeIdToSelect) {
+			nodeIdToSelect = Ext.isNumber(nodeIdToSelect) ? nodeIdToSelect : null;
+
+			CMDBuild.core.proxy.userAndGroup.group.Group.readAll({
+				loadMask: false,
 				scope: this,
-				success: function(response, options, decodedResponse) {
-					Ext.suspendLayouts();
+				success: function(result, options, decodedResult) {
+					decodedResult = decodedResult[CMDBuild.core.constants.Proxy.GROUPS];
 
-					CMDBuild.core.Utils.objectArraySort(decodedResponse.groups, CMDBuild.core.constants.Proxy.TEXT);
+					if (!Ext.isEmpty(decodedResult)) {
+						CMDBuild.core.Utils.objectArraySort(decodedResult, CMDBuild.core.constants.Proxy.TEXT);
 
-					var out = [{
-						cmName: this.cmName,
-						iconCls: 'cmdbuild-tree-group-icon',
-						id: 0,
-						leaf: true,
-						text: '* Default *'
-					}];
-
-					Ext.Object.each(decodedResponse.groups, function(key, group, myself) {
-						out.push({
+						var nodes = [{
 							cmName: this.cmName,
+							text: '* Default *',
+							description: '* Default *',
 							iconCls: 'cmdbuild-tree-group-icon',
-							id: group[CMDBuild.core.constants.Proxy.ID],
-							leaf: true,
-							name: group[CMDBuild.core.constants.Proxy.NAME],
-							text: group[CMDBuild.core.constants.Proxy.TEXT]
-						});
-					}, this);
+							id: this.delegate.cmfg('accordionBuildId', { components: 'default-group' }),
+							leaf: true
+						}];
 
-					this.getStore().getRootNode().removeAll();
-					this.getStore().getRootNode().appendChild(out);
+						Ext.Array.forEach(decodedResult, function(groupObject, i, allGroupObjects) {
+							var nodeObject = {};
+							nodeObject['cmName'] = this.cmName;
+							nodeObject['iconCls'] = 'cmdbuild-tree-group-icon';
+							nodeObject[CMDBuild.core.constants.Proxy.TEXT] = groupObject[CMDBuild.core.constants.Proxy.TEXT];
+							nodeObject[CMDBuild.core.constants.Proxy.DESCRIPTION] = groupObject[CMDBuild.core.constants.Proxy.TEXT];
+							nodeObject[CMDBuild.core.constants.Proxy.ENTITY_ID] = groupObject[CMDBuild.core.constants.Proxy.NAME];
+							nodeObject[CMDBuild.core.constants.Proxy.ID] = this.delegate.cmfg('accordionBuildId', { components: groupObject[CMDBuild.core.constants.Proxy.ID] });
+							nodeObject[CMDBuild.core.constants.Proxy.NAME] = groupObject[CMDBuild.core.constants.Proxy.NAME];
+							nodeObject[CMDBuild.core.constants.Proxy.LEAF] = true;
 
-					Ext.resumeLayouts(true);
+							nodes.push(nodeObject);
+						}, this);
 
-					this.deferExpand();
+						this.getStore().getRootNode().removeAll();
+						this.getStore().getRootNode().appendChild(nodes);
+
+						// Alias of this.callParent(arguments), inside proxy function doesn't work
+						if (!Ext.isEmpty(this.delegate))
+							this.delegate.cmfg('onAccordionUpdateStore', nodeIdToSelect);
+					}
 				}
 			});
-
-			return this.callParent(arguments);
 		}
 	});
 

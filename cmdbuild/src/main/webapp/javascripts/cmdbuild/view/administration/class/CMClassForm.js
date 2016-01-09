@@ -95,11 +95,12 @@
 				scope: this
 			}),
 
-			this.printClassButton = Ext.create('CMDBuild.core.buttons.iconized.Print', {
+			this.printClassButton = Ext.create('CMDBuild.core.buttons.iconized.split.Print', {
 				formatList: [
 					CMDBuild.core.constants.Proxy.PDF,
 					CMDBuild.core.constants.Proxy.ODT
 				],
+				mode: 'legacy',
 				text: tr.print_class
 			});
 
@@ -176,7 +177,7 @@
 				fields: ['value', 'name'],
 				data : [
 					{"value":"standard", "name":tr.standard},
-					{"value":CMDBuild.Constants.cachedTableType.simpletable, "name":tr.simple}
+					{"value":'simpletable', "name":tr.simple}
 				]
 			});
 

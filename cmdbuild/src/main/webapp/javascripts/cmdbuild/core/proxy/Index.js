@@ -22,6 +22,10 @@
 			updateSortConfiguration: 'services/json/schema/modclass/saveordercriteria'
 		},
 
+		bim: {
+			readRootLayer: 'services/json/bim/rootclassname'
+		},
+
 		card: {
 			create: '',
 			read: 'services/json/management/modcard/getcard',
@@ -32,7 +36,8 @@
 			bulkUpdateFromFilter: 'services/json/management/modcard/bulkupdatefromfilter',
 			getList: 'services/json/management/modcard/getcardlist',
 			getListShort: 'services/json/management/modcard/getcardlistshort',
-			getPosition: 'services/json/management/modcard/getcardposition'
+			getPosition: 'services/json/management/modcard/getcardposition',
+			getSqlCardList: 'services/json/management/modcard/getsqlcardlist'
 		},
 
 		classes: {
@@ -50,25 +55,46 @@
 			}
 		},
 
+		configuration: {
+			create: '',
+			read: 'services/json/schema/setup/getconfiguration',
+			update: 'services/json/schema/setup/saveconfiguration',
+			remove: '',
+
+			readAll: 'services/json/schema/setup/getconfigurations'
+		},
+
 		csv: {
 			clearSession: 'services/json/management/importcsv/clearsession',
+			exports: 'services/json/management/exportcsv/writecsv',
 			getCsvRecords: 'services/json/management/importcsv/getcsvrecords',
 			readCsv: 'services/json/management/importcsv/readcsv',
 			uploadCsv: 'services/json/management/importcsv/uploadcsv'
 		},
 
-		configuration: {
-			getConfiguration: 'services/json/schema/setup/getconfiguration',
-			getConfigurations: 'services/json/schema/setup/getconfigurations',
-			saveConfiguration: 'services/json/schema/setup/saveconfiguration'
+		customPage: {
+			create: '',
+			read: '',
+			update: '',
+			remove: '',
+
+			readAll: '',
+			readForCurrentUser: 'services/json/custompages/readforcurrentuser'
+		},
+
+		dashboard: {
+			create: '',
+			read: '',
+			update: '',
+			remove: '',
+
+			readAll: 'services/json/dashboard/fulllist'
 		},
 
 		dataView: {
-			readAll: 'services/json/viewmanagement/read', // TODO: waiting for refactor (rename on server)
-
 			filter: {
 				create: 'services/json/viewmanagement/createfilterview',
-				read: '', // TODO: waiting for refactor (crud)
+				read: 'services/json/viewmanagement/readfilterview', // TODO: waiting for refactor (crud)
 				update: 'services/json/viewmanagement/updatefilterview',
 				remove: 'services/json/viewmanagement/deletefilterview',
 
@@ -77,34 +103,34 @@
 
 			sql: {
 				create: 'services/json/viewmanagement/createsqlview',
-				read: '', // TODO: waiting for refactor (crud)
+				read: 'services/json/viewmanagement/readsqlview', // TODO: waiting for refactor (crud)
 				update: 'services/json/viewmanagement/updatesqlview',
 				remove: 'services/json/viewmanagement/deletesqlview',
 
 				readAll: 'services/json/viewmanagement/readsqlview' // TODO: waiting for refactor (crud)
-			}
+			},
+
+			readAll: 'services/json/viewmanagement/read' // TODO: waiting for refactor (rename on server)
 		},
 
 		domain: {
 			create: 'services/json/schema/modclass/savedomain', // TODO: waiting for refactor (crud)
-			read: '',
+			read: 'services/json/schema/modclass/getalldomains', // TODO: waiting for refactor (crud)
 			update: 'services/json/schema/modclass/savedomain', // TODO: waiting for refactor (crud)
 			remove: 'services/json/schema/modclass/deletedomain',
 
 			readAll: 'services/json/schema/modclass/getalldomains',
-
 			getDomainList: 'services/json/schema/modclass/getdomainlist'
 		},
 
 		email: {
 			accounts:{
+				create: 'services/json/schema/emailaccount/post',
+				read: 'services/json/schema/emailaccount/get',
+				update: 'services/json/schema/emailaccount/put',
 				remove: 'services/json/schema/emailaccount/delete',
-				get: 'services/json/schema/emailaccount/get',
-				post: 'services/json/schema/emailaccount/post',
-				put: 'services/json/schema/emailaccount/put',
 
-				getStore: 'services/json/schema/emailaccount/getall',
-				getStoreColumns: '',
+				readAll: 'services/json/schema/emailaccount/getall',
 				setDefault: 'services/json/schema/emailaccount/setdefault'
 			},
 
@@ -125,12 +151,12 @@
 			},
 
 			templates:{
+				create: 'services/json/email/template/create',
+				read: 'services/json/email/template/read',
+				update: 'services/json/email/template/update',
 				remove: 'services/json/email/template/delete',
-				get: 'services/json/email/template/read',
-				post: 'services/json/email/template/create',
-				put: 'services/json/email/template/update',
 
-				getStore: 'services/json/email/template/readall'
+				readAll: 'services/json/email/template/readall'
 			},
 
 			remove: 'services/json/email/email/delete',
@@ -145,33 +171,53 @@
 		fkTargetClass: 'services/json/schema/modclass/getfktargetingclass',
 
 		filter: {
-			create: 'services/json/filter/create',
-			read: 'services/json/filter/read',
-			remove: 'services/json/filter/delete',
-			update: 'services/json/filter/update',
+			group: {
+				create: 'services/json/filter/create',
+				read: 'services/json/filter/readallgroupfilters', // TODO: waiting for refactor (CRUD)
+				remove: 'services/json/filter/delete',
+				update: 'services/json/filter/update',
 
-			groupStore: 'services/json/filter/readallgroupfilters',
-			userStore: 'services/json/filter/readforuser',
+				readAll: 'services/json/filter/readallgroupfilters',
 
-			defaultForGroups: {
-				read: 'services/json/filter/getgroups',
-				update: 'services/json/filter/setdefault'
+				defaults: {
+					read: 'services/json/filter/getgroups',
+					update: 'services/json/filter/setdefault'
+				}
+			},
+
+			user: {
+				create: '',
+				read: 'services/json/filter/read',
+				remove: '',
+				update: '',
+
+				readAll: 'services/json/filter/readforuser'
 			}
 		},
 
 		functions: {
-			getFunctions: 'services/json/schema/modclass/getfunctions'
+			create: '',
+			read: '',
+			remove: '',
+			update: '',
+
+			readAll: 'services/json/schema/modclass/getfunctions',
+			readCards: 'services/json/management/modcard/getsqlcardlist'
+		},
+
+		gis: {
+			readTreeNavigation: 'services/json/gis/getgistreenavigation'
 		},
 
 		group: {
 			create: 'services/json/schema/modsecurity/savegroup', // TODO: waiting for refactor (crud)
-			read: '',
+			read: 'services/json/schema/modsecurity/getgrouplist', // TODO: waiting for refactor (crud)
 			remove: '',
 			update: 'services/json/schema/modsecurity/savegroup', // TODO: waiting for refactor (crud)
 
 			enableDisableGroup: 'services/json/schema/modsecurity/enabledisablegroup',
-			getGroupList: 'services/json/schema/modsecurity/getgrouplist',
 			getUiConfiguration: 'services/json/schema/modsecurity/getuiconfiguration',
+			readAll: 'services/json/schema/modsecurity/getgrouplist',
 
 			defaultFilters: {
 				read: 'services/json/filter/getdefault',
@@ -218,17 +264,26 @@
 			}
 		},
 
-		login: 'services/json/login/login',
-
 		lookup: {
+			create: 'services/json/schema/modlookup/savelookup', // TODO: waiting for refactor (crud)
+			read: 'services/json/schema/modlookup/getlookuplist', // TODO: waiting for refactor (crud)
+			remove: '',
+			update: 'services/json/schema/modlookup/savelookup', // TODO: waiting for refactor (crud)
+
 			disable: 'services/json/schema/modlookup/disablelookup',
 			enable: 'services/json/schema/modlookup/enablelookup',
-			getList: 'services/json/schema/modlookup/getlookuplist',
 			getParentList: 'services/json/schema/modlookup/getparentlist',
-			save: 'services/json/schema/modlookup/savelookup',
-			saveType: 'services/json/schema/modlookup/savelookuptype',
+			readAll: 'services/json/schema/modlookup/getlookuplist',
 			setOrder: 'services/json/schema/modlookup/reorderlookup',
-			tree: 'services/json/schema/modlookup/tree'
+
+			type: {
+				create: 'services/json/schema/modlookup/savelookuptype', // TODO: waiting for refactor (crud)
+				read: 'services/json/schema/modlookup/tree', // TODO: waiting for refactor (crud)
+				remove: '',
+				update: 'services/json/schema/modlookup/savelookuptype', // TODO: waiting for refactor (crud)
+
+				readAll: 'services/json/schema/modlookup/tree'
+			}
 		},
 
 		menu: {
@@ -242,11 +297,18 @@
 		},
 
 		navigationTrees: {
-			get: 'services/json/navigationtree/get',
-			read: 'services/json/navigationtree/read',
 			create: 'services/json/navigationtree/create',
-			save: 'services/json/navigationtree/save',
-			remove: 'services/json/navigationtree/remove'
+			read: 'services/json/navigationtree/read',
+			update: 'services/json/navigationtree/save',
+			remove: 'services/json/navigationtree/remove',
+
+			readAll: 'services/json/navigationtree/get'
+		},
+
+		patchManager: {
+			update: 'services/json/configure/applypatches',
+
+			readAll: 'services/json/configure/getpatches'
 		},
 
 		privileges: {
@@ -258,6 +320,10 @@
 				setRowAndColumnPrivileges: 'services/json/schema/modsecurity/setrowandcolumnprivileges',
 				loadClassUiConfiguration: 'services/json/schema/modsecurity/loadclassuiconfiguration',
 				saveClassUiConfiguration: 'services/json/schema/modsecurity/saveclassuiconfiguration'
+			},
+			customPages: {
+				read: 'services/json/schema/modsecurity/getcustompageprivilegelist',
+				update: 'services/json/schema/modsecurity/savecustompageprivilege'
 			},
 			dataView: {
 				read: 'services/json/schema/modsecurity/getviewprivilegelist',
@@ -286,7 +352,15 @@
 			getAlreadyRelatedCards: 'services/json/management/modcard/getalreadyrelatedcards'
 		},
 
-		reports: {
+		report: {
+			createReportFactory: 'services/json/management/modreport/createreportfactory',
+			createReportFactoryByTypeCode: 'services/json/management/modreport/createreportfactorybytypecode',
+			getReportsByType: 'services/json/management/modreport/getreportsbytype',
+			getReportTypesTree: 'services/json/management/modreport/getreporttypestree',
+			menuTree: 'services/json/schema/modreport/menutree',
+			printReportFactory: 'services/json/management/modreport/printreportfactory',
+			updateReportFactoryParams: 'services/json/management/modreport/updatereportfactoryparams',
+
 			jasper: {
 				create: 'services/json/management/modreport/createreportfactory',
 				read: '',
@@ -299,27 +373,22 @@
 				import: 'services/json/schema/modreport/importjasperreport',
 				resetSession: 'services/json/schema/modreport/resetsession'
 			},
-			print: {
-				cardDetails: 'services/json/management/modreport/printcarddetails',
-				classSchema: 'services/json/schema/modreport/printclassschema',
-				currentView: 'services/json/management/modreport/printcurrentview',
-				schema: 'services/json/schema/modreport/printschema'
-			},
-			createReportFactory: 'services/json/management/modreport/createreportfactory',
-			createReportFactoryByTypeCode: 'services/json/management/modreport/createreportfactorybytypecode',
-			getReportTypesTree: 'services/json/management/modreport/getreporttypestree',
-			getReportsByType: 'services/json/management/modreport/getreportsbytype',
-			menuTree: 'services/json/schema/modreport/menutree',
 
 			print: {
 				cardDetails: 'services/json/management/modreport/printcarddetails',
 				classSchema: 'services/json/schema/modreport/printclassschema',
 				currentView: 'services/json/management/modreport/printcurrentview',
-				schema: 'services/json/schema/modreport/printschema'
-			},
+				schema: 'services/json/schema/modreport/printschema',
+				sqlView: 'services/json/management/modreport/printsqlview'
+			}
+		},
 
-			printReportFactory: 'services/json/management/modreport/printreportfactory',
-			updateReportFactoryParams: 'services/json/management/modreport/updatereportfactoryparams'
+		session: {
+			jsonRpc: {
+				login: 'services/json/login/login',
+				logout: 'services/json/login/logout'
+			},
+			rest: 'services/rest/v2/sessions',
 		},
 
 		tasks: {
@@ -376,10 +445,14 @@
 		},
 
 		user: {
+			create: 'services/json/schema/modsecurity/saveuser', // TODO: waiting for refactor (crud)
+			read: 'services/json/schema/modsecurity/getgrouplist', // TODO: waiting for refactor (crud)
+			remove: '',
+			update: 'services/json/schema/modsecurity/saveuser', // TODO: waiting for refactor (crud)
+
 			disable: 'services/json/schema/modsecurity/disableuser',
 			getGroupList: 'services/json/schema/modsecurity/getusergrouplist',
-			getList: 'services/json/schema/modsecurity/getuserlist',
-			save: 'services/json/schema/modsecurity/saveuser'
+			readAll: 'services/json/schema/modsecurity/getuserlist'
 		},
 
 		utils: {
@@ -389,23 +462,37 @@
 			listAvailableTranslations: 'services/json/utils/listavailabletranslations'
 		},
 
-		widgets: {
-			grid: {
-				getSqlCardList: 'services/json/management/modcard/getsqlcardlist'
-			}
+		widget: {
+			create: 'services/json/widget/create',
+			read: 'services/json/widget/read',
+			update: 'services/json/widget/update',
+			remove: 'services/json/widget/delete',
+
+			readAll: 'services/json/widget/readall',
+			readAllForClass: 'services/json/widget/readallforclass'
 		},
 
 		workflow: {
+			create: 'services/json/schema/modclass/savetable', // TODO: waiting for refactor (crud)
+			read: 'services/json/schema/modclass/getallclasses', // TODO: waiting for refactor (crud)
+			update: 'services/json/schema/modclass/savetable', // TODO: waiting for refactor (crud)
+			remove: 'services/json/schema/modclass/deletetable',
+
+			readAll: 'services/json/schema/modclass/getallclasses', // TODO: waiting for refactor (crud)
+
 			abortProcess: 'services/json/workflow/abortprocess',
 			getActivityInstance: 'services/json/workflow/getactivityinstance',
 			getStartActivity: 'services/json/workflow/getstartactivity',
 			isProcessUpdated: 'services/json/workflow/isprocessupdated',
 			saveActivity: 'services/json/workflow/saveactivity',
 			synchronize: 'services/json/workflow/sync',
-			xpdlDownload: 'services/json/workflow/downloadxpdl',
-			xpdlDownloadTemplate: 'services/json/workflow/downloadxpdltemplate',
-			xpdlUpload: 'services/json/workflow/uploadxpdl',
-			xpdlVersions: 'services/json/workflow/xpdlversions'
+
+			xpdl: {
+				download: 'services/json/workflow/downloadxpdl',
+				downloadTemplate: 'services/json/workflow/downloadxpdltemplate',
+				upload: 'services/json/workflow/uploadxpdl',
+				versions: 'services/json/workflow/xpdlversions'
+			}
 		}
 	});
 

@@ -24,7 +24,7 @@
 		grid: undefined,
 
 		/**
-		 * @cfg {CMDBuild.view.administration.localization.advancedTable.SectionPanel}
+		 * @property {CMDBuild.view.administration.localization.advancedTable.SectionPanel}
 		 */
 		view: undefined,
 
@@ -55,6 +55,7 @@
 		 *
 		 * @returns {CMDBuild.model.localization.advancedTable.TreeStore}
 		 *
+		 * @private
 		 * @override
 		 */
 		buildValuesNode: function(rootNode) {
@@ -74,13 +75,13 @@
 		 * @param {CMDBuild.model.localization.advancedTable.TreeStore} rootNode
 		 * @param {Array} arrayToDecode
 		 *
+		 * @private
 		 * @override
 		 */
 		decodeStructure: function(rootNode, arrayToDecode) {
 			if (
 				!Ext.isEmpty(rootNode)
-				&& !Ext.isEmpty(arrayToDecode)
-				&& Ext.isArray(arrayToDecode)
+				&& !Ext.isEmpty(arrayToDecode) && Ext.isArray(arrayToDecode)
 			) {
 				Ext.Array.forEach(arrayToDecode, function(lookupTypeObject, i, allLookupTypesObjects) {
 					// LookupType main node
@@ -107,13 +108,13 @@
 		 * @param {CMDBuild.model.localization.advancedTable.TreeStore} rootNode
 		 * @param {Array} fieldsArray
 		 *
+		 * @private
 		 * @override
 		 */
 		decodeStructureFields: function(rootNode, fieldsArray) {
 			if (
 				!Ext.isEmpty(rootNode)
-				&& !Ext.isEmpty(fieldsArray)
-				&& Ext.isArray(fieldsArray)
+				&& !Ext.isEmpty(fieldsArray) && Ext.isArray(fieldsArray)
 			) {
 				Ext.Array.forEach(fieldsArray, function(fieldObject, i, allFields) {
 					var entityFieldNodeObject = {};
@@ -145,12 +146,13 @@
 		 *
 		 * @param {CMDBuild.model.localization.advancedTable.TreeStore} rootNode
 		 * @param {Array} valuesArray
+		 *
+		 * @private
 		 */
 		decodeStructureValues: function(rootNode, valuesArray) {
 			if (
 				!Ext.isEmpty(rootNode)
-				&& !Ext.isEmpty(valuesArray)
-				&& Ext.isArray(valuesArray)
+				&& !Ext.isEmpty(valuesArray) && Ext.isArray(valuesArray)
 			) {
 				rootNode = this.buildValuesNode(rootNode);
 
