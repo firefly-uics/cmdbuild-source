@@ -225,6 +225,7 @@ public class ToAttributeDetail implements Function<CMAttribute, Attribute> {
 
 				builder.withTargetClass(target.getName()) //
 						.withTargetType(dataView.getActivityClass().isAncestorOf(target) ? PROCESS : CLASS) //
+						.withDomainName(domain.getName())
 						.withFilter(newFilter() //
 								.withText(attribute.getFilter()) //
 								.withParams(toMap(metadataStoreFactory.storeForAttribute(attribute).readAll())) //

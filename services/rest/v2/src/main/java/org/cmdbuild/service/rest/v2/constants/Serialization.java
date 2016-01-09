@@ -57,6 +57,7 @@ public class Serialization {
 			DISPLAYABLE_IN_LIST = "displayableInList", //
 			DOMAIN = "domain", //
 			DOMAIN_ID = DOMAIN + ID_CAPITALIZED, //
+			DOMAIN_NAME = "domainName", //
 			DOMAIN_SOURCE = DOMAIN + "Source", //
 			EDITOR_TYPE = "editorType", //
 			EMAIL = "email", //
