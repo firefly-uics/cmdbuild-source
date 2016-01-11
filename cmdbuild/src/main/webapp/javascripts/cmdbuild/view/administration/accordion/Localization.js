@@ -35,8 +35,8 @@
 				{
 					cmName: this.cmName,
 					iconCls: 'cmdbuild-tree-localization-icon',
-					text: '@@ Advanced table',
-					description: '@@ Advanced table',
+					text: '@@ Advanced tables',
+					description: '@@ Advanced tables',
 					id: this.delegate.cmfg('accordionBuildId', { components: 'advancedTranslationsTable' }),
 					sectionHierarchy: ['advancedTranslationsTable'],
 					leaf: true
