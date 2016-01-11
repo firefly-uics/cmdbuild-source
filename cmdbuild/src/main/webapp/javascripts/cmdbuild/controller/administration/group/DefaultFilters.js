@@ -81,45 +81,21 @@
 
 		onGroupDefaultFiltersSaveButtonClick: function() {
 			if (!this.cmfg('selectedGroupIsEmpty')) {
-				var defaultFiltersNames = [];
 				var defaultFiltersIds = [];
-				var filterObjectsMap = {};
+
+				this.getAllDefaultFilters(this.tree.getStore().getRootNode(), defaultFiltersIds);
 
 				var params = {};
-				params[CMDBuild.core.proxy.CMProxyConstants.LIMIT] = CMDBuild.core.constants.Server.getMaxInteger(); // HACK to get all filters
-				params[CMDBuild.core.proxy.CMProxyConstants.START] = 0; // HACK to get all filters
+				params[CMDBuild.core.proxy.CMProxyConstants.FILTERS] = Ext.encode(defaultFiltersIds);
+				params[CMDBuild.core.proxy.CMProxyConstants.GROUPS] = Ext.encode([this.cmfg('selectedGroupGet', CMDBuild.core.proxy.CMProxyConstants.NAME)]);
 
-				this.getAllDefaultFilters(this.tree.getStore().getRootNode(), defaultFiltersNames);
-
-				// Translate filter name to ID
-				CMDBuild.core.proxy.group.DefaultFilters.readAllGroupFilters({
-					params: params,
-					scope: this,
-					success: function(response, options, decodedResponse) {
-						decodedResponse = decodedResponse.filters;
-
-						// Build filter object map ([{ name: filterObject, ... }])
-						Ext.Array.forEach(decodedResponse, function(filterObject, i, allFilterObjects) {
-							filterObjectsMap[filterObject[CMDBuild.core.proxy.CMProxyConstants.NAME]] = filterObject;
-						}, this);
-
-						Ext.Array.forEach(defaultFiltersNames, function(defaultFilter, i, allDefaultFilters) {
-							defaultFiltersIds.push(filterObjectsMap[defaultFilter][CMDBuild.core.proxy.CMProxyConstants.ID]);
-						}, this);
-
-						params = {};
-						params[CMDBuild.core.proxy.CMProxyConstants.FILTERS] = Ext.encode(defaultFiltersIds);
-						params[CMDBuild.core.proxy.CMProxyConstants.GROUPS] = Ext.encode([this.cmfg('selectedGroupGet', CMDBuild.core.proxy.CMProxyConstants.NAME)]);
-
-						CMDBuild.core.proxy.group.DefaultFilters.update({ params: params });
-					}
-				});
+				CMDBuild.core.proxy.group.DefaultFilters.update({ params: params });
 			}
 		},
 
 		/**
 		 * Builds tree store.
-		 * Wrongly tableType attribute use to recognize three types of classes (standard, simple, processes).
+		 * Wrongly tableType attribute use to recognize tree types of classes (standard, simple, processes).
 		 */
 		onGroupDefaultFiltersTabShow: function() {
 			if (!this.cmfg('selectedGroupIsEmpty')) {
@@ -143,7 +119,7 @@
 							success: function(response, options, decodedResponse) {
 								decodedResponse = decodedResponse.response.elements;
 
-								var defaultFilters = {};
+								var defaultFilters = {}; // Object { className: filterId, ... }
 								var nodesMap = {};
 								var processesTree = [];
 								var simpleTree = [];
@@ -151,7 +127,7 @@
 
 								Ext.Array.forEach(decodedResponse, function(filterObject, i, allFiltersObjects) {
 									if (Ext.isEmpty(defaultFilters[filterObject[CMDBuild.core.proxy.CMProxyConstants.ENTRY_TYPE]]))
-										defaultFilters[filterObject[CMDBuild.core.proxy.CMProxyConstants.ENTRY_TYPE]] = filterObject[CMDBuild.core.proxy.CMProxyConstants.NAME];
+										defaultFilters[filterObject[CMDBuild.core.proxy.CMProxyConstants.ENTRY_TYPE]] = filterObject[CMDBuild.core.proxy.CMProxyConstants.ID];
 								}, this);
 
 								// Build all tree done objects

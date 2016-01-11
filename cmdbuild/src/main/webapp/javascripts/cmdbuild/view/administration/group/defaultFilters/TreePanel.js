@@ -54,7 +54,7 @@
 						editor: {
 							xtype: 'combo',
 							displayField: CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION,
-							valueField: CMDBuild.core.proxy.CMProxyConstants.NAME,
+							valueField: CMDBuild.core.proxy.CMProxyConstants.ID,
 							editable: false,
 							forceSelection: true,
 
