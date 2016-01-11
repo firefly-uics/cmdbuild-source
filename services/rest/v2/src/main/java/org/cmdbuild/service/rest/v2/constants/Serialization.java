@@ -22,6 +22,7 @@ public class Serialization {
 			ATTRIBUTES = "attributes", //
 			AUTHOR = "author", //
 			AVAILABLE_ROLES = "availableRoles", //
+			BASE_LEVEL = "baseLevel", //
 			BCC = "bcc", //
 			BODY = "body", //
 			CARD = "card", //
@@ -33,6 +34,7 @@ public class Serialization {
 			CHILDREN = "children", //
 			CLASS = "class", //
 			CLASS_ID = CLASS + ID_CAPITALIZED, //
+			CLUSTERING_THRESHOLD = "clusteringThreshold", //
 			CODE_CAPITALIZED = "Code", //
 			CODE = "code", //
 			CREATED = "created", //
@@ -62,7 +64,10 @@ public class Serialization {
 			EDITOR_TYPE = "editorType", //
 			EMAIL = "email", //
 			EMAIL_ID = EMAIL + ID_CAPITALIZED, //
+			ENABLED = "enabled", //
+			EXPANDING_THRESHOLD = "expandingThreshold", //
 			EXTENSION = "extension", //
+			EXTENSION_MAXIMUM_LEVEL = "extensionMaximumLevel", //
 			EXTRA = "extra", //
 			FILE = "file", //
 			FILTER = "filter", //
