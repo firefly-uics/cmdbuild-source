@@ -1122,6 +1122,52 @@ public class Models {
 
 	}
 
+	public static class GraphConfigurationBuilder extends ModelBuilder<GraphConfiguration> {
+
+		private boolean enabled;
+		private int baseLevel;
+		private int expandingThreshold;
+		private int clusteringThreshold;
+		private int extensionMaximumLevel;
+
+		@Override
+		protected GraphConfiguration doBuild() {
+			final GraphConfiguration output = new GraphConfiguration();
+			output.setEnabled(enabled);
+			output.setBaseLevel(baseLevel);
+			output.setExpandingThreshold(expandingThreshold);
+			output.setClusteringThreshold(clusteringThreshold);
+			output.setExtensionMaximumLevel(extensionMaximumLevel);
+			return output;
+		}
+
+		public GraphConfigurationBuilder withEnabledStatus(final boolean value) {
+			this.enabled = value;
+			return this;
+		}
+
+		public GraphConfigurationBuilder withBaseLevel(final int value) {
+			this.baseLevel = value;
+			return this;
+		}
+
+		public GraphConfigurationBuilder withExpandingThreshold(final int value) {
+			this.expandingThreshold = value;
+			return this;
+		}
+
+		public GraphConfigurationBuilder withClusteringThreshold(final int value) {
+			this.clusteringThreshold = value;
+			return this;
+		}
+
+		public GraphConfigurationBuilder withExtensionMaximumLevel(final int value) {
+			this.extensionMaximumLevel = value;
+			return this;
+		}
+
+	}
+
 	public static class LongIdBuilder extends ModelBuilder<LongId> {
 
 		private Long id;
@@ -2260,6 +2306,10 @@ public class Models {
 
 	public static FunctionWithFullDetailsBuilder newFunctionWithFullDetails() {
 		return new FunctionWithFullDetailsBuilder();
+	}
+
+	public static GraphConfigurationBuilder newGraphConfiguration() {
+		return new GraphConfigurationBuilder();
 	}
 
 	public static LongIdBuilder newLongId() {

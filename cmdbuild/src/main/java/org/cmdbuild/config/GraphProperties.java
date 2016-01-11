@@ -1,8 +1,11 @@
 package org.cmdbuild.config;
 
+import static java.lang.Boolean.parseBoolean;
+import static java.lang.Integer.parseInt;
+
 import org.cmdbuild.services.Settings;
 
-public class GraphProperties extends DefaultProperties {
+public class GraphProperties extends DefaultProperties implements GraphConfiguration {
 
 	private static final long serialVersionUID = 1L;
 
@@ -27,14 +30,29 @@ public class GraphProperties extends DefaultProperties {
 		return (GraphProperties) Settings.getInstance().getModule(MODULE_NAME);
 	}
 
-	public int getClusteringThreshold() {
-		final String clusteringThreshold = getProperty(CLUSTERING_THRESHOLD);
-		return Integer.parseInt(clusteringThreshold);
+	@Override
+	public boolean isEnabled() {
+		return parseBoolean(getProperty(ENABLED));
 	}
 
+	@Override
+	public int getBaseLevel() {
+		return parseInt(getProperty(BASE_LEVEL));
+	}
+
+	@Override
+	public int getExtensionMaximumLevel() {
+		return parseInt(getProperty(EXTENSION_MAXIMUM_LEVEL));
+	}
+
+	@Override
+	public int getClusteringThreshold() {
+		return parseInt(getProperty(CLUSTERING_THRESHOLD));
+	}
+
+	@Override
 	public int getExpandingThreshold() {
-		final String expandingThreshold = getProperty(EXPANDING_THRESHOLD);
-		return Integer.parseInt(expandingThreshold);
+		return parseInt(getProperty(EXPANDING_THRESHOLD));
 	}
 
 }
