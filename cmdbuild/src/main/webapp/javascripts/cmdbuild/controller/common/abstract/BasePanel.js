@@ -32,14 +32,14 @@
 
 			this.cmName = this.view.cmName;
 			this.view.delegate = this; // Apply delegate to view
-
-			this.view.on('CM_iamtofront', this.onViewOnFront, this);
 		},
 
 		/**
+		 * Must be implemented a method with right name localization to manage onModuleInit cmfg() event
+		 *
 		 * @abstract
 		 */
-		onViewOnFront: Ext.emptyFn
+		onModuleInit: Ext.emptyFn
 	});
 
 })();

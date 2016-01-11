@@ -28,12 +28,16 @@
 		};
 	};
 
+	/**
+	 * Forwarder function
+	 *
+	 * @param {String} cmName
+	 * @param {Object} params
+	 *
+	 * @returns {Boolean}
+	 */
 	ns.CMMainViewportController.prototype.bringTofrontPanelByCmName = function(cmName, params) {
-//		try {
-			return this.viewport.bringTofrontPanelByCmName(cmName, params);
-//		} catch (e) {
-//			_debug("Cannot bring to front the panel " + cmName, e);
-//		}
+		return this.viewport.bringTofrontPanelByCmName(cmName, params);
 	};
 
 	ns.CMMainViewportController.prototype.deselectAccordionByName = function(cmName) {

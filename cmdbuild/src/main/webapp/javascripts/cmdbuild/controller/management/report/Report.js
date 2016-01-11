@@ -9,9 +9,15 @@
 		],
 
 		/**
+		 * @cfg {Object}
+		 */
+		parentDelegate: undefined,
+
+		/**
 		 * @cfg {Array}
 		 */
 		cmfgCatchedFunctions: [
+			'onReportModuleInit = onModuleInit',
 			'reportSelectedAccordionGet',
 			'reportSelectedAccordionIsEmpty'
 		],
@@ -37,6 +43,49 @@
 		 * @cfg {CMDBuild.view.management.report.ReportView}
 		 */
 		view: undefined,
+
+		/**
+		 * Setup view items and controllers on accordion click
+		 *
+		 * @param {CMDBuild.model.common.accordion.Report} node
+		 *
+		 * @override
+		 */
+		onReportModuleInit: function(node) {
+			if (!Ext.Object.isEmpty(node)) {
+				var nodeData = node.getData();
+				nodeData[CMDBuild.core.constants.Proxy.TYPE] = nodeData[CMDBuild.core.constants.Proxy.ENTITY_ID];
+
+				this.reportSelectedAccordionSet({ value: nodeData });
+
+				this.view.removeAll(true);
+
+				switch (this.reportSelectedAccordionGet(CMDBuild.core.constants.Proxy.SECTION_HIERARCHY)[0]) {
+					case 'custom':
+					default: {
+						this.sectionController = Ext.create('CMDBuild.controller.management.report.Custom', { parentDelegate: this });
+					}
+				}
+
+				this.setViewTitle(node.get(CMDBuild.core.constants.Proxy.TEXT));
+
+				this.view.add(this.sectionController.getView());
+
+				this.sectionController.cmfg('onReportShow');
+
+				// History record save
+				CMDBuild.global.navigation.Chronology.cmfg('navigationChronologyRecordSave', {
+					moduleId: this.cmName,
+					entryType: {
+						description: this.reportSelectedAccordionGet(CMDBuild.core.constants.Proxy.DESCRIPTION),
+						id: this.reportSelectedAccordionGet(CMDBuild.core.constants.Proxy.ID),
+						object: this.reportSelectedAccordionGet()
+					}
+				});
+
+				this.onModuleInit(node); // Custom callParent() implementation
+			}
+		},
 
 		// SelectedAccordion property methods
 			/**
@@ -77,46 +126,7 @@
 
 					this.propertyManageSet(parameters);
 				}
-			},
-
-		/**
-		 * @param {CMDBuild.model.common.accordion.Report} node
-		 */
-		onViewOnFront: function(node) {
-			if (!Ext.Object.isEmpty(node)) {
-				var nodeData = node.getData();
-				nodeData[CMDBuild.core.constants.Proxy.TYPE] = nodeData[CMDBuild.core.constants.Proxy.ENTITY_ID];
-
-				this.reportSelectedAccordionSet({ value: nodeData });
-
-				this.view.removeAll(true);
-
-				switch (this.reportSelectedAccordionGet(CMDBuild.core.constants.Proxy.SECTION_HIERARCHY)[0]) {
-					case 'custom':
-					default: {
-						this.sectionController = Ext.create('CMDBuild.controller.management.report.Custom', { parentDelegate: this });
-					}
-				}
-
-				this.setViewTitle(node.get(CMDBuild.core.constants.Proxy.TEXT));
-
-				this.view.add(this.sectionController.getView());
-
-				this.sectionController.cmfg('onReportShow');
-
-				// History record save
-				CMDBuild.global.navigation.Chronology.cmfg('navigationChronologyRecordSave', {
-					moduleId: this.cmName,
-					entryType: {
-						description: this.reportSelectedAccordionGet(CMDBuild.core.constants.Proxy.DESCRIPTION),
-						id: this.reportSelectedAccordionGet(CMDBuild.core.constants.Proxy.ID),
-						object: this.reportSelectedAccordionGet()
-					}
-				});
-
-				this.callParent(arguments);
 			}
-		}
 	});
 
 })();

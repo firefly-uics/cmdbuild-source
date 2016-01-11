@@ -11,6 +11,18 @@
 		parentDelegate: undefined,
 
 		/**
+		 * @cfg {Array}
+		 */
+		cmfgCatchedFunctions: [
+			'onEmailModuleInit = onModuleInit'
+		],
+
+		/**
+		 * @cfg {String}
+		 */
+		cmName: undefined,
+
+		/**
 		 * @property {Mixed}
 		 */
 		sectionController: undefined,
@@ -27,7 +39,7 @@
 		 *
 		 * @override
 		 */
-		onViewOnFront: function(node) {
+		onEmailModuleInit: function(node) {
 			if (!Ext.Object.isEmpty(node)) {
 				this.view.removeAll(true);
 
@@ -52,7 +64,7 @@
 
 				this.sectionController.getView().fireEvent('show');
 
-				this.callParent(arguments);
+				this.onModuleInit(node); // Custom callParent() implementation
 			}
 		}
 	});

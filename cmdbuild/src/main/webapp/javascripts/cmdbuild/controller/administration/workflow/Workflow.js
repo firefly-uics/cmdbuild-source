@@ -9,6 +9,24 @@
 		],
 
 		/**
+		 * @cfg {Array}
+		 */
+		cmfgCatchedFunctions: [
+			'onWorkflowAddButtonClick',
+			'onWorkflowModuleInit = onModuleInit',
+			'onWorkflowPrintSchemaButtonClick = onButtonPrintClick',
+			'workflowSelectedWorkflowGet',
+			'workflowSelectedWorkflowIsEmpty',
+			'workflowSelectedWorkflowReset',
+			'workflowTabInit'
+		],
+
+		/**
+		 * @cfg {String}
+		 */
+		cmName: undefined,
+
+		/**
 		 * @cfg {Object}
 		 */
 		parentDelegate: undefined,
@@ -32,18 +50,6 @@
 		 * @property {CMDBuild.controller.administration.workflow.tabs.TaskManager}
 		 */
 		controllerTaks: undefined,
-
-		/**
-		 * @cfg {Array}
-		 */
-		cmfgCatchedFunctions: [
-			'onWorkflowAddButtonClick',
-			'onWorkflowPrintSchemaButtonClick = onButtonPrintClick',
-			'workflowSelectedWorkflowGet',
-			'workflowSelectedWorkflowIsEmpty',
-			'workflowSelectedWorkflowReset',
-			'workflowTabInit'
-		],
 
 		/**
 		 * @property {CMDBuild.model.workflow.Workflow}
@@ -86,15 +92,29 @@
 			this.tabPanel.add(this.controllerTasks.getView());
 		},
 
+		onWorkflowAddButtonClick: function() {
+			_CMMainViewportController.deselectAccordionByName(CMDBuild.core.constants.ModuleIdentifiers.getWorkflow());
+
+			this.setViewTitle();
+
+			this.workflowSelectedWorkflowReset();
+
+			this.tabPanel.setActiveTab(0);
+
+			this.controllerAttributes.onAddClassButtonClick(); // TODO: legacy
+			this.controllerDomains.cmfg('onWorkflowTabDomainsAddWorkflowButtonClick');
+			this.controllerProperties.cmfg('onWorkflowTabPropertiesAddWorkflowButtonClick');
+			this.controllerTasks.cmfg('onWorkflowTabTasksAddWorkflowButtonClick');
+		},
+
 		/**
 		 * Setup view items and controllers on accordion click
 		 *
 		 * @param {CMDBuild.model.common.accordion.Generic} node
 		 *
-		 * @public
 		 * @override
 		 */
-		onViewOnFront: function(node) {
+		onWorkflowModuleInit: function(node) {
 			if (!Ext.Object.isEmpty(node)) {
 				var params = {};
 				params[CMDBuild.core.constants.Proxy.ACTIVE] = false;
@@ -124,25 +144,9 @@
 					}
 				});
 
-				this.callParent(arguments);
+				this.onModuleInit(node); // Custom callParent() implementation
 			}
 		},
-
-		onWorkflowAddButtonClick: function() {
-			_CMMainViewportController.deselectAccordionByName(CMDBuild.core.constants.ModuleIdentifiers.getWorkflow());
-
-			this.setViewTitle();
-
-			this.workflowSelectedWorkflowReset();
-
-			this.tabPanel.setActiveTab(0);
-
-			this.controllerAttributes.onAddClassButtonClick(); // TODO: legacy
-			this.controllerDomains.cmfg('onWorkflowTabDomainsAddWorkflowButtonClick');
-			this.controllerProperties.cmfg('onWorkflowTabPropertiesAddWorkflowButtonClick');
-			this.controllerTasks.cmfg('onWorkflowTabTasksAddWorkflowButtonClick');
-		},
-
 
 		/**
 		 * @param {String} format

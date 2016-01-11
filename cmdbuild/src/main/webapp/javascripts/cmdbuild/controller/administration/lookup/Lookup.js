@@ -10,6 +10,23 @@
 		],
 
 		/**
+		 * @cfg {Array}
+		 */
+		cmfgCatchedFunctions: [
+			'controllerPropertyGet',
+			'lookupSelectedLookupTypeGet',
+			'lookupSelectedLookupTypeIsEmpty',
+			'onLookupAddButtonClick',
+			'onLookupModuleInit = onModuleInit',
+			'onLookupSelected -> controllerProperties, controllerList'
+		],
+
+		/**
+		 * @cfg {String}
+		 */
+		cmName: undefined,
+
+		/**
 		 * @property {CMDBuild.controller.administration.lookup.List}
 		 */
 		controllerList: undefined,
@@ -18,17 +35,6 @@
 		 * @property {CMDBuild.controller.administration.lookup.Properties}
 		 */
 		controllerProperties: undefined,
-
-		/**
-		 * @cfg {Array}
-		 */
-		cmfgCatchedFunctions: [
-			'controllerPropertyGet',
-			'lookupSelectedLookupTypeGet',
-			'lookupSelectedLookupTypeIsEmpty',
-			'onLookupAddButtonClick',
-			'onLookupSelected -> controllerProperties, controllerList'
-		],
 
 		/**
 		 * @property {CMDBuild.model.lookup.Type} or null
@@ -44,6 +50,8 @@
 
 		/**
 		 * @param {CMDBuild.view.administration.lookup.LookupView} view
+		 *
+		 * @override
 		 */
 		constructor: function(view) {
 			this.callParent(arguments);
@@ -110,13 +118,15 @@
 		},
 
 		/**
+		 * Setup view items and controllers on accordion click
+		 *
 		 * @param {CMDBuild.model.common.accordion.Lookup} node
 		 *
-		 * TODO: waiting for refactor (crud + rename)
+		 * @override
 		 */
-		onViewOnFront: function(node) {
+		onLookupModuleInit: function(node) {
 			if (!Ext.isEmpty(node)) {
-				CMDBuild.core.proxy.lookup.Type.read({
+				CMDBuild.core.proxy.lookup.Type.read({ // TODO: waiting for refactor (crud + rename)
 					scope: this,
 					success: function(response, options, decodedResponse) {
 						var lookupObject = Ext.Array.findBy(decodedResponse, function(item, i) {
@@ -132,6 +142,8 @@
 
 						if (Ext.isEmpty(this.view.tabPanel.getActiveTab()))
 							this.view.tabPanel.setActiveTab(0);
+
+						this.onModuleInit(node); // Custom callParent() implementation
 					}
 				});
 			}

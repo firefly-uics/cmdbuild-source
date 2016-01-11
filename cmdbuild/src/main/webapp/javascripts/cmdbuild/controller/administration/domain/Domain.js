@@ -19,6 +19,7 @@
 			'onDomainAbortButtonClick',
 			'onDomainAddButtonClick',
 			'onDomainModifyButtonClick',
+			'onDomainModuleInit = onModuleInit',
 			'onDomainRemoveButtonClick',
 			'onDomainSaveButtonClick',
 			'onDomainSelected -> controllerProperties, controllerEnabledClasses, controllerAttributes'
@@ -56,6 +57,8 @@
 
 		/**
 		 * @param {CMDBuild.view.administration.domain.DomainView} view
+		 *
+		 * @override
 		 */
 		constructor: function(view) {
 			this.callParent(arguments);
@@ -99,6 +102,42 @@
 			this.controllerProperties.cmfg('onDomainPropertiesModifyButtonClick');
 		},
 
+		/**
+		 * Setup view items and controllers on accordion click
+		 *
+		 * @param {CMDBuild.model.common.accordion.Generic} node
+		 *
+		 * @override
+		 */
+		onDomainModuleInit: function(node) {
+			if (!Ext.isEmpty(node)) {
+				var params = {};
+
+				CMDBuild.core.proxy.domain.Domain.read({ // TODO: waiting for refactor (crud)
+					params: params,
+					scope: this,
+					success: function(response, options, decodedResponse) {
+						decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.DOMAINS];
+
+						this.domainSelectedDomainSet(
+							Ext.Array.findBy(decodedResponse, function(item, i) {
+								return node.get(CMDBuild.core.constants.Proxy.ENTITY_ID) == item[CMDBuild.core.constants.Proxy.ID_DOMAIN];
+							}, this)
+						);
+
+						this.cmfg('onDomainSelected');
+
+						this.setViewTitle(node.get(CMDBuild.core.constants.Proxy.TEXT));
+
+						if (Ext.isEmpty(this.view.tabPanel.getActiveTab()))
+							this.view.tabPanel.setActiveTab(0);
+
+						this.onModuleInit(node); // Custom callParent() implementation
+					}
+				});
+			}
+		},
+
 		onDomainRemoveButtonClick: function() {
 			Ext.Msg.show({
 				title: CMDBuild.Translation.removeDomain,
@@ -133,38 +172,6 @@
 						success: this.success
 					});
 				}
-			}
-		},
-
-		/**
-		 * @param {CMDBuild.model.common.accordion.Generic} parameters
-		 *
-		 * TODO: waiting for refactor (crud)
-		 */
-		onViewOnFront: function(parameters) {
-			if (!Ext.isEmpty(parameters)) {
-				var params = {};
-
-				CMDBuild.core.proxy.domain.Domain.read({
-					params: params,
-					scope: this,
-					success: function(response, options, decodedResponse) {
-						decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.DOMAINS];
-
-						this.domainSelectedDomainSet(
-							Ext.Array.findBy(decodedResponse, function(item, i) {
-								return parameters.get(CMDBuild.core.constants.Proxy.ENTITY_ID) == item[CMDBuild.core.constants.Proxy.ID_DOMAIN];
-							}, this)
-						);
-
-						this.cmfg('onDomainSelected');
-
-						this.setViewTitle(parameters.get(CMDBuild.core.constants.Proxy.TEXT));
-
-						if (Ext.isEmpty(this.view.tabPanel.getActiveTab()))
-							this.view.tabPanel.setActiveTab(0);
-					}
-				});
 			}
 		},
 

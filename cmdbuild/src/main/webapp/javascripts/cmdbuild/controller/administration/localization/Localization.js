@@ -11,6 +11,18 @@
 		parentDelegate: undefined,
 
 		/**
+		 * @cfg {Array}
+		 */
+		cmfgCatchedFunctions: [
+			'onLocalizationModuleInit = onModuleInit'
+		],
+
+		/**
+		 * @cfg {String}
+		 */
+		cmName: undefined,
+
+		/**
 		 * @property {Mixed}
 		 */
 		sectionController: undefined,
@@ -25,10 +37,9 @@
 		 *
 		 * @param {CMDBuild.model.common.accordion.Generic} node
 		 *
-		 * @public
 		 * @override
 		 */
-		onViewOnFront: function(node) {
+		onLocalizationModuleInit: function(node) {
 			if (!Ext.Object.isEmpty(node)) {
 				this.view.removeAll(true);
 
@@ -47,7 +58,7 @@
 
 				this.setViewTitle(node.get(CMDBuild.core.constants.Proxy.TEXT));
 
-				this.callParent(arguments);
+				this.onModuleInit(node); // Custom callParent() implementation
 			}
 		}
 	});

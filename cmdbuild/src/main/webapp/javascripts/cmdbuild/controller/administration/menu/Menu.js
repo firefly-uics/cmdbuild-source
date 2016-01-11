@@ -14,8 +14,14 @@
 		 * @cfg {Array}
 		 */
 		cmfgCatchedFunctions: [
+			'onMenuModuleInit = onModuleInit',
 			'selectedMenuNameGet'
 		],
+
+		/**
+		 * @cfg {String}
+		 */
+		cmName: undefined,
 
 		/**
 		 * @property {CMDBuild.controller.administration.menu.Groups}
@@ -33,20 +39,13 @@
 		view: undefined,
 
 		/**
-		 * @param {CMDBuild.view.administration.menu.MenuView} view
-		 */
-		constructor: function(view) {
-			this.callParent(arguments);
-
-			// Handlers exchange
-			this.view = view;
-			this.view.delegate = this;
-		},
-
-		/**
+		 * Setup view items and controllers on accordion click
+		 *
 		 * @param {CMDBuild.model.menu.accordion.Administration} node
+		 *
+		 * @override
 		 */
-		onViewOnFront: function(node) {
+		onMenuModuleInit: function(node) {
 			if (!Ext.isEmpty(node)) {
 				this.selectedMenuName = node.get(CMDBuild.core.constants.Proxy.ENTITY_ID);
 				this.sectionController = Ext.create('CMDBuild.controller.administration.menu.Group', { parentDelegate: this });
@@ -57,6 +56,8 @@
 				this.setViewTitle(node.get(CMDBuild.core.constants.Proxy.TEXT));
 
 				this.sectionController.cmfg('onMenuGroupMenuSelected');
+
+				this.onModuleInit(node); // Custom callParent() implementation
 			}
 		},
 
