@@ -8,7 +8,7 @@
 		constructor: function() {
 			this.title = CMDBuild.Translation.configure.title;
 
-			this.languageCombo = new CMDBuild.view.common.field.LanguageCombo({
+			this.languageCombo = new CMDBuild.view.common.field.comboBox.Language({
 				name: 'language',
 				fieldLabel: tr.choose,
 				labelWidth: CMDBuild.LABEL_WIDTH

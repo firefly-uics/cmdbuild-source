@@ -63,7 +63,7 @@
 					(
 						!Ext.isEmpty(CMDBuild.configuration.localization)
 						&& CMDBuild.configuration.localization.get(CMDBuild.core.constants.Proxy.LANGUAGE_PROMPT)
-					) ? Ext.create('CMDBuild.view.common.field.LanguageCombo', {
+					) ? Ext.create('CMDBuild.view.common.field.comboBox.Language', {
 						fieldLabel: CMDBuild.Translation.language,
 						labelWidth: CMDBuild.LABEL_WIDTH_LOGIN,
 						submitValue: false
