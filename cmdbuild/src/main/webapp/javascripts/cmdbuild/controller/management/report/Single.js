@@ -11,14 +11,25 @@
 		],
 
 		/**
+		 * @cfg {Object}
+		 */
+		parentDelegate: undefined,
+
+		/**
 		 * @cfg {Array}
 		 */
 		cmfgCatchedFunctions: [
-			'reportSingleSelectedReportParametersSet = selectedReportParametersSet',
 			'onSingleReportDownloadButtonClick',
+			'onSingleReportModuleInit = onModuleInit',
 			'onSingleReportTypeButtonClick',
+			'reportSingleSelectedReportParametersSet = selectedReportParametersSet',
 			'reportSingleUpdateReport = updateReport'
 		],
+
+		/**
+		 * @cfg {String}
+		 */
+		cmName: undefined,
 
 		/**
 		 * All server calls parameters
@@ -182,6 +193,37 @@
 		},
 
 		/**
+		 * Setup view items and controllers on accordion click
+		 *
+		 * @param {CMDBuild.model.common.accordion.Generic} node
+		 *
+		 * @override
+		 */
+		onSingleReportModuleInit: function(node) {
+			this.cmfg('reportSingleSelectedReportParametersSet'); // Reset class property
+
+			if (
+				!Ext.Object.isEmpty(node)
+				&& !Ext.isEmpty(node.get(CMDBuild.core.constants.Proxy.ID))
+				&& node.get(CMDBuild.core.constants.Proxy.ID) != CMDBuild.core.constants.Proxy.CUSTOM
+			) {
+				this.setViewTitle(node.get(CMDBuild.core.constants.Proxy.TEXT));
+
+				this.cmfg('reportSingleSelectedReportParametersSet', {
+					callIdentifier: 'create',
+					params: {
+						extension: node.get(CMDBuild.core.constants.Proxy.SECTION_HIERARCHY)[0],
+						id: node.get(CMDBuild.core.constants.Proxy.ENTITY_ID)
+					}
+				});
+
+				this.createReport();
+
+				this.onModuleInit(node); // Custom callParent() implementation
+			}
+		},
+
+		/**
 		 * @param {String} type
 		 */
 		onSingleReportTypeButtonClick: function(type) {
@@ -204,33 +246,6 @@
 					CMDBuild.Translation.errors.unmanagedReportType,
 					false
 				);
-			}
-		},
-
-		/**
-		 * @param {CMDBuild.model.common.accordion.Generic} node
-		 */
-		onViewOnFront: function(node) {
-			this.cmfg('reportSingleSelectedReportParametersSet'); // Reset class property
-
-			if (
-				!Ext.Object.isEmpty(node)
-				&& !Ext.isEmpty(node.get(CMDBuild.core.constants.Proxy.ID))
-				&& node.get(CMDBuild.core.constants.Proxy.ID) != CMDBuild.core.constants.Proxy.CUSTOM
-			) {
-				this.setViewTitle(node.get(CMDBuild.core.constants.Proxy.TEXT));
-
-				this.cmfg('reportSingleSelectedReportParametersSet', {
-					callIdentifier: 'create',
-					params: {
-						extension: node.get(CMDBuild.core.constants.Proxy.SECTION_HIERARCHY)[0],
-						id: node.get(CMDBuild.core.constants.Proxy.ENTITY_ID)
-					}
-				});
-
-				this.createReport();
-
-				this.callParent(arguments);
 			}
 		},
 

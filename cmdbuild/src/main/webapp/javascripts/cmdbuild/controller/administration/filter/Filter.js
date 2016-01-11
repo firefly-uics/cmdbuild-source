@@ -11,6 +11,18 @@
 		parentDelegate: undefined,
 
 		/**
+		 * @cfg {Array}
+		 */
+		cmfgCatchedFunctions: [
+			'onFilterModuleInit = onModuleInit'
+		],
+
+		/**
+		 * @cfg {String}
+		 */
+		cmName: undefined,
+
+		/**
 		 * @property {Mixed}
 		 */
 		sectionController: undefined,
@@ -27,7 +39,7 @@
 		 *
 		 * @override
 		 */
-		onViewOnFront: function(node) {
+		onFilterModuleInit: function(node) {
 			if (!Ext.Object.isEmpty(node)) {
 				this.view.removeAll(true);
 
@@ -42,7 +54,7 @@
 
 				this.setViewTitle(node.get(CMDBuild.core.constants.Proxy.TEXT));
 
-				this.callParent(arguments);
+				this.onModuleInit(node); // Custom callParent() implementation
 			}
 		}
 	});

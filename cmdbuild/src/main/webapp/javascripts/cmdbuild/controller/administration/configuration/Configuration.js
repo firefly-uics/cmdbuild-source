@@ -8,7 +8,19 @@
 		/**
 		 * @cfg {Object}
 		 */
-		delegate: undefined,
+		parentDelegate: undefined,
+
+		/**
+		 * @cfg {Array}
+		 */
+		cmfgCatchedFunctions: [
+			'onConfigurationModuleInit = onModuleInit'
+		],
+
+		/**
+		 * @cfg {String}
+		 */
+		cmName: undefined,
 
 		/**
 		 * @property {CMDBuild.view.administration.configuration.ConfigurationView}
@@ -16,13 +28,13 @@
 		view: undefined,
 
 		/**
-		 * Setup view items on accordion click
+		 * Setup view items and controllers on accordion click
 		 *
 		 * @param {CMDBuild.model.common.accordion.Generic} node
 		 *
 		 * @override
 		 */
-		onViewOnFront: function(node) {
+		onConfigurationModuleInit: function(node) {
 			if (!Ext.Object.isEmpty(node)) {
 				this.view.removeAll(true);
 
@@ -63,7 +75,8 @@
 
 				this.sectionController.getView().fireEvent('show'); // Manual show event fire
 
-				this.callParent(arguments);
+				// Custom callParent() implementation
+				this.onModuleInit(node);
 			}
 		}
 	});

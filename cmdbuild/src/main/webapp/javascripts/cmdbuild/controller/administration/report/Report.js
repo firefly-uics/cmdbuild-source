@@ -11,6 +11,18 @@
 		parentDelegate: undefined,
 
 		/**
+		 * @cfg {Array}
+		 */
+		cmfgCatchedFunctions: [
+			'onReportModuleInit = onModuleInit'
+		],
+
+		/**
+		 * @cfg {String}
+		 */
+		cmName: undefined,
+
+		/**
 		 * @property {Mixed}
 		 */
 		sectionController: undefined,
@@ -21,11 +33,13 @@
 		view: undefined,
 
 		/**
+		 * Setup view items and controllers on accordion click
+		 *
 		 * @param {CMDBuild.model.common.accordion.Generic} node
 		 *
 		 * @override
 		 */
-		onViewOnFront: function(node) {
+		onReportModuleInit: function(node) {
 			if (!Ext.Object.isEmpty(node)) {
 				this.view.removeAll(true);
 
@@ -42,7 +56,7 @@
 
 				this.sectionController.getView().fireEvent('show');
 
-				this.callParent(arguments);
+				this.onModuleInit(node); // Custom callParent() implementation
 			}
 		}
 	});

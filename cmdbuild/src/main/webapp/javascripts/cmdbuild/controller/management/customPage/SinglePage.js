@@ -3,9 +3,21 @@
 	Ext.define('CMDBuild.controller.management.customPage.SinglePage', {
 		extend: 'CMDBuild.controller.common.abstract.BasePanel',
 
+		/**
+		 * @cfg {Object}
+		 */
+		parentDelegate: undefined,
+
 		requires: [
 			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.configurations.CustomPages'
+		],
+
+		/**
+		 * @cfg {Array}
+		 */
+		cmfgCatchedFunctions: [
+			'onCustomPageModuleInit = onModuleInit'
 		],
 
 		/**
@@ -19,9 +31,13 @@
 		view: undefined,
 
 		/**
+		 * Setup view items and controllers on accordion click
+		 *
 		 * @param {CMDBuild.model.common.accordion.Generic} node
+		 *
+		 * @override
 		 */
-		onViewOnFront: function(node) {
+		onCustomPageModuleInit: function(node) {
 			if (!Ext.isEmpty(node)) {
 				var basePath = window.location.toString().split('/');
 				basePath = Ext.Array.slice(basePath, 0, basePath.length - 1).join('/');
@@ -51,10 +67,9 @@
 					}
 				});
 
-				this.callParent(arguments);
+				this.onModuleInit(node); // Custom callParent() implementation
 			}
 		}
-
 	});
 
 })();

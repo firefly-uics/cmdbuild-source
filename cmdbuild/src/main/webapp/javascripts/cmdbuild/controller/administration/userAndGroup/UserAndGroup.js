@@ -15,9 +15,15 @@
 		 */
 		cmfgCatchedFunctions: [
 			'onUserAndGroupAccordionSelect',
+			'onUserAndGroupModuleInit = onModuleInit',
 			'userAndGroupSelectedAccordionGet',
 			'userAndGroupSelectedAccordionIsEmpty'
 		],
+
+		/**
+		 * @cfg {String}
+		 */
+		cmName: undefined,
 
 		/**
 		 * @parameter {CMDBuild.model.userAndGroup.SelectedAccordion}
@@ -43,7 +49,7 @@
 		 *
 		 * @override
 		 */
-		onViewOnFront: function(node) {
+		onUserAndGroupModuleInit: function(node) {
 			if (!Ext.Object.isEmpty(node)) {
 				var titleParts = [];
 				var selectedAccordionData = node.getData();
@@ -78,7 +84,7 @@
 				this.sectionController.cmfg('onUserAndGroupAccordionSelect');
 				this.sectionController.getView().fireEvent('show'); // Manual show event fire
 
-				this.callParent(arguments);
+				this.onModuleInit(node); // Custom callParent() implementation
 			}
 		},
 
