@@ -37,9 +37,12 @@
 					});
 			$.Cmdbuild.customvariables.commandsManager.execute(init, {},
 					function(response) {
-						this.centerOnViewer();
 						$.Cmdbuild.customvariables.selected.erase();
 						$.Cmdbuild.customvariables.selected.select(cardId);
+						var me = this;
+						setTimeout(function() {
+							me.centerOnViewer();
+						}, 500);
 					}, this);
 		},
 		selectAll: function() {
