@@ -754,7 +754,9 @@
 			var index = 10;
 			$.Cmdbuild.customvariables.camera.zoomOnPosition(position,
 					function() {
-						this.stepZoom(box, w, h);
+						if (box.w > 0 || box.h > 0) {
+							this.stepZoom(box, w, h);
+						}
 					}, this);
 		};
 		this.refreshOptions = function() {
