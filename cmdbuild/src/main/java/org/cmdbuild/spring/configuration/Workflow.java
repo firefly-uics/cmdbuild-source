@@ -185,7 +185,8 @@ public class Workflow {
 				.withService(workflowService()) //
 				.withTypesConverter(workflowTypesConverter()) //
 				.withEventListener(workflowLogger()) //
-				.withAuthenticationService(authenticationService);
+				.withAuthenticationService(authenticationService) //
+				.withWorkflowConfiguration(workflowConfiguration);
 	}
 
 	@Bean

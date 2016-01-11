@@ -109,7 +109,8 @@ public class User {
 				.withService(workflow.workflowService()) //
 				.withTypesConverter(workflow.workflowTypesConverter()) //
 				.withEventListener(workflow.workflowLogger()) //
-				.withAuthenticationService(authentication.defaultAuthenticationService());
+				.withAuthenticationService(authentication.defaultAuthenticationService()) //
+				.withWorkflowConfiguration(properties.workflowProperties());
 	}
 
 	@Bean

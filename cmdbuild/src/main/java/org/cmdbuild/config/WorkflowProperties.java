@@ -1,5 +1,8 @@
 package org.cmdbuild.config;
 
+import static java.lang.Boolean.FALSE;
+import static java.lang.Boolean.parseBoolean;
+
 import java.io.IOException;
 import java.util.HashSet;
 import java.util.Set;
@@ -17,6 +20,7 @@ public class WorkflowProperties extends DefaultProperties implements WorkflowCon
 	private static final String ENDPOINT = "endpoint";
 	private static final String ADMIN_USERNAME = "user";
 	private static final String ADMIN_PASSWORD = "password";
+	private static final String DISABLE_SYNCHRONIZATION_OF_MISSING_VARIABLES = "disableSynchronizationOfMissingVariables";
 
 	private final Set<ChangeListener> changeListeners;
 
@@ -25,10 +29,12 @@ public class WorkflowProperties extends DefaultProperties implements WorkflowCon
 
 		changeListeners = new HashSet<RemoteSharkServiceConfiguration.ChangeListener>();
 
-		setProperty(ENABLED, String.valueOf(false));
+		setProperty(ENABLED, FALSE.toString());
 		setProperty(ENDPOINT, "http://localhost:8080/shark");
 		setProperty(ADMIN_USERNAME, "admin");
 		setProperty(ADMIN_PASSWORD, "enhydra");
+		setProperty(ADMIN_PASSWORD, "enhydra");
+		setProperty(DISABLE_SYNCHRONIZATION_OF_MISSING_VARIABLES, FALSE.toString());
 	}
 
 	public static WorkflowProperties getInstance() {
@@ -37,8 +43,8 @@ public class WorkflowProperties extends DefaultProperties implements WorkflowCon
 
 	@Override
 	public boolean isEnabled() {
-		final String enabled = getProperty(ENABLED, Boolean.FALSE.toString());
-		return Boolean.parseBoolean(enabled);
+		final String enabled = getProperty(ENABLED, FALSE.toString());
+		return parseBoolean(enabled);
 	}
 
 	@Override
@@ -54,6 +60,11 @@ public class WorkflowProperties extends DefaultProperties implements WorkflowCon
 	@Override
 	public String getPassword() {
 		return getProperty(ADMIN_PASSWORD);
+	}
+
+	@Override
+	public boolean isSynchronizationOfMissingVariablesDisabled() {
+		return parseBoolean(getProperty(DISABLE_SYNCHRONIZATION_OF_MISSING_VARIABLES, FALSE.toString()));
 	}
 
 	@Override
