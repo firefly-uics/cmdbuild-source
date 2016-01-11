@@ -87,7 +87,7 @@ public class GetRelationList extends AbstractGetRelation {
 	}
 
 	public GetRelationListResponse exec(final Card src, final DomainWithSource domainWithSource,
-										final QueryOptions queryOptions) {
+			final QueryOptions queryOptions) {
 		Validate.notNull(src);
 
 		if (emptyCardForWrongId) {
