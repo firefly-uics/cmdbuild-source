@@ -18,6 +18,7 @@ import org.cmdbuild.auth.acl.NullGroup;
 import org.cmdbuild.auth.user.AuthenticatedUser;
 import org.cmdbuild.auth.user.OperationUser;
 import org.cmdbuild.common.utils.PagedElements;
+import org.cmdbuild.config.WorkflowConfiguration;
 import org.cmdbuild.dao.entrytype.CMAttribute;
 import org.cmdbuild.dao.entrytype.attributetype.CMAttributeType;
 import org.cmdbuild.logger.Log;
@@ -58,6 +59,7 @@ public class DefaultWorkflowEngine implements QueryableUserWorkflowEngine {
 		private WorkflowTypesConverter typesConverter;
 		private CMWorkflowEngineListener engineListener = NULL_EVENT_LISTENER;
 		private AuthenticationService authenticationService;
+		private WorkflowConfiguration workflowConfiguration;
 
 		@Override
 		public DefaultWorkflowEngine build() {
@@ -118,6 +120,15 @@ public class DefaultWorkflowEngine implements QueryableUserWorkflowEngine {
 			this.authenticationService = authenticationService;
 		}
 
+		public DefaultWorkflowEngineBuilder withWorkflowConfiguration(final WorkflowConfiguration value) {
+			this.workflowConfiguration = value;
+			return this;
+		}
+
+		public void setWorkflowConfiguration(final WorkflowConfiguration value) {
+			this.workflowConfiguration = value;
+		}
+
 	}
 
 	public static DefaultWorkflowEngineBuilder newInstance() {
@@ -133,6 +144,7 @@ public class DefaultWorkflowEngine implements QueryableUserWorkflowEngine {
 	private final WorkflowTypesConverter typesConverter;
 	private CMWorkflowEngineListener eventListener;
 	private final AuthenticationService authenticationService;
+	private final WorkflowConfiguration workflowConfiguration;
 
 	private DefaultWorkflowEngine(final DefaultWorkflowEngineBuilder builder) {
 		this.operationUser = builder.operationUser;
@@ -141,6 +153,7 @@ public class DefaultWorkflowEngine implements QueryableUserWorkflowEngine {
 		this.typesConverter = builder.typesConverter;
 		this.eventListener = builder.engineListener;
 		this.authenticationService = builder.authenticationService;
+		this.workflowConfiguration = builder.workflowConfiguration;
 	}
 
 	@Override
@@ -334,19 +347,19 @@ public class DefaultWorkflowEngine implements QueryableUserWorkflowEngine {
 				processInstance.getType().getName(), processInstance.getCardId());
 		service.abortProcessInstance(processInstance.getProcessInstanceId());
 		persistence.updateProcessInstance(processInstance, new ForwardingProcessData() {
-			
+
 			private final ProcessData delegate = NoProcessData.getInstance();
-			
+
 			@Override
 			protected ProcessData delegate() {
 				return delegate;
 			}
-			
+
 			@Override
 			public WSProcessInstanceState state() {
 				return ABORTED;
 			}
-			
+
 		});
 	}
 
@@ -396,12 +409,14 @@ public class DefaultWorkflowEngine implements QueryableUserWorkflowEngine {
 		/**
 		 * Synchronizes missing variables
 		 */
-		final Map<String, Object> workflowServiceVariables = service.getProcessInstanceVariables(processInstance
-				.getProcessInstanceId());
-		for (final CMAttribute attribute : processInstance.getType().getAttributes()) {
-			if (!attribute.isSystem() && !workflowServiceVariables.containsKey(attribute.getName())) {
-				logger.debug(marker, "'{}' is missing, initializing it", attribute.getName());
-				nativeValues.put(attribute.getName(), null);
+		if (!workflowConfiguration.isSynchronizationOfMissingVariablesDisabled()) {
+			final Map<String, Object> workflowServiceVariables = service.getProcessInstanceVariables(processInstance
+					.getProcessInstanceId());
+			for (final CMAttribute attribute : processInstance.getType().getAttributes()) {
+				if (!attribute.isSystem() && !workflowServiceVariables.containsKey(attribute.getName())) {
+					logger.debug(marker, "'{}' is missing, initializing it", attribute.getName());
+					nativeValues.put(attribute.getName(), null);
+				}
 			}
 		}
 

@@ -6,4 +6,6 @@ public interface WorkflowConfiguration extends RemoteSharkServiceConfiguration {
 
 	boolean isEnabled();
 
+	boolean isSynchronizationOfMissingVariablesDisabled();
+
 }
