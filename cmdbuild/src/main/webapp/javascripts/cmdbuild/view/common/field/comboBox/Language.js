@@ -1,7 +1,7 @@
 (function() {
 
-	Ext.define('CMDBuild.view.common.field.LanguageCombo', {
-		extend: 'CMDBuild.view.common.field.CMIconCombo',
+	Ext.define('CMDBuild.view.common.field.comboBox.Language', {
+		extend: 'Ext.form.field.ComboBox',
 
 		requires: [
 			'CMDBuild.core.constants.Proxy',
@@ -15,17 +15,36 @@
 
 		displayField: CMDBuild.core.constants.Proxy.DESCRIPTION,
 		editable: false,
+		fieldCls: 'ux-icon-combo-input ux-icon-combo-item',
 		forceSelection: true,
+		iconClsField: 'name', // could be changed on instantiation
 		iconClsField: CMDBuild.core.constants.Proxy.TAG,
+		iconClsPrefix: 'ux-flag-', // could be changed on instantiation
 		valueField: CMDBuild.core.constants.Proxy.TAG,
 
 		initComponent: function() {
+			var tpl = '<div class="x-combo-list-item ux-icon-combo-item ' + this.iconClsPrefix + '{' + this.iconClsField + '}">{' + this.displayField +'}</div>';
+
 			Ext.apply(this, {
+				listConfig: {
+					getInnerTpl: function() { return tpl; }
+				},
 				store: CMDBuild.core.proxy.localization.Localization.getStoreLanguages(),
 				queryMode: 'local'
 			});
 
 			this.callParent(arguments);
+
+			this.setValue = Ext.Function.createInterceptor(this.setValue, function(v) {
+				if (this.lastFlagCls && !Ext.isEmpty(this.inputEl)) {
+					this.inputEl.removeCls(this.lastFlagCls);
+				}
+
+				this.lastFlagCls = this.iconClsPrefix + v;
+
+				if (!Ext.isEmpty(this.inputEl))
+					this.inputEl.addCls(this.lastFlagCls);
+			}, this);
 
 			this.getStore().on('load', function() {
 				this.setValue(this.getCurrentLanguage());

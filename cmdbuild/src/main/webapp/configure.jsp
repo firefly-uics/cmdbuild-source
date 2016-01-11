@@ -43,8 +43,7 @@
 		<script type="text/javascript" src="javascripts/cmdbuild/core/proxy/Index.js"></script>
 		<script type="text/javascript" src="javascripts/cmdbuild/core/proxy/CMProxy.js"></script>
 		<script type="text/javascript" src="javascripts/cmdbuild/core/proxy/CMProxySetup.js"></script>
-		<script type="text/javascript" src="javascripts/cmdbuild/view/common/field/CMIconCombo.js"></script>
-		<script type="text/javascript" src="javascripts/cmdbuild/view/common/field/LanguageCombo.js"></script>
+		<script type="text/javascript" src="javascripts/cmdbuild/view/common/field/comboBox/Language.js"></script>
 		<script type="text/javascript" src="javascripts/cmdbuild/form/CallbackPlugin.js"></script>
 
 		<!-- 2. Translations -->
