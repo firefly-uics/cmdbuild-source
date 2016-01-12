@@ -47,7 +47,7 @@
 							}),
 							'->',
 							this.includeUnactiveUsers = Ext.create('Ext.form.field.Checkbox', {
-								boxLabel: '@@ CMDBuild.Translation.includeUnactiveUsers',
+								boxLabel: '@@ CMDBuild.Translation.activeOnly',
 								boxLabelCls: 'cmtoolbaritem',
 								inputValue: true,
 								uncheckedValue: false,
