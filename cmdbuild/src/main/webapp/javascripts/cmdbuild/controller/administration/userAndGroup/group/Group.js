@@ -48,6 +48,7 @@
 			'onUserAndGroupGroupSetActiveTab',
 			'userAndGroupGroupSelectedGroupGet',
 			'userAndGroupGroupSelectedGroupIsEmpty',
+			'userAndGroupGroupSelectedGroupReset',
 			'userAndGroupGroupSelectedGroupSet'
 		],
 
@@ -97,16 +98,15 @@
 			if (!this.cmfg('userAndGroupSelectedAccordionIsEmpty'))
 				CMDBuild.core.proxy.userAndGroup.group.Group.read({ // TODO: waiting for refactor (crud)
 					scope: this,
-					success: function(result, options, decodedResult) {
-						decodedResult = decodedResult[CMDBuild.core.constants.Proxy.GROUPS];
+					success: function(response, options, decodedResponse) {
+						decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.GROUPS];
 
-						var selectedGroupModel = Ext.Array.findBy(decodedResult, function(groupObject, i) {
+						var selectedGroupModel = Ext.Array.findBy(decodedResponse, function(groupObject, i) {
 							return this.cmfg('userAndGroupSelectedAccordionGet', CMDBuild.core.constants.Proxy.ID) == groupObject[CMDBuild.core.constants.Proxy.ID];
 						}, this);
 
 						if (!Ext.isEmpty(selectedGroupModel)) {
-							this.userAndGroupGroupSelectedGroupSet(selectedGroupModel);
-
+							this.cmfg('userAndGroupGroupSelectedGroupSet', { value: selectedGroupModel });
 							this.cmfg('onUserAndGroupGroupSelected');
 
 							if (Ext.isEmpty(this.view.tabPanel.getActiveTab()))
@@ -127,38 +127,44 @@
 
 		// SelectedGroup property methods
 			/**
-			 * Returns full model object or just one property if required
+			 * @param {Array or String} attributePath
 			 *
-			 * @param {String} parameterName
-			 *
-			 * @returns {CMDBuild.model.userAndGroup.group.Group} or Mixed
+			 * @returns {Mixed or undefined}
 			 */
-			userAndGroupGroupSelectedGroupGet: function(parameterName) {
-				if (!Ext.isEmpty(parameterName))
-					return this.selectedGroup.get(parameterName);
+			userAndGroupGroupSelectedGroupGet: function(attributePath) {
+				var parameters = {};
+				parameters[CMDBuild.core.constants.Proxy.TARGET_VARIABLE_NAME] = 'selectedGroup';
+				parameters[CMDBuild.core.constants.Proxy.ATTRIBUTE_PATH] = attributePath;
 
-				return this.selectedGroup;
+				return this.propertyManageGet(parameters);
 			},
 
 			/**
+			 * @param {Array or String} attributePath
+			 *
 			 * @returns {Boolean}
 			 */
-			userAndGroupGroupSelectedGroupIsEmpty: function() {
-				return Ext.isEmpty(this.selectedGroup);
+			userAndGroupGroupSelectedGroupIsEmpty: function(attributePath) {
+				var parameters = {};
+				parameters[CMDBuild.core.constants.Proxy.TARGET_VARIABLE_NAME] = 'selectedGroup';
+				parameters[CMDBuild.core.constants.Proxy.ATTRIBUTE_PATH] = attributePath;
+
+				return this.propertyManageIsEmpty(parameters);
+			},
+
+			userAndGroupGroupSelectedGroupReset: function() {
+				this.propertyManageReset('selectedGroup');
 			},
 
 			/**
-			 * @property {Object} selectedGroupObject
+			 * @property {Object} parameters
 			 */
-			userAndGroupGroupSelectedGroupSet: function(selectedGroupObject) {
-				this.selectedGroup = null;
+			userAndGroupGroupSelectedGroupSet: function(parameters) {
+				if (!Ext.Object.isEmpty(parameters)) {
+					parameters[CMDBuild.core.constants.Proxy.MODEL_NAME] = 'CMDBuild.model.userAndGroup.group.Group';
+					parameters[CMDBuild.core.constants.Proxy.TARGET_VARIABLE_NAME] = 'selectedGroup';
 
-				if (!Ext.isEmpty(selectedGroupObject) && Ext.isObject(selectedGroupObject)) {
-					if (Ext.getClassName(selectedGroupObject) == 'CMDBuild.model.userAndGroup.group.Group') {
-						this.selectedGroup = selectedGroupObject;
-					} else {
-						this.selectedGroup = Ext.create('CMDBuild.model.userAndGroup.group.Group', selectedGroupObject);
-					}
+					this.propertyManageSet(parameters);
 				}
 			}
 	});

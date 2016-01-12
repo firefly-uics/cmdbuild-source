@@ -145,7 +145,7 @@
 					params: params,
 					scope: this,
 					success: function(response, options, decodedResponse) {
-						this.onUserAndGroupGroupPrivilegesGridTabShow();
+						this.cmfg('onUserAndGroupGroupPrivilegesGridTabShow');
 					}
 				});
 			} else {
@@ -184,7 +184,7 @@
 					params: params,
 					scope: this,
 					success: function(response, options, decodedResponse) {
-						this.onUserAndGroupGroupPrivilegesGridTabShow();
+						this.cmfg('onUserAndGroupGroupPrivilegesGridTabShow');
 					}
 				});
 			}
@@ -213,7 +213,7 @@
 							params: params,
 							scope: this,
 							success: function(response, options, decodedResponse) {
-								this.onUserAndGroupGroupPrivilegesGridTabShow();
+								this.cmfg('onUserAndGroupGroupPrivilegesGridTabShow');
 							}
 						});
 					}
@@ -225,7 +225,7 @@
 		 * @param {CMDBuild.model.userAndGroup.group.privileges.GridRecord} record
 		 */
 		onUserAndGroupGroupPrivilegesGridUIConfigurationButtonClick: function(record) {
-			this.controllerUiConfiguration.setRecord(record);
+			this.controllerUiConfiguration.cmfg('userAndGroupGroupPrivilegesGridUIConfigurationRecordSet', record);
 			this.controllerUiConfiguration.getView().show();
 		},
 

@@ -37,14 +37,14 @@
 								scope: this,
 
 								handler: function(button, e) {
-									this.delegate.cmfg('onUserAndGroupGroupDefaultFiltersSaveButtonClick');
+									this.delegate.cmfg('onUserAndGroupGroupTabDefaultFiltersSaveButtonClick');
 								}
 							}),
 							Ext.create('CMDBuild.core.buttons.text.Abort', {
 								scope: this,
 
 								handler: function(button, e) {
-									this.delegate.cmfg('onUserAndGroupGroupDefaultFiltersAbortButtonClick');
+									this.delegate.cmfg('onUserAndGroupGroupTabDefaultFiltersAbortButtonClick');
 								}
 							})
 						]
@@ -60,7 +60,7 @@
 
 		listeners: {
 			show: function(panel, eOpts) {
-				this.delegate.cmfg('onUserAndGroupGroupDefaultFiltersTabShow');
+				this.delegate.cmfg('onUserAndGroupGroupTabDefaultFiltersShow');
 			}
 		}
 	});

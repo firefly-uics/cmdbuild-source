@@ -51,7 +51,7 @@
 								scope: this,
 
 								handler: function(button, e) {
-									this.delegate.cmfg('onUserAndGroupGroupUsersSaveButtonClick');
+									this.delegate.cmfg('onUserAndGroupGroupTabUsersSaveButtonClick');
 								}
 							})
 						]
@@ -91,7 +91,7 @@
 
 		listeners: {
 			show: function(panel, eOpts) {
-				this.delegate.cmfg('onUserAndGroupGroupUsersTabShow');
+				this.delegate.cmfg('onUserAndGroupGroupTabUsersShow');
 			}
 		}
 	});

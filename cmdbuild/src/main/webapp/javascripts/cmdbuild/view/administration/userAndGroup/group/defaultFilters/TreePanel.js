@@ -78,7 +78,7 @@
 						listeners: {
 							scope: this,
 							beforeedit: function(editor, e, eOpts) {
-								return this.delegate.cmfg('onUserAndGroupGroupDefaultFiltersTreeBeforeEdit', e);
+								return this.delegate.cmfg('onUserAndGroupGroupTabDefaultFiltersTreeBeforeEdit', e);
 							}
 						}
 					})

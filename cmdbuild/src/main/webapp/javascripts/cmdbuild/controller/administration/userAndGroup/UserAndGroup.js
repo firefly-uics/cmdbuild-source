@@ -59,7 +59,7 @@
 
 				this.view.removeAll(true);
 
-				switch (this.userAndGroupSelectedAccordionGet(CMDBuild.core.constants.Proxy.SECTION_HIERARCHY)[0]) {
+				switch (this.cmfg('userAndGroupSelectedAccordionGet', CMDBuild.core.constants.Proxy.SECTION_HIERARCHY)[0]) {
 					case 'user': {
 						this.sectionController = Ext.create('CMDBuild.controller.administration.userAndGroup.user.User', { parentDelegate: this });
 
@@ -72,8 +72,8 @@
 
 						titleParts = [this.sectionController.getBaseTitle()];
 
-						if (!this.userAndGroupSelectedAccordionIsEmpty(CMDBuild.core.constants.Proxy.DESCRIPTION))
-							titleParts.push(this.userAndGroupSelectedAccordionGet(CMDBuild.core.constants.Proxy.DESCRIPTION));
+						if (!this.cmfg('userAndGroupSelectedAccordionIsEmpty', CMDBuild.core.constants.Proxy.DESCRIPTION))
+							titleParts.push(this.cmfg('userAndGroupSelectedAccordionGet', CMDBuild.core.constants.Proxy.DESCRIPTION));
 					}
 				}
 
@@ -117,6 +117,8 @@
 
 			/**
 			 * @param {Object} parameters
+			 *
+			 * @private
 			 */
 			userAndGroupSelectedAccordionSet: function(parameters) {
 				if (!Ext.Object.isEmpty(parameters)) {

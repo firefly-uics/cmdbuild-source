@@ -14,7 +14,7 @@
 
 		listeners: {
 			show: function(panel, eOpts) {
-				this.delegate.cmfg('onUserAndGroupGroupPrivilegesTabShow');
+				this.delegate.cmfg('onUserAndGroupGroupTabPrivilegesShow');
 			}
 		}
 	});

@@ -19,13 +19,13 @@
 		 * @cfg {Array}
 		 */
 		cmfgCatchedFunctions: [
-			'onUserAndGroupGroupPropertiesAbortButtonClick',
-			'onUserAndGroupGroupPropertiesAddButtonClick = onUserAndGroupGroupAddButtonClick',
-			'onUserAndGroupGroupPropertiesEnableDisableButtonClick',
-			'onUserAndGroupGroupPropertiesGroupSelected = onUserAndGroupGroupSelected',
-			'onUserAndGroupGroupPropertiesModifyButtonClick',
-			'onUserAndGroupGroupPropertiesSaveButtonClick',
-			'onUserAndGroupGroupPropertiesTabShow'
+			'onUserAndGroupGroupTabPropertiesAbortButtonClick',
+			'onUserAndGroupGroupTabPropertiesAddButtonClick = onUserAndGroupGroupAddButtonClick',
+			'onUserAndGroupGroupTabPropertiesEnableDisableButtonClick',
+			'onUserAndGroupGroupTabPropertiesGroupSelected = onUserAndGroupGroupSelected',
+			'onUserAndGroupGroupTabPropertiesModifyButtonClick',
+			'onUserAndGroupGroupTabPropertiesSaveButtonClick',
+			'onUserAndGroupGrouptabPropertiesShow'
 		],
 
 		/**
@@ -53,17 +53,17 @@
 			this.form = this.view.form;
 		},
 
-		onUserAndGroupGroupPropertiesAbortButtonClick: function() {
+		onUserAndGroupGroupTabPropertiesAbortButtonClick: function() {
 			if (this.cmfg('userAndGroupGroupSelectedGroupIsEmpty')) {
 				this.form.reset();
 				this.form.setDisabledModify(true, true, true);
 			} else {
-				this.onUserAndGroupGroupPropertiesTabShow();
+				this.cmfg('onUserAndGroupGrouptabPropertiesShow');
 			}
 		},
 
-		onUserAndGroupGroupPropertiesAddButtonClick: function() {
-			this.cmfg('userAndGroupGroupSelectedGroupSet'); // Reset selected group
+		onUserAndGroupGroupTabPropertiesAddButtonClick: function() {
+			this.cmfg('userAndGroupGroupSelectedGroupReset');
 			this.cmfg('onUserAndGroupGroupSetActiveTab');
 
 			this.form.reset();
@@ -71,7 +71,7 @@
 			this.form.loadRecord(Ext.create('CMDBuild.model.userAndGroup.group.Group'));
 		},
 
-		onUserAndGroupGroupPropertiesEnableDisableButtonClick: function() {
+		onUserAndGroupGroupTabPropertiesEnableDisableButtonClick: function() {
 			var params = {};
 			params[CMDBuild.core.constants.Proxy.GROUP_ID] = this.cmfg('userAndGroupGroupSelectedGroupGet', CMDBuild.core.constants.Proxy.ID);
 			params[CMDBuild.core.constants.Proxy.IS_ACTIVE] = !this.cmfg('userAndGroupGroupSelectedGroupGet', CMDBuild.core.constants.Proxy.IS_ACTIVE);
@@ -86,18 +86,18 @@
 		/**
 		 * Enable/Disable tab evaluating selected group
 		 */
-		onUserAndGroupGroupPropertiesGroupSelected: function() {
+		onUserAndGroupGroupTabPropertiesGroupSelected: function() {
 			this.view.setDisabled(this.cmfg('userAndGroupGroupSelectedGroupIsEmpty'));
 		},
 
-		onUserAndGroupGroupPropertiesModifyButtonClick: function() {
+		onUserAndGroupGroupTabPropertiesModifyButtonClick: function() {
 			this.form.setDisabledModify(false);
 		},
 
 		/**
-		 * TODO: waiting for a refactor (new CRUD standards)
+		 * TODO: waiting for a refactor (CRUD)
 		 */
-		onUserAndGroupGroupPropertiesSaveButtonClick: function() {
+		onUserAndGroupGroupTabPropertiesSaveButtonClick: function() {
 			if (this.validate(this.form)) { // Validate before save
 				var params = this.form.getData(true);
 
@@ -122,19 +122,19 @@
 		/**
 		 * TODO: waiting for refactor (crud)
 		 */
-		onUserAndGroupGroupPropertiesTabShow: function() {
+		onUserAndGroupGrouptabPropertiesShow: function() {
 			if (!this.cmfg('userAndGroupGroupSelectedGroupIsEmpty'))
 				CMDBuild.core.proxy.userAndGroup.group.Group.read({
 					scope: this,
-					success: function(result, options, decodedResult) {
-						decodedResult = decodedResult[CMDBuild.core.constants.Proxy.GROUPS];
+					success: function(response, options, decodedResponse) {
+						decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.GROUPS];
 
-						var selectedGroupModel = Ext.Array.findBy(decodedResult, function(groupObject, i) {
+						var selectedGroupModel = Ext.Array.findBy(decodedResponse, function(groupObject, i) {
 							return this.cmfg('userAndGroupGroupSelectedGroupGet', CMDBuild.core.constants.Proxy.ID) == groupObject[CMDBuild.core.constants.Proxy.ID];
 						}, this);
 
 						if (!Ext.isEmpty(selectedGroupModel)) {
-							this.cmfg('userAndGroupGroupSelectedGroupSet', selectedGroupModel); // Update selectedGroup data (to delete on refactor)
+							this.cmfg('userAndGroupGroupSelectedGroupSet', { value: selectedGroupModel }); // Update selectedGroup data (to delete on refactor)
 
 							var params = {};
 							params[CMDBuild.core.constants.Proxy.ACTIVE] = false;
@@ -154,13 +154,15 @@
 		},
 
 		/**
-		 * @param {Object} result
+		 * @param {Object} response
 		 * @param {Object} options
-		 * @param {Object} decodedResult
+		 * @param {Object} decodedResponse
+		 *
+		 * @private
 		 */
-		success: function(result, options, decodedResult) {
+		success: function(response, options, decodedResponse) {
 			_CMMainViewportController.findAccordionByCMName(CMDBuild.core.constants.ModuleIdentifiers.getUserAndGroup()).updateStore(
-				decodedResult[CMDBuild.core.constants.Proxy.GROUP][CMDBuild.core.constants.Proxy.ID]
+				decodedResponse[CMDBuild.core.constants.Proxy.GROUP][CMDBuild.core.constants.Proxy.ID]
 			);
 
 			this.form.setDisabledModify(true);
