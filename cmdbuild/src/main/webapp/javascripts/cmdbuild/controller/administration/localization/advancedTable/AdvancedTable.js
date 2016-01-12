@@ -131,7 +131,7 @@
 				{
 					xtype: 'treecolumn',
 					dataIndex: CMDBuild.core.constants.Proxy.TEXT,
-					text: '@@ Translation object',
+					text: CMDBuild.Translation.translationObject,
 					width: 300,
 					// locked: true, // There is a performance issue in ExtJs 4.2.0 without locked columns all is fine
 					sortable: false,
@@ -139,7 +139,7 @@
 				},
 				{
 					dataIndex: CMDBuild.core.constants.Proxy.DEFAULT,
-					text: '@@ Default translation',
+					text: CMDBuild.Translation.defaultTranslation,
 					width: 300,
 					sortable: false,
 					draggable: false

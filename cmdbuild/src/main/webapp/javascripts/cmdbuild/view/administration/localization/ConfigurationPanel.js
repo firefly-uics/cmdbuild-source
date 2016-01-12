@@ -11,7 +11,7 @@
 		delegate: undefined,
 
 		/**
-		 * @property {CMDBuild.view.common.field.LanguageCombo}
+		 * @property {CMDBuild.view.common.field.comboBox.Language}
 		 */
 		defaultLanguageCombobox: undefined,
 
@@ -21,21 +21,11 @@
 		enabledLanguagesGrid: undefined,
 
 		/**
-		 * @property {CMDBuild.view.administration.localization.common.ExportPanel}
-		 */
-		exportPanel: undefined,
-
-		/**
-		 * @property {CMDBuild.view.administration.localization.common.ImportPanel}
-		 */
-		importPanel: undefined,
-
-		/**
 		 * @property {Ext.form.field.Checkbox}
 		 */
 		languagePromptCheckbox: undefined,
 
-		bodyCls: 'cmgraypanel-nopadding',
+		bodyCls: 'cmgraypanel',
 		border: false,
 		frame: false,
 		overflowY: 'auto',
@@ -79,7 +69,7 @@
 				],
 				items: [
 					Ext.create('Ext.form.FieldSet', {
-						title: '@@ Language configuration',
+						title: CMDBuild.Translation.languageConfiguration,
 						overflowY: 'auto',
 
 						layout: {
@@ -92,9 +82,9 @@
 						},
 
 						items: [
-							this.defaultLanguageCombobox = Ext.create('CMDBuild.view.common.field.LanguageCombo', {
+							this.defaultLanguageCombobox = Ext.create('CMDBuild.view.common.field.comboBox.Language', {
 								name: CMDBuild.core.constants.Proxy.DEFAULT_LANGUAGE,
-								fieldLabel: '@@ Default language',
+								fieldLabel: CMDBuild.Translation.defaultLanguage,
 								labelWidth: CMDBuild.LABEL_WIDTH,
 								enableChangeLanguage: false,
 
@@ -110,7 +100,7 @@
 							}),
 							this.languagePromptCheckbox = Ext.create('Ext.form.field.Checkbox', {
 								name: CMDBuild.core.constants.Proxy.LANGUAGE_PROMPT,
-								fieldLabel: '@@ Show language choice',
+								fieldLabel: CMDBuild.Translation.showLanguageChoice,
 								labelWidth: CMDBuild.LABEL_WIDTH,
 								inputValue: true,
 								uncheckedValue: false
@@ -118,40 +108,11 @@
 						]
 					}),
 					Ext.create('Ext.form.FieldSet', {
-						title: '@@ Enabled languages',
+						title: CMDBuild.Translation.enabledLanguages,
 						overflowY: 'auto',
 
 						items: [
 							this.enabledLanguagesGrid = Ext.create('CMDBuild.view.administration.localization.common.LanguagesGrid')
-						]
-					}),
-					Ext.create('Ext.panel.Panel', {
-						bodyCls: 'cmgraypanel-nopadding',
-						overflowY: 'auto',
-						frame: false,
-						border: false,
-						layout: 'hbox',
-
-						items: [
-							Ext.create('Ext.form.FieldSet', {
-								title: '@@ Import',
-								flex: 1,
-								overflowY: 'auto',
-
-								items: [
-									this.importPanel = Ext.create('CMDBuild.view.administration.localization.common.ImportPanel', { delegate: this.delegate })
-								]
-							}),
-							{ xtype: 'splitter' },
-							Ext.create('Ext.form.FieldSet', {
-								title: '@@ Export',
-								flex: 1,
-								overflowY: 'auto',
-
-								items: [
-									this.exportPanel = Ext.create('CMDBuild.view.administration.localization.common.ExportPanel', { delegate: this.delegate })
-								]
-							})
 						]
 					})
 				]

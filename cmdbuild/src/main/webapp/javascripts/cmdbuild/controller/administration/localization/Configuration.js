@@ -22,22 +22,7 @@
 		cmfgCatchedFunctions: [
 			'onLocalizationConfigurationAbortButtonClick',
 			'onLocalizationConfigurationDefaultLanguageChange',
-			'onLocalizationConfigurationExportButtonClick',
-			'onLocalizationConfigurationExportSectionChange',
-			'onLocalizationConfigurationImportButtonClick',
 			'onLocalizationConfigurationSaveButtonClick'
-		],
-
-		/**
-		 * Sections where activeOnly is managed on server side
-		 *
-		 * @cfg {Array}
-		 */
-		activeOnlySections: [
-			CMDBuild.core.constants.Proxy.CLASS,
-			CMDBuild.core.constants.Proxy.DOMAIN,
-			CMDBuild.core.constants.Proxy.LOOKUP,
-			CMDBuild.core.constants.Proxy.PROCESS
 		],
 
 		/**
@@ -110,70 +95,6 @@
 					}
 				}, this);
 			}
-		},
-
-		onLocalizationConfigurationExportButtonClick: function() {
-			var formValues = this.view.exportPanel.getForm().getValues();
-			var params = {};
-			params[CMDBuild.core.constants.Proxy.TYPE] = formValues[CMDBuild.core.constants.Proxy.TYPE];
-			params[CMDBuild.core.constants.Proxy.SEPARATOR] = formValues[CMDBuild.core.constants.Proxy.SEPARATOR];
-			params[CMDBuild.core.constants.Proxy.ACTIVE] = formValues[CMDBuild.core.constants.Proxy.ACTIVE_ONLY];
-			params[CMDBuild.core.constants.Proxy.FORCE_DOWNLOAD_PARAM_KEY] = true;
-
-			CMDBuild.core.proxy.localization.Export.exports({
-				form: this.view.exportPanel.getForm(),
-				params: params,
-				scope: this,
-				success: function(form, action) { // TODO: probably not these parameters
-					CMDBuild.core.Message.success();
-				},
-				failure: function(form, action) { // TODO: probably not these parameters
-					CMDBuild.core.Message.error(
-						CMDBuild.Translation.common.failure,
-						CMDBuild.Translation.errors.csvUploadOrDecodeFailure,
-						false
-					);
-				}
-			});
-		},
-
-		/**
-		 * ActiveOnly parameter is managed on server side only for class, domain, lookup and process
-		 *
-		 * @param {String} selection
-		 */
-		onLocalizationConfigurationExportSectionChange: function(selection) {
-			this.view.exportPanel.activeOnlyCheckbox.setValue();
-			this.view.exportPanel.activeOnlyCheckbox.setDisabled(!Ext.Array.contains(this.activeOnlySections, selection));
-		},
-
-		onLocalizationConfigurationImportButtonClick: function() {
-			if (this.validate(this.view.importPanel))
-				CMDBuild.core.proxy.localization.Import.imports({
-					form: this.view.importPanel.getForm(),
-					scope: this,
-					success: function(form, action) { // TODO: probably not these parameters
-						var importFailures = action.result.response.failures;
-
-						if (Ext.isEmpty(importFailures)) {
-							CMDBuild.core.Message.success();
-						} else {
-							// TODO: import error visualization/download
-							CMDBuild.core.Message.error(
-								CMDBuild.Translation.common.failure,
-								importFailures.toString(),
-								true
-							);
-						}
-					},
-					failure: function(form, action) { // TODO: probably not these parameters
-						CMDBuild.core.Message.error(
-							CMDBuild.Translation.common.failure,
-							CMDBuild.Translation.errors.csvUploadOrDecodeFailure,
-							false
-						);
-					}
-				});
 		},
 
 		/**

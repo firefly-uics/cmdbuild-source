@@ -39,7 +39,7 @@
 
 			this.view = Ext.create('CMDBuild.view.administration.localization.advancedTable.SectionPanel', {
 				delegate: this,
-				title: '@@ Domains'
+				title: CMDBuild.Translation.domains
 			});
 
 			// Shorthand

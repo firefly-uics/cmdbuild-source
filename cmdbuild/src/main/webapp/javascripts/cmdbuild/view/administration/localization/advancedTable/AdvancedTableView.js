@@ -10,7 +10,7 @@
 
 		activeTab: 0,
 		bodyCls: 'cmgraypanel-nopadding',
-		border: true,
+		border: false,
 		frame: false
 	});
 

@@ -1,6 +1,6 @@
 (function() {
 
-	Ext.define('CMDBuild.view.administration.localization.common.ExportPanel', {
+	Ext.define('CMDBuild.view.administration.localization.importExport.ExportForm', {
 		extend: 'Ext.form.Panel',
 
 		requires: [
@@ -10,19 +10,17 @@
 			'CMDBuild.core.proxy.localization.Localization'
 		],
 
-		/**
-		 * @cfg {CMDBuild.controller.administration.localization.Configuration}
-		 */
-		delegate: undefined,
+		mixins: ['CMDBuild.view.common.PanelFunctions'],
 
 		/**
-		 * @property {Ext.form.field.Checkbox}
+		 * @cfg {CMDBuild.controller.administration.localization.ImportExport}
 		 */
-		activeOnlyCheckbox: undefined,
+		delegate: undefined,
 
 		bodyCls: 'cmgraypanel',
 		border: false,
 		frame: false,
+		title: CMDBuild.Translation.exportLabel,
 
 		layout: {
 			type: 'vbox',
@@ -48,7 +46,7 @@
 								scope: this,
 
 								handler: function(button, e) {
-									this.delegate.cmfg('onLocalizationConfigurationExportButtonClick');
+									this.delegate.cmfg('onLocalizationImportExportExportButtonClick');
 								}
 							})
 						]
@@ -57,7 +55,7 @@
 				items: [
 					Ext.create('Ext.form.field.ComboBox', {
 						name: CMDBuild.core.constants.Proxy.TYPE,
-						fieldLabel: '@@ Section',
+						fieldLabel: CMDBuild.Translation.section,
 						labelWidth: CMDBuild.LABEL_WIDTH,
 						maxWidth: CMDBuild.MEDIUM_FIELD_WIDTH,
 						displayField: CMDBuild.core.constants.Proxy.DESCRIPTION,
@@ -73,12 +71,28 @@
 						listeners: {
 							scope: this,
 							change: function(combo, newValue, oldValue, eOpts) {
-								this.delegate.cmfg('onLocalizationConfigurationExportSectionChange', newValue);
+								this.delegate.cmfg('onLocalizationImportExportExportSectionChange', newValue);
 							}
 						}
 					}),
+					Ext.create('CMDBuild.view.common.field.multiselect.Multiselect', {
+						name: CMDBuild.core.constants.Proxy.LANGUAGES, // TODO: synch with server side parameter name
+						fieldLabel: CMDBuild.Translation.languages,
+						labelWidth: CMDBuild.LABEL_WIDTH,
+						valueField: CMDBuild.core.constants.Proxy.TAG,
+						displayField: CMDBuild.core.constants.Proxy.DESCRIPTION,
+						maxHeight: 300,
+						maxWidth: CMDBuild.MEDIUM_FIELD_WIDTH,
+						considerAsFieldToDisable: true,
+						defaultSelection: 'all',
+						flex: 1, // Stretch vertically
+						allowBlank: false,
+
+						store: CMDBuild.core.proxy.localization.Localization.getStoreLanguages(),
+						queryMode: 'local'
+					}),
 					Ext.create('Ext.form.field.ComboBox', {
-						name: '@@ exportFormat',
+						name: CMDBuild.core.constants.Proxy.FORMAT,
 						fieldLabel: CMDBuild.Translation.format,
 						labelWidth: CMDBuild.LABEL_WIDTH,
 						maxWidth: CMDBuild.MEDIUM_FIELD_WIDTH,
@@ -110,7 +124,7 @@
 					}),
 					this.activeOnlyCheckbox = Ext.create('Ext.form.field.Checkbox', {
 						name: CMDBuild.core.constants.Proxy.ACTIVE_ONLY,
-						fieldLabel: '@@ Only active',
+						fieldLabel: CMDBuild.Translation.activeOnly,
 						labelWidth: CMDBuild.LABEL_WIDTH,
 						inputValue: true,
 						uncheckedValue: false

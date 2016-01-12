@@ -19,7 +19,7 @@
 		 */
 		cmName: undefined,
 
-		title: CMDBuild.Translation.classList,
+		title: CMDBuild.Translation.classes,
 
 		/**
 		 * @param {Number} nodeIdToSelect

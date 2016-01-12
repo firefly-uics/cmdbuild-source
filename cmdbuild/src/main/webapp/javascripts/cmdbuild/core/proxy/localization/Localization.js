@@ -55,15 +55,15 @@
 			return Ext.create('Ext.data.ArrayStore', {
 				fields: [CMDBuild.core.constants.Proxy.DESCRIPTION, CMDBuild.core.constants.Proxy.NAME],
 				data: [
-					['@@ All', CMDBuild.core.constants.Proxy.ALL],
-					['@@ Classes', CMDBuild.core.constants.Proxy.CLASS],
-					['@@ Processes', CMDBuild.core.constants.Proxy.PROCESS],
-					['@@ Domains', CMDBuild.core.constants.Proxy.DOMAIN],
-					['@@ Views', CMDBuild.core.constants.Proxy.VIEW],
-					['@@ Search filters', CMDBuild.core.constants.Proxy.FILTER],
-					['@@ Lookup types', CMDBuild.core.constants.Proxy.LOOKUP],
-					['@@ Report', CMDBuild.core.constants.Proxy.REPORT],
-					['@@ Menu', CMDBuild.core.constants.Proxy.MENU]
+					[CMDBuild.Translation.all, CMDBuild.core.constants.Proxy.ALL],
+					[CMDBuild.Translation.classes, CMDBuild.core.constants.Proxy.CLASS],
+					[CMDBuild.Translation.processes, CMDBuild.core.constants.Proxy.PROCESS],
+					[CMDBuild.Translation.domains, CMDBuild.core.constants.Proxy.DOMAIN],
+					[CMDBuild.Translation.views, CMDBuild.core.constants.Proxy.VIEW],
+					[CMDBuild.Translation.searchFilters, CMDBuild.core.constants.Proxy.FILTER],
+					[CMDBuild.Translation.lookupTypes, CMDBuild.core.constants.Proxy.LOOKUP],
+					[CMDBuild.Translation.report, CMDBuild.core.constants.Proxy.REPORT],
+					[CMDBuild.Translation.menu, CMDBuild.core.constants.Proxy.MENU]
 				]
 			});
 		},

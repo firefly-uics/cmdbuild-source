@@ -39,13 +39,17 @@
 		 *
 		 * @override
 		 */
-		onLocalizationModuleInit: function(node) {
+		onLocalizationModuleInit: function(node) { // TODO: implementare lo switch come funzione esterna per ridurre il numero di righe ecc con il return
 			if (!Ext.Object.isEmpty(node)) {
 				this.view.removeAll(true);
 
 				switch(node.get(CMDBuild.core.constants.Proxy.SECTION_HIERARCHY)[0]) {
 					case 'advancedTranslationsTable': {
 						this.sectionController = Ext.create('CMDBuild.controller.administration.localization.advancedTable.AdvancedTable', { parentDelegate: this });
+					} break;
+
+					case 'importExport': {
+						this.sectionController = Ext.create('CMDBuild.controller.administration.localization.ImportExport', { parentDelegate: this });
 					} break;
 
 					case 'configuration':

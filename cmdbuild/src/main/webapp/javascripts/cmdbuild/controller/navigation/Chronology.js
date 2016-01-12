@@ -116,7 +116,7 @@
 				if (Ext.isArray(targetArray))
 					switch (property) {
 						case 'class':
-							return targetArray.push(CMDBuild.Translation.classList);
+							return targetArray.push(CMDBuild.Translation.classes);
 
 						case 'custompage':
 							return targetArray.push(CMDBuild.Translation.customPages);

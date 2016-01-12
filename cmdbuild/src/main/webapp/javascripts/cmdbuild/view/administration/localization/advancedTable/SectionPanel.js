@@ -25,7 +25,9 @@
 		 */
 		hideActiveOnlyCheckbox: false,
 
-		bodyCls: 'cmgraypanel',
+		bodyCls: 'cmgraypanel-nopadding',
+		border: false,
+		frame: false,
 		layout: 'fit',
 
 		initComponent: function() {
@@ -54,7 +56,7 @@
 							}),
 							'->',
 							this.activeOnlyCheckbox = Ext.create('Ext.form.field.Checkbox', {
-								boxLabel: '@@ Only active',
+								boxLabel: CMDBuild.Translation.activeOnly,
 								boxLabelCls: 'cmtoolbaritem',
 								checked: true, // Default
 								hidden: this.hideActiveOnlyCheckbox,

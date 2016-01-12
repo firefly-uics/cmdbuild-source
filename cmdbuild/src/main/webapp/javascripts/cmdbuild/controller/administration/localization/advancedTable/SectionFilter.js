@@ -40,7 +40,7 @@
 			this.view = Ext.create('CMDBuild.view.administration.localization.advancedTable.SectionPanel', {
 				delegate: this,
 				hideActiveOnlyCheckbox: true,
-				title: '@@ Search filters'
+				title: CMDBuild.Translation.searchFilters
 			});
 
 			// Shorthand

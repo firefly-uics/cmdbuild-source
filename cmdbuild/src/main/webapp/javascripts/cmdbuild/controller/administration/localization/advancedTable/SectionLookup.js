@@ -39,7 +39,7 @@
 
 			this.view = Ext.create('CMDBuild.view.administration.localization.advancedTable.SectionPanel', {
 				delegate: this,
-				title: '@@ Lookup types'
+				title: CMDBuild.Translation.lookupTypes
 			});
 
 			// Shorthand
@@ -63,7 +63,7 @@
 				var entityAttributesNodeObject = { expandable: true };
 				entityAttributesNodeObject[CMDBuild.core.constants.Proxy.LEAF] = false;
 				entityAttributesNodeObject[CMDBuild.core.constants.Proxy.PARENT] = rootNode;
-				entityAttributesNodeObject[CMDBuild.core.constants.Proxy.TEXT] = '@@ Lookup';
+				entityAttributesNodeObject[CMDBuild.core.constants.Proxy.TEXT] = CMDBuild.Translation.lookup;
 
 				return rootNode.appendChild(entityAttributesNodeObject);
 			}
