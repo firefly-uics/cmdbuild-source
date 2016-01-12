@@ -96,9 +96,4 @@
 					}), this;
 		}, this);
 	};
-	// $.Cmdbuild.utilities.proxy.getGraphConfiguration(function(
-	// graphConfiguration) {
-	// console.log(graphConfiguration, "-----", configuration);
-	// alert(1);
-	// configuration.explosionLevels = graphConfiguration.baseLevel;
 })(jQuery);
