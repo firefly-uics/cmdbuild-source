@@ -14,6 +14,10 @@
 				<backend>SelectedNavigation</backend>
 				<nRows>9</nRows>
 			</params>
+			<onDblClick>
+					<command>zoomOn</command>
+					<node>$selectedForm.id</node>
+				</onDblClick>
 			<rowButton id="zoom" tooltip="Zoom sulla Card richiesta">
 				<onClick>
 					<command>zoomOn</command>

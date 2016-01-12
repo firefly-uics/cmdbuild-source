@@ -6,6 +6,7 @@
 	<div id="options">
 		<onInit>
 			<command>initOptions</command>
+			<backend>Options</backend>
 		</onInit>
 		<checkbox id="nodesTooltip" label="Tooltip for entities" text="true">
 			<onClick>
@@ -30,5 +31,13 @@
 				<type>labels</type>
 			</onChange>
 		</select>
+	</div>
+	<div class='cmdbuildFooterButtonsWrapper'>
+		<button text="Ok" id="okOptionsDialogButton">
+			<onClick>
+				<command>dialogClose</command>
+				<dialog>commandPanelDialog</dialog>
+			</onClick>
+		</button>
 	</div>
 </DATA>

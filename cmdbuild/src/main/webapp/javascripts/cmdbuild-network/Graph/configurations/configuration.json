@@ -2,10 +2,10 @@
 	"camera": {
 		"position": {"x": 0, "y": 2500, "z": 2500}
 	},
-	"explosionLevels": 2,
-	"nodesTooltip": true,
+	"explosionLevels": 7,
+	"nodesTooltip": false,
 	"edgesTooltip": true,
-	"labels": "",
+	"labels": "Selected",
 	"defaultSprite": "others/circle_blue.png",
 	"filterClassesDomains": {
 		"InternalEmployee" : [{
