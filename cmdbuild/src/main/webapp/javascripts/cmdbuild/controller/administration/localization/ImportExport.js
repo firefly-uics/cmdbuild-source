@@ -79,10 +79,10 @@
 				form: this.exportPanel.getForm(),
 				params: params,
 				scope: this,
-				success: function(form, action) { // TODO: probably not these parameters
+				success: function(response, options, decodedResponse) {
 					CMDBuild.core.Message.success();
 				},
-				failure: function(form, action) { // TODO: probably not these parameters
+				failure: function(response, options, decodedResponse) {
 					CMDBuild.core.Message.error(
 						CMDBuild.Translation.common.failure,
 						CMDBuild.Translation.errors.csvUploadOrDecodeFailure,
@@ -107,13 +107,12 @@
 				CMDBuild.core.proxy.localization.Import.imports({
 					form: this.importPanel.getForm(),
 					scope: this,
-					success: function(form, action) { // TODO: probably not these parameters
-						var importFailures = action.result.response.failures;
+					success: function(response, options, decodedResponse) {
+						var importFailures = options.result.response.failures; // TODO: verify correct implementation
 
 						if (Ext.isEmpty(importFailures)) {
 							CMDBuild.core.Message.success();
 						} else {
-							// TODO: import error visualization/download
 							CMDBuild.core.Message.error(
 								CMDBuild.Translation.common.failure,
 								importFailures.toString(),
@@ -121,7 +120,7 @@
 							);
 						}
 					},
-					failure: function(form, action) { // TODO: probably not these parameters
+					failure: function(response, options, decodedResponse) {
 						CMDBuild.core.Message.error(
 							CMDBuild.Translation.common.failure,
 							CMDBuild.Translation.errors.csvUploadOrDecodeFailure,
