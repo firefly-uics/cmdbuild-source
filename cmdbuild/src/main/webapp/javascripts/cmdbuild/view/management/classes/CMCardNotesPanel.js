@@ -54,14 +54,12 @@
 			var displayField = new Ext.form.field.Display({
 				padding: "0 0 5px 5px",
 				name : 'Notes',
-				xtype : 'displayfield',
 				anchor: '95%'
 			});
 
 			this.displayPanel = new Ext.form.Panel({
 				hideMode: "offsets",
 				autoScroll: true,
-				hideMode: "offsets",
 				frame: false,
 				bodyCls: "x-panel-body-default-framed",
 				items: [displayField],
