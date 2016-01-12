@@ -133,16 +133,18 @@
 					dataIndex: CMDBuild.core.constants.Proxy.TEXT,
 					text: CMDBuild.Translation.translationObject,
 					width: 300,
-					// locked: true, // There is a performance issue in ExtJs 4.2.0 without locked columns all is fine
+//					locked: true, // There is a performance issue in ExtJs 4.2.0 without locked columns all is fine
 					sortable: false,
-					draggable: false
+					draggable: false,
+					hideable: false
 				},
 				{
 					dataIndex: CMDBuild.core.constants.Proxy.DEFAULT,
 					text: CMDBuild.Translation.defaultTranslation,
 					width: 300,
 					sortable: false,
-					draggable: false
+					draggable: false,
+					hideable: false
 				}
 			];
 			var languagesColumnsArray = [];
