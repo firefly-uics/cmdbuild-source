@@ -83,7 +83,6 @@
 		 */
 		this.init();
 		$.Cmdbuild.standard.backend.Options.labelsVisibility = function(code) {
-			console.log("this.labelsVisibility " + code + " " + $.Cmdbuild.customvariables.options["labels"]);
 			for (var i = 0; i < labelsVisibility.length; i++) {
 				if (code == labelsVisibility[i]._id) {
 					return labelsVisibility[i].description;
@@ -98,7 +97,6 @@
 				case "explosionLevels" :
 					return "";
 				case "labels" :
-					console.log("->"+$.Cmdbuild.standard.backend.Options.labelsVisibility(code)+"|");
 					return $.Cmdbuild.standard.backend.Options.labelsVisibility(code);
 			}
 		};

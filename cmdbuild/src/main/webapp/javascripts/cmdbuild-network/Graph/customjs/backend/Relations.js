@@ -45,8 +45,6 @@
 			this.data = [];
 			this.getAllDomains(param.className, param.cardId,
 					function(response) {
-						// this.total = data.total;
-						// this.data = data.rows;
 						this.rows = [];
 						var nRows = parseInt(param.nRows);
 						var firstRow = parseInt(param.firstRow);

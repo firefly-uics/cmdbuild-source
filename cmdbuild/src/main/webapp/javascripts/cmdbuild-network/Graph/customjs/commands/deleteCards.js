@@ -12,12 +12,6 @@
 		this.saved4Undo = [];
 		this.execute = function(callback, callbackScope) {
 			var me = this;
-			//this for give control at the mask to start
-//			setTimeout(function() { me.deleteInBackground(deleteSelection, callback, callbackScope); }, 10);
-			//			$("#" + "cmdbuilForm").waitMe({
-//				effect : 'stretch',
-//				color : "#1c94c4"
-//			});
 			 me.deleteInBackground(deleteSelection, callback, callbackScope);
 		};
 		this.deleteInBackground = function(deleteSelection, callback, callbackScope) {

@@ -3,17 +3,15 @@
 	var relationsGrid = function(param) {
 		this.param = param;
 		this.grid = new $.Cmdbuild.standard.grid();
-		var working = true;
 		this.init = function(param) {
 			if ($.Cmdbuild.customvariables.commandInExecution === true) {
 				return;
 			}
 			var cardId = $.Cmdbuild.dataModel.getValue("selectedForm", "id");
-			if (cardId == oldId) {
+			if (oldId == cardId) {
 				return;
 			}
 			oldId = cardId;
-			console.log("-<-<-<-<-<-", cardId);
 			this.param = param;
 			try {
 				this.param = param;
