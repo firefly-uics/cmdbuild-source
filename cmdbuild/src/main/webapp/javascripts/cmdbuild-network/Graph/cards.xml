@@ -19,6 +19,10 @@
 					<command>selectNode</command>
 					<node>$cardsForm.id</node>
 				</onChange>
+				<onDblClick>
+					<command>zoomOn</command>
+					<node>$cardsForm.id</node>
+				</onDblClick>
 			<rowButton id="zoom" tooltip="Zoom sulla Card richiesta">
 				<onClick>
 					<command>zoomOn</command>

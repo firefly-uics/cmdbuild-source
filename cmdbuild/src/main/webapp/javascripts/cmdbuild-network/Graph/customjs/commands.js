@@ -5,20 +5,29 @@
 			console.log("Test", param, paramActualized);
 		},
 		switchOnSelected: function(param) {
-			var check = $.Cmdbuild.utilities.getHtmlFieldValue("#" + param.check);
+			var check = $.Cmdbuild.utilities.getHtmlFieldValue("#"
+					+ param.check);
 			$.Cmdbuild.standard.commands.tab({
 				form: param.form,
 				activeTab: (check) ? 1 : 0
 			});
 		},
 		initOptions: function(param) {
-			$("#nodesTooltip").prop("checked", $.Cmdbuild.custom.configuration.nodesTooltip);
+			$("#nodesTooltip").prop("checked",
+					$.Cmdbuild.custom.configuration.nodesTooltip);
 			$.Cmdbuild.customvariables.options["nodesTooltip"] = $.Cmdbuild.custom.configuration.nodesTooltip;
-			$("#edgesTooltip").prop("checked", $.Cmdbuild.custom.configuration.edgesTooltip);
+			$("#edgesTooltip").prop("checked",
+					$.Cmdbuild.custom.configuration.edgesTooltip);
 			$.Cmdbuild.customvariables.options["edgesTooltip"] = $.Cmdbuild.custom.configuration.edgesTooltip;
-			$("#explosionLevels").spinner("value", $.Cmdbuild.custom.configuration.explosionLevels);
-			$.Cmdbuild.customvariables.options["explosionLevels"] = $.Cmdbuild.custom.configuration.explosionLevels;
-			// ***TODO: labels*** 
+			$.Cmdbuild.customvariables.options["labels"] = $.Cmdbuild.custom.configuration.labels;
+			var backendFn = $.Cmdbuild.utilities.getBackend(param.backend);
+			var valLabels = backendFn.getSelectValue("labels",
+					$.Cmdbuild.customvariables.options["labels"]);
+			setTimeout(function() {
+				var selectMenu = $("#labels");
+				selectMenu.val(valLabels);
+				selectMenu.selectmenu("refresh");
+			}, 100);
 		},
 		navigateOnNode: function(param) {
 			var selected = $.Cmdbuild.customvariables.selected.getCards(0, 1);
@@ -64,11 +73,14 @@
 			var arCommands = getExplodeCommands(selected, levels);
 			var macroCommand = new $.Cmdbuild.g3d.commands.macroCommand(
 					$.Cmdbuild.customvariables.model, arCommands);
-			$.Cmdbuild.customvariables.commandsManager.execute(macroCommand,
-					{}, function() {
-						var nodes = $.Cmdbuild.customvariables.model.getNodes();
-						$.Cmdbuild.g3d.Model.removeGraphData(nodes, "exploded_children");
-					}, $.Cmdbuild.customvariables.viewer);
+			$.Cmdbuild.customvariables.commandsManager
+					.execute(macroCommand, {},
+							function() {
+								var nodes = $.Cmdbuild.customvariables.model
+										.getNodes();
+								$.Cmdbuild.g3d.Model.removeGraphData(nodes,
+										"exploded_children");
+							}, $.Cmdbuild.customvariables.viewer);
 
 		},
 		boolean: function(param) {

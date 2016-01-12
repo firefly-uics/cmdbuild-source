@@ -1,17 +1,19 @@
 (function($) {
+	var oldId = -1;
 	var relationsGrid = function(param) {
 		this.param = param;
 		this.grid = new $.Cmdbuild.standard.grid();
 		var working = true;
-		console.log("creating", param);
-
 		this.init = function(param) {
-			console.log("init", param);
 			if ($.Cmdbuild.customvariables.commandInExecution === true) {
 				return;
 			}
 			var cardId = $.Cmdbuild.dataModel.getValue("selectedForm", "id");
-			console.log("cardId ==== " + cardId);
+			if (cardId == oldId) {
+				return;
+			}
+			oldId = cardId;
+			console.log("-<-<-<-<-<-", cardId);
 			this.param = param;
 			try {
 				this.param = param;

@@ -23,7 +23,7 @@
 		var objects = [];
 		var edges = [];
 		this.init = function() {
-			$.Cmdbuild.g3d.Options.chargeConfiguration(CONFIGURATION_FILE, function(response) {
+			$.Cmdbuild.g3d.Options.loadConfiguration(CONFIGURATION_FILE, function(response) {
 				$.Cmdbuild.custom.configuration = response;
 				this.initCB();
 				animate();
@@ -36,6 +36,7 @@
 			this.model.observe(this);
 			$.Cmdbuild.customvariables.options = new $.Cmdbuild.g3d.Options();
 			$.Cmdbuild.customvariables.options.observe(this);
+			$.Cmdbuild.g3d.Options.initFields();
 			$.Cmdbuild.customvariables.viewer = this;
 			$.Cmdbuild.customvariables.model = this.model;
 			this.camera = new $.Cmdbuild.g3d.Camera(this.model);

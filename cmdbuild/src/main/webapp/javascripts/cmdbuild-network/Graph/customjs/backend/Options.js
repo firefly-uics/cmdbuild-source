@@ -7,22 +7,6 @@
 		this.type = param.type;
 		this.data = [];
 		this.metadata = {};
-		var levels = [{
-			_id: "1",
-			description: "1"
-		}, {
-			_id: "2",
-			description: "2"
-		}, {
-			_id: "3",
-			description: "3"
-		}, {
-			_id: "4",
-			description: "4"
-		}, {
-			_id: "5",
-			description: "5"
-		}];
 
 		var layouts = [{
 			_id: "Hierarchical",
@@ -68,7 +52,7 @@
 					this.data = layouts;
 					break;
 				case "explosionLevels" :
-					this.data = levels;
+					this.data = [];
 					break;
 				case "labels" :
 					this.data = labelsVisibility;
@@ -79,6 +63,7 @@
 			}, 10);
 
 		};
+		
 		this.getData = function() {
 			return this.data;
 		};
@@ -97,6 +82,27 @@
 		 * Call init function and return object
 		 */
 		this.init();
+		$.Cmdbuild.standard.backend.Options.labelsVisibility = function(code) {
+			console.log("this.labelsVisibility " + code + " " + $.Cmdbuild.customvariables.options["labels"]);
+			for (var i = 0; i < labelsVisibility.length; i++) {
+				if (code == labelsVisibility[i]._id) {
+					return labelsVisibility[i].description;
+				}
+			}
+			return "";
+		};
+		$.Cmdbuild.standard.backend.Options.getSelectValue = function(type, code) {
+			switch (type) {
+				case "projectionType" :
+				case "layoutType" :
+				case "explosionLevels" :
+					return "";
+				case "labels" :
+					console.log("->"+$.Cmdbuild.standard.backend.Options.labelsVisibility(code)+"|");
+					return $.Cmdbuild.standard.backend.Options.labelsVisibility(code);
+			}
+		};
 	};
 	$.Cmdbuild.standard.backend.Options = Options;
+
 })(jQuery);

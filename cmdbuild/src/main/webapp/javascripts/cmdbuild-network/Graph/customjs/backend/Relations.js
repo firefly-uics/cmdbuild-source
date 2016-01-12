@@ -10,6 +10,7 @@
 		 * Base functions
 		 */
 		this.model = $.Cmdbuild.customvariables.selected;
+		this.attributes = [];
 		this.data = [];
 		this.init = function() {
 			this.loadAttributes();
@@ -55,7 +56,7 @@
 						}
 						this.populateRelationAttributes(this.rows, 0,
 								function() {
-									callback.apply(callbackScope, this.rows);
+									callback.apply(callbackScope, (this.rows) ? this.rows : []);
 								}, this);
 					}, this);
 		};
