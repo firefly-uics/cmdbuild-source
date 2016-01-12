@@ -4,6 +4,7 @@ import org.cmdbuild.auth.TokenGenerator;
 import org.cmdbuild.auth.TokenManager;
 import org.cmdbuild.auth.UserStore;
 import org.cmdbuild.config.CmdbuildConfiguration;
+import org.cmdbuild.config.GraphConfiguration;
 import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.logic.auth.AuthenticationLogic;
 import org.cmdbuild.logic.auth.RestAuthenticationLogicBuilder;
@@ -51,6 +52,10 @@ public class ApplicationContextHelperV2 {
 
 	public EmailTemplateLogic emailTemplateLogic() {
 		return applicationContext.getBean(EmailTemplateLogic.class);
+	}
+
+	public GraphConfiguration graphConfiguration() {
+		return applicationContext.getBean(GraphConfiguration.class);
 	}
 
 	public LookupHelper lookupHelper() {

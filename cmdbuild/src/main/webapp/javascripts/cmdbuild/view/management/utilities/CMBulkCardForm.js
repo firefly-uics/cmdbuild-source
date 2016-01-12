@@ -21,7 +21,7 @@ Ext.define("CMDBuild.view.management.utilities.CMBulkCardFormPanel", {
 		this.removeAll();
 		_CMCache.getAttributeList(classId, Ext.bind(fillForm, this));
 	},
-	
+
 	getCheckedValues: function() {
 		var out = {};
 		this.items.each(function(item) {
@@ -44,7 +44,7 @@ Ext.define("CMDBuild.view.management.utilities.CMBulkCardFormPanel", {
 				// FIXME find the reason why
 				// HTML fields breaks the UI
 				if (Ext.getClassName(field) == "Ext.form.field.HtmlEditor"
-					|| Ext.getClassName(field) == "CMDBuild.view.common.field.CMHtmlEditorField") {
+					|| Ext.getClassName(field) == "CMDBuild.view.common.field.HtmlEditor") {
 
 					continue;
 				}

@@ -3,7 +3,7 @@
 	Ext.define('CMDBuild.view.management.dataView.sql.SqlView', {
 		extend: 'Ext.panel.Panel',
 
-		requires: ['CMDBuild.core.proxy.CMProxyConstants'],
+		requires: ['CMDBuild.core.constants.Proxy'],
 
 		/**
 		 * @cfg {CMDBuild.controller.management.dataView.Sql}
@@ -39,12 +39,11 @@
 					}),
 					this.form = Ext.create('CMDBuild.view.management.dataView.sql.FormPanel', {
 						delegate: this.delegate,
-						height: (CMDBuild.Config.cmdbuild.grid_card_ratio || 50) + '%',
+						height: CMDBuild.configuration.instance.get(CMDBuild.core.constants.Proxy.CARD_FORM_RATIO) + '%',
 						region: 'south',
 						split: true
 					})
-				],
-				tools: []
+				]
 			});
 
 			this.callParent(arguments);

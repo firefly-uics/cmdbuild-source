@@ -34,6 +34,18 @@
 					iconCls: this.iconCls + ' cm-action-col-icon-spacer'
 				});
 
+			// IsDisabled method instantiantion
+			if (!Ext.isEmpty(this.isDisabled) && Ext.isFunction(this.isDisabled))
+				Ext.apply(this, {
+					isDisabled: Ext.bind(this.isDisabled, this.scope)
+				});
+
+			this.on('show', function(button, eOpts) {
+				// IsDisabled method execute
+				if (Ext.isFunction(this.isDisabled))
+					this.setDisabled(this.isDisabled());
+			}, this);
+
 			this.callParent(arguments);
 		}
 	});

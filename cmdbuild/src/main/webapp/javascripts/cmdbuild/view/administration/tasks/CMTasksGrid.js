@@ -5,7 +5,7 @@
 	Ext.define('CMDBuild.view.administration.tasks.CMTasksGrid', {
 		extend: 'Ext.grid.Panel',
 
-		requires: ['CMDBuild.core.proxy.CMProxyConstants'],
+		requires: ['CMDBuild.core.constants.Proxy'],
 
 		/**
 		 * @cfg {Mixed} Task specific controller
@@ -13,18 +13,18 @@
 		delegate: undefined,
 
 		border: false,
-		frame: false,
 		cls: 'cmborderbottom',
+		frame: false,
 
 		initComponent: function() {
 			this.gridColumns = [
 				{
-					dataIndex: CMDBuild.core.proxy.CMProxyConstants.ID,
+					dataIndex: CMDBuild.core.constants.Proxy.ID,
 					hidden: true
 				},
 				{
+					dataIndex: CMDBuild.core.constants.Proxy.TYPE,
 					text: tr.type,
-					dataIndex: CMDBuild.core.proxy.CMProxyConstants.TYPE,
 					flex: 1,
 					scope: this,
 
@@ -34,23 +34,20 @@
 				},
 				{
 					text: CMDBuild.Translation.description_,
-					dataIndex: CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION,
+					dataIndex: CMDBuild.core.constants.Proxy.DESCRIPTION,
 					flex: 4
 				},
-				{
+				Ext.create('Ext.ux.grid.column.Active', {
+					dataIndex: CMDBuild.core.constants.Proxy.ACTIVE,
 					text: CMDBuild.Translation.active,
+					iconAltTextActive: tr.running,
+					iconAltTextNotActive: tr.stopped,
 					width: 60,
 					align: 'center',
-					dataIndex: CMDBuild.core.proxy.CMProxyConstants.ACTIVE,
 					hideable: false,
 					menuDisabled: true,
-					fixed: true,
-					scope: this,
-
-					renderer: function(value, metaData, record) {
-						return this.activeGridColumnRenderer(value, metaData, record);
-					}
-				},
+					fixed: true
+				}),
 				Ext.create('Ext.grid.column.Action', {
 					align: 'center',
 					width: 25,
@@ -60,13 +57,13 @@
 					fixed: true,
 
 					items: [
-						Ext.create('CMDBuild.core.buttons.Start', {
+						Ext.create('CMDBuild.core.buttons.iconized.Start', {
 							text: null,
 							tooltip: tr.startLabel,
 							scope: this,
 
 							isDisabled: function(grid, rowIndex, colIndex, item, record) {
-								return record.get(CMDBuild.core.proxy.CMProxyConstants.ACTIVE);
+								return record.get(CMDBuild.core.constants.Proxy.ACTIVE);
 							},
 
 							handler: function(grid, rowIndex, colIndex, node, e, record, rowNode) {
@@ -84,13 +81,13 @@
 					fixed: true,
 
 					items: [
-						Ext.create('CMDBuild.core.buttons.Stop', {
+						Ext.create('CMDBuild.core.buttons.iconized.Stop', {
 							text: null,
 							tooltip: tr.stopLabel,
 							scope: this,
 
 							isDisabled: function(grid, rowIndex, colIndex, item, record) {
-								return !record.get(CMDBuild.core.proxy.CMProxyConstants.ACTIVE);
+								return !record.get(CMDBuild.core.constants.Proxy.ACTIVE);
 							},
 
 							handler: function(grid, rowIndex, colIndex, node, e, record, rowNode) {
@@ -117,17 +114,6 @@
 			select: function(model, record, index, eOpts) {
 				this.delegate.cmOn('onRowSelected');
 			}
-		},
-
-		/**
-		 * Used to render active value to add icon in grid
-		 *
-		 * @param {Mixed} value
-		 * @param {Object} metaData
-		 * @param {Object} record
-		 */
-		activeGridColumnRenderer: function(value, metaData, record) {
-			return value ? '<img src="images/icons/accept.png" alt="' + tr.running + '" />' : '<img src="images/icons/cancel.png" alt="' + tr.stopped + '" />';
 		},
 
 		/**

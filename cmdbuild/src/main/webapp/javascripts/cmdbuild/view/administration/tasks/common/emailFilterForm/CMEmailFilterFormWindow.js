@@ -11,7 +11,7 @@
 		delegate: undefined,
 
 		/**
-		 * @property {CMDBuild.buttons.AbortButton}
+		 * @property {CMDBuild.core.buttons.text.Abort}
 		 */
 		abortButton: undefined,
 
@@ -21,7 +21,7 @@
 		addRowButton: undefined,
 
 		/**
-		 * @property {CMDBuild.buttons.ConfirmButton}
+		 * @property {CMDBuild.core.buttons.text.Confirm}
 		 */
 		confirmButton: undefined,
 
@@ -70,7 +70,7 @@
 					}
 				});
 
-				this.confirmButton = Ext.create('CMDBuild.buttons.ConfirmButton', {
+				this.confirmButton = Ext.create('CMDBuild.core.buttons.text.Confirm', {
 					text: CMDBuild.Translation.common.buttons.confirm,
 					scope: this,
 
@@ -79,7 +79,7 @@
 					}
 				});
 
-				this.abortButton = Ext.create('CMDBuild.buttons.AbortButton', {
+				this.abortButton = Ext.create('CMDBuild.core.buttons.text.Abort', {
 					text: CMDBuild.Translation.common.buttons.abort,
 					scope: this,
 
@@ -106,7 +106,7 @@
 					{
 						xtype: 'toolbar',
 						dock: 'top',
-						itemId: CMDBuild.core.proxy.CMProxyConstants.TOOLBAR_TOP,
+						itemId: CMDBuild.core.constants.Proxy.TOOLBAR_TOP,
 						items: this.addRowButton
 					}
 				],

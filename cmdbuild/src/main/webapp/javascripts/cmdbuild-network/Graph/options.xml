@@ -1,0 +1,43 @@
+<DATA>
+	<params>
+		<type>popup</type>
+		<title>Properties</title>
+	</params>
+	<div id="options">
+		<onInit>
+			<command>initOptions</command>
+			<backend>Options</backend>
+		</onInit>
+		<checkbox id="nodesTooltip" label="Tooltip for entities" text="true">
+			<onClick>
+				<command>boolean</command>
+				<type>nodesTooltip</type>
+			</onClick>
+		</checkbox>
+		<checkbox id="edgesTooltip" label="Tooltip for relations" text="true">
+			<onClick>
+				<command>boolean</command>
+				<type>edgesTooltip</type>
+			</onClick>
+		</checkbox>
+		<select label="Labels" id="labels" class="optionsSelect">
+			<params>
+				<backend>Options</backend>
+				<type>labels</type>
+				<value>No labels</value>
+			</params>
+			<onChange>
+				<command>boolean</command>
+				<type>labels</type>
+			</onChange>
+		</select>
+	</div>
+	<div class='cmdbuildFooterButtonsWrapper'>
+		<button text="Ok" id="okOptionsDialogButton">
+			<onClick>
+				<command>dialogClose</command>
+				<dialog>commandPanelDialog</dialog>
+			</onClick>
+		</button>
+	</div>
+</DATA>

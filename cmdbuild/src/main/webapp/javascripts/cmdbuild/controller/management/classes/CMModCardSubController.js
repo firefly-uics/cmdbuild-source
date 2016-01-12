@@ -47,10 +47,11 @@ Ext.define("CMDBuild.controller.management.classes.CMModCardSubController", {
 	},
 
 	onShowGraphClick: function() {
-		var classId = this.card.get("IdClass"),
-			cardId = this.card.get("Id");
-
-		CMDBuild.Management.showGraphWindow(classId, cardId);
+		Ext.create('CMDBuild.controller.management.common.graph.Graph', {
+			parentDelegate: this,
+			classId: this.card.get("IdClass"),
+			cardId: this.card.get("Id")
+		});
 	},
 
 	onCloneCard: function() {

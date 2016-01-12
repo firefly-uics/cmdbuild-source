@@ -32,6 +32,7 @@
 			ATTRIBUTES: ATTR
 		},
 
+		cls: 'cmborderbottom',
 		remoteSort: false,
 		includeInherited: true,
 		eventtype: 'class',
