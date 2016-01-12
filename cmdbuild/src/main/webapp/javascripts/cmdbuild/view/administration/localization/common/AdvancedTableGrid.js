@@ -24,7 +24,6 @@
 		border: false,
 		collapsible: true,
 		columnLines: true,
-		enableColumnHide: false,
 		frame: false,
 		header: false,
 		hideCollapseTool: true,
