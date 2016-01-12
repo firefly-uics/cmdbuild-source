@@ -70,6 +70,10 @@
 		<script type="text/javascript" src="javascripts/cmdbuild/setup.js"></script>
 		<script type="text/javascript" src="javascripts/cmdbuild/setup/CMSetupController.js"></script>
 
+		<!-- 3. Configuration script -->
+		<script type="text/javascript" src="javascripts/cmdbuild/core/buttons/Base.js"></script>
+		<script type="text/javascript" src="javascripts/cmdbuild/core/buttons/Buttons.js"></script>
+
 		<title>CMDBuild - Configuration</title>
 	</head>
 	<body>
