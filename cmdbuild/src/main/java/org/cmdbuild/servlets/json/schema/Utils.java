@@ -1,11 +1,13 @@
 package org.cmdbuild.servlets.json.schema;
 
-import static org.apache.commons.lang3.ObjectUtils.*;
+import static org.apache.commons.lang3.ObjectUtils.defaultIfNull;
 
 import java.util.List;
 import java.util.Map;
 
 import org.cmdbuild.logger.Log;
+import org.codehaus.jackson.map.ObjectMapper;
+import org.codehaus.jackson.type.TypeReference;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -20,6 +22,8 @@ public class Utils {
 
 	private static final Logger logger = Log.JSONRPC;
 	private static final Marker marker = MarkerFactory.getMarker(Utils.class.getName());
+
+	private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
 
 	private Utils() {
 		// prevents instantiation
@@ -45,7 +49,7 @@ public class Utils {
 		AS_STRING {
 
 			@Override
-			public Object serialize(JSONArray json, int index) throws JSONException {
+			public Object serialize(final JSONArray json, final int index) throws JSONException {
 				return json.getString(index);
 			}
 
@@ -53,7 +57,7 @@ public class Utils {
 		AS_LONG {
 
 			@Override
-			public Object serialize(JSONArray json, int index) throws JSONException {
+			public Object serialize(final JSONArray json, final int index) throws JSONException {
 				return json.getLong(index);
 			}
 
@@ -61,7 +65,7 @@ public class Utils {
 		DEFAULT {
 
 			@Override
-			public Object serialize(JSONArray json, int index) throws JSONException {
+			public Object serialize(final JSONArray json, final int index) throws JSONException {
 				return AS_STRING.serialize(json, index);
 			}
 
@@ -70,6 +74,16 @@ public class Utils {
 
 		abstract Object serialize(JSONArray json, int index) throws JSONException;
 
+	}
+
+	public static <T> Iterable<T> toIterable(final String json) {
+		try {
+			return OBJECT_MAPPER.readValue(json, new TypeReference<List<T>>() {
+			});
+		} catch (final Exception e) {
+			logger.warn(marker, "error parsing json data");
+			throw new RuntimeException(e);
+		}
 	}
 
 	public static Iterable<String> toIterable(final JSONArray json) {

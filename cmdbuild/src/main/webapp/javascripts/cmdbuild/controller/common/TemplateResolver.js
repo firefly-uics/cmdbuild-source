@@ -59,7 +59,7 @@ CMDBuild.Management.TemplateResolver.prototype = {
 			} else {
 				if (splitLocalName.detail) {
 					CMDBuild.log.warn("Detail can only be specified for lookup and reference types");
-					CMDBuild.Msg.warn(CMDBuild.Translation.errors.warning_message,
+					CMDBuild.core.Message.warning(CMDBuild.Translation.errors.warning_message,
 							CMDBuild.Translation.errors.template_error + ' ' + splitLocalName.name + ' ' + splitLocalName.detail);
 				}
 
@@ -409,7 +409,7 @@ CMDBuild.Management.TemplateResolver.prototype = {
 	executeCQLTemplate: function(templateName, cqlQuery, ctx, callback) {
 		var queryParams = this.buildCQLQueryParameters(cqlQuery, ctx);
 		if (queryParams) {
-			CMDBuild.Ajax.request({
+			CMDBuild.core.interfaces.Ajax.request({
 				url: "services/json/management/modcard/getcardlist",
 				params: queryParams,
 				success: function(response, options, decoded) {
@@ -587,7 +587,7 @@ CMDBuild.Management.TemplateResolver.prototype = {
 				// as changed, and call the callback at blur
 				field.mon(field, "change", function(f) {
 					if (Ext.getClassName(f) == "Ext.ux.form.XCheckbox" ||
-							Ext.getClassName(f) == "CMDBuild.view.common.field.CMHtmlEditorField"
+							Ext.getClassName(f) == "CMDBuild.view.common.field.HtmlEditor"
 						) {
 
 						callback.call(scope);

@@ -5,7 +5,8 @@ import java.util.Map;
 import org.cmdbuild.logic.Logic;
 
 public interface TranslationLogic extends Logic {
-
+	
+	@Deprecated
 	void create(TranslationObject translationObject);
 
 	Map<String, String> readAll(TranslationObject translationObject);

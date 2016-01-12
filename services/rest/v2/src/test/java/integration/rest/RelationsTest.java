@@ -20,6 +20,7 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasEntry;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyBoolean;
 import static org.mockito.Matchers.anyInt;
 import static org.mockito.Matchers.anyLong;
 import static org.mockito.Matchers.anyString;
@@ -175,7 +176,7 @@ public class RelationsTest {
 						.build()) //
 				.build();
 		doReturn(sentResponse) //
-				.when(service).read(anyString(), anyString(), anyInt(), anyInt());
+				.when(service).read(anyString(), anyString(), anyInt(), anyInt(), anyBoolean());
 
 		// when
 		final HttpGet get = new HttpGet(new URIBuilder(server.resource("domains/dummy/relations/")) //
@@ -190,7 +191,7 @@ public class RelationsTest {
 		assertThat(statusCodeOf(response), equalTo(200));
 		assertThat(json.from(contentOf(response)), equalTo(json.from(expectedResponse)));
 
-		verify(service).read(eq("dummy"), eq("filter"), eq(56), eq(78));
+		verify(service).read(eq("dummy"), eq("filter"), eq(56), eq(78), eq(false));
 	}
 
 	@Test

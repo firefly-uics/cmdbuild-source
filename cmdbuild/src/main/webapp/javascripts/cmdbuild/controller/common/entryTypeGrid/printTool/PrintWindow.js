@@ -1,11 +1,13 @@
 (function() {
 
 	Ext.define('CMDBuild.controller.common.entryTypeGrid.printTool.PrintWindow', {
-		extend: 'CMDBuild.controller.common.AbstractController',
+		extend: 'CMDBuild.controller.common.abstract.Base',
 
 		requires: [
-			'CMDBuild.core.proxy.CMProxyConstants',
-			'CMDBuild.core.proxy.CMProxyUrlIndex',
+			'CMDBuild.core.constants.Proxy',
+			'CMDBuild.core.interfaces.FormSubmit',
+			'CMDBuild.core.Message',
+			'CMDBuild.core.proxy.Index',
 			'CMDBuild.core.proxy.report.Print'
 		],
 
@@ -26,14 +28,14 @@
 		 * @cfg {Array}
 		 */
 		browserManagedFormats: [
-			CMDBuild.core.proxy.CMProxyConstants.PDF,
-			CMDBuild.core.proxy.CMProxyConstants.CSV
+			CMDBuild.core.constants.Proxy.PDF,
+			CMDBuild.core.constants.Proxy.CSV
 		],
 
 		/**
 		 * @cfg {String}
 		 */
-		format: CMDBuild.core.proxy.CMProxyConstants.PDF,
+		format: CMDBuild.core.constants.Proxy.PDF,
 
 		/**
 		 * @cfg {Boolean}
@@ -60,6 +62,8 @@
 		/**
 		 * @param {Object} configurationObject
 		 * @param {Mixed} configurationObject.parentDelegate
+		 *
+		 * @override
 		 */
 		constructor: function(configurationObject) {
 			this.callParent(arguments);
@@ -76,6 +80,9 @@
 				}
 		},
 
+		/**
+		 * @private
+		 */
 		createDocument: function() {
 			var proxyCreateFunction = null;
 
@@ -109,6 +116,13 @@
 				proxyCreateFunction({
 					params: this.parameters,
 					scope: this,
+					failure: function(response, options, decodedResponse) {
+						CMDBuild.core.Message.error(
+							CMDBuild.Translation.error,
+							CMDBuild.Translation.errors.createReportFilure,
+							false
+						);
+					},
 					success: function(response, options, decodedResponse) {
 						this.showReport();
 					}
@@ -130,25 +144,19 @@
 
 		/**
 		 * Get created report from server and display it in iframe
+		 *
+		 * @private
 		 */
 		showReport: function() {
 			var params = {};
-			params[CMDBuild.core.proxy.CMProxyConstants.FORCE_DOWNLOAD_PARAM_KEY] = true;
+			params[CMDBuild.core.constants.Proxy.FORCE_DOWNLOAD_PARAM_KEY] = true;
 
 			if (this.forceDownload) { // Force download mode
-				var form = Ext.create('Ext.form.Panel', {
-					standardSubmit: true,
-					url: CMDBuild.core.proxy.CMProxyUrlIndex.reports.printReportFactory
+				CMDBuild.core.interfaces.FormSubmit.submit({
+					buildRuntimeForm: true,
+					params: params,
+					url: CMDBuild.core.proxy.Index.report.printReportFactory
 				});
-
-				form.submit({
-					target: '_blank',
-					params: params
-				});
-
-				Ext.defer(function() { // Form cleanup
-					form.close();
-				}, 100);
 			} else { // Add to view display mode
 				this.view.removeAll();
 
@@ -157,7 +165,7 @@
 
 					autoEl: {
 						tag: 'iframe',
-						src: CMDBuild.core.proxy.CMProxyUrlIndex.reports.printReportFactory
+						src: CMDBuild.core.proxy.Index.report.printReportFactory
 					}
 				});
 			}

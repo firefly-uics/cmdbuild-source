@@ -23,6 +23,7 @@ import org.cmdbuild.service.rest.v2.DomainAttributes;
 import org.cmdbuild.service.rest.v2.Domains;
 import org.cmdbuild.service.rest.v2.EmailTemplates;
 import org.cmdbuild.service.rest.v2.Functions;
+import org.cmdbuild.service.rest.v2.GraphConfiguration;
 import org.cmdbuild.service.rest.v2.Impersonate;
 import org.cmdbuild.service.rest.v2.LookupTypeValues;
 import org.cmdbuild.service.rest.v2.LookupTypes;
@@ -53,6 +54,7 @@ import org.cmdbuild.service.rest.v2.cxf.CxfDomainAttributes;
 import org.cmdbuild.service.rest.v2.cxf.CxfDomains;
 import org.cmdbuild.service.rest.v2.cxf.CxfEmailTemplates;
 import org.cmdbuild.service.rest.v2.cxf.CxfFunctions;
+import org.cmdbuild.service.rest.v2.cxf.CxfGraphConfiguration;
 import org.cmdbuild.service.rest.v2.cxf.CxfImpersonate;
 import org.cmdbuild.service.rest.v2.cxf.CxfLookupTypeValues;
 import org.cmdbuild.service.rest.v2.cxf.CxfLookupTypes;
@@ -412,6 +414,12 @@ public class ServicesV2 implements LoggingSupport {
 	@Bean
 	public HeaderResponseHandler v2_headerResponseHandler() {
 		return new HeaderResponseHandler();
+	}
+
+	@Bean
+	public GraphConfiguration v2_graphConfiguration() {
+		final CxfGraphConfiguration service = new CxfGraphConfiguration(helper.graphConfiguration());
+		return proxy(GraphConfiguration.class, service);
 	}
 
 }

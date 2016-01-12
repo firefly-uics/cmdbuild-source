@@ -7,6 +7,7 @@ import java.util.Map;
 
 import org.cmdbuild.logic.translation.TranslationObject;
 import org.cmdbuild.logic.translation.converter.AttributeConverter;
+import org.cmdbuild.logic.translation.converter.Converter;
 import org.cmdbuild.logic.translation.object.DomainAttributeDescription;
 import org.junit.Test;
 
@@ -15,7 +16,7 @@ import com.google.common.collect.ImmutableMap;
 public class DomainAttributeDescriptionObjectCreationTest {
 
 	private static final String entryType = "domain";
-	private static final String floorname = "BuildingFloor";
+	private static final String domainname = "BuildingFloor";
 	private static final String attributename = "Name";
 	private static final String field = "Description";
 	private static final String lang = "it";
@@ -25,17 +26,19 @@ public class DomainAttributeDescriptionObjectCreationTest {
 	@Test
 	public void forDescriptionFieldReturnsValidObject() {
 		// given
-		final AttributeConverter converter = AttributeConverter //
+		final Converter converter = AttributeConverter //
 				.of(entryType, field)//
+				.withOwner(domainname) //
+				.withIdentifier(attributename) //
 				.withTranslations(map);
 
 		// when
-		final TranslationObject translationObject = converter.create(floorname, attributename);
+		final TranslationObject translationObject = converter.create();
 
 		// then
 		assertTrue(converter.isValid());
 		assertNotNull(translationObject);
-		assertTrue(DomainAttributeDescription.class.cast(translationObject).getDomainName().equals(floorname));
+		assertTrue(DomainAttributeDescription.class.cast(translationObject).getDomainName().equals(domainname));
 		assertTrue(DomainAttributeDescription.class.cast(translationObject).getName().equals(attributename));
 		assertTrue(translationObject.getTranslations().get(lang).equals(translatedAttributename));
 	}
@@ -43,17 +46,19 @@ public class DomainAttributeDescriptionObjectCreationTest {
 	@Test
 	public void converterIsCaseInsensitiveForTheField() {
 		// given
-		final AttributeConverter converter = AttributeConverter//
+		final Converter converter = AttributeConverter//
 				.of(entryType, "dEscRiptION") //
 				.withTranslations(map);
 
 		// when
-		final TranslationObject translationObject = converter.create(floorname, attributename);
+		final TranslationObject translationObject = converter.withOwner(domainname) //
+				.withIdentifier(attributename) //
+				.create();
 
 		// then
 		assertTrue(converter.isValid());
 		assertNotNull(translationObject);
-		assertTrue(DomainAttributeDescription.class.cast(translationObject).getDomainName().equals(floorname));
+		assertTrue(DomainAttributeDescription.class.cast(translationObject).getDomainName().equals(domainname));
 		assertTrue(DomainAttributeDescription.class.cast(translationObject).getName().equals(attributename));
 		assertTrue(translationObject.getTranslations().get(lang).equals(translatedAttributename));
 	}
@@ -81,7 +86,7 @@ public class DomainAttributeDescriptionObjectCreationTest {
 
 		// when
 		try {
-			converter.create(floorname, attributename);
+			converter.create();
 		} catch (final Exception e) {
 			thrown = e;
 		}
@@ -98,12 +103,14 @@ public class DomainAttributeDescriptionObjectCreationTest {
 				.of(entryType, field);
 
 		// when
-		final TranslationObject translationObject = converter.create(floorname, attributename);
+		final TranslationObject translationObject = converter.withOwner(domainname) //
+				.withIdentifier(attributename) //
+				.create();
 
 		// then
 		assertTrue(converter.isValid());
 		assertNotNull(translationObject);
-		assertTrue(DomainAttributeDescription.class.cast(translationObject).getDomainName().equals(floorname));
+		assertTrue(DomainAttributeDescription.class.cast(translationObject).getDomainName().equals(domainname));
 	}
 
 }

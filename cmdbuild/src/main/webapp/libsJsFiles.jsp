@@ -1,8 +1,9 @@
 <script type="text/javascript" src="javascripts/ext-<%= extVersion %>/ext-all-debug.js"></script>
 <script type="text/javascript" src="javascripts/ext-<%= extVersion %>/locale/ext-lang-<%= lang %>.js"></script>
 
-<script type="text/javascript" src="javascripts/log/log4javascript.js"></script>
 <script type="text/javascript" src="javascripts/flash/swfobject.js"></script>
+
+<script type="text/javascript" src="javascripts/log/log4javascript.js"></script>
 
 <script type="text/javascript" src="javascripts/ext-<%= extVersion %>-ux/grid/CheckColumn.js"></script>
 <script type="text/javascript" src="javascripts/ext-<%= extVersion %>-ux/event/Broadcast.js"></script>

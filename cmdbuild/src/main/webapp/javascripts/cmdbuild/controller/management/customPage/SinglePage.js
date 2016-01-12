@@ -1,11 +1,23 @@
 (function() {
 
 	Ext.define('CMDBuild.controller.management.customPage.SinglePage', {
-		extend: 'CMDBuild.controller.common.AbstractBasePanelController',
+		extend: 'CMDBuild.controller.common.abstract.BasePanel',
+
+		/**
+		 * @cfg {Object}
+		 */
+		parentDelegate: undefined,
 
 		requires: [
-			'CMDBuild.core.configurations.CustomPages',
-			'CMDBuild.core.proxy.CMProxyConstants'
+			'CMDBuild.core.constants.Proxy',
+			'CMDBuild.core.configurations.CustomPages'
+		],
+
+		/**
+		 * @cfg {Array}
+		 */
+		cmfgCatchedFunctions: [
+			'onCustomPageModuleInit = onModuleInit'
 		],
 
 		/**
@@ -19,14 +31,18 @@
 		view: undefined,
 
 		/**
-		 * @param {CMDBuild.view.common.CMAccordionStoreModel} node
+		 * Setup view items and controllers on accordion click
+		 *
+		 * @param {CMDBuild.model.common.accordion.Generic} node
+		 *
+		 * @override
 		 */
-		onViewOnFront: function(node) {
+		onCustomPageModuleInit: function(node) {
 			if (!Ext.isEmpty(node)) {
 				var basePath = window.location.toString().split('/');
 				basePath = Ext.Array.slice(basePath, 0, basePath.length - 1).join('/');
 
-				this.setViewTitle(node.get(CMDBuild.core.proxy.CMProxyConstants.TEXT));
+				this.setViewTitle(node.get(CMDBuild.core.constants.Proxy.DESCRIPTION));
 
 				this.view.removeAll();
 				this.view.add({
@@ -34,15 +50,26 @@
 
 					autoEl: {
 						tag: 'iframe',
-						src: CMDBuild.Constants.customPages.customizationsPath
-							+ node.get(CMDBuild.core.proxy.CMProxyConstants.TEXT)
+						src: CMDBuild.core.configurations.CustomPages.getCustomizationsPath()
+							+ node.get(CMDBuild.core.constants.Proxy.NAME)
 							+ '/?basePath=' + basePath
 							+ '&frameworkVersion=' + CMDBuild.core.configurations.CustomPages.getVersion()
 					}
 				});
+
+				// History record save
+				CMDBuild.global.navigation.Chronology.cmfg('navigationChronologyRecordSave', {
+					moduleId: this.cmName,
+					entryType: {
+						description: node.get(CMDBuild.core.constants.Proxy.DESCRIPTION),
+						id: node.get(CMDBuild.core.constants.Proxy.ID),
+						object: node
+					}
+				});
+
+				this.onModuleInit(node); // Custom callParent() implementation
 			}
 		}
-
 	});
 
 })();

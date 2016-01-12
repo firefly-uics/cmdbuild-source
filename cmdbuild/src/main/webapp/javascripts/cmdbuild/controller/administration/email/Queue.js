@@ -1,10 +1,11 @@
 (function() {
 
 	Ext.define('CMDBuild.controller.administration.email.Queue', {
-		extend: 'CMDBuild.controller.common.AbstractController',
+		extend: 'CMDBuild.controller.common.abstract.Base',
 
 		requires: [
-			'CMDBuild.core.proxy.CMProxyConstants',
+			'CMDBuild.core.constants.Proxy',
+			'CMDBuild.core.Message',
 			'CMDBuild.core.proxy.email.Queue'
 		],
 
@@ -14,38 +15,40 @@
 		cmfgCatchedFunctions: [
 			'onEmailQueueAbortButtonClick',
 			'onEmailQueueSaveButtonClick',
+			'onEmailQueueShow',
 			'onEmailQueueStartButtonClick',
 			'onEmailQueueStopButtonClick'
 		],
 
 		/**
-		 * @property {CMDBuild.view.administration.email.QueuePanel}
+		 * @property {CMDBuild.view.administration.email.QueueView}
 		 */
 		view: undefined,
 
 		/**
-		 * @param {CMDBuild.view.administration.email.QueuePanel} view
+		 * @param {CMDBuild.view.administration.email.QueueView} view
 		 *
 		 * @override
 		 */
 		constructor: function(view) {
 			this.callParent(arguments);
 
-			this.view = Ext.create('CMDBuild.view.administration.email.QueuePanel', {
-				delegate: this
-			});
+			this.view = Ext.create('CMDBuild.view.administration.email.QueueView', { delegate: this });
 		},
 
 		/**
 		 * Reads if queue is running and setup topToolbar buttons enabled state
+		 *
+		 * @private
 		 */
 		isQueueRunning: function() {
 			CMDBuild.core.proxy.email.Queue.isRunning({
 				scope: this,
-				loadmask: true,
 				success: function(response, options, decodedResponse) {
-					this.view.queueStartButton.setDisabled(decodedResponse.response);
-					this.view.queueStopButton.setDisabled(!decodedResponse.response);
+					decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.RESPONSE];
+
+					this.view.queueStartButton.setDisabled(decodedResponse);
+					this.view.queueStopButton.setDisabled(!decodedResponse);
 				}
 			});
 		},
@@ -57,25 +60,27 @@
 		onEmailQueueSaveButtonClick: function() {
 			if (this.validate(this.view)) { // Validate before save
 				var params = {};
-				params[CMDBuild.core.proxy.CMProxyConstants.TIME] = this.toManagedUnit(this.view.cycleIntervalField.getValue());
+				params[CMDBuild.core.constants.Proxy.TIME] = this.toManagedUnit(this.view.cycleIntervalField.getValue());
 
 				CMDBuild.core.proxy.email.Queue.configurationSave({
 					params: params,
 					scope: this,
-					loadmask: true,
 					success: function(response, options, decodedResponse) {
 						this.readConfiguration();
 
-						CMDBuild.Msg.success();
+						CMDBuild.core.Message.success();
 					}
 				});
 			}
 		},
 
+		onEmailQueueShow: function() {
+			this.readConfiguration();
+		},
+
 		onEmailQueueStartButtonClick: function() {
 			CMDBuild.core.proxy.email.Queue.start({
 				scope: this,
-				loadmask: true,
 				success: function(response, options, decodedResponse) {
 					this.isQueueRunning();
 				}
@@ -85,28 +90,26 @@
 		onEmailQueueStopButtonClick: function() {
 			CMDBuild.core.proxy.email.Queue.stop({
 				scope: this,
-				loadmask: true,
 				success: function(response, options, decodedResponse) {
 					this.isQueueRunning();
 				}
 			});
 		},
 
-		onViewOnFront: function() {
-			this.readConfiguration();
-		},
-
 		/**
 		 * Reads full queue configuration and setups form
+		 *
+		 * @private
 		 */
 		readConfiguration: function() {
 			CMDBuild.core.proxy.email.Queue.configurationRead({
 				scope: this,
-				loadmask: true,
 				success: function(response, options, decodedResponse) {
-					var configurationModel = Ext.create('CMDBuild.model.email.Queue', decodedResponse.response);
+					decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.RESPONSE];
 
-					this.view.cycleIntervalField.setValue(this.toDisplayedUnit(configurationModel.get(CMDBuild.core.proxy.CMProxyConstants.TIME)));
+					var configurationModel = Ext.create('CMDBuild.model.email.Queue', decodedResponse);
+
+					this.view.cycleIntervalField.setValue(this.toDisplayedUnit(configurationModel.get(CMDBuild.core.constants.Proxy.TIME)));
 				},
 				callback: function(options, success, response) {
 					this.isQueueRunning();
@@ -120,6 +123,8 @@
 		 * @param {Number} value
 		 *
 		 * @return {Number}
+		 *
+		 * @private
 		 */
 		toDisplayedUnit: function(value) {
 			if (Ext.isNumber(value))
@@ -134,6 +139,8 @@
 		 * @param {Number} value
 		 *
 		 * @return {Number}
+		 *
+		 * @private
 		 */
 		toManagedUnit: function(value) {
 			if (Ext.isNumber(value))

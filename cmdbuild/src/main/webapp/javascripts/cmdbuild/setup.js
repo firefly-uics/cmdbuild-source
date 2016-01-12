@@ -5,7 +5,14 @@
 	Ext.define('CMDBuild.app.Setup', {
 		statics: {
 			init: function() {
-				Ext.QuickTips.init();//for the error tips
+				Ext.tip.QuickTipManager.init();
+
+				// Fix a problem of Ext 4.2 tooltips width
+				// see http://www.sencha.com/forum/showthread.php?260106-Tooltips-on-forms-and-grid-are-not-resizing-to-the-size-of-the-text/page3#24
+				delete Ext.tip.Tip.prototype.minWidth;
+
+				Ext.create('CMDBuild.core.LoggerManager'); // Logger configuration
+				Ext.create('CMDBuild.core.configurationBuilders.Instance', { fullInit: false }); // CMDBuild instance configuration
 
 				this.step1 = new CMDBuild.setup.Step1();
 				this.step2 = new CMDBuild.setup.Step2();

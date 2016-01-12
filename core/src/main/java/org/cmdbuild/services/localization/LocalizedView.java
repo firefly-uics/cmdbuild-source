@@ -30,7 +30,9 @@ public class LocalizedView extends ForwardingView {
 
 	@Override
 	public String getDescription() {
-		final TranslationObject translationObject = ViewConverter.of(ViewConverter.description()).create(getName());
+		final TranslationObject translationObject = ViewConverter.of(ViewConverter.description()) //
+				.withIdentifier(getName())
+				.create();
 		final String translatedDescription = facade.read(translationObject);
 		return defaultIfBlank(translatedDescription, super.getDescription());
 	}

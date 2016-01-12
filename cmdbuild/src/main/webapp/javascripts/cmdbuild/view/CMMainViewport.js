@@ -181,6 +181,9 @@
 				padding: '5 5 5 0',
 				frame: false,
 				border: false,
+				bodyStyle: {
+					border: '0px;'
+				},
 
 				layout: 'card',
 
@@ -228,18 +231,6 @@
 
 		},
 
-		addAccordion: function(a) {
-			Ext.suspendLayouts();
-			this.cmAccordions.add(a);
-			Ext.resumeLayouts();
-		},
-
-		addPanel: function(p) {
-			Ext.suspendLayouts();
-			this.cmPanels.add(p);
-			Ext.resumeLayouts();
-		},
-
 		/*
 		 * Take a function as parameter iterate over the cmAccordions and call the given function with the current accordion as parameter
 		 */
@@ -258,21 +249,35 @@
 
 			this.cmPanels.items.each(fn, scope);
 		},
-		/*
-		 * Search in the cmPanels the given name and bring it to front
-		 */
-		bringTofrontPanelByCmName: function(cmName, params, silent) {
-			var p = this.findModuleByCMName(cmName),
-				activatePanel = null;
 
-			if (p) {
-				activatePanel = (typeof p.beforeBringToFront != 'function' || p.beforeBringToFront(params) !== false);
-				if (activatePanel) {
-					this.cmPanels.layout.setActiveItem(p.id);
-				}
-				if (silent !== true) {
-					p.fireEvent('CM_iamtofront', params);
-				}
+		/**
+		 * Search in the cmPanels the given name and bring it to front
+		 *
+		 * @param {String} cmName
+		 * @param {Object} params
+		 *
+		 * @returns {Object}
+		 */
+		bringTofrontPanelByCmName: function(cmName, params) {
+			var activatePanel = null;
+			var modulePanel = this.findModuleByCMName(cmName);
+
+			if (!Ext.isEmpty(modulePanel)) {
+				activatePanel = !Ext.isFunction(modulePanel.beforeBringToFront) || modulePanel.beforeBringToFront(params) !== false; // TODO: legacy
+
+				if (activatePanel)
+					this.cmPanels.layout.setActiveItem(modulePanel.getId());
+
+				/**
+				 * Legacy event
+				 *
+				 * @deprecated
+				 */
+				modulePanel.fireEvent('CM_iamtofront', params);
+
+				// FireEvent not used because of problems to pass right parameters to cmfg() function
+				if (!Ext.isEmpty(modulePanel.delegate) && Ext.isFunction(modulePanel.delegate.cmfg))
+					modulePanel.delegate.cmfg('onModuleInit', params);
 			}
 
 			return activatePanel;

@@ -27,7 +27,8 @@ public class LocalizedFilter extends ForwardingFilter {
 	public String getDescription() {
 		final TranslationObject translationObject = FilterConverter //
 				.of(FilterConverter.description()) //
-				.create(getName());
+				.withIdentifier(getName())
+				.create();
 		final String translatedDescription = facade.read(translationObject);
 		return defaultIfBlank(translatedDescription, super.getDescription());
 	}

@@ -24,12 +24,17 @@
 
 			Ext.apply(this, {
 				title: tr.title,
+				tools: [
+					Ext.create('CMDBuild.view.common.panel.gridAndForm.tools.Properties', {
+						style: {} // Reset margin setup
+					})
+				],
 				items:[this.form, this.grid],
 				buttonAlign: "center",
 				buttons: [
-					this.updateButton = new CMDBuild.buttons.UpdateButton(),
-					this.confirmButton = new CMDBuild.buttons.ConfirmButton(),
-					this.abortButton = new CMDBuild.buttons.AbortButton()
+					this.updateButton = Ext.create('CMDBuild.core.buttons.text.Update'),
+					this.confirmButton = Ext.create('CMDBuild.core.buttons.text.Confirm'),
+					this.abortButton = Ext.create('CMDBuild.core.buttons.text.Abort')
 				]
 			});
 

@@ -7,11 +7,11 @@
 		},
 
 		availableDataSourcesStore = Ext.create('Ext.data.ArrayStore', {
-			fields: [CMDBuild.core.proxy.CMProxyConstants.NAME],
+			fields: [CMDBuild.core.constants.Proxy.NAME],
 			data: [],
 
 			sorters: [{
-				property: CMDBuild.core.proxy.CMProxyConstants.NAME,
+				property: CMDBuild.core.constants.Proxy.NAME,
 				direction: 'ASC'
 			}]
 		}),

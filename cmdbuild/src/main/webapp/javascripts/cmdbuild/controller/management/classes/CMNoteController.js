@@ -62,20 +62,20 @@
 				params = me._getSaveParams();
 
 			if (form.isValid() && me.beforeSave(me.card)) {
-				CMDBuild.LoadMask.get().show();
+				CMDBuild.core.LoadMask.show();
 				form.submit({
 					method : 'POST',
 					url : 'services/json/management/modcard/updatecard',
 					params: params,
 					success : function() {
-						CMDBuild.LoadMask.get().hide();
+						CMDBuild.core.LoadMask.hide();
 						me.view.disableModify(enableToolbar = true);
 						var val = me.view.syncForms();
 						me.syncSavedNoteWithModel(me.card, val);
 						me.fireEvent(me.CMEVENTS.noteWasSaved, me.card);
 					},
 					failure: function() {
-						CMDBuild.LoadMask.get().hide();
+						CMDBuild.core.LoadMask.hide();
 					}
 				});
 			}

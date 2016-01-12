@@ -10,6 +10,7 @@ import static org.cmdbuild.data.store.lookup.Predicates.lookupWithType;
 
 import java.util.Map;
 
+import org.apache.commons.lang3.ObjectUtils;
 import org.cmdbuild.data.store.ForwardingStore;
 import org.cmdbuild.data.store.Storable;
 import org.cmdbuild.data.store.Store;
@@ -17,6 +18,8 @@ import org.slf4j.Marker;
 import org.slf4j.MarkerFactory;
 
 import com.google.common.base.Function;
+import com.google.common.base.Predicate;
+import com.google.common.collect.Iterables;
 
 public class DataViewLookupStore extends ForwardingStore<Lookup> implements LookupStore {
 
@@ -87,6 +90,17 @@ public class DataViewLookupStore extends ForwardingStore<Lookup> implements Look
 		return from(readAll()) //
 				.transform(toLookupType()) //
 				.toSet();
+	}
+
+	@Override
+	public Iterable<Lookup> readFromUuid(final String uuid) {
+		return Iterables.filter(readAll(), new Predicate<Lookup>() {
+
+			@Override
+			public boolean apply(final Lookup input) {
+				return ObjectUtils.equals(input.getTranslationUuid(), uuid);
+			}
+		});
 	}
 
 }
