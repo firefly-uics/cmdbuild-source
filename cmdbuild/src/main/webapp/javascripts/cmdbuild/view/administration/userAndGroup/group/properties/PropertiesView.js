@@ -30,7 +30,7 @@
 
 		listeners: {
 			show: function(panel, eOpts) {
-				this.delegate.cmfg('onUserAndGroupGroupPropertiesTabShow');
+				this.delegate.cmfg('onUserAndGroupGrouptabPropertiesShow');
 			}
 		}
 	});

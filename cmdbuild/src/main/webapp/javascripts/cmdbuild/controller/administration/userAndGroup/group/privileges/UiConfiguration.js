@@ -19,7 +19,8 @@
 		cmfgCatchedFunctions: [
 			'onUserAndGroupGroupPrivilegesGridUIConfigurationAbortButtonClick',
 			'onUserAndGroupGroupPrivilegesGridUIConfigurationSaveButtonClick',
-			'onUserAndGroupGroupPrivilegesGridUIConfigurationShow'
+			'onUserAndGroupGroupPrivilegesGridUIConfigurationShow',
+			'userAndGroupGroupPrivilegesGridUIConfigurationRecordSet'
 		],
 
 		/**
@@ -65,9 +66,11 @@
 				params: params,
 				scope: this,
 				success: function(response, options, decodedResponse) {
-					this.form.getForm().setValues(Ext.decode(decodedResponse.response)); // TODO: waiting for refactor
+					decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.RESPONSE];
 
-					this.onUserAndGroupGroupPrivilegesGridUIConfigurationAbortButtonClick();
+					this.form.getForm().setValues(Ext.decode(decodedResponse)); // TODO: waiting for refactor
+
+					this.cmfg('onUserAndGroupGroupPrivilegesGridUIConfigurationAbortButtonClick');
 				}
 			});
 		},
@@ -81,7 +84,9 @@
 				params: params,
 				scope: this,
 				success: function(response, options, decodedResponse) {
-					this.form.getForm().setValues(Ext.decode(decodedResponse.response));
+					decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.RESPONSE];
+
+					this.form.getForm().setValues(Ext.decode(decodedResponse));
 				}
 			});
 		},
@@ -89,7 +94,7 @@
 		/**
 		 * @param {CMDBuild.model.userAndGroup.group.privileges.GridRecord} record
 		 */
-		setRecord: function(record) {
+		userAndGroupGroupPrivilegesGridUIConfigurationRecordSet: function(record) {
 			if(!Ext.isEmpty(record))
 				this.record = record;
 		}

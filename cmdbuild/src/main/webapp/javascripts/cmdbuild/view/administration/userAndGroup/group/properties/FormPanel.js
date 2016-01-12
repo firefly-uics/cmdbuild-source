@@ -59,7 +59,7 @@
 								scope: this,
 
 								handler: function(button, e) {
-									this.delegate.cmfg('onUserAndGroupGroupPropertiesModifyButtonClick');
+									this.delegate.cmfg('onUserAndGroupGroupTabPropertiesModifyButtonClick');
 								}
 							}),
 							this.enableDisableButton = Ext.create('CMDBuild.core.buttons.iconized.state.Double', {
@@ -68,7 +68,7 @@
 								scope: this,
 
 								handler: function(button, e) {
-									this.delegate.cmfg('onUserAndGroupGroupPropertiesEnableDisableButtonClick', button.getClickedState());
+									this.delegate.cmfg('onUserAndGroupGroupTabPropertiesEnableDisableButtonClick', button.getClickedState());
 								}
 							})
 						]
@@ -89,14 +89,14 @@
 								scope: this,
 
 								handler: function(button, e) {
-									this.delegate.cmfg('onUserAndGroupGroupPropertiesSaveButtonClick');
+									this.delegate.cmfg('onUserAndGroupGroupTabPropertiesSaveButtonClick');
 								}
 							}),
 							Ext.create('CMDBuild.core.buttons.text.Abort', {
 								scope: this,
 
 								handler: function(button, e) {
-									this.delegate.cmfg('onUserAndGroupGroupPropertiesAbortButtonClick');
+									this.delegate.cmfg('onUserAndGroupGroupTabPropertiesAbortButtonClick');
 								}
 							})
 						]

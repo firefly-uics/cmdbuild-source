@@ -42,14 +42,14 @@
 								scope: this,
 
 								handler: function(button, e) {
-									this.delegate.cmfg('onUserAndGroupGroupUserInterfaceSaveButtonClick');
+									this.delegate.cmfg('onUserAndGroupGroupTabUserInterfaceSaveButtonClick');
 								}
 							}),
 							Ext.create('CMDBuild.core.buttons.text.Abort', {
 								scope: this,
 
 								handler: function(button, e) {
-									this.delegate.cmfg('onUserAndGroupGroupUserInterfaceAbortButtonClick');
+									this.delegate.cmfg('onUserAndGroupGroupTabUserInterfaceAbortButtonClick');
 								}
 							})
 						]

@@ -17,10 +17,10 @@
 		 * @cfg {Array}
 		 */
 		cmfgCatchedFunctions: [
-			'onUserAndGroupGroupUsersAddButtonClick = onUserAndGroupGroupAddButtonClick',
-			'onUserAndGroupGroupUsersGroupSelected = onUserAndGroupGroupSelected',
-			'onUserAndGroupGroupUsersSaveButtonClick',
-			'onUserAndGroupGroupUsersTabShow',
+			'onUserAndGroupGroupTabUsersAddButtonClick = onUserAndGroupGroupAddButtonClick',
+			'onUserAndGroupGroupTabUsersGroupSelected = onUserAndGroupGroupSelected',
+			'onUserAndGroupGroupTabUsersSaveButtonClick',
+			'onUserAndGroupGroupTabUsersShow',
 		],
 
 		/**
@@ -47,21 +47,21 @@
 		/**
 		 * Disable tab on add button click
 		 */
-		onUserAndGroupGroupUsersAddButtonClick: function() {
+		onUserAndGroupGroupTabUsersAddButtonClick: function() {
 			this.view.disable();
 		},
 
 		/**
 		 * Enable/Disable tab evaluating selected group
 		 */
-		onUserAndGroupGroupUsersGroupSelected: function() {
+		onUserAndGroupGroupTabUsersGroupSelected: function() {
 			this.view.setDisabled(this.cmfg('userAndGroupGroupSelectedGroupIsEmpty'));
 		},
 
 		/**
 		 * TODO: waiting for refactor (use an array of id not a string)
 		 */
-		onUserAndGroupGroupUsersSaveButtonClick: function() {
+		onUserAndGroupGroupTabUsersSaveButtonClick: function() {
 			var usersIdArray = [];
 
 			Ext.Array.forEach(this.selectedGrid.getStore().getRange(), function(record, i, allRecords) {
@@ -77,11 +77,13 @@
 				scope: this,
 				success: function(response, options, decodedResponse) {
 					CMDBuild.core.Message.success();
+
+					this.cmfg('onUserAndGroupGroupTabUsersShow');
 				}
 			});
 		},
 
-		onUserAndGroupGroupUsersTabShow: function() {
+		onUserAndGroupGroupTabUsersShow: function() {
 			if (!this.cmfg('userAndGroupGroupSelectedGroupIsEmpty')) {
 				var params = {};
 				params[CMDBuild.core.constants.Proxy.GROUP_ID] = this.cmfg('userAndGroupGroupSelectedGroupGet', CMDBuild.core.constants.Proxy.ID);

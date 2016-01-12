@@ -21,12 +21,12 @@
 		 * @cfg {Array}
 		 */
 		cmfgCatchedFunctions: [
-			'onUserAndGroupGroupDefaultFiltersAbortButtonClick',
-			'onUserAndGroupGroupDefaultFiltersAddButtonClick = onUserAndGroupGroupAddButtonClick',
-			'onUserAndGroupGroupDefaultFiltersGroupSelected = onUserAndGroupGroupSelected',
-			'onUserAndGroupGroupDefaultFiltersSaveButtonClick',
-			'onUserAndGroupGroupDefaultFiltersTabShow',
-			'onUserAndGroupGroupDefaultFiltersTreeBeforeEdit'
+			'onUserAndGroupGroupTabDefaultFiltersAbortButtonClick',
+			'onUserAndGroupGroupTabDefaultFiltersAddButtonClick = onUserAndGroupGroupAddButtonClick',
+			'onUserAndGroupGroupTabDefaultFiltersGroupSelected = onUserAndGroupGroupSelected',
+			'onUserAndGroupGroupTabDefaultFiltersSaveButtonClick',
+			'onUserAndGroupGroupTabDefaultFiltersShow',
+			'onUserAndGroupGroupTabDefaultFiltersTreeBeforeEdit'
 		],
 
 		/**
@@ -61,26 +61,42 @@
 			this.tree = this.view.tree;
 		},
 
-		onUserAndGroupGroupDefaultFiltersAbortButtonClick: function() {
+		/**
+		 * @param {Object} node
+		 * @param {Array} destinationArray
+		 *
+		 * @private
+		 */
+		getAllDefaultFilters: function(node, destinationArray) {
+			node.eachChild(function(childNode) {
+				if (!Ext.isEmpty(childNode.get(CMDBuild.core.constants.Proxy.DEFAULT_FILTER)))
+					destinationArray.push(childNode.get(CMDBuild.core.constants.Proxy.DEFAULT_FILTER));
+
+				if (!Ext.isEmpty(node.hasChildNodes()))
+					this.getAllDefaultFilters(childNode, destinationArray);
+			}, this);
+		},
+
+		onUserAndGroupGroupTabDefaultFiltersAbortButtonClick: function() {
 			if (!this.cmfg('userAndGroupGroupSelectedGroupIsEmpty'))
-				this.onUserAndGroupGroupDefaultFiltersTabShow();
+				this.cmfg('onUserAndGroupGroupTabDefaultFiltersShow');
 		},
 
 		/**
 		 * Disable tab on add button click
 		 */
-		onUserAndGroupGroupDefaultFiltersAddButtonClick: function() {
+		onUserAndGroupGroupTabDefaultFiltersAddButtonClick: function() {
 			this.view.disable();
 		},
 
 		/**
 		 * Enable/Disable tab evaluating selected group
 		 */
-		onUserAndGroupGroupDefaultFiltersGroupSelected: function() {
+		onUserAndGroupGroupTabDefaultFiltersGroupSelected: function() {
 			this.view.setDisabled(this.cmfg('userAndGroupGroupSelectedGroupIsEmpty'));
 		},
 
-		onUserAndGroupGroupDefaultFiltersSaveButtonClick: function() {
+		onUserAndGroupGroupTabDefaultFiltersSaveButtonClick: function() {
 			if (!this.cmfg('userAndGroupGroupSelectedGroupIsEmpty')) {
 				var defaultFiltersNames = [];
 				var defaultFiltersIds = [];
@@ -97,7 +113,7 @@
 					params: params,
 					scope: this,
 					success: function(response, options, decodedResponse) {
-						decodedResponse = decodedResponse.filters;
+						decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.FILTERS];
 
 						// Build filter object map ([{ name: filterObject, ... }])
 						Ext.Array.forEach(decodedResponse, function(filterObject, i, allFilterObjects) {
@@ -112,7 +128,13 @@
 						params[CMDBuild.core.constants.Proxy.FILTERS] = Ext.encode(defaultFiltersIds);
 						params[CMDBuild.core.constants.Proxy.GROUPS] = Ext.encode([this.cmfg('userAndGroupGroupSelectedGroupGet', CMDBuild.core.constants.Proxy.NAME)]);
 
-						CMDBuild.core.proxy.userAndGroup.group.DefaultFilters.update({ params: params });
+						CMDBuild.core.proxy.userAndGroup.group.DefaultFilters.update({
+							params: params,
+							scope: this,
+							success: function(response, options, decodedResponse) {
+								this.cmfg('onUserAndGroupGroupTabDefaultFiltersShow');
+							}
+						});
 					}
 				});
 			}
@@ -122,7 +144,7 @@
 		 * Builds tree store.
 		 * Wrongly tableType attribute use to recognize three types of classes (standard, simple, processes).
 		 */
-		onUserAndGroupGroupDefaultFiltersTabShow: function() {
+		onUserAndGroupGroupTabDefaultFiltersShow: function() {
 			if (!this.cmfg('userAndGroupGroupSelectedGroupIsEmpty')) {
 				var params = {};
 				params[CMDBuild.core.constants.Proxy.ACTIVE] = true;
@@ -133,7 +155,7 @@
 					params: params,
 					scope: this,
 					success: function(response, options, decodedResponse) {
-						var readedClasses = decodedResponse.classes;
+						var readedClasses = decodedResponse[CMDBuild.core.constants.Proxy.CLASSES];
 
 						params = {};
 						params[CMDBuild.core.constants.Proxy.GROUP] = this.cmfg('userAndGroupGroupSelectedGroupGet', CMDBuild.core.constants.Proxy.NAME);
@@ -142,7 +164,7 @@
 							params: params,
 							scope: this,
 							success: function(response, options, decodedResponse) {
-								decodedResponse = decodedResponse.response.elements;
+								decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.RESPONSE][CMDBuild.core.constants.Proxy.ELEMENTS];
 
 								var defaultFilters = {};
 								var nodesMap = {};
@@ -273,7 +295,7 @@
 		 *
 		 * @returns {Boolean}
 		 */
-		onUserAndGroupGroupDefaultFiltersTreeBeforeEdit: function(parameters) {
+		onUserAndGroupGroupTabDefaultFiltersTreeBeforeEdit: function(parameters) {
 			var colIdx = parameters.colIdx;
 			var column = parameters.column;
 			var record = parameters.record;
@@ -293,21 +315,6 @@
 			}
 
 			return false;
-		},
-
-
-		/**
-		 * @param {Object} node
-		 * @param {Array} destinationArray
-		 */
-		getAllDefaultFilters: function(node, destinationArray) {
-			node.eachChild(function(childNode) {
-				if (!Ext.isEmpty(childNode.get(CMDBuild.core.constants.Proxy.DEFAULT_FILTER)))
-					destinationArray.push(childNode.get(CMDBuild.core.constants.Proxy.DEFAULT_FILTER));
-
-				if (!Ext.isEmpty(node.hasChildNodes()))
-					this.getAllDefaultFilters(childNode, destinationArray);
-			}, this);
 		}
 	});
 
