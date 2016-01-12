@@ -24,7 +24,7 @@
 		 */
 		hideIfEmpty: true,
 
-		title: CMDBuild.Translation.classList,
+		title: CMDBuild.Translation.classes,
 
 		/**
 		 * @param {Number} nodeIdToSelect

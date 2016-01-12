@@ -13,7 +13,7 @@
 		 */
 		cmName: undefined,
 
-		title: '@@ Localizations',
+		title: CMDBuild.Translation.localizations,
 
 		/**
 		 * @param {Number} nodeIdToSelect
@@ -26,8 +26,8 @@
 				{
 					cmName: this.cmName,
 					iconCls: 'cmdbuild-tree-localization-icon',
-					text: '@@ Configuration',
-					description: '@@ Configuration',
+					text: CMDBuild.Translation.configuration,
+					description: CMDBuild.Translation.configuration,
 					id: this.delegate.cmfg('accordionBuildId', { components: 'configuration' }),
 					sectionHierarchy: ['configuration'],
 					leaf: true
@@ -35,8 +35,17 @@
 				{
 					cmName: this.cmName,
 					iconCls: 'cmdbuild-tree-localization-icon',
-					text: '@@ Advanced tables',
-					description: '@@ Advanced tables',
+					text: CMDBuild.Translation.importExport,
+					description: CMDBuild.Translation.importExport,
+					id: this.delegate.cmfg('accordionBuildId', { components: 'importExport' }),
+					sectionHierarchy: ['importExport'],
+					leaf: true
+				},
+				{
+					cmName: this.cmName,
+					iconCls: 'cmdbuild-tree-localization-icon',
+					text: CMDBuild.Translation.advancedTables,
+					description: CMDBuild.Translation.advancedTables,
 					id: this.delegate.cmfg('accordionBuildId', { components: 'advancedTranslationsTable' }),
 					sectionHierarchy: ['advancedTranslationsTable'],
 					leaf: true

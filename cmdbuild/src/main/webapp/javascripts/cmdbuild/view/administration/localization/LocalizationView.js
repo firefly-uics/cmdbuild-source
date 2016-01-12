@@ -11,9 +11,9 @@
 		/**
 		 * @cfg {String}
 		 */
-		baseTitle: '@@ Localizations',
+		baseTitle: CMDBuild.Translation.localizations,
 
-		bodyCls: 'cmgraypanel',
+		bodyCls: 'cmgraypanel-nopadding',
 		border: true,
 		frame: false,
 		layout: 'fit'

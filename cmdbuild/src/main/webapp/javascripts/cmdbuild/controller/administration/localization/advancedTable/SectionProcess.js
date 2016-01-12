@@ -44,7 +44,7 @@
 
 			this.view = Ext.create('CMDBuild.view.administration.localization.advancedTable.SectionPanel', {
 				delegate: this,
-				title: '@@ Processes'
+				title: CMDBuild.Translation.processes
 			});
 
 			// Shorthand

@@ -40,7 +40,7 @@
 			this.view = Ext.create('CMDBuild.view.administration.localization.advancedTable.SectionPanel', {
 				delegate: this,
 				hideActiveOnlyCheckbox: true,
-				title: '@@ Menu'
+				title: CMDBuild.Translation.menu
 			});
 
 			// Shorthand
@@ -63,7 +63,7 @@
 				var entityAttributesNodeObject = { expandable: true };
 				entityAttributesNodeObject[CMDBuild.core.constants.Proxy.LEAF] = false;
 				entityAttributesNodeObject[CMDBuild.core.constants.Proxy.PARENT] = rootNode;
-				entityAttributesNodeObject[CMDBuild.core.constants.Proxy.TEXT] = '@@ Children';
+				entityAttributesNodeObject[CMDBuild.core.constants.Proxy.TEXT] = CMDBuild.Translation.children;
 
 				return rootNode.appendChild(entityAttributesNodeObject);
 			}

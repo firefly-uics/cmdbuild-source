@@ -1,6 +1,6 @@
 (function() {
 
-	Ext.define('CMDBuild.view.administration.localization.common.ImportPanel', {
+	Ext.define('CMDBuild.view.administration.localization.importExport.ImportForm', {
 		extend: 'Ext.form.Panel',
 
 		requires: [
@@ -12,17 +12,17 @@
 		mixins: ['CMDBuild.view.common.PanelFunctions'],
 
 		/**
-		 * @cfg {CMDBuild.controller.administration.localization.Configuration}
+		 * @cfg {CMDBuild.controller.administration.localization.ImportExport}
 		 */
 		delegate: undefined,
 
 		bodyCls: 'cmgraypanel',
-		bodyPadding: '0 0 32 0', // Hack to fix panel height to be same as right one
 		border: false,
 		encoding: 'multipart/form-data',
 		fileUpload: true,
 		frame: false,
 		monitorValid: true,
+		title: CMDBuild.Translation.import,
 
 		layout: {
 			type: 'vbox',
@@ -48,7 +48,7 @@
 								scope: this,
 
 								handler: function(button, e) {
-									this.delegate.cmfg('onLocalizationConfigurationImportButtonClick');
+									this.delegate.cmfg('onLocalizationImportExportImportButtonClick');
 								}
 							})
 						]
@@ -56,7 +56,7 @@
 				],
 				items: [
 					Ext.create('Ext.form.field.ComboBox', {
-						name: '@@ importFormat',
+						name: CMDBuild.core.constants.Proxy.FORMAT,
 						fieldLabel: CMDBuild.Translation.format,
 						labelWidth: CMDBuild.LABEL_WIDTH,
 						maxWidth: CMDBuild.MEDIUM_FIELD_WIDTH,

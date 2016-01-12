@@ -356,7 +356,7 @@
 
 	Ext.define("CMDBuild.view.common.classes.CMClassAccordion", {
 		extend: "CMDBuild.view.common.CMBaseAccordion",
-		title: CMDBuild.Translation.administration.modClass.tree_title,
+		title: CMDBuild.Translation.classes,
 		cmName: "class",
 		excludeSimpleTables: false,
 
