@@ -41,9 +41,9 @@
 		read: function(parameters) {
 			parameters = Ext.isEmpty(parameters) ? {} : parameters;
 
-			Ext.apply(parameters, {
-				url: CMDBuild.core.proxy.Index.group.defaultFilters.read
-			});
+			Ext.apply(parameters, { url: CMDBuild.core.proxy.Index.group.defaultFilters.read });
+
+			CMDBuild.core.cache.Cache.request(CMDBuild.core.constants.Proxy.GROUP, parameters);
 		},
 
 		/**
@@ -52,9 +52,7 @@
 		update: function(parameters) {
 			parameters = Ext.isEmpty(parameters) ? {} : parameters;
 
-			Ext.apply(parameters, {
-				url: CMDBuild.core.proxy.Index.group.defaultFilters.update
-			});
+			Ext.apply(parameters, { url: CMDBuild.core.proxy.Index.group.defaultFilters.update });
 
 			CMDBuild.core.cache.Cache.request(CMDBuild.core.constants.Proxy.GROUP, parameters, true);
 		}
