@@ -12,7 +12,6 @@
 		this.oldValue = $.Cmdbuild.utilities.clone(node.position());
 		this.execute = function(callback, callbackScope) {
 			var node = this.model.getNode(this.id);
-//			var parentId = $.Cmdbuild.g3d.Model.getGraphData(node.data, "previousPathNode");
 			$.Cmdbuild.g3d.Model.setGraphData(node, "moved", true);
 			this.model.modifyPosition(this.id, position);
 			callback.apply(callbackScope, []);
