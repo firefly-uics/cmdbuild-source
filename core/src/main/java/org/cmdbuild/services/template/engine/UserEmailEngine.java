@@ -59,6 +59,7 @@ public class UserEmailEngine implements Engine {
 		final CMCard card = dataView.select(anyAttribute(userClass)) //
 				.from(userClass) //
 				.where(condition(attribute(userClass, USERNAME_ATTRIBUTE), eq(expression))) //
+				.limit(1) //
 				.run() //
 				.getOnlyRow() //
 				.getCard(userClass);

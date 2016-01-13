@@ -1,4 +1,5 @@
 package org.cmdbuild.logic.auth;
+
 import static com.google.common.collect.Iterables.getFirst;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.cmdbuild.auth.user.AuthenticatedUserImpl.ANONYMOUS_USER;
@@ -271,7 +272,9 @@ public class DefaultAuthenticationLogic implements AuthenticationLogic {
 		final CMQueryRow row = view.select(attribute(roleClass, "Description")) //
 				.from(roleClass) //
 				.where(condition(attribute(roleClass, "Code"), eq(groupName))) //
-				.run().getOnlyRow();
+				.limit(1) //
+				.run() //
+				.getOnlyRow();
 		final String description = (String) row.getCard(roleClass).get("Description");
 		final Long roleId = row.getCard(roleClass).getId();
 		final DefaultGroupInfo groupInfo = new DefaultGroupInfo(roleId, groupName, description);

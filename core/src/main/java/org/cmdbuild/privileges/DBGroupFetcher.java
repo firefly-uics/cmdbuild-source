@@ -116,7 +116,9 @@ public class DBGroupFetcher implements GroupFetcher {
 		final CMQueryRow row = view.select(anyAttribute(roleClass)) //
 				.from(roleClass, as(groupClassAlias)) //
 				.where(condition(attribute(roleClass, ID_ATTRIBUTE), eq(groupId))) //
-				.run().getOnlyRow();
+				.limit(1) //
+				.run() //
+				.getOnlyRow();
 		final CMCard groupCard = row.getCard(groupClassAlias);
 		return groupCard;
 	}
@@ -126,7 +128,9 @@ public class DBGroupFetcher implements GroupFetcher {
 		final CMQueryRow row = view.select(anyAttribute(roleClass)) //
 				.from(roleClass) //
 				.where(condition(attribute(roleClass, Role.CODE), eq(groupName))) //
-				.run().getOnlyRow();
+				.limit(1) //
+				.run() //
+				.getOnlyRow();
 		final CMCard groupCard = row.getCard(roleClass);
 		return groupCard;
 	}

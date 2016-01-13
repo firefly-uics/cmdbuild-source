@@ -128,6 +128,7 @@ public class LocalizedMenuElement extends ForwardingMenuElement {
 		final CMQueryResult queryResult = dataView.select(anyAttribute(cmClass)) //
 				.from(cmClass) //
 				.where(condition(attribute(cmClass, ID_ATTRIBUTE), eq(id))) //
+				.limit(1) //
 				.run();
 		Optional<CMCard> _card;
 		if (!queryResult.isEmpty()) {

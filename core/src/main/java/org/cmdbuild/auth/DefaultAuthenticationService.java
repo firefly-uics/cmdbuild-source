@@ -55,7 +55,7 @@ public class DefaultAuthenticationService implements AuthenticationService {
 		/**
 		 * Returns the names of the authenticators that should be activated, or
 		 * null if all authenticators should be activated.
-		 *
+		 * 
 		 * @return active authenticators or null
 		 */
 		Collection<String> getActiveAuthenticators();
@@ -306,7 +306,7 @@ public class DefaultAuthenticationService implements AuthenticationService {
 			final CMRelationDefinition definition = view.update(relation) //
 					/*
 					 * TODO implement within dao layer
-					 *
+					 * 
 					 * at the moment queried relations doesn't have card1 and
 					 * card2, so we must set them until it will be fixed
 					 */
@@ -331,6 +331,7 @@ public class DefaultAuthenticationService implements AuthenticationService {
 		return view.select(anyAttribute(target)) //
 				.from(target) //
 				.where(condition(attribute(target, ID), eq(relation.getCard1Id()))) //
+				.limit(1) //
 				.run() //
 				.getOnlyRow() //
 				.getCard(target);
@@ -341,6 +342,7 @@ public class DefaultAuthenticationService implements AuthenticationService {
 		return view.select(anyAttribute(target)) //
 				.from(target) //
 				.where(condition(attribute(target, ID), eq(relation.getCard2Id()))) //
+				.limit(1) //
 				.run() //
 				.getOnlyRow() //
 				.getCard(target);
@@ -348,14 +350,15 @@ public class DefaultAuthenticationService implements AuthenticationService {
 
 	private CMCard fetchUserCardWithId(final Long userId) throws NoSuchElementException {
 		final Alias userClassAlias = EntryTypeAlias.canonicalAlias(userClass());
-		final CMQueryRow userRow = view.select(attribute(userClassAlias, User.USERNAME), //
+		return view.select(attribute(userClassAlias, User.USERNAME), //
 				attribute(userClassAlias, User.DESCRIPTION), //
 				attribute(userClassAlias, User.PASSWORD)) //
 				.from(userClass(), as(userClassAlias)) //
 				.where(condition(attribute(userClassAlias, ID), eq(userId))) //
-				.run().getOnlyRow();
-		final CMCard userCard = userRow.getCard(userClassAlias);
-		return userCard;
+				.limit(1) //
+				.run() //
+				.getOnlyRow() //
+				.getCard(userClassAlias);
 	}
 
 	private List<CMRelation> fetchRelationsForUserWithId(final Long userId) {
@@ -475,7 +478,9 @@ public class DefaultAuthenticationService implements AuthenticationService {
 		final CMQueryRow userRow = view.select(anyAttribute(groupClassAlias)) //
 				.from(roleClass(), as(groupClassAlias)) //
 				.where(condition(attribute(groupClassAlias, ID), eq(groupId))) //
-				.run().getOnlyRow();
+				.limit(1) //
+				.run() //
+				.getOnlyRow();
 		final CMCard groupCard = userRow.getCard(groupClassAlias);
 		return groupCard;
 	}

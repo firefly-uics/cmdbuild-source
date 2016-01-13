@@ -73,6 +73,7 @@ public class CreateModifyCardWidgetFactory extends ValuePairWidgetFactory {
 		final CMCard card = dataView.select(attribute(queryClass, DESCRIPTION_ATTRIBUTE)) //
 				.from(queryClass) //
 				.where(condition(attribute(queryClass, ID_ATTRIBUTE), eq(id))) //
+				.limit(1) //
 				.run() //
 				.getOnlyRow() //
 				.getCard(queryClass);

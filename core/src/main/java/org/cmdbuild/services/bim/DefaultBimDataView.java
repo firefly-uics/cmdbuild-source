@@ -95,6 +95,7 @@ public class DefaultBimDataView extends ForwardingDataView implements BimDataVie
 			final CMQueryResult result = dataView.select( //
 					anyAttribute(theClass)) //
 					.from(theClass).where(condition(attribute(theClass, ID_ATTRIBUTE), eq(masterId))) //
+					.limit(1) //
 					.run();
 			if (!result.isEmpty()) {
 				final CMQueryRow row = result.getOnlyRow();
@@ -151,12 +152,14 @@ public class DefaultBimDataView extends ForwardingDataView implements BimDataVie
 
 		CMFunction function = dataView.findFunctionByName(CARDDATA_FOR_EXPORT_FUNCTION);
 		NameAlias f = NameAlias.as("f");
-		CMQueryResult queryResult = dataView.select(anyAttribute(function, f)).from(call(//
-				function, //
-				id, //
-				className, //
-				containerAttributeName, //
-				containerClassName), f) //
+		CMQueryResult queryResult = dataView.select(anyAttribute(function, f)) //
+				.from(call(//
+						function, //
+						id, //
+						className, //
+						containerAttributeName, //
+						containerClassName), f) //
+				.limit(1) //
 				.run();
 
 		if (queryResult.isEmpty()) {
@@ -186,8 +189,10 @@ public class DefaultBimDataView extends ForwardingDataView implements BimDataVie
 		if (x == 0 && y == 0 && z == 0) {
 			function = dataView.findFunctionByName(GENERATE_COORDINATES_FUNCTION);
 			f = NameAlias.as("f");
-			queryResult = dataView.select(anyAttribute(function, f))
-					.from(call(function, containerId, containerClassName), f).run();
+			queryResult = dataView.select(anyAttribute(function, f)) //
+					.from(call(function, containerId, containerClassName), f) //
+					.limit(1) //
+					.run();
 			if (queryResult.isEmpty()) {
 				logger.warn("No coordinates generated for card " + id);
 			}
@@ -238,7 +243,9 @@ public class DefaultBimDataView extends ForwardingDataView implements BimDataVie
 	public BimCard getBimDataFromGlobalid(final String globalId) {
 		final CMFunction function = dataView.findFunctionByName(CARDDATA_FROM_GUID_FUNCTION);
 		final NameAlias f = NameAlias.as("f");
-		final CMQueryResult queryResult = dataView.select(anyAttribute(function, f)).from(call(function, globalId), f)
+		final CMQueryResult queryResult = dataView.select(anyAttribute(function, f)) //
+				.from(call(function, globalId), f) //
+				.limit(1) //
 				.run();
 		if (queryResult.isEmpty()) {
 			logger.warn("No matching card found for globalid " + globalId);
@@ -332,12 +339,14 @@ public class DefaultBimDataView extends ForwardingDataView implements BimDataVie
 	@Override
 	public Long getRootId(final Long cardId, final String className, final String referenceRootName) {
 		final CMClass theClass = dataView.findClass(className);
-		final CMQueryResult result = dataView.select( //
+		final CMCard card = dataView.select( //
 				attribute(theClass, referenceRootName)) //
-				.from(theClass).where(condition(attribute(theClass, ID_ATTRIBUTE), eq(cardId))) //
-				.run();
-		final CMQueryRow row = result.getOnlyRow();
-		final CMCard card = row.getCard(theClass);
+				.from(theClass) //
+				.where(condition(attribute(theClass, ID_ATTRIBUTE), eq(cardId))) //
+				.limit(1) //
+				.run() //
+				.getOnlyRow() //
+				.getCard(theClass);
 		final IdAndDescription reference = IdAndDescription.class.cast(card.get(referenceRootName));
 		return reference.getId();
 	}
@@ -408,12 +417,12 @@ public class DefaultBimDataView extends ForwardingDataView implements BimDataVie
 	@Override
 	public CMCard fetchCard(final String className, final Long id) {
 		final CMClass theClass = dataView.findClass(className);
-		final CMQueryResult result = dataView.select(anyAttribute(theClass)).from(theClass)
+		return dataView.select(anyAttribute(theClass)).from(theClass)
 				.where(condition(attribute(theClass, ID_ATTRIBUTE), eq(id))) //
-				.run();
-		final CMQueryRow row = result.getOnlyRow();
-		final CMCard card = row.getCard(theClass);
-		return card;
+				.limit(1) //
+				.run() //
+				.getOnlyRow() //
+				.getCard(theClass);
 	}
 
 	@Override

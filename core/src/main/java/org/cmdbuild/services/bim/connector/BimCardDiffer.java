@@ -45,10 +45,13 @@ public class BimCardDiffer implements CardDiffer {
 	public CMCard updateCard(final Entity sourceEntity, final CMCard oldCard) {
 		final CMCard updatedCard = defaultCardDiffer.updateCard(sourceEntity, oldCard);
 		final CMClass bimClass = dataView.findClass(BimIdentifier.newIdentifier().withName(sourceEntity.getTypeName()));
-		final CMQueryResult queryResult = dataView.select(anyAttribute(bimClass))//
+		final CMCard bimCard = dataView.select(anyAttribute(bimClass))//
 				.from(bimClass)//
-				.where(condition(attribute(bimClass, GLOBALID_ATTRIBUTE), eq(sourceEntity.getKey()))).run();
-		final CMCard bimCard = queryResult.getOnlyRow().getCard(bimClass);
+				.where(condition(attribute(bimClass, GLOBALID_ATTRIBUTE), eq(sourceEntity.getKey()))) //
+				.limit(1) //
+				.run() //
+				.getOnlyRow() //
+				.getCard(bimClass);
 		if (bimCard != null) {
 			final boolean updateCoordinates = sourceEntity.getAttributeByName(COORDINATES).isValid();
 			final boolean updateSpaceGeometry = sourceEntity.getAttributeByName(SPACEGEOMETRY).isValid()

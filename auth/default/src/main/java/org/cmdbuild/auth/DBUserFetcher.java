@@ -195,6 +195,7 @@ public abstract class DBUserFetcher implements UserFetcher {
 						activeCondition(userClassAlias), //
 						condition(attribute(userClassAlias, loginAttributeName(login)), //
 								eq(login.getValue())))) //
+				.limit(1) //
 				.run();
 		final CMCard userCard;
 		if (queryResult.size() == 1) {

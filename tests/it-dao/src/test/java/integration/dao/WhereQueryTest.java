@@ -52,14 +52,15 @@ public class WhereQueryTest extends IntegrationTestBase {
 				.save();
 
 		// when
-		final CMQueryResult result = dbDataView() //
+		final CMQueryRow row = dbDataView() //
 				.select(anyAttribute(clazz)) //
 				.from(clazz) //
 				.where(condition(codeAttribute(clazz), eq("foo"))) //
-				.run();
+				.limit(1) //
+				.run() //
+				.getOnlyRow();
 
 		// then
-		final CMQueryRow row = result.getOnlyRow();
 		final CMCard card = row.getCard(clazz);
 		assertThat((String) card.getCode(), equalTo("foo"));
 	}
@@ -77,16 +78,17 @@ public class WhereQueryTest extends IntegrationTestBase {
 				.save();
 
 		// when
-		final CMQueryResult result = dbDataView() //
+		final CMQueryRow row = dbDataView() //
 				.select(anyAttribute(clazz)) //
 				.from(clazz) //
 				.where(and( //
 						condition(codeAttribute(clazz), eq("foo")), //
 						condition(descriptionAttribute(clazz), eq("bar")))) //
-				.run();
+				.limit(1) //
+				.run() //
+				.getOnlyRow();
 
 		// then
-		final CMQueryRow row = result.getOnlyRow();
 		final CMCard card = row.getCard(clazz);
 		assertThat((String) card.getCode(), equalTo("foo"));
 		assertThat((String) card.getDescription(), equalTo("bar"));
@@ -138,7 +140,9 @@ public class WhereQueryTest extends IntegrationTestBase {
 				.from(clazz) //
 				.where(not( //
 				condition(codeAttribute(clazz), eq("foo")))) //
-				.run().getOnlyRow();
+				.limit(1) //
+				.run() //
+				.getOnlyRow();
 
 		// then
 		assertThat((String) row.getCard(clazz).getCode(), equalTo("bar"));
@@ -188,7 +192,9 @@ public class WhereQueryTest extends IntegrationTestBase {
 				.from(clazz) //
 				.where(and(condition(codeAttribute(clazz), eq("foo")), //
 						not(condition(descriptionAttribute(clazz), eq("fake"))))) //
-				.run().getOnlyRow();
+				.limit(1) //
+				.run() //
+				.getOnlyRow();
 
 		// then
 		assertThat((String) row.getCard(clazz).getCode(), equalTo("foo"));
@@ -214,7 +220,9 @@ public class WhereQueryTest extends IntegrationTestBase {
 				.select(anyAttribute(clazz)) //
 				.from(clazz) //
 				.where(condition(codeAttribute(clazz), gt("f"))) //
-				.run().getOnlyRow();
+				.limit(1) //
+				.run() //
+				.getOnlyRow();
 
 		// then
 		assertThat((String) row.getCard(clazz).getCode(), equalTo("foo"));
@@ -240,7 +248,9 @@ public class WhereQueryTest extends IntegrationTestBase {
 				.select(anyAttribute(clazz)) //
 				.from(clazz) //
 				.where(condition(codeAttribute(clazz), lt("e"))) //
-				.run().getOnlyRow();
+				.limit(1) //
+				.run() //
+				.getOnlyRow();
 
 		// then
 		assertThat((String) row.getCard(clazz).getCode(), equalTo("bar"));
@@ -266,7 +276,9 @@ public class WhereQueryTest extends IntegrationTestBase {
 				.select(anyAttribute(clazz)) //
 				.from(clazz) //
 				.where(condition(descriptionAttribute(clazz), contains("PTioN"))) //
-				.run().getOnlyRow();
+				.limit(1) //
+				.run() //
+				.getOnlyRow();
 
 		// then
 		assertThat((String) row.getCard(clazz).getCode(), equalTo("foo"));
@@ -292,7 +304,9 @@ public class WhereQueryTest extends IntegrationTestBase {
 				.select(anyAttribute(clazz)) //
 				.from(clazz) //
 				.where(not(condition(descriptionAttribute(clazz), contains("PTioN")))) //
-				.run().getOnlyRow();
+				.limit(1) //
+				.run() //
+				.getOnlyRow();
 
 		// then
 		assertThat((String) row.getCard(clazz).getCode(), equalTo("bar"));
@@ -318,7 +332,9 @@ public class WhereQueryTest extends IntegrationTestBase {
 				.select(anyAttribute(clazz)) //
 				.from(clazz) //
 				.where(condition(descriptionAttribute(clazz), beginsWith("dESc"))) //
-				.run().getOnlyRow();
+				.limit(1) //
+				.run() //
+				.getOnlyRow();
 
 		// then
 		assertThat((String) row.getCard(clazz).getCode(), equalTo("foo"));
@@ -344,7 +360,9 @@ public class WhereQueryTest extends IntegrationTestBase {
 				.select(anyAttribute(clazz)) //
 				.from(clazz) //
 				.where(not(condition(descriptionAttribute(clazz), beginsWith("dESc")))) //
-				.run().getOnlyRow();
+				.limit(1) //
+				.run() //
+				.getOnlyRow();
 
 		// then
 		assertThat((String) row.getCard(clazz).getCode(), equalTo("bar"));
@@ -370,7 +388,9 @@ public class WhereQueryTest extends IntegrationTestBase {
 				.select(anyAttribute(clazz)) //
 				.from(clazz) //
 				.where(condition(descriptionAttribute(clazz), endsWith("_fOo"))) //
-				.run().getOnlyRow();
+				.limit(1) //
+				.run() //
+				.getOnlyRow();
 
 		// then
 		assertThat((String) row.getCard(clazz).getCode(), equalTo("foo"));
@@ -396,7 +416,9 @@ public class WhereQueryTest extends IntegrationTestBase {
 				.select(anyAttribute(clazz)) //
 				.from(clazz) //
 				.where(not(condition(descriptionAttribute(clazz), endsWith("_FOO")))) //
-				.run().getOnlyRow();
+				.limit(1) //
+				.run() //
+				.getOnlyRow();
 
 		// then
 		assertThat((String) row.getCard(clazz).getCode(), equalTo("bar"));
@@ -422,7 +444,9 @@ public class WhereQueryTest extends IntegrationTestBase {
 				.select(anyAttribute(clazz)) //
 				.from(clazz) //
 				.where(condition(codeAttribute(clazz), isNull())) //
-				.run().getOnlyRow();
+				.limit(1) //
+				.run() //
+				.getOnlyRow();
 
 		// then
 		assertThat((String) row.getCard(clazz).getDescription(), equalTo("foo"));
@@ -448,7 +472,9 @@ public class WhereQueryTest extends IntegrationTestBase {
 				.select(anyAttribute(clazz)) //
 				.from(clazz) //
 				.where(not(condition(codeAttribute(clazz), isNull()))) //
-				.run().getOnlyRow();
+				.limit(1) //
+				.run() //
+				.getOnlyRow();
 
 		// then
 		assertThat((String) row.getCard(clazz).getDescription(), equalTo("bar"));
@@ -474,7 +500,9 @@ public class WhereQueryTest extends IntegrationTestBase {
 				.select(anyAttribute(clazz)) //
 				.from(clazz) //
 				.where(condition(codeAttribute(clazz), in("foo", "loo", "moo", "poo"))) //
-				.run().getOnlyRow();
+				.limit(1) //
+				.run() //
+				.getOnlyRow();
 
 		// then
 		assertThat((String) row.getCard(clazz).getCode(), equalTo("foo"));
@@ -500,7 +528,9 @@ public class WhereQueryTest extends IntegrationTestBase {
 				.select(anyAttribute(clazz)) //
 				.from(clazz) //
 				.where(not(condition(codeAttribute(clazz), in("foo", "loo", "goo", "poo")))) //
-				.run().getOnlyRow();
+				.limit(1) //
+				.run() //
+				.getOnlyRow();
 
 		// then
 		assertThat((String) row.getCard(clazz).getCode(), equalTo("bar"));

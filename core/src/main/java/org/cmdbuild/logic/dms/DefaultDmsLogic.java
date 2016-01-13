@@ -211,6 +211,7 @@ public class DefaultDmsLogic implements DmsLogic {
 				.select(anyAttribute(type)) //
 				.from(type) //
 				.where(condition(attribute(type, ID_ATTRIBUTE), eq(cardId))) //
+				.limit(1) //
 				.run() //
 				.getOnlyRow() //
 				.getCard(type) //
