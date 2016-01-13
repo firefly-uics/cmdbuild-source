@@ -51,9 +51,9 @@
 				case "layoutType" :
 					this.data = layouts;
 					break;
-				case "explosionLevels" :
-					this.data = [];
-					break;
+//				case "explosionLevels" :
+//					this.data = [];
+//					break;
 				case "labels" :
 					this.data = labelsVisibility;
 					break;
@@ -95,6 +95,7 @@
 				case "projectionType" :
 				case "layoutType" :
 				case "explosionLevels" :
+				case "clusteringThreshold" :
 					return "";
 				case "labels" :
 					return $.Cmdbuild.standard.backend.Options.labelsVisibility(code);

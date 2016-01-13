@@ -22,7 +22,7 @@
 	"Fornitore": "supplier",
 	"GenericClientSW": "software",
 	"GestioneModifiche": "process",
-	"GUICOMPOUND": "compound",
+	"GUICOMPOUNDNODE": "compound",
 	"ImacTrans": "process",
 	"Indirizzo": "IP",
 	"InfrastructureSW": "softwareCatalogue",

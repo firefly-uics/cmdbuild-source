@@ -4,7 +4,6 @@
 	var OPTIONS_LABEL_ON_ALL = "All";
 	var MAX_DISTANCE_NODES = 10000;
 	var MIN_STEP_ZOOMALL = 10;
-	var STEPOPENCOMPOUND = 20;
 	if (!$.Cmdbuild.g3d) {
 		$.Cmdbuild.g3d = {};
 	}
@@ -110,11 +109,12 @@
 			var elements = $.Cmdbuild.g3d.Model.getGraphData(node,
 					"compoundData");
 			var arCommands = [];
-			for (var i = 0; i < elements.length; i += STEPOPENCOMPOUND) {
+			var expandingThreshold = $.Cmdbuild.customvariables.options["expandingThreshold"];
+			for (var i = 0; i < elements.length; i += expandingThreshold) {
 				arCommands.push({
 					command: "openChildren",
 					id: node.id(),
-					elements: elements.slice(i, i + STEPOPENCOMPOUND)
+					elements: elements.slice(i, i + expandingThreshold)
 				});
 			}
 			return arCommands;
@@ -126,7 +126,7 @@
 			var node = thisViewer.model.getNode(LASTSELECTED.elementId);
 			var className = $.Cmdbuild.g3d.Model
 					.getGraphData(node, "className");
-			if (className == "GUICOMPOUND") {
+			if (className == $.Cmdbuild.g3d.constants.GUICOMPOUNDNODE) {
 				var arCommands = thisViewer.getOpenCompoundCommands(node);
 				var macroCommand = new $.Cmdbuild.g3d.commands.macroCommand(
 						thisViewer.model, arCommands);

@@ -1,5 +1,4 @@
 (function($) {
-	var ELEMENTSNUMBERTOBECOMPOUND = 100;
 	var cache = {
 		domains: {}
 	};
@@ -194,7 +193,8 @@
 									return;
 
 								}
-								if (response.length > ELEMENTSNUMBERTOBECOMPOUND) {
+								var clusteringThreshold = $.Cmdbuild.customvariables.options["clusteringThreshold"];
+								if (response.length > clusteringThreshold) {
 									var relation = response[0];
 									var rDescription = (relation._sourceId == cardId && relation._sourceType == className)
 											? relation._type + "(1)"
@@ -205,7 +205,7 @@
 											+ rDescription;
 									this.pushAnOpeningChild(elements, domain,
 											relation._destinationId,
-											description, "GUICOMPOUND",
+											description, $.Cmdbuild.g3d.constants.GUICOMPOUNDNODE,
 											response, node, cardId, children);
 								} else {
 									this.explodeChildren(elements, domain,
