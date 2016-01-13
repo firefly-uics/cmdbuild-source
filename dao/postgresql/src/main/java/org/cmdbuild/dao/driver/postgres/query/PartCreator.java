@@ -11,11 +11,14 @@ import org.cmdbuild.dao.entrytype.CMEntryType;
 import org.cmdbuild.dao.query.clause.ClassHistory;
 import org.cmdbuild.dao.query.clause.where.Native;
 
-public class PartCreator {
+public abstract class PartCreator {
 
 	protected final StringBuilder sb;
 	private final List<Object> params;
 
+	/**
+	 * Usable by subclasses only.
+	 */
 	protected PartCreator() {
 		sb = new StringBuilder();
 		params = new ArrayList<Object>();
