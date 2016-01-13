@@ -27,7 +27,7 @@
 				this.attributes = [];
 				return;
 			}
-			if (this.type == "GUICOMPOUND") {
+			if (this.type == $.Cmdbuild.g3d.constants.GUICOMPOUNDNODE) {
 				this.attributes = this.compoundAttributes();
 				var node = $.Cmdbuild.customvariables.model
 						.getNode(this.param.cardId);

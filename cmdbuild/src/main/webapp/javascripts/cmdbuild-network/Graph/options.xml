@@ -20,6 +20,17 @@
 				<type>edgesTooltip</type>
 			</onClick>
 		</checkbox>
+		<spinner label="Threshold for clustering nodes" id="clusteringThreshold" class="optionsSpinner">
+			<params>
+				<backend>Options</backend>
+				<type>clusteringThreshold</type>
+				<value>1</value>
+			</params>
+			<onChange>
+				<command>boolean</command>
+				<type>clusteringThreshold</type>
+			</onChange>
+		</spinner>
 		<select label="Labels" id="labels" class="optionsSelect">
 			<params>
 				<backend>Options</backend>

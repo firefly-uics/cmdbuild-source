@@ -49,6 +49,8 @@
 												// defined
 												// in administration/setup
 												configuration.explosionLevels = graphConfiguration.baseLevel;
+												configuration.clusteringThreshold = graphConfiguration.clusteringThreshold;
+												configuration.expandingThreshold = graphConfiguration.expandingThreshold;
 												callback.apply(callbackScope,
 														[configuration]);
 											}, this);

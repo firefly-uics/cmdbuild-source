@@ -24,6 +24,8 @@
 			var valLabels = backendFn.getSelectValue("labels",
 					$.Cmdbuild.customvariables.options["labels"]);
 			setTimeout(function() {
+				$("#clusteringThreshold").spinner("value",
+						$.Cmdbuild.custom.configuration.clusteringThreshold);
 				var selectMenu = $("#labels");
 				selectMenu.val(valLabels);
 				selectMenu.selectmenu("refresh");
@@ -109,9 +111,6 @@
 			var form2Hook = $.Cmdbuild.dataModel.forms[paramActualized.id];
 			form2Hook.selectRows($.Cmdbuild.customvariables.selected.getData());
 		},
-		// centerOnSelection: function(param) {
-		// $.Cmdbuild.customvariables.model.doLayout();
-		// },
 		initialize: function(callback) {
 			callback.apply(this, []);
 		},
