@@ -16,7 +16,7 @@
 			</observe>
  			<params>
 				<type>form</type>
-				<backend>Card</backend>
+				<backend>GraphCard</backend>
 				<className>$selectedForm.className</className>
 				<cardId>$selectedForm.id</cardId>
 				<readonly>true</readonly>
