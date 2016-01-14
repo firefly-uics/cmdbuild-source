@@ -248,6 +248,7 @@ public class InternalStore implements Store {
 					.from(targetType) //
 					.where(condition(attribute(targetType, ID_ATTRIBUTE), eq(id))) //
 					.limit(1) //
+					.skipDefaultOrdering() //
 					.run() //
 					.getOnlyRow() //
 					.getCard(targetType);
@@ -290,6 +291,7 @@ public class InternalStore implements Store {
 					.from(targetType) //
 					.where(condition(attribute(targetType, ID_ATTRIBUTE), eq(id))) //
 					.limit(1) //
+					.skipDefaultOrdering() //
 					.run() //
 					.getOnlyRow() //
 					.getCard(targetType);

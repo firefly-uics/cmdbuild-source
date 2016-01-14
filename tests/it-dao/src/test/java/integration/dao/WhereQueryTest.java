@@ -57,6 +57,7 @@ public class WhereQueryTest extends IntegrationTestBase {
 				.from(clazz) //
 				.where(condition(codeAttribute(clazz), eq("foo"))) //
 				.limit(1) //
+				.skipDefaultOrdering() //
 				.run() //
 				.getOnlyRow();
 
@@ -85,6 +86,7 @@ public class WhereQueryTest extends IntegrationTestBase {
 						condition(codeAttribute(clazz), eq("foo")), //
 						condition(descriptionAttribute(clazz), eq("bar")))) //
 				.limit(1) //
+				.skipDefaultOrdering() //
 				.run() //
 				.getOnlyRow();
 
@@ -141,6 +143,7 @@ public class WhereQueryTest extends IntegrationTestBase {
 				.where(not( //
 				condition(codeAttribute(clazz), eq("foo")))) //
 				.limit(1) //
+				.skipDefaultOrdering() //
 				.run() //
 				.getOnlyRow();
 
@@ -193,6 +196,7 @@ public class WhereQueryTest extends IntegrationTestBase {
 				.where(and(condition(codeAttribute(clazz), eq("foo")), //
 						not(condition(descriptionAttribute(clazz), eq("fake"))))) //
 				.limit(1) //
+				.skipDefaultOrdering() //
 				.run() //
 				.getOnlyRow();
 
@@ -221,6 +225,7 @@ public class WhereQueryTest extends IntegrationTestBase {
 				.from(clazz) //
 				.where(condition(codeAttribute(clazz), gt("f"))) //
 				.limit(1) //
+				.skipDefaultOrdering() //
 				.run() //
 				.getOnlyRow();
 
@@ -249,6 +254,7 @@ public class WhereQueryTest extends IntegrationTestBase {
 				.from(clazz) //
 				.where(condition(codeAttribute(clazz), lt("e"))) //
 				.limit(1) //
+				.skipDefaultOrdering() //
 				.run() //
 				.getOnlyRow();
 
@@ -277,6 +283,7 @@ public class WhereQueryTest extends IntegrationTestBase {
 				.from(clazz) //
 				.where(condition(descriptionAttribute(clazz), contains("PTioN"))) //
 				.limit(1) //
+				.skipDefaultOrdering() //
 				.run() //
 				.getOnlyRow();
 
@@ -305,6 +312,7 @@ public class WhereQueryTest extends IntegrationTestBase {
 				.from(clazz) //
 				.where(not(condition(descriptionAttribute(clazz), contains("PTioN")))) //
 				.limit(1) //
+				.skipDefaultOrdering() //
 				.run() //
 				.getOnlyRow();
 
@@ -333,6 +341,7 @@ public class WhereQueryTest extends IntegrationTestBase {
 				.from(clazz) //
 				.where(condition(descriptionAttribute(clazz), beginsWith("dESc"))) //
 				.limit(1) //
+				.skipDefaultOrdering() //
 				.run() //
 				.getOnlyRow();
 
@@ -361,6 +370,7 @@ public class WhereQueryTest extends IntegrationTestBase {
 				.from(clazz) //
 				.where(not(condition(descriptionAttribute(clazz), beginsWith("dESc")))) //
 				.limit(1) //
+				.skipDefaultOrdering() //
 				.run() //
 				.getOnlyRow();
 
@@ -389,6 +399,7 @@ public class WhereQueryTest extends IntegrationTestBase {
 				.from(clazz) //
 				.where(condition(descriptionAttribute(clazz), endsWith("_fOo"))) //
 				.limit(1) //
+				.skipDefaultOrdering() //
 				.run() //
 				.getOnlyRow();
 
@@ -417,6 +428,7 @@ public class WhereQueryTest extends IntegrationTestBase {
 				.from(clazz) //
 				.where(not(condition(descriptionAttribute(clazz), endsWith("_FOO")))) //
 				.limit(1) //
+				.skipDefaultOrdering() //
 				.run() //
 				.getOnlyRow();
 
@@ -445,6 +457,7 @@ public class WhereQueryTest extends IntegrationTestBase {
 				.from(clazz) //
 				.where(condition(codeAttribute(clazz), isNull())) //
 				.limit(1) //
+				.skipDefaultOrdering() //
 				.run() //
 				.getOnlyRow();
 
@@ -473,6 +486,7 @@ public class WhereQueryTest extends IntegrationTestBase {
 				.from(clazz) //
 				.where(not(condition(codeAttribute(clazz), isNull()))) //
 				.limit(1) //
+				.skipDefaultOrdering() //
 				.run() //
 				.getOnlyRow();
 
@@ -501,6 +515,7 @@ public class WhereQueryTest extends IntegrationTestBase {
 				.from(clazz) //
 				.where(condition(codeAttribute(clazz), in("foo", "loo", "moo", "poo"))) //
 				.limit(1) //
+				.skipDefaultOrdering() //
 				.run() //
 				.getOnlyRow();
 
@@ -529,6 +544,7 @@ public class WhereQueryTest extends IntegrationTestBase {
 				.from(clazz) //
 				.where(not(condition(codeAttribute(clazz), in("foo", "loo", "goo", "poo")))) //
 				.limit(1) //
+				.skipDefaultOrdering() //
 				.run() //
 				.getOnlyRow();
 

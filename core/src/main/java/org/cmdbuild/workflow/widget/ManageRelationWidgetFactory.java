@@ -134,6 +134,7 @@ public class ManageRelationWidgetFactory extends ValuePairWidgetFactory {
 				.from(queryClass) //
 				.where(condition(attribute(queryClass, ID_ATTRIBUTE), eq(id))) //
 				.limit(1) //
+				.skipDefaultOrdering() //
 				.run() //
 				.getOnlyRow() //
 				.getCard(queryClass);

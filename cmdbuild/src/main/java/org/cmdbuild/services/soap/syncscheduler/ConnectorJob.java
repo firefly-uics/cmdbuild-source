@@ -338,6 +338,7 @@ public class ConnectorJob implements Runnable {
 					.from(referencedClass) //
 					.where(condition(attribute(referencedClass, "Description"), eq(attributeValue))) //
 					.limit(1) //
+					.skipDefaultOrdering() //
 					.run();
 			if (result.size() > 0) {
 				final Long referencedCardId = result.getOnlyRow().getCard(referencedClass).getId();

@@ -230,6 +230,7 @@ public class DefaultBimDataModelManager implements BimDataModelManager {
 					.from(projectsClass) //
 					.where(condition(attribute(projectsClass, ID_ATTRIBUTE), eq(Long.parseLong(projectCardId)))) //
 					.limit(1) //
+					.skipDefaultOrdering() //
 					.run() //
 					.getOnlyRow() //
 					.getCard(projectsClass);
@@ -238,6 +239,7 @@ public class DefaultBimDataModelManager implements BimDataModelManager {
 					.from(rootClass) //
 					.where(condition(attribute(rootClass, ID_ATTRIBUTE), eq(Long.parseLong(cardId)))) //
 					.limit(1) //
+					.skipDefaultOrdering() //
 					.run() //
 					.getOnlyRow() //
 					.getCard(rootClass);

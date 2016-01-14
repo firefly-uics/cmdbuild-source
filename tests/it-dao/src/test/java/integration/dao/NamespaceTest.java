@@ -80,6 +80,7 @@ public class NamespaceTest extends IntegrationTestBase {
 		final CMQueryResult result = dbDataView().select(anyAttribute(clazz)) //
 				.from(clazz) //
 				.limit(1) //
+				.skipDefaultOrdering() //
 				.run();
 
 		// then

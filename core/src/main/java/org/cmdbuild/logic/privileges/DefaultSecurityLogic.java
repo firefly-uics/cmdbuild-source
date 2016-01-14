@@ -471,6 +471,7 @@ public class DefaultSecurityLogic implements Logic, SecurityLogic {
 				.from(roleClass) //
 				.where(condition(attribute(roleClass, "Id"), eq(groupId))) //
 				.limit(1) //
+				.skipDefaultOrdering() //
 				.run() //
 				.getOnlyRow();
 		final CMCard roleCard = row.getCard(roleClass);
@@ -519,6 +520,7 @@ public class DefaultSecurityLogic implements Logic, SecurityLogic {
 				.from(roleClass) //
 				.where(condition(attribute(roleClass, "Id"), eq(groupId))) //
 				.limit(1) //
+				.skipDefaultOrdering() //
 				.run() //
 				.getOnlyRow();
 		final CMCard roleCard = row.getCard(roleClass);
@@ -591,6 +593,7 @@ public class DefaultSecurityLogic implements Logic, SecurityLogic {
 								eq(privilegeInfoToSave.getPrivilegedObjectId()))) //
 				) //
 				.limit(1) //
+				.skipDefaultOrdering() //
 				.run();
 		Optional<CMCard> optional;
 		if (!rowsForGroupAndClass.isEmpty()) {

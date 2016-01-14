@@ -173,6 +173,7 @@ public class DBLayerMetadataStore {
 				.from(getLayerTable()) //
 				.where(condition(attribute(getLayerTable(), Attributes.FULL_NAME.getName()), eq(fullName))) //
 				.limit(1) //
+				.skipDefaultOrdering() //
 				.run() //
 				.getOnlyRow();
 

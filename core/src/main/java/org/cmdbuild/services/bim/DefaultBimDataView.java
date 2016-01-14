@@ -96,6 +96,7 @@ public class DefaultBimDataView extends ForwardingDataView implements BimDataVie
 					anyAttribute(theClass)) //
 					.from(theClass).where(condition(attribute(theClass, ID_ATTRIBUTE), eq(masterId))) //
 					.limit(1) //
+					.skipDefaultOrdering() //
 					.run();
 			if (!result.isEmpty()) {
 				final CMQueryRow row = result.getOnlyRow();
@@ -160,6 +161,7 @@ public class DefaultBimDataView extends ForwardingDataView implements BimDataVie
 						containerAttributeName, //
 						containerClassName), f) //
 				.limit(1) //
+				.skipDefaultOrdering() //
 				.run();
 
 		if (queryResult.isEmpty()) {
@@ -192,6 +194,7 @@ public class DefaultBimDataView extends ForwardingDataView implements BimDataVie
 			queryResult = dataView.select(anyAttribute(function, f)) //
 					.from(call(function, containerId, containerClassName), f) //
 					.limit(1) //
+					.skipDefaultOrdering() //
 					.run();
 			if (queryResult.isEmpty()) {
 				logger.warn("No coordinates generated for card " + id);
@@ -246,6 +249,7 @@ public class DefaultBimDataView extends ForwardingDataView implements BimDataVie
 		final CMQueryResult queryResult = dataView.select(anyAttribute(function, f)) //
 				.from(call(function, globalId), f) //
 				.limit(1) //
+				.skipDefaultOrdering() //
 				.run();
 		if (queryResult.isEmpty()) {
 			logger.warn("No matching card found for globalid " + globalId);
@@ -344,6 +348,7 @@ public class DefaultBimDataView extends ForwardingDataView implements BimDataVie
 				.from(theClass) //
 				.where(condition(attribute(theClass, ID_ATTRIBUTE), eq(cardId))) //
 				.limit(1) //
+				.skipDefaultOrdering() //
 				.run() //
 				.getOnlyRow() //
 				.getCard(theClass);
@@ -420,6 +425,7 @@ public class DefaultBimDataView extends ForwardingDataView implements BimDataVie
 		return dataView.select(anyAttribute(theClass)).from(theClass)
 				.where(condition(attribute(theClass, ID_ATTRIBUTE), eq(id))) //
 				.limit(1) //
+				.skipDefaultOrdering() //
 				.run() //
 				.getOnlyRow() //
 				.getCard(theClass);

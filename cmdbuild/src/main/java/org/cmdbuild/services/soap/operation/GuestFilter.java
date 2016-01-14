@@ -132,6 +132,7 @@ class GuestFilter {
 												attribute(targetClass, attributeName), //
 												eq(attributeValue))) //
 										.limit(1) //
+										.skipDefaultOrdering() //
 										.run() //
 										.getOnlyRow() //
 										.getCard(targetClass) //

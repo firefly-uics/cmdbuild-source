@@ -83,6 +83,7 @@ public class DBDashboardStore implements DashboardStore {
 				.from(dashboardClass) //
 				.where(condition(attribute(dashboardClass, "Id"), eq(dashboardId))) //
 				.limit(1) //
+				.skipDefaultOrdering() //
 				.run() //
 				.getOnlyRow();
 		return row.getCard(dashboardClass);

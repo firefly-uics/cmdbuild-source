@@ -332,6 +332,7 @@ public class DefaultAuthenticationService implements AuthenticationService {
 				.from(target) //
 				.where(condition(attribute(target, ID), eq(relation.getCard1Id()))) //
 				.limit(1) //
+				.skipDefaultOrdering() //
 				.run() //
 				.getOnlyRow() //
 				.getCard(target);
@@ -343,6 +344,7 @@ public class DefaultAuthenticationService implements AuthenticationService {
 				.from(target) //
 				.where(condition(attribute(target, ID), eq(relation.getCard2Id()))) //
 				.limit(1) //
+				.skipDefaultOrdering() //
 				.run() //
 				.getOnlyRow() //
 				.getCard(target);
@@ -356,6 +358,7 @@ public class DefaultAuthenticationService implements AuthenticationService {
 				.from(userClass(), as(userClassAlias)) //
 				.where(condition(attribute(userClassAlias, ID), eq(userId))) //
 				.limit(1) //
+				.skipDefaultOrdering() //
 				.run() //
 				.getOnlyRow() //
 				.getCard(userClassAlias);
@@ -479,6 +482,7 @@ public class DefaultAuthenticationService implements AuthenticationService {
 				.from(roleClass(), as(groupClassAlias)) //
 				.where(condition(attribute(groupClassAlias, ID), eq(groupId))) //
 				.limit(1) //
+				.skipDefaultOrdering() //
 				.run() //
 				.getOnlyRow();
 		final CMCard groupCard = userRow.getCard(groupClassAlias);

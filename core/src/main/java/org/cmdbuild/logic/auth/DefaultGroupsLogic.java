@@ -150,6 +150,7 @@ public class DefaultGroupsLogic implements GroupsLogic {
 				.from(userClass) //
 				.where(condition(QueryAliasAttribute.attribute(userClass, "Id"), eq(userId))) //
 				.limit(1) //
+				.skipDefaultOrdering() //
 				.run() //
 				.getOnlyRow();
 		return userRow.getCard(userClass);
@@ -161,6 +162,7 @@ public class DefaultGroupsLogic implements GroupsLogic {
 				.from(roleClass) //
 				.where(condition(QueryAliasAttribute.attribute(roleClass, "Id"), eq(groupId))) //
 				.limit(1) //
+				.skipDefaultOrdering() //
 				.run() //
 				.getOnlyRow();
 		return groupRow.getCard(roleClass);
@@ -184,6 +186,7 @@ public class DefaultGroupsLogic implements GroupsLogic {
 				.where(and(condition(attribute(userClass, "Id"), eq(userId)), //
 						condition(attribute(roleClass, "Id"), eq(groupId)))) //
 				.limit(1) //
+				.skipDefaultOrdering() //
 				.run() //
 				.getOnlyRow();
 
