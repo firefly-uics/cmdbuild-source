@@ -65,8 +65,7 @@ public class NumberingAndOrderPartCreatorTest {
 
 		// then
 		assertThat(normalize(part), equalTo("" //
-				+ "SELECT * " //
-				+ "FROM (*** THIS IS THE MAIN ONE ***) AS main " //
+				+ "*** THIS IS THE MAIN ONE *** " //
 				+ "ORDER BY \"_dummy_Id\""));
 
 		verify(querySpecs, atLeast(1)).getFromClause();
