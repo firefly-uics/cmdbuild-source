@@ -60,6 +60,7 @@ public class GroupEmailEngine implements Engine {
 				.from(roleClass) //
 				.where(condition(attribute(roleClass, CODE_ATTRIBUTE), eq(expression))) //
 				.limit(1) //
+				.skipDefaultOrdering() //
 				.run() //
 				.getOnlyRow() //
 				.getCard(roleClass);

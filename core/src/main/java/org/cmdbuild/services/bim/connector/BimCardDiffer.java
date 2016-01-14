@@ -49,6 +49,7 @@ public class BimCardDiffer implements CardDiffer {
 				.from(bimClass)//
 				.where(condition(attribute(bimClass, GLOBALID_ATTRIBUTE), eq(sourceEntity.getKey()))) //
 				.limit(1) //
+				.skipDefaultOrdering() //
 				.run() //
 				.getOnlyRow() //
 				.getCard(bimClass);

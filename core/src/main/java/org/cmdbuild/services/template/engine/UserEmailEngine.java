@@ -60,6 +60,7 @@ public class UserEmailEngine implements Engine {
 				.from(userClass) //
 				.where(condition(attribute(userClass, USERNAME_ATTRIBUTE), eq(expression))) //
 				.limit(1) //
+				.skipDefaultOrdering() //
 				.run() //
 				.getOnlyRow() //
 				.getCard(userClass);

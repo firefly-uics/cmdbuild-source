@@ -261,6 +261,7 @@ public class DataViewStore<T extends Storable> implements Store<T> {
 				.from(storeClass()) //
 				.where(whereClauseFor(storable)) //
 				.limit(1) //
+				.skipDefaultOrdering() //
 				.run() //
 				.getOnlyRow() //
 				.getCard(storeClass());

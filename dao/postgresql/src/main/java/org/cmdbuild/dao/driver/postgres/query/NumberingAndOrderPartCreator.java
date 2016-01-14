@@ -95,7 +95,7 @@ public class NumberingAndOrderPartCreator extends PartCreator {
 					actual));
 
 			/*
-			 * uses row_number feature for ordering
+			 * does not uses row_number feature for ordering
 			 */
 			if (!querySpecs.numbered() && !orderByAttributesExpression.isEmpty()) {
 				sb.append(LINE_SEPARATOR).append(ORDER_BY).append(SPACE).append(orderByAttributesExpression);
@@ -130,7 +130,8 @@ public class NumberingAndOrderPartCreator extends PartCreator {
 					quote(name(nameForUserAttribute(attribute.getEntryTypeAlias(), attribute.getName()))), //
 					clause.getDirection()));
 		}
-		if (specialFeaturesChecker.addDefaultOrderings(querySpecs.getFromClause().getType())) {
+		if (!querySpecs.skipDefaultOrdering()
+				&& specialFeaturesChecker.addDefaultOrderings(querySpecs.getFromClause().getType())) {
 			expressions.add(quote(name(nameForSystemAttribute(querySpecs.getFromClause().getAlias(), Id))));
 		}
 

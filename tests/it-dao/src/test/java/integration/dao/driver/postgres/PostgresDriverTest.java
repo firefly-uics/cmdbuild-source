@@ -54,6 +54,7 @@ public class PostgresDriverTest extends IntegrationTestBase {
 				.select(REGCLASS_ATTRIBUTE) //
 				.from(classWithRegClassAttribute) //
 				.limit(1) //
+				.skipDefaultOrdering() //
 				.run() //
 				.getOnlyRow();
 

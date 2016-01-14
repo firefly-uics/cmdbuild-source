@@ -38,6 +38,7 @@ public class LazyCard extends ForwardingCard {
 						.from(target) //
 						.where(condition(attribute(target, ID_ATTRIBUTE), eq(delegate.getId()))) //
 						.limit(1) //
+						.skipDefaultOrdering() //
 						.run() //
 						.getOnlyRow() //
 						.getCard(target);

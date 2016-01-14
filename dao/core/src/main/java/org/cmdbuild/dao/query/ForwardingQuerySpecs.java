@@ -82,4 +82,9 @@ public abstract class ForwardingQuerySpecs extends ForwardingObject implements Q
 		return delegate().count();
 	}
 
+	@Override
+	public boolean skipDefaultOrdering() {
+		return delegate().skipDefaultOrdering();
+	}
+
 }

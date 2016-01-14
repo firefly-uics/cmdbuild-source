@@ -135,6 +135,7 @@ public class QuerySpecsBuilderImpl implements QuerySpecsBuilder {
 	private boolean numbered;
 	private WhereClause conditionOnNumberedQuery;
 	private boolean count;
+	private boolean skipDefaultOrdering;
 
 	private final AliasLibrary aliases;
 
@@ -447,6 +448,12 @@ public class QuerySpecsBuilderImpl implements QuerySpecsBuilder {
 	}
 
 	@Override
+	public QuerySpecsBuilder skipDefaultOrdering() {
+		skipDefaultOrdering = true;
+		return this;
+	}
+
+	@Override
 	public QuerySpecs build() {
 		final FromClause fromClause = createFromClause();
 
@@ -483,6 +490,7 @@ public class QuerySpecsBuilderImpl implements QuerySpecsBuilder {
 				.numbered(numbered) //
 				.conditionOnNumberedQuery(conditionOnNumberedQuery) //
 				.count(count) //
+				.skipDefaultOrdering(skipDefaultOrdering) //
 				.build();
 
 		for (final JoinClause joinClause : joinClauses) {

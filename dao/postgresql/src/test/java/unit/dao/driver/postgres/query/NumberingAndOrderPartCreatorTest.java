@@ -72,6 +72,31 @@ public class NumberingAndOrderPartCreatorTest {
 		verify(querySpecs, atLeast(1)).count();
 		verify(querySpecs, atLeast(1)).numbered();
 		verify(querySpecs, atLeast(1)).getOrderByClauses();
+		verify(querySpecs, times(1)).skipDefaultOrdering();
+		verifyNoMoreInteractions(querySpecs);
+	}
+
+	@Test
+	public void queryWithNothingSkippingOrdering() throws Exception {
+		// given
+		final QuerySpecs querySpecs = mock(QuerySpecs.class);
+		doReturn(fromClause) //
+				.when(querySpecs).getFromClause();
+		doReturn(true) //
+				.when(querySpecs).skipDefaultOrdering();
+		final StringBuilder input = new StringBuilder("*** THIS IS THE MAIN ONE ***");
+
+		// when
+		final String part = new NumberingAndOrderPartCreator(querySpecs, input).getPart();
+
+		// then
+		assertThat(normalize(part), equalTo("" //
+				+ "*** THIS IS THE MAIN ONE ***"));
+
+		verify(querySpecs, atLeast(1)).count();
+		verify(querySpecs, atLeast(1)).numbered();
+		verify(querySpecs, atLeast(1)).getOrderByClauses();
+		verify(querySpecs, times(1)).skipDefaultOrdering();
 		verifyNoMoreInteractions(querySpecs);
 	}
 
@@ -98,6 +123,7 @@ public class NumberingAndOrderPartCreatorTest {
 		verify(querySpecs, atLeast(1)).count();
 		verify(querySpecs, atLeast(1)).numbered();
 		verify(querySpecs, atLeast(1)).getOrderByClauses();
+		verify(querySpecs, times(1)).skipDefaultOrdering();
 		verifyNoMoreInteractions(querySpecs);
 	}
 
@@ -126,6 +152,7 @@ public class NumberingAndOrderPartCreatorTest {
 		verify(querySpecs, atLeast(1)).count();
 		verify(querySpecs, atLeast(1)).numbered();
 		verify(querySpecs, atLeast(1)).getOrderByClauses();
+		verify(querySpecs, times(1)).skipDefaultOrdering();
 		verifyNoMoreInteractions(querySpecs);
 	}
 
@@ -152,6 +179,7 @@ public class NumberingAndOrderPartCreatorTest {
 		verify(querySpecs, atLeast(1)).numbered();
 		verify(querySpecs, atLeast(1)).getOrderByClauses();
 		verify(querySpecs, times(1)).getConditionOnNumberedQuery();
+		verify(querySpecs, times(1)).skipDefaultOrdering();
 		verifyNoMoreInteractions(querySpecs);
 	}
 
@@ -182,6 +210,7 @@ public class NumberingAndOrderPartCreatorTest {
 		verify(querySpecs, atLeast(1)).numbered();
 		verify(querySpecs, atLeast(1)).getOrderByClauses();
 		verify(querySpecs, times(1)).getConditionOnNumberedQuery();
+		verify(querySpecs, times(1)).skipDefaultOrdering();
 		verifyNoMoreInteractions(querySpecs);
 	}
 
@@ -210,6 +239,7 @@ public class NumberingAndOrderPartCreatorTest {
 		verify(querySpecs, atLeast(1)).numbered();
 		verify(querySpecs, atLeast(1)).getOrderByClauses();
 		verify(querySpecs, times(1)).getConditionOnNumberedQuery();
+		verify(querySpecs, times(1)).skipDefaultOrdering();
 		verifyNoMoreInteractions(querySpecs);
 	}
 
@@ -244,6 +274,7 @@ public class NumberingAndOrderPartCreatorTest {
 		verify(querySpecs, atLeast(1)).numbered();
 		verify(querySpecs, atLeast(1)).getOrderByClauses();
 		verify(querySpecs, times(1)).getConditionOnNumberedQuery();
+		verify(querySpecs, times(1)).skipDefaultOrdering();
 		verifyNoMoreInteractions(querySpecs);
 	}
 
@@ -274,6 +305,7 @@ public class NumberingAndOrderPartCreatorTest {
 		verify(querySpecs, atLeast(1)).numbered();
 		verify(querySpecs, atLeast(1)).getOrderByClauses();
 		verify(querySpecs, times(1)).getConditionOnNumberedQuery();
+		verify(querySpecs, times(1)).skipDefaultOrdering();
 		verifyNoMoreInteractions(querySpecs);
 	}
 
@@ -306,6 +338,7 @@ public class NumberingAndOrderPartCreatorTest {
 		verify(querySpecs, atLeast(1)).numbered();
 		verify(querySpecs, atLeast(1)).getOrderByClauses();
 		verify(querySpecs, times(1)).getConditionOnNumberedQuery();
+		verify(querySpecs, times(1)).skipDefaultOrdering();
 		verifyNoMoreInteractions(querySpecs);
 	}
 
@@ -342,7 +375,9 @@ public class NumberingAndOrderPartCreatorTest {
 		verify(querySpecs, atLeast(1)).numbered();
 		verify(querySpecs, atLeast(1)).getOrderByClauses();
 		verify(querySpecs, times(1)).getConditionOnNumberedQuery();
+		verify(querySpecs, times(1)).skipDefaultOrdering();
 		verifyNoMoreInteractions(querySpecs);
+
 	}
 
 	@Test
@@ -380,6 +415,7 @@ public class NumberingAndOrderPartCreatorTest {
 		verify(querySpecs, atLeast(1)).numbered();
 		verify(querySpecs, atLeast(1)).getOrderByClauses();
 		verify(querySpecs, times(1)).getConditionOnNumberedQuery();
+		verify(querySpecs, times(1)).skipDefaultOrdering();
 		verifyNoMoreInteractions(querySpecs);
 	}
 

@@ -273,6 +273,7 @@ public class DefaultAuthenticationLogic implements AuthenticationLogic {
 				.from(roleClass) //
 				.where(condition(attribute(roleClass, "Code"), eq(groupName))) //
 				.limit(1) //
+				.skipDefaultOrdering() //
 				.run() //
 				.getOnlyRow();
 		final String description = (String) row.getCard(roleClass).get("Description");

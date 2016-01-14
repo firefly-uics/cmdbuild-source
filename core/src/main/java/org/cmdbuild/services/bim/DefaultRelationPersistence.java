@@ -115,6 +115,7 @@ public class DefaultRelationPersistence implements RelationPersistence {
 					.from(projectsClass) //
 					.where(condition(attribute(projectsClass, ID_ATTRIBUTE), eq(projectCardId))) //
 					.limit(1) //
+					.skipDefaultOrdering() //
 					.run() //
 					.getOnlyRow() //
 					.getCard(projectsClass);
@@ -123,6 +124,7 @@ public class DefaultRelationPersistence implements RelationPersistence {
 					.from(rootClass) //
 					.where(condition(attribute(rootClass, ID_ATTRIBUTE), eq(Long.parseLong(cardId)))) //
 					.limit(1) //
+					.skipDefaultOrdering() //
 					.run() //
 					.getOnlyRow() //
 					.getCard(rootClass);

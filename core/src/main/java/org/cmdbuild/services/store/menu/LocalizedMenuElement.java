@@ -129,6 +129,7 @@ public class LocalizedMenuElement extends ForwardingMenuElement {
 				.from(cmClass) //
 				.where(condition(attribute(cmClass, ID_ATTRIBUTE), eq(id))) //
 				.limit(1) //
+				.skipDefaultOrdering() //
 				.run();
 		Optional<CMCard> _card;
 		if (!queryResult.isEmpty()) {

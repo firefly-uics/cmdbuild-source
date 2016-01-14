@@ -210,6 +210,7 @@ public class SimpleQueryTest extends IntegrationTestBase {
 				.from(newClass) //
 				.where(condition(attribute(newClass, codeAttributeName), eq(codeValueToFind))) //
 				.limit(1) //
+				.skipDefaultOrdering() //
 				.run() //
 				.getOnlyRow();
 
@@ -274,6 +275,7 @@ public class SimpleQueryTest extends IntegrationTestBase {
 				.select(newClass.getCodeAttributeName()) //
 				.from(newClass) //
 				.limit(1) //
+				.skipDefaultOrdering() //
 				.run() //
 				.getOnlyRow();
 
