@@ -130,7 +130,7 @@ public class NumberingAndOrderPartCreator extends PartCreator {
 					quote(name(nameForUserAttribute(attribute.getEntryTypeAlias(), attribute.getName()))), //
 					clause.getDirection()));
 		}
-		if (!querySpecs.skipDefaultOrdering()
+		if ((!expressions.isEmpty() || !querySpecs.skipDefaultOrdering())
 				&& specialFeaturesChecker.addDefaultOrderings(querySpecs.getFromClause().getType())) {
 			expressions.add(quote(name(nameForSystemAttribute(querySpecs.getFromClause().getAlias(), Id))));
 		}
