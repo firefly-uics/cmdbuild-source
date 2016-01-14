@@ -64,44 +64,51 @@ public class NumberingAndOrderPartCreator extends PartCreator {
 		final String actual = main.toString();
 		main.setLength(0);
 
-		final List<String> selectAttributes = newArrayList();
-
-		// any attribute of default query
-		selectAttributes.add("*");
-
-		// count
-		if (querySpecs.count()) {
-			selectAttributes.add(format("count(*) over() AS %s", //
-					nameForSystemAttribute(querySpecs.getFromClause().getAlias(), RowsCount)));
-		}
-
 		final String orderByAttributesExpression = join(expressionsForOrdering(querySpecs), ATTRIBUTES_SEPARATOR);
 
-		/*
-		 * row number (if possible)
-		 * 
-		 * uses row_number feature for ordering
-		 */
-		if (querySpecs.numbered() && !orderByAttributesExpression.isEmpty()) {
-			selectAttributes.add(format("row_number() OVER (%s %s) AS %s", //
-					ORDER_BY, //
-					orderByAttributesExpression, //
-					nameForSystemAttribute(querySpecs.getFromClause().getAlias(), RowNumber)));
-		}
+		if (querySpecs.count() || querySpecs.numbered()) {
+			final List<String> selectAttributes = newArrayList();
 
-		sb.append(format("SELECT %s FROM (%s) AS main", //
-				join(selectAttributes, ATTRIBUTES_SEPARATOR), //
-				actual));
+			// any attribute of default query
+			selectAttributes.add("*");
 
-		/*
-		 * uses row_number feature for ordering
-		 */
-		if (!querySpecs.numbered() && !orderByAttributesExpression.isEmpty()) {
-			sb.append(LINE_SEPARATOR).append(ORDER_BY).append(SPACE).append(orderByAttributesExpression);
-		}
+			// count
+			if (querySpecs.count()) {
+				selectAttributes.add(format("count(*) over() AS %s", //
+						nameForSystemAttribute(querySpecs.getFromClause().getAlias(), RowsCount)));
+			}
 
-		if (querySpecs.numbered()) {
-			sb.append(new ConditionOnNumberedQueryPartCreator(querySpecs, sb).getPart());
+			/*
+			 * row number (if possible)
+			 * 
+			 * uses row_number feature for ordering
+			 */
+			if (querySpecs.numbered() && !orderByAttributesExpression.isEmpty()) {
+				selectAttributes.add(format("row_number() OVER (%s %s) AS %s", //
+						ORDER_BY, //
+						orderByAttributesExpression, //
+						nameForSystemAttribute(querySpecs.getFromClause().getAlias(), RowNumber)));
+			}
+
+			sb.append(format("SELECT %s FROM (%s) AS main", //
+					join(selectAttributes, ATTRIBUTES_SEPARATOR), //
+					actual));
+
+			/*
+			 * uses row_number feature for ordering
+			 */
+			if (!querySpecs.numbered() && !orderByAttributesExpression.isEmpty()) {
+				sb.append(LINE_SEPARATOR).append(ORDER_BY).append(SPACE).append(orderByAttributesExpression);
+			}
+
+			if (querySpecs.numbered()) {
+				sb.append(new ConditionOnNumberedQueryPartCreator(querySpecs, sb).getPart());
+			}
+		} else {
+			sb.append(actual);
+			if (!orderByAttributesExpression.isEmpty()) {
+				sb.append(LINE_SEPARATOR).append(ORDER_BY).append(SPACE).append(orderByAttributesExpression);
+			}
 		}
 	}
 
