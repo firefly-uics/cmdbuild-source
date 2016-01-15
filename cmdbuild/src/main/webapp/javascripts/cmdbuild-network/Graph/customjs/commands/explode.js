@@ -10,7 +10,7 @@
 		this.params = params;
 		this.domainList = params.domainList;
 		var batch = params.batch;
-		var backend = new $.Cmdbuild.g3d.backend.CmdbuildTest();
+		var backend = new $.Cmdbuild.g3d.backend.CmdbuildModel();
 		this.newElements = [];
 		backend.setModel(this.model);
 		this.execute = function(callback, callbackScope) {
