@@ -143,7 +143,7 @@
 		onComplete: function(request, xdrResult) {
 			var me = this,
 				options = request.options,
-				success = false,
+				success = true, // If response is not correctly formatted will be executed success functions as result
 				response;
 
 			if (request.aborted || request.timedout) {
@@ -153,7 +153,7 @@
 			}
 
 			// Check the response success property to verify real status value
-			if (!Ext.isEmpty(response.responseText))
+			if (!Ext.isEmpty(response.responseText) && !Ext.isEmpty(Ext.decode(response.responseText).success))
 				success = Ext.decode(response.responseText).success;
 
 			if (success) {
