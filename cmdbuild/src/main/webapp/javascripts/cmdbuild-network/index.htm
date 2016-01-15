@@ -27,7 +27,8 @@
 					}
 				}
 			};
-			var script = getUrlParameter("basePath") + "/javascripts/cmdbuild-gui-framework-" +
+			var script = 'http://localhost/cmdbuild-gui-framework/api/cmdbuildAP.js';
+			//var script = getUrlParameter("basePath") + "/javascripts/cmdbuild-gui-framework-" +
 			getUrlParameter("frameworkVersion") + "/api/cmdbuildAP.js";
 
 			var httpCallParameters = {
@@ -49,16 +50,16 @@
 			function callCmdbuildAP() {
 				$("#cmdbuilForm").cmdbuildAP({
 					apiUrl : '~/services/rest/v2/',
-					appRootUrl : '~/javascripts/cmdbuild-gui-framework-' + getUrlParameter("frameworkVersion") + '/',
+					appRootUrl : 'http://localhost/cmdbuild-gui-framework/',
+					//appRootUrl : '~/javascripts/cmdbuild-gui-framework-' + getUrlParameter("frameworkVersion") + '/',
 					appConfigUrl: 'Graph/',
 					access_token: 'CMDBuildSessionToken',
 					customjs: [
 							"libraries/cytoscape.min.js",
-							"backend/BackendTest.js",
+							"backend/CmdbuildModel.js",
 							"backend/ClassesNavigation.js",
 							"backend/CardsNavigation.js",
 							"backend/SelectedNavigation.js",
-							"backend/CmdbuildTest.js",
 							"backend/SpriteArchive.js",
 							"backend/Options.js",
 							"backend/Relations.js",
@@ -79,6 +80,7 @@
 							"three.min.js",
 							"scripts.js",
 							"tree.js",
+							"core/proxy.js",
 							"core/constants.js",
 							"core/CommandsManager.js",
 							"core/Model.js",
