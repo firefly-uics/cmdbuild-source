@@ -22,7 +22,7 @@
 		 */
 		cmfgCatchedFunctions: [
 			'onUserAndGroupGroupTabDefaultFiltersAbortButtonClick',
-			'onUserAndGroupGroupTabDefaultFiltersAddButtonClick = onUserAndGroupGroupAddButtonClick',
+			'onUserAndGroupGroupTabDefaultFiltersAddButtonClick',
 			'onUserAndGroupGroupTabDefaultFiltersGroupSelected = onUserAndGroupGroupSelected',
 			'onUserAndGroupGroupTabDefaultFiltersSaveButtonClick',
 			'onUserAndGroupGroupTabDefaultFiltersShow',

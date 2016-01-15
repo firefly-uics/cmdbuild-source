@@ -63,6 +63,8 @@
 			this.form.reset();
 			this.form.setDisabledModify(false, true);
 			this.form.loadRecord(Ext.create('CMDBuild.model.lookup.Type'));
+
+			this.form.parentCombobox.getStore().load(); // Force store to be reloaded
 		},
 
 		onLookupPropertiesLookupSelected: function() {

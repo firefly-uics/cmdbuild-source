@@ -63,6 +63,7 @@
 		},
 
 		onWorkflowTabTasksAddButtonClick: function() {
+			this.cmfg('mainViewportAccordionDeselect', 'task');
 			this.cmfg('mainViewportAccordionControllerGet', 'task').disableStoreLoad = true;
 			this.cmfg('mainViewportAccordionControllerExpand', 'task');
 
@@ -87,6 +88,7 @@
 		 */
 		onWorkflowTabTasksItemDoubleClick: function() {
 			if (!this.selectedTaskIsEmpty()) {
+				this.cmfg('mainViewportAccordionDeselect', 'task');
 				this.cmfg('mainViewportAccordionControllerGet', 'task').disableStoreLoad = true;
 				this.cmfg('mainViewportAccordionControllerExpand', 'task');
 
@@ -138,6 +140,7 @@
 
 		onWorkflowTabTasksModifyButtonClick: function() {
 			if (!this.selectedTaskIsEmpty()) {
+				this.cmfg('mainViewportAccordionDeselect', 'task');
 				this.cmfg('mainViewportAccordionControllerGet', 'task').disableStoreLoad = true;
 				this.cmfg('mainViewportAccordionControllerExpand', 'task');
 

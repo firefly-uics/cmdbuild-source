@@ -243,7 +243,7 @@
 					CMDBuild.configuration.userInterface.isDisabledModule('class') ? null :
 						Ext.create('CMDBuild.controller.management.accordion.Classes', { identifier: 'class' })
 					,
-					CMDBuild.configuration.userInterface.isDisabledModule('process') || !(CMDBuild.Config.workflow.enabled == 'true') ? null :
+					CMDBuild.configuration.userInterface.isDisabledModule('process') || !CMDBuild.configuration.workflow.get(CMDBuild.core.constants.Proxy.ENABLED) ? null :
 						Ext.create('CMDBuild.controller.management.accordion.Workflow', { identifier: CMDBuild.core.constants.ModuleIdentifiers.getWorkflow() })
 					,
 					CMDBuild.configuration.userInterface.isDisabledModule(CMDBuild.core.constants.Proxy.DATA_VIEW) ? null :

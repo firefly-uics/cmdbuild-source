@@ -28,7 +28,7 @@
 		/**
 		 * @property {CMDBuild.core.buttons.iconized.state.Double}
 		 */
-		enableDisableButton: undefined,
+		activeStateToggleButton: undefined,
 
 		/**
 		 * @property {CMDBuild.field.ErasableCombo}
@@ -62,13 +62,13 @@
 									this.delegate.cmfg('onUserAndGroupGroupTabPropertiesModifyButtonClick');
 								}
 							}),
-							this.enableDisableButton = Ext.create('CMDBuild.core.buttons.iconized.state.Double', {
+							this.activeStateToggleButton = Ext.create('CMDBuild.core.buttons.iconized.state.Double', {
 								state1text: CMDBuild.Translation.disableGroup,
 								state2text: CMDBuild.Translation.enableGroup,
 								scope: this,
 
 								handler: function(button, e) {
-									this.delegate.cmfg('onUserAndGroupGroupTabPropertiesEnableDisableButtonClick', button.getClickedState());
+									this.delegate.cmfg('onUserAndGroupGroupTabPropertiesActiveStateToggleButtonClick', button.getClickedState());
 								}
 							})
 						]

@@ -44,7 +44,7 @@
 				params: CMDBuild.model.configuration.instance.Form.convertToLegacy(this.view.getData(true)),
 				scope: this,
 				success: function(response, options, decodedResponse) {
-					this.onConfigurationGeneralOptionsTabShow();
+					this.cmfg('onConfigurationGeneralOptionsTabShow');
 
 					CMDBuild.view.common.field.translatable.Utils.commit(this.view);
 
@@ -59,11 +59,13 @@
 				success: function(response, options, decodedResponse) {
 					decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.DATA];
 
-					this.view.loadRecord(Ext.create('CMDBuild.model.configuration.instance.Form', CMDBuild.model.configuration.instance.Form.convertFromLegacy(decodedResponse)));
+					if (!Ext.isEmpty(decodedResponse)) {
+						this.view.loadRecord(Ext.create('CMDBuild.model.configuration.instance.Form', CMDBuild.model.configuration.instance.Form.convertFromLegacy(decodedResponse)));
 
-					this.cmfg('mainViewportInstanceNameSet', decodedResponse[CMDBuild.core.constants.Proxy.INSTANCE_NAME]);
+						this.cmfg('mainViewportInstanceNameSet', decodedResponse[CMDBuild.core.constants.Proxy.INSTANCE_NAME]);
 
-					this.view.instanceNameField.translationsRead(); // Custom function call to read translations data
+						this.view.instanceNameField.translationsRead(); // Custom function call to read translations data
+					}
 				}
 			});
 		}

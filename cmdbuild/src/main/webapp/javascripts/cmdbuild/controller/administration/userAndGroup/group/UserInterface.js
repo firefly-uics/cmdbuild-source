@@ -19,7 +19,7 @@
 		 */
 		cmfgCatchedFunctions: [
 			'onUserAndGroupGroupTabUserInterfaceAbortButtonClick',
-			'onUserAndGroupGroupTabUserInterfaceAddButtonClick = onUserAndGroupGroupAddButtonClick',
+			'onUserAndGroupGroupTabUserInterfaceAddButtonClick',
 			'onUserAndGroupGroupTabUserInterfaceGroupSelected = onUserAndGroupGroupSelected',
 			'onUserAndGroupGroupTabUserInterfaceSaveButtonClick',
 			'onUserAndGroupGroupTabUserInterfaceShow'

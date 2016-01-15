@@ -4,6 +4,7 @@
 		extend: 'CMDBuild.controller.common.abstract.Base',
 
 		requires: [
+			'CMDBuild.core.constants.ModuleIdentifiers',
 			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.proxy.lookup.Type',
 			'CMDBuild.model.lookup.Type'
@@ -117,8 +118,11 @@
 		onLookupAddButtonClick: function() {
 			this.lookupSelectedLookupTypeReset();
 
+			this.cmfg('mainViewportAccordionDeselect', CMDBuild.core.constants.ModuleIdentifiers.getLookupType());
+
 			this.view.tabPanel.setActiveTab(0);
 
+			// Forwarding
 			this.controllerProperties.cmfg('onLookupPropertiesAddButtonClick');
 			this.controllerList.getView().disable();
 		},

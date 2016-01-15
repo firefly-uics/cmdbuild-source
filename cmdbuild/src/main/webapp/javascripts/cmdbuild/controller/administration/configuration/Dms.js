@@ -44,7 +44,7 @@
 				params: CMDBuild.model.configuration.dms.Form.convertToLegacy(this.view.getData(true)),
 				scope: this,
 				success: function(response, options, decodedResponse) {
-					this.onConfigurationAlfrescoTabShow();
+					this.cmfg('onConfigurationAlfrescoTabShow');
 
 					CMDBuild.core.Message.success();
 				}
@@ -57,7 +57,8 @@
 				success: function(response, options, decodedResponse) {
 					decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.DATA];
 
-					this.view.loadRecord(Ext.create('CMDBuild.model.configuration.dms.Form', CMDBuild.model.configuration.dms.Form.convertFromLegacy(decodedResponse)));
+					if (!Ext.isEmpty(decodedResponse))
+						this.view.loadRecord(Ext.create('CMDBuild.model.configuration.dms.Form', CMDBuild.model.configuration.dms.Form.convertFromLegacy(decodedResponse)));
 				}
 			});
 		}

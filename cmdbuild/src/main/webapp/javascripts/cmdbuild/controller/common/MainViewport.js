@@ -222,7 +222,7 @@
 				) {
 					parameters.state = Ext.isBoolean(parameters.state) ? parameters.state : true;
 
-					this.cmfg('mainViewportAccordionControllerGet', parameters.identifier).setDisabled(parameters.state);
+					this.cmfg('mainViewportAccordionControllerGet', parameters.identifier).getView().setDisabled(parameters.state);
 				}
 			},
 
