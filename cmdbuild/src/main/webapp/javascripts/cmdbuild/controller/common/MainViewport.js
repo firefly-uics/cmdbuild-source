@@ -118,14 +118,16 @@
 			accordionControllerBuild: function() {
 				if (!Ext.isEmpty(this.accordion) && Ext.isArray(this.accordion)) {
 					Ext.Array.forEach(this.accordion, function(accordionController, i, allAccordionControllers) {
-						if (Ext.isFunction(accordionController.cmfg) && !Ext.isEmpty(accordionController.cmfg('accordionIdentifierGet'))) {
-							accordionController.parentDelegate = this; // Inject as parentDelegate in accordion controllers
+						if (!Ext.isEmpty(accordionController)) {
+							if (Ext.isFunction(accordionController.cmfg) && !Ext.isEmpty(accordionController.cmfg('accordionIdentifierGet'))) {
+								accordionController.parentDelegate = this; // Inject as parentDelegate in accordion controllers
 
-							this.accordionControllers[accordionController.cmfg('accordionIdentifierGet')] = accordionController;
+								this.accordionControllers[accordionController.cmfg('accordionIdentifierGet')] = accordionController;
 
-							this.accordionContainer.add(accordionController.getView());
-						} else {
-							_warning('identifier not found in accordion object', this, accordionController);
+								this.accordionContainer.add(accordionController.getView());
+							} else {
+								_warning('identifier not found in accordion object', this, accordionController);
+							}
 						}
 					}, this);
 				}
@@ -408,33 +410,35 @@
 			moduleControllerBuild: function() {
 				if (!Ext.isEmpty(this.module) && Ext.isArray(this.module)) {
 					Ext.Array.forEach(this.module, function(moduleController, i, allModuleViews) {
-						if (Ext.isFunction(moduleController.cmfg)) {
-							if (!Ext.isEmpty(moduleController.cmfg('identifierGet'))) {
-								moduleController.parentDelegate = this; // Inject as parentDelegate in module controllers
+						if (!Ext.isEmpty(moduleController)) {
+							if (Ext.isFunction(moduleController.cmfg)) {
+								if (!Ext.isEmpty(moduleController.cmfg('identifierGet'))) {
+									moduleController.parentDelegate = this; // Inject as parentDelegate in module controllers
 
-								this.moduleControllers[moduleController.cmfg('identifierGet')] = moduleController;
+									this.moduleControllers[moduleController.cmfg('identifierGet')] = moduleController;
 
-								this.moduleContainer.add(moduleController.getView());
-							} else {
-								_warning('identifier not found in accordion object', this, moduleController);
-							}
-						} else if (!Ext.isEmpty(moduleController.cmName)) { // TODO: legacy mode manage
-							this.moduleControllers[moduleController.cmName] = moduleController.delegate;
-
-							if (Ext.isFunction(moduleController.cmControllerType)) {
-								// We start to use the cmcreate factory method to have the possibility to inject the sub-controllers in tests
-								if (Ext.isFunction(moduleController.cmControllerType.cmcreate)) {
-									this.moduleControllers[moduleController.cmName] = new moduleController.cmControllerType.cmcreate(moduleController);
+									this.moduleContainer.add(moduleController.getView());
 								} else {
-									this.moduleControllers[moduleController.cmName] = new moduleController.cmControllerType(moduleController);
+									_warning('identifier not found in accordion object', this, moduleController);
 								}
-							} else if (Ext.isString(moduleController.cmControllerType)) { // To use Ext.loader to asynchronous load also controllers
-								this.moduleControllers[moduleController.cmName] = Ext.create(moduleController.cmControllerType, moduleController);
-							} else {
-								this.moduleControllers[moduleController.cmName] = new CMDBuild.controller.CMBasePanelController(moduleController);
-							}
+							} else if (!Ext.isEmpty(moduleController.cmName)) { // TODO: legacy mode manage
+								this.moduleControllers[moduleController.cmName] = moduleController.delegate;
 
-							this.moduleContainer.add(moduleController);
+								if (Ext.isFunction(moduleController.cmControllerType)) {
+									// We start to use the cmcreate factory method to have the possibility to inject the sub-controllers in tests
+									if (Ext.isFunction(moduleController.cmControllerType.cmcreate)) {
+										this.moduleControllers[moduleController.cmName] = new moduleController.cmControllerType.cmcreate(moduleController);
+									} else {
+										this.moduleControllers[moduleController.cmName] = new moduleController.cmControllerType(moduleController);
+									}
+								} else if (Ext.isString(moduleController.cmControllerType)) { // To use Ext.loader to asynchronous load also controllers
+									this.moduleControllers[moduleController.cmName] = Ext.create(moduleController.cmControllerType, moduleController);
+								} else {
+									this.moduleControllers[moduleController.cmName] = new CMDBuild.controller.CMBasePanelController(moduleController);
+								}
+
+								this.moduleContainer.add(moduleController);
+							}
 						}
 					}, this);
 				}
