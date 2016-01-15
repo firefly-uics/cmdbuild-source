@@ -50,7 +50,10 @@
 		};
 		this.connectedEdges = function(idNode) {
 			var source = this.getNode(idNode);
-			var nodes = (cy.collection([source]).connectedEdges());
+			if (source.length === 0) {
+				return cy.collection();
+			}
+			var nodes = cy.collection([source]).connectedEdges();
 			return nodes;
 		};
 		this.getNode = function(id) {
@@ -166,6 +169,25 @@
 				total: retCards.length,
 				rows: retCards
 			};
+		};
+		this.cleanCompoundNode = function(node) {
+			var elements = $.Cmdbuild.g3d.Model.getGraphData(node, "compoundData");
+			var remainElements = [];
+			for (var i = 0; i < elements.length; i++) {
+				var element = elements[i];
+				if (! this.getNode(element.destinationId)) {
+					remainElements.push(element);
+				}
+			}
+			if (remainElements.length > 0) {
+				$.Cmdbuild.g3d.Model.setGraphData(node, "compoundData", remainElements);
+			}
+			else {
+				console.log("removed");
+				$.Cmdbuild.customvariables.selected.unSelect(node.id());	
+				this.remove(node.id());
+				this.changed(true);
+			}
 		};
 		this.getCards = function(first, rows, filter) {
 			first = parseInt(first);
