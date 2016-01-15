@@ -46,7 +46,6 @@
 			nodeIdToSelect = Ext.isNumber(nodeIdToSelect) ? nodeIdToSelect : null;
 
 			CMDBuild.core.proxy.Classes.readAll({
-				loadMask: false,
 				scope: this,
 				success: function(response, options, decodedResponse) {
 					decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.CLASSES] || [];

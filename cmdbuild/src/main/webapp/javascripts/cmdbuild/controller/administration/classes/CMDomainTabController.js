@@ -70,6 +70,7 @@
 
 	function onItemDoubleClick(grid, record) {
 		if (!Ext.isEmpty(record)) {
+			CMDBuild.global.controller.MainViewport.cmfg('mainViewportAccordionControllerGet', 'domain').disableStoreLoad = true;
 			CMDBuild.global.controller.MainViewport.cmfg('mainViewportAccordionControllerExpand', 'domain');
 			CMDBuild.global.controller.MainViewport.cmfg('mainViewportAccordionControllerUpdateStore', {
 				identifier: 'domain',
@@ -80,15 +81,19 @@
 
 	function onModifyDomainButton() {
 		if (this.currentDomain) {
+			CMDBuild.global.controller.MainViewport.cmfg('mainViewportAccordionControllerGet', 'domain').disableStoreLoad = true;
 			CMDBuild.global.controller.MainViewport.cmfg('mainViewportAccordionControllerExpand', 'domain');
+
+			CMDBuild.global.controller.MainViewport.cmfg('mainViewportAccordionControllerGet', 'domain').getView().on('storeload', function(accordion, eOpts) {
+				Ext.Function.createDelayed(function() {
+					CMDBuild.global.controller.MainViewport.cmfg('mainViewportModuleControllerGet', 'domain').cmfg('onDomainModifyButtonClick');
+				}, 100, this)();
+			}, this, { single: true });
+
 			CMDBuild.global.controller.MainViewport.cmfg('mainViewportAccordionControllerUpdateStore', {
 				identifier: 'domain',
 				nodeIdToSelect: this.currentDomain.get('idDomain')
 			});
-
-			Ext.Function.createDelayed(function() {
-				CMDBuild.global.controller.MainViewport.cmfg('mainViewportModuleControllerGet', 'domain').cmfg('onDomainModifyButtonClick');
-			}, 500, this)();
 		}
 	}
 
@@ -129,12 +134,11 @@
 	}
 
 	function onAddDomainButton() {
-		CMDBuild.global.controller.MainViewport.cmfg('mainViewportAccordionControllerGet', 'domain').getView().on('expand', function(accordion, eOpts) {
-			Ext.Function.createDelayed(function() {
-				CMDBuild.global.controller.MainViewport.cmfg('mainViewportModuleControllerGet', 'domain').cmfg('onDomainAddButtonClick');
-			}, 100, this)();
+		CMDBuild.global.controller.MainViewport.cmfg('mainViewportAccordionControllerGet', 'domain').getView().on('storeload', function(accordion, eOpts) {
+			CMDBuild.global.controller.MainViewport.cmfg('mainViewportModuleControllerGet', 'domain').cmfg('onDomainAddButtonClick');
 		}, this, { single: true });
 
+		CMDBuild.global.controller.MainViewport.cmfg('mainViewportAccordionControllerGet', 'domain').disableSelection = true;
 		CMDBuild.global.controller.MainViewport.cmfg('mainViewportAccordionControllerExpand', 'domain');
 	}
 })();

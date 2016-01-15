@@ -174,7 +174,7 @@
 			try {
 				return record.get("Description").replace(/\n/g," ");
 			} catch (e) {
-				_debug('CMDBuild.Management.SearchableCombo recordDescriptionFixedForCarriageReturnBugOnComboBoxes error', e);
+				_error('CMDBuild.Management.SearchableCombo recordDescriptionFixedForCarriageReturnBugOnComboBoxes error', e);
 			}
 		},
 

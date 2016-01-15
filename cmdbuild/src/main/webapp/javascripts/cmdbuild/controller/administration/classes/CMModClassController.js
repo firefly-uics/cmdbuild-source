@@ -64,6 +64,8 @@
 
 		//private and overridden in subclasses
 		onViewOnFront: function(selection) {
+			this.view.tabPanel.setActiveTab(0);
+
 			if (selection) {
 				selection.data['id'] = selection.data[CMDBuild.core.constants.Proxy.ENTITY_ID]; // New accordion manage
 
@@ -102,7 +104,6 @@
 
 			this.view.onAddClassButtonClick();
 			CMDBuild.global.controller.MainViewport.cmfg('mainViewportAccordionDeselect', "class");
-
 		}
 	});
 
