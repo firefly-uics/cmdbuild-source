@@ -1,7 +1,7 @@
 (function() {
 
 	Ext.define('CMDBuild.controller.administration.lookup.Lookup', {
-		extend: 'CMDBuild.controller.common.abstract.BasePanel',
+		extend: 'CMDBuild.controller.common.abstract.Base',
 
 		requires: [
 			'CMDBuild.core.constants.Proxy',
@@ -10,10 +10,14 @@
 		],
 
 		/**
+		 * @cfg {CMDBuild.controller.common.MainViewport}
+		 */
+		parentDelegate: undefined,
+
+		/**
 		 * @cfg {Array}
 		 */
 		cmfgCatchedFunctions: [
-			'controllerPropertyGet',
 			'lookupSelectedLookupTypeGet',
 			'lookupSelectedLookupTypeIsEmpty',
 			'onLookupAddButtonClick',
@@ -24,7 +28,7 @@
 		/**
 		 * @cfg {String}
 		 */
-		cmName: undefined,
+		identifier: undefined,
 
 		/**
 		 * @property {CMDBuild.controller.administration.lookup.List}
@@ -49,12 +53,14 @@
 		view: undefined,
 
 		/**
-		 * @param {CMDBuild.view.administration.lookup.LookupView} view
+		 * @param {Object} configurationObject
 		 *
 		 * @override
 		 */
-		constructor: function(view) {
+		constructor: function(configurationObject) {
 			this.callParent(arguments);
+
+			this.view = Ext.create('CMDBuild.view.administration.lookup.LookupView', { delegate: this });
 
 			this.view.tabPanel.removeAll();
 

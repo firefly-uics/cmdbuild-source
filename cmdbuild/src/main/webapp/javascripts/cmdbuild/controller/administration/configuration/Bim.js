@@ -62,9 +62,10 @@
 
 					this.view.loadRecord(Ext.create('CMDBuild.model.configuration.bim.Form', decodedResponse));
 
-					_CMMainViewportController.findAccordionByCMName('bim').setDisabled(
-						!CMDBuild.core.Utils.decodeAsBoolean(decodedResponse[CMDBuild.core.constants.Proxy.ENABLED])
-					);
+					this.cmfg('mainViewportAccordionSetDisabled', {
+						identifier: 'bim',
+						state: !CMDBuild.core.Utils.decodeAsBoolean(decodedResponse[CMDBuild.core.constants.Proxy.ENABLED])
+					});
 
 					/**
 					 * @deprecated (CMDBuild.configuration.bim)

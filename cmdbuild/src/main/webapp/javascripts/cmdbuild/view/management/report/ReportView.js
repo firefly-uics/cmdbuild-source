@@ -13,11 +13,6 @@
 		 */
 		baseTitle: CMDBuild.Translation.report,
 
-		/**
-		 * @cfg {String}
-		 */
-		cmName: undefined,
-
 		border: true,
 		frame: false,
 		layout: 'fit',

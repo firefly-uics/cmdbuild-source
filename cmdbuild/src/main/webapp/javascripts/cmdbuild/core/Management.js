@@ -18,7 +18,8 @@
 			'CMDBuild.core.proxy.report.Report',
 			'CMDBuild.core.proxy.userAndGroup.group.Group',
 			'CMDBuild.core.proxy.widget.Widget',
-			'CMDBuild.core.RequestBarrier'
+			'CMDBuild.core.RequestBarrier',
+			'CMDBuild.core.Splash'
 		],
 
 		singleton: true,
@@ -27,7 +28,7 @@
 		 * Entry-point
 		 */
 		init: function() {
-			CMDBuild.view.CMMainViewport.showSplash();
+			CMDBuild.core.Splash.show();
 
 			CMDBuild.core.Management.buildConfiguration();
 		},
@@ -235,83 +236,69 @@
 
 			_CMCache.syncAttachmentCategories();
 
-			_CMMainViewportController = new CMDBuild.controller.CMMainViewportController(
-				new CMDBuild.view.CMMainViewport({
-					cmAccordions: [ // Display order
-						Ext.create('CMDBuild.view.management.accordion.Menu', { cmName: CMDBuild.core.constants.ModuleIdentifiers.getMenu() }),
-						CMDBuild.configuration.userInterface.isDisabledModule('class') ? null :
-							Ext.create('CMDBuild.view.management.accordion.Classes', { cmName: 'class' })
-						,
-						CMDBuild.configuration.userInterface.isDisabledModule('process') || !(CMDBuild.Config.workflow.enabled == 'true') ? null :
-							Ext.create('CMDBuild.view.management.accordion.Workflow', { cmName: CMDBuild.core.constants.ModuleIdentifiers.getWorkflow() })
-						,
-						CMDBuild.configuration.userInterface.isDisabledModule(CMDBuild.core.constants.Proxy.DATA_VIEW) ? null :
-							Ext.create('CMDBuild.view.management.accordion.DataView', { cmName: CMDBuild.core.constants.ModuleIdentifiers.getDataView() })
-						,
-						CMDBuild.configuration.userInterface.isDisabledModule('dashboard') ? null :
-							Ext.create('CMDBuild.view.management.accordion.Dashboard', { cmName: 'dashboard' })
-						,
-						CMDBuild.configuration.userInterface.isDisabledModule('report') ? null :
-							Ext.create('CMDBuild.view.management.accordion.Report', { cmName: CMDBuild.core.constants.ModuleIdentifiers.getReport() })
-						,
-						CMDBuild.configuration.userInterface.isDisabledModule(CMDBuild.core.constants.Proxy.CUSTOM_PAGES) ? null :
-							Ext.create('CMDBuild.view.management.accordion.CustomPage', { cmName: 'custompage' })
-						,
-						Ext.create('CMDBuild.view.management.accordion.Utility', { cmName: 'utility' })
-					],
-					cmPanels: [
-						Ext.create('Ext.panel.Panel', { cls: 'empty_panel x-panel-body' }),
-						Ext.create('CMDBuild.view.management.customPage.SinglePagePanel', {
-							cmControllerType: 'CMDBuild.controller.management.customPage.SinglePage',
-							cmName: 'custompage'
-						}),
-						Ext.create('CMDBuild.view.management.dataView.DataViewView', {
-							cmControllerType: 'CMDBuild.controller.management.dataView.DataView',
-							cmName: CMDBuild.core.constants.ModuleIdentifiers.getDataView()
-						}),
-						Ext.create('CMDBuild.view.management.report.ReportView', {
-							cmControllerType: 'CMDBuild.controller.management.report.Report',
-							cmName: CMDBuild.core.constants.ModuleIdentifiers.getReport()
-						}),
-						Ext.create('CMDBuild.view.management.report.SinglePanel', {
-							cmControllerType: 'CMDBuild.controller.management.report.Single',
-							cmName: 'singlereport'
-						}),
-						this.cardPanel = new CMDBuild.view.management.classes.CMModCard({
-							cmControllerType: CMDBuild.controller.management.classes.CMModCardController,
-							cmName: 'class'
-						}),
-						this.processPanel = new CMDBuild.view.management.workflow.CMModProcess({
-							cmControllerType: CMDBuild.controller.management.workflow.CMModWorkflowController,
-							cmName: CMDBuild.core.constants.ModuleIdentifiers.getWorkflow()
-						}),
-						this.dashboardPanel = new CMDBuild.view.management.dashboard.CMModDashboard({
-							cmControllerType: CMDBuild.controller.management.dashboard.CMModDashboardController,
-							cmName: 'dashboard'
-						}),
-						new CMDBuild.view.management.utilities.CMModChangePassword(),
-						new CMDBuild.view.management.utilites.CMModBulkCardUpdate({
-							cmControllerType: CMDBuild.controller.management.utilities.CMModBulkUpdateController
-						}),
-						new CMDBuild.view.management.utilities.CMModImportCSV({
-							cmControllerType: CMDBuild.controller.management.utilities.CMModImportCSVController
-						}),
-						new CMDBuild.view.management.utilities.CMModExportCSV()
-					],
-					hideAccordions: CMDBuild.configuration.userInterface.get(CMDBuild.core.constants.Proxy.HIDE_SIDE_PANEL)
-				})
-			);
+			Ext.ns('CMDBuild.global.controller');
+			CMDBuild.global.controller.MainViewport = Ext.create('CMDBuild.controller.common.MainViewport', {
+				accordion: [ // Display order
+					Ext.create('CMDBuild.controller.management.accordion.Menu', { identifier: CMDBuild.core.constants.ModuleIdentifiers.getMenu() }),
+					CMDBuild.configuration.userInterface.isDisabledModule('class') ? null :
+						Ext.create('CMDBuild.controller.management.accordion.Classes', { identifier: 'class' })
+					,
+					CMDBuild.configuration.userInterface.isDisabledModule('process') || !(CMDBuild.Config.workflow.enabled == 'true') ? null :
+						Ext.create('CMDBuild.controller.management.accordion.Workflow', { identifier: CMDBuild.core.constants.ModuleIdentifiers.getWorkflow() })
+					,
+					CMDBuild.configuration.userInterface.isDisabledModule(CMDBuild.core.constants.Proxy.DATA_VIEW) ? null :
+						Ext.create('CMDBuild.controller.management.accordion.DataView', { identifier: CMDBuild.core.constants.ModuleIdentifiers.getDataView() })
+					,
+					CMDBuild.configuration.userInterface.isDisabledModule('dashboard') ? null :
+						Ext.create('CMDBuild.controller.management.accordion.Dashboard', { identifier: 'dashboard' })
+					,
+					CMDBuild.configuration.userInterface.isDisabledModule('report') ? null :
+						Ext.create('CMDBuild.controller.management.accordion.Report', { identifier: CMDBuild.core.constants.ModuleIdentifiers.getReport() })
+					,
+					CMDBuild.configuration.userInterface.isDisabledModule(CMDBuild.core.constants.Proxy.CUSTOM_PAGES) ? null :
+						Ext.create('CMDBuild.controller.management.accordion.CustomPage', { identifier: CMDBuild.core.constants.ModuleIdentifiers.getCustomPage() })
+					,
+					Ext.create('CMDBuild.controller.management.accordion.Utility', { identifier: 'utility' })
+				],
+				module: [
+					Ext.create('CMDBuild.controller.management.customPage.SinglePage', { identifier: CMDBuild.core.constants.ModuleIdentifiers.getCustomPage() }),
+					Ext.create('CMDBuild.controller.management.dataView.DataView', { identifier: CMDBuild.core.constants.ModuleIdentifiers.getDataView() }),
+					Ext.create('CMDBuild.controller.management.report.Report', { identifier: CMDBuild.core.constants.ModuleIdentifiers.getReport() }),
+					Ext.create('CMDBuild.controller.management.report.Single', { identifier: 'singlereport' }),
+					new CMDBuild.view.management.classes.CMModCard({
+						cmControllerType: CMDBuild.controller.management.classes.CMModCardController,
+						cmName: 'class'
+					}),
+					new CMDBuild.view.management.workflow.CMModProcess({
+						cmControllerType: CMDBuild.controller.management.workflow.CMModWorkflowController,
+						cmName: CMDBuild.core.constants.ModuleIdentifiers.getWorkflow()
+					}),
+					new CMDBuild.view.management.dashboard.CMModDashboard({
+						cmControllerType: CMDBuild.controller.management.dashboard.CMModDashboardController,
+						cmName: 'dashboard'
+					}),
+					new CMDBuild.view.management.utilities.CMModChangePassword(),
+					new CMDBuild.view.management.utilites.CMModBulkCardUpdate({
+						cmControllerType: CMDBuild.controller.management.utilities.CMModBulkUpdateController
+					}),
+					new CMDBuild.view.management.utilities.CMModImportCSV({
+						cmControllerType: CMDBuild.controller.management.utilities.CMModImportCSVController
+					}),
+					new CMDBuild.view.management.utilities.CMModExportCSV()
+				],
+				hideAccordions: CMDBuild.configuration.userInterface.get(CMDBuild.core.constants.Proxy.HIDE_SIDE_PANEL)
+			});
 
 			Ext.resumeLayouts();
 
-			CMDBuild.view.CMMainViewport.hideSplash(function() {
-				_CMMainViewportController.setInstanceName(CMDBuild.Config.cmdbuild.instance_name);
+			CMDBuild.core.Splash.hide(function() {
+				CMDBuild.global.controller.MainViewport.cmfg('mainViewportInstanceNameSet', CMDBuild.configuration.instance.get(CMDBuild.core.constants.Proxy.INSTANCE_NAME));
 
 				// Execute routes
 				CMDBuild.routes.Routes.exec();
 
-				_CMMainViewportController.selectStartingClass();
-			});
+				CMDBuild.global.controller.MainViewport.cmfg('mainViewportStartingEntitySelect');
+			}, this);
 
 			if (CMDBuild.configuration.userInterface.get(CMDBuild.core.constants.Proxy.FULL_SCREEN_MODE))
 				_CMUIState.onlyGrid();

@@ -245,6 +245,7 @@
 		GRAPH: 'graph',
 		GRID_CONFIGURATION: 'gridConfiguration',
 		GROUP: 'group',
+		GROUP_DESCRIPTIONS: 'groupDescriptions',
 		GROUP_ID: 'groupId',
 		GROUP_NAME: 'groupName',
 		GROUPS: 'groups',

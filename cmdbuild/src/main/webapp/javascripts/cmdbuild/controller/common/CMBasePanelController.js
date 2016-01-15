@@ -1,8 +1,6 @@
 (function() {
 
 	/**
-	 * Use CMDBuild.controller.common.abstract.BasePanel instead
-	 *
 	 * @deprecated
 	 */
 	Ext.define('CMDBuild.controller.common.CMBasePanelController', {

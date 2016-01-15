@@ -92,7 +92,8 @@
 					} break;
 				}
 
-				root.removeAll();
+				if (!Ext.isEmpty(root))
+					root.removeAll();
 
 				var params = {};
 				params[CMDBuild.core.constants.Proxy.ACTIVE] = true;

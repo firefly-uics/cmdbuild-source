@@ -285,8 +285,8 @@
 						this.form.reset();
 						this.form.setDisabledModify(true, true, true, true);
 
-						_CMMainViewportController.findAccordionByCMName(CMDBuild.core.constants.ModuleIdentifiers.getWorkflow()).deselect();
-						_CMMainViewportController.findAccordionByCMName(CMDBuild.core.constants.ModuleIdentifiers.getWorkflow()).updateStore();
+						this.cmfg('mainViewportAccordionDeselect', CMDBuild.core.constants.ModuleIdentifiers.getWorkflow());
+						this.cmfg('mainViewportAccordionControllerUpdateStore', { identifier: CMDBuild.core.constants.ModuleIdentifiers.getWorkflow() });
 					}
 				});
 			}
@@ -306,9 +306,10 @@
 
 			CMDBuild.view.common.field.translatable.Utils.commit(this.propertiesPanel);
 
-			_CMMainViewportController.findAccordionByCMName(CMDBuild.core.constants.ModuleIdentifiers.getWorkflow()).updateStore(
-				formDataModel.get(CMDBuild.core.constants.Proxy.ID) || decodedResponse[CMDBuild.core.constants.Proxy.ID]
-			);
+			this.cmfg('mainViewportAccordionControllerUpdateStore', {
+				identifier: CMDBuild.core.constants.ModuleIdentifiers.getWorkflow(),
+				nodeIdToSelect: formDataModel.get(CMDBuild.core.constants.Proxy.ID) || decodedResponse[CMDBuild.core.constants.Proxy.ID]
+			});
 		},
 
 		/**

@@ -124,7 +124,7 @@
 
 		onFollowRelationClick: function(model) {
 			if (model.get("depth") > 1) {
-				_CMMainViewportController.openCard({
+				CMDBuild.global.controller.MainViewport.cmfg('mainViewportCardSelect', {
 					Id: model.get("dst_id"),
 					IdClass: model.get("dst_cid")
 				});

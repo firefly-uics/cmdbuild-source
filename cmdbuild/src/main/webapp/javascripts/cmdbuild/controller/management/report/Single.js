@@ -1,7 +1,7 @@
 (function() {
 
 	Ext.define('CMDBuild.controller.management.report.Single', {
-		extend: 'CMDBuild.controller.common.abstract.BasePanel',
+		extend: 'CMDBuild.controller.common.abstract.Base',
 
 		requires: [
 			'CMDBuild.core.Message',
@@ -11,7 +11,7 @@
 		],
 
 		/**
-		 * @cfg {Object}
+		 * @cfg {CMDBuild.controller.common.MainViewport}
 		 */
 		parentDelegate: undefined,
 
@@ -27,11 +27,6 @@
 		],
 
 		/**
-		 * @cfg {String}
-		 */
-		cmName: undefined,
-
-		/**
 		 * All server calls parameters
 		 *
 		 * @property {Object}
@@ -44,6 +39,11 @@
 		 * @private
 		 */
 		currentReportParameters: {},
+
+		/**
+		 * @cfg {String}
+		 */
+		identifier: undefined,
 
 		/**
 		 * @cfg {Array}
@@ -64,6 +64,17 @@
 		 * @cfg {CMDBuild.view.management.report.SinglePanel}
 		 */
 		view: undefined,
+
+		/**
+		 * @param {Object} configurationObject
+		 *
+		 * @override
+		 */
+		constructor: function(configurationObject) {
+			this.callParent(arguments);
+
+			this.view = Ext.create('CMDBuild.view.management.report.SinglePanel', { delegate: this });
+		},
 
 		/**
 		 * @param {Boolean} forceDownload

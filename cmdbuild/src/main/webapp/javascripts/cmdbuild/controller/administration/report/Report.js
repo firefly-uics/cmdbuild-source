@@ -1,12 +1,12 @@
 (function() {
 
 	Ext.define('CMDBuild.controller.administration.report.Report', {
-		extend: 'CMDBuild.controller.common.abstract.BasePanel',
+		extend: 'CMDBuild.controller.common.abstract.Base',
 
 		requires: ['CMDBuild.core.constants.Proxy'],
 
 		/**
-		 * @cfg {Object}
+		 * @cfg {CMDBuild.controller.common.MainViewport}
 		 */
 		parentDelegate: undefined,
 
@@ -20,7 +20,7 @@
 		/**
 		 * @cfg {String}
 		 */
-		cmName: undefined,
+		identifier: undefined,
 
 		/**
 		 * @property {Mixed}
@@ -31,6 +31,17 @@
 		 * @cfg {CMDBuild.view.administration.report.ReportView}
 		 */
 		view: undefined,
+
+		/**
+		 * @param {Object} configurationObject
+		 *
+		 * @override
+		 */
+		constructor: function(configurationObject) {
+			this.callParent(arguments);
+
+			this.view = Ext.create('CMDBuild.view.administration.report.ReportView', { delegate: this });
+		},
 
 		/**
 		 * Setup view items and controllers on accordion click

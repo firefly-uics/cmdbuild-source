@@ -34,7 +34,7 @@
 				Ext.Function.createDelayed(function() {
 					this.entryType.set(CMDBuild.core.constants.Proxy.FILTER, this.clientFilter); // Inject filter in entryType object
 
-					_CMMainViewportController.panelControllers['class'].onViewOnFront(this.entryType);
+					CMDBuild.global.controller.MainViewport.cmfg('mainViewportModuleControllerGet', 'class').onViewOnFront(this.entryType);
 				}, 1500, this)();
 		},
 
@@ -109,7 +109,7 @@
 			this.detail(params, path, router);
 
 			Ext.Function.createDelayed(function() {
-				_CMMainViewportController.panelControllers['class'].gridController.onPrintGridMenuClick(this.printFormat);
+				CMDBuild.global.controller.MainViewport.cmfg('mainViewportModuleControllerGet', 'class').gridController.onPrintGridMenuClick(this.printFormat);
 			}, 500, this)();
 		}
 	});

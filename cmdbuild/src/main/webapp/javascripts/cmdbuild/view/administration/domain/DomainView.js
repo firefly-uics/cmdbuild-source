@@ -14,11 +14,6 @@
 		baseTitle: CMDBuild.Translation.domains,
 
 		/**
-		 * @cfg {String}
-		 */
-		cmName: undefined,
-
-		/**
 		 * @property {Ext.tab.Panel}
 		 */
 		tabPanel: undefined,

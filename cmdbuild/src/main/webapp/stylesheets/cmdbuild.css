@@ -1,6 +1,7 @@
 @import url("./flags.css");
 @import url("./grids.css");
 @import url("./icons.css");
+@import url("./splashScreen.css");
 @import url("./trees.css");
 
 html {
@@ -60,7 +61,7 @@ em { font-style: oblique !important; }
 	font-weight: bold;
 }
 
-.cm_no_display { display: none; }
+.display-none { display: none; }
 
 /* INFO AND SUPPORTS */
 .cm-credits-container {
@@ -189,7 +190,7 @@ em { font-style: oblique !important; }
 	text-align: right;
 }
 
-#header #instance_name {
+#header #instance-name {
 	float: left;
 	padding: 0.8em 0 0 0
 }
@@ -247,138 +248,54 @@ em { font-style: oblique !important; }
 	margin: 0.5em 0 0 0;
 }
 
-/* splash */
-.cmMask { background: #eeeeee !important; }
-
-.splashScreen_image,
-.splashScreen_image_administration {
-	height: 217px;
-	width: 381px;
-	display: block;
-	background-image: url("../images/splash.png");
-	background-position: top left;
-	background-repeat: no-repeat;
-}
-
-.splashScreen_image_administration { background-image: url("../images/splash-gray.png"); }
-
-.splashScreen_central {
-	font-family: sans-serif;
-	color: #666666;
-	line-height: 1.4em;
-	font-size: 11px;
-	padding: 0;
-	margin: 0;
-	width: 395px;
-	height: 63px;
-	padding-left: 10px;
-	padding-top: 135px;
-}
-
-.splashScreen_central a {
-	font-family: sans-serif;
-	line-height: 1.4em;
-	color: #666666;
-	text-decoration: none;
-}
-
-#splashScreen_text {
-	float: left;
-	font-family: sans-serif;
-	font-size: 11px;
-	line-height: 1.4em;
-	padding-left: 25px;
-	z-index: 50002;
-}
-
-#splashScreen_text a {
-	text-decoration: none;
-	color: #1c4196;
-}
-
-#splashScreen_version {
-	float: right;
-	font-family: sans-serif;
-	font-size: 11px;
-	line-height: 1.4em;
-	margin-right: 21px;
-	margin-top: 38px;
-	z-index: 50002;
-	font-size: 10px;
-	color: #1c4196;
-}
-
-.splashBold {
-	font-size: 11px;
-	font-weight: bold;
-	color: #666666;
-	padding: 0 0.1em 0 0;
-}
-
-.spalshMotto {
-	color: #1c4196;
-	font-size: 14px;
-	letter-spacing: -.5px;
-	padding-top: 8px;
-	margin-bottom: 3px;
-}
-
-.splashSubTitle {
-	font-size: 9px;
-	float: left;
-}
-
-/* FOOTER */
-#footer {
-	color: #727262;
-	font-family: Verdana, Arial, Helvetica, sans-serif;
-	font-size: 9px;
-	padding-left: 1%;
-	position: absolute;
-	height: 16px;
-	line-height: 16px;
-	bottom: 0;
-	width: 98%;
-}
-
-#footer .fl {
-	font-family: Verdana, Arial, Helvetica, sans-serif;
-	font-size: 10px;
-	margin: 0px;
-	padding: 0px 0px 0px 3px;
-	width: 25%;
-	float: left;
-	text-align: left;
-}
-
-#footer .fc {
-	font-family: Verdana, Arial, Helvetica, sans-serif;
-	font-size: 10px;
-	margin: 0px;
-	padding: 0px;
-	width: 48%;
-	float: left;
-	text-align: center;
-}
-
-#footer .fr {
-	font-family: Verdana, Arial, Helvetica, sans-serif;
-	font-size: 10px;
-	margin: 0px;
-	padding: 0px 3px 0px 0px;
-	width: 25%;
-	float: right;
-	text-align: right;
-}
-
-#footer a {
-	color: #727262;
-	font-family: Verdana, Arial, Helvetica, sans-serif;
-	font-size: 10px;
-	text-decoration: none;
-}
-
-#cmdbuild_credits_link { cursor: pointer;}
+/**
+ * Footer
+ **/
+	#footer {
+		color: #727262;
+		font-family: Verdana, Arial, Helvetica, sans-serif;
+		font-size: 9px;
+		padding-left: 1%;
+		position: absolute;
+		height: 16px;
+		line-height: 16px;
+		bottom: 0;
+		width: 98%;
+	}
+	#footer .fl {
+		font-family: Verdana, Arial, Helvetica, sans-serif;
+		font-size: 10px;
+		margin: 0px;
+		padding: 0px 0px 0px 3px;
+		width: 25%;
+		float: left;
+		text-align: left;
+	}
+	#footer .fc {
+		font-family: Verdana, Arial, Helvetica, sans-serif;
+		font-size: 10px;
+		margin: 0px;
+		padding: 0px;
+		width: 48%;
+		float: left;
+		text-align: center;
+	}
+	#footer .fr {
+		font-family: Verdana, Arial, Helvetica, sans-serif;
+		font-size: 10px;
+		margin: 0px;
+		padding: 0px 3px 0px 0px;
+		width: 25%;
+		float: right;
+		text-align: right;
+	}
+	#footer a {
+		color: #727262;
+		font-family: Verdana, Arial, Helvetica, sans-serif;
+		font-size: 10px;
+		text-decoration: none;
+	}
+	#cmdbuild-credits-link { cursor: pointer; }
 
 /*custom rulse*/
 .cmdbuild_unconfigured_modpanel {

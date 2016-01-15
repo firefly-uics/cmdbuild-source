@@ -1,10 +1,10 @@
 (function() {
 
 	Ext.define('CMDBuild.controller.management.customPage.SinglePage', {
-		extend: 'CMDBuild.controller.common.abstract.BasePanel',
+		extend: 'CMDBuild.controller.common.abstract.Base',
 
 		/**
-		 * @cfg {Object}
+		 * @cfg {CMDBuild.controller.common.MainViewport}
 		 */
 		parentDelegate: undefined,
 
@@ -23,12 +23,23 @@
 		/**
 		 * @cfg {String}
 		 */
-		cmName: undefined,
+		identifier: undefined,
 
 		/**
-		 * @property {Object}
+		 * @property {CMDBuild.view.management.customPage.SinglePagePanel}
 		 */
 		view: undefined,
+
+		/**
+		 * @param {Object} configurationObject
+		 *
+		 * @override
+		 */
+		constructor: function(configurationObject) {
+			this.callParent(arguments);
+
+			this.view = Ext.create('CMDBuild.view.management.customPage.SinglePagePanel', { delegate: this });
+		},
 
 		/**
 		 * Setup view items and controllers on accordion click
@@ -59,7 +70,7 @@
 
 				// History record save
 				CMDBuild.global.navigation.Chronology.cmfg('navigationChronologyRecordSave', {
-					moduleId: this.cmName,
+					moduleId: this.cmfg('identifierGet'),
 					entryType: {
 						description: node.get(CMDBuild.core.constants.Proxy.DESCRIPTION),
 						id: node.get(CMDBuild.core.constants.Proxy.ID),

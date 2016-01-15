@@ -9,6 +9,7 @@
 
 		config: {
 			configuration: 'configuration',
+			customPage: 'custompage',
 			dataView: 'dataview',
 			domain: 'domain',
 			email: 'email',

@@ -25,7 +25,7 @@
 		onViewOnFront: function(entryType) {
 			if (entryType) {
 				var idPropertyName = Ext.isEmpty(entryType.get(CMDBuild.core.constants.Proxy.ENTITY_ID)) ? CMDBuild.core.constants.Proxy.ID : CMDBuild.core.constants.Proxy.ENTITY_ID;
-				var dc = _CMMainViewportController.getDanglingCard();
+				var dc = CMDBuild.global.controller.MainViewport.cmfg('mainViewportDanglingCardGet');
 				var filter = entryType.get(CMDBuild.core.constants.Proxy.FILTER);
 				var newEntryId = entryType.get(idPropertyName);
 

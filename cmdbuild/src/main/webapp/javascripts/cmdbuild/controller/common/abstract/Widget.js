@@ -1,9 +1,10 @@
 (function () {
 
-	/**
-	 * External requires to avoid overrides from classes that extends
-	 */
-	Ext.require(['CMDBuild.core.constants.Global']);
+	// External implementation to avoid overrides
+	Ext.require([
+		'CMDBuild.core.constants.Global',
+		'CMDBuild.core.constants.Proxy'
+	]);
 
 	/**
 	 * Class to be extended in widget controllers to adapt CMDBuild.controller.common.abstract.Base functionalities
@@ -12,8 +13,6 @@
 	 */
 	Ext.define('CMDBuild.controller.common.abstract.Widget', {
 		extend: 'CMDBuild.controller.common.abstract.Base',
-
-		requires: ['CMDBuild.core.constants.Proxy'],
 
 		/**
 		 * @cfg {CMDBuild.controller.management.common.CMWidgetManagerController}

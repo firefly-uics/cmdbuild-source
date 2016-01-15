@@ -101,7 +101,7 @@
 			this.widgetDefinitionController.cmfg('onAddClassButtonClick');
 
 			this.view.onAddClassButtonClick();
-			_CMMainViewportController.deselectAccordionByName("class");
+			CMDBuild.global.controller.MainViewport.cmfg('mainViewportAccordionDeselect', "class");
 
 		}
 	});

@@ -1,7 +1,7 @@
 (function() {
 
 	Ext.define('CMDBuild.controller.management.report.Report', {
-		extend: 'CMDBuild.controller.common.abstract.BasePanel',
+		extend: 'CMDBuild.controller.common.abstract.Base',
 
 		requires: [
 			'CMDBuild.core.constants.Proxy',
@@ -9,7 +9,7 @@
 		],
 
 		/**
-		 * @cfg {Object}
+		 * @cfg {CMDBuild.controller.common.MainViewport}
 		 */
 		parentDelegate: undefined,
 
@@ -25,7 +25,7 @@
 		/**
 		 * @cfg {String}
 		 */
-		cmName: undefined,
+		identifier: undefined,
 
 		/**
 		 * @property {Object}
@@ -43,6 +43,17 @@
 		 * @cfg {CMDBuild.view.management.report.ReportView}
 		 */
 		view: undefined,
+
+		/**
+		 * @param {Object} configurationObject
+		 *
+		 * @override
+		 */
+		constructor: function(configurationObject) {
+			this.callParent(arguments);
+
+			this.view = Ext.create('CMDBuild.view.management.report.ReportView', { delegate: this });
+		},
 
 		/**
 		 * Setup view items and controllers on accordion click
@@ -75,7 +86,7 @@
 
 				// History record save
 				CMDBuild.global.navigation.Chronology.cmfg('navigationChronologyRecordSave', {
-					moduleId: this.cmName,
+					moduleId: this.cmfg('identifierGet'),
 					entryType: {
 						description: this.reportSelectedAccordionGet(CMDBuild.core.constants.Proxy.DESCRIPTION),
 						id: this.reportSelectedAccordionGet(CMDBuild.core.constants.Proxy.ID),

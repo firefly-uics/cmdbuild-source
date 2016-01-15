@@ -46,7 +46,7 @@
 			CMDBuild.core.proxy.NavigationTree.update({
 				params: formData,
 				success: function(operation, request, decoded) {
-					_CMMainViewportController.findAccordionByCMName('navigationtree').updateStore();
+					CMDBuild.global.controller.MainViewport.cmfg('mainViewportAccordionControllerUpdateStore', { identifier: 'navigationtree' });
 
 					success(operation, request, decoded);
 				}
@@ -59,7 +59,7 @@
 			CMDBuild.core.proxy.NavigationTree.create({
 				params: formData,
 				success: function(operation, request, decoded) {
-					_CMMainViewportController.findAccordionByCMName('navigationtree').updateStore();
+					CMDBuild.global.controller.MainViewport.cmfg('mainViewportAccordionControllerUpdateStore', { identifier: 'navigationtree' });
 
 					me.listNavigationTrees({
 						success: function() {
@@ -92,8 +92,8 @@
 					name: name
 				},
 				success: function(operation, request, decoded) {
-					_CMMainViewportController.findAccordionByCMName('navigationtree').deselect();
-					_CMMainViewportController.findAccordionByCMName('navigationtree').updateStore();
+					CMDBuild.global.controller.MainViewport.cmfg('mainViewportAccordionDeselect', 'navigationtree');
+					CMDBuild.global.controller.MainViewport.cmfg('mainViewportAccordionControllerUpdateStore', { identifier: 'navigationtree' });
 
 					me.listNavigationTrees({
 						success: function() {

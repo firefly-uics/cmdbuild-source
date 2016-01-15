@@ -52,7 +52,7 @@
 		onAddButtonClick: function() {
 			this.callMethodForAllSubcontrollers("prepareForAdd", [this.dashboard]);
 			this.view.activateFirstTab();
-			_CMMainViewportController.deselectAccordionByName(this.view.cmName);
+			CMDBuild.global.controller.MainViewport.cmfg('mainViewportAccordionDeselect', this.view.cmName);
 		},
 
 		// chartPanelDelegate

@@ -1,12 +1,17 @@
 (function() {
 
 	Ext.define('CMDBuild.controller.administration.workflow.Workflow', {
-		extend: 'CMDBuild.controller.common.abstract.BasePanel',
+		extend: 'CMDBuild.controller.common.abstract.Base',
 
 		requires: [
 			'CMDBuild.core.constants.ModuleIdentifiers',
 			'CMDBuild.core.constants.Proxy'
 		],
+
+		/**
+		 * @cfg {CMDBuild.controller.common.MainViewport}
+		 */
+		parentDelegate: undefined,
 
 		/**
 		 * @cfg {Array}
@@ -24,7 +29,7 @@
 		/**
 		 * @cfg {String}
 		 */
-		cmName: undefined,
+		identifier: undefined,
 
 		/**
 		 * @cfg {Object}
@@ -64,15 +69,14 @@
 		view: undefined,
 
 		/**
-		 * @param {CMDBuild.view.administration.workflow.WorkflowView} view
+		 * @param {Object} configurationObject
 		 *
 		 * @override
 		 */
-		constructor: function(view) {
+		constructor: function(configurationObject) {
 			this.callParent(arguments);
 
-			// Handlers inject
-			this.view.printSchemaButton.delegate = this; // Useless on module instantiation refactor
+			this.view = Ext.create('CMDBuild.view.administration.workflow.WorkflowView', { delegate: this });
 
 			// Shorthands
 			this.tabPanel = this.view.tabPanel;
@@ -93,7 +97,7 @@
 		},
 
 		onWorkflowAddButtonClick: function() {
-			_CMMainViewportController.deselectAccordionByName(CMDBuild.core.constants.ModuleIdentifiers.getWorkflow());
+			this.cmfg('mainViewportAccordionDeselect', CMDBuild.core.constants.ModuleIdentifiers.getWorkflow());
 
 			this.setViewTitle();
 

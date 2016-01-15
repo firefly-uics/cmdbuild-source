@@ -45,7 +45,7 @@
 					return isSuperClass ? 'cmdbuild-tree-superclass-icon' : 'cmdbuild-tree-class-icon';
 				}
 
-				case 'custompage':
+				case CMDBuild.core.constants.ModuleIdentifiers.getCustomPage():
 					return 'cmdbuild-tree-custompage-icon';
 
 				case 'dashboard':
@@ -118,7 +118,7 @@
 						case 'class':
 							return targetArray.push(CMDBuild.Translation.classes);
 
-						case 'custompage':
+						case CMDBuild.core.constants.ModuleIdentifiers.getCustomPage():
 							return targetArray.push(CMDBuild.Translation.customPages);
 
 						case 'dashboard':
@@ -193,7 +193,7 @@
 
 		/**
 		 * @param {Object} parameters
-		 * @param {String} parameters.moduleId - cmName (class, workflow, dashboard, dataview, ...)
+		 * @param {String} parameters.moduleId - module identifier (class, workflow, dashboard, dataview, ...)
 		 * @param {String} parameters.entryType - selected entryType (Class, process, ...)
 		 * @param {Object} parameters.item - item selected from grid (card, instance, ...)
 		 * @param {Object} parameters.section - usually form tab object

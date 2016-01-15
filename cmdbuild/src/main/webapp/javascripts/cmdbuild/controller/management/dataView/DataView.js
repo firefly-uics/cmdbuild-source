@@ -1,12 +1,12 @@
 (function() {
 
 	Ext.define('CMDBuild.controller.management.dataView.DataView', {
-		extend: 'CMDBuild.controller.common.abstract.BasePanel',
+		extend: 'CMDBuild.controller.common.abstract.Base',
 
 		requires: ['CMDBuild.core.constants.Proxy'],
 
 		/**
-		 * @cfg {Object}
+		 * @cfg {CMDBuild.controller.common.MainViewport}
 		 */
 		parentDelegate: undefined,
 
@@ -24,7 +24,7 @@
 		/**
 		 * @cfg {String}
 		 */
-		cmName: undefined,
+		identifier: undefined,
 
 		/**
 		 * @property {Object}
@@ -42,6 +42,17 @@
 		 * @cfg {CMDBuild.view.management.dataView.DataViewView}
 		 */
 		view: undefined,
+
+		/**
+		 * @param {Object} configurationObject
+		 *
+		 * @override
+		 */
+		constructor: function(configurationObject) {
+			this.callParent(arguments);
+
+			this.view = Ext.create('CMDBuild.view.management.dataView.DataViewView', { delegate: this });
+		},
 
 		// SelectedView property methods
 			/**
@@ -126,7 +137,7 @@
 
 				// History record save
 				CMDBuild.global.navigation.Chronology.cmfg('navigationChronologyRecordSave', {
-					moduleId: this.cmName,
+					moduleId: this.cmfg('identifierGet'),
 					entryType: {
 						description: this.dataViewSelectedGet(CMDBuild.core.constants.Proxy.TEXT),
 						id: this.dataViewSelectedGet(CMDBuild.core.constants.Proxy.ID),

@@ -97,9 +97,9 @@
 		<title>CMDBuild</title>
 	</head>
 	<body id="cmbodyAdministration">
-		<div id="header" class="cm_no_display">
+		<div id="header" class="display-none">
 			<a href="http://www.cmdbuild.org" target="_blank"><img alt="CMDBuild logo" src="images/logo.jpg" /></a>
-			<div id="instance_name"></div>
+			<div id="instance-name"></div>
 			<div id="header_po">Open Source Configuration and Management Database</div>
 			<div id="msg-ct" class="msg-gray">
 				<div id="msg">
@@ -110,7 +110,9 @@
 						<% } else { %>
 							<p id="msg-inner-hidden"><tr:translation key="common.group"/>: <strong><tr:translation key="multiGroup"/></strong>
 							<script type="text/javascript">
-								CMDBuild.Runtime.GroupDescriptions = '<%= StringEscapeUtils.escapeEcmaScript(groupDecriptions) %>';
+								CMDBuild.Runtime.GroupDescriptions = '<%= StringEscapeUtils.escapeEcmaScript(groupDecriptions) %>'; // @deprecated
+
+								CMDBuild.configuration.runtime.set(CMDBuild.core.constants.Proxy.GROUP_DESCRIPTIONS, '<%= StringEscapeUtils.escapeEcmaScript(groupDecriptions) %>');
 							</script>
 						<% } %>
 							| <a href="management.jsp"><tr:translation key="management.description"/></a>
@@ -120,9 +122,9 @@
 			</div>
 		</div>
 
-		<div id="footer" class="cm_no_display">
+		<div id="footer" class="display-none">
 			<div class="fl"><a href="http://www.cmdbuild.org" target="_blank">www.cmdbuild.org</a></div>
-			<div id="cmdbuild_credits_link" class="fc"><tr:translation key="common.credits"/></div>
+			<div id="cmdbuild-credits-link" class="fc"><tr:translation key="common.credits"/></div>
 			<div class="fr"><a href="http://www.tecnoteca.com" target="_blank">Copyright &copy; Tecnoteca srl</a></div>
 		</div>
 	</body>

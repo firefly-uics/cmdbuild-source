@@ -1,12 +1,12 @@
 (function() {
 
 	Ext.define('CMDBuild.controller.administration.configuration.Configuration', {
-		extend: 'CMDBuild.controller.common.abstract.BasePanel',
+		extend: 'CMDBuild.controller.common.abstract.Base',
 
 		requires: ['CMDBuild.core.constants.Proxy'],
 
 		/**
-		 * @cfg {Object}
+		 * @cfg {CMDBuild.controller.common.MainViewport}
 		 */
 		parentDelegate: undefined,
 
@@ -20,12 +20,23 @@
 		/**
 		 * @cfg {String}
 		 */
-		cmName: undefined,
+		identifier: undefined,
 
 		/**
 		 * @property {CMDBuild.view.administration.configuration.ConfigurationView}
 		 */
 		view: undefined,
+
+		/**
+		 * @param {Object} configurationObject
+		 *
+		 * @override
+		 */
+		constructor: function(configurationObject) {
+			this.callParent(arguments);
+
+			this.view = Ext.create('CMDBuild.view.administration.configuration.ConfigurationView', { delegate: this });
+		},
 
 		/**
 		 * Setup view items and controllers on accordion click
@@ -75,8 +86,7 @@
 
 				this.sectionController.getView().fireEvent('show'); // Manual show event fire
 
-				// Custom callParent() implementation
-				this.onModuleInit(node);
+				this.onModuleInit(node); // Custom callParent() implementation
 			}
 		}
 	});

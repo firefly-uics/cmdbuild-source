@@ -16,7 +16,7 @@
 				}
 			};
 
-			_CMMainViewportController = { // have to be global
+			CMDBuild.global.controller.MainViewport = { // have to be global
 				deselectAccordionByName: function() {}
 			};
 
@@ -47,7 +47,7 @@
 			delete controller;
 			delete treeNode;
 			delete subcontroller;
-			delete _CMMainViewportController;
+			delete CMDBuild.global.controller.MainViewport;
 		});
 
 		it("Take the dashboard from cache when is calld onViewOnFront", function() {
@@ -72,7 +72,7 @@
 		});
 
 		it("Prepare the view to add a dashboard", function() {
-			var deselectTree = spyOn(_CMMainViewportController, "deselectAccordionByName");
+			var deselectTree = spyOn(CMDBuild.global.controller.MainViewport, "deselectAccordionByName");
 
 			controller.onAddButtonClick();
 

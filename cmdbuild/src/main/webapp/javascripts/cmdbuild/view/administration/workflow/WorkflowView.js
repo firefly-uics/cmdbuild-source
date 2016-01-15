@@ -14,11 +14,6 @@
 		baseTitle: CMDBuild.Translation.processes,
 
 		/**
-		 * @property {CMDBuild.core.buttons.iconized.split.Print}
-		 */
-		printSchemaButton: undefined,
-
-		/**
 		 * @property {Ext.tab.Panel}
 		 */
 		tabPanel: undefined,
@@ -50,7 +45,7 @@
 									this.delegate.cmfg('onWorkflowAddButtonClick');
 								}
 							}),
-							this.printSchemaButton = Ext.create('CMDBuild.core.buttons.iconized.split.Print', {
+							Ext.create('CMDBuild.core.buttons.iconized.split.Print', {
 								delegate: this.delegate,
 								text: CMDBuild.Translation.printSchema,
 								formatList: [

@@ -1,12 +1,12 @@
 (function() {
 
 	Ext.define('CMDBuild.controller.administration.menu.Menu', {
-		extend: 'CMDBuild.controller.common.abstract.BasePanel',
+		extend: 'CMDBuild.controller.common.abstract.Base',
 
 		requires: ['CMDBuild.core.constants.Proxy'],
 
 		/**
-		 * @cfg {Object}
+		 * @cfg {CMDBuild.controller.common.MainViewport}
 		 */
 		parentDelegate: undefined,
 
@@ -21,7 +21,7 @@
 		/**
 		 * @cfg {String}
 		 */
-		cmName: undefined,
+		identifier: undefined,
 
 		/**
 		 * @property {CMDBuild.controller.administration.menu.Groups}
@@ -37,6 +37,17 @@
 		 * @cfg {CMDBuild.view.administration.menu.MenuView}
 		 */
 		view: undefined,
+
+		/**
+		 * @param {Object} configurationObject
+		 *
+		 * @override
+		 */
+		constructor: function(configurationObject) {
+			this.callParent(arguments);
+
+			this.view = Ext.create('CMDBuild.view.administration.menu.MenuView', { delegate: this });
+		},
 
 		/**
 		 * Setup view items and controllers on accordion click

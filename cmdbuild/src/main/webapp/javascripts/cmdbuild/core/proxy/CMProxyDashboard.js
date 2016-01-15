@@ -42,7 +42,10 @@
 
 					success.apply(scope);
 
-					_CMMainViewportController.findAccordionByCMName('dashboard').updateStore(dashboardConfiguration.id);
+					CMDBuild.global.controller.MainViewport.cmfg('mainViewportAccordionControllerUpdateStore', {
+						identifier: 'dashboard',
+						nodeIdToSelect: dashboardConfiguration.id
+					});
 
 					/**
 					 * @deprecated
@@ -63,7 +66,10 @@
 				success: function(operation, configuration, decodedResponse) {
 					success.apply(scope);
 
-					_CMMainViewportController.findAccordionByCMName('dashboard').updateStore(dashboardId);
+					CMDBuild.global.controller.MainViewport.cmfg('mainViewportAccordionControllerUpdateStore', {
+						identifier: 'dashboard',
+						nodeIdToSelect: dashboardId
+					});
 
 					/**
 					 * @deprecated
@@ -103,8 +109,8 @@
 				success: function(operation, configuration, decodedResponse) {
 					success.apply(scope);
 
-					_CMMainViewportController.findAccordionByCMName('dashboard').deselect();
-					_CMMainViewportController.findAccordionByCMName('dashboard').updateStore();
+					CMDBuild.global.controller.MainViewport.cmfg('mainViewportAccordionDeselect', 'dashboard');
+					CMDBuild.global.controller.MainViewport.cmfg('mainViewportAccordionControllerUpdateStore', { identifier: 'dashboard' });
 
 					/**
 					 * @deprecated

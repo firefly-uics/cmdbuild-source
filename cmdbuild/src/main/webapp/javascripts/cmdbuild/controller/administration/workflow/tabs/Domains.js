@@ -70,18 +70,17 @@
 		},
 
 		onWorkflowTabDomainsAddButtonClick: function() {
-			var domainAccordion = _CMMainViewportController.findAccordionByCMName(CMDBuild.core.constants.ModuleIdentifiers.getDomain());
-
-			if (!Ext.isEmpty(domainAccordion)) {
-				domainAccordion.deselect();
-
-				// Add action to act as expand callback
-				domainAccordion.on('selectionchange', function(accordion, eOpts) {
-					_CMMainViewportController.panelControllers[CMDBuild.core.constants.ModuleIdentifiers.getDomain()].cmfg('onDomainAddButtonClick');
-				}, this, { single: true });
-
-				domainAccordion.expand();
-			}
+			this.cmfg('mainViewportAccordionDeselect', CMDBuild.core.constants.ModuleIdentifiers.getDomain());
+			// Add action to act as expand callback
+			this.cmfg('mainViewportAccordionControllerGet', CMDBuild.core.constants.ModuleIdentifiers.getDomain()).getView().on(
+				'selectionchange',
+				function(accordion, eOpts) {
+					this.cmfg('mainViewportModuleControllerGet', CMDBuild.core.constants.ModuleIdentifiers.getDomain()).cmfg('onDomainAddButtonClick');
+				},
+				this,
+				{ single: true }
+			);
+			this.cmfg('mainViewportAccordionControllerExpand', CMDBuild.core.constants.ModuleIdentifiers.getDomain());
 		},
 
 		onWorkflowTabDomainsAddWorkflowButtonClick: function() {
@@ -100,32 +99,30 @@
 
 		onWorkflowTabDomainsItemDoubleClick: function() {
 			if (!this.selectedDomainIsEmpty()) {
-				var domainAccordion = _CMMainViewportController.findAccordionByCMName(CMDBuild.core.constants.ModuleIdentifiers.getDomain());
-
-				if (!Ext.isEmpty(domainAccordion)) {
-					domainAccordion.expand();
-					domainAccordion.updateStore(this.selectedDomainGet(CMDBuild.core.constants.Proxy.ID_DOMAIN));
-				}
+				this.cmfg('mainViewportAccordionControllerExpand', CMDBuild.core.constants.ModuleIdentifiers.getDomain());
+				this.cmfg('mainViewportAccordionControllerUpdateStore', {
+					identifier: CMDBuild.core.constants.ModuleIdentifiers.getDomain(),
+					nodeIdToSelect: this.selectedDomainGet(CMDBuild.core.constants.Proxy.ID_DOMAIN)
+				});
 			}
 		},
 
 		onWorkflowTabDomainsModifyButtonClick: function() {
 			if (!this.selectedDomainIsEmpty()) {
-				var domainAccordion = _CMMainViewportController.findAccordionByCMName(CMDBuild.core.constants.ModuleIdentifiers.getDomain());
+				this.cmfg('mainViewportAccordionDeselect', CMDBuild.core.constants.ModuleIdentifiers.getDomain());
 
-				if (!Ext.isEmpty(domainAccordion)) {
-					domainAccordion.deselect();
+				// Add action to act as expand callback
+				this.cmfg('mainViewportAccordionControllerGet', CMDBuild.core.constants.ModuleIdentifiers.getDomain()).getView().on('selectionchange', function(accordion, eOpts) {
+					Ext.Function.createDelayed(function() { // Delay needed because of server asynchronous call to get domain data
+						this.cmfg('mainViewportModuleControllerGet', CMDBuild.core.constants.ModuleIdentifiers.getDomain()).cmfg('onDomainModifyButtonClick');
+					}, 500, this)();
+				}, this, { single: true });
 
-					// Add action to act as expand callback
-					domainAccordion.on('selectionchange', function(accordion, eOpts) {
-						Ext.Function.createDelayed(function() { // Delay needed because of server asynchronous call to get domain data
-							_CMMainViewportController.panelControllers[CMDBuild.core.constants.ModuleIdentifiers.getDomain()].cmfg('onDomainModifyButtonClick');
-						}, 500, this)();
-					}, this, { single: true });
-
-					domainAccordion.expand();
-					domainAccordion.updateStore(this.selectedDomainGet(CMDBuild.core.constants.Proxy.ID_DOMAIN));
-				}
+				this.cmfg('mainViewportAccordionControllerExpand', CMDBuild.core.constants.ModuleIdentifiers.getDomain());
+				this.cmfg('mainViewportAccordionControllerUpdateStore', {
+					identifier: CMDBuild.core.constants.ModuleIdentifiers.getDomain(),
+					nodeIdToSelect: this.selectedDomainGet(CMDBuild.core.constants.Proxy.ID_DOMAIN)
+				});
 			}
 		},
 

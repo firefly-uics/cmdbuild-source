@@ -63,21 +63,20 @@
 		},
 
 		onWorkflowTabTasksAddButtonClick: function() {
-			var taskAccordion = _CMMainViewportController.findAccordionByCMName('task');
+			this.cmfg('mainViewportAccordionDeselect', 'task');
 
-			if (!Ext.isEmpty(taskAccordion)) {
-				taskAccordion.deselect();
+			// Add action to act as expand callback
+			this.cmfg('mainViewportAccordionControllerGet', 'task').getView().on('selectionchange', function(accordion, eOpts) {
+				Ext.Function.createDelayed(function() {
+					this.cmfg('mainViewportAccordionControllerGet', 'task').cmOn('onAddButtonClick', { type: 'workflow' });
+				}, 500, this)();
+			}, this, { single: true });
 
-				// Add action to act as expand callback
-				taskAccordion.on('selectionchange', function(accordion, eOpts) {
-					Ext.Function.createDelayed(function() {
-						_CMMainViewportController.panelControllers['task'].cmOn('onAddButtonClick', { type: 'workflow' });
-					}, 500, this)();
-				}, this, { single: true });
-
-				taskAccordion.expand();
-				taskAccordion.updateStore('accordion-task-workflow');
-			}
+			this.cmfg('mainViewportAccordionControllerExpand', 'task');
+			this.cmfg('mainViewportAccordionControllerUpdateStore', {
+				identifier: 'task',
+				nodeIdToSelect: 'accordion-task-workflow'
+			});
 		},
 
 		onWorkflowTabTasksAddWorkflowButtonClick: function() {
@@ -89,39 +88,38 @@
 		 */
 		onWorkflowTabTasksItemDoubleClick: function() {
 			if (!this.selectedTaskIsEmpty()) {
-				var taskAccordion = _CMMainViewportController.findAccordionByCMName('task');
+				this.cmfg('mainViewportAccordionDeselect', 'task');
 
-				if (!Ext.isEmpty(taskAccordion)) {
-					taskAccordion.deselect();
+				// Add action to act as expand callback
+				this.cmfg('mainViewportAccordionControllerGet', 'task').getView().on('selectionchange', function(accordion, eOpts) {
+					Ext.Function.createDelayed(function() { // Delay needed because of server asynchronous call to get domain data
+						if (!Ext.isEmpty(this.cmfg('mainViewportModuleControllerGet', 'task').form.delegate))
+							this.cmfg('mainViewportModuleControllerGet', 'task').grid.getStore().load({
+								scope: this,
+								callback: function(records, operation, success) {
+									var selectionIndex = this.cmfg('mainViewportModuleControllerGet', 'task').grid.getStore().find(
+										CMDBuild.core.constants.Proxy.ID,
+										this.selectedTaskGet(CMDBuild.core.constants.Proxy.ID)
+									);
 
-					// Add action to act as expand callback
-					taskAccordion.on('selectionchange', function(accordion, eOpts) {
-						Ext.Function.createDelayed(function() { // Delay needed because of server asynchronous call to get domain data
-							if (!Ext.isEmpty(_CMMainViewportController.panelControllers['task'].form.delegate))
-								_CMMainViewportController.panelControllers['task'].grid.getStore().load({
-									scope: this,
-									callback: function(records, operation, success) {
-										var selectionIndex = _CMMainViewportController.panelControllers['task'].grid.getStore().find(
-											CMDBuild.core.constants.Proxy.ID,
-											this.selectedTaskGet(CMDBuild.core.constants.Proxy.ID)
-										);
+									if (selectionIndex >= 0) {
+										this.cmfg('mainViewportModuleControllerGet', 'task').grid.getSelectionModel().select(selectionIndex, true);
+									} else {
+										_error('cannot find taks with id ' + this.selectedTaskGet(CMDBuild.core.constants.Proxy.ID) + ' in store', this);
 
-										if (selectionIndex >= 0) {
-											_CMMainViewportController.panelControllers['task'].grid.getSelectionModel().select(selectionIndex, true);
-										} else {
-											_error('cannot find taks with id ' + this.selectedTaskGet(CMDBuild.core.constants.Proxy.ID) + ' in store', this);
-
-											_CMMainViewportController.panelControllers['task'].form.delegate.selectedId = null;
-											_CMMainViewportController.panelControllers['task'].form.disableModify();
-										}
+										this.cmfg('mainViewportModuleControllerGet', 'task').form.delegate.selectedId = null;
+										this.cmfg('mainViewportModuleControllerGet', 'task').form.disableModify();
 									}
-								});
-						}, 500, this)();
-					}, this, { single: true });
+								}
+							});
+					}, 500, this)();
+				}, this, { single: true });
 
-					taskAccordion.expand();
-					taskAccordion.updateStore('accordion-task-workflow');
-				}
+				this.cmfg('mainViewportAccordionControllerExpand', 'task');
+				this.cmfg('mainViewportAccordionControllerUpdateStore', {
+					identifier: 'task',
+					nodeIdToSelect: 'accordion-task-workflow'
+				});
 			}
 		},
 
@@ -141,43 +139,42 @@
 
 		onWorkflowTabTasksModifyButtonClick: function() {
 			if (!this.selectedTaskIsEmpty()) {
-				var taskAccordion = _CMMainViewportController.findAccordionByCMName('task');
+				this.cmfg('mainViewportAccordionDeselect', 'task');
 
-				if (!Ext.isEmpty(taskAccordion)) {
-					taskAccordion.deselect();
+				// Add action to act as expand callback
+				this.cmfg('mainViewportAccordionControllerGet', 'task').getView().on('selectionchange', function(accordion, eOpts) {
+					Ext.Function.createDelayed(function() { // Delay needed because of server asynchronous call to get domain data
+						if (!Ext.isEmpty(this.cmfg('mainViewportModuleControllerGet', 'task').form.delegate))
+							this.cmfg('mainViewportModuleControllerGet', 'task').grid.getStore().load({
+								scope: this,
+								callback: function(records, operation, success) {
+									var selectionIndex = this.cmfg('mainViewportModuleControllerGet', 'task').grid.getStore().find(
+										CMDBuild.core.constants.Proxy.ID,
+										this.selectedTaskGet(CMDBuild.core.constants.Proxy.ID)
+									);
 
-					// Add action to act as expand callback
-					taskAccordion.on('selectionchange', function(accordion, eOpts) {
-						Ext.Function.createDelayed(function() { // Delay needed because of server asynchronous call to get domain data
-							if (!Ext.isEmpty(_CMMainViewportController.panelControllers['task'].form.delegate))
-								_CMMainViewportController.panelControllers['task'].grid.getStore().load({
-									scope: this,
-									callback: function(records, operation, success) {
-										var selectionIndex = _CMMainViewportController.panelControllers['task'].grid.getStore().find(
-											CMDBuild.core.constants.Proxy.ID,
-											this.selectedTaskGet(CMDBuild.core.constants.Proxy.ID)
-										);
+									if (selectionIndex >= 0) {
+										this.cmfg('mainViewportModuleControllerGet', 'task').grid.getSelectionModel().select(selectionIndex, true);
 
-										if (selectionIndex >= 0) {
-											_CMMainViewportController.panelControllers['task'].grid.getSelectionModel().select(selectionIndex, true);
+										Ext.Function.createDelayed(function() {
+											this.cmfg('mainViewportModuleControllerGet', 'task').form.delegate.cmOn('onModifyButtonClick');
+										}, 100, this)();
+									} else {
+										_error('cannot find taks with id ' + this.selectedTaskGet(CMDBuild.core.constants.Proxy.ID) + ' in store', this);
 
-											Ext.Function.createDelayed(function() {
-												_CMMainViewportController.panelControllers['task'].form.delegate.cmOn('onModifyButtonClick');
-											}, 100, this)();
-										} else {
-											_error('cannot find taks with id ' + this.selectedTaskGet(CMDBuild.core.constants.Proxy.ID) + ' in store', this);
-
-											_CMMainViewportController.panelControllers['task'].form.delegate.selectedId = null;
-											_CMMainViewportController.panelControllers['task'].form.disableModify();
-										}
+										this.cmfg('mainViewportModuleControllerGet', 'task').form.delegate.selectedId = null;
+										this.cmfg('mainViewportModuleControllerGet', 'task').form.disableModify();
 									}
-								});
-						}, 500, this)();
-					}, this, { single: true });
+								}
+							});
+					}, 500, this)();
+				}, this, { single: true });
 
-					taskAccordion.expand();
-					taskAccordion.updateStore('accordion-task-workflow');
-				}
+				this.cmfg('mainViewportAccordionControllerExpand', 'task');
+				this.cmfg('mainViewportAccordionControllerUpdateStore', {
+					identifier: 'task',
+					nodeIdToSelect: 'accordion-task-workflow'
+				});
 			}
 		},
 

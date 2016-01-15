@@ -41,7 +41,7 @@
 				Ext.Function.createDelayed(function() {
 					this.entryType.set(CMDBuild.core.constants.Proxy.FILTER, this.clientFilter); // Inject filter in entryType object
 
-					_CMMainViewportController.panelControllers[CMDBuild.core.constants.ModuleIdentifiers.getWorkflow()].onViewOnFront(this.entryType);
+					CMDBuild.global.controller.MainViewport.cmfg('mainViewportModuleControllerGet', CMDBuild.core.constants.ModuleIdentifiers.getWorkflow()).onViewOnFront(this.entryType);
 				}, 1500, this)();
 		},
 
@@ -116,7 +116,7 @@
 			this.detail(params, path, router);
 
 			Ext.Function.createDelayed(function() {
-				_CMMainViewportController.panelControllers[CMDBuild.core.constants.ModuleIdentifiers.getWorkflow()].gridController.onPrintGridMenuClick(this.printFormat);
+				CMDBuild.global.controller.MainViewport.cmfg('mainViewportModuleControllerGet', CMDBuild.core.constants.ModuleIdentifiers.getWorkflow()).gridController.onPrintGridMenuClick(this.printFormat);
 			}, 500, this)();
 		},
 
@@ -128,7 +128,7 @@
 		showAll: function(params, path, router) {
 			if (Ext.Object.isEmpty(params)) {
 				Ext.Function.createDelayed(function() {
-					_CMMainViewportController.findAccordionByCMName(CMDBuild.core.constants.ModuleIdentifiers.getWorkflow()).selectFirstSelectableNode();
+					CMDBuild.global.controller.MainViewport.cmfg('mainViewportAccordionControllerGet', CMDBuild.core.constants.ModuleIdentifiers.getWorkflow()).cmfg('onAccordionExpand');
 				}, 500, this)();
 			}
 		}

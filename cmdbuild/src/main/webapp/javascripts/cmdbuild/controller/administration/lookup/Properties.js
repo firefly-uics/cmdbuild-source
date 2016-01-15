@@ -114,9 +114,10 @@
 				_CMCache.onModifyLookupType(decodedResponse[CMDBuild.core.constants.Proxy.LOOKUP]);
 			}
 
-			_CMMainViewportController.findAccordionByCMName(this.cmfg('controllerPropertyGet', 'cmName')).updateStore(
-				decodedResponse[CMDBuild.core.constants.Proxy.LOOKUP][CMDBuild.core.constants.Proxy.ID]
-			);
+			this.cmfg('mainViewportAccordionControllerUpdateStore', {
+				identifier: this.cmfg('identifierGet'),
+				nodeIdToSelect: decodedResponse[CMDBuild.core.constants.Proxy.LOOKUP][CMDBuild.core.constants.Proxy.ID]
+			});
 
 			this.form.setDisabledModify(true);
 		}

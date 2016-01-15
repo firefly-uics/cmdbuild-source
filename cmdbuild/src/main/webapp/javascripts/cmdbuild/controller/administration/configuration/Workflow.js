@@ -60,9 +60,10 @@
 
 					this.view.loadRecord(Ext.create('CMDBuild.model.configuration.workflow.Form', CMDBuild.model.configuration.workflow.Form.convertFromLegacy(decodedResponse)));
 
-					_CMMainViewportController.findAccordionByCMName(CMDBuild.core.constants.ModuleIdentifiers.getWorkflow()).setDisabled(
-						!CMDBuild.core.Utils.decodeAsBoolean(decodedResponse[CMDBuild.core.constants.Proxy.ENABLED])
-					);
+					this.cmfg('mainViewportAccordionSetDisabled', {
+						identifier: CMDBuild.core.constants.ModuleIdentifiers.getWorkflow(),
+						state: !CMDBuild.core.Utils.decodeAsBoolean(decodedResponse[CMDBuild.core.constants.Proxy.ENABLED])
+					});
 
 					/**
 					 * @deprecated (CMDBuild.configuration.workflow)

@@ -1,12 +1,12 @@
 (function() {
 
 	Ext.define('CMDBuild.controller.administration.userAndGroup.UserAndGroup', {
-		extend: 'CMDBuild.controller.common.abstract.BasePanel',
+		extend: 'CMDBuild.controller.common.abstract.Base',
 
 		requires: ['CMDBuild.core.constants.Proxy'],
 
 		/**
-		 * @cfg {Object}
+		 * @cfg {CMDBuild.controller.common.MainViewport}
 		 */
 		parentDelegate: undefined,
 
@@ -23,7 +23,7 @@
 		/**
 		 * @cfg {String}
 		 */
-		cmName: undefined,
+		identifier: undefined,
 
 		/**
 		 * @parameter {CMDBuild.model.userAndGroup.SelectedAccordion}
@@ -41,6 +41,17 @@
 		 * @cfg {CMDBuild.view.administration.userAndGroup.UserAndGroupView}
 		 */
 		view: undefined,
+
+		/**
+		 * @param {Object} configurationObject
+		 *
+		 * @override
+		 */
+		constructor: function(configurationObject) {
+			this.callParent(arguments);
+
+			this.view = Ext.create('CMDBuild.view.administration.userAndGroup.UserAndGroupView', { delegate: this });
+		},
 
 		/**
 		 * Setup view items and controllers on accordion click

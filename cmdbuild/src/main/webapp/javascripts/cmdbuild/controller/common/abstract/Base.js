@@ -1,8 +1,6 @@
 (function () {
 
-	/**
-	 * External requires to avoid overrides from classes that extends
-	 */
+	// External implementation to avoid overrides
 	Ext.require([
 		'CMDBuild.core.constants.Global',
 		'CMDBuild.core.Message'
@@ -16,6 +14,9 @@
 	 * 		Ex. 'functionName = aliasFunctionName'
 	 * 	'->' - forwards method to sub-controller without a value return (sub-controller could be also multiple as list separated by commas)
 	 * 		Ex. 'functionName -> controllerOne, controllerTwo, controllerThree, ...'
+	 *
+	 * Default managed functions:
+	 * 	- identifierGet: only if identifier property is configured
 	 *
 	 * @abstract
 	 */
@@ -34,6 +35,11 @@
 		 * @abstract
 		 */
 		cmfgCatchedFunctions: [],
+
+		/**
+		 * @cfg {String}
+		 */
+		identifier: undefined,
 
 		/**
 		 * Map to bind string to functions names
@@ -56,6 +62,9 @@
 			this.stringToFunctionNameMap = {};
 
 			Ext.apply(this, configurationObject); // Apply configuration to class
+
+			if (!Ext.isEmpty(this.identifier))
+				this.cmfgCatchedFunctions.push('identifierGet');
 
 			this.decodeCatchedFunctionsArray();
 		},
@@ -104,42 +113,6 @@
 
 			_warning('unmanaged function with name "' + name + '"', this);
 		},
-
-		/**
-		 * Controller methods
-		 * Methods use by controllers to manage local variables from cmfg() functions without rewrite a function. Don't use to set local variables, alias as this.
-		 */
-			/**
-			 * @param {String} name
-			 *
-			 * @returns {Mixed}
-			 */
-			controllerPropertyGet: function(name) {
-				if (Ext.isString(name) && !Ext.isEmpty(this[name]))
-					return this[name];
-
-				return null;
-			},
-
-			controllerPropertyReset: function(name) {
-				if (Ext.isString(name) && !Ext.isEmpty(this[name]))
-					this[name] = null;
-			},
-
-			/**
-			 * @param {object} parameters
-			 * @param {String} parameters.name
-			 * @param {Mixed} parameters.value
-			 */
-			controllerPropertySet: function(parameters) {
-				if (
-					!Ext.Object.isEmpty(parameters)
-					&& !Ext.isEmpty(parameters.name)
-					&& !Ext.isEmpty(this[parameters.name])
-				) {
-					this[parameters.name] = parameters.value;
-				}
-			},
 
 		/**
 		 * Decodes array string inline tags (forward: '->', alias: '=')
@@ -208,6 +181,23 @@
 		getView: function() {
 			return this.view;
 		},
+
+		/**
+		 * @returns {String or null}
+		 */
+		identifierGet: function() {
+			if (!Ext.isEmpty(this.identifier))
+				return this.identifier;
+
+			return null;
+		},
+
+		/**
+		 * Method to manage module initialization (to localize)
+		 *
+		 * @abstract
+		 */
+		onModuleInit: Ext.emptyFn,
 
 		/**
 		 * Property manage methods

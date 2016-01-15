@@ -4,7 +4,6 @@
 		extend: 'CMDBuild.controller.common.abstract.Base',
 
 		requires: [
-			'CMDBuild.core.constants.ModuleIdentifiers',
 			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.proxy.userAndGroup.group.Group',
 			'CMDBuild.model.userAndGroup.group.Group'
@@ -161,9 +160,10 @@
 		 * @private
 		 */
 		success: function(response, options, decodedResponse) {
-			_CMMainViewportController.findAccordionByCMName(CMDBuild.core.constants.ModuleIdentifiers.getUserAndGroup()).updateStore(
-				decodedResponse[CMDBuild.core.constants.Proxy.GROUP][CMDBuild.core.constants.Proxy.ID]
-			);
+			this.cmfg('mainViewportAccordionControllerUpdateStore', {
+				identifier: this.cmfg('identifierGet'),
+				nodeIdToSelect: decodedResponse[CMDBuild.core.constants.Proxy.GROUP][CMDBuild.core.constants.Proxy.ID]
+			});
 
 			this.form.setDisabledModify(true);
 		}

@@ -145,5 +145,3 @@
 
 	<!-- WIDGET DERIVED -->
 	<script type="text/javascript" src="javascripts/cmdbuild/controller/management/common/widgets/CMWorkflowController.js"></script>
-
-<script type="text/javascript" src="javascripts/cmdbuild/Management.js"></script>

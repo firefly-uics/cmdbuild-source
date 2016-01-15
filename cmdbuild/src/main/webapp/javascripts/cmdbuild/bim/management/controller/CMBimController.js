@@ -282,7 +282,7 @@
 
 	function openCard(me, classId, cardId) {
 		me.bimWindow.hide();
-		_CMMainViewportController.openCard({
+		CMDBuild.global.controller.MainViewport.cmfg('mainViewportCardSelect', {
 			IdClass: classId,
 			Id: cardId
 		});

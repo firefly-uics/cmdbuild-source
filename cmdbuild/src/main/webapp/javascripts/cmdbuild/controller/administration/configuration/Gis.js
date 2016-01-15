@@ -59,9 +59,10 @@
 
 					this.view.loadRecord(Ext.create('CMDBuild.model.configuration.gis.Form', CMDBuild.model.configuration.gis.Form.convertFromLegacy(decodedResponse)));
 
-					_CMMainViewportController.findAccordionByCMName('gis').setDisabled(
-						!CMDBuild.core.Utils.decodeAsBoolean(decodedResponse[CMDBuild.core.constants.Proxy.ENABLED])
-					);
+					this.cmfg('mainViewportAccordionSetDisabled', {
+						identifier: 'gis',
+						state: !CMDBuild.core.Utils.decodeAsBoolean(decodedResponse[CMDBuild.core.constants.Proxy.ENABLED])
+					});
 
 					/**
 					 * @deprecated (CMDBuild.configuration.gis)

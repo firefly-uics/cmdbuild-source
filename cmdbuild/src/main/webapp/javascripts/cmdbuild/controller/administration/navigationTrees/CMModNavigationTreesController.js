@@ -21,7 +21,7 @@
 		cmOn: function(name, param, callBack) {
 			switch (name) {
 				case 'onAddButtonClick':
-					_CMMainViewportController.deselectAccordionByName('navigationtree');
+					CMDBuild.global.controller.MainViewport.cmfg('mainViewportAccordionDeselect', 'navigationtree');
 					this.view.selectPropertiesTab();
 					this.view.navigationTreesTree.disable();
 					this.view.navigationTreesForm.enableModify(true);

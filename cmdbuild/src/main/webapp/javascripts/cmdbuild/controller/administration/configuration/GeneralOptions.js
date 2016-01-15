@@ -61,7 +61,7 @@
 
 					this.view.loadRecord(Ext.create('CMDBuild.model.configuration.instance.Form', CMDBuild.model.configuration.instance.Form.convertFromLegacy(decodedResponse)));
 
-					Ext.get('instance_name').dom.innerHTML = decodedResponse[CMDBuild.core.constants.Proxy.INSTANCE_NAME];
+					this.cmfg('mainViewportInstanceNameSet', decodedResponse[CMDBuild.core.constants.Proxy.INSTANCE_NAME]);
 
 					this.view.instanceNameField.translationsRead(); // Custom function call to read translations data
 				}

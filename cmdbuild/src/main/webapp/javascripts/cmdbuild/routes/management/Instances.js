@@ -31,7 +31,7 @@
 
 				if (!isNaN(parseInt(this.instanceIdentifier))) { // Single card selection
 					Ext.Function.createDelayed(function() {
-						_CMMainViewportController.openCard({
+						CMDBuild.global.controller.MainViewport.cmfg('mainViewportCardSelect', {
 							Id: this.instanceIdentifier,
 							IdClass: this.entryType.get(CMDBuild.core.constants.Proxy.ID)
 						});

@@ -48,7 +48,7 @@
 
 		<div id="footer">
 			<div class="fl"><a href="http://www.cmdbuild.org" target="_blank">www.cmdbuild.org</a></div>
-			<div id="cmdbuild_credits_link" class="fc"><tr:translation key="common.credits"/></div>
+			<div id="cmdbuild-credits-link" class="fc"><tr:translation key="common.credits"/></div>
 			<div class="fr"><a href="http://www.tecnoteca.com" target="_blank">Copyright &copy; Tecnoteca srl</a></div>
 		</div>
 	</body>

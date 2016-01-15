@@ -68,7 +68,10 @@
 
 			this.view.disableModify(true);
 
-			_CMMainViewportController.findAccordionByCMName('class').updateStore(decodedResponse[CMDBuild.core.constants.Proxy.ID]);
+			CMDBuild.global.controller.MainViewport.cmfg('mainViewportAccordionControllerUpdateStore', {
+				identifier: 'class',
+				nodeIdToSelect: decodedResponse[CMDBuild.core.constants.Proxy.ID]
+			});
 
 			/**
 			 * @deprecated
@@ -139,8 +142,8 @@
 		deleteSuccessCB: function(response, options, decodedResponse) {
 			var removedClassId = this.selection.get(CMDBuild.core.constants.Proxy.ID);
 
-			_CMMainViewportController.findAccordionByCMName('class').deselect();
-			_CMMainViewportController.findAccordionByCMName('class').updateStore();
+			CMDBuild.global.controller.MainViewport.cmfg('mainViewportAccordionDeselect', 'class');
+			CMDBuild.global.controller.MainViewport.cmfg('mainViewportAccordionControllerUpdateStore', { identifier: 'class' });
 
 			/**
 			 * @deprecated

@@ -9,7 +9,7 @@
 			{ name: CMDBuild.core.constants.Proxy.DATE, type: 'date' },
 			{ name: CMDBuild.core.constants.Proxy.ENTRY_TYPE, type: 'auto' }, // 2nd level - a.k.a. entityId
 			{ name: CMDBuild.core.constants.Proxy.ITEM, type: 'auto' }, // 3rd level - card/workflow/item usually selected from grid
-			{ name: CMDBuild.core.constants.Proxy.MODULE_ID, type: 'string' }, // 1st level - a.k.a. cmName
+			{ name: CMDBuild.core.constants.Proxy.MODULE_ID, type: 'string' }, // 1st level - module identifier
 			{ name: CMDBuild.core.constants.Proxy.SECTION, type: 'auto', defaultValue: {} },  // 4th level
 			{ name: CMDBuild.core.constants.Proxy.SUB_SECTION, type: 'auto', defaultValue: {} }  // 5th level
 		],

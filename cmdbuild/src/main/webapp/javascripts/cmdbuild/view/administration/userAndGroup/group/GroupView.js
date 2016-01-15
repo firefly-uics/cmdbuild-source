@@ -13,11 +13,6 @@
 		/**
 		 * @cfg {String}
 		 */
-		cmName: undefined,
-
-		/**
-		 * @cfg {String}
-		 */
 		baseTitle: CMDBuild.Translation.groups,
 
 		/**

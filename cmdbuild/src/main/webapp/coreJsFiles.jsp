@@ -134,7 +134,6 @@
 <!--  VIEWS -->
 <script type="text/javascript" src="javascripts/cmdbuild/view/common/CMUnconfiguredModPanel.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/view/common/CMFormFuncions.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/view/CMMainViewport.js"></script>
 
 <!-- TODO: remove from management -->
 <script type="text/javascript" src="javascripts/cmdbuild/view/management/common/CMCardGrid.js"></script>
@@ -158,7 +157,6 @@
 
 <!--  CONTROLLERS -->
 <script type="text/javascript" src="javascripts/cmdbuild/controller/common/CMBasePanelController.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/controller/common/CMMainViewportController.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/controller/common/CMUnconfiguredModPanelController.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/controller/management/classes/StaticsController.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/controller/management/workflow/StaticsController.js"></script>

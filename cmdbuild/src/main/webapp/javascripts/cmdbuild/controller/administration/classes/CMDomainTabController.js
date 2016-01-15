@@ -69,20 +69,26 @@
 	}
 
 	function onItemDoubleClick(grid, record) {
-		var domainAccordion = _CMMainViewportController.findAccordionByCMName("domain");
-		domainAccordion.expand();
-		Ext.Function.createDelayed(function() {
-			domainAccordion.selectNodeById(record.get("idDomain"));
-		}, 100)();
-
+		if (!Ext.isEmpty(record)) {
+			CMDBuild.global.controller.MainViewport.cmfg('mainViewportAccordionControllerExpand', 'domain');
+			CMDBuild.global.controller.MainViewport.cmfg('mainViewportAccordionControllerUpdateStore', {
+				identifier: 'domain',
+				nodeIdToSelect: record.get('idDomain')
+			});
+		}
 	}
 
 	function onModifyDomainButton() {
 		if (this.currentDomain) {
-			onItemDoubleClick(this.view, this.currentDomain);
+			CMDBuild.global.controller.MainViewport.cmfg('mainViewportAccordionControllerExpand', 'domain');
+			CMDBuild.global.controller.MainViewport.cmfg('mainViewportAccordionControllerUpdateStore', {
+				identifier: 'domain',
+				nodeIdToSelect: this.currentDomain.get('idDomain')
+			});
+
 			Ext.Function.createDelayed(function() {
-				_CMMainViewportController.panelControllers["domain"].view.domainForm.enableModify();
-			}, 500)();
+				CMDBuild.global.controller.MainViewport.cmfg('mainViewportModuleControllerGet', 'domain').cmfg('onDomainModifyButtonClick');
+			}, 500, this)();
 		}
 	}
 
@@ -123,9 +129,12 @@
 	}
 
 	function onAddDomainButton() {
-		var domainAccordion = _CMMainViewportController.findAccordionByCMName("domain");
-		if (domainAccordion) {
-			domainAccordion.expandForAdd();
-		}
+		CMDBuild.global.controller.MainViewport.cmfg('mainViewportAccordionControllerGet', 'domain').getView().on('expand', function(accordion, eOpts) {
+			Ext.Function.createDelayed(function() {
+				CMDBuild.global.controller.MainViewport.cmfg('mainViewportModuleControllerGet', 'domain').cmfg('onDomainAddButtonClick');
+			}, 100, this)();
+		}, this, { single: true });
+
+		CMDBuild.global.controller.MainViewport.cmfg('mainViewportAccordionControllerExpand', 'domain');
 	}
 })();

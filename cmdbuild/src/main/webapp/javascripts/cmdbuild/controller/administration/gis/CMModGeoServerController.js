@@ -1,6 +1,6 @@
 (function() {
 	var tr = CMDBuild.Translation.administration.modcartography.geoserver;
-	
+
 	Ext.define("CMDBuild.controller.administration.gis.CMModGeoServerController", {
 		extend: "CMDBuild.controller.CMBasePanelController",
 		constructor: function() {
@@ -25,8 +25,11 @@
 				var msg = Ext.String.format(tr.service_not_available
 						, CMDBuild.Translation.administration.modcartography.title +
 							"/" + CMDBuild.Translation.administration.modcartography.external_services.title);
-				
-				_CMMainViewportController.bringTofrontPanelByCmName("notconfiguredpanel", msg);
+
+				CMDBuild.global.controller.MainViewport.cmfg('mainViewportModuleShow', {
+					identifier: "notconfiguredpanel",
+					parameters: msg
+				});
 				return false;
 			}
 
@@ -69,7 +72,7 @@
 					this.view.layersGrid.loadStoreAndSelectLayerWithName(nameToSelect);
 				},
 				failure: function() {
-					_debug("Failed to add or modify a Geoserver Layer", arguments);	
+					_debug("Failed to add or modify a Geoserver Layer", arguments);
 				},
 				callback: function() {
 					CMDBuild.core.LoadMask.hide();

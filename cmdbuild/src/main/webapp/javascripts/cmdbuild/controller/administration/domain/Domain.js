@@ -1,13 +1,18 @@
 (function() {
 
 	Ext.define('CMDBuild.controller.administration.domain.Domain', {
-		extend: 'CMDBuild.controller.common.abstract.BasePanel',
+		extend: 'CMDBuild.controller.common.abstract.Base',
 
 		requires: [
 			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.proxy.domain.Domain',
 			'CMDBuild.view.common.field.translatable.Utils'
 		],
+
+		/**
+		 * @cfg {CMDBuild.controller.common.MainViewport}
+		 */
+		parentDelegate: undefined,
 
 		/**
 		 * @cfg {Array}
@@ -28,7 +33,7 @@
 		/**
 		 * @cfg {String}
 		 */
-		cmName: undefined,
+		identifier: undefined,
 
 		/**
 		 * @property {CMDBuild.controller.administration.domain.Attributes}
@@ -56,12 +61,14 @@
 		view: undefined,
 
 		/**
-		 * @param {CMDBuild.view.administration.domain.DomainView} view
+		 * @param {Object} configurationObject
 		 *
 		 * @override
 		 */
-		constructor: function(view) {
+		constructor: function(configurationObject) {
 			this.callParent(arguments);
+
+			this.view = Ext.create('CMDBuild.view.administration.domain.DomainView', { delegate: this });
 
 			// Controller build
 			this.controllerAttributes = Ext.create('CMDBuild.controller.administration.domain.Attributes', { parentDelegate: this });
@@ -83,7 +90,7 @@
 		},
 
 		onDomainAddButtonClick: function() {
-			_CMMainViewportController.deselectAccordionByName(this.cmName);
+			this.cmfg('mainViewportAccordionDeselect', this.cmfg('identifierGet'));
 
 			this.setViewTitle();
 
@@ -188,7 +195,8 @@
 						this.controllerProperties.getView().form.setDisabledModify(true);
 
 						_CMCache.onDomainDeleted(this.domainSelectedDomainGet(CMDBuild.core.constants.Proxy.ID));
-						_CMMainViewportController.findAccordionByCMName(this.cmName).updateStore();
+
+						this.cmfg('mainViewportAccordionControllerUpdateStore', { identifier: this.cmfg('identifierGet') });
 					}
 				});
 			}
@@ -199,7 +207,11 @@
 			this.view.tabPanel.getActiveTab().form.setDisabledModify(true);
 
 			_CMCache.onDomainSaved(decodedResponse.domain);
-			_CMMainViewportController.findAccordionByCMName(this.cmName).updateStore(decodedResponse[CMDBuild.core.constants.Proxy.DOMAIN][CMDBuild.core.constants.Proxy.ID_DOMAIN]);
+
+			this.cmfg('mainViewportAccordionControllerUpdateStore', {
+				identifier: this.cmfg('identifierGet'),
+				nodeIdToSelect: decodedResponse[CMDBuild.core.constants.Proxy.DOMAIN][CMDBuild.core.constants.Proxy.ID_DOMAIN]
+			});
 
 			CMDBuild.view.common.field.translatable.Utils.commit(this.controllerProperties.getView().form);
 		},
