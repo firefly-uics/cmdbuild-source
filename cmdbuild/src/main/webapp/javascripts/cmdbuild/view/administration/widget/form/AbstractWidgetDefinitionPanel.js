@@ -1,5 +1,8 @@
 (function() {
 
+	// External implementation to avoid overrides
+	Ext.require(['CMDBuild.core.constants.Proxy']);
+
 	/**
 	 * @abstract
 	 */

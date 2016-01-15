@@ -45,7 +45,6 @@
 			nodeIdToSelect = Ext.isString(nodeIdToSelect) ? nodeIdToSelect : null;
 
 			CMDBuild.core.proxy.lookup.Type.readAll({
-				loadMask: false,
 				scope: this,
 				success: function(response, options, decodedResponse) {
 					if (!Ext.isEmpty(decodedResponse)) {

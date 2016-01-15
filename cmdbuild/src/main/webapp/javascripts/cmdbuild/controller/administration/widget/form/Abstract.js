@@ -1,9 +1,10 @@
 (function() {
 
+	// External implementation to avoid overrides
+	Ext.require(['CMDBuild.core.constants.Proxy']);
+
 	Ext.define('CMDBuild.controller.administration.widget.form.Abstract', {
 		extend: 'CMDBuild.controller.common.abstract.Base',
-
-		requires: ['CMDBuild.core.constants.Proxy'],
 
 		/**
 		 * @cfg {CMDBuild.controller.administration.widget.Widget}
@@ -16,17 +17,6 @@
 		 * @private
 		 */
 		definitionModelName: undefined,
-
-		/**
-		 * @param {Object} configurationObject
-		 * @param {CMDBuild.controller.administration.widget.Widget} configurationObject.parentDelegate
-		 */
-		constructor: function(configurationObject) {
-			this.callParent(arguments);
-
-			if (Ext.isEmpty(this.definitionModelName) || !Ext.isString(this.definitionModelName))
-				_error('widgetDefinitionModelName property not configured', this);
-		},
 
 		classTabWidgetAdd: function() {
 			this.view.reset();

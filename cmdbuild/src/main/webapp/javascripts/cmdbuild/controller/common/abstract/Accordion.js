@@ -33,6 +33,20 @@
 		],
 
 		/**
+		 * Flag to disable next selection, will be reset on next store update
+		 *
+		 * @cfg {Boolean}
+		 */
+		disableSelection: false,
+
+		/**
+		 * Flag to disable next storeLoad, will be reset on next expand
+		 *
+		 * @cfg {Boolean}
+		 */
+		disableStoreLoad: false,
+
+		/**
 		 * @cfg {Boolean}
 		 */
 		hideIfEmpty: false,
@@ -181,7 +195,7 @@
 
 					this.view.getSelectionModel().select(node);
 				} else {
-					_warning('cannot find node with id "' + id + '"', this);
+					this.cmfg('accordionSelectFirstSelectableNode');
 				}
 			}
 		},
@@ -228,12 +242,19 @@
 		onAccordionExpand: function() {
 			this.cmfg('mainViewportModuleShow', { identifier: this.cmfg('accordionIdentifierGet') });
 
-			// Reselect selected or select first leaf
-			if (this.view.getSelectionModel().hasSelection()) {
-				this.cmfg('onAccordionSelectionChange');
-			} else {
-				this.cmfg('accordionSelectFirstSelectableNode');
+			// Update store
+			if (!this.disableStoreLoad) {
+				if (this.view.getSelectionModel().hasSelection()) {
+					var selection = this.view.getSelectionModel().getSelection()[0];
+
+					this.cmfg('accordionUpdateStore', selection.get(CMDBuild.core.constants.Proxy.ENTITY_ID));
+				} else {
+					this.cmfg('accordionUpdateStore');
+				}
 			}
+
+			// DisableStoreLoad flag reset
+			this.disableStoreLoad = false;
 		},
 
 		onAccordionSelectionChange: function() {
@@ -264,16 +285,24 @@
 		 * @private
 		 */
 		updateStoreCommonEndpoint: function(nodeIdToSelect) {
-			if (!Ext.isEmpty(nodeIdToSelect))
-				this.cmfg('accordionSelectNodeById', nodeIdToSelect);
+			if (!this.disableSelection) {
+				if (!Ext.isEmpty(nodeIdToSelect))
+					this.cmfg('accordionSelectNodeById', nodeIdToSelect);
 
-			// Select first selectable item if no selection and expanded
-			if (!this.view.getSelectionModel().hasSelection() && this.view.getCollapsed() === false)
-				this.cmfg('accordionSelectFirstSelectableNode');
+				// Select first selectable item if no selection and expanded
+				if (!this.view.getSelectionModel().hasSelection() && this.view.getCollapsed() === false)
+					this.cmfg('accordionSelectFirstSelectableNode');
+			}
+
+			// Accordion store update end event fire
+			this.view.fireEvent('storeload');
 
 			// Hide if accordion is empty
 			if (this.hideIfEmpty && this.isEmpty())
 				this.hide();
+
+			// DisableSelection flag reset
+			this.disableSelection = false;
 		}
 	});
 

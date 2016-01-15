@@ -101,7 +101,7 @@
 						} break;
 
 						default:
-							_debug('CMTasksFormConnectorController: onSaveButtonClick() datasource type not recognized');
+							_error('CMTasksFormConnectorController: onSaveButtonClick() datasource type not recognized');
 					}
 			},
 

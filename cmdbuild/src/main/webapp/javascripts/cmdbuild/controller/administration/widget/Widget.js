@@ -86,10 +86,10 @@
 		 * @private
 		 */
 		buildForm: function() {
-			if (!Ext.isEmpty(this.controllerWidgetForm)) {
-				if (!Ext.isEmpty(this.form))
-					this.view.remove(this.form);
+			if (!Ext.isEmpty(this.form))
+				this.view.remove(this.form);
 
+			if (!Ext.isEmpty(this.controllerWidgetForm)) {
 				// Shorthands
 				this.form = this.controllerWidgetForm.getView();
 				this.view.form = this.form;
@@ -101,35 +101,30 @@
 		/**
 		 * @param {String} type
 		 *
+		 * @returns {Mixed}
+		 *
 		 * @private
 		 */
 		buildFormController: function(type) {
-			if (!Ext.isEmpty(type) && Ext.isString(type))
-				switch (type) {
-					case '.Calendar': {
-						this.controllerWidgetForm = Ext.create('CMDBuild.controller.administration.widget.form.Calendar', { parentDelegate: this });
-					} break;
+			switch (type) {
+				case '.Calendar':
+					return Ext.create('CMDBuild.controller.administration.widget.form.Calendar', { parentDelegate: this });
 
-					case '.CreateModifyCard': {
-						this.controllerWidgetForm = Ext.create('CMDBuild.controller.administration.widget.form.CreateModifyCard', { parentDelegate: this });
-					} break;
+				case '.CreateModifyCard':
+					return Ext.create('CMDBuild.controller.administration.widget.form.CreateModifyCard', { parentDelegate: this });
 
-					case '.OpenReport': {
-						this.controllerWidgetForm = Ext.create('CMDBuild.controller.administration.widget.form.OpenReport', { parentDelegate: this });
-					} break;
+				case '.OpenReport':
+					return Ext.create('CMDBuild.controller.administration.widget.form.OpenReport', { parentDelegate: this });
 
-					case '.Ping': {
-						this.controllerWidgetForm = Ext.create('CMDBuild.controller.administration.widget.form.Ping', { parentDelegate: this });
-					} break;
+				case '.Ping':
+					return Ext.create('CMDBuild.controller.administration.widget.form.Ping', { parentDelegate: this });
 
-					case '.Workflow': {
-						this.controllerWidgetForm = Ext.create('CMDBuild.controller.administration.widget.form.Workflow', { parentDelegate: this });
-					} break;
+				case '.Workflow':
+					return Ext.create('CMDBuild.controller.administration.widget.form.Workflow', { parentDelegate: this });
 
-					default: {
-						_warning('unmanaged widget controller type "' + type + '"', this);
-					}
-				}
+				default:
+					return Ext.create('CMDBuild.controller.administration.widget.form.Empty', { parentDelegate: this });
+			}
 		},
 
 		/**
@@ -161,18 +156,6 @@
 			}
 		},
 
-//		/**
-//		 * @param {Object} options
-//		 * @param {Boolean} success
-//		 * @param {Object} response
-//		 *
-//		 * @private
-//		 */
-//		defaultLoadCallback: function(options, success, response) {
-//			if (!this.grid.getSelectionModel().hasSelection())
-//				this.grid.getSelectionModel().select(0, true);
-//		},
-
 		onClassTabWidgetAbortButtonClick: function() {
 			if (!this.classTabWidgetSelectedWidgetIsEmpty()) {
 				this.cmfg('onClassTabWidgetRowSelected');
@@ -191,7 +174,7 @@
 
 				this.classTabWidgetSelectedWidgetReset();
 
-				this.buildFormController(type);
+				this.controllerWidgetForm = this.buildFormController(type);
 				this.buildForm();
 
 				if (!Ext.isEmpty(this.controllerWidgetForm) && Ext.isFunction(this.controllerWidgetForm.cmfg))
@@ -212,7 +195,7 @@
 		 * @param {Number} classId
 		 */
 		onClassTabWidgetClassSelected: function(classId) {
-			if (!Ext.isEmpty(classId) || !Ext.isNumeric(classId)) {
+			if (!Ext.isEmpty(classId) && Ext.isNumeric(classId)) {
 				var params = {};
 				params[CMDBuild.core.constants.Proxy.ACTIVE] = false;
 
@@ -250,12 +233,12 @@
 					if (!Ext.isEmpty(widgetRowModel))
 						params['sortedArray'].push(widgetRowModel.get(CMDBuild.core.constants.Proxy.ID));
 				}, this);
-_debug('onClassTabWidgetItemDrop', params['sortedArray']);
+
 				CMDBuild.core.proxy.widget.Widget.setSorting({
 					params: params,
 					scope: this,
 					success: function(response, options, decodedResponse) {
-//						this.cmfg('onClassTabWidgetPanelShow');
+						this.cmfg('onClassTabWidgetPanelShow');
 					}
 				});
 			}
@@ -320,7 +303,7 @@ _debug('onClassTabWidgetItemDrop', params['sortedArray']);
 					success: function(response, options, decodedResponse) {
 						decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.RESPONSE] || [];
 
-						this.buildFormController(decodedResponse[CMDBuild.core.constants.Proxy.TYPE]);
+						this.controllerWidgetForm = this.buildFormController(decodedResponse[CMDBuild.core.constants.Proxy.TYPE]);
 
 						this.classTabWidgetSelectedWidgetSet({ value: decodedResponse });
 
@@ -335,6 +318,10 @@ _debug('onClassTabWidgetItemDrop', params['sortedArray']);
 					}
 				});
 			} else {
+				this.controllerWidgetForm = this.buildFormController();
+
+				this.buildForm();
+
 				this.form.setDisabledModify(true, true, true);
 			}
 		},
@@ -342,7 +329,7 @@ _debug('onClassTabWidgetItemDrop', params['sortedArray']);
 		onClassTabWidgetSaveButtonClick: function() {
 			if (this.controllerWidgetForm.cmfg('classTabWidgetValidateForm', this.form)) {
 				var widgetDefinition = this.controllerWidgetForm.cmfg('classTabWidgetDefinitionGet');
-_debug('widgetDefinition', widgetDefinition);
+
 				var params = {};
 				params[CMDBuild.core.constants.Proxy.CLASS_NAME] = this.classTabWidgetSelectedClassGet(CMDBuild.core.constants.Proxy.NAME);
 				params[CMDBuild.core.constants.Proxy.WIDGET] = Ext.encode(widgetDefinition);

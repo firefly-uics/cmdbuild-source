@@ -63,16 +63,15 @@
 		},
 
 		onWorkflowTabTasksAddButtonClick: function() {
-			this.cmfg('mainViewportAccordionDeselect', 'task');
+			this.cmfg('mainViewportAccordionControllerGet', 'task').disableStoreLoad = true;
+			this.cmfg('mainViewportAccordionControllerExpand', 'task');
 
-			// Add action to act as expand callback
-			this.cmfg('mainViewportAccordionControllerGet', 'task').getView().on('selectionchange', function(accordion, eOpts) {
+			this.cmfg('mainViewportAccordionControllerGet', 'task').getView().on('storeload', function(accordion, eOpts) {
 				Ext.Function.createDelayed(function() {
-					this.cmfg('mainViewportAccordionControllerGet', 'task').cmOn('onAddButtonClick', { type: 'workflow' });
-				}, 500, this)();
+					this.cmfg('mainViewportModuleControllerGet', 'task').cmOn('onAddButtonClick', { type: 'workflow' });
+				}, 100, this)();
 			}, this, { single: true });
 
-			this.cmfg('mainViewportAccordionControllerExpand', 'task');
 			this.cmfg('mainViewportAccordionControllerUpdateStore', {
 				identifier: 'task',
 				nodeIdToSelect: 'accordion-task-workflow'
@@ -88,7 +87,8 @@
 		 */
 		onWorkflowTabTasksItemDoubleClick: function() {
 			if (!this.selectedTaskIsEmpty()) {
-				this.cmfg('mainViewportAccordionDeselect', 'task');
+				this.cmfg('mainViewportAccordionControllerGet', 'task').disableStoreLoad = true;
+				this.cmfg('mainViewportAccordionControllerExpand', 'task');
 
 				// Add action to act as expand callback
 				this.cmfg('mainViewportAccordionControllerGet', 'task').getView().on('selectionchange', function(accordion, eOpts) {
@@ -112,10 +112,9 @@
 									}
 								}
 							});
-					}, 500, this)();
+					}, 100, this)();
 				}, this, { single: true });
 
-				this.cmfg('mainViewportAccordionControllerExpand', 'task');
 				this.cmfg('mainViewportAccordionControllerUpdateStore', {
 					identifier: 'task',
 					nodeIdToSelect: 'accordion-task-workflow'
@@ -139,7 +138,8 @@
 
 		onWorkflowTabTasksModifyButtonClick: function() {
 			if (!this.selectedTaskIsEmpty()) {
-				this.cmfg('mainViewportAccordionDeselect', 'task');
+				this.cmfg('mainViewportAccordionControllerGet', 'task').disableStoreLoad = true;
+				this.cmfg('mainViewportAccordionControllerExpand', 'task');
 
 				// Add action to act as expand callback
 				this.cmfg('mainViewportAccordionControllerGet', 'task').getView().on('selectionchange', function(accordion, eOpts) {
@@ -167,10 +167,9 @@
 									}
 								}
 							});
-					}, 500, this)();
+					}, 100, this)();
 				}, this, { single: true });
 
-				this.cmfg('mainViewportAccordionControllerExpand', 'task');
 				this.cmfg('mainViewportAccordionControllerUpdateStore', {
 					identifier: 'task',
 					nodeIdToSelect: 'accordion-task-workflow'

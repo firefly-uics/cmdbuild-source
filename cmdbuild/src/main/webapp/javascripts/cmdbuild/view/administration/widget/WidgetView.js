@@ -9,7 +9,7 @@
 		delegate: undefined,
 
 		/**
-		 * @property {Mixed}
+		 * @cfg {Mixed}
 		 */
 		form: undefined,
 
@@ -41,15 +41,6 @@
 						region: 'north',
 						split: true,
 						height: '30%'
-					}),
-					this.form = Ext.create('Ext.panel.Panel', { // Placeholder for real form
-						bodyCls: 'cmgraypanel',
-						border: false,
-						cls: 'x-panel-body-default-framed cmbordertop',
-						frame: false,
-						overflowY: 'auto',
-						split: true,
-						region: 'center'
 					})
 				]
 			});

@@ -45,7 +45,6 @@
 			nodeIdToSelect = Ext.isEmpty(nodeIdToSelect) ? null : nodeIdToSelect;
 
 			CMDBuild.core.proxy.domain.Domain.readAll({
-				loadMask: false,
 				scope: this,
 				success: function(response, options, decodedResponse) {
 					decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.DOMAINS];
