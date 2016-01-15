@@ -2,6 +2,8 @@
 
 	/**
 	 * Global LoadMask management class
+	 *
+	 * NOTE: gives priority to Splash visualization, to avoid ugly masks overviews
 	 */
 	Ext.define('CMDBuild.core.LoadMask', {
 
@@ -33,13 +35,17 @@
 
 		hide: function() {
 			CMDBuild.core.LoadMask.build().hide();
+
+			if (!Ext.isEmpty(CMDBuild.core.Splash.build()) && !CMDBuild.core.Splash.build().isHidden())
+				CMDBuild.core.Splash.build().hide();
 		},
 
 		/**
 		 * @param {String} message
 		 */
 		show: function(message) {
-			CMDBuild.core.LoadMask.build(message).show();
+			if (Ext.isEmpty(CMDBuild.core.Splash.build()) || CMDBuild.core.Splash.build().isHidden())
+				CMDBuild.core.LoadMask.build(message).show();
 		}
 	});
 
