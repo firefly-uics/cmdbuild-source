@@ -25,27 +25,22 @@
 			callback.apply(callbackScope, []);
 			
 		};
-		this.insertRelations = function(saved) {
-			this.model.insertEdge({
-				data: {
-					source: saved.previousPathNode,
-					target: saved.id
-				}
-			});
-			for (var i = 0; saved.children && i < saved.children.length; i++) {
+		this.insertEdges = function(saved) {
+			for (var i = 0; i < saved.edges.length; i++) {
+				var edge = saved.edges[i];
 				this.model.insertEdge({
 					data: {
-						source: saved.id,
-						target: saved.children[i]
+						source: edge.source,
+						target: edge.target
 					}
-				});
+				});				
 			}
 		};
 		this.insertNode = function(saved) {
 			var data = {
 				className: saved.className,
 				id: saved.id,
-				label: saved.description,
+				label: saved.label,
 				color: saved.color,
 				faveShape: 'triangle',
 				position: saved.position,
@@ -74,6 +69,20 @@
 			}
 			return index;
 		};
+		this.getNodeEdges = function(id) {
+			var edges = [];
+			var cyEdges = this.model.connectedEdges(id);
+			for (var i = 0; i < cyEdges.length; i++) {
+				var cyEdge = cyEdges[i];
+				edges.push({
+					id: $.Cmdbuild.g3d.Model.getGraphData(cyEdge, "id"),
+					label: $.Cmdbuild.g3d.Model.getGraphData(cyEdge, "label"),
+					source: $.Cmdbuild.g3d.Model.getGraphData(cyEdge, "source"),
+					target: $.Cmdbuild.g3d.Model.getGraphData(cyEdge, "target")
+				});
+			}
+			return edges;
+		};
 		this.save4Undo = function(id) {
 			var node = this.model.getNode(id);
 			var parentId = $.Cmdbuild.g3d.Model.getGraphData(node, "previousPathNode");
@@ -87,7 +96,8 @@
 				label: $.Cmdbuild.g3d.Model.getGraphData(node, "label"),
 				position: node.position(),
 				previousPathNode: $.Cmdbuild.g3d.Model.getGraphData(node, "previousPathNode"),
-				childPosition: childPosition
+				childPosition: childPosition, 
+				edges: this.getNodeEdges(id)
 			});
 		};
 		this.undoSingleSaved = function(saved) {
@@ -98,7 +108,7 @@
 			}
 			var cyNode = this.insertNode(saved);
 			$.Cmdbuild.g3d.Model.setGraphData(cyNode, "children", children);
-			this.insertRelations(saved);
+			this.insertEdges(saved);
 		};
 		this.undo = function() {
 			var saved = this.saved4Undo.pop();
