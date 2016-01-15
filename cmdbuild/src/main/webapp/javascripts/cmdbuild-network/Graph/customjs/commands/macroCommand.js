@@ -8,7 +8,7 @@
 	var macroCommand = function(model, arCommands) {
 		this.model = model;
 		this.arCommands = arCommands;
-		var backend = new $.Cmdbuild.g3d.backend.CmdbuildTest();
+		var backend = new $.Cmdbuild.g3d.backend.CmdbuildModel();
 		this.newElements = [];
 		backend.setModel(this.model);
 		this.numberUndoes = 0;
