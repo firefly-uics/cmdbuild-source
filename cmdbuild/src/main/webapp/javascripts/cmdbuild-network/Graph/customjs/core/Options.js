@@ -40,7 +40,7 @@
 				.loadJsonConfiguration(
 						configurationFile,
 						function(configuration) {
-							$.Cmdbuild.utilities.proxy
+							$.Cmdbuild.g3d.proxy
 									.getGraphConfiguration(
 											function(graphConfiguration) {
 												// CONFIGURATION:

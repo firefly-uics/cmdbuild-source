@@ -10,10 +10,10 @@
 		this.params = params;
 		this.domainList = params.domainList;
 		var batch = params.batch;
-		var backend = new $.Cmdbuild.g3d.backend.CmdbuildTest();
-		this.newElements = [];
+		var backend = new $.Cmdbuild.g3d.backend.CmdbuildModel();
 		backend.setModel(this.model);
 		this.execute = function(callback, callbackScope) {
+			this.newElements = [];
 			var levels = parseInt(params.levels);//$.Cmdbuild.customvariables.options["explosionLevels"]) - 1;
 			if ($.Cmdbuild.customvariables.commandsManager.stopped) {
 				$.Cmdbuild.customvariables.commandsManager.stopped = false;
@@ -49,6 +49,12 @@
 				return;
 			}
 			var newElements = [];
+			for (var i = 0; i < elements.nodes.length; i++) {
+				var childId = elements.nodes[i].data.id;
+				if (this.model.getNode(childId).length === 0) {
+					this.newElements.push(childId);
+				}
+			}
 			this.model.pushElements(elements);
 			for (var i = 0; i < elements.nodes.length; i++) {
 				var childId = elements.nodes[i].data.id;
@@ -61,14 +67,13 @@
 			if (! batch) {
 				this.model.changed();	
 			}
-			newElements = this.newElements.concat(newElements);
 			if (levels > 0) {
 				var children = newElements.slice();
 				this.explodeChildren(children, levels, callback, callbackScope);
 			} else {
 				callback.apply(callbackScope, []);				
 			}
-		}
+		};
 //		---------------------------------------------		
 		this.explodeChildren = function(children, levels, callback, callbackScope) {
 			if (children.length == 0 || $.Cmdbuild.customvariables.commandsManager.stopped) {
