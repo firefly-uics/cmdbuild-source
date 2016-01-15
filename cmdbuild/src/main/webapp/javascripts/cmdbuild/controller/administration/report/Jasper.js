@@ -184,19 +184,11 @@
 					params = {};
 					params[CMDBuild.core.constants.Proxy.FORCE_DOWNLOAD_PARAM_KEY] = true;
 
-					var form = Ext.create('Ext.form.Panel', {
-						standardSubmit: true,
+					CMDBuild.core.interfaces.FormSubmit.submit({
+						buildRuntimeForm: true,
+						params: params,
 						url: CMDBuild.core.proxy.Index.report.printReportFactory
 					});
-
-					form.submit({
-						target: '_blank',
-						params: params
-					});
-
-					Ext.defer(function() { // Form cleanup
-						form.close();
-					}, 100);
 				}
 			});
 		},

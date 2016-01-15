@@ -44,7 +44,7 @@
 				params: CMDBuild.model.configuration.gis.Form.convertToLegacy(this.view.getData(true)),
 				scope: this,
 				success: function(response, options, decodedResponse) {
-					this.onConfigurationGisTabShow();
+					this.cmfg('onConfigurationGisTabShow');
 
 					CMDBuild.core.Message.success();
 				}
@@ -57,18 +57,20 @@
 				success: function(response, options, decodedResponse) {
 					decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.DATA];
 
-					this.view.loadRecord(Ext.create('CMDBuild.model.configuration.gis.Form', CMDBuild.model.configuration.gis.Form.convertFromLegacy(decodedResponse)));
+					if (!Ext.isEmpty(decodedResponse)) {
+						this.view.loadRecord(Ext.create('CMDBuild.model.configuration.gis.Form', CMDBuild.model.configuration.gis.Form.convertFromLegacy(decodedResponse)));
 
-					this.cmfg('mainViewportAccordionSetDisabled', {
-						identifier: 'gis',
-						state: !CMDBuild.core.Utils.decodeAsBoolean(decodedResponse[CMDBuild.core.constants.Proxy.ENABLED])
-					});
+						this.cmfg('mainViewportAccordionSetDisabled', {
+							identifier: 'gis',
+							state: !CMDBuild.core.Utils.decodeAsBoolean(decodedResponse[CMDBuild.core.constants.Proxy.ENABLED])
+						});
 
-					/**
-					 * @deprecated (CMDBuild.configuration.gis)
-					 */
-					CMDBuild.Config.gis = Ext.apply(CMDBuild.Config.gis, decodedResponse);
-					CMDBuild.Config.gis.enabled = ('true' == CMDBuild.Config.gis.enabled);
+						/**
+						 * @deprecated (CMDBuild.configuration.gis)
+						 */
+						CMDBuild.Config.gis = Ext.apply(CMDBuild.Config.gis, decodedResponse);
+						CMDBuild.Config.gis.enabled = ('true' == CMDBuild.Config.gis.enabled);
+					}
 				}
 			});
 		}

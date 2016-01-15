@@ -174,7 +174,6 @@
 						 * @deprecated (CMDBuild.configuration.workflow)
 						 */
 						CMDBuild.Config.workflow = decodedResponse.workflow;
-						CMDBuild.Config.workflow.enabled = ('true' == CMDBuild.Config.workflow.enabled);
 					},
 					callback: CMDBuild.core.Administration.buildCache
 				});

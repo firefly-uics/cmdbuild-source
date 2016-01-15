@@ -70,6 +70,7 @@
 
 	function onItemDoubleClick(grid, record) {
 		if (!Ext.isEmpty(record)) {
+			CMDBuild.global.controller.MainViewport.cmfg('mainViewportAccordionDeselect', 'domain');
 			CMDBuild.global.controller.MainViewport.cmfg('mainViewportAccordionControllerGet', 'domain').disableStoreLoad = true;
 			CMDBuild.global.controller.MainViewport.cmfg('mainViewportAccordionControllerExpand', 'domain');
 			CMDBuild.global.controller.MainViewport.cmfg('mainViewportAccordionControllerUpdateStore', {
@@ -81,6 +82,7 @@
 
 	function onModifyDomainButton() {
 		if (this.currentDomain) {
+			CMDBuild.global.controller.MainViewport.cmfg('mainViewportAccordionDeselect', 'domain');
 			CMDBuild.global.controller.MainViewport.cmfg('mainViewportAccordionControllerGet', 'domain').disableStoreLoad = true;
 			CMDBuild.global.controller.MainViewport.cmfg('mainViewportAccordionControllerExpand', 'domain');
 
@@ -134,6 +136,8 @@
 	}
 
 	function onAddDomainButton() {
+		CMDBuild.global.controller.MainViewport.cmfg('mainViewportAccordionDeselect', 'domain');
+
 		CMDBuild.global.controller.MainViewport.cmfg('mainViewportAccordionControllerGet', 'domain').getView().on('storeload', function(accordion, eOpts) {
 			CMDBuild.global.controller.MainViewport.cmfg('mainViewportModuleControllerGet', 'domain').cmfg('onDomainAddButtonClick');
 		}, this, { single: true });

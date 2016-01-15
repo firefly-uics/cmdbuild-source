@@ -19,8 +19,8 @@
 		 */
 		cmfgCatchedFunctions: [
 			'onUserAndGroupGroupTabPropertiesAbortButtonClick',
-			'onUserAndGroupGroupTabPropertiesAddButtonClick = onUserAndGroupGroupAddButtonClick',
-			'onUserAndGroupGroupTabPropertiesEnableDisableButtonClick',
+			'onUserAndGroupGroupTabPropertiesActiveStateToggleButtonClick',
+			'onUserAndGroupGroupTabPropertiesAddButtonClick',
 			'onUserAndGroupGroupTabPropertiesGroupSelected = onUserAndGroupGroupSelected',
 			'onUserAndGroupGroupTabPropertiesModifyButtonClick',
 			'onUserAndGroupGroupTabPropertiesSaveButtonClick',
@@ -61,16 +61,7 @@
 			}
 		},
 
-		onUserAndGroupGroupTabPropertiesAddButtonClick: function() {
-			this.cmfg('userAndGroupGroupSelectedGroupReset');
-			this.cmfg('onUserAndGroupGroupSetActiveTab');
-
-			this.form.reset();
-			this.form.setDisabledModify(false, true);
-			this.form.loadRecord(Ext.create('CMDBuild.model.userAndGroup.group.Group'));
-		},
-
-		onUserAndGroupGroupTabPropertiesEnableDisableButtonClick: function() {
+		onUserAndGroupGroupTabPropertiesActiveStateToggleButtonClick: function() {
 			var params = {};
 			params[CMDBuild.core.constants.Proxy.GROUP_ID] = this.cmfg('userAndGroupGroupSelectedGroupGet', CMDBuild.core.constants.Proxy.ID);
 			params[CMDBuild.core.constants.Proxy.IS_ACTIVE] = !this.cmfg('userAndGroupGroupSelectedGroupGet', CMDBuild.core.constants.Proxy.IS_ACTIVE);
@@ -80,6 +71,15 @@
 				scope: this,
 				success: this.success
 			});
+		},
+
+		onUserAndGroupGroupTabPropertiesAddButtonClick: function() {
+			this.cmfg('userAndGroupGroupSelectedGroupReset');
+			this.cmfg('onUserAndGroupGroupSetActiveTab');
+
+			this.form.reset();
+			this.form.setDisabledModify(false, true);
+			this.form.loadRecord(Ext.create('CMDBuild.model.userAndGroup.group.Group'));
 		},
 
 		/**
@@ -143,7 +143,7 @@
 								scope: this,
 								callback: function(records, operation, success) {
 									this.form.loadRecord(this.cmfg('userAndGroupGroupSelectedGroupGet'));
-									this.form.enableDisableButton.setActiveState(this.cmfg('userAndGroupGroupSelectedGroupGet', CMDBuild.core.constants.Proxy.IS_ACTIVE));
+									this.form.activeStateToggleButton.setActiveState(this.cmfg('userAndGroupGroupSelectedGroupGet', CMDBuild.core.constants.Proxy.IS_ACTIVE));
 									this.form.setDisabledModify(true, true);
 								}
 							});
@@ -160,6 +160,7 @@
 		 * @private
 		 */
 		success: function(response, options, decodedResponse) {
+			this.cmfg('mainViewportAccordionDeselect', this.cmfg('identifierGet'));
 			this.cmfg('mainViewportAccordionControllerUpdateStore', {
 				identifier: this.cmfg('identifierGet'),
 				nodeIdToSelect: decodedResponse[CMDBuild.core.constants.Proxy.GROUP][CMDBuild.core.constants.Proxy.ID]

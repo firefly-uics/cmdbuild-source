@@ -43,7 +43,7 @@
 				params: this.view.getData(true),
 				scope: this,
 				success: function(response, options, decodedResponse) {
-					this.onConfigurationRelationGraphTabShow();
+					this.cmfg('onConfigurationRelationGraphTabShow');
 
 					CMDBuild.core.Message.success();
 				}
@@ -56,7 +56,8 @@
 				success: function(response, options, decodedResponse) {
 					decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.DATA];
 
-					this.view.loadRecord(Ext.create('CMDBuild.model.configuration.relationGraph.Form', decodedResponse));
+					if (!Ext.isEmpty(decodedResponse))
+						this.view.loadRecord(Ext.create('CMDBuild.model.configuration.relationGraph.Form', decodedResponse));
 				}
 			});
 		}

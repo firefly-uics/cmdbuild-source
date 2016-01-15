@@ -70,6 +70,8 @@
 		},
 
 		onWorkflowTabDomainsAddButtonClick: function() {
+			this.cmfg('mainViewportAccordionDeselect', CMDBuild.core.constants.ModuleIdentifiers.getDomain());
+
 			this.cmfg('mainViewportAccordionControllerGet', CMDBuild.core.constants.ModuleIdentifiers.getDomain()).getView().on('storeload', function(accordion, eOpts) {
 				this.cmfg('mainViewportModuleControllerGet', CMDBuild.core.constants.ModuleIdentifiers.getDomain()).cmfg('onDomainAddButtonClick');
 			}, this, { single: true });
@@ -94,6 +96,7 @@
 
 		onWorkflowTabDomainsItemDoubleClick: function() {
 			if (!this.selectedDomainIsEmpty()) {
+				this.cmfg('mainViewportAccordionDeselect', CMDBuild.core.constants.ModuleIdentifiers.getDomain());
 				this.cmfg('mainViewportAccordionControllerGet', CMDBuild.core.constants.ModuleIdentifiers.getDomain()).disableStoreLoad = true;
 				this.cmfg('mainViewportAccordionControllerExpand', CMDBuild.core.constants.ModuleIdentifiers.getDomain());
 				this.cmfg('mainViewportAccordionControllerUpdateStore', {
@@ -105,6 +108,7 @@
 
 		onWorkflowTabDomainsModifyButtonClick: function() {
 			if (!this.selectedDomainIsEmpty()) {
+				this.cmfg('mainViewportAccordionDeselect', CMDBuild.core.constants.ModuleIdentifiers.getDomain());
 				this.cmfg('mainViewportAccordionControllerGet', CMDBuild.core.constants.ModuleIdentifiers.getDomain()).disableStoreLoad = true;
 				this.cmfg('mainViewportAccordionControllerExpand', CMDBuild.core.constants.ModuleIdentifiers.getDomain());
 

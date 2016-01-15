@@ -4,6 +4,7 @@
 		extend: 'CMDBuild.controller.common.abstract.Base',
 
 		requires: [
+			'CMDBuild.core.constants.ModuleIdentifiers',
 			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.model.userAndGroup.group.Group'
 		],
@@ -43,7 +44,7 @@
 		 */
 		cmfgCatchedFunctions: [
 			'onUserAndGroupGroupAccordionSelect = onUserAndGroupAccordionSelect',
-			'onUserAndGroupGroupAddButtonClick -> controllerProperties, controllerPrivileges, controllerUsers, controllerUserInterface, controllerDefaultFilters',
+			'onUserAndGroupGroupAddButtonClick',
 			'onUserAndGroupGroupSelected -> controllerProperties, controllerPrivileges, controllerUsers, controllerUserInterface, controllerDefaultFilters',
 			'onUserAndGroupGroupSetActiveTab',
 			'userAndGroupGroupSelectedGroupGet',
@@ -116,6 +117,17 @@
 						}
 					}
 				});
+		},
+
+		onUserAndGroupGroupAddButtonClick: function() {
+			this.cmfg('mainViewportAccordionDeselect', CMDBuild.core.constants.ModuleIdentifiers.getUserAndGroup());
+
+			// Forwarding
+			this.controllerDefaultFilters.cmfg('onUserAndGroupGroupTabDefaultFiltersAddButtonClick');
+			this.controllerPrivileges.cmfg('onUserAndGroupGroupTabPrivilegesAddButtonClick');
+			this.controllerProperties.cmfg('onUserAndGroupGroupTabPropertiesAddButtonClick');
+			this.controllerUserInterface.cmfg('onUserAndGroupGroupTabUserInterfaceAddButtonClick');
+			this.controllerUsers.cmfg('onUserAndGroupGroupTabUsersAddButtonClick');
 		},
 
 		/**

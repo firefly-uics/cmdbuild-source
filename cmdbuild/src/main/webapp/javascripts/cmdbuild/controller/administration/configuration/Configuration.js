@@ -39,6 +39,39 @@
 		},
 
 		/**
+		 * @param {String} identifier
+		 *
+		 * @returns {Mixed}
+		 *
+		 * @private
+		 */
+		buildSectionController: function(identifier) {
+			switch(identifier) {
+				case 'alfresco':
+					return Ext.create('CMDBuild.controller.administration.configuration.Dms', { parentDelegate: this });
+
+				case 'bim':
+					return Ext.create('CMDBuild.controller.administration.configuration.Bim', { parentDelegate: this });
+
+				case 'gis':
+					return Ext.create('CMDBuild.controller.administration.configuration.Gis', { parentDelegate: this });
+
+				case 'relationGraph':
+					return Ext.create('CMDBuild.controller.administration.configuration.RelationGraph', { parentDelegate: this });
+
+				case 'server':
+					return Ext.create('CMDBuild.controller.administration.configuration.Server', { parentDelegate: this });
+
+				case 'workflow':
+					return Ext.create('CMDBuild.controller.administration.configuration.Workflow', { parentDelegate: this });
+
+				case 'generalOptions':
+				default:
+					return Ext.create('CMDBuild.controller.administration.configuration.GeneralOptions', { parentDelegate: this });
+			}
+		},
+
+		/**
 		 * Setup view items and controllers on accordion click
 		 *
 		 * @param {CMDBuild.model.common.accordion.Generic} node
@@ -49,36 +82,7 @@
 			if (!Ext.Object.isEmpty(node)) {
 				this.view.removeAll(true);
 
-				switch(node.get(CMDBuild.core.constants.Proxy.SECTION_HIERARCHY)[0]) {
-					case 'alfresco': {
-						this.sectionController = Ext.create('CMDBuild.controller.administration.configuration.Dms', { parentDelegate: this });
-					} break;
-
-					case 'bim': {
-						this.sectionController = Ext.create('CMDBuild.controller.administration.configuration.Bim', { parentDelegate: this });
-					} break;
-
-					case 'gis': {
-						this.sectionController = Ext.create('CMDBuild.controller.administration.configuration.Gis', { parentDelegate: this });
-					} break;
-
-					case 'relationGraph': {
-						this.sectionController = Ext.create('CMDBuild.controller.administration.configuration.RelationGraph', { parentDelegate: this });
-					} break;
-
-					case 'server': {
-						this.sectionController = Ext.create('CMDBuild.controller.administration.configuration.Server', { parentDelegate: this });
-					} break;
-
-					case 'workflow': {
-						this.sectionController = Ext.create('CMDBuild.controller.administration.configuration.Workflow', { parentDelegate: this });
-					} break;
-
-					case 'generalOptions':
-					default: {
-						this.sectionController = Ext.create('CMDBuild.controller.administration.configuration.GeneralOptions', { parentDelegate: this });
-					}
-				}
+				this.sectionController = this.buildSectionController(node.get(CMDBuild.core.constants.Proxy.SECTION_HIERARCHY)[0]);
 
 				this.view.add(this.sectionController.getView());
 

@@ -45,7 +45,7 @@
 				params: CMDBuild.model.configuration.workflow.Form.convertToLegacy(this.view.getData(true)),
 				scope: this,
 				success: function(response, options, decodedResponse) {
-					this.onConfigurationWorkflowTabShow();
+					this.cmfg('onConfigurationWorkflowTabShow');
 
 					CMDBuild.core.Message.success();
 				}
@@ -58,17 +58,14 @@
 				success: function(response, options, decodedResponse) {
 					decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.DATA];
 
-					this.view.loadRecord(Ext.create('CMDBuild.model.configuration.workflow.Form', CMDBuild.model.configuration.workflow.Form.convertFromLegacy(decodedResponse)));
+					if (!Ext.isEmpty(decodedResponse)) {
+						this.view.loadRecord(Ext.create('CMDBuild.model.configuration.workflow.Form', CMDBuild.model.configuration.workflow.Form.convertFromLegacy(decodedResponse)));
 
-					this.cmfg('mainViewportAccordionSetDisabled', {
-						identifier: CMDBuild.core.constants.ModuleIdentifiers.getWorkflow(),
-						state: !CMDBuild.core.Utils.decodeAsBoolean(decodedResponse[CMDBuild.core.constants.Proxy.ENABLED])
-					});
-
-					/**
-					 * @deprecated (CMDBuild.configuration.workflow)
-					 */
-					CMDBuild.Config.workflow.enabled = this.view.enabledCheckBox.getValue();
+						this.cmfg('mainViewportAccordionSetDisabled', {
+							identifier: CMDBuild.core.constants.ModuleIdentifiers.getWorkflow(),
+							state: !CMDBuild.core.Utils.decodeAsBoolean(decodedResponse[CMDBuild.core.constants.Proxy.ENABLED])
+						});
+					}
 				}
 			});
 		}

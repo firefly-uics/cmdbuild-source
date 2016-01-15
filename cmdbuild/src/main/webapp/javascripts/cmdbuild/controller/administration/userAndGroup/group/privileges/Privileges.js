@@ -35,7 +35,7 @@
 		 * @cfg {Array}
 		 */
 		cmfgCatchedFunctions: [
-			'onUserAndGroupGroupTabPrivilegesAddButtonClick = onUserAndGroupGroupAddButtonClick',
+			'onUserAndGroupGroupTabPrivilegesAddButtonClick',
 			'onUserAndGroupGroupTabPrivilegesGroupSelected = onUserAndGroupGroupSelected',
 			'onUserAndGroupGroupTabPrivilegesShow'
 		],

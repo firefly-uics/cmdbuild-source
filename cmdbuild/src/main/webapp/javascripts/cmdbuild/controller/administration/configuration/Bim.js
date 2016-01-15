@@ -44,7 +44,7 @@
 				params: this.view.getData(true),
 				scope: this,
 				success: function(response, options, decodedResponse) {
-					this.onConfigurationBimTabShow();
+					this.cmfg('onConfigurationBimTabShow');
 
 					CMDBuild.core.Message.success();
 				}
@@ -60,17 +60,14 @@
 				success: function(response, options, decodedResponse) {
 					decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.DATA];
 
-					this.view.loadRecord(Ext.create('CMDBuild.model.configuration.bim.Form', decodedResponse));
+					if (!Ext.isEmpty(decodedResponse)) {
+						this.view.loadRecord(Ext.create('CMDBuild.model.configuration.bim.Form', decodedResponse));
 
-					this.cmfg('mainViewportAccordionSetDisabled', {
-						identifier: 'bim',
-						state: !CMDBuild.core.Utils.decodeAsBoolean(decodedResponse[CMDBuild.core.constants.Proxy.ENABLED])
-					});
-
-					/**
-					 * @deprecated (CMDBuild.configuration.bim)
-					 */
-					CMDBuild.Config.workflow.enabled = decodedResponse[CMDBuild.core.constants.Proxy.ENABLED];
+						this.cmfg('mainViewportAccordionSetDisabled', {
+							identifier: 'bim',
+							state: !CMDBuild.core.Utils.decodeAsBoolean(decodedResponse[CMDBuild.core.constants.Proxy.ENABLED])
+						});
+					}
 				}
 			});
 		}
