@@ -8,7 +8,6 @@
 		 */
 		delegate: undefined,
 
-		disabled: !CMDBuild.configuration.workflow.get(CMDBuild.core.constants.Proxy.ENABLED),
 		title: CMDBuild.Translation.processes
 	});
 

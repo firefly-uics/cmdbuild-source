@@ -32,7 +32,10 @@
 		constructor: function(configurationObject) {
 			this.callParent(arguments);
 
-			this.view = Ext.create('CMDBuild.view.management.accordion.Workflow', { delegate: this });
+			this.view = Ext.create('CMDBuild.view.management.accordion.Workflow', {
+				delegate: this,
+				disabled: !CMDBuild.configuration.workflow.get(CMDBuild.core.constants.Proxy.ENABLED)
+			});
 
 			this.cmfg('accordionUpdateStore');
 		},
