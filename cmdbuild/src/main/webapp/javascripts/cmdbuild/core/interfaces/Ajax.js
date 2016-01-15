@@ -19,7 +19,7 @@
 
 		listeners: {
 			beforerequest: function(conn, options, eOpts) {
-				CMDBuild.core.interfaces.Ajax.trapCallbacks(conn, options);
+				return CMDBuild.core.interfaces.Ajax.trapCallbacks(conn, options);
 			}
 		},
 
@@ -131,10 +131,55 @@
 		},
 
 		/**
+		 * Overrides to fix a bug that evaluates xhr status to determine success or failure. Uses response success property to determine success status.
+		 *
+		 * @param {Object} request
+		 *
+		 * @returns {Object} The response
+		 *
+		 * @override
+		 * @private
+		 */
+		onComplete: function(request, xdrResult) {
+			var me = this,
+				options = request.options,
+				success = false,
+				response;
+
+			if (request.aborted || request.timedout) {
+				response = me.createException(request);
+			} else {
+				response = me.createResponse(request);
+			}
+
+			// Check the response success property to verify real status value
+			if (!Ext.isEmpty(response.responseText))
+				success = Ext.decode(response.responseText).success;
+
+			if (success) {
+				me.fireEvent('requestcomplete', me, response, options);
+
+				Ext.callback(options.success, options.scope, [response, options]);
+			} else {
+				me.fireEvent('requestexception', me, response, options);
+
+				Ext.callback(options.failure, options.scope, [response, options]);
+			}
+
+			Ext.callback(options.callback, options.scope, [options, success, response]);
+
+			delete me.requests[request.id];
+
+			return response;
+		},
+
+		/**
 		 * Manually builds callback's interceptors to manage loadMask property and callbacks build
 		 *
 		 * @param {Object} conn
 		 * @param {Object} options - the options configuration object passed to the request method
+		 *
+		 * @returns {Boolean}
 		 *
 		 * @private
 		 */
@@ -146,6 +191,8 @@
 				failure: CMDBuild.core.interfaces.Ajax.interceptorFailure(options),
 				success: CMDBuild.core.interfaces.Ajax.interceptorSuccess(options)
 			});
+
+			return true;
 		}
 	});
 
