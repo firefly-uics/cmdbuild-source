@@ -412,6 +412,87 @@ public class Predicates {
 		return new FunctionParameterName(delegate);
 	}
 
+	private static abstract class EntryTypePredicate<T> extends ForwardingObject implements Predicate<CMEntryType> {
+
+		@Override
+		protected abstract Predicate<T> delegate();
+
+		protected abstract T value(CMEntryType input);
+
+		@Override
+		public final boolean apply(final CMEntryType input) {
+			return delegate().apply(value(input));
+		}
+
+	}
+
+	private static class IsSystem_ extends EntryTypePredicate<Boolean> {
+
+		private final Predicate<Boolean> delegate;
+
+		public IsSystem_(final Predicate<Boolean> delegate) {
+			this.delegate = delegate;
+		}
+
+		@Override
+		protected Predicate<Boolean> delegate() {
+			return delegate;
+		}
+
+		@Override
+		protected Boolean value(final CMEntryType input) {
+			return input.isSystem();
+		}
+
+	}
+
+	public static Predicate<CMEntryType> isSystem(final Predicate<Boolean> delegate) {
+		return new IsSystem_(delegate);
+	}
+
+	private static class IsBaseClass extends EntryTypePredicate<Boolean> {
+
+		private final Predicate<Boolean> delegate;
+
+		public IsBaseClass(final Predicate<Boolean> delegate) {
+			this.delegate = delegate;
+		}
+
+		@Override
+		protected Predicate<Boolean> delegate() {
+			return delegate;
+		}
+
+		@Override
+		protected Boolean value(final CMEntryType input) {
+			return input.isBaseClass();
+		}
+
+	}
+
+	public static Predicate<CMEntryType> isBaseClass(final Predicate<Boolean> delegate) {
+		return new IsBaseClass(delegate);
+	}
+
+	private static class HasAncestor implements Predicate<CMClass> {
+
+		private final CMClass anchestor;
+
+		public HasAncestor(final CMClass anchestor) {
+			this.anchestor = anchestor;
+		}
+
+		@Override
+		public boolean apply(final CMClass input) {
+			return anchestor.isAncestorOf(input);
+		}
+
+	}
+
+	public static Predicate<CMClass> hasAnchestor(final CMClass value) {
+		return new HasAncestor(value);
+	}
+
 	private Predicates() {
 		// prevents instantiation
 	}
