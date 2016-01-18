@@ -1,8 +1,6 @@
 (function() {
 
 	/**
-	 * Use CMDBuild.controller.common.AbstractBasePanelController instead
-	 *
 	 * @deprecated
 	 */
 	Ext.define('CMDBuild.controller.common.CMBasePanelController', {
@@ -17,7 +15,7 @@
 		},
 
 		callback: function() {
-			CMDBuild.LoadMask.get().hide();
+			CMDBuild.core.LoadMask.hide();
 		},
 
 		/**

@@ -20,10 +20,10 @@
 	final UserStore userStore = SpringIntegrationUtils.applicationContext().getBean(UserStore.class);
 	final OperationUser operationUser = userStore.getUser();
 	final CMGroup group = operationUser.getPreferredGroup();
-	final String extVersion = "4.2.0";
 	final String defaultGroupName = operationUser.getAuthenticatedUser().getDefaultGroupName();
 	final Collection<String> groupDescriptionList = operationUser.getAuthenticatedUser().getGroupDescriptions();
 	final String groupDecriptions = Joiner.on(", ").join(groupDescriptionList);
+	final String extVersion = "4.2.0";
 
 	if (!operationUser.hasAdministratorPrivileges()) {
 		response.sendRedirect("management.jsp");
@@ -37,26 +37,52 @@
 		<link rel="stylesheet" type="text/css" href="stylesheets/cmdbuild.css" />
 		<link rel="stylesheet" type="text/css" href="javascripts/ext-<%= extVersion %>/resources/css/ext-all-gray.css" />
 		<link rel="stylesheet" type="text/css" href="javascripts/ext-<%= extVersion %>-ux/css/portal.css" />
-		<link rel="icon" href="images/favicon.ico" />
+		<link rel="icon" type="image/x-icon" href="images/favicon.ico" />
 
 		<%@ include file="libsJsFiles.jsp"%>
 
+		<!-- 1. Main script -->
+		<script type="text/javascript" src="javascripts/cmdbuild/core/Utils.js"></script>
+		<script type="text/javascript" src="javascripts/cmdbuild/core/LoaderConfig.js"></script>
+		<script type="text/javascript" src="javascripts/log/log4javascript.js"></script>
+		<script type="text/javascript" src="javascripts/cmdbuild/application.js"></script>
+		<script type="text/javascript" src="javascripts/cmdbuild/core/interfaces/Ajax.js"></script>
+		<script type="text/javascript" src="javascripts/cmdbuild/core/Message.js"></script>
+
+		<!-- 2. Translations -->
+		<script type="text/javascript" src="javascripts/ext-<%= extVersion %>/locale/ext-lang-<%= lang %>.js"></script>
+		<script type="text/javascript" src="services/json/utils/gettranslationobject"></script>
+
+		<!-- 3. Runtime configuration -->
 		<script type="text/javascript">
-			Ext.ns('CMDBuild.Runtime'); // runtime configurations
+			Ext.ns('CMDBuild.configuration.runtime');
+
+			CMDBuild.configuration.runtime = Ext.create('CMDBuild.model.configuration.Runtime');
+			CMDBuild.configuration.runtime.set(CMDBuild.core.constants.Proxy.ALLOW_PASSWORD_CHANGE, <%= operationUser.getAuthenticatedUser().canChangePassword() %>);
+			CMDBuild.configuration.runtime.set(CMDBuild.core.constants.Proxy.DEFAULT_GROUP_DESCRIPTION, '<%= StringEscapeUtils.escapeEcmaScript(group.getDescription()) %>');
+			CMDBuild.configuration.runtime.set(CMDBuild.core.constants.Proxy.DEFAULT_GROUP_ID, <%= group.getId() %>);
+			CMDBuild.configuration.runtime.set(CMDBuild.core.constants.Proxy.DEFAULT_GROUP_NAME, '<%= StringEscapeUtils.escapeEcmaScript(group.getName()) %>');
+			CMDBuild.configuration.runtime.set(CMDBuild.core.constants.Proxy.IS_ADMINISTRATOR, true);
+			CMDBuild.configuration.runtime.set(CMDBuild.core.constants.Proxy.USER_ID, <%= operationUser.getAuthenticatedUser().getId() %>);
+			CMDBuild.configuration.runtime.set(CMDBuild.core.constants.Proxy.USERNAME, '<%= StringEscapeUtils.escapeEcmaScript(operationUser.getAuthenticatedUser().getUsername()) %>');
+
+			/**
+			 * Compatibility mode
+			 *
+			 * @deprecated (CMDBuild.configuration.runtime)
+			 */
+			Ext.ns('CMDBuild.Runtime');
 			CMDBuild.Runtime.UserId = <%= operationUser.getAuthenticatedUser().getId() %>;
 			CMDBuild.Runtime.Username = '<%= StringEscapeUtils.escapeEcmaScript(operationUser.getAuthenticatedUser().getUsername()) %>';
-
 			CMDBuild.Runtime.DefaultGroupId = <%= group.getId() %>;
 			CMDBuild.Runtime.DefaultGroupName = '<%= StringEscapeUtils.escapeEcmaScript(group.getName()) %>';
 			CMDBuild.Runtime.DefaultGroupDescription = '<%= StringEscapeUtils.escapeEcmaScript(group.getDescription()) %>';
+			CMDBuild.Runtime.AllowsPasswordLogin = <%= operationUser.getAuthenticatedUser().canChangePassword() %>;
+
 			<% if (operationUser.getAuthenticatedUser().getGroupNames().size() == 1) { %>
 				CMDBuild.Runtime.LoginGroupId = <%= group.getId() %>;
 			<% } %>
-			CMDBuild.Runtime.AllowsPasswordLogin = <%= operationUser.getAuthenticatedUser().canChangePassword() %>;
-
 		</script>
-		<script type="text/javascript" src="javascripts/cmdbuild/application.js"></script>
-		<script type="text/javascript" src="services/json/utils/gettranslationobject"></script>
 
 		<%@ include file="coreJsFiles.jsp" %>
 		<%@ include file="administrationJsFiles.jsp" %>
@@ -65,18 +91,15 @@
 		<script type="text/javascript" src="javascripts/cmdbuild/cmdbuild-administration.js"></script>
 -->
 
-		<script type="text/javascript">
-			Ext.onReady(function() {
-				CMDBuild.app.Administration.init();
-			});
-		</script>
+		<!-- 4. Modules -->
+		<script type="text/javascript" src="javascripts/cmdbuild/Administration.js"></script>
 
 		<title>CMDBuild</title>
 	</head>
 	<body id="cmbodyAdministration">
-		<div id="header" class="cm_no_display">
+		<div id="header" class="display-none">
 			<a href="http://www.cmdbuild.org" target="_blank"><img alt="CMDBuild logo" src="images/logo.jpg" /></a>
-			<div id="instance_name"></div>
+			<div id="instance-name"></div>
 			<div id="header_po">Open Source Configuration and Management Database</div>
 			<div id="msg-ct" class="msg-gray">
 				<div id="msg">
@@ -87,7 +110,9 @@
 						<% } else { %>
 							<p id="msg-inner-hidden"><tr:translation key="common.group"/>: <strong><tr:translation key="multiGroup"/></strong>
 							<script type="text/javascript">
-								CMDBuild.Runtime.GroupDescriptions = '<%= StringEscapeUtils.escapeEcmaScript(groupDecriptions) %>';
+								CMDBuild.Runtime.GroupDescriptions = '<%= StringEscapeUtils.escapeEcmaScript(groupDecriptions) %>'; // @deprecated
+
+								CMDBuild.configuration.runtime.set(CMDBuild.core.constants.Proxy.GROUP_DESCRIPTIONS, '<%= StringEscapeUtils.escapeEcmaScript(groupDecriptions) %>');
 							</script>
 						<% } %>
 							| <a href="management.jsp"><tr:translation key="management.description"/></a>
@@ -97,9 +122,9 @@
 			</div>
 		</div>
 
-		<div id="footer" class="cm_no_display">
+		<div id="footer" class="display-none">
 			<div class="fl"><a href="http://www.cmdbuild.org" target="_blank">www.cmdbuild.org</a></div>
-			<div id="cmdbuild_credits_link" class="fc"><tr:translation key="common.credits"/></div>
+			<div id="cmdbuild-credits-link" class="fc"><tr:translation key="common.credits"/></div>
 			<div class="fr"><a href="http://www.tecnoteca.com" target="_blank">Copyright &copy; Tecnoteca srl</a></div>
 		</div>
 	</body>

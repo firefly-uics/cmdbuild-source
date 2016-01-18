@@ -3,8 +3,12 @@
 	Ext.define('CMDBuild.core.proxy.Csv', {
 
 		requires: [
-			'CMDBuild.core.proxy.CMProxyConstants',
-			'CMDBuild.core.proxy.CMProxyUrlIndex'
+			'CMDBuild.core.cache.Cache',
+			'CMDBuild.core.constants.Proxy',
+			'CMDBuild.core.interfaces.Ajax',
+			'CMDBuild.core.interfaces.FormSubmit',
+			'CMDBuild.core.LoadMask',
+			'CMDBuild.core.proxy.Index'
 		],
 
 		singleton: true,
@@ -13,36 +17,33 @@
 		 * @param {Object} parameters
 		 */
 		exports: function(parameters) {
-			parameters.form.submit({
-				url: CMDBuild.core.proxy.CMProxyUrlIndex.csv.exports,
-				params: parameters.params,
-				loadMask: Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : true,
-				scope: parameters.scope || this,
-				failure: parameters.failure || Ext.emptyFn,
-				success: parameters.success || Ext.emptyFn,
-				callback: parameters.callback || Ext.emptyFn
-			});
+			parameters = Ext.isEmpty(parameters) ? {} : parameters;
+
+			Ext.apply(parameters, { url: CMDBuild.core.proxy.Index.csv.exports });
+
+			CMDBuild.core.interfaces.FormSubmit.submit(parameters);
 		},
 
 		/**
 		 * @param {Object} parameters
 		 */
 		getRecords: function(parameters) {
-			CMDBuild.Ajax.request({
+			parameters = Ext.isEmpty(parameters) ? {} : parameters;
+
+			Ext.apply(parameters, {
 				method: 'GET',
-				url: CMDBuild.core.proxy.CMProxyUrlIndex.csv.getCsvRecords,
-				scope: parameters.scope || this,
-				failure: parameters.failure || Ext.emptyFn,
-				success: parameters.success || Ext.emptyFn,
-				callback: function(records, operation, success) { // Clears server session data
-					CMDBuild.Ajax.request({
+				url: CMDBuild.core.proxy.Index.csv.getCsvRecords,
+				callback: function(options, success, response) { // Clears server session data
+					CMDBuild.core.interfaces.Ajax.request({
 						method: 'GET',
-						url: CMDBuild.core.proxy.CMProxyUrlIndex.csv.clearSession
+						url: CMDBuild.core.proxy.Index.csv.clearSession
 					});
 
-					CMDBuild.LoadMask.get().hide();
+					CMDBuild.core.LoadMask.hide();
 				}
 			});
+
+			CMDBuild.core.cache.Cache.request(CMDBuild.core.constants.Proxy.CSV, parameters);
 		},
 
 		/**
@@ -60,12 +61,12 @@
 			];
 
 			return Ext.create('Ext.data.ArrayStore', {
-				fields: [CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION, CMDBuild.core.proxy.CMProxyConstants.VALUE],
+				fields: [CMDBuild.core.constants.Proxy.DESCRIPTION, CMDBuild.core.constants.Proxy.VALUE],
 				data: Ext.Array.filter(dataValues, function(valueArray, i, allValueArrays) {
 					return !Ext.Array.contains(excludedValues, valueArray[1]);
 				}, this),
 				sorters: [
-					{ property: CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION, direction: 'ASC' }
+					{ property: CMDBuild.core.constants.Proxy.DESCRIPTION, direction: 'ASC' }
 				]
 			});
 		},
@@ -75,7 +76,7 @@
 		 */
 		getStoreSeparator: function() {
 			return Ext.create('Ext.data.ArrayStore', {
-				fields: [CMDBuild.core.proxy.CMProxyConstants.VALUE],
+				fields: [CMDBuild.core.constants.Proxy.VALUE],
 				data: [
 					[';'],
 					[','],
@@ -88,30 +89,22 @@
 		 * @param {Object} parameters
 		 */
 		decode: function(parameters) {
-			parameters.form.submit({
-				form: parameters.form,
-				isUpload: true,
-				method: 'POST',
-				url: CMDBuild.core.proxy.CMProxyUrlIndex.csv.readCsv,
-				scope: parameters.scope || this,
-				failure: parameters.failure || Ext.emptyFn,
-				success: parameters.success || Ext.emptyFn,
-				callback: parameters.callback || Ext.emptyFn
-			});
+			parameters = Ext.isEmpty(parameters) ? {} : parameters;
+
+			Ext.apply(parameters, { url: CMDBuild.core.proxy.Index.csv.readCsv });
+
+			CMDBuild.core.interfaces.FormSubmit.submit(parameters);
 		},
 
 		/**
 		 * @param {Object} parameters
 		 */
 		upload: function(parameters) {
-			parameters.form.submit({
-				method: 'POST',
-				url: CMDBuild.core.proxy.CMProxyUrlIndex.csv.uploadCsv,
-				scope: parameters.scope || this,
-				failure: parameters.failure || Ext.emptyFn,
-				success: parameters.success || Ext.emptyFn,
-				callback: parameters.callback || Ext.emptyFn
-			});
+			parameters = Ext.isEmpty(parameters) ? {} : parameters;
+
+			Ext.apply(parameters, { url: CMDBuild.core.proxy.Index.csv.uploadCsv });
+
+			CMDBuild.core.interfaces.FormSubmit.submit(parameters);
 		}
 	});
 

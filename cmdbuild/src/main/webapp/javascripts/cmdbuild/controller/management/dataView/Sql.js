@@ -1,11 +1,11 @@
 (function() {
 
 	Ext.define('CMDBuild.controller.management.dataView.Sql', {
-		extend: 'CMDBuild.controller.common.AbstractController',
+		extend: 'CMDBuild.controller.common.abstract.Base',
 
 		requires: [
 			'CMDBuild.core.Message',
-			'CMDBuild.core.proxy.CMProxyConstants',
+			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.proxy.dataView.Sql'
 		],
 
@@ -22,7 +22,7 @@
 			'dataViewSqlBuildStore',
 			'onButtonPrintClick',
 			'onDataViewSqlGridSelect',
-			'onDataViewSqlViewSelected = onDataViewViewSelected',
+			'onDataViewSqlViewSelected = onDataViewViewSelected'
 		],
 
 		/**
@@ -65,10 +65,10 @@
 		dataViewSqlBuildColumns: function() {
 			var columns = [];
 
-			Ext.Array.forEach(this.cmfg('dataViewSelectedGet', CMDBuild.core.proxy.CMProxyConstants.OUTPUT), function(columnObject, i, allColumnObjects) {
+			Ext.Array.forEach(this.cmfg('dataViewSelectedGet', CMDBuild.core.constants.Proxy.OUTPUT), function(columnObject, i, allColumnObjects) {
 				columns.push({
-					text: columnObject[CMDBuild.core.proxy.CMProxyConstants.NAME],
-					dataIndex: columnObject[CMDBuild.core.proxy.CMProxyConstants.NAME],
+					text: columnObject[CMDBuild.core.constants.Proxy.NAME],
+					dataIndex: columnObject[CMDBuild.core.constants.Proxy.NAME],
 					flex: 1
 				});
 			}, this);
@@ -81,10 +81,10 @@
 		 */
 		dataViewSqlBuildStore: function() {
 			var extraParams = {};
-			extraParams[CMDBuild.core.proxy.CMProxyConstants.FUNCTION] = this.cmfg('dataViewSelectedGet', CMDBuild.core.proxy.CMProxyConstants.SOURCE_FUNCTION);
+			extraParams[CMDBuild.core.constants.Proxy.FUNCTION] = this.cmfg('dataViewSelectedGet', CMDBuild.core.constants.Proxy.SOURCE_FUNCTION);
 
 			return CMDBuild.core.proxy.dataView.Sql.getStoreFromSql({
-				fields: this.cmfg('dataViewSelectedGet', CMDBuild.core.proxy.CMProxyConstants.OUTPUT),
+				fields: this.cmfg('dataViewSelectedGet', CMDBuild.core.constants.Proxy.OUTPUT),
 				extraParams: extraParams
 			});
 		},
@@ -109,10 +109,10 @@
 		onButtonPrintClick: function(format) {
 			if (!Ext.isEmpty(format)) {
 				var params = {};
-				params[CMDBuild.core.proxy.CMProxyConstants.ATTRIBUTES] = Ext.encode(this.getVisibleColumns());
-				params[CMDBuild.core.proxy.CMProxyConstants.FUNCTION] = this.cmfg('dataViewSelectedGet', CMDBuild.core.proxy.CMProxyConstants.SOURCE_FUNCTION);
-				params[CMDBuild.core.proxy.CMProxyConstants.SORT] = Ext.encode(this.grid.getStore().getSorters());
-				params[CMDBuild.core.proxy.CMProxyConstants.TYPE] = format;
+				params[CMDBuild.core.constants.Proxy.ATTRIBUTES] = Ext.encode(this.getVisibleColumns());
+				params[CMDBuild.core.constants.Proxy.FUNCTION] = this.cmfg('dataViewSelectedGet', CMDBuild.core.constants.Proxy.SOURCE_FUNCTION);
+				params[CMDBuild.core.constants.Proxy.SORT] = Ext.encode(this.grid.getStore().getSorters());
+				params[CMDBuild.core.constants.Proxy.TYPE] = format;
 
 				Ext.create('CMDBuild.controller.common.entryTypeGrid.printTool.PrintWindow', {
 					format: format,
@@ -130,7 +130,7 @@
 			record.fields.each(function(field) {
 				var name = field.name;
 
-				if (!Ext.Array.contains([CMDBuild.core.proxy.CMProxyConstants.ID], name)) { // Filters id attribute
+				if (!Ext.Array.contains([CMDBuild.core.constants.Proxy.ID], name)) { // Filters id attribute
 					var value = record.get(name);
 
 					if (
@@ -160,40 +160,41 @@
 			}, this);
 		},
 
-		onFullScreenChangeToFormOnly: function() {
-			Ext.suspendLayouts();
+		// _CMUIState methods
+			onFullScreenChangeToFormOnly: function() {
+				Ext.suspendLayouts();
 
-			this.grid.hide();
-			this.grid.region = '';
+				this.grid.hide();
+				this.grid.region = '';
 
-			this.form.show();
-			this.form.region = 'center';
+				this.form.show();
+				this.form.region = 'center';
 
-			Ext.resumeLayouts(true);
-		},
+				Ext.resumeLayouts(true);
+			},
 
-		onFullScreenChangeToGridOnly: function() {
-			Ext.suspendLayouts();
+			onFullScreenChangeToGridOnly: function() {
+				Ext.suspendLayouts();
 
-			this.form.hide();
-			this.form.region = '';
+				this.form.hide();
+				this.form.region = '';
 
-			this.grid.show();
-			this.grid.region = 'center';
+				this.grid.show();
+				this.grid.region = 'center';
 
-			Ext.resumeLayouts(true);
-		},
+				Ext.resumeLayouts(true);
+			},
 
-		onFullScreenChangeToOff: function() {
-			Ext.suspendLayouts();
-			this.form.show();
-			this.form.region = 'south';
+			onFullScreenChangeToOff: function() {
+				Ext.suspendLayouts();
+				this.form.show();
+				this.form.region = 'south';
 
-			this.grid.show();
-			this.grid.region = 'center';
+				this.grid.show();
+				this.grid.region = 'center';
 
-			Ext.resumeLayouts(true);
-		}
+				Ext.resumeLayouts(true);
+			}
 	});
 
 })();

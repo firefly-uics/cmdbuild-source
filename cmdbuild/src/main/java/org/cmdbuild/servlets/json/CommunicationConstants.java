@@ -10,6 +10,7 @@ public class CommunicationConstants {
 			ACCOUNT = "account", //
 			ACTIVE = "active", //
 			ACTIVE_CAPITAL = "Active", //
+			ACTIVE_ONLY = ACTIVE + "Only", //
 			ACTIVITY_INSTANCE_ID = "activityInstanceId", //
 			ACTIVITY_NAME = "activityName", //
 			ADDRESS = "address", //
@@ -44,6 +45,7 @@ public class CommunicationConstants {
 			CLASS_ID = "classId", //
 			CLASS_MAPPING = "classMapping", //
 			CLASS_NAME = "className", //
+			CLASS_NAMES = "classNames", //
 			CODE_CAPITAL = "Code", //
 			CODE = "code", //
 			CONFIGURATION = "configuration", //

@@ -1,6 +1,6 @@
 (function() {
 	var tr = CMDBuild.Translation.administration.modcartography.geoserver;
-	
+
 	Ext.define("CMDBuild.controller.administration.gis.CMModGeoServerController", {
 		extend: "CMDBuild.controller.CMBasePanelController",
 		constructor: function() {
@@ -25,8 +25,11 @@
 				var msg = Ext.String.format(tr.service_not_available
 						, CMDBuild.Translation.administration.modcartography.title +
 							"/" + CMDBuild.Translation.administration.modcartography.external_services.title);
-				
-				_CMMainViewportController.bringTofrontPanelByCmName("notconfiguredpanel", msg);
+
+				CMDBuild.global.controller.MainViewport.cmfg('mainViewportModuleShow', {
+					identifier: "notconfiguredpanel",
+					parameters: msg
+				});
 				return false;
 			}
 
@@ -54,7 +57,7 @@
 		var form = this.view.form.getForm();
 
 		if (form.isValid()) {
-			CMDBuild.LoadMask.get().show();
+			CMDBuild.core.LoadMask.show();
 			form.submit({
 				method: 'POST',
 				url: url,
@@ -69,10 +72,10 @@
 					this.view.layersGrid.loadStoreAndSelectLayerWithName(nameToSelect);
 				},
 				failure: function() {
-					_debug("Failed to add or modify a Geoserver Layer", arguments);	
+					_debug("Failed to add or modify a Geoserver Layer", arguments);
 				},
 				callback: function() {
-					CMDBuild.LoadMask.get().hide();
+					CMDBuild.core.LoadMask.hide();
 				}
 			});
 		}
@@ -94,7 +97,7 @@
 			buttons: Ext.Msg.YESNO,
 			fn: function(button) {
 				if (button == "yes") {
-					CMDBuild.LoadMask.get().show();
+					CMDBuild.core.LoadMask.show();
 					var layerName = me.view.form.getName();
 					CMDBuild.ServiceProxy.geoServer.deleteLayer({
 						params: {
@@ -103,7 +106,7 @@
 						callback: function() {
 							_CMCache.onGeoAttributeDeleted("_Geoserver", layerName);
 							me.view.layersGrid.loadStoreAndSelectLayerWithName();
-							CMDBuild.LoadMask.get().hide();
+							CMDBuild.core.LoadMask.hide();
 						}
 					});
 				}

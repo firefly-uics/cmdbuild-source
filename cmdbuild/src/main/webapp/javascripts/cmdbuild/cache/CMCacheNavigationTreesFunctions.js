@@ -2,7 +2,7 @@
 
 	var navigationTrees = null;
 	Ext.define("CMDBUild.cache.CMCacheNavigationTreesFunctions", {
-		
+
 		observers: [],
 		lastEntry: "",
 		listNavigationTrees: function(p) {
@@ -12,10 +12,10 @@
 				navigationTrees = decoded.response;
 				appSuccess(response, options, decoded);
 			};
-			p.url = CMDBuild.ServiceProxy.url.navigationTrees.get;
+			p.url = CMDBuild.core.proxy.Index.navigationTrees.readAll;
 			CMDBuild.ServiceProxy.core.doRequest(p);
 		},
-		
+
 		registerOnNavigationTrees: function(observer) {
 			this.observers.push(observer);
 		},
@@ -26,7 +26,7 @@
 				this.observers[i].refresh();
 			}
 		},
-		
+
 		getNavigationTrees: function() {
 			var nt = [];
 			for (nav in navigationTrees) {
@@ -41,22 +41,26 @@
 				lastEntry: this.lastEntry
 			};
 		},
-			
+
 		saveNavigationTrees: function(formData, success) {
-			_CMProxy.navigationTrees.save({
+			CMDBuild.core.proxy.NavigationTree.update({
 				params: formData,
 				success: function(operation, request, decoded) {
+					CMDBuild.global.controller.MainViewport.cmfg('mainViewportAccordionControllerUpdateStore', { identifier: 'navigationtree' });
+
 					success(operation, request, decoded);
 				}
 			});
 		},
-		
+
 		createNavigationTrees: function(formData, success) {
 			var me = this;
 			this.lastEntry = formData.name;
-			_CMProxy.navigationTrees.create({
+			CMDBuild.core.proxy.NavigationTree.create({
 				params: formData,
 				success: function(operation, request, decoded) {
+					CMDBuild.global.controller.MainViewport.cmfg('mainViewportAccordionControllerUpdateStore', { identifier: 'navigationtree' });
+
 					me.listNavigationTrees({
 						success: function() {
 							me.refreshObserversNavigationTrees();
@@ -67,9 +71,9 @@
 				}
 			});
 		},
-		
+
 		readNavigationTrees: function(me, name, success) {
-			_CMProxy.navigationTrees.read({
+			CMDBuild.core.proxy.NavigationTree.read({
 				params: {
 					name: name
 				},
@@ -83,11 +87,14 @@
 		removeNavigationTrees: function(name, success) {
 			var me = this;
 			this.lastEntry = "";
-			_CMProxy.navigationTrees.remove({
+			CMDBuild.core.proxy.NavigationTree.remove({
 				params: {
 					name: name
 				},
 				success: function(operation, request, decoded) {
+					CMDBuild.global.controller.MainViewport.cmfg('mainViewportAccordionDeselect', 'navigationtree');
+					CMDBuild.global.controller.MainViewport.cmfg('mainViewportAccordionControllerUpdateStore', { identifier: 'navigationtree' });
+
 					me.listNavigationTrees({
 						success: function() {
 							me.refreshObserversNavigationTrees();
@@ -97,7 +104,7 @@
 				}
 			});
 		},
-		
+
 	});
 
 })();

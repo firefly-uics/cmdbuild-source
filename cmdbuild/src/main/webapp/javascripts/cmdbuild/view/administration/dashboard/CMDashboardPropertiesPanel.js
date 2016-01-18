@@ -187,8 +187,6 @@
 			allowBlank: false,
 			labelWidth: CMDBuild.LABEL_WIDTH,
 			width: CMDBuild.ADM_BIG_FIELD_WIDTH,
-			translationsKeyType: "Dashboard",
-			translationsKeyField: "Description",
 			disabled: true
 		});
 

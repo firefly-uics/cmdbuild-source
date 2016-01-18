@@ -178,11 +178,11 @@
 				params.detailClassName = _CMCache.getEntryTypeNameById(detailCard.get("IdClass"));
 				params.detailCardId = detailCard.get("Id");
 
-				CMDBuild.LoadMask.get().show();
+				CMDBuild.core.LoadMask.show();
 				CMDBuild.ServiceProxy.relations.removeDetail({
 					params : params,
 					callback: function() {
-						CMDBuild.LoadMask.get().hide();
+						CMDBuild.core.LoadMask.hide();
 						me.view.reload();
 					}
 				});
@@ -190,7 +190,11 @@
 		},
 
 		onOpenGraphClick: function(model) {
-			CMDBuild.Management.showGraphWindow(model.get("IdClass"), model.get("Id"));
+			Ext.create('CMDBuild.controller.management.common.graph.Graph', {
+				parentDelegate: this,
+				classId: model.get('IdClass'),
+				cardId: model.get('id')
+			});
 		},
 
 		onOpenNoteClick: function(model) {
@@ -219,6 +223,15 @@
 			var w = new CMDBuild.view.management.common.CMAttachmentsWindow();
 			new CMDBuild.controller.management.common.CMAttachmentsWindowController(w,modelToCardInfo(model));
 			w.show();
+		},
+
+		onTabClick: onTabClick,
+
+		/**
+		 * @param {Mixed} tab
+		 */
+		activeTabSet: function(tab) {
+			return this.view.tabs.setActiveTab(tab);
 		}
 	});
 
@@ -242,7 +255,7 @@
 	}
 
 	function onDetailDoubleClick(grid, model, html, index, e, options) {
-		_CMMainViewportController.openCard({
+		CMDBuild.global.controller.MainViewport.cmfg('mainViewportCardSelect', {
 			Id: model.get("Id"),
 			IdClass: model.get("IdClass"),
 			activateFirstTab: true
@@ -250,7 +263,7 @@
 	}
 
 	function removeCard(model) {
-		CMDBuild.LoadMask.get().show();
+		CMDBuild.core.LoadMask.show();
 		CMDBuild.ServiceProxy.card.remove({
 			scope : this,
 			important: true,
@@ -260,7 +273,7 @@
 			},
 			success : updateDetailGrid,
 			callback : function() {
-				CMDBuild.LoadMask.get().hide();
+				CMDBuild.core.LoadMask.hide();
 			}
 		});
 	}
@@ -298,6 +311,31 @@
 			detail = this.view.details[type][targetPanel.detailId];
 		this.view.addDetailButton.enable();
 		this.currentTab = tab;
+
+		// History record save
+		if (!Ext.isEmpty(_CMCardModuleState.card)) {
+			CMDBuild.global.navigation.Chronology.cmfg('navigationChronologyRecordSave', {
+				moduleId: 'class',
+				entryType: {
+					description: _CMCardModuleState.entryType.get(CMDBuild.core.constants.Proxy.TEXT),
+					id: _CMCardModuleState.entryType.get(CMDBuild.core.constants.Proxy.ID),
+					object: _CMCardModuleState.entryType
+				},
+				item: {
+					description: _CMCardModuleState.card.get('Description') || _CMCardModuleState.card.get('Code'),
+					id: _CMCardModuleState.card.get(CMDBuild.core.constants.Proxy.ID),
+					object: _CMCardModuleState.card
+				},
+				section: {
+					description: this.view.title,
+					object: this.view
+				},
+				subSection: {
+					description: this.currentTab[CMDBuild.core.constants.Proxy.TEXT],
+					object: this.currentTab.targetPanel
+				}
+			});
+		}
 
 		if (type == MD) {
 			selectDetail.call(this, detail);

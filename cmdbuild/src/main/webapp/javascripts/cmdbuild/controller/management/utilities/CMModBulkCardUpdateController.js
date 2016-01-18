@@ -1,4 +1,7 @@
 (function() {
+
+	Ext.require('CMDBuild.core.constants.Global');
+
 	Ext.define("CMDBuild.controller.management.common.CMStandAloneCardGridController", {
 		extend: "CMDBuild.controller.management.common.CMCardGridController",
 
@@ -61,7 +64,7 @@
 		var cardToModifyMSG = "<p>" + CMDBuild.Translation.management.modutilities.bulkupdate.countMessage + ".</p>",
 			me = this;
 
-		CMDBuild.LoadMask.get().show();
+		CMDBuild.core.LoadMask.show();
 		getProxyCall(me)({
 			params: builSaveParams(me),
 			success: function(response, request, decordedResp) {
@@ -75,7 +78,7 @@
 				showWarningMsg(me, msg);
 			},
 			callback: function() {
-				CMDBuild.LoadMask.get().hide();
+				CMDBuild.core.LoadMask.hide();
 			}
 		});
 	}
@@ -109,7 +112,7 @@
 		var selections = me.gridSM.hasSelection();
 		if (!reverse && !selections) {
 			var msg = Ext.String.format("<p class=\"{0}\">{1}</p>",
-					CMDBuild.Constants.css.error_msg,
+					CMDBuild.core.constants.Global.getErrorMsgCss(),
 					CMDBuild.Translation.errors.no_selections);
 
 			CMDBuild.Msg.error(CMDBuild.Translation.common.failure, msg, false);
@@ -119,7 +122,7 @@
 		var params = builSaveParams(me);
 		params[_CMProxy.parameter.CONFIRMED] = true;
 
-		CMDBuild.LoadMask.get().show();
+		CMDBuild.core.LoadMask.show();
 		getProxyCall(me)({
 			params: params,
 			success: function(response, request, decordedResp) {
@@ -127,7 +130,7 @@
 				onAbortButtonClick.call(me);
 			},
 			callback: function() {
-				CMDBuild.LoadMask.get().hide();
+				CMDBuild.core.LoadMask.hide();
 			}
 		});
 	}

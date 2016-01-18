@@ -1,15 +1,28 @@
 (function() {
 	var constants = CMDBuild.Constants;
-	
-	var lookupTypeStore = getFakeStore()
+
+	var lookupTypeStore = getFakeStore();
 	var lookupTypeStoreOnlyLeves = getFakeStore();
 
-	
+
 	var lookupTypes = {};
-	
+
 	var lookupAttributeStoreMap = {};
 
+	Ext.define('CMDBuild.model.cache.LookupFieldStore', {
+		extend: 'Ext.data.Model',
+
+		fields: [
+			{ name: 'Description', type: 'string' },
+			{ name: 'Id', type: 'int', defaultValue: '' },
+			{ name: 'Number', type: 'int' },
+			{ name: 'ParentId', type: 'int' },
+			{ name: 'TranslationUuid', type: 'string' }
+		]
+	});
+
 	Ext.define("CMDBUild.cache.CMCacheLookupFunctions", {
+
 		getLookupTypes: function() {
 			return lookupTypes;
 		},
@@ -31,7 +44,7 @@
 				lookupTypeStore = buildLookupTypeStore(onlyLeaves = false);
 				lookupTypeStore.cmFill();
 			}
-			
+
 			return lookupTypeStore;
 		},
 
@@ -40,7 +53,7 @@
 				lookupTypeStoreOnlyLeves = buildLookupTypeStore(onlyLeaves = true);
 				lookupTypeStoreOnlyLeves.cmFill();
 			}
-	
+
 			return lookupTypeStoreOnlyLeves;
 		},
 
@@ -76,10 +89,31 @@
 				}
 			}
 		},
-		
+
 		getLookupStore: function(type) {
 			if (!lookupAttributeStoreMap[type]) {
-				lookupAttributeStoreMap[type] = CMDBuild.ServiceProxy.lookup.getLookupFieldStore(type);
+				lookupAttributeStoreMap[type] =Ext.create('Ext.data.Store', {
+					autoLoad: true,
+					model: 'CMDBuild.model.cache.LookupFieldStore',
+					proxy: {
+						type: 'ajax',
+						url: CMDBuild.core.proxy.Index.lookup.readAll,
+						reader: {
+							type: 'json',
+							root: 'rows'
+						},
+						extraParams: {
+							type: type,
+							active: true,
+							short: true
+						},
+						actionMethods: 'POST' // Lookup types can have UTF-8 names  not handled correctly
+					},
+					sorters: [
+						{ property: 'Number', direction: 'ASC' },
+						{ property: 'Description', direction: 'ASC' }
+					]
+				});
 			}
 			return lookupAttributeStoreMap[type];
 		},
@@ -110,7 +144,7 @@
 
 	function buildLookupTypeStore(onlyLeaves) {
 		var store = new Ext.data.Store({
-			model: "CMLookupTypeForCombo",
+			model: "CMDBuild.cache.Lookup.typeComboStore",
 			cmOnlyLeaves: onlyLeaves,
 			cmFill: function() {
 				this.removeAll();

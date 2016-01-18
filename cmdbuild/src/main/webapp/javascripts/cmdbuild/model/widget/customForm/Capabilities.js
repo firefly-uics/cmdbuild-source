@@ -1,19 +1,19 @@
 (function() {
 
-	Ext.require(['CMDBuild.core.proxy.CMProxyConstants']);
+	Ext.require(['CMDBuild.core.constants.Proxy']);
 
 	Ext.define('CMDBuild.model.widget.customForm.Capabilities', {
 		extend: 'Ext.data.Model',
 
 		fields: [
-			{ name: CMDBuild.core.proxy.CMProxyConstants.ADD_DISABLED, type: 'boolean' },
-			{ name: CMDBuild.core.proxy.CMProxyConstants.CLONE_DISABLED, type: 'boolean' },
-			{ name: CMDBuild.core.proxy.CMProxyConstants.DELETE_DISABLED, type: 'boolean' },
-			{ name: CMDBuild.core.proxy.CMProxyConstants.EXPORT_DISABLED, type: 'boolean' },
-			{ name: CMDBuild.core.proxy.CMProxyConstants.IMPORT_DISABLED, type: 'boolean' },
-			{ name: CMDBuild.core.proxy.CMProxyConstants.MODIFY_DISABLED, type: 'boolean' },
-			{ name: CMDBuild.core.proxy.CMProxyConstants.READ_ONLY, type: 'boolean' },
-			{ name: CMDBuild.core.proxy.CMProxyConstants.REFRESH_BEHAVIOUR, type: 'string', defaultValue: 'everyTime' } // Configuration to indicate when recalculate content from function [everyTime || firstTime]
+			{ name: CMDBuild.core.constants.Proxy.ADD_DISABLED, type: 'boolean' },
+			{ name: CMDBuild.core.constants.Proxy.CLONE_DISABLED, type: 'boolean' },
+			{ name: CMDBuild.core.constants.Proxy.DELETE_DISABLED, type: 'boolean' },
+			{ name: CMDBuild.core.constants.Proxy.EXPORT_DISABLED, type: 'boolean' },
+			{ name: CMDBuild.core.constants.Proxy.IMPORT_DISABLED, type: 'boolean' },
+			{ name: CMDBuild.core.constants.Proxy.MODIFY_DISABLED, type: 'boolean' },
+			{ name: CMDBuild.core.constants.Proxy.READ_ONLY, type: 'boolean' },
+			{ name: CMDBuild.core.constants.Proxy.REFRESH_BEHAVIOUR, type: 'string', defaultValue: 'everyTime' } // Configuration to indicate when recalculate content from function [everyTime || firstTime]
 		]
 	});
 

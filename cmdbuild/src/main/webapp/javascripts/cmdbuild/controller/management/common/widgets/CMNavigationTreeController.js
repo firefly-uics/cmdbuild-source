@@ -5,10 +5,6 @@
 			widgetcontroller: "CMDBuild.controller.management.common.widgets.CMWidgetController"
 		},
 
-		statics: {
-			WIDGET_NAME: CMDBuild.view.management.common.widgets.CMNavigationTree.WIDGET_NAME
-		},
-
 		constructor: function(view, ownerController, widgetDef, clientForm, card) {
 			this.mixins.observable.constructor.call(this);
 			this.mixins.widgetcontroller.constructor.apply(this, arguments);
@@ -35,7 +31,7 @@
 			}
 			return undefined;
 		},
-		
+
 		// override
 		beforeActiveView: function() {
 			var me = this;

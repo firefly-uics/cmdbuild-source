@@ -1,7 +1,13 @@
 (function() {
 
 	Ext.define('CMDBuild.controller.administration.configuration.Bim', {
-		extend: 'CMDBuild.controller.common.AbstractController',
+		extend: 'CMDBuild.controller.common.abstract.Base',
+
+		requires: [
+			'CMDBuild.core.constants.Proxy',
+			'CMDBuild.core.proxy.configuration.Bim',
+			'CMDBuild.model.configuration.bim.Form'
+		],
 
 		/**
 		 * @cfg {CMDBuild.controller.administration.configuration.Configuration}
@@ -12,14 +18,9 @@
 		 * @cfg {Array}
 		 */
 		cmfgCatchedFunctions: [
-			'onBimAbortButtonClick',
-			'onBimSaveButtonClick'
+			'onConfigurationBimSaveButtonClick',
+			'onConfigurationBimTabShow = onConfigurationBimAbortButtonClick'
 		],
-
-		/**
-		 * @cfg {String}
-		 */
-		configFileName: 'bim',
 
 		/**
 		 * @property {CMDBuild.view.administration.configuration.BimPanel}
@@ -35,27 +36,39 @@
 		constructor: function(configObject) {
 			this.callParent(arguments);
 
-			this.view = Ext.create('CMDBuild.view.administration.configuration.BimPanel', {
-				delegate: this
-			});
+			this.view = Ext.create('CMDBuild.view.administration.configuration.BimPanel', { delegate: this });
+		},
 
-			this.cmfg('onConfigurationRead', {
-				configFileName: this.configFileName,
-				view: this.view
+		onConfigurationBimSaveButtonClick: function() {
+			CMDBuild.core.proxy.configuration.Bim.update({
+				params: this.view.getData(true),
+				scope: this,
+				success: function(response, options, decodedResponse) {
+					this.cmfg('onConfigurationBimTabShow');
+
+					CMDBuild.core.Message.success();
+				}
 			});
 		},
 
-		onBimAbortButtonClick: function() {
-			this.cmfg('onConfigurationRead', {
-				configFileName: this.configFileName,
-				view: this.view
-			});
-		},
+		/**
+		 * NOTE: Readed enabled response parameter must be decoded by utils function because is a string, not a boolean
+		 */
+		onConfigurationBimTabShow: function() {
+			CMDBuild.core.proxy.configuration.Bim.read({
+				scope: this,
+				success: function(response, options, decodedResponse) {
+					decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.DATA];
 
-		onBimSaveButtonClick: function() {
-			this.cmfg('onConfigurationSave', {
-				configFileName: this.configFileName,
-				view: this.view
+					if (!Ext.isEmpty(decodedResponse)) {
+						this.view.loadRecord(Ext.create('CMDBuild.model.configuration.bim.Form', decodedResponse));
+
+						this.cmfg('mainViewportAccordionSetDisabled', {
+							identifier: 'bim',
+							state: !CMDBuild.core.Utils.decodeAsBoolean(decodedResponse[CMDBuild.core.constants.Proxy.ENABLED])
+						});
+					}
+				}
 			});
 		}
 	});

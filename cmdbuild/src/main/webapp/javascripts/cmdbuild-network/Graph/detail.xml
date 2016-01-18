@@ -1,0 +1,26 @@
+<DATA>
+	<params>
+		<type>div</type>
+	</params>
+ 	<div id="cmdbuildDetail">
+		<onInit>
+			<command>navigate</command>
+			<container>cmdbuildDetail</container>
+			<form>formdetail</form>
+			<fromObserving>true</fromObserving>
+		</onInit>
+		<form id="formdetail" class="cmdbuildCard">
+ 			<observe container="cmdbuildDetail">
+			<!-- observing a generic save of formactivity...not interested in a specific variable -->
+				<dummy1>$selectedForm.dummy</dummy1> 
+			</observe>
+ 			<params>
+				<type>form</type>
+				<backend>GraphCard</backend>
+				<className>$selectedForm.className</className>
+				<cardId>$selectedForm.id</cardId>
+				<readonly>true</readonly>
+			</params>
+		</form>
+	</div>
+</DATA>

@@ -5,6 +5,12 @@
 	Ext.define('CMDBuild.view.administration.tasks.email.CMStep3Delegate', {
 		extend: 'CMDBuild.controller.CMBasePanelController',
 
+		requires: [
+			'CMDBuild.core.constants.Proxy',
+			'CMDBuild.core.proxy.configuration.Dms',
+			'CMDBuild.core.proxy.lookup.Lookup'
+		],
+
 		/**
 		 * @cfg {CMDBuild.controller.administration.tasks.CMTasksFormEmailController}
 		 */
@@ -72,15 +78,17 @@
 			var me = this;
 
 			if (this.view.attachmentsCombo.store.getCount() == 0)
-				CMDBuild.ServiceProxy.configuration.read({
+				CMDBuild.core.proxy.configuration.Dms.read({
 					success: function(response) {
 						var decodedJson = Ext.JSON.decode(response.responseText);
+						var params = {};
+						params[CMDBuild.core.constants.Proxy.TYPE] = decodedJson.data['category.lookup'];
+						params[CMDBuild.core.constants.Proxy.ACTIVE] = true;
+						params[CMDBuild.core.constants.Proxy.SHORT] = true;
 
-						me.view.attachmentsCombo.bindStore(
-							CMDBuild.ServiceProxy.lookup.getLookupFieldStore(decodedJson.data['category.lookup'])
-						);
+						me.view.attachmentsCombo.getStore().load({ params: params });
 					}
-				}, 'dms');
+				});
 		},
 
 		// SETters functions
@@ -173,7 +181,10 @@
 	Ext.define('CMDBuild.view.administration.tasks.email.CMStep3', {
 		extend: 'Ext.panel.Panel',
 
-		requires: ['CMDBuild.core.proxy.CMProxyConstants'],
+		requires: [
+			'CMDBuild.core.constants.Proxy',
+			'CMDBuild.core.proxy.lookup.Lookup'
+		],
 
 		/**
 		 * @cfg {CMDBuild.view.administration.tasks.email.CMStep3Delegate}
@@ -244,7 +255,7 @@
 					fieldLabel: tr.parsingKeyStart,
 					labelWidth: CMDBuild.LABEL_WIDTH,
 					maxWidth: CMDBuild.ADM_BIG_FIELD_WIDTH,
-					name: CMDBuild.core.proxy.CMProxyConstants.PARSING_KEY_INIT,
+					name: CMDBuild.core.constants.Proxy.PARSING_KEY_INIT,
 					flex: 1
 				});
 
@@ -252,7 +263,7 @@
 					fieldLabel: tr.parsingKeyEnd,
 					labelWidth: CMDBuild.LABEL_WIDTH,
 					maxWidth: CMDBuild.ADM_BIG_FIELD_WIDTH,
-					name: CMDBuild.core.proxy.CMProxyConstants.PARSING_KEY_END,
+					name: CMDBuild.core.constants.Proxy.PARSING_KEY_END,
 					margin: '0 0 0 20',
 					flex: 1
 				});
@@ -261,7 +272,7 @@
 					fieldLabel: tr.parsingValueStart,
 					labelWidth: CMDBuild.LABEL_WIDTH,
 					maxWidth: CMDBuild.ADM_BIG_FIELD_WIDTH,
-					name: CMDBuild.core.proxy.CMProxyConstants.PARSING_VALUE_INIT,
+					name: CMDBuild.core.constants.Proxy.PARSING_VALUE_INIT,
 					flex: 1
 				});
 
@@ -269,14 +280,14 @@
 					fieldLabel: tr.parsingValueEnd,
 					labelWidth: CMDBuild.LABEL_WIDTH,
 					maxWidth: CMDBuild.ADM_BIG_FIELD_WIDTH,
-					name: CMDBuild.core.proxy.CMProxyConstants.PARSING_VALUE_END,
+					name: CMDBuild.core.constants.Proxy.PARSING_VALUE_END,
 					margin: '0 0 0 20',
 					flex: 1
 				});
 
 				this.parsingFieldset = Ext.create('Ext.form.FieldSet', {
 					title: tr.bodyParsing,
-					checkboxName: CMDBuild.core.proxy.CMProxyConstants.PARSING_ACTIVE,
+					checkboxName: CMDBuild.core.constants.Proxy.PARSING_ACTIVE,
 					checkboxToggle: true,
 					collapsed: true,
 					collapsible: true,
@@ -321,7 +332,7 @@
 
 				this.notificationFieldset = Ext.create('Ext.form.FieldSet', {
 					title: CMDBuild.Translation.administration.tasks.notificationForm.title,
-					checkboxName: CMDBuild.core.proxy.CMProxyConstants.NOTIFICATION_ACTIVE,
+					checkboxName: CMDBuild.core.constants.Proxy.NOTIFICATION_ACTIVE,
 					checkboxToggle: true,
 					collapsed: true,
 					collapsible: true,
@@ -336,7 +347,7 @@
 
 			// Attachments configuration
 				this.attachmentsCombo = Ext.create('Ext.form.field.ComboBox', {
-					name: CMDBuild.core.proxy.CMProxyConstants.ATTACHMENTS_CATEGORY,
+					name: CMDBuild.core.constants.Proxy.ATTACHMENTS_CATEGORY,
 					fieldLabel: tr.attachmentsCategory,
 					labelWidth: CMDBuild.LABEL_WIDTH,
 					maxWidth: CMDBuild.ADM_BIG_FIELD_WIDTH,
@@ -344,12 +355,15 @@
 					displayField: 'Description',
 					valueField: 'Id',
 					forceSelection: true,
-					editable: false
+					editable: false,
+
+					store: CMDBuild.core.proxy.lookup.Lookup.getStore(),
+					queryMode: 'local'
 				});
 
 				this.attachmentsFieldset = Ext.create('Ext.form.FieldSet', {
 					title: tr.saveToAlfresco,
-					checkboxName: CMDBuild.core.proxy.CMProxyConstants.ATTACHMENTS_ACTIVE,
+					checkboxName: CMDBuild.core.constants.Proxy.ATTACHMENTS_ACTIVE,
 					checkboxToggle: true,
 					collapsed: true,
 					collapsible: true,

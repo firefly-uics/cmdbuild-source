@@ -59,12 +59,12 @@
 			if (!Ext.isEmpty(value)) {
 				var store = _CMCache.getLookupStore(attribute.lookup);
 
-				if (value.hasOwnProperty(CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION)) {
-					value = value[CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION];
+				if (value.hasOwnProperty(CMDBuild.core.constants.Proxy.DESCRIPTION)) {
+					value = value[CMDBuild.core.constants.Proxy.DESCRIPTION];
 				} else if (value.hasOwnProperty('Description')) {
 					value = value['Description'];
-				} else if (value.hasOwnProperty(CMDBuild.core.proxy.CMProxyConstants.ID)) {
-					value = value[CMDBuild.core.proxy.CMProxyConstants.ID];
+				} else if (value.hasOwnProperty(CMDBuild.core.constants.Proxy.ID)) {
+					value = value[CMDBuild.core.constants.Proxy.ID];
 				} else if (value.hasOwnProperty('Id')) {
 					value = value['Id'];
 				} else if (typeof value == 'string' && !isNaN(parseInt(value))) {

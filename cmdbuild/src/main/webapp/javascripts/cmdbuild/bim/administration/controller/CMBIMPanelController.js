@@ -59,14 +59,14 @@
 			}
 
 			if (form != null) {
-				CMDBuild.LoadMask.get().show();
+				CMDBuild.core.LoadMask.show();
 
 				this.view.enableModify();
 
 				proxyFunction(form, params,
 					function onSuccess() {
 						me.fieldManager.enableFileField();
-						CMDBuild.LoadMask.instance.hide();
+						CMDBuild.core.LoadMask.hide();
 						me.gridConfigurator.getStore().load();
 						me.view.disableModify(me.enableCMTBar = false);
 						form.reset();
@@ -77,7 +77,7 @@
 						form.reset();
 						me.view.grid.getSelectionModel().deselectAll();
 
-						CMDBuild.LoadMask.instance.hide();
+						CMDBuild.core.LoadMask.hide();
 					}
 				);
 			}
@@ -113,13 +113,13 @@
 				this.view.updateEnableDisableButton(true);
 			}
 
-			CMDBuild.LoadMask.get().show();
+			CMDBuild.core.LoadMask.show();
 			proxyFunction({
 				params: {
 					id: me.record.getId()
 				},
 				callback: function() {
-					CMDBuild.LoadMask.instance.hide();
+					CMDBuild.core.LoadMask.hide();
 					me.gridConfigurator.getStore().load();
 				}
 			});

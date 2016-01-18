@@ -1,5 +1,9 @@
 (function() {
 
+	/**
+	 * @deprecated new class (CMDBuild.view.common.field.filter.advanced.Advanced)
+	 */
+
 	// Constants to identify the icons that the user
 	// could click, and call the right callback
 	var ACTION_CSS_CLASS = {
@@ -71,6 +75,26 @@
 			this.mon(this, "move", function(button, x, y) {
 				this.showListButton.toggle(false);
 			}, this);
+		},
+
+		/**
+		 * Override to avoid full bottongroup container disabling
+		 *
+		 * @overrider
+		 */
+		disable: function() {
+			this.clearButton.disable();
+			this.showListButton.disable();
+		},
+
+		/**
+		 * Override to avoid full bottongroup container disabling
+		 *
+		 * @overrider
+		 */
+		enable: function() {
+			this.clearButton.enable();
+			this.showListButton.enable();
 		},
 
 		reconfigureForEntryType: function(entryType) {
@@ -276,7 +300,7 @@
 
 			if (fieldClassName == "Ext.form.field.TextArea") {
 				height += TEXT_FIELD_HEIGHT;
-			} else if (fieldClassName == "CMDBuild.view.common.field.CMHtmlEditorField") {
+			} else if (fieldClassName == "CMDBuild.view.common.field.HtmlEditor") {
 				height += HTML_FIELD_HEIGHT;
 			} else {
 				height += SIMPLE_FIELD_HEIGHT;

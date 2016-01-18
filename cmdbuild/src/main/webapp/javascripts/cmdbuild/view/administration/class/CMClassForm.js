@@ -2,14 +2,20 @@
 	var tr = CMDBuild.Translation.administration.modClass.classProperties;
 
 	Ext.define("CMDBuild.view.administration.classes.CMClassForm", {
-		extend : "Ext.panel.Panel",
-		title : tr.title_add,
+		extend: "Ext.panel.Panel",
+
+		alias: "classform",
+
+		requires: ['CMDBuild.core.constants.Proxy'],
+
 		mixins: {
 			cmFormFunctions: "CMDBUild.view.common.CMFormFunctions"
 		},
-		alias : "classform",
-		defaultParent : "Class",
-		layout : 'border',
+
+		defaultParent: "Class",
+		layout: 'border',
+
+		title: tr.title_add,
 
 		// config
 		/**
@@ -52,12 +58,13 @@
 			return this.form.getForm();
 		},
 
-		onClassSelected : function(selection) {
+		/**
+		 * @property {CMDBuild.cache.CMEntryTypeModel} selection
+		 */
+		onClassSelected: function(selection) {
 			this.getForm().loadRecord(selection);
-			Ext.apply(this.classDescription, {
-				translationsKeyName: selection.get("name")
-			});
-			this.disableModify(enableCMTbar = true);
+
+			this.disableModify(true);
 		},
 
 		onAddClassButtonClick: function() {
@@ -70,7 +77,7 @@
 		setDefaults: function() {
 			this.isActive.setValue(true);
 			this.typeCombo.setValue("standard");
-			this.inheriteCombo.setValue(_CMCache.getClassRootId())
+			this.inheriteCombo.setValue(_CMCache.getClassRootId());
 		},
 
 		buildButtons: function() {
@@ -80,22 +87,21 @@
 			}),
 
 			this.modifyButton = new Ext.button.Button( {
-				iconCls : 'modify',
-				text : tr.modify_class,
+				iconCls: 'modify',
+				text: tr.modify_class,
 				handler: function() {
 					this.enableModify();
-					_CMCache.initModifyingTranslations();
 				},
 				scope: this
 			}),
 
-			this.printClassButton = Ext.create('CMDBuild.core.buttons.iconized.Print', {
+			this.printClassButton = Ext.create('CMDBuild.core.buttons.iconized.split.Print', {
 				formatList: [
-					CMDBuild.core.proxy.CMProxyConstants.PDF,
-					CMDBuild.core.proxy.CMProxyConstants.ODT
+					CMDBuild.core.constants.Proxy.PDF,
+					CMDBuild.core.constants.Proxy.ODT
 				],
 				mode: 'legacy',
-				text: CMDBuild.Translation.printClass
+				text: tr.print_class
 			});
 
 			if (this.whithSaveAndCancelButtons) {
@@ -129,25 +135,29 @@
 				store : this.buildInheriteComboStore()
 			});
 
-			this.className = new Ext.form.field.Text( {
-				fieldLabel : tr.name,
+			this.className = Ext.create('Ext.form.field.Text', {
+				fieldLabel: tr.name,
 				labelWidth: CMDBuild.LABEL_WIDTH,
 				width: CMDBuild.ADM_BIG_FIELD_WIDTH,
-				name : 'name',
-				allowBlank : false,
-				vtype : 'alphanum',
-				cmImmutable : true
+				name: CMDBuild.core.constants.Proxy.NAME,
+				allowBlank: false,
+				vtype: 'alphanum',
+				cmImmutable: true
 			});
 
 			this.classDescription = Ext.create('CMDBuild.view.common.field.translatable.Text', {
-				fieldLabel: tr.description,
+				name: CMDBuild.core.constants.Proxy.TEXT,
+				fieldLabel: CMDBuild.Translation.descriptionLabel,
 				labelWidth: CMDBuild.LABEL_WIDTH,
 				width: CMDBuild.ADM_BIG_FIELD_WIDTH,
-				name: 'text',
 				allowBlank: false,
 				vtype: 'cmdbcomment',
-				translationsKeyType: "Class",
-				translationsKeyField: "Description"
+
+				translationFieldConfig: {
+					type: CMDBuild.core.constants.Proxy.CLASS,
+					identifier: { sourceType: 'form', key: CMDBuild.core.constants.Proxy.NAME, source: this },
+					field: CMDBuild.core.constants.Proxy.DESCRIPTION
+				}
 			});
 
 			this.isSuperClass = new Ext.ux.form.XCheckbox( {
@@ -167,7 +177,7 @@
 				fields: ['value', 'name'],
 				data : [
 					{"value":"standard", "name":tr.standard},
-					{"value":CMDBuild.Constants.cachedTableType.simpletable, "name":tr.simple}
+					{"value":'simpletable', "name":tr.simple}
 				]
 			});
 

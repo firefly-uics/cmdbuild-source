@@ -34,7 +34,7 @@
 		},
 
 		miniCardGridWantOpenCard: function(grid, card) {
-			_CMMainViewportController.openCard(card);
+			CMDBuild.global.controller.MainViewport.cmfg('mainViewportCardSelect', card);
 			this.miniGridWindow.close();
 		},
 
