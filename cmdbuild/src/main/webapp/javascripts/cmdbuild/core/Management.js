@@ -277,14 +277,20 @@
 						cmControllerType: CMDBuild.controller.management.dashboard.CMModDashboardController,
 						cmName: 'dashboard'
 					}),
-					new CMDBuild.view.management.utilities.CMModChangePassword(),
+					new CMDBuild.view.management.utilities.CMModChangePassword({
+						cmName: 'changepassword'
+					}),
 					new CMDBuild.view.management.utilites.CMModBulkCardUpdate({
-						cmControllerType: CMDBuild.controller.management.utilities.CMModBulkUpdateController
+						cmControllerType: CMDBuild.controller.management.utilities.CMModBulkUpdateController,
+						cmName: 'bulkcardupdate'
 					}),
 					new CMDBuild.view.management.utilities.CMModImportCSV({
-						cmControllerType: CMDBuild.controller.management.utilities.CMModImportCSVController
+						cmControllerType: CMDBuild.controller.management.utilities.CMModImportCSVController,
+						cmName: 'importcsv'
 					}),
-					new CMDBuild.view.management.utilities.CMModExportCSV()
+					new CMDBuild.view.management.utilities.CMModExportCSV({
+						cmName: 'exportcsv'
+					})
 				],
 				hideAccordions: CMDBuild.configuration.userInterface.get(CMDBuild.core.constants.Proxy.HIDE_SIDE_PANEL)
 			});
