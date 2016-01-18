@@ -31,9 +31,7 @@
 			this.callParent(arguments);
 
 			// View build
-			this.view = Ext.create('CMDBuild.view.management.workflow.tabs.Email', {
-				delegate: this
-			});
+			this.view = Ext.create('CMDBuild.view.management.workflow.tabs.Email', { delegate: this });
 
 			this.view.add(this.grid);
 

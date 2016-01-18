@@ -54,9 +54,7 @@
 		constructor: function(configurationObject) {
 			this.callParent(arguments);
 
-			this.view = Ext.create('CMDBuild.view.management.common.tabs.email.GridPanel', {
-				delegate: this
-			});
+			this.view = Ext.create('CMDBuild.view.management.common.tabs.email.GridPanel', { delegate: this });
 		},
 
 		/**
