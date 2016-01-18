@@ -1,0 +1,29 @@
+<DATA>
+	<params>
+		<type>div</type>
+	</params>
+	<div id="selectedFormContainer">
+		<onInit>
+			<command>navigate</command>
+			<container>selectedFormContainer</container>
+			<form>selectedForm</form>
+		</onInit>
+		<form id="selectedForm">
+ 			<params>
+				<type>selectedGrid</type>
+				<backend>SelectedNavigation</backend>
+				<nRows>9</nRows>
+			</params>
+			<onDblClick>
+					<command>zoomOn</command>
+					<node>$selectedForm.id</node>
+				</onDblClick>
+			<rowButton id="zoom" tooltip="Zoom sulla Card richiesta">
+				<onClick>
+					<command>zoomOn</command>
+					<node>$selectedForm.id</node>
+				</onClick>
+			</rowButton>
+		</form>
+	</div>
+</DATA>

@@ -15,7 +15,19 @@
 
 		border: true,
 		frame: false,
-		layout: 'fit'
+		layout: 'fit',
+
+		initComponent: function() {
+			Ext.apply(this, {
+				tools: [
+					Ext.create('CMDBuild.view.common.panel.gridAndForm.tools.Properties', {
+						style: {} // Reset margin setup
+					})
+				]
+			});
+
+			this.callParent(arguments);
+		}
 	});
 
 })();

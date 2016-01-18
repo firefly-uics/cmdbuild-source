@@ -29,8 +29,8 @@
 		 * @cfg {Array}
 		 */
 		supportedPrintFormats: [
-			CMDBuild.core.proxy.CMProxyConstants.PDF,
-			CMDBuild.core.proxy.CMProxyConstants.ODT
+			CMDBuild.core.constants.Proxy.PDF,
+			CMDBuild.core.constants.Proxy.ODT
 		],
 
 		/**
@@ -50,10 +50,9 @@
 
 				if (!isNaN(parseInt(this.cardIdentifier))) { // Single card selection
 					Ext.Function.createDelayed(function() {
-						_CMMainViewportController.openCard({
+						CMDBuild.global.controller.MainViewport.cmfg('mainViewportCardSelect', {
 							Id: this.cardIdentifier,
-							IdClass: this.entryType.get(CMDBuild.core.proxy.CMProxyConstants.ID),
-							activateFirstTab: true
+							IdClass: this.entryType.get(CMDBuild.core.constants.Proxy.ID)
 						});
 					}, 500, this)();
 				} else if (
@@ -79,10 +78,10 @@
 		 * @return  {Boolean}
 		 */
 		paramsValidation: function(params) {
-			this.cardIdentifier = params[CMDBuild.core.proxy.CMProxyConstants.CARD_IDENTIFIER];
-			this.classIdentifier = params[CMDBuild.core.proxy.CMProxyConstants.CLASS_IDENTIFIER];
-			this.clientFilterString = params[CMDBuild.core.proxy.CMProxyConstants.CLIENT_FILTER];
-			this.printFormat = params[CMDBuild.core.proxy.CMProxyConstants.FORMAT] || CMDBuild.core.proxy.CMProxyConstants.PDF;
+			this.cardIdentifier = params[CMDBuild.core.constants.Proxy.CARD_IDENTIFIER];
+			this.classIdentifier = params[CMDBuild.core.constants.Proxy.CLASS_IDENTIFIER];
+			this.clientFilterString = params[CMDBuild.core.constants.Proxy.CLIENT_FILTER];
+			this.printFormat = params[CMDBuild.core.constants.Proxy.FORMAT] || CMDBuild.core.constants.Proxy.PDF;
 
 			// Class identifier validation
 			if (
@@ -135,7 +134,7 @@
 			this.detail(params, path, router);
 
 			Ext.Function.createDelayed(function() {
-				_CMMainViewportController.panelControllers[CMDBuild.core.proxy.CMProxyConstants.CLASS].cardPanelController.onPrintCardMenuClick(this.printFormat);
+				CMDBuild.global.controller.MainViewport.cmfg('mainViewportModuleControllerGet', 'class').cardPanelController.onPrintCardMenuClick(this.printFormat);
 			}, 1500, this)();
 		},
 

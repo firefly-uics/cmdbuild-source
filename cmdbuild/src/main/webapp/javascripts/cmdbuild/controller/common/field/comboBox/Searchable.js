@@ -1,10 +1,10 @@
 (function() {
 
 	Ext.define('CMDBuild.controller.common.field.comboBox.Searchable', {
-		extend: 'CMDBuild.controller.common.AbstractController',
+		extend: 'CMDBuild.controller.common.abstract.Base',
 
 		requires: [
-			'CMDBuild.core.proxy.CMProxyConstants',
+			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.proxy.Classes'
 		],
 
@@ -124,7 +124,7 @@
 		 */
 		fieldComboBoxSearchableStoreExceedsLimit: function() {
 			if (!Ext.isEmpty(this.view.getStore()))
-				return this.view.getStore().getTotalCount() > parseInt(CMDBuild.Config.cmdbuild.referencecombolimit);
+				return this.view.getStore().getTotalCount() > CMDBuild.configuration.instance.get(CMDBuild.core.constants.Proxy.REFERENCE_COMBO_STORE_LIMIT);
 
 			return false;
 		},
@@ -158,25 +158,25 @@
 			if (!this.view.isDisabled()) {
 				// Get class data from server
 				var params = {};
-				params[CMDBuild.core.proxy.CMProxyConstants.ACTIVE] = true;
+				params[CMDBuild.core.constants.Proxy.ACTIVE] = true;
 
 				CMDBuild.core.proxy.Classes.read({
 					params: params,
 					scope: this,
 					success: function(response, options, decodedResponse) {
-						decodedResponse = decodedResponse[CMDBuild.core.proxy.CMProxyConstants.CLASSES];
+						decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.CLASSES];
 
 						var targetClassObject = Ext.Array.findBy(decodedResponse, function(item, i) {
-							return item[CMDBuild.core.proxy.CMProxyConstants.NAME] == this.view.attributeModel.get(CMDBuild.core.proxy.CMProxyConstants.TARGET_CLASS);
+							return item[CMDBuild.core.constants.Proxy.NAME] == this.view.attributeModel.get(CMDBuild.core.constants.Proxy.TARGET_CLASS);
 						}, this);
 
 						if (!Ext.isEmpty(targetClassObject)) {
 							var configurationObject = {};
-							configurationObject[CMDBuild.core.proxy.CMProxyConstants.ENTRY_TYPE] = Ext.create('CMDBuild.cache.CMEntryTypeModel', targetClassObject);
-							configurationObject[CMDBuild.core.proxy.CMProxyConstants.GRID_CONFIGURATION] = {
+							configurationObject[CMDBuild.core.constants.Proxy.ENTRY_TYPE] = Ext.create('CMDBuild.cache.CMEntryTypeModel', targetClassObject);
+							configurationObject[CMDBuild.core.constants.Proxy.GRID_CONFIGURATION] = {
 								presets: { quickSearch: value }
 							};
-							configurationObject[CMDBuild.core.proxy.CMProxyConstants.READ_ONLY] = this.configurationGet(CMDBuild.core.proxy.CMProxyConstants.READ_ONLY_SEARCH_WINDOW);
+							configurationObject[CMDBuild.core.constants.Proxy.READ_ONLY] = this.configurationGet(CMDBuild.core.constants.Proxy.READ_ONLY_SEARCH_WINDOW);
 
 							this.controllerSearchWindow.fieldSearchWindowConfigurationSet(configurationObject);
 							this.controllerSearchWindow.getView().show();

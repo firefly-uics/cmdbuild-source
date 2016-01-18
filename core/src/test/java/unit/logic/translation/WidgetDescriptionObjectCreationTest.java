@@ -6,6 +6,7 @@ import static org.junit.Assert.assertTrue;
 import java.util.Map;
 
 import org.cmdbuild.logic.translation.TranslationObject;
+import org.cmdbuild.logic.translation.converter.Converter;
 import org.cmdbuild.logic.translation.converter.WidgetConverter;
 import org.cmdbuild.logic.translation.object.WidgetLabel;
 import org.junit.Test;
@@ -22,12 +23,13 @@ public class WidgetDescriptionObjectCreationTest {
 	@Test
 	public void forLabelReturnsValidObject() {
 		// given
-		final WidgetConverter converter = WidgetConverter //
+		final Converter converter = WidgetConverter //
 				.of(WidgetConverter.label())//
+				.withIdentifier(widgetId) //
 				.withTranslations(map);
 
 		// when
-		final TranslationObject translationObject = converter.create(widgetId);
+		final TranslationObject translationObject = converter.create();
 
 		// then
 		assertTrue(converter.isValid());

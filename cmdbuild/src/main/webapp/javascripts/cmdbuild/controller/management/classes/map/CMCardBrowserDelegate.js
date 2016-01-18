@@ -33,7 +33,7 @@
 
 		onCardBrowserTreeCardSelected: function(cardBaseInfo) {
 			if (cardBaseInfo.IdClass > 0) {
-				_CMMainViewportController.openCard(cardBaseInfo);
+				CMDBuild.global.controller.MainViewport.cmfg('mainViewportCardSelect', cardBaseInfo);
 			}
 		},
 

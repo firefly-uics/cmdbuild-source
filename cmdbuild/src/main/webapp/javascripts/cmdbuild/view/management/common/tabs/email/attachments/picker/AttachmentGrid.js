@@ -4,8 +4,8 @@
 		extend: 'Ext.grid.Panel',
 
 		requires: [
-			'CMDBuild.core.proxy.Attachment',
-			'CMDBuild.core.proxy.CMProxyConstants'
+			'CMDBuild.core.constants.Proxy',
+			'CMDBuild.core.proxy.Attachment'
 		],
 
 		/**
@@ -21,18 +21,16 @@
 				columns: [
 					{
 						text: CMDBuild.Translation.fileName,
-						dataIndex: 'Filename', // TODO: use proxy constants
+						dataIndex: 'Filename', // TODO: waiting for refactor (rename)
 						flex: 1
 					},
 					{
 						text: CMDBuild.Translation.descriptionLabel,
-						dataIndex: 'Description', // TODO: use proxy constants
+						dataIndex: 'Description', // TODO: waiting for refactor (rename)
 						flex: 1
 					}
 				],
-				selModel: Ext.create('Ext.selection.CheckboxModel', {
-					injectCheckbox: 'first'
-				}),
+				selModel: Ext.create('Ext.selection.CheckboxModel', { injectCheckbox: 'first' }),
 				store: CMDBuild.core.proxy.Attachment.getStore()
 			});
 

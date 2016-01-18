@@ -5,8 +5,6 @@
 	Ext.define("CMDBuild.view.management.workflow.CMModProcess", {
 		extend: "CMDBuild.view.management.classes.CMModCard",
 
-		cmName: "process",
-
 		whitMap: false,
 
 		initComponent: function() {

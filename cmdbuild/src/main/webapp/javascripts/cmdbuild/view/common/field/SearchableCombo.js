@@ -152,7 +152,7 @@
 			if (this.getStore() && (this.getStore().find('Id', id) == -1)) {
 				var params = Ext.apply({ cardId: id }, this.getStore().baseParams);
 
-				CMDBuild.Ajax.request({
+				CMDBuild.core.interfaces.Ajax.request({
 					url: 'services/json/management/modcard/getcard',
 					params: params,
 					method: 'GET',
@@ -174,7 +174,7 @@
 			try {
 				return record.get("Description").replace(/\n/g," ");
 			} catch (e) {
-				_debug('CMDBuild.Management.SearchableCombo recordDescriptionFixedForCarriageReturnBugOnComboBoxes error', e);
+				_error('CMDBuild.Management.SearchableCombo recordDescriptionFixedForCarriageReturnBugOnComboBoxes error', e);
 			}
 		},
 

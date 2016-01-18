@@ -1,4 +1,5 @@
 (function() {
+
 	Ext.define("CMDBuild.view.common.CMSideTabPanel", {
 		extend: "Ext.panel.Panel",
 		frame: false,
@@ -75,6 +76,20 @@
 			if (f) {
 				onTabClick.call(this, f);
 			}
+		},
+
+		/**
+		 * @param {Object} itemToSelect
+		 */
+		setActiveTab: function(itemToSelect) {
+			if (!Ext.isEmpty(this.items.getRange()) && Ext.isArray(this.items.getRange()))
+				Ext.Array.each(this.items.getRange(), function(item, i, allItems) {
+					if (itemToSelect['detailId'] == item.targetPanel['detailId']) {
+						onTabClick.call(this, item);
+
+						return false;
+					}
+				}, this);
 		}
 	});
 
@@ -98,4 +113,5 @@
 		manageToggleTab.call(this, tab);
 		this.fireEvent("click", tab);
 	}
+
 })();

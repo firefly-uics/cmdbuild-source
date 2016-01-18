@@ -33,7 +33,7 @@ Ext.define("CMDBuild.field.LookupCombo", {
 	setValueAndUpdateParents: function(value) {
 		if (!this.store) {
 			// TODO why sometimes there are lookups without store?
-			_debug("Lookup without store");
+			_error("Lookup without store");
 			return;
 		}
 

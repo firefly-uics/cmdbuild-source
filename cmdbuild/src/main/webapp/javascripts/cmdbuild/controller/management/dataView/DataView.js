@@ -1,9 +1,14 @@
 (function() {
 
 	Ext.define('CMDBuild.controller.management.dataView.DataView', {
-		extend: 'CMDBuild.controller.common.AbstractBasePanelController',
+		extend: 'CMDBuild.controller.common.abstract.Base',
 
-		requires: ['CMDBuild.core.proxy.CMProxyConstants'],
+		requires: ['CMDBuild.core.constants.Proxy'],
+
+		/**
+		 * @cfg {CMDBuild.controller.common.MainViewport}
+		 */
+		parentDelegate: undefined,
 
 		/**
 		 * @cfg {Array}
@@ -12,13 +17,14 @@
 			'dataViewSelectedGet',
 			'dataViewSelectedIsEmpty',
 			'dataViewSelectedSet',
+			'onDataViewModuleInit = onModuleInit',
 			'onDataViewViewSelected -> sectionController'
 		],
 
 		/**
 		 * @cfg {String}
 		 */
-		cmName: undefined,
+		identifier: undefined,
 
 		/**
 		 * @property {Object}
@@ -38,30 +44,14 @@
 		view: undefined,
 
 		/**
-		 * @param {CMDBuild.model.common.accordion.Generic} node
+		 * @param {Object} configurationObject
+		 *
+		 * @override
 		 */
-		onViewOnFront: function(node) {
-			if (!Ext.isEmpty(node)) {
-				var selectedDataView = node.getData();
-				selectedDataView[CMDBuild.core.proxy.CMProxyConstants.OUTPUT] = _CMCache.getDataSourceOutput(node.get(CMDBuild.core.proxy.CMProxyConstants.SOURCE_FUNCTION));
+		constructor: function(configurationObject) {
+			this.callParent(arguments);
 
-				this.dataViewSelectedSet({ value: selectedDataView });
-
-				this.view.removeAll(true);
-
-				switch(this.dataViewSelectedGet(CMDBuild.core.proxy.CMProxyConstants.SECTION_HIERARCHY)[0]) {
-					case 'sql':
-					default: {
-						this.sectionController = Ext.create('CMDBuild.controller.management.dataView.Sql', { parentDelegate: this });
-					}
-				}
-
-				this.view.add(this.sectionController.getView());
-
-				this.setViewTitle(this.dataViewSelectedGet(CMDBuild.core.proxy.CMProxyConstants.TEXT));
-
-				this.callParent(arguments);
-			}
+			this.view = Ext.create('CMDBuild.view.management.dataView.DataViewView', { delegate: this });
 		},
 
 		// SelectedView property methods
@@ -116,7 +106,48 @@
 						}
 					}
 				}
+			},
+
+		/**
+		 * Setup view items and controllers on accordion click
+		 *
+		 * @param {CMDBuild.model.common.accordion.Generic} node
+		 *
+		 * @override
+		 */
+		onDataViewModuleInit: function(node) {
+			if (!Ext.isEmpty(node)) {
+				var selectedDataView = node.getData();
+				selectedDataView[CMDBuild.core.constants.Proxy.OUTPUT] = _CMCache.getDataSourceOutput(node.get(CMDBuild.core.constants.Proxy.SOURCE_FUNCTION));
+
+				this.dataViewSelectedSet({ value: selectedDataView });
+
+				this.view.removeAll(true);
+
+				switch(this.dataViewSelectedGet(CMDBuild.core.constants.Proxy.SECTION_HIERARCHY)[0]) {
+					case 'sql':
+					default: {
+						this.sectionController = Ext.create('CMDBuild.controller.management.dataView.Sql', { parentDelegate: this });
+					}
+				}
+
+				this.view.add(this.sectionController.getView());
+
+				this.setViewTitle(this.dataViewSelectedGet(CMDBuild.core.constants.Proxy.TEXT));
+
+				// History record save
+				CMDBuild.global.navigation.Chronology.cmfg('navigationChronologyRecordSave', {
+					moduleId: this.cmfg('identifierGet'),
+					entryType: {
+						description: this.dataViewSelectedGet(CMDBuild.core.constants.Proxy.TEXT),
+						id: this.dataViewSelectedGet(CMDBuild.core.constants.Proxy.ID),
+						object: this.dataViewSelectedGet()
+					}
+				});
+
+				this.onModuleInit(node); // Custom callParent() implementation
 			}
+		}
 	});
 
 })();

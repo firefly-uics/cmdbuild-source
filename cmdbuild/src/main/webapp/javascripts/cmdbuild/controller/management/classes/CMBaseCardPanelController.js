@@ -1,6 +1,9 @@
 (function() {
 
-	Ext.require('CMDBuild.controller.management.classes.StaticsController');
+	Ext.require([
+		'CMDBuild.core.constants.Global',
+		'CMDBuild.controller.management.classes.StaticsController'
+	]);
 
 	Ext.define("CMDBuild.controller.management.classes.CMBaseCardPanelController", {
 		extend: "CMDBuild.controller.management.classes.CMModCardSubController",
@@ -10,7 +13,7 @@
 		},
 
 		requires: [
-			'CMDBuild.core.proxy.CMProxyConstants',
+			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.proxy.Card'
 		],
 
@@ -87,7 +90,7 @@
 			var loadRemoteData = true;
 
 			// If the entryType id and the id of the card are different the fields are not right, refill the form before the loadCard
-			var reloadFields = this.entryType.get(CMDBuild.core.proxy.CMProxyConstants.ID) != this.card.get("IdClass");
+			var reloadFields = this.entryType.get(CMDBuild.core.constants.Proxy.ID) != this.card.get("IdClass");
 
 			// Defer this call to release the UI event manage
 			Ext.defer(buildWidgetControllers, 1, this, [card]);
@@ -99,6 +102,21 @@
 			} else {
 				me.loadCard(loadRemoteData);
 			}
+
+			// History record save
+			CMDBuild.global.navigation.Chronology.cmfg('navigationChronologyRecordSave', {
+				moduleId: 'class',
+				entryType: {
+					description: _CMCardModuleState.entryType.get(CMDBuild.core.constants.Proxy.TEXT),
+					id: _CMCardModuleState.entryType.get(CMDBuild.core.constants.Proxy.ID),
+					object: _CMCardModuleState.entryType
+				},
+				item: {
+					description: card.get('Description') || card.get('Code'),
+					id: card.get(CMDBuild.core.constants.Proxy.ID),
+					object: card
+				}
+			});
 		},
 
 		onModifyCardClick: function() {
@@ -154,8 +172,8 @@
 			this.view.displayMode();
 
 			var cardData = {
-				Id: operation.result[CMDBuild.core.proxy.CMProxyConstants.ID] || this.card.get("Id"), // if is a new card, the id is given by the request
-				IdClass: this.entryType.get(CMDBuild.core.proxy.CMProxyConstants.ID)
+				Id: operation.result[CMDBuild.core.constants.Proxy.ID] || this.card.get("Id"), // if is a new card, the id is given by the request
+				IdClass: this.entryType.get(CMDBuild.core.constants.Proxy.ID)
 			};
 
 			this.fireEvent(this.CMEVENTS.cardSaved, cardData);
@@ -218,15 +236,15 @@
 			if (cardId && cardId != '-1' && (loadRemoteData || me.view.hasDomainAttributes())) {
 				if (!params) {
 					var params = {};
-					params[CMDBuild.core.proxy.CMProxyConstants.CARD_ID] = me.card.get('Id');
-					params[CMDBuild.core.proxy.CMProxyConstants.CLASS_NAME] = _CMCache.getEntryTypeNameById(me.card.get('IdClass'));
+					params[CMDBuild.core.constants.Proxy.CARD_ID] = me.card.get('Id');
+					params[CMDBuild.core.constants.Proxy.CLASS_NAME] = _CMCache.getEntryTypeNameById(me.card.get('IdClass'));
 				}
 
-				CMDBuild.LoadMask.get().show();
+				CMDBuild.core.LoadMask.show();
 				CMDBuild.ServiceProxy.card.get({
 					params: params,
 					success: function(result, options, decodedResult) {
-						CMDBuild.LoadMask.get().hide();
+						CMDBuild.core.LoadMask.hide();
 
 						var data = decodedResult.card;
 
@@ -375,7 +393,7 @@
 		var form = me.view.getForm();
 		var invalidAttributes = CMDBuild.controller.management.classes.StaticsController.getInvalidAttributeAsHTML(form);
 		if (invalidAttributes != null) {
-			var msg = Ext.String.format("<p class=\"{0}\">{1}</p>", CMDBuild.Constants.css.error_msg, CMDBuild.Translation.errors.invalid_attributes);
+			var msg = Ext.String.format("<p class=\"{0}\">{1}</p>", CMDBuild.core.constants.Global.getErrorMsgCss(), CMDBuild.Translation.errors.invalid_attributes);
 			CMDBuild.Msg.error(null, msg + invalidAttributes, false);
 			return false;
 		} else {
