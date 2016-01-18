@@ -269,21 +269,27 @@
 						cmName: 'notconfiguredpanel'
 					}),
 					new CMDBuild.view.administration.classes.CMModClass({
-						cmControllerType: CMDBuild.controller.administration.classes.CMModClassController
+						cmControllerType: CMDBuild.controller.administration.classes.CMModClassController,
+						cmName: 'class'
 					}),
-					new CMDBuild.Administration.ModIcons(),
+					new CMDBuild.Administration.ModIcons({
+						cmName: 'gis-icons'
+					}),
 					new CMDBuild.view.administration.gis.CMModGISNavigationConfiguration({
-						cmControllerType: CMDBuild.controller.administration.gis.CMModGISNavigationConfigurationController
+						cmControllerType: CMDBuild.controller.administration.gis.CMModGISNavigationConfigurationController,
+						cmName: 'gis-filter-configuration'
 					}),
 					new CMDBuild.Administration.ModLayerOrder({
-						cmControllerType: CMDBuild.controller.administration.gis.CMModLayerOrderController
+						cmControllerType: CMDBuild.controller.administration.gis.CMModLayerOrderController,
+						cmName: 'gis-layers-order'
 					}),
 					new CMDBuild.view.administration.navigationTrees.CMModNavigationTrees({
 						cmControllerType: CMDBuild.controller.administration.navigationTrees.CMModNavigationTreesController,
 						cmName: 'navigationtree'
 					}),
 					new CMDBuild.view.administration.dashboard.CMModDashboard({
-						cmControllerType: CMDBuild.controller.administration.dashboard.CMModDashboardController
+						cmControllerType: CMDBuild.controller.administration.dashboard.CMModDashboardController,
+						cmName: 'dashboard'
 					})
 				]
 			});
