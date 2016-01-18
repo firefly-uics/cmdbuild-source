@@ -1,6 +1,5 @@
 package org.cmdbuild.service.rest.v1.cxf;
 
-import static com.google.common.base.Predicates.and;
 import static com.google.common.collect.FluentIterable.from;
 import static com.google.common.collect.Iterables.size;
 import static org.cmdbuild.service.rest.v1.model.Models.newClassPrivilege;
@@ -87,31 +86,10 @@ public class CxfClassPrivileges implements ClassPrivileges {
 					.transform(classPrivilegeWithWriteMode());
 		} else {
 			elements = from(securityLogic.fetchClassPrivilegesForGroup(role.getId())) //
-					.filter(and(classesButNotProcesses(), privileged())) //
+					.filter(privileged()) //
 					.transform(classPrivilege());
 		}
 		return elements;
-	}
-
-	private Predicate<PrivilegeInfo> classesButNotProcesses() {
-		return new Predicate<PrivilegeInfo>() {
-
-			@Override
-			public boolean apply(final PrivilegeInfo input) {
-				final SerializablePrivilege privileged = input.getPrivilegedObject();
-				final boolean isClass = privileged instanceof CMClass;
-				final boolean output;
-				if (isClass) {
-					final CMClass privilegedClass = CMClass.class.cast(privileged);
-					final boolean isProcess = dataAccessLogic.isProcess(privilegedClass);
-					output = isClass && !isProcess;
-				} else {
-					output = false;
-				}
-				return output;
-			}
-
-		};
 	}
 
 	private Predicate<PrivilegeInfo> privileged() {
