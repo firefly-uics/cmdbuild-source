@@ -9,7 +9,7 @@
 		],
 
 		/**
-		 * @cfg {CMDBuild.controller.administration.group.privileges.Grid}
+		 * @cfg {CMDBuild.controller.administration.group.privileges.tabs.Classes}
 		 */
 		parentDelegate: undefined,
 
@@ -39,7 +39,7 @@
 
 		/**
 		 * @param {Object} configurationObject
-		 * @param {CMDBuild.controller.administration.group.privileges.Grid} configurationObject.parentDelegate
+		 * @param {CMDBuild.controller.administration.group.privileges.tabs.Classes} configurationObject.parentDelegate
 		 *
 		 * @override
 		 */
