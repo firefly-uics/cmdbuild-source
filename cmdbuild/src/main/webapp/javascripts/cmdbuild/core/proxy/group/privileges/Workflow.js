@@ -1,6 +1,6 @@
 (function() {
 
-	Ext.define('CMDBuild.core.proxy.group.privileges.Classes', {
+	Ext.define('CMDBuild.core.proxy.group.privileges.Workflow', {
 
 		requires: [
 			'CMDBuild.core.proxy.CMProxyConstants',
@@ -19,7 +19,7 @@
 				model: 'CMDBuild.model.group.privileges.GridRecord',
 				proxy: {
 					type: 'ajax',
-					url: CMDBuild.core.proxy.CMProxyUrlIndex.privileges.classes.read,
+					url: CMDBuild.core.proxy.CMProxyUrlIndex.privileges.workflow.read,
 					reader: {
 						type: 'json',
 						root: 'privileges'
@@ -34,24 +34,9 @@
 		/**
 		 * @param {Object} parameters
 		 */
-		readUIConfiguration: function(parameters) {
-			CMDBuild.Ajax.request({
-				url: CMDBuild.core.proxy.CMProxyUrlIndex.privileges.classes.loadClassUiConfiguration,
-				params: parameters.params,
-				loadMask: Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : true,
-				scope: parameters.scope || this,
-				failure: parameters.failure || Ext.emptyFn,
-				success: parameters.success || Ext.emptyFn,
-				callback: parameters.callback || Ext.emptyFn
-			});
-		},
-
-		/**
-		 * @param {Object} parameters
-		 */
 		setRowAndColumn: function(parameters) {
 			CMDBuild.Ajax.request({
-				url: CMDBuild.core.proxy.CMProxyUrlIndex.privileges.classes.setRowAndColumnPrivileges,
+				url: CMDBuild.core.proxy.CMProxyUrlIndex.privileges.workflow.setRowAndColumnPrivileges,
 				params: parameters.params,
 				loadMask: Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : true,
 				scope: parameters.scope || this,
@@ -66,22 +51,7 @@
 		 */
 		update: function(parameters) {
 			CMDBuild.Ajax.request({
-				url: CMDBuild.core.proxy.CMProxyUrlIndex.privileges.classes.update,
-				params: parameters.params,
-				loadMask: Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : true,
-				scope: parameters.scope || this,
-				failure: parameters.failure || Ext.emptyFn,
-				success: parameters.success || Ext.emptyFn,
-				callback: parameters.callback || Ext.emptyFn
-			});
-		},
-
-		/**
-		 * @param {Object} parameters
-		 */
-		updateUIConfiguration: function(parameters) {
-			CMDBuild.Ajax.request({
-				url: CMDBuild.core.proxy.CMProxyUrlIndex.privileges.classes.saveClassUiConfiguration,
+				url: CMDBuild.core.proxy.CMProxyUrlIndex.privileges.workflow.update,
 				params: parameters.params,
 				loadMask: Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : true,
 				scope: parameters.scope || this,

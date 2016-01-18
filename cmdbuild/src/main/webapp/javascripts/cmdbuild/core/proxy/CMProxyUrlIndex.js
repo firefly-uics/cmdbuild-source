@@ -249,7 +249,6 @@
 				read: 'services/json/schema/modsecurity/getclassprivilegelist',
 				update: 'services/json/schema/modsecurity/saveclassprivilege',
 
-				clearRowAndColumnPrivileges: 'services/json/schema/modsecurity/clearrowandcolumnprivileges',
 				setRowAndColumnPrivileges: 'services/json/schema/modsecurity/setrowandcolumnprivileges',
 
 				loadClassUiConfiguration: 'services/json/schema/modsecurity/loadclassuiconfiguration',
@@ -266,7 +265,13 @@
 			customPages: {
 				read: 'services/json/schema/modsecurity/getcustompageprivilegelist',
 				update: 'services/json/schema/modsecurity/savecustompageprivilege'
-			}
+			},
+			workflow: {
+				read: 'services/json/schema/modsecurity/getprocessprivilegelist',
+				update: 'services/json/schema/modsecurity/saveprocessprivilege',
+
+				setRowAndColumnPrivileges: 'services/json/schema/modsecurity/setrowandcolumnprivileges'
+			},
 		},
 
 		processes: {
