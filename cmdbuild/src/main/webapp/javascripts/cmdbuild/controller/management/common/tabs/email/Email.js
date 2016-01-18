@@ -761,7 +761,7 @@
 			) {
 				var me = this;
 				var xaVars = Ext.apply({}, template.getData(), template.get(CMDBuild.core.proxy.CMProxyConstants.VARIABLES));
-_debug('templateResolver template', template);
+
 				var templateResolver = new CMDBuild.Management.TemplateResolver({
 					clientForm: this.parentDelegate.getFormForTemplateResolver(),
 					xaVars: xaVars,
@@ -769,7 +769,7 @@ _debug('templateResolver template', template);
 						this.selectedEntity.get(CMDBuild.core.proxy.CMProxyConstants.ENTITY)
 					)
 				});
-_debug('templateResolver', templateResolver);
+
 				templateResolver.resolveTemplates({
 					attributes: Ext.Object.getKeys(xaVars),
 					callback: function(values, ctx) {
@@ -791,7 +791,7 @@ _debug('templateResolver', templateResolver);
 						emailObject.set(CMDBuild.core.proxy.CMProxyConstants.REFERENCE, me.cmfg('selectedEntityIdGet'));
 						emailObject.set(CMDBuild.core.proxy.CMProxyConstants.TEMPLATE, template.get(CMDBuild.core.proxy.CMProxyConstants.KEY));
 						emailObject.set(CMDBuild.core.proxy.CMProxyConstants.TEMPORARY, me.cmfg('selectedEntityIdGet') < 0); // Setup temporary parameter
-_debug('template regen', emailObject, values);
+
 						if (me.checkCondition(values, templateResolver)) {
 							_msg('Template with subject "' + values[CMDBuild.core.proxy.CMProxyConstants.SUBJECT] + '" regenerated');
 
