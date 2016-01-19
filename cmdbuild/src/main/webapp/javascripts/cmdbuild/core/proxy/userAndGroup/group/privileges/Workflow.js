@@ -1,32 +1,38 @@
 (function() {
 
-	Ext.define('CMDBuild.core.proxy.group.privileges.Workflow', {
+	Ext.define('CMDBuild.core.proxy.userAndGroup.group.privileges.Workflow', {
 
 		requires: [
-			'CMDBuild.core.proxy.CMProxyConstants',
-			'CMDBuild.core.proxy.CMProxyUrlIndex',
-			'CMDBuild.model.group.privileges.GridRecord'
+			'CMDBuild.core.cache.Cache',
+			'CMDBuild.core.constants.Proxy',
+			'CMDBuild.core.proxy.Index',
+			'CMDBuild.model.userAndGroup.group.privileges.GridRecord'
 		],
 
 		singleton: true,
 
 		/**
-		 * @returns {Ext.data.Store}
+		 * @returns {Ext.data.Store or CMDBuild.core.cache.Store}
 		 */
 		getStore: function() {
-			return Ext.create('Ext.data.Store', {
-				autoLoad: true,
-				model: 'CMDBuild.model.group.privileges.GridRecord',
+			return CMDBuild.core.cache.Cache.requestAsStore(CMDBuild.core.constants.Proxy.GROUP, {
+				autoLoad: false,
+				model: 'CMDBuild.model.userAndGroup.group.privileges.GridRecord',
 				proxy: {
 					type: 'ajax',
-					url: CMDBuild.core.proxy.CMProxyUrlIndex.privileges.workflow.read,
+					url: CMDBuild.core.proxy.Index.privileges.workflow.read,
 					reader: {
 						type: 'json',
-						root: 'privileges'
+						root: CMDBuild.core.constants.Proxy.PRIVILEGES
+					},
+					extraParams: {
+						limitParam: undefined,
+						pageParam: undefined,
+						startParam: undefined
 					}
 				},
 				sorters: [
-					{ property: CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION, direction: 'ASC' }
+					{ property: CMDBuild.core.constants.Proxy.DESCRIPTION, direction: 'ASC' }
 				]
 			});
 		},
@@ -35,30 +41,22 @@
 		 * @param {Object} parameters
 		 */
 		setRowAndColumn: function(parameters) {
-			CMDBuild.Ajax.request({
-				url: CMDBuild.core.proxy.CMProxyUrlIndex.privileges.workflow.setRowAndColumnPrivileges,
-				params: parameters.params,
-				loadMask: Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : true,
-				scope: parameters.scope || this,
-				failure: parameters.failure || Ext.emptyFn,
-				success: parameters.success || Ext.emptyFn,
-				callback: parameters.callback || Ext.emptyFn
-			});
+			parameters = Ext.isEmpty(parameters) ? {} : parameters;
+
+			Ext.apply(parameters, { url: CMDBuild.core.proxy.Index.privileges.workflow.setRowAndColumnPrivileges });
+
+			CMDBuild.core.cache.Cache.request(CMDBuild.core.constants.Proxy.GROUP, parameters);
 		},
 
 		/**
 		 * @param {Object} parameters
 		 */
 		update: function(parameters) {
-			CMDBuild.Ajax.request({
-				url: CMDBuild.core.proxy.CMProxyUrlIndex.privileges.workflow.update,
-				params: parameters.params,
-				loadMask: Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : true,
-				scope: parameters.scope || this,
-				failure: parameters.failure || Ext.emptyFn,
-				success: parameters.success || Ext.emptyFn,
-				callback: parameters.callback || Ext.emptyFn
-			});
+			parameters = Ext.isEmpty(parameters) ? {} : parameters;
+
+			Ext.apply(parameters, { url: CMDBuild.core.proxy.Index.privileges.workflow.update });
+
+			CMDBuild.core.cache.Cache.request(CMDBuild.core.constants.Proxy.GROUP, parameters, true);
 		}
 	});
 

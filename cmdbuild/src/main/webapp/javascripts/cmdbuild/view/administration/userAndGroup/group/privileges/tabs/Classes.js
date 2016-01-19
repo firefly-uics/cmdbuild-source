@@ -1,15 +1,15 @@
 (function() {
 
-	Ext.define('CMDBuild.view.administration.group.privileges.tabs.Classes', {
+	Ext.define('CMDBuild.view.administration.userAndGroup.group.privileges.tabs.Classes', {
 		extend: 'Ext.grid.Panel',
 
 		requires: [
-			'CMDBuild.core.proxy.CMProxyConstants',
-			'CMDBuild.core.proxy.group.privileges.Classes'
+			'CMDBuild.core.constants.Proxy',
+			'CMDBuild.core.proxy.userAndGroup.group.privileges.Classes'
 		],
 
 		/**
-		 * @cfg {CMDBuild.controller.administration.group.privileges.tabs.Classes}
+		 * @cfg {CMDBuild.controller.administration.userAndGroup.group.privileges.tabs.Classes}
 		 */
 		delegate: undefined,
 
@@ -22,7 +22,7 @@
 			Ext.apply(this, {
 				columns: [
 					Ext.create('Ext.grid.column.Column', {
-						dataIndex: CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION,
+						dataIndex: CMDBuild.core.constants.Proxy.DESCRIPTION,
 						text: CMDBuild.Translation.descriptionLabel,
 						flex: 1,
 					}),
@@ -42,7 +42,7 @@
 								return checked;
 							},
 							checkchange: function(column, rowIndex, checked, eOpts) {
-								this.delegate.cmfg('onGroupPrivilegesTabClassesSetPrivilege', {
+								this.delegate.cmfg('onUserAndGroupGroupTabPrivilegesTabClassesSetPrivilege', {
 									rowIndex: rowIndex,
 									privilege: 'none_privilege'
 								});
@@ -65,7 +65,7 @@
 								return checked;
 							},
 							checkchange: function(column, rowIndex, checked, eOpts) {
-								this.delegate.cmfg('onGroupPrivilegesTabClassesSetPrivilege', {
+								this.delegate.cmfg('onUserAndGroupGroupTabPrivilegesTabClassesSetPrivilege', {
 									rowIndex: rowIndex,
 									privilege: 'read_privilege'
 								});
@@ -88,7 +88,7 @@
 								return checked;
 							},
 							checkchange: function(column, rowIndex, checked, eOpts) {
-								this.delegate.cmfg('onGroupPrivilegesTabClassesSetPrivilege', {
+								this.delegate.cmfg('onUserAndGroupGroupTabPrivilegesTabClassesSetPrivilege', {
 									rowIndex: rowIndex,
 									privilege: 'write_privilege'
 								});
@@ -110,7 +110,7 @@
 								scope: this,
 
 								handler: function(grid, rowIndex, colIndex, node, e, record, rowNode) {
-									this.delegate.cmfg('onGroupPrivilegesTabClassesSetFilterClick', record);
+									this.delegate.cmfg('onUserAndGroupGroupTabPrivilegesTabClassesSetFilterClick', record);
 								}
 							}),
 							Ext.create('CMDBuild.core.buttons.iconized.filter.Clear', {
@@ -119,7 +119,7 @@
 								scope: this,
 
 								handler: function(grid, rowIndex, colIndex, node, e, record, rowNode) {
-									this.delegate.cmfg('onGroupPrivilegesTabClassesRemoveFilterClick', record);
+									this.delegate.cmfg('onUserAndGroupGroupTabPrivilegesTabClassesRemoveFilterClick', record);
 								}
 							}),
 							Ext.create('CMDBuild.core.buttons.iconized.UserInterface', {
@@ -128,17 +128,17 @@
 								scope: this,
 
 								isDisabled: function(grid, rowIndex, colIndex, item, record) {
-									return !_CMCache.isClassById(record.get(CMDBuild.core.proxy.CMProxyConstants.ID));
+									return !_CMCache.isClassById(record.get(CMDBuild.core.constants.Proxy.ID));
 								},
 
 								handler: function(grid, rowIndex, colIndex, node, e, record, rowNode) {
-									this.delegate.cmfg('onGroupPrivilegesTabClassesUIConfigurationButtonClick', record);
+									this.delegate.cmfg('onUserAndGroupGroupTabPrivilegesTabClassesUIConfigurationButtonClick', record);
 								}
 							})
 						]
 					})
 				],
-				store: CMDBuild.core.proxy.group.privileges.Classes.getStore()
+				store: CMDBuild.core.proxy.userAndGroup.group.privileges.Classes.getStore()
 			});
 
 			this.callParent(arguments);
@@ -146,7 +146,7 @@
 
 		listeners: {
 			show: function(panel, eOpts) {
-				this.delegate.cmfg('onGroupPrivilegesTabClassesShow');
+				this.delegate.cmfg('onUserAndGroupGroupTabPrivilegesTabClassesShow');
 			}
 		}
 	});

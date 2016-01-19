@@ -12,10 +12,10 @@
 		singleton: true,
 
 		/**
-		 * @returns {Ext.data.Store}
+		 * @returns {Ext.data.Store or CMDBuild.core.cache.Store}
 		 */
 		getStore: function() {
-			return Ext.create('Ext.data.Store', {
+			return CMDBuild.core.cache.Cache.requestAsStore(CMDBuild.core.constants.Proxy.GROUP, {
 				autoLoad: false,
 				model: 'CMDBuild.model.userAndGroup.group.privileges.GridRecord',
 				proxy: {
@@ -23,7 +23,12 @@
 					url: CMDBuild.core.proxy.Index.privileges.classes.read,
 					reader: {
 						type: 'json',
-						root: 'privileges'
+						root: CMDBuild.core.constants.Proxy.PRIVILEGES
+					},
+					extraParams: {
+						limitParam: undefined,
+						pageParam: undefined,
+						startParam: undefined
 					}
 				},
 				sorters: [
@@ -38,9 +43,7 @@
 		readUIConfiguration: function(parameters) {
 			parameters = Ext.isEmpty(parameters) ? {} : parameters;
 
-			Ext.apply(parameters, {
-				url: CMDBuild.core.proxy.Index.privileges.classes.loadClassUiConfiguration
-			});
+			Ext.apply(parameters, { url: CMDBuild.core.proxy.Index.privileges.classes.loadClassUiConfiguration });
 
 			CMDBuild.core.cache.Cache.request(CMDBuild.core.constants.Proxy.GROUP, parameters);
 		},
@@ -51,9 +54,7 @@
 		setRowAndColumn: function(parameters) {
 			parameters = Ext.isEmpty(parameters) ? {} : parameters;
 
-			Ext.apply(parameters, {
-				url: CMDBuild.core.proxy.Index.privileges.classes.setRowAndColumnPrivileges
-			});
+			Ext.apply(parameters, { url: CMDBuild.core.proxy.Index.privileges.classes.setRowAndColumnPrivileges });
 
 			CMDBuild.core.cache.Cache.request(CMDBuild.core.constants.Proxy.GROUP, parameters, true);
 		},
@@ -64,9 +65,7 @@
 		update: function(parameters) {
 			parameters = Ext.isEmpty(parameters) ? {} : parameters;
 
-			Ext.apply(parameters, {
-				url: CMDBuild.core.proxy.Index.privileges.classes.update
-			});
+			Ext.apply(parameters, { url: CMDBuild.core.proxy.Index.privileges.classes.update });
 
 			CMDBuild.core.cache.Cache.request(CMDBuild.core.constants.Proxy.GROUP, parameters, true);
 		},
@@ -77,9 +76,7 @@
 		updateUIConfiguration: function(parameters) {
 			parameters = Ext.isEmpty(parameters) ? {} : parameters;
 
-			Ext.apply(parameters, {
-				url: CMDBuild.core.proxy.Index.privileges.classes.saveClassUiConfiguration
-			});
+			Ext.apply(parameters, { url: CMDBuild.core.proxy.Index.privileges.classes.saveClassUiConfiguration });
 
 			CMDBuild.core.cache.Cache.request(CMDBuild.core.constants.Proxy.GROUP, parameters, true);
 		}
