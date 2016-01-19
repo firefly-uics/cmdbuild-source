@@ -70,7 +70,6 @@
 
 		<!-- 3. Configuration script -->
 		<script type="text/javascript" src="javascripts/cmdbuild/core/buttons/Base.js"></script>
-		<script type="text/javascript" src="javascripts/cmdbuild/core/buttons/Buttons.js"></script>
 
 		<title>CMDBuild - Configuration</title>
 	</head>
