@@ -1132,6 +1132,7 @@
 	"disableGridFilter": "Désactiver le filtre de la table",
 	"disableGroup": "Désactiver le groupe",
 	"disableLookup": "Désactiver la liste de valeurs",
+	"disableSynchronizationOfMissingVariables": "<em>Disable synchronization of missing variables</em>",
 	"disableUser": "Désactiver l'utilisateur",
 	"display_less_attributes": "Afficher moins d'attributs",
 	"display_more_attributes": "Afficher plus d'attributs",

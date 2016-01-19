@@ -165,6 +165,7 @@
 		DISABLE_DELETE_ROW: 'disableDeleteRow',
 		DISABLE_GRID_FILTER_TOGGLER: 'disableGridFilterToggler',
 		DISABLE_IMPORT_FROM_CSV: 'disableImportFromCsv',
+		DISABLE_SYNCHRONIZATION_OF_MISSING_VARIABLES: 'disableSynchronizationOfMissingVariables',
 		DISABLED: 'disabled',
 		DISABLED_CARD_TABS: 'disabledCardTabs',
 		DISABLED_MODULES: 'disabledModules',

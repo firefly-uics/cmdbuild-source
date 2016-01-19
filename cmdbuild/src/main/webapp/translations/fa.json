@@ -1131,6 +1131,7 @@
 	"disableGridFilter": "<em>Disable grid filter</em>",
 	"disableGroup": "غیر فعال کردن گروه",
 	"disableLookup": "غیر فعال کردن جستجو",
+	"disableSynchronizationOfMissingVariables": "<em>Disable synchronization of missing variables</em>",
 	"disableUser": "غیر فعال کردن کاربر",
 	"display_less_attributes": "خواص کمتری نشان بده",
 	"display_more_attributes": "خواص بیشتری نشان بده",

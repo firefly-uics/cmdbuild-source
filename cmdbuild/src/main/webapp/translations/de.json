@@ -1132,6 +1132,7 @@
 	"disableGridFilter": "<em>Disable grid filter</em>",
 	"disableGroup": "Gruppe sperren",
 	"disableLookup": "Lookup deaktivieren",
+	"disableSynchronizationOfMissingVariables": "<em>Disable synchronization of missing variables</em>",
 	"disableUser": "Benutzer sperren",
 	"display_less_attributes": "Weniger Attribute zeigen",
 	"display_more_attributes": "Mehr Attribute zeigen",

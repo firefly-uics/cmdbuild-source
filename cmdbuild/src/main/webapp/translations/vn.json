@@ -1132,6 +1132,7 @@
 	"disableGridFilter": "<em>Disable grid filter</em>",
 	"disableGroup": "Vô hiệu hóa Nhóm",
 	"disableLookup": "Vô hiệu hóa tra cứu",
+	"disableSynchronizationOfMissingVariables": "<em>Disable synchronization of missing variables</em>",
 	"disableUser": "Vô hiệu hóa người dùng",
 	"display_less_attributes": "<em>Display less attributes</em>",
 	"display_more_attributes": "<em>Display more attributes</em>",

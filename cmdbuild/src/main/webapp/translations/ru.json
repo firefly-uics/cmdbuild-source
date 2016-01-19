@@ -1132,6 +1132,7 @@
 	"disableGridFilter": "<em>Disable grid filter</em>",
 	"disableGroup": "Отключить группу",
 	"disableLookup": "Отключить элемент",
+	"disableSynchronizationOfMissingVariables": "<em>Disable synchronization of missing variables</em>",
 	"disableUser": "Отключить пользователя",
 	"display_less_attributes": "Показать меньше атрибутов",
 	"display_more_attributes": "Показать больше атрибутов",

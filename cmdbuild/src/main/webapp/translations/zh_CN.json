@@ -1132,6 +1132,7 @@
 	"disableGridFilter": "无效的方格过滤器",
 	"disableGroup": "<em>Disable group</em>",
 	"disableLookup": "<em>Disable lookup</em>",
+	"disableSynchronizationOfMissingVariables": "<em>Disable synchronization of missing variables</em>",
 	"disableUser": "无效的用户",
 	"display_less_attributes": "显示较少属性",
 	"display_more_attributes": "显示更多属性",

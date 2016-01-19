@@ -1132,6 +1132,7 @@
 	"disableGridFilter": "Rács szűrő tiltása",
 	"disableGroup": "Csoport tiltása",
 	"disableLookup": "<em>Disable lookup</em>",
+	"disableSynchronizationOfMissingVariables": "<em>Disable synchronization of missing variables</em>",
 	"disableUser": "Felhasználó tiltása",
 	"display_less_attributes": "Kevesebb attribútum megjelenítése",
 	"display_more_attributes": "Több attribútum megjelenítése",

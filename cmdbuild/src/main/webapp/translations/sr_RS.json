@@ -1132,6 +1132,7 @@
 	"disableGridFilter": "Искључи филтрирање табеле",
 	"disableGroup": "Искључи групу",
 	"disableLookup": "Искључи ставку шифарника",
+	"disableSynchronizationOfMissingVariables": "<em>Disable synchronization of missing variables</em>",
 	"disableUser": "Искључи корисника",
 	"display_less_attributes": "Прикажи мање атрибута",
 	"display_more_attributes": "Прикажи више атрибута",
