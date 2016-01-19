@@ -1,7 +1,7 @@
 (function() {
 
 	Ext.define('CMDBuild.view.common.MainViewport', {
-		extend: 'Ext.Viewport',
+		extend: 'Ext.container.Viewport',
 
 		requires: ['CMDBuild.core.Splash'],
 
@@ -20,20 +20,14 @@
 		 */
 		moduleContainer: undefined,
 
-		/**
-		 * @cfg {Boolean}
-		 */
-		hideAccordions: false,
-
 		border: false,
 		frame: false,
 		layout: 'border',
-		renderTo: Ext.getBody(),
 
 		initComponent: function() {
 			Ext.apply(this, {
 				items: [
-					this.header = Ext.create('Ext.panel.Panel', {
+					Ext.create('Ext.panel.Panel', {
 						region: 'north',
 						border: true,
 						contentEl: 'header',
@@ -43,12 +37,11 @@
 					this.accordionContainer = Ext.create('Ext.panel.Panel', {
 						region: 'west',
 						border: true,
-						collapsed: this.hideAccordions,
+						collapsed: this.delegate.cmfg('mainViewportAccordionContainerIsCollapsed'),
 						collapsible: true,
 						frame: false,
 						header: false, // Hide panel header as CMDBuild UI look
 						layout: 'accordion',
-						margin: this.hideAccordions ? '0 2 0 0' : '0',
 						padding: '5 0 5 5',
 						split: true,
 						width: 200,
@@ -68,7 +61,7 @@
 
 						items: [],
 					}),
-					this.footer = Ext.create('Ext.panel.Panel', {
+					Ext.create('Ext.panel.Panel', {
 						region: 'south',
 						border: true,
 						contentEl: 'footer',
