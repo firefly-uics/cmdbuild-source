@@ -36,16 +36,26 @@
 		hide: function() {
 			CMDBuild.core.LoadMask.build().hide();
 
-			if (!Ext.isEmpty(CMDBuild.core.Splash.build()) && !CMDBuild.core.Splash.build().isHidden())
+			if (
+				!Ext.isEmpty(CMDBuild.core.Splash)
+				&& Ext.isFunction(CMDBuild.core.Splash.build)
+				&& !CMDBuild.core.Splash.build().isHidden()
+			) {
 				CMDBuild.core.Splash.build().hide();
+			}
 		},
 
 		/**
 		 * @param {String} message
 		 */
 		show: function(message) {
-			if (Ext.isEmpty(CMDBuild.core.Splash.build()) || CMDBuild.core.Splash.build().isHidden())
+			if (
+				Ext.isEmpty(CMDBuild.core.Splash)
+				|| !Ext.isFunction(CMDBuild.core.Splash.build)
+				|| CMDBuild.core.Splash.build().isHidden()
+			) {
 				CMDBuild.core.LoadMask.build(message).show();
+			}
 		}
 	});
 
