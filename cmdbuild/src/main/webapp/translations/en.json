@@ -1153,7 +1153,7 @@
 	"emailTemplate": "E-mail Template",
 	"empty": "Empty",
 	"enable": "Enable",
-	"enableAddAttachmentOnClosedActivities": "Enable add attachment on closed activities",
+	"enableAddAttachmentOnClosedActivities": "Enable \"Add attachment\" on closed activities",
 	"enabled": "Enabled",
 	"enabledClasses": "Enabled classes",
 	"enabledGroups": "Enabled groups",
