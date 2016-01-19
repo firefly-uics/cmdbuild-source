@@ -1152,6 +1152,7 @@
 	"emailTemplate": "E-mail Sablon",
 	"empty": "<em>Empty</em>",
 	"enable": "Engedélyezés",
+	"enableAddAttachmentOnClosedActivities": "<em>Enable add attachment on closed activities</em>",
 	"enabled": "Engedélyezve",
 	"enabledClasses": "Engedélyezett osztályok",
 	"enabledGroups": "<em>Enabled groups</em>",

@@ -1152,6 +1152,7 @@
 	"emailTemplate": "Email sjabloon",
 	"empty": "<em>Empty</em>",
 	"enable": "Activeer",
+	"enableAddAttachmentOnClosedActivities": "<em>Enable add attachment on closed activities</em>",
 	"enabled": "Geactiveerd",
 	"enabledClasses": "<em>Enabled classes</em>",
 	"enabledGroups": "Groepen toestaan",

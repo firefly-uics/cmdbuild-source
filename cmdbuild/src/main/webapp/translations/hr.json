@@ -1152,6 +1152,7 @@
 	"emailTemplate": "Email Predložak",
 	"empty": "<em>Empty</em>",
 	"enable": "<em>Enable</em>",
+	"enableAddAttachmentOnClosedActivities": "<em>Enable add attachment on closed activities</em>",
 	"enabled": "Uključen",
 	"enabledClasses": "<em>Enabled classes</em>",
 	"enabledGroups": "Odobrene grupe",

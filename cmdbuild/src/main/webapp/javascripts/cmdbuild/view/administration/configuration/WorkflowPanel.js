@@ -86,7 +86,7 @@
 							},
 							Ext.create('Ext.form.field.Checkbox', {
 								name: CMDBuild.core.constants.Proxy.ENABLE_ADD_ATTACHMENT_ON_CLOSED_ACTIVITIES,
-								fieldLabel: 'CMDBuild.Translation.enableAddAttachmentOnClosedActivities',
+								fieldLabel: CMDBuild.Translation.enableAddAttachmentOnClosedActivities,
 								inputValue: true,
 								uncheckedValue: false
 							})

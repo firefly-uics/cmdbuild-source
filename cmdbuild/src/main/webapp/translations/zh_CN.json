@@ -1152,6 +1152,7 @@
 	"emailTemplate": "E-mail模版",
 	"empty": "<em>Empty</em>",
 	"enable": "使生效",
+	"enableAddAttachmentOnClosedActivities": "<em>Enable add attachment on closed activities</em>",
 	"enabled": "使生效的",
 	"enabledClasses": "生效的类",
 	"enabledGroups": "<em>Enabled groups</em>",

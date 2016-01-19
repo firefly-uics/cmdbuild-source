@@ -1152,6 +1152,7 @@
 	"emailTemplate": "電子メールテンプレート",
 	"empty": "<em>Empty</em>",
 	"enable": "有効にする",
+	"enableAddAttachmentOnClosedActivities": "<em>Enable add attachment on closed activities</em>",
 	"enabled": "有効",
 	"enabledClasses": "<em>Enabled classes</em>",
 	"enabledGroups": "可能なグループ",

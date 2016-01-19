@@ -1152,6 +1152,7 @@
 	"emailTemplate": "<em>Email Template</em>",
 	"empty": "<em>Empty</em>",
 	"enable": "<em>Enable</em>",
+	"enableAddAttachmentOnClosedActivities": "<em>Enable add attachment on closed activities</em>",
 	"enabled": "Habilitado",
 	"enabledClasses": "<em>Enabled classes</em>",
 	"enabledGroups": "Grupos habilitados",
