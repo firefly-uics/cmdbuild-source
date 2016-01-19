@@ -1309,6 +1309,7 @@
 	"disabledTabsInProcessesModule": "Uitgeschakelde tabs in processen module",
 	"disableGridFilter": "Verwijder raster filter",
 	"disableGroup": "Blokkeer groep",
+	"disableSynchronizationOfMissingVariables": "<em>Disable synchronization of missing variables</em>",
 	"disableUser": "Blokkeer gebruiker",
 	"display_less_attributes": "Toon minder attributen",
 	"display_more_attributes": "Toon meer attributen",

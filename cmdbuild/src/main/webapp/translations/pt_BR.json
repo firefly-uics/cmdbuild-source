@@ -1309,6 +1309,7 @@
 	"disabledTabsInProcessesModule": "Abas desabilitadas no módulo processo",
 	"disableGridFilter": "<em>Disable grid filter</em>",
 	"disableGroup": "Desabilitar grupo",
+	"disableSynchronizationOfMissingVariables": "<em>Disable synchronization of missing variables</em>",
 	"disableUser": "Desabilitar usuário",
 	"display_less_attributes": "<em>Display less attributes</em>",
 	"display_more_attributes": "<em>Display more attributes</em>",

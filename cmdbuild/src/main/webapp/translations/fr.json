@@ -1309,6 +1309,7 @@
 	"disabledTabsInProcessesModule": "Désactiver les onglets dans les processes",
 	"disableGridFilter": "Désactiver le filtre de la table",
 	"disableGroup": "Désactiver le groupe",
+	"disableSynchronizationOfMissingVariables": "<em>Disable synchronization of missing variables</em>",
 	"disableUser": "Désactiver l'utilisateur",
 	"display_less_attributes": "Afficher moins d'attributs",
 	"display_more_attributes": "Afficher plus d'attributs",
