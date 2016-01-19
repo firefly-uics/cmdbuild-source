@@ -1153,7 +1153,7 @@
 	"emailTemplate": "Plantilla correo",
 	"empty": "<em>Empty</em>",
 	"enable": "Habilita",
-	"enableAddAttachmentOnClosedActivities": "<em>Enable add attachment on closed activities</em>",
+	"enableAddAttachmentOnClosedActivities": "<em>Enable \"Add attachment\" on closed activities</em>",
 	"enabled": "Habilitado",
 	"enabledClasses": "Clases habilitadas",
 	"enabledGroups": "Grupos habilitados",
