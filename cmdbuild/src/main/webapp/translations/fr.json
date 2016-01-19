@@ -1152,6 +1152,7 @@
 	"emailTemplate": "Modèle d'email",
 	"empty": "Vide",
 	"enable": "Activer",
+	"enableAddAttachmentOnClosedActivities": "<em>Enable add attachment on closed activities</em>",
 	"enabled": "Activé",
 	"enabledClasses": "Classes activées",
 	"enabledGroups": "Groupes activés",
