@@ -222,8 +222,8 @@
 		isRefreshNeeded: function() {
 			switch (
 				this.delegate.cmfg('widgetCustomFormConfigurationGet', [
-					CMDBuild.core.proxy.CMProxyConstants.CAPABILITIES,
-					CMDBuild.core.proxy.CMProxyConstants.REFRESH_BEHAVIOUR
+					CMDBuild.core.constants.Proxy.CAPABILITIES,
+					CMDBuild.core.constants.Proxy.REFRESH_BEHAVIOUR
 				])
 			) {
 				case 'firstTime':

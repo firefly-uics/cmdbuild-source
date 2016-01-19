@@ -1,15 +1,15 @@
 (function() {
 
-	Ext.define('CMDBuild.view.administration.group.privileges.tabs.Filter', {
+	Ext.define('CMDBuild.view.administration.userAndGroup.group.privileges.tabs.Filter', {
 		extend: 'Ext.grid.Panel',
 
 		requires: [
-			'CMDBuild.core.proxy.CMProxyConstants',
-			'CMDBuild.core.proxy.group.privileges.Filter'
+			'CMDBuild.core.constants.Proxy',
+			'CMDBuild.core.proxy.userAndGroup.group.privileges.Filter'
 		],
 
 		/**
-		 * @cfg {CMDBuild.controller.administration.group.privileges.tabs.Filter}
+		 * @cfg {CMDBuild.controller.administration.userAndGroup.group.privileges.tabs.Filter}
 		 */
 		delegate: undefined,
 
@@ -22,7 +22,7 @@
 			Ext.apply(this, {
 				columns: [
 					Ext.create('Ext.grid.column.Column', {
-						dataIndex: CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION,
+						dataIndex: CMDBuild.core.constants.Proxy.DESCRIPTION,
 						text: CMDBuild.Translation.descriptionLabel,
 						flex: 1,
 					}),
@@ -42,7 +42,7 @@
 								return checked;
 							},
 							checkchange: function(column, rowIndex, checked, eOpts) {
-								this.delegate.cmfg('onGroupPrivilegesTabFilterSetPrivilege', {
+								this.delegate.cmfg('onUserAndGroupGroupTabPrivilegesTabFilterSetPrivilege', {
 									rowIndex: rowIndex,
 									privilege: 'none_privilege'
 								});
@@ -65,7 +65,7 @@
 								return checked;
 							},
 							checkchange: function(column, rowIndex, checked, eOpts) {
-								this.delegate.cmfg('onGroupPrivilegesTabFilterSetPrivilege', {
+								this.delegate.cmfg('onUserAndGroupGroupTabPrivilegesTabFilterSetPrivilege', {
 									rowIndex: rowIndex,
 									privilege: 'read_privilege'
 								});
@@ -73,7 +73,7 @@
 						}
 					})
 				],
-				store: CMDBuild.core.proxy.group.privileges.Filter.getStore()
+				store: CMDBuild.core.proxy.userAndGroup.group.privileges.Filter.getStore()
 			});
 
 			this.callParent(arguments);
@@ -81,7 +81,7 @@
 
 		listeners: {
 			show: function(panel, eOpts) {
-				this.delegate.cmfg('onGroupPrivilegesTabFilterShow');
+				this.delegate.cmfg('onUserAndGroupGroupTabPrivilegesTabFilterShow');
 			}
 		}
 	});

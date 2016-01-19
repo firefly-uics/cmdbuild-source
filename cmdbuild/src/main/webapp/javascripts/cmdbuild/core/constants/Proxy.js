@@ -395,6 +395,7 @@
 		PRIVILEGED: 'privileged',
 		PRIVILEGED_OBJ_DESCRIPTION: 'privilegedObjectDescription',
 		PRIVILEGED_OBJ_ID: 'privilegedObjectId',
+		PRIVILEGES: 'privileges',
 		PROCESS: 'process',
 		PROCESS_ATTACHMENT_TAB: 'processAttachmentTab',
 		PROCESS_EMAIL_TAB: 'processEmailTab',

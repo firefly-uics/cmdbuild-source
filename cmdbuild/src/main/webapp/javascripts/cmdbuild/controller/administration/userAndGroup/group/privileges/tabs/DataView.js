@@ -1,12 +1,12 @@
 (function() {
 
-	Ext.define('CMDBuild.controller.administration.group.privileges.tabs.DataView', {
-		extend: 'CMDBuild.controller.common.AbstractController',
+	Ext.define('CMDBuild.controller.administration.userAndGroup.group.privileges.tabs.DataView', {
+		extend: 'CMDBuild.controller.common.abstract.Base',
 
 		requires: [
+			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.Message',
-			'CMDBuild.core.proxy.CMProxyConstants',
-			'CMDBuild.core.proxy.group.privileges.DataView'
+			'CMDBuild.core.proxy.userAndGroup.group.privileges.DataView'
 		],
 
 		/**
@@ -18,12 +18,12 @@
 		 * @cfg {Array}
 		 */
 		cmfgCatchedFunctions: [
-			'onGroupPrivilegesTabDataViewSetPrivilege',
-			'onGroupPrivilegesTabDataViewShow'
+			'onUserAndGroupGroupTabPrivilegesTabDataViewSetPrivilege',
+			'onUserAndGroupGroupTabPrivilegesTabDataViewShow'
 		],
 
 		/**
-		 * @cfg {CMDBuild.view.administration.group.privileges.tabs.DataView}
+		 * @cfg {CMDBuild.view.administration.userAndGroup.group.privileges.tabs.DataView}
 		 */
 		view: undefined,
 
@@ -36,12 +36,12 @@
 		constructor: function(configurationObject) {
 			this.callParent(arguments);
 
-			this.view = Ext.create('CMDBuild.view.administration.group.privileges.tabs.DataView', { delegate: this });
+			this.view = Ext.create('CMDBuild.view.administration.userAndGroup.group.privileges.tabs.DataView', { delegate: this });
 		},
 
-		onGroupPrivilegesTabDataViewShow: function() {
+		onUserAndGroupGroupTabPrivilegesTabDataViewShow: function() {
 			var params = {};
-			params[CMDBuild.core.proxy.CMProxyConstants.GROUP_ID] = this.cmfg('selectedGroupGet', CMDBuild.core.proxy.CMProxyConstants.ID);
+			params[CMDBuild.core.constants.Proxy.GROUP_ID] = this.cmfg('userAndGroupGroupSelectedGroupGet', CMDBuild.core.constants.Proxy.ID);
 
 			this.view.getStore().load({ params: params });
 		},
@@ -53,22 +53,22 @@
 		 *
 		 * TODO: waiting for refactor (attributes names)
 		 */
-		onGroupPrivilegesTabDataViewSetPrivilege: function(parameters) {
+		onUserAndGroupGroupTabPrivilegesTabDataViewSetPrivilege: function(parameters) {
 			if (!Ext.isEmpty(parameters) && Ext.isObject(parameters)) {
 				var params = {};
 				params['privilege_mode'] = parameters.privilege;
-				params['privilegedObjectId'] = this.view.store.getAt(parameters.rowIndex).get(CMDBuild.core.proxy.CMProxyConstants.ID);
-				params[CMDBuild.core.proxy.CMProxyConstants.GROUP_ID] = this.cmfg('selectedGroupGet', CMDBuild.core.proxy.CMProxyConstants.ID);
+				params['privilegedObjectId'] = this.view.store.getAt(parameters.rowIndex).get(CMDBuild.core.constants.Proxy.ID);
+				params[CMDBuild.core.constants.Proxy.GROUP_ID] = this.cmfg('userAndGroupGroupSelectedGroupGet', CMDBuild.core.constants.Proxy.ID);
 
-				CMDBuild.core.proxy.group.privileges.DataView.update({
+				CMDBuild.core.proxy.userAndGroup.group.privileges.DataView.update({
 					params: params,
 					scope: this,
 					success: function(response, options, decodedResponse) {
-						this.cmfg('onGroupPrivilegesTabDataViewShow');
+						this.cmfg('onUserAndGroupGroupTabPrivilegesTabDataViewShow');
 					}
 				});
 			} else {
-				_error('wrong or empty parameters in onGroupPrivilegesTabDataViewSetPrivilege()', this);
+				_error('wrong or empty parameters in onUserAndGroupGroupTabPrivilegesTabDataViewSetPrivilege()', this);
 			}
 		}
 	});

@@ -12,10 +12,10 @@
 		singleton: true,
 
 		/**
-		 * @returns {Ext.data.Store}
+		 * @returns {Ext.data.Store or CMDBuild.core.cache.Store}
 		 */
 		getStore: function() {
-			return Ext.create('Ext.data.Store', {
+			return CMDBuild.core.cache.Cache.requestAsStore(CMDBuild.core.constants.Proxy.GROUP, {
 				autoLoad: false,
 				model: 'CMDBuild.model.userAndGroup.group.privileges.GridRecord',
 				proxy: {
@@ -23,7 +23,12 @@
 					url: CMDBuild.core.proxy.Index.privileges.dataView.read,
 					reader: {
 						type: 'json',
-						root: 'privileges'
+						root: CMDBuild.core.constants.Proxy.PRIVILEGES
+					},
+					extraParams: {
+						limitParam: undefined,
+						pageParam: undefined,
+						startParam: undefined
 					}
 				},
 				sorters: [
@@ -38,9 +43,7 @@
 		update: function(parameters) {
 			parameters = Ext.isEmpty(parameters) ? {} : parameters;
 
-			Ext.apply(parameters, {
-				url: CMDBuild.core.proxy.Index.privileges.dataView.update
-			});
+			Ext.apply(parameters, { url: CMDBuild.core.proxy.Index.privileges.dataView.update });
 
 			CMDBuild.core.cache.Cache.request(CMDBuild.core.constants.Proxy.GROUP, parameters, true);
 		}

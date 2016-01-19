@@ -61,18 +61,18 @@
 			this.view = Ext.create('CMDBuild.view.administration.userAndGroup.group.privileges.PrivilegesView', { delegate: this });
 
 			// Controller build
-			this.controllerClassPrivileges = Ext.create('CMDBuild.controller.administration.group.privileges.tabs.Classes', { parentDelegate: this });
-			this.controllerCustomPageProperties = Ext.create('CMDBuild.controller.administration.group.privileges.tabs.CustomPage', { parentDelegate: this });
-			this.controllerDataViewProperties = Ext.create('CMDBuild.controller.administration.group.privileges.tabs.DataView', { parentDelegate: this });
-			this.controllerFilterProperties = Ext.create('CMDBuild.controller.administration.group.privileges.tabs.Filter', { parentDelegate: this });
-			this.controllerWorkflowPrivileges = Ext.create('CMDBuild.controller.administration.group.privileges.tabs.Workflow', { parentDelegate: this });
+			this.controllerClassPrivileges = Ext.create('CMDBuild.controller.administration.userAndGroup.group.privileges.tabs.Classes', { parentDelegate: this });
+			this.controllerCustomPageProperties = Ext.create('CMDBuild.controller.administration.userAndGroup.group.privileges.tabs.CustomPage', { parentDelegate: this });
+			this.controllerDataViewProperties = Ext.create('CMDBuild.controller.administration.userAndGroup.group.privileges.tabs.DataView', { parentDelegate: this });
+			this.controllerFilterProperties = Ext.create('CMDBuild.controller.administration.userAndGroup.group.privileges.tabs.Filter', { parentDelegate: this });
+			this.controllerWorkflowPrivileges = Ext.create('CMDBuild.controller.administration.userAndGroup.group.privileges.tabs.Workflow', { parentDelegate: this });
 
 			// Inject tabs (sorted)
 			this.view.add(this.controllerClassPrivileges.getView());
 			this.view.add(this.controllerWorkflowPrivileges.getView());
-			this.view.add(this.controllerViewProperties.getView());
+			this.view.add(this.controllerDataViewProperties.getView());
 			this.view.add(this.controllerFilterProperties.getView());
-			this.view.add(this.controllerCustomPagesProperties.getView());
+			this.view.add(this.controllerCustomPageProperties.getView());
 		},
 
 		/**
