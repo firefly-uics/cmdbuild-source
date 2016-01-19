@@ -14,6 +14,7 @@
 		 * @cfg {Array}
 		 */
 		cmfgCatchedFunctions: [
+			'mainViewportAccordionContainerIsCollapsed',
 			'mainViewportAccordionControllerExists',
 			'mainViewportAccordionControllerExpand',
 			'mainViewportAccordionControllerGet',
@@ -96,10 +97,7 @@
 		constructor: function(configObject) {
 			this.callParent(arguments);
 
-			this.view = Ext.create('CMDBuild.view.common.MainViewport', {
-				delegate: this,
-				hideAccordions: this.hideAccordions
-			});
+			this.view = Ext.create('CMDBuild.view.common.MainViewport', { delegate: this });
 
 			// Shorthands
 			this.accordionContainer = this.view.accordionContainer;
@@ -131,6 +129,13 @@
 						}
 					}, this);
 				}
+			},
+
+			/**
+			 * @returns {Boolean}
+			 */
+			mainViewportAccordionContainerIsCollapsed: function() {
+				return this.hideAccordions;
 			},
 
 			/**
