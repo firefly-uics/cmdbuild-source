@@ -27,8 +27,8 @@
 					}
 				}
 			};
-			var script = 'http://localhost/cmdbuild-gui-framework/api/cmdbuildAP.js';
-			//var script = getUrlParameter("basePath") + "/javascripts/cmdbuild-gui-framework-" +
+			//var script = 'http://localhost/cmdbuild-gui-framework/api/cmdbuildAP.js';
+			var script = getUrlParameter("basePath") + "/javascripts/cmdbuild-gui-framework-" +
 			getUrlParameter("frameworkVersion") + "/api/cmdbuildAP.js";
 
 			var httpCallParameters = {
@@ -50,8 +50,8 @@
 			function callCmdbuildAP() {
 				$("#cmdbuilForm").cmdbuildAP({
 					apiUrl : '~/services/rest/v2/',
-					appRootUrl : 'http://localhost/cmdbuild-gui-framework/',
-					//appRootUrl : '~/javascripts/cmdbuild-gui-framework-' + getUrlParameter("frameworkVersion") + '/',
+					//appRootUrl : 'http://localhost/cmdbuild-gui-framework/',
+					appRootUrl : '~/javascripts/cmdbuild-gui-framework-' + getUrlParameter("frameworkVersion") + '/',
 					appConfigUrl: 'Graph/',
 					access_token: 'CMDBuildSessionToken',
 					customjs: [
@@ -99,10 +99,6 @@
 							"jquery-ui-graph.theme.min.css",
 							"custom.css"],
 					authentication: {
-						type: 'system',
-						login: {
-							username: "ab005553"
-						}
 					},
 					cssClass: "cmdbuild-graph",
 					httpCallParameters: httpCallParameters
