@@ -1132,6 +1132,7 @@
 	"disableGridFilter": "グリッドフィルターを無効に",
 	"disableGroup": "グループ無効化",
 	"disableLookup": "ルックアップ不可",
+	"disableSynchronizationOfMissingVariables": "<em>Disable synchronization of missing variables</em>",
 	"disableUser": "無効なユーザー",
 	"display_less_attributes": "より少ない属性を表示",
 	"display_more_attributes": "より多くの属性を表示",

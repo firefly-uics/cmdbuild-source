@@ -1132,6 +1132,7 @@
 	"disableGridFilter": "Verwijder raster filter",
 	"disableGroup": "Blokkeer groep",
 	"disableLookup": "Blokkeer zoeklijst",
+	"disableSynchronizationOfMissingVariables": "<em>Disable synchronization of missing variables</em>",
 	"disableUser": "Blokkeer gebruiker",
 	"display_less_attributes": "Toon minder attributen",
 	"display_more_attributes": "Toon meer attributen",

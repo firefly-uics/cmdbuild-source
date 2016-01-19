@@ -9,6 +9,7 @@
 		extend: 'Ext.data.Model',
 
 		fields: [
+			{ name: CMDBuild.core.constants.Proxy.DISABLE_SYNCHRONIZATION_OF_MISSING_VARIABLES, type: 'boolean' },
 			{ name: CMDBuild.core.constants.Proxy.ENABLE_ADD_ATTACHMENT_ON_CLOSED_ACTIVITIES, type: 'boolean' },
 			{ name: CMDBuild.core.constants.Proxy.ENABLED, type: 'boolean' },
 			{ name: CMDBuild.core.constants.Proxy.PASSWORD, type: 'string' },
@@ -39,6 +40,7 @@
 			convertToLegacy: function(data) {
 				return {
 					'endpoint': data[CMDBuild.core.constants.Proxy.URL],
+					disableSynchronizationOfMissingVariables: data[CMDBuild.core.constants.Proxy.DISABLE_SYNCHRONIZATION_OF_MISSING_VARIABLES],
 					enableAddAttachmentOnClosedActivities: data[CMDBuild.core.constants.Proxy.ENABLE_ADD_ATTACHMENT_ON_CLOSED_ACTIVITIES],
 					enabled: data[CMDBuild.core.constants.Proxy.ENABLED],
 					password: data[CMDBuild.core.constants.Proxy.PASSWORD],

@@ -89,6 +89,12 @@
 								fieldLabel: CMDBuild.Translation.enableAddAttachmentOnClosedActivities,
 								inputValue: true,
 								uncheckedValue: false
+							}),
+							Ext.create('Ext.form.field.Checkbox', {
+								name: CMDBuild.core.constants.Proxy.DISABLE_SYNCHRONIZATION_OF_MISSING_VARIABLES,
+								fieldLabel: CMDBuild.Translation.disableSynchronizationOfMissingVariables,
+								inputValue: true,
+								uncheckedValue: false
 							})
 						]
 					}),

@@ -1132,6 +1132,7 @@
 	"disableGridFilter": "Disabilita filtro griglia",
 	"disableGroup": "Disabilita gruppo",
 	"disableLookup": "Disabilita lookup",
+	"disableSynchronizationOfMissingVariables": "Disabilita sincronizzazione variabili mancanti",
 	"disableUser": "Disabilita utente",
 	"display_less_attributes": "Mostra meno attributi",
 	"display_more_attributes": "Mostra più attributi",
