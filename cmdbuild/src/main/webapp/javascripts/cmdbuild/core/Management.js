@@ -173,13 +173,6 @@
 						CMDBuild.Config.graph = decodedResponse.graph;
 
 						/**
-						 * Workflow configuration
-						 *
-						 * @deprecated (CMDBuild.configuration.workflow)
-						 */
-						CMDBuild.Config.workflow = decodedResponse.workflow;
-
-						/**
 						 * GIS configuration
 						 *
 						 * @deprecated (CMDBuild.configuration.gis)
