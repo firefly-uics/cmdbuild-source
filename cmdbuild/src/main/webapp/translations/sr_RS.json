@@ -1309,6 +1309,7 @@
 	"disabledTabsInProcessesModule": "Неактивне картице у модулу процеса",
 	"disableGridFilter": "Искључи филтрирање табеле",
 	"disableGroup": "Искључи групу",
+	"disableSynchronizationOfMissingVariables": "<em>Disable synchronization of missing variables</em>",
 	"disableUser": "Искључи корисника",
 	"display_less_attributes": "Прикажи мање атрибута",
 	"display_more_attributes": "Прикажи више атрибута",

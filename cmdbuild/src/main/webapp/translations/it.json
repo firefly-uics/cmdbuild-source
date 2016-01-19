@@ -1309,6 +1309,7 @@
 	"disabledTabsInProcessesModule": "Schede del modulo processi disabilitate",
 	"disableGridFilter": "Disabilita filtro griglia",
 	"disableGroup": "Disabilita gruppo",
+	"disableSynchronizationOfMissingVariables": "Disabilita sincronizzazione variabili mancanti",
 	"disableUser": "Disabilita utente",
 	"display_less_attributes": "Mostra meno attributi",
 	"display_more_attributes": "Mostra più attributi",

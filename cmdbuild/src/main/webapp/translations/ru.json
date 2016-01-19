@@ -1309,6 +1309,7 @@
 	"disabledTabsInProcessesModule": "Отключенные закладки в модуле 'Процессы'",
 	"disableGridFilter": "<em>Disable grid filter</em>",
 	"disableGroup": "Отключить группу",
+	"disableSynchronizationOfMissingVariables": "<em>Disable synchronization of missing variables</em>",
 	"disableUser": "Отключить пользователя",
 	"display_less_attributes": "Показать меньше атрибутов",
 	"display_more_attributes": "Показать больше атрибутов",

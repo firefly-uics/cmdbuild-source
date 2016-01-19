@@ -1309,6 +1309,7 @@
 	"disabledTabsInProcessesModule": "Neaktivne kartice u modulu procesa",
 	"disableGridFilter": "<em>Disable grid filter</em>",
 	"disableGroup": "Isključi grupu",
+	"disableSynchronizationOfMissingVariables": "<em>Disable synchronization of missing variables</em>",
 	"disableUser": "Isključi korisnika",
 	"display_less_attributes": "<em>Display less attributes</em>",
 	"display_more_attributes": "<em>Display more attributes</em>",

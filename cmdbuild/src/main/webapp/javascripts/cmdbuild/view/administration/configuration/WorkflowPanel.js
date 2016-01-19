@@ -86,7 +86,13 @@
 								name: 'endpoint',
 								allowBlank: false,
 								maxWidth: CMDBuild.CFG_BIG_FIELD_WIDTH
-							}
+							},
+							Ext.create('Ext.form.field.Checkbox', {
+								name: CMDBuild.core.proxy.CMProxyConstants.DISABLE_SYNCHRONIZATION_OF_MISSING_VARIABLES,
+								fieldLabel: CMDBuild.Translation.disableSynchronizationOfMissingVariables,
+								inputValue: true,
+								uncheckedValue: false
+							})
 						]
 					}),
 					Ext.create('Ext.form.FieldSet', {
