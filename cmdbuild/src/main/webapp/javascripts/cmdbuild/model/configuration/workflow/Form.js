@@ -9,7 +9,8 @@
 		extend: 'Ext.data.Model',
 
 		fields: [
-			{ name: CMDBuild.core.constants.Proxy.ENABLED, type: 'boolean', defaultValue: false },
+			{ name: CMDBuild.core.constants.Proxy.ENABLE_ADD_ATTACHMENT_ON_CLOSED_ACTIVITIES, type: 'boolean' },
+			{ name: CMDBuild.core.constants.Proxy.ENABLED, type: 'boolean' },
 			{ name: CMDBuild.core.constants.Proxy.PASSWORD, type: 'string' },
 			{ name: CMDBuild.core.constants.Proxy.URL, type: 'string' },
 			{ name: CMDBuild.core.constants.Proxy.USER, type: 'string' }
@@ -38,8 +39,9 @@
 			convertToLegacy: function(data) {
 				return {
 					'endpoint': data[CMDBuild.core.constants.Proxy.URL],
-					password: data[CMDBuild.core.constants.Proxy.PASSWORD],
+					enableAddAttachmentOnClosedActivities: data[CMDBuild.core.constants.Proxy.ENABLE_ADD_ATTACHMENT_ON_CLOSED_ACTIVITIES],
 					enabled: data[CMDBuild.core.constants.Proxy.ENABLED],
+					password: data[CMDBuild.core.constants.Proxy.PASSWORD],
 					user: data[CMDBuild.core.constants.Proxy.USER]
 				};
 			}

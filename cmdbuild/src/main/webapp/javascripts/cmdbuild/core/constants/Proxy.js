@@ -189,6 +189,7 @@
 		EMAIL_TEMPLATES: 'emailTemplates',
 		EMPTY: 'empty',
 		ENABLE: 'enable',
+		ENABLE_ADD_ATTACHMENT_ON_CLOSED_ACTIVITIES: 'enableAddAttachmentOnClosedActivities',
 		ENABLE_CARD_LOCK: 'enableCardLock',
 		ENABLE_MAP: 'enableMap',
 		ENABLE_MOVE_REJECTED_NOT_MATCHING: 'enableMoveRejectedNotMatching',

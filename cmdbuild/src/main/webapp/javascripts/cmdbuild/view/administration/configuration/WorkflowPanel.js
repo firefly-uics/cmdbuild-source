@@ -12,11 +12,6 @@
 		 */
 		delegate: undefined,
 
-		/**
-		 * @property {Ext.form.field.Checkbox}
-		 */
-		enabledCheckBox: undefined,
-
 		bodyCls: 'cmgraypanel',
 		border: false,
 		frame: false,
@@ -77,7 +72,7 @@
 						},
 
 						items: [
-							this.enabledCheckBox = Ext.create('Ext.form.field.Checkbox', {
+							Ext.create('Ext.form.field.Checkbox', {
 								name: CMDBuild.core.constants.Proxy.ENABLED,
 								fieldLabel: CMDBuild.Translation.enabled,
 								inputValue: true,
@@ -88,7 +83,13 @@
 								name: CMDBuild.core.constants.Proxy.URL,
 								allowBlank: false,
 								maxWidth: CMDBuild.CFG_BIG_FIELD_WIDTH
-							}
+							},
+							Ext.create('Ext.form.field.Checkbox', {
+								name: CMDBuild.core.constants.Proxy.ENABLE_ADD_ATTACHMENT_ON_CLOSED_ACTIVITIES,
+								fieldLabel: 'CMDBuild.Translation.enableAddAttachmentOnClosedActivities',
+								inputValue: true,
+								uncheckedValue: false
+							})
 						]
 					}),
 					Ext.create('Ext.form.FieldSet', {

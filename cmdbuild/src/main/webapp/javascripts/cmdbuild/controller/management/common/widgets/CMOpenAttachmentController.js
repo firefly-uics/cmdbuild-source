@@ -1,5 +1,4 @@
 (function() {
-	var TRUE = "true";
 
 	Ext.define("CMDBuild.controller.management.workflow.CMActivityAttachmentsController", {
 
@@ -25,7 +24,7 @@
 			var priv = false;
 			var pi = _CMWFState.getProcessInstance();
 
-			if (CMDBuild.Config.workflow.add_attachment_on_closed_activities == TRUE
+			if (CMDBuild.configuration.workflow.get(CMDBuild.core.constants.Proxy.ENABLE_ADD_ATTACHMENT_ON_CLOSED_ACTIVITIES)
 					&& pi
 					&& pi.isStateCompleted()) {
 

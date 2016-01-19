@@ -21,6 +21,7 @@ public class WorkflowProperties extends DefaultProperties implements WorkflowCon
 	private static final String ADMIN_USERNAME = "user";
 	private static final String ADMIN_PASSWORD = "password";
 	private static final String DISABLE_SYNCHRONIZATION_OF_MISSING_VARIABLES = "disableSynchronizationOfMissingVariables";
+	private static final String ENABLE_ADD_ATTACHMENT_ON_CLOSED_ACTIVITIES = "enableAddAttachmentOnClosedActivities";
 
 	private final Set<ChangeListener> changeListeners;
 
@@ -33,8 +34,8 @@ public class WorkflowProperties extends DefaultProperties implements WorkflowCon
 		setProperty(ENDPOINT, "http://localhost:8080/shark");
 		setProperty(ADMIN_USERNAME, "admin");
 		setProperty(ADMIN_PASSWORD, "enhydra");
-		setProperty(ADMIN_PASSWORD, "enhydra");
 		setProperty(DISABLE_SYNCHRONIZATION_OF_MISSING_VARIABLES, FALSE.toString());
+		setProperty(ENABLE_ADD_ATTACHMENT_ON_CLOSED_ACTIVITIES, FALSE.toString());
 	}
 
 	public static WorkflowProperties getInstance() {

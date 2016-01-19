@@ -167,13 +167,6 @@
 						 */
 						CMDBuild.Config.gis = decodedResponse.gis;
 						CMDBuild.Config.gis.enabled = ('true' == CMDBuild.Config.gis.enabled);
-
-						/**
-						 * Workflow configuration
-						 *
-						 * @deprecated (CMDBuild.configuration.workflow)
-						 */
-						CMDBuild.Config.workflow = decodedResponse.workflow;
 					},
 					callback: CMDBuild.core.Administration.buildCache
 				});
