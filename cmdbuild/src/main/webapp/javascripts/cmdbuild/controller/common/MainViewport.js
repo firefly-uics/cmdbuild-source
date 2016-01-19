@@ -452,18 +452,13 @@
 			/**
 			 * @param {String} identifier
 			 *
-			 * @returns {Boolean} accordionExists
+			 * @returns {Boolean}
 			 */
 			mainViewportModuleControllerExists: function(identifier) {
-				var moduleControllerExists = (
+				return (
 					!Ext.isEmpty(identifier) && Ext.isString(identifier)
 					&& !Ext.isEmpty(this.moduleControllers[identifier])
 				);
-
-				if (!moduleControllerExists)
-					_error('module controller with identifier "' + identifier + '" not found', this);
-
-				return moduleControllerExists;
 			},
 
 			/**
