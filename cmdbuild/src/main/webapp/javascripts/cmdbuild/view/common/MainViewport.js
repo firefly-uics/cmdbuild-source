@@ -37,7 +37,7 @@
 					this.accordionContainer = Ext.create('Ext.panel.Panel', {
 						region: 'west',
 						border: true,
-						collapsed: this.delegate.cmfg('mainViewportAccordionContainerIsCollapsed'),
+						collapsed: this.delegate.cmfg('mainViewportAccordionIsCollapsed'),
 						collapsible: true,
 						frame: false,
 						header: false, // Hide panel header as CMDBuild UI look

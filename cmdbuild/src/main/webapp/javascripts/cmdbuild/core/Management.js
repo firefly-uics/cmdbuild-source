@@ -284,8 +284,7 @@
 					new CMDBuild.view.management.utilities.CMModExportCSV({
 						cmName: 'exportcsv'
 					})
-				],
-				hideAccordions: CMDBuild.configuration.userInterface.get(CMDBuild.core.constants.Proxy.HIDE_SIDE_PANEL)
+				]
 			});
 
 			Ext.resumeLayouts();

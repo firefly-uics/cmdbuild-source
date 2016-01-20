@@ -14,12 +14,12 @@
 		 * @cfg {Array}
 		 */
 		cmfgCatchedFunctions: [
-			'mainViewportAccordionContainerIsCollapsed',
 			'mainViewportAccordionControllerExists',
 			'mainViewportAccordionControllerExpand',
 			'mainViewportAccordionControllerGet',
 			'mainViewportAccordionControllerUpdateStore',
 			'mainViewportAccordionDeselect',
+			'mainViewportAccordionIsCollapsed',
 			'mainViewportAccordionSetDisabled',
 			'mainViewportCardSelect',
 			'mainViewportDanglingCardGet',
@@ -63,7 +63,7 @@
 		/**
 		 * @cfg {Boolean}
 		 */
-		hideAccordions: false,
+		isAdministration: false,
 
 		/**
 		 * All module views
@@ -115,6 +115,8 @@
 			 */
 			accordionControllerBuild: function() {
 				if (!Ext.isEmpty(this.accordion) && Ext.isArray(this.accordion)) {
+					var accordionViewsBuffer = [];
+
 					Ext.Array.forEach(this.accordion, function(accordionController, i, allAccordionControllers) {
 						if (!Ext.isEmpty(accordionController)) {
 							if (Ext.isFunction(accordionController.cmfg) && !Ext.isEmpty(accordionController.cmfg('accordionIdentifierGet'))) {
@@ -122,20 +124,16 @@
 
 								this.accordionControllers[accordionController.cmfg('accordionIdentifierGet')] = accordionController;
 
-								this.accordionContainer.add(accordionController.getView());
+								accordionViewsBuffer.push(accordionController.getView());
 							} else {
 								_warning('identifier not found in accordion object', this, accordionController);
 							}
 						}
 					}, this);
-				}
-			},
 
-			/**
-			 * @returns {Boolean}
-			 */
-			mainViewportAccordionContainerIsCollapsed: function() {
-				return this.hideAccordions;
+					if (!Ext.isEmpty(accordionViewsBuffer))
+						this.accordionContainer.add(accordionViewsBuffer);
+				}
 			},
 
 			/**
@@ -203,6 +201,13 @@
 			mainViewportAccordionDeselect: function(identifier) {
 				if (this.cmfg('mainViewportAccordionControllerExists', identifier))
 					this.cmfg('mainViewportAccordionControllerGet', identifier).cmfg('accordionDeselect');
+			},
+
+			/**
+			 * @returns {Boolean}
+			 */
+			mainViewportAccordionIsCollapsed: function() {
+				return !this.isAdministration && CMDBuild.configuration.userInterface.get(CMDBuild.core.constants.Proxy.HIDE_SIDE_PANEL);
 			},
 
 			/**
@@ -414,6 +419,8 @@
 			 */
 			moduleControllerBuild: function() {
 				if (!Ext.isEmpty(this.module) && Ext.isArray(this.module)) {
+					var moduleViewsBuffer = [];
+
 					Ext.Array.forEach(this.module, function(moduleController, i, allModuleViews) {
 						if (!Ext.isEmpty(moduleController)) {
 							if (Ext.isFunction(moduleController.cmfg)) {
@@ -422,7 +429,7 @@
 
 									this.moduleControllers[moduleController.cmfg('identifierGet')] = moduleController;
 
-									this.moduleContainer.add(moduleController.getView());
+									moduleViewsBuffer.push(moduleController.getView());
 								} else {
 									_warning('identifier not found in accordion object', this, moduleController);
 								}
@@ -442,10 +449,13 @@
 									this.moduleControllers[moduleController.cmName] = new CMDBuild.controller.CMBasePanelController(moduleController);
 								}
 
-								this.moduleContainer.add(moduleController);
+								moduleViewsBuffer.push(moduleController);
 							}
 						}
 					}, this);
+
+					if (!Ext.isEmpty(moduleViewsBuffer))
+						this.moduleContainer.add(moduleViewsBuffer);
 				}
 			},
 

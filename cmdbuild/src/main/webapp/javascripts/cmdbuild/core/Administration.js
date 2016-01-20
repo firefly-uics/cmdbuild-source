@@ -194,6 +194,7 @@
 
 			Ext.ns('CMDBuild.global.controller');
 			CMDBuild.global.controller.MainViewport = Ext.create('CMDBuild.controller.common.MainViewport', {
+				isAdministration: true,
 				accordion: [ // Display order
 					CMDBuild.configuration.userInterface.get(CMDBuild.core.constants.Proxy.CLOUD_ADMIN) ? null :
 						Ext.create('CMDBuild.controller.administration.accordion.Classes', { identifier: 'class' })
