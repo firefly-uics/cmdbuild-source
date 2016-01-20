@@ -211,16 +211,6 @@
 			},
 
 			/**
-			 * @private
-			 */
-			accordionSelectFirstSelectableLeaf: function() {
-				var accordionController = this.accordionControllerWithSelectableNodeGet();
-
-				if (!Ext.isEmpty(accordionController))
-					accordionController.cmfg('accordionSelectFirstSelectableNode');
-			},
-
-			/**
 			 * Forwarder method
 			 *
 			 * @param {Object} parameters
@@ -404,13 +394,29 @@
 				|| CMDBuild.configuration.instance.get(CMDBuild.core.constants.Proxy.STARTING_CLASS) // Main configuration's starting class
 			);
 			var accordionWithNodeController = Ext.isEmpty(startingClassId) ? null : this.accordionControllerWithNodeWithIdGet(startingClassId);
+			var node = null;
 
 			if (!Ext.isEmpty(accordionWithNodeController)) {
 				accordionWithNodeController.cmfg('accordionExpand');
 				accordionWithNodeController.cmfg('accordionSelectNodeById', startingClassId);
-			} else {
-				this.accordionSelectFirstSelectableLeaf();
+
+				node = accordionWithNodeController.cmfg('accordionNodeByIdGet', startingClassId); // To manage selection if accordion are collapsed
+			} else { // If no statingClass to select try to select fist selectable node
+				var accordionController = this.accordionControllerWithSelectableNodeGet();
+
+				if (!Ext.isEmpty(accordionController)) {
+					accordionController.cmfg('accordionSelectFirstSelectableNode');
+
+					node = accordionController.cmfg('accordionFirtsSelectableNodeGet'); // To manage selection if accordion are collapsed
+				}
 			}
+
+			// Manage selection if accordion are collapsed
+			if (this.cmfg('mainViewportAccordionIsCollapsed') && !Ext.isEmpty(node))
+				this.cmfg('mainViewportModuleShow', {
+					identifier: node.get('cmName'),
+					parameters: node
+				});
 		},
 
 		// Module manage methods
