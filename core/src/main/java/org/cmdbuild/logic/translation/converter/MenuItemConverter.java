@@ -2,6 +2,7 @@ package org.cmdbuild.logic.translation.converter;
 
 import java.util.Map;
 
+import org.apache.commons.lang3.Validate;
 import org.cmdbuild.logic.translation.TranslationObject;
 import org.cmdbuild.logic.translation.object.MenuItemDescription;
 
@@ -24,6 +25,7 @@ public enum MenuItemConverter {
 
 		@Override
 		public MenuItemDescription create(final String name) {
+			Validate.notBlank(name, "missing identifier, identifier is needed for handling translation");
 			final org.cmdbuild.logic.translation.object.MenuItemDescription.Builder builder = MenuItemDescription
 					.newInstance() //
 					.withUuid(name);

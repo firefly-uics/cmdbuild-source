@@ -22,12 +22,25 @@ public class Functions {
 
 	};
 
+	private static final Function<Lookup, String> LOOKUP_TRANSLATION_UUID = new Function<Lookup, String>() {
+
+		@Override
+		public String apply(final Lookup input) {
+			return input.getTranslationUuid();
+		}
+
+	};
+
 	public static Function<Lookup, Long> toLookupId() {
 		return LOOKUP_ID;
 	}
 
 	public static Function<Lookup, LookupType> toLookupType() {
 		return LOOKUP_TYPE;
+	}
+
+	public static Function<Lookup, String> toTranslationUuid() {
+		return LOOKUP_TRANSLATION_UUID;
 	}
 
 	private Functions() {

@@ -1,6 +1,7 @@
 package org.cmdbuild.services.localization;
 
 import static org.apache.commons.lang3.StringUtils.defaultIfBlank;
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
 import org.cmdbuild.data.store.lookup.ForwardingLookup;
 import org.cmdbuild.data.store.lookup.Lookup;
@@ -25,9 +26,15 @@ public class LocalizedLookup extends ForwardingLookup {
 
 	@Override
 	public String getDescription() {
-		final TranslationObject translationObject = LookupConverter.of(LookupConverter.description()).create(uuid());
-		final String translatedDescription = facade.read(translationObject);
-		return defaultIfBlank(translatedDescription, super.getDescription());
+		final String output;
+		final String uuid = uuid();
+		if (isNotBlank(uuid)) {
+			final TranslationObject translationObject = LookupConverter.of(LookupConverter.description()).create(uuid);
+			output = defaultIfBlank(facade.read(translationObject), super.getDescription());
+		} else {
+			output = super.getDescription();
+		}
+		return output;
 	}
 
 	@Override
