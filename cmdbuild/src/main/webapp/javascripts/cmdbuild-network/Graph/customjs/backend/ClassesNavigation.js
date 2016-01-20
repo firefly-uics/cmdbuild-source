@@ -9,12 +9,25 @@
 		this.param = param;
 		var onReadyFunction = onReadyFunction;
 		var onReadyScope = onReadyScope;
+		var backend = this;
 
 		/**
 		 * Base functions
 		 */
 		this.init = function() {
+			var me = this;
+			if (! $.Cmdbuild.customvariables.model) {
+				setTimeout(function() {
+					me.init();
+				
+				}, 100);
+				return;
+			}
+			this._init();
+		}
+		this._init = function() {
 			this.model = $.Cmdbuild.customvariables.model;
+			console.log("this.model ", this.model);
 			var data = this.model.getDistinctClasses(0, 10);
 			this.total = data.total;
 			this.data = data.rows;
@@ -136,7 +149,9 @@
 		 * Private functions
 		 */
 		var onObjectReady = function() {
-			onReadyFunction.apply(onReadyScope);
+			console.log("onObjectReady", this.model);
+
+			onReadyFunction.apply(onReadyScope, [backend]);
 		};
 
 		/**
