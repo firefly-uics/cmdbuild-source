@@ -79,10 +79,16 @@
 
 				});
 				var backendFn = $.Cmdbuild.utilities.getBackend(this.param.backend);
-				var backend = new backendFn(this.param, this.showCB, this);
-				this.param.backend = backend;
-				this.toCreate = false;
-				this.param.backend.model.observe(this);
+				var backend = new backendFn(this.param, function(response) {
+					this.param.backend = response;
+					this.toCreate = false;
+					console.log("2");
+					this.param.backend.model.observe(this);
+					this.showCB();
+				}, this);
+//				this.param.backend = backend;
+//				this.toCreate = false;
+//				this.param.backend.model.observe(this);
 			}
 			catch (e) {
 				$.Cmdbuild.errorsManager.log("$.Cmdbuild.standard.div.show");

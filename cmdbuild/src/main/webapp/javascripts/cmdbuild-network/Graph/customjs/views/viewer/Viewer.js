@@ -22,6 +22,7 @@
 		var objects = [];
 		var edges = [];
 		this.init = function() {
+			this.model = new $.Cmdbuild.g3d.Model();
 			$.Cmdbuild.g3d.Options.loadConfiguration(CONFIGURATION_FILE, function(response) {
 				$.Cmdbuild.custom.configuration = response;
 				this.initCB();
@@ -31,7 +32,6 @@
 		this.initCB = function() {
 			THREE.ImageUtils.crossOrigin = '';
 			thisViewer = this;
-			this.model = new $.Cmdbuild.g3d.Model();
 			this.model.observe(this);
 			$.Cmdbuild.customvariables.options = new $.Cmdbuild.g3d.Options();
 			$.Cmdbuild.customvariables.options.observe(this);
