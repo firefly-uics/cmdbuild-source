@@ -2,6 +2,7 @@ package org.cmdbuild.logic.translation.converter;
 
 import java.util.Map;
 
+import org.apache.commons.lang3.Validate;
 import org.cmdbuild.logic.translation.TranslationObject;
 import org.cmdbuild.logic.translation.object.LookupDescription;
 
@@ -24,6 +25,7 @@ public enum LookupConverter {
 
 		@Override
 		public LookupDescription create(final String uuid) {
+			Validate.notBlank(uuid, "missing identifier, identifier is needed for handling translation");
 			final org.cmdbuild.logic.translation.object.LookupDescription.Builder builder = LookupDescription
 					.newInstance() //
 					.withUuid(uuid);
