@@ -72,6 +72,7 @@
 			<img alt="CMDBuild logo" src="images/logo.jpg" />
 			<div id="header_po">Open Source Configuration and Management Database</div>
 		</div>
+
 		<div id="release_box">
 			<span class="x-panel-header-text-default">CMDBuild <tr:translation key="release" /></span>
 		</div>
