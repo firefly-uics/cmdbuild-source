@@ -40,7 +40,7 @@
 
 		onConfigurationRelationGraphSaveButtonClick: function() {
 			CMDBuild.core.proxy.configuration.RelationGraph.update({
-				params: this.view.getData(true),
+				params: Ext.create('CMDBuild.model.configuration.relationGraph.Form', this.view.getData(true)).getData(),
 				scope: this,
 				success: function(response, options, decodedResponse) {
 					this.cmfg('onConfigurationRelationGraphTabShow');

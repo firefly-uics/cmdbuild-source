@@ -305,10 +305,7 @@
 
 			headers = headers.concat(this.buildExtraColumns());
 
-			if (this.cmAddGraphColumn
-					&& CMDBuild.Config.graph
-					&& CMDBuild.Config.graph.enabled=="true") {
-
+			if (this.cmAddGraphColumn && CMDBuild.configuration.graph.get(CMDBuild.core.constants.Proxy.ENABLED)) {
 				buildGraphIconColumn.call(this, headers);
 			}
 

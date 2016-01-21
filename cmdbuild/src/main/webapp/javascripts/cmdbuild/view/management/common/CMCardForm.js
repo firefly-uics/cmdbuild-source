@@ -435,7 +435,7 @@
 				}
 			});
 
-			if (CMDBuild.Config.graph.enabled=="true") {
+			if (CMDBuild.configuration.graph.get(CMDBuild.core.constants.Proxy.ENABLED)) {
 				this.cmTBar.push(this.graphButton);
 			}
 

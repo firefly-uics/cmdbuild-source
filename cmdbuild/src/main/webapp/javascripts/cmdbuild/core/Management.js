@@ -166,13 +166,6 @@
 						CMDBuild.Config.bim.enabled = ('true' == CMDBuild.Config.bim.enabled);
 
 						/**
-						 * Graph (aka RelationGraph) configuration
-						 *
-						 * @deprecated (CMDBuild.configuration.graph)
-						 */
-						CMDBuild.Config.graph = decodedResponse.graph;
-
-						/**
 						 * GIS configuration
 						 *
 						 * @deprecated (CMDBuild.configuration.gis)
