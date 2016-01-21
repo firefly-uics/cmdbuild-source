@@ -6,10 +6,22 @@ public interface GraphConfiguration {
 
 	int getBaseLevel();
 
-	int getExtensionMaximumLevel();
-
 	int getClusteringThreshold();
 
-	int getExpandingThreshold();
+	String getDisplayLabel();
+
+	String getEdgeColor();
+
+	boolean isEdgeTooltipEnabled();
+
+	boolean isNodeTooltipEnabled();
+
+	int getSpriteDimension();
+
+	int getStepRadius();
+
+	int getViewPointDistance();
+
+	int getViewPointHeight();
 
 }

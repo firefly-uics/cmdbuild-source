@@ -65,9 +65,7 @@ public class Serialization {
 			EMAIL = "email", //
 			EMAIL_ID = EMAIL + ID_CAPITALIZED, //
 			ENABLED = "enabled", //
-			EXPANDING_THRESHOLD = "expandingThreshold", //
 			EXTENSION = "extension", //
-			EXTENSION_MAXIMUM_LEVEL = "extensionMaximumLevel", //
 			EXTRA = "extra", //
 			FILE = "file", //
 			FILTER = "filter", //

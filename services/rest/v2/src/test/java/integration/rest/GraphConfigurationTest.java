@@ -54,9 +54,7 @@ public class GraphConfigurationTest {
 				.withElement(newGraphConfiguration() //
 						.withEnabledStatus(true) //
 						.withBaseLevel(12) //
-						.withExpandingThreshold(34) //
-						.withClusteringThreshold(56) //
-						.withExtensionMaximumLevel(78) //
+						.withClusteringThreshold(34) //
 						.build()) //
 				.withMetadata(newMetadata() //
 						// nothing to add, just needed for simplify assertions
