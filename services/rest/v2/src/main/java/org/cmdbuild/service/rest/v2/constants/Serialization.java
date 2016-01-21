@@ -57,10 +57,13 @@ public class Serialization {
 			DETAILED = "detailed", //
 			DIRECTION = "direction", //
 			DISPLAYABLE_IN_LIST = "displayableInList", //
+			DISPLAY_LABEL = "displayLabel", //
 			DOMAIN = "domain", //
 			DOMAIN_ID = DOMAIN + ID_CAPITALIZED, //
 			DOMAIN_NAME = "domainName", //
 			DOMAIN_SOURCE = DOMAIN + "Source", //
+			EDGE_COLOR = "edgeColor", //
+			EDGE_TOOLTIP_ENABLED = "edgeTooltipEnabled", //
 			EDITOR_TYPE = "editorType", //
 			EMAIL = "email", //
 			EMAIL_ID = EMAIL + ID_CAPITALIZED, //
@@ -89,6 +92,7 @@ public class Serialization {
 			MODE = "mode", //
 			MODIFIED = "modified", //
 			NAME = "name", //
+			NODE_TOOLTIP_ENABLED = "nodeTooltipEnabled", //
 			NO_SUBJECT_PREFIX = "noSubjectPrefix", //
 			NOTIFY_WITH = "notifyWith", //
 			NUMBER = "number", //
@@ -121,9 +125,11 @@ public class Serialization {
 			SORT = "sort", //
 			SOURCE = "source", //
 			SOURCE_PROCESS = SOURCE + PROCESS_CAPITAL, //
+			SPRITE_DIMENSION = "spriteDimension", //
 			START = "start", //
 			STATUSES = "statuses", //
 			STATUS = "status", //
+			STEP_RADIUS = "stepRadius", //
 			STOPPABLE = "stoppable", //
 			SUBJECT = "subject", //
 			TARGET_CLASS = "targetClass", //
@@ -140,6 +146,8 @@ public class Serialization {
 			VALUES = "values", //
 			VALUE = "value", //
 			VERSION = "version", //
+			VIEW_POINT_DISTANCE = "viewPointDistance", //
+			VIEW_POINT_HEIGHT = "viewPointHeight", //
 			WIDGETS = "widgets", //
 			WRITABLE = "writable";
 

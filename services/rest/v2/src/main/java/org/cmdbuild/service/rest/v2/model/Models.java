@@ -1127,6 +1127,14 @@ public class Models {
 		private boolean enabled;
 		private int baseLevel;
 		private int clusteringThreshold;
+		private String displayLabel;
+		private String edgeColor;
+		private boolean edgeTooltipEnabled;
+		private boolean nodeTooltipEnabled;
+		private int spriteDimension;
+		private int stepRadius;
+		private int viewPointDistance;
+		private int viewPointHeight;
 
 		@Override
 		protected GraphConfiguration doBuild() {
@@ -1134,6 +1142,14 @@ public class Models {
 			output.setEnabled(enabled);
 			output.setBaseLevel(baseLevel);
 			output.setClusteringThreshold(clusteringThreshold);
+			output.setDisplayLabel(displayLabel);
+			output.setEdgeColor(edgeColor);
+			output.setEdgeTooltipEnabled(edgeTooltipEnabled);
+			output.setNodeTooltipEnabled(nodeTooltipEnabled);
+			output.setSpriteDimension(spriteDimension);
+			output.setStepRadius(stepRadius);
+			output.setViewPointDistance(viewPointDistance);
+			output.setViewPointHeight(viewPointHeight);
 			return output;
 		}
 
@@ -1149,6 +1165,46 @@ public class Models {
 
 		public GraphConfigurationBuilder withClusteringThreshold(final int value) {
 			this.clusteringThreshold = value;
+			return this;
+		}
+
+		public GraphConfigurationBuilder withDisplayLabel(final String value) {
+			this.displayLabel = value;
+			return this;
+		}
+
+		public GraphConfigurationBuilder withEdgeColor(final String value) {
+			this.edgeColor = value;
+			return this;
+		}
+
+		public GraphConfigurationBuilder withEdgeTooltipEnabled(final boolean value) {
+			this.edgeTooltipEnabled = value;
+			return this;
+		}
+
+		public GraphConfigurationBuilder withNodeTooltipEnabled(final boolean value) {
+			this.nodeTooltipEnabled = value;
+			return this;
+		}
+
+		public GraphConfigurationBuilder withSpriteDimension(final int value) {
+			this.spriteDimension = value;
+			return this;
+		}
+
+		public GraphConfigurationBuilder withStepRadius(final int value) {
+			this.stepRadius = value;
+			return this;
+		}
+
+		public GraphConfigurationBuilder withViewPointDistance(final int value) {
+			this.viewPointDistance = value;
+			return this;
+		}
+
+		public GraphConfigurationBuilder withViewPointHeight(final int value) {
+			this.viewPointHeight = value;
 			return this;
 		}
 

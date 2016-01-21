@@ -53,8 +53,16 @@ public class GraphConfigurationTest {
 				org.cmdbuild.service.rest.v2.model.GraphConfiguration.class) //
 				.withElement(newGraphConfiguration() //
 						.withEnabledStatus(true) //
-						.withBaseLevel(12) //
-						.withClusteringThreshold(34) //
+						.withBaseLevel(1) //
+						.withClusteringThreshold(2) //
+						.withDisplayLabel("this is the label") //
+						.withEdgeColor("this is the color") //
+						.withEdgeTooltipEnabled(true) //
+						.withNodeTooltipEnabled(true) //
+						.withSpriteDimension(3) //
+						.withStepRadius(4) //
+						.withViewPointDistance(5) //
+						.withViewPointHeight(6) //
 						.build()) //
 				.withMetadata(newMetadata() //
 						// nothing to add, just needed for simplify assertions
