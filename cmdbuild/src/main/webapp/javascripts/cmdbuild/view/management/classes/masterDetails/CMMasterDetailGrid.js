@@ -115,7 +115,7 @@
 			icons = ["showDetail", "deleteDetail", "note"];
 		}
 
-		if (CMDBuild.Config.graph.enabled=="true") {
+		if (CMDBuild.configuration.graph.get(CMDBuild.core.constants.Proxy.ENABLED)) {
 			icons.push("showGraph");
 
 		}
