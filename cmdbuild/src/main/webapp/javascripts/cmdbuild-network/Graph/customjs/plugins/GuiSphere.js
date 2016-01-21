@@ -9,21 +9,15 @@
 	};
 
 	function CircleLayout(options) {
-		//this.options = $$.util.extend({}, defaults, options);
-	}
+		}
 
 	CircleLayout.prototype.run = function() {
+		STEPRADIUS = $.Cmdbuild.custom.configuration.stepRadius;
 		var params = this.options;
 		var options = params;
 		var cy = params.cy;
 		var eles = options.eles;
 		var nodes = eles.nodes().not(':parent');
-//		var bb = $$.util.makeBoundingBox({
-//			x1: 0,
-//			y1: 0,
-//			w: cy.width(),
-//			h: cy.height()
-//		});
 
 		var center = {
 			x: 0 + cy.width() / 2,

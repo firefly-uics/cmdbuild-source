@@ -5,19 +5,12 @@
 	"explosionLevels": 7,
 	"nodesTooltip": true,
 	"edgesTooltip": true,
-	"labels": "Selected",
-	"defaultSprite": "others/circle_blue.png",
-	"filterClassesDomains": {
-		"InternalEmployee" : [{
-				"_id": "AssigneeCI", 
-				"description": "AssigneeCI"
-			}, {
-				"_id": "OUEmployee", 
-				"description": "OUEmployee"
-			}
-		]	
-	},
-	"filterClasses":["PhysicalServer", "BusinessService"],
+	"stepRadius": 200,
+	"spriteDimension": 40,
+	"edgeColor": "#FF0000",
+	"labels": "",
+	"filterClassesDomains": {	},
+	"filterClasses":[],
 	"class2Key": {
 		"NetworkConfigurationFile" : "configurations/filteredLayout/class2Key.json"
 	},

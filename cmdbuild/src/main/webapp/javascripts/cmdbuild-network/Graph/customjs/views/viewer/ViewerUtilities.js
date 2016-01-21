@@ -116,7 +116,8 @@
 			return textMesh;
 		},
 		objOnPlane: function(position) {
-			var sprite = $.Cmdbuild.SpriteArchive.class2Sprite("selectionShape");
+			var selectionShape = $.Cmdbuild.g3d.constants.SELECTIONSHAPE;
+			var sprite = $.Cmdbuild.SpriteArchive.class2Sprite(selectionShape);
 			var map = THREE.ImageUtils.loadTexture(sprite);
             var material = new THREE.SpriteMaterial( { map: map, color: 0xffffff, fog: false } );
             var object = new THREE.Sprite( material );
@@ -136,25 +137,13 @@
 		},
 		//OPENGL
 		selectionOnNode: function(node) {
-			var sprite = $.Cmdbuild.SpriteArchive.class2Sprite("selectionShape");
+			var selectionShape = $.Cmdbuild.g3d.constants.SELECTIONSHAPE;
+			var sprite = $.Cmdbuild.SpriteArchive.class2Sprite(selectionShape);
 			var map = THREE.ImageUtils.loadTexture(sprite);
             var material = new THREE.SpriteMaterial( { map: map, color: 0xffffff, fog: false } );
             var object = new THREE.Sprite( material );
             object.scale.set(80, 80, 2);
             object.material.ambient = object.material.color;
-			return object;
-			////NB
-			var radius = 50;
-			var geometry = new THREE.SphereGeometry(radius, 6, 6);
-			var object = new THREE.Mesh(geometry,
-				new THREE.MeshBasicMaterial({
-					color: $.Cmdbuild.g3d.colors.selected,
-					wireframe: true
-//					transparent: true,
-//					opacity: 0.5
-				})
-			);
-			
 			return object;
 		},
 		objectFromNode: function(node, selected, position) {
@@ -170,7 +159,8 @@
 				var material = new THREE.SpriteMaterial( { map: map, color: 0xffffff, fog: false } );
 				//material.needsUpdate = true;
 				var object = new THREE.Sprite( material );
-				object.scale.set(40, 40, 1);
+				var sd = $.Cmdbuild.custom.configuration.spriteDimension;
+				object.scale.set(sd, sd, 1);
 				object.material.ambient = object.material.color;
 				object.position.x = position.x;
 				object.position.y = position.y;
@@ -191,7 +181,7 @@
 			var p1 = $.Cmdbuild.g3d.ViewerUtilities.getCenterPosition(source);
 			var p2 = $.Cmdbuild.g3d.ViewerUtilities.getCenterPosition(target);
 			var material = new THREE.LineBasicMaterial({
-				color: $.Cmdbuild.g3d.colors.edge,
+				color: $.Cmdbuild.custom.configuration.edgeColor,
 				linewidth: 1
 			});
 
@@ -258,24 +248,6 @@
 			edge.glLine.geometry.dynamic = true;
 			edge.glLine.geometry.verticesNeedUpdate = true;
 			edge.glLine.geometry.computeBoundingSphere();
-
-
-//			var source = edge.source();
-//			var target = edge.target();
-//			var material = new THREE.LineBasicMaterial({
-//				color: $.Cmdbuild.g3d.colors.edge,
-//				linewidth: 1
-//			});
-//
-//			var geometry = new THREE.Geometry();
-//			geometry.vertices.push(p1, p2);
-//
-//			var line = new THREE.Line( geometry, material );
-//			line.source = source;
-//			line.target = target;
-//			line.label = edge.data("label");
-//			edge.glLine = line;
-//			scene.add(line);
 		},
 		clearScene: function(scene, model, nodes, edges) {
 			for (var i = 0; i < edges.length; i++) {
