@@ -27,7 +27,6 @@
 		}
 		this._init = function() {
 			this.model = $.Cmdbuild.customvariables.model;
-			console.log("this.model ", this.model);
 			var data = this.model.getDistinctClasses(0, 10);
 			this.total = data.total;
 			this.data = data.rows;
@@ -149,8 +148,6 @@
 		 * Private functions
 		 */
 		var onObjectReady = function() {
-			console.log("onObjectReady", this.model);
-
 			onReadyFunction.apply(onReadyScope, [backend]);
 		};
 
