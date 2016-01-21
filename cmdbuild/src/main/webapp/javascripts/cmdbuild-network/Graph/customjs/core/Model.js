@@ -20,7 +20,9 @@
 			this.layout.run();			
 		};
 		this.observe = function(observer) {
-			this.observers.push(observer);
+			if  ($.inArray(observer, this.observers) === -1) {
+				this.observers.push(observer);				
+			}
 		};
 		this.changed = function(params) {
 			for (var i = 0; i < this.observers.length; i++) {
@@ -58,6 +60,13 @@
 		};
 		this.getNode = function(id) {
 			return cy.getElementById(id	);
+		};
+		this.getEdge = function(edge) {
+			var filter = "";
+			filter += "[target='" + edge.target + "']";
+			filter += "[source='" + edge.source + "']";
+			filter += "[label='" + edge.label + "']";
+			return cy.edges(filter);
 		};
 		this.insertNode = function(node) {
 			var cyNode = cy.add({
@@ -121,6 +130,13 @@
 			}
 			$.Cmdbuild.g3d.Model.setGraphData(node, "children", newChildren);
 		};
+		this.removeEdge= function(edge) {
+			var filter = "";
+			filter += "[target='" + edge.target + "']";
+			filter += "[source='" + edge.source + "']";
+			filter += "[label='" + edge.label + "']";
+			cy.remove(cy.edges(filter));
+		};
 		this.remove = function(id) {
 			var node = this.getNode(id);
 			var parentId = $.Cmdbuild.g3d.Model.getGraphData(node, "previousPathNode");
@@ -183,7 +199,6 @@
 				$.Cmdbuild.g3d.Model.setGraphData(node, "compoundData", remainElements);
 			}
 			else {
-				console.log("removed");
 				$.Cmdbuild.customvariables.selected.unSelect(node.id());	
 				this.remove(node.id());
 				this.changed(true);

@@ -34,7 +34,7 @@
 						}
 						callback.apply(callbackScope, [elements]);
 					}, me);
-				}, 500);
+				}, 100);
 			}, this);
 		};
 		this.explodeNode = function(id, levels, callback, callbackScope) {
