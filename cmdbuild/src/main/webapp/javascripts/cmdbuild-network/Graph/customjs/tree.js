@@ -9,7 +9,6 @@
 				return;
 			}
 			this.param.backend.init();
-//			this.showCB();
 		};
 		this.init = function(param) {
 			try {
@@ -23,10 +22,6 @@
 		};
 		this.show = function() {
 			try {
-//				var xmlForm = $.Cmdbuild.elementsManager.getElement(this.param.form);
-//				$.Cmdbuild.eventsManager.deferEvents();
-//				var htmlStr = "";
-//				htmlStr += $.Cmdbuild.elementsManager.insertChildren(xmlForm);
 				var xmlForm = $.Cmdbuild.elementsManager.getElement(this.param.form);
 				$.Cmdbuild.eventsManager.deferEvents();
 				this.id = $.Cmdbuild.elementsManager.getXmlElementId(xmlForm);
@@ -36,7 +31,6 @@
 				$.Cmdbuild.elementsManager.initialize();
 				$.Cmdbuild.eventsManager.unDeferEvents();
 				var me = this;
-				//$('#' + this.id).empty();
 				$('#' + this.id).jstree({
 					'core' : {
 						'check_callback': true
@@ -54,14 +48,14 @@
 		            },
 		    		"plugins" : [ "checkbox", "actions", "types" ]
 			  	}).bind("select_node.jstree", function (event, data) {
-			  		//console.log(event, data);
+			  		//
 			  	}).bind("open_node.jstree", function (event, data) {
 			  		var val = (data.node.data) ? data.node.data.className : "--";
 			  		var children = $('#' + me.id).jstree().get_children_dom(data.node);
 			        var nodes = [];
 			  		for (var i = 0; i < children.length; i++) {
 			  			var child = children[i];
-			  			nodes.push(child.id);//$('#' + me.id).jstree().get_text(child));
+			  			nodes.push(child.id);
 			  		}
 			  		me.fillNodes(nodes);
 			  	});
@@ -82,13 +76,9 @@
 				var backend = new backendFn(this.param, function(response) {
 					this.param.backend = response;
 					this.toCreate = false;
-					console.log("2");
 					this.param.backend.model.observe(this);
 					this.showCB();
 				}, this);
-//				this.param.backend = backend;
-//				this.toCreate = false;
-//				this.param.backend.model.observe(this);
 			}
 			catch (e) {
 				$.Cmdbuild.errorsManager.log("$.Cmdbuild.standard.div.show");
@@ -129,18 +119,12 @@
 					var strCmd = "$.Cmdbuild.customvariables.selected.selectByClassName(event, '" + node.className + "');";
 					var strOnClick = "onClick=\"" + strCmd + " return true;\"";
 					var imgHtml = '<img src="' + img + '" ' + strOnClick + ' alt="' + node.className+ '" height="20" width="20">';
-//					var imgHtml = '<img src="' + img + '" alt="' + node.className+ '" height="20" width="20">';
 					if (this.oldNodes[node.className]) {
 						$('#' + this.id).jstree().rename_node(this.oldNodes[node.className], imgHtml + " [" + node.qt + "] - " + node.className);
 						continue;
 					}
 			 		var str = $('#' + this.id).jstree().create_node("#", imgHtml + " [" + node.qt + "] - " + node.className);
 					this.oldNodes[node.className] = str;
-//			 		str += "<span "+ 
-//					strTooltip + 
-//					" class='commandcell " + 
-//					"businessProcessDetail" + 
-//					"' </span>";
 					$('#' + this.id).jstree().get_node(str).data = node;
 					newNodes.push(str);
 				}
@@ -173,17 +157,12 @@
 		};
 		this.openClass = function(treeNode, node, path, index, arExplosions) {
 			if (index >= -1 && node != null) {
-//				if (node != null) {
 					var domains = this.getDomainsFromTreeNode(treeNode);
 					arExplosions.push({
 						command: "explode",
 						id: node.id(),
 						domainList: domains
 					}); 
-//				}
-//				else {
-//					/* ?? */
-//				}
 			}
 			else {
 				var className = path[index].className;

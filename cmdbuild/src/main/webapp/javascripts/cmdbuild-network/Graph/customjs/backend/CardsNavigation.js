@@ -44,7 +44,7 @@
 			setTimeout(function() { onObjectReady(); }, 500);
 		};
 		this.loadData = function(param, callback, callbackScope) {
-			var data = this.model.getCards(param.firstRow, param.nRows, this.filter);
+			var data = $.Cmdbuild.customvariables.model.getCards(param.firstRow, param.nRows, this.filter);
 			this.total = data.total;
 			this.data = data.rows;
 			callback.apply(callbackScope, this.data);

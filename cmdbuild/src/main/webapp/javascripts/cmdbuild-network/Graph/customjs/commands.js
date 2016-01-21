@@ -86,7 +86,6 @@
 
 		},
 		boolean: function(param) {
-			// var value = $("#" + param.type).val();
 			var value = $.Cmdbuild.utilities
 					.getHtmlFieldValue("#" + param.type);
 			$.Cmdbuild.customvariables.options[param.type] = value;
@@ -112,6 +111,8 @@
 			form2Hook.selectRows($.Cmdbuild.customvariables.selected.getData());
 		},
 		initialize: function(callback) {
+			$.Cmdbuild.customvariables.model = new $.Cmdbuild.g3d.Model();
+			$.Cmdbuild.customvariables.selected = new $.Cmdbuild.g3d.Selected($.Cmdbuild.customvariables.model);
 			callback.apply(this, []);
 		},
 		doLayout: function(param) {
