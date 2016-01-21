@@ -7,12 +7,8 @@
 			<command>navigate</command>
 			<container>classesFormContainer</container>
 			<form>classesForm</form>
-			<fromObserving>false</fromObserving>
 		</onInit>
 		<form id="classesForm">
-<!-- 			<observe container="classesFormContainer"> -->
-<!-- 				<dummy1>$cardsForm.dummy</dummy1>  -->
-<!-- 			</observe> -->
 	 		<params>
 				<type>tree</type>
 				<backend>ClassesNavigation</backend>

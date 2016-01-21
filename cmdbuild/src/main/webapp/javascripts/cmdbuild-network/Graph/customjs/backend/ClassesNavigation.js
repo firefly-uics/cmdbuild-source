@@ -15,17 +15,6 @@
 		 * Base functions
 		 */
 		this.init = function() {
-			var me = this;
-			if (! $.Cmdbuild.customvariables.model) {
-				setTimeout(function() {
-					me.init();
-				
-				}, 100);
-				return;
-			}
-			this._init();
-		}
-		this._init = function() {
 			this.model = $.Cmdbuild.customvariables.model;
 			var data = this.model.getDistinctClasses(0, 10);
 			this.total = data.total;
@@ -46,7 +35,7 @@
 			}];
 			setTimeout(function() {
 				onObjectReady();
-			}, 500);
+			}, 100);
 		};
 		this.loadData = function(param, callback, callbackScope) {
 			callback.apply(callbackScope, this.data);

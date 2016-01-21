@@ -32,7 +32,7 @@
    					displayableInList: true
    				}
    			];
-			setTimeout(function() { onObjectReady(); }, 500);
+			setTimeout(function() { onObjectReady(); }, 100);
 		};
 		this.loadData = function(param, callback, callbackScope) {
 			var data = this.model.getCards(param.firstRow, param.nRows);

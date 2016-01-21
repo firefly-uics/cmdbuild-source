@@ -16,11 +16,8 @@
 		this.init = function(onlyRefresh) {
 			this.onlyRefresh = onlyRefresh;
 			this.model = $.Cmdbuild.customvariables.model; 
-//			var data = this.model.getCards(0, 10);
-//			this.total = data.total;
-//			this.data = data.rows;
 			if (onlyRefresh) {
-				setTimeout(function() { onObjectReady(); }, 500);
+				setTimeout(function() { onObjectReady(); }, 100);
 			}
 			else {
 				this.loadAttributes();
@@ -41,7 +38,7 @@
    					displayableInList: true
    				}
    			];
-			setTimeout(function() { onObjectReady(); }, 500);
+			setTimeout(function() { onObjectReady(); }, 100);
 		};
 		this.loadData = function(param, callback, callbackScope) {
 			var data = $.Cmdbuild.customvariables.model.getCards(param.firstRow, param.nRows, this.filter);
