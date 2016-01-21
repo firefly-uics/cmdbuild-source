@@ -1,7 +1,7 @@
 package org.cmdbuild.logic.report;
 
-import java.util.Arrays;
-import java.util.List;
+import static com.google.common.collect.Sets.intersection;
+import static com.google.common.collect.Sets.newHashSet;
 
 import org.cmdbuild.auth.UserStore;
 import org.cmdbuild.auth.user.OperationUser;
@@ -25,12 +25,8 @@ public class Predicates {
 			if (operationUser.hasAdministratorPrivileges()) {
 				return true;
 			}
-			final List<String> allowedGroupIdsForThisReport = Arrays.asList(input.getGroups());
-			final String groupUsedForLogin = operationUser.getPreferredGroup().getName();
-			if (allowedGroupIdsForThisReport.contains(groupUsedForLogin.toString())) {
-				return true;
-			}
-			return false;
+			return !intersection(newHashSet(input.getGroups()),
+					newHashSet(operationUser.getAuthenticatedUser().getGroupNames())).isEmpty();
 		}
 
 	}
