@@ -39,7 +39,7 @@
 			}];
 			setTimeout(function() {
 				onObjectReady();
-			}, 500);
+			}, 100);
 		};
 		this.loadData = function(param, callback, callbackScope) {
 			this.data = [];
