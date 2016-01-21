@@ -1,5 +1,5 @@
 (function($) {
-	var CONFIGURATION_FILE = "configurations/configuration.json";
+	var CONFIGURATION_FILE = $.Cmdbuild.g3d.constants.CONFIGURATION_FILE;
 	var OPTIONS_LABEL_ON_SELECTED = "Selected";
 	var OPTIONS_LABEL_ON_ALL = "All";
 	var MAX_DISTANCE_NODES = 10000;
@@ -22,7 +22,8 @@
 		var objects = [];
 		var edges = [];
 		this.init = function() {
-			this.model = new $.Cmdbuild.g3d.Model();
+			this.model = $.Cmdbuild.customvariables.model;
+			this.selected = $.Cmdbuild.customvariables.selected;
 			$.Cmdbuild.g3d.Options.loadConfiguration(CONFIGURATION_FILE, function(response) {
 				$.Cmdbuild.custom.configuration = response;
 				this.initCB();
@@ -37,16 +38,13 @@
 			$.Cmdbuild.customvariables.options.observe(this);
 			$.Cmdbuild.g3d.Options.initFields();
 			$.Cmdbuild.customvariables.viewer = this;
-			$.Cmdbuild.customvariables.model = this.model;
 			this.camera = new $.Cmdbuild.g3d.Camera(this.model);
 			this.camera.observe(this);
-			this.selected = new $.Cmdbuild.g3d.Selected(this.model);
 			this.selected.observe(this);
 			$.Cmdbuild.customvariables.camera = this.camera;
-			$.Cmdbuild.customvariables.selected = this.selected;
 			this.commandsManager = new $.Cmdbuild.g3d.CommandsManager(
 					this.model);
-			canvasDiv = $("#" + idCanvas)[0];// document.createElement('div');
+			canvasDiv = $("#" + idCanvas)[0];
 			$.Cmdbuild.customvariables.commandsManager = this.commandsManager;
 
 			camera = $.Cmdbuild.g3d.ViewerUtilities.camera();
@@ -54,15 +52,12 @@
 			scene = new THREE.Scene();
 
 			scene.add(new THREE.AmbientLight(0x909090));
-			// scene.add(cameraHelper);
 			var light = $.Cmdbuild.g3d.ViewerUtilities.spotLight(camera, 2000);
 			scene.add(light);
 			var light = $.Cmdbuild.g3d.ViewerUtilities.spotLight(camera, -2000);
 			scene.add(light);
 			plane = $.Cmdbuild.g3d.ViewerUtilities.spacePlane();
 			scene.add(plane);
-			// var axes = buildAxes(1000);
-			// scene.add(axes);
 			renderer = $.Cmdbuild.g3d.ViewerUtilities.webGlRender(canvasDiv);
 			canvasDiv.appendChild(renderer.domElement);
 
@@ -78,7 +73,7 @@
 							init,
 							{},
 							function(response) {
-								if (true) {// $.Cmdbuild.customvariables.options["automaticZoom"])
+								if (true) {
 									// {
 									var me = this;
 									setTimeout(
@@ -178,7 +173,8 @@
 					.getGraphData(source, "label");
 			var labelTarget = $.Cmdbuild.g3d.Model
 					.getGraphData(target, "label");
-			var img = $.Cmdbuild.SpriteArchive.class2Sprite("relation");
+			var relationShape = $.Cmdbuild.g3d.constants.RELATIONSHAPE;
+			var img = $.Cmdbuild.SpriteArchive.class2Sprite(relationShape);
 			htmlStr += "<p>" + labelSource + " (" + classSource + ")</p>";
 			htmlStr += "<img width=16px height=16px src='" + img + "'/>";
 			htmlStr += "<p>" + labelTarget + " (" + classTarget + ")</p>";
@@ -587,7 +583,6 @@
 
 			projScreenMatrix.multiplyMatrices(projectionMatrix,
 					matrixWorldInverse);
-			// projScreenMatrix.multiplyVector3( vector );
 			vector = vector.applyProjection(projScreenMatrix);
 
 			return vector;

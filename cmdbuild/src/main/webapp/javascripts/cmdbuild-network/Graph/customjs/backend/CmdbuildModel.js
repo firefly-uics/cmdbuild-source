@@ -8,11 +8,6 @@
 	if (!$.Cmdbuild.g3d.backend) {
 		$.Cmdbuild.g3d.backend = {};
 	}
-	$.Cmdbuild.g3d.colors = {
-		node: '#6FB1FC',
-		selected: '#FFFF00',
-		edge: "#FF9900"
-	};
 	var elements = {
 		nodes: [{
 			data: {
@@ -89,7 +84,7 @@
 				source: sourceId,
 				target: targetId,
 				label: (domain) ? domain.description : "--",
-				color: $.Cmdbuild.g3d.colors.edge,
+				color: $.Cmdbuild.custom.configuration.edgeColor,
 				strength: 90
 			};
 			elements.edges.push({
@@ -113,7 +108,7 @@
 				edges: []
 			};
 			var configuration = $.Cmdbuild.custom.configuration;
-			if (configuration.filterClassesDomains[className]) {
+			if (configuration && configuration.filterClassesDomains[className]) {
 				this.getAllRelations(node,
 						configuration.filterClassesDomains[className],
 						domainList, className, parseInt(cardId), elements,
@@ -183,10 +178,10 @@
 								}
 								var relation = response[0];
 								var configuration = $.Cmdbuild.custom.configuration;
-								if (configuration.filterClasses
-										.indexOf(relation._destinationType) != -1
-										|| configuration.filterClasses
-												.indexOf(relation._sourceType) != -1) {
+								if (configuration
+										&& (configuration.filterClasses
+												.indexOf(relation._destinationType) != -1 || configuration.filterClasses
+												.indexOf(relation._sourceType) != -1)) {
 									this.getAllRelations(node, domains,
 											domainList, className, cardId,
 											elements, callback, callbackScope);
@@ -203,10 +198,15 @@
 											+ response.length + " "
 											+ relation._destinationType + " - "
 											+ rDescription;
-									this.pushAnOpeningChild(elements, domain,
-											relation._destinationId,
-											description, $.Cmdbuild.g3d.constants.GUICOMPOUNDNODE,
-											response, node, cardId, children);
+									this
+											.pushAnOpeningChild(
+													elements,
+													domain,
+													relation._destinationId,
+													description,
+													$.Cmdbuild.g3d.constants.GUICOMPOUNDNODE,
+													response, node, cardId,
+													children);
 								} else {
 									this.explodeChildren(elements, domain,
 											node, className, cardId, children,

@@ -1,4 +1,11 @@
 {
+	"_COMMENT": "This are two sprites required by the system. The key is declared in class2Key.json",
+	"cmdbuildDefaultShape": "others/circle_blue.png",
+	"cmdbuildSelectionShape": "buildings/select.png",
+	"cmdbuildRelationShape": "actions/view-refresh-2.png",
+
+
+	"_COMMENT": "This are user's nodes and can be defined or not.",
 	"accesses": "devices/blockdevice-2.png",
 	"application": "categories/applications-other-4.png",
 	"asset": "devices/computer-6.png",
@@ -31,9 +38,7 @@
 	"printer": "devices/printer-4.png",
 	"process": "actions/system-run-2-green.png",
 	"rack": "devices/computer-server-rack_mount.png",
-	"relation": "actions/view-refresh-2.png",
 	"SAP": "buildings/sap.png",
-	"selectionShape": "buildings/select.png",
 	"server": "places/gnome-style/network-server.png",
 	"software": "apps/system-software-install.png",
 	"softwareCatalogue": "apps/system-software-installer-3.png",
