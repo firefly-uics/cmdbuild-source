@@ -21,6 +21,14 @@ public class CxfGraphConfiguration implements GraphConfiguration {
 						.withEnabledStatus(delegate.isEnabled()) //
 						.withBaseLevel(delegate.getBaseLevel()) //
 						.withClusteringThreshold(delegate.getClusteringThreshold()) //
+						.withDisplayLabel(delegate.getDisplayLabel()) //
+						.withEdgeColor(delegate.getEdgeColor()) //
+						.withEdgeTooltipEnabled(delegate.isEdgeTooltipEnabled()) //
+						.withNodeTooltipEnabled(delegate.isNodeTooltipEnabled()) //
+						.withSpriteDimension(delegate.getSpriteDimension()) //
+						.withStepRadius(delegate.getStepRadius()) //
+						.withViewPointDistance(delegate.getViewPointDistance()) //
+						.withViewPointHeight(delegate.getViewPointHeight()) //
 						.build()) //
 				.build();
 	}
