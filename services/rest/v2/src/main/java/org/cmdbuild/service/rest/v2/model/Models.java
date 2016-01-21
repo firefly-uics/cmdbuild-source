@@ -1126,18 +1126,14 @@ public class Models {
 
 		private boolean enabled;
 		private int baseLevel;
-		private int expandingThreshold;
 		private int clusteringThreshold;
-		private int extensionMaximumLevel;
 
 		@Override
 		protected GraphConfiguration doBuild() {
 			final GraphConfiguration output = new GraphConfiguration();
 			output.setEnabled(enabled);
 			output.setBaseLevel(baseLevel);
-			output.setExpandingThreshold(expandingThreshold);
 			output.setClusteringThreshold(clusteringThreshold);
-			output.setExtensionMaximumLevel(extensionMaximumLevel);
 			return output;
 		}
 
@@ -1151,18 +1147,8 @@ public class Models {
 			return this;
 		}
 
-		public GraphConfigurationBuilder withExpandingThreshold(final int value) {
-			this.expandingThreshold = value;
-			return this;
-		}
-
 		public GraphConfigurationBuilder withClusteringThreshold(final int value) {
 			this.clusteringThreshold = value;
-			return this;
-		}
-
-		public GraphConfigurationBuilder withExtensionMaximumLevel(final int value) {
-			this.extensionMaximumLevel = value;
 			return this;
 		}
 

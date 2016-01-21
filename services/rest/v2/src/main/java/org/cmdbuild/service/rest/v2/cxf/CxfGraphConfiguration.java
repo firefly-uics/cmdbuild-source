@@ -20,9 +20,7 @@ public class CxfGraphConfiguration implements GraphConfiguration {
 				.withElement(newGraphConfiguration() //
 						.withEnabledStatus(delegate.isEnabled()) //
 						.withBaseLevel(delegate.getBaseLevel()) //
-						.withExpandingThreshold(delegate.getExpandingThreshold()) //
 						.withClusteringThreshold(delegate.getClusteringThreshold()) //
-						.withExtensionMaximumLevel(delegate.getExtensionMaximumLevel()) //
 						.build()) //
 				.build();
 	}
