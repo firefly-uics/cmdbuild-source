@@ -18,7 +18,7 @@
 				this.param = param;
 				$.Cmdbuild.dataModel.forms[this.param.form] = this.grid;
 				this.grid.init(param);
-				this.grid.backend.model.observe(this);
+				$.Cmdbuild.customvariables.model.observe(this);
 				$.Cmdbuild.customvariables.selected.observe(this);
 			}
 			catch (e) {
