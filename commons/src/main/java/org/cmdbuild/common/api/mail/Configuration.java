@@ -46,6 +46,13 @@ public class Configuration {
 		String getOutputProtocol();
 
 		/**
+		 * Returns the status of StartTLS.
+		 * 
+		 * @return {@code true} if StartTLS is enabled, {@code false} otherwise.
+		 */
+		boolean isOutputStartTlsEnabled();
+
+		/**
 		 * Returns the host.
 		 * 
 		 * @return the host.
@@ -58,13 +65,6 @@ public class Configuration {
 		 * @return the port.
 		 */
 		Integer getOutputPort();
-
-		/**
-		 * Returns {@code true} if StartTLS is enabled, {@code false} otherwise.
-		 * 
-		 * @return {@code true} if StartTLS is enabled, {@code false} otherwise.
-		 */
-		boolean isStartTlsEnabled();
 
 		/**
 		 * Returns the username.
@@ -108,6 +108,13 @@ public class Configuration {
 		 * @return the protocol.
 		 */
 		String getInputProtocol();
+
+		/**
+		 * Returns the status of StartTLS.
+		 * 
+		 * @return {@code true} if StartTLS is enabled, {@code false} otherwise.
+		 */
+		boolean isInputStartTlsEnabled();
 
 		/**
 		 * Returns the host.

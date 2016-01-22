@@ -24,6 +24,8 @@ public interface EmailAccountLogic extends Logic {
 
 		boolean isSmtpSsl();
 
+		boolean isSmtpStartTls();
+
 		String getOutputFolder();
 
 		String getImapServer();
@@ -31,6 +33,8 @@ public interface EmailAccountLogic extends Logic {
 		Integer getImapPort();
 
 		boolean isImapSsl();
+
+		boolean isImapStartTls();
 
 	}
 

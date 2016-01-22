@@ -66,6 +66,7 @@ public class ConfigurationHelper {
 	}
 
 	public Configuration.All getMailApiConfiguration() {
+
 		final Configuration.Input INPUT_NOT_SUPPORTED = newProxy(Configuration.Input.class,
 				unsupported("method not supported"));
 
@@ -88,6 +89,11 @@ public class ConfigurationHelper {
 			}
 
 			@Override
+			public boolean isOutputStartTlsEnabled() {
+				return Boolean.valueOf(cus.getProperty(MAIL_STARTTLS));
+			}
+
+			@Override
 			public String getOutputHost() {
 				return cus.getProperty(MAIL_SMTP_SERVER);
 			}
@@ -95,11 +101,6 @@ public class ConfigurationHelper {
 			@Override
 			public Integer getOutputPort() {
 				return Integer.parseInt(cus.getProperty(MAIL_SMTP_PORT));
-			}
-
-			@Override
-			public boolean isStartTlsEnabled() {
-				return Boolean.valueOf(cus.getProperty(MAIL_STARTTLS));
 			}
 
 			@Override
@@ -126,6 +127,11 @@ public class ConfigurationHelper {
 			@Override
 			public String getInputProtocol() {
 				return INPUT_NOT_SUPPORTED.getInputProtocol();
+			}
+
+			@Override
+			public boolean isInputStartTlsEnabled() {
+				return INPUT_NOT_SUPPORTED.isInputStartTlsEnabled();
 			}
 
 			@Override
