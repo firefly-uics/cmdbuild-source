@@ -84,7 +84,6 @@
 			var value = (param.type === "displayLabel") ?
 				param.value : $.Cmdbuild.utilities
 				.getHtmlFieldValue("#" + param.type);
-			console.log("boolean " + param.type + " " + value);
 			$.Cmdbuild.customvariables.options[param.type] = value;
 			$.Cmdbuild.customvariables.options.changed();
 		},
