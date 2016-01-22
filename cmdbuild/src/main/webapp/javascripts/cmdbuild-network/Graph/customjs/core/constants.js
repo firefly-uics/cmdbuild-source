@@ -1,10 +1,11 @@
 (function($) {
 	$.Cmdbuild.g3d.constants = {
 			GUICOMPOUNDNODE: "GUICOMPOUNDNODE",
-			DEFAULTSHAPE: "cmdbuildDefaultShape",
-			SELECTIONSHAPE: "cmdbuildSelectionShape",
-			RELATIONSHAPE: "cmdbuildRelationShape",
+			DEFAULT_SHAPE: "cmdbuildDefaultShape",
+			SELECTION_SHAPE: "cmdbuildSelectionShape",
+			RELATION_SHAPE: "cmdbuildRelationShape",
 			CONFIGURATION_FILE: "configurations/configuration.json",
-			SPRITESPATH: "sprites/"
+			SPRITES_PATH: "sprites/",
+			LABELS_ON_SELECTED: "Selected"
 	};
 })(jQuery);

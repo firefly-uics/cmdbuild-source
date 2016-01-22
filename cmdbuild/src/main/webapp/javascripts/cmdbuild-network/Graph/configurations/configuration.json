@@ -9,8 +9,6 @@
 	"spriteDimension": 40,
 	"edgeColor": "#FF0000",
 	"labels": "",
-	"filterClassesDomains": {	},
-	"filterClasses":[],
 	"class2Key": {
 		"NetworkConfigurationFile" : "configurations/filteredLayout/class2Key.json"
 	},

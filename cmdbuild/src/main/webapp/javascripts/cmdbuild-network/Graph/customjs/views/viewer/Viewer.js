@@ -1,9 +1,6 @@
 (function($) {
 	var CONFIGURATION_FILE = $.Cmdbuild.g3d.constants.CONFIGURATION_FILE;
-	var OPTIONS_LABEL_ON_SELECTED = "Selected";
-	var OPTIONS_LABEL_ON_ALL = "All";
-	var MAX_DISTANCE_NODES = 10000;
-	var MIN_STEP_ZOOMALL = 10;
+	var OPTIONS_LABEL_ON_SELECTED = $.Cmdbuild.g3d.constants.LABELS_ON_SELECTED;;
 	if (!$.Cmdbuild.g3d) {
 		$.Cmdbuild.g3d = {};
 	}
@@ -173,7 +170,7 @@
 					.getGraphData(source, "label");
 			var labelTarget = $.Cmdbuild.g3d.Model
 					.getGraphData(target, "label");
-			var relationShape = $.Cmdbuild.g3d.constants.RELATIONSHAPE;
+			var relationShape = $.Cmdbuild.g3d.constants.RELATION_SHAPE;
 			var img = $.Cmdbuild.SpriteArchive.class2Sprite(relationShape);
 			htmlStr += "<p>" + labelSource + " (" + classSource + ")</p>";
 			htmlStr += "<img width=16px height=16px src='" + img + "'/>";

@@ -108,7 +108,7 @@
 				edges: []
 			};
 			var configuration = $.Cmdbuild.custom.configuration;
-			if (configuration && configuration.filterClassesDomains[className]) {
+			if (configuration.filterClassesDomains && configuration.filterClassesDomains[className]) {
 				this.getAllRelations(node,
 						configuration.filterClassesDomains[className],
 						domainList, className, parseInt(cardId), elements,
@@ -178,7 +178,7 @@
 								}
 								var relation = response[0];
 								var configuration = $.Cmdbuild.custom.configuration;
-								if (configuration
+								if (configuration.filterClasses
 										&& (configuration.filterClasses
 												.indexOf(relation._destinationType) != -1 || configuration.filterClasses
 												.indexOf(relation._sourceType) != -1)) {

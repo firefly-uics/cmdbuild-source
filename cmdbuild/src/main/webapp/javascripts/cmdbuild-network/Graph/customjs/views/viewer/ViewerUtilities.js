@@ -116,7 +116,7 @@
 			return textMesh;
 		},
 		objOnPlane: function(position) {
-			var selectionShape = $.Cmdbuild.g3d.constants.SELECTIONSHAPE;
+			var selectionShape = $.Cmdbuild.g3d.constants.SELECTION_SHAPE;
 			var sprite = $.Cmdbuild.SpriteArchive.class2Sprite(selectionShape);
 			var map = THREE.ImageUtils.loadTexture(sprite);
             var material = new THREE.SpriteMaterial( { map: map, color: 0xffffff, fog: false } );
@@ -137,7 +137,7 @@
 		},
 		//OPENGL
 		selectionOnNode: function(node) {
-			var selectionShape = $.Cmdbuild.g3d.constants.SELECTIONSHAPE;
+			var selectionShape = $.Cmdbuild.g3d.constants.SELECTION_SHAPE;
 			var sprite = $.Cmdbuild.SpriteArchive.class2Sprite(selectionShape);
 			var map = THREE.ImageUtils.loadTexture(sprite);
             var material = new THREE.SpriteMaterial( { map: map, color: 0xffffff, fog: false } );
