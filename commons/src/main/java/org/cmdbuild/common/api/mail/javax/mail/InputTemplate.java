@@ -1,16 +1,19 @@
 package org.cmdbuild.common.api.mail.javax.mail;
 
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
+import static org.cmdbuild.common.api.mail.javax.mail.Constants.FALSE;
 import static org.cmdbuild.common.api.mail.javax.mail.Constants.IMAPS;
+import static org.cmdbuild.common.api.mail.javax.mail.Constants.JAVAX_NET_SSL_SSL_SOCKET_FACTORY;
 import static org.cmdbuild.common.api.mail.javax.mail.Constants.MAIL_DEBUG;
 import static org.cmdbuild.common.api.mail.javax.mail.Constants.MAIL_IMAPS_HOST;
 import static org.cmdbuild.common.api.mail.javax.mail.Constants.MAIL_IMAPS_PORT;
 import static org.cmdbuild.common.api.mail.javax.mail.Constants.MAIL_IMAP_HOST;
 import static org.cmdbuild.common.api.mail.javax.mail.Constants.MAIL_IMAP_PORT;
 import static org.cmdbuild.common.api.mail.javax.mail.Constants.MAIL_IMAP_SOCKET_FACTORY_CLASS;
+import static org.cmdbuild.common.api.mail.javax.mail.Constants.MAIL_IMAP_STARTTLS_ENABLE;
 import static org.cmdbuild.common.api.mail.javax.mail.Constants.MAIL_STORE_PROTOCOL;
 import static org.cmdbuild.common.api.mail.javax.mail.Constants.NO_AUTENTICATION;
-import static org.cmdbuild.common.api.mail.javax.mail.Constants.SSL_FACTORY;
+import static org.cmdbuild.common.api.mail.javax.mail.Constants.TRUE;
 
 import java.io.PrintStream;
 import java.util.Properties;
@@ -80,12 +83,13 @@ class InputTemplate {
 		final Properties properties = new Properties(System.getProperties());
 		properties.setProperty(MAIL_DEBUG, Boolean.toString(configuration.isDebug()));
 		properties.setProperty(MAIL_STORE_PROTOCOL, configuration.getInputProtocol());
+		properties.setProperty(MAIL_IMAP_STARTTLS_ENABLE, configuration.isInputStartTlsEnabled() ? TRUE : FALSE);
 		if (sslRequired()) {
 			properties.setProperty(MAIL_IMAPS_HOST, configuration.getInputHost());
 			if (configuration.getInputPort() != null) {
 				properties.setProperty(MAIL_IMAPS_PORT, configuration.getInputPort().toString());
 			}
-			properties.setProperty(MAIL_IMAP_SOCKET_FACTORY_CLASS, SSL_FACTORY);
+			properties.setProperty(MAIL_IMAP_SOCKET_FACTORY_CLASS, JAVAX_NET_SSL_SSL_SOCKET_FACTORY);
 		} else {
 			properties.setProperty(MAIL_IMAP_HOST, configuration.getInputHost());
 			if (configuration.getInputPort() != null) {

@@ -81,6 +81,11 @@ public class DefaultEmailAccountLogic implements EmailAccountLogic {
 		}
 
 		@Override
+		public boolean isSmtpStartTls() {
+			return delegate().isSmtpStartTls();
+		}
+
+		@Override
 		public String getOutputFolder() {
 			return delegate().getOutputFolder();
 		}
@@ -98,6 +103,11 @@ public class DefaultEmailAccountLogic implements EmailAccountLogic {
 		@Override
 		public boolean isImapSsl() {
 			return delegate().isImapSsl();
+		}
+
+		@Override
+		public boolean isImapStartTls() {
+			return delegate().isImapStartTls();
 		}
 
 		@Override
@@ -250,6 +260,11 @@ public class DefaultEmailAccountLogic implements EmailAccountLogic {
 		}
 
 		@Override
+		public boolean isSmtpStartTls() {
+			return delegate.isSmtpStartTls();
+		}
+
+		@Override
 		public String getOutputFolder() {
 			return delegate.getOutputFolder();
 		}
@@ -267,6 +282,11 @@ public class DefaultEmailAccountLogic implements EmailAccountLogic {
 		@Override
 		public boolean isImapSsl() {
 			return delegate.isImapSsl();
+		}
+
+		@Override
+		public boolean isImapStartTls() {
+			return delegate.isImapStartTls();
 		}
 
 		@Override
@@ -298,10 +318,12 @@ public class DefaultEmailAccountLogic implements EmailAccountLogic {
 					.withSmtpServer(input.getSmtpServer()) //
 					.withSmtpPort(input.getSmtpPort()) //
 					.withSmtpSsl(input.isSmtpSsl()) //
+					.withSmtpStartTls(input.isSmtpStartTls()) //
 					.withOutputFolder(input.getOutputFolder()) //
 					.withImapServer(input.getImapServer()) //
 					.withImapPort(input.getImapPort()) //
 					.withImapSsl(input.isImapSsl()) //
+					.withImapStartTls(input.isImapStartTls()) //
 					.build();
 		};
 
