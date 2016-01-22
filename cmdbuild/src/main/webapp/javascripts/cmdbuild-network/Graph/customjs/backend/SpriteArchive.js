@@ -1,8 +1,8 @@
 (function($) {
 	var SpriteArchive = {
 		class2Sprite: function(className) {
-			var defaultShape = $.Cmdbuild.g3d.constants.DEFAULTSHAPE;
-			var prefix = $.Cmdbuild.appConfigUrl + $.Cmdbuild.g3d.constants.SPRITESPATH;
+			var defaultShape = $.Cmdbuild.g3d.constants.DEFAULT_SHAPE;
+			var prefix = $.Cmdbuild.appConfigUrl + $.Cmdbuild.g3d.constants.SPRITES_PATH;
 			var sprite = "";
 			sprite = this.keyInArchive("systemKeys", className);
 			if (sprite) {
