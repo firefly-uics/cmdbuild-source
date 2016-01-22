@@ -1,4 +1,15 @@
 (function($) {
+	function configureFromServer(configuration, graphConfiguration) {
+		configuration.nodeTooltipEnabled = graphConfiguration.nodeTooltipEnabled;
+		configuration.edgeTooltipEnabled = graphConfiguration.edgeTooltipEnabled;
+		configuration.stepRadius = graphConfiguration.stepRadius;
+		configuration.spriteDimension = graphConfiguration.spriteDimension;
+		configuration.edgeColor = graphConfiguration.edgeColor;
+		configuration.displayLabel = graphConfiguration.displayLabel;
+		configuration.explosionLevels = graphConfiguration.baseLevel;
+		configuration.clusteringThreshold = graphConfiguration.clusteringThreshold;
+		configuration.expandingThreshold = graphConfiguration.expandingThreshold;
+	}
 	var INCLUDED_FILE = "NetworkConfigurationFile";
 	if (!$.Cmdbuild.g3d) {
 		$.Cmdbuild.g3d = {};
@@ -48,9 +59,7 @@
 												// Json properties and those
 												// defined
 												// in administration/setup
-												configuration.explosionLevels = graphConfiguration.baseLevel;
-												configuration.clusteringThreshold = graphConfiguration.clusteringThreshold;
-												configuration.expandingThreshold = graphConfiguration.expandingThreshold;
+												configureFromServer(configuration, graphConfiguration);
 												callback.apply(callbackScope,
 														[configuration]);
 											}, this);

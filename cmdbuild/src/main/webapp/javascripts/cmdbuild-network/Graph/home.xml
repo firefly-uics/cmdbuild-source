@@ -77,10 +77,10 @@
 		 			<params>
 						<type>tabbed</type>
 					</params>
-					<form title="Classes" id="classesGrid" include="classes.xml" class="commandPanelWindow cmdbuildTabbedForm"/>
+					<form title="Card" id="detail" include="detail.xml" class="commandPanelWindow cmdbuildTabbedForm"/>
 					<form title="Card list" id="mainCardsGrid" include="mainCards.xml" class="commandPanelWindow cmdbuildTabbedForm"/>
-					<form title="Card detail" id="detail" include="detail.xml" class="commandPanelWindow cmdbuildTabbedForm"/>
  					<form title="Relations" id="relations" include="relations.xml" class="commandPanelWindow cmdbuildTabbedForm"/>  
+					<form title="Classes" id="classesGrid" include="classes.xml" class="commandPanelWindow cmdbuildTabbedForm"/>
 				</form>
 			</div>
 			<div id="statusPanelContainer">
@@ -119,6 +119,17 @@
 						<type>explosionLevels</type>
 					</onChange>
 				</spinner>
+				<buttonset label="Labels" id="displayLabel" class="labelsMultistate">
+					<params>
+						<none>No labels</none>
+						<selected>Selected</selected>
+						<all>All</all>
+					</params>
+					<onChange>
+						<command>boolean</command>
+						<type>displayLabel</type>
+					</onChange>
+				</buttonset>
 			</div>
 		</div>
 		<form title="Command panel" id="commandPanel" include="commandPanel.xml" class="cmdbuildTabbedForm"/>

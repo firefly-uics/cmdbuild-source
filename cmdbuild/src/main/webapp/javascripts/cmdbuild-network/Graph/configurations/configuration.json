@@ -2,13 +2,6 @@
 	"camera": {
 		"position": {"x": 0, "y": 2500, "z": 2500}
 	},
-	"explosionLevels": 7,
-	"nodesTooltip": true,
-	"edgesTooltip": true,
-	"stepRadius": 200,
-	"spriteDimension": 40,
-	"edgeColor": "#FF0000",
-	"labels": "",
 	"class2Key": {
 		"NetworkConfigurationFile" : "configurations/filteredLayout/class2Key.json"
 	},

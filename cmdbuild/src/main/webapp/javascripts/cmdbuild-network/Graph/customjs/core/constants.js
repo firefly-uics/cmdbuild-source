@@ -6,6 +6,7 @@
 			RELATION_SHAPE: "cmdbuildRelationShape",
 			CONFIGURATION_FILE: "configurations/configuration.json",
 			SPRITES_PATH: "sprites/",
-			LABELS_ON_SELECTED: "Selected"
+			LABELS_ON_SELECTED: "selected",
+			NO_LABELS: "none"
 	};
 })(jQuery);

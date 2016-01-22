@@ -24,10 +24,13 @@
 			description: "Orthogonal"
 		}];
 		var labelsVisibility = [{
-			_id: "All",
+			_id: "none",
+			description: "No abels on entities"
+		},{
+			_id: "all",
 			description: "Labels on all entities"
 		}, {
-			_id: "Selected",
+			_id: "selected",
 			description: "Labels on all selected entities"
 		}];
 
@@ -54,7 +57,7 @@
 //				case "explosionLevels" :
 //					this.data = [];
 //					break;
-				case "labels" :
+				case "displayLabel" :
 					this.data = labelsVisibility;
 					break;
 			}
@@ -97,8 +100,8 @@
 				case "explosionLevels" :
 				case "clusteringThreshold" :
 					return "";
-				case "labels" :
-					return $.Cmdbuild.standard.backend.Options.labelsVisibility(code);
+				case "displayLabel" :
+					return "";
 			}
 		};
 	};
