@@ -13,22 +13,17 @@
 			});
 		},
 		initOptions: function(param) {
-			$("#nodesTooltip").prop("checked",
-					$.Cmdbuild.custom.configuration.nodesTooltip);
-			$.Cmdbuild.customvariables.options["nodesTooltip"] = $.Cmdbuild.custom.configuration.nodesTooltip;
-			$("#edgesTooltip").prop("checked",
-					$.Cmdbuild.custom.configuration.edgesTooltip);
-			$.Cmdbuild.customvariables.options["edgesTooltip"] = $.Cmdbuild.custom.configuration.edgesTooltip;
-			$.Cmdbuild.customvariables.options["labels"] = $.Cmdbuild.custom.configuration.labels;
+			$("#nodeTooltipEnabled").prop("checked",
+					$.Cmdbuild.custom.configuration.nodeTooltipEnabled);
+			$.Cmdbuild.customvariables.options["nodeTooltipEnabled"] = $.Cmdbuild.custom.configuration.nodeTooltipEnabled;
+			$("#edgeTooltipEnabled").prop("checked",
+					$.Cmdbuild.custom.configuration.edgeTooltipEnabled);
+			$.Cmdbuild.customvariables.options["edgeTooltipEnabled"] = $.Cmdbuild.custom.configuration.edgeTooltipEnabled;
+			$.Cmdbuild.customvariables.options["displayLabel"] = $.Cmdbuild.custom.configuration.displayLabel;
 			var backendFn = $.Cmdbuild.utilities.getBackend(param.backend);
-			var valLabels = backendFn.getSelectValue("labels",
-					$.Cmdbuild.customvariables.options["labels"]);
 			setTimeout(function() {
 				$("#clusteringThreshold").spinner("value",
 						$.Cmdbuild.custom.configuration.clusteringThreshold);
-				var selectMenu = $("#labels");
-				selectMenu.val(valLabels);
-				selectMenu.selectmenu("refresh");
 			}, 100);
 		},
 		navigateOnNode: function(param) {
@@ -86,8 +81,10 @@
 
 		},
 		boolean: function(param) {
-			var value = $.Cmdbuild.utilities
-					.getHtmlFieldValue("#" + param.type);
+			var value = (param.type === "displayLabel") ?
+				param.value : $.Cmdbuild.utilities
+				.getHtmlFieldValue("#" + param.type);
+			console.log("boolean " + param.type + " " + value);
 			$.Cmdbuild.customvariables.options[param.type] = value;
 			$.Cmdbuild.customvariables.options.changed();
 		},
@@ -113,7 +110,10 @@
 		initialize: function(callback) {
 			$.Cmdbuild.customvariables.model = new $.Cmdbuild.g3d.Model();
 			$.Cmdbuild.customvariables.selected = new $.Cmdbuild.g3d.Selected($.Cmdbuild.customvariables.model);
-			callback.apply(this, []);
+//			$.Cmdbuild.g3d.Options.loadConfiguration(CONFIGURATION_FILE, function(response) {
+//				$.Cmdbuild.custom.configuration = response;
+				callback.apply(this, []);
+//			}, this);
 		},
 		doLayout: function(param) {
 			$.Cmdbuild.customvariables.model.doLayout();

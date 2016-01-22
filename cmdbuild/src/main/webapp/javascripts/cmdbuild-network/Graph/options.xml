@@ -8,16 +8,16 @@
 			<command>initOptions</command>
 			<backend>Options</backend>
 		</onInit>
-		<checkbox id="nodesTooltip" label="Tooltip for entities" text="true">
+		<checkbox id="nodeTooltipEnabled" label="Tooltip for entities" text="true">
 			<onClick>
 				<command>boolean</command>
-				<type>nodesTooltip</type>
+				<type>nodeTooltipEnabled</type>
 			</onClick>
 		</checkbox>
-		<checkbox id="edgesTooltip" label="Tooltip for relations" text="true">
+		<checkbox id="edgeTooltipEnabled" label="Tooltip for relations" text="true">
 			<onClick>
 				<command>boolean</command>
-				<type>edgesTooltip</type>
+				<type>edgeTooltipEnabled</type>
 			</onClick>
 		</checkbox>
 		<spinner label="Threshold for clustering nodes" id="clusteringThreshold" class="optionsSpinner">
@@ -31,17 +31,6 @@
 				<type>clusteringThreshold</type>
 			</onChange>
 		</spinner>
-		<select label="Labels" id="labels" class="optionsSelect">
-			<params>
-				<backend>Options</backend>
-				<type>labels</type>
-				<value>No labels</value>
-			</params>
-			<onChange>
-				<command>boolean</command>
-				<type>labels</type>
-			</onChange>
-		</select>
 	</div>
 	<div class='cmdbuildFooterButtonsWrapper'>
 		<button text="Ok" id="okOptionsDialogButton">

@@ -8,6 +8,10 @@
 		},
 		combo: function(param) {
 			$("#" + param.id).combobox();
+		},
+		buttonset: function(param) {
+			console.log("buttonset " + param.id + " -- " + + $("#" + param.id).length);
+			$("#" + param.id).buttonset();
 		}
 	};
 	$.Cmdbuild.custom.scripts = scripts;

@@ -1,6 +1,7 @@
 (function($) {
 	var CONFIGURATION_FILE = $.Cmdbuild.g3d.constants.CONFIGURATION_FILE;
 	var OPTIONS_LABEL_ON_SELECTED = $.Cmdbuild.g3d.constants.LABELS_ON_SELECTED;;
+	var OPTIONS_NO_LABELS = $.Cmdbuild.g3d.constants.NO_LABELS;;
 	if (!$.Cmdbuild.g3d) {
 		$.Cmdbuild.g3d = {};
 	}
@@ -149,7 +150,7 @@
 			}, this);
 		};
 		this.moveEdgeTooltip = function(intersected, node, mouseX, mouseY) {
-			if (!$.Cmdbuild.customvariables.options["edgesTooltip"]) {
+			if (!$.Cmdbuild.customvariables.options["edgeTooltipEnabled"]) {
 				return;
 			}
 			$('#viewerInformation').removeClass('viewerInformationNode')
@@ -179,7 +180,7 @@
 			$("#viewerInformation")[0].style.display = "block";
 		};
 		this.moveNodeTooltip = function(intersected, node, mouseX, mouseY) {
-			if (!$.Cmdbuild.customvariables.options["nodesTooltip"]) {
+			if (!$.Cmdbuild.customvariables.options["nodeTooltipEnabled"]) {
 				return;
 			}
 			$('#viewerInformation').removeClass('viewerInformationEdge')
@@ -471,7 +472,7 @@
 			for ( var key in selected) {
 				this.showSelected(key);
 			}
-			if ($.Cmdbuild.customvariables.options["labels"] === OPTIONS_LABEL_ON_SELECTED) {
+			if ($.Cmdbuild.customvariables.options["displayLabel"] === OPTIONS_LABEL_ON_SELECTED) {
 				this.refreshLabels();
 			}
 		};
@@ -619,14 +620,15 @@
 				$("#label" + labels[i].id).remove();
 			}
 			labels = [];
-			var showLabels = $.Cmdbuild.customvariables.options["labels"];
-			if (showLabels) {
+			var showLabels = $.Cmdbuild.customvariables.options["displayLabel"];
+			console.log("displayLabel " + showLabels);
+			if (showLabels !== OPTIONS_NO_LABELS) {
 				var nodes = this.model.getNodes();
 				for (var i = 0; i < nodes.length; i++) {
 					var node = nodes[i];
 					var label = $.Cmdbuild.g3d.Model
 							.getGraphData(node, "label");
-					if (showLabels == "Selected"
+					if (showLabels === OPTIONS_LABEL_ON_SELECTED
 							&& !this.selected.isSelect(node.id())) {
 						continue;
 					}
@@ -646,7 +648,7 @@
 			}
 			labelsInterval = setInterval(
 					function() {
-						var showLabels = $.Cmdbuild.customvariables.options["labels"];
+						var showLabels = $.Cmdbuild.customvariables.options["displayLabel"];
 						if (!showLabels) {
 							clearInterval(labelsInterval);
 							return;

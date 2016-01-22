@@ -1,4 +1,9 @@
 <DATA>
+	<onClick>
+			<command>navigate</command>
+			<container>relationsFormContainer</container>
+			<form>relationsForm</form>
+	</onClick>
 	<params>
 		<type>div</type>
 	</params>
@@ -9,9 +14,9 @@
 			<form>relationsForm</form>
 		</onInit>
 		<form id="relationsForm">
-			<observe container="relationsFormContainer">
-				<dummy1>$selectedForm.dummy</dummy1> 
-			</observe>
+<!-- 			<observe container="relationsFormContainer"> -->
+<!-- 				<dummy1>$selectedForm.dummy</dummy1>  -->
+<!-- 			</observe> -->
    			<params>
 				<type>relationsGrid</type>
 				<backend>Relations</backend>

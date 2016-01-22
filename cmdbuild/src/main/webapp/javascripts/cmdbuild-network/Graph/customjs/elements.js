@@ -52,6 +52,37 @@
 				type: params.type
 			});
 			return htmlStr;
+		},
+		buttonset : function(xmlElement) {
+			var param = $.Cmdbuild.elementsManager.getParams(xmlElement);
+			var paramActualized = $.Cmdbuild.dataModel.resolveVariables(param);
+
+			if (paramActualized.condition !== undefined && ! paramActualized.condition) {
+				return "";
+			}
+			var htmlStr = "";
+			htmlStr += $.Cmdbuild.elementsManager.insertLabel(xmlElement);
+			var id = $.Cmdbuild.elementsManager.getXmlElementId(xmlElement);
+			var text = $.Cmdbuild.elementsManager.getText(xmlElement);
+			var ca = $.Cmdbuild.elementsManager.getCommonAttributes(xmlElement);
+			var paramForClick = $.Cmdbuild.elementsManager.getEvent("onChange", xmlElement);
+			htmlStr += "<div " + ca + ">";
+			for (var key in paramActualized) {
+				var text = paramActualized[key];
+				paramForClick.value = key;
+				var onClick = " onClick=\'$.Cmdbuild.eventsManager.onEvent(" + JSON.stringify(paramForClick) + ");\'";
+				htmlStr += "<input type='radio' id='" + key + "' name='" + id + "' " + onClick + "><label for='" + key + "'>" +  text + "</label>";
+			}
+			htmlStr += "</div>";
+			htmlStr += $.Cmdbuild.elementsManager.insertReturn(xmlElement);
+			if (param) {
+				$.Cmdbuild.dataModel.prepareCallerParameters(id, param);
+			}
+			$.Cmdbuild.scriptsManager.push({
+				script : "buttonset",
+				id : id
+			});
+			return htmlStr;
 		}
 	};
 	$.Cmdbuild.custom.elements = elements;
