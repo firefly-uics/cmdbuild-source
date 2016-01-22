@@ -621,7 +621,6 @@
 			}
 			labels = [];
 			var showLabels = $.Cmdbuild.customvariables.options["displayLabel"];
-			console.log("displayLabel " + showLabels);
 			if (showLabels !== OPTIONS_NO_LABELS) {
 				var nodes = this.model.getNodes();
 				for (var i = 0; i < nodes.length; i++) {
@@ -684,12 +683,17 @@
 		};
 		this.pointOnScreen = function(vector, w, h, projectionMatrix,
 				matrixWorld, bFirst) {
+			var ZOOM_BORDER = 50;
 			var v = new THREE.Vector3();
 			v.copy(vector);
 			this.projectVector(v, projectionMatrix, matrixWorld);
 			v.x = (v.x * w / 2) + w / 2;
 			v.y = -(v.y * h / 2) + h / 2;
-			if (v.x < 0 || v.x > w || v.y < 0 || v.y > h) {
+			var bx = ZOOM_BORDER;
+			var by = ZOOM_BORDER;
+			var bw = w - ZOOM_BORDER * 2;
+			var bh = h - ZOOM_BORDER * 2;
+			if (v.x < bx || v.x > bw || v.y < by || v.y > bh) {
 				return false;
 			}
 			return true;
