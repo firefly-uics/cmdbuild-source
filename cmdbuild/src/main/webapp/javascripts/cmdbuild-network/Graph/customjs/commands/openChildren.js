@@ -67,11 +67,15 @@
 			this.model.pushElements({
 				nodes: [{
 					data: this.compoundSavedNode.node
-					}],
+				}],
 				edges: [{
 					data: this.compoundSavedNode.edge
 				}]
 			});
+			var children = $.Cmdbuild.g3d.Model.getGraphData(this.parentNode,
+					"children");
+			children.push(this.compoundSavedNode.node.id);
+
 			// if (this.batch !== true) {
 			this.model.changed(true);
 			// }
@@ -95,7 +99,7 @@
 						"previousPathNode")
 			};
 			var node = data;
-			
+
 			var data = {};
 			if (edge) {
 				data = {
