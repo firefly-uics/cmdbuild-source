@@ -204,6 +204,13 @@
 							name: CMDBuild.core.proxy.CMProxyConstants.SMTP_SSL,
 							fieldLabel: CMDBuild.Translation.enableSsl
 						},
+						Ext.create('Ext.form.field.Checkbox',{
+							name: CMDBuild.core.proxy.CMProxyConstants.SMTP_START_TLS,
+							fieldLabel: CMDBuild.Translation.enableStartTls,
+							labelWidth: CMDBuild.LABEL_WIDTH,
+							inputValue: true,
+							uncheckedValue: false
+						}),
 						{
 							xtype: 'textfield',
 							name: CMDBuild.core.proxy.CMProxyConstants.OUTPUT_FOLDER,
@@ -247,7 +254,14 @@
 							xtype: 'checkbox',
 							name: CMDBuild.core.proxy.CMProxyConstants.IMAP_SSL,
 							fieldLabel: CMDBuild.Translation.enableSsl
-						}
+						},
+						Ext.create('Ext.form.field.Checkbox',{
+							name: CMDBuild.core.proxy.CMProxyConstants.IMAP_START_TLS,
+							fieldLabel: CMDBuild.Translation.enableStartTls,
+							labelWidth: CMDBuild.LABEL_WIDTH,
+							inputValue: true,
+							uncheckedValue: false
+						})
 					]
 				});
 			// END: Page FieldSets configuration
