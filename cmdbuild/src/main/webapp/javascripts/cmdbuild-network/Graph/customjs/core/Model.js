@@ -188,6 +188,9 @@
 		};
 		this.cleanCompoundNode = function(node) {
 			var elements = $.Cmdbuild.g3d.Model.getGraphData(node, "compoundData");
+			if (! elements) {
+				elements = [];
+			}
 			var remainElements = [];
 			for (var i = 0; i < elements.length; i++) {
 				var element = elements[i];
