@@ -102,7 +102,7 @@
 			var elements = $.Cmdbuild.g3d.Model.getGraphData(node,
 					"compoundData");
 			var arCommands = [];
-			var expandingThreshold = $.Cmdbuild.customvariables.options["expandingThreshold"];
+			var expandingThreshold = 10;//$.Cmdbuild.customvariables.options["expandingThreshold"];
 			for (var i = 0; i < elements.length; i += expandingThreshold) {
 				arCommands.push({
 					command: "openChildren",
@@ -230,7 +230,7 @@
 				SELECTED.position.copy(position);
 				thisViewer.refreshNodeEdges(SELECTED.elementId, position);
 				if (node.selectionOnNode) {
-					node.selectionOnNode.position.copy(position);
+					node.selectionOnNode.position.copy(node.glObject.position);
 				}
 				return;
 			}
@@ -255,7 +255,7 @@
 					thisViewer.moveNodeTooltip(intersects[0], node,
 							event.clientX, event.clientY);
 					if (node.selectionOnNode) {
-						node.selectionOnNode.position.copy(node.position());
+						node.selectionOnNode.position.copy(node.glObject.position);
 					}
 				} catch (e) {
 					console
@@ -348,12 +348,24 @@
 							SELECTED.elementId, node.position(),
 							INTERSECTED.position);
 				}
+				else {
+					if (node.selectionOnNode) {
+						node.selectionOnNode.position.copy(node.glObject.position);
+					}
+					
+				}
 			} else if (SELECTED) {
 				if (!$.Cmdbuild.g3d.ViewerUtilities.equals(node.position(),
 						SELECTED.position)) {
 					thisViewer.pushNewPosition(thisViewer.model,
 							SELECTED.elementId, node.position(),
 							SELECTED.position);
+				}
+				else {
+					if (node.selectionOnNode) {
+						node.selectionOnNode.position.copy(node.glObject.position);
+					}
+					
 				}
 			}
 			canvasDiv.style.cursor = 'auto';
@@ -500,6 +512,11 @@
 				scene.add(object);
 				node.selectionOnNode = object;
 				object.position.set(position.x, position.y, position.z);
+			}
+			else {
+				var position = node.glObject.position;
+				node.selectionOnNode.position.set(position.x, position.y, position.z);
+				
 			}
 		};
 		this.setSelection = function(id, select) {
