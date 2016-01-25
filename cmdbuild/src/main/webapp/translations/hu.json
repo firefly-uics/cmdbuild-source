@@ -1332,6 +1332,7 @@
 	"enableGroup": "Csoport engedélyezése",
 	"enableMoveRejectedNotMatching": "Nem egyezők mozgatásának engedélyezése",
 	"enableSsl": "SSL engedélyezése",
+	"enableStartTls": "<em>Enable STARTTLS</em>",
 	"enableUser": "Felhasználó engedélyezése",
 	"endDate": "Befejező dátum",
 	"engineName": "Engine neve",

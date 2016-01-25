@@ -1332,6 +1332,7 @@
 	"enableGroup": "Kích hoạt Nhóm",
 	"enableMoveRejectedNotMatching": "<em>Enable move rejected not matching</em>",
 	"enableSsl": "<em>Enable SSL</em>",
+	"enableStartTls": "<em>Enable STARTTLS</em>",
 	"enableUser": "Kích hoạt người dùng",
 	"endDate": "Ngày kết thúc",
 	"engineName": "Tên phương tiện",
