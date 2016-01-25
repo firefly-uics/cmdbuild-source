@@ -1332,6 +1332,7 @@
 	"enableGroup": "Включить группу",
 	"enableMoveRejectedNotMatching": "<em>Enable move rejected not matching</em>",
 	"enableSsl": "Использовать SSL",
+	"enableStartTls": "<em>Enable STARTTLS</em>",
 	"enableUser": "Включить пользователя",
 	"endDate": "Конечная дата",
 	"engineName": "Имя движка",

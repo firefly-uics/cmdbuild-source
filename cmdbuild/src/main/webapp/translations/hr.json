@@ -1332,6 +1332,7 @@
 	"enableGroup": "Uključi grupu",
 	"enableMoveRejectedNotMatching": "<em>Enable move rejected not matching</em>",
 	"enableSsl": "<em>Enable SSL</em>",
+	"enableStartTls": "<em>Enable STARTTLS</em>",
 	"enableUser": "Uključi korisnika",
 	"endDate": "Datum završetka",
 	"engineName": "Naziv sistema za upravljanje procesima",

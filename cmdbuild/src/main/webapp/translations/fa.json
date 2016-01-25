@@ -1332,6 +1332,7 @@
 	"enableGroup": "فعال کردن گروه",
 	"enableMoveRejectedNotMatching": "Enable move rejected not matching",
 	"enableSsl": "Enable SSL",
+	"enableStartTls": "<em>Enable STARTTLS</em>",
 	"enableUser": "کاربر فعال",
 	"endDate": "تاریخ اتمام",
 	"engineName": "Engine name",
