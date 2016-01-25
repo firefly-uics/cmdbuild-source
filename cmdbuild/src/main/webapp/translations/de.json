@@ -1332,6 +1332,7 @@
 	"enableGroup": "Gruppe freigeben",
 	"enableMoveRejectedNotMatching": "unbehandelte E-Mails verschieben",
 	"enableSsl": "SSL aktivieren",
+	"enableStartTls": "<em>Enable STARTTLS</em>",
 	"enableUser": "Benutzer freigeben",
 	"endDate": "Enddatum",
 	"engineName": "Engine-Name",

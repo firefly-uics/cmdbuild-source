@@ -1332,6 +1332,7 @@
 	"enableGroup": "Abilita gruppo",
 	"enableMoveRejectedNotMatching": "Abilita spostamento respinte",
 	"enableSsl": "Abilita SSL",
+	"enableStartTls": "Abilita STARTTLS",
 	"enableUser": "Abilita utente",
 	"endDate": "Data fine",
 	"engineName": "Nome Motore",

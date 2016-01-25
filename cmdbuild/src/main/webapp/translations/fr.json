@@ -1332,6 +1332,7 @@
 	"enableGroup": "Activer le groupe",
 	"enableMoveRejectedNotMatching": "Autoriser le déplacement des rejets ne correspondant pas",
 	"enableSsl": "Activer SSL",
+	"enableStartTls": "<em>Enable STARTTLS</em>",
 	"enableUser": "Activer l'utilisateur",
 	"endDate": "Date de fin",
 	"engineName": "Nom du moteur",

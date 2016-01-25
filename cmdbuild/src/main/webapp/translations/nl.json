@@ -1332,6 +1332,7 @@
 	"enableGroup": "Deblokkeer groep",
 	"enableMoveRejectedNotMatching": "Aktiveer, Verplaats of Weiger niet passende",
 	"enableSsl": "Aktiveer SSL",
+	"enableStartTls": "<em>Enable STARTTLS</em>",
 	"enableUser": "Deblokkeer gebruiker",
 	"endDate": "Eind datum",
 	"engineName": "Machine naam",

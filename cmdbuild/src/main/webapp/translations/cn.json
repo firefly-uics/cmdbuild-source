@@ -1332,6 +1332,7 @@
 	"enableGroup": "<em>Enable group</em>",
 	"enableMoveRejectedNotMatching": "Enable move rejected not matching",
 	"enableSsl": "使SSL生效",
+	"enableStartTls": "<em>Enable STARTTLS</em>",
 	"enableUser": "使用户生效",
 	"endDate": "结束日期",
 	"engineName": "引擎名称",

@@ -1332,6 +1332,7 @@
 	"enableGroup": "Enable group",
 	"enableMoveRejectedNotMatching": "Enable move rejected not matching",
 	"enableSsl": "Enable SSL",
+	"enableStartTls": "Enable STARTTLS",
 	"enableUser": "Enable user",
 	"endDate": "End date",
 	"engineName": "Engine name",
