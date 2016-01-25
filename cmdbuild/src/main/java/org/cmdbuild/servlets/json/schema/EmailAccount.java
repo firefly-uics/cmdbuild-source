@@ -7,6 +7,7 @@ import static org.cmdbuild.servlets.json.CommunicationConstants.ID;
 import static org.cmdbuild.servlets.json.CommunicationConstants.IMAP_PORT;
 import static org.cmdbuild.servlets.json.CommunicationConstants.IMAP_SERVER;
 import static org.cmdbuild.servlets.json.CommunicationConstants.IMAP_SSL;
+import static org.cmdbuild.servlets.json.CommunicationConstants.IMAP_STARTTLS;
 import static org.cmdbuild.servlets.json.CommunicationConstants.IS_DEFAULT;
 import static org.cmdbuild.servlets.json.CommunicationConstants.NAME;
 import static org.cmdbuild.servlets.json.CommunicationConstants.OUTPUT_FOLDER;
@@ -14,6 +15,7 @@ import static org.cmdbuild.servlets.json.CommunicationConstants.PASSWORD;
 import static org.cmdbuild.servlets.json.CommunicationConstants.SMTP_PORT;
 import static org.cmdbuild.servlets.json.CommunicationConstants.SMTP_SERVER;
 import static org.cmdbuild.servlets.json.CommunicationConstants.SMTP_SSL;
+import static org.cmdbuild.servlets.json.CommunicationConstants.SMTP_STARTTLS;
 import static org.cmdbuild.servlets.json.CommunicationConstants.USER_NAME;
 
 import java.util.List;
@@ -42,10 +44,12 @@ public class EmailAccount extends JSONBaseWithSpringContext {
 		private String smtpServer;
 		private Integer smtpPort;
 		private boolean smtpSsl;
+		private boolean smtpStartTls;
 		private String outputFolder;
 		private String imapServer;
 		private Integer imapPort;
 		private boolean imapSsl;
+		private boolean imapStartTls;
 
 		@Override
 		@JsonProperty(ID)
@@ -138,12 +142,22 @@ public class EmailAccount extends JSONBaseWithSpringContext {
 		}
 
 		@Override
+		@JsonProperty(SMTP_STARTTLS)
+		public boolean isSmtpStartTls() {
+			return smtpStartTls;
+		}
+
+		public void setSmtpStartTls(final Boolean smtpStartTls) {
+			this.smtpStartTls = (smtpStartTls == null) ? false : smtpStartTls;
+		}
+
+		@Override
 		@JsonProperty(OUTPUT_FOLDER)
 		public String getOutputFolder() {
 			return outputFolder;
 		}
 
-		public void setOutputFolder(String outputFolder) {
+		public void setOutputFolder(final String outputFolder) {
 			this.outputFolder = outputFolder;
 		}
 
@@ -175,6 +189,16 @@ public class EmailAccount extends JSONBaseWithSpringContext {
 
 		public void setImapSsl(final Boolean imapSsl) {
 			this.imapSsl = (imapSsl == null) ? false : imapSsl;
+		}
+
+		@Override
+		@JsonProperty(IMAP_STARTTLS)
+		public boolean isImapStartTls() {
+			return imapStartTls;
+		}
+
+		public void setImapStartTls(final Boolean imapStartTls) {
+			this.imapStartTls = (imapStartTls == null) ? false : imapStartTls;
 		}
 
 		@Override
@@ -219,10 +243,12 @@ public class EmailAccount extends JSONBaseWithSpringContext {
 					setSmtpServer(input.getSmtpServer());
 					setSmtpPort(input.getSmtpPort());
 					setSmtpSsl(input.isSmtpSsl());
+					setSmtpStartTls(input.isSmtpStartTls());
 					setOutputFolder(input.getOutputFolder());
 					setImapServer(input.getImapServer());
 					setImapPort(input.getImapPort());
 					setImapSsl(input.isImapSsl());
+					setImapStartTls(input.isImapStartTls());
 				}
 			};
 		}
@@ -275,10 +301,12 @@ public class EmailAccount extends JSONBaseWithSpringContext {
 			@Parameter(SMTP_SERVER) final String smtpServer, //
 			@Parameter(SMTP_PORT) final Integer smtpPort, //
 			@Parameter(SMTP_SSL) final Boolean smtpSsl, //
+			@Parameter(SMTP_STARTTLS) final Boolean smtpStartTls, //
 			@Parameter(value = OUTPUT_FOLDER, required = false) final String outputFolder, //
 			@Parameter(IMAP_SERVER) final String imapServer, //
 			@Parameter(IMAP_PORT) final Integer imapPort, //
-			@Parameter(IMAP_SSL) final Boolean imapSsl //
+			@Parameter(IMAP_SSL) final Boolean imapSsl, //
+			@Parameter(IMAP_STARTTLS) final Boolean imapStartTls //
 	) {
 		final JsonAccount accountDetails = new JsonAccount() {
 			{
@@ -290,10 +318,12 @@ public class EmailAccount extends JSONBaseWithSpringContext {
 				setSmtpServer(smtpServer);
 				setSmtpPort(smtpPort);
 				setSmtpSsl(smtpSsl);
+				setSmtpStartTls(smtpStartTls);
 				setOutputFolder(outputFolder);
 				setImapServer(imapServer);
 				setImapPort(imapPort);
 				setImapSsl(imapSsl);
+				setImapStartTls(imapStartTls);
 			}
 		};
 
@@ -313,10 +343,12 @@ public class EmailAccount extends JSONBaseWithSpringContext {
 			@Parameter(SMTP_SERVER) final String smtpServer, //
 			@Parameter(SMTP_PORT) final Integer smtpPort, //
 			@Parameter(SMTP_SSL) final Boolean smtpSsl, //
+			@Parameter(SMTP_STARTTLS) final Boolean smtpStartTls, //
 			@Parameter(value = OUTPUT_FOLDER, required = false) final String outputFolder, //
 			@Parameter(IMAP_SERVER) final String imapServer, //
 			@Parameter(IMAP_PORT) final Integer imapPort, //
-			@Parameter(IMAP_SSL) final Boolean imapSsl //
+			@Parameter(IMAP_SSL) final Boolean imapSsl, //
+			@Parameter(IMAP_STARTTLS) final Boolean imapStartTls //
 	) {
 		final JsonAccount accountDetails = new JsonAccount() {
 			{
@@ -328,10 +360,12 @@ public class EmailAccount extends JSONBaseWithSpringContext {
 				setSmtpServer(smtpServer);
 				setSmtpPort(smtpPort);
 				setSmtpSsl(smtpSsl);
+				setSmtpStartTls(smtpStartTls);
 				setOutputFolder(outputFolder);
 				setImapServer(imapServer);
 				setImapPort(imapPort);
 				setImapSsl(imapSsl);
+				setImapStartTls(imapStartTls);
 			}
 		};
 

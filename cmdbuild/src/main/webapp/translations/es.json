@@ -1332,6 +1332,7 @@
 	"enableGroup": "Habilitar Grupo",
 	"enableMoveRejectedNotMatching": "Habilita transferencias rechazadas",
 	"enableSsl": "Habilita SSL",
+	"enableStartTls": "<em>Enable STARTTLS</em>",
 	"enableUser": "Habilitar usuario",
 	"endDate": "Fecha de finalización",
 	"engineName": "Nombre del motor",

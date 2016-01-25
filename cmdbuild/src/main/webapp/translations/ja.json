@@ -1332,6 +1332,7 @@
 	"enableGroup": "グループの有効化",
 	"enableMoveRejectedNotMatching": "マッチせずにリジェクトされた移動を可能にする",
 	"enableSsl": "SSLを有効化",
+	"enableStartTls": "<em>Enable STARTTLS</em>",
 	"enableUser": "可能なユーザー",
 	"endDate": "終了日",
 	"engineName": "エンジン名",
