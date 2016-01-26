@@ -14,7 +14,6 @@
 				return;
 			}
 			var me = this;
-			var me = this;
 			$.Cmdbuild.authProxy.maskRequest();
 			// this for give control at the mask to start
 			setTimeout(function() {
