@@ -22,11 +22,12 @@
 		this.init = function() {
 			this.model = $.Cmdbuild.customvariables.model;
 			this.selected = $.Cmdbuild.customvariables.selected;
-			$.Cmdbuild.g3d.Options.loadConfiguration(CONFIGURATION_FILE, function(response) {
-				$.Cmdbuild.custom.configuration = response;
-				this.initCB();
-				animate();
-			}, this);
+			$.Cmdbuild.g3d.Options.loadConfiguration(CONFIGURATION_FILE,
+					function(response) {
+						$.Cmdbuild.custom.configuration = response;
+						this.initCB();
+						animate();
+					}, this);
 		};
 		this.initCB = function() {
 			THREE.ImageUtils.crossOrigin = '';
@@ -102,7 +103,7 @@
 			var elements = $.Cmdbuild.g3d.Model.getGraphData(node,
 					"compoundData");
 			var arCommands = [];
-			var expandingThreshold = 10;//$.Cmdbuild.customvariables.options["expandingThreshold"];
+			var expandingThreshold = 10;// $.Cmdbuild.customvariables.options["expandingThreshold"];
 			for (var i = 0; i < elements.length; i += expandingThreshold) {
 				arCommands.push({
 					command: "openChildren",
@@ -146,7 +147,8 @@
 					});
 			thisViewer.commandsManager.execute(explode, {}, function() {
 				var nodes = $.Cmdbuild.customvariables.model.getNodes();
-				$.Cmdbuild.g3d.Model.removeGraphData(nodes, "exploded_children");
+				$.Cmdbuild.g3d.Model
+						.removeGraphData(nodes, "exploded_children");
 			}, this);
 		};
 		this.moveEdgeTooltip = function(intersected, node, mouseX, mouseY) {
@@ -255,7 +257,8 @@
 					thisViewer.moveNodeTooltip(intersects[0], node,
 							event.clientX, event.clientY);
 					if (node.selectionOnNode) {
-						node.selectionOnNode.position.copy(node.glObject.position);
+						node.selectionOnNode.position
+								.copy(node.glObject.position);
 					}
 				} catch (e) {
 					console
@@ -325,10 +328,10 @@
 					return;
 				}
 				offset.copy(intersects[0].point).sub(plane.position);
-				if (! event.ctrlKey) {
+				if (!event.ctrlKey) {
 					thisViewer.clearSelection();
 				}
-				thisViewer.setSelection(SELECTED.elementId, ! event.ctrlKey);
+				thisViewer.setSelection(SELECTED.elementId, !event.ctrlKey);
 				canvasDiv.style.cursor = 'move';
 				// ---->>> controls.set( SELECTED.position);
 			}
@@ -347,12 +350,12 @@
 					thisViewer.pushNewPosition(thisViewer.model,
 							SELECTED.elementId, node.position(),
 							INTERSECTED.position);
-				}
-				else {
+				} else {
 					if (node.selectionOnNode) {
-						node.selectionOnNode.position.copy(node.glObject.position);
+						node.selectionOnNode.position
+								.copy(node.glObject.position);
 					}
-					
+
 				}
 			} else if (SELECTED) {
 				if (!$.Cmdbuild.g3d.ViewerUtilities.equals(node.position(),
@@ -360,12 +363,12 @@
 					thisViewer.pushNewPosition(thisViewer.model,
 							SELECTED.elementId, node.position(),
 							SELECTED.position);
-				}
-				else {
+				} else {
 					if (node.selectionOnNode) {
-						node.selectionOnNode.position.copy(node.glObject.position);
+						node.selectionOnNode.position
+								.copy(node.glObject.position);
 					}
-					
+
 				}
 			}
 			canvasDiv.style.cursor = 'auto';
@@ -512,15 +515,15 @@
 				scene.add(object);
 				node.selectionOnNode = object;
 				object.position.set(position.x, position.y, position.z);
-			}
-			else {
+			} else {
 				var position = node.glObject.position;
-				node.selectionOnNode.position.set(position.x, position.y, position.z);
-				
+				node.selectionOnNode.position.set(position.x, position.y,
+						position.z);
+
 			}
 		};
 		this.setSelection = function(id, select) {
-			if (select || ! this.selected.isSelect(id)) {
+			if (select || !this.selected.isSelect(id)) {
 				this.selected.select(id);
 				this.showSelected(id);
 			} else {
@@ -528,7 +531,58 @@
 			}
 		};
 		// ZOOM ALL
+		this.boundingBoxVertices = function(box) {
+			return [{
+				x: box.x,
+				y: box.y,
+				z: box.z
+			}, {
+				x: box.x,
+				y: box.y,
+				z: box.d + box.z
+			}, {
+				x: box.x,
+				y: box.h + box.y,
+				z: box.z
+			}, {
+				x: box.x,
+				y: box.h + box.y,
+				z: box.d + box.z
+			}, {
+				x: box.w + box.x,
+				y: box.y,
+				z: box.z
+			}, {
+				x: box.w + box.x,
+				y: box.y,
+				z: box.d + box.z
+			}, {
+				x: box.w + box.x,
+				y: box.h + box.y,
+				z: box.z
+			}, {
+				x: box.w + box.x,
+				y: box.h + box.y,
+				z: box.d + box.z
+			}];
+		};
 		this.boundingBox = function() {
+			var RANGE_ZOOM = $.Cmdbuild.custom.configuration.stepRadius * 3;
+			var box = this._boundingBox();
+			if (box.w < RANGE_ZOOM) {
+				var m = RANGE_ZOOM - box.w;
+				box.x -= m / 2;
+				box.w += m;
+			}
+			if (box.h < RANGE_ZOOM) {
+				var m = RANGE_ZOOM - box.h;
+				box.y -= m / 2;
+				box.h += m;
+			}
+			box.vertices = this.boundingBoxVertices(box);
+			return box;
+		};
+		this._boundingBox = function() {
 			var bb = new THREE.Box3();
 			var maxx = -Number.MAX_VALUE;
 			var maxy = -Number.MAX_VALUE;
@@ -546,39 +600,6 @@
 				maxz = Math.max(maxz, p.z);
 			}
 			return {
-				vertices: [{
-					x: minx,
-					y: miny,
-					z: minz
-				}, {
-					x: minx,
-					y: miny,
-					z: maxz
-				}, {
-					x: minx,
-					y: maxy,
-					z: minz
-				}, {
-					x: minx,
-					y: maxy,
-					z: maxz
-				}, {
-					x: maxx,
-					y: miny,
-					z: minz
-				}, {
-					x: maxx,
-					y: miny,
-					z: maxz
-				}, {
-					x: maxx,
-					y: maxy,
-					z: minz
-				}, {
-					x: maxx,
-					y: maxy,
-					z: maxz
-				}],
 				x: minx,
 				y: miny,
 				z: minz,
@@ -715,7 +736,18 @@
 			}
 			return true;
 		};
+		// this.objectDimensionAfterProjection = function(box, w, h,
+		// projectionMatrix, matrixWorld) {
+		// var vapp = new THREE.Vector3(box.x + box.w/2, box.y + box.h/2, box.z
+		// + box.d/2);
+		// var v = new THREE.Vector3(box.x + box.w/2, box.y + box.h/2, box.z +
+		// box.d/2);
+		// this.projectVector(v, projectionMatrix, matrixWorld);
+		// console.log(box, v, vapp);
+		// };
 		this.onVideo = function(box, w, h, projectionMatrix, matrixWorld) {
+			// var dimension = this.objectDimensionAfterProjection(box, w, h,
+			// projectionMatrix, matrixWorld);
 			for (var i = 0; i < box.vertices.length; i++) {
 				var vertice = box.vertices[i];
 				var vector = new THREE.Vector3(vertice.x, vertice.y, vertice.z);
