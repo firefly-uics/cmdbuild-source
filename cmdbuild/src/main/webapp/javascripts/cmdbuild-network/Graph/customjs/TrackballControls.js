@@ -63,6 +63,20 @@ THREE.TrackballControls = function ( object, domElement ) {
 	
 	//************************************
 	//MADE IN TECNOTECA
+	this.approxOnY = function(y) {
+		var direction = (y > 0) ? 1 : -1;
+		this._approxOnY(direction, y);
+	};
+	this._approxOnY = function(direction, steps) {
+		if (Math.abs(steps) < 1) {
+			return;
+		}
+		var me = this;
+		setTimeout(function() {
+			me.setY(direction);
+			me._approxOnY(direction, steps - direction);
+		}, 10);
+	};
 	this.setY = function(direction) {
 		_zoomStart.y = direction * .1;
 	};

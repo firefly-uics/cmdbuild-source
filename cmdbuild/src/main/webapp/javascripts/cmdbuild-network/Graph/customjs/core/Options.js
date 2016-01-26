@@ -9,6 +9,9 @@
 		configuration.explosionLevels = graphConfiguration.baseLevel;
 		configuration.clusteringThreshold = graphConfiguration.clusteringThreshold;
 		configuration.expandingThreshold = graphConfiguration.expandingThreshold;
+		
+		configuration.viewPointDistance = $.Cmdbuild.g3d.constants.RANGE_VIEWPOINTDISTANCE / 2 - graphConfiguration.viewPointDistance;
+		//configuration.camera.position.z = graphConfiguration.viewPointHeight;
 	}
 	var INCLUDED_FILE = "NetworkConfigurationFile";
 	if (!$.Cmdbuild.g3d) {

@@ -7,6 +7,7 @@
 			CONFIGURATION_FILE: "configurations/configuration.json",
 			SPRITES_PATH: "sprites/",
 			LABELS_ON_SELECTED: "selected",
-			NO_LABELS: "none"
+			NO_LABELS: "none",
+			RANGE_VIEWPOINTDISTANCE: 100
 	};
 })(jQuery);

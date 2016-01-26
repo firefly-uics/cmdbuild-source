@@ -59,10 +59,9 @@
 			scene.add(plane);
 			renderer = $.Cmdbuild.g3d.ViewerUtilities.webGlRender(canvasDiv);
 			canvasDiv.appendChild(renderer.domElement);
-
 			controls = $.Cmdbuild.g3d.ViewerUtilities.trackballControls(camera,
 					renderer.domElement);
-
+			controls.approxOnY($.Cmdbuild.custom.configuration.viewPointDistance);
 			$.Cmdbuild.g3d.ViewerUtilities.declareEvents(this,
 					renderer.domElement);
 			var init = new $.Cmdbuild.g3d.commands.init_explode(
