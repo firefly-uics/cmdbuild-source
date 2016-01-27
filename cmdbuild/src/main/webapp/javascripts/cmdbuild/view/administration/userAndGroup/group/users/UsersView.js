@@ -20,7 +20,7 @@
 		 */
 		selectedGrid: undefined,
 
-		bodyCls: 'cmgraypanel-nopadding',
+		bodyCls: 'cmdb-gray-panel-no-padding',
 		border: false,
 		frame: false,
 		overflowY: 'auto',

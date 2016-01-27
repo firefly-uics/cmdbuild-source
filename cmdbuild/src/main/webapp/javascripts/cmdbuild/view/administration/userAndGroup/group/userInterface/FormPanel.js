@@ -12,7 +12,7 @@
 		 */
 		delegate: undefined,
 
-		bodyCls: 'cmgraypanel',
+		bodyCls: 'cmdb-gray-panel',
 		border: false,
 		frame: false,
 		overflowY: 'auto',
@@ -57,7 +57,7 @@
 				],
 				items: [
 					Ext.create('Ext.panel.Panel', {
-						bodyCls: 'cmgraypanel',
+						bodyCls: 'cmdb-gray-panel',
 						cls: 'cmborderbottom',
 						frame: false,
 						border: false,
@@ -132,7 +132,7 @@
 						]
 					}),
 					Ext.create('Ext.panel.Panel', {
-						bodyCls: 'cmgraypanel',
+						bodyCls: 'cmdb-gray-panel',
 						cls: 'cmborderbottom',
 						frame: false,
 						border: false,
@@ -183,7 +183,7 @@
 						]
 					}),
 					Ext.create('Ext.panel.Panel', {
-						bodyCls: 'cmgraypanel',
+						bodyCls: 'cmdb-gray-panel',
 						cls: 'cmborderbottom',
 						frame: false,
 						border: false,
@@ -228,7 +228,7 @@
 						]
 					}),
 					Ext.create('Ext.panel.Panel', {
-						bodyCls: 'cmgraypanel',
+						bodyCls: 'cmdb-gray-panel',
 						cls: 'cmborderbottom',
 						frame: false,
 						border: false,

@@ -12,7 +12,7 @@
 		 */
 		delegate: undefined,
 
-		bodyCls: 'cmgraypanel-nopadding',
+		bodyCls: 'cmdb-gray-panel-no-padding',
 		border: false,
 		encoding: 'multipart/form-data',
 		fileUpload: true,

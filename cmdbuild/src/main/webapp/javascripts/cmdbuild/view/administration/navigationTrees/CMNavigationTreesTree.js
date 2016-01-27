@@ -69,7 +69,7 @@
 				border: false,
 				layout: "border",
 				cls: "x-panel-body-default-framed",
-				bodyCls: 'cmgraypanel',
+				bodyCls: 'cmdb-gray-panel',
 				items: [this.treePanel]
 			});
 

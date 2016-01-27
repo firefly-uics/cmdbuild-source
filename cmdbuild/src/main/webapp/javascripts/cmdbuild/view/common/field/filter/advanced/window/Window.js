@@ -109,7 +109,7 @@
 										}),
 										this.tabPanel = Ext.create('Ext.tab.Panel', {
 											region: 'center',
-											bodyCls: 'cmgraypanel-nopadding',
+											bodyCls: 'cmdb-gray-panel-no-padding',
 											border: false,
 											cls: 'x-panel-body-default-framed cmbordertop',
 
@@ -134,7 +134,7 @@
 						}),
 						this.tabPanel = Ext.create('Ext.tab.Panel', {
 							region: 'center',
-							bodyCls: 'cmgraypanel-nopadding',
+							bodyCls: 'cmdb-gray-panel-no-padding',
 							border: false,
 							cls: 'x-panel-body-default-framed cmbordertop',
 

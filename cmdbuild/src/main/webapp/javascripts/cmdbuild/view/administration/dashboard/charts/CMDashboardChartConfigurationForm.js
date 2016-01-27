@@ -46,7 +46,7 @@
 					anchor: "-30",
 					border: false,
 					frame: false,
-					bodyCls: 'cmgraypanel'
+					bodyCls: 'cmdb-gray-panel'
 				};
 
 			this.dataSourcePanel = new CMDBuild.view.administration.dashboard.CMDashboardChartConfigurationDataSourcePanel(Ext.apply(subPanelConf, {

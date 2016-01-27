@@ -44,7 +44,7 @@
 				frame: false,
 				border: false,
 				cls: "x-panel-body-default-framed",
-				bodyCls: 'cmgraypanel',
+				bodyCls: 'cmdb-gray-panel',
 				items: [],
 				buttons: buttons(me)
 			});

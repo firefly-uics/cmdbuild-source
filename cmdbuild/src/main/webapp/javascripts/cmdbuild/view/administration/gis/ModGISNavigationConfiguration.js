@@ -24,7 +24,7 @@
 			this.buttonAlign = "center";
 			this.frame = false;
 			this.cls = "x-panel-body-default-framed";
-			this.bodyCls = "cmgraypanel";
+			this.bodyCls = "cmdb-gray-panel";
 			this.bodyStyle = "padding: 5px";
 
 			var me = this;

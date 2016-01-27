@@ -22,7 +22,7 @@
 		 */
 		originTree: undefined,
 
-		bodyCls: 'cmgraypanel',
+		bodyCls: 'cmdb-gray-panel',
 		border: false,
 		frame: false,
 		layout: 'fit',
@@ -77,7 +77,7 @@
 				],
 				items: [
 					Ext.create('Ext.panel.Panel', {
-						bodyCls: 'cmgraypanel-nopadding',
+						bodyCls: 'cmdb-gray-panel-no-padding',
 						border: false,
 						frame: false,
 

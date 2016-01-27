@@ -417,12 +417,10 @@ em { font-style: oblique !important; }
 /*
  * Panels styles
  */
-	.cmgraypanel, /* @deprecated */
 	.cmdb-gray-panel {
 		background-color: #f1f1f1 !important;
 		padding: 5px 5px 0 5px;
 	}
-	.cmgraypanel-nopadding, /* @deprecated */
 	.cmdb-gray-panel-no-padding { background-color: #f1f1f1 !important; }
 	.cmdb-blue-panel {
 		background: #dfe9f6 !important;

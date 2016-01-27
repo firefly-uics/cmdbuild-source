@@ -22,7 +22,7 @@
 		 */
 		sourceFunctionCombobox: undefined,
 
-		bodyCls: 'cmgraypanel',
+		bodyCls: 'cmdb-gray-panel',
 		border: false,
 		cls: 'x-panel-body-default-framed cmbordertop',
 		frame: false,

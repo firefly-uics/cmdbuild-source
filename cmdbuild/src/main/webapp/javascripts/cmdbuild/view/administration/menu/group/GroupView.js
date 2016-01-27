@@ -39,7 +39,7 @@
 		 */
 		translatableAttributesConfigurationsBuffer: {},
 
-		bodyCls: 'cmgraypanel',
+		bodyCls: 'cmdb-gray-panel',
 		border: false,
 		frame: false,
 
