@@ -393,6 +393,8 @@
 		PARSING_VALUE_END: 'parsingValueEnd',
 		PARSING_VALUE_INIT: 'parsingValueInit',
 		PASSWORD: 'password',
+		PATCH: 'patch',
+		PATCHES: 'patches',
 		PDF: 'pdf',
 		PERFORMER_NAME: 'performerName',
 		PERFORMERS: 'performers',

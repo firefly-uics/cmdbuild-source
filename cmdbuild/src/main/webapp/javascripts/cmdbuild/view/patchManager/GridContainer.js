@@ -13,10 +13,11 @@
 		 */
 		grid: undefined,
 
-		border: true,
-		frame: true,
+		border: false,
+		cls: 'cmdb-blue-panel',
+		frame: false,
 		layout: 'fit',
-		title: CMDBuild.Translation.availablePatchesList,
+		padding: '0 0 5 0',
 
 		initComponent: function() {
 			Ext.apply(this, {

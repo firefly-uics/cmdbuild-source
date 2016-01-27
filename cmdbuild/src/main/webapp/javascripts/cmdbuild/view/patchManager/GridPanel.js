@@ -13,8 +13,9 @@
 		 */
 		delegate: undefined,
 
+		border: false,
+		cls: 'cmborderbottom',
 		frame: false,
-		layout: 'fit',
 
 		initComponent: function() {
 			Ext.apply(this, {
