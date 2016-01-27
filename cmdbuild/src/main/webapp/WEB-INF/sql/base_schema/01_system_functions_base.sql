@@ -181,9 +181,9 @@ $$ LANGUAGE plpgsql VOLATILE;
 
 CREATE OR REPLACE FUNCTION _cm_concat(separator text, elements text[]) RETURNS text AS $$
 	SELECT case
-		WHEN trim(array_to_string(elements, coalesce(separator, ''))) = ''
+		WHEN $1 IS NULL OR trim(array_to_string($2, coalesce($1, ''))) = ''
 			THEN null
-			ELSE array_to_string(elements, coalesce(separator, ''))
+			ELSE array_to_string($2, coalesce($1, ''))
 		END
 $$ LANGUAGE sql VOLATILE;
 
