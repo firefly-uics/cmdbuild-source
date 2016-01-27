@@ -27,9 +27,17 @@
 						frame: false,
 						height: 45
 					}),
-					this.gridContainer = Ext.create('CMDBuild.view.patchManager.GridContainer', {
-						delegate: this.delegate,
-						region: 'center'
+					Ext.create('Ext.panel.Panel', {
+						region: 'center',
+						border: true,
+						frame: false,
+						layout: 'fit',
+						margin: '5',
+						title: CMDBuild.Translation.availablePatchesList,
+
+						items: [
+							this.gridContainer = Ext.create('CMDBuild.view.patchManager.GridContainer', { delegate: this.delegate })
+						]
 					}),
 					Ext.create('Ext.panel.Panel', {
 						region: 'south',

@@ -10,9 +10,9 @@
 <%@ page import="org.apache.commons.lang3.StringEscapeUtils" %>
 
 <%
-	String lang = SpringIntegrationUtils.applicationContext().getBean(SessionVars.class).getLanguage();
-	String jdbcDriverVersion = GisDatabaseService.getDriverVersion();
-	String extVersion = "4.2.0";
+	final String lang = SpringIntegrationUtils.applicationContext().getBean(SessionVars.class).getLanguage();
+	final String jdbcDriverVersion = GisDatabaseService.getDriverVersion();
+	final String extVersion = "4.2.0";
 %>
 
 <html>
@@ -24,7 +24,7 @@
 		<link rel="icon" type="image/x-icon" href="images/favicon.ico" />
 
 		<!-- 0. ExtJS -->
-		<script type="text/javascript" src="javascripts/ext-<%= extVersion %>/ext-all-debug.js"></script>
+		<script type="text/javascript" src="javascripts/ext-<%= extVersion %>/ext-all.js"></script>
 		<script type="text/javascript" src="javascripts/ext-<%= extVersion %>-ux/Notification.js"></script>
 
 		<!-- 1. Main script -->

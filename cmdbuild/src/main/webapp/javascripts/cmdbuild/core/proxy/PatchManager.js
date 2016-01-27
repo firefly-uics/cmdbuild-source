@@ -3,8 +3,9 @@
 	Ext.define('CMDBuild.core.proxy.PatchManager', {
 
 		requires: [
-			'CMDBuild.core.interfaces.Ajax',
+			'CMDBuild.core.cache.Cache',
 			'CMDBuild.core.configurations.Timeout',
+			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.proxy.Index',
 			'CMDBuild.model.patchManager.Patch'
 		],
@@ -12,10 +13,10 @@
 		singleton: true,
 
 		/**
-		 * @returns {Ext.data.Store}
+		 * @returns {Ext.data.Store or CMDBuild.core.cache.Store}
 		 */
 		getStore: function() {
-			return Ext.create('Ext.data.Store', {
+			return CMDBuild.core.cache.Cache.requestAsStore(CMDBuild.core.constants.Proxy.PATCH, {
 				autoLoad: true,
 				model: 'CMDBuild.model.patchManager.Patch',
 				remoteSort: false,
@@ -24,7 +25,7 @@
 					url: CMDBuild.core.proxy.Index.patchManager.readAll,
 					reader: {
 						type: 'json',
-						root: 'patches'
+						root: CMDBuild.core.constants.Proxy.PATCHES
 					},
 					extraParams: {
 						limitParam: undefined,
@@ -36,21 +37,17 @@
 		},
 
 		/**
-		 * Apply all new patches
-		 *
 		 * @param {Object} parameters
 		 */
 		update: function(parameters) {
-			CMDBuild.core.interfaces.Ajax.request({
-				url: CMDBuild.core.proxy.Index.patchManager.update,
-				params: parameters.params,
-				loadMask: Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : true,
-				timeout: CMDBuild.core.configurations.Timeout.getPatchManager(), // Get report timeout from configuration
-				scope: parameters.scope || this,
-				failure: parameters.failure || Ext.emptyFn,
-				success: parameters.success || Ext.emptyFn,
-				callback: parameters.callback || Ext.emptyFn
+			parameters = Ext.isEmpty(parameters) ? {} : parameters;
+
+			Ext.apply(parameters, {
+				timeout: CMDBuild.core.configurations.Timeout.getPatchManager(), // Get patch timeout from configuration
+				url: CMDBuild.core.proxy.Index.patchManager.update
 			});
+
+			CMDBuild.core.cache.Cache.request(CMDBuild.core.constants.Proxy.PATCH, parameters);
 		}
 	});
 

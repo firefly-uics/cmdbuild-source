@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 
+<%@ taglib uri="/WEB-INF/tags/translations.tld" prefix="tr" %>
+
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%@ page import="org.cmdbuild.services.SessionVars" %>
 <%@ page import="org.cmdbuild.spring.SpringIntegrationUtils" %>
-<%@ taglib uri="/WEB-INF/tags/translations.tld" prefix="tr" %>
 
 <%
 	final String lang = SpringIntegrationUtils.applicationContext().getBean(SessionVars.class).getLanguage();
@@ -25,10 +26,8 @@
 
 		<!-- 1. Main script -->
 		<script type="text/javascript" src="javascripts/cmdbuild/core/LoaderConfig.js"></script>
-		<script type="text/javascript" src="javascripts/cmdbuild/core/Utils.js"></script>
 		<script type="text/javascript" src="javascripts/log/log4javascript.js"></script>
 		<script type="text/javascript" src="javascripts/cmdbuild/application.js"></script>
-		<script type="text/javascript" src="javascripts/cmdbuild/core/interfaces/Ajax.js"></script>
 		<script type="text/javascript" src="javascripts/cmdbuild/core/Message.js"></script>
 
 		<!-- 2. Localizations -->
