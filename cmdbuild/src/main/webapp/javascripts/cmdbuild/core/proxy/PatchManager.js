@@ -16,7 +16,7 @@
 		 * @returns {Ext.data.Store or CMDBuild.core.cache.Store}
 		 */
 		getStore: function() {
-			return CMDBuild.core.cache.Cache.requestAsStore(CMDBuild.core.constants.Proxy.PATCH, {
+			return CMDBuild.core.cache.Cache.requestAsStore(CMDBuild.core.constants.Proxy.UNCACHED, {
 				autoLoad: true,
 				model: 'CMDBuild.model.patchManager.Patch',
 				remoteSort: false,
@@ -47,7 +47,7 @@
 				url: CMDBuild.core.proxy.Index.patchManager.update
 			});
 
-			CMDBuild.core.cache.Cache.request(CMDBuild.core.constants.Proxy.PATCH, parameters);
+			CMDBuild.core.cache.Cache.request(CMDBuild.core.constants.Proxy.UNCACHED, parameters);
 		}
 	});
 
