@@ -30,8 +30,10 @@
 				var edge = saved.edges[i];
 				this.model.insertEdge({
 					data: {
+						id: edge.id,
 						source: edge.source,
-						target: edge.target
+						target: edge.target,
+						label: edge.label
 					}
 				});				
 			}
