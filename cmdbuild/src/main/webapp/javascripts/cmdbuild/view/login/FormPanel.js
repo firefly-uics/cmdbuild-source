@@ -25,9 +25,10 @@
 		 */
 		user: undefined,
 
-		title: CMDBuild.Translation.login,
+		border: true,
 		frame: true,
 		padding: 10,
+		title: CMDBuild.Translation.login,
 
 		layout: {
 			type: 'vbox',
@@ -53,7 +54,7 @@
 								scope: this,
 
 								handler: function(button, e) {
-									this.delegate.cmfg('onLoginDoLogin');
+									this.delegate.cmfg('onLoginViewportDoLogin');
 								}
 							})
 						]
@@ -77,11 +78,11 @@
 						listeners: {
 							scope: this,
 							change: function(field, newValue, oldValue, eOpts) {
-								this.delegate.cmfg('onLoginUserChange');
+								this.delegate.cmfg('onLoginViewportUserChange');
 							},
 							specialkey: function(field, e, eOpts) {
 								if (e.getKey() == e.ENTER)
-									this.delegate.cmfg('onLoginDoLogin');
+									this.delegate.cmfg('onLoginViewportDoLogin');
 							}
 						}
 					}),
@@ -96,7 +97,7 @@
 							scope: this,
 							specialkey: function(field, e, eOpts) {
 								if (e.getKey() == e.ENTER)
-									this.delegate.cmfg('onLoginDoLogin');
+									this.delegate.cmfg('onLoginViewportDoLogin');
 							}
 						}
 					}),
@@ -125,7 +126,7 @@
 									try {
 										this.listKeyNav.selectHighlighted(e);
 
-										this.delegate.cmfg('onLoginDoLogin');
+										this.delegate.cmfg('onLoginViewportDoLogin');
 									} catch (e) {
 										_error('error setting the group', this);
 									}

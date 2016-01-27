@@ -54,14 +54,6 @@ em { font-style: oblique !important; }
 	margin: 14px 4px;
 	width: 16px;
 }
-
-#release_box {
-	text-align: center;
-	padding-top: 1em;
-	color: #04408c;
-	font-weight: bold;
-}
-
 .display-none { display: none; }
 
 /* INFO AND SUPPORTS */
@@ -152,48 +144,54 @@ em { font-style: oblique !important; }
 	border-radius: 5px;
 }
 
-/* LOGIN */
-#login_box_wrap {
-	text-align: center;
-	width: 100%;
-}
+/*
+ * Login
+ */
+	#login-wrapper {
+		text-align: center;
+		width: 100%;
+	}
+	#login-container {
+		margin: 100px auto;
+		text-align: left;
+		width: 300px;
+	}
+	#release-box {
+		color: #04408c;
+		font-weight: bold;
+		padding-top: 1em;
+		text-align: center;
+	}
 
-#login_box {
-	width: 300px;
-	text-align: left;
-	margin: 100px auto;
-}
-
-/* HEADER */
-#header {
-	color: #666666;
-	height: 45px;
-	margin: 0;
-	padding: 3px 0px 0px 3px;
-}
-#header .description {
-	float: right;
-	font-size: 10px;
-	height: 45px;
-	line-height: 1.3em;
-	margin: 0px;
-	padding: 8px 10px 0px 0px;
-	text-align: right;
-	width: 200px;
-}
-
-#header img {
-	float: left;
-	height: 35px;
-	margin-top: 2px;
-	margin-left: 2px;
-}
-
-
-#header #instance-name {
-	float: left;
-	padding: 0.8em 0 0 0
-}
+/*
+ * Header
+ */
+	#header {
+		color: #666666;
+		height: 45px;
+		margin: 0;
+		padding: 3px 0px 0px 3px;
+	}
+	#header .description {
+		float: right;
+		font-size: 10px;
+		height: 45px;
+		line-height: 1.3em;
+		margin: 0px;
+		padding: 8px 10px 0px 0px;
+		text-align: right;
+		width: 200px;
+	}
+	#header img {
+		float: left;
+		height: 35px;
+		margin-top: 2px;
+		margin-left: 2px;
+	}
+	#header #instance-name {
+		float: left;
+		padding: 0.8em 0 0 0
+	}
 
 #lang_bar {
 	float: right;

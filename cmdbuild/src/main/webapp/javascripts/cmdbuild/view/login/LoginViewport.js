@@ -21,18 +21,17 @@
 			Ext.apply(this, {
 				items: [
 					Ext.create('Ext.panel.Panel', {
-						border: false,
-						frame: false,
-						height: 45,
 						region: 'north',
-						contentEl: 'header'
+						border: false,
+						contentEl: 'header',
+						frame: false,
+						height: 45
 					}),
 					Ext.create('Ext.panel.Panel', {
+						region: 'center',
 						border: false,
 						frame: false,
-						region: 'center',
-
-						id: 'login_box_wrap',
+						id: 'login-wrapper',
 
 						items: [
 							this.formContainer = Ext.create('CMDBuild.view.login.FormContainer', { delegate: this.delegate })

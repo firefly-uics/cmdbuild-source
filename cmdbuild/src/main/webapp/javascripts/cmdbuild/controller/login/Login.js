@@ -14,8 +14,8 @@
 		 * @cfg {Array}
 		 */
 		cmfgCatchedFunctions: [
-			'onLoginDoLogin',
-			'onLoginUserChange'
+			'onLoginViewportDoLogin',
+			'onLoginViewportUserChange'
 		],
 
 		/**
@@ -30,6 +30,8 @@
 
 		/**
 		 * @param {Object} configurationObject
+		 *
+		 * @override
 		 */
 		constructor: function(configurationObject) {
 			this.callParent(arguments);
@@ -42,7 +44,7 @@
 			this.setupFields();
 		},
 
-		onLoginDoLogin: function() {
+		onLoginViewportDoLogin: function() {
 			if (!Ext.isEmpty(this.form.role.getValue()) || this.form.getForm().isValid()) {
 				var params = {};
 				params[CMDBuild.core.constants.Proxy.PASSWORD] = this.form.password.getValue();
@@ -96,10 +98,13 @@
 			}
 		},
 
-		onLoginUserChange: function() {
+		onLoginViewportUserChange: function() {
 			this.setupFieldsRole(false);
 		},
 
+		/**
+		 * @private
+		 */
 		setupFields: function() {
 			if (!Ext.isEmpty(CMDBuild.configuration.runtime)) {
 				if (Ext.isEmpty(CMDBuild.configuration.runtime.get(CMDBuild.core.constants.Proxy.USERNAME))) {
@@ -118,6 +123,8 @@
 
 		/**
 		 * @param {Boolean} state
+		 *
+		 * @private
 		 */
 		setupFieldsRole: function(state) {
 			state = Ext.isBoolean(state) ? state : false;

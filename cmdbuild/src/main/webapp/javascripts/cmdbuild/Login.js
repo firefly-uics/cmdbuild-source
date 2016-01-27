@@ -10,12 +10,25 @@
 		// see http://www.sencha.com/forum/showthread.php?260106-Tooltips-on-forms-and-grid-are-not-resizing-to-the-size-of-the-text/page3#24
 		delete Ext.tip.Tip.prototype.minWidth;
 
-		Ext.create('CMDBuild.core.LoggerManager'); // Logger configuration
-		Ext.create('CMDBuild.core.Data'); // Data connections configuration
-		Ext.create('CMDBuild.core.configurationBuilders.Instance'); // CMDBuild instance configuration
-		Ext.create('CMDBuild.core.configurationBuilders.Localization', { // CMDBuild localization configuration
-			callback: function(options, success, response) {
-				Ext.create('CMDBuild.controller.login.Login');
+		Ext.application({
+			extend: 'Ext.app.Application',
+
+			requires: [
+				'Ext.tip.QuickTipManager' // Avoid core override
+			],
+
+			appFolder: './javascripts/cmdbuild',
+			name: 'CMDBuild',
+
+			launch: function() {
+				Ext.create('CMDBuild.core.LoggerManager'); // Logger configuration
+				Ext.create('CMDBuild.core.Data'); // Data connections configuration
+				Ext.create('CMDBuild.core.configurationBuilders.Instance'); // CMDBuild instance configuration
+				Ext.create('CMDBuild.core.configurationBuilders.Localization', { // CMDBuild localization configuration
+					callback: function(options, success, response) {
+						Ext.create('CMDBuild.controller.login.Login');
+					}
+				});
 			}
 		});
 	});

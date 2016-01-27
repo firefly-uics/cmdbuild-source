@@ -13,7 +13,7 @@
 		 */
 		form: undefined,
 
-		id: 'login_box',
+		id: 'login-container',
 
 		initComponent: function() {
 			Ext.apply(this, {
@@ -21,9 +21,9 @@
 					this.form = Ext.create('CMDBuild.view.login.FormPanel', { delegate: this.delegate }),
 					Ext.create('Ext.panel.Panel', {
 						border: false,
+						contentEl: 'release-box',
 						frame: false,
-						height: 30,
-						contentEl: 'release_box'
+						height: 30
 					})
 				]
 			});

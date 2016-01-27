@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 
-<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
+<%@ taglib uri="/WEB-INF/tags/translations.tld" prefix="tr" %>
 
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%@ page import="org.cmdbuild.auth.UserStore" %>
 <%@ page import="org.cmdbuild.auth.user.OperationUser" %>
 <%@ page import="org.cmdbuild.services.SessionVars" %>
 <%@ page import="org.cmdbuild.servlets.json.Login" %>
 <%@ page import="org.cmdbuild.spring.SpringIntegrationUtils" %>
 <%@ page import="org.apache.commons.lang3.StringEscapeUtils" %>
-<%@ taglib uri="/WEB-INF/tags/translations.tld" prefix="tr" %>
 
 <%
 	final String lang = SpringIntegrationUtils.applicationContext().getBean(SessionVars.class).getLanguage();
@@ -31,10 +31,8 @@
 
 		<!-- 1. Main script -->
 		<script type="text/javascript" src="javascripts/cmdbuild/core/LoaderConfig.js"></script>
-		<script type="text/javascript" src="javascripts/cmdbuild/core/Utils.js"></script>
 		<script type="text/javascript" src="javascripts/log/log4javascript.js"></script>
 		<script type="text/javascript" src="javascripts/cmdbuild/application.js"></script>
-		<script type="text/javascript" src="javascripts/cmdbuild/core/interfaces/Ajax.js"></script>
 		<script type="text/javascript" src="javascripts/cmdbuild/core/Message.js"></script>
 
 		<!-- 2. Localizations -->
@@ -49,15 +47,6 @@
 			<% if (!operationUser.isValid() && !operationUser.getAuthenticatedUser().isAnonymous()) { %>
 				CMDBuild.configuration.runtime.set(CMDBuild.core.constants.Proxy.USERNAME, '<%= StringEscapeUtils.escapeEcmaScript(operationUser.getAuthenticatedUser().getUsername()) %>');
 				CMDBuild.configuration.runtime.set(CMDBuild.core.constants.Proxy.GROUPS, <%= Login.serializeGroupForLogin(operationUser.getAuthenticatedUser().getGroupNames()) %>);
-
-				/**
-				 * Compatibility mode
-				 *
-				 * @deprecated (CMDBuild.configuration.runtime)
-				 */
-				Ext.ns('CMDBuild.Runtime');
-				CMDBuild.Runtime.Username = '<%= StringEscapeUtils.escapeEcmaScript(operationUser.getAuthenticatedUser().getUsername()) %>';
-				CMDBuild.Runtime.Groups = <%= Login.serializeGroupForLogin(operationUser.getAuthenticatedUser().getGroupNames()) %>;
 			<% } %>
 		</script>
 
@@ -72,7 +61,7 @@
 			<div class="description">Open Source Configuration and Management Database</div>
 		</div>
 
-		<div id="release_box">
+		<div id="release-box">
 			<span class="x-panel-header-text-default">CMDBuild <tr:translation key="release" /></span>
 		</div>
 	</body>

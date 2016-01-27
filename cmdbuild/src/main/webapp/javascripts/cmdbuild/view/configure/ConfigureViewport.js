@@ -22,7 +22,8 @@
 				items: [
 					Ext.create('Ext.panel.Panel', {
 						region: 'north',
-						border: true,
+						border: false,
+						cls: 'cmdb-border-bottom',
 						contentEl: 'header',
 						frame: false,
 						height: 45

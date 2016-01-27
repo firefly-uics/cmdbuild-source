@@ -22,7 +22,7 @@
 				url: CMDBuild.core.proxy.Index.configuration.apply
 			});
 
-			CMDBuild.core.cache.Cache.request(CMDBuild.core.constants.Proxy.CONFIGURATION, parameters);
+			CMDBuild.core.cache.Cache.request(CMDBuild.core.constants.Proxy.UNCACHED, parameters);
 		},
 
 		/**
@@ -33,7 +33,7 @@
 
 			Ext.apply(parameters, { url: CMDBuild.core.proxy.Index.configuration.connectionTest });
 
-			CMDBuild.core.cache.Cache.request(CMDBuild.core.constants.Proxy.CONFIGURATION, parameters);
+			CMDBuild.core.cache.Cache.request(CMDBuild.core.constants.Proxy.UNCACHED, parameters);
 		},
 
 		/**
