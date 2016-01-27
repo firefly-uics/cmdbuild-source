@@ -30,16 +30,15 @@
 		<script type="text/javascript" src="javascripts/ext-<%= extVersion %>-ux/Notification.js"></script>
 
 		<!-- 1. Main script -->
-		<script type="text/javascript" src="javascripts/cmdbuild/core/Utils.js"></script>
 		<script type="text/javascript" src="javascripts/cmdbuild/core/LoaderConfig.js"></script>
+		<script type="text/javascript" src="javascripts/cmdbuild/core/Utils.js"></script>
 		<script type="text/javascript" src="javascripts/log/log4javascript.js"></script>
 		<script type="text/javascript" src="javascripts/cmdbuild/application.js"></script>
 		<script type="text/javascript" src="javascripts/cmdbuild/core/interfaces/Ajax.js"></script>
 		<script type="text/javascript" src="javascripts/cmdbuild/core/Message.js"></script>
 
-		<!-- 2. Translations -->
-		<script type="text/javascript" src="javascripts/ext-<%= extVersion %>/locale/ext-lang-<%= lang %>.js"></script>
-		<script type="text/javascript" src="services/json/utils/gettranslationobject"></script>
+		<!-- 2. Localizations -->
+		<%@ include file="localizationsJsFiles.jsp" %>
 
 		<!-- 3. Runtime configuration -->
 		<script type="text/javascript">
@@ -69,8 +68,8 @@
 	</head>
 	<body>
 		<div id="header">
-			<img alt="CMDBuild logo" src="images/logo.jpg" />
-			<div id="header_po">Open Source Configuration and Management Database</div>
+			<a href="http://www.cmdbuild.org" target="_blank"><img src="images/logo.jpg" alt="CMDBuild logo" /></a>
+			<div class="description">Open Source Configuration and Management Database</div>
 		</div>
 
 		<div id="release_box">

@@ -1,23 +1,9 @@
-<%
-	final String locale = sessionVars.getLanguage();
-
-	if ("it".equals(locale)) {
-%>
-	<script type="text/javascript" src="javascripts/cmdbuild/locale/it.js"></script>
-<%
-	} else {
-%>
-	<script type="text/javascript" src="javascripts/cmdbuild/locale/en.js"></script>
-<%
-	}
-%>
-
 <!--  CONSTANTS -->
 <script type="text/javascript" src="javascripts/cmdbuild/core/constants/Proxy.js"></script>
 
 <!-- LOADER CONFIG -->
-<script type="text/javascript" src="javascripts/cmdbuild/core/Utils.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/core/LoaderConfig.js"></script>
+<script type="text/javascript" src="javascripts/cmdbuild/core/Utils.js"></script>
 
 <!-- OVERRIDES -->
 <script type="text/javascript" src="javascripts/cmdbuild/override/data/proxy/Server.js"></script>

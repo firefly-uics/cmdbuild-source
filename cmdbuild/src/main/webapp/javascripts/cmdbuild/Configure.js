@@ -1,7 +1,7 @@
 (function() {
 
 	/**
-	 * Administration
+	 * Configuration
 	 */
 	Ext.onReady(function() {
 		Ext.tip.QuickTipManager.init();
@@ -14,8 +14,7 @@
 			extend: 'Ext.app.Application',
 
 			requires: [
-				'Ext.tip.QuickTipManager', // Avoid core override
-				'CMDBuild.core.Administration'
+				'Ext.tip.QuickTipManager' // Avoid core override
 			],
 
 			appFolder: './javascripts/cmdbuild',
@@ -24,9 +23,9 @@
 			launch: function() {
 				Ext.create('CMDBuild.core.LoggerManager'); // Logger configuration
 				Ext.create('CMDBuild.core.Data'); // Data connections configuration
-				Ext.create('CMDBuild.core.Rest'); // Setup REST connection
+				Ext.create('CMDBuild.core.configurationBuilders.Instance', { fullInit: false }); // CMDBuild instance configuration
 
-				CMDBuild.core.Administration.init();
+				Ext.create('CMDBuild.controller.configure.Configure');
 			}
 		});
 	});

@@ -26,16 +26,15 @@
 		<script type="text/javascript" src="javascripts/ext-<%= extVersion %>-ux/Notification.js"></script>
 
 		<!-- 1. Main script -->
-		<script type="text/javascript" src="javascripts/cmdbuild/core/Utils.js"></script>
 		<script type="text/javascript" src="javascripts/cmdbuild/core/LoaderConfig.js"></script>
+		<script type="text/javascript" src="javascripts/cmdbuild/core/Utils.js"></script>
 		<script type="text/javascript" src="javascripts/log/log4javascript.js"></script>
 		<script type="text/javascript" src="javascripts/cmdbuild/application.js"></script>
 		<script type="text/javascript" src="javascripts/cmdbuild/core/Message.js"></script>
 		<script type="text/javascript" src="javascripts/cmdbuild/core/interfaces/Ajax.js"></script>
 
-		<!-- 2. Translations -->
-		<script type="text/javascript" src="javascripts/ext-<%= extVersion %>/locale/ext-lang-<%= lang %>.js"></script>
-		<script type="text/javascript" src="services/json/utils/gettranslationobject"></script>
+		<!-- 2. Localizations -->
+		<%@ include file="localizationsJsFiles.jsp" %>
 
 		<!-- 3. Logout script -->
 		<script type="text/javascript" src="javascripts/cmdbuild/Logout.js"></script>

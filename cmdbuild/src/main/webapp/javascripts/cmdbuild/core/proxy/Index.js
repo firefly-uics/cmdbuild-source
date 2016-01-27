@@ -61,6 +61,8 @@
 			update: 'services/json/schema/setup/saveconfiguration',
 			remove: '',
 
+			apply: 'services/json/configure/apply',
+			connectionTest: 'services/json/configure/testconnection',
 			readAll: 'services/json/schema/setup/getconfigurations'
 		},
 

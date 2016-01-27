@@ -81,12 +81,7 @@
 				if (
 					!Ext.isEmpty(item)
 					&& Ext.isFunction(item.setValue)
-					&& (
-						item instanceof Ext.form.Field
-						|| item instanceof Ext.form.field.Base
-						|| item instanceof Ext.form.field.HtmlEditor
-						|| item instanceof Ext.form.FieldContainer
-					)
+					&& this.isManagedField(item)
 					&& !item.disablePanelFunctions
 				) {
 					item.setValue();
@@ -98,12 +93,7 @@
 				if (
 					!Ext.isEmpty(item)
 					&& Ext.isFunction(item.reset)
-					&& (
-						item instanceof Ext.form.Field
-						|| item instanceof Ext.form.field.Base
-						|| item instanceof Ext.form.field.HtmlEditor
-						|| item instanceof Ext.form.FieldContainer
-					)
+					&& this.isManagedField(item)
 					&& !item.disablePanelFunctions
 				) {
 					item.reset();
@@ -179,6 +169,31 @@
 					}
 				}
 			}, this);
+		},
+
+		/**
+		 * Don't disable FieldSets, but only contained fields
+		 *
+		 * @param {Ext.form.FieldSet} fieldset
+		 * @param {Boolean} state
+		 */
+		setDisabledFieldSet: function(fieldset, state) {
+			state = Ext.isBoolean(state) ? state : true;
+
+			if (fieldset instanceof Ext.form.FieldSet)
+				fieldset.cascade(function(item) {
+					if (
+						!Ext.isEmpty(item)
+						&& Ext.isFunction(item.setDisabled)
+						&& (
+							this.isManagedField(item)
+							|| item.considerAsFieldToDisable
+						)
+						&& !item.disablePanelFunctions
+					) {
+						item.setDisabled(state);
+					}
+				}, this);
 		},
 
 		/**
