@@ -8,7 +8,7 @@
 		 */
 		delegate: undefined,
 
-		bodyCls: 'cmgraypanel',
+		bodyCls: 'cmdb-gray-panel',
 		border: false,
 		frame: true,
 		overflowY: 'auto',

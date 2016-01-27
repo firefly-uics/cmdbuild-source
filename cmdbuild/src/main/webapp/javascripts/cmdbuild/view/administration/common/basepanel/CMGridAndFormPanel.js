@@ -77,7 +77,7 @@ Ext.define("CMDBuild.view.administration.common.basepanel.CMGridAndFormPanel", {
 			frame: false,
 			border: false,
 			cls: "x-panel-body-default-framed cmbordertop",
-			bodyCls: 'cmgraypanel'
+			bodyCls: 'cmdb-gray-panel'
 		});
 
 		return form;

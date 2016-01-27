@@ -16,7 +16,7 @@
 		 */
 		delegate: undefined,
 
-		bodyCls: 'cmgraypanel',
+		bodyCls: 'cmdb-gray-panel',
 		border: false,
 		encoding: 'multipart/form-data',
 		fileUpload: true,

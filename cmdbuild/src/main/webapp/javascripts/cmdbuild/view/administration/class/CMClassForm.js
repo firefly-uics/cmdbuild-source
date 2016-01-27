@@ -31,7 +31,7 @@
 			this.border = false;
 			this.frame = false;
 			this.cls = "x-panel-body-default-framed";
-			this.bodyCls = 'cmgraypanel';
+			this.bodyCls = 'cmdb-gray-panel';
 
 			this.buildButtons();
 			this.buildFormFields();
@@ -206,7 +206,7 @@
 				frame: false,
 				border: false,
 				cls: "x-panel-body-default-framed",
-				bodyCls: 'cmgraypanel',
+				bodyCls: 'cmdb-gray-panel',
 				defaultType: 'textfield',
 				monitorValid: true,
 				autoScroll: true,

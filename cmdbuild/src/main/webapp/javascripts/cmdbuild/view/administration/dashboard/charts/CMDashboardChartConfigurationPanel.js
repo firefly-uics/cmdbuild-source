@@ -39,8 +39,8 @@
 			Ext.apply(this, {
 				title: tr.title,
 				layout: "border",
-				cls: 'cmgraypanel-nopadding',
-				bodyCls: 'cmgraypanel-nopadding',
+				cls: 'cmdb-gray-panel-no-padding',
+				bodyCls: 'cmdb-gray-panel-no-padding',
 				tbar : tbar(me),
 				buttons: buttons(me),
 				border: false,
@@ -90,7 +90,7 @@
 			region: "center",
 			frame: false,
 			border: false,
-			bodyCls: 'cmgraypanel',
+			bodyCls: 'cmdb-gray-panel',
 			cls: 'cmbordertop',
 			style: {
 				"padding": "5px"

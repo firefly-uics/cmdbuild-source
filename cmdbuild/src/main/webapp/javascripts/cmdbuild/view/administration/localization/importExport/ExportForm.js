@@ -17,7 +17,7 @@
 		 */
 		delegate: undefined,
 
-		bodyCls: 'cmgraypanel',
+		bodyCls: 'cmdb-gray-panel',
 		border: false,
 		frame: false,
 		title: CMDBuild.Translation.exportLabel,

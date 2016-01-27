@@ -12,7 +12,7 @@
 		},
 
 		autoScroll: false,
-		bodyCls:'cmgraypanel',
+		bodyCls:'cmdb-gray-panel',
 		border: false,
 		buttonAlign: 'center',
 		cls: 'x-panel-body-default-framed cmbordertop',

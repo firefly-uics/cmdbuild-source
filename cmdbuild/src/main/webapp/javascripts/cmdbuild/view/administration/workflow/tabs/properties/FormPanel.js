@@ -27,7 +27,7 @@
 		 */
 		uploadXpdlPanel: undefined,
 
-		bodyCls: 'cmgraypanel',
+		bodyCls: 'cmdb-gray-panel',
 		border: false,
 		frame: false,
 		overflowY: 'auto',

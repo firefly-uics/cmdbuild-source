@@ -13,7 +13,7 @@
 		 */
 		baseTitle: CMDBuild.Translation.usersAndGroups,
 
-		bodyCls: 'cmgraypanel-nopadding',
+		bodyCls: 'cmdb-gray-panel-no-padding',
 		border: true,
 		frame: false,
 		layout: 'fit'

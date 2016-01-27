@@ -20,7 +20,7 @@
 		delegate: undefined,
 
 		activeItem: 0,
-		bodyCls: 'cmgraypanel',
+		bodyCls: 'cmdb-gray-panel',
 		border: false,
 		buttonAlign: 'center',
 		cls: 'x-panel-body-default-framed cmbordertop',
