@@ -566,17 +566,30 @@
 			}];
 		};
 		this.boundingBox = function() {
-			var RANGE_ZOOM = $.Cmdbuild.custom.configuration.stepRadius * 3;
+			var ZOOM_RANGE = $.Cmdbuild.custom.configuration.stepRadius * 3;
+			var ZOOM_BORDER = 1;
 			var box = this._boundingBox();
-			if (box.w < RANGE_ZOOM) {
-				var m = RANGE_ZOOM - box.w;
+			if (box.w < ZOOM_RANGE) {
+				var m = ZOOM_RANGE - box.w;
 				box.x -= m / 2;
 				box.w += m;
 			}
-			if (box.h < RANGE_ZOOM) {
-				var m = RANGE_ZOOM - box.h;
+			else {
+				var m = box.w * ZOOM_BORDER / 100 ;
+				box.x -= m;
+				box.w += m * 2;
+				
+			}
+			if (box.h < ZOOM_RANGE) {
+				var m = ZOOM_RANGE - box.h;
 				box.y -= m / 2;
 				box.h += m;
+			}
+			else {
+				var m = box.h * ZOOM_BORDER / 100 ;
+				box.y -= m;
+				box.h += m * 2;
+				
 			}
 			box.vertices = this.boundingBoxVertices(box);
 			return box;
@@ -720,7 +733,7 @@
 		};
 		this.pointOnScreen = function(vector, w, h, projectionMatrix,
 				matrixWorld, bFirst) {
-			var ZOOM_BORDER = 50;
+			var ZOOM_BORDER = 0;//50;!!!!!N.B.
 			var v = new THREE.Vector3();
 			v.copy(vector);
 			this.projectVector(v, projectionMatrix, matrixWorld);
@@ -735,18 +748,7 @@
 			}
 			return true;
 		};
-		// this.objectDimensionAfterProjection = function(box, w, h,
-		// projectionMatrix, matrixWorld) {
-		// var vapp = new THREE.Vector3(box.x + box.w/2, box.y + box.h/2, box.z
-		// + box.d/2);
-		// var v = new THREE.Vector3(box.x + box.w/2, box.y + box.h/2, box.z +
-		// box.d/2);
-		// this.projectVector(v, projectionMatrix, matrixWorld);
-		// console.log(box, v, vapp);
-		// };
 		this.onVideo = function(box, w, h, projectionMatrix, matrixWorld) {
-			// var dimension = this.objectDimensionAfterProjection(box, w, h,
-			// projectionMatrix, matrixWorld);
 			for (var i = 0; i < box.vertices.length; i++) {
 				var vertice = box.vertices[i];
 				var vector = new THREE.Vector3(vertice.x, vertice.y, vertice.z);
@@ -783,7 +785,7 @@
 			}
 			stepIn();
 			stepOut();
-		}
+		};
 		this.scaleInView = function(box) {
 			NORECURSE = 100;
 			var x = box.x + box.w / 2;
@@ -798,7 +800,6 @@
 				z: z
 			};
 			controls.enabled = true;
-			var index = 10;
 			$.Cmdbuild.customvariables.camera.zoomOnPosition(position,
 					function() {
 						if (box.w > 0 || box.h > 0) {
