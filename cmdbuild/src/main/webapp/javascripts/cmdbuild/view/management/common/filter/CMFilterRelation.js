@@ -112,7 +112,7 @@
 			this.domainGrid = Ext.create('CMDBuild.view.management.common.filter.CMDomainGrid', {
 				border: false,
 				className: this.className,
-				cls: 'cmborderbottom',
+				cls: 'cmdb-border-bottom',
 				region: 'center'
 			});
 			this.domainGrid.addDelegate(this);
@@ -121,7 +121,7 @@
 				border: false,
 				split: true,
 				height: '70%',
-				cls: 'cmbordertop',
+				cls: 'cmdb-border-top',
 				frame: false,
 				multiSelect: true,
 				selType: 'checkboxmodel',

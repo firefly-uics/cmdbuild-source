@@ -15,7 +15,7 @@
 		bodyCls:'cmdb-gray-panel',
 		border: false,
 		buttonAlign: 'center',
-		cls: 'x-panel-body-default-framed cmbordertop',
+		cls: 'x-panel-body-default-framed cmdb-border-top',
 		fileUpload: true,
 		frame: false,
 		hideMode: 'offsets',

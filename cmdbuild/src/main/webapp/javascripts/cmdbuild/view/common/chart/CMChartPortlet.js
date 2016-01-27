@@ -34,7 +34,7 @@
 			});
 
 			this.tableView = new CMDBuild.view.management.dashboard.CMChartPortletTableView({
-				cls: "cmbordertop",
+				cls: "cmdb-border-top",
 				region: 'south',
 				split: true,
 				autoScroll: true,
@@ -51,8 +51,8 @@
 				chartConfiguration: this.chartConfiguration,
 				region: 'north',
 				frame: false,
-				bodyCls: "x-panel-body-default-framed cmborderbottom",
-				cls: "cmborderbottom",
+				bodyCls: "x-panel-body-default-framed cmdb-border-bottom",
+				cls: "cmdb-border-bottom",
 				style: {
 					padding: "0 0 3px 0"
 				},

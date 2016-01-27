@@ -68,7 +68,7 @@
 				delegate: this,
 				region: 'east',
 				hideMode: 'offsets',
-				cls: "cmborderleft",
+				cls: "cmdb-border-left",
 				autoScroll: true,
 				frame: true,
 				border: false,

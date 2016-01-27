@@ -13,7 +13,7 @@
 		delegate: undefined,
 
 		border: false,
-		cls: 'cmborderbottom',
+		cls: 'cmdb-border-bottom',
 		frame: false,
 
 		initComponent: function() {

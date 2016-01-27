@@ -10,7 +10,7 @@
 		 */
 		delegate: undefined,
 
-		bodyCls: 'x-panel-body-default-framed cmbordertop',
+		bodyCls: 'x-panel-body-default-framed cmdb-border-top',
 		bodyPadding: '5 5 0 5',
 		border: false,
 		frame: false,

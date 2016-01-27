@@ -131,7 +131,7 @@
 
 			this.acutalPanel = new Ext.tab.Panel({
 				region: "center",
-				cls: "cmborderright",
+				cls: "cmdb-border-right",
 				activeTab: 0,
 				frame: false,
 				border: false,

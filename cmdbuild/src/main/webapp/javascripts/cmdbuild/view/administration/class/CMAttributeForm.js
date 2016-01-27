@@ -423,7 +423,7 @@
 		initComponent: function() {
 			this.frame = false;
 			this.border = false;
-			this.cls = "x-panel-body-default-framed cmbordertop";
+			this.cls = "x-panel-body-default-framed cmdb-border-top";
 			this.bodyCls = 'cmdb-gray-panel';
 			this.buttonAlign = "center";
 			this.buttons = this.cmButtons;

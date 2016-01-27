@@ -106,7 +106,7 @@
 			if (this.attributesPanel != null) {
 				this.layout = 'border';
 				this.grid.region = 'center';
-				this.grid.addCls('cmborderbottom');
+				this.grid.addCls('cmdb-border-bottom');
 				this.items.push(this.attributesPanel);
 			} else {
 				this.attributesPanel = buildNullObject();

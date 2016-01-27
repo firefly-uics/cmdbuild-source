@@ -6,7 +6,7 @@
 		extend: 'Ext.form.FieldSet',
 
 		border: false,
-		cls: 'cmbordertop',
+		cls: 'cmdb-border-top',
 		style: { 'border-color': '#d0d0d0' },
 		margin: '5 0 0 0',
 

@@ -24,7 +24,7 @@
 
 		bodyCls: 'cmdb-gray-panel',
 		border: false,
-		cls: 'x-panel-body-default-framed cmbordertop',
+		cls: 'x-panel-body-default-framed cmdb-border-top',
 		frame: false,
 		overflowY: 'auto',
 		split: true,
