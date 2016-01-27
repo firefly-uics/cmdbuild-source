@@ -567,7 +567,7 @@
 		};
 		this.boundingBox = function() {
 			var ZOOM_RANGE = $.Cmdbuild.custom.configuration.stepRadius * 3;
-			var ZOOM_BORDER = 1;
+			var ZOOM_BORDER = 2;
 			var box = this._boundingBox();
 			if (box.w < ZOOM_RANGE) {
 				var m = ZOOM_RANGE - box.w;
