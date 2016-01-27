@@ -96,8 +96,8 @@
 			this.tabDelegate.getView().on('show', this.showEventManager, this);
 
 			// Border manage
-			if (!this.tabDelegate.grid.hasCls('cmborderbottom'))
-				this.tabDelegate.grid.addCls('cmborderbottom');
+			if (!this.tabDelegate.grid.hasCls('cmdb-border-bottom'))
+				this.tabDelegate.grid.addCls('cmdb-border-bottom');
 
 			this.tabDelegate.getView().getDockedComponent(CMDBuild.core.constants.Proxy.TOOLBAR_BOTTOM).removeAll();
 			this.tabDelegate.getView().getDockedComponent(CMDBuild.core.constants.Proxy.TOOLBAR_BOTTOM).add(
@@ -120,8 +120,8 @@
 			this.tabDelegate.getView().getDockedComponent(CMDBuild.core.constants.Proxy.TOOLBAR_BOTTOM).hide();
 
 			// Border manage
-			if (this.tabDelegate.grid.hasCls('cmborderbottom'))
-				this.tabDelegate.grid.removeCls('cmborderbottom');
+			if (this.tabDelegate.grid.hasCls('cmdb-border-bottom'))
+				this.tabDelegate.grid.removeCls('cmdb-border-bottom');
 		},
 
 		/**

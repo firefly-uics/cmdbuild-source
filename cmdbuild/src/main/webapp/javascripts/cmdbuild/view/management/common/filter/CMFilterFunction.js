@@ -30,7 +30,7 @@
 		extend: 'Ext.panel.Panel',
 
 		title: CMDBuild.Translation.management.findfilter.functions,
-		bodyCls: 'x-panel-body-default-framed cmbordertop',
+		bodyCls: 'x-panel-body-default-framed cmdb-border-top',
 		bodyStyle: {
 			padding: '5px 5px 0px 5px'
 		},

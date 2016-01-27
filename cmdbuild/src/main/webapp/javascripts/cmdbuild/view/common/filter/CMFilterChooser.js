@@ -127,7 +127,7 @@
 				grid: Ext.create('Ext.grid.Panel', {
 					autoScroll: true,
 					border: false,
-					cls: 'cmborderbottom',
+					cls: 'cmdb-border-bottom',
 					frame: false,
 					height: '40%',
 					region: 'north',
@@ -271,7 +271,7 @@
 			this.chooseFilterButton = Ext.create('Ext.button.Button', {
 				tooltip: CMDBuild.Translation.setFilter,
 				iconCls: 'privileges',
-				cls: 'cmnoborder',
+				border: false,
 				style: {
 					'margin-left': '5px'
 				},
@@ -285,7 +285,7 @@
 			this.clearFilterButton = Ext.create('Ext.button.Button', {
 				tooltip: CMDBuild.Translation.clearFilter,
 				iconCls: 'privilegesClear',
-				cls: 'cmnoborder',
+				border: false,
 				scope: me,
 				disabled: true,
 

@@ -58,7 +58,7 @@
 				items: [
 					Ext.create('Ext.panel.Panel', {
 						bodyCls: 'cmdb-gray-panel',
-						cls: 'cmborderbottom',
+						cls: 'cmdb-border-bottom',
 						frame: false,
 						border: false,
 						items: [
@@ -133,7 +133,7 @@
 					}),
 					Ext.create('Ext.panel.Panel', {
 						bodyCls: 'cmdb-gray-panel',
-						cls: 'cmborderbottom',
+						cls: 'cmdb-border-bottom',
 						frame: false,
 						border: false,
 						items: [
@@ -184,7 +184,7 @@
 					}),
 					Ext.create('Ext.panel.Panel', {
 						bodyCls: 'cmdb-gray-panel',
-						cls: 'cmborderbottom',
+						cls: 'cmdb-border-bottom',
 						frame: false,
 						border: false,
 						items: [
@@ -229,7 +229,7 @@
 					}),
 					Ext.create('Ext.panel.Panel', {
 						bodyCls: 'cmdb-gray-panel',
-						cls: 'cmborderbottom',
+						cls: 'cmdb-border-bottom',
 						frame: false,
 						border: false,
 						items: [

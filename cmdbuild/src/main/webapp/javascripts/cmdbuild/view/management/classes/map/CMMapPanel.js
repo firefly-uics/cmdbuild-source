@@ -70,7 +70,7 @@
 				region: "center",
 				frame: false,
 				border: false,
-				cls: "cmborderright",
+				cls: "cmdb-border-right",
 				listeners: {
 					afterrender: function() {
 						initMap(me);
@@ -116,7 +116,7 @@
 				{
 					xtype: "tabpanel",
 					region: "east",
-					cls: "cmborderleft",
+					cls: "cmdb-border-left",
 					width: "25%",
 					split: true,
 					collapsible: true,

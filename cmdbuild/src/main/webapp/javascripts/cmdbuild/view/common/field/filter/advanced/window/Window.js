@@ -111,7 +111,7 @@
 											region: 'center',
 											bodyCls: 'cmdb-gray-panel-no-padding',
 											border: false,
-											cls: 'x-panel-body-default-framed cmbordertop',
+											cls: 'x-panel-body-default-framed cmdb-border-top',
 
 											items: []
 										})
@@ -136,7 +136,7 @@
 							region: 'center',
 							bodyCls: 'cmdb-gray-panel-no-padding',
 							border: false,
-							cls: 'x-panel-body-default-framed cmbordertop',
+							cls: 'x-panel-body-default-framed cmdb-border-top',
 
 							items: []
 						})

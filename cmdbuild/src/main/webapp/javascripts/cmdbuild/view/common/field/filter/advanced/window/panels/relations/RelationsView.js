@@ -34,7 +34,7 @@
 					}),
 					this.gridCard = Ext.create('CMDBuild.view.common.field.filter.advanced.window.panels.relations.CardGridPanel', {
 						delegate: this.delegate,
-						cls: 'cmbordertop',
+						cls: 'cmdb-border-top',
 						disabled: true,
 						region: 'center'
 					})

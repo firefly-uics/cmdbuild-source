@@ -95,7 +95,7 @@
 
 		<title>CMDBuild</title>
 	</head>
-	<body id="cmbodyAdministration">
+	<body class="cmdb-administration-body">
 		<div id="header" class="display-none">
 			<a href="http://www.cmdbuild.org" target="_blank"><img src="images/logo.jpg" alt="CMDBuild logo" /></a>
 			<div id="instance-name"></div>

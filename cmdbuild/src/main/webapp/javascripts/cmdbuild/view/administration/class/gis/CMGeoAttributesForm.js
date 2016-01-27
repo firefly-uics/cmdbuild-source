@@ -21,7 +21,7 @@
 				plugins : [new CMDBuild.FormPlugin()],
 				frame: false,
 				border: false,
-				cls: "x-panel-body-default-framed cmbordertop",
+				cls: "x-panel-body-default-framed cmdb-border-top",
 				bodyCls: 'cmdb-gray-panel',
 				tbar: this.cmTBar,
 				layout: {

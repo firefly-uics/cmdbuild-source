@@ -110,7 +110,7 @@
 		rootClassName: undefined,
 		delegate: null, // pass it on creation
 
-		cls: 'x-panel-body-default-framed cmbordertop',
+		cls: 'x-panel-body-default-framed cmdb-border-top',
 		itemId: 'bimCardBinding',
 		layout: 'hbox',
 		padding: '10 0 0 0',

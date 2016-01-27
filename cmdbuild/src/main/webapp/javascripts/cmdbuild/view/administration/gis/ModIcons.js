@@ -54,7 +54,7 @@ Ext.define("CMDBuild.Administration.ModIcons", {
 			split: true,
 			frame: false,
 			border: false,
-			cls: "x-panel-body-default-framed cmbordertop",
+			cls: "x-panel-body-default-framed cmdb-border-top",
 			bodyCls: 'cmdb-gray-panel',
 			layout: "border",
 			tbar: [this.modifyButton, this.removeButton],

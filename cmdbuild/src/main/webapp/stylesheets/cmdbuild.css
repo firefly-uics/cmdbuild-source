@@ -417,50 +417,36 @@ em { font-style: oblique !important; }
 /*
  * Panels styles
  */
+ 	/* Background */
+ 	.cmdb-administration-body { background-color: #eeeeee !important; }
 	.cmdb-gray-panel {
 		background-color: #f1f1f1 !important;
 		padding: 5px 5px 0 5px;
 	}
 	.cmdb-gray-panel-no-padding { background-color: #f1f1f1 !important; }
 	.cmdb-blue-panel {
-		background: #dfe9f6 !important;
+		background-color: #dfe9f6 !important;
 		padding: 5px;
 	}
-	.cmdb-blue-panel-no-padding { background: #dfe9f6 !important; }
+	.cmdb-blue-panel-no-padding { background-color: #dfe9f6 !important; }
 
-/*override*/
-	.x-panel-header { padding: 2px 2px 2px 4px !important; }
-
-	#cmbodyAdministration {
-		background-color: #EEE !important; /* to change the color of the border of the mainvieport*/
-	}
-
-	.cmborder {
-		border-style: solid !important;
-		border-width: 1px !important;
-	}
-
-	.cmbordertop {
+	/* Borders */
+	.cmdb-border-top {
 		border-top-style: solid !important;
 		border-top-width: 1px !important;
 	}
-
-	.cmborderbottom {
-		border-bottom-style: solid !important;
-		border-bottom-width: 1px !important;
-	}
-
-	.cmborderright {
+	.cmdb-border-right {
 		border-right-style: solid !important;
 		border-right-width: 1px !important;
 	}
-
-	.cmborderleft {
+	.cmdb-border-bottom {
+		border-bottom-style: solid !important;
+		border-bottom-width: 1px !important;
+	}
+	.cmdb-border-left {
 		border-left-style: solid !important;
 		border-left-width: 1px !important;
 	}
-
-	.cmnoborder { border: none !important; }
 
 /* fieldset */
 	.cmfieldset {
@@ -529,6 +515,9 @@ em { font-style: oblique !important; }
 	height: 100%;
 	width: 100%;
 }
+
+/* Overrides */
+	.x-panel-header { padding: 2px 2px 2px 4px !important; }
 
 /* FIX: Fieldset label CheckBox */
 	.x-form-cb-wrap { height: auto !important; }

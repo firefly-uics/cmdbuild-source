@@ -36,7 +36,7 @@
 				layout: "card",
 				activeItem: 0,
 				hideMode: "offsets",
-				cls: "cmborderbottom",
+				cls: "cmdb-border-bottom",
 				border: false,
 				frame: false,
 				cardGrid: this.cardGrid,
@@ -156,7 +156,7 @@
 			});
 
 			this.cardTabPanel = new CMDBuild.view.management.classes.CMCardTabPanel({
-				cls: "cmbordertop",
+				cls: "cmdb-border-top",
 				region: "south",
 				hideMode: "offsets",
 				border: false,

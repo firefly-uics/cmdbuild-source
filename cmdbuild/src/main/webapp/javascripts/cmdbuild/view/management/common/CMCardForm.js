@@ -52,7 +52,7 @@
 				frame: false,
 				border: false,
 				hideMode: "offsets",
-				bodyCls: "x-panel-body-default-framed cmbordertop",
+				bodyCls: "x-panel-body-default-framed cmdb-border-top",
 				bodyStyle: {
 					padding: "5px 5px 0 5px"
 				},

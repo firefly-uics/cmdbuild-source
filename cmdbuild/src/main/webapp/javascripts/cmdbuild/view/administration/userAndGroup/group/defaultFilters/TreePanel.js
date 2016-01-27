@@ -21,7 +21,7 @@
 
 		autoScroll: true,
 		border: false,
-		cls: 'cmborderbottom',
+		cls: 'cmdb-border-bottom',
 		collapsible: true,
 		enableColumnHide: false,
 		frame: false,

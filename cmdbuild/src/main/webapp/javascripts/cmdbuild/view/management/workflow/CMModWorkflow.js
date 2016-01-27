@@ -35,7 +35,7 @@
 			});
 
 			this.cardTabPanel = new CMDBuild.view.management.workflow.CMActivityTabPanel({
-				cls: "cmbordertop",
+				cls: "cmdb-border-top",
 				region: "south",
 				hideMode: "offsets",
 				split: true,

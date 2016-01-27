@@ -50,7 +50,7 @@
 				};
 
 			this.dataSourcePanel = new CMDBuild.view.administration.dashboard.CMDashboardChartConfigurationDataSourcePanel(Ext.apply(subPanelConf, {
-				cls: 'cmborderbottom',
+				cls: 'cmdb-border-bottom',
 				afterComboValueChanged: function(value) {
 					if (me.delegate) {
 						me.delegate.onDataSourceChanged(cleanComboValue(value, "name"));
@@ -70,7 +70,7 @@
 				items: [{
 					padding: '0 0 5 0',
 					items: mainPropertiesItems(me),
-					cls: 'cmborderbottom'
+					cls: 'cmdb-border-bottom'
 				},
 					this.dataSourcePanel
 				, {

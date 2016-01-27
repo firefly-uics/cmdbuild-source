@@ -91,7 +91,7 @@
 			frame: false,
 			border: false,
 			bodyCls: 'cmdb-gray-panel',
-			cls: 'cmbordertop',
+			cls: 'cmdb-border-top',
 			style: {
 				"padding": "5px"
 			}
@@ -110,7 +110,7 @@
 			split: true,
 			border: false,
 			frame: false,
-			cls: 'cmborderbottom',
+			cls: 'cmdb-border-bottom',
 			height: "40%"
 		});
 
