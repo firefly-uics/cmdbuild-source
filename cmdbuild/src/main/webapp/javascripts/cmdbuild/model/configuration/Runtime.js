@@ -2,6 +2,12 @@
 
 	Ext.require('CMDBuild.core.constants.Proxy');
 
+	/**
+	 * Runtime configuration model used in Administration and Management
+	 *
+	 * @administration
+	 * @management
+	 */
 	Ext.define('CMDBuild.model.configuration.Runtime', {
 		extend: 'Ext.data.Model',
 

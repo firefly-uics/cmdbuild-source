@@ -8,7 +8,8 @@
 
 		requires: [
 			'CMDBuild.core.constants.Proxy',
-			'CMDBuild.core.constants.Global'
+			'CMDBuild.core.constants.Global',
+			'CMDBuild.core.Utils'
 		],
 
 		/**
@@ -27,8 +28,8 @@
 		 * @returns {String or Mixed}
 		 */
 		applyMandatoryLabelFlag: function(string) {
-			if (Ext.isString(string) && this.cmfg('attributeModelGet', CMDBuild.core.constants.Proxy.MANDATORY))
-				return CMDBuild.core.constants.Global.getMandatoryLabelFlag() + string;
+			if (this.cmfg('attributeModelGet', CMDBuild.core.constants.Proxy.MANDATORY))
+				return CMDBuild.core.Utils.prependMandatoryLabel(string);
 
 			return string;
 		},

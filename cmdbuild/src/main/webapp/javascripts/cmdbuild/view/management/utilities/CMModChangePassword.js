@@ -29,14 +29,14 @@
 				region: "center",
 				items: [{
 					xtype: 'textfield',
-					inputType:'password', 
+					inputType:'password',
 					fieldLabel: CMDBuild.Translation.management.modutilities.changepassword.oldpw,
 					labelWidth: CMDBuild.LABEL_WIDTH,
 					name: 'oldpassword',
 					allowBlank: false
 				},{
 					xtype: 'textfield',
-					inputType:'password', 
+					inputType:'password',
 					fieldLabel: CMDBuild.Translation.management.modutilities.changepassword.newpw,
 					labelWidth: CMDBuild.LABEL_WIDTH,
 					name: 'newpassword',
@@ -44,12 +44,12 @@
 					allowBlank: false
 				},{
 					xtype: 'textfield',
-					inputType:'password', 
+					inputType:'password',
 					fieldLabel: CMDBuild.Translation.management.modutilities.changepassword.repnew,
 					labelWidth: CMDBuild.LABEL_WIDTH,
 					name: 'confirmnewpassword',
 					vtype: 'password',
-					initialPassField: 'newpassword',
+					twinFieldId: 'newpassword',
 					allowBlank: false
 				}]
 			});

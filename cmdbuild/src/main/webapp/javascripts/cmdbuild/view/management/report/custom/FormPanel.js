@@ -237,7 +237,7 @@
 								labelWidth: CMDBuild.LABEL_WIDTH,
 								maxWidth: CMDBuild.ADM_BIG_FIELD_WIDTH,
 								allowBlank: false,
-								initialPassField: 'user_password',
+								twinFieldId: 'user_password',
 								vtype: 'password',
 								submitValue: false
 							}),

@@ -101,13 +101,5 @@ Ext.apply(Ext.form.VTypes, {
 	time: function(value, field) {
 		field.vtypeText = Ext.String.format(CMDBuild.Translation.vtype_text.wrong_time, value, field.format);
 		return Ext.Date.parse(value, field.format);
-	},
-	password : function(val, field) {
-		if (field.initialPassField) {
-			var pwd = Ext.getCmp(field.initialPassField);
-			return (val == pwd.getValue());
-		}
-		return true;
-	},
-	passwordText : CMDBuild.Translation.configure.step2.msg.pswnomatch
+	}
 });

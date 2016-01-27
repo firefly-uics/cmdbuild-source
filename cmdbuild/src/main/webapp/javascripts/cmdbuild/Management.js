@@ -14,6 +14,7 @@
 			extend: 'Ext.app.Application',
 
 			requires: [
+				'Ext.tip.QuickTipManager', // Avoid core override
 				'Ext.ux.Router',
 				'CMDBuild.routes.management.Cards',
 				'CMDBuild.routes.management.Classes',

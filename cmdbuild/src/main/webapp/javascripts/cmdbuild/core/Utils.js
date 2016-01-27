@@ -1,5 +1,7 @@
 (function() {
 
+	Ext.require(['CMDBuild.core.constants.Global']);
+
 	/**
 	 * New class to replace CMDBuild.Utils
 	 */
@@ -275,6 +277,18 @@
 			}
 
 			return array;
+		},
+
+		/**
+		 * @param {String} label
+		 *
+		 * @returns {String}
+		 */
+		prependMandatoryLabel: function(label) {
+			if (!Ext.isEmpty(label) && Ext.isString(label))
+				return CMDBuild.core.constants.Global.getMandatoryLabelFlag() + label;
+
+			return label;
 		},
 
 		/**

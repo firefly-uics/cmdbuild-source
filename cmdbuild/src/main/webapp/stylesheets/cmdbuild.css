@@ -3,6 +3,7 @@
 @import url("./icons.css");
 @import url("./splashScreen.css");
 @import url("./trees.css");
+@import url("./footer.css");
 
 html {
 	height: 100%;
@@ -165,10 +166,20 @@ em { font-style: oblique !important; }
 
 /* HEADER */
 #header {
-	height: 45px;
 	color: #666666;
-	padding: 3px 0 0 3px;
+	height: 45px;
 	margin: 0;
+	padding: 3px 0px 0px 3px;
+}
+#header .description {
+	float: right;
+	font-size: 10px;
+	height: 45px;
+	line-height: 1.3em;
+	margin: 0px;
+	padding: 8px 10px 0px 0px;
+	text-align: right;
+	width: 200px;
 }
 
 #header img {
@@ -178,17 +189,6 @@ em { font-style: oblique !important; }
 	margin-left: 2px;
 }
 
-#header_po {
-	float: right;
-	font-size: 10px;
-	height: 45px;
-	margin: 0;
-	padding: 8px 10px 0 0;
-	text-align: right;
-	line-height: 1.3em;
-	width: 20em;
-	text-align: right;
-}
 
 #header #instance-name {
 	float: left;
@@ -247,55 +247,6 @@ em { font-style: oblique !important; }
 	padding: 0;
 	margin: 0.5em 0 0 0;
 }
-
-/**
- * Footer
- **/
-	#footer {
-		color: #727262;
-		font-family: Verdana, Arial, Helvetica, sans-serif;
-		font-size: 9px;
-		padding-left: 1%;
-		position: absolute;
-		height: 16px;
-		line-height: 16px;
-		bottom: 0;
-		width: 98%;
-	}
-	#footer .fl {
-		font-family: Verdana, Arial, Helvetica, sans-serif;
-		font-size: 10px;
-		margin: 0px;
-		padding: 0px 0px 0px 3px;
-		width: 25%;
-		float: left;
-		text-align: left;
-	}
-	#footer .fc {
-		font-family: Verdana, Arial, Helvetica, sans-serif;
-		font-size: 10px;
-		margin: 0px;
-		padding: 0px;
-		width: 48%;
-		float: left;
-		text-align: center;
-	}
-	#footer .fr {
-		font-family: Verdana, Arial, Helvetica, sans-serif;
-		font-size: 10px;
-		margin: 0px;
-		padding: 0px 3px 0px 0px;
-		width: 25%;
-		float: right;
-		text-align: right;
-	}
-	#footer a {
-		color: #727262;
-		font-family: Verdana, Arial, Helvetica, sans-serif;
-		font-size: 10px;
-		text-decoration: none;
-	}
-	#cmdbuild-credits-link { cursor: pointer; }
 
 /*custom rulse*/
 .cmdbuild_unconfigured_modpanel {
@@ -463,19 +414,28 @@ em { font-style: oblique !important; }
 		padding-bottom: 1em;
 	}
 
+/*
+ * Panels styles
+ */
+	.cmgraypanel, /* @deprecated */
+	.cmdb-gray-panel {
+		background-color: #f1f1f1 !important;
+		padding: 5px 5px 0 5px;
+	}
+	.cmgraypanel-nopadding, /* @deprecated */
+	.cmdb-gray-panel-no-padding { background-color: #f1f1f1 !important; }
+	.cmdb-blue-panel {
+		background: #dfe9f6 !important;
+		padding: 5px;
+	}
+	.cmdb-blue-panel-no-padding { background: #dfe9f6 !important; }
+
 /*override*/
 	.x-panel-header { padding: 2px 2px 2px 4px !important; }
 
 	#cmbodyAdministration {
 		background-color: #EEE !important; /* to change the color of the border of the mainvieport*/
 	}
-
-	.cmgraypanel {
-		background: #f1f1f1 !important;
-		padding: 5px 5px 0 5px;
-	}
-
-	.cmgraypanel-nopadding { background: #f1f1f1 !important; }
 
 	.cmborder {
 		border-style: solid !important;
