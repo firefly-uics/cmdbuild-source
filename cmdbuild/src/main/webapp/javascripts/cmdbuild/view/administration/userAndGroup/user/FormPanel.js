@@ -220,7 +220,7 @@
 						items: [
 							Ext.create('Ext.form.field.Text', {
 								name: CMDBuild.core.constants.Proxy.PASSWORD,
-								id: 'user_password',
+								id: 'userPassword',
 								inputType: 'password',
 								fieldLabel: CMDBuild.Translation.password,
 								labelWidth: CMDBuild.LABEL_WIDTH,
@@ -234,7 +234,7 @@
 								labelWidth: CMDBuild.LABEL_WIDTH,
 								maxWidth: CMDBuild.ADM_BIG_FIELD_WIDTH,
 								allowBlank: false,
-								twinFieldId: 'user_password',
+								twinFieldId: 'userPassword',
 								vtype: 'password',
 								submitValue: false
 							}),

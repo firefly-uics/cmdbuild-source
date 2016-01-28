@@ -68,31 +68,6 @@
 			this.grid = this.view.grid;
 		},
 
-		/**
-		 * @param {Ext.form.FieldSet} fieldset
-		 *
-		 * @private
-		 */
-		enableFieldset: function(fieldset) {
-			fieldset.cascade(function (item) {
-				if (
-					item
-					&& (
-						item instanceof Ext.form.Field
-						|| item instanceof Ext.form.FieldSet
-						|| item.considerAsFieldToDisable
-					)
-					&& !item.cmImmutable
-					&& item.isVisible()
-				) {
-					item.enable();
-				}
-			});
-
-			this.form.setDisabledTopBar(true);
-			this.form.setDisabledBottomBar(false);
-		},
-
 		onUserAndGroupUserAbortButtonClick: function() {
 			if (!this.userAndGroupUserSelectedUserIsEmpty()) {
 				this.onUserAndGroupUserRowSelected();
@@ -119,7 +94,10 @@
 		},
 
 		onUserAndGroupUserChangePasswordButtonClick: function() {
-			this.enableFieldset(this.form.userPasswordFieldSet);
+			this.form.setDisabledFieldSet(this.form.userPasswordFieldSet, false);
+
+			this.form.setDisabledTopBar(true);
+			this.form.setDisabledBottomBar(false);
 		},
 
 		onUserAndGroupUserDisableButtonClick: function() {
@@ -135,7 +113,10 @@
 		},
 
 		onUserAndGroupUserModifyButtonClick: function() {
-			this.enableFieldset(this.form.userInfoFieldSet);
+			this.form.setDisabledFieldSet(this.form.userInfoFieldSet, false);
+
+			this.form.setDisabledTopBar(true);
+			this.form.setDisabledBottomBar(false);
 		},
 
 		/**

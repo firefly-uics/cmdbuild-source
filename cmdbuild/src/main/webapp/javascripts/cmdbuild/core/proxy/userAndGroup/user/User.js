@@ -26,7 +26,7 @@
 		/**
 		 * @param {Object} parameters
 		 */
-		disable:function(parameters) {
+		disable: function(parameters) {
 			parameters = Ext.isEmpty(parameters) ? {} : parameters;
 
 			Ext.apply(parameters, { url: CMDBuild.core.proxy.Index.user.disable });
