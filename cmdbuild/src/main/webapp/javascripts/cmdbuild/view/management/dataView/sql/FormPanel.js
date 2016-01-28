@@ -18,6 +18,7 @@
 		cls: 'x-panel-body-default-framed cmdb-border-top',
 		border: false,
 		frame: false,
+		split: true,
 
 		initComponent: function() {
 			Ext.apply(this, {

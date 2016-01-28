@@ -17,6 +17,7 @@
 		border: false,
 		cls: 'cmdb-border-bottom',
 		frame: false,
+		split: true,
 
 		initComponent: function() {
 			Ext.apply(this, {

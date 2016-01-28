@@ -283,7 +283,6 @@
 			/**
 			 * @param {Object} parameters
 			 * @param {String} parameters.modelName
-			 * @param {String} parameters.propertyName
 			 * @param {String} parameters.targetVariableName
 			 * @param {Object} parameters.value
 			 *

@@ -22,6 +22,7 @@
 			'dataViewSqlBuildStore',
 			'onButtonPrintClick',
 			'onDataViewSqlGridSelect',
+			'onDataViewSqlPanelShow = onDataViewPanelShow',
 			'onDataViewSqlViewSelected = onDataViewViewSelected'
 		],
 
@@ -157,6 +158,13 @@
 						})
 					);
 				}
+			}, this);
+		},
+
+		onDataViewSqlPanelShow: function() {
+			this.view.grid.getStore().on('load', function() {
+				if (!this.grid.getSelectionModel().hasSelection())
+					this.grid.getSelectionModel().select(0, true);
 			}, this);
 		},
 
