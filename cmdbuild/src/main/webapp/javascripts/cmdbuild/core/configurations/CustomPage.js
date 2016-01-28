@@ -1,6 +1,6 @@
 (function() {
 
-	Ext.define('CMDBuild.core.configurations.CustomPages', {
+	Ext.define('CMDBuild.core.configurations.CustomPage', {
 
 		singleton: true,
 
