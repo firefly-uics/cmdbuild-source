@@ -27,14 +27,14 @@ public class GraphProperties extends DefaultProperties implements GraphConfigura
 	public GraphProperties() {
 		super();
 		setProperty(BASE_LEVEL, "1");
-		setProperty(CLUSTERING_THRESHOLD, "5");
+		setProperty(CLUSTERING_THRESHOLD, "100");
 		setProperty(DISPLAY_LABEL, "none");
-		setProperty(EDGE_COLOR, "#000000");
+		setProperty(EDGE_COLOR, "#3D85C6");
 		setProperty(ENABLE_EDGE_TOOLTIP, TRUE.toString());
 		setProperty(ENABLE_NODE_TOOLTIP, TRUE.toString());
 		setProperty(ENABLED, TRUE.toString());
-		setProperty(SPRITE_DIMENSION, "40");
-		setProperty(STEP_RADIUS, "200");
+		setProperty(SPRITE_DIMENSION, "20");
+		setProperty(STEP_RADIUS, "60");
 		setProperty(VIEW_POINT_DISTANCE, "50");
 		setProperty(VIEW_POINT_HEIGHT, "50");
 	}
