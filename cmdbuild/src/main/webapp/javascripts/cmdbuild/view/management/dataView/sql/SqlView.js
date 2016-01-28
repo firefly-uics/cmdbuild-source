@@ -27,7 +27,6 @@
 
 		border: false,
 		frame: false,
-		header: false,
 		layout: 'border',
 
 		initComponent: function() {
@@ -39,14 +38,19 @@
 					}),
 					this.form = Ext.create('CMDBuild.view.management.dataView.sql.FormPanel', {
 						delegate: this.delegate,
-						height: CMDBuild.configuration.instance.get(CMDBuild.core.constants.Proxy.CARD_FORM_RATIO) + '%',
 						region: 'south',
-						split: true
+						height: CMDBuild.configuration.instance.get(CMDBuild.core.constants.Proxy.CARD_FORM_RATIO) + '%'
 					})
 				]
 			});
 
 			this.callParent(arguments);
+		},
+
+		listeners: {
+			show: function(panel, eOpts) {
+				this.delegate.cmfg('onDataViewSqlPanelShow');
+			}
 		}
 	});
 

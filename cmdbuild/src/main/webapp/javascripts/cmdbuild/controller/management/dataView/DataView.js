@@ -15,8 +15,6 @@
 		 */
 		cmfgCatchedFunctions: [
 			'dataViewSelectedGet',
-			'dataViewSelectedIsEmpty',
-			'dataViewSelectedSet',
 			'onDataViewModuleInit = onModuleInit',
 			'onDataViewViewSelected -> sectionController'
 		],
@@ -45,6 +43,7 @@
 
 		/**
 		 * @param {Object} configurationObject
+		 * @param {CMDBuild.controller.common.MainViewport} configurationObject.parentDelegate
 		 *
 		 * @override
 		 */
@@ -56,55 +55,29 @@
 
 		// SelectedView property methods
 			/**
-			 * @param {String} parameterName
+			 * @param {Array or String} attributePath
 			 *
-			 * @returns {Boolean}
+			 * @returns {Mixed or undefined}
 			 */
-			dataViewSelectedIsEmpty: function(parameterName) {
-				if (!Ext.isEmpty(parameterName))
-					return Ext.isEmpty(this.selectedView.get(parameterName));
+			dataViewSelectedGet: function(attributePath) {
+				var parameters = {};
+				parameters[CMDBuild.core.constants.Proxy.TARGET_VARIABLE_NAME] = 'selectedView';
+				parameters[CMDBuild.core.constants.Proxy.ATTRIBUTE_PATH] = attributePath;
 
-				return Ext.isEmpty(this.selectedView);
-			},
-
-			/**
-			 * Returns full model object or just one property if required
-			 *
-			 * @param {String} parameterName
-			 *
-			 * @returns {CMDBuild.model.group.Group} or Mixed
-			 */
-			dataViewSelectedGet: function(parameterName) {
-				if (!Ext.isEmpty(parameterName))
-					return this.selectedView.get(parameterName);
-
-				return this.selectedView;
+				return this.propertyManageGet(parameters);
 			},
 
 			/**
 			 * @param {Object} parameters
-			 * @param {Object} parameters.value
-			 * @param {String} parameters.propertyName
+			 *
+			 * @private
 			 */
 			dataViewSelectedSet: function(parameters) {
-				if (!Ext.isEmpty(parameters)) {
-					var value = parameters.value;
-					var propertyName = parameters.propertyName;
+				if (!Ext.Object.isEmpty(parameters)) {
+					parameters[CMDBuild.core.constants.Proxy.MODEL_NAME] = 'CMDBuild.model.dataView.SqlView';
+					parameters[CMDBuild.core.constants.Proxy.TARGET_VARIABLE_NAME] = 'selectedView';
 
-					// Create model if not existing
-					if (Ext.isEmpty(this.selectedView))
-						this.selectedView = Ext.create('CMDBuild.model.dataView.SqlView');
-
-					// Single property management
-					if (!Ext.isEmpty(propertyName) && Ext.isString(propertyName)) {
-						return this.selectedView.set(propertyName, value);
-					} else if (!Ext.isEmpty(value) && Ext.isObject(value)) { // Full object management
-						if (Ext.getClassName(value) == 'CMDBuild.model.dataView.SqlView') {
-							this.selectedView = value;
-						} else {
-							this.selectedView = Ext.create('CMDBuild.model.dataView.SqlView', value);
-						}
-					}
+					this.propertyManageSet(parameters);
 				}
 			},
 
@@ -124,7 +97,7 @@
 
 				this.view.removeAll(true);
 
-				switch(this.dataViewSelectedGet(CMDBuild.core.constants.Proxy.SECTION_HIERARCHY)[0]) {
+				switch(this.cmfg('dataViewSelectedGet', CMDBuild.core.constants.Proxy.SECTION_HIERARCHY)[0]) {
 					case 'sql':
 					default: {
 						this.sectionController = Ext.create('CMDBuild.controller.management.dataView.Sql', { parentDelegate: this });
@@ -133,15 +106,19 @@
 
 				this.view.add(this.sectionController.getView());
 
-				this.setViewTitle(this.dataViewSelectedGet(CMDBuild.core.constants.Proxy.TEXT));
+				this.sectionController.getView().fireEvent('show');
+
+//				this.sectionController.cmfg('onDataViewPanelShow');
+
+				this.setViewTitle(this.cmfg('dataViewSelectedGet', CMDBuild.core.constants.Proxy.TEXT));
 
 				// History record save
 				CMDBuild.global.navigation.Chronology.cmfg('navigationChronologyRecordSave', {
 					moduleId: this.cmfg('identifierGet'),
 					entryType: {
-						description: this.dataViewSelectedGet(CMDBuild.core.constants.Proxy.TEXT),
-						id: this.dataViewSelectedGet(CMDBuild.core.constants.Proxy.ID),
-						object: this.dataViewSelectedGet()
+						description: this.cmfg('dataViewSelectedGet', CMDBuild.core.constants.Proxy.TEXT),
+						id: this.cmfg('dataViewSelectedGet', CMDBuild.core.constants.Proxy.ID),
+						object: this.cmfg('dataViewSelectedGet')
 					}
 				});
 

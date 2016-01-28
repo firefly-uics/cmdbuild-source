@@ -25,7 +25,6 @@
 		cls: 'x-panel-body-default-framed cmdb-border-top',
 		frame: false,
 		overflowY: 'auto',
-		split: true,
 
 		layout: {
 			type: 'vbox',

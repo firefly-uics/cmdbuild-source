@@ -47,7 +47,6 @@
 					this.grid = Ext.create('CMDBuild.view.administration.dataView.filter.GridPanel', {
 						delegate: this.delegate,
 						region: 'north',
-						split: true,
 						height: '30%'
 					}),
 					this.form = Ext.create('CMDBuild.view.administration.dataView.filter.FormPanel', {

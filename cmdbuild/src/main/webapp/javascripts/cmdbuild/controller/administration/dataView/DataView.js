@@ -44,6 +44,22 @@
 		},
 
 		/**
+		 * @param {String} sectionIdentifier
+		 *
+		 * @returns {Mixed}
+		 */
+		buildSectionController: function(sectionIdentifier) {
+			switch (sectionIdentifier) {
+				case 'sql':
+					return Ext.create('CMDBuild.controller.administration.dataView.Sql', { parentDelegate: this });
+
+				case 'filter':
+				default:
+					return Ext.create('CMDBuild.controller.administration.dataView.Filter', { parentDelegate: this });
+			}
+		},
+
+		/**
 		 * Setup view items and controllers on accordion click
 		 *
 		 * @param {CMDBuild.model.common.accordion.Generic} node
@@ -52,19 +68,9 @@
 		 */
 		onDataViewModuleInit: function(node) {
 			if (!Ext.Object.isEmpty(node)) {
+				this.sectionController = this.buildSectionController(node.get(CMDBuild.core.constants.Proxy.SECTION_HIERARCHY)[0]);
+
 				this.view.removeAll(true);
-
-				switch (node.get(CMDBuild.core.constants.Proxy.SECTION_HIERARCHY)[0]) {
-					case 'sql': {
-						this.sectionController = Ext.create('CMDBuild.controller.administration.dataView.Sql', { parentDelegate: this });
-					} break;
-
-					case 'filter':
-					default: {
-						this.sectionController = Ext.create('CMDBuild.controller.administration.dataView.Filter', { parentDelegate: this });
-					}
-				}
-
 				this.view.add(this.sectionController.getView());
 
 				this.setViewTitle(node.get(CMDBuild.core.constants.Proxy.DESCRIPTION));
