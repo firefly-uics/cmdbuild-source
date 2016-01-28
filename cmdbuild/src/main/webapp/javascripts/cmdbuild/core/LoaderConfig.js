@@ -42,6 +42,7 @@
 
 	Ext.Loader.setConfig({
 		enabled: true,
+		disableCaching: false,
 		paths: {
 			'CMDBuild.app': './javascripts/cmdbuild',
 			'CMDBuild': './javascripts/cmdbuild',
