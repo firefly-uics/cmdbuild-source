@@ -104,7 +104,7 @@
 						+ '/javascripts/cmdbuild-network/?basePath=' + this.basePath
 						+ '&classId=' + this.className
 						+ '&cardId=' + this.cardId
-						+ '&frameworkVersion=' + CMDBuild.core.configurations.CustomPages.getVersion()
+						+ '&frameworkVersion=' + CMDBuild.core.configurations.CustomPage.getVersion()
 				}
 			});
 		}

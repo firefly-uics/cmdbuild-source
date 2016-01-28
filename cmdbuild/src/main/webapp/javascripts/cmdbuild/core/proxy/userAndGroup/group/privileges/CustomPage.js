@@ -1,6 +1,6 @@
 (function() {
 
-	Ext.define('CMDBuild.core.proxy.userAndGroup.group.privileges.CustomPages', {
+	Ext.define('CMDBuild.core.proxy.userAndGroup.group.privileges.CustomPage', {
 
 		requires: [
 			'CMDBuild.core.cache.Cache',

@@ -10,7 +10,7 @@
 
 		requires: [
 			'CMDBuild.core.constants.Proxy',
-			'CMDBuild.core.configurations.CustomPages'
+			'CMDBuild.core.configurations.CustomPage'
 		],
 
 		/**
@@ -61,10 +61,10 @@
 
 					autoEl: {
 						tag: 'iframe',
-						src: CMDBuild.core.configurations.CustomPages.getCustomizationsPath()
+						src: CMDBuild.core.configurations.CustomPage.getCustomizationsPath()
 							+ node.get(CMDBuild.core.constants.Proxy.NAME)
 							+ '/?basePath=' + basePath
-							+ '&frameworkVersion=' + CMDBuild.core.configurations.CustomPages.getVersion()
+							+ '&frameworkVersion=' + CMDBuild.core.configurations.CustomPage.getVersion()
 					}
 				});
 
