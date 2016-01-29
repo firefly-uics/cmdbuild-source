@@ -30,7 +30,4 @@
 	CMDBuild.configuration = {};
 	CMDBuild.Config = {}; // @deprecated
 
-	Ext.WindowManager.getNextZSeed();	// To increase the default zseed. Is needed for the combo on windows probably it fix also the prev problem
-	Ext.enableFx = false;
-
 })();

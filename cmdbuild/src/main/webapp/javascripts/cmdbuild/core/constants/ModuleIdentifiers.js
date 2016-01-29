@@ -7,6 +7,11 @@
 
 		singleton: true,
 
+		/**
+		 * @cfg {Object}
+		 *
+		 * @private
+		 */
 		config: {
 			configuration: 'configuration',
 			customPage: 'custompage',
@@ -22,6 +27,9 @@
 			workflow: 'workflow'
 		},
 
+		/**
+		 * @param {Object} config
+		 */
 		constructor: function(config) {
 			this.initConfig(config);
 		}
