@@ -4,6 +4,8 @@
 	 * Administration
 	 */
 	Ext.onReady(function() {
+		Ext.WindowManager.getNextZSeed();	// To increase the default zseed. Is needed for the combo on windows probably it fix also the prev problem
+		Ext.enableFx = false;
 		Ext.tip.QuickTipManager.init();
 
 		// Fix a problem of Ext 4.2 tooltips width

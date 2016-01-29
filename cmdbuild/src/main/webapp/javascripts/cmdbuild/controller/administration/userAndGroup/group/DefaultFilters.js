@@ -283,7 +283,7 @@
 			) {
 				var params = {};
 				params[CMDBuild.core.constants.Proxy.CLASS_NAME] = record.get(CMDBuild.core.constants.Proxy.NAME);
-				params[CMDBuild.core.constants.Proxy.LIMIT] = CMDBuild.core.constants.Server.MAX_INTEGER; // HACK to get all filters
+				params[CMDBuild.core.constants.Proxy.LIMIT] = CMDBuild.core.constants.Server.getMaxInteger(); // HACK to get all filters
 				params[CMDBuild.core.constants.Proxy.START] = 0; // HACK to get all filters
 
 				column.getEditor().getStore().load({ params: params });
