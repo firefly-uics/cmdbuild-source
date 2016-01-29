@@ -210,17 +210,15 @@
 					url: 'services/json/management/modcard/getcard',
 					params: params,
 					scope: this,
-					success: function(response, options, decodedResult) {
-						if (!Ext.isEmpty(this.getStore())) {
+					success: function(response, options, decodedResponse) {
+						if (!Ext.isEmpty(this.getStore()))
 							this.getStore().add({
 								Id: value,
-								Description: decodedResult.card['Description']
+								Description: decodedResponse.card['Description']
 							});
 
-							this.validate();
-						}
-
 						this.setValue(value);
+						this.validate();
 					}
 				});
 
