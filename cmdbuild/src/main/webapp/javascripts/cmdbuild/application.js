@@ -26,8 +26,4 @@
 	CMDBuild.HTML_EDITOR_WIDTH = CMDBuild.LABEL_WIDTH + 600;
 	CMDBuild.MENU_WIDTH = 600;
 
-	// Global object with runtime configuration
-	CMDBuild.configuration = {};
-	CMDBuild.Config = {}; // @deprecated
-
 })();
