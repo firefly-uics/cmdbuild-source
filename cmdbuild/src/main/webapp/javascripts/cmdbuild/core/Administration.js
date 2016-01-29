@@ -148,6 +148,11 @@
 		buildConfiguration: function() {
 			var barrierId = 'config';
 
+			/**
+			 * @deprecated
+			 */
+			Ext.ns('CMDBuild.Config');
+
 			CMDBuild.core.RequestBarrier.init(barrierId, function() {
 				CMDBuild.core.proxy.configuration.Configuration.readAll({
 					loadMask: false,
