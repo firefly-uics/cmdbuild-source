@@ -166,7 +166,7 @@
 
 					return !widgetsBusyState;
 				} else if (!Ext.isEmpty(controller.isValid) && Ext.isFunction(controller.isValid)) {
-					widgetsBusyState = wc.isBusy();
+					widgetsBusyState = controller.isBusy();
 
 					return !widgetsBusyState;
 				}
