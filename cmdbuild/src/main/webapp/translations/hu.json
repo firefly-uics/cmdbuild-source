@@ -920,15 +920,6 @@
 			"title": "Üdvözlöm"
 		}
 	},
-	"vtype_text": {
-		"cmdbcomment": "A függőleges vonal és aposztróf nem engedélyezett",
-		"cmdbcommentrelaxed": "A függőleges vonal nem engedélyezett",
-		"invalid_character": "Érvénytelen karakter",
-		"wrong_decimal_part": "Max {0} decimális érték",
-		"wrong_integer_part": "Max {0} integer érték",
-		"wrong_ip_address": "Érvénytelen IP cím",
-		"wrong_time": "{0} nem érvényes érték. {1} a megfelelő formátum"
-	},
 	"warnings": {
 		"emailTemplateRelatedAttributeEdited": "Email sablonnal összefüggő attribútumok megváltoztak, néhány levelet újra kell generálni.",
 		"itIsNotAllowedFilterWithCalculatedParams": "Nem engedélyezett a szűrők kalkulált paraméterrel történő használata",
@@ -1434,6 +1425,13 @@
 	"viewPointDistance": "<em>View point distance</em>",
 	"viewPointHeight": "<em>View point height</em>",
 	"views": "Nézetek",
+	"vtypeCommentExtendedText": "A függőleges vonal és aposztróf nem engedélyezett",
+	"vtypeCommentText": "A függőleges vonal nem engedélyezett",
+	"vtypeIpText": "Érvénytelen IP cím",
+	"vtypeNumericInvalidCharacterText": "Érvénytelen karakter",
+	"vtypeNumericMaxDecimalDigitsText": "Max {0} decimális érték",
+	"vtypeNumericMaxIntegerDigitsText": "Max {0} integer érték",
+	"vtypeTimeText": "{0} nem érvényes érték. {1} a megfelelő formátum",
 	"warning": "<em>Warning</em>",
 	"webServicePath": "Web service elérési út",
 	"widget": "Widget",

@@ -17,12 +17,14 @@
 		 * @cfg {Array}
 		 */
 		cmfgCatchedFunctions: [
+			'domainPropertiesDataGet',
 			'onDomainPropertiesAbortButtonClick',
 			'onDomainPropertiesAddButtonClick',
 			'onDomainPropertiesCardinalitySelect',
 			'onDomainPropertiesDomainSelected = onDomainSelected',
 			'onDomainPropertiesMasterDetailCheckboxChange',
-			'onDomainPropertiesModifyButtonClick'
+			'onDomainPropertiesModifyButtonClick',
+			'onDomainPropertiesNameChange'
 		],
 
 		/**
@@ -51,22 +53,13 @@
 		},
 
 		/**
-		 * @returns {Object} data
+		 * Forwarder method
 		 *
-		 * @public
+		 * @returns {Object}
 		 */
-		getData: function() {
-			var data = this.form.getData(true);
-
-			// TODO: waiting for refactor (server side variables rename)
-			data['descr_1'] = data[CMDBuild.core.constants.Proxy.DIRECT_DESCRIPTION];
-			data['descr_2'] = data[CMDBuild.core.constants.Proxy.INVERSE_DESCRIPTION];
-			data['idClass1'] = data[CMDBuild.core.constants.Proxy.ORIGIN_CLASS_ID];
-			data['idClass2'] = data[CMDBuild.core.constants.Proxy.DESTINATION_CLASS_ID];
-			data['md_label'] = data[CMDBuild.core.constants.Proxy.MASTER_DETAIL_LABEL];
-			data[CMDBuild.core.constants.Proxy.ID] = Ext.isEmpty(data[CMDBuild.core.constants.Proxy.ID]) ? -1 : data[CMDBuild.core.constants.Proxy.ID];
-
-			return data;
+		domainPropertiesDataGet: function() {
+//			return Ext.create('CMDBuild.model.domain.Domain', this.form.getData(true)).getDataForSubmit();
+			return this.form.getData(true);
 		},
 
 		onDomainPropertiesAbortButtonClick: function() {
@@ -79,7 +72,7 @@
 		},
 
 		onDomainPropertiesAddButtonClick: function() {
-			this.cmfg('domainSelectedDomainSet');
+			this.cmfg('domainSelectedDomainReset');
 
 			this.form.reset();
 			this.form.setDisabledModify(false, true);
@@ -131,6 +124,22 @@
 			this.form.setDisabledModify(false);
 
 			this.onDomainPropertiesCardinalitySelect(); // Execute cardinality selection event actions to disable masterDetailCheckbox
+		},
+
+		/**
+		 * Synchronize name and description fields
+		 *
+		 * @param {Object} parameters
+		 * @param {String} parameters.newValue
+		 * @param {String} parameters.oldValue
+		 */
+		onDomainPropertiesNameChange: function(parameters) {
+			if (Ext.isObject(parameters) && !Ext.Object.isEmpty(parameters)) {
+				var actualValue = this.form.domainDescription.getValue();
+
+				if (Ext.isEmpty(actualValue) || actualValue == parameters.oldValue )
+					this.form.domainDescription.setValue(parameters.newValue);
+			}
 		}
 	});
 

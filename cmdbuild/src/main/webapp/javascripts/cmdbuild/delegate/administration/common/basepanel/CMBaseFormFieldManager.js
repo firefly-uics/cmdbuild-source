@@ -25,7 +25,7 @@
 				width: CMDBuild.ADM_BIG_FIELD_WIDTH,
 				name: _CMProxy.parameter.DESCRIPTION,
 				allowBlank: false,
-				vtype: "cmdbcomment"
+				vtype: "commentextended"
 			});
 
 			return [this.name, this.description];

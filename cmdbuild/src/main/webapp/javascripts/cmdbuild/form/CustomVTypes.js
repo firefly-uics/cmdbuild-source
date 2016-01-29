@@ -11,7 +11,7 @@ var ipv6RegExp = /^\s*((([0-9A-Fa-f]{1,4}:){7}([0-9A-Fa-f]{1,4}|:))|(([0-9A-Fa-f
 	if (value.match(numericRegExp) == null) {
 		out = {
 			valid: false,
-			message: CMDBuild.Translation.vtype_text.invalid_character
+			message: CMDBuild.Translation.vtypeNumericInvalidCharacterText
 		};
 	}
 	var splitByDecimalSeparator = value.split(".");
@@ -23,7 +23,7 @@ var ipv6RegExp = /^\s*((([0-9A-Fa-f]{1,4}:){7}([0-9A-Fa-f]{1,4}|:))|(([0-9A-Fa-f
 		if (integerPart && new String(integerPart).length > integerPartMaxlength) {
 			out = {
 				valid: false,
-				message: Ext.String.format(CMDBuild.Translation.vtype_text.wrong_integer_part ,integerPartMaxlength)
+				message: Ext.String.format(CMDBuild.Translation.vtypeNumericMaxIntegerDigitsText ,integerPartMaxlength)
 			};
 		}
 	};
@@ -32,7 +32,7 @@ var ipv6RegExp = /^\s*((([0-9A-Fa-f]{1,4}:){7}([0-9A-Fa-f]{1,4}|:))|(([0-9A-Fa-f
 		if (decimalPart && decimalPart.length > scale) {
 			out = {
 				valid: false,
-				message: Ext.String.format(CMDBuild.Translation.vtype_text.wrong_decimal_part, scale)
+				message: Ext.String.format(CMDBuild.Translation.vtypeNumericMaxDecimalDigitsText, scale)
 			};
 		}
 	}
@@ -41,16 +41,6 @@ var ipv6RegExp = /^\s*((([0-9A-Fa-f]{1,4}:){7}([0-9A-Fa-f]{1,4}|:))|(([0-9A-Fa-f
 };
 
 Ext.apply(Ext.form.VTypes, {
-		cmdbcomment : function(val, field) {
-		return !val.match("[|']");
-		},
-	cmdbcommentText : CMDBuild.Translation.vtype_text.cmdbcomment || 'Pipe or apostrophe not allowed',
-
-		cmdbcommentrelaxed : function(val, field) {
-		return !val.match("[|]");
-		},
-	cmdbcommentrelaxedText :  CMDBuild.Translation.vtype_text.cmdbcommentrelaxedText || 'Pipe not allowed',
-
 	emailaddrspec : function(v) {
 		 var inner = v.match(fullemailspec);
 		 if (inner) {
@@ -91,12 +81,12 @@ Ext.apply(Ext.form.VTypes, {
 	ipv4: function(value, field) {
 		 return value.match(ipv4RegExp) != null;
 	},
-	ipv4Text: CMDBuild.Translation.vtype_text.wrong_ip_address,
+	ipv4Text: CMDBuild.Translation.vtypeIpText,
 
 	ipv6: function(value, field) {
 			return value.match(ipv6RegExp) != null;
 	},
-	ipv6Text: CMDBuild.Translation.vtype_text.wrong_ip_address,
+	ipv6Text: CMDBuild.Translation.vtypeIpText,
 
 	time: function(value, field) {
 		field.vtypeText = Ext.String.format(CMDBuild.Translation.vtype_text.wrong_time, value, field.format);

@@ -920,15 +920,6 @@
 			"title": "Welcome"
 		}
 	},
-	"vtype_text": {
-		"cmdbcomment": "Pipe or apostrophe not allowed",
-		"cmdbcommentrelaxed": "Pipe not allowed",
-		"invalid_character": "Invalid character",
-		"wrong_decimal_part": "Max {0} decimal digits",
-		"wrong_integer_part": "Max {0} integer digits",
-		"wrong_ip_address": "Not valid IP address",
-		"wrong_time": "{0} is not a valid value. It must be in the format {1}"
-	},
 	"warnings": {
 		"emailTemplateRelatedAttributeEdited": "Attribute related with email templates changed, some e-mail could be regenerated.",
 		"itIsNotAllowedFilterWithCalculatedParams": "It's not allowed to use a filter with calculated parameters",
@@ -1434,6 +1425,13 @@
 	"viewPointDistance": "View point distance",
 	"viewPointHeight": "View point height",
 	"views": "Views",
+	"vtypeCommentExtendedText": "Pipe or apostrophe not allowed",
+	"vtypeCommentText": "Pipe not allowed",
+	"vtypeIpText": "Not valid IP address",
+	"vtypeNumericInvalidCharacterText": "Invalid character",
+	"vtypeNumericMaxDecimalDigitsText": "Max {0} decimal digits",
+	"vtypeNumericMaxIntegerDigitsText": "Max {0} integer digits",
+	"vtypeTimeText": "{0} is not a valid value. It must be in the format {1}",
 	"warning": "Warning",
 	"webServicePath": "Web service path",
 	"widget": "Widget",

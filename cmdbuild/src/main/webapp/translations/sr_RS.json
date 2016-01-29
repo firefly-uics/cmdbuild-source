@@ -920,15 +920,6 @@
 			"title": "Добро дошли"
 		}
 	},
-	"vtype_text": {
-		"cmdbcomment": "Апостроф и/или вертикална цртица су недозвољени",
-		"cmdbcommentrelaxed": "Вертикална цртица је недозвољен карактер",
-		"invalid_character": "Недозвољени карактер",
-		"wrong_decimal_part": "Максимално је дозвољено {0} децималних места",
-		"wrong_integer_part": "Максимално је дозвољено {0} цифара за целобројни део",
-		"wrong_ip_address": "Невалидна IP адреса",
-		"wrong_time": "{0} је недозвољена вредност. Вредност мора бити у формату {1}"
-	},
 	"warnings": {
 		"emailTemplateRelatedAttributeEdited": "<em>Attribute related with email templates changed, some e-mail could be regenerated.</em>",
 		"itIsNotAllowedFilterWithCalculatedParams": "Није дозвољена употреба филтера са параметрима који се калкулишу",
@@ -1434,6 +1425,13 @@
 	"viewPointDistance": "<em>View point distance</em>",
 	"viewPointHeight": "<em>View point height</em>",
 	"views": "Прикази",
+	"vtypeCommentExtendedText": "Апостроф и/или вертикална цртица су недозвољени",
+	"vtypeCommentText": "Вертикална цртица је недозвољен карактер",
+	"vtypeIpText": "Невалидна IP адреса",
+	"vtypeNumericInvalidCharacterText": "Недозвољени карактер",
+	"vtypeNumericMaxDecimalDigitsText": "Максимално је дозвољено {0} децималних места",
+	"vtypeNumericMaxIntegerDigitsText": "Максимално је дозвољено {0} цифара за целобројни део",
+	"vtypeTimeText": "{0} је недозвољена вредност. Вредност мора бити у формату {1}",
 	"warning": "Пажња",
 	"webServicePath": "Путања web сервиса",
 	"widget": "Компонента (Widget)",

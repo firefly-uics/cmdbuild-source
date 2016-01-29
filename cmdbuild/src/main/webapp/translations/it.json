@@ -920,15 +920,6 @@
 			"title": "Benvenuto"
 		}
 	},
-	"vtype_text": {
-		"cmdbcomment": "La barra verticale e l'apostrofo non sono permessi",
-		"cmdbcommentrelaxed": "La barra verticale non è permessa",
-		"invalid_character": "Carattere non valido",
-		"wrong_decimal_part": "Al massiono {0} cifre decimali",
-		"wrong_integer_part": "Al massimo {0} cifre intere",
-		"wrong_ip_address": "Indirizzo IP non valido",
-		"wrong_time": "{0} non è un valore valido. Deve essere nel formato {1}"
-	},
 	"warnings": {
 		"emailTemplateRelatedAttributeEdited": "Modificato attributo contenuto in una mail,qualche email potrebbe venir rigenerata.",
 		"itIsNotAllowedFilterWithCalculatedParams": "Non è permesso usare filtri con parametri calcolati",
@@ -1434,6 +1425,13 @@
 	"viewPointDistance": "Distanza punto di vista",
 	"viewPointHeight": "Altezza punto di vista",
 	"views": "Viste",
+	"vtypeCommentExtendedText": "La barra verticale e l'apostrofo non sono permessi",
+	"vtypeCommentText": "La barra verticale non è permessa",
+	"vtypeIpText": "Indirizzo IP non valido",
+	"vtypeNumericInvalidCharacterText": "Carattere non valido",
+	"vtypeNumericMaxDecimalDigitsText": "Al massiono {0} cifre decimali",
+	"vtypeNumericMaxIntegerDigitsText": "Al massimo {0} cifre intere",
+	"vtypeTimeText": "{0} non è un valore valido. Deve essere nel formato {1}",
 	"warning": "Attenzione",
 	"webServicePath": "Percorso per il web service",
 	"widget": "Widget",

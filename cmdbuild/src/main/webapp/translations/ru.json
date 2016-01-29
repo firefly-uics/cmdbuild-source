@@ -920,15 +920,6 @@
 			"title": "Добро пожаловать!"
 		}
 	},
-	"vtype_text": {
-		"cmdbcomment": "Использование вертикальной черты | или апострофа не разрешено",
-		"cmdbcommentrelaxed": "Использование вертикальной черты | не разрешено",
-		"invalid_character": "Неверный символ",
-		"wrong_decimal_part": "Не более {0} десятичных знаков",
-		"wrong_integer_part": "Не более {0} целочисленных знаков",
-		"wrong_ip_address": "Неверный IP адрес",
-		"wrong_time": "{0} не является верным значением. Требуемый формат {1}"
-	},
 	"warnings": {
 		"emailTemplateRelatedAttributeEdited": "<em>Attribute related with email templates changed, some e-mail could be regenerated.</em>",
 		"itIsNotAllowedFilterWithCalculatedParams": "Не допускается использовать фильтр с вычисляемыми параметрами",
@@ -1434,6 +1425,13 @@
 	"viewPointDistance": "<em>View point distance</em>",
 	"viewPointHeight": "<em>View point height</em>",
 	"views": "Представления",
+	"vtypeCommentExtendedText": "Использование вертикальной черты | или апострофа не разрешено",
+	"vtypeCommentText": "Использование вертикальной черты | не разрешено",
+	"vtypeIpText": "Неверный IP адрес",
+	"vtypeNumericInvalidCharacterText": "Неверный символ",
+	"vtypeNumericMaxDecimalDigitsText": "Не более {0} десятичных знаков",
+	"vtypeNumericMaxIntegerDigitsText": "Не более {0} целочисленных знаков",
+	"vtypeTimeText": "{0} не является верным значением. Требуемый формат {1}",
 	"warning": "Предупреждение",
 	"webServicePath": "Путь в веб-сервисах",
 	"widget": "Виджет",

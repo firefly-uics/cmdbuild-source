@@ -920,15 +920,6 @@
 			"title": "欢迎"
 		}
 	},
-	"vtype_text": {
-		"cmdbcomment": "Pipe or apostrophe not allowed",
-		"cmdbcommentrelaxed": "Pipe not allowed",
-		"invalid_character": "无效字符",
-		"wrong_decimal_part": "Max {0} 小数数字",
-		"wrong_integer_part": "Max {0} 整数数字",
-		"wrong_ip_address": "无效IP地址",
-		"wrong_time": "{0} 不是有效数据. 必须是 {1}的格式"
-	},
 	"warnings": {
 		"emailTemplateRelatedAttributeEdited": "与email模板相关联的属性变化, email不能生成.",
 		"itIsNotAllowedFilterWithCalculatedParams": "不允许使用已被计算过的参数来过滤",
@@ -1434,6 +1425,13 @@
 	"viewPointDistance": "<em>View point distance</em>",
 	"viewPointHeight": "<em>View point height</em>",
 	"views": "浏览",
+	"vtypeCommentExtendedText": "Pipe or apostrophe not allowed",
+	"vtypeCommentText": "Pipe not allowed",
+	"vtypeIpText": "无效IP地址",
+	"vtypeNumericInvalidCharacterText": "无效字符",
+	"vtypeNumericMaxDecimalDigitsText": "Max {0} 小数数字",
+	"vtypeNumericMaxIntegerDigitsText": "Max {0} 整数数字",
+	"vtypeTimeText": "{0} 不是有效数据. 必须是 {1}的格式",
 	"warning": "<em>Warning</em>",
 	"webServicePath": "Web服务路径",
 	"widget": "窗口控件",

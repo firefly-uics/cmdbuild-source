@@ -920,15 +920,6 @@
 			"title": "Bienvenue"
 		}
 	},
-	"vtype_text": {
-		"cmdbcomment": "symbole interdit",
-		"cmdbcommentrelaxed": "symbole interdit",
-		"invalid_character": "caractère invalide",
-		"wrong_decimal_part": "Max {0} chiffres décimaux",
-		"wrong_integer_part": "Max {0} chiffres entiers",
-		"wrong_ip_address": " adresse IP non valide",
-		"wrong_time": "{0} est une valeur invalide. Le bon format est {1}"
-	},
 	"warnings": {
 		"emailTemplateRelatedAttributeEdited": "Des attributs utilisés dans les modèles d'email ont été modifiés, certains emails pourraient être regénérés.",
 		"itIsNotAllowedFilterWithCalculatedParams": "Il est interdit d'utiliser un filtre avec des paramètres calculés",
@@ -1434,6 +1425,13 @@
 	"viewPointDistance": "Distance du point de vue",
 	"viewPointHeight": "Hauteur du point de vue",
 	"views": "Vues",
+	"vtypeCommentExtendedText": "symbole interdit",
+	"vtypeCommentText": "symbole interdit",
+	"vtypeIpText": " adresse IP non valide",
+	"vtypeNumericInvalidCharacterText": "caractère invalide",
+	"vtypeNumericMaxDecimalDigitsText": "Max {0} chiffres décimaux",
+	"vtypeNumericMaxIntegerDigitsText": "Max {0} chiffres entiers",
+	"vtypeTimeText": "{0} est une valeur invalide. Le bon format est {1}",
 	"warning": "Attention",
 	"webServicePath": "Chemin des Web services",
 	"widget": "Widget",

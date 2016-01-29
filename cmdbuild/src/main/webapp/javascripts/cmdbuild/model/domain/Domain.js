@@ -2,6 +2,9 @@
 
 	Ext.require('CMDBuild.core.constants.Proxy');
 
+	/**
+	 * TODO: waiting for refactor (rename)
+	 */
 	Ext.define('CMDBuild.model.domain.Domain', {
 		extend: 'Ext.data.Model',
 
@@ -24,15 +27,16 @@
 			{ name: CMDBuild.core.constants.Proxy.ORIGIN_DISABLED_CLASSES, type: 'auto', defaultValue: [] },
 		],
 
-		/**
-		 * @param {Object} data
-		 *
-		 * @override
-		 *
-		 * TODO: waiting for server refactor (server side variables rename)
-		 */
-		constructor: function(data) {
-			if (!Ext.isEmpty(data)) {
+		statics: {
+			/**
+			 * Static function to convert from legacy object to model's one
+			 *
+			 * @param {Object} data
+			 *
+			 * @returns {Object} data
+			 */
+			convertFromLegacy: function(data) {
+				data = data || {};
 				data[CMDBuild.core.constants.Proxy.DESTINATION_CLASS_ID] = data['class2id'];
 				data[CMDBuild.core.constants.Proxy.DESTINATION_CLASS_NAME] = data['class2'];
 				data[CMDBuild.core.constants.Proxy.DESTINATION_DISABLED_CLASSES] = data['disabled2'];
@@ -44,9 +48,30 @@
 				data[CMDBuild.core.constants.Proxy.ORIGIN_CLASS_ID] = data['class1id'];
 				data[CMDBuild.core.constants.Proxy.ORIGIN_CLASS_NAME] = data['class1'];
 				data[CMDBuild.core.constants.Proxy.ORIGIN_DISABLED_CLASSES] = data['disabled1'];
-			}
 
-			this.callParent(arguments);
+				return data;
+			}
+		},
+
+		/**
+		 * @returns {Object}
+		 */
+		getDataForSubmit: function() {
+			return {
+				active: this.get(CMDBuild.core.constants.Proxy.ACTIVE),
+				cardinality: this.get(CMDBuild.core.constants.Proxy.CARDINALITY),
+				descr_1: this.get(CMDBuild.core.constants.Proxy.DIRECT_DESCRIPTION),
+				descr_2: this.get(CMDBuild.core.constants.Proxy.INVERSE_DESCRIPTION),
+				description: this.get(CMDBuild.core.constants.Proxy.DESCRIPTION),
+				disabled1: this.get(CMDBuild.core.constants.Proxy.ORIGIN_DISABLED_CLASSES),
+				disabled2: this.get(CMDBuild.core.constants.Proxy.DESTINATION_DISABLED_CLASSES),
+				id: this.get(CMDBuild.core.constants.Proxy.ID) || -1,
+				idClass1: this.get(CMDBuild.core.constants.Proxy.ORIGIN_CLASS_ID),
+				idClass2: this.get(CMDBuild.core.constants.Proxy.DESTINATION_CLASS_ID),
+				isMasterDetail: this.get(CMDBuild.core.constants.Proxy.IS_MASTER_DETAIL),
+				md_label: this.get(CMDBuild.core.constants.Proxy.MASTER_DETAIL_LABEL),
+				name: this.get(CMDBuild.core.constants.Proxy.NAME)
+			};
 		}
 	});
 

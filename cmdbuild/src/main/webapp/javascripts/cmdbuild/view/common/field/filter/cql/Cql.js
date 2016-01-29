@@ -44,7 +44,7 @@
 				items: [
 					this.textAreaField = Ext.create('Ext.form.field.TextArea', {
 						name: this.fieldName,
-						vtype: 'cmdbcommentrelaxed'
+						vtype: 'comment'
 					}),
 					this.metadataButton = Ext.create('CMDBuild.core.buttons.iconized.Modify', {
 						text: this.buttonLabel,

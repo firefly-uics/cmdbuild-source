@@ -920,15 +920,6 @@
 			"title": "Willkommen"
 		}
 	},
-	"vtype_text": {
-		"cmdbcomment": "Der senkrechte Strich und der Apostroph sind nicht erlaubt",
-		"cmdbcommentrelaxed": "Der senkrechte Strich ist nicht erlaubt",
-		"invalid_character": "Ungültige Schrift",
-		"wrong_decimal_part": "Maximal {0} Dezimalziffern",
-		"wrong_integer_part": "Maximal {0} Ganzzahlen",
-		"wrong_ip_address": "Ungültige IP Adresse",
-		"wrong_time": "{0} ist kein gültiger Wert. Er muss im Format {1} sein"
-	},
 	"warnings": {
 		"emailTemplateRelatedAttributeEdited": "<em>Attribute related with email templates changed, some e-mail could be regenerated.</em>",
 		"itIsNotAllowedFilterWithCalculatedParams": "Es ist nicht erlaubt, ein Filter mit gerechneten Parametern zu benutzen",
@@ -1434,6 +1425,13 @@
 	"viewPointDistance": "<em>View point distance</em>",
 	"viewPointHeight": "<em>View point height</em>",
 	"views": "Sicht",
+	"vtypeCommentExtendedText": "Der senkrechte Strich und der Apostroph sind nicht erlaubt",
+	"vtypeCommentText": "Der senkrechte Strich ist nicht erlaubt",
+	"vtypeIpText": "Ungültige IP Adresse",
+	"vtypeNumericInvalidCharacterText": "Ungültige Schrift",
+	"vtypeNumericMaxDecimalDigitsText": "Maximal {0} Dezimalziffern",
+	"vtypeNumericMaxIntegerDigitsText": "Maximal {0} Ganzzahlen",
+	"vtypeTimeText": "{0} ist kein gültiger Wert. Er muss im Format {1} sein",
 	"warning": "Achtung",
 	"webServicePath": "Pfad für den Web Service",
 	"widget": "Widget",
