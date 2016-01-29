@@ -2,21 +2,21 @@
 
 	/**
 	 * Custom VTypes:
-	 * 	- alphanumextended: to validate user names /[a-z0-9_-.]/i
+	 * 	- alphanumextended: to validate user names (alphanum and _ - .)
+	 * 	- comment: all except pipe (all excluded |)
+	 * 	- commentextended: all except pipe and apostrophe (all excluded | ')
 	 * 	- multimail: to validate a field with multiple email addresses separated by commas (,)
-	 * 	- password: to validate password fields with confimation capabilites
+	 * 	- password: to validate password fields with confirmation capabilities
 	 */
 	Ext.apply(Ext.form.field.VTypes, {
 		// Alpha-numeric extended (alphanumextended)
 			/**
 			 * @param {String} value
 			 *
-			 * @return {Boolean}
+			 * @returns {Boolean}
 			 */
 			alphanumextended: function(value) {
-				var username = /^[a-zA-Z0-9_.+#@-]+$/;
-
-				return username.test(value);
+				return this.alphanumextendedMask.test(value);
 			},
 
 			/**
@@ -27,7 +27,47 @@
 			/**
 			 * @type {RegExp}
 			 */
-			alphanumextendedMask: /[a-z0-9_.+#@-]/i,
+			alphanumextendedMask: /^[a-zA-Z0-9_.+#@-]+$/i,
+
+		// Comment (comment)
+			/**
+			 * @param {String} value
+			 *
+			 * @returns {Boolean}
+			 */
+			comment: function(value){
+				return this.commentMask.test(value);
+			},
+
+			/**
+			 * @type {String}
+			 */
+			commentText: CMDBuild.Translation.vtypeCommentText,
+
+			/**
+			 * @type {RegExp}
+			 */
+			commentMask: /^[^|]*$/i,
+
+		// Comment extended (commentextended)
+			/**
+			 * @param {String} value
+			 *
+			 * @returns {Boolean}
+			 */
+			commentextended: function(value){
+				return this.commentextendedMask.test(value);
+			},
+
+			/**
+			 * @type {String}
+			 */
+			commentextendedText: CMDBuild.Translation.vtypeCommentExtendedText,
+
+			/**
+			 * @type {RegExp}
+			 */
+			commentextendedMask: /^[^'|]*$/i,
 
 		// Multiple email addresses (multimail)
 			/**
@@ -35,7 +75,7 @@
 			 *
 			 * @param {String} value - The email addresses separated by a comma or semicolon
 			 *
-			 * @return {Boolean}
+			 * @returns {Boolean}
 			 */
 			multiemail: function(value) {
 				var array = value.split(',');

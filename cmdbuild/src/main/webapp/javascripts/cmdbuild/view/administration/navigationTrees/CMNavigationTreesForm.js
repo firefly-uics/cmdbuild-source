@@ -75,7 +75,7 @@
 				width: CMDBuild.ADM_BIG_FIELD_WIDTH,
 				name: "description",
 				allowBlank: false,
-				vtype: 'cmdbcomment'
+				vtype: 'commentextended'
 			});
 			this.rootName = new CMDBuild.field.CMBaseCombo({
 				fieldLabel: this.translation.class_target,

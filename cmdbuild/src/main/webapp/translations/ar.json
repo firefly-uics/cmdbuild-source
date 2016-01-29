@@ -920,15 +920,6 @@
 			"title": "مرحبا"
 		}
 	},
-	"vtype_text": {
-		"cmdbcomment": "لا يسمح باستخدام | أو ،",
-		"cmdbcommentrelaxed": "غير مسموح باستخدام |",
-		"invalid_character": "حرف غير صحيح",
-		"wrong_decimal_part": "أقصى عدد لأرقام الجزء العشري {0}",
-		"wrong_integer_part": "أقصى عدد لأرقام العدد الصحيح {0}",
-		"wrong_ip_address": "عنوان شبكي غير صحيح",
-		"wrong_time": "{0} ليس بقيمة صحيحة. يجب أن يكون بالتنسيق {1}"
-	},
 	"warnings": {
 		"emailTemplateRelatedAttributeEdited": "السمة المتعلقة بقوالب البريد الإلكتروني تغيرت، يمكن تجديد بعض البريدات الإلكترونية.",
 		"itIsNotAllowedFilterWithCalculatedParams": "<em>It's not allowed to use a filter with calculated parameters</em>",
@@ -1434,6 +1425,13 @@
 	"viewPointDistance": "<em>View point distance</em>",
 	"viewPointHeight": "<em>View point height</em>",
 	"views": "الاشتقاقات",
+	"vtypeCommentExtendedText": "لا يسمح باستخدام | أو ،",
+	"vtypeCommentText": "غير مسموح باستخدام |",
+	"vtypeIpText": "عنوان شبكي غير صحيح",
+	"vtypeNumericInvalidCharacterText": "حرف غير صحيح",
+	"vtypeNumericMaxDecimalDigitsText": "أقصى عدد لأرقام الجزء العشري {0}",
+	"vtypeNumericMaxIntegerDigitsText": "أقصى عدد لأرقام العدد الصحيح {0}",
+	"vtypeTimeText": "{0} ليس بقيمة صحيحة. يجب أن يكون بالتنسيق {1}",
 	"warning": "تنبيه",
 	"webServicePath": "مسار خدمة الويب",
 	"widget": "<em>Widget</em>",

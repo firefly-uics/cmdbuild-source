@@ -920,15 +920,6 @@
 			"title": "خوش آمدید"
 		}
 	},
-	"vtype_text": {
-		"cmdbcomment": "Pipe or apostrophe not allowed",
-		"cmdbcommentrelaxed": "Pipe not allowed",
-		"invalid_character": "کاراکتر غیر مجاز",
-		"wrong_decimal_part": "حداکثر {0} رقم",
-		"wrong_integer_part": "حداکثر {0} رقم",
-		"wrong_ip_address": "آی.پی قابل قبول نمیباشد",
-		"wrong_time": "مقدار {0}، مقدار مناسبی نیست. باید به فرمت {1} باشد"
-	},
 	"warnings": {
 		"emailTemplateRelatedAttributeEdited": "<em>Attribute related with email templates changed, some e-mail could be regenerated.</em>",
 		"itIsNotAllowedFilterWithCalculatedParams": "اجازه ندارید که از فیلتر با پارامترهای محاسبه شده استفاده کنید",
@@ -1434,6 +1425,13 @@
 	"viewPointDistance": "<em>View point distance</em>",
 	"viewPointHeight": "<em>View point height</em>",
 	"views": "نمایش",
+	"vtypeCommentExtendedText": "Pipe or apostrophe not allowed",
+	"vtypeCommentText": "Pipe not allowed",
+	"vtypeIpText": "آی.پی قابل قبول نمیباشد",
+	"vtypeNumericInvalidCharacterText": "کاراکتر غیر مجاز",
+	"vtypeNumericMaxDecimalDigitsText": "حداکثر {0} رقم",
+	"vtypeNumericMaxIntegerDigitsText": "حداکثر {0} رقم",
+	"vtypeTimeText": "مقدار {0}، مقدار مناسبی نیست. باید به فرمت {1} باشد",
 	"warning": "هشدار",
 	"webServicePath": "Web service path",
 	"widget": "Widget",

@@ -920,15 +920,6 @@
 			"title": "Boas-Vindas"
 		}
 	},
-	"vtype_text": {
-		"cmdbcomment": "Pipe ou apóstrofo não permitidos",
-		"cmdbcommentrelaxed": "Pipe não permitido",
-		"invalid_character": "Caractere Inválido",
-		"wrong_decimal_part": "Max {0} Digitos Decimais",
-		"wrong_integer_part": "Max {0} Digitos Inteiros",
-		"wrong_ip_address": "Endereço IP não válido",
-		"wrong_time": "{0} não é um valor válido. Ele deve estar no formato {1}"
-	},
 	"warnings": {
 		"emailTemplateRelatedAttributeEdited": "<em>Attribute related with email templates changed, some e-mail could be regenerated.</em>",
 		"itIsNotAllowedFilterWithCalculatedParams": "<em>It's not allowed to use a filter with calculated parameters</em>",
@@ -1434,6 +1425,13 @@
 	"viewPointDistance": "<em>View point distance</em>",
 	"viewPointHeight": "<em>View point height</em>",
 	"views": "Visualizações",
+	"vtypeCommentExtendedText": "Pipe ou apóstrofo não permitidos",
+	"vtypeCommentText": "Pipe não permitido",
+	"vtypeIpText": "Endereço IP não válido",
+	"vtypeNumericInvalidCharacterText": "Caractere Inválido",
+	"vtypeNumericMaxDecimalDigitsText": "Max {0} Digitos Decimais",
+	"vtypeNumericMaxIntegerDigitsText": "Max {0} Digitos Inteiros",
+	"vtypeTimeText": "{0} não é um valor válido. Ele deve estar no formato {1}",
 	"warning": "Aviso",
 	"webServicePath": "Caminho para o Serviço Web",
 	"widget": "Widget",

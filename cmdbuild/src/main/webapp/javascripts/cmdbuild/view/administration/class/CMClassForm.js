@@ -151,7 +151,7 @@
 				labelWidth: CMDBuild.LABEL_WIDTH,
 				width: CMDBuild.ADM_BIG_FIELD_WIDTH,
 				allowBlank: false,
-				vtype: 'cmdbcomment',
+				vtype: 'commentextended',
 
 				translationFieldConfig: {
 					type: CMDBuild.core.constants.Proxy.CLASS,

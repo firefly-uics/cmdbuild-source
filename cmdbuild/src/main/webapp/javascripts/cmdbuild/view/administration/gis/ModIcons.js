@@ -43,7 +43,7 @@ Ext.define("CMDBuild.Administration.ModIcons", {
 			width: CMDBuild.ADM_BIG_FIELD_WIDTH,
 			name: 'description',
 			allowBlank: false,
-			vtype: 'cmdbcomment'
+			vtype: 'commentextended'
 		});
 		this.uploadForm = new Ext.form.FormPanel({
 			monitorValid: true,

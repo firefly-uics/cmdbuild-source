@@ -6,6 +6,7 @@
 		requires: [
 			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.proxy.domain.Domain',
+			'CMDBuild.model.domain.Domain',
 			'CMDBuild.view.common.field.translatable.Utils'
 		],
 
@@ -20,7 +21,7 @@
 		cmfgCatchedFunctions: [
 			'domainSelectedDomainGet',
 			'domainSelectedDomainIsEmpty',
-			'domainSelectedDomainSet',
+			'domainSelectedDomainReset',
 			'onDomainAbortButtonClick',
 			'onDomainAddButtonClick',
 			'onDomainModifyButtonClick',
@@ -62,6 +63,7 @@
 
 		/**
 		 * @param {Object} configurationObject
+		 * @param {CMDBuild.controller.common.MainViewport} configurationObject.parentDelegate
 		 *
 		 * @override
 		 */
@@ -126,18 +128,22 @@
 					success: function(response, options, decodedResponse) {
 						decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.DOMAINS];
 
-						this.domainSelectedDomainSet(
-							Ext.Array.findBy(decodedResponse, function(item, i) {
-								return node.get(CMDBuild.core.constants.Proxy.ENTITY_ID) == item[CMDBuild.core.constants.Proxy.ID_DOMAIN];
-							}, this)
-						);
+						if (!Ext.isEmpty(decodedResponse) && Ext.isArray(decodedResponse)) {
+							this.domainSelectedDomainSet({
+								value: CMDBuild.model.domain.Domain.convertFromLegacy( // TODO: waiting for refactor (rename)
+									Ext.Array.findBy(decodedResponse, function(item, i) {
+										return node.get(CMDBuild.core.constants.Proxy.ENTITY_ID) == item[CMDBuild.core.constants.Proxy.ID_DOMAIN];
+									}, this)
+								)
+							});
 
-						this.cmfg('onDomainSelected');
+							this.cmfg('onDomainSelected');
 
-						this.setViewTitle(node.get(CMDBuild.core.constants.Proxy.TEXT));
+							this.setViewTitle(node.get(CMDBuild.core.constants.Proxy.TEXT));
 
-						if (Ext.isEmpty(this.view.tabPanel.getActiveTab()))
-							this.view.tabPanel.setActiveTab(0);
+							if (Ext.isEmpty(this.view.tabPanel.getActiveTab()))
+								this.view.tabPanel.setActiveTab(0);
+						}
 
 						this.onModuleInit(node); // Custom callParent() implementation
 					}
@@ -161,10 +167,12 @@
 
 		onDomainSaveButtonClick: function() {
 			if (this.validate(this.controllerProperties.getView().form)) {
-				var params = {};
-
-				params = Ext.Object.merge(params, this.controllerEnabledClasses.getData());
-				params = Ext.Object.merge(params, this.controllerProperties.getData());
+				var params = Ext.create('CMDBuild.model.domain.Domain',
+					Ext.Object.merge(
+						this.controllerProperties.cmfg('domainPropertiesDataGet'),
+						this.controllerEnabledClasses.cmfg('domainEnabledClassesDataGet')
+					)
+				).getDataForSubmit();
 
 				if (Ext.isEmpty(params[CMDBuild.core.constants.Proxy.ID])) {
 					CMDBuild.core.proxy.domain.Domain.create({
@@ -182,10 +190,13 @@
 			}
 		},
 
+		/**
+		 * @private
+		 */
 		removeItem: function() {
-			if (!this.domainSelectedDomainIsEmpty()) {
+			if (!this.cmfg('domainSelectedDomainIsEmpty')) {
 				var params = {};
-				params[CMDBuild.core.constants.Proxy.DOMAIN_NAME] = this.domainSelectedDomainGet(CMDBuild.core.constants.Proxy.NAME);
+				params[CMDBuild.core.constants.Proxy.DOMAIN_NAME] = this.cmfg('domainSelectedDomainGet', CMDBuild.core.constants.Proxy.NAME);
 
 				CMDBuild.core.proxy.domain.Domain.remove({
 					params: params,
@@ -194,7 +205,7 @@
 						this.controllerProperties.getView().form.reset();
 						this.controllerProperties.getView().form.setDisabledModify(true);
 
-						_CMCache.onDomainDeleted(this.domainSelectedDomainGet(CMDBuild.core.constants.Proxy.ID));
+						_CMCache.onDomainDeleted(this.cmfg('domainSelectedDomainGet', CMDBuild.core.constants.Proxy.ID));
 
 						this.cmfg('mainViewportAccordionControllerUpdateStore', { identifier: this.cmfg('identifierGet') });
 					}
@@ -202,6 +213,9 @@
 			}
 		},
 
+		/**
+		 * @private
+		 */
 		success: function(response, options, decodedResponse) {
 			this.view.tabPanel.setActiveTab(0);
 			this.view.tabPanel.getActiveTab().form.setDisabledModify(true);
@@ -218,38 +232,46 @@
 
 		// SelectedDomain property methods
 			/**
-			 * Returns full model object or just one property if required
+			 * @param {Array or String} attributePath
 			 *
-			 * @param {String} parameterName
-			 *
-			 * @returns {CMDBuild.model.domain.Domain} or Mixed
+			 * @returns {Mixed or undefined}
 			 */
-			domainSelectedDomainGet: function(parameterName) {
-				if (!Ext.isEmpty(parameterName))
-					return this.selectedDomain.get(parameterName);
+			domainSelectedDomainGet: function(attributePath) {
+				var parameters = {};
+				parameters[CMDBuild.core.constants.Proxy.TARGET_VARIABLE_NAME] = 'selectedDomain';
+				parameters[CMDBuild.core.constants.Proxy.ATTRIBUTE_PATH] = attributePath;
 
-				return this.selectedDomain;
+				return this.propertyManageGet(parameters);
 			},
 
 			/**
+			 * @param {Array or String} attributePath
+			 *
 			 * @returns {Boolean}
 			 */
-			domainSelectedDomainIsEmpty: function() {
-				return Ext.isEmpty(this.selectedDomain);
+			domainSelectedDomainIsEmpty: function(attributePath) {
+				var parameters = {};
+				parameters[CMDBuild.core.constants.Proxy.TARGET_VARIABLE_NAME] = 'selectedDomain';
+				parameters[CMDBuild.core.constants.Proxy.ATTRIBUTE_PATH] = attributePath;
+
+				return this.propertyManageIsEmpty(parameters);
+			},
+
+			domainSelectedDomainReset: function() {
+				this.propertyManageReset('selectedDomain');
 			},
 
 			/**
-			 * @param {Object} selectedDomainObject
+			 * @param {Object} parameters
+			 *
+			 * @private
 			 */
-			domainSelectedDomainSet: function(selectedDomainObject) {
-				this.selectedDomain = null;
+			domainSelectedDomainSet: function(parameters) {
+				if (!Ext.Object.isEmpty(parameters)) {
+					parameters[CMDBuild.core.constants.Proxy.MODEL_NAME] = 'CMDBuild.model.domain.Domain';
+					parameters[CMDBuild.core.constants.Proxy.TARGET_VARIABLE_NAME] = 'selectedDomain';
 
-				if (!Ext.isEmpty(selectedDomainObject) && Ext.isObject(selectedDomainObject)) {
-					if (Ext.getClassName(selectedDomainObject) == 'CMDBuild.model.domain.Domain') {
-						this.selectedDomain = selectedDomainObject;
-					} else {
-						this.selectedDomain = Ext.create('CMDBuild.model.domain.Domain', selectedDomainObject);
-					}
+					this.propertyManageSet(parameters);
 				}
 			}
 	});

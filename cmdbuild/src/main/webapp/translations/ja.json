@@ -920,15 +920,6 @@
 			"title": "ようこそ"
 		}
 	},
-	"vtype_text": {
-		"cmdbcomment": "パイプまたはアポストロフィは使用できません",
-		"cmdbcommentrelaxed": "パイプは使用できません",
-		"invalid_character": "無効な文字",
-		"wrong_decimal_part": "最大 {0} 小数桁",
-		"wrong_integer_part": "最大 {0} 整数桁",
-		"wrong_ip_address": "正しくないIPアドレス",
-		"wrong_time": "{0} は有効な値ではありません。フォーマットに従ってください。"
-	},
 	"warnings": {
 		"emailTemplateRelatedAttributeEdited": "<em>Attribute related with email templates changed, some e-mail could be regenerated.</em>",
 		"itIsNotAllowedFilterWithCalculatedParams": "計算されたパラメータでフィルタを使用することを許可されていません",
@@ -1434,6 +1425,13 @@
 	"viewPointDistance": "<em>View point distance</em>",
 	"viewPointHeight": "<em>View point height</em>",
 	"views": "ビュー",
+	"vtypeCommentExtendedText": "パイプまたはアポストロフィは使用できません",
+	"vtypeCommentText": "パイプは使用できません",
+	"vtypeIpText": "正しくないIPアドレス",
+	"vtypeNumericInvalidCharacterText": "無効な文字",
+	"vtypeNumericMaxDecimalDigitsText": "最大 {0} 小数桁",
+	"vtypeNumericMaxIntegerDigitsText": "最大 {0} 整数桁",
+	"vtypeTimeText": "{0} は有効な値ではありません。フォーマットに従ってください。",
 	"warning": "警告",
 	"webServicePath": "Webサービスへのパス",
 	"widget": "ウィジェット",

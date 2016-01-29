@@ -142,7 +142,7 @@
 				labelWidth: CMDBuild.LABEL_WIDTH,
 				width: CMDBuild.ADM_BIG_FIELD_WIDTH,
 				allowBlank: false,
-				vtype: 'cmdbcomment',
+				vtype: 'commentextended',
 
 				listeners: {
 					scope: this,
@@ -244,7 +244,7 @@
 				width: CMDBuild.ADM_BIG_FIELD_WIDTH,
 				name : _CMProxy.parameter.FILTER,
 				allowBlank : true,
-				vtype : "cmdbcommentrelaxed",
+				vtype : "comment",
 				invalidText : tr.pipeNotAllowed,
 				editableOnInherited : true
 			});

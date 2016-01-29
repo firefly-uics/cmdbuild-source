@@ -920,15 +920,6 @@
 			"title": "Chào mừng"
 		}
 	},
-	"vtype_text": {
-		"cmdbcomment": "Duong dan or apostrophe khong duoc phep",
-		"cmdbcommentrelaxed": "duong dan khong duoc phep",
-		"invalid_character": "Các ký tự không hợp lệ",
-		"wrong_decimal_part": "Tối đa {0} chữ số thập phân",
-		"wrong_integer_part": "Tối đa {0} số nguyên",
-		"wrong_ip_address": "Địa chỉ IP không hợp lệ",
-		"wrong_time": "{0} giá trị không hợp lệ. Nó cần phải có định dạng {1}"
-	},
 	"warnings": {
 		"emailTemplateRelatedAttributeEdited": "<em>Attribute related with email templates changed, some e-mail could be regenerated.</em>",
 		"itIsNotAllowedFilterWithCalculatedParams": " Không được phép sử dụng  bộ lọc voi các thông số được tính toán ",
@@ -1434,6 +1425,13 @@
 	"viewPointDistance": "<em>View point distance</em>",
 	"viewPointHeight": "<em>View point height</em>",
 	"views": "Lượt xem",
+	"vtypeCommentExtendedText": "Duong dan or apostrophe khong duoc phep",
+	"vtypeCommentText": "duong dan khong duoc phep",
+	"vtypeIpText": "Địa chỉ IP không hợp lệ",
+	"vtypeNumericInvalidCharacterText": "Các ký tự không hợp lệ",
+	"vtypeNumericMaxDecimalDigitsText": "Tối đa {0} chữ số thập phân",
+	"vtypeNumericMaxIntegerDigitsText": "Tối đa {0} số nguyên",
+	"vtypeTimeText": "{0} giá trị không hợp lệ. Nó cần phải có định dạng {1}",
 	"warning": "Cảnh báo",
 	"webServicePath": "Đường dẫn web service",
 	"widget": "Tiện ích",

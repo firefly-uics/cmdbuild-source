@@ -920,15 +920,6 @@
 			"title": "Bienvenido"
 		}
 	},
-	"vtype_text": {
-		"cmdbcomment": "La barra vertical y el apóstrofe no están permitidos",
-		"cmdbcommentrelaxed": "No está permitida la barra vertical",
-		"invalid_character": "Caracter inválido",
-		"wrong_decimal_part": "Máx {0} dígitos decimales",
-		"wrong_integer_part": "Máx {0} dígitos enteros",
-		"wrong_ip_address": "Dirección IP inválida",
-		"wrong_time": "{0} no es un valor válido. Este debe estar en el formato {1}"
-	},
 	"warnings": {
 		"emailTemplateRelatedAttributeEdited": "Ha cambiado un atributo relacionado con la plantilla del email, deberá ser regenerado",
 		"itIsNotAllowedFilterWithCalculatedParams": "No se permite utilizar un filtro con parámetros calculados",
@@ -1434,6 +1425,13 @@
 	"viewPointDistance": "<em>View point distance</em>",
 	"viewPointHeight": "<em>View point height</em>",
 	"views": "Vistas",
+	"vtypeCommentExtendedText": "La barra vertical y el apóstrofe no están permitidos",
+	"vtypeCommentText": "No está permitida la barra vertical",
+	"vtypeIpText": "Dirección IP inválida",
+	"vtypeNumericInvalidCharacterText": "Caracter inválido",
+	"vtypeNumericMaxDecimalDigitsText": "Máx {0} dígitos decimales",
+	"vtypeNumericMaxIntegerDigitsText": "Máx {0} dígitos enteros",
+	"vtypeTimeText": "{0} no es un valor válido. Este debe estar en el formato {1}",
 	"warning": "Atención",
 	"webServicePath": "Recorrido para el servicio web",
 	"widget": "Widget",

@@ -119,7 +119,6 @@
 						]
 					})
 				],
-				plugins: [new CMDBuild.FormPlugin()],
 				items: [
 					Ext.create('Ext.form.TextField', {
 						name: CMDBuild.core.constants.Proxy.NAME,
@@ -131,8 +130,11 @@
 
 						listeners: {
 							scope: this,
-							change: function(field, newValue, oldValue) {
-								this.autoComplete(this.domainDescription, newValue, oldValue);
+							change: function(field, newValue, oldValue, eOpts) {
+								this.delegate.cmfg('onDomainPropertiesNameChange', {
+									newValue: newValue,
+									oldValue: oldValue
+								});
 							}
 						}
 					}),
@@ -141,7 +143,7 @@
 						fieldLabel: CMDBuild.Translation.descriptionLabel,
 						labelWidth: CMDBuild.LABEL_WIDTH,
 						allowBlank: false,
-						vtype: 'cmdbcomment',
+						vtype: 'commentextended',
 
 						translationFieldConfig: {
 							type: CMDBuild.core.constants.Proxy.DOMAIN,
@@ -182,7 +184,7 @@
 						fieldLabel: CMDBuild.Translation.directDescription,
 						labelWidth: CMDBuild.LABEL_WIDTH,
 						allowBlank: false,
-						vtype: 'cmdbcomment',
+						vtype: 'commentextended',
 
 						translationFieldConfig: {
 							type: CMDBuild.core.constants.Proxy.DOMAIN,
@@ -195,7 +197,7 @@
 						fieldLabel: CMDBuild.Translation.inverseDescription,
 						labelWidth: CMDBuild.LABEL_WIDTH,
 						allowBlank: false,
-						vtype: 'cmdbcomment',
+						vtype: 'commentextended',
 
 						translationFieldConfig: {
 							type: CMDBuild.core.constants.Proxy.DOMAIN,

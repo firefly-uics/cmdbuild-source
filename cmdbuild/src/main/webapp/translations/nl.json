@@ -920,15 +920,6 @@
 			"title": "Welkom"
 		}
 	},
-	"vtype_text": {
-		"cmdbcomment": "Pijp of apostrophe niet toegestaan",
-		"cmdbcommentrelaxed": "Pijp niet toegestaan",
-		"invalid_character": "Ongeldig karakter",
-		"wrong_decimal_part": "Max {0} decimal digits",
-		"wrong_integer_part": "Max {0} integer digits",
-		"wrong_ip_address": "Ongeldig IP adres",
-		"wrong_time": "{0} is geen geldige waarde. Het moet in het volgende formaat {1}"
-	},
 	"warnings": {
 		"emailTemplateRelatedAttributeEdited": "<em>Attribute related with email templates changed, some e-mail could be regenerated.</em>",
 		"itIsNotAllowedFilterWithCalculatedParams": "Het is niet toegestaan een filter te gebruiken met berekende parameters",
@@ -1434,6 +1425,13 @@
 	"viewPointDistance": "<em>View point distance</em>",
 	"viewPointHeight": "<em>View point height</em>",
 	"views": "Vensters",
+	"vtypeCommentExtendedText": "Pijp of apostrophe niet toegestaan",
+	"vtypeCommentText": "Pijp niet toegestaan",
+	"vtypeIpText": "Ongeldig IP adres",
+	"vtypeNumericInvalidCharacterText": "Ongeldig karakter",
+	"vtypeNumericMaxDecimalDigitsText": "Max {0} decimal digits",
+	"vtypeNumericMaxIntegerDigitsText": "Max {0} integer digits",
+	"vtypeTimeText": "{0} is geen geldige waarde. Het moet in het volgende formaat {1}",
 	"warning": "Waarschuwing",
 	"webServicePath": "Web service pad",
 	"widget": "Widget",

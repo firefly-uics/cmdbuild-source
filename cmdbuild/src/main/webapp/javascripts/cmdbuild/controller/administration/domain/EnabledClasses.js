@@ -18,6 +18,7 @@
 		 * @cfg {Array}
 		 */
 		cmfgCatchedFunctions: [
+			'domainEnabledClassesDataGet',
 			'onDomainEnabledClassesAbortButtonClick',
 			'onDomainEnabledClassesAddButtonClick',
 			'onDomainEnabledClassesDomainSelected = onDomainSelected',
@@ -62,6 +63,8 @@
 
 		/**
 		 * @param {String} type
+		 *
+		 * @private
 		 */
 		fillTreeStore: function(type) {
 			if (
@@ -167,10 +170,8 @@
 
 		/**
 		 * @returns {Object} data
-		 *
-		 * @public
 		 */
-		getData: function() {
+		domainEnabledClassesDataGet: function() {
 			var data = {};
 			var destinationDisabledClasses = [];
 			var originDisabledClasses = [];
@@ -180,31 +181,34 @@
 				node: this.originTree.getStore().getRootNode(),
 				destinationArray: originDisabledClasses
 			});
-			data['disabled1'] = Ext.encode(originDisabledClasses);
 
 			// Get destination disabled classes
 			this.getDisabledTreeVisit({
 				node: this.destinationTree.getStore().getRootNode(),
 				destinationArray: destinationDisabledClasses
 			});
-			data['disabled2'] = Ext.encode(destinationDisabledClasses);
+
+			data[CMDBuild.core.constants.Proxy.ORIGIN_DISABLED_CLASSES] = Ext.encode(originDisabledClasses);
+			data[CMDBuild.core.constants.Proxy.DESTINATION_DISABLED_CLASSES] = Ext.encode(destinationDisabledClasses);
 
 			return data;
 		},
 
 		/**
-		 * @param {Object} parametersObject
-		 * @param {Object} parametersObject.node
-		 * @param {Array} parametersObject.destinationArray
+		 * @param {Object} parameters
+		 * @param {Object} parameters.node
+		 * @param {Array} parameters.destinationArray
+		 *
+		 * @private
 		 */
-		getDisabledTreeVisit: function(parametersObject) {
+		getDisabledTreeVisit: function(parameters) {
 			if (
-				!Ext.isEmpty(parametersObject)
-				&& !Ext.isEmpty(parametersObject.node)
-				&& Ext.isArray(parametersObject.destinationArray)
+				!Ext.isEmpty(parameters)
+				&& !Ext.isEmpty(parameters.node)
+				&& Ext.isArray(parameters.destinationArray)
 			) {
-				var node = parametersObject.node;
-				var destinationArray = parametersObject.destinationArray;
+				var node = parameters.node;
+				var destinationArray = parameters.destinationArray;
 
 				node.eachChild(function(childNode) {
 					if (!childNode.hasChildNodes() && !childNode.get(CMDBuild.core.constants.Proxy.ENABLED))
@@ -217,7 +221,7 @@
 						});
 				}, this);
 			} else {
-				_error('wrong getDisabledTreeVisit parametersObject', this);
+				_error('wrong getDisabledTreeVisit parameters', this);
 			}
 		},
 
