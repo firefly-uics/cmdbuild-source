@@ -4,7 +4,6 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
-import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
@@ -53,7 +52,7 @@ public class DefaultDmsPrivilegesTest {
 		// then
 		assertThat(output, equalTo(false));
 
-		verify(dataView).findClass(eq("foo"));
+		verify(dataView).findClass("foo");
 		verifyNoMoreInteractions(dataView, privilegeContext);
 	}
 
@@ -72,8 +71,8 @@ public class DefaultDmsPrivilegesTest {
 		// then
 		assertThat(output, equalTo(false));
 
-		verify(dataView).findClass(eq("foo"));
-		verify(privilegeContext).hasReadAccess(eq(element));
+		verify(dataView).findClass("foo");
+		verify(privilegeContext).hasReadAccess(element);
 		verifyNoMoreInteractions(dataView, privilegeContext);
 	}
 
@@ -92,8 +91,8 @@ public class DefaultDmsPrivilegesTest {
 		// then
 		assertThat(output, equalTo(true));
 
-		verify(dataView).findClass(eq("foo"));
-		verify(privilegeContext).hasReadAccess(eq(element));
+		verify(dataView).findClass("foo");
+		verify(privilegeContext).hasReadAccess(element);
 		verifyNoMoreInteractions(dataView, privilegeContext);
 	}
 
@@ -119,13 +118,18 @@ public class DefaultDmsPrivilegesTest {
 		// then
 		assertThat(output, equalTo(false));
 
-		verify(dataView).findClass(eq("foo"));
+		verify(dataView).findClass("foo");
 		verifyNoMoreInteractions(dataView, privilegeContext);
 	}
 
 	@Test
-	public void notWritableWhenNotWritableForCurrentPrivileges() throws Exception {
+	public void notWritableWhenNotWritableForCurrentPrivilegesAndClassIsNotProcessClass() throws Exception {
 		// given
+		final CMClass activityClass = mock(CMClass.class);
+		doReturn(false) //
+				.when(activityClass).isAncestorOf(any(CMClass.class));
+		doReturn(activityClass) //
+				.when(dataView).getActivityClass();
 		final CMClass element = mock(CMClass.class);
 		doReturn(element) //
 				.when(dataView).findClass(anyString());
@@ -138,9 +142,11 @@ public class DefaultDmsPrivilegesTest {
 		// then
 		assertThat(output, equalTo(false));
 
-		verify(dataView).findClass(eq("foo"));
-		verify(privilegeContext).hasWriteAccess(eq(element));
-		verifyNoMoreInteractions(dataView, privilegeContext);
+		verify(dataView).findClass("foo");
+		verify(privilegeContext).hasWriteAccess(element);
+		verify(dataView).getActivityClass();
+		verify(activityClass).isAncestorOf(element);
+		verifyNoMoreInteractions(dataView, privilegeContext, activityClass);
 	}
 
 	@Test
@@ -158,9 +164,36 @@ public class DefaultDmsPrivilegesTest {
 		// then
 		assertThat(output, equalTo(true));
 
-		verify(dataView).findClass(eq("foo"));
-		verify(privilegeContext).hasWriteAccess(eq(element));
+		verify(dataView).findClass("foo");
+		verify(privilegeContext).hasWriteAccess(element);
 		verifyNoMoreInteractions(dataView, privilegeContext);
+	}
+
+	@Test
+	public void writableWhenClassIsProcessClassEvenIfNotWritableForCurrentPrivileges() throws Exception {
+		// given
+		final CMClass activityClass = mock(CMClass.class);
+		doReturn(true) //
+				.when(activityClass).isAncestorOf(any(CMClass.class));
+		doReturn(activityClass) //
+				.when(dataView).getActivityClass();
+		final CMClass element = mock(CMClass.class);
+		doReturn(element) //
+				.when(dataView).findClass(anyString());
+		doReturn(false) //
+				.when(privilegeContext).hasWriteAccess(any(CMPrivilegedObject.class));
+
+		// when
+		final boolean output = underTest.writable("foo");
+
+		// then
+		assertThat(output, equalTo(true));
+
+		verify(dataView).findClass("foo");
+		verify(privilegeContext).hasWriteAccess(element);
+		verify(dataView).getActivityClass();
+		verify(activityClass).isAncestorOf(element);
+		verifyNoMoreInteractions(dataView, privilegeContext, activityClass);
 	}
 
 }

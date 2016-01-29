@@ -63,7 +63,8 @@ public class PrivilegedDmsLogic extends ForwardingDmsLogic {
 				if (element == null) {
 					output = false;
 				} else {
-					output = privilegeContext.hasWriteAccess(element);
+					output = privilegeContext.hasWriteAccess(element)
+							|| dataView.getActivityClass().isAncestorOf(element);
 				}
 			}
 			return output;
