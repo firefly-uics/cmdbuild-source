@@ -12,6 +12,8 @@ import org.cmdbuild.dms.LoggedDmsService;
 import org.cmdbuild.dms.alfresco.AlfrescoDmsService;
 import org.cmdbuild.logic.dms.DefaultDmsLogic;
 import org.cmdbuild.logic.dms.PrivilegedDmsLogic;
+import org.cmdbuild.logic.dms.PrivilegedDmsLogic.DefaultDmsPrivileges;
+import org.cmdbuild.logic.dms.PrivilegedDmsLogic.DmsPrivileges;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
@@ -57,9 +59,14 @@ public class Dms {
 	public PrivilegedDmsLogic privilegedDmsLogic() {
 		return new PrivilegedDmsLogic( //
 				defaultDmsLogic(), //
-				data.systemDataView(), //
-				privilegeManagement.userPrivilegeContext() //
+				defaultDmsPrivileges() //
 		);
+	}
+
+	@Bean
+	@Scope(PROTOTYPE)
+	public DmsPrivileges defaultDmsPrivileges() {
+		return new DefaultDmsPrivileges(data.systemDataView(), privilegeManagement.userPrivilegeContext());
 	}
 
 	@Bean

@@ -1,5 +1,6 @@
 package org.cmdbuild.logic.dms;
 
+import static java.lang.String.format;
 import static org.cmdbuild.logic.PrivilegeUtils.assure;
 
 import java.io.IOException;
@@ -18,15 +19,64 @@ import com.google.common.base.Optional;
 
 public class PrivilegedDmsLogic extends ForwardingDmsLogic {
 
-	private final DmsLogic delegate;
-	private final CMDataView dataView;
-	private final PrivilegeContext privilegeContext;
+	public static interface DmsPrivileges {
 
-	public PrivilegedDmsLogic(final DmsLogic delegate, final CMDataView dataView,
-			final PrivilegeContext privilegeContext) {
+		boolean readable(String className);
+
+		boolean writable(String className);
+
+	}
+
+	public static class DefaultDmsPrivileges implements DmsPrivileges {
+
+		private final CMDataView dataView;
+		private final PrivilegeContext privilegeContext;
+
+		public DefaultDmsPrivileges(final CMDataView dataView, final PrivilegeContext privilegeContext) {
+			this.dataView = dataView;
+			this.privilegeContext = privilegeContext;
+		}
+
+		@Override
+		public boolean readable(final String className) {
+			final boolean output;
+			if (className == null) {
+				output = false;
+			} else {
+				final CMClass element = dataView.findClass(className);
+				if (element == null) {
+					output = false;
+				} else {
+					output = privilegeContext.hasReadAccess(element);
+				}
+			}
+			return output;
+		}
+
+		@Override
+		public boolean writable(final String className) {
+			final boolean output;
+			if (className == null) {
+				output = false;
+			} else {
+				final CMClass element = dataView.findClass(className);
+				if (element == null) {
+					output = false;
+				} else {
+					output = privilegeContext.hasWriteAccess(element);
+				}
+			}
+			return output;
+		}
+
+	}
+
+	private final DmsLogic delegate;
+	private final DmsPrivileges privileges;
+
+	public PrivilegedDmsLogic(final DmsLogic delegate, final DmsPrivileges privileges) {
 		this.delegate = delegate;
-		this.dataView = dataView;
-		this.privilegeContext = privilegeContext;
+		this.privileges = privileges;
 	}
 
 	@Override
@@ -35,13 +85,11 @@ public class PrivilegedDmsLogic extends ForwardingDmsLogic {
 	}
 
 	private void assureReadPrivilege(final String className) {
-		final CMClass fetchedClass = dataView.findClass(className);
-		assure(privilegeContext.hasReadAccess(fetchedClass));
+		assure(privileges.readable(className), format("class '%s' not readable", className));
 	}
 
 	private void assureWritePrivilege(final String className) {
-		final CMClass fetchedClass = dataView.findClass(className);
-		assure(privilegeContext.hasWriteAccess(fetchedClass));
+		assure(privileges.writable(className), format("class '%s' not writable", className));
 	}
 
 	@Override
