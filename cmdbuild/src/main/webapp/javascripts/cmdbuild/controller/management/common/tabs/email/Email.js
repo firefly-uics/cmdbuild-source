@@ -889,7 +889,7 @@
 			},
 
 			tabEmailRegenerationEndPointCallbackReset: function() {
-				this.controllerPropertyReset('regenerationEndPointCallback');
+				this.propertyManageReset('regenerationEndPointCallback');
 			},
 
 			/**
