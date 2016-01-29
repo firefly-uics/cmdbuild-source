@@ -268,7 +268,7 @@
 		 * Implements empty email deletion on window destroy
 		 */
 		onTabEmailEmailWindowBeforeDestroy: function() {
-			if (CMDBuild.core.Utils.isObjectEmpty(this.form.getData()))
+			if (Ext.isFunction(this.form.getData) && CMDBuild.core.Utils.isObjectEmpty(this.form.getData()))
 				this.cmfg('tabEmailGridRecordRemove', this.record);
 		},
 
