@@ -69,6 +69,7 @@
 				columns.push({
 					text: columnObject[CMDBuild.core.proxy.CMProxyConstants.NAME],
 					dataIndex: columnObject[CMDBuild.core.proxy.CMProxyConstants.NAME],
+					renderer: 'stripTags',
 					flex: 1
 				});
 			}, this);
