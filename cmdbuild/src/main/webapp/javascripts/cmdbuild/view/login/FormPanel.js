@@ -4,8 +4,8 @@
 		extend: 'Ext.form.Panel',
 
 		requires: [
-			'CMDBuild.core.constants.Proxy',
-			'CMDBuild.core.constants.FieldWidths'
+			'CMDBuild.core.constants.FieldWidths',
+			'CMDBuild.core.constants.Proxy'
 		],
 
 		/**
