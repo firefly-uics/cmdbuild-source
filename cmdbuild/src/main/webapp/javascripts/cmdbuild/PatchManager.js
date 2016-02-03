@@ -4,33 +4,31 @@
 	 * PatchManager
 	 * This component manage the update state of the database
 	 */
-	Ext.onReady(function() {
-		Ext.WindowManager.getNextZSeed();	// To increase the default zseed. Is needed for the combo on windows probably it fix also the prev problem
-		Ext.enableFx = false;
-		Ext.tip.QuickTipManager.init();
+	Ext.application({
+		extend: 'Ext.app.Application',
 
-		// fix a problem of Ext 4.2 tooltips width
-		// see http://www.sencha.com/forum/showthread.php?260106-Tooltips-on-forms-and-grid-are-not-resizing-to-the-size-of-the-text/page3#24
-		delete Ext.tip.Tip.prototype.minWidth;
+		requires: [
+			'Ext.tip.QuickTipManager' // Avoid core override
+		],
 
-		Ext.application({
-			extend: 'Ext.app.Application',
+		appFolder: './javascripts/cmdbuild',
+		name: 'CMDBuild',
 
-			requires: [
-				'Ext.tip.QuickTipManager' // Avoid core override
-			],
+		launch: function() {
+			Ext.WindowManager.getNextZSeed();	// To increase the default zseed. Is needed for the combo on windows probably it fix also the prev problem
+			Ext.enableFx = false;
+			Ext.tip.QuickTipManager.init();
 
-			appFolder: './javascripts/cmdbuild',
-			name: 'CMDBuild',
+			// fix a problem of Ext 4.2 tooltips width
+			// see http://www.sencha.com/forum/showthread.php?260106-Tooltips-on-forms-and-grid-are-not-resizing-to-the-size-of-the-text/page3#24
+			delete Ext.tip.Tip.prototype.minWidth;
 
-			launch: function() {
-				Ext.create('CMDBuild.core.LoggerManager'); // Logger configuration
-				Ext.create('CMDBuild.core.Data'); // Data connections configuration
-				Ext.create('CMDBuild.core.configurationBuilders.Instance', { fullInit: false }); // CMDBuild instance configuration
+			Ext.create('CMDBuild.core.LoggerManager'); // Logger configuration
+			Ext.create('CMDBuild.core.Data'); // Data connections configuration
+			Ext.create('CMDBuild.core.configurationBuilders.Instance', { fullInit: false }); // CMDBuild instance configuration
 
-				Ext.create('CMDBuild.controller.patchManager.PatchManager');
-			}
-		});
+			Ext.create('CMDBuild.controller.patchManager.PatchManager');
+		}
 	});
 
 })();
