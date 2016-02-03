@@ -152,7 +152,7 @@
 				showGraph: {
 					title: CMDBuild.Translation.management.moddetail.showgraph,
 					event: "graph",
-					icon: "chart_organisation"
+					icon: "graph"
 				},
 				note: {
 					title: CMDBuild.Translation.management.moddetail.shownotes,

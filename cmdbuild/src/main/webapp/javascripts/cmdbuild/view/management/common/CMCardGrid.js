@@ -63,6 +63,8 @@
 	Ext.define("CMDBuild.view.management.common.CMCardGrid", {
 		extend: "Ext.grid.Panel",
 
+		requires: ['CMDBuild.core.constants.Global'],
+
 		mixins: {
 			delegable: "CMDBuild.core.CMDelegable"
 		},
@@ -545,44 +547,50 @@
 		me.bbar = me.pagingBar;
 	}
 
+	/**
+	 * @param {Array} headers
+	 *
+	 * @private
+	 */
 	function buildGraphIconColumn(headers) {
-		var c = _CMCache.getClassById(this.currentClassId);
+		var classModel = _CMCache.getClassById(this.currentClassId);
 
-		if (c && c.get("tableType") != "simpletable") {
-			var graphHeader = {
-					noWrap: true,
-				header: '&nbsp',
-				width: 30,
-				tdCls: "grid-button",
-				fixed: true,
-				sortable: false,
-				renderer: renderGraphIcon,
-				align: 'center',
-				dataIndex: 'Id',
-				menuDisabled: true,
-				hideable: false
-			};
-			headers.push(graphHeader);
+		if (
+			!Ext.isEmpty(classModel) && classModel.get('tableType') != CMDBuild.core.constants.Global.getTableTypeSimpleTable()
+			&& Ext.isArray(headers)
+		) {
+			headers.push(
+				Ext.create('Ext.grid.column.Action', {
+					align: 'center',
+					width: 30,
+					sortable: false,
+					hideable: false,
+					menuDisabled: true,
+					fixed: true,
+
+					items: [
+						Ext.create('CMDBuild.core.buttons.iconized.Graph', {
+							withSpacer: true,
+							tooltip: CMDBuild.Translation.openRelationGraph,
+							scope: this,
+
+							// TODO: cmfg() controller call implementation  on controller refactor
+							handler: function(grid, rowIndex, colIndex, node, e, record, rowNode) {
+								Ext.create('CMDBuild.controller.management.common.graph.Graph', {
+									parentDelegate: this,
+									classId: record.get('IdClass'),
+									cardId: record.get('id')
+								});
+							}
+						})
+					]
+				})
+			);
 		}
 	};
 
-	function renderGraphIcon() {
-		return '<img style="cursor:pointer" title="'
-			+ CMDBuild.Translation.openRelationGraph
-			+'" class="action-open-graph" src="images/icons/chart_organisation.png"/>';
-	}
-
 	function cellclickHandler(grid, model, htmlelement, rowIndex, event, opt) {
-		var action = event.target.className;
-
-		if (action == 'action-open-graph')
-			Ext.create('CMDBuild.controller.management.common.graph.Graph', {
-				parentDelegate: this,
-				classId: model.get('IdClass'),
-				cardId: model.get('id')
-			});
-
-		this.callDelegates("onCMCardGridIconRowClick", [grid, action, model]);
+		this.callDelegates("onCMCardGridIconRowClick", [grid, event.target.className, model]);
 	}
 
 })();
