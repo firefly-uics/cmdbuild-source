@@ -10,7 +10,7 @@
 	</parent>
 	<artifactId>cmdbuild-scheduler-quartz</artifactId>
 	<properties>
-		<quartz.version>2.2.0</quartz.version>
+		<quartz.version>2.2.2</quartz.version>
 	</properties>
 	<dependencies>
 		<dependency>
