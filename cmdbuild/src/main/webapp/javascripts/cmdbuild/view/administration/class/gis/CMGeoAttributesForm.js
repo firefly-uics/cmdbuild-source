@@ -111,8 +111,8 @@
 	function buildGenericProperties() {
 		this.name = new Ext.form.TextField({
 			fieldLabel: tr_attribute.name,
-			labelWidth: CMDBuild.LABEL_WIDTH,
-			width: CMDBuild.ADM_BIG_FIELD_WIDTH,
+			labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
+			width: CMDBuild.core.constants.FieldWidths.ADMINISTRATION_BIG,
 			name: "name",
 			cmImmutable: true,
 			vtype : 'alphanum',
@@ -121,16 +121,16 @@
 
 		this.description = new Ext.form.TextField({
 			fieldLabel: tr_attribute.description,
-			labelWidth: CMDBuild.LABEL_WIDTH,
-			width: CMDBuild.ADM_BIG_FIELD_WIDTH,
+			labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
+			width: CMDBuild.core.constants.FieldWidths.ADMINISTRATION_BIG,
 			name: "description",
 			allowBlank: false
 		});
 
 		this.minZoom = new Ext.form.SliderField( {
 			fieldLabel: tr.min_zoom,
-			labelWidth: CMDBuild.LABEL_WIDTH,
-			width: CMDBuild.ADM_BIG_FIELD_WIDTH,
+			labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
+			width: CMDBuild.core.constants.FieldWidths.ADMINISTRATION_BIG,
 			minValue: 0,
 			maxValue: 25,
 			name: "minZoom"
@@ -138,8 +138,8 @@
 
 		this.maxZoom = new Ext.form.SliderField( {
 			fieldLabel: tr.max_zoom,
-			labelWidth: CMDBuild.LABEL_WIDTH,
-			width: CMDBuild.ADM_BIG_FIELD_WIDTH,
+			labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
+			width: CMDBuild.core.constants.FieldWidths.ADMINISTRATION_BIG,
 			minValue: 0,
 			maxValue: 25,
 			value: 25,
@@ -192,8 +192,8 @@
 			autoScroll: true,
 			name: "type",
 			fieldLabel: tr_attribute.type,
-			labelWidth: CMDBuild.LABEL_WIDTH,
-			width: CMDBuild.ADM_MEDIUM_FIELD_WIDTH,
+			labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
+			width: CMDBuild.core.constants.FieldWidths.ADMINISTRATION_MEDIUM,
 			valueField: "value",
 			displayField: "name",
 			queryMode: "local",
@@ -219,8 +219,8 @@
 				name: "externalGraphic",
 				hiddenName: "externalGraphic",
 				fieldLabel: tr.externalGraphic,
-				labelWidth: CMDBuild.LABEL_WIDTH,
-				width: CMDBuild.ADM_MEDIUM_FIELD_WIDTH,
+				labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
+				width: CMDBuild.core.constants.FieldWidths.ADMINISTRATION_MEDIUM,
 				allowedGeoTypes: {POINT: true},
 				valueField: "path",
 				displayField: "description",
@@ -229,8 +229,8 @@
 
 			pointRadius: new Ext.form.field.Number({
 				fieldLabel: tr.pointRadius,
-				labelWidth: CMDBuild.LABEL_WIDTH,
-				width: CMDBuild.ADM_SMALL_FIELD_WIDTH,
+				labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
+				width: CMDBuild.core.constants.FieldWidths.ADMINISTRATION_SMALL,
 				defaultValue: 6,
 				minValue: 0,
 				maxValue: 100,
@@ -242,15 +242,15 @@
 
 			fillColor: new CMDBuild.form.HexColorField( {
 				name: "fillColor",
-				labelWidth: CMDBuild.LABEL_WIDTH,
-				width: CMDBuild.ADM_MEDIUM_FIELD_WIDTH,
+				labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
+				width: CMDBuild.core.constants.FieldWidths.ADMINISTRATION_MEDIUM,
 				fieldLabel: tr.fillColor,
 				allowedGeoTypes: {POINT: true, POLYGON: true}
 			}),
 
 			fillOpacity: new Ext.form.SliderField( {
-				labelWidth: CMDBuild.LABEL_WIDTH,
-				width: CMDBuild.ADM_BIG_FIELD_WIDTH,
+				labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
+				width: CMDBuild.core.constants.FieldWidths.ADMINISTRATION_BIG,
 				minValue: 0,
 				maxValue: 1,
 				defaultValue: 1,
@@ -269,8 +269,8 @@
 			strokeColor : new CMDBuild.form.HexColorField( {
 				disabled : true,
 				name : "strokeColor",
-				labelWidth : CMDBuild.LABEL_WIDTH,
-				width : CMDBuild.ADM_MEDIUM_FIELD_WIDTH,
+				labelWidth : CMDBuild.core.constants.FieldWidths.LABEL,
+				width : CMDBuild.core.constants.FieldWidths.ADMINISTRATION_MEDIUM,
 				fieldLabel : tr.strokeColor,
 				defaultValue : "000000",
 				hidden : true,
@@ -284,8 +284,8 @@
 			strokeOpacity:  new Ext.form.SliderField( {
 				minValue: 0,
 				maxValue: 1,
-				labelWidth: CMDBuild.LABEL_WIDTH,
-				width: CMDBuild.ADM_BIG_FIELD_WIDTH,
+				labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
+				width: CMDBuild.core.constants.FieldWidths.ADMINISTRATION_BIG,
 				defaultValue: 1,
 				decimalPrecision: 1,
 				increment: 0.1,
@@ -301,8 +301,8 @@
 
 			strokeWidth: new Ext.form.field.Number({
 				fieldLabel: tr.strokeWidth,
-				labelWidth: CMDBuild.LABEL_WIDTH,
-				width: CMDBuild.ADM_SMALL_FIELD_WIDTH,
+				labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
+				width: CMDBuild.core.constants.FieldWidths.ADMINISTRATION_SMALL,
 				name: "strokeWidth",
 				defaultValue: 1,
 				minValue: 0,
@@ -325,8 +325,8 @@
 				name: "strokeDashstyle",
 				hiddenName: "strokeDashstyle",
 				fieldLabel: tr.strokeDashstyle,
-				labelWidth: CMDBuild.LABEL_WIDTH,
-				width: CMDBuild.ADM_MEDIUM_FIELD_WIDTH,
+				labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
+				width: CMDBuild.core.constants.FieldWidths.ADMINISTRATION_MEDIUM,
 				allowedGeoTypes: {POINT: true, POLYGON: true, LINESTRING: true},
 				valueField: "value",
 				displayField: "name",

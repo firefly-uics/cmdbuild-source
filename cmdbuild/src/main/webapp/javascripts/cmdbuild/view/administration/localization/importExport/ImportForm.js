@@ -4,6 +4,7 @@
 		extend: 'Ext.form.Panel',
 
 		requires: [
+			'CMDBuild.core.constants.FieldWidths',
 			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.proxy.Csv',
 			'CMDBuild.core.proxy.localization.Import'
@@ -58,8 +59,8 @@
 					Ext.create('Ext.form.field.ComboBox', {
 						name: CMDBuild.core.constants.Proxy.FORMAT,
 						fieldLabel: CMDBuild.Translation.format,
-						labelWidth: CMDBuild.LABEL_WIDTH,
-						maxWidth: CMDBuild.MEDIUM_FIELD_WIDTH,
+						labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
+						maxWidth: CMDBuild.core.constants.FieldWidths.STANDARD_MEDIUM,
 						displayField: CMDBuild.core.constants.Proxy.DESCRIPTION,
 						valueField: CMDBuild.core.constants.Proxy.NAME,
 						editable: false,
@@ -74,14 +75,14 @@
 					Ext.create('Ext.form.field.File', {
 						name: CMDBuild.core.constants.Proxy.FILE,
 						fieldLabel: CMDBuild.Translation.file,
-						labelWidth: CMDBuild.LABEL_WIDTH,
-						maxWidth: CMDBuild.ADM_BIG_FIELD_WIDTH,
+						labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
+						maxWidth: CMDBuild.core.constants.FieldWidths.ADMINISTRATION_BIG,
 						allowBlank: false
 					}),
 					Ext.create('Ext.form.field.ComboBox', {
 						name: CMDBuild.core.constants.Proxy.SEPARATOR,
 						fieldLabel: CMDBuild.Translation.separator,
-						labelWidth: CMDBuild.LABEL_WIDTH,
+						labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
 						maxWidth: 200,
 						valueField: CMDBuild.core.constants.Proxy.VALUE,
 						displayField: CMDBuild.core.constants.Proxy.VALUE,

@@ -4,6 +4,7 @@
 		extend: 'Ext.form.Panel',
 
 		requires: [
+			'CMDBuild.core.constants.FieldWidths',
 			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.proxy.Csv',
 			'CMDBuild.core.proxy.localization.Export',
@@ -56,8 +57,8 @@
 					Ext.create('Ext.form.field.ComboBox', {
 						name: CMDBuild.core.constants.Proxy.TYPE,
 						fieldLabel: CMDBuild.Translation.section,
-						labelWidth: CMDBuild.LABEL_WIDTH,
-						maxWidth: CMDBuild.MEDIUM_FIELD_WIDTH,
+						labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
+						maxWidth: CMDBuild.core.constants.FieldWidths.STANDARD_MEDIUM,
 						displayField: CMDBuild.core.constants.Proxy.DESCRIPTION,
 						valueField: CMDBuild.core.constants.Proxy.NAME,
 						editable: false,
@@ -78,11 +79,11 @@
 					Ext.create('CMDBuild.view.common.field.multiselect.Multiselect', {
 						name: CMDBuild.core.constants.Proxy.LANGUAGES, // TODO: synch with server side parameter name
 						fieldLabel: CMDBuild.Translation.languages,
-						labelWidth: CMDBuild.LABEL_WIDTH,
+						labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
 						valueField: CMDBuild.core.constants.Proxy.TAG,
 						displayField: CMDBuild.core.constants.Proxy.DESCRIPTION,
 						maxHeight: 300,
-						maxWidth: CMDBuild.MEDIUM_FIELD_WIDTH,
+						maxWidth: CMDBuild.core.constants.FieldWidths.STANDARD_MEDIUM,
 						considerAsFieldToDisable: true,
 						defaultSelection: 'all',
 						flex: 1, // Stretch vertically
@@ -94,8 +95,8 @@
 					Ext.create('Ext.form.field.ComboBox', {
 						name: CMDBuild.core.constants.Proxy.FORMAT,
 						fieldLabel: CMDBuild.Translation.format,
-						labelWidth: CMDBuild.LABEL_WIDTH,
-						maxWidth: CMDBuild.MEDIUM_FIELD_WIDTH,
+						labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
+						maxWidth: CMDBuild.core.constants.FieldWidths.STANDARD_MEDIUM,
 						displayField: CMDBuild.core.constants.Proxy.DESCRIPTION,
 						valueField: CMDBuild.core.constants.Proxy.NAME,
 						editable: false,
@@ -110,7 +111,7 @@
 					Ext.create('Ext.form.field.ComboBox', {
 						name: CMDBuild.core.constants.Proxy.SEPARATOR,
 						fieldLabel: CMDBuild.Translation.separator,
-						labelWidth: CMDBuild.LABEL_WIDTH,
+						labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
 						maxWidth: 200,
 						valueField: CMDBuild.core.constants.Proxy.VALUE,
 						displayField: CMDBuild.core.constants.Proxy.VALUE,
@@ -125,7 +126,7 @@
 					this.activeOnlyCheckbox = Ext.create('Ext.form.field.Checkbox', {
 						name: CMDBuild.core.constants.Proxy.ACTIVE_ONLY,
 						fieldLabel: CMDBuild.Translation.activeOnly,
-						labelWidth: CMDBuild.LABEL_WIDTH,
+						labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
 						inputValue: true,
 						uncheckedValue: false
 					})

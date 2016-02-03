@@ -155,7 +155,7 @@
 		},
 
 		defaults: {
-			maxWidth: CMDBuild.CFG_BIG_FIELD_WIDTH,
+			maxWidth: CMDBuild.core.constants.FieldWidths.CONFIGURATION_BIG,
 			anchor: '100%'
 		},
 
@@ -167,7 +167,7 @@
 			this.typeField = Ext.create('Ext.form.field.Text', {
 				name: CMDBuild.core.constants.Proxy.TYPE,
 				fieldLabel: tr.type,
-				labelWidth: CMDBuild.LABEL_WIDTH,
+				labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
 				value: tr.tasksTypes.event + ' ' + tr.tasksTypes.eventTypes.synchronous.toLowerCase(),
 				disabled: true,
 				cmImmutable: true,
@@ -182,24 +182,24 @@
 			this.descriptionField = Ext.create('Ext.form.field.Text', {
 				name: CMDBuild.core.constants.Proxy.DESCRIPTION,
 				fieldLabel: CMDBuild.Translation.description_,
-				labelWidth: CMDBuild.LABEL_WIDTH,
+				labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
 				allowBlank: false
 			});
 
 			this.activeField = Ext.create('Ext.form.field.Checkbox', {
 				name: CMDBuild.core.constants.Proxy.ACTIVE,
 				fieldLabel: tr.startOnSave,
-				labelWidth: CMDBuild.LABEL_WIDTH
+				labelWidth: CMDBuild.core.constants.FieldWidths.LABEL
 			});
 
 			this.phaseCombo = Ext.create('Ext.form.field.ComboBox', {
 				name: CMDBuild.core.constants.Proxy.PHASE,
 				fieldLabel: tr.taskEvent.phase,
-				labelWidth: CMDBuild.LABEL_WIDTH,
+				labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
 				store: CMDBuild.core.proxy.CMProxyTasks.getPhases(),
 				valueField: CMDBuild.core.constants.Proxy.VALUE,
 				displayField: CMDBuild.core.constants.Proxy.DESCRIPTION,
-				maxWidth: CMDBuild.ADM_BIG_FIELD_WIDTH,
+				maxWidth: CMDBuild.core.constants.FieldWidths.ADMINISTRATION_BIG,
 				queryMode: 'local',
 				forceSelection: true,
 				editable: false
@@ -210,8 +210,8 @@
 				fieldLabel: tr.taskEvent.groupsToApply,
 				height: 300,
 				valueField: CMDBuild.core.constants.Proxy.NAME,
-				labelWidth: CMDBuild.LABEL_WIDTH,
-				maxWidth: CMDBuild.ADM_BIG_FIELD_WIDTH,
+				labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
+				maxWidth: CMDBuild.core.constants.FieldWidths.ADMINISTRATION_BIG,
 				considerAsFieldToDisable: true,
 				anchor: '100%'
 			});
@@ -219,10 +219,10 @@
 			this.classNameCombo = Ext.create('Ext.form.field.ComboBox', {
 				name: CMDBuild.core.constants.Proxy.CLASS_NAME,
 				fieldLabel: CMDBuild.Translation.classLabel,
-				labelWidth: CMDBuild.LABEL_WIDTH,
+				labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
 				valueField: CMDBuild.core.constants.Proxy.NAME,
 				displayField: CMDBuild.core.constants.Proxy.DESCRIPTION,
-				maxWidth: CMDBuild.ADM_BIG_FIELD_WIDTH,
+				maxWidth: CMDBuild.core.constants.FieldWidths.ADMINISTRATION_BIG,
 				allowBlank: false,
 				forceSelection: true,
 				editable: false,

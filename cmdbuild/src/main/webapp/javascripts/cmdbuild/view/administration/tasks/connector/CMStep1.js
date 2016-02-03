@@ -165,7 +165,7 @@
 		},
 
 		defaults: {
-			maxWidth: CMDBuild.CFG_BIG_FIELD_WIDTH,
+			maxWidth: CMDBuild.core.constants.FieldWidths.CONFIGURATION_BIG,
 			anchor: '100%'
 		},
 
@@ -174,7 +174,7 @@
 
 			this.typeField = Ext.create('Ext.form.field.Text', {
 				fieldLabel: tr.type,
-				labelWidth: CMDBuild.LABEL_WIDTH,
+				labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
 				name: CMDBuild.core.constants.Proxy.TYPE,
 				value: tr.tasksTypes.connector,
 				disabled: true,
@@ -190,14 +190,14 @@
 			this.descriptionField = Ext.create('Ext.form.field.Text', {
 				name: CMDBuild.core.constants.Proxy.DESCRIPTION,
 				fieldLabel: CMDBuild.Translation.description_,
-				labelWidth: CMDBuild.LABEL_WIDTH,
+				labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
 				allowBlank: false
 			});
 
 			this.activeField = Ext.create('Ext.form.field.Checkbox', {
 				name: CMDBuild.core.constants.Proxy.ACTIVE,
 				fieldLabel: tr.startOnSave,
-				labelWidth: CMDBuild.LABEL_WIDTH
+				labelWidth: CMDBuild.core.constants.FieldWidths.LABEL
 			});
 
 			// Email notification configuration

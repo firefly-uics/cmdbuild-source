@@ -4,6 +4,7 @@
 		extend: 'Ext.container.Container',
 
 		requires: [
+			'CMDBuild.core.constants.FieldWidths',
 			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.proxy.localization.Localization'
 		],
@@ -23,7 +24,7 @@
 				languageCheckboxes.push(
 					Ext.create('Ext.form.field.Checkbox', {
 						fieldLabel: languageModel.get(CMDBuild.core.constants.Proxy.DESCRIPTION),
-						labelWidth: CMDBuild.LABEL_WIDTH,
+						labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
 						name: languageModel.get(CMDBuild.core.constants.Proxy.TAG),
 						padding: '3 5',
 						margin: '0 20 0 0',

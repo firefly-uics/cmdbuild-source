@@ -306,10 +306,10 @@
 																) {
 																	alreadyRelatedCardsIds.push(options.params[CMDBuild.core.constants.Proxy.CARD_ID]);
 																} else {
-																	_warning('onAddRelationButtonClick, domain valutation not catch');
+																	_warning('onAddRelationButtonClick, domain valutation not catch', this);
 																}
 															} else {
-																_warning('onAddRelationButtonClick, empty class data object');
+																_warning('onAddRelationButtonClick, empty class data object', this);
 															}
 														});
 													}

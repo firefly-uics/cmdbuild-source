@@ -1,6 +1,6 @@
 (function() {
-Ext.define("CMDBuild.field.LookupCombo", {
-	extend: "CMDBuild.field.ErasableCombo",
+Ext.define("CMDBuild.view.common.field.LookupField", {
+	extend: "CMDBuild.view.common.field.CMErasableCombo",
 	plugins: new CMDBuild.SetValueOnLoadPlugin(),
 	parentId: '',
 
@@ -90,7 +90,7 @@ Ext.define("CMDBuild.field.MultiLevelLookupPanel", {
 	frame: false,
 	autoHeight: true,
 	hideMode: 'offsets',
-	labelWidth: CMDBuild.LABEL_WIDTH,
+	labelWidth: 150,
 	bodyCls: "x-panel-default-framed",
 	isMultiLevel: true,
 	bodyStyle: {
@@ -272,7 +272,7 @@ var buildSingleLookupField = function(attribute, hideLabel) {
 	if (hideLabel) {
 		fieldLabel = "";
 		labelSeparator = "";
-		padding = "0 0 0 " + (CMDBuild.LABEL_WIDTH + 5);
+		padding = "0 0 0 " + (CMDBuild.core.constants.FieldWidths.LABEL + 5);
 	} else {
 		fieldLabel = attribute.description || attribute.name;
 		if (!canBeBlank(attribute)) {
@@ -281,9 +281,9 @@ var buildSingleLookupField = function(attribute, hideLabel) {
 		labelSeparator = ":";
 	}
 
-	var field = new CMDBuild.field.LookupCombo({
+	var field = new CMDBuild.view.common.field.LookupField({
 		labelAlign: "right",
-		labelWidth: CMDBuild.LABEL_WIDTH,
+		labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
 		fieldLabel: fieldLabel,
 		labelSeparator: labelSeparator,
 		padding: padding,

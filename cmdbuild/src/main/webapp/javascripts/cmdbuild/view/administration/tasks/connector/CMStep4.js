@@ -262,7 +262,7 @@
 				title: tr.classLevelMapping,
 				considerAsFieldToDisable: true,
 				margin: '0 0 5 0',
-				minWidth: CMDBuild.ADM_BIG_FIELD_WIDTH,
+				minWidth: CMDBuild.core.constants.FieldWidths.ADMINISTRATION_BIG,
 
 				plugins: [this.gridEditorPlugin],
 

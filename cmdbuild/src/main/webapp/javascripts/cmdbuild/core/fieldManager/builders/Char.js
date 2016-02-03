@@ -3,7 +3,10 @@
 	Ext.define('CMDBuild.core.fieldManager.builders.Char', {
 		extend: 'CMDBuild.core.fieldManager.builders.Abstract',
 
-		requires: ['CMDBuild.core.constants.Proxy'],
+		requires: [
+			'CMDBuild.core.constants.FieldWidths',
+			'CMDBuild.core.constants.Proxy'
+		],
 
 		/**
 		 * @cfg {CMDBuild.core.fieldManager.FieldManager}
@@ -60,9 +63,9 @@
 				),
 				hidden: this.cmfg('attributeModelGet', CMDBuild.core.constants.Proxy.HIDDEN),
 				labelAlign: 'right',
-				labelWidth: CMDBuild.LABEL_WIDTH,
+				labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
 				maxLength: 1,
-				maxWidth: CMDBuild.LABEL_WIDTH + 30,
+				maxWidth: CMDBuild.core.constants.FieldWidths.LABEL + 30,
 				name: this.cmfg('attributeModelGet', CMDBuild.core.constants.Proxy.NAME),
 				readOnly: !this.cmfg('attributeModelGet', CMDBuild.core.constants.Proxy.WRITABLE)
 			});

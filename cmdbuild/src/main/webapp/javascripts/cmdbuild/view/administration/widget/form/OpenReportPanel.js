@@ -4,6 +4,7 @@
 		extend: 'CMDBuild.view.administration.widget.form.AbstractWidgetDefinitionPanel',
 
 		requires: [
+			'CMDBuild.core.constants.FieldWidths',
 			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.proxy.widget.OpenReport',
 			'CMDBuild.model.widget.openReport.PresetGrid'
@@ -49,8 +50,8 @@
 						this.reportCode = Ext.create('Ext.form.field.ComboBox', {
 							name: CMDBuild.core.constants.Proxy.REPORT_CODE,
 							fieldLabel: CMDBuild.Translation.report,
-							labelWidth: CMDBuild.LABEL_WIDTH,
-							maxWidth: CMDBuild.ADM_BIG_FIELD_WIDTH,
+							labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
+							maxWidth: CMDBuild.core.constants.FieldWidths.ADMINISTRATION_BIG,
 							valueField: CMDBuild.core.constants.Proxy.TITLE,
 							displayField: CMDBuild.core.constants.Proxy.DESCRIPTION,
 							forceSelection: true,
@@ -68,9 +69,9 @@
 						}),
 						this.forceFormat = Ext.create('CMDBuild.view.common.field.comboBox.DrivedCheckbox', {
 							name: CMDBuild.core.constants.Proxy.FORCE_FORMAT,
-							maxWidth: CMDBuild.ADM_BIG_FIELD_WIDTH,
+							maxWidth: CMDBuild.core.constants.FieldWidths.ADMINISTRATION_BIG,
 							fieldLabel: CMDBuild.Translation.forceFormat,
-							labelWidth: CMDBuild.LABEL_WIDTH,
+							labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
 							displayField: CMDBuild.core.constants.Proxy.DESCRIPTION,
 							valueField: CMDBuild.core.constants.Proxy.VALUE,
 

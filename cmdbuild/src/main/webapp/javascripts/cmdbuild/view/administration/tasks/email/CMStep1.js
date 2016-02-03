@@ -236,7 +236,7 @@
 		},
 
 		defaults: {
-			maxWidth: CMDBuild.CFG_BIG_FIELD_WIDTH,
+			maxWidth: CMDBuild.core.constants.FieldWidths.CONFIGURATION_BIG,
 			anchor: '100%'
 		},
 
@@ -247,8 +247,8 @@
 				this.rejectedFolder = Ext.create('Ext.form.field.Text', {
 					name: CMDBuild.core.constants.Proxy.REJECTED_FOLDER,
 					fieldLabel: CMDBuild.Translation.rejectedFolder,
-					labelWidth: CMDBuild.LABEL_WIDTH,
-					maxWidth: CMDBuild.CFG_BIG_FIELD_WIDTH - 10, // FIX: field with inside FieldSet is narrow
+					labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
+					maxWidth: CMDBuild.core.constants.FieldWidths.CONFIGURATION_BIG - 10, // FIX: field with inside FieldSet is narrow
 					anchor: '100%'
 				});
 
@@ -272,7 +272,7 @@
 				items: [
 					this.typeField = Ext.create('Ext.form.field.Text', {
 						fieldLabel: CMDBuild.Translation.administration.tasks.type,
-						labelWidth: CMDBuild.LABEL_WIDTH,
+						labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
 						name: CMDBuild.core.constants.Proxy.TYPE,
 						value: tr.tasksTypes.email,
 						disabled: true,
@@ -283,21 +283,21 @@
 					this.descriptionField = Ext.create('Ext.form.field.Text', {
 						name: CMDBuild.core.constants.Proxy.DESCRIPTION,
 						fieldLabel: CMDBuild.Translation.description_,
-						labelWidth: CMDBuild.LABEL_WIDTH,
+						labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
 						allowBlank: false
 					}),
 					this.activeField = Ext.create('Ext.form.field.Checkbox', {
 						name: CMDBuild.core.constants.Proxy.ACTIVE,
 						fieldLabel: CMDBuild.Translation.administration.tasks.startOnSave,
-						labelWidth: CMDBuild.LABEL_WIDTH
+						labelWidth: CMDBuild.core.constants.FieldWidths.LABEL
 					}),
 					this.emailAccountCombo = Ext.create('Ext.form.field.ComboBox', {
 						name: CMDBuild.core.constants.Proxy.EMAIL_ACCOUNT,
 						fieldLabel: tr.taskEmail.emailAccount,
-						labelWidth: CMDBuild.LABEL_WIDTH,
+						labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
 						displayField: CMDBuild.core.constants.Proxy.NAME,
 						valueField: CMDBuild.core.constants.Proxy.NAME,
-						maxWidth: CMDBuild.ADM_BIG_FIELD_WIDTH,
+						maxWidth: CMDBuild.core.constants.FieldWidths.ADMINISTRATION_BIG,
 						forceSelection: true,
 						editable: false,
 
@@ -306,7 +306,7 @@
 					this.incomingFolder = Ext.create('Ext.form.field.Text', {
 						name: CMDBuild.core.constants.Proxy.INCOMING_FOLDER,
 						fieldLabel: CMDBuild.Translation.incomingFolder,
-						labelWidth: CMDBuild.LABEL_WIDTH
+						labelWidth: CMDBuild.core.constants.FieldWidths.LABEL
 					}),
 					this.fromAddresFilter = Ext.create('CMDBuild.view.administration.tasks.common.emailFilterForm.CMEmailFilterForm', {
 						fieldContainer: {
@@ -335,7 +335,7 @@
 					this.processedFolder = Ext.create('Ext.form.field.Text', {
 						name: CMDBuild.core.constants.Proxy.PROCESSED_FOLDER,
 						fieldLabel: CMDBuild.Translation.processedFolder,
-						labelWidth: CMDBuild.LABEL_WIDTH
+						labelWidth: CMDBuild.core.constants.FieldWidths.LABEL
 					}),
 					this.rejectedFieldset,
 					this.idField = Ext.create('Ext.form.field.Hidden', {

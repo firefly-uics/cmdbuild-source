@@ -30,9 +30,9 @@
 
 		border: false,
 		considerAsFieldToDisable: true,
-		labelWidth: CMDBuild.LABEL_WIDTH,
+		labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
 		layout: 'hbox',
-		width: CMDBuild.CFG_BIG_FIELD_WIDTH,
+		width: CMDBuild.core.constants.FieldWidths.CONFIGURATION_BIG,
 
 		/**
 		 * To acquire informations to setup fields before creation

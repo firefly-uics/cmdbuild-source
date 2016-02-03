@@ -115,8 +115,8 @@
 			this.classCombo =  Ext.create('CMDBuild.view.common.field.CMErasableCombo', {
 				fieldLabel: me.isFirst ? tr.card_binding : ' ',
 				labelSeparator: me.isFirst ? ':' : '',
-				labelWidth: CMDBuild.LABEL_WIDTH,
-				width: CMDBuild.ADM_BIG_FIELD_WIDTH,
+				labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
+				width: CMDBuild.core.constants.FieldWidths.ADMINISTRATION_BIG,
 				valueField: CMDBuild.core.constants.Proxy.NAME,
 				displayField: CMDBuild.core.constants.Proxy.DESCRIPTION,
 				editable: false,

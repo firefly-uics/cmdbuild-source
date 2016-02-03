@@ -253,16 +253,16 @@
 			// Parsing configuration
 				this.parsingKeyStart = Ext.create('Ext.form.field.Text', {
 					fieldLabel: tr.parsingKeyStart,
-					labelWidth: CMDBuild.LABEL_WIDTH,
-					maxWidth: CMDBuild.ADM_BIG_FIELD_WIDTH,
+					labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
+					maxWidth: CMDBuild.core.constants.FieldWidths.ADMINISTRATION_BIG,
 					name: CMDBuild.core.constants.Proxy.PARSING_KEY_INIT,
 					flex: 1
 				});
 
 				this.parsingKeyEnd = Ext.create('Ext.form.field.Text', {
 					fieldLabel: tr.parsingKeyEnd,
-					labelWidth: CMDBuild.LABEL_WIDTH,
-					maxWidth: CMDBuild.ADM_BIG_FIELD_WIDTH,
+					labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
+					maxWidth: CMDBuild.core.constants.FieldWidths.ADMINISTRATION_BIG,
 					name: CMDBuild.core.constants.Proxy.PARSING_KEY_END,
 					margin: '0 0 0 20',
 					flex: 1
@@ -270,16 +270,16 @@
 
 				this.parsingValueStart = Ext.create('Ext.form.field.Text', {
 					fieldLabel: tr.parsingValueStart,
-					labelWidth: CMDBuild.LABEL_WIDTH,
-					maxWidth: CMDBuild.ADM_BIG_FIELD_WIDTH,
+					labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
+					maxWidth: CMDBuild.core.constants.FieldWidths.ADMINISTRATION_BIG,
 					name: CMDBuild.core.constants.Proxy.PARSING_VALUE_INIT,
 					flex: 1
 				});
 
 				this.parsingValueEnd = Ext.create('Ext.form.field.Text', {
 					fieldLabel: tr.parsingValueEnd,
-					labelWidth: CMDBuild.LABEL_WIDTH,
-					maxWidth: CMDBuild.ADM_BIG_FIELD_WIDTH,
+					labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
+					maxWidth: CMDBuild.core.constants.FieldWidths.ADMINISTRATION_BIG,
 					name: CMDBuild.core.constants.Proxy.PARSING_VALUE_END,
 					margin: '0 0 0 20',
 					flex: 1
@@ -349,8 +349,8 @@
 				this.attachmentsCombo = Ext.create('Ext.form.field.ComboBox', {
 					name: CMDBuild.core.constants.Proxy.ATTACHMENTS_CATEGORY,
 					fieldLabel: tr.attachmentsCategory,
-					labelWidth: CMDBuild.LABEL_WIDTH,
-					maxWidth: CMDBuild.ADM_BIG_FIELD_WIDTH,
+					labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
+					maxWidth: CMDBuild.core.constants.FieldWidths.ADMINISTRATION_BIG,
 					anchor: '100%',
 					displayField: 'Description',
 					valueField: 'Id',

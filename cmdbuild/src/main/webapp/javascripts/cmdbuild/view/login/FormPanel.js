@@ -3,7 +3,10 @@
 	Ext.define('CMDBuild.view.login.FormPanel', {
 		extend: 'Ext.form.Panel',
 
-		requires: ['CMDBuild.core.constants.Proxy'],
+		requires: [
+			'CMDBuild.core.constants.Proxy',
+			'CMDBuild.core.constants.FieldWidths'
+		],
 
 		/**
 		 * @cfg {CMDBuild.controller.login.Login}
@@ -66,13 +69,13 @@
 						&& CMDBuild.configuration.localization.get(CMDBuild.core.constants.Proxy.LANGUAGE_PROMPT)
 					) ? Ext.create('CMDBuild.view.common.field.comboBox.Language', {
 						fieldLabel: CMDBuild.Translation.language,
-						labelWidth: CMDBuild.LABEL_WIDTH_LOGIN,
+						labelWidth: CMDBuild.core.constants.FieldWidths.LABEL_LOGIN,
 						submitValue: false
 					}) : null,
 					this.user = Ext.create('Ext.form.field.Text', {
 						name: CMDBuild.core.constants.Proxy.USERNAME,
 						fieldLabel: CMDBuild.Translation.username,
-						labelWidth: CMDBuild.LABEL_WIDTH_LOGIN,
+						labelWidth: CMDBuild.core.constants.FieldWidths.LABEL_LOGIN,
 						allowBlank: false,
 
 						listeners: {
@@ -89,7 +92,7 @@
 					this.password = Ext.create('Ext.form.field.Text', {
 						name: CMDBuild.core.constants.Proxy.PASSWORD,
 						fieldLabel: CMDBuild.Translation.password,
-						labelWidth: CMDBuild.LABEL_WIDTH_LOGIN,
+						labelWidth: CMDBuild.core.constants.FieldWidths.LABEL_LOGIN,
 						inputType: 'password',
 						allowBlank: false,
 
@@ -105,7 +108,7 @@
 						name: CMDBuild.core.constants.Proxy.ROLE,
 						hiddenName: CMDBuild.core.constants.Proxy.ROLE,
 						fieldLabel: CMDBuild.Translation.chooseAGroup,
-						labelWidth: CMDBuild.LABEL_WIDTH_LOGIN,
+						labelWidth: CMDBuild.core.constants.FieldWidths.LABEL_LOGIN,
 						valueField: CMDBuild.core.constants.Proxy.NAME,
 						displayField: CMDBuild.core.constants.Proxy.DESCRIPTION,
 						editable: false,

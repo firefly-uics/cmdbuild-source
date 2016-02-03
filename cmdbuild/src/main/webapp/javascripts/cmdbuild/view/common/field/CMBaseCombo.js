@@ -3,15 +3,21 @@
 	var TRIGGER_LENGTH = 20;
 	var PADDING = 20;
 
-	Ext.define('CMDBuild.field.CMBaseCombo', {
+
+	Ext.define('CMDBuild.view.common.field.CMBaseCombo', {
 		extend: 'Ext.form.field.ComboBox',
 		alias: 'cmbasecombo',
 
+		requires: ['CMDBuild.core.constants.FieldWidths'],
+
 		cmGreatestItem: '',
 
-		maxWidth: CMDBuild.BIG_FIELD_WIDTH, // Avoid too wide fields
 
-		initComponent : function() {
+		initComponent: function() {
+			Ext.apply(this, {
+				maxWidth: CMDBuild.core.constants.FieldWidths.STANDARD_BIG, // Avoid too wide fields
+			});
+
 			this.callParent(arguments);
 
 			this.mon(this.store, 'load', function(store, records, successful, operation) {

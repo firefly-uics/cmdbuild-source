@@ -4,6 +4,7 @@
 		extend: 'Ext.form.Panel',
 
 		requires: [
+			'CMDBuild.core.constants.FieldWidths',
 			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.model.workflow.tabs.properties.XpdlVersion',
 		],
@@ -35,8 +36,8 @@
 					this.versionCombo = Ext.create('Ext.form.field.ComboBox', {
 						name: CMDBuild.core.constants.Proxy.VERSION,
 						fieldLabel: CMDBuild.Translation.version,
-						labelWidth: CMDBuild.LABEL_WIDTH,
-						maxWidth: CMDBuild.ADM_BIG_FIELD_WIDTH,
+						labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
+						maxWidth: CMDBuild.core.constants.FieldWidths.ADMINISTRATION_BIG,
 						displayField: CMDBuild.core.constants.Proxy.DESCRIPTION,
 						valueField: CMDBuild.core.constants.Proxy.ID,
 						flex: 1,

@@ -5,6 +5,7 @@
 
 		requires: [
 			'CMDBuild.core.configurations.DataFormat',
+			'CMDBuild.core.constants.FieldWidths',
 			'CMDBuild.core.constants.Global',
 			'CMDBuild.core.constants.ModuleIdentifiers',
 			'CMDBuild.core.constants.Proxy',
@@ -228,7 +229,7 @@
 				Ext.apply(item, {
 					menu: Ext.create('Ext.menu.Menu', {
 						overflowX: 'auto',
-						maxWidth: CMDBuild.MENU_WIDTH,
+						maxWidth: CMDBuild.core.constants.FieldWidths.MENU_DROPDOWN,
 
 						items: this.menuItemsBuild()
 					})

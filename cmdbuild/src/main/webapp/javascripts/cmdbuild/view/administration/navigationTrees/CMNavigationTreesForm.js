@@ -52,7 +52,7 @@
 
 			this.active = new Ext.ux.form.XCheckbox({
 				fieldLabel: this.translation.is_active,
-				labelWidth: CMDBuild.LABEL_WIDTH,
+				labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
 				name: "active",
 				checked: true
 			});
@@ -60,8 +60,8 @@
 
 			this.treeName = new Ext.form.TextField({
 				fieldLabel : this.translation.name,
-				labelWidth: CMDBuild.LABEL_WIDTH,
-				width: CMDBuild.ADM_BIG_FIELD_WIDTH,
+				labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
+				width: CMDBuild.core.constants.FieldWidths.ADMINISTRATION_BIG,
 				name : "name",
 				allowBlank : false,
 				vtype : 'alphanum',
@@ -71,16 +71,16 @@
 
 			this.treeDescription = Ext.create('Ext.form.TextField', {
 				fieldLabel: CMDBuild.Translation.description_,
-				labelWidth: CMDBuild.LABEL_WIDTH,
-				width: CMDBuild.ADM_BIG_FIELD_WIDTH,
+				labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
+				width: CMDBuild.core.constants.FieldWidths.ADMINISTRATION_BIG,
 				name: "description",
 				allowBlank: false,
 				vtype: 'commentextended'
 			});
-			this.rootName = new CMDBuild.field.CMBaseCombo({
+			this.rootName = new CMDBuild.view.common.field.CMBaseCombo({
 				fieldLabel: this.translation.class_target,
-				width: CMDBuild.ADM_BIG_FIELD_WIDTH,
-				labelWidth: CMDBuild.LABEL_WIDTH,
+				width: CMDBuild.core.constants.FieldWidths.ADMINISTRATION_BIG,
+				labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
 				name: "rootClassName",
 				triggerAction: 'all',
 				valueField: 'id',
@@ -97,7 +97,7 @@
 				border : true,
 				autoScroll : true,
 				defaults: {
-					labelWidth: CMDBuild.LABEL_WIDTH
+					labelWidth: CMDBuild.core.constants.FieldWidths.LABEL
 				},
 				items : [this.treeName, this.treeDescription, this.rootName, this.active, ]
 			});

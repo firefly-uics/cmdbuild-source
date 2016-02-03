@@ -34,7 +34,7 @@
 				name: CMDBuild.core.constants.Proxy.CRON_INPUT_TYPE,
 				inputValue: CMDBuild.core.constants.Proxy.ADVANCED,
 				boxLabel: tr.advanced,
-				width: CMDBuild.LABEL_WIDTH,
+				width: CMDBuild.core.constants.FieldWidths.LABEL,
 
 				listeners: {
 					change: function(radio, value) {

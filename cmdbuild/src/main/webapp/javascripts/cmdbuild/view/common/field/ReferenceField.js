@@ -105,7 +105,7 @@
 	}
 
 	Ext.define("CMDBuild.Management.ReferenceField.Field", {
-		extend: "CMDBuild.Management.SearchableCombo",
+		extend: "CMDBuild.view.common.field.SearchableCombo",
 
 		mixins: {
 			observable: 'Ext.util.Observable'
@@ -123,7 +123,7 @@
 
 			Ext.apply(this, {
 				fieldLabel: attribute.description || attribute.name,
-				labelWidth: CMDBuild.LABEL_WIDTH,
+				labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
 				name: attribute.name,
 				store: store,
 				queryMode: "local",

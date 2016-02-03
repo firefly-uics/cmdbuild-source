@@ -3,7 +3,10 @@
 	Ext.define('CMDBuild.view.administration.workflow.tabs.properties.panel.UploadXpdl', {
 		extend: 'Ext.form.Panel',
 
-		requires: ['CMDBuild.core.constants.Proxy'],
+		requires: [
+			'CMDBuild.core.constants.FieldWidths',
+			'CMDBuild.core.constants.Proxy'
+		],
 
 		mixins: ['CMDBuild.view.common.PanelFunctions'],
 
@@ -30,8 +33,8 @@
 					Ext.create('Ext.form.field.File', {
 						name: CMDBuild.core.constants.Proxy.XPDL, // TODO: waiting for refactor (rename in "file")
 						fieldLabel: CMDBuild.Translation.xpdlFile,
-						labelWidth: CMDBuild.LABEL_WIDTH,
-						maxWidth: CMDBuild.ADM_BIG_FIELD_WIDTH,
+						labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
+						maxWidth: CMDBuild.core.constants.FieldWidths.ADMINISTRATION_BIG,
 						flex: 1,
 						margin: '0 5 5 0',
 						allowBlank: true

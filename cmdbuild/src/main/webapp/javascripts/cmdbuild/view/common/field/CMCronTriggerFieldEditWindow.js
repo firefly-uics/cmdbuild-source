@@ -89,7 +89,7 @@
 					this.step,
 					{
 						frame: true,
-						labelWidth: CMDBuild.LABEL_WIDTH,
+						labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
 
 						layout: {
 							type: 'vbox',
@@ -101,7 +101,7 @@
 					this.range,
 					{
 						frame: true,
-						labelWidth: CMDBuild.LABEL_WIDTH,
+						labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
 
 						layout: {
 							type: 'vbox',
@@ -116,7 +116,7 @@
 					this.exactly,
 					{
 						frame: true,
-						labelWidth: CMDBuild.LABEL_WIDTH,
+						labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
 
 						layout: {
 							type: 'vbox',

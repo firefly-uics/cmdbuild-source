@@ -4,6 +4,7 @@
 		extend: 'Ext.form.Panel',
 
 		requires: [
+			'CMDBuild.core.constants.FieldWidths',
 			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.proxy.widget.OpenReport'
 		],
@@ -43,8 +44,8 @@
 						name: CMDBuild.core.constants.Proxy.EXTENSION,
 						fieldLabel: CMDBuild.Translation.format,
 						labelAlign: 'right',
-						labelWidth: CMDBuild.LABEL_WIDTH,
-						maxWidth: CMDBuild.MEDIUM_FIELD_WIDTH,
+						labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
+						maxWidth: CMDBuild.core.constants.FieldWidths.STANDARD_MEDIUM,
 						valueField: CMDBuild.core.constants.Proxy.VALUE,
 						displayField: CMDBuild.core.constants.Proxy.DESCRIPTION,
 						value: CMDBuild.core.constants.Proxy.PDF,
@@ -64,7 +65,7 @@
 						},
 
 						defaults: {
-							maxWidth: CMDBuild.BIG_FIELD_WIDTH
+							maxWidth: CMDBuild.core.constants.FieldWidths.STANDARD_BIG
 						},
 
 						items: []

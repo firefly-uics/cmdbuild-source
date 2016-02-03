@@ -4,8 +4,7 @@
 	 * @deprecated (CMDBuild.view.common.field.comboBox.Erasable)
 	 */
 	Ext.define('CMDBuild.view.common.field.CMErasableCombo', {
-		alternateClassName: 'CMDBuild.field.ErasableCombo', // Legacy class name
-		extend: 'CMDBuild.field.CMBaseCombo',
+		extend: 'CMDBuild.view.common.field.CMBaseCombo',
 		alias: 'cmerasablecombo',
 
 		trigger1cls: Ext.form.field.ComboBox.triggerCls,

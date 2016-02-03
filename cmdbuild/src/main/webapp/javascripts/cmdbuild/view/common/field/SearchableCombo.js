@@ -4,8 +4,7 @@
 	 * @deprecated (CMDBuild.view.common.field.comboBox.Searchable)
 	 */
 	Ext.define("CMDBuild.view.common.field.SearchableCombo", {
-		extend: "CMDBuild.field.CMBaseCombo",
-		alternateClassName: 'CMDBuild.Management.SearchableCombo', // Legacy class name
+		extend: "CMDBuild.view.common.field.CMBaseCombo",
 
 		trigger1Cls: Ext.baseCSSPrefix + 'form-arrow-trigger',
 		trigger2Cls: Ext.baseCSSPrefix + 'form-clear-trigger',
@@ -174,7 +173,7 @@
 			try {
 				return record.get("Description").replace(/\n/g," ");
 			} catch (e) {
-				_error('CMDBuild.Management.SearchableCombo recordDescriptionFixedForCarriageReturnBugOnComboBoxes error', e);
+				_error('CMDBuild.view.common.field.SearchableCombo recordDescriptionFixedForCarriageReturnBugOnComboBoxes error', e);
 			}
 		},
 

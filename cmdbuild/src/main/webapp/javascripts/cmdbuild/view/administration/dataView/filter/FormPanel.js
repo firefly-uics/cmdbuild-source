@@ -4,6 +4,7 @@
 		extend: 'Ext.form.Panel',
 
 		requires: [
+			'CMDBuild.core.constants.FieldWidths',
 			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.proxy.dataView.Filter'
 		],
@@ -35,8 +36,8 @@
 			var classesCombobox = Ext.create('Ext.form.field.ComboBox', {
 				name: CMDBuild.core.constants.Proxy.SOURCE_CLASS_NAME,
 				fieldLabel: CMDBuild.Translation.targetClass,
-				labelWidth: CMDBuild.LABEL_WIDTH,
-				maxWidth: CMDBuild.ADM_BIG_FIELD_WIDTH,
+				labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
+				maxWidth: CMDBuild.core.constants.FieldWidths.ADMINISTRATION_BIG,
 				valueField: CMDBuild.core.constants.Proxy.NAME,
 				displayField: CMDBuild.core.constants.Proxy.TEXT,
 				forceSelection: true,
@@ -106,16 +107,16 @@
 						name: CMDBuild.core.constants.Proxy.NAME,
 						itemId: CMDBuild.core.constants.Proxy.NAME,
 						fieldLabel: CMDBuild.Translation.name,
-						labelWidth: CMDBuild.LABEL_WIDTH,
-						maxWidth: CMDBuild.ADM_BIG_FIELD_WIDTH,
+						labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
+						maxWidth: CMDBuild.core.constants.FieldWidths.ADMINISTRATION_BIG,
 						allowBlank: false,
 						cmImmutable: true
 					}),
 					Ext.create('CMDBuild.view.common.field.translatable.Text', {
 						name: CMDBuild.core.constants.Proxy.DESCRIPTION,
 						fieldLabel: CMDBuild.Translation.descriptionLabel,
-						labelWidth: CMDBuild.LABEL_WIDTH,
-						maxWidth: CMDBuild.ADM_BIG_FIELD_WIDTH,
+						labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
+						maxWidth: CMDBuild.core.constants.FieldWidths.ADMINISTRATION_BIG,
 						allowBlank: false,
 						vtype: 'commentextended',
 
@@ -129,7 +130,7 @@
 					this.advancedFilterField = Ext.create('CMDBuild.view.common.field.filter.advanced.Advanced', {
 						name: CMDBuild.core.constants.Proxy.FILTER,
 						fieldLabel: CMDBuild.Translation.filter,
-						labelWidth: CMDBuild.LABEL_WIDTH,
+						labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
 						fieldConfiguration: {
 							targetClassField: classesCombobox,
 							enabledPanels: ['attribute', 'relation']

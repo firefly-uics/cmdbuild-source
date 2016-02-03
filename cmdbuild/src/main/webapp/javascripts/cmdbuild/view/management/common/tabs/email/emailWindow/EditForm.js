@@ -3,7 +3,10 @@
 	Ext.define('CMDBuild.view.management.common.tabs.email.emailWindow.EditForm', {
 		extend: 'Ext.form.Panel',
 
-		requires: ['CMDBuild.core.constants.Proxy'],
+		requires: [
+			'CMDBuild.core.constants.FieldWidths',
+			'CMDBuild.core.constants.Proxy'
+		],
 
 		mixins: ['CMDBuild.view.common.PanelFunctions'],
 
@@ -35,7 +38,7 @@
 
 		defaults: {
 			labelAlign: 'right',
-			labelWidth: CMDBuild.LABEL_WIDTH
+			labelWidth: CMDBuild.core.constants.FieldWidths.LABEL
 		},
 
 		initComponent: function() {
@@ -45,7 +48,7 @@
 						name: CMDBuild.core.constants.Proxy.KEEP_SYNCHRONIZATION,
 						fieldLabel: CMDBuild.Translation.keepSync,
 						labelAlign: 'right',
-						labelWidth: CMDBuild.LABEL_WIDTH,
+						labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
 						disabled: true,
 						inputValue: true,
 						uncheckedValue: false
@@ -53,14 +56,14 @@
 					this.delayField = Ext.create('CMDBuild.view.common.field.delay.Delay', {
 						name: CMDBuild.core.constants.Proxy.DELAY,
 						fieldLabel: CMDBuild.Translation.delay,
-						labelWidth: CMDBuild.LABEL_WIDTH,
+						labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
 						labelAlign: 'right',
-						maxWidth: CMDBuild.MEDIUM_FIELD_WIDTH
+						maxWidth: CMDBuild.core.constants.FieldWidths.STANDARD_MEDIUM
 					}),
 					this.fromField = Ext.create('Ext.form.field.Display', {
 						name: CMDBuild.core.constants.Proxy.FROM,
 						fieldLabel: CMDBuild.Translation.from,
-						labelWidth: CMDBuild.LABEL_WIDTH,
+						labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
 						labelAlign: 'right',
 						vtype: 'multiemail',
 						submitValue: true,

@@ -4,6 +4,7 @@
 		extend: 'CMDBuild.PopupWindow',
 
 		requires: [
+			'CMDBuild.core.constants.FieldWidths',
 			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.proxy.common.tabs.email.Attachment'
 		],
@@ -40,7 +41,7 @@
 						itemId: CMDBuild.core.constants.Proxy.TOOLBAR_TOP,
 						items: [
 							this.classComboBox = Ext.create('Ext.form.field.ComboBox', {
-								labelWidth: CMDBuild.LABEL_WIDTH,
+								labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
 								fieldLabel: CMDBuild.Translation.selectAClass,
 								labelAlign: 'right',
 								valueField: CMDBuild.core.constants.Proxy.ID,

@@ -50,9 +50,9 @@
 		},
 		constructor: function() {
 
-			this.classList = new CMDBuild.field.CMBaseCombo({
+			this.classList = new CMDBuild.view.common.field.CMBaseCombo({
 				store: _CMCache.getClassesStore(),
-				labelWidth: CMDBuild.LABEL_WIDTH,
+				labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
 				fieldLabel : tr.selectaclass,
 				width: 260,
 				name : 'idClass',
@@ -76,8 +76,8 @@
 					this.classList,
 				{
 					xtype: 'filefield',
-					width: CMDBuild.BIG_FIELD_ONLY_WIDTH,
-					labelWidth: CMDBuild.LABEL_WIDTH,
+					width: CMDBuild.core.constants.FieldWidths.STANDARD_BIG_FIELD_ONLY,
+					labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
 					fieldLabel: tr.csvfile,
 					allowBlank: false,
 					name: 'file'
@@ -86,7 +86,7 @@
 				new Ext.form.ComboBox({
 					name: 'separator',
 					fieldLabel: tr.separator,
-					labelWidth: CMDBuild.LABEL_WIDTH,
+					labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
 					valueField: 'value',
 					displayField: 'value',
 					hiddenName: 'separator',

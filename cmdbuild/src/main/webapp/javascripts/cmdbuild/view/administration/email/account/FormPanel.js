@@ -3,7 +3,10 @@
 	Ext.define('CMDBuild.view.administration.email.account.FormPanel', {
 		extend: 'Ext.form.Panel',
 
-		requires: ['CMDBuild.core.constants.Proxy'],
+		requires: [
+			'CMDBuild.core.constants.FieldWidths',
+			'CMDBuild.core.constants.Proxy'
+		],
 
 		mixins: ['CMDBuild.view.common.PanelFunctions'],
 
@@ -111,8 +114,8 @@
 								overflowY: 'auto',
 
 								defaults: {
-									labelWidth: CMDBuild.LABEL_WIDTH,
-									maxWidth: CMDBuild.ADM_BIG_FIELD_WIDTH
+									labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
+									maxWidth: CMDBuild.core.constants.FieldWidths.ADMINISTRATION_BIG
 								},
 
 								layout: {
@@ -124,8 +127,8 @@
 									Ext.create('Ext.form.field.Text', {
 										name: CMDBuild.core.constants.Proxy.NAME,
 										fieldLabel: CMDBuild.Translation.name,
-										labelWidth: CMDBuild.LABEL_WIDTH,
-										maxWidth: CMDBuild.ADM_BIG_FIELD_WIDTH,
+										labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
+										maxWidth: CMDBuild.core.constants.FieldWidths.ADMINISTRATION_BIG,
 										allowBlank: false,
 										cmImmutable: true
 									}),
@@ -141,8 +144,8 @@
 								overflowY: 'auto',
 
 								defaults: {
-									labelWidth: CMDBuild.LABEL_WIDTH,
-									maxWidth: CMDBuild.ADM_BIG_FIELD_WIDTH
+									labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
+									maxWidth: CMDBuild.core.constants.FieldWidths.ADMINISTRATION_BIG
 								},
 
 								layout: {
@@ -181,8 +184,8 @@
 								overflowY: 'auto',
 
 								defaults: {
-									labelWidth: CMDBuild.LABEL_WIDTH,
-									maxWidth: CMDBuild.ADM_BIG_FIELD_WIDTH
+									labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
+									maxWidth: CMDBuild.core.constants.FieldWidths.ADMINISTRATION_BIG
 								},
 
 								layout: {
@@ -208,10 +211,10 @@
 										name: CMDBuild.core.constants.Proxy.SMTP_PORT,
 										fieldLabel: CMDBuild.Translation.smtpPort,
 										allowBlank: true,
-										width: CMDBuild.ADM_SMALL_FIELD_WIDTH,
+										width: CMDBuild.core.constants.FieldWidths.ADMINISTRATION_SMALL,
 										minValue: 1,
 										maxValue: 65535,
-										maxWidth: CMDBuild.ADM_SMALL_FIELD_WIDTH
+										maxWidth: CMDBuild.core.constants.FieldWidths.ADMINISTRATION_SMALL
 									},
 									{
 										xtype: 'checkbox',
@@ -230,8 +233,8 @@
 								overflowY: 'auto',
 
 								defaults: {
-									labelWidth: CMDBuild.LABEL_WIDTH,
-									maxWidth: CMDBuild.ADM_BIG_FIELD_WIDTH
+									labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
+									maxWidth: CMDBuild.core.constants.FieldWidths.ADMINISTRATION_BIG
 								},
 
 								layout: {
@@ -252,7 +255,7 @@
 										allowBlank: true,
 										minValue: 1,
 										maxValue: 65535,
-										maxWidth: CMDBuild.ADM_SMALL_FIELD_WIDTH
+										maxWidth: CMDBuild.core.constants.FieldWidths.ADMINISTRATION_SMALL
 									},
 									{
 										xtype: 'checkbox',

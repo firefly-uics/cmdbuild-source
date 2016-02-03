@@ -4,6 +4,7 @@
 		extend: 'CMDBuild.view.administration.widget.form.AbstractWidgetDefinitionPanel',
 
 		requires: [
+			'CMDBuild.core.constants.FieldWidths',
 			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.proxy.widget.CreateModifyCard'
 		],
@@ -43,13 +44,13 @@
 						Ext.create('Ext.form.field.Checkbox', {
 							name: CMDBuild.core.constants.Proxy.READ_ONLY,
 							fieldLabel: CMDBuild.Translation.readOnly,
-							labelWidth: CMDBuild.LABEL_WIDTH
+							labelWidth: CMDBuild.core.constants.FieldWidths.LABEL
 						}),
 						this.targetClass = Ext.create('Ext.form.field.ComboBox', {
 							name: CMDBuild.core.constants.Proxy.TARGET_CLASS,
 							fieldLabel: CMDBuild.Translation.targetClass,
-							labelWidth: CMDBuild.LABEL_WIDTH,
-							maxWidth: CMDBuild.ADM_BIG_FIELD_WIDTH,
+							labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
+							maxWidth: CMDBuild.core.constants.FieldWidths.ADMINISTRATION_BIG,
 							valueField: CMDBuild.core.constants.Proxy.NAME,
 							displayField: CMDBuild.core.constants.Proxy.TEXT, // TODO: waiting for refactor (rename description)
 							editable: false,
@@ -61,8 +62,8 @@
 						this.filter = Ext.create('Ext.form.field.TextArea', {
 							name: CMDBuild.core.constants.Proxy.FILTER,
 							fieldLabel: CMDBuild.Translation.cardCqlSelector,
-							labelWidth: CMDBuild.LABEL_WIDTH,
-							maxWidth: CMDBuild.ADM_BIG_FIELD_WIDTH
+							labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
+							maxWidth: CMDBuild.core.constants.FieldWidths.ADMINISTRATION_BIG
 						})
 					]
 				})

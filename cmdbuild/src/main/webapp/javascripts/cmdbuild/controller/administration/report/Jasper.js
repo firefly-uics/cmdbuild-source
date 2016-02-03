@@ -4,6 +4,7 @@
 		extend: 'CMDBuild.controller.common.abstract.Base',
 
 		requires: [
+			'CMDBuild.core.constants.FieldWidths',
 			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.Message',
 			'CMDBuild.core.proxy.Index',
@@ -402,8 +403,8 @@
 								Ext.create('Ext.form.field.File', {
 									name: namePrefix + i,
 									fieldLabel: image[CMDBuild.core.constants.Proxy.NAME],
-									labelWidth: CMDBuild.LABEL_WIDTH,
-									maxWidth: CMDBuild.ADM_BIG_FIELD_WIDTH,
+									labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
+									maxWidth: CMDBuild.core.constants.FieldWidths.ADMINISTRATION_BIG,
 									allowBlank: true
 								})
 							);

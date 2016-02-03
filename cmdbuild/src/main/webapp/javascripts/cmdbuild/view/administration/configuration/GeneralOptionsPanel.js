@@ -4,6 +4,7 @@
 		extend: 'Ext.form.Panel',
 
 		requires: [
+			'CMDBuild.core.constants.FieldWidths',
 			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.proxy.configuration.GeneralOptions'
 		],
@@ -32,8 +33,8 @@
 
 		fieldDefaults: {
 			labelAlign: 'left',
-			labelWidth: CMDBuild.CFG_LABEL_WIDTH,
-			maxWidth: CMDBuild.CFG_MEDIUM_FIELD_WIDTH
+			labelWidth: CMDBuild.core.constants.FieldWidths.LABEL_CONFIGURATION,
+			maxWidth: CMDBuild.core.constants.FieldWidths.CONFIGURATION_MEDIUM
 		},
 
 		initComponent: function() {
@@ -81,8 +82,8 @@
 							this.instanceNameField = Ext.create('CMDBuild.view.common.field.translatable.Text', {
 								name: CMDBuild.core.constants.Proxy.INSTANCE_NAME,
 								fieldLabel: CMDBuild.Translation.instanceName,
-								labelWidth: CMDBuild.CFG_LABEL_WIDTH,
-								maxWidth: CMDBuild.CFG_BIG_FIELD_WIDTH,
+								labelWidth: CMDBuild.core.constants.FieldWidths.LABEL_CONFIGURATION,
+								maxWidth: CMDBuild.core.constants.FieldWidths.CONFIGURATION_BIG,
 								allowBlank: true,
 
 								translationFieldConfig: {

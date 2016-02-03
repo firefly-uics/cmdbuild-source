@@ -4,6 +4,7 @@
 		extend: 'CMDBuild.core.PopupWindow',
 
 		requires: [
+			'CMDBuild.core.constants.FieldWidths',
 			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.proxy.Csv'
 		],
@@ -51,16 +52,16 @@
 			this.csvFileField = Ext.create('Ext.form.field.File', {
 				name: CMDBuild.core.constants.Proxy.FILE,
 				fieldLabel: CMDBuild.Translation.csvFile,
-				labelWidth: CMDBuild.LABEL_WIDTH,
+				labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
 				labelAlign: 'right',
 				allowBlank: true,
-				width: CMDBuild.BIG_FIELD_WIDTH
+				width: CMDBuild.core.constants.FieldWidths.STANDARD_BIG
 			});
 
 			this.csvSeparatorCombo = Ext.create('Ext.form.field.ComboBox', {
 				name: 'separator',
 				fieldLabel: CMDBuild.Translation.separator,
-				labelWidth: CMDBuild.LABEL_WIDTH,
+				labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
 				labelAlign: 'right',
 				valueField: CMDBuild.core.constants.Proxy.VALUE,
 				displayField: CMDBuild.core.constants.Proxy.VALUE,
@@ -76,11 +77,11 @@
 			this.csvImportModeCombo = Ext.create('Ext.form.field.ComboBox', {
 				name: CMDBuild.core.constants.Proxy.MODE,
 				fieldLabel: CMDBuild.Translation.mode,
-				labelWidth: CMDBuild.LABEL_WIDTH,
+				labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
 				labelAlign: 'right',
 				valueField: CMDBuild.core.constants.Proxy.VALUE,
 				displayField: CMDBuild.core.constants.Proxy.DESCRIPTION,
-				width: CMDBuild.MEDIUM_FIELD_WIDTH,
+				width: CMDBuild.core.constants.FieldWidths.STANDARD_MEDIUM,
 				value: 'replace',
 				editable: false,
 				allowBlank: false,

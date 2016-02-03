@@ -4,6 +4,7 @@
 		extend: 'Ext.form.Panel',
 
 		requires: [
+			'CMDBuild.core.constants.FieldWidths',
 			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.proxy.workflow.Properties'
 		],
@@ -35,8 +36,8 @@
 					Ext.create('Ext.form.field.Text', {
 						name: CMDBuild.core.constants.Proxy.NAME,
 						fieldLabel: CMDBuild.Translation.name,
-						labelWidth: CMDBuild.LABEL_WIDTH,
-						maxWidth: CMDBuild.ADM_BIG_FIELD_WIDTH,
+						labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
+						maxWidth: CMDBuild.core.constants.FieldWidths.ADMINISTRATION_BIG,
 						allowBlank: false,
 						vtype: 'alphanum',
 						cmImmutable: true
@@ -44,8 +45,8 @@
 					Ext.create('CMDBuild.view.common.field.translatable.Text', {
 						name: CMDBuild.core.constants.Proxy.DESCRIPTION,
 						fieldLabel: CMDBuild.Translation.descriptionLabel,
-						labelWidth: CMDBuild.LABEL_WIDTH,
-						maxWidth: CMDBuild.ADM_BIG_FIELD_WIDTH,
+						labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
+						maxWidth: CMDBuild.core.constants.FieldWidths.ADMINISTRATION_BIG,
 						allowBlank: false,
 						vtype: 'commentextended',
 
@@ -58,8 +59,8 @@
 					this.parentCombo = Ext.create('Ext.form.field.ComboBox', {
 						name: CMDBuild.core.constants.Proxy.PARENT,
 						fieldLabel: CMDBuild.Translation.inheritsFrom,
-						labelWidth: CMDBuild.LABEL_WIDTH,
-						maxWidth: CMDBuild.ADM_BIG_FIELD_WIDTH,
+						labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
+						maxWidth: CMDBuild.core.constants.FieldWidths.ADMINISTRATION_BIG,
 						valueField: CMDBuild.core.constants.Proxy.ID,
 						displayField: CMDBuild.core.constants.Proxy.TEXT,
 						editable: false,
@@ -71,7 +72,7 @@
 					Ext.create('Ext.form.field.Checkbox',{
 						name: CMDBuild.core.constants.Proxy.IS_SUPER_CLASS,
 						fieldLabel: CMDBuild.Translation.superclass,
-						labelWidth: CMDBuild.LABEL_WIDTH,
+						labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
 						inputValue: true,
 						uncheckedValue: false,
 						cmImmutable: true
@@ -79,14 +80,14 @@
 					Ext.create('Ext.form.field.Checkbox',{
 						name: CMDBuild.core.constants.Proxy.ACTIVE,
 						fieldLabel: CMDBuild.Translation.active,
-						labelWidth: CMDBuild.LABEL_WIDTH,
+						labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
 						inputValue: true,
 						uncheckedValue: false
 					}),
 					Ext.create('Ext.form.field.Checkbox',{
 						name: CMDBuild.core.constants.Proxy.USER_STOPPABLE,
 						fieldLabel: CMDBuild.Translation.userStoppable,
-						labelWidth: CMDBuild.LABEL_WIDTH
+						labelWidth: CMDBuild.core.constants.FieldWidths.LABEL
 					}),
 					{
 						xtype: 'hiddenfield',

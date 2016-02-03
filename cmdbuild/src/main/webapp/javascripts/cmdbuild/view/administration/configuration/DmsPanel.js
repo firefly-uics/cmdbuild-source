@@ -3,7 +3,10 @@
 	Ext.define('CMDBuild.view.administration.configuration.DmsPanel', {
 		extend: 'Ext.form.Panel',
 
-		requires: ['CMDBuild.core.constants.Proxy'],
+		requires: [
+			'CMDBuild.core.constants.FieldWidths',
+			'CMDBuild.core.constants.Proxy'
+		],
 
 		mixins: ['CMDBuild.view.common.PanelFunctions'],
 
@@ -24,8 +27,8 @@
 
 		fieldDefaults: {
 			labelAlign: 'left',
-			labelWidth: CMDBuild.CFG_LABEL_WIDTH,
-			maxWidth: CMDBuild.CFG_MEDIUM_FIELD_WIDTH
+			labelWidth: CMDBuild.core.constants.FieldWidths.LABEL_CONFIGURATION,
+			maxWidth: CMDBuild.core.constants.FieldWidths.CONFIGURATION_MEDIUM
 		},
 
 		initComponent: function() {
@@ -81,7 +84,7 @@
 							{
 								name: CMDBuild.core.constants.Proxy.SERVER_URL,
 								fieldLabel: CMDBuild.Translation.host,
-								maxWidth: CMDBuild.CFG_BIG_FIELD_WIDTH,
+								maxWidth: CMDBuild.core.constants.FieldWidths.CONFIGURATION_BIG,
 								allowBlank: false
 							},
 							{
@@ -111,7 +114,7 @@
 							{
 								name: CMDBuild.core.constants.Proxy.FILE_SERVER_URL,
 								fieldLabel: CMDBuild.Translation.host,
-								maxWidth: CMDBuild.CFG_BIG_FIELD_WIDTH,
+								maxWidth: CMDBuild.core.constants.FieldWidths.CONFIGURATION_BIG,
 								allowBlank: false
 							},
 							{
@@ -135,13 +138,13 @@
 							{
 								name: CMDBuild.core.constants.Proxy.REPOSITORY_FILE_SERVER_PATH,
 								fieldLabel: CMDBuild.Translation.fileServerPath,
-								maxWidth: CMDBuild.CFG_BIG_FIELD_WIDTH,
+								maxWidth: CMDBuild.core.constants.FieldWidths.CONFIGURATION_BIG,
 								allowBlank: false
 							},
 							{
 								name: CMDBuild.core.constants.Proxy.REPOSITORY_WEB_SERVICE_PATH,
 								fieldLabel: CMDBuild.Translation.webServicePath,
-								maxWidth: CMDBuild.CFG_BIG_FIELD_WIDTH,
+								maxWidth: CMDBuild.core.constants.FieldWidths.CONFIGURATION_BIG,
 								allowBlank: false
 							},
 							{

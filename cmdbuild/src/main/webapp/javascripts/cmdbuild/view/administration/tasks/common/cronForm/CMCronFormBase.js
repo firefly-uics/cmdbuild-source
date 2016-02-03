@@ -34,7 +34,7 @@
 				name: CMDBuild.core.constants.Proxy.CRON_INPUT_TYPE,
 				inputValue: CMDBuild.core.constants.Proxy.BASE,
 				boxLabel: tr.basic,
-				width: CMDBuild.LABEL_WIDTH,
+				width: CMDBuild.core.constants.FieldWidths.LABEL,
 
 				listeners: {
 					change: function(radio, value) {
@@ -49,7 +49,7 @@
 				displayField: CMDBuild.core.constants.Proxy.DESCRIPTION,
 				forceSelection: true,
 				editable: false,
-				margins: '0 0 0 ' + (CMDBuild.LABEL_WIDTH - 45),
+				margins: '0 0 0 ' + (CMDBuild.core.constants.FieldWidths.LABEL - 45),
 
 				store: Ext.create('Ext.data.SimpleStore', {
 					fields: [CMDBuild.core.constants.Proxy.VALUE, CMDBuild.core.constants.Proxy.DESCRIPTION],

@@ -196,10 +196,10 @@
 				this.dbTypeCombo = Ext.create('Ext.form.field.ComboBox', {
 					name: CMDBuild.core.constants.Proxy.DATASOURCE_DB_TYPE,
 					fieldLabel: CMDBuild.Translation.administration.tasks.type,
-					labelWidth: CMDBuild.LABEL_WIDTH,
+					labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
 					displayField: CMDBuild.core.constants.Proxy.VALUE,
 					valueField: CMDBuild.core.constants.Proxy.KEY,
-					maxWidth: CMDBuild.ADM_BIG_FIELD_WIDTH,
+					maxWidth: CMDBuild.core.constants.FieldWidths.ADMINISTRATION_BIG,
 					forceSelection: true,
 					editable: false,
 					anchor: '100%',
@@ -216,43 +216,43 @@
 				this.dbAddressField = Ext.create('Ext.form.field.Text', {
 					name: CMDBuild.core.constants.Proxy.DATASOURCE_ADDRESS,
 					fieldLabel: CMDBuild.Translation.address,
-					labelWidth: CMDBuild.LABEL_WIDTH,
-					maxWidth: CMDBuild.CFG_BIG_FIELD_WIDTH,
+					labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
+					maxWidth: CMDBuild.core.constants.FieldWidths.CONFIGURATION_BIG,
 					anchor: '100%'
 				});
 
 				this.dbPortField = Ext.create('Ext.form.field.Number', {
 					name: CMDBuild.core.constants.Proxy.DATASOURCE_DB_PORT,
 					fieldLabel: CMDBuild.Translation.port,
-					labelWidth: CMDBuild.LABEL_WIDTH,
-					maxWidth: CMDBuild.ADM_BIG_FIELD_WIDTH,
+					labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
+					maxWidth: CMDBuild.core.constants.FieldWidths.ADMINISTRATION_BIG,
 					minValue: 1,
 					maxValue: 65535,
-					maxWidth: CMDBuild.ADM_SMALL_FIELD_WIDTH,
+					maxWidth: CMDBuild.core.constants.FieldWidths.ADMINISTRATION_SMALL,
 					anchor: '100%'
 				});
 
 				this.dbNameField = Ext.create('Ext.form.field.Text', {
 					name: CMDBuild.core.constants.Proxy.DATASOURCE_DB_NAME,
 					fieldLabel: tr.dbName,
-					labelWidth: CMDBuild.LABEL_WIDTH,
-					maxWidth: CMDBuild.CFG_BIG_FIELD_WIDTH,
+					labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
+					maxWidth: CMDBuild.core.constants.FieldWidths.CONFIGURATION_BIG,
 					anchor: '100%'
 				});
 
 				this.dbInstanceNameField = Ext.create('Ext.form.field.Text', {
 					name: CMDBuild.core.constants.Proxy.DATASOURCE_DB_INSATANCE_NAME,
 					fieldLabel: tr.instanceName,
-					labelWidth: CMDBuild.LABEL_WIDTH,
-					maxWidth: CMDBuild.CFG_BIG_FIELD_WIDTH,
+					labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
+					maxWidth: CMDBuild.core.constants.FieldWidths.CONFIGURATION_BIG,
 					anchor: '100%'
 				});
 
 				this.dbUsernameField = Ext.create('Ext.form.field.Text', {
 					name: CMDBuild.core.constants.Proxy.DATASOURCE_DB_USERNAME,
 					fieldLabel: CMDBuild.Translation.username,
-					labelWidth: CMDBuild.LABEL_WIDTH,
-					maxWidth: CMDBuild.CFG_BIG_FIELD_WIDTH,
+					labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
+					maxWidth: CMDBuild.core.constants.FieldWidths.CONFIGURATION_BIG,
 					anchor: '100%'
 				});
 
@@ -260,16 +260,16 @@
 					name: CMDBuild.core.constants.Proxy.DATASOURCE_DB_PASSWORD,
 					inputType: 'password',
 					fieldLabel: CMDBuild.Translation.password,
-					labelWidth: CMDBuild.LABEL_WIDTH,
-					maxWidth: CMDBuild.CFG_BIG_FIELD_WIDTH,
+					labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
+					maxWidth: CMDBuild.core.constants.FieldWidths.CONFIGURATION_BIG,
 					anchor: '100%'
 				});
 
 				this.dbSourceFilterField = Ext.create('Ext.form.field.Text', {
 					name: CMDBuild.core.constants.Proxy.DATASOURCE_TABLE_VIEW_PREFIX,
 					fieldLabel: tr.sourceFilter,
-					labelWidth: CMDBuild.LABEL_WIDTH,
-					maxWidth: CMDBuild.CFG_BIG_FIELD_WIDTH,
+					labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
+					maxWidth: CMDBuild.core.constants.FieldWidths.CONFIGURATION_BIG,
 					anchor: '100%'
 				});
 
@@ -305,16 +305,16 @@
 				this.ldapAddressField = Ext.create('Ext.form.field.Text', {
 					name: CMDBuild.core.constants.Proxy.ADDRESS,
 					fieldLabel: CMDBuild.Translation.address,
-					labelWidth: CMDBuild.LABEL_WIDTH,
-					width: CMDBuild.CFG_BIG_FIELD_WIDTH,
+					labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
+					width: CMDBuild.core.constants.FieldWidths.CONFIGURATION_BIG,
 					allowBlank: false
 				});
 
 				this.ldapUsernameField = Ext.create('Ext.form.field.Text', {
 					name: CMDBuild.core.constants.Proxy.USERNAME,
 					fieldLabel: CMDBuild.Translation.username,
-					labelWidth: CMDBuild.LABEL_WIDTH,
-					width: CMDBuild.CFG_BIG_FIELD_WIDTH,
+					labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
+					width: CMDBuild.core.constants.FieldWidths.CONFIGURATION_BIG,
 					allowBlank: false
 				});
 
@@ -322,8 +322,8 @@
 					name: CMDBuild.core.constants.Proxy.PASSWORD,
 					inputType: 'password',
 					fieldLabel: CMDBuild.Translation.password,
-					labelWidth: CMDBuild.LABEL_WIDTH,
-					width: CMDBuild.CFG_BIG_FIELD_WIDTH,
+					labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
+					width: CMDBuild.core.constants.FieldWidths.CONFIGURATION_BIG,
 					allowBlank: false
 				});
 

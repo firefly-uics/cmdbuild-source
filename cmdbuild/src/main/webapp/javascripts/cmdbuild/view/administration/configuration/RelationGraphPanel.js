@@ -3,7 +3,10 @@
 	Ext.define('CMDBuild.view.administration.configuration.RelationGraphPanel', {
 		extend: 'Ext.form.Panel',
 
-		requires: ['CMDBuild.core.constants.Proxy'],
+		requires: [
+			'CMDBuild.core.constants.FieldWidths',
+			'CMDBuild.core.constants.Proxy'
+		],
 
 		mixins: ['CMDBuild.view.common.PanelFunctions'],
 
@@ -24,8 +27,8 @@
 
 		fieldDefaults: {
 			labelAlign: 'left',
-			labelWidth: CMDBuild.CFG_LABEL_WIDTH,
-			maxWidth: CMDBuild.CFG_MEDIUM_FIELD_WIDTH
+			labelWidth: CMDBuild.core.constants.FieldWidths.LABEL_CONFIGURATION,
+			maxWidth: CMDBuild.core.constants.FieldWidths.CONFIGURATION_MEDIUM
 		},
 
 		initComponent: function() {
@@ -115,7 +118,7 @@
 							Ext.create('Ext.form.field.ComboBox', {
 								name: CMDBuild.core.constants.Proxy.DISPLAY_LABEL,
 								fieldLabel: CMDBuild.Translation.displayNodeLabel,
-								maxWidth: CMDBuild.CFG_MEDIUM_FIELD_WIDTH,
+								maxWidth: CMDBuild.core.constants.FieldWidths.CONFIGURATION_MEDIUM,
 								valueField: CMDBuild.core.constants.Proxy.ID,
 								displayField: CMDBuild.core.constants.Proxy.DESCRIPTION,
 								editable: false,
@@ -144,7 +147,7 @@
 							Ext.create('CMDBuild.view.common.field.slider.SingleWithExtremeLabels', {
 								name: CMDBuild.core.constants.Proxy.VIEW_POINT_HEIGHT,
 								fieldLabel: CMDBuild.Translation.viewPointHeight,
-								maxWidth: CMDBuild.CFG_BIG_FIELD_WIDTH,
+								maxWidth: CMDBuild.core.constants.FieldWidths.CONFIGURATION_BIG,
 								minLabel: CMDBuild.Translation.min,
 								minValue: 1,
 								maxLabel: CMDBuild.Translation.max,
@@ -154,7 +157,7 @@
 							Ext.create('CMDBuild.view.common.field.slider.SingleWithExtremeLabels', {
 								name: CMDBuild.core.constants.Proxy.VIEW_POINT_DISTANCE,
 								fieldLabel: CMDBuild.Translation.viewPointDistance,
-								maxWidth: CMDBuild.CFG_BIG_FIELD_WIDTH,
+								maxWidth: CMDBuild.core.constants.FieldWidths.CONFIGURATION_BIG,
 								minLabel: CMDBuild.Translation.min,
 								minValue: 1,
 								maxLabel: CMDBuild.Translation.max,

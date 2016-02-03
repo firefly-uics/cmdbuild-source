@@ -4,6 +4,7 @@
 		extend: 'Ext.panel.Panel',
 
 		requires: [
+			'CMDBuild.core.constants.FieldWidths',
 			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.proxy.Configure',
 			'CMDBuild.core.Utils'
@@ -53,8 +54,8 @@
 							Ext.create('Ext.form.field.ComboBox', {
 								name: CMDBuild.core.constants.Proxy.DATABASE_TYPE,
 								fieldLabel: CMDBuild.Translation.type,
-								labelWidth: CMDBuild.LABEL_WIDTH_CONFIGURATION,
-								maxWidth: CMDBuild.CFG_MEDIUM_FIELD_WIDTH,
+								labelWidth: CMDBuild.core.constants.FieldWidths.LABEL_CONFIGURE,
+								maxWidth: CMDBuild.core.constants.FieldWidths.CONFIGURE_MEDIUM,
 								valueField: CMDBuild.core.constants.Proxy.VALUE,
 								displayField: CMDBuild.core.constants.Proxy.DESCRIPTION,
 								editable: false,
@@ -72,15 +73,15 @@
 							Ext.create('Ext.form.field.Text', {
 								name: CMDBuild.core.constants.Proxy.DATABASE_NAME,
 								fieldLabel: CMDBuild.core.Utils.prependMandatoryLabel(CMDBuild.Translation.name),
-								labelWidth: CMDBuild.LABEL_WIDTH_CONFIGURATION,
-								maxWidth: CMDBuild.CFG_MEDIUM_FIELD_WIDTH,
+								labelWidth: CMDBuild.core.constants.FieldWidths.LABEL_CONFIGURE,
+								maxWidth: CMDBuild.core.constants.FieldWidths.CONFIGURE_MEDIUM,
 								allowBlank: false
 							}),
 							this.createSharkSchemaCheckbox = Ext.create('Ext.form.field.Checkbox', {
 								name: CMDBuild.core.constants.Proxy.CREATE_SHARK_SCHEMA,
 								fieldLabel: CMDBuild.Translation.createSharkSchema,
-								labelWidth: CMDBuild.LABEL_WIDTH_CONFIGURATION,
-								maxWidth: CMDBuild.CFG_MEDIUM_FIELD_WIDTH,
+								labelWidth: CMDBuild.core.constants.FieldWidths.LABEL_CONFIGURE,
+								maxWidth: CMDBuild.core.constants.FieldWidths.CONFIGURE_MEDIUM,
 								inputValue: true,
 								uncheckedValue: false
 							})
@@ -99,34 +100,34 @@
 							Ext.create('Ext.form.field.Text', {
 								name: CMDBuild.core.constants.Proxy.CONNECTION_HOST,
 								fieldLabel: CMDBuild.core.Utils.prependMandatoryLabel(CMDBuild.Translation.host),
-								labelWidth: CMDBuild.LABEL_WIDTH_CONFIGURATION,
-								maxWidth: CMDBuild.CFG_MEDIUM_FIELD_WIDTH,
+								labelWidth: CMDBuild.core.constants.FieldWidths.LABEL_CONFIGURE,
+								maxWidth: CMDBuild.core.constants.FieldWidths.CONFIGURE_MEDIUM,
 								allowBlank: false
 							}),
 							Ext.create('Ext.form.field.Text', {
 								name: CMDBuild.core.constants.Proxy.CONNECTION_PORT,
 								fieldLabel: CMDBuild.core.Utils.prependMandatoryLabel(CMDBuild.Translation.port),
-								labelWidth: CMDBuild.LABEL_WIDTH_CONFIGURATION,
-								maxWidth: CMDBuild.CFG_MEDIUM_FIELD_WIDTH,
+								labelWidth: CMDBuild.core.constants.FieldWidths.LABEL_CONFIGURE,
+								maxWidth: CMDBuild.core.constants.FieldWidths.CONFIGURE_MEDIUM,
 								allowBlank: false
 							}),
 							Ext.create('Ext.form.field.Text', {
 								name: CMDBuild.core.constants.Proxy.CONNECTION_USER,
 								fieldLabel: CMDBuild.core.Utils.prependMandatoryLabel(CMDBuild.Translation.superUser),
-								labelWidth: CMDBuild.LABEL_WIDTH_CONFIGURATION,
-								maxWidth: CMDBuild.CFG_MEDIUM_FIELD_WIDTH,
+								labelWidth: CMDBuild.core.constants.FieldWidths.LABEL_CONFIGURE,
+								maxWidth: CMDBuild.core.constants.FieldWidths.CONFIGURE_MEDIUM,
 								allowBlank: false
 							}),
 							Ext.create('Ext.form.field.Text', {
 								name: CMDBuild.core.constants.Proxy.CONNECTION_PASSWORD,
 								fieldLabel: CMDBuild.core.Utils.prependMandatoryLabel(CMDBuild.Translation.password),
-								labelWidth: CMDBuild.LABEL_WIDTH_CONFIGURATION,
-								maxWidth: CMDBuild.CFG_MEDIUM_FIELD_WIDTH,
+								labelWidth: CMDBuild.core.constants.FieldWidths.LABEL_CONFIGURE,
+								maxWidth: CMDBuild.core.constants.FieldWidths.CONFIGURE_MEDIUM,
 								inputType:'password',
 								allowBlank: true
 							}),
 							Ext.create('Ext.container.Container', {
-								margin: '0 0 5 ' + (CMDBuild.LABEL_WIDTH_CONFIGURATION + 5),
+								margin: '0 0 5 ' + (CMDBuild.core.constants.FieldWidths.LABEL_CONFIGURE + 5),
 
 								items: [
 									Ext.create('CMDBuild.core.buttons.text.TestConnection', {
@@ -152,8 +153,8 @@
 							this.databaseUserTypeCombobox = Ext.create('Ext.form.field.ComboBox',{
 								name: CMDBuild.core.constants.Proxy.DATABASE_USER_TYPE,
 								fieldLabel: CMDBuild.Translation.userType,
-								labelWidth: CMDBuild.LABEL_WIDTH_CONFIGURATION,
-								maxWidth: CMDBuild.CFG_MEDIUM_FIELD_WIDTH,
+								labelWidth: CMDBuild.core.constants.FieldWidths.LABEL_CONFIGURE,
+								maxWidth: CMDBuild.core.constants.FieldWidths.CONFIGURE_MEDIUM,
 								valueField: CMDBuild.core.constants.Proxy.VALUE,
 								displayField: CMDBuild.core.constants.Proxy.DESCRIPTION,
 								disablePanelFunctions: true,
@@ -172,22 +173,22 @@
 							this.databaseUserNameField = Ext.create('Ext.form.field.Text', {
 								name: CMDBuild.core.constants.Proxy.DATABASE_USER_NAME,
 								fieldLabel: CMDBuild.core.Utils.prependMandatoryLabel(CMDBuild.Translation.user),
-								labelWidth: CMDBuild.LABEL_WIDTH_CONFIGURATION,
-								maxWidth: CMDBuild.CFG_MEDIUM_FIELD_WIDTH,
+								labelWidth: CMDBuild.core.constants.FieldWidths.LABEL_CONFIGURE,
+								maxWidth: CMDBuild.core.constants.FieldWidths.CONFIGURE_MEDIUM,
 								allowBlank: false
 							}),
 							this.databaseUserPasswordField = Ext.create('Ext.form.field.Text', {
 								name: CMDBuild.core.constants.Proxy.DATABASE_USER_PASSWORD,
 								fieldLabel: CMDBuild.core.Utils.prependMandatoryLabel(CMDBuild.Translation.password),
-								labelWidth: CMDBuild.LABEL_WIDTH_CONFIGURATION,
-								maxWidth: CMDBuild.CFG_MEDIUM_FIELD_WIDTH,
+								labelWidth: CMDBuild.core.constants.FieldWidths.LABEL_CONFIGURE,
+								maxWidth: CMDBuild.core.constants.FieldWidths.CONFIGURE_MEDIUM,
 								inputType:'password',
 								allowBlank: false
 							}),
 							this.databaseUserPasswordConfirmationField = Ext.create('Ext.form.field.Text', {
 								fieldLabel: CMDBuild.Translation.confirmPassword,
-								labelWidth: CMDBuild.LABEL_WIDTH_CONFIGURATION,
-								maxWidth: CMDBuild.CFG_MEDIUM_FIELD_WIDTH,
+								labelWidth: CMDBuild.core.constants.FieldWidths.LABEL_CONFIGURE,
+								maxWidth: CMDBuild.core.constants.FieldWidths.CONFIGURE_MEDIUM,
 								inputType:'password',
 								vtype: 'password',
 								twinFieldId: this.databaseUserPasswordField.getId(),
