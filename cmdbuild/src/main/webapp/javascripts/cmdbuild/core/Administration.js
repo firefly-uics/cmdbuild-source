@@ -293,7 +293,7 @@
 				]
 			});
 
-			Ext.resumeLayouts();
+			Ext.resumeLayouts(true);
 
 			CMDBuild.core.Splash.hide(function() {
 				CMDBuild.global.controller.MainViewport.cmfg('mainViewportInstanceNameSet', CMDBuild.configuration.instance.get(CMDBuild.core.constants.Proxy.INSTANCE_NAME));
