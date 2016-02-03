@@ -3,7 +3,10 @@
 	Ext.define('CMDBuild.view.administration.localization.ConfigurationPanel', {
 		extend: 'Ext.form.Panel',
 
-		requires: ['CMDBuild.core.constants.Proxy'],
+		requires: [
+			'CMDBuild.core.constants.FieldWidths',
+			'CMDBuild.core.constants.Proxy'
+		],
 
 		/**
 		 * @cfg {CMDBuild.controller.administration.localization.Configuration}
@@ -78,14 +81,14 @@
 						},
 
 						defaults: {
-							maxWidth: CMDBuild.MEDIUM_FIELD_WIDTH
+							maxWidth: CMDBuild.core.constants.FieldWidths.STANDARD_MEDIUM
 						},
 
 						items: [
 							this.defaultLanguageCombobox = Ext.create('CMDBuild.view.common.field.comboBox.Language', {
 								name: CMDBuild.core.constants.Proxy.DEFAULT_LANGUAGE,
 								fieldLabel: CMDBuild.Translation.defaultLanguage,
-								labelWidth: CMDBuild.LABEL_WIDTH,
+								labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
 								enableChangeLanguage: false,
 
 								listeners: {
@@ -101,7 +104,7 @@
 							this.languagePromptCheckbox = Ext.create('Ext.form.field.Checkbox', {
 								name: CMDBuild.core.constants.Proxy.LANGUAGE_PROMPT,
 								fieldLabel: CMDBuild.Translation.showLanguageChoice,
-								labelWidth: CMDBuild.LABEL_WIDTH,
+								labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
 								inputValue: true,
 								uncheckedValue: false
 							})

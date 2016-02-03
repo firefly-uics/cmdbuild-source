@@ -3,7 +3,10 @@
 	Ext.define('CMDBuild.view.management.common.tabs.email.emailWindow.ViewWindow', {
 		extend: 'CMDBuild.core.PopupWindow',
 
-		requires: ['CMDBuild.core.constants.Proxy'],
+		requires: [
+			'CMDBuild.core.constants.FieldWidths',
+			'CMDBuild.core.constants.Proxy'
+		],
 
 		/**
 		 * @cfg {CMDBuild.controller.management.common.tabs.email.EmailWindow}
@@ -84,7 +87,7 @@
 
 						defaults: {
 							labelAlign: 'right',
-							labelWidth: CMDBuild.LABEL_WIDTH
+							labelWidth: CMDBuild.core.constants.FieldWidths.LABEL
 						},
 
 						items: [
@@ -98,7 +101,7 @@
 								name: CMDBuild.core.constants.Proxy.DELAY,
 								fieldLabel: CMDBuild.Translation.delay,
 								labelAlign: 'right',
-								labelWidth: CMDBuild.LABEL_WIDTH,
+								labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
 								readOnly: true
 							}),
 							{

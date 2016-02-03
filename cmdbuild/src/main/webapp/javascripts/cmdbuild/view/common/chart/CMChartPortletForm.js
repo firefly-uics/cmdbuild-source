@@ -57,11 +57,11 @@
 			STRING: function(parameterConfiguration) {
 				var types = {
 					classes: function(parameterConfiguration) {
-						var f = new CMDBuild.field.ErasableCombo({
+						var f = new CMDBuild.view.common.field.CMErasableCombo({
 							plugins: [new CMDBuild.SetValueOnLoadPlugin()],
 							name: parameterConfiguration.name,
 							fieldLabel : parameterConfiguration.name,
-							labelWidth: CMDBuild.LABEL_WIDTH,
+							labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
 							labelAlign: "right",
 							valueField : 'name',
 							displayField : 'description',
@@ -101,11 +101,11 @@
 				var defaultValue = parseInt(parameterConfiguration.defaultValue) || null;
 				var types = {
 					classes: function(parameterConfiguration) {
-						var f = new CMDBuild.field.ErasableCombo({
+						var f = new CMDBuild.view.common.field.CMErasableCombo({
 							plugins: [new CMDBuild.SetValueOnLoadPlugin()],
 							name: parameterConfiguration.name,
 							fieldLabel : parameterConfiguration.name,
-							labelWidth: CMDBuild.LABEL_WIDTH,
+							labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
 							labelAlign: "right",
 							valueField : 'id',
 							displayField : 'description',

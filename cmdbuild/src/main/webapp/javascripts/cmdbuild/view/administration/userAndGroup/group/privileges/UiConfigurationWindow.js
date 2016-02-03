@@ -3,7 +3,10 @@
 	Ext.define('CMDBuild.view.administration.userAndGroup.group.privileges.UiConfigurationWindow', {
 		extend: 'CMDBuild.core.PopupWindow',
 
-		requires: ['CMDBuild.core.constants.Proxy'],
+		requires: [
+			'CMDBuild.core.constants.FieldWidths',
+			'CMDBuild.core.constants.Proxy'
+		],
 
 		/**
 		 * @cfg {CMDBuild.controller.administration.userAndGroup.group.privileges.UiConfiguration}
@@ -63,28 +66,28 @@
 							Ext.create('Ext.form.field.Checkbox', {
 								name: CMDBuild.core.constants.Proxy.CREATE,
 								fieldLabel: CMDBuild.Translation.common.buttons.add,
-								labelWidth: CMDBuild.LABEL_WIDTH,
+								labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
 								inputValue: true,
 								uncheckedValue: false
 							}),
 							Ext.create('Ext.form.field.Checkbox', {
 								name: CMDBuild.core.constants.Proxy.REMOVE,
 								fieldLabel: CMDBuild.Translation.common.buttons.remove,
-								labelWidth: CMDBuild.LABEL_WIDTH,
+								labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
 								inputValue: true,
 								uncheckedValue: false
 							}),
 							Ext.create('Ext.form.field.Checkbox', {
 								name: CMDBuild.core.constants.Proxy.MODIFY,
 								fieldLabel: CMDBuild.Translation.common.buttons.modify,
-								labelWidth: CMDBuild.LABEL_WIDTH,
+								labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
 								inputValue: true,
 								uncheckedValue: false
 							}),
 							Ext.create('Ext.form.field.Checkbox', {
 								name: CMDBuild.core.constants.Proxy.CLONE,
 								fieldLabel: CMDBuild.Translation.common.buttons.clone,
-								labelWidth: CMDBuild.LABEL_WIDTH,
+								labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
 								inputValue: true,
 								uncheckedValue: false
 							})

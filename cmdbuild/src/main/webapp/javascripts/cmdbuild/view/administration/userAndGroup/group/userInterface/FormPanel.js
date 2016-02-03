@@ -3,7 +3,10 @@
 	Ext.define('CMDBuild.view.administration.userAndGroup.group.userInterface.FormPanel', {
 		extend: 'Ext.form.Panel',
 
-		requires: ['CMDBuild.core.constants.Proxy'],
+		requires: [
+			'CMDBuild.core.constants.FieldWidths',
+			'CMDBuild.core.constants.Proxy'
+		],
 
 		mixins: ['CMDBuild.view.common.PanelFunctions'],
 
@@ -64,7 +67,7 @@
 						items: [
 							Ext.create('Ext.form.CheckboxGroup', {
 								fieldLabel: CMDBuild.Translation.disabledFeatures,
-								labelWidth: CMDBuild.LABEL_WIDTH,
+								labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
 								columns: 1,
 								items: [
 									{
@@ -139,7 +142,7 @@
 						items: [
 							Ext.create('Ext.form.CheckboxGroup', {
 								fieldLabel: CMDBuild.Translation.disabledTabsInClassesModule,
-								labelWidth: CMDBuild.LABEL_WIDTH,
+								labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
 								columns: 1,
 								items: [
 									{
@@ -190,7 +193,7 @@
 						items: [
 							Ext.create('Ext.form.CheckboxGroup', {
 								fieldLabel: CMDBuild.Translation.disabledTabsInProcessesModule,
-								labelWidth: CMDBuild.LABEL_WIDTH,
+								labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
 								columns: 1,
 								items: [
 									{
@@ -235,7 +238,7 @@
 						items: [
 							Ext.create('Ext.form.CheckboxGroup', {
 								fieldLabel: CMDBuild.Translation.otherOptions,
-								labelWidth: CMDBuild.LABEL_WIDTH,
+								labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
 								columns: 1,
 								items: [
 									{

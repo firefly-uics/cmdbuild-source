@@ -13,8 +13,8 @@
 		initComponent: function() {
 			this.queryWorkflow = Ext.create('Ext.form.ComboBox', {
 			    fieldLabel: CMDBuild.Translation.workflow,
-				labelWidth: CMDBuild.LABEL_WIDTH,
-				width: CMDBuild.ADM_BIG_FIELD_WIDTH,
+				labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
+				width: CMDBuild.core.constants.FieldWidths.ADMINISTRATION_BIG,
 				labelAlign: "right",
 			    store: queryWorkflowStore,
 			    queryMode: 'local',

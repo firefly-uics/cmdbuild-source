@@ -123,8 +123,8 @@ CMDBuild.WidgetBuilders.ReferenceAttribute.prototype.buildAttributeField = funct
 CMDBuild.WidgetBuilders.ReferenceAttribute.prototype.buildReadOnlyField = function(attribute) {
 	var field = new Ext.form.DisplayField ({
 		labelAlign: "right",
-		labelWidth: CMDBuild.LABEL_WIDTH,
-		width: CMDBuild.BIG_FIELD_WIDTH,
+		labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
+		width: CMDBuild.core.constants.FieldWidths.STANDARD_BIG,
 		fieldLabel: attribute.description || attribute.name,
 		submitValue: false,
 		name: attribute.name,

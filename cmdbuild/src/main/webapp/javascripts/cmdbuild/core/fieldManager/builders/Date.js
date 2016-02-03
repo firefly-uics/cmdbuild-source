@@ -5,6 +5,7 @@
 
 		requires: [
 			'CMDBuild.core.configurations.DataFormat',
+			'CMDBuild.core.constants.FieldWidths',
 			'CMDBuild.core.constants.Proxy'
 		],
 
@@ -69,8 +70,8 @@
 				format: CMDBuild.core.configurations.DataFormat.getDate(),
 				hidden: this.cmfg('attributeModelGet', CMDBuild.core.constants.Proxy.HIDDEN),
 				labelAlign: 'right',
-				labelWidth: CMDBuild.LABEL_WIDTH,
-				maxWidth: CMDBuild.SMALL_FIELD_WIDTH,
+				labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
+				maxWidth: CMDBuild.core.constants.FieldWidths.STANDARD_SMALL,
 				name: this.cmfg('attributeModelGet', CMDBuild.core.constants.Proxy.NAME),
 				readOnly: !this.cmfg('attributeModelGet', CMDBuild.core.constants.Proxy.WRITABLE)
 			});

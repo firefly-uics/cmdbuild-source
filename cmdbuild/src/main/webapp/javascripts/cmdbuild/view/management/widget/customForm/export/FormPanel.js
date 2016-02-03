@@ -4,6 +4,7 @@
 		extend: 'Ext.form.Panel',
 
 		requires: [
+			'CMDBuild.core.constants.FieldWidths',
 			'CMDBuild.core.constants.Global',
 			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.proxy.Csv',
@@ -31,9 +32,9 @@
 					Ext.create('Ext.form.field.ComboBox', { // Prepared for future implementations
 						name: CMDBuild.core.constants.Proxy.FORMAT,
 						fieldLabel: CMDBuild.Translation.format,
-						labelWidth: CMDBuild.LABEL_WIDTH,
+						labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
 						labelAlign: 'right',
-						maxWidth: CMDBuild.MEDIUM_FIELD_WIDTH,
+						maxWidth: CMDBuild.core.constants.FieldWidths.STANDARD_MEDIUM,
 						displayField: CMDBuild.core.constants.Proxy.DESCRIPTION,
 						valueField: CMDBuild.core.constants.Proxy.NAME,
 						editable: false,
@@ -48,16 +49,16 @@
 					Ext.create('Ext.form.field.Text', {
 						name: CMDBuild.core.constants.Proxy.FILE_NAME,
 						fieldLabel: CMDBuild.core.constants.Global.getMandatoryLabelFlag() + CMDBuild.Translation.fileName,
-						labelWidth: CMDBuild.LABEL_WIDTH,
+						labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
 						labelAlign: 'right',
-						maxWidth: CMDBuild.BIG_FIELD_WIDTH,
+						maxWidth: CMDBuild.core.constants.FieldWidths.STANDARD_BIG,
 						allowBlank: false,
 						vtype: 'alphanumextended'
 					}),
 					Ext.create('Ext.form.field.ComboBox', {
 						name: CMDBuild.core.constants.Proxy.SEPARATOR,
 						fieldLabel: CMDBuild.Translation.separator,
-						labelWidth: CMDBuild.LABEL_WIDTH,
+						labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
 						labelAlign: 'right',
 						valueField: CMDBuild.core.constants.Proxy.VALUE,
 						displayField: CMDBuild.core.constants.Proxy.VALUE,
@@ -72,12 +73,12 @@
 					Ext.create('CMDBuild.view.common.field.multiselect.Multiselect', {
 						name: CMDBuild.core.constants.Proxy.HEADERS,
 						fieldLabel: CMDBuild.core.constants.Global.getMandatoryLabelFlag() + CMDBuild.Translation.dataToExport,
-						labelWidth: CMDBuild.LABEL_WIDTH,
+						labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
 						labelAlign: 'right',
 						valueField: CMDBuild.core.constants.Proxy.NAME,
 						displayField: CMDBuild.core.constants.Proxy.DESCRIPTION,
 						maxHeight: 300,
-						maxWidth: CMDBuild.MEDIUM_FIELD_WIDTH,
+						maxWidth: CMDBuild.core.constants.FieldWidths.STANDARD_MEDIUM,
 						considerAsFieldToDisable: true,
 						defaultSelection: 'all',
 						flex: 1, // Stretch vertically

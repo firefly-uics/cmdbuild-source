@@ -123,8 +123,8 @@
 		buildFormFields: function() {
 			this.inheriteCombo = new Ext.form.ComboBox( {
 				fieldLabel : tr.inherits,
-				labelWidth: CMDBuild.LABEL_WIDTH,
-				width: CMDBuild.ADM_BIG_FIELD_WIDTH,
+				labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
+				width: CMDBuild.core.constants.FieldWidths.ADMINISTRATION_BIG,
 				name : 'parent',
 				valueField : 'id',
 				displayField : 'description',
@@ -137,8 +137,8 @@
 
 			this.className = Ext.create('Ext.form.field.Text', {
 				fieldLabel: tr.name,
-				labelWidth: CMDBuild.LABEL_WIDTH,
-				width: CMDBuild.ADM_BIG_FIELD_WIDTH,
+				labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
+				width: CMDBuild.core.constants.FieldWidths.ADMINISTRATION_BIG,
 				name: CMDBuild.core.constants.Proxy.NAME,
 				allowBlank: false,
 				vtype: 'alphanum',
@@ -148,8 +148,8 @@
 			this.classDescription = Ext.create('CMDBuild.view.common.field.translatable.Text', {
 				name: CMDBuild.core.constants.Proxy.TEXT,
 				fieldLabel: CMDBuild.Translation.descriptionLabel,
-				labelWidth: CMDBuild.LABEL_WIDTH,
-				width: CMDBuild.ADM_BIG_FIELD_WIDTH,
+				labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
+				width: CMDBuild.core.constants.FieldWidths.ADMINISTRATION_BIG,
 				allowBlank: false,
 				vtype: 'commentextended',
 
@@ -162,14 +162,14 @@
 
 			this.isSuperClass = new Ext.ux.form.XCheckbox( {
 				fieldLabel : tr.superclass,
-				labelWidth: CMDBuild.LABEL_WIDTH,
+				labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
 				name : 'superclass',
 				cmImmutable : true
 			});
 
 			this.isActive = new Ext.ux.form.XCheckbox({
 				fieldLabel : tr.active,
-				labelWidth: CMDBuild.LABEL_WIDTH,
+				labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
 				name : 'active'
 			});
 
@@ -183,8 +183,8 @@
 
 			this.typeCombo = new Ext.form.field.ComboBox({
 				fieldLabel : tr.type,
-				labelWidth : CMDBuild.LABEL_WIDTH,
-				width : CMDBuild.ADM_MEDIUM_FIELD_WIDTH,
+				labelWidth : CMDBuild.core.constants.FieldWidths.LABEL,
+				width : CMDBuild.core.constants.FieldWidths.ADMINISTRATION_MEDIUM,
 				name : 'tableType',
 				hiddenName : 'tableType',
 				valueField : 'value',

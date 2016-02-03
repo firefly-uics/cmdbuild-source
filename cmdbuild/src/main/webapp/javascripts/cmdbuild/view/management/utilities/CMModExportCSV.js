@@ -17,7 +17,7 @@ Ext.define("CMDBuild.view.management.utilities.CMModExportCSV", {
 			}
 		});
 
-		this.classList = new CMDBuild.field.CMBaseCombo({
+		this.classList = new CMDBuild.view.common.field.CMBaseCombo({
 			store: _CMCache.getClassesStore(),
 			fieldLabel : this.translation.selectaclass,
 			queryMode: 'local',

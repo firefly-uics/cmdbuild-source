@@ -4,6 +4,7 @@
 		extend: 'Ext.form.Panel',
 
 		requires: [
+			'CMDBuild.core.constants.FieldWidths',
 			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.proxy.userAndGroup.user.User'
 		],
@@ -21,7 +22,7 @@
 		toggleEnableDisableButton: undefined,
 
 		/**
-		 * @param {CMDBuild.field.ErasableCombo}
+		 * @param {CMDBuild.view.common.field.CMErasableCombo}
 		 */
 		defaultGroupCombo: undefined,
 
@@ -140,8 +141,8 @@
 							Ext.create('Ext.form.field.Text', {
 								name: CMDBuild.core.constants.Proxy.USERNAME,
 								fieldLabel: CMDBuild.Translation.username,
-								labelWidth: CMDBuild.LABEL_WIDTH,
-								maxWidth: CMDBuild.ADM_BIG_FIELD_WIDTH,
+								labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
+								maxWidth: CMDBuild.core.constants.FieldWidths.ADMINISTRATION_BIG,
 								allowBlank: false,
 								cmImmutable: true,
 								vtype: 'alphanumextended'
@@ -149,23 +150,23 @@
 							Ext.create('Ext.form.field.Text', {
 								name: CMDBuild.core.constants.Proxy.DESCRIPTION,
 								fieldLabel: CMDBuild.Translation.descriptionLabel,
-								labelWidth: CMDBuild.LABEL_WIDTH,
-								maxWidth: CMDBuild.ADM_BIG_FIELD_WIDTH,
+								labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
+								maxWidth: CMDBuild.core.constants.FieldWidths.ADMINISTRATION_BIG,
 								allowBlank: false
 							}),
 							Ext.create('Ext.form.field.Text', {
 								name: CMDBuild.core.constants.Proxy.EMAIL,
 								fieldLabel: CMDBuild.Translation.email,
-								labelWidth: CMDBuild.LABEL_WIDTH,
-								maxWidth: CMDBuild.ADM_BIG_FIELD_WIDTH,
+								labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
+								maxWidth: CMDBuild.core.constants.FieldWidths.ADMINISTRATION_BIG,
 								allowBlank: true,
 								vtype: 'emailOrBlank'
 							}),
 							this.defaultGroupCombo = Ext.create('CMDBuild.view.common.field.comboBox.Erasable', {
 								name: 'defaultgroup',
 								fieldLabel: CMDBuild.Translation.defaultGroup,
-								labelWidth: CMDBuild.LABEL_WIDTH,
-								maxWidth: CMDBuild.ADM_BIG_FIELD_WIDTH,
+								labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
+								maxWidth: CMDBuild.core.constants.FieldWidths.ADMINISTRATION_BIG,
 								valueField: CMDBuild.core.constants.Proxy.ID,
 								displayField: CMDBuild.core.constants.Proxy.DESCRIPTION,
 								editable: false,
@@ -177,12 +178,12 @@
 							Ext.create('Ext.form.field.Checkbox', {
 								name: CMDBuild.core.constants.Proxy.IS_ACTIVE,
 								fieldLabel: CMDBuild.Translation.active,
-								labelWidth: CMDBuild.LABEL_WIDTH
+								labelWidth: CMDBuild.core.constants.FieldWidths.LABEL
 							}),
 							this.serviceCheckbox = Ext.create('Ext.form.field.Checkbox', {
 								name: CMDBuild.core.constants.Proxy.SERVICE,
 								fieldLabel: CMDBuild.Translation.service,
-								labelWidth: CMDBuild.LABEL_WIDTH,
+								labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
 
 								listeners: {
 									scope: this,
@@ -194,7 +195,7 @@
 							this.privilegedCheckbox = Ext.create('Ext.form.field.Checkbox', {
 								name: CMDBuild.core.constants.Proxy.PRIVILEGED,
 								fieldLabel: CMDBuild.Translation.privileged,
-								labelWidth: CMDBuild.LABEL_WIDTH,
+								labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
 
 								listeners: {
 									scope: this,
@@ -223,16 +224,16 @@
 								id: 'userPassword',
 								inputType: 'password',
 								fieldLabel: CMDBuild.Translation.password,
-								labelWidth: CMDBuild.LABEL_WIDTH,
-								maxWidth: CMDBuild.ADM_BIG_FIELD_WIDTH,
+								labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
+								maxWidth: CMDBuild.core.constants.FieldWidths.ADMINISTRATION_BIG,
 								allowBlank: false
 							}),
 							Ext.create('Ext.form.field.Text', {
 								name: CMDBuild.core.constants.Proxy.CONFIRMATION,
 								inputType: 'password',
 								fieldLabel: CMDBuild.Translation.confirmation,
-								labelWidth: CMDBuild.LABEL_WIDTH,
-								maxWidth: CMDBuild.ADM_BIG_FIELD_WIDTH,
+								labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
+								maxWidth: CMDBuild.core.constants.FieldWidths.ADMINISTRATION_BIG,
 								allowBlank: false,
 								twinFieldId: 'userPassword',
 								vtype: 'password',

@@ -4,6 +4,7 @@
 		extend: 'Ext.form.Panel',
 
 		requires: [
+			'CMDBuild.core.constants.FieldWidths',
 			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.proxy.lookup.Lookup'
 		],
@@ -102,14 +103,14 @@
 					Ext.create('Ext.form.field.Text', {
 						name: CMDBuild.core.constants.Proxy.CODE,
 						fieldLabel: CMDBuild.Translation.code,
-						labelWidth: CMDBuild.LABEL_WIDTH,
-						maxWidth: CMDBuild.ADM_BIG_FIELD_WIDTH
+						labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
+						maxWidth: CMDBuild.core.constants.FieldWidths.ADMINISTRATION_BIG
 					}),
 					Ext.create('CMDBuild.view.common.field.translatable.Text', {
 						name: CMDBuild.core.constants.Proxy.DESCRIPTION,
 						fieldLabel: CMDBuild.Translation.descriptionLabel,
-						labelWidth: CMDBuild.LABEL_WIDTH,
-						maxWidth: CMDBuild.ADM_BIG_FIELD_WIDTH,
+						labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
+						maxWidth: CMDBuild.core.constants.FieldWidths.ADMINISTRATION_BIG,
 						allowBlank: false,
 
 						translationFieldConfig: {
@@ -121,8 +122,8 @@
 					this.parentCombobox = Ext.create('Ext.form.field.ComboBox', {
 						name: CMDBuild.core.constants.Proxy.PARENT_ID,
 						fieldLabel: CMDBuild.Translation.parentDescription,
-						labelWidth: CMDBuild.LABEL_WIDTH,
-						maxWidth: CMDBuild.ADM_BIG_FIELD_WIDTH,
+						labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
+						maxWidth: CMDBuild.core.constants.FieldWidths.ADMINISTRATION_BIG,
 						displayField: 'ParentDescription',
 						valueField: 'ParentId',
 						forceSelection: true,
@@ -134,13 +135,13 @@
 					Ext.create('Ext.form.field.TextArea', {
 						name: CMDBuild.core.constants.Proxy.NOTES,
 						fieldLabel: CMDBuild.Translation.notes,
-						labelWidth: CMDBuild.LABEL_WIDTH,
-						maxWidth: CMDBuild.ADM_BIG_FIELD_WIDTH
+						labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
+						maxWidth: CMDBuild.core.constants.FieldWidths.ADMINISTRATION_BIG
 					}),
 					this.activeCheckbox = Ext.create('Ext.form.field.Checkbox', {
 						name: CMDBuild.core.constants.Proxy.ACTIVE,
 						fieldLabel: CMDBuild.Translation.active,
-						labelWidth: CMDBuild.LABEL_WIDTH,
+						labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
 						inputValue: true,
 						uncheckedValue: false,
 						checked: true

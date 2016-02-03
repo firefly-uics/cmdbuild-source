@@ -4,6 +4,7 @@
 		extend: 'CMDBuild.view.administration.widget.form.AbstractWidgetDefinitionPanel',
 
 		requires: [
+			'CMDBuild.core.constants.FieldWidths',
 			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.proxy.widget.Workflow',
 			'CMDBuild.model.widget.workflow.PresetGrid'
@@ -47,8 +48,8 @@
 						this.filter = Ext.create('Ext.form.field.TextArea', {
 							name: CMDBuild.core.constants.Proxy.FILTER,
 							fieldLabel: CMDBuild.Translation.cqlFilter,
-							labelWidth: CMDBuild.LABEL_WIDTH,
-							maxWidth: CMDBuild.ADM_BIG_FIELD_WIDTH
+							labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
+							maxWidth: CMDBuild.core.constants.FieldWidths.ADMINISTRATION_BIG
 						})
 					]
 				})
@@ -73,8 +74,8 @@
 						this.workflow = Ext.create('Ext.form.field.ComboBox', {
 							name: CMDBuild.core.constants.Proxy.WORKFLOW_NAME,
 							fieldLabel: CMDBuild.Translation.workflow,
-							labelWidth: CMDBuild.LABEL_WIDTH,
-							maxWidth: CMDBuild.ADM_BIG_FIELD_WIDTH,
+							labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
+							maxWidth: CMDBuild.core.constants.FieldWidths.ADMINISTRATION_BIG,
 							valueField: CMDBuild.core.constants.Proxy.NAME,
 							displayField: CMDBuild.core.constants.Proxy.TEXT, // TODO: waiting for refactor (rename description)
 							forceSelection: true,
@@ -113,8 +114,8 @@
 				Ext.create('Ext.form.field.ComboBox', {
 					name: CMDBuild.core.constants.Proxy.FILTER_TYPE,
 					fieldLabel: CMDBuild.Translation.selection,
-					labelWidth: CMDBuild.LABEL_WIDTH,
-					maxWidth: CMDBuild.ADM_BIG_FIELD_WIDTH,
+					labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
+					maxWidth: CMDBuild.core.constants.FieldWidths.ADMINISTRATION_BIG,
 					valueField: CMDBuild.core.constants.Proxy.NAME,
 					displayField: CMDBuild.core.constants.Proxy.DESCRIPTION,
 					forceSelection: true,

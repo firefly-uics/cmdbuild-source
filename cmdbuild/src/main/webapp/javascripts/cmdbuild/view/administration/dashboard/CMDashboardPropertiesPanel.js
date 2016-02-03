@@ -176,8 +176,8 @@
 			fieldLabel: CMDBuild.Translation.administration.modDashboard.properties.fields.name,
 			name: "name",
 			allowBlank: false,
-			labelWidth: CMDBuild.LABEL_WIDTH,
-			width: CMDBuild.ADM_BIG_FIELD_WIDTH,
+			labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
+			width: CMDBuild.core.constants.FieldWidths.ADMINISTRATION_BIG,
 			disabled: true
 		});
 
@@ -185,14 +185,14 @@
 			fieldLabel:CMDBuild.Translation.administration.modDashboard.properties.fields.description,
 			name: "description",
 			allowBlank: false,
-			labelWidth: CMDBuild.LABEL_WIDTH,
-			width: CMDBuild.ADM_BIG_FIELD_WIDTH,
+			labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
+			width: CMDBuild.core.constants.FieldWidths.ADMINISTRATION_BIG,
 			disabled: true
 		});
 
 		me.groupsSelectionList = new CMDBuild.view.common.field.CMGroupSelectionList({
-			labelWidth: CMDBuild.LABEL_WIDTH,
-			width: CMDBuild.ADM_BIG_FIELD_WIDTH,
+			labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
+			width: CMDBuild.core.constants.FieldWidths.ADMINISTRATION_BIG,
 			dataFields : ['name', 'description'],
 			valueField : 'name',
 			height: 300,

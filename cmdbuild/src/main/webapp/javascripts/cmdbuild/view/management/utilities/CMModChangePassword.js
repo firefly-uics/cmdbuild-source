@@ -31,14 +31,14 @@
 					xtype: 'textfield',
 					inputType:'password',
 					fieldLabel: CMDBuild.Translation.management.modutilities.changepassword.oldpw,
-					labelWidth: CMDBuild.LABEL_WIDTH,
+					labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
 					name: 'oldpassword',
 					allowBlank: false
 				},{
 					xtype: 'textfield',
 					inputType:'password',
 					fieldLabel: CMDBuild.Translation.management.modutilities.changepassword.newpw,
-					labelWidth: CMDBuild.LABEL_WIDTH,
+					labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
 					name: 'newpassword',
 					id:'newpassword',
 					allowBlank: false
@@ -46,7 +46,7 @@
 					xtype: 'textfield',
 					inputType:'password',
 					fieldLabel: CMDBuild.Translation.management.modutilities.changepassword.repnew,
-					labelWidth: CMDBuild.LABEL_WIDTH,
+					labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
 					name: 'confirmnewpassword',
 					vtype: 'password',
 					twinFieldId: 'newpassword',

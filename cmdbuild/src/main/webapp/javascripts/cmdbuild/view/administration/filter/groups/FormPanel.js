@@ -3,7 +3,10 @@
 	Ext.define('CMDBuild.view.administration.filter.groups.FormPanel', {
 		extend: 'Ext.form.Panel',
 
-		requires: ['CMDBuild.core.constants.Proxy'],
+		requires: [
+			'CMDBuild.core.constants.FieldWidths',
+			'CMDBuild.core.constants.Proxy'
+		],
 
 		mixins: ['CMDBuild.view.common.PanelFunctions'],
 
@@ -94,16 +97,16 @@
 						name: CMDBuild.core.constants.Proxy.NAME,
 						itemId: CMDBuild.core.constants.Proxy.NAME,
 						fieldLabel: CMDBuild.Translation.name,
-						labelWidth: CMDBuild.LABEL_WIDTH,
-						maxWidth: CMDBuild.ADM_BIG_FIELD_WIDTH,
+						labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
+						maxWidth: CMDBuild.core.constants.FieldWidths.ADMINISTRATION_BIG,
 						allowBlank: false,
 						cmImmutable: true
 					}),
 					Ext.create('CMDBuild.view.common.field.translatable.Text', {
 						name: _CMProxy.parameter.DESCRIPTION,
 						fieldLabel: CMDBuild.Translation.descriptionLabel,
-						labelWidth: CMDBuild.LABEL_WIDTH,
-						maxWidth: CMDBuild.ADM_BIG_FIELD_WIDTH,
+						labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
+						maxWidth: CMDBuild.core.constants.FieldWidths.ADMINISTRATION_BIG,
 						allowBlank: false,
 						vtype: 'commentextended',
 
@@ -116,8 +119,8 @@
 					this.targetClassCombobox = Ext.create('Ext.form.field.ComboBox', {
 						name: CMDBuild.core.constants.Proxy.ENTRY_TYPE,
 						fieldLabel: CMDBuild.Translation.targetClass,
-						labelWidth: CMDBuild.LABEL_WIDTH,
-						maxWidth: CMDBuild.ADM_BIG_FIELD_WIDTH,
+						labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
+						maxWidth: CMDBuild.core.constants.FieldWidths.ADMINISTRATION_BIG,
 						valueField: CMDBuild.core.constants.Proxy.NAME,
 						displayField: CMDBuild.core.constants.Proxy.TEXT, // TODO: waiting for refactor (rename description)
 						forceSelection: true,
@@ -130,7 +133,7 @@
 					this.advancedFilterField = Ext.create('CMDBuild.view.common.field.filter.advanced.Advanced', {
 						name: CMDBuild.core.constants.Proxy.CONFIGURATION,
 						fieldLabel: CMDBuild.Translation.filter,
-						labelWidth: CMDBuild.LABEL_WIDTH,
+						labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
 						fieldConfiguration: {
 							targetClassField: this.targetClassCombobox,
 							enabledPanels: ['attribute', 'relation']
@@ -140,8 +143,8 @@
 						name: CMDBuild.core.constants.Proxy.DEFAULT_FOR_GROUPS,
 						fieldLabel: CMDBuild.Translation.defaultForGroups,
 						height: 300,
-						labelWidth: CMDBuild.LABEL_WIDTH,
-						maxWidth: CMDBuild.ADM_BIG_FIELD_WIDTH,
+						labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
+						maxWidth: CMDBuild.core.constants.FieldWidths.ADMINISTRATION_BIG,
 						valueField: CMDBuild.core.constants.Proxy.NAME
 					}),
 					{

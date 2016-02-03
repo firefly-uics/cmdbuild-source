@@ -35,14 +35,17 @@
 			padding: '5px 5px 0px 5px'
 		},
 		cls: 'x-panel-body-default-framed',
-		labelWidth: CMDBuild.LABEL_WIDTH,
-		width: CMDBuild.ADM_BIG_FIELD_WIDTH,
 
 		// configuration
 			className: undefined,
 		// configuration
 
 		initComponent: function() {
+			Ext.apply(this, {
+				labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
+				width: CMDBuild.core.constants.FieldWidths.ADMINISTRATION_BIG
+			});
+
 			this.functionsCombo = Ext.create('Ext.form.ComboBox', {
 				fieldLabel: CMDBuild.Translation.management.findfilter.functions,
 				store: functionsStore,

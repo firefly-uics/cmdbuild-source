@@ -4,8 +4,9 @@
 		extend: 'CMDBuild.controller.common.abstract.Base',
 
 		requires: [
-			'CMDBuild.core.Message',
+			'CMDBuild.core.constants.FieldWidths',
 			'CMDBuild.core.constants.Proxy',
+			'CMDBuild.core.Message',
 			'CMDBuild.core.proxy.dataView.Sql'
 		],
 
@@ -147,14 +148,14 @@
 							disabled: false,
 							fieldLabel: field.name,
 							labelAlign: 'right',
-							labelWidth: CMDBuild.LABEL_WIDTH,
+							labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
 							name: field.name,
 							submitValue: false,
 							style: {
 								overflow: 'hidden'
 							},
 							value: value,
-							maxWidth: CMDBuild.BIG_FIELD_WIDTH
+							maxWidth: CMDBuild.core.constants.FieldWidths.STANDARD_BIG
 						})
 					);
 				}

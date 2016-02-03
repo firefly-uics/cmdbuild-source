@@ -4,6 +4,7 @@
 		extend: 'Ext.form.Panel',
 
 		requires: [
+			'CMDBuild.core.constants.FieldWidths',
 			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.proxy.email.Account'
 		],
@@ -92,8 +93,8 @@
 						flex: 1,
 
 						defaults: {
-							labelWidth: CMDBuild.LABEL_WIDTH,
-							maxWidth: CMDBuild.ADM_BIG_FIELD_WIDTH
+							labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
+							maxWidth: CMDBuild.core.constants.FieldWidths.ADMINISTRATION_BIG
 						},
 
 						layout: {
@@ -105,7 +106,7 @@
 							Ext.create('Ext.form.field.Text', {
 								name: CMDBuild.core.constants.Proxy.NAME,
 								fieldLabel: CMDBuild.Translation.name,
-								labelWidth: CMDBuild.LABEL_WIDTH,
+								labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
 								allowBlank: false,
 								cmImmutable: true
 							}),
@@ -130,7 +131,7 @@
 							},
 							this.delayField = Ext.create('CMDBuild.view.common.field.delay.Delay', {
 								fieldLabel: CMDBuild.Translation.delay,
-								labelWidth: CMDBuild.LABEL_WIDTH,
+								labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
 								name: CMDBuild.core.constants.Proxy.DELAY
 							}),
 							Ext.create('Ext.form.field.Hidden', { name: CMDBuild.core.constants.Proxy.ID })
@@ -143,8 +144,8 @@
 
 						defaults: {
 							xtype: 'textfield',
-							labelWidth: CMDBuild.LABEL_WIDTH,
-							maxWidth: CMDBuild.ADM_BIG_FIELD_WIDTH
+							labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
+							maxWidth: CMDBuild.core.constants.FieldWidths.ADMINISTRATION_BIG
 						},
 
 						layout: {
@@ -156,10 +157,10 @@
 							Ext.create('CMDBuild.view.common.field.CMErasableCombo', {
 								name: CMDBuild.core.constants.Proxy.DEFAULT_ACCOUNT,
 								fieldLabel: CMDBuild.Translation.defaultAccount,
-								labelWidth: CMDBuild.LABEL_WIDTH,
+								labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
 								displayField: CMDBuild.core.constants.Proxy.NAME,
 								valueField: CMDBuild.core.constants.Proxy.NAME,
-								maxWidth: CMDBuild.ADM_BIG_FIELD_WIDTH,
+								maxWidth: CMDBuild.core.constants.FieldWidths.ADMINISTRATION_BIG,
 								forceSelection: true,
 								editable: false,
 
@@ -190,12 +191,12 @@
 							Ext.create('CMDBuild.view.common.field.HtmlEditor', {
 								name: CMDBuild.core.constants.Proxy.BODY,
 								fieldLabel: CMDBuild.Translation.body,
-								labelWidth: CMDBuild.LABEL_WIDTH,
-								maxWidth: CMDBuild.CFG_BIG_FIELD_WIDTH
+								labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
+								maxWidth: CMDBuild.core.constants.FieldWidths.CONFIGURATION_BIG
 							}),
 							Ext.create('CMDBuild.core.buttons.iconized.Modify', {
 								text: CMDBuild.Translation.editValues,
-								margin: '0 0 0 ' + (CMDBuild.LABEL_WIDTH + 5),
+								margin: '0 0 0 ' + (CMDBuild.core.constants.FieldWidths.LABEL + 5),
 								maxWidth: 100,
 								scope: this,
 

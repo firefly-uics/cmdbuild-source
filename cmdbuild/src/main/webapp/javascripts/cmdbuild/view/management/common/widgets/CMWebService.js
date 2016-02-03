@@ -140,8 +140,8 @@
 				xtype: 'displayfield',
 				fieldLabel: label,
 				labelAlign: "right",
-				labelWidth: CMDBuild.LABEL_WIDTH,
-				width: CMDBuild.BIG_FIELD_WIDTH,
+				labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
+				width: CMDBuild.core.constants.FieldWidths.STANDARD_BIG,
 		        value: text
 			});
 		}

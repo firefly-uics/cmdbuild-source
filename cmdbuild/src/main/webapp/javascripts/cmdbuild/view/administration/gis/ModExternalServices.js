@@ -42,8 +42,8 @@
 
 				defaults: {
 					xtype: 'textfield',
-					labelWidth: CMDBuild.LABEL_WIDTH,
-					maxWidth: CMDBuild.ADM_BIG_FIELD_WIDTH,
+					labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
+					maxWidth: CMDBuild.core.constants.FieldWidths.ADMINISTRATION_BIG,
 					anchor: '100%'
 				},
 
@@ -60,8 +60,8 @@
 							width: 300,
 							name: 'google_minzoom',
 							fieldLabel: CMDBuild.Translation.administration.modClass.geo_attributes.min_zoom,
-							labelWidth: CMDBuild.LABEL_WIDTH,
-							width: CMDBuild.ADM_BIG_FIELD_WIDTH,
+							labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
+							width: CMDBuild.core.constants.FieldWidths.ADMINISTRATION_BIG,
 							clickToChange: false,
 							animate: false
 						}),
@@ -72,8 +72,8 @@
 							width: 300,
 							name: 'google_maxzoom',
 							fieldLabel: CMDBuild.Translation.administration.modClass.geo_attributes.max_zoom,
-							labelWidth: CMDBuild.LABEL_WIDTH,
-							width: CMDBuild.ADM_BIG_FIELD_WIDTH,
+							labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
+							width: CMDBuild.core.constants.FieldWidths.ADMINISTRATION_BIG,
 							clickToChange: false,
 							animate: false
 						})
@@ -98,8 +98,8 @@
 
 				defaults: {
 					xtype: 'textfield',
-					labelWidth: CMDBuild.LABEL_WIDTH,
-					maxWidth: CMDBuild.ADM_BIG_FIELD_WIDTH,
+					labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
+					maxWidth: CMDBuild.core.constants.FieldWidths.ADMINISTRATION_BIG,
 					anchor: '100%'
 				},
 
@@ -116,8 +116,8 @@
 							width: 300,
 							name: 'yahoo_minzoom',
 							fieldLabel: CMDBuild.Translation.administration.modClass.geo_attributes.min_zoom,
-							labelWidth: CMDBuild.LABEL_WIDTH,
-							width: CMDBuild.ADM_BIG_FIELD_WIDTH,
+							labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
+							width: CMDBuild.core.constants.FieldWidths.ADMINISTRATION_BIG,
 							clickToChange: false,
 							animate: false
 						}),
@@ -128,8 +128,8 @@
 							width: 300,
 							name: 'yahoo_maxzoom',
 							fieldLabel: CMDBuild.Translation.administration.modClass.geo_attributes.max_zoom,
-							labelWidth: CMDBuild.LABEL_WIDTH,
-							width: CMDBuild.ADM_BIG_FIELD_WIDTH,
+							labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
+							width: CMDBuild.core.constants.FieldWidths.ADMINISTRATION_BIG,
 							clickToChange: false,
 							animate: false
 						})
@@ -154,8 +154,8 @@
 
 				defaults: {
 					xtype: 'textfield',
-					labelWidth: CMDBuild.LABEL_WIDTH,
-					maxWidth: CMDBuild.ADM_BIG_FIELD_WIDTH,
+					labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
+					maxWidth: CMDBuild.core.constants.FieldWidths.ADMINISTRATION_BIG,
 					anchor: '100%'
 				},
 
@@ -168,8 +168,8 @@
 							width: 300,
 							name: 'osm_minzoom',
 							fieldLabel: CMDBuild.Translation.administration.modClass.geo_attributes.min_zoom,
-							labelWidth: CMDBuild.LABEL_WIDTH,
-							width: CMDBuild.ADM_BIG_FIELD_WIDTH,
+							labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
+							width: CMDBuild.core.constants.FieldWidths.ADMINISTRATION_BIG,
 							clickToChange: false,
 							animate: false
 						}),
@@ -180,8 +180,8 @@
 							width: 300,
 							name: 'osm_maxzoom',
 							fieldLabel: CMDBuild.Translation.administration.modClass.geo_attributes.max_zoom,
-							labelWidth: CMDBuild.LABEL_WIDTH,
-							width: CMDBuild.ADM_BIG_FIELD_WIDTH,
+							labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
+							width: CMDBuild.core.constants.FieldWidths.ADMINISTRATION_BIG,
 							clickToChange: false,
 							animate: false
 						})
@@ -206,8 +206,8 @@
 
 				defaults: {
 					xtype: 'textfield',
-					labelWidth: CMDBuild.LABEL_WIDTH,
-					maxWidth: CMDBuild.ADM_BIG_FIELD_WIDTH,
+					labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
+					maxWidth: CMDBuild.core.constants.FieldWidths.ADMINISTRATION_BIG,
 					anchor: '100%'
 				},
 

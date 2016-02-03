@@ -3,7 +3,10 @@
 	Ext.define('CMDBuild.view.administration.email.QueueView', {
 		extend: 'Ext.form.Panel',
 
-		requires: ['CMDBuild.core.constants.Proxy'],
+		requires: [
+			'CMDBuild.core.constants.FieldWidths',
+			'CMDBuild.core.constants.Proxy'
+		],
 
 		mixins: ['CMDBuild.view.common.PanelFunctions'],
 
@@ -97,8 +100,8 @@
 					this.cycleIntervalField = Ext.create('CMDBuild.view.common.field.slider.SingleWithExtremeLabels', {
 						name: CMDBuild.core.constants.Proxy.TIME,
 						fieldLabel: CMDBuild.Translation.frequencyCheck,
-						labelWidth: CMDBuild.LABEL_WIDTH,
-						maxWidth: CMDBuild.CFG_BIG_FIELD_WIDTH,
+						labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
+						maxWidth: CMDBuild.core.constants.FieldWidths.CONFIGURATION_BIG,
 						minValue: 1,
 						maxValue: 10
 					})

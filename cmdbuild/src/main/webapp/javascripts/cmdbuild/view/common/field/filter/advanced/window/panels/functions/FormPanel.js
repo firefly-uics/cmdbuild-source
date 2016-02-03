@@ -4,6 +4,7 @@
 		extend: 'Ext.form.Panel',
 
 		requires: [
+			'CMDBuild.core.constants.FieldWidths',
 			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.proxy.common.field.filter.advanced.window.Functions'
 		],
@@ -34,8 +35,8 @@
 					this.functionComboBox = Ext.create('CMDBuild.view.common.field.CMErasableCombo', {
 						name: CMDBuild.core.constants.Proxy.FUNCTION,
 						fieldLabel: CMDBuild.Translation.functionLabel,
-						labelWidth: CMDBuild.LABEL_WIDTH,
-						maxWidth: CMDBuild.ADM_BIG_FIELD_WIDTH,
+						labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
+						maxWidth: CMDBuild.core.constants.FieldWidths.ADMINISTRATION_BIG,
 						displayField: CMDBuild.core.constants.Proxy.NAME,
 						valueField: CMDBuild.core.constants.Proxy.NAME,
 						editable: false,

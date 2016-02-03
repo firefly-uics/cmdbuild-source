@@ -5,7 +5,7 @@
 	Ext.ns("CMDBuild.WidgetBuilders");
 	CMDBuild.WidgetBuilders.IPAddressAttribute = function() {};
 	CMDBuild.extend(CMDBuild.WidgetBuilders.IPAddressAttribute, CMDBuild.WidgetBuilders.DecimalAttribute);
-	CMDBuild.WidgetBuilders.IPAddressAttribute.prototype.MAXWIDTH = CMDBuild.MEDIUM_FIELD_ONLY_WIDTH;
+	CMDBuild.WidgetBuilders.IPAddressAttribute.prototype.MAXWIDTH = 150;
 	CMDBuild.WidgetBuilders.IPAddressAttribute.prototype.customVType = "ipv4";
 	CMDBuild.WidgetBuilders.IPAddressAttribute.prototype.getQueryOptions = function() {
 		var operator = CMDBuild.WidgetBuilders.BaseAttribute.FilterOperator;
@@ -22,4 +22,4 @@
 	CMDBuild.WidgetBuilders.IPAddressAttributeV6 = function() {};
 	CMDBuild.extend(CMDBuild.WidgetBuilders.IPAddressAttributeV6, CMDBuild.WidgetBuilders.IPAddressAttribute);
 	CMDBuild.WidgetBuilders.IPAddressAttributeV6.prototype.customVType = "ipv6";
-	CMDBuild.WidgetBuilders.IPAddressAttributeV6.prototype.MAXWIDTH = CMDBuild.MEDIUM_FIELD_ONLY_WIDTH * 2;
+	CMDBuild.WidgetBuilders.IPAddressAttributeV6.prototype.MAXWIDTH = 300;

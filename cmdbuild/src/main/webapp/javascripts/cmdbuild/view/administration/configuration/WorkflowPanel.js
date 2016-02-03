@@ -3,7 +3,10 @@
 	Ext.define('CMDBuild.view.administration.configuration.WorkflowPanel', {
 		extend: 'Ext.form.Panel',
 
-		requires: ['CMDBuild.core.constants.Proxy'],
+		requires: [
+			'CMDBuild.core.constants.FieldWidths',
+			'CMDBuild.core.constants.Proxy'
+		],
 
 		mixins: ['CMDBuild.view.common.PanelFunctions'],
 
@@ -24,8 +27,8 @@
 
 		fieldDefaults: {
 			labelAlign: 'left',
-			labelWidth: CMDBuild.CFG_LABEL_WIDTH,
-			maxWidth: CMDBuild.CFG_MEDIUM_FIELD_WIDTH
+			labelWidth: CMDBuild.core.constants.FieldWidths.LABEL_CONFIGURATION,
+			maxWidth: CMDBuild.core.constants.FieldWidths.CONFIGURATION_MEDIUM
 		},
 
 		initComponent: function() {
@@ -82,7 +85,7 @@
 								fieldLabel: CMDBuild.Translation.serverUrl,
 								name: CMDBuild.core.constants.Proxy.URL,
 								allowBlank: false,
-								maxWidth: CMDBuild.CFG_BIG_FIELD_WIDTH
+								maxWidth: CMDBuild.core.constants.FieldWidths.CONFIGURATION_BIG
 							},
 							Ext.create('Ext.form.field.Checkbox', {
 								name: CMDBuild.core.constants.Proxy.ENABLE_ADD_ATTACHMENT_ON_CLOSED_ACTIVITIES,

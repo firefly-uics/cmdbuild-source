@@ -15,9 +15,9 @@
 	 * @return Ext.form.field.ComboBox
 	 */
 	CMDBuild.WidgetBuilders.CustomListAttribute.prototype.buildAttributeField = function(attribute) {
-		return new CMDBuild.field.ErasableCombo({
+		return new CMDBuild.view.common.field.CMErasableCombo({
 			labelAlign: "right",
-			labelWidth: CMDBuild.LABEL_WIDTH,
+			labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
 			fieldLabel: attribute.description || attribute.name,
 			labelSeparator: ":",
 			name: attribute.name,

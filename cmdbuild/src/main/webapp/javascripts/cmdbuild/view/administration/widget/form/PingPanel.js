@@ -4,6 +4,7 @@
 		extend: 'CMDBuild.view.administration.widget.form.AbstractWidgetDefinitionPanel',
 
 		requires: [
+			'CMDBuild.core.constants.FieldWidths',
 			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.model.widget.ping.PresetGrid'
 		],
@@ -38,14 +39,14 @@
 						Ext.create('Ext.form.field.Text', {
 							name: CMDBuild.core.constants.Proxy.ADDRESS,
 							fieldLabel: CMDBuild.Translation.addressToPing,
-							labelWidth: CMDBuild.LABEL_WIDTH,
-							maxWidth: CMDBuild.ADM_BIG_FIELD_WIDTH
+							labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
+							maxWidth: CMDBuild.core.constants.FieldWidths.ADMINISTRATION_BIG
 						}),
 						Ext.create('Ext.form.field.Number', {
 							name: CMDBuild.core.constants.Proxy.COUNT,
 							fieldLabel: CMDBuild.Translation.numberOfPings,
-							labelWidth: CMDBuild.LABEL_WIDTH,
-							maxWidth: CMDBuild.ADM_SMALL_FIELD_WIDTH,
+							labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
+							maxWidth: CMDBuild.core.constants.FieldWidths.ADMINISTRATION_SMALL,
 							maxValue: 10,
 							minValue: 1
 						}),

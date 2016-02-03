@@ -39,8 +39,8 @@ Ext.define("CMDBuild.Administration.ModIcons", {
 
 		this.description = Ext.create('Ext.form.field.Text', {
 			fieldLabel: this.translation.description,
-			labelWidth: CMDBuild.LABEL_WIDTH,
-			width: CMDBuild.ADM_BIG_FIELD_WIDTH,
+			labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
+			width: CMDBuild.core.constants.FieldWidths.ADMINISTRATION_BIG,
 			name: 'description',
 			allowBlank: false,
 			vtype: 'commentextended'
@@ -63,8 +63,8 @@ Ext.define("CMDBuild.Administration.ModIcons", {
 				region: "center",
 				frame: true,
 				defaults: {
-					labelWidth: CMDBuild.LABEL_WIDTH,
-					width: CMDBuild.ADM_BIG_FIELD_WIDTH
+					labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
+					width: CMDBuild.core.constants.FieldWidths.ADMINISTRATION_BIG
 				},
 				items: [{
 					xtype:'hidden',
@@ -72,7 +72,7 @@ Ext.define("CMDBuild.Administration.ModIcons", {
 				},{
 					xtype: 'filefield',
 					allowBlank: true,
-					width: CMDBuild.ADM_BIG_FIELD_WIDTH,
+					width: CMDBuild.core.constants.FieldWidths.ADMINISTRATION_BIG,
 					fieldLabel: this.translation.file,
 					name: 'file'
 				}, this.description

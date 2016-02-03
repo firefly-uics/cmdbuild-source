@@ -20,7 +20,7 @@
 		title: tr.attributes,
 		considerAsFieldToDisable: true,
 		margin: '0 10 5 0',
-		minWidth: CMDBuild.ADM_BIG_FIELD_WIDTH,
+		minWidth: CMDBuild.core.constants.FieldWidths.ADMINISTRATION_BIG,
 
 		columns: [
 			{

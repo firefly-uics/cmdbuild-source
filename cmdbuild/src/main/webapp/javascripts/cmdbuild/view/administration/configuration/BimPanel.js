@@ -3,7 +3,10 @@
 	Ext.define('CMDBuild.view.administration.configuration.BimPanel', {
 		extend: 'Ext.form.Panel',
 
-		requires: ['CMDBuild.core.constants.Proxy'],
+		requires: [
+			'CMDBuild.core.constants.FieldWidths',
+			'CMDBuild.core.constants.Proxy'
+		],
 
 		mixins: ['CMDBuild.view.common.PanelFunctions'],
 
@@ -24,8 +27,8 @@
 
 		fieldDefaults: {
 			labelAlign: 'left',
-			labelWidth: CMDBuild.CFG_LABEL_WIDTH,
-			maxWidth: CMDBuild.CFG_MEDIUM_FIELD_WIDTH
+			labelWidth: CMDBuild.core.constants.FieldWidths.LABEL_CONFIGURATION,
+			maxWidth: CMDBuild.core.constants.FieldWidths.CONFIGURATION_MEDIUM
 		},
 
 		initComponent: function() {
@@ -72,7 +75,7 @@
 						xtype: 'textfield',
 						name: CMDBuild.core.constants.Proxy.URL,
 						fieldLabel: CMDBuild.Translation.url,
-						maxWidth: CMDBuild.CFG_BIG_FIELD_WIDTH,
+						maxWidth: CMDBuild.core.constants.FieldWidths.CONFIGURATION_BIG,
 					},
 					{
 						xtype: 'textfield',

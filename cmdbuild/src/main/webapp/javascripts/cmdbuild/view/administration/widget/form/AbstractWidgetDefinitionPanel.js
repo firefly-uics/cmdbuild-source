@@ -1,7 +1,10 @@
 (function() {
 
 	// External implementation to avoid overrides
-	Ext.require(['CMDBuild.core.constants.Proxy']);
+	Ext.require([
+		'CMDBuild.core.constants.FieldWidths',
+		'CMDBuild.core.constants.Proxy'
+	]);
 
 	/**
 	 * @abstract
@@ -143,9 +146,9 @@
 				Ext.create('Ext.form.field.Hidden', { name: CMDBuild.core.constants.Proxy.ID }),
 				this.fieldType = Ext.create('Ext.form.field.Text', {
 					fieldLabel: CMDBuild.Translation.type,
-					labelWidth: CMDBuild.LABEL_WIDTH,
+					labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
 					name: CMDBuild.core.constants.Proxy.TYPE,
-					maxWidth: CMDBuild.ADM_BIG_FIELD_WIDTH,
+					maxWidth: CMDBuild.core.constants.FieldWidths.ADMINISTRATION_BIG,
 					disabled: true,
 					disablePanelFunctions: true,
 					readOnly: true,
@@ -161,8 +164,8 @@
 				Ext.create('CMDBuild.view.common.field.translatable.Text', {
 					name: CMDBuild.core.constants.Proxy.LABEL,
 					fieldLabel: CMDBuild.Translation.buttonLabel,
-					maxWidth: CMDBuild.ADM_BIG_FIELD_WIDTH,
-					labelWidth: CMDBuild.LABEL_WIDTH,
+					maxWidth: CMDBuild.core.constants.FieldWidths.ADMINISTRATION_BIG,
+					labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
 					allowBlank: false,
 
 					translationFieldConfig: {
@@ -175,12 +178,12 @@
 				Ext.create('Ext.form.field.Checkbox', {
 					name: CMDBuild.core.constants.Proxy.ACTIVE,
 					fieldLabel: CMDBuild.Translation.active,
-					labelWidth: CMDBuild.LABEL_WIDTH
+					labelWidth: CMDBuild.core.constants.FieldWidths.LABEL
 				}),
 				Ext.create('Ext.form.field.Checkbox', {
 					name: CMDBuild.core.constants.Proxy.ALWAYS_ENABLED,
 					fieldLabel: CMDBuild.Translation.alwaysEnabled,
-					labelWidth: CMDBuild.LABEL_WIDTH
+					labelWidth: CMDBuild.core.constants.FieldWidths.LABEL
 				})
 			];
 		}

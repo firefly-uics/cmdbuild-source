@@ -261,7 +261,7 @@
 				fieldLabel: CMDBuild.Translation.administration.modClass.attributeProperties.name,
 				value: this.filter.getName(),
 				disabled: !canEditTheName,
-				width: CMDBuild.BIG_FIELD_WIDTH,
+				width: CMDBuild.core.constants.FieldWidths.STANDARD_BIG,
 				allowBlank: false // Requires a non-empty value
 			});
 
@@ -269,7 +269,7 @@
 				name: CMDBuild.core.constants.Proxy.DESCRIPTION,
 				fieldLabel: CMDBuild.Translation.administration.modClass.attributeProperties.description,
 				value: this.filter.getDescription(),
-				width: CMDBuild.BIG_FIELD_WIDTH,
+				width: CMDBuild.core.constants.FieldWidths.STANDARD_BIG,
 				allowBlank: false // Requires a non-empty value
 			});
 

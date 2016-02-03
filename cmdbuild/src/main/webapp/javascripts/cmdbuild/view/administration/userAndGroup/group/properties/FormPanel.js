@@ -4,6 +4,7 @@
 		extend: 'Ext.form.Panel',
 
 		requires: [
+			'CMDBuild.core.constants.FieldWidths',
 			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.proxy.userAndGroup.group.Group'
 		],
@@ -31,7 +32,7 @@
 		activeStateToggleButton: undefined,
 
 		/**
-		 * @property {CMDBuild.field.ErasableCombo}
+		 * @property {CMDBuild.view.common.field.CMErasableCombo}
 		 */
 		startingClassCombo: undefined,
 
@@ -106,8 +107,8 @@
 					Ext.create('Ext.form.field.Text', {
 						name: CMDBuild.core.constants.Proxy.NAME,
 						fieldLabel: CMDBuild.Translation.name,
-						labelWidth: CMDBuild.LABEL_WIDTH,
-						maxWidth: CMDBuild.ADM_BIG_FIELD_WIDTH,
+						labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
+						maxWidth: CMDBuild.core.constants.FieldWidths.ADMINISTRATION_BIG,
 						allowBlank: false,
 						cmImmutable: true,
 						vtype: 'alphanumextended'
@@ -115,15 +116,15 @@
 					Ext.create('Ext.form.field.Text', {
 						name: CMDBuild.core.constants.Proxy.DESCRIPTION,
 						fieldLabel: CMDBuild.Translation.descriptionLabel,
-						labelWidth: CMDBuild.LABEL_WIDTH,
-						maxWidth: CMDBuild.ADM_BIG_FIELD_WIDTH,
+						labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
+						maxWidth: CMDBuild.core.constants.FieldWidths.ADMINISTRATION_BIG,
 						allowBlank: false
 					}),
 					Ext.create('Ext.form.field.ComboBox', {
 						name: CMDBuild.core.constants.Proxy.TYPE,
 						fieldLabel: CMDBuild.Translation.type,
-						labelWidth: CMDBuild.LABEL_WIDTH,
-						maxWidth: CMDBuild.ADM_BIG_FIELD_WIDTH,
+						labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
+						maxWidth: CMDBuild.core.constants.FieldWidths.ADMINISTRATION_BIG,
 						valueField: CMDBuild.core.constants.Proxy.VALUE,
 						displayField: CMDBuild.core.constants.Proxy.DESCRIPTION,
 						editable: false,
@@ -137,16 +138,16 @@
 					Ext.create('Ext.form.field.Text', {
 						name: CMDBuild.core.constants.Proxy.EMAIL,
 						fieldLabel: CMDBuild.Translation.email,
-						labelWidth: CMDBuild.LABEL_WIDTH,
-						maxWidth: CMDBuild.ADM_BIG_FIELD_WIDTH,
+						labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
+						maxWidth: CMDBuild.core.constants.FieldWidths.ADMINISTRATION_BIG,
 						allowBlank: true,
 						vtype: 'emailOrBlank'
 					}),
-					this.startingClassCombo = Ext.create('CMDBuild.field.ErasableCombo', {
+					this.startingClassCombo = Ext.create('CMDBuild.view.common.field.CMErasableCombo', {
 						name: CMDBuild.core.constants.Proxy.STARTING_CLASS,
 						fieldLabel: CMDBuild.Translation.startingPageAt,
-						labelWidth: CMDBuild.LABEL_WIDTH,
-						maxWidth: CMDBuild.ADM_BIG_FIELD_WIDTH,
+						labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
+						maxWidth: CMDBuild.core.constants.FieldWidths.ADMINISTRATION_BIG,
 						valueField: CMDBuild.core.constants.Proxy.ID,
 						displayField: CMDBuild.core.constants.Proxy.TEXT, // TODO: waiting for refactor (rename description)
 						editable: false,
@@ -158,7 +159,7 @@
 					this.activeCheckbox = Ext.create('Ext.form.field.Checkbox', {
 						name: CMDBuild.core.constants.Proxy.IS_ACTIVE,
 						fieldLabel: CMDBuild.Translation.active,
-						labelWidth: CMDBuild.LABEL_WIDTH,
+						labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
 						inputValue: true,
 						uncheckedValue: false,
 						checked: true

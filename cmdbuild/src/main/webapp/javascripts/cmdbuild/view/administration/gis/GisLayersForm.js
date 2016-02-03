@@ -53,8 +53,8 @@
 
 			this.nameField = Ext.create('Ext.form.field.Text', {
 				fieldLabel: tr_attribute.name,
-				labelWidth: CMDBuild.LABEL_WIDTH,
-				width: CMDBuild.ADM_BIG_FIELD_WIDTH,
+				labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
+				width: CMDBuild.core.constants.FieldWidths.ADMINISTRATION_BIG,
 				name: CMDBuild.core.constants.Proxy.NAME,
 				allowBlank: false,
 				cmImmutable: true,
@@ -73,7 +73,7 @@
 				autoScroll: true,
 				name: CMDBuild.core.constants.Proxy.TYPE,
 				fieldLabel: tr_attribute.type,
-				labelWidth: CMDBuild.LABEL_WIDTH,
+				labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
 				valueField: CMDBuild.core.constants.Proxy.VALUE,
 				displayField: CMDBuild.core.constants.Proxy.NAME,
 				hiddenName: CMDBuild.core.constants.Proxy.TYPE,
@@ -95,8 +95,8 @@
 			this.rangeFields = Ext.create('CMDBuild.form.RangeSliders', {
 				maxSliderField: Ext.create('Ext.slider.Single', {
 					fieldLabel: tr.max_zoom,
-					labelWidth: CMDBuild.LABEL_WIDTH,
-					width: CMDBuild.ADM_BIG_FIELD_WIDTH,
+					labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
+					width: CMDBuild.core.constants.FieldWidths.ADMINISTRATION_BIG,
 					minValue: 0,
 					maxValue: 25,
 					value: 25,
@@ -105,8 +105,8 @@
 				}),
 				minSliderField: Ext.create('Ext.slider.Single', {
 					fieldLabel: tr.min_zoom,
-					labelWidth: CMDBuild.LABEL_WIDTH,
-					width: CMDBuild.ADM_BIG_FIELD_WIDTH,
+					labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
+					width: CMDBuild.core.constants.FieldWidths.ADMINISTRATION_BIG,
 					minValue: 0,
 					maxValue: 25,
 					name: 'minZoom',
@@ -117,8 +117,8 @@
 
 			this.descriptionField = Ext.create('Ext.form.field.Text', {
 				fieldLabel: tr_attribute.description,
-				labelWidth: CMDBuild.LABEL_WIDTH,
-				width: CMDBuild.ADM_BIG_FIELD_WIDTH,
+				labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
+				width: CMDBuild.core.constants.FieldWidths.ADMINISTRATION_BIG,
 				name: CMDBuild.core.constants.Proxy.DESCRIPTION,
 				allowBlank: false,
 				disabled: true
@@ -126,8 +126,8 @@
 
 			this.fileField = Ext.create('Ext.form.field.File', {
 				fieldLabel: tr_geoserver.file,
-				labelWidth: CMDBuild.LABEL_WIDTH,
-				width: CMDBuild.ADM_BIG_FIELD_WIDTH,
+				labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
+				width: CMDBuild.core.constants.FieldWidths.ADMINISTRATION_BIG,
 				name: 'file',
 				form: this,
 				disabled: true

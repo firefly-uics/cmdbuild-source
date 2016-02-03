@@ -19,7 +19,7 @@
 
 		valueField: CMDBuild.core.constants.Proxy.NAME,
 		displayField: CMDBuild.core.constants.Proxy.DESCRIPTION,
-		maxWidth: CMDBuild.ADM_BIG_FIELD_WIDTH,
+		maxWidth: CMDBuild.core.constants.FieldWidths.ADMINISTRATION_BIG,
 		forceSelection: true,
 		editable: false,
 
