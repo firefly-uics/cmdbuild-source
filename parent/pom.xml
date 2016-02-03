@@ -14,27 +14,27 @@
 
 		<axis.version>1.4</axis.version>
 		<beanshell.version>2.0b4</beanshell.version>
-		<commons-configuration.version>1.9</commons-configuration.version>
-		<commons-lang.version>3.3</commons-lang.version>
-		<commons-io.version>2.2</commons-io.version>
-		<commons-validator.version>1.3.1</commons-validator.version>
+		<commons-configuration.version>1.10</commons-configuration.version>
+		<commons-lang.version>3.4</commons-lang.version>
+		<commons-io.version>2.4</commons-io.version>
+		<commons-validator.version>1.5.0</commons-validator.version>
 		<cxf.version>2.6.11</cxf.version>
-		<guava.version>16.0.1</guava.version>
+		<guava.version>19.0</guava.version>
 		<jackson.version>1.9.13</jackson.version>
 		<jcip-annotations.version>1.0</jcip-annotations.version>
-		<joda-time.version>2.3</joda-time.version>
+		<joda-time.version>2.9.2</joda-time.version>
 		<log4j.version>1.2.17</log4j.version>
 		<postgresql.version>9.1-901.jdbc4</postgresql.version>
 		<shark.version>4.4-1</shark.version>
-		<slf4j.version>1.7.6</slf4j.version>
+		<slf4j.version>1.7.14</slf4j.version>
 		<spring.version>3.2.3.RELEASE</spring.version>
 		<tomcat.version>6.0.29</tomcat.version>
 		<tomcat-plugin.version>1.1</tomcat-plugin.version>
 
 		<!-- Test -->
 		<hamcrest.version>1.3</hamcrest.version>
-		<junit.version>4.11</junit.version>
-		<mockito.version>1.9.5</mockito.version>
+		<junit.version>4.12</junit.version>
+		<mockito.version>1.10.19</mockito.version>
 
 		<!-- Plugins -->
 		<maven-compiler-plugin.version>2.3.2</maven-compiler-plugin.version>

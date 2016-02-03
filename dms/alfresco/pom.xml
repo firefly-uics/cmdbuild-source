@@ -12,7 +12,7 @@
 	<name>CMDBuild DMS Alfresco</name>
 	<properties>
 		<alfresco.version>3.4.e</alfresco.version>
-		<commons-net.version>3.0.1</commons-net.version>
+		<commons-net.version>3.4</commons-net.version>
 	</properties>
 	<dependencies>
 		<dependency>
