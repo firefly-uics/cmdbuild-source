@@ -11,12 +11,31 @@
 		requires: [
 			'CMDBuild.core.cache.Cache',
 			'CMDBuild.core.constants.Proxy',
+			'CMDBuild.core.interfaces.Ajax'
 		],
 
 		/**
 		 * @cfg {String}
 		 */
 		cacheGroupIdentifier: undefined,
+
+		/**
+		 * @param {Array} records
+		 * @param {Object} operation
+		 * @param {Boolean} success
+		 *
+		 * @returns {Boolean}
+		 *
+		 * @private
+		 */
+		callbackInterceptor: function(records, operation, success) {
+			var decodedResponse = CMDBuild.core.interfaces.Ajax.decodeJson(operation.response.responseText);
+
+			CMDBuild.core.interfaces.messages.Warning.display(decodedResponse);
+			CMDBuild.core.interfaces.messages.Error.display(decodedResponse, operation.request);
+
+			return true;
+		},
 
 		/**
 		 * @param {Function or Object} options
