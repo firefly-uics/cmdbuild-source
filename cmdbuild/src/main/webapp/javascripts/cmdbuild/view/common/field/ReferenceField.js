@@ -98,8 +98,8 @@
 		return Ext.create('Ext.container.Container', {
 			margin: "0 0 5 0",
 			items: [fieldContainer].concat(subFields),
-			resolveTemplate: function() {
-				field.resolveTemplate();
+			resolveTemplate: function(barrierCallbackDefinitionObject) {
+				field.resolveTemplate(barrierCallbackDefinitionObject);
 			}
 		});
 	}
@@ -228,7 +228,12 @@
 			return true;
 		},
 
-		resolveTemplate : function() {
+		/**
+		 * @param {Object} barrierCallbackDefinitionObject
+		 * @param {Object} barrierCallbackDefinitionObject.callback
+		 * @param {Object} barrierCallbackDefinitionObject.scope
+		 */
+		resolveTemplate: function(barrierCallbackDefinitionObject) {
 			var me = this;
 			if (me.templateResolver && !me.disabled) {
 				// Don't overlap requests
@@ -244,36 +249,65 @@
 					callback: function(out, ctx) {
 						me.onTemplateResolved(
 							out,
-							function afterStoreIsLoaded() {
+							function () {
 								me.templateResolverBusy = false;
 
 								if (me.requireResolveTemplates) {
 									me.requireResolveTemplates = false;
-									me.resolveTemplate();
+
+									me.resolveTemplate(barrierCallbackDefinitionObject);
+
+									return;
+								}
+
+								// Run callback at the end of resolving execution
+								if (
+									Ext.isObject(barrierCallbackDefinitionObject) && !Ext.Object.isEmpty(barrierCallbackDefinitionObject)
+									&& !Ext.isEmpty(barrierCallbackDefinitionObject.callback) && Ext.isFunction(barrierCallbackDefinitionObject.callback)
+								) {
+									Ext.callback(
+										barrierCallbackDefinitionObject.callback,
+										barrierCallbackDefinitionObject.scope || me
+									);
 								}
 							}
 						);
 					}
 				});
+			} else {
+				// Run callback at the end of resolving execution
+				if (
+					Ext.isObject(barrierCallbackDefinitionObject) && !Ext.Object.isEmpty(barrierCallbackDefinitionObject)
+					&& !Ext.isEmpty(barrierCallbackDefinitionObject.callback) && Ext.isFunction(barrierCallbackDefinitionObject.callback)
+				) {
+					Ext.callback(
+						barrierCallbackDefinitionObject.callback,
+						barrierCallbackDefinitionObject.scope || me
+					);
+				}
 			}
 		},
 
+		/**
+		 * @param {Object} out
+		 * @param {Function} afterStoreIsLoaded
+		 *
+		 * @private
+		 */
 		onTemplateResolved: function(out, afterStoreIsLoaded) {
-			this.filtered = true;
-
-			var store = this.store;
 			var callParams = this.templateResolver.buildCQLQueryParameters(out[FILTER_FIELD]);
 
-			if (!Ext.isEmpty(store)) {
+			this.filtered = true;
+
+			if (!Ext.isEmpty(this.getStore())) {
 				if (callParams) {
 					// For the popup window! baseParams is not meant to be the old ExtJS 3.x property!
 					// Ext.apply(store.baseParams, callParams);
-					store.baseParams.filter = Ext.encode({
+					this.getStore().baseParams.filter = Ext.encode({
 						CQL: callParams.CQL
 					});
 
-					var me = this;
-					store.load({
+					this.getStore().load({
 						scope: this,
 						callback: function(records, operation, success) {
 							// Manage preselectIfUnique metadata with CQL filter
@@ -287,17 +321,17 @@
 								this.setValue(records[0].get('Id'));
 							}
 
-							// Fail the validation if the current selection is not in the new filter
-							me.validate();
+							this.validate(); // Fail the validation if the current selection is not in the new filter
+
 							afterStoreIsLoaded();
 						}
 					});
 				} else {
 					var emptyDataSet = {};
-					emptyDataSet[store.root] = [];
-					emptyDataSet[store.totalProperty] = 0;
+					emptyDataSet[this.getStore().root] = [];
+					emptyDataSet[this.getStore().totalProperty] = 0;
 
-					store.loadData(emptyDataSet);
+					this.getStore().loadData(emptyDataSet);
 
 					afterStoreIsLoaded();
 				}
@@ -306,23 +340,36 @@
 			}
 		},
 
+		/**
+		 * @private
+		 */
 		addListenerToDeps: function() {
-			if (this.depsAdded)
-				return;
+			Ext.Object.each(this.templateResolver.getLocalDepsAsField(), function(name, field, myself) {
+				if (
+					!Ext.isEmpty(field)
+					&& Ext.isFunction(field.resumeEvents)
+					&& Ext.isFunction(field.un) && Ext.isFunction(field.on)
+				) {
+					// Remove event before add
+					if (field.hasListener('change'))
+						field.un('change', this.depsChangeEventManager, this);
 
-			this.depsAdded = true;
-			// Adding the same listener twice does not double the fired events, that's why it works
-			var deps = this.templateResolver.getLocalDepsAsField();
+					field.on('change', this.depsChangeEventManager, this);
+				}
+			}, this);
+		},
 
-			for (var name in deps) {
-				var field = deps[name];
-
-				if (field)
-					field.mon(field, CHANGE_EVENT, function() {
-						this.reset();
-						this.resolveTemplate();
-					}, this);
-			}
+		/**
+		 * @param {Ext.form.Field} field
+		 * @param {Object} newValue
+		 * @param {Object} oldValue
+		 * @param {Object} eOpts
+		 *
+		 * @private
+		 */
+		depsChangeEventManager: function(field, newValue, oldValue, eOpts) {
+			this.reset();
+			this.resolveTemplate();
 		},
 
 		isFiltered: function() {
