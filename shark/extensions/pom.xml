@@ -13,7 +13,7 @@
 	<name>CMDBuild Shark Extensions</name>
 
 	<properties>
-		<groovy.version>1.8.1</groovy.version>
+		<groovy.version>2.4.5</groovy.version>
 	</properties>
 
 	<dependencies>
@@ -128,6 +128,7 @@
 				<artifactId>maven-failsafe-plugin</artifactId>
 			</plugin>
 			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-jar-plugin</artifactId>
 				<executions>
 					<execution>
