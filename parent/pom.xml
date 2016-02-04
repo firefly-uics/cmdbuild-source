@@ -19,6 +19,7 @@
 		<commons-io.version>2.4</commons-io.version>
 		<commons-validator.version>1.5.0</commons-validator.version>
 		<cxf.version>2.6.11</cxf.version>
+		<commons-fileupload.version>1.3.1</commons-fileupload.version>
 		<guava.version>19.0</guava.version>
 		<jackson.version>1.9.13</jackson.version>
 		<jcip-annotations.version>1.0</jcip-annotations.version>
@@ -29,7 +30,6 @@
 		<slf4j.version>1.7.14</slf4j.version>
 		<spring.version>3.2.3.RELEASE</spring.version>
 		<tomcat.version>6.0.29</tomcat.version>
-		<tomcat-plugin.version>1.1</tomcat-plugin.version>
 
 		<!-- Test -->
 		<hamcrest.version>1.3</hamcrest.version>
@@ -37,12 +37,13 @@
 		<mockito.version>1.10.19</mockito.version>
 
 		<!-- Plugins -->
-		<maven-compiler-plugin.version>2.3.2</maven-compiler-plugin.version>
-		<maven-failsafe-plugin.version>2.8</maven-failsafe-plugin.version>
-		<maven-merge-file-plugin.version>0.4</maven-merge-file-plugin.version>
-		<maven-surefire-plugin.version>2.8</maven-surefire-plugin.version>
-		<maven-war-plugin.version>2.1.1</maven-war-plugin.version>
-		<maven-jar-plugin.version>2.4</maven-jar-plugin.version>
+		<maven-compiler-plugin.version>3.5</maven-compiler-plugin.version>
+		<maven-failsafe-plugin.version>2.19.1</maven-failsafe-plugin.version>
+		<maven-surefire-plugin.version>2.19.1</maven-surefire-plugin.version>
+		<maven-war-plugin.version>2.6</maven-war-plugin.version>
+		<maven-jar-plugin.version>2.6</maven-jar-plugin.version>
+		<maven-toolchains-plugin.version>1.1</maven-toolchains-plugin.version>
+		<tomcat-maven-plugin.version>2.2</tomcat-maven-plugin.version>
 		<buildnumber-maven-plugin.version>1.4</buildnumber-maven-plugin.version>
 	</properties>
 	<dependencyManagement>
@@ -163,6 +164,12 @@
 				<artifactId>spring-context</artifactId>
 				<version>${spring.version}</version>
 			</dependency>
+
+			<dependency>
+				<groupId>commons-fileupload</groupId>
+				<artifactId>commons-fileupload</artifactId>
+				<version>${commons-fileupload.version}</version>
+			</dependency>
 		</dependencies>
 	</dependencyManagement>
 
@@ -262,7 +269,7 @@
 				<plugin>
 					<groupId>org.codehaus.mojo</groupId>
 					<artifactId>tomcat-maven-plugin</artifactId>
-					<version>${tomcat-plugin.version}</version>
+					<version>${tomcat-maven-plugin.version}</version>
 				</plugin>
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
@@ -422,7 +429,7 @@
 					<plugin>
 						<groupId>org.apache.maven.plugins</groupId>
 						<artifactId>maven-toolchains-plugin</artifactId>
-						<version>1.0</version>
+						<version>${maven-toolchains-plugin.version}</version>
 						<executions>
 							<execution>
 								<phase>validate</phase>
