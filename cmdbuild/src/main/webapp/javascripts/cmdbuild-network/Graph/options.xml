@@ -1,0 +1,43 @@
+<DATA>
+	<params>
+		<type>popup</type>
+		<title>Properties</title>
+	</params>
+	<div id="options">
+		<onInit>
+			<command>initOptions</command>
+			<backend>Options</backend>
+		</onInit>
+		<checkbox id="nodeTooltipEnabled" label="Tooltip for entities" text="true">
+			<onClick>
+				<command>boolean</command>
+				<type>nodeTooltipEnabled</type>
+			</onClick>
+		</checkbox>
+		<checkbox id="edgeTooltipEnabled" label="Tooltip for relations" text="true">
+			<onClick>
+				<command>boolean</command>
+				<type>edgeTooltipEnabled</type>
+			</onClick>
+		</checkbox>
+		<spinner label="Threshold for clustering nodes" id="clusteringThreshold" class="optionsSpinner">
+			<params>
+				<backend>Options</backend>
+				<type>clusteringThreshold</type>
+				<value>1</value>
+			</params>
+			<onChange>
+				<command>boolean</command>
+				<type>clusteringThreshold</type>
+			</onChange>
+		</spinner>
+	</div>
+	<div class='cmdbuildFooterButtonsWrapper'>
+		<button text="Ok" id="okOptionsDialogButton">
+			<onClick>
+				<command>dialogClose</command>
+				<dialog>commandPanelDialog</dialog>
+			</onClick>
+		</button>
+	</div>
+</DATA>

@@ -1,0 +1,31 @@
+<DATA>
+	<onClick>
+			<command>navigate</command>
+			<container>relationsFormContainer</container>
+			<form>relationsForm</form>
+	</onClick>
+	<params>
+		<type>div</type>
+	</params>
+	<div id="relationsFormContainer">
+		<onInit>
+			<command>navigate</command>
+			<container>relationsFormContainer</container>
+			<form>relationsForm</form>
+		</onInit>
+		<form id="relationsForm">
+<!-- 			<observe container="relationsFormContainer"> -->
+<!-- 				<dummy1>$selectedForm.dummy</dummy1>  -->
+<!-- 			</observe> -->
+   			<params>
+				<type>relationsGrid</type>
+				<backend>Relations</backend>
+				<nRows>9</nRows>
+				<className>$selectedForm.className</className>
+				<cardId>$selectedForm.id</cardId>
+<!-- 				<container>relationsFormContainer</container> -->
+<!-- 				<form>relationsForm</form> -->
+			</params>
+		</form>
+	</div>
+</DATA>
