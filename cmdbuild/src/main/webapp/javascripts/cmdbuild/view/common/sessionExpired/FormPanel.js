@@ -62,7 +62,6 @@
 						]
 					})
 				],
-
 				items: [
 					Ext.create('Ext.form.field.Display', {
 						value: CMDBuild.Translation.sessionExpiredMessage,
