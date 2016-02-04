@@ -13,7 +13,7 @@
 	<properties>
 		<bimserver.libraries.dir>${basedir}/src/lib</bimserver.libraries.dir>
 		<bimserver.version>1.2</bimserver.version>
-		<maven-resources-plugin>2.6</maven-resources-plugin>
+		<maven-install-plugin.version>2.5.2</maven-install-plugin.version>
 	</properties>
 	<dependencies>
 		<dependency>
@@ -163,7 +163,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-install-plugin</artifactId>
-				<version>2.4</version>
+				<version>${maven-install-plugin.version}</version>
 				<executions>
 					<execution>
 						<id>bimserver</id>
@@ -295,7 +295,7 @@
 									<pluginExecutionFilter>
 										<groupId>org.apache.maven.plugins</groupId>
 										<artifactId>maven-install-plugin</artifactId>
-										<versionRange>[2.4,)</versionRange>
+										<versionRange>[${maven-install-plugin.version},)</versionRange>
 										<goals>
 											<goal>install-file</goal>
 										</goals>
