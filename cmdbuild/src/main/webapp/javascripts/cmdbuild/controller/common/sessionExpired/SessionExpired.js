@@ -23,8 +23,8 @@
 		 * @cfg {Array}
 		 */
 		cmfgCatchedFunctions: [
-			'onSessionExpiredChangeUserButtonClick',
-			'onSessionExpiredLoginButtonClick = onSessionExpiredConfirmButtonClick'
+			'onSessionExpiredChangeUserButtonClick = onSessionExpiredConfirmButtonClick',
+			'onSessionExpiredLoginButtonClick'
 		],
 
 		/**
