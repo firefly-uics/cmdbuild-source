@@ -61,4 +61,9 @@ public abstract class ForwardingDataSource extends ForwardingObject implements D
 		return delegate().getConnection(username, password);
 	}
 	
+	@Override
+	public Logger getParentLogger() throws SQLFeatureNotSupportedException {
+		return delegate().getParentLogger();
+	}
+	
 }

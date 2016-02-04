@@ -12,7 +12,7 @@
 	<name>CMDBuild Core</name>
 
 	<properties>
-		<antlr.version>3.2</antlr.version>
+		<antlr.version>3.5.2</antlr.version>
 		<itext.version>2.1.7</itext.version> <!-- jasperreports dependency -->
 		<jasperreports.version>5.1.2</jasperreports.version>
 		<json-java.version>20110113</json-java.version>

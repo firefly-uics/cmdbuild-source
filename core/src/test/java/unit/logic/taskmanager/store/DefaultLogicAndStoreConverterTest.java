@@ -1,5 +1,8 @@
 package unit.logic.taskmanager.store;
 
+import static com.google.common.collect.Maps.newHashMap;
+import static com.google.common.collect.Maps.newLinkedHashMap;
+import static com.google.common.collect.Ordering.from;
 import static java.util.Arrays.asList;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.cmdbuild.common.java.sql.DataSourceTypes.mysql;
@@ -46,8 +49,6 @@ import org.junit.Test;
 
 import com.google.common.base.Joiner;
 import com.google.common.base.Splitter;
-import com.google.common.collect.Maps;
-import com.google.common.collect.Ordering;
 
 public class DefaultLogicAndStoreConverterTest {
 
@@ -116,18 +117,18 @@ public class DefaultLogicAndStoreConverterTest {
 	@Test
 	public void asynchronousEventTaskSuccessfullyConvertedToLogic() throws Exception {
 		// given
-		final org.cmdbuild.data.store.task.AsynchronousEventTask source = a(org.cmdbuild.data.store.task.AsynchronousEventTask
-				.newInstance() //
-				.withId(42L) //
-				.withDescription("description") //
-				.withRunningStatus(true) //
-				.withCronExpression("cron expression") //
-				.withLastExecution(NOW) //
-				.withParameter(AsynchronousEvent.FILTER_CLASSNAME, "classname") //
-				.withParameter(AsynchronousEvent.FILTER_CARDS, "filter") //
-				.withParameter(AsynchronousEvent.EMAIL_ACTIVE, "true") //
-				.withParameter(AsynchronousEvent.EMAIL_ACCOUNT, "account") //
-				.withParameter(AsynchronousEvent.EMAIL_TEMPLATE, "error template") //
+		final org.cmdbuild.data.store.task.AsynchronousEventTask source = a(
+				org.cmdbuild.data.store.task.AsynchronousEventTask.newInstance() //
+						.withId(42L) //
+						.withDescription("description") //
+						.withRunningStatus(true) //
+						.withCronExpression("cron expression") //
+						.withLastExecution(NOW) //
+						.withParameter(AsynchronousEvent.FILTER_CLASSNAME, "classname") //
+						.withParameter(AsynchronousEvent.FILTER_CARDS, "filter") //
+						.withParameter(AsynchronousEvent.EMAIL_ACTIVE, "true") //
+						.withParameter(AsynchronousEvent.EMAIL_ACCOUNT, "account") //
+						.withParameter(AsynchronousEvent.EMAIL_TEMPLATE, "error template") //
 		);
 
 		// when
@@ -166,28 +167,28 @@ public class DefaultLogicAndStoreConverterTest {
 						.withCreateStatus(true) //
 						.withUpdateStatus(true) //
 						.withDeleteStatus(false) //
-						)) //
+		)) //
 				.withClassMapping(a(ClassMapping.newInstance() //
 						.withSourceType("sourceTypeB") //
 						.withTargetType("targetTypeB") //
 						.withCreateStatus(false) //
 						.withUpdateStatus(false) //
 						.withDeleteStatus(true) //
-						)) //
+		)) //
 				.withAttributeMapping(a(AttributeMapping.newInstance() //
 						.withSourceType("sourceTypeA") //
 						.withSourceAttribute("sourceAttributeA") //
 						.withTargetType("targetTypeA") //
 						.withTargetAttribute("targetAttributeA") //
 						.withKeyStatus(true) //
-						)) //
+		)) //
 				.withAttributeMapping(a(AttributeMapping.newInstance() //
 						.withSourceType("sourceTypeB") //
 						.withSourceAttribute("sourceAttributeB") //
 						.withTargetType("targetTypeB") //
 						.withTargetAttribute("targetAttributeB") //
 						.withKeyStatus(false) //
-						)) //
+		)) //
 		);
 
 		// when
@@ -205,13 +206,17 @@ public class DefaultLogicAndStoreConverterTest {
 		assertThat(parameters, hasEntry(Connector.NOTIFICATION_ACTIVE, "true"));
 		assertThat(parameters, hasEntry(Connector.NOTIFICATION_ACCOUNT, "account"));
 		assertThat(parameters, hasEntry(Connector.NOTIFICATION_ERROR_TEMPLATE, "error template"));
-		assertThat(parameters, hasEntry(Connector.MAPPING_TYPES, "" //
-				+ "sourceTypeB,targetTypeB,false,false,true" + SPECIAL_SEPARATOR //
-				+ "sourceTypeA,targetTypeA,true,true,false" //
+		assertThat(parameters,
+				hasEntry(Connector.MAPPING_TYPES,
+						"" //
+								+ "sourceTypeA,targetTypeA,true,true,false" + SPECIAL_SEPARATOR //
+								+ "sourceTypeB,targetTypeB,false,false,true" //
 		));
-		assertThat(parameters, hasEntry(Connector.MAPPING_ATTRIBUTES, "" //
-				+ "sourceTypeA,sourceAttributeA,targetTypeA,targetAttributeA,true" + SPECIAL_SEPARATOR //
-				+ "sourceTypeB,sourceAttributeB,targetTypeB,targetAttributeB,false" //
+		assertThat(parameters,
+				hasEntry(Connector.MAPPING_ATTRIBUTES,
+						"" //
+								+ "sourceTypeA,sourceAttributeA,targetTypeA,targetAttributeA,true" + SPECIAL_SEPARATOR //
+								+ "sourceTypeB,sourceAttributeB,targetTypeB,targetAttributeB,false" //
 		));
 	}
 
@@ -232,7 +237,7 @@ public class DefaultLogicAndStoreConverterTest {
 						.withUsername("user") //
 						.withPassword("pwd") //
 						.withFilter("filter") //
-						)) //
+		)) //
 		);
 
 		// when
@@ -356,24 +361,25 @@ public class DefaultLogicAndStoreConverterTest {
 	@Test
 	public void connectorTaskSuccessfullyConvertedToLogic() throws Exception {
 		// given
-		final org.cmdbuild.data.store.task.ConnectorTask source = a(org.cmdbuild.data.store.task.ConnectorTask
-				.newInstance() //
-				.withId(42L) //
-				.withDescription("description") //
-				.withRunningStatus(true) //
-				.withCronExpression("cron expression") //
-				.withLastExecution(NOW) //
-				.withParameter(Connector.NOTIFICATION_ACTIVE, "true") //
-				.withParameter(Connector.NOTIFICATION_ACCOUNT, "account") //
-				.withParameter(Connector.NOTIFICATION_ERROR_TEMPLATE, "error template") //
-				.withParameter(Connector.MAPPING_TYPES, "" //
-						+ "sourceTypeA,targetTypeA,true,true,false" + SPECIAL_SEPARATOR //
-						+ "sourceTypeB,targetTypeB,false,false,true" //
-				) //
-				.withParameter(Connector.MAPPING_ATTRIBUTES, "" //
-						+ "sourceTypeA,sourceAttributeA,targetTypeA,targetAttributeA,true" + SPECIAL_SEPARATOR //
-						+ "sourceTypeB,sourceAttributeB,targetTypeB,targetAttributeB,false" //
-				) //
+		final org.cmdbuild.data.store.task.ConnectorTask source = a(
+				org.cmdbuild.data.store.task.ConnectorTask.newInstance() //
+						.withId(42L) //
+						.withDescription("description") //
+						.withRunningStatus(true) //
+						.withCronExpression("cron expression") //
+						.withLastExecution(NOW) //
+						.withParameter(Connector.NOTIFICATION_ACTIVE, "true") //
+						.withParameter(Connector.NOTIFICATION_ACCOUNT, "account") //
+						.withParameter(Connector.NOTIFICATION_ERROR_TEMPLATE, "error template") //
+						.withParameter(Connector.MAPPING_TYPES,
+								"" //
+										+ "sourceTypeA,targetTypeA,true,true,false" + SPECIAL_SEPARATOR //
+										+ "sourceTypeB,targetTypeB,false,false,true" //
+		) //
+						.withParameter(Connector.MAPPING_ATTRIBUTES, "" //
+								+ "sourceTypeA,sourceAttributeA,targetTypeA,targetAttributeA,true" + SPECIAL_SEPARATOR //
+								+ "sourceTypeB,sourceAttributeB,targetTypeB,targetAttributeB,false" //
+		) //
 		);
 
 		// when
@@ -390,7 +396,7 @@ public class DefaultLogicAndStoreConverterTest {
 		assertThat(converted.isNotificationActive(), equalTo(true));
 		assertThat(converted.getNotificationAccount(), equalTo("account"));
 		assertThat(converted.getNotificationErrorTemplate(), equalTo("error template"));
-		final List<ClassMapping> classMappings = Ordering.from(CLASS_MAPPING_COMPARATOR) //
+		final List<ClassMapping> classMappings = from(CLASS_MAPPING_COMPARATOR) //
 				.immutableSortedCopy(converted.getClassMappings());
 		final ClassMapping firstClassMapping = classMappings.get(0);
 		assertThat(firstClassMapping.getSourceType(), equalTo("sourceTypeA"));
@@ -404,7 +410,7 @@ public class DefaultLogicAndStoreConverterTest {
 		assertThat(secondClassMapping.isCreate(), is(false));
 		assertThat(secondClassMapping.isUpdate(), is(false));
 		assertThat(secondClassMapping.isDelete(), is(true));
-		final List<AttributeMapping> attributeMappings = Ordering.from(ATTRIBUTE_MAPPING_COMPARATOR) //
+		final List<AttributeMapping> attributeMappings = from(ATTRIBUTE_MAPPING_COMPARATOR) //
 				.immutableSortedCopy(converted.getAttributeMappings());
 		final AttributeMapping firstAttributeMapping = attributeMappings.get(0);
 		assertThat(firstAttributeMapping.getSourceType(), equalTo("sourceTypeA"));
@@ -423,7 +429,7 @@ public class DefaultLogicAndStoreConverterTest {
 	@Test
 	public void sqlDataSourceSuccessfullyConvertedToLogic() throws Exception {
 		// given
-		final Map<String, String> configuration = Maps.newHashMap();
+		final Map<String, String> configuration = newHashMap();
 		configuration.put(Connector.SQL_TYPE, "postgresql");
 		configuration.put(Connector.SQL_HOSTNAME, "example.com");
 		configuration.put(Connector.SQL_PORT, "12345");
@@ -432,16 +438,17 @@ public class DefaultLogicAndStoreConverterTest {
 		configuration.put(Connector.SQL_USERNAME, "user");
 		configuration.put(Connector.SQL_PASSWORD, "pwd");
 		configuration.put(Connector.SQL_FILTER, "filter");
-		final org.cmdbuild.data.store.task.ConnectorTask source = a(org.cmdbuild.data.store.task.ConnectorTask
-				.newInstance() //
-				.withId(42L) //
-				.withDescription("description") //
-				.withRunningStatus(true) //
-				.withCronExpression("cron expression") //
-				.withParameter(Connector.DATA_SOURCE_TYPE, "sql") //
-				.withParameter(Connector.DATA_SOURCE_CONFIGURATION, Joiner.on(SPECIAL_SEPARATOR) //
-						.withKeyValueSeparator(KEY_VALUE_SEPARATOR) //
-						.join(configuration)) //
+		final org.cmdbuild.data.store.task.ConnectorTask source = a(
+				org.cmdbuild.data.store.task.ConnectorTask.newInstance() //
+						.withId(42L) //
+						.withDescription("description") //
+						.withRunningStatus(true) //
+						.withCronExpression("cron expression") //
+						.withParameter(Connector.DATA_SOURCE_TYPE, "sql") //
+						.withParameter(Connector.DATA_SOURCE_CONFIGURATION,
+								Joiner.on(SPECIAL_SEPARATOR) //
+										.withKeyValueSeparator(KEY_VALUE_SEPARATOR) //
+										.join(configuration)) //
 		);
 
 		// when
@@ -453,34 +460,36 @@ public class DefaultLogicAndStoreConverterTest {
 		final SourceConfiguration sourceConfiguration = converted.getSourceConfiguration();
 		assertThat(sourceConfiguration, instanceOf(SqlSourceConfiguration.class));
 		final SqlSourceConfiguration sqlSourceConfiguration = SqlSourceConfiguration.class.cast(sourceConfiguration);
-		assertThat(sqlSourceConfiguration, equalTo(a(SqlSourceConfiguration.newInstance() //
-				.withType(postgresql()) //
-				.withHost("example.com") //
-				.withPort(12345) //
-				.withDatabase("db") //
-				.withInstance("instance") //
-				.withUsername("user") //
-				.withPassword("pwd") //
-				.withFilter("filter") //
-				)) //
+		assertThat(sqlSourceConfiguration,
+				equalTo(a(SqlSourceConfiguration.newInstance() //
+						.withType(postgresql()) //
+						.withHost("example.com") //
+						.withPort(12345) //
+						.withDatabase("db") //
+						.withInstance("instance") //
+						.withUsername("user") //
+						.withPassword("pwd") //
+						.withFilter("filter") //
+		)) //
 		);
 	}
 
 	@Test
 	public void mysqlTypeForSqlDataSuccessfullyConvertedToLogic() throws Exception {
 		// given
-		final Map<String, String> configuration = Maps.newHashMap();
+		final Map<String, String> configuration = newHashMap();
 		configuration.put(Connector.SQL_TYPE, "mysql");
-		final org.cmdbuild.data.store.task.ConnectorTask source = a(org.cmdbuild.data.store.task.ConnectorTask
-				.newInstance() //
-				.withId(42L) //
-				.withDescription("description") //
-				.withRunningStatus(true) //
-				.withCronExpression("cron expression") //
-				.withParameter(Connector.DATA_SOURCE_TYPE, "sql") //
-				.withParameter(Connector.DATA_SOURCE_CONFIGURATION, Joiner.on(SPECIAL_SEPARATOR) //
-						.withKeyValueSeparator(KEY_VALUE_SEPARATOR) //
-						.join(configuration)) //
+		final org.cmdbuild.data.store.task.ConnectorTask source = a(
+				org.cmdbuild.data.store.task.ConnectorTask.newInstance() //
+						.withId(42L) //
+						.withDescription("description") //
+						.withRunningStatus(true) //
+						.withCronExpression("cron expression") //
+						.withParameter(Connector.DATA_SOURCE_TYPE, "sql") //
+						.withParameter(Connector.DATA_SOURCE_CONFIGURATION,
+								Joiner.on(SPECIAL_SEPARATOR) //
+										.withKeyValueSeparator(KEY_VALUE_SEPARATOR) //
+										.join(configuration)) //
 		);
 
 		// when
@@ -500,18 +509,19 @@ public class DefaultLogicAndStoreConverterTest {
 	@Test
 	public void oracleTypeForSqlDataSuccessfullyConvertedToLogic() throws Exception {
 		// given
-		final Map<String, String> configuration = Maps.newHashMap();
+		final Map<String, String> configuration = newHashMap();
 		configuration.put(Connector.SQL_TYPE, "oracle");
-		final org.cmdbuild.data.store.task.ConnectorTask source = a(org.cmdbuild.data.store.task.ConnectorTask
-				.newInstance() //
-				.withId(42L) //
-				.withDescription("description") //
-				.withRunningStatus(true) //
-				.withCronExpression("cron expression") //
-				.withParameter(Connector.DATA_SOURCE_TYPE, "sql") //
-				.withParameter(Connector.DATA_SOURCE_CONFIGURATION, Joiner.on(SPECIAL_SEPARATOR) //
-						.withKeyValueSeparator(KEY_VALUE_SEPARATOR) //
-						.join(configuration)) //
+		final org.cmdbuild.data.store.task.ConnectorTask source = a(
+				org.cmdbuild.data.store.task.ConnectorTask.newInstance() //
+						.withId(42L) //
+						.withDescription("description") //
+						.withRunningStatus(true) //
+						.withCronExpression("cron expression") //
+						.withParameter(Connector.DATA_SOURCE_TYPE, "sql") //
+						.withParameter(Connector.DATA_SOURCE_CONFIGURATION,
+								Joiner.on(SPECIAL_SEPARATOR) //
+										.withKeyValueSeparator(KEY_VALUE_SEPARATOR) //
+										.join(configuration)) //
 		);
 
 		// when
@@ -531,18 +541,19 @@ public class DefaultLogicAndStoreConverterTest {
 	@Test
 	public void postgresqlTypeForSqlDataSuccessfullyConvertedToLogic() throws Exception {
 		// given
-		final Map<String, String> configuration = Maps.newHashMap();
+		final Map<String, String> configuration = newHashMap();
 		configuration.put(Connector.SQL_TYPE, "postgresql");
-		final org.cmdbuild.data.store.task.ConnectorTask source = a(org.cmdbuild.data.store.task.ConnectorTask
-				.newInstance() //
-				.withId(42L) //
-				.withDescription("description") //
-				.withRunningStatus(true) //
-				.withCronExpression("cron expression") //
-				.withParameter(Connector.DATA_SOURCE_TYPE, "sql") //
-				.withParameter(Connector.DATA_SOURCE_CONFIGURATION, Joiner.on(SPECIAL_SEPARATOR) //
-						.withKeyValueSeparator(KEY_VALUE_SEPARATOR) //
-						.join(configuration)) //
+		final org.cmdbuild.data.store.task.ConnectorTask source = a(
+				org.cmdbuild.data.store.task.ConnectorTask.newInstance() //
+						.withId(42L) //
+						.withDescription("description") //
+						.withRunningStatus(true) //
+						.withCronExpression("cron expression") //
+						.withParameter(Connector.DATA_SOURCE_TYPE, "sql") //
+						.withParameter(Connector.DATA_SOURCE_CONFIGURATION,
+								Joiner.on(SPECIAL_SEPARATOR) //
+										.withKeyValueSeparator(KEY_VALUE_SEPARATOR) //
+										.join(configuration)) //
 		);
 
 		// when
@@ -562,18 +573,19 @@ public class DefaultLogicAndStoreConverterTest {
 	@Test
 	public void sqlserverTypeForSqlDataSuccessfullyConvertedToLogic() throws Exception {
 		// given
-		final Map<String, String> configuration = Maps.newHashMap();
+		final Map<String, String> configuration = newHashMap();
 		configuration.put(Connector.SQL_TYPE, "sqlserver");
-		final org.cmdbuild.data.store.task.ConnectorTask source = a(org.cmdbuild.data.store.task.ConnectorTask
-				.newInstance() //
-				.withId(42L) //
-				.withDescription("description") //
-				.withRunningStatus(true) //
-				.withCronExpression("cron expression") //
-				.withParameter(Connector.DATA_SOURCE_TYPE, "sql") //
-				.withParameter(Connector.DATA_SOURCE_CONFIGURATION, Joiner.on(SPECIAL_SEPARATOR) //
-						.withKeyValueSeparator(KEY_VALUE_SEPARATOR) //
-						.join(configuration)) //
+		final org.cmdbuild.data.store.task.ConnectorTask source = a(
+				org.cmdbuild.data.store.task.ConnectorTask.newInstance() //
+						.withId(42L) //
+						.withDescription("description") //
+						.withRunningStatus(true) //
+						.withCronExpression("cron expression") //
+						.withParameter(Connector.DATA_SOURCE_TYPE, "sql") //
+						.withParameter(Connector.DATA_SOURCE_CONFIGURATION,
+								Joiner.on(SPECIAL_SEPARATOR) //
+										.withKeyValueSeparator(KEY_VALUE_SEPARATOR) //
+										.join(configuration)) //
 		);
 
 		// when
@@ -593,7 +605,7 @@ public class DefaultLogicAndStoreConverterTest {
 	@Test
 	public void readEmailTaskSuccessfullyConvertedToStore() throws Exception {
 		// given
-		final Map<String, String> attributes = Maps.newHashMap();
+		final Map<String, String> attributes = newLinkedHashMap();
 		attributes.put("foo", "bar");
 		attributes.put("bar", "baz");
 		attributes.put("baz", "foo");
@@ -639,21 +651,25 @@ public class DefaultLogicAndStoreConverterTest {
 		assertThat(parameters, hasEntry(ReadEmail.PROCESSED_FOLDER, "processed folder"));
 		assertThat(parameters, hasEntry(ReadEmail.REJECTED_FOLDER, "rejected folder"));
 		assertThat(parameters, hasEntry(ReadEmail.FILTER_REJECT, "true"));
-		assertThat(parameters, hasEntry(ReadEmail.FILTER_FROM_REGEX, "regex" + SPECIAL_SEPARATOR //
-				+ "from" + SPECIAL_SEPARATOR //
-				+ "filter"));
-		assertThat(parameters, hasEntry(ReadEmail.FILTER_SUBJECT_REGEX, "regex" + SPECIAL_SEPARATOR //
-				+ "subject" + SPECIAL_SEPARATOR //
-				+ "filter"));
+		assertThat(parameters,
+				hasEntry(ReadEmail.FILTER_FROM_REGEX,
+						"regex" + SPECIAL_SEPARATOR //
+								+ "from" + SPECIAL_SEPARATOR //
+								+ "filter"));
+		assertThat(parameters,
+				hasEntry(ReadEmail.FILTER_SUBJECT_REGEX,
+						"regex" + SPECIAL_SEPARATOR //
+								+ "subject" + SPECIAL_SEPARATOR //
+								+ "filter"));
 		assertThat(parameters, hasEntry(ReadEmail.NOTIFICATION_ACTIVE, "true"));
 		assertThat(parameters, hasEntry(ReadEmail.NOTIFICATION_TEMPLATE, "template"));
 		assertThat(parameters, hasEntry(ReadEmail.ATTACHMENTS_ACTIVE, "true"));
 		assertThat(parameters, hasEntry(ReadEmail.ATTACHMENTS_CATEGORY, "category"));
 		assertThat(parameters, hasEntry(ReadEmail.WORKFLOW_ACTIVE, "true"));
 		assertThat(parameters, hasEntry(ReadEmail.WORKFLOW_CLASS_NAME, "workflow class name"));
-		assertThat(parameters, hasEntry(ReadEmail.WORKFLOW_FIELDS_MAPPING, Joiner.on(SPECIAL_SEPARATOR) //
+		assertThat(Splitter.on(SPECIAL_SEPARATOR) //
 				.withKeyValueSeparator(KEY_VALUE_SEPARATOR) //
-				.join(attributes)));
+				.split(parameters.get(ReadEmail.WORKFLOW_FIELDS_MAPPING)), equalTo(attributes));
 		assertThat(parameters, hasEntry(ReadEmail.WORKFLOW_ADVANCE, "true"));
 		assertThat(parameters, hasEntry(ReadEmail.WORKFLOW_ATTACHMENTS_SAVE, "true"));
 		assertThat(parameters, hasEntry(ReadEmail.WORKFLOW_ATTACHMENTS_CATEGORY, "workflow's attachments category"));
@@ -666,8 +682,8 @@ public class DefaultLogicAndStoreConverterTest {
 				.withMapperEngine(a(KeyValueMapperEngine.newInstance() //
 						.withKey("key_init", "key_end") //
 						.withValue("value_init", "value_end") //
-						) //
-				) //
+		) //
+		) //
 		);
 
 		// when
@@ -685,40 +701,43 @@ public class DefaultLogicAndStoreConverterTest {
 	@Test
 	public void readEmailTaskSuccessfullyConvertedToLogic() throws Exception {
 		// given
-		final Map<String, String> fieldsMapping = Maps.newHashMap();
+		final Map<String, String> fieldsMapping = newHashMap();
 		fieldsMapping.put("foo", "bar");
 		fieldsMapping.put("bar", "baz");
 		fieldsMapping.put("baz", "foo");
-		final org.cmdbuild.data.store.task.ReadEmailTask source = a(org.cmdbuild.data.store.task.ReadEmailTask
-				.newInstance() //
-				.withId(42L) //
-				.withDescription("description") //
-				.withRunningStatus(true) //
-				.withCronExpression("cron expression") //
-				.withLastExecution(NOW) //
-				.withParameter(ReadEmail.ACCOUNT_NAME, "email account") //
-				.withParameter(ReadEmail.INCOMING_FOLDER, "incoming folder") //
-				.withParameter(ReadEmail.PROCESSED_FOLDER, "processed folder") //
-				.withParameter(ReadEmail.REJECTED_FOLDER, "rejected folder") //
-				.withParameter(ReadEmail.FILTER_REJECT, "true") //
-				.withParameter(ReadEmail.FILTER_FROM_REGEX, "regex" + SPECIAL_SEPARATOR //
-						+ "from" + SPECIAL_SEPARATOR //
-						+ "filter") //
-				.withParameter(ReadEmail.FILTER_SUBJECT_REGEX, "regex" + SPECIAL_SEPARATOR //
-						+ "subject" + SPECIAL_SEPARATOR //
-						+ "filter") //
-				.withParameter(ReadEmail.NOTIFICATION_ACTIVE, "true") //
-				.withParameter(ReadEmail.NOTIFICATION_TEMPLATE, "template") //
-				.withParameter(ReadEmail.ATTACHMENTS_ACTIVE, "true") //
-				.withParameter(ReadEmail.ATTACHMENTS_CATEGORY, "category") //
-				.withParameter(ReadEmail.WORKFLOW_ACTIVE, "true") //
-				.withParameter(ReadEmail.WORKFLOW_CLASS_NAME, "workflow class name") //
-				.withParameter(ReadEmail.WORKFLOW_FIELDS_MAPPING, Joiner.on(SPECIAL_SEPARATOR) //
-						.withKeyValueSeparator(KEY_VALUE_SEPARATOR) //
-						.join(fieldsMapping)) //
-				.withParameter(ReadEmail.WORKFLOW_ADVANCE, "true") //
-				.withParameter(ReadEmail.WORKFLOW_ATTACHMENTS_SAVE, "true") //
-				.withParameter(ReadEmail.WORKFLOW_ATTACHMENTS_CATEGORY, "workflow's attachments category") //
+		final org.cmdbuild.data.store.task.ReadEmailTask source = a(
+				org.cmdbuild.data.store.task.ReadEmailTask.newInstance() //
+						.withId(42L) //
+						.withDescription("description") //
+						.withRunningStatus(true) //
+						.withCronExpression("cron expression") //
+						.withLastExecution(NOW) //
+						.withParameter(ReadEmail.ACCOUNT_NAME, "email account") //
+						.withParameter(ReadEmail.INCOMING_FOLDER, "incoming folder") //
+						.withParameter(ReadEmail.PROCESSED_FOLDER, "processed folder") //
+						.withParameter(ReadEmail.REJECTED_FOLDER, "rejected folder") //
+						.withParameter(ReadEmail.FILTER_REJECT, "true") //
+						.withParameter(ReadEmail.FILTER_FROM_REGEX,
+								"regex" + SPECIAL_SEPARATOR //
+										+ "from" + SPECIAL_SEPARATOR //
+										+ "filter") //
+						.withParameter(ReadEmail.FILTER_SUBJECT_REGEX,
+								"regex" + SPECIAL_SEPARATOR //
+										+ "subject" + SPECIAL_SEPARATOR //
+										+ "filter") //
+						.withParameter(ReadEmail.NOTIFICATION_ACTIVE, "true") //
+						.withParameter(ReadEmail.NOTIFICATION_TEMPLATE, "template") //
+						.withParameter(ReadEmail.ATTACHMENTS_ACTIVE, "true") //
+						.withParameter(ReadEmail.ATTACHMENTS_CATEGORY, "category") //
+						.withParameter(ReadEmail.WORKFLOW_ACTIVE, "true") //
+						.withParameter(ReadEmail.WORKFLOW_CLASS_NAME, "workflow class name") //
+						.withParameter(ReadEmail.WORKFLOW_FIELDS_MAPPING,
+								Joiner.on(SPECIAL_SEPARATOR) //
+										.withKeyValueSeparator(KEY_VALUE_SEPARATOR) //
+										.join(fieldsMapping)) //
+						.withParameter(ReadEmail.WORKFLOW_ADVANCE, "true") //
+						.withParameter(ReadEmail.WORKFLOW_ATTACHMENTS_SAVE, "true") //
+						.withParameter(ReadEmail.WORKFLOW_ATTACHMENTS_CATEGORY, "workflow's attachments category") //
 		);
 
 		// when
@@ -745,7 +764,7 @@ public class DefaultLogicAndStoreConverterTest {
 		assertThat(converted.getAttachmentsCategory(), equalTo("category"));
 		assertThat(converted.isWorkflowActive(), equalTo(true));
 		assertThat(converted.getWorkflowClassName(), equalTo("workflow class name"));
-		final Map<String, String> attributes = Maps.newHashMap();
+		final Map<String, String> attributes = newHashMap();
 		attributes.put("foo", "bar");
 		attributes.put("bar", "baz");
 		attributes.put("baz", "foo");
@@ -758,13 +777,13 @@ public class DefaultLogicAndStoreConverterTest {
 	@Test
 	public void keyValueMapperSuccessfullyConvertedToLogic() throws Exception {
 		// given
-		final org.cmdbuild.data.store.task.ReadEmailTask source = a(org.cmdbuild.data.store.task.ReadEmailTask
-				.newInstance() //
-				.withParameter(ReadEmail.KeyValueMapperEngine.TYPE, "keyvalue") //
-				.withParameter(ReadEmail.KeyValueMapperEngine.KEY_INIT, "key_init") //
-				.withParameter(ReadEmail.KeyValueMapperEngine.KEY_END, "key_end") //
-				.withParameter(ReadEmail.KeyValueMapperEngine.VALUE_INIT, "value_init") //
-				.withParameter(ReadEmail.KeyValueMapperEngine.VALUE_END, "value_end") //
+		final org.cmdbuild.data.store.task.ReadEmailTask source = a(
+				org.cmdbuild.data.store.task.ReadEmailTask.newInstance() //
+						.withParameter(ReadEmail.KeyValueMapperEngine.TYPE, "keyvalue") //
+						.withParameter(ReadEmail.KeyValueMapperEngine.KEY_INIT, "key_init") //
+						.withParameter(ReadEmail.KeyValueMapperEngine.KEY_END, "key_end") //
+						.withParameter(ReadEmail.KeyValueMapperEngine.VALUE_INIT, "value_init") //
+						.withParameter(ReadEmail.KeyValueMapperEngine.VALUE_END, "value_end") //
 		);
 
 		// when
@@ -785,7 +804,7 @@ public class DefaultLogicAndStoreConverterTest {
 	@Test
 	public void startWorkflowTaskSuccessfullyConvertedToStore() throws Exception {
 		// given
-		final Map<String, String> attributes = Maps.newHashMap();
+		final Map<String, String> attributes = newHashMap();
 		attributes.put("foo", "bar");
 		attributes.put("bar", "baz");
 		attributes.put("baz", "foo");
@@ -812,29 +831,32 @@ public class DefaultLogicAndStoreConverterTest {
 
 		final Map<String, String> parameters = converted.getParameters();
 		assertThat(parameters, hasEntry(StartWorkflow.CLASSNAME, "class name"));
-		assertThat(parameters, hasEntry(StartWorkflow.ATTRIBUTES, Joiner.on(SPECIAL_SEPARATOR) //
-				.withKeyValueSeparator(KEY_VALUE_SEPARATOR) //
-				.join(attributes)));
+		assertThat(parameters,
+				hasEntry(StartWorkflow.ATTRIBUTES,
+						Joiner.on(SPECIAL_SEPARATOR) //
+								.withKeyValueSeparator(KEY_VALUE_SEPARATOR) //
+								.join(attributes)));
 	}
 
 	@Test
 	public void startWorkflowTaskSuccessfullyConvertedToLogic() throws Exception {
 		// given
-		final Map<String, String> storedAttributes = Maps.newHashMap();
+		final Map<String, String> storedAttributes = newHashMap();
 		storedAttributes.put("foo", "bar");
 		storedAttributes.put("bar", "baz");
 		storedAttributes.put("baz", "foo");
-		final org.cmdbuild.data.store.task.StartWorkflowTask source = a(org.cmdbuild.data.store.task.StartWorkflowTask
-				.newInstance() //
-				.withId(42L) //
-				.withDescription("description") //
-				.withRunningStatus(true) //
-				.withCronExpression("cron expression") //
-				.withLastExecution(NOW) //
-				.withParameter(StartWorkflow.CLASSNAME, "class name") //
-				.withParameter(StartWorkflow.ATTRIBUTES, Joiner.on(SPECIAL_SEPARATOR) //
-						.withKeyValueSeparator(KEY_VALUE_SEPARATOR) //
-						.join(storedAttributes)) //
+		final org.cmdbuild.data.store.task.StartWorkflowTask source = a(
+				org.cmdbuild.data.store.task.StartWorkflowTask.newInstance() //
+						.withId(42L) //
+						.withDescription("description") //
+						.withRunningStatus(true) //
+						.withCronExpression("cron expression") //
+						.withLastExecution(NOW) //
+						.withParameter(StartWorkflow.CLASSNAME, "class name") //
+						.withParameter(StartWorkflow.ATTRIBUTES,
+								Joiner.on(SPECIAL_SEPARATOR) //
+										.withKeyValueSeparator(KEY_VALUE_SEPARATOR) //
+										.join(storedAttributes)) //
 		);
 
 		// when
@@ -849,7 +871,7 @@ public class DefaultLogicAndStoreConverterTest {
 		assertThat(converted.getCronExpression(), equalTo("cron expression"));
 		assertThat(converted.getLastExecution(), equalTo(NOW));
 		assertThat(converted.getProcessClass(), equalTo("class name"));
-		final Map<String, String> attributes = Maps.newHashMap();
+		final Map<String, String> attributes = newHashMap();
 		attributes.put("foo", "bar");
 		attributes.put("bar", "baz");
 		attributes.put("baz", "foo");
@@ -859,15 +881,15 @@ public class DefaultLogicAndStoreConverterTest {
 	@Test
 	public void startWorkflowTaskWithEmptyAttributesSuccessfullyConvertedToLogic() throws Exception {
 		// given
-		final org.cmdbuild.data.store.task.StartWorkflowTask source = a(org.cmdbuild.data.store.task.StartWorkflowTask
-				.newInstance() //
-				.withId(42L) //
-				.withDescription("description") //
-				.withRunningStatus(true) //
-				.withCronExpression("cron expression") //
-				.withLastExecution(NOW) //
-				.withParameter(StartWorkflow.CLASSNAME, "class name") //
-				.withParameter(StartWorkflow.ATTRIBUTES, EMPTY) //
+		final org.cmdbuild.data.store.task.StartWorkflowTask source = a(
+				org.cmdbuild.data.store.task.StartWorkflowTask.newInstance() //
+						.withId(42L) //
+						.withDescription("description") //
+						.withRunningStatus(true) //
+						.withCronExpression("cron expression") //
+						.withLastExecution(NOW) //
+						.withParameter(StartWorkflow.CLASSNAME, "class name") //
+						.withParameter(StartWorkflow.ATTRIBUTES, EMPTY) //
 		);
 
 		// when
@@ -888,7 +910,7 @@ public class DefaultLogicAndStoreConverterTest {
 	@Test
 	public void synchronousEventTaskSuccessfullyConvertedToStore() throws Exception {
 		// given
-		final Map<String, String> attributes = Maps.newHashMap();
+		final Map<String, String> attributes = newHashMap();
 		attributes.put("foo", "bar");
 		attributes.put("bar", "baz");
 		attributes.put("baz", "foo");
@@ -931,9 +953,9 @@ public class DefaultLogicAndStoreConverterTest {
 		assertThat(parameters, hasEntry(SynchronousEvent.EMAIL_TEMPLATE, "email template"));
 		assertThat(parameters, hasEntry(SynchronousEvent.WORKFLOW_ACTIVE, "true"));
 		assertThat(parameters, hasEntry(SynchronousEvent.WORKFLOW_CLASS_NAME, "workflow class name"));
-		assertThat(parameters, hasEntry(SynchronousEvent.WORKFLOW_ATTRIBUTES, Joiner.on(SPECIAL_SEPARATOR) //
+		assertThat(Splitter.on(SPECIAL_SEPARATOR) //
 				.withKeyValueSeparator(KEY_VALUE_SEPARATOR) //
-				.join(attributes)));
+				.split(parameters.get(SynchronousEvent.WORKFLOW_ATTRIBUTES)), equalTo(attributes));
 		assertThat(parameters, hasEntry(SynchronousEvent.ACTION_SCRIPT_ACTIVE, "true"));
 		assertThat(parameters, hasEntry(SynchronousEvent.ACTION_SCRIPT_ENGINE, "groovy"));
 		assertThat(parameters, hasEntry(SynchronousEvent.ACTION_SCRIPT_SCRIPT, "blah blah blah"));
@@ -975,32 +997,33 @@ public class DefaultLogicAndStoreConverterTest {
 	@Test
 	public void synchronousEventTaskSuccessfullyConvertedToLogic() throws Exception {
 		// given
-		final Map<String, String> workflowAttributes = Maps.newHashMap();
+		final Map<String, String> workflowAttributes = newHashMap();
 		workflowAttributes.put("foo", "bar");
 		workflowAttributes.put("bar", "baz");
 		workflowAttributes.put("baz", "foo");
-		final org.cmdbuild.data.store.task.SynchronousEventTask source = a(org.cmdbuild.data.store.task.SynchronousEventTask
-				.newInstance() //
-				.withId(42L) //
-				.withDescription("description") //
-				.withRunningStatus(true) //
-				.withParameter(SynchronousEvent.PHASE, "after_create") //
-				.withParameter(SynchronousEvent.FILTER_GROUPS, "foo,bar,baz") //
-				.withParameter(SynchronousEvent.FILTER_CLASSNAME, "classname") //
-				.withParameter(SynchronousEvent.FILTER_CARDS, "card's filter") //
-				.withParameter(SynchronousEvent.EMAIL_ACTIVE, "true") //
-				.withParameter(SynchronousEvent.EMAIL_ACCOUNT, "email account") //
-				.withParameter(SynchronousEvent.EMAIL_TEMPLATE, "email template") //
-				.withParameter(SynchronousEvent.WORKFLOW_ACTIVE, "true") //
-				.withParameter(SynchronousEvent.WORKFLOW_CLASS_NAME, "workflow class name") //
-				.withParameter(SynchronousEvent.WORKFLOW_ATTRIBUTES, Joiner.on(SPECIAL_SEPARATOR) //
-						.withKeyValueSeparator(KEY_VALUE_SEPARATOR) //
-						.join(workflowAttributes)) //
-				.withParameter(SynchronousEvent.WORKFLOW_ADVANCE, "true") //
-				.withParameter(SynchronousEvent.ACTION_SCRIPT_ACTIVE, "true") //
-				.withParameter(SynchronousEvent.ACTION_SCRIPT_ENGINE, "groovy") //
-				.withParameter(SynchronousEvent.ACTION_SCRIPT_SCRIPT, "blah blah blah") //
-				.withParameter(SynchronousEvent.ACTION_SCRIPT_SAFE, "true") //
+		final org.cmdbuild.data.store.task.SynchronousEventTask source = a(
+				org.cmdbuild.data.store.task.SynchronousEventTask.newInstance() //
+						.withId(42L) //
+						.withDescription("description") //
+						.withRunningStatus(true) //
+						.withParameter(SynchronousEvent.PHASE, "after_create") //
+						.withParameter(SynchronousEvent.FILTER_GROUPS, "foo,bar,baz") //
+						.withParameter(SynchronousEvent.FILTER_CLASSNAME, "classname") //
+						.withParameter(SynchronousEvent.FILTER_CARDS, "card's filter") //
+						.withParameter(SynchronousEvent.EMAIL_ACTIVE, "true") //
+						.withParameter(SynchronousEvent.EMAIL_ACCOUNT, "email account") //
+						.withParameter(SynchronousEvent.EMAIL_TEMPLATE, "email template") //
+						.withParameter(SynchronousEvent.WORKFLOW_ACTIVE, "true") //
+						.withParameter(SynchronousEvent.WORKFLOW_CLASS_NAME, "workflow class name") //
+						.withParameter(SynchronousEvent.WORKFLOW_ATTRIBUTES,
+								Joiner.on(SPECIAL_SEPARATOR) //
+										.withKeyValueSeparator(KEY_VALUE_SEPARATOR) //
+										.join(workflowAttributes)) //
+						.withParameter(SynchronousEvent.WORKFLOW_ADVANCE, "true") //
+						.withParameter(SynchronousEvent.ACTION_SCRIPT_ACTIVE, "true") //
+						.withParameter(SynchronousEvent.ACTION_SCRIPT_ENGINE, "groovy") //
+						.withParameter(SynchronousEvent.ACTION_SCRIPT_SCRIPT, "blah blah blah") //
+						.withParameter(SynchronousEvent.ACTION_SCRIPT_SAFE, "true") //
 		);
 
 		// when
@@ -1034,38 +1057,38 @@ public class DefaultLogicAndStoreConverterTest {
 	@Test
 	public void phaseOfSynchronousEventTaskSuccessfullyConvertedToLogic() throws Exception {
 		// given
-		final org.cmdbuild.data.store.task.SynchronousEventTask missingPhase = a(org.cmdbuild.data.store.task.SynchronousEventTask
-				.newInstance() //
-				.withParameter(SynchronousEvent.PHASE, null) //
+		final org.cmdbuild.data.store.task.SynchronousEventTask missingPhase = a(
+				org.cmdbuild.data.store.task.SynchronousEventTask.newInstance() //
+						.withParameter(SynchronousEvent.PHASE, null) //
 		);
-		final org.cmdbuild.data.store.task.SynchronousEventTask afterCreate = a(org.cmdbuild.data.store.task.SynchronousEventTask
-				.newInstance() //
-				.withParameter(SynchronousEvent.PHASE, "after_create") //
+		final org.cmdbuild.data.store.task.SynchronousEventTask afterCreate = a(
+				org.cmdbuild.data.store.task.SynchronousEventTask.newInstance() //
+						.withParameter(SynchronousEvent.PHASE, "after_create") //
 		);
-		final org.cmdbuild.data.store.task.SynchronousEventTask beforeUpdate = a(org.cmdbuild.data.store.task.SynchronousEventTask
-				.newInstance() //
-				.withParameter(SynchronousEvent.PHASE, "before_update") //
+		final org.cmdbuild.data.store.task.SynchronousEventTask beforeUpdate = a(
+				org.cmdbuild.data.store.task.SynchronousEventTask.newInstance() //
+						.withParameter(SynchronousEvent.PHASE, "before_update") //
 		);
-		final org.cmdbuild.data.store.task.SynchronousEventTask afterUpdate = a(org.cmdbuild.data.store.task.SynchronousEventTask
-				.newInstance() //
-				.withParameter(SynchronousEvent.PHASE, "after_update") //
+		final org.cmdbuild.data.store.task.SynchronousEventTask afterUpdate = a(
+				org.cmdbuild.data.store.task.SynchronousEventTask.newInstance() //
+						.withParameter(SynchronousEvent.PHASE, "after_update") //
 		);
-		final org.cmdbuild.data.store.task.SynchronousEventTask beforeDelete = a(org.cmdbuild.data.store.task.SynchronousEventTask
-				.newInstance() //
-				.withParameter(SynchronousEvent.PHASE, "before_delete") //
+		final org.cmdbuild.data.store.task.SynchronousEventTask beforeDelete = a(
+				org.cmdbuild.data.store.task.SynchronousEventTask.newInstance() //
+						.withParameter(SynchronousEvent.PHASE, "before_delete") //
 		);
 
 		// when
-		final SynchronousEventTask convertedMissingPhase = SynchronousEventTask.class.cast(converter.from(missingPhase)
-				.toLogic());
-		final SynchronousEventTask convertedAfterCreate = SynchronousEventTask.class.cast(converter.from(afterCreate)
-				.toLogic());
-		final SynchronousEventTask convertedBeforeUpdate = SynchronousEventTask.class.cast(converter.from(beforeUpdate)
-				.toLogic());
-		final SynchronousEventTask convertedAfterUpdate = SynchronousEventTask.class.cast(converter.from(afterUpdate)
-				.toLogic());
-		final SynchronousEventTask convertedBeforeDelete = SynchronousEventTask.class.cast(converter.from(beforeDelete)
-				.toLogic());
+		final SynchronousEventTask convertedMissingPhase = SynchronousEventTask.class
+				.cast(converter.from(missingPhase).toLogic());
+		final SynchronousEventTask convertedAfterCreate = SynchronousEventTask.class
+				.cast(converter.from(afterCreate).toLogic());
+		final SynchronousEventTask convertedBeforeUpdate = SynchronousEventTask.class
+				.cast(converter.from(beforeUpdate).toLogic());
+		final SynchronousEventTask convertedAfterUpdate = SynchronousEventTask.class
+				.cast(converter.from(afterUpdate).toLogic());
+		final SynchronousEventTask convertedBeforeDelete = SynchronousEventTask.class
+				.cast(converter.from(beforeDelete).toLogic());
 
 		// then
 		assertThat(convertedMissingPhase.getPhase(), is(nullValue()));
