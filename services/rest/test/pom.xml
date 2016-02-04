@@ -10,7 +10,7 @@
 	</parent>
 	<artifactId>cmdbuild-services-rest-test</artifactId>
 	<properties>
-		<httpclient.version>4.3</httpclient.version>
+		<httpclient.version>4.5.1</httpclient.version>
 	</properties>
 	<dependencies>
 		<dependency>

@@ -12,6 +12,10 @@
 	<packaging>war</packaging>
 	<name>CMDBuild Webapp</name>
 
+	<properties>
+		<maven-merge-file-plugin.version>0.4</maven-merge-file-plugin.version>
+	</properties>
+
 	<dependencies>
 		<dependency> <!-- @Legacy remove when we get rid of CachedSharkWSFactory -->
 			<groupId>javax.xml</groupId>
@@ -216,7 +220,7 @@
 			<plugin>
 				<groupId>croche.maven</groupId>
 				<artifactId>maven-merge-file-plugin</artifactId>
-				<version>0.4</version>
+				<version>${maven-merge-file-plugin.version}</version>
 				<executions>
 					<execution>
 						<id>create-translation-file</id>
@@ -257,7 +261,7 @@
 									<pluginExecutionFilter>
 										<groupId>croche.maven</groupId>
 										<artifactId>maven-merge-file-plugin</artifactId>
-										<versionRange>[0.4,)</versionRange>
+										<versionRange>[${maven-merge-file-plugin.version},)</versionRange>
 										<goals>
 											<goal>merge</goal>
 										</goals>
