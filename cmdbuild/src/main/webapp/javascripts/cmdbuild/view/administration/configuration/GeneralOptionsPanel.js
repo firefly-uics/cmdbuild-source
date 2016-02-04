@@ -97,7 +97,6 @@
 								fieldLabel: CMDBuild.Translation.defaultClass,
 								valueField: CMDBuild.core.constants.Proxy.ID,
 								displayField: CMDBuild.core.constants.Proxy.TEXT,
-								editable: false,
 								forceSelection: true,
 
 								store: CMDBuild.core.proxy.configuration.GeneralOptions.getStartingClassStore(),
