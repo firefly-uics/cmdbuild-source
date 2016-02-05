@@ -4,7 +4,7 @@
 		extend: 'CMDBuild.core.buttons.Base',
 
 		iconCls: 'ok',
-		textDefault: CMDBuild.Translation.common.buttons.check
+		textDefault: CMDBuild.Translation.check
 	});
 
 })();

@@ -96,7 +96,7 @@
 			var me = this;
 			return [ //
 				new Ext.Button({
-					text: CMDBuild.Translation.common.buttons.confirm,
+					text: CMDBuild.Translation.ok,
 					name: 'saveButton',
 					handler: function() {
 						me.callDelegates("onPresetFromCardSaveButtonClick", [me]);

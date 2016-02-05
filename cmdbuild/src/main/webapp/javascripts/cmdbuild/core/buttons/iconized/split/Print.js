@@ -28,7 +28,7 @@
 		],
 
 		iconCls: 'print',
-		text: CMDBuild.Translation.common.buttons.print,
+		text: CMDBuild.Translation.print,
 
 		initComponent: function() {
 			Ext.apply(this, {
@@ -56,7 +56,7 @@
 
 			Ext.Array.forEach(this.formatList, function(format, i, allFormats) {
 				this.menu.add({
-					text: CMDBuild.Translation.common.buttons.as + ' ' + format.toUpperCase(),
+					text: CMDBuild.Translation.as + ' ' + format.toUpperCase(),
 					iconCls: format,
 					format: format,
 
@@ -70,7 +70,7 @@
 		buildMenu: function() {
 			Ext.Array.forEach(this.formatList, function(format, i, allFormats) {
 				this.menu.add({
-					text: CMDBuild.Translation.common.buttons.as + ' ' + format.toUpperCase(),
+					text: CMDBuild.Translation.as + ' ' + format.toUpperCase(),
 					iconCls: format,
 					format: format,
 					scope: this,

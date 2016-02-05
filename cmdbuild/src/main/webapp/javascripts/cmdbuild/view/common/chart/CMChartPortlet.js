@@ -60,7 +60,7 @@
 					padding: "5px 0 0 0"
 				},
 				buttons: [{
-					text: CMDBuild.Translation.common.buttons.load,
+					text: CMDBuild.Translation.load,
 					handler: function() {
 						if (me.delegate) {
 							me.delegate.onFormLoadButtonClick(this.form);
@@ -112,7 +112,7 @@
 			buttons.push(this.showTableViewButton, this.reloadButton);
 			this.chartBuilder = new CMDBuild.view.management.dashboard.CMChartConfigurationReader();
 
-			
+
 			this.title = this.chartConfiguration.getDescription() || this.chartConfiguration.getName() || "";
 			this.layout = 'border';
 			this.height = 100;
@@ -182,7 +182,7 @@
 
 		adjustSize: function(height) {
 			this.setSize({
-				height: height, 
+				height: height,
 				width: this.getWidth()	// looks useless but without this there
 										// could be rendering problems if the chart
 										// was moved between two columns
@@ -272,7 +272,7 @@
 				gauge: gauge,
 				bar: bar,
 				line: line,
-				pie: pie 
+				pie: pie
 			};
 
 			if (typeof readers[chartConfiguration.getType()] == "function") {

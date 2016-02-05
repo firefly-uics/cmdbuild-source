@@ -254,7 +254,7 @@
 						items: [
 							{
 								icon: 'images/icons/cross.png',
-								tooltip: CMDBuild.Translation.common.buttons.remove,
+								tooltip: CMDBuild.Translation.remove,
 								handler: function(grid, rowIndex, colIndex, node, e, record, rowNode) {
 									me.referenceMappingGrid.store.remove(record);
 								}
@@ -275,7 +275,7 @@
 						itemId: CMDBuild.core.constants.Proxy.TOOLBAR_TOP,
 						items: [
 							{
-								text: CMDBuild.Translation.common.buttons.add,
+								text: CMDBuild.Translation.add,
 								iconCls: 'add',
 								handler: function() {
 									me.referenceMappingGrid.store.insert(0, Ext.create('CMDBuild.model.CMModelTasks.connector.referenceLevel'));

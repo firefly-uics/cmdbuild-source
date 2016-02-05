@@ -11,11 +11,11 @@
 			this.cardSelected = [];
 
 			this.saveButton = new Ext.button.Button({
-				text: CMDBuild.Translation.common.buttons.save
+				text: CMDBuild.Translation.save
 			});
 
 			this.abortButton = new Ext.button.Button({
-				text: CMDBuild.Translation.common.buttons.abort
+				text: CMDBuild.Translation.cancel
 			});
 
 			this.classTree = new CMDBuild.view.common.classes.CMClassAccordion({

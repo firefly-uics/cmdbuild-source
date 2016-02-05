@@ -4,7 +4,7 @@
 		extend: 'CMDBuild.core.buttons.Base',
 
 		iconCls: 'stop',
-		textDefault: CMDBuild.Translation.common.buttons.modify
+		textDefault: CMDBuild.Translation.stop
 	});
 
 })();

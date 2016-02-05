@@ -18,7 +18,7 @@ Ext.define("CMDBuild.view.common.filter.CMFilterConfigurationWindow", {
 		var me = this;
 
 		var buttons = [{
-			text: CMDBuild.Translation.common.buttons.abort,
+			text: CMDBuild.Translation.cancel,
 			handler: function() {
 				me.callDelegates("onCMFilterWindowAbortButtonClick", [me]);
 			}
@@ -28,7 +28,7 @@ Ext.define("CMDBuild.view.common.filter.CMFilterConfigurationWindow", {
 			this.buttons = buttons;
 		} else {
 			this.buttons = [{
-				text: CMDBuild.Translation.common.buttons.save,
+				text: CMDBuild.Translation.save,
 				handler: function() {
 					me.callDelegates("onCMFilterWindowSaveButtonClick", [me, me.getFilter()]);
 				}

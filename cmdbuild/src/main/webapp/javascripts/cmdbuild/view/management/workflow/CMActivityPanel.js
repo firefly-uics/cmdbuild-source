@@ -86,7 +86,7 @@
 			this.callParent(arguments);
 			var me = this;
 			this.advanceButton = new Ext.button.Button({
-				text: CMDBuild.Translation.common.buttons.workflow.advance,
+				text: CMDBuild.Translation.advance,
 				handler: function() {
 					me.fireEvent(me.CMEVENTS.advanceCardButtonClick);
 				}

@@ -3,7 +3,7 @@ Ext.define("CMDBuild.Administration.ModIcons", {
 
 	cmName:"gis-icons",
 	translation: CMDBuild.Translation.administration.modcartography.icons,
-	buttonsTr: CMDBuild.Translation.common.buttons,
+	buttonsTr: CMDBuild.Translation,
 
 	initComponent : function() {
 		this.buildUIButtons();

@@ -23,7 +23,7 @@
 				items: [this.widgetsContainer],
 				buttonAlign: "center",
 				buttons: [{
-					text: CMDBuild.Translation.common.buttons.close,
+					text: CMDBuild.Translation.close,
 					_cmNotRemoveMe: true, // flag to identify the button when clean the buttons bar
 					handler: function() {
 						me.onWidgetsWindowHide();

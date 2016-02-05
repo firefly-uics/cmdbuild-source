@@ -29,7 +29,7 @@
 			});
 
 			this.saveButton = new Ext.button.Button( {
-				text : CMDBuild.Translation.common.buttons.save,
+				text : CMDBuild.Translation.save,
 				scope: this,
 				handler: function() {
 					this.delegate.cmOn("onSaveButtonClick");
@@ -37,7 +37,7 @@
 			});
 
 			this.abortButton = new Ext.button.Button( {
-				text : CMDBuild.Translation.common.buttons.abort,
+				text : CMDBuild.Translation.cancel,
 				scope: this,
 				handler: function() {
 					this.delegate.cmOn("onAbortButtonClick");
