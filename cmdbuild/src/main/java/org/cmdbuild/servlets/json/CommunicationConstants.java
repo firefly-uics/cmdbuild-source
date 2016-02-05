@@ -124,6 +124,7 @@ public class CommunicationConstants {
 			FILTERNAME = "filterName", //
 			FILTERS = "filters", //
 			FILTER_SUBJECT = "filterSubject", //
+			FILTER_TYPE = "filterType", //
 			FK_DESTINATION = "fkDestination", //
 			FORCE_CREATION = "forceCreation", //
 			FORMAT = "format", //

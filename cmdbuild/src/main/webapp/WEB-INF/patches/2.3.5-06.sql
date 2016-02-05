@@ -1,7 +1,9 @@
--- Updates the table "_TaskParameter" changing the key of a parameter
+-- Updates the table "_TaskParameter" handling the new parameters for e-mail tasks 
 
 DROP FUNCTION IF EXISTS apply_patch();
 CREATE OR REPLACE FUNCTION apply_patch() RETURNS void AS $$
+DECLARE
+	entry record;
 BEGIN
 	UPDATE "_TaskParameter"
 		SET "Key" = regexp_replace("Key", 'filter.(\w+).regex', 'filter.regex.\1', 'g')
@@ -11,6 +13,12 @@ BEGIN
 				JOIN "_Task" AS t ON t."Id" = p."Owner" and t."Type" = 'emailService'
 				where p."Status" = 'A'
 			);
+
+	FOR entry IN (
+		SELECT * FROM "_Task" WHERE "Status" = 'A' AND "Type" = 'emailService'
+	) LOOP
+		INSERT INTO "_TaskParameter" ("Owner", "Key", "Value") VALUES (entry."Id", 'filter.type', 'regex');
+	END LOOP;
 END;
 $$ LANGUAGE PLPGSQL;
 
