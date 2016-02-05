@@ -1,5 +1,6 @@
 package org.cmdbuild.logic.taskmanager.task.email;
 
+import static com.google.common.base.Predicates.alwaysTrue;
 import static com.google.common.base.Predicates.and;
 import static com.google.common.base.Suppliers.memoize;
 import static com.google.common.base.Suppliers.ofInstance;
@@ -71,6 +72,9 @@ import com.google.common.base.Predicate;
 import com.google.common.base.Supplier;
 
 public class ReadEmailTaskJobFactory extends AbstractJobFactory<ReadEmailTask> {
+
+	private static final String REGEX = "regex";
+	private static final String NONE = "none";
 
 	private static class ConditionalAction implements Action {
 
@@ -149,8 +153,7 @@ public class ReadEmailTaskJobFactory extends AbstractJobFactory<ReadEmailTask> {
 
 	private Action sendNotification(final ReadEmailTask task) {
 		logger.info(marker, "adding notification action");
-		final Predicate<Email> condition = and(notificationActive(task), addressAndSubjectRespectFilter(task),
-				subjectMatches());
+		final Predicate<Email> condition = and(notificationActive(task), filter(task), subjectMatches());
 		return new ConditionalAction( //
 				condition, //
 				new Action() {
@@ -288,8 +291,7 @@ public class ReadEmailTaskJobFactory extends AbstractJobFactory<ReadEmailTask> {
 
 	private Action storeAttachments(final ReadEmailTask task) {
 		logger.info(marker, "adding attachments action");
-		final Predicate<Email> condition = and(attachmentsActive(task), addressAndSubjectRespectFilter(task),
-				hasAttachments());
+		final Predicate<Email> condition = and(attachmentsActive(task), filter(task), hasAttachments());
 		return new ConditionalAction( //
 				condition, //
 				new Action() {
@@ -335,7 +337,7 @@ public class ReadEmailTaskJobFactory extends AbstractJobFactory<ReadEmailTask> {
 
 	private Action startProcess(final ReadEmailTask task) {
 		logger.info(marker, "adding start process action");
-		final Predicate<Email> condition = and(workflowActive(task), addressAndSubjectRespectFilter(task));
+		final Predicate<Email> condition = and(workflowActive(task), filter(task));
 		return new ConditionalAction( //
 				condition, //
 				new Action() {
@@ -415,6 +417,20 @@ public class ReadEmailTaskJobFactory extends AbstractJobFactory<ReadEmailTask> {
 			}
 
 		};
+	}
+
+	private Predicate<Email> filter(final ReadEmailTask task) {
+		final Predicate<Email> output;
+		final String value = task.getFilterType();
+		if (REGEX.equalsIgnoreCase(value)) {
+			output = addressAndSubjectRespectFilter(task);
+		} else if (NONE.equalsIgnoreCase(value)) {
+			output = alwaysTrue();
+		} else {
+			logger.warn(marker, "filter type '{}' is not expected, ignoring it", value);
+			output = alwaysTrue();
+		}
+		return output;
 	}
 
 	private Predicate<Email> addressAndSubjectRespectFilter(final ReadEmailTask task) {
