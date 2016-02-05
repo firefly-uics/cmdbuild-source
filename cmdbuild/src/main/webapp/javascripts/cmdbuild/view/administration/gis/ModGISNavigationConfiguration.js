@@ -35,7 +35,7 @@
 			this.classesMenu.addDelegate(this);
 
 			this.saveButton = new Ext.button.Button({
-				text: CMDBuild.Translation.common.buttons.save,
+				text: CMDBuild.Translation.save,
 				disabled: true,
 				handler: function() {
 					me.callDelegates("onGISNavigationSaveButtonClick", me);

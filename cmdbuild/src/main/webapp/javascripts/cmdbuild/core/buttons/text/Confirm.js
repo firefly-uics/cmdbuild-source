@@ -3,7 +3,7 @@
 	Ext.define('CMDBuild.core.buttons.text.Confirm', {
 		extend: 'CMDBuild.core.buttons.Base',
 
-		textDefault: CMDBuild.Translation.common.buttons.confirm
+		textDefault: CMDBuild.Translation.ok
 	});
 
 })();

@@ -71,7 +71,7 @@
 				});
 
 				this.confirmButton = Ext.create('CMDBuild.core.buttons.text.Confirm', {
-					text: CMDBuild.Translation.common.buttons.confirm,
+					text: CMDBuild.Translation.ok,
 					scope: this,
 
 					handler: function() {
@@ -80,7 +80,7 @@
 				});
 
 				this.abortButton = Ext.create('CMDBuild.core.buttons.text.Abort', {
-					text: CMDBuild.Translation.common.buttons.abort,
+					text: CMDBuild.Translation.cancel,
 					scope: this,
 
 					handler: function() {

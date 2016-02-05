@@ -101,7 +101,7 @@
 		getExtraButtons: function() {
 			var me = this;
 			this.saveButton = new Ext.Button( {
-				text : CMDBuild.Translation.common.buttons.save,
+				text : CMDBuild.Translation.save,
 				name : 'saveButton',
 				hidden: true,
 				handler: function() {
@@ -109,7 +109,7 @@
 				}
 			});
 			this.advanceButton =  new Ext.Button( {
-				text : CMDBuild.Translation.common.buttons.workflow.advance,
+				text : CMDBuild.Translation.advance,
 				name : 'advanceButton',
 				hidden: true,
 				handler: function() {

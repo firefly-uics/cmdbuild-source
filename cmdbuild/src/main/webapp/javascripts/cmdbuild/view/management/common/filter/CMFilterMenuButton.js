@@ -17,10 +17,10 @@
 	var CLEAR_FILTER_BUTTON_LABEL = CMDBuild.Translation.management.findfilter.clear_filter;
 
 	var TOOLTIP = {
-		save: CMDBuild.Translation.common.buttons.save,
-		modify: CMDBuild.Translation.common.buttons.modify,
-		clone: CMDBuild.Translation.common.buttons.clone,
-		remove: CMDBuild.Translation.common.buttons.remove
+		save: CMDBuild.Translation.save,
+		modify: CMDBuild.Translation.modify,
+		clone: CMDBuild.Translation.clone,
+		remove: CMDBuild.Translation.remove
 	};
 
 	var ICONS_PATH = {
@@ -269,7 +269,7 @@
 					me.callDelegates("onRuntimeParameterWindowSaveButtonClick", [me, me.filter]);
 				}
 			}, {
-				text: CMDBuild.Translation.common.buttons.abort,
+				text: CMDBuild.Translation.cancel,
 				handler: function() {
 					me.destroy();
 				}

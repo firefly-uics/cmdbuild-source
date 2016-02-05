@@ -4,7 +4,7 @@
 		extend: 'CMDBuild.core.buttons.Base',
 
 		iconCls: 'password',
-		textDefault: CMDBuild.Translation.common.buttons.password
+		textDefault: CMDBuild.Translation.password
 	});
 
 })();

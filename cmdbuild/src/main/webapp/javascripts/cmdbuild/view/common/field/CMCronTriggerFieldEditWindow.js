@@ -130,12 +130,12 @@
 				buttons: [
 					{
 						scope: this,
-						text: CMDBuild.Translation.common.buttons.save,
+						text: CMDBuild.Translation.save,
 						handler: this.onSave
 					},
 					{
 						scope: this,
-						text: CMDBuild.Translation.common.buttons.abort,
+						text: CMDBuild.Translation.cancel,
 						handler: function() {
 							this.destroy();
 						}
