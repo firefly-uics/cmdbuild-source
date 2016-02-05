@@ -19,7 +19,7 @@
 
 			Ext.apply(parameters, { url: CMDBuild.core.proxy.Index.lookup.create });
 
-			CMDBuild.core.cache.Cache.request(CMDBuild.core.constants.Proxy.LOOKUP, parameters, true);
+			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.LOOKUP, parameters, true);
 		},
 
 		/**
@@ -30,7 +30,7 @@
 
 			Ext.apply(parameters, { url: CMDBuild.core.proxy.Index.lookup.disable });
 
-			CMDBuild.core.cache.Cache.request(CMDBuild.core.constants.Proxy.LOOKUP, parameters, true);
+			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.LOOKUP, parameters, true);
 		},
 
 		/**
@@ -41,7 +41,7 @@
 
 			Ext.apply(parameters, { url: CMDBuild.core.proxy.Index.lookup.enable });
 
-			CMDBuild.core.cache.Cache.request(CMDBuild.core.constants.Proxy.LOOKUP, parameters, true);
+			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.LOOKUP, parameters, true);
 		},
 
 		/**
@@ -96,7 +96,7 @@
 
 			Ext.apply(parameters, { url: CMDBuild.core.proxy.Index.lookup.read });
 
-			CMDBuild.core.cache.Cache.request(CMDBuild.core.constants.Proxy.LOOKUP, parameters);
+			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.LOOKUP, parameters);
 		},
 
 		/**
@@ -107,7 +107,7 @@
 
 			Ext.apply(parameters, { url: CMDBuild.core.proxy.Index.lookup.readAll });
 
-			CMDBuild.core.cache.Cache.request(CMDBuild.core.constants.Proxy.LOOKUP, parameters);
+			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.LOOKUP, parameters);
 		},
 
 		/**
@@ -118,7 +118,7 @@
 
 			Ext.apply(parameters, { url: CMDBuild.core.proxy.Index.lookup.setOrder });
 
-			CMDBuild.core.cache.Cache.request(CMDBuild.core.constants.Proxy.LOOKUP, parameters, true);
+			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.LOOKUP, parameters, true);
 		},
 
 		/**
@@ -129,7 +129,7 @@
 
 			Ext.apply(parameters, { url: CMDBuild.core.proxy.Index.lookup.update });
 
-			CMDBuild.core.cache.Cache.request(CMDBuild.core.constants.Proxy.LOOKUP, parameters, true);
+			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.LOOKUP, parameters, true);
 		}
 	});
 

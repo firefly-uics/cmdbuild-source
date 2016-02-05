@@ -4,7 +4,6 @@
 		extend: 'CMDBuild.controller.common.abstract.Base',
 
 		requires: [
-			'CMDBuild.core.cache.Cache',
 			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.proxy.session.JsonRpc'
 		],
@@ -81,7 +80,7 @@
 					} else {
 						CMDBuild.core.LoadMask.hide();
 
-						CMDBuild.core.cache.Cache.request(CMDBuild.core.constants.Proxy.UNCACHED, this.ajaxParameters);
+						CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.UNCACHED, this.ajaxParameters);
 					}
 				},
 				failure: function(response, options, decodedResponse) {

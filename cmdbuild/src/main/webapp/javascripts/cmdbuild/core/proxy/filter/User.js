@@ -6,7 +6,6 @@
 	Ext.define('CMDBuild.core.proxy.filter.User', {
 
 		requires: [
-			'CMDBuild.core.cache.Cache',
 			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.proxy.Index'
 		],
@@ -26,7 +25,7 @@
 
 			Ext.apply(parameters, { url: CMDBuild.core.proxy.Index.filter.user.read });
 
-			CMDBuild.core.cache.Cache.request(CMDBuild.core.constants.Proxy.FILTER, parameters);
+			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.FILTER, parameters);
 		},
 		/**
 		 * @param {Object} parameters

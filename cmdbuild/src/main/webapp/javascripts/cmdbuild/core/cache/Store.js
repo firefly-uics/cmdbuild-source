@@ -9,7 +9,6 @@
 		extend: 'Ext.data.Store',
 
 		requires: [
-			'CMDBuild.core.cache.Cache',
 			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.interfaces.Ajax'
 		],
@@ -17,7 +16,12 @@
 		/**
 		 * @cfg {String}
 		 */
-		cacheGroupIdentifier: undefined,
+		groupId: undefined,
+
+		/**
+		 * @cfg {String}
+		 */
+		type: 'store',
 
 		/**
 		 * @param {Array} records
@@ -48,23 +52,46 @@
 			} : options;
 
 			if (
-				Ext.Array.contains(CMDBuild.core.cache.Cache.managedCacheGroupsArray, this.cacheGroupIdentifier)
-				&& CMDBuild.core.cache.Cache.enabled
-				&& !CMDBuild.core.cache.Cache.isExpired(this.cacheGroupIdentifier, this.proxy.url, options.params)
+				CMDBuild.global.Cache.isEnabled()
+				&& CMDBuild.global.Cache.isCacheable(this.groupId)
 			) {
-				var cachedValues = CMDBuild.core.cache.Cache.get(this.cacheGroupIdentifier, this.proxy.url, options.params);
+				var parameters = {
+					type: this.type,
+					groupId: this.groupId,
+					serviceEndpoint: this.proxy.url,
+					params: options.params
+				};
 
-				// Adapter (Ajax response to store)
-				var adaptedRecords = cachedValues.decodedResult[this.getProxy().getReader().root];
-				var adaptedOperation = cachedValues.operation;
-				var adaptedSuccess = true;
+				if (!CMDBuild.global.Cache.isExpired(parameters)) { // Emulation of success and callback execution
+					var cachedValues = CMDBuild.global.Cache.get(parameters);
 
-				this.loadData(adaptedRecords);
+					this.loadData(cachedValues.records);
 
-				Ext.callback(options.callback, options.scope, [adaptedRecords, adaptedOperation, adaptedSuccess]);
-			} else { // Uncachable endpoints manage
-				this.callParent(arguments);
+					// Interceptor to manage error/warning messages
+					options.callback = Ext.Function.createInterceptor(options.callback, this.callbackInterceptor, this);
+
+					return Ext.callback(options.callback, options.scope, [cachedValues.records, cachedValues.operation, cachedValues.success]);
+				} else { // Execute real Ajax call
+					options.callback = Ext.Function.createSequence(function (records, operation, success) {
+						Ext.apply(parameters, {
+							values: {
+								records: records,
+								operation: operation,
+								success: success
+							}
+						});
+
+						// Cache builder call
+						CMDBuild.global.Cache.set(parameters);
+					}, options.callback);
+				}
 			}
+
+			// Interceptor to manage error/warning messages
+			options.callback = Ext.Function.createInterceptor(options.callback, this.callbackInterceptor, this);
+
+			// Uncachable endpoint manage
+			this.callParent(arguments);
 		}
 	});
 

@@ -3,7 +3,7 @@
 	Ext.define('CMDBuild.core.proxy.NavigationTree', {
 
 		requires: [
-			'CMDBuild.core.cache.Cache',
+			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.proxy.Index'
 		],
 
@@ -17,7 +17,7 @@
 
 			Ext.apply(parameters, { url: CMDBuild.core.proxy.Index.navigationTrees.create });
 
-			CMDBuild.core.cache.Cache.request(CMDBuild.core.constants.Proxy.NAVIGATION_TREE, parameters, true);
+			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.NAVIGATION_TREE, parameters, true);
 		},
 
 		/**
@@ -28,7 +28,7 @@
 
 			Ext.apply(parameters, { url: CMDBuild.core.proxy.Index.navigationTrees.read });
 
-			CMDBuild.core.cache.Cache.request(CMDBuild.core.constants.Proxy.NAVIGATION_TREE, parameters);
+			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.NAVIGATION_TREE, parameters);
 		},
 
 		/**
@@ -39,7 +39,7 @@
 
 			Ext.apply(parameters, { url: CMDBuild.core.proxy.Index.navigationTrees.readAll });
 
-			CMDBuild.core.cache.Cache.request(CMDBuild.core.constants.Proxy.NAVIGATION_TREE, parameters);
+			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.NAVIGATION_TREE, parameters);
 		},
 
 		/**
@@ -50,7 +50,7 @@
 
 			Ext.apply(parameters, { url: CMDBuild.core.proxy.Index.navigationTrees.remove });
 
-			CMDBuild.core.cache.Cache.request(CMDBuild.core.constants.Proxy.NAVIGATION_TREE, parameters, true);
+			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.NAVIGATION_TREE, parameters, true);
 		},
 
 		/**
@@ -61,7 +61,7 @@
 
 			Ext.apply(parameters, { url: CMDBuild.core.proxy.Index.navigationTrees.update });
 
-			CMDBuild.core.cache.Cache.request(CMDBuild.core.constants.Proxy.NAVIGATION_TREE, parameters, true);
+			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.NAVIGATION_TREE, parameters, true);
 		}
 	});
 

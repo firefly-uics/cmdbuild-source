@@ -3,7 +3,6 @@
 	Ext.define('CMDBuild.core.proxy.email.Template', {
 
 		requires: [
-			'CMDBuild.core.cache.Cache',
 			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.proxy.Index',
 			'CMDBuild.model.email.template.Store'
@@ -19,7 +18,7 @@
 
 			Ext.apply(parameters, { url: CMDBuild.core.proxy.Index.email.templates.create });
 
-			CMDBuild.core.cache.Cache.request(CMDBuild.core.constants.Proxy.EMAIL, parameters, true);
+			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.EMAIL, parameters, true);
 		},
 
 		/**
@@ -28,7 +27,7 @@
 		 * @returns {Ext.data.Store or CMDBuild.core.cache.Store}
 		 */
 		getStore: function(autoLoad) {
-			return CMDBuild.core.cache.Cache.requestAsStore(CMDBuild.core.constants.Proxy.EMAIL, {
+			return CMDBuild.global.Cache.requestAsStore(CMDBuild.core.constants.Proxy.EMAIL, {
 				autoLoad: autoLoad || false,
 				model: 'CMDBuild.model.email.template.Store',
 				proxy: {
@@ -58,7 +57,7 @@
 
 			Ext.apply(parameters, { url: CMDBuild.core.proxy.Index.email.templates.read });
 
-			CMDBuild.core.cache.Cache.request(CMDBuild.core.constants.Proxy.EMAIL, parameters);
+			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.EMAIL, parameters);
 		},
 
 		/**
@@ -69,7 +68,7 @@
 
 			Ext.apply(parameters, { url: CMDBuild.core.proxy.Index.email.templates.readAll });
 
-			CMDBuild.core.cache.Cache.request(CMDBuild.core.constants.Proxy.EMAIL, parameters);
+			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.EMAIL, parameters);
 		},
 
 		/**
@@ -80,7 +79,7 @@
 
 			Ext.apply(parameters, { url: CMDBuild.core.proxy.Index.email.templates.remove });
 
-			CMDBuild.core.cache.Cache.request(CMDBuild.core.constants.Proxy.EMAIL, parameters, true);
+			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.EMAIL, parameters, true);
 		},
 
 		/**
@@ -91,7 +90,7 @@
 
 			Ext.apply(parameters, { url: CMDBuild.core.proxy.Index.email.templates.update });
 
-			CMDBuild.core.cache.Cache.request(CMDBuild.core.constants.Proxy.EMAIL, parameters, true);
+			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.EMAIL, parameters, true);
 		}
 	});
 

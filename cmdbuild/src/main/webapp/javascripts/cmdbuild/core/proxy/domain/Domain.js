@@ -3,7 +3,6 @@
 	Ext.define('CMDBuild.core.proxy.domain.Domain', {
 
 		requires: [
-			'CMDBuild.core.cache.Cache',
 			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.proxy.Index'
 		],
@@ -18,7 +17,7 @@
 
 			Ext.apply(parameters, { url: CMDBuild.core.proxy.Index.domain.create });
 
-			CMDBuild.core.cache.Cache.request(CMDBuild.core.constants.Proxy.DOMAINS, parameters, true);
+			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.DOMAINS, parameters, true);
 		},
 
 		/**
@@ -29,7 +28,7 @@
 
 			Ext.apply(parameters, { url: CMDBuild.core.proxy.Index.domain.getDomainList });
 
-			CMDBuild.core.cache.Cache.request(CMDBuild.core.constants.Proxy.DOMAINS, parameters);
+			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.DOMAINS, parameters);
 		},
 
 		/**
@@ -40,7 +39,7 @@
 
 			Ext.apply(parameters, { url: CMDBuild.core.proxy.Index.domain.read });
 
-			CMDBuild.core.cache.Cache.request(CMDBuild.core.constants.Proxy.DOMAINS, parameters);
+			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.DOMAINS, parameters);
 		},
 
 		/**
@@ -51,7 +50,7 @@
 
 			Ext.apply(parameters, { url: CMDBuild.core.proxy.Index.domain.readAll });
 
-			CMDBuild.core.cache.Cache.request(CMDBuild.core.constants.Proxy.DOMAINS, parameters);
+			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.DOMAINS, parameters);
 		},
 
 		/**
@@ -62,7 +61,7 @@
 
 			Ext.apply(parameters, { url: CMDBuild.core.proxy.Index.domain.remove });
 
-			CMDBuild.core.cache.Cache.request(CMDBuild.core.constants.Proxy.DOMAINS, parameters, true);
+			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.DOMAINS, parameters, true);
 		},
 
 		/**
@@ -73,7 +72,7 @@
 
 			Ext.apply(parameters, { url: CMDBuild.core.proxy.Index.domain.update });
 
-			CMDBuild.core.cache.Cache.request(CMDBuild.core.constants.Proxy.DOMAINS, parameters, true);
+			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.DOMAINS, parameters, true);
 		}
 	});
 

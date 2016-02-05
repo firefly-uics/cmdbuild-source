@@ -3,7 +3,6 @@
 	Ext.define('CMDBuild.core.proxy.dataView.Sql', {
 
 		requires: [
-			'CMDBuild.core.cache.Cache',
 			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.proxy.Index',
 			'CMDBuild.core.Utils',
@@ -21,14 +20,14 @@
 
 			Ext.apply(parameters, { url: CMDBuild.core.proxy.Index.dataView.sql.create });
 
-			CMDBuild.core.cache.Cache.request(CMDBuild.core.constants.Proxy.DATA_VIEW, parameters, true);
+			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.DATA_VIEW, parameters, true);
 		},
 
 		/**
 		 * @returns {Ext.data.Store or CMDBuild.core.cache.Store}
 		 */
 		getStore: function() {
-			return CMDBuild.core.cache.Cache.requestAsStore(CMDBuild.core.constants.Proxy.DATA_VIEW, {
+			return CMDBuild.global.Cache.requestAsStore(CMDBuild.core.constants.Proxy.DATA_VIEW, {
 				autoLoad: false,
 				model: 'CMDBuild.model.dataView.sql.GridStore',
 				proxy: {
@@ -54,7 +53,7 @@
 		 * @returns {Ext.data.Store or CMDBuild.core.cache.Store}
 		 */
 		getStoreDataSources: function() {
-			return CMDBuild.core.cache.Cache.requestAsStore(CMDBuild.core.constants.Proxy.FUNCTION, {
+			return CMDBuild.global.Cache.requestAsStore(CMDBuild.core.constants.Proxy.FUNCTION, {
 				autoLoad: true,
 				model: 'CMDBuild.model.Function',
 				proxy: {
@@ -113,7 +112,7 @@
 
 			Ext.apply(parameters, { url: CMDBuild.core.proxy.Index.dataView.sql.read });
 
-			CMDBuild.core.cache.Cache.request(CMDBuild.core.constants.Proxy.DATA_VIEW, parameters);
+			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.DATA_VIEW, parameters);
 		},
 
 		/**
@@ -124,7 +123,7 @@
 
 			Ext.apply(parameters, { url: CMDBuild.core.proxy.Index.dataView.sql.remove });
 
-			CMDBuild.core.cache.Cache.request(CMDBuild.core.constants.Proxy.DATA_VIEW, parameters, true);
+			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.DATA_VIEW, parameters, true);
 		},
 
 		/**
@@ -135,7 +134,7 @@
 
 			Ext.apply(parameters, { url: CMDBuild.core.proxy.Index.dataView.sql.update });
 
-			CMDBuild.core.cache.Cache.request(CMDBuild.core.constants.Proxy.DATA_VIEW, parameters, true);
+			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.DATA_VIEW, parameters, true);
 		}
 	});
 

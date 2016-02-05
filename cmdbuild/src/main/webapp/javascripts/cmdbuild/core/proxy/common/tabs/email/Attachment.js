@@ -3,8 +3,6 @@
 	Ext.define('CMDBuild.core.proxy.common.tabs.email.Attachment', {
 
 		requires: [
-			'CMDBuild.core.interfaces.Ajax',
-			'CMDBuild.core.cache.Cache',
 			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.interfaces.FormSubmit',
 			'CMDBuild.core.proxy.Index',
@@ -24,7 +22,7 @@
 				url: CMDBuild.core.proxy.Index.email.attachment.copy
 			});
 
-			CMDBuild.core.cache.Cache.request(CMDBuild.core.constants.Proxy.ATTACHMENT, parameters, true);
+			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.ATTACHMENT, parameters, true);
 		},
 
 		/**
@@ -59,14 +57,14 @@
 				url: CMDBuild.core.proxy.Index.email.attachment.readAll
 			});
 
-			CMDBuild.core.cache.Cache.request(CMDBuild.core.constants.Proxy.ATTACHMENT, parameters, true);
+			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.ATTACHMENT, parameters, true);
 		},
 
 		/**
 		 * @returns {Ext.data.Store or CMDBuild.core.cache.Store}
 		 */
 		getTargetClassComboStore: function() {
-			return CMDBuild.core.cache.Cache.requestAsStore(CMDBuild.core.constants.Proxy.CLASS, {
+			return CMDBuild.global.Cache.requestAsStore(CMDBuild.core.constants.Proxy.CLASS, {
 				autoLoad: true,
 				model: 'CMDBuild.model.common.tabs.email.attachments.TargetClass',
 				proxy: {
@@ -104,7 +102,7 @@
 				url: CMDBuild.core.proxy.Index.email.attachment.remove
 			});
 
-			CMDBuild.core.cache.Cache.request(CMDBuild.core.constants.Proxy.ATTACHMENT, parameters, true);
+			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.ATTACHMENT, parameters, true);
 		},
 
 		/**

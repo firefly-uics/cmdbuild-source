@@ -3,7 +3,7 @@
 	Ext.define('CMDBuild.core.proxy.Gis', {
 
 		requires: [
-			'CMDBuild.core.cache.Cache',
+			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.proxy.Index'
 		],
 
@@ -17,7 +17,7 @@
 
 			Ext.apply(parameters, { url: CMDBuild.core.proxy.Index.gis.readTreeNavigation });
 
-			CMDBuild.core.cache.Cache.request(CMDBuild.core.constants.Proxy.GIS, parameters);
+			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.GIS, parameters);
 		}
 	});
 

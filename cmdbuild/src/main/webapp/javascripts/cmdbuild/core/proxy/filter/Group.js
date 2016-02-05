@@ -3,7 +3,6 @@
 	Ext.define('CMDBuild.core.proxy.filter.Group', {
 
 		requires: [
-			'CMDBuild.core.cache.Cache',
 			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.proxy.Index',
 			'CMDBuild.model.filter.group.Store',
@@ -20,7 +19,7 @@
 
 			Ext.apply(parameters, { url: CMDBuild.core.proxy.Index.filter.group.create });
 
-			CMDBuild.core.cache.Cache.request(CMDBuild.core.constants.Proxy.FILTER, parameters, true);
+			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.FILTER, parameters, true);
 		},
 
 		/**
@@ -31,7 +30,7 @@
 
 			Ext.apply(parameters, { url: CMDBuild.core.proxy.Index.filter.group.defaults.read });
 
-			CMDBuild.core.cache.Cache.request(CMDBuild.core.constants.Proxy.FILTER, parameters);
+			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.FILTER, parameters);
 		},
 
 		/**
@@ -40,7 +39,7 @@
 		 * @return {Ext.data.Store or CMDBuild.core.cache.Store}
 		 */
 		getStore: function() {
-			return CMDBuild.core.cache.Cache.requestAsStore(CMDBuild.core.constants.Proxy.FILTER, {
+			return CMDBuild.global.Cache.requestAsStore(CMDBuild.core.constants.Proxy.FILTER, {
 				autoLoad: false,
 				model: 'CMDBuild.model.filter.group.Store',
 				pageSize: CMDBuild.configuration.instance.get(CMDBuild.core.constants.Proxy.ROW_LIMIT),
@@ -63,7 +62,7 @@
 		 * @returns {Ext.data.Store or CMDBuild.core.cache.Store}
 		 */
 		getStoreTargetClass: function() {
-			return CMDBuild.core.cache.Cache.requestAsStore(CMDBuild.core.constants.Proxy.CLASS, {
+			return CMDBuild.global.Cache.requestAsStore(CMDBuild.core.constants.Proxy.CLASS, {
 				autoLoad: true,
 				model: 'CMDBuild.model.filter.group.TargetClass',
 				proxy: {
@@ -98,7 +97,7 @@
 
 			Ext.apply(parameters, { url: CMDBuild.core.proxy.Index.filter.group.read });
 
-			CMDBuild.core.cache.Cache.request(CMDBuild.core.constants.Proxy.FILTER, parameters);
+			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.FILTER, parameters);
 		},
 
 		/**
@@ -109,7 +108,7 @@
 
 			Ext.apply(parameters, { url: CMDBuild.core.proxy.Index.filter.group.readAll });
 
-			CMDBuild.core.cache.Cache.request(CMDBuild.core.constants.Proxy.FILTER, parameters);
+			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.FILTER, parameters);
 		},
 
 		/**
@@ -120,7 +119,7 @@
 
 			Ext.apply(parameters, { url: CMDBuild.core.proxy.Index.filter.group.remove });
 
-			CMDBuild.core.cache.Cache.request(CMDBuild.core.constants.Proxy.FILTER, parameters, true);
+			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.FILTER, parameters, true);
 		},
 
 		/**
@@ -131,7 +130,7 @@
 
 			Ext.apply(parameters, { url: CMDBuild.core.proxy.Index.filter.group.defaults.update });
 
-			CMDBuild.core.cache.Cache.request(CMDBuild.core.constants.Proxy.FILTER, parameters, true);
+			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.FILTER, parameters, true);
 		},
 
 		/**
@@ -142,7 +141,7 @@
 
 			Ext.apply(parameters, { url: CMDBuild.core.proxy.Index.filter.group.update });
 
-			CMDBuild.core.cache.Cache.request(CMDBuild.core.constants.Proxy.FILTER, parameters, true);
+			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.FILTER, parameters, true);
 		}
 	});
 
