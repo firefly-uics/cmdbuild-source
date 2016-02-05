@@ -1,7 +1,7 @@
 (function() {
 
 	/**
-	 * To use only inside cache. Stores aren't realy cached, they just have possibility to get data from cache.
+	 * To use only inside cache class
 	 *
 	 * @private
 	 */
