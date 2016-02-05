@@ -30,7 +30,7 @@
 		 *
 		 * @private
 		 */
-		bufferObject: { // TODO: add other types "store"
+		bufferObject: {
 			standard: {},
 			store: {}
 		},
@@ -57,8 +57,6 @@
 			CMDBuild.core.constants.Proxy.GROUP,
 			CMDBuild.core.constants.Proxy.USER,
 			CMDBuild.core.constants.Proxy.WORKFLOW
-
-			, CMDBuild.core.constants.Proxy.EMAIL // TODO
 		],
 
 		/**
