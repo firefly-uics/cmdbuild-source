@@ -94,9 +94,11 @@ public class ParameterNames {
 
 		private static final String FILTER_PREFIX = ALL_PREFIX + "filter.";
 		public static final String FILTER_TYPE = FILTER_PREFIX + "type";
-		public static final String FILTER_REGEX = FILTER_PREFIX + "regex.";
-		public static final String FILTER_FROM_REGEX = FILTER_REGEX + "from";
-		public static final String FILTER_SUBJECT_REGEX = FILTER_REGEX + "subject";
+		private static final String FILTER_REGEX_PREFIX = FILTER_PREFIX + "regex.";
+		public static final String FILTER_FROM_REGEX = FILTER_REGEX_PREFIX + "from";
+		public static final String FILTER_SUBJECT_REGEX = FILTER_REGEX_PREFIX + "subject";
+		private static final String FILTER_FUNCTION_PREFIX = FILTER_PREFIX + "function.";
+		public static final String FILTER_FUNCTION_NAME = FILTER_FUNCTION_PREFIX + "name";
 		public static final String FILTER_REJECT = FILTER_PREFIX + "reject";
 
 		private static final String ACTION_PREFIX = ALL_PREFIX + "action.";

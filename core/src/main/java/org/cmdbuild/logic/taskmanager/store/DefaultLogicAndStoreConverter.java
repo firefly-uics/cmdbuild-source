@@ -429,6 +429,7 @@ public class DefaultLogicAndStoreConverter implements LogicAndStoreConverter {
 							.join(task.getRegexFromFilter())) //
 					.withParameter(ReadEmail.FILTER_SUBJECT_REGEX, Joiner.on(SPECIAL_SEPARATOR) //
 							.join(task.getRegexSubjectFilter())) //
+					.withParameter(ReadEmail.FILTER_FUNCTION_NAME, task.getFilterFunction()) //
 					.withParameter(ReadEmail.NOTIFICATION_ACTIVE, //
 							Boolean.toString(task.isNotificationActive())) //
 					.withParameter(ReadEmail.NOTIFICATION_TEMPLATE, //
@@ -616,6 +617,7 @@ public class DefaultLogicAndStoreConverter implements LogicAndStoreConverter {
 					.withRegexSubjectFilter( //
 							isEmpty(subjectRegexFilters) ? EMPTY_FILTERS : Splitter.on(SPECIAL_SEPARATOR) //
 									.split(subjectRegexFilters)) //
+					.withFilterFunction(task.getParameter(ReadEmail.FILTER_FUNCTION_NAME)) //
 					.withNotificationStatus( //
 							Boolean.valueOf(task.getParameter(ReadEmail.NOTIFICATION_ACTIVE))) //
 					.withNotificationTemplate( //

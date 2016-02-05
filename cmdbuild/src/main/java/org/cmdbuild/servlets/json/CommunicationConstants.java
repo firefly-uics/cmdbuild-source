@@ -121,7 +121,8 @@ public class CommunicationConstants {
 			FILE_NAME = "fileName", //
 			FILTER = "filter", //
 			FILTER_FROM_ADDRESS = "filterFromAddress", //
-			FILTERNAME = "filterName", //
+			FILTER_FUNCTION = "filterFunction", //
+			FILTER_NAME = "filterName", //
 			FILTERS = "filters", //
 			FILTER_SUBJECT = "filterSubject", //
 			FILTER_TYPE = "filterType", //
