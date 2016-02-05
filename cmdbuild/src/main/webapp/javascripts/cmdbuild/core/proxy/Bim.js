@@ -3,7 +3,7 @@
 	Ext.define('CMDBuild.core.proxy.Bim', {
 
 		requires: [
-			'CMDBuild.core.cache.Cache',
+			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.proxy.Index'
 		],
 
@@ -17,7 +17,7 @@
 
 			Ext.apply(parameters, { url: CMDBuild.core.proxy.Index.bim.readRootLayer });
 
-			CMDBuild.core.cache.Cache.request(CMDBuild.core.constants.Proxy.BIM, parameters);
+			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.BIM, parameters);
 		}
 	});
 

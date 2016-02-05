@@ -3,7 +3,6 @@
 	Ext.define('CMDBuild.core.proxy.workflow.Tasks', {
 
 		requires: [
-			'CMDBuild.core.cache.Cache',
 			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.proxy.Index',
 			'CMDBuild.model.workflow.tabs.taskManager.Grid'
@@ -15,7 +14,7 @@
 		 * @returns {Ext.data.Store or CMDBuild.core.cache.Store}
 		 */
 		getStore: function() {
-			return CMDBuild.core.cache.Cache.requestAsStore(CMDBuild.core.constants.Proxy.TASK, {
+			return CMDBuild.global.Cache.requestAsStore(CMDBuild.core.constants.Proxy.TASK, {
 				autoLoad: false,
 				model: 'CMDBuild.model.workflow.tabs.taskManager.Grid',
 				proxy: {

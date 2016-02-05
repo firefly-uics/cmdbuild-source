@@ -3,7 +3,7 @@
 	Ext.define('CMDBuild.core.proxy.widget.CustomForm', {
 
 		requires: [
-			'CMDBuild.core.cache.Cache',
+			'CMDBuild.global.Cache',
 			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.proxy.Index'
 		],
@@ -62,7 +62,7 @@
 
 			Ext.apply(parameters, { url: CMDBuild.core.proxy.Index.functions.readCards });
 
-			CMDBuild.core.cache.Cache.request(CMDBuild.core.constants.Proxy.CUSTOM_FORM, parameters);
+			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.CUSTOM_FORM, parameters);
 		}
 	});
 

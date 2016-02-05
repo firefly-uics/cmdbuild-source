@@ -3,7 +3,6 @@
 	Ext.define('CMDBuild.core.proxy.userAndGroup.group.DefaultFilters', {
 
 		requires: [
-			'CMDBuild.core.cache.Cache',
 			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.proxy.Index',
 			'CMDBuild.model.userAndGroup.group.defaultFilters.Filter'
@@ -43,7 +42,7 @@
 
 			Ext.apply(parameters, { url: CMDBuild.core.proxy.Index.group.defaultFilters.read });
 
-			CMDBuild.core.cache.Cache.request(CMDBuild.core.constants.Proxy.GROUP, parameters);
+			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.GROUP, parameters);
 		},
 
 		/**
@@ -54,7 +53,7 @@
 
 			Ext.apply(parameters, { url: CMDBuild.core.proxy.Index.group.defaultFilters.update });
 
-			CMDBuild.core.cache.Cache.request(CMDBuild.core.constants.Proxy.GROUP, parameters, true);
+			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.GROUP, parameters, true);
 		}
 	});
 

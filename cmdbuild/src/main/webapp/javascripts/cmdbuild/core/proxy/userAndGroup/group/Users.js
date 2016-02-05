@@ -3,7 +3,6 @@
 	Ext.define('CMDBuild.core.proxy.userAndGroup.group.Users', {
 
 		requires: [
-			'CMDBuild.core.cache.Cache',
 			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.proxy.Index',
 			'CMDBuild.model.userAndGroup.group.UsersGrid'
@@ -40,7 +39,7 @@
 
 			Ext.apply(parameters, { url: CMDBuild.core.proxy.Index.group.users.saveGroupUserList });
 
-			CMDBuild.core.cache.Cache.request(CMDBuild.core.constants.Proxy.GROUP, parameters, true);
+			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.GROUP, parameters, true);
 		}
 	});
 

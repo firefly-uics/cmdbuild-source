@@ -24,6 +24,7 @@
 
 			Ext.create('CMDBuild.core.LoggerManager'); // Logger configuration
 			Ext.create('CMDBuild.core.Data'); // Data connections configuration
+			Ext.create('CMDBuild.core.cache.Cache');
 
 			Ext.create('CMDBuild.controller.logout.Logout');
 		}

@@ -26,6 +26,7 @@
 			Ext.create('CMDBuild.core.LoggerManager'); // Logger configuration
 			Ext.create('CMDBuild.core.Data'); // Data connections configuration
 			Ext.create('CMDBuild.core.Rest'); // Setup REST connection
+			Ext.create('CMDBuild.core.cache.Cache');
 
 			CMDBuild.core.Administration.init();
 		}

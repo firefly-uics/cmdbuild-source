@@ -3,7 +3,6 @@
 	Ext.define('CMDBuild.core.proxy.userAndGroup.user.User', {
 
 		requires: [
-			'CMDBuild.core.cache.Cache',
 			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.proxy.Index',
 			'CMDBuild.model.userAndGroup.user.DefaultGroup',
@@ -20,7 +19,7 @@
 
 			Ext.apply(parameters, { url: CMDBuild.core.proxy.Index.user.create });
 
-			CMDBuild.core.cache.Cache.request(CMDBuild.core.constants.Proxy.USER, parameters, true);
+			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.USER, parameters, true);
 		},
 
 		/**
@@ -31,14 +30,14 @@
 
 			Ext.apply(parameters, { url: CMDBuild.core.proxy.Index.user.disable });
 
-			CMDBuild.core.cache.Cache.request(CMDBuild.core.constants.Proxy.USER, parameters, true);
+			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.USER, parameters, true);
 		},
 
 		/**
 		 * @returns {Ext.data.Store or CMDBuild.core.cache.Store}
 		 */
 		getStore: function() {
-			return CMDBuild.core.cache.Cache.requestAsStore(CMDBuild.core.constants.Proxy.USER, {
+			return CMDBuild.global.Cache.requestAsStore(CMDBuild.core.constants.Proxy.USER, {
 				autoLoad: false,
 				model: 'CMDBuild.model.userAndGroup.user.User',
 				proxy: {
@@ -64,7 +63,7 @@
 		 * @returns {Ext.data.Store or CMDBuild.core.cache.Store}
 		 */
 		getStoreDefaultGroup: function() {
-			return CMDBuild.core.cache.Cache.requestAsStore(CMDBuild.core.constants.Proxy.USER, {
+			return CMDBuild.global.Cache.requestAsStore(CMDBuild.core.constants.Proxy.USER, {
 				autoLoad: false,
 				model: 'CMDBuild.model.userAndGroup.user.DefaultGroup',
 				proxy: {
@@ -94,7 +93,7 @@
 
 			Ext.apply(parameters, { url: CMDBuild.core.proxy.Index.user.read });
 
-			CMDBuild.core.cache.Cache.request(CMDBuild.core.constants.Proxy.USER, parameters);
+			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.USER, parameters);
 		},
 
 		/**
@@ -105,7 +104,7 @@
 
 			Ext.apply(parameters, { url: CMDBuild.core.proxy.Index.user.update });
 
-			CMDBuild.core.cache.Cache.request(CMDBuild.core.constants.Proxy.USER, parameters, true);
+			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.USER, parameters, true);
 		}
 	});
 

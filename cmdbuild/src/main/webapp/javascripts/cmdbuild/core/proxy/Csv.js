@@ -3,7 +3,6 @@
 	Ext.define('CMDBuild.core.proxy.Csv', {
 
 		requires: [
-			'CMDBuild.core.cache.Cache',
 			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.interfaces.Ajax',
 			'CMDBuild.core.interfaces.FormSubmit',
@@ -43,7 +42,7 @@
 				}
 			});
 
-			CMDBuild.core.cache.Cache.request(CMDBuild.core.constants.Proxy.CSV, parameters);
+			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.CSV, parameters);
 		},
 
 		/**

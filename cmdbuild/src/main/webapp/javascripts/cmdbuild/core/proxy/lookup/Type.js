@@ -18,7 +18,7 @@
 
 			Ext.apply(parameters, { url: CMDBuild.core.proxy.Index.lookup.type.create });
 
-			CMDBuild.core.cache.Cache.request(CMDBuild.core.constants.Proxy.LOOKUP_TYPE, parameters, true);
+			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.LOOKUP_TYPE, parameters, true);
 		},
 
 		/**
@@ -49,7 +49,7 @@
 
 			Ext.apply(parameters, { url: CMDBuild.core.proxy.Index.lookup.type.read });
 
-			CMDBuild.core.cache.Cache.request(CMDBuild.core.constants.Proxy.LOOKUP_TYPE, parameters);
+			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.LOOKUP_TYPE, parameters);
 		},
 
 		/**
@@ -60,7 +60,7 @@
 
 			Ext.apply(parameters, { url: CMDBuild.core.proxy.Index.lookup.type.readAll });
 
-			CMDBuild.core.cache.Cache.request(CMDBuild.core.constants.Proxy.LOOKUP_TYPE, parameters);
+			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.LOOKUP_TYPE, parameters);
 		},
 
 		/**
@@ -71,7 +71,7 @@
 
 			Ext.apply(parameters, { url: CMDBuild.core.proxy.Index.lookup.type.update });
 
-			CMDBuild.core.cache.Cache.request(CMDBuild.core.constants.Proxy.LOOKUP_TYPE, parameters, true);
+			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.LOOKUP_TYPE, parameters, true);
 		}
 	});
 

@@ -3,7 +3,6 @@
 	Ext.define('CMDBuild.core.proxy.email.Queue', {
 
 		requires: [
-			'CMDBuild.core.cache.Cache',
 			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.proxy.Index'
 		],
@@ -18,7 +17,7 @@
 
 			Ext.apply(parameters, { url: CMDBuild.core.proxy.Index.email.queue.configuration });
 
-			CMDBuild.core.cache.Cache.request(CMDBuild.core.constants.Proxy.UNCACHED, parameters);
+			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.UNCACHED, parameters);
 		},
 
 		/**
@@ -29,7 +28,7 @@
 
 			Ext.apply(parameters, { url: CMDBuild.core.proxy.Index.email.queue.configure });
 
-			CMDBuild.core.cache.Cache.request(CMDBuild.core.constants.Proxy.UNCACHED, parameters);
+			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.UNCACHED, parameters);
 		},
 
 		/**
@@ -40,7 +39,7 @@
 
 			Ext.apply(parameters, { url: CMDBuild.core.proxy.Index.email.queue.running });
 
-			CMDBuild.core.cache.Cache.request(CMDBuild.core.constants.Proxy.UNCACHED, parameters);
+			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.UNCACHED, parameters);
 		},
 
 		/**
@@ -51,7 +50,7 @@
 
 			Ext.apply(parameters, { url: CMDBuild.core.proxy.Index.email.queue.start });
 
-			CMDBuild.core.cache.Cache.request(CMDBuild.core.constants.Proxy.UNCACHED, parameters);
+			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.UNCACHED, parameters);
 		},
 
 		/**
@@ -62,7 +61,7 @@
 
 			Ext.apply(parameters, { url: CMDBuild.core.proxy.Index.email.queue.stop });
 
-			CMDBuild.core.cache.Cache.request(CMDBuild.core.constants.Proxy.UNCACHED, parameters);
+			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.UNCACHED, parameters);
 		}
 	});
 

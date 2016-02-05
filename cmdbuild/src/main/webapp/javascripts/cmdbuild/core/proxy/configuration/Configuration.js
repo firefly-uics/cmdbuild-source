@@ -3,7 +3,6 @@
 	Ext.define('CMDBuild.core.proxy.configuration.Configuration', {
 
 		requires: [
-			'CMDBuild.core.cache.Cache',
 			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.proxy.Index'
 		],
@@ -21,7 +20,7 @@
 				url: CMDBuild.core.proxy.Index.configuration.readAll
 			});
 
-			CMDBuild.core.cache.Cache.request(CMDBuild.core.constants.Proxy.CONFIGURATION, parameters);
+			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.CONFIGURATION, parameters);
 		}
 	});
 

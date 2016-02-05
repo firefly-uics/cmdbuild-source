@@ -3,7 +3,6 @@
 	Ext.define('CMDBuild.core.proxy.workflow.Xpdl', {
 
 		requires: [
-			'CMDBuild.core.cache.Cache',
 			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.interfaces.FormSubmit',
 			'CMDBuild.core.proxy.Index'
@@ -47,7 +46,7 @@
 
 			Ext.apply(parameters, { url: CMDBuild.core.proxy.Index.workflow.xpdl.versions });
 
-			CMDBuild.core.cache.Cache.request(CMDBuild.core.constants.Proxy.XPDL, parameters);
+			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.XPDL, parameters);
 		},
 
 		/**
