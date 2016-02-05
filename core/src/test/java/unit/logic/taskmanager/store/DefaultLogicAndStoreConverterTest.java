@@ -608,6 +608,7 @@ public class DefaultLogicAndStoreConverterTest {
 				.withProcessedFolder("processed folder") //
 				.withRejectedFolder("rejected folder") //
 				.withRejectNotMatching(true) //
+				.withFilterType("filter type") //
 				.withRegexFromFilter(asList("regex", "from", "filter")) //
 				.withRegexSubjectFilter(asList("regex", "subject", "filter")) //
 				.withNotificationStatus(true) //
@@ -639,6 +640,7 @@ public class DefaultLogicAndStoreConverterTest {
 		assertThat(parameters, hasEntry(ReadEmail.PROCESSED_FOLDER, "processed folder"));
 		assertThat(parameters, hasEntry(ReadEmail.REJECTED_FOLDER, "rejected folder"));
 		assertThat(parameters, hasEntry(ReadEmail.FILTER_REJECT, "true"));
+		assertThat(parameters, hasEntry(ReadEmail.FILTER_TYPE, "filter type"));
 		assertThat(parameters, hasEntry(ReadEmail.FILTER_FROM_REGEX, "regex" + SPECIAL_SEPARATOR //
 				+ "from" + SPECIAL_SEPARATOR //
 				+ "filter"));
@@ -701,6 +703,7 @@ public class DefaultLogicAndStoreConverterTest {
 				.withParameter(ReadEmail.PROCESSED_FOLDER, "processed folder") //
 				.withParameter(ReadEmail.REJECTED_FOLDER, "rejected folder") //
 				.withParameter(ReadEmail.FILTER_REJECT, "true") //
+				.withParameter(ReadEmail.FILTER_TYPE, "filter type") //
 				.withParameter(ReadEmail.FILTER_FROM_REGEX, "regex" + SPECIAL_SEPARATOR //
 						+ "from" + SPECIAL_SEPARATOR //
 						+ "filter") //
@@ -739,6 +742,7 @@ public class DefaultLogicAndStoreConverterTest {
 		assertThat(converted.isRejectNotMatching(), equalTo(true));
 		assertThat(converted.isNotificationActive(), equalTo(true));
 		assertThat(converted.getNotificationTemplate(), equalTo("template"));
+		assertThat(converted.getFilterType(), equalTo("filter type"));
 		assertThat(converted.getRegexFromFilter(), containsInAnyOrder("regex", "from", "filter"));
 		assertThat(converted.getRegexSubjectFilter(), containsInAnyOrder("regex", "subject", "filter"));
 		assertThat(converted.isAttachmentsActive(), equalTo(true));
