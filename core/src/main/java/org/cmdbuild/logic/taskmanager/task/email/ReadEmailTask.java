@@ -38,6 +38,7 @@ public class ReadEmailTask implements ScheduledTask {
 		private String filterType;
 		private final Collection<String> regexFromFilter = newArrayList();
 		private final Collection<String> regexSubjectFilter = newArrayList();
+		private String filterFunction;
 		private Boolean notificationActive;
 		private String notificationTemplate;
 		private Boolean attachmentsActive;
@@ -141,6 +142,11 @@ public class ReadEmailTask implements ScheduledTask {
 			return this;
 		}
 
+		public Builder withFilterFunction(final String filterFunction) {
+			this.filterFunction = filterFunction;
+			return this;
+		}
+
 		public Builder withNotificationStatus(final Boolean notificationActive) {
 			this.notificationActive = notificationActive;
 			return this;
@@ -215,6 +221,7 @@ public class ReadEmailTask implements ScheduledTask {
 	private final String filterType;
 	private final Iterable<String> regexFromFilter;
 	private final Iterable<String> regexSubjectFilter;
+	private final String filterFunction;
 	private final boolean notificationActive;
 	private final String notificationTemplate;
 	private final boolean attachmentsActive;
@@ -241,6 +248,7 @@ public class ReadEmailTask implements ScheduledTask {
 		this.filterType = builder.filterType;
 		this.regexFromFilter = builder.regexFromFilter;
 		this.regexSubjectFilter = builder.regexSubjectFilter;
+		this.filterFunction = builder.filterFunction;
 		this.notificationActive = builder.notificationActive;
 		this.notificationTemplate = builder.notificationTemplate;
 		this.attachmentsActive = builder.attachmentsActive;
@@ -322,6 +330,10 @@ public class ReadEmailTask implements ScheduledTask {
 
 	public Iterable<String> getRegexSubjectFilter() {
 		return regexSubjectFilter;
+	}
+
+	public String getFilterFunction() {
+		return filterFunction;
 	}
 
 	public boolean isAttachmentsActive() {

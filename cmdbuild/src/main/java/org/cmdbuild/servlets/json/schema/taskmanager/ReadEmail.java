@@ -11,6 +11,7 @@ import static org.cmdbuild.servlets.json.CommunicationConstants.CRON_EXPRESSION;
 import static org.cmdbuild.servlets.json.CommunicationConstants.DESCRIPTION;
 import static org.cmdbuild.servlets.json.CommunicationConstants.EMAIL_ACCOUNT;
 import static org.cmdbuild.servlets.json.CommunicationConstants.FILTER_FROM_ADDRESS;
+import static org.cmdbuild.servlets.json.CommunicationConstants.FILTER_FUNCTION;
 import static org.cmdbuild.servlets.json.CommunicationConstants.FILTER_SUBJECT;
 import static org.cmdbuild.servlets.json.CommunicationConstants.FILTER_TYPE;
 import static org.cmdbuild.servlets.json.CommunicationConstants.ID;
@@ -132,6 +133,11 @@ public class ReadEmail extends JSONBaseWithSpringContext {
 			return delegate.getRegexSubjectFilter();
 		}
 
+		@JsonProperty(FILTER_FUNCTION)
+		public String getFilterFunction() {
+			return delegate.getFilterFunction();
+		}
+
 		@JsonProperty(NOTIFICATION_ACTIVE)
 		public boolean isNotificationActive() {
 			return delegate.isNotificationActive();
@@ -230,6 +236,7 @@ public class ReadEmail extends JSONBaseWithSpringContext {
 			@Parameter(value = FILTER_TYPE, required = false) final String filterType, //
 			@Parameter(value = FILTER_FROM_ADDRESS, required = false) final JSONArray filterFromAddress, //
 			@Parameter(value = FILTER_SUBJECT, required = false) final JSONArray filterSubject, //
+			@Parameter(value = FILTER_FUNCTION, required = false) final String filterFunction, //
 			@Parameter(value = NOTIFICATION_ACTIVE, required = false) final Boolean notificationActive, //
 			@Parameter(value = NOTIFICATION_EMAIL_TEMPLATE, required = false) final String emailTemplate, //
 			@Parameter(value = ATTACHMENTS_ACTIVE, required = false) final Boolean attachmentsActive, //
@@ -260,6 +267,7 @@ public class ReadEmail extends JSONBaseWithSpringContext {
 				.withFilterType(filterType) //
 				.withRegexFromFilter(toIterable(filterFromAddress)) //
 				.withRegexSubjectFilter(toIterable(filterSubject)) //
+				.withFilterFunction(filterFunction) //
 				//
 				// send notification
 				.withNotificationStatus(defaultIfNull(notificationActive, false)) //
@@ -320,6 +328,7 @@ public class ReadEmail extends JSONBaseWithSpringContext {
 			@Parameter(value = FILTER_TYPE, required = false) final String filterType, //
 			@Parameter(value = FILTER_FROM_ADDRESS, required = false) final JSONArray filterFromAddress, //
 			@Parameter(value = FILTER_SUBJECT, required = false) final JSONArray filterSubject, //
+			@Parameter(value = FILTER_FUNCTION, required = false) final String filterFunction, //
 			@Parameter(value = NOTIFICATION_ACTIVE, required = false) final Boolean notificationActive, //
 			@Parameter(value = NOTIFICATION_EMAIL_TEMPLATE, required = false) final String emailTemplate, //
 			@Parameter(value = ATTACHMENTS_ACTIVE, required = false) final Boolean attachmentsActive, //
@@ -351,6 +360,7 @@ public class ReadEmail extends JSONBaseWithSpringContext {
 				.withFilterType(filterType) //
 				.withRegexFromFilter(toIterable(filterFromAddress)) //
 				.withRegexSubjectFilter(toIterable(filterSubject)) //
+				.withFilterFunction(filterFunction) //
 				//
 				// send notification
 				.withNotificationStatus(defaultIfNull(notificationActive, false)) //
