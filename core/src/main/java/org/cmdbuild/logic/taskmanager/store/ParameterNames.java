@@ -93,8 +93,9 @@ public class ParameterNames {
 		public static final String REJECTED_FOLDER = FOLDER_PREFIX + "rejected";
 
 		private static final String FILTER_PREFIX = ALL_PREFIX + "filter.";
-		public static final String FILTER_FROM_REGEX = FILTER_PREFIX + "from.regex";
-		public static final String FILTER_SUBJECT_REGEX = FILTER_PREFIX + "subject.regex";
+		public static final String FILTER_REGEX = FILTER_PREFIX + "regex.";
+		public static final String FILTER_FROM_REGEX = FILTER_REGEX + "from";
+		public static final String FILTER_SUBJECT_REGEX = FILTER_REGEX + "subject";
 		public static final String FILTER_REJECT = FILTER_PREFIX + "reject";
 
 		private static final String ACTION_PREFIX = ALL_PREFIX + "action.";
