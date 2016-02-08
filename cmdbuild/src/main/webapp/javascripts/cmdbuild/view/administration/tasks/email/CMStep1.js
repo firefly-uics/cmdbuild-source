@@ -31,6 +31,9 @@
 		 */
 		cmOn: function(name, param, callBack) {
 			switch (name) {
+				case 'onFilterTypeComboChange':
+					return this.onFilterTypeComboChange();
+
 				default: {
 					if (!Ext.isEmpty(this.parentDelegate))
 						return this.parentDelegate.cmOn(name, param, callBack);
@@ -66,6 +69,22 @@
 			getValueId: function() {
 				return this.view.idField.getValue();
 			},
+
+		onFilterTypeComboChange: function () {
+			this.view.filterDefinitionContainer.removeAll();
+
+			switch (this.view.filterTypeCombobox.getValue()) {
+				case 'regex':
+					return this.view.filterDefinitionContainer.add([this.view.fromAddresFilter, this.view.subjectFilter]);
+
+				case 'function':
+					return this.view.filterDefinitionContainer.add(this.view.filterFunctionCombobox);
+
+				case 'none':
+				default:
+					return;
+			}
+		},
 
 		// SETters functions
 			/**
@@ -134,8 +153,22 @@
 			/**
 			 * @param {String} value
 			 */
+			setValueFilterFunction: function(value) {
+				this.view.filterFunctionCombobox.setValue(value);
+			},
+
+			/**
+			 * @param {String} value
+			 */
 			setValueFilterSubject: function(value) {
 				this.getSubjectFilterDelegate().setValue(value);
+			},
+
+			/**
+			 * @param {String} value
+			 */
+			setValueFilterType: function(value) {
+				this.view.filterTypeCombobox.setValue(value);
 			},
 
 			/**
@@ -240,6 +273,52 @@
 		initComponent: function() {
 			this.delegate = Ext.create('CMDBuild.view.administration.tasks.email.CMStep1Delegate', this);
 
+			// Filter configuration
+				this.fromAddresFilter = Ext.create('CMDBuild.view.administration.tasks.common.emailFilterForm.CMEmailFilterForm', {
+					maxWidth: CMDBuild.CFG_BIG_FIELD_WIDTH - 5,
+					labelWidth: CMDBuild.LABEL_WIDTH - 5,
+
+					fieldContainer: {
+						fieldLabel: CMDBuild.Translation.fromAddress
+					},
+					textarea: {
+						name: CMDBuild.core.proxy.CMProxyConstants.FILTER_FROM_ADDRESS,
+						id: 'FromAddresFilterField'
+					},
+					button: {
+						titleWindow: tr.taskEmail.fromAddressFilter
+					}
+				});
+				this.subjectFilter = Ext.create('CMDBuild.view.administration.tasks.common.emailFilterForm.CMEmailFilterForm', {
+					maxWidth: CMDBuild.CFG_BIG_FIELD_WIDTH - 5,
+					labelWidth: CMDBuild.LABEL_WIDTH - 5,
+
+					fieldContainer: {
+						fieldLabel: CMDBuild.Translation.subject
+					},
+					textarea: {
+						name: CMDBuild.core.proxy.CMProxyConstants.FILTER_SUBJECT,
+						id: 'SubjectFilterField'
+					},
+					button: {
+						titleWindow: tr.taskEmail.subjectFilter
+					}
+				});
+				this.filterFunctionCombobox = Ext.create('Ext.form.field.ComboBox', {
+					name: CMDBuild.core.proxy.CMProxyConstants.FILTER_FUNCTION,
+					fieldLabel: CMDBuild.Translation.functionLabel,
+					labelWidth: CMDBuild.LABEL_WIDTH - 5,
+					maxWidth: CMDBuild.ADM_BIG_FIELD_WIDTH - 5,
+					valueField: 'name',
+					displayField: 'name',
+					editable: false,
+					allowBlank: false,
+
+					store: _CMCache.getAvailableDataSourcesStore(),
+					queryMode: 'local',
+				});
+			// END: Filter configuration
+
 			// Rejected configuration
 				this.rejectedFolder = Ext.create('Ext.form.field.Text', {
 					name: CMDBuild.core.proxy.CMProxyConstants.REJECTED_FOLDER,
@@ -304,29 +383,55 @@
 						fieldLabel: CMDBuild.Translation.incomingFolder,
 						labelWidth: CMDBuild.LABEL_WIDTH
 					}),
-					this.fromAddresFilter = Ext.create('CMDBuild.view.administration.tasks.common.emailFilterForm.CMEmailFilterForm', {
-						fieldContainer: {
-							fieldLabel: tr.taskEmail.fromAddressFilter
+					this.filterDefinitionFieldset = Ext.create('Ext.form.FieldSet', {
+						title: CMDBuild.Translation.filter,
+						maxWidth: 'auto',
+						overflowY: 'auto',
+						padding: '0 5 5 5',
+
+						layout: {
+							type: 'vbox',
+							align:'stretch'
 						},
-						textarea: {
-							name: CMDBuild.core.proxy.CMProxyConstants.FILTER_FROM_ADDRESS,
-							id: 'FromAddresFilterField'
-						},
-						button: {
-							titleWindow: tr.taskEmail.fromAddressFilter
-						}
-					}),
-					this.subjectFilter = Ext.create('CMDBuild.view.administration.tasks.common.emailFilterForm.CMEmailFilterForm', {
-						fieldContainer: {
-							fieldLabel: tr.taskEmail.subjectFilter
-						},
-						textarea: {
-							name: CMDBuild.core.proxy.CMProxyConstants.FILTER_SUBJECT,
-							id: 'SubjectFilterField'
-						},
-						button: {
-							titleWindow: tr.taskEmail.subjectFilter
-						}
+
+						items: [
+							this.filterTypeCombobox = Ext.create('Ext.form.field.ComboBox', {
+								name: CMDBuild.core.proxy.CMProxyConstants.FILTER_TYPE,
+								fieldLabel: CMDBuild.Translation.type,
+								labelWidth: CMDBuild.LABEL_WIDTH - 5,
+								displayField: CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION,
+								valueField: CMDBuild.core.proxy.CMProxyConstants.VALUE,
+								maxWidth: CMDBuild.ADM_BIG_FIELD_WIDTH - 5,
+								value: CMDBuild.core.proxy.CMProxyConstants.NONE, // Default value
+								forceSelection: true,
+								editable: false,
+
+								store: Ext.create('Ext.data.ArrayStore', { // TODO: move to proxy
+									fields: [CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION, CMDBuild.core.proxy.CMProxyConstants.VALUE],
+									data: [
+										[CMDBuild.Translation.none, CMDBuild.core.proxy.CMProxyConstants.NONE],
+										[CMDBuild.Translation.regex, CMDBuild.core.proxy.CMProxyConstants.REGEX],
+										[CMDBuild.Translation.functionLabel, CMDBuild.core.proxy.CMProxyConstants.FUNCTION]
+									]
+								}),
+								queryMode: 'local',
+
+								listeners: {
+									scope: this,
+									change: function (field, newValue, oldValue, eOpts) {
+										this.delegate.cmOn('onFilterTypeComboChange');
+									}
+								}
+							}),
+							this.filterDefinitionContainer = Ext.create('Ext.container.Container', {
+								layout: {
+									type: 'vbox',
+									align:'stretch'
+								},
+
+								items: []
+							})
+						]
 					}),
 					this.processedFolder = Ext.create('Ext.form.field.Text', {
 						name: CMDBuild.core.proxy.CMProxyConstants.PROCESSED_FOLDER,
