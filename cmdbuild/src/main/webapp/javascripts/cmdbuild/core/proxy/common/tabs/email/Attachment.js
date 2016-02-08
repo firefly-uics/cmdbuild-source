@@ -29,21 +29,15 @@
 		 * @param {Object} parameters
 		 */
 		download: function(parameters) {
-			parameters.params[CMDBuild.core.constants.Proxy.FORCE_DOWNLOAD_PARAM_KEY] = true;
-
-			var form = Ext.create('Ext.form.Panel', {
-				standardSubmit: true,
-				url: CMDBuild.core.proxy.Index.email.attachment.download
-			});
-
-			form.submit({
-				target: '_blank',
-				params: parameters.params
-			});
-
-			Ext.defer(function() { // Form cleanup
-				form.close();
-			}, 100);
+			if (
+				Ext.isObject(parameters) && !Ext.Object.isEmpty(parameters)
+				&& Ext.isObject(parameters.params) && !Ext.Object.isEmpty(parameters.params)
+			) {
+				window.open(
+					CMDBuild.core.proxy.Index.email.attachment.download + '?' + Ext.urlEncode(parameters.params),
+					'_blank'
+				);
+			}
 		},
 
 		/**

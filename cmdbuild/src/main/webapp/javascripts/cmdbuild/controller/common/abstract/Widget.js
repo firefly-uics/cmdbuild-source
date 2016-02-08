@@ -115,7 +115,7 @@
 		},
 
 		/**
-		 * @param {CMDBuild.view.management.common.widgets.CMWidgetManager} configurationObject.view
+		 * @param {Mixed} configurationObject.view
 		 * @param {CMDBuild.controller.management.common.CMWidgetManagerController} configurationObject.parentDelegate
 		 * @param {Object} configurationObject.widgetConfiguration
 		 * @param {Ext.form.Basic} configurationObject.clientForm
@@ -252,8 +252,6 @@
 		},
 
 		/**
-		 * This method can't be called using cmfg functionalities because of his implementation
-		 *
 		 * @abstract
 		 */
 		onEditMode: Ext.emptyFn,
