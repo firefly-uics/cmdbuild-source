@@ -48,11 +48,12 @@ public class IpAddressAttributeType extends AbstractAttributeType<String> {
 
 	}
 
+	private static final String NETMASK = "([0-9]|[1-9][0-9]|1[0-1][0-9]|12[0-8])";
 	private static final String IPV4SEG = "(25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])";
 	private static final String IPV4ADDR = "(" + IPV4SEG + "\\.){3,3}" + IPV4SEG;
 	private static final String IPV6SEG = "[0-9a-fA-F]{1,4}";
 	private static final String IPV6ADDR = "(" //
-			+ "(" + IPV6SEG + ":){7,7}" + IPV6SEG + "|" //
+			+ "(" + IPV6SEG + ":){7,7}" + IPV6SEG + "(\\/" + NETMASK + ")?|" //
 			+ "(" + IPV6SEG + ":){1,7}:|" //
 			+ "(" + IPV6SEG + ":){1,6}:" + IPV6SEG + "|" //
 			+ "(" + IPV6SEG + ":){1,5}(:" + IPV6SEG + "){1,2}|" //
