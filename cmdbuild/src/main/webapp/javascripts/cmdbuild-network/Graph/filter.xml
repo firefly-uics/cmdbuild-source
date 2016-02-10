@@ -1,0 +1,28 @@
+<DATA>
+	<params>
+		<type>popup</type>
+		<title>Filters</title>
+	</params>
+	<div id="filterDiv">
+		<onInit>
+			<command>navigate</command>
+			<container>filterDiv</container>
+			<form>filtersPanelMain</form>
+		</onInit>
+		<form id="filtersPanelMain">
+ 			<params>
+				<type>tabbed</type>
+			</params>
+			<form title="Classes" id="filterClasses" include="todo.xml" class="commandPanelWindow cmdbuildTabbedForm"/>
+			<form title="Domains" id="filterDomains" include="todo.xml" class="commandPanelWindow cmdbuildTabbedForm"/>
+		</form>
+	</div>
+	<div class='cmdbuildFooterButtonsWrapper'>
+		<button text="Ok" id="okOptionsDialogButton">
+			<onClick>
+				<command>dialogClose</command>
+				<dialog>commandPanelDialog</dialog>
+			</onClick>
+		</button>
+	</div>
+</DATA>

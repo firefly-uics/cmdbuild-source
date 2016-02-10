@@ -77,10 +77,12 @@
 		 			<params>
 						<type>tabbed</type>
 					</params>
-					<form title="Card list" id="mainCardsGrid" include="mainCards.xml" class="commandPanelWindow cmdbuildTabbedForm"/>
 					<form title="Card" id="detail" include="detail.xml" class="commandPanelWindow cmdbuildTabbedForm"/>
- 					<form title="Relations" id="relations" include="relations.xml" class="commandPanelWindow cmdbuildTabbedForm"/>  
+					<form title="Card list" id="mainCardsGrid" include="cards.xml" class="commandPanelWindow cmdbuildTabbedForm"/>
 					<form title="Classes" id="classesGrid" include="classes.xml" class="commandPanelWindow cmdbuildTabbedForm"/>
+ 					<form title="Complete Card" id="completeDetail" include="card.xml" invisible="true" class="commandPanelWindow cmdbuildTabbedForm"/>
+ 					<form title="Selected list" id="selectedGrid" include="selected.xml" invisible="true" class="commandPanelWindow cmdbuildTabbedForm"/>
+ 					<form title="Relations" id="relations" include="relations.xml" invisible="true" class="commandPanelWindow cmdbuildTabbedForm"/>  
 				</form>
 			</div>
 			<div id="statusPanelContainer">
@@ -108,11 +110,20 @@
 						<dialog>commandPanelDialog</dialog>
 					</onClick>
 				</span>
+				<span class="properties toolbarButton" tooltip="Open the filter panel">
+					<onClick>
+						<command>navigate</command>
+						<form>filter</form>
+						<dialog>commandPanelDialog</dialog>
+					</onClick>
+				</span>
 				<spinner label="Open levels" id="explosionLevels" class="optionsSpinner">
 					<params>
 						<backend>Options</backend>
 						<type>explosionLevels</type>
 						<value>1</value>
+						<min>1</min>
+						<max>10</max>
 					</params>
 					<onChange>
 						<command>boolean</command>
@@ -133,7 +144,8 @@
 			</div>
 		</div>
 		<form title="Command panel" id="commandPanel" include="commandPanel.xml" class="cmdbuildTabbedForm"/>
-		<form title="Options" id="options" include="options.xml" class="commandPanelWindow cmdbuildTabbedForm"/> 
-		<dialog id="commandPanelDialog"></dialog>
 	</div>
+	<form title="Options" id="options" include="options.xml" invisible="true" class="commandPanelWindow cmdbuildTabbedForm"/> 
+	<form title="Filter" id="filter" include="filter.xml" invisible="true" class="commandPanelWindow cmdbuildTabbedForm"/> 
+	<dialog id="commandPanelDialog"></dialog>
 </DATA>	

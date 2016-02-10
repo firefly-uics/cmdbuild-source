@@ -1,0 +1,32 @@
+<DATA>
+	<params>
+		<type>div</type>
+	</params>
+		<button id="contractDetail" text="Overview">
+			<onClick>
+				<command>tab</command>
+				<form>commandPanelMain</form>
+				<activeTab>0</activeTab>
+			</onClick>
+		</button>
+ 	<div id="cmdbuildCard">
+		<onInit>
+			<command>navigate</command>
+			<container>cmdbuildCard</container>
+			<form>formcard</form>
+			<fromObserving>true</fromObserving>
+		</onInit>
+		<form id="formcard" class="cmdbuildCard">
+ 			<observe container="cmdbuildCard">
+				<dummy1>$selectedForm.dummy</dummy1> 
+			</observe>
+ 			<params>
+				<type>form</type>
+				<backend>GraphCard</backend>
+				<className>$selectedForm.className</className>
+				<cardId>$selectedForm.id</cardId>
+				<readonly>true</readonly>
+			</params>
+		</form>
+	</div>
+</DATA>
