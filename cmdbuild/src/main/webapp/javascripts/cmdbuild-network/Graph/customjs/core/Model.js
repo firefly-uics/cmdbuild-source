@@ -77,6 +77,7 @@
 		    		label: node.data.label,
 		    		color: node.data.color,
 		    		compoundData: node.data.compoundData,
+		    		domain: node.data.domain,
 		    		children: node.data.children,
 		    		previousPathNode: node.data.previousPathNode
 			    },
@@ -194,7 +195,7 @@
 			var remainElements = [];
 			for (var i = 0; i < elements.length; i++) {
 				var element = elements[i];
-				if (! this.getNode(element.destinationId)) {
+				if (this.getNode(element._id).length === 0) {
 					remainElements.push(element);
 				}
 			}

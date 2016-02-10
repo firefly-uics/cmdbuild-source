@@ -24,34 +24,44 @@
 			this.compoundNode = this.model.getNode(this.params.id);
 			this.compoundEdge = this.model.connectedEdges(this.params.id)[0];
 			this.saveForUndoCompoundNode(this.compoundNode, this.compoundEdge);
+			if (this.compoundSavedNode.node.id === undefined) {
+				callback.apply(callbackScope, []);
+				return;
+			}
 			var parentId = $.Cmdbuild.g3d.Model.getGraphData(this.compoundNode,
 					"previousPathNode");
 			this.parentNode = this.model.getNode(parentId);
 			this.oldChildren = $.Cmdbuild.g3d.Model.getGraphData(
 					this.parentNode, "children");
-			backend.openChildren(this.params.id, this.elements, function(
-					elements) {
-				this.newElements = [];
-				for (var i = 0; i < elements.nodes.length; i++) {
-					var childId = elements.nodes[i].data.id;
-					if (this.model.getNode(childId).length === 0) {
-						this.newElements.push(childId);
-					}
-				}
-				this.saveForUndo(elements);
-				this.model.pushElements(elements);
-				var allChildren = [];
-				if (this.oldChildren) {
-					allChildren = this.newElements.concat(this.oldChildren);
-				}
-				$.Cmdbuild.g3d.Model.setGraphData(this.parentNode, "children",
-						allChildren);
-				this.model.cleanCompoundNode(this.compoundNode);
-				this.model.changed();
-				callback.apply(callbackScope, []);
-			}, this);
+			var domain = $.Cmdbuild.g3d.Model.getGraphData(this.compoundNode,
+					"domain");
+			backend.openCompoundNode(this.params.id, this.elements, domain,
+					function(elements) {
+						this.newElements = [];
+						for (var i = 0; i < elements.nodes.length; i++) {
+							var childId = elements.nodes[i].data.id;
+							if (this.model.getNode(childId).length === 0) {
+								this.newElements.push(childId);
+							}
+						}
+						this.saveForUndo(elements);
+						this.model.pushElements(elements);
+						var allChildren = [];
+						if (this.oldChildren) {
+							allChildren = this.newElements
+									.concat(this.oldChildren);
+						}
+						$.Cmdbuild.g3d.Model.setGraphData(this.parentNode,
+								"children", allChildren);
+						this.model.cleanCompoundNode(this.compoundNode);
+						this.model.changed();
+						callback.apply(callbackScope, []);
+					}, this);
 		};
 		this.undo = function() {
+			if (this.compoundSavedNode.node.id === undefined) {
+					return;
+			}
 			for (var i = 0; i < this.newEdges.length; i++) {
 				var edge = this.newEdges[i];
 				this.model.removeEdge({
@@ -64,23 +74,39 @@
 				var id = this.newNodes[i];
 				this.model.remove(id);
 			}
-			this.model.pushElements({
-				nodes: [{
-					data: this.compoundSavedNode.node
-				}],
-				edges: [{
-					data: this.compoundSavedNode.edge
-				}]
-			});
+			var compoundNode = this.model.getNode(this.compoundSavedNode.node.id);
+			if (compoundNode.length === 0) {
+				this.model.pushElements({
+					nodes: [{
+						data: this.compoundSavedNode.node
+					}],
+					edges: [{
+						data: this.compoundSavedNode.edge
+					}]
+				});
+			}
+			else {
+				$.Cmdbuild.g3d.Model.setGraphData(compoundNode,
+				"compoundData", this.compoundSavedNode.node.compoundData);
+			}
+			console.log("this.compoundSavedNode.node ",this.compoundSavedNode.node);
 			var children = $.Cmdbuild.g3d.Model.getGraphData(this.parentNode,
 					"children");
+			if (!children) {
+				children = [];
+			}
 			children.push(this.compoundSavedNode.node.id);
-
+			$.Cmdbuild.g3d.Model.setGraphData(this.parentNode, "children",
+					children);
 			// if (this.batch !== true) {
 			this.model.changed(true);
 			// }
 		};
 		this.saveForUndoCompoundNode = function(node, edge) {
+			console.log("saving....", node);
+			var compoundData = $.Cmdbuild.g3d.Model.getGraphData(node,
+					"compoundData");
+			compoundData = (compoundData) ? compoundData.slice() : [];
 			var data = {
 				className: $.Cmdbuild.g3d.Model.getGraphData(node, "className"),
 				id: node.id(),
@@ -93,8 +119,8 @@
 					z: 200
 				// Math.random() * 800 - 400
 				},
-				compoundData: $.Cmdbuild.g3d.Model.getGraphData(node,
-						"compoundData"),
+				domain: $.Cmdbuild.g3d.Model.getGraphData(node, "domain"),
+				compoundData: compoundData,
 				previousPathNode: $.Cmdbuild.g3d.Model.getGraphData(node,
 						"previousPathNode")
 			};
@@ -134,17 +160,17 @@
 				}
 			}
 		};
-		this.chargeModel = function(node, edge) {
-			var elements = {
-				nodes: [{
-					data: this.compoundData
-				}],
-				edges: [{
-					data: this.compoundEdgeData
-				}]
-			};
-			return elements;
-		};
+//		this.chargeModel = function(node, edge) {
+//			var elements = {
+//				nodes: [{
+//					data: this.compoundData
+//				}],
+//				edges: [{
+//					data: this.compoundEdgeData
+//				}]
+//			};
+//			return elements;
+//		};
 	};
 	$.Cmdbuild.g3d.commands.openChildren = openChildren;
 })(jQuery);

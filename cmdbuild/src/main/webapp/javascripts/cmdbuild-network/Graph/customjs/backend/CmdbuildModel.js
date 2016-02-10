@@ -65,6 +65,7 @@
 					label: targetDescription,
 					color: "#ff0000",
 					faveShape: 'triangle',
+					domain: domain,
 					position: {
 						x: Math.random() * 1000 - 500,
 						y: Math.random() * 600 - 300,
@@ -108,7 +109,8 @@
 				edges: []
 			};
 			var configuration = $.Cmdbuild.custom.configuration;
-			if (configuration.filterClassesDomains && configuration.filterClassesDomains[className]) {
+			if (configuration.filterClassesDomains
+					&& configuration.filterClassesDomains[className]) {
 				this.getAllRelations(node,
 						configuration.filterClassesDomains[className],
 						domainList, className, parseInt(cardId), elements,
@@ -169,14 +171,14 @@
 					.getRelations(
 							domainId,
 							param,
-							function(response) {
-								if (response.length <= 0) {
+							function(relations) {
+								if (relations.length <= 0) {
 									this.getAllRelations(node, domains,
 											domainList, className, cardId,
 											elements, callback, callbackScope);
 									return;
 								}
-								var relation = response[0];
+								var relation = relations[0];
 								var configuration = $.Cmdbuild.custom.configuration;
 								if (configuration.filterClasses
 										&& (configuration.filterClasses
@@ -188,29 +190,15 @@
 									return;
 
 								}
-								var clusteringThreshold = $.Cmdbuild.customvariables.options["clusteringThreshold"];
-								if (response.length > clusteringThreshold) {
-									var relation = response[0];
-									var rDescription = (relation._sourceId == cardId && relation._sourceType == className)
-											? relation._type + "(1)"
-											: relation._type + "(2)";
-									var description = "compound node of: "
-											+ response.length + " "
-											+ relation._destinationType + " - "
-											+ rDescription;
-									this
-											.pushAnOpeningChild(
-													elements,
-													domain,
-													relation._destinationId,
-													description,
-													$.Cmdbuild.g3d.constants.GUICOMPOUNDNODE,
-													response, node, cardId,
-													children);
+								if (this.isCompound(relations)) {
+									console.log("relations = ", relations);
+									this.pushCompound(relations, className,
+											elements, domain, node, cardId,
+											children);
 								} else {
 									this.explodeChildren(elements, domain,
 											node, className, cardId, children,
-											response);
+											relations);
 								}
 								// $.Cmdbuild.g3d.Model.setGraphData(node,
 								// "children", children);
@@ -220,7 +208,26 @@
 										callbackScope);
 							}, this);
 		};
-		this.openChildren = function(id, data, callback, callbackScope) {
+		this.pushCompound = function(relations, className, elements, domain,
+				node, cardId, children) {
+			var relation = relations[0];
+			var rDescription = (relation._sourceId == cardId && relation._sourceType == className)
+					? relation._type + "(1)"
+					: relation._type + "(2)";
+			var description = "compound node of: " + relations.length + " "
+					+ relation._destinationType + " - " + rDescription;
+			var id = "CN" + relation._type + relation._sourceId
+					+ relation._destinationId;
+			this.pushAnOpeningChild(elements, domain, id, description,
+					$.Cmdbuild.g3d.constants.GUICOMPOUNDNODE, relations, node,
+					cardId, children);
+		};
+		this.isCompound = function(relations) {
+			var clusteringThreshold = $.Cmdbuild.customvariables.options["clusteringThreshold"];
+			return (relations.length > clusteringThreshold);
+		};
+		this.openCompoundNode = function(id, data, domain, callback,
+				callbackScope) {
 			var node = this.model.getNode(id);
 			var parentId = $.Cmdbuild.g3d.Model.getGraphData(node,
 					"previousPathNode");
@@ -232,17 +239,17 @@
 			};
 			var className = $.Cmdbuild.g3d.Model.getGraphData(parentNode,
 					"className");
-			this.explodeChildren(elements, null, parentNode, className,
+			this.explodeChildren(elements, domain, parentNode, className,
 					parentId, children, data);
 			callback.apply(callbackScope, [elements]);
 		};
 		this.explodeChildren = function(elements, domain, node, className,
-				cardId, children, response) {
+				cardId, children, relations) {
 			var destinationId = undefined;
 			var destinationDescription = undefined;
 			var destinationType = undefined;
-			for (var i = 0; i < response.length; i++) {
-				var relation = response[i];
+			for (var i = 0; i < relations.length; i++) {
+				var relation = relations[i];
 				if (relation._sourceId == cardId
 						&& relation._sourceType == className) {
 					destinationId = relation._destinationId;
