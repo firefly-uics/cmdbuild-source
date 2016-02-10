@@ -6,6 +6,7 @@
 		this.data =  [];
 		this.metadata = {};
 		this.param = param;
+		this.filter = {};
 		var onReadyFunction = onReadyFunction;
 		var onReadyScope = onReadyScope;
 
@@ -35,7 +36,7 @@
 			setTimeout(function() { onObjectReady(); }, 100);
 		};
 		this.loadData = function(param, callback, callbackScope) {
-			var data = this.model.getCards(param.firstRow, param.nRows);
+			var data = this.model.getCards(param.firstRow, param.nRows, this.filter);
 			this.total = data.total;
 			this.data = data.rows;
 			callback.apply(callbackScope, this.data);
