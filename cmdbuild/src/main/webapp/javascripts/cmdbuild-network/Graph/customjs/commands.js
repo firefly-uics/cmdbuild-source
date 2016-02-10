@@ -14,16 +14,17 @@
 		},
 		initOptions: function(param) {
 			$("#nodeTooltipEnabled").prop("checked",
-					$.Cmdbuild.custom.configuration.nodeTooltipEnabled);
-			$.Cmdbuild.customvariables.options["nodeTooltipEnabled"] = $.Cmdbuild.custom.configuration.nodeTooltipEnabled;
+					$.Cmdbuild.customvariables.options.nodeTooltipEnabled);
 			$("#edgeTooltipEnabled").prop("checked",
-					$.Cmdbuild.custom.configuration.edgeTooltipEnabled);
-			$.Cmdbuild.customvariables.options["edgeTooltipEnabled"] = $.Cmdbuild.custom.configuration.edgeTooltipEnabled;
-			$.Cmdbuild.customvariables.options["displayLabel"] = $.Cmdbuild.custom.configuration.displayLabel;
-			var backendFn = $.Cmdbuild.utilities.getBackend(param.backend);
+					$.Cmdbuild.customvariables.options.edgeTooltipEnabled);
+			console.log("$.Cmdbuild.custom.options.spriteDimension ", $.Cmdbuild.customvariables.options.spriteDimension);
 			setTimeout(function() {
 				$("#clusteringThreshold").spinner("value",
-						$.Cmdbuild.custom.configuration.clusteringThreshold);
+						$.Cmdbuild.customvariables.options.clusteringThreshold);
+				$("#spriteDimension").spinner("value",
+						$.Cmdbuild.customvariables.options.spriteDimension);
+				$("#stepRadius").spinner("value",
+						$.Cmdbuild.customvariables.options.stepRadius);
 			}, 100);
 		},
 		navigateOnNode: function(param) {
@@ -80,12 +81,37 @@
 							}, $.Cmdbuild.customvariables.viewer);
 
 		},
+		optionsOk: function(param) {
+			$.Cmdbuild.customvariables.viewer.refresh(true);
+			$.Cmdbuild.standard.commands.dialogClose(param);
+		},
+		optionsPreview: function(param) {
+			$.Cmdbuild.customvariables.viewer.refresh(true);
+		},
+		optionsCancel: function(param) {
+			$.Cmdbuild.customvariables.viewer.refresh(true);
+			$.Cmdbuild.standard.commands.dialogClose(param);
+		},
+		optionsReset: function(param) {
+			$.Cmdbuild.g3d.Options.initVariables();
+			$.Cmdbuild.customvariables.viewer.refresh(true);
+			$.Cmdbuild.standard.commands.dialogClose(param);
+		},
 		boolean: function(param) {
-			var value = (param.type === "displayLabel") ?
-				param.value : $.Cmdbuild.utilities
-				.getHtmlFieldValue("#" + param.type);
+			var value = (param.type === "displayLabel")
+					? param.value
+					: $.Cmdbuild.utilities.getHtmlFieldValue("#" + param.type);
+			console.log(param.type + " " + value);
 			$.Cmdbuild.customvariables.options[param.type] = value;
 			$.Cmdbuild.customvariables.options.changed();
+		},
+		selectClass: function(param) {
+			var paramActualized = $.Cmdbuild.dataModel.resolveVariables(param);
+			$.Cmdbuild.customvariables.selected.selectByClassName(
+					paramActualized.node, param.addSelection);
+			var form2Hook = $.Cmdbuild.dataModel.forms[paramActualized.id];
+			console.log("$.Cmdbuild.custom.classesGrid.getAllSelected() ", $.Cmdbuild.custom.classesGrid.getAllSelected());
+			form2Hook.selectRows($.Cmdbuild.custom.classesGrid.getAllSelected());
 		},
 		selectNode: function(param) {
 			var paramActualized = $.Cmdbuild.dataModel.resolveVariables(param);
@@ -108,11 +134,13 @@
 		},
 		initialize: function(callback) {
 			$.Cmdbuild.customvariables.model = new $.Cmdbuild.g3d.Model();
-			$.Cmdbuild.customvariables.selected = new $.Cmdbuild.g3d.Selected($.Cmdbuild.customvariables.model);
-//			$.Cmdbuild.g3d.Options.loadConfiguration(CONFIGURATION_FILE, function(response) {
-//				$.Cmdbuild.custom.configuration = response;
-				callback.apply(this, []);
-//			}, this);
+			$.Cmdbuild.customvariables.selected = new $.Cmdbuild.g3d.Selected(
+					$.Cmdbuild.customvariables.model);
+			// $.Cmdbuild.g3d.Options.loadConfiguration(CONFIGURATION_FILE,
+			// function(response) {
+			// $.Cmdbuild.custom.configuration = response;
+			callback.apply(this, []);
+			// }, this);
 		},
 		doLayout: function(param) {
 			$.Cmdbuild.customvariables.model.doLayout();
