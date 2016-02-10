@@ -48,12 +48,11 @@ public class IpAddressAttributeType extends AbstractAttributeType<String> {
 
 	}
 
-	private static final String NETMASK = "([0-9]|[1-9][0-9]|1[0-1][0-9]|12[0-8])";
 	private static final String IPV4SEG = "(25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])";
 	private static final String IPV4ADDR = "(" + IPV4SEG + "\\.){3,3}" + IPV4SEG;
 	private static final String IPV6SEG = "[0-9a-fA-F]{1,4}";
 	private static final String IPV6ADDR = "(" //
-			+ "(" + IPV6SEG + ":){7,7}" + IPV6SEG + "(\\/" + NETMASK + ")?|" //
+			+ "(" + IPV6SEG + ":){7,7}" + IPV6SEG + "|" //
 			+ "(" + IPV6SEG + ":){1,7}:|" //
 			+ "(" + IPV6SEG + ":){1,6}:" + IPV6SEG + "|" //
 			+ "(" + IPV6SEG + ":){1,5}(:" + IPV6SEG + "){1,2}|" //
@@ -66,18 +65,17 @@ public class IpAddressAttributeType extends AbstractAttributeType<String> {
 			+ "::(ffff(:0{1,4}){0,1}:){0,1}" + IPV4ADDR + "|" //
 			+ "(" + IPV6SEG + ":){1,4}:" + IPV4ADDR //
 			+ ")";
-
 	private static final String CLASS_SEPARATOR_REGEX = "/";
 	private static final String IPV4_CLASS_REGEX = "(3[0-2]|[1-2][0-9]|[8-9])";
-
 	private static final Pattern IPV4_PATTERN = Pattern.compile(EMPTY //
 			+ "^" //
 			+ IPV4ADDR + "(" + CLASS_SEPARATOR_REGEX + IPV4_CLASS_REGEX + ")*"//
 			+ "$" //
 	);
+	private static final String IPV6_CLASS_REGEX = "([0-9]|[1-9][0-9]|1[0-1][0-9]|12[0-8])";
 	private static final Pattern IPV6_PATTERN = Pattern.compile(EMPTY //
 			+ "^" //
-			+ IPV6ADDR //
+			+ IPV6ADDR + "(" + CLASS_SEPARATOR_REGEX + IPV6_CLASS_REGEX + ")*"//
 			+ "$" //
 	);
 
