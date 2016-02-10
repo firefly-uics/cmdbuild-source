@@ -1,6 +1,21 @@
 /*
 * Override font-weight rule for "a" tags
 */
+#tabs-left-vertical .ui-tabs-nav { 
+    position: absolute; 
+    width: 21em; 
+    transform: translate(-100%,0%) rotate(-90deg); 
+    transform-origin: 100% 0%; 
+} 
+#tabs-left-vertical .ui-tabs-nav li { 
+    float: right; 
+} 
+#tabs-left-vertical .ui-tabs-panel { 
+    padding-left: 3.5em; 
+} 
+#tabs-left-vertical .ui-tabs-panel { 
+    height: 20em; 
+}
 .cmdbuild-crt-toscana-theme a,
 .cmdbuild-crt-toscana-theme a:link {
 	font-weight: normal;
@@ -19,8 +34,13 @@
 	width: 20px!important;
 	text-align: left;
 }
-#mainCardsFormContainer .ui-tabs-anchor {
+.invisible {
 	display:none;
+}
+#options  {
+	border: 1px solid #99bce8;
+	border-radius:5;
+	box-shadow: 10px 10px 5px #8888aa;
 }
 #mainCardsFormContainer .ui-corner-top {
 	display:none;

@@ -3,7 +3,7 @@
 		<type>popup</type>
 		<title>Properties</title>
 	</params>
-	<div id="options">
+	<div id="optionsDiv">
 		<onInit>
 			<command>initOptions</command>
 			<backend>Options</backend>
@@ -25,17 +25,63 @@
 				<backend>Options</backend>
 				<type>clusteringThreshold</type>
 				<value>1</value>
+				<min>2</min>
+				<max>100</max>
 			</params>
 			<onChange>
 				<command>boolean</command>
 				<type>clusteringThreshold</type>
 			</onChange>
 		</spinner>
+		<spinner label="Node dimension" id="spriteDimension" class="">
+			<params>
+				<backend>Options</backend>
+				<type>spriteDimension</type>
+				<value>1</value>
+				<min>2</min>
+				<max>500</max>
+			</params>
+			<onChange>
+				<command>boolean</command>
+				<type>spriteDimension</type>
+			</onChange>
+		</spinner>
+		<spinner label="Edge Length" id="stepRadius" class="">
+			<params>
+				<backend>Options</backend>
+				<type>stepRadius</type>
+				<value>1</value>
+				<min>2</min>
+				<max>1000</max>
+			</params>
+			<onChange>
+				<command>boolean</command>
+				<type>stepRadius</type>
+			</onChange>
+		</spinner>
 	</div>
 	<div class='cmdbuildFooterButtonsWrapper'>
+		<button text="Preview" id="previewOptionsDialogButton">
+			<onClick>
+				<command>optionsPreview</command>
+				<dialog>commandPanelDialog</dialog>
+			</onClick>
+		</button>
 		<button text="Ok" id="okOptionsDialogButton">
 			<onClick>
-				<command>dialogClose</command>
+				<command>optionsOk</command>
+				<dialog>commandPanelDialog</dialog>
+			</onClick>
+		</button>
+		<button text="Reset" id="resetOptionsDialogButton">
+			<onClick>
+				<command>optionsReset</command>
+				<dialog>commandPanelDialog</dialog>
+			</onClick>
+		</button>
+		<button text="Cancel" id="cancelOptionsDialogButton">
+			<onClick>
+				<command>optionsCancel</command>
 				<dialog>commandPanelDialog</dialog>
 			</onClick>
 		</button>

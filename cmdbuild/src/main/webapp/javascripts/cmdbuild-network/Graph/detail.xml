@@ -2,6 +2,13 @@
 	<params>
 		<type>div</type>
 	</params>
+		<button id="expandDetail" text="More details">
+			<onClick>
+				<command>tab</command>
+				<form>commandPanelMain</form>
+				<activeTab>3</activeTab>
+			</onClick>
+		</button>
  	<div id="cmdbuildDetail">
 		<onInit>
 			<command>navigate</command>
@@ -11,7 +18,6 @@
 		</onInit>
 		<form id="formdetail" class="cmdbuildCard">
  			<observe container="cmdbuildDetail">
-			<!-- observing a generic save of formactivity...not interested in a specific variable -->
 				<dummy1>$selectedForm.dummy</dummy1> 
 			</observe>
  			<params>
@@ -20,6 +26,28 @@
 				<className>$selectedForm.className</className>
 				<cardId>$selectedForm.id</cardId>
 				<readonly>true</readonly>
+				<displayableInList>true</displayableInList>
+			</params>
+		</form>
+	</div>
+	<div id="cmdbuildDetailRelations">
+		<onInit>
+			<command>navigate</command>
+			<container>cmdbuildDetailRelations</container>
+			<form>formdetailrelations</form>
+			<fromObserving>true</fromObserving>
+		</onInit>
+		<form id="formdetailrelations" class="cmdbuildCard">
+ 			<observe container="cmdbuildDetailRelations">
+				<dummy1>$selectedForm.dummy</dummy1> 
+			</observe>
+ 			<params>
+				<type>form</type>
+				<backend>GraphCard</backend>
+				<className>$selectedForm.className</className>
+				<cardId>$selectedForm.id</cardId>
+				<readonly>true</readonly>
+				<displayableInList>true</displayableInList>
 			</params>
 		</form>
 	</div>
