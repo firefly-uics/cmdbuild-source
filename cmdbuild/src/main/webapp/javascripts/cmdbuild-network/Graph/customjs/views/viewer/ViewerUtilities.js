@@ -274,6 +274,106 @@
 			var epsilon = 10;
 			return !(Math.abs(p1.x - p2.x) > epsilon
 					|| Math.abs(p1.y - p2.y) > epsilon || Math.abs(p1.z - p2.z) > epsilon);
+		},
+		boundingBox: function(objects) {
+			var maxx = -Number.MAX_VALUE;
+			var maxy = -Number.MAX_VALUE;
+			var maxz = -Number.MAX_VALUE;
+			var minx = Number.MAX_VALUE;
+			var miny = Number.MAX_VALUE;
+			var minz = Number.MAX_VALUE;
+			for (var i = 0; i < objects.length; i++) {
+				var p = objects[i].position;
+				minx = Math.min(minx, p.x);
+				miny = Math.min(miny, p.y);
+				minz = Math.min(minz, p.z);
+				maxx = Math.max(maxx, p.x);
+				maxy = Math.max(maxy, p.y);
+				maxz = Math.max(maxz, p.z);
+			}
+			return {
+				x: minx,
+				y: miny,
+				z: minz,
+				w: maxx - minx,
+				h: maxy - miny,
+				d: maxz - minz
+			};
+		},
+		boundingBoxVertices: function(box) {
+			return [{
+				x: box.x,
+				y: box.y,
+				z: box.z
+			}, {
+				x: box.x,
+				y: box.y,
+				z: box.d + box.z
+			}, {
+				x: box.x,
+				y: box.h + box.y,
+				z: box.z
+			}, {
+				x: box.x,
+				y: box.h + box.y,
+				z: box.d + box.z
+			}, {
+				x: box.w + box.x,
+				y: box.y,
+				z: box.z
+			}, {
+				x: box.w + box.x,
+				y: box.y,
+				z: box.d + box.z
+			}, {
+				x: box.w + box.x,
+				y: box.h + box.y,
+				z: box.z
+			}, {
+				x: box.w + box.x,
+				y: box.h + box.y,
+				z: box.d + box.z
+			}];
+		},
+		projectVector: function(vector, projectionMatrix, matrixWorld) {
+			var projScreenMatrix = new THREE.Matrix4();
+			var matrixWorldInverse = new THREE.Matrix4();
+			matrixWorldInverse.getInverse(matrixWorld);
+
+			projScreenMatrix.multiplyMatrices(projectionMatrix,
+					matrixWorldInverse);
+			vector = vector.applyProjection(projScreenMatrix);
+
+			return vector;
+
+		},
+		pointOnScreen: function(vector, w, h, projectionMatrix,
+				matrixWorld, bFirst) {
+			var v = new THREE.Vector3();
+			v.copy(vector);
+			this.projectVector(v, projectionMatrix, matrixWorld);
+			v.x = (v.x * w / 2) + w / 2;
+			v.y = -(v.y * h / 2) + h / 2;
+			var bx = 0;
+			var by = 0;
+			var bw = w;
+			var bh = h;
+			if (v.x < bx || v.x > bw || v.y < by || v.y > bh) {
+				return false;
+			}
+			return true;
+		},
+		onVideo: function(box, w, h, projectionMatrix, matrixWorld) {
+			for (var i = 0; i < box.vertices.length; i++) {
+				var vertice = box.vertices[i];
+				var vector = new THREE.Vector3(vertice.x, vertice.y, vertice.z);
+				var bOnVideo = this.pointOnScreen(vector, w, h,
+						projectionMatrix, matrixWorld);
+				if (!bOnVideo) {
+					return false;
+				}
+			}
+			return true;
 		}
 	};
 	$.Cmdbuild.g3d.ViewerUtilities = ViewerUtilities;
