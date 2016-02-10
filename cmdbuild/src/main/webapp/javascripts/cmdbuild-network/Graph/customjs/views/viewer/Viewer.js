@@ -35,6 +35,7 @@
 			this.model.observe(this);
 			$.Cmdbuild.customvariables.options = new $.Cmdbuild.g3d.Options();
 			$.Cmdbuild.customvariables.options.observe(this);
+			$.Cmdbuild.g3d.Options.initVariables();
 			$.Cmdbuild.g3d.Options.initFields();
 			$.Cmdbuild.customvariables.viewer = this;
 			this.camera = new $.Cmdbuild.g3d.Camera(this.model);
@@ -102,7 +103,7 @@
 			var elements = $.Cmdbuild.g3d.Model.getGraphData(node,
 					"compoundData");
 			var arCommands = [];
-			var expandingThreshold = 10;// $.Cmdbuild.customvariables.options["expandingThreshold"];
+			var expandingThreshold = $.Cmdbuild.g3d.constants.EXPANDING_THRESHOLD;
 			for (var i = 0; i < elements.length; i += expandingThreshold) {
 				arCommands.push({
 					command: "openChildren",

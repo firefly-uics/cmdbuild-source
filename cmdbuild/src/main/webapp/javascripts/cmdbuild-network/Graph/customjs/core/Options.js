@@ -1,5 +1,5 @@
 (function($) {
-	function configureFromServer(configuration, graphConfiguration) {
+	function configureFromServer(configuration, graphConfiguration) {// graph, server
 		configuration.nodeTooltipEnabled = graphConfiguration.nodeTooltipEnabled;
 		configuration.edgeTooltipEnabled = graphConfiguration.edgeTooltipEnabled;
 		configuration.stepRadius = graphConfiguration.stepRadius;
@@ -36,13 +36,22 @@
 			this.observers.push(observer);
 		};
 		this.changed = function(params) {
-			for (var i = 0; i < this.observers.length; i++) {
-				this.observers[i].refreshOptions(params);
-			}
+//			for (var i = 0; i < this.observers.length; i++) {
+//				this.observers[i].refreshOptions(params);
+//			}
 		};
 		this.init();
 	};
 	$.Cmdbuild.g3d.Options = Options;
+	$.Cmdbuild.g3d.Options.initVariables = function() {// from saved to session
+		$.Cmdbuild.customvariables.options["nodeTooltipEnabled"] = $.Cmdbuild.custom.configuration.nodeTooltipEnabled;
+		$.Cmdbuild.customvariables.options["edgeTooltipEnabled"] = $.Cmdbuild.custom.configuration.edgeTooltipEnabled;
+		$.Cmdbuild.customvariables.options["displayLabel"] = $.Cmdbuild.custom.configuration.displayLabel;
+		$.Cmdbuild.customvariables.options["clusteringThreshold"] = $.Cmdbuild.custom.configuration.clusteringThreshold;
+		$.Cmdbuild.customvariables.options["spriteDimension"] = $.Cmdbuild.custom.configuration.spriteDimension;
+		$.Cmdbuild.customvariables.options["stepRadius"] = $.Cmdbuild.custom.configuration.stepRadius;
+		$.Cmdbuild.customvariables.options["explosionLevels"] = $.Cmdbuild.custom.configuration.explosionLevels;
+	};
 	$.Cmdbuild.g3d.Options.initFields = function() {
 		$("#explosionLevels").spinner("value",
 				$.Cmdbuild.custom.configuration.explosionLevels);

@@ -106,6 +106,7 @@
 		objOnPlane: function(position) {
 			var selectionShape = $.Cmdbuild.g3d.constants.SELECTION_SHAPE;
 			var sprite = $.Cmdbuild.SpriteArchive.class2Sprite(selectionShape);
+			THREE.ImageUtils.crossOrigin = true;
 			var map = THREE.ImageUtils.loadTexture(sprite);
 			var material = new THREE.SpriteMaterial({
 				map: map,
@@ -138,7 +139,7 @@
 				fog: false
 			});
 			var object = new THREE.Sprite(material);
-			var sd = $.Cmdbuild.custom.configuration.spriteDimension;
+			var sd = $.Cmdbuild.customvariables.options.spriteDimension;
 			object.scale.set(sd * 2, sd * 2, 2);
 			object.material.ambient = object.material.color;
 			return object;
@@ -162,7 +163,7 @@
 					fog: false
 				});
 				var object = new THREE.Sprite(material);
-				var sd = $.Cmdbuild.custom.configuration.spriteDimension;
+				var sd = $.Cmdbuild.customvariables.options.spriteDimension;
 				object.scale.set(sd, sd, 1);
 				object.material.ambient = object.material.color;
 				object.position.x = position.x;
