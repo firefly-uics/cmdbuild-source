@@ -18,7 +18,6 @@
 		this.init = function() {
 			this.model = $.Cmdbuild.customvariables.model;
 			var data = this.model.getDistinctClasses(0, 10);
-			console.log("getDistinctClasses ", data);
 			this.total = data.total;
 			this.data = data.rows;
 			this.loadAttributes();

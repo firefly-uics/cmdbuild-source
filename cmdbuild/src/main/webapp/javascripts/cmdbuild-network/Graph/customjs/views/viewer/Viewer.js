@@ -531,45 +531,10 @@
 			}
 		};
 		// ZOOM ALL
-		this.boundingBoxVertices = function(box) {
-			return [{
-				x: box.x,
-				y: box.y,
-				z: box.z
-			}, {
-				x: box.x,
-				y: box.y,
-				z: box.d + box.z
-			}, {
-				x: box.x,
-				y: box.h + box.y,
-				z: box.z
-			}, {
-				x: box.x,
-				y: box.h + box.y,
-				z: box.d + box.z
-			}, {
-				x: box.w + box.x,
-				y: box.y,
-				z: box.z
-			}, {
-				x: box.w + box.x,
-				y: box.y,
-				z: box.d + box.z
-			}, {
-				x: box.w + box.x,
-				y: box.h + box.y,
-				z: box.z
-			}, {
-				x: box.w + box.x,
-				y: box.h + box.y,
-				z: box.d + box.z
-			}];
-		};
 		this.boundingBox = function() {
 			var ZOOM_RANGE = $.Cmdbuild.custom.configuration.stepRadius * 3;
 			var ZOOM_BORDER = 2;
-			var box = this._boundingBox();
+			var box = $.Cmdbuild.g3d.ViewerUtilities.boundingBox(objects);
 			if (box.w < ZOOM_RANGE) {
 				var m = ZOOM_RANGE - box.w;
 				box.x -= m / 2;
@@ -592,50 +557,12 @@
 				box.h += m * 2;
 				
 			}
-			box.vertices = this.boundingBoxVertices(box);
+			box.vertices = $.Cmdbuild.g3d.ViewerUtilities.boundingBoxVertices(box);
 			return box;
-		};
-		this._boundingBox = function() {
-			var bb = new THREE.Box3();
-			var maxx = -Number.MAX_VALUE;
-			var maxy = -Number.MAX_VALUE;
-			var maxz = -Number.MAX_VALUE;
-			var minx = Number.MAX_VALUE;
-			var miny = Number.MAX_VALUE;
-			var minz = Number.MAX_VALUE;
-			for (var i = 0; i < objects.length; i++) {
-				var p = objects[i].position;
-				minx = Math.min(minx, p.x);
-				miny = Math.min(miny, p.y);
-				minz = Math.min(minz, p.z);
-				maxx = Math.max(maxx, p.x);
-				maxy = Math.max(maxy, p.y);
-				maxz = Math.max(maxz, p.z);
-			}
-			return {
-				x: minx,
-				y: miny,
-				z: minz,
-				w: maxx - minx,
-				h: maxy - miny,
-				d: maxz - minz
-			};
 		};
 		this.zoomAll = function(vertices) {
 			this.scaleInView(vertices);
 			camera.updateProjectionMatrix();
-		};
-		this.projectVector = function(vector, projectionMatrix, matrixWorld) {
-			var projScreenMatrix = new THREE.Matrix4();
-			var matrixWorldInverse = new THREE.Matrix4();
-			matrixWorldInverse.getInverse(matrixWorld);
-
-			projScreenMatrix.multiplyMatrices(projectionMatrix,
-					matrixWorldInverse);
-			vector = vector.applyProjection(projScreenMatrix);
-
-			return vector;
-
 		};
 		this.vector2ScreenPosition = function(vector, camera, widthHalf,
 				heightHalf) {
@@ -732,41 +659,12 @@
 						}
 					}, 500);
 		};
-		this.pointOnScreen = function(vector, w, h, projectionMatrix,
-				matrixWorld, bFirst) {
-			var ZOOM_BORDER = 0;//50;!!!!!N.B.
-			var v = new THREE.Vector3();
-			v.copy(vector);
-			this.projectVector(v, projectionMatrix, matrixWorld);
-			v.x = (v.x * w / 2) + w / 2;
-			v.y = -(v.y * h / 2) + h / 2;
-			var bx = ZOOM_BORDER;
-			var by = ZOOM_BORDER;
-			var bw = w - ZOOM_BORDER * 2;
-			var bh = h - ZOOM_BORDER * 2;
-			if (v.x < bx || v.x > bw || v.y < by || v.y > bh) {
-				return false;
-			}
-			return true;
-		};
-		this.onVideo = function(box, w, h, projectionMatrix, matrixWorld) {
-			for (var i = 0; i < box.vertices.length; i++) {
-				var vertice = box.vertices[i];
-				var vector = new THREE.Vector3(vertice.x, vertice.y, vertice.z);
-				var bOnVideo = this.pointOnScreen(vector, w, h,
-						projectionMatrix, matrixWorld);
-				if (!bOnVideo) {
-					return false;
-				}
-			}
-			return true;
-		};
 		this.stepZoom = function(box, w, h) {
 			var NORECURSE = 100;
 			var me = this;
 			function stepIn() {
 				setTimeout(function() {
-					if (me.onVideo(box, w, h, camera.projectionMatrix,
+					if ($.Cmdbuild.g3d.ViewerUtilities.onVideo(box, w, h, camera.projectionMatrix,
 							camera.matrixWorld)
 							&& NORECURSE-- > 0) {
 						controls.setY(+1);
@@ -776,7 +674,7 @@
 			}
 			function stepOut() {
 				setTimeout(function() {
-					if (!me.onVideo(box, w, h, camera.projectionMatrix,
+					if (!$.Cmdbuild.g3d.ViewerUtilities.onVideo(box, w, h, camera.projectionMatrix,
 							camera.matrixWorld)
 							&& NORECURSE-- > 0) {
 						controls.setY(-1);
@@ -824,51 +722,4 @@
 		this.init();
 	};
 	$.Cmdbuild.g3d.Viewer = Viewer;
-	function buildAxes(length) {
-		var axes = new THREE.Object3D();
-
-		axes.add(buildAxis(new THREE.Vector3(0, 0, 0), new THREE.Vector3(
-				length, 0, 0), 0xFF0000, false)); // +X
-		axes.add(buildAxis(new THREE.Vector3(0, 0, 0), new THREE.Vector3(
-				-length, 0, 0), 0xFF0000, true)); // -X
-		axes.add(buildAxis(new THREE.Vector3(0, 0, 0), new THREE.Vector3(0,
-				length, 0), 0x00FF00, false)); // +Y
-		axes.add(buildAxis(new THREE.Vector3(0, 0, 0), new THREE.Vector3(0,
-				-length, 0), 0x00FF00, true)); // -Y
-		axes.add(buildAxis(new THREE.Vector3(0, 0, 0), new THREE.Vector3(0, 0,
-				length), 0x0000FF, false)); // +Z
-		axes.add(buildAxis(new THREE.Vector3(0, 0, 0), new THREE.Vector3(0, 0,
-				-length), 0x0000FF, true)); // -Z
-
-		return axes;
-
-	}
-	function buildAxis(src, dst, colorHex, dashed) {
-		var geom = new THREE.Geometry(), mat;
-
-		if (dashed) {
-			mat = new THREE.LineDashedMaterial({
-				linewidth: 3,
-				color: colorHex,
-				dashSize: 3,
-				gapSize: 3
-			});
-		} else {
-			mat = new THREE.LineBasicMaterial({
-				linewidth: 3,
-				color: colorHex
-			});
-		}
-
-		geom.vertices.push(src.clone());
-		geom.vertices.push(dst.clone());
-		geom.computeLineDistances(); // This one is SUPER important,
-		// otherwise dashed lines will appear as
-		// simple plain lines
-
-		var axis = new THREE.Line(geom, mat, THREE.LinePieces);
-
-		return axis;
-
-	}
 })(jQuery);

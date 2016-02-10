@@ -40,7 +40,9 @@
 						this.loadAttributesCallback, this);
 			}
 		};
-		// load Attributes and its callback
+		this.getWidgets = function() {
+			return [];
+		};
 		this.compoundAttributes = function() {
 			var attributes = [{
 				type: "string",
