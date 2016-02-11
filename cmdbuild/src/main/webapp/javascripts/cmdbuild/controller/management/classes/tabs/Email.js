@@ -155,7 +155,7 @@
 		 *
 		 * @override
 		 */
-		onTabEmailModifyCardClick: function() {
+		onModifyCardClick: function() {
 			var params = {};
 			params[CMDBuild.core.constants.Proxy.CLASS_NAME] = _CMCache.getEntryTypeNameById(this.card.get('IdClass'));
 			params[CMDBuild.core.constants.Proxy.CARD_ID] = this.card.get(CMDBuild.core.constants.Proxy.ID);
