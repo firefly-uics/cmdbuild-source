@@ -102,7 +102,7 @@
 										scope: this,
 
 										handler: function(view, rowIndex, colIndex, item, e, record) {
-											this.cmfg('onEmailTemplateValuesWindowDeleteRowButtonClick', record);
+											this.delegate.cmfg('onEmailTemplateValuesWindowDeleteRowButtonClick', record);
 
 										}
 									})
