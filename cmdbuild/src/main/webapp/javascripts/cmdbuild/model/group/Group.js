@@ -10,7 +10,7 @@
 			{ name: CMDBuild.core.proxy.CMProxyConstants.DISABLED_MODULES, type: 'auto' },
 			{ name: CMDBuild.core.proxy.CMProxyConstants.EMAIL, type: 'string' },
 			{ name: CMDBuild.core.proxy.CMProxyConstants.ID, type: 'int', useNull: true },
-			{ name: CMDBuild.core.proxy.CMProxyConstants.IS_ACTIVE, type: 'boolean' },
+			{ name: CMDBuild.core.proxy.CMProxyConstants.IS_ACTIVE, type: 'boolean', defaultValue: true },
 			{ name: CMDBuild.core.proxy.CMProxyConstants.IS_ADMINISTRATOR, type: 'boolean' },
 			{ name: CMDBuild.core.proxy.CMProxyConstants.IS_CLOUD_ADMINISTRATOR, type: 'boolean' },
 			{ name: CMDBuild.core.proxy.CMProxyConstants.NAME, type: 'string' },
