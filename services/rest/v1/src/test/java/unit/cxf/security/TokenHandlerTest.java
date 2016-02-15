@@ -42,12 +42,26 @@ import com.google.common.base.Predicate;
 
 public class TokenHandlerTest {
 
-	@Unauthorized
-	private static class DummyUnauthorized {
+	private static interface Dummy {
+
+		void dummy();
 
 	}
 
-	private static class DummyAuthorized {
+	private static class DummyUnauthorized implements Dummy {
+
+		@Override
+		@Unauthorized
+		public void dummy() {
+		}
+
+	}
+
+	private static class DummyAuthorized implements Dummy {
+
+		@Override
+		public void dummy() {
+		}
 
 	}
 
@@ -83,8 +97,8 @@ public class TokenHandlerTest {
 	public void unauthorizedServicesHaveNoOtherRequirements() throws Exception {
 		// given
 		final ResourceInfo resourceInfo = mock(ResourceInfo.class);
-		doReturn(DummyUnauthorized.class) //
-				.when(resourceInfo).getResourceClass();
+		doReturn(DummyUnauthorized.class.getMethod("dummy")) //
+				.when(resourceInfo).getResourceMethod();
 		final TokenHandler tokenHandler = new TokenHandler(tokenExtractor, sessionStore, operationUserStore, userStore,
 				resourceInfo);
 		final ContainerRequestContext requestContext = mock(ContainerRequestContext.class);
@@ -93,7 +107,7 @@ public class TokenHandlerTest {
 		tokenHandler.filter(requestContext);
 
 		// then
-		verify(resourceInfo).getResourceClass();
+		verify(resourceInfo).getResourceMethod();
 		verifyNoMoreInteractions(tokenExtractor, resourceInfo, requestContext);
 	}
 
@@ -101,8 +115,8 @@ public class TokenHandlerTest {
 	public void unauthorizedResponseForAuthorizedServiceWhenNoTokenReceiced() throws Exception {
 		// given
 		final ResourceInfo resourceInfo = mock(ResourceInfo.class);
-		doReturn(DummyAuthorized.class) //
-				.when(resourceInfo).getResourceClass();
+		doReturn(DummyAuthorized.class.getMethod("dummy")) //
+				.when(resourceInfo).getResourceMethod();
 		final TokenHandler tokenHandler = new TokenHandler(tokenExtractor, sessionStore, operationUserStore, userStore,
 				resourceInfo);
 		doReturn(MISSING_TOKEN) //
@@ -113,7 +127,7 @@ public class TokenHandlerTest {
 		tokenHandler.filter(requestContext);
 
 		// then
-		verify(resourceInfo).getResourceClass();
+		verify(resourceInfo).getResourceMethod();
 		verify(tokenExtractor).extract(requestContext);
 		final ArgumentCaptor<Response> captor = ArgumentCaptor.forClass(Response.class);
 		verify(requestContext).abortWith(captor.capture());
@@ -127,8 +141,8 @@ public class TokenHandlerTest {
 		// given
 		sessionStore.put(newSession().withId("bar").build());
 		final ResourceInfo resourceInfo = mock(ResourceInfo.class);
-		doReturn(DummyAuthorized.class) //
-				.when(resourceInfo).getResourceClass();
+		doReturn(DummyAuthorized.class.getMethod("dummy")) //
+				.when(resourceInfo).getResourceMethod();
 		final TokenHandler tokenHandler = new TokenHandler(tokenExtractor, sessionStore, operationUserStore, userStore,
 				resourceInfo);
 		doReturn(TOKEN_FOO) //
@@ -139,7 +153,7 @@ public class TokenHandlerTest {
 		tokenHandler.filter(requestContext);
 
 		// then
-		verify(resourceInfo).getResourceClass();
+		verify(resourceInfo).getResourceMethod();
 		verify(tokenExtractor).extract(requestContext);
 		final ArgumentCaptor<Response> captor = ArgumentCaptor.forClass(Response.class);
 		verify(requestContext).abortWith(captor.capture());
@@ -154,8 +168,8 @@ public class TokenHandlerTest {
 		// given
 		sessionStore.put(newSession().withId("foo").build());
 		final ResourceInfo resourceInfo = mock(ResourceInfo.class);
-		doReturn(DummyAuthorized.class) //
-				.when(resourceInfo).getResourceClass();
+		doReturn(DummyAuthorized.class.getMethod("dummy")) //
+				.when(resourceInfo).getResourceMethod();
 		final TokenHandler tokenHandler = new TokenHandler(tokenExtractor, sessionStore, operationUserStore, userStore,
 				resourceInfo);
 		doReturn(TOKEN_FOO) //
@@ -166,7 +180,7 @@ public class TokenHandlerTest {
 		tokenHandler.filter(requestContext);
 
 		// then
-		verify(resourceInfo).getResourceClass();
+		verify(resourceInfo).getResourceMethod();
 		verify(tokenExtractor).extract(requestContext);
 		final ArgumentCaptor<Response> captor = ArgumentCaptor.forClass(Response.class);
 		verify(requestContext).abortWith(captor.capture());
@@ -184,8 +198,8 @@ public class TokenHandlerTest {
 		sessionStore.put(session);
 		operationUserStore.of(session).main(operationUser);
 		final ResourceInfo resourceInfo = mock(ResourceInfo.class);
-		doReturn(DummyAuthorized.class) //
-				.when(resourceInfo).getResourceClass();
+		doReturn(DummyAuthorized.class.getMethod("dummy")) //
+				.when(resourceInfo).getResourceMethod();
 		final TokenHandler tokenHandler = new TokenHandler(tokenExtractor, sessionStore, operationUserStore, userStore,
 				resourceInfo);
 		doReturn(TOKEN_FOO) //
@@ -196,7 +210,7 @@ public class TokenHandlerTest {
 		tokenHandler.filter(requestContext);
 
 		// then
-		verify(resourceInfo).getResourceClass();
+		verify(resourceInfo).getResourceMethod();
 		verify(tokenExtractor).extract(requestContext);
 		verifyNoMoreInteractions(tokenExtractor, resourceInfo, requestContext);
 
