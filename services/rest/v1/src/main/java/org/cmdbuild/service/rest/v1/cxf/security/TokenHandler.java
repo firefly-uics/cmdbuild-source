@@ -1,6 +1,7 @@
 package org.cmdbuild.service.rest.v1.cxf.security;
 
 import static javax.ws.rs.core.Response.Status.UNAUTHORIZED;
+import static org.springframework.core.annotation.AnnotationUtils.findAnnotation;
 
 import java.io.IOException;
 
@@ -57,7 +58,7 @@ public class TokenHandler implements ContainerRequestFilter, LoggingSupport {
 	public void filter(final ContainerRequestContext requestContext) throws IOException {
 		Response response = null;
 		do {
-			final boolean unauthorized = (resourceInfo.getResourceClass().getAnnotation(Unauthorized.class) != null);
+			final boolean unauthorized = (findAnnotation(resourceInfo.getResourceMethod(), Unauthorized.class) != null);
 			if (unauthorized) {
 				break;
 			}
