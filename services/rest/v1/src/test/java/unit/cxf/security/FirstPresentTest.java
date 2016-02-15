@@ -6,7 +6,8 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.mock;
 
-import org.apache.cxf.message.Message;
+import javax.ws.rs.container.ContainerRequestContext;
+
 import org.cmdbuild.service.rest.v1.cxf.security.TokenHandler.TokenExtractor;
 import org.junit.Test;
 
@@ -23,7 +24,7 @@ public class FirstPresentTest {
 		}
 
 		@Override
-		public Optional<String> extract(final Message message) {
+		public Optional<String> extract(final ContainerRequestContext value) {
 			return optional;
 		}
 
@@ -34,10 +35,10 @@ public class FirstPresentTest {
 		// given
 		final DummyTokenExtractor first = new DummyTokenExtractor(Optional.of("foo"));
 		final DummyTokenExtractor second = new DummyTokenExtractor(Optional.of("bar"));
-		final Message message = mock(Message.class);
+		final ContainerRequestContext value = mock(ContainerRequestContext.class);
 
 		// when
-		final Optional<String> optional = firstPresent(asList(first, second)).extract(message);
+		final Optional<String> optional = firstPresent(asList(first, second)).extract(value);
 
 		// then
 		assertThat(optional, equalTo(Optional.of("foo")));
@@ -48,10 +49,10 @@ public class FirstPresentTest {
 		// given
 		final DummyTokenExtractor first = new DummyTokenExtractor(Optional.<String> absent());
 		final DummyTokenExtractor second = new DummyTokenExtractor(Optional.of("bar"));
-		final Message message = mock(Message.class);
+		final ContainerRequestContext value = mock(ContainerRequestContext.class);
 
 		// when
-		final Optional<String> optional = firstPresent(asList(first, second)).extract(message);
+		final Optional<String> optional = firstPresent(asList(first, second)).extract(value);
 
 		// then
 		assertThat(optional, equalTo(Optional.of("bar")));

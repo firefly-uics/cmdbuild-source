@@ -19,6 +19,7 @@ import org.cmdbuild.service.rest.v1.model.Session;
 @Path("sessions/")
 @Consumes(APPLICATION_JSON)
 @Produces(APPLICATION_JSON)
+@Unauthorized
 public interface Sessions {
 
 	@POST

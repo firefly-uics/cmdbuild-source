@@ -1,6 +1,7 @@
 package org.cmdbuild.service.rest.v1.cxf.security;
 
-import org.apache.cxf.message.Message;
+import javax.ws.rs.container.ContainerRequestContext;
+
 import org.cmdbuild.service.rest.v1.cxf.security.TokenHandler.TokenExtractor;
 
 import com.google.common.base.Optional;
@@ -20,9 +21,9 @@ public class FirstPresent implements TokenExtractor {
 	}
 
 	@Override
-	public Optional<String> extract(final Message message) {
+	public Optional<String> extract(final ContainerRequestContext value) {
 		for (final TokenExtractor element : elements) {
-			final Optional<String> optional = element.extract(message);
+			final Optional<String> optional = element.extract(value);
 			if (optional.isPresent()) {
 				return optional;
 			}

@@ -10,8 +10,7 @@
 	<artifactId>cmdbuild-services-rest-parent</artifactId>
 	<packaging>pom</packaging>
 	<properties>
-		<!-- <javax.ws.rs-api.version>2.0</javax.ws.rs-api.version> -->
-		<jsr311-api.version>1.1.1</jsr311-api.version>
+		<javax.ws.rs-api.version>2.0</javax.ws.rs-api.version>
 	</properties>
 	<dependencyManagement>
 		<dependencies>
@@ -28,15 +27,10 @@
 		</dependencies>
 	</dependencyManagement>
 	<dependencies>
-		<!-- <dependency> -->
-		<!-- <groupId>javax.ws.rs</groupId> -->
-		<!-- <artifactId>javax.ws.rs-api</artifactId> -->
-		<!-- <version>${javax.ws.rs-api.version}</version> -->
-		<!-- </dependency> -->
 		<dependency>
 			<groupId>javax.ws.rs</groupId>
-			<artifactId>jsr311-api</artifactId>
-			<version>${jsr311-api.version}</version>
+			<artifactId>javax.ws.rs-api</artifactId>
+			<version>${javax.ws.rs-api.version}</version>
 		</dependency>
 		<dependency>
 			<artifactId>jackson-core-asl</artifactId>
@@ -58,6 +52,11 @@
 					<groupId>org.springframework</groupId>
 				</exclusion>
 			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.cxf</groupId>
+			<artifactId>cxf-rt-rs-service-description</artifactId>
+			<version>${cxf.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.codehaus.jackson</groupId>
