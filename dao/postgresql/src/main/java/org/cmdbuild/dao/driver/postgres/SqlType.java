@@ -29,7 +29,7 @@ import org.cmdbuild.dao.entrytype.attributetype.StringAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.TextAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.TimeAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.UndefinedAttributeType;
-import org.postgresql.jdbc4.Jdbc4Array;
+import org.postgresql.jdbc.PgArray;
 
 /**
  * Missing DAO types: Lookup, Reference, ForeignKey
@@ -216,9 +216,9 @@ public enum SqlType {
 		@Override
 		public Object sqlToJavaValue(final Object value) {
 			String[] javaValue = new String[1];
-			if (value instanceof Jdbc4Array) {
+			if (value instanceof PgArray) {
 				try {
-					javaValue = (String[]) ((Jdbc4Array) value).getArray();
+					javaValue = (String[]) ((PgArray) value).getArray();
 				} catch (final SQLException e) {
 					throw new IllegalArgumentException(e);
 				}

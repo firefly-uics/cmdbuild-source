@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 
+<%@page import="org.cmdbuild.webapp.Management"%>
 <%@ taglib uri="/WEB-INF/tags/translations.tld" prefix="tr" %>
 
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
@@ -25,6 +26,7 @@
 	final Collection<String> groupDescriptionList = operationUser.getAuthenticatedUser().getGroupDescriptions();
 	final String groupDecriptions = Joiner.on(", ").join(groupDescriptionList);
 	final String extVersion = "4.2.0";
+	final Management helper = new Management();
 %>
 
 <html>
@@ -94,16 +96,14 @@
 
 		<!-- GIS -->
 		<%
-			GisProperties g =  GisProperties.getInstance();
-
-			if (g.isEnabled()) {
-				if (g.isServiceOn(GisProperties.GOOGLE)) {
+			if (helper.isGisEnabled()) {
+				if (helper.isGoogleServiceOn()) {
 		%>
 					<script src="http://maps.google.com/maps/api/js?v=3&amp;sensor=false"></script>
 			<% } %>
 
-			<% if (g.isServiceOn(GisProperties.YAHOO)) { %>
-						<script src="http://api.maps.yahoo.com/ajaxymap?v=3.0&appid=<%=g.getYahooKey()%>"></script>
+			<% if (helper.isYahooServiceOn()) { %>
+						<script src="http://api.maps.yahoo.com/ajaxymap?v=3.0&appid=<%=helper.getYahooKey()%>"></script>
 			<% } %>
 			<%@ include file="gisJsFiles.jsp" %>
 		<% } %>

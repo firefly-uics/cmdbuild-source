@@ -11,13 +11,9 @@ import java.lang.reflect.Method;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
-import java.sql.SQLFeatureNotSupportedException;
 import java.util.Collection;
-import java.util.logging.Logger;
 
 import javax.sql.DataSource;
-
-import net.sourceforge.jtds.jdbcx.JtdsDataSource;
 
 import org.apache.commons.lang3.Validate;
 import org.cmdbuild.common.java.sql.DataSourceTypes.DataSourceType;
@@ -34,6 +30,8 @@ import org.slf4j.MarkerFactory;
 
 import com.google.common.collect.Sets;
 import com.mysql.jdbc.jdbc2.optional.MysqlDataSource;
+
+import net.sourceforge.jtds.jdbcx.JtdsDataSource;
 
 public class DefaultDataSourceHelper implements DataSourceHelper, LoggingSupport {
 
