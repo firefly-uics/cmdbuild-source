@@ -23,7 +23,7 @@
 					out.push(node);
 				}
 			}
-			
+
 			return out;
 		},
 
@@ -39,6 +39,7 @@
 		return {
 			id: node.get("id"),
 			text: node.get("text"),
+			name: node.get("name"),
 			tableType: node.get("tableType"),
 			leaf: true,
 			cmName: "process",
