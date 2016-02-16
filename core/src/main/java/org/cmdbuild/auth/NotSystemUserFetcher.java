@@ -155,4 +155,9 @@ public class NotSystemUserFetcher extends DBUserFetcher implements Cacheable {
 		return trueWhereClause();
 	}
 
+	@Override
+	protected boolean extendedInformation() {
+		return false;
+	}
+
 }

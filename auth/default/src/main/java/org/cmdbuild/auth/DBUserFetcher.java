@@ -117,9 +117,9 @@ public abstract class DBUserFetcher implements UserFetcher {
 				.withEmail(defaultString(email)) //
 				.withDescription(defaultString(userDescription)) //
 				.withDefaultGroupName(defaultGroupName) //
-				.withActiveStatus(userCard.get(User.ACTIVE, Boolean.class)) //
-				.withServiceStatus(userCard.get(User.SERVICE, Boolean.class)) //
-				.withPrivilegedStatus(userCard.get(User.PRIVILEGED, Boolean.class));
+				.withActiveStatus(extendedInformation() ? userCard.get(User.ACTIVE, Boolean.class) : null) //
+				.withServiceStatus(extendedInformation() ? userCard.get(User.SERVICE, Boolean.class) : null) //
+				.withPrivilegedStatus(extendedInformation() ? userCard.get(User.PRIVILEGED, Boolean.class) : null);
 
 		final List<String> userGroups = fetchGroupNamesForUser(userId);
 		for (final String groupName : userGroups) {
@@ -128,6 +128,8 @@ public abstract class DBUserFetcher implements UserFetcher {
 		}
 		return userBuilder.build();
 	}
+
+	protected abstract boolean extendedInformation();
 
 	/**
 	 * @param userBuilder
