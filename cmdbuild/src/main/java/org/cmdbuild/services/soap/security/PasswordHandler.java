@@ -13,7 +13,7 @@ import javax.security.auth.callback.UnsupportedCallbackException;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
-import org.apache.ws.security.WSPasswordCallback;
+import org.apache.wss4j.common.ext.WSPasswordCallback;
 import org.cmdbuild.auth.AuthenticationService;
 import org.cmdbuild.auth.AuthenticationService.PasswordCallback;
 import org.cmdbuild.auth.Login;

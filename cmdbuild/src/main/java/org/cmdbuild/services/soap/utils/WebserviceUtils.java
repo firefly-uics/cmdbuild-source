@@ -5,10 +5,10 @@ import java.util.List;
 import javax.xml.ws.handler.MessageContext;
 
 import org.apache.cxf.message.Message;
-import org.apache.ws.security.WSSecurityEngineResult;
-import org.apache.ws.security.WSUsernameTokenPrincipal;
-import org.apache.ws.security.handler.WSHandlerConstants;
-import org.apache.ws.security.handler.WSHandlerResult;
+import org.apache.wss4j.common.principal.UsernameTokenPrincipal;
+import org.apache.wss4j.dom.engine.WSSecurityEngineResult;
+import org.apache.wss4j.dom.handler.WSHandlerConstants;
+import org.apache.wss4j.dom.handler.WSHandlerResult;
 
 public class WebserviceUtils {
 
@@ -32,7 +32,7 @@ public class WebserviceUtils {
 		final List<?> wsResults = results.getResults();
 		final WSSecurityEngineResult ws = (WSSecurityEngineResult) wsResults.get(0);
 		final Object rawPrincipal = ws.get(WSSecurityEngineResult.TAG_PRINCIPAL);
-		final WSUsernameTokenPrincipal principal = WSUsernameTokenPrincipal.class.cast(rawPrincipal);
+		final UsernameTokenPrincipal principal = UsernameTokenPrincipal.class.cast(rawPrincipal);
 		return principal.getName();
 	}
 }
