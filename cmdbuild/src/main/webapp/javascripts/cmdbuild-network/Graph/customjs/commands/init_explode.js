@@ -22,19 +22,20 @@
 				return;
 			}
 			backend.getInitModel(params, function(elements) {
-				this.model.pushElements(elements);
-				var me = this;
-				setTimeout(function() {
-					var parentId = elements.nodes[0].data.id;
-					var parentNode = me.model.getNode(parentId);
-					me.explodeNode(parentId, $.Cmdbuild.custom.configuration.explosionLevels - 1, function(elements) {
-						if (!batch) {
-							$.Cmdbuild.customvariables.commandInExecution = false;
-							me.model.changed();
-						}
-						callback.apply(callbackScope, [elements]);
-					}, me);
-				}, 100);
+				this.model.pushElements(elements, function() {
+					var me = this;
+					setTimeout(function() {
+						var parentId = elements.nodes[0].data.id;
+						var parentNode = me.model.getNode(parentId);
+						me.explodeNode(parentId, $.Cmdbuild.custom.configuration.explosionLevels - 1, function(elements) {
+							if (!batch) {
+								$.Cmdbuild.customvariables.commandInExecution = false;
+								me.model.changed();
+							}
+							callback.apply(callbackScope, [elements]);
+						}, me);
+					}, 100);
+				}, this);
 			}, this);
 		};
 		this.explodeNode = function(id, levels, callback, callbackScope) {
@@ -54,29 +55,29 @@
 			var oldChildren = $.Cmdbuild.g3d.Model.getGraphData(parentNode, "children");
 			backend.getANodesBunch(id, this.domainList, function(elements) {
 				var newElements = [];
-				this.model.pushElements(elements);
-				for (var i = 0; i < elements.nodes.length; i++) {
-					var childId = elements.nodes[i].data.id;
-					newElements.push(childId);
-				}
-				if (oldChildren) {
-					newElements = newElements.concat(oldChildren);
-				}
-				$.Cmdbuild.g3d.Model.setGraphData(parentNode, "children", newElements);
-				if (! batch) {
-					this.model.changed();	
-				}
-				this.newElements = this.newElements.concat(newElements);
-				if (levels > 0) {
-					var children = this.newElements.slice();
-					this.explodeChildren(children, levels - 1, function() {
-						callback.apply(callbackScope, []);
-					}, this);
-				} else {
-					callback.apply(callbackScope, [this.newElements]);
-				}
-			}, this);
-			
+				this.model.pushElements(elements, function() {
+					for (var i = 0; i < elements.nodes.length; i++) {
+						var childId = elements.nodes[i].data.id;
+						newElements.push(childId);
+					}
+					if (oldChildren) {
+						newElements = newElements.concat(oldChildren);
+					}
+					$.Cmdbuild.g3d.Model.setGraphData(parentNode, "children", newElements);
+					if (! batch) {
+						this.model.changed();	
+					}
+					this.newElements = this.newElements.concat(newElements);
+					if (levels > 0) {
+						var children = this.newElements.slice();
+						this.explodeChildren(children, levels - 1, function() {
+							callback.apply(callbackScope, []);
+						}, this);
+					} else {
+						callback.apply(callbackScope, [this.newElements]);
+					}
+				}, this);
+			}, this);			
 		};
 		this.explodeChildren = function(children, levels, callback, callbackScope) {
 			if (children.length == 0 || $.Cmdbuild.customvariables.commandsManager.stopped) {

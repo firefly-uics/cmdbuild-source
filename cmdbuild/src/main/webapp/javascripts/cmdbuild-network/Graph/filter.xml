@@ -13,15 +13,17 @@
  			<params>
 				<type>tabbed</type>
 			</params>
-			<form title="Classes" id="filterClasses" include="todo.xml" class="commandPanelWindow cmdbuildTabbedForm"/>
-			<form title="Domains" id="filterDomains" include="todo.xml" class="commandPanelWindow cmdbuildTabbedForm"/>
+			<form title="Classes" id="filterClasses" include="filterByClass.xml" class="commandPanelWindow cmdbuildTabbedForm"/>
+			<form title="Domains" id="filterDomains" include="filterByDomain.xml" class="commandPanelWindow cmdbuildTabbedForm"/>
 		</form>
 	</div>
 	<div class='cmdbuildFooterButtonsWrapper'>
 		<button text="Ok" id="okOptionsDialogButton">
 			<onClick>
-				<command>dialogClose</command>
+				<command>applyFilters</command>
 				<dialog>commandPanelDialog</dialog>
+				<filterByClass>filterByClassForm</filterByClass>
+				<filterByDomain>filterByDomainForm</filterByDomain>
 			</onClick>
 		</button>
 	</div>

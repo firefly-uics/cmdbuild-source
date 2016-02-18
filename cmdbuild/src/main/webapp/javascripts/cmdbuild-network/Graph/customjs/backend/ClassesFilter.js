@@ -1,6 +1,6 @@
 (function($) {
 	var NO_OPEN_NODE = "__NoOpenNode";
-	var ClassesNavigation = function(param, onReadyFunction, onReadyScope) {
+	var ClassesFilter = function(param, onReadyFunction, onReadyScope) {
 		/**
 		 * Private attributes
 		 */
@@ -25,8 +25,8 @@
 		this.loadAttributes = function() {
 			this.attributes = [{
 				type: "string",
-				name: "classId",
-				description: "classId",
+				name: "_id",
+				description: "_id",
 				displayableInList: false
 			}, {
 				type: "string",
@@ -34,10 +34,10 @@
 				description: "Class",
 				displayableInList: true
 			}, {
-				type: "integer",
-				name: "qt",
-				description: "Qt",
-				displayableInList: true
+				type: "string",
+				name: "classId",
+				description: "Class",
+				displayableInList: false
 			}];
 			setTimeout(function() {
 				onObjectReady();
@@ -50,6 +50,20 @@
 				data.rows[i].id = data.rows[i].classId;
 			}
 			this.total = data.total;
+			var filterClasses = $.Cmdbuild.custom.configuration.filterClasses;
+			if (filterClasses) {
+				for (var i = 0; i < filterClasses.length; i++) {
+					data.rows.push({
+						_id: filterClasses[i],
+						id: filterClasses[i],
+						classId: filterClasses[i]
+					});
+				}
+				this.total += i;
+			}
+			data.rows.sort(function(a, b) {
+				return (a.classId > b.classId) ? 1  : -1;
+			});
 			this.data = [];
 			param.nRows = parseInt(param.nRows);
 			for (var i = param.firstRow; i < param.nRows + param.firstRow && i < data.rows.length; i++) {
@@ -89,6 +103,6 @@
 		 */
 		this.init();
 	};
-	$.Cmdbuild.custom.backend.ClassesNavigation = ClassesNavigation;
+	$.Cmdbuild.custom.backend.ClassesFilter = ClassesFilter;
 
 })(jQuery);

@@ -144,10 +144,12 @@
 			object.material.ambient = object.material.color;
 			return object;
 		},
-		objectFromNode: function(node, selected, position) {
-			var sprite = $.Cmdbuild.SpriteArchive
-					.class2Sprite($.Cmdbuild.g3d.Model.getGraphData(node,
-							"className"));
+		objectFromNode: function(node, position) {
+//			var sprite = $.Cmdbuild.SpriteArchive
+//					.class2Sprite($.Cmdbuild.g3d.Model.getGraphData(node,
+//							"classId"));
+			var classId = $.Cmdbuild.g3d.Model.getGraphData(node, "classId");
+			var sprite = $.Cmdbuild.customvariables.cacheImages.getImage(classId);
 			try {
 				var map = THREE.ImageUtils.loadTexture(sprite, {}, function() {
 
@@ -155,7 +157,7 @@
 				if (!map) {
 					console.log("Error on Sprite: "
 							+ $.Cmdbuild.g3d.Model.getGraphData(node,
-									"className") + " the sprite is " + sprite);
+									"classId") + " the sprite is " + sprite);
 				}
 				var material = new THREE.SpriteMaterial({
 					map: map,
@@ -175,7 +177,7 @@
 				return object;
 			} catch (e) {
 				console.log("Error on Sprite: "
-						+ $.Cmdbuild.g3d.Model.getGraphData(node, "className")
+						+ $.Cmdbuild.g3d.Model.getGraphData(node, "classId")
 						+ " the sprite is " + sprite);
 				return null;
 			}
@@ -195,7 +197,7 @@
 			var line = new THREE.Line(geometry, material);
 			line.source = source;
 			line.target = target;
-			line.label = edge.data("label");
+			line.domainId = edge.data("domainId");
 			return line;
 		},
 		moveObject: function(viewer, node) {
@@ -271,7 +273,7 @@
 			return node.position();
 		},
 		equals: function(p1, p2) {
-			var epsilon = 10;
+			var epsilon = $.Cmdbuild.g3d.constants.MIN_MOVEMENT;
 			return !(Math.abs(p1.x - p2.x) > epsilon
 					|| Math.abs(p1.y - p2.y) > epsilon || Math.abs(p1.z - p2.z) > epsilon);
 		},
@@ -347,8 +349,8 @@
 			return vector;
 
 		},
-		pointOnScreen: function(vector, w, h, projectionMatrix,
-				matrixWorld, bFirst) {
+		pointOnScreen: function(vector, w, h, projectionMatrix, matrixWorld,
+				bFirst) {
 			var v = new THREE.Vector3();
 			v.copy(vector);
 			this.projectVector(v, projectionMatrix, matrixWorld);

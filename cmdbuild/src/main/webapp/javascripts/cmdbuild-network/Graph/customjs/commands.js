@@ -4,6 +4,63 @@
 			var paramActualized = $.Cmdbuild.dataModel.resolveVariables(param);
 			console.log("Test", param, paramActualized);
 		},
+		filterDomains: function(param) {
+			var classDescription = $.Cmdbuild.utilities.getHtmlFieldValue("#"
+					+ param.id);
+			$.Cmdbuild.standard.commands.navigate({
+				form: param.navigationForm,
+				container: param.navigationContainer,
+				classDescription: (classDescription) ? classDescription : "-1"
+			});
+		},
+		applyFilters: function(param) {
+			var formObject = $.Cmdbuild.dataModel.forms[param.filterByClass];
+			var configuration = $.Cmdbuild.custom.configuration;
+			configuration.filterClasses = [];
+			if (formObject) {
+				$.Cmdbuild.customvariables.selected.erase();
+				for ( var key in formObject.checked) {
+					if (formObject.checked[key] == false) {
+						$.Cmdbuild.customvariables.selected.selectByClassName(
+								key, true);
+						configuration.filterClasses.push(key);
+					}
+				}
+			}
+			$.Cmdbuild.custom.commands.deleteSelection({
+				selected: "true"
+			});
+			var formObject = $.Cmdbuild.dataModel.forms[param.filterByDomain];
+			if (formObject) {
+				$.Cmdbuild.customvariables.selected.erase();
+				configuration.filterClassesDomains = [];
+				for ( var key in formObject.checked) {
+					$.Cmdbuild.customvariables.cacheDomains.setActive(key, formObject.checked[key]);
+					if (formObject.checked[key] == false) {
+						var domain = $.Cmdbuild.customvariables.cacheDomains.getDomain(key);
+						if (! configuration.filterClassesDomains[domain.sourceId]) {
+							configuration.filterClassesDomains[domain.sourceId] = [];
+						}
+						if (! configuration.filterClassesDomains[domain.destinationId]) {
+							configuration.filterClassesDomains[domain.destinationId] = [];
+						}
+						configuration.filterClassesDomains[domain.sourceId].push({
+							_id: key,
+							description: key
+						});
+						configuration.filterClassesDomains[domain.destinationId].push({
+							_id: key,
+							description: key
+						});
+						console.log("removeEdge for ", key);
+						$.Cmdbuild.customvariables.model.removeEdge({
+							domainId: key
+						});
+					}
+				}
+			}
+			$.Cmdbuild.standard.commands.dialogClose(param);
+		},
 		switchOnSelected: function(param) {
 			var check = $.Cmdbuild.utilities.getHtmlFieldValue("#"
 					+ param.check);
@@ -17,22 +74,26 @@
 					$.Cmdbuild.customvariables.options.nodeTooltipEnabled);
 			$("#edgeTooltipEnabled").prop("checked",
 					$.Cmdbuild.customvariables.options.edgeTooltipEnabled);
-			console.log("$.Cmdbuild.custom.options.spriteDimension ", $.Cmdbuild.customvariables.options.spriteDimension);
-			setTimeout(function() {
-				$("#clusteringThreshold").spinner("value",
-						$.Cmdbuild.customvariables.options.clusteringThreshold);
-				$("#spriteDimension").spinner("value",
-						$.Cmdbuild.customvariables.options.spriteDimension);
-				$("#stepRadius").spinner("value",
-						$.Cmdbuild.customvariables.options.stepRadius);
-			}, 100);
+			setTimeout(
+					function() {
+						$("#clusteringThreshold")
+								.spinner(
+										"value",
+										$.Cmdbuild.customvariables.options.clusteringThreshold);
+						$("#spriteDimension")
+								.spinner(
+										"value",
+										$.Cmdbuild.customvariables.options.spriteDimension);
+						$("#stepRadius").spinner("value",
+								$.Cmdbuild.customvariables.options.stepRadius);
+					}, 100);
 		},
 		navigateOnNode: function(param) {
 			var selected = $.Cmdbuild.customvariables.selected.getCards(0, 1);
 			if (selected.total <= 0) {
 				return;
 			}
-			var classId = selected.rows[0].className;
+			var classId = selected.rows[0].classId;
 			var cardId = selected.rows[0].id;
 			$.Cmdbuild.customvariables.viewer.clearSelection();
 			$.Cmdbuild.customvariables.model.erase();
@@ -101,17 +162,17 @@
 			var value = (param.type === "displayLabel")
 					? param.value
 					: $.Cmdbuild.utilities.getHtmlFieldValue("#" + param.type);
-			console.log(param.type + " " + value);
 			$.Cmdbuild.customvariables.options[param.type] = value;
 			$.Cmdbuild.customvariables.options.changed();
+			$.Cmdbuild.customvariables.viewer.refresh();
 		},
 		selectClass: function(param) {
 			var paramActualized = $.Cmdbuild.dataModel.resolveVariables(param);
 			$.Cmdbuild.customvariables.selected.selectByClassName(
 					paramActualized.node, param.addSelection);
 			var form2Hook = $.Cmdbuild.dataModel.forms[paramActualized.id];
-			console.log("$.Cmdbuild.custom.classesGrid.getAllSelected() ", $.Cmdbuild.custom.classesGrid.getAllSelected());
-			form2Hook.selectRows($.Cmdbuild.custom.classesGrid.getAllSelected());
+			form2Hook
+					.selectRows($.Cmdbuild.custom.classesGrid.getAllSelected());
 		},
 		selectNode: function(param) {
 			var paramActualized = $.Cmdbuild.dataModel.resolveVariables(param);
@@ -136,6 +197,7 @@
 			$.Cmdbuild.customvariables.model = new $.Cmdbuild.g3d.Model();
 			$.Cmdbuild.customvariables.selected = new $.Cmdbuild.g3d.Selected(
 					$.Cmdbuild.customvariables.model);
+			new $.Cmdbuild.g3d.cache();
 			// $.Cmdbuild.g3d.Options.loadConfiguration(CONFIGURATION_FILE,
 			// function(response) {
 			// $.Cmdbuild.custom.configuration = response;

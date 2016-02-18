@@ -62,7 +62,8 @@
 			canvasDiv.appendChild(renderer.domElement);
 			controls = $.Cmdbuild.g3d.ViewerUtilities.trackballControls(camera,
 					renderer.domElement);
-			controls.approxOnY($.Cmdbuild.custom.configuration.viewPointDistance);
+			controls
+					.approxOnY($.Cmdbuild.custom.configuration.viewPointDistance);
 			$.Cmdbuild.g3d.ViewerUtilities.declareEvents(this,
 					renderer.domElement);
 			var init = new $.Cmdbuild.g3d.commands.init_explode(
@@ -118,9 +119,9 @@
 				return;
 			}
 			var node = thisViewer.model.getNode(LASTSELECTED.elementId);
-			var className = $.Cmdbuild.g3d.Model
-					.getGraphData(node, "className");
-			if (className == $.Cmdbuild.g3d.constants.GUICOMPOUNDNODE) {
+			var classId = $.Cmdbuild.g3d.Model
+					.getGraphData(node, "classId");
+			if (classId == $.Cmdbuild.g3d.constants.GUICOMPOUNDNODE) {
 				var arCommands = thisViewer.getOpenCompoundCommands(node);
 				var macroCommand = new $.Cmdbuild.g3d.commands.macroCommand(
 						thisViewer.model, arCommands);
@@ -161,23 +162,26 @@
 			var w = $("#viewerInformation").width();
 			$("#viewerInformation")[0].style.top = mouseY - (h + 50);
 			$("#viewerInformation")[0].style.left = mouseX - w / 2;
-			var label = intersected.object.label;
-			var htmlStr = "<p>" + label + "</p>";
+			var domainId = intersected.object.domainId;
+			var domainDescription = $.Cmdbuild.customvariables.cacheDomains.getDescription(domainId);
+			var htmlStr = "<p>" + domainDescription + "</p>";
 			var source = intersected.object.source;
 			var target = intersected.object.target;
 			var classSource = $.Cmdbuild.g3d.Model.getGraphData(source,
-					"className");
+					"classId");
 			var classTarget = $.Cmdbuild.g3d.Model.getGraphData(target,
-					"className");
+					"classId");
 			var labelSource = $.Cmdbuild.g3d.Model
 					.getGraphData(source, "label");
 			var labelTarget = $.Cmdbuild.g3d.Model
 					.getGraphData(target, "label");
+			var sourceClassDescription = $.Cmdbuild.customvariables.cacheClasses.getDescription(classSource);
+			var targetClassDescription = $.Cmdbuild.customvariables.cacheClasses.getDescription(classTarget);
 			var relationShape = $.Cmdbuild.g3d.constants.RELATION_SHAPE;
 			var img = $.Cmdbuild.SpriteArchive.class2Sprite(relationShape);
-			htmlStr += "<p>" + labelSource + " (" + classSource + ")</p>";
+			htmlStr += "<p>" + labelSource + " (" + sourceClassDescription + ")</p>";
 			htmlStr += "<img width=16px height=16px src='" + img + "'/>";
-			htmlStr += "<p>" + labelTarget + " (" + classTarget + ")</p>";
+			htmlStr += "<p>" + labelTarget + " (" + targetClassDescription + ")</p>";
 			$("#viewerInformation").html(htmlStr);
 			$("#viewerInformation")[0].style.display = "block";
 		};
@@ -198,12 +202,14 @@
 			// collision: "fit"
 			// });
 			var label = $.Cmdbuild.g3d.Model.getGraphData(node, "label");
-			var className = $.Cmdbuild.g3d.Model
-					.getGraphData(node, "className");
-			var img = $.Cmdbuild.SpriteArchive.class2Sprite(className);
+			var classId = $.Cmdbuild.g3d.Model
+					.getGraphData(node, "classId");
+//			var img = $.Cmdbuild.SpriteArchive.class2Sprite(classId);
+			var img = $.Cmdbuild.customvariables.cacheImages.getImage(classId);
 			var htmlStr = "<img width=32px height=32px src='" + img + "'/>";
 			htmlStr += "<p>" + label + "</p>";
-			htmlStr += "<p>" + className + "</p>";
+			var classDescription = $.Cmdbuild.customvariables.cacheClasses.getDescription(classId);
+			htmlStr += "<p>" + classDescription + "</p>";
 			$("#viewerInformation").html(htmlStr);
 			$("#viewerInformation")[0].style.display = "block";
 		};
@@ -442,8 +448,7 @@
 								z: 0
 							};
 					var object = $.Cmdbuild.g3d.ViewerUtilities.objectFromNode(
-							node, this.selected.isSelect(node.id()), p,
-							renderer, scene);
+							node, p);
 					node.glObject = object;
 					scene.add(object);
 					objects.push(object);
@@ -539,25 +544,24 @@
 				var m = ZOOM_RANGE - box.w;
 				box.x -= m / 2;
 				box.w += m;
-			}
-			else {
-				var m = box.w * ZOOM_BORDER / 100 ;
+			} else {
+				var m = box.w * ZOOM_BORDER / 100;
 				box.x -= m;
 				box.w += m * 2;
-				
+
 			}
 			if (box.h < ZOOM_RANGE) {
 				var m = ZOOM_RANGE - box.h;
 				box.y -= m / 2;
 				box.h += m;
-			}
-			else {
-				var m = box.h * ZOOM_BORDER / 100 ;
+			} else {
+				var m = box.h * ZOOM_BORDER / 100;
 				box.y -= m;
 				box.h += m * 2;
-				
+
 			}
-			box.vertices = $.Cmdbuild.g3d.ViewerUtilities.boundingBoxVertices(box);
+			box.vertices = $.Cmdbuild.g3d.ViewerUtilities
+					.boundingBoxVertices(box);
 			return box;
 		};
 		this.zoomAll = function(vertices) {
@@ -664,8 +668,8 @@
 			var me = this;
 			function stepIn() {
 				setTimeout(function() {
-					if ($.Cmdbuild.g3d.ViewerUtilities.onVideo(box, w, h, camera.projectionMatrix,
-							camera.matrixWorld)
+					if ($.Cmdbuild.g3d.ViewerUtilities.onVideo(box, w, h,
+							camera.projectionMatrix, camera.matrixWorld)
 							&& NORECURSE-- > 0) {
 						controls.setY(+1);
 						stepIn();
@@ -674,8 +678,8 @@
 			}
 			function stepOut() {
 				setTimeout(function() {
-					if (!$.Cmdbuild.g3d.ViewerUtilities.onVideo(box, w, h, camera.projectionMatrix,
-							camera.matrixWorld)
+					if (!$.Cmdbuild.g3d.ViewerUtilities.onVideo(box, w, h,
+							camera.projectionMatrix, camera.matrixWorld)
 							&& NORECURSE-- > 0) {
 						controls.setY(-1);
 						stepOut();

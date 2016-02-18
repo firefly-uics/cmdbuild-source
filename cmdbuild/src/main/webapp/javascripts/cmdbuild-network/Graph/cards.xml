@@ -20,7 +20,7 @@
 				<type>cardsGrid</type>
 				<backend>CardsNavigation</backend>
 				<nRows>9</nRows>
-				<hookSelection>true</hookSelection>
+				<hookParent>true</hookParent>
 			</params>
 				<onChange>
 					<command>selectNode</command>

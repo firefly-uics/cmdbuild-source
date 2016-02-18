@@ -23,7 +23,7 @@
  			<params>
 				<type>form</type>
 				<backend>GraphCard</backend>
-				<className>$selectedForm.className</className>
+				<classId>$selectedForm.classId</classId>
 				<cardId>$selectedForm.id</cardId>
 				<readonly>true</readonly>
 			</params>
