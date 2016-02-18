@@ -142,7 +142,6 @@
 			filter += (edge.target) ? "[target='" + edge.target + "']" : "";
 			filter += (edge.source) ? "[source='" + edge.source + "']" : "";
 			filter += (edge.domainId) ? "[domainId='" + edge.domainId + "']" : "";
-			console.log("cy.edges(filter) " + filter + "   ", cy.edges(filter));
 			cy.remove(cy.edges(filter));
 		};
 		this.remove = function(id) {
