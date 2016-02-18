@@ -27,8 +27,6 @@
 					}
 				}
 			};
-//			var script = 'http://localhost/cmdbuild-gui-framework/api/cmdbuildAP.js';
-//			var script = 'http://localhost/cmdbuild-gui-framework/target/api/cmdbuildAP.js';
 			var script = getUrlParameter("basePath") + "/javascripts/cmdbuild-gui-framework-" +
 			getUrlParameter("frameworkVersion") + "/api/cmdbuildAP.js";
 
@@ -43,17 +41,14 @@
 				url: script,
 				crossDomain: true,	
 				dataType: "script",
-				cache: true,
+				cache: false,
 				success : function(data, status) {
 						callCmdbuildAP();
 					} 
 			});
 			function callCmdbuildAP() {
 				$("#cmdbuilForm").cmdbuildAP({
-					debug: true,
 					apiUrl : '~/services/rest/v2/',
-					//appRootUrl : 'http://localhost/cmdbuild-gui-framework/target/',
-					//appRootUrl : 'http://localhost/cmdbuild-gui-framework/',
 					appRootUrl : '~/javascripts/cmdbuild-gui-framework-' + getUrlParameter("frameworkVersion") + '/',
 					appConfigUrl: 'Graph/',
 					access_token: 'CMDBuildSessionToken',
@@ -100,9 +95,9 @@
 							"views/viewer/ViewerUtilities.js",
 							"views/viewer/Camera.js",
 							"TrackballControls.js",
-							"plugins/GuiCircle.js", // first layout's sample
-							"plugins/GuiSpringy.js", // first layout's sample
-							"plugins/GuiSphere.js"], // first layout's sample
+							"plugins/GuiCircle.js", 
+							"plugins/GuiSpringy.js",
+							"plugins/GuiSphere.js"], 
 					start: "home.xml",
 					theme: [
 							"jquery-ui-graph.theme.min.css",
