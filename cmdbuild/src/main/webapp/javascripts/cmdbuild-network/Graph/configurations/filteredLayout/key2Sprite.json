@@ -2,6 +2,7 @@
 	"_COMMENT": "This are two sprites required by the system. The key is declared in class2Key.json",
 	"cmdbuildDefaultShape": "others/circle_blue.png",
 	"cmdbuildSelectionShape": "buildings/select.png",
+	"cmdbuildCurrentShape": "buildings/current.png",
 	"cmdbuildRelationShape": "actions/view-refresh-2.png",
 
 

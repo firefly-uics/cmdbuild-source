@@ -21,7 +21,7 @@
 				<type>relationsGrid</type>
 				<backend>Relations</backend>
 				<nRows>9</nRows>
-				<className>$selectedForm.className</className>
+				<classId>$selectedForm.classId</classId>
 				<cardId>$selectedForm.id</cardId>
 <!-- 				<container>relationsFormContainer</container> -->
 <!-- 				<form>relationsForm</form> -->

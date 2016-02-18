@@ -61,25 +61,26 @@
 			}
 			var newChildren = [];
 			this.saveForUndo(elements);
-			this.model.pushElements(elements);
-			for (var i = 0; i < elements.nodes.length; i++) {
-				var childId = elements.nodes[i].data.id;
-				newChildren.push(childId);
-			}
-			if (oldChildren) {
-				newChildren = newChildren.concat(oldChildren);
-			}
-			$.Cmdbuild.g3d.Model.setGraphData(parentNode, "children",
-					newChildren);
-			if (!batch) {
-				this.model.changed();
-			}
-			if (levels > 0) {
-				var children = newChildren.slice();
-				this.explodeChildren(children, levels, callback, callbackScope);
-			} else {
-				callback.apply(callbackScope, []);
-			}
+			this.model.pushElements(elements, function() {
+				for (var i = 0; i < elements.nodes.length; i++) {
+					var childId = elements.nodes[i].data.id;
+					newChildren.push(childId);
+				}
+				if (oldChildren) {
+					newChildren = newChildren.concat(oldChildren);
+				}
+				$.Cmdbuild.g3d.Model.setGraphData(parentNode, "children",
+						newChildren);
+				if (!batch) {
+					this.model.changed();
+				}
+				if (levels > 0) {
+					var children = newChildren.slice();
+					this.explodeChildren(children, levels, callback, callbackScope);
+				} else {
+					callback.apply(callbackScope, []);
+				}
+			}, this);
 		};
 		this.saveForUndo = function(elements) {
 			for (var i = 0; i < elements.nodes.length; i++) {
@@ -93,7 +94,7 @@
 				if (this.model.getEdge({
 					source: edge.data.source,
 					target: edge.data.target,
-					label: edge.data.label
+					domainId: edge.data.domainId
 				}).length === 0) {
 					this.newEdges.push(edge);
 				}
@@ -122,7 +123,7 @@
 				this.model.removeEdge({
 					source: edge.data.source,
 					target: edge.data.target,
-					label: edge.data.label
+					domainId: edge.data.domainId
 				});
 			}
 			for (var i = 0; i < this.newNodes.length; i++) {

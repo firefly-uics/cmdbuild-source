@@ -1,5 +1,5 @@
 (function($) {
-	var Relations = function(param, onReadyFunction, onReadyScope) {
+	var OnGraphRelations = function(param, onReadyFunction, onReadyScope) {
 		/**
 		 * Attributes
 		 */
@@ -9,7 +9,7 @@
 		/**
 		 * Base functions
 		 */
-		this.model = $.Cmdbuild.customvariables.selected;
+		this.model = $.Cmdbuild.customvariables.model;
 		this.attributes = [];
 		this.data = [];
 		this.init = function() {
@@ -46,86 +46,90 @@
 				onObjectReady();
 			}, 100);
 		};
+		this.cyCollection2Array = function(collection) {
+			var array = [];
+			for (var i = 0; i < collection.length; i++) {
+				var element = collection[i];
+				var domainId = $.Cmdbuild.g3d.Model.getGraphData(element,
+						"domainId");
+				var domainDescription = $.Cmdbuild.g3d.Model.getGraphData(
+						element, "label");
+				var relationId = $.Cmdbuild.g3d.Model.getGraphData(element,
+						"relationId");
+				array.push({
+					domainId: domainId,
+					domainDescription: domainDescription,
+					relationId: relationId
+				});
+			}
+			return array;
+		};
 		this.loadData = function(param, callback, callbackScope) {
 			this.data = [];
-			this.getAllDomains(param.classId, param.cardId, function(response) {
-				this.rows = [];
-				var nRows = parseInt(param.nRows);
-				var firstRow = parseInt(param.firstRow);
-				for (var i = firstRow; i < firstRow + nRows
-						&& i < this.data.length; i++) {
-					this.rows.push(this.data[i]);
-				}
-				this.populateRelationAttributes(this.rows, 0,
-						function() {
-							callback.apply(callbackScope, (this.rows)
-									? this.rows
-									: []);
-						}, this);
-			}, this);
+			var me = this;
+			setTimeout(function() {
+				var edgesCollection = $.Cmdbuild.customvariables.model
+						.connectedEdges(param.cardId);
+				var edges = me.cyCollection2Array(edgesCollection);
+				me.getEdges(param.cardId, edges, function(response) {
+					me.rows = [];
+					var nRows = parseInt(param.nRows);
+					var firstRow = parseInt(param.firstRow);
+					for (var i = firstRow; i < firstRow + nRows
+							&& i < response.length; i++) {
+						me.rows.push(response[i]);
+					}
+					me.populateRelationAttributes(me.rows, 0,
+							function() {
+								callback.apply(callbackScope, (me.rows)
+										? me.rows
+										: []);
+							}, me);
+				}, me);
+			}, 100);
 		};
-		this.getAllDomains = function(classId, cardId, callback, callbackScope) {
-			var filter = this.getFilterForDomain(classId);
-			var param = {
-				filter: filter
-			};
-			$.Cmdbuild.utilities.proxy.getDomains(param, function(response) {
-				this.getAllRelations(response, classId, parseInt(cardId),
-						callback, callbackScope);
-			}, this);
-		};
-		this.getAllRelations = function(domains, classId, cardId, callback,
-				callbackScope) {
-			if (domains.length == 0) {
+		this.getEdges = function(cardId, edges, callback, callbackScope) {
+			if (edges.length == 0) {
 				callback.apply(callbackScope, [this.data]);
 				return;
 			}
-			var domain = domains[0];
-			domains.splice(0, 1);
-			var domainId = domain._id;
-			var domainDescription = domain.description;
-			var filter = this.getFilterForRelation(cardId);
-			var param = {
-				filter: filter
-			};
+			var edge = edges[0];
+			edges.splice(0, 1);
+			var domainId = edge.domainId;
+			var domainDescription = edge.domainDescription;
+			var relationId = edge.relationId;
 			$.Cmdbuild.utilities.proxy.getDomainAttributes(domainId, function(
 					domainAttributes) {
-				$.Cmdbuild.utilities.proxy
-						.getRelations(domainId, param,
-								function(response) {
-									this.getAllRelationsCB(domains, classId,
-											cardId, response, domainAttributes,
-											domainDescription, callback,
-											callbackScope);
-								}, this);
+				$.Cmdbuild.utilities.proxy.getRelation(domainId, relationId,
+						{}, function(response) {
+							this.getRelationCB(cardId, response,
+									domainAttributes, domainDescription,
+									function() {
+										this.getEdges(cardId, edges, callback,
+												callbackScope);
+									}, this);
+						}, this);
 			}, this);
 		};
-		this.getAllRelationsCB = function(domains, classId, cardId, relations,
-				domainAttributes, domainDescription, callback, callbackScope) {
-			if (relations.length <= 0) {
-				this.getAllRelations(domains, classId, cardId, callback,
-						callbackScope);
-				return;
-			}
-			for (var i = 0; i < relations.length; i++) {
-				var classId = (relations[i]._sourceId != cardId)
-						? relations[i]._sourceType
-						: relations[i]._destinationType;
-				var classDescription = $.Cmdbuild.customvariables.cacheClasses.getDescription(classId);
-				this.data.push({
-					domainId: relations[i]._type,
-					domainDescription: domainDescription,
-					relationId: relations[i]._id,
-					classId: classId,
-					classDescription: classDescription,
-					cardDescription: (relations[i]._sourceId != cardId)
-							? relations[i]._sourceDescription
-							: relations[i]._destinationDescription,
-					domainAttributes: domainAttributes
-				});
-			}
-			this.getAllRelations(domains, classId, cardId, callback,
-					callbackScope);
+		this.getRelationCB = function(cardId, relation, domainAttributes,
+				domainDescription, callback, callbackScope) {
+			var classId = (relations._sourceId != cardId)
+					? relation._sourceType
+					: relation._destinationType;
+			var classDescription = $.Cmdbuild.customvariables.cacheClasses
+					.getDescription(classId);
+			this.data.push({
+				domainId: relation._type,
+				domainDescription: domainDescription,
+				relationId: relation._id,
+				classId: classId,
+				classDescription: classDescription,
+				cardDescription: (relation._sourceId != cardId)
+						? relation._sourceDescription
+						: relation._destinationDescription,
+				domainAttributes: domainAttributes
+			});
+			callback.apply(callbackScope, [this.data]);
 		};
 		this.populateRelationAttributes = function(rows, index, callback,
 				callbackScope) {
@@ -222,46 +226,6 @@
 			return this.metadata;
 		};
 
-		this.getFilterForDomain = function(classId) {
-			var filter = {
-				attribute: {
-					or: [{
-						simple: {
-							attribute: "source",
-							operator: "contain",
-							value: [classId]
-						}
-					}, {
-						simple: {
-							attribute: "destination",
-							operator: "contain",
-							value: [classId]
-						}
-					}]
-				}
-			};
-			return filter;
-		};
-		this.getFilterForRelation = function(cardId) {
-			var filter = {
-				attribute: {
-					or: [{
-						simple: {
-							attribute: "_sourceId",
-							operator: "in",
-							value: [cardId]
-						}
-					}, {
-						simple: {
-							attribute: "_destinationId",
-							operator: "in",
-							value: [cardId]
-						}
-					}]
-				}
-			};
-			return filter;
-		};
 		/**
 		 * Private functions
 		 */
@@ -284,5 +248,5 @@
 		 */
 		this.init();
 	};
-	$.Cmdbuild.custom.backend.Relations = Relations;
+	$.Cmdbuild.custom.backend.OnGraphRelations = OnGraphRelations;
 })(jQuery);

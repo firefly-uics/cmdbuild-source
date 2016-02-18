@@ -23,10 +23,11 @@
  			<params>
 				<type>form</type>
 				<backend>GraphCard</backend>
-				<className>$selectedForm.className</className>
+				<classId>$selectedForm.classId</classId>
 				<cardId>$selectedForm.id</cardId>
 				<readonly>true</readonly>
 				<displayableInList>true</displayableInList>
+				<noGroup>true</noGroup>
 			</params>
 		</form>
 	</div>
@@ -42,12 +43,12 @@
 				<dummy1>$selectedForm.dummy</dummy1> 
 			</observe>
  			<params>
-				<type>form</type>
-				<backend>GraphCard</backend>
-				<className>$selectedForm.className</className>
+				<type>relationsGrid</type>
+				<backend>OnGraphRelations</backend>
+				<nRows>5</nRows>
+				<classId>$selectedForm.classId</classId>
 				<cardId>$selectedForm.id</cardId>
-				<readonly>true</readonly>
-				<displayableInList>true</displayableInList>
+				<hookParent>true</hookParent>
 			</params>
 		</form>
 	</div>

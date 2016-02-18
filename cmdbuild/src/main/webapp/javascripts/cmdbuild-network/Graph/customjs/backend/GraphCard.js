@@ -4,7 +4,7 @@
 		 * Attributes
 		 */
 		this.param = param;
-		this.type = param.className;
+		this.type = param.classId;
 		this.data = [];
 		this.metadata = {};
 

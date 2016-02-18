@@ -67,7 +67,7 @@
 				this.model.removeEdge({
 					source: edge.data.source,
 					target: edge.data.target,
-					label: edge.data.label
+					domainId: edge.data.domainId
 				});
 			}
 			for (var i = 0; i < this.newNodes.length; i++) {
@@ -103,12 +103,11 @@
 			// }
 		};
 		this.saveForUndoCompoundNode = function(node, edge) {
-			console.log("saving....", node);
 			var compoundData = $.Cmdbuild.g3d.Model.getGraphData(node,
 					"compoundData");
 			compoundData = (compoundData) ? compoundData.slice() : [];
 			var data = {
-				className: $.Cmdbuild.g3d.Model.getGraphData(node, "className"),
+				classId: $.Cmdbuild.g3d.Model.getGraphData(node, "classId"),
 				id: node.id(),
 				label: $.Cmdbuild.g3d.Model.getGraphData(node, "label"),
 				color: "#ff0000",
@@ -154,23 +153,12 @@
 				if (this.model.getEdge({
 					source: edge.data.source,
 					target: edge.data.target,
-					label: edge.data.label
+					domainId: edge.data.domainId
 				}).length === 0) {
 					this.newEdges.push(edge);
 				}
 			}
 		};
-//		this.chargeModel = function(node, edge) {
-//			var elements = {
-//				nodes: [{
-//					data: this.compoundData
-//				}],
-//				edges: [{
-//					data: this.compoundEdgeData
-//				}]
-//			};
-//			return elements;
-//		};
 	};
 	$.Cmdbuild.g3d.commands.openChildren = openChildren;
 })(jQuery);
