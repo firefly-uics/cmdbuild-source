@@ -235,6 +235,9 @@
 		 */
 		resolveTemplate: function(barrierCallbackDefinitionObject) {
 			var me = this;
+
+			this.barrierCallbackDefinitionObject = barrierCallbackDefinitionObject;
+
 			if (me.templateResolver && !me.disabled) {
 				// Don't overlap requests
 				if (me.templateResolverBusy) {
@@ -255,20 +258,22 @@
 								if (me.requireResolveTemplates) {
 									me.requireResolveTemplates = false;
 
-									me.resolveTemplate(barrierCallbackDefinitionObject);
+									me.resolveTemplate(me.barrierCallbackDefinitionObject);
 
 									return;
 								}
 
 								// Run callback at the end of resolving execution
 								if (
-									Ext.isObject(barrierCallbackDefinitionObject) && !Ext.Object.isEmpty(barrierCallbackDefinitionObject)
-									&& !Ext.isEmpty(barrierCallbackDefinitionObject.callback) && Ext.isFunction(barrierCallbackDefinitionObject.callback)
+									Ext.isObject(me.barrierCallbackDefinitionObject) && !Ext.Object.isEmpty(me.barrierCallbackDefinitionObject)
+									&& !Ext.isEmpty(me.barrierCallbackDefinitionObject.callback) && Ext.isFunction(me.barrierCallbackDefinitionObject.callback)
 								) {
 									Ext.callback(
-										barrierCallbackDefinitionObject.callback,
-										barrierCallbackDefinitionObject.scope || me
+										me.barrierCallbackDefinitionObject.callback,
+										me.barrierCallbackDefinitionObject.scope || me
 									);
+
+									delete me.barrierCallbackDefinitionObject;
 								}
 							}
 						);
@@ -277,13 +282,15 @@
 			} else {
 				// Run callback at the end of resolving execution
 				if (
-					Ext.isObject(barrierCallbackDefinitionObject) && !Ext.Object.isEmpty(barrierCallbackDefinitionObject)
-					&& !Ext.isEmpty(barrierCallbackDefinitionObject.callback) && Ext.isFunction(barrierCallbackDefinitionObject.callback)
+					Ext.isObject(me.barrierCallbackDefinitionObject) && !Ext.Object.isEmpty(me.barrierCallbackDefinitionObject)
+					&& !Ext.isEmpty(me.barrierCallbackDefinitionObject.callback) && Ext.isFunction(me.barrierCallbackDefinitionObject.callback)
 				) {
 					Ext.callback(
-						barrierCallbackDefinitionObject.callback,
-						barrierCallbackDefinitionObject.scope || me
+						me.barrierCallbackDefinitionObject.callback,
+						me.barrierCallbackDefinitionObject.scope || me
 					);
+
+					delete me.barrierCallbackDefinitionObject;
 				}
 			}
 		},

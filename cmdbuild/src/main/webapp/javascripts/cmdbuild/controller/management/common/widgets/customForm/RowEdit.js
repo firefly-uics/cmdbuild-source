@@ -120,7 +120,7 @@
 		 */
 		fieldsInitialization: function() {
 			var barrierId = 'rowEditFieldsInitializationBarrier';
-			
+
 			this.view.setLoading(true);
 
 			CMDBuild.core.RequestBarrier.init(barrierId, function() {
@@ -141,7 +141,7 @@
 						callback: CMDBuild.core.RequestBarrier.getCallback(barrierId)
 					});
 			}, this);
-			
+
 			CMDBuild.core.RequestBarrier.finalize(barrierId);
 		},
 
