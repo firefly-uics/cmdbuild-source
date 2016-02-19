@@ -1,10 +1,12 @@
 package org.cmdbuild.config;
 
+import static com.google.common.collect.Sets.newHashSet;
 import static java.lang.String.format;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Collection;
 
 import org.apache.commons.io.FileUtils;
 import org.cmdbuild.common.annotations.Legacy;
@@ -62,8 +64,15 @@ public class DmsProperties extends DefaultProperties implements DmsConfiguration
 
 	}
 
+	public static DmsProperties getInstance() {
+		return (DmsProperties) Settings.getInstance().getModule(MODULE_NAME);
+	}
+
+	private final Collection<ChangeListener> changeListeners;
+
 	public DmsProperties() {
 		super();
+		changeListeners = newHashSet();
 		setProperty(ENABLED, Default.ENABLED);
 		setProperty(SERVER_URL, Default.SERVER_URL);
 		setProperty(FILE_SERVER_PORT, Default.FILE_SERVER_PORT);
@@ -82,8 +91,21 @@ public class DmsProperties extends DefaultProperties implements DmsConfiguration
 		setProperty(METADATA_AUTOCOMPLETION_FILENAME, Default.METADATA_AUTOCOMPLETION_FILENAME);
 	}
 
-	public static DmsProperties getInstance() {
-		return (DmsProperties) Settings.getInstance().getModule(MODULE_NAME);
+	@Override
+	public void addListener(ChangeListener listener) {
+		changeListeners.add(listener);
+	}
+
+	@Override
+	public void store() throws IOException {
+		super.store();
+		notifyListeners();
+	}
+
+	private void notifyListeners() {
+		for (final ChangeListener changeListener : changeListeners) {
+			changeListener.configurationChanged();
+		}
 	}
 
 	@Override

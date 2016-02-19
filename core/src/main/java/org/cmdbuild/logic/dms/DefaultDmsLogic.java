@@ -65,7 +65,6 @@ public class DefaultDmsLogic implements DmsLogic {
 	) {
 		logger.trace("creating new dms logic...");
 		this.service = service;
-		service.setConfiguration(configuration);
 		definitionsFactory = new DefaultDefinitionsFactory();
 		this.dataView = dataView;
 		this.configuration = configuration;
@@ -81,7 +80,7 @@ public class DefaultDmsLogic implements DmsLogic {
 	 */
 	@Override
 	public String getCategoryLookupType() {
-		return service.getConfiguration().getCmdbuildCategory();
+		return configuration.getCmdbuildCategory();
 	}
 
 	/**
