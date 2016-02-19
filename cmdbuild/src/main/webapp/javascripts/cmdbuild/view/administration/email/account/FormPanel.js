@@ -130,7 +130,7 @@
 										labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
 										maxWidth: CMDBuild.core.constants.FieldWidths.ADMINISTRATION_BIG,
 										allowBlank: false,
-										cmImmutable: true
+										disableEnableFunctions: true
 									}),
 									Ext.create('Ext.form.field.Checkbox', {
 										name: CMDBuild.core.constants.Proxy.IS_DEFAULT,

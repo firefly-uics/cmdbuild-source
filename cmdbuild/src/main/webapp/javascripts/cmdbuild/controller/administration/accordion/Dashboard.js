@@ -28,7 +28,7 @@
 		 *
 		 * @override
 		 */
-		constructor: function(configurationObject) {
+		constructor: function (configurationObject) {
 			this.callParent(arguments);
 
 			this.view = Ext.create('CMDBuild.view.administration.accordion.Dashboard', { delegate: this });
@@ -41,18 +41,20 @@
 		 *
 		 * @override
 		 */
-		accordionUpdateStore: function(nodeIdToSelect) {
+		accordionUpdateStore: function (nodeIdToSelect) {
 			nodeIdToSelect = Ext.isNumber(nodeIdToSelect) ? nodeIdToSelect : null;
 
 			CMDBuild.ServiceProxy.Dashboard.fullList({
 				scope: this,
-				success: function(response, options, decodedResponse) {
+				success: function (response, options, decodedResponse) {
 					decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.RESPONSE][CMDBuild.core.constants.Proxy.DASHBOARDS] || [];
 
 					var nodes = [];
 
+					this.view.getStore().getRootNode().removeAll();
+
 					if (!Ext.isEmpty(decodedResponse)) {
-						Ext.Object.each(decodedResponse, function(id, dashboardObject, myself) {
+						Ext.Object.each(decodedResponse, function (id, dashboardObject, myself) {
 							var nodeObject = {};
 							nodeObject['cmName'] = this.cmfg('accordionIdentifierGet');
 							nodeObject['iconCls'] = 'cmdbuild-tree-dashboard-icon';
@@ -67,7 +69,6 @@
 						}, this);
 
 						if (!Ext.isEmpty(nodes)) {
-							this.view.getStore().getRootNode().removeAll();
 							this.view.getStore().getRootNode().appendChild(nodes);
 							this.view.getStore().sort();
 						}

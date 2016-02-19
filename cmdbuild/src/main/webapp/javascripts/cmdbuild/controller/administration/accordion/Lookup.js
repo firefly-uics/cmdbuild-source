@@ -28,7 +28,7 @@
 		 *
 		 * @override
 		 */
-		constructor: function(configurationObject) {
+		constructor: function (configurationObject) {
 			this.callParent(arguments);
 
 			this.view = Ext.create('CMDBuild.view.administration.accordion.Lookup', { delegate: this });
@@ -41,18 +41,18 @@
 		 *
 		 * @override
 		 */
-		accordionUpdateStore: function(nodeIdToSelect) {
+		accordionUpdateStore: function (nodeIdToSelect) {
 			nodeIdToSelect = Ext.isString(nodeIdToSelect) ? nodeIdToSelect : null;
 
 			CMDBuild.core.proxy.lookup.Type.readAll({
 				scope: this,
-				success: function(response, options, decodedResponse) {
+				success: function (response, options, decodedResponse) {
 					if (!Ext.isEmpty(decodedResponse)) {
 						var nodes = [];
 						var nodesMap = {};
 
 						// Build nodes map
-						Ext.Array.forEach(decodedResponse, function(lookupTypeObject, i, allLookupTypeObjects) {
+						Ext.Array.forEach(decodedResponse, function (lookupTypeObject, i, allLookupTypeObjects) {
 							var nodeObject = {};
 							nodeObject['cmName'] = this.cmfg('accordionIdentifierGet');
 							nodeObject[CMDBuild.core.constants.Proxy.TEXT] = lookupTypeObject[CMDBuild.core.constants.Proxy.TEXT];
@@ -65,8 +65,10 @@
 							nodesMap[lookupTypeObject[CMDBuild.core.constants.Proxy.ID]] = nodeObject;
 						}, this);
 
+						this.view.getStore().getRootNode().removeAll();
+
 						// Build tree nodes hierarchy
-						Ext.Object.each(nodesMap, function(id, node, myself) {
+						Ext.Object.each(nodesMap, function (id, node, myself) {
 							if (Ext.isEmpty(node[CMDBuild.core.constants.Proxy.PARENT])) {
 								nodes.push(node);
 							} else {
@@ -81,7 +83,6 @@
 						}, this);
 
 						if (!Ext.isEmpty(nodes)) {
-							this.view.getStore().getRootNode().removeAll();
 							this.view.getStore().getRootNode().appendChild(nodes);
 							this.view.getStore().sort();
 						}

@@ -95,7 +95,7 @@
 						displayField: CMDBuild.core.constants.Proxy.ID,
 						valueField: CMDBuild.core.constants.Proxy.TEXT, // TODO: waiting for refactor (rename)
 						disabled: true,
-						cmImmutable: true,
+						disableEnableFunctions: true,
 
 						store: CMDBuild.core.proxy.lookup.Type.getStore(),
 						queryMode: 'local'

@@ -127,7 +127,7 @@
 						labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
 						allowBlank: false,
 						vtype: 'alphanum',
-						cmImmutable: true,
+						disableEnableFunctions: true,
 
 						listeners: {
 							scope: this,
@@ -159,7 +159,7 @@
 						valueField: CMDBuild.core.constants.Proxy.ID,
 						displayField: CMDBuild.core.constants.Proxy.TEXT,
 						allowBlank: false,
-						cmImmutable: true,
+						disableEnableFunctions: true,
 						forceSelection: true,
 						editable: false,
 
@@ -173,7 +173,7 @@
 						valueField: CMDBuild.core.constants.Proxy.ID,
 						displayField: CMDBuild.core.constants.Proxy.TEXT,
 						allowBlank: false,
-						cmImmutable: true,
+						disableEnableFunctions: true,
 						forceSelection: true,
 						editable: false,
 
@@ -214,7 +214,7 @@
 						valueField: CMDBuild.core.constants.Proxy.NAME,
 						displayField: CMDBuild.core.constants.Proxy.VALUE,
 						allowBlank: false,
-						cmImmutable: true,
+						disableEnableFunctions: true,
 						forceSelection: true,
 						editable: false,
 

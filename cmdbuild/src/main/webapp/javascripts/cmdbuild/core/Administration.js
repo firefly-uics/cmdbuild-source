@@ -25,7 +25,7 @@
 		/**
 		 * Entry-point
 		 */
-		init: function() {
+		init: function () {
 			CMDBuild.core.Splash.show(true);
 
 			CMDBuild.core.Administration.buildConfiguration();
@@ -36,11 +36,11 @@
 		 *
 		 * @private
 		 */
-		buildCache: function() {
+		buildCache: function () {
 			var barrierId = 'cache';
 			var params = {};
 
-			CMDBuild.core.RequestBarrier.init(barrierId, function() {
+			CMDBuild.core.RequestBarrier.init(barrierId, function () {
 				CMDBuild.core.Administration.buildUserInterface();
 			});
 
@@ -54,7 +54,7 @@
 				params: params,
 				loadMask: false,
 				scope: this,
-				success: function(response, options, decodedResponse) {
+				success: function (response, options, decodedResponse) {
 					decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.CLASSES];
 
 					_CMCache.addClasses(decodedResponse);
@@ -69,7 +69,7 @@
 				CMDBuild.core.proxy.domain.Domain.readAll({
 					loadMask: false,
 					scope: this,
-					success: function(response, options, decodedResponse) {
+					success: function (response, options, decodedResponse) {
 						decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.DOMAINS];
 
 						_CMCache.addDomains(decodedResponse);
@@ -92,19 +92,9 @@
 			CMDBuild.core.proxy.lookup.Type.readAll({
 				loadMask: false,
 				scope: this,
-				success: function(response, options, decodedResponse) {
+				success: function (response, options, decodedResponse) {
 					_CMCache.addLookupTypes(decodedResponse);
 				},
-				callback: CMDBuild.core.RequestBarrier.getCallback(barrierId)
-			});
-
-			/**
-			 * Navigation tree
-			 */
-			_CMCache.listNavigationTrees({
-				loadMask: false,
-				scope: this,
-				success: Ext.emptyFn,
 				callback: CMDBuild.core.RequestBarrier.getCallback(barrierId)
 			});
 
@@ -114,7 +104,7 @@
 			CMDBuild.ServiceProxy.Dashboard.fullList({
 				loadMask: false,
 				scope: this,
-				success: function(response, options, decodedResponse) {
+				success: function (response, options, decodedResponse) {
 					decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.RESPONSE];
 
 					_CMCache.addDashboards(decodedResponse.dashboards);
@@ -129,7 +119,7 @@
 			CMDBuild.core.proxy.widget.Widget.readAll({
 				loadMask: false,
 				scope: this,
-				success: function(response, options, decodedResponse) {
+				success: function (response, options, decodedResponse) {
 					decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.RESPONSE];
 
 					_CMCache.addWidgetToEntryTypes(decodedResponse);
@@ -145,7 +135,7 @@
 		 *
 		 * @private
 		 */
-		buildConfiguration: function() {
+		buildConfiguration: function () {
 			var barrierId = 'config';
 
 			/**
@@ -153,11 +143,11 @@
 			 */
 			Ext.ns('CMDBuild.Config');
 
-			CMDBuild.core.RequestBarrier.init(barrierId, function() {
+			CMDBuild.core.RequestBarrier.init(barrierId, function () {
 				CMDBuild.core.proxy.configuration.Configuration.readAll({
 					loadMask: false,
 					scope: this,
-					success: function(response, options, decodedResponse) {
+					success: function (response, options, decodedResponse) {
 						/**
 						 * CMDBuild (aka Instance) configuration
 						 *
@@ -194,7 +184,7 @@
 		 *
 		 * @private
 		 */
-		buildUserInterface: function() {
+		buildUserInterface: function () {
 			Ext.suspendLayouts();
 
 			Ext.ns('CMDBuild.global.controller');
@@ -215,7 +205,7 @@
 					,
 					Ext.create('CMDBuild.controller.administration.accordion.Filter', { identifier: CMDBuild.core.constants.ModuleIdentifiers.getFilter() }),
 					CMDBuild.configuration.userInterface.get(CMDBuild.core.constants.Proxy.CLOUD_ADMIN) ? null :
-						Ext.create('CMDBuild.controller.administration.accordion.NavigationTree', { identifier: 'navigationtree' })
+						Ext.create('CMDBuild.controller.administration.accordion.NavigationTree', { identifier: CMDBuild.core.constants.ModuleIdentifiers.getNavigationTree() })
 					,
 					Ext.create('CMDBuild.controller.administration.accordion.Lookup', { identifier: CMDBuild.core.constants.ModuleIdentifiers.getLookupType() }),
 					CMDBuild.configuration.userInterface.get(CMDBuild.core.constants.Proxy.CLOUD_ADMIN) ? null :
@@ -240,6 +230,7 @@
 					Ext.create('CMDBuild.controller.administration.localization.Localization', { identifier: CMDBuild.core.constants.ModuleIdentifiers.getLocalization() }),
 					Ext.create('CMDBuild.controller.administration.lookup.Lookup', { identifier: CMDBuild.core.constants.ModuleIdentifiers.getLookupType() }),
 					Ext.create('CMDBuild.controller.administration.menu.Menu', { identifier: CMDBuild.core.constants.ModuleIdentifiers.getMenu() }),
+					Ext.create('CMDBuild.controller.administration.navigationTree.NavigationTree', { identifier: CMDBuild.core.constants.ModuleIdentifiers.getNavigationTree() }), // TODO: identifier in class
 					Ext.create('CMDBuild.controller.administration.report.Report', { identifier: CMDBuild.core.constants.ModuleIdentifiers.getReport() }),
 					Ext.create('CMDBuild.controller.administration.userAndGroup.UserAndGroup', { identifier: CMDBuild.core.constants.ModuleIdentifiers.getUserAndGroup() }),
 					Ext.create('CMDBuild.controller.administration.workflow.Workflow', { identifier: CMDBuild.core.constants.ModuleIdentifiers.getWorkflow() }),
@@ -282,10 +273,6 @@
 						cmControllerType: CMDBuild.controller.administration.gis.CMModLayerOrderController,
 						cmName: 'gis-layers-order'
 					}),
-					new CMDBuild.view.administration.navigationTrees.CMModNavigationTrees({
-						cmControllerType: CMDBuild.controller.administration.navigationTrees.CMModNavigationTreesController,
-						cmName: 'navigationtree'
-					}),
 					new CMDBuild.view.administration.dashboard.CMModDashboard({
 						cmControllerType: CMDBuild.controller.administration.dashboard.CMModDashboardController,
 						cmName: 'dashboard'
@@ -295,7 +282,7 @@
 
 			Ext.resumeLayouts(true);
 
-			CMDBuild.core.Splash.hide(function() {
+			CMDBuild.core.Splash.hide(function () {
 				CMDBuild.global.controller.MainViewport.cmfg('mainViewportInstanceNameSet', CMDBuild.configuration.instance.get(CMDBuild.core.constants.Proxy.INSTANCE_NAME));
 				CMDBuild.global.controller.MainViewport.cmfg('mainViewportSelectFirstExpandedAccordionSelectableNode');
 			}, this);

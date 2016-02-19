@@ -4,7 +4,8 @@
 	 * New class than will replace CMFormFunctions
 	 *
 	 * Specific properties:
-	 *  - {Boolean} considerAsFieldToDisable: enable setDisable function on processed item also if it's not inherits from Ext.form.Field
+	 * 	- {Boolean} considerAsFieldToDisable: enable setDisable function on processed item also if it's not inherits from Ext.form.Field
+	 * 	- {Boolean} disableEnableFunctions: disable enable/setDisabled(false) on processed item (ex. cmImmutable)
 	 * 	- {Boolean} disablePanelFunctions: disable PanelFunctions class actions on processed item
 	 */
 	Ext.define('CMDBuild.view.common.PanelFunctions', {
@@ -140,7 +141,7 @@
 					if (state) {
 						item.setDisabled(state);
 					} else {
-						if ((allFields || !item.cmImmutable) && item.isVisible())
+						if ((allFields || !item.disableEnableFunctions) && item.isVisible())
 							item.setDisabled(state);
 					}
 				}
@@ -161,7 +162,7 @@
 						item.setDisabled(state);
 					} else {
 						if (
-							(allFields || !item.cmImmutable)
+							(allFields || !item.disableEnableFunctions)
 							&& (item.isVisible() || disableIsVisibleCheck)
 						) {
 							item.setDisabled(state);

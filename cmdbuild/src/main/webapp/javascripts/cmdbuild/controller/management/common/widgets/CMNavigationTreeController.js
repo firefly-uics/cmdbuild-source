@@ -1,4 +1,7 @@
 (function() {
+
+	Ext.require(['CMDBuild.core.proxy.NavigationTree']);
+
 	Ext.define("CMDBuild.controller.management.common.widgets.CMNavigationTreeController", {
 		mixins: {
 			observable: "Ext.util.Observable",
@@ -35,7 +38,17 @@
 		// override
 		beforeActiveView: function() {
 			var me = this;
-			_CMCache.readNavigationTrees(this, this.navigationTree, selectTree);
+
+			var params = {};
+			params['name'] = this.navigationTree
+
+			CMDBuild.core.proxy.NavigationTree.read({
+				params: params,
+				success: function(operation, request, decoded) {
+					me.tree = Ext.JSON.decode(decoded.response);
+					selectTree(me, me.tree);
+				}
+			});
 		},
 
 		// override

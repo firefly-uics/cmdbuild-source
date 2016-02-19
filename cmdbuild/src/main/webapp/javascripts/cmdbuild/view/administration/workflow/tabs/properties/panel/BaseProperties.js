@@ -40,7 +40,7 @@
 						maxWidth: CMDBuild.core.constants.FieldWidths.ADMINISTRATION_BIG,
 						allowBlank: false,
 						vtype: 'alphanum',
-						cmImmutable: true
+						disableEnableFunctions: true
 					}),
 					Ext.create('CMDBuild.view.common.field.translatable.Text', {
 						name: CMDBuild.core.constants.Proxy.DESCRIPTION,
@@ -64,7 +64,7 @@
 						valueField: CMDBuild.core.constants.Proxy.ID,
 						displayField: CMDBuild.core.constants.Proxy.TEXT,
 						editable: false,
-						cmImmutable: true,
+						disableEnableFunctions: true,
 
 						store: CMDBuild.core.proxy.workflow.Properties.getStoreSuperProcesses(),
 						queryMode: 'local'
@@ -75,7 +75,7 @@
 						labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
 						inputValue: true,
 						uncheckedValue: false,
-						cmImmutable: true
+						disableEnableFunctions: true
 					}),
 					Ext.create('Ext.form.field.Checkbox',{
 						name: CMDBuild.core.constants.Proxy.ACTIVE,

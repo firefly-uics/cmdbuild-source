@@ -14,8 +14,7 @@
 			dashboards: "CMDBuild.cache.CMCacheDashboardFunctions",
 			attachmentCategories: "CMDBUild.cache.CMCacheAttachmentCategoryFunctions",
 			gis: "CMDBUild.cache.CMCacheGisFunctions",
-			filters: "CMDBuild.cache.CMCacheFilterFunctions",
-			navigationTrees: "CMDBUild.cache.CMCacheNavigationTreesFunctions"
+			filters: "CMDBuild.cache.CMCacheFilterFunctions"
 		},
 
 		constructor: function() {

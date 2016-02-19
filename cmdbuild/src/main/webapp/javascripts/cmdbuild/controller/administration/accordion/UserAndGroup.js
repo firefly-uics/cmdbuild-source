@@ -28,7 +28,7 @@
 		 *
 		 * @override
 		 */
-		constructor: function(configurationObject) {
+		constructor: function (configurationObject) {
 			this.callParent(arguments);
 
 			this.view = Ext.create('CMDBuild.view.administration.accordion.UserAndGroup', { delegate: this });
@@ -41,18 +41,20 @@
 		 *
 		 * @override
 		 */
-		accordionUpdateStore: function(nodeIdToSelect) {
+		accordionUpdateStore: function (nodeIdToSelect) {
 			nodeIdToSelect = Ext.isNumber(nodeIdToSelect) ? nodeIdToSelect : null;
 
 			CMDBuild.core.proxy.userAndGroup.group.Group.readAll({
 				scope: this,
-				success: function(result, options, decodedResult) {
+				success: function (result, options, decodedResult) {
 					decodedResult = decodedResult[CMDBuild.core.constants.Proxy.GROUPS];
+
+					this.view.getStore().getRootNode().removeAll();
 
 					if (!Ext.isEmpty(decodedResult)) {
 						var nodes = [];
 
-						Ext.Array.forEach(decodedResult, function(groupObject, i, allGroupObjects) {
+						Ext.Array.forEach(decodedResult, function (groupObject, i, allGroupObjects) {
 							var nodeObject = {};
 							nodeObject['cmName'] = this.cmfg('accordionIdentifierGet');
 							nodeObject['iconCls'] = 'cmdbuild-tree-group-icon';
@@ -66,7 +68,6 @@
 							nodes.push(nodeObject);
 						}, this);
 
-						this.view.getStore().getRootNode().removeAll();
 						this.view.getStore().getRootNode().appendChild([
 							{
 								cmName: this.cmfg('accordionIdentifierGet'),

@@ -110,7 +110,7 @@
 						labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
 						maxWidth: CMDBuild.core.constants.FieldWidths.ADMINISTRATION_BIG,
 						allowBlank: false,
-						cmImmutable: true,
+						disableEnableFunctions: true,
 						vtype: 'alphanumextended'
 					}),
 					Ext.create('Ext.form.field.Text', {
