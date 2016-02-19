@@ -3,7 +3,6 @@
 	Ext.define('CMDBuild.core.proxy.widget.Workflow', {
 
 		requires: [
-			'CMDBuild.core.cache.Cache',
 			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.proxy.Index',
 			'CMDBuild.model.widget.workflow.TargetWorkflow'
@@ -32,7 +31,7 @@
 		 * @administration
 		 */
 		getStoreTargetWorkflow: function() {
-			return CMDBuild.core.cache.Cache.requestAsStore(CMDBuild.core.constants.Proxy.WORKFLOW, {
+			return CMDBuild.global.Cache.requestAsStore(CMDBuild.core.constants.Proxy.WORKFLOW, {
 				autoLoad: true,
 				model: 'CMDBuild.model.widget.workflow.TargetWorkflow',
 				proxy: {
@@ -73,7 +72,7 @@
 
 			Ext.apply(parameters, { url: CMDBuild.core.proxy.Index.workflow.getStartActivity });
 
-			CMDBuild.core.cache.Cache.request(CMDBuild.core.constants.Proxy.WORKFLOW, parameters);
+			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.WORKFLOW, parameters);
 		}
 	});
 

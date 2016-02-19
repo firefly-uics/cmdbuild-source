@@ -3,7 +3,7 @@
 	Ext.define('CMDBuild.core.buttons.text.ChangeUser', {
 		extend: 'CMDBuild.core.buttons.Base',
 
-		textDefault: CMDBuild.Translation.common.buttons.changeUser
+		textDefault: CMDBuild.Translation.changeUser
 	});
 
 })();

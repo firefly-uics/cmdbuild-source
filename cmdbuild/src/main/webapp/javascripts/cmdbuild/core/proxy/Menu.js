@@ -3,7 +3,6 @@
 	Ext.define('CMDBuild.core.proxy.Menu', {
 
 		requires: [
-			'CMDBuild.core.cache.Cache',
 			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.proxy.Index'
 		],
@@ -19,11 +18,9 @@
 		read: function(parameters) {
 			parameters = Ext.isEmpty(parameters) ? {} : parameters;
 
-			Ext.apply(parameters, {
-				url: CMDBuild.core.proxy.Index.menu.read
-			});
+			Ext.apply(parameters, { url: CMDBuild.core.proxy.Index.menu.read });
 
-			CMDBuild.core.cache.Cache.request(CMDBuild.core.constants.Proxy.MENU, parameters);
+			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.MENU, parameters);
 		},
 
 		/**
@@ -34,11 +31,9 @@
 		readAvailableItems: function(parameters) {
 			parameters = Ext.isEmpty(parameters) ? {} : parameters;
 
-			Ext.apply(parameters, {
-				url: CMDBuild.core.proxy.Index.menu.readAvailableItems
-			});
+			Ext.apply(parameters, { url: CMDBuild.core.proxy.Index.menu.readAvailableItems });
 
-			CMDBuild.core.cache.Cache.request(CMDBuild.core.constants.Proxy.MENU, parameters);
+			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.MENU, parameters);
 		},
 
 		/**
@@ -49,11 +44,9 @@
 		readConfiguration: function(parameters) {
 			parameters = Ext.isEmpty(parameters) ? {} : parameters;
 
-			Ext.apply(parameters, {
-				url: CMDBuild.core.proxy.Index.menu.readConfiguration
-			});
+			Ext.apply(parameters, { url: CMDBuild.core.proxy.Index.menu.readConfiguration });
 
-			CMDBuild.core.cache.Cache.request(CMDBuild.core.constants.Proxy.MENU, parameters);
+			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.MENU, parameters);
 		},
 
 		/**
@@ -62,11 +55,9 @@
 		remove: function(parameters) {
 			parameters = Ext.isEmpty(parameters) ? {} : parameters;
 
-			Ext.apply(parameters, {
-				url: CMDBuild.core.proxy.Index.menu.remove
-			});
+			Ext.apply(parameters, { url: CMDBuild.core.proxy.Index.menu.remove });
 
-			CMDBuild.core.cache.Cache.request(CMDBuild.core.constants.Proxy.MENU, parameters, true);
+			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.MENU, parameters, true);
 		},
 
 		/**
@@ -75,11 +66,9 @@
 		save: function(parameters) {
 			parameters = Ext.isEmpty(parameters) ? {} : parameters;
 
-			Ext.apply(parameters, {
-				url: CMDBuild.core.proxy.Index.menu.update
-			});
+			Ext.apply(parameters, { url: CMDBuild.core.proxy.Index.menu.update });
 
-			CMDBuild.core.cache.Cache.request(CMDBuild.core.constants.Proxy.MENU, parameters, true);
+			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.MENU, parameters, true);
 		}
 	});
 

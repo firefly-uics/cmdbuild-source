@@ -6,6 +6,7 @@
 		 */
 		this.data = [];
 		this.metadata = {};
+		this.filter = {};
 		this.param = param;
 		var onReadyFunction = onReadyFunction;
 		var onReadyScope = onReadyScope;
@@ -24,7 +25,12 @@
 		this.loadAttributes = function() {
 			this.attributes = [{
 				type: "string",
-				name: "className",
+				name: "classId",
+				description: "classId",
+				displayableInList: false
+			}, {
+				type: "string",
+				name: "classDescription",
 				description: "Class",
 				displayableInList: true
 			}, {
@@ -38,6 +44,17 @@
 			}, 100);
 		};
 		this.loadData = function(param, callback, callbackScope) {
+			var data = this.model.getDistinctClasses(0, 10);
+			for (var i = 0; i < data.rows.length; i++) {
+				data.rows[i]._id = data.rows[i].classId;
+				data.rows[i].id = data.rows[i].classId;
+			}
+			this.total = data.total;
+			this.data = [];
+			param.nRows = parseInt(param.nRows);
+			for (var i = param.firstRow; i < param.nRows + param.firstRow && i < data.rows.length; i++) {
+				this.data.push(data.rows[i]);
+			}
 			callback.apply(callbackScope, this.data);
 		};
 		this.getAttributes = function() {
@@ -46,93 +63,10 @@
 		this.getData = function() {
 			return this.data;
 		};
-		this.getRelation4Class = function(path, className, returnData,
-				callback, callbackScope) {
-			var filter = {
-				attribute: {
-					or: [{
-						simple: {
-							attribute: "source",
-							operator: "contain",
-							value: [className]
-						}
-					}, {
-						simple: {
-							attribute: "destination",
-							operator: "contain",
-							value: [className]
-						}
-					}]
-				}
-			};
-			var param = {
-				filter: filter
-			};
-			this.callbackRelations = callback;
-			this.callbackRelationsScope = callbackScope;
-			this.domainsWithData = [];
-			this.sourceRelations = className;
-			this.returnData = returnData;
-			$.Cmdbuild.utilities.proxy.getDomains(param, function(response) {
-				this.getSingleDomains(path, response);
-			}, this);
-		};
-		this.isTheSame = function(d, domainId, source, destination, bDirect) {
-			return d._id == domainId
-					&& ((bDirect && (d.source == source && d.destination == destination)) || ((!bDirect) && (d.source == destination && d.destination == source)));
-		};
-		this.inPathToRoot = function(path, domain, bDirect) {
-			for (var i = 0; i < path.length; i++) {
-				var d = path[i];
-				if (this.isTheSame(d, domain._id, domain.source,
-						domain.destination, bDirect)) {
-					return true;
-				}
-			}
-			return false;
-		};
-		this.getSingleDomains = function(path, domains) {
-			if (domains.length == 0) {
-				this.callbackRelations.apply(this.callbackRelationsScope, [
-						this.returnData, this.domainsWithData]);
-				return;
-			}
-			var domain = domains[0];
-			domains.splice(0, 1);
-			$.Cmdbuild.utilities.proxy.getDomain(domain._id, function(response) {
-				this.chargeNode(path, domains, response);
-			}, this);
-		};
 		this.getMetadata = function() {
 			return this.metadata;
 		};
 
-		this.getChildrenByClassName = function(node, className) {
-			return this.model.getChildrenByClassName(node, className);
-		};
-
-		this.chargeNode = function(path, domains, response) {
-			var obj = (response.source == this.sourceRelations) ? {
-				className: response.destination,
-				label: response.descriptionDirect,
-				_id: response._id,
-				source: response.source,
-				destination: response.destination
-			} : {
-				className: response.source,
-				label: response.descriptionInverse,
-				_id: response._id,
-				source: response.destination,
-				destination: response.source
-			};
-			if (this.inPathToRoot(path, response,
-					response.source == this.sourceRelations)) {
-				obj.source = NO_OPEN_NODE;
-				obj.destination = NO_OPEN_NODE;
-			}
-			this.domainsWithData.push(obj);
-			this.getSingleDomains(path, domains);
-		};
 		/**
 		 * Private functions
 		 */
@@ -146,8 +80,8 @@
 		this.getTotalRows = function() {
 			return this.total;
 		};
-		this.getNodesByClassName = function(className) {
-			return this.model.getNodesByClassName(className);
+		this.getNodesByClassName = function(classId) {
+			return this.model.getNodesByClassName(classId);
 		};
 
 		/**

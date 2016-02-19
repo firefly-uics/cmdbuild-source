@@ -6,7 +6,6 @@
 	Ext.define('CMDBuild.core.proxy.report.Report', {
 
 		requires: [
-			'CMDBuild.core.cache.Cache',
 			'CMDBuild.core.configurations.Timeout',
 			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.proxy.Index',
@@ -26,7 +25,7 @@
 				url: CMDBuild.core.proxy.Index.report.createReportFactory
 			});
 
-			CMDBuild.core.cache.Cache.request(CMDBuild.core.constants.Proxy.REPORT, parameters, true);
+			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.REPORT, parameters, true);
 		},
 
 		/**
@@ -62,7 +61,7 @@
 
 			Ext.apply(parameters, { url: CMDBuild.core.proxy.Index.report.getReportTypesTree });
 
-			CMDBuild.core.cache.Cache.request(CMDBuild.core.constants.Proxy.REPORT, parameters);
+			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.REPORT, parameters);
 		},
 
 		/**
@@ -76,7 +75,7 @@
 				url: CMDBuild.core.proxy.Index.report.updateReportFactoryParams
 			});
 
-			CMDBuild.core.cache.Cache.request(CMDBuild.core.constants.Proxy.REPORT, parameters, true);
+			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.REPORT, parameters, true);
 		}
 	});
 

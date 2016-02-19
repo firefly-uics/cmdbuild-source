@@ -4,6 +4,11 @@
 		this.param = param;
 		this.grid = new $.Cmdbuild.standard.grid();
 		this.init = function(param) {
+			if (this.loading === true) {
+				this.buffer = param;
+				return;
+			}
+			this.buffer = null;
 			if ($.Cmdbuild.customvariables.commandInExecution === true) {
 				return;
 			}
@@ -12,10 +17,11 @@
 				return;
 			}
 			oldId = cardId;
+			param.parent = this;
 			this.param = param;
 			try {
-				this.param = param;
 				$.Cmdbuild.dataModel.forms[this.param.form] = this;
+				this.loading = true;
 				this.grid.init(param);
 			}
 			catch (e) {
@@ -25,6 +31,12 @@
 		};
 		this.show = function() {
 			this.grid.show();
+		};
+		this.onLoad = function() {
+			this.loading = false;
+			if (this.buffer !== null) {
+				this.init(this.buffer);
+			}
 		};
 	};
 	$.Cmdbuild.custom.relationsGrid = relationsGrid;

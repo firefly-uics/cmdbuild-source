@@ -2,6 +2,13 @@
 	<params>
 		<type>div</type>
 	</params>
+		<button id="allCards" text="All cards">
+			<onClick>
+				<command>tab</command>
+				<form>commandPanelMain</form>
+				<activeTab>1</activeTab>
+			</onClick>
+		</button>
 	<div id="selectedFormContainer">
 		<onInit>
 			<command>navigate</command>

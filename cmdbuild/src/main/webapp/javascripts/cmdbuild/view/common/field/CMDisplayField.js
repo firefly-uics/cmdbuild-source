@@ -127,7 +127,7 @@
 				buttonAlign: "center",
 				autoScroll: true,
 				buttons: [{
-					text: CMDBuild.Translation.common.buttons.close,
+					text: CMDBuild.Translation.close,
 					handler: function() {
 						popup.destroy();
 					}

@@ -3,7 +3,6 @@
 	Ext.define('CMDBuild.core.proxy.widget.OpenReport', {
 
 		requires: [
-			'CMDBuild.core.cache.Cache',
 			'CMDBuild.core.configurations.Timeout',
 			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.proxy.Index',
@@ -25,7 +24,7 @@
 				url: CMDBuild.core.proxy.Index.report.createReportFactory
 			});
 
-			CMDBuild.core.cache.Cache.request(CMDBuild.core.constants.Proxy.REPORT, parameters);
+			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.REPORT, parameters);
 		},
 
 		/**
@@ -41,7 +40,7 @@
 				url: CMDBuild.core.proxy.Index.report.createReportFactoryByTypeCode
 			});
 
-			CMDBuild.core.cache.Cache.request(CMDBuild.core.constants.Proxy.REPORT, parameters);
+			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.REPORT, parameters);
 		},
 
 		/**
@@ -88,7 +87,7 @@
 		 * @administration
 		 */
 		getStoreReports: function() {
-			return CMDBuild.core.cache.Cache.requestAsStore(CMDBuild.core.constants.Proxy.REPORT, {
+			return CMDBuild.global.Cache.requestAsStore(CMDBuild.core.constants.Proxy.REPORT, {
 				autoLoad: true,
 				model: 'CMDBuild.model.widget.openReport.ReportCombo',
 				proxy: {
@@ -122,7 +121,7 @@
 				url: CMDBuild.core.proxy.Index.report.updateReportFactoryParams
 			});
 
-			CMDBuild.core.cache.Cache.request(CMDBuild.core.constants.Proxy.REPORT, parameters);
+			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.REPORT, parameters);
 		}
 	});
 

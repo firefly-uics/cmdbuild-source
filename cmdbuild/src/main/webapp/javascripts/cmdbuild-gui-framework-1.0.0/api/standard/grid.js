@@ -40,7 +40,8 @@
 					nTotalRows: 0,
 					firstRow: 0,
 					condition: param.condition,
-					hookSelection: (param.hookSelection === "true"),
+					hookParent: (param.hookParent === "true"),
+					parent: param.parent,
 					singleSelect: (param.singleSelect == 1) ? true : false,
 					onClick: $.Cmdbuild.elementsManager.getEvent("onClick", xmlForm),
 					onChange: $.Cmdbuild.elementsManager.getEvent("onChange", xmlForm),
@@ -163,22 +164,23 @@
 								}
 								var row = $('#' + me.id + ' tbody tr:not(".cmdbuildGroupByHeader"):eq(' + selectedRow + ')');
 								var table = $('#' + me.id).DataTable();
-								if (! me.paginationSettings.hookSelection) {
+								if (! me.paginationSettings.hookParent || ! me.paginationSettings.parent.getSelection) {
 									me.selectRow(me.id, table, row, selectedRow, false);
 								}
 								else {
-									this.selectRows($.Cmdbuild.customvariables.selected.getData());
+									me.selectRows(me.paginationSettings.parent.getSelection());
 								}
+								me.onLoad();
 								me.disableRowButtons();
 							} else {
 								$.Cmdbuild.dataModel.setCurrentIndex(me.id, -1);
-
+								me.onLoad();
 							}
 						}, me);
 					},
 					"columns": me.paginationSettings.attributesInGrid,
 					"columnDefs": me.getNoAttributeColumns(),
-					"fnInitComplete": me.paginationSettings.onInitComplete ? window[me.paginationSettings.onInitComplete] : null,
+					"fnInitComplete": me.paginationSettings.onInitComplete ? $.Cmdbuild.dataModel.resolveVariable(me.paginationSettings.onInitComplete) : null,
 					"drawCallback": function ( settings ) {
 						me.drawCallback(this, me, param, settings);
 			        }
@@ -204,7 +206,7 @@
 					var htmlTable =  $(this).parents('table');
 					me.id = htmlTable.attr("id");
 					var table = $('#' + me.id).DataTable();
-					if (! $(this).hasClass('selected') || me.paginationSettings.hookSelection) {
+					if (! $(this).hasClass('selected') || me.paginationSettings.hookParent) {
 						me.selectRow(param.form, table, $(this), table.row(this).index(), event.ctrlKey);
 					}
 					$.Cmdbuild.eventsManager.onEvent(me.paginationSettings.onClick);
@@ -246,6 +248,11 @@
 					}
 				}
 			});
+		};
+		this.onLoad = function() {
+			if (this.paginationSettings.hookParent && this.paginationSettings.parent.onLoad) {
+				this.paginationSettings.parent.onLoad();				
+			}
 		};
 		this.convertReferencedValues = function() {
 			var table = $('#' + this.id).DataTable();
@@ -334,10 +341,8 @@
 		this.selectRow = function(name, table, row, index, ctrlKey) {
 			$.Cmdbuild.dataModel.setCurrentIndex(name, index);
 			
-			if (! this.paginationSettings.hookSelection) {
 				table.$('tr.selected').removeClass('selected');
 				row.addClass('selected');
-			}
 			if (this.paginationSettings.onChange) {
 				this.paginationSettings.onChange.addSelection = ctrlKey;
 				$.Cmdbuild.eventsManager.onEvent(this.paginationSettings.onChange);

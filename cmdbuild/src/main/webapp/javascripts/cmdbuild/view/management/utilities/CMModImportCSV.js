@@ -64,7 +64,7 @@
 			});
 
 			this.uploadButton = new Ext.Button({
-				 text: CMDBuild.Translation.common.buttons.upload,
+				 text: CMDBuild.Translation.upload,
 				 scope: this
 			 });
 

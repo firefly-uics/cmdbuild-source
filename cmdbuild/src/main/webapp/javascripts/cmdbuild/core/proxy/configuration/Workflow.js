@@ -3,7 +3,6 @@
 	Ext.define('CMDBuild.core.proxy.configuration.Workflow', {
 
 		requires: [
-			'CMDBuild.core.cache.Cache',
 			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.proxy.Index'
 		],
@@ -25,7 +24,7 @@
 
 			Ext.apply(parameters, { url: CMDBuild.core.proxy.Index.configuration.read });
 
-			CMDBuild.core.cache.Cache.request(CMDBuild.core.constants.Proxy.CONFIGURATION, parameters);
+			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.CONFIGURATION, parameters);
 		},
 
 		/**
@@ -40,7 +39,7 @@
 
 			Ext.apply(parameters, { url: CMDBuild.core.proxy.Index.configuration.update });
 
-			CMDBuild.core.cache.Cache.request(CMDBuild.core.constants.Proxy.CONFIGURATION, parameters, true);
+			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.CONFIGURATION, parameters, true);
 		}
 	});
 

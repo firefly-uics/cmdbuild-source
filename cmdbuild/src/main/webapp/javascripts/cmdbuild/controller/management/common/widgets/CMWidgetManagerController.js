@@ -20,7 +20,7 @@
 					'.CustomForm': 'CMDBuild.controller.management.widget.customForm.CustomForm',
 					'.Grid': 'CMDBuild.controller.management.common.widgets.grid.Grid',
 					'.LinkCards': CMDBuild.controller.management.common.widgets.linkCards.LinkCardsController,
-					'.ManageEmail': 'CMDBuild.controller.management.common.widgets.ManageEmail',
+					'.ManageEmail': 'CMDBuild.controller.management.widget.ManageEmail',
 					'.ManageRelation': 'CMDBuild.controller.management.common.widgets.manageRelation.CMManageRelationController',
 					'.NavigationTree': CMDBuild.controller.management.common.widgets.CMNavigationTreeController,
 					'.OpenAttachment': CMDBuild.controller.management.common.widgets.CMOpenAttachmentController,

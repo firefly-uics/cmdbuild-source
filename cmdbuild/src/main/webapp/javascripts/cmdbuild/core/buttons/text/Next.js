@@ -3,7 +3,7 @@
 	Ext.define('CMDBuild.core.buttons.text.Next', {
 		extend: 'CMDBuild.core.buttons.Base',
 
-		textDefault: CMDBuild.Translation.common.buttons.next
+		textDefault: CMDBuild.Translation.next
 	});
 
 })();

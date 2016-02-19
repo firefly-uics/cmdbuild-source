@@ -60,7 +60,6 @@
 		advance: function(param) {
 			try {
 				param.formObject = $.Cmdbuild.dataModel.forms[param.form];
-				var data = $.Cmdbuild.dataModel.model[param.form].data;
 				if (! $.Cmdbuild.dataModel.change(param)) {
 					return;
 				}
@@ -69,6 +68,11 @@
 						$.Cmdbuild.standard.commands.dialogClose(param);
 						return;
 					}
+					var data = $.Cmdbuild.dataModel.model[param.form].data;
+					if (! data._id) {
+						data._id = response;
+						data._type = param.formObject.param.className;
+					}
 					if (param.navigationForm) {
 						$.Cmdbuild.standard.commands.navigate({
 							form: param.navigationForm,
@@ -76,7 +80,6 @@
 						});
 						return;
 					}
-					var data = $.Cmdbuild.dataModel.model[param.form].data;
 					$.Cmdbuild.utilities.proxy.getActivity(data._type, data._id,
 							function(response) {
 								if (response.length == 0) {

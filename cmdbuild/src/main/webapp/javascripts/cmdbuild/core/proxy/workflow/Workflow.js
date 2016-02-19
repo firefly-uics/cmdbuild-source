@@ -3,7 +3,6 @@
 	Ext.define('CMDBuild.core.proxy.workflow.Workflow', {
 
 		requires: [
-			'CMDBuild.core.cache.Cache',
 			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.proxy.Index'
 		],
@@ -18,7 +17,7 @@
 
 			Ext.apply(parameters, { url: CMDBuild.core.proxy.Index.workflow.create });
 
-			CMDBuild.core.cache.Cache.request(CMDBuild.core.constants.Proxy.WORKFLOW, parameters, true);
+			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.WORKFLOW, parameters, true);
 		},
 
 		/**
@@ -29,7 +28,7 @@
 
 			Ext.apply(parameters, { url: CMDBuild.core.proxy.Index.workflow.read });
 
-			CMDBuild.core.cache.Cache.request(CMDBuild.core.constants.Proxy.WORKFLOW, parameters);
+			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.WORKFLOW, parameters);
 		},
 
 		/**
@@ -40,7 +39,7 @@
 
 			Ext.apply(parameters, { url: CMDBuild.core.proxy.Index.workflow.readAll });
 
-			CMDBuild.core.cache.Cache.request(CMDBuild.core.constants.Proxy.WORKFLOW, parameters);
+			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.WORKFLOW, parameters);
 		},
 
 		/**
@@ -51,7 +50,7 @@
 
 			Ext.apply(parameters, { url: CMDBuild.core.proxy.Index.workflow.remove });
 
-			CMDBuild.core.cache.Cache.request(CMDBuild.core.constants.Proxy.WORKFLOW, parameters, true);
+			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.WORKFLOW, parameters, true);
 		},
 
 		/**
@@ -62,7 +61,7 @@
 
 			Ext.apply(parameters, { url: CMDBuild.core.proxy.Index.workflow.update });
 
-			CMDBuild.core.cache.Cache.request(CMDBuild.core.constants.Proxy.WORKFLOW, parameters, true);
+			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.WORKFLOW, parameters, true);
 		}
 	});
 

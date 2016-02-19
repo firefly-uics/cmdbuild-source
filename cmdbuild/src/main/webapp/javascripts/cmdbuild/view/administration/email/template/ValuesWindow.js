@@ -98,11 +98,11 @@
 								items: [
 									Ext.create('CMDBuild.core.buttons.iconized.Delete', {
 										withSpacer: true,
-										tooltip: CMDBuild.Translation.common.buttons.remove,
+										tooltip: CMDBuild.Translation.remove,
 										scope: this,
 
 										handler: function(view, rowIndex, colIndex, item, e, record) {
-											this.cmfg('onEmailTemplateValuesWindowDeleteRowButtonClick', record);
+											this.delegate.cmfg('onEmailTemplateValuesWindowDeleteRowButtonClick', record);
 
 										}
 									})

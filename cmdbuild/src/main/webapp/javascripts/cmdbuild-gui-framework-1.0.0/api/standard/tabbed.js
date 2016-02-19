@@ -66,6 +66,7 @@
 					id: $this.attr("id"),
 					include: $this.attr("include"),
 					classes: $this.attr("class"),
+					invisible: $this.attr("invisible"),
 					params: param
 				});
 			});
@@ -89,7 +90,11 @@
 				var htmlStr = "";
 				htmlStr += "<ul>";
 				for (var i = 0; i < forms.length; i++) {
-					htmlStr += "<li><a href='#" + forms[i].id + "'>" + forms[i].title + "</a></li>";
+					var myClass = "";
+					if (forms[i].invisible === "true") {
+						myClass = " class='invisible' ";
+					}
+					htmlStr += "<li " + myClass + "><a href='#" + forms[i].id + "'>" + forms[i].title + "</a></li>";
 				}
 				htmlStr += "</ul>";
 				return htmlStr;

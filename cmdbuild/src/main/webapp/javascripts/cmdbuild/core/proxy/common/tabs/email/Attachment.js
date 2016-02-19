@@ -3,8 +3,6 @@
 	Ext.define('CMDBuild.core.proxy.common.tabs.email.Attachment', {
 
 		requires: [
-			'CMDBuild.core.interfaces.Ajax',
-			'CMDBuild.core.cache.Cache',
 			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.interfaces.FormSubmit',
 			'CMDBuild.core.proxy.Index',
@@ -24,28 +22,22 @@
 				url: CMDBuild.core.proxy.Index.email.attachment.copy
 			});
 
-			CMDBuild.core.cache.Cache.request(CMDBuild.core.constants.Proxy.ATTACHMENT, parameters, true);
+			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.ATTACHMENT, parameters, true);
 		},
 
 		/**
 		 * @param {Object} parameters
 		 */
 		download: function(parameters) {
-			parameters.params[CMDBuild.core.constants.Proxy.FORCE_DOWNLOAD_PARAM_KEY] = true;
-
-			var form = Ext.create('Ext.form.Panel', {
-				standardSubmit: true,
-				url: CMDBuild.core.proxy.Index.email.attachment.download
-			});
-
-			form.submit({
-				target: '_blank',
-				params: parameters.params
-			});
-
-			Ext.defer(function() { // Form cleanup
-				form.close();
-			}, 100);
+			if (
+				Ext.isObject(parameters) && !Ext.Object.isEmpty(parameters)
+				&& Ext.isObject(parameters.params) && !Ext.Object.isEmpty(parameters.params)
+			) {
+				window.open(
+					CMDBuild.core.proxy.Index.email.attachment.download + '?' + Ext.urlEncode(parameters.params),
+					'_blank'
+				);
+			}
 		},
 
 		/**
@@ -59,14 +51,14 @@
 				url: CMDBuild.core.proxy.Index.email.attachment.readAll
 			});
 
-			CMDBuild.core.cache.Cache.request(CMDBuild.core.constants.Proxy.ATTACHMENT, parameters, true);
+			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.ATTACHMENT, parameters, true);
 		},
 
 		/**
 		 * @returns {Ext.data.Store or CMDBuild.core.cache.Store}
 		 */
 		getTargetClassComboStore: function() {
-			return CMDBuild.core.cache.Cache.requestAsStore(CMDBuild.core.constants.Proxy.CLASS, {
+			return CMDBuild.global.Cache.requestAsStore(CMDBuild.core.constants.Proxy.CLASS, {
 				autoLoad: true,
 				model: 'CMDBuild.model.common.tabs.email.attachments.TargetClass',
 				proxy: {
@@ -104,7 +96,7 @@
 				url: CMDBuild.core.proxy.Index.email.attachment.remove
 			});
 
-			CMDBuild.core.cache.Cache.request(CMDBuild.core.constants.Proxy.ATTACHMENT, parameters, true);
+			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.ATTACHMENT, parameters, true);
 		},
 
 		/**

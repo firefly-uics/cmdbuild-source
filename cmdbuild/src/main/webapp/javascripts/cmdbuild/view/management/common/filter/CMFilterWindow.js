@@ -152,7 +152,7 @@
 					}
 				},
 				{
-					text: CMDBuild.Translation.common.buttons.abort,
+					text: CMDBuild.Translation.cancel,
 					handler: function() {
 						me.callDelegates('onCMFilterWindowAbortButtonClick', [me]);
 					}
@@ -277,7 +277,7 @@
 
 			this.buttons = [
 				{
-					text: CMDBuild.Translation.common.buttons.save,
+					text: CMDBuild.Translation.save,
 					handler: function() {
 						var name = me.nameField.getValue();
 						var description = me.descriptionField.getValue();
@@ -286,7 +286,7 @@
 					}
 				},
 				{
-					text: CMDBuild.Translation.common.buttons.abort,
+					text: CMDBuild.Translation.cancel,
 					handler: function() {
 						me.destroy();
 					}

@@ -187,7 +187,7 @@
 			var field = $(name);
 			if (field) {
 				if (field.prop("tagName") == "SELECT") {
-					var entryValue = $(name + " :selected, " + name + " [selected]").attr("entryValue");
+					var entryValue =  field.val();//$(name + " :selected, " + name + " [selected]").attr("entryValue");
 					return entryValue;
 				}
 				else if (field.attr("isDate")) {
@@ -198,12 +198,11 @@
 				}
 				else if (field.attr("valueType") == "spinner") {
 					var entryValue = field.spinner("value");
-					console.log("yay " + entryValue);
 					return entryValue;
 				}
 
 				else if (field.attr("type") == "checkbox") {
-					return field.prop("checked");
+					return (field.prop("checked")) ? true : false;
 				}
 				else {
 					return field.val();
@@ -562,5 +561,5 @@
         }
 
 	};
-	$.Cmdbuild.utilities = utilities;
+	$.Cmdbuild.utilities = $.extend($.Cmdbuild.utilities, utilities);
 }) (jQuery);

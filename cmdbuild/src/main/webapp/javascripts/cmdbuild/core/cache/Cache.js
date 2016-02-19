@@ -1,35 +1,39 @@
 (function() {
 
 	/**
-	 * CMDBuild cache v2
+	 * CMDBuild cache v3
 	 */
 	Ext.define('CMDBuild.core.cache.Cache', {
 
 		requires: [
-			'CMDBuild.core.interfaces.Ajax',
 			'CMDBuild.core.configurations.Timeout',
-			'CMDBuild.core.constants.Proxy'
+			'CMDBuild.core.constants.Proxy',
+			'CMDBuild.core.interfaces.Ajax'
 		],
-
-		singleton: true,
 
 		/**
 		 * Object to save all proxy results. All properties are instances of CMDBuild.model.Cache
 		 *
 		 * @cfg {Object}
 		 * 	Structure: {
-		 * 		{Object} 'griupId': {
-		 * 			{Object} 'endpoint-identifier': {
-		 * 				{CMDBuild.model.Cache} 'encoded-parameters',
-		 * 				...
+		 * 		{String} 'type': {
+		 * 			{Object} 'groupId': {
+		 * 				{Object} 'serviceEndpoint': {
+		 * 					{CMDBuild.model.Cache} 'params',
+		 * 					...
+		 * 				},
 		 * 			},
+		 * 			...
 		 * 		},
 		 * 		...
 		 * 	}
 		 *
 		 * @private
 		 */
-		cachedValues: {},
+		bufferObject: {
+			standard: {},
+			store: {}
+		},
 
 		/**
 		 * Enable/disable cache
@@ -47,7 +51,7 @@
 		 *
 		 * @private
 		 */
-		managedCacheGroupsArray: [
+		managedGroupsArray: [
 			CMDBuild.core.constants.Proxy.GENERIC, // Default
 			CMDBuild.core.constants.Proxy.CLASS,
 			CMDBuild.core.constants.Proxy.GROUP,
@@ -56,33 +60,59 @@
 		],
 
 		/**
-		 * @param {String} cacheGroupIdentifier
-		 * @param {String} identifier
-		 * @param {Object} parameters
-		 * @param {String} propertyName
+		 * @param {Object} configurationObject
+		 */
+		constructor: function (configurationObject) {
+			Ext.apply(this, configurationObject);
+
+			Ext.ns('CMDBuild.global');
+
+			CMDBuild.global.Cache = this; // Global reference
+		},
+
+		/**
+		 * @param {String} parameters.type
+		 * @param {String} parameters.groupId
+		 * @param {String} parameters.serviceEndpoint
+		 * @param {Object} parameters.params
 		 *
-		 * @returns {Object} valuesFromCache
+		 * @returns {Boolean}
 		 *
 		 * @private
 		 */
-		get: function(cacheGroupIdentifier, identifier, parameters, propertyName) {
-			cacheGroupIdentifier = Ext.isString(cacheGroupIdentifier) ? cacheGroupIdentifier : CMDBuild.core.constants.Proxy.GENERIC;
-			parameters = Ext.isEmpty(parameters) ? CMDBuild.core.constants.Proxy.EMPTY : parameters;
-			propertyName = Ext.isString(propertyName) ? propertyName : null;
+		cachedDataExists: function (parameters) {
+			parameters = Ext.isObject(parameters) ? parameters : {};
 
-			var valuesFromCache = {};
+			return (
+				!Ext.isEmpty(this.bufferObject[parameters.type])
+				&& !Ext.isEmpty(this.bufferObject[parameters.type][parameters.groupId])
+				&& !Ext.isEmpty(this.bufferObject[parameters.type][parameters.groupId][parameters.serviceEndpoint])
+				&& !Ext.isEmpty(this.bufferObject[parameters.type][parameters.groupId][parameters.serviceEndpoint][Ext.encode(parameters.params)])
+			);
+		},
 
-			if (
-				!Ext.isEmpty(CMDBuild.core.cache.Cache.cachedValues[cacheGroupIdentifier])
-				&& !Ext.isEmpty(CMDBuild.core.cache.Cache.cachedValues[cacheGroupIdentifier][identifier])
-				&& !Ext.isEmpty(CMDBuild.core.cache.Cache.cachedValues[cacheGroupIdentifier][identifier][Ext.encode(parameters)])
-				&& !CMDBuild.core.cache.Cache.isExpired(cacheGroupIdentifier,identifier, parameters)
-			) {
-				valuesFromCache = CMDBuild.core.cache.Cache.cachedValues[cacheGroupIdentifier][identifier][Ext.encode(parameters)].get(CMDBuild.core.constants.Proxy.RESPONSE);
+		/**
+		 * @param {String} parameters.type
+		 * @param {String} parameters.groupId
+		 * @param {String} parameters.serviceEndpoint
+		 * @param {Object} parameters.params
+		 *
+		 * @returns {Object or null} valuesFromCache
+		 *
+		 * @private
+		 */
+		get: function (parameters) {
+			parameters = this.parametersValidate(parameters, [
+				CMDBuild.core.constants.Proxy.TYPE,
+				CMDBuild.core.constants.Proxy.GROUP_ID,
+				CMDBuild.core.constants.Proxy.SERVICE_ENDPOINT,
+				CMDBuild.core.constants.Proxy.PARAMS
+			]);
 
-				if (!Ext.isEmpty(propertyName))
-					valuesFromCache = valuesFromCache[propertyName];
-			}
+			var valuesFromCache = null;
+
+			if (this.cachedDataExists(parameters) && !this.isExpired(parameters))
+				valuesFromCache = this.bufferObject[parameters.type][parameters.groupId][parameters.serviceEndpoint][Ext.encode(parameters.params)].get(CMDBuild.core.constants.Proxy.RESPONSE);
 
 			return valuesFromCache;
 		},
@@ -90,52 +120,121 @@
 		/**
 		 * Invalidate cache group (delete object)
 		 *
-		 * @param {String} cacheGroupIdentifier
+		 * @param {String} parameters.type
+		 * @param {String} parameters.groupId
+		 *
+		 * @private
 		 */
-		invalidate: function(cacheGroupIdentifier) {
+		invalidate: function (parameters) {
+			parameters = this.parametersValidate(parameters, [ CMDBuild.core.constants.Proxy.GROUP_ID ]);
+
+			if (!Ext.isEmpty(parameters.groupId) && this.isCacheable(parameters.groupId))
+				Ext.Object.each(this.bufferObject, function (type, typeObject, myself) {
+					if (!Ext.isEmpty(this.bufferObject[type]) && this.bufferObject[type][parameters.groupId])
+						delete this.bufferObject[type][parameters.groupId];
+				}, this);
+		},
+
+		/**
+		 * @param {String} grupId
+		 *
+		 * @returns {Boolean}
+		 *
+		 * @private
+		 */
+		isCacheable: function (grupId) {
 			if (
-				!Ext.isEmpty(cacheGroupIdentifier)
-				&& cacheGroupIdentifier != CMDBuild.core.constants.Proxy.UNCACHED // Force uncached AJAX calls
-				&& Ext.Array.contains(CMDBuild.core.cache.Cache.managedCacheGroupsArray, cacheGroupIdentifier)
+				!Ext.isEmpty(grupId)
+				&& grupId != CMDBuild.core.constants.Proxy.UNCACHED // Force uncached AJAX calls
 			) {
-				delete CMDBuild.core.cache.Cache.cachedValues[cacheGroupIdentifier];
+				return Ext.Array.contains(this.managedGroupsArray, grupId);
 			}
+
+			return false;
 		},
 
 		/**
 		 * Returns expired state and manage validity invalidate if expired
 		 *
-		 * @param {String} cacheGroupIdentifier
-		 * @param {String} identifier
-		 * @param {Object} parameters
+		 * @param {String} parameters.type
+		 * @param {String} parameters.groupId
+		 * @param {String} parameters.serviceEndpoint
+		 * @param {Object} parameters.params
 		 *
-		 * @returns {Boolean} result
+		 * @returns {Boolean} isExpired
 		 *
 		 * @private
 		 */
-		isExpired: function(cacheGroupIdentifier, identifier, parameters) {
-			cacheGroupIdentifier = Ext.isString(cacheGroupIdentifier) ? cacheGroupIdentifier : CMDBuild.core.constants.Proxy.GENERIC;
-			parameters = Ext.isEmpty(parameters) ? CMDBuild.core.constants.Proxy.EMPTY : parameters;
+		isExpired: function (parameters) {
+			parameters = this.parametersValidate(parameters, [
+				CMDBuild.core.constants.Proxy.TYPE,
+				CMDBuild.core.constants.Proxy.GROUP_ID,
+				CMDBuild.core.constants.Proxy.SERVICE_ENDPOINT,
+				CMDBuild.core.constants.Proxy.PARAMS
+			]);
 
-			var result = true;
+			var isExpired = true;
 
-			if (
-				!Ext.isEmpty(CMDBuild.core.cache.Cache.cachedValues[cacheGroupIdentifier])
-				&& !Ext.isEmpty(CMDBuild.core.cache.Cache.cachedValues[cacheGroupIdentifier][identifier])
-				&& !Ext.isEmpty(CMDBuild.core.cache.Cache.cachedValues[cacheGroupIdentifier][identifier][Ext.encode(parameters)])
-			) {
-				var cachedObject = CMDBuild.core.cache.Cache.cachedValues[cacheGroupIdentifier][identifier][Ext.encode(parameters)];
+			if (this.cachedDataExists(parameters)) {
+				var cachedObject = this.bufferObject[parameters.type][parameters.groupId][parameters.serviceEndpoint][Ext.encode(parameters.params)];
 
-				result = (
+				isExpired = (
 					Ext.isEmpty(cachedObject)
+					|| Ext.Object.isEmpty(cachedObject)
 					|| cachedObject.get(CMDBuild.core.constants.Proxy.DATE) < (Date.now() - CMDBuild.core.configurations.Timeout.getCache())
 				);
 
-				if (result)
+				if (isExpired)
 					delete cachedObject;
 			}
 
-			return result;
+			return isExpired;
+		},
+
+		/**
+		 * @returns {Boolean}
+		 *
+		 * @public
+		 */
+		isEnabled: function () {
+			return this.enabled;
+		},
+
+		/**
+		 * @param {Object} parameters
+		 * @param {Array} paramsToReturn
+		 *
+		 * @returns {Object} outputObject
+		 *
+		 * @private
+		 */
+		parametersValidate: function (parameters, paramsToReturn) {
+			parameters = Ext.isObject(parameters) ? parameters : {};
+
+			var outputObject = {};
+
+			// Apply defaults
+			Ext.applyIf(parameters, {
+				type: CMDBuild.core.constants.Proxy.STANDARD,
+				groupId: CMDBuild.core.constants.Proxy.GENERIC,
+				params: CMDBuild.core.constants.Proxy.EMPTY,
+				values: null
+			});
+
+			parameters.groupId = Ext.isString(parameters.groupId) ? parameters.groupId : CMDBuild.core.constants.Proxy.GENERIC;
+			parameters.serviceEndpoint = Ext.isString(parameters.serviceEndpoint) ? parameters.serviceEndpoint : null;
+			parameters.params = Ext.isEmpty(parameters.params) || Ext.Object.isEmpty(parameters.params) ? CMDBuild.core.constants.Proxy.EMPTY : parameters.params;
+
+			if (!Ext.isEmpty(paramsToReturn) && Ext.isArray(paramsToReturn)) {
+				Ext.Array.forEach(paramsToReturn, function (param, i, allParams) {
+					if (!Ext.isEmpty(parameters[param]))
+						outputObject[param] = parameters[param];
+				}, this);
+			} else {
+				outputObject = parameters;
+			}
+
+			return outputObject;
 		},
 
 		/**
@@ -150,16 +249,18 @@
 		 * @param {Function} parameters.failure
 		 * @param {Function} parameters.success
 		 * @param {Boolean} invalidateOnSuccess
+		 *
+		 * @public
 		 */
-		request: function(cacheGroupIdentifier, parameters, invalidateOnSuccess) {
-			cacheGroupIdentifier = Ext.isString(cacheGroupIdentifier) ? cacheGroupIdentifier : CMDBuild.core.constants.Proxy.GENERIC;
+		request: function (groupId, parameters, invalidateOnSuccess) {
+			groupId = Ext.isString(groupId) ? groupId : CMDBuild.core.constants.Proxy.GENERIC;
 			invalidateOnSuccess = Ext.isBoolean(invalidateOnSuccess) ? invalidateOnSuccess : false;
 
 			if (
 				!Ext.Object.isEmpty(parameters)
 				&& !Ext.isEmpty(parameters.url)
 			) {
-				// Set default values
+				// Apply defaults
 				Ext.applyIf(parameters, {
 					method: 'POST',
 					loadMask: true,
@@ -170,97 +271,123 @@
 				});
 
 				if (
-					cacheGroupIdentifier != CMDBuild.core.constants.Proxy.UNCACHED // Force uncached AJAX calls
-					&& Ext.Array.contains(CMDBuild.core.cache.Cache.managedCacheGroupsArray, cacheGroupIdentifier)
+					this.isEnabled()
+					&& this.isCacheable(groupId)
 				) { // Cacheable endpoints manage
 					if (
-						!CMDBuild.core.cache.Cache.enabled
-						|| CMDBuild.core.cache.Cache.isExpired(cacheGroupIdentifier, parameters.url, parameters.params)
-						|| invalidateOnSuccess
-					) {
-						parameters.success = Ext.Function.createSequence(function(result, options, decodedResult) {
-							if (CMDBuild.core.cache.Cache.enabled && !invalidateOnSuccess) // Don't cache if want to invalidate
-								CMDBuild.core.cache.Cache.set(cacheGroupIdentifier, parameters.url, parameters.params, {
-									result: result,
-									options: options,
-									decodedResult: decodedResult
-								});
-
-							if (invalidateOnSuccess)
-								CMDBuild.core.cache.Cache.invalidate(cacheGroupIdentifier);
-						}, parameters.success);
-
-						CMDBuild.core.interfaces.Ajax.request(parameters);
-					} else { // Emulation of success and callback execution
-						var cachedValues = CMDBuild.core.cache.Cache.get(cacheGroupIdentifier, parameters.url, parameters.params);
+						!this.isExpired({
+							groupId: groupId,
+							serviceEndpoint: parameters.url,
+							params: parameters.params
+						})
+						&& !invalidateOnSuccess
+					) { // Emulation of success and callback execution
+						var cachedValues = this.get({
+							groupId: groupId,
+							serviceEndpoint: parameters.url,
+							params: parameters.params
+						});
 
 						Ext.Function.createSequence(
 							Ext.bind(parameters.success, parameters.scope, [
-								cachedValues.result,
+								cachedValues.response,
 								cachedValues.options,
-								cachedValues.decodedResult
+								cachedValues.decodedResponse
 							]),
 							Ext.bind(parameters.callback, parameters.scope, [
 								cachedValues.options,
 								true,
-								cachedValues.result
+								cachedValues.response
 							]),
 							parameters.scope
 						)();
+					} else { // Execute real AJAX call
+						parameters.success = Ext.Function.createSequence(function (response, options, decodedResponse) {
+							if (invalidateOnSuccess) { // Don't cache if want to invalidate
+								CMDBuild.global.Cache.invalidate({ groupId: groupId });
+							} else {
+								CMDBuild.global.Cache.set({
+									groupId: groupId,
+									serviceEndpoint: parameters.url,
+									params: parameters.params,
+									values: {
+										response: response,
+										options: options,
+										decodedResponse: decodedResponse
+									}
+								});
+							}
+						}, parameters.success);
+
+						CMDBuild.core.interfaces.Ajax.request(parameters);
 					}
-				} else { // Uncachable endpoints manage
+				} else { // Uncacheable endpoints manage
 					CMDBuild.core.interfaces.Ajax.request(parameters);
 				}
 			} else {
-				_error('invalid request parameters', 'CMDBuild.core.cache.Cache');
+				_error('invalid request parameters', this);
 			}
 		},
 
 		/**
-		 * @param {String} cacheGroupIdentifier
-		 * @param {Object} parameters - Store configuration object
+		 * @param {String} parameters.groupId
+		 * @param {Object} storeParameters - Store configuration object
 		 *
 		 * @returns {CMDBuild.core.cache.Store}
+		 *
+		 * @public
 		 */
-		requestAsStore: function(cacheGroupIdentifier, parameters) {
-			Ext.apply(parameters, { cacheGroupIdentifier: cacheGroupIdentifier });
+		requestAsStore: function (groupId, storeParameters) {
+			parameters = this.parametersValidate({ groupId: groupId }, [CMDBuild.core.constants.Proxy.GROUP_ID]);
 
-			return Ext.create('CMDBuild.core.cache.Store', parameters);
+			Ext.apply(storeParameters, parameters);
+
+			return Ext.create('CMDBuild.core.cache.Store', storeParameters);
 		},
 
 		/**
-		 * @param {String} cacheGroupIdentifier
-		 * @param {String} identifier
-		 * @param {Object} parameters
-		 * @param {Object} values
+		 * @param {String} parameters.type
+		 * @param {String} parameters.groupId
+		 * @param {String} parameters.serviceEndpoint
+		 * @param {Object} parameters.params
+		 * @param {Object} parameters.values
+		 *
+		 * @returns {Object or null}
 		 *
 		 * @private
 		 */
-		set: function(cacheGroupIdentifier, identifier, parameters, values) {
-			cacheGroupIdentifier = Ext.isString(cacheGroupIdentifier) ? cacheGroupIdentifier : CMDBuild.core.constants.Proxy.GENERIC;
-			parameters = Ext.isEmpty(parameters) ? CMDBuild.core.constants.Proxy.EMPTY : parameters;
+		set: function (parameters) {
+			parameters = this.parametersValidate(parameters, [
+				CMDBuild.core.constants.Proxy.TYPE,
+				CMDBuild.core.constants.Proxy.GROUP_ID,
+				CMDBuild.core.constants.Proxy.SERVICE_ENDPOINT,
+				CMDBuild.core.constants.Proxy.PARAMS,
+				CMDBuild.core.constants.Proxy.VALUES
+			]);
 
 			if (
-				!Ext.isEmpty(identifier) && Ext.isString(identifier)
-				&& !Ext.isEmpty(values)
-				&& cacheGroupIdentifier != CMDBuild.core.constants.Proxy.UNCACHED // Force uncached AJAX calls
-				&& Ext.Array.contains(CMDBuild.core.cache.Cache.managedCacheGroupsArray, cacheGroupIdentifier)
+				!Ext.isEmpty(parameters.serviceEndpoint) && !Ext.isEmpty(parameters.values)
+				&& this.isCacheable(parameters.groupId)
 			) {
 				var cacheObject = {};
 				cacheObject[CMDBuild.core.constants.Proxy.DATE] = Date.now();
-				cacheObject[CMDBuild.core.constants.Proxy.PARAMETERS] = parameters;
-				cacheObject[CMDBuild.core.constants.Proxy.RESPONSE] = values;
+				cacheObject[CMDBuild.core.constants.Proxy.PARAMETERS] = parameters.params;
+				cacheObject[CMDBuild.core.constants.Proxy.RESPONSE] = parameters.values;
 
-				// Creates cache group object if not exists
-				if (Ext.isEmpty(CMDBuild.core.cache.Cache.cachedValues[cacheGroupIdentifier]))
-					CMDBuild.core.cache.Cache.cachedValues[cacheGroupIdentifier] = {};
+				// Creates cache groupId object if not exists
+				if (Ext.isEmpty(this.bufferObject[parameters.type][parameters.groupId]))
+					this.bufferObject[parameters.type][parameters.groupId] = {};
 
-				// Creates cache identifier object if not exists
-				if (Ext.isEmpty(CMDBuild.core.cache.Cache.cachedValues[cacheGroupIdentifier][identifier]))
-					CMDBuild.core.cache.Cache.cachedValues[cacheGroupIdentifier][identifier] = {};
+				// Creates cache serviceEndpoint object if not exists
+				if (Ext.isEmpty(this.bufferObject[parameters.type][parameters.groupId][parameters.serviceEndpoint]))
+					this.bufferObject[parameters.type][parameters.groupId][parameters.serviceEndpoint] = {};
 
-				CMDBuild.core.cache.Cache.cachedValues[cacheGroupIdentifier][identifier][Ext.encode(parameters)] = Ext.create('CMDBuild.model.Cache', cacheObject);
+				this.bufferObject[parameters.type][parameters.groupId][parameters.serviceEndpoint][Ext.encode(parameters.params)] = Ext.create('CMDBuild.model.Cache', cacheObject);
+
+				return this.bufferObject[parameters.type][parameters.groupId][parameters.serviceEndpoint][Ext.encode(parameters.params)];
 			}
+
+			return null;
 		}
 	});
 

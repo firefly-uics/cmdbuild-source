@@ -1,7 +1,7 @@
 (function($) {
 	var ManageEmail = {
 		ROWBUTTONREGENERATE: "refresh",
-		ROWBUTTONREPLY: "arrowTurnLeft",
+		ROWBUTTONREPLY: "btnIconReply",
 		ROWBUTTONDELETE: "deleteIconButton",
 		ROWBUTTONMODIFY: "pencilGoIcon",
 		mailAttributes: ["account", "bcc", "body", "cc", "date", "delay",

@@ -3,7 +3,7 @@
 	Ext.define('CMDBuild.core.proxy.report.Print', {
 
 		requires: [
-			'CMDBuild.core.cache.Cache',
+			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.proxy.Index'
 		],
 
@@ -17,7 +17,7 @@
 
 			Ext.apply(parameters, { url: CMDBuild.core.proxy.Index.report.print.cardDetails });
 
-			CMDBuild.core.cache.Cache.request(CMDBuild.core.constants.Proxy.REPORT, parameters);
+			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.REPORT, parameters);
 		},
 
 		/**
@@ -28,7 +28,7 @@
 
 			Ext.apply(parameters, { url: CMDBuild.core.proxy.Index.report.print.classSchema });
 
-			CMDBuild.core.cache.Cache.request(CMDBuild.core.constants.Proxy.REPORT, parameters);
+			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.REPORT, parameters);
 		},
 
 		/**
@@ -39,7 +39,7 @@
 
 			Ext.apply(parameters, { url: CMDBuild.core.proxy.Index.report.print.sqlView });
 
-			CMDBuild.core.cache.Cache.request(CMDBuild.core.constants.Proxy.REPORT, parameters);
+			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.REPORT, parameters);
 		},
 
 		/**
@@ -50,7 +50,7 @@
 
 			Ext.apply(parameters, { url: CMDBuild.core.proxy.Index.report.print.schema });
 
-			CMDBuild.core.cache.Cache.request(CMDBuild.core.constants.Proxy.REPORT, parameters);
+			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.REPORT, parameters);
 		},
 
 		/**
@@ -61,7 +61,7 @@
 
 			Ext.apply(parameters, { url: CMDBuild.core.proxy.Index.report.print.currentView });
 
-			CMDBuild.core.cache.Cache.request(CMDBuild.core.constants.Proxy.REPORT, parameters);
+			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.REPORT, parameters);
 		}
 	});
 

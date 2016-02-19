@@ -3,7 +3,6 @@
 	Ext.define('CMDBuild.core.proxy.userAndGroup.group.privileges.Classes', {
 
 		requires: [
-			'CMDBuild.core.cache.Cache',
 			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.proxy.Index',
 			'CMDBuild.model.userAndGroup.group.privileges.GridRecord'
@@ -15,7 +14,7 @@
 		 * @returns {Ext.data.Store or CMDBuild.core.cache.Store}
 		 */
 		getStore: function() {
-			return CMDBuild.core.cache.Cache.requestAsStore(CMDBuild.core.constants.Proxy.GROUP, {
+			return CMDBuild.global.Cache.requestAsStore(CMDBuild.core.constants.Proxy.GROUP, {
 				autoLoad: false,
 				model: 'CMDBuild.model.userAndGroup.group.privileges.GridRecord',
 				proxy: {
@@ -45,7 +44,7 @@
 
 			Ext.apply(parameters, { url: CMDBuild.core.proxy.Index.privileges.classes.loadClassUiConfiguration });
 
-			CMDBuild.core.cache.Cache.request(CMDBuild.core.constants.Proxy.GROUP, parameters);
+			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.GROUP, parameters);
 		},
 
 		/**
@@ -56,7 +55,7 @@
 
 			Ext.apply(parameters, { url: CMDBuild.core.proxy.Index.privileges.classes.setRowAndColumnPrivileges });
 
-			CMDBuild.core.cache.Cache.request(CMDBuild.core.constants.Proxy.GROUP, parameters, true);
+			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.GROUP, parameters, true);
 		},
 
 		/**
@@ -67,7 +66,7 @@
 
 			Ext.apply(parameters, { url: CMDBuild.core.proxy.Index.privileges.classes.update });
 
-			CMDBuild.core.cache.Cache.request(CMDBuild.core.constants.Proxy.GROUP, parameters, true);
+			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.GROUP, parameters, true);
 		},
 
 		/**
@@ -78,7 +77,7 @@
 
 			Ext.apply(parameters, { url: CMDBuild.core.proxy.Index.privileges.classes.saveClassUiConfiguration });
 
-			CMDBuild.core.cache.Cache.request(CMDBuild.core.constants.Proxy.GROUP, parameters, true);
+			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.GROUP, parameters, true);
 		}
 	});
 

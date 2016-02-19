@@ -40,7 +40,7 @@
 		};
 		this.insertNode = function(saved) {
 			var data = {
-				className: saved.className,
+				classId: saved.classId,
 				id: saved.id,
 				label: saved.label,
 				color: saved.color,
@@ -93,7 +93,7 @@
 				id: id,
 				parentId: parentId,
 				children: $.Cmdbuild.g3d.Model.getGraphData(node, "children"),
-				className: $.Cmdbuild.g3d.Model.getGraphData(node, "className"),
+				classId: $.Cmdbuild.g3d.Model.getGraphData(node, "classId"),
 				color: $.Cmdbuild.g3d.Model.getGraphData(node, "color"),
 				label: $.Cmdbuild.g3d.Model.getGraphData(node, "label"),
 				position: node.position(),

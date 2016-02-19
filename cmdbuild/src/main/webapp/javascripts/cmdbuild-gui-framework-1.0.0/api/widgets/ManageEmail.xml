@@ -33,7 +33,7 @@
 					<navigationForm variableId="true">formmail</navigationForm>
 				</onClick>
 			</rowButton>
-			<rowButton id="arrowTurnLeft" class="arrowTurnLeft" tooltip="Reply">
+			<rowButton id="btnIconReply" class="btnIconReply" tooltip="Reply">
 				<onClick>
 					<command>replyMail</command>
 					<form>formmail</form>

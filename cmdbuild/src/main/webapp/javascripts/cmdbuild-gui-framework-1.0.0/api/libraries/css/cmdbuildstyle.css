@@ -66,7 +66,7 @@ a:hover {
 .cmdbuildHeader .cmdbuildLogoWrapper {
 	height: 100%;
 	width: 150px;
-	background: transparent url("../images/logo_150x45.png") no-repeat left
+	background: transparent url("../images/cmdbuild_logo_150x45.png") no-repeat left
 		top;
 	background-size: 100% 100%;
 }
@@ -386,7 +386,7 @@ table.dataTable th {
 }
 
 .layoutContentIcon,.card {
-	background: transparent url("../images/layout_content.png") right 50%
+	background: transparent url("../images/icon_card.png") right 50%
 		no-repeat;
 }
 
@@ -397,8 +397,9 @@ table.dataTable th {
 	display: block;
 }
 
-.arrowTurnLeft {
-	background: transparent url("../images/arrow_turn_left.png") right 50%
+.arrowTurnLeft,
+.btnIconReply {
+	background: transparent url("../images/icon_reply.png") right 50%
 		no-repeat;
 	cursor: pointer;
 	width: 16px;
@@ -407,7 +408,7 @@ table.dataTable th {
 }
 
 .refresh {
-	background: transparent url("../images/refresh.gif") right 50% no-repeat;
+	background: transparent url("../images/icon_refresh.png") right 50% no-repeat;
 	cursor: pointer;
 	width: 16px;
 	height: 16px;
@@ -415,7 +416,7 @@ table.dataTable th {
 }
 
 .bookNextIcon,.processesNextPage {
-	background: transparent url("../images/book_next.png") right 50%
+	background: transparent url("../images/icon_next.png") right 50%
 		no-repeat;
 }
 
@@ -427,7 +428,7 @@ table.dataTable th {
 }
 
 .bookProcessIcon,.processesPreviousPage {
-	background: transparent url("../images/book_previous.png") right 50%
+	background: transparent url("../images/icon_previous.png") right 50%
 		no-repeat;
 }
 
@@ -439,7 +440,7 @@ table.dataTable th {
 }
 
 .crossIcon,.deleteIconButton {
-	background: transparent url("../images/cancel.png") right 50% no-repeat;
+	background: transparent url("../images/icon_cancel.png") right 50% no-repeat;
 }
 
 .deleteIconButton {
@@ -450,7 +451,7 @@ table.dataTable th {
 }
 
 .pencilGoIcon,.processesControlsAdvance {
-	background: transparent url("../images/pencil_go.png") right 50%
+	background: transparent url("../images/icon_modify.png") right 50%
 		no-repeat;
 	cursor: pointer;
 	width: 16px;
@@ -466,7 +467,7 @@ table.dataTable th {
 }
 
 .zoomIcon,.processesControlsDetail {
-	background: transparent url("../images/zoom.png") right 50% no-repeat;
+	background: transparent url("../images/icon_details.png") right 50% no-repeat;
 }
 
 .processesControlsDetail {
@@ -477,7 +478,7 @@ table.dataTable th {
 }
 
 .mailIcon,.processesControlsMail {
-	background: transparent url("../images/stock_mail.png") right 50%
+	background: transparent url("../images/icon_mail.png") right 50%
 		no-repeat;
 }
 
@@ -489,7 +490,7 @@ table.dataTable th {
 }
 
 .attachIcon,.processesControlsAttach {
-	background: transparent url("../images/attach.png") right 50% no-repeat;
+	background: transparent url("../images/icon_attach.png") right 50% no-repeat;
 }
 
 .processesControlsAttach {
@@ -500,7 +501,7 @@ table.dataTable th {
 }
 
 .downloadIcon,.processesControlsDownload {
-	background: transparent url("../images/download-icon.png") right 50%
+	background: transparent url("../images/icon_download.png") right 50%
 		no-repeat;
 }
 
@@ -512,7 +513,7 @@ table.dataTable th {
 }
 
 .hourglassIcon,.processesControlsHistory {
-	background: transparent url("../images/hourglass.png") right 50%
+	background: transparent url("../images/icon_history.png") right 50%
 		no-repeat;
 }
 
@@ -524,7 +525,7 @@ table.dataTable th {
 }
 
 .pdfIcon,.reportPdf {
-	background: transparent url("../images/ico_pdf.png") right 50% no-repeat;
+	background: transparent url("../images/icon_file_pdf.png") right 50% no-repeat;
 }
 
 .reportPdf {
@@ -535,7 +536,7 @@ table.dataTable th {
 }
 
 .odtIcon,.reportOdt {
-	background: transparent url("../images/ico_odt.png") right 50% no-repeat;
+	background: transparent url("../images/icon_file_odt.png") right 50% no-repeat;
 }
 
 .reportOdt {
@@ -546,7 +547,7 @@ table.dataTable th {
 }
 
 .csvIcon,.reportCsv {
-	background: transparent url("../images/ico_csv.png") right 50% no-repeat;
+	background: transparent url("../images/icon_file_csv.png") right 50% no-repeat;
 }
 
 .reportCsv {
@@ -557,7 +558,7 @@ table.dataTable th {
 }
 
 .rtfIcon,.reportRtf {
-	background: transparent url("../images/ico_rtf.png") right 50% no-repeat;
+	background: transparent url("../images/icon_file_rtf.png") right 50% no-repeat;
 }
 
 .reportRtf {

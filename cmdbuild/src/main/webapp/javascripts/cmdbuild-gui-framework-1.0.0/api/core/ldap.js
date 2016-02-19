@@ -95,7 +95,7 @@
 		resolveCqlCallback : function(value, keys, callback, callbackScope) {
 			try {
 				this.configurator.manager["cql"].getValue("", value, function(response) {
-					if (response.length <= 0) {
+					if (response && response.length <= 0) {
 						throw new $.Cmdbuild.errorsManager.getError({
 							message : $.Cmdbuild.errorsManager.CMERROR,
 							type : $.Cmdbuild.errorsManager.PARAMNOTCORRECT,
@@ -105,7 +105,7 @@
 						});
 					}
 					var retValue = "";
-					if (response.length == 1) {
+					if (response && response.length == 1) {
 						retValue = response[0][keys[1]];
 						if (typeof retValue === "object") {
 							retValue = retValue.description;
