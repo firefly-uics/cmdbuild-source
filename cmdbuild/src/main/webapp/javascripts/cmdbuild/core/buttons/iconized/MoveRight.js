@@ -4,7 +4,7 @@
 		extend: 'CMDBuild.core.buttons.Base',
 
 		iconCls: 'arrowRight',
-		textDefault: CMDBuild.Translation.common.buttons.move
+		textDefault: CMDBuild.Translation.move
 	});
 
 })();

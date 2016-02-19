@@ -33,9 +33,15 @@
    				},
    				{
    					type: "string",
-   					name: "className",
+   					name: "classDescription",
    					description: "Class",
    					displayableInList: true
+   				},
+   				{
+   					type: "string",
+   					name: "classId",
+   					description: "Class",
+   					displayableInList: false
    				}
    			];
 			setTimeout(function() { onObjectReady(); }, 100);

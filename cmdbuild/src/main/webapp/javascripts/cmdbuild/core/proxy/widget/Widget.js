@@ -19,14 +19,14 @@
 
 			Ext.apply(parameters, { url: CMDBuild.core.proxy.Index.widget.create });
 
-			CMDBuild.core.cache.Cache.request(CMDBuild.core.constants.Proxy.WIDGET, parameters, true);
+			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.WIDGET, parameters, true);
 		},
 
 		/**
 		 * @return {Ext.data.Store or CMDBuild.core.cache.Store}
 		 */
 		getStore: function() {
-			return CMDBuild.core.cache.Cache.requestAsStore(CMDBuild.core.constants.Proxy.WIDGET, {
+			return CMDBuild.global.Cache.requestAsStore(CMDBuild.core.constants.Proxy.WIDGET, {
 				autoLoad: false,
 				model: 'CMDBuild.model.widget.DefinitionGrid',
 				proxy: {
@@ -51,7 +51,7 @@
 
 			Ext.apply(parameters, { url: CMDBuild.core.proxy.Index.widget.read });
 
-			CMDBuild.core.cache.Cache.request(CMDBuild.core.constants.Proxy.WIDGET, parameters);
+			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.WIDGET, parameters);
 		},
 
 		/**
@@ -62,7 +62,7 @@
 
 			Ext.apply(parameters, { url: CMDBuild.core.proxy.Index.widget.readAll });
 
-			CMDBuild.core.cache.Cache.request(CMDBuild.core.constants.Proxy.WIDGET, parameters);
+			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.WIDGET, parameters);
 		},
 
 		/**
@@ -73,7 +73,7 @@
 
 			Ext.apply(parameters, { url: CMDBuild.core.proxy.Index.widget.remove });
 
-			CMDBuild.core.cache.Cache.request(CMDBuild.core.constants.Proxy.WIDGET, parameters, true);
+			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.WIDGET, parameters, true);
 		},
 
 		/**
@@ -86,7 +86,7 @@
 
 			Ext.apply(parameters, { url: CMDBuild.core.proxy.Index.widget.setSorting });
 
-			CMDBuild.core.cache.Cache.request(CMDBuild.core.constants.Proxy.WIDGET, parameters, true);
+			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.WIDGET, parameters, true);
 		},
 
 		/**
@@ -97,7 +97,7 @@
 
 			Ext.apply(parameters, { url: CMDBuild.core.proxy.Index.widget.update });
 
-			CMDBuild.core.cache.Cache.request(CMDBuild.core.constants.Proxy.WIDGET, parameters, true);
+			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.WIDGET, parameters, true);
 		}
 	});
 

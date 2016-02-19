@@ -3,7 +3,6 @@
 	Ext.define('CMDBuild.core.proxy.widget.CreateModifyCard', {
 
 		requires: [
-			'CMDBuild.core.cache.Cache',
 			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.proxy.Index',
 			'CMDBuild.model.widget.createModifyCard.TargetClass'
@@ -17,7 +16,7 @@
 		 * @administration
 		 */
 		getStoreTargetClass: function() {
-			return CMDBuild.core.cache.Cache.requestAsStore(CMDBuild.core.constants.Proxy.CLASS, {
+			return CMDBuild.global.Cache.requestAsStore(CMDBuild.core.constants.Proxy.CLASS, {
 				autoLoad: true,
 				model: 'CMDBuild.model.widget.createModifyCard.TargetClass',
 				proxy: {

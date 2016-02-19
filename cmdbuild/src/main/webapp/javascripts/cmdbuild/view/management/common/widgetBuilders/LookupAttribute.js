@@ -218,7 +218,7 @@
 			buttonAlign: "center",
 			buttons: [{
 				xtype: "button",
-				text: CMDBuild.Translation.common.buttons.confirm,
+				text: CMDBuild.Translation.ok,
 				handler: function() {
 					var value = fieldForTheWindow.getValue(),
 						rawValue = fieldForTheWindow.getRawValue(),
@@ -243,7 +243,7 @@
 				}
 			},{
 				xtype: "button",
-				text: CMDBuild.Translation.common.buttons.abort,
+				text: CMDBuild.Translation.cancel,
 				handler: function() {
 					me.editingWindow.destroy();
 					delete me.editingWindow;

@@ -67,12 +67,18 @@
 		params.containerId = $(this).attr("id");
 		var container = $(this);
 		// load start script and start application
-		var nameFile = $.Cmdbuild.appRootUrl + "core/start.js";
-		$.getScript(nameFile,
-				function() {
-					$.Cmdbuild.start.loadAndStart(params, container);
-				});
+		var nameFile = $.Cmdbuild.appRootUrl + "start.js";
 
-		return this;
+		$.Cmdbuild.utilities = {};
+
+		$.ajax({
+			async: false,
+			url: nameFile,
+			dataType: "script",
+			cache: !params.debug,
+			success : function(data, status) {
+				$.Cmdbuild.start.loadAndStart(params, container);
+			}
+		});
 	};
 })(jQuery);

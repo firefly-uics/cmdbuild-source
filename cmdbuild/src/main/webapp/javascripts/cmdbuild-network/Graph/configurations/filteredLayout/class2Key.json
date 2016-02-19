@@ -3,6 +3,7 @@
 			"COMMENT": "This is a system node default and selection shapes have to exist",
 			"cmdbuildDefaultShape": "cmdbuildDefaultShape",
 			"cmdbuildSelectionShape": "cmdbuildSelectionShape",
+			"cmdbuildRelationShape": "cmdbuildCurrentShape",
 			"cmdbuildRelationShape": "cmdbuildRelationShape"
 		},
 		"networkKeys": {

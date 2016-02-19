@@ -26,6 +26,7 @@
 		READ_ONLY : "READ_ONLY",
 		htmlContainer : null,
 		themeCSSClass : null,
+		debugMode : undefined,
 		// tags that can be influenced by a withId tag
 		ID_TAGS: ["onClick > dialog", "onClick > form", "onClick > container",  "onClick > *[variableId='true']",
 		          "onInit > dialog", "onInit > form", "onInit > container",  "onInit > *[variableId='true']",
@@ -53,7 +54,7 @@
 			return this.READ_ONLY;
 		},
 		fieldInteractivityFromCard : function(type) {
-			if (type == true) {
+			if (type === true) {
 				return this.READ_WRITE_REQUIRED;
 			}
 			return this.READ_WRITE;
@@ -167,6 +168,14 @@
 		},
 		getLanguage : function() {
 			return this.language;
+		},
+
+		// Debug mode
+		setDebugMode : function(debug) {
+			this.debugMode = debug;
+		},
+		isDebugMode : function() {
+			return this.debugMode;
 		},
 
 		// Authentication config

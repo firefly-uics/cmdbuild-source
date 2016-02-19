@@ -3,7 +3,6 @@
 	Ext.define('CMDBuild.core.proxy.Configure', {
 
 		requires: [
-			'CMDBuild.core.cache.Cache',
 			'CMDBuild.core.configurations.Timeout',
 			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.proxy.Index'
@@ -22,7 +21,7 @@
 				url: CMDBuild.core.proxy.Index.configuration.apply
 			});
 
-			CMDBuild.core.cache.Cache.request(CMDBuild.core.constants.Proxy.UNCACHED, parameters);
+			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.UNCACHED, parameters);
 		},
 
 		/**
@@ -33,7 +32,7 @@
 
 			Ext.apply(parameters, { url: CMDBuild.core.proxy.Index.configuration.connectionTest });
 
-			CMDBuild.core.cache.Cache.request(CMDBuild.core.constants.Proxy.UNCACHED, parameters);
+			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.UNCACHED, parameters);
 		},
 
 		/**

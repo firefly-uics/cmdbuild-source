@@ -27,7 +27,6 @@
 					}
 				}
 			};
-			//var script = 'http://localhost/cmdbuild-gui-framework/api/cmdbuildAP.js';
 			var script = getUrlParameter("basePath") + "/javascripts/cmdbuild-gui-framework-" +
 			getUrlParameter("frameworkVersion") + "/api/cmdbuildAP.js";
 
@@ -50,23 +49,25 @@
 			function callCmdbuildAP() {
 				$("#cmdbuilForm").cmdbuildAP({
 					apiUrl : '~/services/rest/v2/',
-					//appRootUrl : 'http://localhost/cmdbuild-gui-framework/',
 					appRootUrl : '~/javascripts/cmdbuild-gui-framework-' + getUrlParameter("frameworkVersion") + '/',
 					appConfigUrl: 'Graph/',
 					access_token: 'CMDBuildSessionToken',
 					customjs: [
-							"libraries/cytoscape.min.js",
+							"libraries/cytoscape.js",
 							"backend/CmdbuildModel.js",
 							"backend/ClassesNavigation.js",
+							"backend/ClassesFilter.js",
+							"backend/DomainsFilter.js",
 							"backend/CardsNavigation.js",
 							"backend/SelectedNavigation.js",
 							"backend/SpriteArchive.js",
 							"backend/Options.js",
 							"backend/Relations.js",
 							"backend/GraphCard.js",
+							"backend/DomainsFilterClasses.js",
+							"backend/OnGraphRelations.js",
 							"commands/modifyPosition.js",
 							"commands/macroCommand.js",
-							"commands/explode.js",
 							"commands/explode_levels.js",
 							"commands/init_explode.js",
 							"commands/openChildren.js",
@@ -75,11 +76,14 @@
 							"commands.js",
 							"elements.js",
 							"cardsGrid.js",
+							"domainsGrid.js",
+							"classesGrid.js",
 							"selectedGrid.js",
 							"relationsGrid.js",
 							"three.min.js",
 							"scripts.js",
 							"tree.js",
+							"core/cache.js",
 							"core/proxy.js",
 							"core/constants.js",
 							"core/CommandsManager.js",
@@ -91,9 +95,9 @@
 							"views/viewer/ViewerUtilities.js",
 							"views/viewer/Camera.js",
 							"TrackballControls.js",
-							"plugins/GuiCircle.js", // first layout's sample
-							"plugins/GuiSpringy.js", // first layout's sample
-							"plugins/GuiSphere.js"], // first layout's sample
+							"plugins/GuiCircle.js", 
+							"plugins/GuiSpringy.js",
+							"plugins/GuiSphere.js"], 
 					start: "home.xml",
 					theme: [
 							"jquery-ui-graph.theme.min.css",

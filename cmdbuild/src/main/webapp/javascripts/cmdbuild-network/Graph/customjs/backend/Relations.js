@@ -23,7 +23,12 @@
 				displayableInList: true
 			}, {
 				type: "string",
-				name: "className",
+				name: "classId",
+				description: "Class",
+				displayableInList: false
+			}, {
+				type: "string",
+				name: "classDescription",
 				description: "Class",
 				displayableInList: true
 			}, {
@@ -43,33 +48,33 @@
 		};
 		this.loadData = function(param, callback, callbackScope) {
 			this.data = [];
-			this.getAllDomains(param.className, param.cardId,
-					function(response) {
-						this.rows = [];
-						var nRows = parseInt(param.nRows);
-						var firstRow = parseInt(param.firstRow);
-						for (var i = firstRow; i < firstRow + nRows
-								&& i < this.data.length; i++) {
-							this.rows.push(this.data[i]);
-						}
-						this.populateRelationAttributes(this.rows, 0,
-								function() {
-									callback.apply(callbackScope, (this.rows) ? this.rows : []);
-								}, this);
-					}, this);
+			this.getAllDomains(param.classId, param.cardId, function(response) {
+				this.rows = [];
+				var nRows = parseInt(param.nRows);
+				var firstRow = parseInt(param.firstRow);
+				for (var i = firstRow; i < firstRow + nRows
+						&& i < this.data.length; i++) {
+					this.rows.push(this.data[i]);
+				}
+				this.populateRelationAttributes(this.rows, 0,
+						function() {
+							callback.apply(callbackScope, (this.rows)
+									? this.rows
+									: []);
+						}, this);
+			}, this);
 		};
-		this.getAllDomains = function(className, cardId, callback,
-				callbackScope) {
-			var filter = this.getFilterForDomain(className);
+		this.getAllDomains = function(classId, cardId, callback, callbackScope) {
+			var filter = this.getFilterForDomain(classId);
 			var param = {
 				filter: filter
 			};
 			$.Cmdbuild.utilities.proxy.getDomains(param, function(response) {
-				this.getAllRelations(response, className, parseInt(cardId),
+				this.getAllRelations(response, classId, parseInt(cardId),
 						callback, callbackScope);
 			}, this);
 		};
-		this.getAllRelations = function(domains, className, cardId, callback,
+		this.getAllRelations = function(domains, classId, cardId, callback,
 				callbackScope) {
 			if (domains.length == 0) {
 				callback.apply(callbackScope, [this.data]);
@@ -88,36 +93,38 @@
 				$.Cmdbuild.utilities.proxy
 						.getRelations(domainId, param,
 								function(response) {
-									this.getAllRelationsCB(domains, className,
+									this.getAllRelationsCB(domains, classId,
 											cardId, response, domainAttributes,
 											domainDescription, callback,
 											callbackScope);
 								}, this);
 			}, this);
 		};
-		this.getAllRelationsCB = function(domains, className, cardId,
-				relations, domainAttributes, domainDescription, callback,
-				callbackScope) {
+		this.getAllRelationsCB = function(domains, classId, cardId, relations,
+				domainAttributes, domainDescription, callback, callbackScope) {
 			if (relations.length <= 0) {
-				this.getAllRelations(domains, className, cardId, callback,
+				this.getAllRelations(domains, classId, cardId, callback,
 						callbackScope);
 				return;
 			}
 			for (var i = 0; i < relations.length; i++) {
+				var classId = (relations[i]._sourceId != cardId)
+						? relations[i]._sourceType
+						: relations[i]._destinationType;
+				var classDescription = $.Cmdbuild.customvariables.cacheClasses.getDescription(classId);
 				this.data.push({
 					domainId: relations[i]._type,
 					domainDescription: domainDescription,
 					relationId: relations[i]._id,
-					className: (relations[i]._sourceId != cardId)
-							? relations[i]._sourceType
-							: relations[i]._destinationType,
+					classId: classId,
+					classDescription: classDescription,
 					cardDescription: (relations[i]._sourceId != cardId)
 							? relations[i]._sourceDescription
 							: relations[i]._destinationDescription,
 					domainAttributes: domainAttributes
 				});
 			}
-			this.getAllRelations(domains, className, cardId, callback,
+			this.getAllRelations(domains, classId, cardId, callback,
 					callbackScope);
 		};
 		this.populateRelationAttributes = function(rows, index, callback,
@@ -186,7 +193,8 @@
 				attributesStrings, relationDetail, callback, callbackScope) {
 			attributesStrings.strHeaders += "<th>"
 					+ domainAttribute.description + "</th>";
-			if (domainAttribute.type == "lookup" && relationDetail[domainAttribute._id]) {
+			if (domainAttribute.type == "lookup"
+					&& relationDetail[domainAttribute._id]) {
 				$.Cmdbuild.utilities.proxy.getLookupValue(domainAttribute.type,
 						relationDetail[domainAttribute._id], {}, function(
 								response) {
@@ -214,20 +222,20 @@
 			return this.metadata;
 		};
 
-		this.getFilterForDomain = function(className) {
+		this.getFilterForDomain = function(classId) {
 			var filter = {
 				attribute: {
 					or: [{
 						simple: {
 							attribute: "source",
 							operator: "contain",
-							value: [className]
+							value: [classId]
 						}
 					}, {
 						simple: {
 							attribute: "destination",
 							operator: "contain",
-							value: [className]
+							value: [classId]
 						}
 					}]
 				}

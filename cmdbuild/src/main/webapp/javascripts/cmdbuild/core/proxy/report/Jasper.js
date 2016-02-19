@@ -3,7 +3,6 @@
 	Ext.define('CMDBuild.core.proxy.report.Jasper', {
 
 		requires: [
-			'CMDBuild.core.cache.Cache',
 			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.interfaces.FormSubmit',
 			'CMDBuild.core.proxy.Index',
@@ -31,14 +30,14 @@
 
 			Ext.apply(parameters, { url: CMDBuild.core.proxy.Index.report.jasper.create });
 
-			CMDBuild.core.cache.Cache.request(CMDBuild.core.constants.Proxy.REPORT, parameters, true);
+			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.REPORT, parameters, true);
 		},
 
 		/**
 		 * @returns {Ext.data.Store or CMDBuild.core.cache.Store}
 		 */
 		getStore: function() {
-			return CMDBuild.core.cache.Cache.requestAsStore(CMDBuild.core.constants.Proxy.REPORT, {
+			return CMDBuild.global.Cache.requestAsStore(CMDBuild.core.constants.Proxy.REPORT, {
 				autoLoad: false,
 				model: 'CMDBuild.model.report.Grid',
 				pageSize: CMDBuild.configuration.instance.get(CMDBuild.core.constants.Proxy.ROW_LIMIT),
@@ -79,7 +78,7 @@
 
 			Ext.apply(parameters, { url: CMDBuild.core.proxy.Index.report.jasper.remove });
 
-			CMDBuild.core.cache.Cache.request(CMDBuild.core.constants.Proxy.REPORT, parameters, true);
+			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.REPORT, parameters, true);
 		},
 
 		/**
@@ -90,7 +89,7 @@
 
 			Ext.apply(parameters, { url: CMDBuild.core.proxy.Index.report.jasper.resetSession });
 
-			CMDBuild.core.cache.Cache.request(CMDBuild.core.constants.Proxy.REPORT, parameters);
+			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.REPORT, parameters);
 		},
 
 		/**
@@ -101,7 +100,7 @@
 
 			Ext.apply(parameters, { url: CMDBuild.core.proxy.Index.report.jasper.save });
 
-			CMDBuild.core.cache.Cache.request(CMDBuild.core.constants.Proxy.REPORT, parameters, true);
+			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.REPORT, parameters, true);
 		}
 	});
 

@@ -106,6 +106,7 @@
 		objOnPlane: function(position) {
 			var selectionShape = $.Cmdbuild.g3d.constants.SELECTION_SHAPE;
 			var sprite = $.Cmdbuild.SpriteArchive.class2Sprite(selectionShape);
+			THREE.ImageUtils.crossOrigin = true;
 			var map = THREE.ImageUtils.loadTexture(sprite);
 			var material = new THREE.SpriteMaterial({
 				map: map,
@@ -138,15 +139,17 @@
 				fog: false
 			});
 			var object = new THREE.Sprite(material);
-			var sd = $.Cmdbuild.custom.configuration.spriteDimension;
+			var sd = $.Cmdbuild.customvariables.options.spriteDimension;
 			object.scale.set(sd * 2, sd * 2, 2);
 			object.material.ambient = object.material.color;
 			return object;
 		},
-		objectFromNode: function(node, selected, position) {
-			var sprite = $.Cmdbuild.SpriteArchive
-					.class2Sprite($.Cmdbuild.g3d.Model.getGraphData(node,
-							"className"));
+		objectFromNode: function(node, position) {
+//			var sprite = $.Cmdbuild.SpriteArchive
+//					.class2Sprite($.Cmdbuild.g3d.Model.getGraphData(node,
+//							"classId"));
+			var classId = $.Cmdbuild.g3d.Model.getGraphData(node, "classId");
+			var sprite = $.Cmdbuild.customvariables.cacheImages.getImage(classId);
 			try {
 				var map = THREE.ImageUtils.loadTexture(sprite, {}, function() {
 
@@ -154,7 +157,7 @@
 				if (!map) {
 					console.log("Error on Sprite: "
 							+ $.Cmdbuild.g3d.Model.getGraphData(node,
-									"className") + " the sprite is " + sprite);
+									"classId") + " the sprite is " + sprite);
 				}
 				var material = new THREE.SpriteMaterial({
 					map: map,
@@ -162,7 +165,7 @@
 					fog: false
 				});
 				var object = new THREE.Sprite(material);
-				var sd = $.Cmdbuild.custom.configuration.spriteDimension;
+				var sd = $.Cmdbuild.customvariables.options.spriteDimension;
 				object.scale.set(sd, sd, 1);
 				object.material.ambient = object.material.color;
 				object.position.x = position.x;
@@ -174,7 +177,7 @@
 				return object;
 			} catch (e) {
 				console.log("Error on Sprite: "
-						+ $.Cmdbuild.g3d.Model.getGraphData(node, "className")
+						+ $.Cmdbuild.g3d.Model.getGraphData(node, "classId")
 						+ " the sprite is " + sprite);
 				return null;
 			}
@@ -194,7 +197,7 @@
 			var line = new THREE.Line(geometry, material);
 			line.source = source;
 			line.target = target;
-			line.label = edge.data("label");
+			line.domainId = edge.data("domainId");
 			return line;
 		},
 		moveObject: function(viewer, node) {
@@ -270,9 +273,109 @@
 			return node.position();
 		},
 		equals: function(p1, p2) {
-			var epsilon = 10;
+			var epsilon = $.Cmdbuild.g3d.constants.MIN_MOVEMENT;
 			return !(Math.abs(p1.x - p2.x) > epsilon
 					|| Math.abs(p1.y - p2.y) > epsilon || Math.abs(p1.z - p2.z) > epsilon);
+		},
+		boundingBox: function(objects) {
+			var maxx = -Number.MAX_VALUE;
+			var maxy = -Number.MAX_VALUE;
+			var maxz = -Number.MAX_VALUE;
+			var minx = Number.MAX_VALUE;
+			var miny = Number.MAX_VALUE;
+			var minz = Number.MAX_VALUE;
+			for (var i = 0; i < objects.length; i++) {
+				var p = objects[i].position;
+				minx = Math.min(minx, p.x);
+				miny = Math.min(miny, p.y);
+				minz = Math.min(minz, p.z);
+				maxx = Math.max(maxx, p.x);
+				maxy = Math.max(maxy, p.y);
+				maxz = Math.max(maxz, p.z);
+			}
+			return {
+				x: minx,
+				y: miny,
+				z: minz,
+				w: maxx - minx,
+				h: maxy - miny,
+				d: maxz - minz
+			};
+		},
+		boundingBoxVertices: function(box) {
+			return [{
+				x: box.x,
+				y: box.y,
+				z: box.z
+			}, {
+				x: box.x,
+				y: box.y,
+				z: box.d + box.z
+			}, {
+				x: box.x,
+				y: box.h + box.y,
+				z: box.z
+			}, {
+				x: box.x,
+				y: box.h + box.y,
+				z: box.d + box.z
+			}, {
+				x: box.w + box.x,
+				y: box.y,
+				z: box.z
+			}, {
+				x: box.w + box.x,
+				y: box.y,
+				z: box.d + box.z
+			}, {
+				x: box.w + box.x,
+				y: box.h + box.y,
+				z: box.z
+			}, {
+				x: box.w + box.x,
+				y: box.h + box.y,
+				z: box.d + box.z
+			}];
+		},
+		projectVector: function(vector, projectionMatrix, matrixWorld) {
+			var projScreenMatrix = new THREE.Matrix4();
+			var matrixWorldInverse = new THREE.Matrix4();
+			matrixWorldInverse.getInverse(matrixWorld);
+
+			projScreenMatrix.multiplyMatrices(projectionMatrix,
+					matrixWorldInverse);
+			vector = vector.applyProjection(projScreenMatrix);
+
+			return vector;
+
+		},
+		pointOnScreen: function(vector, w, h, projectionMatrix, matrixWorld,
+				bFirst) {
+			var v = new THREE.Vector3();
+			v.copy(vector);
+			this.projectVector(v, projectionMatrix, matrixWorld);
+			v.x = (v.x * w / 2) + w / 2;
+			v.y = -(v.y * h / 2) + h / 2;
+			var bx = 0;
+			var by = 0;
+			var bw = w;
+			var bh = h;
+			if (v.x < bx || v.x > bw || v.y < by || v.y > bh) {
+				return false;
+			}
+			return true;
+		},
+		onVideo: function(box, w, h, projectionMatrix, matrixWorld) {
+			for (var i = 0; i < box.vertices.length; i++) {
+				var vertice = box.vertices[i];
+				var vector = new THREE.Vector3(vertice.x, vertice.y, vertice.z);
+				var bOnVideo = this.pointOnScreen(vector, w, h,
+						projectionMatrix, matrixWorld);
+				if (!bOnVideo) {
+					return false;
+				}
+			}
+			return true;
 		}
 	};
 	$.Cmdbuild.g3d.ViewerUtilities = ViewerUtilities;

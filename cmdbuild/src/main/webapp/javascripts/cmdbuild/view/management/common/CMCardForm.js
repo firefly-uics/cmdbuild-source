@@ -414,7 +414,7 @@
 					CMDBuild.core.constants.Proxy.ODT
 				],
 				mode: 'legacy',
-				text: CMDBuild.Translation.common.buttons.print + ' ' + CMDBuild.Translation.management.modcard.tabs.card.toLowerCase()
+				text: CMDBuild.Translation.print + ' ' + CMDBuild.Translation.management.modcard.tabs.card.toLowerCase()
 			});
 
 			this.mon(this.printCardMenu, "click", function(format) {
@@ -447,14 +447,14 @@
 		if (this.withButtons) {
 			var me = this;
 			this.saveButton = new Ext.button.Button({
-				text: CMDBuild.Translation.common.buttons.save,
+				text: CMDBuild.Translation.save,
 				handler: function() {
 					me.fireEvent(me.CMEVENTS.saveCardButtonClick);
 				}
 			});
 
 			this.cancelButton = new Ext.button.Button( {
-				text: this.readOnlyForm ? CMDBuild.Translation.common.buttons.close : CMDBuild.Translation.common.buttons.abort,
+				text: this.readOnlyForm ? CMDBuild.Translation.close : CMDBuild.Translation.cancel,
 				handler: function() {
 					me.fireEvent(me.CMEVENTS.abortButtonClick);
 				}

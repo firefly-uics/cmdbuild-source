@@ -82,10 +82,10 @@
 			}
 		};
 		this.getAttributes = function() {
-			return this.attributes;
+			return (this.attributes) ? this.attributes : [];
 		};
 		this.getData = function() {
-			return this.data;
+			return (this.data) ? this.data : [];
 		};
 		this.getMetadata = function() {
 			return this.metadata;

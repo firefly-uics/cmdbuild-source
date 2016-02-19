@@ -204,7 +204,7 @@
 
 	function buttons(me) {
 		me.saveButton = new Ext.button.Button({
-			text: CMDBuild.Translation.common.buttons.save,
+			text: CMDBuild.Translation.save,
 			disabled: true,
 			handler: function() {
 				me.delegate.onSaveButtonClick();
@@ -212,7 +212,7 @@
 		});
 
 		me.abortButton = new Ext.button.Button({
-			text: CMDBuild.Translation.common.buttons.abort,
+			text: CMDBuild.Translation.cancel,
 			disabled: true,
 			handler: function() {
 				me.delegate.onAbortButtonClick();

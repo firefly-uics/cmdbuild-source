@@ -21,7 +21,7 @@
 
 			// Buttons configuration
 				this.saveButton = Ext.create('Ext.button.Button', {
-					text: CMDBuild.Translation.common.buttons.save,
+					text: CMDBuild.Translation.save,
 					disabled: false,
 					scope: this,
 

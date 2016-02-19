@@ -22,7 +22,7 @@
 			this.buttons = this.buttons || [];
 
 			this.backToActivityButton = new Ext.button.Button({
-				text: CMDBuild.Translation.common.buttons.workflow.back,
+				text: CMDBuild.Translation.back,
 				hidden: true
 			});
 

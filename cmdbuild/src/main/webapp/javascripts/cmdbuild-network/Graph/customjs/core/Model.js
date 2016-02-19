@@ -65,7 +65,7 @@
 			var filter = "";
 			filter += "[target='" + edge.target + "']";
 			filter += "[source='" + edge.source + "']";
-			filter += "[label='" + edge.label + "']";
+			filter += "[domainId='" + edge.domainId + "']";
 			return cy.edges(filter);
 		};
 		this.insertNode = function(node) {
@@ -73,10 +73,11 @@
 			    group: "nodes",
 			    data: {
 		    		id : node.data.id,
-		    		className: node.data.className,
+		    		classId: node.data.classId,
 		    		label: node.data.label,
 		    		color: node.data.color,
 		    		compoundData: node.data.compoundData,
+		    		domain: node.data.domain,
 		    		children: node.data.children,
 		    		previousPathNode: node.data.previousPathNode
 			    },
@@ -95,7 +96,13 @@
 			}
 			cy.add({
 			    group: "edges",
-			    data: {source: edge.data.source, target: edge.data.target, label: edge.data.label },
+			    data: {
+			    	source: edge.data.source, 
+			    	target: edge.data.target, 
+			    	label: edge.data.label,
+			    	domainId: edge.data.domainId,
+			    	relationId: edge.data.relationId 
+			    },
 			});
 		};
 		this.modifyPosition = function(id, value) {
@@ -130,11 +137,11 @@
 			}
 			$.Cmdbuild.g3d.Model.setGraphData(node, "children", newChildren);
 		};
-		this.removeEdge= function(edge) {
+		this.removeEdge = function(edge) {
 			var filter = "";
-			filter += "[target='" + edge.target + "']";
-			filter += "[source='" + edge.source + "']";
-			filter += "[label='" + edge.label + "']";
+			filter += (edge.target) ? "[target='" + edge.target + "']" : "";
+			filter += (edge.source) ? "[source='" + edge.source + "']" : "";
+			filter += (edge.domainId) ? "[domainId='" + edge.domainId + "']" : "";
 			cy.remove(cy.edges(filter));
 		};
 		this.remove = function(id) {
@@ -147,30 +154,35 @@
 			}
 			cy.remove("node#" + id);
 		};
-		this.pushElements = function(elements) {
-			for (var i = 0; i < elements.nodes.length; i++) {
-				var node = elements.nodes[i];
-				this.insertNode(node);
-			}
-			for (var i = 0; i < elements.edges.length; i++) {
-				var edge = elements.edges[i];
-				this.insertEdge(edge);
-			}
+		this.pushElements = function(elements, callback, callbackScope) {
+			$.Cmdbuild.customvariables.cacheImages.pushElements(elements, function() {
+				for (var i = 0; i < elements.nodes.length; i++) {
+					var node = elements.nodes[i];
+					this.insertNode(node);
+				}
+				for (var i = 0; i < elements.edges.length; i++) {
+					var edge = elements.edges[i];
+					this.insertEdge(edge);
+				}
+				callback.apply(callbackScope, []);
+			}, this);
 		};
 		this.getDistinctClasses = function() {
 			this.classes = {};
 			var nodes = this.getNodes();
 			for (var i = 0; i < nodes.length; i++) {
 				var node = nodes[i];
-				var className = $.Cmdbuild.g3d.Model.getGraphData(node, "className");
-				if (! this.classes[className]) {
-					this.classes[className] = {
-							className: className,
+				var classId = $.Cmdbuild.g3d.Model.getGraphData(node, "classId");
+				if (! this.classes[classId]) {
+					var classDescription = $.Cmdbuild.customvariables.cacheClasses.getDescription(classId);
+					this.classes[classId] = {
+							classId: classId,
+							classDescription: classDescription,
 							qt: 1
 					}
 				}
 				else {
-					this.classes[className].qt += 1;
+					this.classes[classId].qt += 1;
 				}
 			}
 			var arClasses = [];
@@ -194,7 +206,7 @@
 			var remainElements = [];
 			for (var i = 0; i < elements.length; i++) {
 				var element = elements[i];
-				if (! this.getNode(element.destinationId)) {
+				if (this.getNode(element._id).length === 0) {
 					remainElements.push(element);
 				}
 			}
@@ -214,7 +226,8 @@
 			var nodes = this.getNodes();
 			for (var i = 0; i < nodes.length; i++) {
 				var node = nodes[i];
-				var className = $.Cmdbuild.g3d.Model.getGraphData(node, "className");
+				var classId = $.Cmdbuild.g3d.Model.getGraphData(node, "classId");
+				var classDescription = $.Cmdbuild.customvariables.cacheClasses.getDescription(classId);
 				var label = $.Cmdbuild.g3d.Model.getGraphData(node, "label");
 				if (filter.query && label.toLowerCase().indexOf(filter.query) < 0) {
 					continue;
@@ -222,7 +235,8 @@
 				var id = node.id();
 				arClasses.push({
 					id: id,
-					className: className,
+					classId: classId,
+					classDescription: classDescription,
 					label: label
 				});
 			}
@@ -238,17 +252,17 @@
 				rows: retCards
 			};
 		};
-		this.getNodesByClassName = function(className) {
+		this.getNodesByClassName = function(classId) {
 			return cy.filter(function(i, element){
-				  if( element.isNode() && $.Cmdbuild.g3d.Model.getGraphData(element, "className") == className ){
+				  if( element.isNode() && $.Cmdbuild.g3d.Model.getGraphData(element, "classId") == classId ){
 				    return true;
 				  }
 				  return false;
 				});
 		};
-		this.getChildrenByClassName = function(node, className) {
+		this.getChildrenByClassName = function(node, classId) {
 			return $.Cmdbuild.g3d.Model.getChildrenByFunct(node, function(element) {
-				return ($.Cmdbuild.g3d.Model.getGraphData(element, "className") == className);
+				return ($.Cmdbuild.g3d.Model.getGraphData(element, "classId") == classId);
 			});
 		};
 		this.collection = function() {

@@ -65,28 +65,28 @@
 						items: [
 							Ext.create('Ext.form.field.Checkbox', {
 								name: CMDBuild.core.constants.Proxy.CREATE,
-								fieldLabel: CMDBuild.Translation.common.buttons.add,
+								fieldLabel: CMDBuild.Translation.add,
 								labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
 								inputValue: true,
 								uncheckedValue: false
 							}),
 							Ext.create('Ext.form.field.Checkbox', {
 								name: CMDBuild.core.constants.Proxy.REMOVE,
-								fieldLabel: CMDBuild.Translation.common.buttons.remove,
+								fieldLabel: CMDBuild.Translation.remove,
 								labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
 								inputValue: true,
 								uncheckedValue: false
 							}),
 							Ext.create('Ext.form.field.Checkbox', {
 								name: CMDBuild.core.constants.Proxy.MODIFY,
-								fieldLabel: CMDBuild.Translation.common.buttons.modify,
+								fieldLabel: CMDBuild.Translation.modify,
 								labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
 								inputValue: true,
 								uncheckedValue: false
 							}),
 							Ext.create('Ext.form.field.Checkbox', {
 								name: CMDBuild.core.constants.Proxy.CLONE,
-								fieldLabel: CMDBuild.Translation.common.buttons.clone,
+								fieldLabel: CMDBuild.Translation.clone,
 								labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
 								inputValue: true,
 								uncheckedValue: false

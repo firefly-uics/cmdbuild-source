@@ -3,7 +3,6 @@
 	Ext.define('CMDBuild.core.proxy.PatchManager', {
 
 		requires: [
-			'CMDBuild.core.cache.Cache',
 			'CMDBuild.core.configurations.Timeout',
 			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.proxy.Index',
@@ -16,7 +15,7 @@
 		 * @returns {Ext.data.Store or CMDBuild.core.cache.Store}
 		 */
 		getStore: function() {
-			return CMDBuild.core.cache.Cache.requestAsStore(CMDBuild.core.constants.Proxy.UNCACHED, {
+			return CMDBuild.global.Cache.requestAsStore(CMDBuild.core.constants.Proxy.UNCACHED, {
 				autoLoad: true,
 				model: 'CMDBuild.model.patchManager.Patch',
 				remoteSort: false,
@@ -47,7 +46,7 @@
 				url: CMDBuild.core.proxy.Index.patchManager.update
 			});
 
-			CMDBuild.core.cache.Cache.request(CMDBuild.core.constants.Proxy.UNCACHED, parameters);
+			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.UNCACHED, parameters);
 		}
 	});
 

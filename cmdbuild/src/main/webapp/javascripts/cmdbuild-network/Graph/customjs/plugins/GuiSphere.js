@@ -12,7 +12,7 @@
 		}
 
 	CircleLayout.prototype.run = function() {
-		STEPRADIUS = $.Cmdbuild.custom.configuration.stepRadius;
+		STEPRADIUS = $.Cmdbuild.customvariables.options.stepRadius;
 		var params = this.options;
 		var options = params;
 		var cy = params.cy;

@@ -35,6 +35,7 @@
 			this.model.observe(this);
 			$.Cmdbuild.customvariables.options = new $.Cmdbuild.g3d.Options();
 			$.Cmdbuild.customvariables.options.observe(this);
+			$.Cmdbuild.g3d.Options.initVariables();
 			$.Cmdbuild.g3d.Options.initFields();
 			$.Cmdbuild.customvariables.viewer = this;
 			this.camera = new $.Cmdbuild.g3d.Camera(this.model);
@@ -61,7 +62,8 @@
 			canvasDiv.appendChild(renderer.domElement);
 			controls = $.Cmdbuild.g3d.ViewerUtilities.trackballControls(camera,
 					renderer.domElement);
-			controls.approxOnY($.Cmdbuild.custom.configuration.viewPointDistance);
+			controls
+					.approxOnY($.Cmdbuild.custom.configuration.viewPointDistance);
 			$.Cmdbuild.g3d.ViewerUtilities.declareEvents(this,
 					renderer.domElement);
 			var init = new $.Cmdbuild.g3d.commands.init_explode(
@@ -102,7 +104,7 @@
 			var elements = $.Cmdbuild.g3d.Model.getGraphData(node,
 					"compoundData");
 			var arCommands = [];
-			var expandingThreshold = 10;// $.Cmdbuild.customvariables.options["expandingThreshold"];
+			var expandingThreshold = $.Cmdbuild.g3d.constants.EXPANDING_THRESHOLD;
 			for (var i = 0; i < elements.length; i += expandingThreshold) {
 				arCommands.push({
 					command: "openChildren",
@@ -117,9 +119,9 @@
 				return;
 			}
 			var node = thisViewer.model.getNode(LASTSELECTED.elementId);
-			var className = $.Cmdbuild.g3d.Model
-					.getGraphData(node, "className");
-			if (className == $.Cmdbuild.g3d.constants.GUICOMPOUNDNODE) {
+			var classId = $.Cmdbuild.g3d.Model
+					.getGraphData(node, "classId");
+			if (classId == $.Cmdbuild.g3d.constants.GUICOMPOUNDNODE) {
 				var arCommands = thisViewer.getOpenCompoundCommands(node);
 				var macroCommand = new $.Cmdbuild.g3d.commands.macroCommand(
 						thisViewer.model, arCommands);
@@ -160,23 +162,26 @@
 			var w = $("#viewerInformation").width();
 			$("#viewerInformation")[0].style.top = mouseY - (h + 50);
 			$("#viewerInformation")[0].style.left = mouseX - w / 2;
-			var label = intersected.object.label;
-			var htmlStr = "<p>" + label + "</p>";
+			var domainId = intersected.object.domainId;
+			var domainDescription = $.Cmdbuild.customvariables.cacheDomains.getDescription(domainId);
+			var htmlStr = "<p>" + domainDescription + "</p>";
 			var source = intersected.object.source;
 			var target = intersected.object.target;
 			var classSource = $.Cmdbuild.g3d.Model.getGraphData(source,
-					"className");
+					"classId");
 			var classTarget = $.Cmdbuild.g3d.Model.getGraphData(target,
-					"className");
+					"classId");
 			var labelSource = $.Cmdbuild.g3d.Model
 					.getGraphData(source, "label");
 			var labelTarget = $.Cmdbuild.g3d.Model
 					.getGraphData(target, "label");
+			var sourceClassDescription = $.Cmdbuild.customvariables.cacheClasses.getDescription(classSource);
+			var targetClassDescription = $.Cmdbuild.customvariables.cacheClasses.getDescription(classTarget);
 			var relationShape = $.Cmdbuild.g3d.constants.RELATION_SHAPE;
 			var img = $.Cmdbuild.SpriteArchive.class2Sprite(relationShape);
-			htmlStr += "<p>" + labelSource + " (" + classSource + ")</p>";
+			htmlStr += "<p>" + labelSource + " (" + sourceClassDescription + ")</p>";
 			htmlStr += "<img width=16px height=16px src='" + img + "'/>";
-			htmlStr += "<p>" + labelTarget + " (" + classTarget + ")</p>";
+			htmlStr += "<p>" + labelTarget + " (" + targetClassDescription + ")</p>";
 			$("#viewerInformation").html(htmlStr);
 			$("#viewerInformation")[0].style.display = "block";
 		};
@@ -197,12 +202,14 @@
 			// collision: "fit"
 			// });
 			var label = $.Cmdbuild.g3d.Model.getGraphData(node, "label");
-			var className = $.Cmdbuild.g3d.Model
-					.getGraphData(node, "className");
-			var img = $.Cmdbuild.SpriteArchive.class2Sprite(className);
+			var classId = $.Cmdbuild.g3d.Model
+					.getGraphData(node, "classId");
+//			var img = $.Cmdbuild.SpriteArchive.class2Sprite(classId);
+			var img = $.Cmdbuild.customvariables.cacheImages.getImage(classId);
 			var htmlStr = "<img width=32px height=32px src='" + img + "'/>";
 			htmlStr += "<p>" + label + "</p>";
-			htmlStr += "<p>" + className + "</p>";
+			var classDescription = $.Cmdbuild.customvariables.cacheClasses.getDescription(classId);
+			htmlStr += "<p>" + classDescription + "</p>";
 			$("#viewerInformation").html(htmlStr);
 			$("#viewerInformation")[0].style.display = "block";
 		};
@@ -441,8 +448,7 @@
 								z: 0
 							};
 					var object = $.Cmdbuild.g3d.ViewerUtilities.objectFromNode(
-							node, this.selected.isSelect(node.id()), p,
-							renderer, scene);
+							node, p);
 					node.glObject = object;
 					scene.add(object);
 					objects.push(object);
@@ -530,111 +536,37 @@
 			}
 		};
 		// ZOOM ALL
-		this.boundingBoxVertices = function(box) {
-			return [{
-				x: box.x,
-				y: box.y,
-				z: box.z
-			}, {
-				x: box.x,
-				y: box.y,
-				z: box.d + box.z
-			}, {
-				x: box.x,
-				y: box.h + box.y,
-				z: box.z
-			}, {
-				x: box.x,
-				y: box.h + box.y,
-				z: box.d + box.z
-			}, {
-				x: box.w + box.x,
-				y: box.y,
-				z: box.z
-			}, {
-				x: box.w + box.x,
-				y: box.y,
-				z: box.d + box.z
-			}, {
-				x: box.w + box.x,
-				y: box.h + box.y,
-				z: box.z
-			}, {
-				x: box.w + box.x,
-				y: box.h + box.y,
-				z: box.d + box.z
-			}];
-		};
 		this.boundingBox = function() {
 			var ZOOM_RANGE = $.Cmdbuild.custom.configuration.stepRadius * 3;
 			var ZOOM_BORDER = 2;
-			var box = this._boundingBox();
+			var box = $.Cmdbuild.g3d.ViewerUtilities.boundingBox(objects);
 			if (box.w < ZOOM_RANGE) {
 				var m = ZOOM_RANGE - box.w;
 				box.x -= m / 2;
 				box.w += m;
-			}
-			else {
-				var m = box.w * ZOOM_BORDER / 100 ;
+			} else {
+				var m = box.w * ZOOM_BORDER / 100;
 				box.x -= m;
 				box.w += m * 2;
-				
+
 			}
 			if (box.h < ZOOM_RANGE) {
 				var m = ZOOM_RANGE - box.h;
 				box.y -= m / 2;
 				box.h += m;
-			}
-			else {
-				var m = box.h * ZOOM_BORDER / 100 ;
+			} else {
+				var m = box.h * ZOOM_BORDER / 100;
 				box.y -= m;
 				box.h += m * 2;
-				
+
 			}
-			box.vertices = this.boundingBoxVertices(box);
+			box.vertices = $.Cmdbuild.g3d.ViewerUtilities
+					.boundingBoxVertices(box);
 			return box;
-		};
-		this._boundingBox = function() {
-			var bb = new THREE.Box3();
-			var maxx = -Number.MAX_VALUE;
-			var maxy = -Number.MAX_VALUE;
-			var maxz = -Number.MAX_VALUE;
-			var minx = Number.MAX_VALUE;
-			var miny = Number.MAX_VALUE;
-			var minz = Number.MAX_VALUE;
-			for (var i = 0; i < objects.length; i++) {
-				var p = objects[i].position;
-				minx = Math.min(minx, p.x);
-				miny = Math.min(miny, p.y);
-				minz = Math.min(minz, p.z);
-				maxx = Math.max(maxx, p.x);
-				maxy = Math.max(maxy, p.y);
-				maxz = Math.max(maxz, p.z);
-			}
-			return {
-				x: minx,
-				y: miny,
-				z: minz,
-				w: maxx - minx,
-				h: maxy - miny,
-				d: maxz - minz
-			};
 		};
 		this.zoomAll = function(vertices) {
 			this.scaleInView(vertices);
 			camera.updateProjectionMatrix();
-		};
-		this.projectVector = function(vector, projectionMatrix, matrixWorld) {
-			var projScreenMatrix = new THREE.Matrix4();
-			var matrixWorldInverse = new THREE.Matrix4();
-			matrixWorldInverse.getInverse(matrixWorld);
-
-			projScreenMatrix.multiplyMatrices(projectionMatrix,
-					matrixWorldInverse);
-			vector = vector.applyProjection(projScreenMatrix);
-
-			return vector;
-
 		};
 		this.vector2ScreenPosition = function(vector, camera, widthHalf,
 				heightHalf) {
@@ -731,42 +663,13 @@
 						}
 					}, 500);
 		};
-		this.pointOnScreen = function(vector, w, h, projectionMatrix,
-				matrixWorld, bFirst) {
-			var ZOOM_BORDER = 0;//50;!!!!!N.B.
-			var v = new THREE.Vector3();
-			v.copy(vector);
-			this.projectVector(v, projectionMatrix, matrixWorld);
-			v.x = (v.x * w / 2) + w / 2;
-			v.y = -(v.y * h / 2) + h / 2;
-			var bx = ZOOM_BORDER;
-			var by = ZOOM_BORDER;
-			var bw = w - ZOOM_BORDER * 2;
-			var bh = h - ZOOM_BORDER * 2;
-			if (v.x < bx || v.x > bw || v.y < by || v.y > bh) {
-				return false;
-			}
-			return true;
-		};
-		this.onVideo = function(box, w, h, projectionMatrix, matrixWorld) {
-			for (var i = 0; i < box.vertices.length; i++) {
-				var vertice = box.vertices[i];
-				var vector = new THREE.Vector3(vertice.x, vertice.y, vertice.z);
-				var bOnVideo = this.pointOnScreen(vector, w, h,
-						projectionMatrix, matrixWorld);
-				if (!bOnVideo) {
-					return false;
-				}
-			}
-			return true;
-		};
 		this.stepZoom = function(box, w, h) {
 			var NORECURSE = 100;
 			var me = this;
 			function stepIn() {
 				setTimeout(function() {
-					if (me.onVideo(box, w, h, camera.projectionMatrix,
-							camera.matrixWorld)
+					if ($.Cmdbuild.g3d.ViewerUtilities.onVideo(box, w, h,
+							camera.projectionMatrix, camera.matrixWorld)
 							&& NORECURSE-- > 0) {
 						controls.setY(+1);
 						stepIn();
@@ -775,8 +678,8 @@
 			}
 			function stepOut() {
 				setTimeout(function() {
-					if (!me.onVideo(box, w, h, camera.projectionMatrix,
-							camera.matrixWorld)
+					if (!$.Cmdbuild.g3d.ViewerUtilities.onVideo(box, w, h,
+							camera.projectionMatrix, camera.matrixWorld)
 							&& NORECURSE-- > 0) {
 						controls.setY(-1);
 						stepOut();
@@ -823,51 +726,4 @@
 		this.init();
 	};
 	$.Cmdbuild.g3d.Viewer = Viewer;
-	function buildAxes(length) {
-		var axes = new THREE.Object3D();
-
-		axes.add(buildAxis(new THREE.Vector3(0, 0, 0), new THREE.Vector3(
-				length, 0, 0), 0xFF0000, false)); // +X
-		axes.add(buildAxis(new THREE.Vector3(0, 0, 0), new THREE.Vector3(
-				-length, 0, 0), 0xFF0000, true)); // -X
-		axes.add(buildAxis(new THREE.Vector3(0, 0, 0), new THREE.Vector3(0,
-				length, 0), 0x00FF00, false)); // +Y
-		axes.add(buildAxis(new THREE.Vector3(0, 0, 0), new THREE.Vector3(0,
-				-length, 0), 0x00FF00, true)); // -Y
-		axes.add(buildAxis(new THREE.Vector3(0, 0, 0), new THREE.Vector3(0, 0,
-				length), 0x0000FF, false)); // +Z
-		axes.add(buildAxis(new THREE.Vector3(0, 0, 0), new THREE.Vector3(0, 0,
-				-length), 0x0000FF, true)); // -Z
-
-		return axes;
-
-	}
-	function buildAxis(src, dst, colorHex, dashed) {
-		var geom = new THREE.Geometry(), mat;
-
-		if (dashed) {
-			mat = new THREE.LineDashedMaterial({
-				linewidth: 3,
-				color: colorHex,
-				dashSize: 3,
-				gapSize: 3
-			});
-		} else {
-			mat = new THREE.LineBasicMaterial({
-				linewidth: 3,
-				color: colorHex
-			});
-		}
-
-		geom.vertices.push(src.clone());
-		geom.vertices.push(dst.clone());
-		geom.computeLineDistances(); // This one is SUPER important,
-		// otherwise dashed lines will appear as
-		// simple plain lines
-
-		var axis = new THREE.Line(geom, mat, THREE.LinePieces);
-
-		return axis;
-
-	}
 })(jQuery);

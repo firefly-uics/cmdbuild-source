@@ -3,7 +3,6 @@
 	Ext.define('CMDBuild.core.proxy.workflow.Properties', {
 
 		requires: [
-			'CMDBuild.core.cache.Cache',
 			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.proxy.Index',
 			'CMDBuild.model.workflow.tabs.properties.Parent'
@@ -15,7 +14,7 @@
 		 * @returns {Ext.data.Store or CMDBuild.core.cache.Store}
 		 */
 		getStoreSuperProcesses: function() {
-			return CMDBuild.core.cache.Cache.requestAsStore(CMDBuild.core.constants.Proxy.WORKFLOW, {
+			return CMDBuild.global.Cache.requestAsStore(CMDBuild.core.constants.Proxy.WORKFLOW, {
 				autoLoad: true,
 				model: 'CMDBuild.model.workflow.tabs.properties.Parent',
 				proxy: {

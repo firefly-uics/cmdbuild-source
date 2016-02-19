@@ -41,14 +41,14 @@
 		this.erase = function() {
 			this.selected = {};
 		};
-		this.selectByClassName =  function(event, className) {
-			if (! event.ctrlKey) {
+		this.selectByClassName =  function(classId, bAddSelection) {
+			if (! bAddSelection) {
 				this.erase();
 			}
 			var nodes = this.model.getNodes();
 			for (var i = 0; i < nodes.length; i++) {
-				if ($.Cmdbuild.g3d.Model.getGraphData(nodes[i], "className") == className) {
-					if (this.selected[nodes[i].id()] === true && event.ctrlKey) {
+				if ($.Cmdbuild.g3d.Model.getGraphData(nodes[i], "classId") == classId) {
+					if (this.selected[nodes[i].id()] === true && bAddSelection) {
 						delete this.selected[nodes[i].id()];
 					} else {
 						this.selected[nodes[i].id()] = true;
@@ -57,18 +57,23 @@
 			}
 			this.changed({});
 		};
-		this.getCards = function(first, rows) {
+		this.getCards = function(first, rows, filter) {
 			first = parseInt(first);
 			rows = parseInt(rows);
 			var arClasses = [];
 			for (var key in this.selected) {
 				var node = this.model.getNode(key);
-				var className = $.Cmdbuild.g3d.Model.getGraphData(node, "className");
+				var classId = $.Cmdbuild.g3d.Model.getGraphData(node, "classId");
+				var classDescription = $.Cmdbuild.customvariables.cacheClasses.getDescription(classId);
 				var label = $.Cmdbuild.g3d.Model.getGraphData(node, "label");
+				if (filter && filter.query && label.toLowerCase().indexOf(filter.query) < 0) {
+					continue;
+				}
 				var id = node.id();
 				arClasses.push({
 					id: id,
-					className: className,
+					classId: classId,
+					classDescription: classDescription,
 					label: label
 				});
 			}

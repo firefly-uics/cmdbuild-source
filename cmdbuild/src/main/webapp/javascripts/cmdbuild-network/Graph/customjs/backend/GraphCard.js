@@ -4,7 +4,7 @@
 		 * Attributes
 		 */
 		this.param = param;
-		this.type = param.className;
+		this.type = param.classId;
 		this.data = [];
 		this.metadata = {};
 
@@ -40,7 +40,9 @@
 						this.loadAttributesCallback, this);
 			}
 		};
-		// load Attributes and its callback
+		this.getWidgets = function() {
+			return [];
+		};
 		this.compoundAttributes = function() {
 			var attributes = [{
 				type: "string",
@@ -63,8 +65,20 @@
 			};
 			return data;
 		};
+		this.removeIfNotGridAttribute = function(attributes) {
+			var ret = [];
+			for (var i = 0; i < attributes.length; i++) {
+				if (attributes[i].displayableInList) {
+					ret.push(attributes[i]);
+				}
+			}
+			return ret;
+		};
 		this.loadAttributesCallback = function(attributes) {
 			this.originalAttributes = attributes.slice();
+			if (this.param.displayableInList === "true") {
+				attributes = this.removeIfNotGridAttribute(attributes);
+			}
 			if (this.param.withNotes != "true") {
 				this.attributes = $.Cmdbuild.utilities.removeAttribute(
 						attributes, "Notes");

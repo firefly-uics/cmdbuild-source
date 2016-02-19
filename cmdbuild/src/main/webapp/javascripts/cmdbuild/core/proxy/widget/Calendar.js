@@ -3,7 +3,6 @@
 	Ext.define('CMDBuild.core.proxy.widget.Calendar', {
 
 		requires: [
-			'CMDBuild.core.cache.Cache',
 			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.proxy.Index',
 			'CMDBuild.model.widget.calendar.AttributeCombo',
@@ -18,7 +17,7 @@
 		 * @administration
 		 */
 		getStoreTargetClass: function() {
-			return CMDBuild.core.cache.Cache.requestAsStore(CMDBuild.core.constants.Proxy.CLASS, {
+			return CMDBuild.global.Cache.requestAsStore(CMDBuild.core.constants.Proxy.CLASS, {
 				autoLoad: true,
 				model: 'CMDBuild.model.widget.calendar.TargetClass',
 				proxy: {
@@ -52,7 +51,7 @@
 		 * @administration
 		 */
 		getStoreAttributesDate: function() {
-			return CMDBuild.core.cache.Cache.requestAsStore(CMDBuild.core.constants.Proxy.ATTRIBUTE, {
+			return CMDBuild.global.Cache.requestAsStore(CMDBuild.core.constants.Proxy.ATTRIBUTE, {
 				autoLoad: false,
 				model: 'CMDBuild.model.widget.calendar.AttributeCombo',
 				proxy: {
@@ -85,7 +84,7 @@
 		 * @administration
 		 */
 		getStoreAttributesString: function() {
-			return CMDBuild.core.cache.Cache.requestAsStore(CMDBuild.core.constants.Proxy.ATTRIBUTE, {
+			return CMDBuild.global.Cache.requestAsStore(CMDBuild.core.constants.Proxy.ATTRIBUTE, {
 				autoLoad: false,
 				model: 'CMDBuild.model.widget.calendar.AttributeCombo',
 				proxy: {

@@ -40,7 +40,7 @@
 		 */
 		cmfgCatchedFunctions: [
 			'onTabEmailGlobalRegenerationButtonClick',
-			'onTabEmailModifyCardClick',
+			'onModifyCardClick',
 			'onTabEmailPanelShow',
 			'tabEmailBindLocalDepsChangeEvent',
 			'tabEmailBusyStateGet',
@@ -382,7 +382,7 @@
 		/**
 		 * Base implementation to force email regeneration and editMode setup
 		 */
-		onTabEmailModifyCardClick: function() {
+		onModifyCardClick: function() {
 			this.cmfg('tabEmailEditModeSet', true);
 
 			if (!this.grid.getStore().isLoading())
@@ -401,7 +401,7 @@
 			if (this.view.isVisible()) {
 				this.controllerGrid.cmfg('tabEmailGridUiStateSet');
 
-				// Regenerate all widgets only if editMode otherwise simple store load
+				// Regenerate all email only if editMode otherwise simple store load
 				this.cmfg('tabEmailRegenerateAllEmailsSet', this.cmfg('tabEmailEditModeGet'));
 				this.controllerGrid.cmfg('tabEmailGridStoreLoad');
 

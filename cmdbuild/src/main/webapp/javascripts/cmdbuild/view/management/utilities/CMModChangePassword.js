@@ -8,13 +8,13 @@
 		constructor: function() {
 			this.saveBtn = new Ext.button.Button({
 				id:'confirmButton',
-				text: CMDBuild.Translation.common.buttons.save,
+				text: CMDBuild.Translation.save,
 				scope: this,
 				handler: onSaveButtonClick
 			});
 
 			this.abortBtn = new Ext.button.Button({
-				text: CMDBuild.Translation.common.buttons.abort,
+				text: CMDBuild.Translation.cancel,
 				scope: this,
 				handler: function(){
 					this.form.getForm().reset();

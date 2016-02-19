@@ -61,7 +61,7 @@
 					scope: this,
 					success: function(response, options, decodedResponse) {
 						if (!decodedResponse.filled)
-							this.configureForm(decodedResult[CMDBuild.core.constants.Proxy.ATTRIBUTE]);
+							this.configureForm(decodedResponse[CMDBuild.core.constants.Proxy.ATTRIBUTE]);
 
 						new CMDBuild.Management.TemplateResolver({
 							clientForm: this.clientForm,

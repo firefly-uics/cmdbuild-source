@@ -3,7 +3,6 @@
 	Ext.define('CMDBuild.core.proxy.dataView.Filter', {
 
 		requires: [
-			'CMDBuild.core.cache.Cache',
 			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.proxy.Index',
 			'CMDBuild.model.dataView.filter.GridStore',
@@ -20,14 +19,14 @@
 
 			Ext.apply(parameters, { url: CMDBuild.core.proxy.Index.dataView.filter.create });
 
-			CMDBuild.core.cache.Cache.request(CMDBuild.core.constants.Proxy.DATA_VIEW, parameters, true);
+			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.DATA_VIEW, parameters, true);
 		},
 
 		/**
 		 * @returns {Ext.data.Store or CMDBuild.core.cache.Store}
 		 */
 		getStore: function() {
-			return CMDBuild.core.cache.Cache.requestAsStore(CMDBuild.core.constants.Proxy.DATA_VIEW, {
+			return CMDBuild.global.Cache.requestAsStore(CMDBuild.core.constants.Proxy.DATA_VIEW, {
 				autoLoad: false,
 				model: 'CMDBuild.model.dataView.filter.GridStore',
 				proxy: {
@@ -55,7 +54,7 @@
 		 * @returns {Ext.data.Store or CMDBuild.core.cache.Store}
 		 */
 		getStoreSourceClass: function() {
-			return CMDBuild.core.cache.Cache.requestAsStore(CMDBuild.core.constants.Proxy.CLASS, {
+			return CMDBuild.global.Cache.requestAsStore(CMDBuild.core.constants.Proxy.CLASS, {
 				autoLoad: true,
 				model: 'CMDBuild.model.dataView.filter.SourceClass',
 				proxy: {
@@ -82,7 +81,7 @@
 
 				listeners: {
 					load: function(store, records, successful, eOpts) { // Add Dashboards items
-						CMDBuild.core.cache.Cache.request(CMDBuild.core.constants.Proxy.DASHBOARD, {
+						CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.DASHBOARD, {
 							url: CMDBuild.core.proxy.Index.dashboard.readAll,
 							scope: this,
 							success: function(response, options, decodedResponse) {
@@ -112,7 +111,7 @@
 
 			Ext.apply(parameters, { url: CMDBuild.core.proxy.Index.dataView.filter.read });
 
-			CMDBuild.core.cache.Cache.request(CMDBuild.core.constants.Proxy.DATA_VIEW, parameters);
+			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.DATA_VIEW, parameters);
 		},
 
 		/**
@@ -123,7 +122,7 @@
 
 			Ext.apply(parameters, { url: CMDBuild.core.proxy.Index.dataView.filter.remove });
 
-			CMDBuild.core.cache.Cache.request(CMDBuild.core.constants.Proxy.DATA_VIEW, parameters, true);
+			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.DATA_VIEW, parameters, true);
 		},
 
 		/**
@@ -134,7 +133,7 @@
 
 			Ext.apply(parameters, { url: CMDBuild.core.proxy.Index.dataView.filter.update });
 
-			CMDBuild.core.cache.Cache.request(CMDBuild.core.constants.Proxy.DATA_VIEW, parameters, true);
+			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.DATA_VIEW, parameters, true);
 		}
 	});
 

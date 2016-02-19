@@ -4,7 +4,7 @@
 		alternateClassName: 'CMDBuild.ServiceProxy.classes', // Legacy class name
 
 		requires: [
-			'CMDBuild.core.cache.Cache',
+			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.proxy.Index'
 		],
 
@@ -32,7 +32,7 @@
 
 			Ext.apply(parameters, { url: CMDBuild.core.proxy.Index.classes.readAll });
 
-			CMDBuild.core.cache.Cache.request(CMDBuild.core.constants.Proxy.CLASS, parameters);
+			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.CLASS, parameters);
 		},
 
 		/**
@@ -43,7 +43,7 @@
 
 			Ext.apply(parameters, { url: CMDBuild.core.proxy.Index.classes.remove });
 
-			CMDBuild.core.cache.Cache.request(CMDBuild.core.constants.Proxy.CLASS, parameters, true);
+			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.CLASS, parameters, true);
 		},
 
 		/**
@@ -56,7 +56,7 @@
 
 			Ext.apply(parameters, { url: CMDBuild.core.proxy.Index.classes.update });
 
-			CMDBuild.core.cache.Cache.request(CMDBuild.core.constants.Proxy.CLASS, parameters, true);
+			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.CLASS, parameters, true);
 		}
 	});
 

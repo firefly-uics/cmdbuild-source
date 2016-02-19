@@ -31,8 +31,8 @@
 		// Configuration
 			className: '',
 			firstShowDetectEvent: 'activate',
-			saveButtonText: CMDBuild.Translation.common.buttons.confirm,
-			abortButtonText: CMDBuild.Translation.common.buttons.abort,
+			saveButtonText: CMDBuild.Translation.ok,
+			abortButtonText: CMDBuild.Translation.cancel,
 
 			/**
 			 * To enable/disable tabs visualization

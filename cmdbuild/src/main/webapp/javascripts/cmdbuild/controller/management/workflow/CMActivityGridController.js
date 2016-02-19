@@ -156,7 +156,7 @@
 				_CMWFState.setProcessInstance(new CMDBuild.model.CMProcessInstance());
 				_CMUIState.onlyGridIfFullScreen();
 //			} else {
-//				this.callParent(arguments);
+				this.callParent(arguments);
 //			}
 		},
 

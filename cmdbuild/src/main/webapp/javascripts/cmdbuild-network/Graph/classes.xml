@@ -10,10 +10,15 @@
 		</onInit>
 		<form id="classesForm">
 	 		<params>
-				<type>tree</type>
+				<type>classesGrid</type>
 				<backend>ClassesNavigation</backend>
-				<nRows>10</nRows>
+				<nRows>9</nRows>
+				<hookParent>true</hookParent>
 			</params>
+			<onChange>
+				<command>selectClass</command>
+				<node>$classesForm.id</node>
+			</onChange>
 		</form>
 	</div>
 </DATA>

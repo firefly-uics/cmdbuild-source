@@ -484,6 +484,7 @@
 		SEPARATOR: 'separator',
 		SERVER_URL: 'serverUrl',
 		SERVICE: 'service',
+		SERVICE_ENDPOINT: 'serviceEndpoint',
 		SESSION_TIMEOUT: 'sessionTimeout',
 		SESSION_TOKEN: 'CMDBuildSessionToken',
 		SHORT: 'short',

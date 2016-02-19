@@ -97,15 +97,6 @@
 				callback.apply(callbackScope, [data, metadata]);
 			}, params);
 		},
-		getCqlResult: function(config, callback, callbackScope) {
-			// params
-			var params = this.prepareParamsForList(config);
-			// get url and make request
-			var url = $.Cmdbuild.global.getApiUrl() + 'cql/';
-			$.Cmdbuild.authProxy.makeAjaxRequest(url, methods.GET, function(data, metadata){
-				callback.apply(callbackScope, [data, metadata]);
-			}, params);
-		},
 		getRelations: function(domainId, config, callback, callbackScope) {
 			// params
 			var params = this.prepareParamsForList(config);
@@ -180,7 +171,6 @@
 		getCardData: function(type, cardId, config, callback, callbackScope) {
 			// params
 			var params = this.prepareParamsForList(config);
-
 			// get url and make request
 			var url = $.Cmdbuild.global.getApiUrl() + 'classes/' + type + "/cards/" + cardId;
 			$.Cmdbuild.authProxy.makeAjaxRequest(url, methods.GET, function(data, metadata){
@@ -319,8 +309,8 @@
 		getCardProcess: function(type, processInstanceId, data, callback, callbackScope) {
 			var url = $.Cmdbuild.global.getApiUrl() + 'processes/' + type + 
 				'/instances/' + processInstanceId;
-			$.Cmdbuild.authProxy.makeAjaxRequest(url, methods.GET, function(response){
-				callback.apply(callbackScope, [response]);
+			$.Cmdbuild.authProxy.makeAjaxRequest(url, methods.GET, function(data, metadata){
+				callback.apply(callbackScope, [data, metadata]);
 			});
 		},
 		getActivity: function(type, processInstanceId, callback, callbackScope) {
@@ -470,9 +460,20 @@
 		getCqlResults : function(config, callback, callbackScope) {
 			var params = this.prepareParamsForList(config);
 			var url = $.Cmdbuild.global.getApiUrl() + 'cql/';
-			$.Cmdbuild.authProxy.makeAjaxRequest(url, methods.GET, function(data, metadata){
-				callback.apply(callbackScope, [data, metadata]);
-			}, params);
+			var callbackObj = undefined;
+			if (typeof(callback) === "function") {
+				callbackObj = {
+						success: function(data, metadata){
+							callback.apply(callbackScope, [data, metadata]);
+						},
+						fail: function(response){
+							callback.apply(callbackScope, [[], []]);
+						}
+					};
+			} else  {
+				callbackObj = callback;					
+			}
+			$.Cmdbuild.authProxy.makeAjaxRequest(url, methods.GET, callbackObj, params);
 		},
 	};
 	$.Cmdbuild.utilities.proxy = proxy;

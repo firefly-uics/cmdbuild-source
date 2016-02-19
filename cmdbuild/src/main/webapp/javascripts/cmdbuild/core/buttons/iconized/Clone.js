@@ -4,7 +4,7 @@
 		extend: 'CMDBuild.core.buttons.Base',
 
 		iconCls: 'clone',
-		textDefault: CMDBuild.Translation.common.buttons.clone
+		textDefault: CMDBuild.Translation.clone
 	});
 
 })();

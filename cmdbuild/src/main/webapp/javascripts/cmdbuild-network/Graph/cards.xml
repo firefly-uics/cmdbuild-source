@@ -2,6 +2,13 @@
 	<params>
 		<type>div</type>
 	</params>
+		<button id="selectCards" text="Only selected">
+			<onClick>
+				<command>tab</command>
+				<form>commandPanelMain</form>
+				<activeTab>4</activeTab>
+			</onClick>
+		</button>
 	<div id="cardsFormContainer">
 		<onInit>
 			<command>navigate</command>
@@ -13,7 +20,7 @@
 				<type>cardsGrid</type>
 				<backend>CardsNavigation</backend>
 				<nRows>9</nRows>
-				<hookSelection>true</hookSelection>
+				<hookParent>true</hookParent>
 			</params>
 				<onChange>
 					<command>selectNode</command>
