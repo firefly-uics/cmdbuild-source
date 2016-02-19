@@ -10,11 +10,11 @@ import java.util.Collection;
 
 import org.apache.commons.io.FileUtils;
 import org.cmdbuild.common.annotations.Legacy;
-import org.cmdbuild.dms.DmsConfiguration;
+import org.cmdbuild.dms.alfresco.AlfrescoDmsConfiguration;
 import org.cmdbuild.logger.Log;
 import org.cmdbuild.services.Settings;
 
-public class DmsProperties extends DefaultProperties implements DmsConfiguration {
+public class DmsProperties extends DefaultProperties implements AlfrescoDmsConfiguration {
 
 	private static final long serialVersionUID = 1L;
 

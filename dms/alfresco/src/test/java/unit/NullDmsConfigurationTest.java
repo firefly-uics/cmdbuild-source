@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 import org.cmdbuild.dms.DmsConfiguration;
+import org.cmdbuild.dms.alfresco.AlfrescoDmsConfiguration;
 import org.cmdbuild.dms.exception.MissingConfigurationException;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -20,7 +21,7 @@ public class NullDmsConfigurationTest {
 
 	@Parameters
 	public static Collection<Object[]> data() {
-		final DmsConfiguration configuration = DmsConfiguration.NullDmsConfiguration.newInstance();
+		final DmsConfiguration configuration = AlfrescoDmsConfiguration.NullDmsConfiguration.newInstance();
 		final Collection<Object[]> parameters = new ArrayList<Object[]>();
 		final Class<?> dmsPropertiesClass = DmsConfiguration.class;
 		final Method[] methods = dmsPropertiesClass.getMethods();

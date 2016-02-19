@@ -10,7 +10,6 @@ import java.util.Map;
 
 import javax.activation.DataHandler;
 
-import org.cmdbuild.dms.DmsConfiguration;
 import org.cmdbuild.dms.DmsConfiguration.ChangeListener;
 import org.cmdbuild.dms.DmsService;
 import org.cmdbuild.dms.DmsService.LoggingSupport;
@@ -51,12 +50,12 @@ public class AlfrescoDmsService implements DmsService, LoggingSupport, ChangeLis
 
 	};
 
-	private final DmsConfiguration configuration;
+	private final AlfrescoDmsConfiguration configuration;
 
 	private Supplier<AlfrescoFtpService> ftpService;
 	private Supplier<AlfrescoWsService> wsService;
 
-	public AlfrescoDmsService(final DmsConfiguration configuration) {
+	public AlfrescoDmsService(final AlfrescoDmsConfiguration configuration) {
 		this.configuration = configuration;
 		this.configuration.addListener(this);
 		configurationChanged();

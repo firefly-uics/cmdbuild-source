@@ -5,7 +5,6 @@ import java.util.List;
 import javax.activation.DataHandler;
 
 import org.apache.commons.lang3.Validate;
-import org.cmdbuild.dms.DmsConfiguration;
 import org.cmdbuild.dms.DmsService.LoggingSupport;
 import org.cmdbuild.dms.DocumentDelete;
 import org.cmdbuild.dms.DocumentDownload;
@@ -18,9 +17,9 @@ import org.cmdbuild.dms.exception.DmsError;
 
 public abstract class AlfrescoInnerService implements LoggingSupport {
 
-	protected final DmsConfiguration configuration;
+	protected final AlfrescoDmsConfiguration configuration;
 
-	public AlfrescoInnerService(final DmsConfiguration configuration) {
+	public AlfrescoInnerService(final AlfrescoDmsConfiguration configuration) {
 		Validate.notNull(configuration, "null configuration");
 		this.configuration = configuration;
 	}
