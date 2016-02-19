@@ -841,7 +841,7 @@
 			"add_card": "Avvia",
 			"completed": "Completato",
 			"custom_steps": "Passi aggiuntivi",
-			"delete_card": "Arresta processo",
+			"delete_card": "Arresta attività",
 			"delete_card_confirm": "Sicuro di voler cancellare questo processo?",
 			"extattrs": {
 				"attachments": {
@@ -861,7 +861,7 @@
 				}
 			},
 			"interrupted": "Interrotto",
-			"modify_card": "Modifica attivita",
+			"modify_card": "Modifica attività",
 			"modify_note": "Modifica nota",
 			"open_attachment": "Apri allegati",
 			"open_note": "Apri note",
@@ -876,7 +876,7 @@
 			},
 			"tabs": {
 				"attachments": "Allegati",
-				"card": "Attivita",
+				"card": "Attività",
 				"detail": "Dettagli",
 				"history": "Storia",
 				"notes": "Note",
