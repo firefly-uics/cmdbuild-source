@@ -5,9 +5,9 @@ import static org.apache.commons.lang3.StringUtils.EMPTY;
 import java.io.File;
 
 import org.apache.commons.io.FileUtils;
-import org.cmdbuild.dms.DmsConfiguration;
+import org.cmdbuild.dms.alfresco.AlfrescoDmsConfiguration;
 
-public class TestConfiguration implements DmsConfiguration {
+public class TestConfiguration implements AlfrescoDmsConfiguration {
 
 	private static final String FTP_HOST = "localhost";
 	private static final String FTP_PORT = "2121";
