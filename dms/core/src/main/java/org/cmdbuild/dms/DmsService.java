@@ -22,22 +22,10 @@ public interface DmsService {
 	}
 
 	/**
-	 * Gets the {@link DmsConfiguration}.
-	 * 
-	 * @return the actual {@link DmsConfiguration}.
-	 */
-	DmsConfiguration getConfiguration();
-
-	/**
-	 * Sets the {@link DmsConfiguration}.
-	 */
-	void setConfiguration(DmsConfiguration configuration);
-
-	/**
 	 * Gets all {@link DocumentTypeDefinition}s.
-	 * 
+	 *
 	 * @return all {@link DocumentTypeDefinition}s.
-	 * 
+	 *
 	 * @throws DmsError
 	 *             if something goes wrong.
 	 */
@@ -45,12 +33,12 @@ public interface DmsService {
 
 	/**
 	 * Search for all documents matching the specified query.
-	 * 
+	 *
 	 * @param document
 	 *            the document query parameters.
-	 * 
+	 *
 	 * @return the list found documents (never null).
-	 * 
+	 *
 	 * @throws DmsError
 	 *             if something goes wrong.
 	 */
@@ -58,10 +46,10 @@ public interface DmsService {
 
 	/**
 	 * Upload the specified document.
-	 * 
+	 *
 	 * @param document
 	 *            the definition for the document that needs to be upload.
-	 * 
+	 *
 	 * @throws DmsError
 	 *             if something goes wrong.
 	 */
@@ -69,12 +57,12 @@ public interface DmsService {
 
 	/**
 	 * Downloads the specified document.
-	 * 
+	 *
 	 * @param document
 	 *            the definition for the document that needs to be downloaded.
-	 * 
+	 *
 	 * @return the {@link DataHandler} associated with the document.
-	 * 
+	 *
 	 * @throws DmsError
 	 *             if something goes wrong.
 	 */
@@ -82,10 +70,10 @@ public interface DmsService {
 
 	/**
 	 * Deletes the specified document.
-	 * 
+	 *
 	 * @param document
 	 *            the definition for the document that needs to be deleted.
-	 * 
+	 *
 	 * @throws DmsError
 	 *             if something goes wrong.
 	 */
@@ -93,10 +81,10 @@ public interface DmsService {
 
 	/**
 	 * Updates the description of an existing document.
-	 * 
+	 *
 	 * @param document
 	 *            the definition for the document that needs to be updated.
-	 * 
+	 *
 	 * @throws DmsError
 	 *             if something goes wrong.
 	 */
@@ -104,9 +92,9 @@ public interface DmsService {
 
 	/**
 	 * Gets the auto-completion rules.
-	 * 
+	 *
 	 * @return the auto-completion rules.
-	 * 
+	 *
 	 * @throws DmsError
 	 *             if something goes wrong.
 	 */
@@ -120,11 +108,11 @@ public interface DmsService {
 	/**
 	 * Moves a {@link StoredDocument} from a {@link DocumentSearch} position to
 	 * a {@link DocumentSearch} position.
-	 * 
+	 *
 	 * @param document
 	 * @param from
 	 * @param to
-	 * 
+	 *
 	 * @throws DmsError
 	 *             if something goes wrong.
 	 */
@@ -133,11 +121,11 @@ public interface DmsService {
 	/**
 	 * Copies a {@link StoredDocument} from a {@link DocumentSearch} position to
 	 * a {@link DocumentSearch} position.
-	 * 
+	 *
 	 * @param document
 	 * @param from
 	 * @param to
-	 * 
+	 *
 	 * @throws DmsError
 	 *             if something goes wrong.
 	 */
@@ -145,9 +133,9 @@ public interface DmsService {
 
 	/**
 	 * Creates the specified position if missing.
-	 * 
+	 *
 	 * @param position
-	 * 
+	 *
 	 * @throws DmsError
 	 *             if something goes wrong.
 	 */
@@ -155,9 +143,9 @@ public interface DmsService {
 
 	/**
 	 * Deletes the specified position.
-	 * 
+	 *
 	 * @param position
-	 * 
+	 *
 	 * @throws DmsError
 	 *             if something goes wrong.
 	 */

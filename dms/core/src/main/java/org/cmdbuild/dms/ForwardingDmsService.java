@@ -21,16 +21,6 @@ public abstract class ForwardingDmsService extends ForwardingObject implements D
 	protected abstract DmsService delegate();
 
 	@Override
-	public DmsConfiguration getConfiguration() {
-		return delegate().getConfiguration();
-	}
-
-	@Override
-	public void setConfiguration(final DmsConfiguration configuration) {
-		delegate().setConfiguration(configuration);
-	}
-
-	@Override
 	public Iterable<DocumentTypeDefinition> getTypeDefinitions() throws DmsError {
 		return delegate().getTypeDefinitions();
 	}
@@ -71,12 +61,14 @@ public abstract class ForwardingDmsService extends ForwardingObject implements D
 	}
 
 	@Override
-	public void move(final StoredDocument document, final DocumentSearch from, final DocumentSearch to) throws DmsError {
+	public void move(final StoredDocument document, final DocumentSearch from, final DocumentSearch to)
+			throws DmsError {
 		delegate().move(document, from, to);
 	}
 
 	@Override
-	public void copy(final StoredDocument document, final DocumentSearch from, final DocumentSearch to) throws DmsError {
+	public void copy(final StoredDocument document, final DocumentSearch from, final DocumentSearch to)
+			throws DmsError {
 		delegate().copy(document, from, to);
 	}
 

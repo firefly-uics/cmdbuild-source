@@ -25,10 +25,10 @@ import org.junit.rules.ExternalResource;
 
 /**
  * Component for all tests which needs a running instance of Alfresco.
- * 
+ *
  * The file {@literal cmdbuildCustomModel.xml} (within resources) must be copied
  * in the extensions directory of Alfresco before starting it.
- * 
+ *
  * @see {@link TestConfiguration} for an overview of the settings of the
  *      Alfresco instance.
  * @see {@link BaseWebServiceSystemTest} for tests that use an embedded instance
@@ -161,8 +161,8 @@ public class DmsServiceResource extends ExternalResource {
 			dmsService.upload(storableDocumentFrom(file, category));
 		}
 
-		public void upload(final File file, final List<MetadataGroup> metadataGroups) throws DmsError,
-				FileNotFoundException {
+		public void upload(final File file, final List<MetadataGroup> metadataGroups)
+				throws DmsError, FileNotFoundException {
 			dmsService.upload(storableDocumentFrom(file, metadataGroups));
 		}
 
@@ -271,8 +271,7 @@ public class DmsServiceResource extends ExternalResource {
 	private final String targetClass;
 
 	private DmsServiceResource(final Builder builder) {
-		dmsService = new AlfrescoDmsService();
-		dmsService.setConfiguration(builder.configuration);
+		dmsService = new AlfrescoDmsService(builder.configuration);
 		documentFactory = new DefaultDocumentCreator(builder.path);
 		targetClass = builder.targetClass;
 	}

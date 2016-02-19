@@ -5,7 +5,6 @@ import static org.cmdbuild.spring.util.Constants.PROTOTYPE;
 
 import org.cmdbuild.dms.CachedDmsService;
 import org.cmdbuild.dms.DefaultDocumentCreatorFactory;
-import org.cmdbuild.dms.DmsConfiguration;
 import org.cmdbuild.dms.DmsService;
 import org.cmdbuild.dms.DocumentCreatorFactory;
 import org.cmdbuild.dms.LoggedDmsService;
@@ -25,10 +24,10 @@ public class Dms {
 	private Data data;
 
 	@Autowired
-	private DmsConfiguration dmsConfiguration;
+	private PrivilegeManagement privilegeManagement;
 
 	@Autowired
-	private PrivilegeManagement privilegeManagement;
+	private Properties properties;
 
 	@Bean
 	@Qualifier(DEFAULT)
@@ -43,7 +42,7 @@ public class Dms {
 
 	@Bean
 	protected DmsService alfrescoDmsService() {
-		return new AlfrescoDmsService();
+		return new AlfrescoDmsService(properties.dmsProperties());
 	}
 
 	@Bean
@@ -67,7 +66,7 @@ public class Dms {
 		return new DefaultDmsLogic( //
 				dmsService(), //
 				data.systemDataView(), //
-				dmsConfiguration, //
+				properties.dmsProperties(), //
 				documentCreatorFactory(), //
 				data.lookupStore() //
 		);

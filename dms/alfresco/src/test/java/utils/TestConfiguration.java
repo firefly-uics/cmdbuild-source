@@ -21,7 +21,6 @@ public class TestConfiguration implements DmsConfiguration {
 	private static final String PASSWORD = "admin";
 
 	private static final String ALFRESCO_CATEGORY = "AlfrescoCategory";
-	private static final String LOOKUP_NAME_FOR_ATTACHMENTS = "Attachment";
 
 	private static final String ALFRESCO_CUSTOM_URI = "org.cmdbuild.dms.alfresco";
 	private static final String ALFRESCO_CUSTOM_PREFIX = "cmdbuild";
@@ -29,6 +28,11 @@ public class TestConfiguration implements DmsConfiguration {
 	private static final String METADATA_AUTOCOMPLETION_FILENAME = "metadataAutocompletion.xml";
 
 	private static final long DELAY = 1000L;
+
+	@Override
+	public void addListener(final ChangeListener listener) {
+		// not handled
+	}
 
 	@Override
 	public boolean isEnabled() {

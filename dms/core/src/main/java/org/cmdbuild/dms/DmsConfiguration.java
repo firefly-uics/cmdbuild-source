@@ -3,10 +3,19 @@ package org.cmdbuild.dms;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
+import java.util.EventListener;
 
 import org.cmdbuild.dms.exception.MissingConfigurationException;
 
 public interface DmsConfiguration {
+
+	static interface ChangeListener extends EventListener {
+
+		void configurationChanged();
+
+	}
+
+	void addListener(ChangeListener listener);
 
 	boolean isEnabled();
 
