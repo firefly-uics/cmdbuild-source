@@ -29,7 +29,7 @@
 		 *
 		 * @override
 		 */
-		constructor: function(configurationObject) {
+		constructor: function (configurationObject) {
 			this.callParent(arguments);
 
 			this.view = Ext.create('CMDBuild.view.administration.accordion.NavigationTree', { delegate: this });
@@ -42,18 +42,20 @@
 		 *
 		 * @override
 		 */
-		accordionUpdateStore: function(nodeIdToSelect) {
+		accordionUpdateStore: function (nodeIdToSelect) {
 			nodeIdToSelect = Ext.isNumber(nodeIdToSelect) ? nodeIdToSelect : null;
 
 			CMDBuild.core.proxy.NavigationTree.readAll({
 				scope: this,
-				success: function(response, options, decodedResponse) {
+				success: function (response, options, decodedResponse) {
 					decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.RESPONSE];
 
 					var nodes = [];
 
+					this.view.getStore().getRootNode().removeAll();
+
 					if (!Ext.isEmpty(decodedResponse)) {
-						Ext.Array.forEach(decodedResponse, function(treeObject, i, allTreeObjects) {
+						Ext.Array.forEach(decodedResponse, function (treeObject, i, allTreeObjects) {
 							var nodeObject = {};
 							nodeObject['cmName'] = this.cmfg('accordionIdentifierGet');
 							nodeObject[CMDBuild.core.constants.Proxy.TEXT] = treeObject[CMDBuild.core.constants.Proxy.DESCRIPTION];
@@ -67,7 +69,6 @@
 						}, this);
 
 						if (!Ext.isEmpty(nodes)) {
-							this.view.getStore().getRootNode().removeAll();
 							this.view.getStore().getRootNode().appendChild(nodes);
 							this.view.getStore().sort();
 						}

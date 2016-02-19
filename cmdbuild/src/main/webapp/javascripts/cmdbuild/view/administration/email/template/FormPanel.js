@@ -108,7 +108,7 @@
 								fieldLabel: CMDBuild.Translation.name,
 								labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
 								allowBlank: false,
-								cmImmutable: true
+								disableEnableFunctions: true
 							}),
 							{
 								xtype: 'textareafield',

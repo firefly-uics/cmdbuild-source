@@ -28,7 +28,7 @@
 		 *
 		 * @override
 		 */
-		constructor: function(configurationObject) {
+		constructor: function (configurationObject) {
 			this.callParent(arguments);
 
 			this.view = Ext.create('CMDBuild.view.administration.accordion.Domain', { delegate: this });
@@ -41,18 +41,20 @@
 		 *
 		 * @override
 		 */
-		accordionUpdateStore: function(nodeIdToSelect) {
+		accordionUpdateStore: function (nodeIdToSelect) {
 			nodeIdToSelect = Ext.isEmpty(nodeIdToSelect) ? null : nodeIdToSelect;
 
 			CMDBuild.core.proxy.domain.Domain.readAll({
 				scope: this,
-				success: function(response, options, decodedResponse) {
+				success: function (response, options, decodedResponse) {
 					decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.DOMAINS];
+
+					this.view.getStore().getRootNode().removeAll();
 
 					if (!Ext.isEmpty(decodedResponse)) {
 						var nodes = [];
 
-						Ext.Array.forEach(decodedResponse, function(domainObject, i, allDomainObjects) {
+						Ext.Array.forEach(decodedResponse, function (domainObject, i, allDomainObjects) {
 							var nodeObject = {};
 							nodeObject['cmName'] = this.cmfg('accordionIdentifierGet');
 							nodeObject['iconCls'] = 'cmdbuild-tree-domain-icon';
@@ -66,7 +68,6 @@
 						}, this);
 
 						if (!Ext.isEmpty(nodes)) {
-							this.view.getStore().getRootNode().removeAll();
 							this.view.getStore().getRootNode().appendChild(nodes);
 							this.view.getStore().sort();
 						}

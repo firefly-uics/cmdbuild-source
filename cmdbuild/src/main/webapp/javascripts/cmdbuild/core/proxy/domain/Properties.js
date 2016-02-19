@@ -14,7 +14,7 @@
 		/**
 		 * @return {Ext.data.ArrayStore}
 		 */
-		getCardinalityStore: function() {
+		getCardinalityStore: function () {
 			return Ext.create('Ext.data.ArrayStore', {
 				fields: [CMDBuild.core.constants.Proxy.NAME, CMDBuild.core.constants.Proxy.VALUE],
 				data: [
@@ -27,10 +27,10 @@
 		},
 
 		/**
-		 * @returns {Ext.data.Store}
+		 * @returns {Ext.data.Store or CMDBuild.core.cache.Store}
 		 */
-		getClassesStore: function() {
-			return Ext.create('Ext.data.Store', {
+		getClassesStore: function () {
+			return CMDBuild.global.Cache.requestAsStore(CMDBuild.core.constants.Proxy.CLASS, {
 				autoLoad: true,
 				model: 'CMDBuild.model.domain.ClassesStore',
 				proxy: {
@@ -38,7 +38,7 @@
 					url: CMDBuild.core.proxy.Index.classes.readAll,
 					reader: {
 						type: 'json',
-						root: 'classes'
+						root: CMDBuild.core.constants.Proxy.CLASSES
 					},
 					extraParams: {
 						limitParam: undefined,

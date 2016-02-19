@@ -1,33 +1,24 @@
 (function() {
 
-	Ext.define('CMDBuild.view.administration.dataView.sql.FormPanel', {
+	Ext.define('CMDBuild.view.administration.navigationTree.properties.FormPanel', {
 		extend: 'Ext.form.Panel',
 
 		requires: [
 			'CMDBuild.core.constants.FieldWidths',
-			'CMDBuild.core.constants.Proxy'
+			'CMDBuild.core.constants.Proxy',
+			'CMDBuild.core.proxy.NavigationTree',
+			'CMDBuild.core.Utils'
 		],
 
 		mixins: ['CMDBuild.view.common.PanelFunctions'],
 
 		/**
-		 * @cfg {CMDBuild.controller.administration.dataView.Sql}
+		 * @cfg {CMDBuild.controller.administration.navigationTree.Properties}
 		 */
 		delegate: undefined,
 
-		/**
-		 * @property {CMDBuild.view.common.field.translatable.Text}
-		 */
-		descriptionTextField: undefined,
-
-		/**
-		 * @property {Ext.form.field.ComboBox}
-		 */
-		sourceFunctionCombobox: undefined,
-
 		bodyCls: 'cmdb-gray-panel',
 		border: false,
-		cls: 'x-panel-body-default-framed cmdb-border-top',
 		frame: false,
 		overflowY: 'auto',
 		split: true,
@@ -37,7 +28,7 @@
 			align:'stretch'
 		},
 
-		initComponent: function() {
+		initComponent: function () {
 			Ext.apply(this, {
 				dockedItems: [
 					Ext.create('Ext.toolbar.Toolbar', {
@@ -46,19 +37,19 @@
 
 						items: [
 							Ext.create('CMDBuild.core.buttons.iconized.Modify', {
-								text: CMDBuild.Translation.modifyView,
+								text: CMDBuild.Translation.modifyNavigationTree,
 								scope: this,
 
-								handler: function(button, e) {
-									this.delegate.cmfg('onDataViewSqlModifyButtonClick');
+								handler: function (button, e) {
+									this.delegate.cmfg('onNavigationTreeModifyButtonClick');
 								}
 							}),
 							Ext.create('CMDBuild.core.buttons.iconized.Delete', {
-								text: CMDBuild.Translation.removeView,
+								text: CMDBuild.Translation.removeNavigationTree,
 								scope: this,
 
-								handler: function(button, e) {
-									this.delegate.cmfg('onDataViewSqlRemoveButtonClick');
+								handler: function (button, e) {
+									this.delegate.cmfg('onNavigationTreeRemoveButtonClick');
 								}
 							})
 						]
@@ -78,62 +69,61 @@
 							Ext.create('CMDBuild.core.buttons.text.Save', {
 								scope: this,
 
-								handler: function(button, e) {
-									this.delegate.cmfg('onDataViewSqlSaveButtonClick');
+								handler: function (button, e) {
+									this.delegate.cmfg('onNavigationTreeSaveButtonClick');
 								}
 							}),
 							Ext.create('CMDBuild.core.buttons.text.Abort', {
 								scope: this,
 
-								handler: function(button, e) {
-									this.delegate.cmfg('onDataViewSqlAbortButtonClick');
+								handler: function (button, e) {
+									this.delegate.cmfg('onNavigationTreeAbortButtonClick');
 								}
 							})
 						]
 					})
 				],
 				items: [
-					Ext.create('Ext.form.field.Text', {
+					Ext.create('Ext.form.TextField', {
 						name: CMDBuild.core.constants.Proxy.NAME,
-						itemId: CMDBuild.core.constants.Proxy.NAME,
-						fieldLabel: CMDBuild.Translation.name,
+						fieldLabel: CMDBuild.core.Utils.prependMandatoryLabel(CMDBuild.Translation.name),
 						labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
 						maxWidth: CMDBuild.core.constants.FieldWidths.ADMINISTRATION_BIG,
+						disableEnableFunctions: true,
 						allowBlank: false,
-						disableEnableFunctions: true
+						vtype: 'alphanum'
 					}),
-					this.descriptionTextField = Ext.create('CMDBuild.view.common.field.translatable.Text', {
+					Ext.create('Ext.form.TextField', {
 						name: CMDBuild.core.constants.Proxy.DESCRIPTION,
-						fieldLabel: CMDBuild.Translation.descriptionLabel,
+						fieldLabel: CMDBuild.core.Utils.prependMandatoryLabel(CMDBuild.Translation.descriptionLabel),
 						labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
 						maxWidth: CMDBuild.core.constants.FieldWidths.ADMINISTRATION_BIG,
 						allowBlank: false,
-						vtype: 'commentextended',
-
-						translationFieldConfig: {
-							type: CMDBuild.core.constants.Proxy.VIEW,
-							identifier: { sourceType: 'form', key: CMDBuild.core.constants.Proxy.NAME, source: this },
-							field: CMDBuild.core.constants.Proxy.DESCRIPTION
-						}
+						vtype: 'commentextended'
 					}),
-					this.sourceFunctionCombobox = Ext.create('Ext.form.field.ComboBox', {
-						name: CMDBuild.core.constants.Proxy.SOURCE_FUNCTION,
-						fieldLabel: CMDBuild.Translation.dataSource,
+					Ext.create('Ext.form.field.ComboBox', {
+						name: CMDBuild.core.constants.Proxy.TARGET_CLASS_NAME,
+						fieldLabel: CMDBuild.core.Utils.prependMandatoryLabel(CMDBuild.Translation.origin),
 						labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
 						maxWidth: CMDBuild.core.constants.FieldWidths.ADMINISTRATION_BIG,
+						displayField: CMDBuild.core.constants.Proxy.TEXT, // TODO: waiting for refactor (rename)
 						valueField: CMDBuild.core.constants.Proxy.NAME,
-						displayField: CMDBuild.core.constants.Proxy.NAME,
+						disableEnableFunctions: true,
+						allowBlank: false,
 						forceSelection: true,
 						editable: false,
-						allowBlank: false,
 
-						store: CMDBuild.core.proxy.dataView.Sql.getStoreDataSources(),
-						queryMode: 'local',
+						store: CMDBuild.core.proxy.NavigationTree.getStoreTargetClass(),
+						queryMode: 'local'
 					}),
-					{
-						xtype: 'hiddenfield',
-						name: CMDBuild.core.constants.Proxy.ID
-					}
+					Ext.create('Ext.form.field.Checkbox',{
+						name: CMDBuild.core.constants.Proxy.ACTIVE,
+						fieldLabel: CMDBuild.Translation.active,
+						labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
+						inputValue: true,
+						uncheckedValue: false
+					}),
+					Ext.create('Ext.form.field.Hidden', { name: CMDBuild.core.constants.Proxy.ID })
 				]
 			});
 

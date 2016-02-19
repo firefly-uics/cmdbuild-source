@@ -56,7 +56,7 @@
 						allowBlank: false,
 						labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
 						maxWidth: CMDBuild.core.constants.FieldWidths.ADMINISTRATION_BIG,
-						cmImmutable: true
+						disableEnableFunctions: true
 					}),
 					this.description = Ext.create('CMDBuild.view.common.field.translatable.Text', {
 						name: CMDBuild.core.constants.Proxy.DESCRIPTION,

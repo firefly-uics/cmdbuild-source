@@ -42,7 +42,7 @@
 
 		classes: {
 			create: 'services/json/schema/modclass/savetable', // TODO: waiting for refactor (crud)
-			read: '', // TODO: waiting for refactor (crud)
+			read: 'services/json/schema/modclass/getallclasses', // TODO: waiting for refactor (crud)
 			update: 'services/json/schema/modclass/savetable', // TODO: waiting for refactor (crud)
 			remove: 'services/json/schema/modclass/deletetable',
 
@@ -298,13 +298,13 @@
 			readAvailableItems: 'services/json/schema/modmenu/getavailablemenuitems'
 		},
 
-		navigationTrees: {
+		navigationTree: {
 			create: 'services/json/navigationtree/create',
 			read: 'services/json/navigationtree/read',
-			update: 'services/json/navigationtree/save',
+			update: 'services/json/navigationtree/save', // TODO: waiting for refactor (rename update)
 			remove: 'services/json/navigationtree/remove',
 
-			readAll: 'services/json/navigationtree/get'
+			readAll: 'services/json/navigationtree/get' // TODO: waiting for refactor (rename readAll)
 		},
 
 		patchManager: {

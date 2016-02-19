@@ -44,6 +44,7 @@
 
 		/**
 		 * @param {Object} configurationObject
+		 * @param {CMDBuild.controller.common.MainViewport} configurationObject.parentDelegate
 		 *
 		 * @override
 		 */

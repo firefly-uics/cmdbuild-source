@@ -22,6 +22,7 @@
 			localization: 'localization',
 			lookupType: 'lookuptype',
 			menu: 'menu',
+			navigationTree: 'navigationtree',
 			report: 'report',
 			userAndGroup: 'userandgroup',
 			workflow: 'workflow'

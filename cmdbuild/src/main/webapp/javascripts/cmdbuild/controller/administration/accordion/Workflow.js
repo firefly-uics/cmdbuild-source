@@ -29,7 +29,7 @@
 		 *
 		 * @override
 		 */
-		constructor: function(configurationObject) {
+		constructor: function (configurationObject) {
 			this.callParent(arguments);
 
 			this.view = Ext.create('CMDBuild.view.management.accordion.Workflow', {
@@ -45,27 +45,29 @@
 		 *
 		 * @override
 		 */
-		accordionUpdateStore: function(nodeIdToSelect) {
+		accordionUpdateStore: function (nodeIdToSelect) {
 			nodeIdToSelect = Ext.isNumber(nodeIdToSelect) ? nodeIdToSelect : null;
 
 			CMDBuild.core.proxy.workflow.Workflow.readAll({
 				scope: this,
-				success: function(response, options, decodedResponse) {
+				success: function (response, options, decodedResponse) {
 					decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.CLASSES] || [];
 
 					var nodes = [];
 					var nodesMap = {};
 
 					// Removes all processes and root class from response
-					decodedResponse = Ext.Array.filter(decodedResponse, function(item, i, array) {
+					decodedResponse = Ext.Array.filter(decodedResponse, function (item, i, array) {
 						return (
 							item[CMDBuild.core.constants.Proxy.TYPE] == CMDBuild.core.constants.Global.getTableTypeProcessClass() // Discard processes
 							&& item[CMDBuild.core.constants.Proxy.NAME] != 'Activity' // Discard root workflow of all Workflows
 						);
 					}, this);
 
+					this.view.getStore().getRootNode().removeAll();
+
 					if (!Ext.isEmpty(decodedResponse)) {
-						Ext.Array.forEach(decodedResponse, function(classObject, i, allClassObjects) {
+						Ext.Array.forEach(decodedResponse, function (classObject, i, allClassObjects) {
 							var nodeObject = {};
 							nodeObject['cmName'] = this.cmfg('accordionIdentifierGet');
 							nodeObject['iconCls'] = classObject['superclass'] ? 'cmdbuild-tree-superprocessclass-icon' : 'cmdbuild-tree-processclass-icon';
@@ -98,7 +100,6 @@
 						}
 
 						if (!Ext.isEmpty(nodes)) {
-							this.view.getStore().getRootNode().removeAll();
 							this.view.getStore().getRootNode().appendChild(nodes);
 							this.view.getStore().sort();
 						}
