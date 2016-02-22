@@ -14,6 +14,18 @@ public interface DmsConfiguration {
 
 	boolean isEnabled();
 
+	String getService();
+
 	String getCmdbuildCategory();
+
+	String getAlfrescoCustomModelFileName();
+
+	String getAlfrescoCustomModelFileContent();
+
+	String getAlfrescoCustomUri();
+
+	String getMetadataAutocompletionFileName();
+
+	String getMetadataAutocompletionFileContent();
 
 }

@@ -1,12 +1,12 @@
 package org.cmdbuild.dms.alfresco;
 
-import static com.google.common.base.Suppliers.memoize;
+import static org.cmdbuild.dms.MetadataAutocompletion.NULL_AUTOCOMPLETION_RULES;
+
+import static com.google.common.base.Suppliers.*;
 import static java.lang.String.format;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
-import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 
 import javax.activation.DataHandler;
 
@@ -31,25 +31,6 @@ import com.google.common.base.Supplier;
 
 public class AlfrescoDmsService implements DmsService, LoggingSupport, ChangeListener {
 
-	private static final AutocompletionRules NULL_AUTOCOMPLETION_RULES = new AutocompletionRules() {
-
-		@Override
-		public Iterable<String> getMetadataGroupNames() {
-			return Collections.emptyList();
-		}
-
-		@Override
-		public Iterable<String> getMetadataNamesForGroup(final String groupName) {
-			return Collections.emptyList();
-		}
-
-		@Override
-		public Map<String, String> getRulesForGroupAndMetadata(final String groupName, final String metadataName) {
-			return Collections.emptyMap();
-		}
-
-	};
-
 	private final AlfrescoDmsConfiguration configuration;
 
 	private Supplier<AlfrescoFtpService> ftpService;
@@ -63,7 +44,7 @@ public class AlfrescoDmsService implements DmsService, LoggingSupport, ChangeLis
 
 	@Override
 	public void configurationChanged() {
-		ftpService = memoize(new Supplier<AlfrescoFtpService>() {
+		ftpService = synchronizedSupplier(memoize(new Supplier<AlfrescoFtpService>() {
 
 			@Override
 			public AlfrescoFtpService get() {
@@ -71,8 +52,8 @@ public class AlfrescoDmsService implements DmsService, LoggingSupport, ChangeLis
 				return new AlfrescoFtpService(configuration);
 			}
 
-		});
-		wsService = memoize(new Supplier<AlfrescoWsService>() {
+		}));
+		wsService = synchronizedSupplier(memoize(new Supplier<AlfrescoWsService>() {
 
 			@Override
 			public AlfrescoWsService get() {
@@ -80,7 +61,7 @@ public class AlfrescoDmsService implements DmsService, LoggingSupport, ChangeLis
 				return new AlfrescoWsService(configuration);
 			}
 
-		});
+		}));
 	}
 
 	@Override

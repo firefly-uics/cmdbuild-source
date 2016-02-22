@@ -35,6 +35,11 @@ public class TestConfiguration implements AlfrescoDmsConfiguration {
 	}
 
 	@Override
+	public String getService() {
+		throw new UnsupportedOperationException("should never be called");
+	}
+
+	@Override
 	public boolean isEnabled() {
 		return true;
 	}

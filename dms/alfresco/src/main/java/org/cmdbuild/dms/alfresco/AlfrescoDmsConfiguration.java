@@ -29,14 +29,6 @@ public interface AlfrescoDmsConfiguration extends DmsConfiguration {
 
 	String getAlfrescoCustomPrefix();
 
-	String getAlfrescoCustomModelFileName();
-
-	String getAlfrescoCustomModelFileContent();
-
-	String getMetadataAutocompletionFileName();
-
-	String getMetadataAutocompletionFileContent();
-
 	long getDelayBetweenFtpAndWebserviceOperations();
 
 	/*
