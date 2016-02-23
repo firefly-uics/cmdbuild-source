@@ -9,7 +9,6 @@ import org.cmdbuild.dao.entrytype.CMAttribute;
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.logger.Log;
 import org.cmdbuild.logic.data.access.DataAccessLogic;
-import org.cmdbuild.logic.translation.SetupFacade;
 import org.cmdbuild.logic.translation.TranslationLogic;
 import org.cmdbuild.servlets.json.serializers.translations.commons.AttributeSorter;
 import org.cmdbuild.servlets.json.serializers.translations.commons.EntryTypeSorter;
@@ -36,8 +35,8 @@ public class ClassSectionSerializer extends EntryTypeTranslationSerializer {
 
 	public ClassSectionSerializer(final DataAccessLogic dataLogic, final boolean activeOnly,
 			final TranslationLogic translationLogic, final JSONArray sorters, final String separator,
-			final SetupFacade setupFacade) {
-		super(dataLogic, activeOnly, translationLogic, separator, setupFacade);
+			final Iterable<String> selectedLanguages) {
+		super(dataLogic, activeOnly, translationLogic, separator, selectedLanguages);
 		setOrderings(sorters);
 	}
 
@@ -75,7 +74,7 @@ public class ClassSectionSerializer extends EntryTypeTranslationSerializer {
 
 			records.addAll(ClassSerializer.newInstance() //
 					.withClass(aClass) //
-					.withEnabledLanguages(enabledLanguages) //
+					.withSelectedLanguages(selectedLanguages) //
 					.withTranslationLogic(translationLogic) //
 					.withDataAccessLogic(dataLogic) //
 					.build() //
@@ -84,13 +83,13 @@ public class ClassSectionSerializer extends EntryTypeTranslationSerializer {
 			final Iterable<? extends CMAttribute> allAttributes = dataLogic.getAttributes(aClass.getName(), activeOnly,
 					NO_LIMIT_AND_OFFSET);
 
-			final Iterable<? extends CMAttribute> sortedAttributes = sortAttributes(Iterables.filter(allAttributes,
-					REMOVE_NOTES));
+			final Iterable<? extends CMAttribute> sortedAttributes = sortAttributes(
+					Iterables.filter(allAttributes, REMOVE_NOTES));
 			for (final CMAttribute anAttribute : sortedAttributes) {
 
 				records.addAll(AttributeSerializer.newInstance() //
 						.withAttribute(anAttribute) //
-						.withEnabledLanguages(enabledLanguages) //
+						.withSelectedLanguages(selectedLanguages) //
 						.withTranslationLogic(translationLogic) //
 						.withDataAccessLogic(dataLogic) //
 						.build() //

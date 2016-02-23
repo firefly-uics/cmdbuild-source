@@ -27,7 +27,7 @@ public class ViewSerializer extends DefaultElementSerializer {
 
 	public static class Builder implements org.apache.commons.lang3.builder.Builder<ViewSerializer> {
 
-		private Iterable<String> enabledLanguages;
+		private Iterable<String> selectedLanguages;
 		private TranslationLogic translationLogic;
 		public View theView;
 		public ViewLogic viewLogic;
@@ -42,8 +42,8 @@ public class ViewSerializer extends DefaultElementSerializer {
 			return this;
 		}
 
-		public Builder withEnabledLanguages(final Iterable<String> enabledLanguages) {
-			this.enabledLanguages = enabledLanguages;
+		public Builder withSelectedLanguages(final Iterable<String> selectedLanguages) {
+			this.selectedLanguages = selectedLanguages;
 			return this;
 		}
 
@@ -61,7 +61,7 @@ public class ViewSerializer extends DefaultElementSerializer {
 
 	private ViewSerializer(final Builder builder) {
 		super.viewLogic = builder.viewLogic;
-		super.enabledLanguages = builder.enabledLanguages;
+		super.selectedLanguages = builder.selectedLanguages;
 		super.translationLogic = builder.translationLogic;
 		this.theView = builder.theView;
 	}

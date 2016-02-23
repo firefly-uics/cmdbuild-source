@@ -27,9 +27,9 @@ public class DomainSerializer extends DefaultElementSerializer {
 	}
 
 	public static class Builder implements org.apache.commons.lang3.builder.Builder<DomainSerializer> {
-		
+
 		private DataAccessLogic dataLogic;
-		private Iterable<String> enabledLanguages;
+		private Iterable<String> selectedLanguages;
 		private TranslationLogic translationLogic;
 		public CMDomain theDomain;
 
@@ -43,13 +43,13 @@ public class DomainSerializer extends DefaultElementSerializer {
 			return this;
 		}
 
-		public Builder withDataAccessLogic(DataAccessLogic dataLogic) {
+		public Builder withDataAccessLogic(final DataAccessLogic dataLogic) {
 			this.dataLogic = dataLogic;
 			return this;
 		}
 
-		public Builder withEnabledLanguages(final Iterable<String> enabledLanguages) {
-			this.enabledLanguages = enabledLanguages;
+		public Builder withSelectedLanguages(final Iterable<String> selectedLanguages) {
+			this.selectedLanguages = selectedLanguages;
 			return this;
 		}
 
@@ -62,7 +62,7 @@ public class DomainSerializer extends DefaultElementSerializer {
 
 	private DomainSerializer(final Builder builder) {
 		super.dataLogic = builder.dataLogic;
-		super.enabledLanguages = builder.enabledLanguages;
+		super.selectedLanguages = builder.selectedLanguages;
 		super.translationLogic = builder.translationLogic;
 		this.theDomain = builder.theDomain;
 	}

@@ -2,7 +2,6 @@ package org.cmdbuild.servlets.json.serializers.translations.csv;
 
 import java.util.Collection;
 
-import org.cmdbuild.logic.translation.SetupFacade;
 import org.cmdbuild.logic.translation.TranslationLogic;
 import org.cmdbuild.logic.view.ViewLogic;
 import org.cmdbuild.model.view.View;
@@ -16,7 +15,7 @@ import com.google.common.collect.Ordering;
 
 public class ViewSectionSerializer implements TranslationSectionSerializer {
 
-	private final Iterable<String> enabledLanguages;
+	private final Iterable<String> selectedLanguages;
 	private final TranslationLogic translationLogic;
 	private final ViewLogic viewLogic;
 	private final Ordering<View> viewOrdering = ViewSorter.DEFAULT.getOrientedOrdering();
@@ -24,10 +23,10 @@ public class ViewSectionSerializer implements TranslationSectionSerializer {
 	private final Collection<TranslationSerialization> records = Lists.newArrayList();
 
 	public ViewSectionSerializer(final TranslationLogic translationLogic, final JSONArray sorters,
-			final SetupFacade setupFacade, final ViewLogic viewLogic) {
+			final ViewLogic viewLogic, final Iterable<String> selectedLanguages) {
 		this.viewLogic = viewLogic;
 		this.translationLogic = translationLogic;
-		this.enabledLanguages = setupFacade.getEnabledLanguages();
+		this.selectedLanguages = selectedLanguages;
 		// TODO: manage ordering configuration
 	}
 
@@ -38,7 +37,7 @@ public class ViewSectionSerializer implements TranslationSectionSerializer {
 
 		for (final View view : sortedViews) {
 			records.addAll(ViewSerializer.newInstance() //
-					.withEnabledLanguages(enabledLanguages) //
+					.withSelectedLanguages(selectedLanguages) //
 					.withTranslationLogic(translationLogic) //
 					.withViewLogic(viewLogic) //
 					.withView(view) //

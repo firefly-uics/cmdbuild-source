@@ -19,6 +19,8 @@ import org.cmdbuild.servlets.json.translationtable.objects.EntryField;
 import org.cmdbuild.servlets.json.translationtable.objects.TableEntry;
 import org.cmdbuild.servlets.json.translationtable.objects.TranslationSerialization;
 
+import static org.apache.commons.lang3.StringUtils.*;
+
 import com.google.common.collect.Lists;
 import com.google.common.collect.Ordering;
 
@@ -82,7 +84,8 @@ public abstract class EntryTypeTranslationSerializer implements TranslationSecti
 		final Collection<EntryField> jsonFields = Lists.newArrayList();
 		final String ownerName = attribute.getOwner().getName();
 		final TranslationObject translationObjectForDescription = AttributeConverter.CLASSATTRIBUTE_DESCRIPTION //
-				.withOwner(ownerName).withIdentifier(attribute.getName()) //
+				.withOwner(ownerName) //
+				.withIdentifier(attribute.getName()) //
 				.create();
 		final Map<String, String> descriptionTranslations = translationLogic.readAll(translationObjectForDescription);
 		final EntryField descriptionField = new EntryField();
@@ -91,15 +94,18 @@ public abstract class EntryTypeTranslationSerializer implements TranslationSecti
 		descriptionField.setValue(attribute.getDescription());
 		jsonFields.add(descriptionField);
 
-		final TranslationObject translationObjectForGroup = AttributeConverter.CLASSATTRIBUTE_GROUP //
-				.withOwner(ownerName).withIdentifier(attribute.getName()) //
-				.create();
-		final Map<String, String> groupTranslations = translationLogic.readAll(translationObjectForGroup);
-		final EntryField groupField = new EntryField();
-		groupField.setName(AttributeConverter.group());
-		groupField.setTranslations(groupTranslations);
-		groupField.setValue(attribute.getGroup());
-		jsonFields.add(groupField);
+		if (isNotBlank(attribute.getGroup())) {
+			final TranslationObject translationObjectForGroup = AttributeConverter.CLASSATTRIBUTE_GROUP //
+					.withOwner(ownerName) //
+					.withIdentifier(attribute.getName()) //
+					.create();
+			final Map<String, String> groupTranslations = translationLogic.readAll(translationObjectForGroup);
+			final EntryField groupField = new EntryField();
+			groupField.setName(AttributeConverter.group());
+			groupField.setTranslations(groupTranslations);
+			groupField.setValue(attribute.getGroup());
+			jsonFields.add(groupField);
+		}
 		return jsonFields;
 	}
 

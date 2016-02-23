@@ -5,16 +5,13 @@ import static org.cmdbuild.servlets.json.serializers.translations.commons.Consta
 import java.util.Collection;
 
 import org.cmdbuild.logic.translation.TranslationLogic;
-import org.cmdbuild.logic.view.ViewLogic;
-import org.cmdbuild.model.view.View;
 import org.cmdbuild.services.store.report.Report;
 import org.cmdbuild.services.store.report.ReportStore;
 import org.cmdbuild.servlets.json.schema.TranslatableElement;
-import org.cmdbuild.servlets.json.serializers.translations.csv.ViewSerializer.Builder;
 import org.cmdbuild.servlets.json.translationtable.objects.csv.CsvTranslationRecord;
 
 public class ReportSerializer extends DefaultElementSerializer {
-	
+
 	private final Report theReport;
 
 	public static Builder newInstance() {
@@ -30,7 +27,7 @@ public class ReportSerializer extends DefaultElementSerializer {
 
 	public static class Builder implements org.apache.commons.lang3.builder.Builder<ReportSerializer> {
 
-		private Iterable<String> enabledLanguages;
+		private Iterable<String> selectedLanguages;
 		private TranslationLogic translationLogic;
 		public Report theReport;
 		public ReportStore reportStore;
@@ -45,8 +42,8 @@ public class ReportSerializer extends DefaultElementSerializer {
 			return this;
 		}
 
-		public Builder withEnabledLanguages(final Iterable<String> enabledLanguages) {
-			this.enabledLanguages = enabledLanguages;
+		public Builder withSelectedLanguages(final Iterable<String> selectedLanguages) {
+			this.selectedLanguages = selectedLanguages;
 			return this;
 		}
 
@@ -64,7 +61,7 @@ public class ReportSerializer extends DefaultElementSerializer {
 
 	private ReportSerializer(final Builder builder) {
 		super.reportStore = builder.reportStore;
-		super.enabledLanguages = builder.enabledLanguages;
+		super.selectedLanguages = builder.selectedLanguages;
 		super.translationLogic = builder.translationLogic;
 		this.theReport = builder.theReport;
 	}

@@ -28,7 +28,7 @@ public class ClassSerializer extends DefaultElementSerializer {
 	public static class Builder implements org.apache.commons.lang3.builder.Builder<ClassSerializer> {
 
 		private DataAccessLogic dataLogic;
-		private Iterable<String> enabledLanguages;
+		private Iterable<String> selectedLanguages;
 		private TranslationLogic translationLogic;
 		public CMClass theClass;
 
@@ -42,13 +42,13 @@ public class ClassSerializer extends DefaultElementSerializer {
 			return this;
 		}
 
-		public Builder withDataAccessLogic(DataAccessLogic dataLogic) {
+		public Builder withDataAccessLogic(final DataAccessLogic dataLogic) {
 			this.dataLogic = dataLogic;
 			return this;
 		}
 
-		public Builder withEnabledLanguages(final Iterable<String> enabledLanguages) {
-			this.enabledLanguages = enabledLanguages;
+		public Builder withSelectedLanguages(final Iterable<String> selectedLanguages) {
+			this.selectedLanguages = selectedLanguages;
 			return this;
 		}
 
@@ -61,7 +61,7 @@ public class ClassSerializer extends DefaultElementSerializer {
 
 	private ClassSerializer(final Builder builder) {
 		super.dataLogic = builder.dataLogic;
-		super.enabledLanguages = builder.enabledLanguages;
+		super.selectedLanguages = builder.selectedLanguages;
 		super.translationLogic = builder.translationLogic;
 		this.aClass = builder.theClass;
 	}

@@ -9,7 +9,6 @@ import org.cmdbuild.logic.menu.MenuLogic;
 import org.cmdbuild.logic.translation.SetupFacade;
 import org.cmdbuild.logic.translation.TranslationLogic;
 import org.cmdbuild.logic.view.ViewLogic;
-import org.cmdbuild.services.store.filter.FilterStore;
 import org.cmdbuild.services.store.report.ReportStore;
 import org.cmdbuild.servlets.json.serializers.translations.commons.TranslationSectionSerializer;
 import org.json.JSONArray;
@@ -28,6 +27,7 @@ public class TranslationSerializerFactory {
 	private final boolean activeOnly;
 	private final DataAccessLogic dataLogic;
 	private final FilterLogic filterLogic;
+	private final Iterable<String> languages;
 	private final LookupStore lookupStore;
 	private final TranslationLogic translationLogic;
 	private final JSONArray sorters;
@@ -57,6 +57,7 @@ public class TranslationSerializerFactory {
 		this.authLogic = builder.authLogic;
 		this.dataLogic = builder.dataLogic;
 		this.filterLogic = builder.filterLogic;
+		this.languages = builder.languages;
 		this.lookupStore = builder.lookupStore;
 		this.menuLogic = builder.menuLogic;
 		this.output = builder.output;
@@ -76,7 +77,7 @@ public class TranslationSerializerFactory {
 				return new ClassTranslationSerializer(dataLogic, activeOnly, translationLogic, sorters);
 			} else if (output.equals(Output.CSV)) {
 				return new org.cmdbuild.servlets.json.serializers.translations.csv.ClassSectionSerializer(dataLogic,
-						activeOnly, translationLogic, sorters, separator, setupFacade);
+						activeOnly, translationLogic, sorters, separator, languages);
 			}
 		} else if (type.equalsIgnoreCase(DOMAIN)) {
 			if (output.equals(Output.TABLE)) {
@@ -84,21 +85,21 @@ public class TranslationSerializerFactory {
 						setupFacade);
 			} else if (output.equals(Output.CSV)) {
 				return new org.cmdbuild.servlets.json.serializers.translations.csv.DomainSectionSerializer(dataLogic,
-						activeOnly, translationLogic, sorters, separator, setupFacade);
+						activeOnly, translationLogic, sorters, separator, languages);
 			}
 		} else if (type.equalsIgnoreCase(FILTER)) {
 			if (output.equals(Output.TABLE)) {
 				return new FilterTranslationSerializer(filterLogic, translationLogic, sorters, separator, setupFacade);
 			} else if (output.equals(Output.CSV)) {
 				return new org.cmdbuild.servlets.json.serializers.translations.csv.FilterSectionSerializer(
-						translationLogic, sorters, setupFacade, filterLogic);
+						translationLogic, sorters, filterLogic, languages);
 			}
 		} else if (type.equalsIgnoreCase(LOOKUP)) {
 			if (output.equals(Output.TABLE)) {
 				return new LookupTranslationSerializer(lookupStore, activeOnly, translationLogic, sorters);
 			} else if (output.equals(Output.CSV)) {
 				return new org.cmdbuild.servlets.json.serializers.translations.csv.LookupSectionSerializer(lookupStore,
-						activeOnly, translationLogic, sorters, setupFacade);
+						activeOnly, translationLogic, sorters, languages);
 			}
 		} else if (type.equalsIgnoreCase(MENU)) {
 			if (output.equals(Output.TABLE)) {
@@ -106,7 +107,7 @@ public class TranslationSerializerFactory {
 						setupFacade);
 			} else if (output.equals(Output.CSV)) {
 				return new org.cmdbuild.servlets.json.serializers.translations.csv.MenuSectionSerializer(authLogic,
-						menuLogic, translationLogic, sorters, setupFacade);
+						menuLogic, translationLogic, sorters, languages);
 			}
 		} else if (type.equalsIgnoreCase(PROCESS)) {
 			if (output.equals(Output.TABLE)) {
@@ -114,21 +115,21 @@ public class TranslationSerializerFactory {
 						setupFacade);
 			} else if (output.equals(Output.CSV)) {
 				return new org.cmdbuild.servlets.json.serializers.translations.csv.ProcessSectionSerializer(dataLogic,
-						activeOnly, translationLogic, sorters, separator, setupFacade);
+						activeOnly, translationLogic, sorters, separator, languages);
 			}
 		} else if (type.equalsIgnoreCase(REPORT)) {
 			if (output.equals(Output.TABLE)) {
 				return new ReportTranslationSerializer(reportStore, translationLogic, sorters, separator, setupFacade);
 			} else if (output.equals(Output.CSV)) {
 				return new org.cmdbuild.servlets.json.serializers.translations.csv.ReportSectionSerializer(
-						translationLogic, sorters, setupFacade, reportStore);
+						translationLogic, sorters, reportStore, languages);
 			}
 		} else if (type.equalsIgnoreCase(VIEW)) {
 			if (output.equals(Output.TABLE)) {
 				return new ViewTranslationSerializer(viewLogic, translationLogic, sorters, separator, setupFacade);
 			} else if (output.equals(Output.CSV)) {
 				return new org.cmdbuild.servlets.json.serializers.translations.csv.ViewSectionSerializer(
-						translationLogic, sorters, setupFacade, viewLogic);
+						translationLogic, sorters, viewLogic, languages);
 			}
 		}
 		throw new IllegalArgumentException("type '" + type + "' unsupported");
@@ -139,7 +140,8 @@ public class TranslationSerializerFactory {
 		private boolean activeOnly;
 		private AuthenticationLogic authLogic;
 		private DataAccessLogic dataLogic;
-		private FilterStore filterStore;
+		private FilterLogic filterLogic;
+		private Iterable<String> languages;
 		private LookupStore lookupStore;
 		private MenuLogic menuLogic;
 		public Output output;
@@ -150,7 +152,6 @@ public class TranslationSerializerFactory {
 		private String type;
 		private ViewLogic viewLogic;
 		private SetupFacade setupFacade;
-		private FilterLogic filterLogic;
 
 		public SerializerBuilder withActiveOnly(final boolean activeOnly) {
 			this.activeOnly = activeOnly;
@@ -169,6 +170,11 @@ public class TranslationSerializerFactory {
 
 		public SerializerBuilder withFilterLogic(final FilterLogic filterLogic) {
 			this.filterLogic = filterLogic;
+			return this;
+		}
+
+		public SerializerBuilder withSelectedLanguages(final Iterable<String> languages) {
+			this.languages = languages;
 			return this;
 		}
 

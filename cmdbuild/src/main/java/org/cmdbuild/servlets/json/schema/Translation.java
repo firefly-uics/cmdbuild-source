@@ -4,6 +4,7 @@ import static org.cmdbuild.common.utils.BuilderUtils.a;
 import static org.cmdbuild.servlets.json.CommunicationConstants.ACTIVE;
 import static org.cmdbuild.servlets.json.CommunicationConstants.FIELD;
 import static org.cmdbuild.servlets.json.CommunicationConstants.FILE;
+import static org.cmdbuild.servlets.json.CommunicationConstants.LANGUAGES;
 import static org.cmdbuild.servlets.json.CommunicationConstants.SEPARATOR;
 import static org.cmdbuild.servlets.json.CommunicationConstants.SORT;
 import static org.cmdbuild.servlets.json.CommunicationConstants.TRANSLATIONS;
@@ -17,6 +18,7 @@ import static org.cmdbuild.servlets.json.serializers.translations.csv.read.Error
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -24,6 +26,8 @@ import java.util.Map.Entry;
 import javax.activation.DataHandler;
 
 import org.apache.commons.fileupload.FileItem;
+import org.apache.commons.lang3.Validate;
+import org.bouncycastle.util.Strings;
 import org.cmdbuild.logic.translation.TranslationObject;
 import org.cmdbuild.logic.translation.converter.Converter;
 import org.cmdbuild.servlets.json.JSONBaseWithSpringContext;
@@ -96,6 +100,10 @@ public class Translation extends JSONBaseWithSpringContext {
 			@Parameter(value = IDENTIFIER) final String identifier, //
 			@Parameter(value = FIELD) final String field //
 	) {
+		Validate.notBlank(type);
+		Validate.notBlank(identifier);
+		Validate.notBlank(field);
+
 		final Converter converter = createConverter(type, field);
 		final TranslationObject translationObject = converter.withOwner(owner) //
 				.withIdentifier(identifier) //
@@ -113,7 +121,12 @@ public class Translation extends JSONBaseWithSpringContext {
 			@Parameter(value = FIELD) final String field, //
 			@Parameter(value = TRANSLATIONS) final JSONObject translations //
 	) {
+		Validate.notBlank(type);
+		Validate.notBlank(identifier);
+		Validate.notBlank(field);
+
 		final Converter converter = createConverter(type, field);
+
 		final TranslationObject translationObject = converter //
 				.withOwner(owner) //
 				.withIdentifier(identifier) //
@@ -127,26 +140,29 @@ public class Translation extends JSONBaseWithSpringContext {
 	public DataHandler exportCsv(@Parameter(value = TYPE) final String type, //
 			@Parameter(value = SEPARATOR, required = false) final String separator, //
 			@Parameter(value = SORT, required = false) final JSONArray sorters, //
-			@Parameter(value = ACTIVE, required = false) final boolean activeOnly //
+			@Parameter(value = ACTIVE, required = false) final boolean activeOnly, //
+			@Parameter(value = LANGUAGES, required = false) final String _languages //
 	) throws JSONException, IOException {
 
 		final Collection<TranslationSerialization> records = Lists.newArrayList();
 
+		final Iterable<String> selectedLanguages = Arrays.asList(Strings.split(_languages, ','));
+
 		if (type.equalsIgnoreCase(ALL)) {
 			for (final Sections section : Sections.values()) {
-				Iterables.addAll(records, serialize(section.name(), sorters, activeOnly));
+				Iterables.addAll(records, serialize(section.name(), sorters, activeOnly, selectedLanguages));
 			}
 		} else {
-			Iterables.addAll(records, serialize(type, sorters, activeOnly));
+			Iterables.addAll(records, serialize(type, sorters, activeOnly, selectedLanguages));
 		}
-
-		final File outputFile = new File(type);
+		final String fileName = String.format("%s.csv", type);
+		final File outputFile = new File(fileName);
 		final Iterable<Map<String, Object>> rows = TO_MAP.apply(records);
 
 		final DataHandler dataHandler = DefaultCsvExporter.newInstance() //
 				.withRecords(rows) //
 				.withFile(outputFile) //
-				.withHeaders(initHeaders()) //
+				.withHeaders(initHeaders(selectedLanguages)) //
 				.withSeparator(separator) //
 				.build() //
 				.write();
@@ -160,9 +176,9 @@ public class Translation extends JSONBaseWithSpringContext {
 			@Parameter(value = SEPARATOR, required = false) final String separator //
 	) throws JSONException, IOException {
 
-		//final File testFile = new File("/home/tecnoteca/Desktop/test.csv");
+		// final File testFile = new File("/home/tecnoteca/Desktop/test.csv");
 		final DataHandler input = new DataHandler(FileItemDataSource.of(file));
-		//final DataHandler input = new DataHandler(testFile.toURI().toURL());
+		// final DataHandler input = new DataHandler(testFile.toURI().toURL());
 
 		final Iterable<CsvTranslationRecord> records = DefaultCsvImporter.newInstance() //
 				.withDataHandler(input) //
@@ -203,7 +219,7 @@ public class Translation extends JSONBaseWithSpringContext {
 	}
 
 	private Iterable<TranslationSerialization> serialize(final String type, final JSONArray sorters,
-			final boolean activeOnly) {
+			final boolean activeOnly, final Iterable<String> selectedLanguages) {
 		final TranslationSerializerFactory factory = TranslationSerializerFactory //
 				.newInstance() //
 				.withOutput(Output.CSV) //
@@ -218,7 +234,7 @@ public class Translation extends JSONBaseWithSpringContext {
 				.withTranslationLogic(translationLogic()) //
 				.withType(type) //
 				.withViewLogic(viewLogic()) //
-				.withSetupFacade(setupFacade()) //
+				.withSelectedLanguages(selectedLanguages) //
 				.build();
 
 		final TranslationSectionSerializer serializer = factory.createSerializer();
@@ -226,10 +242,11 @@ public class Translation extends JSONBaseWithSpringContext {
 		return records;
 	}
 
-	private String[] initHeaders() {
-		final Iterable<String> enabledLanguages = setupFacade().getEnabledLanguages();
+	private String[] initHeaders(final Iterable<String> selectedLanguages) {
+		Collection<String> languagesToExport = Lists.newArrayList(selectedLanguages);
+		Iterables.retainAll(languagesToExport, Lists.newArrayList(setupFacade().getEnabledLanguages()));
 		final Collection<String> allHeaders = Lists.newArrayList(commonHeaders);
-		for (final String lang : enabledLanguages) {
+		for (final String lang : languagesToExport) {
 			allHeaders.add(lang);
 		}
 		String[] csvHeader = new String[allHeaders.size()];

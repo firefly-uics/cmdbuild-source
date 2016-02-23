@@ -27,7 +27,7 @@ public class FilterSerializer extends DefaultElementSerializer {
 
 	public static class Builder implements org.apache.commons.lang3.builder.Builder<FilterSerializer> {
 
-		private Iterable<String> enabledLanguages;
+		private Iterable<String> selectedLanguages;
 		private TranslationLogic translationLogic;
 		public Filter theFilter;
 		public FilterLogic filterLogic;
@@ -42,8 +42,8 @@ public class FilterSerializer extends DefaultElementSerializer {
 			return this;
 		}
 
-		public Builder withEnabledLanguages(final Iterable<String> enabledLanguages) {
-			this.enabledLanguages = enabledLanguages;
+		public Builder withSelectedLanguages(final Iterable<String> selectedLanguages) {
+			this.selectedLanguages = selectedLanguages;
 			return this;
 		}
 
@@ -61,7 +61,7 @@ public class FilterSerializer extends DefaultElementSerializer {
 
 	private FilterSerializer(final Builder builder) {
 		super.filterLogic = builder.filterLogic;
-		super.enabledLanguages = builder.enabledLanguages;
+		super.selectedLanguages = builder.selectedLanguages;
 		super.translationLogic = builder.translationLogic;
 		this.theFilter = builder.theFilter;
 	}

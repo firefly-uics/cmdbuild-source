@@ -12,11 +12,12 @@ import org.cmdbuild.services.store.report.ReportStore;
 import org.cmdbuild.servlets.json.schema.TranslatableElement;
 import org.cmdbuild.servlets.json.translationtable.objects.csv.CsvTranslationRecord;
 
+import com.google.common.base.Optional;
 import com.google.common.collect.Lists;
 
 public abstract class DefaultElementSerializer implements ElementSerializer {
 
-	Iterable<String> enabledLanguages;
+	Iterable<String> selectedLanguages;
 	TranslationLogic translationLogic;
 	DataAccessLogic dataLogic;
 	FilterLogic filterLogic;
@@ -33,13 +34,13 @@ public abstract class DefaultElementSerializer implements ElementSerializer {
 		final Collection<CsvTranslationRecord> records = Lists.newArrayList();
 		final Iterable<String> allowedFields = elementType.allowedFields();
 		for (final String fieldName : allowedFields) {
-			final CsvTranslationRecord record = DefaultFieldSerializer.newInstance() //
+			final Optional<CsvTranslationRecord> _record = DefaultFieldSerializer.newInstance() //
 					.withElement(elementType) //
 					.withFieldName(fieldName) //
 					.withIdentifier(identifier) //
 					.withOwner(owner) //
 					.withTranslationLogic(translationLogic) //
-					.withEnabledLanguages(enabledLanguages) //
+					.withSelectedLanguages(selectedLanguages) //
 					.withDataLogic(dataLogic) //
 					.withFilterLogic(filterLogic) //
 					.withLookupStore(lookupStore) //
@@ -48,7 +49,9 @@ public abstract class DefaultElementSerializer implements ElementSerializer {
 					.withReportStore(reportStore) //
 					.build() //
 					.serialize();
-			records.add(record);
+			if(_record.isPresent()){
+				records.add(_record.get());
+			}
 		}
 		return records;
 	}

@@ -3,7 +3,6 @@ package org.cmdbuild.servlets.json.serializers.translations.csv;
 import java.util.Collection;
 
 import org.cmdbuild.logic.filter.FilterLogic;
-import org.cmdbuild.logic.translation.SetupFacade;
 import org.cmdbuild.logic.translation.TranslationLogic;
 import org.cmdbuild.services.store.filter.FilterStore.Filter;
 import org.cmdbuild.servlets.json.serializers.translations.commons.FilterSorter;
@@ -16,7 +15,7 @@ import com.google.common.collect.Ordering;
 
 public class FilterSectionSerializer implements TranslationSectionSerializer {
 
-	private final Iterable<String> enabledLanguages;
+	private final Iterable<String> selectedLanguages;
 	private final TranslationLogic translationLogic;
 	private final FilterLogic filterLogic;
 	private final Ordering<Filter> filterOrdering = FilterSorter.DEFAULT.getOrientedOrdering();
@@ -24,10 +23,10 @@ public class FilterSectionSerializer implements TranslationSectionSerializer {
 	private final Collection<TranslationSerialization> records = Lists.newArrayList();
 
 	public FilterSectionSerializer(final TranslationLogic translationLogic, final JSONArray sorters,
-			final SetupFacade setupFacade, final FilterLogic filterLogic) {
+			final FilterLogic filterLogic, final Iterable<String> selectedLanguages) {
 		this.filterLogic = filterLogic;
 		this.translationLogic = translationLogic;
-		this.enabledLanguages = setupFacade.getEnabledLanguages();
+		this.selectedLanguages = selectedLanguages;
 		// TODO: manage ordering configuration
 	}
 
@@ -39,7 +38,7 @@ public class FilterSectionSerializer implements TranslationSectionSerializer {
 
 		for (final org.cmdbuild.logic.filter.FilterLogic.Filter filter : sortedFilters) {
 			records.addAll(FilterSerializer.newInstance() //
-					.withEnabledLanguages(enabledLanguages) //
+					.withSelectedLanguages(selectedLanguages) //
 					.withTranslationLogic(translationLogic) //
 					.withFilterLogic(filterLogic) //
 					.withFilter(filter) //

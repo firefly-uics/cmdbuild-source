@@ -6,7 +6,6 @@ import org.bouncycastle.util.Strings;
 import org.cmdbuild.dao.entrytype.CMAttribute;
 import org.cmdbuild.dao.entrytype.CMDomain;
 import org.cmdbuild.logic.data.access.DataAccessLogic;
-import org.cmdbuild.logic.translation.SetupFacade;
 import org.cmdbuild.logic.translation.TranslationLogic;
 import org.cmdbuild.logic.translation.converter.DomainConverter;
 import org.cmdbuild.servlets.json.serializers.translations.commons.AttributeSorter;
@@ -27,30 +26,30 @@ public class DomainSectionSerializer extends EntryTypeTranslationSerializer {
 
 	public DomainSectionSerializer(final DataAccessLogic dataLogic, final boolean activeOnly,
 			final TranslationLogic translationLogic, final JSONArray sorters, final String separator,
-			final SetupFacade setupFacade) {
-		super(dataLogic, activeOnly, translationLogic, separator, setupFacade);
+			final Iterable<String> languages) {
+		super(dataLogic, activeOnly, translationLogic, separator, languages);
 		setOrderings(sorters);
 	}
 
 	@Override
 	public Iterable<TranslationSerialization> serialize() {
 
-		final Iterable<? extends CMDomain> allDomains = activeOnly ? dataLogic.findActiveDomains() : dataLogic
-				.findAllDomains();
+		final Iterable<? extends CMDomain> allDomains = activeOnly ? dataLogic.findActiveDomains()
+				: dataLogic.findAllDomains();
 		final Iterable<? extends CMDomain> sortedDomains = entryTypeOrdering.sortedCopy(allDomains);
 
 		for (final CMDomain aDomain : sortedDomains) {
 
 			final Collection<? extends CsvTranslationRecord> allFieldsForDomain = DomainSerializer.newInstance() //
 					.withDomain(aDomain) //
-					.withEnabledLanguages(enabledLanguages) //
+					.withSelectedLanguages(selectedLanguages) //
 					.withTranslationLogic(translationLogic) //
 					.withDataAccessLogic(dataLogic) //
 					.build() //
 					.serialize();
 
-			final Collection<? extends CsvTranslationRecord> filteredDomainFields = Collections2.filter(
-					allFieldsForDomain, new Predicate<CsvTranslationRecord>() {
+			final Collection<? extends CsvTranslationRecord> filteredDomainFields = Collections2
+					.filter(allFieldsForDomain, new Predicate<CsvTranslationRecord>() {
 
 						@Override
 						public boolean apply(final CsvTranslationRecord input) {
@@ -65,14 +64,14 @@ public class DomainSectionSerializer extends EntryTypeTranslationSerializer {
 
 			records.addAll(filteredDomainFields);
 
-			final Iterable<? extends CMAttribute> allAttributes = activeOnly ? aDomain.getActiveAttributes() : aDomain
-					.getAllAttributes();
+			final Iterable<? extends CMAttribute> allAttributes = activeOnly ? aDomain.getActiveAttributes()
+					: aDomain.getAllAttributes();
 
 			final Iterable<? extends CMAttribute> sortedAttributes = sortAttributes(allAttributes);
 			for (final CMAttribute anAttribute : sortedAttributes) {
 				records.addAll(DomainAttributeSerializer.newInstance() //
 						.withAttribute(anAttribute) //
-						.withEnabledLanguages(enabledLanguages) //
+						.withSelectedLanguages(selectedLanguages) //
 						.withTranslationLogic(translationLogic) //
 						.withDataAccessLogic(dataLogic) //
 						.build() //

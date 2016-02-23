@@ -7,6 +7,7 @@ import static org.apache.commons.lang3.ObjectUtils.defaultIfNull;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.apache.commons.lang3.StringUtils.defaultIfBlank;
 import static org.apache.commons.lang3.StringUtils.isBlank;
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.apache.commons.lang3.StringUtils.join;
 import static org.apache.commons.lang3.StringUtils.lowerCase;
 import static org.apache.commons.lang3.StringUtils.splitByCharacterTypeCamelCase;
@@ -52,6 +53,7 @@ import org.cmdbuild.servlets.json.schema.TranslatableElement;
 import org.cmdbuild.servlets.json.translationtable.objects.csv.CsvTranslationRecord;
 
 import com.google.common.base.Function;
+import com.google.common.base.Optional;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -63,7 +65,7 @@ public class DefaultFieldSerializer implements FieldSerializer {
 	private final String fieldName;
 	private final TranslatableElement element;
 	private final TranslationLogic translationLogic;
-	private final Iterable<String> enabledLanguages;
+	private final Iterable<String> selectedLanguages;
 	private final DataAccessLogic dataLogic;
 	private final FilterLogic filterLogic;
 	private final LookupStore lookupStore;
@@ -82,7 +84,7 @@ public class DefaultFieldSerializer implements FieldSerializer {
 		private String fieldName;
 		private TranslatableElement element;
 		private TranslationLogic translationLogic;
-		private Iterable<String> enabledLanguages;
+		private Iterable<String> selectedLanguages;
 		private DataAccessLogic dataLogic;
 		private FilterLogic filterLogic;
 		private LookupStore lookupStore;
@@ -105,8 +107,8 @@ public class DefaultFieldSerializer implements FieldSerializer {
 			return this;
 		}
 
-		public Builder withEnabledLanguages(final Iterable<String> enabledLanguages) {
-			this.enabledLanguages = enabledLanguages;
+		public Builder withSelectedLanguages(final Iterable<String> selectedLanguages) {
+			this.selectedLanguages = selectedLanguages;
 			return this;
 		}
 
@@ -159,7 +161,7 @@ public class DefaultFieldSerializer implements FieldSerializer {
 
 	private DefaultFieldSerializer(final Builder builder) {
 		this.element = builder.element;
-		this.enabledLanguages = builder.enabledLanguages;
+		this.selectedLanguages = builder.selectedLanguages;
 		this.fieldName = builder.fieldName;
 		this.identifier = builder.identifier;
 		this.owner = builder.owner;
@@ -173,13 +175,15 @@ public class DefaultFieldSerializer implements FieldSerializer {
 	}
 
 	@Override
-	public CsvTranslationRecord serialize() {
+	public Optional<CsvTranslationRecord> serialize() {
+		final CsvTranslationRecord record;
 		final String key = buildKey();
 		final String description = buildDescription();
 		final Map<String, String> translations = readTranslations();
 		final String defaultValue = fetchDefault();
-		final CsvTranslationRecord record = writeRow(key, description, defaultValue, translations);
-		return record;
+		record = (isNotBlank(defaultValue)) ? writeRow(key, description, defaultValue, translations) : null;
+		final Optional<CsvTranslationRecord> _record = (record != null) ? Optional.of(record) : Optional.absent();
+		return _record;
 	}
 
 	// FIXME: do it better
@@ -292,8 +296,8 @@ public class DefaultFieldSerializer implements FieldSerializer {
 		final String FORMAT_NO_OWNER = "%s%c%s%c%s";
 		final String FORMAT_WITH_OWNER = "%s%c%s%c%s%c%s";
 		if (isBlank(owner)) {
-			key = String
-					.format(FORMAT_NO_OWNER, element.getType(), KEY_SEPARATOR, identifier, KEY_SEPARATOR, fieldName);
+			key = String.format(FORMAT_NO_OWNER, element.getType(), KEY_SEPARATOR, identifier, KEY_SEPARATOR,
+					fieldName);
 		} else {
 			key = String.format(FORMAT_WITH_OWNER, element.getType(), KEY_SEPARATOR, owner, KEY_SEPARATOR, identifier,
 					KEY_SEPARATOR, fieldName);
@@ -333,7 +337,7 @@ public class DefaultFieldSerializer implements FieldSerializer {
 		map.put(IDENTIFIER, key);
 		map.put(DESCRIPTION, description);
 		map.put(DEFAULT, defaultValue);
-		for (final String language : enabledLanguages) {
+		for (final String language : selectedLanguages) {
 			final String value = defaultIfNull(translations.get(language), EMPTY);
 			map.put(language, value);
 		}

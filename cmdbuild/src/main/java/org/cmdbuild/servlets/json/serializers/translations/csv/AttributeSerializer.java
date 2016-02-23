@@ -27,7 +27,7 @@ public class AttributeSerializer extends DefaultElementSerializer {
 	public static class Builder implements org.apache.commons.lang3.builder.Builder<AttributeSerializer> {
 
 		private TranslationLogic translationLogic;
-		private Iterable<String> enabledLanguages;
+		private Iterable<String> selectedLanguages;
 		public CMAttribute theAttribute;
 		private DataAccessLogic dataLogic;
 
@@ -46,8 +46,8 @@ public class AttributeSerializer extends DefaultElementSerializer {
 			return this;
 		}
 
-		public Builder withEnabledLanguages(final Iterable<String> enabledLanguages) {
-			this.enabledLanguages = enabledLanguages;
+		public Builder withSelectedLanguages(final Iterable<String> selectedLanguages) {
+			this.selectedLanguages = selectedLanguages;
 			return this;
 		}
 
@@ -60,7 +60,7 @@ public class AttributeSerializer extends DefaultElementSerializer {
 
 	private AttributeSerializer(final Builder builder) {
 		super.dataLogic = builder.dataLogic;
-		super.enabledLanguages = builder.enabledLanguages;
+		super.selectedLanguages = builder.selectedLanguages;
 		super.translationLogic = builder.translationLogic;
 		this.theAttribute = builder.theAttribute;
 	}
