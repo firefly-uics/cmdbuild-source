@@ -1100,6 +1100,7 @@
 	"enableLookup": "فعال کردن جستجو",
 	"enableMoveRejectedNotMatching": "Enable move rejected not matching",
 	"enableNodeTooltip": "<em>Enable node tooltip</em>",
+	"enableRecursion": "<em>Enable recursion</em>",
 	"enableSsl": "Enable SSL",
 	"enableUser": "کاربر فعال",
 	"endDate": "تاریخ اتمام",

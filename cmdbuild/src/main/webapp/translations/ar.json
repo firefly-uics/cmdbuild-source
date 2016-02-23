@@ -1101,6 +1101,7 @@
 	"enableLookup": "<em>Enable lookup</em>",
 	"enableMoveRejectedNotMatching": "تمكين تحريك غير المطابق المرفوض",
 	"enableNodeTooltip": "<em>Enable node tooltip</em>",
+	"enableRecursion": "<em>Enable recursion</em>",
 	"enableSsl": "تمكين SSL",
 	"enableUser": "تمكين مستخدم",
 	"endDate": "تاريخ النهاية",

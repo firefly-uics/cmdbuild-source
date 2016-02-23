@@ -1101,6 +1101,7 @@
 	"enableLookup": "Enable lookup",
 	"enableMoveRejectedNotMatching": "Enable move rejected not matching",
 	"enableNodeTooltip": "Enable node tooltip",
+	"enableRecursion": "Enable recursion",
 	"enableSsl": "Enable SSL",
 	"enableUser": "Enable user",
 	"endDate": "End date",

@@ -1101,6 +1101,7 @@
 	"enableLookup": "Abilita lookup",
 	"enableMoveRejectedNotMatching": "Abilita spostamento respinte",
 	"enableNodeTooltip": "Abilita tooltip nodi",
+	"enableRecursion": "Abilita ricorsione",
 	"enableSsl": "Abilita SSL",
 	"enableUser": "Abilita utente",
 	"endDate": "Data fine",

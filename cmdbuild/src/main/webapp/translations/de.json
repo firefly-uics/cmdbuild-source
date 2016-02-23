@@ -1101,6 +1101,7 @@
 	"enableLookup": "Lookup aktivieren",
 	"enableMoveRejectedNotMatching": "unbehandelte E-Mails verschieben",
 	"enableNodeTooltip": "<em>Enable node tooltip</em>",
+	"enableRecursion": "<em>Enable recursion</em>",
 	"enableSsl": "SSL aktivieren",
 	"enableUser": "Benutzer freigeben",
 	"endDate": "Enddatum",

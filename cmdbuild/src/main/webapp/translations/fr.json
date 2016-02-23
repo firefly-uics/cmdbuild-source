@@ -1101,6 +1101,7 @@
 	"enableLookup": "Activer la liste de valeurs",
 	"enableMoveRejectedNotMatching": "Autoriser le déplacement des rejets ne correspondant pas",
 	"enableNodeTooltip": "Activer les infobulles des noeuds",
+	"enableRecursion": "<em>Enable recursion</em>",
 	"enableSsl": "Activer SSL",
 	"enableUser": "Activer l'utilisateur",
 	"endDate": "Date de fin",
