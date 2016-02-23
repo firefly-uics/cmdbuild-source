@@ -15,8 +15,7 @@
 		this.newNodes = [];
 		this.newEdges = [];
 		this.execute = function(callback, callbackScope) {
-			var levels = parseInt(params.levels);// $.Cmdbuild.customvariables.options["explosionLevels"])
-													// - 1;
+			var levels = parseInt(params.levels);
 			if ($.Cmdbuild.customvariables.commandsManager.stopped) {
 				$.Cmdbuild.customvariables.commandsManager.stopped = false;
 				callback.apply(callbackScope, []);

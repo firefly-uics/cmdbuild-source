@@ -22,8 +22,6 @@
 		};
 		this.loadAttributes = function() {
 			if (!this.type) {
-//				var msg = "No _type specified for form: " + param.form;
-//				$.Cmdbuild.errorsManager.warn(msg);
 				this.attributes = [];
 				return;
 			}
