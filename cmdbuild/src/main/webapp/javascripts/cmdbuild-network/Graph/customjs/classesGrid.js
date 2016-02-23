@@ -40,6 +40,7 @@
 				param.parent = this;
 				this.grid.init(param);
 				$.Cmdbuild.customvariables.model.observe(this);
+				$.Cmdbuild.customvariables.selected.observe(this);
 			}
 			catch (e) {
 				$.Cmdbuild.errorsManager.log("$.Cmdbuild.standard.classesGrid.init");

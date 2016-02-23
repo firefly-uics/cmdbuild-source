@@ -2,13 +2,13 @@
 	<params>
 		<type>div</type>
 	</params>
-		<button id="selectCards" text="Only selected">
-			<onClick>
-				<command>tab</command>
-				<form>commandPanelMain</form>
-				<activeTab>4</activeTab>
-			</onClick>
-		</button>
+	<span class="undo toolbarButton" tooltip="Apply the current layout">
+		<onClick>
+			<command>tab</command>
+			<form>cardlistform</form>
+			<activeTab>1</activeTab>
+		</onClick>
+	</span>
 	<div id="cardsFormContainer">
 		<onInit>
 			<command>navigate</command>

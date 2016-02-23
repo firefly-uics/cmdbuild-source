@@ -206,7 +206,7 @@
 			var remainElements = [];
 			for (var i = 0; i < elements.length; i++) {
 				var element = elements[i];
-				if (this.getNode(element._id).length === 0) {
+				if (this.getNode(element._sourceId).length === 0) {
 					remainElements.push(element);
 				}
 			}

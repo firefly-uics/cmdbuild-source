@@ -2,13 +2,13 @@
 	<params>
 		<type>div</type>
 	</params>
-		<button id="contractDetail" text="Overview">
-			<onClick>
-				<command>tab</command>
-				<form>commandPanelMain</form>
-				<activeTab>0</activeTab>
-			</onClick>
-		</button>
+	<span class="layout toolbarButton" tooltip="Undo the last operation">
+		<onClick>
+			<command>tab</command>
+			<form>detailform</form>
+			<activeTab>0</activeTab>
+		</onClick>
+	</span>
  	<div id="cmdbuildCard">
 		<onInit>
 			<command>navigate</command>
