@@ -10,6 +10,7 @@
 			NO_LABELS: "none",
 			RANGE_VIEWPOINTDISTANCE: 100,
 			EXPANDING_THRESHOLD: 30,
-			MIN_MOVEMENT: 5
+			MIN_MOVEMENT: 5,
+			TOOLTIP_WINDOW: "viewerInformation"
 	};
 })(jQuery);

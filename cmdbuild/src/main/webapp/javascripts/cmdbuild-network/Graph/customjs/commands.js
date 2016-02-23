@@ -35,23 +35,27 @@
 				$.Cmdbuild.customvariables.selected.erase();
 				configuration.filterClassesDomains = [];
 				for ( var key in formObject.checked) {
-					$.Cmdbuild.customvariables.cacheDomains.setActive(key, formObject.checked[key]);
+					$.Cmdbuild.customvariables.cacheDomains.setActive(key,
+							formObject.checked[key]);
 					if (formObject.checked[key] == false) {
-						var domain = $.Cmdbuild.customvariables.cacheDomains.getDomain(key);
-						if (! configuration.filterClassesDomains[domain.sourceId]) {
+						var domain = $.Cmdbuild.customvariables.cacheDomains
+								.getDomain(key);
+						if (!configuration.filterClassesDomains[domain.sourceId]) {
 							configuration.filterClassesDomains[domain.sourceId] = [];
 						}
-						if (! configuration.filterClassesDomains[domain.destinationId]) {
+						if (!configuration.filterClassesDomains[domain.destinationId]) {
 							configuration.filterClassesDomains[domain.destinationId] = [];
 						}
-						configuration.filterClassesDomains[domain.sourceId].push({
-							_id: key,
-							description: key
-						});
-						configuration.filterClassesDomains[domain.destinationId].push({
-							_id: key,
-							description: key
-						});
+						configuration.filterClassesDomains[domain.sourceId]
+								.push({
+									_id: key,
+									description: key
+								});
+						configuration.filterClassesDomains[domain.destinationId]
+								.push({
+									_id: key,
+									description: key
+								});
 						console.log("removeEdge for ", key);
 						$.Cmdbuild.customvariables.model.removeEdge({
 							domainId: key
@@ -97,6 +101,7 @@
 			var cardId = selected.rows[0].id;
 			$.Cmdbuild.customvariables.viewer.clearSelection();
 			$.Cmdbuild.customvariables.model.erase();
+			$.Cmdbuild.customvariables.selected.erase();
 			$.Cmdbuild.customvariables.viewer.refresh(true);
 			var init = new $.Cmdbuild.g3d.commands.init_explode(
 					$.Cmdbuild.customvariables.model, {

@@ -376,6 +376,72 @@
 				}
 			}
 			return true;
+		},
+		closeTooltip: function() {
+			var tooltip_window = $("#" + $.Cmdbuild.g3d.constants.TOOLTIP_WINDOW);
+			tooltip_window[0].style.display = "none";
+		},
+		moveEdgeTooltip: function(intersected, node, mouseX, mouseY) {
+			if (!$.Cmdbuild.customvariables.options["edgeTooltipEnabled"]) {
+				return;
+			}
+			var tooltip_window = $("#" + $.Cmdbuild.g3d.constants.TOOLTIP_WINDOW);
+			tooltip_window.removeClass('viewerInformationNode')
+					.addClass('viewerInformationEdge');
+			var domainId = intersected.object.domainId;
+			var domainDescription = $.Cmdbuild.customvariables.cacheDomains.getDescription(domainId);
+			var htmlStr = "<p>" + domainDescription + "</p>";
+			var source = intersected.object.source;
+			var target = intersected.object.target;
+			var classSource = $.Cmdbuild.g3d.Model.getGraphData(source,
+					"classId");
+			var classTarget = $.Cmdbuild.g3d.Model.getGraphData(target,
+					"classId");
+			var labelSource = $.Cmdbuild.g3d.Model
+					.getGraphData(source, "label");
+			var labelTarget = $.Cmdbuild.g3d.Model
+					.getGraphData(target, "label");
+			var sourceClassDescription = $.Cmdbuild.customvariables.cacheClasses.getDescription(classSource);
+			var targetClassDescription = $.Cmdbuild.customvariables.cacheClasses.getDescription(classTarget);
+			var relationShape = $.Cmdbuild.g3d.constants.RELATION_SHAPE;
+			var img = $.Cmdbuild.SpriteArchive.class2Sprite(relationShape);
+			htmlStr += "<p>" + labelSource + " (" + sourceClassDescription + ")</p>";
+			htmlStr += "<img width=16px height=16px src='" + img + "'/>";
+			htmlStr += "<p>" + labelTarget + " (" + targetClassDescription + ")</p>";
+			tooltip_window.html(htmlStr);
+			var h = tooltip_window.height();
+			var w = tooltip_window.width();
+			tooltip_window[0].style.top = mouseY - (h + 50);
+			tooltip_window[0].style.left = mouseX - w / 2;
+			tooltip_window[0].style.display = "block";
+		},
+		moveNodeTooltip: function(intersected, node, mouseX, mouseY) {
+			var tooltip_window = $("#" + $.Cmdbuild.g3d.constants.TOOLTIP_WINDOW);
+			if (!$.Cmdbuild.customvariables.options["nodeTooltipEnabled"]) {
+				return;
+			}
+			tooltip_window.removeClass('viewerInformationEdge')
+					.addClass('viewerInformationNode');
+			// the jquery version gives problems on the page's layout
+			// tooltip_window.position({
+			// my: "center bottom-30",
+			// of: event,
+			// collision: "fit"
+			// });
+			var label = $.Cmdbuild.g3d.Model.getGraphData(node, "label");
+			var classId = $.Cmdbuild.g3d.Model
+					.getGraphData(node, "classId");
+			var img = $.Cmdbuild.customvariables.cacheImages.getImage(classId);
+			var htmlStr = "<img width=32px height=32px src='" + img + "'/>";
+			htmlStr += "<p>" + label + "</p>";
+			var classDescription = $.Cmdbuild.customvariables.cacheClasses.getDescription(classId);
+			htmlStr += "<p>" + classDescription + "</p>";
+			tooltip_window.html(htmlStr);
+			var h = tooltip_window.height();
+			var w = tooltip_window.width();
+			tooltip_window[0].style.top = mouseY - (h + 50);
+			tooltip_window[0].style.left = mouseX - w / 2;
+			tooltip_window[0].style.display = "block";
 		}
 	};
 	$.Cmdbuild.g3d.ViewerUtilities = ViewerUtilities;

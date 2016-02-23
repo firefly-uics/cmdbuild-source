@@ -152,70 +152,6 @@
 						.removeGraphData(nodes, "exploded_children");
 			}, this);
 		};
-		this.moveEdgeTooltip = function(intersected, node, mouseX, mouseY) {
-			if (!$.Cmdbuild.customvariables.options["edgeTooltipEnabled"]) {
-				return;
-			}
-			$('#viewerInformation').removeClass('viewerInformationNode')
-					.addClass('viewerInformationEdge');
-			var h = $("#viewerInformation").height();
-			var w = $("#viewerInformation").width();
-			$("#viewerInformation")[0].style.top = mouseY - (h + 50);
-			$("#viewerInformation")[0].style.left = mouseX - w / 2;
-			var domainId = intersected.object.domainId;
-			var domainDescription = $.Cmdbuild.customvariables.cacheDomains.getDescription(domainId);
-			var htmlStr = "<p>" + domainDescription + "</p>";
-			var source = intersected.object.source;
-			var target = intersected.object.target;
-			var classSource = $.Cmdbuild.g3d.Model.getGraphData(source,
-					"classId");
-			var classTarget = $.Cmdbuild.g3d.Model.getGraphData(target,
-					"classId");
-			var labelSource = $.Cmdbuild.g3d.Model
-					.getGraphData(source, "label");
-			var labelTarget = $.Cmdbuild.g3d.Model
-					.getGraphData(target, "label");
-			var sourceClassDescription = $.Cmdbuild.customvariables.cacheClasses.getDescription(classSource);
-			var targetClassDescription = $.Cmdbuild.customvariables.cacheClasses.getDescription(classTarget);
-			var relationShape = $.Cmdbuild.g3d.constants.RELATION_SHAPE;
-			var img = $.Cmdbuild.SpriteArchive.class2Sprite(relationShape);
-			htmlStr += "<p>" + labelSource + " (" + sourceClassDescription + ")</p>";
-			htmlStr += "<img width=16px height=16px src='" + img + "'/>";
-			htmlStr += "<p>" + labelTarget + " (" + targetClassDescription + ")</p>";
-			$("#viewerInformation").html(htmlStr);
-			$("#viewerInformation")[0].style.display = "block";
-		};
-		this.moveNodeTooltip = function(intersected, node, mouseX, mouseY) {
-			if (!$.Cmdbuild.customvariables.options["nodeTooltipEnabled"]) {
-				return;
-			}
-			$('#viewerInformation').removeClass('viewerInformationEdge')
-					.addClass('viewerInformationNode');
-			var h = $("#viewerInformation").height();
-			var w = $("#viewerInformation").width();
-			$("#viewerInformation")[0].style.top = mouseY - (h + 50);
-			$("#viewerInformation")[0].style.left = mouseX - w / 2;
-			// the jquery version gives problems on the page's layout
-			// $("#viewerInformation").position({
-			// my: "center bottom-30",
-			// of: event,
-			// collision: "fit"
-			// });
-			var label = $.Cmdbuild.g3d.Model.getGraphData(node, "label");
-			var classId = $.Cmdbuild.g3d.Model
-					.getGraphData(node, "classId");
-//			var img = $.Cmdbuild.SpriteArchive.class2Sprite(classId);
-			var img = $.Cmdbuild.customvariables.cacheImages.getImage(classId);
-			var htmlStr = "<img width=32px height=32px src='" + img + "'/>";
-			htmlStr += "<p>" + label + "</p>";
-			var classDescription = $.Cmdbuild.customvariables.cacheClasses.getDescription(classId);
-			htmlStr += "<p>" + classDescription + "</p>";
-			$("#viewerInformation").html(htmlStr);
-			$("#viewerInformation")[0].style.display = "block";
-		};
-		this.closeTooltip = function() {
-			$("#viewerInformation")[0].style.display = "none";
-		};
 		this.onDocumentMouseMove = function(event) {
 			event.preventDefault();
 			// event.stopPropagation();
@@ -260,7 +196,7 @@
 			if (intersects.length > 0 && intersects[0].object.name) {
 				try {
 					var node = thisViewer.model.getNode(INTERSECTED.elementId);
-					thisViewer.moveNodeTooltip(intersects[0], node,
+					$.Cmdbuild.g3d.ViewerUtilities.moveNodeTooltip(intersects[0], node,
 							event.clientX, event.clientY);
 					if (node.selectionOnNode) {
 						node.selectionOnNode.position
@@ -271,7 +207,7 @@
 							.log("Viewer: onDocumentMouseMove error during tooltip show");
 				}
 			} else {
-				thisViewer.closeTooltip();
+				$.Cmdbuild.g3d.ViewerUtilities.closeTooltip();
 				thisViewer.tooltipLine(event);
 			}
 		};
@@ -290,10 +226,10 @@
 			}
 			if (intersects.length > 0) {
 				var node = thisViewer.model.getNode(intersects[0].object.id);
-				thisViewer.moveEdgeTooltip(intersects[0], node, event.clientX,
+				$.Cmdbuild.g3d.ViewerUtilities.moveEdgeTooltip(intersects[0], node, event.clientX,
 						event.clientY);
 			} else {
-				thisViewer.closeTooltip();
+				$.Cmdbuild.g3d.ViewerUtilities.closeTooltip();
 			}
 		};
 		this.refreshNodeEdges = function(id, position) {
@@ -313,7 +249,7 @@
 			}
 		};
 		this.onDocumentMouseDown = function(event) {
-			thisViewer.closeTooltip();
+			$.Cmdbuild.g3d.ViewerUtilities.closeTooltip();
 			event.preventDefault();
 			var vector = new THREE.Vector3(mouse.x, mouse.y, 0.5)
 					.unproject(camera);

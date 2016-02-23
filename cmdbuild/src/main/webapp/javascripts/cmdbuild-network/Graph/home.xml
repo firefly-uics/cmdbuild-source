@@ -78,11 +78,8 @@
 						<type>tabbed</type>
 					</params>
 					<form title="Card" id="detail" include="detail.xml" class="commandPanelWindow cmdbuildTabbedForm"/>
-					<form title="Card list" id="mainCardsGrid" include="cards.xml" class="commandPanelWindow cmdbuildTabbedForm"/>
+					<form title="Card list" id="cardList" include="cardList.xml" class="commandPanelWindow cmdbuildTabbedForm"/>
 					<form title="Classes" id="classesGrid" include="classes.xml" class="commandPanelWindow cmdbuildTabbedForm"/>
- 					<form title="Complete Card" id="completeDetail" include="card.xml" invisible="true" class="commandPanelWindow cmdbuildTabbedForm"/>
- 					<form title="Selected list" id="selectedGrid" include="selected.xml" invisible="true" class="commandPanelWindow cmdbuildTabbedForm"/>
- 					<form title="Relations" id="relations" include="relations.xml" invisible="true" class="commandPanelWindow cmdbuildTabbedForm"/>  
 				</form>
 			</div>
 			<div id="statusPanelContainer">
