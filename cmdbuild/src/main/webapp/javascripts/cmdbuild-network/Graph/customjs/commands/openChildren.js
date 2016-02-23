@@ -45,22 +45,26 @@
 							}
 						}
 						this.saveForUndo(elements);
-						this.model.pushElements(elements);
-						var allChildren = [];
-						if (this.oldChildren) {
-							allChildren = this.newElements
-									.concat(this.oldChildren);
-						}
-						$.Cmdbuild.g3d.Model.setGraphData(this.parentNode,
-								"children", allChildren);
-						this.model.cleanCompoundNode(this.compoundNode);
-						this.model.changed();
-						callback.apply(callbackScope, []);
+						this.model.pushElements(elements, function() {
+							var allChildren = [];
+							if (this.oldChildren) {
+								allChildren = this.newElements
+										.concat(this.oldChildren);
+							}
+							$.Cmdbuild.g3d.Model.setGraphData(this.parentNode,
+									"children", allChildren);
+							var me = this;
+							setTimeout(function() {
+								me.model.cleanCompoundNode(me.compoundNode);
+								me.model.changed();
+								callback.apply(callbackScope, []);
+							}, 500);
+						}, this);
 					}, this);
 		};
 		this.undo = function() {
 			if (this.compoundSavedNode.node.id === undefined) {
-					return;
+				return;
 			}
 			for (var i = 0; i < this.newEdges.length; i++) {
 				var edge = this.newEdges[i];
@@ -74,7 +78,8 @@
 				var id = this.newNodes[i];
 				this.model.remove(id);
 			}
-			var compoundNode = this.model.getNode(this.compoundSavedNode.node.id);
+			var compoundNode = this.model
+					.getNode(this.compoundSavedNode.node.id);
 			if (compoundNode.length === 0) {
 				this.model.pushElements({
 					nodes: [{
@@ -83,13 +88,11 @@
 					edges: [{
 						data: this.compoundSavedNode.edge
 					}]
-				});
+				}, function() {}, this);
+			} else {
+				$.Cmdbuild.g3d.Model.setGraphData(compoundNode, "compoundData",
+						this.compoundSavedNode.node.compoundData);
 			}
-			else {
-				$.Cmdbuild.g3d.Model.setGraphData(compoundNode,
-				"compoundData", this.compoundSavedNode.node.compoundData);
-			}
-			console.log("this.compoundSavedNode.node ",this.compoundSavedNode.node);
 			var children = $.Cmdbuild.g3d.Model.getGraphData(this.parentNode,
 					"children");
 			if (!children) {
