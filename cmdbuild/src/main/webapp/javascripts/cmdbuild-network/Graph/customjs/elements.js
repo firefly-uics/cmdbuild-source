@@ -3,11 +3,8 @@
 		canvas3d : function(xmlElement) {
 			var htmlStr = "";
 			var ca = $.Cmdbuild.elementsManager.getCommonAttributes(xmlElement);
-			var mouseover = "";//"this.style.display = 'none';";
+			var mouseover = "";
 			htmlStr += "<div class='viewerInformation' id='viewerInformation' onmouseenter='" + mouseover + "'>";
-//			htmlStr += "<img id='viewerInformationImg' src='" + $.Cmdbuild.SpriteArchive.class2Sprite("Client") + "' />";
-//			htmlStr += "<p id='viewerInformationCard'></p>";
-//			htmlStr += "<p id='viewerInformationClass'></p>";
 			htmlStr += "</div>";
 			htmlStr += "<div  " + ca + ">";
 			htmlStr += "</div>";
@@ -17,26 +14,6 @@
 				script : "canvas3d",
 				id : id
 			});
-			return htmlStr;
-		},
-		combo : function(xmlElement) {
-			var htmlStr = "";
-			var text = $.Cmdbuild.elementsManager.getText(xmlElement);
-			var id = $.Cmdbuild.elementsManager.getXmlElementId(xmlElement);
-			var params = $.Cmdbuild.elementsManager.getParams(xmlElement);
-			htmlStr += "<span id='margin10'>" + text + "</span>";
-			htmlStr += "<select id='" + id + "'>";
-			htmlStr += "<option value='0'>One...</option>";
-			htmlStr += "<option value='1'>Two...</option>";
-			htmlStr += "<option value='2'>Three...</option>";
-			htmlStr += "<option value='3'>Four...</option>";
-			htmlStr += "<option value='4'>Five...</option>";
-			htmlStr += "<option value='5'>Six...</option>";
-			htmlStr += "</select>";
-//			$.Cmdbuild.scriptsManager.push({
-//				script : "combo",
-//				id : id
-//			});
 			return htmlStr;
 		},
 		counter : function(xmlElement) {
@@ -63,7 +40,6 @@
 			var htmlStr = "";
 			htmlStr += $.Cmdbuild.elementsManager.insertLabel(xmlElement);
 			var id = $.Cmdbuild.elementsManager.getXmlElementId(xmlElement);
-			var text = $.Cmdbuild.elementsManager.getText(xmlElement);
 			var ca = $.Cmdbuild.elementsManager.getCommonAttributes(xmlElement);
 			var paramForClick = $.Cmdbuild.elementsManager.getEvent("onChange", xmlElement);
 			htmlStr += "<div " + ca + ">";
