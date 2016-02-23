@@ -4,6 +4,18 @@ import static com.google.common.base.Suppliers.memoize;
 import static com.google.common.base.Suppliers.synchronizedSupplier;
 import static com.google.common.collect.Lists.newArrayList;
 import static com.google.common.collect.Maps.newHashMap;
+import static org.apache.chemistry.opencmis.commons.PropertyIds.DESCRIPTION;
+import static org.apache.chemistry.opencmis.commons.PropertyIds.NAME;
+import static org.apache.chemistry.opencmis.commons.PropertyIds.OBJECT_TYPE_ID;
+import static org.apache.chemistry.opencmis.commons.PropertyIds.SECONDARY_OBJECT_TYPE_IDS;
+import static org.apache.chemistry.opencmis.commons.SessionParameter.ATOMPUB_URL;
+import static org.apache.chemistry.opencmis.commons.SessionParameter.AUTH_HTTP_BASIC;
+import static org.apache.chemistry.opencmis.commons.SessionParameter.BINDING_TYPE;
+import static org.apache.chemistry.opencmis.commons.SessionParameter.CONNECT_TIMEOUT;
+import static org.apache.chemistry.opencmis.commons.SessionParameter.PASSWORD;
+import static org.apache.chemistry.opencmis.commons.SessionParameter.READ_TIMEOUT;
+import static org.apache.chemistry.opencmis.commons.SessionParameter.USER;
+import static org.apache.commons.lang3.ObjectUtils.defaultIfNull;
 import static org.cmdbuild.dms.MetadataAutocompletion.NULL_AUTOCOMPLETION_RULES;
 
 import java.io.IOException;
@@ -29,7 +41,6 @@ import org.apache.chemistry.opencmis.client.api.Repository;
 import org.apache.chemistry.opencmis.client.api.Session;
 import org.apache.chemistry.opencmis.client.api.SessionFactory;
 import org.apache.chemistry.opencmis.client.runtime.SessionFactoryImpl;
-import org.apache.chemistry.opencmis.commons.SessionParameter;
 import org.apache.chemistry.opencmis.commons.data.ContentStream;
 import org.apache.chemistry.opencmis.commons.definitions.PropertyDefinition;
 import org.apache.chemistry.opencmis.commons.enums.BindingType;
@@ -63,6 +74,9 @@ import com.google.common.base.Supplier;
 
 public class CmisDmsService implements DmsService, LoggingSupport, ChangeListener {
 
+	private static final String CMIS_DOCUMENT = "cmis:document";
+	private static final String CMIS_FOLDER = "cmis:folder";
+
 	private final CmisDmsConfiguration configuration;
 	private DefinitionsFactory definitionsFactory;
 	private Supplier<CmisCustomModel> customModel;
@@ -88,13 +102,13 @@ public class CmisDmsService implements DmsService, LoggingSupport, ChangeListene
 					logger.info("initializing repository");
 					final SessionFactory sessionFactory = SessionFactoryImpl.newInstance();
 					final Map<String, String> parameters = newHashMap();
-					parameters.put(SessionParameter.ATOMPUB_URL, configuration.getServerURL());
-					parameters.put(SessionParameter.BINDING_TYPE, BindingType.ATOMPUB.value());
-					parameters.put(SessionParameter.AUTH_HTTP_BASIC, "true");
-					parameters.put(SessionParameter.USER, configuration.getAlfrescoUser());
-					parameters.put(SessionParameter.PASSWORD, configuration.getAlfrescoPassword());
-					parameters.put(SessionParameter.CONNECT_TIMEOUT, Integer.toString(10000));
-					parameters.put(SessionParameter.READ_TIMEOUT, Integer.toString(30000));
+					parameters.put(ATOMPUB_URL, configuration.getServerURL());
+					parameters.put(BINDING_TYPE, BindingType.ATOMPUB.value());
+					parameters.put(AUTH_HTTP_BASIC, "true");
+					parameters.put(USER, configuration.getAlfrescoUser());
+					parameters.put(PASSWORD, configuration.getAlfrescoPassword());
+					parameters.put(CONNECT_TIMEOUT, Integer.toString(10000));
+					parameters.put(READ_TIMEOUT, Integer.toString(30000));
 					if (customModel().getSessionParameters() != null) {
 						for (final Parameter param : customModel().getSessionParameters()) {
 							parameters.put(param.getName(), param.getValue());
@@ -624,8 +638,8 @@ public class CmisDmsService implements DmsService, LoggingSupport, ChangeListene
 					}
 				} catch (final CmisObjectNotFoundException e) {
 					final Map<String, String> properties = newHashMap();
-					properties.put("cmis:objectTypeId", "cmis:folder");
-					properties.put("cmis:name", name);
+					properties.put(OBJECT_TYPE_ID, CMIS_FOLDER);
+					properties.put(NAME, name);
 					folder = parentFolder.createFolder(properties);
 				}
 				parentFolder = folder;
@@ -662,7 +676,7 @@ public class CmisDmsService implements DmsService, LoggingSupport, ChangeListene
 		ensureCachedDefinitions();
 
 		final Map<String, Object> properties = newHashMap();
-		properties.put("cmis:description", document.getDescription());
+		properties.put(DESCRIPTION, document.getDescription());
 
 		if (customModel().getDescription() != null) {
 			final PropertyDefinition<?> propertyDefinition = cachedPropertyDefinitions
@@ -768,13 +782,12 @@ public class CmisDmsService implements DmsService, LoggingSupport, ChangeListene
 				logger.info("cmisdocument is null");
 			}
 
-			properties.put("cmis:secondaryObjectTypeIds", secondaryTypes);
+			properties.put(SECONDARY_OBJECT_TYPE_IDS, secondaryTypes);
 		}
 
 		if (cmisDocument == null) {
-			properties.put("cmis:objectTypeId",
-					customModel().getCmisType() != null ? customModel().getCmisType() : "cmis:document");
-			properties.put("cmis:name", document.getFileName());
+			properties.put(OBJECT_TYPE_ID, defaultIfNull(customModel().getCmisType(), CMIS_DOCUMENT));
+			properties.put(NAME, document.getFileName());
 		}
 
 		return properties;
