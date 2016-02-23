@@ -2,8 +2,11 @@ package org.cmdbuild.dms.cmis;
 
 import static com.google.common.base.Suppliers.memoize;
 import static com.google.common.base.Suppliers.synchronizedSupplier;
+import static com.google.common.collect.FluentIterable.from;
 import static com.google.common.collect.Lists.newArrayList;
 import static com.google.common.collect.Maps.newHashMap;
+import static java.util.Arrays.asList;
+import static java.util.Collections.emptyList;
 import static org.apache.chemistry.opencmis.commons.PropertyIds.DESCRIPTION;
 import static org.apache.chemistry.opencmis.commons.PropertyIds.NAME;
 import static org.apache.chemistry.opencmis.commons.PropertyIds.OBJECT_TYPE_ID;
@@ -15,13 +18,13 @@ import static org.apache.chemistry.opencmis.commons.SessionParameter.CONNECT_TIM
 import static org.apache.chemistry.opencmis.commons.SessionParameter.PASSWORD;
 import static org.apache.chemistry.opencmis.commons.SessionParameter.READ_TIMEOUT;
 import static org.apache.chemistry.opencmis.commons.SessionParameter.USER;
+import static org.apache.chemistry.opencmis.commons.enums.UnfileObject.DELETE;
 import static org.apache.commons.lang3.ObjectUtils.defaultIfNull;
 import static org.cmdbuild.dms.MetadataAutocompletion.NULL_AUTOCOMPLETION_RULES;
 
 import java.io.IOException;
 import java.io.StringReader;
-import java.util.Arrays;
-import java.util.Collections;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -44,7 +47,6 @@ import org.apache.chemistry.opencmis.client.runtime.SessionFactoryImpl;
 import org.apache.chemistry.opencmis.commons.data.ContentStream;
 import org.apache.chemistry.opencmis.commons.definitions.PropertyDefinition;
 import org.apache.chemistry.opencmis.commons.enums.BindingType;
-import org.apache.chemistry.opencmis.commons.enums.UnfileObject;
 import org.apache.chemistry.opencmis.commons.enums.VersioningState;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisObjectNotFoundException;
 import org.cmdbuild.dms.DefaultDefinitionsFactory;
@@ -65,9 +67,10 @@ import org.cmdbuild.dms.MetadataGroup;
 import org.cmdbuild.dms.MetadataGroupDefinition;
 import org.cmdbuild.dms.StorableDocument;
 import org.cmdbuild.dms.StoredDocument;
-import org.cmdbuild.dms.cmis.CmisCustomModel.Converter;
-import org.cmdbuild.dms.cmis.CmisCustomModel.DocumentType;
-import org.cmdbuild.dms.cmis.CmisCustomModel.Parameter;
+import org.cmdbuild.dms.cmis.model.CmisCustomModel;
+import org.cmdbuild.dms.cmis.model.CmisCustomModel.Converter;
+import org.cmdbuild.dms.cmis.model.CmisCustomModel.DocumentType;
+import org.cmdbuild.dms.cmis.model.CmisCustomModel.Parameter;
 import org.cmdbuild.dms.exception.DmsError;
 
 import com.google.common.base.Supplier;
@@ -82,100 +85,227 @@ public class CmisDmsService implements DmsService, LoggingSupport, ChangeListene
 	private Supplier<CmisCustomModel> customModel;
 	private CmisConverter defaultConverter;
 	private Map<String, CmisConverter> propertyConverters;
-	private Map<String, PropertyDefinition<?>> cachedPropertyDefinitions;
-	private Map<String, DocumentTypeDefinition> cachedDocumentTypeDefinitions;
+	private Supplier<Collection<ObjectType>> types;
+	private Supplier<Map<String, PropertyDefinition<?>>> propertyDefinitions;
+	private Supplier<Map<String, CmisDocumentType>> documentTypeDefinitions;
 	private Supplier<Repository> repository;
 
 	public CmisDmsService(final CmisDmsConfiguration configuration) {
 		this.configuration = configuration;
 		this.configuration.addListener(this);
-		configurationChanged();
-	}
-
-	@Override
-	public void configurationChanged() {
-		synchronized (this) {
-			repository = synchronizedSupplier(memoize(new Supplier<Repository>() {
-
-				@Override
-				public Repository get() {
-					logger.info("initializing repository");
-					final SessionFactory sessionFactory = SessionFactoryImpl.newInstance();
-					final Map<String, String> parameters = newHashMap();
-					parameters.put(ATOMPUB_URL, configuration.getServerURL());
-					parameters.put(BINDING_TYPE, BindingType.ATOMPUB.value());
-					parameters.put(AUTH_HTTP_BASIC, "true");
-					parameters.put(USER, configuration.getAlfrescoUser());
-					parameters.put(PASSWORD, configuration.getAlfrescoPassword());
-					parameters.put(CONNECT_TIMEOUT, Integer.toString(10000));
-					parameters.put(READ_TIMEOUT, Integer.toString(30000));
-					if (customModel().getSessionParameters() != null) {
-						for (final Parameter param : customModel().getSessionParameters()) {
-							parameters.put(param.getName(), param.getValue());
-						}
-					}
-					logger.debug("parameters for repository '{}'", parameters);
-					final List<Repository> repositories = sessionFactory.getRepositories(parameters);
-					logger.debug("got a repository list with length '{}'", repositories);
-					final Repository repository = repositories.get(0);
-					logger.debug("will use repository with name '{}'", repository);
-					return repository;
-				}
-
-			}));
-			customModel = synchronizedSupplier(memoize(new Supplier<CmisCustomModel>() {
-
-				@Override
-				public CmisCustomModel get() {
-					try {
-						logger.info("loading custom model from");
-						final String content = configuration.getCustomModelFileContent();
-						logger.debug("content is '{}'", content);
-						final JAXBContext jaxbContext = JAXBContext.newInstance(CmisCustomModel.class);
-						final StreamSource xml = new StreamSource(new StringReader(content));
-						final Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
-						logger.debug("unmarshalling with '{}'", unmarshaller.getClass().getName());
-						return unmarshaller.unmarshal(xml, CmisCustomModel.class).getValue();
-					} catch (final Exception e) {
-						logger.error("error loading custom model", e);
-						return new CmisCustomModel();
-					}
-				}
-
-			}));
-			definitionsFactory = new DefaultDefinitionsFactory();
-			defaultConverter = new DefaultConverter();
-
-			cachedPropertyDefinitions = null;
-			cachedDocumentTypeDefinitions = null;
-
-			propertyConverters = newHashMap();
-			if (customModel().getConverterList() != null) {
-				for (final Converter converter : customModel().getConverterList()) {
-					try {
-						final CmisConverter cmisConverter = (CmisConverter) Class.forName(converter.getType())
-								.newInstance();
-						cmisConverter.setConfiguration(configuration);
-						for (final String propertyId : converter.getCmisPropertyId()) {
-							logger.debug("Property converter for " + propertyId + cmisConverter.getClass().getName());
-							propertyConverters.put(propertyId, cmisConverter);
-						}
-					} catch (final Exception e) {
-						logger.error("Exception loading CMIS converter " + converter.getType(), e);
-					}
-				}
-			}
-		}
+		initialize();
 	}
 
 	private CmisCustomModel customModel() {
 		return customModel.get();
 	}
 
+	private Collection<ObjectType> types() {
+		return types.get();
+	}
+
+	private Map<String, PropertyDefinition<?>> propertyDefinitions() {
+		return propertyDefinitions.get();
+	}
+
+	private void initialize() {
+		repository = synchronizedSupplier(memoize(new Supplier<Repository>() {
+
+			@Override
+			public Repository get() {
+				logger.info("initializing repository");
+				final SessionFactory sessionFactory = SessionFactoryImpl.newInstance();
+				final Map<String, String> parameters = newHashMap();
+				parameters.put(ATOMPUB_URL, configuration.getServerURL());
+				parameters.put(BINDING_TYPE, BindingType.ATOMPUB.value());
+				parameters.put(AUTH_HTTP_BASIC, "true");
+				parameters.put(USER, configuration.getAlfrescoUser());
+				parameters.put(PASSWORD, configuration.getAlfrescoPassword());
+				parameters.put(CONNECT_TIMEOUT, Integer.toString(10000));
+				parameters.put(READ_TIMEOUT, Integer.toString(30000));
+				if (customModel().getSessionParameters() != null) {
+					for (final Parameter param : customModel().getSessionParameters()) {
+						parameters.put(param.getName(), param.getValue());
+					}
+				}
+				logger.info("parameters for repository '{}'", parameters);
+				final List<Repository> repositories = sessionFactory.getRepositories(parameters);
+				logger.info("got a repository list with length '{}'", repositories);
+				final Repository repository = repositories.get(0);
+				logger.info("will use repository with name '{}'", repository);
+				return repository;
+			}
+
+		}));
+		customModel = synchronizedSupplier(memoize(new Supplier<CmisCustomModel>() {
+
+			@Override
+			public CmisCustomModel get() {
+				try {
+					logger.info("loading custom model from");
+					final String content = configuration.getCustomModelFileContent();
+					logger.info("content is '{}'", content);
+					final JAXBContext jaxbContext = JAXBContext.newInstance(CmisCustomModel.class);
+					final StreamSource xml = new StreamSource(new StringReader(content));
+					final Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
+					logger.info("unmarshalling with '{}'", unmarshaller.getClass().getName());
+					return unmarshaller.unmarshal(xml, CmisCustomModel.class).getValue();
+				} catch (final Exception e) {
+					logger.error("error loading custom model", e);
+					return new CmisCustomModel();
+				}
+			}
+
+		}));
+		definitionsFactory = new DefaultDefinitionsFactory();
+		defaultConverter = new DefaultConverter();
+		types = synchronizedSupplier(memoize(new Supplier<Collection<ObjectType>>() {
+
+			@Override
+			public Collection<ObjectType> get() {
+				final List<ObjectType> output = newArrayList();
+				final Session session = createSession();
+				if (customModel().getCmisType() != null) {
+					final ObjectType type = session.getTypeDefinition(customModel().getCmisType());
+					if (type != null && type.getPropertyDefinitions() != null) {
+						logger.info("storing CMIS type definition '{}'", type.getDisplayName());
+						output.add(type);
+					}
+					if (customModel().getSecondaryTypeList() != null) {
+						for (final String element : customModel().getSecondaryTypeList()) {
+							logger.info("storing secondary CMIS type definition '{}'", element);
+							final ObjectType secondaryType = session.getTypeDefinition(element);
+							if (secondaryType != null && secondaryType.getPropertyDefinitions() != null) {
+								output.add(secondaryType);
+							}
+						}
+					}
+				}
+				return output;
+			}
+
+		}));
+		propertyDefinitions = synchronizedSupplier(memoize(new Supplier<Map<String, PropertyDefinition<?>>>() {
+
+			@Override
+			public Map<String, PropertyDefinition<?>> get() {
+				final Map<String, PropertyDefinition<?>> output = newHashMap();
+				for (final String name : from(
+						asList(customModel().getCategory(), customModel().getAuthor(), customModel().getDescription()))
+								// skips non-null elements
+								.filter(String.class)) {
+					PropertyDefinition<?> property = null;
+					for (final ObjectType element : types.get()) {
+						if (property == null) {
+							property = element.getPropertyDefinitions().get(name);
+						}
+					}
+					if (property != null) {
+						output.put(name, property);
+					}
+				}
+				return output;
+			}
+
+		}));
+		documentTypeDefinitions = synchronizedSupplier(memoize(new Supplier<Map<String, CmisDocumentType>>() {
+
+			private final Iterable<DocumentType> EMPTY = emptyList();
+
+			@Override
+			public Map<String, CmisDocumentType> get() {
+				final Map<String, CmisDocumentType> output = newHashMap();
+				for (final DocumentType documentType : defaultIfNull(customModel().getDocumentTypeList(), EMPTY)) {
+					logger.info("processing document type '{}' defined in customModel", documentType.getName());
+					final Collection<CmisMetadataGroupDefinition> cmisMetadataGroupDefinitions = newArrayList();
+					for (final CmisCustomModel.MetadataGroup metadataGroup : documentType.getGroupList()) {
+						final Collection<CmisMetadataDefinition> cmisMetadataDefinitions = newArrayList();
+						ObjectType secondaryType = null;
+						if (metadataGroup.getCmisSecondaryTypeId() != null) {
+							logger.info("getting secondary type definition for '{}'",
+									metadataGroup.getCmisSecondaryTypeId());
+							secondaryType = createSession().getTypeDefinition(metadataGroup.getCmisSecondaryTypeId());
+						}
+						if (metadataGroup.getMetadataList() != null) {
+							for (final CmisCustomModel.Metadata metadata : metadataGroup.getMetadataList()) {
+								PropertyDefinition<?> property = null;
+								if (secondaryType != null && secondaryType.getPropertyDefinitions() != null) {
+									property = secondaryType.getPropertyDefinitions().get(metadata.getCmisPropertyId());
+								}
+								for (final ObjectType baseType : types()) {
+									if (property == null) {
+										property = baseType.getPropertyDefinitions().get(metadata.getCmisPropertyId());
+									}
+								}
+								if (property != null) {
+									final CmisConverter converter = getConverter(property);
+									final CmisMetadataDefinition cmisMetadata = new CmisMetadataDefinition(
+											metadata.getName(), property, converter.getType(property));
+									cmisMetadataDefinitions.add(cmisMetadata);
+								}
+							}
+						} else if (secondaryType != null && secondaryType.getPropertyDefinitions() != null) {
+							logger.info("Processing property definitions for " + secondaryType.getDisplayName());
+							logger.info("alfrescocustomuri (configuration) is " + configuration.getAlfrescoCustomUri());
+							for (final PropertyDefinition<?> property : secondaryType.getPropertyDefinitions()
+									.values()) {
+								final String localNamespace = property.getLocalNamespace();
+								logger.info("Processing property : " + property.getDisplayName() + " ,namespace : "
+										+ localNamespace + " ,localname " + property.getLocalName() + " ,queryname "
+										+ property.getQueryName());
+								if (property.getLocalNamespace().equals(configuration.getAlfrescoCustomUri())) {
+									final CmisConverter converter = getConverter(property);
+									final CmisMetadataDefinition cmisMetadata = new CmisMetadataDefinition(
+											property.getDisplayName(), property, converter.getType(property));
+									cmisMetadataDefinitions.add(cmisMetadata);
+								}
+							}
+						}
+						if (cmisMetadataDefinitions != null) {
+							final CmisMetadataGroupDefinition cmisGroup = new CmisMetadataGroupDefinition(
+									metadataGroup.getName(), secondaryType, cmisMetadataDefinitions);
+							cmisMetadataGroupDefinitions.add(cmisGroup);
+						}
+					}
+					if (cmisMetadataGroupDefinitions != null) {
+						final CmisDocumentType cmisDocumentType = new CmisDocumentType(documentType.getName(),
+								cmisMetadataGroupDefinitions);
+						output.put(cmisDocumentType.getName(), cmisDocumentType);
+					}
+				}
+				return output;
+			}
+
+		}));
+		propertyConverters = newHashMap();
+		if (customModel().getConverterList() != null) {
+			for (final Converter converter : customModel().getConverterList()) {
+				try {
+					final CmisConverter cmisConverter = (CmisConverter) Class.forName(converter.getType())
+							.newInstance();
+					cmisConverter.setConfiguration(configuration);
+					for (final String propertyId : converter.getCmisPropertyId()) {
+						logger.debug("Property converter for " + propertyId + cmisConverter.getClass().getName());
+						propertyConverters.put(propertyId, cmisConverter);
+					}
+				} catch (final Exception e) {
+					logger.error("Exception loading CMIS converter " + converter.getType(), e);
+				}
+			}
+		}
+	}
+
+	@Override
+	public void configurationChanged() {
+		synchronized (this) {
+			initialize();
+		}
+	}
+
 	@Override
 	public void clearCache() {
 		synchronized (this) {
-			cachedDocumentTypeDefinitions = null;
+			initialize();
 		}
 	}
 
@@ -198,14 +328,12 @@ public class CmisDmsService implements DmsService, LoggingSupport, ChangeListene
 
 	@Override
 	public Iterable<DocumentTypeDefinition> getTypeDefinitions() throws DmsError {
-		ensureCachedDefinitions();
-		return (cachedDocumentTypeDefinitions == null) ? Collections.emptyList()
-				: cachedDocumentTypeDefinitions.values();
+		return from(documentTypeDefinitions.get().values()) //
+				.filter(DocumentTypeDefinition.class);
 	}
 
 	@Override
 	public List<StoredDocument> search(final DocumentSearch position) throws DmsError {
-		ensureCachedDefinitions();
 		final Session cmisSession = createSession();
 		logger.info("Searching from: " + position.getPath() + "" + position.getClassName() + position.getCardId() + "");
 		final List<StoredDocument> results = newArrayList();
@@ -251,7 +379,7 @@ public class CmisDmsService implements DmsService, LoggingSupport, ChangeListene
 					DocumentTypeDefinition documentTypeDefinition = null;
 					logger.info("Category of searchd document is " + category);
 					if (category != null) {
-						documentTypeDefinition = cachedDocumentTypeDefinitions.get(category);
+						documentTypeDefinition = documentTypeDefinitions.get().get(category);
 					}
 					if (documentTypeDefinition == null) {
 						documentTypeDefinition = definitionsFactory.newDocumentTypeDefinitionWithNoMetadata(category);
@@ -317,8 +445,7 @@ public class CmisDmsService implements DmsService, LoggingSupport, ChangeListene
 
 			Object author = null;
 			if (customModel().getAuthor() != null) {
-				final PropertyDefinition<?> propertyDefinition = cachedPropertyDefinitions
-						.get(customModel().getAuthor());
+				final PropertyDefinition<?> propertyDefinition = propertyDefinitions().get(customModel().getAuthor());
 				if (propertyDefinition != null) {
 					author = getConverter(propertyDefinition).convertToCmisValue(cmisSession, propertyDefinition,
 							document.getAuthor());
@@ -465,7 +592,7 @@ public class CmisDmsService implements DmsService, LoggingSupport, ChangeListene
 		final Folder folder = getFolder(cmisSession, position.getPath());
 		logger.info("will delete  tree '{}'", position.getPath());
 		if (folder != null) {
-			final List<String> results = folder.deleteTree(true, UnfileObject.DELETE, true);
+			final Collection<String> results = folder.deleteTree(true, DELETE, true);
 			for (final String result : results) {
 				logger.debug("result " + result);
 			}
@@ -480,124 +607,6 @@ public class CmisDmsService implements DmsService, LoggingSupport, ChangeListene
 
 	private Session createSession() {
 		return repository.get().createSession();
-	}
-
-	private void ensureCachedDefinitions() throws DmsError {
-		synchronized (this) {
-			if (cachedPropertyDefinitions == null || cachedDocumentTypeDefinitions == null) {
-				logger.info("intializing internal cache for document type definitions");
-				try {
-					final Session cmisSession = createSession();
-					final List<ObjectType> types = newArrayList();
-					if (customModel().getCmisType() != null) {
-						final ObjectType type = cmisSession.getTypeDefinition(customModel().getCmisType());
-						logger.info("Caching cmis type definition " + type.getDisplayName());
-						if (type != null && type.getPropertyDefinitions() != null) {
-							types.add(type);
-						}
-						if (customModel().getSecondaryTypeList() != null) {
-							for (final String name : customModel().getSecondaryTypeList()) {
-								logger.info("Caching secondary cmis type definition " + name);
-								final ObjectType secondaryType = cmisSession.getTypeDefinition(name);
-								if (secondaryType != null && secondaryType.getPropertyDefinitions() != null) {
-									types.add(secondaryType);
-								}
-							}
-						}
-					}
-
-					final Map<String, PropertyDefinition<?>> cmisPropertyDefinitions = newHashMap();
-					for (final String name : Arrays.asList(customModel().getCategory(), customModel().getAuthor(),
-							customModel().getDescription())) {
-						if (name != null) {
-							PropertyDefinition<?> property = null;
-							for (final ObjectType baseType : types) {
-								if (property == null) {
-									property = baseType.getPropertyDefinitions().get(name);
-								}
-							}
-							if (property != null) {
-								cmisPropertyDefinitions.put(name, property);
-							}
-						}
-					}
-					cachedPropertyDefinitions = cmisPropertyDefinitions;
-
-					final Map<String, DocumentTypeDefinition> cmisDocumentTypes = newHashMap();
-					if (customModel().getDocumentTypeList() != null) {
-						for (final DocumentType documentType : customModel().getDocumentTypeList()) {
-							logger.info("Processing document type defined in customModel " + documentType.getName());
-							final List<CmisMetadataGroupDefinition> cmisMetadataGroupDefinitions = newArrayList();
-							for (final CmisCustomModel.MetadataGroup metadataGroup : documentType.getGroupList()) {
-								final List<CmisMetadataDefinition> cmisMetadataDefinitions = newArrayList();
-								ObjectType secondaryType = null;
-								if (metadataGroup.getCmisSecondaryTypeId() != null) {
-									logger.info("caching " + metadataGroup.getCmisSecondaryTypeId());
-									secondaryType = cmisSession
-											.getTypeDefinition(metadataGroup.getCmisSecondaryTypeId());
-									logger.info("Getting secondary type definition from server for "
-											+ metadataGroup.getCmisSecondaryTypeId());
-								}
-								if (metadataGroup.getMetadataList() != null) {
-									for (final CmisCustomModel.Metadata metadata : metadataGroup.getMetadataList()) {
-										PropertyDefinition<?> property = null;
-										if (secondaryType != null && secondaryType.getPropertyDefinitions() != null) {
-											property = secondaryType.getPropertyDefinitions()
-													.get(metadata.getCmisPropertyId());
-										}
-										for (final ObjectType baseType : types) {
-											if (property == null) {
-												property = baseType.getPropertyDefinitions()
-														.get(metadata.getCmisPropertyId());
-											}
-										}
-										if (property != null) {
-											final CmisConverter converter = getConverter(property);
-											final CmisMetadataDefinition cmisMetadata = new CmisMetadataDefinition(
-													metadata.getName(), property, converter.getType(property));
-											cmisMetadataDefinitions.add(cmisMetadata);
-										}
-									}
-								} else if (secondaryType != null && secondaryType.getPropertyDefinitions() != null) {
-									logger.info(
-											"Processing property definitions for " + secondaryType.getDisplayName());
-									logger.info("alfrescocustomuri (configuration) is "
-											+ configuration.getAlfrescoCustomUri());
-									for (final PropertyDefinition<?> property : secondaryType.getPropertyDefinitions()
-											.values()) {
-										final String localNamespace = property.getLocalNamespace();
-										logger.info("Processing property : " + property.getDisplayName()
-												+ " ,namespace : " + localNamespace + " ,localname "
-												+ property.getLocalName() + " ,queryname " + property.getQueryName());
-										if (property.getLocalNamespace().equals(configuration.getAlfrescoCustomUri())) {
-											final CmisConverter converter = getConverter(property);
-											final CmisMetadataDefinition cmisMetadata = new CmisMetadataDefinition(
-													property.getDisplayName(), property, converter.getType(property));
-											cmisMetadataDefinitions.add(cmisMetadata);
-										}
-									}
-								}
-								if (cmisMetadataDefinitions != null) {
-									final CmisMetadataGroupDefinition cmisGroup = new CmisMetadataGroupDefinition(
-											metadataGroup.getName(), secondaryType, cmisMetadataDefinitions);
-									cmisMetadataGroupDefinitions.add(cmisGroup);
-								}
-							}
-							if (cmisMetadataGroupDefinitions != null) {
-								final CmisDocumentType cmisDocumentType = new CmisDocumentType(documentType.getName(),
-										cmisMetadataGroupDefinitions);
-								cmisDocumentTypes.put(cmisDocumentType.getName(), cmisDocumentType);
-
-							}
-						}
-					}
-					cachedDocumentTypeDefinitions = cmisDocumentTypes;
-				} catch (final Exception e) {
-					logger.error("error getting document type definitions", e);
-					throw DmsError.forward(e);
-				}
-			}
-		}
 	}
 
 	private Folder getFolder(final Session cmisSession, final List<String> pathList) {
@@ -673,14 +682,11 @@ public class CmisDmsService implements DmsService, LoggingSupport, ChangeListene
 
 	private Map<String, Object> getProperties(final Session cmisSession, final DocumentUpdate document,
 			final Document cmisDocument) throws DmsError {
-		ensureCachedDefinitions();
-
 		final Map<String, Object> properties = newHashMap();
 		properties.put(DESCRIPTION, document.getDescription());
 
 		if (customModel().getDescription() != null) {
-			final PropertyDefinition<?> propertyDefinition = cachedPropertyDefinitions
-					.get(customModel().getDescription());
+			final PropertyDefinition<?> propertyDefinition = propertyDefinitions().get(customModel().getDescription());
 			logger.info("description property: " + propertyDefinition.getDisplayName() + " updatability "
 					+ propertyDefinition.getUpdatability());
 			if (propertyDefinition != null) {
@@ -696,8 +702,7 @@ public class CmisDmsService implements DmsService, LoggingSupport, ChangeListene
 		if (category != null) {
 			logger.info("CustomModel for  " + category + " " + customModel().getCategory());
 			if (customModel().getCategory() != null) {
-				final PropertyDefinition<?> propertyDefinition = cachedPropertyDefinitions
-						.get(customModel().getCategory());
+				final PropertyDefinition<?> propertyDefinition = propertyDefinitions().get(customModel().getCategory());
 				if (propertyDefinition != null) {
 					final Object value = getConverter(propertyDefinition).convertToCmisValue(cmisSession,
 							propertyDefinition, document.getCategory());
@@ -727,7 +732,7 @@ public class CmisDmsService implements DmsService, LoggingSupport, ChangeListene
 				logger.info("No Secondarytype list   in customModel ");
 			}
 
-			final CmisDocumentType documentType = (CmisDocumentType) cachedDocumentTypeDefinitions.get(category);
+			final CmisDocumentType documentType = documentTypeDefinitions.get().get(category);
 			if (documentType != null) {
 				for (final MetadataGroupDefinition group : documentType.getMetadataGroupDefinitions()) {
 					final CmisMetadataGroupDefinition cmisGroup = (CmisMetadataGroupDefinition) group;

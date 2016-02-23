@@ -10,7 +10,6 @@ import org.apache.chemistry.opencmis.commons.definitions.PropertyDefinition;
 import org.apache.chemistry.opencmis.commons.enums.DateTimeResolution;
 import org.apache.chemistry.opencmis.commons.enums.PropertyType;
 import org.cmdbuild.common.Constants;
-import org.cmdbuild.dms.DmsConfiguration;
 import org.cmdbuild.dms.MetadataType;
 
 public class DefaultConverter implements CmisConverter {
@@ -23,7 +22,7 @@ public class DefaultConverter implements CmisConverter {
 			Constants.DATE_PRINTING_PATTERN);
 
 	@Override
-	public void setConfiguration(final DmsConfiguration configuration) {
+	public void setConfiguration(final CmisDmsConfiguration configuration) {
 	}
 
 	@Override
