@@ -113,7 +113,7 @@
 		};
 		this.getRelationCB = function(cardId, relation, domainAttributes,
 				domainDescription, callback, callbackScope) {
-			var classId = (relations._sourceId != cardId)
+			var classId = (relation._sourceId != cardId)
 					? relation._sourceType
 					: relation._destinationType;
 			var classDescription = $.Cmdbuild.customvariables.cacheClasses
