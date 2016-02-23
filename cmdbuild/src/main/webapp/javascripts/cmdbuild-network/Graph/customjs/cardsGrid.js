@@ -3,7 +3,7 @@
 		this.param = param;
 		this.grid = new $.Cmdbuild.standard.grid();
 		this.refreshSelected = function() {
-			var form2Hook = $.Cmdbuild.dataModel.forms["cardsForm"];
+			var form2Hook = $.Cmdbuild.dataModel.forms.cardsForm;
 			form2Hook.selectRows($.Cmdbuild.customvariables.selected.getData());
 		};
 		this.refresh = function() {

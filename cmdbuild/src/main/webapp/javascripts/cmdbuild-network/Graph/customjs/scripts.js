@@ -6,9 +6,6 @@
 		counter: function(param) {
 			new counter(param);
 		},
-		combo: function(param) {
-			$("#" + param.id).combobox();
-		},
 		buttonset: function(param) {
 			$("#" + param.id).buttonset();
 		}

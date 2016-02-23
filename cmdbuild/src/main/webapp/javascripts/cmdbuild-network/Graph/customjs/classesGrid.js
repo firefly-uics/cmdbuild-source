@@ -3,7 +3,7 @@
 		this.param = param;
 		this.grid = new $.Cmdbuild.standard.grid();
 		this.refreshSelected = function() {
-			var form2Hook = $.Cmdbuild.dataModel.forms["classesForm"];
+			var form2Hook = $.Cmdbuild.dataModel.forms.classesForm;
 			form2Hook.selectRows($.Cmdbuild.custom.classesGrid.getAllSelected());
 		};
 		this.refresh = function() {
@@ -21,7 +21,7 @@
 			}
 			var filterClasses = $.Cmdbuild.custom.configuration.filterClasses;
 			if (filterClasses) {
-				for (var i = 0; i < filterClasses.length; i++) {
+				for (i = 0; i < filterClasses.length; i++) {
 					this.grid.checked[filterClasses[i]] = false;
 				}
 			}

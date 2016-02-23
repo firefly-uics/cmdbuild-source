@@ -48,12 +48,13 @@
 			});
 			function callCmdbuildAP() {
 				$("#cmdbuilForm").cmdbuildAP({
+					debug: false,
 					apiUrl : '~/services/rest/v2/',
 					appRootUrl : '~/javascripts/cmdbuild-gui-framework-' + getUrlParameter("frameworkVersion") + '/',
 					appConfigUrl: 'Graph/',
 					access_token: 'CMDBuildSessionToken',
 					customjs: [
-							"libraries/cytoscape.js",
+							"libraries/cytoscape.min.js",
 							"backend/CmdbuildModel.js",
 							"backend/ClassesNavigation.js",
 							"backend/ClassesFilter.js",
@@ -62,7 +63,6 @@
 							"backend/SelectedNavigation.js",
 							"backend/SpriteArchive.js",
 							"backend/Options.js",
-							"backend/Relations.js",
 							"backend/GraphCard.js",
 							"backend/DomainsFilterClasses.js",
 							"backend/OnGraphRelations.js",
