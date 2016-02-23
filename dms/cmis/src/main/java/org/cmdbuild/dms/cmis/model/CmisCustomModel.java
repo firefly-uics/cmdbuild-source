@@ -1,4 +1,4 @@
-package org.cmdbuild.dms.cmis;
+package org.cmdbuild.dms.cmis.model;
 
 import java.util.List;
 
@@ -27,7 +27,7 @@ public class CmisCustomModel {
 			return name;
 		}
 
-		public void setName(final String name) {
+		void setName(final String name) {
 			this.name = name;
 		}
 
@@ -35,7 +35,7 @@ public class CmisCustomModel {
 			return groupList;
 		}
 
-		public void setGroupList(final List<MetadataGroup> groupList) {
+		void setGroupList(final List<MetadataGroup> groupList) {
 			this.groupList = groupList;
 		}
 	}
@@ -56,7 +56,7 @@ public class CmisCustomModel {
 			return name;
 		}
 
-		public void setName(final String name) {
+		void setName(final String name) {
 			this.name = name;
 		}
 
@@ -64,7 +64,7 @@ public class CmisCustomModel {
 			return cmisSecondaryTypeId;
 		}
 
-		public void setCmisSecondaryTypeId(final String cmisSecondaryTypeId) {
+		void setCmisSecondaryTypeId(final String cmisSecondaryTypeId) {
 			this.cmisSecondaryTypeId = cmisSecondaryTypeId;
 		}
 
@@ -72,7 +72,7 @@ public class CmisCustomModel {
 			return metadataList;
 		}
 
-		public void setMetadataList(final List<Metadata> metadataList) {
+		void setMetadataList(final List<Metadata> metadataList) {
 			this.metadataList = metadataList;
 		}
 	}
@@ -89,7 +89,7 @@ public class CmisCustomModel {
 			return name;
 		}
 
-		public void setName(final String name) {
+		void setName(final String name) {
 			this.name = name;
 		}
 
@@ -97,7 +97,7 @@ public class CmisCustomModel {
 			return cmisPropertyId;
 		}
 
-		public void setCmisPropertyId(final String cmisPropertyId) {
+		void setCmisPropertyId(final String cmisPropertyId) {
 			this.cmisPropertyId = cmisPropertyId;
 		}
 	}
@@ -115,7 +115,7 @@ public class CmisCustomModel {
 			return type;
 		}
 
-		public void setType(final String type) {
+		void setType(final String type) {
 			this.type = type;
 		}
 
@@ -123,7 +123,7 @@ public class CmisCustomModel {
 			return cmisPropertyId;
 		}
 
-		public void setCmisPropertyId(final List<String> cmisPropertyId) {
+		void setCmisPropertyId(final List<String> cmisPropertyId) {
 			this.cmisPropertyId = cmisPropertyId;
 		}
 	}
@@ -141,7 +141,7 @@ public class CmisCustomModel {
 			return name;
 		}
 
-		public void setName(final String name) {
+		void setName(final String name) {
 			this.name = name;
 		}
 
@@ -149,7 +149,7 @@ public class CmisCustomModel {
 			return value;
 		}
 
-		public void setValue(final String value) {
+		void setValue(final String value) {
 			this.value = value;
 		}
 	}
@@ -186,7 +186,7 @@ public class CmisCustomModel {
 		return cmisType;
 	}
 
-	public void setCmisType(final String cmisType) {
+	void setCmisType(final String cmisType) {
 		this.cmisType = cmisType;
 	}
 
@@ -194,7 +194,7 @@ public class CmisCustomModel {
 		return secondaryTypeList;
 	}
 
-	public void setSecondaryTypeList(final List<String> secondaryTypeList) {
+	void setSecondaryTypeList(final List<String> secondaryTypeList) {
 		this.secondaryTypeList = secondaryTypeList;
 	}
 
@@ -202,7 +202,7 @@ public class CmisCustomModel {
 		return documentTypeList;
 	}
 
-	public void setDocumentTypeList(final List<DocumentType> documentTypeList) {
+	void setDocumentTypeList(final List<DocumentType> documentTypeList) {
 		this.documentTypeList = documentTypeList;
 	}
 
@@ -210,7 +210,7 @@ public class CmisCustomModel {
 		return converterList;
 	}
 
-	public void setConverterList(final List<Converter> converterList) {
+	void setConverterList(final List<Converter> converterList) {
 		this.converterList = converterList;
 	}
 
@@ -218,7 +218,7 @@ public class CmisCustomModel {
 		return author;
 	}
 
-	public void setAuthor(final String author) {
+	void setAuthor(final String author) {
 		this.author = author;
 	}
 
@@ -226,7 +226,7 @@ public class CmisCustomModel {
 		return category;
 	}
 
-	public void setCategory(final String category) {
+	void setCategory(final String category) {
 		this.category = category;
 	}
 
@@ -234,7 +234,7 @@ public class CmisCustomModel {
 		return description;
 	}
 
-	public void setDescription(final String description) {
+	void setDescription(final String description) {
 		this.description = description;
 	}
 
@@ -242,7 +242,7 @@ public class CmisCustomModel {
 		return sessionParameters;
 	}
 
-	public void setSessionParameters(final List<Parameter> sessionParameters) {
+	void setSessionParameters(final List<Parameter> sessionParameters) {
 		this.sessionParameters = sessionParameters;
 	}
 }
