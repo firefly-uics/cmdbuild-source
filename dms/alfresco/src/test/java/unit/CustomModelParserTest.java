@@ -23,7 +23,7 @@ public class CustomModelParserTest {
 	@Before
 	public void createParser() throws Exception {
 		final TestConfiguration configuration = new TestConfiguration();
-		final String content = configuration.getAlfrescoCustomModelFileContent();
+		final String content = configuration.getCustomModelFileContent();
 		final String prefix = configuration.getAlfrescoCustomPrefix();
 		customModelParser = new CustomModelParser(content, prefix);
 	}

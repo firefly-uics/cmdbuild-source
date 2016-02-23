@@ -134,7 +134,7 @@ class AlfrescoWebserviceClient implements LoggingSupport {
 		final GetDocumentTypeDefinitionsCommand command = new GetDocumentTypeDefinitionsCommand();
 		command.setUri(configuration.getAlfrescoCustomUri());
 		command.setPrefix(configuration.getAlfrescoCustomPrefix());
-		command.setCustomModelContent(configuration.getAlfrescoCustomModelFileContent());
+		command.setCustomModelContent(configuration.getCustomModelFileContent());
 		executeWhithinSession(command);
 		if (command.isSuccessfull()) {
 			return command.getResult().values();

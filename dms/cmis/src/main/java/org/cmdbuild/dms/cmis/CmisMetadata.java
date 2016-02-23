@@ -3,10 +3,10 @@ package org.cmdbuild.dms.cmis;
 import org.cmdbuild.dms.Metadata;
 
 public class CmisMetadata implements Metadata {
-	private String name;
-	private String value;
+	private final String name;
+	private final String value;
 
-	public CmisMetadata(String name, String value) {
+	public CmisMetadata(final String name, final String value) {
 		this.name = name;
 		this.value = value;
 	}

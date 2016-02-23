@@ -14,7 +14,8 @@ public class CmisMetadataDefinition implements MetadataDefinition {
 	private final PropertyDefinition<?> propertyDefinition;
 	private final MetadataType metadataType;
 
-	public CmisMetadataDefinition(final String name, final PropertyDefinition<?> propertyDefinition, MetadataType metadataType) {
+	public CmisMetadataDefinition(final String name, final PropertyDefinition<?> propertyDefinition,
+			final MetadataType metadataType) {
 		this.name = name;
 		this.propertyDefinition = propertyDefinition;
 		this.metadataType = metadataType;
@@ -23,7 +24,7 @@ public class CmisMetadataDefinition implements MetadataDefinition {
 	public PropertyDefinition<?> getProperty() {
 		return propertyDefinition;
 	}
-	
+
 	@Override
 	public String getName() {
 		return propertyDefinition.getId();
@@ -46,13 +47,13 @@ public class CmisMetadataDefinition implements MetadataDefinition {
 
 	@Override
 	public boolean isList() {
-		return propertyDefinition.getChoices()!=null && !propertyDefinition.getChoices().isEmpty();
+		return propertyDefinition.getChoices() != null && !propertyDefinition.getChoices().isEmpty();
 	}
 
 	@Override
 	public Iterable<String> getListValues() {
-		List<String> values = new ArrayList<String>();
-		for(Choice<?> choice : propertyDefinition.getChoices()){
+		final List<String> values = new ArrayList<String>();
+		for (final Choice<?> choice : propertyDefinition.getChoices()) {
 			values.add(choice.getDisplayName());
 		}
 		return values;

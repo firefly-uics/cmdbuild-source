@@ -100,23 +100,13 @@ public class TestConfiguration implements AlfrescoDmsConfiguration {
 	}
 
 	@Override
-	public String getAlfrescoCustomModelFileName() {
-		return ALFRESCO_CUSTOM_MODEL_FILENAME;
-	}
-
-	@Override
-	public String getAlfrescoCustomModelFileContent() {
-		return contentOf(getAlfrescoCustomModelFileName());
-	}
-
-	@Override
-	public String getMetadataAutocompletionFileName() {
-		return METADATA_AUTOCOMPLETION_FILENAME;
+	public String getCustomModelFileContent() {
+		return contentOf(ALFRESCO_CUSTOM_MODEL_FILENAME);
 	}
 
 	@Override
 	public String getMetadataAutocompletionFileContent() {
-		return contentOf(getMetadataAutocompletionFileName());
+		return contentOf(METADATA_AUTOCOMPLETION_FILENAME);
 	}
 
 	private String contentOf(final String filename) {

@@ -11,26 +11,26 @@ public class CmisDocumentType implements DocumentTypeDefinition {
 	private final String name;
 	private final Map<String, MetadataGroupDefinition> metadataGroupDefinitions;
 
-	public CmisDocumentType(String name, Iterable<CmisMetadataGroupDefinition> metadataGroupDefinitions) {
+	public CmisDocumentType(final String name, final Iterable<CmisMetadataGroupDefinition> metadataGroupDefinitions) {
 		this.name = name;
 		this.metadataGroupDefinitions = new HashMap<String, MetadataGroupDefinition>();
-		for (CmisMetadataGroupDefinition group : metadataGroupDefinitions) {
+		for (final CmisMetadataGroupDefinition group : metadataGroupDefinitions) {
 			this.metadataGroupDefinitions.put(group.getName(), group);
 		}
 	}
-	
+
 	@Override
 	public String getName() {
 		return name;
 	}
-	
-	public CmisMetadataGroupDefinition getMetadataGroupDefinition(String name) {
-		return (CmisMetadataGroupDefinition)metadataGroupDefinitions.get(name);					
+
+	public CmisMetadataGroupDefinition getMetadataGroupDefinition(final String name) {
+		return (CmisMetadataGroupDefinition) metadataGroupDefinitions.get(name);
 	}
 
 	@Override
 	public Iterable<MetadataGroupDefinition> getMetadataGroupDefinitions() {
-		return metadataGroupDefinitions.values();					
+		return metadataGroupDefinitions.values();
 	}
 
 	@Override
