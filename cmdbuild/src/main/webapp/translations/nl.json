@@ -1101,6 +1101,7 @@
 	"enableLookup": "Deblokkeer zoeklijst",
 	"enableMoveRejectedNotMatching": "Aktiveer, Verplaats of Weiger niet passende",
 	"enableNodeTooltip": "<em>Enable node tooltip</em>",
+	"enableRecursion": "<em>Enable recursion</em>",
 	"enableSsl": "Aktiveer SSL",
 	"enableUser": "Deblokkeer gebruiker",
 	"endDate": "Eind datum",

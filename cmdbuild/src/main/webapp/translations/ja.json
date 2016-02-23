@@ -1101,6 +1101,7 @@
 	"enableLookup": "ルックアップ可能",
 	"enableMoveRejectedNotMatching": "マッチせずにリジェクトされた移動を可能にする",
 	"enableNodeTooltip": "<em>Enable node tooltip</em>",
+	"enableRecursion": "<em>Enable recursion</em>",
 	"enableSsl": "SSLを有効化",
 	"enableUser": "可能なユーザー",
 	"endDate": "終了日",

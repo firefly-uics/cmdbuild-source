@@ -1101,6 +1101,7 @@
 	"enableLookup": "Habilitar Lookup",
 	"enableMoveRejectedNotMatching": "Habilita transferencias rechazadas",
 	"enableNodeTooltip": "<em>Enable node tooltip</em>",
+	"enableRecursion": "<em>Enable recursion</em>",
 	"enableSsl": "Habilita SSL",
 	"enableUser": "Habilitar usuario",
 	"endDate": "Fecha de finalización",

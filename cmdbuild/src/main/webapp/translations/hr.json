@@ -1101,6 +1101,7 @@
 	"enableLookup": "Uključi stavku šifarnika",
 	"enableMoveRejectedNotMatching": "<em>Enable move rejected not matching</em>",
 	"enableNodeTooltip": "<em>Enable node tooltip</em>",
+	"enableRecursion": "<em>Enable recursion</em>",
 	"enableSsl": "<em>Enable SSL</em>",
 	"enableUser": "Uključi korisnika",
 	"endDate": "Datum završetka",

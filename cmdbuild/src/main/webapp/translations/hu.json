@@ -1101,6 +1101,7 @@
 	"enableLookup": "Enable lookup",
 	"enableMoveRejectedNotMatching": "Nem egyezők mozgatásának engedélyezése",
 	"enableNodeTooltip": "<em>Enable node tooltip</em>",
+	"enableRecursion": "<em>Enable recursion</em>",
 	"enableSsl": "SSL engedélyezése",
 	"enableUser": "Felhasználó engedélyezése",
 	"endDate": "Befejező dátum",

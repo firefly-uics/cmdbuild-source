@@ -1101,6 +1101,7 @@
 	"enableLookup": "Cho phép tra cứu",
 	"enableMoveRejectedNotMatching": "<em>Enable move rejected not matching</em>",
 	"enableNodeTooltip": "<em>Enable node tooltip</em>",
+	"enableRecursion": "<em>Enable recursion</em>",
 	"enableSsl": "<em>Enable SSL</em>",
 	"enableUser": "Kích hoạt người dùng",
 	"endDate": "Ngày kết thúc",
