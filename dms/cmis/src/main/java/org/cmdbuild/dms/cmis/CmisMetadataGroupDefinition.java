@@ -10,19 +10,20 @@ import org.cmdbuild.dms.MetadataGroupDefinition;
 
 public class CmisMetadataGroupDefinition implements MetadataGroupDefinition {
 
-	private String name;
-	private ObjectType secondaryType;
-	private Map<String, MetadataDefinition> metadataDefinitions;
-	
-	public CmisMetadataGroupDefinition(String name, ObjectType secondaryType, Iterable<CmisMetadataDefinition> metadataDefinitions) {
+	private final String name;
+	private final ObjectType secondaryType;
+	private final Map<String, MetadataDefinition> metadataDefinitions;
+
+	public CmisMetadataGroupDefinition(final String name, final ObjectType secondaryType,
+			final Iterable<CmisMetadataDefinition> metadataDefinitions) {
 		this.name = name;
 		this.secondaryType = secondaryType;
 		this.metadataDefinitions = new HashMap<String, MetadataDefinition>();
-		for (CmisMetadataDefinition metadata : metadataDefinitions) {
+		for (final CmisMetadataDefinition metadata : metadataDefinitions) {
 			this.metadataDefinitions.put(metadata.getName(), metadata);
 		}
 	}
-	
+
 	public ObjectType getSecondaryType() {
 		return secondaryType;
 	}
@@ -31,9 +32,9 @@ public class CmisMetadataGroupDefinition implements MetadataGroupDefinition {
 	public String getName() {
 		return name;
 	}
-	
-	public CmisMetadataDefinition getMetadataDefinition(String name) {
-		return (CmisMetadataDefinition)metadataDefinitions.get(name);
+
+	public CmisMetadataDefinition getMetadataDefinition(final String name) {
+		return (CmisMetadataDefinition) metadataDefinitions.get(name);
 	}
 
 	@Override

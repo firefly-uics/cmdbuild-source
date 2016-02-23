@@ -18,13 +18,9 @@ public interface DmsConfiguration {
 
 	String getCmdbuildCategory();
 
-	String getAlfrescoCustomModelFileName();
-
-	String getAlfrescoCustomModelFileContent();
+	String getCustomModelFileContent();
 
 	String getAlfrescoCustomUri();
-
-	String getMetadataAutocompletionFileName();
 
 	String getMetadataAutocompletionFileContent();
 

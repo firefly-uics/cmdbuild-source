@@ -6,10 +6,10 @@ import org.cmdbuild.dms.Metadata;
 import org.cmdbuild.dms.MetadataGroup;
 
 public class CmisMetadataGroup implements MetadataGroup {
-	private String name;
-	private List<Metadata> metadataList;
+	private final String name;
+	private final List<Metadata> metadataList;
 
-	public CmisMetadataGroup(String name, List<Metadata> metadataList) {
+	public CmisMetadataGroup(final String name, final List<Metadata> metadataList) {
 		this.name = name;
 		this.metadataList = metadataList;
 	}

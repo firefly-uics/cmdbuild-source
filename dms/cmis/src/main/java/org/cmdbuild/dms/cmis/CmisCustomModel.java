@@ -16,106 +16,106 @@ public class CmisCustomModel {
 
 	@XmlAccessorType(XmlAccessType.FIELD)
 	public static class DocumentType {
-		
-		@XmlAttribute(name="name")
+
+		@XmlAttribute(name = "name")
 		private String name;
-		
-		@XmlElement(name="group")	    		
+
+		@XmlElement(name = "group")
 		private List<MetadataGroup> groupList;
-		
+
 		public String getName() {
 			return name;
 		}
-		
-		public void setName(String name) {
+
+		public void setName(final String name) {
 			this.name = name;
 		}
-		
+
 		public List<MetadataGroup> getGroupList() {
 			return groupList;
 		}
-		
-		public void setGroupList(List<MetadataGroup> groupList) {
+
+		public void setGroupList(final List<MetadataGroup> groupList) {
 			this.groupList = groupList;
 		}
 	}
-	
+
 	@XmlAccessorType(XmlAccessType.FIELD)
 	public static class MetadataGroup {
-		
-		@XmlAttribute(name="name")	    
+
+		@XmlAttribute(name = "name")
 		private String name;
-		
-		@XmlAttribute(name="secondary-type")	    
+
+		@XmlAttribute(name = "secondary-type")
 		private String cmisSecondaryTypeId;
-		
-		@XmlElement(name="metadata")
-	    private List<Metadata> metadataList;
-		
+
+		@XmlElement(name = "metadata")
+		private List<Metadata> metadataList;
+
 		public String getName() {
 			return name;
 		}
-		
-		public void setName(String name) {
+
+		public void setName(final String name) {
 			this.name = name;
 		}
-		
+
 		public String getCmisSecondaryTypeId() {
 			return cmisSecondaryTypeId;
 		}
-		
-		public void setCmisSecondaryTypeId(String cmisSecondaryTypeId) {
+
+		public void setCmisSecondaryTypeId(final String cmisSecondaryTypeId) {
 			this.cmisSecondaryTypeId = cmisSecondaryTypeId;
 		}
-		
+
 		public List<Metadata> getMetadataList() {
 			return metadataList;
 		}
-		
-		public void setMetadataList(List<Metadata> metadataList) {
+
+		public void setMetadataList(final List<Metadata> metadataList) {
 			this.metadataList = metadataList;
 		}
 	}
-	
+
 	@XmlAccessorType(XmlAccessType.FIELD)
 	public static class Metadata {
-		@XmlAttribute(name="name")	    		
+		@XmlAttribute(name = "name")
 		private String name;
-		
-		@XmlAttribute(name="property")	    		
+
+		@XmlAttribute(name = "property")
 		private String cmisPropertyId;
-		
+
 		public String getName() {
 			return name;
 		}
-		
-		public void setName(String name) {
+
+		public void setName(final String name) {
 			this.name = name;
 		}
-		
+
 		public String getCmisPropertyId() {
 			return cmisPropertyId;
 		}
-		
-		public void setCmisPropertyId(String cmisPropertyId) {
+
+		public void setCmisPropertyId(final String cmisPropertyId) {
 			this.cmisPropertyId = cmisPropertyId;
 		}
 	}
-	
+
 	@XmlAccessorType(XmlAccessType.FIELD)
 	public static class Converter {
-		
-		@XmlAttribute(name="type")	    		
+
+		@XmlAttribute(name = "type")
 		private String type;
-		
-		@XmlElement(name="property")	    		
+
+		@XmlElement(name = "property")
 		private List<String> cmisPropertyId;
 
 		public String getType() {
 			return type;
 		}
 
-		public void setType(String type) {
+		public void setType(final String type) {
 			this.type = type;
 		}
 
@@ -123,111 +123,110 @@ public class CmisCustomModel {
 			return cmisPropertyId;
 		}
 
-		public void setCmisPropertyId(List<String> cmisPropertyId) {
+		public void setCmisPropertyId(final List<String> cmisPropertyId) {
 			this.cmisPropertyId = cmisPropertyId;
 		}
 	}
-	
+
 	@XmlAccessorType(XmlAccessType.FIELD)
 	public static class Parameter {
-		
-		@XmlAttribute(name="name")	    		
+
+		@XmlAttribute(name = "name")
 		private String name;
-		
-		@XmlAttribute(name="value")	    		
+
+		@XmlAttribute(name = "value")
 		private String value;
-		
+
 		public String getName() {
 			return name;
 		}
 
-		public void setName(String name) {
+		public void setName(final String name) {
 			this.name = name;
 		}
-		
+
 		public String getValue() {
 			return value;
 		}
 
-		public void setValue(String value) {
+		public void setValue(final String value) {
 			this.value = value;
 		}
 	}
-	
-	@XmlAttribute(name="type")
+
+	@XmlAttribute(name = "type")
 	private String cmisType;
-	
+
 	@XmlList
-	@XmlAttribute(name="secondary-types")
-    private List<String> secondaryTypeList;
-	
-	@XmlElementWrapper(name="document-types")
-    @XmlElement(name="document-type")    
+	@XmlAttribute(name = "secondary-types")
+	private List<String> secondaryTypeList;
+
+	@XmlElementWrapper(name = "document-types")
+	@XmlElement(name = "document-type")
 	private List<DocumentType> documentTypeList;
-	
-	@XmlElementWrapper(name="property-converters")
-    @XmlElement(name="converter")    
+
+	@XmlElementWrapper(name = "property-converters")
+	@XmlElement(name = "converter")
 	private List<Converter> converterList;
-	
-	@XmlElement(name="author")
+
+	@XmlElement(name = "author")
 	private String author;
-	
-	@XmlElement(name="category")
+
+	@XmlElement(name = "category")
 	private String category;
-	
-	@XmlElement(name="description")
+
+	@XmlElement(name = "description")
 	private String description;
-	
-	
-	@XmlElementWrapper(name="session-parameters")   
-	@XmlElement(name="parameter")
+
+	@XmlElementWrapper(name = "session-parameters")
+	@XmlElement(name = "parameter")
 	private List<Parameter> sessionParameters;
-	
+
 	public String getCmisType() {
 		return cmisType;
 	}
-	
-	public void setCmisType(String cmisType) {
+
+	public void setCmisType(final String cmisType) {
 		this.cmisType = cmisType;
 	}
-	
+
 	public List<String> getSecondaryTypeList() {
 		return secondaryTypeList;
 	}
-	
-	public void setSecondaryTypeList(List<String> secondaryTypeList) {
+
+	public void setSecondaryTypeList(final List<String> secondaryTypeList) {
 		this.secondaryTypeList = secondaryTypeList;
 	}
-	
+
 	public List<DocumentType> getDocumentTypeList() {
 		return documentTypeList;
 	}
-	
-	public void setDocumentTypeList(List<DocumentType> documentTypeList) {
+
+	public void setDocumentTypeList(final List<DocumentType> documentTypeList) {
 		this.documentTypeList = documentTypeList;
 	}
-	
+
 	public List<Converter> getConverterList() {
 		return converterList;
 	}
-	
-	public void setConverterList(List<Converter> converterList) {
+
+	public void setConverterList(final List<Converter> converterList) {
 		this.converterList = converterList;
 	}
-	
+
 	public String getAuthor() {
 		return author;
 	}
-	
-	public void setAuthor(String author) {
+
+	public void setAuthor(final String author) {
 		this.author = author;
 	}
-	
+
 	public String getCategory() {
 		return category;
 	}
-	
-	public void setCategory(String category) {
+
+	public void setCategory(final String category) {
 		this.category = category;
 	}
 
@@ -235,7 +234,7 @@ public class CmisCustomModel {
 		return description;
 	}
 
-	public void setDescription(String description) {
+	public void setDescription(final String description) {
 		this.description = description;
 	}
 
@@ -243,7 +242,7 @@ public class CmisCustomModel {
 		return sessionParameters;
 	}
 
-	public void setSessionParameters(List<Parameter> sessionParameters) {
+	public void setSessionParameters(final List<Parameter> sessionParameters) {
 		this.sessionParameters = sessionParameters;
-	}	
+	}
 }

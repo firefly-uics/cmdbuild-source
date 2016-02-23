@@ -9,10 +9,10 @@ import javax.activation.DataSource;
 import org.apache.chemistry.opencmis.commons.data.ContentStream;
 
 public class CmisDataSource implements DataSource {
-	
-	private ContentStream contentStream;
 
-	public CmisDataSource(ContentStream contentStream) {
+	private final ContentStream contentStream;
+
+	public CmisDataSource(final ContentStream contentStream) {
 		this.contentStream = contentStream;
 	}
 

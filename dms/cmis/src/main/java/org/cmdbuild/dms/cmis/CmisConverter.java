@@ -6,9 +6,9 @@ import org.cmdbuild.dms.DmsConfiguration;
 import org.cmdbuild.dms.MetadataType;
 
 public interface CmisConverter {
-	
+
 	public void setConfiguration(final DmsConfiguration configuration);
-	
+
 	public Object convertToCmisValue(Session session, PropertyDefinition<?> propertyDefinition, String value);
 
 	public String convertFromCmisValue(Session session, PropertyDefinition<?> propertyDefinition, Object cmisValue);

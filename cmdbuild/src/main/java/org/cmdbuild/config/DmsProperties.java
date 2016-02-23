@@ -205,23 +205,13 @@ public class DmsProperties extends DefaultProperties implements AlfrescoDmsConfi
 	}
 
 	@Override
-	public String getAlfrescoCustomModelFileName() {
-		return getProperty(ALFRESCO_CUSTOM_MODEL_FILENAME);
-	}
-
-	@Override
-	public String getAlfrescoCustomModelFileContent() {
-		return contentOf(getAlfrescoCustomModelFileName());
-	}
-
-	@Override
-	public String getMetadataAutocompletionFileName() {
-		return getProperty(METADATA_AUTOCOMPLETION_FILENAME);
+	public String getCustomModelFileContent() {
+		return contentOf(getProperty(ALFRESCO_CUSTOM_MODEL_FILENAME));
 	}
 
 	@Override
 	public String getMetadataAutocompletionFileContent() {
-		return contentOf(getMetadataAutocompletionFileName());
+		return contentOf(getProperty(METADATA_AUTOCOMPLETION_FILENAME));
 	}
 
 	private String contentOf(final String filename) {
