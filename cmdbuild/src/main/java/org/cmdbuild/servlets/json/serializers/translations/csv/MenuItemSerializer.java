@@ -27,7 +27,7 @@ public class MenuItemSerializer extends DefaultElementSerializer {
 	public static class Builder implements org.apache.commons.lang3.builder.Builder<MenuItemSerializer> {
 
 		private DataAccessLogic dataLogic;
-		private Iterable<String> enabledLanguages;
+		private Iterable<String> selectedLanguages;
 		private TranslationLogic translationLogic;
 		private MenuItem entry;
 		private MenuLogic menuLogic;
@@ -43,8 +43,8 @@ public class MenuItemSerializer extends DefaultElementSerializer {
 			return this;
 		}
 
-		public Builder withEnabledLanguages(final Iterable<String> enabledLanguages) {
-			this.enabledLanguages = enabledLanguages;
+		public Builder withSelectedLanguages(final Iterable<String> selectedLanguages) {
+			this.selectedLanguages = selectedLanguages;
 			return this;
 		}
 
@@ -72,7 +72,7 @@ public class MenuItemSerializer extends DefaultElementSerializer {
 
 	private MenuItemSerializer(final Builder builder) {
 		super.dataLogic = builder.dataLogic;
-		super.enabledLanguages = builder.enabledLanguages;
+		super.selectedLanguages = builder.selectedLanguages;
 		super.translationLogic = builder.translationLogic;
 		super.menuLogic = builder.menuLogic;
 		this.entry = builder.entry;

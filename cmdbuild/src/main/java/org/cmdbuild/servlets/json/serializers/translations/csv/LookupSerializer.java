@@ -28,7 +28,7 @@ public class LookupSerializer extends DefaultElementSerializer {
 	public static class Builder implements org.apache.commons.lang3.builder.Builder<LookupSerializer> {
 
 		private DataAccessLogic dataLogic;
-		private Iterable<String> enabledLanguages;
+		private Iterable<String> selectedLanguages;
 		private LookupStore lookupStore;
 		private TranslationLogic translationLogic;
 		private LookupType type;
@@ -44,11 +44,11 @@ public class LookupSerializer extends DefaultElementSerializer {
 			return this;
 		}
 
-		public Builder withEnabledLanguages(final Iterable<String> enabledLanguages) {
-			this.enabledLanguages = enabledLanguages;
+		public Builder withSelectedLanguages(final Iterable<String> selectedLanguages) {
+			this.selectedLanguages = selectedLanguages;
 			return this;
 		}
-		
+
 		public Builder withLookupStore(final LookupStore lookupStore) {
 			this.lookupStore = lookupStore;
 			return this;
@@ -73,7 +73,7 @@ public class LookupSerializer extends DefaultElementSerializer {
 
 	private LookupSerializer(final Builder builder) {
 		super.dataLogic = builder.dataLogic;
-		super.enabledLanguages = builder.enabledLanguages;
+		super.selectedLanguages = builder.selectedLanguages;
 		super.translationLogic = builder.translationLogic;
 		super.lookupStore = builder.lookupStore;
 		this.type = builder.type;

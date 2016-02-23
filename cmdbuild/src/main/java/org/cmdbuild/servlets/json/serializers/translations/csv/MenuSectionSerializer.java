@@ -11,7 +11,6 @@ import org.cmdbuild.auth.acl.CMGroup;
 import org.cmdbuild.auth.acl.PrivilegePair;
 import org.cmdbuild.logic.auth.AuthenticationLogic;
 import org.cmdbuild.logic.menu.MenuLogic;
-import org.cmdbuild.logic.translation.SetupFacade;
 import org.cmdbuild.logic.translation.TranslationLogic;
 import org.cmdbuild.services.store.menu.MenuConstants;
 import org.cmdbuild.services.store.menu.MenuItem;
@@ -32,7 +31,7 @@ public class MenuSectionSerializer implements TranslationSectionSerializer {
 
 	private final AuthenticationLogic authLogic;
 	private final MenuLogic menuLogic;
-	private final Iterable<String> enabledLanguages;
+	private final Iterable<String> selectedLanguages;
 	private final TranslationLogic translationLogic;
 	private final Ordering<MenuItem> menuNodesOrdering = MenuItemSorter.DEFAULT.getOrientedOrdering();
 	private final Ordering<CMGroup> menusOrdering = MenuSorter.DEFAULT.getOrientedOrdering();
@@ -50,11 +49,12 @@ public class MenuSectionSerializer implements TranslationSectionSerializer {
 	};
 
 	public MenuSectionSerializer(final AuthenticationLogic authLogic, final MenuLogic menuLogic,
-			final TranslationLogic translationLogic, final JSONArray sorters, final SetupFacade setupFacade) {
+			final TranslationLogic translationLogic, final JSONArray sorters,
+			final Iterable<String> selectedLanguages) {
 		this.authLogic = authLogic;
 		this.menuLogic = menuLogic;
 		this.translationLogic = translationLogic;
-		this.enabledLanguages = setupFacade.getEnabledLanguages();
+		this.selectedLanguages = selectedLanguages;
 		// TODO: manage ordering configuration
 	}
 
@@ -79,7 +79,7 @@ public class MenuSectionSerializer implements TranslationSectionSerializer {
 		if (hasValidUuid(rootElement)) {
 
 			records.addAll(MenuItemSerializer.newInstance() //
-					.withEnabledLanguages(enabledLanguages) //
+					.withSelectedLanguages(selectedLanguages) //
 					.withTranslationLogic(translationLogic) //
 					.withMenuLogic(menuLogic) //
 					.withMenuItem(rootElement) //
@@ -88,8 +88,8 @@ public class MenuSectionSerializer implements TranslationSectionSerializer {
 					.serialize());
 		}
 
-		final Iterable<MenuItem> sortedChildren = nullableIterable(menuNodesOrdering.sortedCopy(rootElement
-				.getChildren()));
+		final Iterable<MenuItem> sortedChildren = nullableIterable(
+				menuNodesOrdering.sortedCopy(rootElement.getChildren()));
 
 		for (final MenuItem child : sortedChildren) {
 			recursivelySerialize(child);

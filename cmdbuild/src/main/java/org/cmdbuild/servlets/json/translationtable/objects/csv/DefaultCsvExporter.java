@@ -25,6 +25,7 @@ public class DefaultCsvExporter implements CsvExporter {
 	private final char quoteCharacter;
 	private final File file;
 	private final String[] headers;
+	private Iterable<String> languages;
 
 	public static Builder newInstance() {
 		return new Builder();
@@ -37,7 +38,8 @@ public class DefaultCsvExporter implements CsvExporter {
 		private String lineSeparator;
 		private String quoteCharacter;
 		private File file;
-		String[] headers;
+		private String[] headers;
+		private Iterable<String> languages;
 
 		@Override
 		public DefaultCsvExporter build() {
@@ -73,6 +75,11 @@ public class DefaultCsvExporter implements CsvExporter {
 			this.headers = headers;
 			return this;
 		}
+		
+		public Builder withLanguages(final Iterable<String> languages) {
+			this.languages = languages;
+			return this;
+		}
 
 	}
 
@@ -83,6 +90,7 @@ public class DefaultCsvExporter implements CsvExporter {
 		this.lineSeparator = (builder.lineSeparator != null) ? builder.lineSeparator : LINE_SEPARATOR;
 		this.quoteCharacter = (builder.quoteCharacter != null) ? builder.quoteCharacter.charAt(0) : QUOTE_CHARACTER;
 		this.records = builder.records;
+		this.languages = builder.languages;
 
 	}
 

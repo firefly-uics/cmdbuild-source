@@ -1,8 +1,77 @@
 package org.cmdbuild.data.store.lookup;
 
 import com.google.common.base.Predicate;
+import com.google.common.collect.ForwardingObject;
 
 public class Predicates {
+
+	private static abstract class LookupPredicate<T> extends ForwardingObject implements Predicate<Lookup> {
+
+		/**
+		 * Usable by subclasses only.
+		 */
+		protected LookupPredicate() {
+		}
+
+		@Override
+		protected abstract Predicate<T> delegate();
+
+		protected abstract T value(Lookup input);
+
+		@Override
+		public final boolean apply(final Lookup input) {
+			return delegate().apply(value(input));
+		}
+
+	}
+
+	private static class LookupId extends LookupPredicate<Long> {
+
+		private final Predicate<Long> delegate;
+
+		public LookupId(final Predicate<Long> delegate) {
+			this.delegate = delegate;
+		}
+
+		@Override
+		protected Predicate<Long> delegate() {
+			return delegate;
+		}
+
+		@Override
+		protected Long value(final Lookup input) {
+			return input.getId();
+		}
+
+	}
+
+	public static Predicate<Lookup> lookupId(final Predicate<Long> delegate) {
+		return new LookupId(delegate);
+	}
+
+	private static class LookupTranslationUuid extends LookupPredicate<String> {
+
+		private final Predicate<String> delegate;
+
+		public LookupTranslationUuid(final Predicate<String> delegate) {
+			this.delegate = delegate;
+		}
+
+		@Override
+		protected Predicate<String> delegate() {
+			return delegate;
+		}
+
+		@Override
+		protected String value(final Lookup input) {
+			return input.getTranslationUuid();
+		}
+
+	}
+
+	public static Predicate<Lookup> lookupTranslationUuid(final Predicate<String> delegate) {
+		return new LookupTranslationUuid(delegate);
+	}
 
 	private static final Predicate<Lookup> ACTIVE = new Predicate<Lookup>() {
 

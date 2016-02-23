@@ -7,7 +7,6 @@ import java.util.List;
 import org.cmdbuild.dao.entrytype.CMAttribute;
 import org.cmdbuild.dao.entrytype.CMEntryType;
 import org.cmdbuild.logic.data.access.DataAccessLogic;
-import org.cmdbuild.logic.translation.SetupFacade;
 import org.cmdbuild.logic.translation.TranslationLogic;
 import org.cmdbuild.servlets.json.serializers.translations.commons.AttributeSorter;
 import org.cmdbuild.servlets.json.serializers.translations.commons.EntryTypeSorter;
@@ -20,7 +19,7 @@ import com.google.common.collect.Ordering;
 public abstract class EntryTypeTranslationSerializer implements TranslationSectionSerializer {
 
 	final DataAccessLogic dataLogic;
-	Iterable<String> enabledLanguages;
+	Iterable<String> selectedLanguages;
 	final TranslationLogic translationLogic;
 	final boolean activeOnly;
 	final String separator;
@@ -33,12 +32,12 @@ public abstract class EntryTypeTranslationSerializer implements TranslationSecti
 	Ordering<CMAttribute> attributeOrdering = AttributeSorter.DEFAULT.getOrientedOrdering();
 
 	EntryTypeTranslationSerializer(final DataAccessLogic dataLogic, final boolean activeOnly,
-			final TranslationLogic translationLogic, final String separator, final SetupFacade setupFacade) {
+			final TranslationLogic translationLogic, final String separator, final Iterable<String> selectedLanguages) {
 		this.dataLogic = dataLogic;
 		this.activeOnly = activeOnly;
 		this.translationLogic = translationLogic;
 		this.separator = separator;
-		this.enabledLanguages = setupFacade.getEnabledLanguages();
+		this.selectedLanguages = selectedLanguages;
 	}
 
 	@Override

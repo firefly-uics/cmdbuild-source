@@ -63,45 +63,53 @@ public class LocalizedMenuElement extends ForwardingMenuElement {
 	}
 
 	private String searchTranslation() {
-		final TranslationObject translationObject = org.cmdbuild.logic.translation.converter.MenuItemConverter //
-				.of(org.cmdbuild.logic.translation.converter.MenuItemConverter.description()) //
-				.withIdentifier(getUuid()).create();
-		String translatedDescription = facade.read(translationObject);
 
-		if (isBlank(translatedDescription)) {
-			final MenuItemType type = getType();
-			if (isClassOrProcess(type)) {
-				final String className = getElementClassName();
-				final ClassConverter converter = ClassConverter.of(ClassConverter.description());
-				final TranslationObject classTranslation = converter //
-						.withIdentifier(className) //
-						.create();
-				translatedDescription = facade.read(classTranslation);
+		final String uuid = getUuid();
+		final String output;
+		if (!isBlank(uuid)) {
+			final TranslationObject translationObject = org.cmdbuild.logic.translation.converter.MenuItemConverter //
+					.of(org.cmdbuild.logic.translation.converter.MenuItemConverter.description()) //
+					.withIdentifier(uuid).create();
+			String translatedDescription = facade.read(translationObject);
 
-			} else if (isReport(type)) {
-				final Optional<String> _reportName = fetchReportName();
-				if (_reportName.isPresent()) {
-					final ReportConverter converter = ReportConverter.of(ReportConverter.description());
-					Validate.isTrue(converter.isValid());
-					final TranslationObject reportTranslationObject = converter //
-							.withIdentifier(_reportName.get()) //
-							.create();
-					translatedDescription = facade.read(reportTranslationObject);
+			if (isBlank(translatedDescription)) {
+				final MenuItemType type = getType();
+				if (isClassOrProcess(type)) {
+					final String className = getElementClassName();
+					final ClassConverter converter = ClassConverter.of(ClassConverter.description());
+					final TranslationObject classTranslation = converter //
+							.withIdentifier(className).create();
+					translatedDescription = facade.read(classTranslation);
+
+				} else if (isReport(type)) {
+					final Optional<String> _reportName = fetchReportName();
+					if (_reportName.isPresent()) {
+						final ReportConverter converter = ReportConverter.of(ReportConverter.description());
+						Validate.isTrue(converter.isValid());
+						final TranslationObject reportTranslationObject = converter //
+								.withIdentifier(_reportName.get()) //
+								.create();
+						translatedDescription = facade.read(reportTranslationObject);
+					}
+				} else if (isView(type)) {
+					final Optional<String> _viewName = fetchViewName();
+					if (_viewName.isPresent()) {
+						final ViewConverter converter = ViewConverter.of(ViewConverter.description());
+						Validate.isTrue(converter.isValid());
+						final TranslationObject viewTranslationObject = converter //
+								.withIdentifier(_viewName.get()) //
+								.create();
+						translatedDescription = facade.read(viewTranslationObject);
+					}
+				} else if (isDashboard(type)) {
+					// dashboards localization not supported
 				}
-			} else if (isView(type)) {
-				final Optional<String> _viewName = fetchViewName();
-				if (_viewName.isPresent()) {
-					final ViewConverter converter = ViewConverter.of(ViewConverter.description());
-					Validate.isTrue(converter.isValid());
-					final TranslationObject viewTranslationObject = converter //
-							.withIdentifier(_viewName.get()).create();
-					translatedDescription = facade.read(viewTranslationObject);
-				}
-			} else if (isDashboard(type)) {
-				// dashboards localization not supported
 			}
+			output = translatedDescription;
+		} else {
+			output = super.getDescription();
 		}
-		return translatedDescription;
+		return output;
 	}
 
 	private Optional<String> fetchReportName() {

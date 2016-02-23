@@ -158,6 +158,7 @@ public class CommunicationConstants {
 			KEEP_SYNCHRONIZATION = "keepSynchronization", //
 			KEY = "key", //
 			LANGUAGE = "language", //
+			LANGUAGES = "languages", //
 			LANGUAGE_PROMPT = "language_prompt", //
 			LAST_CHECKIN = "lastCheckin", //
 			LENGTH = "len", //

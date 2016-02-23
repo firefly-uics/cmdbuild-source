@@ -5,7 +5,6 @@ import java.util.Collection;
 import org.cmdbuild.data.store.lookup.Lookup;
 import org.cmdbuild.data.store.lookup.LookupStore;
 import org.cmdbuild.data.store.lookup.LookupType;
-import org.cmdbuild.logic.translation.SetupFacade;
 import org.cmdbuild.logic.translation.TranslationLogic;
 import org.cmdbuild.servlets.json.serializers.translations.commons.LookupTypeSorter;
 import org.cmdbuild.servlets.json.serializers.translations.commons.LookupValueSorter;
@@ -29,14 +28,15 @@ public class LookupSectionSerializer implements TranslationSectionSerializer {
 
 	Ordering<LookupType> typeOrdering = LookupTypeSorter.DEFAULT.getOrientedOrdering();
 	Ordering<Lookup> valueOrdering = LookupValueSorter.DEFAULT.getOrientedOrdering();
-	private final Iterable<String> enabledLanguages;
+	private final Iterable<String> selectedLanguages;
 	private final TranslationLogic translationLogic;
 
 	private final Collection<TranslationSerialization> records = Lists.newArrayList();
 
 	public LookupSectionSerializer(final LookupStore lookupStore, final boolean activeOnly,
-			final TranslationLogic translationLogic, final JSONArray sorters, final SetupFacade setupFacade) {
-		this.enabledLanguages = setupFacade.getEnabledLanguages();
+			final TranslationLogic translationLogic, final JSONArray sorters,
+			final Iterable<String> selectedLanguages) {
+		this.selectedLanguages = selectedLanguages;
 		this.translationLogic = translationLogic;
 		this.lookupStore = lookupStore;
 		this.activeOnly = activeOnly;
@@ -66,7 +66,7 @@ public class LookupSectionSerializer implements TranslationSectionSerializer {
 
 			for (final Lookup value : sortedLookupValues) {
 				records.addAll(LookupSerializer.newInstance() //
-						.withEnabledLanguages(enabledLanguages) //
+						.withSelectedLanguages(selectedLanguages) //
 						.withTranslationLogic(translationLogic) //
 						.withLookupType(type) //
 						.withLookupValue(value) //
