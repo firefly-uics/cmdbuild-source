@@ -114,7 +114,7 @@
 							childObject[CMDBuild.core.constants.Proxy.DESCRIPTION] = anchestorDomainModel.get(CMDBuild.core.constants.Proxy.DESCRIPTION)
 								+ ' (' + domainDescription + ' ' + oppositeEntryTypeModel.get(CMDBuild.core.constants.Proxy.DESCRIPTION) + ')';
 							childObject[CMDBuild.core.constants.Proxy.ENTRY_TYPE] = oppositeEntryTypeModel;
-							childObject[CMDBuild.core.constants.Proxy.DOMAIN_MODEL] = anchestorDomainModel;
+							childObject[CMDBuild.core.constants.Proxy.DOMAIN] = anchestorDomainModel;
 
 							nodes.push(childObject);
 						}
@@ -140,13 +140,14 @@
 			if (!Ext.isEmpty(node) && node.hasChildNodes())
 				node.eachChild(function (childNode) {
 					if (!Ext.isEmpty(childNode) && childNode.get('checked')) {
-						var domainModel = childNode.get(CMDBuild.core.constants.Proxy.DOMAIN_MODEL);
+						var domainModel = childNode.get(CMDBuild.core.constants.Proxy.DOMAIN);
 						var entryTypeModel = childNode.get(CMDBuild.core.constants.Proxy.ENTRY_TYPE);
 
 						var childObject = { direct: true };
 						childObject[CMDBuild.core.constants.Proxy.BASE_NODE] = childNode.isRoot();
 						childObject[CMDBuild.core.constants.Proxy.CHILD_NODES] = this.getCheckedChild(childNode);
 						childObject[CMDBuild.core.constants.Proxy.DOMAIN_NAME] = domainModel.get(CMDBuild.core.constants.Proxy.NAME);
+						childObject[CMDBuild.core.constants.Proxy.ENABLE_RECURSION] = childNode.get(CMDBuild.core.constants.Proxy.ENABLE_RECURSION);
 						childObject[CMDBuild.core.constants.Proxy.FILTER] = childNode.get(CMDBuild.core.constants.Proxy.FILTER);
 						childObject[CMDBuild.core.constants.Proxy.TARGET_CLASS_DESCRIPTION] = entryTypeModel.get(CMDBuild.core.constants.Proxy.DESCRIPTION);
 						childObject[CMDBuild.core.constants.Proxy.TARGET_CLASS_NAME] = entryTypeModel.get(CMDBuild.core.constants.Proxy.NAME);
@@ -220,7 +221,7 @@
 				Ext.Array.each(stateObjectArray, function (stateObject, i, allStateObjects) {
 					if (Ext.isObject(stateObject) && !Ext.Object.isEmpty(stateObject)) {
 						var soughtNode = node.findChildBy(function (childNode) {
-							var domainModel = childNode.get(CMDBuild.core.constants.Proxy.DOMAIN_MODEL);
+							var domainModel = childNode.get(CMDBuild.core.constants.Proxy.DOMAIN);
 							var entryTypeModel = childNode.get(CMDBuild.core.constants.Proxy.ENTRY_TYPE);
 
 							return (
@@ -337,7 +338,7 @@
 		 */
 		onExpandNode: function (node) {
 			if (!Ext.isEmpty(node) && Ext.isObject(node)) {
-				var nodeDomainModel = node.get(CMDBuild.core.constants.Proxy.DOMAIN_MODEL);
+				var nodeDomainModel = node.get(CMDBuild.core.constants.Proxy.DOMAIN);
 				var nodes = Ext.Array.push(
 					this.buildNodesArray( // Build domain's destination nodes
 						nodeDomainModel.get(CMDBuild.core.constants.Proxy.DESTINATION_CLASS_ID),
@@ -433,6 +434,8 @@
 		onNavigationTreeTabTreeModifyButtonClick: function () {
 			this.form.setDisabledModify(false);
 			this.form.setDisableFields(false, false, true); // To enable also if not visible
+
+			this.tree.getView().refresh(); // Fixes enable/disable checkcolumn problems
 		},
 
 		/**
@@ -504,10 +507,10 @@
 												this.cmfg('navigationTreeSelectedTreeGet', CMDBuild.core.constants.Proxy.FILTER)
 											);
 
-											this.loadNodesCheckState(
-												this.tree.getStore().getRootNode(),
-												this.cmfg('navigationTreeSelectedTreeGet', CMDBuild.core.constants.Proxy.CHILD_NODES)
-											);
+										this.loadNodesCheckState(
+											this.tree.getStore().getRootNode(),
+											this.cmfg('navigationTreeSelectedTreeGet', CMDBuild.core.constants.Proxy.CHILD_NODES)
+										);
 									}
 								}
 							});
