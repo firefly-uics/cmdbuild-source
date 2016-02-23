@@ -23,12 +23,12 @@
 			}
 			backend.getInitModel(params, function(elements) {
 				this.model.pushElements(elements, function() {
-					var me = this;
-					setTimeout(function() {
+				var me = this;
+				setTimeout(function() {
 						var parentId = elements.nodes[0].data.id;
-						var parentNode = me.model.getNode(parentId);
-						me.explodeNode(parentId, $.Cmdbuild.custom.configuration.explosionLevels - 1, function(elements) {
+						me.explodeNode(parentId, $.Cmdbuild.customvariables.options["explosionLevels"] - 1, function(elements) {
 							if (!batch) {
+								$.Cmdbuild.customvariables.commandsManager.stopped = false;
 								$.Cmdbuild.customvariables.commandInExecution = false;
 								me.model.changed();
 							}
@@ -81,7 +81,6 @@
 		};
 		this.explodeChildren = function(children, levels, callback, callbackScope) {
 			if (children.length == 0 || $.Cmdbuild.customvariables.commandsManager.stopped) {
-				
 				callback.apply(callbackScope, []);
 				return;
 			}
