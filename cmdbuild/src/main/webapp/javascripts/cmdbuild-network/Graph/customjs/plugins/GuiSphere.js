@@ -16,51 +16,68 @@
 		var nodes = eles.nodes().not(':parent');
 
 		var center = {
-			x: 0 + cy.width() / 2,
-			y: 0 + cy.height() / 2,
-			z: 0
+			x : 0 + cy.width() / 2,
+			y : 0 + cy.height() / 2,
+			z : 0
 		};
 		this.clean = function() {
 			nodes[0].position(center);
 			$.Cmdbuild.g3d.Model.removeGraphData(nodes, "moved");
 		};
+		this.getFactors = function(n, a) {
+			do {
+				var b = n / a;
+				if (b >= a) {
+					return this.getFactors(n, a + 1);
+				} else {
+					return a - 1;
+				}
+			} while (true);
+		};
 		this.initialAngle = function(nChildren) {
+			var a = this.getFactors(nChildren, 1);
+			if (a === 0) {
+				a = 1;
+			}
+			var b = parseInt(nChildren / a + 1);
+			if (b === 0) {
+				b = 1;
+			}
 			return {
-				theta: 0,
-				phi: 0 + STARTPHI,
-				gamma: 0,
-				thetaSteps: parseInt(nChildren / 5) + 1,
-				phiSteps: 5,
-				gammaSteps: 0,
-				dTheta: (2 * Math.PI) / (parseInt(nChildren / 5) + 1),
-				dPhi: (Math.PI) / 7,
-				dGamma: 0
+				theta : 0,
+				phi : 0 + (Math.PI) / b,//STARTPHI,
+				gamma : 0,
+				thetaSteps : a,
+				phiSteps : b,
+				gammaSteps : 0,
+				dTheta : (2 * Math.PI) / a,
+				dPhi : (Math.PI) / (b +2),
+				dGamma : 0
 			};
 		};
 		this.initialLittleAngle = function(nChildren, nChildrenWithChildren,
 				isRoot) {
 			return {
-				theta: 0,
-				phi: 0 + STARTPHI,
-				gamma: 0,
-				thetaSteps: parseInt(nChildren / 5) + 1,
-				phiSteps: 5,
-				gammaSteps: nChildrenWithChildren,
-				dTheta: (isRoot) ? (2 * Math.PI)
+				theta : 0,
+				phi : 0 + STARTPHI,
+				gamma : 0,
+				thetaSteps : parseInt(nChildren / 5) + 1,
+				phiSteps : 5,
+				gammaSteps : nChildrenWithChildren,
+				dTheta : (isRoot) ? (2 * Math.PI)
 						/ (parseInt(nChildren / 5) + 1) : 0,
-				dPhi: (isRoot) ? (Math.PI) / 7 : 0,
-				dGamma: (isRoot || !nChildrenWithChildren) ? 0 : (2 * Math.PI)
+				dPhi : (isRoot) ? (Math.PI) / 7 : 0,
+				dGamma : (isRoot || !nChildrenWithChildren) ? 0 : (2 * Math.PI)
 						/ nChildrenWithChildren
 			};
 		};
 		this.getActualAngle = function(angle, index) {
-			var thetaIndex = (angle.thetaSteps) ? parseInt(index
-					% angle.thetaSteps) : index;
-			var phiIndex = parseInt(index % angle.phiSteps);
+			var thetaIndex = parseInt(index	% angle.thetaSteps);
+			var phiIndex = parseInt((index) % angle.phiSteps);
 			return {
-				theta: angle.theta + angle.dTheta * thetaIndex,
-				phi: angle.phi + angle.dPhi * phiIndex,
-				gamma: 0
+				theta : angle.theta + angle.dTheta * thetaIndex,
+				phi : angle.phi + angle.dPhi * phiIndex,
+				gamma : 0
 			};
 		};
 		this.getActualLittleAngle = function(angle, indexAngle,
@@ -70,11 +87,10 @@
 			var phiIndex = parseInt(indexAngle % angle.phiSteps);
 			var gammaIndex = indexLittleAngle;
 			return {
-				theta: (isRoot)
-						? angle.theta + angle.dTheta * thetaIndex
+				theta : (isRoot) ? angle.theta + angle.dTheta * thetaIndex
 						: Math.PI / 4,
-				phi: (isRoot) ? angle.phi + angle.dPhi * phiIndex : 0,
-				gamma: (isRoot) ? 0 : angle.gamma + angle.dGamma * gammaIndex
+				phi : (isRoot) ? angle.phi + angle.dPhi * phiIndex : 0,
+				gamma : (isRoot) ? 0 : angle.gamma + angle.dGamma * gammaIndex
 			};
 		};
 
@@ -92,7 +108,6 @@
 			$.Cmdbuild.g3d.Model.setGraphData(node, "justOpen", true);
 			var openChildren = $.Cmdbuild.g3d.Model.getGraphData(node,
 					"children");
-			// console.log("openChildren " + openChildren.length);
 			var children = getNodesById(openChildren);
 			var lChildrenWithChildren = lengthChildrenWithChildren(children);
 			var angle = this.initialAngle(children.length);
@@ -134,9 +149,9 @@
 				}
 				var composedPosition = composeQuaternions(node, vectorPosition);
 				children[i].position({
-					x: composedPosition.x,
-					y: composedPosition.y,
-					z: composedPosition.z
+					x : composedPosition.x,
+					y : composedPosition.y,
+					z : composedPosition.z
 				});
 				if (areChildren) {
 					indexWithChildren++;
@@ -165,8 +180,8 @@
 
 	function withChildren(node) {
 		var chs = $.Cmdbuild.g3d.Model.getGraphData(node, "children");
-		return (chs != undefined && chs.length > 0);
-	};
+		return (chs !== undefined && chs.length > 0);
+	}
 	function composeQuaternions(node, vector) {
 		while (node) {
 			if (!$.Cmdbuild.g3d.Model.getGraphData(node, "previousPathNode")
@@ -185,7 +200,7 @@
 			node = cy.getElementById(parentId);
 		}
 		return vector;
-	};
+	}
 	function getChildrenByFunct(children, f) {
 		var children2Return = [];
 		if (!children) {
@@ -199,19 +214,19 @@
 		}
 		return children2Return;
 
-	};
+	}
 	function lengthChildrenWithChildren(children) {
 		var f = function(element) {
 			return withChildren(element);
 		};
 		return getChildrenByFunct(children, f).length;
-	};
+	}
 	function lengthChildrenWithoutChildren(children) {
 		var f = function(element) {
 			return !withChildren(element);
 		};
 		return getChildrenByFunct(children, f).length;
-	};
+	}
 	function getNodesById(children) {
 		if (!children) {
 			return [];
@@ -221,5 +236,5 @@
 			arChildren.push(cy.getElementById(children[i]));
 		}
 		return arChildren;
-	};
+	}
 })(cytoscape);
