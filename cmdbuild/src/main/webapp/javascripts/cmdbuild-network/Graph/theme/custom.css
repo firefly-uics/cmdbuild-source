@@ -300,11 +300,18 @@ a {
 	height: auto;
 	padding: 5px 6px 5px;
 }
-.cmdbuildGridNavigationWrapper input[type="text"]{
+.cmdbuild-graph .cmdbuildGridNavigationWrapper .cmdbuildGridFilterContainer {
+	width: calc(100% - 130px);
+}
+.cmdbuild-graph .cmdbuildGridNavigationWrapper input[type="text"]{
 	width: auto!important; 
 }
-.cmdbuildGridNavigationWrapper .cmdbuildGridNavigationCount {
+.cmdbuild-graph .cmdbuildGridNavigationWrapper .cmdbuildGridNavigationContainer {
+	width: 120px;
+}
+.cmdbuild-graph .cmdbuildGridNavigationWrapper .cmdbuildGridNavigationCount {
 	margin: 0.2em 0.1em 0em 0em;
+	font-size: 0.9em;
 }
 .cmdbuild-graph .grid-btn {
 	cursor: pointer;
@@ -312,7 +319,6 @@ a {
 	height: 16px;
 	display: inline-block;
 }
-
 /**
  * TOOLTIP
  */
@@ -384,6 +390,88 @@ a {
 	float: right;
 }
 
+/**
+ * NODE LABEL
+ */
+.labelText {
+	position: absolute;
+	display: none;
+	font-family: tahoma,arial,verdana,sans-serif;
+	color: #416da3;
+	font-size: 11px;
+	z-index: 0;
+	font-weight: bold;
+	text-shadow: 1px 1px #CCC;
+}
+
+/**
+ * LOADER
+ */
+.waitMe_container {
+	position: relative
+}
+body.waitMe_container {
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	width: 80px;
+	height: 100%
+}
+.waitMe_container .waitMe {
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	width: 80px;
+	height: 100%;
+	z-index: 9989;
+	text-align: center
+}
+.waitMe_container .waitMe * {
+	font-family: sans-serif;
+	font-size: 14px;
+	font-weight: initial;
+	font-style: initial;
+	color: initial;
+	text-decoration: initial;
+	text-transform: initial;
+	padding: initial;
+	margin: initial
+}
+.waitMe_container .waitMe .waitMe_content {
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 80px;
+	height: 100%
+}
+.waitMe_container .waitMe .waitMe_progress {
+	position: relative
+}
+.waitMe_container .waitMe .waitMe_progress>div {
+	-webkit-animation-fill-mode: both;
+	animation-fill-mode: both;
+	display: inline-block
+}
+.waitMe_container .waitMe .waitMe_text {
+	position: relative;
+	margin: 20px 0 0
+}
+div.waitMe {
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	width: 80px;
+	height: 100%
+}
+
+/**
+ * FIXES
+ */
+.DTFC_LeftBodyLiner,
+.DTFC_RightBodyLiner {
+	height: 0;
+}
+ 
 /*
 * Override font-weight rule for "a" tags
 */
@@ -398,18 +486,6 @@ a {
 .relationAttributes {
 	font-size: 9px;
 }
-.labelText {
-	position: absolute;
-	top: 20px; 
-	width: 200px;
-	padding: 10px;
-	text-align: left;
-	z-index: 50;
-	color: #066;
-	font-family: tahoma,arial,verdana,sans-serif;
-	font-size: 11px;
-	display: none;
-}
 #margin10 {
 	margin-left:10;
 	margin-right:5;
@@ -417,9 +493,9 @@ a {
 }
 .allWidth {
 	width: 100%;
-    padding: 4px 4px 4px 4px;
-    -webkit-align-content: flex-start  !important;
-    align-content: flex-start !important;
+	padding: 4px 4px 4px 4px;
+	-webkit-align-content: flex-start !important;
+	align-content: flex-start !important;
 }
 .canvas {
 	width: 100%;
@@ -434,17 +510,5 @@ a {
 }
 
 .commandPanelWindow {
-/* 	height: 500px; */
 	overflow: auto;
 }
-
-/* 4 Umberto! */
-.waitMe_container {position:relative}
-body.waitMe_container {position:absolute;top:50%;left:50%;width:80px;height:100%}
-.waitMe_container .waitMe {position:absolute;top:50%;left:50%;width:80px;height:100%;z-index:9989;text-align:center}
-.waitMe_container .waitMe * {font-family:sans-serif;font-size:14px;font-weight:initial;font-style:initial;color:initial;text-decoration:initial;text-transform:initial;padding:initial;margin:initial}
-.waitMe_container .waitMe .waitMe_content {position:absolute;top:0;left:0;width:80px;height:100%}
-.waitMe_container .waitMe .waitMe_progress {position:relative}
-.waitMe_container .waitMe .waitMe_progress > div {-webkit-animation-fill-mode:both;animation-fill-mode:both;display:inline-block}
-.waitMe_container .waitMe .waitMe_text {position:relative;margin:20px 0 0}
-div.waitMe  {position:absolute;top:50%;left:50%;width:80px;height:100%}
