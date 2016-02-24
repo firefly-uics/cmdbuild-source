@@ -49,13 +49,40 @@
 				data.rows[i]._id = data.rows[i].classId;
 				data.rows[i].id = data.rows[i].classId;
 			}
-			this.total = data.total;
+			if (param.sort) {
+				var sortingColumn = param.sort;
+				data.rows.sort(function(a, b) {
+					if (param.direction === "ASC")
+						return (a[sortingColumn] > b[sortingColumn]) ? 1  : -1;
+					else
+						return (a[sortingColumn] < b[sortingColumn]) ? 1  : -1;
+				});
+			}
+			data = this.filterData(this.filter, data.rows);
+			this.total = data.length;
 			this.data = [];
 			param.nRows = parseInt(param.nRows);
-			for (var i = param.firstRow; i < param.nRows + param.firstRow && i < data.rows.length; i++) {
-				this.data.push(data.rows[i]);
+			for (var i = param.firstRow; i < param.nRows + param.firstRow && i < data.length; i++) {
+				this.data.push(data[i]);
 			}
 			callback.apply(callbackScope, this.data);
+		};
+		this.filterData = function(filter, data) {
+			if (! (filter && filter.query)) {
+				return data;
+			}
+			var retData = [];
+			for (var i = 0; i < data.length; i++) {
+				if (filter.query) {
+					filter.query = filter.query.toLowerCase();
+					var label = data[i].classDescription;
+					if (label.toLowerCase().indexOf(filter.query) < 0) {
+						continue;
+					}
+				}
+				retData.push(data[i]);
+			}
+			return retData;
 		};
 		this.getAttributes = function() {
 			return this.attributes;

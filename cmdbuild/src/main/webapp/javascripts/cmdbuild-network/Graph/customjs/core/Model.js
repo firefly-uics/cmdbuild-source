@@ -229,8 +229,11 @@
 				var classId = $.Cmdbuild.g3d.Model.getGraphData(node, "classId");
 				var classDescription = $.Cmdbuild.customvariables.cacheClasses.getDescription(classId);
 				var label = $.Cmdbuild.g3d.Model.getGraphData(node, "label");
-				if (filter.query && label.toLowerCase().indexOf(filter.query) < 0) {
-					continue;
+				if (filter.query) {
+					filter.query = filter.query.toLowerCase();
+					if (label.toLowerCase().indexOf(filter.query) < 0) {
+						continue;
+					}
 				}
 				var id = node.id();
 				arClasses.push({
