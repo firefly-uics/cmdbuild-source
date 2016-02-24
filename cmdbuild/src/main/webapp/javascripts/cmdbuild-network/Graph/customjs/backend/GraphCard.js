@@ -26,7 +26,7 @@
 				return;
 			}
 			if (this.type == $.Cmdbuild.g3d.constants.GUICOMPOUNDNODE) {
-				this.attributes = this.compoundAttributes();
+				this.attributes = $.Cmdbuild.g3d.constants.COMPOUND_ATTRIBUTES;
 				var node = $.Cmdbuild.customvariables.model
 						.getNode(this.param.cardId);
 				this.data = this.compoundData(node);
@@ -40,20 +40,6 @@
 		};
 		this.getWidgets = function() {
 			return [];
-		};
-		this.compoundAttributes = function() {
-			var attributes = [{
-				type: "string",
-				name: "type",
-				description: "Type",
-				displayableInList: true
-			}, {
-				type: "string",
-				name: "description",
-				description: "Description",
-				displayableInList: true
-			}];
-			return attributes;
 		};
 		this.compoundData = function(node) {
 			var label = $.Cmdbuild.g3d.Model.getGraphData(node, "label");

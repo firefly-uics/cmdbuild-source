@@ -16,19 +16,21 @@ public interface ErrorHandler {
 
 	void domainNotFound(String id);
 
+	void domainTreeNotFound(String id);
+
 	void extensionNotFound(String id);
+
+	void functionNotFound(Long id);
 
 	void invalidType(String id);
 
 	void lookupTypeNotFound(String id);
 
-	void functionNotFound(Long id);
-
 	void missingAttachmentId();
 
-	void missingAttachmentName();
-
 	void missingAttachmentMetadata();
+
+	void missingAttachmentName();
 
 	void missingFile();
 
@@ -40,11 +42,11 @@ public interface ErrorHandler {
 
 	void notAuthorized();
 
-	void processNotFound(String id);
+	void processActivityNotFound(String id);
 
 	void processInstanceNotFound(Long id);
 
-	void processActivityNotFound(String id);
+	void processNotFound(String id);
 
 	void propagate(Throwable e);
 

@@ -39,6 +39,7 @@
 			<ref bean="v2_cql" />
 			<ref bean="v2_domains" />
 			<ref bean="v2_domainAttributes" />
+			<ref bean="v2_domainTrees" />
 			<ref bean="v2_emailTemplates" />
 			<ref bean="v2_functions" />
 			<ref bean="v2_graphConfiguration" />

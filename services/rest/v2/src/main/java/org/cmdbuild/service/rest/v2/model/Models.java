@@ -3,6 +3,7 @@ package org.cmdbuild.service.rest.v2.model;
 import static com.google.common.collect.Iterables.addAll;
 import static com.google.common.collect.Lists.newArrayList;
 import static com.google.common.collect.Maps.immutableEntry;
+import static com.google.common.collect.Maps.newHashMap;
 import static com.google.common.collect.Maps.transformValues;
 import static com.google.common.collect.Maps.uniqueIndex;
 import static com.google.common.collect.Sets.newHashSet;
@@ -1491,6 +1492,42 @@ public class Models {
 
 	}
 
+	public static class NodeBuilder extends ModelBuilder<Node> {
+
+		private Long id;
+		private Long parent;
+		private final Map<String, Object> metadata = newHashMap();
+
+		private NodeBuilder() {
+			// use factory method
+		}
+
+		@Override
+		protected Node doBuild() {
+			final Node output = new Node();
+			output.setId(id);
+			output.setParent(parent);
+			output.setMetadata(metadata);
+			return output;
+		}
+
+		public NodeBuilder withId(final Long id) {
+			this.id = id;
+			return this;
+		}
+
+		public NodeBuilder withParent(final Long parent) {
+			this.parent = parent;
+			return this;
+		}
+
+		public NodeBuilder withMetadata(final String key, final Object value) {
+			metadata.put(key, value);
+			return this;
+		}
+
+	}
+
 	public static class ProcessActivityWithBasicDetailsBuilder extends ModelBuilder<ProcessActivityWithBasicDetails> {
 
 		private String id;
@@ -1739,7 +1776,8 @@ public class Models {
 			return this;
 		}
 
-		public ProcessInstanceAdvanceBuilder withValues(final Iterable<? extends Entry<String, ? extends Object>> values) {
+		public ProcessInstanceAdvanceBuilder withValues(
+				final Iterable<? extends Entry<String, ? extends Object>> values) {
 			return withValues(transformValues(uniqueIndex(values, KEY), VALUE));
 		}
 
@@ -2115,7 +2153,6 @@ public class Models {
 			return output;
 		}
 
-		@SuppressWarnings("unchecked")
 		public ResponseMultipleBuilder<T> withElement(final T element) {
 			addAll(this.elements, (element == null) ? NO_ELEMENTS : asList(element));
 			return this;
@@ -2383,6 +2420,10 @@ public class Models {
 
 	public static MetadataBuilder newMetadata() {
 		return new MetadataBuilder();
+	}
+
+	public static NodeBuilder newNode() {
+		return new NodeBuilder();
 	}
 
 	public static ProcessActivityWithBasicDetailsBuilder newProcessActivityWithBasicDetails() {

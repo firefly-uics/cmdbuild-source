@@ -23,7 +23,7 @@
  			<params>
 				<type>selectedGrid</type>
 				<backend>SelectedNavigation</backend>
-				<nRows>9</nRows>
+				<nRows>10</nRows>
 			</params>
 			<onDblClick>
 					<command>zoomOn</command>
