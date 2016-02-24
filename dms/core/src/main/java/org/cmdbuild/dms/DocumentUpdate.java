@@ -8,4 +8,6 @@ public interface DocumentUpdate extends Document, DocumentWithMetadata {
 
 	String getDescription();
 
+	String getAuthor();
+
 }

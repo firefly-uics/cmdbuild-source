@@ -90,8 +90,8 @@ public class AttachmentsManagementTest {
 		// then
 		verify(userStore).getUser();
 		verify(dmsLogic).getCategoryDefinition(eq("the category"));
-		verify(dmsLogic).upload(eq("dummy user"), eq("foo"), eq(123L), same(inputStream), eq("bar"),
-				eq("the category"), eq("the description"), any(Iterable.class));
+		verify(dmsLogic).upload(eq("dummy user"), eq("foo"), eq(123L), same(inputStream), eq("bar"), eq("the category"),
+				eq("the description"), any(Iterable.class));
 		verifyNoMoreInteractions(userStore, dmsLogic);
 	}
 
@@ -202,8 +202,8 @@ public class AttachmentsManagementTest {
 
 		// then
 		verify(dmsLogic).getCategoryDefinition(eq("the new category"));
-		verify(dmsLogic).updateDescriptionAndMetadata(eq("foo"), eq(123L), eq("bar"), eq("the new category"),
-				eq("the new description"), any(Iterable.class));
+		verify(dmsLogic).updateDescriptionAndMetadata(eq("dummy user"), eq("foo"), eq(123L), eq("bar"),
+				eq("the new category"), eq("the new description"), any(Iterable.class));
 		verifyNoMoreInteractions(dmsLogic);
 	}
 

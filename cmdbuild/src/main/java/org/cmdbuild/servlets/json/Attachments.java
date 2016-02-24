@@ -102,7 +102,7 @@ public class Attachments extends JSONBaseWithSpringContext {
 				category, //
 				description, //
 				metadataGroupsFrom(categoryDefinition(category), metadataValues) //
-				);
+		);
 	}
 
 	/**
@@ -127,7 +127,9 @@ public class Attachments extends JSONBaseWithSpringContext {
 
 		final Map<String, Map<String, Object>> metadataValues = metadataValuesFromJson(jsonMetadataValues);
 		dmsLogic().updateDescriptionAndMetadata( //
-				className, cardId, //
+				operationUser().getAuthenticatedUser().getUsername(), //
+				className, //
+				cardId, //
 				filename, //
 				null, //
 				description, //
@@ -155,7 +157,8 @@ public class Attachments extends JSONBaseWithSpringContext {
 				@Override
 				public Iterable<Metadata> getMetadata() {
 					final List<Metadata> metadata = Lists.newArrayList();
-					for (final MetadataDefinition metadataDefinition : metadataGroupDefinition.getMetadataDefinitions()) {
+					for (final MetadataDefinition metadataDefinition : metadataGroupDefinition
+							.getMetadataDefinitions()) {
 						final String metadataName = metadataDefinition.getName();
 						final Object rawValue = allMetadataMap.get(metadataName);
 						metadata.add(new Metadata() {

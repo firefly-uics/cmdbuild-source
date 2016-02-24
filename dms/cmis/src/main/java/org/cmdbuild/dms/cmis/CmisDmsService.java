@@ -18,6 +18,7 @@ import static org.apache.chemistry.opencmis.commons.SessionParameter.CONNECT_TIM
 import static org.apache.chemistry.opencmis.commons.SessionParameter.PASSWORD;
 import static org.apache.chemistry.opencmis.commons.SessionParameter.READ_TIMEOUT;
 import static org.apache.chemistry.opencmis.commons.SessionParameter.USER;
+import static org.apache.chemistry.opencmis.commons.enums.CmisVersion.CMIS_1_0;
 import static org.apache.chemistry.opencmis.commons.enums.UnfileObject.DELETE;
 import static org.apache.commons.lang3.ObjectUtils.defaultIfNull;
 import static org.cmdbuild.dms.MetadataAutocompletion.NULL_AUTOCOMPLETION_RULES;
@@ -27,7 +28,6 @@ import java.io.StringReader;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 
 import javax.activation.DataHandler;
 import javax.activation.MimetypesFileTypeMap;
@@ -47,6 +47,7 @@ import org.apache.chemistry.opencmis.client.runtime.SessionFactoryImpl;
 import org.apache.chemistry.opencmis.commons.data.ContentStream;
 import org.apache.chemistry.opencmis.commons.definitions.PropertyDefinition;
 import org.apache.chemistry.opencmis.commons.enums.BindingType;
+import org.apache.chemistry.opencmis.commons.enums.CmisVersion;
 import org.apache.chemistry.opencmis.commons.enums.VersioningState;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisObjectNotFoundException;
 import org.cmdbuild.dms.DefaultDefinitionsFactory;
@@ -334,10 +335,10 @@ public class CmisDmsService implements DmsService, LoggingSupport, ChangeListene
 
 	@Override
 	public List<StoredDocument> search(final DocumentSearch position) throws DmsError {
-		final Session cmisSession = createSession();
+		final Session session = createSession();
 		logger.info("Searching from: " + position.getPath() + "" + position.getClassName() + position.getCardId() + "");
 		final List<StoredDocument> results = newArrayList();
-		final Folder folder = getFolder(cmisSession, position.getPath());
+		final Folder folder = getFolder(session, position.getPath());
 		logger.debug("In search : got a folder :" + folder);
 		if (folder != null) {
 			logger.debug("Got children of " + folder.getPath());
@@ -362,7 +363,7 @@ public class CmisDmsService implements DmsService, LoggingSupport, ChangeListene
 					if (customModel().getCategory() != null) {
 						final Property<Object> property = cmisDocument.getProperty(customModel().getCategory());
 						if (property != null) {
-							category = getConverter(property.getDefinition()).convertFromCmisValue(cmisSession,
+							category = getConverter(property.getDefinition()).convertFromCmisValue(session,
 									property.getDefinition(), property.getValue());
 						}
 					}
@@ -371,7 +372,7 @@ public class CmisDmsService implements DmsService, LoggingSupport, ChangeListene
 					if (customModel().getAuthor() != null) {
 						final Property<Object> property = cmisDocument.getProperty(customModel().getAuthor());
 						if (property != null) {
-							author = getConverter(property.getDefinition()).convertFromCmisValue(cmisSession,
+							author = getConverter(property.getDefinition()).convertFromCmisValue(session,
 									property.getDefinition(), property.getValue());
 						}
 					}
@@ -398,7 +399,7 @@ public class CmisDmsService implements DmsService, LoggingSupport, ChangeListene
 							if (property != null && property.getValue() != null) {
 								logger.info("Value of property " + property.getValue());
 								final CmisConverter converter = getConverter(propertyDefinition);
-								final String value = converter.convertFromCmisValue(cmisSession, propertyDefinition,
+								final String value = converter.convertFromCmisValue(session, propertyDefinition,
 										property.getValue());
 								logger.info("After conversion Value of property " + value);
 								metadataList.add(new CmisMetadata(cmisMetadata.getName(), value));
@@ -430,57 +431,35 @@ public class CmisDmsService implements DmsService, LoggingSupport, ChangeListene
 
 	@Override
 	public DataHandler download(final DocumentDownload document) throws DmsError {
-		final Session cmisSession = createSession();
-		final Document cmisDocument = getDocument(cmisSession, document.getPath(), document.getFileName());
+		final Document cmisDocument = getDocument(createSession(), document.getPath(), document.getFileName());
 		return cmisDocument != null ? new DataHandler(new CmisDataSource(cmisDocument.getContentStream())) : null;
 	}
 
 	@Override
 	public void upload(final StorableDocument document) throws DmsError {
-		final Session cmisSession = createSession();
-		final Folder folder = createFolder(cmisSession, document.getPath());
+		final Session session = createSession();
+		final Folder folder = createFolder(session, document.getPath());
 		if (folder != null) {
 			final MimetypesFileTypeMap mimeTypesMap = new MimetypesFileTypeMap();
 			final String mimeType = mimeTypesMap.getContentType(document.getFileName());
 
-			Object author = null;
-			if (customModel().getAuthor() != null) {
-				final PropertyDefinition<?> propertyDefinition = propertyDefinitions().get(customModel().getAuthor());
-				if (propertyDefinition != null) {
-					author = getConverter(propertyDefinition).convertToCmisValue(cmisSession, propertyDefinition,
-							document.getAuthor());
-				}
-			}
-
-			Document cmisDocument = getDocument(cmisSession, document.getPath(), document.getFileName());
+			Document cmisDocument = getDocument(session, document.getPath(), document.getFileName());
 			if (cmisDocument == null) {
 				logger.info("create document");
-				final ContentStream contentStream = cmisSession.getObjectFactory()
+				final ContentStream contentStream = session.getObjectFactory()
 						.createContentStream(document.getFileName(), -1, mimeType, document.getInputStream());
-				final Map<String, Object> properties = getProperties(cmisSession, document, null);
-				if (customModel().getAuthor() != null) {
-					properties.put(customModel().getAuthor(), author);
-				}
-				for (final Entry<String, Object> property : properties.entrySet()) {
-					logger.debug("Property for document: " + property.toString());
-				}
+				final Map<String, Object> properties = getProperties(session, document, null);
 				cmisDocument = folder.createDocument(properties, contentStream, VersioningState.MAJOR);
 				logger.info(
 						"Document created : " + cmisDocument + "secondary type " + cmisDocument.getSecondaryTypes());
 
 			} else {
 				logger.info("update document");
-				final Document pwc = (Document) cmisSession.getObject(cmisDocument.checkOut());
-				final ContentStream contentStream = cmisSession.getObjectFactory()
+				final Document pwc = (Document) session.getObject(cmisDocument.checkOut());
+				final ContentStream contentStream = session.getObjectFactory()
 						.createContentStream(document.getFileName(), -1, mimeType, document.getInputStream());
-				final Map<String, Object> properties = getProperties(cmisSession, document, pwc);
-				if (customModel().getAuthor() != null) {
-					properties.put(customModel().getAuthor(), author);
-				}
+				final Map<String, Object> properties = getProperties(session, document, pwc);
 				try {
-					for (final String p : properties.keySet()) {
-						logger.debug("Properties to set " + p + " " + properties.get(p));
-					}
 					pwc.checkIn(true, properties, contentStream, "");
 				} catch (final Exception e) {
 					pwc.cancelCheckOut();
@@ -499,14 +478,14 @@ public class CmisDmsService implements DmsService, LoggingSupport, ChangeListene
 
 	@Override
 	public void updateDescriptionAndMetadata(final DocumentUpdate document) throws DmsError {
-		final Session cmisSession = createSession();
-		final Folder folder = getFolder(cmisSession, document.getPath());
+		final Session session = createSession();
+		final Folder folder = getFolder(session, document.getPath());
 		if (folder != null) {
-			final Document cmisDocument = getDocument(cmisSession, document.getPath(), document.getFileName());
+			final Document cmisDocument = getDocument(session, document.getPath(), document.getFileName());
 			if (cmisDocument != null) {
 				logger.info("Will update document: " + "path: " + cmisDocument.getPaths());
 				logger.info("Will get properties for secondary type " + cmisDocument.getSecondaryTypes());
-				final Map<String, Object> properties = getProperties(cmisSession, document, cmisDocument);
+				final Map<String, Object> properties = getProperties(session, document, cmisDocument);
 				cmisDocument.updateProperties(properties);
 			}
 		}
@@ -514,9 +493,8 @@ public class CmisDmsService implements DmsService, LoggingSupport, ChangeListene
 
 	@Override
 	public void delete(final DocumentDelete document) throws DmsError {
-		final Session cmisSession = createSession();
 		logger.info("Delete dms document " + (document != null ? document.getFileName() : null));
-		final Document cmisDocument = getDocument(cmisSession, document.getPath(), document.getFileName());
+		final Document cmisDocument = getDocument(createSession(), document.getPath(), document.getFileName());
 		logger.info("Delete cmis document " + (cmisDocument != null ? document.getFileName() : null));
 		if (cmisDocument != null) {
 			logger.info("Delete cmis document " + cmisDocument.getName());
@@ -531,11 +509,11 @@ public class CmisDmsService implements DmsService, LoggingSupport, ChangeListene
 	@Override
 	public void copy(final StoredDocument document, final DocumentSearch from, final DocumentSearch to)
 			throws DmsError {
-		final Session cmisSession = createSession();
+		final Session session = createSession();
 		logger.info("Trying to get cmid document for cmdbuild doc :" + document.getName());
-		final Document cmisDocument = getDocument(cmisSession, from.getPath(), document.getName());
+		final Document cmisDocument = getDocument(session, from.getPath(), document.getName());
 		logger.debug("cmisDocument :" + cmisDocument);
-		final Folder toFolder = createFolder(cmisSession, to.getPath());
+		final Folder toFolder = createFolder(session, to.getPath());
 		logger.debug("folder :" + toFolder);
 		if (cmisDocument != null && toFolder != null) {
 			logger.debug("folder path" + toFolder.getPath());
@@ -545,9 +523,9 @@ public class CmisDmsService implements DmsService, LoggingSupport, ChangeListene
 					final CmisConverter cmisConverter = propertyConverters.get(property.getId());
 					logger.info("Property converter for " + property.getLocalName() + " is " + cmisConverter);
 					if (cmisConverter != null && cmisConverter.isAsymmetric()) {
-						final String value = cmisConverter.convertFromCmisValue(cmisSession, property.getDefinition(),
+						final String value = cmisConverter.convertFromCmisValue(session, property.getDefinition(),
 								property.getValue());
-						final Object cmisValue = cmisConverter.convertToCmisValue(cmisSession, property.getDefinition(),
+						final Object cmisValue = cmisConverter.convertToCmisValue(session, property.getDefinition(),
 								value);
 						logger.debug("Setting property " + property.getId() + " to " + cmisValue);
 						properties.put(property.getId(), cmisValue);
@@ -563,15 +541,15 @@ public class CmisDmsService implements DmsService, LoggingSupport, ChangeListene
 	@Override
 	public void move(final StoredDocument document, final DocumentSearch from, final DocumentSearch to)
 			throws DmsError {
-		final Session cmisSession = createSession();
+		final Session session = createSession();
 
 		logger.info("Move document: " + document.getPath() + "|" + document.getName() + " from :" + from.getPath()
 				+ " to " + to.getPath());
-		final Folder fromFolder = getFolder(cmisSession, from.getPath());
-		final Folder toFolder = createFolder(cmisSession, to.getPath());
+		final Folder fromFolder = getFolder(session, from.getPath());
+		final Folder toFolder = createFolder(session, to.getPath());
 		logger.info("Move from Folder: " + fromFolder + "to folder:" + toFolder);
 		if (fromFolder != null && toFolder != null) {
-			final Document cmisDocument = getDocument(cmisSession, from.getPath(), document.getName());
+			final Document cmisDocument = getDocument(session, from.getPath(), document.getName());
 			if (cmisDocument != null) {
 				cmisDocument.move(fromFolder, toFolder);
 				logger.info("( Move ) document " + cmisDocument.getName() + "has moved from: " + fromFolder.getName()
@@ -588,8 +566,7 @@ public class CmisDmsService implements DmsService, LoggingSupport, ChangeListene
 
 	@Override
 	public void delete(final DocumentSearch position) throws DmsError {
-		final Session cmisSession = createSession();
-		final Folder folder = getFolder(cmisSession, position.getPath());
+		final Folder folder = getFolder(createSession(), position.getPath());
 		logger.info("will delete  tree '{}'", position.getPath());
 		if (folder != null) {
 			final Collection<String> results = folder.deleteTree(true, DELETE, true);
@@ -601,15 +578,14 @@ public class CmisDmsService implements DmsService, LoggingSupport, ChangeListene
 
 	@Override
 	public void create(final DocumentSearch position) throws DmsError {
-		final Session cmisSession = createSession();
-		createFolder(cmisSession, position.getPath());
+		createFolder(createSession(), position.getPath());
 	}
 
 	private Session createSession() {
 		return repository.get().createSession();
 	}
 
-	private Folder getFolder(final Session cmisSession, final List<String> pathList) {
+	private Folder getFolder(final Session session, final List<String> pathList) {
 		CmisObject object = null;
 		if (pathList != null) {
 			final StringBuilder path = new StringBuilder();
@@ -620,7 +596,7 @@ public class CmisDmsService implements DmsService, LoggingSupport, ChangeListene
 				path.append(name);
 			}
 			try {
-				object = cmisSession.getObjectByPath(path.toString());
+				object = session.getObjectByPath(path.toString());
 			} catch (final CmisObjectNotFoundException e) {
 				object = null;
 			}
@@ -628,12 +604,12 @@ public class CmisDmsService implements DmsService, LoggingSupport, ChangeListene
 		return object instanceof Folder ? (Folder) object : null;
 	}
 
-	private Folder createFolder(final Session cmisSession, final List<String> pathList) {
+	private Folder createFolder(final Session session, final List<String> pathList) {
 		final StringBuilder path = new StringBuilder();
 		path.append(configuration.getRepositoryWSPath());
 		path.append(configuration.getRepositoryApp());
 
-		final CmisObject object = cmisSession.getObjectByPath(path.toString());
+		final CmisObject object = session.getObjectByPath(path.toString());
 		if (object instanceof Folder && pathList != null) {
 			Folder parentFolder = (Folder) object;
 			for (final String name : pathList) {
@@ -641,7 +617,7 @@ public class CmisDmsService implements DmsService, LoggingSupport, ChangeListene
 				try {
 					path.append('/');
 					path.append(name);
-					final CmisObject child = cmisSession.getObjectByPath(path.toString());
+					final CmisObject child = session.getObjectByPath(path.toString());
 					if (child instanceof Folder) {
 						folder = (Folder) child;
 					}
@@ -659,7 +635,7 @@ public class CmisDmsService implements DmsService, LoggingSupport, ChangeListene
 		}
 	}
 
-	private Document getDocument(final Session cmisSession, final List<String> pathList, final String filename) {
+	private Document getDocument(final Session session, final List<String> pathList, final String filename) {
 		CmisObject object = null;
 		if (pathList != null && filename != null) {
 			final StringBuilder path = new StringBuilder();
@@ -672,7 +648,7 @@ public class CmisDmsService implements DmsService, LoggingSupport, ChangeListene
 			path.append("/");
 			path.append(filename);
 			try {
-				object = cmisSession.getObjectByPath(path.toString());
+				object = session.getObjectByPath(path.toString());
 			} catch (final CmisObjectNotFoundException e) {
 				object = null;
 			}
@@ -680,119 +656,143 @@ public class CmisDmsService implements DmsService, LoggingSupport, ChangeListene
 		return object instanceof Document ? (Document) object : null;
 	}
 
-	private Map<String, Object> getProperties(final Session cmisSession, final DocumentUpdate document,
-			final Document cmisDocument) throws DmsError {
+	private Map<String, Object> getProperties(final Session session, final DocumentUpdate document,
+			final Document cmisDocument) {
 		final Map<String, Object> properties = newHashMap();
-		properties.put(DESCRIPTION, document.getDescription());
 
-		if (customModel().getDescription() != null) {
-			final PropertyDefinition<?> propertyDefinition = propertyDefinitions().get(customModel().getDescription());
-			logger.info("description property: " + propertyDefinition.getDisplayName() + " updatability "
-					+ propertyDefinition.getUpdatability());
-			if (propertyDefinition != null) {
-				final Object value = getConverter(propertyDefinition).convertToCmisValue(cmisSession,
-						propertyDefinition, document.getDescription());
-				logger.info("converted property for : " + propertyDefinition.getDisplayName() + " value: " + value);
-				properties.put(customModel().getDescription(), value);
-			}
-		}
-
-		String category = document.getCategory();
-		logger.info("Category of document  " + document.getFileName() + " is " + category);
-		if (category != null) {
-			logger.info("CustomModel for  " + category + " " + customModel().getCategory());
-			if (customModel().getCategory() != null) {
-				final PropertyDefinition<?> propertyDefinition = propertyDefinitions().get(customModel().getCategory());
-				if (propertyDefinition != null) {
-					final Object value = getConverter(propertyDefinition).convertToCmisValue(cmisSession,
-							propertyDefinition, document.getCategory());
-					properties.put(customModel().getCategory(), value);
-				}
-			}
+		final CmisVersion version = session.getRepositoryInfo().getCmisVersion();
+		if (version.compareTo(CMIS_1_0) <= 0) {
+			logger.warn("secondary types not supported by this protocol version ({})", version);
 		} else {
-			if (customModel().getCategory() != null) {
-				final Property<Object> property = cmisDocument.getProperty(customModel().getCategory());
-				if (property != null) {
-					category = getConverter(property.getDefinition()).convertFromCmisValue(cmisSession,
-							property.getDefinition(), property.getValue());
+			if (customModel().getAuthor() != null) {
+				final PropertyDefinition<?> propertyDefinition = propertyDefinitions().get(customModel().getAuthor());
+				if (propertyDefinition != null) {
+					Object author = getConverter(propertyDefinition).convertToCmisValue(session, propertyDefinition,
+							document.getAuthor());
+					properties.put(customModel().getAuthor(), author);
 				}
 			}
-		}
 
-		if (category != null) {
-			logger.info("Processing secondary types  for " + category);
-			final List<Object> secondaryTypes = newArrayList();
-			if (customModel().getSecondaryTypeList() != null) {
-				logger.info("Secondary type list legth:  " + customModel().getSecondaryTypeList().size());
-				for (final String secondaryType : customModel().getSecondaryTypeList()) {
-					logger.info("Adding secondary types  " + secondaryType);
-					secondaryTypes.add(secondaryType);
+			properties.put(DESCRIPTION, document.getDescription());
+
+			if (customModel().getDescription() != null) {
+				final PropertyDefinition<?> propertyDefinition = propertyDefinitions()
+						.get(customModel().getDescription());
+				logger.info("description property: " + propertyDefinition.getDisplayName() + " updatability "
+						+ propertyDefinition.getUpdatability());
+				if (propertyDefinition != null) {
+					final Object value = getConverter(propertyDefinition).convertToCmisValue(session,
+							propertyDefinition, document.getDescription());
+					logger.info("converted property for : " + propertyDefinition.getDisplayName() + " value: " + value);
+					properties.put(customModel().getDescription(), value);
 				}
-			} else {
-				logger.info("No Secondarytype list   in customModel ");
 			}
 
-			final CmisDocumentType documentType = documentTypeDefinitions.get().get(category);
-			if (documentType != null) {
-				for (final MetadataGroupDefinition group : documentType.getMetadataGroupDefinitions()) {
-					final CmisMetadataGroupDefinition cmisGroup = (CmisMetadataGroupDefinition) group;
-					if (cmisGroup.getSecondaryType() != null) {
-						secondaryTypes.add(cmisGroup.getSecondaryType().getId());
-						logger.info("Adding secondary types  from metadata" + cmisGroup.getSecondaryType().getId());
+			String category = document.getCategory();
+			logger.info("Category of document  " + document.getFileName() + " is " + category);
+			if (category != null) {
+				logger.info("CustomModel for  " + category + " " + customModel().getCategory());
+				if (customModel().getCategory() != null) {
+					final PropertyDefinition<?> propertyDefinition = propertyDefinitions()
+							.get(customModel().getCategory());
+					if (propertyDefinition != null) {
+						final Object value = getConverter(propertyDefinition).convertToCmisValue(session,
+								propertyDefinition, document.getCategory());
+						properties.put(customModel().getCategory(), value);
 					}
 				}
+			} else {
+				if (customModel().getCategory() != null) {
+					final Property<Object> property = cmisDocument.getProperty(customModel().getCategory());
+					if (property != null) {
+						category = getConverter(property.getDefinition()).convertFromCmisValue(session,
+								property.getDefinition(), property.getValue());
+					}
+				}
+			}
 
-				if (document.getMetadataGroups() != null) {
-					for (final MetadataGroup group : document.getMetadataGroups()) {
-						logger.info("Processing group " + group.getName());
-						final CmisMetadataGroupDefinition groupDefinition = documentType
-								.getMetadataGroupDefinition(group.getName());
-						if (groupDefinition != null && group.getMetadata() != null) {
-							for (final Metadata metadata : group.getMetadata()) {
-								final CmisMetadataDefinition metadataDefinition = groupDefinition
-										.getMetadataDefinition(metadata.getName());
-								if (metadataDefinition != null) {
-									final PropertyDefinition<?> propertyDefinition = metadataDefinition.getProperty();
-									final CmisConverter converter = getConverter(propertyDefinition);
-									final Object value = converter.convertToCmisValue(cmisSession, propertyDefinition,
-											metadata.getValue());
-									properties.put(metadataDefinition.getProperty().getId(), value);
+			if (category != null) {
+				logger.info("Processing secondary types  for " + category);
+				final List<Object> secondaryTypes = newArrayList();
+				if (customModel().getSecondaryTypeList() != null) {
+					logger.info("Secondary type list legth:  " + customModel().getSecondaryTypeList().size());
+					for (final String secondaryType : customModel().getSecondaryTypeList()) {
+						logger.info("Adding secondary types  " + secondaryType);
+						secondaryTypes.add(secondaryType);
+					}
+				} else {
+					logger.info("No Secondarytype list   in customModel ");
+				}
+
+				final CmisDocumentType documentType = documentTypeDefinitions.get().get(category);
+				if (documentType != null) {
+					for (final MetadataGroupDefinition group : documentType.getMetadataGroupDefinitions()) {
+						final CmisMetadataGroupDefinition cmisGroup = (CmisMetadataGroupDefinition) group;
+						if (cmisGroup.getSecondaryType() != null) {
+							secondaryTypes.add(cmisGroup.getSecondaryType().getId());
+							logger.info("Adding secondary types  from metadata" + cmisGroup.getSecondaryType().getId());
+						}
+					}
+
+					if (document.getMetadataGroups() != null) {
+						for (final MetadataGroup group : document.getMetadataGroups()) {
+							logger.info("Processing group " + group.getName());
+							final CmisMetadataGroupDefinition groupDefinition = documentType
+									.getMetadataGroupDefinition(group.getName());
+							if (groupDefinition != null && group.getMetadata() != null) {
+								for (final Metadata metadata : group.getMetadata()) {
+									final CmisMetadataDefinition metadataDefinition = groupDefinition
+											.getMetadataDefinition(metadata.getName());
+									if (metadataDefinition != null) {
+										final PropertyDefinition<?> propertyDefinition = metadataDefinition
+												.getProperty();
+										final CmisConverter converter = getConverter(propertyDefinition);
+										final Object value = converter.convertToCmisValue(session, propertyDefinition,
+												metadata.getValue());
+										properties.put(metadataDefinition.getProperty().getId(), value);
+									}
+								}
+							} else {
+								logger.info("Either group definition or group.getMetadata() is null");
+								logger.info(" group definition " + groupDefinition + " group.getMetadata :"
+										+ group.getMetadata());
+							}
+						}
+					} else {
+						logger.info("No group metadata for" + document.getFileName());
+					}
+				}
+				logger.warn("CMISDOCUMENT " + cmisDocument);
+
+				if (cmisDocument != null) {
+					logger.info("cmisdocument : " + cmisDocument.getPaths());
+					if (cmisDocument.getSecondaryTypes() != null) {
+						for (final ObjectType secondaryType : cmisDocument.getSecondaryTypes()) {
+							logger.warn("SECONDARY TYPE NAMESPACE" + secondaryType.getLocalNamespace());
+							if (!secondaryType.getLocalNamespace().equals(configuration.getAlfrescoCustomUri())) {
+								if (!secondaryTypes.contains(secondaryType.getId())) {
+									secondaryTypes.add(secondaryType.getId());
 								}
 							}
-						} else {
-							logger.info("Either group definition or group.getMetadata() is null");
-							logger.info(" group definition " + groupDefinition + " group.getMetadata :"
-									+ group.getMetadata());
 						}
 					}
 				} else {
-					logger.info("No group metadata for" + document.getFileName());
+					logger.info("cmisdocument is null");
 				}
-			}
-			logger.warn("CMISDOCUMENT " + cmisDocument);
 
-			if (cmisDocument != null) {
-				logger.info("cmisdocument : " + cmisDocument.getPaths());
-				if (cmisDocument.getSecondaryTypes() != null) {
-					for (final ObjectType secondaryType : cmisDocument.getSecondaryTypes()) {
-						logger.warn("SECONDARY TYPE NAMESPACE" + secondaryType.getLocalNamespace());
-						if (!secondaryType.getLocalNamespace().equals(configuration.getAlfrescoCustomUri())) {
-							if (!secondaryTypes.contains(secondaryType.getId())) {
-								secondaryTypes.add(secondaryType.getId());
-							}
-						}
-					}
-				}
-			} else {
-				logger.info("cmisdocument is null");
+				properties.put(SECONDARY_OBJECT_TYPE_IDS, secondaryTypes);
 			}
-
-			properties.put(SECONDARY_OBJECT_TYPE_IDS, secondaryTypes);
 		}
 
 		if (cmisDocument == null) {
 			properties.put(OBJECT_TYPE_ID, defaultIfNull(customModel().getCmisType(), CMIS_DOCUMENT));
 			properties.put(NAME, document.getFileName());
+		}
+
+		if (logger.isDebugEnabled()) {
+			for (final String key : properties.keySet()) {
+				logger.debug("property to set '{}': '{}'", key, properties.get(key));
+			}
 		}
 
 		return properties;
