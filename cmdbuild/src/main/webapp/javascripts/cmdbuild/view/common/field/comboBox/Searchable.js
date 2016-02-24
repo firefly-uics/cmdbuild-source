@@ -63,6 +63,21 @@
 
 		onTrigger3Click: function(value) {
 			this.delegate.cmfg('onFieldComboBoxSearchableTrigger3Click');
+		},
+
+		/**
+		 * Adds values in store if not already inside
+		 *
+		 * @param {String} value
+		 *
+		 * @override
+		 */
+		setValue: function (value) {
+			if (this.getStore().find(this.valueField, value) >= 0) {
+				return this.callParent(arguments);
+			} else {
+				return this.delegate.cmfg('onFieldComboBoxSearchableSetValue', value);
+			}
 		}
 	});
 

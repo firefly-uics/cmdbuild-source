@@ -27,6 +27,7 @@
 			'fieldComboBoxSearchableSetValue = fiedlSetValue',
 			'fieldComboBoxSearchableStoreExceedsLimit',
 			'onFieldComboBoxSearchableKeyUp',
+			'onFieldComboBoxSearchableSetValue',
 			'onFieldComboBoxSearchableTrigger1Click',
 			'onFieldComboBoxSearchableTrigger2Click',
 			'onFieldComboBoxSearchableTrigger3Click'
@@ -57,21 +58,6 @@
 
 			// Controller build
 			this.controllerSearchWindow = Ext.create('CMDBuild.controller.common.field.searchWindow.SearchWindow', { parentDelegate: this });
-		},
-
-		/**
-		 * @param {Ext.data.Model} record
-		 */
-		addToStoreIfNotAlreadyInside: function(record) {
-			if (
-				!Ext.isEmpty(record)
-				&& !Ext.isEmpty(this.view.getStore())
-				&& this.view.getStore().find('Id', record.get('Id')) == -1
-			) {
-				this.view.getStore().add(Ext.create('CMDBuild.model.common.attributes.ForeignKeyStore', record.getData())); // Model conversion
-
-				this.view.validate();
-			}
 		},
 
 		// Configuration property methods
@@ -113,9 +99,8 @@
 		 */
 		fieldComboBoxSearchableSetValue: function(selectedRecord) {
 			if (!Ext.isEmpty(selectedRecord)) {
-				this.addToStoreIfNotAlreadyInside(selectedRecord);
 				this.view.blur(); // Allow 'change' event that occurs on blur
-				this.view.setValue(selectedRecord.get('Id'));
+				this.cmfg('onFieldComboBoxSearchableSetValue', selectedRecord.get(this.view.valueField));
 			}
 		},
 
@@ -131,6 +116,44 @@
 
 		onFieldComboBoxSearchableKeyUp: function() {
 			this.onFieldComboBoxSearchableTrigger3Click(this.view.getRawValue());
+		},
+
+		/**
+		 * Adds values in store if not already inside
+		 *
+		 * @param {String} value
+		 */
+		onFieldComboBoxSearchableSetValue: function(value) {
+			if (
+				!Ext.isEmpty(value)
+				&& this.view.getStore().find(this.view.valueField, value) < 0
+			) {
+				var params = {};
+				params[CMDBuild.core.proxy.CMProxyConstants.CLASS_NAME] = this.view.attributeModel.get(CMDBuild.core.proxy.CMProxyConstants.TARGET_CLASS);
+				params[CMDBuild.core.proxy.CMProxyConstants.CARD_ID] = value;
+
+				CMDBuild.core.proxy.common.field.ForeignKey.readCard({
+					params: params,
+					scope: this,
+					success: function(response, options, decodedResponse) {
+						decodedResponse = decodedResponse[CMDBuild.core.proxy.CMProxyConstants.CARD];
+
+						if (!Ext.isEmpty(decodedResponse)) {
+							if (!Ext.isEmpty(this.view.getStore()))
+								this.view.getStore().add(
+									Ext.create('CMDBuild.model.common.attributes.ForeignKeyStore', {
+										Id: decodedResponse['Id'],
+										Description: decodedResponse['Description']
+									})
+								);
+
+							this.view.setValue(decodedResponse[this.view.valueField]);
+						}
+
+						this.view.validate();
+					}
+				});
+			}
 		},
 
 		/**
