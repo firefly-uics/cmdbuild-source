@@ -1,39 +1,14 @@
 (function() {
 
 	Ext.define('CMDBuild.view.administration.accordion.Report', {
-		extend: 'CMDBuild.view.common.CMBaseAccordion',
-
-		requires: ['CMDBuild.core.proxy.CMProxyConstants'],
-
-		cmName: 'report',
-		title: CMDBuild.Translation.administration.modreport.title,
+		extend: 'CMDBuild.view.common.abstract.Accordion',
 
 		/**
-		 * @param {CMDBuild.model.Report} report
-		 *
-		 * @return {Object} nodeConf
+		 * @cfg {CMDBuild.controller.administration.accordion.Report}
 		 */
-		buildNodeConf: function(report) {
-			var nodeConf = report.getData();
-			nodeConf['cmName'] = this.cmName;
-			nodeConf['leaf'] = true;
+		delegate: undefined,
 
-			return nodeConf;
-		},
-
-		/**
-		 * @return {Array} nodes
-		 */
-		buildTreeStructure: function() {
-			var nodes = [];
-			var reports = _CMCache.getReports();
-
-			for (var key in reports)
-				nodes.push(this.buildNodeConf(reports[key]));
-
-			return nodes;
-
-		}
+		title: CMDBuild.Translation.report
 	});
 
 })();

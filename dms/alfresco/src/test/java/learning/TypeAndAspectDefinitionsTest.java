@@ -21,7 +21,6 @@ import org.alfresco.webservice.util.AuthenticationUtils;
 import org.alfresco.webservice.util.WebServiceFactory;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.builder.ToStringBuilder;
-import org.cmdbuild.dms.DmsConfiguration;
 import org.hamcrest.Matcher;
 import org.junit.After;
 import org.junit.Before;
@@ -39,7 +38,7 @@ public class TypeAndAspectDefinitionsTest {
 
 	private static DictionaryServiceSoapPort dictionaryService;
 
-	private final DmsConfiguration configuration = new TestConfiguration();
+	private final TestConfiguration configuration = new TestConfiguration();
 
 	@Before
 	public void createDictionaryService() throws Exception {

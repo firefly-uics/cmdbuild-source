@@ -2,12 +2,11 @@ package org.cmdbuild.logic.translation.converter;
 
 import java.util.Map;
 
-import org.cmdbuild.logic.translation.TranslationObject;
 import org.cmdbuild.logic.translation.object.WidgetLabel;
 
 import com.google.common.collect.Maps;
 
-public enum WidgetConverter {
+public enum WidgetConverter implements Converter {
 
 	LABEL(label()) {
 
@@ -17,13 +16,7 @@ public enum WidgetConverter {
 		}
 
 		@Override
-		public WidgetConverter withTranslations(final Map<String, String> map) {
-			translations = map;
-			return this;
-		}
-
-		@Override
-		public WidgetLabel create(final String name) {
+		public WidgetLabel create() {
 			final WidgetLabel.Builder builder = WidgetLabel //
 					.newInstance() //
 					.withClassName(name);
@@ -43,27 +36,35 @@ public enum WidgetConverter {
 		}
 
 		@Override
-		public WidgetConverter withTranslations(final Map<String, String> map) {
-			throw new UnsupportedOperationException();
-		}
-
-		@Override
-		public WidgetLabel create(final String name) {
+		public WidgetLabel create() {
 			throw new UnsupportedOperationException();
 		}
 	};
 
 	private final String fieldName;
+
+	private static String name;
 	private static Map<String, String> translations = Maps.newHashMap();
 
 	private static final String LABEL_FIELD = "buttonlabel";
 	private static final String UNDEFINED_FIELD = "undefined";
 
-	public abstract TranslationObject create(String name);
+	@Override
+	public Converter withIdentifier(final String identifier) {
+		name = identifier;
+		return this;
+	}
 
-	public abstract WidgetConverter withTranslations(Map<String, String> map);
+	@Override
+	public Converter withOwner(final String parentIdentifier) {
+		return this;
+	}
 
-	public abstract boolean isValid();
+	@Override
+	public Converter withTranslations(final Map<String, String> map) {
+		translations = map;
+		return this;
+	}
 
 	public static String label() {
 		return LABEL_FIELD;

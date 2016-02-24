@@ -12,15 +12,15 @@ import org.apache.commons.net.ftp.FTP;
 import org.apache.commons.net.ftp.FTPClient;
 import org.apache.commons.net.ftp.FTPReply;
 import org.cmdbuild.common.utils.TempDataSource;
-import org.cmdbuild.dms.DmsConfiguration;
 import org.cmdbuild.dms.DmsService.LoggingSupport;
+import org.cmdbuild.dms.alfresco.AlfrescoDmsConfiguration;
 import org.cmdbuild.dms.exception.DmsError;
 
 class AlfrescoFtpClient implements FtpClient, LoggingSupport {
 
-	private final DmsConfiguration configuration;
+	private final AlfrescoDmsConfiguration configuration;
 
-	public AlfrescoFtpClient(final DmsConfiguration configuration) {
+	public AlfrescoFtpClient(final AlfrescoDmsConfiguration configuration) {
 		this.configuration = configuration;
 	}
 

@@ -8,13 +8,13 @@
 		constructor: function() {
 			this.saveBtn = new Ext.button.Button({
 				id:'confirmButton',
-				text: CMDBuild.Translation.common.buttons.save,
+				text: CMDBuild.Translation.save,
 				scope: this,
 				handler: onSaveButtonClick
 			});
 
 			this.abortBtn = new Ext.button.Button({
-				text: CMDBuild.Translation.common.buttons.abort,
+				text: CMDBuild.Translation.cancel,
 				scope: this,
 				handler: function(){
 					this.form.getForm().reset();
@@ -29,27 +29,27 @@
 				region: "center",
 				items: [{
 					xtype: 'textfield',
-					inputType:'password', 
+					inputType:'password',
 					fieldLabel: CMDBuild.Translation.management.modutilities.changepassword.oldpw,
-					labelWidth: CMDBuild.LABEL_WIDTH,
+					labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
 					name: 'oldpassword',
 					allowBlank: false
 				},{
 					xtype: 'textfield',
-					inputType:'password', 
+					inputType:'password',
 					fieldLabel: CMDBuild.Translation.management.modutilities.changepassword.newpw,
-					labelWidth: CMDBuild.LABEL_WIDTH,
+					labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
 					name: 'newpassword',
 					id:'newpassword',
 					allowBlank: false
 				},{
 					xtype: 'textfield',
-					inputType:'password', 
+					inputType:'password',
 					fieldLabel: CMDBuild.Translation.management.modutilities.changepassword.repnew,
-					labelWidth: CMDBuild.LABEL_WIDTH,
+					labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
 					name: 'confirmnewpassword',
 					vtype: 'password',
-					initialPassField: 'newpassword',
+					twinFieldId: 'newpassword',
 					allowBlank: false
 				}]
 			});

@@ -8,6 +8,7 @@ import java.util.Map;
 import org.cmdbuild.logic.translation.NullTranslationObject;
 import org.cmdbuild.logic.translation.TranslationObject;
 import org.cmdbuild.logic.translation.converter.AttributeConverter;
+import org.cmdbuild.logic.translation.converter.Converter;
 import org.junit.Test;
 
 import com.google.common.collect.ImmutableMap;
@@ -26,12 +27,14 @@ public class DomainAttributeGroupObjectCreationTest {
 	@Test
 	public void forGroupFieldReturnsEmptyTranslations() {
 		// given
-		final AttributeConverter converter = AttributeConverter //
+		final Converter converter = AttributeConverter //
 				.of(entryType, field) //
+				.withOwner(domainname) //
+				.withIdentifier(attributename) //
 				.withTranslations(map);
 
 		// when
-		final TranslationObject translationObject = converter.create(domainname, attributename);
+		final TranslationObject translationObject = converter.create();
 
 		// then
 		assertTrue(converter.isValid());
@@ -43,12 +46,14 @@ public class DomainAttributeGroupObjectCreationTest {
 	@Test
 	public void converterIsCaseInsensitiveForTheField() {
 		// given
-		final AttributeConverter converter = AttributeConverter //
+		final Converter converter = AttributeConverter //
 				.of(entryType, "gROup") //
 				.withTranslations(map);
 
 		// when
-		final TranslationObject translationObject = converter.create(domainname, attributename);
+		final TranslationObject translationObject = converter.withOwner(domainname) //
+				.withIdentifier(attributename) //
+				.create();
 
 		// then
 		assertTrue(converter.isValid());
@@ -78,7 +83,7 @@ public class DomainAttributeGroupObjectCreationTest {
 
 		// when
 		try {
-			converter.create(domainname, attributename);
+			converter.create();
 		} catch (final Exception e) {
 			thrown = e;
 		}

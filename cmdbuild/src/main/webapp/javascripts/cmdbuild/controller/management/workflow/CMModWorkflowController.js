@@ -114,7 +114,7 @@
 		},
 
 		buildTabControllerEmail: function() {
-			if (!CMDBuild.configuration.userInterface.isDisabledProcessTab(CMDBuild.core.proxy.CMProxyConstants.PROCESS_EMAIL_TAB)) {
+			if (!CMDBuild.configuration.userInterface.isDisabledProcessTab(CMDBuild.core.constants.Proxy.PROCESS_EMAIL_TAB)) {
 				this.controllerTabEmail = Ext.create('CMDBuild.controller.management.workflow.tabs.Email', { parentDelegate: this });
 
 				this.subControllers.push(this.controllerTabEmail);
@@ -126,7 +126,7 @@
 		},
 
 		buildTabControllerHistory: function() {
-			if (!CMDBuild.configuration.userInterface.isDisabledProcessTab(CMDBuild.core.proxy.CMProxyConstants.PROCESS_HISTORY_TAB)) {
+			if (!CMDBuild.configuration.userInterface.isDisabledProcessTab(CMDBuild.core.constants.Proxy.PROCESS_HISTORY_TAB)) {
 				this.controllerTabHistory = Ext.create('CMDBuild.controller.management.workflow.tabs.History', { parentDelegate: this });
 
 				this.subControllers.push(this.controllerTabHistory);
@@ -250,7 +250,22 @@
 
 			_CMUIState.onlyGridIfFullScreen();
 
-			this.view.activateFirstTab();
+			if (
+				!Ext.isEmpty(danglingCard)
+				&& !Ext.isEmpty(danglingCard.activateFirstTab)
+			) {
+				this.view.cardTabPanel.activeTabSet(danglingCard.activateFirstTab);
+			}
+
+			// History record save
+			CMDBuild.global.navigation.Chronology.cmfg('navigationChronologyRecordSave', {
+				moduleId: this.view.cmName,
+				entryType: {
+					description: _CMWFState.getProcessClassRef().get(CMDBuild.core.constants.Proxy.TEXT),
+					id: _CMWFState.getProcessClassRef().get(CMDBuild.core.constants.Proxy.ID),
+					object: _CMWFState.getProcessClassRef()
+				}
+			});
 		}
 	});
 

@@ -3,7 +3,7 @@ Ext.define("CMDBuild.Administration.ModIcons", {
 
 	cmName:"gis-icons",
 	translation: CMDBuild.Translation.administration.modcartography.icons,
-	buttonsTr: CMDBuild.Translation.common.buttons,
+	buttonsTr: CMDBuild.Translation,
 
 	initComponent : function() {
 		this.buildUIButtons();
@@ -39,11 +39,11 @@ Ext.define("CMDBuild.Administration.ModIcons", {
 
 		this.description = Ext.create('Ext.form.field.Text', {
 			fieldLabel: this.translation.description,
-			labelWidth: CMDBuild.LABEL_WIDTH,
-			width: CMDBuild.ADM_BIG_FIELD_WIDTH,
+			labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
+			width: CMDBuild.core.constants.FieldWidths.ADMINISTRATION_BIG,
 			name: 'description',
 			allowBlank: false,
-			vtype: 'cmdbcomment'
+			vtype: 'commentextended'
 		});
 		this.uploadForm = new Ext.form.FormPanel({
 			monitorValid: true,
@@ -54,8 +54,8 @@ Ext.define("CMDBuild.Administration.ModIcons", {
 			split: true,
 			frame: false,
 			border: false,
-			cls: "x-panel-body-default-framed cmbordertop",
-			bodyCls: 'cmgraypanel',
+			cls: "x-panel-body-default-framed cmdb-border-top",
+			bodyCls: 'cmdb-gray-panel',
 			layout: "border",
 			tbar: [this.modifyButton, this.removeButton],
 			items: [{
@@ -63,8 +63,8 @@ Ext.define("CMDBuild.Administration.ModIcons", {
 				region: "center",
 				frame: true,
 				defaults: {
-					labelWidth: CMDBuild.LABEL_WIDTH,
-					width: CMDBuild.ADM_BIG_FIELD_WIDTH
+					labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
+					width: CMDBuild.core.constants.FieldWidths.ADMINISTRATION_BIG
 				},
 				items: [{
 					xtype:'hidden',
@@ -72,7 +72,7 @@ Ext.define("CMDBuild.Administration.ModIcons", {
 				},{
 					xtype: 'filefield',
 					allowBlank: true,
-					width: CMDBuild.ADM_BIG_FIELD_WIDTH,
+					width: CMDBuild.core.constants.FieldWidths.ADMINISTRATION_BIG,
 					fieldLabel: this.translation.file,
 					name: 'file'
 				}, this.description
@@ -166,9 +166,6 @@ Ext.define("CMDBuild.Administration.ModIcons", {
   		this.removeButton.enable();
   		this.uploadForm.getForm().reset();
   		this.uploadForm.getForm().loadRecord(record);
-		Ext.apply(this.description, {
-			translationsKeyName: record.get("name")
-		});
   	},
 
   	//private
@@ -177,7 +174,6 @@ Ext.define("CMDBuild.Administration.ModIcons", {
 		this.uploadForm.getForm().reset();
 		this.enableModify();
 		this.uploadForm.saveStatus = "add";
-		_CMCache.initAddingTranslations();
 	},
 
   	//private
@@ -195,7 +191,6 @@ Ext.define("CMDBuild.Administration.ModIcons", {
   			descriptionField[0].disable();
   		}
   		this.uploadForm.saveStatus = "modify";
-		_CMCache.initModifyingTranslations();
  	},
 
   	//private
@@ -226,7 +221,7 @@ Ext.define("CMDBuild.Administration.ModIcons", {
   		//the save request
 
 		if (form.isValid()) {
-			CMDBuild.LoadMask.get().show();
+			CMDBuild.core.LoadMask.show();
 			var config = {
 				scope: this,
 				success: function(form, action) {
@@ -238,7 +233,6 @@ Ext.define("CMDBuild.Administration.ModIcons", {
 					        // contains all of the details of the load operation
 					        console.log(records);
 					        var r = this.iconsGrid.store.findRecord("description", description);
-					        _CMCache.flushTranslationsToSave(r.get("name"));
 					    }
 					});
 				},
@@ -265,7 +259,7 @@ Ext.define("CMDBuild.Administration.ModIcons", {
 	  		var selectedRow = this.iconsGrid.getSelectionModel().getSelection();
 	  		if (selectedRow && selectedRow.length > 0) {
 	  			var selectedData = selectedRow[0];
-	  			CMDBuild.LoadMask.get().show();
+	  			CMDBuild.core.LoadMask.show();
 	  			CMDBuild.ServiceProxy.Icons.remove({
 					scope : this,
 					important: true,
@@ -289,7 +283,7 @@ Ext.define("CMDBuild.Administration.ModIcons", {
 
   	//private
   	requestCallback: function() {
-  		CMDBuild.LoadMask.get().hide();
+  		CMDBuild.core.LoadMask.hide();
 		this.disableModify();
   	}
 });

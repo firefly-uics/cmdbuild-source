@@ -4,7 +4,8 @@
 		extend: 'CMDBuild.core.PopupWindow',
 
 		requires: [
-			'CMDBuild.core.proxy.CMProxyConstants',
+			'CMDBuild.core.constants.FieldWidths',
+			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.proxy.Csv'
 		],
 
@@ -49,21 +50,21 @@
 			});
 
 			this.csvFileField = Ext.create('Ext.form.field.File', {
-				name: CMDBuild.core.proxy.CMProxyConstants.FILE,
+				name: CMDBuild.core.constants.Proxy.FILE,
 				fieldLabel: CMDBuild.Translation.csvFile,
-				labelWidth: CMDBuild.LABEL_WIDTH,
+				labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
 				labelAlign: 'right',
 				allowBlank: true,
-				width: CMDBuild.BIG_FIELD_WIDTH
+				width: CMDBuild.core.constants.FieldWidths.STANDARD_BIG
 			});
 
 			this.csvSeparatorCombo = Ext.create('Ext.form.field.ComboBox', {
 				name: 'separator',
 				fieldLabel: CMDBuild.Translation.separator,
-				labelWidth: CMDBuild.LABEL_WIDTH,
+				labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
 				labelAlign: 'right',
-				valueField: CMDBuild.core.proxy.CMProxyConstants.VALUE,
-				displayField: CMDBuild.core.proxy.CMProxyConstants.VALUE,
+				valueField: CMDBuild.core.constants.Proxy.VALUE,
+				displayField: CMDBuild.core.constants.Proxy.VALUE,
 				width: 200,
 				value: ';',
 				editable: false,
@@ -74,13 +75,13 @@
 			});
 
 			this.csvImportModeCombo = Ext.create('Ext.form.field.ComboBox', {
-				name: CMDBuild.core.proxy.CMProxyConstants.MODE,
+				name: CMDBuild.core.constants.Proxy.MODE,
 				fieldLabel: CMDBuild.Translation.mode,
-				labelWidth: CMDBuild.LABEL_WIDTH,
+				labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
 				labelAlign: 'right',
-				valueField: CMDBuild.core.proxy.CMProxyConstants.VALUE,
-				displayField: CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION,
-				width: CMDBuild.MEDIUM_FIELD_WIDTH,
+				valueField: CMDBuild.core.constants.Proxy.VALUE,
+				displayField: CMDBuild.core.constants.Proxy.DESCRIPTION,
+				width: CMDBuild.core.constants.FieldWidths.STANDARD_MEDIUM,
 				value: 'replace',
 				editable: false,
 				allowBlank: false,
@@ -103,7 +104,7 @@
 				dockedItems: [
 					Ext.create('Ext.toolbar.Toolbar', {
 						dock: 'bottom',
-						itemId: CMDBuild.core.proxy.CMProxyConstants.TOOLBAR_BOTTOM,
+						itemId: CMDBuild.core.constants.Proxy.TOOLBAR_BOTTOM,
 						ui: 'footer',
 
 						layout: {
@@ -113,14 +114,14 @@
 						},
 
 						items: [
-							Ext.create('CMDBuild.core.buttons.Upload', {
+							Ext.create('CMDBuild.core.buttons.text.Upload', {
 								scope: this,
 
 								handler: function(button, e) {
 									this.delegate.cmfg('onImportCSVUploadButtonClick');
 								}
 							}),
-							Ext.create('CMDBuild.core.buttons.Abort', {
+							Ext.create('CMDBuild.core.buttons.text.Abort', {
 								scope: this,
 
 								handler: function(button, e) {

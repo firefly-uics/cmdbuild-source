@@ -2,7 +2,7 @@ package org.cmdbuild.dao.driver.postgres;
 
 import org.cmdbuild.dao.entrytype.DBEntryType.EntryTypeMetadata;
 
-abstract class EntryTypeCommentMapper extends CommentMapper {
+public abstract class EntryTypeCommentMapper extends CommentMapper {
 
 	protected static final String DESCR = "DESCR";
 	private static final String MODE = "MODE";

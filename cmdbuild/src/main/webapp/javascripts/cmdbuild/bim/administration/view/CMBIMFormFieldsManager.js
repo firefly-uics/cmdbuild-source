@@ -11,8 +11,8 @@
 		build: function() {
 			this.name = new Ext.form.TextField({
 				fieldLabel: CMDBuild.Translation.administration.modClass.attributeProperties.name,
-				labelWidth: CMDBuild.LABEL_WIDTH,
-				width: CMDBuild.ADM_BIG_FIELD_WIDTH,
+				labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
+				width: CMDBuild.core.constants.FieldWidths.ADMINISTRATION_BIG,
 				name: NAME,
 				allowBlank: false,
 				vtype: "alphanum",
@@ -21,8 +21,8 @@
 
 			this.description= new Ext.form.TextField({
 				fieldLabel : CMDBuild.Translation.administration.modClass.attributeProperties.description,
-				labelWidth: CMDBuild.LABEL_WIDTH,
-				width: CMDBuild.ADM_BIG_FIELD_WIDTH,
+				labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
+				width: CMDBuild.core.constants.FieldWidths.ADMINISTRATION_BIG,
 				name: DESCRIPTION,
 				allowBlank : false,
 				vtype : "cmdbcomment"
@@ -30,15 +30,15 @@
 
 			this.activeCheckBox = Ext.create('Ext.ux.form.XCheckbox', {
 				fieldLabel: CMDBuild.Translation.active,
-				labelWidth: CMDBuild.LABEL_WIDTH,
-				width: CMDBuild.ADM_BIG_FIELD_WIDTH,
+				labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
+				width: CMDBuild.core.constants.FieldWidths.ADMINISTRATION_BIG,
 				name: 'active'
 			});
 
 			this.fileField = Ext.create('Ext.form.field.File', {
 				fieldLabel: CMDBuild.Translation.ifc_file,
-				labelWidth: CMDBuild.LABEL_WIDTH,
-				width: CMDBuild.ADM_BIG_FIELD_WIDTH,
+				labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
+				width: CMDBuild.core.constants.FieldWidths.ADMINISTRATION_BIG,
 				name: 'fileIFC'
 			});
 
@@ -110,7 +110,7 @@
 		rootClassName: undefined,
 		delegate: null, // pass it on creation
 
-		cls: 'x-panel-body-default-framed cmbordertop',
+		cls: 'x-panel-body-default-framed cmdb-border-top',
 		itemId: 'bimCardBinding',
 		layout: 'hbox',
 		padding: '10 0 0 0',
@@ -151,8 +151,8 @@
 			this.className = Ext.create('Ext.form.field.Text', {
 				margin: '0 5 0 0',
 				fieldLabel: CMDBuild.Translation.administration.modClass.geo_attributes.card_binding,
-				labelWidth: CMDBuild.LABEL_WIDTH,
-				width: CMDBuild.ADM_BIG_FIELD_WIDTH,
+				labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
+				width: CMDBuild.core.constants.FieldWidths.ADMINISTRATION_BIG,
 				disabled: true,
 				cmImmutable: true,
 				value: rootClassName

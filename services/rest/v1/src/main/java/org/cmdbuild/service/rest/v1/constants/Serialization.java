@@ -42,9 +42,11 @@ public class Serialization {
 			DESCRIPTION_MASTER_DETAIL = DESCRIPTION + "MasterDetail", //
 			DESTINATION = "destination", //
 			DESTINATION_PROCESS = DESTINATION + PROCESS_CAPITAL, //
+			DETAILED = "detailed", //
 			DISPLAYABLE_IN_LIST = "displayableInList", //
 			DOMAIN = "domain", //
 			DOMAIN_ID = DOMAIN + ID_CAPITALIZED, //
+			DOMAIN_NAME = "domainName", //
 			DOMAIN_SOURCE = DOMAIN + "Source", //
 			EDITOR_TYPE = "editorType", //
 			EXTRA = "extra", //

@@ -3,9 +3,8 @@
 	Ext.define('CMDBuild.core.proxy.session.JsonRpc', {
 
 		requires: [
-			'CMDBuild.core.proxy.CMProxyConstants',
-			'CMDBuild.core.proxy.CMProxyUrlIndex',
-			'CMDBuild.core.Utils'
+			'CMDBuild.core.constants.Proxy',
+			'CMDBuild.core.proxy.Index'
 		],
 
 		singleton: true,
@@ -14,30 +13,22 @@
 		 * @param {Object} parameters
 		 */
 		login: function(parameters) {
-			CMDBuild.Ajax.request({
-				params: parameters.params,
-				url: CMDBuild.core.proxy.CMProxyUrlIndex.session.jsonRpc.login,
-				loadMask: Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : true,
-				scope: parameters.scope || this,
-				success: parameters.success || Ext.emptyFn,
-				failure: parameters.failure || Ext.emptyFn,
-				callback: parameters.callback || Ext.emptyFn
-			});
+			parameters = Ext.isEmpty(parameters) ? {} : parameters;
+
+			Ext.apply(parameters, { url: CMDBuild.core.proxy.Index.session.jsonRpc.login });
+
+			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.UNCACHED, parameters);
 		},
 
 		/**
 		 * @param {Object} parameters
 		 */
 		logout: function(parameters) {
-			CMDBuild.Ajax.request({
-				params: parameters.params,
-				url: CMDBuild.core.proxy.CMProxyUrlIndex.session.jsonRpc.logout,
-				loadMask: Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : true,
-				scope: parameters.scope || this,
-				success: parameters.success || Ext.emptyFn,
-				failure: parameters.failure || Ext.emptyFn,
-				callback: parameters.callback || Ext.emptyFn
-			});
+			parameters = Ext.isEmpty(parameters) ? {} : parameters;
+
+			Ext.apply(parameters, { url: CMDBuild.core.proxy.Index.session.jsonRpc.logout });
+
+			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.UNCACHED, parameters);
 		}
 	});
 

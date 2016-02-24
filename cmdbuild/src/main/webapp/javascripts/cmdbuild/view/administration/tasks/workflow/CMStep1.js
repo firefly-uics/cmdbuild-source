@@ -128,7 +128,7 @@
 	Ext.define('CMDBuild.view.administration.tasks.workflow.CMStep1', {
 		extend: 'Ext.panel.Panel',
 
-		requires: ['CMDBuild.core.proxy.CMProxyConstants'],
+		requires: ['CMDBuild.core.constants.Proxy'],
 
 		/**
 		 * @cfg {CMDBuild.view.administration.tasks.workflow.CMStep1Delegate}
@@ -149,10 +149,10 @@
 
 			this.typeField = Ext.create('Ext.form.field.Text', {
 				fieldLabel: tr.type,
-				labelWidth: CMDBuild.LABEL_WIDTH,
-				name: CMDBuild.core.proxy.CMProxyConstants.TYPE,
+				labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
+				name: CMDBuild.core.constants.Proxy.TYPE,
 				value: tr.tasksTypes.workflow,
-				maxWidth: CMDBuild.CFG_BIG_FIELD_WIDTH,
+				maxWidth: CMDBuild.core.constants.FieldWidths.CONFIGURATION_BIG,
 				anchor: '100%',
 				disabled: true,
 				cmImmutable: true,
@@ -161,29 +161,29 @@
 			});
 
 			this.idField = Ext.create('Ext.form.field.Hidden', {
-				name: CMDBuild.core.proxy.CMProxyConstants.ID
+				name: CMDBuild.core.constants.Proxy.ID
 			});
 
 			this.descriptionField = Ext.create('Ext.form.field.Text', {
-				name: CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION,
+				name: CMDBuild.core.constants.Proxy.DESCRIPTION,
 				fieldLabel: CMDBuild.Translation.description_,
-				labelWidth: CMDBuild.LABEL_WIDTH,
-				maxWidth: CMDBuild.CFG_BIG_FIELD_WIDTH,
+				labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
+				maxWidth: CMDBuild.core.constants.FieldWidths.CONFIGURATION_BIG,
 				anchor: '100%',
 				allowBlank: false
 			});
 
 			this.activeField = Ext.create('Ext.form.field.Checkbox', {
-				name: CMDBuild.core.proxy.CMProxyConstants.ACTIVE,
+				name: CMDBuild.core.constants.Proxy.ACTIVE,
 				fieldLabel: tr.startOnSave,
-				labelWidth: CMDBuild.LABEL_WIDTH,
-				maxWidth: CMDBuild.CFG_BIG_FIELD_WIDTH,
+				labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
+				maxWidth: CMDBuild.core.constants.FieldWidths.CONFIGURATION_BIG,
 				anchor: '100%'
 			});
 
 			this.workflowForm = Ext.create('CMDBuild.view.administration.tasks.common.workflowForm.CMWorkflowForm', {
 				combo: {
-					name: CMDBuild.core.proxy.CMProxyConstants.WORKFLOW_CLASS_NAME
+					name: CMDBuild.core.constants.Proxy.WORKFLOW_CLASS_NAME
 				},
 				widthFixDisable: false
 			});

@@ -54,7 +54,7 @@
 
 			if (!this.withButtons) {
 				this.closeButton = new Ext.button.Button({
-					text: CMDBuild.Translation.common.buttons.close,
+					text: CMDBuild.Translation.close,
 					handler: this.close,
 					scope: this
 				});

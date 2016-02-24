@@ -1,12 +1,7 @@
 (function() {
 
 	Ext.define("CMDBuild.view.management.common.widgets.CMCreateModifyCard", {
-
 		extend: "CMDBuild.view.management.common.CMFormWithWidgetButtons",
-
-		statics: {
-			WIDGET_NAME: ".CreateModifyCard"
-		},
 
 		withButtons: false,
 
@@ -30,7 +25,7 @@
 		getExtraButtons: function() {
 			var me = this;
 			return [new Ext.Button( {
-				text : CMDBuild.Translation.common.buttons.save,
+				text : CMDBuild.Translation.save,
 				name : 'saveButton',
 				handler: function() {
 					me.fireEvent(me.CMEVENTS.saveCardButtonClick);
@@ -47,4 +42,5 @@
 			}
 		}
 	});
+
 })();

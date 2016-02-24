@@ -65,7 +65,6 @@ public class DefaultDmsLogic implements DmsLogic {
 	) {
 		logger.trace("creating new dms logic...");
 		this.service = service;
-		service.setConfiguration(configuration);
 		definitionsFactory = new DefaultDefinitionsFactory();
 		this.dataView = dataView;
 		this.configuration = configuration;
@@ -81,7 +80,7 @@ public class DefaultDmsLogic implements DmsLogic {
 	 */
 	@Override
 	public String getCategoryLookupType() {
-		return service.getConfiguration().getCmdbuildCategory();
+		return configuration.getCmdbuildCategory();
 	}
 
 	/**
@@ -93,7 +92,8 @@ public class DefaultDmsLogic implements DmsLogic {
 	 * 
 	 * @return the {@link DocumentTypeDefinition} for the specified category.
 	 * 
-	 * @throws {@link DmsException} if cannot read definitions.
+	 * @throws {@link
+	 *             DmsException} if cannot read definitions.
 	 */
 	@Override
 	public DocumentTypeDefinition getCategoryDefinition(final String category) {
@@ -240,8 +240,8 @@ public class DefaultDmsLogic implements DmsLogic {
 			final String message = String.format("error downloading file '%s' for card '%s' with id '%d'", //
 					fileName, className, cardId);
 			logger.error(message, e);
-			throw DmsException.Type.DMS_ATTACHMENT_NOTFOUND
-					.createException(fileName, className, String.valueOf(cardId));
+			throw DmsException.Type.DMS_ATTACHMENT_NOTFOUND.createException(fileName, className,
+					String.valueOf(cardId));
 		}
 	}
 
@@ -260,10 +260,11 @@ public class DefaultDmsLogic implements DmsLogic {
 	}
 
 	@Override
-	public void updateDescriptionAndMetadata(final String className, final Long cardId, final String filename,
-			final String category, final String description, final Iterable<MetadataGroup> metadataGroups) {
+	public void updateDescriptionAndMetadata(final String author, final String className, final Long cardId,
+			final String filename, final String category, final String description,
+			final Iterable<MetadataGroup> metadataGroups) {
 		final DocumentUpdate document = createDocumentFactory(className) //
-				.createDocumentUpdate(className, cardId, filename, category, description, metadataGroups);
+				.createDocumentUpdate(className, cardId, filename, category, description, author, metadataGroups);
 		try {
 			service.updateDescriptionAndMetadata(document);
 		} catch (final Exception e) {

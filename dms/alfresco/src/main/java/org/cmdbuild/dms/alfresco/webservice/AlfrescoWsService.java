@@ -23,7 +23,6 @@ import org.alfresco.webservice.types.ResultSetRow;
 import org.cmdbuild.common.Constants;
 import org.cmdbuild.dms.DefaultDefinitionsFactory;
 import org.cmdbuild.dms.DefinitionsFactory;
-import org.cmdbuild.dms.DmsConfiguration;
 import org.cmdbuild.dms.DocumentSearch;
 import org.cmdbuild.dms.DocumentTypeDefinition;
 import org.cmdbuild.dms.DocumentUpdate;
@@ -36,6 +35,7 @@ import org.cmdbuild.dms.MetadataType;
 import org.cmdbuild.dms.SingleDocumentSearch;
 import org.cmdbuild.dms.StorableDocument;
 import org.cmdbuild.dms.StoredDocument;
+import org.cmdbuild.dms.alfresco.AlfrescoDmsConfiguration;
 import org.cmdbuild.dms.alfresco.AlfrescoInnerService;
 import org.cmdbuild.dms.alfresco.StoredDocumentComparator;
 import org.cmdbuild.dms.exception.DmsError;
@@ -69,7 +69,7 @@ public class AlfrescoWsService extends AlfrescoInnerService {
 
 	private Iterable<DocumentTypeDefinition> cachedDocumentTypeDefinitions;
 
-	public AlfrescoWsService(final DmsConfiguration configuration) {
+	public AlfrescoWsService(final AlfrescoDmsConfiguration configuration) {
 		super(configuration);
 		definitionsFactory = new DefaultDefinitionsFactory();
 	}

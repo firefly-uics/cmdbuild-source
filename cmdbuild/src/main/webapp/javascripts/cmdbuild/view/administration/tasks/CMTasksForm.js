@@ -12,7 +12,7 @@
 			cmFormFunctions: 'CMDBUild.view.common.CMFormFunctions'
 		},
 
-		requires: ['CMDBuild.core.proxy.CMProxyConstants'],
+		requires: ['CMDBuild.core.constants.Proxy'],
 
 		/**
 		 * @cfg {Mixed} Task specific controller
@@ -20,10 +20,10 @@
 		delegate: undefined,
 
 		activeItem: 0,
-		bodyCls: 'cmgraypanel',
+		bodyCls: 'cmdb-gray-panel',
 		border: false,
 		buttonAlign: 'center',
-		cls: 'x-panel-body-default-framed cmbordertop',
+		cls: 'x-panel-body-default-framed cmdb-border-top',
 		frame: false,
 		split: true,
 
@@ -38,7 +38,7 @@
 
 		initComponent: function() {
 			// Buttons configuration
-			this.abortButton = Ext.create('CMDBuild.core.buttons.Abort', {
+			this.abortButton = Ext.create('CMDBuild.core.buttons.text.Abort', {
 				scope: this,
 
 				handler: function(button, e) {
@@ -46,7 +46,7 @@
 				}
 			});
 
-			this.cloneButton = Ext.create('CMDBuild.core.buttons.Clone', {
+			this.cloneButton = Ext.create('CMDBuild.core.buttons.iconized.Clone', {
 				text: tr.clone,
 				scope: this,
 
@@ -55,7 +55,7 @@
 				}
 			});
 
-			this.modifyButton = Ext.create('CMDBuild.core.buttons.Modify', {
+			this.modifyButton = Ext.create('CMDBuild.core.buttons.iconized.Modify', {
 				text: tr.modify,
 				scope: this,
 
@@ -64,7 +64,7 @@
 				}
 			});
 
-			this.nextButton = Ext.create('CMDBuild.core.buttons.Next', {
+			this.nextButton = Ext.create('CMDBuild.core.buttons.text.Next', {
 				scope: this,
 
 				handler: function(button, e) {
@@ -72,7 +72,7 @@
 				}
 			});
 
-			this.previousButton = Ext.create('CMDBuild.core.buttons.Previous', {
+			this.previousButton = Ext.create('CMDBuild.core.buttons.text.Previous', {
 				scope: this,
 
 				handler: function(button, e) {
@@ -80,7 +80,7 @@
 				}
 			});
 
-			this.removeButton = Ext.create('CMDBuild.core.buttons.Delete', {
+			this.removeButton = Ext.create('CMDBuild.core.buttons.iconized.Delete', {
 				text: tr.remove,
 				scope: this,
 
@@ -89,7 +89,7 @@
 				}
 			});
 
-			this.saveButton = Ext.create('CMDBuild.core.buttons.Save', {
+			this.saveButton = Ext.create('CMDBuild.core.buttons.text.Save', {
 				scope: this,
 
 				handler: function(button, e) {
@@ -105,7 +105,7 @@
 				dockedItems: [
 					Ext.create('Ext.toolbar.Toolbar', {
 						dock: 'top',
-						itemId: CMDBuild.core.proxy.CMProxyConstants.TOOLBAR_TOP,
+						itemId: CMDBuild.core.constants.Proxy.TOOLBAR_TOP,
 						items: this.cmTBar
 					})
 				],

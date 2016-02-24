@@ -5,7 +5,8 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.mock;
 
-import org.apache.cxf.message.Message;
+import javax.ws.rs.container.ContainerRequestContext;
+
 import org.cmdbuild.service.rest.v2.cxf.util.Messages.FirstPresentOrAbsent;
 import org.cmdbuild.service.rest.v2.cxf.util.Messages.StringFromMessage;
 import org.junit.Test;
@@ -23,7 +24,7 @@ public class FirstPresentOrAbsentTest {
 		}
 
 		@Override
-		public Optional<String> apply(final Message message) {
+		public Optional<String> apply(final ContainerRequestContext input) {
 			return optional;
 		}
 
@@ -34,10 +35,10 @@ public class FirstPresentOrAbsentTest {
 		// given
 		final Dummy first = new Dummy(Optional.of("foo"));
 		final Dummy second = new Dummy(Optional.of("bar"));
-		final Message message = mock(Message.class);
+		final ContainerRequestContext value = mock(ContainerRequestContext.class);
 
 		// when
-		final Optional<String> optional = FirstPresentOrAbsent.of(asList(first, second)).apply(message);
+		final Optional<String> optional = FirstPresentOrAbsent.of(asList(first, second)).apply(value);
 
 		// then
 		assertThat(optional, equalTo(Optional.of("foo")));
@@ -48,10 +49,10 @@ public class FirstPresentOrAbsentTest {
 		// given
 		final Dummy first = new Dummy(Optional.<String> absent());
 		final Dummy second = new Dummy(Optional.of("bar"));
-		final Message message = mock(Message.class);
+		final ContainerRequestContext value = mock(ContainerRequestContext.class);
 
 		// when
-		final Optional<String> optional = FirstPresentOrAbsent.of(asList(first, second)).apply(message);
+		final Optional<String> optional = FirstPresentOrAbsent.of(asList(first, second)).apply(value);
 
 		// then
 		assertThat(optional, equalTo(Optional.of("bar")));

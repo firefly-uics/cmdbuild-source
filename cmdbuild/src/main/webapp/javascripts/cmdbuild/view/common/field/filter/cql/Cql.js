@@ -3,7 +3,7 @@
 	Ext.define('CMDBuild.view.common.field.filter.cql.Cql', {
 		extend: 'Ext.form.FieldContainer',
 
-		requires: ['CMDBuild.core.proxy.CMProxyConstants'],
+		requires: ['CMDBuild.core.constants.Proxy'],
 
 		/**
 		 * @property {CMDBuild.controller.common.field.filter.cql.Cql}
@@ -18,10 +18,10 @@
 		/**
 		 * @cfg {String}
 		 */
-		fieldName: CMDBuild.core.proxy.CMProxyConstants.FILTER,
+		fieldName: CMDBuild.core.constants.Proxy.FILTER,
 
 		/**
-		 * @property {CMDBuild.core.buttons.Modify}
+		 * @property {CMDBuild.core.buttons.iconized.Modify}
 		 */
 		metadataButton: undefined,
 
@@ -44,9 +44,9 @@
 				items: [
 					this.textAreaField = Ext.create('Ext.form.field.TextArea', {
 						name: this.fieldName,
-						vtype: 'cmdbcommentrelaxed'
+						vtype: 'comment'
 					}),
-					this.metadataButton = Ext.create('CMDBuild.core.buttons.Modify', {
+					this.metadataButton = Ext.create('CMDBuild.core.buttons.iconized.Modify', {
 						text: this.buttonLabel,
 						maxWidth: this.buttonLabel.length * 10,
 						scope: this,

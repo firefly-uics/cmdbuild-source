@@ -11,7 +11,6 @@ import java.util.List;
 import org.alfresco.webservice.test.BaseWebServiceSystemTest;
 import org.apache.commons.lang3.Validate;
 import org.cmdbuild.dms.DefaultDocumentCreator;
-import org.cmdbuild.dms.DmsConfiguration;
 import org.cmdbuild.dms.DmsService;
 import org.cmdbuild.dms.DocumentCreator;
 import org.cmdbuild.dms.DocumentDelete;
@@ -19,16 +18,17 @@ import org.cmdbuild.dms.DocumentSearch;
 import org.cmdbuild.dms.MetadataGroup;
 import org.cmdbuild.dms.StorableDocument;
 import org.cmdbuild.dms.StoredDocument;
+import org.cmdbuild.dms.alfresco.AlfrescoDmsConfiguration;
 import org.cmdbuild.dms.alfresco.AlfrescoDmsService;
 import org.cmdbuild.dms.exception.DmsError;
 import org.junit.rules.ExternalResource;
 
 /**
  * Component for all tests which needs a running instance of Alfresco.
- * 
+ *
  * The file {@literal cmdbuildCustomModel.xml} (within resources) must be copied
  * in the extensions directory of Alfresco before starting it.
- * 
+ *
  * @see {@link TestConfiguration} for an overview of the settings of the
  *      Alfresco instance.
  * @see {@link BaseWebServiceSystemTest} for tests that use an embedded instance
@@ -41,7 +41,7 @@ public class DmsServiceResource extends ExternalResource {
 		private static final List<String> DEFAULT_PATH = asList("path", "of", "test", "documents");
 		private static final String DEFAULT_TARGET_CLASS = "class";
 
-		private DmsConfiguration configuration;
+		private AlfrescoDmsConfiguration configuration;
 		private List<String> path;
 		private String targetClass;
 
@@ -62,7 +62,7 @@ public class DmsServiceResource extends ExternalResource {
 			targetClass = (targetClass == null) ? DEFAULT_TARGET_CLASS : targetClass;
 		}
 
-		public Builder withConfiguration(final DmsConfiguration configuration) {
+		public Builder withConfiguration(final AlfrescoDmsConfiguration configuration) {
 			this.configuration = configuration;
 			return this;
 		}
@@ -161,8 +161,8 @@ public class DmsServiceResource extends ExternalResource {
 			dmsService.upload(storableDocumentFrom(file, category));
 		}
 
-		public void upload(final File file, final List<MetadataGroup> metadataGroups) throws DmsError,
-				FileNotFoundException {
+		public void upload(final File file, final List<MetadataGroup> metadataGroups)
+				throws DmsError, FileNotFoundException {
 			dmsService.upload(storableDocumentFrom(file, metadataGroups));
 		}
 
@@ -271,8 +271,7 @@ public class DmsServiceResource extends ExternalResource {
 	private final String targetClass;
 
 	private DmsServiceResource(final Builder builder) {
-		dmsService = new AlfrescoDmsService();
-		dmsService.setConfiguration(builder.configuration);
+		dmsService = new AlfrescoDmsService(builder.configuration);
 		documentFactory = new DefaultDocumentCreator(builder.path);
 		targetClass = builder.targetClass;
 	}

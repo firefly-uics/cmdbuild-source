@@ -1,5 +1,9 @@
 (function() {
 
+	/**
+	 * @deprecated new class (CMDBuild.view.common.field.filter.advanced.Advanced)
+	 */
+
 	// Constants to identify the icons that the user
 	// could click, and call the right callback
 	var ACTION_CSS_CLASS = {
@@ -13,10 +17,10 @@
 	var CLEAR_FILTER_BUTTON_LABEL = CMDBuild.Translation.management.findfilter.clear_filter;
 
 	var TOOLTIP = {
-		save: CMDBuild.Translation.common.buttons.save,
-		modify: CMDBuild.Translation.common.buttons.modify,
-		clone: CMDBuild.Translation.common.buttons.clone,
-		remove: CMDBuild.Translation.common.buttons.remove
+		save: CMDBuild.Translation.save,
+		modify: CMDBuild.Translation.modify,
+		clone: CMDBuild.Translation.clone,
+		remove: CMDBuild.Translation.remove
 	};
 
 	var ICONS_PATH = {
@@ -71,6 +75,26 @@
 			this.mon(this, "move", function(button, x, y) {
 				this.showListButton.toggle(false);
 			}, this);
+		},
+
+		/**
+		 * Override to avoid full bottongroup container disabling
+		 *
+		 * @overrider
+		 */
+		disable: function() {
+			this.clearButton.disable();
+			this.showListButton.disable();
+		},
+
+		/**
+		 * Override to avoid full bottongroup container disabling
+		 *
+		 * @overrider
+		 */
+		enable: function() {
+			this.clearButton.enable();
+			this.showListButton.enable();
 		},
 
 		reconfigureForEntryType: function(entryType) {
@@ -245,7 +269,7 @@
 					me.callDelegates("onRuntimeParameterWindowSaveButtonClick", [me, me.filter]);
 				}
 			}, {
-				text: CMDBuild.Translation.common.buttons.abort,
+				text: CMDBuild.Translation.cancel,
 				handler: function() {
 					me.destroy();
 				}
@@ -276,7 +300,7 @@
 
 			if (fieldClassName == "Ext.form.field.TextArea") {
 				height += TEXT_FIELD_HEIGHT;
-			} else if (fieldClassName == "CMDBuild.view.common.field.CMHtmlEditorField") {
+			} else if (fieldClassName == "CMDBuild.view.common.field.HtmlEditor") {
 				height += HTML_FIELD_HEIGHT;
 			} else {
 				height += SIMPLE_FIELD_HEIGHT;

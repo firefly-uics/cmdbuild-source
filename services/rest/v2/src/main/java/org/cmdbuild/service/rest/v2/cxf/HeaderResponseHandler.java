@@ -3,28 +3,27 @@ package org.cmdbuild.service.rest.v2.cxf;
 import static java.lang.String.format;
 import static java.net.URLEncoder.encode;
 
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 
 import javax.activation.DataHandler;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.Response.ResponseBuilder;
+import javax.ws.rs.container.ContainerRequestContext;
+import javax.ws.rs.container.ContainerResponseContext;
+import javax.ws.rs.container.ContainerResponseFilter;
 
-import org.apache.cxf.jaxrs.ext.ResponseHandler;
-import org.apache.cxf.jaxrs.model.OperationResourceInfo;
-import org.apache.cxf.message.Message;
 import org.cmdbuild.common.logging.LoggingSupport;
 
-public class HeaderResponseHandler implements ResponseHandler, LoggingSupport {
+public class HeaderResponseHandler implements ContainerResponseFilter, LoggingSupport {
 
 	@Override
-	public Response handleResponse(final Message m, final OperationResourceInfo ori, final Response response) {
-		final ResponseBuilder output = Response.fromResponse(response);
-		final Object entity = response.getEntity();
+	public void filter(final ContainerRequestContext requestContext, final ContainerResponseContext responseContext)
+			throws IOException {
+		final Object entity = responseContext.getEntity();
 		if (entity instanceof DataHandler) {
 			final DataHandler dataHandler = DataHandler.class.cast(entity);
-			output.header("Content-Disposition", format("inline; filename=\"%s\"", _encode(dataHandler.getName())));
+			responseContext.getHeaders() //
+					.add("Content-Disposition", format("inline; filename=\"%s\"", _encode(dataHandler.getName())));
 		}
-		return output.build();
 	}
 
 	private static String _encode(final String name) {

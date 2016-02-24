@@ -4,8 +4,7 @@
 	 * @deprecated (CMDBuild.view.common.field.comboBox.Searchable)
 	 */
 	Ext.define("CMDBuild.view.common.field.SearchableCombo", {
-		extend: "CMDBuild.field.CMBaseCombo",
-		alternateClassName: 'CMDBuild.Management.SearchableCombo', // Legacy class name
+		extend: "CMDBuild.view.common.field.CMBaseCombo",
 
 		trigger1Cls: Ext.baseCSSPrefix + 'form-arrow-trigger',
 		trigger2Cls: Ext.baseCSSPrefix + 'form-clear-trigger',
@@ -152,7 +151,7 @@
 			if (this.getStore() && (this.getStore().find('Id', id) == -1)) {
 				var params = Ext.apply({ cardId: id }, this.getStore().baseParams);
 
-				CMDBuild.Ajax.request({
+				CMDBuild.core.interfaces.Ajax.request({
 					url: 'services/json/management/modcard/getcard',
 					params: params,
 					method: 'GET',
@@ -175,7 +174,7 @@
 			try {
 				return record.get("Description").replace(/\n/g," ");
 			} catch (e) {
-				_debug('CMDBuild.Management.SearchableCombo recordDescriptionFixedForCarriageReturnBugOnComboBoxes error', e);
+				_error('CMDBuild.view.common.field.SearchableCombo recordDescriptionFixedForCarriageReturnBugOnComboBoxes error', e);
 			}
 		},
 

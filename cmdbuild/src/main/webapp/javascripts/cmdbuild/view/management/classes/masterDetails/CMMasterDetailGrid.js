@@ -115,7 +115,7 @@
 			icons = ["showDetail", "deleteDetail", "note"];
 		}
 
-		if (CMDBuild.Config.graph.enabled=="true") {
+		if (CMDBuild.configuration.graph.get(CMDBuild.core.constants.Proxy.ENABLED)) {
 			icons.push("showGraph");
 
 		}
@@ -152,7 +152,7 @@
 				showGraph: {
 					title: CMDBuild.Translation.management.moddetail.showgraph,
 					event: "graph",
-					icon: "chart_organisation"
+					icon: "graph"
 				},
 				note: {
 					title: CMDBuild.Translation.management.moddetail.shownotes,

@@ -3,6 +3,8 @@ package org.cmdbuild.common.java.sql;
 import java.io.PrintWriter;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.sql.SQLFeatureNotSupportedException;
+import java.util.logging.Logger;
 
 import javax.sql.DataSource;
 
@@ -58,5 +60,10 @@ public abstract class ForwardingDataSource extends ForwardingObject implements D
 	public Connection getConnection(final String username, final String password) throws SQLException {
 		return delegate().getConnection(username, password);
 	}
-
+	
+	@Override
+	public Logger getParentLogger() throws SQLFeatureNotSupportedException {
+		return delegate().getParentLogger();
+	}
+	
 }

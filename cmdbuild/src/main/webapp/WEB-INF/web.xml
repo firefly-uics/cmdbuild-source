@@ -109,4 +109,11 @@
 		<url-pattern>/services/cmdb-schema/*</url-pattern>
 	</servlet-mapping>
 
+	<jsp-config>
+		<taglib>
+			<taglib-uri>translations</taglib-uri>
+			<taglib-location>/WEB-INF/tags/translations.tld</taglib-location>
+		</taglib>
+	</jsp-config>   
+
 </web-app>

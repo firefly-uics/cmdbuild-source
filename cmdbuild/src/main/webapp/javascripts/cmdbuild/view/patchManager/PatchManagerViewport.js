@@ -13,33 +13,50 @@
 		 */
 		gridContainer: undefined,
 
+		border: false,
+		frame: false,
 		layout: 'border',
 
 		initComponent: function() {
 			Ext.apply(this, {
 				items: [
 					Ext.create('Ext.panel.Panel', {
+						region: 'north',
 						border: false,
+						cls: 'cmdb-border-bottom',
+						contentEl: 'header',
 						frame: false,
-						height: 45,
-						region:'north',
-						contentEl: 'header'
-					}),
-					this.gridContainer = Ext.create('CMDBuild.view.patchManager.GridContainer', {
-						delegate: this.delegate,
-						region: 'center'
+						height: 45
 					}),
 					Ext.create('Ext.panel.Panel', {
-						border: false,
+						region: 'center',
+						border: true,
 						frame: false,
-						height: 16,
-						region:'south',
-						contentEl: 'footer'
+						layout: 'fit',
+						margin: '5',
+						title: CMDBuild.Translation.availablePatchesList,
+
+						items: [
+							this.gridContainer = Ext.create('CMDBuild.view.patchManager.GridContainer', { delegate: this.delegate })
+						]
+					}),
+					Ext.create('Ext.panel.Panel', {
+						region: 'south',
+						border: true,
+						contentEl: 'footer',
+						frame: false,
+						height: 18
 					})
 				]
 			});
 
 			this.callParent(arguments);
+
+			if (!Ext.isEmpty(Ext.get('cmdbuild-credits-link')))
+				Ext.get('cmdbuild-credits-link').on('click', function(e, t, eOpts) {
+					if (!Ext.isEmpty(this.delegate))
+						this.delegate.cmfg('onPatchManagerViewportCreditsClick');
+				}, this);
 		}
 	});
 

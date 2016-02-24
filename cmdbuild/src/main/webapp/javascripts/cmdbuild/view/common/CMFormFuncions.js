@@ -1,5 +1,10 @@
 (function() {
 
+	/**
+	 * PanelFunction should be used (new implementation)
+	 *
+	 * @deprecated (CMDBuild.view.common.PanelFunctions)
+	 */
 	Ext.define("CMDBUild.view.common.CMFormFunctions", {
 
 		enableCMButtons: function() {

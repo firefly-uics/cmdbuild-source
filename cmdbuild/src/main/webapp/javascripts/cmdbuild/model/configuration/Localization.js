@@ -1,41 +1,89 @@
 (function() {
 
-	Ext.require('CMDBuild.core.proxy.CMProxyConstants');
-	Ext.require('CMDBuild.core.proxy.Localizations');
+	Ext.require('CMDBuild.core.constants.Proxy');
 
+	/**
+	 * TODO: waiting for refactor (configurations)
+	 */
 	Ext.define('CMDBuild.model.configuration.Localization', {
 		extend: 'Ext.data.Model',
 
 		fields: [
-			{ name: CMDBuild.core.proxy.CMProxyConstants.LANGUAGE, type: 'string' },
-			{ name: CMDBuild.core.proxy.CMProxyConstants.LANGUAGES, type: 'auto' }, // All CMDBuild languages
-			{ name: CMDBuild.core.proxy.CMProxyConstants.LANGUAGES_TAGS, type: 'auto' },
-			{ name: CMDBuild.core.proxy.CMProxyConstants.LANGUAGES_WITH_LOCALIZATIONS, type: 'auto' }, // CMDBuild languages with localizations
-			{ name: CMDBuild.core.proxy.CMProxyConstants.LANGUAGES_WITH_LOCALIZATIONS_TAGS, type: 'auto' }
+			{ name: CMDBuild.core.constants.Proxy.ENABLED_LANGUAGES, type: 'auto' }, // CMDBuild enabled languages
+			{ name: CMDBuild.core.constants.Proxy.LANGUAGE, type: 'string', defaultValue: 'en' },
+			{ name: CMDBuild.core.constants.Proxy.LANGUAGES, type: 'auto' }, // All CMDBuild languages
+			{ name: CMDBuild.core.constants.Proxy.LANGUAGE_PROMPT, type: 'boolean', defaultValue: true } // Login prompt for language
 		],
 
 		/**
-		 * @return {Boolean}
+		 * @returns {Object}
 		 */
-		hasLocalizations: function() {
-			var languagesWithTrasnlations = this.get(CMDBuild.core.proxy.CMProxyConstants.LANGUAGES_WITH_LOCALIZATIONS);
-
-			// TODO: it's needed to avoid to use "CMDBuild.Config.cmdbuild.enabled_languages", i must use that because configuration modules are initialized
-			// before configuration call ends
-			return Ext.isArray(languagesWithTrasnlations) && languagesWithTrasnlations.length > 0;
+		getAllLanguages: function() {
+			return this.get(CMDBuild.core.constants.Proxy.LANGUAGES) || {};
 		},
 
 		/**
-		 * Setup languages with localizations array and all languages array (to avoid double call for same thing)
+		 * @returns {Object}
+		 */
+		getEnabledLanguages: function() {
+			var enabledLanguages = {};
+
+			Ext.Array.forEach(this.get(CMDBuild.core.constants.Proxy.ENABLED_LANGUAGES), function(languageTag, i, allLanguageTag) {
+				enabledLanguages[languageTag] = this.getLanguageObject(languageTag);
+			},this);
+
+			return enabledLanguages;
+		},
+
+		/**
+		 * @param {String} languageTag
+		 *
+		 * @returns {CMDBuild.model.localization.Localization} or null
+		 */
+		getLanguageObject: function(languageTag) {
+			if (this.isManagedLanguage(languageTag))
+				return this.get(CMDBuild.core.constants.Proxy.LANGUAGES)[languageTag];
+
+			return null;
+		},
+
+		/**
+		 * @returns {Boolean}
+		 */
+		hasEnabledLanguages: function() {
+			var enabledLanguages = this.get(CMDBuild.core.constants.Proxy.ENABLED_LANGUAGES);
+
+			return Ext.isArray(enabledLanguages) && enabledLanguages.length > 0;
+		},
+
+		/**
+		 * @param {String} languageTag
+		 *
+		 * @returns {Boolean}
+		 */
+		isManagedLanguage: function(languageTag) {
+			return this.get(CMDBuild.core.constants.Proxy.LANGUAGES).hasOwnProperty(languageTag);
+		},
+
+		/**
+		 * @param {String} languageTag
+		 */
+		setCurrentLanguage: function(languageTag) {
+			if (!Ext.isEmpty(languageTag) && this.isManagedLanguage(languageTag)) {
+				this.set(CMDBuild.core.constants.Proxy.LANGUAGE, languageTag);
+			} else {
+				_error('empty language tag', this);
+			}
+		},
+
+		/**
+		 * Setup enabled languages
 		 *
 		 * @param {Mixed} enableLanguages
 		 */
-		setLanguagesWithLocalizations: function(enableLanguages) {
+		setEnabledLanguages: function(enableLanguages) {
 			var decodedArray = [];
-			var languagesArray = [];
-			var languagesTagArray = [];
-			var languagesWithLocalizationsArray = [];
-			var languagesWithLocalizationsTagArray = [];
+			var enabledLanguages = [];
 
 			// TODO: refactor saving on server an array not a string
 			if (typeof enableLanguages == 'string') {
@@ -48,37 +96,30 @@
 					decodedArray = enableLanguages;
 			}
 
-			// Build languages objects
-			CMDBuild.core.proxy.Localizations.getLanguages({
-				scope: this,
-				success: function(result, options, decodedResult) {
-					// Build all languages array
-					Ext.Array.forEach(decodedResult.translations, function(translation, i, allTranslations) {
-						languagesTagArray.push(translation[CMDBuild.core.proxy.CMProxyConstants.TAG]);
+			// Build languages with localizations
+			Ext.Array.forEach(decodedArray, function(languageTag, i, allLanguageTag) {
+				if (this.isManagedLanguage(languageTag))
+					enabledLanguages.push(languageTag);
+			}, this);
 
-						languagesArray.push(
-							Ext.create('CMDBuild.model.Localizations.translation', translation)
-						);
-					}, this);
+			this.set(CMDBuild.core.constants.Proxy.ENABLED_LANGUAGES, enabledLanguages);
+		},
 
-					this.set(CMDBuild.core.proxy.CMProxyConstants.LANGUAGES, languagesArray);
-					this.set(CMDBuild.core.proxy.CMProxyConstants.LANGUAGES_TAGS, languagesTagArray);
+		/**
+		 * @param {Array} languages
+		 */
+		setLanguages: function(languages) {
+			var languagesObjectsArray = {};
 
-					// Build languages with localizations
-					Ext.Array.forEach(decodedResult.translations, function(translation, i, allTranslations) {
-						if (Ext.Array.contains(decodedArray, translation[CMDBuild.core.proxy.CMProxyConstants.TAG])) {
-							languagesWithLocalizationsTagArray.push(translation[CMDBuild.core.proxy.CMProxyConstants.TAG]);
+			if (Ext.isArray(languages)) {
+				Ext.Array.forEach(languages, function(language, i, allLanguages) {
+					languagesObjectsArray[language[CMDBuild.core.constants.Proxy.TAG]] = Ext.create('CMDBuild.model.localization.Localization', language);
+				}, this);
 
-							languagesWithLocalizationsArray.push(
-									Ext.create('CMDBuild.model.Localizations.translation', translation)
-							);
-						}
-					}, this);
-
-					this.set(CMDBuild.core.proxy.CMProxyConstants.LANGUAGES_WITH_LOCALIZATIONS, languagesWithLocalizationsArray);
-					this.set(CMDBuild.core.proxy.CMProxyConstants.LANGUAGES_WITH_LOCALIZATIONS_TAGS, languagesWithLocalizationsTagArray);
-				}
-			});
+				this.set(CMDBuild.core.constants.Proxy.LANGUAGES, languagesObjectsArray);
+			} else {
+				_error('wrong languages array format', this);
+			}
 		}
 	});
 

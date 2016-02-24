@@ -3,6 +3,7 @@ package unit.data.store.custompage;
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.hasSize;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.anyString;
@@ -71,9 +72,11 @@ public class FileSystemSynchronizerTest {
 		// given
 		doReturn(NO_ELEMENTS) //
 				.when(store).readAll();
-		doReturn(
-				asList(temporaryFolder.newFile("foo"), temporaryFolder.newFolder("bar"), temporaryFolder.newFile("baz"))) //
-				.when(filesStore).files(anyString(), anyString());
+		doReturn(asList( //
+				temporaryFolder.newFile("foo"), //
+				temporaryFolder.newFolder("bar"), //
+				temporaryFolder.newFile("baz") //
+		)).when(filesStore).files(anyString(), anyString());
 
 		// when
 		underTest.synchronize();
@@ -109,8 +112,8 @@ public class FileSystemSynchronizerTest {
 
 		final List<DBCustomPage> captured = captor.getAllValues();
 		assertThat(captured, hasSize(2));
-		assertThat(captured.get(0), equalTo(foo));
-		assertThat(captured.get(1), equalTo(bar));
+		assertThat(captured, hasItem(foo));
+		assertThat(captured, hasItem(bar));
 	}
 
 	@Test

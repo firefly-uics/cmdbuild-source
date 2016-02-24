@@ -9,7 +9,7 @@ Ext.define("CMDBuild.view.management.utilities.CMModExportCSV", {
 
 	initComponent: function() {
 
-		this.exportBtn = new CMDBuild.buttons.ExportButton({
+		this.exportBtn = Ext.create('CMDBuild.core.buttons.text.Export', {
 			scope: this,
 			formBind: true,
 			handler: function(){
@@ -17,7 +17,7 @@ Ext.define("CMDBuild.view.management.utilities.CMModExportCSV", {
 			}
 		});
 
-		this.classList = new CMDBuild.field.CMBaseCombo({
+		this.classList = new CMDBuild.view.common.field.CMBaseCombo({
 			store: _CMCache.getClassesStore(),
 			fieldLabel : this.translation.selectaclass,
 			queryMode: 'local',
@@ -29,7 +29,7 @@ Ext.define("CMDBuild.view.management.utilities.CMModExportCSV", {
 			editable: false
 		});
 
-		this.separator = new Ext.form.ComboBox({ 
+		this.separator = new Ext.form.ComboBox({
 			name: 'separator',
 			fieldLabel: this.translation.separator,
 			valueField: 'value',
@@ -69,6 +69,11 @@ Ext.define("CMDBuild.view.management.utilities.CMModExportCSV", {
 
 		Ext.apply(this, {
 			title: CMDBuild.Translation.management.modutilities.csv.title_export,
+			tools: [
+				Ext.create('CMDBuild.view.common.panel.gridAndForm.tools.Properties', {
+					style: {} // Reset margin setup
+				})
+			],
 			items:[this.form]
 		});
 
