@@ -20,6 +20,7 @@ import org.cmdbuild.service.rest.v2.ClassPrivileges;
 import org.cmdbuild.service.rest.v2.Classes;
 import org.cmdbuild.service.rest.v2.Cql;
 import org.cmdbuild.service.rest.v2.DomainAttributes;
+import org.cmdbuild.service.rest.v2.DomainTrees;
 import org.cmdbuild.service.rest.v2.Domains;
 import org.cmdbuild.service.rest.v2.EmailTemplates;
 import org.cmdbuild.service.rest.v2.Functions;
@@ -51,6 +52,7 @@ import org.cmdbuild.service.rest.v2.cxf.CxfClassPrivileges;
 import org.cmdbuild.service.rest.v2.cxf.CxfClasses;
 import org.cmdbuild.service.rest.v2.cxf.CxfCql;
 import org.cmdbuild.service.rest.v2.cxf.CxfDomainAttributes;
+import org.cmdbuild.service.rest.v2.cxf.CxfDomainTrees;
 import org.cmdbuild.service.rest.v2.cxf.CxfDomains;
 import org.cmdbuild.service.rest.v2.cxf.CxfEmailTemplates;
 import org.cmdbuild.service.rest.v2.cxf.CxfFunctions;
@@ -187,6 +189,13 @@ public class ServicesV2 implements LoggingSupport {
 	public Domains v2_domains() {
 		final CxfDomains service = new CxfDomains(v2_errorHandler(), helper.userDataAccessLogic());
 		return proxy(Domains.class, service);
+	}
+
+	@Bean
+	@Scope()
+	public DomainTrees v2_domainTrees() {
+		final CxfDomainTrees service = new CxfDomainTrees(v2_errorHandler(), helper.navigationTreeLogic());
+		return proxy(DomainTrees.class, service);
 	}
 
 	@Bean
