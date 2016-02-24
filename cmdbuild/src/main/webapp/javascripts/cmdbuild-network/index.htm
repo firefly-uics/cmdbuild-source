@@ -1,7 +1,7 @@
-</script>
+<html>
+<head>
 </head>
-
-<body>
+<body class="CMDBuildRelationsGraphBody">
 	<div hidden="true" id="cy">
 		<!--  Cytoscape -->
 	</div>
@@ -41,7 +41,7 @@
 				url: script,
 				crossDomain: true,	
 				dataType: "script",
-				cache: false,
+				cache: true,
 				success : function(data, status) {
 						callCmdbuildAP();
 					} 

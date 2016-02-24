@@ -237,6 +237,21 @@
 		zoomOn: function(param) {
 			var paramActualized = $.Cmdbuild.dataModel.resolveVariables(param);
 			$.Cmdbuild.customvariables.camera.zoomOn(paramActualized.node);
+		},
+
+		/**
+		 * Execute this script when home page is ready
+		 */
+		homepageready : function(param) {
+			var $container = $(".mainContainer");
+			var $header = $(".mainContainerHeader");
+			var $body = $(".mainContainerBody");
+			var $footer = $(".mainContainerFooter");
+			$body.css("margin-top", ($header.outerHeight() - 1) + "px").css(
+					"height",
+					($container.height() - $header.outerHeight()
+							- $footer.outerHeight() + 2)
+							+ "px");
 		}
 
 	};

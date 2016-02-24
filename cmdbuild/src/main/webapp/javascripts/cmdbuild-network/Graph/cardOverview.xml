@@ -2,13 +2,17 @@
 	<params>
 		<type>div</type>
 	</params>
-	<span class="undo toolbarButton" tooltip="Apply the current layout">
-		<onClick>
-			<command>tab</command>
-			<form>detailform</form>
-			<activeTab>1</activeTab>
-		</onClick>
-	</span>
+	<div class="bodyToolbar">
+		<div class="toolbarButton border-box">
+			<span class="btn-moredetails" tooltip="Show more details">
+				<onClick>
+					<command>tab</command>
+					<form>detailform</form>
+					<activeTab>1</activeTab>
+				</onClick>
+			</span>
+		</div>
+	</div>
  	<div id="cmdbuildCardOverview">
 		<onInit>
 			<command>navigate</command>

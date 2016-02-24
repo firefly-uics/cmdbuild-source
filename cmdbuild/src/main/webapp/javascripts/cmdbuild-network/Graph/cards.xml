@@ -2,13 +2,17 @@
 	<params>
 		<type>div</type>
 	</params>
-	<span class="undo toolbarButton" tooltip="Apply the current layout">
-		<onClick>
-			<command>tab</command>
-			<form>cardlistform</form>
-			<activeTab>1</activeTab>
-		</onClick>
-	</span>
+	<div class="bodyToolbar">
+		<div class="toolbarButton border-box">
+			<span class="btn-selecteditems" tooltip="Show selected items">
+				<onClick>
+					<command>tab</command>
+					<form>cardlistform</form>
+					<activeTab>1</activeTab>
+				</onClick>
+			</span>
+		</div>
+	</div>
 	<div id="cardsFormContainer">
 		<onInit>
 			<command>navigate</command>

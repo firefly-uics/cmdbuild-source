@@ -4,7 +4,7 @@
 			var htmlStr = "";
 			var ca = $.Cmdbuild.elementsManager.getCommonAttributes(xmlElement);
 			var mouseover = "";
-			htmlStr += "<div class='viewerInformation' id='viewerInformation' onmouseenter='" + mouseover + "'>";
+			htmlStr += "<div class='viewerInformation ui-widget ui-corner-all' id='viewerInformation' onmouseenter='" + mouseover + "'>";
 			htmlStr += "</div>";
 			htmlStr += "<div  " + ca + ">";
 			htmlStr += "</div>";
