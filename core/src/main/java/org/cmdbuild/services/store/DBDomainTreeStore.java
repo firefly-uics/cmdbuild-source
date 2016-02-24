@@ -18,16 +18,16 @@ import org.cmdbuild.model.domainTree.DomainTreeNode;
 public class DBDomainTreeStore {
 	private enum Attributes {
 		/*
-		 * TODO
-		 * BASE_NODE is a specific field of the GIS navigation tree
-		 * for the moment the field is left here for not touch all the GIS module
-		 * but the column redundant because define only one node and only in 
-		 * the GIS navigation Tree
+		 * TODO BASE_NODE is a specific field of the GIS navigation tree for the
+		 * moment the field is left here for not touch all the GIS module but
+		 * the column redundant because define only one node and only in the GIS
+		 * navigation Tree
 		 */
 		BASE_NODE("BaseNode"), //
 		DESCRIPTION("Description"), //
 		DIRECT("Direct"), //
 		DOMAIN_NAME("DomainName"), //
+		ENABLE_RECURSION("EnableRecursion"), //
 		FILTER("TargetFilter"), //
 		ID_GROUP("IdGroup"), //
 		ID_PARENT("IdParent"), //
@@ -63,11 +63,7 @@ public class DBDomainTreeStore {
 		final CMQueryResult domainTreeNodes = dataView //
 				.select(anyAttribute(table)) //
 				.from(table) //
-				.where(//
-				condition( //
-						attribute(table, Attributes.TYPE.getName()), eq(treeType) //
-				)//
-				) //
+				.where(condition(attribute(table, Attributes.TYPE.getName()), eq(treeType))) //
 				.run();
 
 		for (final CMQueryRow domainTreeNode : domainTreeNodes) {
@@ -75,6 +71,7 @@ public class DBDomainTreeStore {
 		}
 
 	}
+
 	public Map<String, String> getTreeNames() {
 		final CMClass table = getTable();
 		final CMQueryResult domainTreeNames = dataView //
@@ -97,11 +94,7 @@ public class DBDomainTreeStore {
 		final CMQueryResult domainTreeNodes = dataView //
 				.select(anyAttribute(table)) //
 				.from(table) //
-				.where(//
-				condition( //
-						attribute(table, Attributes.TYPE.getName()), eq(treeType) //
-				)//
-				) //
+				.where(condition(attribute(table, Attributes.TYPE.getName()), eq(treeType))) //
 				.run();
 
 		DomainTreeNode root = null;
@@ -134,15 +127,19 @@ public class DBDomainTreeStore {
 	}
 
 	private void saveNode(final String treeType, String description, final DomainTreeNode root) {
-		final CMCard newNode = dataView.createCardFor(getTable()).set(Attributes.DIRECT.getName(), root.isDirect())
-				.set(Attributes.DOMAIN_NAME.getName(), root.getDomainName()).set(Attributes.TYPE.getName(), treeType)
-				.set(Attributes.ID_GROUP.getName(), root.getIdGroup())
-				.set(Attributes.ID_PARENT.getName(), root.getIdParent())
-				.set(Attributes.TARGET_CLASS_NAME.getName(), root.getTargetClassName())
-				.set(Attributes.TARGET_CLASS_DESCRIPTION.getName(), root.getTargetClassDescription())
-				.set(Attributes.FILTER.getName(), root.getTargetFilter())
-				.set(Attributes.DESCRIPTION.getName(), description)
-				.set(Attributes.BASE_NODE.getName(), root.isBaseNode()).save();
+		final CMCard newNode = dataView.createCardFor(getTable()) //
+				.set(Attributes.DIRECT.getName(), root.isDirect()) //
+				.set(Attributes.DOMAIN_NAME.getName(), root.getDomainName()) //
+				.set(Attributes.TYPE.getName(), treeType) //
+				.set(Attributes.ID_GROUP.getName(), root.getIdGroup()) //
+				.set(Attributes.ID_PARENT.getName(), root.getIdParent()) //
+				.set(Attributes.TARGET_CLASS_NAME.getName(), root.getTargetClassName()) //
+				.set(Attributes.TARGET_CLASS_DESCRIPTION.getName(), root.getTargetClassDescription()) //
+				.set(Attributes.FILTER.getName(), root.getTargetFilter()) //
+				.set(Attributes.DESCRIPTION.getName(), description) //
+				.set(Attributes.BASE_NODE.getName(), root.isBaseNode()) //
+				.set(Attributes.ENABLE_RECURSION.getName(), root.isEnableRecursion()) //
+				.save();
 
 		final Long id = newNode.getId();
 		for (final DomainTreeNode child : root.getChildNodes()) {
@@ -164,6 +161,7 @@ public class DBDomainTreeStore {
 		domainTreeNode.setTargetClassName(((String) card.get(Attributes.TARGET_CLASS_NAME.getName())));
 		domainTreeNode.setBaseNode((booleanCast(card.get(Attributes.BASE_NODE.getName()))));
 		domainTreeNode.setTargetFilter((String) card.get(Attributes.FILTER.getName()));
+		domainTreeNode.setEnableRecursion((booleanCast(card.get(Attributes.ENABLE_RECURSION.getName()))));
 
 		return domainTreeNode;
 	}
