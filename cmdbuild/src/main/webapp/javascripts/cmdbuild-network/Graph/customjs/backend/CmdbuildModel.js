@@ -39,7 +39,7 @@
 		};
 		this.getInitModel = function(params, callback, callbackScope) {
 			if (params) {
-				$.Cmdbuild.utilities.proxy.getCardData(params.classId,
+				$.Cmdbuild.g3d.proxy.getCardData(params.classId,
 						params.cardId, {}, function(card) {
 							elements.nodes[0].data.label = card.Description;
 							elements.nodes[0].data.classId = params.classId;
