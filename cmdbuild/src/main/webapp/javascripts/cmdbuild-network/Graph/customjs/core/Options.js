@@ -100,7 +100,7 @@
 		$.Cmdbuild.g3d.Options.loadFiles(configuration, filesToInclude,
 				function() {
 					callback.apply(callbackScope, [configuration]);
-				}), this;
+				}, this);
 	};
 	$.Cmdbuild.g3d.Options.loadFiles = function(configuration, filesToInclude,
 			callback, callbackScope) {

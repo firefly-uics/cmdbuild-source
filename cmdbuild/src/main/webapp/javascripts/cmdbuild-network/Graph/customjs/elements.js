@@ -47,7 +47,7 @@
 				var text = paramActualized[key];
 				paramForClick.value = key;
 				var onClick = " onClick=\'$.Cmdbuild.eventsManager.onEvent(" + JSON.stringify(paramForClick) + ");\'";
-				htmlStr += "<input type='radio' id='" + key + "' name='" + id + "' " + onClick + "><label for='" + key + "'>" +  text + "</label>";
+				htmlStr += "<input type='radio' id='" + key + "' name='" + id + "'><label for='" + key +"' " + onClick + ">" +  text + "</label>";
 			}
 			htmlStr += "</div>";
 			htmlStr += $.Cmdbuild.elementsManager.insertReturn(xmlElement);
