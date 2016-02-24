@@ -6,6 +6,7 @@ import org.cmdbuild.auth.UserStore;
 import org.cmdbuild.config.CmdbuildConfiguration;
 import org.cmdbuild.config.GraphConfiguration;
 import org.cmdbuild.dao.view.CMDataView;
+import org.cmdbuild.logic.NavigationTreeLogic;
 import org.cmdbuild.logic.auth.AuthenticationLogic;
 import org.cmdbuild.logic.auth.RestAuthenticationLogicBuilder;
 import org.cmdbuild.logic.data.access.DataAccessLogic;
@@ -72,6 +73,10 @@ public class ApplicationContextHelperV2 {
 
 	public MetadataStoreFactory metadataStoreFactory() {
 		return applicationContext.getBean(MetadataStoreFactory.class);
+	}
+
+	public NavigationTreeLogic navigationTreeLogic() {
+		return applicationContext.getBean(NavigationTreeLogic.class);
 	}
 
 	public ReportLogic reportLogic() {

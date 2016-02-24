@@ -55,6 +55,12 @@ public class WebApplicationExceptionErrorHandler implements ErrorHandler, Loggin
 	}
 
 	@Override
+	public void domainTreeNotFound(final String id) {
+		logger.error("domain tree found '{}'", id);
+		notFound(id);
+	}
+
+	@Override
 	public void extensionNotFound(final String id) {
 		logger.error("extension not found '{}'", id);
 		notFound(id);
@@ -81,29 +87,21 @@ public class WebApplicationExceptionErrorHandler implements ErrorHandler, Loggin
 	}
 
 	@Override
-	public void missingUsername() {
-		logger.error("missing username");
-		throw new WebApplicationException(Response.status(BAD_REQUEST) //
-				.entity("missing username") //
-				.build());
-	}
-
-	@Override
 	public void missingAttachmentId() {
 		logger.error("missing attachment's id");
 		notFound("attachment's id");
 	}
 
 	@Override
-	public void missingAttachmentName() {
-		logger.error("missing attachment's name");
-		notFound("attachment's name");
-	}
-
-	@Override
 	public void missingAttachmentMetadata() {
 		logger.error("missing attachment's metadata");
 		notFound("attachment's metadata");
+	}
+
+	@Override
+	public void missingAttachmentName() {
+		logger.error("missing attachment's name");
+		notFound("attachment's name");
 	}
 
 	@Override
@@ -127,6 +125,14 @@ public class WebApplicationExceptionErrorHandler implements ErrorHandler, Loggin
 	}
 
 	@Override
+	public void missingUsername() {
+		logger.error("missing username");
+		throw new WebApplicationException(Response.status(BAD_REQUEST) //
+				.entity("missing username") //
+				.build());
+	}
+
+	@Override
 	public void notAuthorized() {
 		logger.error("not authorized");
 		throw new WebApplicationException(Response.status(UNAUTHORIZED) //
@@ -134,8 +140,8 @@ public class WebApplicationExceptionErrorHandler implements ErrorHandler, Loggin
 	}
 
 	@Override
-	public void processNotFound(final String id) {
-		logger.error("process not found '{}'", id);
+	public void processActivityNotFound(final String id) {
+		logger.error("process instance activity not found '{}'", id);
 		notFound(id);
 	}
 
@@ -146,17 +152,18 @@ public class WebApplicationExceptionErrorHandler implements ErrorHandler, Loggin
 	}
 
 	@Override
-	public void processActivityNotFound(final String id) {
-		logger.error("process instance activity not found '{}'", id);
+	public void processNotFound(final String id) {
+		logger.error("process not found '{}'", id);
 		notFound(id);
 	}
 
 	@Override
 	public void propagate(final Throwable e) {
 		logger.error("unhandled exception", e);
-		throw new WebApplicationException(e, Response.serverError() //
-				.entity(e) //
-				.build());
+		throw new WebApplicationException(e,
+				Response.serverError() //
+						.entity(e) //
+						.build());
 	}
 
 	@Override
