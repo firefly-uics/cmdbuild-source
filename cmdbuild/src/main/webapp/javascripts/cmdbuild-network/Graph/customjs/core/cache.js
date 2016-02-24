@@ -1,8 +1,20 @@
 (function($) {
 	var cache = function() {
+		$.Cmdbuild.customvariables.cacheProcess = new cacheProcesses();
 		$.Cmdbuild.customvariables.cacheDomains = new cacheDomains();
 		$.Cmdbuild.customvariables.cacheClasses = new cacheClasses();
 		$.Cmdbuild.customvariables.cacheImages = new cacheImages();
+	};
+	var cacheProcesses = function() {
+		this.data = {};
+		$.Cmdbuild.utilities.proxy.getProcesses(function(processes) {
+			for (var i = 0; i < processes.length; i++) {
+				this.data[processes[i]._id] = true;
+			}
+		}, this);
+		this.isProcess = function(processId) {
+			return (this.data[processId]) ? true : false;
+		};
 	};
 	var cacheImages = function() {
 		this.data = {};
@@ -42,9 +54,9 @@
 				return;
 			}
 			var token = $.Cmdbuild.authentication.getAuthenticationToken();
-			var url = $.Cmdbuild.global.getApiUrl()
-					+ "classes/InternalEmployee/cards/6083/attachments/b2JqZWN0LXJvdGF0ZS0yLnBuZw/object-rotate-2.png?CMDBuild-Authorization="
-					+ token;
+			var url = $.Cmdbuild.global.getApiUrl() +
+					"classes/InternalEmployee/cards/6083/attachments/b2JqZWN0LXJvdGF0ZS0yLnBuZw/object-rotate-2.png?CMDBuild-Authorization=" +
+					token;
 		    var img = $('<img/>');
 		    var me = this;
 		    img[0].onload = function() {
@@ -80,7 +92,7 @@
 			if (this.data[classId]) {
 				callback.apply(callbackScope, [this.data[classId]]);
 			} else {
-				$.Cmdbuild.utilities.proxy.getClass(classId, function(classAttributes) {
+				$.Cmdbuild.g3d.proxy.getClass(classId, function(classAttributes) {
 					this.data[classId] = classAttributes;
 					callback.apply(callbackScope, [classAttributes]);
 				}, this);
@@ -90,7 +102,7 @@
 			return this.data[classId];
 		};
 		this.getDescription = function(classId) {
-			return this.data[classId].description;
+			return (this.data[classId] && this.data[classId].description) ? this.data[classId].description : "";
 		};
 		this.getClasses = function() {
 			var classes = [];
@@ -122,7 +134,7 @@
 			}, this);
 		};
 		this.getAllDomainsRecursive = function(domains, callback, callbackScope) {
-			if (domains.length == 0) {
+			if (domains.length === 0) {
 				callback.apply(callbackScope, []);
 				return;
 			}

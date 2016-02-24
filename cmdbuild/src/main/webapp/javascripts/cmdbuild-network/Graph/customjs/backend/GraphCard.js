@@ -34,7 +34,7 @@
 					onObjectReady();
 				}, 100);
 			} else {
-				$.Cmdbuild.utilities.proxy.getClassAttributes(this.type,
+				$.Cmdbuild.g3d.proxy.getClassAttributes(this.type,
 						this.loadAttributesCallback, this);
 			}
 		};
@@ -95,7 +95,7 @@
 		};
 		this.loadData = function() {
 			if (this.param.cardId) {
-				$.Cmdbuild.utilities.proxy.getCardData(this.type,
+				$.Cmdbuild.g3d.proxy.getCardData(this.type,
 						this.param.cardId, {}, this.loadDataCallback, this);
 			} else {
 				for (var i = 0; i < this.attributes.length; i++) {
