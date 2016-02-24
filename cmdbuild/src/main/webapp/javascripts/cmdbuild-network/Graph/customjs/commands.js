@@ -169,7 +169,10 @@
 					: $.Cmdbuild.utilities.getHtmlFieldValue("#" + param.type);
 			$.Cmdbuild.customvariables.options[param.type] = value;
 			$.Cmdbuild.customvariables.options.changed();
-			$.Cmdbuild.customvariables.viewer.refresh();
+			if ($.Cmdbuild.customvariables.viewer) {
+				$.Cmdbuild.customvariables.viewer.refresh();
+				
+			}
 		},
 		selectClass: function(param) {
 			var paramActualized = $.Cmdbuild.dataModel.resolveVariables(param);
