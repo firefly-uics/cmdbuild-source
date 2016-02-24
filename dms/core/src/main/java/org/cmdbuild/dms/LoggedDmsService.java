@@ -22,18 +22,6 @@ public class LoggedDmsService extends ForwardingDmsService implements LoggingSup
 	}
 
 	@Override
-	public DmsConfiguration getConfiguration() {
-		logger.info("getting configuration");
-		return super.getConfiguration();
-	}
-
-	@Override
-	public void setConfiguration(final DmsConfiguration configuration) {
-		logger.info("setting configuration");
-		super.setConfiguration(configuration);
-	}
-
-	@Override
 	public Iterable<DocumentTypeDefinition> getTypeDefinitions() throws DmsError {
 		logger.info("getting document type definitions");
 		return super.getTypeDefinitions();

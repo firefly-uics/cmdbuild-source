@@ -1,29 +1,29 @@
 (function() {
 
+	Ext.require('CMDBuild.core.constants.Proxy');
+
 	Ext.define('CMDBuild.model.common.tabs.email.Template', {
 		extend: 'Ext.data.Model',
 
-		require: ['CMDBuild.core.proxy.CMProxyConstants'],
-
 		fields: [
-			{ name: CMDBuild.core.proxy.CMProxyConstants.ACCOUNT, type: 'string' },
-			{ name: CMDBuild.core.proxy.CMProxyConstants.BCC, type: 'string' },
-			{ name: CMDBuild.core.proxy.CMProxyConstants.BODY, type: 'string' },
-			{ name: CMDBuild.core.proxy.CMProxyConstants.CC, type: 'string' },
-			{ name: CMDBuild.core.proxy.CMProxyConstants.CONDITION, type: 'string' },
-			{ name: CMDBuild.core.proxy.CMProxyConstants.DEFAULT_ACCOUNT, type: 'string' },
-			{ name: CMDBuild.core.proxy.CMProxyConstants.DELAY, type: 'int', useNull: true },
-			{ name: CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION, type: 'string' },
-			{ name: CMDBuild.core.proxy.CMProxyConstants.FROM, type: 'string' },
-			{ name: CMDBuild.core.proxy.CMProxyConstants.KEEP_SYNCHRONIZATION, type: 'boolean', defaultValue: true },
-			{ name: CMDBuild.core.proxy.CMProxyConstants.KEY, type: 'string' },
-			{ name: CMDBuild.core.proxy.CMProxyConstants.NAME, type: 'string' },
-			{ name: CMDBuild.core.proxy.CMProxyConstants.NO_SUBJECT_PREFIX, type: 'boolean' },
-			{ name: CMDBuild.core.proxy.CMProxyConstants.NOTIFY_WITH, type: 'string' },
-			{ name: CMDBuild.core.proxy.CMProxyConstants.PROMPT_SYNCHRONIZATION, type: 'boolean', defaultValue: false },
-			{ name: CMDBuild.core.proxy.CMProxyConstants.SUBJECT, type: 'string' },
-			{ name: CMDBuild.core.proxy.CMProxyConstants.TO, type: 'string' },
-			{ name: CMDBuild.core.proxy.CMProxyConstants.VARIABLES, type: 'auto' }
+			{ name: CMDBuild.core.constants.Proxy.ACCOUNT, type: 'string' },
+			{ name: CMDBuild.core.constants.Proxy.BCC, type: 'string' },
+			{ name: CMDBuild.core.constants.Proxy.BODY, type: 'string' },
+			{ name: CMDBuild.core.constants.Proxy.CC, type: 'string' },
+			{ name: CMDBuild.core.constants.Proxy.CONDITION, type: 'string' },
+			{ name: CMDBuild.core.constants.Proxy.DEFAULT_ACCOUNT, type: 'string' },
+			{ name: CMDBuild.core.constants.Proxy.DELAY, type: 'int', useNull: true },
+			{ name: CMDBuild.core.constants.Proxy.DESCRIPTION, type: 'string' },
+			{ name: CMDBuild.core.constants.Proxy.FROM, type: 'string' },
+			{ name: CMDBuild.core.constants.Proxy.KEEP_SYNCHRONIZATION, type: 'boolean', defaultValue: true },
+			{ name: CMDBuild.core.constants.Proxy.KEY, type: 'string' },
+			{ name: CMDBuild.core.constants.Proxy.NAME, type: 'string' },
+			{ name: CMDBuild.core.constants.Proxy.NO_SUBJECT_PREFIX, type: 'boolean' },
+			{ name: CMDBuild.core.constants.Proxy.NOTIFY_WITH, type: 'string' },
+			{ name: CMDBuild.core.constants.Proxy.PROMPT_SYNCHRONIZATION, type: 'boolean', defaultValue: false },
+			{ name: CMDBuild.core.constants.Proxy.SUBJECT, type: 'string' },
+			{ name: CMDBuild.core.constants.Proxy.TO, type: 'string' },
+			{ name: CMDBuild.core.constants.Proxy.VARIABLES, type: 'auto' }
 		],
 
 		/**
@@ -32,8 +32,8 @@
 		 * @override
 		 */
 		constructor: function(data) {
-			if (!Ext.isEmpty(data) && !Ext.isEmpty(data[CMDBuild.core.proxy.CMProxyConstants.ID]))
-				delete data[CMDBuild.core.proxy.CMProxyConstants.ID];
+			if (!Ext.isEmpty(data) && !Ext.isEmpty(data[CMDBuild.core.constants.Proxy.ID]))
+				delete data[CMDBuild.core.constants.Proxy.ID];
 
 			this.callParent(arguments);
 		},
@@ -48,7 +48,7 @@
 		getData: function(includeAssociated) {
 			var data = this.callParent(arguments);
 
-			delete data[CMDBuild.core.proxy.CMProxyConstants.ID];
+			delete data[CMDBuild.core.constants.Proxy.ID];
 
 			return data;
 		}

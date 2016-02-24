@@ -3,7 +3,11 @@
 	Ext.define('CMDBuild.view.management.common.tabs.email.attachments.picker.MainWindow', {
 		extend: 'CMDBuild.PopupWindow',
 
-		requires: ['CMDBuild.core.proxy.CMProxyConstants'],
+		requires: [
+			'CMDBuild.core.constants.FieldWidths',
+			'CMDBuild.core.constants.Proxy',
+			'CMDBuild.core.proxy.common.tabs.email.Attachment'
+		],
 
 		/**
 		 * @cfg {CMDBuild.controller.management.common.tabs.email.attachments.Picker}
@@ -30,47 +34,36 @@
 		title: CMDBuild.Translation.chooseAttachmentFromDb,
 
 		initComponent: function() {
-			this.classComboBox = Ext.create('Ext.form.field.ComboBox', {
-				labelWidth: CMDBuild.LABEL_WIDTH,
-				fieldLabel: CMDBuild.Translation.selectAClass,
-				labelAlign: 'right',
-				valueField: CMDBuild.core.proxy.CMProxyConstants.ID,
-				displayField: CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION,
-				editable: false,
-
-				store: _CMCache.getClassesAndProcessesStore(),
-				queryMode: 'local',
-
-				listeners: {
-					scope: this,
-
-					change: function(field, newValue, oldValue) {
-						this.delegate.cmfg('onPickerWindowClassSelected');
-					}
-				}
-			});
-
-			this.cardGrid = Ext.create('CMDBuild.view.management.common.tabs.email.attachments.picker.CardGrid', {
-				delegate: this.delegate,
-				region: 'center'
-			});
-
-			this.attachmentGrid = Ext.create('CMDBuild.view.management.common.tabs.email.attachments.picker.AttachmentGrid', {
-				delegate: this.delegate,
-				region: 'south',
-				height: '30%'
-			});
-
 			Ext.apply(this, {
 				dockedItems: [
 					Ext.create('Ext.toolbar.Toolbar', {
 						dock: 'top',
-						itemId: CMDBuild.core.proxy.CMProxyConstants.TOOLBAR_TOP,
-						items: [this.classComboBox]
+						itemId: CMDBuild.core.constants.Proxy.TOOLBAR_TOP,
+						items: [
+							this.classComboBox = Ext.create('Ext.form.field.ComboBox', {
+								labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
+								fieldLabel: CMDBuild.Translation.selectAClass,
+								labelAlign: 'right',
+								valueField: CMDBuild.core.constants.Proxy.ID,
+								displayField: CMDBuild.core.constants.Proxy.TEXT,
+								editable: false,
+
+								store: CMDBuild.core.proxy.common.tabs.email.Attachment.getTargetClassComboStore(),
+								queryMode: 'local',
+
+								listeners: {
+									scope: this,
+
+									change: function(field, newValue, oldValue) {
+										this.delegate.cmfg('onTabEmailAttachmentPickerWindowClassSelected');
+									}
+								}
+							})
+						]
 					}),
 					Ext.create('Ext.toolbar.Toolbar', {
 						dock: 'bottom',
-						itemId: CMDBuild.core.proxy.CMProxyConstants.TOOLBAR_BOTTOM,
+						itemId: CMDBuild.core.constants.Proxy.TOOLBAR_BOTTOM,
 						ui: 'footer',
 
 						layout: {
@@ -80,24 +73,34 @@
 						},
 
 						items: [
-							Ext.create('CMDBuild.core.buttons.Confirm', {
+							Ext.create('CMDBuild.core.buttons.text.Confirm', {
 								scope: this,
 
 								handler: function(button, e) {
-									this.delegate.cmfg('onPickerWindowConfirmButtonClick');
+									this.delegate.cmfg('onTabEmailAttachmentPickerWindowConfirmButtonClick');
 								}
 							}),
-							Ext.create('CMDBuild.core.buttons.Abort', {
+							Ext.create('CMDBuild.core.buttons.text.Abort', {
 								scope: this,
 
 								handler: function(button, e) {
-									this.delegate.cmfg('onPickerWindowAbortButtonClick');
+									this.delegate.cmfg('onTabEmailAttachmentPickerWindowAbortButtonClick');
 								}
 							})
 						]
 					})
 				],
-				items: [this.cardGrid, this.attachmentGrid]
+				items: [
+					this.cardGrid = Ext.create('CMDBuild.view.management.common.tabs.email.attachments.picker.CardGrid', {
+						delegate: this.delegate,
+						region: 'center'
+					}),
+					this.attachmentGrid = Ext.create('CMDBuild.view.management.common.tabs.email.attachments.picker.AttachmentGrid', {
+						delegate: this.delegate,
+						region: 'south',
+						height: '30%'
+					})
+				]
 			});
 
 			this.callParent(arguments);

@@ -3,11 +3,15 @@
 	Ext.define('CMDBuild.view.management.CMEditAttachmentWindow', {
 		extend: 'CMDBuild.core.PopupWindow',
 
-		requires: ['CMDBuild.core.proxy.CMProxyConstants'],
+		requires: [
+			'CMDBuild.core.constants.Proxy',
+			'CMDBuild.core.constants.FieldWidths'
+		],
 
 		delegate: undefined, // set on creation
 		attachmentRecord: undefined, // could be set on creation
 
+		autoScroll: true,
 		title: CMDBuild.Translation.management.modcard.add_attachment_window.window_title,
 
 		initComponent: function() {
@@ -29,10 +33,10 @@
 						name: 'Category',
 						labelAlign: 'right',
 						fieldLabel: '* ' + CMDBuild.Translation.management.modcard.add_attachment_window.category,
-						labelWidth: CMDBuild.LABEL_WIDTH,
+						labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
 						emptyText: CMDBuild.Translation.management.modcard.add_attachment_window.select_category,
-						valueField: CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION,
-						displayField: CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION,
+						valueField: CMDBuild.core.constants.Proxy.DESCRIPTION,
+						displayField: CMDBuild.core.constants.Proxy.DESCRIPTION,
 						triggerAction: 'all',
 						allowBlank: false,
 						forceSelection: true,
@@ -48,18 +52,18 @@
 					}),
 					Ext.create('Ext.form.field.File', {
 						name: 'File',
-						width: CMDBuild.BIG_FIELD_ONLY_WIDTH,
+						width: CMDBuild.core.constants.FieldWidths.STANDARD_BIG_FIELD_ONLY,
 						labelAlign: 'right',
 						fieldLabel: '* ' + CMDBuild.Translation.management.modcard.add_attachment_window.load_attachment,
-						labelWidth: CMDBuild.LABEL_WIDTH,
+						labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
 						allowBlank: false
 					}),
 					Ext.create('Ext.form.field.TextArea', {
 						name: 'Description',
 						fieldLabel: '* ' + CMDBuild.Translation.descriptionLabel,
 						labelAlign: 'right',
-						labelWidth: CMDBuild.LABEL_WIDTH,
-						width: CMDBuild.BIG_FIELD_ONLY_WIDTH,
+						labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
+						width: CMDBuild.core.constants.FieldWidths.STANDARD_BIG_FIELD_ONLY,
 						allowBlank: false
 					}),
 					this.metadataContainer
@@ -70,7 +74,7 @@
 				dockedItems: [
 					Ext.create('Ext.toolbar.Toolbar', {
 						dock: 'bottom',
-						itemId: CMDBuild.core.proxy.CMProxyConstants.TOOLBAR_BOTTOM,
+						itemId: CMDBuild.core.constants.Proxy.TOOLBAR_BOTTOM,
 						ui: 'footer',
 
 						layout: {
@@ -80,14 +84,14 @@
 						},
 
 						items: [
-							Ext.create('CMDBuild.core.buttons.Confirm', {
+							Ext.create('CMDBuild.core.buttons.text.Confirm', {
 								scope: this,
 
 								handler: function(button, e) {
 									this.delegate.onConfirmButtonClick(me);
 								}
 							}),
-							Ext.create('CMDBuild.core.buttons.Abort', {
+							Ext.create('CMDBuild.core.buttons.text.Abort', {
 								scope: this,
 
 								handler: function(button, e) {

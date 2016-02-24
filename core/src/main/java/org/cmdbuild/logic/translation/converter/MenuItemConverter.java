@@ -3,12 +3,11 @@ package org.cmdbuild.logic.translation.converter;
 import java.util.Map;
 
 import org.apache.commons.lang3.Validate;
-import org.cmdbuild.logic.translation.TranslationObject;
 import org.cmdbuild.logic.translation.object.MenuItemDescription;
 
 import com.google.common.collect.Maps;
 
-public enum MenuItemConverter {
+public enum MenuItemConverter implements Converter {
 
 	DESCRIPTION(description()) {
 
@@ -18,17 +17,11 @@ public enum MenuItemConverter {
 		}
 
 		@Override
-		public MenuItemConverter withTranslations(final Map<String, String> map) {
-			translations = map;
-			return this;
-		}
-
-		@Override
-		public MenuItemDescription create(final String name) {
-			Validate.notBlank(name, "missing identifier, identifier is needed for handling translation");
+		public MenuItemDescription create() {
+			validate();
 			final org.cmdbuild.logic.translation.object.MenuItemDescription.Builder builder = MenuItemDescription
 					.newInstance() //
-					.withUuid(name);
+					.withUuid(uuid);
 
 			if (!translations.isEmpty()) {
 				builder.withTranslations(translations);
@@ -45,22 +38,38 @@ public enum MenuItemConverter {
 		}
 
 		@Override
-		public MenuItemConverter withTranslations(final Map<String, String> map) {
-			throw new UnsupportedOperationException();
-		}
-
-		@Override
-		public MenuItemDescription create(final String name) {
+		public MenuItemDescription create() {
 			throw new UnsupportedOperationException();
 		}
 	};
 
 	private final String fieldName;
+
+	private static String uuid;
 	private static Map<String, String> translations = Maps.newHashMap();
 	private static final String DESCRIPTION_FIELD = "description";
 	private static final String UNDEFINED_FIELD = "undefined";
 
-	public abstract TranslationObject create(String name);
+	@Override
+	public Converter withIdentifier(final String identifier) {
+		uuid = identifier;
+		return this;
+	}
+
+	@Override
+	public Converter withOwner(final String parentIdentifier) {
+		return this;
+	}
+
+	@Override
+	public Converter withTranslations(final Map<String, String> map) {
+		translations = map;
+		return this;
+	}
+
+	private static void validate() {
+		Validate.notBlank(uuid);
+	}
 
 	public static String description() {
 		return DESCRIPTION_FIELD;
@@ -69,10 +78,6 @@ public enum MenuItemConverter {
 	private static String undefined() {
 		return UNDEFINED_FIELD;
 	}
-
-	public abstract MenuItemConverter withTranslations(Map<String, String> map);
-
-	public abstract boolean isValid();
 
 	private MenuItemConverter(final String fieldName) {
 		this.fieldName = fieldName;

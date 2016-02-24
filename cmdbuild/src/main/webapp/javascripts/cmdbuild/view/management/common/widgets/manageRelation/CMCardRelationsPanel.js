@@ -131,12 +131,12 @@
 			if (this.cmWithAddButton)
 				this.tbar.push(this.addRelationButton);
 
-			if (CMDBuild.Config.graph.enabled == 'true') {
-				this.graphButton = new Ext.button.Button({
-					iconCls: 'graph',
-					text: CMDBuild.Translation.management.graph.action,
-					handler: function() {
-						me.fireEvent(me.CMEVENTS.openGraphClick);
+			if (CMDBuild.configuration.graph.get(CMDBuild.core.constants.Proxy.ENABLED)) {
+				this.graphButton = Ext.create('CMDBuild.core.buttons.iconized.RelationGraph', {
+					scope: this,
+
+					handler: function(button, e) {
+						this.fireEvent(this.CMEVENTS.openGraphClick);
 					}
 				});
 

@@ -1,9 +1,9 @@
 (function() {
 
 	Ext.define('CMDBuild.controller.common.field.searchWindow.SearchWindow', {
-		extend: 'CMDBuild.controller.common.AbstractController',
+		extend: 'CMDBuild.controller.common.abstract.Base',
 
-		requires: ['CMDBuild.core.proxy.CMProxyConstants'],
+		requires: ['CMDBuild.core.constants.Proxy'],
 
 		/**
 		 * @cfg {CMDBuild.controller.common.field.comboBox.Searchable}
@@ -130,7 +130,7 @@
 				this.setupViewGrid();
 
 				// Set window title
-				this.setViewTitle(this.fieldSearchWindowConfigurationGet([CMDBuild.core.proxy.CMProxyConstants.ENTRY_TYPE, CMDBuild.core.proxy.CMProxyConstants.TEXT]));
+				this.setViewTitle(this.fieldSearchWindowConfigurationGet([CMDBuild.core.constants.Proxy.ENTRY_TYPE, CMDBuild.core.constants.Proxy.TEXT]));
 
 				this.setupViewAddCardButton();
 
@@ -155,10 +155,10 @@
 		 * TODO: waiting for refactor (CMDBuild.view.management.common.CMCardWindow)
 		 */
 		setupViewAddCardButton: function() {
-			this.view.addCardButton.setDisabled(this.cmfg('fieldSearchWindowConfigurationGet', CMDBuild.core.proxy.CMProxyConstants.READ_ONLY));
+			this.view.addCardButton.setDisabled(this.cmfg('fieldSearchWindowConfigurationGet', CMDBuild.core.constants.Proxy.READ_ONLY));
 
-			if (!this.cmfg('fieldSearchWindowConfigurationGet', CMDBuild.core.proxy.CMProxyConstants.READ_ONLY)) {
-				this.view.addCardButton.updateForEntry(this.cmfg('fieldSearchWindowConfigurationGet', CMDBuild.core.proxy.CMProxyConstants.ENTRY_TYPE));
+			if (!this.cmfg('fieldSearchWindowConfigurationGet', CMDBuild.core.constants.Proxy.READ_ONLY)) {
+				this.view.addCardButton.updateForEntry(this.cmfg('fieldSearchWindowConfigurationGet', CMDBuild.core.constants.Proxy.ENTRY_TYPE));
 
 				this.view.mon(this.view.addCardButton, 'cmClick', function(p) {
 					var w = new CMDBuild.view.management.common.CMCardWindow({
@@ -195,7 +195,7 @@
 			);
 
 			this.grid.updateStoreForClassId(
-				this.fieldSearchWindowConfigurationGet([CMDBuild.core.proxy.CMProxyConstants.ENTRY_TYPE, CMDBuild.core.proxy.CMProxyConstants.ID]),
+				this.fieldSearchWindowConfigurationGet([CMDBuild.core.constants.Proxy.ENTRY_TYPE, CMDBuild.core.constants.Proxy.ID]),
 				{
 					scope: this,
 					cb: function(grid) {
@@ -205,8 +205,8 @@
 						this.grid.gridSearchField.focus();
 						this.grid.gridSearchField.setValue(
 							this.fieldSearchWindowConfigurationGet([
-								CMDBuild.core.proxy.CMProxyConstants.GRID_CONFIGURATION,
-								CMDBuild.core.proxy.CMProxyConstants.PRESETS,
+								CMDBuild.core.constants.Proxy.GRID_CONFIGURATION,
+								CMDBuild.core.constants.Proxy.PRESETS,
 								'quickSearch'
 							])
 						);

@@ -1,16 +1,17 @@
 package org.cmdbuild.dms.alfresco;
 
+import static org.cmdbuild.dms.MetadataAutocompletion.NULL_AUTOCOMPLETION_RULES;
+
+import static com.google.common.base.Suppliers.*;
 import static java.lang.String.format;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
-import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 
 import javax.activation.DataHandler;
 
-import org.cmdbuild.dms.BaseDmsService;
-import org.cmdbuild.dms.DmsConfiguration;
+import org.cmdbuild.dms.DmsConfiguration.ChangeListener;
+import org.cmdbuild.dms.DmsService;
 import org.cmdbuild.dms.DmsService.LoggingSupport;
 import org.cmdbuild.dms.DocumentDelete;
 import org.cmdbuild.dms.DocumentDownload;
@@ -26,77 +27,81 @@ import org.cmdbuild.dms.alfresco.utils.XmlAutocompletionReader;
 import org.cmdbuild.dms.alfresco.webservice.AlfrescoWsService;
 import org.cmdbuild.dms.exception.DmsError;
 
-public class AlfrescoDmsService extends BaseDmsService implements LoggingSupport {
+import com.google.common.base.Supplier;
 
-	private static final AutocompletionRules NULL_AUTOCOMPLETION_RULES = new AutocompletionRules() {
+public class AlfrescoDmsService implements DmsService, LoggingSupport, ChangeListener {
 
-		@Override
-		public Iterable<String> getMetadataGroupNames() {
-			return Collections.emptyList();
-		}
+	private final AlfrescoDmsConfiguration configuration;
 
-		@Override
-		public Iterable<String> getMetadataNamesForGroup(final String groupName) {
-			return Collections.emptyList();
-		}
+	private Supplier<AlfrescoFtpService> ftpService;
+	private Supplier<AlfrescoWsService> wsService;
 
-		@Override
-		public Map<String, String> getRulesForGroupAndMetadata(final String groupName, final String metadataName) {
-			return Collections.emptyMap();
-		}
-
-	};
-
-	private AlfrescoFtpService ftpService;
-	private AlfrescoWsService wsService;
+	public AlfrescoDmsService(final AlfrescoDmsConfiguration configuration) {
+		this.configuration = configuration;
+		this.configuration.addListener(this);
+		configurationChanged();
+	}
 
 	@Override
-	public void setConfiguration(final DmsConfiguration configuration) {
-		super.setConfiguration(configuration);
+	public void configurationChanged() {
+		ftpService = synchronizedSupplier(memoize(new Supplier<AlfrescoFtpService>() {
 
-		logger.info("initializing Alfresco inner services for ftp/ws");
-		ftpService = new AlfrescoFtpService(configuration);
-		wsService = new AlfrescoWsService(configuration);
+			@Override
+			public AlfrescoFtpService get() {
+				logger.info("initializing Alfresco inner services for ftp");
+				return new AlfrescoFtpService(configuration);
+			}
+
+		}));
+		wsService = synchronizedSupplier(memoize(new Supplier<AlfrescoWsService>() {
+
+			@Override
+			public AlfrescoWsService get() {
+				logger.info("initializing Alfresco inner services for ws");
+				return new AlfrescoWsService(configuration);
+			}
+
+		}));
 	}
 
 	@Override
 	public Iterable<DocumentTypeDefinition> getTypeDefinitions() throws DmsError {
-		return wsService.getDocumentTypeDefinitions();
+		return wsService.get().getDocumentTypeDefinitions();
 	}
 
 	@Override
 	public void delete(final DocumentDelete document) throws DmsError {
-		ftpService.delete(document);
+		ftpService.get().delete(document);
 	}
 
 	@Override
 	public DataHandler download(final DocumentDownload document) throws DmsError {
-		return ftpService.download(document);
+		return ftpService.get().download(document);
 	}
 
 	@Override
 	public List<StoredDocument> search(final DocumentSearch document) throws DmsError {
-		return wsService.search(document);
+		return wsService.get().search(document);
 	}
 
 	@Override
 	public void updateDescriptionAndMetadata(final DocumentUpdate document) throws DmsError {
-		wsService.updateCategory(document);
-		wsService.updateDescription(document);
+		wsService.get().updateCategory(document);
+		wsService.get().updateDescription(document);
 	}
 
 	@Override
 	public void upload(final StorableDocument document) throws DmsError {
-		ftpService.upload(document);
+		ftpService.get().upload(document);
 		waitForSomeTimeBetweenFtpAndWebserviceOperations();
 		try {
-			wsService.updateCategory(document);
-			wsService.updateProperties(document);
+			wsService.get().updateCategory(document);
+			wsService.get().updateProperties(document);
 		} catch (final Exception e) {
 			final String message = format("error updating metadata for file '%s' at path '%s'", //
 					document.getFileName(), document.getPath());
 			logger.error(message, e);
-			ftpService.delete(documentDeleteFrom(document));
+			ftpService.get().delete(documentDeleteFrom(document));
 			throw DmsError.forward(e);
 		}
 	}
@@ -107,7 +112,7 @@ public class AlfrescoDmsService extends BaseDmsService implements LoggingSupport
 	 */
 	private void waitForSomeTimeBetweenFtpAndWebserviceOperations() {
 		try {
-			Thread.sleep(getConfiguration().getDelayBetweenFtpAndWebserviceOperations());
+			Thread.sleep(configuration.getDelayBetweenFtpAndWebserviceOperations());
 		} catch (final InterruptedException e) {
 			logger.warn("should never happen... so why?", e);
 		}
@@ -142,7 +147,7 @@ public class AlfrescoDmsService extends BaseDmsService implements LoggingSupport
 	@Override
 	public AutocompletionRules getAutoCompletionRules() throws DmsError {
 		try {
-			final String content = getConfiguration().getMetadataAutocompletionFileContent();
+			final String content = configuration.getMetadataAutocompletionFileContent();
 			final AutocompletionRules autocompletionRules;
 			if (isNotBlank(content)) {
 				final MetadataAutocompletion.Reader reader = new XmlAutocompletionReader(content);
@@ -160,30 +165,32 @@ public class AlfrescoDmsService extends BaseDmsService implements LoggingSupport
 	public void clearCache() {
 		final boolean isAlfrescoConfigured = wsService != null;
 		if (isAlfrescoConfigured) {
-			wsService.clearCache();
+			wsService.get().clearCache();
 		}
 	}
 
 	@Override
-	public void move(final StoredDocument document, final DocumentSearch from, final DocumentSearch to) throws DmsError {
+	public void move(final StoredDocument document, final DocumentSearch from, final DocumentSearch to)
+			throws DmsError {
 		create(to);
-		wsService.move(document, from, to);
+		wsService.get().move(document, from, to);
 	}
 
 	@Override
-	public void copy(final StoredDocument document, final DocumentSearch from, final DocumentSearch to) throws DmsError {
+	public void copy(final StoredDocument document, final DocumentSearch from, final DocumentSearch to)
+			throws DmsError {
 		create(to);
-		wsService.copy(document, from, to);
+		wsService.get().copy(document, from, to);
 	}
 
 	@Override
 	public void create(final DocumentSearch position) throws DmsError {
-		ftpService.create(position);
+		ftpService.get().create(position);
 	}
 
 	@Override
 	public void delete(final DocumentSearch position) throws DmsError {
-		wsService.delete(position);
+		wsService.get().delete(position);
 	}
 
 }

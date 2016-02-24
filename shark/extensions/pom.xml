@@ -1,19 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
 	<parent>
 		<groupId>org.cmdbuild</groupId>
-		<artifactId>cmdbuild-main</artifactId>
-		<version>2.3.5-SNAPSHOT</version>
-		<relativePath>../..</relativePath>
+		<artifactId>cmdbuild-parent</artifactId>
+		<version>2.4-SNAPSHOT</version>
+		<relativePath>../../parent</relativePath>
 	</parent>
-	<modelVersion>4.0.0</modelVersion>
 	<artifactId>cmdbuild-shark-extensions</artifactId>
 	<packaging>jar</packaging>
 	<name>CMDBuild Shark Extensions</name>
 
 	<properties>
-		<groovy.version>1.8.1</groovy.version>
+		<groovy.version>2.4.5</groovy.version>
 	</properties>
 
 	<dependencies>
@@ -128,6 +128,7 @@
 				<artifactId>maven-failsafe-plugin</artifactId>
 			</plugin>
 			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-jar-plugin</artifactId>
 				<executions>
 					<execution>

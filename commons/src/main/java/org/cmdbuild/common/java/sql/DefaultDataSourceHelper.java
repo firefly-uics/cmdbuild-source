@@ -15,8 +15,6 @@ import java.util.Collection;
 
 import javax.sql.DataSource;
 
-import net.sourceforge.jtds.jdbcx.JtdsDataSource;
-
 import org.apache.commons.lang3.Validate;
 import org.cmdbuild.common.java.sql.DataSourceTypes.DataSourceType;
 import org.cmdbuild.common.java.sql.DataSourceTypes.DataSourceTypeVisitor;
@@ -32,6 +30,8 @@ import org.slf4j.MarkerFactory;
 
 import com.google.common.collect.Sets;
 import com.mysql.jdbc.jdbc2.optional.MysqlDataSource;
+
+import net.sourceforge.jtds.jdbcx.JtdsDataSource;
 
 public class DefaultDataSourceHelper implements DataSourceHelper, LoggingSupport {
 

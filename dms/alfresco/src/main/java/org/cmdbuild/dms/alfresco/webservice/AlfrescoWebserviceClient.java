@@ -10,20 +10,20 @@ import org.alfresco.webservice.types.Store;
 import org.alfresco.webservice.util.Constants;
 import org.alfresco.webservice.util.WebServiceFactory;
 import org.apache.commons.lang3.Validate;
-import org.cmdbuild.dms.DmsConfiguration;
 import org.cmdbuild.dms.DmsService.LoggingSupport;
 import org.cmdbuild.dms.DocumentSearch;
 import org.cmdbuild.dms.DocumentTypeDefinition;
 import org.cmdbuild.dms.SingleDocumentSearch;
+import org.cmdbuild.dms.alfresco.AlfrescoDmsConfiguration;
 import org.cmdbuild.dms.exception.DmsError;
 
 class AlfrescoWebserviceClient implements LoggingSupport {
 
 	private static Map<String, AlfrescoWebserviceClient> cache = new WeakHashMap<String, AlfrescoWebserviceClient>();
 
-	private final DmsConfiguration configuration;
+	private final AlfrescoDmsConfiguration configuration;
 
-	private AlfrescoWebserviceClient(final DmsConfiguration configuration) {
+	private AlfrescoWebserviceClient(final AlfrescoDmsConfiguration configuration) {
 		Validate.notNull(configuration, "null configuration");
 		this.configuration = configuration;
 
@@ -31,7 +31,7 @@ class AlfrescoWebserviceClient implements LoggingSupport {
 		WebServiceFactory.setEndpointAddress(address);
 	}
 
-	public static AlfrescoWebserviceClient getInstance(final DmsConfiguration configuration) {
+	public static AlfrescoWebserviceClient getInstance(final AlfrescoDmsConfiguration configuration) {
 		Validate.notNull(configuration, "null configuration");
 		synchronized (cache) {
 			final String address = configuration.getServerURL();
@@ -59,10 +59,10 @@ class AlfrescoWebserviceClient implements LoggingSupport {
 		session.end();
 	}
 
-	private static String baseSearchPath(final DmsConfiguration properties) {
+	private static String baseSearchPath(final AlfrescoDmsConfiguration configuration) {
 		return new StringBuilder() //
-				.append(properties.getRepositoryWSPath()) //
-				.append(properties.getRepositoryApp()) //
+				.append(configuration.getRepositoryWSPath()) //
+				.append(configuration.getRepositoryApp()) //
 				.toString();
 	}
 
@@ -134,7 +134,7 @@ class AlfrescoWebserviceClient implements LoggingSupport {
 		final GetDocumentTypeDefinitionsCommand command = new GetDocumentTypeDefinitionsCommand();
 		command.setUri(configuration.getAlfrescoCustomUri());
 		command.setPrefix(configuration.getAlfrescoCustomPrefix());
-		command.setCustomModelContent(configuration.getAlfrescoCustomModelFileContent());
+		command.setCustomModelContent(configuration.getCustomModelFileContent());
 		executeWhithinSession(command);
 		if (command.isSuccessfull()) {
 			return command.getResult().values();

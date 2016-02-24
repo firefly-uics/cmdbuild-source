@@ -7,7 +7,7 @@ Ext.define("CMDBuild.view.management.common.CMAttachmentsWindow", {
 		});
 
 		var closeButton = new Ext.Button({
-			text: CMDBuild.Translation.common.buttons.close,
+			text: CMDBuild.Translation.close,
 			name: 'saveButton',
 			formBind: true,
 			handler: function() {

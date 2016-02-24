@@ -24,12 +24,17 @@
 
 			Ext.apply(this, {
 				title: tr.title,
+				tools: [
+					Ext.create('CMDBuild.view.common.panel.gridAndForm.tools.Properties', {
+						style: {} // Reset margin setup
+					})
+				],
 				items:[this.form, this.grid],
 				buttonAlign: "center",
 				buttons: [
-					this.updateButton = new CMDBuild.buttons.UpdateButton(),
-					this.confirmButton = new CMDBuild.buttons.ConfirmButton(),
-					this.abortButton = new CMDBuild.buttons.AbortButton()
+					this.updateButton = Ext.create('CMDBuild.core.buttons.text.Update'),
+					this.confirmButton = Ext.create('CMDBuild.core.buttons.text.Confirm'),
+					this.abortButton = Ext.create('CMDBuild.core.buttons.text.Abort')
 				]
 			});
 
@@ -45,9 +50,9 @@
 		},
 		constructor: function() {
 
-			this.classList = new CMDBuild.field.CMBaseCombo({
+			this.classList = new CMDBuild.view.common.field.CMBaseCombo({
 				store: _CMCache.getClassesStore(),
-				labelWidth: CMDBuild.LABEL_WIDTH,
+				labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
 				fieldLabel : tr.selectaclass,
 				width: 260,
 				name : 'idClass',
@@ -59,7 +64,7 @@
 			});
 
 			this.uploadButton = new Ext.Button({
-				 text: CMDBuild.Translation.common.buttons.upload,
+				 text: CMDBuild.Translation.upload,
 				 scope: this
 			 });
 
@@ -71,8 +76,8 @@
 					this.classList,
 				{
 					xtype: 'filefield',
-					width: CMDBuild.BIG_FIELD_ONLY_WIDTH,
-					labelWidth: CMDBuild.LABEL_WIDTH,
+					width: CMDBuild.core.constants.FieldWidths.STANDARD_BIG_FIELD_ONLY,
+					labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
 					fieldLabel: tr.csvfile,
 					allowBlank: false,
 					name: 'file'
@@ -81,7 +86,7 @@
 				new Ext.form.ComboBox({
 					name: 'separator',
 					fieldLabel: tr.separator,
-					labelWidth: CMDBuild.LABEL_WIDTH,
+					labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
 					valueField: 'value',
 					displayField: 'value',
 					hiddenName: 'separator',

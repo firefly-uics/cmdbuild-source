@@ -30,11 +30,8 @@
 
 	Ext.define("CMDBuild.view.management.common.widgets.CMCalendar", {
 		extend : "Ext.panel.Panel",
-		withButtons : true,
 
-		statics : {
-			WIDGET_NAME : ".Calendar"
-		},
+		withButtons : true,
 
 		constructor : function() {
 			this.eventStore = new Extensible.calendar.data.MemoryEventStore({

@@ -5,10 +5,6 @@
 			widgetcontroller: "CMDBuild.controller.management.common.widgets.CMWidgetController"
 		},
 
-		statics: {
-			WIDGET_NAME: CMDBuild.view.management.common.widgets.CMPing.WIDGET_NAME
-		},
-
 		constructor: function(view, ownerController, widgetDef, clientForm, card) {
 			this.mixins.observable.constructor.call(this);
 			this.mixins.widgetcontroller.constructor.apply(this, arguments);
@@ -55,10 +51,10 @@
 
 				var el = me.view.getEl();
 				if (el) {
-					el.mask(CMDBuild.Translation.common.wait_title);
+					el.mask(CMDBuild.Translation.pleaseWait);
 				}
 
-				CMDBuild.Ajax.request({
+				CMDBuild.core.interfaces.Ajax.request({
 					url: "services/json/modwidget/callwidget",
 					method: "GET",
 					params: pingParams,

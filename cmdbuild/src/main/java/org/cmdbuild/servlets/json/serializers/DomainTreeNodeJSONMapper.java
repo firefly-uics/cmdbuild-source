@@ -14,6 +14,7 @@ public class DomainTreeNodeJSONMapper {
 			DESCRIPTION = "description", //
 			DIRECT = "direct", //
 			DOMAIN_NAME = "domainName", //
+			ENABLE_RECURSION = "enableRecursion", //
 			TARGET_FILTER = "filter", //
 			ID = "id", //
 			ID_PARENT = "idParent", //
@@ -36,6 +37,7 @@ public class DomainTreeNodeJSONMapper {
 		treeNode.setIdGroup(readLongOrNull(jsonTreeNode, ID_GROUP));
 		treeNode.setTargetFilter(readStringOrNull(jsonTreeNode, TARGET_FILTER));
 		treeNode.setDescription(readStringOrNull(jsonTreeNode, DESCRIPTION));
+		treeNode.setEnableRecursion(readBooleanOrFalse(jsonTreeNode, ENABLE_RECURSION));
 
 		JSONArray jsonChildNodes = new JSONArray();
 		if (jsonTreeNode.has(CHILD_NODES)) {
@@ -67,6 +69,7 @@ public class DomainTreeNodeJSONMapper {
 		jsonTreeNode.put(ID_GROUP, treeNode.getIdGroup());
 		jsonTreeNode.put(TARGET_FILTER, treeNode.getTargetFilter());
 		jsonTreeNode.put(DESCRIPTION, treeNode.getDescription());
+		jsonTreeNode.put(ENABLE_RECURSION, treeNode.isEnableRecursion());
 
 		if (deeply) {
 			jsonTreeNode.put(CHILD_NODES, serialize(treeNode.getChildNodes(), deeply));

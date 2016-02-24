@@ -6,7 +6,7 @@
 		extend: 'Ext.form.FieldSet',
 
 		border: false,
-		cls: 'cmbordertop',
+		cls: 'cmdb-border-top',
 		style: { 'border-color': '#d0d0d0' },
 		margin: '5 0 0 0',
 
@@ -115,10 +115,10 @@
 			this.classCombo =  Ext.create('CMDBuild.view.common.field.CMErasableCombo', {
 				fieldLabel: me.isFirst ? tr.card_binding : ' ',
 				labelSeparator: me.isFirst ? ':' : '',
-				labelWidth: CMDBuild.LABEL_WIDTH,
-				width: CMDBuild.ADM_BIG_FIELD_WIDTH,
-				valueField: CMDBuild.core.proxy.CMProxyConstants.NAME,
-				displayField: CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION,
+				labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
+				width: CMDBuild.core.constants.FieldWidths.ADMINISTRATION_BIG,
+				valueField: CMDBuild.core.constants.Proxy.NAME,
+				displayField: CMDBuild.core.constants.Proxy.DESCRIPTION,
 				editable: false,
 				margin: '0 5 0 0',
 

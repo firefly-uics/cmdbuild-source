@@ -3,8 +3,8 @@
 	Ext.define('CMDBuild.core.proxy.common.field.ForeignKey', {
 
 		requires: [
-			'CMDBuild.core.proxy.CMProxyConstants',
-			'CMDBuild.core.proxy.CMProxyUrlIndex',
+			'CMDBuild.core.constants.Proxy',
+			'CMDBuild.core.proxy.Index',
 			'CMDBuild.model.common.attributes.ForeignKeyStore'
 		],
 
@@ -19,10 +19,10 @@
 			return Ext.create('Ext.data.Store', {
 				autoLoad: true,
 				model: 'CMDBuild.model.common.attributes.ForeignKeyStore',
-				pageSize: parseInt(CMDBuild.Config.cmdbuild.referencecombolimit),
+				pageSize: CMDBuild.configuration.instance.get(CMDBuild.core.constants.Proxy.REFERENCE_COMBO_STORE_LIMIT),
 				proxy: {
 					type: 'ajax',
-					url: CMDBuild.core.proxy.CMProxyUrlIndex.card.getListShort,
+					url: CMDBuild.core.proxy.Index.card.getListShort,
 					reader: {
 						type: 'json',
 						root: 'rows',

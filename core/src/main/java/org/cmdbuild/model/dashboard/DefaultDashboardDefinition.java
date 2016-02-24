@@ -35,17 +35,8 @@ public class DefaultDashboardDefinition implements DashboardDefinition {
 	}
 	
 	@Override
-	public String getDefaultDescription() {
-		return description;
-	}
-
-	@Override
 	public void setDescription(final String description) {
 		this.description = description;
-	}
-	
-	public void setDefaultDescription(final String defaultDescription) {
-		this.description = defaultDescription;
 	}
 	
 	// charts

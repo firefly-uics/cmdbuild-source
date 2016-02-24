@@ -6,7 +6,6 @@ import static org.junit.Assert.assertThat;
 
 import java.util.Map;
 
-import org.cmdbuild.dms.DmsConfiguration;
 import org.cmdbuild.dms.MetadataAutocompletion;
 import org.cmdbuild.dms.MetadataAutocompletion.AutocompletionRules;
 import org.cmdbuild.dms.alfresco.utils.XmlAutocompletionReader;
@@ -22,7 +21,7 @@ public class MetadataAutocompletionReaderTest {
 
 	@Before
 	public void createParser() throws Exception {
-		final DmsConfiguration configuration = new TestConfiguration();
+		final TestConfiguration configuration = new TestConfiguration();
 		final String content = configuration.getMetadataAutocompletionFileContent();
 		reader = new XmlAutocompletionReader(content);
 		autocompletionRules = reader.read();

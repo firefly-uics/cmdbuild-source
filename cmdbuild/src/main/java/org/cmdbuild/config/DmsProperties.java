@@ -1,28 +1,33 @@
 package org.cmdbuild.config;
 
+import static com.google.common.collect.Maps.newHashMap;
+import static com.google.common.collect.Sets.newHashSet;
 import static java.lang.String.format;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Collection;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import org.apache.commons.io.FileUtils;
-import org.cmdbuild.common.annotations.Legacy;
-import org.cmdbuild.dms.DmsConfiguration;
+import org.cmdbuild.dms.alfresco.AlfrescoDmsConfiguration;
+import org.cmdbuild.dms.cmis.CmisDmsConfiguration;
 import org.cmdbuild.logger.Log;
 import org.cmdbuild.services.Settings;
 
-public class DmsProperties extends DefaultProperties implements DmsConfiguration {
+public class DmsProperties extends DefaultProperties implements AlfrescoDmsConfiguration, CmisDmsConfiguration {
 
 	private static final long serialVersionUID = 1L;
 
 	private static final String MODULE_NAME = "dms";
 
 	private static final String ENABLED = "enabled";
+	private static final String SERVICE = "dms.service.type";
+
 	private static final String SERVER_URL = "server.url";
 	private static final String FILE_SERVER_PORT = "fileserver.port";
-	@Legacy("not used now")
-	private static final String FILE_SERVER_TYPE = "fileserver.type";
 	private static final String FILE_SERVER_URL = "fileserver.url";
 	/*
 	 * wspath is the path for the base space, fspath is the same thing, in terms
@@ -40,56 +45,72 @@ public class DmsProperties extends DefaultProperties implements DmsConfiguration
 	private static final String ALFRESCO_CUSTOM_MODEL_FILENAME = "alfresco.custom.model.filename";
 	private static final String METADATA_AUTOCOMPLETION_FILENAME = "metadata.autocompletion.filename";
 
-	public interface Default {
+	private static final Map<String, String> DEFAULTS;
 
-		String ENABLED = Boolean.FALSE.toString();
-		String SERVER_URL = "http://localhost:10080/alfresco/api";
-		String FILE_SERVER_PORT = "1121";
-		String FILE_SERVER_URL = "localhost";
-		String FILE_SERVER_TYPE = "AlfrescoFTP";
-		String REPOSITORY_FS_PATH = "/Alfresco/User Homes/cmdbuild";
-		String REPOSITORY_WS_PATH = "/app:company_home/app:user_homes/";
-		String REPOSITORY_APP = "cm:cmdbuild";
-		String USER = "admin";
-		String PASSWORD = "admin";
-		String CATEGORY_LOOKUP = "AlfrescoCategory";
-		String CATEGORY_LOOKUP_ATTACHMENTS = "Attachment";
-		String DELAY = "1000";
-		String ALFRESCO_CUSTOM_URI = "org.cmdbuild.dms.alfresco";
-		String ALFRESCO_CUSTOM_PREFIX = "cmdbuild";
-		String ALFRESCO_CUSTOM_MODULE_FILE_NAME = "cmdbuildCustomModel.xml";
-		String METADATA_AUTOCOMPLETION_FILENAME = "metadataAutocompletion.xml";
-
-	}
-
-	public DmsProperties() {
-		super();
-		setProperty(ENABLED, Default.ENABLED);
-		setProperty(SERVER_URL, Default.SERVER_URL);
-		setProperty(FILE_SERVER_PORT, Default.FILE_SERVER_PORT);
-		setProperty(FILE_SERVER_URL, Default.FILE_SERVER_URL);
-		setProperty(FILE_SERVER_TYPE, Default.FILE_SERVER_TYPE);
-		setProperty(REPOSITORY_FS_PATH, Default.REPOSITORY_FS_PATH);
-		setProperty(REPOSITORY_WS_PATH, Default.REPOSITORY_WS_PATH);
-		setProperty(REPOSITORY_APP, Default.REPOSITORY_APP);
-		setProperty(PASSWORD, Default.PASSWORD);
-		setProperty(USER, Default.USER);
-		setProperty(CATEGORY_LOOKUP, Default.CATEGORY_LOOKUP);
-		setProperty(DELAY, Default.DELAY);
-		setProperty(ALFRESCO_CUSTOM_URI, Default.ALFRESCO_CUSTOM_URI);
-		setProperty(ALFRESCO_CUSTOM_PREFIX, Default.ALFRESCO_CUSTOM_PREFIX);
-		setProperty(ALFRESCO_CUSTOM_MODEL_FILENAME, Default.ALFRESCO_CUSTOM_MODULE_FILE_NAME);
-		setProperty(METADATA_AUTOCOMPLETION_FILENAME, Default.METADATA_AUTOCOMPLETION_FILENAME);
+	static {
+		DEFAULTS = newHashMap();
+		DEFAULTS.put(ENABLED, Boolean.FALSE.toString());
+		DEFAULTS.put(SERVICE, "alfresco");
+		DEFAULTS.put(SERVER_URL, "http://localhost:10080/alfresco/api");
+		DEFAULTS.put(FILE_SERVER_PORT, "1121");
+		DEFAULTS.put(FILE_SERVER_URL, "localhost");
+		DEFAULTS.put(REPOSITORY_FS_PATH, "/Alfresco/User Homes/cmdbuild");
+		DEFAULTS.put(REPOSITORY_WS_PATH, "/app:company_home/app:user_homes/");
+		DEFAULTS.put(REPOSITORY_APP, "cm:cmdbuild");
+		DEFAULTS.put(USER, "admin");
+		DEFAULTS.put(PASSWORD, "admin");
+		DEFAULTS.put(CATEGORY_LOOKUP, "AlfrescoCategory");
+		DEFAULTS.put(DELAY, "1000");
+		DEFAULTS.put(ALFRESCO_CUSTOM_URI, "org.cmdbuild.dms.alfresco");
+		DEFAULTS.put(ALFRESCO_CUSTOM_PREFIX, "cmdbuild");
+		DEFAULTS.put(ALFRESCO_CUSTOM_MODEL_FILENAME, "cmdbuildCustomModel.xml");
+		DEFAULTS.put(METADATA_AUTOCOMPLETION_FILENAME, "metadataAutocompletion.xml");
 	}
 
 	public static DmsProperties getInstance() {
 		return (DmsProperties) Settings.getInstance().getModule(MODULE_NAME);
 	}
 
+	private final Collection<ChangeListener> changeListeners;
+
+	public DmsProperties() {
+		super();
+		changeListeners = newHashSet();
+		for (final Entry<String, String> entry : DEFAULTS.entrySet()) {
+			setProperty(entry.getKey(), entry.getValue());
+		}
+	}
+
+	@Override
+	public void addListener(final ChangeListener listener) {
+		changeListeners.add(listener);
+	}
+
+	@Override
+	public void store() throws IOException {
+		super.store();
+		notifyListeners();
+	}
+
+	private void notifyListeners() {
+		for (final ChangeListener changeListener : changeListeners) {
+			changeListener.configurationChanged();
+		}
+	}
+
 	@Override
 	public boolean isEnabled() {
 		final String enabled = getProperty(ENABLED, "false");
 		return enabled.equals("true");
+	}
+
+	@Override
+	public String getService() {
+		return getProperty(SERVICE);
+	}
+
+	public void setService(final String value) {
+		setProperty(SERVICE, value);
 	}
 
 	@Override
@@ -184,23 +205,13 @@ public class DmsProperties extends DefaultProperties implements DmsConfiguration
 	}
 
 	@Override
-	public String getAlfrescoCustomModelFileName() {
-		return getProperty(ALFRESCO_CUSTOM_MODEL_FILENAME);
-	}
-
-	@Override
-	public String getAlfrescoCustomModelFileContent() {
-		return contentOf(getAlfrescoCustomModelFileName());
-	}
-
-	@Override
-	public String getMetadataAutocompletionFileName() {
-		return getProperty(METADATA_AUTOCOMPLETION_FILENAME);
+	public String getCustomModelFileContent() {
+		return contentOf(getProperty(ALFRESCO_CUSTOM_MODEL_FILENAME));
 	}
 
 	@Override
 	public String getMetadataAutocompletionFileContent() {
-		return contentOf(getMetadataAutocompletionFileName());
+		return contentOf(getProperty(METADATA_AUTOCOMPLETION_FILENAME));
 	}
 
 	private String contentOf(final String filename) {

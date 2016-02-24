@@ -19,7 +19,7 @@
 
 			this.detailGrid = new CMDBuild.Management.MasterDetailCardGrid({
 				editable: this.editable,
-				cls: "cmborderright",
+				cls: "cmdb-border-right",
 				border: false,
 				region: "center",
 				columns: [],

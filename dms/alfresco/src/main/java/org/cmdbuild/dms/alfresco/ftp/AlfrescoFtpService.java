@@ -2,17 +2,17 @@ package org.cmdbuild.dms.alfresco.ftp;
 
 import javax.activation.DataHandler;
 
-import org.cmdbuild.dms.DmsConfiguration;
 import org.cmdbuild.dms.DocumentDelete;
 import org.cmdbuild.dms.DocumentDownload;
 import org.cmdbuild.dms.DocumentSearch;
 import org.cmdbuild.dms.StorableDocument;
+import org.cmdbuild.dms.alfresco.AlfrescoDmsConfiguration;
 import org.cmdbuild.dms.alfresco.AlfrescoInnerService;
 import org.cmdbuild.dms.exception.DmsError;
 
 public class AlfrescoFtpService extends AlfrescoInnerService {
 
-	public AlfrescoFtpService(final DmsConfiguration configuration) {
+	public AlfrescoFtpService(final AlfrescoDmsConfiguration configuration) {
 		super(configuration);
 	}
 

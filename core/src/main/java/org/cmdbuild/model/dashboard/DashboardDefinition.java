@@ -13,8 +13,6 @@ public interface DashboardDefinition {
 
 	String getDescription();
 
-	String getDefaultDescription();
-
 	void setDescription(String description);
 
 	// charts

@@ -39,8 +39,8 @@
 			Ext.apply(this, {
 				title: tr.title,
 				layout: "border",
-				cls: 'cmgraypanel-nopadding',
-				bodyCls: 'cmgraypanel-nopadding',
+				cls: 'cmdb-gray-panel-no-padding',
+				bodyCls: 'cmdb-gray-panel-no-padding',
 				tbar : tbar(me),
 				buttons: buttons(me),
 				border: false,
@@ -90,8 +90,8 @@
 			region: "center",
 			frame: false,
 			border: false,
-			bodyCls: 'cmgraypanel',
-			cls: 'cmbordertop',
+			bodyCls: 'cmdb-gray-panel',
+			cls: 'cmdb-border-top',
 			style: {
 				"padding": "5px"
 			}
@@ -110,7 +110,7 @@
 			split: true,
 			border: false,
 			frame: false,
-			cls: 'cmborderbottom',
+			cls: 'cmdb-border-bottom',
 			height: "40%"
 		});
 
@@ -172,7 +172,7 @@
 
 	function buttons(me) {
 		me.saveButton = new Ext.button.Button({
-			text: CMDBuild.Translation.common.buttons.save,
+			text: CMDBuild.Translation.save,
 			disabled: true,
 			handler: function() {
 				me.delegate.onSaveButtonClick();
@@ -180,7 +180,7 @@
 		});
 
 		me.abortButton = new Ext.button.Button({
-			text: CMDBuild.Translation.common.buttons.abort,
+			text: CMDBuild.Translation.cancel,
 			disabled: true,
 			handler: function() {
 				me.delegate.onAbortButtonClick();

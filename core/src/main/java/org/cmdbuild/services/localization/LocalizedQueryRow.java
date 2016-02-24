@@ -43,7 +43,8 @@ public class LocalizedQueryRow extends ForwardingQueryRow {
 	private final Function<LookupValue, LookupValue> TRANSLATE;
 	private final Function<Entry<String, Object>, Entry<String, Object>> TRANSLATE_LOOKUPS;
 
-	protected LocalizedQueryRow(final CMQueryRow delegate, final TranslationFacade facade, final LookupStore lookupStore) {
+	protected LocalizedQueryRow(final CMQueryRow delegate, final TranslationFacade facade,
+			final LookupStore lookupStore) {
 		this.delegate = delegate;
 		this.TO_LOCALIZED_CARD = new Function<CMCard, CMCard>() {
 			@Override
@@ -162,7 +163,9 @@ public class LocalizedQueryRow extends ForwardingQueryRow {
 							.transform(toTranslationUuid()) //
 							.first();
 					if (uuid.isPresent()) {
-						final TranslationObject translationObject = converter.create(uuid.get());
+						final TranslationObject translationObject = converter //
+								.withIdentifier(uuid.get()) //
+								.create();
 						final String translatedDescription = facade.read(translationObject);
 						final String description = defaultIfBlank(translatedDescription, input.getDescription());
 						output = new LookupValue(input.getId(), description, input.getLooupType(),
@@ -178,15 +181,19 @@ public class LocalizedQueryRow extends ForwardingQueryRow {
 		};
 
 		this.TRANSLATE_LOOKUPS = new Function<Entry<String, Object>, Entry<String, Object>>() {
+
 			@Override
 			public Entry<String, Object> apply(final Entry<String, Object> input) {
 				if (input.getValue() instanceof LookupValue) {
 					LookupValue lookupValue = LookupValue.class.cast(input.getValue());
-					lookupValue = TRANSLATE.apply(lookupValue);
-					input.setValue(lookupValue);
+					if (lookupValue.getId() != null) {
+						lookupValue = TRANSLATE.apply(lookupValue);
+						input.setValue(lookupValue);
+					}
 				}
 				return input;
 			}
+
 		};
 	}
 
@@ -228,8 +235,8 @@ public class LocalizedQueryRow extends ForwardingQueryRow {
 	}
 
 	private QueryRelation proxy(final QueryRelation queryRelation) {
-		return QueryRelation.newInstance(proxy(queryRelation.getRelation()), queryRelation.getQueryDomain()
-				.getQuerySource());
+		return QueryRelation.newInstance(proxy(queryRelation.getRelation()),
+				queryRelation.getQueryDomain().getQuerySource());
 	}
 
 	private CMRelation proxy(final CMRelation relation) {

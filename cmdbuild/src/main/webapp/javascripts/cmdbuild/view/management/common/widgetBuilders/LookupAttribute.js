@@ -33,9 +33,9 @@
 		var field = new Ext.form.DisplayField({
 			allowBlank: true,
 			labelAlign: "right",
-			labelWidth: CMDBuild.LABEL_WIDTH,
+			labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
 			fieldLabel: attribute.description || attribute.name,
-			width: CMDBuild.BIG_FIELD_WIDTH,
+			width: CMDBuild.core.constants.FieldWidths.STANDARD_BIG,
 			submitValue: false,
 			name: attribute.name,
 			disabled: false,
@@ -59,12 +59,12 @@
 			if (!Ext.isEmpty(value)) {
 				var store = _CMCache.getLookupStore(attribute.lookup);
 
-				if (value.hasOwnProperty(CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION)) {
-					value = value[CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION];
+				if (value.hasOwnProperty(CMDBuild.core.constants.Proxy.DESCRIPTION)) {
+					value = value[CMDBuild.core.constants.Proxy.DESCRIPTION];
 				} else if (value.hasOwnProperty('Description')) {
 					value = value['Description'];
-				} else if (value.hasOwnProperty(CMDBuild.core.proxy.CMProxyConstants.ID)) {
-					value = value[CMDBuild.core.proxy.CMProxyConstants.ID];
+				} else if (value.hasOwnProperty(CMDBuild.core.constants.Proxy.ID)) {
+					value = value[CMDBuild.core.constants.Proxy.ID];
 				} else if (value.hasOwnProperty('Id')) {
 					value = value['Id'];
 				} else if (typeof value == 'string' && !isNaN(parseInt(value))) {
@@ -172,9 +172,9 @@
 
 
 	function buildFakeField(attribute) {
-		return new CMDBuild.field.ErasableCombo({
+		return new CMDBuild.view.common.field.CMErasableCombo({
 			labelAlign: "right",
-			labelWidth: CMDBuild.LABEL_WIDTH,
+			labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
 			fieldLabel: attribute.fieldLabel || attribute.name,
 			labelSeparator: ":",
 			name: attribute.name,
@@ -218,7 +218,7 @@
 			buttonAlign: "center",
 			buttons: [{
 				xtype: "button",
-				text: CMDBuild.Translation.common.buttons.confirm,
+				text: CMDBuild.Translation.ok,
 				handler: function() {
 					var value = fieldForTheWindow.getValue(),
 						rawValue = fieldForTheWindow.getRawValue(),
@@ -243,7 +243,7 @@
 				}
 			},{
 				xtype: "button",
-				text: CMDBuild.Translation.common.buttons.abort,
+				text: CMDBuild.Translation.cancel,
 				handler: function() {
 					me.editingWindow.destroy();
 					delete me.editingWindow;

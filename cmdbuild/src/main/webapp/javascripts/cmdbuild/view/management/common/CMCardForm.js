@@ -54,7 +54,7 @@
 				frame: false,
 				border: false,
 				hideMode: "offsets",
-				bodyCls: "x-panel-body-default-framed cmbordertop",
+				bodyCls: "x-panel-body-default-framed cmdb-border-top",
 				bodyStyle: {
 					padding: "5px 5px 0 5px"
 				},
@@ -412,13 +412,13 @@
 				}
 			});
 
-			this.printCardMenu = Ext.create('CMDBuild.core.buttons.iconized.Print', {
+			this.printCardMenu = Ext.create('CMDBuild.core.buttons.iconized.split.Print', {
 				formatList: [
-					CMDBuild.core.proxy.CMProxyConstants.PDF,
-					CMDBuild.core.proxy.CMProxyConstants.ODT
+					CMDBuild.core.constants.Proxy.PDF,
+					CMDBuild.core.constants.Proxy.ODT
 				],
 				mode: 'legacy',
-				text: CMDBuild.Translation.common.buttons.print + ' ' + CMDBuild.Translation.management.modcard.tabs.card.toLowerCase()
+				text: CMDBuild.Translation.print + ' ' + CMDBuild.Translation.management.modcard.tabs.card.toLowerCase()
 			});
 
 			this.mon(this.printCardMenu, "click", function(format) {
@@ -431,15 +431,15 @@
 				this.cloneCardButton
 			];
 
-			this.graphButton = new Ext.button.Button({
-				iconCls : "graph",
-				text : CMDBuild.Translation.management.graph.action,
-				handler: function() {
-					me.fireEvent(me.CMEVENTS.openGraphButtonClick);
+			this.graphButton = Ext.create('CMDBuild.core.buttons.iconized.RelationGraph', {
+				scope: this,
+
+				handler: function(button, e) {
+					this.fireEvent(this.CMEVENTS.openGraphButtonClick);
 				}
 			});
 
-			if (CMDBuild.Config.graph.enabled=="true") {
+			if (CMDBuild.configuration.graph.get(CMDBuild.core.constants.Proxy.ENABLED)) {
 				this.cmTBar.push(this.graphButton);
 			}
 
@@ -451,14 +451,14 @@
 		if (this.withButtons) {
 			var me = this;
 			this.saveButton = new Ext.button.Button({
-				text: CMDBuild.Translation.common.buttons.save,
+				text: CMDBuild.Translation.save,
 				handler: function() {
 					me.fireEvent(me.CMEVENTS.saveCardButtonClick);
 				}
 			});
 
 			this.cancelButton = new Ext.button.Button( {
-				text: this.readOnlyForm ? CMDBuild.Translation.common.buttons.close : CMDBuild.Translation.common.buttons.abort,
+				text: this.readOnlyForm ? CMDBuild.Translation.close : CMDBuild.Translation.cancel,
 				handler: function() {
 					me.fireEvent(me.CMEVENTS.abortButtonClick);
 				}

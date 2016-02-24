@@ -11,8 +11,8 @@
 		build: function() {
 			this.name = new Ext.form.TextField({
 				fieldLabel: CMDBuild.Translation.administration.modClass.attributeProperties.name,
-				labelWidth: CMDBuild.LABEL_WIDTH,
-				width: CMDBuild.ADM_BIG_FIELD_WIDTH,
+				labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
+				width: CMDBuild.core.constants.FieldWidths.ADMINISTRATION_BIG,
 				name: NAME,
 				allowBlank: false,
 				vtype: "alphanum",
@@ -21,11 +21,11 @@
 
 			this.description= Ext.create('CMDBuild.view.common.field.translatable.Text', {
 				fieldLabel: CMDBuild.Translation.administration.modClass.attributeProperties.description,
-				labelWidth: CMDBuild.LABEL_WIDTH,
-				width: CMDBuild.ADM_BIG_FIELD_WIDTH,
+				labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
+				width: CMDBuild.core.constants.FieldWidths.ADMINISTRATION_BIG,
 				name: _CMProxy.parameter.DESCRIPTION,
 				allowBlank: false,
-				vtype: "cmdbcomment"
+				vtype: "commentextended"
 			});
 
 			return [this.name, this.description];

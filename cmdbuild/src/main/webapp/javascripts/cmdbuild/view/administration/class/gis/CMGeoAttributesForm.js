@@ -1,7 +1,8 @@
 (function() {
-	var point = CMDBuild.Constants.geoTypes.point,
-		line = CMDBuild.Constants.geoTypes.line,
-		polygon = CMDBuild.Constants.geoTypes.polygon,
+
+	var point = 'POINT',
+		line = 'LINESTRING',
+		polygon = 'POLYGON',
 		tr_attribute = CMDBuild.Translation.administration.modClass.attributeProperties,
 		tr = CMDBuild.Translation.administration.modClass.geo_attributes;
 
@@ -20,8 +21,8 @@
 				plugins : [new CMDBuild.FormPlugin()],
 				frame: false,
 				border: false,
-				cls: "x-panel-body-default-framed cmbordertop",
-				bodyCls: 'cmgraypanel',
+				cls: "x-panel-body-default-framed cmdb-border-top",
+				bodyCls: 'cmdb-gray-panel',
 				tbar: this.cmTBar,
 				layout: {
 					type: 'hbox',
@@ -34,7 +35,7 @@
 
 			this.callParent(arguments);
 			this.disableModify(enableCMTbar = false);
-			
+
 			this.name.on("change", function(fieldname, newValue, oldValue) {
 				this.autoComplete(this.description, newValue, oldValue);
 			}, this);
@@ -51,13 +52,13 @@
 			}
 			return out;
 		},
-		
+
 		onClassSelected: function() {
 			this.reset();
 			this.hideStyleFields();
 			this.disableModify(enableCMTbar = false);
 		},
-		
+
 		onAttributeSelected: function(attribute) {
 			this.reset();
 
@@ -68,13 +69,13 @@
 				this.disableModify(enableCMTbar = true);
 			}
 		},
-		
+
 		iterateOverStyleFields: function(fn) {
 			for (var key in this.styleFieldsMap) {
 				fn(this.styleFieldsMap[key]);
 			}
 		},
-		
+
 		hideStyleFields: function() {
 			this.iterateOverStyleFields(function(f) {
 				f.hide();
@@ -98,7 +99,7 @@
 			this.styleProperties.setDefaults();
 		}
 	});
-	
+
 	function fillStyleFields(style) {
 		if (style) {
 			for ( var propName in style) {
@@ -110,8 +111,8 @@
 	function buildGenericProperties() {
 		this.name = new Ext.form.TextField({
 			fieldLabel: tr_attribute.name,
-			labelWidth: CMDBuild.LABEL_WIDTH,
-			width: CMDBuild.ADM_BIG_FIELD_WIDTH,
+			labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
+			width: CMDBuild.core.constants.FieldWidths.ADMINISTRATION_BIG,
 			name: "name",
 			cmImmutable: true,
 			vtype : 'alphanum',
@@ -120,16 +121,16 @@
 
 		this.description = new Ext.form.TextField({
 			fieldLabel: tr_attribute.description,
-			labelWidth: CMDBuild.LABEL_WIDTH,
-			width: CMDBuild.ADM_BIG_FIELD_WIDTH,
+			labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
+			width: CMDBuild.core.constants.FieldWidths.ADMINISTRATION_BIG,
 			name: "description",
 			allowBlank: false
 		});
 
 		this.minZoom = new Ext.form.SliderField( {
 			fieldLabel: tr.min_zoom,
-			labelWidth: CMDBuild.LABEL_WIDTH,
-			width: CMDBuild.ADM_BIG_FIELD_WIDTH,
+			labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
+			width: CMDBuild.core.constants.FieldWidths.ADMINISTRATION_BIG,
 			minValue: 0,
 			maxValue: 25,
 			name: "minZoom"
@@ -137,8 +138,8 @@
 
 		this.maxZoom = new Ext.form.SliderField( {
 			fieldLabel: tr.max_zoom,
-			labelWidth: CMDBuild.LABEL_WIDTH,
-			width: CMDBuild.ADM_BIG_FIELD_WIDTH,
+			labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
+			width: CMDBuild.core.constants.FieldWidths.ADMINISTRATION_BIG,
 			minValue: 0,
 			maxValue: 25,
 			value: 25,
@@ -156,11 +157,11 @@
 
 	function buildButtons() {
 		this.saveButton = new Ext.button.Button({
-			text: CMDBuild.Translation.common.buttons.save
+			text: CMDBuild.Translation.save
 		});
 
 		this.abortButton = new Ext.button.Button( {
-			text: CMDBuild.Translation.common.buttons.abort
+			text: CMDBuild.Translation.cancel
 		});
 
 		this.cancelButton = new Ext.button.Button({
@@ -191,14 +192,14 @@
 			autoScroll: true,
 			name: "type",
 			fieldLabel: tr_attribute.type,
-			labelWidth: CMDBuild.LABEL_WIDTH,
-			width: CMDBuild.ADM_MEDIUM_FIELD_WIDTH,
+			labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
+			width: CMDBuild.core.constants.FieldWidths.ADMINISTRATION_MEDIUM,
 			valueField: "value",
 			displayField: "name",
 			queryMode: "local",
 			cmImmutable: true
 		});
-		
+
 		this.types.setValue = Ext.Function.createSequence(this.types.setValue, function(v) {
 			if (v) {
 				if (typeof v == "string") {
@@ -211,15 +212,15 @@
 				}
 			}
 		}, this);
-		
+
 		this.styleFieldsMap = {
 			externalGraphic: new CMDBuild.IconsCombo({
 				store: CMDBuild.ServiceProxy.Icons.getIconStore(),
 				name: "externalGraphic",
 				hiddenName: "externalGraphic",
 				fieldLabel: tr.externalGraphic,
-				labelWidth: CMDBuild.LABEL_WIDTH,
-				width: CMDBuild.ADM_MEDIUM_FIELD_WIDTH,
+				labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
+				width: CMDBuild.core.constants.FieldWidths.ADMINISTRATION_MEDIUM,
 				allowedGeoTypes: {POINT: true},
 				valueField: "path",
 				displayField: "description",
@@ -228,8 +229,8 @@
 
 			pointRadius: new Ext.form.field.Number({
 				fieldLabel: tr.pointRadius,
-				labelWidth: CMDBuild.LABEL_WIDTH,
-				width: CMDBuild.ADM_SMALL_FIELD_WIDTH,
+				labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
+				width: CMDBuild.core.constants.FieldWidths.ADMINISTRATION_SMALL,
 				defaultValue: 6,
 				minValue: 0,
 				maxValue: 100,
@@ -241,15 +242,15 @@
 
 			fillColor: new CMDBuild.form.HexColorField( {
 				name: "fillColor",
-				labelWidth: CMDBuild.LABEL_WIDTH,
-				width: CMDBuild.ADM_MEDIUM_FIELD_WIDTH,
+				labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
+				width: CMDBuild.core.constants.FieldWidths.ADMINISTRATION_MEDIUM,
 				fieldLabel: tr.fillColor,
 				allowedGeoTypes: {POINT: true, POLYGON: true}
 			}),
 
 			fillOpacity: new Ext.form.SliderField( {
-				labelWidth: CMDBuild.LABEL_WIDTH,
-				width: CMDBuild.ADM_BIG_FIELD_WIDTH,
+				labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
+				width: CMDBuild.core.constants.FieldWidths.ADMINISTRATION_BIG,
 				minValue: 0,
 				maxValue: 1,
 				defaultValue: 1,
@@ -268,8 +269,8 @@
 			strokeColor : new CMDBuild.form.HexColorField( {
 				disabled : true,
 				name : "strokeColor",
-				labelWidth : CMDBuild.LABEL_WIDTH,
-				width : CMDBuild.ADM_MEDIUM_FIELD_WIDTH,
+				labelWidth : CMDBuild.core.constants.FieldWidths.LABEL,
+				width : CMDBuild.core.constants.FieldWidths.ADMINISTRATION_MEDIUM,
 				fieldLabel : tr.strokeColor,
 				defaultValue : "000000",
 				hidden : true,
@@ -283,8 +284,8 @@
 			strokeOpacity:  new Ext.form.SliderField( {
 				minValue: 0,
 				maxValue: 1,
-				labelWidth: CMDBuild.LABEL_WIDTH,
-				width: CMDBuild.ADM_BIG_FIELD_WIDTH,
+				labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
+				width: CMDBuild.core.constants.FieldWidths.ADMINISTRATION_BIG,
 				defaultValue: 1,
 				decimalPrecision: 1,
 				increment: 0.1,
@@ -300,8 +301,8 @@
 
 			strokeWidth: new Ext.form.field.Number({
 				fieldLabel: tr.strokeWidth,
-				labelWidth: CMDBuild.LABEL_WIDTH,
-				width: CMDBuild.ADM_SMALL_FIELD_WIDTH,
+				labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
+				width: CMDBuild.core.constants.FieldWidths.ADMINISTRATION_SMALL,
 				name: "strokeWidth",
 				defaultValue: 1,
 				minValue: 0,
@@ -313,7 +314,7 @@
 				store: new Ext.data.SimpleStore( {
 					fields: ["value", "name"],
 					data: [
-						["dot", tr.strokeStyles.dot], 
+						["dot", tr.strokeStyles.dot],
 						["dash", tr.strokeStyles.dash],
 						["dashdot", tr.strokeStyles.dashdot],
 						["longdash", tr.strokeStyles.longdash],
@@ -324,8 +325,8 @@
 				name: "strokeDashstyle",
 				hiddenName: "strokeDashstyle",
 				fieldLabel: tr.strokeDashstyle,
-				labelWidth: CMDBuild.LABEL_WIDTH,
-				width: CMDBuild.ADM_MEDIUM_FIELD_WIDTH,
+				labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
+				width: CMDBuild.core.constants.FieldWidths.ADMINISTRATION_MEDIUM,
 				allowedGeoTypes: {POINT: true, POLYGON: true, LINESTRING: true},
 				valueField: "value",
 				displayField: "name",

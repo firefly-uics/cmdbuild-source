@@ -7,37 +7,131 @@
 		layout: 'border',
 
 		constructor: function(config) {
-
-			var tabs = CMDBuild.model.CMUIConfigurationModel.processTabs;
-			var disabledTabs = _CMUIConfiguration.getDisabledProcessTabs();
-
 			this.activityTab = new CMDBuild.view.management.workflow.CMActivityPanel({
 				title: CMDBuild.Translation.management.modworkflow.tabs.card,
 				border: false,
 				withToolBar: true,
-				withButtons: true
+				withButtons: true,
+
+				listeners: {
+					show: function(panel, eOpts) {
+						// History record save
+						CMDBuild.global.navigation.Chronology.cmfg('navigationChronologyRecordSave', {
+							moduleId: 'workflow',
+							entryType: {
+								description: _CMWFState.getProcessClassRef().get(CMDBuild.core.constants.Proxy.TEXT),
+								id: _CMWFState.getProcessClassRef().get(CMDBuild.core.constants.Proxy.ID),
+								object: _CMWFState.getProcessClassRef()
+							},
+							item: {
+								description: _CMWFState.getProcessInstance().get(CMDBuild.core.constants.Proxy.TEXT),
+								id: _CMWFState.getProcessInstance().get(CMDBuild.core.constants.Proxy.ID),
+								object: _CMWFState.getProcessInstance()
+							},
+							section: {
+								description: this.title,
+								object: this
+							}
+						});
+					}
+				}
 			});
 
-			this.openNotePanel = isEnabled(disabledTabs, tabs.notes) ? new CMDBuild.view.management.common.widgets.CMOpenNotes({
-				title: CMDBuild.Translation.management.modworkflow.tabs.notes,
-				border: false
-			}) : null;
+			this.openNotePanel = CMDBuild.configuration.userInterface.isDisabledProcessTab(CMDBuild.core.constants.Proxy.PROCESS_NOTE_TAB) ? null
+				: new CMDBuild.view.management.common.widgets.CMOpenNotes({
+					title: CMDBuild.Translation.management.modworkflow.tabs.notes,
+					border: false,
 
-			this.relationsPanel = isEnabled(disabledTabs, tabs.relations) ? new CMDBuild.view.management.classes.CMCardRelationsPanel({
-				title: CMDBuild.Translation.management.modworkflow.tabs.relations,
-				border: false,
-				cmWithAddButton: false,
-				cmWithEditRelationIcons: false
-			}) : null;
+					listeners: {
+						show: function(panel, eOpts) {
+							// History record save
+							CMDBuild.global.navigation.Chronology.cmfg('navigationChronologyRecordSave', {
+								moduleId: 'workflow',
+								entryType: {
+									description: _CMWFState.getProcessClassRef().get(CMDBuild.core.constants.Proxy.TEXT),
+									id: _CMWFState.getProcessClassRef().get(CMDBuild.core.constants.Proxy.ID),
+									object: _CMWFState.getProcessClassRef()
+								},
+								item: {
+									description: _CMWFState.getProcessInstance().get(CMDBuild.core.constants.Proxy.TEXT),
+									id: _CMWFState.getProcessInstance().get(CMDBuild.core.constants.Proxy.ID),
+									object: _CMWFState.getProcessInstance()
+								},
+								section: {
+									description: this.title,
+									object: this
+								}
+							});
+						}
+					}
+				})
+			;
 
-			this.openAttachmentPanel = isEnabled(disabledTabs, tabs.attachments) ? new CMDBuild.view.management.common.widgets.CMOpenAttachment({
-				title: CMDBuild.Translation.management.modworkflow.tabs.attachments,
-				border: false
-			}) : null;
+			this.relationsPanel = CMDBuild.configuration.userInterface.isDisabledProcessTab(CMDBuild.core.constants.Proxy.PROCESS_RELATION_TAB) ? null
+				: new CMDBuild.view.management.classes.CMCardRelationsPanel({
+					title: CMDBuild.Translation.management.modworkflow.tabs.relations,
+					border: false,
+					cmWithAddButton: false,
+					cmWithEditRelationIcons: false,
+
+					listeners: {
+						show: function(panel, eOpts) {
+							// History record save
+							CMDBuild.global.navigation.Chronology.cmfg('navigationChronologyRecordSave', {
+								moduleId: 'workflow',
+								entryType: {
+									description: _CMWFState.getProcessClassRef().get(CMDBuild.core.constants.Proxy.TEXT),
+									id: _CMWFState.getProcessClassRef().get(CMDBuild.core.constants.Proxy.ID),
+									object: _CMWFState.getProcessClassRef()
+								},
+								item: {
+									description: _CMWFState.getProcessInstance().get(CMDBuild.core.constants.Proxy.TEXT),
+									id: _CMWFState.getProcessInstance().get(CMDBuild.core.constants.Proxy.ID),
+									object: _CMWFState.getProcessInstance()
+								},
+								section: {
+									description: this.title,
+									object: this
+								}
+							});
+						}
+					}
+				})
+			;
+
+			this.openAttachmentPanel = CMDBuild.configuration.userInterface.isDisabledProcessTab(CMDBuild.core.constants.Proxy.PROCESS_ATTACHMENT_TAB) ? null
+				: new CMDBuild.view.management.common.widgets.CMOpenAttachment({
+					title: CMDBuild.Translation.management.modworkflow.tabs.attachments,
+					border: false,
+
+					listeners: {
+						show: function(panel, eOpts) {
+							// History record save
+							CMDBuild.global.navigation.Chronology.cmfg('navigationChronologyRecordSave', {
+								moduleId: 'workflow',
+								entryType: {
+									description: _CMWFState.getProcessClassRef().get(CMDBuild.core.constants.Proxy.TEXT),
+									id: _CMWFState.getProcessClassRef().get(CMDBuild.core.constants.Proxy.ID),
+									object: _CMWFState.getProcessClassRef()
+								},
+								item: {
+									description: _CMWFState.getProcessInstance().get(CMDBuild.core.constants.Proxy.TEXT),
+									id: _CMWFState.getProcessInstance().get(CMDBuild.core.constants.Proxy.ID),
+									object: _CMWFState.getProcessInstance()
+								},
+								section: {
+									description: this.title,
+									object: this
+								}
+							});
+						}
+					}
+				})
+			;
 
 			this.acutalPanel = new Ext.tab.Panel({
 				region: "center",
-				cls: "cmborderright",
+				cls: "cmdb-border-right",
 				activeTab: 0,
 				frame: false,
 				border: false,
@@ -97,12 +191,6 @@
 			if (this.ignoreTabActivationManagement) {
 				this.ignoreTabActivationManagement = false;
 				return;
-			}
-		},
-
-		activateRelationTab: function() {
-			if (relationsPanel != null) {
-				this.acutalPanel.setActiveTab(this.relationsPanel);
 			}
 		},
 
@@ -167,6 +255,16 @@
 
 		activateFirstTab: function() {
 			this.acutalPanel.setActiveTab(this.activityTab);
+		},
+
+		/**
+		 * @param {Object} tab
+		 */
+		activeTabSet: function(tab) {
+			if (!Ext.Object.isEmpty(tab) && Ext.isObject(tab))
+				return this.acutalPanel.setActiveTab(tab);
+
+			return this.acutalPanel.setActiveTab(this.activityTab);
 		}
 	});
 
@@ -198,9 +296,5 @@
 			}
 		}
 	});
-
-	function isEnabled(disabledTabs, name) {
-		return !Ext.Array.contains(disabledTabs, name);
-	}
 
 })();

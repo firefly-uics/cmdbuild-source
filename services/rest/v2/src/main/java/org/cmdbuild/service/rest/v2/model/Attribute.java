@@ -4,6 +4,7 @@ import static org.cmdbuild.service.rest.v2.constants.Serialization.ACTIVE;
 import static org.cmdbuild.service.rest.v2.constants.Serialization.DEFAULT_VALUE;
 import static org.cmdbuild.service.rest.v2.constants.Serialization.DESCRIPTION;
 import static org.cmdbuild.service.rest.v2.constants.Serialization.DISPLAYABLE_IN_LIST;
+import static org.cmdbuild.service.rest.v2.constants.Serialization.DOMAIN_NAME;
 import static org.cmdbuild.service.rest.v2.constants.Serialization.EDITOR_TYPE;
 import static org.cmdbuild.service.rest.v2.constants.Serialization.FILTER;
 import static org.cmdbuild.service.rest.v2.constants.Serialization.GROUP;
@@ -96,6 +97,7 @@ public class Attribute extends ModelWithStringId {
 	private String name;
 	private String description;
 	private boolean displayableInList;
+	private String domainName;
 	private boolean unique;
 	private boolean mandatory;
 	private boolean inherited;
@@ -153,6 +155,15 @@ public class Attribute extends ModelWithStringId {
 
 	void setDisplayableInList(final boolean displayableInList) {
 		this.displayableInList = displayableInList;
+	}
+
+	@XmlAttribute(name = DOMAIN_NAME)
+	public String getDomainName() {
+		return domainName;
+	}
+
+	void setDomainName(final String domainName) {
+		this.domainName = domainName;
 	}
 
 	@XmlAttribute(name = UNIQUE)

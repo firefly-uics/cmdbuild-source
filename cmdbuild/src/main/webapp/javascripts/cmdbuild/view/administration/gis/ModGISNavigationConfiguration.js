@@ -24,7 +24,7 @@
 			this.buttonAlign = "center";
 			this.frame = false;
 			this.cls = "x-panel-body-default-framed";
-			this.bodyCls = "cmgraypanel";
+			this.bodyCls = "cmdb-gray-panel";
 			this.bodyStyle = "padding: 5px";
 
 			var me = this;
@@ -35,7 +35,7 @@
 			this.classesMenu.addDelegate(this);
 
 			this.saveButton = new Ext.button.Button({
-				text: CMDBuild.Translation.common.buttons.save,
+				text: CMDBuild.Translation.save,
 				disabled: true,
 				handler: function() {
 					me.callDelegates("onGISNavigationSaveButtonClick", me);

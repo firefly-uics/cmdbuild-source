@@ -4,7 +4,7 @@
 
 		initComponent: function() {
 			this.backToActivityButton = new Ext.button.Button({
-				text: CMDBuild.Translation.common.buttons.workflow.back
+				text: CMDBuild.Translation.back
 			});
 
 			Ext.apply(this, {
@@ -37,7 +37,7 @@
 		cmActivate: function() {
 			this.enable();
 
-			// rendering issues, call showBackButton only after	
+			// rendering issues, call showBackButton only after
 			// that the  panel did actually activated
 			this.mon(this, "activate", this.showBackButton, this, {single: true});
 

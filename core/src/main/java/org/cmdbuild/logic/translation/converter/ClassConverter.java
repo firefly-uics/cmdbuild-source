@@ -2,12 +2,11 @@ package org.cmdbuild.logic.translation.converter;
 
 import java.util.Map;
 
-import org.cmdbuild.logic.translation.TranslationObject;
 import org.cmdbuild.logic.translation.object.ClassDescription;
 
 import com.google.common.collect.Maps;
 
-public enum ClassConverter {
+public enum ClassConverter implements Converter {
 
 	DESCRIPTION(description()) {
 
@@ -17,22 +16,17 @@ public enum ClassConverter {
 		}
 
 		@Override
-		public ClassConverter withTranslations(final Map<String, String> map) {
-			translations = map;
-			return this;
-		}
-
-		@Override
-		public ClassDescription create(final String name) {
+		public ClassDescription create() {
 			final org.cmdbuild.logic.translation.object.ClassDescription.Builder builder = ClassDescription
 					.newInstance() //
-					.withClassName(name);
+					.withClassName(className);
 
 			if (!translations.isEmpty()) {
 				builder.withTranslations(translations);
 			}
 			return builder.build();
 		}
+
 	},
 
 	UNDEFINED(undefined()) {
@@ -43,32 +37,40 @@ public enum ClassConverter {
 		}
 
 		@Override
-		public ClassConverter withTranslations(final Map<String, String> map) {
-			throw new UnsupportedOperationException();
-		}
-
-		@Override
-		public ClassDescription create(final String name) {
+		public ClassDescription create() {
 			throw new UnsupportedOperationException();
 		}
 	};
 
 	private final String fieldName;
+
+	private static String className;
 	private static Map<String, String> translations = Maps.newHashMap();
-	
+
 	private static final String DESCRIPTION_FIELD = "description";
 	private static final String UNDEFINED_FIELD = "undefined";
 
-	public abstract TranslationObject create(String name);
+	@Override
+	public Converter withIdentifier(final String identifier) {
+		className = identifier;
+		return this;
+	}
 
-	public abstract ClassConverter withTranslations(Map<String, String> map);
+	@Override
+	public Converter withOwner(final String parentIdentifier) {
+		return this;
+	}
 
-	public abstract boolean isValid();
-	
+	@Override
+	public Converter withTranslations(final Map<String, String> map) {
+		translations = map;
+		return this;
+	}
+
 	public static String description() {
 		return DESCRIPTION_FIELD;
 	}
-	
+
 	private static String undefined() {
 		return UNDEFINED_FIELD;
 	}

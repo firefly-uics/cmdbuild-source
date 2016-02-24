@@ -1,24 +1,20 @@
 (function() {
-	var constants = CMDBuild.Constants;
+
 	var dashboardClassesProcessStore = null;
 
 	Ext.define("CMDBuild.cache.CMCache", {
 		extend: "Ext.util.Observable",
 
-		requires: ['CMDBuild.core.proxy.CMProxyUrlIndex'],
+		requires: ['CMDBuild.core.proxy.Index'],
 
 		mixins: {
 			lookup: "CMDBUild.cache.CMCacheLookupFunctions",
 			entryType: "CMDBUild.cache.CMCacheClassFunctions",
-			groups: "CMDBUild.cache.CMCacheGroupsFunctions",
 			domains: "CMDBUild.cache.CMCacheDomainFunctions",
-			reports: "CMDBUild.cache.CMCacheReportFunctions",
 			dashboards: "CMDBuild.cache.CMCacheDashboardFunctions",
 			attachmentCategories: "CMDBUild.cache.CMCacheAttachmentCategoryFunctions",
 			gis: "CMDBUild.cache.CMCacheGisFunctions",
-			filters: "CMDBuild.cache.CMCacheFilterFunctions",
-			translations: "CMDBUild.cache.CMCacheTranslationsFunctions",
-			navigationTrees: "CMDBUild.cache.CMCacheNavigationTreesFunctions"
+			filters: "CMDBuild.cache.CMCacheFilterFunctions"
 		},
 
 		constructor: function() {
@@ -191,7 +187,7 @@
 				pageSize: parseInt(CMDBuild.Config.cmdbuild.referencecombolimit),
 				proxy: {
 					type: 'ajax',
-					url: CMDBuild.core.proxy.CMProxyUrlIndex.card.getListShort,
+					url: CMDBuild.core.proxy.Index.card.getListShort,
 					reader: {
 						type: 'json',
 						root: 'rows',
@@ -218,8 +214,8 @@
 				return superClass && subClass && subClass.isAncestor(superClass);
 			};
 			return superclassId == subclassId
-				|| isDescendant(this.getTree(CMDBuild.Constants.treeNames.classTree), superclassId, subclassId)
-				|| isDescendant(this.getTree(CMDBuild.Constants.treeNames.processTree), superclassId, subclassId);
+				|| isDescendant(this.getTree('class_tree'), superclassId, subclassId)
+				|| isDescendant(this.getTree('process_tree'), superclassId, subclassId);
 		},
 
 		onClassContentChanged: function(idClass) {
@@ -284,13 +280,22 @@
 	function getTableGroup (table) {
 		//the simple table are discriminate by the tableType
 		var type;
+		var cachedTableType = {
+			"class": "class",
+			processclass: "processclass",
+			simpletable: "simpletable",
+			report: "report",
+			lookuptype: "lookuptype",
+			group: "group"
+		};
+
 		if (table.tableType && table.tableType != "standard") {
 			type = table.tableType;
 		} else {
 			type = table.type;
 		}
 
-		if (constants.cachedTableType[type]) {
+		if (cachedTableType[type]) {
 			return type;
 		} else {
 			throw new Error("Unsupported node type: "+type);

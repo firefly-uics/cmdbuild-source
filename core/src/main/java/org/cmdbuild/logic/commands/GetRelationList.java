@@ -98,25 +98,30 @@ public class GetRelationList extends AbstractGetRelation {
 		}
 
 		final CMClass sourceType = view.findClass(src.getClassName());
-		final SorterMapper sorterMapper = new JsonSorterMapper(sourceType, queryOptions.getSorters());
-		final List<OrderByClause> orderByClauses = sorterMapper.deserialize();
-		final FilterMapper filterMapper = JsonFilterMapper.newInstance() //
-				.withDataView(view) //
-				.withEntryType(sourceType) //
-				.withEntryTypeAlias(SRC_ALIAS) //
-				.withFilterObject(queryOptions.getFilter()) //
-				.build();
-		final Iterable<WhereClause> whereClauses = filterMapper.whereClauses();
-		final WhereClause filtersOnRelations = isEmpty(whereClauses) ? trueWhereClause() : and(whereClauses);
-		final CMDomain domain = getQueryDomain(domainWithSource);
-		final QuerySpecsBuilder querySpecsBuilder = getRelationQuerySpecsBuilder(src, domain, filtersOnRelations) //
-				.limit(queryOptions.getLimit()) //
-				.offset(queryOptions.getOffset());
-		addOrderByClauses(querySpecsBuilder, orderByClauses);
-
-		final CMQueryResult relationList = querySpecsBuilder.run();
 		final String domainSource = (domainWithSource != null) ? domainWithSource.querySource : null;
-		return createRelationListResponse(relationList, domainSource);
+
+		if (sourceType.isSimple()) {
+			return createRelationListResponse(CMQueryResult.EMPTY, domainSource);
+		} else {
+			final SorterMapper sorterMapper = new JsonSorterMapper(sourceType, queryOptions.getSorters());
+			final List<OrderByClause> orderByClauses = sorterMapper.deserialize();
+			final FilterMapper filterMapper = JsonFilterMapper.newInstance() //
+					.withDataView(view) //
+					.withEntryType(sourceType) //
+					.withEntryTypeAlias(SRC_ALIAS) //
+					.withFilterObject(queryOptions.getFilter()) //
+					.build();
+			final Iterable<WhereClause> whereClauses = filterMapper.whereClauses();
+			final WhereClause filtersOnRelations = isEmpty(whereClauses) ? trueWhereClause() : and(whereClauses);
+			final CMDomain domain = getQueryDomain(domainWithSource);
+			final QuerySpecsBuilder querySpecsBuilder = getRelationQuerySpecsBuilder(src, domain, filtersOnRelations) //
+					.limit(queryOptions.getLimit()) //
+					.offset(queryOptions.getOffset());
+			addOrderByClauses(querySpecsBuilder, orderByClauses);
+
+			final CMQueryResult relationList = querySpecsBuilder.run();
+			return createRelationListResponse(relationList, domainSource);
+		}
 	}
 
 	public GetRelationListResponse exec(final CMDomain domain, final QueryOptions queryOptions) {

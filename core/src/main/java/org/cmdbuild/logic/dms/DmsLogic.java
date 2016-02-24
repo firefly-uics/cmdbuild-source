@@ -37,7 +37,8 @@ public interface DmsLogic extends Logic {
 	 * 
 	 * @return the {@link DocumentTypeDefinition} for the specified category.
 	 * 
-	 * @throws {@link DmsException} if cannot read definitions.
+	 * @throws {@link
+	 *             DmsException} if cannot read definitions.
 	 */
 	DocumentTypeDefinition getCategoryDefinition(String category);
 
@@ -47,7 +48,8 @@ public interface DmsLogic extends Logic {
 	 * 
 	 * @return the all {@link DocumentTypeDefinition}s.
 	 * 
-	 * @throws {@link DmsException} if cannot read definitions.
+	 * @throws {@link
+	 *             DmsException} if cannot read definitions.
 	 */
 	Iterable<DocumentTypeDefinition> getConfiguredCategoryDefinitions();
 
@@ -76,15 +78,14 @@ public interface DmsLogic extends Logic {
 
 	Optional<StoredDocument> search(String className, Long cardId, String fileName);
 
-	void upload(String author, String className, Long cardId, InputStream inputStream, String fileName,
-			String category, String description, Iterable<MetadataGroup> metadataGroups) throws IOException,
-			CMDBException;
+	void upload(String author, String className, Long cardId, InputStream inputStream, String fileName, String category,
+			String description, Iterable<MetadataGroup> metadataGroups) throws IOException, CMDBException;
 
 	DataHandler download(String className, Long cardId, String fileName);
 
 	void delete(String className, Long cardId, String fileName) throws DmsException;
 
-	void updateDescriptionAndMetadata(String className, Long cardId, String filename, String category,
+	void updateDescriptionAndMetadata(String author, String className, Long cardId, String filename, String category,
 			String description, Iterable<MetadataGroup> metadataGroups);
 
 	void copy(String sourceClassName, Long sourceId, String filename, String destinationClassName, Long destinationId);

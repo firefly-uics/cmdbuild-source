@@ -63,6 +63,8 @@
 	Ext.define("CMDBuild.view.management.common.CMCardGrid", {
 		extend: "Ext.grid.Panel",
 
+		requires: ['CMDBuild.core.constants.Global'],
+
 		mixins: {
 			delegable: "CMDBuild.core.CMDelegable"
 		},
@@ -225,11 +227,6 @@
 								this.getSelectionModel().select(0);
 							}
 						}
-					} else {
-						CMDBuild.core.Message.error(null, {
-							text: CMDBuild.Translation.errors.unknown_error,
-							detail: operation.error
-						});
 					}
 				}
 			});
@@ -310,10 +307,7 @@
 
 			headers = headers.concat(this.buildExtraColumns());
 
-			if (this.cmAddGraphColumn
-					&& CMDBuild.Config.graph
-					&& CMDBuild.Config.graph.enabled=="true") {
-
+			if (this.cmAddGraphColumn && CMDBuild.configuration.graph.get(CMDBuild.core.constants.Proxy.ENABLED)) {
 				buildGraphIconColumn.call(this, headers);
 			}
 
@@ -394,7 +388,7 @@
 
 		// protected
 		getStoreForFields: function(fields) {
-			var pageSize = _CMUtils.grid.getPageSize();
+			var pageSize = CMDBuild.configuration.instance.get(CMDBuild.core.constants.Proxy.ROW_LIMIT);
 			var s = this.buildStore(fields, pageSize);
 
 			this.mon(s, "beforeload", function() {
@@ -529,10 +523,10 @@
 		}
 
 		if (me.cmAddPrintButton) {
-			me.printGridMenu = Ext.create('CMDBuild.core.buttons.iconized.Print', {
+			me.printGridMenu = Ext.create('CMDBuild.core.buttons.iconized.split.Print', {
 				formatList: [
-					CMDBuild.core.proxy.CMProxyConstants.PDF,
-					CMDBuild.core.proxy.CMProxyConstants.CSV
+					CMDBuild.core.constants.Proxy.PDF,
+					CMDBuild.core.constants.Proxy.CSV
 				],
 				mode: 'legacy',
 				disabled: true
@@ -553,39 +547,50 @@
 		me.bbar = me.pagingBar;
 	}
 
+	/**
+	 * @param {Array} headers
+	 *
+	 * @private
+	 */
 	function buildGraphIconColumn(headers) {
-		 var c = _CMCache.getClassById(this.currentClassId);
+		var classModel = _CMCache.getClassById(this.currentClassId);
 
-		 if (c && c.get("tableType") != "simpletable") {
-			var graphHeader = {
-					noWrap: true,
-				header: '&nbsp',
-				width: 30,
-				tdCls: "grid-button",
-				fixed: true,
-				sortable: false,
-				renderer: renderGraphIcon,
-				align: 'center',
-				dataIndex: 'Id',
-				menuDisabled: true,
-				hideable: false
-			};
-			headers.push(graphHeader);
+		if (
+			!Ext.isEmpty(classModel) && classModel.get('tableType') != CMDBuild.core.constants.Global.getTableTypeSimpleTable()
+			&& Ext.isArray(headers)
+		) {
+			headers.push(
+				Ext.create('Ext.grid.column.Action', {
+					align: 'center',
+					width: 30,
+					sortable: false,
+					hideable: false,
+					menuDisabled: true,
+					fixed: true,
+
+					items: [
+						Ext.create('CMDBuild.core.buttons.iconized.Graph', {
+							withSpacer: true,
+							tooltip: CMDBuild.Translation.openRelationGraph,
+							scope: this,
+
+							// TODO: cmfg() controller call implementation  on controller refactor
+							handler: function(grid, rowIndex, colIndex, node, e, record, rowNode) {
+								Ext.create('CMDBuild.controller.management.common.graph.Graph', {
+									parentDelegate: this,
+									classId: record.get('IdClass'),
+									cardId: record.get('id')
+								});
+							}
+						})
+					]
+				})
+			);
 		}
 	};
 
-	function renderGraphIcon() {
-		return '<img style="cursor:pointer" title="'
-			+ CMDBuild.Translation.management.graph.icon_tooltip
-			+'" class="action-open-graph" src="images/icons/chart_organisation.png"/>';
-	}
-
 	function cellclickHandler(grid, model, htmlelement, rowIndex, event, opt) {
-		var action = event.target.className;
-		if (action == 'action-open-graph') {
-			CMDBuild.Management.showGraphWindow(model.get("IdClass"), model.get("Id"));
-		}
-
-		this.callDelegates("onCMCardGridIconRowClick", [grid, action, model]);
+		this.callDelegates("onCMCardGridIconRowClick", [grid, event.target.className, model]);
 	}
+
 })();

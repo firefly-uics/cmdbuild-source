@@ -3,7 +3,7 @@
 	Ext.define("CMDBuild.view.management.dashboard.CMChartPortletForm", {
 		extend: "Ext.form.Panel",
 
-		requires: ['CMDBuild.core.proxy.CMProxyConstants'],
+		requires: ['CMDBuild.core.constants.Proxy'],
 
 		initComponent: function() {
 			this.callParent(arguments);
@@ -25,26 +25,26 @@
 		 * are the ones with a url setted on the proxy
 		 * */
 		checkStoreLoad: function(cb) {
-			var requestBarrier = new CMDBuild.Utils.CMRequestBarrier(cb);
+			var barrierId = 'chart';
 			var someStore = false;
 
-			this.cascade(function(item) {
-				if (item
-						&& item.store
-						&& item.store.proxy
-						&& item.store.proxy.url) {
+			CMDBuild.core.RequestBarrier.init(barrierId, cb);
 
+			this.cascade(function(item) {
+				if (
+					item
+					&& item.store
+					&& item.store.proxy
+					&& item.store.proxy.url
+				) {
 					someStore = true;
-					item.store.load({callback: requestBarrier.getCallback()});
+					item.store.load({ callback: CMDBuild.core.RequestBarrier.getCallback(barrierId) });
 				}
 			});
 
-			// call the callback directly if there is no store to load
-			if (!someStore) {
+			// Call the callback directly if there is no store to load
+			if (!someStore)
 				cb();
-			} else {
-				requestBarrier.start();
-			}
 		}
 	});
 
@@ -57,11 +57,11 @@
 			STRING: function(parameterConfiguration) {
 				var types = {
 					classes: function(parameterConfiguration) {
-						var f = new CMDBuild.field.ErasableCombo({
+						var f = new CMDBuild.view.common.field.CMErasableCombo({
 							plugins: [new CMDBuild.SetValueOnLoadPlugin()],
 							name: parameterConfiguration.name,
 							fieldLabel : parameterConfiguration.name,
-							labelWidth: CMDBuild.LABEL_WIDTH,
+							labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
 							labelAlign: "right",
 							valueField : 'name',
 							displayField : 'description',
@@ -101,11 +101,11 @@
 				var defaultValue = parseInt(parameterConfiguration.defaultValue) || null;
 				var types = {
 					classes: function(parameterConfiguration) {
-						var f = new CMDBuild.field.ErasableCombo({
+						var f = new CMDBuild.view.common.field.CMErasableCombo({
 							plugins: [new CMDBuild.SetValueOnLoadPlugin()],
 							name: parameterConfiguration.name,
 							fieldLabel : parameterConfiguration.name,
-							labelWidth: CMDBuild.LABEL_WIDTH,
+							labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
 							labelAlign: "right",
 							valueField : 'id',
 							displayField : 'description',
@@ -166,21 +166,21 @@
 					 * @returns {CMDBuild.Management.ReferenceField.Field} field
 					 */
 					card: function(parameterConfiguration) {
-						var required = parameterConfiguration[CMDBuild.core.proxy.CMProxyConstants.REQUIRED];
-						var filter = parameterConfiguration[CMDBuild.core.proxy.CMProxyConstants.FILTER];
+						var required = parameterConfiguration[CMDBuild.core.constants.Proxy.REQUIRED];
+						var filter = parameterConfiguration[CMDBuild.core.constants.Proxy.FILTER];
 						var meta = {};
 
 						if (!Ext.isEmpty(filter))
-							Ext.Object.each(filter[CMDBuild.core.proxy.CMProxyConstants.CONTEXT], function(key, value, myself) {
+							Ext.Object.each(filter[CMDBuild.core.constants.Proxy.CONTEXT], function(key, value, myself) {
 								meta['system.template.' + key] = value;
 							}, this);
 
 						var field = CMDBuild.Management.ReferenceField.build({
-							description: (required ? '* ' : '' ) + parameterConfiguration[CMDBuild.core.proxy.CMProxyConstants.NAME],
-							filter: !Ext.isEmpty(filter) ? filter[CMDBuild.core.proxy.CMProxyConstants.EXPRESSION] : null,
+							description: (required ? '* ' : '' ) + parameterConfiguration[CMDBuild.core.constants.Proxy.NAME],
+							filter: !Ext.isEmpty(filter) ? filter[CMDBuild.core.constants.Proxy.EXPRESSION] : null,
 							isnotnull: required,
 							meta: meta,
-							name: parameterConfiguration[CMDBuild.core.proxy.CMProxyConstants.NAME],
+							name: parameterConfiguration[CMDBuild.core.constants.Proxy.NAME],
 							referencedIdClass: parameterConfiguration.classToUseForReferenceWidget
 						});
 

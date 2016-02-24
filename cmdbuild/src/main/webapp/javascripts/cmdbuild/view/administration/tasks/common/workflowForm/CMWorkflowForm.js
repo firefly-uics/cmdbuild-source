@@ -13,7 +13,7 @@
 		border: false,
 		considerAsFieldToDisable: true,
 		fieldLabel: tr.workflow,
-		labelWidth: CMDBuild.LABEL_WIDTH,
+		labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
 
 		layout: {
 			type: 'vbox',

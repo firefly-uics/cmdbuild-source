@@ -15,7 +15,7 @@
 
 				getExtraButtons: function() {
 					return Ext.create('Ext.button.Button', {
-						text: CMDBuild.Translation.common.buttons.close,
+						text: CMDBuild.Translation.close,
 
 						handler: function() {
 							me.destroy();

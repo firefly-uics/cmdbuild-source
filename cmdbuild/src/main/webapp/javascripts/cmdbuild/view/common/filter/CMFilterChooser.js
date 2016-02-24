@@ -1,5 +1,9 @@
 (function() {
 
+	/**
+	 * @deprecated new class (CMDBuild.view.common.field.filter.advanced.Advanced)
+	 */
+
 	Ext.define('CMDBuild.delegate.common.filter.CMFilterChooserWindowDelegate', {
 		alternateClassName: 'CMDBuild.delegate.common.field.CMFilterChooserWindowDelegate', // Legacy class name
 		/**
@@ -14,7 +18,7 @@
 		extend: 'CMDBuild.view.management.common.filter.CMFilterWindow',
 
 		requires: [
-			'CMDBuild.core.proxy.CMProxyConstants',
+			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.proxy.Filter'
 		],
 
@@ -27,8 +31,8 @@
 		// Configuration
 			className: '',
 			firstShowDetectEvent: 'activate',
-			saveButtonText: CMDBuild.Translation.common.buttons.confirm,
-			abortButtonText: CMDBuild.Translation.common.buttons.abort,
+			saveButtonText: CMDBuild.Translation.ok,
+			abortButtonText: CMDBuild.Translation.cancel,
 
 			/**
 			 * To enable/disable tabs visualization
@@ -123,7 +127,7 @@
 				grid: Ext.create('Ext.grid.Panel', {
 					autoScroll: true,
 					border: false,
-					cls: 'cmborderbottom',
+					cls: 'cmdb-border-bottom',
 					frame: false,
 					height: '40%',
 					region: 'north',
@@ -133,11 +137,12 @@
 					columns: [
 						{
 							text: CMDBuild.Translation.name,
-							dataIndex: CMDBuild.core.proxy.CMProxyConstants.NAME,
+							dataIndex: CMDBuild.core.constants.Proxy.NAME,
 							flex: 1
-						}, {
+						},
+						{
 							text: CMDBuild.Translation.description_,
-							dataIndex: CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION,
+							dataIndex: CMDBuild.core.constants.Proxy.DESCRIPTION,
 							flex: 1
 						}
 					],
@@ -145,7 +150,7 @@
 					dockedItems: [
 						Ext.create('Ext.toolbar.Toolbar', {
 							dock: 'top',
-							itemId: CMDBuild.core.proxy.CMProxyConstants.TOOLBAR_TOP,
+							itemId: CMDBuild.core.constants.Proxy.TOOLBAR_TOP,
 							items: [
 								'->',
 								this.includeUsersFiltersCheckbox = Ext.create('Ext.form.field.Checkbox', {
@@ -164,7 +169,7 @@
 						}),
 						Ext.create('Ext.toolbar.Paging', {
 							dock: 'bottom',
-							itemId: CMDBuild.core.proxy.CMProxyConstants.TOOLBAR_BOTTOM,
+							itemId: CMDBuild.core.constants.Proxy.TOOLBAR_BOTTOM,
 							store: store,
 							displayInfo: true,
 							displayMsg: ' {0} - {1} ' + CMDBuild.Translation.common.display_topic_of+' {2}',
@@ -191,14 +196,14 @@
 		 */
 		evaluateSystemFiltersCheckbox: function(checked) {
 			var params = {};
-			params[CMDBuild.core.proxy.CMProxyConstants.CLASS_NAME] = this.className;
+			params[CMDBuild.core.constants.Proxy.CLASS_NAME] = this.className;
 
 			if (checked)
 				CMDBuild.core.proxy.Filter.read({
 					params: params,
 					scope: this,
 					success: function(response, options, decodedResponse) {
-						decodedResponse = decodedResponse[CMDBuild.core.proxy.CMProxyConstants.FILTERS];
+						decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.FILTERS];
 
 						this.grid.getStore().loadData(decodedResponse, true);
 					}
@@ -214,7 +219,7 @@
 	});
 
 	var SET = CMDBuild.Translation.set;
-	var UNSET = CMDBuild.Translation.not_set;
+	var UNSET = CMDBuild.Translation.notSet;
 
 	Ext.define('CMDBuild.view.common.filter.CMFilterChooser', {
 		alternateClassName: 'CMDBuild.view.common.field.CMFilterChooser', // Legacy class name
@@ -266,7 +271,7 @@
 			this.chooseFilterButton = Ext.create('Ext.button.Button', {
 				tooltip: CMDBuild.Translation.setFilter,
 				iconCls: 'privileges',
-				cls: 'cmnoborder',
+				border: false,
 				style: {
 					'margin-left': '5px'
 				},
@@ -280,7 +285,7 @@
 			this.clearFilterButton = Ext.create('Ext.button.Button', {
 				tooltip: CMDBuild.Translation.clearFilter,
 				iconCls: 'privilegesClear',
-				cls: 'cmnoborder',
+				border: false,
 				scope: me,
 				disabled: true,
 
@@ -372,16 +377,36 @@
 			return this.filter;
 		},
 
+		/**
+		 * Alias getFilter()
+		 *
+		 * @return {Object}
+		 */
+		getValue: function() {
+			return this.getFilter();
+		},
+
+		/**
+		 * @return {Boolean}
+		 */
+		isValid: function() {
+			return !Ext.isEmpty(this.getFilter().getConfiguration());
+		},
+
 		disable: function() {
 			this.items.each(function(item) {
 				item.disable();
 			});
+
+			this.callParent(arguments);
 		},
 
 		enable: function() {
 			this.items.each(function(item) {
 				item.enable();
 			});
+
+			this.callParent(arguments);
 		},
 
 		// as filterChooserWindowDelegate
