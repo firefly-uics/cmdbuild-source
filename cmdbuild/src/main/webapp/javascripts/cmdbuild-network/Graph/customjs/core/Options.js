@@ -44,13 +44,13 @@
 	};
 	$.Cmdbuild.g3d.Options = Options;
 	$.Cmdbuild.g3d.Options.initVariables = function() {// from saved to session
-		$.Cmdbuild.customvariables.options["nodeTooltipEnabled"] = $.Cmdbuild.custom.configuration.nodeTooltipEnabled;
-		$.Cmdbuild.customvariables.options["edgeTooltipEnabled"] = $.Cmdbuild.custom.configuration.edgeTooltipEnabled;
-		$.Cmdbuild.customvariables.options["displayLabel"] = $.Cmdbuild.custom.configuration.displayLabel;
-		$.Cmdbuild.customvariables.options["clusteringThreshold"] = $.Cmdbuild.custom.configuration.clusteringThreshold;
-		$.Cmdbuild.customvariables.options["spriteDimension"] = $.Cmdbuild.custom.configuration.spriteDimension;
-		$.Cmdbuild.customvariables.options["stepRadius"] = $.Cmdbuild.custom.configuration.stepRadius;
-		$.Cmdbuild.customvariables.options["explosionLevels"] = $.Cmdbuild.custom.configuration.explosionLevels;
+		$.Cmdbuild.customvariables.options.nodeTooltipEnabled = $.Cmdbuild.custom.configuration.nodeTooltipEnabled;
+		$.Cmdbuild.customvariables.options.edgeTooltipEnabled = $.Cmdbuild.custom.configuration.edgeTooltipEnabled;
+		$.Cmdbuild.customvariables.options.displayLabel = $.Cmdbuild.custom.configuration.displayLabel;
+		$.Cmdbuild.customvariables.options.clusteringThreshold = $.Cmdbuild.custom.configuration.clusteringThreshold;
+		$.Cmdbuild.customvariables.options.spriteDimension = $.Cmdbuild.custom.configuration.spriteDimension;
+		$.Cmdbuild.customvariables.options.stepRadius = $.Cmdbuild.custom.configuration.stepRadius;
+		$.Cmdbuild.customvariables.options.explosionLevels = $.Cmdbuild.custom.configuration.explosionLevels;
 	};
 	$.Cmdbuild.g3d.Options.initFields = function() {
 		$("#explosionLevels").spinner("value",
@@ -104,7 +104,7 @@
 	};
 	$.Cmdbuild.g3d.Options.loadFiles = function(configuration, filesToInclude,
 			callback, callbackScope) {
-		if (filesToInclude.length == 0) {
+		if (filesToInclude.length === 0) {
 			callback.apply(callbackScope, [configuration]);
 			return;
 		}
@@ -116,7 +116,7 @@
 			$.Cmdbuild.g3d.Options.loadFiles(configuration, filesToInclude,
 					function() {
 						callback.apply(callbackScope, [configuration]);
-					}), this;
+					}, this);
 		}, this);
 	};
 })(jQuery);
