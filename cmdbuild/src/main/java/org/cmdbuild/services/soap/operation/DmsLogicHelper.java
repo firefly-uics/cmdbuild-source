@@ -78,6 +78,7 @@ public class DmsLogicHelper implements SoapLogicHelper {
 			final String description) {
 		try {
 			dmsLogic.updateDescriptionAndMetadata( //
+					operationUser.getAuthenticatedUser().getUsername(), //
 					className, //
 					cardId, //
 					filename, //
