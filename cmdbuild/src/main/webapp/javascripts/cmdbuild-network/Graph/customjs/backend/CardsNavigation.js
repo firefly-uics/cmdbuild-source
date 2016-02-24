@@ -49,6 +49,15 @@
 		this.loadData = function(param, callback, callbackScope) {
 			var data = $.Cmdbuild.customvariables.model.getCards(param.firstRow, param.nRows, this.filter);
 			this.total = data.total;
+			if (param.sort) {
+				var sortingColumn = param.sort;
+				data.rows.sort(function(a, b) {
+					if (param.direction === "ASC")
+						return (a[sortingColumn] > b[sortingColumn]) ? 1  : -1;
+					else
+						return (a[sortingColumn] < b[sortingColumn]) ? 1  : -1;
+				});
+			}
 			this.data = data.rows;
 			callback.apply(callbackScope, this.data);
 		};
