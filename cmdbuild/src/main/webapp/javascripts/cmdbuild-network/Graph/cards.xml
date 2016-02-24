@@ -23,7 +23,7 @@
  			<params>
 				<type>cardsGrid</type>
 				<backend>CardsNavigation</backend>
-				<nRows>9</nRows>
+				<nRows>10</nRows>
 				<hookParent>true</hookParent>
 			</params>
 				<onChange>
