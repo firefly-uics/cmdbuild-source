@@ -91,6 +91,8 @@
 		this.getLoadingClass = function(classId, callback, callbackScope) {
 			if (this.data[classId]) {
 				callback.apply(callbackScope, [this.data[classId]]);
+			} else if (classId === $.Cmdbuild.g3d.constants.GUICOMPOUNDNODE) {
+				callback.apply(callbackScope, [[$.Cmdbuild.g3d.constants.COMPOUND_ATTRIBUTES]]);
 			} else {
 				$.Cmdbuild.g3d.proxy.getClass(classId, function(classAttributes) {
 					this.data[classId] = classAttributes;
