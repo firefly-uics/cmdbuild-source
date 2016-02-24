@@ -2,13 +2,17 @@
 	<params>
 		<type>div</type>
 	</params>
-	<span class="layout toolbarButton" tooltip="Apply the current layout">
-		<onClick>
-			<command>tab</command>
-			<form>cardlistform</form>
-			<activeTab>0</activeTab>
-		</onClick>
-	</span>
+	<div class="bodyToolbar">
+		<div class="toolbarButton border-box">
+			<span class="btn-allitems" tooltip="Show all items">
+				<onClick>
+					<command>tab</command>
+					<form>cardlistform</form>
+					<activeTab>0</activeTab>
+				</onClick>
+			</span>
+		</div>
+	</div>
 	<div id="selectedFormContainer">
 		<onInit>
 			<command>navigate</command>
@@ -25,7 +29,7 @@
 					<command>zoomOn</command>
 					<node>$selectedForm.id</node>
 				</onDblClick>
-			<rowButton id="zoom" tooltip="Zoom on Card">
+			<rowButton class="grid-btn centerOnSelection" tooltip="Center the layout on this item">
 				<onClick>
 					<command>zoomOn</command>
 					<node>$selectedForm.id</node>

@@ -2,13 +2,17 @@
 	<params>
 		<type>div</type>
 	</params>
-	<span class="layout toolbarButton" tooltip="Undo the last operation">
-		<onClick>
-			<command>tab</command>
-			<form>detailform</form>
-			<activeTab>0</activeTab>
-		</onClick>
-	</span>
+	<div class="bodyToolbar">
+		<div class="toolbarButton border-box">
+			<span class="btn-lessdetails" tooltip="Show less details">
+				<onClick>
+					<command>tab</command>
+					<form>detailform</form>
+					<activeTab>0</activeTab>
+				</onClick>
+			</span>
+		</div>
+	</div>
  	<div id="cmdbuildCard">
 		<onInit>
 			<command>navigate</command>

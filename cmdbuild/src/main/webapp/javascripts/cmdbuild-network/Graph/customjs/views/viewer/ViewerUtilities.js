@@ -49,7 +49,7 @@
 				antialias: true
 			});
 			renderer.setClearColor(0xf0f0f0);
-			renderer.setPixelRatio(1.);
+			renderer.setPixelRatio(1.0);
 			renderer.setSize(container.clientWidth, container.clientHeight,
 					true);
 			renderer.sortObjects = false;
@@ -382,66 +382,93 @@
 			tooltip_window[0].style.display = "none";
 		},
 		moveEdgeTooltip: function(intersected, node, mouseX, mouseY) {
-			if (!$.Cmdbuild.customvariables.options["edgeTooltipEnabled"]) {
+			if (!$.Cmdbuild.customvariables.options.edgeTooltipEnabled) {
 				return;
 			}
-			var tooltip_window = $("#" + $.Cmdbuild.g3d.constants.TOOLTIP_WINDOW);
-			tooltip_window.removeClass('viewerInformationNode')
-					.addClass('viewerInformationEdge');
+			var $tooltip_window = $("#" + $.Cmdbuild.g3d.constants.TOOLTIP_WINDOW);
+
+			// create box
+			var boxtitle = $.Cmdbuild.translations.getTranslation(
+					"boxtitle_relation", "Relation");
+			var $boxtitle = $("<div></div>").addClass("viewerInformationTitle")
+					.addClass("ui-widget-header").addClass("ui-helper-reset")
+					.addClass("ui-corner-top").text(boxtitle);
+			var $boxcontent = $("<div></div>").addClass(
+					"viewerInformationContent").addClass("ui-widget-content")
+					.addClass("ui-corner-bottom").addClass("ui-helper-reset");
+			$tooltip_window.empty().append($boxtitle).append($boxcontent);
+
+			// get relation info
 			var domainId = intersected.object.domainId;
 			var domainDescription = $.Cmdbuild.customvariables.cacheDomains.getDescription(domainId);
-			var htmlStr = "<p>" + domainDescription + "</p>";
 			var source = intersected.object.source;
 			var target = intersected.object.target;
-			var classSource = $.Cmdbuild.g3d.Model.getGraphData(source,
-					"classId");
-			var classTarget = $.Cmdbuild.g3d.Model.getGraphData(target,
-					"classId");
-			var labelSource = $.Cmdbuild.g3d.Model
-					.getGraphData(source, "label");
-			var labelTarget = $.Cmdbuild.g3d.Model
-					.getGraphData(target, "label");
+			var classSource = $.Cmdbuild.g3d.Model.getGraphData(source, "classId");
+			var classTarget = $.Cmdbuild.g3d.Model.getGraphData(target, "classId");
+			var labelSource = $.Cmdbuild.g3d.Model.getGraphData(source, "label");
+			var labelTarget = $.Cmdbuild.g3d.Model.getGraphData(target, "label");
 			var sourceClassDescription = $.Cmdbuild.customvariables.cacheClasses.getDescription(classSource);
 			var targetClassDescription = $.Cmdbuild.customvariables.cacheClasses.getDescription(classTarget);
-			var relationShape = $.Cmdbuild.g3d.constants.RELATION_SHAPE;
-			var img = $.Cmdbuild.SpriteArchive.class2Sprite(relationShape);
-			htmlStr += "<p>" + labelSource + " (" + sourceClassDescription + ")</p>";
-			htmlStr += "<img width=16px height=16px src='" + img + "'/>";
-			htmlStr += "<p>" + labelTarget + " (" + targetClassDescription + ")</p>";
-			tooltip_window.html(htmlStr);
-			var h = tooltip_window.height();
-			var w = tooltip_window.width();
-			tooltip_window[0].style.top = mouseY - (h + 50);
-			tooltip_window[0].style.left = mouseX - w / 2;
-			tooltip_window[0].style.display = "block";
+
+			// create UI
+//			var $title = $("<h3></h3>").text(domainDescription);
+			var $source = $("<p></p>").append(
+					$("<span></span>").text(sourceClassDescription + ": ")).append(
+					$("<em></em>").text(labelSource));
+			var $target = $("<p></p>").append(
+					$("<span></span>").text(targetClassDescription + ": ")).append(
+					$("<em></em>").text(labelTarget));
+//			$boxcontent.append($title);
+			$boxcontent.append($source).append($target);
+
+			// set position
+			var h = $tooltip_window.height();
+			var w = $tooltip_window.width();
+			$tooltip_window[0].style.top = mouseY - (h + 10);
+			$tooltip_window[0].style.left = mouseX - w / 2;
+			$tooltip_window[0].style.display = "block";
 		},
 		moveNodeTooltip: function(intersected, node, mouseX, mouseY) {
-			var tooltip_window = $("#" + $.Cmdbuild.g3d.constants.TOOLTIP_WINDOW);
-			if (!$.Cmdbuild.customvariables.options["nodeTooltipEnabled"]) {
+			if (!$.Cmdbuild.customvariables.options.nodeTooltipEnabled) {
 				return;
 			}
-			tooltip_window.removeClass('viewerInformationEdge')
-					.addClass('viewerInformationNode');
-			// the jquery version gives problems on the page's layout
-			// tooltip_window.position({
-			// my: "center bottom-30",
-			// of: event,
-			// collision: "fit"
-			// });
-			var label = $.Cmdbuild.g3d.Model.getGraphData(node, "label");
-			var classId = $.Cmdbuild.g3d.Model
-					.getGraphData(node, "classId");
-			var img = $.Cmdbuild.customvariables.cacheImages.getImage(classId);
-			var htmlStr = "<img width=32px height=32px src='" + img + "'/>";
-			htmlStr += "<p>" + label + "</p>";
-			var classDescription = $.Cmdbuild.customvariables.cacheClasses.getDescription(classId);
-			htmlStr += "<p>" + classDescription + "</p>";
-			tooltip_window.html(htmlStr);
-			var h = tooltip_window.height();
-			var w = tooltip_window.width();
-			tooltip_window[0].style.top = mouseY - (h + 50);
-			tooltip_window[0].style.left = mouseX - w / 2;
-			tooltip_window[0].style.display = "block";
+			var $tooltip_window = $("#" + $.Cmdbuild.g3d.constants.TOOLTIP_WINDOW);
+
+			// create box
+			var boxtitle = $.Cmdbuild.translations.getTranslation(
+					"boxtitle_item", "Item");
+			var $boxtitle = $("<div></div>").addClass("viewerInformationTitle")
+					.addClass("ui-widget-header").addClass("ui-helper-reset")
+					.addClass("ui-corner-top").text(boxtitle);
+			var $boxcontent = $("<div></div>").addClass(
+					"viewerInformationContent").addClass("ui-widget-content")
+					.addClass("ui-corner-bottom").addClass("ui-helper-reset");
+			$tooltip_window.empty().append($boxtitle).append($boxcontent);
+
+			// get item info
+			var classId = $.Cmdbuild.g3d.Model.getGraphData(node, "classId");
+			var img_src = $.Cmdbuild.customvariables.cacheImages.getImage(classId);
+			var itemLabel = $.Cmdbuild.translations.getTranslation("boxlabel_item", "Item");
+			var typeLabel = $.Cmdbuild.translations.getTranslation("boxlabel_type", "Type");
+			var itemDescription = $.Cmdbuild.g3d.Model.getGraphData(node, "label");
+			var typeDescription = $.Cmdbuild.customvariables.cacheClasses.getDescription(classId);
+
+			// create UI
+			var $img = $("<img></img>").attr("src", img_src).attr("width", "32").attr("height", "32");
+			var $item = $("<p></p>").append(
+					$("<span></span>").text(itemLabel + ": ")).append(
+					$("<em></em>").html(itemDescription));
+			var $type = $("<p></p>").append(
+					$("<span></span>").text(typeLabel + ": ")).append(
+					$("<em></em>").html(typeDescription));
+			$boxcontent.append($img).append($type).append($item);
+
+			// set position
+			var h = $tooltip_window.height();
+			var w = $tooltip_window.width();
+			$tooltip_window[0].style.top = mouseY - (h + 10);
+			$tooltip_window[0].style.left = mouseX - w / 2;
+			$tooltip_window[0].style.display = "block";
 		}
 	};
 	$.Cmdbuild.g3d.ViewerUtilities = ViewerUtilities;
