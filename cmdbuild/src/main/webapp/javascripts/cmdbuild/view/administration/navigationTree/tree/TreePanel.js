@@ -67,7 +67,7 @@
 						fixed: true,
 						scope: this,
 
-						renderer: function(value, meta, record, rowIndex, colIndex, store, view) {
+						renderer: function (value, meta, record, rowIndex, colIndex, store, view) {
 							var recordDomain = record.get(CMDBuild.core.constants.Proxy.DOMAIN);
 
 							// HACK: to recreate original renderer method behaviour, callParent doesn't work
