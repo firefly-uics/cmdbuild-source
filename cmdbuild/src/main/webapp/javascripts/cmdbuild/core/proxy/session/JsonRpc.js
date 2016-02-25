@@ -12,7 +12,7 @@
 		/**
 		 * @param {Object} parameters
 		 */
-		login: function(parameters) {
+		login: function (parameters) {
 			parameters = Ext.isEmpty(parameters) ? {} : parameters;
 
 			Ext.apply(parameters, { url: CMDBuild.core.proxy.Index.session.jsonRpc.login });
@@ -23,7 +23,7 @@
 		/**
 		 * @param {Object} parameters
 		 */
-		logout: function(parameters) {
+		logout: function (parameters) {
 			parameters = Ext.isEmpty(parameters) ? {} : parameters;
 
 			Ext.apply(parameters, { url: CMDBuild.core.proxy.Index.session.jsonRpc.logout });
