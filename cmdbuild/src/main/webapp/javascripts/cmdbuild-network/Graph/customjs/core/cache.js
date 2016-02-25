@@ -148,10 +148,13 @@
 			} else {
 				$.Cmdbuild.utilities.proxy.getDomain(domain._id, function(
 						domainAttributes) {
-					this.loadExtremeClasses(domainAttributes.source, domainAttributes.destination, function() {
-						this.pushDomain(domainAttributes);
-						this.getAllDomainsRecursive(domains, callback,
-								callbackScope);
+						$.Cmdbuild.utilities.proxy.getDomainAttributes(domain._id, function(
+								domainCustomAttributes) {
+						this.loadExtremeClasses(domainAttributes.source, domainAttributes.destination, function() {
+							this.pushDomain(domainAttributes, domainCustomAttributes);
+							this.getAllDomainsRecursive(domains, callback,
+									callbackScope);
+						}, this);
 					}, this);
 				}, this);
 			}
@@ -163,7 +166,7 @@
 				}, this);
 			}, this);
 		};
-		this.pushDomain = function(domainAttributes) {
+		this.pushDomain = function(domainAttributes, domainCustomAttributes) {
 			var destinationDescription = $.Cmdbuild.customvariables.cacheClasses.getDescription(domainAttributes.destination);
 			var sourceDescription = $.Cmdbuild.customvariables.cacheClasses.getDescription(domainAttributes.source);
 			this.data.push({
@@ -173,7 +176,10 @@
 				destinationId: domainAttributes.destination,
 				sourceId: domainAttributes.source,
 				destinationDescription: destinationDescription,
-				sourceDescription: sourceDescription
+				sourceDescription: sourceDescription,
+				domainCustomAttributes: domainCustomAttributes,
+				descriptionDirect: domainAttributes.descriptionDirect,
+				descriptionInverse: domainAttributes.descriptionInverse
 			});
 		};
 		this.getDomainIndex = function(domainId) {

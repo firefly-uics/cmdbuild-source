@@ -98,18 +98,17 @@
 			var domainId = edge.domainId;
 			var domainDescription = edge.domainDescription;
 			var relationId = edge.relationId;
-			$.Cmdbuild.utilities.proxy.getDomainAttributes(domainId, function(
-					domainAttributes) {
-				$.Cmdbuild.utilities.proxy.getRelation(domainId, relationId,
-						{}, function(response) {
-							this.getRelationCB(cardId, response,
-									domainAttributes, domainDescription,
-									function() {
-										this.getEdges(cardId, edges, callback,
-												callbackScope);
-									}, this);
-						}, this);
-			}, this);
+			var domainAttributes = $.Cmdbuild.customvariables.cacheDomains.getDomain(domainId);
+			$.Cmdbuild.utilities.proxy.getRelation(domainId, relationId,
+					{}, function(response) {
+						this.getRelationCB(cardId, response,
+								domainAttributes.domainCustomAttributes, domainDescription,
+								function() {
+									this.getEdges(cardId, edges, callback,
+											callbackScope);
+								}, this);
+					}, this);
+		
 		};
 		this.getRelationCB = function(cardId, relation, domainAttributes,
 				domainDescription, callback, callbackScope) {
