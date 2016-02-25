@@ -14,7 +14,7 @@
 		/**
 		 * @param {Object} parameters
 		 */
-		create: function(parameters) {
+		create: function (parameters) {
 			parameters = Ext.isEmpty(parameters) ? {} : parameters;
 
 			Ext.apply(parameters, { url: CMDBuild.core.proxy.Index.filter.group.create });
@@ -25,7 +25,7 @@
 		/**
 		 * @param {Object} parameters
 		 */
-		getDefaults: function(parameters) {
+		getDefaults: function (parameters) {
 			parameters = Ext.isEmpty(parameters) ? {} : parameters;
 
 			Ext.apply(parameters, { url: CMDBuild.core.proxy.Index.filter.group.defaults.read });
@@ -38,7 +38,7 @@
 		 *
 		 * @return {Ext.data.Store or CMDBuild.core.cache.Store}
 		 */
-		getStore: function() {
+		getStore: function () {
 			return CMDBuild.global.Cache.requestAsStore(CMDBuild.core.constants.Proxy.FILTER, {
 				autoLoad: false,
 				model: 'CMDBuild.model.filter.group.Store',
@@ -61,7 +61,7 @@
 		/**
 		 * @returns {Ext.data.Store or CMDBuild.core.cache.Store}
 		 */
-		getStoreTargetClass: function() {
+		getStoreTargetClass: function () {
 			return CMDBuild.global.Cache.requestAsStore(CMDBuild.core.constants.Proxy.CLASS, {
 				autoLoad: true,
 				model: 'CMDBuild.model.filter.group.TargetClass',
@@ -79,7 +79,7 @@
 					}
 				},
 				filters: [
-					function(record) { // Filters root of all classes
+					function (record) { // Filters root of all classes
 						return record.get(CMDBuild.core.constants.Proxy.NAME) != 'Class';
 					}
 				],
@@ -92,7 +92,7 @@
 		/**
 		 * @param {Object} parameters
 		 */
-		read: function(parameters) {
+		read: function (parameters) {
 			parameters = Ext.isEmpty(parameters) ? {} : parameters;
 
 			Ext.apply(parameters, { url: CMDBuild.core.proxy.Index.filter.group.read });
@@ -103,7 +103,7 @@
 		/**
 		 * @param {Object} parameters
 		 */
-		readAll: function(parameters) {
+		readAll: function (parameters) {
 			parameters = Ext.isEmpty(parameters) ? {} : parameters;
 
 			Ext.apply(parameters, { url: CMDBuild.core.proxy.Index.filter.group.readAll });
@@ -114,7 +114,7 @@
 		/**
 		 * @param {Object} parameters
 		 */
-		remove: function(parameters) {
+		remove: function (parameters) {
 			parameters = Ext.isEmpty(parameters) ? {} : parameters;
 
 			Ext.apply(parameters, { url: CMDBuild.core.proxy.Index.filter.group.remove });
@@ -125,7 +125,7 @@
 		/**
 		 * @param {Object} parameters
 		 */
-		setDefaults: function(parameters) {
+		setDefaults: function (parameters) {
 			parameters = Ext.isEmpty(parameters) ? {} : parameters;
 
 			Ext.apply(parameters, { url: CMDBuild.core.proxy.Index.filter.group.defaults.update });
@@ -136,7 +136,7 @@
 		/**
 		 * @param {Object} parameters
 		 */
-		update: function(parameters) {
+		update: function (parameters) {
 			parameters = Ext.isEmpty(parameters) ? {} : parameters;
 
 			Ext.apply(parameters, { url: CMDBuild.core.proxy.Index.filter.group.update });

@@ -30,7 +30,7 @@
 		rootVisible: false,
 		sortableColumns: false, // BUGGED in ExtJs 4.2, workaround setting sortable: false to columns
 
-		initComponent: function() {
+		initComponent: function () {
 			Ext.apply(this, {
 				columns: [
 					{
@@ -63,8 +63,8 @@
 							queryMode: 'local'
 						},
 
-						renderer: function(value, meta, record, rowIndex, colIndex, store, view, returna) {
-							return this.delegate.cmfg('groupDefaultFiltersRendererGridFilterColumn', value);
+						renderer: function (value, meta, record, rowIndex, colIndex, store, view, returna) {
+							return this.delegate.cmfg('userAndGroupGroupTabDefaultFiltersRendererGridFilterColumn', value);
 						}
 					})
 				],
@@ -82,7 +82,7 @@
 
 						listeners: {
 							scope: this,
-							beforeedit: function(editor, e, eOpts) {
+							beforeedit: function (editor, e, eOpts) {
 								return this.delegate.cmfg('onUserAndGroupGroupTabDefaultFiltersTreeBeforeEdit', e);
 							}
 						}
