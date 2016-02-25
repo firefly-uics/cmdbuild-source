@@ -29,18 +29,18 @@
 		 *
 		 * @returns {Ext.data.Store}
 		 */
-		onFieldMultiselectGroupGetStore: function() {
+		onFieldMultiselectGroupGetStore: function () {
 			return this.view.boundList.getStore();
 		},
 
-		onFieldMultiselectGroupReset: function() {
+		onFieldMultiselectGroupReset: function () {
 			this.view.setValue();
 		},
 
-		onFieldMultiselectGroupSelectAll: function() {
+		onFieldMultiselectGroupSelectAll: function () {
 			var arrayGroups = [];
 
-			Ext.Array.forEach(this.view.getStore().getRange(), function(record, i, allRecords) {
+			Ext.Array.forEach(this.view.getStore().getRange(), function (record, i, allRecords) {
 				arrayGroups.push(record.get(CMDBuild.core.constants.Proxy.NAME));
 			}, this);
 

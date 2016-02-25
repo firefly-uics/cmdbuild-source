@@ -11,10 +11,10 @@
 		singleton: true,
 
 		/**
-		 * @returns {Ext.data.Store}
+		 * @returns {Ext.data.Store or CMDBuild.core.cache.Store}
 		 */
-		getStore: function() {
-			return Ext.create('Ext.data.Store', {
+		getStore: function () {
+			return CMDBuild.global.Cache.requestAsStore(CMDBuild.core.constants.Proxy.GROUP, {
 				autoLoad: true,
 				model: 'CMDBuild.model.common.field.multiselect.Group',
 				proxy: {
@@ -31,7 +31,7 @@
 					}
 				},
 				filters: [
-					function(record) { // Filters active groups only
+					function (record) { // Filters active groups only
 						return record.get(CMDBuild.core.constants.Proxy.IS_ACTIVE);
 					}
 				],
