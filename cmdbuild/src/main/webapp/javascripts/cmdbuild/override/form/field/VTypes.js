@@ -17,7 +17,7 @@
 			 *
 			 * @returns {Boolean}
 			 */
-			alphanumextended: function(value) {
+			alphanumextended: function (value) {
 				return this.alphanumextendedMask.test(value);
 			},
 
@@ -37,7 +37,7 @@
 			 *
 			 * @returns {Boolean}
 			 */
-			comment: function(value){
+			comment: function (value) {
 				return this.commentMask.test(value);
 			},
 
@@ -57,7 +57,7 @@
 			 *
 			 * @returns {Boolean}
 			 */
-			commentextended: function(value){
+			commentextended: function (value) {
 				return this.commentextendedMask.test(value);
 			},
 
@@ -77,7 +77,7 @@
 			 *
 			 * @return {Boolean}
 			 */
-			ipv4: function(value) {
+			ipv4: function (value) {
 				return this.ipv4RegExp.test(value);
 			},
 
@@ -102,7 +102,7 @@
 			 *
 			 * @return {Boolean}
 			 */
-			ipv6: function(value) {
+			ipv6: function (value) {
 				return this.ipv6RegExp.test(value);
 			},
 
@@ -129,11 +129,11 @@
 			 *
 			 * @returns {Boolean}
 			 */
-			multiemail: function(value) {
+			multiemail: function (value) {
 				var array = value.split(',');
 				var valid = true;
 
-				Ext.Array.each(array, function(value) {
+				Ext.Array.each(array, function (value) {
 					if (!this.email(value)) {
 						valid = false;
 
@@ -165,12 +165,12 @@
 			 *
 			 * @returns {Boolean}
 			 */
-			password: function(val, field) {
+			password: function (value, field) {
 				if (
 					!Ext.isEmpty(field.twinFieldId) && Ext.isString(field.twinFieldId)
 					&& !Ext.isEmpty(Ext.getCmp(field.twinFieldId)) && Ext.isFunction(Ext.getCmp(field.twinFieldId).getValue)
 				) {
-					return val == Ext.getCmp(field.twinFieldId).getValue();
+					return value == Ext.getCmp(field.twinFieldId).getValue();
 				}
 
 				return true;
