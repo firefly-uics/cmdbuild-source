@@ -1,5 +1,6 @@
 package org.cmdbuild.servlets.json;
 
+import static com.google.common.base.Predicates.alwaysTrue;
 import static org.cmdbuild.servlets.json.CommunicationConstants.ACTIVE;
 import static org.cmdbuild.servlets.json.CommunicationConstants.DESCRIPTION;
 import static org.cmdbuild.servlets.json.CommunicationConstants.NAME;
@@ -19,7 +20,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 public class NavigationTree extends JSONBaseWithSpringContext {
-	
+
 	private static class DTO {
 
 		private final Entry<String, String> delegate;
@@ -38,26 +39,23 @@ public class NavigationTree extends JSONBaseWithSpringContext {
 			return delegate.getValue();
 		}
 
-
 	}
-	
+
 	@Admin
 	@JSONExported
 	public JsonResponse get() throws JSONException {
 		final NavigationTreeLogic logic = navigationTreeLogic();
-		Map<String, String> trees = logic.get();
+		Map<String, String> trees = logic.get(alwaysTrue());
 		final List<DTO> jsonTrees = new ArrayList<DTO>();
-		for ( Entry<String, String> tree : trees.entrySet()) {
+		for (Entry<String, String> tree : trees.entrySet()) {
 			jsonTrees.add(new DTO(tree));
-			
+
 		}
 		return JsonResponse.success(jsonTrees);
 	}
 
 	@JSONExported
-	public JsonResponse read(
-			@Parameter(NAME) final String name
-			) throws JSONException {
+	public JsonResponse read(@Parameter(NAME) final String name) throws JSONException {
 		final NavigationTreeLogic logic = navigationTreeLogic();
 		DomainTreeNode root = logic.getTree(name);
 		JSONObject response = DomainTreeNodeJSONMapper.serialize(root, true);
@@ -66,9 +64,7 @@ public class NavigationTree extends JSONBaseWithSpringContext {
 
 	@Admin
 	@JSONExported
-	public JsonResponse remove(
-			@Parameter(NAME) final String name
-			) throws JSONException {
+	public JsonResponse remove(@Parameter(NAME) final String name) throws JSONException {
 		final NavigationTreeLogic logic = navigationTreeLogic();
 		logic.delete(name);
 		return JsonResponse.success();
@@ -76,12 +72,10 @@ public class NavigationTree extends JSONBaseWithSpringContext {
 
 	@Admin
 	@JSONExported
-	public JsonResponse create(
-			@Parameter(NAME) final String name, //
+	public JsonResponse create(@Parameter(NAME) final String name, //
 			@Parameter(DESCRIPTION) final String description, //
 			@Parameter(ACTIVE) final boolean isActive, //
-			@Parameter("structure") final String jsonConfiguration 
-			) throws JSONException {
+			@Parameter("structure") final String jsonConfiguration) throws JSONException {
 		final NavigationTreeLogic logic = navigationTreeLogic();
 		final JSONObject structure = new JSONObject(jsonConfiguration);
 		final DomainTreeNode root = DomainTreeNodeJSONMapper.deserialize(structure);
@@ -89,15 +83,13 @@ public class NavigationTree extends JSONBaseWithSpringContext {
 		logic.create(name, description, isActive, root);
 		return JsonResponse.success();
 	}
-	
+
 	@Admin
 	@JSONExported
-	public JsonResponse save(
-			@Parameter(NAME) final String name, //
+	public JsonResponse save(@Parameter(NAME) final String name, //
 			@Parameter(DESCRIPTION) final String description, //
 			@Parameter(ACTIVE) final boolean isActive, //
-			@Parameter("structure") final String jsonConfiguration 
-			) throws JSONException {
+			@Parameter("structure") final String jsonConfiguration) throws JSONException {
 		final NavigationTreeLogic logic = navigationTreeLogic();
 		final JSONObject structure = new JSONObject(jsonConfiguration);
 		final DomainTreeNode root = DomainTreeNodeJSONMapper.deserialize(structure);
@@ -105,5 +97,5 @@ public class NavigationTree extends JSONBaseWithSpringContext {
 		logic.save(name, description, isActive, root);
 		return JsonResponse.success();
 	}
-	
+
 }

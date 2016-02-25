@@ -18,6 +18,9 @@ import org.cmdbuild.dao.query.clause.alias.Alias;
 import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.model.domainTree.DomainTreeNode;
 
+import com.google.common.base.Function;
+import com.google.common.base.Predicate;
+
 public class DBDomainTreeStore {
 
 	private enum Attributes {
@@ -50,6 +53,51 @@ public class DBDomainTreeStore {
 		}
 	}
 
+	private static final Function<CMCard, DomainTreeNode> CARD_TO_DOMAIN_TREE_NODE = new Function<CMCard, DomainTreeNode>() {
+
+		@Override
+		public DomainTreeNode apply(final CMCard card) {
+			final DomainTreeNode domainTreeNode = new DomainTreeNode();
+			domainTreeNode.setId(card.getId());
+			domainTreeNode.setDescription((String) card.get(Attributes.DESCRIPTION.getName()));
+			domainTreeNode.setDirect(booleanCast(card.get(Attributes.DIRECT.getName())));
+			domainTreeNode.setDomainName((String) card.get(Attributes.DOMAIN_NAME.getName()));
+			domainTreeNode.setType((String) card.get(Attributes.TYPE.getName()));
+			domainTreeNode.setIdGroup(safeLongCast(card.get(Attributes.ID_GROUP.getName())));
+			domainTreeNode.setIdParent(safeLongCast(card.get(Attributes.ID_PARENT.getName())));
+			domainTreeNode.setTargetClassDescription((String) card.get(Attributes.TARGET_CLASS_DESCRIPTION.getName()));
+			domainTreeNode.setTargetClassName(((String) card.get(Attributes.TARGET_CLASS_NAME.getName())));
+			domainTreeNode.setBaseNode((booleanCast(card.get(Attributes.BASE_NODE.getName()))));
+			domainTreeNode.setTargetFilter((String) card.get(Attributes.FILTER.getName()));
+			domainTreeNode.setEnableRecursion((booleanCast(card.get(Attributes.ENABLE_RECURSION.getName()))));
+			return domainTreeNode;
+		}
+
+		/*
+		 * getValue method of a Card returns an Object. For the Ids it returns
+		 * an Integer but we want a Long. Cast them ignoring null values
+		 */
+		private Long safeLongCast(final Object o) {
+			if (o == null) {
+				return null;
+			} else if (o instanceof Long) {
+				return (Long) o;
+			} else if (o instanceof Integer) {
+				return ((Integer) o).longValue();
+			}
+			return null;
+		}
+
+		private boolean booleanCast(final Object o) {
+			if (o == null) {
+				return false;
+			} else {
+				return (Boolean) o;
+			}
+		}
+
+	};
+
 	private static final String TABLE_NAME = "_DomainTreeNavigation";
 	private static final Alias T = name("A");
 
@@ -59,7 +107,7 @@ public class DBDomainTreeStore {
 		this.dataView = dataView;
 	}
 
-	public void createOrReplaceTree(final String treeType, String description, final DomainTreeNode root) {
+	public void createOrReplaceTree(final String treeType, final String description, final DomainTreeNode root) {
 		removeTree(treeType);
 		saveNode(treeType, description, root);
 	}
@@ -76,16 +124,16 @@ public class DBDomainTreeStore {
 
 	}
 
-	public Map<String, String> getTreeNames() {
+	public Map<String, String> getTreeNames(final Predicate<DomainTreeNode> predicate) {
 		final Map<String, String> names = newHashMap();
-		for (final CMCard element : from(dataView //
+		for (final DomainTreeNode element : from(dataView //
 				.select(anyAttribute(T)) //
 				.from(target(), as(T)) //
 				.run()) //
-						.transform(toCard(T))) {
-			final String name = element.get(Attributes.TYPE.getName(), String.class);
-			final String description = element.get(Attributes.DESCRIPTION.getName(), String.class);
-			names.put(name, description);
+						.transform(toCard(T)) //
+						.transform(CARD_TO_DOMAIN_TREE_NODE) //
+						.filter(predicate)) {
+			names.put(element.getType(), element.getDescription());
 		}
 		return names;
 	}
@@ -93,13 +141,13 @@ public class DBDomainTreeStore {
 	public DomainTreeNode getDomainTree(final String type) {
 		DomainTreeNode root = null;
 		final Map<Long, DomainTreeNode> nodesById = newHashMap();
-		for (final CMCard card : from(dataView //
+		for (final DomainTreeNode current : from(dataView //
 				.select(anyAttribute(T)) //
 				.from(target(), as(T)) //
 				.where(condition(attribute(T, Attributes.TYPE.getName()), eq(type))) //
 				.run()) //
-						.transform(toCard(T))) {
-			final DomainTreeNode current = cardToDomainTreeNode(card);
+						.transform(toCard(T)) //
+						.transform(CARD_TO_DOMAIN_TREE_NODE)) {
 			for (final DomainTreeNode element : nodesById.values()) {
 				// Link children to current node
 				if (element.getIdParent() != null && element.getIdParent().equals(current.getId())) {
@@ -122,7 +170,7 @@ public class DBDomainTreeStore {
 		return root;
 	}
 
-	private void saveNode(final String treeType, String description, final DomainTreeNode root) {
+	private void saveNode(final String treeType, final String description, final DomainTreeNode root) {
 		final Long id = dataView.createCardFor(target()) //
 				.set(Attributes.DIRECT.getName(), root.isDirect()) //
 				.set(Attributes.DOMAIN_NAME.getName(), root.getDomainName()) //
@@ -143,48 +191,8 @@ public class DBDomainTreeStore {
 		}
 	}
 
-	private DomainTreeNode cardToDomainTreeNode(final CMCard card) {
-		final DomainTreeNode domainTreeNode = new DomainTreeNode();
-		domainTreeNode.setId(card.getId());
-		domainTreeNode.setDescription((String) card.get(Attributes.DESCRIPTION.getName()));
-		domainTreeNode.setDirect(booleanCast(card.get(Attributes.DIRECT.getName())));
-		domainTreeNode.setDomainName((String) card.get(Attributes.DOMAIN_NAME.getName()));
-		domainTreeNode.setType((String) card.get(Attributes.TYPE.getName()));
-		domainTreeNode.setIdGroup(safeLongCast(card.get(Attributes.ID_GROUP.getName())));
-		domainTreeNode.setIdParent(safeLongCast(card.get(Attributes.ID_PARENT.getName())));
-		domainTreeNode.setTargetClassDescription((String) card.get(Attributes.TARGET_CLASS_DESCRIPTION.getName()));
-		domainTreeNode.setTargetClassName(((String) card.get(Attributes.TARGET_CLASS_NAME.getName())));
-		domainTreeNode.setBaseNode((booleanCast(card.get(Attributes.BASE_NODE.getName()))));
-		domainTreeNode.setTargetFilter((String) card.get(Attributes.FILTER.getName()));
-		domainTreeNode.setEnableRecursion((booleanCast(card.get(Attributes.ENABLE_RECURSION.getName()))));
-		return domainTreeNode;
-	}
-
 	private CMClass target() {
 		return dataView.findClass(TABLE_NAME);
-	}
-
-	/*
-	 * getValue method of a Card returns an Object. For the Ids it returns an
-	 * Integer but we want a Long. Cast them ignoring null values
-	 */
-	private Long safeLongCast(final Object o) {
-		if (o == null) {
-			return null;
-		} else if (o instanceof Long) {
-			return (Long) o;
-		} else if (o instanceof Integer) {
-			return ((Integer) o).longValue();
-		}
-		return null;
-	}
-
-	private boolean booleanCast(final Object o) {
-		if (o == null) {
-			return false;
-		} else {
-			return (Boolean) o;
-		}
 	}
 
 }

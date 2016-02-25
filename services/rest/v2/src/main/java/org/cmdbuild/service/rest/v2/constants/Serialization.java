@@ -111,6 +111,7 @@ public class Serialization {
 			PRECISION = "precision", //
 			PROMPT_SYNCHRONIZATION = "promptSynchronization", //
 			PROTOTYPE = "prototype", //
+			RECURSION_ENABLED = "recursionEnabled", //
 			REFERENCES = "references", //
 			RELATION = "relation", //
 			RELATION_ID = RELATION + ID_CAPITALIZED, //
