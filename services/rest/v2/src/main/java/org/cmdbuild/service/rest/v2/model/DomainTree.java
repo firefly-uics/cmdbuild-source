@@ -46,7 +46,7 @@ public class DomainTree extends ModelWithStringId {
 			return true;
 		}
 
-		if (!(obj instanceof Node)) {
+		if (!(obj instanceof DomainTree)) {
 			return false;
 		}
 
