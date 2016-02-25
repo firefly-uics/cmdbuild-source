@@ -1,32 +1,36 @@
 (function() {
 
-	/**
-	 * Logout
-	 */
-	Ext.application({
-		extend: 'Ext.app.Application',
+	Ext.define('CMDBuild.app.Logout', {
+		extend: 'Ext.panel.Panel',
 
 		requires: [
-			'Ext.tip.QuickTipManager' // Avoid core override
+			'CMDBuild.core.proxy.CMProxyConstants',
+			'CMDBuild.core.proxy.session.JsonRpc',
+			'CMDBuild.core.proxy.session.Rest'
 		],
 
-		appFolder: './javascripts/cmdbuild',
-		name: 'CMDBuild',
+		singleton: true,
 
-		launch: function() {
-			Ext.WindowManager.getNextZSeed();	// To increase the default zseed. Is needed for the combo on windows probably it fix also the prev problem
-			Ext.enableFx = false;
-			Ext.tip.QuickTipManager.init();
+		frame: false,
+		border: false,
 
-			// Fix a problem of Ext 4.2 tooltips width
-			// see http://www.sencha.com/forum/showthread.php?260106-Tooltips-on-forms-and-grid-are-not-resizing-to-the-size-of-the-text/page3#24
-			delete Ext.tip.Tip.prototype.minWidth;
+		doLogout: function() {
+			CMDBuild.core.proxy.session.JsonRpc.logout({
+				scope: this,
+				success: function(response, options, decodedResponse) {
+					if (!Ext.isEmpty(Ext.util.Cookies.get(CMDBuild.core.proxy.CMProxyConstants.SESSION_TOKEN))) {
+						var urlParams = {};
+						urlParams[CMDBuild.core.proxy.CMProxyConstants.TOKEN] = Ext.util.Cookies.get(CMDBuild.core.proxy.CMProxyConstants.SESSION_TOKEN);
 
-			Ext.create('CMDBuild.core.LoggerManager'); // Logger configuration
-			Ext.create('CMDBuild.core.Data'); // Data connections configuration
-			Ext.create('CMDBuild.core.cache.Cache');
+						CMDBuild.core.proxy.session.Rest.logout({ urlParams: urlParams });
+					}
+				},
+				callback: function(records, operation, success) {
+					Ext.util.Cookies.clear(CMDBuild.core.constants.Proxy.SESSION_TOKEN);
 
-			Ext.create('CMDBuild.controller.logout.Logout');
+					window.location = 'index.jsp';
+				}
+			});
 		}
 	});
 
