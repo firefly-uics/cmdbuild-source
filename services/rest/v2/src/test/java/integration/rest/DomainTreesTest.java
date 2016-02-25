@@ -7,9 +7,11 @@ import static org.cmdbuild.service.rest.test.ServerResource.randomPort;
 import static org.cmdbuild.service.rest.v2.constants.Serialization.FILTER;
 import static org.cmdbuild.service.rest.v2.constants.Serialization.LIMIT;
 import static org.cmdbuild.service.rest.v2.constants.Serialization.START;
+import static org.cmdbuild.service.rest.v2.model.Models.newDomainTree;
 import static org.cmdbuild.service.rest.v2.model.Models.newMetadata;
 import static org.cmdbuild.service.rest.v2.model.Models.newNode;
 import static org.cmdbuild.service.rest.v2.model.Models.newResponseMultiple;
+import static org.cmdbuild.service.rest.v2.model.Models.newResponseSingle;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.anyInt;
@@ -27,8 +29,9 @@ import org.apache.http.impl.client.HttpClientBuilder;
 import org.cmdbuild.service.rest.test.JsonSupport;
 import org.cmdbuild.service.rest.test.ServerResource;
 import org.cmdbuild.service.rest.v2.DomainTrees;
-import org.cmdbuild.service.rest.v2.model.Node;
+import org.cmdbuild.service.rest.v2.model.DomainTree;
 import org.cmdbuild.service.rest.v2.model.ResponseMultiple;
+import org.cmdbuild.service.rest.v2.model.ResponseSingle;
 import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Rule;
@@ -58,8 +61,16 @@ public class DomainTreesTest {
 	@Test
 	public void allElementsRead() throws Exception {
 		// given
-		final ResponseMultiple<String> expectedResponse = newResponseMultiple(String.class) //
-				.withElements(asList("foo", "bar")) //
+		final ResponseMultiple<DomainTree> expectedResponse = newResponseMultiple(DomainTree.class) //
+				.withElements(asList( //
+						newDomainTree() //
+								.withId("foo") //
+								.withDescription("Foo") //
+								.build(),
+						newDomainTree() //
+								.withId("bar") //
+								.withDescription("Bar") //
+								.build())) //
 				.withMetadata(newMetadata() //
 						.withTotal(42L) //
 						.build()) //
@@ -85,17 +96,19 @@ public class DomainTreesTest {
 	@Test
 	public void elementRead() throws Exception {
 		// given
-		final ResponseMultiple<Node> expectedResponse = newResponseMultiple(Node.class) //
-				.withElements(asList( //
-						newNode() //
+		final ResponseSingle<DomainTree> expectedResponse = newResponseSingle(DomainTree.class) //
+				.withElement(newDomainTree() //
+						.withId("foo") //
+						.withDescription("Foo") //
+						.withNode(newNode() //
 								.withId(123L) //
-								.build(), //
-						newNode() //
+								.build()) //
+						.withNode(newNode() //
 								.withId(456L) //
-								.build() //
-		)) //
+								.build()) //
+						.build()) //
 				.withMetadata(newMetadata() //
-						.withTotal(42L) //
+						// nothing to add, just needed for simplify assertions
 						.build()) //
 				.build();
 		when(service.read(anyString())) //

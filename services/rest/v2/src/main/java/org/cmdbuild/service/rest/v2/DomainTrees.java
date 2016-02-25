@@ -14,8 +14,9 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 
-import org.cmdbuild.service.rest.v2.model.Node;
+import org.cmdbuild.service.rest.v2.model.DomainTree;
 import org.cmdbuild.service.rest.v2.model.ResponseMultiple;
+import org.cmdbuild.service.rest.v2.model.ResponseSingle;
 
 @Path("domainTrees")
 @Consumes(APPLICATION_JSON)
@@ -24,7 +25,7 @@ public interface DomainTrees {
 
 	@GET
 	@Path(EMPTY)
-	ResponseMultiple<String> readAll( //
+	ResponseMultiple<DomainTree> readAll( //
 			@QueryParam(FILTER) String filter, //
 			@QueryParam(LIMIT) Integer limit, //
 			@QueryParam(START) Integer offset //
@@ -32,7 +33,7 @@ public interface DomainTrees {
 
 	@GET
 	@Path("{" + ID + "}/")
-	ResponseMultiple<Node> read( //
+	ResponseSingle<DomainTree> read( //
 			@PathParam(ID) String id //
 	);
 

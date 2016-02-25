@@ -661,6 +661,47 @@ public class Models {
 
 	}
 
+	public static class DomainTreeBuilder extends ModelBuilder<DomainTree> {
+
+		private String id;
+		private String description;
+		private final Collection<Node> nodes = newArrayList();
+
+		private DomainTreeBuilder() {
+			// use factory method
+		}
+
+		@Override
+		protected DomainTree doBuild() {
+			final DomainTree output = new DomainTree();
+			output.setId(id);
+			output.setDescription(description);
+			output.setNodes(nodes);
+			return output;
+		}
+
+		public DomainTreeBuilder withId(final String id) {
+			this.id = id;
+			return this;
+		}
+
+		public DomainTreeBuilder withDescription(final String description) {
+			this.description = description;
+			return this;
+		}
+
+		public DomainTreeBuilder withNode(final Node node) {
+			this.nodes.add(node);
+			return this;
+		}
+
+		public DomainTreeBuilder withNodes(final Iterable<Node> nodes) {
+			addAll(this.nodes, nodes);
+			return this;
+		}
+
+	}
+
 	public static class DomainWithBasicDetailsBuilder extends ModelBuilder<DomainWithBasicDetails> {
 
 		private String id;
@@ -2364,6 +2405,10 @@ public class Models {
 
 	public static ClassWithFullDetailsBuilder newClassWithFullDetails() {
 		return new ClassWithFullDetailsBuilder();
+	}
+
+	public static DomainTreeBuilder newDomainTree() {
+		return new DomainTreeBuilder();
 	}
 
 	public static DomainWithBasicDetailsBuilder newDomainWithBasicDetails() {

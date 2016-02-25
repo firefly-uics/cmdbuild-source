@@ -5,12 +5,12 @@ public class Serialization {
 	public static final String NAMESPACE = "http://cmdbuild.org/services/rest/v2/";
 
 	public static final String //
-			ID = "id", //
+	ID = "id", //
 			ID_CAPITALIZED = "Id", //
 			PROCESS_CAPITAL = "Process";
 
 	public static final String //
-			ACCOUNT = "account", //
+	ACCOUNT = "account", //
 			ACTIVE = "active", //
 			ACTIVITY = "activity", //
 			ADVANCE = "advance", //
@@ -93,6 +93,7 @@ public class Serialization {
 			MODIFIED = "modified", //
 			NAME = "name", //
 			NODE_TOOLTIP_ENABLED = "nodeTooltipEnabled", //
+			NODES = "nodes", //
 			NO_SUBJECT_PREFIX = "noSubjectPrefix", //
 			NOTIFY_WITH = "notifyWith", //
 			NUMBER = "number", //
@@ -153,14 +154,14 @@ public class Serialization {
 			WRITABLE = "writable";
 
 	public static final String //
-			LOOKUP = "lookup", //
+	LOOKUP = "lookup", //
 			LOOKUP_TYPE = LOOKUP + "Type", //
 			LOOKUP_TYPE_ID = LOOKUP_TYPE + ID_CAPITALIZED, //
 			LOOKUP_VALUE = LOOKUP + "Value", //
 			LOOKUP_VALUE_ID = LOOKUP_VALUE + ID_CAPITALIZED;
 
 	public static final String //
-			PROCESS = "process", //
+	PROCESS = "process", //
 			PROCESS_ACTIVITY = PROCESS + "Activity", //
 			PROCESS_ACTIVITY_ID = PROCESS_ACTIVITY + ID_CAPITALIZED, //
 			PROCESS_ID = PROCESS + ID_CAPITALIZED, //
@@ -168,7 +169,7 @@ public class Serialization {
 			PROCESS_INSTANCE_ID = PROCESS_INSTANCE + ID_CAPITALIZED;
 
 	public static final String //
-			TYPE_BOOLEAN = "boolean", //
+	TYPE_BOOLEAN = "boolean", //
 			TYPE_CHAR = "char", //
 			TYPE_DATE = "date", //
 			TYPE_DATE_TIME = "dateTime", //
@@ -187,7 +188,7 @@ public class Serialization {
 			TYPE_TIME = "time";
 
 	public static final String //
-			UNDERSCORED_ACTIVITY = "_activity", //
+	UNDERSCORED_ACTIVITY = "_activity", //
 			UNDERSCORED_ADVANCE = "_" + ADVANCE, //
 			UNDERSCORED_ATTACHMENT = "_" + ATTACHMENT, //
 			UNDERSCORED_AUTHOR = "_" + AUTHOR, //
