@@ -1,10 +1,17 @@
 package org.cmdbuild.service.rest.v2.model;
 
+import static org.cmdbuild.service.rest.v2.constants.Serialization.METADATA;
+import static org.cmdbuild.service.rest.v2.constants.Serialization.PARENT;
+
 import java.util.Map;
+
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
+@XmlRootElement
 public class Node extends ModelWithLongId {
 
 	private Long parent;
@@ -14,6 +21,7 @@ public class Node extends ModelWithLongId {
 		// package visibility
 	}
 
+	@XmlElement(name = PARENT)
 	public Long getParent() {
 		return parent;
 	}
@@ -22,6 +30,7 @@ public class Node extends ModelWithLongId {
 		this.parent = parent;
 	}
 
+	@XmlElement(name = METADATA)
 	public Map<String, Object> getMetadata() {
 		return metadata;
 	}
