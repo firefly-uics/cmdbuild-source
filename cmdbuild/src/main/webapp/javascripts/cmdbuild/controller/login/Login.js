@@ -33,7 +33,7 @@
 		 *
 		 * @override
 		 */
-		constructor: function(configurationObject) {
+		constructor: function (configurationObject) {
 			this.callParent(arguments);
 
 			this.view = Ext.create('CMDBuild.view.login.LoginViewport', { delegate: this });
@@ -44,7 +44,7 @@
 			this.setupFields();
 		},
 
-		onLoginViewportDoLogin: function() {
+		onLoginViewportDoLogin: function () {
 			if (!Ext.isEmpty(this.form.role.getValue()) || this.form.getForm().isValid()) {
 				var params = {};
 				params[CMDBuild.core.constants.Proxy.PASSWORD] = this.form.password.getValue();
@@ -59,18 +59,17 @@
 					params: params,
 					loadMask: false,
 					scope: this,
-					success: function(response, options, decodedResponse) {
-						var urlParams = {};
-						urlParams[CMDBuild.core.constants.Proxy.TOKEN] = response.getResponseHeader(CMDBuild.core.constants.Proxy.AUTHORIZATION_HEADER_KEY);
-
+					success: function (response, options, decodedResponse) {
 						CMDBuild.core.proxy.session.Rest.login({
 							params: params,
-							urlParams: urlParams,
 							scope: this,
-							success: function(response, options, decodedResponse) {
-								Ext.util.Cookies.set(CMDBuild.core.constants.Proxy.SESSION_TOKEN, urlParams[CMDBuild.core.constants.Proxy.TOKEN]);
+							success: function (response, options, decodedResponse) {
+								decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.DATA];
+
+								if (Ext.isObject(decodedResponse) && !Ext.Object.isEmpty(decodedResponse))
+									Ext.util.Cookies.set(CMDBuild.core.constants.Proxy.SESSION_TOKEN, decodedResponse['_id']);
 							},
-							callback: function(options, success, response) {
+							callback: function (options, success, response) {
 								// CMDBuild redirect
 								if (/administration.jsp$/.test(window.location)) {
 									window.location = 'administration.jsp' + window.location.hash;
@@ -80,7 +79,7 @@
 							}
 						});
 					},
-					failure: function(result, options, decodedResult) {
+					failure: function (result, options, decodedResult) {
 						CMDBuild.core.LoadMask.hide();
 
 						if (!Ext.isEmpty(decodedResult) && decodedResult[CMDBuild.core.constants.Proxy.REASON] == 'AUTH_MULTIPLE_GROUPS') {
@@ -98,14 +97,14 @@
 			}
 		},
 
-		onLoginViewportUserChange: function() {
+		onLoginViewportUserChange: function () {
 			this.setupFieldsRole(false);
 		},
 
 		/**
 		 * @private
 		 */
-		setupFields: function() {
+		setupFields: function () {
 			if (!Ext.isEmpty(CMDBuild.configuration.runtime)) {
 				if (Ext.isEmpty(CMDBuild.configuration.runtime.get(CMDBuild.core.constants.Proxy.USERNAME))) {
 					this.form.user.focus();
@@ -126,7 +125,7 @@
 		 *
 		 * @private
 		 */
-		setupFieldsRole: function(state) {
+		setupFieldsRole: function (state) {
 			state = Ext.isBoolean(state) ? state : false;
 
 			if (state && !Ext.isEmpty(CMDBuild.configuration.runtime.get(CMDBuild.core.constants.Proxy.GROUPS))) {

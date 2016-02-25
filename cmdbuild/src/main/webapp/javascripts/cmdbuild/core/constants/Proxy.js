@@ -47,7 +47,7 @@
 		ATTRIBUTES: 'attributes',
 		ATTRIBUTES_NODE: 'attributesNode',
 		ATTRIBUTES_PRIVILEGES: 'attributesPrivileges',
-		AUTHORIZATION_HEADER_KEY: 'cmdbuild-authorization',
+		AUTHORIZATION_HEADER_KEY: 'CMDBuild-Authorization',
 		BASE: 'base',
 		BASE_LEVEL: 'baseLevel',
 		BASE_NODE: 'baseNode',

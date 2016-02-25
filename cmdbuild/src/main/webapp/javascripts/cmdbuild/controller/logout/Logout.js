@@ -12,16 +12,19 @@
 		/**
 		 * @param {Object} configurationObject
 		 */
-		constructor: function(configurationObject) {
+		constructor: function (configurationObject) {
 			this.callParent(arguments);
 
 			this.doLogout();
 		},
 
-		doLogout: function() {
+		/**
+		 * @private
+		 */
+		doLogout: function () {
 			CMDBuild.core.proxy.session.JsonRpc.logout({
 				scope: this,
-				success: function(response, options, decodedResponse) {
+				success: function (response, options, decodedResponse) {
 					if (!Ext.isEmpty(Ext.util.Cookies.get(CMDBuild.core.constants.Proxy.SESSION_TOKEN))) {
 						var urlParams = {};
 						urlParams[CMDBuild.core.constants.Proxy.TOKEN] = Ext.util.Cookies.get(CMDBuild.core.constants.Proxy.SESSION_TOKEN);
@@ -29,7 +32,7 @@
 						CMDBuild.core.proxy.session.Rest.logout({ urlParams: urlParams });
 					}
 				},
-				callback: function(options, success, response) {
+				callback: function (options, success, response) {
 					Ext.util.Cookies.clear(CMDBuild.core.constants.Proxy.SESSION_TOKEN);
 
 					window.location = 'index.jsp';

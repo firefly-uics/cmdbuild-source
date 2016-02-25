@@ -22,15 +22,13 @@
 		<link rel="icon" type="image/x-icon" href="images/favicon.ico" />
 
 		<!-- 0. ExtJS -->
-		<script type="text/javascript" src="javascripts/ext-<%= extVersion %>/ext-all.js"></script>
+		<script type="text/javascript" src="javascripts/ext-<%= extVersion %>/ext-all-debug.js"></script>
 		<script type="text/javascript" src="javascripts/ext-<%= extVersion %>-ux/Notification.js"></script>
 
 		<!-- 1. Main script -->
 		<script type="text/javascript" src="javascripts/cmdbuild/core/LoaderConfig.js"></script>
-		<script type="text/javascript" src="javascripts/cmdbuild/core/Utils.js"></script>
 		<script type="text/javascript" src="javascripts/log/log4javascript.js"></script>
 		<script type="text/javascript" src="javascripts/cmdbuild/core/Message.js"></script>
-		<script type="text/javascript" src="javascripts/cmdbuild/core/interfaces/Ajax.js"></script>
 
 		<!-- 2. Localizations -->
 		<%@ include file="localizationsJsFiles.jsp" %>
