@@ -101,10 +101,12 @@ public class DomainTreesTest {
 						.withId("foo") //
 						.withDescription("Foo") //
 						.withNode(newNode() //
-								.withId(123L) //
+								.withId(12L) //
+								.withParent(34L) //
 								.build()) //
 						.withNode(newNode() //
-								.withId(456L) //
+								.withId(56L) //
+								.withParent(78L) //
 								.build()) //
 						.build()) //
 				.withMetadata(newMetadata() //
