@@ -10,14 +10,11 @@
 
 		singleton: true,
 
-
 		/**
-		 * @param {Object} parameters
-		 *
-		 * @returns {Ext.data.Store}
+		 * @returns {Ext.data.Store or CMDBuild.core.cache.Store}
 		 */
-		getClassFiltersStore: function(parameters) {
-			return Ext.create('Ext.data.Store', {
+		getClassFiltersStore: function () {
+			return CMDBuild.global.Cache.requestAsStore(CMDBuild.core.constants.Proxy.FILTER, {
 				autoLoad: false,
 				model: 'CMDBuild.model.userAndGroup.group.defaultFilters.Filter',
 				proxy: {
@@ -25,7 +22,7 @@
 					url: CMDBuild.core.proxy.Index.group.defaultFilters.readAllGroupFilters,
 					reader: {
 						type: 'json',
-						root: 'filters'
+						root: CMDBuild.core.constants.Proxy.FILTERS
 					}
 				},
 				sorters: [
@@ -37,23 +34,23 @@
 		/**
 		 * @param {Object} parameters
 		 */
-		read: function(parameters) {
+		read: function (parameters) {
 			parameters = Ext.isEmpty(parameters) ? {} : parameters;
 
 			Ext.apply(parameters, { url: CMDBuild.core.proxy.Index.group.defaultFilters.read });
 
-			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.GROUP, parameters);
+			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.DEFAULT_FILTER, parameters);
 		},
 
 		/**
 		 * @param {Object} parameters
 		 */
-		update: function(parameters) {
+		update: function (parameters) {
 			parameters = Ext.isEmpty(parameters) ? {} : parameters;
 
 			Ext.apply(parameters, { url: CMDBuild.core.proxy.Index.group.defaultFilters.update });
 
-			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.GROUP, parameters, true);
+			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.DEFAULT_FILTER, parameters, true);
 		}
 	});
 

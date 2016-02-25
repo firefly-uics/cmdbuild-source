@@ -32,7 +32,7 @@
 		 *
 		 * @private
 		 */
-		callbackInterceptor: function(records, operation, success) {
+		callbackInterceptor: function (records, operation, success) {
 			var decodedResponse = CMDBuild.core.interfaces.Ajax.decodeJson(operation.response.responseText);
 
 			CMDBuild.core.interfaces.messages.Warning.display(decodedResponse);
@@ -44,12 +44,14 @@
 		/**
 		 * @param {Function or Object} options
 		 */
-		load: function(options) {
-			options = Ext.isEmpty(options) ? {
+		load: function (options) {
+			options = Ext.isEmpty(options) ? {} : options;
+
+			Ext.applyIf(options, {
 				callback: Ext.emptyFn,
 				params: {},
 				scope: this
-			} : options;
+			});
 
 			if (
 				CMDBuild.global.Cache.isEnabled()
