@@ -7,8 +7,7 @@
 
 		requires: [
 			'CMDBuild.core.proxy.CMProxyConstants',
-			'CMDBuild.core.proxy.CMProxyUrlIndex',
-			'CMDBuild.core.Utils'
+			'CMDBuild.core.proxy.CMProxyUrlIndex'
 		],
 
 		singleton: true,
@@ -17,10 +16,10 @@
 		 * @param {Object} parameters
 		 */
 		login: function(parameters) {
-			Ext.Ajax.request({
-				method: 'PUT',
+			CMDBuild.Ajax.request({
+				method: 'POST',
 				jsonData: parameters.params,
-				url: CMDBuild.core.proxy.CMProxyUrlIndex.session.rest + '/' + parameters.urlParams[CMDBuild.core.proxy.CMProxyConstants.TOKEN],
+				url: CMDBuild.core.proxy.CMProxyUrlIndex.session.rest + '/',
 				loadMask: Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : true,
 				scope: parameters.scope || this,
 				success: parameters.success || Ext.emptyFn,
@@ -33,8 +32,12 @@
 		 * @param {Object} parameters
 		 */
 		logout: function(parameters) {
-			Ext.Ajax.request({
+			parameters.headers = Ext.isEmpty(parameters.headers) ? {} : parameters.headers;
+			parameters.headers[CMDBuild.core.proxy.CMProxyConstants.AUTHORIZATION_HEADER_KEY] = Ext.util.Cookies.get(CMDBuild.core.proxy.CMProxyConstants.SESSION_TOKEN);
+
+			CMDBuild.Ajax.request({
 				method: 'DELETE',
+				headers: parameters.headers,
 				url: CMDBuild.core.proxy.CMProxyUrlIndex.session.rest + '/' + parameters.urlParams[CMDBuild.core.proxy.CMProxyConstants.TOKEN],
 				loadMask: Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : true,
 				scope: parameters.scope || this,
@@ -48,8 +51,12 @@
 		 * @param {Object} parameters
 		 */
 		read: function(parameters) {
-			Ext.Ajax.request({
+			parameters.headers = Ext.isEmpty(parameters.headers) ? {} : parameters.headers;
+			parameters.headers[CMDBuild.core.proxy.CMProxyConstants.AUTHORIZATION_HEADER_KEY] = Ext.util.Cookies.get(CMDBuild.core.proxy.CMProxyConstants.SESSION_TOKEN);
+
+			CMDBuild.Ajax.request({
 				method: 'GET',
+				headers: parameters.headers,
 				jsonData: parameters.params,
 				url: CMDBuild.core.proxy.CMProxyUrlIndex.session.rest + '/' + parameters.urlParams[CMDBuild.core.proxy.CMProxyConstants.TOKEN],
 				loadMask: Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : true,
