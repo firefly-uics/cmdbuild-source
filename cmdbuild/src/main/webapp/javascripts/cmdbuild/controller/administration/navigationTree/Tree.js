@@ -233,6 +233,7 @@
 
 						if (!Ext.isEmpty(soughtNode)) {
 							soughtNode.set('checked', true);
+							soughtNode.set(CMDBuild.core.constants.Proxy.ENABLE_RECURSION, stateObject[CMDBuild.core.constants.Proxy.ENABLE_RECURSION]);
 							soughtNode.set(CMDBuild.core.constants.Proxy.FILTER, stateObject[CMDBuild.core.constants.Proxy.FILTER]);
 
 							this.loadNodesCheckState(soughtNode, stateObject[CMDBuild.core.constants.Proxy.CHILD_NODES]);
