@@ -223,15 +223,14 @@
 					params: params,
 					scope: this,
 					success: function(response, options, decodedResponse) {
-						var urlParams = {};
-						urlParams[CMDBuild.core.proxy.CMProxyConstants.TOKEN] = response.getResponseHeader(CMDBuild.core.proxy.CMProxyConstants.AUTHORIZATION_HEADER_KEY);
-
 						CMDBuild.core.proxy.session.Rest.login({
 							params: params,
-							urlParams: urlParams,
 							scope: this,
 							success: function(response, options, decodedResponse) {
-								Ext.util.Cookies.set(CMDBuild.core.proxy.CMProxyConstants.SESSION_TOKEN, urlParams[CMDBuild.core.proxy.CMProxyConstants.TOKEN]);
+								decodedResponse = decodedResponse[CMDBuild.core.proxy.CMProxyConstants.DATA];
+
+								if (Ext.isObject(decodedResponse) && !Ext.Object.isEmpty(decodedResponse))
+									Ext.util.Cookies.set(CMDBuild.core.proxy.CMProxyConstants.SESSION_TOKEN, decodedResponse['_id']);
 							},
 							callback: function(records, operation, success) {
 								// CMDBuild redirect
