@@ -29,9 +29,9 @@
 			this.parentNode = this.model.getNode(parentId);
 			this.oldChildren = $.Cmdbuild.g3d.Model.getGraphData(
 					this.parentNode, "children");
-			var domain = $.Cmdbuild.g3d.Model.getGraphData(this.compoundNode,
-					"domain");
-			backend.openCompoundNode(this.params.id, this.elements, domain,
+			var domainId = $.Cmdbuild.g3d.Model.getGraphData(this.compoundNode,
+					"domainId");
+			backend.openCompoundNode(this.params.id, this.elements, domainId,
 					function(elements) {
 						this.newElements = [];
 						for (var i = 0; i < elements.nodes.length; i++) {
@@ -101,7 +101,7 @@
 					y: Math.random() * 600 - 300,
 					z: 200
 				},
-				domain: $.Cmdbuild.g3d.Model.getGraphData(node, "domain"),
+				domainId: $.Cmdbuild.g3d.Model.getGraphData(node, "domainId"),
 				compoundData: compoundData,
 				previousPathNode: $.Cmdbuild.g3d.Model.getGraphData(node,
 						"previousPathNode")
@@ -113,7 +113,9 @@
 				data = {
 					source: edge.source().id(),
 					target: edge.target().id(),
-					label: $.Cmdbuild.g3d.Model.getGraphData(node, "label"),
+					label: $.Cmdbuild.g3d.Model.getGraphData(edge, "label"),
+					domainId: $.Cmdbuild.g3d.Model.getGraphData(edge, "domainId"),
+					relationId: $.Cmdbuild.g3d.Model.getGraphData(edge, "relationId"),
 					color: $.Cmdbuild.custom.configuration.edgeColor,
 					strength: 90
 				}

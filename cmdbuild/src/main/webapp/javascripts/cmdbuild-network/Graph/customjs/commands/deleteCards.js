@@ -33,7 +33,9 @@
 						id: edge.id,
 						source: edge.source,
 						target: edge.target,
-						label: edge.label
+						label: edge.label,
+						relationId: edge.relationId,
+						domainId: edge.domainId
 					}
 				});				
 			}
@@ -80,7 +82,9 @@
 					id: $.Cmdbuild.g3d.Model.getGraphData(cyEdge, "id"),
 					label: $.Cmdbuild.g3d.Model.getGraphData(cyEdge, "label"),
 					source: $.Cmdbuild.g3d.Model.getGraphData(cyEdge, "source"),
-					target: $.Cmdbuild.g3d.Model.getGraphData(cyEdge, "target")
+					target: $.Cmdbuild.g3d.Model.getGraphData(cyEdge, "target"),
+					relationId: $.Cmdbuild.g3d.Model.getGraphData(cyEdge, "relationId"),
+					domainId: $.Cmdbuild.g3d.Model.getGraphData(cyEdge, "domainId")
 				});
 			}
 			return edges;
