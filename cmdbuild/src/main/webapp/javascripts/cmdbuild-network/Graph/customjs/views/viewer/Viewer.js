@@ -1,7 +1,7 @@
 (function($) {
 	var CONFIGURATION_FILE = $.Cmdbuild.g3d.constants.CONFIGURATION_FILE;
-	var OPTIONS_LABEL_ON_SELECTED = $.Cmdbuild.g3d.constants.LABELS_ON_SELECTED;;
-	var OPTIONS_NO_LABELS = $.Cmdbuild.g3d.constants.NO_LABELS;;
+	var OPTIONS_LABEL_ON_SELECTED = $.Cmdbuild.g3d.constants.LABELS_ON_SELECTED;
+	var OPTIONS_NO_LABELS = $.Cmdbuild.g3d.constants.NO_LABELS;
 	if (!$.Cmdbuild.g3d) {
 		$.Cmdbuild.g3d = {};
 	}
@@ -66,6 +66,7 @@
 					.approxOnY($.Cmdbuild.custom.configuration.viewPointDistance);
 			$.Cmdbuild.g3d.ViewerUtilities.declareEvents(this,
 					renderer.domElement);
+			render();
 			var init = new $.Cmdbuild.g3d.commands.init_explode(
 					thisViewer.model, $.Cmdbuild.start.httpCallParameters);
 			this.commandsManager
@@ -94,57 +95,74 @@
 			camera.aspect = canvas.innerWidth() / canvas.innerHeight();
 			camera.updateProjectionMatrix();
 			renderer.setSize(canvas.innerWidth(), canvas.innerHeight());
-		};
+			};
 		this.refreshCamera = function() {
 			var position = this.camera.getData();
 			camera.lookAt(position);
 			controls.target.set(position.x, position.y, position.z);
 		};
-		this.getOpenCompoundCommands = function(node) {
-			var elements = $.Cmdbuild.g3d.Model.getGraphData(node,
+		this.getOpenCompoundCommands = function(node, callback, callbackScope) {
+			var compoundData = $.Cmdbuild.g3d.Model.getGraphData(node,
 					"compoundData");
-			var arCommands = [];
-			var expandingThreshold = $.Cmdbuild.g3d.constants.EXPANDING_THRESHOLD;
-			for (var i = 0; i < elements.length; i += expandingThreshold) {
-				arCommands.push({
-					command: "openChildren",
-					id: node.id(),
-					elements: elements.slice(i, i + expandingThreshold)
-				});
-			}
-			return arCommands;
+			var param = {
+				filter : compoundData.filter
+			};
+			$.Cmdbuild.utilities.proxy
+					.getRelations(
+							compoundData.domainId,
+							param,
+							function(elements) {
+								var arCommands = [];
+								var expandingThreshold = $.Cmdbuild.g3d.constants.EXPANDING_THRESHOLD;
+								for (var i = 0; i < elements.length; i += expandingThreshold) {
+									arCommands.push({
+										command : "openChildren",
+										id : node.id(),
+										elements : elements.slice(i, i
+												+ expandingThreshold)
+									});
+								}
+								callback.apply(callbackScope, [ arCommands ]);
+							}, this);
+		};
+		this.openCompoundNode = function(node, callback, callbackScope) {
+			this.getOpenCompoundCommands(node, function(arCommands) {
+				var macroCommand = new $.Cmdbuild.g3d.commands.macroCommand(
+						thisViewer.model, arCommands);
+				$.Cmdbuild.customvariables.commandsManager.execute(
+						macroCommand, {}, function() {
+							callback.apply(callbackScope, []);
+						}, this);
+
+			}, this);
 		};
 		this.onDocumentMouseDblClick = function(event) {
 			if (!LASTSELECTED) {
 				return;
 			}
 			var node = thisViewer.model.getNode(LASTSELECTED.elementId);
-			var classId = $.Cmdbuild.g3d.Model
-					.getGraphData(node, "classId");
+			var classId = $.Cmdbuild.g3d.Model.getGraphData(node, "classId");
 			if (classId == $.Cmdbuild.g3d.constants.GUICOMPOUNDNODE) {
-				var arCommands = thisViewer.getOpenCompoundCommands(node);
-				var macroCommand = new $.Cmdbuild.g3d.commands.macroCommand(
-						thisViewer.model, arCommands);
-				$.Cmdbuild.customvariables.commandsManager.execute(
-						macroCommand, {}, function() {
-						}, thisViewer);
-
+				thisViewer.openCompoundNode(node, function() {
+					thisViewer.clearSelection();
+					thisViewer.model.remove(node.id());
+					thisViewer.model.changed(true);
+				}, this);
 			} else {
 				thisViewer
 						.explodeNode({
-							id: LASTSELECTED.elementId,
-							domainList: null,
-							levels: $.Cmdbuild.customvariables.options["explosionLevels"]
-						// parseInt($("#levels").val())
+							id : LASTSELECTED.elementId,
+							domainList : null,
+							levels : $.Cmdbuild.customvariables.options["explosionLevels"]
 						});
 			}
 		};
 		this.explodeNode = function(params) {
 			var explode = new $.Cmdbuild.g3d.commands.explode_levels(
 					thisViewer.model, {
-						id: params.id,
-						domainList: params.domainList,
-						levels: params.levels
+						id : params.id,
+						domainList : params.domainList,
+						levels : params.levels
 					});
 			thisViewer.commandsManager.execute(explode, {}, function() {
 				var nodes = $.Cmdbuild.customvariables.model.getNodes();
@@ -196,8 +214,8 @@
 			if (intersects.length > 0 && intersects[0].object.name) {
 				try {
 					var node = thisViewer.model.getNode(INTERSECTED.elementId);
-					$.Cmdbuild.g3d.ViewerUtilities.moveNodeTooltip(intersects[0], node,
-							event.clientX, event.clientY);
+					$.Cmdbuild.g3d.ViewerUtilities.moveNodeTooltip(
+							intersects[0], node, event.clientX, event.clientY);
 					if (node.selectionOnNode) {
 						node.selectionOnNode.position
 								.copy(node.glObject.position);
@@ -226,8 +244,8 @@
 			}
 			if (intersects.length > 0) {
 				var node = thisViewer.model.getNode(intersects[0].object.id);
-				$.Cmdbuild.g3d.ViewerUtilities.moveEdgeTooltip(intersects[0], node, event.clientX,
-						event.clientY);
+				$.Cmdbuild.g3d.ViewerUtilities.moveEdgeTooltip(intersects[0],
+						node, event.clientX, event.clientY);
 			} else {
 				$.Cmdbuild.g3d.ViewerUtilities.closeTooltip();
 			}
@@ -334,7 +352,7 @@
 			}
 			this.duringRefresh = true;
 			this.model.changeLayout({
-				name: "guisphere"// "guicircle"//"breadthfirst"//"concentric"//
+				name : "guisphere"// "guicircle"//"breadthfirst"//"concentric"//
 			});
 			if (rough) {
 				$.Cmdbuild.g3d.ViewerUtilities.clearScene(scene, this.model,
@@ -354,7 +372,6 @@
 			} else {
 				this.refreshLabels();
 			}
-
 		};
 		this.refreshNodes = function(scene, rough) {
 			var nodes = this.model.getNodes();
@@ -376,12 +393,11 @@
 					var parentId = $.Cmdbuild.g3d.Model.getGraphData(node,
 							"previousPathNode");
 					var parentNode = this.model.getNode(parentId);
-					var p = (parentNode && parentNode.glObject)
-							? parentNode.glObject.position
+					var p = (parentNode && parentNode.glObject) ? parentNode.glObject.position
 							: {
-								x: 0,
-								y: 0,
-								z: 0
+								x : 0,
+								y : 0,
+								z : 0
 							};
 					var object = $.Cmdbuild.g3d.ViewerUtilities.objectFromNode(
 							node, p);
@@ -538,7 +554,7 @@
 				$("#label" + labels[i].id).remove();
 			}
 			labels = [];
-			var showLabels = $.Cmdbuild.customvariables.options["displayLabel"];
+			var showLabels = $.Cmdbuild.customvariables.options.displayLabel;
 			if (showLabels !== OPTIONS_NO_LABELS) {
 				var nodes = this.model.getNodes();
 				for (var i = 0; i < nodes.length; i++) {
@@ -550,8 +566,8 @@
 						continue;
 					}
 					labels.push({
-						object: node.glObject,
-						id: node.id()
+						object : node.glObject,
+						id : node.id()
 					});
 					var strEvents = " onmousemove='$.Cmdbuild.customvariables.viewer.onDocumentMouseMove(event)' ";
 					strEvents += " onmousedown='$.Cmdbuild.customvariables.viewer.onDocumentMouseDown(event)' ";
@@ -566,7 +582,7 @@
 			labelsInterval = setInterval(
 					function() {
 						var showLabels = $.Cmdbuild.customvariables.options["displayLabel"];
-						if (!showLabels) {
+						if (showLabels === $.Cmdbuild.g3d.constants.NO_LABELS) {
 							clearInterval(labelsInterval);
 							return;
 						}
@@ -582,16 +598,16 @@
 							if (y < 0 || x < 0 || x > wCanvas
 									|| y > hCanvas - 40) {
 								$("#label" + labels[i].id).css({
-									display: "none"
+									display : "none"
 								});
 
 							} else if (!labels[i].x || !labels[i].y
 									|| Math.abs(labels[i].y - y) > 4
 									|| Math.abs(labels[i].x - x) > 4) {
 								$("#label" + labels[i].id).css({
-									top: y,
-									left: x,
-									display: "block"
+									top : y,
+									left : x,
+									display : "block"
 								});
 							}
 							labels[i].x = x;
@@ -634,9 +650,9 @@
 			var w = canvas.innerWidth();
 			var h = canvas.innerHeight();
 			var position = {
-				x: x,
-				y: y,
-				z: z
+				x : x,
+				y : y,
+				z : z
 			};
 			controls.enabled = true;
 			$.Cmdbuild.customvariables.camera.zoomOnPosition(position,
@@ -651,8 +667,7 @@
 		};
 		// initialization
 		var animate = function() {
-			requestAnimationFrame(animate);
-			render();
+				setTimeout(function () { requestAnimationFrame(animate); render();}, 1000/20);				
 		};
 
 		var render = function() {

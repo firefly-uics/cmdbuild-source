@@ -24,10 +24,6 @@
 			this.compoundNode = this.model.getNode(this.params.id);
 			this.compoundEdge = this.model.connectedEdges(this.params.id)[0];
 			this.saveForUndoCompoundNode(this.compoundNode, this.compoundEdge);
-			if (this.compoundSavedNode.node.id === undefined) {
-				callback.apply(callbackScope, []);
-				return;
-			}
 			var parentId = $.Cmdbuild.g3d.Model.getGraphData(this.compoundNode,
 					"previousPathNode");
 			this.parentNode = this.model.getNode(parentId);
@@ -53,12 +49,8 @@
 							}
 							$.Cmdbuild.g3d.Model.setGraphData(this.parentNode,
 									"children", allChildren);
-							var me = this;
-							setTimeout(function() {
-								me.model.cleanCompoundNode(me.compoundNode);
-								me.model.changed();
-								callback.apply(callbackScope, []);
-							}, 500);
+							this.model.changed();
+							callback.apply(callbackScope, []);
 						}, this);
 					}, this);
 		};
@@ -93,22 +85,11 @@
 				$.Cmdbuild.g3d.Model.setGraphData(compoundNode, "compoundData",
 						this.compoundSavedNode.node.compoundData);
 			}
-			var children = $.Cmdbuild.g3d.Model.getGraphData(this.parentNode,
-					"children");
-			if (!children) {
-				children = [];
-			}
-			children.push(this.compoundSavedNode.node.id);
-			$.Cmdbuild.g3d.Model.setGraphData(this.parentNode, "children",
-					children);
-			// if (this.batch !== true) {
 			this.model.changed(true);
-			// }
 		};
 		this.saveForUndoCompoundNode = function(node, edge) {
 			var compoundData = $.Cmdbuild.g3d.Model.getGraphData(node,
 					"compoundData");
-			compoundData = (compoundData) ? compoundData.slice() : [];
 			var data = {
 				classId: $.Cmdbuild.g3d.Model.getGraphData(node, "classId"),
 				id: node.id(),
@@ -119,7 +100,6 @@
 					x: Math.random() * 1000 - 500,
 					y: Math.random() * 600 - 300,
 					z: 200
-				// Math.random() * 800 - 400
 				},
 				domain: $.Cmdbuild.g3d.Model.getGraphData(node, "domain"),
 				compoundData: compoundData,
