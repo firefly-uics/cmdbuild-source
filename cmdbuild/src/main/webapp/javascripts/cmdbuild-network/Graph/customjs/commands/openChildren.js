@@ -66,7 +66,7 @@
 					domainId: edge.data.domainId
 				});
 			}
-			for (var i = 0; i < this.newNodes.length; i++) {
+			for (i = 0; i < this.newNodes.length; i++) {
 				var id = this.newNodes[i];
 				this.model.remove(id);
 			}
@@ -106,9 +106,9 @@
 				previousPathNode: $.Cmdbuild.g3d.Model.getGraphData(node,
 						"previousPathNode")
 			};
-			var node = data;
+			node = data;
 
-			var data = {};
+			data = {};
 			if (edge) {
 				data = {
 					source: edge.source().id(),
@@ -118,9 +118,9 @@
 					relationId: $.Cmdbuild.g3d.Model.getGraphData(edge, "relationId"),
 					color: $.Cmdbuild.custom.configuration.edgeColor,
 					strength: 90
-				}
-			};
-			var edge = data;
+				};
+			}
+			edge = data;
 			this.compoundSavedNode = {
 				node: node,
 				edge: edge
@@ -133,7 +133,7 @@
 					this.newNodes.push(childId);
 				}
 			}
-			for (var i = 0; i < elements.edges.length; i++) {
+			for (i = 0; i < elements.edges.length; i++) {
 				var edge = elements.edges[i];
 				if (this.model.getEdge({
 					source: edge.data.source,

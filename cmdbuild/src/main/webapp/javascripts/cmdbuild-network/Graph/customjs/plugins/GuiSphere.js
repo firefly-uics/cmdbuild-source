@@ -160,7 +160,6 @@
 			}
 		};
 		this.layoutPositions = function(nodes) {
-			// nodes[0].position(center);
 			for (var i = 0; i < nodes.length; i++) {
 				if (!$.Cmdbuild.g3d.Model.getGraphData(nodes[i],
 						"previousPathNode")
