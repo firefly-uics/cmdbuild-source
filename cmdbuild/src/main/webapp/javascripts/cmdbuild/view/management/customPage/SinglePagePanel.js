@@ -17,7 +17,7 @@
 		frame: false,
 		layout: 'fit',
 
-		initComponent: function() {
+		initComponent: function () {
 			Ext.apply(this, {
 				tools: [
 					Ext.create('CMDBuild.view.common.panel.gridAndForm.tools.Properties', {

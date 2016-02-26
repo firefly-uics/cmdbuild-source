@@ -11,7 +11,7 @@
 		title: CMDBuild.Translation.relationGraph,
 
 		listeners: {
-			show: function(window, eOpts) {
+			show: function (window, eOpts) {
 				this.delegate.cmfg('onGraphWindowShow');
 			}
 		}

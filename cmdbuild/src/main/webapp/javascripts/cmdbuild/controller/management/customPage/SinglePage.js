@@ -35,7 +35,7 @@
 		 *
 		 * @override
 		 */
-		constructor: function(configurationObject) {
+		constructor: function (configurationObject) {
 			this.callParent(arguments);
 
 			this.view = Ext.create('CMDBuild.view.management.customPage.SinglePagePanel', { delegate: this });
@@ -48,7 +48,7 @@
 		 *
 		 * @override
 		 */
-		onCustomPageModuleInit: function(node) {
+		onCustomPageModuleInit: function (node) {
 			if (!Ext.isEmpty(node)) {
 				var basePath = window.location.toString().split('/');
 				basePath = Ext.Array.slice(basePath, 0, basePath.length - 1).join('/');
@@ -65,6 +65,7 @@
 							+ node.get(CMDBuild.core.constants.Proxy.NAME)
 							+ '/?basePath=' + basePath
 							+ '&frameworkVersion=' + CMDBuild.core.configurations.CustomPage.getVersion()
+							+ '&language=' + CMDBuild.configuration.localization.get(CMDBuild.core.constants.Proxy.LANGUAGE)
 					}
 				});
 
