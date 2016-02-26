@@ -1,5 +1,7 @@
 (function() {
 
+	Ext.require(['CMDBuild.controller.management.common.widgets.manageRelation.CMManageRelationController']); // Legacy
+
 	Ext.define("CMDBuild.controller.management.common.CMWidgetManagerController", {
 
 		/**
@@ -21,7 +23,7 @@
 					'.Grid': 'CMDBuild.controller.management.common.widgets.grid.Grid',
 					'.LinkCards': CMDBuild.controller.management.common.widgets.linkCards.LinkCardsController,
 					'.ManageEmail': 'CMDBuild.controller.management.widget.ManageEmail',
-					'.ManageRelation': 'CMDBuild.controller.management.common.widgets.manageRelation.CMManageRelationController',
+					'.ManageRelation': CMDBuild.controller.management.common.widgets.manageRelation.CMManageRelationController,
 					'.NavigationTree': CMDBuild.controller.management.common.widgets.CMNavigationTreeController,
 					'.OpenAttachment': CMDBuild.controller.management.common.widgets.CMOpenAttachmentController,
 					'.OpenNote': CMDBuild.controller.management.common.widgets.CMOpenNoteController,
