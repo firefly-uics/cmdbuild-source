@@ -34,7 +34,7 @@
 		 *
 		 * @override
 		 */
-		constructor: function(configObject) {
+		constructor: function (configObject) {
 			this.callParent(arguments);
 
 			this.view = Ext.create('CMDBuild.view.administration.localization.advancedTable.SectionPanel', {
@@ -58,7 +58,7 @@
 		 *
 		 * @private
 		 */
-		buildChildrenNode: function(rootNode) {
+		buildChildrenNode: function (rootNode) {
 			if (!Ext.isEmpty(rootNode) && rootNode.getDepth() != 1) {
 				var entityAttributesNodeObject = { expandable: true };
 				entityAttributesNodeObject[CMDBuild.core.constants.Proxy.LEAF] = false;
@@ -77,12 +77,12 @@
 		 *
 		 * @private
 		 */
-		decodeStructure: function(rootNode, arrayToDecode) {
+		decodeStructure: function (rootNode, arrayToDecode) {
 			if (
 				!Ext.isEmpty(rootNode)
 				&& !Ext.isEmpty(arrayToDecode) && Ext.isArray(arrayToDecode)
 			) {
-				Ext.Array.forEach(arrayToDecode, function(entityObject, i, allEntitiesObjects) {
+				Ext.Array.forEach(arrayToDecode, function (entityObject, i, allEntitiesObjects) {
 					if (!Ext.Array.contains(this.entityFilter, entityObject[CMDBuild.core.constants.Proxy.NAME].toLowerCase())) { // Discard unwanted entities
 						// Entity main node
 						var entityMainNodeObject = { expandable: true };
@@ -115,14 +115,14 @@
 		 *
 		 * @private
 		 */
-		decodeStructureChildren: function(rootNode, attributesArray) {
+		decodeStructureChildren: function (rootNode, attributesArray) {
 			if (
 				!Ext.isEmpty(rootNode)
 				&& !Ext.isEmpty(attributesArray) && Ext.isArray(attributesArray)
 			) {
 				rootNode = this.buildChildrenNode(rootNode);
 
-				Ext.Array.forEach(attributesArray, function(attributeObject, i, allAttributesObjects) {
+				Ext.Array.forEach(attributesArray, function (attributeObject, i, allAttributesObjects) {
 					if (!Ext.Array.contains(this.entityAttributeFilter, attributeObject[CMDBuild.core.constants.Proxy.NAME].toLowerCase())) { // Discard unwanted attributes
 						var entityAttributeNodeObject = { expandable: true };
 						entityAttributeNodeObject[CMDBuild.core.constants.Proxy.IDENTIFIER] = attributeObject[CMDBuild.core.constants.Proxy.NAME];
@@ -156,12 +156,12 @@
 		 * @private
 		 * @override
 		 */
-		decodeStructureFields: function(rootNode, fieldsArray) {
+		decodeStructureFields: function (rootNode, fieldsArray) {
 			if (
 				!Ext.isEmpty(rootNode)
 				&& !Ext.isEmpty(fieldsArray) && Ext.isArray(fieldsArray)
 			) {
-				Ext.Array.forEach(fieldsArray, function(fieldObject, i, allFields) {
+				Ext.Array.forEach(fieldsArray, function (fieldObject, i, allFields) {
 					var entityFieldNodeObject = {};
 					entityFieldNodeObject[CMDBuild.core.constants.Proxy.DEFAULT] = fieldObject[CMDBuild.core.constants.Proxy.VALUE];
 					entityFieldNodeObject[CMDBuild.core.constants.Proxy.FIELD] = fieldObject[CMDBuild.core.constants.Proxy.NAME];

@@ -2,6 +2,7 @@ package org.cmdbuild.servlets.json.schema;
 
 import static org.cmdbuild.common.utils.BuilderUtils.a;
 import static org.cmdbuild.servlets.json.CommunicationConstants.ACTIVE;
+import static org.cmdbuild.servlets.json.CommunicationConstants.ACTIVE_ONLY;
 import static org.cmdbuild.servlets.json.CommunicationConstants.FIELD;
 import static org.cmdbuild.servlets.json.CommunicationConstants.FILE;
 import static org.cmdbuild.servlets.json.CommunicationConstants.LANGUAGES;
@@ -140,7 +141,7 @@ public class Translation extends JSONBaseWithSpringContext {
 	public DataHandler exportCsv(@Parameter(value = TYPE) final String type, //
 			@Parameter(value = SEPARATOR, required = false) final String separator, //
 			@Parameter(value = SORT, required = false) final JSONArray sorters, //
-			@Parameter(value = ACTIVE, required = false) final boolean activeOnly, //
+			@Parameter(value = ACTIVE_ONLY, required = false) final boolean activeOnly, //
 			@Parameter(value = LANGUAGES, required = false) final String _languages //
 	) throws JSONException, IOException {
 

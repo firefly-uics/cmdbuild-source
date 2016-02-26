@@ -21,7 +21,6 @@
 		 */
 		cmfgCatchedFunctions: [
 			'onLocalizationConfigurationAbortButtonClick',
-			'onLocalizationConfigurationDefaultLanguageChange',
 			'onLocalizationConfigurationSaveButtonClick'
 		],
 
@@ -36,7 +35,7 @@
 		 *
 		 * @override
 		 */
-		constructor: function(configObject) {
+		constructor: function (configObject) {
 			this.callParent(arguments);
 
 			this.view = Ext.create('CMDBuild.view.administration.localization.ConfigurationPanel', { delegate: this });
@@ -51,10 +50,10 @@
 		 *
 		 * @private
 		 */
-		configurationRead: function() {
+		configurationRead: function () {
 			CMDBuild.core.proxy.configuration.GeneralOptions.read({
 				scope: this,
-				success: function(response, options, decodedResponse) {
+				success: function (response, options, decodedResponse) {
 					var decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.DATA];
 
 					this.view.languagePromptCheckbox.setValue(decodedResponse['languageprompt']);
@@ -64,37 +63,8 @@
 			});
 		},
 
-		onLocalizationConfigurationAbortButtonClick: function() {
+		onLocalizationConfigurationAbortButtonClick: function () {
 			this.configurationRead();
-		},
-
-		/**
-		 * Check and disable defaultLanguage relative language checkbox to avoid server wrong configurations
-		 *
-		 * @param {Object} parameters
-		 * @param {String} parameters.defaultLanguageTag
-		 * @param {String} parameters.oldDefaultLanguageTag
-		 */
-		onLocalizationConfigurationDefaultLanguageChange: function(parameters) {
-			if (
-				Ext.isObject(parameters) && !Ext.Object.isEmpty(parameters)
-				&& !Ext.isEmpty(parameters.defaultLanguageTag) && Ext.isString(parameters.defaultLanguageTag)
-			) {
-				Ext.Array.forEach(this.view.enabledLanguagesGrid.getItems(), function(checkbox, i, allCheckboxes) {
-					if (checkbox.getName() == parameters.defaultLanguageTag) {
-						checkbox.setValue(true);
-						checkbox.disable();
-					}
-
-					if (
-						!Ext.isEmpty(parameters.oldDefaultLanguageTag) && Ext.isString(parameters.oldDefaultLanguageTag)
-						&& checkbox.getName() == parameters.oldDefaultLanguageTag
-					) {
-						checkbox.setValue(false);
-						checkbox.enable();
-					}
-				}, this);
-			}
 		},
 
 		/**
@@ -102,10 +72,10 @@
 		 *
 		 * TODO: refactor to save directly only language configuration on another endpoint
 		 */
-		onLocalizationConfigurationSaveButtonClick: function() {
+		onLocalizationConfigurationSaveButtonClick: function () {
 			CMDBuild.core.proxy.configuration.GeneralOptions.read({
 				scope: this,
-				success: function(response, options, decodedResponse) {
+				success: function (response, options, decodedResponse) {
 					var params = decodedResponse[CMDBuild.core.constants.Proxy.DATA];
 					params['language'] = this.view.defaultLanguageCombobox.getValue();
 					params['languageprompt'] = this.view.languagePromptCheckbox.getValue();
@@ -114,8 +84,11 @@
 					CMDBuild.core.proxy.configuration.GeneralOptions.update({
 						params: params,
 						scope: this,
-						success: function(response, options, decodedResponse) {
+						success: function (response, options, decodedResponse) {
 							CMDBuild.core.Message.success();
+
+							// Rebuild configuration model
+							Ext.create('CMDBuild.core.configurationBuilders.Localization');
 						}
 					});
 				}

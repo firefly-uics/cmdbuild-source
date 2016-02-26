@@ -34,10 +34,11 @@
 
 		/**
 		 * @param {Object} configurationObject
+		 * @param {Object} configurationObject.parentDelegate
 		 *
 		 * @override
 		 */
-		constructor: function(configurationObject) {
+		constructor: function (configurationObject) {
 			this.callParent(arguments);
 
 			this.view = Ext.create('CMDBuild.view.administration.localization.LocalizationView', { delegate: this });
@@ -50,7 +51,7 @@
 		 *
 		 * @override
 		 */
-		onLocalizationModuleInit: function(node) {
+		onLocalizationModuleInit: function (node) {
 			if (!Ext.Object.isEmpty(node)) {
 				this.view.removeAll(true);
 
@@ -71,7 +72,7 @@
 		 *
 		 * @private
 		 */
-		sectionIdentifierEvaluation: function(sectionIdentifier) {
+		sectionIdentifierEvaluation: function (sectionIdentifier) {
 			switch (sectionIdentifier) {
 				case 'advancedTranslationsTable':
 					return Ext.create('CMDBuild.controller.administration.localization.advancedTable.AdvancedTable', { parentDelegate: this });

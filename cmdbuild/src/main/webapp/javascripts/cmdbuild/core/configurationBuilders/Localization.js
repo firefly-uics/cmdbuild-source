@@ -17,35 +17,37 @@
 		 * @param {Object} configuration
 		 * @param {Function} configuration.callback
 		 */
-		constructor: function(configuration) {
+		constructor: function (configuration) {
 			Ext.apply(this, configuration); // Apply configurations
 
 			Ext.ns('CMDBuild.configuration');
-
-			CMDBuild.configuration[CMDBuild.core.constants.Proxy.LOCALIZATION] = Ext.create('CMDBuild.model.configuration.Localization'); // Localization configuration object
+			CMDBuild.configuration.localization = Ext.create('CMDBuild.model.configuration.Localization'); // Localization configuration object
 
 			CMDBuild.core.proxy.localization.Localization.getLanguages({
 				loadMask: false,
 				scope: this,
-				success: function(response, options, decodedResponse) {
+				success: function (response, options, decodedResponse) {
 					decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.TRANSLATIONS];
 
-					// Build all languages array
-					CMDBuild.configuration[CMDBuild.core.constants.Proxy.LOCALIZATION].setLanguages(decodedResponse);
+					if (!Ext.isEmpty(decodedResponse) && Ext.isArray(decodedResponse)) {
+						CMDBuild.configuration.localization.set(CMDBuild.core.constants.Proxy.LANGUAGES, decodedResponse); // Build all languages array
 
-					// Get server language
-					CMDBuild.core.proxy.configuration.GeneralOptions.read({ // TODO: waiting for server configuration refactoring
-						loadMask: false,
-						scope: this,
-						success: function(response, options, decodedResponse) {
-							decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.DATA];
+						// Get server language
+						CMDBuild.core.proxy.configuration.GeneralOptions.read({ // TODO: waiting for refactor (server configuration refactoring)
+							loadMask: false,
+							scope: this,
+							success: function (response, options, decodedResponse) {
+								decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.DATA];
 
-							CMDBuild.configuration[CMDBuild.core.constants.Proxy.LOCALIZATION].set(CMDBuild.core.constants.Proxy.LANGUAGE_PROMPT, decodedResponse['languageprompt']);
-							CMDBuild.configuration[CMDBuild.core.constants.Proxy.LOCALIZATION].setEnabledLanguages(decodedResponse['enabled_languages']);
-							CMDBuild.configuration[CMDBuild.core.constants.Proxy.LOCALIZATION].setCurrentLanguage(decodedResponse[CMDBuild.core.constants.Proxy.LANGUAGE]);
-						},
-						callback: this.callback
-					});
+								if (!Ext.isEmpty(decodedResponse) && Ext.isObject(decodedResponse)) {
+									CMDBuild.configuration.localization.set(CMDBuild.core.constants.Proxy.ENABLED_LANGUAGES, decodedResponse['enabled_languages']);
+									CMDBuild.configuration.localization.set(CMDBuild.core.constants.Proxy.LANGUAGE, decodedResponse[CMDBuild.core.constants.Proxy.LANGUAGE]);
+									CMDBuild.configuration.localization.set(CMDBuild.core.constants.Proxy.LANGUAGE_PROMPT, decodedResponse['languageprompt']);
+								}
+							},
+							callback: this.callback
+						});
+					}
 				}
 			});
 		}

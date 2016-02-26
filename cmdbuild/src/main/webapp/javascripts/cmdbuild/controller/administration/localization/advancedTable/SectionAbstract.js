@@ -55,7 +55,7 @@
 		 *
 		 * @private
 		 */
-		buildAttributesNode: function(rootNode) {
+		buildAttributesNode: function (rootNode) {
 			if (!Ext.isEmpty(rootNode)) {
 				var entityAttributesNodeObject = { expandable: true };
 				entityAttributesNodeObject[CMDBuild.core.constants.Proxy.LEAF] = false;
@@ -74,12 +74,12 @@
 		 *
 		 * @private
 		 */
-		decodeStructure: function(rootNode, arrayToDecode) {
+		decodeStructure: function (rootNode, arrayToDecode) {
 			if (
 				!Ext.isEmpty(rootNode)
 				&& Ext.isArray(arrayToDecode)
 			) {
-				Ext.Array.forEach(arrayToDecode, function(entityObject, i, allEntitiesObjects) {
+				Ext.Array.forEach(arrayToDecode, function (entityObject, i, allEntitiesObjects) {
 					if (!Ext.Array.contains(this.entityFilter, entityObject[CMDBuild.core.constants.Proxy.NAME].toLowerCase())) { // Discard unwanted entities
 						// Entity main node
 						var entityMainNodeObject = { expandable: true };
@@ -92,7 +92,7 @@
 
 						// Entity's fields nodes
 						if (!Ext.isEmpty(entityObject[CMDBuild.core.constants.Proxy.FIELDS]))
-							this.decodeStructureFields(entityMainNode, entityObject[CMDBuild.core.constants.Proxy.FIELDS], entityObject);
+							this.decodeStructureFields(entityMainNode, entityObject[CMDBuild.core.constants.Proxy.FIELDS]);
 
 						// Entity's attributes nodes
 						if (!Ext.isEmpty(entityObject[CMDBuild.core.constants.Proxy.CHILDREN]))
@@ -112,14 +112,14 @@
 		 *
 		 * @private
 		 */
-		decodeStructureAttributes: function(rootNode, attributesArray) {
+		decodeStructureAttributes: function (rootNode, attributesArray) {
 			if (
 				!Ext.isEmpty(rootNode)
 				&& !Ext.isEmpty(attributesArray) && Ext.isArray(attributesArray)
 			) {
 				rootNode = this.buildAttributesNode(rootNode);
 
-				Ext.Array.forEach(attributesArray, function(attributeObject, i, allAttributesObjects) {
+				Ext.Array.forEach(attributesArray, function (attributeObject, i, allAttributesObjects) {
 					if (!Ext.Array.contains(this.entityAttributeFilter, attributeObject[CMDBuild.core.constants.Proxy.NAME].toLowerCase())) { // Discard unwanted attributes
 						var entityAttributeNodeObject = { expandable: true };
 						entityAttributeNodeObject[CMDBuild.core.constants.Proxy.IDENTIFIER] = attributeObject[CMDBuild.core.constants.Proxy.NAME];
@@ -145,16 +145,16 @@
 		 *
 		 * @private
 		 */
-		decodeStructureFields: function(rootNode, fieldsArray) {
+		decodeStructureFields: function (rootNode, fieldsArray) {
 			if (
 				!Ext.isEmpty(rootNode)
 				&& !Ext.isEmpty(fieldsArray) && Ext.isArray(fieldsArray)
 			) {
-				Ext.Array.forEach(fieldsArray, function(fieldObject, i, allFields) {
+				Ext.Array.forEach(fieldsArray, function (fieldObject, i, allFields) {
 					var entityFieldNodeObject = {};
 					entityFieldNodeObject[CMDBuild.core.constants.Proxy.DEFAULT] = fieldObject[CMDBuild.core.constants.Proxy.VALUE];
 					entityFieldNodeObject[CMDBuild.core.constants.Proxy.FIELD] = fieldObject[CMDBuild.core.constants.Proxy.NAME];
-					entityFieldNodeObject[CMDBuild.core.constants.Proxy.IDENTIFIER] = this.getLevelNode(rootNode, 1).get(CMDBuild.core.constants.Proxy.IDENTIFIER);
+					entityFieldNodeObject[CMDBuild.core.constants.Proxy.IDENTIFIER] = rootNode.get(CMDBuild.core.constants.Proxy.IDENTIFIER);
 					entityFieldNodeObject[CMDBuild.core.constants.Proxy.LEAF] = true;
 					entityFieldNodeObject[CMDBuild.core.constants.Proxy.PARENT] = rootNode;
 					entityFieldNodeObject[CMDBuild.core.constants.Proxy.TEXT] = fieldObject[CMDBuild.core.constants.Proxy.NAME];
@@ -181,12 +181,12 @@
 		 *
 		 * @private
 		 */
-		fillWithTranslations: function(translationsSourceObject, targetObject) {
+		fillWithTranslations: function (translationsSourceObject, targetObject) {
 			if (
 				Ext.isObject(translationsSourceObject)
 				&& Ext.isObject(targetObject)
 			) {
-				Ext.Object.each(translationsSourceObject, function(tag, translation, myself) {
+				Ext.Object.each(translationsSourceObject, function (tag, translation, myself) {
 					targetObject[tag] = translation;
 				});
 			} else {
@@ -202,7 +202,7 @@
 		 *
 		 * @private
 		 */
-		getLevelNode: function(startNode, levelToReach) {
+		getLevelNode: function (startNode, levelToReach) {
 			var requestedNode = startNode;
 
 			if (!Ext.isEmpty(requestedNode) && Ext.isNumber(levelToReach)) {
@@ -221,14 +221,14 @@
 		 *
 		 * @private
 		 */
-		getSectionId: function() {
+		getSectionId: function () {
 			return this.sectionId;
 		},
 
 		/**
 		 * Fill grid store with entities data
 		 */
-		onLocalizationAdvancedTableShow: function() {
+		onLocalizationAdvancedTableShow: function () {
 			var root = this.grid.getStore().getRootNode();
 			root.removeAll();
 
@@ -239,7 +239,7 @@
 			CMDBuild.core.proxy.localization.Localization.readAll({
 				params: params,
 				scope: this,
-				success: function(response, options, decodedResponse) {
+				success: function (response, options, decodedResponse) {
 					Ext.suspendLayouts();
 
 					this.decodeStructure(root, decodedResponse.response);
@@ -252,7 +252,7 @@
 		/**
 		 * @param {CMDBuild.model.localization.advancedTable.TreeStore} node
 		 */
-		onLocalizationAdvancedTableRowUpdateButtonClick: function(node) {
+		onLocalizationAdvancedTableRowUpdateButtonClick: function (node) {
 			if (!Ext.isEmpty(node)) {
 				var params = {};
 				params[CMDBuild.core.constants.Proxy.TYPE] = node.get(CMDBuild.core.constants.Proxy.TYPE);
@@ -265,7 +265,7 @@
 
 				CMDBuild.core.proxy.localization.Localization.update({
 					params: params,
-					success: function(response, options, decodedResponse) {
+					success: function (response, options, decodedResponse) {
 						CMDBuild.core.Message.success();
 					}
 				});

@@ -8,17 +8,24 @@
 		],
 
 		/**
+		 * Enable/Disable header to get localized server responses
+		 *
+		 * @cfg {Boolean}
+		 */
+		enableLocalized: false,
+
+		/**
 		 * Setup with overrides of all data configurations (timeouts, defaultHeaders)
 		 */
-		constructor: function() {
-			if (!Ext.isEmpty(CMDBuild)) {
-				var toLocalize = Ext.isEmpty(CMDBuild) || Ext.isEmpty(CMDBuild.app) || Ext.isEmpty(CMDBuild.app.Administration); // I'm on Management so i must localize
+		constructor: function (configurationObject) {
+			Ext.apply(this, configurationObject); // Apply configurations
 
+			if (!Ext.isEmpty(CMDBuild)) {
 				var defaultHeaders = {};
-				defaultHeaders[CMDBuild.core.constants.Proxy.LOCALIZED_HEADER_KEY] = toLocalize;
+				defaultHeaders[CMDBuild.core.constants.Proxy.LOCALIZED_HEADER_KEY] = this.enableLocalized;
 
 				Ext.Ajax.timeout = CMDBuild.core.configurations.Timeout.getBase() * 1000;
-				Ext.Ajax[CMDBuild.core.constants.Proxy.LOCALIZED_HEADER_KEY] = toLocalize;
+				Ext.Ajax[CMDBuild.core.constants.Proxy.LOCALIZED_HEADER_KEY] = this.enableLocalized;
 
 				Ext.define('CMDBuild.data.Connection', {
 					override: 'Ext.data.Connection',

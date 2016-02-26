@@ -30,7 +30,7 @@
 		frame: false,
 		layout: 'fit',
 
-		initComponent: function() {
+		initComponent: function () {
 			Ext.apply(this, {
 				dockedItems: [
 					Ext.create('Ext.toolbar.Toolbar', {
@@ -42,7 +42,7 @@
 								text: CMDBuild.Translation.expandAll,
 								scope: this,
 
-								handler: function(button, e) {
+								handler: function (button, e) {
 									this.delegate.cmfg('onLocalizationAdvancedTableExpandAll', this.grid);
 								}
 							}),
@@ -50,7 +50,7 @@
 								text: CMDBuild.Translation.collapseAll,
 								scope: this,
 
-								handler: function(button, e) {
+								handler: function (button, e) {
 									this.delegate.cmfg('onLocalizationAdvancedTableCollapseAll', this.grid);
 								}
 							}),
@@ -62,7 +62,7 @@
 								hidden: this.hideActiveOnlyCheckbox,
 								scope: this,
 
-								handler: function(checkbox, checked) {
+								handler: function (checkbox, checked) {
 									this.delegate.cmfg('onLocalizationAdvancedTableOnlyEnabledEntitiesCheck');
 								}
 							})
@@ -82,7 +82,7 @@
 		},
 
 		listeners: {
-			show: function(panel, eOpts) {
+			show: function (panel, eOpts) {
 				this.delegate.cmfg('onLocalizationAdvancedTableShow');
 			}
 		}

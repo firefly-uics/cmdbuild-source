@@ -13,7 +13,7 @@
 		/**
 		 * @param {Object} parameters
 		 */
-		imports: function(parameters) {
+		imports: function (parameters) {
 			parameters = Ext.isEmpty(parameters) ? {} : parameters;
 
 			Ext.apply(parameters, { url: CMDBuild.core.proxy.Index.localizations.importExport.importCsv });
@@ -24,7 +24,7 @@
 		/**
 		 * @return {Ext.data.ArrayStore}
 		 */
-		getStoreFileFormat: function() {
+		getStoreFileFormat: function () {
 			return Ext.create('Ext.data.ArrayStore', {
 				fields: [CMDBuild.core.constants.Proxy.DESCRIPTION, CMDBuild.core.constants.Proxy.NAME],
 				data: [

@@ -34,7 +34,7 @@
 		 *
 		 * @override
 		 */
-		constructor: function(configObject) {
+		constructor: function (configObject) {
 			this.callParent(arguments);
 
 			this.view = Ext.create('CMDBuild.view.administration.localization.advancedTable.SectionPanel', {
@@ -58,7 +58,7 @@
 		 * @private
 		 * @override
 		 */
-		buildValuesNode: function(rootNode) {
+		buildValuesNode: function (rootNode) {
 			if (!Ext.isEmpty(rootNode)) {
 				var entityAttributesNodeObject = { expandable: true };
 				entityAttributesNodeObject[CMDBuild.core.constants.Proxy.LEAF] = false;
@@ -78,12 +78,12 @@
 		 * @private
 		 * @override
 		 */
-		decodeStructure: function(rootNode, arrayToDecode) {
+		decodeStructure: function (rootNode, arrayToDecode) {
 			if (
 				!Ext.isEmpty(rootNode)
 				&& !Ext.isEmpty(arrayToDecode) && Ext.isArray(arrayToDecode)
 			) {
-				Ext.Array.forEach(arrayToDecode, function(lookupTypeObject, i, allLookupTypesObjects) {
+				Ext.Array.forEach(arrayToDecode, function (lookupTypeObject, i, allLookupTypesObjects) {
 					// LookupType main node
 					var lookupTypeNodeObject = { expandable: true };
 					lookupTypeNodeObject[CMDBuild.core.constants.Proxy.IDENTIFIER] = lookupTypeObject[CMDBuild.core.constants.Proxy.DESCRIPTION];
@@ -111,12 +111,12 @@
 		 * @private
 		 * @override
 		 */
-		decodeStructureFields: function(rootNode, fieldsArray) {
+		decodeStructureFields: function (rootNode, fieldsArray) {
 			if (
 				!Ext.isEmpty(rootNode)
 				&& !Ext.isEmpty(fieldsArray) && Ext.isArray(fieldsArray)
 			) {
-				Ext.Array.forEach(fieldsArray, function(fieldObject, i, allFields) {
+				Ext.Array.forEach(fieldsArray, function (fieldObject, i, allFields) {
 					var entityFieldNodeObject = {};
 					entityFieldNodeObject[CMDBuild.core.constants.Proxy.DEFAULT] = fieldObject[CMDBuild.core.constants.Proxy.VALUE];
 					entityFieldNodeObject[CMDBuild.core.constants.Proxy.FIELD] = fieldObject[CMDBuild.core.constants.Proxy.NAME];
@@ -149,14 +149,14 @@
 		 *
 		 * @private
 		 */
-		decodeStructureValues: function(rootNode, valuesArray) {
+		decodeStructureValues: function (rootNode, valuesArray) {
 			if (
 				!Ext.isEmpty(rootNode)
 				&& !Ext.isEmpty(valuesArray) && Ext.isArray(valuesArray)
 			) {
 				rootNode = this.buildValuesNode(rootNode);
 
-				Ext.Array.forEach(valuesArray, function(valueObject, i, allValuesObjects) {
+				Ext.Array.forEach(valuesArray, function (valueObject, i, allValuesObjects) {
 					var lookupValueNodeObject = { expandable: true };
 					lookupValueNodeObject[CMDBuild.core.constants.Proxy.IDENTIFIER] = valueObject[CMDBuild.core.constants.Proxy.TRANSLATION_UUID];
 					lookupValueNodeObject[CMDBuild.core.constants.Proxy.LEAF] = false;
