@@ -90,7 +90,7 @@
 			if (exist.length > 0) {
 				return;
 			}
-			var exist = cy.edges("[target='" + edge.data.source + "'][source='" + edge.data.target + "']");
+			exist = cy.edges("[target='" + edge.data.source + "'][source='" + edge.data.target + "']");
 			if (exist.length > 0) {
 				return;
 			}
@@ -160,7 +160,7 @@
 					var node = elements.nodes[i];
 					this.insertNode(node);
 				}
-				for (var i = 0; i < elements.edges.length; i++) {
+				for (i = 0; i < elements.edges.length; i++) {
 					var edge = elements.edges[i];
 					this.insertEdge(edge);
 				}
@@ -179,7 +179,7 @@
 							classId: classId,
 							classDescription: classDescription,
 							qt: 1
-					}
+					};
 				}
 				else {
 					this.classes[classId].qt += 1;
@@ -190,7 +190,7 @@
 				arClasses.push(this.classes[key]);
 			}
 			var retCards = [];
-			for (var i = 0; i < arClasses.length; i++) {
+			for (i = 0; i < arClasses.length; i++) {
 				retCards.push(arClasses[i]);
 			}
 			return {
@@ -226,7 +226,7 @@
 			if (first >= arClasses.length) {
 				first = 0;
 			}
-			for (var i = first; i < first + rows && i < arClasses.length; i++) {
+			for (i = first; i < first + rows && i < arClasses.length; i++) {
 				retCards.push(arClasses[i]);
 			}
 			return {
