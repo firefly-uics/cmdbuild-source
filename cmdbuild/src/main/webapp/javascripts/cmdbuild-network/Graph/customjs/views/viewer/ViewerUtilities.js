@@ -46,7 +46,7 @@
 		},
 		webGlRender: function(container) {
 			var renderer = new THREE.WebGLRenderer({
-				antialias: true
+				antialias: false
 			});
 			renderer.setClearColor(0xf0f0f0);
 			renderer.setPixelRatio(1.0);
@@ -54,8 +54,8 @@
 					true);
 			renderer.sortObjects = false;
 
-			renderer.shadowMapEnabled = true;
-			renderer.shadowMapType = THREE.PCFShadowMap;
+			renderer.shadowMapEnabled = false;
+//			renderer.shadowMapType = THREE.PCFShadowMap;
 			return renderer;
 		},
 		header: function() {
