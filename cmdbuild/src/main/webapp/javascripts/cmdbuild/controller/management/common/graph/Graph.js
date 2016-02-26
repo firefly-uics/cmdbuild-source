@@ -55,7 +55,7 @@
 		 *
 		 * @override
 		 */
-		constructor: function(configurationObject) {
+		constructor: function (configurationObject) {
 			this.callParent(arguments);
 
 			if (
@@ -71,20 +71,22 @@
 				CMDBuild.core.proxy.Classes.readAll({
 					params: params,
 					scope: this,
-					success: function(response, options, decodedResponse) {
+					success: function (response, options, decodedResponse) {
 						decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.CLASSES];
 
-						var targetClassObject = Ext.Array.findBy(decodedResponse, function(item, i) {
-							return item[CMDBuild.core.constants.Proxy.ID] == this.classId;
-						}, this);
+						if (!Ext.isEmpty(decodedResponse) && Ext.isArray(decodedResponse)) {
+							var targetClassObject = Ext.Array.findBy(decodedResponse, function (item, i) {
+								return item[CMDBuild.core.constants.Proxy.ID] == this.classId;
+							}, this);
 
-						if (!Ext.isEmpty(targetClassObject)) {
-							this.className = targetClassObject[CMDBuild.core.constants.Proxy.NAME];
+							if (!Ext.isEmpty(targetClassObject)) {
+								this.className = targetClassObject[CMDBuild.core.constants.Proxy.NAME];
 
-							this.view = Ext.create('CMDBuild.view.management.common.graph.GraphWindow', { delegate: this });
-							this.view.show();
-						} else {
-							_error('class with id ' + this.classId + ' not found', this);
+								this.view = Ext.create('CMDBuild.view.management.common.graph.GraphWindow', { delegate: this });
+								this.view.show();
+							} else {
+								_error('class with id ' + this.classId + ' not found', this);
+							}
 						}
 					}
 				});
@@ -93,7 +95,7 @@
 			}
 		},
 
-		onGraphWindowShow: function() {
+		onGraphWindowShow: function () {
 			this.view.removeAll();
 			this.view.add({
 				xtype: 'component',
@@ -105,6 +107,7 @@
 						+ '&classId=' + this.className
 						+ '&cardId=' + this.cardId
 						+ '&frameworkVersion=' + CMDBuild.core.configurations.CustomPage.getVersion()
+						+ '&language=' + CMDBuild.configuration.localization.get(CMDBuild.core.constants.Proxy.LANGUAGE)
 				}
 			});
 		}
