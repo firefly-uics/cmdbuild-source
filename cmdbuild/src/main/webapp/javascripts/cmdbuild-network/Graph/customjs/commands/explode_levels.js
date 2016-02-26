@@ -99,7 +99,6 @@
 				}
 			}
 		};
-		// ---------------------------------------------
 		this.explodeChildren = function(children, levels, callback,
 				callbackScope) {
 			if (children.length == 0
@@ -129,9 +128,7 @@
 				var id = this.newNodes[i];
 				this.model.remove(id);
 			}
-//			if (this.batch !== true) {
-				this.model.changed(true);
-//			}
+			this.model.changed(true);
 		};
 	};
 	$.Cmdbuild.g3d.commands.explode_levels = explode_levels;

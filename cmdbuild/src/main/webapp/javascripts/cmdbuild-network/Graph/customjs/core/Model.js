@@ -77,7 +77,7 @@
 		    		label: node.data.label,
 		    		color: node.data.color,
 		    		compoundData: node.data.compoundData,
-		    		domain: node.data.domain,
+		    		domainId: node.data.domainId,
 		    		children: node.data.children,
 		    		previousPathNode: node.data.previousPathNode
 			    },

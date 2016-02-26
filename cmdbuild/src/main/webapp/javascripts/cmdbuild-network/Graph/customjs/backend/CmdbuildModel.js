@@ -50,11 +50,16 @@
 				callback.apply(callbackScope, []);
 			}
 		};
-		this.chargeModel = function(elements, domain, relation, sourceId,
+		this.chargeModel = function(elements, domainId, relation, sourceId,
 				targetId, targetDescription, targetClassName, compoundData,
 				parentNode, isNew) {
 			sourceId = "" + sourceId;
 			targetId = "" + targetId;
+			var domain = $.Cmdbuild.customvariables.cacheDomains
+					.getDomain(domainId);
+			if (! domain) {
+				console.log("Error :", Error().stack);
+			}
 			if (isNew) {
 				var data = {
 					classId : targetClassName,
@@ -62,7 +67,7 @@
 					label : targetDescription,
 					color : "#ff0000",
 					faveShape : 'triangle',
-					domain : (domain) ? domain._id : "--",
+					domainId : domain._id,// (domain) ? domain._id : "--",
 					position : {
 						x : Math.random() * 1000 - 500,
 						y : Math.random() * 600 - 300,
@@ -84,7 +89,7 @@
 				target : targetId,
 				relationId : relation._id,
 				domainId : domain._id,
-				label : (domain) ? domain.domainDescription : "--",
+				label : domain.domainDescription,// (domain) ? domain.domainDescription : "--",
 				color : $.Cmdbuild.custom.configuration.edgeColor,
 				strength : 90
 			};
@@ -140,18 +145,18 @@
 						}, this);
 			}
 		};
-		this.pushAnOpeningChild = function(elements, domain, relation, id,
+		this.pushAnOpeningChild = function(elements, domainId, relation, id,
 				description, classId, data, node, parentId, children) {
 			var cyNode = this.model.getNode(id);
 			if (cyNode.length === 0) {
 				children.push(id);
 			}
-			this.chargeModel(elements, domain, relation, parentId, id,
+			this.chargeModel(elements, domainId, relation, parentId, id,
 					description, classId, data, node, cyNode.length === 0);
 		};
 		this.getAllRelations = function(node, domains, domainList, classId,
 				cardId, elements, callback, callbackScope) {
-			if (! domains || domains.length === 0) {
+			if (!domains || domains.length === 0) {
 				callback.apply(callbackScope, [ elements ]);
 				return;
 			}
@@ -188,10 +193,10 @@
 						filter : filter
 					};
 					this.pushCompound(relations[0], compoundData,
-							metadata.total, classId, elements, domain, node,
+							metadata.total, classId, elements, domainId, node,
 							cardId, children);
 				} else {
-					this.explodeChildren(elements, domain, node, classId,
+					this.explodeChildren(elements, domainId, node, classId,
 							cardId, children, relations);
 				}
 				node.data.children = children;
@@ -200,7 +205,7 @@
 			}, this);
 		};
 		this.pushCompound = function(relationSample, compoundData, total,
-				classId, elements, domain, node, cardId, children) {
+				classId, elements, domainId, node, cardId, children) {
 			var rDescription = (relationSample._sourceId == cardId && relationSample._sourceType == classId) ? relationSample._type
 					+ "(1)"
 					: relationSample._type + "(2)";
@@ -208,7 +213,7 @@
 					+ relationSample._destinationType + " - " + rDescription;
 			var id = "CN" + relationSample._type + relationSample._sourceId
 					+ relationSample._destinationId;
-			this.pushAnOpeningChild(elements, domain, relationSample, id,
+			this.pushAnOpeningChild(elements, domainId, relationSample, id,
 					description, $.Cmdbuild.g3d.constants.GUICOMPOUNDNODE,
 					compoundData, node, cardId, children);
 		};
@@ -216,7 +221,7 @@
 			var clusteringThreshold = $.Cmdbuild.customvariables.options.clusteringThreshold;
 			return (relations.length >= clusteringThreshold);
 		};
-		this.openCompoundNode = function(id, data, domain, callback,
+		this.openCompoundNode = function(id, data, domainId, callback,
 				callbackScope) {
 			var node = this.model.getNode(id);
 			var parentId = $.Cmdbuild.g3d.Model.getGraphData(node,
@@ -229,11 +234,11 @@
 			};
 			var classId = $.Cmdbuild.g3d.Model.getGraphData(parentNode,
 					"classId");
-			this.explodeChildren(elements, domain, parentNode, classId,
+			this.explodeChildren(elements, domainId, parentNode, classId,
 					parentId, children, data);
 			callback.apply(callbackScope, [ elements ]);
 		};
-		this.explodeChildren = function(elements, domain, node, classId,
+		this.explodeChildren = function(elements, domainId, node, classId,
 				cardId, children, relations) {
 			var destinationId;
 			var destinationDescription;
@@ -257,7 +262,7 @@
 					destinationDescription = relation._sourceDescription;
 					destinationType = relation._sourceType;
 				}
-				this.pushAnOpeningChild(elements, domain, relation,
+				this.pushAnOpeningChild(elements, domainId, relation,
 						destinationId, destinationDescription, destinationType,
 						{}, node, cardId, children);
 			}
