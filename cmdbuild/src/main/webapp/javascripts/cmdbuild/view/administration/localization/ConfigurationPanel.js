@@ -38,7 +38,7 @@
 			align:'stretch'
 		},
 
-		initComponent: function() {
+		initComponent: function () {
 			Ext.apply(this, {
 				dockedItems: [
 					Ext.create('Ext.toolbar.Toolbar', {
@@ -56,14 +56,14 @@
 							Ext.create('CMDBuild.core.buttons.text.Save', {
 								scope: this,
 
-								handler: function(button, e) {
+								handler: function (button, e) {
 									this.delegate.cmfg('onLocalizationConfigurationSaveButtonClick');
 								}
 							}),
 							Ext.create('CMDBuild.core.buttons.text.Abort', {
 								scope: this,
 
-								handler: function(button, e) {
+								handler: function (button, e) {
 									this.delegate.cmfg('onLocalizationConfigurationAbortButtonClick');
 								}
 							})
@@ -81,7 +81,7 @@
 						},
 
 						defaults: {
-							maxWidth: CMDBuild.core.constants.FieldWidths.STANDARD_MEDIUM
+							maxWidth: CMDBuild.core.constants.FieldWidths.ADMINISTRATION_MEDIUM
 						},
 
 						items: [
@@ -89,17 +89,7 @@
 								name: CMDBuild.core.constants.Proxy.DEFAULT_LANGUAGE,
 								fieldLabel: CMDBuild.Translation.defaultLanguage,
 								labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
-								enableChangeLanguage: false,
-
-								listeners: {
-									scope: this,
-									change: function(field, newValue, oldValue, eOpts) {
-										this.delegate.cmfg('onLocalizationConfigurationDefaultLanguageChange', {
-											defaultLanguageTag: newValue,
-											oldDefaultLanguageTag: oldValue
-										});
-									}
-								}
+								enableChangeLanguage: false
 							}),
 							this.languagePromptCheckbox = Ext.create('Ext.form.field.Checkbox', {
 								name: CMDBuild.core.constants.Proxy.LANGUAGE_PROMPT,

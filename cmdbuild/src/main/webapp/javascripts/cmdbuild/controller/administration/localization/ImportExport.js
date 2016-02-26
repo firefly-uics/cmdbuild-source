@@ -33,6 +33,7 @@
 		cmfgCatchedFunctions: [
 			'onLocalizationImportExportExportButtonClick',
 			'onLocalizationImportExportExportSectionChange',
+			'onLocalizationImportExportExportShow',
 			'onLocalizationImportExportImportButtonClick'
 		],
 
@@ -57,7 +58,7 @@
 		 *
 		 * @override
 		 */
-		constructor: function(configObject) {
+		constructor: function (configObject) {
 			this.callParent(arguments);
 
 			this.view = Ext.create('CMDBuild.view.administration.localization.importExport.ImportExportView', { delegate: this });
@@ -67,28 +68,17 @@
 			this.importPanel = this.view.importPanel;
 		},
 
-		onLocalizationImportExportExportButtonClick: function() {
+		onLocalizationImportExportExportButtonClick: function () {
 			var formValues = this.exportPanel.getForm().getValues();
 			var params = {};
 			params[CMDBuild.core.constants.Proxy.TYPE] = formValues[CMDBuild.core.constants.Proxy.TYPE];
 			params[CMDBuild.core.constants.Proxy.SEPARATOR] = formValues[CMDBuild.core.constants.Proxy.SEPARATOR];
-			params[CMDBuild.core.constants.Proxy.ACTIVE] = formValues[CMDBuild.core.constants.Proxy.ACTIVE_ONLY];
+			params[CMDBuild.core.constants.Proxy.ACTIVE_ONLY] = formValues[CMDBuild.core.constants.Proxy.ACTIVE_ONLY];
 			params[CMDBuild.core.constants.Proxy.FORCE_DOWNLOAD_PARAM_KEY] = true;
 
 			CMDBuild.core.proxy.localization.Export.exports({
 				form: this.exportPanel.getForm(),
-				params: params,
-				scope: this,
-				success: function(response, options, decodedResponse) {
-					CMDBuild.core.Message.success();
-				},
-				failure: function(response, options, decodedResponse) {
-					CMDBuild.core.Message.error(
-						CMDBuild.Translation.common.failure,
-						CMDBuild.Translation.errors.csvUploadOrDecodeFailure,
-						false
-					);
-				}
+				params: params
 			});
 		},
 
@@ -97,17 +87,21 @@
 		 *
 		 * @param {String} selection
 		 */
-		onLocalizationImportExportExportSectionChange: function(selection) {
+		onLocalizationImportExportExportSectionChange: function (selection) {
 			this.exportPanel.activeOnlyCheckbox.setValue();
 			this.exportPanel.activeOnlyCheckbox.setDisabled(!Ext.Array.contains(this.activeOnlySections, selection));
 		},
 
-		onLocalizationImportExportImportButtonClick: function() {
+		onLocalizationImportExportExportShow: function () {
+
+		},
+
+		onLocalizationImportExportImportButtonClick: function () {
 			if (this.validate(this.importPanel))
 				CMDBuild.core.proxy.localization.Import.imports({
 					form: this.importPanel.getForm(),
 					scope: this,
-					success: function(response, options, decodedResponse) {
+					success: function (response, options, decodedResponse) {
 						var importFailures = options.result.response.failures; // TODO: verify correct implementation
 
 						if (Ext.isEmpty(importFailures)) {
@@ -120,7 +114,7 @@
 							);
 						}
 					},
-					failure: function(response, options, decodedResponse) {
+					failure: function (response, options, decodedResponse) {
 						CMDBuild.core.Message.error(
 							CMDBuild.Translation.common.failure,
 							CMDBuild.Translation.errors.csvUploadOrDecodeFailure,

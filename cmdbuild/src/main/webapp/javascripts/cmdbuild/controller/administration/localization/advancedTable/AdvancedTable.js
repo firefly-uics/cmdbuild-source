@@ -76,7 +76,7 @@
 		 *
 		 * @override
 		 */
-		constructor: function(configObject) {
+		constructor: function (configObject) {
 			this.callParent(arguments);
 
 			this.view = Ext.create('CMDBuild.view.administration.localization.advancedTable.AdvancedTableView', { delegate: this });
@@ -103,7 +103,7 @@
 		 *
 		 * @private
 		 */
-		buildColumn: function(languageObject) {
+		buildColumn: function (languageObject) {
 			if (!Ext.isEmpty(languageObject))
 				return Ext.create('Ext.grid.column.Column', {
 					dataIndex: languageObject.get(CMDBuild.core.constants.Proxy.TAG),
@@ -126,7 +126,7 @@
 		 *
 		 * @returns {Array} columnsArray
 		 */
-		onLocalizationAdvancedTableBuildColumns: function() {
+		onLocalizationAdvancedTableBuildColumns: function () {
 			var columnsArray = [
 				{
 					xtype: 'treecolumn',
@@ -149,7 +149,7 @@
 			];
 			var languagesColumnsArray = [];
 
-			Ext.Object.each(CMDBuild.configuration.localization.getEnabledLanguages(), function(key, value, myself) {
+			Ext.Object.each(CMDBuild.configuration.localization.getEnabledLanguages(), function (key, value, myself) {
 				languagesColumnsArray.push(this.buildColumn(value));
 			}, this);
 
@@ -162,7 +162,7 @@
 		/**
 		 * @returns {Ext.data.TreeStore}
 		 */
-		onLocalizationAdvancedTableBuildStore: function() {
+		onLocalizationAdvancedTableBuildStore: function () {
 			return Ext.create('Ext.data.TreeStore', {
 				model: 'CMDBuild.model.localization.advancedTable.TreeStore',
 
@@ -177,11 +177,11 @@
 		/**
 		 * @param {CMDBuild.view.administration.localization.common.AdvancedTableGrid}
 		 */
-		onLocalizationAdvancedTableCollapseAll: function(gridPanel) {
+		onLocalizationAdvancedTableCollapseAll: function (gridPanel) {
 			CMDBuild.core.LoadMask.show();
 
-			Ext.Function.defer(function() { // HACK: to fix expandAll bug that don't displays loeadMask
-				gridPanel.collapseAll(function() {
+			Ext.Function.defer(function () { // HACK: to fix expandAll bug that don't displays loeadMask
+				gridPanel.collapseAll(function () {
 					CMDBuild.core.LoadMask.hide();
 				});
 			}, 100, this);
@@ -190,11 +190,11 @@
 		/**
 		 * @param {CMDBuild.view.administration.localization.common.AdvancedTableGrid}
 		 */
-		onLocalizationAdvancedTableExpandAll: function(gridPanel) {
+		onLocalizationAdvancedTableExpandAll: function (gridPanel) {
 			CMDBuild.core.LoadMask.show();
 
-			Ext.Function.defer(function() { // HACK: to fix expandAll bug that don't displays loeadMask
-				gridPanel.expandAll(function() {
+			Ext.Function.defer(function () { // HACK: to fix expandAll bug that don't displays loeadMask
+				gridPanel.expandAll(function () {
 					CMDBuild.core.LoadMask.hide();
 				});
 			}, 100, this);
@@ -203,7 +203,7 @@
 		/**
 		 * @param {Mixed} panel
 		 */
-		onLocalizationAdvancedTableTabCreation: function(panel) {
+		onLocalizationAdvancedTableTabCreation: function (panel) {
 			if (!Ext.isEmpty(panel))
 				this.view.add(panel);
 		}

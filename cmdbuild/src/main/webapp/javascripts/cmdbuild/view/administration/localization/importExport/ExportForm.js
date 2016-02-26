@@ -21,6 +21,7 @@
 		bodyCls: 'cmdb-gray-panel',
 		border: false,
 		frame: false,
+		standardSubmit: true,
 		title: CMDBuild.Translation.exportLabel,
 
 		layout: {
@@ -28,7 +29,7 @@
 			align: 'stretch'
 		},
 
-		initComponent: function() {
+		initComponent: function () {
 			Ext.apply(this, {
 				dockedItems: [
 					Ext.create('Ext.toolbar.Toolbar', {
@@ -46,7 +47,7 @@
 							Ext.create('CMDBuild.core.buttons.text.Export', {
 								scope: this,
 
-								handler: function(button, e) {
+								handler: function (button, e) {
 									this.delegate.cmfg('onLocalizationImportExportExportButtonClick');
 								}
 							})
@@ -58,7 +59,7 @@
 						name: CMDBuild.core.constants.Proxy.TYPE,
 						fieldLabel: CMDBuild.Translation.section,
 						labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
-						maxWidth: CMDBuild.core.constants.FieldWidths.STANDARD_MEDIUM,
+						maxWidth: CMDBuild.core.constants.FieldWidths.ADMINISTRATION_MEDIUM,
 						displayField: CMDBuild.core.constants.Proxy.DESCRIPTION,
 						valueField: CMDBuild.core.constants.Proxy.NAME,
 						editable: false,
@@ -71,32 +72,32 @@
 
 						listeners: {
 							scope: this,
-							change: function(combo, newValue, oldValue, eOpts) {
+							change: function (combo, newValue, oldValue, eOpts) {
 								this.delegate.cmfg('onLocalizationImportExportExportSectionChange', newValue);
 							}
 						}
 					}),
 					Ext.create('CMDBuild.view.common.field.multiselect.Multiselect', {
-						name: CMDBuild.core.constants.Proxy.LANGUAGES, // TODO: synch with server side parameter name
+						name: CMDBuild.core.constants.Proxy.LANGUAGES,
 						fieldLabel: CMDBuild.Translation.languages,
 						labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
 						valueField: CMDBuild.core.constants.Proxy.TAG,
 						displayField: CMDBuild.core.constants.Proxy.DESCRIPTION,
 						maxHeight: 300,
-						maxWidth: CMDBuild.core.constants.FieldWidths.STANDARD_MEDIUM,
+						maxWidth: CMDBuild.core.constants.FieldWidths.ADMINISTRATION_MEDIUM,
 						considerAsFieldToDisable: true,
 						defaultSelection: 'all',
 						flex: 1, // Stretch vertically
 						allowBlank: false,
 
-						store: CMDBuild.core.proxy.localization.Localization.getStoreLanguages(),
+						store: CMDBuild.core.proxy.localization.Export.getStoreEnabledLaguages(),
 						queryMode: 'local'
 					}),
 					Ext.create('Ext.form.field.ComboBox', {
 						name: CMDBuild.core.constants.Proxy.FORMAT,
 						fieldLabel: CMDBuild.Translation.format,
 						labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
-						maxWidth: CMDBuild.core.constants.FieldWidths.STANDARD_MEDIUM,
+						maxWidth: CMDBuild.core.constants.FieldWidths.ADMINISTRATION_MEDIUM,
 						displayField: CMDBuild.core.constants.Proxy.DESCRIPTION,
 						valueField: CMDBuild.core.constants.Proxy.NAME,
 						editable: false,
@@ -134,6 +135,12 @@
 			});
 
 			this.callParent(arguments);
+		},
+
+		listeners: {
+			show: function (panel, eOpts) {
+				this.delegate.cmfg('onLocalizationImportExportExportShow');
+			}
 		}
 	});
 

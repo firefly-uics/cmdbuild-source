@@ -6,8 +6,7 @@
 			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.interfaces.messages.Error',
 			'CMDBuild.core.interfaces.messages.Warning',
-			'CMDBuild.core.interfaces.service.LoadMask',
-			'CMDBuild.core.LoadMask'
+			'CMDBuild.core.interfaces.service.LoadMask'
 		],
 
 		singleton: true,
@@ -21,7 +20,7 @@
 		 *
 		 * @private
 		 */
-		adapterCallback: function(form, action, originalFunction) {
+		adapterCallback: function (form, action, originalFunction) {
 			CMDBuild.core.interfaces.service.LoadMask.manage(action.loadMask, false);
 
 			CMDBuild.core.interfaces.messages.Warning.display(action.result);
@@ -39,7 +38,7 @@
 		 *
 		 * @private
 		 */
-		adapterSuccess: function(form, action, originalFunction) {
+		adapterSuccess: function (form, action, originalFunction) {
 			Ext.callback(originalFunction, action.scope, [action.response, action, action.result]);
 		},
 
@@ -52,7 +51,7 @@
 		 *
 		 * @private
 		 */
-		adapterFailure: function(form, action, originalFunction) {
+		adapterFailure: function (form, action, originalFunction) {
 			Ext.callback(originalFunction, action.scope, [action.response, action, action.result]);
 		},
 
@@ -61,7 +60,7 @@
 		 *
 		 * @private
 		 */
-		interceptorCallback: function(action) {
+		interceptorCallback: function (action) {
 			return Ext.bind(CMDBuild.core.interfaces.FormSubmit.adapterCallback, action.scope, [action.callback], true);
 		},
 
@@ -72,7 +71,7 @@
 		 *
 		 * @private
 		 */
-		interceptorFailure: function(action) {
+		interceptorFailure: function (action) {
 			return Ext.Function.createSequence(
 				Ext.bind(CMDBuild.core.interfaces.FormSubmit.adapterFailure, action.scope, [action.failure], true),
 				action.callback,
@@ -89,7 +88,7 @@
 		 *
 		 * @private
 		 */
-		interceptorSuccess: function(action) {
+		interceptorSuccess: function (action) {
 			return Ext.Function.createSequence(
 				Ext.bind(CMDBuild.core.interfaces.FormSubmit.adapterSuccess, action.scope, [action.success], true),
 				action.callback,
@@ -106,12 +105,15 @@
 		 *
 		 * @private
 		 */
-		trapCallbacks: function(form, action, eOpts) {
-			CMDBuild.core.interfaces.service.LoadMask.manage(action.loadMask, true);
+		trapCallbacks: function (form, action, eOpts) {
+			// Form with standardSubmit property will execute a normal HTML submit with no success, failure, callback execution
+			if (!Ext.isEmpty(action.form) && !action.form.standardSubmit) {
+				CMDBuild.core.interfaces.service.LoadMask.manage(action.loadMask, true);
 
-			action.callback = CMDBuild.core.interfaces.FormSubmit.interceptorCallback(action); // First of all because is related to others
-			action.failure = CMDBuild.core.interfaces.FormSubmit.interceptorFailure(action);
-			action.success = CMDBuild.core.interfaces.FormSubmit.interceptorSuccess(action);
+				action.callback = CMDBuild.core.interfaces.FormSubmit.interceptorCallback(action); // First of all because is related to others
+				action.failure = CMDBuild.core.interfaces.FormSubmit.interceptorFailure(action);
+				action.success = CMDBuild.core.interfaces.FormSubmit.interceptorSuccess(action);
+			}
 		},
 
 		/**
@@ -129,7 +131,7 @@
 		 *
 		 * @public
 		 */
-		submit: function(parameters) {
+		submit: function (parameters) {
 			// Set default values
 			Ext.applyIf(parameters, {
 				method: 'POST',
@@ -157,7 +159,7 @@
 					params: parameters.params
 				});
 
-				Ext.defer(function() { // Form cleanup
+				Ext.defer(function () { // Form cleanup
 					form.close();
 				}, 100);
 			} else{

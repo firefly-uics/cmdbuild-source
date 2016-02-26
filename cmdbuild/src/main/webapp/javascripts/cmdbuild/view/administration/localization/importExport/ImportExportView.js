@@ -23,7 +23,7 @@
 		border: false,
 		frame: false,
 
-		initComponent: function() {
+		initComponent: function () {
 			Ext.apply(this, {
 				items: [
 					this.importPanel = Ext.create('CMDBuild.view.administration.localization.importExport.ImportForm', { delegate: this.delegate }),

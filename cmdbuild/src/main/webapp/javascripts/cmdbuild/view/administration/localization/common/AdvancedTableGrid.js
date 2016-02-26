@@ -30,7 +30,7 @@
 		rootVisible: false,
 		sortableColumns: false, // BUGGED in ExtJs 4.2, workaround setting sortable: false to columns
 
-		initComponent: function() {
+		initComponent: function () {
 			Ext.apply(this, {
 				plugins: [
 					this.gridEditorPlugin = Ext.create('Ext.grid.plugin.RowEditing', {
@@ -41,7 +41,7 @@
 							/**
 							 * Permits to edit only leaf nodes
 							 */
-							beforeedit: function(editor, context, eOpts) {
+							beforeedit: function (editor, context, eOpts) {
 								if (!context.record.isLeaf())
 									return false;
 							}
@@ -55,7 +55,7 @@
 		},
 
 		listeners: {
-			edit: function(editor, context, eOpts) {
+			edit: function (editor, context, eOpts) {
 				this.delegate.cmfg('onLocalizationAdvancedTableRowUpdateButtonClick', context.record);
 			}
 		}

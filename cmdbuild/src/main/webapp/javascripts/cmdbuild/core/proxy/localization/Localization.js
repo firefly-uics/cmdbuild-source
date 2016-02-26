@@ -13,7 +13,7 @@
 		/**
 		 * @param {Object} parameters
 		 */
-		getLanguages: function(parameters) {
+		getLanguages: function (parameters) {
 			parameters = Ext.isEmpty(parameters) ? {} : parameters;
 
 			Ext.apply(parameters, { url: CMDBuild.core.proxy.Index.utils.listAvailableTranslations });
@@ -24,7 +24,7 @@
 		/**
 		 * @returns {Ext.data.Store or CMDBuild.core.cache.Store}
 		 */
-		getStoreLanguages: function() {
+		getStoreLanguages: function () {
 			return CMDBuild.global.Cache.requestAsStore(CMDBuild.core.constants.Proxy.LOCALIZATION, {
 				autoLoad: true,
 				model: 'CMDBuild.model.localization.Localization',
@@ -50,7 +50,7 @@
 		/**
 		 * @returns {Ext.data.ArrayStore}
 		 */
-		getStoreSections: function() {
+		getStoreSections: function () {
 			return Ext.create('Ext.data.ArrayStore', {
 				fields: [CMDBuild.core.constants.Proxy.DESCRIPTION, CMDBuild.core.constants.Proxy.NAME],
 				data: [
@@ -70,7 +70,7 @@
 		/**
 		 * @param {Object} parameters
 		 */
-		read: function(parameters) {
+		read: function (parameters) {
 			parameters = Ext.isEmpty(parameters) ? {} : parameters;
 
 			Ext.apply(parameters, { url: CMDBuild.core.proxy.Index.localizations.translation.read });
@@ -81,7 +81,7 @@
 		/**
 		 * @param {Object} parameters
 		 */
-		readAll: function(parameters) {
+		readAll: function (parameters) {
 			parameters = Ext.isEmpty(parameters) ? {} : parameters;
 
 			Ext.apply(parameters, { url: CMDBuild.core.proxy.Index.localizations.translation.readAll });
@@ -92,7 +92,7 @@
 		/**
 		 * @param {Object} parameters
 		 */
-		update: function(parameters) {
+		update: function (parameters) {
 			parameters = Ext.isEmpty(parameters) ? {} : parameters;
 
 			Ext.apply(parameters, { url: CMDBuild.core.proxy.Index.localizations.translation.update });

@@ -39,7 +39,7 @@
 		 *
 		 * @override
 		 */
-		constructor: function(configObject) {
+		constructor: function (configObject) {
 			this.callParent(arguments);
 
 			this.view = Ext.create('CMDBuild.view.administration.localization.advancedTable.SectionPanel', {
@@ -62,16 +62,16 @@
 		 * @private
 		 * @override
 		 */
-		decodeStructureFields: function(rootNode, fieldsArray) {
+		decodeStructureFields: function (rootNode, fieldsArray) {
 			if (
 				!Ext.isEmpty(rootNode)
 				&& !Ext.isEmpty(fieldsArray) && Ext.isArray(fieldsArray)
 			) {
-				Ext.Array.forEach(fieldsArray, function(fieldObject, i, allFields) {
+				Ext.Array.forEach(fieldsArray, function (fieldObject, i, allFields) {
 					var entityFieldNodeObject = {};
 					entityFieldNodeObject[CMDBuild.core.constants.Proxy.DEFAULT] = fieldObject[CMDBuild.core.constants.Proxy.VALUE];
 					entityFieldNodeObject[CMDBuild.core.constants.Proxy.FIELD] = fieldObject[CMDBuild.core.constants.Proxy.NAME];
-					entityFieldNodeObject[CMDBuild.core.constants.Proxy.IDENTIFIER] = this.getLevelNode(rootNode, 1).get(CMDBuild.core.constants.Proxy.IDENTIFIER);
+					entityFieldNodeObject[CMDBuild.core.constants.Proxy.IDENTIFIER] = rootNode.get(CMDBuild.core.constants.Proxy.IDENTIFIER);
 					entityFieldNodeObject[CMDBuild.core.constants.Proxy.LEAF] = true;
 					entityFieldNodeObject[CMDBuild.core.constants.Proxy.PARENT] = rootNode;
 					entityFieldNodeObject[CMDBuild.core.constants.Proxy.TEXT] = fieldObject[CMDBuild.core.constants.Proxy.NAME];

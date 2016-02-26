@@ -60,8 +60,8 @@
 				{
 					cmName: this.cmfg('accordionIdentifierGet'),
 					iconCls: 'cmdbuild-tree-localization-icon',
-					text: CMDBuild.Translation.advancedTables,
-					description: CMDBuild.Translation.advancedTables,
+					text: CMDBuild.Translation.bulkUpdate,
+					description: CMDBuild.Translation.bulkUpdate,
 					id: this.cmfg('accordionBuildId', { components: 'advancedTranslationsTable' }),
 					sectionHierarchy: ['advancedTranslationsTable'],
 					leaf: true

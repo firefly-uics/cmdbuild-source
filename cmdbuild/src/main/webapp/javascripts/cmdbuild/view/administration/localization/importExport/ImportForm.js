@@ -30,7 +30,7 @@
 			align: 'stretch'
 		},
 
-		initComponent: function() {
+		initComponent: function () {
 			Ext.apply(this, {
 				dockedItems: [
 					Ext.create('Ext.toolbar.Toolbar', {
@@ -48,7 +48,7 @@
 							Ext.create('CMDBuild.core.buttons.text.Import', {
 								scope: this,
 
-								handler: function(button, e) {
+								handler: function (button, e) {
 									this.delegate.cmfg('onLocalizationImportExportImportButtonClick');
 								}
 							})
@@ -60,7 +60,7 @@
 						name: CMDBuild.core.constants.Proxy.FORMAT,
 						fieldLabel: CMDBuild.Translation.format,
 						labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
-						maxWidth: CMDBuild.core.constants.FieldWidths.STANDARD_MEDIUM,
+						maxWidth: CMDBuild.core.constants.FieldWidths.ADMINISTRATION_MEDIUM,
 						displayField: CMDBuild.core.constants.Proxy.DESCRIPTION,
 						valueField: CMDBuild.core.constants.Proxy.NAME,
 						editable: false,

@@ -13,14 +13,14 @@
 		frame: false,
 		layout: 'column',
 
-		initComponent: function() {
+		initComponent: function () {
 			var languagesArray = Ext.Object.getValues(CMDBuild.configuration.localization.get(CMDBuild.core.constants.Proxy.LANGUAGES));
 			var languageCheckboxes = [];
 
 			// Sort languages with alphabetical order
 			CMDBuild.core.Utils.objectArraySort(languagesArray, CMDBuild.core.constants.Proxy.DESCRIPTION);
 
-			Ext.Array.forEach(languagesArray, function(languageModel, i, allLanguageModels) {
+			Ext.Array.forEach(languagesArray, function (languageModel, i, allLanguageModels) {
 				languageCheckboxes.push(
 					Ext.create('Ext.form.field.Checkbox', {
 						fieldLabel: languageModel.get(CMDBuild.core.constants.Proxy.DESCRIPTION),
@@ -45,10 +45,10 @@
 		/**
 		 * @returns {Array}
 		 */
-		getValue: function() {
+		getValue: function () {
 			var languageArray = [];
 
-			Ext.Array.forEach(this.getItems(), function(languageCheckbox, i, allCheckboxes) {
+			Ext.Array.forEach(this.getItems(), function (languageCheckbox, i, allCheckboxes) {
 				if (languageCheckbox.getValue())
 					languageArray.push(languageCheckbox.getName());
 			}, this);
@@ -59,9 +59,9 @@
 		/**
 		 * @param {Array} activeLanguages
 		 */
-		setValue: function(activeLanguages) {
+		setValue: function (activeLanguages) {
 			if (Ext.isArray(activeLanguages))
-				Ext.Array.forEach(this.getItems(), function(languageCheckbox, i, allCheckboxes) {
+				Ext.Array.forEach(this.getItems(), function (languageCheckbox, i, allCheckboxes) {
 					languageCheckbox.setValue(Ext.Array.contains(activeLanguages, languageCheckbox.getName()));
 				}, this);
 		},
@@ -71,7 +71,7 @@
 		 *
 		 * @returns {Array}
 		 */
-		getItems: function() {
+		getItems: function () {
 			return this.items.getRange();
 		}
 	});
