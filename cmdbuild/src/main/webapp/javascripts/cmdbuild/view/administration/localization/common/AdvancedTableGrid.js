@@ -39,11 +39,13 @@
 
 						listeners: {
 							/**
-							 * Permits to edit only leaf nodes
+							 * Permits to edit only leaf nodes and there are selected languages
 							 */
 							beforeedit: function (editor, context, eOpts) {
-								if (!context.record.isLeaf())
-									return false;
+								return (
+									context.record.isLeaf()
+									&& !Ext.isEmpty(CMDBuild.configuration.localization.get(CMDBuild.core.constants.Proxy.ENABLED_LANGUAGES))
+								);
 							}
 						}
 					}),

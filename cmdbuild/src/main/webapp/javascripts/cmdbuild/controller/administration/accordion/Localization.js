@@ -51,19 +51,19 @@
 				{
 					cmName: this.cmfg('accordionIdentifierGet'),
 					iconCls: 'cmdbuild-tree-localization-icon',
-					text: CMDBuild.Translation.importExport,
-					description: CMDBuild.Translation.importExport,
-					id: this.cmfg('accordionBuildId', { components: 'importExport' }),
-					sectionHierarchy: ['importExport'],
+					text: CMDBuild.Translation.bulkUpdate,
+					description: CMDBuild.Translation.bulkUpdate,
+					id: this.cmfg('accordionBuildId', { components: 'advancedTranslationsTable' }),
+					sectionHierarchy: ['advancedTranslationsTable'],
 					leaf: true
 				},
 				{
 					cmName: this.cmfg('accordionIdentifierGet'),
 					iconCls: 'cmdbuild-tree-localization-icon',
-					text: CMDBuild.Translation.bulkUpdate,
-					description: CMDBuild.Translation.bulkUpdate,
-					id: this.cmfg('accordionBuildId', { components: 'advancedTranslationsTable' }),
-					sectionHierarchy: ['advancedTranslationsTable'],
+					text: CMDBuild.Translation.importExport,
+					description: CMDBuild.Translation.importExport,
+					id: this.cmfg('accordionBuildId', { components: 'importExport' }),
+					sectionHierarchy: ['importExport'],
 					leaf: true
 				}
 			]);
