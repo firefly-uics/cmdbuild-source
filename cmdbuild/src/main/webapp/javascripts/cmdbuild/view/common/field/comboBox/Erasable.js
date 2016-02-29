@@ -3,6 +3,8 @@
 	Ext.define('CMDBuild.view.common.field.comboBox.Erasable', {
 		extend: 'Ext.form.field.ComboBox',
 
+		alias: 'widget.comboboxerasable',
+
 		/**
 		 * @cfg {CMDBuild.controller.common.field.comboBox.Erasable}
 		 */
@@ -13,7 +15,7 @@
 		trigger1Cls: Ext.baseCSSPrefix + 'form-arrow-trigger',
 		trigger2Cls: Ext.baseCSSPrefix + 'form-clear-trigger',
 
-		initComponent: function() {
+		initComponent: function () {
 			Ext.apply(this, {
 				delegate: Ext.create('CMDBuild.controller.common.field.comboBox.Erasable', { view: this })
 			});
@@ -27,15 +29,15 @@
 		 *
 		 * @returns {String}
 		 */
-		getReadableValue: function() {
+		getReadableValue: function () {
 			return this.getRawValue();
 		},
 
-		onTrigger1Click: function() {
+		onTrigger1Click: function () {
 			this.delegate.cmfg('onFieldComboBoxErasableTrigger1Click');
 		},
 
-		onTrigger2Click: function() {
+		onTrigger2Click: function () {
 			this.delegate.cmfg('onFieldComboBoxErasableTrigger2Click');
 		}
 	});

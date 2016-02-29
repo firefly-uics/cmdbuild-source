@@ -18,7 +18,7 @@
 		layout: 'fit',
 		title: CMDBuild.Translation.defaultFilters,
 
-		initComponent: function() {
+		initComponent: function () {
 			Ext.apply(this, {
 				dockedItems: [
 					Ext.create('Ext.toolbar.Toolbar', {
@@ -36,14 +36,14 @@
 							Ext.create('CMDBuild.core.buttons.text.Save', {
 								scope: this,
 
-								handler: function(button, e) {
+								handler: function (button, e) {
 									this.delegate.cmfg('onUserAndGroupGroupTabDefaultFiltersSaveButtonClick');
 								}
 							}),
 							Ext.create('CMDBuild.core.buttons.text.Abort', {
 								scope: this,
 
-								handler: function(button, e) {
+								handler: function (button, e) {
 									this.delegate.cmfg('onUserAndGroupGroupTabDefaultFiltersAbortButtonClick');
 								}
 							})
@@ -59,7 +59,7 @@
 		},
 
 		listeners: {
-			show: function(panel, eOpts) {
+			show: function (panel, eOpts) {
 				this.delegate.cmfg('onUserAndGroupGroupTabDefaultFiltersShow');
 			}
 		}

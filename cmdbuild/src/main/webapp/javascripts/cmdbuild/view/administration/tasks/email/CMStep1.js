@@ -71,7 +71,7 @@
 			},
 
 		onFilterTypeComboChange: function () {
-			this.view.filterDefinitionContainer.removeAll();
+			this.view.filterDefinitionContainer.removeAll(false);
 
 			switch (this.view.filterTypeCombobox.getValue()) {
 				case 'regex':
@@ -282,14 +282,14 @@
 					labelWidth: CMDBuild.core.constants.FieldWidths.LABEL - 5,
 
 					fieldContainer: {
-						fieldLabel: CMDBuild.Translation.fromAddress
+						fieldLabel: CMDBuild.Translation.sender
 					},
 					textarea: {
 						name: CMDBuild.core.constants.Proxy.FILTER_FROM_ADDRESS,
 						id: 'FromAddresFilterField'
 					},
 					button: {
-						titleWindow: tr.taskEmail.fromAddressFilter
+						titleWindow: CMDBuild.Translation.sender
 					}
 				});
 				this.subjectFilter = Ext.create('CMDBuild.view.administration.tasks.common.emailFilterForm.CMEmailFilterForm', {
@@ -304,7 +304,7 @@
 						id: 'SubjectFilterField'
 					},
 					button: {
-						titleWindow: tr.taskEmail.subjectFilter
+						titleWindow: CMDBuild.Translation.subject
 					}
 				});
 				this.filterFunctionCombobox = Ext.create('Ext.form.field.ComboBox', {
@@ -340,6 +340,11 @@
 					toggleOnTitleClick: true,
 					overflowY: 'auto',
 					maxWidth: 'auto',
+
+					layout: {
+						type: 'vbox',
+						align: 'stretch'
+					},
 
 					items: [this.rejectedFolder]
 				});
@@ -395,7 +400,7 @@
 
 						layout: {
 							type: 'vbox',
-							align:'stretch'
+							align: 'stretch'
 						},
 
 						items: [
@@ -430,7 +435,7 @@
 							this.filterDefinitionContainer = Ext.create('Ext.container.Container', {
 								layout: {
 									type: 'vbox',
-									align:'stretch'
+									align: 'stretch'
 								},
 
 								items: []
