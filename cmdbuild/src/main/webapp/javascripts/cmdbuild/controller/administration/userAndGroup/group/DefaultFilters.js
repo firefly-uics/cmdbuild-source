@@ -315,7 +315,7 @@
 
 			if (
 				colIdx == 1 // Avoid to go in edit of unwanted columns
-				&& record.getDepth() > 1// Avoid to go in edit of root classes (standard and simple)
+				&& record.getDepth() > 1 // Avoid to go in edit of root classes (standard and simple)
 			) {
 				var params = {};
 				params[CMDBuild.core.constants.Proxy.CLASS_NAME] = record.get(CMDBuild.core.constants.Proxy.NAME);

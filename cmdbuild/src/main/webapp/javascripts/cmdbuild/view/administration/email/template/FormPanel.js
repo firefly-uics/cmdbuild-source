@@ -29,7 +29,7 @@
 
 		layout: {
 			type: 'hbox',
-			align:'stretch'
+			align: 'stretch'
 		},
 
 		initComponent: function() {
@@ -90,6 +90,7 @@
 				items: [
 					Ext.create('Ext.form.FieldSet', {
 						title: CMDBuild.Translation.baseProperties,
+						overflowY: 'auto',
 						flex: 1,
 
 						defaults: {
@@ -140,7 +141,12 @@
 					{ xtype: 'splitter' },
 					Ext.create('Ext.form.FieldSet', {
 						title: CMDBuild.Translation.template,
+						overflowY: 'auto',
 						flex: 1,
+
+						style: {
+							paddingBottom: '5px'
+						},
 
 						defaults: {
 							xtype: 'textfield',

@@ -31,12 +31,9 @@
 		frame: false,
 		overflowY: 'auto',
 
-		layout: {
-			type: 'hbox',
-			align:'stretch'
-		},
+		layout: 'hbox',
 
-		initComponent: function() {
+		initComponent: function () {
 			Ext.apply(this, {
 				dockedItems: [
 					Ext.create('Ext.toolbar.Toolbar', {
@@ -48,7 +45,7 @@
 								text: CMDBuild.Translation.modifyAccount,
 								scope: this,
 
-								handler: function(button, e) {
+								handler: function (button, e) {
 									this.delegate.cmfg('onEmailAccountModifyButtonClick');
 								}
 							}),
@@ -56,7 +53,7 @@
 								text: CMDBuild.Translation.removeAccount,
 								scope: this,
 
-								handler: function(button, e) {
+								handler: function (button, e) {
 									this.delegate.cmfg('onEmailAccountRemoveButtonClick');
 								}
 							}),
@@ -64,7 +61,7 @@
 								text: CMDBuild.Translation.setAsDefault,
 								scope: this,
 
-								handler: function(button, e) {
+								handler: function (button, e) {
 									this.delegate.cmfg('onEmailAccountSetDefaultButtonClick');
 								}
 							})
@@ -85,14 +82,14 @@
 							Ext.create('CMDBuild.core.buttons.text.Save', {
 								scope: this,
 
-								handler: function(button, e) {
+								handler: function (button, e) {
 									this.delegate.cmfg('onEmailAccountSaveButtonClick');
 								}
 							}),
 							Ext.create('CMDBuild.core.buttons.text.Abort', {
 								scope: this,
 
-								handler: function(button, e) {
+								handler: function (button, e) {
 									this.delegate.cmfg('onEmailAccountAbortButtonClick');
 								}
 							})
@@ -111,7 +108,6 @@
 						items: [
 							Ext.create('Ext.form.FieldSet', {
 								title: CMDBuild.Translation.account,
-								overflowY: 'auto',
 
 								defaults: {
 									labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
@@ -141,7 +137,6 @@
 							}),
 							Ext.create('Ext.form.FieldSet', {
 								title: CMDBuild.Translation.credentials,
-								overflowY: 'auto',
 
 								defaults: {
 									labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
@@ -181,7 +176,6 @@
 						items: [
 							Ext.create('Ext.form.FieldSet', {
 								title: CMDBuild.Translation.outgoing,
-								overflowY: 'auto',
 
 								defaults: {
 									labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
@@ -237,7 +231,6 @@
 							}),
 							Ext.create('Ext.form.FieldSet', {
 								title: CMDBuild.Translation.incoming,
-								overflowY: 'auto',
 
 								defaults: {
 									labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,

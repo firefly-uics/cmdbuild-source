@@ -23,10 +23,10 @@
 
 		layout: {
 			type: 'vbox',
-			align:'stretch'
+			align: 'stretch'
 		},
 
-		initComponent: function() {
+		initComponent: function () {
 			Ext.apply(this, {
 				dockedItems: [
 					Ext.create('Ext.toolbar.Toolbar', {
@@ -44,14 +44,14 @@
 							Ext.create('CMDBuild.core.buttons.text.Save', {
 								scope: this,
 
-								handler: function(button, e) {
+								handler: function (button, e) {
 									this.delegate.cmfg('onUserAndGroupGroupTabUserInterfaceSaveButtonClick');
 								}
 							}),
 							Ext.create('CMDBuild.core.buttons.text.Abort', {
 								scope: this,
 
-								handler: function(button, e) {
+								handler: function (button, e) {
 									this.delegate.cmfg('onUserAndGroupGroupTabUserInterfaceAbortButtonClick');
 								}
 							})
@@ -64,6 +64,7 @@
 						cls: 'cmdb-border-bottom',
 						frame: false,
 						border: false,
+
 						items: [
 							Ext.create('Ext.form.CheckboxGroup', {
 								fieldLabel: CMDBuild.Translation.disabledFeatures,
@@ -95,14 +96,14 @@
 										uncheckedValue: false
 									},
 									{
-										boxLabel: CMDBuild.Translation.customPages,
-										name: CMDBuild.core.constants.Proxy.CUSTOM_PAGES,
+										boxLabel: CMDBuild.Translation.report,
+										name: CMDBuild.core.constants.Proxy.REPORT,
 										inputValue: true,
 										uncheckedValue: false
 									},
 									{
-										boxLabel: CMDBuild.Translation.report,
-										name: CMDBuild.core.constants.Proxy.REPORT,
+										boxLabel: CMDBuild.Translation.customPages,
+										name: CMDBuild.core.constants.Proxy.CUSTOM_PAGES,
 										inputValue: true,
 										uncheckedValue: false
 									},
@@ -139,6 +140,7 @@
 						cls: 'cmdb-border-bottom',
 						frame: false,
 						border: false,
+
 						items: [
 							Ext.create('Ext.form.CheckboxGroup', {
 								fieldLabel: CMDBuild.Translation.disabledTabsInClassesModule,
@@ -190,6 +192,7 @@
 						cls: 'cmdb-border-bottom',
 						frame: false,
 						border: false,
+
 						items: [
 							Ext.create('Ext.form.CheckboxGroup', {
 								fieldLabel: CMDBuild.Translation.disabledTabsInProcessesModule,
@@ -235,6 +238,7 @@
 						cls: 'cmdb-border-bottom',
 						frame: false,
 						border: false,
+
 						items: [
 							Ext.create('Ext.form.CheckboxGroup', {
 								fieldLabel: CMDBuild.Translation.otherOptions,

@@ -6,7 +6,8 @@
 		requires: [
 			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.proxy.userAndGroup.group.DefaultFilters',
-			'CMDBuild.model.userAndGroup.group.defaultFilters.TreeNode'
+			'CMDBuild.model.userAndGroup.group.defaultFilters.TreeNode',
+			'CMDBuild.view.common.field.comboBox.Erasable'
 		],
 
 		/**
@@ -53,7 +54,7 @@
 						scope: this,
 
 						editor: {
-							xtype: 'combo',
+							xtype: 'comboboxerasable',
 							displayField: CMDBuild.core.constants.Proxy.DESCRIPTION,
 							valueField: CMDBuild.core.constants.Proxy.ID,
 							editable: false,
