@@ -11,7 +11,13 @@
 		activeTab: 0,
 		bodyCls: 'cmdb-gray-panel-no-padding',
 		border: false,
-		frame: false
+		frame: false,
+
+		listeners: {
+			show: function (panel, eOpts) {
+				this.delegate.cmfg('onLocalizationAdvancedTableShow');
+			}
+		}
 	});
 
 })();

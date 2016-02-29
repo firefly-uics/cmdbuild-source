@@ -22,6 +22,7 @@
 			'onLocalizationAdvancedTableBuildStore',
 			'onLocalizationAdvancedTableCollapseAll',
 			'onLocalizationAdvancedTableExpandAll',
+			'onLocalizationAdvancedTableShow',
 			'onLocalizationAdvancedTableTabCreation'
 		],
 
@@ -92,8 +93,7 @@
 			this.sectionControllerMenu = Ext.create('CMDBuild.controller.administration.localization.advancedTable.SectionMenu', { parentDelegate: this });
 
 			this.view.setActiveTab(0);
-
-			this.view.getActiveTab().fireEvent('show'); // Manual show event fire because was already selected
+			this.view.getActiveTab().fireEvent('show'); // Manual show event fire
 		},
 
 		/**
@@ -198,6 +198,14 @@
 					CMDBuild.core.LoadMask.hide();
 				});
 			}, 100, this);
+		},
+
+		/**
+		 * Check if there are enabled languages and show warning popup
+		 */
+		onLocalizationAdvancedTableShow: function () {
+			if (Ext.isEmpty(CMDBuild.configuration.localization.get(CMDBuild.core.constants.Proxy.ENABLED_LANGUAGES)))
+				CMDBuild.core.Message.warning(null, CMDBuild.Translation.warnings.thereAreNoEnabledLanguages);
 		},
 
 		/**

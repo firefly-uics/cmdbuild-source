@@ -45,34 +45,13 @@
 		},
 
 		/**
-		 * Setup view items and controllers on accordion click
-		 *
-		 * @param {CMDBuild.model.common.accordion.Generic} node
-		 *
-		 * @override
-		 */
-		onLocalizationModuleInit: function (node) {
-			if (!Ext.Object.isEmpty(node)) {
-				this.view.removeAll(true);
-
-				this.sectionController = this.sectionIdentifierEvaluation(node.get(CMDBuild.core.constants.Proxy.SECTION_HIERARCHY)[0]);
-
-				this.view.add(this.sectionController.getView());
-
-				this.setViewTitle(node.get(CMDBuild.core.constants.Proxy.TEXT));
-
-				this.onModuleInit(node); // Custom callParent() implementation
-			}
-		},
-
-		/**
 		 * @param {String} sectionIdentifier
 		 *
 		 * @returns {Mixed}
 		 *
 		 * @private
 		 */
-		sectionIdentifierEvaluation: function (sectionIdentifier) {
+		buildSectionController: function (sectionIdentifier) {
 			switch (sectionIdentifier) {
 				case 'advancedTranslationsTable':
 					return Ext.create('CMDBuild.controller.administration.localization.advancedTable.AdvancedTable', { parentDelegate: this });
@@ -83,6 +62,29 @@
 				case 'configuration':
 				default:
 					return Ext.create('CMDBuild.controller.administration.localization.Configuration', { parentDelegate: this });
+			}
+		},
+
+		/**
+		 * Setup view items and controllers on accordion click
+		 *
+		 * @param {CMDBuild.model.common.accordion.Generic} node
+		 *
+		 * @override
+		 */
+		onLocalizationModuleInit: function (node) {
+			if (!Ext.Object.isEmpty(node)) {
+				this.sectionController = this.buildSectionController(node.get(CMDBuild.core.constants.Proxy.SECTION_HIERARCHY)[0]);
+
+				this.view.removeAll(true);
+
+				this.setViewTitle(node.get(CMDBuild.core.constants.Proxy.TEXT));
+
+				this.view.add(this.sectionController.getView());
+
+				this.sectionController.getView().fireEvent('show'); // Manual show event fire
+
+				this.onModuleInit(node); // Custom callParent() implementation
 			}
 		}
 	});
