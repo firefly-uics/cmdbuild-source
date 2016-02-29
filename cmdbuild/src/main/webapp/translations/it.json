@@ -342,7 +342,6 @@
 				"attachmentsCategory": "Categoria",
 				"bodyParsing": "Parsing corpo del messaggio",
 				"emailAccount": "Account e-mail",
-				"fromAddressFilter": "Filtro indirizzo mittente",
 				"parsingKeyEnd": "Delimitatore finale di chiave",
 				"parsingKeyStart": "Delimitatore iniziale di chiave",
 				"parsingValueEnd": "Delimitatore finale di valore",
@@ -900,6 +899,7 @@
 		"popup_block": "Abbiamo rilevato un blocco popup, disabilitato per eseguire questa operazione",
 		"reportsDuplicateImageFilename": "Impossibile continuare: il report contiene file immagini con lo stesso nome.",
 		"saveMenuBeforeAccess": "Il menu deve essere salvato prima di accedere alla traduzione di questo elemento.",
+		"thereAreNoEnabledLanguages": "Non ci sono lingue abilitate.",
 		"toSetAFilterYouMustBeforeSelectAClass": "Per impostare un filtro è necessario prima selezionare una classe.",
 		"warning_message": "Attenzione"
 	},
@@ -1337,6 +1337,7 @@
 	"selectedUsers": "Utenti selezionati",
 	"selection": "Selezione",
 	"send": "Invia",
+	"sender": "Mittente",
 	"sentFolder": "Cartella posta inviata",
 	"separator": "Separatore",
 	"serverManagement": "Gestione server",

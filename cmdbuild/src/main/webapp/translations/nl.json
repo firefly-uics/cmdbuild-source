@@ -342,7 +342,6 @@
 				"attachmentsCategory": "Categorie",
 				"bodyParsing": "Body verwerking",
 				"emailAccount": "Email account",
-				"fromAddressFilter": "Filter op zenderadres",
 				"parsingKeyEnd": "Sleutel eind scheidingsteken",
 				"parsingKeyStart": "Sleutel start scheidingsteken",
 				"parsingValueEnd": "Waarde eind scheidingsteken",
@@ -900,6 +899,7 @@
 		"popup_block": "We hebben ontdekt dat u popup blokkeer software gebruikt, schakel deze uit om dit programma te draaien",
 		"reportsDuplicateImageFilename": "Waarschuwing: rapport samenstelling gevonden met gelijke bestandsnaam - kan niet doorgaan.",
 		"saveMenuBeforeAccess": "Het menu moet worden opgeslagen voor toegang tot de vertalingen van dit element.",
+		"thereAreNoEnabledLanguages": "<em>There are no enabled languages</em>",
 		"toSetAFilterYouMustBeforeSelectAClass": "<em>To set a filter you must before select a class</em>",
 		"warning_message": "Waarschuwing"
 	},
@@ -1337,6 +1337,7 @@
 	"selectedUsers": "Geselecteerde gebruikers",
 	"selection": "Selectie",
 	"send": "<em>Send</em>",
+	"sender": "<em>Sender</em>",
 	"sentFolder": "<em>Sent folder</em>",
 	"separator": "Scheidingsteken",
 	"serverManagement": "Server beheer",

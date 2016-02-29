@@ -342,7 +342,6 @@
 				"attachmentsCategory": "カテゴリー",
 				"bodyParsing": "本文解析",
 				"emailAccount": "電子メールアカウント",
-				"fromAddressFilter": "Fromアドレスにフィルター",
 				"parsingKeyEnd": "キー終了デリミター",
 				"parsingKeyStart": "キー開始デリミター",
 				"parsingValueEnd": "値終了デリミター",
@@ -900,6 +899,7 @@
 		"popup_block": "ポップアップブロックが有効になっています。操作と行うためにはそれを無効にしてください。",
 		"reportsDuplicateImageFilename": "警告: 同名のレポートイメージがあります。処理を継続できません。",
 		"saveMenuBeforeAccess": "このエレメントの翻訳にアクセスする前にメニューは保存される必要があります。",
+		"thereAreNoEnabledLanguages": "<em>There are no enabled languages</em>",
 		"toSetAFilterYouMustBeforeSelectAClass": "<em>To set a filter you must before select a class</em>",
 		"warning_message": "警告"
 	},
@@ -1337,6 +1337,7 @@
 	"selectedUsers": "ルックアップユーザー",
 	"selection": "選択",
 	"send": "<em>Send</em>",
+	"sender": "<em>Sender</em>",
 	"sentFolder": "<em>Sent folder</em>",
 	"separator": "セパレータ",
 	"serverManagement": "サーバ管理",
