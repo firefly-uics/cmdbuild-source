@@ -342,7 +342,6 @@
 				"attachmentsCategory": "Category",
 				"bodyParsing": "Body parsing",
 				"emailAccount": "E-mail account",
-				"fromAddressFilter": "Filter on FromAddress",
 				"parsingKeyEnd": "Key end delimiter",
 				"parsingKeyStart": "Key start delimeter",
 				"parsingValueEnd": "Value end delimiter",
@@ -900,6 +899,7 @@
 		"popup_block": "We have detected that you are using popup blocking software, please disable to run operation",
 		"reportsDuplicateImageFilename": "Warning: found report images with same filename - cannot proceed.",
 		"saveMenuBeforeAccess": "The menu has to been saved before access at the translations of this element.",
+		"thereAreNoEnabledLanguages": "There are no enabled languages",
 		"toSetAFilterYouMustBeforeSelectAClass": "To set a filter you must before select a class",
 		"warning_message": "Warning"
 	},
@@ -1337,6 +1337,7 @@
 	"selectedUsers": "Selected users",
 	"selection": "Selection",
 	"send": "Send",
+	"sender": "Sender",
 	"sentFolder": "Sent folder",
 	"separator": "Separator",
 	"serverManagement": "Server management",

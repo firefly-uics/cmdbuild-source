@@ -342,7 +342,6 @@
 				"attachmentsCategory": "Catégorie",
 				"bodyParsing": "Analyse du corps du message",
 				"emailAccount": "Compte de messagerie",
-				"fromAddressFilter": "Filtrer sur l'expéditeur",
 				"parsingKeyEnd": "Clef et séparateur",
 				"parsingKeyStart": "Le séparateur commence avec la clef",
 				"parsingValueEnd": "La valeur termine le séparateur",
@@ -900,6 +899,7 @@
 		"popup_block": "Nous avons détecté que vous utilisez un programme pour bloquer les popups, merci de le désactiver",
 		"reportsDuplicateImageFilename": "Attention : des images du rapport possèdent le même nom - impossible de continuer.",
 		"saveMenuBeforeAccess": "Le menu doit être enregistré avant de pouvoir accéder aux traductions de cet élément.",
+		"thereAreNoEnabledLanguages": "<em>There are no enabled languages</em>",
 		"toSetAFilterYouMustBeforeSelectAClass": "Pour configurer un filtre, vous devez d'abord choisir une classe",
 		"warning_message": "Attention"
 	},
@@ -1337,6 +1337,7 @@
 	"selection": "Sélection",
 	"send": "Envoyer",
 	"sentFolder": "Dossier d'envoi",
+	"sender": "<em>Sender</em>",
 	"separator": "Séparateur",
 	"serverManagement": "Gestion du serveur",
 	"serverUrl": "URL du serveur",

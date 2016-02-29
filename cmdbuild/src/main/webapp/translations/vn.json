@@ -342,7 +342,6 @@
 				"attachmentsCategory": "<em>Category</em>",
 				"bodyParsing": "<em>Body parsing</em>",
 				"emailAccount": "<em>Email account</em>",
-				"fromAddressFilter": "<em>Filter on FromAddress</em>",
 				"parsingKeyEnd": "<em>Key end delimiter</em>",
 				"parsingKeyStart": "<em>Key start delimeter</em>",
 				"parsingValueEnd": "<em>Value end delimiter</em>",
@@ -900,6 +899,7 @@
 		"popup_block": "Chúng tôi phát hiện bạn đang sử dụng phần mềm chan cac cua so tu dong xuat hien, vui lòng tắt phan mem do để chạy hoạt động",
 		"reportsDuplicateImageFilename": "Cảnh báo: báo cáo hình ảnh được tìm thấy trùng tên với một tập tin khác- không thể tiến hành.",
 		"saveMenuBeforeAccess": "<em>The menu has to been saved before access at the translations of this element.</em>",
+		"thereAreNoEnabledLanguages": "<em>There are no enabled languages</em>",
 		"toSetAFilterYouMustBeforeSelectAClass": "<em>To set a filter you must before select a class</em>",
 		"warning_message": "Cảnh báo"
 	},
@@ -1337,6 +1337,7 @@
 	"selectedUsers": "Những người dùng được chọn",
 	"selection": "<em>Selection</em>",
 	"send": "<em>Send</em>",
+	"sender": "<em>Sender</em>",
 	"sentFolder": "<em>Sent folder</em>",
 	"separator": "Phân cách",
 	"serverManagement": " Quản lý máy chủ ",

@@ -342,7 +342,6 @@
 				"attachmentsCategory": "Категория",
 				"bodyParsing": "Разбор текста письма",
 				"emailAccount": "Учетная запись",
-				"fromAddressFilter": "Фильтровать по адресу отправителя",
 				"parsingKeyEnd": "Разделитель конца ключа",
 				"parsingKeyStart": "Разделитель начала ключа",
 				"parsingValueEnd": "Разделитель конца значения",
@@ -900,6 +899,7 @@
 		"popup_block": "Пожалуйста, отключите блокировку всплывающих окон в браузере для нормальной работы",
 		"reportsDuplicateImageFilename": "Невозможно выполнить: найдены изображения с дублирующимися именами файлов.",
 		"saveMenuBeforeAccess": "<em>The menu has to been saved before access at the translations of this element.</em>",
+		"thereAreNoEnabledLanguages": "<em>There are no enabled languages</em>",
 		"toSetAFilterYouMustBeforeSelectAClass": "<em>To set a filter you must before select a class</em>",
 		"warning_message": "Предупреждение"
 	},
@@ -1337,6 +1337,7 @@
 	"selectedUsers": "Выбранные пользователи",
 	"selection": "Отбор",
 	"send": "<em>Send</em>",
+	"sender": "<em>Sender</em>",
 	"sentFolder": "<em>Sent folder</em>",
 	"separator": "Разделитель",
 	"serverManagement": "Настройки сервера",

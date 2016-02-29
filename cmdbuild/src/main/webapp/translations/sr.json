@@ -342,7 +342,6 @@
 				"attachmentsCategory": "Ketegorija",
 				"bodyParsing": "Parsiranje tela poruke",
 				"emailAccount": "Nalog e-pošte",
-				"fromAddressFilter": "Filtriranje po polju pošiljaoca",
 				"parsingKeyEnd": "Delimiter kraja ključa",
 				"parsingKeyStart": "Delimiter početka ključa",
 				"parsingValueEnd": "Delimiter kraja vrednosti",
@@ -900,6 +899,7 @@
 		"popup_block": "Detektovan je program za blokiranje popup prozora, isključite ga kako biste mogli nastaviti operaciju",
 		"reportsDuplicateImageFilename": "Pažnja! Nemoguće je obaviti operaciju - Izveštaj sadrži duplirane slike sa istim imenom.",
 		"saveMenuBeforeAccess": "Meni mora biti snimljen pre pristupa prevodu elementa.",
+		"thereAreNoEnabledLanguages": "<em>There are no enabled languages</em>",
 		"toSetAFilterYouMustBeforeSelectAClass": "<em>To set a filter you must before select a class</em>",
 		"warning_message": "Pažnja"
 	},
@@ -1337,6 +1337,7 @@
 	"selectedUsers": "Korisnici u grupi",
 	"selection": "Selekcija",
 	"send": "<em>Send</em>",
+	"sender": "<em>Sender</em>",
 	"sentFolder": "<em>Sent folder</em>",
 	"separator": "Separator",
 	"serverManagement": "Podešavanje servera",
