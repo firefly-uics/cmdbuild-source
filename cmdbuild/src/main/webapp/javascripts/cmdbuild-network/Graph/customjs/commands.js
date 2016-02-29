@@ -250,6 +250,28 @@
 					($container.height() - $header.outerHeight()
 							- $footer.outerHeight() + 2)
 							+ "px");
+		},
+
+		/**
+		 * Show relation attributes
+		 * @param {Object} params
+		 * @param {String} params.form DataTable id
+		 */
+		showRelatioAttributes : function(params) {
+			var table = $("#" + params.form).DataTable();
+			var tr = $("#" + params.form).find('tr.selected');
+			var row = table.row(tr);
+
+			if (row.child.isShown()) {
+				// This row is already open - close it
+				row.child.hide();
+				tr.removeClass('shown');
+			} else {
+				// Open this row
+				row.child(format(params.form, {name : "Name", extn : 351351})).show();
+				tr.addClass('shown');
+			}
+			table.columns.adjust();
 		}
 
 	};
@@ -266,4 +288,65 @@
 		}
 		return arCommands;
 	}
+
+	/* Formatting function for row details - modify as you need */
+	function format (formid, d) {
+		var data = $.Cmdbuild.dataModel.getValues(formid);
+		var ddefinition = $.Cmdbuild.customvariables.cacheDomains.getDomain(data.domainId);
+		var cAttributes = data.attributes;
+		var result = '<table cellpadding="5" cellspacing="0" border="0" class="gridAttributesTable">';
+		if (ddefinition.domainCustomAttributes.length) {
+			result += '<tr><th colspan="2">' + $.Cmdbuild.translations.getTranslation(
+					"label_attributes", 'Attributes') + '</th></tr>';
+			$.each(ddefinition.domainCustomAttributes, function(index, attribute) {
+				if (cAttributes[attribute._id]) {
+					result += '<tr><td>' + attribute.description + '</td><td>'
+							+ cAttributes[attribute._id] + '</td></tr>';
+				}
+			});
+		}
+		result += '</table>';
+		return result;
+	}
+
+	/**
+	 * Add Array.filter for browsers which doesn't support it
+	 */
+	if (!Array.prototype.filter) {
+		Array.prototype.filter = function(fun /*, thisp*/) {
+			var len = this.length >>> 0;
+			if (typeof fun != "function")
+				throw new TypeError();
+
+			var res = [];
+			var thisp = arguments[1];
+			for (var i = 0; i < len; i++) {
+				if (i in this) {
+					var val = this[i]; // in case fun mutates this
+					if (fun.call(thisp, val, i, this))
+						res.push(val);
+				}
+			}
+			return res;
+		};
+	}
+	
+	/**
+	 * Get current item class description from cache
+	 * @
+	 */
+	function getCurrentClassDescription() {
+		var classId = $.Cmdbuild.dataModel.getValue("selectedForm", "classId");
+		return $.Cmdbuild.customvariables.cacheClasses.getDescription(classId);
+	}
+
+	/**
+	 * update title for card and card overview pages
+	 */
+	window.cmdbUpdateCardOverviewTitle = function() {
+		$("#cmdbuildCardOverviewTitle").text(getCurrentClassDescription());
+	};
+	window.cmdbUpdateCardTitle = function() {
+		$("#cmdbuildCardTitle").text(getCurrentClassDescription());
+	};
 })(jQuery);

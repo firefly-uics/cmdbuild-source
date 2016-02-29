@@ -13,6 +13,7 @@
 			</span>
 		</div>
 	</div>
+	<div class="cmdbuildClear"></div>
 	<div id="cardsFormContainer">
 		<onInit>
 			<command>navigate</command>
@@ -34,7 +35,7 @@
 					<command>zoomOn</command>
 					<node>$cardsForm.id</node>
 				</onDblClick>
-			<rowButton id="zoom" tooltip="Zoom on Card">
+			<rowButton class="grid-btn centerOnSelection" tooltip="Zoom on Card">
 				<onClick>
 					<command>zoomOn</command>
 					<node>$cardsForm.id</node>

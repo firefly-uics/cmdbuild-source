@@ -13,6 +13,8 @@
 			</span>
 		</div>
 	</div>
+	<h1 id="cmdbuildCardTitle" class="pageTitle">PAGE TITLE</h1>
+	<div class="cmdbuildClear"></div>
  	<div id="cmdbuildCard">
 		<onInit>
 			<command>navigate</command>
@@ -30,6 +32,7 @@
 				<classId>$selectedForm.classId</classId>
 				<cardId>$selectedForm.id</cardId>
 				<readonly>true</readonly>
+				<onInitComplete>cmdbUpdateCardTitle</onInitComplete>
 			</params>
 		</form>
 	</div>

@@ -13,6 +13,7 @@
 			</span>
 		</div>
 	</div>
+	<div class="cmdbuildClear"></div>
 	<div id="selectedFormContainer">
 		<onInit>
 			<command>navigate</command>

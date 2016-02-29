@@ -424,7 +424,7 @@
 			// set position
 			var h = $tooltip_window.height();
 			var w = $tooltip_window.width();
-			$tooltip_window[0].style.top = mouseY - (h + 10);
+			$tooltip_window[0].style.top = mouseY - (h + 20);
 			$tooltip_window[0].style.left = mouseX - w / 2;
 			$tooltip_window[0].style.display = "block";
 		},
@@ -466,7 +466,7 @@
 			// set position
 			var h = $tooltip_window.height();
 			var w = $tooltip_window.width();
-			$tooltip_window[0].style.top = mouseY - (h + 10);
+			$tooltip_window[0].style.top = mouseY - (h + 20);
 			$tooltip_window[0].style.left = mouseX - w / 2;
 			$tooltip_window[0].style.display = "block";
 		}

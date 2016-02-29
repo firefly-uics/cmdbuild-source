@@ -13,6 +13,8 @@
 			</span>
 		</div>
 	</div>
+	<h1 id="cmdbuildCardOverviewTitle" class="pageTitle">PAGE TITLE</h1>
+	<div class="cmdbuildClear"></div>
  	<div id="cmdbuildCardOverview">
 		<onInit>
 			<command>navigate</command>
@@ -32,6 +34,7 @@
 				<readonly>true</readonly>
 				<displayableInList>true</displayableInList>
 				<noGroup>true</noGroup>
+				<onInitComplete>cmdbUpdateCardOverviewTitle</onInitComplete>
 			</params>
 		</form>
 	</div>
@@ -52,8 +55,13 @@
 				<nRows>5</nRows>
 				<classId>$selectedForm.classId</classId>
 				<cardId>$selectedForm.id</cardId>
-				<hookParent>true</hookParent>
 			</params>
+			<rowButton id="zoom" class="grid-btn btn-attributes" tooltip="">
+				<onClick>
+					<command>showRelatioAttributes</command>
+					<form>formcardoverviewrelations</form>
+				</onClick>
+			</rowButton>
 		</form>
 	</div>
 </DATA>
