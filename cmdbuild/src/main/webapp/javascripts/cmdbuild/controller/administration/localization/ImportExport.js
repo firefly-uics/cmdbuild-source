@@ -43,6 +43,11 @@
 		exportPanel: undefined,
 
 		/**
+		 * @property {CMDBuild.core.PopupWindow}
+		 */
+		failuresWindow: undefined,
+
+		/**
 		 * @property {CMDBuild.view.administration.localization.importExport.ImportForm}
 		 */
 		importPanel: undefined,
@@ -102,16 +107,63 @@
 					form: this.importPanel.getForm(),
 					scope: this,
 					success: function (response, options, decodedResponse) {
-						var importFailures = options.result.response.failures; // TODO: verify correct implementation
+						decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.RESPONSE];
+
+						var importFailures = decodedResponse[CMDBuild.core.constants.Proxy.FAILURES];
 
 						if (Ext.isEmpty(importFailures)) {
 							CMDBuild.core.Message.success();
-						} else {
-							CMDBuild.core.Message.error(
-								CMDBuild.Translation.common.failure,
-								importFailures.toString(),
-								true
-							);
+						} else if (Ext.isArray(importFailures)) {
+							var data = [];
+
+							Ext.Array.each(importFailures, function (failureObject, i, allFailureObjects) {
+								if (Ext.isObject(failureObject) && !Ext.Object.isEmpty(failureObject))
+									data.push([failureObject[CMDBuild.core.constants.Proxy.MESSAGE], failureObject[CMDBuild.core.constants.Proxy.RECORD]]);
+							}, this);
+
+
+							this.failuresWindow = Ext.create('CMDBuild.core.PopupWindow', {
+								title: CMDBuild.Translation.common.failure,
+
+								dockedItems: [
+									Ext.create('Ext.toolbar.Toolbar', {
+										dock: 'bottom',
+										itemId: CMDBuild.core.constants.Proxy.TOOLBAR_BOTTOM,
+										ui: 'footer',
+
+										layout: {
+											type: 'hbox',
+											align: 'middle',
+											pack: 'center'
+										},
+
+										items: [
+											Ext.create('CMDBuild.core.buttons.text.Close', {
+												scope: this,
+
+												handler: function(button, e) {
+													this.failuresWindow.destroy();
+												}
+											})
+										]
+									})
+								],
+								items: [
+									Ext.create('Ext.grid.Panel', {
+										border: false,
+										frame: false,
+
+										columns: [
+											{ text: CMDBuild.Translation.message, dataIndex: CMDBuild.core.constants.Proxy.MESSAGE },
+											{ text: CMDBuild.Translation.record, dataIndex: CMDBuild.core.constants.Proxy.RECORD, flex: 1 }
+										],
+										store: Ext.create('Ext.data.ArrayStore', {
+											fields:[CMDBuild.core.constants.Proxy.MESSAGE, CMDBuild.core.constants.Proxy.RECORD],
+											data: data
+										})
+									})
+								]
+							}).show();
 						}
 					},
 					failure: function (response, options, decodedResponse) {
