@@ -25,10 +25,10 @@
 				'action-relation-attach': this.onOpenAttachmentClick
 			};
 
-			this.view.store.getRootNode().on('append', function(root, newNode) {
-				// The nodes with depth == 1 are folders
-				if (newNode.get('depth') == 1)
-					newNode.on('expand', onDomainNodeExpand, this, {single: true});
+			this.view.getStore().getRootNode().on('append', function (node, newNode, index, eOpts) {
+				// Nodes with depth == 1 are folders
+				if (newNode.getDepth() == 1)
+					newNode.on('expand', this.onDomainNodeExpand, this, { single: true });
 			}, this);
 
 			this.mon(this.view, this.view.CMEVENTS.openGraphClick, this.onShowGraphClick, this);
@@ -40,6 +40,46 @@
 			this.CMEVENTS = { serverOperationSuccess: 'cm-server-success' };
 
 			this.addEvents(this.CMEVENTS.serverOperationSuccess);
+		},
+
+		/**
+		 * @param {CMRelationPanelModel} node
+		 * @param {CMRelationPanelModel} newNode
+		 * @param {Number} index
+		 * @param {Object} eOpts
+		 *
+		 * @private
+		 */
+		onDomainNodeExpand: function (node, newNode, index, eOpts) {
+			if (node.get('relations_size') > CMDBuild.configuration.instance.get(CMDBuild.core.constants.Proxy.RELATION_LIMIT)) {
+				node.removeAll();
+
+				var parameters = {};
+				parameters[CMDBuild.core.constants.Proxy.CARD_ID] = this.getCardId();
+				parameters[CMDBuild.core.constants.Proxy.CLASS_NAME] = _CMCache.getEntryTypeNameById(this.getClassId());
+				parameters[CMDBuild.core.constants.Proxy.DOMAIN_ID] = node.get('dom_id');
+				parameters[CMDBuild.core.constants.Proxy.SRC] = node.get('src');
+
+				this.view.setLoading(true);
+				CMDBuild.core.proxy.CMProxyRelations.getList({
+					params: parameters,
+					scope: this,
+					success: function (response, options, decodedResponse) {
+						this.view.setLoading(false);
+						this.view.suspendLayouts();
+
+						this.view.convertRelationInNodes(
+							decodedResponse.domains[0].relations,
+							node.data.dom_id,
+							node.data.src,
+							node.data,
+							node
+						);
+
+						this.view.resumeLayouts(true);
+					}
+				});
+			}
 		},
 
 		/**
@@ -125,23 +165,24 @@
 
 							// Domains relation cardinality check
 							Ext.Array.forEach(decodedResult.domains, function(item, index, allItems) {
-								var domainObjext = _CMCache.getDomainById(item[CMDBuild.core.constants.Proxy.ID]);
+								var domainObject = _CMCache.getDomainById(item[CMDBuild.core.constants.Proxy.ID]);
 
 								if ( // Checks when disable add buttons ...
 									item[CMDBuild.core.constants.Proxy.RELATIONS_SIZE] == 1 // ... relation size equals 1 ...
+									&& !Ext.isEmpty(domainObject) && Ext.isFunction(domainObject.get)
 									&& ( // ... and i'm on N side of domain (so i have only one target) ...
 										(
-											domainObjext.get(CMDBuild.core.constants.Proxy.CARDINALITY) == 'N:1'
+											domainObject.get(CMDBuild.core.constants.Proxy.CARDINALITY) == 'N:1'
 											&& item[CMDBuild.core.constants.Proxy.DOMAIN_SOURCE] == '_1'
 										)
 										|| (
-											domainObjext.get(CMDBuild.core.constants.Proxy.CARDINALITY) == '1:N'
+											domainObject.get(CMDBuild.core.constants.Proxy.CARDINALITY) == '1:N'
 											&& item[CMDBuild.core.constants.Proxy.DOMAIN_SOURCE] == '_2'
 										)
-										|| domainObjext.get(CMDBuild.core.constants.Proxy.CARDINALITY) == '1:1' // ... or i'm on 1:1 relation
+										|| domainObject.get(CMDBuild.core.constants.Proxy.CARDINALITY) == '1:1' // ... or i'm on 1:1 relation
 									)
 								) {
-									toDisableButtons.push(domainObjext.get(CMDBuild.core.constants.Proxy.ID));
+									toDisableButtons.push(domainObject.get(CMDBuild.core.constants.Proxy.ID));
 								}
 							}, this);
 
@@ -182,10 +223,10 @@
 		},
 
 		/**
-		 * @param {CMDBuild.model.classes.CMRelationPanelModel} model (CMRelationPanelModel)
+		 * @param {CMRelationPanelModel} model
 		 */
 		onFollowRelationClick: function(model) {
-			if (model.get('depth') > 1)
+			if (model.getDepth() > 1)
 				CMDBuild.global.controller.MainViewport.cmfg('mainViewportCardSelect', {
 					Id: model.get('dst_id'),
 					IdClass: model.get('dst_cid')
@@ -469,21 +510,21 @@
 		},
 
 		/**
-		 * @param {CMDBuild.model.classes.CMRelationPanelModel} model (CMRelationPanelModel)
+		 * @param {CMRelationPanelModel} model
 		 */
 		onEditCardClick: function(model) {
 			openCardWindow.call(this, model, true);
 		},
 
 		/**
-		 * @param {CMDBuild.model.classes.CMRelationPanelModel} model (CMRelationPanelModel)
+		 * @param {CMRelationPanelModel} model
 		 */
 		onViewCardClick: function(model) {
 			openCardWindow.call(this, model, false);
 		},
 
 		/**
-		 * @param {CMDBuild.model.classes.CMRelationPanelModel} model (CMRelationPanelModel)
+		 * @param {CMRelationPanelModel} model
 		 */
 		onOpenAttachmentClick: function(model) {
 			var w = new CMDBuild.view.management.common.CMAttachmentsWindow();
@@ -651,43 +692,6 @@
 		}
 
 		return out;
-	}
-
-	function onDomainNodeExpand(node) {
-		if (node.get('relations_size') > CMDBuild.Config.cmdbuild.relationlimit) {
-			node.removeAll();
-
-			var el = this.view.getEl();
-			if (el)
-				el.mask();
-
-			var parameterNames = CMDBuild.ServiceProxy.parameter;
-			var parameters = {};
-
-			parameters[parameterNames.CARD_ID] = this.getCardId();
-			parameters[parameterNames.CLASS_NAME] = _CMCache.getEntryTypeNameById(this.getClassId());
-			parameters[parameterNames.DOMAIN_ID] = node.get('dom_id');
-			parameters[parameterNames.DOMAIN_SOURCE] = node.get(CMDBuild.core.constants.Proxy.SOURCE);
-
-			CMDBuild.core.proxy.CMProxyRelations.getList({
-				params: parameters,
-				scope: this,
-				success: function(result, options, decodedResult) {
-					el.unmask();
-					this.view.suspendLayouts();
-
-					var cc = this.view.convertRelationInNodes(
-						decodedResult.domains[0].relations,
-						node.data.dom_id,
-						node.data.src,
-						node.data,
-						node
-					);
-
-					this.view.resumeLayouts(true);
-				}
-			});
-		}
 	}
 
 })();
