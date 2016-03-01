@@ -182,6 +182,14 @@
 								<type>displayLabel</type>
 							</onChange>
 						</buttonset>
+					<navigationTreesCombo id="navigationTrees" label="Navigation" >
+					</navigationTreesCombo>
+					<button id="applyNavigationTree" text="apply">
+						<onClick>
+							<command>applyNavigationTree</command>
+							<control>navigationTrees</control>
+						</onClick>
+					</button>
 					</div>
 				</div>
 			</div>

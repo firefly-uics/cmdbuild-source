@@ -16,6 +16,21 @@
 			});
 			return htmlStr;
 		},
+		navigationTreesCombo : function(xmlElement) {
+			var htmlStr = "";
+			htmlStr += $.Cmdbuild.elementsManager.insertLabel(xmlElement);
+			var text = $.Cmdbuild.elementsManager.getText(xmlElement);
+			var id = $.Cmdbuild.elementsManager.getXmlElementId(xmlElement);
+			var params = $.Cmdbuild.elementsManager.getParams(xmlElement);
+			htmlStr += "<span id='margin10'>" + text + "</span>";
+			htmlStr += "<select id='" + id + "'>";
+			htmlStr += "</select>";
+			$.Cmdbuild.scriptsManager.push({
+				script : "navigationTreesCombo",
+				id : id
+			});
+			return htmlStr;
+		},
 		counter : function(xmlElement) {
 			var htmlStr = "";
 			var text = $.Cmdbuild.elementsManager.getText(xmlElement);

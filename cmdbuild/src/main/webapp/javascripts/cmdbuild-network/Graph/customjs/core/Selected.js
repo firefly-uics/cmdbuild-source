@@ -3,6 +3,7 @@
 		$.Cmdbuild.g3d = {};
 	}
 	var Selected = function(model) {
+		this.current = undefined;
 		this.observers = [];
 		this.model = model;
 		this.selected = {};
@@ -19,12 +20,16 @@
 			$.Cmdbuild.dataModel.dispatchChange("selected");
 		};
 		this.isSelect = function(nodeId) {
-			return (this.selected[nodeId] == true) ? true : false;
+			return (this.selected[nodeId] === true) ? true : false;
+		};
+		this.getCurrent = function() {
+			return this.current;
 		};
 		this.length = function() {
 			return Object.keys(this.selected).length;
 		};
 		this.select = function(nodeId, noRefresh) {
+			this.current = nodeId;
 			if (! this.selected[nodeId] === true) {
 				this.selected[nodeId] = true;
 				if (! noRefresh) {
