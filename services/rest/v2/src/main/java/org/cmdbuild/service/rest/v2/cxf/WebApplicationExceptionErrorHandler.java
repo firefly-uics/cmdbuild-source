@@ -1,0 +1,217 @@
+package org.cmdbuild.service.rest.v2.cxf;
+
+import static java.lang.String.format;
+import static javax.ws.rs.core.Response.Status.BAD_REQUEST;
+import static javax.ws.rs.core.Response.Status.NOT_FOUND;
+import static javax.ws.rs.core.Response.Status.UNAUTHORIZED;
+
+import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.core.Response;
+
+import org.cmdbuild.service.rest.v2.logging.LoggingSupport;
+
+public class WebApplicationExceptionErrorHandler implements ErrorHandler, LoggingSupport {
+
+	@Override
+	public void alreadyExistingAttachmentName(final String name) {
+		logger.error("already existing attachment '{}'", name);
+		badRequest(format("already existing attachment '%s'", name));
+	}
+
+	@Override
+	public void attachmentNotFound(final String id) {
+		logger.error("attachment not found '{}'", id);
+		notFound(id);
+	}
+
+	@Override
+	public void cardNotFound(final Long id) {
+		logger.error("card not found '{}'", id);
+		notFound(id);
+	}
+
+	@Override
+	public void classNotFound(final String id) {
+		logger.error("class not found '{}'", id);
+		notFound(id);
+	}
+
+	@Override
+	public void classNotFoundClassIsProcess(final String id) {
+		logger.error("class '{}' is a process", id);
+		notFound(id);
+	}
+
+	@Override
+	public void differentAttachmentName(final String name) {
+		logger.error("different file name '{}'", name);
+		badRequest(format("different file name '%s'", name));
+	}
+
+	@Override
+	public void domainNotFound(final String id) {
+		logger.error("domain not found '{}'", id);
+		notFound(id);
+	}
+
+	@Override
+	public void domainTreeNotFound(final String id) {
+		logger.error("domain tree found '{}'", id);
+		notFound(id);
+	}
+
+	@Override
+	public void extensionNotFound(final String id) {
+		logger.error("extension not found '{}'", id);
+		notFound(id);
+	}
+
+	@Override
+	public void functionNotFound(final Long id) {
+		logger.error("function not found '{}'", id);
+		notFound(id);
+	}
+
+	@Override
+	public void invalidIconType(final String type) {
+		logger.error("invalid icon type '{}'", type);
+		badRequest(type);
+	}
+
+	@Override
+	public void invalidType(final String id) {
+		logger.error("invalid param '{}'", id);
+		badRequest(id);
+	}
+
+	@Override
+	public void lookupTypeNotFound(final String id) {
+		logger.error("lookup type not found '{}'", id);
+		notFound(id);
+	}
+
+	@Override
+	public void missingAttachmentId() {
+		logger.error("missing attachment's id");
+		notFound("attachment's id");
+	}
+
+	@Override
+	public void missingAttachmentMetadata() {
+		logger.error("missing attachment's metadata");
+		notFound("attachment's metadata");
+	}
+
+	@Override
+	public void missingAttachmentName() {
+		logger.error("missing attachment's name");
+		notFound("attachment's name");
+	}
+
+	@Override
+	public void missingFile() {
+		logger.error("missing file");
+		notFound("attachment's file");
+	}
+
+	@Override
+	public void missingIcon(final String id) {
+		logger.error("missing icon '{}'", id);
+		notFound(id);
+	}
+
+	@Override
+	public void missingParam(final String name) {
+		logger.error("missing param '{}'", name);
+		notFound(name);
+	}
+
+	@Override
+	public void missingPassword() {
+		logger.error("missing password");
+		badRequest("missing password");
+	}
+
+	@Override
+	public void missingUsername() {
+		logger.error("missing username");
+		badRequest("missing username");
+	}
+
+	@Override
+	public void notAuthorized() {
+		logger.error("not authorized");
+		throw new WebApplicationException(Response.status(UNAUTHORIZED) //
+				.build());
+	}
+
+	@Override
+	public void processActivityNotFound(final String id) {
+		logger.error("process instance activity not found '{}'", id);
+		notFound(id);
+	}
+
+	@Override
+	public void processInstanceNotFound(final Long id) {
+		logger.error("process instance not found '{}'", id);
+		notFound(id);
+	}
+
+	@Override
+	public void processNotFound(final String id) {
+		logger.error("process not found '{}'", id);
+		notFound(id);
+	}
+
+	@Override
+	public void propagate(final Throwable e) {
+		logger.error("unhandled exception", e);
+		throw new WebApplicationException(e,
+				Response.serverError() //
+						.entity(e) //
+						.build());
+	}
+
+	@Override
+	public void relationNotFound(final Long id) {
+		logger.error("relation not found '{}'", id);
+		notFound(id);
+	}
+
+	@Override
+	public void reportNotFound(final Long id) {
+		logger.error("report not found '{}'", id);
+		notFound(id);
+	}
+
+	@Override
+	public void roleNotFound(final String id) {
+		logger.error("role not found '{}'", id);
+		notFound(id);
+	}
+
+	@Override
+	public void sessionNotFound(final String id) {
+		logger.error("session not found '{}'", id);
+		notFound(id);
+	}
+
+	@Override
+	public void userNotFound(final String id) {
+		logger.error("user not found '{}'", id);
+		notFound(id);
+	}
+
+	private void badRequest(final Object entity) {
+		throw new WebApplicationException(Response.status(BAD_REQUEST) //
+				.entity(entity) //
+				.build());
+	}
+
+	private void notFound(final Object entity) {
+		throw new WebApplicationException(Response.status(NOT_FOUND) //
+				.entity(entity) //
+				.build());
+	}
+
+}
