@@ -1,4 +1,4 @@
-(function() {
+(function () {
 
 	Ext.define('CMDBuild.controller.common.MainViewport', {
 		extend: 'CMDBuild.controller.common.abstract.Base',
@@ -94,7 +94,7 @@
 		 *
 		 * @override
 		 */
-		constructor: function(configObject) {
+		constructor: function (configObject) {
 			this.callParent(arguments);
 
 			this.view = Ext.create('CMDBuild.view.common.MainViewport', { delegate: this });
@@ -113,11 +113,11 @@
 			 *
 			 * @private
 			 */
-			accordionControllerBuild: function() {
+			accordionControllerBuild: function () {
 				if (!Ext.isEmpty(this.accordion) && Ext.isArray(this.accordion)) {
 					var accordionViewsBuffer = [];
 
-					Ext.Array.forEach(this.accordion, function(accordionController, i, allAccordionControllers) {
+					Ext.Array.forEach(this.accordion, function (accordionController, i, allAccordionControllers) {
 						if (!Ext.isEmpty(accordionController)) {
 							if (Ext.isFunction(accordionController.cmfg) && !Ext.isEmpty(accordionController.cmfg('accordionIdentifierGet'))) {
 								accordionController.parentDelegate = this; // Inject as parentDelegate in accordion controllers
@@ -141,7 +141,7 @@
 			 *
 			 * @returns {Boolean} accordionExists
 			 */
-			mainViewportAccordionControllerExists: function(identifier) {
+			mainViewportAccordionControllerExists: function (identifier) {
 				var accordionControllerExists = (
 					!Ext.isEmpty(identifier) && Ext.isString(identifier)
 					&& !Ext.isEmpty(this.accordionControllers[identifier])
@@ -158,7 +158,7 @@
 			 *
 			 * @param {Object} parameters
 			 */
-			mainViewportAccordionControllerExpand: function(identifier) {
+			mainViewportAccordionControllerExpand: function (identifier) {
 				if (this.cmfg('mainViewportAccordionControllerExists', identifier))
 					this.cmfg('mainViewportAccordionControllerGet', identifier).cmfg('accordionExpand');
 			},
@@ -168,7 +168,7 @@
 			 *
 			 * @returns {Mixed} or null
 			 */
-			mainViewportAccordionControllerGet: function(identifier) {
+			mainViewportAccordionControllerGet: function (identifier) {
 				if (this.cmfg('mainViewportAccordionControllerExists', identifier))
 					return this.accordionControllers[identifier];
 
@@ -182,7 +182,7 @@
 			 * @param {String} parameters.identifier
 			 * @param {Number} parameters.nodeIdToSelect
 			 */
-			mainViewportAccordionControllerUpdateStore: function(parameters) {
+			mainViewportAccordionControllerUpdateStore: function (parameters) {
 				if (
 					Ext.isObject(parameters) && !Ext.Object.isEmpty(parameters)
 					&& this.cmfg('mainViewportAccordionControllerExists', parameters.identifier)
@@ -198,7 +198,7 @@
 			 *
 			 * @param {String} identifier
 			 */
-			mainViewportAccordionDeselect: function(identifier) {
+			mainViewportAccordionDeselect: function (identifier) {
 				if (this.cmfg('mainViewportAccordionControllerExists', identifier))
 					this.cmfg('mainViewportAccordionControllerGet', identifier).cmfg('accordionDeselect');
 			},
@@ -206,7 +206,7 @@
 			/**
 			 * @returns {Boolean}
 			 */
-			mainViewportAccordionIsCollapsed: function() {
+			mainViewportAccordionIsCollapsed: function () {
 				return !this.isAdministration && CMDBuild.configuration.userInterface.get(CMDBuild.core.constants.Proxy.HIDE_SIDE_PANEL);
 			},
 
@@ -217,7 +217,7 @@
 			 * @param {String} parameters.identifier
 			 * @param {Boolean} parameters.state
 			 */
-			mainViewportAccordionSetDisabled: function(parameters) {
+			mainViewportAccordionSetDisabled: function (parameters) {
 				if (
 					Ext.isObject(parameters) && !Ext.Object.isEmpty(parameters)
 					&& this.cmfg('mainViewportAccordionControllerExists', parameters.identifier)
@@ -237,7 +237,7 @@
 			 *
 			 * @private
 			 */
-			accordionControllerWithNodeWithIdGet: function(id) {
+			accordionControllerWithNodeWithIdGet: function (id) {
 				var searchedAccordionController = this.accordionControllerExpandedGet();
 
 				// First search in expanded accordion
@@ -247,7 +247,7 @@
 				// Then in other ones
 				searchedAccordionController = null;
 
-				Ext.Object.each(this.accordionControllers, function(identifier, accordionController, myself) {
+				Ext.Object.each(this.accordionControllers, function (identifier, accordionController, myself) {
 					if (!Ext.isEmpty(accordionController) && !Ext.isEmpty(accordionController.cmfg('accordionNodeByIdGet', id))) {
 						searchedAccordionController = accordionController;
 
@@ -265,10 +265,10 @@
 			 *
 			 * @private
 			 */
-			accordionControllerExpandedGet: function() {
+			accordionControllerExpandedGet: function () {
 				var expandedAccordionController = null;
 
-				Ext.Object.each(this.accordionControllers, function(identifier, accordionController, myself) {
+				Ext.Object.each(this.accordionControllers, function (identifier, accordionController, myself) {
 					if (!Ext.isEmpty(accordionController) && !accordionController.getView().getCollapsed()) {
 						expandedAccordionController = accordionController;
 
@@ -284,10 +284,10 @@
 			 *
 			 * @private
 			 */
-			accordionControllerWithSelectableNodeGet: function() {
+			accordionControllerWithSelectableNodeGet: function () {
 				var searchedAccordionController = null;
 
-				Ext.Object.each(this.accordionControllers, function(identifier, accordionController, myself) {
+				Ext.Object.each(this.accordionControllers, function (identifier, accordionController, myself) {
 					if (!Ext.isEmpty(accordionController) && !Ext.isEmpty(accordionController.cmfg('accordionFirtsSelectableNodeGet'))) {
 						searchedAccordionController = accordionController;
 
@@ -302,7 +302,7 @@
 			/**
 			 * @returns {Object}
 			 */
-			mainViewportDanglingCardGet: function() {
+			mainViewportDanglingCardGet: function () {
 				var danglingCard = Ext.clone(this.danglingCard);
 
 				this.danglingCardReset();
@@ -313,7 +313,7 @@
 			/**
 			 * @private
 			 */
-			danglingCardReset: function() {
+			danglingCardReset: function () {
 				this.danglingCard = null;
 			},
 
@@ -322,7 +322,7 @@
 			 *
 			 * @private
 			 */
-			danglingCardSet: function(danglingCard) {
+			danglingCardSet: function (danglingCard) {
 				this.danglingCard = danglingCard;
 			},
 
@@ -332,7 +332,7 @@
 		 * @param {Number} parameters.Id - card id
 		 * @param {Number} parameters.IdClass
 		 */
-		mainViewportCardSelect: function(parameters) {
+		mainViewportCardSelect: function (parameters) {
 			if (
 				Ext.isObject(parameters) && !Ext.Object.isEmpty(parameters)
 				&& !Ext.isEmpty(parameters['Id'])
@@ -346,6 +346,7 @@
 
 				if (!Ext.isEmpty(accordionController)) {
 					accordionController.cmfg('accordionDeselect'); // Instruction required or selection doesn't work if exists another selection
+					accordionController.cmfg('accordionExpand');
 					accordionController.cmfg('accordionSelectNodeById', parameters['IdClass']);
 				}
 			} else {
@@ -356,7 +357,7 @@
 		/**
 		 * @param {String} name
 		 */
-		mainViewportInstanceNameSet: function(name) {
+		mainViewportInstanceNameSet: function (name) {
 			name = Ext.isString(name) ? name : '';
 
 			var instanceNameContainer = Ext.get('instance-name');
@@ -373,7 +374,7 @@
 		/**
 		 * @administration
 		 */
-		mainViewportSelectFirstExpandedAccordionSelectableNode: function() {
+		mainViewportSelectFirstExpandedAccordionSelectableNode: function () {
 			var expandedAccordionController = this.accordionControllerExpandedGet();
 
 			if (!Ext.isEmpty(expandedAccordionController)) {
@@ -388,7 +389,7 @@
 		 *
 		 * @management
 		 */
-		mainViewportStartingEntitySelect: function() {
+		mainViewportStartingEntitySelect: function () {
 			var startingClassId = (
 				CMDBuild.configuration.runtime.get(CMDBuild.core.constants.Proxy.STARTING_CLASS_ID) // Group's starting class
 				|| CMDBuild.configuration.instance.get(CMDBuild.core.constants.Proxy.STARTING_CLASS) // Main configuration's starting class
@@ -423,11 +424,11 @@
 			/**
 			 * @private
 			 */
-			moduleControllerBuild: function() {
+			moduleControllerBuild: function () {
 				if (!Ext.isEmpty(this.module) && Ext.isArray(this.module)) {
 					var moduleViewsBuffer = [];
 
-					Ext.Array.forEach(this.module, function(moduleController, i, allModuleViews) {
+					Ext.Array.forEach(this.module, function (moduleController, i, allModuleViews) {
 						if (!Ext.isEmpty(moduleController)) {
 							if (Ext.isFunction(moduleController.cmfg)) {
 								if (!Ext.isEmpty(moduleController.cmfg('identifierGet'))) {
@@ -470,7 +471,7 @@
 			 *
 			 * @returns {Boolean}
 			 */
-			mainViewportModuleControllerExists: function(identifier) {
+			mainViewportModuleControllerExists: function (identifier) {
 				return (
 					!Ext.isEmpty(identifier) && Ext.isString(identifier)
 					&& !Ext.isEmpty(this.moduleControllers[identifier])
@@ -482,7 +483,7 @@
 			 *
 			 * @returns {Mixed} or null
 			 */
-			mainViewportModuleControllerGet: function(identifier) {
+			mainViewportModuleControllerGet: function (identifier) {
 				if (this.cmfg('mainViewportModuleControllerExists', identifier))
 					return this.moduleControllers[identifier];
 
@@ -498,7 +499,7 @@
 			 *
 			 * @returns {Boolean} toShow
 			 */
-			mainViewportModuleShow: function(parameters) {
+			mainViewportModuleShow: function (parameters) {
 				var toShow = false;
 
 				if (
@@ -542,7 +543,7 @@
 		/**
 		 * Manages footer credits link click action
 		 */
-		onMainViewportCreditsClick: function() {
+		onMainViewportCreditsClick: function () {
 			Ext.create('CMDBuild.core.window.Credits').show();
 		}
 	});
