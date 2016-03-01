@@ -1,5 +1,7 @@
 package org.cmdbuild.servlets.json.serializers;
 
+import static com.google.common.collect.FluentIterable.from;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -15,6 +17,7 @@ import org.cmdbuild.workflow.CMActivityWidget;
 import org.cmdbuild.workflow.CMWorkflowException;
 import org.cmdbuild.workflow.user.UserActivityInstance;
 import org.cmdbuild.workflow.user.UserProcessInstance;
+import org.cmdbuild.workflow.xpdl.CMActivityMetadata;
 import org.cmdbuild.workflow.xpdl.CMActivityVariableToProcess;
 import org.slf4j.Logger;
 import org.slf4j.Marker;
@@ -55,6 +58,11 @@ public class JsonWorkflowDTOs {
 
 		public Iterable<CMActivityVariableToProcess> getVariables() {
 			return activity.getVariables();
+		}
+		
+		public Iterable<CMActivityMetadata> getMetadata() {
+			return from(activity.getMetadata()) //
+					.toList();
 		}
 
 		public Iterable<CMActivityWidget> getWidgets() throws CMWorkflowException {

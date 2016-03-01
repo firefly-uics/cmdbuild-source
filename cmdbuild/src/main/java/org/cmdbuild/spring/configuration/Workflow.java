@@ -32,8 +32,10 @@ import org.cmdbuild.workflow.event.WorkflowEventManager;
 import org.cmdbuild.workflow.service.AbstractSharkService;
 import org.cmdbuild.workflow.service.AbstractSharkService.UpdateOperationListener;
 import org.cmdbuild.workflow.service.RemoteSharkService;
+import org.cmdbuild.workflow.xpdl.SharkStyleXpdlExtendedAttributeMetadataFactory;
 import org.cmdbuild.workflow.xpdl.SharkStyleXpdlExtendedAttributeVariableFactory;
 import org.cmdbuild.workflow.xpdl.ValuePairXpdlExtendedAttributeWidgetFactory;
+import org.cmdbuild.workflow.xpdl.XpdlExtendedAttributeMetadataFactory;
 import org.cmdbuild.workflow.xpdl.XpdlExtendedAttributeVariableFactory;
 import org.cmdbuild.workflow.xpdl.XpdlManager;
 import org.cmdbuild.workflow.xpdl.XpdlManager.GroupQueryAdapter;
@@ -104,6 +106,12 @@ public class Workflow {
 	protected XpdlExtendedAttributeVariableFactory xpdlExtendedAttributeVariableFactory() {
 		return new SharkStyleXpdlExtendedAttributeVariableFactory();
 	}
+	
+	
+	@Bean
+	protected XpdlExtendedAttributeMetadataFactory xpdlExtendedAttributeMetadataFactory() {
+		return new SharkStyleXpdlExtendedAttributeMetadataFactory();
+	}
 
 	@Bean
 	protected ValuePairXpdlExtendedAttributeWidgetFactory xpdlExtendedAttributeWidgetFactory() {
@@ -119,7 +127,7 @@ public class Workflow {
 
 	@Bean
 	protected XpdlProcessDefinitionStore processDefinitionStore() {
-		return new XpdlProcessDefinitionStore(workflowService(), xpdlExtendedAttributeVariableFactory(),
+		return new XpdlProcessDefinitionStore(workflowService(), xpdlExtendedAttributeVariableFactory(),xpdlExtendedAttributeMetadataFactory(),
 				xpdlExtendedAttributeWidgetFactory());
 	}
 
