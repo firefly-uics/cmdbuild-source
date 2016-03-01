@@ -468,7 +468,6 @@
 		"emailUpdate": "<em>E-mail update call failure</em>",
 		"error_message": "Fout",
 		"error_moving_row": "Er is een fout ontstaan tijdens het verplaatsen van de rij",
-		"getAccountWithNameFailure": "<em>Get account with name \"{0}\" failure</em>",
 		"getTemplateWithNameFailure": "<em>Get template with name \"{0}\" failure</em>",
 		"invalid_attributes": "De volgende velden zijn niet correct ingevuld:",
 		"invalid_extended_attributes": "De volgende visuele controls zijn niet correct ingevuld:",

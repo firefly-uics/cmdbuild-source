@@ -468,7 +468,6 @@
 		"emailUpdate": "<em>E-mail update call failure</em>",
 		"error_message": "Greška",
 		"error_moving_row": "Došlo je do greške prilikom obrade reda",
-		"getAccountWithNameFailure": "<em>Get account with name \"{0}\" failure</em>",
 		"getTemplateWithNameFailure": "<em>Get template with name \"{0}\" failure</em>",
 		"invalid_attributes": "Sledeća polja nisu korektno popunjena:",
 		"invalid_extended_attributes": "Sledeće vizuelne kontrole nisu korektno popunjene:",

@@ -468,7 +468,6 @@
 		"emailUpdate": "E-mail frissítés hívásának hibája",
 		"error_message": "Hiba",
 		"error_moving_row": "Hiba lépett fel a sor mozgatása közben",
-		"getAccountWithNameFailure": "A \"{0}\" nevű fiók elérése közben hiba történt",
 		"getTemplateWithNameFailure": "A \"{0}\" nevű sablon elérése közben hiba történt",
 		"invalid_attributes": "A következő mezők nem lettek helyesen kitöltve:",
 		"invalid_extended_attributes": "A következő vizuális vezérlők nem lettek helyesen kitöltve:",

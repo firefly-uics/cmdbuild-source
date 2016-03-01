@@ -468,7 +468,6 @@
 		"emailUpdate": "<em>E-mail update call failure</em>",
 		"error_message": "Lỗi",
 		"error_moving_row": "Đã xảy ra lỗi trong khi chuyển",
-		"getAccountWithNameFailure": "<em>Get account with name \"{0}\" failure</em>",
 		"getTemplateWithNameFailure": "<em>Get template with name \"{0}\" failure</em>",
 		"invalid_attributes": "Các trường sau đây đã không được điền đầy đủ một cách chính xác:",
 		"invalid_extended_attributes": "Các bộ điều khiển trực quan sau đây đã không được điền đầy đủ một cách chính xác:",

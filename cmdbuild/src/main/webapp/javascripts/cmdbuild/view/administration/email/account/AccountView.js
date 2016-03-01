@@ -1,4 +1,4 @@
-(function() {
+(function () {
 
 	Ext.define('CMDBuild.view.administration.email.account.AccountView', {
 		extend: 'Ext.panel.Panel',
@@ -24,7 +24,7 @@
 		frame: false,
 		layout: 'border',
 
-		initComponent: function() {
+		initComponent: function () {
 			Ext.apply(this, {
 				dockedItems: [
 					Ext.create('Ext.toolbar.Toolbar', {
@@ -36,7 +36,7 @@
 								text: CMDBuild.Translation.addAccount,
 								scope: this,
 
-								handler: function(button, e) {
+								handler: function (button, e) {
 									this.delegate.cmfg('onEmailAccountAddButtonClick');
 								}
 							})
@@ -60,7 +60,7 @@
 		},
 
 		listeners: {
-			show: function(panel, eOpts) {
+			show: function (panel, eOpts) {
 				this.delegate.cmfg('onEmailAccountShow');
 			}
 		}

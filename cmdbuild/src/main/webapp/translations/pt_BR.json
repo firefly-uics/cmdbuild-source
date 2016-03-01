@@ -468,7 +468,6 @@
 		"emailUpdate": "<em>E-mail update call failure</em>",
 		"error_message": "Erro",
 		"error_moving_row": "Um erro ocorreu durante a movimentação da linha",
-		"getAccountWithNameFailure": "<em>Get account with name \"{0}\" failure</em>",
 		"getTemplateWithNameFailure": "<em>Get template with name \"{0}\" failure</em>",
 		"invalid_attributes": "Os seguintes campos não foram preenchidos corretamente:",
 		"invalid_extended_attributes": "Os seguintes controles visuais não foram preenchidos corretamente:",

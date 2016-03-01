@@ -468,7 +468,6 @@
 		"emailUpdate": "<em>E-mail update call failure</em>",
 		"error_message": "Ошибка",
 		"error_moving_row": "При перемещении строки произошла ошибка",
-		"getAccountWithNameFailure": "<em>Get account with name \"{0}\" failure</em>",
 		"getTemplateWithNameFailure": "<em>Get template with name \"{0}\" failure</em>",
 		"invalid_attributes": "Данные поля были заполнены с ошибками:",
 		"invalid_extended_attributes": "Данные виджеты были заполнены с ошибками:",
