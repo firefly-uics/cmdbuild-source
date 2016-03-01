@@ -37,6 +37,7 @@
 			$.Cmdbuild.customvariables.options.observe(this);
 			$.Cmdbuild.g3d.Options.initVariables();
 			$.Cmdbuild.g3d.Options.initFields();
+			$.Cmdbuild.customvariables.navigationTreesCombo = new $.Cmdbuild.g3d.navigationTreesCombo();
 			$.Cmdbuild.customvariables.viewer = this;
 			this.camera = new $.Cmdbuild.g3d.Camera(this.model);
 			this.camera.observe(this);
@@ -69,33 +70,27 @@
 			render();
 			var init = new $.Cmdbuild.g3d.commands.init_explode(
 					thisViewer.model, $.Cmdbuild.start.httpCallParameters);
-			this.commandsManager
-					.execute(
-							init,
-							{},
-							function(response) {
-								if (true) {
-									// {
-									var me = this;
-									setTimeout(
-											function() {
-												var box = me.boundingBox();
-												me.zoomAll(box);
-												$.Cmdbuild.customvariables.selected
-														.erase();
-												$.Cmdbuild.customvariables.selected
-														.select($.Cmdbuild.start.httpCallParameters.cardId);
-											}, 500);
-								}
+			this.commandsManager.execute(init, {}, function(response) {
+				this.centerAndSelect();
+			}, this);
+		};
+		this.centerAndSelect = function() {
+			var me = this;
+			setTimeout(function() {
+				var box = me.boundingBox();
+				me.zoomAll(box);
+				$.Cmdbuild.customvariables.selected.erase();
+				$.Cmdbuild.customvariables.selected
+						.select($.Cmdbuild.start.httpCallParameters.cardId);
+			}, 500);
 
-							}, this);
 		};
 		this.onWindowResize = function() {
 			var canvas = $("#" + idCanvas);
 			camera.aspect = canvas.innerWidth() / canvas.innerHeight();
 			camera.updateProjectionMatrix();
 			renderer.setSize(canvas.innerWidth(), canvas.innerHeight());
-			};
+		};
 		this.refreshCamera = function() {
 			var position = this.camera.getData();
 			camera.lookAt(position);
@@ -667,7 +662,10 @@
 		};
 		// initialization
 		var animate = function() {
-				setTimeout(function () { requestAnimationFrame(animate); render();}, 1000/20);				
+			setTimeout(function() {
+				requestAnimationFrame(animate);
+				render();
+			}, 1000 / 20);
 		};
 
 		var render = function() {
