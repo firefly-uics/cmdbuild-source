@@ -83,6 +83,12 @@
 				"getRelationsPanel",
 				"getEmailPanel"
 			]);
+
+			// Defer map controller build after view render
+			this.on('afterrender', function (panel, eOpts) {
+				if (Ext.isFunction(this.delegate.buildMapController))
+					this.delegate.buildMapController();
+			}, this);
 		},
 
 		minimize: function() {
