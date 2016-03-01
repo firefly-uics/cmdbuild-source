@@ -14,6 +14,25 @@
 				callback.apply(callbackScope, [ response ]);
 			});
 		},
+		
+		getDomainTrees: function(config, callback, callbackScope) {
+			// params
+			var params = $.Cmdbuild.utilities.proxy.prepareParamsForList(config);
+
+			// get url and make request
+			var url = $.Cmdbuild.global.getApiUrl() + 'domainTrees/';
+			$.Cmdbuild.authProxy.makeAjaxRequest(url, methods.GET, function(data, metadata){
+				callback.apply(callbackScope, [data, metadata]);
+			}, params);
+		},
+		getDomainTree: function(id, callback, callbackScope) {
+			var url = $.Cmdbuild.global.getApiUrl() + 'domainTrees/' + id;
+			$.Cmdbuild.authProxy.makeAjaxRequest(url, methods.GET, function(data, metadata){
+				callback.apply(callbackScope, [data, metadata]);
+			}, {});
+		},
+		
+		// transforms processes in classes
 		getClassAttributes : function(type, callback, callbackScope) {
 			if ($.Cmdbuild.customvariables.cacheProcess.isProcess(type)) {
 				$.Cmdbuild.utilities.proxy.getProcessAttributes(type, callback,

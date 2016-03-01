@@ -13,6 +13,11 @@
 				classDescription : (classDescription) ? classDescription : "-1"
 			});
 		},
+		applyNavigationTree : function(param) {
+			var treeValue = $("#navigationTrees").val();
+			console.log(treeValue);
+			$.Cmdbuild.custom.commands.navigateOnNode({});
+		},
 		applyFilters : function(param) {
 			var formObject = $.Cmdbuild.dataModel.forms[param.filterByClass];
 			var configuration = $.Cmdbuild.custom.configuration;

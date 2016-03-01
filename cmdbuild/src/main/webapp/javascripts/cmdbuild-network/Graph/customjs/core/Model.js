@@ -155,7 +155,7 @@
 			cy.remove("node#" + id);
 		};
 		this.pushElements = function(elements, callback, callbackScope) {
-			$.Cmdbuild.customvariables.cacheImages.pushElements(elements, function() {
+			$.Cmdbuild.customvariables.cacheClasses.pushClasses(elements, function() {
 				for (var i = 0; i < elements.nodes.length; i++) {
 					var node = elements.nodes[i];
 					this.insertNode(node);
@@ -173,7 +173,7 @@
 			for (var i = 0; i < nodes.length; i++) {
 				var node = nodes[i];
 				var classId = $.Cmdbuild.g3d.Model.getGraphData(node, "classId");
-				if (! this.classes[classId]) {
+				if (! this.classes[classId]) { 
 					var classDescription = $.Cmdbuild.customvariables.cacheClasses.getDescription(classId);
 					this.classes[classId] = {
 							classId: classId,
