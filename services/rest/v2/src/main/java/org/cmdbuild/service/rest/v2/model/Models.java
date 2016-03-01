@@ -1274,6 +1274,47 @@ public class Models {
 
 	}
 
+	public static class IconBuilder extends ModelBuilder<Icon> {
+
+		private String id;
+		private String type;
+		private final Map<String, Object> details = newHashMap();
+
+		private IconBuilder() {
+			// use factory method
+		}
+
+		@Override
+		protected Icon doBuild() {
+			final Icon output = new Icon();
+			output.setId(id);
+			output.setType(type);
+			output.setDetails(details);
+			return output;
+		}
+
+		public IconBuilder withId(final String id) {
+			this.id = id;
+			return this;
+		}
+
+		public IconBuilder withType(final String type) {
+			this.type = type;
+			return this;
+		}
+
+		public IconBuilder setDetail(final String key, final Object value) {
+			this.details.put(key, value);
+			return this;
+		}
+
+		public IconBuilder withDetails(Map<String, Object> details) {
+			this.details.putAll(details);
+			return this;
+		}
+
+	}
+
 	public static class LongIdAndDescriptionBuilder extends ModelBuilder<LongIdAndDescription> {
 
 		private Long id;
@@ -2441,6 +2482,10 @@ public class Models {
 
 	public static GraphConfigurationBuilder newGraphConfiguration() {
 		return new GraphConfigurationBuilder();
+	}
+
+	public static IconBuilder newIcon() {
+		return new IconBuilder();
 	}
 
 	public static LongIdBuilder newLongId() {

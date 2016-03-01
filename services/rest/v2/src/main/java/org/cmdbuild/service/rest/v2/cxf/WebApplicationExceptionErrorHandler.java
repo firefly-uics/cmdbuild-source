@@ -73,11 +73,15 @@ public class WebApplicationExceptionErrorHandler implements ErrorHandler, Loggin
 	}
 
 	@Override
+	public void invalidIconType(final String type) {
+		logger.error("invalid icon type '{}'", type);
+		badRequest(type);
+	}
+
+	@Override
 	public void invalidType(final String id) {
 		logger.error("invalid param '{}'", id);
-		throw new WebApplicationException(Response.status(BAD_REQUEST) //
-				.entity(id) //
-				.build());
+		badRequest(id);
 	}
 
 	@Override
@@ -111,6 +115,12 @@ public class WebApplicationExceptionErrorHandler implements ErrorHandler, Loggin
 	}
 
 	@Override
+	public void missingIcon(final String id) {
+		logger.error("missing icon '{}'", id);
+		notFound(id);
+	}
+
+	@Override
 	public void missingParam(final String name) {
 		logger.error("missing param '{}'", name);
 		notFound(name);
@@ -119,17 +129,13 @@ public class WebApplicationExceptionErrorHandler implements ErrorHandler, Loggin
 	@Override
 	public void missingPassword() {
 		logger.error("missing password");
-		throw new WebApplicationException(Response.status(BAD_REQUEST) //
-				.entity("missing password") //
-				.build());
+		badRequest("missing password");
 	}
 
 	@Override
 	public void missingUsername() {
 		logger.error("missing username");
-		throw new WebApplicationException(Response.status(BAD_REQUEST) //
-				.entity("missing username") //
-				.build());
+		badRequest("missing username");
 	}
 
 	@Override

@@ -4,7 +4,7 @@ public interface ErrorHandler {
 
 	void alreadyExistingAttachmentName(String name);
 
-	void attachmentNotFound(String attachmentId);
+	void attachmentNotFound(String id);
 
 	void cardNotFound(Long id);
 
@@ -22,6 +22,8 @@ public interface ErrorHandler {
 
 	void functionNotFound(Long id);
 
+	void invalidIconType(String type);
+
 	void invalidType(String id);
 
 	void lookupTypeNotFound(String id);
@@ -33,6 +35,8 @@ public interface ErrorHandler {
 	void missingAttachmentName();
 
 	void missingFile();
+
+	void missingIcon(String id);
 
 	void missingParam(String name);
 

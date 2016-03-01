@@ -17,6 +17,7 @@ import org.cmdbuild.logic.dms.DmsLogic;
 import org.cmdbuild.logic.dms.PrivilegedDmsLogic;
 import org.cmdbuild.logic.email.EmailLogic;
 import org.cmdbuild.logic.email.EmailTemplateLogic;
+import org.cmdbuild.logic.icon.IconsLogic;
 import org.cmdbuild.logic.menu.MenuLogic;
 import org.cmdbuild.logic.privileges.SecurityLogic;
 import org.cmdbuild.logic.report.ReportLogic;
@@ -57,6 +58,10 @@ public class ApplicationContextHelperV2 {
 
 	public GraphConfiguration graphConfiguration() {
 		return applicationContext.getBean(GraphConfiguration.class);
+	}
+
+	public IconsLogic iconsLogic() {
+		return applicationContext.getBean(IconsLogic.class);
 	}
 
 	public LookupHelper lookupHelper() {

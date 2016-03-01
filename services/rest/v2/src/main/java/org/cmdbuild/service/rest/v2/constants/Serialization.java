@@ -34,6 +34,7 @@ public class Serialization {
 			CHILDREN = "children", //
 			CLASS = "class", //
 			CLASS_ID = CLASS + ID_CAPITALIZED, //
+			CLASS_NAME = CLASS + "Name", //
 			CLUSTERING_THRESHOLD = "clusteringThreshold", //
 			CODE_CAPITALIZED = "Code", //
 			CODE = "code", //
@@ -55,6 +56,7 @@ public class Serialization {
 			DESTINATION = "destination", //
 			DESTINATION_PROCESS = DESTINATION + PROCESS_CAPITAL, //
 			DETAILED = "detailed", //
+			DETAILS = "details", //
 			DIRECTION = "direction", //
 			DISPLAYABLE_IN_LIST = "displayableInList", //
 			DISPLAY_LABEL = "displayLabel", //
@@ -77,6 +79,7 @@ public class Serialization {
 			FUNCTION_ID = FUNCTION + ID_CAPITALIZED, //
 			GROUP = "group", //
 			HIDDEN = "hidden", //
+			ICON = "icon", //
 			INDEX = "index", //
 			INHERITED = "inherited", //
 			INPUTS = "inputs", //

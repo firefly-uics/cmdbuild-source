@@ -25,6 +25,7 @@ import org.cmdbuild.service.rest.v2.Domains;
 import org.cmdbuild.service.rest.v2.EmailTemplates;
 import org.cmdbuild.service.rest.v2.Functions;
 import org.cmdbuild.service.rest.v2.GraphConfiguration;
+import org.cmdbuild.service.rest.v2.Icons;
 import org.cmdbuild.service.rest.v2.Impersonate;
 import org.cmdbuild.service.rest.v2.LookupTypeValues;
 import org.cmdbuild.service.rest.v2.LookupTypes;
@@ -57,6 +58,7 @@ import org.cmdbuild.service.rest.v2.cxf.CxfDomains;
 import org.cmdbuild.service.rest.v2.cxf.CxfEmailTemplates;
 import org.cmdbuild.service.rest.v2.cxf.CxfFunctions;
 import org.cmdbuild.service.rest.v2.cxf.CxfGraphConfiguration;
+import org.cmdbuild.service.rest.v2.cxf.CxfIcons;
 import org.cmdbuild.service.rest.v2.cxf.CxfImpersonate;
 import org.cmdbuild.service.rest.v2.cxf.CxfLookupTypeValues;
 import org.cmdbuild.service.rest.v2.cxf.CxfLookupTypes;
@@ -175,6 +177,13 @@ public class ServicesV2 implements LoggingSupport {
 	public EmailTemplates v2_emailTemplates() {
 		final CxfEmailTemplates service = new CxfEmailTemplates(helper.emailTemplateLogic());
 		return proxy(EmailTemplates.class, service);
+	}
+
+	@Bean
+	public Icons v2_icons() {
+		final CxfIcons service = new CxfIcons(v2_errorHandler(), helper.iconsLogic(),
+				new CxfIcons.IconToElement(v2_errorHandler()), new CxfIcons.ElementToIcon());
+		return proxy(Icons.class, service);
 	}
 
 	@Bean

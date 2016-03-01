@@ -5,6 +5,7 @@ import static org.cmdbuild.service.rest.v2.constants.Serialization.PARENT;
 
 import java.util.Map;
 
+import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
@@ -21,7 +22,7 @@ public class Node extends ModelWithLongId {
 		// package visibility
 	}
 
-	@XmlElement(name = PARENT)
+	@XmlAttribute(name = PARENT)
 	public Long getParent() {
 		return parent;
 	}
