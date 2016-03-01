@@ -150,7 +150,7 @@
 				var parameters = {};
 				parameters[CMDBuild.core.constants.Proxy.CARD_ID] = this.getCardId();
 				parameters[CMDBuild.core.constants.Proxy.CLASS_NAME] = _CMCache.getEntryTypeNameById(this.getClassId());
-				parameters[CMDBuild.core.constants.Proxy.DOMAIN_LIMIT] = CMDBuild.Config.cmdbuild.relationlimit;
+				parameters[CMDBuild.core.constants.Proxy.DOMAIN_LIMIT] = CMDBuild.configuration.instance.get(CMDBuild.core.constants.Proxy.RELATION_LIMIT);
 
 				CMDBuild.core.proxy.CMProxyRelations.getList({
 					params: parameters,
@@ -304,7 +304,7 @@
 										var parameters = {};
 										parameters[CMDBuild.core.constants.Proxy.CARD_ID] = alreadyRelatedItem[CMDBuild.core.constants.Proxy.ID];
 										parameters[CMDBuild.core.constants.Proxy.CLASS_NAME] = alreadyRelatedItem[CMDBuild.core.constants.Proxy.CLASS_NAME];
-										parameters[CMDBuild.core.constants.Proxy.DOMAIN_LIMIT] = CMDBuild.Config.cmdbuild.relationlimit;
+										parameters[CMDBuild.core.constants.Proxy.DOMAIN_LIMIT] = CMDBuild.configuration.instance.get(CMDBuild.core.constants.Proxy.RELATION_LIMIT);
 
 										// Get all domains of grid-card to check if it have relation with current-card
 										CMDBuild.core.proxy.CMProxyRelations.getList({
@@ -583,7 +583,7 @@
 				var parameters = {};
 				parameters[parameterNames.CARD_ID] =  pi.getId();
 				parameters[parameterNames.CLASS_NAME] = _CMCache.getEntryTypeNameById(pi.getClassId());
-				parameters[parameterNames.DOMAIN_LIMIT] = CMDBuild.Config.cmdbuild.relationlimit;
+				parameters[parameterNames.DOMAIN_LIMIT] = CMDBuild.configuration.instance.get(CMDBuild.core.constants.Proxy.RELATION_LIMIT);
 
 				CMDBuild.core.proxy.CMProxyRelations.getList({
 					params: parameters,
