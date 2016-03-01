@@ -3,6 +3,7 @@ package org.cmdbuild.workflow;
 import java.util.List;
 
 import org.cmdbuild.dao.entry.CMValueSet;
+import org.cmdbuild.workflow.xpdl.CMActivityMetadata;
 import org.cmdbuild.workflow.xpdl.CMActivityVariableToProcess;
 
 import com.google.common.collect.ForwardingObject;
@@ -46,6 +47,11 @@ public abstract class ForwardingActivity extends ForwardingObject implements CMA
 	@Override
 	public List<CMActivityVariableToProcess> getVariables() {
 		return delegate().getVariables();
+	}
+
+	@Override
+	public Iterable<CMActivityMetadata> getMetadata() {
+		return delegate().getMetadata();
 	}
 
 	@Override

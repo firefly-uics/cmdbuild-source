@@ -71,7 +71,7 @@ public class XpdlProcessDefinitionStore extends CachedProcessDefinitionStore {
 		public List<CMActivity> getManualStartActivities() {
 			final List<CMActivity> out = new ArrayList<CMActivity>();
 			for (final XpdlActivity xact : xproc.getManualStartActivitiesRecursive()) {
-				out.add(new XpdlActivityWrapper(xact, xpdlVariableFactory, xpdlWidgetFactory));
+				out.add(new XpdlActivityWrapper(xact, xpdlVariableFactory, xpdlMetadataFactory, xpdlWidgetFactory));
 			}
 			return out;
 		}
@@ -79,18 +79,21 @@ public class XpdlProcessDefinitionStore extends CachedProcessDefinitionStore {
 		@Override
 		public CMActivity getActivityById(final String activityDefinitionId) {
 			final XpdlActivity xact = xproc.getActivity(activityDefinitionId);
-			return new XpdlActivityWrapper(xact, xpdlVariableFactory, xpdlWidgetFactory);
+			return new XpdlActivityWrapper(xact, xpdlVariableFactory, xpdlMetadataFactory, xpdlWidgetFactory);
 		}
 	}
 
 	private final XpdlExtendedAttributeVariableFactory xpdlVariableFactory;
+	private final XpdlExtendedAttributeMetadataFactory xpdlMetadataFactory;
 	private final XpdlExtendedAttributeWidgetFactory xpdlWidgetFactory;
 
 	public XpdlProcessDefinitionStore(final CMWorkflowService workflowService,
 			final XpdlExtendedAttributeVariableFactory xpdlvariablefactory,
+			final XpdlExtendedAttributeMetadataFactory xpdlMetadataFactory,
 			final XpdlExtendedAttributeWidgetFactory xpdlwidgetfactory) {
 		super(workflowService);
 		this.xpdlVariableFactory = xpdlvariablefactory;
+		this.xpdlMetadataFactory = xpdlMetadataFactory;
 		this.xpdlWidgetFactory = xpdlwidgetfactory;
 	}
 

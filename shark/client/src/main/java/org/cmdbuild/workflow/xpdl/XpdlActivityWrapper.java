@@ -1,17 +1,20 @@
 package org.cmdbuild.workflow.xpdl;
 
+import static com.google.common.collect.FluentIterable.from;
 import static java.util.Collections.emptyList;
+import static org.apache.commons.lang3.Validate.notNull;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.lang3.Validate;
 import org.cmdbuild.common.annotations.Legacy;
 import org.cmdbuild.dao.entry.CMValueSet;
 import org.cmdbuild.workflow.ActivityPerformer;
 import org.cmdbuild.workflow.CMActivity;
 import org.cmdbuild.workflow.CMActivityWidget;
+
+import com.google.common.base.Function;
 
 public class XpdlActivityWrapper implements CMActivity {
 
@@ -46,17 +49,17 @@ public class XpdlActivityWrapper implements CMActivity {
 
 	private final XpdlActivity inner;
 	private final XpdlExtendedAttributeVariableFactory variableFactory;
+	private final XpdlExtendedAttributeMetadataFactory metadataFactory;
 	private final XpdlExtendedAttributeWidgetFactory widgetFactory;
 
 	public XpdlActivityWrapper(final XpdlActivity xpdlActivity,
 			final XpdlExtendedAttributeVariableFactory variableFactory,
+			final XpdlExtendedAttributeMetadataFactory metadataFactory,
 			final XpdlExtendedAttributeWidgetFactory widgetFactory) {
-		Validate.notNull(xpdlActivity, "Wrapped object cannot be null");
-		Validate.notNull(variableFactory, "Wrapped object cannot be null");
-		Validate.notNull(widgetFactory, "Wrapped object cannot be null");
-		this.inner = xpdlActivity;
-		this.variableFactory = variableFactory;
-		this.widgetFactory = widgetFactory;
+		this.inner = notNull(xpdlActivity, "missing " + XpdlActivity.class);
+		this.variableFactory = notNull(variableFactory, "missing " + XpdlExtendedAttributeVariableFactory.class);
+		this.metadataFactory = notNull(metadataFactory, "missing " + XpdlExtendedAttributeMetadataFactory.class);
+		this.widgetFactory = notNull(widgetFactory, "missing " + XpdlExtendedAttributeWidgetFactory.class);
 	}
 
 	@Override
@@ -112,6 +115,20 @@ public class XpdlActivityWrapper implements CMActivity {
 			}
 		}
 		return vars;
+	}
+
+	@Override
+	public Iterable<CMActivityMetadata> getMetadata() {
+		return from(inner.getExtendedAttributes()) //
+				.transform(new Function<XpdlExtendedAttribute, CMActivityMetadata>() {
+
+					@Override
+					public CMActivityMetadata apply(final XpdlExtendedAttribute input) {
+						return metadataFactory.createMetadata(input);
+					}
+
+				}) //
+				.filter(CMActivityMetadata.class);
 	}
 
 	@Override
