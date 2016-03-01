@@ -468,7 +468,6 @@
 		"emailUpdate": "فشل في دالة تحديث البريد",
 		"error_message": "خطأ",
 		"error_moving_row": "حدث خطأ أثناء تحريك الصف",
-		"getAccountWithNameFailure": "فشل في استرجاع الحساب ذا الاسم \"{0}\"",
 		"getTemplateWithNameFailure": "فشل في استرجاع القالب ذا الاسم \"{0}\"",
 		"invalid_attributes": "الحقول التالية لم تملء بالشكل الصحيح:",
 		"invalid_extended_attributes": "أدوات التحكم المرئية التالية لم تملء بالشكل الصحيح:",

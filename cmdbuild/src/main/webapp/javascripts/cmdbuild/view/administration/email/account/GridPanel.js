@@ -1,4 +1,4 @@
-(function() {
+(function () {
 
 	Ext.define('CMDBuild.view.administration.email.account.GridPanel', {
 		extend: 'Ext.grid.Panel',
@@ -18,7 +18,7 @@
 		frame: false,
 		split: true,
 
-		initComponent: function() {
+		initComponent: function () {
 			Ext.apply(this, {
 				columns: [
 					Ext.create('Ext.ux.grid.column.Tick', {
@@ -50,11 +50,11 @@
 		},
 
 		listeners: {
-			itemdblclick: function(grid, record, item, index, e, eOpts) {
+			itemdblclick: function (grid, record, item, index, e, eOpts) {
 				this.delegate.cmfg('onEmailAccountItemDoubleClick');
 			},
 
-			select: function(row, record, index) {
+			select: function (row, record, index) {
 				this.delegate.cmfg('onEmailAccountRowSelected');
 			}
 		}

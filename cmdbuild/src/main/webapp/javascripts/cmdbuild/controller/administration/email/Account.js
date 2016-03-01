@@ -1,4 +1,4 @@
-(function() {
+(function () {
 
 	Ext.define('CMDBuild.controller.administration.email.Account', {
 		extend: 'CMDBuild.controller.common.abstract.Base',
@@ -56,7 +56,7 @@
 		 *
 		 * @override
 		 */
-		constructor: function(configurationObject) {
+		constructor: function (configurationObject) {
 			this.callParent(arguments);
 
 			this.view = Ext.create('CMDBuild.view.administration.email.account.AccountView', { delegate: this });
@@ -66,7 +66,7 @@
 			this.grid = this.view.grid;
 		},
 
-		onEmailAccountAbortButtonClick: function() {
+		onEmailAccountAbortButtonClick: function () {
 			if (!this.emailAccountSelectedAccountIsEmpty()) {
 				this.cmfg('onEmailAccountRowSelected');
 			} else {
@@ -75,7 +75,7 @@
 			}
 		},
 
-		onEmailAccountAddButtonClick: function() {
+		onEmailAccountAddButtonClick: function () {
 			this.grid.getSelectionModel().deselectAll();
 
 			this.emailAccountSelectedAccountReset();
@@ -85,25 +85,25 @@
 			this.form.loadRecord(Ext.create('CMDBuild.model.email.account.SelectedAccount'));
 		},
 
-		onEmailAccountModifyButtonClick: function() {
+		onEmailAccountModifyButtonClick: function () {
 			this.form.setDisabledModify(false);
 		},
 
-		onEmailAccountRemoveButtonClick: function() {
+		onEmailAccountRemoveButtonClick: function () {
 			Ext.Msg.show({
 				title: CMDBuild.Translation.common.confirmpopup.title,
 				msg: CMDBuild.Translation.common.confirmpopup.areyousure,
 				buttons: Ext.Msg.YESNO,
 				scope: this,
 
-				fn: function(buttonId, text, opt) {
+				fn: function (buttonId, text, opt) {
 					if (buttonId == 'yes')
 						this.removeItem();
 				}
 			});
 		},
 
-		onEmailAccountRowSelected: function() {
+		onEmailAccountRowSelected: function () {
 			if (this.grid.getSelectionModel().hasSelection()) {
 				var params = {};
 				params[CMDBuild.core.constants.Proxy.NAME] = this.grid.getSelectionModel().getSelection()[0].get(CMDBuild.core.constants.Proxy.NAME);
@@ -111,30 +111,25 @@
 				CMDBuild.core.proxy.email.Account.read({
 					params: params,
 					scope: this,
-					failure: function(response, options, decodedResponse) {
-						CMDBuild.core.Message.error(
-							CMDBuild.Translation.common.failure,
-							Ext.String.format(CMDBuild.Translation.errors.getAccountWithNameFailure, this.selectedTemplate.get(CMDBuild.core.constants.Proxy.NAME)),
-							false
-						);
-					},
-					success: function(response, options, decodedResponse) {
+					success: function (response, options, decodedResponse) {
 						decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.RESPONSE];
 
-						this.emailAccountSelectedAccountSet({ value: decodedResponse });
+						if (!Ext.isEmpty(decodedResponse)) {
+							this.emailAccountSelectedAccountSet({ value: decodedResponse });
 
-						this.form.loadRecord(this.emailAccountSelectedAccountGet());
-						this.form.setDisabledModify(true, true);
+							this.form.loadRecord(this.emailAccountSelectedAccountGet());
+							this.form.setDisabledModify(true, true);
 
-						// Set disable state to setDefaultButton and removeButton related to selectedAccount
-						this.form.removeButton.setDisabled(this.emailAccountSelectedAccountGet(CMDBuild.core.constants.Proxy.IS_DEFAULT));
-						this.form.setDefaultButton.setDisabled(this.emailAccountSelectedAccountGet(CMDBuild.core.constants.Proxy.IS_DEFAULT));
+							// Set disable state to setDefaultButton and removeButton related to selectedAccount
+							this.form.removeButton.setDisabled(this.emailAccountSelectedAccountGet(CMDBuild.core.constants.Proxy.IS_DEFAULT));
+							this.form.setDefaultButton.setDisabled(this.emailAccountSelectedAccountGet(CMDBuild.core.constants.Proxy.IS_DEFAULT));
+						}
 					}
 				});
 			}
 		},
 
-		onEmailAccountSaveButtonClick: function() {
+		onEmailAccountSaveButtonClick: function () {
 			if (this.validate(this.form)) {
 				var formData = this.form.getData(true);
 
@@ -154,7 +149,7 @@
 			}
 		},
 
-		onEmailAccountSetDefaultButtonClick: function() {
+		onEmailAccountSetDefaultButtonClick: function () {
 			var params = {};
 			params[CMDBuild.core.constants.Proxy.NAME] = this.emailAccountSelectedAccountGet(CMDBuild.core.constants.Proxy.NAME);
 
@@ -165,10 +160,10 @@
 			});
 		},
 
-		onEmailAccountShow: function() {
+		onEmailAccountShow: function () {
 			this.grid.getStore().load({
 				scope: this,
-				callback: function(records, operation, success) {
+				callback: function (records, operation, success) {
 					if (!this.grid.getSelectionModel().hasSelection())
 						this.grid.getSelectionModel().select(0, true);
 				}
@@ -178,7 +173,7 @@
 		/**
 		 * @private
 		 */
-		removeItem: function() {
+		removeItem: function () {
 			if (!this.emailAccountSelectedAccountIsEmpty()) {
 				var params = {};
 				params[CMDBuild.core.constants.Proxy.NAME] = this.emailAccountSelectedAccountGet(CMDBuild.core.constants.Proxy.NAME);
@@ -186,12 +181,12 @@
 				CMDBuild.core.proxy.email.Account.remove({
 					params: params,
 					scope: this,
-					success: function(response, options, decodedResponse) {
+					success: function (response, options, decodedResponse) {
 						this.form.reset();
 
 						this.grid.getStore().load({
 							scope: this,
-							callback: function(records, operation, success) {
+							callback: function (records, operation, success) {
 								this.grid.getSelectionModel().select(0, true);
 
 								if (!this.grid.getSelectionModel().hasSelection())
@@ -211,7 +206,7 @@
 			 *
 			 * @private
 			 */
-			emailAccountSelectedAccountGet: function(attributePath) {
+			emailAccountSelectedAccountGet: function (attributePath) {
 				var parameters = {};
 				parameters[CMDBuild.core.constants.Proxy.TARGET_VARIABLE_NAME] = 'selectedAccount';
 				parameters[CMDBuild.core.constants.Proxy.ATTRIBUTE_PATH] = attributePath;
@@ -226,7 +221,7 @@
 			 *
 			 * @private
 			 */
-			emailAccountSelectedAccountIsEmpty: function(attributePath) {
+			emailAccountSelectedAccountIsEmpty: function (attributePath) {
 				var parameters = {};
 				parameters[CMDBuild.core.constants.Proxy.TARGET_VARIABLE_NAME] = 'selectedAccount';
 				parameters[CMDBuild.core.constants.Proxy.ATTRIBUTE_PATH] = attributePath;
@@ -237,7 +232,7 @@
 			/**
 			 * @private
 			 */
-			emailAccountSelectedAccountReset: function() {
+			emailAccountSelectedAccountReset: function () {
 				this.propertyManageReset('selectedAccount');
 			},
 
@@ -246,7 +241,7 @@
 			 *
 			 * @private
 			 */
-			emailAccountSelectedAccountSet: function(parameters) {
+			emailAccountSelectedAccountSet: function (parameters) {
 				if (!Ext.Object.isEmpty(parameters)) {
 					parameters[CMDBuild.core.constants.Proxy.MODEL_NAME] = 'CMDBuild.model.email.account.SelectedAccount';
 					parameters[CMDBuild.core.constants.Proxy.TARGET_VARIABLE_NAME] = 'selectedAccount';
@@ -262,10 +257,10 @@
 		 *
 		 * @private
 		 */
-		success: function(response, options, decodedResponse) {
+		success: function (response, options, decodedResponse) {
 			this.grid.getStore().load({
 				scope: this,
-				callback: function(records, operation, success) {
+				callback: function (records, operation, success) {
 					var rowIndex = this.grid.getStore().find(
 						CMDBuild.core.constants.Proxy.NAME,
 						this.form.getForm().findField(CMDBuild.core.constants.Proxy.NAME).getValue()

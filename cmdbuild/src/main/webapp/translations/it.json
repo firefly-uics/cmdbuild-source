@@ -468,7 +468,6 @@
 		"emailUpdate": "Errore nella creazione dell'e-mail",
 		"error_message": "Errore",
 		"error_moving_row": "Si è verificato un errore muovendo la riga",
-		"getAccountWithNameFailure": "Richiesta dell'account con nome \"{0}\" fallita",
 		"getTemplateWithNameFailure": "Richiesta template con nome \"{0}\" fallita",
 		"invalid_attributes": "I seguenti campi non sono stati compilati correttamente:",
 		"invalid_extended_attributes": "I seguenti controlli visuali non sono stati compilati correttamente:",

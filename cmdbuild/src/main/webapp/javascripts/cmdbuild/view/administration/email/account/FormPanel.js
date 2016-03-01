@@ -1,11 +1,12 @@
-(function() {
+(function () {
 
 	Ext.define('CMDBuild.view.administration.email.account.FormPanel', {
 		extend: 'Ext.form.Panel',
 
 		requires: [
 			'CMDBuild.core.constants.FieldWidths',
-			'CMDBuild.core.constants.Proxy'
+			'CMDBuild.core.constants.Proxy',
+			'CMDBuild.core.Utils'
 		],
 
 		mixins: ['CMDBuild.view.common.PanelFunctions'],
@@ -109,11 +110,6 @@
 							Ext.create('Ext.form.FieldSet', {
 								title: CMDBuild.Translation.account,
 
-								defaults: {
-									labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
-									maxWidth: CMDBuild.core.constants.FieldWidths.ADMINISTRATION_BIG
-								},
-
 								layout: {
 									type: 'vbox',
 									align: 'stretch'
@@ -122,7 +118,7 @@
 								items: [
 									Ext.create('Ext.form.field.Text', {
 										name: CMDBuild.core.constants.Proxy.NAME,
-										fieldLabel: CMDBuild.Translation.name,
+										fieldLabel: CMDBuild.core.Utils.prependMandatoryLabel(CMDBuild.Translation.name),
 										labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
 										maxWidth: CMDBuild.core.constants.FieldWidths.ADMINISTRATION_BIG,
 										allowBlank: false,
@@ -138,28 +134,25 @@
 							Ext.create('Ext.form.FieldSet', {
 								title: CMDBuild.Translation.credentials,
 
-								defaults: {
-									labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
-									maxWidth: CMDBuild.core.constants.FieldWidths.ADMINISTRATION_BIG
-								},
-
 								layout: {
 									type: 'vbox',
 									align: 'stretch'
 								},
 
 								items: [
-									{
-										xtype: 'textfield',
+									Ext.create('Ext.form.field.Text', {
 										name: CMDBuild.core.constants.Proxy.USERNAME,
-										fieldLabel: CMDBuild.Translation.username
-									},
-									{
-										xtype: 'textfield',
+										fieldLabel: CMDBuild.Translation.username,
+										labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
+										maxWidth: CMDBuild.core.constants.FieldWidths.ADMINISTRATION_BIG
+									}),
+									Ext.create('Ext.form.field.Text', {
 										inputType: 'password',
 										name: CMDBuild.core.constants.Proxy.PASSWORD,
-										fieldLabel: CMDBuild.Translation.password
-									}
+										fieldLabel: CMDBuild.Translation.password,
+										labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
+										maxWidth: CMDBuild.core.constants.FieldWidths.ADMINISTRATION_BIG
+									})
 								]
 							})
 						]
@@ -177,65 +170,56 @@
 							Ext.create('Ext.form.FieldSet', {
 								title: CMDBuild.Translation.outgoing,
 
-								defaults: {
-									labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
-									maxWidth: CMDBuild.core.constants.FieldWidths.ADMINISTRATION_BIG
-								},
-
 								layout: {
 									type: 'vbox',
 									align: 'stretch'
 								},
 
 								items: [
-									{
-										xtype: 'textfield',
+									Ext.create('Ext.form.field.Text', {
 										name: CMDBuild.core.constants.Proxy.ADDRESS,
-										fieldLabel: CMDBuild.Translation.address,
+										fieldLabel: CMDBuild.core.Utils.prependMandatoryLabel(CMDBuild.Translation.address),
+										labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
+										maxWidth: CMDBuild.core.constants.FieldWidths.ADMINISTRATION_BIG,
 										allowBlank: false,
 										vtype: 'email'
-									},
-									{
-										xtype: 'textfield',
+									}),
+									Ext.create('Ext.form.field.Text', {
 										name: CMDBuild.core.constants.Proxy.SMTP_SERVER,
-										fieldLabel: CMDBuild.Translation.smtpServer
-									},
-									{
-										xtype: 'numberfield',
+										fieldLabel: CMDBuild.Translation.smtpServer,
+										labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
+										maxWidth: CMDBuild.core.constants.FieldWidths.ADMINISTRATION_BIG
+									}),
+									Ext.create('Ext.form.field.Number', {
 										name: CMDBuild.core.constants.Proxy.SMTP_PORT,
 										fieldLabel: CMDBuild.Translation.smtpPort,
-										allowBlank: true,
-										width: CMDBuild.core.constants.FieldWidths.ADMINISTRATION_SMALL,
-										minValue: 1,
-										maxValue: 65535,
-										maxWidth: CMDBuild.core.constants.FieldWidths.ADMINISTRATION_SMALL
-									},
-									{
-										xtype: 'checkbox',
+										labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
+										maxWidth: CMDBuild.core.constants.FieldWidths.ADMINISTRATION_SMALL,
+										minValue: 0,
+										maxValue: 65535
+									}),
+									Ext.create('Ext.form.field.Checkbox', {
 										name: CMDBuild.core.constants.Proxy.SMTP_SSL,
-										fieldLabel: CMDBuild.Translation.enableSsl
-									},
-									Ext.create('Ext.form.field.Checkbox',{
+										fieldLabel: CMDBuild.Translation.enableSsl,
+										labelWidth: CMDBuild.core.constants.FieldWidths.LABEL
+									}),
+									Ext.create('Ext.form.field.Checkbox', {
 										name: CMDBuild.core.constants.Proxy.SMTP_START_TLS,
 										fieldLabel: CMDBuild.Translation.enableStartTls,
 										labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
 										inputValue: true,
 										uncheckedValue: false
 									}),
-									{
-										xtype: 'textfield',
+									Ext.create('Ext.form.field.Text', {
 										name: CMDBuild.core.constants.Proxy.OUTPUT_FOLDER,
-										fieldLabel: CMDBuild.Translation.sentFolder
-									}
+										fieldLabel: CMDBuild.Translation.sentFolder,
+										labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
+										maxWidth: CMDBuild.core.constants.FieldWidths.ADMINISTRATION_BIG
+									})
 								]
 							}),
 							Ext.create('Ext.form.FieldSet', {
 								title: CMDBuild.Translation.incoming,
-
-								defaults: {
-									labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
-									maxWidth: CMDBuild.core.constants.FieldWidths.ADMINISTRATION_BIG
-								},
 
 								layout: {
 									type: 'vbox',
@@ -243,29 +227,30 @@
 								},
 
 								items: [
-									{
-										xtype: 'textfield',
+									Ext.create('Ext.form.field.Text', {
 										fieldLabel: CMDBuild.Translation.imapServer,
-										name: CMDBuild.core.constants.Proxy.IMAP_SERVER
-									},
-									{
-										xtype: 'numberfield',
+										name: CMDBuild.core.constants.Proxy.IMAP_SERVER,
+										labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
+										maxWidth: CMDBuild.core.constants.FieldWidths.ADMINISTRATION_BIG
+									}),
+									Ext.create('Ext.form.field.Number', {
 										name: CMDBuild.core.constants.Proxy.IMAP_PORT,
 										fieldLabel: CMDBuild.Translation.imapPort,
-										allowBlank: true,
-										minValue: 1,
-										maxValue: 65535,
-										maxWidth: CMDBuild.core.constants.FieldWidths.ADMINISTRATION_SMALL
-									},
-									{
-										xtype: 'checkbox',
+										labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
+										maxWidth: CMDBuild.core.constants.FieldWidths.ADMINISTRATION_SMALL,
+										minValue: 0,
+										maxValue: 65535
+									}),
+									Ext.create('Ext.form.field.Checkbox', {
 										name: CMDBuild.core.constants.Proxy.IMAP_SSL,
-										fieldLabel: CMDBuild.Translation.enableSsl
-									},
-									Ext.create('Ext.form.field.Checkbox',{
+										fieldLabel: CMDBuild.Translation.enableSsl,
+										labelWidth: CMDBuild.core.constants.FieldWidths.LABEL
+									}),
+									Ext.create('Ext.form.field.Checkbox', {
 										name: CMDBuild.core.constants.Proxy.IMAP_START_TLS,
 										fieldLabel: CMDBuild.Translation.enableStartTls,
 										labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
+										maxWidth: CMDBuild.core.constants.FieldWidths.ADMINISTRATION_BIG,
 										inputValue: true,
 										uncheckedValue: false
 									})

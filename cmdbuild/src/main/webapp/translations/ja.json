@@ -468,7 +468,6 @@
 		"emailUpdate": "<em>E-mail update call failure</em>",
 		"error_message": "エラー",
 		"error_moving_row": "行の移動時にエラーが発生しました",
-		"getAccountWithNameFailure": "<em>Get account with name \"{0}\" failure</em>",
 		"getTemplateWithNameFailure": "<em>Get template with name \"{0}\" failure</em>",
 		"invalid_attributes": "これらのフィールドには正しくデータが格納されていません:",
 		"invalid_extended_attributes": "これらのビジュアルコントロールは正しく設定されていません:",

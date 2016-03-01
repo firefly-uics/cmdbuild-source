@@ -468,7 +468,6 @@
 		"emailUpdate": "E-mail更新调用失败",
 		"error_message": "错误",
 		"error_moving_row": "移动行时产生一个错误",
-		"getAccountWithNameFailure": "以\"{0}\"账户名取值失败",
 		"getTemplateWithNameFailure": "以\"{0}\" 模板名取值失败",
 		"invalid_attributes": "以下字段填写不正确:",
 		"invalid_extended_attributes": "以下可视控件填写不正确:",

@@ -468,7 +468,6 @@
 		"emailUpdate": "La mise à jour de l'email a échoué",
 		"error_message": "Erreur",
 		"error_moving_row": "Une erreur est survenue lors du déplacement de la colonne",
-		"getAccountWithNameFailure": "Impossible d'obtenir le compte \"{0}\"",
 		"getTemplateWithNameFailure": "Impossible d'obtenir le canevas \"{0}\"",
 		"invalid_attributes": "Les différents champs n'ont pas été renseignés correctement:",
 		"invalid_extended_attributes": "Les attributs étendus suivants n'ont pas été renseignés correctement:",

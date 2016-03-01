@@ -468,7 +468,6 @@
 		"emailUpdate": "Error en la solicitud de actualización del email",
 		"error_message": "Error",
 		"error_moving_row": "Se verificó un error en el traslado de la fila",
-		"getAccountWithNameFailure": "Error en la solicitud de la cuenta de nombre \"{0}\"",
 		"getTemplateWithNameFailure": "Error en la solicitude de la plantilla de nombre \"{0}\"",
 		"invalid_attributes": "Los siguientes campos no han sido compilados correctamente: ",
 		"invalid_extended_attributes": "Los siguientes controles visuales no fueron compilados correctamente: ",

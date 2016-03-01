@@ -468,7 +468,6 @@
 		"emailUpdate": "<em>E-mail update call failure</em>",
 		"error_message": "Fehler",
 		"error_moving_row": "Es ist ein Fehler bei der Bewegung der Zeile aufgetreten",
-		"getAccountWithNameFailure": "<em>Get account with name \"{0}\" failure</em>",
 		"getTemplateWithNameFailure": "<em>Get template with name \"{0}\" failure</em>",
 		"invalid_attributes": "Folgende Felder wurden nicht korrekt ausgefüllt:",
 		"invalid_extended_attributes": "Folgende Attribute wurden nicht korrekt ausgefüllt:",

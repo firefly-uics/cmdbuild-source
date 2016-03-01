@@ -468,7 +468,6 @@
 		"emailUpdate": "E-mail update call failure",
 		"error_message": "Error",
 		"error_moving_row": "An error occourred while moving the row",
-		"getAccountWithNameFailure": "Get account with name \"{0}\" failure",
 		"getTemplateWithNameFailure": "Get template with name \"{0}\" failure",
 		"invalid_attributes": "The following fields have not been filled correctly:",
 		"invalid_extended_attributes": "The following visual controls have not been filled correctly:",
