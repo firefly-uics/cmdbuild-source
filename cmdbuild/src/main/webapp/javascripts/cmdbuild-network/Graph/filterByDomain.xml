@@ -1,0 +1,33 @@
+<DATA>
+	<params>
+		<type>div</type>
+	</params>
+	<select label="Class" id="domains4Class" class="optionsSelect">
+		<params>
+			<backend>DomainsFilterClasses</backend>
+		</params>
+		<onChange>
+			<command>filterDomains</command>
+			<value>domains4Class</value>
+			<navigationForm>filterByDomainForm</navigationForm>
+			<navigationContainer>filterByDomainFormContainer
+			</navigationContainer>
+		</onChange>
+	</select>
+	<div id="filterByDomainFormContainer">
+<!-- 		<onInit> -->
+<!-- 			<command>navigate</command> -->
+<!-- 			<container>filterByDomainFormContainer</container> -->
+<!-- 			<form>filterByDomainForm</form> -->
+<!-- 		</onInit> -->
+		<form id="filterByDomainForm">
+			<params>
+				<type>domainsGrid</type>
+				<backend>DomainsFilter</backend>
+				<nRows>10</nRows>
+				<selection>true</selection>
+				<classId>-1</classId>
+			</params>
+		</form>
+	</div>
+</DATA>
