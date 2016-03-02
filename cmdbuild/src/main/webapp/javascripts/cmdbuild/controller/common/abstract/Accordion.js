@@ -300,7 +300,7 @@
 
 			// Hide if accordion is empty
 			if (this.hideIfEmpty && this.isEmpty())
-				this.hide();
+				this.view.hide();
 
 			// DisableSelection flag reset
 			this.disableSelection = false;
