@@ -76,6 +76,19 @@
 				id : id
 			});
 			return htmlStr;
+		},
+		slider : function(xmlElement) {
+			var htmlStr = "";
+			htmlStr += $.Cmdbuild.elementsManager.insertLabel(xmlElement);
+			var id = $.Cmdbuild.elementsManager.getXmlElementId(xmlElement);
+			var params = $.Cmdbuild.elementsManager.getParams(xmlElement);
+			var change = $.Cmdbuild.utilities.getEventLikeString(xmlElement, "onChange");
+			htmlStr += '<div id="' + id + '" ' + change + ' />';
+			$.Cmdbuild.scriptsManager.push({
+				script : "slider",
+				id : id
+			});
+			return htmlStr;
 		}
 	};
 	$.Cmdbuild.custom.elements = elements;
