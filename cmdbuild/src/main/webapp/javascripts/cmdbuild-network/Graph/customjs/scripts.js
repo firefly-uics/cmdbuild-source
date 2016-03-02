@@ -6,14 +6,21 @@
 		counter : function(param) {
 			new counter(param);
 		},
-		navigationTreesCombo : function(param) {
-			$("#" + param.id).selectmenu({});
-			var position = {
-				top : -400,
-				of : "#" + "optionsPanelContainer"
-			};
-			$("#" + param.id).selectmenu("option", "style", "popup");
-			$("#" + param.id).selectmenu("option", "position", position);
+		navigationTreesBtnMenu : function(param) {
+			var $ul = $("<ul></ul>").menu();
+			var $div = $("<div></div>").addClass("menu-icon-separator");
+			$("#" + param.id).click(function() {
+				var menu = $(this).next().show().position({
+					my : "right+3 top+3",
+					at : "right bottom",
+					of : this
+				});
+				menu.parent().addClass("btn-active");
+				$(document).one("click", function() {
+					menu.hide().parent().removeClass("btn-active");
+				});
+				return false;
+			}).next().hide().append($div).append($ul).parent().addClass("btn-disabled");
 		},
 		buttonset : function(param) {
 			$("#" + param.id).buttonset();

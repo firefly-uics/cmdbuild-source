@@ -63,7 +63,8 @@ a {
 	background-image: -o-linear-gradient(top, #dbeeff, #d0e7ff 48%, #bbd2f0 52%, #bed6f5);
 	background-image: linear-gradient(top, #dbeeff, #d0e7ff 48%, #bbd2f0 52%, #bed6f5);
 }
-.toolbarButton:active {
+.toolbarButton:active,
+.toolbarButton.btn-active {
 	border-color: #7a9ac4;
 	background-image: none;
 	background-color: #bccfe5;
@@ -73,7 +74,17 @@ a {
 	background-image: -webkit-linear-gradient(top, #bccfe5, #c5d6e7 48%, #95c4f4 52%, #9fc9f5);
 	background-image: -moz-linear-gradient(top, #bccfe5, #c5d6e7 48%, #95c4f4 52%, #9fc9f5);
 	background-image: -o-linear-gradient(top, #bccfe5, #c5d6e7 48%, #95c4f4 52%, #9fc9f5);
-	background-image: linear-gradient(top, #bccfe5, #c5d6e7 48%, #95c4f4 52%, #9fc9f5);}
+	background-image: linear-gradient(top, #bccfe5, #c5d6e7 48%, #95c4f4 52%, #9fc9f5);
+}
+.toolbarButton.btn-disabled {
+	opacity: .5;
+	cursor: default;
+}
+.toolbarButton.btn-disabled:hover,
+.toolbarButton.btn-disabled:active {
+	border-color: transparent!important;
+	background: none!important;
+}
 .toolbarButton span {
 	display: block;
 	width: 16px;
@@ -133,6 +144,9 @@ a {
 .btn-attributes {
 	background:transparent url("images/icons/icon_attributes.png") right 50% no-repeat;
 }
+.btn-navigationtree {
+	background:transparent url("images/icons/icon_navigation_tree.png") right 50% no-repeat;
+}
 /**
  * HEADER TOOLBAR
  */
@@ -157,7 +171,64 @@ a {
 	clear: both;
 	display: block;
 }
-
+/* navigationTreesBtnMenu_menu */
+#navigationTreesBtnMenu_menu {
+	position: absolute;
+	width: 150px;
+}
+#navigationTreesBtnMenu_menu > ul.ui-menu {
+	background: #f0f0f0;
+	padding: 2px;
+	border-color: #99bce8;
+	border-width: 1px;
+	border-style: solid;
+}
+#navigationTreesBtnMenu_menu li {
+	border: 1px solid transparent;
+	z-index: 10;
+}
+#navigationTreesBtnMenu_menu li:hover {
+	background-image: none;
+	background-color: #d9e8fb;
+	background-image: -webkit-gradient(linear, 50% 0, 50% 100%, color-stop(0%, #e7f0fc),
+		color-stop(100%, #c7ddf9));
+	background-image: -webkit-linear-gradient(top, #e7f0fc, #c7ddf9);
+	background-image: -moz-linear-gradient(top, #e7f0fc, #c7ddf9);
+	background-image: -o-linear-gradient(top, #e7f0fc, #c7ddf9);
+	background-image: linear-gradient(top, #e7f0fc, #c7ddf9);
+	border-color: #a9cbf5;
+	-webkit-border-radius: 3px;
+	-moz-border-radius: 3px;
+	-ms-border-radius: 3px;
+	-o-border-radius: 3px;
+	border-width: 1px;
+	border-style: solid;
+	padding: 0;
+	z-index: 10;
+}
+#navigationTreesBtnMenu_menu span {
+	line-height: 18px;
+	padding: 0 0 0 30px;
+	display: inline-block;
+	width: auto;
+	height: auto;
+	font-weight: normal;
+}
+#navigationTreesBtnMenu_menu li.active span {
+	background:transparent url("images/icons/icon_selected.png") 2px 50% no-repeat;
+}
+#navigationTreesBtnMenu_menu .menu-icon-separator {
+	left: 24px;
+	border-left: solid 1px #e0e0e0;
+	background-color: white;
+	width: 2px;
+	position: absolute;
+	top: 0;
+	z-index: 0;
+	margin-top: 2px;
+	height: calc(100% - 4px);
+	overflow: hidden;
+}
 /**
  * FOOTER TOOLBAR
  */

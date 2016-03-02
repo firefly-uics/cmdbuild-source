@@ -37,7 +37,7 @@
 			$.Cmdbuild.customvariables.options.observe(this);
 			$.Cmdbuild.g3d.Options.initVariables();
 			$.Cmdbuild.g3d.Options.initFields();
-			$.Cmdbuild.customvariables.navigationTreesCombo = new $.Cmdbuild.g3d.navigationTreesCombo();
+			$.Cmdbuild.customvariables.navigationTreesBtnMenu = new $.Cmdbuild.g3d.navigationTreesBtnMenu();
 			$.Cmdbuild.customvariables.viewer = this;
 			this.camera = new $.Cmdbuild.g3d.Camera(this.model);
 			this.camera.observe(this);
