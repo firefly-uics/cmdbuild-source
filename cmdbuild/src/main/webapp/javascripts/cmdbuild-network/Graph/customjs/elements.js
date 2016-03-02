@@ -89,6 +89,22 @@
 				id : id
 			});
 			return htmlStr;
+		},
+		toggleTooltips : function(xmlElement) {
+			var htmlStr = "";
+			htmlStr += $.Cmdbuild.elementsManager.insertLabel(xmlElement);
+			var id = $.Cmdbuild.elementsManager.getXmlElementId(xmlElement);
+			var params = $.Cmdbuild.elementsManager.getParams(xmlElement);
+			var tooltip = "";
+			if (params && params.tooltip) {
+				tooltip = params.tooltip;
+			}
+			htmlStr += '<span class="btn-toggletooltips" id="' + id + '" title="' + tooltip + '"></span>';
+			$.Cmdbuild.scriptsManager.push({
+				script : "toggleTooltips",
+				id : id
+			});
+			return htmlStr;
 		}
 	};
 	$.Cmdbuild.custom.elements = elements;

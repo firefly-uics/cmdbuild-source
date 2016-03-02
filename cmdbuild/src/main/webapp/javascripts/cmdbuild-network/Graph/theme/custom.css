@@ -147,6 +147,9 @@ a {
 .btn-navigationtree {
 	background:transparent url("images/icons/icon_navigation_tree.png") right 50% no-repeat;
 }
+.btn-toggletooltips {
+	background:transparent url("images/icons/icon_tooltip.png") right 50% no-repeat;
+}
 /**
  * HEADER TOOLBAR
  */
