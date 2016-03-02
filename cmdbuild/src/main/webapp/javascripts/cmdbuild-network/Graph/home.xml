@@ -160,6 +160,13 @@
 							</onClick>
 						</span>
 					</div>
+					<div class="toolbarButton footerToolbar border-box">
+						<toggleTooltips>
+							<params>
+								<tooltip>Enable/disable tooltips on graph</tooltip>
+							</params>
+						</toggleTooltips>
+					</div>
 					<div class="toolbarSeparator"></div>
 					<div class="footerToolbarItem">
 						<spinner label="Levels" id="explosionLevels" class="optionsSpinner">

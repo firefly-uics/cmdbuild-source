@@ -1,5 +1,8 @@
 (function($) {
 	var commands = {
+		variables : {
+			BUTTONACTIVECLASS : "btn-active"
+		},
 		test : function(param) {
 			var paramActualized = $.Cmdbuild.dataModel.resolveVariables(param);
 			console.log("Test", param, paramActualized);
@@ -277,6 +280,22 @@
 				tr.addClass('shown');
 			}
 			table.columns.adjust();
+		},
+
+		/**
+		 * Update UI of toggleTooltips element
+		 * @param {Object} params
+		 * @param {String} params.id
+		 * @param {Boolean} params.active
+		 */
+		updateToggleTooltips : function(params) {
+			if (params.active) {
+				$("#" + params.id).parent().addClass(
+						$.Cmdbuild.custom.commands.variables.BUTTONACTIVECLASS);
+			} else {
+				$("#" + params.id).parent().removeClass(
+						$.Cmdbuild.custom.commands.variables.BUTTONACTIVECLASS);
+			}
 		}
 
 	};
