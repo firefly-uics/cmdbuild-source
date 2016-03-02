@@ -14,7 +14,7 @@
 			});
 		},
 		applyNavigationTree : function(param) {
-			var treeValue = $("#navigationTrees").val();
+			var treeValue = param.treeValue;
 			console.log(treeValue);
 			$.Cmdbuild.custom.commands.navigateOnNode({});
 		},

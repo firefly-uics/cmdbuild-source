@@ -16,17 +16,19 @@
 			});
 			return htmlStr;
 		},
-		navigationTreesCombo : function(xmlElement) {
+		navigationTreesBtnMenu : function(xmlElement) {
 			var htmlStr = "";
 			htmlStr += $.Cmdbuild.elementsManager.insertLabel(xmlElement);
-			var text = $.Cmdbuild.elementsManager.getText(xmlElement);
 			var id = $.Cmdbuild.elementsManager.getXmlElementId(xmlElement);
 			var params = $.Cmdbuild.elementsManager.getParams(xmlElement);
-			htmlStr += "<span id='margin10'>" + text + "</span>";
-			htmlStr += "<select id='" + id + "'>";
-			htmlStr += "</select>";
+			var tooltip = "";
+			if (params && params.tooltip) {
+				tooltip = params.tooltip;
+			}
+			htmlStr += '<span class="btn-navigationtree" id="' + id + '" title="' + tooltip + '"></span>';
+			htmlStr += '<div class="subGraphMenu" id="navigationTreesBtnMenu_menu"></div>';
 			$.Cmdbuild.scriptsManager.push({
-				script : "navigationTreesCombo",
+				script : "navigationTreesBtnMenu",
 				id : id
 			});
 			return htmlStr;
@@ -71,6 +73,19 @@
 			}
 			$.Cmdbuild.scriptsManager.push({
 				script : "buttonset",
+				id : id
+			});
+			return htmlStr;
+		},
+		slider : function(xmlElement) {
+			var htmlStr = "";
+			htmlStr += $.Cmdbuild.elementsManager.insertLabel(xmlElement);
+			var id = $.Cmdbuild.elementsManager.getXmlElementId(xmlElement);
+			var params = $.Cmdbuild.elementsManager.getParams(xmlElement);
+			var change = $.Cmdbuild.utilities.getEventLikeString(xmlElement, "onChange");
+			htmlStr += '<div id="' + id + '" ' + change + ' />';
+			$.Cmdbuild.scriptsManager.push({
+				script : "slider",
 				id : id
 			});
 			return htmlStr;

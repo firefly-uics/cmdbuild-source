@@ -96,6 +96,13 @@
 							</onClick>
 						</span>
 					</div>
+					<div class="toolbarButton border-box">
+						<navigationTreesBtnMenu class="subGraph" id="navigationTreeCombo">
+							<params>
+								<tooltip>Choose navigation tree</tooltip>
+							</params>
+						</navigationTreesBtnMenu>
+					</div>
 				</div>
 			</div>
 			<!-- BODY -->
@@ -182,14 +189,12 @@
 								<type>displayLabel</type>
 							</onChange>
 						</buttonset>
-					<navigationTreesCombo id="navigationTrees" label="Navigation" >
-					</navigationTreesCombo>
-					<button id="applyNavigationTree" text="apply">
-						<onClick>
-							<command>applyNavigationTree</command>
-							<control>navigationTrees</control>
-						</onClick>
-					</button>
+					</div>
+					<div class="toolbarSeparator"></div>
+					<div class="footerToolbarItem">
+						<div class="openLevelsSliderContainer">
+							<slider label="" id="openLevelsSlider" class=""></slider>
+						</div>
 					</div>
 				</div>
 			</div>
