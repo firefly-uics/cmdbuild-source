@@ -1,19 +1,9 @@
-(function() {
+(function () {
 
 	Ext.define('CMDBuild.view.common.field.HtmlEditor', {
 		extend: 'Ext.ux.form.field.TinyMCE',
 
 		requires: ['CMDBuild.core.Utils'],
-
-		/**
-		 * @cfg {Boolean}
-		 */
-		dirty: false,
-
-		/**
-		 * @cfg {Mixed} object or string
-		 */
-		tinyMCEConfig: undefined,
 
 		/**
 		 * Custom CMDBuild buttons configurations to use
@@ -63,32 +53,35 @@
 			}
 		},
 
+		/**
+		 * @cfg {Boolean}
+		 */
+		dirty: false,
+
+		/**
+		 * @cfg {Object or String}
+		 */
+		tinyMCEConfig: 'standard',
+
 		considerAsFieldToDisable: true,
 		minHeight: 150,
 
-		initComponent: function() {
-			// Setup TinyMCE configuration from string identifier
-			if (
-				Ext.isEmpty(this.tinyMCEConfig)
-				|| typeof this.tinyMCEConfig == 'string'
-			) {
-				var validIdentifiers = ['full', 'standard'];
+		initComponent: function () {
+			var validIdentifiers = ['full', 'standard'];
 
-				if(!Ext.Array.contains(validIdentifiers, this.tinyMCEConfig))
-					this.tinyMCEConfig = 'standard';
+			// Check and setup TinyMCE configuration from string identifier
+			if (Ext.isEmpty(this.tinyMCEConfig) || Ext.isString(this.tinyMCEConfig) || !Ext.Array.contains(validIdentifiers, this.tinyMCEConfig))
+				this.tinyMCEConfig = 'standard';
 
-				this.tinyMCEConfig = Ext.Object.merge(this.customConfigurations['common'], this.customConfigurations[this.tinyMCEConfig]);
-			}
+			this.tinyMCEConfig = Ext.Object.merge(this.customConfigurations['common'], this.customConfigurations[this.tinyMCEConfig]);
 
 			// Language setup
 			this.tinyMCEConfig.language = CMDBuild.configuration.localization.get(CMDBuild.core.constants.Proxy.LANGUAGE);
 
 			// Silver editor color setup for Administration
-			if (Ext.isEmpty(CMDBuild.core.Management)) {
-				var extVersion = CMDBuild.core.Utils.getExtJsVersion();
-
-				this.tinyMCEConfig.popup_css = 'javascripts/ext-' + extVersion + '-ux/form/field/tinymce/themes/advanced/skins/extjs/dialog_silver.css';
-			}
+			if (Ext.isEmpty(CMDBuild.core.Management))
+				this.tinyMCEConfig.popup_css = 'javascripts/ext-'
+					+ CMDBuild.core.Utils.getExtJsVersion() + '-ux/form/field/tinymce/themes/advanced/skins/extjs/dialog_silver.css';
 
 			// Blue editor color setup for Management
 			if (Ext.isEmpty(CMDBuild.core.Administration))
@@ -96,30 +89,39 @@
 
 			this.callParent(arguments);
 
-			this.on('change', function() {
+			this.on('change', function (field, newValue, oldValue, eOpts) {
 				this.setDirty(); // Set as dirty
 			}, this);
 		},
 
-		initValue: function() {
+		initValue: function () {
 			this.dirty = false;
 		},
 
 		/**
 		 * Dirty functionality implementation
+		 *
+		 * @returns {Boolean}
 		 */
-		isDirty: function() {
+		isDirty: function () {
 			if (!Ext.isEmpty(this.getEditor()))
 				try { // Avoids a getBody of null error
 					return this.getEditor().isDirty() || this.dirty;
-				} catch(e) {}
+				} catch (e) {}
 
 			return false;
 		},
 
-		setDirty: function() {
+		setDirty: function () {
 			this.dirty = true;
-		}
+		},
+
+		/**
+		 * Override to avoid event suspend that deny correct editor rendering
+		 *
+		 * @override
+		 */
+		suspendEvents: undefined
 	});
 
 })();
