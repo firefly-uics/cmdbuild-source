@@ -272,7 +272,15 @@ a {
 .footerToolbarItem .ui-button-text-only .ui-button-text {
 	padding: .2em .5em;
 }
-
+.openLevelsSliderContainer {
+	padding: 7px 7px;
+}
+#openLevelsSlider {
+	width: 85px;
+}
+#openLevelsSlider span {
+	outline: none;
+}
 /**
  * BODY TOOLBAR
  */

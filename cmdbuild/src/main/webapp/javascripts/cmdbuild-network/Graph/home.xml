@@ -190,6 +190,12 @@
 							</onChange>
 						</buttonset>
 					</div>
+					<div class="toolbarSeparator"></div>
+					<div class="footerToolbarItem">
+						<div class="openLevelsSliderContainer">
+							<slider label="" id="openLevelsSlider" class=""></slider>
+						</div>
+					</div>
 				</div>
 			</div>
 		</div>

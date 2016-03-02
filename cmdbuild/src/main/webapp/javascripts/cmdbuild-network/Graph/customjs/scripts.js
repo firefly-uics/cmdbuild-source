@@ -24,6 +24,9 @@
 		},
 		buttonset : function(param) {
 			$("#" + param.id).buttonset();
+		},
+		slider : function(param) {
+			$("#" + param.id).slider();
 		}
 	};
 	$.Cmdbuild.custom.scripts = scripts;
