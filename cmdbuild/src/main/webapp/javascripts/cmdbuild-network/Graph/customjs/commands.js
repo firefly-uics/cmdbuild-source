@@ -18,8 +18,9 @@
 		},
 		applyNavigationTree : function(param) {
 			var treeValue = param.treeValue;
-			console.log(treeValue);
-			$.Cmdbuild.custom.commands.navigateOnNode({});
+			$.Cmdbuild.customvariables.cacheTrees.setCurrentNavigationTree(treeValue, function() {
+				$.Cmdbuild.custom.commands.navigateOnNode({});				
+			}, this);
 		},
 		applyFilters : function(param) {
 			var formObject = $.Cmdbuild.dataModel.forms[param.filterByClass];
@@ -64,7 +65,6 @@
 									_id : key,
 									description : key
 								});
-						console.log("removeEdge for ", key);
 						$.Cmdbuild.customvariables.model.removeEdge({
 							domainId : key
 						});

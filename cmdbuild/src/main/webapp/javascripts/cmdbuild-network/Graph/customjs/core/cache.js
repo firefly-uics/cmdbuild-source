@@ -8,6 +8,7 @@
 	};
 	var cacheTrees = function() {
 		this.data = {};
+		this.currentNavigationTree = null;
 		this.getFilterEqual = function(classId) {
 			var filter = {
 				"attribute" : {
@@ -42,17 +43,13 @@
 			$.Cmdbuild.g3d.proxy.getDomainTrees({
 				filter : filterEqual
 			}, function(treesWithClassLikeRoot) {
-				this.getAllTrees(0, treesWithClassLikeRoot, function() {
 					$.Cmdbuild.g3d.proxy.getDomainTrees({
 						filter : filterContain
 					}, function(treesAboutClass) {
-						this.getAllTrees(0, treesAboutClass, function() {
 							this.data[classId] = this.merge(
 									treesWithClassLikeRoot, treesAboutClass);
 							callback.apply(callbackScope, []);
-						}, this);
 					}, this);
-				}, this);
 			}, this);
 		};
 		this.merge = function(ar1, ar2) {
@@ -85,16 +82,17 @@
 			}
 			return [];
 		};
-		this.getAllTrees = function(index, trees, callback, callbackScope) {
-			if (index >= trees.length) {
-				callback.apply(callbackScope, []);
-				return;
+		this.setCurrentNavigationTree = function(navigationTree, callback, callbackScope) {
+			if (navigationTree) {
+				$.Cmdbuild.g3d.proxy.getDomainTree(navigationTree, function(
+						tree) {
+					this.currentNavigationTree = tree;
+					callback.apply(callbackScope, []);
+				}, this);
 			}
-			var tree = trees[index];
-			$.Cmdbuild.g3d.proxy.getDomainTree(tree._id, function(singleTree) {
-				this.data[tree._id] = singleTree;
-				this.getAllTrees(++index, trees, callback, callbackScope);
-			}, this);
+		};
+		this.getCurrentNavigationTree = function() {
+			return this.currentNavigationTree;
 		};
 	};
 	var cacheProcesses = function() {
