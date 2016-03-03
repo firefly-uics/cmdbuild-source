@@ -1,5 +1,6 @@
 (function($) {
-	function configureFromServer(configuration, graphConfiguration) {// graph, server
+	function configureFromServer(configuration, graphConfiguration) {// graph,
+		// server
 		configuration.nodeTooltipEnabled = graphConfiguration.nodeTooltipEnabled;
 		configuration.edgeTooltipEnabled = graphConfiguration.edgeTooltipEnabled;
 		configuration.stepRadius = graphConfiguration.stepRadius;
@@ -9,9 +10,10 @@
 		configuration.explosionLevels = graphConfiguration.baseLevel;
 		configuration.clusteringThreshold = graphConfiguration.clusteringThreshold;
 		configuration.expandingThreshold = graphConfiguration.expandingThreshold;
-		
-		configuration.viewPointDistance = $.Cmdbuild.g3d.constants.RANGE_VIEWPOINTDISTANCE / 2 - graphConfiguration.viewPointDistance;
-		//configuration.camera.position.z = graphConfiguration.viewPointHeight;
+
+		configuration.viewPointDistance = $.Cmdbuild.g3d.constants.RANGE_VIEWPOINTDISTANCE
+				/ 2 - graphConfiguration.viewPointDistance;
+		// configuration.camera.position.z = graphConfiguration.viewPointHeight;
 	}
 	var INCLUDED_FILE = "NetworkConfigurationFile";
 	if (!$.Cmdbuild.g3d) {
@@ -36,9 +38,9 @@
 			this.observers.push(observer);
 		};
 		this.changed = function(params) {
-//			for (var i = 0; i < this.observers.length; i++) {
-//				this.observers[i].refreshOptions(params);
-//			}
+			// for (var i = 0; i < this.observers.length; i++) {
+			// this.observers[i].refreshOptions(params);
+			// }
 		};
 		this.init();
 	};
@@ -53,36 +55,29 @@
 		$.Cmdbuild.customvariables.options.explosionLevels = $.Cmdbuild.custom.configuration.explosionLevels;
 	};
 	$.Cmdbuild.g3d.Options.initFields = function() {
-		$("#explosionLevels").spinner("value",
-				$.Cmdbuild.custom.configuration.explosionLevels);
+		// $("#explosionLevels").spinner("value",
+		// $.Cmdbuild.custom.configuration.explosionLevels);
 
 	};
-	$.Cmdbuild.g3d.Options.loadConfiguration = function(configurationFile,
-			callback, callbackScope) {
-		$.Cmdbuild.g3d.Options
-				.loadJsonConfiguration(
-						configurationFile,
-						function(configuration) {
-							$.Cmdbuild.g3d.proxy
-									.getGraphConfiguration(
-											function(graphConfiguration) {
-												// CONFIGURATION:
-												// here the mixing between the
-												// Json properties and those
-												// defined
-												// in administration/setup
-												configureFromServer(configuration, graphConfiguration);
-												callback.apply(callbackScope,
-														[configuration]);
-											}, this);
-						}, this);
+	$.Cmdbuild.g3d.Options.loadConfiguration = function(callback, callbackScope) {
+		$.Cmdbuild.g3d.proxy.getGraphConfiguration(function(
+				graphConfiguration) {
+			// CONFIGURATION:
+			// here the mixing between the
+			// Json properties and those
+			// defined
+			// in administration/setup
+			console.log("graphConfiguration ", graphConfiguration);
+//			configureFromServer(configuration, graphConfiguration);
+			callback.apply(callbackScope, [ graphConfiguration ]);
+		}, this);
 	};
 	$.Cmdbuild.g3d.Options.loadJsonConfiguration = function(configurationFile,
 			callback, callbackScope) {
 		var fileName = $.Cmdbuild.appConfigUrl + configurationFile;
 		$.getJSON(fileName, {}, function(configuration) {
 			$.Cmdbuild.g3d.Options.includeFiles(configuration, function() {
-				callback.apply(callbackScope, [configuration]);
+				callback.apply(callbackScope, [ configuration ]);
 			}, this);
 		}, this);
 	};
@@ -92,20 +87,20 @@
 		for ( var key in configuration) {
 			if (configuration[key][INCLUDED_FILE]) {
 				filesToInclude.push({
-					key: key,
-					fileName: configuration[key][INCLUDED_FILE]
+					key : key,
+					fileName : configuration[key][INCLUDED_FILE]
 				});
 			}
 		}
 		$.Cmdbuild.g3d.Options.loadFiles(configuration, filesToInclude,
 				function() {
-					callback.apply(callbackScope, [configuration]);
+					callback.apply(callbackScope, [ configuration ]);
 				}, this);
 	};
 	$.Cmdbuild.g3d.Options.loadFiles = function(configuration, filesToInclude,
 			callback, callbackScope) {
 		if (filesToInclude.length === 0) {
-			callback.apply(callbackScope, [configuration]);
+			callback.apply(callbackScope, [ configuration ]);
 			return;
 		}
 		var file = filesToInclude[0];
@@ -115,7 +110,7 @@
 			configuration[file.key] = response;
 			$.Cmdbuild.g3d.Options.loadFiles(configuration, filesToInclude,
 					function() {
-						callback.apply(callbackScope, [configuration]);
+						callback.apply(callbackScope, [ configuration ]);
 					}, this);
 		}, this);
 	};
