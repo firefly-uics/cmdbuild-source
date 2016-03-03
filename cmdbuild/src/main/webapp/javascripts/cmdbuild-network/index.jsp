@@ -20,6 +20,7 @@
 				access_token: 'CMDBuildSessionToken',
 				customjs: [
 					"libraries/cytoscape.min.js",
+					"libraries/three.min.js",
 					"backend/CmdbuildModel.js",
 					"backend/ClassesNavigation.js",
 					"backend/ClassesFilter.js",
@@ -45,7 +46,6 @@
 					"classesGrid.js",
 					"selectedGrid.js",
 					"relationsGrid.js",
-					"three.min.js",
 					"scripts.js",
 					"tree.js",
 					"navigationTreesBtnMenu.js",
