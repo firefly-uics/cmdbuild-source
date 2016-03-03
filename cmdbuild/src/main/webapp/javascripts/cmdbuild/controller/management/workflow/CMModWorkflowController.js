@@ -256,16 +256,6 @@
 			) {
 				this.view.cardTabPanel.activeTabSet(danglingCard.activateFirstTab);
 			}
-
-			// History record save
-			CMDBuild.global.navigation.Chronology.cmfg('navigationChronologyRecordSave', {
-				moduleId: this.view.cmName,
-				entryType: {
-					description: _CMWFState.getProcessClassRef().get(CMDBuild.core.constants.Proxy.TEXT),
-					id: _CMWFState.getProcessClassRef().get(CMDBuild.core.constants.Proxy.ID),
-					object: _CMWFState.getProcessClassRef()
-				}
-			});
 		}
 	});
 

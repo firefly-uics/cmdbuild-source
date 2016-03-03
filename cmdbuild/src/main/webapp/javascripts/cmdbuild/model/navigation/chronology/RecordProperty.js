@@ -1,4 +1,4 @@
-(function() {
+(function () {
 
 	Ext.require('CMDBuild.core.constants.Proxy');
 
@@ -16,7 +16,7 @@
 		 *
 		 * @returns {Boolean}
 		 */
-		equals: function(record) {
+		equals: function (record) {
 			return (
 				Ext.getClassName(record) == Ext.getClassName(this)
 				&& this.get(CMDBuild.core.constants.Proxy.DESCRIPTION) == record.get(CMDBuild.core.constants.Proxy.DESCRIPTION)
@@ -29,7 +29,7 @@
 		 *
 		 * @returns {Boolean}
 		 */
-		isEmpty: function(attributeName) {
+		isEmpty: function (attributeName) {
 			if (!Ext.isEmpty(attributeName)) {
 				var requiredValue = this.get(attributeName);
 

@@ -1,4 +1,4 @@
-(function() {
+(function () {
 
 	Ext.require('CMDBuild.core.constants.Proxy');
 
@@ -19,7 +19,7 @@
 		 *
 		 * @override
 		 */
-		constructor: function(data) {
+		constructor: function (data) {
 			data = Ext.clone(data);
 			data[CMDBuild.core.constants.Proxy.DATE] = new Date();
 			data[CMDBuild.core.constants.Proxy.ENTRY_TYPE] = Ext.create('CMDBuild.model.navigation.chronology.RecordProperty', data[CMDBuild.core.constants.Proxy.ENTRY_TYPE]);
@@ -35,7 +35,7 @@
 		 *
 		 * @returns {Boolean}
 		 */
-		equals: function(record) {
+		equals: function (record) {
 			return (
 				Ext.getClassName(record) == Ext.getClassName(this)
 				&& this.get(CMDBuild.core.constants.Proxy.MODULE_ID) == record.get(CMDBuild.core.constants.Proxy.MODULE_ID)
@@ -53,11 +53,11 @@
 		 *
 		 * @override
 		 */
-		get: function(attributePath) {
+		get: function (attributePath) {
 			var requiredAttribute = this;
 
 			if (!Ext.isEmpty(attributePath) && Ext.isArray(attributePath)) {
-				Ext.Array.forEach(attributePath, function(attributeName, i, allAttributeNames) {
+				Ext.Array.forEach(attributePath, function (attributeName, i, allAttributeNames) {
 					if (
 						!Ext.isEmpty(attributeName) && Ext.isString(attributeName)
 						&& !Ext.isEmpty(requiredAttribute) && Ext.isObject(requiredAttribute) && Ext.isFunction(requiredAttribute.get)
@@ -77,7 +77,7 @@
 		 *
 		 * @returns {Boolean}
 		 */
-		isEmpty: function(attributePath) {
+		isEmpty: function (attributePath) {
 			if (!Ext.isEmpty(attributePath)) {
 				var requiredValue = this.get(attributePath);
 

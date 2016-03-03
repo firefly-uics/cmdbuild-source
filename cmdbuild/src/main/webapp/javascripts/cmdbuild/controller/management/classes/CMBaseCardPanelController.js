@@ -112,7 +112,7 @@
 					object: _CMCardModuleState.entryType
 				},
 				item: {
-					description: card.get('Description') || card.get('Code'),
+					description: card.get('Description') || card.raw['Description'] || card.get('Code') || card.raw['Code'],
 					id: card.get(CMDBuild.core.constants.Proxy.ID),
 					object: card
 				}
