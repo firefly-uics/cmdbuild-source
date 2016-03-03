@@ -1,4 +1,4 @@
-(function() {
+(function () {
 
 	Ext.define('CMDBuild.view.administration.report.jasper.form.FormPanel', {
 		extend: 'Ext.form.Panel',
@@ -27,9 +27,8 @@
 		cls: 'x-panel-body-default-framed cmdb-border-top',
 		frame: false,
 		layout: 'card',
-		overflowY: 'auto',
 
-		initComponent: function() {
+		initComponent: function () {
 			Ext.apply(this, {
 				dockedItems: [
 					Ext.create('Ext.toolbar.Toolbar', {
@@ -41,16 +40,16 @@
 								text: CMDBuild.Translation.modifyReport,
 								scope: this,
 
-								handler: function(button, e) {
-									this.delegate.cmfg('onReportsJasperModifyButtonClick');
+								handler: function (button, e) {
+									this.delegate.cmfg('onReportJasperModifyButtonClick');
 								}
 							}),
 							Ext.create('CMDBuild.core.buttons.iconized.Delete', {
 								text: CMDBuild.Translation.removeReport,
 								scope: this,
 
-								handler: function(button, e) {
-									this.delegate.cmfg('onReportsJasperRemoveButtonClick');
+								handler: function (button, e) {
+									this.delegate.cmfg('onReportJasperRemoveButtonClick');
 								}
 							})
 						]
@@ -70,15 +69,15 @@
 							Ext.create('CMDBuild.core.buttons.text.Save', {
 								scope: this,
 
-								handler: function(button, e) {
-									this.delegate.cmfg('onReportsJasperSaveButtonClick');
+								handler: function (button, e) {
+									this.delegate.cmfg('onReportJasperSaveButtonClick');
 								}
 							}),
 							Ext.create('CMDBuild.core.buttons.text.Abort', {
 								scope: this,
 
-								handler: function(button, e) {
-									this.delegate.cmfg('onReportsJasperAbortButtonClick');
+								handler: function (button, e) {
+									this.delegate.cmfg('onReportJasperAbortButtonClick');
 								}
 							})
 						]

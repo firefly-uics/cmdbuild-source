@@ -1,4 +1,4 @@
-(function() {
+(function () {
 
 	Ext.define('CMDBuild.view.administration.report.ReportView', {
 		extend: 'Ext.form.Panel',

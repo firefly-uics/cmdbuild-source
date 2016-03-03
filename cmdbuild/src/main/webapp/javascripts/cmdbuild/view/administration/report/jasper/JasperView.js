@@ -1,4 +1,4 @@
-(function() {
+(function () {
 
 	Ext.define('CMDBuild.view.administration.report.jasper.JasperView', {
 		extend: 'Ext.panel.Panel',
@@ -24,7 +24,7 @@
 		frame: false,
 		layout: 'border',
 
-		initComponent: function() {
+		initComponent: function () {
 			Ext.apply(this, {
 				dockedItems: [
 					Ext.create('Ext.toolbar.Toolbar', {
@@ -36,8 +36,8 @@
 								text: CMDBuild.Translation.addReport,
 								scope: this,
 
-								handler: function(button, e) {
-									this.delegate.cmfg('onReportsJasperAddButtonClick');
+								handler: function (button, e) {
+									this.delegate.cmfg('onReportJasperAddButtonClick');
 								}
 							})
 						]
@@ -60,8 +60,8 @@
 		},
 
 		listeners: {
-			show: function(panel, eOpts) {
-				this.delegate.cmfg('onReportsJasperShow');
+			show: function (panel, eOpts) {
+				this.delegate.cmfg('onReportJasperShow');
 			}
 		}
 	});

@@ -60,7 +60,7 @@
 								scope: this,
 
 								handler: function(grid, rowIndex, colIndex, node, e, record, rowNode) {
-									this.delegate.cmfg('onReportsJasperGenerateSqlButtonClick', record);
+									this.delegate.cmfg('onReportJasperGenerateSqlButtonClick', record);
 								}
 							}),
 							Ext.create('CMDBuild.core.buttons.fileTypes.Zip', {
@@ -69,7 +69,7 @@
 								scope: this,
 
 								handler: function(grid, rowIndex, colIndex, node, e, record, rowNode) {
-									this.delegate.cmfg('onReportsJasperGenerateZipButtonClick', record);
+									this.delegate.cmfg('onReportJasperGenerateZipButtonClick', record);
 								}
 							})
 						]
@@ -83,11 +83,11 @@
 
 		listeners: {
 			itemdblclick: function(grid, record, item, index, e, eOpts) {
-				this.delegate.cmfg('onReportsJasperItemDoubleClick');
+				this.delegate.cmfg('onReportJasperItemDoubleClick');
 			},
 
 			select: function(row, record, index) {
-				this.delegate.cmfg('onReportsJasperRowSelected');
+				this.delegate.cmfg('onReportJasperRowSelected');
 			}
 		}
 	});

@@ -1,4 +1,4 @@
-(function() {
+(function () {
 
 	Ext.define('CMDBuild.view.administration.report.jasper.form.Step1Panel', {
 		extend: 'Ext.form.Panel',
@@ -35,6 +35,7 @@
 		 */
 		reportId: undefined,
 
+		bodyCls: 'cmdb-gray-panel',
 		border: false,
 		cls: 'x-panel-body-default-framed',
 		encoding: 'multipart/form-data',
@@ -44,10 +45,10 @@
 
 		layout: {
 			type: 'vbox',
-			align:'stretch'
+			align: 'stretch'
 		},
 
-		initComponent: function() {
+		initComponent: function () {
 			Ext.apply(this, {
 				items: [
 					this.name = Ext.create('Ext.form.field.Text',{

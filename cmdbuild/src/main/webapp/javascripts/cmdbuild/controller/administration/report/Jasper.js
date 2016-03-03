@@ -1,4 +1,4 @@
-(function() {
+(function () {
 
 	Ext.define('CMDBuild.controller.administration.report.Jasper', {
 		extend: 'CMDBuild.controller.common.abstract.Base',
@@ -22,15 +22,15 @@
 		 * @cfg {Array}
 		 */
 		cmfgCatchedFunctions: [
-			'onReportsJasperAbortButtonClick',
-			'onReportsJasperAddButtonClick',
-			'onReportsJasperGenerateSqlButtonClick',
-			'onReportsJasperGenerateZipButtonClick',
-			'onReportsJasperModifyButtonClick = onReportsJasperItemDoubleClick',
-			'onReportsJasperRemoveButtonClick',
-			'onReportsJasperRowSelected',
-			'onReportsJasperSaveButtonClick',
-			'onReportsJasperShow'
+			'onReportJasperAbortButtonClick',
+			'onReportJasperAddButtonClick',
+			'onReportJasperGenerateSqlButtonClick',
+			'onReportJasperGenerateZipButtonClick',
+			'onReportJasperModifyButtonClick = onReportJasperItemDoubleClick',
+			'onReportJasperRemoveButtonClick',
+			'onReportJasperRowSelected',
+			'onReportJasperSaveButtonClick',
+			'onReportJasperShow'
 		],
 
 		/**
@@ -78,7 +78,7 @@
 		 *
 		 * @override
 		 */
-		constructor: function(configurationObject) {
+		constructor: function (configurationObject) {
 			this.callParent(arguments);
 
 			this.view = Ext.create('CMDBuild.view.administration.report.jasper.JasperView', { delegate: this });
@@ -91,27 +91,27 @@
 		/**
 		 * @private
 		 */
-		import: function() {
+		import: function () {
 			CMDBuild.core.proxy.report.Jasper.import({
 				form: this.form.step2Panel.getForm(),
 				scope: this,
-				failure: function(response, options, decodedResponse) {
+				failure: function (response, options, decodedResponse) {
 					CMDBuild.core.Message.error(CMDBuild.Translation.errors.error_message, CMDBuild.Translation.errors.reportsImportError, false);
 				},
 				success: this.success
 			});
 		},
 
-		onReportsJasperAbortButtonClick: function() {
+		onReportJasperAbortButtonClick: function () {
 			if (!Ext.isEmpty(this.selectedReport)) {
-				this.onReportsJasperRowSelected();
+				this.onReportJasperRowSelected();
 			} else {
 				this.form.reset();
 				this.form.setDisabledModify(true, true, true);
 			}
 		},
 
-		onReportsJasperAddButtonClick: function() {
+		onReportJasperAddButtonClick: function () {
 			this.grid.getSelectionModel().deselectAll();
 
 			this.selectedReport = null;
@@ -126,7 +126,7 @@
 		 *
 		 * @param {CMDBuild.model.report.Grid} record
 		 */
-		onReportsJasperGenerateSqlButtonClick: function(record) {
+		onReportJasperGenerateSqlButtonClick: function (record) {
 			var sqlWindow = Ext.create('CMDBuild.core.PopupWindow', {
 				autoScroll: true,
 				border: false,
@@ -157,7 +157,7 @@
 
 						items: [
 							Ext.create('CMDBuild.core.buttons.text.Close', {
-								handler: function(button, e) {
+								handler: function (button, e) {
 									sqlWindow.destroy();
 								}
 							})
@@ -172,7 +172,7 @@
 		 *
 		 * @param {CMDBuild.model.report.Grid} record
 		 */
-		onReportsJasperGenerateZipButtonClick: function(record) {
+		onReportJasperGenerateZipButtonClick: function (record) {
 			var params = {};
 			params[CMDBuild.core.constants.Proxy.ID] = record.get(CMDBuild.core.constants.Proxy.ID);
 			params[CMDBuild.core.constants.Proxy.TYPE] = record.get(CMDBuild.core.constants.Proxy.TYPE);
@@ -181,7 +181,7 @@
 			CMDBuild.core.proxy.report.Jasper.create({
 				params: params,
 				scope: this,
-				success: function(response, options, decodedResponse) {
+				success: function (response, options, decodedResponse) {
 					params = {};
 					params[CMDBuild.core.constants.Proxy.FORCE_DOWNLOAD_PARAM_KEY] = true;
 
@@ -194,18 +194,18 @@
 			});
 		},
 
-		onReportsJasperModifyButtonClick: function() {
+		onReportJasperModifyButtonClick: function () {
 			this.form.setDisabledModify(false);
 		},
 
-		onReportsJasperRemoveButtonClick: function() {
+		onReportJasperRemoveButtonClick: function () {
 			Ext.Msg.show({
 				title: CMDBuild.Translation.common.confirmpopup.title,
 				msg: CMDBuild.Translation.common.confirmpopup.areyousure,
 				buttons: Ext.Msg.YESNO,
 				scope: this,
 
-				fn: function(buttonId, text, opt) {
+				fn: function (buttonId, text, opt) {
 					if (buttonId == 'yes')
 						this.removeItem();
 				}
@@ -215,7 +215,7 @@
 		/**
 		 * TODO: waiting for refactor (crud)
 		 */
-		onReportsJasperRowSelected: function() {
+		onReportJasperRowSelected: function () {
 			this.selectedReport = this.grid.getSelectionModel().getSelection()[0];
 
 			this.form.reset();
@@ -232,7 +232,7 @@
 			this.form.setDisabledModify(true, true);
 		},
 
-		onReportsJasperSaveButtonClick: function() {
+		onReportJasperSaveButtonClick: function () {
 			if (this.form.getLayout().getActiveItem() == this.form.step1Panel) { // We are on step1
 				var params = {};
 				params[CMDBuild.core.constants.Proxy.NAME] = this.form.step1Panel.name.getValue(); // TODO: waiting for refactor (read title parameter, write as name)
@@ -242,10 +242,10 @@
 					form: this.form.step1Panel.getForm(),
 					params: params,
 					scope: this,
-					failure: function(response, options, decodedResponse) {
+					failure: function (response, options, decodedResponse) {
 						CMDBuild.core.Message.error(CMDBuild.Translation.errors.error_message, CMDBuild.Translation.errors.reportsAnalizeError, false);
 					},
-					success: function(response, options, decodedResponse) {
+					success: function (response, options, decodedResponse) {
 						if (Ext.isBoolean(decodedResponse.skipSecondStep) && decodedResponse.skipSecondStep) {
 							CMDBuild.core.proxy.report.Jasper.save({
 								scope: this,
@@ -267,10 +267,10 @@
 			}
 		},
 
-		onReportsJasperShow: function() {
+		onReportJasperShow: function () {
 			this.grid.getStore().load({
 				scope: this,
-				callback: function(records, operation, success) {
+				callback: function (records, operation, success) {
 					if (!this.grid.getSelectionModel().hasSelection())
 						this.grid.getSelectionModel().select(0, true);
 				}
@@ -280,7 +280,7 @@
 		/**
 		 * @private
 		 */
-		removeItem: function() {
+		removeItem: function () {
 			if (!Ext.isEmpty(this.selectedReport)) {
 				var params = {};
 				params[CMDBuild.core.constants.Proxy.ID] = this.selectedReport.get(CMDBuild.core.constants.Proxy.ID);
@@ -288,21 +288,21 @@
 				CMDBuild.core.proxy.report.Jasper.remove({
 					params: params,
 					scope: this,
-					success: function(response, options, decodedResponse) {
+					success: function (response, options, decodedResponse) {
 						this.form.reset();
 						this.form.getLayout().setActiveItem(0);
 
 						// Reset server session
 						CMDBuild.core.proxy.report.Jasper.resetSession({
 							scope: this,
-							success: function(response, options, decodedResponse) {
+							success: function (response, options, decodedResponse) {
 								this.form.getLayout().setActiveItem(0);
 							}
 						});
 
 						this.grid.getStore().load({
 							scope: this,
-							callback: function(records, operation, success) {
+							callback: function (records, operation, success) {
 								if (success) {
 									this.grid.getSelectionModel().select(0, true);
 
@@ -324,17 +324,17 @@
 		 *
 		 * @private
 		 */
-		success: function(response, options, decodedResponse) {
+		success: function (response, options, decodedResponse) {
 			this.grid.getStore().load({
 				scope: this,
-				callback: function(records, operation, success) {
+				callback: function (records, operation, success) {
 					if (success) {
 						this.form.step2Panel.removeAll();
 
 						// Reset server session
 						CMDBuild.core.proxy.report.Jasper.resetSession({
 							scope: this,
-							success: function(response, options, decodedResponse) {
+							success: function (response, options, decodedResponse) {
 								this.form.getLayout().setActiveItem(0);
 							}
 						});
@@ -361,7 +361,7 @@
 			 *
 			 * TODO: this functionality should be refactored because it's not so safe to apply server response like this way
 			 */
-			setFormDetails: function(results) {
+			setFormDetails: function (results) {
 				delete results.success; // Delete unwanted properties
 
 				this.duplicateimages = false; // Because it was overridden by the apply only if is true
@@ -395,9 +395,9 @@
 			 *
 			 * @private
 			 */
-			buildFields: function(refer, namePrefix) {
+			buildFields: function (refer, namePrefix) {
 				if (!Ext.isEmpty(refer) && Ext.isArray(refer)) {
-					Ext.Array.forEach(refer, function(image, i, allImages) {
+					Ext.Array.forEach(refer, function (image, i, allImages) {
 						if (!Ext.isEmpty(image[CMDBuild.core.constants.Proxy.NAME])) {
 							this.form.step2Panel.add(
 								Ext.create('Ext.form.field.File', {
