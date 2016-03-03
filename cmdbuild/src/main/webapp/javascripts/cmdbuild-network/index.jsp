@@ -57,6 +57,7 @@
 					"core/Cytoscape.js",
 					"core/Selected.js",
 					"core/Options.js",
+					"core/navigationManager.js",
 					"views/viewer/Viewer.js",
 					"views/viewer/ViewerUtilities.js",
 					"views/viewer/Camera.js",

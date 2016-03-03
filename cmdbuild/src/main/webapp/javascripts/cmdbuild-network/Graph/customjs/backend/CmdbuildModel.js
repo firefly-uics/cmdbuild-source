@@ -34,6 +34,7 @@
 		edges : []
 	};
 	var CmdbuildModel = function() {
+		this.navigationTree = undefined;
 		this.setModel = function(model) {
 			this.model = model;
 		};
@@ -105,7 +106,22 @@
 			this.getAllDomains(node, classId, id, domainList, callback,
 					callbackScope);
 		};
-		this.filteredDomains = function(domainList, classId) {
+		this.filteredDomains = function(node, domainList, classId) {
+			//-------------------------------------
+			var navigationTree = $.Cmdbuild.customvariables.cacheTrees.getCurrentNavigationTree();
+			if (navigationTree) {
+				var navigationManager = new $.Cmdbuild.g3d.navigationManager(navigationTree);
+				var path = this.model.pathClasses([], node);
+				var domains = navigationManager.getClassPathInTree(path);
+				var ret = [];
+				for (var i = 0; domains && i < domains.length; i++) {
+					var domain = $.Cmdbuild.customvariables.cacheDomains.getDomain(domains[i].metadata.domain);
+					ret.push(domain);
+				}
+				return ret; // this overrides other filters on domains
+			}
+			//-------------------------------------
+			
 			if (!domainList) {
 				return null;
 			}
@@ -126,7 +142,7 @@
 				edges : []
 			};
 			var configuration = $.Cmdbuild.custom.configuration;
-			var filteredDomains = this.filteredDomains(
+			var filteredDomains = this.filteredDomains(node,
 					configuration.filterClassesDomains, classId);
 			if (filteredDomains) {
 				this.getAllRelations(node, filteredDomains, domainList,
