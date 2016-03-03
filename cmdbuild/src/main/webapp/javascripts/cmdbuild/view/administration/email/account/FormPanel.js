@@ -30,7 +30,6 @@
 		border: false,
 		cls: 'x-panel-body-default-framed cmdb-border-top',
 		frame: false,
-		overflowY: 'auto',
 
 		layout: 'hbox',
 
@@ -100,6 +99,7 @@
 				items: [
 					Ext.create('Ext.container.Container', {
 						flex: 1,
+						overflowY: 'auto',
 
 						layout: {
 							type: 'vbox',
@@ -160,6 +160,7 @@
 					{ xtype: 'splitter' },
 					Ext.create('Ext.container.Container', {
 						flex: 1,
+						overflowY: 'auto',
 
 						layout: {
 							type: 'vbox',
