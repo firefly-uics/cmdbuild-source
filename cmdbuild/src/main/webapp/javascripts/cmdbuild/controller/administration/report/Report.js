@@ -1,4 +1,4 @@
-(function() {
+(function () {
 
 	Ext.define('CMDBuild.controller.administration.report.Report', {
 		extend: 'CMDBuild.controller.common.abstract.Base',
@@ -34,10 +34,11 @@
 
 		/**
 		 * @param {Object} configurationObject
+		 * @param {CMDBuild.controller.common.MainViewport} configurationObject.parentDelegate
 		 *
 		 * @override
 		 */
-		constructor: function(configurationObject) {
+		constructor: function (configurationObject) {
 			this.callParent(arguments);
 
 			this.view = Ext.create('CMDBuild.view.administration.report.ReportView', { delegate: this });
@@ -50,7 +51,7 @@
 		 *
 		 * @override
 		 */
-		onReportModuleInit: function(node) {
+		onReportModuleInit: function (node) {
 			if (!Ext.Object.isEmpty(node)) {
 				this.view.removeAll(true);
 
