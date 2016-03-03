@@ -18,6 +18,7 @@
 			'mainViewportAccordionControllerExpand',
 			'mainViewportAccordionControllerGet',
 			'mainViewportAccordionControllerUpdateStore',
+			'mainViewportAccordionControllerWithNodeWithIdGet',
 			'mainViewportAccordionDeselect',
 			'mainViewportAccordionIsCollapsed',
 			'mainViewportAccordionSetDisabled',
@@ -176,6 +177,34 @@
 			},
 
 			/**
+			 * Returns first accordion witch contains a node with give id
+			 *
+			 * @param {String} id
+			 *
+			 * @return {Mixed or null} searchedAccordionController
+			 */
+			mainViewportAccordionControllerWithNodeWithIdGet: function (id) {
+				var searchedAccordionController = this.accordionControllerExpandedGet();
+
+				// First search in expanded accordion
+				if (!Ext.isEmpty(searchedAccordionController) && !Ext.isEmpty(searchedAccordionController.cmfg('accordionNodeByIdGet', id)))
+					return searchedAccordionController;
+
+				// Then in other ones
+				searchedAccordionController = null;
+
+				Ext.Object.each(this.accordionControllers, function (identifier, accordionController, myself) {
+					if (!Ext.isEmpty(accordionController) && !Ext.isEmpty(accordionController.cmfg('accordionNodeByIdGet', id))) {
+						searchedAccordionController = accordionController;
+
+						return false;
+					}
+				}, this);
+
+				return searchedAccordionController;
+			},
+
+			/**
 			 * Forwarder method
 			 *
 			 * @param {Object} parameters
@@ -226,36 +255,6 @@
 
 					this.cmfg('mainViewportAccordionControllerGet', parameters.identifier).getView().setDisabled(parameters.state);
 				}
-			},
-
-			/**
-			 * Returns first accordion witch contains a node with give id
-			 *
-			 * @param {String} id
-			 *
-			 * @return {Mixed or null} searchedAccordionController
-			 *
-			 * @private
-			 */
-			accordionControllerWithNodeWithIdGet: function (id) {
-				var searchedAccordionController = this.accordionControllerExpandedGet();
-
-				// First search in expanded accordion
-				if (!Ext.isEmpty(searchedAccordionController) && !Ext.isEmpty(searchedAccordionController.cmfg('accordionNodeByIdGet', id)))
-					return searchedAccordionController;
-
-				// Then in other ones
-				searchedAccordionController = null;
-
-				Ext.Object.each(this.accordionControllers, function (identifier, accordionController, myself) {
-					if (!Ext.isEmpty(accordionController) && !Ext.isEmpty(accordionController.cmfg('accordionNodeByIdGet', id))) {
-						searchedAccordionController = accordionController;
-
-						return false;
-					}
-				}, this);
-
-				return searchedAccordionController;
 			},
 
 			/**
@@ -340,11 +339,11 @@
 			) {
 				parameters.activateFirstTab = Ext.isEmpty(parameters.activateFirstTab) ? true : parameters.activateFirstTab;
 
-				var accordionController = this.accordionControllerWithNodeWithIdGet(parameters['IdClass']);
+				var accordionController = this.cmfg('mainViewportAccordionControllerWithNodeWithIdGet', parameters['IdClass']);
 
 				this.danglingCardSet(parameters);
 
-				if (!Ext.isEmpty(accordionController)) {
+				if (!Ext.isEmpty(accordionController) && Ext.isFunction(accordionController.cmfg)) {
 					accordionController.cmfg('accordionDeselect'); // Instruction required or selection doesn't work if exists another selection
 					accordionController.cmfg('accordionExpand');
 					accordionController.cmfg('accordionSelectNodeById', parameters['IdClass']);
@@ -394,7 +393,7 @@
 				CMDBuild.configuration.runtime.get(CMDBuild.core.constants.Proxy.STARTING_CLASS_ID) // Group's starting class
 				|| CMDBuild.configuration.instance.get(CMDBuild.core.constants.Proxy.STARTING_CLASS) // Main configuration's starting class
 			);
-			var accordionWithNodeController = Ext.isEmpty(startingClassId) ? null : this.accordionControllerWithNodeWithIdGet(startingClassId);
+			var accordionWithNodeController = Ext.isEmpty(startingClassId) ? null : this.cmfg('mainViewportAccordionControllerWithNodeWithIdGet', startingClassId);
 			var node = null;
 
 			if (!Ext.isEmpty(accordionWithNodeController)) {

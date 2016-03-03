@@ -1,4 +1,4 @@
-(function() {
+(function () {
 
 	Ext.define('CMDBuild.controller.management.accordion.Menu', {
 		extend: 'CMDBuild.controller.common.abstract.Accordion',
@@ -42,7 +42,7 @@
 		 *
 		 * @override
 		 */
-		constructor: function(configurationObject) {
+		constructor: function (configurationObject) {
 			this.callParent(arguments);
 
 			this.view = Ext.create('CMDBuild.view.management.accordion.Menu', { delegate: this });
@@ -55,7 +55,7 @@
 		 *
 		 * @override
 		 */
-		accordionUpdateStore: function(nodeIdToSelect) {
+		accordionUpdateStore: function (nodeIdToSelect) {
 			nodeIdToSelect = Ext.isNumber(nodeIdToSelect) ? nodeIdToSelect : null;
 
 			var params = {};
@@ -66,13 +66,13 @@
 				params: params,
 				loadMask: false,
 				scope: this,
-				success: function(response, options, decodedResponse) {
+				success: function (response, options, decodedResponse) {
 					var menuItemsResponse = decodedResponse[CMDBuild.core.constants.Proxy.MENU];
 
 					CMDBuild.core.proxy.CustomPage.readForCurrentUser({
 						loadMask: false,
 						scope: this,
-						success: function(response, options, decodedResponse) {
+						success: function (response, options, decodedResponse) {
 							this.customPagesResponse = decodedResponse[CMDBuild.core.constants.Proxy.RESPONSE];
 
 							if (
@@ -100,23 +100,23 @@
 		 * @param {Object} menuObject - menu root node object
 		 *
 		 * @returns {Array} nodeStructure
+		 *
+		 * @private
 		 */
-		menuStructureChildrenBuilder: function(menuObject) {
+		menuStructureChildrenBuilder: function (menuObject) {
 			var nodeStructure = [];
 
-			if (
-				!Ext.isEmpty(menuObject[CMDBuild.core.constants.Proxy.CHILDREN])
-				&& Ext.isArray(menuObject[CMDBuild.core.constants.Proxy.CHILDREN])
-			) {
-				Ext.Array.forEach(menuObject[CMDBuild.core.constants.Proxy.CHILDREN], function(childObject, i, allChildNodes) {
+			if (!Ext.isEmpty(menuObject[CMDBuild.core.constants.Proxy.CHILDREN]) && Ext.isArray(menuObject[CMDBuild.core.constants.Proxy.CHILDREN]))
+				Ext.Array.each(menuObject[CMDBuild.core.constants.Proxy.CHILDREN], function (childObject, i, allChildNodes) {
 					nodeStructure.push(this.menuStructureNodeBuilder(childObject));
 				}, this);
-			}
 
 			return nodeStructure;
 		},
 
 		/**
+		 * Children nodes IDs contains also index property to avoid problems of duplicate IDs
+		 *
 		 * @param {Object} menuNodeObject
 		 * 	Ex. {
 		 * 		{String} description
@@ -127,8 +127,10 @@
 		 * 	}
 		 *
 		 * @returns {Object} nodeStructure
+		 *
+		 * @private
 		 */
-		menuStructureNodeBuilder: function(menuNodeObject) {
+		menuStructureNodeBuilder: function (menuNodeObject) {
 			var nodeStructure = {};
 
 			if (!Ext.Object.isEmpty(menuNodeObject)) {
@@ -149,7 +151,7 @@
 							nodeStructure[CMDBuild.core.constants.Proxy.FILTER] = menuNodeObject[CMDBuild.core.constants.Proxy.FILTER];
 							nodeStructure[CMDBuild.core.constants.Proxy.ID] = this.cmfg('accordionBuildId', {
 								name: menuNodeObject[CMDBuild.core.constants.Proxy.TYPE],
-								components: entryType.getId()
+								components: [entryType.getId(), menuNodeObject[CMDBuild.core.constants.Proxy.INDEX]]
 							});
 							nodeStructure[CMDBuild.core.constants.Proxy.NAME] = menuNodeObject[CMDBuild.core.constants.Proxy.REFERENCED_CLASS_NAME];
 						}
@@ -159,7 +161,7 @@
 					 * Uses readForCurrentUser() server call response to get CustomPage name. Should be fixed with a server getAssignedMenu() call refactor.
 					 */
 					case CMDBuild.core.constants.ModuleIdentifiers.getCustomPage(): {
-						var customPageDataObject = Ext.Array.findBy(this.customPagesResponse, function(item, i) {
+						var customPageDataObject = Ext.Array.findBy(this.customPagesResponse, function (item, i) {
 							return menuNodeObject[CMDBuild.core.constants.Proxy.REFERENCED_ELEMENT_ID] == item[CMDBuild.core.constants.Proxy.ID];
 						}, this);
 
@@ -178,7 +180,10 @@
 						nodeStructure[CMDBuild.core.constants.Proxy.ENTITY_ID] = menuNodeObject[CMDBuild.core.constants.Proxy.REFERENCED_ELEMENT_ID];
 						nodeStructure[CMDBuild.core.constants.Proxy.ID] = this.cmfg('accordionBuildId', {
 							name: menuNodeObject[CMDBuild.core.constants.Proxy.TYPE],
-							components: menuNodeObject[CMDBuild.core.constants.Proxy.REFERENCED_ELEMENT_ID]
+							components: [
+								menuNodeObject[CMDBuild.core.constants.Proxy.REFERENCED_ELEMENT_ID],
+								menuNodeObject[CMDBuild.core.constants.Proxy.INDEX]
+							]
 						});
 					} break;
 
@@ -187,6 +192,7 @@
 						nodeStructure[CMDBuild.core.constants.Proxy.ENTITY_ID] = menuNodeObject[CMDBuild.core.constants.Proxy.REFERENCED_CLASS_NAME];
 						nodeStructure[CMDBuild.core.constants.Proxy.ID] = undefined; // Avoids node selection
 						nodeStructure[CMDBuild.core.constants.Proxy.NAME] = menuNodeObject[CMDBuild.core.constants.Proxy.REFERENCED_CLASS_NAME];
+						nodeStructure[CMDBuild.core.constants.Proxy.LEAF] = false;
 					} break;
 
 					case 'processclass': {
@@ -199,7 +205,10 @@
 							nodeStructure[CMDBuild.core.constants.Proxy.FILTER] = menuNodeObject[CMDBuild.core.constants.Proxy.FILTER];
 							nodeStructure[CMDBuild.core.constants.Proxy.ID] = this.cmfg('accordionBuildId', {
 								name: menuNodeObject[CMDBuild.core.constants.Proxy.TYPE],
-								components: entryType.getId()
+								components: [
+									entryType.getId(),
+									menuNodeObject[CMDBuild.core.constants.Proxy.INDEX]
+								]
 							});
 							nodeStructure[CMDBuild.core.constants.Proxy.NAME] = menuNodeObject[CMDBuild.core.constants.Proxy.REFERENCED_CLASS_NAME];
 						}
@@ -211,7 +220,10 @@
 						nodeStructure[CMDBuild.core.constants.Proxy.ENTITY_ID] = menuNodeObject[CMDBuild.core.constants.Proxy.REFERENCED_ELEMENT_ID];
 						nodeStructure[CMDBuild.core.constants.Proxy.ID] = this.cmfg('accordionBuildId', {
 							name: 'singlereport',
-							components: menuNodeObject[CMDBuild.core.constants.Proxy.REFERENCED_ELEMENT_ID]
+							components: [
+								menuNodeObject[CMDBuild.core.constants.Proxy.REFERENCED_ELEMENT_ID],
+								menuNodeObject[CMDBuild.core.constants.Proxy.INDEX]
+							]
 						});
 						nodeStructure[CMDBuild.core.constants.Proxy.SECTION_HIERARCHY] = [CMDBuild.core.constants.Proxy.CSV];
 					} break;
@@ -222,7 +234,10 @@
 						nodeStructure[CMDBuild.core.constants.Proxy.ENTITY_ID] = menuNodeObject[CMDBuild.core.constants.Proxy.REFERENCED_ELEMENT_ID];
 						nodeStructure[CMDBuild.core.constants.Proxy.ID] = this.cmfg('accordionBuildId', {
 							name: 'singlereport',
-							components: menuNodeObject[CMDBuild.core.constants.Proxy.REFERENCED_ELEMENT_ID]
+							components: [
+								menuNodeObject[CMDBuild.core.constants.Proxy.REFERENCED_ELEMENT_ID],
+								menuNodeObject[CMDBuild.core.constants.Proxy.INDEX]
+							]
 						});
 						nodeStructure[CMDBuild.core.constants.Proxy.SECTION_HIERARCHY] = [CMDBuild.core.constants.Proxy.PDF];
 					} break;
@@ -230,19 +245,22 @@
 					case 'view': {
 						switch (menuNodeObject[CMDBuild.core.constants.Proxy.SPECIFIC_TYPE_VALUES][CMDBuild.core.constants.Proxy.TYPE]) {
 							case 'FILTER': {
-								var entryTypeName = menuNodeObject[CMDBuild.core.constants.Proxy.SPECIFIC_TYPE_VALUES][CMDBuild.core.constants.Proxy.SOURCE_CLASS_NAME];
-								var entryType = _CMCache.getEntryTypeByName(entryTypeName);
-
-								nodeStructure[CMDBuild.core.constants.Proxy.SECTION_HIERARCHY] = ['filter'];
+								var entryType = _CMCache.getEntryTypeByName(
+									menuNodeObject[CMDBuild.core.constants.Proxy.SPECIFIC_TYPE_VALUES][CMDBuild.core.constants.Proxy.SOURCE_CLASS_NAME]
+								);
 
 								if (!Ext.isEmpty(entryType)) {
 									nodeStructure['cmName'] = 'class';
 									nodeStructure[CMDBuild.core.constants.Proxy.ENTITY_ID] = entryType.getId();
-									nodeStructure[CMDBuild.core.constants.Proxy.FILTER] = menuNodeObject[CMDBuild.core.constants.Proxy.SPECIFIC_TYPE_VALUES][CMDBuild.core.constants.Proxy.FILTER];
 									nodeStructure[CMDBuild.core.constants.Proxy.ID] = this.cmfg('accordionBuildId', {
 										name: 'dataview-filter',
-										components: entryType.getId()
+										components: [
+											entryType.getId(),
+											menuNodeObject[CMDBuild.core.constants.Proxy.INDEX]
+										]
 									});
+									nodeStructure[CMDBuild.core.constants.Proxy.SECTION_HIERARCHY] = ['filter'];
+									nodeStructure[CMDBuild.core.constants.Proxy.FILTER] = menuNodeObject[CMDBuild.core.constants.Proxy.SPECIFIC_TYPE_VALUES][CMDBuild.core.constants.Proxy.FILTER];
 								}
 							} break;
 
