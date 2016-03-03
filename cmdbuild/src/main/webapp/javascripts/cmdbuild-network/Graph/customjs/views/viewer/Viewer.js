@@ -1,5 +1,4 @@
 (function($) {
-	var CONFIGURATION_FILE = $.Cmdbuild.g3d.constants.CONFIGURATION_FILE;
 	var OPTIONS_LABEL_ON_SELECTED = $.Cmdbuild.g3d.constants.LABELS_ON_SELECTED;
 	var OPTIONS_NO_LABELS = $.Cmdbuild.g3d.constants.NO_LABELS;
 	if (!$.Cmdbuild.g3d) {
@@ -22,12 +21,18 @@
 		this.init = function() {
 			this.model = $.Cmdbuild.customvariables.model;
 			this.selected = $.Cmdbuild.customvariables.selected;
-			$.Cmdbuild.g3d.Options.loadConfiguration(CONFIGURATION_FILE,
-					function(response) {
-						$.Cmdbuild.custom.configuration = response;
-						this.initCB();
-						animate();
-					}, this);
+			$.Cmdbuild.g3d.Options.loadConfiguration(function(response) {
+				$.Cmdbuild.custom.configuration = response;
+				$.Cmdbuild.custom.configuration.camera = {
+					position: {
+						x : 0,
+						y : 2500,
+						z : 2500
+					}
+				};
+				this.initCB();
+				animate();
+			}, this);
 		};
 		this.initCB = function() {
 			THREE.ImageUtils.crossOrigin = '';
