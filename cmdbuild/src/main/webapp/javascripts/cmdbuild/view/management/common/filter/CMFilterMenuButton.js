@@ -78,9 +78,9 @@
 		},
 
 		/**
-		 * Override to avoid full bottongroup container disabling
+		 * Override to avoid full bottongroup container disabled
 		 *
-		 * @overrider
+		 * @override
 		 */
 		disable: function() {
 			this.clearButton.disable();
@@ -88,9 +88,9 @@
 		},
 
 		/**
-		 * Override to avoid full bottongroup container disabling
+		 * Override to avoid full bottongroup container disabled
 		 *
-		 * @overrider
+		 * @override
 		 */
 		enable: function() {
 			this.clearButton.enable();

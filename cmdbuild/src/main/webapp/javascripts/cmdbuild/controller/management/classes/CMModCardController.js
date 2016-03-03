@@ -23,10 +23,10 @@
 		},
 
 		/**
-		 * @param {CMDBuild.model.common.accordion.Generic} entryType
+		 * @param {Object} entryType
 		 */
 		onViewOnFront: function(entryType) {
-			if (entryType) {
+			if (!Ext.isEmpty(entryType)) {
 				var idPropertyName = Ext.isEmpty(entryType.get(CMDBuild.core.constants.Proxy.ENTITY_ID)) ? CMDBuild.core.constants.Proxy.ID : CMDBuild.core.constants.Proxy.ENTITY_ID;
 				var dc = CMDBuild.global.controller.MainViewport.cmfg('mainViewportDanglingCardGet');
 				var filter = entryType.get(CMDBuild.core.constants.Proxy.FILTER);

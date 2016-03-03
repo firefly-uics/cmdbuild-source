@@ -142,12 +142,6 @@
 				};
 			}
 
-			if (viewFilter) {
-				me.view.disableFilterMenuButton();
-			} else {
-				me.view.enableFilterMenuButton();
-			}
-
 			me.view.updateStoreForClassId(me.getEntryType().get("id"), {
 				cb: afterStoreUpdated
 			});
