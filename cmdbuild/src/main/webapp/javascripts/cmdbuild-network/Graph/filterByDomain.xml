@@ -15,11 +15,6 @@
 		</onChange>
 	</select>
 	<div id="filterByDomainFormContainer">
-<!-- 		<onInit> -->
-<!-- 			<command>navigate</command> -->
-<!-- 			<container>filterByDomainFormContainer</container> -->
-<!-- 			<form>filterByDomainForm</form> -->
-<!-- 		</onInit> -->
 		<form id="filterByDomainForm">
 			<params>
 				<type>domainsGrid</type>
