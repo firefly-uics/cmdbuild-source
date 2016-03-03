@@ -121,7 +121,7 @@
 		this.getBaseImages = function(type) {
 			var base_url = $.Cmdbuild.global.getAppConfigUrl() + $.Cmdbuild.g3d.constants.SPRITES_PATH;
 			switch (type) {
-				case "defalt" :
+				case "default" :
 					return base_url + "default.png";
 					break;
 				case "selected" :
