@@ -105,7 +105,7 @@
 		},
 		objOnPlane: function(position) {
 			var selectionShape = $.Cmdbuild.g3d.constants.SELECTION_SHAPE;
-			var sprite = $.Cmdbuild.SpriteArchive.class2Sprite(selectionShape);
+			var sprite = $.Cmdbuild.customvariables.cacheImages.getBaseImages("selected");
 			THREE.ImageUtils.crossOrigin = true;
 			var map = THREE.ImageUtils.loadTexture(sprite);
 			var material = new THREE.SpriteMaterial({
@@ -131,7 +131,7 @@
 		// OPENGL
 		selectionOnNode: function(node) {
 			var selectionShape = $.Cmdbuild.g3d.constants.SELECTION_SHAPE;
-			var sprite = $.Cmdbuild.SpriteArchive.class2Sprite(selectionShape);
+			var sprite = $.Cmdbuild.customvariables.cacheImages.getBaseImages("selected");
 			var map = THREE.ImageUtils.loadTexture(sprite);
 			var material = new THREE.SpriteMaterial({
 				map: map,

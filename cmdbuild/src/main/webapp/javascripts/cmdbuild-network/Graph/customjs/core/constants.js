@@ -4,7 +4,7 @@
 		DEFAULT_SHAPE : "cmdbuildDefaultShape",
 		SELECTION_SHAPE : "cmdbuildSelectionShape",
 		CONFIGURATION_FILE : "configurations/configuration.json",
-		SPRITES_PATH : "sprites/",
+		SPRITES_PATH : "theme/images/sprites/",
 		LABELS_ON_SELECTED : "selected",
 		NO_LABELS : "none",
 		RANGE_VIEWPOINTDISTANCE : 100,

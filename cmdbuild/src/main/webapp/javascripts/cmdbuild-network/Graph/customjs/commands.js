@@ -212,8 +212,7 @@
 			$.Cmdbuild.customvariables.model = new $.Cmdbuild.g3d.Model();
 			$.Cmdbuild.customvariables.selected = new $.Cmdbuild.g3d.Selected(
 					$.Cmdbuild.customvariables.model);
-			new $.Cmdbuild.g3d.cache();
-			callback.apply(this, []);
+			new $.Cmdbuild.g3d.cache(callback, this);
 		},
 		doLayout : function(param) {
 			$.Cmdbuild.customvariables.model.doLayout();
