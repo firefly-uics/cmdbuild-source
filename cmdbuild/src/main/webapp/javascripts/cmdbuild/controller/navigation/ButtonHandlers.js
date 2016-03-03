@@ -1,4 +1,4 @@
-(function() {
+(function () {
 
 	Ext.define('CMDBuild.controller.navigation.ButtonHandlers', {
 
@@ -10,7 +10,7 @@
 		/**
 		 * @param {CMDBuild.model.navigation.chronology.Record} record
 		 */
-		navigationChronologyButtonHandler: function(record) {
+		navigationChronologyButtonHandler: function (record) {
 			switch (record.get(CMDBuild.core.constants.Proxy.MODULE_ID)) {
 				case 'class':
 					return this.navigationChronologyButtonHandlerClass(record);
@@ -37,7 +37,7 @@
 		 *
 		 * @private
 		 */
-		navigationChronologyButtonHandlerClass: function(record) {
+		navigationChronologyButtonHandlerClass: function (record) {
 			if (!Ext.isEmpty(record) && !record.isEmpty()) {
 				if (
 					!record.isEmpty([CMDBuild.core.constants.Proxy.ENTRY_TYPE, CMDBuild.core.constants.Proxy.ID])
@@ -53,14 +53,14 @@
 					});
 
 					if (!record.isEmpty([CMDBuild.core.constants.Proxy.SECTION, CMDBuild.core.constants.Proxy.OBJECT]))
-						CMDBuild.global.controller.MainViewport.cmfg('mainViewportModuleControllerGet', record.get(CMDBuild.core.constants.Proxy.MODULE_ID)).gridController.view.getStore().on('load', function() {
+						CMDBuild.global.controller.MainViewport.cmfg('mainViewportModuleControllerGet', record.get(CMDBuild.core.constants.Proxy.MODULE_ID)).gridController.view.getStore().on('load', function () {
 							CMDBuild.global.controller.MainViewport.cmfg('mainViewportModuleControllerGet', record.get(CMDBuild.core.constants.Proxy.MODULE_ID)).cardTabPanel.activeTabSet(
 								record.get([CMDBuild.core.constants.Proxy.SECTION, CMDBuild.core.constants.Proxy.OBJECT])
 							);
 						}, this, { single: true });
 
 					if (!record.isEmpty([CMDBuild.core.constants.Proxy.SUB_SECTION, CMDBuild.core.constants.Proxy.OBJECT]))
-						CMDBuild.global.controller.MainViewport.cmfg('mainViewportModuleControllerGet', record.get(CMDBuild.core.constants.Proxy.MODULE_ID)).gridController.view.getStore().on('load', function() {
+						CMDBuild.global.controller.MainViewport.cmfg('mainViewportModuleControllerGet', record.get(CMDBuild.core.constants.Proxy.MODULE_ID)).gridController.view.getStore().on('load', function () {
 							CMDBuild.global.controller.MainViewport.cmfg('mainViewportModuleControllerGet', record.get(CMDBuild.core.constants.Proxy.MODULE_ID)).mdController.activeTabSet(
 								record.get([CMDBuild.core.constants.Proxy.SUB_SECTION, CMDBuild.core.constants.Proxy.OBJECT])
 							);
@@ -80,7 +80,7 @@
 		 *
 		 * @private
 		 */
-		navigationChronologyButtonHandlerDefault: function(record) {
+		navigationChronologyButtonHandlerDefault: function (record) {
 			if (
 				!Ext.isEmpty(record) && !record.isEmpty()
 				&& !record.isEmpty([CMDBuild.core.constants.Proxy.ENTRY_TYPE, CMDBuild.core.constants.Proxy.ID])
@@ -98,7 +98,7 @@
 		 *
 		 * @private
 		 */
-		navigationChronologyButtonHandlerWorkflow: function(record) {
+		navigationChronologyButtonHandlerWorkflow: function (record) {
 			if (!Ext.isEmpty(record) && !record.isEmpty()) {
 				if (
 					!record.isEmpty([CMDBuild.core.constants.Proxy.ENTRY_TYPE, CMDBuild.core.constants.Proxy.ID])
@@ -113,7 +113,7 @@
 					});
 
 					if (!record.isEmpty([CMDBuild.core.constants.Proxy.SECTION, CMDBuild.core.constants.Proxy.OBJECT]))
-						CMDBuild.global.controller.MainViewport.cmfg('mainViewportModuleControllerGet', record.get(CMDBuild.core.constants.Proxy.MODULE_ID)).gridController.view.getStore().on('load', function() {
+						CMDBuild.global.controller.MainViewport.cmfg('mainViewportModuleControllerGet', record.get(CMDBuild.core.constants.Proxy.MODULE_ID)).gridController.view.getStore().on('load', function () {
 							CMDBuild.global.controller.MainViewport.cmfg('mainViewportModuleControllerGet', record.get(CMDBuild.core.constants.Proxy.MODULE_ID)).cardTabPanel.activeTabSet(
 								record.get([CMDBuild.core.constants.Proxy.SECTION, CMDBuild.core.constants.Proxy.OBJECT])
 							);

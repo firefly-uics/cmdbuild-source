@@ -1,4 +1,4 @@
-(function() {
+(function () {
 
 	Ext.define('CMDBuild.controller.navigation.Chronology', {
 		extend: 'CMDBuild.controller.common.abstract.Base',
@@ -38,7 +38,7 @@
 		 *
 		 * @private
 		 */
-		getIconClass: function(record) {
+		getIconClass: function (record) {
 			switch (record.get(CMDBuild.core.constants.Proxy.MODULE_ID)) {
 				case 'class': {
 					var isSuperClass = record.get([CMDBuild.core.constants.Proxy.ENTRY_TYPE, CMDBuild.core.constants.Proxy.OBJECT, 'superclass']);
@@ -71,7 +71,7 @@
 			 *
 			 * @private
 			 */
-			getLabel: function(record) {
+			getLabel: function (record) {
 				if (!Ext.isEmpty(record) && Ext.isObject(record)) {
 					var itemLabelParts = [];
 					itemLabelParts.push(Ext.Date.format(record.get(CMDBuild.core.constants.Proxy.DATE), CMDBuild.core.configurations.DataFormat.getTime()));
@@ -94,7 +94,7 @@
 			 *
 			 * @private
 			 */
-			getLabelProperty: function(targetArray, property) {
+			getLabelProperty: function (targetArray, property) {
 				if (
 					Ext.isArray(targetArray)
 					&& !Ext.isEmpty(property) && Ext.isObject(property)
@@ -113,7 +113,7 @@
 			 *
 			 * @private
 			 */
-			getLabelPropertyModuleId: function(targetArray, property) {
+			getLabelPropertyModuleId: function (targetArray, property) {
 				if (Ext.isArray(targetArray))
 					switch (property) {
 						case 'class':
@@ -141,13 +141,13 @@
 		 *
 		 * @private
 		 */
-		menuItemsBuild: function() {
+		menuItemsBuild: function () {
 			var menuItems = [];
 
 			if (!Ext.isEmpty(this.records) && Ext.isArray(this.records)) {
 				CMDBuild.core.Utils.objectArraySort(this.records, CMDBuild.core.constants.Proxy.DATE, 'DESC');
 
-				Ext.Array.forEach(this.records, function(recordObject, i, allRecordObjects) {
+				Ext.Array.forEach(this.records, function (recordObject, i, allRecordObjects) {
 					if (!Ext.Object.isEmpty(recordObject))
 						menuItems.push({
 							delegate: this,
@@ -156,7 +156,7 @@
 							record: recordObject,
 							text: this.getLabel(recordObject),
 
-							handler: function(button, e) {
+							handler: function (button, e) {
 								this.delegate.cmfg('navigationChronologyButtonHandler', this.record);
 							}
 						});
@@ -177,7 +177,7 @@
 		/**
 		 * @returns {Object}
 		 */
-		navigationChronologyItemConfigurationGet: function() {
+		navigationChronologyItemConfigurationGet: function () {
 			return {
 				text: CMDBuild.Translation.navigationChronology,
 				iconCls: 'navigation-chronology',
@@ -185,7 +185,7 @@
 				menu: Ext.create('Ext.menu.Menu'),
 
 				listeners: {
-					beforeshow: function(tool, eOpts) {
+					beforeshow: function (tool, eOpts) {
 						return CMDBuild.global.navigation.Chronology.cmfg('onNavigationChronologyMenuBeforeShow', this);
 					}
 				}
@@ -200,7 +200,7 @@
 		 * @param {Object} parameters.section - usually form tab object
 		 * @param {Object} parameters.subSection - usually form tab sub-section
 		 */
-		navigationChronologyRecordSave: function(parameters) {
+		navigationChronologyRecordSave: function (parameters) {
 			if (
 				!Ext.isEmpty(parameters) && Ext.isObject(parameters)
 				&& !Ext.isEmpty(parameters[CMDBuild.core.constants.Proxy.MODULE_ID])
@@ -224,7 +224,7 @@
 		 *
 		 * @returns {Boolean}
 		 */
-		onNavigationChronologyMenuBeforeShow: function(item) {
+		onNavigationChronologyMenuBeforeShow: function (item) {
 			if (!Ext.isEmpty(item)) {
 				Ext.apply(item, {
 					menu: Ext.create('Ext.menu.Menu', {
