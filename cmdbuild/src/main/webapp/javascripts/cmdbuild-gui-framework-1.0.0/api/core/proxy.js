@@ -53,6 +53,15 @@
 		},
 
 		/**
+		 * Get URIs
+		 */
+		getURIForIconDownload : function (id) {
+			return $.Cmdbuild.global.getApiUrl() + 'icons/' + id
+					+ "/image?CMDBuild-Authorization="
+					+ $.Cmdbuild.authentication.getAuthenticationToken();
+		},
+
+		/**
 		 * Getters for resources
 		 */
 		getAttachmentsCategories: function(callback, callbackScope) {
@@ -475,6 +484,17 @@
 			}
 			$.Cmdbuild.authProxy.makeAjaxRequest(url, methods.GET, callbackObj, params);
 		},
+
+		// get icons
+		getIcons : function(config, callback, callbackScope) {
+			// params
+			var params = this.prepareParamsForList(config);
+			// get url and make request
+			var url = $.Cmdbuild.global.getApiUrl() + 'icons/';
+			$.Cmdbuild.authProxy.makeAjaxRequest(url, methods.GET, function(data, metadata){
+				callback.apply(callbackScope, [data, metadata]);
+			}, params);
+		}
 	};
 	$.Cmdbuild.utilities.proxy = proxy;
 }) (jQuery);
