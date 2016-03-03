@@ -33,6 +33,7 @@
 				<artifactId>maven-war-plugin</artifactId>
 				<configuration>
 					<failOnMissingWebXml>false</failOnMissingWebXml>
+					<dependentWarExcludes>WEB-INF/lib/bcprov-jdk15-1.45.jar</dependentWarExcludes>
 				</configuration>
 			</plugin>
 		</plugins>
