@@ -38,40 +38,31 @@
 		 * @private
 		 */
 		navigationChronologyButtonHandlerClass: function (record) {
-			if (!Ext.isEmpty(record) && !record.isEmpty()) {
-				if (
-					!record.isEmpty([CMDBuild.core.constants.Proxy.ENTRY_TYPE, CMDBuild.core.constants.Proxy.ID])
-					&& !record.isEmpty([CMDBuild.core.constants.Proxy.ITEM, CMDBuild.core.constants.Proxy.ID])
-				) {
-					CMDBuild.global.controller.MainViewport.cmfg('mainViewportAccordionControllerExpand', record.get(CMDBuild.core.constants.Proxy.MODULE_ID));
+			if (
+				!Ext.isEmpty(record) && !record.isEmpty()
+				&& !record.isEmpty([CMDBuild.core.constants.Proxy.ENTRY_TYPE, CMDBuild.core.constants.Proxy.ID])
+				&& !record.isEmpty([CMDBuild.core.constants.Proxy.ITEM, CMDBuild.core.constants.Proxy.ID])
+			) {
+				CMDBuild.global.controller.MainViewport.cmfg('mainViewportCardSelect', {
+					Id: record.get([CMDBuild.core.constants.Proxy.ITEM, CMDBuild.core.constants.Proxy.ID]),
+					IdClass: record.get([CMDBuild.core.constants.Proxy.ENTRY_TYPE, CMDBuild.core.constants.Proxy.ID]),
+					activateFirstTab: record.isEmpty([CMDBuild.core.constants.Proxy.SECTION, CMDBuild.core.constants.Proxy.OBJECT])
+						? true : record.isEmpty([CMDBuild.core.constants.Proxy.SECTION, CMDBuild.core.constants.Proxy.OBJECT])
+				});
 
-					CMDBuild.global.controller.MainViewport.cmfg('mainViewportCardSelect', {
-						Id: record.get([CMDBuild.core.constants.Proxy.ITEM, CMDBuild.core.constants.Proxy.ID]),
-						IdClass: record.get([CMDBuild.core.constants.Proxy.ENTRY_TYPE, CMDBuild.core.constants.Proxy.ID]),
-						activateFirstTab: record.isEmpty([CMDBuild.core.constants.Proxy.SECTION, CMDBuild.core.constants.Proxy.OBJECT])
-							? true : record.isEmpty([CMDBuild.core.constants.Proxy.SECTION, CMDBuild.core.constants.Proxy.OBJECT])
-					});
+				if (!record.isEmpty([CMDBuild.core.constants.Proxy.SECTION, CMDBuild.core.constants.Proxy.OBJECT]))
+					CMDBuild.global.controller.MainViewport.cmfg('mainViewportModuleControllerGet', record.get(CMDBuild.core.constants.Proxy.MODULE_ID)).gridController.view.getStore().on('load', function () {
+						CMDBuild.global.controller.MainViewport.cmfg('mainViewportModuleControllerGet', record.get(CMDBuild.core.constants.Proxy.MODULE_ID)).cardTabPanel.activeTabSet(
+							record.get([CMDBuild.core.constants.Proxy.SECTION, CMDBuild.core.constants.Proxy.OBJECT])
+						);
+					}, this, { single: true });
 
-					if (!record.isEmpty([CMDBuild.core.constants.Proxy.SECTION, CMDBuild.core.constants.Proxy.OBJECT]))
-						CMDBuild.global.controller.MainViewport.cmfg('mainViewportModuleControllerGet', record.get(CMDBuild.core.constants.Proxy.MODULE_ID)).gridController.view.getStore().on('load', function () {
-							CMDBuild.global.controller.MainViewport.cmfg('mainViewportModuleControllerGet', record.get(CMDBuild.core.constants.Proxy.MODULE_ID)).cardTabPanel.activeTabSet(
-								record.get([CMDBuild.core.constants.Proxy.SECTION, CMDBuild.core.constants.Proxy.OBJECT])
-							);
-						}, this, { single: true });
-
-					if (!record.isEmpty([CMDBuild.core.constants.Proxy.SUB_SECTION, CMDBuild.core.constants.Proxy.OBJECT]))
-						CMDBuild.global.controller.MainViewport.cmfg('mainViewportModuleControllerGet', record.get(CMDBuild.core.constants.Proxy.MODULE_ID)).gridController.view.getStore().on('load', function () {
-							CMDBuild.global.controller.MainViewport.cmfg('mainViewportModuleControllerGet', record.get(CMDBuild.core.constants.Proxy.MODULE_ID)).mdController.activeTabSet(
-								record.get([CMDBuild.core.constants.Proxy.SUB_SECTION, CMDBuild.core.constants.Proxy.OBJECT])
-							);
-						}, this, { single: true });
-				} else if (!record.isEmpty([CMDBuild.core.constants.Proxy.ENTRY_TYPE, CMDBuild.core.constants.Proxy.ID])) {
-					CMDBuild.global.controller.MainViewport.cmfg('mainViewportAccordionControllerExpand', record.get(CMDBuild.core.constants.Proxy.MODULE_ID));
-					CMDBuild.global.controller.MainViewport.cmfg('mainViewportAccordionControllerGet', record.get(CMDBuild.core.constants.Proxy.MODULE_ID)).cmfg(
-						'accordionSelectNodeById',
-						record.get([CMDBuild.core.constants.Proxy.ENTRY_TYPE, CMDBuild.core.constants.Proxy.ID])
-					);
-				}
+				if (!record.isEmpty([CMDBuild.core.constants.Proxy.SUB_SECTION, CMDBuild.core.constants.Proxy.OBJECT]))
+					CMDBuild.global.controller.MainViewport.cmfg('mainViewportModuleControllerGet', record.get(CMDBuild.core.constants.Proxy.MODULE_ID)).gridController.view.getStore().on('load', function () {
+						CMDBuild.global.controller.MainViewport.cmfg('mainViewportModuleControllerGet', record.get(CMDBuild.core.constants.Proxy.MODULE_ID)).mdController.activeTabSet(
+							record.get([CMDBuild.core.constants.Proxy.SUB_SECTION, CMDBuild.core.constants.Proxy.OBJECT])
+						);
+					}, this, { single: true });
 			}
 		},
 
@@ -85,11 +76,16 @@
 				!Ext.isEmpty(record) && !record.isEmpty()
 				&& !record.isEmpty([CMDBuild.core.constants.Proxy.ENTRY_TYPE, CMDBuild.core.constants.Proxy.ID])
 			) {
-				CMDBuild.global.controller.MainViewport.cmfg('mainViewportAccordionControllerExpand', record.get(CMDBuild.core.constants.Proxy.MODULE_ID));
-				CMDBuild.global.controller.MainViewport.cmfg('mainViewportAccordionControllerGet', record.get(CMDBuild.core.constants.Proxy.MODULE_ID)).cmfg(
-					'accordionSelectNodeById',
+				var accordionController = CMDBuild.global.controller.MainViewport.cmfg(
+					'mainViewportAccordionControllerWithNodeWithIdGet',
 					record.get([CMDBuild.core.constants.Proxy.ENTRY_TYPE, CMDBuild.core.constants.Proxy.ID])
 				);
+
+				if (!Ext.isEmpty(accordionController) && Ext.isFunction(accordionController.cmfg)) {
+					accordionController.cmfg('accordionDeselect'); // Instruction required or selection doesn't work if exists another selection
+					accordionController.cmfg('accordionExpand');
+					accordionController.cmfg('accordionSelectNodeById', record.get([CMDBuild.core.constants.Proxy.ENTRY_TYPE, CMDBuild.core.constants.Proxy.ID]));
+				}
 			}
 		},
 
@@ -99,32 +95,24 @@
 		 * @private
 		 */
 		navigationChronologyButtonHandlerWorkflow: function (record) {
-			if (!Ext.isEmpty(record) && !record.isEmpty()) {
-				if (
-					!record.isEmpty([CMDBuild.core.constants.Proxy.ENTRY_TYPE, CMDBuild.core.constants.Proxy.ID])
-					&& !record.isEmpty([CMDBuild.core.constants.Proxy.ITEM, CMDBuild.core.constants.Proxy.ID])
-				) {
-					CMDBuild.global.controller.MainViewport.cmfg('mainViewportAccordionControllerExpand', record.get(CMDBuild.core.constants.Proxy.MODULE_ID));
-					CMDBuild.global.controller.MainViewport.cmfg('mainViewportCardSelect', {
-						Id: record.get([CMDBuild.core.constants.Proxy.ITEM, CMDBuild.core.constants.Proxy.ID]),
-						IdClass: record.get([CMDBuild.core.constants.Proxy.ENTRY_TYPE, CMDBuild.core.constants.Proxy.ID]),
-						activateFirstTab: record.isEmpty([CMDBuild.core.constants.Proxy.SECTION, CMDBuild.core.constants.Proxy.OBJECT])
-							? true : record.isEmpty([CMDBuild.core.constants.Proxy.SECTION, CMDBuild.core.constants.Proxy.OBJECT])
-					});
+			if (
+				!Ext.isEmpty(record) && !record.isEmpty()
+				&& !record.isEmpty([CMDBuild.core.constants.Proxy.ENTRY_TYPE, CMDBuild.core.constants.Proxy.ID])
+				&& !record.isEmpty([CMDBuild.core.constants.Proxy.ITEM, CMDBuild.core.constants.Proxy.ID])
+			) {
+				CMDBuild.global.controller.MainViewport.cmfg('mainViewportCardSelect', {
+					Id: record.get([CMDBuild.core.constants.Proxy.ITEM, CMDBuild.core.constants.Proxy.ID]),
+					IdClass: record.get([CMDBuild.core.constants.Proxy.ENTRY_TYPE, CMDBuild.core.constants.Proxy.ID]),
+					activateFirstTab: record.isEmpty([CMDBuild.core.constants.Proxy.SECTION, CMDBuild.core.constants.Proxy.OBJECT])
+						? true : record.isEmpty([CMDBuild.core.constants.Proxy.SECTION, CMDBuild.core.constants.Proxy.OBJECT])
+				});
 
-					if (!record.isEmpty([CMDBuild.core.constants.Proxy.SECTION, CMDBuild.core.constants.Proxy.OBJECT]))
-						CMDBuild.global.controller.MainViewport.cmfg('mainViewportModuleControllerGet', record.get(CMDBuild.core.constants.Proxy.MODULE_ID)).gridController.view.getStore().on('load', function () {
-							CMDBuild.global.controller.MainViewport.cmfg('mainViewportModuleControllerGet', record.get(CMDBuild.core.constants.Proxy.MODULE_ID)).cardTabPanel.activeTabSet(
-								record.get([CMDBuild.core.constants.Proxy.SECTION, CMDBuild.core.constants.Proxy.OBJECT])
-							);
-						}, this, { single: true });
-				} else if (!record.isEmpty([CMDBuild.core.constants.Proxy.ENTRY_TYPE, CMDBuild.core.constants.Proxy.ID])) {
-					CMDBuild.global.controller.MainViewport.cmfg('mainViewportAccordionControllerExpand', record.get(CMDBuild.core.constants.Proxy.MODULE_ID));
-					CMDBuild.global.controller.MainViewport.cmfg('mainViewportAccordionControllerGet', record.get(CMDBuild.core.constants.Proxy.MODULE_ID)).cmfg(
-						'accordionSelectNodeById',
-						record.get([CMDBuild.core.constants.Proxy.ENTRY_TYPE, CMDBuild.core.constants.Proxy.ID])
-					);
-				}
+				if (!record.isEmpty([CMDBuild.core.constants.Proxy.SECTION, CMDBuild.core.constants.Proxy.OBJECT]))
+					CMDBuild.global.controller.MainViewport.cmfg('mainViewportModuleControllerGet', record.get(CMDBuild.core.constants.Proxy.MODULE_ID)).gridController.view.getStore().on('load', function () {
+						CMDBuild.global.controller.MainViewport.cmfg('mainViewportModuleControllerGet', record.get(CMDBuild.core.constants.Proxy.MODULE_ID)).cardTabPanel.activeTabSet(
+							record.get([CMDBuild.core.constants.Proxy.SECTION, CMDBuild.core.constants.Proxy.OBJECT])
+						);
+					}, this, { single: true });
 			}
 		}
 	});
