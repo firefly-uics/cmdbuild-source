@@ -47,7 +47,6 @@
 					"selectedGrid.js",
 					"relationsGrid.js",
 					"scripts.js",
-					"tree.js",
 					"navigationTreesBtnMenu.js",
 					"core/cache.js",
 					"core/proxy.js",
