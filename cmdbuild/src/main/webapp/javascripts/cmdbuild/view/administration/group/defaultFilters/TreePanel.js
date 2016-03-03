@@ -50,6 +50,7 @@
 						hideable: false,
 						menuDisabled: true,
 						fixed: true,
+						scope: this,
 
 						editor: {
 							xtype: 'combo',
@@ -60,6 +61,10 @@
 
 							store: CMDBuild.core.proxy.group.DefaultFilters.getClassFiltersStore(),
 							queryMode: 'local'
+						},
+
+						renderer: function(value, meta, record, rowIndex, colIndex, store, view, returna) {
+							return this.delegate.cmfg('groupDefaultFiltersRendererGridFilterColumn', value);
 						}
 					})
 				],

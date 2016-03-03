@@ -608,8 +608,10 @@ public class DefaultLogicAndStoreConverterTest {
 				.withProcessedFolder("processed folder") //
 				.withRejectedFolder("rejected folder") //
 				.withRejectNotMatching(true) //
+				.withFilterType("filter type") //
 				.withRegexFromFilter(asList("regex", "from", "filter")) //
 				.withRegexSubjectFilter(asList("regex", "subject", "filter")) //
+				.withFilterFunction("filter function") //
 				.withNotificationStatus(true) //
 				.withNotificationTemplate("template") //
 				.withAttachmentsActive(true) //
@@ -639,12 +641,14 @@ public class DefaultLogicAndStoreConverterTest {
 		assertThat(parameters, hasEntry(ReadEmail.PROCESSED_FOLDER, "processed folder"));
 		assertThat(parameters, hasEntry(ReadEmail.REJECTED_FOLDER, "rejected folder"));
 		assertThat(parameters, hasEntry(ReadEmail.FILTER_REJECT, "true"));
+		assertThat(parameters, hasEntry(ReadEmail.FILTER_TYPE, "filter type"));
 		assertThat(parameters, hasEntry(ReadEmail.FILTER_FROM_REGEX, "regex" + SPECIAL_SEPARATOR //
 				+ "from" + SPECIAL_SEPARATOR //
 				+ "filter"));
 		assertThat(parameters, hasEntry(ReadEmail.FILTER_SUBJECT_REGEX, "regex" + SPECIAL_SEPARATOR //
 				+ "subject" + SPECIAL_SEPARATOR //
 				+ "filter"));
+		assertThat(parameters, hasEntry(ReadEmail.FILTER_FUNCTION_NAME, "filter function"));
 		assertThat(parameters, hasEntry(ReadEmail.NOTIFICATION_ACTIVE, "true"));
 		assertThat(parameters, hasEntry(ReadEmail.NOTIFICATION_TEMPLATE, "template"));
 		assertThat(parameters, hasEntry(ReadEmail.ATTACHMENTS_ACTIVE, "true"));
@@ -701,12 +705,14 @@ public class DefaultLogicAndStoreConverterTest {
 				.withParameter(ReadEmail.PROCESSED_FOLDER, "processed folder") //
 				.withParameter(ReadEmail.REJECTED_FOLDER, "rejected folder") //
 				.withParameter(ReadEmail.FILTER_REJECT, "true") //
+				.withParameter(ReadEmail.FILTER_TYPE, "filter type") //
 				.withParameter(ReadEmail.FILTER_FROM_REGEX, "regex" + SPECIAL_SEPARATOR //
 						+ "from" + SPECIAL_SEPARATOR //
 						+ "filter") //
 				.withParameter(ReadEmail.FILTER_SUBJECT_REGEX, "regex" + SPECIAL_SEPARATOR //
 						+ "subject" + SPECIAL_SEPARATOR //
 						+ "filter") //
+				.withParameter(ReadEmail.FILTER_FUNCTION_NAME, "filter function") //
 				.withParameter(ReadEmail.NOTIFICATION_ACTIVE, "true") //
 				.withParameter(ReadEmail.NOTIFICATION_TEMPLATE, "template") //
 				.withParameter(ReadEmail.ATTACHMENTS_ACTIVE, "true") //
@@ -739,8 +745,10 @@ public class DefaultLogicAndStoreConverterTest {
 		assertThat(converted.isRejectNotMatching(), equalTo(true));
 		assertThat(converted.isNotificationActive(), equalTo(true));
 		assertThat(converted.getNotificationTemplate(), equalTo("template"));
+		assertThat(converted.getFilterType(), equalTo("filter type"));
 		assertThat(converted.getRegexFromFilter(), containsInAnyOrder("regex", "from", "filter"));
 		assertThat(converted.getRegexSubjectFilter(), containsInAnyOrder("regex", "subject", "filter"));
+		assertThat(converted.getFilterFunction(), equalTo("filter function"));
 		assertThat(converted.isAttachmentsActive(), equalTo(true));
 		assertThat(converted.getAttachmentsCategory(), equalTo("category"));
 		assertThat(converted.isWorkflowActive(), equalTo(true));

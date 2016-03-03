@@ -11,7 +11,9 @@ import static org.cmdbuild.servlets.json.CommunicationConstants.CRON_EXPRESSION;
 import static org.cmdbuild.servlets.json.CommunicationConstants.DESCRIPTION;
 import static org.cmdbuild.servlets.json.CommunicationConstants.EMAIL_ACCOUNT;
 import static org.cmdbuild.servlets.json.CommunicationConstants.FILTER_FROM_ADDRESS;
+import static org.cmdbuild.servlets.json.CommunicationConstants.FILTER_FUNCTION;
 import static org.cmdbuild.servlets.json.CommunicationConstants.FILTER_SUBJECT;
+import static org.cmdbuild.servlets.json.CommunicationConstants.FILTER_TYPE;
 import static org.cmdbuild.servlets.json.CommunicationConstants.ID;
 import static org.cmdbuild.servlets.json.CommunicationConstants.INCOMING_FOLDER;
 import static org.cmdbuild.servlets.json.CommunicationConstants.MAPPER_ACTIVE;
@@ -114,6 +116,11 @@ public class ReadEmail extends JSONBaseWithSpringContext {
 			return delegate.isRejectNotMatching();
 		}
 
+		@JsonProperty(FILTER_TYPE)
+		public String getFilterType() {
+			return delegate.getFilterType();
+		}
+
 		@JsonProperty(FILTER_FROM_ADDRESS)
 		// TODO send array as string?
 		public Iterable<String> getRegexFromFilter() {
@@ -124,6 +131,11 @@ public class ReadEmail extends JSONBaseWithSpringContext {
 		// TODO send array as string?
 		public Iterable<String> getRegexSubjectFilter() {
 			return delegate.getRegexSubjectFilter();
+		}
+
+		@JsonProperty(FILTER_FUNCTION)
+		public String getFilterFunction() {
+			return delegate.getFilterFunction();
 		}
 
 		@JsonProperty(NOTIFICATION_ACTIVE)
@@ -221,8 +233,10 @@ public class ReadEmail extends JSONBaseWithSpringContext {
 			@Parameter(value = PROCESSED_FOLDER, required = false) final String processedFolder, //
 			@Parameter(value = REJECTED_FOLDER, required = false) final String rejectedFolder, //
 			@Parameter(value = REJECT_NOT_MATCHING, required = false) final boolean rejectNotMatching, //
+			@Parameter(value = FILTER_TYPE, required = false) final String filterType, //
 			@Parameter(value = FILTER_FROM_ADDRESS, required = false) final JSONArray filterFromAddress, //
 			@Parameter(value = FILTER_SUBJECT, required = false) final JSONArray filterSubject, //
+			@Parameter(value = FILTER_FUNCTION, required = false) final String filterFunction, //
 			@Parameter(value = NOTIFICATION_ACTIVE, required = false) final Boolean notificationActive, //
 			@Parameter(value = NOTIFICATION_EMAIL_TEMPLATE, required = false) final String emailTemplate, //
 			@Parameter(value = ATTACHMENTS_ACTIVE, required = false) final Boolean attachmentsActive, //
@@ -250,8 +264,10 @@ public class ReadEmail extends JSONBaseWithSpringContext {
 				.withRejectNotMatching(rejectNotMatching) //
 				//
 				// filters
+				.withFilterType(filterType) //
 				.withRegexFromFilter(toIterable(filterFromAddress)) //
 				.withRegexSubjectFilter(toIterable(filterSubject)) //
+				.withFilterFunction(filterFunction) //
 				//
 				// send notification
 				.withNotificationStatus(defaultIfNull(notificationActive, false)) //
@@ -309,8 +325,10 @@ public class ReadEmail extends JSONBaseWithSpringContext {
 			@Parameter(value = PROCESSED_FOLDER, required = false) final String processedFolder, //
 			@Parameter(value = REJECTED_FOLDER, required = false) final String rejectedFolder, //
 			@Parameter(value = REJECT_NOT_MATCHING, required = false) final boolean rejectNotMatching, //
+			@Parameter(value = FILTER_TYPE, required = false) final String filterType, //
 			@Parameter(value = FILTER_FROM_ADDRESS, required = false) final JSONArray filterFromAddress, //
 			@Parameter(value = FILTER_SUBJECT, required = false) final JSONArray filterSubject, //
+			@Parameter(value = FILTER_FUNCTION, required = false) final String filterFunction, //
 			@Parameter(value = NOTIFICATION_ACTIVE, required = false) final Boolean notificationActive, //
 			@Parameter(value = NOTIFICATION_EMAIL_TEMPLATE, required = false) final String emailTemplate, //
 			@Parameter(value = ATTACHMENTS_ACTIVE, required = false) final Boolean attachmentsActive, //
@@ -339,8 +357,10 @@ public class ReadEmail extends JSONBaseWithSpringContext {
 				.withRejectNotMatching(rejectNotMatching) //
 				//
 				// filters
+				.withFilterType(filterType) //
 				.withRegexFromFilter(toIterable(filterFromAddress)) //
 				.withRegexSubjectFilter(toIterable(filterSubject)) //
+				.withFilterFunction(filterFunction) //
 				//
 				// send notification
 				.withNotificationStatus(defaultIfNull(notificationActive, false)) //

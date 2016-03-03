@@ -7,6 +7,7 @@
 			'CMDBuild.core.constants.Server',
 			'CMDBuild.core.proxy.Classes',
 			'CMDBuild.core.proxy.CMProxyConstants',
+			'CMDBuild.core.proxy.Filter',
 			'CMDBuild.core.proxy.group.DefaultFilters',
 			'CMDBuild.core.Utils'
 		],
@@ -20,6 +21,7 @@
 		 * @cfg {Array}
 		 */
 		cmfgCatchedFunctions: [
+			'groupDefaultFiltersRendererGridFilterColumn',
 			'onGroupAddButtonClick',
 			'onGroupDefaultFiltersAbortButtonClick',
 			'onGroupDefaultFiltersGroupSelected = onGroupGroupSelected',
@@ -27,6 +29,13 @@
 			'onGroupDefaultFiltersTabShow',
 			'onGroupDefaultFiltersTreeBeforeEdit'
 		],
+
+		/**
+		 * @property {Object}
+		 *
+		 * @private
+		 */
+		filtersBuffer: {},
 
 		/**
 		 * Filters root class of all classes and root process of all processes
@@ -58,6 +67,41 @@
 
 			// Shorthands
 			this.tree = this.view.tree;
+
+			this.filtersBufferBuild();
+		},
+
+		/**
+		 * @private
+		 */
+		filtersBufferBuild: function() {
+			CMDBuild.core.proxy.Filter.readAll({
+				loadMask: false,
+				scope: this,
+				success: function(response, options, decodedResponse) {
+					decodedResponse = decodedResponse[CMDBuild.core.proxy.CMProxyConstants.FILTERS] || [];
+
+					this.filtersBuffer = {}; // Buffer property reset
+
+					if (!Ext.isEmpty(decodedResponse) && Ext.isArray(decodedResponse))
+						Ext.Array.forEach(decodedResponse, function(filterObject, i, allFilterObjects) {
+							if (!Ext.isEmpty(filterObject) && !Ext.isEmpty(filterObject[CMDBuild.core.proxy.CMProxyConstants.ID]))
+								this.filtersBuffer[filterObject[CMDBuild.core.proxy.CMProxyConstants.ID]] = filterObject;
+						}, this);
+				}
+			});
+		},
+
+		/**
+		 * @param {String} filterId
+		 *
+		 * @returns {String}
+		 */
+		groupDefaultFiltersRendererGridFilterColumn: function(filterId) {
+			if (!Ext.isEmpty(filterId) && !Ext.isEmpty(this.filtersBuffer[filterId]))
+				return this.filtersBuffer[filterId][CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION];
+
+			return filterId;
 		},
 
 		/**
@@ -103,6 +147,8 @@
 				params[CMDBuild.core.proxy.CMProxyConstants.ACTIVE] = true;
 
 				this.tree.getStore().getRootNode().removeAll();
+
+				this.filtersBufferBuild();
 
 				CMDBuild.core.proxy.Classes.read({
 					params: params,

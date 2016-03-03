@@ -11,21 +11,6 @@
 		singleton: true,
 
 		/**
-		 * @param {Object} parameters
-		 */
-		readUIConfiguration: function(parameters) {
-			CMDBuild.Ajax.request({
-				url: CMDBuild.core.proxy.CMProxyUrlIndex.privileges.classes.loadClassUiConfiguration,
-				params: parameters.params,
-				loadMask: Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : true,
-				scope: parameters.scope || this,
-				failure: parameters.failure || Ext.emptyFn,
-				success: parameters.success || Ext.emptyFn,
-				callback: parameters.callback || Ext.emptyFn
-			});
-		},
-
-		/**
 		 * @returns {Ext.data.Store}
 		 */
 		getStore: function() {
@@ -49,9 +34,9 @@
 		/**
 		 * @param {Object} parameters
 		 */
-		updateUIConfiguration: function(parameters) {
+		readUIConfiguration: function(parameters) {
 			CMDBuild.Ajax.request({
-				url: CMDBuild.core.proxy.CMProxyUrlIndex.privileges.classes.saveClassUiConfiguration,
+				url: CMDBuild.core.proxy.CMProxyUrlIndex.privileges.classes.loadClassUiConfiguration,
 				params: parameters.params,
 				loadMask: Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : true,
 				scope: parameters.scope || this,
@@ -82,6 +67,21 @@
 		update: function(parameters) {
 			CMDBuild.Ajax.request({
 				url: CMDBuild.core.proxy.CMProxyUrlIndex.privileges.classes.update,
+				params: parameters.params,
+				loadMask: Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : true,
+				scope: parameters.scope || this,
+				failure: parameters.failure || Ext.emptyFn,
+				success: parameters.success || Ext.emptyFn,
+				callback: parameters.callback || Ext.emptyFn
+			});
+		},
+
+		/**
+		 * @param {Object} parameters
+		 */
+		updateUIConfiguration: function(parameters) {
+			CMDBuild.Ajax.request({
+				url: CMDBuild.core.proxy.CMProxyUrlIndex.privileges.classes.saveClassUiConfiguration,
 				params: parameters.params,
 				loadMask: Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : true,
 				scope: parameters.scope || this,

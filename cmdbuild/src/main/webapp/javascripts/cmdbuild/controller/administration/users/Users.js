@@ -141,7 +141,7 @@
 				var store = this.form.defaultGroup.getStore();
 
 				this.selectedUser = this.grid.getSelectionModel().getSelection()[0];
-_debug('this.selectedUser', this.selectedUser);
+
 				this.form.reset();
 				this.form.setDisabledModify(true, true);
 

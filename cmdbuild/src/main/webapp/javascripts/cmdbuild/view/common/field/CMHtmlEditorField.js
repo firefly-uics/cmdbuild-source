@@ -119,7 +119,14 @@
 
 		setDirty: function() {
 			this.dirty = true;
-		}
+		},
+
+		/**
+		 * Override to avoid event suspend that deny correct editor rendering
+		 *
+		 * @override
+		 */
+		suspendEvents: undefined
 	});
 
 })();

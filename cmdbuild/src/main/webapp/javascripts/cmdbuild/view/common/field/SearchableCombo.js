@@ -164,6 +164,7 @@
 								Description: decodedResult.card['Description']
 							});
 
+						this.setValue(id);
 						this.validate();
 					}
 				});

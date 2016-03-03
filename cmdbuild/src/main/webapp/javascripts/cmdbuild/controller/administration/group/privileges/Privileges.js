@@ -17,19 +17,29 @@
 		parentDelegate: undefined,
 
 		/**
-		 * @property {CMDBuild.controller.administration.group.privileges.Grid}
+		 * @property {CMDBuild.controller.administration.group.privileges.tabs.Classes}
 		 */
 		controllerClassPrivileges: undefined,
 
 		/**
-		 * @property {CMDBuild.controller.administration.group.privileges.Grid}
+		 * @property {CMDBuild.controller.administration.group.privileges.tabs.CustomPage}
 		 */
-		controllerViewProperties: undefined,
+		controllerCustomPageProperties: undefined,
+
+		/**
+		 * @property {CMDBuild.controller.administration.group.privileges.tabs.DataView}
+		 */
+		controllerDataViewProperties: undefined,
+
+		/**
+		 * @property {CMDBuild.controller.administration.group.privileges.tabs.Filter}
+		 */
+		controllerFilterProperties: undefined,
 
 		/**
 		 * @property {CMDBuild.controller.administration.group.privileges.Grid}
 		 */
-		controllerFilterProperties: undefined,
+		controllerWorkflowPrivileges: undefined,
 
 		/**
 		 * @cfg {Array}
@@ -57,39 +67,18 @@
 			this.view = Ext.create('CMDBuild.view.administration.group.privileges.PrivilegesView', { delegate: this });
 
 			// Controller build
-			this.controllerClassPrivileges = Ext.create('CMDBuild.controller.administration.group.privileges.Grid', {
-				parentDelegate: this,
-				proxy: CMDBuild.core.proxy.group.privileges.Classes,
-				title: CMDBuild.Translation.classes,
-				enableCRUDRead: true,
-				enableCRUDWrite: true,
-				enablePrivilegesAndUi: true
-			});
-			this.controllerViewProperties = Ext.create('CMDBuild.controller.administration.group.privileges.Grid', {
-				parentDelegate: this,
-				proxy: CMDBuild.core.proxy.group.privileges.DataView,
-				title: CMDBuild.Translation.views,
-				enableCRUDRead: true
-			});
-			this.controllerFilterProperties = Ext.create('CMDBuild.controller.administration.group.privileges.Grid', {
-				parentDelegate: this,
-				proxy: CMDBuild.core.proxy.group.privileges.Filter,
-				title: CMDBuild.Translation.searchFilters,
-				enableCRUDRead: true
-			});
-
-			this.controllerCustomPagesProperties = Ext.create('CMDBuild.controller.administration.group.privileges.Grid', {
-				parentDelegate: this,
-				proxy: CMDBuild.core.proxy.group.privileges.CustomPages,
-				title: CMDBuild.Translation.customPages,
-				enableCRUDRead: true
-			});
+			this.controllerClassPrivileges = Ext.create('CMDBuild.controller.administration.group.privileges.tabs.Classes', { parentDelegate: this });
+			this.controllerCustomPageProperties = Ext.create('CMDBuild.controller.administration.group.privileges.tabs.CustomPage', { parentDelegate: this });
+			this.controllerDataViewProperties = Ext.create('CMDBuild.controller.administration.group.privileges.tabs.DataView', { parentDelegate: this });
+			this.controllerFilterProperties = Ext.create('CMDBuild.controller.administration.group.privileges.tabs.Filter', { parentDelegate: this });
+			this.controllerWorkflowPrivileges = Ext.create('CMDBuild.controller.administration.group.privileges.tabs.Workflow', { parentDelegate: this });
 
 			// Inject tabs (sorted)
 			this.view.add(this.controllerClassPrivileges.getView());
-			this.view.add(this.controllerViewProperties.getView());
+			this.view.add(this.controllerWorkflowPrivileges.getView());
+			this.view.add(this.controllerDataViewProperties.getView());
 			this.view.add(this.controllerFilterProperties.getView());
-			this.view.add(this.controllerCustomPagesProperties.getView());
+			this.view.add(this.controllerCustomPageProperties.getView());
 		},
 
 		/**

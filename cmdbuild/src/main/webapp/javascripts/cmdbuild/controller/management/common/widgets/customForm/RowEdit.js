@@ -56,10 +56,8 @@
 			this.fieldsInitialization();
 
 			// Show window
-			if (!Ext.isEmpty(this.view)) {
+			if (!Ext.isEmpty(this.view))
 				this.view.show();
-				this.view.setLoading(true);
-			}
 		},
 
 		/**
@@ -123,6 +121,8 @@
 		fieldsInitialization: function() {
 			var barrierId = 'rowEditFieldsInitializationBarrier';
 
+			this.view.setLoading(true);
+
 			CMDBuild.core.RequestBarrier.init(barrierId, function() {
 				this.form.loadRecord(this.record);
 
@@ -135,12 +135,14 @@
 
 				// Force editor fields store load (must be done because FieldManager field don't works properly)
 				// TODO: waiting for full FiledManager v2 implementation
-				if (!Ext.Object.isEmpty(field) && !Ext.Object.isEmpty(field.store) && field.store.count() == 0)
-					field.store.load({
+				if (!Ext.Object.isEmpty(field) && Ext.isFunction(field.getStore) && field.getStore().count() == 0)
+					field.getStore().load({
 						scope: this,
 						callback: CMDBuild.core.RequestBarrier.getCallback(barrierId)
 					});
 			}, this);
+
+			CMDBuild.core.RequestBarrier.finalize(barrierId);
 		},
 
 		onWidgetCustomFormRowEditWindowAbortButtonClick: function() {

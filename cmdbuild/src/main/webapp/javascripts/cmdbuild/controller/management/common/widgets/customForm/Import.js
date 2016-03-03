@@ -88,6 +88,8 @@
 						} break;
 					}
 				}, this);
+				
+				CMDBuild.core.RequestBarrier.finalize(barrierId);
 			}
 		},
 

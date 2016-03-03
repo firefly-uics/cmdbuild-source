@@ -18,6 +18,8 @@ public interface SecurityLogic {
 
 	List<PrivilegeInfo> fetchClassPrivilegesForGroup(Long groupId);
 
+	List<PrivilegeInfo> fetchProcessPrivilegesForGroup(Long groupId);
+
 	CardEditMode fetchCardEditModeForGroupAndClass(Long groupId, Long classId);
 
 	List<PrivilegeInfo> fetchViewPrivilegesForGroup(Long groupId);
@@ -40,6 +42,8 @@ public interface SecurityLogic {
 	 * attributes and update them all
 	 */
 	void saveClassPrivilege(PrivilegeInfo privilegeInfo, boolean modeOnly);
+
+	void saveProcessPrivilege(PrivilegeInfo privilegeInfo, boolean modeOnly);
 
 	void saveViewPrivilege(PrivilegeInfo privilegeInfo);
 

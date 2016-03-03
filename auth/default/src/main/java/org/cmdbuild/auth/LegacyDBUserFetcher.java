@@ -55,4 +55,9 @@ public class LegacyDBUserFetcher extends DBUserFetcher {
 		return view.findDomain("UserRole");
 	}
 
+	@Override
+	protected boolean extendedInformation() {
+		return true;
+	}
+
 }

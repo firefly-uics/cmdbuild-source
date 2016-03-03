@@ -1,15 +1,13 @@
 (function() {
 
-	Ext.define('CMDBuild.controller.administration.group.privileges.Grid', {
+	Ext.define('CMDBuild.controller.administration.group.privileges.tabs.Workflow', {
 		extend: 'CMDBuild.controller.common.AbstractController',
 
 		requires: [
 			'CMDBuild.core.Message',
 			'CMDBuild.core.proxy.Attributes',
 			'CMDBuild.core.proxy.CMProxyConstants',
-			'CMDBuild.core.proxy.group.privileges.Classes',
-			'CMDBuild.core.proxy.group.privileges.DataView',
-			'CMDBuild.core.proxy.group.privileges.Filter'
+			'CMDBuild.core.proxy.group.privileges.Workflow'
 		],
 
 		// Here to avoid a complete refactor of FilterChooser structure
@@ -24,48 +22,17 @@
 		parentDelegate: undefined,
 
 		/**
-		 * @property {CMDBuild.controller.administration.group.privileges.UiConfiguration}
-		 */
-		controllerUiConfiguration: undefined,
-
-		/**
 		 * @cfg {Array}
 		 */
 		cmfgCatchedFunctions: [
-			'onGroupPrivilegesGridSetPrivilege',
-			'onGroupPrivilegesGridTabShow',
-			'onGroupPrivilegesRemoveFilterClick',
-			'onGroupPrivilegesSetFilterClick',
-			'onGroupPrivilegesUIConfigurationButtonClick'
+			'onGroupPrivilegesTabWorkflowRemoveFilterClick',
+			'onGroupPrivilegesTabWorkflowSetFilterClick',
+			'onGroupPrivilegesTabWorkflowSetPrivilege',
+			'onGroupPrivilegesTabWorkflowShow'
 		],
 
 		/**
-		 * @cfg {Boolean}
-		 */
-		enableCRUDRead: false,
-
-		/**
-		 * @cfg {Boolean}
-		 */
-		enableCRUDWrite: false,
-
-		/**
-		 * @cfg {Boolean}
-		 */
-		enablePrivilegesAndUi: false,
-
-		/**
-		 * @cfg {Mixed}
-		 */
-		proxy: undefined,
-
-		/**
-		 * @cfg {String}
-		 */
-		title: undefined,
-
-		/**
-		 * @cfg {CMDBuild.view.administration.group.privileges.GridPanel}
+		 * @cfg {CMDBuild.view.administration.group.privileges.tabs.Workflow}
 		 */
 		view: undefined,
 
@@ -78,49 +45,7 @@
 		constructor: function(configurationObject) {
 			this.callParent(arguments);
 
-			this.controllerUiConfiguration = Ext.create('CMDBuild.controller.administration.group.privileges.UiConfiguration', { parentDelegate: this });
-
-			this.view = Ext.create('CMDBuild.view.administration.group.privileges.GridPanel', {
-				delegate: this,
-				title: this.title,
-				store: this.proxy.getStore(),
-				enableCRUDRead: this.enableCRUDRead,
-				enableCRUDWrite: this.enableCRUDWrite,
-				enablePrivilegesAndUi: this.enablePrivilegesAndUi
-			});
-		},
-
-		onGroupPrivilegesGridTabShow: function() {
-			var params = {};
-			params[CMDBuild.core.proxy.CMProxyConstants.GROUP_ID] = this.cmfg('selectedGroupGet', CMDBuild.core.proxy.CMProxyConstants.ID);
-
-			this.view.getStore().load({ params: params });
-		},
-
-		/**
-		 * @param {Object} parameters
-		 * @param {Number} parameters.rowIndex
-		 * @param {String} parameters.privilege
-		 *
-		 * TODO: waiting for refactor (attributes names)
-		 */
-		onGroupPrivilegesGridSetPrivilege: function(parameters) {
-			if (Ext.isEmpty(this.proxy)) {
-				_error('proxy object not defined', this);
-			} else {
-				var params = {};
-				params['privilege_mode'] = parameters.privilege;
-				params['privilegedObjectId'] = this.view.store.getAt(parameters.rowIndex).get(CMDBuild.core.proxy.CMProxyConstants.ID);
-				params[CMDBuild.core.proxy.CMProxyConstants.GROUP_ID] = this.cmfg('selectedGroupGet', CMDBuild.core.proxy.CMProxyConstants.ID);
-
-				this.proxy.update({
-					params: params,
-					scope: this,
-					success: function(response, options, decodedResponse) {
-						this.onGroupPrivilegesGridTabShow();
-					}
-				});
-			}
+			this.view = Ext.create('CMDBuild.view.administration.group.privileges.tabs.Workflow', { delegate: this });
 		},
 
 		/**
@@ -128,7 +53,7 @@
 		 *
 		 * TODO: waiting for refactor (attributes names)
 		 */
-		onGroupPrivilegesRemoveFilterClick: function(record) {
+		onGroupPrivilegesTabWorkflowRemoveFilterClick: function(record) {
 			Ext.Msg.show({
 				title: CMDBuild.Translation.attention,
 				msg: CMDBuild.Translation.common.confirmpopup.areyousure,
@@ -141,11 +66,11 @@
 						params[CMDBuild.core.proxy.CMProxyConstants.GROUP_ID] = this.cmfg('selectedGroupGet', CMDBuild.core.proxy.CMProxyConstants.ID);
 
 						// Set empty filter to clear value
-						this.proxy.setRowAndColumn({
+						CMDBuild.core.proxy.group.privileges.Workflow.setRowAndColumn({
 							params: params,
 							scope: this,
 							success: function(response, options, decodedResponse) {
-								this.onGroupPrivilegesGridTabShow();
+								this.cmfg('onGroupPrivilegesTabWorkflowShow');
 							}
 						});
 					}
@@ -155,19 +80,10 @@
 
 		/**
 		 * @param {CMDBuild.model.group.privileges.GridRecord} record
-		 */
-		onGroupPrivilegesUIConfigurationButtonClick: function(record) {
-			this.controllerUiConfiguration.setRecord(record);
-
-			this.controllerUiConfiguration.getView().show();
-		},
-
-		/**
-		 * @param {CMDBuild.model.group.privileges.GridRecord} record
 		 *
 		 * TODO: waiting for refactor (attributes names)
 		 */
-		onGroupPrivilegesSetFilterClick: function(record) {
+		onGroupPrivilegesTabWorkflowSetFilterClick: function(record) {
 			var entryType = _CMCache.getEntryTypeByName(record.get(CMDBuild.core.proxy.CMProxyConstants.NAME));
 
 			var filter = new CMDBuild.model.CMFilterModel({
@@ -197,6 +113,39 @@
 					filterWindow.show();
 				}
 			});
+		},
+
+		/**
+		 * @param {Object} parameters
+		 * @param {Number} parameters.rowIndex
+		 * @param {String} parameters.privilege
+		 *
+		 * TODO: waiting for refactor (attributes names)
+		 */
+		onGroupPrivilegesTabWorkflowSetPrivilege: function(parameters) {
+			if (!Ext.isEmpty(parameters) && Ext.isObject(parameters)) {
+				var params = {};
+				params['privilege_mode'] = parameters.privilege;
+				params['privilegedObjectId'] = this.view.store.getAt(parameters.rowIndex).get(CMDBuild.core.proxy.CMProxyConstants.ID);
+				params[CMDBuild.core.proxy.CMProxyConstants.GROUP_ID] = this.cmfg('selectedGroupGet', CMDBuild.core.proxy.CMProxyConstants.ID);
+
+				CMDBuild.core.proxy.group.privileges.Workflow.update({
+					params: params,
+					scope: this,
+					success: function(response, options, decodedResponse) {
+						this.cmfg('onGroupPrivilegesTabWorkflowShow');
+					}
+				});
+			} else {
+				_error('wrong or empty parameters in onGroupPrivilegesTabWorkflowSetPrivilege()', this);
+			}
+		},
+
+		onGroupPrivilegesTabWorkflowShow: function() {
+			var params = {};
+			params[CMDBuild.core.proxy.CMProxyConstants.GROUP_ID] = this.cmfg('selectedGroupGet', CMDBuild.core.proxy.CMProxyConstants.ID);
+
+			this.view.getStore().load({ params: params });
 		},
 
 		// As cmFilterWindowDelegate
@@ -234,7 +183,7 @@
 				params[CMDBuild.core.proxy.CMProxyConstants.FILTER] = Ext.encode(filter.getConfiguration());
 				params[CMDBuild.core.proxy.CMProxyConstants.GROUP_ID] = this.cmfg('selectedGroupGet', CMDBuild.core.proxy.CMProxyConstants.ID);
 
-				this.proxy.setRowAndColumn({
+				CMDBuild.core.proxy.group.privileges.Workflow.setRowAndColumn({
 					params: params,
 					scope: this,
 					success: function(response, options, decodedResponse) {

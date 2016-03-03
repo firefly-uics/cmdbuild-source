@@ -121,9 +121,11 @@ public class CommunicationConstants {
 			FILE_NAME = "fileName", //
 			FILTER = "filter", //
 			FILTER_FROM_ADDRESS = "filterFromAddress", //
-			FILTERNAME = "filterName", //
+			FILTER_FUNCTION = "filterFunction", //
+			FILTER_NAME = "filterName", //
 			FILTERS = "filters", //
 			FILTER_SUBJECT = "filterSubject", //
+			FILTER_TYPE = "filterType", //
 			FK_DESTINATION = "fkDestination", //
 			FORCE_CREATION = "forceCreation", //
 			FORMAT = "format", //
@@ -139,6 +141,7 @@ public class CommunicationConstants {
 			IMAP_PORT = "imapPort", //
 			IMAP_SERVER = "imapServer", //
 			IMAP_SSL = "imapSsl", //
+			IMAP_STARTTLS = "imapStartTls", //
 			IMPORT_MAPPING = "ImportMapping",//
 			INCOMING_FOLDER = "incomingFolder", //
 			INDEX = "index", //
@@ -254,6 +257,7 @@ public class CommunicationConstants {
 			SMTP_PORT = "smtpPort", //
 			SMTP_SERVER = "smtpServer", //
 			SMTP_SSL = "smtpSsl", //
+			SMTP_STARTTLS = "smtpStartTls", //
 			SORT = "sort", //
 			SOURCE = "source", //
 			SOURCE_ATTRIBUTE = SOURCE + "Attribute", //

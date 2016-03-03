@@ -26,6 +26,8 @@
 					}
 				},
 				callback: function(records, operation, success) {
+					Ext.util.Cookies.clear(CMDBuild.core.proxy.CMProxyConstants.SESSION_TOKEN);
+
 					window.location = 'index.jsp';
 				}
 			});

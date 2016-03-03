@@ -29,6 +29,21 @@
 			});
 		},
 
+		/**
+		 * @param {Object} parameters
+		 */
+		readAll: function(parameters) {
+			CMDBuild.Ajax.request({
+				url: CMDBuild.core.proxy.CMProxyUrlIndex.filter.groupStore,
+				params: parameters.params,
+				loadMask: Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : true,
+				scope: parameters.scope || this,
+				failure: parameters.failure || Ext.emptyFn,
+				success: parameters.success || Ext.emptyFn,
+				callback: parameters.callback || Ext.emptyFn
+			});
+		},
+
 		update: function(filter, config) {
 			doRequest(filter, config, CMDBuild.core.proxy.CMProxyUrlIndex.filter.update, 'POST', true);
 		},

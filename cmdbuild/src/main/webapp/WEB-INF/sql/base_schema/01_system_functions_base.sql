@@ -179,6 +179,14 @@ BEGIN
 END
 $$ LANGUAGE plpgsql VOLATILE;
 
+CREATE OR REPLACE FUNCTION _cm_concat(separator text, elements text[]) RETURNS text AS $$
+	SELECT case
+		WHEN $1 IS NULL OR trim(array_to_string($2, coalesce($1, ''))) = ''
+			THEN null
+			ELSE array_to_string($2, coalesce($1, ''))
+		END
+$$ LANGUAGE sql VOLATILE;
+
 CREATE OR REPLACE FUNCTION _cm_comment_add_parts(comment text, parts text[], missingOnly boolean) RETURNS text AS $$
 DECLARE
 	part text;
@@ -194,7 +202,7 @@ BEGIN
 		key = split_part(part, ': ', 1);
 		value = split_part(part, ': ', 2);
 		IF NOT (missingOnly AND substring(comment, key || ': [^|]+') IS NOT NULL) THEN
-			comment = concat_ws('|', comment, key || ': ' || value);
+			comment = _cm_concat('|', ARRAY[comment, key || ': ' || value]);
 		ELSE
 		END IF;
 	END LOOP;

@@ -22,6 +22,8 @@ public interface EmailAccount extends Storable {
 
 	boolean isSmtpSsl();
 
+	boolean isSmtpStartTls();
+
 	boolean isSmtpConfigured();
 
 	String getOutputFolder();
@@ -31,6 +33,8 @@ public interface EmailAccount extends Storable {
 	Integer getImapPort();
 
 	boolean isImapSsl();
+
+	boolean isImapStartTls();
 
 	boolean isImapConfigured();
 
