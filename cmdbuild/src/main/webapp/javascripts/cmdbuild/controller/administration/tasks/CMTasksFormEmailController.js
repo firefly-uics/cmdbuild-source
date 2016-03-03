@@ -127,6 +127,8 @@
 							this.delegateStep[0].setValueActive(record.get(CMDBuild.core.proxy.CMProxyConstants.ACTIVE));
 							this.delegateStep[0].setValueDescription(record.get(CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION));
 							this.delegateStep[0].setValueEmailAccount(record.get(CMDBuild.core.proxy.CMProxyConstants.EMAIL_ACCOUNT));
+							this.delegateStep[0].setValueFilterType(record.get(CMDBuild.core.proxy.CMProxyConstants.FILTER_TYPE));
+							this.delegateStep[0].setValueFilterFunction(record.get(CMDBuild.core.proxy.CMProxyConstants.FILTER_FUNCTION));
 							this.delegateStep[0].setValueFilterFromAddress(
 								this.delegateStep[0].getFromAddressFilterDelegate().filterStringBuild(
 									record.get(CMDBuild.core.proxy.CMProxyConstants.FILTER_FROM_ADDRESS)
@@ -187,26 +189,39 @@
 
 				submitDatas[CMDBuild.core.proxy.CMProxyConstants.CRON_EXPRESSION] = this.delegateStep[1].getCronDelegate().getValue();
 
-				// Form submit values formatting
-					if (!Ext.isEmpty(formData.filterFromAddress))
-						submitDatas[CMDBuild.core.proxy.CMProxyConstants.FILTER_FROM_ADDRESS] = Ext.encode(
-							formData[CMDBuild.core.proxy.CMProxyConstants.FILTER_FROM_ADDRESS].split(
-								this.delegateStep[0].getFromAddressFilterDelegate().getTextareaConcatParameter()
-							)
-						);
-
-					if (!Ext.isEmpty(formData.filterSubject))
-						submitDatas[CMDBuild.core.proxy.CMProxyConstants.FILTER_SUBJECT] = Ext.encode(
-							formData[CMDBuild.core.proxy.CMProxyConstants.FILTER_SUBJECT].split(
-								this.delegateStep[0].getSubjectFilterDelegate().getTextareaConcatParameter()
-							)
-						);
-
 				// Fieldset submitting filter to avoid to send datas if fieldset are collapsed
 					var rejectedFieldsetCheckboxValue = this.delegateStep[0].getValueRejectedFieldsetCheckbox();
 					if (rejectedFieldsetCheckboxValue) {
 						submitDatas[CMDBuild.core.proxy.CMProxyConstants.REJECT_NOT_MATCHING] = rejectedFieldsetCheckboxValue;
 						submitDatas[CMDBuild.core.proxy.CMProxyConstants.REJECTED_FOLDER] = formData[CMDBuild.core.proxy.CMProxyConstants.REJECTED_FOLDER];
+					}
+
+					var filterFieldsetComboValue = this.delegateStep[0].view.filterTypeCombobox.getValue();
+					if (filterFieldsetComboValue) {
+						submitDatas[CMDBuild.core.proxy.CMProxyConstants.FILTER_TYPE] = formData[CMDBuild.core.proxy.CMProxyConstants.FILTER_TYPE];
+
+						switch (filterFieldsetComboValue) {
+							case 'function': {
+								submitDatas[CMDBuild.core.proxy.CMProxyConstants.FILTER_FUNCTION] = formData[CMDBuild.core.proxy.CMProxyConstants.FILTER_FUNCTION];
+							} break;
+
+							case 'regex': {
+								// Form submit values formatting
+								if (!Ext.isEmpty(formData.filterFromAddress))
+									submitDatas[CMDBuild.core.proxy.CMProxyConstants.FILTER_FROM_ADDRESS] = Ext.encode(
+										formData[CMDBuild.core.proxy.CMProxyConstants.FILTER_FROM_ADDRESS].split(
+											this.delegateStep[0].getFromAddressFilterDelegate().getTextareaConcatParameter()
+										)
+									);
+
+								if (!Ext.isEmpty(formData.filterSubject))
+									submitDatas[CMDBuild.core.proxy.CMProxyConstants.FILTER_SUBJECT] = Ext.encode(
+										formData[CMDBuild.core.proxy.CMProxyConstants.FILTER_SUBJECT].split(
+											this.delegateStep[0].getSubjectFilterDelegate().getTextareaConcatParameter()
+										)
+									);
+							} break;
+						}
 					}
 
 					var attachmentsFieldsetCheckboxValue = this.delegateStep[2].getValueAttachmentsFieldsetCheckbox();

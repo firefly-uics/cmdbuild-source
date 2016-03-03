@@ -19,10 +19,12 @@ public class DefaultEmailAccount implements EmailAccount {
 		private String smtpServer;
 		private Integer smtpPort;
 		private boolean smtpSsl;
+		private boolean smtpStartTls;
 		private String outputFolder;
 		private String imapServer;
 		private Integer imapPort;
 		private boolean imapSsl;
+		private boolean imapStartTls;
 
 		private Builder() {
 			// use factory method
@@ -88,6 +90,11 @@ public class DefaultEmailAccount implements EmailAccount {
 			return this;
 		}
 
+		public Builder withSmtpStartTls(final boolean smtpStartTls) {
+			this.smtpStartTls = smtpStartTls;
+			return this;
+		}
+
 		public Builder withOutputFolder(final String outputFolder) {
 			this.outputFolder = outputFolder;
 			return this;
@@ -108,6 +115,11 @@ public class DefaultEmailAccount implements EmailAccount {
 			return this;
 		}
 
+		public Builder withImapStartTls(final boolean imapStartTls) {
+			this.imapStartTls = imapStartTls;
+			return this;
+		}
+
 	}
 
 	public static Builder newInstance() {
@@ -123,10 +135,12 @@ public class DefaultEmailAccount implements EmailAccount {
 	private final String smtpServer;
 	private final Integer smtpPort;
 	private final boolean smtpSsl;
+	private final boolean smtpStartTls;
 	private final String outputFolder;
 	private final String imapServer;
 	private final Integer imapPort;
 	private final boolean imapSsl;
+	private final boolean imapStartTls;
 
 	private DefaultEmailAccount(final Builder builder) {
 		this.id = builder.id;
@@ -138,10 +152,12 @@ public class DefaultEmailAccount implements EmailAccount {
 		this.smtpServer = builder.smtpServer;
 		this.smtpPort = builder.smtpPort;
 		this.smtpSsl = builder.smtpSsl;
+		this.smtpStartTls = builder.smtpStartTls;
 		this.outputFolder = builder.outputFolder;
 		this.imapServer = builder.imapServer;
 		this.imapPort = builder.imapPort;
 		this.imapSsl = builder.imapSsl;
+		this.imapStartTls = builder.imapStartTls;
 	}
 
 	@Override
@@ -195,6 +211,11 @@ public class DefaultEmailAccount implements EmailAccount {
 	}
 
 	@Override
+	public boolean isSmtpStartTls() {
+		return smtpStartTls;
+	}
+
+	@Override
 	public boolean isSmtpConfigured() {
 		return isNotBlank(smtpServer) && isNotBlank(address);
 	}
@@ -217,6 +238,11 @@ public class DefaultEmailAccount implements EmailAccount {
 	@Override
 	public boolean isImapSsl() {
 		return imapSsl;
+	}
+
+	@Override
+	public boolean isImapStartTls() {
+		return imapStartTls;
 	}
 
 	@Override

@@ -88,7 +88,13 @@ public class Startup {
 
 				for (final Task task : taskManagerLogic.read()) {
 					if (task.isActive()) {
-						taskManagerLogic.activate(task.getId());
+						try {
+							taskManagerLogic.logger.debug("starting task '{}'", task.getId());
+							taskManagerLogic.activate(task.getId());
+						} catch (final Exception e) {
+							taskManagerLogic.logger.error("task '{}' cannot be started due to an error", task.getId());
+							taskManagerLogic.logger.error("error starting task", e);
+						}
 					}
 				}
 			}

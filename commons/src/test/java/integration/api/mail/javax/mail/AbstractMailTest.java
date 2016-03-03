@@ -121,6 +121,11 @@ public abstract class AbstractMailTest {
 			}
 
 			@Override
+			public boolean isOutputStartTlsEnabled() {
+				return false;
+			}
+
+			@Override
 			public String getOutputHost() {
 				return LOCALHOST;
 			}
@@ -128,11 +133,6 @@ public abstract class AbstractMailTest {
 			@Override
 			public Integer getOutputPort() {
 				return outputServerSetup().getPort();
-			}
-
-			@Override
-			public boolean isStartTlsEnabled() {
-				return false;
 			}
 
 			@Override
@@ -158,6 +158,11 @@ public abstract class AbstractMailTest {
 			@Override
 			public String getInputProtocol() {
 				return inputServerSetup().getProtocol();
+			}
+
+			@Override
+			public boolean isInputStartTlsEnabled() {
+				return false;
 			}
 
 			@Override

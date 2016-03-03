@@ -1,6 +1,8 @@
 package org.cmdbuild.logic.taskmanager.task.email;
 
 import static com.google.common.collect.Iterables.addAll;
+import static com.google.common.collect.Lists.newArrayList;
+import static com.google.common.collect.Maps.newHashMap;
 import static java.lang.Boolean.FALSE;
 import static org.apache.commons.lang3.ObjectUtils.defaultIfNull;
 
@@ -15,9 +17,6 @@ import org.cmdbuild.logic.taskmanager.TaskVistor;
 import org.cmdbuild.logic.taskmanager.task.email.mapper.MapperEngine;
 import org.cmdbuild.logic.taskmanager.task.email.mapper.NullMapperEngine;
 import org.joda.time.DateTime;
-
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 
 public class ReadEmailTask implements ScheduledTask {
 
@@ -36,15 +35,17 @@ public class ReadEmailTask implements ScheduledTask {
 		private String processedFolder;
 		private String rejectedFolder;
 		private Boolean rejectNotMatching;
-		private final Collection<String> regexFromFilter = Lists.newArrayList();
-		private final Collection<String> regexSubjectFilter = Lists.newArrayList();
+		private String filterType;
+		private final Collection<String> regexFromFilter = newArrayList();
+		private final Collection<String> regexSubjectFilter = newArrayList();
+		private String filterFunction;
 		private Boolean notificationActive;
 		private String notificationTemplate;
 		private Boolean attachmentsActive;
 		private String attachmentsCategory;
 		private Boolean workflowActive;
 		private String workflowClassName;
-		private final Map<String, String> workflowAttributes = Maps.newHashMap();
+		private final Map<String, String> workflowAttributes = newHashMap();
 		private Boolean workflowAdvanceable;
 		private Boolean workflowAttachments;
 		private String workflowAttachmentsCategory;
@@ -126,6 +127,11 @@ public class ReadEmailTask implements ScheduledTask {
 			return this;
 		}
 
+		public Builder withFilterType(final String filterType) {
+			this.filterType = filterType;
+			return this;
+		}
+
 		public Builder withRegexFromFilter(final Iterable<String> regexFromFilter) {
 			addAll(this.regexFromFilter, defaultIfNull(regexFromFilter, EMPTY_FILTER));
 			return this;
@@ -133,6 +139,11 @@ public class ReadEmailTask implements ScheduledTask {
 
 		public Builder withRegexSubjectFilter(final Iterable<String> regexSubjectFilter) {
 			addAll(this.regexSubjectFilter, defaultIfNull(regexSubjectFilter, EMPTY_FILTER));
+			return this;
+		}
+
+		public Builder withFilterFunction(final String filterFunction) {
+			this.filterFunction = filterFunction;
 			return this;
 		}
 
@@ -207,8 +218,10 @@ public class ReadEmailTask implements ScheduledTask {
 	private final String processedFolder;
 	private final String rejectedFolder;
 	private final boolean rejectNotMatching;
+	private final String filterType;
 	private final Iterable<String> regexFromFilter;
 	private final Iterable<String> regexSubjectFilter;
+	private final String filterFunction;
 	private final boolean notificationActive;
 	private final String notificationTemplate;
 	private final boolean attachmentsActive;
@@ -232,8 +245,10 @@ public class ReadEmailTask implements ScheduledTask {
 		this.processedFolder = builder.processedFolder;
 		this.rejectedFolder = builder.rejectedFolder;
 		this.rejectNotMatching = builder.rejectNotMatching;
+		this.filterType = builder.filterType;
 		this.regexFromFilter = builder.regexFromFilter;
 		this.regexSubjectFilter = builder.regexSubjectFilter;
+		this.filterFunction = builder.filterFunction;
 		this.notificationActive = builder.notificationActive;
 		this.notificationTemplate = builder.notificationTemplate;
 		this.attachmentsActive = builder.attachmentsActive;
@@ -305,12 +320,20 @@ public class ReadEmailTask implements ScheduledTask {
 		return notificationTemplate;
 	}
 
+	public String getFilterType() {
+		return filterType;
+	}
+
 	public Iterable<String> getRegexFromFilter() {
 		return regexFromFilter;
 	}
 
 	public Iterable<String> getRegexSubjectFilter() {
 		return regexSubjectFilter;
+	}
+
+	public String getFilterFunction() {
+		return filterFunction;
 	}
 
 	public boolean isAttachmentsActive() {

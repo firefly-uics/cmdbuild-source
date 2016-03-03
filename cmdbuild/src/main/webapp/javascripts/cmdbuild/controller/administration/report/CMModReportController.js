@@ -6,21 +6,21 @@
 		extend: "CMDBuild.controller.CMBasePanelController",
 		constructor: function() {
 			this.callParent(arguments);
-			
+
 			this.currentReport = null;
 			this.currentReportType = null;
-			
+
 			this.grid = this.view.grid;
 			this.gridSM = this.grid.getSelectionModel();
 			this.form = this.view.form;
-			
+
 			this.gridSM.on("selectionchange", onSelectionChange, this);
 			this.view.addReportButton.on("click", onAddReportClick, this);
 			this.form.modifyButton.on("click", onModifyButtonClick, this);
 			this.form.deleteButton.on("click", onDeleteButtonClick, this);
 			this.form.saveButton.on("click", onSaveButtonClick, this);
 			this.form.abortButton.on("click", onAbortButtonClick, this);
-			
+
 			activePanel = this.form.step1.id;
 		},
 
@@ -30,7 +30,7 @@
 		}
 
 	});
-	
+
 	function onSelectionChange(selection) {
 		if (selection.selected.length > 0) {
 			activePanel = this.form.step1.id;
@@ -38,7 +38,7 @@
 			this.form.onReportSelected(this.currentReport);
 		}
 	}
-	
+
 	function onAddReportClick() {
 		this.gridSM.deselectAll();
 		this.form.step1.fileField.allowBlank = false;
@@ -47,13 +47,13 @@
 		this.form.enableModify(all = true);
 		_CMCache.initAddingTranslations();
 	}
-	
+
 	function onModifyButtonClick() {
 		this.form.step1.fileField.allowBlank = true;
 		this.form.enableModify();
 		_CMCache.initModifyingTranslations();
 	}
-	
+
 	function onSaveButtonClick() {
 		if (activePanel == this.form.step1.id) {
 			analizeReport.call(this);
@@ -62,7 +62,7 @@
 		}
 		this.gridSM.deselectAll();
 	}
-	
+
 	function onAbortButtonClick() {
 		this.form.disableModify();
 		this.form.reset();
@@ -70,17 +70,20 @@
 			this.form.onReportSelected(this.currentReport);
 		}
 	}
-	
+
 	function analizeReport() {
 		this.form.step1.name.enable();
 		CMDBuild.LoadMask.get().show();
-		
+
 		this.form.step1.getForm().submit({
 			method : 'POST',
 			url : 'services/json/schema/modreport/analyzejasperreport',
 			scope: this,
 			params: {
 				reportId: this.currentReport == null ? -1 : this.currentReport.get("id")
+			},
+			failure: function(form, action) {
+				CMDBuild.Ajax.defaultFailure(action.response, action.params, action.result);
 			},
 			success : function(form, action) {
 				var r = action.result;
@@ -120,6 +123,9 @@
 			url : 'services/json/schema/modreport/importjasperreport',
 			scope: this,
 			success : successCB,
+			failure: function(form, action) {
+				CMDBuild.Ajax.defaultFailure(action.response, action.params, action.result);
+			},
 			callback: function() {
 				CMDBuild.LoadMask.get().hide();
 			}
@@ -176,7 +182,7 @@
 			scope : this,
 			success : successCB,
 			callback: function() {
-				CMDBuild.LoadMask.get().hide(); 
+				CMDBuild.LoadMask.get().hide();
 			}
 		});
 	}

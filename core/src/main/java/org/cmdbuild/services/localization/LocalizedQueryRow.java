@@ -1,11 +1,17 @@
 package org.cmdbuild.services.localization;
 
+import static com.google.common.base.Predicates.and;
+import static com.google.common.base.Predicates.equalTo;
+import static com.google.common.collect.FluentIterable.from;
 import static org.apache.commons.lang3.ObjectUtils.defaultIfNull;
 import static org.apache.commons.lang3.StringUtils.defaultIfBlank;
+import static org.cmdbuild.common.utils.guava.Predicates.isNotBlank;
+import static org.cmdbuild.data.store.lookup.Functions.toTranslationUuid;
+import static org.cmdbuild.data.store.lookup.Predicates.lookupId;
+import static org.cmdbuild.data.store.lookup.Predicates.lookupTranslationUuid;
 
 import java.util.Map.Entry;
 
-import org.apache.commons.lang3.StringUtils;
 import org.cmdbuild.dao.entry.CMCard;
 import org.cmdbuild.dao.entry.CMRelation;
 import org.cmdbuild.dao.entry.ForwardingCard;
@@ -17,7 +23,6 @@ import org.cmdbuild.dao.query.CMQueryRow;
 import org.cmdbuild.dao.query.ForwardingQueryRow;
 import org.cmdbuild.dao.query.clause.QueryRelation;
 import org.cmdbuild.dao.query.clause.alias.Alias;
-import org.cmdbuild.data.store.lookup.Lookup;
 import org.cmdbuild.data.store.lookup.LookupStore;
 import org.cmdbuild.data.store.lookup.LookupType;
 import org.cmdbuild.logic.translation.TranslationFacade;
@@ -25,6 +30,7 @@ import org.cmdbuild.logic.translation.TranslationObject;
 import org.cmdbuild.logic.translation.converter.LookupConverter;
 
 import com.google.common.base.Function;
+import com.google.common.base.Optional;
 import com.google.common.collect.Iterables;
 
 public class LocalizedQueryRow extends ForwardingQueryRow {
@@ -145,22 +151,29 @@ public class LocalizedQueryRow extends ForwardingQueryRow {
 
 			@Override
 			public LookupValue apply(final LookupValue input) {
-				final LookupConverter converter = LookupConverter.of(LookupConverter.description());
-				final LookupType lookupType = LookupType.newInstance() //
-						.withName(input.getLooupType()) //
-						.build();
-				final Iterable<Lookup> allLookups = lookupStore.readAll(lookupType);
-				String uuid = StringUtils.EMPTY;
-				for (final Lookup lookup : allLookups) {
-					if (lookup.getId().equals(input.getId())) {
-						uuid = lookup.getTranslationUuid();
-						break;
+				final LookupValue output;
+				if (input.getId() != null) {
+					final LookupConverter converter = LookupConverter.of(LookupConverter.description());
+					final LookupType lookupType = LookupType.newInstance() //
+							.withName(input.getLooupType()) //
+							.build();
+					final Optional<String> uuid = from(lookupStore.readAll(lookupType)) //
+							.filter(and(lookupId(equalTo(input.getId())), lookupTranslationUuid(isNotBlank()))) //
+							.transform(toTranslationUuid()) //
+							.first();
+					if (uuid.isPresent()) {
+						final TranslationObject translationObject = converter.create(uuid.get());
+						final String translatedDescription = facade.read(translationObject);
+						final String description = defaultIfBlank(translatedDescription, input.getDescription());
+						output = new LookupValue(input.getId(), description, input.getLooupType(),
+								input.getTranslationUuid());
+					} else {
+						output = input;
 					}
+				} else {
+					output = input;
 				}
-				final TranslationObject translationObject = converter.create(uuid);
-				final String translatedDescription = facade.read(translationObject);
-				final String description = defaultIfBlank(translatedDescription, input.getDescription());
-				return new LookupValue(input.getId(), description, input.getLooupType(), input.getTranslationUuid());
+				return output;
 			}
 		};
 

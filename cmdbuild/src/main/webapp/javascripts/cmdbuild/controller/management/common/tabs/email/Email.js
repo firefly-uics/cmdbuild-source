@@ -255,9 +255,7 @@
 			this.callParent(arguments);
 
 			// Build controllers
-			this.controllerGrid = Ext.create('CMDBuild.controller.management.common.tabs.email.Grid', {
-				parentDelegate: this
-			});
+			this.controllerGrid = Ext.create('CMDBuild.controller.management.common.tabs.email.Grid', { parentDelegate: this });
 			this.grid = this.controllerGrid.getView();
 
 			this.controllerConfirmRegenerationWindow = Ext.create('CMDBuild.controller.management.common.tabs.email.ConfirmRegenerationWindow', {

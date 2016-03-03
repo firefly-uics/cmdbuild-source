@@ -210,29 +210,42 @@ public class UserQuerySpecs extends ForwardingQuerySpecs {
 		if (operationUser.hasAdministratorPrivileges()) {
 			whereClause = trueWhereClause();
 		} else if (prevExecutors != null) {
-			final String defaultGroupName = operationUser.getAuthenticatedUser().getDefaultGroupName();
-			String userGroupsJoined = EMPTY;
-			if (isEmpty(defaultGroupName)) {
-				userGroupsJoined = operationUser.getPreferredGroup().getName();
+			/*
+			 * read access is for those who wants only instances currently in
+			 * charge or worked in the past, write access is for those who wants
+			 * to see all instances.
+			 */
+			if (operationUser.hasWriteAccess(type)) {
+				whereClause = trueWhereClause();
 			} else {
-				userGroupsJoined = on(GROUPS_SEPARATOR).join( //
-						operationUser.getAuthenticatedUser().getGroupNames() //
-						);
+				whereClause = precExecutorsWhereClause(alias, prevExecutors);
 			}
-
-			whereClause = or( //
-					condition(attribute(alias, prevExecutors), stringArrayOverlap(userGroupsJoined)), //
-					/*
-					 * the or with empty array is necessary because after the
-					 * creation of the the process card (before to say to shark
-					 * to advance it) the PrevExecutors is empty
-					 */
-					condition(attribute(alias, prevExecutors), emptyArray()) //
-			);
 		} else {
 			whereClause = trueWhereClause();
 		}
 
+		return whereClause;
+	}
+
+	private WhereClause precExecutorsWhereClause(final Alias alias, final CMAttribute prevExecutors) {
+		final WhereClause whereClause;
+		final String defaultGroupName = operationUser.getAuthenticatedUser().getDefaultGroupName();
+		String userGroupsJoined = EMPTY;
+		if (isEmpty(defaultGroupName)) {
+			userGroupsJoined = operationUser.getPreferredGroup().getName();
+		} else {
+			userGroupsJoined = on(GROUPS_SEPARATOR).join(operationUser.getAuthenticatedUser().getGroupNames());
+		}
+
+		whereClause = or( //
+				condition(attribute(alias, prevExecutors), stringArrayOverlap(userGroupsJoined)), //
+				/*
+				 * the or with empty array is necessary because after the
+				 * creation of the the process card (before to say to shark to
+				 * advance it) the PrevExecutors is empty
+				 */
+				condition(attribute(alias, prevExecutors), emptyArray()) //
+		);
 		return whereClause;
 	}
 

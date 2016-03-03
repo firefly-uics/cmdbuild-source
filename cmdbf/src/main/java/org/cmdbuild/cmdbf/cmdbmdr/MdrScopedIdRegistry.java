@@ -302,7 +302,7 @@ public class MdrScopedIdRegistry {
 	private List<ReconciliationRule> loadRules(final String path) throws Exception {
 		final JAXBContext jaxbContext = JAXBContext.newInstance(ReconciliationRule.class);
 
-		final XMLInputFactory xmlInputFactory = XMLInputFactory.newFactory();
+		final XMLInputFactory xmlInputFactory = XMLInputFactory.newInstance();
 		final StreamSource xml = new StreamSource(path);
 		final XMLStreamReader reader = xmlInputFactory.createXMLStreamReader(xml);
 

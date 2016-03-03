@@ -1,6 +1,8 @@
 (function() {
 	var tr = CMDBuild.Translation.management.modcard;
 
+	Ext.require(['CMDBuild.core.RequestBarrier']); // TODO: should be fixed (require outside class because of wrong class name)
+
 	Ext.define("CMDBuild.view.management.classes.CMCardForm", {
 		extend: "Ext.form.Panel",
 
@@ -75,7 +77,6 @@
 				return;
 			}
 
-//			this.suspendLayouts();
 			this.ensureEditPanel();
 
 			if (this.tabPanel) {
@@ -90,7 +91,7 @@
 			//To delete when upgrade at extjs 4.2.1
 			this.tabPanel.showAll();
 			//-------------------------------------------------
-//			this.resumeLayouts(true);
+
 			this.fireEvent(this.CMEVENTS.editModeDidAcitvate);
 			this._isInEditMode = true;
 		},
@@ -168,15 +169,11 @@
 		},
 
 		ensureEditPanel: function() {
-			if (this.tabPanel
-					&& !this._isInEditMode) {
-
+			if (this.tabPanel && !this._isInEditMode) {
 				this.tabPanel.ensureEditPanel();
 
-				if (this._lastCard) {
+				if (this._lastCard)
 					this.loadCard(this._lastCard, bothPanels=true);
-					this.callFieldTemplateResolverIfNeeded();
-				}
 			}
 		},
 
@@ -201,16 +198,6 @@
 			return false;
 		},
 
-		callFieldTemplateResolverIfNeeded: function() {
-			var fields = this.getForm().getFields().items;
-			for (var i=0;  i<fields.length; ++i) {
-				var field = fields[i];
-				if (field && field.resolveTemplate) {
-					field.resolveTemplate();
-				}
-			}
-		},
-
 		isInEditing: function() {
 			return this._isInEditMode;
 		},
@@ -233,48 +220,65 @@
 	}
 
 	/**
+	 * Fills form fields with 4 steps to avoid reference fields empty problems depending on store's load times:
+	 * 	1. Suspend envets
+	 * 	2. Set values
+	 * 	3. Load all field's stores
+	 * 	4. Resume events
+	 *
 	 * @param {CMDBuild.view.management.classes.CMCardForm} me
 	 * @param {Object} data
 	 * @param {Object} referenceAttributes
 	 * @param {Function} fieldSelector
+	 *
+	 * @private
 	 */
 	function _fillFields(me, data, referenceAttributes, fieldSelector) {
-		var fields = me.getForm().getFields();
-
-		if (Ext.getClassName(fields) == 'Ext.util.MixedCollection')
-			fields = fields.items;
-
-		// Suspend all events on fields to prevent values modifications by internal fields events listeners
-		// This fixes ReferenceFields empty values going on editMode
-		for (var idx in fields)
-			if (fields[idx].isObservable)
-				fields[idx].suspendEvents(false);
+		var fields = me.getForm().getFields().getRange();
 
 		addReferenceAttrsToData(data, referenceAttributes);
 
-		if (fields) {
-			for (var i=0, l=fields.length; i<l; ++i) {
-				var f = fields[i];
+		// Suspend all events on fields to prevent values modifications by internal fields events listeners
+		// This fixes ReferenceFields empty values going on editMode
+		if (!Ext.isEmpty(fields) && Ext.isArray(fields)) {
+			Ext.Array.forEach(fields, function (field, i, allFields) {
+				if (!Ext.isEmpty(field) && Ext.isFunction(field.suspendEvents) && !(Ext.isFunction(fieldSelector) && !fieldSelector(field)))
+					field.suspendEvents(false);
+			});
 
-				if (!(typeof fieldSelector == 'function' && !fieldSelector(f))) {
-					try {
-						f.setValue(data[f.name]);
-						if (typeof f.isFiltered == 'function' && f.isFiltered()) {
-							f.setServerVarsForTemplate(data);
-						}
-					} catch (e) {
-						_msg('[Field name: ' + f.name + '] ' + e.message);
-					}
+			// Set field's values
+			Ext.Array.forEach(fields, function (field, i, allFields) {
+				if (!(Ext.isFunction(fieldSelector) && !fieldSelector(field))) {
+					field.setValue(data[field.name]);
+
+					if (Ext.isFunction(field.isFiltered) && field.isFiltered())
+						field.setServerVarsForTemplate(data);
 				}
-			}
+			});
+
+			// Load field's stores with barrier to load data after reference field store's load end
+			CMDBuild.core.RequestBarrier.init('referenceStoreLoadBarrier', function () {
+				// Resume events on fields
+				Ext.Array.forEach(fields, function (field, i, allFields) {
+					if (!Ext.isEmpty(field) && Ext.isFunction(field.resumeEvents) && !(Ext.isFunction(fieldSelector) && !fieldSelector(field)))
+						field.resumeEvents();
+				});
+
+				me.fireEvent(me.CMEVENTS.formFilled);
+			}, me);
+
+			Ext.Array.forEach(fields, function (field, i, allFields) {
+				if (
+					!Ext.isEmpty(field)
+					&& Ext.isFunction(field.isFiltered) && field.isFiltered()
+					&& Ext.isFunction(field.resolveTemplate)
+				) {
+					field.resolveTemplate({ callback: CMDBuild.core.RequestBarrier.getCallback('referenceStoreLoadBarrier') });
+				}
+			});
+
+			CMDBuild.core.RequestBarrier.finalize('referenceStoreLoadBarrier');
 		}
-
-		// Resume events on fields
-		for (var idx in fields)
-			if (fields[idx].isObservable)
-				fields[idx].resumeEvents();
-
-		me.fireEvent(me.CMEVENTS.formFilled);
 	}
 
 	// FIXME: probably never reached 'couse the reference's attributes are added in the controller
@@ -463,4 +467,5 @@
 			this.cmButtons = [this.saveButton,this.cancelButton];
 		}
 	};
+
 })();

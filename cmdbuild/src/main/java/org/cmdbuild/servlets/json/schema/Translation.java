@@ -5,7 +5,7 @@ import static org.cmdbuild.servlets.json.CommunicationConstants.ATTRIBUTENAME;
 import static org.cmdbuild.servlets.json.CommunicationConstants.CLASS_NAME;
 import static org.cmdbuild.servlets.json.CommunicationConstants.DOMAIN_NAME;
 import static org.cmdbuild.servlets.json.CommunicationConstants.FIELD;
-import static org.cmdbuild.servlets.json.CommunicationConstants.FILTERNAME;
+import static org.cmdbuild.servlets.json.CommunicationConstants.FILTER_NAME;
 import static org.cmdbuild.servlets.json.CommunicationConstants.MENU_ITEM_UUID;
 import static org.cmdbuild.servlets.json.CommunicationConstants.REPORTNAME;
 import static org.cmdbuild.servlets.json.CommunicationConstants.TRANSLATIONS;
@@ -101,7 +101,7 @@ public class Translation extends JSONBaseWithSpringContext {
 	@JSONExported
 	@Admin
 	public void createForFilter( //
-			@Parameter(value = FILTERNAME) final String filterName, //
+			@Parameter(value = FILTER_NAME) final String filterName, //
 			@Parameter(value = FIELD) final String field, //
 			@Parameter(value = TRANSLATIONS) final JSONObject translations //
 	) {
@@ -256,7 +256,7 @@ public class Translation extends JSONBaseWithSpringContext {
 	@JSONExported
 	@Admin
 	public JsonResponse readForFilter( //
-			@Parameter(value = FILTERNAME) final String filterName, //
+			@Parameter(value = FILTER_NAME) final String filterName, //
 			@Parameter(value = FIELD) final String field) {
 		final FilterConverter converter = FilterConverter.of(field);
 		Validate.isTrue(converter.isValid());
@@ -408,7 +408,7 @@ public class Translation extends JSONBaseWithSpringContext {
 	@JSONExported
 	@Admin
 	public void updateForFilter( //
-			@Parameter(value = FILTERNAME) final String filterName, //
+			@Parameter(value = FILTER_NAME) final String filterName, //
 			@Parameter(value = FIELD) final String field, //
 			@Parameter(value = TRANSLATIONS) final JSONObject translations //
 	) {
@@ -574,7 +574,7 @@ public class Translation extends JSONBaseWithSpringContext {
 	@JSONExported
 	@Admin
 	public void deleteForFilter( //
-			@Parameter(value = FILTERNAME) final String filterName, //
+			@Parameter(value = FILTER_NAME) final String filterName, //
 			@Parameter(value = FIELD) final String field, //
 			@Parameter(value = TRANSLATIONS) final JSONObject translations //
 	) {

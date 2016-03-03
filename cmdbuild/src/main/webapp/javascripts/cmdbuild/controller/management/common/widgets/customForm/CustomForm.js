@@ -251,28 +251,21 @@
 			var output = {};
 			output[CMDBuild.core.proxy.CMProxyConstants.OUTPUT] = [];
 
-			if (
-				!this.cmfg('widgetCustomFormConfigurationGet', [
-					CMDBuild.core.proxy.CMProxyConstants.CAPABILITIES,
-					CMDBuild.core.proxy.CMProxyConstants.READ_ONLY
-				])
-			) {
-				Ext.Array.forEach(this.cmfg('widgetCustomFormDataGet'), function(rowObject, i, allRowObjects) {
-					var dataObject = Ext.isEmpty(rowObject.data) ? rowObject : rowObject.data; // Model/Objects management
+			Ext.Array.forEach(this.cmfg('widgetCustomFormDataGet'), function(rowObject, i, allRowObjects) {
+				var dataObject = Ext.isEmpty(rowObject.data) ? rowObject : rowObject.data; // Model/Objects management
 
-					new CMDBuild.Management.TemplateResolver({
-						clientForm: this.clientForm,
-						xaVars: dataObject,
-						serverVars: this.cmfg('widgetCustomFormGetTemplateResolverServerVars')
-					}).resolveTemplates({
-						attributes: Ext.Object.getKeys(dataObject),
-						callback: function(out, ctx) {
-							if (Ext.isObject(out))
-								output[CMDBuild.core.proxy.CMProxyConstants.OUTPUT].push(Ext.encode(out));
-						}
-					});
-				}, this);
-			}
+				new CMDBuild.Management.TemplateResolver({
+					clientForm: this.clientForm,
+					xaVars: dataObject,
+					serverVars: this.cmfg('widgetCustomFormGetTemplateResolverServerVars')
+				}).resolveTemplates({
+					attributes: Ext.Object.getKeys(dataObject),
+					callback: function(out, ctx) {
+						if (Ext.isObject(out))
+							output[CMDBuild.core.proxy.CMProxyConstants.OUTPUT].push(Ext.encode(out));
+					}
+				});
+			}, this);
 
 			return output;
 		},
@@ -286,7 +279,7 @@
 		 */
 		isRefreshNeeded: function() {
 			switch (
-				this.delegate.cmfg('widgetCustomFormConfigurationGet', [
+				this.cmfg('widgetCustomFormConfigurationGet', [
 					CMDBuild.core.proxy.CMProxyConstants.CAPABILITIES,
 					CMDBuild.core.proxy.CMProxyConstants.REFRESH_BEHAVIOUR
 				])

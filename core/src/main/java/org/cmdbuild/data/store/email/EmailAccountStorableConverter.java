@@ -20,10 +20,12 @@ public class EmailAccountStorableConverter extends BaseStorableConverter<EmailAc
 	private static final String SMTP_SERVER = "SmtpServer";
 	private static final String SMTP_PORT = "SmtpPort";
 	private static final String SMTP_SSL = "SmtpSsl";
+	private static final String SMTP_STARTTLS = "SmtpStartTls";
 	private static final String OUTPUT_FOLDER = "OutputFolder";
 	private static final String IMAP_SERVER = "ImapServer";
 	private static final String IMAP_PORT = "ImapPort";
 	private static final String IMAP_SSL = "ImapSsl";
+	private static final String IMAP_STARTTLS = "ImapStartTls";
 
 	@Override
 	public String getClassName() {
@@ -42,10 +44,12 @@ public class EmailAccountStorableConverter extends BaseStorableConverter<EmailAc
 				.withSmtpServer(card.get(SMTP_SERVER, String.class)) //
 				.withSmtpPort(card.get(SMTP_PORT, Integer.class)) //
 				.withSmtpSsl(defaultBoolean(card.get(SMTP_SSL, Boolean.class), false)) //
+				.withSmtpStartTls(defaultBoolean(card.get(SMTP_STARTTLS, Boolean.class), false)) //
 				.withOutputFolder(card.get(OUTPUT_FOLDER, String.class)) //
 				.withImapServer(card.get(IMAP_SERVER, String.class)) //
 				.withImapPort(card.get(IMAP_PORT, Integer.class)) //
 				.withImapSsl(defaultBoolean(card.get(IMAP_SSL, Boolean.class), false)) //
+				.withImapStartTls(defaultBoolean(card.get(IMAP_STARTTLS, Boolean.class), false)) //
 				.build();
 	}
 
@@ -69,10 +73,12 @@ public class EmailAccountStorableConverter extends BaseStorableConverter<EmailAc
 		values.put(SMTP_SERVER, storable.getSmtpServer());
 		values.put(SMTP_PORT, storable.getSmtpPort());
 		values.put(SMTP_SSL, storable.isSmtpSsl());
+		values.put(SMTP_STARTTLS, storable.isSmtpStartTls());
 		values.put(OUTPUT_FOLDER, storable.getOutputFolder());
 		values.put(IMAP_SERVER, storable.getImapServer());
 		values.put(IMAP_PORT, storable.getImapPort());
 		values.put(IMAP_SSL, storable.isImapSsl());
+		values.put(IMAP_STARTTLS, storable.isImapStartTls());
 		return values;
 	}
 

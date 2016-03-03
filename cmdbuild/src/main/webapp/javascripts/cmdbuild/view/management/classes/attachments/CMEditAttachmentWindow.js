@@ -28,7 +28,7 @@
 					Ext.create('Ext.form.ComboBox', {
 						name: 'Category',
 						labelAlign: 'right',
-						fieldLabel: CMDBuild.Translation.management.modcard.add_attachment_window.category,
+						fieldLabel: '* ' + CMDBuild.Translation.management.modcard.add_attachment_window.category,
 						labelWidth: CMDBuild.LABEL_WIDTH,
 						emptyText: CMDBuild.Translation.management.modcard.add_attachment_window.select_category,
 						valueField: CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION,
@@ -50,13 +50,13 @@
 						name: 'File',
 						width: CMDBuild.BIG_FIELD_ONLY_WIDTH,
 						labelAlign: 'right',
-						fieldLabel: CMDBuild.Translation.management.modcard.add_attachment_window.load_attachment,
+						fieldLabel: '* ' + CMDBuild.Translation.management.modcard.add_attachment_window.load_attachment,
 						labelWidth: CMDBuild.LABEL_WIDTH,
 						allowBlank: false
 					}),
 					Ext.create('Ext.form.field.TextArea', {
 						name: 'Description',
-						fieldLabel: CMDBuild.Translation.descriptionLabel,
+						fieldLabel: '* ' + CMDBuild.Translation.descriptionLabel,
 						labelAlign: 'right',
 						labelWidth: CMDBuild.LABEL_WIDTH,
 						width: CMDBuild.BIG_FIELD_ONLY_WIDTH,

@@ -65,18 +65,17 @@ public class IpAddressAttributeType extends AbstractAttributeType<String> {
 			+ "::(ffff(:0{1,4}){0,1}:){0,1}" + IPV4ADDR + "|" //
 			+ "(" + IPV6SEG + ":){1,4}:" + IPV4ADDR //
 			+ ")";
-
 	private static final String CLASS_SEPARATOR_REGEX = "/";
 	private static final String IPV4_CLASS_REGEX = "(3[0-2]|[1-2][0-9]|[8-9])";
-
 	private static final Pattern IPV4_PATTERN = Pattern.compile(EMPTY //
 			+ "^" //
 			+ IPV4ADDR + "(" + CLASS_SEPARATOR_REGEX + IPV4_CLASS_REGEX + ")*"//
 			+ "$" //
 	);
+	private static final String IPV6_CLASS_REGEX = "([0-9]|[1-9][0-9]|1[0-1][0-9]|12[0-8])";
 	private static final Pattern IPV6_PATTERN = Pattern.compile(EMPTY //
 			+ "^" //
-			+ IPV6ADDR //
+			+ IPV6ADDR + "(" + CLASS_SEPARATOR_REGEX + IPV6_CLASS_REGEX + ")*"//
 			+ "$" //
 	);
 

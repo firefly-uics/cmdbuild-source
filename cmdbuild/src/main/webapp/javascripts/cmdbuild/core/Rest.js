@@ -3,7 +3,7 @@
 	/**
 	 * Verify and setup rest session to be compatible with CAS or header authenticators
 	 */
-	Ext.define('CMDBuild.core.Rest', {
+	Ext.define('CMDBuild.core.Rest', { // FIXME: atm header authentication widn't work
 
 		requires: [
 			'CMDBuild.core.proxy.session.Rest',
@@ -36,6 +36,8 @@
 		/**
 		 * @param {Object} urlParams
 		 * @param {String} authorizationKey
+		 *
+		 * @private
 		 */
 		fakeCallToGetAuthorizationToken: function(urlParams, authorizationKey) {
 			var params = {};
@@ -44,16 +46,19 @@
 			CMDBuild.core.proxy.Utils.generateId({
 				scope: this,
 				success: function(response, options, decodedResponse) {
-					var urlParams = {};
-					urlParams[CMDBuild.core.proxy.CMProxyConstants.TOKEN] = response.getResponseHeader(CMDBuild.core.proxy.CMProxyConstants.AUTHORIZATION_HEADER_KEY);
+//					var urlParams = {};
+//					urlParams[CMDBuild.core.proxy.CMProxyConstants.TOKEN] = response.getResponseHeader(CMDBuild.core.proxy.CMProxyConstants.AUTHORIZATION_HEADER_KEY);
 
 					CMDBuild.core.proxy.session.Rest.login({
 						params: params,
-						urlParams: urlParams,
+//						urlParams: urlParams,
 						loadMask: false,
 						scope: this,
 						success: function(response, options, decodedResponse) {
-							Ext.util.Cookies.set(CMDBuild.core.proxy.CMProxyConstants.SESSION_TOKEN, urlParams[CMDBuild.core.proxy.CMProxyConstants.TOKEN]);
+							decodedResponse = decodedResponse[CMDBuild.core.proxy.CMProxyConstants.DATA];
+
+							if (Ext.isObject(decodedResponse) && !Ext.Object.isEmpty(decodedResponse))
+								Ext.util.Cookies.set(CMDBuild.core.proxy.CMProxyConstants.SESSION_TOKEN, decodedResponse['_id']);
 						}
 					});
 				}

@@ -2,6 +2,7 @@ package org.cmdbuild.common.api.mail.javax.mail;
 
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.cmdbuild.common.api.mail.javax.mail.Constants.FALSE;
+import static org.cmdbuild.common.api.mail.javax.mail.Constants.JAVAX_NET_SSL_SSL_SOCKET_FACTORY;
 import static org.cmdbuild.common.api.mail.javax.mail.Constants.MAIL_DEBUG;
 import static org.cmdbuild.common.api.mail.javax.mail.Constants.MAIL_SMPT_SOCKET_FACTORY_CLASS;
 import static org.cmdbuild.common.api.mail.javax.mail.Constants.MAIL_SMPT_SOCKET_FACTORY_FALLBACK;
@@ -15,7 +16,6 @@ import static org.cmdbuild.common.api.mail.javax.mail.Constants.MAIL_SMTP_STARTT
 import static org.cmdbuild.common.api.mail.javax.mail.Constants.MAIL_TRANSPORT_PROTOCOL;
 import static org.cmdbuild.common.api.mail.javax.mail.Constants.NO_AUTENTICATION;
 import static org.cmdbuild.common.api.mail.javax.mail.Constants.SMTPS;
-import static org.cmdbuild.common.api.mail.javax.mail.Constants.SSL_FACTORY;
 import static org.cmdbuild.common.api.mail.javax.mail.Constants.TRUE;
 
 import java.io.PrintStream;
@@ -85,7 +85,7 @@ class OutputTemplate {
 		final Properties properties = new Properties(System.getProperties());
 		properties.setProperty(MAIL_DEBUG, Boolean.toString(configuration.isDebug()));
 		properties.setProperty(MAIL_TRANSPORT_PROTOCOL, configuration.getOutputProtocol());
-		properties.setProperty(MAIL_SMTP_STARTTLS_ENABLE, configuration.isStartTlsEnabled() ? TRUE : FALSE);
+		properties.setProperty(MAIL_SMTP_STARTTLS_ENABLE, configuration.isOutputStartTlsEnabled() ? TRUE : FALSE);
 		final String auth = authenticationRequired() ? TRUE : FALSE;
 		if (sslRequired()) {
 			properties.setProperty(MAIL_SMTPS_HOST, configuration.getOutputHost());
@@ -93,7 +93,7 @@ class OutputTemplate {
 				properties.setProperty(MAIL_SMTPS_PORT, configuration.getOutputPort().toString());
 			}
 			properties.setProperty(MAIL_SMTPS_AUTH, auth);
-			properties.setProperty(MAIL_SMPT_SOCKET_FACTORY_CLASS, SSL_FACTORY);
+			properties.setProperty(MAIL_SMPT_SOCKET_FACTORY_CLASS, JAVAX_NET_SSL_SSL_SOCKET_FACTORY);
 			properties.setProperty(MAIL_SMPT_SOCKET_FACTORY_FALLBACK, FALSE);
 		} else {
 			properties.setProperty(MAIL_SMTP_HOST, configuration.getOutputHost());

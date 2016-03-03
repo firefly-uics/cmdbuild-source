@@ -1,5 +1,11 @@
 package org.cmdbuild.logic.privileges;
 
+import static com.google.common.base.Predicates.equalTo;
+import static com.google.common.base.Predicates.not;
+import static com.google.common.base.Predicates.or;
+import static com.google.common.collect.FluentIterable.from;
+import static com.google.common.collect.Lists.newArrayList;
+import static com.google.common.collect.Maps.newHashMap;
 import static java.lang.Integer.MAX_VALUE;
 import static org.apache.commons.lang3.ObjectUtils.defaultIfNull;
 import static org.cmdbuild.auth.privileges.constants.GrantConstants.ATTRIBUTES_PRIVILEGES_ATTRIBUTE;
@@ -12,15 +18,24 @@ import static org.cmdbuild.auth.privileges.constants.GrantConstants.PRIVILEGE_FI
 import static org.cmdbuild.auth.privileges.constants.GrantConstants.STATUS_ATTRIBUTE;
 import static org.cmdbuild.auth.privileges.constants.GrantConstants.TYPE_ATTRIBUTE;
 import static org.cmdbuild.auth.privileges.constants.GrantConstants.UI_CARD_EDIT_MODE_ATTRIBUTE;
+import static org.cmdbuild.auth.privileges.constants.PrivilegeMode.NONE;
+import static org.cmdbuild.auth.privileges.constants.PrivilegeMode.READ;
+import static org.cmdbuild.auth.privileges.constants.PrivilegeMode.WRITE;
+import static org.cmdbuild.auth.privileges.constants.PrivilegeMode.of;
+import static org.cmdbuild.auth.privileges.constants.PrivilegedObjectType.CLASS;
+import static org.cmdbuild.auth.privileges.constants.PrivilegedObjectType.CUSTOMPAGE;
+import static org.cmdbuild.auth.privileges.constants.PrivilegedObjectType.FILTER;
+import static org.cmdbuild.auth.privileges.constants.PrivilegedObjectType.VIEW;
 import static org.cmdbuild.common.Constants.ROLE_CLASS_NAME;
+import static org.cmdbuild.dao.entrytype.Predicates.hasAnchestor;
+import static org.cmdbuild.dao.entrytype.Predicates.isBaseClass;
+import static org.cmdbuild.dao.entrytype.Predicates.isSystem;
 import static org.cmdbuild.dao.query.clause.AnyAttribute.anyAttribute;
 import static org.cmdbuild.dao.query.clause.QueryAliasAttribute.attribute;
 import static org.cmdbuild.dao.query.clause.where.AndWhereClause.and;
 import static org.cmdbuild.dao.query.clause.where.EqualsOperatorAndValue.eq;
 import static org.cmdbuild.dao.query.clause.where.SimpleWhereClause.condition;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -60,7 +75,6 @@ import org.cmdbuild.services.store.filter.FilterStore;
 import org.cmdbuild.services.store.filter.FilterStore.Filter;
 
 import com.google.common.base.Optional;
-import com.google.common.collect.Lists;
 
 public class DefaultSecurityLogic implements Logic, SecurityLogic {
 
@@ -85,32 +99,51 @@ public class DefaultSecurityLogic implements Logic, SecurityLogic {
 
 	@Override
 	public List<PrivilegeInfo> fetchClassPrivilegesForGroup(final Long groupId) {
-		final List<PrivilegeInfo> fetchedClassPrivileges = fetchStoredPrivilegesForGroup( //
-				groupId, //
-				PrivilegedObjectType.CLASS //
-		);
+		return fetchClassPrivilegesForGroup(groupId, allButNonProcessClasses());
+	}
 
-		final Iterable<CMClass> nonReservedActiveClasses = filterNonReservedAndNonBaseClasses();
+	private Iterable<CMClass> allButNonProcessClasses() {
+		return from(view.findClasses()) //
+				.filter(CMClass.class) //
+				.filter(not(or(isSystem(equalTo(true)), isBaseClass(equalTo(true)),
+						hasAnchestor(view.getActivityClass()))));
+	}
 
-		for (final CMClass clazz : nonReservedActiveClasses) {
+	@Override
+	public List<PrivilegeInfo> fetchProcessPrivilegesForGroup(final Long groupId) {
+		return fetchClassPrivilegesForGroup(groupId, processClasses());
+	}
+
+	private Iterable<CMClass> processClasses() {
+		return from(view.findClasses()) //
+				.filter(CMClass.class) //
+				.filter(not(or(isSystem(equalTo(true)), isBaseClass(equalTo(true)),
+						not(hasAnchestor(view.getActivityClass())))));
+	}
+
+	private List<PrivilegeInfo> fetchClassPrivilegesForGroup(final Long groupId, final Iterable<CMClass> classes) {
+		final List<PrivilegeInfo> output = newArrayList();
+		final List<PrivilegeInfo> stored = fetchStoredPrivilegesForGroup(groupId, CLASS);
+		for (final CMClass clazz : classes) {
 			final Long classId = clazz.getId();
-			if (!isPrivilegeAlreadyStored(classId, fetchedClassPrivileges)) {
-				final PrivilegeInfo pi = new PrivilegeInfo(groupId, clazz, PrivilegeMode.NONE, null);
+			final PrivilegeInfo element = getPrivilegedElement(stored, classId);
+			if (element == null) {
+				final PrivilegeInfo pi = new PrivilegeInfo(groupId, clazz, NONE, null);
 
-				final List<String> attributesPrivileges = new ArrayList<String>();
+				final List<String> attributesPrivileges = newArrayList();
 				for (final CMAttribute attribute : clazz.getAttributes()) {
 					final String mode = attribute.getMode().name().toLowerCase();
 					attributesPrivileges.add(String.format("%s:%s", attribute.getName(), mode));
 				}
 
-				pi.setAttributesPrivileges( //
-				attributesPrivileges.toArray(new String[attributesPrivileges.size()]) //
-				);
+				pi.setAttributesPrivileges(attributesPrivileges.toArray(new String[attributesPrivileges.size()]));
 
-				fetchedClassPrivileges.add(pi);
+				output.add(pi);
+			} else {
+				output.add(element);
 			}
 		}
-		return fetchedClassPrivileges;
+		return output;
 	}
 
 	@Override
@@ -129,13 +162,12 @@ public class DefaultSecurityLogic implements Logic, SecurityLogic {
 
 	@Override
 	public List<PrivilegeInfo> fetchViewPrivilegesForGroup(final Long groupId) {
-		final List<PrivilegeInfo> fetchedViewPrivileges = fetchStoredPrivilegesForGroup(groupId,
-				PrivilegedObjectType.VIEW);
+		final List<PrivilegeInfo> fetchedViewPrivileges = fetchStoredPrivilegesForGroup(groupId, VIEW);
 		final Iterable<View> allViews = fetchAllViews();
 		for (final View view : allViews) {
 			final Long viewId = view.getId();
 			if (!isPrivilegeAlreadyStored(viewId, fetchedViewPrivileges)) {
-				final PrivilegeInfo pi = new PrivilegeInfo(groupId, view, PrivilegeMode.NONE, null);
+				final PrivilegeInfo pi = new PrivilegeInfo(groupId, view, NONE, null);
 				fetchedViewPrivileges.add(pi);
 			}
 		}
@@ -144,13 +176,12 @@ public class DefaultSecurityLogic implements Logic, SecurityLogic {
 
 	@Override
 	public List<PrivilegeInfo> fetchFilterPrivilegesForGroup(final Long groupId) {
-		final List<PrivilegeInfo> fetchedFilterPrivileges = fetchStoredPrivilegesForGroup(groupId,
-				PrivilegedObjectType.FILTER);
+		final List<PrivilegeInfo> fetchedFilterPrivileges = fetchStoredPrivilegesForGroup(groupId, FILTER);
 		final Iterable<Filter> allGroupsFilters = filterStore.readSharedFilters(null, 0, MAX_VALUE);
 		for (final Filter filter : allGroupsFilters) {
 			final Long filterId = Long.valueOf(filter.getId());
 			if (!isPrivilegeAlreadyStored(filterId, fetchedFilterPrivileges)) {
-				final PrivilegeInfo pi = new PrivilegeInfo(groupId, filter, PrivilegeMode.NONE, null);
+				final PrivilegeInfo pi = new PrivilegeInfo(groupId, filter, NONE, null);
 				fetchedFilterPrivileges.add(pi);
 			}
 		}
@@ -159,12 +190,10 @@ public class DefaultSecurityLogic implements Logic, SecurityLogic {
 
 	@Override
 	public List<PrivilegeInfo> fetchCustomViewPrivilegesForGroup(final Long groupId) {
-		final List<PrivilegeInfo> alreadyStoredPrivileges = fetchStoredPrivilegesForGroup(groupId,
-				PrivilegedObjectType.CUSTOMPAGE);
+		final List<PrivilegeInfo> alreadyStoredPrivileges = fetchStoredPrivilegesForGroup(groupId, CUSTOMPAGE);
 		for (final CustomPage element : customPagesLogic.read()) {
 			if (!isPrivilegeAlreadyStored(element.getId(), alreadyStoredPrivileges)) {
-				final PrivilegeInfo pi = new PrivilegeInfo(groupId, new CustomPageAdapter(element), PrivilegeMode.NONE,
-						null);
+				final PrivilegeInfo pi = new PrivilegeInfo(groupId, new CustomPageAdapter(element), NONE, null);
 				alreadyStoredPrivileges.add(pi);
 			}
 		}
@@ -211,17 +240,17 @@ public class DefaultSecurityLogic implements Logic, SecurityLogic {
 
 	private List<PrivilegeInfo> fromPrivilegePairToPrivilegeInfo(final Iterable<PrivilegePair> privilegePairs,
 			final Long groupId) {
-		final List<PrivilegeInfo> list = Lists.newArrayList();
+		final List<PrivilegeInfo> list = newArrayList();
 		for (final PrivilegePair privilegePair : privilegePairs) {
 			final SerializablePrivilege privilegedObject = privilegePair.privilegedObject;
 			final CMPrivilege privilege = privilegePair.privilege;
 			PrivilegeInfo privilegeInfo;
 			if (privilege.implies(DefaultPrivileges.WRITE)) {
-				privilegeInfo = new PrivilegeInfo(groupId, privilegedObject, PrivilegeMode.WRITE, null);
+				privilegeInfo = new PrivilegeInfo(groupId, privilegedObject, WRITE, null);
 			} else if (privilege.implies(DefaultPrivileges.READ)) {
-				privilegeInfo = new PrivilegeInfo(groupId, privilegedObject, PrivilegeMode.READ, null);
+				privilegeInfo = new PrivilegeInfo(groupId, privilegedObject, READ, null);
 			} else {
-				privilegeInfo = new PrivilegeInfo(groupId, privilegedObject, PrivilegeMode.NONE, null);
+				privilegeInfo = new PrivilegeInfo(groupId, privilegedObject, NONE, null);
 			}
 			privilegeInfo.setPrivilegeFilter(privilegePair.privilegeFilter);
 			privilegeInfo.setAttributesPrivileges(privilegePair.attributesPrivileges);
@@ -231,26 +260,18 @@ public class DefaultSecurityLogic implements Logic, SecurityLogic {
 		return list;
 	}
 
-	@SuppressWarnings("unchecked")
-	private Iterable<CMClass> filterNonReservedAndNonBaseClasses() {
-		final Iterable<CMClass> classes = (Iterable<CMClass>) view.findClasses();
-		final List<CMClass> nonReservedClasses = Lists.newArrayList();
-		for (final CMClass clazz : classes) {
-			if (!clazz.isSystem() && !clazz.isBaseClass()) {
-				nonReservedClasses.add(clazz);
-			}
-		}
-		return nonReservedClasses;
+	private boolean isPrivilegeAlreadyStored(final Long privilegedObjectId, final Iterable<PrivilegeInfo> elements) {
+		return getPrivilegedElement(elements, privilegedObjectId) != null;
 	}
 
-	private boolean isPrivilegeAlreadyStored(final Long privilegedObjectId, final List<PrivilegeInfo> fetchedPrivileges) {
-		for (final PrivilegeInfo privilegeInfo : fetchedPrivileges) {
-			if (privilegeInfo.getPrivilegedObjectId() != null
-					&& privilegeInfo.getPrivilegedObjectId().equals(privilegedObjectId)) {
-				return true;
+	private PrivilegeInfo getPrivilegedElement(final Iterable<PrivilegeInfo> elements, final Long privilegedObjectId) {
+		for (final PrivilegeInfo element : elements) {
+			final Long value = element.getPrivilegedObjectId();
+			if (value != null && value.equals(privilegedObjectId)) {
+				return element;
 			}
 		}
-		return false;
+		return null;
 	}
 
 	/*
@@ -293,7 +314,7 @@ public class DefaultSecurityLogic implements Logic, SecurityLogic {
 					 */
 					final CMEntryType entryType = view.findClass(entryTypeId);
 					final Map<String, String> attributeModes = attributesMode(entryType);
-					final List<String> attributesPrivilegesToSave = new ArrayList<String>();
+					final List<String> attributesPrivilegesToSave = newArrayList();
 					for (final String attributePrivilege : privilegeInfo.getAttributesPrivileges()) {
 						final String[] parts = attributePrivilege.split(":");
 						final String attributeName = parts[0];
@@ -320,7 +341,7 @@ public class DefaultSecurityLogic implements Logic, SecurityLogic {
 	}
 
 	private Map<String, String> attributesMode(final CMEntryType entryType) {
-		final Map<String, String> privileges = new HashMap<String, String>();
+		final Map<String, String> privileges = newHashMap();
 		for (final CMAttribute attribute : entryType.getActiveAttributes()) {
 			if (attribute.isActive()) {
 				final String mode = attribute.getMode().name().toLowerCase();
@@ -332,12 +353,17 @@ public class DefaultSecurityLogic implements Logic, SecurityLogic {
 	}
 
 	@Override
+	public void saveProcessPrivilege(final PrivilegeInfo privilegeInfo, final boolean modeOnly) {
+		saveClassPrivilege(privilegeInfo, modeOnly);
+	}
+
+	@Override
 	public void saveViewPrivilege(final PrivilegeInfo privilegeInfo) {
 		final CMQueryResult result = view
 				.select(anyAttribute(grantClass))
 				.from(grantClass)
 				.where(and(condition(attribute(grantClass, GROUP_ID_ATTRIBUTE), eq(privilegeInfo.getGroupId())),
-						condition(attribute(grantClass, TYPE_ATTRIBUTE), eq(PrivilegedObjectType.VIEW.getValue())))) //
+						condition(attribute(grantClass, TYPE_ATTRIBUTE), eq(VIEW.getValue())))) //
 				.run();
 
 		for (final CMQueryRow row : result) {
@@ -358,7 +384,7 @@ public class DefaultSecurityLogic implements Logic, SecurityLogic {
 				.select(anyAttribute(grantClass))
 				.from(grantClass)
 				.where(and(condition(attribute(grantClass, GROUP_ID_ATTRIBUTE), eq(privilegeInfo.getGroupId())),
-						condition(attribute(grantClass, TYPE_ATTRIBUTE), eq(PrivilegedObjectType.FILTER.getValue())))) //
+						condition(attribute(grantClass, TYPE_ATTRIBUTE), eq(FILTER.getValue())))) //
 				.run();
 
 		for (final CMQueryRow row : result) {
@@ -378,9 +404,8 @@ public class DefaultSecurityLogic implements Logic, SecurityLogic {
 		final CMQueryResult result = view
 				.select(anyAttribute(grantClass))
 				.from(grantClass)
-				.where(and(
-						condition(attribute(grantClass, GROUP_ID_ATTRIBUTE), eq(privilegeInfo.getGroupId())),
-						condition(attribute(grantClass, TYPE_ATTRIBUTE), eq(PrivilegedObjectType.CUSTOMPAGE.getValue())))) //
+				.where(and(condition(attribute(grantClass, GROUP_ID_ATTRIBUTE), eq(privilegeInfo.getGroupId())),
+						condition(attribute(grantClass, TYPE_ATTRIBUTE), eq(CUSTOMPAGE.getValue())))) //
 				.run();
 
 		for (final CMQueryRow row : result) {
@@ -418,7 +443,7 @@ public class DefaultSecurityLogic implements Logic, SecurityLogic {
 
 		// manage the null value for the privilege mode
 		// it could happen updating row and column privileges
-		final PrivilegeMode privilegeMode = defaultIfNull(privilegeInfo.getMode(), PrivilegeMode.NONE);
+		final PrivilegeMode privilegeMode = defaultIfNull(privilegeInfo.getMode(), NONE);
 
 		final String persistenceCardEditMode = CardEditMode.LOGIC_TO_PERSISTENCE.apply(privilegeInfo.getCardEditMode());
 
@@ -426,7 +451,7 @@ public class DefaultSecurityLogic implements Logic, SecurityLogic {
 				.set(GROUP_ID_ATTRIBUTE, privilegeInfo.getGroupId()) //
 				.set(PRIVILEGED_CLASS_ID_ATTRIBUTE, privilegeInfo.getPrivilegedObjectId()) //
 				.set(MODE_ATTRIBUTE, privilegeMode.getValue()) //
-				.set(TYPE_ATTRIBUTE, PrivilegedObjectType.CLASS.getValue()) //
+				.set(TYPE_ATTRIBUTE, CLASS.getValue()) //
 				.set(PRIVILEGE_FILTER_ATTRIBUTE, privilegeInfo.getPrivilegeFilter()) //
 				.set(ATTRIBUTES_PRIVILEGES_ATTRIBUTE, privilegeInfo.getAttributesPrivileges()) //
 				.set(STATUS_ATTRIBUTE, CardStatus.ACTIVE.value()) //
@@ -439,7 +464,7 @@ public class DefaultSecurityLogic implements Logic, SecurityLogic {
 		grantCardToBeCreated.set(GROUP_ID_ATTRIBUTE, privilegeInfo.getGroupId()) //
 				.set(PRIVILEGED_OBJECT_ID_ATTRIBUTE, privilegeInfo.getPrivilegedObjectId()) //
 				.set(MODE_ATTRIBUTE, privilegeInfo.getMode().getValue()) //
-				.set(TYPE_ATTRIBUTE, PrivilegedObjectType.VIEW.getValue()) //
+				.set(TYPE_ATTRIBUTE, VIEW.getValue()) //
 				.set(STATUS_ATTRIBUTE, CardStatus.ACTIVE.value()) //
 				.save();
 	}
@@ -449,7 +474,7 @@ public class DefaultSecurityLogic implements Logic, SecurityLogic {
 		grantCardToBeCreated.set(GROUP_ID_ATTRIBUTE, privilegeInfo.getGroupId()) //
 				.set(PRIVILEGED_OBJECT_ID_ATTRIBUTE, privilegeInfo.getPrivilegedObjectId()) //
 				.set(MODE_ATTRIBUTE, privilegeInfo.getMode().getValue()) //
-				.set(TYPE_ATTRIBUTE, PrivilegedObjectType.FILTER.getValue()) //
+				.set(TYPE_ATTRIBUTE, FILTER.getValue()) //
 				.set(STATUS_ATTRIBUTE, CardStatus.ACTIVE.value()) //
 				.save();
 	}
@@ -459,7 +484,7 @@ public class DefaultSecurityLogic implements Logic, SecurityLogic {
 				.set(GROUP_ID_ATTRIBUTE, privilegeInfo.getGroupId()) //
 				.set(PRIVILEGED_OBJECT_ID_ATTRIBUTE, privilegeInfo.getPrivilegedObjectId()) //
 				.set(MODE_ATTRIBUTE, privilegeInfo.getMode().getValue()) //
-				.set(TYPE_ATTRIBUTE, PrivilegedObjectType.CUSTOMPAGE.getValue()) //
+				.set(TYPE_ATTRIBUTE, CUSTOMPAGE.getValue()) //
 				.set(STATUS_ATTRIBUTE, CardStatus.ACTIVE.value()) //
 				.save();
 	}
@@ -558,7 +583,7 @@ public class DefaultSecurityLogic implements Logic, SecurityLogic {
 			createClassGrantCard(privilegeInfoToSave);
 		} else {
 			final CMCard privilegeCard = _privilegeCard.get();
-			final PrivilegeMode classMode = PrivilegeMode.of(privilegeCard.get(MODE_ATTRIBUTE));
+			final PrivilegeMode classMode = of(privilegeCard.get(MODE_ATTRIBUTE));
 			final Object attributesPrivileges = privilegeCard.get(ATTRIBUTES_PRIVILEGES_ATTRIBUTE);
 			final Object privilegeFilter = privilegeCard.get(PRIVILEGE_FILTER_ATTRIBUTE);
 			final SerializablePrivilege privilegeObject = privilegeObjectFromId(privilegeInfoToSave
@@ -588,7 +613,7 @@ public class DefaultSecurityLogic implements Logic, SecurityLogic {
 				.where( //
 				and( //
 				condition(attribute(grantClass, GROUP_ID_ATTRIBUTE), eq(privilegeInfoToSave.getGroupId())), //
-						condition(attribute(grantClass, TYPE_ATTRIBUTE), eq(PrivilegedObjectType.CLASS.getValue())), //
+						condition(attribute(grantClass, TYPE_ATTRIBUTE), eq(CLASS.getValue())), //
 						condition(attribute(grantClass, PRIVILEGED_CLASS_ID_ATTRIBUTE),
 								eq(privilegeInfoToSave.getPrivilegedObjectId()))) //
 				) //

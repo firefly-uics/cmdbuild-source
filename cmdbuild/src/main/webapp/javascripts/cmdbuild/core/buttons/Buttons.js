@@ -50,7 +50,7 @@
 		alternateClassName: 'CMDBuild.buttons.ExportButton', // Legacy class name
 		extend: 'CMDBuild.core.buttons.Base',
 
-		textDefault: CMDBuild.Translation.common.buttons.exportLabel
+		textDefault: CMDBuild.Translation.exportLabel
 	});
 
 	Ext.define('CMDBuild.core.buttons.Previous', {

@@ -38,6 +38,11 @@ public class AllConfigurationWrapper implements Configuration.All {
 	}
 
 	@Override
+	public boolean isOutputStartTlsEnabled() {
+		return Boolean.valueOf(account.isSmtpStartTls());
+	}
+
+	@Override
 	public String getOutputHost() {
 		return account.getSmtpServer();
 	}
@@ -45,11 +50,6 @@ public class AllConfigurationWrapper implements Configuration.All {
 	@Override
 	public Integer getOutputPort() {
 		return account.getSmtpPort();
-	}
-
-	@Override
-	public boolean isStartTlsEnabled() {
-		return false;
 	}
 
 	@Override
@@ -76,6 +76,11 @@ public class AllConfigurationWrapper implements Configuration.All {
 	public String getInputProtocol() {
 		final boolean useSsl = Boolean.valueOf(account.isImapSsl());
 		return useSsl ? PROTOCOL_IMAPS : PROTOCOL_IMAP;
+	}
+
+	@Override
+	public boolean isInputStartTlsEnabled() {
+		return Boolean.valueOf(account.isImapStartTls());
 	}
 
 	@Override

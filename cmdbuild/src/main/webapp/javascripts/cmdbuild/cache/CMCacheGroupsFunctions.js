@@ -4,7 +4,8 @@
 	var groups = {};
 	var activeGroupsStore = new Ext.data.Store( {
 		model: "CMDBuild.cache.CMGroupModel",
-		data: []
+		data: [],
+		sorters: [{ property: 'description', direction: 'ASC' }]
 	});
 
 	Ext.define("CMDBUild.cache.CMCacheGroupsFunctions", {

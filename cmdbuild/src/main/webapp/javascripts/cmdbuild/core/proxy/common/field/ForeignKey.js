@@ -34,6 +34,21 @@
 					{ property: 'Description', direction: 'ASC' }
 				]
 			});
+		},
+
+		/**
+		 * @property {Object} parameters
+		 */
+		readCard: function(parameters) {
+			CMDBuild.Ajax.request({
+				url: CMDBuild.core.proxy.CMProxyUrlIndex.card.read,
+				params: parameters.params,
+				scope: parameters.scope || this,
+				loadMask: parameters.loadMask || true,
+				failure: parameters.failure || Ext.emptyFn,
+				success: parameters.success || Ext.emptyFn,
+				callback: parameters.callback || Ext.emptyFn
+			});
 		}
 	});
 

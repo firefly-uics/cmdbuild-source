@@ -132,14 +132,15 @@
 		/**
 		 * @param {Object} params
 		 */
-		doFormSubmit: function(params) {
+		doFormSubmit: function (params) {
 			CMDBuild.core.proxy.Card.update({
 				params: Ext.Object.merge(params, this.view.getForm().getValues()),
 				scope: this,
-				success: function(response, options, decodedResponse) {
-					// Hack to adapr old method behaviour for classes witch extends this one
+				success: function (response, options, decodedResponse) {
+					// Adapter to old method behaviour for classes witch extends this one
 					var fakeOperation = {};
 					fakeOperation['result'] = decodedResponse;
+					fakeOperation['params'] = options.params;
 
 					this.onSaveSuccess(this.view.getForm(), fakeOperation);
 				}

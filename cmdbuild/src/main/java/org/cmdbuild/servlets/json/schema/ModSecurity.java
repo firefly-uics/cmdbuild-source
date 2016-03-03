@@ -257,6 +257,14 @@ public class ModSecurity extends JSONBaseWithSpringContext {
 	}
 
 	@JSONExported
+	public JSONObject getProcessPrivilegeList( //
+			@Parameter(GROUP_ID) final Long groupId //
+	) throws JSONException, AuthException {
+		final List<PrivilegeInfo> processPrivilegesForGroup = securityLogic().fetchProcessPrivilegesForGroup(groupId);
+		return PrivilegeSerializer.serializePrivilegeList(processPrivilegesForGroup);
+	}
+
+	@JSONExported
 	public JSONObject getViewPrivilegeList( //
 			@Parameter(GROUP_ID) final Long groupId //
 	) throws JSONException, AuthException {
@@ -271,7 +279,7 @@ public class ModSecurity extends JSONBaseWithSpringContext {
 		final List<PrivilegeInfo> filterPrivilegesForGroup = securityLogic().fetchFilterPrivilegesForGroup(groupId);
 		return PrivilegeSerializer.serializePrivilegeList(filterPrivilegesForGroup);
 	}
-	
+
 	@JSONExported
 	public JSONObject getCustomPagePrivilegeList( //
 			@Parameter(GROUP_ID) final Long groupId //
@@ -285,11 +293,25 @@ public class ModSecurity extends JSONBaseWithSpringContext {
 	public void saveClassPrivilege( //
 			@Parameter(GROUP_ID) final Long groupId, //
 			@Parameter(PRIVILEGE_OBJ_ID) final Long privilegedObjectId, //
-			@Parameter(PRIVILEGE_MODE) final String privilegeMode) throws AuthException { //
+			@Parameter(PRIVILEGE_MODE) final String privilegeMode //
+	) throws AuthException { //
 		final PrivilegeMode mode = extractPrivilegeMode(privilegeMode);
 		final PrivilegeInfo privilegeInfoToSave = new PrivilegeInfo(groupId, serializablePrivilege(privilegedObjectId),
 				mode, null);
 		securityLogic().saveClassPrivilege(privilegeInfoToSave, true);
+	}
+
+	@Admin(AdminAccess.DEMOSAFE)
+	@JSONExported
+	public void saveProcessPrivilege( //
+			@Parameter(GROUP_ID) final Long groupId, //
+			@Parameter(PRIVILEGE_OBJ_ID) final Long privilegedObjectId, //
+			@Parameter(PRIVILEGE_MODE) final String privilegeMode //
+	) throws AuthException { //
+		final PrivilegeMode mode = extractPrivilegeMode(privilegeMode);
+		final PrivilegeInfo privilegeInfoToSave = new PrivilegeInfo(groupId, serializablePrivilege(privilegedObjectId),
+				mode, null);
+		securityLogic().saveProcessPrivilege(privilegeInfoToSave, true);
 	}
 
 	private SerializablePrivilege serializablePrivilege(final Long privilegedObjectId) {

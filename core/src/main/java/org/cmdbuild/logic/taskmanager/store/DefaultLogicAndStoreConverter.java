@@ -424,10 +424,12 @@ public class DefaultLogicAndStoreConverter implements LogicAndStoreConverter {
 					.withParameter(ReadEmail.PROCESSED_FOLDER, task.getProcessedFolder()) //
 					.withParameter(ReadEmail.REJECTED_FOLDER, task.getRejectedFolder()) //
 					.withParameter(ReadEmail.FILTER_REJECT, Boolean.toString(task.isRejectNotMatching())) //
+					.withParameter(ReadEmail.FILTER_TYPE, task.getFilterType()) //
 					.withParameter(ReadEmail.FILTER_FROM_REGEX, Joiner.on(SPECIAL_SEPARATOR) //
 							.join(task.getRegexFromFilter())) //
 					.withParameter(ReadEmail.FILTER_SUBJECT_REGEX, Joiner.on(SPECIAL_SEPARATOR) //
 							.join(task.getRegexSubjectFilter())) //
+					.withParameter(ReadEmail.FILTER_FUNCTION_NAME, task.getFilterFunction()) //
 					.withParameter(ReadEmail.NOTIFICATION_ACTIVE, //
 							Boolean.toString(task.isNotificationActive())) //
 					.withParameter(ReadEmail.NOTIFICATION_TEMPLATE, //
@@ -608,12 +610,14 @@ public class DefaultLogicAndStoreConverter implements LogicAndStoreConverter {
 					.withRejectedFolder(task.getParameter(ReadEmail.REJECTED_FOLDER)) //
 					.withRejectNotMatching( //
 							Boolean.valueOf(task.getParameter(ReadEmail.FILTER_REJECT))) //
+					.withFilterType(task.getParameter(ReadEmail.FILTER_TYPE)) //
 					.withRegexFromFilter( //
 							isEmpty(fromRegexFilters) ? EMPTY_FILTERS : Splitter.on(SPECIAL_SEPARATOR) //
 									.split(fromRegexFilters)) //
 					.withRegexSubjectFilter( //
 							isEmpty(subjectRegexFilters) ? EMPTY_FILTERS : Splitter.on(SPECIAL_SEPARATOR) //
 									.split(subjectRegexFilters)) //
+					.withFilterFunction(task.getParameter(ReadEmail.FILTER_FUNCTION_NAME)) //
 					.withNotificationStatus( //
 							Boolean.valueOf(task.getParameter(ReadEmail.NOTIFICATION_ACTIVE))) //
 					.withNotificationTemplate( //

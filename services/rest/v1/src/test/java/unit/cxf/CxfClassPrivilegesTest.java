@@ -34,7 +34,6 @@ import org.cmdbuild.service.rest.v1.cxf.CxfClassPrivileges;
 import org.cmdbuild.service.rest.v1.cxf.ErrorHandler;
 import org.cmdbuild.service.rest.v1.model.ClassPrivilege;
 import org.cmdbuild.service.rest.v1.model.ResponseMultiple;
-import org.cmdbuild.workflow.CMProcessClass;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
@@ -158,56 +157,8 @@ public class CxfClassPrivilegesTest {
 				.build()));
 		verify(authenticationLogic).getGroupWithName(eq("foo"));
 		verify(securityLogic).fetchClassPrivilegesForGroup(eq(NORMAL.getId()));
-		final ArgumentCaptor<CMClass> captor = ArgumentCaptor.forClass(CMClass.class);
-		verify(dataAccessLogic, times(2)).isProcess(captor.capture());
 		final ArgumentCaptor<Long> idCaptor = ArgumentCaptor.forClass(Long.class);
 		verify(dataAccessLogic, times(2)).hasClass(idCaptor.capture());
-		verifyNoMoreInteractions(errorHandler, authenticationLogic, securityLogic, dataAccessLogic);
-	}
-
-	@Test
-	public void processesAreNotReturned() throws Exception {
-		// given
-		doReturn(NORMAL) //
-				.when(authenticationLogic).getGroupWithName(anyString());
-		final CMClass foo = mock(CMClass.class);
-		doReturn(1L).when(foo).getId();
-		doReturn("foo").when(foo).getName();
-		final CMProcessClass bar = mock(CMProcessClass.class);
-		doReturn(2L).when(bar).getId();
-		doReturn("bar").when(bar).getName();
-		doReturn(asList(//
-				PrivilegeInfo.newInstance() //
-						.withPrivilegedObject(foo) //
-						.withPrivilegeMode(PrivilegeMode.READ) //
-						.build(), //
-				PrivilegeInfo.newInstance() //
-						.withPrivilegedObject(bar) //
-						.withPrivilegeMode(PrivilegeMode.WRITE) //
-						.build() //
-				)) //
-				.when(securityLogic).fetchClassPrivilegesForGroup(anyLong());
-		doAnswer(new ReturnsElementsOf(asList(false, true))) //
-				.when(dataAccessLogic).isProcess(any(CMClass.class));
-		doReturn(true) //
-				.when(dataAccessLogic).hasClass(anyLong());
-
-		// when
-		final ResponseMultiple<ClassPrivilege> response = cxfClassPrivileges.read("foo");
-
-		// then
-		final Iterable<ClassPrivilege> elements = response.getElements();
-		assertThat(size(elements), equalTo(1));
-		assertThat(get(elements, 0), equalTo(newClassPrivilege() //
-				.withId("foo") //
-				.withName("foo") //
-				.withMode("r") //
-				.build()));
-		verify(authenticationLogic).getGroupWithName(eq("foo"));
-		verify(securityLogic).fetchClassPrivilegesForGroup(eq(NORMAL.getId()));
-		final ArgumentCaptor<CMClass> captor = ArgumentCaptor.forClass(CMClass.class);
-		verify(dataAccessLogic, times(2)).isProcess(captor.capture());
-		verify(dataAccessLogic).hasClass(eq(foo.getId()));
 		verifyNoMoreInteractions(errorHandler, authenticationLogic, securityLogic, dataAccessLogic);
 	}
 
@@ -219,7 +170,7 @@ public class CxfClassPrivilegesTest {
 		final CMClass foo = mock(CMClass.class);
 		doReturn(1L).when(foo).getId();
 		doReturn("foo").when(foo).getName();
-		final CMProcessClass bar = mock(CMProcessClass.class);
+		final CMClass bar = mock(CMClass.class);
 		doReturn(2L).when(bar).getId();
 		doReturn("bar").when(bar).getName();
 		doReturn(asList(//
@@ -251,8 +202,6 @@ public class CxfClassPrivilegesTest {
 				.build()));
 		verify(authenticationLogic).getGroupWithName(eq("foo"));
 		verify(securityLogic).fetchClassPrivilegesForGroup(eq(NORMAL.getId()));
-		final ArgumentCaptor<CMClass> captor = ArgumentCaptor.forClass(CMClass.class);
-		verify(dataAccessLogic, times(2)).isProcess(captor.capture());
 		final ArgumentCaptor<Long> idCaptor = ArgumentCaptor.forClass(Long.class);
 		verify(dataAccessLogic, times(2)).hasClass(idCaptor.capture());
 		verifyNoMoreInteractions(errorHandler, authenticationLogic, securityLogic, dataAccessLogic);

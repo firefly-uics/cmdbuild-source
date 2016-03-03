@@ -1,16 +1,25 @@
 package org.cmdbuild.logic.taskmanager.task.email;
 
+import static com.google.common.base.Joiner.on;
+import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.base.Predicates.alwaysTrue;
 import static com.google.common.base.Predicates.and;
 import static com.google.common.base.Suppliers.memoize;
 import static com.google.common.base.Suppliers.ofInstance;
 import static com.google.common.collect.FluentIterable.from;
+import static com.google.common.collect.Iterables.get;
 import static com.google.common.collect.Iterables.isEmpty;
+import static com.google.common.collect.Iterables.size;
+import static com.google.common.collect.Maps.newHashMap;
 import static java.util.Arrays.asList;
 import static org.apache.commons.lang3.StringUtils.defaultIfBlank;
 import static org.apache.commons.lang3.StringUtils.defaultString;
 import static org.cmdbuild.common.template.engine.Engines.emptyStringOnNull;
 import static org.cmdbuild.common.template.engine.Engines.map;
 import static org.cmdbuild.common.template.engine.Engines.nullOnError;
+import static org.cmdbuild.dao.query.clause.AnyAttribute.anyAttribute;
+import static org.cmdbuild.dao.query.clause.Clauses.call;
 import static org.cmdbuild.data.store.Storables.storableOf;
 import static org.cmdbuild.data.store.email.EmailConstants.EMAIL_CLASS_NAME;
 import static org.cmdbuild.logic.taskmanager.task.email.Actions.safe;
@@ -23,6 +32,7 @@ import static org.cmdbuild.services.template.engine.EngineNames.GROUP_USERS_PREF
 import static org.cmdbuild.services.template.engine.EngineNames.MAPPER_PREFIX;
 import static org.cmdbuild.services.template.engine.EngineNames.USER_PREFIX;
 
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -32,6 +42,14 @@ import org.apache.commons.lang3.Validate;
 import org.cmdbuild.common.template.TemplateResolver;
 import org.cmdbuild.common.template.engine.EngineBasedTemplateResolver;
 import org.cmdbuild.dao.entry.CMCard;
+import org.cmdbuild.dao.entrytype.attributetype.BooleanAttributeType;
+import org.cmdbuild.dao.entrytype.attributetype.CMAttributeType;
+import org.cmdbuild.dao.entrytype.attributetype.TextAttributeType;
+import org.cmdbuild.dao.function.CMFunction;
+import org.cmdbuild.dao.function.CMFunction.CMFunctionParameter;
+import org.cmdbuild.dao.query.CMQueryResult;
+import org.cmdbuild.dao.query.clause.alias.Alias;
+import org.cmdbuild.dao.query.clause.alias.Aliases;
 import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.data.store.Storable;
 import org.cmdbuild.data.store.Store;
@@ -69,8 +87,22 @@ import com.google.common.base.Function;
 import com.google.common.base.Optional;
 import com.google.common.base.Predicate;
 import com.google.common.base.Supplier;
+import com.google.common.collect.Maps;
 
 public class ReadEmailTaskJobFactory extends AbstractJobFactory<ReadEmailTask> {
+
+	private static final String //
+			CONTENT = "content", //
+			CC_ADDRESSES = "ccAddresses", //
+			FROM_ADDRESS = "fromAddress", //
+			SEPARATOR = ",", //
+			SUBJECT = "subject", //
+			TO_ADDRESSES = "toAddresses";
+
+	private static final String //
+			FUNCTION = "function", //
+			NONE = "none", //
+			REGEX = "regex";
 
 	private static class ConditionalAction implements Action {
 
@@ -149,8 +181,7 @@ public class ReadEmailTaskJobFactory extends AbstractJobFactory<ReadEmailTask> {
 
 	private Action sendNotification(final ReadEmailTask task) {
 		logger.info(marker, "adding notification action");
-		final Predicate<Email> condition = and(notificationActive(task), addressAndSubjectRespectFilter(task),
-				subjectMatches());
+		final Predicate<Email> condition = and(notificationActive(task), filter(task), subjectMatches());
 		return new ConditionalAction( //
 				condition, //
 				new Action() {
@@ -288,8 +319,7 @@ public class ReadEmailTaskJobFactory extends AbstractJobFactory<ReadEmailTask> {
 
 	private Action storeAttachments(final ReadEmailTask task) {
 		logger.info(marker, "adding attachments action");
-		final Predicate<Email> condition = and(attachmentsActive(task), addressAndSubjectRespectFilter(task),
-				hasAttachments());
+		final Predicate<Email> condition = and(attachmentsActive(task), filter(task), hasAttachments());
 		return new ConditionalAction( //
 				condition, //
 				new Action() {
@@ -335,7 +365,7 @@ public class ReadEmailTaskJobFactory extends AbstractJobFactory<ReadEmailTask> {
 
 	private Action startProcess(final ReadEmailTask task) {
 		logger.info(marker, "adding start process action");
-		final Predicate<Email> condition = and(workflowActive(task), addressAndSubjectRespectFilter(task));
+		final Predicate<Email> condition = and(workflowActive(task), filter(task));
 		return new ConditionalAction( //
 				condition, //
 				new Action() {
@@ -417,6 +447,22 @@ public class ReadEmailTaskJobFactory extends AbstractJobFactory<ReadEmailTask> {
 		};
 	}
 
+	private Predicate<Email> filter(final ReadEmailTask task) {
+		final Predicate<Email> output;
+		final String value = task.getFilterType();
+		if (REGEX.equalsIgnoreCase(value)) {
+			output = addressAndSubjectRespectFilter(task);
+		} else if (FUNCTION.equalsIgnoreCase(value)) {
+			output = functionFilter(task);
+		} else if (NONE.equalsIgnoreCase(value)) {
+			output = alwaysTrue();
+		} else {
+			logger.warn(marker, "filter type '{}' is not expected, ignoring it", value);
+			output = alwaysTrue();
+		}
+		return output;
+	}
+
 	private Predicate<Email> addressAndSubjectRespectFilter(final ReadEmailTask task) {
 		logger.debug(marker, "creating main filter for email");
 		return and(fromAddressRespectsFilter(task), subjectRespectsFilter(task));
@@ -467,6 +513,70 @@ public class ReadEmailTaskJobFactory extends AbstractJobFactory<ReadEmailTask> {
 				}
 				logger.debug(marker, "subject not matching");
 				return false;
+			}
+
+		};
+	}
+
+	private Predicate<Email> functionFilter(final ReadEmailTask task) {
+		final String name = task.getFilterFunction();
+		logger.debug(marker, "creating filter for function '{}'", name);
+		final CMFunction function = checkNotNull(dataView.findFunctionByName(name), "missing function '%s'", name);
+		final Map<String, CMFunctionParameter> map = Maps.uniqueIndex(function.getInputParameters(),
+				new Function<CMFunctionParameter, String>() {
+
+					@Override
+					public String apply(final CMFunctionParameter input) {
+						return input.getName();
+					}
+
+				});
+		for (final String element : asList(FROM_ADDRESS, TO_ADDRESSES, CC_ADDRESSES, SUBJECT, CONTENT)) {
+			checkArgument(map.containsKey(element), "missing input parameter '%s'", element);
+			final CMAttributeType<?> type = map.get(element).getType();
+			checkArgument(type instanceof TextAttributeType, "invalid type '%s' for input parameter '%s' ", type,
+					element);
+		}
+		final Iterable<CMFunctionParameter> outputParameters = function.getOutputParameters();
+		checkArgument(size(outputParameters) == 1, "output parameter must be one");
+		final CMFunctionParameter outputParameter = get(outputParameters, 0);
+		checkArgument(outputParameter.getType() instanceof BooleanAttributeType, "output parameter must be boolean");
+		return new Predicate<Email>() {
+
+			@Override
+			public boolean apply(final Email email) {
+				try {
+					final Map<String, Object> parameters = newHashMap();
+					parameters.put(FROM_ADDRESS, email.getFromAddress());
+					parameters.put(TO_ADDRESSES, serializeAddresses(email.getToAddresses()));
+					parameters.put(CC_ADDRESSES, serializeAddresses(email.getCcAddresses()));
+					parameters.put(SUBJECT, email.getSubject());
+					parameters.put(CONTENT, email.getContent());
+
+					final Alias f = Aliases.name("f");
+					final CMQueryResult queryResult = dataView.select(anyAttribute(function, f)) //
+							.from(call(function, parameters), f) //
+							.run();
+					boolean output;
+					if (queryResult.isEmpty()) {
+						logger.warn(marker, "no row returned from function '{}'", name);
+						output = false;
+					} else {
+						output = queryResult.iterator().next() //
+								.getValueSet(f) //
+								.get(outputParameter.getName(), Boolean.class);
+					}
+					return output;
+				} catch (final Exception e) {
+					logger.error(marker, "error calling function", e);
+					return false;
+				}
+			}
+
+			public String serializeAddresses(final Iterable<String> values) {
+				return on(SEPARATOR) //
+						.skipNulls() //
+						.join(values);
 			}
 
 		};

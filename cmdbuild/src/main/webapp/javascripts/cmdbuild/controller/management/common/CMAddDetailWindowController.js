@@ -12,7 +12,7 @@
 				var r = this.referenceToMaster;
 				p[r.name] = r.value;
 				// Then set the save relation to emptyFn because
-				// the relation is automatically 
+				// the relation is automatically
 				this.saveRelationAction = Ext.emptyFn; //this.view.hasRelationAttributes ? this.updateRelation : Ext.emptyFn;
 			} else {
 				// set the function to create the relation

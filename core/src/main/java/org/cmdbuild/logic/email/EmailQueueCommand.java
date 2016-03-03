@@ -1,6 +1,7 @@
 package org.cmdbuild.logic.email;
 
 import static com.google.common.base.Optional.absent;
+import static com.google.common.base.Predicates.not;
 import static com.google.common.base.Splitter.on;
 import static com.google.common.collect.FluentIterable.from;
 import static com.google.common.collect.Maps.newHashMap;
@@ -121,7 +122,24 @@ public class EmailQueueCommand implements Command, Callback {
 	private void execute0() {
 		logger.debug(MARKER, "getting all outgoing e-mails where delay is elapsed");
 		final Iterable<Email> elements = from(emailLogic.readAll(outgoing())) //
-				.filter(DELAY_ELAPSED);
+				.filter(DELAY_ELAPSED) //
+				.filter(not(new Predicate<Email>() {
+
+					@Override
+					public boolean apply(final Email input) {
+						final boolean missingReference = (input.getReference() == null);
+						if (missingReference) {
+							try {
+								logger.debug("deleting e-mail '{}' since its reference is missing ", input);
+								emailLogic.deleteWithNoChecks(input);
+							} catch (final Exception e) {
+								logger.debug("error deleting e-mail", e);
+							}
+						}
+						return missingReference;
+					}
+
+				}));
 		logger.debug(MARKER, "grouping e-mails by account");
 		final Multimap<Optional<String>, Email> emailsByAccount = index(elements, ACCOUNT_NAME_OR_ABSENT);
 		for (final Optional<String> accountName : emailsByAccount.keySet()) {
