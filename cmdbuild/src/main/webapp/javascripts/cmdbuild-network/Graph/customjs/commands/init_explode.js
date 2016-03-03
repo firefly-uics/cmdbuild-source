@@ -26,7 +26,7 @@
 				var me = this;
 				setTimeout(function() {
 						var parentId = elements.nodes[0].data.id;
-						me.explodeNode(parentId, $.Cmdbuild.customvariables.options["explosionLevels"] - 1, function(elements) {
+						me.explodeNode(parentId, $.Cmdbuild.customvariables.options["baseLevel"] - 1, function(elements) {
 							if (!batch) {
 								$.Cmdbuild.customvariables.commandsManager.stopped = false;
 								$.Cmdbuild.customvariables.commandInExecution = false;

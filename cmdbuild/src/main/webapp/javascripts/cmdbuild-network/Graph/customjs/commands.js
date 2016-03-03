@@ -141,7 +141,7 @@
 		},
 		openSelection : function(param) {
 			var selected = $.Cmdbuild.customvariables.selected.getData();
-			var levels = $.Cmdbuild.customvariables.options.explosionLevels;
+			var levels = $.Cmdbuild.customvariables.options.baseLevel;
 			var arCommands = getExplodeCommands(selected, levels);
 			var macroCommand = new $.Cmdbuild.g3d.commands.macroCommand(
 					$.Cmdbuild.customvariables.model, arCommands);

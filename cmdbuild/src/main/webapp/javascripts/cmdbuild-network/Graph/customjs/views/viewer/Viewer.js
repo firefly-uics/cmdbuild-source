@@ -153,7 +153,7 @@
 						.explodeNode({
 							id : LASTSELECTED.elementId,
 							domainList : null,
-							levels : $.Cmdbuild.customvariables.options["explosionLevels"]
+							levels : $.Cmdbuild.customvariables.options.baseLevel
 						});
 			}
 		};
