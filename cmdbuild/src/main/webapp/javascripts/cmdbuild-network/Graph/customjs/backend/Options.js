@@ -54,7 +54,7 @@
 				case "layoutType" :
 					this.data = layouts;
 					break;
-//				case "explosionLevels" :
+//				case "baseLevel" :
 //					this.data = [];
 //					break;
 				case "displayLabel" :
@@ -97,7 +97,7 @@
 			switch (type) {
 				case "projectionType" :
 				case "layoutType" :
-				case "explosionLevels" :
+				case "baseLevel" :
 				case "clusteringThreshold" :
 					return "";
 				case "displayLabel" :
