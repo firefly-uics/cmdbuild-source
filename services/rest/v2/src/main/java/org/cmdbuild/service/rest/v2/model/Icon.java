@@ -1,6 +1,6 @@
 package org.cmdbuild.service.rest.v2.model;
 
-import static org.cmdbuild.service.rest.v2.constants.Serialization.CLASS_NAME;
+import static org.cmdbuild.service.rest.v2.constants.Serialization.ID;
 import static org.cmdbuild.service.rest.v2.constants.Serialization.DETAILS;
 import static org.cmdbuild.service.rest.v2.constants.Serialization.TYPE;
 
@@ -16,7 +16,7 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 @XmlRootElement
 public class Icon extends ModelWithStringId {
 
-	public static final String className = CLASS_NAME;
+	public static final String id = ID;
 
 	private String type;
 	private Map<String, Object> details;

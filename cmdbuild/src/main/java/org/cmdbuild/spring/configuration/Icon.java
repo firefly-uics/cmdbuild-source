@@ -14,11 +14,14 @@ public class Icon {
 	private static final String ICONS = "icons4classes";
 
 	@Autowired
+	private Data data;
+
+	@Autowired
 	private FileStore fileStore;
 
 	@Bean
 	public IconsLogic defaultIconsLogic() {
-		return new DefaultIconsLogic(iconsFilesStore(), uuidIdGenerator());
+		return new DefaultIconsLogic(iconsFilesStore(), uuidIdGenerator(), data.systemDataView());
 	}
 
 	@Bean

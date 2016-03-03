@@ -21,6 +21,7 @@ import org.cmdbuild.logic.icon.IconsLogic;
 import org.cmdbuild.logic.icon.Type;
 import org.cmdbuild.logic.icon.TypeVisitor;
 import org.cmdbuild.logic.icon.Types.ClassType;
+import org.cmdbuild.logic.icon.Types.ProcessType;
 import org.cmdbuild.service.rest.v2.Icons;
 import org.cmdbuild.service.rest.v2.logging.LoggingSupport;
 import org.cmdbuild.service.rest.v2.model.Icon;
@@ -30,6 +31,9 @@ import org.cmdbuild.service.rest.v2.model.ResponseSingle;
 import com.google.common.base.Function;
 
 public class CxfIcons implements Icons, LoggingSupport {
+
+	private static final String CLASS = "class";
+	private static final String PROCESS = "process";
 
 	public static class IconToElement implements Function<Icon, Element> {
 
@@ -43,14 +47,22 @@ public class CxfIcons implements Icons, LoggingSupport {
 		public Element apply(final Icon input) {
 			final Type type;
 			switch (input.getType()) {
-			case "class":
+			case CLASS: {
 				final Map<String, Object> details = requireNonNull(input.getDetails(), "missing details");
-				final String className = String.class
-						.cast(requireNonNull(details.get(Icon.className), "missing " + Icon.className));
+				final String name = String.class.cast(requireNonNull(details.get(Icon.id), "missing " + Icon.id));
 				type = classType() //
-						.withName(className) //
+						.withName(name) //
 						.build();
 				break;
+			}
+			case PROCESS: {
+				final Map<String, Object> details = requireNonNull(input.getDetails(), "missing details");
+				final String name = String.class.cast(requireNonNull(details.get(Icon.id), "missing " + Icon.id));
+				type = classType() //
+						.withName(name) //
+						.build();
+				break;
+			}
 			default:
 				errorHandler.invalidIconType(input.getType());
 				throw new AssertionError("should never come here");
@@ -92,9 +104,16 @@ public class CxfIcons implements Icons, LoggingSupport {
 
 				@Override
 				public void visit(final ClassType type) {
-					this.type = "class";
+					this.type = CLASS;
 					this.details = newHashMap();
-					this.details.put(Icon.className, type.getName());
+					this.details.put(Icon.id, type.getName());
+				}
+
+				@Override
+				public void visit(final ProcessType type) {
+					this.type = PROCESS;
+					this.details = newHashMap();
+					this.details.put(Icon.id, type.getName());
 				}
 
 			}.icon();

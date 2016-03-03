@@ -7,6 +7,7 @@ import static java.util.Optional.of;
 import static java.util.Optional.ofNullable;
 import static java.util.UUID.randomUUID;
 import static org.cmdbuild.logic.icon.Types.classType;
+import static org.cmdbuild.logic.icon.Types.processType;
 
 import java.io.File;
 import java.io.IOException;
@@ -16,7 +17,10 @@ import java.util.Optional;
 import javax.activation.DataHandler;
 
 import org.bimserver.utils.FileDataSource;
+import org.cmdbuild.dao.entrytype.CMClass;
+import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.logic.icon.Types.ClassType;
+import org.cmdbuild.logic.icon.Types.ProcessType;
 import org.cmdbuild.services.FilesStore;
 
 import com.google.common.base.Function;
@@ -42,38 +46,44 @@ public class DefaultIconsLogic implements IconsLogic {
 
 	private static final String SEPARATOR = "_";
 
-	private static Function<File, Element> FILE_TO_ELEMENT = new Function<File, Element>() {
-
-		@Override
-		public Element apply(final File input) {
-			final List<String> parts = Splitter.on(SEPARATOR) //
-					.limit(2) //
-					.splitToList(input.getName());
-			return new Element() {
-
-				@Override
-				public String getId() {
-					return parts.get(0);
-				}
-
-				@Override
-				public Type getType() {
-					return classType() //
-							.withName(parts.get(1)) //
-							.build();
-				}
-
-			};
-		};
-
-	};
-
 	private final FilesStore filesStore;
 	private final IdGenerator idGenerator;
+	private final Function<File, Element> fileToElement;
 
-	public DefaultIconsLogic(final FilesStore filesStore, final IdGenerator idGenerator) {
+	public DefaultIconsLogic(final FilesStore filesStore, final IdGenerator idGenerator, final CMDataView dataView) {
 		this.filesStore = requireNonNull(filesStore, "missing " + FilesStore.class);
 		this.idGenerator = requireNonNull(idGenerator, "missing " + IdGenerator.class);
+		this.fileToElement = new Function<File, Element>() {
+
+			@Override
+			public Element apply(final File input) {
+				final List<String> parts = Splitter.on(SEPARATOR) //
+						.limit(2) //
+						.splitToList(input.getName());
+				return new Element() {
+
+					@Override
+					public String getId() {
+						return parts.get(0);
+					}
+
+					@Override
+					public Type getType() {
+						final String name = parts.get(1);
+						final CMClass found = dataView.findClass(name);
+						return dataView.getActivityClass().isAncestorOf(found)
+								? processType() //
+										.withName(name) //
+										.build()
+								: classType() //
+										.withName(name) //
+										.build();
+					}
+
+				};
+			};
+
+		};
 	}
 
 	@Override
@@ -94,6 +104,11 @@ public class DefaultIconsLogic implements IconsLogic {
 
 						@Override
 						public void visit(final ClassType type) {
+							output = type.getName();
+						}
+
+						@Override
+						public void visit(final ProcessType type) {
 							output = type.getName();
 						}
 
@@ -121,7 +136,7 @@ public class DefaultIconsLogic implements IconsLogic {
 	@Override
 	public Iterable<Element> read() {
 		return from(filesStore.files(null)) //
-				.transform(FILE_TO_ELEMENT);
+				.transform(fileToElement);
 	}
 
 	@Override
@@ -130,7 +145,7 @@ public class DefaultIconsLogic implements IconsLogic {
 				.join(element.getId(), ".*");
 		return ofNullable(from(filesStore.files(pattern)) //
 				.limit(1) //
-				.transform(FILE_TO_ELEMENT) //
+				.transform(fileToElement) //
 				.first() //
 				.orNull());
 	}
@@ -152,6 +167,11 @@ public class DefaultIconsLogic implements IconsLogic {
 
 						@Override
 						public void visit(final ClassType type) {
+							output = type.getName();
+						}
+
+						@Override
+						public void visit(final ProcessType type) {
 							output = type.getName();
 						}
 
@@ -186,6 +206,11 @@ public class DefaultIconsLogic implements IconsLogic {
 							output = type.getName();
 						}
 
+						@Override
+						public void visit(final ProcessType type) {
+							output = type.getName();
+						}
+
 					}.part());
 			final Optional<File> file = ofNullable(from(filesStore.files(name)) //
 					.limit(1) //
@@ -214,6 +239,11 @@ public class DefaultIconsLogic implements IconsLogic {
 
 						@Override
 						public void visit(final ClassType type) {
+							output = type.getName();
+						}
+
+						@Override
+						public void visit(final ProcessType type) {
 							output = type.getName();
 						}
 

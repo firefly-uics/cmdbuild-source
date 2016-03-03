@@ -104,6 +104,72 @@ public class Types {
 		return new ClassType.Builder();
 	}
 
+	public static class ProcessType extends AbstractType {
+
+		public static class Builder implements org.apache.commons.lang3.builder.Builder<ProcessType> {
+
+			private String name;
+
+			private Builder() {
+				// use factory method
+			}
+
+			@Override
+			public ProcessType build() {
+				return new ProcessType(this);
+			}
+
+			public Builder withName(final String value) {
+				name = value;
+				return this;
+			}
+
+		}
+
+		private final String name;
+
+		private ProcessType(final Builder builder) {
+			this.name = requireNonNull(builder.name);
+		}
+
+		public String getName() {
+			return name;
+		}
+
+		@Override
+		public void accept(final TypeVisitor visitor) {
+			visitor.visit(this);
+		}
+
+		@Override
+		protected boolean doEquals(final Object obj) {
+			if (this == obj) {
+				return true;
+			}
+
+			if (!(obj instanceof ProcessType)) {
+				return false;
+			}
+
+			final ProcessType other = ProcessType.class.cast(obj);
+			return new EqualsBuilder() //
+					.append(this.getName(), other.getName()) //
+					.isEquals();
+		}
+
+		@Override
+		protected int doHashCode() {
+			return new HashCodeBuilder() //
+					.append(getName()) //
+					.toHashCode();
+		}
+
+	}
+
+	public static ProcessType.Builder processType() {
+		return new ProcessType.Builder();
+	}
+
 	private Types() {
 		// prevents instantiation
 	}
