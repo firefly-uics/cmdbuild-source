@@ -1,10 +1,13 @@
 (function($) {
-	var cache = function() {
+	var cache = function(callback, callbackScope) {
 		$.Cmdbuild.customvariables.cacheProcess = new cacheProcesses();
 		$.Cmdbuild.customvariables.cacheDomains = new cacheDomains();
 		$.Cmdbuild.customvariables.cacheClasses = new cacheClasses();
 		$.Cmdbuild.customvariables.cacheImages = new cacheImages();
 		$.Cmdbuild.customvariables.cacheTrees = new cacheTrees();
+
+		// load icons data
+		$.Cmdbuild.customvariables.cacheImages.loadData(callback, callbackScope);
 	};
 	var cacheTrees = function() {
 		this.data = {};
@@ -107,57 +110,41 @@
 		};
 	};
 	var cacheImages = function() {
-		this.data = {};
-		this.getBase64Image = function(img) {
-			canvas = document.createElement('canvas');
-			canvas.width = img.width;
-			canvas.height = img.height;
-			// Get '2d' context and draw the image.
-			ctx = canvas.getContext("2d");
-			ctx.drawImage(img, 0, 0);
-			// Get canvas data URL
-			try {
-				data = canvas.toDataURL();
-				return data;
-			} catch (e) {
-				error(e);
-			}
-		};
-		this.pushClass = function(classId, callback, callbackScope) {
-			if (this.data[classId]) {
-				callback.apply(callbackScope, []);
-				return;
-			}
-			var token = $.Cmdbuild.authentication.getAuthenticationToken();
-			var url = $.Cmdbuild.SpriteArchive.class2Sprite(classId);
-			var img = $('<img/>');
+		this.data = [];
+		this.loadData = function(callback, callbackScope) {
 			var me = this;
-			img[0].onload = function() {
-				me.data[classId] = me.getBase64Image(img[0]);
-				callback.apply(callbackScope, []);
-			};
-			img.attr('src', url);
+			$.Cmdbuild.utilities.proxy.getIcons({}, function(data, metadata) {
+				me.data = data;
+				callback.apply(callbackScope);
+			});
 		};
-		this.pushClass_DEFINITIVE_FUNCTION = function(classId, callback,
-				callbackScope) {
-			if (this.data[classId]) {
-				callback.apply(callbackScope, []);
-				return;
+		this.getBaseImages = function(type) {
+			var base_url = $.Cmdbuild.global.getAppConfigUrl() + $.Cmdbuild.g3d.constants.SPRITES_PATH;
+			switch (type) {
+				case "defalt" :
+					return base_url + "default.png";
+					break;
+				case "selected" :
+					return base_url + "selected.png";
+					break;
+				case "current" :
+					return base_url + "current.png";
+					break;
+				default:
+					return "";
 			}
-			var token = $.Cmdbuild.authentication.getAuthenticationToken();
-			var url = $.Cmdbuild.global.getApiUrl()
-					+ "classes/InternalEmployee/cards/6083/attachments/b2JqZWN0LXJvdGF0ZS0yLnBuZw/object-rotate-2.png?CMDBuild-Authorization="
-					+ token;
-			var img = $('<img/>');
-			var me = this;
-			img[0].onload = function() {
-				me.data[classId] = me.getBase64Image(img[0]);
-				callback.apply(callbackScope, []);
-			};
-			img.attr('src', url);
 		};
 		this.getImage = function(classId) {
-			return this.data[classId];
+			var imgs = $.grep(this.data, function(item) {
+				return item.details.id === classId;
+			});
+			var url;
+			if (imgs && imgs.length) {
+				url = $.Cmdbuild.utilities.proxy.getURIForIconDownload(imgs[0]._id);
+			} else {
+				url = $.Cmdbuild.customvariables.cacheImages.getBaseImages("default");
+			}
+			return url;
 		};
 	};
 	var cacheClasses = function() {
@@ -205,11 +192,11 @@
 			}
 			var node = nodes[index];
 			this.getLoadingClass(node.data.classId, function() {
-				$.Cmdbuild.customvariables.cacheImages.pushClass(
-						node.data.classId, function() {
+//				$.Cmdbuild.customvariables.cacheImages.pushClass(
+//						node.data.classId, function() {
 							this.pushClassesRecursive(nodes, index + 1,
 									callback, callbackScope);
-						}, this);
+//						}, this);
 			}, this);
 		};
 		this.pushClasses = function(elements, callback, callbackScope) {
