@@ -46,6 +46,20 @@
 			}
 		},
 
+		/**
+		 * Enable only if is not superclass or if is superclass not empty
+		 *
+		 * @override
+		 */
+		enable: function () {
+			if (
+				!_CMUtils.isSuperclass(this.classId)
+				|| (_CMUtils.isSuperclass(this.classId) && !this.isEmpty())
+			) {
+				this.callParent(arguments);
+			}
+		},
+
 		showDropDownArrow: function() {
 			var arrowEl = this.getArrowEl();
 			if (arrowEl) {
@@ -83,7 +97,7 @@
 
 		//private
 		isEmpty: function() {
-			return (this.menu && this.menu.items.length == 0 );
+			return (this.menu && this.menu.items.length == 0);
 		},
 
 		//private
