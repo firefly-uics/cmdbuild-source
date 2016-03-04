@@ -31,17 +31,14 @@
 		},
 		toggleTooltips : function(param) {
 			var isEnabled = true;
-			if (isEnabled) {
-				$.Cmdbuild.custom.commands.updateToggleTooltips({
-					id : param.id,
-					active : true
-				});
-			}
+			$("#" + param.id).ready(function() {
+				$("#" + param.id).parent().addClass(
+						$.Cmdbuild.custom.commands.variables.BUTTONACTIVECLASS);
+			});
 			$("#" + param.id)
 					.click(
 							function() {
-								if ($(this)
-										.parent()
+								if ($(this).parent()
 										.hasClass(
 												$.Cmdbuild.custom.commands.variables.BUTTONACTIVECLASS)) {
 									// TODO: disable tooltips
