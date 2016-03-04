@@ -1,4 +1,4 @@
-(function() {
+(function () {
 
 	Ext.define('CMDBuild.view.management.common.tabs.email.attachments.MainContainer', {
 		extend: 'Ext.container.Container',
@@ -30,7 +30,7 @@
 			align: 'stretch'
 		},
 
-		initComponent: function() {
+		initComponent: function () {
 			if (CMDBuild.configuration.dms.get(CMDBuild.core.constants.Proxy.ENABLED)) {
 				Ext.apply(this, {
 					items: [
@@ -56,7 +56,7 @@
 		 *
 		 * @return {Ext.Component}
 		 */
-		addPanel: function(component) {
+		addPanel: function (component) {
 			return this.attachmentPanelsContainer.add(component);
 		}
 	});

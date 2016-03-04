@@ -1,4 +1,4 @@
-(function() {
+(function () {
 
 	Ext.define('CMDBuild.view.management.common.tabs.email.attachments.picker.AttachmentGrid', {
 		extend: 'Ext.grid.Panel',
@@ -16,7 +16,7 @@
 		border: false,
 		split: true,
 
-		initComponent: function() {
+		initComponent: function () {
 			Ext.apply(this, {
 				columns: [
 					{

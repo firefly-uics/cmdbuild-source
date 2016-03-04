@@ -1,4 +1,4 @@
-(function() {
+(function () {
 
 	Ext.define('CMDBuild.view.management.common.tabs.email.attachments.FileAttacchedPanel', {
 		extend: 'Ext.panel.Panel',
@@ -27,7 +27,7 @@
 			align: 'middle'
 		},
 
-		initComponent: function() {
+		initComponent: function () {
 			Ext.apply(this, {
 				items: [
 					Ext.create('Ext.form.field.Display', {
@@ -38,7 +38,7 @@
 						tooltip: CMDBuild.Translation.download,
 						scope: this,
 
-						handler: function(button, e) {
+						handler: function (button, e) {
 							this.delegate.cmfg('onTabEmailAttachmentDownloadButtonClick', this);
 						}
 					}),
@@ -47,7 +47,7 @@
 						disabled: this.readOnly,
 						scope: this,
 
-						handler: function(button, e) {
+						handler: function (button, e) {
 							this.delegate.cmfg('onTabEmailAttachmentRemoveButtonClick', this);
 						}
 					})

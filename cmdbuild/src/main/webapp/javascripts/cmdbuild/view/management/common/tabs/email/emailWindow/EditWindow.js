@@ -1,4 +1,4 @@
-(function() {
+(function () {
 
 	Ext.define('CMDBuild.view.management.common.tabs.email.emailWindow.EditWindow', {
 		extend: 'CMDBuild.core.PopupWindow',
@@ -29,7 +29,7 @@
 
 		layout: 'border',
 
-		initComponent: function() {
+		initComponent: function () {
 			Ext.apply(this, {
 				dockedItems: [
 					Ext.create('Ext.toolbar.Toolbar', {
@@ -40,7 +40,7 @@
 								iconCls: 'clone',
 								text: CMDBuild.Translation.composeFromTemplate,
 
-								handler: function() {
+								handler: function () {
 									this.showMenu();
 								},
 
@@ -65,14 +65,14 @@
 							Ext.create('CMDBuild.core.buttons.text.Confirm', {
 								scope: this,
 
-								handler: function(button, e) {
+								handler: function (button, e) {
 									this.delegate.cmfg('onTabEmailEmailWindowConfirmButtonClick');
 								}
 							}),
 							Ext.create('CMDBuild.core.buttons.text.Abort', {
 								scope: this,
 
-								handler: function(button, e) {
+								handler: function (button, e) {
 									this.delegate.cmfg('onTabEmailEmailWindowAbortButtonClick');
 								}
 							})
@@ -95,7 +95,7 @@
 		},
 
 		listeners: {
-			beforedestroy: function(window, eOpts) {
+			beforedestroy: function (window, eOpts) {
 				return this.delegate.cmfg('onTabEmailEmailWindowBeforeDestroy');
 			}
 		}

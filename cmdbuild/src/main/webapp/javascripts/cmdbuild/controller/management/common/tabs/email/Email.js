@@ -176,7 +176,7 @@
 			 *
 			 * @returns {Boolean} found
 			 */
-			searchForCqlClientVariables: function(inspectingVariable, inspectingVariableKey, searchedVariablesNames, foundedKeysArray) {
+			searchForCqlClientVariables: function (inspectingVariable, inspectingVariableKey, searchedVariablesNames, foundedKeysArray) {
 				var found = false;
 				var cqlTags = ['{client:', '{cql:', '{xa:', '{js:'];
 
@@ -201,11 +201,11 @@
 			 *
 			 * @returns {Boolean} storeLoadEnabled
 			 */
-			trafficLightArrayCheck: function(record, regenerationTrafficLightArray) {
+			trafficLightArrayCheck: function (record, regenerationTrafficLightArray) {
 				if (!Ext.isEmpty(regenerationTrafficLightArray) && Ext.isArray(regenerationTrafficLightArray)) {
 					var storeLoadEnabled = true;
 
-					Ext.Array.forEach(regenerationTrafficLightArray, function(item, i, allItems) {
+					Ext.Array.forEach(regenerationTrafficLightArray, function (item, i, allItems) {
 						if (Ext.Object.equals(item[CMDBuild.core.constants.Proxy.RECORD], record))
 							item[CMDBuild.core.constants.Proxy.STATUS] = true;
 
@@ -227,7 +227,7 @@
 			 * @param {Mixed} record
 			 * @param {Array} trafficLightArray
 			 */
-			trafficLightSlotBuild: function(record, trafficLightArray) {
+			trafficLightSlotBuild: function (record, trafficLightArray) {
 				if (!Ext.isEmpty(record) && Ext.isArray(trafficLightArray)) {
 					var trafficLight = {};
 					trafficLight[CMDBuild.core.constants.Proxy.STATUS] = false;
@@ -242,11 +242,12 @@
 		 * Abstract constructor that must be extended implementing creation and setup of view
 		 *
 		 * @param {Object} configurationObject
-		 * @param {Mixed} configurationObject.parentDelegate - CMModCardController or CMModWorkflowController
+		 * @param {Object} configurationObject.parentDelegate - CMModCardController or CMModWorkflowController
 		 *
 		 * @abstract
+		 * @override
 		 */
-		constructor: function(configurationObject) {
+		constructor: function (configurationObject) {
 			this.callParent(arguments);
 
 			this.tabEmailConfigurationReset();
@@ -271,7 +272,7 @@
 		 *
 		 * @returns {Boolean}
 		 */
-		checkCondition: function(data, templateResolver) {
+		checkCondition: function (data, templateResolver) {
 			var conditionExpr = data[CMDBuild.core.constants.Proxy.CONDITION];
 
 			return Ext.isEmpty(conditionExpr) || templateResolver.safeJSEval(conditionExpr);
@@ -282,7 +283,7 @@
 		 *
 		 * @returns {Array} templatesToRegenerate
 		 */
-		checkTemplatesToRegenerate: function() {
+		checkTemplatesToRegenerate: function () {
 			var templatesToRegenerate = [];
 			var clientForm = this.cmfg('tabEmailGetFormForTemplateResolver');
 			var dirtyVariables = Ext.Object.getKeys(clientForm.getValues(false, true));
@@ -309,11 +310,11 @@
 			}
 
 			// Check templates attributes looking for dirtyVariables as client variables (ex. {client:varName})
-			Ext.Array.forEach(this.emailTemplatesObjects, function(template, templateIndex, allTemplatesItems) {
+			Ext.Array.forEach(this.emailTemplatesObjects, function (template, templateIndex, allTemplatesItems) {
 				if (!Ext.Object.isEmpty(template))
 					var mergedTemplate = Ext.apply(template.getData(), template.get(CMDBuild.core.constants.Proxy.VARIABLES));
 
-					Ext.Object.each(mergedTemplate, function(key, value, myself) {
+					Ext.Object.each(mergedTemplate, function (key, value, myself) {
 						if (Ext.isString(value)) { // Check all types of CQL variables that can contains client variables
 							CMDBuild.controller.management.common.tabs.email.Email.searchForCqlClientVariables(
 								value,
@@ -334,10 +335,10 @@
 		 *
 		 * @returns {Object} variables
 		 */
-		extractVariablesForTemplateResolver: function() {
+		extractVariablesForTemplateResolver: function () {
 			var variables = {};
 
-			Ext.Array.forEach(this.emailTemplatesObjects, function(item, i, allItems) {
+			Ext.Array.forEach(this.emailTemplatesObjects, function (item, i, allItems) {
 				var templateObject = item.getData();
 				var templateVariables = item.get(CMDBuild.core.constants.Proxy.VARIABLES);
 
@@ -355,25 +356,25 @@
 			/**
 			 * @returns {Boolean}
 			 */
-			forceRegenerationGet: function() {
+			forceRegenerationGet: function () {
 				return this.flagForceRegeneration;
 			},
 
 			/**
 			 * @param {Boolean} mode
 			 */
-			forceRegenerationSet: function(mode) {
+			forceRegenerationSet: function (mode) {
 				this.flagForceRegeneration = Ext.isBoolean(mode) ? mode : false;
 			},
 
 		/**
 		 * Called from parent super controller
 		 */
-		onAddCardButtonClick: function() {
+		onAddCardButtonClick: function () {
 			this.cmfg('tabEmailEditModeSet', true);
 		},
 
-		onTabEmailGlobalRegenerationButtonClick: function() {
+		onTabEmailGlobalRegenerationButtonClick: function () {
 			this.cmfg('tabEmailRegenerateAllEmailsSet', true);
 			this.forceRegenerationSet(true);
 			this.controllerGrid.cmfg('tabEmailGridStoreLoad');
@@ -382,7 +383,7 @@
 		/**
 		 * Base implementation to force email regeneration and editMode setup
 		 */
-		onModifyCardClick: function() {
+		onModifyCardClick: function () {
 			this.cmfg('tabEmailEditModeSet', false);
 
 			if (!this.grid.getStore().isLoading())
@@ -392,7 +393,7 @@
 		/**
 		 * Reload store every time panel is showed
 		 */
-		onTabEmailPanelShow: function() {
+		onTabEmailPanelShow: function () {
 			this.view.setDisabled(
 				this.cmfg('tabEmailSelectedEntityIsEmpty', CMDBuild.core.constants.Proxy.ENTITY)
 				&& !this.cmfg('tabEmailEditModeGet') // Evaluate also editMode to enable onAddCardButtonClick
@@ -415,7 +416,7 @@
 		 * @param {Mixed} record
 		 * @param {Array} regenerationTrafficLightArray
 		 */
-		regenerateEmail: function(record, regenerationTrafficLightArray) {
+		regenerateEmail: function (record, regenerationTrafficLightArray) {
 			if (
 				!Ext.Object.isEmpty(record)
 				&& Ext.isArray(regenerationTrafficLightArray)
@@ -424,7 +425,7 @@
 			) {
 				// Find record template in emailTemplatesObjects
 				var recordTemplate = record.get(CMDBuild.core.constants.Proxy.TEMPLATE);
-				recordTemplate = Ext.Array.findBy(this.emailTemplatesObjects, function(item, i) {
+				recordTemplate = Ext.Array.findBy(this.emailTemplatesObjects, function (item, i) {
 					if (
 						recordTemplate == item.get(CMDBuild.core.constants.Proxy.KEY)
 						|| recordTemplate == item.get(CMDBuild.core.constants.Proxy.NAME)
@@ -450,7 +451,7 @@
 					templateResolver.resolveTemplates({
 						attributes: Ext.Object.getKeys(xaVars),
 						scope: this,
-						callback: function(values, ctx) {
+						callback: function (values, ctx) {
 							for (var key in values)
 								record.set(key, values[key]);
 
@@ -482,7 +483,7 @@
 		 * @param {CMDBuild.model.common.tabs.email.Template} template
 		 * @param {Array} regenerationTrafficLightArray
 		 */
-		regenerateTemplate: function(template, regenerationTrafficLightArray) {
+		regenerateTemplate: function (template, regenerationTrafficLightArray) {
 			if (
 				!Ext.Object.isEmpty(template)
 				&& Ext.isArray(regenerationTrafficLightArray)
@@ -500,11 +501,11 @@
 				templateResolver.resolveTemplates({
 					attributes: Ext.Object.getKeys(xaVars),
 					scope: this,
-					callback: function(values, ctx) {
+					callback: function (values, ctx) {
 						var emailObject = null;
 
 						// Find record witch has been created from this template
-						var record = Ext.Array.findBy(this.controllerGrid.cmfg('tabEmailGridDraftEmailsGet'), function(item, i) {
+						var record = Ext.Array.findBy(this.controllerGrid.cmfg('tabEmailGridDraftEmailsGet'), function (item, i) {
 							if (item.get(CMDBuild.core.constants.Proxy.TEMPLATE) == template.get(CMDBuild.core.constants.Proxy.KEY))
 								return true;
 
@@ -556,7 +557,7 @@
 		 * @param {CMDBuild.Management.TemplateResolver} parameters.templateResolver
 		 * @param {Object} parameters.scope
 		 */
-		tabEmailBindLocalDepsChangeEvent: function(parameters) {
+		tabEmailBindLocalDepsChangeEvent: function (parameters) {
 			if (
 				!Ext.Object.isEmpty(parameters)
 				&& !Ext.isEmpty(parameters.record)
@@ -564,7 +565,7 @@
 			) {
 				parameters.scope = Ext.isEmpty(parameters.scope) ? this : parameters.scope;
 
-				parameters.templateResolver.bindLocalDepsChange(function() {
+				parameters.templateResolver.bindLocalDepsChange(function () {
 					if (
 						!Ext.Object.isEmpty(parameters.record)
 						&& !this.relatedAttributeChanged
@@ -588,14 +589,14 @@
 			/**
 			 * @returns {Boolean}
 			 */
-			tabEmailBusyStateGet: function() {
+			tabEmailBusyStateGet: function () {
 				return this.busyState;
 			},
 
 			/**
 			 * @param {Boolean} state
 			 */
-			tabEmailBusyStateSet: function(state) {
+			tabEmailBusyStateSet: function (state) {
 				state = Ext.isBoolean(state) ? state : false;
 
 				this.busyState = state;
@@ -607,7 +608,7 @@
 			 *
 			 * @returns {Mixed or undefined}
 			 */
-			tabEmailConfigurationGet: function(attributePath) {
+			tabEmailConfigurationGet: function (attributePath) {
 				var parameters = {};
 				parameters[CMDBuild.core.constants.Proxy.TARGET_VARIABLE_NAME] = 'configuration';
 				parameters[CMDBuild.core.constants.Proxy.ATTRIBUTE_PATH] = attributePath;
@@ -615,7 +616,7 @@
 				return this.propertyManageGet(parameters);
 			},
 
-			tabEmailConfigurationReset: function() {
+			tabEmailConfigurationReset: function () {
 				var parameters = {};
 				parameters[CMDBuild.core.constants.Proxy.MODEL_NAME] = 'CMDBuild.model.common.tabs.email.Configuration';
 				parameters[CMDBuild.core.constants.Proxy.TARGET_VARIABLE_NAME] = 'configuration';
@@ -627,7 +628,7 @@
 			/**
 			 * @param {Object} parameters
 			 */
-			tabEmailConfigurationSet: function(parameters) {
+			tabEmailConfigurationSet: function (parameters) {
 				if (!Ext.Object.isEmpty(parameters)) {
 					parameters[CMDBuild.core.constants.Proxy.MODEL_NAME] = 'CMDBuild.model.common.tabs.email.Configuration';
 					parameters[CMDBuild.core.constants.Proxy.TARGET_VARIABLE_NAME] = 'configuration';
@@ -640,14 +641,14 @@
 			/**
 			 * @returns {Boolean}
 			 */
-			tabEmailEditModeGet: function() {
+			tabEmailEditModeGet: function () {
 				return this.editMode;
 			},
 
 			/**
 			 * @param {Boolean} state
 			 */
-			tabEmailEditModeSet: function(state) {
+			tabEmailEditModeSet: function (state) {
 				state = Ext.isBoolean(state) ? state : false;
 
 				this.editMode = state;
@@ -656,18 +657,18 @@
 		/**
 		 * Adapter function waiting for widgetController refactor
 		 */
-		tabEmailGetFormForTemplateResolver: function() {
+		tabEmailGetFormForTemplateResolver: function () {
 			if (!Ext.isEmpty(this.parentDelegate) && Ext.isFunction(this.parentDelegate.getFormForTemplateResolver))
 				return this.parentDelegate.getFormForTemplateResolver();
 		},
 
-		tabEmailGetAllTemplatesData: function() {
+		tabEmailGetAllTemplatesData: function () {
 			// Reset local storage arrays
 			this.emailTemplatesObjects = [];
 			this.emailTemplatesIdentifiers = [];
 
 			// Loads configuration templates to local array and push key in emailTemplatesIdentifiers array
-			Ext.Array.forEach(this.cmfg('tabEmailConfigurationGet', CMDBuild.core.constants.Proxy.TEMPLATES), function(template, i, allItems) {
+			Ext.Array.forEach(this.cmfg('tabEmailConfigurationGet', CMDBuild.core.constants.Proxy.TEMPLATES), function (template, i, allItems) {
 				if (!Ext.isEmpty(template) && !Ext.Array.contains(this.emailTemplatesIdentifiers, template.get(CMDBuild.core.constants.Proxy.KEY))) {
 					this.emailTemplatesObjects.push(template);
 					this.emailTemplatesIdentifiers.push(template.get(CMDBuild.core.constants.Proxy.KEY));
@@ -675,7 +676,7 @@
 			}, this);
 
 			// Load grid's draft templates names to local array
-			Ext.Array.forEach(this.controllerGrid.cmfg('tabEmailGridDraftEmailsGet'), function(record, i, allItems) {
+			Ext.Array.forEach(this.controllerGrid.cmfg('tabEmailGridDraftEmailsGet'), function (record, i, allItems) {
 				var templateIdentifier = null;
 				var template = record.get(CMDBuild.core.constants.Proxy.TEMPLATE);
 
@@ -696,22 +697,22 @@
 				params: params,
 				loadMask: this.cmfg('tabEmailGlobalLoadMaskGet'),
 				scope: this,
-				failure: function(response, options, decodedResponse) {
+				failure: function (response, options, decodedResponse) {
 					CMDBuild.core.Message.error(
 						CMDBuild.Translation.common.failure,
 						Ext.String.format(CMDBuild.Translation.errors.getTemplateWithNameFailure),
 						false
 					);
 				},
-				success: function(response, options, decodedResponse) {
+				success: function (response, options, decodedResponse) {
 					var templates = decodedResponse.response.elements;
 
 					// Load grid's templates to local array
-					Ext.Array.forEach(templates, function(template, i, allTemplates) {
+					Ext.Array.forEach(templates, function (template, i, allTemplates) {
 						this.emailTemplatesObjects.push(Ext.create('CMDBuild.model.common.tabs.email.Template', template));
 					}, this);
 				},
-				callback: function(options, success, response) {
+				callback: function (options, success, response) {
 					this.regenerateAllEmails();
 				}
 			});
@@ -721,14 +722,14 @@
 			/**
 			 * @returns {Boolean}
 			 */
-			tabEmailGlobalLoadMaskGet: function() {
+			tabEmailGlobalLoadMaskGet: function () {
 				return this.globalLoadMask;
 			},
 
 			/**
 			 * @param {Boolean} state
 			 */
-			tabEmailGlobalLoadMaskSet: function(state) {
+			tabEmailGlobalLoadMaskSet: function (state) {
 				state = Ext.isBoolean(state) ? state : true;
 
 				this.globalLoadMask = state;
@@ -741,7 +742,7 @@
 			 * {regenerationTrafficLightArray} Implements a trafficLight functionality to manage multiple asynchronous calls and have a global callback
 			 * to reload grid only at real end of calls and avoid to have multiple and useless store load calls.
 			 */
-			regenerateAllEmails: function() {
+			regenerateAllEmails: function () {
 				var isRegenerationStarted = false; // Marks that regeneration process is started
 
 				if (this.tabEmailRegenerateAllEmailsGet()) {
@@ -754,7 +755,7 @@
 						var emailTemplatesToRegenerate = this.checkTemplatesToRegenerate();
 
 						// Build records to regenerate array
-						Ext.Array.forEach(this.controllerGrid.cmfg('tabEmailGridDraftEmailsGet'), function(item, i, allItems) {
+						Ext.Array.forEach(this.controllerGrid.cmfg('tabEmailGridDraftEmailsGet'), function (item, i, allItems) {
 							var recordTemplate = item.get(CMDBuild.core.constants.Proxy.TEMPLATE);
 
 							if (
@@ -778,7 +779,7 @@
 						}, this);
 
 						// Build template to regenerate array
-						Ext.Array.forEach(this.cmfg('tabEmailConfigurationGet', CMDBuild.core.constants.Proxy.TEMPLATES), function(item, i, allItems) {
+						Ext.Array.forEach(this.cmfg('tabEmailConfigurationGet', CMDBuild.core.constants.Proxy.TEMPLATES), function (item, i, allItems) {
 							var templateIdentifier = item.get(CMDBuild.core.constants.Proxy.KEY);
 
 							if (
@@ -831,14 +832,14 @@
 			/**
 			 * @returns {Boolean}
 			 */
-			tabEmailRegenerateAllEmailsGet: function() {
+			tabEmailRegenerateAllEmailsGet: function () {
 				return this.flagRegenerateAllEmails;
 			},
 
 			/**
 			 * @param {Boolean} state
 			 */
-			tabEmailRegenerateAllEmailsSet: function(state) {
+			tabEmailRegenerateAllEmailsSet: function (state) {
 				state = Ext.isBoolean(state) ? state : false;
 
 				this.flagRegenerateAllEmails = state;
@@ -852,11 +853,11 @@
 		 *
 		 * @param {Array} records
 		 */
-		tabEmailRegenerateSelectedEmails: function(records) {
+		tabEmailRegenerateSelectedEmails: function (records) {
 			if (!Ext.isEmpty(records)) {
 				var regenerationTrafficLightArray = [];
 
-				Ext.Array.forEach(records, function(item, i, allItems) {
+				Ext.Array.forEach(records, function (item, i, allItems) {
 					var recordTemplate = item.get(CMDBuild.core.constants.Proxy.TEMPLATE);
 
 					if (!Ext.isEmpty(recordTemplate)) {
@@ -880,7 +881,7 @@
 			 *
 			 * @private
 			 */
-			tabEmailRegenerationEndPointCallbackGet: function(attributePath) {
+			tabEmailRegenerationEndPointCallbackGet: function (attributePath) {
 				var parameters = {};
 				parameters[CMDBuild.core.constants.Proxy.TARGET_VARIABLE_NAME] = 'regenerationEndPointCallback';
 				parameters[CMDBuild.core.constants.Proxy.ATTRIBUTE_PATH] = attributePath;
@@ -888,14 +889,14 @@
 				return this.propertyManageGet(parameters);
 			},
 
-			tabEmailRegenerationEndPointCallbackReset: function() {
+			tabEmailRegenerationEndPointCallbackReset: function () {
 				this.propertyManageReset('regenerationEndPointCallback');
 			},
 
 			/**
 			 * @param {Object} parameters
 			 */
-			tabEmailRegenerationEndPointCallbackSet: function(parameters) {
+			tabEmailRegenerationEndPointCallbackSet: function (parameters) {
 				if (!Ext.Object.isEmpty(parameters)) {
 					parameters[CMDBuild.core.constants.Proxy.MODEL_NAME] = 'CMDBuild.model.common.tabs.email.RegenerationEndPointCallback';
 					parameters[CMDBuild.core.constants.Proxy.TARGET_VARIABLE_NAME] = 'regenerationEndPointCallback';
@@ -910,7 +911,7 @@
 			 *
 			 * @returns {Mixed or undefined}
 			 */
-			tabEmailSelectedEntityGet: function(attributePath) {
+			tabEmailSelectedEntityGet: function (attributePath) {
 				var parameters = {};
 				parameters[CMDBuild.core.constants.Proxy.TARGET_VARIABLE_NAME] = 'selectedEntity';
 				parameters[CMDBuild.core.constants.Proxy.ATTRIBUTE_PATH] = attributePath;
@@ -925,7 +926,7 @@
 			 * @param {Object} parameters.scope
 			 * @param {Function} parameters.callbackFunction
 			 */
-			tabEmailSelectedEntityInit: function(parameters) {
+			tabEmailSelectedEntityInit: function (parameters) {
 				parameters = Ext.Object.isEmpty(parameters) ? {} : parameters;
 				parameters.callbackFunction = Ext.isFunction(parameters.callbackFunction) ? parameters.callbackFunction : Ext.emptyFn;
 				parameters.scope = Ext.isEmpty(parameters.scope) ? parameters.scope : this;
@@ -936,7 +937,7 @@
 				CMDBuild.core.proxy.Utils.generateId({
 					params: params,
 					scope: this,
-					success: function(response, options, decodedResponse) {
+					success: function (response, options, decodedResponse) {
 						parameters[CMDBuild.core.constants.Proxy.MODEL_NAME] = 'CMDBuild.model.common.tabs.email.SelectedEntity';
 						parameters[CMDBuild.core.constants.Proxy.TARGET_VARIABLE_NAME] = 'selectedEntity';
 						parameters[CMDBuild.core.constants.Proxy.VALUE] = { id: decodedResponse.response };
@@ -952,7 +953,7 @@
 			 *
 			 * @returns {Boolean}
 			 */
-			tabEmailSelectedEntityIsEmpty: function(attributePath) {
+			tabEmailSelectedEntityIsEmpty: function (attributePath) {
 				var parameters = {};
 				parameters[CMDBuild.core.constants.Proxy.TARGET_VARIABLE_NAME] = 'selectedEntity';
 				parameters[CMDBuild.core.constants.Proxy.ATTRIBUTE_PATH] = attributePath;
@@ -968,7 +969,7 @@
 			 * @param {Object} parameters.scope
 			 * @param {Function} parameters.callbackFunction
 			 */
-			tabEmailSelectedEntitySet: function(parameters) {
+			tabEmailSelectedEntitySet: function (parameters) {
 				if (!Ext.Object.isEmpty(parameters)) {
 					parameters.callbackFunction = Ext.isFunction(parameters.callbackFunction) ? parameters.callbackFunction : Ext.emptyFn;
 					parameters.scope = Ext.isEmpty(parameters.scope) ? parameters.scope : this;
@@ -980,7 +981,7 @@
 						CMDBuild.core.proxy.Utils.generateId({
 							params: params,
 							scope: this,
-							success: function(response, options, decodedResponse) {
+							success: function (response, options, decodedResponse) {
 								var serviceParams = {};
 								serviceParams[CMDBuild.core.constants.Proxy.MODEL_NAME] = 'CMDBuild.model.common.tabs.email.SelectedEntity';
 								serviceParams[CMDBuild.core.constants.Proxy.TARGET_VARIABLE_NAME] = 'selectedEntity';
@@ -997,7 +998,7 @@
 						CMDBuild.core.proxy.Utils.generateId({
 							params: params,
 							scope: this,
-							success: function(response, options, decodedResponse) {
+							success: function (response, options, decodedResponse) {
 								var serviceParams = {};
 								serviceParams[CMDBuild.core.constants.Proxy.MODEL_NAME] = 'CMDBuild.model.common.tabs.email.SelectedEntity';
 								serviceParams[CMDBuild.core.constants.Proxy.TARGET_VARIABLE_NAME] = 'selectedEntity';
@@ -1031,14 +1032,14 @@
 			/**
 			 * @returns {Boolean}
 			 */
-			tabEmailSendAllOnSaveGet: function() {
+			tabEmailSendAllOnSaveGet: function () {
 				return this.sendAllOnSave;
 			},
 
 			/**
 			 * @param {Boolean} state
 			 */
-			tabEmailSendAllOnSaveSet: function(state) {
+			tabEmailSendAllOnSaveSet: function (state) {
 				state = Ext.isBoolean(state) ? state : false;
 
 				this.sendAllOnSave = state;

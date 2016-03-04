@@ -40,8 +40,10 @@
 		 * @param {CMDBuild.controller.management.common.tabs.email.EmailWindow} configurationObject.parentDelegate
 		 * @param {Mixed} configurationObject.record
 		 * @param {CMDBuild.view.management.common.tabs.email.attachments.MainContainer} configurationObject.view
+		 *
+		 * @override
 		 */
-		constructor: function(configurationObject) {
+		constructor: function (configurationObject) {
 			if (CMDBuild.configuration.dms.get(CMDBuild.core.constants.Proxy.ENABLED)) {
 				this.callParent(arguments);
 
@@ -52,14 +54,14 @@
 			}
 		},
 
-		onTabEmailAttachmentAddFromDmsButtonClick: function() {
+		onTabEmailAttachmentAddFromDmsButtonClick: function () {
 			Ext.create('CMDBuild.controller.management.common.tabs.email.attachments.Picker', {
 				parentDelegate: this,
 				record: this.record
 			});
 		},
 
-		onTabEmailAttachmentChangeFile: function() {
+		onTabEmailAttachmentChangeFile: function () {
 			var params = {};
 			params[CMDBuild.core.constants.Proxy.EMAIL_ID] = this.record.get(CMDBuild.core.constants.Proxy.ID);
 			params[CMDBuild.core.constants.Proxy.TEMPORARY] = this.record.get(CMDBuild.core.constants.Proxy.TEMPORARY);
@@ -69,7 +71,7 @@
 				params: params,
 				loadMask: this.cmfg('tabEmailEmailWindowGetView'),
 				scope: this,
-				success: function(response, options, decodedResponse) {
+				success: function (response, options, decodedResponse) {
 					decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.RESPONSE];
 
 					this.cmfg('tabEmailAttachmentAddPanel', decodedResponse);
@@ -80,7 +82,7 @@
 		/**
 		 * @param {CMDBuild.view.management.common.tabs.email.attachments.FileAttacchedPanel} attachmentPanel
 		 */
-		onTabEmailAttachmentDownloadButtonClick: function(attachmentPanel) {
+		onTabEmailAttachmentDownloadButtonClick: function (attachmentPanel) {
 			var params = {};
 			params[CMDBuild.core.constants.Proxy.EMAIL_ID] = this.record.get(CMDBuild.core.constants.Proxy.ID);
 			params[CMDBuild.core.constants.Proxy.FILE_NAME] = attachmentPanel[CMDBuild.core.constants.Proxy.FILE_NAME];
@@ -92,7 +94,7 @@
 		/**
 		 * @param {CMDBuild.view.management.common.tabs.email.attachments.FileAttacchedPanel} attachmentPanel
 		 */
-		onTabEmailAttachmentRemoveButtonClick: function(attachmentPanel) {
+		onTabEmailAttachmentRemoveButtonClick: function (attachmentPanel) {
 			var params = {};
 			params[CMDBuild.core.constants.Proxy.EMAIL_ID] = this.record.get(CMDBuild.core.constants.Proxy.ID);
 			params[CMDBuild.core.constants.Proxy.FILE_NAME] = attachmentPanel[CMDBuild.core.constants.Proxy.FILE_NAME];
@@ -102,7 +104,7 @@
 				params: params,
 				loadMask: this.parentDelegate.view,
 				scope: this,
-				success: function(response, options ,decodedResponse) {
+				success: function (response, options ,decodedResponse) {
 					this.view.attachmentPanelsContainer.remove(attachmentPanel);
 				}
 			});
@@ -111,7 +113,7 @@
 		/**
 		 * @param {String} fileName
 		 */
-		tabEmailAttachmentAddPanel: function(fileName) {
+		tabEmailAttachmentAddPanel: function (fileName) {
 			this.view.addPanel(
 				Ext.create('CMDBuild.view.management.common.tabs.email.attachments.FileAttacchedPanel', {
 					delegate: this,
@@ -124,10 +126,10 @@
 		/**
 		 * @returns {Array} attachmentsNames
 		 */
-		tabEmailAttachmentNamesGet: function() {
+		tabEmailAttachmentNamesGet: function () {
 			var attachmentsNames = [];
 
-			this.view.attachmentPanelsContainer.items.each(function(attachmentObject, i, allAttachmentObjects) {
+			this.view.attachmentPanelsContainer.items.each(function (attachmentObject, i, allAttachmentObjects) {
 				attachmentsNames.push(attachmentObject[CMDBuild.core.constants.Proxy.FILE_NAME]);
 			});
 

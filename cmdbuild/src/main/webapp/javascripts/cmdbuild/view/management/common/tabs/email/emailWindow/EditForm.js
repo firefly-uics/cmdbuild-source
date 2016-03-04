@@ -1,4 +1,4 @@
-(function() {
+(function () {
 
 	Ext.define('CMDBuild.view.management.common.tabs.email.emailWindow.EditForm', {
 		extend: 'Ext.form.Panel',
@@ -41,7 +41,7 @@
 			labelWidth: CMDBuild.core.constants.FieldWidths.LABEL
 		},
 
-		initComponent: function() {
+		initComponent: function () {
 			Ext.apply(this, {
 				items: [
 					this.keepSynchronizationCheckbox = Ext.create('Ext.form.field.Checkbox', {
@@ -70,7 +70,7 @@
 
 						listeners: {
 							scope: this,
-							change: function(field, newValue, oldValue, eOpts) {
+							change: function (field, newValue, oldValue, eOpts) {
 								this.delegate.cmfg('onTabEmailEmailWindowFieldChange');
 							}
 						}
@@ -84,7 +84,7 @@
 
 						listeners: {
 							scope: this,
-							change: function(field, newValue, oldValue, eOpts) {
+							change: function (field, newValue, oldValue, eOpts) {
 								this.delegate.cmfg('onTabEmailEmailWindowFieldChange');
 							}
 						}
@@ -97,7 +97,7 @@
 
 						listeners: {
 							scope: this,
-							change: function(field, newValue, oldValue, eOpts) {
+							change: function (field, newValue, oldValue, eOpts) {
 								this.delegate.cmfg('onTabEmailEmailWindowFieldChange');
 							}
 						}
@@ -110,7 +110,7 @@
 
 						listeners: {
 							scope: this,
-							change: function(field, newValue, oldValue, eOpts) {
+							change: function (field, newValue, oldValue, eOpts) {
 								this.delegate.cmfg('onTabEmailEmailWindowFieldChange');
 							}
 						}
@@ -123,7 +123,7 @@
 
 						listeners: {
 							scope: this,
-							change: function(field, newValue, oldValue, eOpts) {
+							change: function (field, newValue, oldValue, eOpts) {
 								this.delegate.cmfg('onTabEmailEmailWindowFieldChange');
 							}
 						}
@@ -135,7 +135,7 @@
 
 						listeners: {
 							scope: this,
-							change: function(field, newValue, oldValue, eOpts) {
+							change: function (field, newValue, oldValue, eOpts) {
 								this.delegate.cmfg('onTabEmailEmailWindowFieldChange');
 							}
 						}
@@ -151,9 +151,9 @@
 		/**
 		 * Sometimes on IE the HtmlEditor is not able to take the focus after the mouse click. With this call it works. The reason is currently unknown.
 		 */
-		fixIEFocusIssue: function() {
+		fixIEFocusIssue: function () {
 			if (Ext.isIE || !!navigator.userAgent.match(/Trident.*rv[ :]*11\./)) // Workaround to detect IE 11 witch is not supported from Ext 4.2
-				this.mon(this.emailContentField, 'render', function() {
+				this.mon(this.emailContentField, 'render', function () {
 					try {
 						this.emailContentField.focus();
 					} catch (e) {}

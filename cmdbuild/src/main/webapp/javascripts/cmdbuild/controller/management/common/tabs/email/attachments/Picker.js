@@ -48,8 +48,10 @@
 		 * @param {Object} configurationObject
 		 * @param {CMDBuild.controller.management.common.tabs.email.attachments.Attachments} configurationObject.parentDelegate
 		 * @param {Mixed} configurationObject.record
+		 *
+		 * @override
 		 */
-		constructor: function(configurationObject) {
+		constructor: function (configurationObject) {
 			this.callParent(arguments);
 
 			this.view = Ext.create('CMDBuild.view.management.common.tabs.email.attachments.picker.MainWindow', { delegate: this });
@@ -58,14 +60,14 @@
 				this.view.show();
 		},
 
-		onTabEmailAttachmentPickerWindowCardGridStoreLoad: function() {
+		onTabEmailAttachmentPickerWindowCardGridStoreLoad: function () {
 			this.view.attachmentGrid.getStore().removeAll();
 		},
 
 		/**
 		 * @param {Object} record
 		 */
-		onTabEmailAttachmentPickerWindowCardSelected: function(record) {
+		onTabEmailAttachmentPickerWindowCardSelected: function (record) {
 			this.selectedCardSet({ value: record.getData() });
 
 			var params = {};
@@ -74,10 +76,10 @@
 			CMDBuild.core.proxy.Classes.readAll({
 				params: params,
 				scope: this,
-				success: function(response, options, decodedResponse) {
+				success: function (response, options, decodedResponse) {
 					decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.CLASSES];
 
-					var selectedClass = Ext.Array.findBy(decodedResponse, function(classObject, i) {
+					var selectedClass = Ext.Array.findBy(decodedResponse, function (classObject, i) {
 						return this.selectedCardGet(CMDBuild.core.constants.Proxy.CLASS_ID) == classObject[CMDBuild.core.constants.Proxy.ID];
 					}, this);
 
@@ -96,19 +98,19 @@
 			});
 		},
 
-		onTabEmailAttachmentPickerWindowClassSelected: function() {
+		onTabEmailAttachmentPickerWindowClassSelected: function () {
 			this.view.cardGrid.updateStoreForClassId(this.view.classComboBox.getValue());
 		},
 
-		onTabEmailAttachmentPickerWindowAbortButtonClick: function() {
+		onTabEmailAttachmentPickerWindowAbortButtonClick: function () {
 			this.view.destroy();
 		},
 
 		// TODO: waiting for refactor (rename)
-		onTabEmailAttachmentPickerWindowConfirmButtonClick: function() {
+		onTabEmailAttachmentPickerWindowConfirmButtonClick: function () {
 			if (this.view.attachmentGrid.getSelectionModel().hasSelection()) {
 				this.cmfg('tabEmailEmailWindowSetLoading', true);
-				Ext.Array.forEach(this.view.attachmentGrid.getSelectionModel().getSelection(), function(attachment, i, allAttachments) {
+				Ext.Array.forEach(this.view.attachmentGrid.getSelectionModel().getSelection(), function (attachment, i, allAttachments) {
 					var params = {};
 					params[CMDBuild.core.constants.Proxy.EMAIL_ID] = this.record.get(CMDBuild.core.constants.Proxy.ID);
 					params[CMDBuild.core.constants.Proxy.TEMPORARY] = this.record.get(CMDBuild.core.constants.Proxy.TEMPORARY);
@@ -119,14 +121,14 @@
 					CMDBuild.core.proxy.common.tabs.email.Attachment.copy({
 						params: params,
 						scope: this,
-						failure: function(response, options, decodedResponse) {
+						failure: function (response, options, decodedResponse) {
 							CMDBuild.core.Message.error(
 								CMDBuild.Translation.common.failure,
 								Ext.String.format(CMDBuild.Translation.errors.copyAttachmentFailure, attachment.get('Filename')),
 								false
 							);
 						},
-						success: function(response, options, decodedResponse) {
+						success: function (response, options, decodedResponse) {
 							this.cmfg('tabEmailAttachmentAddPanel', attachment.get('Filename'));
 						}
 					});
@@ -144,7 +146,7 @@
 			 *
 			 * @private
 			 */
-			selectedCardGet: function(attributePath) {
+			selectedCardGet: function (attributePath) {
 				var parameters = {};
 				parameters[CMDBuild.core.constants.Proxy.TARGET_VARIABLE_NAME] = 'selectedCard';
 				parameters[CMDBuild.core.constants.Proxy.ATTRIBUTE_PATH] = attributePath;
@@ -157,7 +159,7 @@
 			 *
 			 * @private
 			 */
-			selectedCardSet: function(parameters) {
+			selectedCardSet: function (parameters) {
 				if (!Ext.Object.isEmpty(parameters)) {
 					parameters[CMDBuild.core.constants.Proxy.MODEL_NAME] = 'CMDBuild.model.common.tabs.email.attachments.SelectedCard';
 					parameters[CMDBuild.core.constants.Proxy.TARGET_VARIABLE_NAME] = 'selectedCard';

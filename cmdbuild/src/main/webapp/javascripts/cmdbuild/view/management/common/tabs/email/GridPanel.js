@@ -1,4 +1,4 @@
-(function() {
+(function () {
 
 	Ext.define('CMDBuild.view.management.common.tabs.email.GridPanel', {
 		extend: 'Ext.grid.Panel',
@@ -22,7 +22,7 @@
 		collapsible: false,
 		frame: false,
 
-		initComponent: function() {
+		initComponent: function () {
 			var me = this;
 
 			Ext.apply(this, {
@@ -36,11 +36,11 @@
 								text: CMDBuild.Translation.composeEmail,
 								scope: this,
 
-								handler: function(button, e) {
+								handler: function (button, e) {
 									this.delegate.cmfg('onTabEmailGridAddEmailButtonClick');
 								},
 
-								isDisabled: function() {
+								isDisabled: function () {
 									return (
 										this.delegate.cmfg('tabEmailConfigurationGet', CMDBuild.core.constants.Proxy.READ_ONLY)
 										|| !this.delegate.cmfg('tabEmailEditModeGet')
@@ -51,7 +51,7 @@
 								text: CMDBuild.Translation.regenerateAllEmails,
 								scope: this,
 
-								handler: function(button, e) {
+								handler: function (button, e) {
 									Ext.Msg.show({ // Ask to the user if is sure to delete all the unsent e-mails before
 										title: CMDBuild.Translation.common.confirmpopup.title,
 										msg: CMDBuild.Translation.emailRegenerationConfirmPopupText,
@@ -59,14 +59,14 @@
 										icon: Ext.Msg.WARNING,
 										scope: this,
 
-										fn: function(buttonId, text, opt) {
+										fn: function (buttonId, text, opt) {
 											if (buttonId == 'ok')
 												this.delegate.cmfg('onTabEmailGlobalRegenerationButtonClick');
 										}
 									});
 								},
 
-								isDisabled: function() {
+								isDisabled: function () {
 									return (
 										this.delegate.cmfg('tabEmailConfigurationGet', CMDBuild.core.constants.Proxy.READ_ONLY)
 										|| !this.delegate.cmfg('tabEmailEditModeGet')
@@ -78,7 +78,7 @@
 								forceDisabledState: false, // Force enabled state
 								scope: this,
 
-								handler: function(button, e) {
+								handler: function (button, e) {
 									this.delegate.cmfg('tabEmailGridStoreLoad');
 								}
 							})
@@ -134,11 +134,11 @@
 								tooltip: CMDBuild.Translation.manualRegeneration,
 								scope: this,
 
-								handler: function(grid, rowIndex, colIndex, node, e, record, rowNode) {
+								handler: function (grid, rowIndex, colIndex, node, e, record, rowNode) {
 									this.delegate.cmfg('onTabEmailGridRegenerationEmailButtonClick', record);
 								},
 
-								isDisabled: function(grid, rowIndex, colIndex, item, record) {
+								isDisabled: function (grid, rowIndex, colIndex, item, record) {
 									return (
 										this.delegate.cmfg('tabEmailConfigurationGet', CMDBuild.core.constants.Proxy.READ_ONLY)
 										|| !this.delegate.cmfg('tabEmailEditModeGet')
@@ -153,11 +153,11 @@
 								tooltip: CMDBuild.Translation.reply,
 								scope: this,
 
-								handler: function(grid, rowIndex, colIndex, node, e, record, rowNode) {
+								handler: function (grid, rowIndex, colIndex, node, e, record, rowNode) {
 									this.delegate.cmfg('onTabEmailGridReplyEmailButtonClick', record);
 								},
 
-								isDisabled: function(grid, rowIndex, colIndex, item, record) {
+								isDisabled: function (grid, rowIndex, colIndex, item, record) {
 									return (
 										this.delegate.cmfg('tabEmailConfigurationGet', CMDBuild.core.constants.Proxy.READ_ONLY)
 										|| !this.delegate.cmfg('tabEmailEditModeGet')
@@ -170,11 +170,11 @@
 								tooltip: CMDBuild.Translation.send,
 								scope: this,
 
-								handler: function(grid, rowIndex, colIndex, node, e, record, rowNode) {
+								handler: function (grid, rowIndex, colIndex, node, e, record, rowNode) {
 									this.delegate.cmfg('onTabEmailGridSendEmailButtonClick', record);
 								},
 
-								isDisabled: function(grid, rowIndex, colIndex, item, record) {
+								isDisabled: function (grid, rowIndex, colIndex, item, record) {
 									return (
 										this.delegate.cmfg('tabEmailConfigurationGet', CMDBuild.core.constants.Proxy.READ_ONLY)
 										|| !this.delegate.cmfg('tabEmailEditModeGet')
@@ -187,11 +187,11 @@
 								tooltip: CMDBuild.Translation.edit,
 								scope: this,
 
-								handler: function(grid, rowIndex, colIndex, node, e, record, rowNode) {
+								handler: function (grid, rowIndex, colIndex, node, e, record, rowNode) {
 									this.delegate.cmfg('onTabEmailGridEditEmailButtonClick', record);
 								},
 
-								isDisabled: function(grid, rowIndex, colIndex, item, record) {
+								isDisabled: function (grid, rowIndex, colIndex, item, record) {
 									return (
 										this.delegate.cmfg('tabEmailConfigurationGet', CMDBuild.core.constants.Proxy.READ_ONLY)
 										|| !this.delegate.cmfg('tabEmailEditModeGet')
@@ -204,7 +204,7 @@
 								tooltip: CMDBuild.Translation.view,
 								scope: this,
 
-								handler: function(grid, rowIndex, colIndex, node, e, record, rowNode) {
+								handler: function (grid, rowIndex, colIndex, node, e, record, rowNode) {
 									this.delegate.cmfg('onTabEmailGridViewEmailButtonClick', record);
 								}
 							}),
@@ -213,11 +213,11 @@
 								tooltip: CMDBuild.Translation.deleteLabel,
 								scope: this,
 
-								handler: function(grid, rowIndex, colIndex, node, e, record, rowNode) {
+								handler: function (grid, rowIndex, colIndex, node, e, record, rowNode) {
 									this.delegate.cmfg('onTabEmailGridDeleteEmailButtonClick', record);
 								},
 
-								isDisabled: function(grid, rowIndex, colIndex, item, record) {
+								isDisabled: function (grid, rowIndex, colIndex, item, record) {
 									return (
 										this.delegate.cmfg('tabEmailConfigurationGet', CMDBuild.core.constants.Proxy.READ_ONLY)
 										|| !this.delegate.cmfg('tabEmailEditModeGet')
@@ -234,7 +234,7 @@
 						groupHeaderTpl: [
 							'{name:this.formatName}',
 							{
-								formatName: function(name) { // TODO: use plain translation without emailLookupNames
+								formatName: function (name) { // TODO: use plain translation without emailLookupNames
 									return CMDBuild.Translation.emailLookupNames[name];
 								}
 							}
@@ -250,7 +250,7 @@
 		},
 
 		listeners: {
-			itemdblclick: function(grid, record, item, index, e, eOpts) {
+			itemdblclick: function (grid, record, item, index, e, eOpts) {
 				this.delegate.cmfg('onTabEmailGridItemDoubleClick', record);
 			}
 		}

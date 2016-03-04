@@ -1,4 +1,4 @@
-(function() {
+(function () {
 
 	Ext.require('CMDBuild.core.constants.Proxy');
 
@@ -31,7 +31,7 @@
 		 *
 		 * @override
 		 */
-		constructor: function(data) {
+		constructor: function (data) {
 			if (!Ext.isEmpty(data) && !Ext.isEmpty(data[CMDBuild.core.constants.Proxy.ID]))
 				delete data[CMDBuild.core.constants.Proxy.ID];
 
@@ -45,7 +45,7 @@
 		 *
 		 * @return {Object}
 		 */
-		getData: function(includeAssociated) {
+		getData: function (includeAssociated) {
 			var data = this.callParent(arguments);
 
 			delete data[CMDBuild.core.constants.Proxy.ID];

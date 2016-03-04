@@ -1,4 +1,4 @@
-(function() {
+(function () {
 
 	Ext.require('CMDBuild.core.constants.Proxy');
 
@@ -35,7 +35,7 @@
 		 *
 		 * @return {Object} params
 		 */
-		getAsParams: function(requiredAttributes) {
+		getAsParams: function (requiredAttributes) {
 			var params = {};
 
 			// With no parameters returns all data
@@ -43,7 +43,7 @@
 				params = this.getData();
 			} else {
 				// Or returns only required attributes
-				Ext.Array.forEach(requiredAttributes, function(item, index, allItems) {
+				Ext.Array.forEach(requiredAttributes, function (item, index, allItems) {
 					if (item == CMDBuild.core.constants.Proxy.TEMPLATE) { // Support for template objects
 						params[CMDBuild.core.constants.Proxy.TEMPLATE] =
 							this.get(CMDBuild.core.constants.Proxy.TEMPLATE)[CMDBuild.core.constants.Proxy.NAME]

@@ -1,4 +1,4 @@
-(function() {
+(function () {
 
 	Ext.require('CMDBuild.core.constants.Proxy');
 
@@ -24,7 +24,7 @@
 			 *
 			 * @returns {Object} data
 			 */
-			convertFromLegacy: function(data) {
+			convertFromLegacy: function (data) {
 				data = data || {};
 				data[CMDBuild.core.constants.Proxy.CLASS_ID] = data['IdClass'];
 				data[CMDBuild.core.constants.Proxy.CODE] = data['Code'];
@@ -39,7 +39,7 @@
 		 *
 		 * @override
 		 */
-		constructor: function(data) {
+		constructor: function (data) {
 			data = CMDBuild.model.common.tabs.email.attachments.SelectedCard.convertFromLegacy(data);
 
 			this.callParent(arguments);
