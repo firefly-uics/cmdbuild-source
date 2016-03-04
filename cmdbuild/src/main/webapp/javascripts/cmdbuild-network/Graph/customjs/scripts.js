@@ -20,7 +20,8 @@
 					menu.hide().parent().removeClass("btn-active");
 				});
 				return false;
-			}).next().hide().append($div).append($ul).parent().addClass("btn-disabled");
+			}).next().hide().append($div).append($ul).parent().addClass(
+					"btn-disabled");
 		},
 		buttonset : function(param) {
 			$("#" + param.id).buttonset();
@@ -31,17 +32,33 @@
 		toggleTooltips : function(param) {
 			var isEnabled = true;
 			if (isEnabled) {
-				$.Cmdbuild.custom.commands.updateToggleTooltips({id : param.id, active : true});
+				$.Cmdbuild.custom.commands.updateToggleTooltips({
+					id : param.id,
+					active : true
+				});
 			}
-			$("#" + param.id).click(function() {
-				if ($(this).parent().hasClass($.Cmdbuild.custom.commands.variables.BUTTONACTIVECLASS)) {
-					// TODO: disable tooltips
-					$.Cmdbuild.custom.commands.updateToggleTooltips({id : param.id, active : false});
-				} else {
-					// TODO: active tooltips
-					$.Cmdbuild.custom.commands.updateToggleTooltips({id : param.id, active : true});
-				}
-			});
+			$("#" + param.id)
+					.click(
+							function() {
+								if ($(this)
+										.parent()
+										.hasClass(
+												$.Cmdbuild.custom.commands.variables.BUTTONACTIVECLASS)) {
+									// TODO: disable tooltips
+									$.Cmdbuild.custom.commands
+											.updateToggleTooltips({
+												id : param.id,
+												active : false
+											});
+								} else {
+									// TODO: active tooltips
+									$.Cmdbuild.custom.commands
+											.updateToggleTooltips({
+												id : param.id,
+												active : true
+											});
+								}
+							});
 		}
 	};
 	$.Cmdbuild.custom.scripts = scripts;
