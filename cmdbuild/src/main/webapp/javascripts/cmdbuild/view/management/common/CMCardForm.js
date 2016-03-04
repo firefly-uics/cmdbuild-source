@@ -244,8 +244,13 @@
 		// This fixes ReferenceFields empty values going on editMode
 		if (!Ext.isEmpty(fields) && Ext.isArray(fields)) {
 			Ext.Array.forEach(fields, function (field, i, allFields) {
-				if (!Ext.isEmpty(field) && Ext.isFunction(field.suspendEvents) && !(Ext.isFunction(fieldSelector) && !fieldSelector(field)))
+				if (
+					!Ext.isEmpty(field) && Ext.isFunction(field.suspendEvents)
+					&& field.eventsSuspended == 0 // Check if events already suspended to avoid multiple suspendEvents overlap
+					&& !(Ext.isFunction(fieldSelector) && !fieldSelector(field))
+				) {
 					field.suspendEvents(false);
+				}
 			});
 
 			// Set field's values
@@ -262,8 +267,12 @@
 			CMDBuild.core.RequestBarrier.init('referenceStoreLoadBarrier', function () {
 				// Resume events on fields
 				Ext.Array.forEach(fields, function (field, i, allFields) {
-					if (!Ext.isEmpty(field) && Ext.isFunction(field.resumeEvents) && !(Ext.isFunction(fieldSelector) && !fieldSelector(field)))
+					if (
+						!Ext.isEmpty(field) && Ext.isFunction(field.resumeEvents)
+						&& !(Ext.isFunction(fieldSelector) && !fieldSelector(field))
+					) {
 						field.resumeEvents();
+					}
 				});
 
 				me.setLoading(false);
