@@ -1,4 +1,4 @@
-(function() {
+(function () {
 
 	Ext.define('CMDBuild.view.management.common.tabs.email.ConfirmRegenerationWindow', {
 		extend: 'CMDBuild.core.PopupWindow',
@@ -34,7 +34,7 @@
 
 		layout: 'border',
 
-		initComponent: function() {
+		initComponent: function () {
 			Ext.apply(this, {
 				dockedItems: [
 					Ext.create('Ext.toolbar.Toolbar', {
@@ -52,7 +52,7 @@
 							Ext.create('CMDBuild.core.buttons.text.Confirm', {
 								scope: this,
 
-								handler: function(button, e) {
+								handler: function (button, e) {
 									this.delegate.cmfg('onConfirmRegenerationWindowConfirmButtonClick');
 								}
 							})
@@ -134,10 +134,10 @@
 		},
 
 		listeners: {
-			hide: function(window, eOpts) {
+			hide: function (window, eOpts) {
 				this.delegate.cmfg('onConfirmRegenerationWindowClearStore');
 			},
-			show: function(window, eOpts) {
+			show: function (window, eOpts) {
 				this.delegate.cmfg('onConfirmRegenerationWindowShow');
 			}
 		},
@@ -150,7 +150,7 @@
 			 *
 			 * @return {String}
 			 */
-			addressRenderer: function(value, metadata, record) {
+			addressRenderer: function (value, metadata, record) {
 				if (this.delegate.gridDelegate.recordIsReceived(record)) {
 					return record.get(CMDBuild.core.constants.Proxy.FROM);
 				} else {

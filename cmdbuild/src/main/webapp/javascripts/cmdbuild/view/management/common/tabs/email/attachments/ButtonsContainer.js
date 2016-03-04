@@ -1,4 +1,4 @@
-(function() {
+(function () {
 
 	Ext.define('CMDBuild.view.management.common.tabs.email.attachments.ButtonsContainer', {
 		extend: 'Ext.container.Container',
@@ -35,7 +35,7 @@
 			padding: '0 5'
 		},
 
-		initComponent: function() {
+		initComponent: function () {
 			Ext.apply(this, {
 				items: [
 					this.attachmentUploadForm = Ext.create('Ext.form.Panel', {
@@ -56,7 +56,7 @@
 
 								listeners: {
 									scope: this,
-									change: function(field, value, eOpts) {
+									change: function (field, value, eOpts) {
 										this.delegate.cmfg('onTabEmailAttachmentChangeFile');
 									}
 								}
@@ -69,7 +69,7 @@
 						disabled: this.readOnly,
 						scope: this,
 
-						handler: function(button, e) {
+						handler: function (button, e) {
 							this.delegate.cmfg('onTabEmailAttachmentAddFromDmsButtonClick');
 						}
 					})

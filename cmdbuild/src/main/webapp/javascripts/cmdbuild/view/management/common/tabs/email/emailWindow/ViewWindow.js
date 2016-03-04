@@ -1,4 +1,4 @@
-(function() {
+(function () {
 
 	Ext.define('CMDBuild.view.management.common.tabs.email.emailWindow.ViewWindow', {
 		extend: 'CMDBuild.core.PopupWindow',
@@ -32,7 +32,7 @@
 
 		layout: 'border',
 
-		initComponent: function() {
+		initComponent: function () {
 			Ext.apply(this, {
 				dockedItems: [
 					Ext.create('Ext.toolbar.Toolbar', {
@@ -65,7 +65,7 @@
 							Ext.create('CMDBuild.core.buttons.text.Close', {
 								scope: this,
 
-								handler: function(button, e) {
+								handler: function (button, e) {
 									this.delegate.cmfg('onTabEmailEmailWindowAbortButtonClick');
 								}
 							})
@@ -152,7 +152,7 @@
 		},
 
 		listeners: {
-			beforedestroy: function(window, eOpts) {
+			beforedestroy: function (window, eOpts) {
 				return this.delegate.cmfg('onTabEmailEmailWindowBeforeDestroy');
 			}
 		}

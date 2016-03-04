@@ -52,8 +52,10 @@
 		 * @param {Object} configurationObject
 		 * @param {CMDBuild.controller.management.common.tabs.email.Email} configurationObject.parentDelegate
 		 * @param {CMDBuild.controller.management.common.tabs.email.Grid} configurationObject.gridDelegate
+		 *
+		 * @override
 		 */
-		constructor: function(configurationObject) {
+		constructor: function (configurationObject) {
 			this.callParent(arguments);
 
 			this.view = Ext.create('CMDBuild.view.management.common.tabs.email.ConfirmRegenerationWindow', {
@@ -66,18 +68,18 @@
 		/**
 		 * @param {Mixed} record
 		 */
-		addRecordToArray: function(record) {
+		addRecordToArray: function (record) {
 			this.recordsCouldBeRegenerated.push(record);
 		},
 
 		/**
 		 * @param {CMDBuild.model.common.tabs.email.Template} template
 		 */
-		addTemplateToArray: function(template) {
+		addTemplateToArray: function (template) {
 			this.templatesCouldBeRegenerated.push(template);
 		},
 
-		beforeShow: function() {
+		beforeShow: function () {
 			this.gridStore.loadData(this.recordsCouldBeRegenerated);
 
 			this.regenerateAndAddTemplateToStore(this.templatesCouldBeRegenerated);
@@ -87,20 +89,20 @@
 			this.show();
 		},
 
-		onConfirmRegenerationWindowClearStore: function() {
+		onConfirmRegenerationWindowClearStore: function () {
 			this.gridStore.removeAll();
 		},
 
 		/**
 		 * Regenerates only selected records
 		 */
-		onConfirmRegenerationWindowConfirmButtonClick: function() {
+		onConfirmRegenerationWindowConfirmButtonClick: function () {
 			this.cmfg('tabEmailRegenerateSelectedEmails', this.view.grid.getSelectionModel().getSelection());
 
 			this.view.hide();
 		},
 
-		onConfirmRegenerationWindowShow: function() {
+		onConfirmRegenerationWindowShow: function () {
 			this.reset();
 		},
 
@@ -112,13 +114,13 @@
 		 * {conditionEvalTrafficLightArray} Implements a trafficLight functionality to manage multiple asynchronous calls and have a global callback
 		 * to hide loadMask only at real end of calls.
 		 */
-		regenerateAndAddTemplateToStore: function(templatesToAdd) {
+		regenerateAndAddTemplateToStore: function (templatesToAdd) {
 			var me = this;
 			var conditionEvalTrafficLightArray = [];
 
 			if (Ext.isArray(templatesToAdd) && !Ext.isEmpty(templatesToAdd)) {
 				CMDBuild.core.LoadMask.show();
-				Ext.Array.forEach(templatesToAdd, function(template, i, allTemplates) {
+				Ext.Array.forEach(templatesToAdd, function (template, i, allTemplates) {
 
 					if (!Ext.Object.isEmpty(template)) {
 						CMDBuild.controller.management.common.tabs.email.Email.trafficLightSlotBuild(template, conditionEvalTrafficLightArray);
@@ -133,7 +135,7 @@
 
 						templateResolver.resolveTemplates({
 							attributes: Ext.Object.getKeys(xaVars),
-							callback: function(values, ctx) {
+							callback: function (values, ctx) {
 								emailObject = Ext.create('CMDBuild.model.common.tabs.email.Email', values);
 								emailObject.set(CMDBuild.core.constants.Proxy.REFERENCE, me.cmfg('tabEmailSelectedEntityGet', CMDBuild.core.constants.Proxy.ID));
 								emailObject.set(CMDBuild.core.constants.Proxy.TEMPLATE, template.get(CMDBuild.core.constants.Proxy.KEY));
@@ -154,12 +156,12 @@
 			}
 		},
 
-		reset: function() {
+		reset: function () {
 			this.recordsCouldBeRegenerated = [];
 			this.templatesCouldBeRegenerated = [];
 		},
 
-		show: function() {
+		show: function () {
 			if(
 				!Ext.isEmpty(this.view)
 				&& (

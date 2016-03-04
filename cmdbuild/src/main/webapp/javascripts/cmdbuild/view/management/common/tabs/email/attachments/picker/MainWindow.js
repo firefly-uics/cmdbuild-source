@@ -1,4 +1,4 @@
-(function() {
+(function () {
 
 	Ext.define('CMDBuild.view.management.common.tabs.email.attachments.picker.MainWindow', {
 		extend: 'CMDBuild.PopupWindow',
@@ -33,7 +33,7 @@
 		layout: 'border',
 		title: CMDBuild.Translation.chooseAttachmentFromDb,
 
-		initComponent: function() {
+		initComponent: function () {
 			Ext.apply(this, {
 				dockedItems: [
 					Ext.create('Ext.toolbar.Toolbar', {
@@ -54,7 +54,7 @@
 								listeners: {
 									scope: this,
 
-									change: function(field, newValue, oldValue) {
+									change: function (field, newValue, oldValue) {
 										this.delegate.cmfg('onTabEmailAttachmentPickerWindowClassSelected');
 									}
 								}
@@ -76,14 +76,14 @@
 							Ext.create('CMDBuild.core.buttons.text.Confirm', {
 								scope: this,
 
-								handler: function(button, e) {
+								handler: function (button, e) {
 									this.delegate.cmfg('onTabEmailAttachmentPickerWindowConfirmButtonClick');
 								}
 							}),
 							Ext.create('CMDBuild.core.buttons.text.Abort', {
 								scope: this,
 
-								handler: function(button, e) {
+								handler: function (button, e) {
 									this.delegate.cmfg('onTabEmailAttachmentPickerWindowAbortButtonClick');
 								}
 							})

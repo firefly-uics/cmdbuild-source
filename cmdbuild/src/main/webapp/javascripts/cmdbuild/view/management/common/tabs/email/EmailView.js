@@ -16,7 +16,7 @@
 		layout: 'fit',
 		title: CMDBuild.Translation.email,
 
-		initComponent: function() {
+		initComponent: function () {
 			Ext.apply(this, {
 				dockedItems: [
 					Ext.create('Ext.toolbar.Toolbar', {
@@ -38,7 +38,7 @@
 		},
 
 		listeners: {
-			show: function(panel, eOpts) {
+			show: function (panel, eOpts) {
 				this.delegate.cmfg('onTabEmailPanelShow');
 			}
 		},
@@ -46,7 +46,7 @@
 		/**
 		 * Service function executed from module controller
 		 */
-		reset: function() {
+		reset: function () {
 			this.setDisabled(this.delegate.cmfg('tabEmailSelectedEntityIsEmpty', CMDBuild.core.constants.Proxy.ENTITY));
 		}
 	});
