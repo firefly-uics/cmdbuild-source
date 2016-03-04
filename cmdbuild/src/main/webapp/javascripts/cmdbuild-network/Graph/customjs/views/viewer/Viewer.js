@@ -24,7 +24,7 @@
 			$.Cmdbuild.g3d.Options.loadConfiguration(function(response) {
 				$.Cmdbuild.custom.configuration = response;
 				$.Cmdbuild.custom.configuration.camera = {
-					position: {
+					position : {
 						x : 0,
 						y : 2500,
 						z : 2500
@@ -149,12 +149,11 @@
 					thisViewer.model.changed(true);
 				}, this);
 			} else {
-				thisViewer
-						.explodeNode({
-							id : LASTSELECTED.elementId,
-							domainList : null,
-							levels : $.Cmdbuild.customvariables.options.baseLevel
-						});
+				thisViewer.explodeNode({
+					id : LASTSELECTED.elementId,
+					domainList : null,
+					levels : $.Cmdbuild.customvariables.options.baseLevel
+				});
 			}
 		};
 		this.explodeNode = function(params) {
@@ -168,6 +167,7 @@
 				var nodes = $.Cmdbuild.customvariables.model.getNodes();
 				$.Cmdbuild.g3d.Model
 						.removeGraphData(nodes, "exploded_children");
+				$.Cmdbuild.custom.commands.centerOnViewer();
 			}, this);
 		};
 		this.onDocumentMouseMove = function(event) {
