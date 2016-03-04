@@ -224,6 +224,7 @@
 			$.Cmdbuild.customvariables.model = new $.Cmdbuild.g3d.Model();
 			$.Cmdbuild.customvariables.selected = new $.Cmdbuild.g3d.Selected(
 					$.Cmdbuild.customvariables.model);
+
 			new $.Cmdbuild.g3d.cache(callback, this);
 		},
 		doLayout : function(param) {
@@ -313,9 +314,13 @@
 			if (params.active) {
 				$("#" + params.id).parent().addClass(
 						$.Cmdbuild.custom.commands.variables.BUTTONACTIVECLASS);
+					$.Cmdbuild.customvariables.options.nodeTooltipEnabled = true;
+					$.Cmdbuild.customvariables.options.edgeTooltipEnabled = true;
 			} else {
 				$("#" + params.id).parent().removeClass(
 						$.Cmdbuild.custom.commands.variables.BUTTONACTIVECLASS);
+				$.Cmdbuild.customvariables.options.nodeTooltipEnabled = false;
+				$.Cmdbuild.customvariables.options.edgeTooltipEnabled = false;
 			}
 		}
 
