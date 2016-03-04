@@ -238,11 +238,11 @@
 
 		addReferenceAttrsToData(data, referenceAttributes);
 
-		me.setLoading(true);
-
 		// Suspend all events on fields to prevent values modifications by internal fields events listeners
 		// This fixes ReferenceFields empty values going on editMode
 		if (!Ext.isEmpty(fields) && Ext.isArray(fields)) {
+			me.setLoading(true);
+
 			Ext.Array.forEach(fields, function (field, i, allFields) {
 				if (
 					!Ext.isEmpty(field) && Ext.isFunction(field.suspendEvents)
