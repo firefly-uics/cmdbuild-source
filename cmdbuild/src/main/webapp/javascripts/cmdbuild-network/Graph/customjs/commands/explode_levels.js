@@ -23,6 +23,7 @@
 			}
 			this.explodeNode(this.params.id, levels - 1, function() {
 				callback.apply(callbackScope, []);
+				$.Cmdbuild.custom.commands.centerOnViewer();
 			}, this);
 		};
 		this.explodeNode = function(id, levels, callback, callbackScope) {
