@@ -7,7 +7,8 @@
 		$.Cmdbuild.customvariables.cacheTrees = new cacheTrees();
 
 		// load icons data
-		$.Cmdbuild.customvariables.cacheImages.loadData(callback, callbackScope);
+		$.Cmdbuild.customvariables.cacheImages
+				.loadData(callback, callbackScope);
 	};
 	var cacheTrees = function() {
 		this.data = {};
@@ -37,7 +38,7 @@
 			return filter;
 		};
 		this.pushTreeForClass = function(classId, callback, callbackScope) {
-			if (this.data[classId]) {
+					if (this.data[classId]) {
 				callback.apply(callbackScope, []);
 				return;
 			}
@@ -46,13 +47,13 @@
 			$.Cmdbuild.g3d.proxy.getDomainTrees({
 				filter : filterEqual
 			}, function(treesWithClassLikeRoot) {
-					$.Cmdbuild.g3d.proxy.getDomainTrees({
-						filter : filterContain
-					}, function(treesAboutClass) {
-							this.data[classId] = this.merge(
-									treesWithClassLikeRoot, treesAboutClass);
-							callback.apply(callbackScope, []);
-					}, this);
+				$.Cmdbuild.g3d.proxy.getDomainTrees({
+					filter : filterContain
+				}, function(treesAboutClass) {
+					this.data[classId] = this.merge(treesWithClassLikeRoot,
+							treesAboutClass);
+					callback.apply(callbackScope, []);
+				}, this);
 			}, this);
 		};
 		this.merge = function(ar1, ar2) {
@@ -85,14 +86,18 @@
 			}
 			return [];
 		};
-		this.setCurrentNavigationTree = function(navigationTree, callback, callbackScope) {
+		this.setCurrentNavigationTree = function(navigationTree, callback,
+				callbackScope) {
 			if (navigationTree) {
 				$.Cmdbuild.g3d.proxy.getDomainTree(navigationTree, function(
 						tree) {
 					this.currentNavigationTree = tree;
-					callback.apply(callbackScope, []);
+					callback.apply(callbackScope, [tree]);
 				}, this);
 			}
+		};
+		this.cleanCurrentNavigationTree = function() {
+			this.currentNavigationTree = null;
 		};
 		this.getCurrentNavigationTree = function() {
 			return this.currentNavigationTree;
@@ -119,19 +124,20 @@
 			});
 		};
 		this.getBaseImages = function(type) {
-			var base_url = $.Cmdbuild.global.getAppConfigUrl() + $.Cmdbuild.g3d.constants.SPRITES_PATH;
+			var base_url = $.Cmdbuild.global.getAppConfigUrl()
+					+ $.Cmdbuild.g3d.constants.SPRITES_PATH;
 			switch (type) {
-				case "default" :
-					return base_url + "default.png";
-					break;
-				case "selected" :
-					return base_url + "selected.png";
-					break;
-				case "current" :
-					return base_url + "current.png";
-					break;
-				default:
-					return "";
+			case "default":
+				return base_url + "default.png";
+				break;
+			case "selected":
+				return base_url + "selected.png";
+				break;
+			case "current":
+				return base_url + "current.png";
+				break;
+			default:
+				return "";
 			}
 		};
 		this.getImage = function(classId) {
@@ -140,9 +146,11 @@
 			});
 			var url;
 			if (imgs && imgs.length) {
-				url = $.Cmdbuild.utilities.proxy.getURIForIconDownload(imgs[0]._id);
+				url = $.Cmdbuild.utilities.proxy
+						.getURIForIconDownload(imgs[0]._id);
 			} else {
-				url = $.Cmdbuild.customvariables.cacheImages.getBaseImages("default");
+				url = $.Cmdbuild.customvariables.cacheImages
+						.getBaseImages("default");
 			}
 			return url;
 		};
@@ -192,11 +200,11 @@
 			}
 			var node = nodes[index];
 			this.getLoadingClass(node.data.classId, function() {
-//				$.Cmdbuild.customvariables.cacheImages.pushClass(
-//						node.data.classId, function() {
-							this.pushClassesRecursive(nodes, index + 1,
-									callback, callbackScope);
-//						}, this);
+				// $.Cmdbuild.customvariables.cacheImages.pushClass(
+				// node.data.classId, function() {
+				this.pushClassesRecursive(nodes, index + 1, callback,
+						callbackScope);
+				// }, this);
 			}, this);
 		};
 		this.pushClasses = function(elements, callback, callbackScope) {
@@ -234,23 +242,25 @@
 			if (this.getDomainIndex(domain._id) > -1) {
 				this.getAllDomainsRecursive(domains, callback, callbackScope);
 			} else {
-				$.Cmdbuild.utilities.proxy.getDomain(domain._id, function(
-						domainAttributes) {
-					$.Cmdbuild.utilities.proxy.getDomainAttributes(domain._id,
-							function(domainCustomAttributes) {
-								this.loadExtremeClasses(
-										domainAttributes.source,
-										domainAttributes.destination,
-										function() {
-											this.pushDomain(domainAttributes,
-													domainCustomAttributes);
-											this.getAllDomainsRecursive(
-													domains, callback,
-													callbackScope);
-										}, this);
-							}, this);
+				this.loadSingleDomain(domain._id, function() {
+					this.getAllDomainsRecursive(domains, callback,
+							callbackScope);
 				}, this);
 			}
+		};
+		this.loadSingleDomain = function(domainId, callback, callbackScope) {
+			$.Cmdbuild.utilities.proxy.getDomain(domainId, function(
+					domainAttributes) {
+				$.Cmdbuild.utilities.proxy.getDomainAttributes(domainId,
+						function(domainCustomAttributes) {
+							this.loadExtremeClasses(domainAttributes.source,
+									domainAttributes.destination, function() {
+										var retDomain = this.pushDomain(domainAttributes,
+												domainCustomAttributes);
+										callback.apply(callbackScope, [retDomain]);
+									}, this);
+						}, this);
+			}, this);
 		};
 		this.loadExtremeClasses = function(sourceId, destinationId, callback,
 				callbackScope) {
@@ -279,6 +289,7 @@
 				descriptionDirect : domainAttributes.descriptionDirect,
 				descriptionInverse : domainAttributes.descriptionInverse
 			});
+			return this.data[this.data.length - 1];
 		};
 		this.getDomainIndex = function(domainId) {
 			for (var i = 0; i < this.data.length; i++) {

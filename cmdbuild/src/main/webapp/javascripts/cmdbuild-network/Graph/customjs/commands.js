@@ -16,11 +16,22 @@
 				classDescription : (classDescription) ? classDescription : "-1"
 			});
 		},
+		removeNavigationTree : function(param) {
+			var treeValue = param.treeValue;
+			$.Cmdbuild.customvariables.cacheTrees.cleanCurrentNavigationTree();
+			$('#treeDisplay').text("");
+			$('#treeDisplayLabel').hide();
+			$('#treeDisplay').hide();
+		},
 		applyNavigationTree : function(param) {
 			var treeValue = param.treeValue;
-			$.Cmdbuild.customvariables.cacheTrees.setCurrentNavigationTree(treeValue, function() {
-				$.Cmdbuild.custom.commands.navigateOnNode({});				
-			}, this);
+			$.Cmdbuild.customvariables.cacheTrees.setCurrentNavigationTree(
+					treeValue, function(tree) {
+						$('#treeDisplay').text(tree.description);
+						$('#treeDisplayLabel').show();
+						$('#treeDisplay').show();
+						$.Cmdbuild.custom.commands.navigateOnNode({});
+					}, this);
 		},
 		applyFilters : function(param) {
 			var formObject = $.Cmdbuild.dataModel.forms[param.filterByClass];
@@ -152,6 +163,7 @@
 										.getNodes();
 								$.Cmdbuild.g3d.Model.removeGraphData(nodes,
 										"exploded_children");
+								$.Cmdbuild.custom.commands.centerOnViewer();
 							}, $.Cmdbuild.customvariables.viewer);
 
 		},
@@ -261,8 +273,11 @@
 
 		/**
 		 * Show relation attributes
-		 * @param {Object} params
-		 * @param {String} params.form DataTable id
+		 * 
+		 * @param {Object}
+		 *            params
+		 * @param {String}
+		 *            params.form DataTable id
 		 */
 		showRelatioAttributes : function(params) {
 			var table = $("#" + params.form).DataTable();
@@ -275,7 +290,10 @@
 				tr.removeClass('shown');
 			} else {
 				// Open this row
-				row.child(format(params.form, {name : "Name", extn : 351351})).show();
+				row.child(format(params.form, {
+					name : "Name",
+					extn : 351351
+				})).show();
 				tr.addClass('shown');
 			}
 			table.columns.adjust();
@@ -283,9 +301,13 @@
 
 		/**
 		 * Update UI of toggleTooltips element
-		 * @param {Object} params
-		 * @param {String} params.id
-		 * @param {Boolean} params.active
+		 * 
+		 * @param {Object}
+		 *            params
+		 * @param {String}
+		 *            params.id
+		 * @param {Boolean}
+		 *            params.active
 		 */
 		updateToggleTooltips : function(params) {
 			if (params.active) {
@@ -313,15 +335,18 @@
 	}
 
 	/* Formatting function for row details - modify as you need */
-	function format (formid, d) {
+	function format(formid, d) {
 		var data = $.Cmdbuild.dataModel.getValues(formid);
-		var ddefinition = $.Cmdbuild.customvariables.cacheDomains.getDomain(data.domainId);
+		var ddefinition = $.Cmdbuild.customvariables.cacheDomains
+				.getDomain(data.domainId);
 		var cAttributes = data.attributes;
 		var result = '<table cellpadding="5" cellspacing="0" border="0" class="gridAttributesTable">';
 		if (ddefinition.domainCustomAttributes.length) {
-			result += '<tr><th colspan="2">' + $.Cmdbuild.translations.getTranslation(
-					"label_attributes", 'Attributes') + '</th></tr>';
-			$.each(ddefinition.domainCustomAttributes, function(index, attribute) {
+			result += '<tr><th colspan="2">'
+					+ $.Cmdbuild.translations.getTranslation(
+							"label_attributes", 'Attributes') + '</th></tr>';
+			$.each(ddefinition.domainCustomAttributes, function(index,
+					attribute) {
 				if (cAttributes[attribute._id]) {
 					result += '<tr><td>' + attribute.description + '</td><td>'
 							+ cAttributes[attribute._id] + '</td></tr>';
@@ -336,7 +361,7 @@
 	 * Add Array.filter for browsers which doesn't support it
 	 */
 	if (!Array.prototype.filter) {
-		Array.prototype.filter = function(fun /*, thisp*/) {
+		Array.prototype.filter = function(fun /* , thisp */) {
 			var len = this.length >>> 0;
 			if (typeof fun != "function")
 				throw new TypeError();
@@ -353,10 +378,9 @@
 			return res;
 		};
 	}
-	
+
 	/**
-	 * Get current item class description from cache
-	 * @
+	 * Get current item class description from cache @
 	 */
 	function getCurrentClassDescription() {
 		var classId = $.Cmdbuild.dataModel.getValue("selectedForm", "classId");

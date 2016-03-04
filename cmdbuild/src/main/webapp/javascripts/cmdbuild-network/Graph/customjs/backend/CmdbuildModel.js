@@ -58,7 +58,7 @@
 			targetId = "" + targetId;
 			var domain = $.Cmdbuild.customvariables.cacheDomains
 					.getDomain(domainId);
-			if (! domain) {
+			if (!domain) {
 				console.log("Error :", Error().stack);
 			}
 			if (isNew) {
@@ -90,7 +90,9 @@
 				target : targetId,
 				relationId : relation._id,
 				domainId : domain._id,
-				label : domain.domainDescription,// (domain) ? domain.domainDescription : "--",
+				label : domain.domainDescription,// (domain) ?
+				// domain.domainDescription
+				// : "--",
 				color : $.Cmdbuild.custom.configuration.edgeColor,
 				strength : 90
 			};
@@ -106,24 +108,44 @@
 			this.getAllDomains(node, classId, id, domainList, callback,
 					callbackScope);
 		};
-		this.filteredDomains = function(node, domainList, classId) {
-			//-------------------------------------
-			var navigationTree = $.Cmdbuild.customvariables.cacheTrees.getCurrentNavigationTree();
+		this.loadFilteredDomains = function(index, domains, filteredDomains,
+				callback, callbackScope) {
+			if (!domains || index >= domains.length) {
+				callback.apply(callbackScope, [ filteredDomains ]);
+				return;
+			}
+			$.Cmdbuild.customvariables.cacheDomains.loadSingleDomain(
+					domains[index].metadata.domain, function(domain) {
+						filteredDomains.push(domain);
+						this.loadFilteredDomains(++index, domains,
+								filteredDomains, callback, callbackScope);
+					}, this);
+		};
+		this.filteredDomains = function(node, domainList, classId, callback,
+				callbackScope) {
+			// -------------------------------------
+			var navigationTree = $.Cmdbuild.customvariables.cacheTrees
+					.getCurrentNavigationTree();
 			if (navigationTree) {
-				var navigationManager = new $.Cmdbuild.g3d.navigationManager(navigationTree);
+				// this overrides other filters on domains
+				var navigationManager = new $.Cmdbuild.g3d.navigationManager(
+						navigationTree);
 				var path = this.model.pathClasses([], node);
 				var domains = navigationManager.getClassPathInTree(path);
-				var ret = [];
-				for (var i = 0; domains && i < domains.length; i++) {
-					var domain = $.Cmdbuild.customvariables.cacheDomains.getDomain(domains[i].metadata.domain);
-					ret.push(domain);
-				}
-				return ret; // this overrides other filters on domains
+				var filteredDomains = [];
+				this.loadFilteredDomains(0, domains, filteredDomains,
+						function() {
+							callback.apply(callbackScope, [ filteredDomains ]);
+						}, this);
+				return;
 			}
-			//-------------------------------------
-			
+			// -------------------------------------
+
 			if (!domainList) {
-				return null;
+				callback.apply(callbackScope, [ null ]); // this overrides
+				// other filters on
+				// domains
+				return;
 			}
 			var domains = $.Cmdbuild.customvariables.cacheDomains
 					.getDomains4Class(classId);
@@ -133,7 +155,8 @@
 					ret.push(domains[i]);
 				}
 			}
-			return ret;
+			callback.apply(callbackScope, [ ret ]); // this overrides other
+			// filters on domains
 		};
 		this.getAllDomains = function(node, classId, cardId, domainList,
 				callback, callbackScope) {
@@ -142,8 +165,15 @@
 				edges : []
 			};
 			var configuration = $.Cmdbuild.custom.configuration;
-			var filteredDomains = this.filteredDomains(node,
-					configuration.filterClassesDomains, classId);
+			this.filteredDomains(node, configuration.filterClassesDomains,
+					classId, function(filteredDomains) {
+						this.getRelations(node, classId, cardId, domainList,
+								filteredDomains, elements, callback,
+								callbackScope);
+					}, this);
+		};
+		this.getRelations = function(node, classId, cardId, domainList,
+				filteredDomains, elements, callback, callbackScope) {
 			if (filteredDomains) {
 				this.getAllRelations(node, filteredDomains, domainList,
 						classId, parseInt(cardId), elements, callback,

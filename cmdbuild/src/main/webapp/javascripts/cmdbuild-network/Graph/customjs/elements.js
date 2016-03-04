@@ -1,5 +1,14 @@
 (function($) {
 	var elements = {
+		display : function(xmlElement) {
+			var htmlStr = "";
+			var text = $.Cmdbuild.elementsManager.getText(xmlElement);
+			var id = $.Cmdbuild.elementsManager.getXmlElementId(xmlElement);
+			var params = $.Cmdbuild.elementsManager.getParams(xmlElement);
+			htmlStr += "<span class='counterType invisible' id='" + (id + "Label") + "'>" + text + "</span>";
+			htmlStr += "<span class='counterValue invisible' id='" + id + "'></span>";
+			return htmlStr;
+		},
 		canvas3d : function(xmlElement) {
 			var htmlStr = "";
 			var ca = $.Cmdbuild.elementsManager.getCommonAttributes(xmlElement);
