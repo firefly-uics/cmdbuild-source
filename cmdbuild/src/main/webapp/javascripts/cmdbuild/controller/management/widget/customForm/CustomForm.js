@@ -41,7 +41,6 @@
 		 * @cfg {Array}
 		 */
 		cmfgCatchedFunctions: [
-			'getLabel',
 			'getTemplateResolverServerVars = widgetCustomFormGetTemplateResolverServerVars',
 			'instancesDataStorageGet = widgetCustomFormInstancesDataStorageGet',
 			'instancesDataStorageIsEmpty = widgetCustomFormInstancesDataStorageIsEmpty',

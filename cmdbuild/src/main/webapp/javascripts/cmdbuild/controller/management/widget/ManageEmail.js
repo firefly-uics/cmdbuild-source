@@ -26,7 +26,6 @@
 		 * @cfg {Array}
 		 */
 		cmfgCatchedFunctions: [
-			'getLabel',
 			'widgetConfigurationGet = widgetManageEmailConfigurationGet',
 			'widgetManageEmailBeforeActiveView = beforeActiveView',
 			'widgetManageEmailEditMode = onEditMode',
@@ -185,7 +184,7 @@
 		 * @override
 		 */
 		widgetManageEmailBeforeActiveView: function () {
-			this.beforeActiveView(); // CallParent alias
+			this.beforeActiveView(); // Custom callParent
 		},
 
 		/**
@@ -194,7 +193,7 @@
 		widgetManageEmailEditMode: function () {
 			this.tabDelegate.cmfg('tabEmailEditModeSet', true);
 
-			this.onEditMode(); // CallParent alias
+			this.onEditMode(); // Custom callParent
 		},
 
 		/**
