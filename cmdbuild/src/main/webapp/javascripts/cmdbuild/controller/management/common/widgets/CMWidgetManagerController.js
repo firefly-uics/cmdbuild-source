@@ -118,25 +118,25 @@
 		 *
 		 * @public
 		 */
-		getWrongWFAsHTML: function() {
+		getWrongWFAsHTML: function () {
 			var out = '';
 			var widgetsAreValid = true;
 
-			Ext.Object.each(this.controllers, function(id, controller, myself) {
+			Ext.Object.each(this.controllers, function (id, controller, myself) {
 				// cmfg() implementation adapter
 				if (
 					!Ext.isEmpty(controller.cmfg) && Ext.isFunction(controller.cmfg)
 					&& !controller.cmfg('isValid')
 				) {
 					widgetsAreValid = false;
-					out += '<li>' + controller.cmfg('getWidgetLabel') + '</li>';
+					out += '<li>' + controller.cmfg('getLabel') + '</li>';
 				} else if (
 					!Ext.isEmpty(controller.isValid) && Ext.isFunction(controller.isValid)
-					&& !Ext.isEmpty(controller.getWidgetLabel) && Ext.isFunction(controller.getWidgetLabel)
+					&& !Ext.isEmpty(controller.getLabel) && Ext.isFunction(controller.getLabel)
 					&& !controller.isValid()
 				) {
 					widgetsAreValid = false;
-					out += '<li>' + controller.getWidgetLabel() + '</li>';
+					out += '<li>' + controller.getLabel() + '</li>';
 				}
 			}, this);
 
