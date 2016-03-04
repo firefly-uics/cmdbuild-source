@@ -139,6 +139,8 @@
 							<type>selected</type>
 						</params>
 					</counter>
+					<display id="treeDisplay" text="Tree:">
+					</display>
 				</div>
 				<div id="optionsPanelContainer" 
 					class="cmdbuildGridFilterContainer ui-state-default ui-corner-all allWidth">
