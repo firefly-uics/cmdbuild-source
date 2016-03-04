@@ -22,7 +22,6 @@
 		 * @cfg {Array}
 		 */
 		cmfgCatchedFunctions: [
-			'getLabel',
 			'isBusy',
 			'isValid',
 			'onOpenReportSaveButtonClick',

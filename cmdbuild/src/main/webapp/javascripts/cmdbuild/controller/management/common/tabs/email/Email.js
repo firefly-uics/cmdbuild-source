@@ -383,7 +383,7 @@
 		 * Base implementation to force email regeneration and editMode setup
 		 */
 		onModifyCardClick: function() {
-			this.cmfg('tabEmailEditModeSet', true);
+			this.cmfg('tabEmailEditModeSet', false);
 
 			if (!this.grid.getStore().isLoading())
 				this.cmfg('onTabEmailGlobalRegenerationButtonClick');

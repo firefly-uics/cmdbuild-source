@@ -9,6 +9,13 @@
 	/**
 	 * Class to be extended in widget controllers to adapt CMDBuild.controller.common.abstract.Base functionalities
 	 *
+	 * Required managed methods:
+	 * 	- beforeActiveView
+	 * 	- beforeHideView
+	 * 	- isBusy
+	 * 	- isValid
+	 * 	- onEditMode
+	 *
 	 * @abstract
 	 */
 	Ext.define('CMDBuild.controller.common.abstract.Widget', {
@@ -87,7 +94,7 @@
 			 *
 			 * @returns {Object} out
 			 */
-			getTemplateResolverServerVars: function(model) {
+			getTemplateResolverServerVars: function (model) {
 				var out = {};
 				var pi = null;
 
@@ -121,13 +128,15 @@
 		 * @param {Ext.form.Basic} configurationObject.clientForm
 		 * @param {CMDBuild.model.CMActivityInstance} configurationObject.card
 		 */
-		constructor: function(configurationObject) {
+		constructor: function (configurationObject) {
 			if (
 				!Ext.Object.isEmpty(configurationObject)
 				&& !Ext.isEmpty(configurationObject.view)
 				&& !Ext.Object.isEmpty(configurationObject.widgetConfiguration)
-
 			) {
+				// Add default managed functions
+				this.cmfgCatchedFunctions.push('getLabel');
+
 				this.callParent(arguments);
 
 				// Setup widget configuration
@@ -145,7 +154,7 @@
 		/**
 		 * @abstract
 		 */
-		beforeActiveView: function() {
+		beforeActiveView: function () {
 			// Setup widgetConfiguration on widget view activation to switch configuration on multiple instances
 			if (!Ext.isEmpty(this.widgetConfiguration))
 				this.widgetConfigurationSet({ value: this.widgetConfiguration });
@@ -161,7 +170,7 @@
 		/**
 		 * @returns {Object or null}
 		 */
-		getData: function() {
+		getData: function () {
 			return null;
 		},
 
@@ -170,21 +179,21 @@
 		 *
 		 * @private
 		 */
-		getId: function() {
+		getId: function () {
 			return this.widgetConfigurationGet(CMDBuild.core.constants.Proxy.ID);
 		},
 
 		/**
 		 * @returns {String}
 		 */
-		getLabel: function() {
+		getLabel: function () {
 			return this.widgetConfigurationGet(CMDBuild.core.constants.Proxy.LABEL);
 		},
 
 		/**
 		 * @returns {Object}
 		 */
-		getTemplateResolverServerVars: function() {
+		getTemplateResolverServerVars: function () {
 			if (!Ext.isEmpty(this.card))
 				return this.statics().getTemplateResolverServerVars(this.card);
 
@@ -195,7 +204,7 @@
 			/**
 			 * @returns {Mixed} or null
 			 */
-			instancesDataStorageGet: function() {
+			instancesDataStorageGet: function () {
 				if (!Ext.isEmpty(this.getId()) && !Ext.isEmpty(this.instancesDataStorage[this.getId()]))
 					return this.instancesDataStorage[this.getId()];
 
@@ -205,45 +214,51 @@
 			/**
 			 * @returns {Boolean}
 			 */
-			instancesDataStorageIsEmpty: function() {
+			instancesDataStorageIsEmpty: function () {
 				if (!Ext.isEmpty(this.getId()))
 					return Ext.isEmpty(this.instancesDataStorage[this.getId()]);
 
 				return true;
 			},
 
-			instancesDataStorageReset: function() {
+			instancesDataStorageReset: function () {
 				this.instancesDataStorage = {};
 			},
 
 			/**
 			 * @param {Mixed} instanceData
 			 */
-			instancesDataStorageSet: function(instanceData) {
+			instancesDataStorageSet: function (instanceData) {
 				if (!Ext.isEmpty(this.getId()) && !Ext.isEmpty(instanceData))
 					this.instancesDataStorage[this.getId()] = instanceData;
 			},
 
 		/**
 		 * @returns {Boolean}
+		 *
+		 * @abstract
 		 */
-		isBusy: function() {
+		isBusy: function () {
 			return false;
 		},
 
 		/**
 		 * @returns {Boolean}
+		 *
+		 * @abstract
 		 */
-		isValid: function() {
+		isValid: function () {
 			return true;
 		},
 
 		/**
+		 * Cannot be manage width cmfg() because requires to be executed on second step
+		 *
 		 * @param {Array} callbackChainArray
 		 *
-		 * TODO: this one is called directly from outside without cmfg(), should be refactored
+		 * @public
 		 */
-		onBeforeSave: function(callbackChainArray, i) {
+		onBeforeSave: function (callbackChainArray, i) {
 			if (!Ext.isEmpty(callbackChainArray[i])) {
 				var callbackObject = callbackChainArray[i];
 
@@ -262,7 +277,7 @@
 			 *
 			 * @returns {Mixed}
 			 */
-			widgetConfigurationGet: function(attributePath) {
+			widgetConfigurationGet: function (attributePath) {
 				var parameters = {};
 				parameters[CMDBuild.core.constants.Proxy.ATTRIBUTE_PATH] = attributePath;
 				parameters[CMDBuild.core.constants.Proxy.TARGET_VARIABLE_NAME] = 'widgetConfigurationModel';
@@ -275,7 +290,7 @@
 			 *
 			 * @returns {Boolean}
 			 */
-			widgetConfigurationIsEmpty: function(attributePath) {
+			widgetConfigurationIsEmpty: function (attributePath) {
 				var parameters = {};
 				parameters[CMDBuild.core.constants.Proxy.ATTRIBUTE_PATH] = attributePath;
 				parameters[CMDBuild.core.constants.Proxy.TARGET_VARIABLE_NAME] = 'widgetConfigurationModel';
@@ -293,7 +308,7 @@
 			 *
 			 * @abstract
 			 */
-			widgetConfigurationSet: function(parameters) {
+			widgetConfigurationSet: function (parameters) {
 				if (Ext.isEmpty(this.widgetConfigurationModelClassName) || !Ext.isString(this.widgetConfigurationModelClassName))
 					return _error('widgetConfigurationModelClassName parameter not configured', this);
 
@@ -310,7 +325,7 @@
 			 *
 			 * @returns {Mixed}
 			 */
-			widgetControllerPropertyGet: function(propertyName) {
+			widgetControllerPropertyGet: function (propertyName) {
 				if (!Ext.isEmpty(this[propertyName]))
 					return this[propertyName];
 
