@@ -171,17 +171,17 @@
 					</div>
 					<div class="toolbarSeparator"></div>
 					<div class="footerToolbarItem">
-						<spinner label="Levels" id="explosionLevels" class="optionsSpinner">
+						<spinner label="Levels" id="baseLevel" class="optionsSpinner">
 							<params>
 								<backend>Options</backend>
-								<type>explosionLevels</type>
+								<type>baseLevel</type>
 								<value>1</value>
 								<min>1</min>
 								<max>10</max>
 							</params>
 							<onChange>
 								<command>boolean</command>
-								<type>explosionLevels</type>
+								<type>baseLevel</type>
 							</onChange>
 						</spinner>
 					</div>
