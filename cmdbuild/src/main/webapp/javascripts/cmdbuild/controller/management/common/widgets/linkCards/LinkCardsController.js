@@ -297,20 +297,20 @@
 		 * @param {Boolean] editable
 		 */
 		getCardWindow: function(model, editable) {
-			var cardWindow = Ext.create('CMDBuild.view.management.common.CMCardWindow', {
+			var cardWindow = Ext.create('CMDBuild.view.management.common.widgets.linkCards.cardWindow.CMCardWindow', {
 				cmEditMode: editable,
 				withButtons: editable,
 				title: model.get('IdClass_value')
 			});
 
-			new CMDBuild.controller.management.common.CMCardWindowController(
-				cardWindow,
-				{
+			Ext.create('CMDBuild.controller.management.common.widgets.linkCards.cardWindow.CMCardWindowController', {
+				view: cardWindow,
+				configuration: {
 					entryType: model.get('IdClass'),
 					card: model.get('Id'),
 					cmEditMode: editable
 				}
-			);
+			});
 
 			return cardWindow;
 		},
