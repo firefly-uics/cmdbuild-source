@@ -1,4 +1,4 @@
-(function() {
+(function () {
 
 	Ext.define('CMDBuild.controller.common.field.comboBox.Searchable', {
 		extend: 'CMDBuild.controller.common.abstract.Base',
@@ -24,6 +24,7 @@
 		cmfgCatchedFunctions: [
 			'fieldComboBoxSearchableGetStore = fiedlGetStore',
 			'fieldComboBoxSearchableGetValue = fiedlGetValue',
+			'fieldComboBoxSearchableNormalizeValue',
 			'fieldComboBoxSearchableSetValue = fiedlSetValue',
 			'fieldComboBoxSearchableStoreExceedsLimit',
 			'onFieldComboBoxSearchableKeyUp',
@@ -51,7 +52,7 @@
 		 *
 		 * @override
 		 */
-		constructor: function(configurationObject) {
+		constructor: function (configurationObject) {
 			this.callParent(arguments);
 
 			this.configurationSet(this.view.configuration);
@@ -66,7 +67,7 @@
 			 *
 			 * @returns {CMDBuild.model.common.field.comboBox.searchable.Configuration} or Mixed
 			 */
-			configurationGet: function(parameterName) {
+			configurationGet: function (parameterName) {
 				if (!Ext.isEmpty(parameterName))
 					return this.configuration.get(parameterName);
 
@@ -76,28 +77,56 @@
 			/**
 			 * @property {Object} configurationObject
 			 */
-			configurationSet: function(configurationObject) {
+			configurationSet: function (configurationObject) {
 				this.configuration = Ext.create('CMDBuild.model.common.field.comboBox.searchable.Configuration', configurationObject);
 			},
 
 		/**
 		 * @returns {Ext.data.Store}
 		 */
-		fieldComboBoxSearchableGetStore: function() {
+		fieldComboBoxSearchableGetStore: function () {
 			return this.view.getStore();
 		},
 
 		/**
 		 * @returns {Number}
 		 */
-		fieldComboBoxSearchableGetValue: function() {
+		fieldComboBoxSearchableGetValue: function () {
 			return this.view.getValue();
+		},
+
+		/**
+		 * Recursive normalization of value
+		 *
+		 * @param {Mixed} value
+		 *
+		 * @returns {String}
+		 */
+		fieldComboBoxSearchableNormalizeValue: function (value) {
+			if (!Ext.isEmpty(value)) {
+				switch (Ext.typeOf(value)) {
+					case 'array':
+						return this.cmfg('fieldComboBoxSearchableNormalizeValue', value[0]);
+
+					case 'object': {
+						if (Ext.isFunction(value.get))
+							return this.cmfg('fieldComboBoxSearchableNormalizeValue', value.get(this.view.valueField));
+
+						return this.cmfg('fieldComboBoxSearchableNormalizeValue', value[this.view.valueField]);
+					}
+
+					default:
+						return value;
+				}
+			}
+
+			return '';
 		},
 
 		/**
 		 * @param {Ext.data.Model} selectedRecord
 		 */
-		fieldComboBoxSearchableSetValue: function(selectedRecord) {
+		fieldComboBoxSearchableSetValue: function (selectedRecord) {
 			if (!Ext.isEmpty(selectedRecord)) {
 				this.view.blur(); // Allow 'change' event that occurs on blur
 				this.cmfg('onFieldComboBoxSearchableSetValue', selectedRecord.get(this.view.valueField));
@@ -107,14 +136,14 @@
 		/**
 		 * @returns {Boolean}
 		 */
-		fieldComboBoxSearchableStoreExceedsLimit: function() {
+		fieldComboBoxSearchableStoreExceedsLimit: function () {
 			if (!Ext.isEmpty(this.view.getStore()))
 				return this.view.getStore().getTotalCount() > CMDBuild.configuration.instance.get(CMDBuild.core.constants.Proxy.REFERENCE_COMBO_STORE_LIMIT);
 
 			return false;
 		},
 
-		onFieldComboBoxSearchableKeyUp: function() {
+		onFieldComboBoxSearchableKeyUp: function () {
 			this.onFieldComboBoxSearchableTrigger3Click(this.view.getRawValue());
 		},
 
@@ -123,43 +152,45 @@
 		 *
 		 * @param {String} value
 		 */
-		onFieldComboBoxSearchableSetValue: function(value) {
-			if (
-				!Ext.isEmpty(value)
-				&& this.view.getStore().find(this.view.valueField, value) < 0
-			) {
-				var params = {};
-				params[CMDBuild.core.constants.Proxy.CLASS_NAME] = this.view.attributeModel.get(CMDBuild.core.constants.Proxy.TARGET_CLASS);
-				params[CMDBuild.core.constants.Proxy.CARD_ID] = value;
+		onFieldComboBoxSearchableSetValue: function (value) {
+			if (!Ext.isEmpty(value)) {
+				if (Ext.isObject(value) && Ext.isFunction(value.get))
+					value = value.get(CMDBuild.core.constants.Proxy.ID) || value.get('Id');
 
-				CMDBuild.core.proxy.common.field.ForeignKey.readCard({
-					params: params,
-					scope: this,
-					success: function(response, options, decodedResponse) {
-						decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.CARD];
+				if (this.view.getStore().find(this.view.valueField, value) < 0) {
+					var params = {};
+					params[CMDBuild.core.constants.Proxy.CLASS_NAME] = this.view.attributeModel.get(CMDBuild.core.constants.Proxy.TARGET_CLASS);
+					params[CMDBuild.core.constants.Proxy.CARD_ID] = value;
 
-						if (!Ext.isEmpty(decodedResponse)) {
-							if (!Ext.isEmpty(this.view.getStore()))
-								this.view.getStore().add(
-									Ext.create('CMDBuild.model.common.attributes.ForeignKeyStore', {
-										Id: decodedResponse['Id'],
-										Description: decodedResponse['Description']
-									})
-								);
+					CMDBuild.core.proxy.common.field.ForeignKey.readCard({
+						params: params,
+						scope: this,
+						success: function (response, options, decodedResponse) {
+							decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.CARD];
 
-							this.view.setValue(decodedResponse[this.view.valueField]);
+							if (!Ext.isEmpty(decodedResponse)) {
+								if (!Ext.isEmpty(this.view.getStore()))
+									this.view.getStore().add(
+										Ext.create('CMDBuild.model.common.attributes.ForeignKeyStore', {
+											Id: decodedResponse['Id'],
+											Description: decodedResponse['Description']
+										})
+									);
+
+								this.view.setValue(decodedResponse[this.view.valueField]);
+							}
+
+							this.view.validate();
 						}
-
-						this.view.validate();
-					}
-				});
+					});
+				}
 			}
 		},
 
 		/**
 		 * If store has more than configuration limit records, no drop down but opens searchWindow
 		 */
-		onFieldComboBoxSearchableTrigger1Click: function() {
+		onFieldComboBoxSearchableTrigger1Click: function () {
 			if (this.view.getStore().isLoading()) {
 				this.view.getStore().on('load', this.trigger1Manager, this, { single: true });
 			} else {
@@ -167,7 +198,7 @@
 			}
 		},
 
-		onFieldComboBoxSearchableTrigger2Click: function() {
+		onFieldComboBoxSearchableTrigger2Click: function () {
 			if (!this.view.isDisabled())
 				this.view.setValue();
 		},
@@ -175,7 +206,7 @@
 		/**
 		 * @param {String} value
 		 */
-		onFieldComboBoxSearchableTrigger3Click: function(value) {
+		onFieldComboBoxSearchableTrigger3Click: function (value) {
 			value = Ext.isString(value) ? value : '';
 
 			if (!this.view.isDisabled()) {
@@ -186,10 +217,10 @@
 				CMDBuild.core.proxy.Classes.read({
 					params: params,
 					scope: this,
-					success: function(response, options, decodedResponse) {
+					success: function (response, options, decodedResponse) {
 						decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.CLASSES];
 
-						var targetClassObject = Ext.Array.findBy(decodedResponse, function(item, i) {
+						var targetClassObject = Ext.Array.findBy(decodedResponse, function (item, i) {
 							return item[CMDBuild.core.constants.Proxy.NAME] == this.view.attributeModel.get(CMDBuild.core.constants.Proxy.TARGET_CLASS);
 						}, this);
 
@@ -209,7 +240,7 @@
 			}
 		},
 
-		trigger1Manager: function() {
+		trigger1Manager: function () {
 			if (this.fieldComboBoxSearchableStoreExceedsLimit()) {
 				this.onFieldComboBoxSearchableTrigger3Click();
 			} else {
