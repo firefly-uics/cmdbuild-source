@@ -23,18 +23,27 @@
 			}
 			return nodes;
 		};
-		this.getChildOfClass = function(node, classId) {
+		this.getChildOfClass = function(node, classId, domainId) {
 			var children = this.getChildren(node._id);
+			if (domainId === node.metadata.domain && node.metadata.recursionEnabled) {
+				return node;
+			}
 			for (var i = 0; i < children.length; i++) {
-				if (this.sameClass(children[i].metadata.targetClass, classId)) {
+				var data = children[i].metadata;
+				if (domainId === data.domain
+						&& this.sameClass(data.targetClass, classId)) {
+					if (data.recursionEnabled) {
+						return node;
+					}
 					return children[i];
 				}
 			}
 			return null;
 		};
-		this.calculatePathFromNode = function(path, node, originalPath) {
+		this.calculatePathFromNode = function(node, originalPath) {
 			for (var i = originalPath.length - 1; i > 0; i--) {
-				node = this.getChildOfClass(node, originalPath[i - 1].classId);
+				node = this.getChildOfClass(node, originalPath[i - 1].classId,
+						originalPath[i - 1].fromDomain);
 			}
 			return (node) ? this.getChildren(node._id) : null;
 		};
@@ -45,7 +54,7 @@
 			}
 			classAttributes = $.Cmdbuild.customvariables.cacheClasses
 					.getClass(currentClass);
-			if (! (classAttributes && classAttributes.parent)) {
+			if (!(classAttributes && classAttributes.parent)) {
 				return false;
 			}
 			return this.sameClass(superClass, classAttributes.parent);
@@ -63,7 +72,7 @@
 					break;
 				}
 			}
-			return (root) ? this.calculatePathFromNode([], root, originalPath)
+			return (root) ? this.calculatePathFromNode(root, originalPath)
 					: null;
 		};
 	};

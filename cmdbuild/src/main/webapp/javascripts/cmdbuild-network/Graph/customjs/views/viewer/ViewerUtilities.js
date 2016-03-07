@@ -400,7 +400,11 @@
 
 			// get relation info
 			var domainId = intersected.object.domainId;
-			var domainDescription = $.Cmdbuild.customvariables.cacheDomains.getDescription(domainId);
+			var domain = $.Cmdbuild.customvariables.cacheDomains.getDomain(domainId);
+			var domainDescription = domain.domainDescription;
+			var descriptionDirect = domain.descriptionDirect;
+			var descriptionInverse = domain.descriptionInverse;
+//			var domainDescription = $.Cmdbuild.customvariables.cacheDomains.getDescription(domainId);
 			var source = intersected.object.source;
 			var target = intersected.object.target;
 			var classSource = $.Cmdbuild.g3d.Model.getGraphData(source, "classId");
@@ -418,8 +422,11 @@
 			var $target = $("<p></p>").append(
 					$("<span></span>").text(targetClassDescription + ": ")).append(
 					$("<em></em>").text(labelTarget));
-//			$boxcontent.append($title);
-			$boxcontent.append($source).append($target);
+			var $descriptionDirect = $("<p></p>").append(
+					$("<span></span>").text(descriptionDirect));
+			var $descriptionInverse = $("<p></p>").append(
+					$("<span></span>").text(descriptionInverse));
+			$boxcontent.append($source).append($descriptionDirect).append($descriptionInverse).append($target);
 
 			// set position
 			var h = $tooltip_window.height();

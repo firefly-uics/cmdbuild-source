@@ -75,7 +75,8 @@
 						z : 200
 					},
 					compoundData : compoundData,
-					previousPathNode : sourceId
+					previousPathNode : sourceId,
+					fromDomain : domainId
 				};
 				var node = {
 					data : data
@@ -255,7 +256,8 @@
 			var rDescription = (relationSample._sourceId == cardId && relationSample._sourceType == classId) ? relationSample._type
 					+ "(1)"
 					: relationSample._type + "(2)";
-			var description = "compound node of: " + total + " "
+			var description = $.Cmdbuild.g3d.constants.GUICOMPOUNDNODEDESCRIPTION;
+			description += ": " + total + " "
 					+ relationSample._destinationType + " - " + rDescription;
 			var id = "CN" + relationSample._type + relationSample._sourceId
 					+ relationSample._destinationId;
