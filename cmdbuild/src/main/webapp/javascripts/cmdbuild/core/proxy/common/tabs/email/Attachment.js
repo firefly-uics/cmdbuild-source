@@ -17,10 +17,7 @@
 		copy: function (parameters) {
 			parameters = Ext.isEmpty(parameters) ? {} : parameters;
 
-			Ext.apply(parameters, {
-				loadMask: false,
-				url: CMDBuild.core.proxy.Index.email.attachment.copy
-			});
+			Ext.apply(parameters, { url: CMDBuild.core.proxy.Index.email.attachment.copy });
 
 			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.ATTACHMENT, parameters, true);
 		},
@@ -91,10 +88,7 @@
 		remove: function (parameters) {
 			parameters = Ext.isEmpty(parameters) ? {} : parameters;
 
-			Ext.apply(parameters, {
-				loadMask: false,
-				url: CMDBuild.core.proxy.Index.email.attachment.remove
-			});
+			Ext.apply(parameters, { url: CMDBuild.core.proxy.Index.email.attachment.remove });
 
 			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.ATTACHMENT, parameters, true);
 		},

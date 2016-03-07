@@ -102,7 +102,7 @@
 
 			CMDBuild.core.proxy.common.tabs.email.Attachment.remove({
 				params: params,
-				loadMask: this.parentDelegate.view,
+				loadMask: this.cmfg('tabEmailEmailWindowGetView'), // Apply load mask to target
 				scope: this,
 				success: function (response, options ,decodedResponse) {
 					this.view.attachmentPanelsContainer.remove(attachmentPanel);
