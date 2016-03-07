@@ -1,6 +1,7 @@
 package org.cmdbuild.spring.configuration;
 
 import static com.google.common.reflect.Reflection.newProxy;
+import static java.util.Optional.ofNullable;
 import static org.cmdbuild.common.utils.Reflection.unsupported;
 import static org.cmdbuild.spring.util.Constants.DEFAULT;
 import static org.cmdbuild.spring.util.Constants.PROTOTYPE;
@@ -46,7 +47,7 @@ public class Dms {
 		@Override
 		protected DmsService delegate() {
 			final String value = configuration.getService();
-			return delegates.containsKey(value) ? delegates.get(value) : UNSUPPORTED;
+			return ofNullable(delegates.get(value)).orElse(UNSUPPORTED);
 		}
 
 	}

@@ -45,6 +45,8 @@ public class DmsProperties extends DefaultProperties implements AlfrescoDmsConfi
 	private static final String ALFRESCO_CUSTOM_MODEL_FILENAME = "alfresco.custom.model.filename";
 	private static final String METADATA_AUTOCOMPLETION_FILENAME = "metadata.autocompletion.filename";
 
+	private static final String CMIS_MODEL_TYPE = "dms.service.cmis.model";
+
 	private static final Map<String, String> DEFAULTS;
 
 	static {
@@ -234,6 +236,11 @@ public class DmsProperties extends DefaultProperties implements AlfrescoDmsConfi
 	@Override
 	public long getDelayBetweenFtpAndWebserviceOperations() {
 		return Long.valueOf(getProperty(DELAY));
+	}
+
+	@Override
+	public String getCmisModelType() {
+		return getProperty(CMIS_MODEL_TYPE);
 	}
 
 }

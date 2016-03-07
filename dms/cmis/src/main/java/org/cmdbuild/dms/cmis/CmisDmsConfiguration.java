@@ -14,4 +14,6 @@ public interface CmisDmsConfiguration extends DmsConfiguration {
 
 	Object getRepositoryApp();
 
+	String getCmisModelType();
+
 }
