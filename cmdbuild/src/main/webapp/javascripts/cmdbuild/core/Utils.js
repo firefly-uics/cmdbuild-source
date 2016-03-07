@@ -246,7 +246,7 @@
 					if (Ext.isFunction(item1.get) && Ext.isFunction(item2.get)) {
 						attribute1 = (!caseSensitive && Ext.isFunction(item1.get(attributeToSort).toLowerCase)) ? item1.get(attributeToSort).toLowerCase() : item1.get(attributeToSort);
 						attribute2 = (!caseSensitive && Ext.isFunction(item2.get(attributeToSort).toLowerCase)) ? item2.get(attributeToSort).toLowerCase() : item2.get(attributeToSort);
-					} else if (item1.hasOwnProperty(attributeToSort) && item2.hasOwnProperty(attributeToSort)) {
+					} else if (!Ext.isEmpty(item1[attributeToSort]) && !Ext.isEmpty(item2[attributeToSort])) {
 						attribute1 = (!caseSensitive && Ext.isFunction(item1[attributeToSort].toLowerCase)) ? item1[attributeToSort].toLowerCase() : item1[attributeToSort];
 						attribute2 = (!caseSensitive && Ext.isFunction(item2[attributeToSort].toLowerCase)) ? item2[attributeToSort].toLowerCase() : item2[attributeToSort];
 					}

@@ -31,8 +31,7 @@
 			'onTabEmailEmailWindowBeforeDestroy',
 			'onTabEmailEmailWindowConfirmButtonClick',
 			'onTabEmailEmailWindowFieldChange',
-			'onTabEmailEmailWindowFillFromTemplateButtonClick',
-			'tabEmailEmailWindowSetLoading'
+			'onTabEmailEmailWindowFillFromTemplateButtonClick'
 		],
 
 		/**
@@ -106,7 +105,6 @@
 				// Fill from template button store configuration
 				CMDBuild.core.proxy.email.Template.readAll({
 					scope: this,
-					loadMask: true,
 					success: function (response, options, decodedResponse) {
 						decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.RESPONSE][CMDBuild.core.constants.Proxy.ELEMENTS];
 
@@ -351,15 +349,6 @@
 					this.form.keepSynchronizationCheckbox.setDisabled(false);
 				}
 			});
-		},
-
-		/**
-		 * @param {Boolean} state
-		 */
-		tabEmailEmailWindowSetLoading: function (state) {
-			state = Ext.isBoolean(state) ? state : false;
-
-			this.view.setLoading(state);
 		}
 	});
 

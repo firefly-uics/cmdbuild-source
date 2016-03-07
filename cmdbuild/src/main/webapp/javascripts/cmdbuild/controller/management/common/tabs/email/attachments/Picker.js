@@ -79,21 +79,25 @@
 				success: function (response, options, decodedResponse) {
 					decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.CLASSES];
 
-					var selectedClass = Ext.Array.findBy(decodedResponse, function (classObject, i) {
-						return this.selectedCardGet(CMDBuild.core.constants.Proxy.CLASS_ID) == classObject[CMDBuild.core.constants.Proxy.ID];
-					}, this);
+					if (!Ext.isEmpty(decodedResponse) && Ext.isArray(decodedResponse)) {
+						var selectedClass = Ext.Array.findBy(decodedResponse, function (classObject, i) {
+							return this.selectedCardGet(CMDBuild.core.constants.Proxy.CLASS_ID) == classObject[CMDBuild.core.constants.Proxy.ID];
+						}, this);
 
-					// Complete selectedCard model with class name property
-					this.selectedCardSet({
-						propertyName: CMDBuild.core.constants.Proxy.CLASS_NAME,
-						value: record.getData()
-					});
+						if (!Ext.isEmpty(selectedClass)) {
+							// Complete selectedCard model with class name property
+							this.selectedCardSet({
+								propertyName: CMDBuild.core.constants.Proxy.CLASS_NAME,
+								value: selectedClass[CMDBuild.core.constants.Proxy.NAME]
+							});
 
-					params = {};
-					params[CMDBuild.core.constants.Proxy.CARD_ID] = this.selectedCardGet(CMDBuild.core.constants.Proxy.ID);
-					params[CMDBuild.core.constants.Proxy.CLASS_NAME] = selectedClass[CMDBuild.core.constants.Proxy.NAME];
+							params = {};
+							params[CMDBuild.core.constants.Proxy.CARD_ID] = this.selectedCardGet(CMDBuild.core.constants.Proxy.ID);
+							params[CMDBuild.core.constants.Proxy.CLASS_NAME] = selectedClass[CMDBuild.core.constants.Proxy.NAME];
 
-					this.view.attachmentGrid.getStore().load({ params: params });
+							this.view.attachmentGrid.getStore().load({ params: params });
+						}
+					}
 				}
 			});
 		},
@@ -109,17 +113,17 @@
 		// TODO: waiting for refactor (rename)
 		onTabEmailAttachmentPickerWindowConfirmButtonClick: function () {
 			if (this.view.attachmentGrid.getSelectionModel().hasSelection()) {
-				this.cmfg('tabEmailEmailWindowSetLoading', true);
 				Ext.Array.forEach(this.view.attachmentGrid.getSelectionModel().getSelection(), function (attachment, i, allAttachments) {
 					var params = {};
-					params[CMDBuild.core.constants.Proxy.EMAIL_ID] = this.record.get(CMDBuild.core.constants.Proxy.ID);
-					params[CMDBuild.core.constants.Proxy.TEMPORARY] = this.record.get(CMDBuild.core.constants.Proxy.TEMPORARY);
-					params[CMDBuild.core.constants.Proxy.CLASS_NAME] = this.selectedCardGet(CMDBuild.core.constants.Proxy.CLASS_NAME);
 					params[CMDBuild.core.constants.Proxy.CARD_ID] = this.selectedCardGet(CMDBuild.core.constants.Proxy.ID);
+					params[CMDBuild.core.constants.Proxy.CLASS_NAME] = this.selectedCardGet(CMDBuild.core.constants.Proxy.CLASS_NAME);
+					params[CMDBuild.core.constants.Proxy.EMAIL_ID] = this.record.get(CMDBuild.core.constants.Proxy.ID);
 					params[CMDBuild.core.constants.Proxy.FILE_NAME] = attachment.get('Filename');
+					params[CMDBuild.core.constants.Proxy.TEMPORARY] = this.record.get(CMDBuild.core.constants.Proxy.TEMPORARY);
 
 					CMDBuild.core.proxy.common.tabs.email.Attachment.copy({
 						params: params,
+						loadMask: this.cmfg('tabEmailEmailWindowGetView'), // Apply load mask to target
 						scope: this,
 						failure: function (response, options, decodedResponse) {
 							CMDBuild.core.Message.error(

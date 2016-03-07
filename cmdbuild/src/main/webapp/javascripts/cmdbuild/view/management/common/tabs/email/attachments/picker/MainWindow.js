@@ -29,7 +29,6 @@
 		 */
 		classComboBox: undefined,
 
-		buttonAlign: 'center',
 		layout: 'border',
 		title: CMDBuild.Translation.chooseAttachmentFromDb,
 
@@ -46,7 +45,6 @@
 								labelAlign: 'right',
 								valueField: CMDBuild.core.constants.Proxy.ID,
 								displayField: CMDBuild.core.constants.Proxy.TEXT,
-								editable: false,
 
 								store: CMDBuild.core.proxy.common.tabs.email.Attachment.getTargetClassComboStore(),
 								queryMode: 'local',
