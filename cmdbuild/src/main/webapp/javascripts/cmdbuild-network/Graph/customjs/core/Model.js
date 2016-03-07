@@ -79,7 +79,8 @@
 					compoundData : node.data.compoundData,
 					domainId : node.data.domainId,
 					children : node.data.children,
-					previousPathNode : node.data.previousPathNode
+					previousPathNode : node.data.previousPathNode,
+					fromDomain : node.data.fromDomain
 				},
 				position : {
 					x : node.data.position.x,
@@ -252,9 +253,12 @@
 				return path;
 			}
 			var classId = $.Cmdbuild.g3d.Model.getGraphData(node, "classId");
+			var fromDomain = $.Cmdbuild.g3d.Model.getGraphData(node,
+					"fromDomain");
 			path.push({
 				classId : classId,
-				cardId : node.id()
+				cardId : node.id(),
+				fromDomain : fromDomain
 			});
 			var previousPathNodeId = $.Cmdbuild.g3d.Model.getGraphData(node,
 					"previousPathNode");

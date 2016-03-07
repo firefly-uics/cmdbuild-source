@@ -179,6 +179,9 @@
 			return this.data[classId];
 		};
 		this.getDescription = function(classId) {
+			if (classId === $.Cmdbuild.g3d.constants.GUICOMPOUNDNODE) {
+				return $.Cmdbuild.g3d.constants.GUICOMPOUNDNODEDESCRIPTION;
+			}
 			return (this.data[classId] && this.data[classId].description) ? this.data[classId].description
 					: "";
 		};

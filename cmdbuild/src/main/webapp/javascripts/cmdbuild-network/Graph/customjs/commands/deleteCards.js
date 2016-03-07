@@ -49,7 +49,8 @@
 				faveShape: 'triangle',
 				position: saved.position,
 				compoundData: {},
-				previousPathNode: saved.parentId
+				previousPathNode: saved.parentId,
+				fromDomain: saved.fromDomain
 			};
 			var node = {
 					data: data
@@ -102,6 +103,7 @@
 				label: $.Cmdbuild.g3d.Model.getGraphData(node, "label"),
 				position: node.position(),
 				previousPathNode: $.Cmdbuild.g3d.Model.getGraphData(node, "previousPathNode"),
+				fromDomain: $.Cmdbuild.g3d.Model.getGraphData(node, "fromDomain"),
 				childPosition: childPosition, 
 				edges: this.getNodeEdges(id)
 			});
@@ -111,6 +113,7 @@
 			for (var i = 0; children && i < children.length; i++) {
 				var child = this.model.getNode(children[i]);
 				$.Cmdbuild.g3d.Model.setGraphData(child, "previousPathNode", saved.id);
+				$.Cmdbuild.g3d.Model.setGraphData(child, "fromDomain", saved.fromDomain);
 			}
 			var cyNode = this.insertNode(saved);
 			$.Cmdbuild.g3d.Model.setGraphData(cyNode, "children", children);
@@ -130,6 +133,7 @@
 					var node = this.model.getNode(saved.id);
 					$.Cmdbuild.g3d.Model.setGraphData(parent, "children", parentChildren);
 					$.Cmdbuild.g3d.Model.setGraphData(node, "previousPathNode", saved.parentId);
+					$.Cmdbuild.g3d.Model.setGraphData(node, "fromDomain", saved.fromDomain);
 				}
 				saved = this.saved4Undo.pop();
 			}

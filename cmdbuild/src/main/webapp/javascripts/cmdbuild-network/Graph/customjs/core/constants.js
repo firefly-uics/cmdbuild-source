@@ -1,6 +1,7 @@
 (function($) {
 	$.Cmdbuild.g3d.constants = {
 		GUICOMPOUNDNODE : "GUICOMPOUNDNODE",
+		GUICOMPOUNDNODEDESCRIPTION : "Compound node",
 		DEFAULT_SHAPE : "cmdbuildDefaultShape",
 		SELECTION_SHAPE : "cmdbuildSelectionShape",
 		SPRITES_PATH : "theme/images/sprites/",
