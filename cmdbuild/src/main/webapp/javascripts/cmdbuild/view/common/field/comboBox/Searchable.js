@@ -1,4 +1,4 @@
-(function() {
+(function () {
 
 	Ext.define('CMDBuild.view.common.field.comboBox.Searchable', {
 		extend: 'Ext.form.field.ComboBox',
@@ -26,7 +26,7 @@
 		trigger2Cls: Ext.baseCSSPrefix + 'form-clear-trigger',
 		trigger3Cls: Ext.baseCSSPrefix + 'form-search-trigger',
 
-		initComponent: function() {
+		initComponent: function () {
 			this.delegate = Ext.create('CMDBuild.controller.common.field.comboBox.Searchable', { view: this });
 
 			this.callParent(arguments);
@@ -38,14 +38,14 @@
 		 *
 		 * @returns {String}
 		 */
-		getReadableValue: function() {
+		getReadableValue: function () {
 			return this.getRawValue();
 		},
 
 		/**
 		 * @override
 		 */
-		onKeyUp: function() {
+		onKeyUp: function () {
 			if (this.delegate.cmfg('fieldComboBoxSearchableStoreExceedsLimit')) {
 				this.delegate.cmfg('onFieldComboBoxSearchableKeyUp');
 			} else {
@@ -53,15 +53,15 @@
 			}
 		},
 
-		onTrigger1Click: function() {
+		onTrigger1Click: function () {
 			this.delegate.cmfg('onFieldComboBoxSearchableTrigger1Click');
 		},
 
-		onTrigger2Click: function() {
+		onTrigger2Click: function () {
 			this.delegate.cmfg('onFieldComboBoxSearchableTrigger2Click');
 		},
 
-		onTrigger3Click: function(value) {
+		onTrigger3Click: function (value) {
 			this.delegate.cmfg('onFieldComboBoxSearchableTrigger3Click');
 		},
 
@@ -73,8 +73,10 @@
 		 * @override
 		 */
 		setValue: function (value) {
+			value = this.delegate.cmfg('fieldComboBoxSearchableNormalizeValue', value);
+
 			if (this.getStore().find(this.valueField, value) >= 0) {
-				return this.callParent(arguments);
+				return this.callParent([value]);
 			} else {
 				return this.delegate.cmfg('onFieldComboBoxSearchableSetValue', value);
 			}
