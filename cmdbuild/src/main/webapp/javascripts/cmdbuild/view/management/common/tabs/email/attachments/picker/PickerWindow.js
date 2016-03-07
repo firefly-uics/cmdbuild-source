@@ -1,6 +1,6 @@
 (function () {
 
-	Ext.define('CMDBuild.view.management.common.tabs.email.attachments.picker.MainWindow', {
+	Ext.define('CMDBuild.view.management.common.tabs.email.attachments.picker.PickerWindow', {
 		extend: 'CMDBuild.PopupWindow',
 
 		requires: [
@@ -40,8 +40,8 @@
 						itemId: CMDBuild.core.constants.Proxy.TOOLBAR_TOP,
 						items: [
 							this.classComboBox = Ext.create('Ext.form.field.ComboBox', {
-								labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
 								fieldLabel: CMDBuild.Translation.selectAClass,
+								labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
 								labelAlign: 'right',
 								valueField: CMDBuild.core.constants.Proxy.ID,
 								displayField: CMDBuild.core.constants.Proxy.TEXT,
@@ -53,7 +53,7 @@
 									scope: this,
 
 									change: function (field, newValue, oldValue) {
-										this.delegate.cmfg('onTabEmailAttachmentPickerWindowClassSelected');
+										this.delegate.cmfg('onTabEmailAttachmentPickerClassSelected');
 									}
 								}
 							})
@@ -75,14 +75,14 @@
 								scope: this,
 
 								handler: function (button, e) {
-									this.delegate.cmfg('onTabEmailAttachmentPickerWindowConfirmButtonClick');
+									this.delegate.cmfg('onTabEmailAttachmentPickerConfirmButtonClick');
 								}
 							}),
 							Ext.create('CMDBuild.core.buttons.text.Abort', {
 								scope: this,
 
 								handler: function (button, e) {
-									this.delegate.cmfg('onTabEmailAttachmentPickerWindowAbortButtonClick');
+									this.delegate.cmfg('onTabEmailAttachmentPickerAbortButtonClick');
 								}
 							})
 						]

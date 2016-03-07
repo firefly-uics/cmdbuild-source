@@ -14,6 +14,8 @@
 		delegate: undefined,
 
 		border: false,
+		cls: 'cmdb-border-top',
+		frame: false,
 		split: true,
 
 		initComponent: function () {

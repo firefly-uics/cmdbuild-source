@@ -20,11 +20,11 @@
 		 * @cfg {Array}
 		 */
 		cmfgCatchedFunctions: [
-			'onTabEmailAttachmentPickerWindowAbortButtonClick',
-			'onTabEmailAttachmentPickerWindowCardGridStoreLoad',
-			'onTabEmailAttachmentPickerWindowCardSelected',
-			'onTabEmailAttachmentPickerWindowClassSelected',
-			'onTabEmailAttachmentPickerWindowConfirmButtonClick'
+			'onTabEmailAttachmentPickerAbortButtonClick',
+			'onTabEmailAttachmentPickerCardGridStoreLoad',
+			'onTabEmailAttachmentPickerCardSelected',
+			'onTabEmailAttachmentPickerClassSelected',
+			'onTabEmailAttachmentPickerConfirmButtonClick'
 		],
 
 		/**
@@ -40,7 +40,7 @@
 		selectedCard: undefined,
 
 		/**
-		 * @property {CMDBuild.view.management.common.tabs.email.attachments.picker.MainWindow}
+		 * @property {CMDBuild.view.management.common.tabs.email.attachments.picker.PickerWindow}
 		 */
 		view: undefined,
 
@@ -54,20 +54,20 @@
 		constructor: function (configurationObject) {
 			this.callParent(arguments);
 
-			this.view = Ext.create('CMDBuild.view.management.common.tabs.email.attachments.picker.MainWindow', { delegate: this });
+			this.view = Ext.create('CMDBuild.view.management.common.tabs.email.attachments.picker.PickerWindow', { delegate: this });
 
 			if (!Ext.isEmpty(this.view))
 				this.view.show();
 		},
 
-		onTabEmailAttachmentPickerWindowCardGridStoreLoad: function () {
+		onTabEmailAttachmentPickerCardGridStoreLoad: function () {
 			this.view.attachmentGrid.getStore().removeAll();
 		},
 
 		/**
 		 * @param {Object} record
 		 */
-		onTabEmailAttachmentPickerWindowCardSelected: function (record) {
+		onTabEmailAttachmentPickerCardSelected: function (record) {
 			this.selectedCardSet({ value: record.getData() });
 
 			var params = {};
@@ -102,16 +102,16 @@
 			});
 		},
 
-		onTabEmailAttachmentPickerWindowClassSelected: function () {
+		onTabEmailAttachmentPickerClassSelected: function () {
 			this.view.cardGrid.updateStoreForClassId(this.view.classComboBox.getValue());
 		},
 
-		onTabEmailAttachmentPickerWindowAbortButtonClick: function () {
+		onTabEmailAttachmentPickerAbortButtonClick: function () {
 			this.view.destroy();
 		},
 
 		// TODO: waiting for refactor (rename)
-		onTabEmailAttachmentPickerWindowConfirmButtonClick: function () {
+		onTabEmailAttachmentPickerConfirmButtonClick: function () {
 			if (this.view.attachmentGrid.getSelectionModel().hasSelection()) {
 				Ext.Array.forEach(this.view.attachmentGrid.getSelectionModel().getSelection(), function (attachment, i, allAttachments) {
 					var params = {};
@@ -139,7 +139,7 @@
 				}, this);
 			}
 
-			this.onTabEmailAttachmentPickerWindowAbortButtonClick();
+			this.cmfg('onTabEmailAttachmentPickerAbortButtonClick');
 		},
 
 		// SelectedCard property methods
