@@ -17,8 +17,8 @@
 		this.newNodes = [];
 		this.newEdges = [];
 		this.compoundSavedNode = {
-			node: {},
-			edge: {}
+			node : {},
+			edge : {}
 		};
 		this.execute = function(callback, callbackScope) {
 			this.compoundNode = this.model.getNode(this.params.id);
@@ -61,9 +61,9 @@
 			for (var i = 0; i < this.newEdges.length; i++) {
 				var edge = this.newEdges[i];
 				this.model.removeEdge({
-					source: edge.data.source,
-					target: edge.data.target,
-					domainId: edge.data.domainId
+					source : edge.data.source,
+					target : edge.data.target,
+					domainId : edge.data.domainId
 				});
 			}
 			for (i = 0; i < this.newNodes.length; i++) {
@@ -74,13 +74,14 @@
 					.getNode(this.compoundSavedNode.node.id);
 			if (compoundNode.length === 0) {
 				this.model.pushElements({
-					nodes: [{
-						data: this.compoundSavedNode.node
-					}],
-					edges: [{
-						data: this.compoundSavedNode.edge
-					}]
-				}, function() {}, this);
+					nodes : [ {
+						data : this.compoundSavedNode.node
+					} ],
+					edges : [ {
+						data : this.compoundSavedNode.edge
+					} ]
+				}, function() {
+				}, this);
 			} else {
 				$.Cmdbuild.g3d.Model.setGraphData(compoundNode, "compoundData",
 						this.compoundSavedNode.node.compoundData);
@@ -91,39 +92,43 @@
 			var compoundData = $.Cmdbuild.g3d.Model.getGraphData(node,
 					"compoundData");
 			var data = {
-				classId: $.Cmdbuild.g3d.Model.getGraphData(node, "classId"),
-				id: node.id(),
-				label: $.Cmdbuild.g3d.Model.getGraphData(node, "label"),
-				color: "#ff0000",
-				faveShape: 'triangle',
-				position: {
-					x: Math.random() * 1000 - 500,
-					y: Math.random() * 600 - 300,
-					z: 200
+				classId : $.Cmdbuild.g3d.Model.getGraphData(node, "classId"),
+				id : node.id(),
+				label : $.Cmdbuild.g3d.Model.getGraphData(node, "label"),
+				color : "#ff0000",
+				faveShape : 'triangle',
+				position : {
+					x : Math.random() * 1000 - 500,
+					y : Math.random() * 600 - 300,
+					z : 200
 				},
-				domainId: $.Cmdbuild.g3d.Model.getGraphData(node, "domainId"),
-				compoundData: compoundData,
-				previousPathNode: $.Cmdbuild.g3d.Model.getGraphData(node,
-						"previousPathNode")
+				domainId : $.Cmdbuild.g3d.Model.getGraphData(node, "domainId"),
+				compoundData : compoundData,
+				previousPathNode : $.Cmdbuild.g3d.Model.getGraphData(node,
+						"previousPathNode"),
+				fromDomain : $.Cmdbuild.g3d.Model.getGraphData(node,
+						"fromDomain")
 			};
 			node = data;
 
 			data = {};
 			if (edge) {
 				data = {
-					source: edge.source().id(),
-					target: edge.target().id(),
-					label: $.Cmdbuild.g3d.Model.getGraphData(edge, "label"),
-					domainId: $.Cmdbuild.g3d.Model.getGraphData(edge, "domainId"),
-					relationId: $.Cmdbuild.g3d.Model.getGraphData(edge, "relationId"),
-					color: $.Cmdbuild.custom.configuration.edgeColor,
-					strength: 90
+					source : edge.source().id(),
+					target : edge.target().id(),
+					label : $.Cmdbuild.g3d.Model.getGraphData(edge, "label"),
+					domainId : $.Cmdbuild.g3d.Model.getGraphData(edge,
+							"domainId"),
+					relationId : $.Cmdbuild.g3d.Model.getGraphData(edge,
+							"relationId"),
+					color : $.Cmdbuild.custom.configuration.edgeColor,
+					strength : 90
 				};
 			}
 			edge = data;
 			this.compoundSavedNode = {
-				node: node,
-				edge: edge
+				node : node,
+				edge : edge
 			};
 		};
 		this.saveForUndo = function(elements) {
@@ -136,9 +141,9 @@
 			for (i = 0; i < elements.edges.length; i++) {
 				var edge = elements.edges[i];
 				if (this.model.getEdge({
-					source: edge.data.source,
-					target: edge.data.target,
-					domainId: edge.data.domainId
+					source : edge.data.source,
+					target : edge.data.target,
+					domainId : edge.data.domainId
 				}).length === 0) {
 					this.newEdges.push(edge);
 				}
