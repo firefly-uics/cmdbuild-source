@@ -1,0 +1,38 @@
+.cmdbuild-tree-no-icon { background-image: url("../images/transparentPixel.png") !important; }
+
+/* Class */
+	.cmdbuild-tree-superclass-icon { background-image: url("../images/icons/tree/superclass_collapsed.png") !important; }
+	.cmdbuild-tree-class-icon { background-image: url("../images/icons/tree/class.png") !important; }
+
+/* Custom page */
+	.cmdbuild-tree-custompage-icon { background-image: url("../images/icons/tree/customPage.png") !important; }
+
+/* Dashboard */
+	.cmdbuild-tree-dashboard-icon { background-image: url("../images/icons/tree/dashboard.png") !important; }
+
+/* Domain */
+	.cmdbuild-tree-domain-icon { background-image: url("../images/icons/tree/domain.png") !important; }
+
+/* Group */
+	.cmdbuild-tree-group-icon { background-image: url("../images/icons/tree/group.png") !important; }
+
+/* Localization */
+	.cmdbuild-tree-localization-icon { background-image: url("../images/icons/tree/world.png") !important; }
+
+/* Process */
+	.cmdbuild-tree-superprocessclass-icon { background-image: url("../images/icons/tree/superclassprocess_collapsed.png") !important; }
+	.cmdbuild-tree-processclass-icon { background-image: url("../images/icons/tree/process.png") !important; }
+
+/* Report */
+	.cmdbuild-tree-reportpdf-icon { background-image: url("../images/icons/fileFormats/pdf.png") !important; }
+	.cmdbuild-tree-reportcsv-icon { background-image: url("../images/icons/fileFormats/csv.png") !important; }
+	.cmdbuild-tree-reportodt-icon { background-image: url("../images/icons/fileFormats/odt.png") !important; }
+	.cmdbuild-tree-reportxml-icon { background-image: url("../images/icons/fileFormats/xml.png") !important; }
+
+/* Task */
+	.cmdbuild-tree-tasks-icon { background-image: url("../images/icons/tree/wrench.png") !important; }
+	.cmdbuild-tree-tasks-group-icon { background-image: url("../images/icons/tree/superclassprocess_collapsed.png") !important; }
+
+/* User */
+	.cmdbuild-tree-user-icon { background-image: url("../images/icons/tree/user.png") !important; }
+	.cmdbuild-tree-user-group-icon { background-image: url("../images/icons/tree/folder_user.png") !important; }

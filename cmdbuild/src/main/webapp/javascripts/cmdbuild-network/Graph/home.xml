@@ -1,0 +1,223 @@
+<DATA>
+	<params>
+		<type>div</type>
+	</params>
+	<div class="cmdbuild-grid-col cmdbuild-grid-span_8">
+		<canvas3d id="myFirstCanvas" class="canvas"/>
+	</div>
+	<div class="cmdbuild-grid-col cmdbuild-grid-span_4">
+		<div id="cmdbuildMainForm" class="cmdbuildMainColumnWrapper mainContainer border-box">
+			<!-- HEADER -->
+			<div id="buttonsPanelContainer" class="ui-state-default ui-corner-all allWidth headerToolbar mainContainerHeader border-box">
+				<div class="leftToolbarButtons">
+					<div class="toolbarButton border-box">
+						<span class="undo" tooltip="Undo the last operation">
+							<onClick>
+								<command>undo</command>
+							</onClick>
+						</span>
+					</div>
+					<div class="toolbarButton border-box">
+						<span class="layout" tooltip="Apply the current layout">
+							<onClick>
+								<command>doLayout</command>
+							</onClick>
+						</span>
+					</div>
+					<div class="toolbarButton border-box">
+						<span class="stop" tooltip="Stop the current operation when possible">
+							<onClick>
+								<command>stopCommands</command>
+							</onClick>
+						</span>
+					</div>
+					<div class="toolbarSeparator"></div>
+					<div class="toolbarButton border-box">
+						<span class="centerOnViewer" tooltip="Center the image">
+							<onClick>
+								<command>centerOnViewer</command>
+							</onClick>
+						</span>
+					</div>
+					<div class="toolbarButton border-box">
+						<span class="centerOnSelection" tooltip="Center the layout on selection">
+							<onClick>
+								<command>zoomOn</command>
+								<node>$selectedForm.id</node>
+							</onClick>
+						</span>
+					</div>
+					<div class="toolbarSeparator"></div>
+				</div>
+				<div class="rightToolbarButtons">
+					<div class="toolbarSeparator"></div>
+					<div class="toolbarButton border-box">
+						<span class="selectAll" tooltip="Select all nodes">
+							<onClick>
+								<command>selectAll</command>
+							</onClick>
+						</span>
+					</div>
+					<div class="toolbarButton border-box">
+						<span class="deleteSelected" tooltip="Delete selected nodes">
+							<onClick>
+								<command>deleteSelection</command>
+								<selected>true</selected>
+							</onClick>
+						</span>
+					</div>
+					<div class="toolbarButton border-box">
+						<span class="deleteUnselected" tooltip="Delete unselected nodes">
+							<onClick>
+								<command>deleteSelection</command>
+								<selected>false</selected>
+							</onClick>
+						</span>
+					</div>
+					<div class="toolbarButton border-box">
+						<span class="openSelected" tooltip="Open selected nodes">
+							<onClick>
+								<command>openSelection</command>
+							</onClick>
+						</span>
+					</div>
+					<div class="toolbarSeparator"></div>
+					<div class="toolbarButton border-box">
+						<span class="navigateOnNode" tooltip="Reopen the graph from this node">
+							<onClick>
+								<command>navigateOnNode</command>
+							</onClick>
+						</span>
+					</div>
+					<div class="toolbarButton border-box">
+						<span class="subGraph" tooltip="Select the sub graph that contains the selected elements">
+							<onClick>
+								<command>connect</command>
+							</onClick>
+						</span>
+					</div>
+					<div class="toolbarButton border-box">
+						<navigationTreesBtnMenu class="subGraph" id="navigationTreeCombo">
+							<params>
+								<tooltip>Choose navigation tree</tooltip>
+							</params>
+						</navigationTreesBtnMenu>
+					</div>
+				</div>
+			</div>
+			<!-- BODY -->
+			<div id="commandPanelContainer" class="mainContainerBody border-box">
+				<onInit>
+					<command>navigate</command>
+					<container>commandPanelContainer</container>
+					<form>commandPanelMain</form>
+				</onInit>
+				<form id="commandPanelMain">
+		 			<params>
+						<type>tabbed</type>
+					</params>
+					<form title="Card" id="detail" include="detail.xml" class="commandPanelWindow cmdbuildTabbedForm"/>
+					<form title="Card list" id="cardList" include="cardList.xml" class="commandPanelWindow cmdbuildTabbedForm"/>
+					<form title="Classes" id="classesGrid" include="classes.xml" class="commandPanelWindow cmdbuildTabbedForm"/>
+				</form>
+			</div>
+			<!-- FOOTER -->
+			<div class="mainContainerFooter border-box">
+				<div id="statusPanelContainer" class="ui-widget">
+					<counter id="nodesCounter" text="Nodes:">
+			 			<params>
+							<type>nodes</type>
+						</params>
+					</counter>
+					<counter id="edgesCounter"  text="Edges:">
+			 			<params>
+							<type>edges</type>
+						</params>
+					</counter>
+					<counter id="selectedCounter"  text="Selected:">
+			 			<params>
+							<type>selected</type>
+						</params>
+					</counter>
+					<display id="treeDisplay" text="Tree:">
+					</display>
+				</div>
+				<div id="optionsPanelContainer" 
+					class="cmdbuildGridFilterContainer ui-state-default ui-corner-all allWidth">
+					<div class="toolbarButton footerToolbar border-box">
+						<span class="properties" tooltip="Open the properties panel">
+							<onClick>
+								<command>navigate</command>
+								<form>options</form>
+								<dialog>commandPanelDialog</dialog>
+							</onClick>
+						</span>
+					</div>
+					<div class="toolbarButton footerToolbar border-box">
+						<span class="filter" tooltip="Open the filter panel">
+							<onClick>
+								<command>navigate</command>
+								<form>filter</form>
+								<dialog>commandPanelDialog</dialog>
+							</onClick>
+						</span>
+					</div>
+					<div class="toolbarButton footerToolbar border-box">
+						<toggleTooltips>
+							<params>
+								<tooltip>Enable/disable tooltips on graph</tooltip>
+							</params>
+						</toggleTooltips>
+					</div>
+					<div class="toolbarSeparator"></div>
+					<div class="footerToolbarItem">
+						<spinner label="Levels" id="explosionLevels" class="optionsSpinner">
+							<params>
+								<backend>Options</backend>
+								<type>explosionLevels</type>
+								<value>1</value>
+								<min>1</min>
+								<max>10</max>
+							</params>
+							<onChange>
+								<command>boolean</command>
+								<type>explosionLevels</type>
+							</onChange>
+						</spinner>
+					</div>
+					<div class="toolbarSeparator"></div>
+					<div class="footerToolbarItem buttonset">
+						<buttonset label="Labels" id="displayLabel" class="labelsMultistate">
+							<params>
+								<none>No</none>
+								<selected>Selected</selected>
+								<all>All</all>
+							</params>
+							<onChange>
+								<command>boolean</command>
+								<type>displayLabel</type>
+							</onChange>
+						</buttonset>
+					</div>
+					<div class="toolbarSeparator"></div>
+					<div class="footerToolbarItem">
+						<div class="openLevelsSliderContainer">
+							<slider label="" id="openLevelsSlider" class=""></slider>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<form title="Command panel" id="commandPanel" include="commandPanel.xml" class="cmdbuildTabbedForm"/>
+	</div>
+	
+	<div>
+		<onInit>
+			<command>homepageready</command>
+		</onInit>
+	</div>
+	
+	<form title="Options" id="options" include="options.xml" invisible="true" class="commandPanelWindow cmdbuildTabbedForm"/> 
+	<form title="Filter" id="filter" include="filter.xml" invisible="true" class="commandPanelWindow cmdbuildTabbedForm"/> 
+	<dialog id="commandPanelDialog"></dialog>
+</DATA>	
