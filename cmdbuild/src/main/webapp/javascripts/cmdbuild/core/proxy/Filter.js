@@ -42,7 +42,7 @@
 		 * @param {Object} parameters
 		 */
 		readAll: function(parameters) {
-			CMDBuild.Ajax.request({
+			CMDBuild.core.interfaces.Ajax.request({
 				url: CMDBuild.core.proxy.CMProxyUrlIndex.filter.groupStore,
 				params: parameters.params,
 				loadMask: Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : true,

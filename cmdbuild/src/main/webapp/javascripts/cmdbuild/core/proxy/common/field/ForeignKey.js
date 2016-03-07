@@ -1,4 +1,4 @@
-(function() {
+(function () {
 
 	Ext.define('CMDBuild.core.proxy.common.field.ForeignKey', {
 
@@ -15,8 +15,8 @@
 		 *
 		 * @return {Ext.data.Store}
 		 */
-		getStore: function(parameters) {
-			return Ext.create('Ext.data.Store', {
+		getStore: function (parameters) {
+			return CMDBuild.global.Cache.requestAsStore(CMDBuild.core.constants.Proxy.LOOKUP, {
 				autoLoad: true,
 				model: 'CMDBuild.model.common.attributes.ForeignKeyStore',
 				pageSize: CMDBuild.configuration.instance.get(CMDBuild.core.constants.Proxy.REFERENCE_COMBO_STORE_LIMIT),
@@ -25,8 +25,8 @@
 					url: CMDBuild.core.proxy.Index.card.getListShort,
 					reader: {
 						type: 'json',
-						root: 'rows',
-						totalProperty: 'results'
+						root: CMDBuild.core.constants.Proxy.ROWS,
+						totalProperty: CMDBuild.core.constants.Proxy.RESULTS
 					},
 					extraParams: parameters.extraParams
 				},
@@ -39,16 +39,12 @@
 		/**
 		 * @property {Object} parameters
 		 */
-		readCard: function(parameters) {
-			CMDBuild.Ajax.request({
-				url: CMDBuild.core.proxy.CMProxyUrlIndex.card.read,
-				params: parameters.params,
-				scope: parameters.scope || this,
-				loadMask: parameters.loadMask || true,
-				failure: parameters.failure || Ext.emptyFn,
-				success: parameters.success || Ext.emptyFn,
-				callback: parameters.callback || Ext.emptyFn
-			});
+		readCard: function (parameters) {
+			parameters = Ext.isEmpty(parameters) ? {} : parameters;
+
+			Ext.apply(parameters, { url: CMDBuild.core.proxy.CMProxyUrlIndex.card.read });
+
+			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.LOOKUP, parameters);
 		}
 	});
 
