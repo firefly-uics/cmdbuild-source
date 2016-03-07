@@ -24,14 +24,16 @@
 		cmAdvancedFilter: false,
 
 		border: false,
+		cls: 'cmdb-border-bottom',
+		frame: false,
 
 		listeners: {
 			load: function (store, records, successful, eOpts) {
-				this.delegate.cmfg('onTabEmailAttachmentPickerWindowCardGridStoreLoad', records);
+				this.delegate.cmfg('onTabEmailAttachmentPickerCardGridStoreLoad', records);
 			},
 
 			select: function (selectionModel, record, index, eOpts) {
-				this.delegate.cmfg('onTabEmailAttachmentPickerWindowCardSelected', record);
+				this.delegate.cmfg('onTabEmailAttachmentPickerCardSelected', record);
 			}
 		}
 	});
