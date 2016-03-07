@@ -36,7 +36,7 @@
 		$.Cmdbuild.customvariables.options.baseLevel = $.Cmdbuild.custom.configuration.baseLevel;
 	};
 	$.Cmdbuild.g3d.Options.initFields = function() {
-		$("#explosionLevels").spinner("value",
+		$("#baseLevel").spinner("value",
 				$.Cmdbuild.customvariables.options.baseLevel);
 
 	};
