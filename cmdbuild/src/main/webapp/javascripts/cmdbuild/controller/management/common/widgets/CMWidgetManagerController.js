@@ -148,8 +148,7 @@
 			for (var wcId in this.controllers) {
 				var wc = this.controllers[wcId];
 				wc.destroy();
-				// FIXME: fixes LinkCard's CardWindow bug that erase controllers object and avoid widget work after window creation (Uncomment on LinkCard refactor)
-				// delete this.controllers[wcId];
+				delete this.controllers[wcId];
 				delete wc;
 			}
 		},
