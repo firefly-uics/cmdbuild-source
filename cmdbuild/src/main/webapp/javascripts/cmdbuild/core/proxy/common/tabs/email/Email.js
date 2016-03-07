@@ -3,7 +3,6 @@
 	Ext.define('CMDBuild.core.proxy.common.tabs.email.Email', {
 
 		requires: [
-			'CMDBuild.core.interfaces.Ajax',
 			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.proxy.Index',
 			'CMDBuild.model.common.tabs.email.Email'
@@ -15,23 +14,21 @@
 		 * @param {Object} parameters
 		 */
 		create: function (parameters) {
-			CMDBuild.core.interfaces.Ajax.request({
-				method: 'POST',
-				url: CMDBuild.core.proxy.Index.email.post,
-				params: parameters.params,
-				scope: parameters.scope || this,
-				loadMask: Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : false,
-				failure: parameters.failure || Ext.emptyFn,
-				success: parameters.success || Ext.emptyFn,
-				callback: parameters.callback || Ext.emptyFn
+			parameters = Ext.isEmpty(parameters) ? {} : parameters;
+
+			Ext.apply(parameters, {
+				loadMask: false,
+				url: CMDBuild.core.proxy.Index.email.post
 			});
+
+			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.EMAIL, parameters, true);
 		},
 
 		/**
-		 * @return {Ext.data.Store}
+		 * @returns {Ext.data.Store or CMDBuild.core.cache.Store}
 		 */
 		getStore: function () {
-			return Ext.create('Ext.data.Store', {
+			return CMDBuild.global.Cache.requestAsStore(CMDBuild.core.constants.Proxy.EMAIL, {
 				autoLoad: false,
 				model: 'CMDBuild.model.common.tabs.email.Email',
 				proxy: {
@@ -59,48 +56,42 @@
 		 * @param {Object} parameters
 		 */
 		isEmailEnabledForCard: function (parameters) {
-			CMDBuild.core.interfaces.Ajax.request({
-				method: 'POST',
-				url: CMDBuild.core.proxy.Index.email.enabled,
-				params: parameters.params,
-				scope: parameters.scope || this,
-				loadMask: Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : false,
-				failure: parameters.failure || Ext.emptyFn,
-				success: parameters.success || Ext.emptyFn,
-				callback: parameters.callback || Ext.emptyFn
+			parameters = Ext.isEmpty(parameters) ? {} : parameters;
+
+			Ext.apply(parameters, {
+				loadMask: false,
+				url: CMDBuild.core.proxy.Index.email.enabled
 			});
+
+			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.UNCACHED, parameters);
 		},
 
 		/**
 		 * @param {Object} parameters
 		 */
 		remove: function (parameters) {
-			CMDBuild.core.interfaces.Ajax.request({
-				method: 'POST',
-				url: CMDBuild.core.proxy.Index.email.remove,
-				params: parameters.params,
-				scope: parameters.scope || this,
-				loadMask: Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : false,
-				failure: parameters.failure || Ext.emptyFn,
-				success: parameters.success || Ext.emptyFn,
-				callback: parameters.callback || Ext.emptyFn
+			parameters = Ext.isEmpty(parameters) ? {} : parameters;
+
+			Ext.apply(parameters, {
+				loadMask: false,
+				url: CMDBuild.core.proxy.Index.email.remove
 			});
+
+			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.EMAIL, parameters, true);
 		},
 
 		/**
 		 * @param {Object} parameters
 		 */
 		update: function (parameters) {
-			CMDBuild.core.interfaces.Ajax.request({
-				method: 'POST',
-				url: CMDBuild.core.proxy.Index.email.put,
-				params: parameters.params,
-				scope: parameters.scope || this,
-				loadMask: Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : false,
-				failure: parameters.failure || Ext.emptyFn,
-				success: parameters.success || Ext.emptyFn,
-				callback: parameters.callback || Ext.emptyFn
+			parameters = Ext.isEmpty(parameters) ? {} : parameters;
+
+			Ext.apply(parameters, {
+				loadMask: false,
+				url: CMDBuild.core.proxy.Index.email.put
 			});
+
+			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.EMAIL, parameters, true);
 		}
 	});
 

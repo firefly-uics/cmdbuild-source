@@ -417,28 +417,37 @@
 			return s;
 		},
 
-		//protected
+		/**
+		 * @param {Array} fields
+		 * @param {Number} pageSize
+		 *
+		 * @returns {Ext.data.Store or CMDBuild.core.cache.Store}
+		 *
+		 * @private
+		 *
+		 * TODO: waiting for refactor (build grid proxy)
+		 */
 		buildStore: function(fields, pageSize) {
-			fields.push({name: "Id", type: "int"});
-			fields.push({name: "IdClass", type: "int"});
+			fields.push({name: 'Id', type: 'int'});
+			fields.push({name: 'IdClass', type: 'int'});
 			fields.push(this.CLASS_COLUMN_DATA_INDEX);
 
-			return new Ext.data.Store({
+			return CMDBuild.global.Cache.requestAsStore(CMDBuild.core.constants.Proxy.UNCACHED, {
+				autoLoad: false,
 				fields: fields,
 				pageSize: pageSize,
 				remoteSort: true,
 				proxy: {
-					type: "ajax",
+					type: 'ajax',
 					url: this.cmStoreUrl,
 					reader: {
-						root: "rows",
-						type: "json",
-						totalProperty: "results",
-						idProperty: "Id"
+						type: 'json',
+						root: 'rows',
+						totalProperty: 'results',
+						idProperty: 'Id'
 					},
 					extraParams: this.getStoreExtraParams()
-				},
-				autoLoad: false
+				}
 			});
 		},
 

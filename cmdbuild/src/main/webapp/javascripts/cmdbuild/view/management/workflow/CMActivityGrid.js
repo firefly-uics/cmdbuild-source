@@ -67,24 +67,34 @@
 			return ep;
 		},
 
-		// override
+		/**
+		 * @param {Array} fields
+		 * @param {Number} pageSize
+		 *
+		 * @returns {Ext.data.Store or CMDBuild.core.cache.Store}
+		 *
+		 * @override
+		 * @private
+		 *
+		 * TODO: waiting for refactor (build grid proxy)
+		 */
 		buildStore: function(fields, pageSize) {
-			return new Ext.data.Store({
+			return CMDBuild.global.Cache.requestAsStore(CMDBuild.core.constants.Proxy.UNCACHED, {
+				autoLoad: false,
 				model: CMDBuild.model.CMProcessInstance,
 				pageSize: pageSize,
 				remoteSort: true,
 				proxy: {
-					type: "ajax",
+					type: 'ajax',
 					url: this.cmStoreUrl,
 					reader: {
-						type: "json",
-						root: "response.rows",
-						totalProperty: "response.results",
-						idProperty: "id"
+						type: 'json',
+						root: 'response.rows',
+						totalProperty: 'response.results',
+						idProperty: 'id'
 					},
 					extraParams: this.getStoreExtraParams()
-				},
-				autoLoad: false
+				}
 			});
 		},
 
