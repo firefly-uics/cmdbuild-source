@@ -488,6 +488,7 @@
 		SECTION: 'section',
 		SECTION_HIERARCHY: 'sectionHierarchy',
 		SECTION_ID: 'sectionId',
+		SELECTABLE: 'selectable',
 		SELECTED: 'selected',
 		SENDER_ACCOUNT: 'senderAccount',
 		SENT: 'sent',

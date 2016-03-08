@@ -91,7 +91,7 @@
 			}
 
 			out.folderType = folderType;
-			out.iconCls = 'cmdbuild-tree-' + (superclass ? 'super' : '') + type +'-icon';
+			out.iconCls = 'cmdb-tree-' + (superclass ? 'super' : '') + type +'-icon';
 			out.index = nodeObject.index;
 			out.referencedClassName = nodeObject.referencedClassName;
 			out.referencedElementId = nodeObject.referencedElementId;
@@ -201,7 +201,6 @@
 					text: folderName,
 					type: 'folder',
 					folderType: 'folder',
-					iconCls: 'cmdbuild-tree-folder-icon',
 					leaf: false
 				});
 

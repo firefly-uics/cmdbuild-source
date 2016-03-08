@@ -1,4 +1,4 @@
-(function() {
+(function () {
 
 	/**
 	 * Configuration
@@ -13,8 +13,8 @@
 		appFolder: './javascripts/cmdbuild',
 		name: 'CMDBuild',
 
-		launch: function() {
-			Ext.WindowManager.getNextZSeed();	// To increase the default zseed. Is needed for the combo on windows probably it fix also the prev problem
+		launch: function () {
+			Ext.WindowManager.getNextZSeed(); // To increase the default zseed. Is needed for the combo on windows probably it fix also the prev problem
 			Ext.enableFx = false;
 			Ext.tip.QuickTipManager.init();
 

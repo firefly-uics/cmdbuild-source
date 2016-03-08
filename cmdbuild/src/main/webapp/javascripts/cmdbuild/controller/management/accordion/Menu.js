@@ -146,13 +146,15 @@
 
 						if (!Ext.isEmpty(entryType)) {
 							nodeStructure['cmName'] = menuNodeObject[CMDBuild.core.constants.Proxy.TYPE];
-							nodeStructure['iconCls'] = 'cmdbuild-tree-' + (entryType.isSuperClass() ? 'super' : '') + menuNodeObject[CMDBuild.core.constants.Proxy.TYPE] +'-icon';
+							nodeStructure['iconCls'] = 'cmdb-tree-' + (entryType.isSuperClass() ? 'super' : '') + 'class-icon';
 							nodeStructure[CMDBuild.core.constants.Proxy.ENTITY_ID] = entryType.getId();
 							nodeStructure[CMDBuild.core.constants.Proxy.FILTER] = menuNodeObject[CMDBuild.core.constants.Proxy.FILTER];
-							nodeStructure[CMDBuild.core.constants.Proxy.ID] = this.cmfg('accordionBuildId', {
-								name: menuNodeObject[CMDBuild.core.constants.Proxy.TYPE],
-								components: [entryType.getId(), menuNodeObject[CMDBuild.core.constants.Proxy.INDEX]]
-							});
+							nodeStructure[CMDBuild.core.constants.Proxy.ID] = this.cmfg('accordionBuildId', [
+								menuNodeObject[CMDBuild.core.constants.Proxy.TYPE],
+								entryType.getId(),
+								menuNodeObject[CMDBuild.core.constants.Proxy.INDEX],
+								menuNodeObject['uuid']
+							]);
 							nodeStructure[CMDBuild.core.constants.Proxy.NAME] = menuNodeObject[CMDBuild.core.constants.Proxy.REFERENCED_CLASS_NAME];
 						}
 					} break;
@@ -166,32 +168,30 @@
 						}, this);
 
 						nodeStructure['cmName'] = menuNodeObject[CMDBuild.core.constants.Proxy.TYPE];
-						nodeStructure['iconCls'] = 'cmdbuild-tree-custompage-icon';
-						nodeStructure[CMDBuild.core.constants.Proxy.ID] = this.cmfg('accordionBuildId', {
-							name: menuNodeObject[CMDBuild.core.constants.Proxy.TYPE],
-							components: menuNodeObject[CMDBuild.core.constants.Proxy.INDEX]
-						});
+						nodeStructure['iconCls'] = 'cmdb-tree-custompage-icon';
+						nodeStructure[CMDBuild.core.constants.Proxy.ID] = this.cmfg('accordionBuildId', [
+							menuNodeObject[CMDBuild.core.constants.Proxy.TYPE],
+							menuNodeObject[CMDBuild.core.constants.Proxy.INDEX],
+							menuNodeObject['uuid']
+						]);
 						nodeStructure[CMDBuild.core.constants.Proxy.NAME] = customPageDataObject[CMDBuild.core.constants.Proxy.NAME];
 					} break;
 
 					case 'dashboard': {
 						nodeStructure['cmName'] = 'dashboard';
-						nodeStructure['iconCls'] = 'cmdbuild-tree-dashboard-icon';
+						nodeStructure['iconCls'] = 'cmdb-tree-dashboard-icon';
 						nodeStructure[CMDBuild.core.constants.Proxy.ENTITY_ID] = menuNodeObject[CMDBuild.core.constants.Proxy.REFERENCED_ELEMENT_ID];
-						nodeStructure[CMDBuild.core.constants.Proxy.ID] = this.cmfg('accordionBuildId', {
-							name: menuNodeObject[CMDBuild.core.constants.Proxy.TYPE],
-							components: [
-								menuNodeObject[CMDBuild.core.constants.Proxy.REFERENCED_ELEMENT_ID],
-								menuNodeObject[CMDBuild.core.constants.Proxy.INDEX]
-							]
-						});
+						nodeStructure[CMDBuild.core.constants.Proxy.ID] = this.cmfg('accordionBuildId', [
+							menuNodeObject[CMDBuild.core.constants.Proxy.TYPE],
+							menuNodeObject[CMDBuild.core.constants.Proxy.REFERENCED_ELEMENT_ID],
+							menuNodeObject[CMDBuild.core.constants.Proxy.INDEX],
+							menuNodeObject['uuid']
+						]);
 					} break;
 
 					case 'folder': {
 						nodeStructure['cmName'] = 'folder';
-						nodeStructure[CMDBuild.core.constants.Proxy.ENTITY_ID] = menuNodeObject[CMDBuild.core.constants.Proxy.REFERENCED_CLASS_NAME];
-						nodeStructure[CMDBuild.core.constants.Proxy.ID] = undefined; // Avoids node selection
-						nodeStructure[CMDBuild.core.constants.Proxy.NAME] = menuNodeObject[CMDBuild.core.constants.Proxy.REFERENCED_CLASS_NAME];
+						nodeStructure[CMDBuild.core.constants.Proxy.SELECTABLE] = false;
 						nodeStructure[CMDBuild.core.constants.Proxy.LEAF] = false;
 					} break;
 
@@ -200,45 +200,40 @@
 
 						if (!Ext.isEmpty(entryType)) {
 							nodeStructure['cmName'] = CMDBuild.core.constants.ModuleIdentifiers.getWorkflow();
-							nodeStructure['iconCls'] = 'cmdbuild-tree-' + (entryType.isSuperClass() ? 'super' : '') + menuNodeObject[CMDBuild.core.constants.Proxy.TYPE] +'-icon';
+							nodeStructure['iconCls'] = 'cmdb-tree-' + (entryType.isSuperClass() ? 'super' : '') + 'processclass-icon';
 							nodeStructure[CMDBuild.core.constants.Proxy.ENTITY_ID] = entryType.getId();
 							nodeStructure[CMDBuild.core.constants.Proxy.FILTER] = menuNodeObject[CMDBuild.core.constants.Proxy.FILTER];
-							nodeStructure[CMDBuild.core.constants.Proxy.ID] = this.cmfg('accordionBuildId', {
-								name: menuNodeObject[CMDBuild.core.constants.Proxy.TYPE],
-								components: [
-									entryType.getId(),
-									menuNodeObject[CMDBuild.core.constants.Proxy.INDEX]
-								]
-							});
+							nodeStructure[CMDBuild.core.constants.Proxy.ID] = this.cmfg('accordionBuildId', [
+								menuNodeObject[CMDBuild.core.constants.Proxy.TYPE],
+								entryType.getId(),
+								menuNodeObject[CMDBuild.core.constants.Proxy.INDEX],
+								menuNodeObject['uuid']
+							]);
 							nodeStructure[CMDBuild.core.constants.Proxy.NAME] = menuNodeObject[CMDBuild.core.constants.Proxy.REFERENCED_CLASS_NAME];
 						}
 					} break;
 
 					case 'reportcsv': {
 						nodeStructure['cmName'] = 'singlereport';
-						nodeStructure['iconCls'] = 'cmdbuild-tree-reportcsv-icon';
+						nodeStructure['iconCls'] = 'cmdb-tree-reportcsv-icon';
 						nodeStructure[CMDBuild.core.constants.Proxy.ENTITY_ID] = menuNodeObject[CMDBuild.core.constants.Proxy.REFERENCED_ELEMENT_ID];
-						nodeStructure[CMDBuild.core.constants.Proxy.ID] = this.cmfg('accordionBuildId', {
-							name: 'singlereport',
-							components: [
-								menuNodeObject[CMDBuild.core.constants.Proxy.REFERENCED_ELEMENT_ID],
-								menuNodeObject[CMDBuild.core.constants.Proxy.INDEX]
-							]
-						});
+						nodeStructure[CMDBuild.core.constants.Proxy.ID] = this.cmfg('accordionBuildId', [
+							'singlereport',
+							menuNodeObject[CMDBuild.core.constants.Proxy.REFERENCED_ELEMENT_ID],
+							menuNodeObject[CMDBuild.core.constants.Proxy.INDEX]
+						]);
 						nodeStructure[CMDBuild.core.constants.Proxy.SECTION_HIERARCHY] = [CMDBuild.core.constants.Proxy.CSV];
 					} break;
 
 					case 'reportpdf': {
 						nodeStructure['cmName'] = 'singlereport';
-						nodeStructure['iconCls'] = 'cmdbuild-tree-reportpdf-icon';
+						nodeStructure['iconCls'] = 'cmdb-tree-reportpdf-icon';
 						nodeStructure[CMDBuild.core.constants.Proxy.ENTITY_ID] = menuNodeObject[CMDBuild.core.constants.Proxy.REFERENCED_ELEMENT_ID];
-						nodeStructure[CMDBuild.core.constants.Proxy.ID] = this.cmfg('accordionBuildId', {
-							name: 'singlereport',
-							components: [
-								menuNodeObject[CMDBuild.core.constants.Proxy.REFERENCED_ELEMENT_ID],
-								menuNodeObject[CMDBuild.core.constants.Proxy.INDEX]
-							]
-						});
+						nodeStructure[CMDBuild.core.constants.Proxy.ID] = this.cmfg('accordionBuildId', [
+							'singlereport',
+							menuNodeObject[CMDBuild.core.constants.Proxy.REFERENCED_ELEMENT_ID],
+							menuNodeObject[CMDBuild.core.constants.Proxy.INDEX]
+						]);
 						nodeStructure[CMDBuild.core.constants.Proxy.SECTION_HIERARCHY] = [CMDBuild.core.constants.Proxy.PDF];
 					} break;
 
@@ -252,13 +247,12 @@
 								if (!Ext.isEmpty(entryType)) {
 									nodeStructure['cmName'] = 'class';
 									nodeStructure[CMDBuild.core.constants.Proxy.ENTITY_ID] = entryType.getId();
-									nodeStructure[CMDBuild.core.constants.Proxy.ID] = this.cmfg('accordionBuildId', {
-										name: 'dataview-filter',
-										components: [
-											entryType.getId(),
-											menuNodeObject[CMDBuild.core.constants.Proxy.INDEX]
-										]
-									});
+									nodeStructure[CMDBuild.core.constants.Proxy.ID] = this.cmfg('accordionBuildId', [
+										'dataview-filter',
+										entryType.getId(),
+										menuNodeObject[CMDBuild.core.constants.Proxy.INDEX],
+										menuNodeObject['uuid']
+									]);
 									nodeStructure[CMDBuild.core.constants.Proxy.SECTION_HIERARCHY] = ['filter'];
 									nodeStructure[CMDBuild.core.constants.Proxy.FILTER] = menuNodeObject[CMDBuild.core.constants.Proxy.SPECIFIC_TYPE_VALUES][CMDBuild.core.constants.Proxy.FILTER];
 								}
@@ -266,10 +260,11 @@
 
 							case 'SQL': { // TODO: check if fill with SQL or do something else
 								nodeStructure['cmName'] = CMDBuild.core.constants.ModuleIdentifiers.getDataView();
-								nodeStructure[CMDBuild.core.constants.Proxy.ID] = this.cmfg('accordionBuildId', {
-									name: 'dataview-sql',
-									components: menuNodeObject[CMDBuild.core.constants.Proxy.INDEX]
-								});
+								nodeStructure[CMDBuild.core.constants.Proxy.ID] = this.cmfg('accordionBuildId', [
+									'dataview-sql',
+									menuNodeObject[CMDBuild.core.constants.Proxy.INDEX],
+									menuNodeObject['uuid']
+								]);
 								nodeStructure[CMDBuild.core.constants.Proxy.SECTION_HIERARCHY] = ['sql'];
 								nodeStructure[CMDBuild.core.constants.Proxy.SOURCE_FUNCTION] = menuNodeObject[CMDBuild.core.constants.Proxy.SPECIFIC_TYPE_VALUES][CMDBuild.core.constants.Proxy.SOURCE_FUNCTION];
 							} break;

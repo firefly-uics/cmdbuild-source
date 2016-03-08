@@ -196,7 +196,7 @@
 											switch(entityObject[CMDBuild.core.constants.Proxy.TYPE]) {
 												case CMDBuild.core.constants.Global.getTableTypeProcessClass(): { // Process node object
 													var processNodeObject = {};
-													processNodeObject['iconCls'] = 'cmdbuild-tree-processclass-icon';
+													processNodeObject['iconCls'] = 'cmdb-tree-processclass-icon';
 													processNodeObject[CMDBuild.core.constants.Proxy.DESCRIPTION] = entityObject[CMDBuild.core.constants.Proxy.TEXT];
 													processNodeObject[CMDBuild.core.constants.Proxy.ID] = entityObject[CMDBuild.core.constants.Proxy.ID];
 													processNodeObject[CMDBuild.core.constants.Proxy.LEAF] = true;
@@ -214,7 +214,7 @@
 												case CMDBuild.core.constants.Global.getTableTypeClass():
 												default: { // Class node object
 													var classNodeObject = {};
-													classNodeObject['iconCls'] = entityObject['superclass'] ? 'cmdbuild-tree-superclass-icon' : 'cmdbuild-tree-class-icon';
+													classNodeObject['iconCls'] = entityObject['superclass'] ? 'cmdb-tree-superclass-icon' : 'cmdb-tree-class-icon';
 													classNodeObject[CMDBuild.core.constants.Proxy.DESCRIPTION] = entityObject[CMDBuild.core.constants.Proxy.TEXT];
 													classNodeObject[CMDBuild.core.constants.Proxy.ID] = entityObject[CMDBuild.core.constants.Proxy.ID];
 													classNodeObject[CMDBuild.core.constants.Proxy.LEAF] = true;

@@ -1,4 +1,4 @@
-(function() {
+(function () {
 
 	Ext.define('CMDBuild.controller.administration.accordion.UserAndGroup', {
 		extend: 'CMDBuild.controller.common.abstract.Accordion',
@@ -57,11 +57,11 @@
 						Ext.Array.forEach(decodedResult, function (groupObject, i, allGroupObjects) {
 							var nodeObject = {};
 							nodeObject['cmName'] = this.cmfg('accordionIdentifierGet');
-							nodeObject['iconCls'] = 'cmdbuild-tree-group-icon';
+							nodeObject['iconCls'] = 'cmdb-tree-group-icon';
 							nodeObject[CMDBuild.core.constants.Proxy.TEXT] = groupObject[CMDBuild.core.constants.Proxy.DESCRIPTION];
 							nodeObject[CMDBuild.core.constants.Proxy.DESCRIPTION] = groupObject[CMDBuild.core.constants.Proxy.DESCRIPTION];
 							nodeObject[CMDBuild.core.constants.Proxy.ENTITY_ID] = groupObject[CMDBuild.core.constants.Proxy.ID];
-							nodeObject[CMDBuild.core.constants.Proxy.ID] = this.cmfg('accordionBuildId', { components: groupObject[CMDBuild.core.constants.Proxy.ID] });
+							nodeObject[CMDBuild.core.constants.Proxy.ID] = this.cmfg('accordionBuildId', groupObject[CMDBuild.core.constants.Proxy.ID]);
 							nodeObject[CMDBuild.core.constants.Proxy.SECTION_HIERARCHY] = ['group'];
 							nodeObject[CMDBuild.core.constants.Proxy.LEAF] = true;
 
@@ -71,20 +71,20 @@
 						this.view.getStore().getRootNode().appendChild([
 							{
 								cmName: this.cmfg('accordionIdentifierGet'),
-								iconCls: 'cmdbuild-tree-user-group-icon',
+								iconCls: 'cmdb-tree-userGroup-icon',
 								text: CMDBuild.Translation.groups,
 								description: CMDBuild.Translation.groups,
-								id: undefined, // Disable node selection
+								selectable: false,
 								leaf: false,
 
 								children: nodes
 							},
 							{
 								cmName: this.cmfg('accordionIdentifierGet'),
-								iconCls: 'cmdbuild-tree-user-icon',
+								iconCls: 'cmdb-tree-user-icon',
 								text: CMDBuild.Translation.users,
 								description: CMDBuild.Translation.users,
-								id: this.cmfg('accordionBuildId', { components: 'user' }),
+								id: this.cmfg('accordionBuildId', 'user'),
 								sectionHierarchy: ['user'],
 								leaf: true
 							}

@@ -1,4 +1,4 @@
-(function() {
+(function () {
 
 	Ext.define('CMDBuild.controller.administration.accordion.Configuration', {
 		extend: 'CMDBuild.controller.common.abstract.Accordion',
@@ -39,9 +39,10 @@
 		accordionUpdateStore: function (nodeIdToSelect) {
 			var nodes = [{
 				cmName: this.cmfg('accordionIdentifierGet'),
+				iconCls: 'cmdb-tree-configuration-icon',
 				text: CMDBuild.Translation.generalOptions,
 				description: CMDBuild.Translation.generalOptions,
-				id: this.cmfg('accordionBuildId', { components: 'generalOptions' }),
+				id: this.cmfg('accordionBuildId', 'generalOptions'),
 				sectionHierarchy: ['generalOptions'],
 				leaf: true
 			}];
@@ -50,49 +51,55 @@
 				nodes = Ext.Array.push(nodes, [
 					{
 						cmName: this.cmfg('accordionIdentifierGet'),
+						iconCls: 'cmdb-tree-configuration-icon',
 						text: CMDBuild.Translation.workflowEngine,
 						description: CMDBuild.Translation.workflowEngine,
-						id: this.cmfg('accordionBuildId', { components: 'workflow' }),
+						id: this.cmfg('accordionBuildId', 'workflow'),
 						sectionHierarchy: ['workflow'],
 						leaf: true
 					},
 					{
 						cmName: this.cmfg('accordionIdentifierGet'),
+						iconCls: 'cmdb-tree-configuration-icon',
 						text: CMDBuild.Translation.relationGraph,
 						description: CMDBuild.Translation.relationGraph,
-						id: this.cmfg('accordionBuildId', { components: 'relationGraph' }),
+						id: this.cmfg('accordionBuildId', 'relationGraph'),
 						sectionHierarchy: ['relationGraph'],
 						leaf: true
 					},
 					{
 						cmName: this.cmfg('accordionIdentifierGet'),
+						iconCls: 'cmdb-tree-configuration-icon',
 						text: CMDBuild.Translation.alfresco,
 						description: CMDBuild.Translation.alfresco,
-						id: this.cmfg('accordionBuildId', { components: 'alfresco' }),
+						id: this.cmfg('accordionBuildId', 'alfresco'),
 						sectionHierarchy: ['alfresco'],
 						leaf: true
 					},
 					{
 						cmName: this.cmfg('accordionIdentifierGet'),
+						iconCls: 'cmdb-tree-configuration-icon',
 						text: CMDBuild.Translation.gis,
 						description: CMDBuild.Translation.gis,
-						id: this.cmfg('accordionBuildId', { components: 'gis' }),
+						id: this.cmfg('accordionBuildId', 'gis'),
 						sectionHierarchy: ['gis'],
 						leaf: true
 					},
 					{
 						cmName: this.cmfg('accordionIdentifierGet'),
+						iconCls: 'cmdb-tree-configuration-icon',
 						text: CMDBuild.Translation.bim,
 						description: CMDBuild.Translation.bim,
-						id: this.cmfg('accordionBuildId', { components: 'bim' }),
+						id: this.cmfg('accordionBuildId', 'bim'),
 						sectionHierarchy: ['bim'],
 						leaf: true
 					},
 					{
 						cmName: this.cmfg('accordionIdentifierGet'),
+						iconCls: 'cmdb-tree-configuration-icon',
 						text: CMDBuild.Translation.serverManagement,
 						description: CMDBuild.Translation.serverManagement,
-						id: this.cmfg('accordionBuildId', { components: 'server' }),
+						id: this.cmfg('accordionBuildId', 'server'),
 						sectionHierarchy: ['server'],
 						leaf: true
 					}

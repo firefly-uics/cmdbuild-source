@@ -1,4 +1,4 @@
-(function() {
+(function () {
 
 	Ext.define('CMDBuild.controller.administration.accordion.Lookup', {
 		extend: 'CMDBuild.controller.common.abstract.Accordion',
@@ -54,11 +54,12 @@
 						// Build nodes map
 						Ext.Array.forEach(decodedResponse, function (lookupTypeObject, i, allLookupTypeObjects) {
 							var nodeObject = {};
+							nodeObject['iconCls'] = 'cmdb-tree-lookup-icon';
 							nodeObject['cmName'] = this.cmfg('accordionIdentifierGet');
 							nodeObject[CMDBuild.core.constants.Proxy.TEXT] = lookupTypeObject[CMDBuild.core.constants.Proxy.TEXT];
 							nodeObject[CMDBuild.core.constants.Proxy.DESCRIPTION] = lookupTypeObject[CMDBuild.core.constants.Proxy.TEXT];
 							nodeObject[CMDBuild.core.constants.Proxy.ENTITY_ID] = lookupTypeObject[CMDBuild.core.constants.Proxy.ID];
-							nodeObject[CMDBuild.core.constants.Proxy.ID] = this.cmfg('accordionBuildId', { components: lookupTypeObject[CMDBuild.core.constants.Proxy.ID] });
+							nodeObject[CMDBuild.core.constants.Proxy.ID] = this.cmfg('accordionBuildId', lookupTypeObject[CMDBuild.core.constants.Proxy.ID]);
 							nodeObject[CMDBuild.core.constants.Proxy.PARENT] = lookupTypeObject[CMDBuild.core.constants.Proxy.PARENT];
 							nodeObject[CMDBuild.core.constants.Proxy.LEAF] = true;
 
@@ -77,6 +78,8 @@
 								if (!Ext.isEmpty(parentNode)) {
 									parentNode.children = parentNode.children || [];
 									parentNode.children.push(node);
+
+									parentNode.iconCls = 'cmdb-tree-superLookup-icon';
 									parentNode.leaf = false;
 								}
 							}

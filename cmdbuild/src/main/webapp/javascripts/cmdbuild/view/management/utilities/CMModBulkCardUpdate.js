@@ -409,7 +409,7 @@
 			cmName: node.get("text") != "Class" ? "class" : "",
 			parent: node.get("parent"),
 			cmData: node.data,
-			iconCls: node.get("superclass") ? "cmdbuild-tree-superclass-icon" : "cmdbuild-tree-class-icon"
+			iconCls: node.get("superclass") ? "cmdb-tree-superclass-icon" : "cmdb-tree-class-icon"
 		};
 	}
 

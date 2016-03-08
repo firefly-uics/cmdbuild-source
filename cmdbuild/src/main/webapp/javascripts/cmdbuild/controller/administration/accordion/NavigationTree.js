@@ -1,4 +1,4 @@
-(function() {
+(function () {
 
 	Ext.define('CMDBuild.controller.administration.accordion.NavigationTree', {
 		extend: 'CMDBuild.controller.common.abstract.Accordion',
@@ -58,10 +58,11 @@
 						Ext.Array.forEach(decodedResponse, function (treeObject, i, allTreeObjects) {
 							var nodeObject = {};
 							nodeObject['cmName'] = this.cmfg('accordionIdentifierGet');
+							nodeObject['iconCls'] = 'cmdb-tree-navigationTree-icon';
 							nodeObject[CMDBuild.core.constants.Proxy.TEXT] = treeObject[CMDBuild.core.constants.Proxy.DESCRIPTION];
 							nodeObject[CMDBuild.core.constants.Proxy.DESCRIPTION] = treeObject[CMDBuild.core.constants.Proxy.DESCRIPTION];
 							nodeObject[CMDBuild.core.constants.Proxy.ENTITY_ID] = treeObject[CMDBuild.core.constants.Proxy.NAME];
-							nodeObject[CMDBuild.core.constants.Proxy.ID] = this.cmfg('accordionBuildId', { components: treeObject[CMDBuild.core.constants.Proxy.NAME] });
+							nodeObject[CMDBuild.core.constants.Proxy.ID] = this.cmfg('accordionBuildId', treeObject[CMDBuild.core.constants.Proxy.NAME]);
 							nodeObject[CMDBuild.core.constants.Proxy.NAME] = treeObject[CMDBuild.core.constants.Proxy.NAME];
 							nodeObject[CMDBuild.core.constants.Proxy.LEAF] = true;
 

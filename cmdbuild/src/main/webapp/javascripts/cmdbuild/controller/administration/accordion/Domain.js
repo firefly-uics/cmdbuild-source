@@ -1,4 +1,4 @@
-(function() {
+(function () {
 
 	Ext.define('CMDBuild.controller.administration.accordion.Domain', {
 		extend: 'CMDBuild.controller.common.abstract.Accordion',
@@ -57,11 +57,11 @@
 						Ext.Array.forEach(decodedResponse, function (domainObject, i, allDomainObjects) {
 							var nodeObject = {};
 							nodeObject['cmName'] = this.cmfg('accordionIdentifierGet');
-							nodeObject['iconCls'] = 'cmdbuild-tree-domain-icon';
+							nodeObject['iconCls'] = 'cmdb-tree-domain-icon';
 							nodeObject[CMDBuild.core.constants.Proxy.TEXT] = domainObject[CMDBuild.core.constants.Proxy.DESCRIPTION];
 							nodeObject[CMDBuild.core.constants.Proxy.DESCRIPTION] = domainObject[CMDBuild.core.constants.Proxy.DESCRIPTION];
 							nodeObject[CMDBuild.core.constants.Proxy.ENTITY_ID] = domainObject[CMDBuild.core.constants.Proxy.ID_DOMAIN];
-							nodeObject[CMDBuild.core.constants.Proxy.ID] = this.cmfg('accordionBuildId', { components: domainObject[CMDBuild.core.constants.Proxy.ID_DOMAIN] });
+							nodeObject[CMDBuild.core.constants.Proxy.ID] = this.cmfg('accordionBuildId', domainObject[CMDBuild.core.constants.Proxy.ID_DOMAIN]);
 							nodeObject[CMDBuild.core.constants.Proxy.LEAF] = true;
 
 							nodes.push(nodeObject);

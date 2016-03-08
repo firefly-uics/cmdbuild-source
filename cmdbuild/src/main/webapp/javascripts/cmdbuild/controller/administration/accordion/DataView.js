@@ -1,4 +1,4 @@
-(function() {
+(function () {
 
 	Ext.define('CMDBuild.controller.administration.accordion.DataView', {
 		extend: 'CMDBuild.controller.common.abstract.Accordion',
@@ -43,7 +43,7 @@
 					cmName: this.cmfg('accordionIdentifierGet'),
 					text: CMDBuild.Translation.filterView,
 					description: CMDBuild.Translation.filterView,
-					id: this.cmfg('accordionBuildId', { components: 'filter' }),
+					id: this.cmfg('accordionBuildId', 'filter'),
 					sectionHierarchy: ['filter'],
 					leaf: true
 				},
@@ -51,7 +51,7 @@
 					cmName: this.cmfg('accordionIdentifierGet'),
 					text: CMDBuild.Translation.sqlView,
 					description: CMDBuild.Translation.sqlView,
-					id: this.cmfg('accordionBuildId', { components: 'sql' }),
+					id: this.cmfg('accordionBuildId', 'sql'),
 					sectionHierarchy: ['sql'],
 					leaf: true
 				}

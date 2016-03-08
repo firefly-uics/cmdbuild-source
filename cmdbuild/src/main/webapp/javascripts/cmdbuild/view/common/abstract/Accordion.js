@@ -1,9 +1,9 @@
-(function() {
+(function () {
 
 	// External implementation to avoid overrides
 	Ext.require([
 		'CMDBuild.core.constants.Proxy',
-		'CMDBuild.model.common.accordion.Generic'
+		'CMDBuild.model.common.Accordion'
 	]);
 
 	/**
@@ -20,7 +20,7 @@
 		/**
 		 * @cfg {String}
 		 */
-		storeModelName: 'CMDBuild.model.common.accordion.Generic',
+		storeModelName: 'CMDBuild.model.common.Accordion',
 
 		autoRender: true,
 		border: true,
@@ -32,7 +32,7 @@
 			background: '#ffffff'
 		},
 
-		initComponent: function() {
+		initComponent: function () {
 			Ext.apply(this, {
 				store: Ext.create('Ext.data.TreeStore', {
 					autoLoad: true,
@@ -51,19 +51,19 @@
 			this.callParent(arguments);
 
 			// Add listener for accordion expand
-			this.on('expand', function(accordion, eOpts) {
+			this.on('expand', function (accordion, eOpts) {
 				if (!Ext.isEmpty(this.delegate))
 					this.delegate.cmfg('onAccordionExpand');
 			}, this);
 
 			// Add listener to avoid selection of unselectable nodes
-			this.on('beforeselect', function(accordion, record, index, eOpts) {
+			this.on('beforeselect', function (accordion, record, index, eOpts) {
 				if (!Ext.isEmpty(this.delegate))
 					return this.delegate.cmfg('onAccordionBeforeSelect', record);
 			}, this);
 
 			// Add listener for selectionchange
-			this.getSelectionModel().on('selectionchange', function(selectionModel, selected, eOpts) {
+			this.getSelectionModel().on('selectionchange', function (selectionModel, selected, eOpts) {
 				if (!Ext.isEmpty(this.delegate))
 					this.delegate.cmfg('onAccordionSelectionChange');
 			}, this);

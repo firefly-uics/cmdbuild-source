@@ -3,7 +3,7 @@
 	Ext.define('CMDBuild.view.administration.accordion.Lookup', {
 		extend: 'CMDBuild.view.common.abstract.Accordion',
 
-		requires: ['CMDBuild.model.common.accordion.Lookup'],
+		requires: ['CMDBuild.model.lookup.accordion.Administration'],
 
 		/**
 		 * @cfg {CMDBuild.controller.administration.accordion.Lookup}
@@ -13,7 +13,7 @@
 		/**
 		 * @cfg {String}
 		 */
-		storeModelName: 'CMDBuild.model.common.accordion.Lookup',
+		storeModelName: 'CMDBuild.model.lookup.accordion.Administration',
 
 		title: CMDBuild.Translation.lookupTypes
 	});

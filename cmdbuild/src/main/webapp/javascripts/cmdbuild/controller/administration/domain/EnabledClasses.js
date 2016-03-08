@@ -116,7 +116,7 @@
 							) {
 								// Class node object
 								var classMainNodeObject = {};
-								classMainNodeObject['iconCls'] = classObject['superclass'] ? 'cmdbuild-tree-superclass-icon' : 'cmdbuild-tree-class-icon';
+								classMainNodeObject['iconCls'] = classObject['superclass'] ? 'cmdb-tree-superclass-icon' : 'cmdb-tree-class-icon';
 								classMainNodeObject[CMDBuild.core.constants.Proxy.DESCRIPTION] = classObject[CMDBuild.core.constants.Proxy.TEXT];
 								classMainNodeObject[CMDBuild.core.constants.Proxy.ENABLED] = !Ext.Array.contains(disabledClasses, classObject[CMDBuild.core.constants.Proxy.NAME]);
 								classMainNodeObject[CMDBuild.core.constants.Proxy.ID] = classObject[CMDBuild.core.constants.Proxy.ID];
@@ -150,7 +150,7 @@
 							root.appendChild(nodesMap[rootData[CMDBuild.core.constants.Proxy.ID]]);
 						} else { // Node is process so build custom node
 							var customNodeObject = {};
-							customNodeObject['iconCls'] = 'cmdbuild-tree-processclass-icon';
+							customNodeObject['iconCls'] = 'cmdb-tree-processclass-icon';
 							customNodeObject[CMDBuild.core.constants.Proxy.DESCRIPTION] = rootData[CMDBuild.core.constants.Proxy.NAME];
 							customNodeObject[CMDBuild.core.constants.Proxy.ENABLED] = true;
 							customNodeObject[CMDBuild.core.constants.Proxy.ID] = rootData[CMDBuild.core.constants.Proxy.ID];

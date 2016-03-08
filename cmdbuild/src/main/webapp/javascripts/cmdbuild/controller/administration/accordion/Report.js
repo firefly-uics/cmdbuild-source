@@ -1,4 +1,4 @@
-(function() {
+(function () {
 
 	Ext.define('CMDBuild.controller.administration.accordion.Report', {
 		extend: 'CMDBuild.controller.common.abstract.Accordion',
@@ -47,9 +47,10 @@
 			this.view.getStore().getRootNode().appendChild([
 				{
 					cmName: this.cmfg('accordionIdentifierGet'),
+					iconCls: 'cmdb-tree-report-icon',
 					text: CMDBuild.Translation.reportMenuJasper,
 					description: CMDBuild.Translation.reportMenuJasper,
-					id: this.cmfg('accordionBuildId', { components: 'jasper' }),
+					id: this.cmfg('accordionBuildId', 'jasper'),
 					sectionHierarchy: ['jasper'],
 					leaf: true
 				}

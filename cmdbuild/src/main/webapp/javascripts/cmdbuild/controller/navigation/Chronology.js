@@ -43,19 +43,19 @@
 				case 'class': {
 					var isSuperClass = record.get([CMDBuild.core.constants.Proxy.ENTRY_TYPE, CMDBuild.core.constants.Proxy.OBJECT, 'superclass']);
 
-					return isSuperClass ? 'cmdbuild-tree-superclass-icon' : 'cmdbuild-tree-class-icon';
+					return isSuperClass ? 'cmdb-tree-superclass-icon' : 'cmdb-tree-class-icon';
 				}
 
 				case CMDBuild.core.constants.ModuleIdentifiers.getCustomPage():
-					return 'cmdbuild-tree-custompage-icon';
+					return 'cmdb-tree-custompage-icon';
 
 				case 'dashboard':
-					return 'cmdbuild-tree-dashboard-icon';
+					return 'cmdb-tree-dashboard-icon';
 
 				case CMDBuild.core.constants.ModuleIdentifiers.getWorkflow(): {
 					var isSuperClass = record.get([CMDBuild.core.constants.Proxy.ENTRY_TYPE, CMDBuild.core.constants.Proxy.OBJECT, 'superclass']);
 
-					return isSuperClass ? 'cmdbuild-tree-superprocessclass-icon' : 'cmdbuild-tree-processclass-icon';
+					return isSuperClass ? 'cmdb-tree-superprocessclass-icon' : 'cmdb-tree-processclass-icon';
 				}
 
 				default:

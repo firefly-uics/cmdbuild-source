@@ -1,4 +1,4 @@
-(function() {
+(function () {
 
 	Ext.define('CMDBuild.controller.management.accordion.Report', {
 		extend: 'CMDBuild.controller.common.abstract.Accordion',
@@ -33,7 +33,7 @@
 		 *
 		 * @override
 		 */
-		constructor: function(configurationObject) {
+		constructor: function (configurationObject) {
 			this.callParent(arguments);
 
 			this.view = Ext.create('CMDBuild.view.management.accordion.Report', { delegate: this });
@@ -46,23 +46,24 @@
 		 *
 		 * @override
 		 */
-		accordionUpdateStore: function(nodeIdToSelect) {
+		accordionUpdateStore: function (nodeIdToSelect) {
 			nodeIdToSelect = Ext.isNumber(nodeIdToSelect) ? nodeIdToSelect : null;
 
 			CMDBuild.core.proxy.report.Report.getTypesTree({
 				loadMask: false,
 				scope: this,
-				success: function(response, options, decodedResponse) {
+				success: function (response, options, decodedResponse) {
 					if (!Ext.isEmpty(decodedResponse) && Ext.isArray(decodedResponse)) {
 						var nodes = [];
 
-						Ext.Array.forEach(decodedResponse, function(reportObject, i, allReportObjects) {
+						Ext.Array.forEach(decodedResponse, function (reportObject, i, allReportObjects) {
 							var nodeObject = {};
 							nodeObject['cmName'] = this.cmfg('accordionIdentifierGet');
+							nodeObject['iconCls'] = 'cmdb-tree-report-icon';
 							nodeObject[CMDBuild.core.constants.Proxy.TEXT] = reportObject[CMDBuild.core.constants.Proxy.TEXT];
 							nodeObject[CMDBuild.core.constants.Proxy.DESCRIPTION] = reportObject[CMDBuild.core.constants.Proxy.TEXT];
 							nodeObject[CMDBuild.core.constants.Proxy.ENTITY_ID] = reportObject[CMDBuild.core.constants.Proxy.ID];
-							nodeObject[CMDBuild.core.constants.Proxy.ID] = this.cmfg('accordionBuildId', { components: reportObject[CMDBuild.core.constants.Proxy.ID] });
+							nodeObject[CMDBuild.core.constants.Proxy.ID] = this.cmfg('accordionBuildId', reportObject[CMDBuild.core.constants.Proxy.ID]);
 							nodeObject[CMDBuild.core.constants.Proxy.SECTION_HIERARCHY] = ['custom'];
 							nodeObject[CMDBuild.core.constants.Proxy.NAME] = reportObject[CMDBuild.core.constants.Proxy.NAME];
 							nodeObject[CMDBuild.core.constants.Proxy.LEAF] = true;

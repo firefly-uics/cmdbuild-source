@@ -1,4 +1,4 @@
-(function() {
+(function () {
 
 	Ext.define('CMDBuild.controller.administration.accordion.Filter', {
 		extend: 'CMDBuild.controller.common.abstract.Accordion',
@@ -41,9 +41,10 @@
 			this.view.getStore().getRootNode().appendChild([
 				{
 					cmName: this.cmfg('accordionIdentifierGet'),
+					iconCls: 'cmdb-tree-searchFilter-icon',
 					text: CMDBuild.Translation.filtersForGroups,
 					description: CMDBuild.Translation.filtersForGroups,
-					id: this.cmfg('accordionBuildId', { components: 'groups' }),
+					id: this.cmfg('accordionBuildId', 'groups'),
 					sectionHierarchy: ['groups'],
 					leaf: true
 				}

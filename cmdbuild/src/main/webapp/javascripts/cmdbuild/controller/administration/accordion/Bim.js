@@ -1,4 +1,4 @@
-(function() {
+(function () {
 
 	Ext.define('CMDBuild.controller.administration.accordion.Bim', {
 		extend: 'CMDBuild.controller.common.abstract.Accordion',
@@ -41,17 +41,19 @@
 			this.view.getStore().getRootNode().appendChild([
 				{
 					cmName: 'bim-project',
+					iconCls: 'cmdb-tree-bim-icon',
 					text: CMDBuild.Translation.projects,
 					description: CMDBuild.Translation.projects,
-					id: this.cmfg('accordionBuildId', { components: 'bim-project' }),
+					id: this.cmfg('accordionBuildId', 'bim-project'),
 					sectionHierarchy: ['bim-project'],
 					leaf: true
 				},
 				{
 					cmName: 'bim-layers',
+					iconCls: 'cmdb-tree-bim-icon',
 					text: CMDBuild.Translation.layers,
 					description: CMDBuild.Translation.layers,
-					id: this.cmfg('accordionBuildId', { components: 'bim-layers' }),
+					id: this.cmfg('accordionBuildId', 'bim-layers'),
 					sectionHierarchy: ['bim-layers'],
 					leaf: true
 				}

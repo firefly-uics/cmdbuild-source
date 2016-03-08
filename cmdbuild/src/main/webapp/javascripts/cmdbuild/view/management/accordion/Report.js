@@ -1,9 +1,9 @@
-(function() {
+(function () {
 
 	Ext.define('CMDBuild.view.management.accordion.Report', {
 		extend: 'CMDBuild.view.common.abstract.Accordion',
 
-		requires: ['CMDBuild.model.common.accordion.Report'],
+		requires: ['CMDBuild.model.report.accordion.Management'],
 
 		/**
 		 * @cfg {CMDBuild.controller.management.accordion.Report}
@@ -13,7 +13,7 @@
 		/**
 		 * @cfg {String}
 		 */
-		storeModelName: 'CMDBuild.model.common.accordion.Report',
+		storeModelName: 'CMDBuild.model.report.accordion.Management',
 
 		title: CMDBuild.Translation.report
 	});

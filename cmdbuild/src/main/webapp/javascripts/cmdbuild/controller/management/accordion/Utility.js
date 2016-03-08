@@ -49,9 +49,10 @@
 			if (!this.isSectionDisabled(CMDBuild.core.constants.Proxy.CHANGE_PASSWORD))
 				nodes.push({
 					cmName: 'changepassword',
+					iconCls: 'cmdb-tree-utility-icon',
 					text: CMDBuild.Translation.management.modutilities.changepassword.title,
 					description: CMDBuild.Translation.management.modutilities.changepassword.title,
-					id: this.cmfg('accordionBuildId', { components: 'changepassword' }),
+					id: this.cmfg('accordionBuildId', 'changepassword'),
 					sectionHierarchy: ['changepassword'],
 					leaf: true
 				});
@@ -59,9 +60,10 @@
 			if (!this.isSectionDisabled(CMDBuild.core.constants.Proxy.BULK_UPDATE))
 				nodes.push({
 					cmName: 'bulkcardupdate',
+					iconCls: 'cmdb-tree-utility-icon',
 					text: CMDBuild.Translation.management.modutilities.bulkupdate.title,
 					description: CMDBuild.Translation.management.modutilities.bulkupdate.title,
-					id: this.cmfg('accordionBuildId', { components: 'bulkcardupdate' }),
+					id: this.cmfg('accordionBuildId', 'bulkcardupdate'),
 					sectionHierarchy: ['bulkcardupdate'],
 					leaf: true
 				});
@@ -69,9 +71,10 @@
 			if (!this.isSectionDisabled(CMDBuild.core.constants.Proxy.IMPORT_CSV))
 				nodes.push({
 					cmName: 'importcsv',
+					iconCls: 'cmdb-tree-utility-icon',
 					text: CMDBuild.Translation.management.modutilities.csv.title,
 					description: CMDBuild.Translation.management.modutilities.csv.title,
-					id: this.cmfg('accordionBuildId', { components: 'importcsv' }),
+					id: this.cmfg('accordionBuildId', 'importcsv'),
 					sectionHierarchy: ['importcsv'],
 					leaf: true
 				});
@@ -79,9 +82,10 @@
 			if (!this.isSectionDisabled(CMDBuild.core.constants.Proxy.EXPORT_CSV))
 				nodes.push({
 					cmName: 'exportcsv',
+					iconCls: 'cmdb-tree-utility-icon',
 					text: CMDBuild.Translation.management.modutilities.csv.title_export,
 					description: CMDBuild.Translation.management.modutilities.csv.title_export,
-					id: this.cmfg('accordionBuildId', { components: 'exportcsv' }),
+					id: this.cmfg('accordionBuildId', 'exportcsv'),
 					sectionHierarchy: ['exportcsv'],
 					leaf: true
 				});

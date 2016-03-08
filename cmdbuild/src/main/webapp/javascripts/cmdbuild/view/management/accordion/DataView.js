@@ -1,9 +1,9 @@
-(function() {
+(function () {
 
 	Ext.define('CMDBuild.view.management.accordion.DataView', {
 		extend: 'CMDBuild.view.common.abstract.Accordion',
 
-		requires: ['CMDBuild.model.common.accordion.DataView'],
+		requires: ['CMDBuild.model.dataView.accordion.Management'],
 
 		/**
 		 * @cfg {CMDBuild.controller.management.accordion.DataView}
@@ -13,7 +13,7 @@
 		/**
 		 * @cfg {String}
 		 */
-		storeModelName: 'CMDBuild.model.common.accordion.DataView',
+		storeModelName: 'CMDBuild.model.dataView.accordion.Management',
 
 		title: CMDBuild.Translation.views
 	});

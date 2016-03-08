@@ -1,4 +1,4 @@
-(function() {
+(function () {
 
 	Ext.define('CMDBuild.view.management.accordion.Menu', {
 		extend: 'CMDBuild.view.common.abstract.Accordion',

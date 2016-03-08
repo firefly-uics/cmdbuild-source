@@ -1,4 +1,4 @@
-(function() {
+(function () {
 
 	// External implementation to avoid overrides
 	Ext.require(['CMDBuild.core.constants.Proxy']);
@@ -57,7 +57,7 @@
 		identifier: undefined,
 
 		/**
-		 * @property {CMDBuild.model.common.accordion.Generic}
+		 * @property {CMDBuild.model.common.Accordion}
 		 */
 		lastSelection: undefined,
 
@@ -67,42 +67,28 @@
 		view: undefined,
 
 		/**
-		 * Method must be overrided with view construction
-		 *
 		 * @param {Object} configurationObject
 		 *
 		 * @override
 		 * @abstract
 		 */
+		constructor: function (configurationObject) {
+			this.callParent(arguments);
+		},
 
 		/**
 		 * Generates an unique id for the menu accordion, prepend to components array "accordion" string and identifier.
 		 *
-		 * @param {Object} parameters
-		 * @param {Array} parameters.components
-		 * @param {String} parameters.name
+		 * @param {Array} components
 		 *
 		 * @return {String}
 		 */
-		accordionBuildId: function(parameters) {
-			if (
-				Ext.isObject(parameters)
-				&& !Ext.isEmpty(parameters[CMDBuild.core.constants.Proxy.COMPONENTS])
-			) {
-				var components = parameters[CMDBuild.core.constants.Proxy.COMPONENTS];
+		accordionBuildId: function (components) {
+			if (!Ext.isEmpty(components)) {
 				components = Ext.isArray(components) ? Ext.Array.clean(components) : [components];
+				components = Ext.Array.push([CMDBuild.core.constants.Proxy.ACCORDION, this.cmfg('accordionIdentifierGet')], components);
 
-				// Custom identifier management
-				if (
-					!Ext.isEmpty(parameters[CMDBuild.core.constants.Proxy.NAME])
-					&& Ext.isString(parameters[CMDBuild.core.constants.Proxy.NAME])
-				) {
-					components.unshift(CMDBuild.core.constants.Proxy.ACCORDION, parameters[CMDBuild.core.constants.Proxy.NAME]);
-				} else {
-					components.unshift(CMDBuild.core.constants.Proxy.ACCORDION, this.cmfg('accordionIdentifierGet'));
-				}
-
-				Ext.Array.forEach(components, function(component, i, allComponents) {
+				Ext.Array.each(components, function (component, i, allComponents) {
 					components[i] = Ext.String.trim(String(component));
 				}, this);
 
@@ -112,21 +98,21 @@
 			return CMDBuild.core.constants.Proxy.ACCORDION + '-' + this.cmfg('accordionIdentifierGet') + '-' + Date.now();
 		},
 
-		accordionDeselect: function() {
+		accordionDeselect: function () {
 			this.view.getSelectionModel().deselectAll();
 
 			this.cmfg('onAccordionSelectionChange');
 		},
 
-		accordionExpand: function() {
+		accordionExpand: function () {
 			if (!Ext.isEmpty(this.view))
 				this.view.expand();
 		},
 
 		/**
-		 * @returns {CMDBuild.model.common.accordion.Generic} node or null
+		 * @returns {CMDBuild.model.common.Accordion or null} node
 		 */
-		accordionFirtsSelectableNodeGet: function() {
+		accordionFirtsSelectableNodeGet: function () {
 			var node = null;
 
 			if (!this.view.isDisabled()) {
@@ -149,7 +135,7 @@
 		/**
 		 * @returns {String or null}
 		 */
-		accordionIdentifierGet: function() {
+		accordionIdentifierGet: function () {
 			if (!Ext.isEmpty(this.identifier))
 				return this.identifier;
 
@@ -161,16 +147,16 @@
 		 *
 		 * @param {Number or String} id
 		 *
-		 * @returns {CMDBuild.model.common.accordion.Generic}
+		 * @returns {CMDBuild.model.common.Accordion}
 		 */
-		accordionNodeByIdGet: function(id) {
+		accordionNodeByIdGet: function (id) {
 			return (
 				this.view.getStore().getRootNode().findChild(CMDBuild.core.constants.Proxy.ID, id, true)
 				|| this.view.getStore().getRootNode().findChild(CMDBuild.core.constants.Proxy.ENTITY_ID, id, true)
 			);
 		},
 
-		accordionSelectFirstSelectableNode: function() {
+		accordionSelectFirstSelectableNode: function () {
 			var firstSelectableNode = this.cmfg('accordionFirtsSelectableNodeGet');
 
 			if (!Ext.isEmpty(firstSelectableNode)) {
@@ -182,14 +168,14 @@
 		/**
 		 * @param {Number or String} id
 		 */
-		accordionSelectNodeById: function(id) {
+		accordionSelectNodeById: function (id) {
 			if (!Ext.isEmpty(id)) {
 				var node = this.cmfg('accordionNodeByIdGet', id);
 
 				if (!Ext.isEmpty(node)) {
 					// Expand fail if the accordion is not visible. I can't know when accordion's parent will be visible, so skip only the expand to avoid to fail
 					if (this.view.isVisible(true))
-						node.bubble(function() {
+						node.bubble(function () {
 							this.expand();
 						});
 
@@ -212,34 +198,35 @@
 		 *
 		 * @private
 		 */
-		isEmpty: function() {
+		isEmpty: function () {
 			return !this.view.getStore().getRootNode().hasChildNodes();
 		},
 
 		/**
-		 * @param {CMDBuild.model.common.accordion.Generic} node
+		 * @param {CMDBuild.model.common.Accordion} node
 		 *
 		 * @returns {Boolean}
 		 *
 		 * @private
 		 */
-		isNodeSelectable: function(node) {
+		isNodeSelectable: function (node) {
 			return (
 				!node.isRoot() // Root is hidden by default
+				&& node.get(CMDBuild.core.constants.Proxy.SELECTABLE)
 				&& !Ext.isEmpty(node.get(CMDBuild.core.constants.Proxy.ID)) // Node without id property are not selectable
 			);
 		},
 
 		/**
-		 * @param {CMDBuild.model.common.accordion.Generic} node
+		 * @param {CMDBuild.model.common.Accordion} node
 		 *
 		 * @returns {Boolean}
 		 */
-		onAccordionBeforeSelect: function(node) {
+		onAccordionBeforeSelect: function (node) {
 			return this.isNodeSelectable(node);
 		},
 
-		onAccordionExpand: function() {
+		onAccordionExpand: function () {
 			this.cmfg('mainViewportModuleShow', { identifier: this.cmfg('accordionIdentifierGet') });
 
 			// Update store
@@ -258,7 +245,7 @@
 			this.disableStoreLoad = false;
 		},
 
-		onAccordionSelectionChange: function() {
+		onAccordionSelectionChange: function () {
 			if (this.view.getSelectionModel().hasSelection()) {
 				var selection = this.view.getSelectionModel().getSelection()[0];
 
@@ -285,7 +272,7 @@
 		 *
 		 * @private
 		 */
-		updateStoreCommonEndpoint: function(nodeIdToSelect) {
+		updateStoreCommonEndpoint: function (nodeIdToSelect) {
 			if (!this.disableSelection) {
 				if (!Ext.isEmpty(nodeIdToSelect))
 					this.cmfg('accordionSelectNodeById', nodeIdToSelect);

@@ -83,9 +83,7 @@
 											if (!Ext.isEmpty(viewSourceClassObject)) {
 												nodeObject['cmName'] = 'class'; // To act as a regular class node
 												nodeObject[CMDBuild.core.constants.Proxy.ENTITY_ID] = viewSourceClassObject[CMDBuild.core.constants.Proxy.ID];
-												nodeObject[CMDBuild.core.constants.Proxy.ID] = this.cmfg('accordionBuildId', {
-													components: viewObject[CMDBuild.core.constants.Proxy.ID]
-												});
+												nodeObject[CMDBuild.core.constants.Proxy.ID] = this.cmfg('accordionBuildId', viewObject[CMDBuild.core.constants.Proxy.ID]);
 												nodeObject[CMDBuild.core.constants.Proxy.SECTION_HIERARCHY] = ['filter'];
 												nodeObject[CMDBuild.core.constants.Proxy.FILTER] = viewObject[CMDBuild.core.constants.Proxy.FILTER];
 											}
@@ -95,9 +93,7 @@
 										default: {
 											nodeObject['cmName'] = this.cmfg('accordionIdentifierGet');
 											nodeObject[CMDBuild.core.constants.Proxy.ENTITY_ID] = viewObject[CMDBuild.core.constants.Proxy.ID];
-											nodeObject[CMDBuild.core.constants.Proxy.ID] = this.cmfg('accordionBuildId', {
-												components: viewObject[CMDBuild.core.constants.Proxy.ID]
-											});
+											nodeObject[CMDBuild.core.constants.Proxy.ID] = this.cmfg('accordionBuildId', viewObject[CMDBuild.core.constants.Proxy.ID]);
 											nodeObject[CMDBuild.core.constants.Proxy.SECTION_HIERARCHY] = ['sql'];
 											nodeObject[CMDBuild.core.constants.Proxy.SOURCE_FUNCTION] = viewObject[CMDBuild.core.constants.Proxy.SOURCE_FUNCTION];
 										}
