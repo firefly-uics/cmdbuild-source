@@ -1,4 +1,4 @@
-(function() {
+(function () {
 
 	/**
 	 * Management
@@ -53,8 +53,8 @@
 			'exec/processes/:processIdentifier/instances/:instanceIdentifier/': 'CMDBuild.routes.management.Instances#detail',
 		},
 
-		launch: function() {
-			Ext.WindowManager.getNextZSeed();	// To increase the default zseed. Is needed for the combo on windows probably it fix also the prev problem
+		launch: function () {
+			Ext.WindowManager.getNextZSeed(); // To increase the default zseed. Is needed for the combo on windows probably it fix also the prev problem
 			Ext.enableFx = false;
 			Ext.tip.QuickTipManager.init();
 

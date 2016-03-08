@@ -33,7 +33,7 @@
 		sectionController: undefined,
 
 		/**
-		 * @property {CMDBuild.model.common.accordion.Report}
+		 * @property {CMDBuild.model.report.accordion.Management}
 		 *
 		 * @private
 		 */
@@ -58,7 +58,7 @@
 		/**
 		 * Setup view items and controllers on accordion click
 		 *
-		 * @param {CMDBuild.model.common.accordion.Report} node
+		 * @param {CMDBuild.model.report.accordion.Management} node
 		 *
 		 * @override
 		 */

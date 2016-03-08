@@ -1,4 +1,4 @@
-(function() {
+(function () {
 
 	Ext.define('CMDBuild.controller.administration.accordion.Menu', {
 		extend: 'CMDBuild.controller.common.abstract.Accordion',
@@ -59,19 +59,19 @@
 							cmName: this.cmfg('accordionIdentifierGet'),
 							text: '* Default *',
 							description: '* Default *',
-							iconCls: 'cmdbuild-tree-group-icon',
-							id: this.cmfg('accordionBuildId', { components: 'default-group' }),
+							iconCls: 'cmdb-tree-group-icon',
+							id: this.cmfg('accordionBuildId', 'default-group'),
 							leaf: true
 						}];
 
 						Ext.Array.forEach(decodedResult, function (groupObject, i, allGroupObjects) {
 							var nodeObject = {};
 							nodeObject['cmName'] = this.cmfg('accordionIdentifierGet');
-							nodeObject['iconCls'] = 'cmdbuild-tree-group-icon';
+							nodeObject['iconCls'] = 'cmdb-tree-group-icon';
 							nodeObject[CMDBuild.core.constants.Proxy.TEXT] = groupObject[CMDBuild.core.constants.Proxy.TEXT];
 							nodeObject[CMDBuild.core.constants.Proxy.DESCRIPTION] = groupObject[CMDBuild.core.constants.Proxy.TEXT];
 							nodeObject[CMDBuild.core.constants.Proxy.ENTITY_ID] = groupObject[CMDBuild.core.constants.Proxy.NAME];
-							nodeObject[CMDBuild.core.constants.Proxy.ID] = this.cmfg('accordionBuildId', { components: groupObject[CMDBuild.core.constants.Proxy.ID] });
+							nodeObject[CMDBuild.core.constants.Proxy.ID] = this.cmfg('accordionBuildId', groupObject[CMDBuild.core.constants.Proxy.ID]);
 							nodeObject[CMDBuild.core.constants.Proxy.NAME] = groupObject[CMDBuild.core.constants.Proxy.NAME];
 							nodeObject[CMDBuild.core.constants.Proxy.LEAF] = true;
 

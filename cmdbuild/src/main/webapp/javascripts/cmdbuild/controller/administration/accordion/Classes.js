@@ -1,4 +1,4 @@
-(function() {
+(function () {
 
 	Ext.define('CMDBuild.controller.administration.accordion.Classes', {
 		extend: 'CMDBuild.controller.common.abstract.Accordion',
@@ -72,16 +72,16 @@
 							nodeObject[CMDBuild.core.constants.Proxy.TEXT] = classObject[CMDBuild.core.constants.Proxy.TEXT];
 							nodeObject[CMDBuild.core.constants.Proxy.DESCRIPTION] = classObject[CMDBuild.core.constants.Proxy.TEXT];
 							nodeObject[CMDBuild.core.constants.Proxy.ENTITY_ID] = classObject[CMDBuild.core.constants.Proxy.ID];
-							nodeObject[CMDBuild.core.constants.Proxy.ID] = this.cmfg('accordionBuildId', { components: classObject[CMDBuild.core.constants.Proxy.ID] });
+							nodeObject[CMDBuild.core.constants.Proxy.ID] = this.cmfg('accordionBuildId', classObject[CMDBuild.core.constants.Proxy.ID]);
 							nodeObject[CMDBuild.core.constants.Proxy.NAME] = classObject[CMDBuild.core.constants.Proxy.NAME];
 							nodeObject[CMDBuild.core.constants.Proxy.LEAF] = true;
 
 							if (classObject[CMDBuild.core.constants.Proxy.TABLE_TYPE] == CMDBuild.core.constants.Global.getTableTypeSimpleTable()) {
-								nodeObject['iconCls'] = 'cmdbuild-tree-class-icon';
+								nodeObject['iconCls'] = 'cmdb-tree-class-icon';
 
 								simple.push(nodeObject);
 							} else { // Standard nodes map build
-								nodeObject['iconCls'] = classObject['superclass'] ? 'cmdbuild-tree-superclass-icon' : 'cmdbuild-tree-class-icon';
+								nodeObject['iconCls'] = classObject['superclass'] ? 'cmdb-tree-superclass-icon' : 'cmdb-tree-class-icon';
 								nodeObject[CMDBuild.core.constants.Proxy.PARENT] = classObject[CMDBuild.core.constants.Proxy.PARENT];
 
 								standardNodesMap[nodeObject[CMDBuild.core.constants.Proxy.ENTITY_ID]] = nodeObject;
@@ -110,21 +110,21 @@
 						} else {
 							nodes = [
 								{
-									iconCls: 'cmdbuild-tree-superclass-icon',
+									iconCls: 'cmdb-tree-superclass-icon',
 									text: CMDBuild.Translation.standard,
 									description: CMDBuild.Translation.standard,
-									id: null, // To be unselectable
 									expanded: true,
+									selectable: false,
 									leaf: false,
 
 									children: standard
 								},
 								{
-									iconCls: 'cmdbuild-tree-superclass-icon',
+									iconCls: 'cmdb-tree-superclass-icon',
 									text: CMDBuild.Translation.simple,
 									description: CMDBuild.Translation.simple,
-									id: null, // To be unselectable
 									expanded: true,
+									selectable: false,
 									leaf: false,
 
 									children: simple

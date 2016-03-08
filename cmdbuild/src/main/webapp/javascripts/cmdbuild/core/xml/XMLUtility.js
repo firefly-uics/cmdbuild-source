@@ -127,7 +127,7 @@
 		if (folder) {
 			node.children = childNodes.children;
 		} else {
-			node.iconCls = "cmdbuild-tree-no-icon";
+			node.iconCls = "cmdb-tree-no-icon";
 		}
 
 		return node;

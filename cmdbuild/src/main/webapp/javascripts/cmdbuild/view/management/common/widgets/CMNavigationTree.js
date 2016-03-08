@@ -149,7 +149,7 @@
 		});
 	}
 	function appendNode(node, text, cardId, className, nodesIn) {
-		var iconCls = (nodesIn.length > 0) ? '' : 'cmdbuild-tree-class-icon';
+		var iconCls = (nodesIn.length > 0) ? '' : 'cmdb-tree-class-icon';
 		var n = node.appendChild({
 			nodeType: 'node',
 			text: text,

@@ -70,7 +70,7 @@
 		},
 
 		/**
-		 * @param {CMDBuild.model.common.accordion.Generic} parameters
+		 * @param {CMDBuild.model.common.Accordion} parameters
 		 *
 		 * @override
 		 */

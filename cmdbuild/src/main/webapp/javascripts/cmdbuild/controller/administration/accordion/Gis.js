@@ -1,4 +1,4 @@
-(function() {
+(function () {
 
 	Ext.define('CMDBuild.controller.administration.accordion.Gis', {
 		extend: 'CMDBuild.controller.common.abstract.Accordion',
@@ -41,41 +41,46 @@
 			this.view.getStore().getRootNode().appendChild([
 				{
 					cmName: 'gis-icons',
+					iconCls: 'cmdb-tree-gis-icon',
 					text: CMDBuild.Translation.manageIcons,
 					description: CMDBuild.Translation.manageIcons,
-					id: this.cmfg('accordionBuildId', { components: 'gis-icons' }),
+					id: this.cmfg('accordionBuildId', 'gis-icons'),
 					sectionHierarchy: ['gis-icons'],
 					leaf: true
 				},
 				{
 					cmName: 'gis-external-services',
+					iconCls: 'cmdb-tree-gis-icon',
 					text: CMDBuild.Translation.externalServices,
 					description: CMDBuild.Translation.externalServices,
-					id: this.cmfg('accordionBuildId', { components: 'gis-external-services' }),
+					id: this.cmfg('accordionBuildId', 'gis-external-services'),
 					sectionHierarchy: ['gis-external-services'],
 					leaf: true
 				},
 				{
 					cmName: 'gis-layers-order',
+					iconCls: 'cmdb-tree-gis-icon',
 					text: CMDBuild.Translation.layersOrder,
 					description: CMDBuild.Translation.layersOrder,
-					id: this.cmfg('accordionBuildId', { components: 'gis-layers-order' }),
+					id: this.cmfg('accordionBuildId', 'gis-layers-order'),
 					sectionHierarchy: ['gis-layers-order'],
 					leaf: true
 				},
 				{
 					cmName: 'gis-geoserver',
+					iconCls: 'cmdb-tree-gis-icon',
 					text: CMDBuild.Translation.geoserverLayers,
 					description: CMDBuild.Translation.geoserverLayers,
-					id: this.cmfg('accordionBuildId', { components: 'gis-geoserver' }),
+					id: this.cmfg('accordionBuildId', 'gis-geoserver'),
 					sectionHierarchy: ['gis-geoserver'],
 					leaf: true
 				},
 				{
 					cmName: 'gis-filter-configuration',
+					iconCls: 'cmdb-tree-gis-icon',
 					text: CMDBuild.Translation.gisNavigation,
 					description: CMDBuild.Translation.gisNavigation,
-					id: this.cmfg('accordionBuildId', { components: 'gis-filter-configuration' }),
+					id: this.cmfg('accordionBuildId', 'gis-filter-configuration'),
 					sectionHierarchy: ['gis-filter-configuration'],
 					leaf: true
 				}

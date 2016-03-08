@@ -1,4 +1,4 @@
-(function() {
+(function () {
 
 	Ext.define('CMDBuild.controller.administration.accordion.Dashboard', {
 		extend: 'CMDBuild.controller.common.abstract.Accordion',
@@ -57,11 +57,11 @@
 						Ext.Object.each(decodedResponse, function (id, dashboardObject, myself) {
 							var nodeObject = {};
 							nodeObject['cmName'] = this.cmfg('accordionIdentifierGet');
-							nodeObject['iconCls'] = 'cmdbuild-tree-dashboard-icon';
+							nodeObject['iconCls'] = 'cmdb-tree-dashboard-icon';
 							nodeObject[CMDBuild.core.constants.Proxy.TEXT] = dashboardObject[CMDBuild.core.constants.Proxy.DESCRIPTION];
 							nodeObject[CMDBuild.core.constants.Proxy.DESCRIPTION] = dashboardObject[CMDBuild.core.constants.Proxy.DESCRIPTION];
 							nodeObject[CMDBuild.core.constants.Proxy.ENTITY_ID] = id;
-							nodeObject[CMDBuild.core.constants.Proxy.ID] = this.cmfg('accordionBuildId', { components: id });
+							nodeObject[CMDBuild.core.constants.Proxy.ID] = this.cmfg('accordionBuildId', id);
 							nodeObject[CMDBuild.core.constants.Proxy.NAME] = dashboardObject[CMDBuild.core.constants.Proxy.NAME];
 							nodeObject[CMDBuild.core.constants.Proxy.LEAF] = true;
 

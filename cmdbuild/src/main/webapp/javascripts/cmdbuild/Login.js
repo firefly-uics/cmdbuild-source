@@ -1,4 +1,4 @@
-(function() {
+(function () {
 
 	/**
 	 * Login
@@ -13,8 +13,8 @@
 		appFolder: './javascripts/cmdbuild',
 		name: 'CMDBuild',
 
-		launch: function() {
-			Ext.WindowManager.getNextZSeed();	// To increase the default zseed. Is needed for the combo on windows probably it fix also the prev problem
+		launch: function () {
+			Ext.WindowManager.getNextZSeed(); // To increase the default zseed. Is needed for the combo on windows probably it fix also the prev problem
 			Ext.enableFx = false;
 			Ext.tip.QuickTipManager.init();
 
@@ -27,7 +27,7 @@
 			Ext.create('CMDBuild.core.cache.Cache');
 			Ext.create('CMDBuild.core.configurationBuilders.Instance'); // CMDBuild instance configuration
 			Ext.create('CMDBuild.core.configurationBuilders.Localization', { // CMDBuild localization configuration
-				callback: function(options, success, response) {
+				callback: function (options, success, response) {
 					Ext.create('CMDBuild.controller.login.Login');
 				}
 			});

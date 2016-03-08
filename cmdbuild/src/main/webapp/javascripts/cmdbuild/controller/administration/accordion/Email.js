@@ -1,4 +1,4 @@
-(function() {
+(function () {
 
 	Ext.define('CMDBuild.controller.administration.accordion.Email', {
 		extend: 'CMDBuild.controller.common.abstract.Accordion',
@@ -41,25 +41,28 @@
 			this.view.getStore().getRootNode().appendChild([
 				{
 					cmName: this.cmfg('accordionIdentifierGet'),
+					iconCls: 'cmdb-tree-email-icon',
 					text: CMDBuild.Translation.accounts,
 					description: CMDBuild.Translation.accounts,
-					id: this.cmfg('accordionBuildId', { components: 'accounts' }),
+					id: this.cmfg('accordionBuildId', 'accounts'),
 					sectionHierarchy: ['accounts'],
 					leaf: true
 				},
 				{
 					cmName: this.cmfg('accordionIdentifierGet'),
+					iconCls: 'cmdb-tree-email-icon',
 					text: CMDBuild.Translation.templates,
 					description: CMDBuild.Translation.templates,
-					id: this.cmfg('accordionBuildId', { components: 'templates' }),
+					id: this.cmfg('accordionBuildId', 'templates'),
 					sectionHierarchy: ['templates'],
 					leaf: true
 				},
 				{
 					cmName: this.cmfg('accordionIdentifierGet'),
+					iconCls: 'cmdb-tree-email-icon',
 					text: CMDBuild.Translation.queue,
 					description: CMDBuild.Translation.queue,
-					id: this.cmfg('accordionBuildId', { components: 'queue' }),
+					id: this.cmfg('accordionBuildId', 'queue'),
 					sectionHierarchy: ['queue'],
 					leaf: true
 				}

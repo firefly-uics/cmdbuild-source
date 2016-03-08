@@ -1,4 +1,4 @@
-(function() {
+(function () {
 
 	Ext.define('CMDBuild.controller.administration.accordion.Localization', {
 		extend: 'CMDBuild.controller.common.abstract.Accordion',
@@ -41,28 +41,28 @@
 			this.view.getStore().getRootNode().appendChild([
 				{
 					cmName: this.cmfg('accordionIdentifierGet'),
-					iconCls: 'cmdbuild-tree-localization-icon',
+					iconCls: 'cmdb-tree-localization-icon',
 					text: CMDBuild.Translation.configuration,
 					description: CMDBuild.Translation.configuration,
-					id: this.cmfg('accordionBuildId', { components: 'configuration' }),
+					id: this.cmfg('accordionBuildId', 'configuration'),
 					sectionHierarchy: ['configuration'],
 					leaf: true
 				},
 				{
 					cmName: this.cmfg('accordionIdentifierGet'),
-					iconCls: 'cmdbuild-tree-localization-icon',
+					iconCls: 'cmdb-tree-localization-icon',
 					text: CMDBuild.Translation.localization,
 					description: CMDBuild.Translation.localization,
-					id: this.cmfg('accordionBuildId', { components: 'advancedTranslationsTable' }),
+					id: this.cmfg('accordionBuildId', 'advancedTranslationsTable'),
 					sectionHierarchy: ['advancedTranslationsTable'],
 					leaf: true
 				},
 				{
 					cmName: this.cmfg('accordionIdentifierGet'),
-					iconCls: 'cmdbuild-tree-localization-icon',
+					iconCls: 'cmdb-tree-localization-icon',
 					text: CMDBuild.Translation.importExport,
 					description: CMDBuild.Translation.importExport,
-					id: this.cmfg('accordionBuildId', { components: 'importExport' }),
+					id: this.cmfg('accordionBuildId', 'importExport'),
 					sectionHierarchy: ['importExport'],
 					leaf: true
 				}
