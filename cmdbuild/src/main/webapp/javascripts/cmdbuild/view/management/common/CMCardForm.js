@@ -248,7 +248,7 @@
 		// Suspend all events on fields to prevent values modifications by internal fields events listeners
 		// This fixes ReferenceFields empty values going on editMode
 		for (var idx in fields)
-			if (fields[idx].isObservable)
+			if (fields[idx].isObservable && Ext.isFunction(fields[idx].suspendEvents))
 				fields[idx].suspendEvents(false);
 
 		addReferenceAttrsToData(data, referenceAttributes);
@@ -272,7 +272,7 @@
 
 		// Resume events on fields
 		for (var idx in fields)
-			if (fields[idx].isObservable)
+			if (fields[idx].isObservable && Ext.isFunction(fields[idx].resumeEvents))
 				fields[idx].resumeEvents();
 
 		me.fireEvent(me.CMEVENTS.formFilled);
