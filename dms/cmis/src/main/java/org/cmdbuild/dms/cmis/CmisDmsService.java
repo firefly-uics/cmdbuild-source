@@ -7,6 +7,7 @@ import static com.google.common.collect.Lists.newArrayList;
 import static com.google.common.collect.Maps.newHashMap;
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
+import static java.util.Optional.ofNullable;
 import static org.apache.chemistry.opencmis.commons.PropertyIds.DESCRIPTION;
 import static org.apache.chemistry.opencmis.commons.PropertyIds.NAME;
 import static org.apache.chemistry.opencmis.commons.PropertyIds.OBJECT_TYPE_ID;
@@ -71,6 +72,7 @@ import org.cmdbuild.dms.MetadataGroup;
 import org.cmdbuild.dms.MetadataGroupDefinition;
 import org.cmdbuild.dms.StorableDocument;
 import org.cmdbuild.dms.StoredDocument;
+import org.cmdbuild.dms.cmis.CmisConverter.Context;
 import org.cmdbuild.dms.cmis.model.XmlConverter;
 import org.cmdbuild.dms.cmis.model.XmlDocumentType;
 import org.cmdbuild.dms.cmis.model.XmlMetadata;
@@ -100,10 +102,13 @@ public class CmisDmsService implements DmsService, LoggingSupport, ChangeListene
 	private Supplier<Map<String, PropertyDefinition<?>>> propertyDefinitions;
 	private Supplier<Map<String, CmisDocumentType>> documentTypeDefinitions;
 	private Supplier<Repository> repository;
+	private final CategoryLookupConverter categoryLookupConverter;
 
-	public CmisDmsService(final CmisDmsConfiguration configuration) {
+	public CmisDmsService(final CmisDmsConfiguration configuration,
+			final CategoryLookupConverter categoryLookupConverter) {
 		this.configuration = configuration;
 		this.configuration.addListener(this);
+		this.categoryLookupConverter = categoryLookupConverter;
 		initialize();
 	}
 
@@ -278,7 +283,7 @@ public class CmisDmsService implements DmsService, LoggingSupport, ChangeListene
 									}
 								}
 								if (property != null) {
-									final CmisConverter converter = getConverter(property);
+									final CmisConverter converter = converterOf(property);
 									final CmisMetadataDefinition cmisMetadata = new CmisMetadataDefinition(
 											metadata.getName(), property, converter.getType(property));
 									cmisMetadataDefinitions.add(cmisMetadata);
@@ -297,7 +302,7 @@ public class CmisDmsService implements DmsService, LoggingSupport, ChangeListene
 												+ localNamespace + " ,localname " + property.getLocalName()
 												+ " ,queryname " + property.getQueryName());
 								if (property.getLocalNamespace().equals(configuration.getAlfrescoCustomUri())) {
-									final CmisConverter converter = getConverter(property);
+									final CmisConverter converter = converterOf(property);
 									final CmisMetadataDefinition cmisMetadata = new CmisMetadataDefinition(
 											property.getDisplayName(), property, converter.getType(property));
 									cmisMetadataDefinitions.add(cmisMetadata);
@@ -326,7 +331,19 @@ public class CmisDmsService implements DmsService, LoggingSupport, ChangeListene
 				try {
 					final CmisConverter cmisConverter = (CmisConverter) Class.forName(converter.getType())
 							.newInstance();
-					cmisConverter.setConfiguration(configuration);
+					cmisConverter.setContext(new Context() {
+
+						@Override
+						public CmisDmsConfiguration getConfiguration() {
+							return configuration;
+						}
+
+						@Override
+						public CategoryLookupConverter getCategoryLookupConverter() {
+							return categoryLookupConverter;
+						}
+
+					});
 					for (final String propertyId : converter.getCmisPropertyId()) {
 						logger.debug(MARKER,
 								"Property converter for " + propertyId + cmisConverter.getClass().getName());
@@ -407,7 +424,7 @@ public class CmisDmsService implements DmsService, LoggingSupport, ChangeListene
 					if (model().getCategory() != null) {
 						final Property<Object> property = cmisDocument.getProperty(model().getCategory());
 						if (property != null) {
-							category = getConverter(property.getDefinition()).convertFromCmisValue(session,
+							category = converterOf(property.getDefinition()).convertFromCmisValue(session,
 									property.getDefinition(), property.getValue());
 						}
 					}
@@ -416,7 +433,7 @@ public class CmisDmsService implements DmsService, LoggingSupport, ChangeListene
 					if (model().getAuthor() != null) {
 						final Property<Object> property = cmisDocument.getProperty(model().getAuthor());
 						if (property != null) {
-							author = getConverter(property.getDefinition()).convertFromCmisValue(session,
+							author = converterOf(property.getDefinition()).convertFromCmisValue(session,
 									property.getDefinition(), property.getValue());
 						}
 					}
@@ -442,7 +459,7 @@ public class CmisDmsService implements DmsService, LoggingSupport, ChangeListene
 							logger.info(MARKER, "processing property " + property);
 							if (property != null && property.getValue() != null) {
 								logger.info(MARKER, "Value of property " + property.getValue());
-								final CmisConverter converter = getConverter(propertyDefinition);
+								final CmisConverter converter = converterOf(propertyDefinition);
 								final String value = converter.convertFromCmisValue(session, propertyDefinition,
 										property.getValue());
 								logger.info(MARKER, "After conversion Value of property " + value);
@@ -712,7 +729,7 @@ public class CmisDmsService implements DmsService, LoggingSupport, ChangeListene
 			if (model().getAuthor() != null) {
 				final PropertyDefinition<?> propertyDefinition = propertyDefinitions().get(model().getAuthor());
 				if (propertyDefinition != null) {
-					final Object author = getConverter(propertyDefinition).convertToCmisValue(session,
+					final Object author = converterOf(propertyDefinition).convertToCmisValue(session,
 							propertyDefinition, document.getAuthor());
 					properties.put(model().getAuthor(), author);
 				}
@@ -725,8 +742,8 @@ public class CmisDmsService implements DmsService, LoggingSupport, ChangeListene
 				logger.info(MARKER, "description property: " + propertyDefinition.getDisplayName() + " updatability "
 						+ propertyDefinition.getUpdatability());
 				if (propertyDefinition != null) {
-					final Object value = getConverter(propertyDefinition).convertToCmisValue(session,
-							propertyDefinition, document.getDescription());
+					final Object value = converterOf(propertyDefinition).convertToCmisValue(session, propertyDefinition,
+							document.getDescription());
 					logger.info(MARKER,
 							"converted property for : " + propertyDefinition.getDisplayName() + " value: " + value);
 					properties.put(model().getDescription(), value);
@@ -740,7 +757,7 @@ public class CmisDmsService implements DmsService, LoggingSupport, ChangeListene
 				if (model().getCategory() != null) {
 					final PropertyDefinition<?> propertyDefinition = propertyDefinitions().get(model().getCategory());
 					if (propertyDefinition != null) {
-						final Object value = getConverter(propertyDefinition).convertToCmisValue(session,
+						final Object value = converterOf(propertyDefinition).convertToCmisValue(session,
 								propertyDefinition, document.getCategory());
 						properties.put(model().getCategory(), value);
 					}
@@ -749,7 +766,7 @@ public class CmisDmsService implements DmsService, LoggingSupport, ChangeListene
 				if (model().getCategory() != null) {
 					final Property<Object> property = cmisDocument.getProperty(model().getCategory());
 					if (property != null) {
-						category = getConverter(property.getDefinition()).convertFromCmisValue(session,
+						category = converterOf(property.getDefinition()).convertFromCmisValue(session,
 								property.getDefinition(), property.getValue());
 					}
 				}
@@ -791,7 +808,7 @@ public class CmisDmsService implements DmsService, LoggingSupport, ChangeListene
 									if (metadataDefinition != null) {
 										final PropertyDefinition<?> propertyDefinition = metadataDefinition
 												.getProperty();
-										final CmisConverter converter = getConverter(propertyDefinition);
+										final CmisConverter converter = converterOf(propertyDefinition);
 										final Object value = converter.convertToCmisValue(session, propertyDefinition,
 												metadata.getValue());
 										properties.put(metadataDefinition.getProperty().getId(), value);
@@ -843,11 +860,9 @@ public class CmisDmsService implements DmsService, LoggingSupport, ChangeListene
 		return properties;
 	}
 
-	private CmisConverter getConverter(final PropertyDefinition<?> property) {
-		logger.debug(MARKER, "Getting converter for: " + property.getDisplayName());
-		final CmisConverter converter = propertyConverters.get(property.getId());
-		final CmisConverter result = converter != null ? converter : defaultConverter;
-		logger.debug(MARKER, "Getconverter for:" + property.getDisplayName() + " is " + result);
-		return result;
+	private CmisConverter converterOf(final PropertyDefinition<?> property) {
+		logger.debug(MARKER, "getting converter for '{}'", property.getDisplayName());
+		return ofNullable(propertyConverters.get(property.getId())).orElse(defaultConverter);
 	}
+
 }
