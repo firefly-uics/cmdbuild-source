@@ -9,7 +9,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 
 @XmlAccessorType(FIELD)
-public class XmlPresets {
+public class XmlPresets extends XmlObject {
 
 	@XmlElementWrapper(name = "models")
 	@XmlElement(name = "model")
