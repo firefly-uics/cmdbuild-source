@@ -72,7 +72,7 @@ import org.cmdbuild.dms.MetadataGroup;
 import org.cmdbuild.dms.MetadataGroupDefinition;
 import org.cmdbuild.dms.StorableDocument;
 import org.cmdbuild.dms.StoredDocument;
-import org.cmdbuild.dms.cmis.CmisConverter.Context;
+import org.cmdbuild.dms.cmis.Converter.Context;
 import org.cmdbuild.dms.cmis.model.XmlConverter;
 import org.cmdbuild.dms.cmis.model.XmlDocumentType;
 import org.cmdbuild.dms.cmis.model.XmlMetadata;
@@ -96,8 +96,8 @@ public class CmisDmsService implements DmsService, LoggingSupport, ChangeListene
 	private final CmisDmsConfiguration configuration;
 	private DefinitionsFactory definitionsFactory;
 	private Supplier<XmlModel> customModel;
-	private CmisConverter defaultConverter;
-	private Map<String, CmisConverter> propertyConverters;
+	private Converter defaultConverter;
+	private Map<String, Converter> converters;
 	private Supplier<Collection<ObjectType>> types;
 	private Supplier<Map<String, PropertyDefinition<?>>> propertyDefinitions;
 	private Supplier<Map<String, CmisDocumentType>> documentTypeDefinitions;
@@ -283,7 +283,7 @@ public class CmisDmsService implements DmsService, LoggingSupport, ChangeListene
 									}
 								}
 								if (property != null) {
-									final CmisConverter converter = converterOf(property);
+									final Converter converter = converterOf(property);
 									final CmisMetadataDefinition cmisMetadata = new CmisMetadataDefinition(
 											metadata.getName(), property, converter.getType(property));
 									cmisMetadataDefinitions.add(cmisMetadata);
@@ -302,7 +302,7 @@ public class CmisDmsService implements DmsService, LoggingSupport, ChangeListene
 												+ localNamespace + " ,localname " + property.getLocalName()
 												+ " ,queryname " + property.getQueryName());
 								if (property.getLocalNamespace().equals(configuration.getAlfrescoCustomUri())) {
-									final CmisConverter converter = converterOf(property);
+									final Converter converter = converterOf(property);
 									final CmisMetadataDefinition cmisMetadata = new CmisMetadataDefinition(
 											property.getDisplayName(), property, converter.getType(property));
 									cmisMetadataDefinitions.add(cmisMetadata);
@@ -325,12 +325,11 @@ public class CmisDmsService implements DmsService, LoggingSupport, ChangeListene
 			}
 
 		}));
-		propertyConverters = newHashMap();
+		converters = newHashMap();
 		if (model().getConverterList() != null) {
 			for (final XmlConverter converter : model().getConverterList()) {
 				try {
-					final CmisConverter cmisConverter = (CmisConverter) Class.forName(converter.getType())
-							.newInstance();
+					final Converter cmisConverter = (Converter) Class.forName(converter.getType()).newInstance();
 					cmisConverter.setContext(new Context() {
 
 						@Override
@@ -347,7 +346,7 @@ public class CmisDmsService implements DmsService, LoggingSupport, ChangeListene
 					for (final String propertyId : converter.getCmisPropertyId()) {
 						logger.debug(MARKER,
 								"Property converter for " + propertyId + cmisConverter.getClass().getName());
-						propertyConverters.put(propertyId, cmisConverter);
+						converters.put(propertyId, cmisConverter);
 					}
 				} catch (final Exception e) {
 					logger.error(MARKER, "Exception loading CMIS converter " + converter.getType(), e);
@@ -459,7 +458,7 @@ public class CmisDmsService implements DmsService, LoggingSupport, ChangeListene
 							logger.info(MARKER, "processing property " + property);
 							if (property != null && property.getValue() != null) {
 								logger.info(MARKER, "Value of property " + property.getValue());
-								final CmisConverter converter = converterOf(propertyDefinition);
+								final Converter converter = converterOf(propertyDefinition);
 								final String value = converter.convertFromCmisValue(session, propertyDefinition,
 										property.getValue());
 								logger.info(MARKER, "After conversion Value of property " + value);
@@ -494,7 +493,8 @@ public class CmisDmsService implements DmsService, LoggingSupport, ChangeListene
 	@Override
 	public DataHandler download(final DocumentDownload document) throws DmsError {
 		final Document cmisDocument = getDocument(createSession(), document.getPath(), document.getFileName());
-		return cmisDocument != null ? new DataHandler(new CmisDataSource(cmisDocument.getContentStream())) : null;
+		return (cmisDocument != null) ? new DataHandler(new ContentStreamAdapter(cmisDocument.getContentStream()))
+				: null;
 	}
 
 	@Override
@@ -582,7 +582,7 @@ public class CmisDmsService implements DmsService, LoggingSupport, ChangeListene
 			final Map<String, Object> properties = newHashMap();
 			for (final Property<?> property : cmisDocument.getProperties()) {
 				if (property.getValue() != null) {
-					final CmisConverter cmisConverter = propertyConverters.get(property.getId());
+					final Converter cmisConverter = converters.get(property.getId());
 					logger.info(MARKER, "Property converter for " + property.getLocalName() + " is " + cmisConverter);
 					if (cmisConverter != null && cmisConverter.isAsymmetric()) {
 						final String value = cmisConverter.convertFromCmisValue(session, property.getDefinition(),
@@ -808,7 +808,7 @@ public class CmisDmsService implements DmsService, LoggingSupport, ChangeListene
 									if (metadataDefinition != null) {
 										final PropertyDefinition<?> propertyDefinition = metadataDefinition
 												.getProperty();
-										final CmisConverter converter = converterOf(propertyDefinition);
+										final Converter converter = converterOf(propertyDefinition);
 										final Object value = converter.convertToCmisValue(session, propertyDefinition,
 												metadata.getValue());
 										properties.put(metadataDefinition.getProperty().getId(), value);
@@ -860,9 +860,9 @@ public class CmisDmsService implements DmsService, LoggingSupport, ChangeListene
 		return properties;
 	}
 
-	private CmisConverter converterOf(final PropertyDefinition<?> property) {
+	private Converter converterOf(final PropertyDefinition<?> property) {
 		logger.debug(MARKER, "getting converter for '{}'", property.getDisplayName());
-		return ofNullable(propertyConverters.get(property.getId())).orElse(defaultConverter);
+		return ofNullable(converters.get(property.getId())).orElse(defaultConverter);
 	}
 
 }
