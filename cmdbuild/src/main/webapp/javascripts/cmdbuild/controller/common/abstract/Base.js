@@ -91,18 +91,24 @@
 				// Wildcard manage
 				if (Ext.isObject(this.stringToFunctionNameMap[name])) {
 					switch (this.stringToFunctionNameMap[name].action) {
-						// Forwarded function manage with multiple controller forwarding management (doesn't return values)
+						// Forwarded function manage with multiple controller forwarding management
 						case 'forward': {
+							var values = {};
+
 							if (Ext.isArray(this.stringToFunctionNameMap[name].target))
 								Ext.Array.forEach(this.stringToFunctionNameMap[name].target, function(controller, i, allControllers) {
 									if (Ext.isEmpty(this[controller])) {
 										_warning('undefined class property "this.' + controller + '"', this);
 									} else {
-										this[controller].cmfg(name, param, callBack); // Use cmfg() access point to manage aliases
+										values[controller] = this[controller].cmfg(name, param, callBack); // Use cmfg() access point to manage aliases
 									}
 								}, this);
 
-							return;
+							// If only one value returned avoids to return object
+							if (Ext.Object.getSize(values) == 1)
+								return Ext.Object.getValues(values)[0];
+
+							return values;
 						}
 					}
 				}
