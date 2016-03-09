@@ -70,16 +70,20 @@
 		 *
 		 * @param {String} value
 		 *
+		 * @returns {CMDBuild.view.common.field.comboBox.Searchable}
+		 *
 		 * @override
 		 */
 		setValue: function (value) {
 			value = this.delegate.cmfg('fieldComboBoxSearchableNormalizeValue', value);
 
-			if (this.getStore().find(this.valueField, value) >= 0) {
+			if (Ext.isEmpty(value))
+				return this.callParent();
+
+			if (this.getStore().find(this.valueField, value) >= 0)
 				return this.callParent([value]);
-			} else {
-				return this.delegate.cmfg('onFieldComboBoxSearchableSetValue', value);
-			}
+
+			return this.delegate.cmfg('onFieldComboBoxSearchableSetValue', value);
 		}
 	});
 

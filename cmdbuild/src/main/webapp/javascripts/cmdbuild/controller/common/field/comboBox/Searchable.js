@@ -240,6 +240,9 @@
 			}
 		},
 
+		/**
+		 * @private
+		 */
 		trigger1Manager: function () {
 			if (this.fieldComboBoxSearchableStoreExceedsLimit()) {
 				this.onFieldComboBoxSearchableTrigger3Click();
