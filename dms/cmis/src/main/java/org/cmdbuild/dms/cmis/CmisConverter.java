@@ -6,14 +6,22 @@ import org.cmdbuild.dms.MetadataType;
 
 public interface CmisConverter {
 
-	public void setConfiguration(final CmisDmsConfiguration configuration);
+	interface Context {
 
-	public Object convertToCmisValue(Session session, PropertyDefinition<?> propertyDefinition, String value);
+		CmisDmsConfiguration getConfiguration();
 
-	public String convertFromCmisValue(Session session, PropertyDefinition<?> propertyDefinition, Object cmisValue);
+		CategoryLookupConverter getCategoryLookupConverter();
 
-	public MetadataType getType(PropertyDefinition<?> propertyDefinition);
+	}
 
-	public boolean isAsymmetric();
+	void setContext(Context context);
+
+	Object convertToCmisValue(Session session, PropertyDefinition<?> propertyDefinition, String value);
+
+	String convertFromCmisValue(Session session, PropertyDefinition<?> propertyDefinition, Object value);
+
+	MetadataType getType(PropertyDefinition<?> propertyDefinition);
+
+	boolean isAsymmetric();
 
 }

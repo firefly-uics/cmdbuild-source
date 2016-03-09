@@ -22,7 +22,7 @@ public class DefaultConverter implements CmisConverter {
 			Constants.DATE_PRINTING_PATTERN);
 
 	@Override
-	public void setConfiguration(final CmisDmsConfiguration configuration) {
+	public void setContext(final Context context) {
 	}
 
 	@Override
@@ -95,27 +95,27 @@ public class DefaultConverter implements CmisConverter {
 
 	@Override
 	public String convertFromCmisValue(final Session session, final PropertyDefinition<?> propertyDefinition,
-			final Object cmisValue) {
+			final Object value) {
 		try {
-			String value = null;
-			if (cmisValue != null) {
+			String output = null;
+			if (value != null) {
 				switch (getType(propertyDefinition)) {
 				case DATE: {
-					final GregorianCalendar calendar = (GregorianCalendar) cmisValue;
-					value = CMDBUILD_DATE_PRINTING_FORMAT.format(calendar.getTime());
+					final GregorianCalendar calendar = (GregorianCalendar) value;
+					output = CMDBUILD_DATE_PRINTING_FORMAT.format(calendar.getTime());
 					break;
 				}
 				case DATETIME: {
-					final GregorianCalendar calendar = (GregorianCalendar) cmisValue;
-					value = CMDBUILD_DATETIME_PRINTING_FORMAT.format(calendar.getTime());
+					final GregorianCalendar calendar = (GregorianCalendar) value;
+					output = CMDBUILD_DATETIME_PRINTING_FORMAT.format(calendar.getTime());
 					break;
 				}
 				default: {
-					value = cmisValue != null ? cmisValue.toString() : null;
+					output = value != null ? value.toString() : null;
 				}
 				}
 			}
-			return value;
+			return output;
 		} catch (final Exception e) {
 			return "";
 		}
