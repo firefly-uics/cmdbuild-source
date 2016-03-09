@@ -36,7 +36,7 @@
 				if (Ext.isEmpty(filter)) {
 					var params = {};
 					params[CMDBuild.core.constants.Proxy.CLASS_NAME] = entryType.get(CMDBuild.core.constants.Proxy.NAME);
-					params[CMDBuild.core.constants.Proxy.GROUP] = CMDBuild.Runtime.DefaultGroupName;
+					params[CMDBuild.core.constants.Proxy.GROUP] = CMDBuild.configuration.runtime.get(CMDBuild.core.constants.Proxy.DEFAULT_GROUP_NAME);
 
 					CMDBuild.core.proxy.userAndGroup.group.DefaultFilters.read({
 						params: params,
