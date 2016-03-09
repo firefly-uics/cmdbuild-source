@@ -8,11 +8,11 @@ import javax.activation.DataSource;
 
 import org.apache.chemistry.opencmis.commons.data.ContentStream;
 
-public class CmisDataSource implements DataSource {
+public class ContentStreamAdapter implements DataSource {
 
 	private final ContentStream contentStream;
 
-	public CmisDataSource(final ContentStream contentStream) {
+	public ContentStreamAdapter(final ContentStream contentStream) {
 		this.contentStream = contentStream;
 	}
 

@@ -4,7 +4,7 @@ import org.apache.chemistry.opencmis.client.api.Session;
 import org.apache.chemistry.opencmis.commons.definitions.PropertyDefinition;
 import org.cmdbuild.dms.MetadataType;
 
-public interface CmisConverter {
+public interface Converter {
 
 	interface Context {
 

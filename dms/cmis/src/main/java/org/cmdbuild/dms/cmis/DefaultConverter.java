@@ -12,7 +12,7 @@ import org.apache.chemistry.opencmis.commons.enums.PropertyType;
 import org.cmdbuild.common.Constants;
 import org.cmdbuild.dms.MetadataType;
 
-public class DefaultConverter implements CmisConverter {
+public class DefaultConverter implements Converter {
 
 	private static final SimpleDateFormat CMDBUILD_DATETIME_PARSING_FORMAT = new SimpleDateFormat(
 			Constants.SOAP_ALL_DATES_PARSING_PATTERN);

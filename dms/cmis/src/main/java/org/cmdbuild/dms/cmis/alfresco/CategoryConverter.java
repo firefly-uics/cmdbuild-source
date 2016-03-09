@@ -2,18 +2,12 @@ package org.cmdbuild.dms.cmis.alfresco;
 
 import static org.cmdbuild.dms.MetadataType.TEXT;
 
-import java.util.Arrays;
-import java.util.List;
-
-import org.apache.chemistry.opencmis.client.api.CmisObject;
-import org.apache.chemistry.opencmis.client.api.Item;
-import org.apache.chemistry.opencmis.client.api.QueryResult;
 import org.apache.chemistry.opencmis.client.api.Session;
 import org.apache.chemistry.opencmis.commons.definitions.PropertyDefinition;
 import org.cmdbuild.dms.MetadataType;
-import org.cmdbuild.dms.cmis.CmisConverter;
+import org.cmdbuild.dms.cmis.Converter;
 
-public class CategoryConverter implements CmisConverter {
+public class CategoryConverter implements Converter {
 
 	private Context context;
 
