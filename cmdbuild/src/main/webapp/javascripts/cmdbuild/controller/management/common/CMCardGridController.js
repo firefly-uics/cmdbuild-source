@@ -586,6 +586,9 @@
 	}
 
 	function unApplyFilter(me) {
+		if (me.gridSM.hasSelection())
+			me.gridSM.deselectAll();
+
 		if (me.appliedFilter) {
 			setStoreFilterUnapplied(me, me.appliedFilter);
 			me.appliedFilter = undefined;
