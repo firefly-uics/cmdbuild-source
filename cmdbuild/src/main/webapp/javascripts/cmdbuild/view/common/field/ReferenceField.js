@@ -201,7 +201,6 @@
 				&& this.getStore().find(this.valueField, value) == -1
 				&& !Ext.isEmpty(this.attribute)
 				&& !Ext.isEmpty(this.attribute.meta)
-				&& this.attribute.meta['system.type.reference.' + CMDBuild.core.constants.Proxy.PRESELECT_IF_UNIQUE] !== 'true'
 			) {
 				var params = Ext.apply({ cardId: value }, this.getStore().baseParams);
 

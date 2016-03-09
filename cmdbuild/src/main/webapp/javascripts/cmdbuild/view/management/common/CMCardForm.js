@@ -251,10 +251,8 @@
 				) {
 					field.suspendEvents(false);
 				}
-			});
 
-			// Set field's values
-			Ext.Array.forEach(fields, function (field, i, allFields) {
+				// Set field's values
 				if (!(Ext.isFunction(fieldSelector) && !fieldSelector(field))) {
 					field.setValue(data[field.name]);
 

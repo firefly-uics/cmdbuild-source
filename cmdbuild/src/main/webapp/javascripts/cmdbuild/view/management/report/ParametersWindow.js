@@ -1,4 +1,4 @@
-(function() {
+(function () {
 
 	Ext.define('CMDBuild.view.management.report.ParametersWindow', {
 		extend: 'CMDBuild.core.PopupWindow',
@@ -28,7 +28,7 @@
 
 		title: CMDBuild.Translation.reportParameters,
 
-		initComponent: function() {
+		initComponent: function () {
 			Ext.apply(this, {
 				dockedItems: [
 					Ext.create('Ext.toolbar.Toolbar', {
@@ -46,14 +46,14 @@
 							Ext.create('CMDBuild.core.buttons.text.Print', {
 								scope: this,
 
-								handler: function(button, e) {
+								handler: function (button, e) {
 									this.delegate.cmfg('onReportParametersWindowPrintButtonClick');
 								}
 							}),
 							Ext.create('CMDBuild.core.buttons.text.Abort', {
 								scope: this,
 
-								handler: function(button, e) {
+								handler: function (button, e) {
 									this.delegate.cmfg('onReportParametersWindowAbortButtonClick');
 								}
 							})
@@ -62,9 +62,9 @@
 				],
 				items: [
 					this.form = Ext.create('Ext.form.Panel', {
-						labelAlign: 'right',
-						frame: true,
 						border: false,
+						frame: true,
+						labelAlign: 'right',
 
 						layout: {
 							type: 'vbox',
