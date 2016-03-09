@@ -4,15 +4,13 @@ import org.cmdbuild.dms.DmsConfiguration;
 
 public interface CmisDmsConfiguration extends DmsConfiguration {
 
-	String getServerURL();
+	String getCmisUrl();
 
-	String getAlfrescoUser();
+	String getCmisUser();
 
-	String getAlfrescoPassword();
+	String getCmisPassword();
 
-	Object getRepositoryWSPath();
-
-	Object getRepositoryApp();
+	String getCmisPath();
 
 	String getCmisModelType();
 

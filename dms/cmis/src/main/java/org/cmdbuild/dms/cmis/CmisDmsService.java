@@ -132,11 +132,11 @@ public class CmisDmsService implements DmsService, LoggingSupport, ChangeListene
 				logger.info(MARKER, "initializing repository");
 				final SessionFactory sessionFactory = SessionFactoryImpl.newInstance();
 				final Map<String, String> parameters = newHashMap();
-				parameters.put(ATOMPUB_URL, configuration.getServerURL());
+				parameters.put(ATOMPUB_URL, configuration.getCmisUrl());
 				parameters.put(BINDING_TYPE, BindingType.ATOMPUB.value());
 				parameters.put(AUTH_HTTP_BASIC, "true");
-				parameters.put(USER, configuration.getAlfrescoUser());
-				parameters.put(PASSWORD, configuration.getAlfrescoPassword());
+				parameters.put(USER, configuration.getCmisUser());
+				parameters.put(PASSWORD, configuration.getCmisPassword());
 				parameters.put(CONNECT_TIMEOUT, Integer.toString(10000));
 				parameters.put(READ_TIMEOUT, Integer.toString(30000));
 				if (model().getSessionParameters() != null) {
@@ -650,9 +650,7 @@ public class CmisDmsService implements DmsService, LoggingSupport, ChangeListene
 	private Folder getFolder(final Session session, final List<String> pathList) {
 		CmisObject object = null;
 		if (pathList != null) {
-			final StringBuilder path = new StringBuilder();
-			path.append(configuration.getRepositoryWSPath());
-			path.append(configuration.getRepositoryApp());
+			final StringBuilder path = new StringBuilder(configuration.getCmisPath());
 			for (final String name : pathList) {
 				path.append("/");
 				path.append(name);
@@ -667,10 +665,7 @@ public class CmisDmsService implements DmsService, LoggingSupport, ChangeListene
 	}
 
 	private Folder createFolder(final Session session, final List<String> pathList) {
-		final StringBuilder path = new StringBuilder();
-		path.append(configuration.getRepositoryWSPath());
-		path.append(configuration.getRepositoryApp());
-
+		final StringBuilder path = new StringBuilder(configuration.getCmisPath());
 		final CmisObject object = session.getObjectByPath(path.toString());
 		if (object instanceof Folder && pathList != null) {
 			Folder parentFolder = (Folder) object;
@@ -700,9 +695,7 @@ public class CmisDmsService implements DmsService, LoggingSupport, ChangeListene
 	private Document getDocument(final Session session, final List<String> pathList, final String filename) {
 		CmisObject object = null;
 		if (pathList != null && filename != null) {
-			final StringBuilder path = new StringBuilder();
-			path.append(configuration.getRepositoryWSPath());
-			path.append(configuration.getRepositoryApp());
+			final StringBuilder path = new StringBuilder(configuration.getCmisPath());
 			for (final String name : pathList) {
 				path.append("/");
 				path.append(name);
