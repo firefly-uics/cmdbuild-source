@@ -277,8 +277,8 @@
 			updateStoreAndSelectGivenPosition(me, p.IdClass, position);
 		},
 
-		_onGetPositionFailureWithoutForcingTheFilter: function(resText) {
-			CMDBuild.Msg.info(undefined, CMDBuild.Translation.info.card_not_found);
+		_onGetPositionFailureWithoutForcingTheFilter: function() {
+			CMDBuild.core.Message.info(undefined, CMDBuild.Translation.info.card_not_found);
 		},
 		// protected
 		unApplyFilter: unApplyFilter,

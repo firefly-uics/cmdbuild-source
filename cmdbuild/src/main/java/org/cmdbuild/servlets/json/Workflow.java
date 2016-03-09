@@ -1,6 +1,6 @@
 package org.cmdbuild.servlets.json;
 
-import static org.cmdbuild.servlets.json.CommunicationConstants.ACTIVITY_INSTANCE_ID;
+import static org.cmdbuild.servlets.json.CommunicationConstants.*;
 import static org.cmdbuild.servlets.json.CommunicationConstants.ADVANCE;
 import static org.cmdbuild.servlets.json.CommunicationConstants.ATTRIBUTES;
 import static org.cmdbuild.servlets.json.CommunicationConstants.BEGIN_DATE;
@@ -70,7 +70,7 @@ public class Workflow extends JSONBaseWithSpringContext {
 	 * (completed/terminated/aborted) will be returned. If state is open, the
 	 * activities in open.not_running.not_started and open.running will be
 	 * returned
-	 * 
+	 *
 	 * @param params
 	 * @return
 	 * @throws JSONException
@@ -217,6 +217,7 @@ public class Workflow extends JSONBaseWithSpringContext {
 				put("ProcessInstanceId", processInstance.getProcessInstanceId());
 				put("beginDate", formatter.print(beginDate));
 				put("beginDateAsLong", processInstance.getBeginDate().getMillis());
+				put("flowStatus", processInstance.getState().name());
 			}
 		});
 	}
