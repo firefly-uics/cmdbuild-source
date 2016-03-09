@@ -1,7 +1,7 @@
 <presets>
 	<models>
 		<model id="alfresco" description="Alfresco" type="cmis:document"
-			secondary-types="P:cm:generalclassifiable P:cm:author P:cm:titled">
+			secondary-types="P:cm:author P:cm:titled">
 			<author>cm:author</author>
 			<description>cm:description</description>
 		</model>
