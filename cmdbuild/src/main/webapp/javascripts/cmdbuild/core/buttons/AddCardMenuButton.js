@@ -53,8 +53,11 @@
 		 */
 		enable: function () {
 			if (
-				!_CMUtils.isSuperclass(this.classId)
-				|| (_CMUtils.isSuperclass(this.classId) && !this.isEmpty())
+				!Ext.isEmpty(this.classId)
+				&& (
+					!_CMUtils.isSuperclass(this.classId)
+					|| (_CMUtils.isSuperclass(this.classId) && !this.isEmpty())
+				)
 			) {
 				this.callParent(arguments);
 			}
