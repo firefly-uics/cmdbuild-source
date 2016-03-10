@@ -9,7 +9,7 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 
 @XmlAccessorType(FIELD)
-public class XmlConverter {
+public class XmlConverter extends XmlObject {
 
 	@XmlAttribute(name = "type")
 	private String type;

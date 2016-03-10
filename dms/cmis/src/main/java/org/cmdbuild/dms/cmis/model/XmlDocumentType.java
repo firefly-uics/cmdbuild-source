@@ -9,7 +9,7 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 
 @XmlAccessorType(FIELD)
-public class XmlDocumentType {
+public class XmlDocumentType extends XmlObject {
 
 	@XmlAttribute(name = "name")
 	private String name;

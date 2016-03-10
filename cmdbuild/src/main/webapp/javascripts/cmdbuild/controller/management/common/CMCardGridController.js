@@ -277,8 +277,8 @@
 			updateStoreAndSelectGivenPosition(me, p.IdClass, position);
 		},
 
-		_onGetPositionFailureWithoutForcingTheFilter: function(resText) {
-			CMDBuild.Msg.info(undefined, CMDBuild.Translation.info.card_not_found);
+		_onGetPositionFailureWithoutForcingTheFilter: function() {
+			CMDBuild.core.Message.info(undefined, CMDBuild.Translation.info.card_not_found);
 		},
 		// protected
 		unApplyFilter: unApplyFilter,
@@ -586,6 +586,9 @@
 	}
 
 	function unApplyFilter(me) {
+		if (me.gridSM.hasSelection())
+			me.gridSM.deselectAll();
+
 		if (me.appliedFilter) {
 			setStoreFilterUnapplied(me, me.appliedFilter);
 			me.appliedFilter = undefined;

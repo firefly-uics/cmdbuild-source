@@ -11,7 +11,7 @@ import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlList;
 
 @XmlAccessorType(FIELD)
-public class XmlModel {
+public class XmlModel extends XmlObject {
 
 	@XmlAttribute(name = "id")
 	private String id;

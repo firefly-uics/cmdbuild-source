@@ -454,7 +454,7 @@
 							_CMUIState.onlyGridIfFullScreen();
 						}
 
-						this.delegate.onCardSaved(savedCardId);
+						this.delegate.onCardSaved(savedCardId, decodedResponse.response.flowStatus);
 					}
 				});
 			}

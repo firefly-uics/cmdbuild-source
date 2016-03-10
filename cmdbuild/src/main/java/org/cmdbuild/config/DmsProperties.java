@@ -45,6 +45,10 @@ public class DmsProperties extends DefaultProperties implements AlfrescoDmsConfi
 	private static final String ALFRESCO_CUSTOM_MODEL_FILENAME = "alfresco.custom.model.filename";
 	private static final String METADATA_AUTOCOMPLETION_FILENAME = "metadata.autocompletion.filename";
 
+	private static final String CMIS_URL = "dms.service.cmis.url";
+	private static final String CMIS_USER = "dms.service.cmis.user";
+	private static final String CMIS_PASSWORD = "dms.service.cmis.password";
+	private static final String CMIS_PATH = "dms.service.cmis.path";
 	private static final String CMIS_MODEL_TYPE = "dms.service.cmis.model";
 
 	private static final Map<String, String> DEFAULTS;
@@ -67,6 +71,10 @@ public class DmsProperties extends DefaultProperties implements AlfrescoDmsConfi
 		DEFAULTS.put(ALFRESCO_CUSTOM_PREFIX, "cmdbuild");
 		DEFAULTS.put(ALFRESCO_CUSTOM_MODEL_FILENAME, "cmdbuildCustomModel.xml");
 		DEFAULTS.put(METADATA_AUTOCOMPLETION_FILENAME, "metadataAutocompletion.xml");
+		DEFAULTS.put(CMIS_URL, "http://localhost:10080/alfresco/api/-default-/public/cmis/versions/1.1/atom");
+		DEFAULTS.put(CMIS_USER, "admin");
+		DEFAULTS.put(CMIS_PASSWORD, "admin");
+		DEFAULTS.put(CMIS_PATH, "/User Homes/cmdbuild");
 	}
 
 	public static DmsProperties getInstance() {
@@ -236,6 +244,26 @@ public class DmsProperties extends DefaultProperties implements AlfrescoDmsConfi
 	@Override
 	public long getDelayBetweenFtpAndWebserviceOperations() {
 		return Long.valueOf(getProperty(DELAY));
+	}
+
+	@Override
+	public String getCmisUrl() {
+		return getProperty(CMIS_URL);
+	}
+
+	@Override
+	public String getCmisUser() {
+		return getProperty(CMIS_USER);
+	}
+
+	@Override
+	public String getCmisPassword() {
+		return getProperty(CMIS_PASSWORD);
+	}
+
+	@Override
+	public String getCmisPath() {
+		return getProperty(CMIS_PATH);
 	}
 
 	@Override

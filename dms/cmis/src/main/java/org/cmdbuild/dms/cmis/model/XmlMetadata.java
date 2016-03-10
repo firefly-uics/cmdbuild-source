@@ -6,7 +6,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 
 @XmlAccessorType(FIELD)
-public class XmlMetadata {
+public class XmlMetadata extends XmlObject {
 
 	@XmlAttribute(name = "name")
 	private String name;

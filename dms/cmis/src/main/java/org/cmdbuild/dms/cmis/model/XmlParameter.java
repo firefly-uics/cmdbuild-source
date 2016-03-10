@@ -6,7 +6,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 
 @XmlAccessorType(FIELD)
-public class XmlParameter {
+public class XmlParameter extends XmlObject {
 
 	@XmlAttribute(name = "name")
 	private String name;
