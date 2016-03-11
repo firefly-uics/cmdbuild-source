@@ -90,6 +90,7 @@ public class CxfSessions implements Sessions, LoggingSupport {
 		final OperationUser user = loginHandler.login(LoginDTO.newInstance() //
 				.withLoginString(session.getUsername()) //
 				.withPassword(session.getPassword()) //
+				.withGroupName(session.getRole()) //
 				.withServiceUsersAllowed(true) //
 				.build());
 		final CMGroup group = user.getPreferredGroup();

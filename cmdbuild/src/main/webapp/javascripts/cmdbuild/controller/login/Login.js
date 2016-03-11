@@ -1,4 +1,4 @@
-(function() {
+(function () {
 
 	Ext.define('CMDBuild.controller.login.Login', {
 		extend: 'CMDBuild.controller.common.abstract.Base',
@@ -79,12 +79,12 @@
 							}
 						});
 					},
-					failure: function (result, options, decodedResult) {
+					failure: function (response, options, decodedResponse) {
 						CMDBuild.core.LoadMask.hide();
 
-						if (!Ext.isEmpty(decodedResult) && decodedResult[CMDBuild.core.constants.Proxy.REASON] == 'AUTH_MULTIPLE_GROUPS') {
+						if (!Ext.isEmpty(decodedResponse) && decodedResponse[CMDBuild.core.constants.Proxy.REASON] == 'AUTH_MULTIPLE_GROUPS') {
 							CMDBuild.configuration.runtime.set(CMDBuild.core.constants.Proxy.USERNAME, this.form.user.getValue());
-							CMDBuild.configuration.runtime.set(CMDBuild.core.constants.Proxy.GROUPS, decodedResult[CMDBuild.core.constants.Proxy.GROUPS]);
+							CMDBuild.configuration.runtime.set(CMDBuild.core.constants.Proxy.GROUPS, decodedResponse[CMDBuild.core.constants.Proxy.GROUPS]);
 
 							this.setupFields();
 

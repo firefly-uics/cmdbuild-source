@@ -1,4 +1,4 @@
-(function() {
+(function () {
 
 	Ext.define('CMDBuild.view.login.LoginViewport', {
 		extend: 'Ext.container.Viewport',
@@ -17,7 +17,7 @@
 		frame: true,
 		layout: 'border',
 
-		initComponent: function() {
+		initComponent: function () {
 			Ext.apply(this, {
 				items: [
 					Ext.create('Ext.panel.Panel', {
