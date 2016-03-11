@@ -1,6 +1,7 @@
 package org.cmdbuild.dms;
 
 import java.util.List;
+import java.util.Map;
 
 import javax.activation.DataHandler;
 
@@ -80,6 +81,11 @@ public abstract class ForwardingDmsService extends ForwardingObject implements D
 	@Override
 	public void delete(final DocumentSearch position) throws DmsError {
 		delegate().delete(position);
+	}
+
+	@Override
+	public Map<String, String> getPresets() {
+		return delegate().getPresets();
 	}
 
 }

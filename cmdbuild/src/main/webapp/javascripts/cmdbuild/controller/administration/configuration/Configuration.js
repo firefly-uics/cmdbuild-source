@@ -47,11 +47,11 @@
 		 */
 		buildSectionController: function(identifier) {
 			switch(identifier) {
-				case 'alfresco':
-					return Ext.create('CMDBuild.controller.administration.configuration.Dms', { parentDelegate: this });
-
 				case 'bim':
 					return Ext.create('CMDBuild.controller.administration.configuration.Bim', { parentDelegate: this });
+
+				case 'dms':
+					return Ext.create('CMDBuild.controller.administration.configuration.Dms', { parentDelegate: this });
 
 				case 'gis':
 					return Ext.create('CMDBuild.controller.administration.configuration.Gis', { parentDelegate: this });

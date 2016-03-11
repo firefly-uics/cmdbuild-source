@@ -36,8 +36,6 @@ import java.util.Map;
 import javax.activation.DataHandler;
 import javax.activation.MimetypesFileTypeMap;
 import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBException;
-import javax.xml.transform.Source;
 import javax.xml.transform.stream.StreamSource;
 
 import org.apache.chemistry.opencmis.client.api.CmisObject;
@@ -97,6 +95,7 @@ public class CmisDmsService implements DmsService, LoggingSupport, ChangeListene
 
 	private final CmisDmsConfiguration configuration;
 	private DefinitionsFactory definitionsFactory;
+	private Supplier<XmlPresets> presets;
 	private Supplier<XmlModel> model;
 	private Converter defaultConverter;
 	private Map<String, Converter> converters;
@@ -112,6 +111,10 @@ public class CmisDmsService implements DmsService, LoggingSupport, ChangeListene
 		this.configuration.addListener(this);
 		this.categoryLookupConverter = categoryLookupConverter;
 		initialize();
+	}
+
+	private XmlPresets presets() {
+		return presets.get();
 	}
 
 	private XmlModel model() {
@@ -155,7 +158,29 @@ public class CmisDmsService implements DmsService, LoggingSupport, ChangeListene
 			}
 
 		}));
-		model = synchronizedSupplier(memoize(new Supplier<XmlModel>() {
+		presets = synchronizedSupplier(memoize(new Supplier<XmlPresets>() {
+
+			@Override
+			public XmlPresets get() {
+				try {
+					final InputStream is = getClass().getClassLoader()
+							.getResourceAsStream("org/cmdbuild/dms/cmis/model/presets.xml");
+					return JAXBContext.newInstance(XmlPresets.class) //
+							.createUnmarshaller() //
+							.unmarshal(new StreamSource(is), XmlPresets.class) //
+							.getValue();
+				} catch (final Exception e) {
+					logger.error(MARKER, "error loading presets", e);
+					final XmlPresets output = new XmlPresets();
+					output.setModels(emptyList());
+					return output;
+				}
+			}
+
+		}));
+		model =
+
+		synchronizedSupplier(memoize(new Supplier<XmlModel>() {
 
 			@Override
 			public XmlModel get() {
@@ -167,15 +192,16 @@ public class CmisDmsService implements DmsService, LoggingSupport, ChangeListene
 					case "custom":
 						logger.info(MARKER, "loading custom model");
 						final String content = configuration.getCustomModelFileContent();
-						model = content.isEmpty() ? new XmlModel() : unmarshal(source(content), XmlModel.class);
+						model = content.isEmpty() ? new XmlModel()
+								: JAXBContext.newInstance(XmlModel.class) //
+										.createUnmarshaller() //
+										.unmarshal(new StreamSource(new StringReader(content)), XmlModel.class) //
+										.getValue();
 						break;
 
 					default:
 						logger.info(MARKER, "loading preset '{}'", modelType);
-						final InputStream is = getClass().getClassLoader()
-								.getResourceAsStream("org/cmdbuild/dms/cmis/model/presets.xml");
-						final XmlPresets value = unmarshal(source(is), XmlPresets.class);
-						model = value.getModels().stream() //
+						model = presets().getModels().stream() //
 								.filter(t -> t.getId().equals(modelType)) //
 								.findFirst() //
 								.orElse(new XmlModel());
@@ -183,24 +209,9 @@ public class CmisDmsService implements DmsService, LoggingSupport, ChangeListene
 					}
 					return model;
 				} catch (final Exception e) {
-					logger.error(MARKER, "error loading  model", e);
+					logger.error(MARKER, "error loading model", e);
 					return new XmlModel();
 				}
-			}
-
-			private <T> T unmarshal(final Source source, final Class<T> type) throws JAXBException {
-				return JAXBContext.newInstance(type) //
-						.createUnmarshaller() //
-						.unmarshal(source, type) //
-						.getValue();
-			}
-
-			private Source source(final String value) {
-				return new StreamSource(new StringReader(value));
-			}
-
-			private Source source(final InputStream value) {
-				return new StreamSource(value);
 			}
 
 		}));
@@ -238,7 +249,7 @@ public class CmisDmsService implements DmsService, LoggingSupport, ChangeListene
 			public Map<String, PropertyDefinition<?>> get() {
 				final Map<String, PropertyDefinition<?>> output = newHashMap();
 				for (final String name : from(
-						asList(model().getCategory(), model().getAuthor(), model().getDescription()))
+						asList(model().getCategory(), model().getAuthor(), model().getDescriptionProperty()))
 								// skips non-null elements
 								.filter(String.class)) {
 					PropertyDefinition<?> property = null;
@@ -732,8 +743,8 @@ public class CmisDmsService implements DmsService, LoggingSupport, ChangeListene
 
 			properties.put(DESCRIPTION, document.getDescription());
 
-			if (model().getDescription() != null) {
-				final PropertyDefinition<?> propertyDefinition = propertyDefinitions().get(model().getDescription());
+			if (model().getDescriptionProperty() != null) {
+				final PropertyDefinition<?> propertyDefinition = propertyDefinitions().get(model().getDescriptionProperty());
 				logger.info(MARKER, "description property '{}' updatability '{}'", propertyDefinition.getDisplayName(),
 						propertyDefinition.getUpdatability());
 				if (propertyDefinition != null) {
@@ -741,7 +752,7 @@ public class CmisDmsService implements DmsService, LoggingSupport, ChangeListene
 							document.getDescription());
 					logger.info(MARKER, "converted property for '{}' value '{}'", propertyDefinition.getDisplayName(),
 							value);
-					properties.put(model().getDescription(), value);
+					properties.put(model().getDescriptionProperty(), value);
 				}
 			}
 
@@ -858,6 +869,15 @@ public class CmisDmsService implements DmsService, LoggingSupport, ChangeListene
 	private Converter converterOf(final PropertyDefinition<?> property) {
 		logger.debug(MARKER, "getting converter for '{}'", property.getDisplayName());
 		return ofNullable(converters.get(property.getId())).orElse(defaultConverter);
+	}
+
+	@Override
+	public Map<String, String> getPresets() {
+		final Map<String, String> output = newHashMap();
+		for (final XmlModel element : presets().getModels()) {
+			output.put(element.getId(), element.getDescription());
+		}
+		return output;
 	}
 
 }

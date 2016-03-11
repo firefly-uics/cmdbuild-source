@@ -1,6 +1,7 @@
 package org.cmdbuild.dms;
 
 import java.util.List;
+import java.util.Map;
 
 import javax.activation.DataHandler;
 
@@ -67,6 +68,12 @@ public class LoggedDmsService extends ForwardingDmsService implements LoggingSup
 	public void clearCache() {
 		logger.info("clearing internal cache");
 		super.clearCache();
+	}
+
+	@Override
+	public Map<String, String> getPresets() {
+		logger.info("getting presets");
+		return super.getPresets();
 	}
 
 }

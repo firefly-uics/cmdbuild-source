@@ -1,10 +1,11 @@
-(function() {
+(function () {
 
 	Ext.define('CMDBuild.controller.administration.configuration.Dms', {
 		extend: 'CMDBuild.controller.common.abstract.Base',
 
 		requires: [
 			'CMDBuild.core.constants.Proxy',
+			'CMDBuild.core.Message',
 			'CMDBuild.core.proxy.configuration.Dms',
 			'CMDBuild.model.configuration.dms.Form'
 		],
@@ -18,8 +19,9 @@
 		 * @cfg {Array}
 		 */
 		cmfgCatchedFunctions: [
-			'onConfigurationAlfrescoSaveButtonClick',
-			'onConfigurationAlfrescoTabShow = onConfigurationAlfrescoAbortButtonClick'
+			'onConfigurationDmsFieldSetExpand',
+			'onConfigurationDmsSaveButtonClick',
+			'onConfigurationDmsTabShow = onConfigurationDmsAbortButtonClick'
 		],
 
 		/**
@@ -33,32 +35,48 @@
 		 *
 		 * @override
 		 */
-		constructor: function(configObject) {
+		constructor: function (configObject) {
 			this.callParent(arguments);
 
 			this.view = Ext.create('CMDBuild.view.administration.configuration.DmsPanel', { delegate: this });
 		},
 
-		onConfigurationAlfrescoSaveButtonClick: function() {
+		/**
+		 * @param {String} expandedFieldSetIdentifier
+		 */
+		onConfigurationDmsFieldSetExpand: function (expandedFieldSetIdentifier) {
+			if (!Ext.isEmpty(expandedFieldSetIdentifier) && Ext.isString(expandedFieldSetIdentifier))
+				switch (expandedFieldSetIdentifier) {
+					case CMDBuild.core.constants.Proxy.ALFRESCO:
+						return this.view.fieldSetCmis.collapse();
+
+					case CMDBuild.core.constants.Proxy.CMIS:
+						return this.view.fieldSetAlfresco.collapse();
+				}
+		},
+
+		onConfigurationDmsSaveButtonClick: function () {
 			CMDBuild.core.proxy.configuration.Dms.update({
-				params: CMDBuild.model.configuration.dms.Form.convertToLegacy(this.view.getData(true)),
+				params: CMDBuild.model.configuration.dms.Form.convertToLegacy(this.view.getData()),
 				scope: this,
-				success: function(response, options, decodedResponse) {
-					this.cmfg('onConfigurationAlfrescoTabShow');
+				success: function (response, options, decodedResponse) {
+					this.cmfg('onConfigurationDmsTabShow');
 
 					CMDBuild.core.Message.success();
 				}
 			});
 		},
 
-		onConfigurationAlfrescoTabShow: function() {
+		onConfigurationDmsTabShow: function () {
 			CMDBuild.core.proxy.configuration.Dms.read({
 				scope: this,
-				success: function(response, options, decodedResponse) {
+				success: function (response, options, decodedResponse) {
 					decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.DATA];
 
-					if (!Ext.isEmpty(decodedResponse))
+					if (!Ext.isEmpty(decodedResponse)) {
+						this.view.reset();
 						this.view.loadRecord(Ext.create('CMDBuild.model.configuration.dms.Form', CMDBuild.model.configuration.dms.Form.convertFromLegacy(decodedResponse)));
+					}
 				}
 			});
 		}

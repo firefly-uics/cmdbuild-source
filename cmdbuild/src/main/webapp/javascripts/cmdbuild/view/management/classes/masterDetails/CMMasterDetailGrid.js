@@ -119,7 +119,7 @@
 			icons.push("showGraph");
 
 		}
-		if (CMDBuild.Config.dms.enabled) {
+		if (CMDBuild.configuration.dms.get(CMDBuild.core.constants.Proxy.ENABLED)) {
 			icons.push("attach");
 		}
 
