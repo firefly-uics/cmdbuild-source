@@ -1,12 +1,17 @@
-(function() {
+(function () {
 
 	Ext.define('CMDBuild.override.form.FixFieldSet', {
 		override: 'Ext.form.FieldSet',
 
 		/**
+		 * @cfg {Mixed}
+		 */
+		checkboxValue: undefined,
+
+		/**
 		 * An ExtJs fix for CellEditing plugin within FieldSet 21/03/2014
 		 */
-		setExpanded: function(expanded) {
+		setExpanded: function (expanded) {
 			var me = this;
 			var checkboxCmp = me.checkboxCmp;
 			var operation = expanded ? 'expand' : 'collapse';
@@ -46,8 +51,8 @@
 		/**
 		 * An ExtJs fix to have a correct fields label and field width in FieldSet - 08/04/2014
 		 */
-		fieldWidthsFix: function() {
-			this.cascade(function(item) {
+		fieldWidthsFix: function () {
+			this.cascade(function (item) {
 				if (Ext.isEmpty(item.checkboxToggle) && item instanceof Ext.form.Field) {
 					item.labelWidth = item.labelWidth - 10;
 					item.width = item.width - 10;
@@ -58,11 +63,43 @@
 		/**
 		 * An ExtJs feature implementation to reset function for FieldSet - 08/04/2014
 		 */
-		reset: function() { // Resets all items except fieldset toglecheckbox
-			this.cascade(function(item) {
+		reset: function () { // Resets all items except fieldset toglecheckbox
+			this.cascade(function (item) {
 				if (Ext.isEmpty(item.checkboxToggle))
 					item.reset();
 			});
+		},
+
+
+		//
+
+		/**
+		 * Implementation of "checkboxValue" property that allow to return different values relatively to each fieldset
+		 *
+		 * @returns {Ext.Component}
+		 *
+		 * @override
+		 */
+		createCheckboxCmp: function () {
+			var me = this;
+			var suffix = '-checkbox';
+
+			this.checkboxCmp = Ext.widget({
+				xtype: 'checkbox',
+				hideEmptyLabel: true,
+				name: me.checkboxName || me.id + suffix,
+				cls: me.baseCls + '-header' + suffix,
+				id: me.id + '-legendChk',
+				checked: !me.collapsed,
+				inputValue: me.checkboxValue || 'on',
+
+				listeners: {
+					change: me.onCheckChange,
+					scope: me
+				}
+			});
+
+			return this.checkboxCmp;
 		}
 	});
 

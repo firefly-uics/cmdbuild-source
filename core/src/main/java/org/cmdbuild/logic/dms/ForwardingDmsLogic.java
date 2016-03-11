@@ -100,4 +100,9 @@ public abstract class ForwardingDmsLogic extends ForwardingObject implements Dms
 		delegate().move(sourceClassName, sourceId, filename, destinationClassName, destinationId);
 	}
 
+	@Override
+	public Map<String, String> presets() {
+		return delegate().presets();
+	}
+
 }

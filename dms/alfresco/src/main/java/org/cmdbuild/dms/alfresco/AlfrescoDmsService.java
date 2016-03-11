@@ -1,12 +1,14 @@
 package org.cmdbuild.dms.alfresco;
 
+import static com.google.common.base.Suppliers.memoize;
+import static com.google.common.base.Suppliers.synchronizedSupplier;
+import static java.lang.String.format;
+import static java.util.Collections.emptyMap;
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.cmdbuild.dms.MetadataAutocompletion.NULL_AUTOCOMPLETION_RULES;
 
-import static com.google.common.base.Suppliers.*;
-import static java.lang.String.format;
-import static org.apache.commons.lang3.StringUtils.isNotBlank;
-
 import java.util.List;
+import java.util.Map;
 
 import javax.activation.DataHandler;
 
@@ -191,6 +193,11 @@ public class AlfrescoDmsService implements DmsService, LoggingSupport, ChangeLis
 	@Override
 	public void delete(final DocumentSearch position) throws DmsError {
 		wsService.get().delete(position);
+	}
+
+	@Override
+	public Map<String, String> getPresets() {
+		return emptyMap();
 	}
 
 }

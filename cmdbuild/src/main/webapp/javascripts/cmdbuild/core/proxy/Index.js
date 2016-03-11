@@ -63,7 +63,11 @@
 
 			apply: 'services/json/configure/apply',
 			connectionTest: 'services/json/configure/testconnection',
-			readAll: 'services/json/schema/setup/getconfigurations'
+			readAll: 'services/json/schema/setup/getconfigurations',
+
+			dms: {
+				getPresets: 'services/json/attachments/getpresets'
+			}
 		},
 
 		csv: {

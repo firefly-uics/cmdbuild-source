@@ -74,7 +74,7 @@ public class DefaultDmsLogic implements DmsLogic {
 
 	/**
 	 * Gets the lookup type that represents attachment categories.
-	 * 
+	 *
 	 * @return the name of the lookup type that represents attachment
 	 *         categories.
 	 */
@@ -86,12 +86,12 @@ public class DefaultDmsLogic implements DmsLogic {
 	/**
 	 * Gets the {@link DocumentTypeDefinition} associated with the specified
 	 * category.
-	 * 
+	 *
 	 * @param category
 	 *            is the {@code Description} of the {@link LookupImpl}.
-	 * 
+	 *
 	 * @return the {@link DocumentTypeDefinition} for the specified category.
-	 * 
+	 *
 	 * @throws {@link
 	 *             DmsException} if cannot read definitions.
 	 */
@@ -131,9 +131,9 @@ public class DefaultDmsLogic implements DmsLogic {
 
 	/**
 	 * Gets all {@link DocumentTypeDefinition}s.
-	 * 
+	 *
 	 * @return the all {@link DocumentTypeDefinition}s.
-	 * 
+	 *
 	 * @throws DmsError
 	 */
 	@Override
@@ -143,12 +143,12 @@ public class DefaultDmsLogic implements DmsLogic {
 
 	/**
 	 * Gets the auto-completion rules for the specified class.
-	 * 
+	 *
 	 * @param classname
 	 *            the name of the class.
-	 * 
+	 *
 	 * @return maps of metadata names and values grouped by metadata group.
-	 * 
+	 *
 	 * @throws DmsError
 	 */
 	@Override
@@ -320,6 +320,11 @@ public class DefaultDmsLogic implements DmsLogic {
 	private DocumentCreator createDocumentFactory(final String className) {
 		final CMClass fetchedClass = dataView.findClass(className);
 		return documentCreatorFactory.create(fetchedClass);
+	}
+
+	@Override
+	public Map<String, String> presets() {
+		return service.getPresets();
 	}
 
 }

@@ -1,6 +1,7 @@
 package org.cmdbuild.dms;
 
 import java.util.List;
+import java.util.Map;
 
 import javax.activation.DataHandler;
 
@@ -150,5 +151,7 @@ public interface DmsService {
 	 *             if something goes wrong.
 	 */
 	void delete(DocumentSearch position) throws DmsError;
+
+	Map<String, String> getPresets();
 
 }

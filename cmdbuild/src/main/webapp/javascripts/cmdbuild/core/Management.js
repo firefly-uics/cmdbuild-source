@@ -155,14 +155,6 @@
 						CMDBuild.Config.cmdbuild = decodedResponse.cmdbuild;
 
 						/**
-						 * DMS configuration
-						 *
-						 * @deprecated (CMDBuild.configuration.dms)
-						 */
-						CMDBuild.Config.dms = decodedResponse.dms;
-						CMDBuild.Config.dms.enabled = ('true' == CMDBuild.Config.dms.enabled);
-
-						/**
 						 * BIM configuration
 						 *
 						 * @deprecated (CMDBuild.configuration.bim)
