@@ -463,6 +463,8 @@
 		setEntryType: function (entryTypeId, dc, filter) {
 			var entryType = _CMCache.getEntryTypeById(entryTypeId);
 
+			this.setCard(null); // Reset selected card to avoid EditMode persistence on accordion switch
+
 			this.view.addCardButton.updateForEntry(entryType);
 			this.view.mapAddCardButton.updateForEntry(entryType);
 			this.view.updateTitleForEntry(entryType);
