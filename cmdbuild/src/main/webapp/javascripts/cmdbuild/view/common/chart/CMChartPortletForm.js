@@ -3,7 +3,10 @@
 	Ext.define("CMDBuild.view.management.dashboard.CMChartPortletForm", {
 		extend: "Ext.form.Panel",
 
-		requires: ['CMDBuild.core.constants.Proxy'],
+		requires: [
+			'CMDBuild.core.constants.Proxy',
+			'CMDBuild.core.RequestBarrier'
+		],
 
 		initComponent: function() {
 			this.callParent(arguments);
@@ -18,33 +21,28 @@
 			}
 		},
 
-		/*
-		 * Used from the controller of the portlet
-		 * to syncronize the store load with the request of the data
-		 * for the chart. We want to load only the remove stores that
-		 * are the ones with a url setted on the proxy
-		 * */
-		checkStoreLoad: function(cb) {
-			var barrierId = 'chart';
-			var someStore = false;
+		/**
+		 * Used from the controller of the portlet to syncronize the store load with the request of the data for the chart. We want to load only the remove stores that
+		 * are the ones with a url setted on the proxy.
+		 *
+		 * @param {Function} callback
+		 */
+		checkStoreLoad: function (callback) {
+			var barrierId = 'chart' + this.id; // Use different id for each chart to avoid initialize problems
 
-			CMDBuild.core.RequestBarrier.init(barrierId, cb);
+			CMDBuild.core.RequestBarrier.init(barrierId, callback);
 
 			this.cascade(function(item) {
 				if (
-					item
-					&& item.store
-					&& item.store.proxy
-					&& item.store.proxy.url
+					!Ext.isEmpty(item)
+					&& Ext.isFunction(item.getStore) && !Ext.isEmpty(item.getStore())
+					&& !Ext.isEmpty(item.getStore().getProxy()) && !Ext.isEmpty(item.getStore().getProxy().url)
 				) {
-					someStore = true;
-					item.store.load({ callback: CMDBuild.core.RequestBarrier.getCallback(barrierId) });
+					item.getStore().load({ callback: CMDBuild.core.RequestBarrier.getCallback(barrierId) });
 				}
 			});
 
-			// Call the callback directly if there is no store to load
-			if (!someStore)
-				cb();
+			CMDBuild.core.RequestBarrier.finalize(barrierId);
 		}
 	});
 
