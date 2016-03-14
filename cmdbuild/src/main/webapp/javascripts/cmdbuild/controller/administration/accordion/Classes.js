@@ -105,6 +105,10 @@
 							}
 						}
 
+						// Manually sorting to avoid main classes group sorting
+						CMDBuild.core.Utils.objectArraySort(standard, CMDBuild.core.constants.Proxy.TEXT);
+						CMDBuild.core.Utils.objectArraySort(simple, CMDBuild.core.constants.Proxy.TEXT);
+
 						if (Ext.isEmpty(simple)) {
 							nodes = standard;
 						} else {
