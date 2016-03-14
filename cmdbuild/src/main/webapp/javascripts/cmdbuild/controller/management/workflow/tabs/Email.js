@@ -55,7 +55,7 @@
 		onAddCardButtonClick: function() {
 			this.callParent(arguments);
 
-			 // Reset selected entity, regenerate email and load store
+			// Reset selected entity, regenerate email and load store
 			this.cmfg('tabEmailSelectedEntityInit', {
 				scope: this,
 				callbackFunction: function(options, success, response) {
