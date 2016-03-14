@@ -74,7 +74,8 @@
 					this.cmfg('widgetCustomFormImportData', this.importDataModeManager(csvData));
 					this.cmfg('onWidgetCustomFormImportAbortButtonClick');
 
-					CMDBuild.LoadMask.get().hide();
+//					CMDBuild.LoadMask.get().hide();
+					this.view.setLoading(false);
 				}, this);
 
 				Ext.Array.forEach(this.cmfg('widgetCustomFormConfigurationGet', CMDBuild.core.proxy.CMProxyConstants.MODEL), function(attribute, i, allAttributes) {
@@ -377,12 +378,14 @@
 		 */
 		onWidgetCustomFormImportUploadButtonClick: function() {
 			if (this.validate(this.form)) {
-				CMDBuild.LoadMask.get().show();
+//				CMDBuild.LoadMask.get().show();
+				this.view.setLoading(true);
 				CMDBuild.core.proxy.Csv.decode({
 					form: this.form.getForm(),
 					scope: this,
 					failure: function(form, action) {
-						CMDBuild.LoadMask.get().hide();
+//						CMDBuild.LoadMask.get().hide();
+						this.view.setLoading(false);
 
 						CMDBuild.Msg.error(
 							CMDBuild.Translation.common.failure,
