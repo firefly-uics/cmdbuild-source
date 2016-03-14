@@ -60,13 +60,14 @@
 						return (
 							item[CMDBuild.core.constants.Proxy.TYPE] != CMDBuild.core.constants.Global.getTableTypeProcessClass() // Discard processes
 							&& item[CMDBuild.core.constants.Proxy.NAME] != 'Class' // Discard root class of all classes
+							&& !item[CMDBuild.core.constants.Proxy.SYSTEM] // Discard system classes
 						);
 					}, this);
 
 					this.view.getStore().getRootNode().removeAll();
 
 					if (!Ext.isEmpty(decodedResponse)) {
-						Ext.Array.forEach(decodedResponse, function (classObject, i, allClassObjects) {
+						Ext.Array.each(decodedResponse, function (classObject, i, allClassObjects) {
 							var nodeObject = {};
 							nodeObject['cmName'] = this.cmfg('accordionIdentifierGet');
 							nodeObject[CMDBuild.core.constants.Proxy.TEXT] = classObject[CMDBuild.core.constants.Proxy.TEXT];
