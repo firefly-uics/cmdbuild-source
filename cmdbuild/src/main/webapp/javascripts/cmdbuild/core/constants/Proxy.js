@@ -542,6 +542,7 @@
 		STRUCTURE: 'structure',
 		SUB_SECTION: 'subSection',
 		SUBJECT: 'subject',
+		SYSTEM: 'system',
 		TABLE: 'table',
 		TABLE_TYPE: 'tableType',
 		TABS: 'tabs',
