@@ -270,7 +270,7 @@
 			var category = form.findField('Category');
 			if (category) {
 				category.setValue(me.attachmentRecord.get('Category'));
-				category.disable();
+//				category.disable();
 			}
 
 			var filename = form.findField('File');

@@ -405,6 +405,7 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 					.from(entryType) //
 					.where(condition(attribute(entryType, ID_ATTRIBUTE), eq(cardId))) //
 					.limit(1) //
+					.skipDefaultOrdering() //
 					.run() //
 					.getOnlyRow();
 			/**
@@ -441,6 +442,7 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 					.from(entryType) //
 					.where(condition(attribute(entryType, ID_ATTRIBUTE), eq(cardId))) //
 					.limit(1) //
+					.skipDefaultOrdering() //
 					.run() //
 					.getOnlyRow();
 
@@ -793,6 +795,8 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 								condition(attribute(sourceClass, ID_ATTRIBUTE), eq(sourceCardId)), //
 								condition(attribute(DST, ID_ATTRIBUTE), eq(destinationCardId)) //
 						)) //
+						.limit(1) //
+						.skipDefaultOrdering() //
 						.run() //
 						.getOnlyRow();
 				final CMCard fetchedSourceCard = row.getCard(sourceClass);
@@ -1102,6 +1106,8 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 				.from(directedSource) //
 				.join(anyClass(), destinationAlias, over(domain, domainAlias)) //
 				.where(whereCondition) //
+				.limit(1) //
+				.skipDefaultOrdering() //
 				.run() //
 				.getOnlyRow(); //
 
@@ -1163,6 +1169,8 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 						condition(attribute(sourceClass, ID_ATTRIBUTE), eq(srcCardId)), //
 						condition(attribute(DST, ID_ATTRIBUTE), eq(dstCardId)) //
 				)) //
+				.limit(1) //
+				.skipDefaultOrdering() //
 				.run() //
 				.getOnlyRow();
 
@@ -1232,6 +1240,8 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 			row = dataView.select(anyAttribute(entryType)) //
 					.from(entryType) //
 					.where(condition(attribute(entryType, ID_ATTRIBUTE), eq(cardId))) //
+					.limit(1) //
+					.skipDefaultOrdering() //
 					.run() //
 					.getOnlyRow();
 		} catch (final NoSuchElementException ex) {

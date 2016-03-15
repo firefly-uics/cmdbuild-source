@@ -1,4 +1,4 @@
-(function() {
+(function () {
 
 	Ext.define('CMDBuild.view.login.FormPanel', {
 		extend: 'Ext.form.Panel',
@@ -38,7 +38,7 @@
 			align: 'stretch'
 		},
 
-		initComponent: function() {
+		initComponent: function () {
 			Ext.apply(this, {
 				dockedItems: [
 					Ext.create('Ext.toolbar.Toolbar', {
@@ -56,7 +56,7 @@
 							Ext.create('CMDBuild.core.buttons.text.Login', {
 								scope: this,
 
-								handler: function(button, e) {
+								handler: function (button, e) {
 									this.delegate.cmfg('onLoginViewportDoLogin');
 								}
 							})
@@ -80,10 +80,10 @@
 
 						listeners: {
 							scope: this,
-							change: function(field, newValue, oldValue, eOpts) {
+							change: function (field, newValue, oldValue, eOpts) {
 								this.delegate.cmfg('onLoginViewportUserChange');
 							},
-							specialkey: function(field, e, eOpts) {
+							specialkey: function (field, e, eOpts) {
 								if (e.getKey() == e.ENTER)
 									this.delegate.cmfg('onLoginViewportDoLogin');
 							}
@@ -98,7 +98,7 @@
 
 						listeners: {
 							scope: this,
-							specialkey: function(field, e, eOpts) {
+							specialkey: function (field, e, eOpts) {
 								if (e.getKey() == e.ENTER)
 									this.delegate.cmfg('onLoginViewportDoLogin');
 							}
@@ -124,7 +124,7 @@
 
 						listeners: {
 							scope: this,
-							specialkey: function(field, e, eOpts) {
+							specialkey: function (field, e, eOpts) {
 								if (e.getKey() == e.ENTER) {
 									try {
 										this.listKeyNav.selectHighlighted(e);

@@ -70,11 +70,14 @@
 						return (
 							item[CMDBuild.core.constants.Proxy.TYPE] != CMDBuild.core.constants.Global.getTableTypeProcessClass() // Discard processes
 							&& item[CMDBuild.core.constants.Proxy.NAME] != 'Class' // Discard root class of all classes
+							&& !item[CMDBuild.core.constants.Proxy.SYSTEM] // Discard system classes
 						);
 					}, this);
 
+					this.view.getStore().getRootNode().removeAll();
+
 					if (!Ext.isEmpty(decodedResponse)) {
-						Ext.Array.forEach(decodedResponse, function (classObject, i, allClassObjects) {
+						Ext.Array.each(decodedResponse, function (classObject, i, allClassObjects) {
 							var nodeObject = {};
 							nodeObject['cmName'] = this.cmfg('accordionIdentifierGet');
 							nodeObject[CMDBuild.core.constants.Proxy.TEXT] = classObject[CMDBuild.core.constants.Proxy.TEXT];
@@ -113,6 +116,10 @@
 							}
 						}
 
+						// Manually sorting to avoid main classes group sorting
+						CMDBuild.core.Utils.objectArraySort(standard, CMDBuild.core.constants.Proxy.TEXT);
+						CMDBuild.core.Utils.objectArraySort(simple, CMDBuild.core.constants.Proxy.TEXT);
+
 						if (Ext.isEmpty(simple)) {
 							nodes = standard;
 						} else {
@@ -121,26 +128,24 @@
 									iconCls: 'cmdb-tree-superclass-icon',
 									text: CMDBuild.Translation.standard,
 									description: CMDBuild.Translation.standard,
-									entityId: null, // To be unselectable
 									children: standard,
 									expanded: true,
+									selectable: false,
 									leaf: false
 								},
 								{
 									iconCls: 'cmdb-tree-superclass-icon',
 									text: CMDBuild.Translation.simple,
 									description: CMDBuild.Translation.simple,
-									entityId: null, // To be unselectable
 									children: simple,
 									expanded: true,
+									selectable: false,
 									leaf: false,
 								}
 							];
 						}
-						if (!Ext.isEmpty(nodes)) {
-							this.view.getStore().getRootNode().removeAll();
+						if (!Ext.isEmpty(nodes))
 							this.view.getStore().getRootNode().appendChild(nodes);
-						}
 
 						// Alias of this.callParent(arguments), inside proxy function doesn't work
 						this.updateStoreCommonEndpoint(nodeIdToSelect);

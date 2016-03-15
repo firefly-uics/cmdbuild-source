@@ -88,7 +88,10 @@ Ext.define("CMDBuild.view.management.classes.attachments.CMCardAttachmentsPanel"
 
 	updateWritePrivileges: function(priv_write) {
 		this.writePrivileges = priv_write;
-		this.addAttachmentButton.setDisabled(!priv_write);
+		this.addAttachmentButton.setDisabled(
+			!priv_write
+			|| !CMDBuild.configuration.workflow.get(CMDBuild.core.constants.Proxy.ENABLE_ADD_ATTACHMENT_ON_CLOSED_ACTIVITIES)
+		);
 	},
 
 	/**

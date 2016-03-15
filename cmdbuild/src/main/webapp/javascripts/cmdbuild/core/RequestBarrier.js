@@ -1,4 +1,4 @@
-(function() {
+(function () {
 
 	/**
 	 * Traffic light class with multiple instances support (id parameter)
@@ -19,13 +19,12 @@
 		 *
 		 * @private
 		 */
-		callback: function(id) {
+		callback: function (id) {
 			if (
 				!Ext.isEmpty(id) && Ext.isString(id)
 				&& !Ext.isEmpty(CMDBuild.core.RequestBarrier.barrierConfigurations[id])
 			) {
 				CMDBuild.core.RequestBarrier.barrierConfigurations[id].index--;
-
 				CMDBuild.core.RequestBarrier.finalize(id);
 			}
 		},
@@ -35,7 +34,7 @@
 		 *
 		 * @param {String} id
 		 */
-		finalize: function(id) {
+		finalize: function (id) {
 			if (
 				!Ext.isEmpty(id) && Ext.isString(id)
 				&& !Ext.isEmpty(CMDBuild.core.RequestBarrier.barrierConfigurations[id])
@@ -55,14 +54,14 @@
 		 *
 		 * @returns {Function}
 		 */
-		getCallback: function(id) {
+		getCallback: function (id) {
 			if (
 				!Ext.isEmpty(id) && Ext.isString(id)
 				&& !Ext.isEmpty(CMDBuild.core.RequestBarrier.barrierConfigurations[id])
 			) {
 				CMDBuild.core.RequestBarrier.barrierConfigurations[id].index++;
 
-				return function(response, options, decodedResponse) {
+				return function (response, options, decodedResponse) {
 					CMDBuild.core.RequestBarrier.callback(id);
 				};
 			}
@@ -73,7 +72,7 @@
 		 * @param {String} id
 		 * @param {object} scope
 		 */
-		init: function(id, callback, scope) {
+		init: function (id, callback, scope) {
 			if (
 				!Ext.isEmpty(id) && Ext.isString(id)
 				&& !Ext.isEmpty(callback) && Ext.isFunction(callback)

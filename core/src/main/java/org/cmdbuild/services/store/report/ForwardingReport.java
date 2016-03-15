@@ -116,4 +116,9 @@ public abstract class ForwardingReport extends ForwardingObject implements Repor
 		return delegate().getSubreportsNumber();
 	}
 
+	@Override
+	public String[] getSubreportsName() {
+		return delegate().getSubreportsName();
+	}
+
 }

@@ -167,12 +167,15 @@
 				success: function(response, options, decodedResponse) {
 					this.cmfg('tabEmailConfigurationSet', {
 						propertyName: CMDBuild.core.constants.Proxy.READ_ONLY,
-						value: !decodedResponse.response
+						value: !decodedResponse[CMDBuild.core.constants.Proxy.RESPONSE]
 					});
+
+					this.cmfg('tabEmailEditModeSet', decodedResponse[CMDBuild.core.constants.Proxy.RESPONSE]);
+
+					if (!this.grid.getStore().isLoading())
+						this.cmfg('onTabEmailGlobalRegenerationButtonClick');
 				}
 			});
-
-			this.callParent(arguments);
 		},
 
 		/**

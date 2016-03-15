@@ -1,4 +1,4 @@
-(function() {
+(function () {
 
 	Ext.define('CMDBuild.view.login.FormContainer', {
 		extend: 'Ext.container.Container',
@@ -15,7 +15,7 @@
 
 		id: 'login-container',
 
-		initComponent: function() {
+		initComponent: function () {
 			Ext.apply(this, {
 				items: [
 					this.form = Ext.create('CMDBuild.view.login.FormPanel', { delegate: this.delegate }),

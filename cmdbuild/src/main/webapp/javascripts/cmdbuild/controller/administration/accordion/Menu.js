@@ -53,7 +53,7 @@
 					this.view.getStore().getRootNode().removeAll();
 
 					if (!Ext.isEmpty(decodedResult)) {
-						CMDBuild.core.Utils.objectArraySort(decodedResult, CMDBuild.core.constants.Proxy.TEXT);
+						CMDBuild.core.Utils.objectArraySort(decodedResult, CMDBuild.core.constants.Proxy.TEXT); // Use this method to avoid default group wrong sorting
 
 						var nodes = [{
 							cmName: this.cmfg('accordionIdentifierGet'),

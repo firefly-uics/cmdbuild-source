@@ -202,7 +202,7 @@
 					if (fieldManager.isAttributeManaged(attribute.get(CMDBuild.core.constants.Proxy.TYPE))) {
 						fieldManager.attributeModelSet(Ext.create('CMDBuild.model.common.attributes.Attribute', attribute.getData()));
 						fieldManager.push(columns, fieldManager.buildColumn(true));
-					} else { // @deprecated - Old field manager
+					} else if (attribute.get(CMDBuild.core.constants.Proxy.TYPE) != 'ipaddress') { // TODO: future implementation - @deprecated - Old field manager
 						var attribute = attribute.getAdaptedData();
 						var attributesMap = CMDBuild.Management.FieldManager.getAttributesMap();
 

@@ -227,17 +227,19 @@ public class DefaultBimDataModelManager implements BimDataModelManager {
 			CMRelationDefinition relationDefinition = dataView.createRelationFor(domain);
 
 			CMCard projectCard = dataView.select(attribute(projectsClass, DESCRIPTION_ATTRIBUTE)) //
-					.from(projectsClass)
-					//
+					.from(projectsClass) //
 					.where(condition(attribute(projectsClass, ID_ATTRIBUTE), eq(Long.parseLong(projectCardId)))) //
+					.limit(1) //
+					.skipDefaultOrdering() //
 					.run() //
 					.getOnlyRow() //
 					.getCard(projectsClass);
 
 			CMCard rootCard = dataView.select(attribute(rootClass, DESCRIPTION_ATTRIBUTE)) //
-					.from(rootClass)
-					//
+					.from(rootClass) //
 					.where(condition(attribute(rootClass, ID_ATTRIBUTE), eq(Long.parseLong(cardId)))) //
+					.limit(1) //
+					.skipDefaultOrdering() //
 					.run() //
 					.getOnlyRow() //
 					.getCard(rootClass);

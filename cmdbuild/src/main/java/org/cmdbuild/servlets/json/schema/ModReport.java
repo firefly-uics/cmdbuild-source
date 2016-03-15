@@ -67,6 +67,7 @@ public class ModReport extends JSONBaseWithSpringContext {
 		private Integer[] imagesLength = new Integer[0];
 		private Integer[] reportLength = new Integer[0];
 		private String[] imagesName = new String[0];
+		private String[] subreportsName = new String[0];
 		private String[] groups = new String[0];
 
 		public ReportImpl() {
@@ -90,6 +91,7 @@ public class ModReport extends JSONBaseWithSpringContext {
 			setReportLength(existing.getReportLength());
 			setImagesLength(existing.getImagesLength());
 			setImagesName(existing.getImagesName());
+			setSubreportsName(existing.getSubreportsName());
 			setSubreportsNumber(existing.getSubreportsNumber());
 		}
 
@@ -333,6 +335,15 @@ public class ModReport extends JSONBaseWithSpringContext {
 			return subreportsNumber;
 		}
 
+		public void setSubreportsName(final String[] subreportsName) {
+			this.subreportsName = subreportsName;
+		}
+
+		@Override
+		public String[] getSubreportsName() {
+			return subreportsName;
+		}
+
 	}
 
 	/**
@@ -408,14 +419,14 @@ public class ModReport extends JSONBaseWithSpringContext {
 		}
 
 		sessionVars().setNewReport(newReport);
-		Report test = sessionVars().getNewReport();
+		final Report test = sessionVars().getNewReport();
 		return out;
 	}
 
 	private void setReportImagesAndSubReports(final JSONObject serializer, final FileItem file,
 			final ReportImpl newReport) throws JSONException {
 		String[] imagesNames = null;
-		int subreportsNumber = 0;
+		String[] subreportsNames = null;
 
 		final JasperDesign jd = loadJasperDesign(file);
 		checkJasperDesignParameters(jd);
@@ -428,11 +439,12 @@ public class ModReport extends JSONBaseWithSpringContext {
 			serializer.put("subreports", "");
 		} else {
 			imagesNames = manageImages(serializer, designImages);
-			subreportsNumber = manageSubReports(serializer, jd);
+			subreportsNames = manageSubReports(serializer, jd);
 		}
 
 		newReport.setImagesName(imagesNames);
-		newReport.setSubreportsNumber(subreportsNumber);
+		newReport.setSubreportsNumber(subreportsNames.length);
+		newReport.setSubreportsName(subreportsNames);
 		newReport.setJd(jd);
 	}
 
@@ -444,14 +456,16 @@ public class ModReport extends JSONBaseWithSpringContext {
 		newReport.setGroups(parseSelectedGroup(groups));
 	}
 
-	private int manageSubReports(final JSONObject serializer, final JasperDesign jd) throws JSONException {
+	private String[] manageSubReports(final JSONObject serializer, final JasperDesign jd) throws JSONException {
 		JSONArray jsonArray;
 		JSONObject jsonObject;
 		int subreportsNumber = 0;
 		final List<JRSubreport> subreports = ReportFactory.getSubreports(jd);
+		final String[] subreportsName = new String[subreports.size()];
 		jsonArray = new JSONArray();
 		for (final JRSubreport subreport : subreports) {
 			final String subreportName = ReportFactory.getSubreportName(subreport);
+			subreportsName[subreportsNumber] = subreportName;
 			subreportsNumber++;
 
 			// client
@@ -463,7 +477,7 @@ public class ModReport extends JSONBaseWithSpringContext {
 		ReportFactory.prepareDesignSubreportsForUpload(subreports); // update
 																	// expressions
 																	// in design
-		return subreportsNumber;
+		return subreportsName;
 	}
 
 	private String[] manageImages(final JSONObject serializer, final List<JRDesignImage> designImages)
@@ -566,13 +580,6 @@ public class ModReport extends JSONBaseWithSpringContext {
 
 	private void importSubreportsAndImages(final List<FileItem> files, final ReportImpl newReport) {
 		try {
-
-			/*
-			 * TODO check images and subreport files - check all elements of
-			 * "files" param (ie: files.get(i).isFormField() ) - compare
-			 * filename requested and filename uploaded
-			 */
-
 			// get IMAGES
 			final int nImages = newReport.getImagesName().length;
 
@@ -581,9 +588,22 @@ public class ModReport extends JSONBaseWithSpringContext {
 			// lengthImageByte contains the lengths of all imageByte[]
 			final Integer lengthImagesByte[] = new Integer[nImages];
 
-			for (int i = 0; i < nImages; i++) {
-				// loading the image file and putting it in imageByte
-				imageByte[i] = files.get(i).get();
+			{
+				int i = 0;
+				for (final String imageName : newReport.getImagesName()) {
+					imageByte[i] = null;
+					for (final FileItem file : files) {
+						if (file.getName().equals(imageName) || file.getFieldName().equals(imageName)) {
+							imageByte[i] = file.get();
+							break;
+						}
+					}
+					if (imageByte[i] == null) {
+						throw ReportExceptionType.REPORT_UPLOAD_ERROR.createException("Expected image '" + imageName
+								+ "' not found in uploaded data");
+					}
+					i++;
+				}
 			}
 
 			// get REPORTS
@@ -599,12 +619,19 @@ public class ModReport extends JSONBaseWithSpringContext {
 
 			for (int i = 0; i < nReports - 1; i++) {
 				// load the subreport .jasper file and put it in reportByte
-				reportByte[i + 1] = files.get(i + nImages).get(); // i+1 because
-																	// of the
-																	// master
-																	// report
-																	// with
-																	// index 0
+				reportByte[i + 1] = null;
+				final String subreportName = newReport.getSubreportsName()[i];
+				for (final FileItem file : files) {
+					if (file.getName().equals(subreportName) || file.getFieldName().equals(subreportName)) {
+						// i+1 because of the master report with index 0
+						reportByte[i + 1] = file.get();
+						break;
+					}
+				}
+				if (reportByte[i + 1] == null) {
+					throw ReportExceptionType.REPORT_UPLOAD_ERROR.createException("Expected jasper report '"
+							+ subreportName + "' not found in uploaded data");
+				}
 			}
 
 			// check if all files have been uploaded

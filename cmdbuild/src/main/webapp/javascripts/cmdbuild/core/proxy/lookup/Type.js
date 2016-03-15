@@ -1,4 +1,4 @@
-(function() {
+(function () {
 
 	Ext.define('CMDBuild.core.proxy.lookup.Type', {
 
@@ -13,7 +13,7 @@
 		/**
 		 * @param {Object} parameters
 		 */
-		create: function(parameters) {
+		create: function (parameters) {
 			parameters = Ext.isEmpty(parameters) ? {} : parameters;
 
 			Ext.apply(parameters, { url: CMDBuild.core.proxy.Index.lookup.type.create });
@@ -24,7 +24,7 @@
 		/**
 		 * @return {Ext.data.Store}
 		 */
-		getStore: function() {
+		getStore: function () {
 			return Ext.create('Ext.data.Store', {
 				autoLoad: true,
 				model: 'CMDBuild.model.lookup.Type',
@@ -44,7 +44,7 @@
 		/**
 		 * @param {Object} parameters
 		 */
-		read: function(parameters) {
+		read: function (parameters) {
 			parameters = Ext.isEmpty(parameters) ? {} : parameters;
 
 			Ext.apply(parameters, { url: CMDBuild.core.proxy.Index.lookup.type.read });
@@ -55,7 +55,7 @@
 		/**
 		 * @param {Object} parameters
 		 */
-		readAll: function(parameters) {
+		readAll: function (parameters) {
 			parameters = Ext.isEmpty(parameters) ? {} : parameters;
 
 			Ext.apply(parameters, { url: CMDBuild.core.proxy.Index.lookup.type.readAll });
@@ -66,7 +66,7 @@
 		/**
 		 * @param {Object} parameters
 		 */
-		update: function(parameters) {
+		update: function (parameters) {
 			parameters = Ext.isEmpty(parameters) ? {} : parameters;
 
 			Ext.apply(parameters, { url: CMDBuild.core.proxy.Index.lookup.type.update });

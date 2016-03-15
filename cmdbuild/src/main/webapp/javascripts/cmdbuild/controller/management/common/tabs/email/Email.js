@@ -371,7 +371,7 @@
 		 * Called from parent super controller
 		 */
 		onAddCardButtonClick: function () {
-			this.cmfg('tabEmailEditModeSet', true);
+			this.cmfg('tabEmailEditModeSet', false);
 		},
 
 		onTabEmailGlobalRegenerationButtonClick: function () {

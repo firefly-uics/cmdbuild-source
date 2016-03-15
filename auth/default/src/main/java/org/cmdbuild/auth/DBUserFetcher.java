@@ -64,6 +64,7 @@ public abstract class DBUserFetcher implements UserFetcher {
 				.from(userClass()) //
 				.where(condition(attribute(userClass(), userClass().getKeyAttributeName()), eq(userId))) //
 				.limit(1) //
+				.skipDefaultOrdering() //
 				.run() //
 				.getOnlyRow();
 		return buildUserFromCard(row.getCard(userClass()));
@@ -144,6 +145,7 @@ public abstract class DBUserFetcher implements UserFetcher {
 					.from(roleClass()) //
 					.where(condition(attribute(roleClass(), ROLE_NAME_COLUMN), eq(groupName))) //
 					.limit(1) //
+					.skipDefaultOrdering() //
 					.run() //
 					.getOnlyRow() //
 					.getCard(roleClass());
@@ -197,6 +199,8 @@ public abstract class DBUserFetcher implements UserFetcher {
 						activeCondition(userClassAlias), //
 						condition(attribute(userClassAlias, loginAttributeName(login)), //
 								eq(login.getValue())))) //
+				.limit(1) //
+				.skipDefaultOrdering() //
 				.run();
 		final CMCard userCard;
 		if (queryResult.size() == 1) {

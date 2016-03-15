@@ -60,4 +60,6 @@ public interface Report {
 
 	int getSubreportsNumber();
 
+	String[] getSubreportsName();
+
 }
