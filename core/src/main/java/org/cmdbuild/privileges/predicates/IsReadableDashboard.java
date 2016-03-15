@@ -57,6 +57,8 @@ public class IsReadableDashboard implements Predicate<CMCard> {
 		final CMQueryRow row = view.select(anyAttribute(dashboardClass)) //
 				.from(dashboardClass) //
 				.where(condition(attribute(dashboardClass, "Id"), eq(cardId))) //
+				.limit(1) //
+				.skipDefaultOrdering() //
 				.run() //
 				.getOnlyRow();
 		return row.getCard(dashboardClass);

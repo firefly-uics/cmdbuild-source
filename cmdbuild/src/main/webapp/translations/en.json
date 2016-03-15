@@ -472,6 +472,8 @@
 		"invalid_attributes": "The following fields have not been filled correctly:",
 		"invalid_extended_attributes": "The following visual controls have not been filled correctly:",
 		"invalid_fields": "Some fields have not been filled correctly",
+		"invalidKeyAttributesInCsvFile": "Invalid key attribute(s) in CSV file",
+		"invalidKeyAttributesInLocalStore": "Invalid key attribute(s) in local store",
 		"no_driver": "No JDBC driver was found.<br />You can find it in the CMDBuild release package and copy it into the Tomcat libraries.",
 		"no_selections": "You have not selected any card to update",
 		"printReportFilure": "Print report failure",

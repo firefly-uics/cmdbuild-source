@@ -472,6 +472,8 @@
 		"invalid_attributes": "I seguenti campi non sono stati compilati correttamente:",
 		"invalid_extended_attributes": "I seguenti controlli visuali non sono stati compilati correttamente:",
 		"invalid_fields": "Alcuni campi non sono stati compilati correttamente",
+		"invalidKeyAttributesInCsvFile": "Attributo(i) chiave non valido(i) nel file CSV",
+		"invalidKeyAttributesInLocalStore": "Attributo(i) chiave non valido(i) nello store locale",
 		"no_driver": "Non è presente il driver JDBC.<br />Può essere trovato nel file del rilascio di CMDBuild e copiato tra le librerie di Tomcat.",
 		"no_selections": "Non hai selezionato nessuna scheda",
 		"printReportFilure": "Errore nella stampa del report",

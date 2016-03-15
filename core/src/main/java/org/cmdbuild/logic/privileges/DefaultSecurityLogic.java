@@ -495,7 +495,10 @@ public class DefaultSecurityLogic implements Logic, SecurityLogic {
 		final CMQueryRow row = view.select(anyAttribute(roleClass)) //
 				.from(roleClass) //
 				.where(condition(attribute(roleClass, "Id"), eq(groupId))) //
-				.run().getOnlyRow();
+				.limit(1) //
+				.skipDefaultOrdering() //
+				.run() //
+				.getOnlyRow();
 		final CMCard roleCard = row.getCard(roleClass);
 		final UIConfiguration uiConfiguration = new UIConfiguration();
 
@@ -541,7 +544,10 @@ public class DefaultSecurityLogic implements Logic, SecurityLogic {
 		final CMQueryRow row = view.select(anyAttribute(roleClass)) //
 				.from(roleClass) //
 				.where(condition(attribute(roleClass, "Id"), eq(groupId))) //
-				.run().getOnlyRow();
+				.limit(1) //
+				.skipDefaultOrdering() //
+				.run() //
+				.getOnlyRow();
 		final CMCard roleCard = row.getCard(roleClass);
 		final CMCardDefinition cardDefinition = view.update(roleCard);
 		if (isStringArrayNull(configuration.getDisabledModules())) {
@@ -611,6 +617,8 @@ public class DefaultSecurityLogic implements Logic, SecurityLogic {
 						condition(attribute(grantClass, PRIVILEGED_CLASS_ID_ATTRIBUTE),
 								eq(privilegeInfoToSave.getPrivilegedObjectId()))) //
 				) //
+				.limit(1) //
+				.skipDefaultOrdering() //
 				.run();
 		Optional<CMCard> optional;
 		if (!rowsForGroupAndClass.isEmpty()) {

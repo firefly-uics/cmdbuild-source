@@ -472,6 +472,8 @@
 		"invalid_attributes": "A következő mezők nem lettek helyesen kitöltve:",
 		"invalid_extended_attributes": "A következő vizuális vezérlők nem lettek helyesen kitöltve:",
 		"invalid_fields": "Néhány mező nem helyesen lett kitöltve",
+		"invalidKeyAttributesInCsvFile": "<em>Invalid key attribute(s) in CSV file</em>",
+		"invalidKeyAttributesInLocalStore": "<em>Invalid key attribute(s) in local store</em>",
 		"no_driver": "Nem található JDBC driver.<br />A driver megtalálható a CMDBuild release csomagban. Másolja a Tomcat libraries.mappába.",
 		"no_selections": "Nem jelölt meg egy kártyát sem frissítésre",
 		"printReportFilure": "Jelentés nyomtatási hiba",

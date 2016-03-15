@@ -472,6 +472,8 @@
 		"invalid_attributes": "以下字段填写不正确:",
 		"invalid_extended_attributes": "以下可视控件填写不正确:",
 		"invalid_fields": "一些字段填写不正确",
+		"invalidKeyAttributesInCsvFile": "<em>Invalid key attribute(s) in CSV file</em>",
+		"invalidKeyAttributesInLocalStore": "<em>Invalid key attribute(s) in local store</em>",
 		"no_driver": "未发现JDBC驱动器.<br />你可以在CMDBuild发布包中找到，并将它拷贝到Tomcat库中.",
 		"no_selections": "你没有选择任何卡片进行更新",
 		"printReportFilure": "打印报告失败",

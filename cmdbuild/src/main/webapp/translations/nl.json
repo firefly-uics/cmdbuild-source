@@ -472,6 +472,8 @@
 		"invalid_attributes": "De volgende velden zijn niet correct ingevuld:",
 		"invalid_extended_attributes": "De volgende visuele controls zijn niet correct ingevuld:",
 		"invalid_fields": "Sommige velden zijn niet correct ingevuld",
+		"invalidKeyAttributesInCsvFile": "<em>Invalid key attribute(s) in CSV file</em>",
+		"invalidKeyAttributesInLocalStore": "<em>Invalid key attribute(s) in local store</em>",
 		"no_driver": "Geen JDBC driver gevonden.<br />je kunt het vinden in het CMDBuild release pakket en kopieren naar de Tomcat bibliotheken.",
 		"no_selections": "Je hebt geen kaart geselecteerd voor bijwerken",
 		"printReportFilure": "<em>Print report failure</em>",

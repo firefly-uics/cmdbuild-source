@@ -172,7 +172,10 @@ public class DBLayerMetadataStore {
 		final CMQueryRow queryRow = dataView.select(anyAttribute(getLayerTable())) //
 				.from(getLayerTable()) //
 				.where(condition(attribute(getLayerTable(), Attributes.FULL_NAME.getName()), eq(fullName))) //
-				.run().getOnlyRow();
+				.limit(1) //
+				.skipDefaultOrdering() //
+				.run() //
+				.getOnlyRow();
 
 		if (queryRow != null) {
 			return queryRow.getCard(getLayerTable());

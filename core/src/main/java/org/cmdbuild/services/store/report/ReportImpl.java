@@ -28,6 +28,7 @@ class ReportImpl implements Report {
 	private Integer[] imagesLength = new Integer[0];
 	private Integer[] reportLength = new Integer[0];
 	private String[] imagesName = new String[0];
+	private String[] subreportsName = new String[0];
 	private String[] groups = new String[0];
 
 	/**
@@ -260,6 +261,15 @@ class ReportImpl implements Report {
 	@Override
 	public int getSubreportsNumber() {
 		return subreportsNumber;
+	}
+	
+	public void setSubreportsName(final String[] subreportsName) {
+		this.subreportsName = subreportsName;
+	}
+
+	@Override
+	public String[] getSubreportsName() {
+		return subreportsName;
 	}
 
 }

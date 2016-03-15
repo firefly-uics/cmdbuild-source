@@ -35,4 +35,6 @@ public interface QuerySpecs {
 
 	boolean count();
 
+	boolean skipDefaultOrdering();
+
 }

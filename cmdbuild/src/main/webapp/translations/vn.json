@@ -472,6 +472,8 @@
 		"invalid_attributes": "Các trường sau đây đã không được điền đầy đủ một cách chính xác:",
 		"invalid_extended_attributes": "Các bộ điều khiển trực quan sau đây đã không được điền đầy đủ một cách chính xác:",
 		"invalid_fields": "Một vài trường đã không được điền đầy đủ một cách chính xác",
+		"invalidKeyAttributesInCsvFile": "<em>Invalid key attribute(s) in CSV file</em>",
+		"invalidKeyAttributesInLocalStore": "<em>Invalid key attribute(s) in local store</em>",
 		"no_driver": "Không có JDBC driver nào được tìm thấy.<br />Bạn có thể tìm thấy nó trong gói CMDBuild và copy nó vào thư viện Tomcat.",
 		"no_selections": "Bạn vẫn chưa chọn bất kỷ thẻ nào để cập nhật",
 		"printReportFilure": "<em>Print report failure</em>",

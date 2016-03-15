@@ -472,6 +472,8 @@
 		"invalid_attributes": "Folgende Felder wurden nicht korrekt ausgefüllt:",
 		"invalid_extended_attributes": "Folgende Attribute wurden nicht korrekt ausgefüllt:",
 		"invalid_fields": "Einige Felder wurden nicht korrekt ausgefüllt",
+		"invalidKeyAttributesInCsvFile": "<em>Invalid key attribute(s) in CSV file</em>",
+		"invalidKeyAttributesInLocalStore": "<em>Invalid key attribute(s) in local store</em>",
 		"no_driver": "JDBC Treiber nicht anwesend.<br />Er kann in der CMDBuild Freigabedatei gefunden und in den Tomcat-Bibliotheken kopiert werden.",
 		"no_selections": "Sie haben keine Karte markiert",
 		"printReportFilure": "<em>Print report failure</em>",

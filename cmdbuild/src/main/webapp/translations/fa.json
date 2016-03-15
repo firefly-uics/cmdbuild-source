@@ -472,6 +472,8 @@
 		"invalid_attributes": "فیلدهای زیر به درستی پر نشده اند:",
 		"invalid_extended_attributes": "کنترلهای تصویری زیر به درستی پر نشده اند:",
 		"invalid_fields": "بعضی از فیلدها به درستی پر نشده اند",
+		"invalidKeyAttributesInCsvFile": "<em>Invalid key attribute(s) in CSV file</em>",
+		"invalidKeyAttributesInLocalStore": "<em>Invalid key attribute(s) in local store</em>",
 		"no_driver": "No JDBC driver was found.<br />You can find it in the CMDBuild release package and copy it into the Tomcat libraries.",
 		"no_selections": "شما هیچ کارتی را برای آپدیت انتخاب نکردید",
 		"printReportFilure": "<em>Print report failure</em>",

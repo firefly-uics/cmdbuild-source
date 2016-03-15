@@ -59,6 +59,8 @@ public class GroupEmailEngine implements Engine {
 		final CMCard card = dataView.select(anyAttribute(roleClass)) //
 				.from(roleClass) //
 				.where(condition(attribute(roleClass, CODE_ATTRIBUTE), eq(expression))) //
+				.limit(1) //
+				.skipDefaultOrdering() //
 				.run() //
 				.getOnlyRow() //
 				.getCard(roleClass);

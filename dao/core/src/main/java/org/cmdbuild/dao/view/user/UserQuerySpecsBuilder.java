@@ -134,6 +134,12 @@ public class UserQuerySpecsBuilder implements QuerySpecsBuilder {
 	}
 
 	@Override
+	public QuerySpecsBuilder skipDefaultOrdering() {
+		delegate.skipDefaultOrdering();
+		return this;
+	}
+
+	@Override
 	public QuerySpecs build() {
 		return userDataView.proxy(delegate.build());
 	}

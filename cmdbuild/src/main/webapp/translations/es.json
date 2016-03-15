@@ -472,6 +472,8 @@
 		"invalid_attributes": "Los siguientes campos no han sido compilados correctamente: ",
 		"invalid_extended_attributes": "Los siguientes controles visuales no fueron compilados correctamente: ",
 		"invalid_fields": "Algunos campos no ha sido compilados correctamente",
+		"invalidKeyAttributesInCsvFile": "<em>Invalid key attribute(s) in CSV file</em>",
+		"invalidKeyAttributesInLocalStore": "<em>Invalid key attribute(s) in local store</em>",
 		"no_driver": "No es grave; Instale el driver JDBC.<br />Puede encontrarlo en el repositorio de CMDBuild y copiarlo a través a las librerias de Tomcat.",
 		"no_selections": "No ha seleccionado ningua tarjeta",
 		"printReportFilure": "Error al imprimir el informe",
