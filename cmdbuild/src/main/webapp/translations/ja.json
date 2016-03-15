@@ -472,6 +472,8 @@
 		"invalid_attributes": "これらのフィールドには正しくデータが格納されていません:",
 		"invalid_extended_attributes": "これらのビジュアルコントロールは正しく設定されていません:",
 		"invalid_fields": "いくつかのフィールドは正しく設定されていません",
+		"invalidKeyAttributesInCsvFile": "<em>Invalid key attribute(s) in CSV file</em>",
+		"invalidKeyAttributesInLocalStore": "<em>Invalid key attribute(s) in local store</em>",
 		"no_driver": "JDBCドライバーが見つかりません。<br />CMDBuild リリースパッケージに含まれており、 Tomcatライブラリにコピーできます。",
 		"no_selections": "更新するカードが選択されていません",
 		"printReportFilure": "<em>Print report failure</em>",

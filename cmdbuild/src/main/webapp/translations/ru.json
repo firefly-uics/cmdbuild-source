@@ -472,6 +472,8 @@
 		"invalid_attributes": "Данные поля были заполнены с ошибками:",
 		"invalid_extended_attributes": "Данные виджеты были заполнены с ошибками:",
 		"invalid_fields": "Некоторые поля были заполнены с ошибками",
+		"invalidKeyAttributesInCsvFile": "<em>Invalid key attribute(s) in CSV file</em>",
+		"invalidKeyAttributesInLocalStore": "<em>Invalid key attribute(s) in local store</em>",
 		"no_driver": "Драйвер JDBC не найден.<br>Вы можете установить его в Tomcat из дистрибутива CMDBuild.",
 		"no_selections": "Не выбрано ни одной карточки для заполнения",
 		"printReportFilure": "<em>Print report failure</em>",

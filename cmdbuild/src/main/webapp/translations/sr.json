@@ -472,6 +472,8 @@
 		"invalid_attributes": "Sledeća polja nisu korektno popunjena:",
 		"invalid_extended_attributes": "Sledeće vizuelne kontrole nisu korektno popunjene:",
 		"invalid_fields": "Određena polja nisu korektno pounjena",
+		"invalidKeyAttributesInCsvFile": "<em>Invalid key attribute(s) in CSV file</em>",
+		"invalidKeyAttributesInLocalStore": "<em>Invalid key attribute(s) in local store</em>",
 		"no_driver": "Nedostaje odgovarajući JDBC upravljački program (drajver).<br />Odgovarajući drajver možete pronaći u CMDBuild instalacionom folderu i kopirati u <b>lib<\/b> folder Tomcat servera.",
 		"no_selections": "Niste izabrali karticu podataka koja će biti ažurirana",
 		"printReportFilure": "<em>Print report failure</em>",

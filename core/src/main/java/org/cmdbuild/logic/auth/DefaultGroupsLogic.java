@@ -149,7 +149,10 @@ public class DefaultGroupsLogic implements GroupsLogic {
 		final CMQueryRow userRow = dataView.select(anyAttribute(userClass)) //
 				.from(userClass) //
 				.where(condition(QueryAliasAttribute.attribute(userClass, "Id"), eq(userId))) //
-				.run().getOnlyRow();
+				.limit(1) //
+				.skipDefaultOrdering() //
+				.run() //
+				.getOnlyRow();
 		return userRow.getCard(userClass);
 	}
 
@@ -158,7 +161,10 @@ public class DefaultGroupsLogic implements GroupsLogic {
 		final CMQueryRow groupRow = dataView.select(anyAttribute(roleClass)) //
 				.from(roleClass) //
 				.where(condition(QueryAliasAttribute.attribute(roleClass, "Id"), eq(groupId))) //
-				.run().getOnlyRow();
+				.limit(1) //
+				.skipDefaultOrdering() //
+				.run() //
+				.getOnlyRow();
 		return groupRow.getCard(roleClass);
 	}
 
@@ -179,7 +185,10 @@ public class DefaultGroupsLogic implements GroupsLogic {
 				.join(roleClass, over(userRoleDomain)) //
 				.where(and(condition(attribute(userClass, "Id"), eq(userId)), //
 						condition(attribute(roleClass, "Id"), eq(groupId)))) //
-				.run().getOnlyRow();
+				.limit(1) //
+				.skipDefaultOrdering() //
+				.run() //
+				.getOnlyRow();
 
 		final CMRelation relationToBeRemoved = row.getRelation(userRoleDomain).getRelation();
 		final CMRelationDefinition relationDefinition = dataView.update(relationToBeRemoved);

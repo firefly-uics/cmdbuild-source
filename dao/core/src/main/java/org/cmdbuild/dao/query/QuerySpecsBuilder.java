@@ -54,6 +54,13 @@ public interface QuerySpecsBuilder extends Builder<QuerySpecs> {
 
 	QuerySpecsBuilder count();
 
+	/**
+	 * @deprecated used temporary for performance improvements since it seems
+	 *             there is an issue with PostgresSQL queries.
+	 */
+	@Deprecated
+	QuerySpecsBuilder skipDefaultOrdering();
+
 	CMQueryResult run();
 
 }

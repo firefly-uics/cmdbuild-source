@@ -38,8 +38,10 @@ public class BimMapperRules extends DefaultMapperRules {
 		CMClass theClass = dataView.findClass(className);
 		CMQueryResult result = dataView.select( //
 				anyAttribute(theClass)) //
-				.from(theClass)
+				.from(theClass) //
 				.where(condition(attribute(theClass, ID_ATTRIBUTE), eq(masterId))) //
+				.limit(1) //
+				.skipDefaultOrdering() //
 				.run();
 		if (!result.isEmpty()) {
 			CMQueryRow row = result.getOnlyRow();
@@ -55,9 +57,10 @@ public class BimMapperRules extends DefaultMapperRules {
 		Alias CLASS_ALIAS = EntryTypeAlias.canonicalAlias(theClass);
 		CMQueryResult result = dataView.select( //
 				anyAttribute(CLASS_ALIAS)) //
-				.from(theClass)
-				//
+				.from(theClass) //
 				.where(condition(attribute(CLASS_ALIAS, GLOBALID_ATTRIBUTE), eq(value))) //
+				.limit(1) //
+				.skipDefaultOrdering() //
 				.run();
 		if (!result.isEmpty()) {
 			CMCard card = result.getOnlyRow().getCard(CLASS_ALIAS);
@@ -72,13 +75,16 @@ public class BimMapperRules extends DefaultMapperRules {
 
 	public String fetchKeyFromId(Long id, String className, CMDataView dataView) {
 		CMClass bimClass = dataView.findClass(BimIdentifier.newIdentifier().withName(className));
-		CMQueryResult result = dataView.select( //
+		return dataView.select( //
 				attribute(bimClass, GLOBALID_ATTRIBUTE)) //
 				.from(bimClass) //
 				.where(condition(attribute(bimClass, FK_COLUMN_NAME), eq(id))) //
-				.run();
-		CMCard card = result.getOnlyRow().getCard(bimClass);
-		return card.get(GLOBALID_ATTRIBUTE).toString();
+				.limit(1) //
+				.skipDefaultOrdering() //
+				.run() //
+				.getOnlyRow() //
+				.getCard(bimClass) //
+				.get(GLOBALID_ATTRIBUTE).toString();
 	}
 
 	public long convertKeyToId(String key, String className, CMDataView dataView) {

@@ -37,7 +37,7 @@
 		 *
 		 * @override
 		 */
-		constructor: function(configurationObject) {
+		constructor: function (configurationObject) {
 			this.callParent(arguments);
 
 			this.view = Ext.create('CMDBuild.view.management.widget.customForm.export.ExportWindow', { delegate: this });
@@ -50,14 +50,14 @@
 				this.view.show();
 		},
 
-		onWidgetCustomFormExportAbortButtonClick: function() {
+		onWidgetCustomFormExportAbortButtonClick: function () {
 			this.view.destroy();
 		},
 
 		/**
 		 * Uses exportCSV calls to build and download file
 		 */
-		onWidgetCustomFormExportExportButtonClick: function() {
+		onWidgetCustomFormExportExportButtonClick: function () {
 			if (this.validate(this.form)) {
 				var params = this.form.getData();
 				params[CMDBuild.core.constants.Proxy.DATA] = Ext.encode(this.cmfg('widgetCustomFormDataGet'));
