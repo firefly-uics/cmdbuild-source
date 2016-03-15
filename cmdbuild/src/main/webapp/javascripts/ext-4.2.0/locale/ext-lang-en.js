@@ -25,9 +25,9 @@ Build date: 2013-03-11 22:33:40 (aed16176e68b5e8aa1433452b12805c0ad913836)
  * English Translations
  * updated to 2.2 by Condor (8 Aug 2008)
  */
-(function() {
+(function () {
 
-	Ext.onReady(function() {
+	Ext.onReady(function () {
 		var cm = Ext.ClassManager;
 		var exists = Ext.Function.bind(cm.get, cm);
 
@@ -40,7 +40,7 @@ Build date: 2013-03-11 22:33:40 (aed16176e68b5e8aa1433452b12805c0ad913836)
 		if (Ext.Date) {
 			Ext.Date.monthNames = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
 
-			Ext.Date.getShortMonthName = function(month) {
+			Ext.Date.getShortMonthName = function (month) {
 				return Ext.Date.monthNames[month].substring(0, 3);
 			};
 
@@ -59,13 +59,13 @@ Build date: 2013-03-11 22:33:40 (aed16176e68b5e8aa1433452b12805c0ad913836)
 				Dec: 11
 			};
 
-			Ext.Date.getMonthNumber = function(name) {
+			Ext.Date.getMonthNumber = function (name) {
 				return Ext.Date.monthNumbers[name.substring(0, 1).toUpperCase() + name.substring(1, 3).toLowerCase()];
 			};
 
 			Ext.Date.dayNames = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 
-			Ext.Date.getShortDayName = function(day) {
+			Ext.Date.getShortDayName = function (day) {
 				return Ext.Date.dayNames[day].substring(0, 3);
 			};
 
@@ -204,7 +204,7 @@ Build date: 2013-03-11 22:33:40 (aed16176e68b5e8aa1433452b12805c0ad913836)
 		override: 'Ext.form.field.ComboBox',
 
 		valueNotFoundText: undefined
-	}, function() {
+	}, function () {
 		Ext.apply(Ext.form.field.ComboBox.prototype.defaultListConfig, {
 			loadingText: 'Loading...'
 		});
@@ -214,7 +214,7 @@ Build date: 2013-03-11 22:33:40 (aed16176e68b5e8aa1433452b12805c0ad913836)
 		override: 'Ext.form.field.HtmlEditor',
 
 		createLinkText: 'Please enter the URL for the link:'
-	}, function() {
+	}, function () {
 		Ext.apply(Ext.form.field.HtmlEditor.prototype, {
 			buttonTips: {
 				bold: {

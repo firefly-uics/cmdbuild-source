@@ -1,6 +1,6 @@
-(function() {
+(function () {
 
-	Ext.onReady(function() {
+	Ext.onReady(function () {
 		var cm = Ext.ClassManager;
 		var exists = Ext.Function.bind(cm.get, cm);
 
@@ -13,7 +13,7 @@
 		if (Ext.Date) {
 			Ext.Date.monthNames = ['一月', '二月', '三月', '四月', '五月', '六月', '七月', '八月', '九月', '十月', '十一月', '十二月'];
 
-			Ext.Date.getShortMonthName = function(month) {
+			Ext.Date.getShortMonthName = function (month) {
 				return Ext.Date.monthNames[month].substring(0, 3);
 			};
 
@@ -32,13 +32,13 @@
 				Dec: 11
 			};
 
-			Ext.Date.getMonthNumber = function(name) {
+			Ext.Date.getMonthNumber = function (name) {
 				return Ext.Date.monthNumbers[name.substring(0, 1).toUpperCase() + name.substring(1, 3).toLowerCase()];
 			};
 
 			Ext.Date.dayNames = ['星期日', '星期一', '星期二', '星期三', '星期四', '星期五', '星期六'];
 
-			Ext.Date.getShortDayName = function(day) {
+			Ext.Date.getShortDayName = function (day) {
 				return Ext.Date.dayNames[day].substring(0, 3);
 			};
 
@@ -177,7 +177,7 @@
 		override: 'Ext.form.field.ComboBox',
 
 		valueNotFoundText: undefined
-	}, function() {
+	}, function () {
 		Ext.apply(Ext.form.field.ComboBox.prototype.defaultListConfig, {
 			loadingText: '加载...'
 		});
@@ -186,7 +186,7 @@
 	Ext.define('Ext.locale.zh_CN.form.field.HtmlEditor', {
 		override: 'Ext.form.field.HtmlEditor',
 		createLinkText: 'Please enter the URL for the link:'
-	}, function() {
+	}, function () {
 		Ext.apply(Ext.form.field.HtmlEditor.prototype, {
 			buttonTips: {
 				bold: {
