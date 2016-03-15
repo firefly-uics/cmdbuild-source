@@ -131,6 +131,8 @@ class GuestFilter {
 										.where(condition( //
 												attribute(targetClass, attributeName), //
 												eq(attributeValue))) //
+										.limit(1) //
+										.skipDefaultOrdering() //
 										.run() //
 										.getOnlyRow() //
 										.getCard(targetClass) //

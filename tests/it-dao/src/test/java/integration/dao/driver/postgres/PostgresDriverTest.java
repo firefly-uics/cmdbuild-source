@@ -53,7 +53,10 @@ public class PostgresDriverTest extends IntegrationTestBase {
 		final CMQueryRow row = dbDataView() //
 				.select(REGCLASS_ATTRIBUTE) //
 				.from(classWithRegClassAttribute) //
-				.run().getOnlyRow();
+				.limit(1) //
+				.skipDefaultOrdering() //
+				.run() //
+				.getOnlyRow();
 
 		final Long reference = row.getCard(classWithRegClassAttribute).get(REGCLASS_ATTRIBUTE, Long.class);
 

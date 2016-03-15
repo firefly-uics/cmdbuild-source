@@ -319,7 +319,7 @@
 			actionsHtml += '<img style="cursor:pointer" title="' + tr.view_relation + '" class="action-relation-viewcard" src="images/icons/zoom.png"/>';
 		}
 
-		if (CMDBuild.Config.dms.enabled)
+		if (CMDBuild.configuration.dms.get(CMDBuild.core.constants.Proxy.ENABLED))
 			actionsHtml += '<img style="cursor:pointer" title="' + tr.showattach + '" class="action-relation-attach" src="images/icons/attach.png"/>';
 
 		return actionsHtml;

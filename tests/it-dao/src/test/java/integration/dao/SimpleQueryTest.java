@@ -209,7 +209,10 @@ public class SimpleQueryTest extends IntegrationTestBase {
 				.select(codeAttributeName) //
 				.from(newClass) //
 				.where(condition(attribute(newClass, codeAttributeName), eq(codeValueToFind))) //
-				.run().getOnlyRow();
+				.limit(1) //
+				.skipDefaultOrdering() //
+				.run() //
+				.getOnlyRow();
 
 		assertThat(row.getCard(newClass).get(codeAttributeName), equalTo(codeValueToFind));
 	}
@@ -235,7 +238,7 @@ public class SimpleQueryTest extends IntegrationTestBase {
 	}
 
 	@Test(expected = NoSuchElementException.class)
-	public void getOnlyRowShouldThrowExceptionBecauseOfMoreThanOneRowAsResult() throws Exception {
+	public void getOnlyRowShouldThrowExceptionBecauseOfMoreThanOneRowAsResultAndNoLimit() throws Exception {
 		// given
 		final DBClass newClass = dbDataView().create(newClass("foo"));
 		dbDataView().createCardFor(newClass) //
@@ -249,7 +252,32 @@ public class SimpleQueryTest extends IntegrationTestBase {
 		dbDataView() //
 				.select(newClass.getCodeAttributeName()) //
 				.from(newClass) //
-				.run().getOnlyRow();
+				.run() //
+				.getOnlyRow();
+
+		// then
+		// ...
+	}
+
+	@Test
+	public void getOnlyRowShouldNotThrowExceptionBecauseOfMoreThanOneRowAsResultButLimitSetted() throws Exception {
+		// given
+		final DBClass newClass = dbDataView().create(newClass("foo"));
+		dbDataView().createCardFor(newClass) //
+				.set(newClass.getCodeAttributeName(), newClass.getName()) //
+				.save();
+		dbDataView().createCardFor(newClass) //
+				.set(newClass.getCodeAttributeName(), newClass.getName()) //
+				.save();
+
+		// when
+		dbDataView() //
+				.select(newClass.getCodeAttributeName()) //
+				.from(newClass) //
+				.limit(1) //
+				.skipDefaultOrdering() //
+				.run() //
+				.getOnlyRow();
 
 		// then
 		// ...
@@ -261,6 +289,7 @@ public class SimpleQueryTest extends IntegrationTestBase {
 		dbDataView() //
 				.select(newClass.getCodeAttributeName()) //
 				.from(newClass) //
+				.limit(1) //
 				.run() //
 				.getOnlyRow();
 	}

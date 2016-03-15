@@ -135,7 +135,7 @@
 		},
 
 		/**
-		 * @params {String} format
+		 * @param {String} format
 		 */
 		onPrintCardMenuClick: function(format) {
 			if (!Ext.isEmpty(format)) {

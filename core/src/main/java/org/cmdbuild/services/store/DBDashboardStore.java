@@ -82,7 +82,10 @@ public class DBDashboardStore implements DashboardStore {
 		final CMQueryRow row = view.select(anyAttribute(dashboardClass)) //
 				.from(dashboardClass) //
 				.where(condition(attribute(dashboardClass, "Id"), eq(dashboardId))) //
-				.run().getOnlyRow();
+				.limit(1) //
+				.skipDefaultOrdering() //
+				.run() //
+				.getOnlyRow();
 		return row.getCard(dashboardClass);
 	}
 

@@ -142,8 +142,7 @@ public class InternalStore implements Store {
 		private final Entry entry;
 		private final AttributeValueAdapter attributeValueAdapter;
 
-		public Create(final CMDataView dataView, final AttributeValueAdapter attributeValueAdapter,
-				final Entry entry) {
+		public Create(final CMDataView dataView, final AttributeValueAdapter attributeValueAdapter, final Entry entry) {
 			super(dataView);
 			this.attributeValueAdapter = attributeValueAdapter;
 			this.entry = entry;
@@ -248,6 +247,8 @@ public class InternalStore implements Store {
 					.select(anyAttribute(targetType)) //
 					.from(targetType) //
 					.where(condition(attribute(targetType, ID_ATTRIBUTE), eq(id))) //
+					.limit(1) //
+					.skipDefaultOrdering() //
 					.run() //
 					.getOnlyRow() //
 					.getCard(targetType);
@@ -289,6 +290,8 @@ public class InternalStore implements Store {
 					.select(anyAttribute(targetType)) //
 					.from(targetType) //
 					.where(condition(attribute(targetType, ID_ATTRIBUTE), eq(id))) //
+					.limit(1) //
+					.skipDefaultOrdering() //
 					.run() //
 					.getOnlyRow() //
 					.getCard(targetType);

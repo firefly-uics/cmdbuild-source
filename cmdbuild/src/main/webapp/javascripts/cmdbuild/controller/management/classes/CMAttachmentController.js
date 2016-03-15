@@ -2,7 +2,10 @@
 
 	var tr = CMDBuild.Translation.management.modcard;
 
-	Ext.require('CMDBuild.core.constants.Global');
+	Ext.require([
+		'CMDBuild.core.constants.Global',
+		'CMDBuild.core.constants.Proxy'
+	]);
 
 	Ext.define("CMDBuild.controller.management.classes.attachments.CMCardAttachmentsController", {
 		extend: "CMDBuild.controller.management.classes.CMModCardSubController",
@@ -175,7 +178,7 @@
 		},
 
 		theModuleIsDisabled: function() {
-			return !CMDBuild.Config.dms.enabled;
+			return !CMDBuild.configuration.dms.get(CMDBuild.core.constants.Proxy.ENABLED);
 		},
 
 		// as attachment window delegate
@@ -247,7 +250,7 @@
 				Ext.Function.createDelayed(function deferredCall() {
 					CMDBuild.core.LoadMask.hide();
 					me.view.reloadCard();
-				}, CMDBuild.Config.dms.delay, me)();
+				}, CMDBuild.configuration.dms.get(CMDBuild.core.constants.Proxy.ALFRESCO_DELAY), me)();
 			},
 
 			failure: function() {
@@ -292,7 +295,7 @@
 						attachmentWindow.unmask();
 						attachmentWindow.close();
 						CMDBuild.core.LoadMask.hide();
-					}, CMDBuild.Config.dms.delay, this)();
+					}, CMDBuild.configuration.dms.get(CMDBuild.core.constants.Proxy.ALFRESCO_DELAY), this)();
 				},
 				failure: function(form, action) {
 					attachmentWindow.unmask();

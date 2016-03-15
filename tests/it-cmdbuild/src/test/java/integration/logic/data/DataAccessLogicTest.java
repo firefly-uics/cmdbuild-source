@@ -74,7 +74,7 @@ public class DataAccessLogicTest extends IntegrationTestBase {
 		dataAccessLogic.fetchCards(null, queryOptions);
 	}
 
-	@Test
+	@Test(expected = NullPointerException.class)
 	public void shouldNotRetrieveCardsIfNotExistentClassName() throws Exception {
 		// when
 		final QueryOptions queryOptions = createQueryOptions(10, 0, new JSONArray(), new JSONObject());

@@ -17,7 +17,7 @@ public class XmlModel extends XmlObject {
 	private String id;
 
 	@XmlAttribute(name = "description")
-	private String _description;
+	private String description;
 
 	@XmlAttribute(name = "type")
 	private String cmisType;
@@ -41,7 +41,7 @@ public class XmlModel extends XmlObject {
 	private String category;
 
 	@XmlElement(name = "description")
-	private String description;
+	private String descriptionProperty;
 
 	@XmlElementWrapper(name = "session-parameters")
 	@XmlElement(name = "parameter")
@@ -53,6 +53,14 @@ public class XmlModel extends XmlObject {
 
 	public void setId(final String id) {
 		this.id = id;
+	}
+
+	public String getDescription() {
+		return description;
+	}
+
+	public void setDescription(final String description) {
+		this.description = description;
 	}
 
 	public String getCmisType() {
@@ -103,12 +111,12 @@ public class XmlModel extends XmlObject {
 		this.category = category;
 	}
 
-	public String getDescription() {
-		return description;
+	public String getDescriptionProperty() {
+		return descriptionProperty;
 	}
 
-	void setDescription(final String description) {
-		this.description = description;
+	void setDescriptionProperty(final String descriptionProperty) {
+		this.descriptionProperty = descriptionProperty;
 	}
 
 	public List<XmlParameter> getSessionParameters() {

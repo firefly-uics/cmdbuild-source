@@ -1,4 +1,4 @@
-(function() {
+(function () {
 
 	Ext.define('CMDBuild.core.proxy.widget.CustomForm', {
 
@@ -13,7 +13,18 @@
 		/**
 		 * @param {Object} parameters
 		 */
-		exports: function(parameters) {
+		getCardList: function (parameters) {
+			parameters = Ext.isEmpty(parameters) ? {} : parameters;
+
+			Ext.apply(parameters, { url: CMDBuild.core.proxy.Index.card.getList });
+
+			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.CUSTOM_FORM, parameters)
+		},
+
+		/**
+		 * @param {Object} parameters
+		 */
+		exports: function (parameters) {
 			parameters = Ext.isEmpty(parameters) ? {} : parameters;
 
 			Ext.apply(parameters, {
@@ -27,7 +38,7 @@
 		/**
 		 * @return {Ext.data.ArrayStore}
 		 */
-		getStoreExportFileFormat: function() {
+		getStoreExportFileFormat: function () {
 			return Ext.create('Ext.data.ArrayStore', {
 				fields: [CMDBuild.core.constants.Proxy.DESCRIPTION, CMDBuild.core.constants.Proxy.NAME],
 				data: [
@@ -42,7 +53,7 @@
 		/**
 		 * @return {Ext.data.ArrayStore}
 		 */
-		getStoreImportFileFormat: function() {
+		getStoreImportFileFormat: function () {
 			return Ext.create('Ext.data.ArrayStore', {
 				fields: [CMDBuild.core.constants.Proxy.DESCRIPTION, CMDBuild.core.constants.Proxy.NAME],
 				data: [
@@ -57,7 +68,7 @@
 		/**
 		 * @param {Object} parameters
 		 */
-		readFromFunctions: function(parameters) {
+		readFromFunctions: function (parameters) {
 			parameters = Ext.isEmpty(parameters) ? {} : parameters;
 
 			Ext.apply(parameters, { url: CMDBuild.core.proxy.Index.functions.readCards });

@@ -257,6 +257,7 @@ public class DataViewFilterStore implements FilterStore {
 				.from(filterClass(), as(F)) //
 				.where(condition(attribute(F, ID), eq(id))) //
 				.limit(1) //
+				.skipDefaultOrdering() //
 				.run() //
 				.getOnlyRow() //
 				.getCard(F);
@@ -268,6 +269,7 @@ public class DataViewFilterStore implements FilterStore {
 				.from(roleClass(), as(R)) //
 				.where(forRole(name)) //
 				.limit(1) //
+				.skipDefaultOrdering() //
 				.run() //
 				.getOnlyRow() //
 				.getCard(R);

@@ -70,10 +70,10 @@
 					{
 						cmName: this.cmfg('accordionIdentifierGet'),
 						iconCls: 'cmdb-tree-configuration-icon',
-						text: CMDBuild.Translation.alfresco,
-						description: CMDBuild.Translation.alfresco,
-						id: this.cmfg('accordionBuildId', 'alfresco'),
-						sectionHierarchy: ['alfresco'],
+						text: CMDBuild.Translation.dms,
+						description: CMDBuild.Translation.dms,
+						id: this.cmfg('accordionBuildId', 'dms'),
+						sectionHierarchy: ['dms'],
 						leaf: true
 					},
 					{

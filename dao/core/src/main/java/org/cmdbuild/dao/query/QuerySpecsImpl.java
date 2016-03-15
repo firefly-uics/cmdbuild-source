@@ -21,6 +21,7 @@ public class QuerySpecsImpl implements QuerySpecs {
 		private boolean numbered;
 		private WhereClause conditionOnNumberedQuery;
 		private boolean count;
+		private boolean skipDefaultOrdering;
 
 		public Builder() {
 			conditionOnNumberedQuery = EmptyWhereClause.emptyWhereClause();
@@ -56,6 +57,11 @@ public class QuerySpecsImpl implements QuerySpecs {
 			return this;
 		}
 
+		public Builder skipDefaultOrdering(final boolean skipDefaultOrdering) {
+			this.skipDefaultOrdering = skipDefaultOrdering;
+			return this;
+		}
+
 	}
 
 	public static Builder newInstance() {
@@ -74,6 +80,7 @@ public class QuerySpecsImpl implements QuerySpecs {
 	private final boolean numbered;
 	private final WhereClause conditionOnNumberedQuery;
 	private final boolean count;
+	private final boolean skipDefaultOrdering;
 
 	private QuerySpecsImpl(final Builder builder) {
 		this.fromClause = builder.fromClause;
@@ -81,6 +88,7 @@ public class QuerySpecsImpl implements QuerySpecs {
 		this.numbered = builder.numbered;
 		this.conditionOnNumberedQuery = builder.conditionOnNumberedQuery;
 		this.count = builder.count;
+		this.skipDefaultOrdering = builder.skipDefaultOrdering;
 
 		this.joinClauses = Lists.newArrayList();
 		this.directJoinClauses = Lists.newArrayList();
@@ -177,6 +185,11 @@ public class QuerySpecsImpl implements QuerySpecs {
 	@Override
 	public boolean count() {
 		return count;
+	}
+
+	@Override
+	public boolean skipDefaultOrdering() {
+		return skipDefaultOrdering;
 	}
 
 }

@@ -44,6 +44,7 @@
 
 			if (CMDBuild.configuration.localization.hasEnabledLanguages()) {
 				this.translationButton = Ext.create('CMDBuild.core.buttons.FieldTranslation', {
+					margin: '0 0 0 5',
 					scope: this,
 
 					handler: function(button, e) {
