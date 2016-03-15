@@ -19,6 +19,8 @@ Ext.define('Ext.app.PortalPanel', {
     defaultType: 'portalcolumn',
     autoScroll: true,
 
+    border: false,
+
     manageHeight: false,
 
     initComponent : function() {
@@ -52,7 +54,7 @@ Ext.define('Ext.app.PortalPanel', {
 
             // CMDBUILD patch: I don't want all the column with the same width
             // who really want it?
-            // old code: 
+            // old code:
             // item.columnWidth = 1 / len;
             // my code:
             item.columnWidth = item.columnWidth || 1 / len;

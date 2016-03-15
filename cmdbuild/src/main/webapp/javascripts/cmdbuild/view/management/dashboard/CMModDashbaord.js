@@ -3,6 +3,7 @@
 	Ext.define("CMDBuild.view.management.dashboard.CMModDashboard", {
 		extend: "Ext.panel.Panel",
 
+		border: true,
 		frame: false,
 		layout: "card",
 
