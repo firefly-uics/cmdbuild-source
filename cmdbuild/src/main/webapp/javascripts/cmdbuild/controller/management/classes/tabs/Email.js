@@ -196,23 +196,24 @@
 		onTabEmailPanelShow: function() {
 			if (this.view.isVisible()) {
 				// History record save
-				CMDBuild.global.navigation.Chronology.cmfg('navigationChronologyRecordSave', {
-					moduleId: 'class',
-					entryType: {
-						description: _CMCardModuleState.entryType.get(CMDBuild.core.constants.Proxy.TEXT),
-						id: _CMCardModuleState.entryType.get(CMDBuild.core.constants.Proxy.ID),
-						object: _CMCardModuleState.entryType
-					},
-					item: {
-						description: _CMCardModuleState.card.get('Description') || _CMCardModuleState.card.get('Code'),
-						id: _CMCardModuleState.card.get(CMDBuild.core.constants.Proxy.ID),
-						object: _CMCardModuleState.card
-					},
-					section: {
-						description: this.view.title,
-						object: this.view
-					}
-				});
+				if (!Ext.isEmpty(_CMCardModuleState.entryType) && !Ext.isEmpty(_CMCardModuleState.card))
+					CMDBuild.global.navigation.Chronology.cmfg('navigationChronologyRecordSave', {
+						moduleId: 'class',
+						entryType: {
+							description: _CMCardModuleState.entryType.get(CMDBuild.core.constants.Proxy.TEXT),
+							id: _CMCardModuleState.entryType.get(CMDBuild.core.constants.Proxy.ID),
+							object: _CMCardModuleState.entryType
+						},
+						item: {
+							description: _CMCardModuleState.card.get('Description') || _CMCardModuleState.card.get('Code'),
+							id: _CMCardModuleState.card.get(CMDBuild.core.constants.Proxy.ID),
+							object: _CMCardModuleState.card
+						},
+						section: {
+							description: this.view.title,
+							object: this.view
+						}
+					});
 			}
 
 			this.callParent(arguments);

@@ -108,8 +108,6 @@
 
 				this.sectionController.getView().fireEvent('show');
 
-//				this.sectionController.cmfg('onDataViewPanelShow');
-
 				this.setViewTitle(this.cmfg('dataViewSelectedGet', CMDBuild.core.constants.Proxy.TEXT));
 
 				// History record save
