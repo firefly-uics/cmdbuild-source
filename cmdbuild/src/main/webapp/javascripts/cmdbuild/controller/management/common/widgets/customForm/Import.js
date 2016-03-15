@@ -7,6 +7,7 @@
 			'CMDBuild.core.proxy.Card',
 			'CMDBuild.core.proxy.CMProxyConstants',
 			'CMDBuild.core.proxy.Csv',
+			'CMDBuild.core.proxy.widgets.CustomForm',
 			'CMDBuild.core.RequestBarrier'
 		],
 
@@ -74,7 +75,6 @@
 					this.cmfg('widgetCustomFormImportData', this.importDataModeManager(csvData));
 					this.cmfg('onWidgetCustomFormImportAbortButtonClick');
 
-//					CMDBuild.LoadMask.get().hide();
 					this.view.setLoading(false);
 				}, this);
 
@@ -173,7 +173,7 @@
 						attribute: { or: requiredCardAdvancedFilterArray }
 					});
 
-				CMDBuild.core.proxy.Card.getList({
+				CMDBuild.core.proxy.widgets.CustomForm.getCardList({
 					params: params,
 					loadMask: false,
 					scope: this,
@@ -378,13 +378,12 @@
 		 */
 		onWidgetCustomFormImportUploadButtonClick: function() {
 			if (this.validate(this.form)) {
-//				CMDBuild.LoadMask.get().show();
 				this.view.setLoading(true);
+				
 				CMDBuild.core.proxy.Csv.decode({
 					form: this.form.getForm(),
 					scope: this,
 					failure: function(form, action) {
-//						CMDBuild.LoadMask.get().hide();
 						this.view.setLoading(false);
 
 						CMDBuild.Msg.error(
