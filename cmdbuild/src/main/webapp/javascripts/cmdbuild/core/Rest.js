@@ -3,7 +3,7 @@
 	/**
 	 * Verify and setup rest session to be compatible with CAS or header authenticators
 	 */
-	Ext.define('CMDBuild.core.Rest', { // FIXME: atm header authentication widn't work
+	Ext.define('CMDBuild.core.Rest', { // FIXME: atm header authentication don't works
 
 		requires: [
 			'CMDBuild.core.proxy.session.Rest',
@@ -11,26 +11,26 @@
 		],
 
 		constructor: function () {
-			if (Ext.isEmpty(Ext.util.Cookies.get(CMDBuild.core.constants.Proxy.SESSION_TOKEN))) {
-				this.fakeCallToGetAuthorizationToken();
-			} else {
-				// Verify if session with cookie token exists
-				var params = {};
-				params[CMDBuild.core.constants.Proxy.USERNAME] = CMDBuild.Runtime.Username;
-
-				var urlParams = {};
-				urlParams[CMDBuild.core.constants.Proxy.TOKEN] = Ext.util.Cookies.get(CMDBuild.core.constants.Proxy.SESSION_TOKEN);
-
-				CMDBuild.core.proxy.session.Rest.read({
-					params: params,
-					urlParams: urlParams,
-					loadMask: false,
-					scope: this,
-					failure: function (response, opts) {
-						this.fakeCallToGetAuthorizationToken();
-					}
-				});
-			}
+//			if (Ext.isEmpty(Ext.util.Cookies.get(CMDBuild.core.constants.Proxy.SESSION_TOKEN))) {
+//				this.fakeCallToGetAuthorizationToken();
+//			} else {
+//				// Verify if session with cookie token exists
+//				var params = {};
+//				params[CMDBuild.core.constants.Proxy.USERNAME] = CMDBuild.Runtime.Username;
+//
+//				var urlParams = {};
+//				urlParams[CMDBuild.core.constants.Proxy.TOKEN] = Ext.util.Cookies.get(CMDBuild.core.constants.Proxy.SESSION_TOKEN);
+//
+//				CMDBuild.core.proxy.session.Rest.read({
+//					params: params,
+//					urlParams: urlParams,
+//					loadMask: false,
+//					scope: this,
+//					failure: function (response, opts) {
+//						this.fakeCallToGetAuthorizationToken();
+//					}
+//				});
+//			}
 		},
 
 		/**
