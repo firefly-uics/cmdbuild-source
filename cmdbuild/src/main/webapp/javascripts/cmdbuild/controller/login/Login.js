@@ -90,7 +90,7 @@
 
 							return false;
 						} else {
-							decodedResult.stacktrace = undefined; // To not show the detail link in the error pop-up
+							decodedResponse.stacktrace = undefined; // To not show the detail link in the error pop-up
 						}
 					}
 				});
