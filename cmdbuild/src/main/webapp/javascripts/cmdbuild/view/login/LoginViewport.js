@@ -22,8 +22,8 @@
 				items: [
 					Ext.create('Ext.panel.Panel', {
 						region: 'north',
-						border: false,
 						contentEl: 'header',
+						border: false,
 						frame: false,
 						height: 45
 					}),
