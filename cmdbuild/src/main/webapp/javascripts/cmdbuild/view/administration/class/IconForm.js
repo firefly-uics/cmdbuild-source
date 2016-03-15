@@ -37,7 +37,7 @@
 
 						items: [
 							Ext.create('Ext.Img', {
-								src: 'images/icons/iconPlaceholder.png',
+								src: '',
 								height: 50,
 								width: 50
 							})
