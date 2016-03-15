@@ -70,14 +70,15 @@
 				});
 
 				// History record save
-				CMDBuild.global.navigation.Chronology.cmfg('navigationChronologyRecordSave', {
-					moduleId: this.cmfg('identifierGet'),
-					entryType: {
-						description: node.get(CMDBuild.core.constants.Proxy.DESCRIPTION),
-						id: node.get(CMDBuild.core.constants.Proxy.ID),
-						object: node
-					}
-				});
+				if (!Ext.isEmpty(node))
+					CMDBuild.global.navigation.Chronology.cmfg('navigationChronologyRecordSave', {
+						moduleId: this.cmfg('identifierGet'),
+						entryType: {
+							description: node.get(CMDBuild.core.constants.Proxy.DESCRIPTION),
+							id: node.get(CMDBuild.core.constants.Proxy.ID),
+							object: node
+						}
+					});
 
 				this.onModuleInit(node); // Custom callParent() implementation
 			}

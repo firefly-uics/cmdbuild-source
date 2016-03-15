@@ -313,7 +313,7 @@
 		this.currentTab = tab;
 
 		// History record save
-		if (!Ext.isEmpty(_CMCardModuleState.card)) {
+		if (!Ext.isEmpty(_CMCardModuleState.entryType) && !Ext.isEmpty(_CMCardModuleState.card))
 			CMDBuild.global.navigation.Chronology.cmfg('navigationChronologyRecordSave', {
 				moduleId: 'class',
 				entryType: {
@@ -335,7 +335,6 @@
 					object: this.currentTab.targetPanel
 				}
 			});
-		}
 
 		if (type == MD) {
 			selectDetail.call(this, detail);

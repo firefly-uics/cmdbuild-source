@@ -26,14 +26,15 @@
 				this.view.buildDashboardColumns(this.dashboard);
 
 				// History record save
-				CMDBuild.global.navigation.Chronology.cmfg('navigationChronologyRecordSave', {
-					moduleId: this.view.cmName,
-					entryType: {
-						description: selection.get(CMDBuild.core.constants.Proxy.DESCRIPTION),
-						id: selection.get(CMDBuild.core.constants.Proxy.ID),
-						object: selection
-					}
-				});
+				if (!Ext.isEmpty(selection))
+					CMDBuild.global.navigation.Chronology.cmfg('navigationChronologyRecordSave', {
+						moduleId: this.view.cmName,
+						entryType: {
+							description: selection.get(CMDBuild.core.constants.Proxy.DESCRIPTION),
+							id: selection.get(CMDBuild.core.constants.Proxy.ID),
+							object: selection
+						}
+					});
 			}
 		}
 	});

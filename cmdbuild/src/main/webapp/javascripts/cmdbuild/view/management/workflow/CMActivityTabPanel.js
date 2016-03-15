@@ -16,35 +16,7 @@
 				listeners: {
 					show: function(panel, eOpts) {
 						// History record save
-						CMDBuild.global.navigation.Chronology.cmfg('navigationChronologyRecordSave', {
-							moduleId: 'workflow',
-							entryType: {
-								description: _CMWFState.getProcessClassRef().get(CMDBuild.core.constants.Proxy.TEXT),
-								id: _CMWFState.getProcessClassRef().get(CMDBuild.core.constants.Proxy.ID),
-								object: _CMWFState.getProcessClassRef()
-							},
-							item: {
-								description: _CMWFState.getProcessInstance().get(CMDBuild.core.constants.Proxy.TEXT),
-								id: _CMWFState.getProcessInstance().get(CMDBuild.core.constants.Proxy.ID),
-								object: _CMWFState.getProcessInstance()
-							},
-							section: {
-								description: this.title,
-								object: this
-							}
-						});
-					}
-				}
-			});
-
-			this.openNotePanel = CMDBuild.configuration.userInterface.isDisabledProcessTab(CMDBuild.core.constants.Proxy.PROCESS_NOTE_TAB) ? null
-				: new CMDBuild.view.management.common.widgets.CMOpenNotes({
-					title: CMDBuild.Translation.management.modworkflow.tabs.notes,
-					border: false,
-
-					listeners: {
-						show: function(panel, eOpts) {
-							// History record save
+						if (!Ext.isEmpty(_CMWFState.getProcessClassRef()) && !Ext.isEmpty( _CMWFState.getProcessInstance()))
 							CMDBuild.global.navigation.Chronology.cmfg('navigationChronologyRecordSave', {
 								moduleId: 'workflow',
 								entryType: {
@@ -62,6 +34,36 @@
 									object: this
 								}
 							});
+					}
+				}
+			});
+
+			this.openNotePanel = CMDBuild.configuration.userInterface.isDisabledProcessTab(CMDBuild.core.constants.Proxy.PROCESS_NOTE_TAB) ? null
+				: new CMDBuild.view.management.common.widgets.CMOpenNotes({
+					title: CMDBuild.Translation.management.modworkflow.tabs.notes,
+					border: false,
+
+					listeners: {
+						show: function(panel, eOpts) {
+							// History record save
+							if (!Ext.isEmpty(_CMWFState.getProcessClassRef()) && !Ext.isEmpty( _CMWFState.getProcessInstance()))
+								CMDBuild.global.navigation.Chronology.cmfg('navigationChronologyRecordSave', {
+									moduleId: 'workflow',
+									entryType: {
+										description: _CMWFState.getProcessClassRef().get(CMDBuild.core.constants.Proxy.TEXT),
+										id: _CMWFState.getProcessClassRef().get(CMDBuild.core.constants.Proxy.ID),
+										object: _CMWFState.getProcessClassRef()
+									},
+									item: {
+										description: _CMWFState.getProcessInstance().get(CMDBuild.core.constants.Proxy.TEXT),
+										id: _CMWFState.getProcessInstance().get(CMDBuild.core.constants.Proxy.ID),
+										object: _CMWFState.getProcessInstance()
+									},
+									section: {
+										description: this.title,
+										object: this
+									}
+								});
 						}
 					}
 				})
@@ -77,23 +79,24 @@
 					listeners: {
 						show: function(panel, eOpts) {
 							// History record save
-							CMDBuild.global.navigation.Chronology.cmfg('navigationChronologyRecordSave', {
-								moduleId: 'workflow',
-								entryType: {
-									description: _CMWFState.getProcessClassRef().get(CMDBuild.core.constants.Proxy.TEXT),
-									id: _CMWFState.getProcessClassRef().get(CMDBuild.core.constants.Proxy.ID),
-									object: _CMWFState.getProcessClassRef()
-								},
-								item: {
-									description: _CMWFState.getProcessInstance().get(CMDBuild.core.constants.Proxy.TEXT),
-									id: _CMWFState.getProcessInstance().get(CMDBuild.core.constants.Proxy.ID),
-									object: _CMWFState.getProcessInstance()
-								},
-								section: {
-									description: this.title,
-									object: this
-								}
-							});
+							if (!Ext.isEmpty(_CMWFState.getProcessClassRef()) && !Ext.isEmpty( _CMWFState.getProcessInstance()))
+								CMDBuild.global.navigation.Chronology.cmfg('navigationChronologyRecordSave', {
+									moduleId: 'workflow',
+									entryType: {
+										description: _CMWFState.getProcessClassRef().get(CMDBuild.core.constants.Proxy.TEXT),
+										id: _CMWFState.getProcessClassRef().get(CMDBuild.core.constants.Proxy.ID),
+										object: _CMWFState.getProcessClassRef()
+									},
+									item: {
+										description: _CMWFState.getProcessInstance().get(CMDBuild.core.constants.Proxy.TEXT),
+										id: _CMWFState.getProcessInstance().get(CMDBuild.core.constants.Proxy.ID),
+										object: _CMWFState.getProcessInstance()
+									},
+									section: {
+										description: this.title,
+										object: this
+									}
+								});
 						}
 					}
 				})
@@ -107,23 +110,24 @@
 					listeners: {
 						show: function(panel, eOpts) {
 							// History record save
-							CMDBuild.global.navigation.Chronology.cmfg('navigationChronologyRecordSave', {
-								moduleId: 'workflow',
-								entryType: {
-									description: _CMWFState.getProcessClassRef().get(CMDBuild.core.constants.Proxy.TEXT),
-									id: _CMWFState.getProcessClassRef().get(CMDBuild.core.constants.Proxy.ID),
-									object: _CMWFState.getProcessClassRef()
-								},
-								item: {
-									description: _CMWFState.getProcessInstance().get(CMDBuild.core.constants.Proxy.TEXT),
-									id: _CMWFState.getProcessInstance().get(CMDBuild.core.constants.Proxy.ID),
-									object: _CMWFState.getProcessInstance()
-								},
-								section: {
-									description: this.title,
-									object: this
-								}
-							});
+							if (!Ext.isEmpty(_CMWFState.getProcessClassRef()) && !Ext.isEmpty( _CMWFState.getProcessInstance()))
+								CMDBuild.global.navigation.Chronology.cmfg('navigationChronologyRecordSave', {
+									moduleId: 'workflow',
+									entryType: {
+										description: _CMWFState.getProcessClassRef().get(CMDBuild.core.constants.Proxy.TEXT),
+										id: _CMWFState.getProcessClassRef().get(CMDBuild.core.constants.Proxy.ID),
+										object: _CMWFState.getProcessClassRef()
+									},
+									item: {
+										description: _CMWFState.getProcessInstance().get(CMDBuild.core.constants.Proxy.TEXT),
+										id: _CMWFState.getProcessInstance().get(CMDBuild.core.constants.Proxy.ID),
+										object: _CMWFState.getProcessInstance()
+									},
+									section: {
+										description: this.title,
+										object: this
+									}
+								});
 						}
 					}
 				})
