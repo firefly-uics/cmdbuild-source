@@ -5,6 +5,21 @@
 		requires: ['CMDBuild.core.proxy.CMProxyConstants'],
 
 		singleton: true,
+		
+		/**
+		 * @param {Object} parameters
+		 */
+		getCardList: function(parameters) {
+			CMDBuild.Ajax.request({
+				url: CMDBuild.core.proxy.CMProxyUrlIndex.card.getList,
+				params: parameters.params,
+				scope: parameters.scope || this,
+				loadMask: Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : false,
+				failure: parameters.failure || Ext.emptyFn,
+				success: parameters.success || Ext.emptyFn,
+				callback: parameters.callback || Ext.emptyFn
+			});
+		},
 
 		/**
 		 * @return {Ext.data.ArrayStore}
