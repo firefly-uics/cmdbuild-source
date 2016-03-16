@@ -11,7 +11,7 @@
 		 */
 		getCardList: function(parameters) {
 			CMDBuild.Ajax.request({
-				url: CMDBuild.core.proxy.CMProxyUrlIndex.card.getListShort,
+				url: CMDBuild.core.proxy.CMProxyUrlIndex.card.getList,
 				params: parameters.params,
 				scope: parameters.scope || this,
 				loadMask: Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : false,
