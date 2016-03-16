@@ -61,6 +61,8 @@
 			if (!Ext.isEmpty(this.view)) {
 				this.buildFields();
 
+				this.setViewTitle(this.cmfg('selectedReportRecordGet', CMDBuild.core.constants.Proxy.DESCRIPTION));
+
 				this.view.show();
 			}
 		},
@@ -75,7 +77,7 @@
 					targetForm: this.form
 				});
 
-				Ext.Array.forEach(this.attributeList, function (attribute, i, allAttributes) {
+				Ext.Array.each(this.attributeList, function (attribute, i, allAttributes) {
 					if (fieldManager.isAttributeManaged(attribute[CMDBuild.core.constants.Proxy.TYPE])) {
 						var attributeCustom = Ext.create('CMDBuild.model.common.attributes.Attribute', attribute);
 						attributeCustom.setAdaptedData(attribute);
@@ -86,7 +88,7 @@
 						var field = CMDBuild.Management.FieldManager.getFieldForAttr(attribute, false, false);
 
 						if (!Ext.isEmpty(field)) {
-							field.maxWidth = field.width;
+							field.maxWidth = field.width || CMDBuild.core.constants.FieldWidths.STANDARD_MEDIUM;
 
 							if (attribute.defaultvalue)
 								field.setValue(attribute.defaultvalue);

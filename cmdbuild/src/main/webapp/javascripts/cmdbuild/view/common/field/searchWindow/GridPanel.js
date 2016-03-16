@@ -1,4 +1,4 @@
-(function() {
+(function () {
 
 	Ext.define('CMDBuild.view.common.field.searchWindow.GridPanel', {
 		extend: 'CMDBuild.view.management.common.CMCardGrid',
@@ -47,11 +47,11 @@
 		frame: false,
 
 		listeners: {
-			itemdblclick: function(grid, record, item, index, e, eOpts) {
+			itemdblclick: function (grid, record, item, index, e, eOpts) {
 				this.delegate.cmfg('onFieldSearchWindowItemDoubleClick');
 			},
 
-			selectionchange: function(selectionModel, selected, eOpts) {
+			selectionchange: function (selectionModel, selected, eOpts) {
 				this.delegate.cmfg('onFieldSearchWindowSelectionChange');
 			}
 		},
@@ -61,8 +61,8 @@
 		 *
 		 * @override
 		 */
-		getStoreExtraParams: function() {
-			return Ext.isEmpty(this.delegate.cmfg('fiedlGetStore')) ? null : this.delegate.cmfg('fiedlGetStore').getProxy().extraParams;
+		getStoreExtraParams: function () {
+			return Ext.isEmpty(this.delegate.cmfg('fieldStoreGet')) ? null : this.delegate.cmfg('fieldStoreGet').getProxy().extraParams;
 		}
 	});
 

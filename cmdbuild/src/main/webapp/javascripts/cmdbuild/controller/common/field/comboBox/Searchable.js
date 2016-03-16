@@ -22,16 +22,17 @@
 		 * @cfg {Array}
 		 */
 		cmfgCatchedFunctions: [
-			'fieldComboBoxSearchableGetStore = fiedlGetStore',
-			'fieldComboBoxSearchableGetValue = fiedlGetValue',
 			'fieldComboBoxSearchableNormalizeValue',
-			'fieldComboBoxSearchableSetValue = fiedlSetValue',
 			'fieldComboBoxSearchableStoreExceedsLimit',
+			'fieldComboBoxSearchableStoreGet = fieldStoreGet',
+			'fieldComboBoxSearchableValueFieldGet = fiedlValueFieldGet',
+			'fieldComboBoxSearchableValueGet = fieldValueGet',
+			'fieldComboBoxSearchableValueSet = fieldValueSet',
 			'onFieldComboBoxSearchableKeyUp',
-			'onFieldComboBoxSearchableSetValue',
 			'onFieldComboBoxSearchableTrigger1Click',
 			'onFieldComboBoxSearchableTrigger2Click',
-			'onFieldComboBoxSearchableTrigger3Click'
+			'onFieldComboBoxSearchableTrigger3Click',
+			'onFieldComboBoxSearchableValueSet'
 		],
 
 		/**
@@ -66,6 +67,8 @@
 			 * @param {String} parameterName
 			 *
 			 * @returns {CMDBuild.model.common.field.comboBox.searchable.Configuration} or Mixed
+			 *
+			 * @private
 			 */
 			configurationGet: function (parameterName) {
 				if (!Ext.isEmpty(parameterName))
@@ -76,6 +79,8 @@
 
 			/**
 			 * @property {Object} configurationObject
+			 *
+			 * @private
 			 */
 			configurationSet: function (configurationObject) {
 				this.configuration = Ext.create('CMDBuild.model.common.field.comboBox.searchable.Configuration', configurationObject);
@@ -84,14 +89,14 @@
 		/**
 		 * @returns {Ext.data.Store}
 		 */
-		fieldComboBoxSearchableGetStore: function () {
+		fieldComboBoxSearchableStoreGet: function () {
 			return this.view.getStore();
 		},
 
 		/**
 		 * @returns {Number}
 		 */
-		fieldComboBoxSearchableGetValue: function () {
+		fieldComboBoxSearchableValueGet: function () {
 			return this.view.getValue();
 		},
 
@@ -126,10 +131,10 @@
 		/**
 		 * @param {Ext.data.Model} selectedRecord
 		 */
-		fieldComboBoxSearchableSetValue: function (selectedRecord) {
+		fieldComboBoxSearchableValueSet: function (selectedRecord) {
 			if (!Ext.isEmpty(selectedRecord)) {
 				this.view.blur(); // Allow 'change' event that occurs on blur
-				this.cmfg('onFieldComboBoxSearchableSetValue', selectedRecord.get(this.view.valueField));
+				this.view.setValue(selectedRecord.get(this.view.valueField));
 			}
 		},
 
@@ -143,48 +148,15 @@
 			return false;
 		},
 
-		onFieldComboBoxSearchableKeyUp: function () {
-			this.onFieldComboBoxSearchableTrigger3Click(this.view.getRawValue());
+		/**
+		 * @returns {String}
+		 */
+		fieldComboBoxSearchableValueFieldGet: function () {
+			return this.view.valueField;
 		},
 
-		/**
-		 * Adds values in store if not already inside
-		 *
-		 * @param {String} value
-		 */
-		onFieldComboBoxSearchableSetValue: function (value) {
-			if (!Ext.isEmpty(value)) {
-				if (Ext.isObject(value) && Ext.isFunction(value.get))
-					value = value.get(CMDBuild.core.constants.Proxy.ID) || value.get('Id');
-
-				if (this.view.getStore().find(this.view.valueField, value) < 0) {
-					var params = {};
-					params[CMDBuild.core.constants.Proxy.CLASS_NAME] = this.view.attributeModel.get(CMDBuild.core.constants.Proxy.TARGET_CLASS);
-					params[CMDBuild.core.constants.Proxy.CARD_ID] = value;
-
-					CMDBuild.core.proxy.common.field.ForeignKey.readCard({
-						params: params,
-						scope: this,
-						success: function (response, options, decodedResponse) {
-							decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.CARD];
-
-							if (!Ext.isEmpty(decodedResponse)) {
-								if (!Ext.isEmpty(this.view.getStore()))
-									this.view.getStore().add(
-										Ext.create('CMDBuild.model.common.attributes.ForeignKeyStore', {
-											Id: decodedResponse['Id'],
-											Description: decodedResponse['Description']
-										})
-									);
-
-								this.view.setValue(decodedResponse[this.view.valueField]);
-							}
-
-							this.view.validate();
-						}
-					});
-				}
-			}
+		onFieldComboBoxSearchableKeyUp: function () {
+			this.cmfg('onFieldComboBoxSearchableTrigger3Click', this.view.getRawValue());
 		},
 
 		/**
@@ -227,12 +199,10 @@
 						if (!Ext.isEmpty(targetClassObject)) {
 							var configurationObject = {};
 							configurationObject[CMDBuild.core.constants.Proxy.ENTRY_TYPE] = Ext.create('CMDBuild.cache.CMEntryTypeModel', targetClassObject);
-							configurationObject[CMDBuild.core.constants.Proxy.GRID_CONFIGURATION] = {
-								presets: { quickSearch: value }
-							};
+							configurationObject[CMDBuild.core.constants.Proxy.GRID_CONFIGURATION] = { presets: { quickSearch: value } };
 							configurationObject[CMDBuild.core.constants.Proxy.READ_ONLY] = this.configurationGet(CMDBuild.core.constants.Proxy.READ_ONLY_SEARCH_WINDOW);
 
-							this.controllerSearchWindow.fieldSearchWindowConfigurationSet(configurationObject);
+							this.controllerSearchWindow.cmfg('fieldSearchWindowConfigurationSet', { value: configurationObject });
 							this.controllerSearchWindow.getView().show();
 						}
 					}
@@ -241,11 +211,50 @@
 		},
 
 		/**
+		 * Adds values in store if not already inside
+		 *
+		 * @param {Mixed} value
+		 */
+		onFieldComboBoxSearchableValueSet: function (value) {
+			if (!Ext.isEmpty(value)) {
+				value = this.cmfg('fieldComboBoxSearchableNormalizeValue', value);
+
+				if (this.view.getStore().find(this.view.valueField, value) < 0) {
+					var params = {};
+					params[CMDBuild.core.constants.Proxy.CLASS_NAME] = this.view.attributeModel.get(CMDBuild.core.constants.Proxy.TARGET_CLASS);
+					params[CMDBuild.core.constants.Proxy.CARD_ID] = value;
+
+					CMDBuild.core.proxy.common.field.ForeignKey.readCard({
+						params: params,
+						scope: this,
+						success: function (response, options, decodedResponse) {
+							decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.CARD];
+
+							if (!Ext.isEmpty(decodedResponse)) {
+								if (!Ext.isEmpty(this.view.getStore()))
+									this.view.getStore().add(
+										Ext.create('CMDBuild.model.common.attributes.ForeignKeyStore', {
+											Id: decodedResponse['Id'],
+											Description: decodedResponse['Description']
+										})
+									);
+
+								this.view.setValue(decodedResponse[this.view.valueField]);
+							}
+
+							this.view.validate();
+						}
+					});
+				}
+			}
+		},
+
+		/**
 		 * @private
 		 */
 		trigger1Manager: function () {
-			if (this.fieldComboBoxSearchableStoreExceedsLimit()) {
-				this.onFieldComboBoxSearchableTrigger3Click();
+			if (this.cmfg('fieldComboBoxSearchableStoreExceedsLimit')) {
+				this.cmfg('onFieldComboBoxSearchableTrigger3Click');
 			} else {
 				this.view.onTriggerClick();
 			}

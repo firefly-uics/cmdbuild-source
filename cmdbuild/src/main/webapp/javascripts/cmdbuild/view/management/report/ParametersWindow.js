@@ -11,6 +11,11 @@
 		delegate: undefined,
 
 		/**
+		 * @cfg {String}
+		 */
+		baseTitle: CMDBuild.Translation.reportParameters,
+
+		/**
 		 * @cfg {Number}
 		 */
 		defaultSizeW: 0.60,
@@ -26,7 +31,6 @@
 		frame: false,
 		layout: 'fit',
 
-		title: CMDBuild.Translation.reportParameters,
 
 		initComponent: function () {
 			Ext.apply(this, {
