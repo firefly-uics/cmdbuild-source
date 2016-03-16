@@ -63,6 +63,7 @@
 				this.view.setLoading(true);
 				CMDBuild.core.proxy.CMProxyRelations.getList({
 					params: parameters,
+					loadMask: true,
 					scope: this,
 					success: function (response, options, decodedResponse) {
 						this.view.setLoading(false);
@@ -154,6 +155,7 @@
 
 				CMDBuild.core.proxy.CMProxyRelations.getList({
 					params: parameters,
+					loadMask: true,
 					scope: this,
 					success: function(result, options, decodedResult) {
 						el.unmask();
@@ -587,6 +589,7 @@
 
 				CMDBuild.core.proxy.CMProxyRelations.getList({
 					params: parameters,
+					loadMask: true,
 					scope: this,
 					success: function(result, options, decodedResult) {
 						el.unmask();

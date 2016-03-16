@@ -3,7 +3,10 @@
 	Ext.define('CMDBuild.controller.common.MainViewport', {
 		extend: 'CMDBuild.controller.common.abstract.Base',
 
-		requires: ['CMDBuild.core.constants.Proxy'],
+		requires: [
+			'CMDBuild.core.constants.Proxy',
+			'CMDBuild.core.Message'
+		],
 
 		/**
 		 * @cfg {Object}
@@ -347,6 +350,8 @@
 					accordionController.cmfg('accordionDeselect'); // Instruction required or selection doesn't work if exists another selection
 					accordionController.cmfg('accordionExpand');
 					accordionController.cmfg('accordionSelectNodeById', parameters['IdClass']);
+				} else {
+					CMDBuild.core.Message.warning(CMDBuild.Translation.errors.warning_message, CMDBuild.Translation.warnings.itemNotAvailable);
 				}
 			} else {
 				_error('malformed parameters in openCard method', this);
