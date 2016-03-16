@@ -5,13 +5,13 @@
 		requires: ['CMDBuild.core.proxy.CMProxyConstants'],
 
 		singleton: true,
-		
+
 		/**
 		 * @param {Object} parameters
 		 */
 		getCardList: function(parameters) {
 			CMDBuild.Ajax.request({
-				url: CMDBuild.core.proxy.CMProxyUrlIndex.card.getList,
+				url: CMDBuild.core.proxy.CMProxyUrlIndex.card.getListShort,
 				params: parameters.params,
 				scope: parameters.scope || this,
 				loadMask: Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : false,

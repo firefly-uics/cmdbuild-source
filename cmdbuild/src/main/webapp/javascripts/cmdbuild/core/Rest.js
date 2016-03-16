@@ -11,26 +11,26 @@
 		],
 
 		constructor: function() {
-			if (Ext.isEmpty(Ext.util.Cookies.get(CMDBuild.core.proxy.CMProxyConstants.SESSION_TOKEN))) {
-				this.fakeCallToGetAuthorizationToken();
-			} else {
-				// Verify if session with cookie token exists
-				var params = {};
-				params[CMDBuild.core.proxy.CMProxyConstants.USERNAME] = CMDBuild.Runtime.Username;
-
-				var urlParams = {};
-				urlParams[CMDBuild.core.proxy.CMProxyConstants.TOKEN] = Ext.util.Cookies.get(CMDBuild.core.proxy.CMProxyConstants.SESSION_TOKEN);
-
-				CMDBuild.core.proxy.session.Rest.read({
-					params: params,
-					urlParams: urlParams,
-					loadMask: false,
-					scope: this,
-					failure: function(response, opts) {
-						this.fakeCallToGetAuthorizationToken();
-					}
-				});
-			}
+//			if (Ext.isEmpty(Ext.util.Cookies.get(CMDBuild.core.proxy.CMProxyConstants.SESSION_TOKEN))) {
+//				this.fakeCallToGetAuthorizationToken();
+//			} else {
+//				// Verify if session with cookie token exists
+//				var params = {};
+//				params[CMDBuild.core.proxy.CMProxyConstants.USERNAME] = CMDBuild.Runtime.Username;
+//
+//				var urlParams = {};
+//				urlParams[CMDBuild.core.proxy.CMProxyConstants.TOKEN] = Ext.util.Cookies.get(CMDBuild.core.proxy.CMProxyConstants.SESSION_TOKEN);
+//
+//				CMDBuild.core.proxy.session.Rest.read({
+//					params: params,
+//					urlParams: urlParams,
+//					loadMask: false,
+//					scope: this,
+//					failure: function(response, opts) {
+//						this.fakeCallToGetAuthorizationToken();
+//					}
+//				});
+//			}
 		},
 
 		/**
