@@ -894,6 +894,7 @@
 	},
 	"warnings": {
 		"emailTemplateRelatedAttributeEdited": "<em>Attribute related with email templates changed, some e-mail could be regenerated.</em>",
+		"itemNotAvailable": "<em>Item not available</em>",
 		"itIsNotAllowedFilterWithCalculatedParams": "Het is niet toegestaan een filter te gebruiken met berekende parameters",
 		"link_cards_changed_values": "De selectie van \"{0}\" is bijgewerkt",
 		"only_filtered": "De wijzigingen worden alleen toegepast bij kaarten welke bij het huidige filter passen",

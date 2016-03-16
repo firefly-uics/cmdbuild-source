@@ -894,6 +894,7 @@
 	},
 	"warnings": {
 		"emailTemplateRelatedAttributeEdited": "<em>Attribute related with email templates changed, some e-mail could be regenerated.</em>",
+		"itemNotAvailable": "<em>Item not available</em>",
 		"itIsNotAllowedFilterWithCalculatedParams": "Nije dozvoljena upotreba filtera sa parametrima koji se kalkulišu",
 		"link_cards_changed_values": "Izabrani(a) \"{0}\" je ažuriran(a)",
 		"only_filtered": "Izmene će biti primenjene samo na kartice podataka koje zadovoljavaju postavljeni filter.",

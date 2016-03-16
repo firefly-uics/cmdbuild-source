@@ -894,6 +894,7 @@
 	},
 	"warnings": {
 		"emailTemplateRelatedAttributeEdited": "<em>Attribute related with email templates changed, some e-mail could be regenerated.</em>",
+		"itemNotAvailable": "<em>Item not available</em>",
 		"itIsNotAllowedFilterWithCalculatedParams": " Không được phép sử dụng  bộ lọc voi các thông số được tính toán ",
 		"link_cards_changed_values": "Sự lựa chọn của\"{0}\" đã được cập nhật",
 		"only_filtered": "Những thay đổi chỉ sẽ được áp dụng cho các thẻ đáp ứng được bộ lọc hiện tại",

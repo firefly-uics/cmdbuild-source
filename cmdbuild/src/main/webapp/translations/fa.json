@@ -894,6 +894,7 @@
 	},
 	"warnings": {
 		"emailTemplateRelatedAttributeEdited": "<em>Attribute related with email templates changed, some e-mail could be regenerated.</em>",
+		"itemNotAvailable": "<em>Item not available</em>",
 		"itIsNotAllowedFilterWithCalculatedParams": "اجازه ندارید که از فیلتر با پارامترهای محاسبه شده استفاده کنید",
 		"link_cards_changed_values": "<em>The selection of \"{0}\" has been updated.</em>",
 		"only_filtered": "تغییرات تنها در کارتهایی که با فیلتر کنونی سازگاری دارند اتفاق خواهد افتاد",
