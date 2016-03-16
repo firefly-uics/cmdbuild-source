@@ -894,6 +894,7 @@
 	},
 	"warnings": {
 		"emailTemplateRelatedAttributeEdited": "Email sablonnal összefüggő attribútumok megváltoztak, néhány levelet újra kell generálni.",
+		"itemNotAvailable": "<em>Item not available</em>",
 		"itIsNotAllowedFilterWithCalculatedParams": "Nem engedélyezett a szűrők kalkulált paraméterrel történő használata",
 		"link_cards_changed_values": "A \"{0}\" kiválasztott értékei frissítve lettek",
 		"only_filtered": "A változtatások csak a szűrőre illeszkedő kártyákon lesznek végrehajtva",

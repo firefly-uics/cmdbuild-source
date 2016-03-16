@@ -894,6 +894,7 @@
 	},
 	"warnings": {
 		"emailTemplateRelatedAttributeEdited": "Des attributs utilisés dans les modèles d'email ont été modifiés, certains emails pourraient être regénérés.",
+		"itemNotAvailable": "<em>Item not available</em>",
 		"itIsNotAllowedFilterWithCalculatedParams": "Il est interdit d'utiliser un filtre avec des paramètres calculés",
 		"link_cards_changed_values": "La sélection de \"{0}\" a été mise à jour",
 		"only_filtered": "Les changements seront appliqués sur les fiches avec le filtre en cours.",

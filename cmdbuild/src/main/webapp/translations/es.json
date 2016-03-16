@@ -894,6 +894,7 @@
 	},
 	"warnings": {
 		"emailTemplateRelatedAttributeEdited": "Ha cambiado un atributo relacionado con la plantilla del email, deberá ser regenerado",
+		"itemNotAvailable": "<em>Item not available</em>",
 		"itIsNotAllowedFilterWithCalculatedParams": "No se permite utilizar un filtro con parámetros calculados",
 		"link_cards_changed_values": "La selección de \"{0}\" ha sido actualizada",
 		"only_filtered": "Las modificaciones solo tendrán efecto sobre las tarjetas que respetan el filtro actual ",

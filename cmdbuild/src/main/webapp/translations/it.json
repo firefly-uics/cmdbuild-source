@@ -894,6 +894,7 @@
 	},
 	"warnings": {
 		"emailTemplateRelatedAttributeEdited": "Modificato attributo contenuto in una mail,qualche email potrebbe venir rigenerata.",
+		"itemNotAvailable": "Elemento non disponibile",
 		"itIsNotAllowedFilterWithCalculatedParams": "Non è permesso usare filtri con parametri calcolati",
 		"link_cards_changed_values": "La selezione di \"{0}\" è stata aggiornata",
 		"only_filtered": "Le modifiche avranno effetto solo sulle schede che rispettano il filtro corrente",

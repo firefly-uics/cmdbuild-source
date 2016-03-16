@@ -894,6 +894,7 @@
 	},
 	"warnings": {
 		"emailTemplateRelatedAttributeEdited": "السمة المتعلقة بقوالب البريد الإلكتروني تغيرت، يمكن تجديد بعض البريدات الإلكترونية.",
+		"itemNotAvailable": "<em>Item not available</em>",
 		"itIsNotAllowedFilterWithCalculatedParams": "<em>It's not allowed to use a filter with calculated parameters</em>",
 		"link_cards_changed_values": "المنتقاة من \"{0}\" تم تحديثه",
 		"only_filtered": "التغييرات ستُعمَل فقط على البطاقات التي قابلت الفرز الحالي",

@@ -894,6 +894,7 @@
 	},
 	"warnings": {
 		"emailTemplateRelatedAttributeEdited": "<em>Attribute related with email templates changed, some e-mail could be regenerated.</em>",
+		"itemNotAvailable": "<em>Item not available</em>",
 		"itIsNotAllowedFilterWithCalculatedParams": "計算されたパラメータでフィルタを使用することを許可されていません",
 		"link_cards_changed_values": "\"{0}\" の選択は更新されました",
 		"only_filtered": "現在のフィルターに一致しているカードにのみ変更は適用されます",

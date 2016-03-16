@@ -894,6 +894,7 @@
 	},
 	"warnings": {
 		"emailTemplateRelatedAttributeEdited": "与email模板相关联的属性变化, email不能生成.",
+		"itemNotAvailable": "<em>Item not available</em>",
 		"itIsNotAllowedFilterWithCalculatedParams": "不允许使用已被计算过的参数来过滤",
 		"link_cards_changed_values": "选择\"{0}\" 已更新",
 		"only_filtered": "变更只能应用于满足当前过滤器的卡片",
