@@ -89,7 +89,7 @@
 						} break;
 					}
 				}, this);
-				
+
 				CMDBuild.core.RequestBarrier.finalize(barrierId);
 			}
 		},
@@ -151,53 +151,56 @@
 				&& !Ext.isEmpty(barrierId) && Ext.isString(barrierId)
 			) {
 				var attributeName = attribute.get(CMDBuild.core.proxy.CMProxyConstants.NAME);
-				var requiredCardAdvancedFilterArray = [];
+				var cardsCodesToManage = [];
 
-				Ext.Array.forEach(csvData, function(recordObject, i, allRecordObjects) {
+				Ext.Array.each(csvData, function(recordObject, i, allRecordObjects) {
 					if (!Ext.isEmpty(recordObject[attributeName]))
-						requiredCardAdvancedFilterArray.push({
-							simple: {
-								attribute: 'Code',
-								operator: 'equal',
-								value: [recordObject[attributeName]],
-								parameterType: 'fixed'
-							}
-						});
+						cardsCodesToManage.push(recordObject[attributeName]);
 				}, this);
 
-				var params = {};
-				params[CMDBuild.core.proxy.CMProxyConstants.CLASS_NAME] = attribute.get(CMDBuild.core.proxy.CMProxyConstants.TARGET_CLASS);
-
-				if (!Ext.isEmpty(requiredCardAdvancedFilterArray))
+				if (!Ext.isEmpty(cardsCodesToManage)) {
+					var params = {};
+					params[CMDBuild.core.proxy.CMProxyConstants.ATTRIBUTES] = Ext.encode(['Code', 'Description']);
+					params[CMDBuild.core.proxy.CMProxyConstants.CLASS_NAME] = attribute.get(CMDBuild.core.proxy.CMProxyConstants.TARGET_CLASS);
 					params[CMDBuild.core.proxy.CMProxyConstants.FILTER] = Ext.encode({ // Filters request to get only required cards
-						attribute: { or: requiredCardAdvancedFilterArray }
+						attribute: {
+							simple: {
+								attribute: 'Code',
+								operator: 'in',
+								value: cardsCodesToManage,
+								parameterType: 'fixed'
+							}
+						}
 					});
 
-				CMDBuild.core.proxy.widgets.CustomForm.getCardList({
-					params: params,
-					loadMask: false,
-					scope: this,
-					success: function(response, options, decodedResponse) {
-						decodedResponse = decodedResponse[CMDBuild.core.proxy.CMProxyConstants.ROWS];
+					CMDBuild.core.proxy.widgets.CustomForm.getCardList({
+						params: params,
+						loadMask: false,
+						scope: this,
+						success: function(response, options, decodedResponse) {
+							decodedResponse = decodedResponse[CMDBuild.core.proxy.CMProxyConstants.ROWS];
 
-						var referencedCardsMap = {};
+							var referencedCardsMap = {};
 
-						// Build referencedCardsMap
-						Ext.Array.forEach(decodedResponse, function(cardObject, i, allCardObjects) {
-							referencedCardsMap[cardObject['Code']] = cardObject;
-						}, this);
+							if (!Ext.isEmpty(decodedResponse) && Ext.isArray(decodedResponse)) {
+								// Build referencedCardsMap
+								Ext.Array.each(decodedResponse, function(cardObject, i, allCardObjects) {
+									referencedCardsMap[cardObject['Code']] = cardObject;
+								}, this);
 
-						Ext.Array.forEach(csvData, function(recordObject, i, allRecordObjects) {
-							if (!Ext.isEmpty(recordObject[attributeName])) {
-								var selectedCard = referencedCardsMap[recordObject[attributeName]];
+								Ext.Array.each(csvData, function(recordObject, i, allRecordObjects) {
+									if (!Ext.isEmpty(recordObject[attributeName])) {
+										var selectedCard = referencedCardsMap[recordObject[attributeName]];
 
-								if (!Ext.isEmpty(selectedCard))
-									csvData[i][attributeName] = selectedCard['Id'];
+										if (!Ext.isEmpty(selectedCard))
+											csvData[i][attributeName] = selectedCard['Id'];
+									}
+								}, this);
 							}
-						}, this);
-					},
-					callback: CMDBuild.core.RequestBarrier.getCallback(barrierId)
-				});
+						},
+						callback: CMDBuild.core.RequestBarrier.getCallback(barrierId)
+					});
+				}
 			} else {
 				_error('malformed parameters in Reference data manage', this);
 			}
@@ -379,7 +382,7 @@
 		onWidgetCustomFormImportUploadButtonClick: function() {
 			if (this.validate(this.form)) {
 				this.view.setLoading(true);
-				
+
 				CMDBuild.core.proxy.Csv.decode({
 					form: this.form.getForm(),
 					scope: this,
