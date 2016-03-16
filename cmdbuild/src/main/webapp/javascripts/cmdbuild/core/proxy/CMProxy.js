@@ -28,6 +28,7 @@
 				url: parameters.url,
 				method: parameters.method,
 				params: parameters.params || {},
+				loadMask: parameters.loadMask || false,
 				scope: parameters.scope || this,
 				success: successWithAdapter,
 				failure: parameters.failure || Ext.emptyFn,
