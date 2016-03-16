@@ -177,7 +177,7 @@
 		 * Return value only if number, to avoid wrong and massive server requests where returned value from ReferenceField
 		 * is a string (if you type something and don't exist the store's relative value, typed string will be returned).
 		 *
-		 * @returns {Number or undefined}
+		 * @returns {Number or String}
 		 *
 		 * @override
 		 */
@@ -187,7 +187,7 @@
 			if (Ext.isNumber(value))
 				return value;
 
-			return undefined;
+			return '';
 		},
 
 		setValue: function(v) {
