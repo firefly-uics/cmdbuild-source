@@ -23,7 +23,8 @@
 			'onSingleReportModuleInit = onModuleInit',
 			'onSingleReportTypeButtonClick',
 			'reportSingleSelectedReportParametersSet = selectedReportParametersSet',
-			'reportSingleUpdateReport = updateReport'
+			'reportSingleUpdateReport = updateReport',
+			'singleReportSelectedReportRecordGet = selectedReportRecordGet'
 		],
 
 		/**
@@ -312,7 +313,12 @@
 					}
 				});
 			}
-		}
+		},
+
+		/**
+		 * TODO: implementation to get/set node properties (mainly report name/description for Properties window title)
+		 */
+		singleReportSelectedReportRecordGet: Ext.emptyFn
 	});
 
 })();

@@ -83,7 +83,7 @@
 			if (this.getStore().find(this.valueField, value) >= 0)
 				return this.callParent([value]);
 
-			return this.delegate.cmfg('onFieldComboBoxSearchableSetValue', value);
+			return this.delegate.cmfg('onFieldComboBoxSearchableValueSet', value);
 		}
 	});
 

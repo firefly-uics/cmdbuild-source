@@ -1,4 +1,4 @@
-(function() {
+(function () {
 
 	Ext.define('CMDBuild.view.common.field.searchWindow.SearchWindow', {
 		extend: 'CMDBuild.core.PopupWindow',
@@ -25,7 +25,7 @@
 
 		closeAction: 'hide',
 
-		initComponent: function() {
+		initComponent: function () {
 			Ext.apply(this, {
 				dockedItems: [
 					Ext.create('Ext.toolbar.Toolbar', {
@@ -51,7 +51,7 @@
 							this.saveButton = Ext.create('CMDBuild.core.buttons.text.Save', {
 								scope: this,
 
-								handler: function(button, e) {
+								handler: function (button, e) {
 									this.delegate.cmfg('onFieldSearchWindowSaveButtonClick');
 								}
 							})
@@ -64,7 +64,7 @@
 		},
 
 		listeners: {
-			show: function(window, eOpts) {
+			show: function (window, eOpts) {
 				this.delegate.cmfg('onFieldSearchWindowShow');
 			}
 		}
