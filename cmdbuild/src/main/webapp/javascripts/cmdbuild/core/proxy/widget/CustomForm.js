@@ -16,7 +16,7 @@
 		getCardList: function (parameters) {
 			parameters = Ext.isEmpty(parameters) ? {} : parameters;
 
-			Ext.apply(parameters, { url: CMDBuild.core.proxy.Index.card.getList });
+			Ext.apply(parameters, { url: CMDBuild.core.proxy.Index.card.getListShort });
 
 			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.CUSTOM_FORM, parameters)
 		},

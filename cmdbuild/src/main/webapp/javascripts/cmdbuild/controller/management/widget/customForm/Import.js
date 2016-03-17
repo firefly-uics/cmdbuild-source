@@ -5,10 +5,9 @@
 
 		requires: [
 			'CMDBuild.core.constants.Proxy',
-			'CMDBuild.core.LoadMask',
-			'CMDBuild.core.proxy.Card',
 			'CMDBuild.core.proxy.Csv',
-			'CMDBuild.core.proxy.widgets.CustomForm',
+			'CMDBuild.core.proxy.lookup.Lookup',
+			'CMDBuild.core.proxy.widget.CustomForm',
 			'CMDBuild.core.RequestBarrier'
 		],
 
@@ -67,7 +66,7 @@
 		dataManageAndForward: function (csvData) {
 			if (
 				!Ext.isEmpty(csvData) && Ext.isArray(csvData)
-				&& !this.cmfg('widgetCustomFormConfigurationIsAttributeEmpty',  CMDBuild.core.constants.Proxy.MODEL)
+				&& !this.cmfg('widgetCustomFormConfigurationIsEmpty',  CMDBuild.core.constants.Proxy.MODEL)
 			) {
 				var barrierId = 'dataManageBarrier';
 
@@ -114,7 +113,7 @@
 				params[CMDBuild.core.constants.Proxy.TYPE] = attribute.get(CMDBuild.core.constants.Proxy.LOOKUP_TYPE);
 				params[CMDBuild.core.constants.Proxy.ACTIVE] = true;
 
-				CMDBuild.ServiceProxy.lookup.get({
+				CMDBuild.core.proxy.lookup.Lookup.readAll({
 					params: params,
 					scope: this,
 					success: function (response, options, decodedResponse) {
@@ -152,55 +151,56 @@
 				&& !Ext.isEmpty(barrierId) && Ext.isString(barrierId)
 			) {
 				var attributeName = attribute.get(CMDBuild.core.constants.Proxy.NAME);
-				var requiredCardAdvancedFilterArray = [];
+				var cardsCodesToManage = [];
 
-				Ext.Array.forEach(csvData, function (recordObject, i, allRecordObjects) {
+				Ext.Array.each(csvData, function (recordObject, i, allRecordObjects) {
 					if (!Ext.isEmpty(recordObject[attributeName]))
-						requiredCardAdvancedFilterArray.push({
-							simple: {
-								attribute: 'Code',
-								operator: 'equal',
-								value: [recordObject[attributeName]],
-								parameterType: 'fixed'
-							}
-						});
+						cardsCodesToManage.push(recordObject[attributeName]);
 				}, this);
 
-				var params = {};
-				params[CMDBuild.core.constants.Proxy.CLASS_NAME] = attribute.get(CMDBuild.core.constants.Proxy.TARGET_CLASS);
-
-				if (!Ext.isEmpty(requiredCardAdvancedFilterArray))
+				if (!Ext.isEmpty(cardsCodesToManage)) {
+					var params = {};
+					params[CMDBuild.core.constants.Proxy.ATTRIBUTES] = Ext.encode(['Code', 'Description']);
+					params[CMDBuild.core.constants.Proxy.CLASS_NAME] = attribute.get(CMDBuild.core.constants.Proxy.TARGET_CLASS);
 					params[CMDBuild.core.constants.Proxy.FILTER] = Ext.encode({ // Filters request to get only required cards
-						attribute: { or: requiredCardAdvancedFilterArray }
+						attribute: {
+							simple: {
+								attribute: 'Code',
+								operator: 'in',
+								value: cardsCodesToManage,
+								parameterType: 'fixed'
+							}
+						}
 					});
 
-				CMDBuild.core.proxy.widgets.CustomForm.getCardList({
-					params: params,
-					loadMask: false,
-					scope: this,
-					success: function (response, options, decodedResponse) {
-						decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.ROWS];
+					CMDBuild.core.proxy.widget.CustomForm.getCardList({
+						params: params,
+						loadMask: false,
+						scope: this,
+						success: function (response, options, decodedResponse) {
+							decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.ROWS];
 
-						var referencedCardsMap = {};
+							var referencedCardsMap = {};
 
-						if (!Ext.isEmpty(decodedResponse) && Ext.isArray(decodedResponse)) {
-							// Build referencedCardsMap
-							Ext.Array.forEach(decodedResponse, function (cardObject, i, allCardObjects) {
-								referencedCardsMap[cardObject['Code']] = cardObject;
-							}, this);
+							if (!Ext.isEmpty(decodedResponse) && Ext.isArray(decodedResponse)) {
+								// Build referencedCardsMap
+								Ext.Array.each(decodedResponse, function (cardObject, i, allCardObjects) {
+									referencedCardsMap[cardObject['Code']] = cardObject;
+								}, this);
 
-							Ext.Array.forEach(csvData, function (recordObject, i, allRecordObjects) {
-								if (!Ext.isEmpty(recordObject[attributeName])) {
-									var selectedCard = referencedCardsMap[recordObject[attributeName]];
+								Ext.Array.each(csvData, function (recordObject, i, allRecordObjects) {
+									if (!Ext.isEmpty(recordObject[attributeName])) {
+										var selectedCard = referencedCardsMap[recordObject[attributeName]];
 
-									if (!Ext.isEmpty(selectedCard))
-										csvData[i][attributeName] = selectedCard['Id'];
-								}
-							}, this);
-						}
-					},
-					callback: CMDBuild.core.RequestBarrier.getCallback(barrierId)
-				});
+										if (!Ext.isEmpty(selectedCard))
+											csvData[i][attributeName] = selectedCard['Id'];
+									}
+								}, this);
+							}
+						},
+						callback: CMDBuild.core.RequestBarrier.getCallback(barrierId)
+					});
+				}
 			} else {
 				_error('malformed parameters in Reference data manage', this);
 			}
