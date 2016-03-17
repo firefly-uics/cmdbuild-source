@@ -6,6 +6,8 @@ import static org.springframework.web.context.WebApplicationContext.SCOPE_REQUES
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.cmdbuild.auth.user.AuthenticatedUser;
 import org.cmdbuild.auth.user.OperationUser;
@@ -19,6 +21,7 @@ import org.cmdbuild.service.rest.v2.ClassAttributes;
 import org.cmdbuild.service.rest.v2.ClassPrivileges;
 import org.cmdbuild.service.rest.v2.Classes;
 import org.cmdbuild.service.rest.v2.Cql;
+import org.cmdbuild.service.rest.v2.DataStores;
 import org.cmdbuild.service.rest.v2.DomainAttributes;
 import org.cmdbuild.service.rest.v2.DomainTrees;
 import org.cmdbuild.service.rest.v2.Domains;
@@ -52,6 +55,7 @@ import org.cmdbuild.service.rest.v2.cxf.CxfClassAttributes;
 import org.cmdbuild.service.rest.v2.cxf.CxfClassPrivileges;
 import org.cmdbuild.service.rest.v2.cxf.CxfClasses;
 import org.cmdbuild.service.rest.v2.cxf.CxfCql;
+import org.cmdbuild.service.rest.v2.cxf.CxfDataStores;
 import org.cmdbuild.service.rest.v2.cxf.CxfDomainAttributes;
 import org.cmdbuild.service.rest.v2.cxf.CxfDomainTrees;
 import org.cmdbuild.service.rest.v2.cxf.CxfDomains;
@@ -438,6 +442,24 @@ public class ServicesV2 implements LoggingSupport {
 	public GraphConfiguration v2_graphConfiguration() {
 		final CxfGraphConfiguration service = new CxfGraphConfiguration(helper.graphConfiguration());
 		return proxy(GraphConfiguration.class, service);
+	}
+
+	@Bean
+	public DataStores v2_dataStores() {
+		final Map<String, CxfDataStores.DataStore> map = new HashMap<>();
+		map.put("images", imagesDataStore());
+		final CxfDataStores service = new CxfDataStores(v2_errorHandler(), map, defaultHashing());
+		return proxy(DataStores.class, service);
+	}
+
+	@Bean
+	protected CxfDataStores.DataStore imagesDataStore() {
+		return new CxfDataStores.DefaultDataStore(helper.filesStore().sub("images"));
+	}
+
+	@Bean
+	protected CxfDataStores.Hashing defaultHashing() {
+		return new CxfDataStores.DefaultHashing();
 	}
 
 }

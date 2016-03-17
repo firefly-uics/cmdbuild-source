@@ -23,6 +23,7 @@ import org.cmdbuild.logic.privileges.SecurityLogic;
 import org.cmdbuild.logic.report.ReportLogic;
 import org.cmdbuild.logic.workflow.WebserviceWorkflowLogicBuilder;
 import org.cmdbuild.logic.workflow.WorkflowLogic;
+import org.cmdbuild.services.FilesStore;
 import org.cmdbuild.services.localization.RequestHandler;
 import org.cmdbuild.services.meta.MetadataStoreFactory;
 import org.cmdbuild.workflow.LookupHelper;
@@ -54,6 +55,10 @@ public class ApplicationContextHelperV2 {
 
 	public EmailTemplateLogic emailTemplateLogic() {
 		return applicationContext.getBean(EmailTemplateLogic.class);
+	}
+
+	public FilesStore filesStore() {
+		return applicationContext.getBean(FilesStore.class);
 	}
 
 	public GraphConfiguration graphConfiguration() {

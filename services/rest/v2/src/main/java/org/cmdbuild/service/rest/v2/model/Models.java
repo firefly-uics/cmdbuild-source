@@ -1063,6 +1063,42 @@ public class Models {
 
 	}
 
+	public static class FileSystemObjectBuilder extends ModelBuilder<FileSystemObject> {
+	
+		private String id;
+		private String name;
+		private String parent;
+	
+		private FileSystemObjectBuilder() {
+			// use factory method
+		}
+	
+		@Override
+		protected FileSystemObject doBuild() {
+			final FileSystemObject output = new FileSystemObject();
+			output.setId(id);
+			output.setName(name);
+			output.setParent(parent);
+			return output;
+		}
+	
+		public FileSystemObjectBuilder withId(final String id) {
+			this.id = id;
+			return this;
+		}
+	
+		public FileSystemObjectBuilder withName(final String name) {
+			this.name = name;
+			return this;
+		}
+	
+		public FileSystemObjectBuilder withParent(final String parent) {
+			this.parent = parent;
+			return this;
+		}
+	
+	}
+
 	public static class FilterBuilder extends ModelBuilder<Filter> {
 
 		private String text;
@@ -1308,7 +1344,7 @@ public class Models {
 			return this;
 		}
 
-		public IconBuilder withDetails(Map<String, Object> details) {
+		public IconBuilder withDetails(final Map<String, Object> details) {
 			this.details.putAll(details);
 			return this;
 		}
@@ -2466,6 +2502,10 @@ public class Models {
 
 	public static EmailTemplateBuilder newEmailTemplate() {
 		return new EmailTemplateBuilder();
+	}
+
+	public static FileSystemObjectBuilder newFileSystemObject() {
+		return new FileSystemObjectBuilder();
 	}
 
 	public static FilterBuilder newFilter() {

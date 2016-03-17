@@ -2,6 +2,7 @@ package org.cmdbuild.service.rest.v2.cxf;
 
 import static java.lang.String.format;
 import static javax.ws.rs.core.Response.Status.BAD_REQUEST;
+import static javax.ws.rs.core.Response.Status.CONFLICT;
 import static javax.ws.rs.core.Response.Status.NOT_FOUND;
 import static javax.ws.rs.core.Response.Status.UNAUTHORIZED;
 
@@ -13,63 +14,87 @@ import org.cmdbuild.service.rest.v2.logging.LoggingSupport;
 public class WebApplicationExceptionErrorHandler implements ErrorHandler, LoggingSupport {
 
 	@Override
-	public void alreadyExistingAttachmentName(final String name) {
-		logger.error("already existing attachment '{}'", name);
-		badRequest(format("already existing attachment '%s'", name));
+	public void alreadyExistingAttachmentName(final String value) {
+		logger.error("already existing attachment '{}'", value);
+		badRequest(format("already existing attachment '%s'", value));
 	}
 
 	@Override
-	public void attachmentNotFound(final String id) {
-		logger.error("attachment not found '{}'", id);
-		notFound(id);
+	public void attachmentNotFound(final String value) {
+		logger.error("attachment not found '{}'", value);
+		notFound(value);
 	}
 
 	@Override
-	public void cardNotFound(final Long id) {
-		logger.error("card not found '{}'", id);
-		notFound(id);
+	public void cardNotFound(final Long value) {
+		logger.error("card not found '{}'", value);
+		notFound(value);
 	}
 
 	@Override
-	public void classNotFound(final String id) {
-		logger.error("class not found '{}'", id);
-		notFound(id);
+	public void classNotFound(final String value) {
+		logger.error("class not found '{}'", value);
+		notFound(value);
 	}
 
 	@Override
-	public void classNotFoundClassIsProcess(final String id) {
-		logger.error("class '{}' is a process", id);
-		notFound(id);
+	public void classNotFoundClassIsProcess(final String value) {
+		logger.error("class '{}' is a process", value);
+		notFound(value);
 	}
 
 	@Override
-	public void differentAttachmentName(final String name) {
-		logger.error("different file name '{}'", name);
-		badRequest(format("different file name '%s'", name));
+	public void dataStoreNotFound(final String value) {
+		logger.error("data store '{}' not found", value);
+		notFound(value);
 	}
 
 	@Override
-	public void domainNotFound(final String id) {
-		logger.error("domain not found '{}'", id);
-		notFound(id);
+	public void differentAttachmentName(final String value) {
+		logger.error("different file value '{}'", value);
+		badRequest(format("different file value '%s'", value));
 	}
 
 	@Override
-	public void domainTreeNotFound(final String id) {
-		logger.error("domain tree found '{}'", id);
-		notFound(id);
+	public void domainNotFound(final String value) {
+		logger.error("domain not found '{}'", value);
+		notFound(value);
 	}
 
 	@Override
-	public void extensionNotFound(final String id) {
-		logger.error("extension not found '{}'", id);
-		notFound(id);
+	public void domainTreeNotFound(final String value) {
+		logger.error("domain tree found '{}'", value);
+		notFound(value);
 	}
 
 	@Override
-	public void functionNotFound(final Long id) {
-		logger.error("function not found '{}'", id);
-		notFound(id);
+	public void duplicateFileName(final String value) {
+		logger.error("duplicate file name '{}'", value);
+		conflict(value);
+	}
+
+	@Override
+	public void extensionNotFound(final String value) {
+		logger.error("extension not found '{}'", value);
+		notFound(value);
+	}
+
+	@Override
+	public void fileNotFound(final String value) {
+		logger.error("file not found '{}'", value);
+		notFound(value);
+	}
+
+	@Override
+	public void folderNotFound(final String value) {
+		logger.error("folder not found '{}'", value);
+		notFound(value);
+	}
+
+	@Override
+	public void functionNotFound(final Long value) {
+		logger.error("function not found '{}'", value);
+		notFound(value);
 	}
 
 	@Override
@@ -79,21 +104,21 @@ public class WebApplicationExceptionErrorHandler implements ErrorHandler, Loggin
 	}
 
 	@Override
-	public void invalidType(final String id) {
-		logger.error("invalid param '{}'", id);
-		badRequest(id);
+	public void invalidType(final String value) {
+		logger.error("invalid param '{}'", value);
+		badRequest(value);
 	}
 
 	@Override
-	public void lookupTypeNotFound(final String id) {
-		logger.error("lookup type not found '{}'", id);
-		notFound(id);
+	public void lookupTypeNotFound(final String value) {
+		logger.error("lookup type not found '{}'", value);
+		notFound(value);
 	}
 
 	@Override
 	public void missingAttachmentId() {
-		logger.error("missing attachment's id");
-		notFound("attachment's id");
+		logger.error("missing attachment's value");
+		notFound("attachment's value");
 	}
 
 	@Override
@@ -104,8 +129,8 @@ public class WebApplicationExceptionErrorHandler implements ErrorHandler, Loggin
 
 	@Override
 	public void missingAttachmentName() {
-		logger.error("missing attachment's name");
-		notFound("attachment's name");
+		logger.error("missing attachment's value");
+		notFound("attachment's value");
 	}
 
 	@Override
@@ -115,15 +140,15 @@ public class WebApplicationExceptionErrorHandler implements ErrorHandler, Loggin
 	}
 
 	@Override
-	public void missingIcon(final String id) {
-		logger.error("missing icon '{}'", id);
-		notFound(id);
+	public void missingIcon(final String value) {
+		logger.error("missing icon '{}'", value);
+		notFound(value);
 	}
 
 	@Override
-	public void missingParam(final String name) {
-		logger.error("missing param '{}'", name);
-		notFound(name);
+	public void missingParam(final String value) {
+		logger.error("missing param '{}'", value);
+		notFound(value);
 	}
 
 	@Override
@@ -146,21 +171,21 @@ public class WebApplicationExceptionErrorHandler implements ErrorHandler, Loggin
 	}
 
 	@Override
-	public void processActivityNotFound(final String id) {
-		logger.error("process instance activity not found '{}'", id);
-		notFound(id);
+	public void processActivityNotFound(final String value) {
+		logger.error("process instance activity not found '{}'", value);
+		notFound(value);
 	}
 
 	@Override
-	public void processInstanceNotFound(final Long id) {
-		logger.error("process instance not found '{}'", id);
-		notFound(id);
+	public void processInstanceNotFound(final Long value) {
+		logger.error("process instance not found '{}'", value);
+		notFound(value);
 	}
 
 	@Override
-	public void processNotFound(final String id) {
-		logger.error("process not found '{}'", id);
-		notFound(id);
+	public void processNotFound(final String value) {
+		logger.error("process not found '{}'", value);
+		notFound(value);
 	}
 
 	@Override
@@ -173,37 +198,43 @@ public class WebApplicationExceptionErrorHandler implements ErrorHandler, Loggin
 	}
 
 	@Override
-	public void relationNotFound(final Long id) {
-		logger.error("relation not found '{}'", id);
-		notFound(id);
+	public void relationNotFound(final Long value) {
+		logger.error("relation not found '{}'", value);
+		notFound(value);
 	}
 
 	@Override
-	public void reportNotFound(final Long id) {
-		logger.error("report not found '{}'", id);
-		notFound(id);
+	public void reportNotFound(final Long value) {
+		logger.error("report not found '{}'", value);
+		notFound(value);
 	}
 
 	@Override
-	public void roleNotFound(final String id) {
-		logger.error("role not found '{}'", id);
-		notFound(id);
+	public void roleNotFound(final String value) {
+		logger.error("role not found '{}'", value);
+		notFound(value);
 	}
 
 	@Override
-	public void sessionNotFound(final String id) {
-		logger.error("session not found '{}'", id);
-		notFound(id);
+	public void sessionNotFound(final String value) {
+		logger.error("session not found '{}'", value);
+		notFound(value);
 	}
 
 	@Override
-	public void userNotFound(final String id) {
-		logger.error("user not found '{}'", id);
-		notFound(id);
+	public void userNotFound(final String value) {
+		logger.error("user not found '{}'", value);
+		notFound(value);
 	}
 
 	private void badRequest(final Object entity) {
 		throw new WebApplicationException(Response.status(BAD_REQUEST) //
+				.entity(entity) //
+				.build());
+	}
+
+	private void conflict(final Object entity) {
+		throw new WebApplicationException(Response.status(CONFLICT) //
 				.entity(entity) //
 				.build());
 	}
