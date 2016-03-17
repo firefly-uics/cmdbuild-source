@@ -230,7 +230,7 @@
 		 * @param {Object} tab
 		 */
 		activeTabSet: function(tab) {
-			if (!Ext.Object.isEmpty(tab) && Ext.isObject(tab))
+			if (Ext.isObject(tab) && !Ext.Object.isEmpty(tab))
 				return this.setActiveTab(tab);
 
 			return this.setActiveTab(this.cardPanel);

@@ -78,12 +78,8 @@
 			this.setCard(null);
 			this.callForSubControllers('onEntryTypeSelected', [this.entryType, dc, filter]);
 
-			if (
-				!Ext.isEmpty(dc)
-				&& !Ext.isEmpty(dc.activateFirstTab)
-			) {
+			if (!Ext.isEmpty(dc) && !Ext.isEmpty(dc.activateFirstTab))
 				this.view.cardTabPanel.activeTabSet(dc.activateFirstTab);
-			}
 		},
 
 		getEntryType: function() {
@@ -469,12 +465,8 @@
 			this.view.mapAddCardButton.updateForEntry(entryType);
 			this.view.updateTitleForEntry(entryType);
 
-			if (
-				!Ext.isEmpty(dc)
-				&& !Ext.isEmpty(dc.activateFirstTab)
-			) {
+			if (!Ext.isEmpty(dc) && !Ext.isEmpty(dc.activateFirstTab))
 				this.view.cardTabPanel.activeTabSet(dc.activateFirstTab);
-			}
 
 			_CMCardModuleState.setEntryType(entryType, dc, filter);
 			_CMUIState.onlyGridIfFullScreen();
