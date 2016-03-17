@@ -312,29 +312,30 @@
 		this.view.addDetailButton.enable();
 		this.currentTab = tab;
 
-		// History record save
-		if (!Ext.isEmpty(_CMCardModuleState.entryType) && !Ext.isEmpty(_CMCardModuleState.card))
-			CMDBuild.global.navigation.Chronology.cmfg('navigationChronologyRecordSave', {
-				moduleId: 'class',
-				entryType: {
-					description: _CMCardModuleState.entryType.get(CMDBuild.core.constants.Proxy.TEXT),
-					id: _CMCardModuleState.entryType.get(CMDBuild.core.constants.Proxy.ID),
-					object: _CMCardModuleState.entryType
-				},
-				item: {
-					description: _CMCardModuleState.card.get('Description') || _CMCardModuleState.card.get('Code'),
-					id: _CMCardModuleState.card.get(CMDBuild.core.constants.Proxy.ID),
-					object: _CMCardModuleState.card
-				},
-				section: {
-					description: this.view.title,
-					object: this.view
-				},
-				subSection: {
-					description: this.currentTab[CMDBuild.core.constants.Proxy.TEXT],
-					object: this.currentTab.targetPanel
-				}
-			});
+// TODO: future implementation
+//		// History record save
+//		if (!Ext.isEmpty(_CMCardModuleState.entryType) && !Ext.isEmpty(_CMCardModuleState.card))
+//			CMDBuild.global.navigation.Chronology.cmfg('navigationChronologyRecordSave', {
+//				moduleId: 'class',
+//				entryType: {
+//					description: _CMCardModuleState.entryType.get(CMDBuild.core.constants.Proxy.TEXT),
+//					id: _CMCardModuleState.entryType.get(CMDBuild.core.constants.Proxy.ID),
+//					object: _CMCardModuleState.entryType
+//				},
+//				item: {
+//					description: _CMCardModuleState.card.get('Description') || _CMCardModuleState.card.get('Code'),
+//					id: _CMCardModuleState.card.get(CMDBuild.core.constants.Proxy.ID),
+//					object: _CMCardModuleState.card
+//				},
+//				section: {
+//					description: this.view.title,
+//					object: this.view
+//				},
+//				subSection: {
+//					description: this.currentTab[CMDBuild.core.constants.Proxy.TEXT],
+//					object: this.currentTab.targetPanel
+//				}
+//			});
 
 		if (type == MD) {
 			selectDetail.call(this, detail);
