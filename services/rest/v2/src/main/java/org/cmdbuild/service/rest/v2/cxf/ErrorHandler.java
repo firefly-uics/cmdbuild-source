@@ -2,31 +2,39 @@ package org.cmdbuild.service.rest.v2.cxf;
 
 public interface ErrorHandler {
 
-	void alreadyExistingAttachmentName(String name);
+	void alreadyExistingAttachmentName(String value);
 
-	void attachmentNotFound(String id);
+	void attachmentNotFound(String value);
 
-	void cardNotFound(Long id);
+	void cardNotFound(Long value);
 
-	void classNotFound(String id);
+	void classNotFound(String value);
 
-	void classNotFoundClassIsProcess(String id);
+	void classNotFoundClassIsProcess(String value);
 
-	void differentAttachmentName(String name);
+	void dataStoreNotFound(String value);
 
-	void domainNotFound(String id);
+	void differentAttachmentName(String value);
 
-	void domainTreeNotFound(String id);
+	void domainNotFound(String value);
 
-	void extensionNotFound(String id);
+	void domainTreeNotFound(String value);
 
-	void functionNotFound(Long id);
+	void duplicateFileName(String value);
+
+	void extensionNotFound(String value);
+
+	void fileNotFound(String value);
+
+	void folderNotFound(String value);
+
+	void functionNotFound(Long value);
 
 	void invalidIconType(String type);
 
-	void invalidType(String id);
+	void invalidType(String value);
 
-	void lookupTypeNotFound(String id);
+	void lookupTypeNotFound(String value);
 
 	void missingAttachmentId();
 
@@ -36,9 +44,9 @@ public interface ErrorHandler {
 
 	void missingFile();
 
-	void missingIcon(String id);
+	void missingIcon(String value);
 
-	void missingParam(String name);
+	void missingParam(String value);
 
 	void missingPassword();
 
@@ -46,22 +54,22 @@ public interface ErrorHandler {
 
 	void notAuthorized();
 
-	void processActivityNotFound(String id);
+	void processActivityNotFound(String value);
 
-	void processInstanceNotFound(Long id);
+	void processInstanceNotFound(Long value);
 
-	void processNotFound(String id);
+	void processNotFound(String value);
 
 	void propagate(Throwable e);
 
-	void relationNotFound(Long id);
+	void relationNotFound(Long value);
 
-	void reportNotFound(Long id);
+	void reportNotFound(Long value);
 
-	void roleNotFound(String id);
+	void roleNotFound(String value);
 
-	void sessionNotFound(String id);
+	void sessionNotFound(String value);
 
-	void userNotFound(String id);
+	void userNotFound(String value);
 
 }

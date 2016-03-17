@@ -11,6 +11,7 @@ import org.cmdbuild.services.ForwardingFilesStore;
 import org.cmdbuild.services.Settings;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
 
 @Configuration
 public class FileStore {
@@ -66,16 +67,12 @@ public class FileStore {
 			return delegate.getAbsoluteRootDirectory();
 		}
 
-		@Override
-		public File getFile(final String path) {
-			return delegate.getFile(path);
-		}
-
 	}
 
 	public static final String UPLOAD = "upload";
 
 	@Bean(name = UPLOAD)
+	@Primary
 	public FilesStore uploadFilesStore() {
 		return new DefaultFilesStore(Settings.getInstance().getRootPath(), "upload");
 	}
