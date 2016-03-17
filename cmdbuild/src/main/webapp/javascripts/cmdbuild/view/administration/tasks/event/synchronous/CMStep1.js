@@ -259,7 +259,7 @@
 					this.delegate.setDisabledButtonNext(true);
 
 				// Select all groups by default only if there aren't other selections
-				if (this.groups.getValue().length == 0)
+				if (Ext.isEmpty(this.groups.getValue()) || this.groups.getValue().length == 0)
 					this.groups.selectAll();
 			}
 		}
