@@ -5,55 +5,47 @@
 	if (!$.Cmdbuild.g3d.backend) {
 		$.Cmdbuild.g3d.backend = {};
 	}
-	var elements = {
-		nodes : [ {
-			data : {
-				classId : '',
-				id : '',
-				label : '',
-				color : "#ff0000",
-				faveShape : 'triangle',
-				position : {
-					x : 0,
-					y : 0,
-					z : 0
-				},
-				rotation : {
-					x : 0,
-					y : 0,
-					z : 0
-				},
-				scale : {
-					x : 1,
-					y : 1,
-					z : 1
-				}
-			}
-		} ],
-
-		edges : []
-	};
 	var CmdbuildModel = function() {
 		this.navigationTree = undefined;
 		this.setModel = function(model) {
 			this.model = model;
 		};
 		this.getInitModel = function(params, callback, callbackScope) {
+			var navigationTree = $.Cmdbuild.customvariables.cacheTrees
+					.getRootNavigationTree();
+			var nodeOnNavigationTree = (navigationTree) ? navigationTree._id : null;
 			if (params) {
-				$.Cmdbuild.g3d.proxy.getCardData(params.classId, params.cardId,
-						{}, function(card) {
-							elements.nodes[0].data.label = card.Description;
-							elements.nodes[0].data.classId = params.classId;
-							elements.nodes[0].data.id = params.cardId;
-							callback.apply(callbackScope, [ elements ]);
-						}, this);
+				$.Cmdbuild.g3d.proxy
+						.getCardData(
+								params.classId,
+								params.cardId,
+								{},
+								function(card) {
+									var elements = {
+										nodes : [ {
+											data : {
+												label : card.Description,
+												classId : params.classId,
+												id : params.cardId,
+												position : {
+													x : 0,
+													y : 0,
+													z : 0
+												},
+												nodeOnNavigationTree : nodeOnNavigationTree
+											}
+										} ],
+										edges : []
+									};
+									callback.apply(callbackScope, [ elements ]);
+								}, this);
 			} else {
 				callback.apply(callbackScope, []);
 			}
 		};
-		this.chargeModel = function(elements, domainId, relation, sourceId,
-				targetId, targetDescription, targetClassName, compoundData,
-				parentNode, isNew) {
+		this.chargeModel = function(elements, domainId, nodeOnNavigationTree,
+				relation, sourceId, targetId, targetDescription,
+				targetClassName, compoundData, parentNode, isNew) {
 			sourceId = "" + sourceId;
 			targetId = "" + targetId;
 			var domain = $.Cmdbuild.customvariables.cacheDomains
@@ -68,12 +60,13 @@
 					label : targetDescription,
 					color : "#ff0000",
 					faveShape : 'triangle',
-					domainId : domain._id,// (domain) ? domain._id : "--",
+					domainId : domain._id,
 					position : {
 						x : Math.random() * 1000 - 500,
 						y : Math.random() * 600 - 300,
 						z : 200
 					},
+					nodeOnNavigationTree : nodeOnNavigationTree,
 					compoundData : compoundData,
 					previousPathNode : sourceId,
 					fromDomain : domainId
@@ -91,9 +84,7 @@
 				target : targetId,
 				relationId : relation._id,
 				domainId : domain._id,
-				label : domain.domainDescription,// (domain) ?
-				// domain.domainDescription
-				// : "--",
+				label : domain.domainDescription,
 				color : $.Cmdbuild.custom.configuration.edgeColor,
 				strength : 90
 			};
@@ -116,7 +107,8 @@
 				return;
 			}
 			$.Cmdbuild.customvariables.cacheDomains.loadSingleDomain(
-					domains[index].metadata.domain, function(domain) {
+					domains[index].domainId, function(domain) {
+						domain.nodeOnNavigationTree = domains[index]._id;
 						filteredDomains.push(domain);
 						this.loadFilteredDomains(++index, domains,
 								filteredDomains, callback, callbackScope);
@@ -124,15 +116,13 @@
 		};
 		this.filteredDomains = function(node, domainList, classId, callback,
 				callbackScope) {
-			// -------------------------------------
+			var domains = [];
 			var navigationTree = $.Cmdbuild.customvariables.cacheTrees
 					.getCurrentNavigationTree();
 			if (navigationTree) {
 				// this overrides other filters on domains
-				var navigationManager = new $.Cmdbuild.g3d.navigationManager(
-						navigationTree);
-				var path = this.model.pathClasses([], node);
-				var domains = navigationManager.getClassPathInTree(path);
+				domains = $.Cmdbuild.customvariables.cacheTrees
+						.getClassPathInTree(node);
 				var filteredDomains = [];
 				this.loadFilteredDomains(0, domains, filteredDomains,
 						function() {
@@ -143,12 +133,10 @@
 			// -------------------------------------
 
 			if (!domainList) {
-				callback.apply(callbackScope, [ null ]); // this overrides
-				// other filters on
-				// domains
+				callback.apply(callbackScope, [ null ]);
 				return;
 			}
-			var domains = $.Cmdbuild.customvariables.cacheDomains
+			domains = $.Cmdbuild.customvariables.cacheDomains
 					.getDomains4Class(classId);
 			var ret = [];
 			for (var i = 0; i < domains.length; i++) {
@@ -180,10 +168,6 @@
 						classId, parseInt(cardId), elements, callback,
 						callbackScope);
 			} else {
-				var filter = this.getFilterForDomain(classId);
-				var param = {
-					filter : filter
-				};
 				$.Cmdbuild.customvariables.cacheDomains
 						.getLoadingDomains4Class(classId, function(response) {
 							this.getAllRelations(node, response, domainList,
@@ -192,14 +176,16 @@
 						}, this);
 			}
 		};
-		this.pushAnOpeningChild = function(elements, domainId, relation, id,
-				description, classId, data, node, parentId, children) {
+		this.pushAnOpeningChild = function(elements, domainId,
+				nodeOnNavigationTree, relation, id, description, classId, data,
+				node, parentId, children) {
 			var cyNode = this.model.getNode(id);
 			if (cyNode.length === 0) {
 				children.push(id);
 			}
-			this.chargeModel(elements, domainId, relation, parentId, id,
-					description, classId, data, node, cyNode.length === 0);
+			this.chargeModel(elements, domainId, nodeOnNavigationTree,
+					relation, parentId, id, description, classId, data, node,
+					cyNode.length === 0);
 		};
 		this.getAllRelations = function(node, domains, domainList, classId,
 				cardId, elements, callback, callbackScope) {
@@ -239,31 +225,36 @@
 						domainId : domainId,
 						filter : filter
 					};
-					this.pushCompound(relations[0], compoundData,
-							metadata.total, classId, elements, domainId, node,
-							cardId, children);
+					this
+							.pushCompound(relations[0], compoundData,
+									domain.nodeOnNavigationTree,
+									metadata.total, classId, elements,
+									domainId, node, cardId, children);
 				} else {
-					this.explodeChildren(elements, domainId, node, classId,
-							cardId, children, relations);
+					this.explodeChildren(elements, domainId,
+							domain.nodeOnNavigationTree, node, classId, cardId,
+							children, relations);
 				}
 				node.data.children = children;
 				this.getAllRelations(node, domains, domainList, classId,
 						cardId, elements, callback, callbackScope);
 			}, this);
 		};
-		this.pushCompound = function(relationSample, compoundData, total,
-				classId, elements, domainId, node, cardId, children) {
+		this.pushCompound = function(relationSample, compoundData,
+				nodeOnNavigationTree, total, classId, elements, domainId, node,
+				cardId, children) {
 			var rDescription = (relationSample._sourceId == cardId && relationSample._sourceType == classId) ? relationSample._type
 					+ "(1)"
 					: relationSample._type + "(2)";
 			var description = $.Cmdbuild.g3d.constants.GUICOMPOUNDNODEDESCRIPTION;
-			description += ": " + total + " "
-					+ relationSample._destinationType + " - " + rDescription;
+			description += ": " + total + " " + relationSample._destinationType
+					+ " - " + rDescription;
 			var id = "CN" + relationSample._type + relationSample._sourceId
 					+ relationSample._destinationId;
-			this.pushAnOpeningChild(elements, domainId, relationSample, id,
-					description, $.Cmdbuild.g3d.constants.GUICOMPOUNDNODE,
-					compoundData, node, cardId, children);
+			this.pushAnOpeningChild(elements, domainId, nodeOnNavigationTree,
+					relationSample, id, description,
+					$.Cmdbuild.g3d.constants.GUICOMPOUNDNODE, compoundData,
+					node, cardId, children);
 		};
 		this.isCompound = function(relations) {
 			var clusteringThreshold = $.Cmdbuild.customvariables.options.clusteringThreshold;
@@ -282,12 +273,13 @@
 			};
 			var classId = $.Cmdbuild.g3d.Model.getGraphData(parentNode,
 					"classId");
-			this.explodeChildren(elements, domainId, parentNode, classId,
-					parentId, children, data);
+			this.explodeChildren(elements, domainId, nodeOnNavigationTree,
+					parentNode, classId, parentId, children, data);
 			callback.apply(callbackScope, [ elements ]);
 		};
-		this.explodeChildren = function(elements, domainId, node, classId,
-				cardId, children, relations) {
+		this.explodeChildren = function(elements, domainId,
+				nodeOnNavigationTree, node, classId, cardId, children,
+				relations) {
 			var destinationId;
 			var destinationDescription;
 			var destinationType;
@@ -310,9 +302,10 @@
 					destinationDescription = relation._sourceDescription;
 					destinationType = relation._sourceType;
 				}
-				this.pushAnOpeningChild(elements, domainId, relation,
-						destinationId, destinationDescription, destinationType,
-						{}, node, cardId, children);
+				this.pushAnOpeningChild(elements, domainId,
+						nodeOnNavigationTree, relation, destinationId,
+						destinationDescription, destinationType, {}, node,
+						cardId, children);
 			}
 		};
 		this.getFilterForDomain = function(classId) {

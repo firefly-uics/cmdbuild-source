@@ -11,6 +11,8 @@
 		EXPANDING_THRESHOLD : 30,
 		MIN_MOVEMENT : 5,
 		TOOLTIP_WINDOW : "viewerInformation",
+		REMOVE_NAVIGATON_TREE : "removeNavigatonTree",
+		REMOVE_NAVIGATON_TREE_STRING : "Disable navigation tree",
 		COMPOUND_ATTRIBUTES : [ {
 			type : "string",
 			name : "type",

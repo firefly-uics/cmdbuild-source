@@ -68,20 +68,30 @@
 			filter += "[domainId='" + edge.domainId + "']";
 			return cy.edges(filter);
 		};
+		this.copyNode = function(from) {
+			var to = {
+					id : from.id,
+					classId : from.classId,
+					label : from.label,
+					color : from.color,
+					compoundData : from.compoundData,
+					domainId : from.domainId,
+					children : from.children,
+					previousPathNode : from.previousPathNode,
+					nodeOnNavigationTree : from.nodeOnNavigationTree,
+					fromDomain : from.fromDomain
+			};
+			return to;
+		};
 		this.insertNode = function(node) {
+			var isHere = this.getNode(node.data.id);
+			if (isHere.length !== 0) {
+				return;
+			}
 			var cyNode = cy.add({
 				group : "nodes",
-				data : {
-					id : node.data.id,
-					classId : node.data.classId,
-					label : node.data.label,
-					color : node.data.color,
-					compoundData : node.data.compoundData,
-					domainId : node.data.domainId,
-					children : node.data.children,
-					previousPathNode : node.data.previousPathNode,
-					fromDomain : node.data.fromDomain
-				},
+				data : this.copyNode(node.data),
+				nodeOnNavigationTree : node.data.nodeOnNavigationTree,
 				position : {
 					x : node.data.position.x,
 					y : node.data.position.y,
