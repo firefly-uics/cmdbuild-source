@@ -12,7 +12,7 @@
 	};
 	var cacheTrees = function() {
 		this.data = {};
-		this.currentNavigationTree = null;
+		this.navigationManager = new $.Cmdbuild.g3d.navigationManager();
 		this.getFilterEqual = function(classId) {
 			var filter = {
 				"attribute" : {
@@ -24,6 +24,18 @@
 				}
 			};
 			return filter;
+		};
+		this.setTreeOnNavigationManager = function(node, callback,
+				callbackScope) {
+			this.navigationManager.setCurrentTree(node, function(value) {
+				callback.apply(callbackScope, [ value ]);
+			}, this);
+		};
+		this.getClassPathInTree = function(node) {
+			return this.navigationManager.getClassPathInTree(node);
+		};
+		this.getRootNavigationTree = function(node) {
+			return this.navigationManager.getRoot();
 		};
 		this.getFilterContain = function(classId) {
 			var filter = {
@@ -38,7 +50,7 @@
 			return filter;
 		};
 		this.pushTreeForClass = function(classId, callback, callbackScope) {
-					if (this.data[classId]) {
+			if (this.data[classId]) {
 				callback.apply(callbackScope, []);
 				return;
 			}
@@ -69,8 +81,8 @@
 				if (!isJustHere(ar1, ar2[i]._id)) {
 					ar1.push(ar2[i]);
 				}
-				return ar1;
 			}
+			return ar1;
 		};
 		this.getTreesFromClass = function(classId) {
 			if (!classId) {
@@ -91,16 +103,16 @@
 			if (navigationTree) {
 				$.Cmdbuild.g3d.proxy.getDomainTree(navigationTree, function(
 						tree) {
-					this.currentNavigationTree = tree;
-					callback.apply(callbackScope, [tree]);
+					this.navigationManager.setServerTree(tree);
+					callback.apply(callbackScope, [ tree ]);
 				}, this);
 			}
 		};
 		this.cleanCurrentNavigationTree = function() {
-			this.currentNavigationTree = null;
+			this.navigationManager.cleanCurrentTree()
 		};
 		this.getCurrentNavigationTree = function() {
-			return this.currentNavigationTree;
+			return this.navigationManager.getCurrentTree();
 		};
 	};
 	var cacheProcesses = function() {
@@ -129,13 +141,10 @@
 			switch (type) {
 			case "default":
 				return base_url + "default.png";
-				break;
 			case "selected":
 				return base_url + "selected.png";
-				break;
 			case "current":
 				return base_url + "current.png";
-				break;
 			default:
 				return "";
 			}
@@ -157,6 +166,16 @@
 	};
 	var cacheClasses = function() {
 		this.data = {};
+		this.sameClass = function(superClass, currentClass) {
+			if (superClass === currentClass) {
+				return true;
+			}
+			var classAttributes = this.getClass(currentClass);
+			if (!(classAttributes && classAttributes.parent)) {
+				return false;
+			}
+			return this.sameClass(superClass, classAttributes.parent);
+		};
 		this.getLoadingClass = function(classId, callback, callbackScope) {
 			if (this.data[classId]) {
 				callback.apply(callbackScope, [ this.data[classId] ]);
@@ -167,11 +186,13 @@
 				$.Cmdbuild.g3d.proxy.getClass(classId,
 						function(classAttributes) {
 							this.data[classId] = classAttributes;
-							$.Cmdbuild.customvariables.cacheTrees
-									.pushTreeForClass(classId, function() {
-										callback.apply(callbackScope,
-												[ classAttributes ]);
-									}, this);
+							$.Cmdbuild.customvariables.cacheTrees.pushTreeForClass(classId, function() {
+								if (!classAttributes.parent) {
+									callback.apply(callbackScope,[ classAttributes ]);
+								} else {
+									this.getLoadingClass(classAttributes.parent, callback, callbackScope);
+								}
+							}, this);
 						}, this);
 			}
 		};
@@ -203,11 +224,8 @@
 			}
 			var node = nodes[index];
 			this.getLoadingClass(node.data.classId, function() {
-				// $.Cmdbuild.customvariables.cacheImages.pushClass(
-				// node.data.classId, function() {
 				this.pushClassesRecursive(nodes, index + 1, callback,
 						callbackScope);
-				// }, this);
 			}, this);
 		};
 		this.pushClasses = function(elements, callback, callbackScope) {
@@ -258,9 +276,11 @@
 						function(domainCustomAttributes) {
 							this.loadExtremeClasses(domainAttributes.source,
 									domainAttributes.destination, function() {
-										var retDomain = this.pushDomain(domainAttributes,
+										var retDomain = this.pushDomain(
+												domainAttributes,
 												domainCustomAttributes);
-										callback.apply(callbackScope, [retDomain]);
+										callback.apply(callbackScope,
+												[ retDomain ]);
 									}, this);
 						}, this);
 			}, this);

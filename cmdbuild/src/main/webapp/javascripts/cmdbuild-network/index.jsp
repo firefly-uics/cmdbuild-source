@@ -21,6 +21,7 @@
 				customjs: [
 					"libraries/cytoscape.min.js",
 					"libraries/three.min.js",
+					"libraries/jquery-impromptu.min.js",
 					"backend/CmdbuildModel.js",
 					"backend/ClassesNavigation.js",
 					"backend/ClassesFilter.js",
@@ -68,6 +69,7 @@
 				start: "home.xml",
 				theme: [
 					"jquery-ui-graph.theme.min.css",
+					"jquery-impromptu.min.css",
 					"custom.css"
 				],
 				authentication: {},

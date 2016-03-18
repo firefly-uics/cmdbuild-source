@@ -16,14 +16,19 @@
 		},
 		
 		getDomainTrees: function(config, callback, callbackScope) {
-			// params
+				// params
 			var params = $.Cmdbuild.utilities.proxy.prepareParamsForList(config);
-
 			// get url and make request
+			callbackObj = {
+					success: function(data, metadata){
+						callback.apply(callbackScope, [data, metadata]);
+					},
+					fail: function(response){
+						callback.apply(callbackScope, [[], []]);
+					}
+				};
 			var url = $.Cmdbuild.global.getApiUrl() + 'domainTrees/';
-			$.Cmdbuild.authProxy.makeAjaxRequest(url, methods.GET, function(data, metadata){
-				callback.apply(callbackScope, [data, metadata]);
-			}, params);
+			$.Cmdbuild.authProxy.makeAjaxRequest(url, methods.GET, callbackObj, params);
 		},
 		getDomainTree: function(id, callback, callbackScope) {
 			var url = $.Cmdbuild.global.getApiUrl() + 'domainTrees/' + id;

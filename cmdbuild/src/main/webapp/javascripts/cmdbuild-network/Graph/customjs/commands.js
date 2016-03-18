@@ -17,7 +17,6 @@
 			});
 		},
 		removeNavigationTree : function(param) {
-			var treeValue = param.treeValue;
 			$.Cmdbuild.customvariables.cacheTrees.cleanCurrentNavigationTree();
 			$('#treeDisplay').text("");
 			$('#treeDisplayLabel').hide();
@@ -25,13 +24,66 @@
 		},
 		applyNavigationTree : function(param) {
 			var treeValue = param.treeValue;
-			$.Cmdbuild.customvariables.cacheTrees.setCurrentNavigationTree(
-					treeValue, function(tree) {
-						$('#treeDisplay').text(tree.description);
-						$('#treeDisplayLabel').show();
-						$('#treeDisplay').show();
-						$.Cmdbuild.custom.commands.navigateOnNode({});
-					}, this);
+			$.Cmdbuild.customvariables.cacheTrees
+					.setCurrentNavigationTree(
+							treeValue,
+							function(tree) {
+								var selected = $.Cmdbuild.customvariables.selected
+										.getCards(0, 1);
+								if (selected.total <= 0) {
+									return;
+								}
+								var classId = selected.rows[0].classId;
+								var cardId = selected.rows[0].id;
+								var navigationTree = $.Cmdbuild.customvariables.cacheTrees
+										.getCurrentNavigationTree();
+								if (navigationTree) {
+									var node = $.Cmdbuild.customvariables.model
+											.getNode(cardId);
+									$.Cmdbuild.customvariables.cacheTrees
+											.setTreeOnNavigationManager(
+													node,
+													function(value) {
+														if (!value) {
+															return;
+														}
+														$('#treeDisplay')
+																.text(
+																		tree.description);
+														$('#treeDisplayLabel')
+																.show();
+														$('#treeDisplay')
+																.show();
+														$.Cmdbuild.custom.commands
+																._navigateOnNode(
+																		classId,
+																		cardId);
+													}, this);
+								}
+							}, this);
+		},
+		navigateOnNode : function(param) {
+			var selected = $.Cmdbuild.customvariables.selected.getCards(0, 1);
+			if (selected.total <= 0) {
+				return;
+			}
+			var classId = selected.rows[0].classId;
+			var cardId = selected.rows[0].id;
+			var navigationTree = $.Cmdbuild.customvariables.cacheTrees
+					.getCurrentNavigationTree();
+			if (navigationTree) {
+				var node = $.Cmdbuild.customvariables.model.getNode(cardId);
+				$.Cmdbuild.customvariables.cacheTrees
+						.setTreeOnNavigationManager(node, function(value) {
+							if (!value) {
+								return;
+							}
+							this._navigateOnNode(classId, cardId);
+						}, this);
+			} else {
+				this._navigateOnNode(classId, cardId);
+				
+			}
 		},
 		applyFilters : function(param) {
 			var formObject = $.Cmdbuild.dataModel.forms[param.filterByClass];
@@ -111,13 +163,7 @@
 								$.Cmdbuild.customvariables.options.stepRadius);
 					}, 100);
 		},
-		navigateOnNode : function(param) {
-			var selected = $.Cmdbuild.customvariables.selected.getCards(0, 1);
-			if (selected.total <= 0) {
-				return;
-			}
-			var classId = selected.rows[0].classId;
-			var cardId = selected.rows[0].id;
+		_navigateOnNode : function(classId, cardId) {
 			$.Cmdbuild.customvariables.viewer.clearSelection();
 			$.Cmdbuild.customvariables.model.erase();
 			$.Cmdbuild.customvariables.selected.erase();
@@ -314,8 +360,8 @@
 			if (params.active) {
 				$("#" + params.id).parent().addClass(
 						$.Cmdbuild.custom.commands.variables.BUTTONACTIVECLASS);
-					$.Cmdbuild.customvariables.options.nodeTooltipEnabled = true;
-					$.Cmdbuild.customvariables.options.edgeTooltipEnabled = true;
+				$.Cmdbuild.customvariables.options.nodeTooltipEnabled = true;
+				$.Cmdbuild.customvariables.options.edgeTooltipEnabled = true;
 			} else {
 				$("#" + params.id).parent().removeClass(
 						$.Cmdbuild.custom.commands.variables.BUTTONACTIVECLASS);
