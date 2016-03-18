@@ -174,8 +174,9 @@ public class CxfDataStores implements DataStores {
 		private Element toElement(final File value) {
 			return new Element() {
 
+				private final File root = delegate.getRoot();
 				private final String id = id(value);
-				private final String parent = id(value);
+				private final String parent = id(value.getParentFile());
 				private final String name = value.getName();
 
 				@Override
@@ -185,12 +186,12 @@ public class CxfDataStores implements DataStores {
 
 				@Override
 				public String getParent() {
-					return parent;
+					return value.equals(root) ? null : parent;
 				};
 
 				@Override
 				public String getName() {
-					return name;
+					return value.equals(root) ? null : name;
 				}
 
 				@Override
