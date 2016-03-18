@@ -37,11 +37,11 @@
 			<ref bean="v2_classAttributes" />
 			<ref bean="v2_classPrivileges" />
 			<ref bean="v2_cql" />
-			<ref bean="v2_dataStores" />
 			<ref bean="v2_domains" />
 			<ref bean="v2_domainAttributes" />
 			<ref bean="v2_domainTrees" />
 			<ref bean="v2_emailTemplates" />
+			<ref bean="v2_fileStores" />
 			<ref bean="v2_functions" />
 			<ref bean="v2_graphConfiguration" />
 			<ref bean="v2_icons" />

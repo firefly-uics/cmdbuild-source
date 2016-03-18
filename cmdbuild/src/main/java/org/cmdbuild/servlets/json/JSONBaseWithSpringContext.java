@@ -2,8 +2,8 @@ package org.cmdbuild.servlets.json;
 
 import static org.cmdbuild.spring.SpringIntegrationUtils.applicationContext;
 import static org.cmdbuild.spring.configuration.Data.BEAN_SYSTEM_DATA_VIEW;
-import static org.cmdbuild.spring.configuration.FileStore.ROOT;
-import static org.cmdbuild.spring.configuration.FileStore.UPLOAD;
+import static org.cmdbuild.spring.configuration.Files.ROOT;
+import static org.cmdbuild.spring.configuration.Files.UPLOAD;
 import static org.cmdbuild.spring.configuration.Lock.USER_LOCK_LOGIC;
 import static org.cmdbuild.spring.configuration.Translation.REQUEST_HANDLER_SETUP_FACADE;
 import static org.cmdbuild.spring.configuration.User.BEAN_USER_DATA_VIEW;

@@ -17,7 +17,7 @@ public class Icon {
 	private Data data;
 
 	@Autowired
-	private FileStore fileStore;
+	private Files fileStore;
 
 	@Bean
 	public IconsLogic defaultIconsLogic() {

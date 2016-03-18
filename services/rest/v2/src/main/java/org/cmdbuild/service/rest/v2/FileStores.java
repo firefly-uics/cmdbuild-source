@@ -19,10 +19,10 @@ import org.cmdbuild.service.rest.v2.model.FileSystemObject;
 import org.cmdbuild.service.rest.v2.model.ResponseMultiple;
 import org.cmdbuild.service.rest.v2.model.ResponseSingle;
 
-@Path("datastores/")
+@Path("filestores/")
 @Consumes(APPLICATION_JSON)
 @Produces(APPLICATION_JSON)
-public interface DataStores {
+public interface FileStores {
 
 	String DATASTORE_ID = "datastoreId";
 	String FOLDER_ID = "folderId";

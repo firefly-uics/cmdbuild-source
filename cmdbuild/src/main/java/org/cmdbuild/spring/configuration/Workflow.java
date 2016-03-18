@@ -60,7 +60,7 @@ public class Workflow {
 	private Email email;
 
 	@Autowired
-	private FileStore fileStore;
+	private Files fileStore;
 
 	@Autowired
 	private Lock lock;
