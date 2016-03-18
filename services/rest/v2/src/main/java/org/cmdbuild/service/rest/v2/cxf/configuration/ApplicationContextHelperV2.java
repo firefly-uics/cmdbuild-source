@@ -17,6 +17,7 @@ import org.cmdbuild.logic.dms.DmsLogic;
 import org.cmdbuild.logic.dms.PrivilegedDmsLogic;
 import org.cmdbuild.logic.email.EmailLogic;
 import org.cmdbuild.logic.email.EmailTemplateLogic;
+import org.cmdbuild.logic.files.FileLogic;
 import org.cmdbuild.logic.icon.IconsLogic;
 import org.cmdbuild.logic.menu.MenuLogic;
 import org.cmdbuild.logic.privileges.SecurityLogic;
@@ -55,6 +56,10 @@ public class ApplicationContextHelperV2 {
 
 	public EmailTemplateLogic emailTemplateLogic() {
 		return applicationContext.getBean(EmailTemplateLogic.class);
+	}
+
+	public FileLogic fileLogic() {
+		return applicationContext.getBean(FileLogic.class);
 	}
 
 	public FilesStore filesStore() {

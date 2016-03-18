@@ -31,7 +31,7 @@ public class Migration {
 	private DataSource dataSource;
 
 	@Autowired
-	private FileStore fileStore;
+	private Files fileStore;
 
 	@Bean
 	public PatchManager patchManager() {

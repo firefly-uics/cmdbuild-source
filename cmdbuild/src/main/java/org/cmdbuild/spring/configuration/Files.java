@@ -4,17 +4,26 @@ import static com.google.common.reflect.Reflection.newProxy;
 import static org.cmdbuild.common.utils.Reflection.unsupported;
 
 import java.io.File;
+import java.util.HashMap;
+import java.util.Map;
 
+import org.cmdbuild.logic.files.DefaultFileLogic;
+import org.cmdbuild.logic.files.DefaultFileStore;
+import org.cmdbuild.logic.files.DefaultHashing;
+import org.cmdbuild.logic.files.FileLogic;
+import org.cmdbuild.logic.files.FileStore;
+import org.cmdbuild.logic.files.Hashing;
 import org.cmdbuild.services.DefaultFilesStore;
 import org.cmdbuild.services.FilesStore;
 import org.cmdbuild.services.ForwardingFilesStore;
 import org.cmdbuild.services.Settings;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Primary;
 
 @Configuration
-public class FileStore {
+public class Files {
+
+	private static final String IMAGES_DIRECTORY = "images";
 
 	private static class FilesStoreWithLimitations extends ForwardingFilesStore {
 
@@ -72,7 +81,6 @@ public class FileStore {
 	public static final String UPLOAD = "upload";
 
 	@Bean(name = UPLOAD)
-	@Primary
 	public FilesStore uploadFilesStore() {
 		return new DefaultFilesStore(Settings.getInstance().getRootPath(), "upload");
 	}
@@ -87,6 +95,23 @@ public class FileStore {
 	@Bean
 	protected FilesStore _webInfFilesStore() {
 		return new DefaultFilesStore(Settings.getInstance().getRootPath(), "WEB-INF");
+	}
+
+	@Bean
+	public FileLogic defaultFileLogic() {
+		final Map<String, FileStore> map = new HashMap<>();
+		map.put(IMAGES_DIRECTORY, imagesFileStore());
+		return new DefaultFileLogic(map);
+	}
+
+	@Bean
+	protected FileStore imagesFileStore() {
+		return new DefaultFileStore(uploadFilesStore().sub(IMAGES_DIRECTORY), defaultHashing());
+	}
+
+	@Bean
+	protected Hashing defaultHashing() {
+		return new DefaultHashing();
 	}
 
 }

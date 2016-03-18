@@ -39,7 +39,7 @@ import org.apache.http.entity.mime.content.FileBody;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.cmdbuild.service.rest.test.JsonSupport;
 import org.cmdbuild.service.rest.test.ServerResource;
-import org.cmdbuild.service.rest.v2.DataStores;
+import org.cmdbuild.service.rest.v2.FileStores;
 import org.cmdbuild.service.rest.v2.model.FileSystemObject;
 import org.cmdbuild.service.rest.v2.model.ResponseMultiple;
 import org.cmdbuild.service.rest.v2.model.ResponseSingle;
@@ -53,12 +53,12 @@ import org.mockito.ArgumentCaptor;
 
 public class DataStoresTest {
 
-	private DataStores service;
+	private FileStores service;
 
 	@Rule
 	public ServerResource server = ServerResource.newInstance() //
-			.withServiceClass(DataStores.class) //
-			.withService(service = mock(DataStores.class)) //
+			.withServiceClass(FileStores.class) //
+			.withService(service = mock(FileStores.class)) //
 			.withPortRange(randomPort()) //
 			.build();
 
@@ -97,12 +97,12 @@ public class DataStoresTest {
 				.thenReturn(expectedResponse);
 
 		// when
-		final HttpGet request = new HttpGet(new URIBuilder(server.resource("datastores/the_datastore/folders/")) //
+		final HttpGet request = new HttpGet(new URIBuilder(server.resource("filestores/the_filestore/folders/")) //
 				.build());
 		final HttpResponse response = httpclient.execute(request);
 
 		// then
-		verify(service).readFolders(eq("the_datastore"));
+		verify(service).readFolders(eq("the_filestore"));
 
 		assertThat(statusCodeOf(response), equalTo(200));
 		assertThat(json.from(contentOf(response)), equalTo(json.from(expectedResponse)));
@@ -126,12 +126,12 @@ public class DataStoresTest {
 
 		// when
 		final HttpGet request = new HttpGet(
-				new URIBuilder(server.resource("datastores/the_datastore/folders/the_folder/")) //
+				new URIBuilder(server.resource("filestores/the_filestore/folders/the_folder/")) //
 						.build());
 		final HttpResponse response = httpclient.execute(request);
 
 		// then
-		verify(service).readFolder(eq("the_datastore"), eq("the_folder"));
+		verify(service).readFolder(eq("the_filestore"), eq("the_folder"));
 
 		assertThat(statusCodeOf(response), equalTo(200));
 		assertThat(json.from(contentOf(response)), equalTo(json.from(expectedResponse)));
@@ -158,7 +158,7 @@ public class DataStoresTest {
 
 		// when
 		final HttpPost request = new HttpPost(
-				new URIBuilder(server.resource("datastores/the_datastore/folders/the_folder/files/")) //
+				new URIBuilder(server.resource("filestores/the_filestore/folders/the_folder/files/")) //
 						.build());
 		final MultipartEntity multipartEntity = new MultipartEntity();
 		multipartEntity.addPart(FILE, new FileBody(file));
@@ -170,7 +170,7 @@ public class DataStoresTest {
 		assertThat(json.from(contentOf(response)), equalTo(json.from(expectedResponse)));
 
 		final ArgumentCaptor<DataHandler> dataHandlerCaptor = ArgumentCaptor.forClass(DataHandler.class);
-		verify(service).uploadFile(eq("the_datastore"), eq("the_folder"), dataHandlerCaptor.capture());
+		verify(service).uploadFile(eq("the_filestore"), eq("the_folder"), dataHandlerCaptor.capture());
 		verifyNoMoreInteractions(service);
 
 		final DataHandler dataHandler = dataHandlerCaptor.getValue();
@@ -200,12 +200,12 @@ public class DataStoresTest {
 
 		// when
 		final HttpGet request = new HttpGet(
-				new URIBuilder(server.resource("datastores/the_datastore/folders/the_folder/files/")) //
+				new URIBuilder(server.resource("filestores/the_filestore/folders/the_folder/files/")) //
 						.build());
 		final HttpResponse response = httpclient.execute(request);
 
 		// then
-		verify(service).readFiles(eq("the_datastore"), eq("the_folder"));
+		verify(service).readFiles(eq("the_filestore"), eq("the_folder"));
 
 		assertThat(statusCodeOf(response), equalTo(200));
 		assertThat(json.from(contentOf(response)), equalTo(json.from(expectedResponse)));
@@ -229,12 +229,12 @@ public class DataStoresTest {
 
 		// when
 		final HttpGet request = new HttpGet(
-				new URIBuilder(server.resource("datastores/the_datastore/folders/the_folder/files/the_file/")) //
+				new URIBuilder(server.resource("filestores/the_filestore/folders/the_folder/files/the_file/")) //
 						.build());
 		final HttpResponse response = httpclient.execute(request);
 
 		// then
-		verify(service).readFile(eq("the_datastore"), eq("the_folder"), eq("the_file"));
+		verify(service).readFile(eq("the_filestore"), eq("the_folder"), eq("the_file"));
 
 		assertThat(statusCodeOf(response), equalTo(200));
 		assertThat(json.from(contentOf(response)), equalTo(json.from(expectedResponse)));
@@ -251,12 +251,12 @@ public class DataStoresTest {
 
 		// when
 		final HttpGet request = new HttpGet(
-				new URIBuilder(server.resource("datastores/the_datastore/folders/the_folder/files/the_file/download")) //
+				new URIBuilder(server.resource("filestores/the_filestore/folders/the_folder/files/the_file/download")) //
 						.build());
 		final HttpResponse response = httpclient.execute(request);
 
 		// then
-		verify(service).downloadFile(eq("the_datastore"), eq("the_folder"), eq("the_file"));
+		verify(service).downloadFile(eq("the_filestore"), eq("the_folder"), eq("the_file"));
 		verifyNoMoreInteractions(service);
 
 		assertThat(statusCodeOf(response), equalTo(200));
@@ -267,12 +267,12 @@ public class DataStoresTest {
 	public void deleteFile() throws Exception {
 		// when
 		final HttpDelete request = new HttpDelete(
-				new URIBuilder(server.resource("datastores/the_datastore/folders/the_folder/files/the_file/")) //
+				new URIBuilder(server.resource("filestores/the_filestore/folders/the_folder/files/the_file/")) //
 						.build());
 		final HttpResponse response = httpclient.execute(request);
 
 		// then
-		verify(service).deleteFile(eq("the_datastore"), eq("the_folder"), eq("the_file"));
+		verify(service).deleteFile(eq("the_filestore"), eq("the_folder"), eq("the_file"));
 
 		assertThat(statusCodeOf(response), equalTo(204));
 	}

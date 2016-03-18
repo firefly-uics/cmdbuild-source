@@ -36,7 +36,7 @@ public class User {
 	private Data data;
 
 	@Autowired
-	private FileStore fileStore;
+	private Files fileStore;
 
 	@Autowired
 	private Lock lock;
