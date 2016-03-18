@@ -1,9 +1,10 @@
 package unit.cxf;
 
-import static java.io.File.separator;
 import static java.nio.file.Files.write;
 import static java.nio.file.Paths.get;
 import static java.util.Arrays.asList;
+import static java.util.Optional.empty;
+import static java.util.Optional.of;
 import static org.cmdbuild.service.rest.v2.model.Models.newFileSystemObject;
 import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.equalTo;
@@ -11,11 +12,9 @@ import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 
@@ -30,7 +29,7 @@ import javax.activation.FileDataSource;
 import org.cmdbuild.common.collect.ChainablePutMap;
 import org.cmdbuild.service.rest.v2.cxf.CxfDataStores;
 import org.cmdbuild.service.rest.v2.cxf.CxfDataStores.DataStore;
-import org.cmdbuild.service.rest.v2.cxf.CxfDataStores.Hashing;
+import org.cmdbuild.service.rest.v2.cxf.CxfDataStores.Element;
 import org.cmdbuild.service.rest.v2.cxf.ErrorHandler;
 import org.cmdbuild.service.rest.v2.model.FileSystemObject;
 import org.cmdbuild.service.rest.v2.model.ResponseMultiple;
@@ -39,8 +38,6 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
-import org.mockito.invocation.InvocationOnMock;
-import org.mockito.stubbing.Answer;
 
 public class CxfDataStoresTest {
 
@@ -49,31 +46,6 @@ public class CxfDataStoresTest {
 		private static final long serialVersionUID = 1L;
 
 	}
-
-	private static class DelegatingAnswer implements Answer<Object> {
-
-		private final Hashing delegate;
-
-		public DelegatingAnswer(final Hashing delegate) {
-			this.delegate = delegate;
-		}
-
-		@Override
-		public Object answer(final InvocationOnMock invocation) throws Throwable {
-			return invocation.getMethod().invoke(delegate, invocation.getArguments());
-		}
-
-	}
-
-	private static final Hashing LAST_PATH_PART = new Hashing() {
-
-		@Override
-		public String hash(final String value) {
-			final String[] values = value.split(separator);
-			return values[values.length - 1];
-		}
-
-	};
 
 	private static final String A_DATASTORE = "a datastore";
 	private static final String A_FOLDER = "a folder";
@@ -84,18 +56,14 @@ public class CxfDataStoresTest {
 
 	private ErrorHandler errorHandler;
 	private DataStore dataStore;
-	private Hashing hashing;
 	private CxfDataStores underTest;
 
 	@Before
 	public void setUp() throws Exception {
 		errorHandler = mock(ErrorHandler.class);
 		dataStore = mock(DataStore.class);
-		hashing = mock(Hashing.class);
-		doAnswer(new DelegatingAnswer(LAST_PATH_PART)) //
-				.when(hashing).hash(anyString());
 		underTest = new CxfDataStores(errorHandler, ChainablePutMap.of(new HashMap<String, DataStore>()) //
-				.chainablePut(A_DATASTORE, dataStore), hashing);
+				.chainablePut(A_DATASTORE, dataStore));
 	}
 
 	@Test(expected = DummyException.class)
@@ -105,8 +73,7 @@ public class CxfDataStoresTest {
 				ChainablePutMap.of(new HashMap<String, DataStore>()) //
 						.chainablePut("foo", mock(DataStore.class)) //
 						.chainablePut("bar", mock(DataStore.class)) //
-						.chainablePut("baz", mock(DataStore.class)), //
-				hashing);
+						.chainablePut("baz", mock(DataStore.class)));
 		doThrow(DummyException.class) //
 				.when(errorHandler).dataStoreNotFound(anyString());
 
@@ -116,16 +83,16 @@ public class CxfDataStoresTest {
 		} finally {
 			// then
 			verify(errorHandler).dataStoreNotFound(eq("none"));
-			verifyNoMoreInteractions(errorHandler, dataStore, hashing);
+			verifyNoMoreInteractions(errorHandler, dataStore);
 		}
 	}
 
 	@Test
 	public void readFolders() throws Exception {
 		// given
-		final File firstFolder = temporaryFolder.newFolder();
-		final File secondFolder = temporaryFolder.newFolder();
-		final File thirdFolder = temporaryFolder.newFolder();
+		final Element firstFolder = element(temporaryFolder.newFolder());
+		final Element secondFolder = element(temporaryFolder.newFolder());
+		final Element thirdFolder = element(temporaryFolder.newFolder());
 		doReturn(asList(firstFolder, secondFolder, thirdFolder)) //
 				.when(dataStore).folders();
 
@@ -134,25 +101,24 @@ public class CxfDataStoresTest {
 
 		// then
 		verify(dataStore).folders();
-		verify(hashing, times(6)).hash(anyString());
-		verifyNoMoreInteractions(errorHandler, dataStore, hashing);
+		verifyNoMoreInteractions(errorHandler, dataStore);
 
 		assertThat(response.getElements(),
 				containsInAnyOrder( //
 						newFileSystemObject() //
 								.withId(firstFolder.getName()) //
 								.withName(firstFolder.getName()) //
-								.withParent(firstFolder.getParentFile().getName()) //
+								.withParent(firstFolder.getParent()) //
 								.build(), //
 						newFileSystemObject() //
 								.withId(secondFolder.getName()) //
 								.withName(secondFolder.getName()) //
-								.withParent(secondFolder.getParentFile().getName()) //
+								.withParent(secondFolder.getParent()) //
 								.build(), //
 						newFileSystemObject() //
 								.withId(thirdFolder.getName()) //
 								.withName(thirdFolder.getName()) //
-								.withParent(thirdFolder.getParentFile().getName()) //
+								.withParent(thirdFolder.getParent()) //
 								.build()));
 		assertThat(response.getMetadata().getTotal(), equalTo(3L));
 	}
@@ -164,8 +130,7 @@ public class CxfDataStoresTest {
 				ChainablePutMap.of(new HashMap<String, DataStore>()) //
 						.chainablePut("foo", mock(DataStore.class)) //
 						.chainablePut("bar", mock(DataStore.class)) //
-						.chainablePut("baz", mock(DataStore.class)), //
-				hashing);
+						.chainablePut("baz", mock(DataStore.class)));
 		doThrow(DummyException.class) //
 				.when(errorHandler).dataStoreNotFound(anyString());
 
@@ -175,18 +140,15 @@ public class CxfDataStoresTest {
 		} finally {
 			// then
 			verify(errorHandler).dataStoreNotFound(eq("none"));
-			verifyNoMoreInteractions(errorHandler, dataStore, hashing);
+			verifyNoMoreInteractions(errorHandler, dataStore);
 		}
 	}
 
 	@Test(expected = DummyException.class)
 	public void readFolderCallsErrorHandlerWhenFolderIsNotFound() throws Exception {
 		// given
-		final File firstFolder = temporaryFolder.newFolder();
-		final File secondFolder = temporaryFolder.newFolder();
-		final File thirdFolder = temporaryFolder.newFolder();
-		doReturn(asList(firstFolder, secondFolder, thirdFolder)) //
-				.when(dataStore).folders();
+		doReturn(empty()) //
+				.when(dataStore).folder(anyString());
 		doThrow(DummyException.class) //
 				.when(errorHandler).folderNotFound(anyString());
 
@@ -195,36 +157,32 @@ public class CxfDataStoresTest {
 			underTest.readFolder(A_DATASTORE, A_FOLDER);
 		} finally {
 			// then
-			verify(dataStore).folders();
-			verify(hashing, times(3)).hash(anyString());
+			verify(dataStore).folder(eq(A_FOLDER));
 			verify(errorHandler).folderNotFound(eq(A_FOLDER));
-			verifyNoMoreInteractions(errorHandler, dataStore, hashing);
+			verifyNoMoreInteractions(errorHandler, dataStore);
 		}
 	}
 
 	@Test
 	public void readFolder() throws Exception {
 		// given
-		final File firstFolder = temporaryFolder.newFolder(A_FOLDER);
-		final File secondFolder = temporaryFolder.newFolder();
-		final File thirdFolder = temporaryFolder.newFolder();
-		doReturn(asList(firstFolder, secondFolder, thirdFolder)) //
-				.when(dataStore).folders();
+		final Element folder = element(temporaryFolder.newFolder());
+		doReturn(of(folder)) //
+				.when(dataStore).folder(anyString());
 
 		// when
 		final ResponseSingle<FileSystemObject> response = underTest.readFolder(A_DATASTORE, A_FOLDER);
 
 		// then
-		verify(dataStore).folders();
-		verify(hashing, times(3)).hash(anyString());
-		verifyNoMoreInteractions(errorHandler, dataStore, hashing);
+		verify(dataStore).folder(eq(A_FOLDER));
+		verifyNoMoreInteractions(errorHandler, dataStore);
 
 		assertThat(response.getElement(),
 				equalTo( //
 						newFileSystemObject() //
-								.withId(firstFolder.getName()) //
-								.withName(firstFolder.getName()) //
-								.withParent(firstFolder.getParentFile().getName()) //
+								.withId(folder.getName()) //
+								.withName(folder.getName()) //
+								.withParent(folder.getParent()) //
 								.build()));
 	}
 
@@ -235,8 +193,7 @@ public class CxfDataStoresTest {
 				ChainablePutMap.of(new HashMap<String, DataStore>()) //
 						.chainablePut("foo", mock(DataStore.class)) //
 						.chainablePut("bar", mock(DataStore.class)) //
-						.chainablePut("baz", mock(DataStore.class)), //
-				hashing);
+						.chainablePut("baz", mock(DataStore.class)));
 		doThrow(DummyException.class) //
 				.when(errorHandler).dataStoreNotFound(anyString());
 		final File file = temporaryFolder.newFile();
@@ -247,18 +204,15 @@ public class CxfDataStoresTest {
 		} finally {
 			// then
 			verify(errorHandler).dataStoreNotFound(eq("none"));
-			verifyNoMoreInteractions(errorHandler, dataStore, hashing);
+			verifyNoMoreInteractions(errorHandler, dataStore);
 		}
 	}
 
 	@Test(expected = DummyException.class)
 	public void uploadFileCallsErrorHandlerWhenFolderIsNotFound() throws Exception {
 		// given
-		final File firstFolder = temporaryFolder.newFolder();
-		final File secondFolder = temporaryFolder.newFolder();
-		final File thirdFolder = temporaryFolder.newFolder();
-		doReturn(asList(firstFolder, secondFolder, thirdFolder)) //
-				.when(dataStore).folders();
+		doReturn(empty()) //
+				.when(dataStore).folder(anyString());
 		doThrow(DummyException.class) //
 				.when(errorHandler).folderNotFound(anyString());
 		final File file = temporaryFolder.newFile();
@@ -268,53 +222,50 @@ public class CxfDataStoresTest {
 			underTest.uploadFile(A_DATASTORE, A_FOLDER, new DataHandler(new FileDataSource(file)));
 		} finally {
 			// then
-			verify(dataStore).folders();
-			verify(hashing, times(3)).hash(anyString());
+			verify(dataStore).folder(eq(A_FOLDER));
 			verify(errorHandler).folderNotFound(eq(A_FOLDER));
-			verifyNoMoreInteractions(errorHandler, dataStore, hashing);
+			verifyNoMoreInteractions(errorHandler, dataStore);
 		}
 	}
 
 	@Test(expected = DummyException.class)
 	public void uploadFileCallsErrorHandlerWhenFileNameIsDuplicated() throws Exception {
 		// given
-		final File firstFolder = temporaryFolder.newFolder(A_FOLDER);
-		final File secondFolder = temporaryFolder.newFolder();
-		final File thirdFolder = temporaryFolder.newFolder();
-		doReturn(asList(firstFolder, secondFolder, thirdFolder)) //
-				.when(dataStore).folders();
-		final File alreadyCreatedFile = temporaryFolder.newFolder();
+		final Element folder = element(temporaryFolder.newFolder());
+		doReturn(of(folder)) //
+				.when(dataStore).folder(anyString());
+		final File file = temporaryFolder.newFile();
+		final Element alreadyCreatedFile = element(file);
 		doReturn(asList(alreadyCreatedFile)) //
-				.when(dataStore).files(any(File.class));
+				.when(dataStore).files(anyString());
 		doThrow(DummyException.class) //
 				.when(errorHandler).duplicateFileName(anyString());
 
 		try {
 			// when
-			underTest.uploadFile(A_DATASTORE, A_FOLDER, new DataHandler(new FileDataSource(alreadyCreatedFile)));
+			underTest.uploadFile(A_DATASTORE, A_FOLDER, new DataHandler(new FileDataSource(file)));
 		} finally {
 			// then
-			verify(dataStore).folders();
-			verify(dataStore).files(eq(firstFolder));
-			verify(hashing).hash(anyString());
+			verify(dataStore).folder(eq(A_FOLDER));
+			verify(dataStore).files(eq(A_FOLDER));
 			verify(errorHandler).duplicateFileName(eq(alreadyCreatedFile.getName()));
-			verifyNoMoreInteractions(errorHandler, dataStore, hashing);
+			verifyNoMoreInteractions(errorHandler, dataStore);
 		}
 	}
+
+	// TODO test error on creation
 
 	@Test
 	public void uploadFile() throws Exception {
 		// given
-		final File firstFolder = temporaryFolder.newFolder(A_FOLDER);
-		final File secondFolder = temporaryFolder.newFolder();
-		final File thirdFolder = temporaryFolder.newFolder();
-		doReturn(asList(firstFolder, secondFolder, thirdFolder)) //
-				.when(dataStore).folders();
+		final Element folder = element(temporaryFolder.newFolder());
+		doReturn(of(folder)) //
+				.when(dataStore).folder(anyString());
 		doReturn(asList()) //
-				.when(dataStore).files(any(File.class));
-		final File created = temporaryFolder.newFile();
-		doReturn(created) //
-				.when(dataStore).create(any(File.class), any(DataHandler.class));
+				.when(dataStore).files(any(String.class));
+		final Element created = element(temporaryFolder.newFile());
+		doReturn(of(created)) //
+				.when(dataStore).create(any(String.class), any(DataHandler.class));
 		final File file = temporaryFolder.newFile();
 		final DataHandler dataHandler = new DataHandler(new FileDataSource(file));
 
@@ -322,11 +273,10 @@ public class CxfDataStoresTest {
 		underTest.uploadFile(A_DATASTORE, A_FOLDER, dataHandler);
 
 		// then
-		verify(dataStore).folders();
-		verify(dataStore).files(eq(firstFolder));
-		verify(dataStore).create(eq(firstFolder), eq(dataHandler));
-		verify(hashing, times(3)).hash(anyString());
-		verifyNoMoreInteractions(errorHandler, dataStore, hashing);
+		verify(dataStore).folder(eq(A_FOLDER));
+		verify(dataStore).files(eq(A_FOLDER));
+		verify(dataStore).create(eq(A_FOLDER), eq(dataHandler));
+		verifyNoMoreInteractions(errorHandler, dataStore);
 	}
 
 	@Test(expected = DummyException.class)
@@ -336,8 +286,7 @@ public class CxfDataStoresTest {
 				ChainablePutMap.of(new HashMap<String, DataStore>()) //
 						.chainablePut("foo", mock(DataStore.class)) //
 						.chainablePut("bar", mock(DataStore.class)) //
-						.chainablePut("baz", mock(DataStore.class)), //
-				hashing);
+						.chainablePut("baz", mock(DataStore.class)));
 		doThrow(DummyException.class) //
 				.when(errorHandler).dataStoreNotFound(anyString());
 
@@ -347,18 +296,15 @@ public class CxfDataStoresTest {
 		} finally {
 			// then
 			verify(errorHandler).dataStoreNotFound(eq("none"));
-			verifyNoMoreInteractions(errorHandler, dataStore, hashing);
+			verifyNoMoreInteractions(errorHandler, dataStore);
 		}
 	}
 
 	@Test(expected = DummyException.class)
 	public void readFilesCallsErrorHandlerWhenFolderIsNotFound() throws Exception {
 		// given
-		final File firstFolder = temporaryFolder.newFolder();
-		final File secondFolder = temporaryFolder.newFolder();
-		final File thirdFolder = temporaryFolder.newFolder();
-		doReturn(asList(firstFolder, secondFolder, thirdFolder)) //
-				.when(dataStore).folders();
+		doReturn(empty()) //
+				.when(dataStore).folder(anyString());
 		doThrow(DummyException.class) //
 				.when(errorHandler).folderNotFound(anyString());
 
@@ -367,51 +313,48 @@ public class CxfDataStoresTest {
 			underTest.readFiles(A_DATASTORE, A_FOLDER);
 		} finally {
 			// then
-			verify(dataStore).folders();
-			verify(hashing, times(3)).hash(anyString());
+			verify(dataStore).folder(eq(A_FOLDER));
 			verify(errorHandler).folderNotFound(eq(A_FOLDER));
-			verifyNoMoreInteractions(errorHandler, dataStore, hashing);
+			verifyNoMoreInteractions(errorHandler, dataStore);
 		}
 	}
 
 	@Test
 	public void readFiles() throws Exception {
-		final File firstFolder = temporaryFolder.newFolder(A_FOLDER);
-		final File secondFolder = temporaryFolder.newFolder();
-		final File thirdFolder = temporaryFolder.newFolder();
-		doReturn(asList(firstFolder, secondFolder, thirdFolder)) //
-				.when(dataStore).folders();
-		final File firstFile = temporaryFolder.newFile();
-		final File secondFile = temporaryFolder.newFile();
-		final File thirdFile = temporaryFolder.newFile();
+		// given
+		final Element folder = element(temporaryFolder.newFolder());
+		doReturn(of(folder)) //
+				.when(dataStore).folder(anyString());
+		final Element firstFile = element(temporaryFolder.newFile());
+		final Element secondFile = element(temporaryFolder.newFile());
+		final Element thirdFile = element(temporaryFolder.newFile());
 		doReturn(asList(firstFile, secondFile, thirdFile)) //
-				.when(dataStore).files(any(File.class));
+				.when(dataStore).files(any(String.class));
 
 		// when
 		final ResponseMultiple<FileSystemObject> response = underTest.readFiles(A_DATASTORE, A_FOLDER);
 
 		// then
-		verify(dataStore).folders();
-		verify(hashing, times(7)).hash(anyString());
-		verify(dataStore).files(eq(firstFolder));
-		verifyNoMoreInteractions(errorHandler, dataStore, hashing);
+		verify(dataStore).folder(eq(A_FOLDER));
+		verify(dataStore).files(eq(A_FOLDER));
+		verifyNoMoreInteractions(errorHandler, dataStore);
 
 		assertThat(response.getElements(),
 				containsInAnyOrder( //
 						newFileSystemObject() //
 								.withId(firstFile.getName()) //
 								.withName(firstFile.getName()) //
-								.withParent(firstFile.getParentFile().getName()) //
+								.withParent(firstFile.getParent()) //
 								.build(), //
 						newFileSystemObject() //
 								.withId(secondFile.getName()) //
 								.withName(secondFile.getName()) //
-								.withParent(secondFile.getParentFile().getName()) //
+								.withParent(secondFile.getParent()) //
 								.build(), //
 						newFileSystemObject() //
 								.withId(thirdFile.getName()) //
 								.withName(thirdFile.getName()) //
-								.withParent(thirdFile.getParentFile().getName()) //
+								.withParent(thirdFile.getParent()) //
 								.build()));
 		assertThat(response.getMetadata().getTotal(), equalTo(3L));
 	}
@@ -423,8 +366,7 @@ public class CxfDataStoresTest {
 				ChainablePutMap.of(new HashMap<String, DataStore>()) //
 						.chainablePut("foo", mock(DataStore.class)) //
 						.chainablePut("bar", mock(DataStore.class)) //
-						.chainablePut("baz", mock(DataStore.class)), //
-				hashing);
+						.chainablePut("baz", mock(DataStore.class)));
 		doThrow(DummyException.class) //
 				.when(errorHandler).dataStoreNotFound(anyString());
 
@@ -434,18 +376,15 @@ public class CxfDataStoresTest {
 		} finally {
 			// then
 			verify(errorHandler).dataStoreNotFound(eq("none"));
-			verifyNoMoreInteractions(errorHandler, dataStore, hashing);
+			verifyNoMoreInteractions(errorHandler, dataStore);
 		}
 	}
 
 	@Test(expected = DummyException.class)
 	public void readFileCallsErrorHandlerWhenFolderIsNotFound() throws Exception {
 		// given
-		final File firstFolder = temporaryFolder.newFolder();
-		final File secondFolder = temporaryFolder.newFolder();
-		final File thirdFolder = temporaryFolder.newFolder();
-		doReturn(asList(firstFolder, secondFolder, thirdFolder)) //
-				.when(dataStore).folders();
+		doReturn(empty()) //
+				.when(dataStore).folder(anyString());
 		doThrow(DummyException.class) //
 				.when(errorHandler).folderNotFound(anyString());
 
@@ -454,26 +393,23 @@ public class CxfDataStoresTest {
 			underTest.readFile(A_DATASTORE, A_FOLDER, A_FILE);
 		} finally {
 			// then
-			verify(dataStore).folders();
-			verify(hashing, times(3)).hash(anyString());
+			verify(dataStore).folder(eq(A_FOLDER));
 			verify(errorHandler).folderNotFound(eq(A_FOLDER));
-			verifyNoMoreInteractions(errorHandler, dataStore, hashing);
+			verifyNoMoreInteractions(errorHandler, dataStore);
 		}
 	}
 
 	@Test(expected = DummyException.class)
 	public void readFileCallsErrorHandlerWhenFileIsNotFound() throws Exception {
 		// given
-		final File firstFolder = temporaryFolder.newFolder(A_FOLDER);
-		final File secondFolder = temporaryFolder.newFolder();
-		final File thirdFolder = temporaryFolder.newFolder();
-		doReturn(asList(firstFolder, secondFolder, thirdFolder)) //
-				.when(dataStore).folders();
-		final File firstFile = temporaryFolder.newFile();
-		final File secondFile = temporaryFolder.newFile();
-		final File thirdFile = temporaryFolder.newFile();
+		final Element folder = element(temporaryFolder.newFolder());
+		doReturn(of(folder)) //
+				.when(dataStore).folder(anyString());
+		final Element firstFile = element(temporaryFolder.newFile());
+		final Element secondFile = element(temporaryFolder.newFile());
+		final Element thirdFile = element(temporaryFolder.newFile());
 		doReturn(asList(firstFile, secondFile, thirdFile)) //
-				.when(dataStore).files(any(File.class));
+				.when(dataStore).files(any(String.class));
 		doThrow(DummyException.class) //
 				.when(errorHandler).fileNotFound(anyString());
 
@@ -482,42 +418,38 @@ public class CxfDataStoresTest {
 			underTest.readFile(A_DATASTORE, A_FOLDER, A_FILE);
 		} finally {
 			// then
-			verify(dataStore).folders();
-			verify(hashing, times(4)).hash(anyString());
-			verify(dataStore).files(eq(firstFolder));
+			verify(dataStore).folder(eq(A_FOLDER));
+			verify(dataStore).files(eq(A_FOLDER));
 			verify(errorHandler).fileNotFound(eq(A_FILE));
-			verifyNoMoreInteractions(errorHandler, dataStore, hashing);
+			verifyNoMoreInteractions(errorHandler, dataStore);
 		}
 	}
 
 	@Test
 	public void readFile() throws Exception {
-		final File firstFolder = temporaryFolder.newFolder(A_FOLDER);
-		final File secondFolder = temporaryFolder.newFolder();
-		final File thirdFolder = temporaryFolder.newFolder();
-		doReturn(asList(firstFolder, secondFolder, thirdFolder)) //
-				.when(dataStore).folders();
-		final File firstFile = temporaryFolder.newFile(A_FILE);
-		final File secondFile = temporaryFolder.newFile();
-		final File thirdFile = temporaryFolder.newFile();
+		final Element folder = element(temporaryFolder.newFolder());
+		doReturn(of(folder)) //
+				.when(dataStore).folder(anyString());
+		final Element firstFile = element(temporaryFolder.newFile(A_FILE));
+		final Element secondFile = element(temporaryFolder.newFile());
+		final Element thirdFile = element(temporaryFolder.newFile());
 		doReturn(asList(firstFile, secondFile, thirdFile)) //
-				.when(dataStore).files(any(File.class));
+				.when(dataStore).files(any(String.class));
 
 		// when
 		final ResponseSingle<FileSystemObject> response = underTest.readFile(A_DATASTORE, A_FOLDER, A_FILE);
 
 		// then
-		verify(dataStore).folders();
-		verify(hashing, times(4)).hash(anyString());
-		verify(dataStore).files(eq(firstFolder));
-		verifyNoMoreInteractions(errorHandler, dataStore, hashing);
+		verify(dataStore).folder(eq(A_FOLDER));
+		verify(dataStore).files(eq(A_FOLDER));
+		verifyNoMoreInteractions(errorHandler, dataStore);
 
 		assertThat(response.getElement(),
 				equalTo( //
 						newFileSystemObject() //
 								.withId(firstFile.getName()) //
 								.withName(firstFile.getName()) //
-								.withParent(firstFile.getParentFile().getName()) //
+								.withParent(firstFile.getParent()) //
 								.build()));
 	}
 
@@ -528,8 +460,7 @@ public class CxfDataStoresTest {
 				ChainablePutMap.of(new HashMap<String, DataStore>()) //
 						.chainablePut("foo", mock(DataStore.class)) //
 						.chainablePut("bar", mock(DataStore.class)) //
-						.chainablePut("baz", mock(DataStore.class)), //
-				hashing);
+						.chainablePut("baz", mock(DataStore.class)));
 		doThrow(DummyException.class) //
 				.when(errorHandler).dataStoreNotFound(anyString());
 
@@ -539,18 +470,15 @@ public class CxfDataStoresTest {
 		} finally {
 			// then
 			verify(errorHandler).dataStoreNotFound(eq("none"));
-			verifyNoMoreInteractions(errorHandler, dataStore, hashing);
+			verifyNoMoreInteractions(errorHandler, dataStore);
 		}
 	}
 
 	@Test(expected = DummyException.class)
 	public void downalodFileCallsErrorHandlerWhenFolderIsNotFound() throws Exception {
 		// given
-		final File firstFolder = temporaryFolder.newFolder();
-		final File secondFolder = temporaryFolder.newFolder();
-		final File thirdFolder = temporaryFolder.newFolder();
-		doReturn(asList(firstFolder, secondFolder, thirdFolder)) //
-				.when(dataStore).folders();
+		doReturn(empty()) //
+				.when(dataStore).folder(anyString());
 		doThrow(DummyException.class) //
 				.when(errorHandler).folderNotFound(anyString());
 
@@ -559,26 +487,23 @@ public class CxfDataStoresTest {
 			underTest.downloadFile(A_DATASTORE, A_FOLDER, A_FILE);
 		} finally {
 			// then
-			verify(dataStore).folders();
-			verify(hashing, times(3)).hash(anyString());
+			verify(dataStore).folder(eq(A_FOLDER));
 			verify(errorHandler).folderNotFound(eq(A_FOLDER));
-			verifyNoMoreInteractions(errorHandler, dataStore, hashing);
+			verifyNoMoreInteractions(errorHandler, dataStore);
 		}
 	}
 
 	@Test(expected = DummyException.class)
 	public void downloadFileCallsErrorHandlerWhenFileIsNotFound() throws Exception {
 		// given
-		final File firstFolder = temporaryFolder.newFolder(A_FOLDER);
-		final File secondFolder = temporaryFolder.newFolder();
-		final File thirdFolder = temporaryFolder.newFolder();
-		doReturn(asList(firstFolder, secondFolder, thirdFolder)) //
-				.when(dataStore).folders();
-		final File firstFile = temporaryFolder.newFile();
-		final File secondFile = temporaryFolder.newFile();
-		final File thirdFile = temporaryFolder.newFile();
+		final Element folder = element(temporaryFolder.newFolder());
+		doReturn(of(folder)) //
+				.when(dataStore).folder(anyString());
+		final Element firstFile = element(temporaryFolder.newFile());
+		final Element secondFile = element(temporaryFolder.newFile());
+		final Element thirdFile = element(temporaryFolder.newFile());
 		doReturn(asList(firstFile, secondFile, thirdFile)) //
-				.when(dataStore).files(any(File.class));
+				.when(dataStore).files(any(String.class));
 		doThrow(DummyException.class) //
 				.when(errorHandler).fileNotFound(anyString());
 
@@ -587,38 +512,39 @@ public class CxfDataStoresTest {
 			underTest.downloadFile(A_DATASTORE, A_FOLDER, A_FILE);
 		} finally {
 			// then
-			verify(dataStore).folders();
-			verify(hashing, times(4)).hash(anyString());
-			verify(dataStore).files(eq(firstFolder));
+			verify(dataStore).folder(eq(A_FOLDER));
+			verify(dataStore).files(eq(A_FOLDER));
 			verify(errorHandler).fileNotFound(eq(A_FILE));
-			verifyNoMoreInteractions(errorHandler, dataStore, hashing);
+			verifyNoMoreInteractions(errorHandler, dataStore);
 		}
 	}
 
 	@Test
 	public void downloadFile() throws Exception {
-		final File firstFolder = temporaryFolder.newFolder(A_FOLDER);
-		final File secondFolder = temporaryFolder.newFolder();
-		final File thirdFolder = temporaryFolder.newFolder();
-		doReturn(asList(firstFolder, secondFolder, thirdFolder)) //
-				.when(dataStore).folders();
-		final File firstFile = temporaryFolder.newFile(A_FILE);
-		write(get(firstFile.toURI()), "foo bar baz".getBytes());
-		final File secondFile = temporaryFolder.newFile();
-		final File thirdFile = temporaryFolder.newFile();
+		// given
+		final Element folder = element(temporaryFolder.newFolder());
+		doReturn(of(folder)) //
+				.when(dataStore).folder(anyString());
+		final Element firstFile = element(temporaryFolder.newFile(A_FILE));
+		final Element secondFile = element(temporaryFolder.newFile());
+		final Element thirdFile = element(temporaryFolder.newFile());
 		doReturn(asList(firstFile, secondFile, thirdFile)) //
-				.when(dataStore).files(any(File.class));
+				.when(dataStore).files(any(String.class));
+		final File file = temporaryFolder.newFile("the file name");
+		write(get(file.toURI()), "foo bar baz".getBytes());
+		doReturn(of(new DataHandler(new FileDataSource(file)))) //
+				.when(dataStore).download(any(Element.class));
 
 		// when
 		final DataHandler response = underTest.downloadFile(A_DATASTORE, A_FOLDER, A_FILE);
 
 		// then
-		verify(dataStore).folders();
-		verify(hashing, times(2)).hash(anyString());
-		verify(dataStore).files(eq(firstFolder));
-		verifyNoMoreInteractions(errorHandler, dataStore, hashing);
+		verify(dataStore).folder(eq(A_FOLDER));
+		verify(dataStore).files(eq(A_FOLDER));
+		verify(dataStore).download(eq(firstFile));
+		verifyNoMoreInteractions(errorHandler, dataStore);
 
-		assertThat(response.getName(), equalTo(A_FILE));
+		assertThat(response.getName(), equalTo("the file name"));
 		assertThat(toString(response.getInputStream()), equalTo("foo bar baz"));
 	}
 
@@ -629,8 +555,7 @@ public class CxfDataStoresTest {
 				ChainablePutMap.of(new HashMap<String, DataStore>()) //
 						.chainablePut("foo", mock(DataStore.class)) //
 						.chainablePut("bar", mock(DataStore.class)) //
-						.chainablePut("baz", mock(DataStore.class)), //
-				hashing);
+						.chainablePut("baz", mock(DataStore.class)));
 		doThrow(DummyException.class) //
 				.when(errorHandler).dataStoreNotFound(anyString());
 
@@ -640,18 +565,15 @@ public class CxfDataStoresTest {
 		} finally {
 			// then
 			verify(errorHandler).dataStoreNotFound(eq("none"));
-			verifyNoMoreInteractions(errorHandler, dataStore, hashing);
+			verifyNoMoreInteractions(errorHandler, dataStore);
 		}
 	}
 
 	@Test(expected = DummyException.class)
 	public void deleteFileCallsErrorHandlerWhenFolderIsNotFound() throws Exception {
 		// given
-		final File firstFolder = temporaryFolder.newFolder();
-		final File secondFolder = temporaryFolder.newFolder();
-		final File thirdFolder = temporaryFolder.newFolder();
-		doReturn(asList(firstFolder, secondFolder, thirdFolder)) //
-				.when(dataStore).folders();
+		doReturn(empty()) //
+				.when(dataStore).folder(anyString());
 		doThrow(DummyException.class) //
 				.when(errorHandler).folderNotFound(anyString());
 
@@ -660,26 +582,23 @@ public class CxfDataStoresTest {
 			underTest.deleteFile(A_DATASTORE, A_FOLDER, A_FILE);
 		} finally {
 			// then
-			verify(dataStore).folders();
-			verify(hashing, times(3)).hash(anyString());
+			verify(dataStore).folder(eq(A_FOLDER));
 			verify(errorHandler).folderNotFound(eq(A_FOLDER));
-			verifyNoMoreInteractions(errorHandler, dataStore, hashing);
+			verifyNoMoreInteractions(errorHandler, dataStore);
 		}
 	}
 
 	@Test(expected = DummyException.class)
 	public void deleteFileCallsErrorHandlerWhenFileIsNotFound() throws Exception {
 		// given
-		final File firstFolder = temporaryFolder.newFolder(A_FOLDER);
-		final File secondFolder = temporaryFolder.newFolder();
-		final File thirdFolder = temporaryFolder.newFolder();
-		doReturn(asList(firstFolder, secondFolder, thirdFolder)) //
-				.when(dataStore).folders();
-		final File firstFile = temporaryFolder.newFile();
-		final File secondFile = temporaryFolder.newFile();
-		final File thirdFile = temporaryFolder.newFile();
+		final Element folder = element(temporaryFolder.newFolder());
+		doReturn(of(folder)) //
+				.when(dataStore).folder(anyString());
+		final Element firstFile = element(temporaryFolder.newFile());
+		final Element secondFile = element(temporaryFolder.newFile());
+		final Element thirdFile = element(temporaryFolder.newFile());
 		doReturn(asList(firstFile, secondFile, thirdFile)) //
-				.when(dataStore).files(any(File.class));
+				.when(dataStore).files(any(String.class));
 		doThrow(DummyException.class) //
 				.when(errorHandler).fileNotFound(anyString());
 
@@ -688,37 +607,56 @@ public class CxfDataStoresTest {
 			underTest.deleteFile(A_DATASTORE, A_FOLDER, A_FILE);
 		} finally {
 			// then
-			verify(dataStore).folders();
-			verify(hashing, times(4)).hash(anyString());
-			verify(dataStore).files(eq(firstFolder));
+			verify(dataStore).folder(eq(A_FOLDER));
+			verify(dataStore).files(eq(A_FOLDER));
 			verify(errorHandler).fileNotFound(eq(A_FILE));
-			verifyNoMoreInteractions(errorHandler, dataStore, hashing);
+			verifyNoMoreInteractions(errorHandler, dataStore);
 		}
 	}
 
 	@Test
 	public void deleteFile() throws Exception {
-		final File firstFolder = temporaryFolder.newFolder(A_FOLDER);
-		final File secondFolder = temporaryFolder.newFolder();
-		final File thirdFolder = temporaryFolder.newFolder();
-		doReturn(asList(firstFolder, secondFolder, thirdFolder)) //
-				.when(dataStore).folders();
-		final File firstFile = temporaryFolder.newFile(A_FILE);
-		write(get(firstFile.toURI()), "foo bar baz".getBytes());
-		final File secondFile = temporaryFolder.newFile();
-		final File thirdFile = temporaryFolder.newFile();
+		// given
+		final Element folder = element(temporaryFolder.newFolder());
+		doReturn(of(folder)) //
+				.when(dataStore).folder(anyString());
+		final File file = temporaryFolder.newFile(A_FILE);
+		final Element firstFile = element(file);
+		write(get(file.toURI()), "foo bar baz".getBytes());
+		final Element secondFile = element(temporaryFolder.newFile());
+		final Element thirdFile = element(temporaryFolder.newFile());
 		doReturn(asList(firstFile, secondFile, thirdFile)) //
-				.when(dataStore).files(any(File.class));
+				.when(dataStore).files(any(String.class));
 
 		// when
 		underTest.deleteFile(A_DATASTORE, A_FOLDER, A_FILE);
 
 		// then
-		verify(dataStore).folders();
-		verify(dataStore).files(eq(firstFolder));
+		verify(dataStore).folder(eq(A_FOLDER));
+		verify(dataStore).files(eq(A_FOLDER));
 		verify(dataStore).delete(eq(firstFile));
-		verify(hashing, times(2)).hash(anyString());
-		verifyNoMoreInteractions(errorHandler, dataStore, hashing);
+		verifyNoMoreInteractions(errorHandler, dataStore);
+	}
+
+	private static Element element(final File file) {
+		return new Element() {
+
+			@Override
+			public String getId() {
+				return file.getName();
+			}
+
+			@Override
+			public String getParent() {
+				return file.getParent();
+			}
+
+			@Override
+			public String getName() {
+				return file.getName();
+			}
+
+		};
 	}
 
 	private static String toString(final InputStream is) {

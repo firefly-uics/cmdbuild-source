@@ -448,13 +448,13 @@ public class ServicesV2 implements LoggingSupport {
 	public DataStores v2_dataStores() {
 		final Map<String, CxfDataStores.DataStore> map = new HashMap<>();
 		map.put("images", imagesDataStore());
-		final CxfDataStores service = new CxfDataStores(v2_errorHandler(), map, defaultHashing());
+		final CxfDataStores service = new CxfDataStores(v2_errorHandler(), map);
 		return proxy(DataStores.class, service);
 	}
 
 	@Bean
 	protected CxfDataStores.DataStore imagesDataStore() {
-		return new CxfDataStores.DefaultDataStore(helper.filesStore().sub("images"));
+		return new CxfDataStores.DefaultDataStore(helper.filesStore().sub("images"), defaultHashing());
 	}
 
 	@Bean

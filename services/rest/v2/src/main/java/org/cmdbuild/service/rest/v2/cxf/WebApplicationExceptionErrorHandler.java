@@ -3,6 +3,7 @@ package org.cmdbuild.service.rest.v2.cxf;
 import static java.lang.String.format;
 import static javax.ws.rs.core.Response.Status.BAD_REQUEST;
 import static javax.ws.rs.core.Response.Status.CONFLICT;
+import static javax.ws.rs.core.Response.Status.INTERNAL_SERVER_ERROR;
 import static javax.ws.rs.core.Response.Status.NOT_FOUND;
 import static javax.ws.rs.core.Response.Status.UNAUTHORIZED;
 
@@ -77,6 +78,12 @@ public class WebApplicationExceptionErrorHandler implements ErrorHandler, Loggin
 	public void extensionNotFound(final String value) {
 		logger.error("extension not found '{}'", value);
 		notFound(value);
+	}
+
+	@Override
+	public void fileNotCreated() {
+		logger.error("file not created");
+		generic("file not created");
 	}
 
 	@Override
@@ -235,6 +242,12 @@ public class WebApplicationExceptionErrorHandler implements ErrorHandler, Loggin
 
 	private void conflict(final Object entity) {
 		throw new WebApplicationException(Response.status(CONFLICT) //
+				.entity(entity) //
+				.build());
+	}
+
+	private void generic(final Object entity) {
+		throw new WebApplicationException(Response.status(INTERNAL_SERVER_ERROR) //
 				.entity(entity) //
 				.build());
 	}
