@@ -1,13 +1,14 @@
 package org.cmdbuild.service.rest.v2.cxf;
 
-import static com.google.common.io.BaseEncoding.base64Url;
 import static java.io.File.separator;
-import static java.util.Arrays.asList;
+import static java.util.Arrays.stream;
 import static java.util.Objects.requireNonNull;
+import static java.util.Optional.empty;
+import static java.util.Optional.of;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toSet;
 import static java.util.stream.StreamSupport.stream;
-import static org.apache.commons.lang3.ObjectUtils.defaultIfNull;
+import static org.apache.commons.lang3.StringUtils.difference;
 import static org.cmdbuild.service.rest.v2.model.Models.newFileSystemObject;
 import static org.cmdbuild.service.rest.v2.model.Models.newMetadata;
 import static org.cmdbuild.service.rest.v2.model.Models.newResponseMultiple;
@@ -19,109 +20,218 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Map;
 import java.util.Optional;
+import java.util.function.Function;
 
 import javax.activation.DataHandler;
 import javax.activation.FileDataSource;
 
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.cmdbuild.service.rest.v2.DataStores;
 import org.cmdbuild.service.rest.v2.model.FileSystemObject;
 import org.cmdbuild.service.rest.v2.model.ResponseMultiple;
 import org.cmdbuild.service.rest.v2.model.ResponseSingle;
+import org.cmdbuild.service.rest.v2.model.ClassWithFullDetails.AttributeOrder;
 import org.cmdbuild.services.FilesStore;
-import org.cmdbuild.services.ForwardingFilesStore;
 
-import com.google.common.hash.HashCode;
 import com.google.common.hash.HashFunction;
-import com.google.common.io.BaseEncoding;
 
 public class CxfDataStores implements DataStores {
 
-	public static interface DataStore {
+	public static interface Element {
 
-		Iterable<File> folders();
+		String getId();
 
-		Iterable<File> files(File folder);
+		String getParent();
 
-		File create(File folder, DataHandler dataHandler) throws IOException;
-
-		void delete(File file);
+		String getName();
 
 	}
 
-	public static class DefaultDataStore extends ForwardingFilesStore implements DataStore {
+	public static interface DataStore {
+
+		Iterable<Element> folders();
+
+		Optional<Element> folder(String folder);
+
+		// TODO change String to Element
+		Iterable<Element> files(String folder);
+
+		// TODO change String to Element
+		Optional<Element> create(String folder, DataHandler dataHandler);
+
+		Optional<DataHandler> download(Element file);
+
+		void delete(Element file);
+
+	}
+
+	public static class DefaultDataStore implements DataStore {
 
 		private static final String NULL = null;
 		private static final File[] MISSING_FILES = new File[] {};
 
 		private final FilesStore delegate;
+		private final Hashing hashing;
 
-		public DefaultDataStore(final FilesStore delegate) {
+		public DefaultDataStore(final FilesStore delegate, final Hashing hashing) {
 			this.delegate = delegate;
+			this.hashing = hashing;
 		}
 
-		@Override
-		protected FilesStore delegate() {
-			return delegate;
-		}
-
-		@Override
-		public Iterable<File> folders() {
+		private Collection<File> directories() {
 			final Collection<File> output = new ArrayList<>();
-			output.add(getRoot());
-			folders(delegate, output);
+			directories(delegate, output);
 			return output;
 		}
 
-		private static void folders(final FilesStore filesStore, final Collection<File> output) {
-			final Collection<File> collect = stream(filesStore.files(NULL).spliterator(), false) //
-					.filter(input -> input.isDirectory()) //
-					.collect(toSet());
-			/*
-			 * we cannot use forEach because we need to avoid the infinite loop
-			 */
-			for (final File input : collect) {
-				output.add(input);
-				folders(filesStore.sub(input.getName()), output);
-			}
+		private static void directories(final FilesStore filesStore, final Collection<File> output) {
+			output.add(filesStore.getRoot());
+			stream(filesStore.files(NULL).spliterator(), false) //
+					.filter(File::isDirectory) //
+					.forEach(input -> directories(filesStore.sub(input.getName()), output));
 		}
 
 		@Override
-		public Iterable<File> files(final File folder) {
-			requireNonNull(folder, "missing directory");
-			return stream(listFiles(folder).spliterator(), false) //
-					.filter(f -> f.isFile()) //
+		public Iterable<Element> folders() {
+			return directories().stream() //
+					.map(input -> toElement(input)) //
 					.collect(toSet());
 		}
 
-		private Iterable<File> listFiles(final File folder) {
-			final File[] output;
-			if (folder.getAbsolutePath().startsWith(getRoot().getAbsolutePath())) {
-				output = defaultIfNull(folder.listFiles(), MISSING_FILES);
-			} else {
-				output = null;
-			}
-			return asList(defaultIfNull(output, MISSING_FILES));
+		@Override
+		public Optional<Element> folder(final String folder) {
+			return directories().stream() //
+					.filter(input -> id(input).equals(requireNonNull(folder, "missing folder"))) //
+					.findFirst() //
+					.map(input -> toElement(input));
 		}
 
 		@Override
-		public File create(final File folder, final DataHandler dataHandler) throws IOException {
-			File output;
-			if (folder.getAbsolutePath().startsWith(getRoot().getAbsolutePath())) {
-				final String path = new StringBuilder() //
-						.append(folder.getAbsolutePath().substring(getRoot().getAbsolutePath().length())) //
-						.append(separator) //
-						.append(dataHandler.getName()) //
-						.toString();
-				output = save(dataHandler.getInputStream(), path);
-			} else {
-				output = null;
-			}
-			return output;
+		public Iterable<Element> files(final String folder) {
+			return stream(directories().stream() //
+					.filter(input -> id(input).equals(requireNonNull(folder, "missing folder"))) //
+					.findFirst() //
+					.map(File::listFiles) //
+					.orElse(MISSING_FILES)) //
+							.filter(File::isFile) //
+							.map(input -> toElement(input)) //
+							.collect(toList());
 		}
 
 		@Override
-		public void delete(final File file) {
-			remove(file.getName());
+		public Optional<Element> create(final String folder, final DataHandler dataHandler) {
+			return directories().stream() //
+					.filter(input -> id(input).equals(requireNonNull(folder, "missing folder"))) //
+					.findFirst() //
+					.flatMap(new Function<File, Optional<File>>() {
+
+						@Override
+						public Optional<File> apply(File directory) {
+							try {
+								final String path = new StringBuilder() //
+										.append(relativePath(directory)) //
+										.append(separator) //
+										.append(dataHandler.getName()) //
+										.toString();
+								return of(delegate.save(dataHandler.getInputStream(), path));
+							} catch (IOException e) {
+								// TODO log
+								return empty();
+							}
+						}
+
+					}) //
+					.map(input -> toElement(input));
+		}
+
+		@Override
+		public Optional<DataHandler> download(Element file) {
+			requireNonNull(file, "missing file");
+			return stream(directories().stream() //
+					.filter(input -> id(input).equals(file.getParent())) //
+					.findFirst() //
+					.map(File::listFiles) //
+					.orElse(MISSING_FILES)) //
+							.filter(input -> id(input).equals(file.getId())) //
+							.findFirst() //
+							.map(input -> new DataHandler(new FileDataSource(input)));
+		}
+
+		@Override
+		public void delete(final Element file) {
+			requireNonNull(file, "missing file");
+			stream(directories().stream() //
+					.filter(input -> id(input).equals(file.getParent())) //
+					.findFirst() //
+					.map(File::listFiles) //
+					.orElse(MISSING_FILES)) //
+							.filter(input -> id(input).equals(file.getId())) //
+							.findFirst() //
+							.ifPresent(File::delete);
+		}
+
+		private Element toElement(final File value) {
+			return new Element() {
+
+				private final String id = id(value);
+				private final String parent = id(value);
+				private final String name = value.getName();
+
+				@Override
+				public String getId() {
+					return id;
+				}
+
+				@Override
+				public String getParent() {
+					return parent;
+				};
+
+				@Override
+				public String getName() {
+					return name;
+				}
+
+				@Override
+				public int hashCode() {
+					return new HashCodeBuilder() //
+							.append(getId()) //
+							.append(getParent()) //
+							.append(getName()) //
+							.toHashCode();
+				}
+
+				@Override
+				public boolean equals(Object obj) {
+					if (obj == this) {
+						return true;
+					}
+					if (!(obj instanceof Element)) {
+						return false;
+					}
+					final Element other = Element.class.cast(obj);
+					return new EqualsBuilder() //
+							.append(this.getId(), other.getId()) //
+							.append(this.getParent(), other.getParent()) //
+							.append(this.getName(), other.getName()) //
+							.isEquals();
+				}
+
+				@Override
+				public String toString() {
+					return getId();
+				}
+
+			};
+		}
+
+		private String id(final File value) {
+			return hashing.hash(relativePath(value));
+		}
+
+		private String relativePath(final File value) {
+			return difference(delegate.getRoot().getAbsolutePath(), value.getAbsolutePath());
 		}
 
 	}
@@ -149,12 +259,10 @@ public class CxfDataStores implements DataStores {
 
 	private final ErrorHandler errorHandler;
 	private final Map<String, DataStore> stores;
-	private final Hashing hashing;
 
-	public CxfDataStores(final ErrorHandler errorHandler, final Map<String, DataStore> stores, final Hashing hashing) {
+	public CxfDataStores(final ErrorHandler errorHandler, final Map<String, DataStore> stores) {
 		this.errorHandler = requireNonNull(errorHandler, "missing " + ErrorHandler.class);
 		this.stores = requireNonNull(stores, "missing " + Map.class);
-		this.hashing = requireNonNull(hashing, "missing " + Hashing.class);
 	}
 
 	@Override
@@ -162,9 +270,9 @@ public class CxfDataStores implements DataStores {
 		final DataStore store = assureDataStore(datastoreId);
 		final Collection<FileSystemObject> folders = stream(store.folders().spliterator(), false) //
 				.map(input -> newFileSystemObject() //
-						.withId(idOf(input)) //
+						.withId(input.getId()) //
 						.withName(input.getName()) //
-						.withParent(idOf(input.getParentFile())) //
+						.withParent(input.getParent()) //
 						.build()) //
 				.collect(toList());
 		return newResponseMultiple(FileSystemObject.class) //
@@ -178,14 +286,12 @@ public class CxfDataStores implements DataStores {
 	@Override
 	public ResponseSingle<FileSystemObject> readFolder(final String datastoreId, final String folderId) {
 		final DataStore store = assureDataStore(datastoreId);
-		final Optional<FileSystemObject> folder = stream(store.folders().spliterator(), false) //
-				.filter(input -> idOf(input).equals(folderId)) //
+		final Optional<FileSystemObject> folder = store.folder(folderId) //
 				.map(input -> newFileSystemObject() //
-						.withId(idOf(input)) //
+						.withId(input.getId()) //
 						.withName(input.getName()) //
-						.withParent(idOf(input.getParentFile())) //
-						.build()) //
-				.findFirst();
+						.withParent(input.getParent()) //
+						.build());
 		if (!folder.isPresent()) {
 			errorHandler.folderNotFound(folderId);
 		}
@@ -198,51 +304,42 @@ public class CxfDataStores implements DataStores {
 	public ResponseSingle<FileSystemObject> uploadFile(final String datastoreId, final String folderId,
 			final DataHandler dataHandler) {
 		final DataStore store = assureDataStore(datastoreId);
-		final Optional<File> folder = stream(store.folders().spliterator(), false) //
-				.filter(input -> idOf(input).equals(folderId)) //
-				.findFirst();
+		final Optional<Element> folder = store.folder(folderId);
 		if (!folder.isPresent()) {
 			errorHandler.folderNotFound(folderId);
 		}
-		final Optional<File> file = stream(store.files(folder.get()).spliterator(), false) //
+		final Optional<Element> file = stream(store.files(folderId).spliterator(), false) //
 				.filter(input -> input.getName().equals(dataHandler.getName())) //
 				.findFirst();
 		if (file.isPresent()) {
 			errorHandler.duplicateFileName(dataHandler.getName());
 		}
-		final File created = create(store, folder.get(), dataHandler);
+		final Optional<Element> created = store.create(folderId, dataHandler);
+		if (!created.isPresent()) {
+			errorHandler.fileNotCreated();
+		}
+		final Element element = created.get();
 		return newResponseSingle(FileSystemObject.class) //
 				.withElement(newFileSystemObject() //
-						.withId(idOf(created)) //
-						.withName(created.getName()) //
-						.withParent(idOf(created.getParentFile())) //
+						.withId(element.getId()) //
+						.withName(element.getName()) //
+						.withParent(element.getParent()) //
 						.build()) //
 				.build();
-	}
-
-	private File create(final DataStore store, final File folder, final DataHandler dataHandler) {
-		try {
-			return store.create(folder, dataHandler);
-		} catch (final IOException e) {
-			errorHandler.propagate(e);
-			throw new AssertionError("should not come here", e);
-		}
 	}
 
 	@Override
 	public ResponseMultiple<FileSystemObject> readFiles(final String datastoreId, final String folderId) {
 		final DataStore store = assureDataStore(datastoreId);
-		final Optional<File> folder = stream(store.folders().spliterator(), false) //
-				.filter(input -> idOf(input).equals(folderId)) //
-				.findFirst();
+		final Optional<Element> folder = store.folder(folderId);
 		if (!folder.isPresent()) {
 			errorHandler.folderNotFound(folderId);
 		}
-		final Collection<FileSystemObject> files = stream(store.files(folder.get()).spliterator(), false) //
+		final Collection<FileSystemObject> files = stream(store.files(folderId).spliterator(), false) //
 				.map(input -> newFileSystemObject() //
-						.withId(idOf(input)) //
+						.withId(input.getId()) //
 						.withName(input.getName()) //
-						.withParent(idOf(input.getParentFile())) //
+						.withParent(input.getParent()) //
 						.build()) //
 				.collect(toList());
 		return newResponseMultiple(FileSystemObject.class) //
@@ -257,18 +354,16 @@ public class CxfDataStores implements DataStores {
 	public ResponseSingle<FileSystemObject> readFile(final String datastoreId, final String folderId,
 			final String fileId) {
 		final DataStore store = assureDataStore(datastoreId);
-		final Optional<File> folder = stream(store.folders().spliterator(), false) //
-				.filter(input -> idOf(input).equals(folderId)) //
-				.findFirst();
+		final Optional<Element> folder = store.folder(folderId);
 		if (!folder.isPresent()) {
 			errorHandler.folderNotFound(folderId);
 		}
-		final Optional<FileSystemObject> file = stream(store.files(folder.get()).spliterator(), false) //
-				.filter(input -> idOf(input).equals(fileId)) //
+		final Optional<FileSystemObject> file = stream(store.files(folderId).spliterator(), false) //
+				.filter(input -> input.getId().equals(fileId)) //
 				.map(input -> newFileSystemObject() //
-						.withId(idOf(input)) //
+						.withId(input.getId()) //
 						.withName(input.getName()) //
-						.withParent(idOf(input.getParentFile())) //
+						.withParent(input.getParent()) //
 						.build()) //
 				.findFirst();
 		if (!file.isPresent()) {
@@ -282,32 +377,28 @@ public class CxfDataStores implements DataStores {
 	@Override
 	public DataHandler downloadFile(final String datastoreId, final String folderId, final String fileId) {
 		final DataStore store = assureDataStore(datastoreId);
-		final Optional<File> folder = stream(store.folders().spliterator(), false) //
-				.filter(input -> idOf(input).equals(folderId)) //
-				.findFirst();
+		final Optional<Element> folder = store.folder(folderId);
 		if (!folder.isPresent()) {
 			errorHandler.folderNotFound(folderId);
 		}
-		final Optional<File> file = stream(store.files(folder.get()).spliterator(), false) //
-				.filter(input -> idOf(input).equals(fileId)) //
+		final Optional<Element> file = stream(store.files(folderId).spliterator(), false) //
+				.filter(input -> input.getId().equals(fileId)) //
 				.findFirst();
 		if (!file.isPresent()) {
 			errorHandler.fileNotFound(fileId);
 		}
-		return new DataHandler(new FileDataSource(file.get()));
+		return store.download(file.get()).get();
 	}
 
 	@Override
 	public void deleteFile(final String datastoreId, final String folderId, final String fileId) {
 		final DataStore store = assureDataStore(datastoreId);
-		final Optional<File> folder = stream(store.folders().spliterator(), false) //
-				.filter(input -> idOf(input).equals(folderId)) //
-				.findFirst();
+		final Optional<Element> folder = store.folder(folderId);
 		if (!folder.isPresent()) {
 			errorHandler.folderNotFound(folderId);
 		}
-		final Optional<File> file = stream(store.files(folder.get()).spliterator(), false) //
-				.filter(input -> idOf(input).equals(fileId)) //
+		final Optional<Element> file = stream(store.files(folderId).spliterator(), false) //
+				.filter(input -> input.getId().equals(fileId)) //
 				.findFirst();
 		if (!file.isPresent()) {
 			errorHandler.fileNotFound(fileId);
@@ -321,10 +412,6 @@ public class CxfDataStores implements DataStores {
 			errorHandler.dataStoreNotFound(datastoreId);
 		}
 		return output;
-	}
-
-	private String idOf(final File input) {
-		return hashing.hash(input.getAbsolutePath());
 	}
 
 }

@@ -24,6 +24,8 @@ public interface ErrorHandler {
 
 	void extensionNotFound(String value);
 
+	void fileNotCreated();
+
 	void fileNotFound(String value);
 
 	void folderNotFound(String value);
