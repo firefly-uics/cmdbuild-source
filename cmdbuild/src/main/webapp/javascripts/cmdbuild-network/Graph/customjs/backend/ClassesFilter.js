@@ -56,7 +56,8 @@
 					data.rows.push({
 						_id: filterClasses[i],
 						id: filterClasses[i],
-						classId: filterClasses[i]
+						classId: filterClasses[i],
+						classDescription : $.Cmdbuild.customvariables.cacheClasses.getDescription(filterClasses[i])
 					});
 				}
 				this.total += i;
