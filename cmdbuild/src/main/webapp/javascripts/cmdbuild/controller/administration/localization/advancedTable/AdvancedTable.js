@@ -27,44 +27,44 @@
 		],
 
 		/**
-		 * @property {CMDBuild.controller.administration.localization.advancedTable.SectionClass}
+		 * @property {CMDBuild.controller.administration.localization.advancedTable.section.Class}
 		 */
-		sectionControllerClasses: undefined,
+		sectionControllerClass: undefined,
 
 		/**
-		 * @property {CMDBuild.controller.administration.localization.advancedTable.SectionDomain}
+		 * @property {CMDBuild.controller.administration.localization.advancedTable.section.Domain}
 		 */
-		sectionControllerDomains: undefined,
+		sectionControllerDomain: undefined,
 
 		/**
-		 * @property {CMDBuild.controller.administration.localization.advancedTable.SectionFilter}
+		 * @property {CMDBuild.controller.administration.localization.advancedTable.section.Filter}
 		 */
-		sectionControllerFilters: undefined,
+		sectionControllerFilter: undefined,
 
 		/**
-		 * @property {CMDBuild.controller.administration.localization.advancedTable.SectionLookup}
+		 * @property {CMDBuild.controller.administration.localization.advancedTable.section.Lookup}
 		 */
 		sectionControllerLookup: undefined,
 
 		/**
-		 * @property {CMDBuild.controller.administration.localization.advancedTable.SectionMenu}
+		 * @property {CMDBuild.controller.administration.localization.advancedTable.section.Menu}
 		 */
 		sectionControllerMenu: undefined,
 
 		/**
-		 * @property {CMDBuild.controller.administration.localization.advancedTable.SectionProcess}
+		 * @property {CMDBuild.controller.administration.localization.advancedTable.section.Report}
 		 */
-		sectionControllerProcesses: undefined,
+		sectionControllerReport: undefined,
 
 		/**
-		 * @property {CMDBuild.controller.administration.localization.advancedTable.SectionReport}
+		 * @property {CMDBuild.controller.administration.localization.advancedTable.section.View}
 		 */
-		sectionControllerReports: undefined,
+		sectionControllerView: undefined,
 
 		/**
-		 * @property {CMDBuild.controller.administration.localization.advancedTable.SectionView}
+		 * @property {CMDBuild.controller.administration.localization.advancedTable.section.Workflow}
 		 */
-		sectionControllerViews: undefined,
+		sectionControllerWorkflow: undefined,
 
 		/**
 		 * @property {CMDBuild.view.administration.localization.advancedTable.AdvancedTableView}
@@ -83,14 +83,14 @@
 			this.view = Ext.create('CMDBuild.view.administration.localization.advancedTable.AdvancedTableView', { delegate: this });
 
 			// Build tabs (in display order)
-			this.sectionControllerClasses = Ext.create('CMDBuild.controller.administration.localization.advancedTable.SectionClass', { parentDelegate: this });
-			this.sectionControllerProcesses = Ext.create('CMDBuild.controller.administration.localization.advancedTable.SectionProcess', { parentDelegate: this });
-			this.sectionControllerDomains = Ext.create('CMDBuild.controller.administration.localization.advancedTable.SectionDomain', { parentDelegate: this });
-			this.sectionControllerViews = Ext.create('CMDBuild.controller.administration.localization.advancedTable.SectionView', { parentDelegate: this });
-			this.sectionControllerFilters = Ext.create('CMDBuild.controller.administration.localization.advancedTable.SectionFilter', { parentDelegate: this });
-			this.sectionControllerLookup = Ext.create('CMDBuild.controller.administration.localization.advancedTable.SectionLookup', { parentDelegate: this });
-			this.sectionControllerReports = Ext.create('CMDBuild.controller.administration.localization.advancedTable.SectionReport', { parentDelegate: this });
-			this.sectionControllerMenu = Ext.create('CMDBuild.controller.administration.localization.advancedTable.SectionMenu', { parentDelegate: this });
+			this.sectionControllerClass = Ext.create('CMDBuild.controller.administration.localization.advancedTable.section.Class', { parentDelegate: this });
+			this.sectionControllerWorkflow = Ext.create('CMDBuild.controller.administration.localization.advancedTable.section.Workflow', { parentDelegate: this });
+			this.sectionControllerDomain = Ext.create('CMDBuild.controller.administration.localization.advancedTable.section.Domain', { parentDelegate: this });
+			this.sectionControllerView = Ext.create('CMDBuild.controller.administration.localization.advancedTable.section.View', { parentDelegate: this });
+			this.sectionControllerFilter = Ext.create('CMDBuild.controller.administration.localization.advancedTable.section.Filter', { parentDelegate: this });
+			this.sectionControllerLookup = Ext.create('CMDBuild.controller.administration.localization.advancedTable.section.Lookup', { parentDelegate: this });
+			this.sectionControllerReport = Ext.create('CMDBuild.controller.administration.localization.advancedTable.section.Report', { parentDelegate: this });
+			this.sectionControllerMenu = Ext.create('CMDBuild.controller.administration.localization.advancedTable.section.Menu', { parentDelegate: this });
 
 			this.view.setActiveTab(0);
 			this.view.getActiveTab().fireEvent('show'); // Manual show event fire

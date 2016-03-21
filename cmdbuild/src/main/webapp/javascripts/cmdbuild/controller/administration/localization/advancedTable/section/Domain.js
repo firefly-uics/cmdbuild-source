@@ -1,7 +1,7 @@
 (function() {
 
-	Ext.define('CMDBuild.controller.administration.localization.advancedTable.SectionClass', {
-		extend: 'CMDBuild.controller.administration.localization.advancedTable.SectionAbstract',
+	Ext.define('CMDBuild.controller.administration.localization.advancedTable.section.Domain', {
+		extend: 'CMDBuild.controller.administration.localization.advancedTable.section.Abstract',
 
 		requires: [
 			'CMDBuild.core.constants.Proxy',
@@ -14,19 +14,9 @@
 		parentDelegate: undefined,
 
 		/**
-		 * @cfg {Array}
-		 */
-		entityFilter: ['class'],
-
-		/**
-		 * @cfg {Array}
-		 */
-		entityAttributeFilter: ['notes'],
-
-		/**
 		 * @cfg {String}
 		 */
-		sectionId: CMDBuild.core.constants.Proxy.CLASS,
+		sectionId: CMDBuild.core.constants.Proxy.DOMAIN,
 
 		/**
 		 * @property {CMDBuild.view.administration.localization.common.AdvancedTableGrid}
@@ -49,7 +39,7 @@
 
 			this.view = Ext.create('CMDBuild.view.administration.localization.advancedTable.SectionPanel', {
 				delegate: this,
-				title: CMDBuild.Translation.classes
+				title: CMDBuild.Translation.domains
 			});
 
 			// Shorthand

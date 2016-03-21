@@ -1,7 +1,7 @@
 (function() {
 
-	Ext.define('CMDBuild.controller.administration.localization.advancedTable.SectionView', {
-		extend: 'CMDBuild.controller.administration.localization.advancedTable.SectionAbstract',
+	Ext.define('CMDBuild.controller.administration.localization.advancedTable.section.View', {
+		extend: 'CMDBuild.controller.administration.localization.advancedTable.section.Abstract',
 
 		requires: [
 			'CMDBuild.core.constants.Proxy',
