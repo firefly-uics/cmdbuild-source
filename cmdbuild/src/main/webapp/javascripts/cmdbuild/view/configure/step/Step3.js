@@ -23,21 +23,21 @@
 				items: [
 					Ext.create('Ext.form.field.Text', {
 						name: CMDBuild.core.constants.Proxy.ADMINISTRATOR_USER_NAME,
-						fieldLabel: CMDBuild.core.Utils.prependMandatoryLabel(CMDBuild.Translation.username),
+						fieldLabel: CMDBuild.Translation.username,
 						labelWidth: CMDBuild.core.constants.FieldWidths.LABEL_CONFIGURE,
 						maxWidth: CMDBuild.core.constants.FieldWidths.CONFIGURE_MEDIUM,
 						allowBlank: false
 					}),
 					this.adminPassword = Ext.create('Ext.form.field.Text', {
 						name: CMDBuild.core.constants.Proxy.ADMINISTRATOR_PASSWORD,
-						fieldLabel: CMDBuild.core.Utils.prependMandatoryLabel(CMDBuild.Translation.password),
+						fieldLabel: CMDBuild.Translation.password,
 						labelWidth: CMDBuild.core.constants.FieldWidths.LABEL_CONFIGURE,
 						maxWidth: CMDBuild.core.constants.FieldWidths.CONFIGURE_MEDIUM,
 						inputType: 'password',
 						allowBlank: false
 					}),
 					Ext.create('Ext.form.field.Text', {
-						fieldLabel: CMDBuild.core.Utils.prependMandatoryLabel(CMDBuild.Translation.confirmPassword),
+						fieldLabel: CMDBuild.Translation.confirmPassword,
 						labelWidth: CMDBuild.core.constants.FieldWidths.LABEL_CONFIGURE,
 						maxWidth: CMDBuild.core.constants.FieldWidths.CONFIGURE_MEDIUM,
 						inputType: 'password',
