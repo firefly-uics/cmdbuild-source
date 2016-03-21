@@ -30,26 +30,45 @@ import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 import org.mockito.ArgumentCaptor;
 
-import com.google.common.base.Function;
+import com.google.common.base.Converter;
 
 public class CxfIconsTest {
+
+	private static interface ConverterDelegate {
+
+		org.cmdbuild.logic.icon.Icon doForward(Icon a);
+
+		Icon doBackward(org.cmdbuild.logic.icon.Icon b);
+
+	}
 
 	@Rule
 	public TemporaryFolder folder = new TemporaryFolder();
 
 	private ErrorHandler errorHandler;
 	private IconsLogic iconsLogic;
-	private Function<Icon, org.cmdbuild.logic.icon.Icon> iconToElement;
-	private Function<org.cmdbuild.logic.icon.Icon, Icon> elementToIcon;
+	private ConverterDelegate converterDelegate;
 	private CxfIcons underTest;
 
 	@Before
 	public void setUp() throws Exception {
 		errorHandler = mock(ErrorHandler.class);
 		iconsLogic = mock(IconsLogic.class);
-		iconToElement = mock(Function.class);
-		elementToIcon = mock(Function.class);
-		underTest = new CxfIcons(errorHandler, iconsLogic, iconToElement, elementToIcon);
+		converterDelegate = mock(ConverterDelegate.class);
+		final Converter<Icon, org.cmdbuild.logic.icon.Icon> converter = new Converter<Icon, org.cmdbuild.logic.icon.Icon>() {
+
+			@Override
+			protected org.cmdbuild.logic.icon.Icon doForward(final Icon a) {
+				return converterDelegate.doForward(a);
+			}
+
+			@Override
+			protected Icon doBackward(final org.cmdbuild.logic.icon.Icon b) {
+				return converterDelegate.doBackward(b);
+			}
+
+		};
+		underTest = new CxfIcons(errorHandler, iconsLogic, converter);
 	}
 
 	@Test(expected = NullPointerException.class)
@@ -64,22 +83,22 @@ public class CxfIconsTest {
 		final Icon inputIcon = newIcon().build();
 		final org.cmdbuild.logic.icon.Icon elementFromIcon = mock(org.cmdbuild.logic.icon.Icon.class);
 		doReturn(elementFromIcon) //
-				.when(iconToElement).apply(any(Icon.class));
+				.when(converterDelegate).doForward(any(Icon.class));
 		final org.cmdbuild.logic.icon.Icon elementFromLogic = mock(org.cmdbuild.logic.icon.Icon.class);
 		doReturn(elementFromLogic) //
 				.when(iconsLogic).create(any(org.cmdbuild.logic.icon.Icon.class));
 		final Icon outputIcon = newIcon().build();
 		doReturn(outputIcon) //
-				.when(elementToIcon).apply(any(org.cmdbuild.logic.icon.Icon.class));
+				.when(converterDelegate).doBackward(any(org.cmdbuild.logic.icon.Icon.class));
 
 		// when
 		final ResponseSingle<Icon> response = underTest.create(inputIcon);
 
 		// then
-		verify(iconToElement).apply(eq(inputIcon));
+		verify(converterDelegate).doForward(eq(inputIcon));
 		verify(iconsLogic).create(eq(elementFromIcon));
-		verify(elementToIcon).apply(eq(elementFromLogic));
-		verifyNoMoreInteractions(errorHandler, iconsLogic, iconToElement, elementToIcon);
+		verify(converterDelegate).doBackward(eq(elementFromLogic));
+		verifyNoMoreInteractions(errorHandler, iconsLogic, converterDelegate);
 
 		assertThat(response,
 				equalTo(newResponseSingle(Icon.class) //
@@ -99,7 +118,7 @@ public class CxfIconsTest {
 		final Icon _second = newIcon().build();
 		final Icon _third = newIcon().build();
 		doReturn(_first).doReturn(_second).doReturn(_third) //
-				.when(elementToIcon).apply(any(org.cmdbuild.logic.icon.Icon.class));
+				.when(converterDelegate).doBackward(any(org.cmdbuild.logic.icon.Icon.class));
 
 		// when
 		final ResponseMultiple<Icon> response = underTest.read();
@@ -108,9 +127,9 @@ public class CxfIconsTest {
 		verify(iconsLogic).read();
 		final ArgumentCaptor<org.cmdbuild.logic.icon.Icon> captor = ArgumentCaptor
 				.forClass(org.cmdbuild.logic.icon.Icon.class);
-		verify(elementToIcon, times(3)).apply(captor.capture());
+		verify(converterDelegate, times(3)).doBackward(captor.capture());
 		assertThat(captor.getAllValues(), contains(first, second, third));
-		verifyNoMoreInteractions(errorHandler, iconsLogic, iconToElement, elementToIcon);
+		verifyNoMoreInteractions(errorHandler, iconsLogic, converterDelegate);
 
 		assertThat(response,
 				equalTo(newResponseMultiple(Icon.class) //
@@ -141,7 +160,7 @@ public class CxfIconsTest {
 				.forClass(org.cmdbuild.logic.icon.Icon.class);
 		verify(iconsLogic).read(captor.capture());
 		verify(errorHandler).missingIcon(eq(42L));
-		verifyNoMoreInteractions(errorHandler, iconsLogic, iconToElement, elementToIcon);
+		verifyNoMoreInteractions(errorHandler, iconsLogic, converterDelegate);
 	}
 
 	@Test
@@ -152,7 +171,7 @@ public class CxfIconsTest {
 				.when(iconsLogic).read(any(org.cmdbuild.logic.icon.Icon.class));
 		final Icon outputIcon = newIcon().build();
 		doReturn(outputIcon) //
-				.when(elementToIcon).apply(any(org.cmdbuild.logic.icon.Icon.class));
+				.when(converterDelegate).doBackward(any(org.cmdbuild.logic.icon.Icon.class));
 
 		// when
 		final ResponseSingle<Icon> response = underTest.read(42L);
@@ -161,8 +180,8 @@ public class CxfIconsTest {
 		final ArgumentCaptor<org.cmdbuild.logic.icon.Icon> captor = ArgumentCaptor
 				.forClass(org.cmdbuild.logic.icon.Icon.class);
 		verify(iconsLogic).read(captor.capture());
-		verify(elementToIcon).apply(eq(element));
-		verifyNoMoreInteractions(errorHandler, iconsLogic, iconToElement, elementToIcon);
+		verify(converterDelegate).doBackward(eq(element));
+		verifyNoMoreInteractions(errorHandler, iconsLogic, converterDelegate);
 
 		assertThat(captor.getValue().getId(), equalTo(42L));
 		assertThat(response,
@@ -201,7 +220,7 @@ public class CxfIconsTest {
 				.forClass(org.cmdbuild.logic.icon.Icon.class);
 		verify(iconsLogic).read(captor.capture());
 		verify(errorHandler).missingIcon(eq(42L));
-		verifyNoMoreInteractions(errorHandler, iconsLogic, iconToElement, elementToIcon);
+		verifyNoMoreInteractions(errorHandler, iconsLogic, converterDelegate);
 
 		assertThat(captor.getValue().getId(), equalTo(42L));
 	}
@@ -210,8 +229,11 @@ public class CxfIconsTest {
 	public void update() throws Exception {
 		// given
 		final Icon icon = newIcon().build();
-		final org.cmdbuild.logic.icon.Icon element = mock(org.cmdbuild.logic.icon.Icon.class);
-		doReturn(Optional.of(element)) //
+		final org.cmdbuild.logic.icon.Icon converted = mock(org.cmdbuild.logic.icon.Icon.class);
+		doReturn(converted) //
+				.when(converterDelegate).doForward(any(Icon.class));
+		final org.cmdbuild.logic.icon.Icon read = mock(org.cmdbuild.logic.icon.Icon.class);
+		doReturn(Optional.of(read)) //
 				.when(iconsLogic).read(any(org.cmdbuild.logic.icon.Icon.class));
 
 		// when
@@ -222,8 +244,8 @@ public class CxfIconsTest {
 				.forClass(org.cmdbuild.logic.icon.Icon.class);
 		verify(iconsLogic).read(captor.capture());
 		verify(iconsLogic).update(captor.capture());
-		verify(iconToElement).apply(any(Icon.class));
-		verifyNoMoreInteractions(errorHandler, iconsLogic, iconToElement, elementToIcon);
+		verify(converterDelegate).doForward(eq(icon));
+		verifyNoMoreInteractions(errorHandler, iconsLogic, converterDelegate);
 
 		assertThat(captor.getAllValues().get(0).getId(), equalTo(42L));
 	}
@@ -248,7 +270,7 @@ public class CxfIconsTest {
 				.forClass(org.cmdbuild.logic.icon.Icon.class);
 		verify(iconsLogic).read(captor.capture());
 		verify(errorHandler).missingIcon(eq(42L));
-		verifyNoMoreInteractions(errorHandler, iconsLogic, iconToElement, elementToIcon);
+		verifyNoMoreInteractions(errorHandler, iconsLogic, converterDelegate);
 
 		assertThat(captor.getValue().getId(), equalTo(42L));
 	}
@@ -268,7 +290,7 @@ public class CxfIconsTest {
 				.forClass(org.cmdbuild.logic.icon.Icon.class);
 		verify(iconsLogic).read(captor.capture());
 		verify(iconsLogic).delete(captor.capture());
-		verifyNoMoreInteractions(errorHandler, iconsLogic, iconToElement, elementToIcon);
+		verifyNoMoreInteractions(errorHandler, iconsLogic, converterDelegate);
 
 		assertThat(captor.getAllValues().get(0).getId(), equalTo(42L));
 		assertThat(captor.getAllValues().get(1), equalTo(element));

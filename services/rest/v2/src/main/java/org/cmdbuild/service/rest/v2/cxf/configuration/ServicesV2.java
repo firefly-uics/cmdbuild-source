@@ -184,7 +184,7 @@ public class ServicesV2 implements LoggingSupport {
 	@Bean
 	public Icons v2_icons() {
 		final CxfIcons service = new CxfIcons(v2_errorHandler(), helper.iconsLogic(),
-				new CxfIcons.IconToElement(v2_errorHandler()), new CxfIcons.ElementToIcon());
+				new CxfIcons.ConverterImpl(v2_errorHandler()));
 		return proxy(Icons.class, service);
 	}
 
