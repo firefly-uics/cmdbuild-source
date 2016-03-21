@@ -71,7 +71,7 @@
 		 *
 		 * @returns {Object} out
 		 */
-		buildNodeStructure: function(nodeObject) {
+		buildNodeStructure: function(nodeObject) { // TODO
 			var out = {};
 			var superclass = false;
 			var type = nodeObject[CMDBuild.core.constants.Proxy.TYPE];
@@ -79,8 +79,8 @@
 
 			if (
 				(
-					folderType == CMDBuild.core.constants.Global.getTableTypeClass()
-					|| folderType == CMDBuild.core.constants.Global.getTableTypeProcessClass()
+					type == CMDBuild.core.constants.Global.getTableTypeClass()
+					|| type == CMDBuild.core.constants.Global.getTableTypeProcessClass()
 				)
 				&& _CMCache.isEntryTypeByName(nodeObject.referencedClassName)
 			) {
