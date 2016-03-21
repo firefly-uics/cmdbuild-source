@@ -68,6 +68,7 @@ public class DomainSerializer extends Serializer {
 				.withDataView(dataView) //
 				.build();
 		jsonDomain.put("attributes", attributeSerializer.toClient(domain.getAttributes(), activeOnly));
+		jsonDomain.put("system", domain.isSystemButUsable());
 
 		addAccessPrivileges(jsonDomain, domain);
 		// TODO: complete ...
