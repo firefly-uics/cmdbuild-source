@@ -340,17 +340,10 @@
 		onExpandNode: function (node) {
 			if (!Ext.isEmpty(node) && Ext.isObject(node)) {
 				var nodeDomainModel = node.get(CMDBuild.core.constants.Proxy.DOMAIN);
-				var nodes = Ext.Array.push(
-					this.buildNodesArray( // Build domain's destination nodes
-						nodeDomainModel.get(CMDBuild.core.constants.Proxy.DESTINATION_CLASS_ID),
-						nodeDomainModel.get(CMDBuild.core.constants.Proxy.DESTINATION_CLASS_NAME),
-						nodeDomainModel.get(CMDBuild.core.constants.Proxy.ID)
-					),
-					this.buildNodesArray( // Build domain's origin nodes
-						nodeDomainModel.get(CMDBuild.core.constants.Proxy.ORIGIN_CLASS_ID),
-						nodeDomainModel.get(CMDBuild.core.constants.Proxy.ORIGIN_CLASS_NAME),
-						nodeDomainModel.get(CMDBuild.core.constants.Proxy.ID)
-					)
+				var nodes = this.buildNodesArray( // Build domain's origin nodes
+					nodeDomainModel.get(CMDBuild.core.constants.Proxy.ORIGIN_CLASS_ID),
+					nodeDomainModel.get(CMDBuild.core.constants.Proxy.ORIGIN_CLASS_NAME),
+					nodeDomainModel.get(CMDBuild.core.constants.Proxy.ID)
 				);
 
 				if (!Ext.isEmpty(nodes)) {
