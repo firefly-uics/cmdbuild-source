@@ -47,7 +47,7 @@
 									this.delegate.cmfg('onEmailTemplateModifyButtonClick');
 								}
 							}),
-							Ext.create('CMDBuild.core.buttons.iconized.Delete', {
+							Ext.create('CMDBuild.core.buttons.iconized.Remove', {
 								text: CMDBuild.Translation.removeTemplate,
 								scope: this,
 

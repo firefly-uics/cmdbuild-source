@@ -3,7 +3,7 @@
 .attach { background-image: url("../images/icons/attach.png") !important; }
 .clear_filter { background-image: url("../images/icons/clear_find.png") !important; }
 .clone { background-image: url("../images/icons/clone.png") !important; }
-.delete { background-image: url("../images/icons/cross.png") !important; }
+.delete { background-image: url("../images/icons/cross.png") !important; } /* @deprecated */
 .down { background-image: url("../images/icons/down.gif") !important;}
 .down-hover { background-image: url("../images/icons/down-hover.gif") !important; }
 .download { background-image: url("../images/icons/page_white_put.png") !important; }
@@ -19,6 +19,7 @@
 .password { background-image: url("../images/icons/key.png") !important; }
 .preview { background-image: url("../images/icons/preview.png") !important; }
 .print { background-image: url("../images/icons/print.png") !important; }
+.remove { background-image: url("../images/icons/remove.png") !important; }
 .save { background-image: url("../images/icons/disk.png") !important; }
 .search { background-image: url("../images/icons/search.gif") !important; }
 .start { background-image: url("../images/icons/start.png") !important; }

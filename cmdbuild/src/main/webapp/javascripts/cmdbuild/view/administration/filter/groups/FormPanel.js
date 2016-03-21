@@ -53,7 +53,7 @@
 									this.delegate.cmfg('onFilterGroupsModifyButtonClick');
 								}
 							}),
-							Ext.create('CMDBuild.core.buttons.iconized.Delete', {
+							Ext.create('CMDBuild.core.buttons.iconized.Remove', {
 								text: CMDBuild.Translation.removeFilter,
 								scope: this,
 

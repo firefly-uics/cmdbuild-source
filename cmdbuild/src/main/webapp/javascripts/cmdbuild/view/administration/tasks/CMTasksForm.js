@@ -80,7 +80,7 @@
 				}
 			});
 
-			this.removeButton = Ext.create('CMDBuild.core.buttons.iconized.Delete', {
+			this.removeButton = Ext.create('CMDBuild.core.buttons.iconized.Remove', {
 				text: tr.remove,
 				scope: this,
 

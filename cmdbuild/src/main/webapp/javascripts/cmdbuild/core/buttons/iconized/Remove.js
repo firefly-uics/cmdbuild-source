@@ -1,9 +1,9 @@
 (function() {
 
-	Ext.define('CMDBuild.core.buttons.email.Delete', {
+	Ext.define('CMDBuild.core.buttons.iconized.Remove', {
 		extend: 'CMDBuild.core.buttons.Base',
 
-		iconCls: 'email-delete',
+		iconCls: 'remove',
 		textDefault: CMDBuild.Translation.remove
 	});
 

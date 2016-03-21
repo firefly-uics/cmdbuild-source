@@ -50,8 +50,8 @@
 						fixed: true,
 
 						items: [
-							Ext.create('CMDBuild.core.buttons.iconized.Delete', {
-								tooltip: CMDBuild.Translation.deleteLabel,
+							Ext.create('CMDBuild.core.buttons.iconized.Remove', {
+								tooltip: CMDBuild.Translation.remove,
 								scope: this,
 
 								handler: function(grid, rowIndex, colIndex, node, e, record, rowNode) {
