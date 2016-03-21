@@ -86,7 +86,7 @@
 				items: [
 					Ext.create('Ext.form.TextField', {
 						name: CMDBuild.core.constants.Proxy.NAME,
-						fieldLabel: CMDBuild.core.Utils.prependMandatoryLabel(CMDBuild.Translation.name),
+						fieldLabel: CMDBuild.Translation.name,
 						labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
 						maxWidth: CMDBuild.core.constants.FieldWidths.ADMINISTRATION_BIG,
 						disableEnableFunctions: true,
@@ -95,7 +95,7 @@
 					}),
 					Ext.create('Ext.form.TextField', {
 						name: CMDBuild.core.constants.Proxy.DESCRIPTION,
-						fieldLabel: CMDBuild.core.Utils.prependMandatoryLabel(CMDBuild.Translation.descriptionLabel),
+						fieldLabel: CMDBuild.Translation.descriptionLabel,
 						labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
 						maxWidth: CMDBuild.core.constants.FieldWidths.ADMINISTRATION_BIG,
 						allowBlank: false,
@@ -103,7 +103,7 @@
 					}),
 					Ext.create('Ext.form.field.ComboBox', {
 						name: CMDBuild.core.constants.Proxy.TARGET_CLASS_NAME,
-						fieldLabel: CMDBuild.core.Utils.prependMandatoryLabel(CMDBuild.Translation.origin),
+						fieldLabel: CMDBuild.Translation.origin,
 						labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
 						maxWidth: CMDBuild.core.constants.FieldWidths.ADMINISTRATION_BIG,
 						displayField: CMDBuild.core.constants.Proxy.TEXT, // TODO: waiting for refactor (rename)
