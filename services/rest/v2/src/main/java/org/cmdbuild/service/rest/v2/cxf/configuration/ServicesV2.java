@@ -443,7 +443,7 @@ public class ServicesV2 implements LoggingSupport {
 	}
 
 	@Bean
-	public FileStores v2_dataStores() {
+	public FileStores v2_fileStores() {
 		final CxfFileStores service = new CxfFileStores(v2_errorHandler(), helper.fileLogic());
 		return proxy(FileStores.class, service);
 	}
