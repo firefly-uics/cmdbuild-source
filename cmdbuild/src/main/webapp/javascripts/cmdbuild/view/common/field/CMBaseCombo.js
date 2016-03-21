@@ -14,7 +14,7 @@
 
 
 		initComponent: function() {
-			Ext.apply(this, {
+			Ext.applyIf(this, {
 				maxWidth: CMDBuild.core.constants.FieldWidths.STANDARD_BIG, // Avoid too wide fields
 			});
 
