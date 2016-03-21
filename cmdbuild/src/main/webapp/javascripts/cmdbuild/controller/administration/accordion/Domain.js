@@ -49,6 +49,11 @@
 				success: function (response, options, decodedResponse) {
 					decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.DOMAINS];
 
+					// Removes all system domains
+					decodedResponse = Ext.Array.filter(decodedResponse, function (item, i, array) {
+						return !item[CMDBuild.core.constants.Proxy.SYSTEM]; // Discard system domains
+					}, this);
+
 					this.view.getStore().getRootNode().removeAll();
 
 					if (!Ext.isEmpty(decodedResponse)) {
