@@ -24,6 +24,7 @@
 
 		bodyCls: 'cmdb-gray-panel',
 		border: false,
+		cls: 'cmdb-gray-panel-no-padding',
 		frame: false,
 		layout: 'fit',
 		title: CMDBuild.Translation.enabledClasses,

@@ -18,6 +18,7 @@
 		 */
 		grid: undefined,
 
+		bodyCls: 'cmdb-gray-panel-no-padding',
 		border: false,
 		disabled: true,
 		frame: false,

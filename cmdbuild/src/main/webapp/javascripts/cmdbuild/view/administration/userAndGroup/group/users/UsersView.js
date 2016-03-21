@@ -22,6 +22,7 @@
 
 		bodyCls: 'cmdb-gray-panel-no-padding',
 		border: false,
+		cls: 'cmdb-gray-panel-no-padding',
 		frame: false,
 		overflowY: 'auto',
 		split: true,

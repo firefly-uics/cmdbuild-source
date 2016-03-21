@@ -20,6 +20,7 @@
 		 */
 		grid: undefined,
 
+		bodyCls: 'cmdb-gray-panel-no-padding',
 		border: false,
 		frame: false,
 		layout: 'border',

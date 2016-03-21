@@ -8,6 +8,7 @@
 		 */
 		delegate: undefined,
 
+		bodyCls: 'cmdb-gray-panel-no-padding',
 		border: false,
 		frame: false,
 		title: CMDBuild.Translation.permissions,
