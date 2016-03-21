@@ -3,7 +3,7 @@
 	/**
 	 * @deprecated (CMDBuild.view.common.field.multiselect.Group)
 	 */
-	Ext.define('CMDBuild.view.common.field.CMGroupSelectionList', {
+	Ext.define('CMDBuild.view.common.field.CMGroupSelectionList', { // asd
 		extend: 'Ext.ux.form.MultiSelect',
 
 		requires: ['CMDBuild.core.proxy.common.field.multiselect.Group'],
@@ -22,7 +22,7 @@
 		allowBlank: true,
 
 		initComponent: function() {
-			Ext.apply(this, {
+			Ext.applyIf(this, {
 				store: CMDBuild.core.proxy.common.field.multiselect.Group.getStore()
 			});
 
