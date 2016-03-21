@@ -1,4 +1,4 @@
-(function() {
+(function () {
 
 	Ext.define('CMDBuild.controller.administration.widget.form.Calendar', {
 		extend: 'CMDBuild.controller.administration.widget.form.Abstract',
@@ -39,8 +39,10 @@
 		/**
 		 * @param {Object} configurationObject
 		 * @param {CMDBuild.controller.administration.widget.Widget} configurationObject.parentDelegate
+		 *
+		 * @override
 		 */
-		constructor: function(configurationObject) {
+		constructor: function (configurationObject) {
 			this.callParent(arguments);
 
 			this.view = Ext.create('CMDBuild.view.administration.widget.form.CalendarPanel', { delegate: this });
@@ -49,7 +51,7 @@
 		/**
 		 * @param {String} selectedClassName
 		 */
-		onClassTabWidgetCalendarTargetClassChange: function(selectedClassName) {
+		onClassTabWidgetCalendarTargetClassChange: function (selectedClassName) {
 			if (!Ext.isEmpty(selectedClassName)) {
 				var params = {};
 				params[CMDBuild.core.constants.Proxy.ACTIVE] = true;
@@ -65,7 +67,7 @@
 		/**
 		 * @return {Object}
 		 */
-		classTabWidgetCalendarDefinitionGet: function() {
+		classTabWidgetCalendarDefinitionGet: function () {
 			return CMDBuild.model.widget.calendar.Definition.convertToLegacy(
 				Ext.create(this.classTabWidgetDefinitionModelNameGet(), this.view.getData(true)).getData()
 			);
@@ -76,7 +78,7 @@
 		 *
 		 * @param {CMDBuild.model.widget.calendar.Definition} record
 		 */
-		classTabWidgetCalendarLoadRecord: function(record) {
+		classTabWidgetCalendarLoadRecord: function (record) {
 			this.view.loadRecord(record);
 		}
 	});

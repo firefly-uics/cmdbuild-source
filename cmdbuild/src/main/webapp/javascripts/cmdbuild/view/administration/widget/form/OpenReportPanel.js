@@ -1,4 +1,4 @@
-(function() {
+(function () {
 
 	Ext.define('CMDBuild.view.administration.widget.form.OpenReportPanel', {
 		extend: 'CMDBuild.view.administration.widget.form.AbstractWidgetDefinitionPanel',
@@ -35,7 +35,7 @@
 		 *
 		 * @override
 		 */
-		widgetDefinitionFormAdditionalPropertiesGet: function() {
+		widgetDefinitionFormAdditionalPropertiesGet: function () {
 			return [
 				Ext.create('Ext.form.FieldSet', {
 					title: CMDBuild.Translation.additionalProperties,
@@ -62,7 +62,7 @@
 
 							listeners: {
 								scope: this,
-								select: function(combo, records, eOpts) {
+								select: function (combo, records, eOpts) {
 									this.delegate.cmfg('onClassTabWidgetOpenReportReportSelect', { selectedReport: records[0] });
 								}
 							}

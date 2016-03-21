@@ -1,4 +1,4 @@
-(function() {
+(function () {
 
 	Ext.define('CMDBuild.controller.administration.widget.Widget', {
 		extend: 'CMDBuild.controller.common.abstract.Base',
@@ -68,10 +68,11 @@
 
 		/**
 		 * @param {Object} configurationObject
+		 * @param {Object} configurationObject.parentDelegate
 		 *
 		 * @override
 		 */
-		constructor: function(configurationObject) {
+		constructor: function (configurationObject) {
 			this.callParent(arguments);
 
 			this.view = Ext.create('CMDBuild.view.administration.widget.WidgetView', { delegate: this });
@@ -84,7 +85,7 @@
 		/**
 		 * @private
 		 */
-		buildForm: function() {
+		buildForm: function () {
 			if (!Ext.isEmpty(this.form))
 				this.view.remove(this.form);
 
@@ -104,7 +105,7 @@
 		 *
 		 * @private
 		 */
-		buildFormController: function(type) {
+		buildFormController: function (type) {
 			switch (type) {
 				case '.Calendar':
 					return Ext.create('CMDBuild.controller.administration.widget.form.Calendar', { parentDelegate: this });
@@ -133,7 +134,7 @@
 		 *
 		 * @returns {String}
 		 */
-		classTabWidgetTypeRenderer: function(value) {
+		classTabWidgetTypeRenderer: function (value) {
 			switch (value) {
 				case '.Calendar':
 					return CMDBuild.Translation.calendar;
@@ -155,7 +156,7 @@
 			}
 		},
 
-		onClassTabWidgetAbortButtonClick: function() {
+		onClassTabWidgetAbortButtonClick: function () {
 			if (!this.classTabWidgetSelectedWidgetIsEmpty()) {
 				this.cmfg('onClassTabWidgetRowSelected');
 			} else if (!Ext.isEmpty(this.form)) {
@@ -167,7 +168,7 @@
 		/**
 		 * @param {String} type
 		 */
-		onClassTabWidgetAddButtonClick: function(type) {
+		onClassTabWidgetAddButtonClick: function (type) {
 			if (!Ext.isEmpty(type) && Ext.isString(type)) {
 				this.grid.getSelectionModel().deselectAll();
 
@@ -184,7 +185,7 @@
 		/**
 		 * Invoked from parentDelegate
 		 */
-		onClassTabWidgetClassAddButtonClick: function() {
+		onClassTabWidgetClassAddButtonClick: function () {
 			this.view.disable();
 		},
 
@@ -193,7 +194,7 @@
 		 *
 		 * @param {Number} classId
 		 */
-		onClassTabWidgetClassSelected: function(classId) {
+		onClassTabWidgetClassSelected: function (classId) {
 			if (!Ext.isEmpty(classId) && Ext.isNumeric(classId)) {
 				var params = {};
 				params[CMDBuild.core.constants.Proxy.ACTIVE] = false;
@@ -201,10 +202,10 @@
 				CMDBuild.core.proxy.Classes.readAll({
 					params: params,
 					scope: this,
-					success: function(response, options, decodedResponse) {
+					success: function (response, options, decodedResponse) {
 						decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.CLASSES] || [];
 
-						var selectedClass = Ext.Array.findBy(decodedResponse, function(classObject, i) {
+						var selectedClass = Ext.Array.findBy(decodedResponse, function (classObject, i) {
 							return classId == classObject[CMDBuild.core.constants.Proxy.ID];
 						}, this);
 
@@ -223,12 +224,12 @@
 			}
 		},
 
-		onClassTabWidgetItemDrop: function() { // TODO: temporary
+		onClassTabWidgetItemDrop: function () { // TODO: temporary
 			if (!Ext.isEmpty(this.grid.getStore().getRange()) && Ext.isArray(this.grid.getStore().getRange())) {
 				var params = {};
 				params['sortedArray'] = [];
 
-				Ext.Array.forEach(this.grid.getStore().getRange(), function(widgetRowModel, i, allWidgetRowModels) {
+				Ext.Array.forEach(this.grid.getStore().getRange(), function (widgetRowModel, i, allWidgetRowModels) {
 					if (!Ext.isEmpty(widgetRowModel))
 						params['sortedArray'].push(widgetRowModel.get(CMDBuild.core.constants.Proxy.ID));
 				}, this);
@@ -236,14 +237,14 @@
 				CMDBuild.core.proxy.widget.Widget.setSorting({
 					params: params,
 					scope: this,
-					success: function(response, options, decodedResponse) {
+					success: function (response, options, decodedResponse) {
 						this.cmfg('onClassTabWidgetPanelShow');
 					}
 				});
 			}
 		},
 
-		onClassTabWidgetModifyButtonClick: function() {
+		onClassTabWidgetModifyButtonClick: function () {
 			if (!Ext.isEmpty(this.form))
 				this.form.setDisabledModify(false);
 		},
@@ -253,7 +254,7 @@
 		 *
 		 * @param {Number} idToSelect
 		 */
-		onClassTabWidgetPanelShow: function(idToSelect) {
+		onClassTabWidgetPanelShow: function (idToSelect) {
 			idToSelect = Ext.isNumber(idToSelect) ? idToSelect : 0;
 
 			var params = {};
@@ -263,7 +264,7 @@
 				this.grid.getStore().load({
 					params: params,
 					scope: this,
-					callback: function(records, operation, success) {
+					callback: function (records, operation, success) {
 						var selectedRecordIndex = this.grid.getStore().find(CMDBuild.core.constants.Proxy.ID, idToSelect);
 
 						this.grid.getSelectionModel().select(
@@ -276,21 +277,21 @@
 				});
 		},
 
-		onClassTabWidgetRemoveButtonClick: function() {
+		onClassTabWidgetRemoveButtonClick: function () {
 			Ext.Msg.show({
 				title: CMDBuild.Translation.common.confirmpopup.title,
 				msg: CMDBuild.Translation.common.confirmpopup.areyousure,
 				buttons: Ext.Msg.YESNO,
 				scope: this,
 
-				fn: function(buttonId, text, opt) {
+				fn: function (buttonId, text, opt) {
 					if (buttonId == 'yes')
 						this.removeItem();
 				}
 			});
 		},
 
-		onClassTabWidgetRowSelected: function() {
+		onClassTabWidgetRowSelected: function () {
 			if (this.grid.getSelectionModel().hasSelection()) {
 				var params = {};
 				params[CMDBuild.core.constants.Proxy.CLASS_NAME] = this.classTabWidgetSelectedClassGet(CMDBuild.core.constants.Proxy.NAME);
@@ -299,7 +300,7 @@
 				CMDBuild.core.proxy.widget.Widget.read({
 					params: params,
 					scope: this,
-					success: function(response, options, decodedResponse) {
+					success: function (response, options, decodedResponse) {
 						decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.RESPONSE] || [];
 
 						this.controllerWidgetForm = this.buildFormController(decodedResponse[CMDBuild.core.constants.Proxy.TYPE]);
@@ -325,7 +326,7 @@
 			}
 		},
 
-		onClassTabWidgetSaveButtonClick: function() {
+		onClassTabWidgetSaveButtonClick: function () {
 			if (this.controllerWidgetForm.cmfg('classTabWidgetValidateForm', this.form)) {
 				var widgetDefinition = this.controllerWidgetForm.cmfg('classTabWidgetDefinitionGet');
 
@@ -337,7 +338,7 @@
 					CMDBuild.core.proxy.widget.Widget.create({
 						params: params,
 						scope: this,
-						success: function(response, options, decodedResponse) {
+						success: function (response, options, decodedResponse) {
 							decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.RESPONSE];
 
 							this.cmfg('onClassTabWidgetPanelShow', decodedResponse);
@@ -347,7 +348,7 @@
 					CMDBuild.core.proxy.widget.Widget.update({
 						params: params,
 						scope: this,
-						success: function(response, options, decodedResponse) {
+						success: function (response, options, decodedResponse) {
 							this.cmfg('onClassTabWidgetPanelShow', parseInt(this.form.getForm().findField(CMDBuild.core.constants.Proxy.ID).getValue()));
 						}
 					});
@@ -358,7 +359,7 @@
 		/**
 		 * @private
 		 */
-		removeItem: function() {
+		removeItem: function () {
 			if (!this.classTabWidgetSelectedWidgetIsEmpty()) {
 				var params = {};
 				params[CMDBuild.core.constants.Proxy.CLASS_NAME] = this.classTabWidgetSelectedClassGet(CMDBuild.core.constants.Proxy.NAME);
@@ -367,7 +368,7 @@
 				CMDBuild.core.proxy.widget.Widget.remove({
 					params: params,
 					scope: this,
-					success: function(response, options, decodedResponse) {
+					success: function (response, options, decodedResponse) {
 						this.form.reset();
 
 						this.cmfg('onClassTabWidgetPanelShow');
@@ -383,7 +384,7 @@
 			 *
 			 * @returns {Mixed or undefined}
 			 */
-			classTabWidgetSelectedClassGet: function(attributePath) {
+			classTabWidgetSelectedClassGet: function (attributePath) {
 				var parameters = {};
 				parameters[CMDBuild.core.constants.Proxy.TARGET_VARIABLE_NAME] = 'selectedClass';
 				parameters[CMDBuild.core.constants.Proxy.ATTRIBUTE_PATH] = attributePath;
@@ -394,7 +395,7 @@
 			/**
 			 * @param {Object} parameters
 			 */
-			classTabWidgetSelectedClassSet: function(parameters) {
+			classTabWidgetSelectedClassSet: function (parameters) {
 				if (!Ext.Object.isEmpty(parameters)) {
 					parameters[CMDBuild.core.constants.Proxy.MODEL_NAME] = 'CMDBuild.model.classes.Class';
 					parameters[CMDBuild.core.constants.Proxy.TARGET_VARIABLE_NAME] = 'selectedClass';
@@ -409,7 +410,7 @@
 			 *
 			 * @returns {Mixed or undefined}
 			 */
-			classTabWidgetSelectedWidgetGet: function(attributePath) {
+			classTabWidgetSelectedWidgetGet: function (attributePath) {
 				var parameters = {};
 				parameters[CMDBuild.core.constants.Proxy.TARGET_VARIABLE_NAME] = 'selectedWidget';
 				parameters[CMDBuild.core.constants.Proxy.ATTRIBUTE_PATH] = attributePath;
@@ -422,7 +423,7 @@
 			 *
 			 * @returns {Mixed or undefined}
 			 */
-			classTabWidgetSelectedWidgetIsEmpty: function(attributePath) {
+			classTabWidgetSelectedWidgetIsEmpty: function (attributePath) {
 				var parameters = {};
 				parameters[CMDBuild.core.constants.Proxy.TARGET_VARIABLE_NAME] = 'selectedWidget';
 				parameters[CMDBuild.core.constants.Proxy.ATTRIBUTE_PATH] = attributePath;
@@ -430,14 +431,14 @@
 				return this.propertyManageIsEmpty(parameters);
 			},
 
-			classTabWidgetSelectedWidgetReset: function() {
+			classTabWidgetSelectedWidgetReset: function () {
 				this.propertyManageReset('selectedWidget');
 			},
 
 			/**
 			 * @param {Object} parameters
 			 */
-			classTabWidgetSelectedWidgetSet: function(parameters) {
+			classTabWidgetSelectedWidgetSet: function (parameters) {
 				if (
 					!Ext.Object.isEmpty(parameters)
 					&& !Ext.isEmpty(this.controllerWidgetForm)

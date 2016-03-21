@@ -1,4 +1,4 @@
-(function() {
+(function () {
 
 	Ext.define('CMDBuild.controller.administration.widget.form.CreateModifyCard', {
 		extend: 'CMDBuild.controller.administration.widget.form.Abstract',
@@ -40,8 +40,10 @@
 		/**
 		 * @param {Object} configurationObject
 		 * @param {CMDBuild.controller.administration.widget.Widget} configurationObject.parentDelegate
+		 *
+		 * @override
 		 */
-		constructor: function(configurationObject) {
+		constructor: function (configurationObject) {
 			this.callParent(arguments);
 
 			this.view = Ext.create('CMDBuild.view.administration.widget.form.CreateModifyCardPanel', { delegate: this });
@@ -50,7 +52,7 @@
 		/**
 		 * @return {Object}
 		 */
-		classTabWidgetCreateModifyCardDefinitionGet: function() {
+		classTabWidgetCreateModifyCardDefinitionGet: function () {
 			return CMDBuild.model.widget.createModifyCard.Definition.convertToLegacy(
 				Ext.create(this.classTabWidgetDefinitionModelNameGet(), this.view.getData(true)).getData()
 			);
@@ -61,7 +63,7 @@
 		 *
 		 * @param {CMDBuild.model.widget.createModifyCard.Definition} record
 		 */
-		classTabWidgetCreateModifyCardLoadRecord: function(record) {
+		classTabWidgetCreateModifyCardLoadRecord: function (record) {
 			this.view.loadRecord(record);
 		},
 
@@ -70,7 +72,7 @@
 		 *
 		 * @returns {Boolean}
 		 */
-		classTabWidgetCreateModifyCardValidateForm: function(form) {
+		classTabWidgetCreateModifyCardValidateForm: function (form) {
 			var formValues = this.view.getData(true);
 
 			if (Ext.isEmpty(formValues[CMDBuild.core.constants.Proxy.TARGET_CLASS]) && Ext.isEmpty(formValues[CMDBuild.core.constants.Proxy.FILTER])) {

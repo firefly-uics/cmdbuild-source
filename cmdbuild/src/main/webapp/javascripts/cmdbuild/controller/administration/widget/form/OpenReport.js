@@ -1,4 +1,4 @@
-(function() {
+(function () {
 
 	Ext.define('CMDBuild.controller.administration.widget.form.OpenReport', {
 		extend: 'CMDBuild.controller.administration.widget.form.Abstract',
@@ -41,8 +41,10 @@
 		/**
 		 * @param {Object} configurationObject
 		 * @param {CMDBuild.controller.administration.widget.Widget} configurationObject.parentDelegate
+		 *
+		 * @override
 		 */
-		constructor: function(configurationObject) {
+		constructor: function (configurationObject) {
 			this.callParent(arguments);
 
 			this.view = Ext.create('CMDBuild.view.administration.widget.form.OpenReportPanel', { delegate: this });
@@ -51,7 +53,7 @@
 		/**
 		 * @return {Object} widgetDefinition
 		 */
-		classTabWidgetOpenReportDefinitionGet: function() {
+		classTabWidgetOpenReportDefinitionGet: function () {
 			var widgetDefinition = CMDBuild.model.widget.openReport.Definition.convertToLegacy(
 				Ext.create(this.classTabWidgetDefinitionModelNameGet(), this.view.getData(true)).getData()
 			);
@@ -66,13 +68,13 @@
 		 *
 		 * @param {CMDBuild.model.widget.openReport.Definition} record
 		 */
-		classTabWidgetOpenReportLoadRecord: function(record) {
+		classTabWidgetOpenReportLoadRecord: function (record) {
 			this.view.loadRecord(record);
 			this.view.forceFormat.setValue(record.get(CMDBuild.core.constants.Proxy.FORCE_FORMAT));
 			this.view.reportCode.setValue(record.get(CMDBuild.core.constants.Proxy.REPORT_CODE));
 
 			// Find selected report ID and manually calls onReportSelected to fill presetGrid
-			this.view.reportCode.getStore().on('load', function(store, records, successful, eOpts) {
+			this.view.reportCode.getStore().on('load', function (store, records, successful, eOpts) {
 				var storeReportIndex = store.find(
 					CMDBuild.core.constants.Proxy.TITLE,
 					record.get(CMDBuild.core.constants.Proxy.REPORT_CODE)
@@ -96,7 +98,7 @@
 		 *
 		 * @private
 		 */
-		cleanServerAttributes: function(attributes) {
+		cleanServerAttributes: function (attributes) {
 			var out = {};
 
 			for (var i = 0; i < attributes.length; ++i) {
@@ -116,7 +118,7 @@
 		 * @param {Object} parameters.readOnlyAttributes
 		 * @param {Object} parameters.selectedReport
 		 */
-		onClassTabWidgetOpenReportReportSelect: function(parameters) {
+		onClassTabWidgetOpenReportReportSelect: function (parameters) {
 			if (
 				!Ext.Object.isEmpty(parameters)
 				&& !Ext.isEmpty(parameters.selectedReport)
@@ -133,7 +135,7 @@
 				CMDBuild.core.proxy.widget.OpenReport.create({
 					scope: this,
 					params: params,
-					success: function(response, options, decodedResponse) {
+					success: function (response, options, decodedResponse) {
 						var data = decodedResponse['filled'] ? {} : this.cleanServerAttributes(decodedResponse[CMDBuild.core.constants.Proxy.ATTRIBUTE]);
 
 						// Reset presetGrid store
@@ -155,7 +157,7 @@
 		 *
 		 * @private
 		 */
-		presetGridGet: function(attribute) {
+		presetGridGet: function (attribute) {
 			switch (attribute) {
 				case CMDBuild.core.constants.Proxy.DATA:
 					return this.presetGridGetData();
@@ -173,7 +175,7 @@
 		 *
 		 * @private
 		 */
-		presetGridGetData: function() {
+		presetGridGetData: function () {
 			return this.view.presetGrid.getData(true);
 		},
 
@@ -182,10 +184,10 @@
 		 *
 		 * @private
 		 */
-		presetGridGetReadOnly: function() {
+		presetGridGetReadOnly: function () {
 			var readOnly = [];
 
-			Ext.Array.forEach(this.view.presetGrid.getStore().getRange(), function(record, i, allRecords) {
+			Ext.Array.forEach(this.view.presetGrid.getStore().getRange(), function (record, i, allRecords) {
 				if (
 					!Ext.isEmpty(record.get(CMDBuild.core.constants.Proxy.NAME))
 					&& !Ext.isEmpty(record.get(CMDBuild.core.constants.Proxy.VALUE))
@@ -206,13 +208,13 @@
 		 *
 		 * @private
 		 */
-		presetGridLoadData: function(data, readOnlyAttributes) {
+		presetGridLoadData: function (data, readOnlyAttributes) {
 			readOnlyAttributes = Ext.isEmpty(readOnlyAttributes) ? [] : readOnlyAttributes;
 
 			if (!Ext.Object.isEmpty(data)) {
 				var formattedDataObject = [];
 
-				Ext.Object.each(data, function(key, value, myself) {
+				Ext.Object.each(data, function (key, value, myself) {
 					// Remove already existing rows
 					var storeReportIndex = this.view.presetGrid.getStore().find(CMDBuild.core.constants.Proxy.NAME, key);
 

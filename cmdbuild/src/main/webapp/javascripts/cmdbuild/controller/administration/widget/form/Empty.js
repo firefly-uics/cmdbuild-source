@@ -1,4 +1,4 @@
-(function() {
+(function () {
 
 	/**
 	 * Placeholder class to build empty form if no widget is selected from grid
@@ -21,8 +21,10 @@
 		/**
 		 * @param {Object} configurationObject
 		 * @param {CMDBuild.controller.administration.widget.Widget} configurationObject.parentDelegate
+		 *
+		 * @override
 		 */
-		constructor: function(configurationObject) {
+		constructor: function (configurationObject) {
 			this.callParent(arguments);
 
 			this.view = Ext.create('CMDBuild.view.administration.widget.form.WorkflowPanel', { delegate: this });

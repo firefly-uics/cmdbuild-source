@@ -1,4 +1,4 @@
-(function() {
+(function () {
 
 	Ext.define('CMDBuild.view.administration.widget.WidgetView', {
 		extend: 'Ext.panel.Panel',
@@ -23,7 +23,7 @@
 		layout: 'border',
 		title: CMDBuild.Translation.widget,
 
-		initComponent: function() {
+		initComponent: function () {
 			Ext.apply(this, {
 				dockedItems: [
 					Ext.create('Ext.toolbar.Toolbar', {
@@ -49,7 +49,7 @@
 		},
 
 		listeners: {
-			show: function(panel, eOpts) {
+			show: function (panel, eOpts) {
 				this.delegate.cmfg('onClassTabWidgetPanelShow');
 			}
 		}
