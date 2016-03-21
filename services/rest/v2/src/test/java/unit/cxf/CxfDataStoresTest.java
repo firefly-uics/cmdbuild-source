@@ -661,6 +661,11 @@ public class CxfDataStoresTest {
 				return file.getName();
 			}
 
+			@Override
+			public String getPath() {
+				return file.getPath();
+			}
+
 		};
 	}
 
