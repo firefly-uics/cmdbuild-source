@@ -1,4 +1,4 @@
-(function() {
+(function () {
 
 	Ext.define('CMDBuild.controller.administration.menu.Menu', {
 		extend: 'CMDBuild.controller.common.abstract.Base',
@@ -40,10 +40,11 @@
 
 		/**
 		 * @param {Object} configurationObject
+		 * @param {CMDBuild.controller.common.MainViewport} configurationObject.parentDelegate
 		 *
 		 * @override
 		 */
-		constructor: function(configurationObject) {
+		constructor: function (configurationObject) {
 			this.callParent(arguments);
 
 			this.view = Ext.create('CMDBuild.view.administration.menu.MenuView', { delegate: this });
@@ -56,7 +57,7 @@
 		 *
 		 * @override
 		 */
-		onMenuModuleInit: function(node) {
+		onMenuModuleInit: function (node) {
 			if (!Ext.isEmpty(node)) {
 				this.selectedMenuName = node.get(CMDBuild.core.constants.Proxy.ENTITY_ID);
 				this.sectionController = Ext.create('CMDBuild.controller.administration.menu.Group', { parentDelegate: this });
@@ -75,7 +76,7 @@
 		/**
 		 * @returns {String}
 		 */
-		selectedMenuNameGet: function() {
+		selectedMenuNameGet: function () {
 			return this.selectedMenuName;
 		}
 	});
