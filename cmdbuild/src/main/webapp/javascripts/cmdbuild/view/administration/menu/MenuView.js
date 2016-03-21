@@ -1,4 +1,4 @@
-(function() {
+(function () {
 
 	Ext.define('CMDBuild.view.administration.menu.MenuView', {
 		extend: 'Ext.form.Panel',

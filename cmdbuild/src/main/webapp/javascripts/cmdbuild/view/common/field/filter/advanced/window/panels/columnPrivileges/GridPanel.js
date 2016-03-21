@@ -104,7 +104,11 @@
 				],
 				store: Ext.create('Ext.data.Store', {
 					model: 'CMDBuild.model.common.field.filter.advanced.window.ColumnPrivilegesGridRecord',
-					data: []
+					data: [],
+					sorters: [
+						{ property: CMDBuild.core.constants.Proxy.NAME, direction: 'ASC' },
+						{ property: CMDBuild.core.constants.Proxy.DESCRIPTION, direction: 'ASC' }
+					]
 				})
 			});
 

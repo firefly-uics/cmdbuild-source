@@ -1,4 +1,4 @@
-(function() {
+(function () {
 
 	Ext.define('CMDBuild.view.administration.menu.group.GroupView', {
 		extend: 'Ext.panel.Panel',
@@ -48,7 +48,7 @@
 			align:'stretch'
 		},
 
-		initComponent: function() {
+		initComponent: function () {
 			var me = this;
 
 			Ext.apply(this, {
@@ -64,7 +64,7 @@
 								margin: '0 0 0 5',
 								allowBlank: true,
 
-								onTriggerClick: function(e) {
+								onTriggerClick: function (e) {
 									me.delegate.cmfg('onMenuGroupAddFolderButtonClick', this.getValue());
 								}
 							}),
@@ -72,7 +72,7 @@
 								text: CMDBuild.Translation.removeMenu,
 								scope: this,
 
-								handler: function(button, e) {
+								handler: function (button, e) {
 									this.delegate.cmfg('onMenuGroupRemoveMenuButtonClick');
 								}
 							})
@@ -93,14 +93,14 @@
 							Ext.create('CMDBuild.core.buttons.text.Save', {
 								scope: this,
 
-								handler: function(button, e) {
+								handler: function (button, e) {
 									this.delegate.cmfg('onMenuGroupSaveButtonClick');
 								}
 							}),
 							Ext.create('CMDBuild.core.buttons.text.Abort', {
 								scope: this,
 
-								handler: function(button, e) {
+								handler: function (button, e) {
 									this.delegate.cmfg('onMenuGroupAbortButtonClick');
 								}
 							})
@@ -144,11 +144,11 @@
 									Ext.create('CMDBuild.core.buttons.FieldTranslation', {
 										scope: this,
 
-										getClass: function(value, metadata, record, rowIndex, colIndex, store) { // Hides icon in root node or if no translations enabled
+										getClass: function (value, metadata, record, rowIndex, colIndex, store) { // Hides icon in root node or if no translations enabled
 											return (record.isRoot() || !CMDBuild.configuration.localization.hasEnabledLanguages()) ? '' : 'translate';
 										},
 
-										handler: function(grid, rowIndex, colIndex, node, e, record, rowNode) {
+										handler: function (grid, rowIndex, colIndex, node, e, record, rowNode) {
 											if (Ext.isEmpty(record.get('uuid'))) {
 												CMDBuild.core.Message.warning(null, CMDBuild.Translation.warnings.saveMenuBeforeAccess, false);
 											} else {
@@ -163,7 +163,7 @@
 											}
 										},
 
-										isDisabled: function(grid, rowIndex, colIndex, item, record) { // Disable icons in root node or if no translations enabled to avoid click action
+										isDisabled: function (grid, rowIndex, colIndex, item, record) { // Disable icons in root node or if no translations enabled to avoid click action
 											return record.isRoot() || !CMDBuild.configuration.localization.hasEnabledLanguages();
 										}
 									})
@@ -178,7 +178,7 @@
 
 								listeners: {
 									// Prevent to edit root node
-									beforeedit: function(editor, context, eOpts) {
+									beforeedit: function (editor, context, eOpts) {
 										if (context.record.isRoot())
 											return false;
 									}
@@ -198,10 +198,10 @@
 
 						listeners: {
 							scope: this,
-							beforeselect: function(treePanel, record, index, eOpts) {
+							beforeselect: function (treePanel, record, index, eOpts) {
 								return this.delegate.cmfg('onMenuGroupMenuTreeBeforeselect', record);
 							},
-							selectionchange: function(treePanel, selected, eOpts) {
+							selectionchange: function (treePanel, selected, eOpts) {
 								this.delegate.cmfg('onMenuGroupMenuTreeSelectionchange');
 							}
 						}
@@ -225,7 +225,7 @@
 								scope: this,
 								disabled: true,
 
-								handler: function(button, e) {
+								handler: function (button, e) {
 									this.delegate.cmfg('onMenuGroupRemoveItemButtonClick');
 								}
 							})
