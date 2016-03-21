@@ -29,27 +29,27 @@ import org.cmdbuild.service.rest.v2.model.Image;
 import org.cmdbuild.service.rest.v2.model.ResponseMultiple;
 import org.cmdbuild.service.rest.v2.model.ResponseSingle;
 
-import com.google.common.base.Function;
+import com.google.common.base.Converter;
 
 public class CxfIcons implements Icons, LoggingSupport {
 
 	private static final String CLASS = "class";
 	private static final String PROCESS = "process";
 
-	public static class IconToElement implements Function<Icon, org.cmdbuild.logic.icon.Icon> {
+	public static class ConverterImpl extends Converter<Icon, org.cmdbuild.logic.icon.Icon> {
 
 		private final ErrorHandler errorHandler;
 
-		public IconToElement(final ErrorHandler errorHandler) {
+		public ConverterImpl(final ErrorHandler errorHandler) {
 			this.errorHandler = errorHandler;
 		}
 
 		@Override
-		public org.cmdbuild.logic.icon.Icon apply(final Icon input) {
+		protected org.cmdbuild.logic.icon.Icon doForward(final Icon a) {
 			final Type type;
-			switch (input.getType()) {
+			switch (a.getType()) {
 			case CLASS: {
-				final Map<String, Object> details = requireNonNull(input.getDetails(), "missing details");
+				final Map<String, Object> details = requireNonNull(a.getDetails(), "missing details");
 				final String name = String.class.cast(requireNonNull(details.get(Icon.id), "missing " + Icon.id));
 				type = classType() //
 						.withName(name) //
@@ -57,7 +57,7 @@ public class CxfIcons implements Icons, LoggingSupport {
 				break;
 			}
 			case PROCESS: {
-				final Map<String, Object> details = requireNonNull(input.getDetails(), "missing details");
+				final Map<String, Object> details = requireNonNull(a.getDetails(), "missing details");
 				final String name = String.class.cast(requireNonNull(details.get(Icon.id), "missing " + Icon.id));
 				type = classType() //
 						.withName(name) //
@@ -65,14 +65,14 @@ public class CxfIcons implements Icons, LoggingSupport {
 				break;
 			}
 			default:
-				errorHandler.invalidIconType(input.getType());
+				errorHandler.invalidIconType(a.getType());
 				throw new AssertionError("should never come here");
 			}
 			return new org.cmdbuild.logic.icon.Icon() {
 
 				@Override
 				public Long getId() {
-					return input.getId();
+					return a.getId();
 				}
 
 				@Override
@@ -83,11 +83,11 @@ public class CxfIcons implements Icons, LoggingSupport {
 				@Override
 				public org.cmdbuild.logic.icon.Image getImage() {
 					final org.cmdbuild.logic.icon.Image output;
-					switch (requireNonNull(input.getImage(), "missing image").getType()) {
+					switch (requireNonNull(a.getImage(), "missing image").getType()) {
 					case Image.filestore:
 						output = new org.cmdbuild.logic.icon.Image() {
 
-							private final Map<String, Object> details = input.getImage().getDetails();
+							private final Map<String, Object> details = a.getImage().getDetails();
 
 							@Override
 							public String folder() {
@@ -114,24 +114,20 @@ public class CxfIcons implements Icons, LoggingSupport {
 			};
 		}
 
-	}
-
-	public static class ElementToIcon implements Function<org.cmdbuild.logic.icon.Icon, Icon> {
-
 		@Override
-		public Icon apply(final org.cmdbuild.logic.icon.Icon input) {
+		protected Icon doBackward(final org.cmdbuild.logic.icon.Icon b) {
 			return new TypeVisitor() {
 
 				private String type;
 				private Map<String, Object> details;
 
 				public Icon icon() {
-					input.getType().accept(this);
+					b.getType().accept(this);
 					return newIcon() //
-							.withId(input.getId()) //
+							.withId(b.getId()) //
 							.withType(requireNonNull(type, "missing type")) //
 							.withDetails(requireNonNull(details, "missing details")) //
-							.withImage(imageOf(requireNonNull(input.getImage(), "missing image"))) //
+							.withImage(imageOf(requireNonNull(b.getImage(), "missing image"))) //
 							.build();
 				}
 
@@ -164,24 +160,21 @@ public class CxfIcons implements Icons, LoggingSupport {
 
 	private final ErrorHandler errorHandler;
 	private final IconsLogic logic;
-	private final Function<Icon, org.cmdbuild.logic.icon.Icon> iconToElement;
-	private final Function<org.cmdbuild.logic.icon.Icon, Icon> elementToIcon;
+	private final Converter<Icon, org.cmdbuild.logic.icon.Icon> converter;
 
 	public CxfIcons(final ErrorHandler errorHandler, final IconsLogic logic,
-			final Function<Icon, org.cmdbuild.logic.icon.Icon> iconToElement,
-			final Function<org.cmdbuild.logic.icon.Icon, Icon> elementToIcon) {
+			final Converter<Icon, org.cmdbuild.logic.icon.Icon> converter) {
 		this.errorHandler = errorHandler;
 		this.logic = logic;
-		this.iconToElement = iconToElement;
-		this.elementToIcon = elementToIcon;
+		this.converter = converter;
 	}
 
 	@Override
 	public ResponseSingle<Icon> create(final Icon icon) {
 		final org.cmdbuild.logic.icon.Icon created = logic
-				.create(iconToElement.apply(requireNonNull(icon, "missing icon")));
+				.create(converter.convert(requireNonNull(icon, "missing icon")));
 		return newResponseSingle(Icon.class) //
-				.withElement(elementToIcon.apply(created)) //
+				.withElement(converter.reverse().convert(created)) //
 				.build();
 	}
 
@@ -190,7 +183,7 @@ public class CxfIcons implements Icons, LoggingSupport {
 		final Iterable<org.cmdbuild.logic.icon.Icon> elements = logic.read();
 		return newResponseMultiple(Icon.class) //
 				.withElements(from(elements) //
-						.transform(elementToIcon)) //
+						.transform(converter.reverse())) //
 				.withMetadata(newMetadata() //
 						.withTotal(size(elements)) //
 						.build()) //
@@ -202,7 +195,7 @@ public class CxfIcons implements Icons, LoggingSupport {
 		final Optional<org.cmdbuild.logic.icon.Icon> read = logic.read(wrapperForId(id));
 		final Icon output;
 		if (read.isPresent()) {
-			output = elementToIcon.apply(read.get());
+			output = converter.reverse().convert(read.get());
 		} else {
 			errorHandler.missingIcon(id);
 			output = null;
@@ -219,8 +212,8 @@ public class CxfIcons implements Icons, LoggingSupport {
 			// TODO do it better
 			logic.update(new ForwardingIcon() {
 
-				private final org.cmdbuild.logic.icon.Icon delegate = iconToElement
-						.apply(requireNonNull(icon, "missing " + Icon.class));
+				private final org.cmdbuild.logic.icon.Icon delegate = converter
+						.convert(requireNonNull(icon, "missing " + Icon.class));
 
 				@Override
 				protected org.cmdbuild.logic.icon.Icon delegate() {

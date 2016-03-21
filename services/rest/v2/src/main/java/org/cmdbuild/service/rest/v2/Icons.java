@@ -24,7 +24,6 @@ public interface Icons {
 
 	@POST
 	@Path(EMPTY)
-	@Produces(APPLICATION_JSON)
 	ResponseSingle<Icon> create( //
 			Icon icon //
 	);
@@ -42,7 +41,6 @@ public interface Icons {
 
 	@PUT
 	@Path("{" + ID + "}/")
-	@Produces(APPLICATION_JSON)
 	void update( //
 			@PathParam(ID) Long id, //
 			Icon icon //
