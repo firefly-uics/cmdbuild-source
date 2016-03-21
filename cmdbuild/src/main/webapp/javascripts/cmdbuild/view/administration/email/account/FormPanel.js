@@ -118,7 +118,7 @@
 								items: [
 									Ext.create('Ext.form.field.Text', {
 										name: CMDBuild.core.constants.Proxy.NAME,
-										fieldLabel: CMDBuild.core.Utils.prependMandatoryLabel(CMDBuild.Translation.name),
+										fieldLabel: CMDBuild.Translation.name,
 										labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
 										maxWidth: CMDBuild.core.constants.FieldWidths.ADMINISTRATION_BIG,
 										allowBlank: false,
@@ -179,7 +179,7 @@
 								items: [
 									Ext.create('Ext.form.field.Text', {
 										name: CMDBuild.core.constants.Proxy.ADDRESS,
-										fieldLabel: CMDBuild.core.Utils.prependMandatoryLabel(CMDBuild.Translation.address),
+										fieldLabel: CMDBuild.Translation.address,
 										labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
 										maxWidth: CMDBuild.core.constants.FieldWidths.ADMINISTRATION_BIG,
 										allowBlank: false,
