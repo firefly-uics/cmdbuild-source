@@ -1,4 +1,4 @@
-(function() {
+(function () {
 
 	Ext.define('CMDBuild.controller.administration.widget.form.Workflow', {
 		extend: 'CMDBuild.controller.administration.widget.form.Abstract',
@@ -41,8 +41,10 @@
 		/**
 		 * @param {Object} configurationObject
 		 * @param {CMDBuild.controller.administration.widget.Widget} configurationObject.parentDelegate
+		 *
+		 * @override
 		 */
-		constructor: function(configurationObject) {
+		constructor: function (configurationObject) {
 			this.callParent(arguments);
 
 			this.view = Ext.create('CMDBuild.view.administration.widget.form.WorkflowPanel', { delegate: this });
@@ -51,7 +53,7 @@
 		/**
 		 * @return {Object} widgetDefinition
 		 */
-		classTabWidgetWorkflowDefinitionGet: function() {
+		classTabWidgetWorkflowDefinitionGet: function () {
 			var widgetDefinition = CMDBuild.model.widget.workflow.Definition.convertToLegacy(
 				Ext.create(this.classTabWidgetDefinitionModelNameGet(), this.view.getData(true)).getData()
 			);
@@ -70,7 +72,7 @@
 		 *
 		 * @param {CMDBuild.model.widget.workflow.Definition} record
 		 */
-		classTabWidgetWorkflowLoadRecord: function(record) {
+		classTabWidgetWorkflowLoadRecord: function (record) {
 			this.view.loadRecord(record);
 
 			switch (record.get(CMDBuild.core.constants.Proxy.FILTER_TYPE)) {
@@ -88,7 +90,7 @@
 		/**
 		 * @param {String} selectedType
 		 */
-		onClassTabWidgetWorkflowFilterTypeChange: function(selectedType) {
+		onClassTabWidgetWorkflowFilterTypeChange: function (selectedType) {
 			switch (selectedType) {
 				case CMDBuild.core.constants.Proxy.CQL: {
 					this.view.additionalProperties.removeAll();
@@ -105,7 +107,7 @@
 		/**
 		 * @param {CMDBuild.model.widget.workflow.TargetWorkflow} selectedRecord
 		 */
-		onClassTabWidgetWorkflowSelectedWorkflowChange: function(selectedRecord) {
+		onClassTabWidgetWorkflowSelectedWorkflowChange: function (selectedRecord) {
 			if (!Ext.Object.isEmpty(selectedRecord)) {
 				var params = {};
 				params[CMDBuild.core.constants.Proxy.CLASS_ID] = selectedRecord.get(CMDBuild.core.constants.Proxy.ID);
@@ -113,13 +115,13 @@
 				CMDBuild.core.proxy.widget.Workflow.readStartActivity({
 					params: params,
 					scope: this,
-					success: function(response, options, decodedResponse) {
+					success: function (response, options, decodedResponse) {
 						decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.RESPONSE][CMDBuild.core.constants.Proxy.VARIABLES];
 
 						var data = {};
 
 						if (!Ext.isEmpty(decodedResponse) && Ext.isArray(decodedResponse))
-							Ext.Array.forEach(decodedResponse, function(valueObject, i, allValueObjects) {
+							Ext.Array.forEach(decodedResponse, function (valueObject, i, allValueObjects) {
 								if (!Ext.Object.isEmpty(valueObject))
 									data[valueObject[CMDBuild.core.constants.Proxy.NAME]] = '';
 							}, this);

@@ -1,4 +1,4 @@
-(function() {
+(function () {
 
 	// External implementation to avoid overrides
 	Ext.require([
@@ -47,7 +47,7 @@
 			align: 'stretch'
 		},
 
-		initComponent: function() {
+		initComponent: function () {
 			Ext.apply(this, {
 				dockedItems: [
 					Ext.create('Ext.toolbar.Toolbar', {
@@ -59,7 +59,7 @@
 								text: CMDBuild.Translation.modifyWidget,
 								scope: this,
 
-								handler: function(button, e) {
+								handler: function (button, e) {
 									this.delegate.cmfg('onClassTabWidgetModifyButtonClick');
 								}
 							}),
@@ -67,7 +67,7 @@
 								text: CMDBuild.Translation.removeWidget,
 								scope: this,
 
-								handler: function(button, e) {
+								handler: function (button, e) {
 									this.delegate.cmfg('onClassTabWidgetRemoveButtonClick');
 								}
 							})
@@ -88,14 +88,14 @@
 							Ext.create('CMDBuild.core.buttons.text.Save', {
 								scope: this,
 
-								handler: function(button, e) {
+								handler: function (button, e) {
 									this.delegate.cmfg('onClassTabWidgetSaveButtonClick');
 								}
 							}),
 							Ext.create('CMDBuild.core.buttons.text.Abort', {
 								scope: this,
 
-								handler: function(button, e) {
+								handler: function (button, e) {
 									this.delegate.cmfg('onClassTabWidgetAbortButtonClick');
 								}
 							})
@@ -141,7 +141,7 @@
 		/**
 		 * @returns {Array}
 		 */
-		widgetDefinitionFormBasePropertiesGet: function() {
+		widgetDefinitionFormBasePropertiesGet: function () {
 			return [
 				this.fieldType = Ext.create('Ext.form.field.Text', {
 					fieldLabel: CMDBuild.Translation.type,
@@ -155,7 +155,7 @@
 
 					listeners: {
 						scope: this,
-						change: function(field, newValue, oldValue, eOpts) {
+						change: function (field, newValue, oldValue, eOpts) {
 							field.setValue(this.delegate.cmfg('classTabWidgetTypeRenderer', newValue));
 						}
 					}

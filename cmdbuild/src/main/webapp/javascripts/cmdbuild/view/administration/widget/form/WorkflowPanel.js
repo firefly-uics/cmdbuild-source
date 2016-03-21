@@ -1,4 +1,4 @@
-(function() {
+(function () {
 
 	Ext.define('CMDBuild.view.administration.widget.form.WorkflowPanel', {
 		extend: 'CMDBuild.view.administration.widget.form.AbstractWidgetDefinitionPanel',
@@ -33,7 +33,7 @@
 		/**
 		 * @returns {Array}
 		 */
-		widgetDefinitionFormAdditionalPropertiesByCqlGet: function() {
+		widgetDefinitionFormAdditionalPropertiesByCqlGet: function () {
 			return [
 				Ext.create('Ext.form.FieldSet', {
 					title: CMDBuild.Translation.additionalProperties,
@@ -59,7 +59,7 @@
 		/**
 		 * @returns {Array}
 		 */
-		widgetDefinitionFormAdditionalPropertiesByNameGet: function() {
+		widgetDefinitionFormAdditionalPropertiesByNameGet: function () {
 			return [
 				Ext.create('Ext.form.FieldSet', {
 					title: CMDBuild.Translation.additionalProperties,
@@ -86,7 +86,7 @@
 
 							listeners: {
 								scope: this,
-								change: function(combo, newValue, oldValue, eOpts) {
+								change: function (combo, newValue, oldValue, eOpts) {
 									this.delegate.cmfg('onClassTabWidgetWorkflowSelectedWorkflowChange', combo.findRecordByValue(newValue));
 								}
 							}
@@ -109,7 +109,7 @@
 		 *
 		 * @override
 		 */
-		widgetDefinitionFormBasePropertiesGet: function() {
+		widgetDefinitionFormBasePropertiesGet: function () {
 			return Ext.Array.push(this.callParent(arguments), [
 				Ext.create('Ext.form.field.ComboBox', {
 					name: CMDBuild.core.constants.Proxy.FILTER_TYPE,
@@ -126,7 +126,7 @@
 
 					listeners: {
 						scope: this,
-						change: function(combo, newValue, oldValue, eOpts) {
+						change: function (combo, newValue, oldValue, eOpts) {
 							this.delegate.cmfg('onClassTabWidgetWorkflowFilterTypeChange', newValue);
 						}
 					}
