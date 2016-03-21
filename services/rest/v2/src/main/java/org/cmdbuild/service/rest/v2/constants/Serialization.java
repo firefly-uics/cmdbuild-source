@@ -80,6 +80,7 @@ public class Serialization {
 			GROUP = "group", //
 			HIDDEN = "hidden", //
 			ICON = "icon", //
+			IMAGE = "image", //
 			INDEX = "index", //
 			INHERITED = "inherited", //
 			INPUTS = "inputs", //

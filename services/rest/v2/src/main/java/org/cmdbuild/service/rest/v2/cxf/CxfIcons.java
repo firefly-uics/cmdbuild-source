@@ -3,20 +3,20 @@ package org.cmdbuild.service.rest.v2.cxf;
 import static com.google.common.collect.FluentIterable.from;
 import static com.google.common.collect.Iterables.size;
 import static com.google.common.collect.Maps.newHashMap;
+import static com.google.common.reflect.Reflection.newProxy;
 import static java.util.Objects.requireNonNull;
+import static org.cmdbuild.common.utils.Reflection.unsupported;
 import static org.cmdbuild.logic.icon.Types.classType;
 import static org.cmdbuild.service.rest.v2.model.Models.newIcon;
+import static org.cmdbuild.service.rest.v2.model.Models.newImage;
 import static org.cmdbuild.service.rest.v2.model.Models.newMetadata;
 import static org.cmdbuild.service.rest.v2.model.Models.newResponseMultiple;
 import static org.cmdbuild.service.rest.v2.model.Models.newResponseSingle;
 
-import java.io.IOException;
 import java.util.Map;
 import java.util.Optional;
 
-import javax.activation.DataHandler;
-
-import org.cmdbuild.logic.icon.Element;
+import org.cmdbuild.logic.icon.ForwardingIcon;
 import org.cmdbuild.logic.icon.IconsLogic;
 import org.cmdbuild.logic.icon.Type;
 import org.cmdbuild.logic.icon.TypeVisitor;
@@ -25,6 +25,7 @@ import org.cmdbuild.logic.icon.Types.ProcessType;
 import org.cmdbuild.service.rest.v2.Icons;
 import org.cmdbuild.service.rest.v2.logging.LoggingSupport;
 import org.cmdbuild.service.rest.v2.model.Icon;
+import org.cmdbuild.service.rest.v2.model.Image;
 import org.cmdbuild.service.rest.v2.model.ResponseMultiple;
 import org.cmdbuild.service.rest.v2.model.ResponseSingle;
 
@@ -35,7 +36,7 @@ public class CxfIcons implements Icons, LoggingSupport {
 	private static final String CLASS = "class";
 	private static final String PROCESS = "process";
 
-	public static class IconToElement implements Function<Icon, Element> {
+	public static class IconToElement implements Function<Icon, org.cmdbuild.logic.icon.Icon> {
 
 		private final ErrorHandler errorHandler;
 
@@ -44,7 +45,7 @@ public class CxfIcons implements Icons, LoggingSupport {
 		}
 
 		@Override
-		public Element apply(final Icon input) {
+		public org.cmdbuild.logic.icon.Icon apply(final Icon input) {
 			final Type type;
 			switch (input.getType()) {
 			case CLASS: {
@@ -67,10 +68,10 @@ public class CxfIcons implements Icons, LoggingSupport {
 				errorHandler.invalidIconType(input.getType());
 				throw new AssertionError("should never come here");
 			}
-			return new Element() {
+			return new org.cmdbuild.logic.icon.Icon() {
 
 				@Override
-				public String getId() {
+				public Long getId() {
 					return input.getId();
 				}
 
@@ -79,15 +80,46 @@ public class CxfIcons implements Icons, LoggingSupport {
 					return type;
 				}
 
+				@Override
+				public org.cmdbuild.logic.icon.Image getImage() {
+					final org.cmdbuild.logic.icon.Image output;
+					switch (requireNonNull(input.getImage(), "missing image").getType()) {
+					case Image.filestore:
+						output = new org.cmdbuild.logic.icon.Image() {
+
+							private final Map<String, Object> details = input.getImage().getDetails();
+
+							@Override
+							public String folder() {
+								return String.class
+										.cast(requireNonNull(details.get(Image.folder), "missing " + Image.folder));
+							}
+
+							@Override
+							public String file() {
+								return String.class
+										.cast(requireNonNull(details.get(Image.file), "missing " + Image.file));
+							}
+
+						};
+						break;
+
+					default:
+						output = null;
+						break;
+					}
+					return requireNonNull(output, "missing " + org.cmdbuild.logic.icon.Image.class);
+				}
+
 			};
 		}
 
 	}
 
-	public static class ElementToIcon implements Function<Element, Icon> {
+	public static class ElementToIcon implements Function<org.cmdbuild.logic.icon.Icon, Icon> {
 
 		@Override
-		public Icon apply(final Element input) {
+		public Icon apply(final org.cmdbuild.logic.icon.Icon input) {
 			return new TypeVisitor() {
 
 				private String type;
@@ -99,6 +131,7 @@ public class CxfIcons implements Icons, LoggingSupport {
 							.withId(input.getId()) //
 							.withType(requireNonNull(type, "missing type")) //
 							.withDetails(requireNonNull(details, "missing details")) //
+							.withImage(imageOf(requireNonNull(input.getImage(), "missing image"))) //
 							.build();
 				}
 
@@ -116,6 +149,14 @@ public class CxfIcons implements Icons, LoggingSupport {
 					this.details.put(Icon.id, type.getName());
 				}
 
+				private Image imageOf(final org.cmdbuild.logic.icon.Image image) {
+					return newImage() //
+							.withType(Image.filestore) //
+							.withDetail(Image.folder, image.folder()) //
+							.withDetail(Image.file, image.file()) //
+							.build();
+				}
+
 			}.icon();
 		}
 
@@ -123,11 +164,12 @@ public class CxfIcons implements Icons, LoggingSupport {
 
 	private final ErrorHandler errorHandler;
 	private final IconsLogic logic;
-	private final Function<Icon, Element> iconToElement;
-	private final Function<Element, Icon> elementToIcon;
+	private final Function<Icon, org.cmdbuild.logic.icon.Icon> iconToElement;
+	private final Function<org.cmdbuild.logic.icon.Icon, Icon> elementToIcon;
 
 	public CxfIcons(final ErrorHandler errorHandler, final IconsLogic logic,
-			final Function<Icon, Element> iconToElement, final Function<Element, Icon> elementToIcon) {
+			final Function<Icon, org.cmdbuild.logic.icon.Icon> iconToElement,
+			final Function<org.cmdbuild.logic.icon.Icon, Icon> elementToIcon) {
 		this.errorHandler = errorHandler;
 		this.logic = logic;
 		this.iconToElement = iconToElement;
@@ -135,25 +177,17 @@ public class CxfIcons implements Icons, LoggingSupport {
 	}
 
 	@Override
-	public ResponseSingle<Icon> create(final Icon icon, final DataHandler dataHandler) {
-		try {
-			final Element created = logic.create( //
-					iconToElement.apply( //
-							requireNonNull(icon, "missing icon")), //
-					requireNonNull(dataHandler, "missing data handler"));
-			return newResponseSingle(Icon.class) //
-					.withElement(elementToIcon.apply(created)) //
-					.build();
-		} catch (final IOException e) {
-			logger.error("error creating icon");
-			errorHandler.propagate(e);
-			throw new AssertionError("should never come here");
-		}
+	public ResponseSingle<Icon> create(final Icon icon) {
+		final org.cmdbuild.logic.icon.Icon created = logic
+				.create(iconToElement.apply(requireNonNull(icon, "missing icon")));
+		return newResponseSingle(Icon.class) //
+				.withElement(elementToIcon.apply(created)) //
+				.build();
 	}
 
 	@Override
 	public ResponseMultiple<Icon> read() {
-		final Iterable<Element> elements = logic.read();
+		final Iterable<org.cmdbuild.logic.icon.Icon> elements = logic.read();
 		return newResponseMultiple(Icon.class) //
 				.withElements(from(elements) //
 						.transform(elementToIcon)) //
@@ -164,23 +198,8 @@ public class CxfIcons implements Icons, LoggingSupport {
 	}
 
 	@Override
-	public ResponseSingle<Icon> read(final String id) {
-		requireNonNull(id, "missing id");
-		// FIXME but cannot use converter/function
-		final Element element = new Element() {
-
-			@Override
-			public String getId() {
-				return id;
-			}
-
-			@Override
-			public Type getType() {
-				return null;
-			}
-
-		};
-		final Optional<Element> read = logic.read(element);
+	public ResponseSingle<Icon> read(final Long id) {
+		final Optional<org.cmdbuild.logic.icon.Icon> read = logic.read(wrapperForId(id));
 		final Icon output;
 		if (read.isPresent()) {
 			output = elementToIcon.apply(read.get());
@@ -194,88 +213,58 @@ public class CxfIcons implements Icons, LoggingSupport {
 	}
 
 	@Override
-	public DataHandler download(final String id) {
-		requireNonNull(id, "missing id");
-		// FIXME but cannot use converter/function
-		final Element element = new Element() {
+	public void update(final Long id, final Icon icon) {
+		final Optional<org.cmdbuild.logic.icon.Icon> read = logic.read(wrapperForId(id));
+		if (read.isPresent()) {
+			// TODO do it better
+			logic.update(new ForwardingIcon() {
 
-			@Override
-			public String getId() {
-				return id;
-			}
+				private final org.cmdbuild.logic.icon.Icon delegate = iconToElement
+						.apply(requireNonNull(icon, "missing " + Icon.class));
 
-			@Override
-			public Type getType() {
-				return null;
-			}
+				@Override
+				protected org.cmdbuild.logic.icon.Icon delegate() {
+					return delegate;
+				}
 
-		};
-		final Optional<DataHandler> download = logic.download(element);
-		final DataHandler output;
-		if (download.isPresent()) {
-			output = download.get();
+				@Override
+				public Long getId() {
+					return read.get().getId();
+				}
+
+			});
 		} else {
 			errorHandler.missingIcon(id);
-			output = null;
-		}
-		return output;
-	}
-
-	@Override
-	public void update(final String id, final DataHandler dataHandler) {
-		try {
-			requireNonNull(id, "missing id");
-			requireNonNull(dataHandler, "missing data handler");
-			// FIXME but cannot use converter/function
-			final Element element = new Element() {
-
-				@Override
-				public String getId() {
-					return id;
-				}
-
-				@Override
-				public Type getType() {
-					return null;
-				}
-
-			};
-			final Optional<Element> read = logic.read(element);
-			if (read.isPresent()) {
-				logic.update(read.get(), dataHandler);
-			} else {
-				errorHandler.missingIcon(id);
-			}
-		} catch (final IOException e) {
-			logger.error("error updating icon");
-			errorHandler.propagate(e);
-			throw new AssertionError("should never come here");
 		}
 	}
 
 	@Override
-	public void delete(final String id) {
-		requireNonNull(id, "missing id");
-		// FIXME but cannot use converter/function
-		final Element element = new Element() {
-
-			@Override
-			public String getId() {
-				return id;
-			}
-
-			@Override
-			public Type getType() {
-				return null;
-			}
-
-		};
-		final Optional<Element> read = logic.read(element);
+	public void delete(final Long id) {
+		final Optional<org.cmdbuild.logic.icon.Icon> read = logic.read(wrapperForId(id));
 		if (read.isPresent()) {
 			logic.delete(read.get());
 		} else {
 			errorHandler.missingIcon(id);
 		}
+	}
+
+	private static org.cmdbuild.logic.icon.Icon wrapperForId(final Long id) {
+		return new ForwardingIcon() {
+
+			final org.cmdbuild.logic.icon.Icon UNSUPPORTED = newProxy(org.cmdbuild.logic.icon.Icon.class,
+					unsupported("not supported"));
+
+			@Override
+			protected org.cmdbuild.logic.icon.Icon delegate() {
+				return UNSUPPORTED;
+			}
+
+			@Override
+			public Long getId() {
+				return requireNonNull(id, "missing id");
+			}
+
+		};
 	}
 
 }
