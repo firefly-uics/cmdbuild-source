@@ -42,8 +42,8 @@
 							this.delegate.cmfg('onTabEmailAttachmentDownloadButtonClick', this);
 						}
 					}),
-					Ext.create('CMDBuild.core.buttons.iconized.Delete', {
-						tooltip: CMDBuild.Translation.deleteLabel,
+					Ext.create('CMDBuild.core.buttons.iconized.Remove', {
+						tooltip: CMDBuild.Translation.remove,
 						disabled: this.readOnly,
 						scope: this,
 

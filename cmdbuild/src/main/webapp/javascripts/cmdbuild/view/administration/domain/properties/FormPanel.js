@@ -81,7 +81,7 @@
 									this.delegate.cmfg('onDomainModifyButtonClick');
 								}
 							}),
-							Ext.create('CMDBuild.core.buttons.iconized.Delete', {
+							Ext.create('CMDBuild.core.buttons.iconized.Remove', {
 								text: CMDBuild.Translation.removeDomain,
 								scope: this,
 

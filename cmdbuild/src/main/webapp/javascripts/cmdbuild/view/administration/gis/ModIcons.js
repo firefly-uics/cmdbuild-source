@@ -143,7 +143,7 @@ Ext.define("CMDBuild.Administration.ModIcons", {
 	    	handler: this.onModify
 	    });
 
-		this.removeButton = Ext.create('CMDBuild.core.buttons.iconized.Delete', {
+		this.removeButton = Ext.create('CMDBuild.core.buttons.iconized.Remove', {
 	    	scope: this,
 	    	disabled: true,
 	    	handler: this.onRemove

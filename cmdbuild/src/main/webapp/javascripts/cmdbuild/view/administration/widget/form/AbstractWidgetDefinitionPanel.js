@@ -63,7 +63,7 @@
 									this.delegate.cmfg('onClassTabWidgetModifyButtonClick');
 								}
 							}),
-							Ext.create('CMDBuild.core.buttons.iconized.Delete', {
+							Ext.create('CMDBuild.core.buttons.iconized.Remove', {
 								text: CMDBuild.Translation.removeWidget,
 								scope: this,
 

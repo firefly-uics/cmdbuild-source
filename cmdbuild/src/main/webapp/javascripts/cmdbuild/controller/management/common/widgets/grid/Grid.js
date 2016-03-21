@@ -179,7 +179,7 @@
 								this.cmfg('onEditRowButtonClick', record);
 							}
 						}),
-						Ext.create('CMDBuild.core.buttons.iconized.Delete', {
+						Ext.create('CMDBuild.core.buttons.iconized.Remove', {
 							withSpacer: true,
 							tooltip: CMDBuild.Translation.deleteRow,
 							scope: this,

@@ -34,7 +34,7 @@
 								text: CMDBuild.Translation.modifyCard,
 								disabled: true
 							}),
-							Ext.create('CMDBuild.core.buttons.iconized.Delete', {
+							Ext.create('CMDBuild.core.buttons.iconized.Remove', {
 								text: CMDBuild.Translation.deleteCard,
 								disabled: true
 							}),

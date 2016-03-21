@@ -44,7 +44,7 @@
 									this.delegate.cmfg('onReportJasperModifyButtonClick');
 								}
 							}),
-							Ext.create('CMDBuild.core.buttons.iconized.Delete', {
+							Ext.create('CMDBuild.core.buttons.iconized.Remove', {
 								text: CMDBuild.Translation.removeReport,
 								scope: this,
 

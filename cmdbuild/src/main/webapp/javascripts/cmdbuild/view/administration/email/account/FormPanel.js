@@ -17,7 +17,7 @@
 		delegate: undefined,
 
 		/**
-		 * @property {CMDBuild.core.buttons.iconized.Delete}
+		 * @property {CMDBuild.core.buttons.iconized.Remove}
 		 */
 		removeButton: undefined,
 
@@ -49,7 +49,7 @@
 									this.delegate.cmfg('onEmailAccountModifyButtonClick');
 								}
 							}),
-							this.removeButton = Ext.create('CMDBuild.core.buttons.iconized.Delete', {
+							this.removeButton = Ext.create('CMDBuild.core.buttons.iconized.Remove', {
 								text: CMDBuild.Translation.removeAccount,
 								scope: this,
 

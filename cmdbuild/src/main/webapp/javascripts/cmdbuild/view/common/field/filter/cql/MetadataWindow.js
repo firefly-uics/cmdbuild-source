@@ -97,7 +97,7 @@
 
 								items: [
 									Ext.create('CMDBuild.core.buttons.Delete', {
-										tooltip: CMDBuild.Translation.deleteLabel,
+										tooltip: CMDBuild.Translation.remove,
 										scope: this,
 
 										handler: function(grid, rowIndex, colIndex, node, e, record, rowNode) {
