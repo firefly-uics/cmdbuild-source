@@ -6,8 +6,7 @@
 		requires: [
 			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.proxy.Classes',
-			'CMDBuild.core.proxy.widget.Widget',
-			'CMDBuild.view.common.field.translatable.Utils'
+			'CMDBuild.core.proxy.widget.Widget'
 		],
 
 		/**
@@ -341,8 +340,6 @@
 						success: function(response, options, decodedResponse) {
 							decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.RESPONSE];
 
-							CMDBuild.view.common.field.translatable.Utils.commit(this.form);
-
 							this.cmfg('onClassTabWidgetPanelShow', decodedResponse);
 						}
 					});
@@ -351,8 +348,6 @@
 						params: params,
 						scope: this,
 						success: function(response, options, decodedResponse) {
-							CMDBuild.view.common.field.translatable.Utils.commit(this.form);
-
 							this.cmfg('onClassTabWidgetPanelShow', parseInt(this.form.getForm().findField(CMDBuild.core.constants.Proxy.ID).getValue()));
 						}
 					});

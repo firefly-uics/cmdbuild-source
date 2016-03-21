@@ -143,7 +143,6 @@
 		 */
 		widgetDefinitionFormBasePropertiesGet: function() {
 			return [
-				Ext.create('Ext.form.field.Hidden', { name: CMDBuild.core.constants.Proxy.ID }),
 				this.fieldType = Ext.create('Ext.form.field.Text', {
 					fieldLabel: CMDBuild.Translation.type,
 					labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
@@ -161,19 +160,12 @@
 						}
 					}
 				}),
-				Ext.create('CMDBuild.view.common.field.translatable.Text', {
+				Ext.create('Ext.form.field.Text', {
 					name: CMDBuild.core.constants.Proxy.LABEL,
 					fieldLabel: CMDBuild.Translation.buttonLabel,
 					maxWidth: CMDBuild.core.constants.FieldWidths.ADMINISTRATION_BIG,
 					labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
-					allowBlank: false,
-
-					translationFieldConfig: {
-						type: CMDBuild.core.constants.Proxy.CLASS_WIDGET,
-						owner: { sourceType: 'form', key: CMDBuild.core.constants.Proxy.NAME, source: this },
-						identifier: { sourceType: 'form', key: CMDBuild.core.constants.Proxy.NAME, source: this },
-						field: CMDBuild.core.constants.Proxy.DESCRIPTION
-					}
+					allowBlank: false
 				}),
 				Ext.create('Ext.form.field.Checkbox', {
 					name: CMDBuild.core.constants.Proxy.ACTIVE,
@@ -184,7 +176,8 @@
 					name: CMDBuild.core.constants.Proxy.ALWAYS_ENABLED,
 					fieldLabel: CMDBuild.Translation.alwaysEnabled,
 					labelWidth: CMDBuild.core.constants.FieldWidths.LABEL
-				})
+				}),
+				Ext.create('Ext.form.field.Hidden', { name: CMDBuild.core.constants.Proxy.ID })
 			];
 		}
 	});
