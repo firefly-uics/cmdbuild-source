@@ -72,7 +72,7 @@
 							}),
 							Ext.create('Ext.form.field.Text', {
 								name: CMDBuild.core.constants.Proxy.DATABASE_NAME,
-								fieldLabel: CMDBuild.core.Utils.prependMandatoryLabel(CMDBuild.Translation.name),
+								fieldLabel: CMDBuild.Translation.name,
 								labelWidth: CMDBuild.core.constants.FieldWidths.LABEL_CONFIGURE,
 								maxWidth: CMDBuild.core.constants.FieldWidths.CONFIGURE_MEDIUM,
 								allowBlank: false
@@ -99,28 +99,28 @@
 						items: [
 							Ext.create('Ext.form.field.Text', {
 								name: CMDBuild.core.constants.Proxy.CONNECTION_HOST,
-								fieldLabel: CMDBuild.core.Utils.prependMandatoryLabel(CMDBuild.Translation.host),
+								fieldLabel: CMDBuild.Translation.host,
 								labelWidth: CMDBuild.core.constants.FieldWidths.LABEL_CONFIGURE,
 								maxWidth: CMDBuild.core.constants.FieldWidths.CONFIGURE_MEDIUM,
 								allowBlank: false
 							}),
 							Ext.create('Ext.form.field.Text', {
 								name: CMDBuild.core.constants.Proxy.CONNECTION_PORT,
-								fieldLabel: CMDBuild.core.Utils.prependMandatoryLabel(CMDBuild.Translation.port),
+								fieldLabel: CMDBuild.Translation.port,
 								labelWidth: CMDBuild.core.constants.FieldWidths.LABEL_CONFIGURE,
 								maxWidth: CMDBuild.core.constants.FieldWidths.CONFIGURE_MEDIUM,
 								allowBlank: false
 							}),
 							Ext.create('Ext.form.field.Text', {
 								name: CMDBuild.core.constants.Proxy.CONNECTION_USER,
-								fieldLabel: CMDBuild.core.Utils.prependMandatoryLabel(CMDBuild.Translation.superUser),
+								fieldLabel: CMDBuild.Translation.superUser,
 								labelWidth: CMDBuild.core.constants.FieldWidths.LABEL_CONFIGURE,
 								maxWidth: CMDBuild.core.constants.FieldWidths.CONFIGURE_MEDIUM,
 								allowBlank: false
 							}),
 							Ext.create('Ext.form.field.Text', {
 								name: CMDBuild.core.constants.Proxy.CONNECTION_PASSWORD,
-								fieldLabel: CMDBuild.core.Utils.prependMandatoryLabel(CMDBuild.Translation.password),
+								fieldLabel: CMDBuild.Translation.password,
 								labelWidth: CMDBuild.core.constants.FieldWidths.LABEL_CONFIGURE,
 								maxWidth: CMDBuild.core.constants.FieldWidths.CONFIGURE_MEDIUM,
 								inputType:'password',
@@ -172,14 +172,14 @@
 							}),
 							this.databaseUserNameField = Ext.create('Ext.form.field.Text', {
 								name: CMDBuild.core.constants.Proxy.DATABASE_USER_NAME,
-								fieldLabel: CMDBuild.core.Utils.prependMandatoryLabel(CMDBuild.Translation.user),
+								fieldLabel: CMDBuild.Translation.user,
 								labelWidth: CMDBuild.core.constants.FieldWidths.LABEL_CONFIGURE,
 								maxWidth: CMDBuild.core.constants.FieldWidths.CONFIGURE_MEDIUM,
 								allowBlank: false
 							}),
 							this.databaseUserPasswordField = Ext.create('Ext.form.field.Text', {
 								name: CMDBuild.core.constants.Proxy.DATABASE_USER_PASSWORD,
-								fieldLabel: CMDBuild.core.Utils.prependMandatoryLabel(CMDBuild.Translation.password),
+								fieldLabel: CMDBuild.Translation.password,
 								labelWidth: CMDBuild.core.constants.FieldWidths.LABEL_CONFIGURE,
 								maxWidth: CMDBuild.core.constants.FieldWidths.CONFIGURE_MEDIUM,
 								inputType:'password',
