@@ -7,7 +7,6 @@
 
 		bodyCls: 'cmdb-gray-panel',
 		border: false,
-		cls: 'x-panel-body-default-framed',
 		encoding: 'multipart/form-data',
 		fileUpload: true,
 		frame: false,

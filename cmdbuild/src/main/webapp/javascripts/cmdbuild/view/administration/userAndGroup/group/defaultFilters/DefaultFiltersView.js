@@ -13,6 +13,8 @@
 		 */
 		tree: undefined,
 
+		bodyCls: 'cmdb-gray-panel-no-padding',
+		cls: 'cmdb-gray-panel-no-padding',
 		border: false,
 		frame: false,
 		layout: 'fit',

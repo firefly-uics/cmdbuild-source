@@ -26,6 +26,7 @@
 		includeUnactiveUsers: undefined,
 
 		baseTitle: CMDBuild.Translation.users,
+		bodyCls: 'cmdb-gray-panel-no-padding',
 		border: true,
 		frame: false,
 		layout: 'border',
