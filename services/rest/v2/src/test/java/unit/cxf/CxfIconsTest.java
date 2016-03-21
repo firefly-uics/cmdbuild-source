@@ -18,10 +18,6 @@ import static org.mockito.Mockito.verifyNoMoreInteractions;
 
 import java.util.Optional;
 
-import javax.activation.DataHandler;
-
-import org.bimserver.utils.FileDataSource;
-import org.cmdbuild.logic.icon.Element;
 import org.cmdbuild.logic.icon.IconsLogic;
 import org.cmdbuild.service.rest.v2.cxf.CxfIcons;
 import org.cmdbuild.service.rest.v2.cxf.ErrorHandler;
@@ -43,8 +39,8 @@ public class CxfIconsTest {
 
 	private ErrorHandler errorHandler;
 	private IconsLogic iconsLogic;
-	private Function<Icon, Element> iconToElement;
-	private Function<Element, Icon> elementToIcon;
+	private Function<Icon, org.cmdbuild.logic.icon.Icon> iconToElement;
+	private Function<org.cmdbuild.logic.icon.Icon, Icon> elementToIcon;
 	private CxfIcons underTest;
 
 	@Before
@@ -58,43 +54,30 @@ public class CxfIconsTest {
 
 	@Test(expected = NullPointerException.class)
 	public void createWithNullIconThrowsException() throws Exception {
-		// given
-		final DataHandler dataHandler = new DataHandler(new FileDataSource(folder.newFile()));
-
 		// when
-		underTest.create(null, dataHandler);
-	}
-
-	@Test(expected = NullPointerException.class)
-	public void createWithNullDataHandlerThrowsException() throws Exception {
-		// given
-		final Icon icon = newIcon().build();
-
-		// when
-		underTest.create(icon, null);
+		underTest.create(null);
 	}
 
 	@Test
 	public void create() throws Exception {
 		// given
 		final Icon inputIcon = newIcon().build();
-		final DataHandler dataHandler = new DataHandler(new FileDataSource(folder.newFile()));
-		final Element elementFromIcon = mock(Element.class);
+		final org.cmdbuild.logic.icon.Icon elementFromIcon = mock(org.cmdbuild.logic.icon.Icon.class);
 		doReturn(elementFromIcon) //
 				.when(iconToElement).apply(any(Icon.class));
-		final Element elementFromLogic = mock(Element.class);
+		final org.cmdbuild.logic.icon.Icon elementFromLogic = mock(org.cmdbuild.logic.icon.Icon.class);
 		doReturn(elementFromLogic) //
-				.when(iconsLogic).create(any(Element.class), any(DataHandler.class));
+				.when(iconsLogic).create(any(org.cmdbuild.logic.icon.Icon.class));
 		final Icon outputIcon = newIcon().build();
 		doReturn(outputIcon) //
-				.when(elementToIcon).apply(any(Element.class));
+				.when(elementToIcon).apply(any(org.cmdbuild.logic.icon.Icon.class));
 
 		// when
-		final ResponseSingle<Icon> response = underTest.create(inputIcon, dataHandler);
+		final ResponseSingle<Icon> response = underTest.create(inputIcon);
 
 		// then
 		verify(iconToElement).apply(eq(inputIcon));
-		verify(iconsLogic).create(eq(elementFromIcon), eq(dataHandler));
+		verify(iconsLogic).create(eq(elementFromIcon));
 		verify(elementToIcon).apply(eq(elementFromLogic));
 		verifyNoMoreInteractions(errorHandler, iconsLogic, iconToElement, elementToIcon);
 
@@ -107,23 +90,24 @@ public class CxfIconsTest {
 	@Test
 	public void read() throws Exception {
 		// given
-		final Element first = mock(Element.class);
-		final Element second = mock(Element.class);
-		final Element third = mock(Element.class);
+		final org.cmdbuild.logic.icon.Icon first = mock(org.cmdbuild.logic.icon.Icon.class);
+		final org.cmdbuild.logic.icon.Icon second = mock(org.cmdbuild.logic.icon.Icon.class);
+		final org.cmdbuild.logic.icon.Icon third = mock(org.cmdbuild.logic.icon.Icon.class);
 		doReturn(asList(first, second, third)) //
 				.when(iconsLogic).read();
 		final Icon _first = newIcon().build();
 		final Icon _second = newIcon().build();
 		final Icon _third = newIcon().build();
 		doReturn(_first).doReturn(_second).doReturn(_third) //
-				.when(elementToIcon).apply(any(Element.class));
+				.when(elementToIcon).apply(any(org.cmdbuild.logic.icon.Icon.class));
 
 		// when
 		final ResponseMultiple<Icon> response = underTest.read();
 
 		// then
 		verify(iconsLogic).read();
-		final ArgumentCaptor<Element> captor = ArgumentCaptor.forClass(Element.class);
+		final ArgumentCaptor<org.cmdbuild.logic.icon.Icon> captor = ArgumentCaptor
+				.forClass(org.cmdbuild.logic.icon.Icon.class);
 		verify(elementToIcon, times(3)).apply(captor.capture());
 		assertThat(captor.getAllValues(), contains(first, second, third));
 		verifyNoMoreInteractions(errorHandler, iconsLogic, iconToElement, elementToIcon);
@@ -147,38 +131,40 @@ public class CxfIconsTest {
 	public void readMissingElementInvokesErrorHandler() throws Exception {
 		// given
 		doReturn(Optional.empty()) //
-				.when(iconsLogic).read(any(Element.class));
+				.when(iconsLogic).read(any(org.cmdbuild.logic.icon.Icon.class));
 
 		// when
-		underTest.read("the_id");
+		underTest.read(42L);
 
 		// then
-		final ArgumentCaptor<Element> captor = ArgumentCaptor.forClass(Element.class);
+		final ArgumentCaptor<org.cmdbuild.logic.icon.Icon> captor = ArgumentCaptor
+				.forClass(org.cmdbuild.logic.icon.Icon.class);
 		verify(iconsLogic).read(captor.capture());
-		verify(errorHandler).missingIcon(eq("the_id"));
+		verify(errorHandler).missingIcon(eq(42L));
 		verifyNoMoreInteractions(errorHandler, iconsLogic, iconToElement, elementToIcon);
 	}
 
 	@Test
 	public void readSingleIcon() throws Exception {
 		// given
-		final Element element = mock(Element.class);
+		final org.cmdbuild.logic.icon.Icon element = mock(org.cmdbuild.logic.icon.Icon.class);
 		doReturn(Optional.of(element)) //
-				.when(iconsLogic).read(any(Element.class));
+				.when(iconsLogic).read(any(org.cmdbuild.logic.icon.Icon.class));
 		final Icon outputIcon = newIcon().build();
 		doReturn(outputIcon) //
-				.when(elementToIcon).apply(any(Element.class));
+				.when(elementToIcon).apply(any(org.cmdbuild.logic.icon.Icon.class));
 
 		// when
-		final ResponseSingle<Icon> response = underTest.read("the_id");
+		final ResponseSingle<Icon> response = underTest.read(42L);
 
 		// then
-		final ArgumentCaptor<Element> captor = ArgumentCaptor.forClass(Element.class);
+		final ArgumentCaptor<org.cmdbuild.logic.icon.Icon> captor = ArgumentCaptor
+				.forClass(org.cmdbuild.logic.icon.Icon.class);
 		verify(iconsLogic).read(captor.capture());
 		verify(elementToIcon).apply(eq(element));
 		verifyNoMoreInteractions(errorHandler, iconsLogic, iconToElement, elementToIcon);
 
-		assertThat(captor.getValue().getId(), equalTo("the_id"));
+		assertThat(captor.getValue().getId(), equalTo(42L));
 		assertThat(response,
 				equalTo(newResponseSingle(Icon.class) //
 						.withElement(outputIcon) //
@@ -186,98 +172,60 @@ public class CxfIconsTest {
 	}
 
 	@Test(expected = NullPointerException.class)
-	public void downloadWithNullIdThrowsException() throws Exception {
-		// when
-		underTest.download(null);
-	}
-
-	@Test
-	public void downloadWithMissingElementInvokesErrorHandler() throws Exception {
-		// given
-		doReturn(Optional.empty()) //
-				.when(iconsLogic).download(any(Element.class));
-
-		// when
-		underTest.download("the_id");
-
-		// then
-		final ArgumentCaptor<Element> captor = ArgumentCaptor.forClass(Element.class);
-		verify(iconsLogic).download(captor.capture());
-		verify(errorHandler).missingIcon(eq("the_id"));
-		verifyNoMoreInteractions(errorHandler, iconsLogic, iconToElement, elementToIcon);
-	}
-
-	@Test
-	public void download() throws Exception {
-		// given
-		final DataHandler dataHandler = mock(DataHandler.class);
-		doReturn(Optional.of(dataHandler)) //
-				.when(iconsLogic).download(any(Element.class));
-
-		// when
-		final DataHandler response = underTest.download("the_id");
-
-		// then
-		final ArgumentCaptor<Element> captor = ArgumentCaptor.forClass(Element.class);
-		verify(iconsLogic).download(captor.capture());
-		verifyNoMoreInteractions(errorHandler, iconsLogic, iconToElement, elementToIcon);
-
-		assertThat(captor.getValue().getId(), equalTo("the_id"));
-		assertThat(response, equalTo(dataHandler));
-	}
-
-	@Test(expected = NullPointerException.class)
 	public void updateWithNullIdThrowsException() throws Exception {
 		// given
-		final DataHandler dataHandler = new DataHandler(new FileDataSource(folder.newFile()));
+		final Icon icon = newIcon().build();
 
 		// when
-		underTest.update(null, dataHandler);
+		underTest.update(null, icon);
 	}
 
 	@Test(expected = NullPointerException.class)
-	public void updateWithNullDataHandlerThrowsException() throws Exception {
+	public void updateWithNullIconThrowsException() throws Exception {
 		// when
-		underTest.update("the_id", null);
+		underTest.update(42L, null);
 	}
 
 	@Test
 	public void updateWithMissingElementInvokesErrorHandler() throws Exception {
 		// given
-		final DataHandler dataHandler = new DataHandler(new FileDataSource(folder.newFile()));
+		final Icon icon = newIcon().build();
 		doReturn(Optional.empty()) //
-				.when(iconsLogic).read(any(Element.class));
+				.when(iconsLogic).read(any(org.cmdbuild.logic.icon.Icon.class));
 
 		// when
-		underTest.update("the_id", dataHandler);
+		underTest.update(42L, icon);
 
 		// then
-		final ArgumentCaptor<Element> captor = ArgumentCaptor.forClass(Element.class);
+		final ArgumentCaptor<org.cmdbuild.logic.icon.Icon> captor = ArgumentCaptor
+				.forClass(org.cmdbuild.logic.icon.Icon.class);
 		verify(iconsLogic).read(captor.capture());
-		verify(errorHandler).missingIcon(eq("the_id"));
+		verify(errorHandler).missingIcon(eq(42L));
 		verifyNoMoreInteractions(errorHandler, iconsLogic, iconToElement, elementToIcon);
 
-		assertThat(captor.getValue().getId(), equalTo("the_id"));
+		assertThat(captor.getValue().getId(), equalTo(42L));
 	}
 
 	@Test
 	public void update() throws Exception {
 		// given
-		final DataHandler dataHandler = new DataHandler(new FileDataSource(folder.newFile()));
-		final Element element = mock(Element.class);
+		final Icon icon = newIcon().build();
+		final org.cmdbuild.logic.icon.Icon element = mock(org.cmdbuild.logic.icon.Icon.class);
 		doReturn(Optional.of(element)) //
-				.when(iconsLogic).read(any(Element.class));
+				.when(iconsLogic).read(any(org.cmdbuild.logic.icon.Icon.class));
 
 		// when
-		underTest.update("the_id", dataHandler);
+		underTest.update(42L, icon);
 
 		// then
-		final ArgumentCaptor<Element> captor = ArgumentCaptor.forClass(Element.class);
+		final ArgumentCaptor<org.cmdbuild.logic.icon.Icon> captor = ArgumentCaptor
+				.forClass(org.cmdbuild.logic.icon.Icon.class);
 		verify(iconsLogic).read(captor.capture());
-		verify(iconsLogic).update(captor.capture(), eq(dataHandler));
+		verify(iconsLogic).update(captor.capture());
+		verify(iconToElement).apply(any(Icon.class));
 		verifyNoMoreInteractions(errorHandler, iconsLogic, iconToElement, elementToIcon);
 
-		assertThat(captor.getAllValues().get(0).getId(), equalTo("the_id"));
+		assertThat(captor.getAllValues().get(0).getId(), equalTo(42L));
 	}
 
 	@Test(expected = NullPointerException.class)
@@ -290,37 +238,39 @@ public class CxfIconsTest {
 	public void deleteWithMissingElementInvokesErrorHandler() throws Exception {
 		// given
 		doReturn(Optional.empty()) //
-				.when(iconsLogic).read(any(Element.class));
+				.when(iconsLogic).read(any(org.cmdbuild.logic.icon.Icon.class));
 
 		// when
-		underTest.delete("the_id");
+		underTest.delete(42L);
 
 		// then
-		final ArgumentCaptor<Element> captor = ArgumentCaptor.forClass(Element.class);
+		final ArgumentCaptor<org.cmdbuild.logic.icon.Icon> captor = ArgumentCaptor
+				.forClass(org.cmdbuild.logic.icon.Icon.class);
 		verify(iconsLogic).read(captor.capture());
-		verify(errorHandler).missingIcon(eq("the_id"));
+		verify(errorHandler).missingIcon(eq(42L));
 		verifyNoMoreInteractions(errorHandler, iconsLogic, iconToElement, elementToIcon);
 
-		assertThat(captor.getValue().getId(), equalTo("the_id"));
+		assertThat(captor.getValue().getId(), equalTo(42L));
 	}
 
 	@Test
 	public void delete() throws Exception {
 		// given
-		final Element element = mock(Element.class);
+		final org.cmdbuild.logic.icon.Icon element = mock(org.cmdbuild.logic.icon.Icon.class);
 		doReturn(Optional.of(element)) //
-				.when(iconsLogic).read(any(Element.class));
+				.when(iconsLogic).read(any(org.cmdbuild.logic.icon.Icon.class));
 
 		// when
-		underTest.delete("the_id");
+		underTest.delete(42L);
 
 		// then
-		final ArgumentCaptor<Element> captor = ArgumentCaptor.forClass(Element.class);
+		final ArgumentCaptor<org.cmdbuild.logic.icon.Icon> captor = ArgumentCaptor
+				.forClass(org.cmdbuild.logic.icon.Icon.class);
 		verify(iconsLogic).read(captor.capture());
 		verify(iconsLogic).delete(captor.capture());
 		verifyNoMoreInteractions(errorHandler, iconsLogic, iconToElement, elementToIcon);
 
-		assertThat(captor.getAllValues().get(0).getId(), equalTo("the_id"));
+		assertThat(captor.getAllValues().get(0).getId(), equalTo(42L));
 		assertThat(captor.getAllValues().get(1), equalTo(element));
 	}
 

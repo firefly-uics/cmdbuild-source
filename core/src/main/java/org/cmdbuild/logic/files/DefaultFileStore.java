@@ -8,6 +8,7 @@ import static java.util.Optional.of;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toSet;
 import static java.util.stream.StreamSupport.stream;
+import static org.apache.commons.lang3.StringUtils.defaultIfBlank;
 import static org.apache.commons.lang3.StringUtils.difference;
 
 import java.io.File;
@@ -136,6 +137,7 @@ public class DefaultFileStore implements FileStore {
 			private final String id = id(value);
 			private final String parent = id(value.getParentFile());
 			private final String name = value.getName();
+			private final String path = defaultIfBlank(relativePath(value), separator);
 
 			@Override
 			public String getId() {
@@ -153,11 +155,17 @@ public class DefaultFileStore implements FileStore {
 			}
 
 			@Override
+			public String getPath() {
+				return path;
+			}
+
+			@Override
 			public int hashCode() {
 				return new HashCodeBuilder() //
 						.append(getId()) //
 						.append(getParent()) //
 						.append(getName()) //
+						.append(getPath()) //
 						.toHashCode();
 			}
 
@@ -174,6 +182,7 @@ public class DefaultFileStore implements FileStore {
 						.append(this.getId(), other.getId()) //
 						.append(this.getParent(), other.getParent()) //
 						.append(this.getName(), other.getName()) //
+						.append(this.getPath(), other.getPath()) //
 						.isEquals();
 			}
 

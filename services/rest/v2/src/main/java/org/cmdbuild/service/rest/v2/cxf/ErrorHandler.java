@@ -46,7 +46,7 @@ public interface ErrorHandler {
 
 	void missingFile();
 
-	void missingIcon(String value);
+	void missingIcon(Long value);
 
 	void missingParam(String value);
 

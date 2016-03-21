@@ -147,7 +147,7 @@ public class WebApplicationExceptionErrorHandler implements ErrorHandler, Loggin
 	}
 
 	@Override
-	public void missingIcon(final String value) {
+	public void missingIcon(final Long value) {
 		logger.error("missing icon '{}'", value);
 		notFound(value);
 	}
