@@ -1,7 +1,7 @@
 (function() {
 
-	Ext.define('CMDBuild.controller.administration.localization.advancedTable.SectionDomain', {
-		extend: 'CMDBuild.controller.administration.localization.advancedTable.SectionAbstract',
+	Ext.define('CMDBuild.controller.administration.localization.advancedTable.section.Filter', {
+		extend: 'CMDBuild.controller.administration.localization.advancedTable.section.Abstract',
 
 		requires: [
 			'CMDBuild.core.constants.Proxy',
@@ -16,7 +16,7 @@
 		/**
 		 * @cfg {String}
 		 */
-		sectionId: CMDBuild.core.constants.Proxy.DOMAIN,
+		sectionId: CMDBuild.core.constants.Proxy.FILTER,
 
 		/**
 		 * @property {CMDBuild.view.administration.localization.common.AdvancedTableGrid}
@@ -39,7 +39,8 @@
 
 			this.view = Ext.create('CMDBuild.view.administration.localization.advancedTable.SectionPanel', {
 				delegate: this,
-				title: CMDBuild.Translation.domains
+				hideActiveOnlyCheckbox: true,
+				title: CMDBuild.Translation.searchFilters
 			});
 
 			// Shorthand

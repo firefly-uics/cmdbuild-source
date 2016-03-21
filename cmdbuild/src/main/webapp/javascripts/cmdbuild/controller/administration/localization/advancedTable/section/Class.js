@@ -1,7 +1,7 @@
 (function() {
 
-	Ext.define('CMDBuild.controller.administration.localization.advancedTable.SectionFilter', {
-		extend: 'CMDBuild.controller.administration.localization.advancedTable.SectionAbstract',
+	Ext.define('CMDBuild.controller.administration.localization.advancedTable.section.Class', {
+		extend: 'CMDBuild.controller.administration.localization.advancedTable.section.Abstract',
 
 		requires: [
 			'CMDBuild.core.constants.Proxy',
@@ -14,9 +14,19 @@
 		parentDelegate: undefined,
 
 		/**
+		 * @cfg {Array}
+		 */
+		entityFilter: ['class'],
+
+		/**
+		 * @cfg {Array}
+		 */
+		entityAttributeFilter: ['notes'],
+
+		/**
 		 * @cfg {String}
 		 */
-		sectionId: CMDBuild.core.constants.Proxy.FILTER,
+		sectionId: CMDBuild.core.constants.Proxy.CLASS,
 
 		/**
 		 * @property {CMDBuild.view.administration.localization.common.AdvancedTableGrid}
@@ -39,8 +49,7 @@
 
 			this.view = Ext.create('CMDBuild.view.administration.localization.advancedTable.SectionPanel', {
 				delegate: this,
-				hideActiveOnlyCheckbox: true,
-				title: CMDBuild.Translation.searchFilters
+				title: CMDBuild.Translation.classes
 			});
 
 			// Shorthand

@@ -3,7 +3,7 @@
 	/**
 	 * @abstract
 	 */
-	Ext.define('CMDBuild.controller.administration.localization.advancedTable.SectionAbstract', {
+	Ext.define('CMDBuild.controller.administration.localization.advancedTable.section.Abstract', {
 		extend: 'CMDBuild.controller.common.abstract.Base',
 
 		requires: [
@@ -240,11 +240,15 @@
 				params: params,
 				scope: this,
 				success: function (response, options, decodedResponse) {
-					Ext.suspendLayouts();
+					decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.RESPONSE];
 
-					this.decodeStructure(root, decodedResponse.response);
+					if (!Ext.isEmpty(decodedResponse) && Ext.isArray(decodedResponse)) {
+						Ext.suspendLayouts();
 
-					Ext.resumeLayouts(true);
+						this.decodeStructure(root, decodedResponse);
+
+						Ext.resumeLayouts(true);
+					}
 				}
 			});
 		},
