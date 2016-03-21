@@ -7,13 +7,11 @@ import static java.util.Optional.empty;
 import static java.util.Optional.of;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toSet;
-import static java.util.stream.StreamSupport.stream;
 import static org.apache.commons.lang3.StringUtils.defaultIfBlank;
 import static org.apache.commons.lang3.StringUtils.difference;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Optional;
 import java.util.function.Function;
@@ -23,36 +21,36 @@ import javax.activation.FileDataSource;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
-import org.cmdbuild.services.FilesStore;
+import org.slf4j.Logger;
+import org.slf4j.Marker;
+import org.slf4j.MarkerFactory;
 
 public class DefaultFileStore implements FileStore {
 
-	private static final String NULL = null;
+	private static final Logger logger = FileLogic.logger;
+	private static final Marker MARKER = MarkerFactory.getMarker(DefaultFileStore.class.getName());
+
 	private static final File[] MISSING_FILES = new File[] {};
 
-	private final FilesStore delegate;
+	private final FileSystemFacade fileSystemFacade;
 	private final Hashing hashing;
 
-	public DefaultFileStore(final FilesStore delegate, final Hashing hashing) {
-		this.delegate = delegate;
+	public DefaultFileStore(final FileSystemFacade fileSystemFacade, final Hashing hashing) {
+		this.fileSystemFacade = fileSystemFacade;
 		this.hashing = hashing;
 	}
 
-	private Collection<File> directories() {
-		final Collection<File> output = new ArrayList<>();
-		directories(delegate, output);
-		return output;
+	private File root() {
+		return fileSystemFacade.root();
 	}
 
-	private static void directories(final FilesStore filesStore, final Collection<File> output) {
-		output.add(filesStore.getRoot());
-		stream(filesStore.files(NULL).spliterator(), false) //
-				.filter(File::isDirectory) //
-				.forEach(input -> directories(filesStore.sub(input.getName()), output));
+	private Collection<File> directories() {
+		return fileSystemFacade.directories();
 	}
 
 	@Override
 	public Iterable<Element> folders() {
+		logger.info(MARKER, "getting all folders");
 		return directories().stream() //
 				.map(input -> toElement(input)) //
 				.collect(toSet());
@@ -60,6 +58,7 @@ public class DefaultFileStore implements FileStore {
 
 	@Override
 	public Optional<Element> folder(final String folder) {
+		logger.info(MARKER, "getting folder '{}'", folder);
 		return directories().stream() //
 				.filter(input -> id(input).equals(requireNonNull(folder, "missing folder"))) //
 				.findFirst() //
@@ -68,6 +67,7 @@ public class DefaultFileStore implements FileStore {
 
 	@Override
 	public Iterable<Element> files(final String folder) {
+		logger.info(MARKER, "getting file for folder '{}'", folder);
 		return stream(directories().stream() //
 				.filter(input -> id(input).equals(requireNonNull(folder, "missing folder"))) //
 				.findFirst() //
@@ -80,6 +80,7 @@ public class DefaultFileStore implements FileStore {
 
 	@Override
 	public Optional<Element> create(final String folder, final DataHandler dataHandler) {
+		logger.info(MARKER, "creating file '{}' within folder '{}'", dataHandler.getName(), folder);
 		return directories().stream() //
 				.filter(input -> id(input).equals(requireNonNull(folder, "missing folder"))) //
 				.findFirst() //
@@ -93,9 +94,9 @@ public class DefaultFileStore implements FileStore {
 									.append(separator) //
 									.append(dataHandler.getName()) //
 									.toString();
-							return of(delegate.save(dataHandler.getInputStream(), path));
+							return of(fileSystemFacade.save(dataHandler, path));
 						} catch (final IOException e) {
-							// TODO log
+							logger.error(MARKER, "error creating file");
 							return empty();
 						}
 					}
@@ -106,6 +107,7 @@ public class DefaultFileStore implements FileStore {
 
 	@Override
 	public Optional<DataHandler> download(final Element file) {
+		logger.info(MARKER, "downloading file '{}' within folder '{}'", file.getId(), file.getParent());
 		requireNonNull(file, "missing file");
 		return stream(directories().stream() //
 				.filter(input -> id(input).equals(file.getParent())) //
@@ -119,6 +121,7 @@ public class DefaultFileStore implements FileStore {
 
 	@Override
 	public void delete(final Element file) {
+		logger.info(MARKER, "deleting file '{}' within folder '{}'", file.getId(), file.getParent());
 		requireNonNull(file, "missing file");
 		stream(directories().stream() //
 				.filter(input -> id(input).equals(file.getParent())) //
@@ -133,7 +136,7 @@ public class DefaultFileStore implements FileStore {
 	private Element toElement(final File value) {
 		return new Element() {
 
-			private final File root = delegate.getRoot();
+			private final File root = root();
 			private final String id = id(value);
 			private final String parent = id(value.getParentFile());
 			private final String name = value.getName();
@@ -199,7 +202,7 @@ public class DefaultFileStore implements FileStore {
 	}
 
 	private String relativePath(final File value) {
-		return difference(delegate.getRoot().getAbsolutePath(), value.getAbsolutePath());
+		return difference(root().getAbsolutePath(), value.getAbsolutePath());
 	}
 
 }

@@ -1,5 +1,7 @@
 package org.cmdbuild.logic.files;
 
+import static com.google.common.hash.Hashing.md5;
+
 import com.google.common.hash.HashFunction;
 
 public class DefaultHashing implements Hashing {
@@ -7,7 +9,7 @@ public class DefaultHashing implements Hashing {
 	private final HashFunction hashFunction;
 
 	public DefaultHashing() {
-		hashFunction = com.google.common.hash.Hashing.md5();
+		hashFunction = md5();
 	}
 
 	@Override

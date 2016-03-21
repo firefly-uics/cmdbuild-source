@@ -35,6 +35,7 @@ public class DefaultIconsLogic implements IconsLogic {
 
 	@Override
 	public Iterable<Icon> read() {
+		logger.info(MARKER, "getting all icons");
 		return store.readAll().stream() //
 				.map(input -> converter.reverse().convert(input)) //
 				.collect(toList());
@@ -42,6 +43,7 @@ public class DefaultIconsLogic implements IconsLogic {
 
 	@Override
 	public Optional<Icon> read(final Icon element) {
+		logger.info(MARKER, "getting icon '{}'", element);
 		return store.readAll().stream() //
 				.filter(input -> Objects.equals(input.getId(), element.getId())) //
 				.limit(1) //
@@ -51,6 +53,7 @@ public class DefaultIconsLogic implements IconsLogic {
 
 	@Override
 	public void update(final Icon element) {
+		logger.info(MARKER, "updating icon '{}'", element);
 		store.readAll().stream() //
 				.filter(input -> Objects.equals(input.getId(), element.getId())) //
 				.limit(1) //
@@ -60,6 +63,7 @@ public class DefaultIconsLogic implements IconsLogic {
 
 	@Override
 	public void delete(final Icon element) {
+		logger.info(MARKER, "deleting icon '{}'", element);
 		store.readAll().stream() //
 				.filter(input -> Objects.equals(input.getId(), element.getId())) //
 				.limit(1) //

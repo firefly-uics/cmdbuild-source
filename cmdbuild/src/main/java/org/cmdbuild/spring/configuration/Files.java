@@ -1,17 +1,24 @@
 package org.cmdbuild.spring.configuration;
 
 import static com.google.common.reflect.Reflection.newProxy;
+import static java.util.concurrent.TimeUnit.MINUTES;
 import static org.cmdbuild.common.utils.Reflection.unsupported;
 
 import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
+import org.cmdbuild.logic.files.CachedFileSystemFacade;
+import org.cmdbuild.logic.files.CachedHashing;
 import org.cmdbuild.logic.files.DefaultFileLogic;
 import org.cmdbuild.logic.files.DefaultFileStore;
+import org.cmdbuild.logic.files.DefaultFileSystemFacade;
 import org.cmdbuild.logic.files.DefaultHashing;
+import org.cmdbuild.logic.files.CacheExpiration;
 import org.cmdbuild.logic.files.FileLogic;
 import org.cmdbuild.logic.files.FileStore;
+import org.cmdbuild.logic.files.FileSystemFacade;
 import org.cmdbuild.logic.files.Hashing;
 import org.cmdbuild.services.DefaultFilesStore;
 import org.cmdbuild.services.FilesStore;
@@ -106,7 +113,46 @@ public class Files {
 
 	@Bean
 	protected FileStore imagesFileStore() {
-		return new DefaultFileStore(uploadFilesStore().sub(IMAGES_DIRECTORY), defaultHashing());
+		return new DefaultFileStore(cachedFileSystemFacade(), cachedHashing());
+	}
+
+	@Bean
+	protected CachedFileSystemFacade cachedFileSystemFacade() {
+		return new CachedFileSystemFacade(defaultFileSystemFacade(), new CacheExpiration() {
+
+			@Override
+			public long duration() {
+				return 10;
+			}
+
+			@Override
+			public TimeUnit unit() {
+				return MINUTES;
+			}
+
+		});
+	}
+
+	@Bean
+	protected FileSystemFacade defaultFileSystemFacade() {
+		return new DefaultFileSystemFacade(uploadFilesStore().sub(IMAGES_DIRECTORY));
+	}
+
+	@Bean
+	protected CachedHashing cachedHashing() {
+		return new CachedHashing(defaultHashing(), new CacheExpiration() {
+
+			@Override
+			public long duration() {
+				return 10;
+			}
+
+			@Override
+			public TimeUnit unit() {
+				return MINUTES;
+			}
+
+		});
 	}
 
 	@Bean
