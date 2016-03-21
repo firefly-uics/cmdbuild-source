@@ -1064,15 +1064,15 @@ public class Models {
 	}
 
 	public static class FileSystemObjectBuilder extends ModelBuilder<FileSystemObject> {
-	
+
 		private String id;
 		private String name;
 		private String parent;
-	
+
 		private FileSystemObjectBuilder() {
 			// use factory method
 		}
-	
+
 		@Override
 		protected FileSystemObject doBuild() {
 			final FileSystemObject output = new FileSystemObject();
@@ -1081,22 +1081,22 @@ public class Models {
 			output.setParent(parent);
 			return output;
 		}
-	
+
 		public FileSystemObjectBuilder withId(final String id) {
 			this.id = id;
 			return this;
 		}
-	
+
 		public FileSystemObjectBuilder withName(final String name) {
 			this.name = name;
 			return this;
 		}
-	
+
 		public FileSystemObjectBuilder withParent(final String parent) {
 			this.parent = parent;
 			return this;
 		}
-	
+
 	}
 
 	public static class FilterBuilder extends ModelBuilder<Filter> {
@@ -1312,9 +1312,10 @@ public class Models {
 
 	public static class IconBuilder extends ModelBuilder<Icon> {
 
-		private String id;
+		private Long id;
 		private String type;
 		private final Map<String, Object> details = newHashMap();
+		private Image image;
 
 		private IconBuilder() {
 			// use factory method
@@ -1326,10 +1327,11 @@ public class Models {
 			output.setId(id);
 			output.setType(type);
 			output.setDetails(details);
+			output.setImage(image);
 			return output;
 		}
 
-		public IconBuilder withId(final String id) {
+		public IconBuilder withId(final Long id) {
 			this.id = id;
 			return this;
 		}
@@ -1339,12 +1341,51 @@ public class Models {
 			return this;
 		}
 
-		public IconBuilder setDetail(final String key, final Object value) {
+		public IconBuilder withDetail(final String key, final Object value) {
 			this.details.put(key, value);
 			return this;
 		}
 
 		public IconBuilder withDetails(final Map<String, Object> details) {
+			this.details.putAll(details);
+			return this;
+		}
+
+		public IconBuilder withImage(final Image image) {
+			this.image = image;
+			return this;
+		}
+
+	}
+
+	public static class ImageBuilder extends ModelBuilder<Image> {
+
+		private String type;
+		private final Map<String, Object> details = newHashMap();
+
+		private ImageBuilder() {
+			// use factory method
+		}
+
+		@Override
+		protected Image doBuild() {
+			final Image output = new Image();
+			output.setType(type);
+			output.setDetails(details);
+			return output;
+		}
+
+		public ImageBuilder withType(final String type) {
+			this.type = type;
+			return this;
+		}
+
+		public ImageBuilder withDetail(final String key, final Object value) {
+			this.details.put(key, value);
+			return this;
+		}
+
+		public ImageBuilder withDetails(final Map<String, Object> details) {
 			this.details.putAll(details);
 			return this;
 		}
@@ -2526,6 +2567,10 @@ public class Models {
 
 	public static IconBuilder newIcon() {
 		return new IconBuilder();
+	}
+
+	public static ImageBuilder newImage() {
+		return new ImageBuilder();
 	}
 
 	public static LongIdBuilder newLongId() {

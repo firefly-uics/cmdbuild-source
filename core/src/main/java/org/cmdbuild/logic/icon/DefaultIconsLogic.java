@@ -1,261 +1,70 @@
 package org.cmdbuild.logic.icon;
 
-import static com.google.common.collect.FluentIterable.from;
 import static java.util.Objects.requireNonNull;
-import static java.util.Optional.empty;
-import static java.util.Optional.of;
-import static java.util.Optional.ofNullable;
-import static java.util.UUID.randomUUID;
-import static org.cmdbuild.logic.icon.Types.classType;
-import static org.cmdbuild.logic.icon.Types.processType;
+import static java.util.stream.Collectors.toList;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
-import javax.activation.DataHandler;
+import org.cmdbuild.data.store.Storable;
+import org.cmdbuild.data.store.Store;
+import org.slf4j.Marker;
+import org.slf4j.MarkerFactory;
 
-import org.bimserver.utils.FileDataSource;
-import org.cmdbuild.dao.entrytype.CMClass;
-import org.cmdbuild.dao.view.CMDataView;
-import org.cmdbuild.logic.icon.Types.ClassType;
-import org.cmdbuild.logic.icon.Types.ProcessType;
-import org.cmdbuild.services.FilesStore;
-
-import com.google.common.base.Function;
-import com.google.common.base.Joiner;
-import com.google.common.base.Splitter;
+import com.google.common.base.Converter;
 
 public class DefaultIconsLogic implements IconsLogic {
 
-	public static interface IdGenerator {
+	private static final Marker MARKER = MarkerFactory.getMarker(DefaultIconsLogic.class.getName());
 
-		String generate(Type type);
+	private final Store<org.cmdbuild.data.store.icon.Icon> store;
+	private final Converter<Icon, org.cmdbuild.data.store.icon.Icon> converter;
 
-	}
-
-	public static class UuidIdGenerator implements IdGenerator {
-
-		@Override
-		public String generate(final Type type) {
-			return randomUUID().toString();
-		}
-
-	}
-
-	private static final String SEPARATOR = "_";
-
-	private final FilesStore filesStore;
-	private final IdGenerator idGenerator;
-	private final Function<File, Element> fileToElement;
-
-	public DefaultIconsLogic(final FilesStore filesStore, final IdGenerator idGenerator, final CMDataView dataView) {
-		this.filesStore = requireNonNull(filesStore, "missing " + FilesStore.class);
-		this.idGenerator = requireNonNull(idGenerator, "missing " + IdGenerator.class);
-		this.fileToElement = new Function<File, Element>() {
-
-			@Override
-			public Element apply(final File input) {
-				final List<String> parts = Splitter.on(SEPARATOR) //
-						.limit(2) //
-						.splitToList(input.getName());
-				return new Element() {
-
-					@Override
-					public String getId() {
-						return parts.get(0);
-					}
-
-					@Override
-					public Type getType() {
-						final String name = parts.get(1);
-						final CMClass found = dataView.findClass(name);
-						return dataView.getActivityClass().isAncestorOf(found)
-								? processType() //
-										.withName(name) //
-										.build()
-								: classType() //
-										.withName(name) //
-										.build();
-					}
-
-				};
-			};
-
-		};
+	public DefaultIconsLogic(final Store<org.cmdbuild.data.store.icon.Icon> store,
+			final Converter<Icon, org.cmdbuild.data.store.icon.Icon> converter) {
+		this.store = store;
+		this.converter = converter;
 	}
 
 	@Override
-	public Element create(final Element element, final DataHandler dataHandler) throws IOException {
-		try {
-			requireNonNull(element, "missing " + Element.class);
-			requireNonNull(dataHandler, "missing " + DataHandler.class);
-			final String generatedId = idGenerator.generate(element.getType());
-			final String name = Joiner.on(SEPARATOR) //
-					.join(generatedId, new TypeVisitor() {
-
-						private String output;
-
-						public String part() {
-							element.getType().accept(this);
-							return output;
-						}
-
-						@Override
-						public void visit(final ClassType type) {
-							output = type.getName();
-						}
-
-						@Override
-						public void visit(final ProcessType type) {
-							output = type.getName();
-						}
-
-					}.part());
-			filesStore.save(dataHandler.getInputStream(), name);
-			return new Element() {
-
-				@Override
-				public String getId() {
-					return generatedId;
-				}
-
-				@Override
-				public Type getType() {
-					return element.getType();
-				}
-
-			};
-		} catch (final IOException e) {
-			logger.error("error saving file", e);
-			throw e;
-		}
+	public Icon create(final Icon element) {
+		logger.info(MARKER, "creating '{}'", element);
+		final Storable storable = store.create(converter.convert(requireNonNull(element, "missing " + Icon.class)));
+		return converter.reverse().convert(store.read(storable));
 	}
 
 	@Override
-	public Iterable<Element> read() {
-		return from(filesStore.files(null)) //
-				.transform(fileToElement);
+	public Iterable<Icon> read() {
+		return store.readAll().stream() //
+				.map(input -> converter.reverse().convert(input)) //
+				.collect(toList());
 	}
 
 	@Override
-	public Optional<Element> read(final Element element) {
-		final String pattern = Joiner.on(SEPARATOR) //
-				.join(element.getId(), ".*");
-		return ofNullable(from(filesStore.files(pattern)) //
+	public Optional<Icon> read(final Icon element) {
+		return store.readAll().stream() //
+				.filter(input -> Objects.equals(input.getId(), element.getId())) //
 				.limit(1) //
-				.transform(fileToElement) //
-				.first() //
-				.orNull());
+				.findFirst() //
+				.map(input -> converter.reverse().convert(input));
 	}
 
 	@Override
-	public Optional<DataHandler> download(final Element element) {
-		final Optional<Element> read = read(element);
-		final Optional<DataHandler> output;
-		if (read.isPresent()) {
-			final String name = Joiner.on(SEPARATOR) //
-					.join(read.get().getId(), new TypeVisitor() {
-
-						private String output;
-
-						public String part() {
-							read.get().getType().accept(this);
-							return output;
-						}
-
-						@Override
-						public void visit(final ClassType type) {
-							output = type.getName();
-						}
-
-						@Override
-						public void visit(final ProcessType type) {
-							output = type.getName();
-						}
-
-					}.part());
-			final Optional<File> file = ofNullable(from(filesStore.files(name)) //
-					.limit(1) //
-					.first() //
-					.orNull());
-			output = file.isPresent() ? of(new DataHandler(new FileDataSource(file.get()))) : empty();
-		} else {
-			output = empty();
-		}
-		return output;
+	public void update(final Icon element) {
+		store.readAll().stream() //
+				.filter(input -> Objects.equals(input.getId(), element.getId())) //
+				.limit(1) //
+				.findFirst() //
+				.ifPresent(input -> store.update(converter.convert(element)));
 	}
 
 	@Override
-	public void update(final Element element, final DataHandler dataHandler) throws IOException {
-		final Optional<Element> read = read(element);
-		if (read.isPresent()) {
-			final String name = Joiner.on(SEPARATOR) //
-					.join(read.get().getId(), new TypeVisitor() {
-
-						private String output;
-
-						public String part() {
-							read.get().getType().accept(this);
-							return output;
-						}
-
-						@Override
-						public void visit(final ClassType type) {
-							output = type.getName();
-						}
-
-						@Override
-						public void visit(final ProcessType type) {
-							output = type.getName();
-						}
-
-					}.part());
-			final Optional<File> file = ofNullable(from(filesStore.files(name)) //
-					.limit(1) //
-					.first() //
-					.orNull());
-			if (file.isPresent()) {
-				filesStore.remove(name);
-				filesStore.save(dataHandler.getInputStream(), name);
-			}
-		}
-	}
-
-	@Override
-	public void delete(final Element element) {
-		final Optional<Element> read = read(element);
-		if (read.isPresent()) {
-			final String name = Joiner.on(SEPARATOR) //
-					.join(read.get().getId(), new TypeVisitor() {
-
-						private String output;
-
-						public String part() {
-							read.get().getType().accept(this);
-							return output;
-						}
-
-						@Override
-						public void visit(final ClassType type) {
-							output = type.getName();
-						}
-
-						@Override
-						public void visit(final ProcessType type) {
-							output = type.getName();
-						}
-
-					}.part());
-			final Optional<File> file = ofNullable(from(filesStore.files(name)) //
-					.limit(1) //
-					.first() //
-					.orNull());
-			if (file.isPresent()) {
-				filesStore.remove(name);
-			}
-		}
+	public void delete(final Icon element) {
+		store.readAll().stream() //
+				.filter(input -> Objects.equals(input.getId(), element.getId())) //
+				.limit(1) //
+				.findFirst() //
+				.ifPresent(input -> store.delete(converter.convert(element)));
 	}
 
 }

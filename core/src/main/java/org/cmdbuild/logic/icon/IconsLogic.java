@@ -1,24 +1,19 @@
 package org.cmdbuild.logic.icon;
 
-import java.io.IOException;
 import java.util.Optional;
-
-import javax.activation.DataHandler;
 
 import org.cmdbuild.logic.Logic;
 
 public interface IconsLogic extends Logic {
 
-	Element create(Element element, DataHandler dataHandler) throws IOException;
+	Icon create(Icon element);
 
-	Iterable<Element> read();
+	Iterable<Icon> read();
 
-	Optional<Element> read(Element element);
+	Optional<Icon> read(Icon element);
 
-	Optional<DataHandler> download(Element element);
+	void update(Icon element);
 
-	void update(Element element, DataHandler dataHandler) throws IOException;
-
-	void delete(Element element);
+	void delete(Icon element);
 
 }
