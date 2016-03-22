@@ -63,12 +63,24 @@
 				this.total += i;
 			}
 			data.rows.sort(function(a, b) {
-				return (a.classId > b.classId) ? 1  : -1;
+				if (param.direction === "ASC")
+					return (a.classId > b.classId) ? 1  : -1;
+				else
+					return (a.classId < b.classId) ? 1  : -1;
 			});
+			var rowsFilteredByQuery = [];
+			for (i = 0; i < data.rows.length; i++) {
+				var desc = data.rows[i].classDescription.toLowerCase();
+				if (this.filter && this.filter.query && desc.indexOf(this.filter.query.toLowerCase()) === -1) {
+					continue;
+				}
+				rowsFilteredByQuery.push(data.rows[i]);
+			}
+
 			this.data = [];
 			param.nRows = parseInt(param.nRows);
-			for (var i = param.firstRow; i < param.nRows + param.firstRow && i < data.rows.length; i++) {
-				this.data.push(data.rows[i]);
+			for (var i = param.firstRow; i < param.nRows + param.firstRow && i < rowsFilteredByQuery.length; i++) {
+				this.data.push(rowsFilteredByQuery[i]);
 			}
 			callback.apply(callbackScope, this.data);
 		};

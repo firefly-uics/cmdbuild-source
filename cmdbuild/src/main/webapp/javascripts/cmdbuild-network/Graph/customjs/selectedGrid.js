@@ -7,6 +7,7 @@
 				return;
 			}
 			$.Cmdbuild.standard.grid.onNavigate(0, this.param.form);
+//			$.Cmdbuild.standard.form.onNavigate(0, "formcardoverview");
 		};
 		this.init = function(param) {
 			this.param = param;
