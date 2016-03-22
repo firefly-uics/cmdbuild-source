@@ -212,30 +212,31 @@
 
 						var storeData = [];
 
-						if (!Ext.isEmpty(decodedResponse) && Ext.isArray(decodedResponse)) {
+						// Add original template version
+						var dataObject = {};
+						dataObject[CMDBuild.core.constants.Proxy.DESCRIPTION] = CMDBuild.core.constants.Proxy.TEMPLATE;
+						dataObject[CMDBuild.core.constants.Proxy.ID] = null;
+						dataObject[CMDBuild.core.constants.Proxy.INDEX] = 0;
+
+						storeData.push(dataObject);
+
+						// Add XPDL versions to the begin of array
+						if (!Ext.isEmpty(decodedResponse) && Ext.isArray(decodedResponse))
 							Ext.Array.forEach(decodedResponse, function(version, i, allValues) {
 								var dataObject = {};
 								dataObject[CMDBuild.core.constants.Proxy.DESCRIPTION] = version;
 								dataObject[CMDBuild.core.constants.Proxy.ID] = version;
 								dataObject[CMDBuild.core.constants.Proxy.INDEX] = version;
 
-								storeData.push(dataObject);
+								storeData.unshift(dataObject); // Add to the begin of array
 							}, this);
 
-							// Add original template version
-							var dataObject = {};
-							dataObject[CMDBuild.core.constants.Proxy.DESCRIPTION] = CMDBuild.core.constants.Proxy.TEMPLATE;
-							dataObject[CMDBuild.core.constants.Proxy.ID] = null;
-							dataObject[CMDBuild.core.constants.Proxy.INDEX] = 0;
 
-							storeData.push(dataObject);
-
-							this.downloadXpdlPanel.versionCombo.getStore().removeAll();
-							this.downloadXpdlPanel.versionCombo.getStore().loadData(storeData);
-							this.downloadXpdlPanel.versionCombo.select( // FIX: autoSelect seems to have some problems probably because it's a fake store
-								this.downloadXpdlPanel.versionCombo.getStore().getAt(0)
-							);
-						}
+						this.downloadXpdlPanel.versionCombo.getStore().removeAll();
+						this.downloadXpdlPanel.versionCombo.getStore().loadData(storeData);
+						this.downloadXpdlPanel.versionCombo.select( // FIX: autoSelect seems to have some problems probably because it's a fake store
+							this.downloadXpdlPanel.versionCombo.getStore().getAt(0)
+						);
 					}
 				});
 			}
