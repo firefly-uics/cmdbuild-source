@@ -237,10 +237,10 @@
 					layout: 'fit',
 
 					items: [
-						this.iconForm = Ext.create('CMDBuild.view.administration.class.IconForm')
+						this.iconForm = Ext.create('CMDBuild.view.administration.class.IconForm', { parentForm: this })
 					]
 				})
-			]
+			];
 		},
 
 		buildInheriteComboStore: function() {
