@@ -55,9 +55,10 @@
 		/**
 		 * Get URIs
 		 */
-		getURIForIconDownload : function (id) {
-			return $.Cmdbuild.global.getApiUrl() + 'icons/' + id
-					+ "/image?CMDBuild-Authorization="
+		getURIForFileStoreItemDownload : function(filestore, folder, file) {
+			return $.Cmdbuild.global.getApiUrl() + 'filestores/' + filestore
+					+ '/folders/' + folder + '/files/' + file
+					+ "/download?CMDBuild-Authorization="
 					+ $.Cmdbuild.authentication.getAuthenticationToken();
 		},
 

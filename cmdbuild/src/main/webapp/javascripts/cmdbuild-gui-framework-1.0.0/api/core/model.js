@@ -8,15 +8,20 @@
 		parameters: {},
 		widgets: {},
 		attachments : {},
+		classes: [],
 		processes: [],
 		observing: true,
 		isAProcess: function(name) {
-			for (var i = 0; i < this.processes.length; i++) {
-				if (this.processes[i]._id == name) {
-					return true;
-				}
-			}
-			return false;
+			return $.grep(this.processes, function(e){ return e._id == name; }).length > 0;
+		},
+		isAClass: function(name) {
+			return $.grep(this.classes, function(e){ return e._id == name; }).length > 0;
+		},
+		setClasses : function(items) {
+			this.classes = items;
+		},
+		setProcesses : function(items) {
+			this.processes = items;
 		},
 		cleanForm: function(name) {
 			if (this.forms[name]) {
