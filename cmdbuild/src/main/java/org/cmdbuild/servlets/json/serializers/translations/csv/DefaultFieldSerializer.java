@@ -25,6 +25,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.cmdbuild.dao.entrytype.CMClass;
+import org.cmdbuild.dao.entrytype.CMDomain;
 import org.cmdbuild.data.store.lookup.Lookup;
 import org.cmdbuild.data.store.lookup.LookupStore;
 import org.cmdbuild.logic.data.access.DataAccessLogic;
@@ -207,6 +208,11 @@ public class DefaultFieldSerializer implements FieldSerializer {
 				defaultValue = dataLogic.findDomain(identifier).getDescription2();
 			} else if (fieldName.equals(DomainConverter.masterDetail())) {
 				defaultValue = dataLogic.findDomain(identifier).getMasterDetailDescription();
+			}
+		} else if (element.equals(TranslatableElement.ATTRIBUTEDOMAIN)) {
+			if (fieldName.equals(AttributeConverter.description())) {
+				final CMDomain ownerDomain = dataLogic.findDomain(owner);
+				defaultValue = ownerDomain.getAttribute(identifier).getDescription();
 			}
 		} else if (element.equals(TranslatableElement.FILTER)) {
 			if (fieldName.equals(FilterConverter.description())) {
