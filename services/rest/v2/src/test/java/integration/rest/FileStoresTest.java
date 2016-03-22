@@ -51,7 +51,7 @@ import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 import org.mockito.ArgumentCaptor;
 
-public class DataStoresTest {
+public class FileStoresTest {
 
 	private FileStores service;
 
