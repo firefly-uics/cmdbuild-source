@@ -423,9 +423,13 @@
 					$("<span></span>").text(targetClassDescription + ": ")).append(
 					$("<em></em>").text(labelTarget));
 			var $descriptionDirect = $("<p></p>").append(
-					$("<span></span>").text(descriptionDirect));
+					$("<span></span>").text(descriptionDirect)).append(
+					$("<span></span>").addClass("icon")).addClass(
+					"rel_desc_direct");
 			var $descriptionInverse = $("<p></p>").append(
-					$("<span></span>").text(descriptionInverse));
+					$("<span></span>").text(descriptionInverse)).append(
+					$("<span></span>").addClass("icon")).addClass(
+					"rel_desc_inverse");
 			$boxcontent.append($source).append($descriptionDirect).append($descriptionInverse).append($target);
 
 			// set position
