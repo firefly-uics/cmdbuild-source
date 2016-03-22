@@ -621,7 +621,40 @@ div.waitMe {
 .DTFC_RightBodyLiner {
 	height: 0;
 }
- 
+
+/**
+ * CUSTOM
+ */
+/* Domains filter grid */
+#filterByDomainForm td .desc_direct {
+	padding-right: 12px;
+	position: relative;
+	text-align: right;
+	display: block;
+}
+#filterByDomainForm td .desc_direct .icon {
+	background-image: url("images/ui-icons_416da3_256x240.png");
+	background-position: -34px -2px;
+	position: absolute;
+	width: 12px;
+	height: 12px;
+	top: 0;
+	right: 0;
+}
+#filterByDomainForm td .desc_inverse {
+	padding-left: 12px;
+	position: relative;
+	display: block;
+}
+#filterByDomainForm td .desc_inverse .icon {
+	background-image: url("images/ui-icons_416da3_256x240.png");
+	background-position: -98px -2px;
+	position: absolute;
+	width: 12px;
+	height: 12px;
+	top: 0;
+	left: 0;
+}
 /*
 * Override font-weight rule for "a" tags
 */

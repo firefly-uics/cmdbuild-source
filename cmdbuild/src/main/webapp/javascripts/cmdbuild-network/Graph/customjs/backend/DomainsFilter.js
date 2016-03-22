@@ -39,7 +39,7 @@
 				displayableInList: false
 			}, {
 				type: "string",
-				name: "descriptionDirect",
+				name: "relationDescription",
 				description: "Relation",
 				displayableInList: true
 			}, {
@@ -98,6 +98,7 @@
 					&& i < rowsFilteredByQuery.length; i++) {
 				this.data.push(rowsFilteredByQuery[i]);
 			}
+			updateRelDescription(this.data);
 			this.total = rowsFilteredByQuery.length;
 			setTimeout(function() {
 				callback.apply(callbackScope, [this.data]);
@@ -136,5 +137,18 @@
 		this.init();
 	};
 	$.Cmdbuild.custom.backend.DomainsFilter = DomainsFilter;
+
+	function updateRelDescription (items) {
+		$.each(items, function(index, item) {
+			var desc = "";
+			if (item.descriptionDirect) {
+				desc = "<span class=\"desc_direct\"><span class=\"icon\"></span>" + item.descriptionDirect + "</span>";
+			}
+			if (item.descriptionInverse) {
+				desc += "<span class=\"desc_inverse\"><span class=\"icon\"></span>" + item.descriptionInverse + "</span>";
+			}
+			item.relationDescription = desc;
+		});
+	}
 
 })(jQuery);
