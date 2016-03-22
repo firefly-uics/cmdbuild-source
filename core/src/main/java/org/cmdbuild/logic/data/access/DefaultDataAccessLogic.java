@@ -912,6 +912,7 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 					.clone(card) //
 					.clearAttributes() //
 					.withAllAttributes(attributes) //
+					.withUser(operationUser.getAuthenticatedUser().getUsername()) //
 					.build();
 			storeOf(updatedCard).update(updatedCard);
 		}
