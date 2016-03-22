@@ -506,9 +506,14 @@ public class CmisDmsService implements DmsService, LoggingSupport, ChangeListene
 
 	@Override
 	public DataHandler download(final DocumentDownload document) throws DmsError {
-		final Document cmisDocument = getDocument(createSession(), document.getPath(), document.getFileName());
-		return (cmisDocument != null) ? new DataHandler(new ContentStreamAdapter(cmisDocument.getContentStream()))
-				: null;
+		try {
+			final Document cmisDocument = getDocument(createSession(), document.getPath(), document.getFileName());
+			return (cmisDocument != null) ? new DataHandler(new ContentStreamAdapter(cmisDocument.getContentStream()))
+					: null;
+		} catch (final IOException e) {
+			logger.error(MARKER, "error getting document", e);
+			throw DmsError.forward(e);
+		}
 	}
 
 	@Override
@@ -744,7 +749,8 @@ public class CmisDmsService implements DmsService, LoggingSupport, ChangeListene
 			properties.put(DESCRIPTION, document.getDescription());
 
 			if (model().getDescriptionProperty() != null) {
-				final PropertyDefinition<?> propertyDefinition = propertyDefinitions().get(model().getDescriptionProperty());
+				final PropertyDefinition<?> propertyDefinition = propertyDefinitions()
+						.get(model().getDescriptionProperty());
 				logger.info(MARKER, "description property '{}' updatability '{}'", propertyDefinition.getDisplayName(),
 						propertyDefinition.getUpdatability());
 				if (propertyDefinition != null) {

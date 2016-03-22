@@ -1,5 +1,9 @@
 package org.cmdbuild.dms.cmis;
 
+import static org.apache.commons.io.IOUtils.copyLarge;
+
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -11,14 +15,18 @@ import org.apache.chemistry.opencmis.commons.data.ContentStream;
 public class ContentStreamAdapter implements DataSource {
 
 	private final ContentStream contentStream;
+	private final byte[] buffer;
 
-	public ContentStreamAdapter(final ContentStream contentStream) {
+	public ContentStreamAdapter(final ContentStream contentStream) throws IOException {
 		this.contentStream = contentStream;
+		final ByteArrayOutputStream output = new ByteArrayOutputStream();
+		copyLarge(contentStream.getStream(), output);
+		buffer = output.toByteArray();
 	}
 
 	@Override
 	public InputStream getInputStream() throws IOException {
-		return contentStream.getStream();
+		return new ByteArrayInputStream(buffer);
 	}
 
 	@Override

@@ -427,7 +427,7 @@
 		 * Forward onAbortCardClick event to email tab controller
 		 */
 		onAbortCardClick: function () {
-			if (!Ext.isEmpty(this.controllerTabEmail) && Ext.isfunction(this.controllerTabEmail.onAbortCardClick))
+			if (!Ext.isEmpty(this.controllerTabEmail) && Ext.isFunction(this.controllerTabEmail.onAbortCardClick))
 				this.controllerTabEmail.onAbortCardClick();
 		},
 
