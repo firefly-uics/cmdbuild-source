@@ -7,6 +7,7 @@ import static com.google.common.reflect.Reflection.newProxy;
 import static java.util.Objects.requireNonNull;
 import static org.cmdbuild.common.utils.Reflection.unsupported;
 import static org.cmdbuild.logic.icon.Types.classType;
+import static org.cmdbuild.logic.icon.Types.processType;
 import static org.cmdbuild.service.rest.v2.model.Models.newIcon;
 import static org.cmdbuild.service.rest.v2.model.Models.newImage;
 import static org.cmdbuild.service.rest.v2.model.Models.newMetadata;
@@ -59,7 +60,7 @@ public class CxfIcons implements Icons, LoggingSupport {
 			case PROCESS: {
 				final Map<String, Object> details = requireNonNull(a.getDetails(), "missing details");
 				final String name = String.class.cast(requireNonNull(details.get(Icon.id), "missing " + Icon.id));
-				type = classType() //
+				type = processType() //
 						.withName(name) //
 						.build();
 				break;
