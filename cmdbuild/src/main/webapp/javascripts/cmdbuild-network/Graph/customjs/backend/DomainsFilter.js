@@ -98,7 +98,7 @@
 					&& i < rowsFilteredByQuery.length; i++) {
 				this.data.push(rowsFilteredByQuery[i]);
 			}
-			this.total = this.data.length;
+			this.total = rowsFilteredByQuery.length;
 			setTimeout(function() {
 				callback.apply(callbackScope, [this.data]);
 			}, 100);
