@@ -655,6 +655,62 @@ div.waitMe {
 	top: 0;
 	left: 0;
 }
+
+/* prompt */
+div.jqi {
+	background-color: #eee;
+	padding: .2em;
+}
+div.jqi .jqiform {
+	margin: 0;
+}
+div.jqi .jqiclose {
+    top: 18px;
+	right: 7px;
+	z-index: 10;
+	width: 20px;
+	padding: 3px 6px;
+	color: #416da3;
+	cursor: pointer;
+}
+div.jqi .jqititle {
+	font-size: 11px;
+}
+div.jqi .jqimessage {
+	border-bottom: 0;
+}
+div.jqi .jqimessage .radio {
+	padding-left: 16px;
+	position: relative;
+	cursor: default;
+}
+div.jqi .jqimessage .radio.selectable {
+	cursor: pointer;
+}
+div.jqi .jqimessage .radio .icon {
+	width: 12px;
+	height: 12px;
+	position: absolute;
+	top: 0;
+	left: 0;
+	background-image: url("images/ui-icons_416da3_256x240.png");
+	background-position: -113px -145px;
+}
+div.jqi .jqimessage .radio.selectable .icon {
+	background-position: -80px -145px;
+}
+div.jqi .jqibuttons {
+	border-top: 0;
+	text-align: center; 
+	padding: .5em 0;
+	border-radius: 0;
+	margin: 0;
+}
+div.jqi .jqibuttons .ui-button {
+	padding: 0 .5em;
+	margin: auto;
+	float: none;
+}
 /*
 * Override font-weight rule for "a" tags
 */
