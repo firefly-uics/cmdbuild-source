@@ -1,11 +1,15 @@
 package org.cmdbuild.auth;
 
+import static com.google.common.collect.FluentIterable.from;
 import static org.apache.commons.lang3.StringUtils.defaultString;
+import static org.cmdbuild.dao.guava.Functions.toCard;
 import static org.cmdbuild.dao.query.clause.AnyAttribute.anyAttribute;
 import static org.cmdbuild.dao.query.clause.QueryAliasAttribute.attribute;
-import static org.cmdbuild.dao.query.clause.alias.Utils.as;
+import static org.cmdbuild.dao.query.clause.alias.Aliases.as;
+import static org.cmdbuild.dao.query.clause.alias.Aliases.canonical;
 import static org.cmdbuild.dao.query.clause.join.Over.over;
 import static org.cmdbuild.dao.query.clause.where.OperatorAndValues.eq;
+import static org.cmdbuild.dao.query.clause.where.WhereClauses.alwaysTrue;
 import static org.cmdbuild.dao.query.clause.where.WhereClauses.and;
 import static org.cmdbuild.dao.query.clause.where.WhereClauses.condition;
 import static org.cmdbuild.dao.query.clause.where.WhereClauses.or;
@@ -35,6 +39,7 @@ import org.cmdbuild.dao.view.CMDataView;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.base.Function;
 import com.google.common.collect.Lists;
 
 /**
@@ -236,17 +241,21 @@ public abstract class DBUserFetcher implements UserFetcher {
 	}
 
 	@Override
-	public List<CMUser> fetchAllUsers() {
-		final CMQueryResult result = view.select(anyAttribute(userClass())) //
-				.from(userClass()) //
-				.run();
-		final List<CMUser> allUsers = Lists.newArrayList();
-		for (final CMQueryRow row : result) {
-			final CMCard userCard = row.getCard(userClass());
-			final CMUser user = buildUserFromCard(userCard);
-			allUsers.add(user);
-		}
-		return allUsers;
+	public Iterable<CMUser> fetchAllUsers(final boolean activeOnly) {
+		final Alias userClassAlias = canonical(userClass());
+		return from(view.select(anyAttribute(userClass())) //
+				.from(userClass(), as(userClassAlias)) //
+				.where(activeOnly ? activeCondition(userClassAlias) : alwaysTrue()) //
+				.run()) //
+						.transform(toCard(userClassAlias)) //
+						.transform(new Function<CMCard, CMUser>() {
+
+							@Override
+							public CMUser apply(final CMCard input) {
+								return buildUserFromCard(input);
+							}
+
+						});
 	}
 
 	@Override
@@ -257,7 +266,7 @@ public abstract class DBUserFetcher implements UserFetcher {
 				.where(or( //
 						condition(attribute(target, User.SERVICE), eq(true)), //
 						condition(attribute(target, User.PRIVILEGED), eq(true))) //
-				) //
+		) //
 				.run();
 		final List<CMUser> allUsers = Lists.newArrayList();
 		for (final CMQueryRow row : result) {

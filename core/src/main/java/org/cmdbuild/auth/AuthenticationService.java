@@ -25,8 +25,8 @@ public interface AuthenticationService {
 		private final AuthenticatedUser user;
 		private final String redirectUrl;
 
-		public static final ClientAuthenticatorResponse EMTPY_RESPONSE = new ClientAuthenticatorResponse(
-				ANONYMOUS_USER, null);
+		public static final ClientAuthenticatorResponse EMTPY_RESPONSE = new ClientAuthenticatorResponse(ANONYMOUS_USER,
+				null);
 
 		public ClientAuthenticatorResponse(final AuthenticatedUser user, final String redirectUrl) {
 			Validate.notNull(user);
@@ -170,10 +170,11 @@ public interface AuthenticationService {
 	Iterable<CMGroup> fetchAllGroups();
 
 	/**
+	 * @param activeOnly
 	 * 
 	 * @return a collection of all users stored in the database
 	 */
-	List<CMUser> fetchAllUsers();
+	Iterable<CMUser> fetchAllUsers(boolean activeOnly);
 
 	Iterable<CMUser> fetchServiceOrPrivilegedUsers();
 
