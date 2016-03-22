@@ -238,14 +238,16 @@
 		this.returnValue = null;
 		this.tree = tree;
 		var me = this;
-		this.space = 30;
+		this.space = 10;
 		this.currentClass = classId;
 		this.possibleNodes = [];
 		this.createRadio = function(value, code, disabled) {
 			var strHtml = '';
 			var strCode = (!disabled) ? 'code="' + code + '"' : '';
-			strHtml += '<text  name="chooseTreePrompt"  class="radio" '
+			var strClass = (!disabled) ? 'radio selectable' : 'radio';
+			strHtml += '<text  name="chooseTreePrompt"  class="' + strClass + '" '
 					+ strCode + '>';
+			strHtml += "<span class=\"icon\"></span>";
 			strHtml += value;
 			strHtml += '</text>';
 			return strHtml;
@@ -255,8 +257,7 @@
 			var str;
 			var disabled;
 			if (!node.domainId) {
-				strHtml += '<div style="margin: 0 0 0 ' + (indent * this.space)
-						+ '">';
+				strHtml += '<div style="margin-left: ' + (indent * this.space) + 'px">';
 				disabled = !parentWindow.sameClass(node.targetClass,
 						this.currentClass);
 				str = node.targetClass + " - " + "Root";
@@ -296,8 +297,7 @@
 					.getDescription(classTarget);
 			var classSourceDescription = $.Cmdbuild.customvariables.cacheClasses
 					.getDescription(classSource);
-			strHtml += '<div style="margin: 0 0 0 ' + (indent * this.space)
-					+ '">';
+			strHtml += '<div style="margin-left: ' + (indent * this.space)+ 'px">';
 			disabled = !parentWindow.sameClass(node.targetClass, this.currentClass);
 			if (!disabled) {
 				this.possibleNodes.push(node._id);
@@ -373,12 +373,12 @@
 				classes : {
 					box : '',
 					fade : '',
-					prompt : '',
-					close : '',
-					title : 'lead',
-					message : 'pure-form',
-					buttons : '',
-					button : 'pure-button',
+					prompt : 'ui-dialog ui-widget ui-widget-content ui-corner-all ui-front ui-draggable ui-resizable cmdbuild-graph',
+					close : 'ui-button ui-widget ui-state-default ui-corner-all ui-button-icon-only ui-dialog-titlebar-close',
+					title : 'ui-dialog-titlebar ui-widget-header ui-corner-all ui-helper-clearfix ui-draggable-handle',
+					message : 'ui-dialog-content ui-widget-content',
+					buttons : 'ui-dialog-content ui-widget-content',
+					button : 'cmdbuildButton ui-button ui-widget ui-state-default ui-corner-all',
 					defaultButton : 'pure-button-primary'
 				},
 				promptspeed : "fast",
