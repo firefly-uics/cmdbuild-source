@@ -39,8 +39,8 @@
 				displayableInList: false
 			}, {
 				type: "string",
-				name: "domainDescription",
-				description: "Domain",
+				name: "descriptionDirect",
+				description: "Relation",
 				displayableInList: true
 			}, {
 				type: "string",
@@ -75,14 +75,30 @@
 			}
 			var sortRow = (param.sort) ? param.sort : "_id";
 			data.sort(function(a, b) {
-				return (a[sortRow] > b[sortRow]) ? 1 : -1;
+				if (param.direction.toLowerCase() === "asc")
+					return (a[sortRow] + a._id > b[sortRow] + b._id) ? 1 : -1;
+				else
+					return (a[sortRow] + a._id >= b[sortRow] + b._id) ? -1 : 1;
 			});
+			var rowsFilteredByQuery = [];
+			for (i = 0; i < data.length; i++) {
+				var sourceDescription = data[i].sourceDescription.toLowerCase();
+				var destinationDescription = data[i].destinationDescription.toLowerCase();
+				if (this.filter && this.filter.query) {
+					var query = this.filter.query.toLowerCase();
+					if (sourceDescription.indexOf(query) === -1 &&
+							destinationDescription.indexOf(query) === -1) {
+						continue;
+					}
+				}
+				rowsFilteredByQuery.push(data[i]);
+			}
 			this.data = [];
 			for (var i = param.firstRow; i < param.nRows + param.firstRow
-					&& i < data.length; i++) {
-				this.data.push(data[i]);
+					&& i < rowsFilteredByQuery.length; i++) {
+				this.data.push(rowsFilteredByQuery[i]);
 			}
-			this.total = data.length;
+			this.total = this.data.length;
 			setTimeout(function() {
 				callback.apply(callbackScope, [this.data]);
 			}, 100);

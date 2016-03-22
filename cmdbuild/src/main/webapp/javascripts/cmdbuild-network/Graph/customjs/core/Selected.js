@@ -13,6 +13,9 @@
 		this.observe = function(observer) {
 			this.observers.push(observer);
 		};
+		this.isEmpty = function() {
+			return $.isEmptyObject(this.selected);
+		};
 		this.changed = function(params) {
 			for (var i = 0; i < this.observers.length; i++) {
 				this.observers[i].refreshSelected(params);
@@ -87,7 +90,7 @@
 				retCards.push(arClasses[i]);
 			}
 			return {
-				total: arClasses.length,
+				total: retCards.length,
 				rows: retCards
 			};
 		};

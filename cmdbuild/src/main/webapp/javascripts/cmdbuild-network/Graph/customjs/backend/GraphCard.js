@@ -80,7 +80,8 @@
 			onObjectReady();
 		};
 		this.loadData = function() {
-			if (this.param.cardId) {
+			var selectedCards = $.Cmdbuild.customvariables.selected.getCards();
+			if (this.param.cardId && ! $.Cmdbuild.customvariables.selected.isEmpty()) {
 				$.Cmdbuild.g3d.proxy.getCardData(this.type,
 						this.param.cardId, {}, this.loadDataCallback, this);
 			} else {

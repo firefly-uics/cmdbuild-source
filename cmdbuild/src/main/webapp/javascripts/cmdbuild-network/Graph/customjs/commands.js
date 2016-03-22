@@ -104,7 +104,6 @@
 			});
 			formObject = $.Cmdbuild.dataModel.forms[param.filterByDomain];
 			if (formObject) {
-				$.Cmdbuild.customvariables.selected.erase();
 				configuration.filterClassesDomains = [];
 				for ( var key in formObject.checked) {
 					$.Cmdbuild.customvariables.cacheDomains.setActive(key,
@@ -134,6 +133,7 @@
 					}
 				}
 			}
+//			$.Cmdbuild.customvariables.selected.changed({});
 			$.Cmdbuild.standard.commands.dialogClose(param);
 		},
 		switchOnSelected : function(param) {
@@ -166,7 +166,6 @@
 		_navigateOnNode : function(classId, cardId) {
 			$.Cmdbuild.customvariables.viewer.clearSelection();
 			$.Cmdbuild.customvariables.model.erase();
-			$.Cmdbuild.customvariables.selected.erase();
 			$.Cmdbuild.customvariables.viewer.refresh(true);
 			var init = new $.Cmdbuild.g3d.commands.init_explode(
 					$.Cmdbuild.customvariables.model, {
@@ -283,10 +282,14 @@
 			$.Cmdbuild.customvariables.commandsManager.stopped = true;
 		},
 		deleteSelection : function(param) {
-			var deleteCards = new $.Cmdbuild.g3d.commands.deleteCards(
-					$.Cmdbuild.customvariables.model,
-					$.Cmdbuild.customvariables.selected, param.selected);
-			$.Cmdbuild.customvariables.commandsManager.execute(deleteCards, {});
+			if (! $.Cmdbuild.customvariables.selected.isEmpty()) {
+				var deleteCards = new $.Cmdbuild.g3d.commands.deleteCards(
+						$.Cmdbuild.customvariables.model,
+						$.Cmdbuild.customvariables.selected, param.selected);
+				$.Cmdbuild.customvariables.commandsManager.execute(deleteCards, {});
+			}
+			$.Cmdbuild.customvariables.selected.erase();
+			$.Cmdbuild.customvariables.selected.changed({});
 		},
 		dijkstra : function(param) {
 			new $.Cmdbuild.g3d.algorithms.dijkstra(
@@ -294,9 +297,11 @@
 					$.Cmdbuild.customvariables.selected);
 		},
 		connect : function(param) {
-			new $.Cmdbuild.g3d.algorithms.connect(
-					$.Cmdbuild.customvariables.model,
-					$.Cmdbuild.customvariables.selected);
+			if ($.Cmdbuild.customvariables.selected.getData() > 1) {
+				new $.Cmdbuild.g3d.algorithms.connect(
+						$.Cmdbuild.customvariables.model,
+						$.Cmdbuild.customvariables.selected);
+			}
 		},
 		zoomOn : function(param) {
 			var paramActualized = $.Cmdbuild.dataModel.resolveVariables(param);

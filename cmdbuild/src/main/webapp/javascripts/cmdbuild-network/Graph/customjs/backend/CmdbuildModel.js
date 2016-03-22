@@ -13,7 +13,8 @@
 		this.getInitModel = function(params, callback, callbackScope) {
 			var navigationTree = $.Cmdbuild.customvariables.cacheTrees
 					.getRootNavigationTree();
-			var nodeOnNavigationTree = (navigationTree) ? navigationTree._id : null;
+			var nodeOnNavigationTree = (navigationTree) ? navigationTree._id
+					: null;
 			if (params) {
 				$.Cmdbuild.g3d.proxy
 						.getCardData(
@@ -139,13 +140,26 @@
 			domains = $.Cmdbuild.customvariables.cacheDomains
 					.getDomains4Class(classId);
 			var ret = [];
-			for (var i = 0; i < domains.length; i++) {
-				if (domains[i].active) {
-					ret.push(domains[i]);
-				}
-			}
-			callback.apply(callbackScope, [ ret ]); // this overrides other
-			// filters on domains
+			$.Cmdbuild.customvariables.cacheDomains.getLoadingDomains4Class(
+					classId, function(response) {
+						for (var j = 0; j < response.length; j++) {
+							var insert = true;
+							for (var i = 0; i < domains.length; i++) {
+								if (response[j]._id === domains[i]._id
+										&& domains[i].active === false) {
+									insert = false;
+									break;
+								}
+							}
+							if (insert) {
+								ret.push(response[j]);
+							}
+						}
+						callback.apply(callbackScope, [ ret ]); // this
+																// overrides
+																// other
+						// filters on domains
+					}, this);
 		};
 		this.getAllDomains = function(node, classId, cardId, domainList,
 				callback, callbackScope) {
@@ -164,6 +178,7 @@
 		this.getRelations = function(node, classId, cardId, domainList,
 				filteredDomains, elements, callback, callbackScope) {
 			if (filteredDomains) {
+				// /------------------------------------------------
 				this.getAllRelations(node, filteredDomains, domainList,
 						classId, parseInt(cardId), elements, callback,
 						callbackScope);
@@ -287,6 +302,7 @@
 			for (var i = 0; i < relations.length; i++) {
 				var relation = relations[i];
 				if (filterClasses
+						&& filterClasses.length > 0
 						&& (filterClasses.indexOf(relation._destinationType) != -1 || filterClasses
 								.indexOf(relation._sourceType) != -1)) {
 					continue;

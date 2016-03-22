@@ -9,6 +9,13 @@
 				this.grid.checked[domains[i]._id] = domains[i].active;
 			}
 		};
+		this.refresh = function() {
+			if ($.Cmdbuild.customvariables.commandInExecution === true) {
+				return;
+			}
+			this.prepareChecked();
+			$.Cmdbuild.standard.grid.onNavigate(0, this.param.form);
+		};
 		this.init = function(param) {
 			if (this.loading === true) {
 				this.buffer = param;
@@ -23,6 +30,7 @@
 				this.param = param;
 				$.Cmdbuild.dataModel.forms[this.param.form] = this.grid;
 				this.grid.init(param);
+				$.Cmdbuild.customvariables.model.observe(this);
 			}
 			catch (e) {
 				$.Cmdbuild.errorsManager.log("$.Cmdbuild.custom.domainsGrid.init");

@@ -38,6 +38,7 @@
 			$.Cmdbuild.customvariables.selected.erase();
 			setTimeout(function() {
 				command.undo(me.model);
+				$.Cmdbuild.customvariables.selected.changed({});
 				$.Cmdbuild.authProxy.unmaskRequest();
 			}, 10);
 		};
