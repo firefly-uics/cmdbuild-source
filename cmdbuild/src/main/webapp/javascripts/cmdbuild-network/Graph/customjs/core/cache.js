@@ -1,4 +1,8 @@
 (function($) {
+	var FILESTORE_IMAGES = "images";
+	var TYPE_CLASS = "class";
+	var TYPE_PROCESS = "process";
+
 	var cache = function(callback, callbackScope) {
 		$.Cmdbuild.customvariables.cacheProcess = new cacheProcesses();
 		$.Cmdbuild.customvariables.cacheDomains = new cacheDomains();
@@ -150,13 +154,22 @@
 			}
 		};
 		this.getImage = function(classId) {
-			var imgs = $.grep(this.data, function(item) {
-				return item.details.id === classId;
+			var type;
+			if ($.Cmdbuild.dataModel.isAClass(classId)) {
+				type = TYPE_CLASS;
+			} else if ($.Cmdbuild.dataModel.isAProcess(classId)) {
+				type = TYPE_PROCESS;
+			}
+			var icons = $.grep(this.data, function(item) {
+				return item.type === type && item.details.id === classId;
 			});
 			var url;
-			if (imgs && imgs.length) {
+			if (icons && icons.length) {
+				var icon = icons[0];
 				url = $.Cmdbuild.utilities.proxy
-						.getURIForIconDownload(imgs[0]._id);
+						.getURIForFileStoreItemDownload(FILESTORE_IMAGES,
+								icon.image.details.folder,
+								icon.image.details.file);
 			} else {
 				url = $.Cmdbuild.customvariables.cacheImages
 						.getBaseImages("default");
