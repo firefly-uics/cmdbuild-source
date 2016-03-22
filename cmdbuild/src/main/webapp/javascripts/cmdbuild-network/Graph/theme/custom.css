@@ -439,6 +439,35 @@ a {
 	font-size: 11px;
 	font-weight: normal;
 }
+#viewerInformation {
+	display: block;
+}
+.viewerInformationContent .rel_desc_direct {
+	padding-right: 16px;
+	position: relative;
+	text-align: right;
+}
+.viewerInformationContent .rel_desc_direct .icon {
+	background-image: url("images/ui-icons_416da3_256x240.png");
+	background-position: -64px 0;
+	position: absolute;
+	width: 16px;
+	height: 16px;
+	top: 0;
+	right: 0;
+}
+.viewerInformationContent .rel_desc_inverse {
+	padding-left: 16px;
+	position: relative;
+}
+.viewerInformationContent .rel_desc_inverse .icon {
+	background-image: url("images/ui-icons_416da3_256x240.png");
+	position: absolute;
+	width: 16px;
+	height: 16px;
+	top: 0;
+	left: 0;
+}
 /**
  * USEFUL
  */
