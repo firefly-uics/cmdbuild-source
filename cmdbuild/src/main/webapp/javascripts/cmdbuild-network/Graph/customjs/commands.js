@@ -297,7 +297,7 @@
 					$.Cmdbuild.customvariables.selected);
 		},
 		connect : function(param) {
-			if ($.Cmdbuild.customvariables.selected.getData() > 1) {
+			if ($.Cmdbuild.customvariables.selected.getCards(0, 100).total > 1) {
 				new $.Cmdbuild.g3d.algorithms.connect(
 						$.Cmdbuild.customvariables.model,
 						$.Cmdbuild.customvariables.selected);
