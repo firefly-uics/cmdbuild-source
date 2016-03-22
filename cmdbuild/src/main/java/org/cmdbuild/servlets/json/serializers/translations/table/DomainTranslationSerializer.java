@@ -1,5 +1,7 @@
 package org.cmdbuild.servlets.json.serializers.translations.table;
 
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
+
 import java.util.Collection;
 import java.util.Map;
 
@@ -56,8 +58,8 @@ public class DomainTranslationSerializer extends EntryTypeTranslationSerializer 
 
 	@Override
 	public Iterable<TranslationSerialization> serialize() {
-		final Iterable<? extends CMDomain> allDomains = activeOnly ? dataLogic.findActiveDomains() : dataLogic
-				.findAllDomains();
+		final Iterable<? extends CMDomain> allDomains = activeOnly ? dataLogic.findActiveDomains()
+				: dataLogic.findAllDomains();
 		final Iterable<? extends CMDomain> sortedDomains = entryTypeOrdering.sortedCopy(allDomains);
 
 		final Collection<TranslationSerialization> jsonDomains = Lists.newArrayList();
@@ -110,6 +112,19 @@ public class DomainTranslationSerializer extends EntryTypeTranslationSerializer 
 		inverseDescriptionField.setTranslations(inverseDescriptionTranslations);
 		inverseDescriptionField.setValue(domain.getDescription2());
 		jsonFields.add(inverseDescriptionField);
+
+		if (isNotBlank(domain.getMasterDetailDescription())) {
+			final TranslationObject masterDetailTranslationObject = DomainConverter.MASTERDETAIL_LABEL //
+					.withIdentifier(domain.getName()) //
+					.create();
+			final Map<String, String> masterDetailTranslations = translationLogic //
+					.readAll(masterDetailTranslationObject);
+			final EntryField masterDetailLabelField = new EntryField();
+			masterDetailLabelField.setName(DomainConverter.masterDetail());
+			masterDetailLabelField.setTranslations(masterDetailTranslations);
+			masterDetailLabelField.setValue(domain.getMasterDetailDescription());
+			jsonFields.add(masterDetailLabelField);
+		}
 
 		return jsonFields;
 	}

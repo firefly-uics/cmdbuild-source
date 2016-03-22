@@ -1,12 +1,17 @@
 package org.cmdbuild.servlets.json.serializers.translations.table;
 
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
+
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
 
 import org.cmdbuild.dao.entrytype.CMAttribute;
 import org.cmdbuild.dao.entrytype.CMClass;
+import org.cmdbuild.dao.entrytype.CMDomain;
 import org.cmdbuild.dao.entrytype.CMEntryType;
+import org.cmdbuild.dao.entrytype.CMEntryTypeVisitor;
+import org.cmdbuild.dao.entrytype.CMFunctionCall;
 import org.cmdbuild.logic.data.access.DataAccessLogic;
 import org.cmdbuild.logic.translation.TranslationLogic;
 import org.cmdbuild.logic.translation.TranslationObject;
@@ -18,8 +23,6 @@ import org.cmdbuild.servlets.json.serializers.translations.commons.TranslationSe
 import org.cmdbuild.servlets.json.translationtable.objects.EntryField;
 import org.cmdbuild.servlets.json.translationtable.objects.TableEntry;
 import org.cmdbuild.servlets.json.translationtable.objects.TranslationSerialization;
-
-import static org.apache.commons.lang3.StringUtils.*;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Ordering;
@@ -81,31 +84,66 @@ public abstract class EntryTypeTranslationSerializer implements TranslationSecti
 	}
 
 	Collection<EntryField> readFields(final CMAttribute attribute) {
-		final Collection<EntryField> jsonFields = Lists.newArrayList();
 		final String ownerName = attribute.getOwner().getName();
-		final TranslationObject translationObjectForDescription = AttributeConverter.CLASSATTRIBUTE_DESCRIPTION //
-				.withOwner(ownerName) //
-				.withIdentifier(attribute.getName()) //
-				.create();
-		final Map<String, String> descriptionTranslations = translationLogic.readAll(translationObjectForDescription);
-		final EntryField descriptionField = new EntryField();
-		descriptionField.setName(AttributeConverter.description());
-		descriptionField.setTranslations(descriptionTranslations);
-		descriptionField.setValue(attribute.getDescription());
-		jsonFields.add(descriptionField);
+		final Collection<EntryField> jsonFields = new CMEntryTypeVisitor() {
 
-		if (isNotBlank(attribute.getGroup())) {
-			final TranslationObject translationObjectForGroup = AttributeConverter.CLASSATTRIBUTE_GROUP //
-					.withOwner(ownerName) //
-					.withIdentifier(attribute.getName()) //
-					.create();
-			final Map<String, String> groupTranslations = translationLogic.readAll(translationObjectForGroup);
-			final EntryField groupField = new EntryField();
-			groupField.setName(AttributeConverter.group());
-			groupField.setTranslations(groupTranslations);
-			groupField.setValue(attribute.getGroup());
-			jsonFields.add(groupField);
-		}
+			private final Collection<EntryField> jsonFields = Lists.newArrayList();
+			private CMAttribute attribute = null;
+
+			@Override
+			public void visit(final CMFunctionCall type) {
+				// nothing to do
+			}
+
+			@Override
+			public void visit(final CMDomain type) {
+				final TranslationObject translationObjectForDescription = AttributeConverter.DOMAINATTRIBUTE_DESCRIPTION //
+						.withOwner(ownerName) //
+						.withIdentifier(attribute.getName()) //
+						.create();
+				final Map<String, String> descriptionTranslations = translationLogic
+						.readAll(translationObjectForDescription);
+				final EntryField descriptionField = new EntryField();
+				descriptionField.setName(AttributeConverter.description());
+				descriptionField.setTranslations(descriptionTranslations);
+				descriptionField.setValue(attribute.getDescription());
+				jsonFields.add(descriptionField);
+			}
+
+			@Override
+			public void visit(final CMClass type) {
+				final TranslationObject translationObjectForDescription = AttributeConverter.CLASSATTRIBUTE_DESCRIPTION //
+						.withOwner(ownerName) //
+						.withIdentifier(attribute.getName()) //
+						.create();
+				final Map<String, String> descriptionTranslations = translationLogic
+						.readAll(translationObjectForDescription);
+				final EntryField descriptionField = new EntryField();
+				descriptionField.setName(AttributeConverter.description());
+				descriptionField.setTranslations(descriptionTranslations);
+				descriptionField.setValue(attribute.getDescription());
+				jsonFields.add(descriptionField);
+
+				if (isNotBlank(attribute.getGroup())) {
+					final TranslationObject translationObjectForGroup = AttributeConverter.CLASSATTRIBUTE_GROUP //
+							.withOwner(ownerName) //
+							.withIdentifier(attribute.getName()) //
+							.create();
+					final Map<String, String> groupTranslations = translationLogic.readAll(translationObjectForGroup);
+					final EntryField groupField = new EntryField();
+					groupField.setName(AttributeConverter.group());
+					groupField.setTranslations(groupTranslations);
+					groupField.setValue(attribute.getGroup());
+					jsonFields.add(groupField);
+				}
+			}
+
+			public Collection<EntryField> readFieldsOfAttribute(final CMAttribute attribute) {
+				this.attribute = attribute;
+				attribute.getOwner().accept(this);
+				return jsonFields;
+			}
+		}.readFieldsOfAttribute(attribute);
 		return jsonFields;
 	}
 
