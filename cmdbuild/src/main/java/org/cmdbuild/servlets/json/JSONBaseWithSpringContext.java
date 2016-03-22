@@ -49,6 +49,7 @@ import org.cmdbuild.logic.email.EmailAttachmentsLogic;
 import org.cmdbuild.logic.email.EmailLogic;
 import org.cmdbuild.logic.email.EmailQueueLogic;
 import org.cmdbuild.logic.email.EmailTemplateLogic;
+import org.cmdbuild.logic.files.FileLogic;
 import org.cmdbuild.logic.filter.FilterLogic;
 import org.cmdbuild.logic.menu.MenuLogic;
 import org.cmdbuild.logic.privileges.SecurityLogic;
@@ -125,7 +126,6 @@ public class JSONBaseWithSpringContext extends JSONBase {
 	 * Stores
 	 */
 
-
 	protected LanguageStore languageStore() {
 		return applicationContext().getBean(LanguageStore.class);
 	}
@@ -139,11 +139,11 @@ public class JSONBaseWithSpringContext extends JSONBase {
 	}
 
 	protected FilesStore rootFilesStore() {
-		return applicationContext().getBean(ROOT,FilesStore.class);
+		return applicationContext().getBean(ROOT, FilesStore.class);
 	}
 
 	protected FilesStore uploadFilesStore() {
-		return applicationContext().getBean(UPLOAD,FilesStore.class);
+		return applicationContext().getBean(UPLOAD, FilesStore.class);
 	}
 
 	protected UserStore userStore() {
@@ -184,6 +184,10 @@ public class JSONBaseWithSpringContext extends JSONBase {
 
 	protected DashboardLogic dashboardLogic() {
 		return applicationContext().getBean(DashboardLogic.class);
+	}
+
+	protected FileLogic fileLogic() {
+		return applicationContext().getBean(FileLogic.class);
 	}
 
 	protected DataAccessLogic systemDataAccessLogic() {
@@ -308,13 +312,12 @@ public class JSONBaseWithSpringContext extends JSONBase {
 	protected TranslationFacade translationFacade() {
 		return applicationContext().getBean(TranslationFacade.class);
 	}
-	
+
 	protected SetupFacade setupFacade() {
-		return applicationContext().getBean(REQUEST_HANDLER_SETUP_FACADE,SetupFacade.class);
+		return applicationContext().getBean(REQUEST_HANDLER_SETUP_FACADE, SetupFacade.class);
 	}
 
 	/*
-	 * 
 	 * Utilities
 	 */
 
@@ -341,7 +344,7 @@ public class JSONBaseWithSpringContext extends JSONBase {
 	/*
 	 * Web
 	 */
-	
+
 	@Deprecated
 	protected ContextStore contextStore() {
 		return applicationContext().getBean(ContextStore.class);

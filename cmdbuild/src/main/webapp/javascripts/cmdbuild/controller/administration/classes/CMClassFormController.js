@@ -35,6 +35,8 @@
 			this.selection = _CMCache.getClassById(classId);
 			if (this.selection) {
 				this.view.onClassSelected(this.selection);
+
+				this.view.iconForm.delegate.cmfg('onClassPropertiesIconClassSelected', this.selection);
 			}
 		},
 
