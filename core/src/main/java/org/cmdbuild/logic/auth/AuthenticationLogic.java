@@ -77,7 +77,7 @@ public interface AuthenticationLogic extends Logic {
 
 	Iterable<CMGroup> getAllGroups();
 
-	List<CMUser> getAllUsers();
+	Iterable<CMUser> getAllUsers(boolean activeOnly);
 
 	Iterable<CMUser> getServiceOrPrivilegedUsers();
 

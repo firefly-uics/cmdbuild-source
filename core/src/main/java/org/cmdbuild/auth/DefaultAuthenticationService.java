@@ -385,9 +385,9 @@ public class DefaultAuthenticationService implements AuthenticationService {
 	}
 
 	@Override
-	public List<CMUser> fetchAllUsers() {
+	public Iterable<CMUser> fetchAllUsers(boolean activeOnly) {
 		for (final UserFetcher uf : userFetchers) {
-			return uf.fetchAllUsers();
+			return uf.fetchAllUsers(activeOnly);
 		}
 		return Lists.newArrayList();
 	}

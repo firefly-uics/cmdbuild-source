@@ -363,8 +363,8 @@ public class DefaultAuthenticationLogic implements AuthenticationLogic {
 	}
 
 	@Override
-	public List<CMUser> getAllUsers() {
-		return authService.fetchAllUsers();
+	public Iterable<CMUser> getAllUsers(boolean activeOnly) {
+		return authService.fetchAllUsers(activeOnly);
 	}
 
 	@Override

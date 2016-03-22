@@ -14,7 +14,7 @@ public interface UserFetcher {
 
 	CMUser fetchUserById(Long userId);
 
-	List<CMUser> fetchAllUsers();
+	Iterable<CMUser> fetchAllUsers(boolean activeOnly);
 
 	Iterable<CMUser> fetchServiceOrPrivilegedUsers();
 

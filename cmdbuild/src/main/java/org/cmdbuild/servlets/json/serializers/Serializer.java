@@ -177,7 +177,7 @@ public class Serializer {
 		return row;
 	}
 
-	public static JSONArray serializeUsers(final List<CMUser> users) throws JSONException {
+	public static JSONArray serializeUsers(final Iterable<CMUser> users) throws JSONException {
 		final JSONArray userList = new JSONArray();
 		for (final CMUser user : users) {
 			userList.put(Serializer.serialize(user));
