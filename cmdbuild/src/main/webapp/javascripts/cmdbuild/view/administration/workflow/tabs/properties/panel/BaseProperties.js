@@ -17,6 +17,11 @@
 		delegate: undefined,
 
 		/**
+		 * @property {CMDBuild.view.common.field.translatable.Text}
+		 */
+		descriptionField: undefined,
+
+		/**
 		 * @property {Ext.form.field.ComboBox}
 		 */
 		parentCombo: undefined,
@@ -40,9 +45,18 @@
 						maxWidth: CMDBuild.core.constants.FieldWidths.ADMINISTRATION_BIG,
 						allowBlank: false,
 						vtype: 'alphanum',
-						disableEnableFunctions: true
+						disableEnableFunctions: true,
+
+						enableKeyEvents: true,
+
+						listeners: {
+							scope: this,
+							change: function (field, newValue, oldValue, eOpts) {
+								this.fieldSynch(this.descriptionField, newValue, oldValue);
+							}
+						}
 					}),
-					Ext.create('CMDBuild.view.common.field.translatable.Text', {
+					this.descriptionField = Ext.create('CMDBuild.view.common.field.translatable.Text', {
 						name: CMDBuild.core.constants.Proxy.DESCRIPTION,
 						fieldLabel: CMDBuild.Translation.descriptionLabel,
 						labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,

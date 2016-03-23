@@ -1,7 +1,7 @@
-(function() {
+(function () {
 
 	/**
-	 * New class than will replace CMFormFunctions
+	 * Service class to be used as mixin for Ext.form.Panel or some methods are compatible also with Ext.panel.Panel
 	 *
 	 * Specific properties:
 	 * 	- {Boolean} considerAsFieldToDisable: enable setDisable function on processed item also if it's not inherits from Ext.form.Field
@@ -13,15 +13,39 @@
 		requires: ['CMDBuild.core.constants.Proxy'],
 
 		/**
+		 * Keeps in sync two fields, usually name and description. If the master field changes and the slave is empty, or it has the same
+		 * value as the old value of the master, its value is updated with the new one.
+		 *
+		 * These function has to be used with the change listener, example:
+		 * 		change: function (field, newValue, oldValue, eOpts) {
+		 * 			this.fieldSynch(slaveField, newValue, oldValue);
+		 * 		}
+		 *
+		 * @param {Object} fieldToComplete
+		 * @param {Object} newValue
+		 * @param {Object} oldValue
+		 *
+		 * @returns {Void}
+		 */
+		fieldSynch: function (slaveField, newValue, oldValue) {
+			if (this.isManagedField(slaveField)) {
+				var actualValue = slaveField.getValue();
+
+				if (Ext.isEmpty(actualValue) || actualValue == oldValue)
+					slaveField.setValue(newValue);
+			}
+		},
+
+		/**
 		 * @param {Boolean} withDisabled
 		 *
 		 * @returns {Array}
 		 */
-		getData: function(withDisabled) {
+		getData: function (withDisabled) {
 			if (withDisabled) {
 				var data = {};
 
-				this.cascade(function(item) {
+				this.cascade(function (item) {
 					if (
 						!Ext.isEmpty(item)
 						&& Ext.isFunction(item.getValue)
@@ -41,10 +65,10 @@
 		/**
 		 * @returns {Array} nonValidFields
 		 */
-		getNonValidFields: function() {
+		getNonValidFields: function () {
 			var nonValidFields = [];
 
-			this.cascade(function(item) {
+			this.cascade(function (item) {
 				if (
 					!Ext.isEmpty(item)
 					&& this.isManagedField(item)
@@ -67,7 +91,7 @@
 		 *
 		 * @private
 		 */
-		isManagedField: function(field) {
+		isManagedField: function (field) {
 			return (
 				field instanceof Ext.form.Field
 				|| field instanceof Ext.form.field.Base
@@ -76,9 +100,12 @@
 			);
 		},
 
-		reset: function() {
+		/**
+		 * @returns {Void}
+		 */
+		reset: function () {
 			// SetValues
-			this.cascade(function(item) {
+			this.cascade(function (item) {
 				if (
 					!Ext.isEmpty(item)
 					&& Ext.isFunction(item.setValue)
@@ -90,7 +117,7 @@
 			}, this);
 
 			// Reset
-			this.cascade(function(item) {
+			this.cascade(function (item) {
 				if (
 					!Ext.isEmpty(item)
 					&& Ext.isFunction(item.reset)
@@ -104,12 +131,14 @@
 
 		/**
 		 * @param {Boolean} state
+		 *
+		 * @returns {Void}
 		 */
-		setDisabledBottomBar: function(state) {
+		setDisabledBottomBar: function (state) {
 			var bottomToolbar = this.getDockedComponent(CMDBuild.core.constants.Proxy.TOOLBAR_BOTTOM);
 
 			if (!Ext.isEmpty(bottomToolbar))
-				Ext.Array.forEach(bottomToolbar.items.items, function(button, i, allButtons) {
+				Ext.Array.forEach(bottomToolbar.items.items, function (button, i, allButtons) {
 					if (
 						!Ext.isEmpty(button)
 						&& Ext.isFunction(button.setDisabled)
@@ -125,14 +154,16 @@
 		 * @param {Boolean} allFields
 		 * @param {Boolean} disableIsVisibleCheck
 		 *
+		 * @returns {Void}
+		 *
 		 * @private
 		 */
-		setDisableFields: function(state, allFields, disableIsVisibleCheck) {
+		setDisableFields: function (state, allFields, disableIsVisibleCheck) {
 			allFields = Ext.isBoolean(allFields) ? allFields : false;
 			disableIsVisibleCheck = Ext.isBoolean(disableIsVisibleCheck) ? disableIsVisibleCheck : false;
 
 			// For Ext.form.field.Field objects
-			this.getForm().getFields().each(function(item, i, length) {
+			this.getForm().getFields().each(function (item, i, length) {
 				if (
 					!Ext.isEmpty(item)
 					&& Ext.isFunction(item.setDisabled)
@@ -148,7 +179,7 @@
 			}, this);
 
 			// For extra objects (Buttons and objects with considerAsFieldToDisable property)
-			this.cascade(function(item) {
+			this.cascade(function (item) {
 				if (
 					!Ext.isEmpty(item)
 					&& Ext.isFunction(item.setDisabled)
@@ -177,12 +208,14 @@
 		 *
 		 * @param {Ext.form.FieldSet} fieldset
 		 * @param {Boolean} state
+		 *
+		 * @returns {Void}
 		 */
-		setDisabledFieldSet: function(fieldset, state) {
+		setDisabledFieldSet: function (fieldset, state) {
 			state = Ext.isBoolean(state) ? state : true;
 
 			if (fieldset instanceof Ext.form.FieldSet)
-				fieldset.cascade(function(item) {
+				fieldset.cascade(function (item) {
 					if (
 						!Ext.isEmpty(item)
 						&& Ext.isFunction(item.setDisabled)
@@ -202,8 +235,10 @@
 		 * @param {Boolean} allFields
 		 * @param {Boolean} tBarState
 		 * @param {Boolean} bBarState
+		 *
+		 * @returns {Void}
 		 */
-		setDisabledModify: function(state, allFields, tBarState, bBarState) {
+		setDisabledModify: function (state, allFields, tBarState, bBarState) {
 			this.setDisableFields(state, allFields);
 			this.setDisabledTopBar(Ext.isBoolean(tBarState) ? tBarState : !state);
 			this.setDisabledBottomBar(Ext.isBoolean(bBarState) ? bBarState : state);
@@ -211,12 +246,14 @@
 
 		/**
 		 * @param {Boolean} state
+		 *
+		 * @returns {Void}
 		 */
-		setDisabledTopBar: function(state) {
+		setDisabledTopBar: function (state) {
 			var topToolbar = this.getDockedComponent(CMDBuild.core.constants.Proxy.TOOLBAR_TOP);
 
 			if (!Ext.isEmpty(topToolbar))
-				Ext.Array.forEach(topToolbar.items.items, function(button, i, allButtons) {
+				Ext.Array.forEach(topToolbar.items.items, function (button, i, allButtons) {
 					if (
 						!Ext.isEmpty(button)
 						&& Ext.isFunction(button.setDisabled)
