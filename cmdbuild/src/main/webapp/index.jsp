@@ -5,11 +5,11 @@
 
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%@ page import="org.cmdbuild.auth.UserStore" %>
+<%@ page import="org.apache.commons.lang3.StringEscapeUtils" %>
 <%@ page import="org.cmdbuild.auth.user.OperationUser" %>
 <%@ page import="org.cmdbuild.services.SessionVars" %>
 <%@ page import="org.cmdbuild.servlets.json.Login" %>
 <%@ page import="org.cmdbuild.spring.SpringIntegrationUtils" %>
-<%@ page import="org.apache.commons.lang3.StringEscapeUtils" %>
 
 <%
 	final String lang = SpringIntegrationUtils.applicationContext().getBean(SessionVars.class).getLanguage();
@@ -42,6 +42,7 @@
 			Ext.ns('CMDBuild.configuration.runtime'); // Runtime configurations
 
 			CMDBuild.configuration.runtime = Ext.create('CMDBuild.model.configuration.Runtime');
+			CMDBuild.configuration.runtime.set(CMDBuild.core.constants.Proxy.LANGUAGE, '<%= StringEscapeUtils.escapeEcmaScript(lang) %>');
 
 			<% if (!operationUser.isValid() && !operationUser.getAuthenticatedUser().isAnonymous()) { %>
 				CMDBuild.configuration.runtime.set(CMDBuild.core.constants.Proxy.USERNAME, '<%= StringEscapeUtils.escapeEcmaScript(operationUser.getAuthenticatedUser().getUsername()) %>');

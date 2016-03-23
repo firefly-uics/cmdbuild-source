@@ -1,4 +1,4 @@
-(function() {
+(function () {
 
 	Ext.define('CMDBuild.core.configurationBuilders.Localization', {
 
@@ -41,7 +41,7 @@
 
 								if (!Ext.isEmpty(decodedResponse) && Ext.isObject(decodedResponse)) {
 									CMDBuild.configuration.localization.set(CMDBuild.core.constants.Proxy.ENABLED_LANGUAGES, decodedResponse['enabled_languages']);
-									CMDBuild.configuration.localization.set(CMDBuild.core.constants.Proxy.LANGUAGE, decodedResponse[CMDBuild.core.constants.Proxy.LANGUAGE]);
+									CMDBuild.configuration.localization.set(CMDBuild.core.constants.Proxy.DEFAULT_LANGUAGE, decodedResponse[CMDBuild.core.constants.Proxy.LANGUAGE]);
 									CMDBuild.configuration.localization.set(CMDBuild.core.constants.Proxy.LANGUAGE_PROMPT, decodedResponse['languageprompt']);
 								}
 							},

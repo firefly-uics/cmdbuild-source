@@ -1,4 +1,4 @@
-(function() {
+(function () {
 
 	Ext.require('CMDBuild.core.constants.Proxy');
 
@@ -32,7 +32,7 @@
 			 *
 			 * @returns {Object} data
 			 */
-			convertFromLegacy: function(data) {
+			convertFromLegacy: function (data) {
 				data = data || {};
 				data[CMDBuild.core.constants.Proxy.CARD_FORM_RATIO] = data['grid_card_ratio'];
 				data[CMDBuild.core.constants.Proxy.CARD_LOCK_TIMEOUT] = data['lockcardtimeout'];
@@ -57,7 +57,7 @@
 		 *
 		 * @override
 		 */
-		constructor: function(data) {
+		constructor: function (data) {
 			data = CMDBuild.model.configuration.instance.Instance.convertFromLegacy(data);
 
 			this.callParent(arguments);

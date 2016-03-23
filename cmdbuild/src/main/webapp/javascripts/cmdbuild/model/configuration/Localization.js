@@ -1,19 +1,46 @@
-(function() {
+(function () {
 
 	Ext.require('CMDBuild.core.constants.Proxy');
 
 	/**
-	 * TODO: waiting for refactor (configurations)
+	 * TODO: waiting for refactor (configurations + translate)
 	 */
 	Ext.define('CMDBuild.model.configuration.Localization', {
 		extend: 'Ext.data.Model',
 
 		fields: [
+			{ name: CMDBuild.core.constants.Proxy.DEFAULT_LANGUAGE, type: 'string', defaultValue: 'en' },
 			{ name: CMDBuild.core.constants.Proxy.ENABLED_LANGUAGES, type: 'auto' }, // CMDBuild enabled languages
-			{ name: CMDBuild.core.constants.Proxy.LANGUAGE, type: 'string', defaultValue: 'en' },
-			{ name: CMDBuild.core.constants.Proxy.LANGUAGES, type: 'auto' }, // All CMDBuild languages
-			{ name: CMDBuild.core.constants.Proxy.LANGUAGE_PROMPT, type: 'boolean', defaultValue: true } // Login prompt for language
+			{ name: CMDBuild.core.constants.Proxy.LANGUAGE_PROMPT, type: 'boolean', defaultValue: true }, // Login prompt for language
+			{ name: CMDBuild.core.constants.Proxy.LANGUAGES, type: 'auto' } // All CMDBuild languages
 		],
+
+		statics: {
+			/**
+			 * Static function to convert from legacy object to model's one
+			 *
+			 * @param {Object} data
+			 *
+			 * @returns {Object} data
+			 */
+			convertFromLegacy: function (data) {
+				data = data || {};
+				data[CMDBuild.core.constants.Proxy.DEFAULT_LANGUAGE] = data[CMDBuild.core.constants.Proxy.LANGUAGE];
+
+				return data;
+			}
+		},
+
+		/**
+		 * @param {Object} data
+		 *
+		 * @override
+		 */
+		constructor: function (data) {
+			data = this.statics().convertFromLegacy(data);
+
+			this.callParent(arguments);
+		},
 
 		/**
 		 * @returns {Object}
@@ -100,7 +127,7 @@
 					return this.callParent([fieldName, enabledLanguages]);
 				}
 
-				case CMDBuild.core.constants.Proxy.LANGUAGE: {
+				case CMDBuild.core.constants.Proxy.DEFAULT_LANGUAGE: {
 					if (!Ext.isEmpty(newValue) && this.isManagedLanguage(newValue))
 						return this.callParent(arguments);
 

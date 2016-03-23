@@ -1,4 +1,4 @@
-(function() {
+(function () {
 
 	Ext.define('CMDBuild.view.common.field.comboBox.Language', {
 		extend: 'Ext.form.field.ComboBox',
@@ -22,12 +22,15 @@
 		iconClsPrefix: 'ux-flag-', // could be changed on instantiation
 		valueField: CMDBuild.core.constants.Proxy.TAG,
 
-		initComponent: function() {
+		/**
+		 * @override
+		 */
+		initComponent: function () {
 			var tpl = '<div class="x-combo-list-item ux-icon-combo-item ' + this.iconClsPrefix + '{' + this.iconClsField + '}">{' + this.displayField +'}</div>';
 
 			Ext.apply(this, {
 				listConfig: {
-					getInnerTpl: function() { return tpl; }
+					getInnerTpl: function () { return tpl; }
 				},
 				store: CMDBuild.core.proxy.localization.Localization.getStoreLanguages(),
 				queryMode: 'local'
@@ -35,7 +38,7 @@
 
 			this.callParent(arguments);
 
-			this.setValue = Ext.Function.createInterceptor(this.setValue, function(v) {
+			this.setValue = Ext.Function.createInterceptor(this.setValue, function (v) {
 				if (this.lastFlagCls && !Ext.isEmpty(this.inputEl)) {
 					this.inputEl.removeCls(this.lastFlagCls);
 				}
@@ -46,13 +49,13 @@
 					this.inputEl.addCls(this.lastFlagCls);
 			}, this);
 
-			this.getStore().on('load', function() {
+			this.getStore().on('load', function (store, records, successful, eOpts) {
 				this.setValue(this.getCurrentLanguage());
 			}, this);
 		},
 
 		listeners: {
-			select: function(field, records, eOpts) {
+			select: function (field, records, eOpts) {
 				if (this.enableChangeLanguage)
 					this.changeLanguage(records[0].get(CMDBuild.core.constants.Proxy.TAG));
 			}
@@ -60,30 +63,28 @@
 
 		/**
 		 * @param {String} language
+		 *
+		 * @private
 		 */
-		changeLanguage: function(language) {
-			window.location = Ext.String.format('?' + CMDBuild.core.constants.Proxy.LANGUAGE + '={0}', language);
+		changeLanguage: function (language) {
+			language = !Ext.isEmpty(language) && Ext.isString(language) ? language : CMDBuild.configuration.localization.get(CMDBuild.core.constants.Proxy.DEFAULT_LANGUAGE);
+
+			window.location = '?' + CMDBuild.core.constants.Proxy.LANGUAGE + '=' + language;
 		},
 
 		/**
 		 * @returns {String}
+		 *
+		 * @private
 		 */
-		getCurrentLanguage: function() {
+		getCurrentLanguage: function () {
 			// Step 1: check URL
 			if (!Ext.isEmpty(window.location.search))
 				return Ext.Object.fromQueryString(window.location.search)[CMDBuild.core.constants.Proxy.LANGUAGE];
 
-			// Step 2: check CMDBuild configuration
-			if (
-				!Ext.isEmpty(CMDBuild)
-				&& !Ext.isEmpty(CMDBuild.configuration)
-				&& !Ext.isEmpty(CMDBuild.configuration.localization)
-			) {
-				return CMDBuild.configuration.localization.get(CMDBuild.core.constants.Proxy.LANGUAGE);
-			}
-
-			// Step 3: use a default language tag
-			return 'en';
+			// Step 2: check CMDBuild configuration (default)
+			if (!Ext.isEmpty(CMDBuild) && !Ext.isEmpty(CMDBuild.configuration) && !Ext.isEmpty(CMDBuild.configuration.localization))
+				return CMDBuild.configuration.localization.get(CMDBuild.core.constants.Proxy.DEFAULT_LANGUAGE);
 		}
 	});
 
