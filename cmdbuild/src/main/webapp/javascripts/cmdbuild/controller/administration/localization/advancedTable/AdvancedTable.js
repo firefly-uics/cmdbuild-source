@@ -180,7 +180,7 @@
 		onLocalizationAdvancedTableCollapseAll: function (gridPanel) {
 			CMDBuild.core.LoadMask.show();
 
-			Ext.Function.defer(function () { // HACK: to fix expandAll bug that don't displays loeadMask
+			Ext.Function.defer(function () { // HACK: to fix collapseAll bug that don't displays loeadMask
 				gridPanel.collapseAll(function () {
 					CMDBuild.core.LoadMask.hide();
 				});

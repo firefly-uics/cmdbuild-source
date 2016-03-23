@@ -20,6 +20,7 @@
 		 */
 		sectionId: undefined,
 
+		animate: false, // Fixes an error while collapsing all elements
 		autoScroll: true,
 		border: false,
 		collapsible: true,
