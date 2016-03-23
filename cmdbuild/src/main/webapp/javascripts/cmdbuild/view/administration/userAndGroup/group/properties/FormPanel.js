@@ -69,7 +69,7 @@
 								scope: this,
 
 								handler: function(button, e) {
-									this.delegate.cmfg('onUserAndGroupGroupTabPropertiesActiveStateToggleButtonClick', button.getClickedState());
+									this.delegate.cmfg('onUserAndGroupGroupTabPropertiesActiveStateToggleButtonClick', button.getActiveState());
 								}
 							})
 						]

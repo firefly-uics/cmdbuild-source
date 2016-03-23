@@ -65,7 +65,7 @@
 								scope: this,
 
 								handler: function(button, e) {
-									this.delegate.cmfg('onLookupListEnableDisableButtonClick', button.getClickedState());
+									this.delegate.cmfg('onLookupListEnableDisableButtonClick', button.getActiveState());
 								}
 							})
 						]
