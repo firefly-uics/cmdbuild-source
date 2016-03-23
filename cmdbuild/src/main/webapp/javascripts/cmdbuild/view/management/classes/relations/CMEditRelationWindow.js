@@ -77,8 +77,16 @@
 
 			this.callParent(arguments);
 
-			this.grid.applyFilterToStore();
-			this.grid.getStore().load();
+			if (
+				Ext.isObject(this.classObject) && !Ext.Object.isEmpty(this.classObject)
+				&& Ext.isFunction(this.classObject.get)
+			) {
+				var params = {};
+				params[CMDBuild.core.constants.Proxy.CLASS_NAME] = this.classObject.get(CMDBuild.core.constants.Proxy.NAME);
+
+				this.grid.applyFilterToStore();
+				this.grid.getStore().load({ params: params });
+			}
 		},
 
 		/**
