@@ -439,11 +439,9 @@
 		/**
 		 * Loads grid's page for last selection and select
 		 *
-		 * @param {Boolean} disableFilter
+		 * @private
 		 */
-		onGridShow: function(disableFilter) {
-			disableFilter = Ext.isBoolean(disableFilter) ? disableFilter : false;
-
+		onGridShow: function() {
 			var lastSelectionId = this.model.getLastSelection();
 
 			if (!Ext.isEmpty(lastSelectionId)) {
@@ -453,7 +451,7 @@
 				params[CMDBuild.core.constants.Proxy.RETRY_WITHOUT_FILTER] = false;
 				params[CMDBuild.core.constants.Proxy.SORT] = Ext.encode(this.grid.getStore().sorters.getRange());
 
-				if (!disableFilter)
+				if (this.view.toggleGridFilterButton.getState() == CMDBuild.core.constants.Proxy.ENABLE)
 					params[CMDBuild.core.constants.Proxy.FILTER] = this.grid.getStore().getProxy().extraParams[CMDBuild.core.constants.Proxy.FILTER];
 
 				this.model._silent = true;
@@ -477,18 +475,16 @@
 										);
 
 										// Retry without grid store filter or server answer out of filter
-										if (!this.grid.getSelectionModel().hasSelection() && this.view.toggleGridFilterButton.filterEnabled) {
+										if (!this.grid.getSelectionModel().hasSelection() && this.view.toggleGridFilterButton.getActiveState()) {
 											this.onToggleGridFilterButtonClick(false);
-											this.onGridShow();
 										}
 
 										this.model._silent = false;
 									}
 								}
 							);
-						} else if (this.view.toggleGridFilterButton.filterEnabled) {
+						} else if (this.view.toggleGridFilterButton.getActiveState()) {
 							this.onToggleGridFilterButtonClick(false);
-							this.onGridShow(true);
 						}
 
 						this.model._silent = false;
@@ -540,22 +536,16 @@
 			var classId = this.targetClass.getId();
 			var cqlQuery = this.widgetConf[CMDBuild.core.constants.Proxy.FILTER];
 
-			if (!Ext.isEmpty(forceState))
-				this.view.toggleGridFilterButton.filterEnabled = !forceState;
+			if (Ext.isBoolean(forceState))
+				this.view.toggleGridFilterButton.setActiveState(forceState ? CMDBuild.core.constants.Proxy.ENABLE : CMDBuild.core.constants.Proxy.DISABLE);
 
-			if (this.view.toggleGridFilterButton.filterEnabled) {
-				this.resolveFilterTemplate(null, classId);
-
-				this.view.toggleGridFilterButton.setIconCls('find');
-				this.view.toggleGridFilterButton.setText(CMDBuild.Translation.enableGridFilter);
-			} else {
+			if (this.view.toggleGridFilterButton.getState() == CMDBuild.core.constants.Proxy.ENABLE) {
 				this.resolveFilterTemplate(cqlQuery, classId);
-
-				this.view.toggleGridFilterButton.setIconCls('clear_filter');
-				this.view.toggleGridFilterButton.setText(CMDBuild.Translation.disableGridFilter);
+			} else {
+				this.resolveFilterTemplate(null, classId);
 			}
 
-			this.view.toggleGridFilterButton.filterEnabled = !this.view.toggleGridFilterButton.filterEnabled;
+			this.onGridShow();
 		},
 
 		onToggleMapButtonClick: function() {

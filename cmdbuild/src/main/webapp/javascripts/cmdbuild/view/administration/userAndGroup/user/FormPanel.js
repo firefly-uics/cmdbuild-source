@@ -92,7 +92,7 @@
 								scope: this,
 
 								handler: function (button, e) {
-									this.delegate.cmfg('onUserAndGroupUserDisableButtonClick', button.getClickedState());
+									this.delegate.cmfg('onUserAndGroupUserDisableButtonClick', button.getActiveState());
 								}
 							})
 						]
