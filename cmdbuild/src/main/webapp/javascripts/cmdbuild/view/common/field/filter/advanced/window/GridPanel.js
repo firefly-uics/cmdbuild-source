@@ -32,7 +32,7 @@
 							'->',
 							this.includeUsersFiltersCheckbox = Ext.create('Ext.form.field.Checkbox', {
 								boxLabel: CMDBuild.Translation.includeUsersFilters,
-								boxLabelCls: 'cmtoolbaritem',
+								boxLabelCls: 'cmdb-toolbar-item',
 								inputValue: true,
 								uncheckedValue: false,
 								checked: false, // Default as false

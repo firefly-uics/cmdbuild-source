@@ -54,7 +54,7 @@
 
 			this.inheriteFlag = new Ext.form.Checkbox({
 				boxLabel: CMDBuild.Translation.administration.modClass.include_inherited,
-				boxLabelCls: 'cmtoolbaritem',
+				boxLabelCls: 'cmdb-toolbar-item',
 				checked: true,
 				scope: this,
 				handler: function(obj, checked) {

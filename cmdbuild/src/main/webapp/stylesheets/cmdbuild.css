@@ -397,10 +397,10 @@ em { font-style: oblique !important; }
 	.x-window-header .x-message-box-error { background-size: 16px 16px; }
 
 /* Toolbar*/
-	.cmtoolbaritem {
+	.cmdb-toolbar-item {
+		color: #333333 !important;
 		font-size: 11px !important;
 		padding: 0px 5px !important;
-		color: #333 !important;
 	}
 
 	.x-form-item-label {

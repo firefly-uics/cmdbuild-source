@@ -63,7 +63,7 @@
 							'->',
 							this.includeInheritedCheckbox = Ext.create('Ext.form.field.Checkbox', {
 								boxLabel: CMDBuild.Translation.includeInherited,
-								boxLabelCls: 'cmtoolbaritem',
+								boxLabelCls: 'cmdb-toolbar-item',
 								inputValue: true,
 								uncheckedValue: false,
 								checked: true,

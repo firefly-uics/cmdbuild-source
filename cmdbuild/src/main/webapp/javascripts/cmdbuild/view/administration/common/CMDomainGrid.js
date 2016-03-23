@@ -71,7 +71,7 @@
 					{
 						xtype: 'checkbox',
 						boxLabel: CMDBuild.Translation.administration.modClass.include_inherited,
-						boxLabelCls: "cmtoolbaritem",
+						boxLabelCls: "cmdb-toolbar-item",
 						checked: true,
 						handler: function(obj, checked) {
 							this.filterInherited(!checked);
