@@ -20,6 +20,7 @@
 			{ name: CMDBuild.core.constants.Proxy.ALFRESCO_REPOSITORY_WEB_SERVICE_PATH, type: 'string', defaultValue: '/app:company_home/app:user_homes/' },
 			{ name: CMDBuild.core.constants.Proxy.ALFRESCO_USER, type: 'string', defaultValue: 'admin' },
 			{ name: CMDBuild.core.constants.Proxy.CMIS_HOST, type: 'string' },
+			{ name: CMDBuild.core.constants.Proxy.CMIS_MODEL, type: 'string' },
 			{ name: CMDBuild.core.constants.Proxy.CMIS_PASSWORD, type: 'string', defaultValue: 'admin' },
 			{ name: CMDBuild.core.constants.Proxy.CMIS_PATH, type: 'string', defaultValue: '/User Homes/cmdbuild' },
 			{ name: CMDBuild.core.constants.Proxy.CMIS_USER, type: 'string', defaultValue: 'admin' },
@@ -52,8 +53,9 @@
 				data[CMDBuild.core.constants.Proxy.ALFRESCO_USER] = data['credential.user'];
 
 				// CMIS configuration translations
-				data[CMDBuild.core.constants.Proxy.CMIS_PASSWORD] = data['dms.service.cmis.password'];
 				data[CMDBuild.core.constants.Proxy.CMIS_HOST] = data['dms.service.cmis.url'];
+				data[CMDBuild.core.constants.Proxy.CMIS_MODEL] = data['dms.service.cmis.model'];
+				data[CMDBuild.core.constants.Proxy.CMIS_PASSWORD] = data['dms.service.cmis.password'];
 				data[CMDBuild.core.constants.Proxy.CMIS_PATH] = data['dms.service.cmis.path'];
 				data[CMDBuild.core.constants.Proxy.CMIS_USER] = data['dms.service.cmis.user'];
 
@@ -72,6 +74,7 @@
 					'category.lookup': data[CMDBuild.core.constants.Proxy.ALFRESCO_LOOKUP_CATEGORY],
 					'credential.password': data[CMDBuild.core.constants.Proxy.ALFRESCO_PASSWORD],
 					'credential.user': data[CMDBuild.core.constants.Proxy.ALFRESCO_USER],
+					'dms.service.cmis.model': data[CMDBuild.core.constants.Proxy.CMIS_MODEL],
 					'dms.service.cmis.password': data[CMDBuild.core.constants.Proxy.CMIS_PASSWORD],
 					'dms.service.cmis.path': data[CMDBuild.core.constants.Proxy.CMIS_PATH],
 					'dms.service.cmis.url': data[CMDBuild.core.constants.Proxy.CMIS_HOST],

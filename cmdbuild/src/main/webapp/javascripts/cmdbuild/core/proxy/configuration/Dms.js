@@ -52,7 +52,7 @@
 					url: CMDBuild.core.proxy.Index.configuration.dms.getPresets,
 					reader: {
 						type: 'json',
-						root: 'response.elements'
+						root: CMDBuild.core.constants.Proxy.RESPONSE
 					},
 					extraParams: { // Avoid to send limit, page and start parameters in server calls
 						limitParam: undefined,

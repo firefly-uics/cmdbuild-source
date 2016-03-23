@@ -75,6 +75,7 @@ public class DmsProperties extends DefaultProperties implements AlfrescoDmsConfi
 		DEFAULTS.put(CMIS_USER, "admin");
 		DEFAULTS.put(CMIS_PASSWORD, "admin");
 		DEFAULTS.put(CMIS_PATH, "/User Homes/cmdbuild");
+		DEFAULTS.put(CMIS_MODEL_TYPE, "");
 	}
 
 	public static DmsProperties getInstance() {
