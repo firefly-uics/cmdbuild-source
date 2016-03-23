@@ -402,8 +402,6 @@
 			var domainId = intersected.object.domainId;
 			var domain = $.Cmdbuild.customvariables.cacheDomains.getDomain(domainId);
 			var domainDescription = domain.domainDescription;
-			var descriptionDirect = domain.descriptionDirect;
-			var descriptionInverse = domain.descriptionInverse;
 //			var domainDescription = $.Cmdbuild.customvariables.cacheDomains.getDescription(domainId);
 			var source = intersected.object.source;
 			var target = intersected.object.target;
@@ -413,7 +411,9 @@
 			var labelTarget = $.Cmdbuild.g3d.Model.getGraphData(target, "label");
 			var sourceClassDescription = $.Cmdbuild.customvariables.cacheClasses.getDescription(classSource);
 			var targetClassDescription = $.Cmdbuild.customvariables.cacheClasses.getDescription(classTarget);
-
+			var direct = $.Cmdbuild.customvariables.cacheClasses.sameClass(domain.sourceId, classSource);
+			var descriptionDirect = (direct) ? domain.descriptionDirect : domain.descriptionInverse;
+			var descriptionInverse = (direct) ? domain.descriptionInverse : domain.descriptionDirect;
 			// create UI
 //			var $title = $("<h3></h3>").text(domainDescription);
 			var $source = $("<p></p>").append(
