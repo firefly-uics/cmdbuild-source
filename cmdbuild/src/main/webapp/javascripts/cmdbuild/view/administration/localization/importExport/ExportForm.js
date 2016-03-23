@@ -1,4 +1,4 @@
-(function() {
+(function () {
 
 	Ext.define('CMDBuild.view.administration.localization.importExport.ExportForm', {
 		extend: 'Ext.form.Panel',

@@ -1,4 +1,4 @@
-(function() {
+(function () {
 
 	Ext.define('CMDBuild.view.administration.localization.advancedTable.AdvancedTableView', {
 		extend: 'Ext.tab.Panel',

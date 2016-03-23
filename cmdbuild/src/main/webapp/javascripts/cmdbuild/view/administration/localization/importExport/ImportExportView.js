@@ -1,4 +1,4 @@
-(function() {
+(function () {
 
 	Ext.define('CMDBuild.view.administration.localization.importExport.ImportExportView', {
 		extend: 'Ext.tab.Panel',

@@ -1,4 +1,4 @@
-(function() {
+(function () {
 
 	Ext.define('CMDBuild.controller.administration.localization.ImportExport', {
 		extend: 'CMDBuild.controller.common.abstract.Base',
@@ -141,7 +141,7 @@
 											Ext.create('CMDBuild.core.buttons.text.Close', {
 												scope: this,
 
-												handler: function(button, e) {
+												handler: function (button, e) {
 													this.failuresWindow.destroy();
 												}
 											})

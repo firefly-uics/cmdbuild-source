@@ -1,4 +1,4 @@
-(function() {
+(function () {
 
 	Ext.define('CMDBuild.view.administration.localization.ConfigurationPanel', {
 		extend: 'Ext.form.Panel',

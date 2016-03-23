@@ -1,4 +1,4 @@
-(function() {
+(function () {
 
 	Ext.define('CMDBuild.controller.administration.localization.advancedTable.section.Domain', {
 		extend: 'CMDBuild.controller.administration.localization.advancedTable.section.Abstract',
