@@ -15,6 +15,22 @@ Ext.define("CMDBuild.view.common.field.LookupField", {
 		}, this);
 	},
 
+	/**
+	 * Return value only if number
+	 *
+	 * @returns {Number}
+	 *
+	 * @override
+	 */
+	getValue: function () {
+		var value = this.callParent(arguments);
+
+		if (Ext.isNumber(value))
+			return value;
+
+		return '';
+	},
+
 	onTrigger2Click: function() {
 		if (!this.disabled) {
 			this.focus(); // to fire the change event in the single lookup fields
