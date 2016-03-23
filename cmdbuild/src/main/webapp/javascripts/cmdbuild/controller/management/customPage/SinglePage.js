@@ -65,7 +65,7 @@
 							+ node.get(CMDBuild.core.constants.Proxy.NAME)
 							+ '/?basePath=' + basePath
 							+ '&frameworkVersion=' + CMDBuild.core.configurations.CustomPage.getVersion()
-							+ '&language=' + CMDBuild.configuration.localization.get(CMDBuild.core.constants.Proxy.LANGUAGE)
+							+ '&language=' + CMDBuild.configuration.runtime.get(CMDBuild.core.constants.Proxy.LANGUAGE)
 					}
 				});
 

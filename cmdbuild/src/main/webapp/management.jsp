@@ -62,6 +62,7 @@
 			CMDBuild.configuration.runtime.set(CMDBuild.core.constants.Proxy.DEFAULT_GROUP_ID, <%= group.getId() %>);
 			CMDBuild.configuration.runtime.set(CMDBuild.core.constants.Proxy.DEFAULT_GROUP_NAME, '<%= StringEscapeUtils.escapeEcmaScript(group.getName()) %>');
 			CMDBuild.configuration.runtime.set(CMDBuild.core.constants.Proxy.IS_ADMINISTRATOR, <%= operationUser.hasAdministratorPrivileges() %>);
+			CMDBuild.configuration.runtime.set(CMDBuild.core.constants.Proxy.LANGUAGE, '<%= StringEscapeUtils.escapeEcmaScript(lang) %>');
 			CMDBuild.configuration.runtime.set(CMDBuild.core.constants.Proxy.STARTING_CLASS_ID, <%= group.getStartingClassId() %>);
 			CMDBuild.configuration.runtime.set(CMDBuild.core.constants.Proxy.USER_ID, <%= operationUser.getAuthenticatedUser().getId() %>);
 			CMDBuild.configuration.runtime.set(CMDBuild.core.constants.Proxy.USERNAME, '<%= StringEscapeUtils.escapeEcmaScript(operationUser.getAuthenticatedUser().getUsername()) %>');

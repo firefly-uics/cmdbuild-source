@@ -76,7 +76,7 @@
 			this.tinyMCEConfig = Ext.Object.merge(this.customConfigurations['common'], this.customConfigurations[this.tinyMCEConfig]);
 
 			// Language setup
-			this.tinyMCEConfig.language = CMDBuild.configuration.localization.get(CMDBuild.core.constants.Proxy.LANGUAGE);
+			this.tinyMCEConfig.language = CMDBuild.configuration.runtime.get(CMDBuild.core.constants.Proxy.LANGUAGE);
 
 			// Silver editor color setup for Administration
 			if (Ext.isEmpty(CMDBuild.core.Management))
