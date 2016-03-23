@@ -1,4 +1,4 @@
-(function() {
+(function () {
 
 	Ext.define('CMDBuild.view.configure.Wizard', {
 		extend: 'Ext.form.Panel',
@@ -32,7 +32,7 @@
 		layout: 'card',
 		padding: '5',
 
-		initComponent: function() {
+		initComponent: function () {
 			Ext.apply(this, {
 				dockedItems: [
 					Ext.create('Ext.toolbar.Toolbar', {
@@ -50,14 +50,14 @@
 							this.previousButton = Ext.create('CMDBuild.core.buttons.text.Previous', {
 								scope: this,
 
-								handler: function(button, e) {
+								handler: function (button, e) {
 									this.delegate.cmfg('onConfigurationViewportWizardNavigationButtonClick', 'previous');
 								}
 							}),
 							this.nextButton = Ext.create('CMDBuild.core.buttons.text.Next', {
 								scope: this,
 
-								handler: function(button, e) {
+								handler: function (button, e) {
 									this.delegate.cmfg('onConfigurationViewportWizardNavigationButtonClick', 'next');
 								}
 							}),
@@ -65,7 +65,7 @@
 								hidden: true,
 								scope: this,
 
-								handler: function(button, e) {
+								handler: function (button, e) {
 									this.delegate.cmfg('onConfigurationViewportWizardFinishButtonClick');
 								}
 							})

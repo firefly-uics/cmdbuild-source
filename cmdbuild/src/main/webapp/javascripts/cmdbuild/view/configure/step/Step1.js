@@ -1,4 +1,4 @@
-(function() {
+(function () {
 
 	Ext.define('CMDBuild.view.configure.step.Step1', {
 		extend: 'Ext.form.Panel',
@@ -22,7 +22,7 @@
 			align:'stretch'
 		},
 
-		initComponent: function() {
+		initComponent: function () {
 			Ext.apply(this, {
 				items: [
 					Ext.create('CMDBuild.view.common.field.comboBox.Language', {
@@ -46,7 +46,7 @@
 		},
 
 		listeners: {
-			show: function(panel, eOpts) {
+			show: function (panel, eOpts) {
 				this.delegate.cmfg('onConfigurationViewportWizardPanelShow', {
 					displayNextButton: true,
 					displayPreviusButton: true
