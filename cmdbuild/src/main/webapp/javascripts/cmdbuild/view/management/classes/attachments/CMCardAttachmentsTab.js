@@ -15,9 +15,8 @@ Ext.define("CMDBuild.view.management.classes.attachments.CMCardAttachmentsPanel"
 	initComponent: function() {
 		var col_tr = CMDBuild.Translation.management.modcard.attachment_columns;
 
-		this.addAttachmentButton = new Ext.button.Button({
-			iconCls : 'add',
-			text : this.translation.add_attachment
+		this.addAttachmentButton = Ext.create('CMDBuild.core.buttons.iconized.add.Add', {
+			text: CMDBuild.Translation.management.modcard.add_attachment
 		});
 
 		this.store = buildStore();
@@ -86,12 +85,12 @@ Ext.define("CMDBuild.view.management.classes.attachments.CMCardAttachmentsPanel"
 			return out;
 	},
 
-	updateWritePrivileges: function(priv_write) {
-		this.writePrivileges = priv_write;
-		this.addAttachmentButton.setDisabled(
-			!priv_write
-			|| !CMDBuild.configuration.workflow.get(CMDBuild.core.constants.Proxy.ENABLE_ADD_ATTACHMENT_ON_CLOSED_ACTIVITIES)
-		);
+	/**
+	 * @param {Boolean} writePrivilege
+	 */
+	updateWritePrivileges: function(writePrivilege) {
+		this.writePrivileges = writePrivilege;
+		this.addAttachmentButton.setDisabled(!writePrivilege);
 	},
 
 	/**
