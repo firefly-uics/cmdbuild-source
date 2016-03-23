@@ -334,13 +334,12 @@
 			return strHtml;
 		};
 		this.loadForm = function(tree) {
+			var cancelButton = $.Cmdbuild.translations.getTranslation("BUTTON_CANCEL", "Cancel");
 			var form = {
 				state0 : {
-					title : 'Possible positions in the tree',
+					title : $.Cmdbuild.translations.getTranslation("TITLEPOPUP_TREES", "Possible positions in the tree"),
 					html : tree,
 					buttons : {
-						Cancel : false,
-					// Ok : true
 					},
 					focus : 1,
 					submit : function(e, v, m, f) {
@@ -352,6 +351,7 @@
 					}
 				}
 			};
+			form.state0.buttons[cancelButton] = false;
 			return form;
 		};
 		this.prompt = function(form) {

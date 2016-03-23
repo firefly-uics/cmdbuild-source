@@ -11,21 +11,21 @@
 			<div id="buttonsPanelContainer" class="ui-state-default ui-corner-all allWidth headerToolbar mainContainerHeader border-box">
 				<div class="leftToolbarButtons">
 					<div class="toolbarButton border-box">
-						<span class="undo" tooltip="Undo the last operation">
+						<span class="undo" i18nTooltip="TOOLTIP_UNDO" tooltip="Undo the last operation">
 							<onClick>
 								<command>undo</command>
 							</onClick>
 						</span>
 					</div>
 					<div class="toolbarButton border-box">
-						<span class="layout" tooltip="Apply the current layout">
+						<span class="layout" i18nTooltip="TOOLTIP_APPLYLAYOUT" tooltip="Apply the current layout">
 							<onClick>
 								<command>doLayout</command>
 							</onClick>
 						</span>
 					</div>
 					<div class="toolbarButton border-box">
-						<span class="stop" tooltip="Stop the current operation when possible">
+						<span class="stop" i18nTooltip="TOOLTIP_STOP" tooltip="Stop the current operation when possible">
 							<onClick>
 								<command>stopCommands</command>
 							</onClick>
@@ -33,14 +33,14 @@
 					</div>
 					<div class="toolbarSeparator"></div>
 					<div class="toolbarButton border-box">
-						<span class="centerOnViewer" tooltip="Center the image">
+						<span class="centerOnViewer" i18nTooltip="TOOLTIP_CENTER" tooltip="Center the image">
 							<onClick>
 								<command>centerOnViewer</command>
 							</onClick>
 						</span>
 					</div>
 					<div class="toolbarButton border-box">
-						<span class="centerOnSelection" tooltip="Center the layout on selection">
+						<span class="centerOnSelection" i18nTooltip="TOOLTIP_CENTERSELECTION" tooltip="Center the layout on selection">
 							<onClick>
 								<command>zoomOn</command>
 								<node>$selectedForm.id</node>
@@ -52,14 +52,14 @@
 				<div class="rightToolbarButtons">
 					<div class="toolbarSeparator"></div>
 					<div class="toolbarButton border-box">
-						<span class="selectAll" tooltip="Select all nodes">
+						<span class="selectAll" i18nTooltip="TOOLTIP_SELECTALL" tooltip="Select all nodes">
 							<onClick>
 								<command>selectAll</command>
 							</onClick>
 						</span>
 					</div>
 					<div class="toolbarButton border-box">
-						<span class="deleteSelected" tooltip="Delete selected nodes">
+						<span class="deleteSelected" i18nTooltip="TOOLTIP_DELETESELECTED" tooltip="Delete selected nodes">
 							<onClick>
 								<command>deleteSelection</command>
 								<selected>true</selected>
@@ -67,7 +67,7 @@
 						</span>
 					</div>
 					<div class="toolbarButton border-box">
-						<span class="deleteUnselected" tooltip="Delete unselected nodes">
+						<span class="deleteUnselected" i18nTooltip="TOOLTIP_DELETEUNSELECTED" tooltip="Delete unselected nodes">
 							<onClick>
 								<command>deleteSelection</command>
 								<selected>false</selected>
@@ -75,7 +75,7 @@
 						</span>
 					</div>
 					<div class="toolbarButton border-box">
-						<span class="openSelected" tooltip="Open selected nodes">
+						<span class="openSelected" i18nTooltip="TOOLTIP_EXPLODE" tooltip="Open selected nodes">
 							<onClick>
 								<command>openSelection</command>
 							</onClick>
@@ -83,14 +83,14 @@
 					</div>
 					<div class="toolbarSeparator"></div>
 					<div class="toolbarButton border-box">
-						<span class="navigateOnNode" tooltip="Reopen the graph from this node">
+						<span class="navigateOnNode" i18nTooltip="TOOLTIP_REOPEN" tooltip="Reopen the graph from this node">
 							<onClick>
 								<command>navigateOnNode</command>
 							</onClick>
 						</span>
 					</div>
 					<div class="toolbarButton border-box">
-						<span class="subGraph" tooltip="Select the sub graph that contains the selected elements">
+						<span class="subGraph" i18nTooltip="TOOLTIP_SUBGRAPH" tooltip="Select the sub graph that contains the selected elements">
 							<onClick>
 								<command>connect</command>
 							</onClick>
@@ -100,6 +100,7 @@
 						<navigationTreesBtnMenu class="subGraph" id="navigationTreeCombo">
 							<params>
 								<tooltip>Choose navigation tree</tooltip>
+								<i18nTooltip>TOOLTIP_TREE</i18nTooltip>
 							</params>
 						</navigationTreesBtnMenu>
 					</div>
@@ -116,36 +117,36 @@
 		 			<params>
 						<type>tabbed</type>
 					</params>
-					<form title="Card" id="detail" include="detail.xml" class="commandPanelWindow cmdbuildTabbedForm"/>
-					<form title="Card list" id="cardList" include="cardList.xml" class="commandPanelWindow cmdbuildTabbedForm"/>
-					<form title="Classes" id="classesGrid" include="classes.xml" class="commandPanelWindow cmdbuildTabbedForm"/>
+					<form i18nTitle="TAB_CARD" title="Card" id="detail" include="detail.xml" class="commandPanelWindow cmdbuildTabbedForm"/>
+					<form i18nTitle="TAB_CARDS" title="Card list" id="cardList" include="cardList.xml" class="commandPanelWindow cmdbuildTabbedForm"/>
+					<form i18nTitle="TAB_CLASSES" title="Classes" id="classesGrid" include="classes.xml" class="commandPanelWindow cmdbuildTabbedForm"/>
 				</form>
 			</div>
 			<!-- FOOTER -->
 			<div class="mainContainerFooter border-box">
 				<div id="statusPanelContainer" class="ui-widget">
-					<counter id="nodesCounter" text="Nodes:">
+					<counter id="nodesCounter" i18nText="LABEL_NODES" text="Nodes:">
 			 			<params>
 							<type>nodes</type>
 						</params>
 					</counter>
-					<counter id="edgesCounter"  text="Edges:">
+					<counter id="edgesCounter" i18nText="LABEL_EDGES" text="Edges:">
 			 			<params>
 							<type>edges</type>
 						</params>
 					</counter>
-					<counter id="selectedCounter"  text="Selected:">
+					<counter id="selectedCounter" i18nText="LABEL_SELECTED" text="Selected:">
 			 			<params>
 							<type>selected</type>
 						</params>
 					</counter>
-					<display id="treeDisplay" text="Tree:">
+					<display id="treeDisplay" i18nText="LABEL_TREE" text="Tree:">
 					</display>
 				</div>
 				<div id="optionsPanelContainer" 
 					class="cmdbuildGridFilterContainer ui-state-default ui-corner-all allWidth">
 					<div class="toolbarButton footerToolbar border-box">
-						<span class="properties" tooltip="Open the properties panel">
+						<span class="properties" i18nTooltip="TOOLTIP_PROPERTIESPANEL" tooltip="Open the properties panel">
 							<onClick>
 								<command>navigate</command>
 								<form>options</form>
@@ -154,7 +155,7 @@
 						</span>
 					</div>
 					<div class="toolbarButton footerToolbar border-box">
-						<span class="filter" tooltip="Open the filter panel">
+						<span class="filter" i18nTooltip="TOOLTIP_FILTERPANEL" tooltip="Open the filter panel">
 							<onClick>
 								<command>navigate</command>
 								<form>filter</form>
@@ -166,12 +167,13 @@
 						<toggleTooltips>
 							<params>
 								<tooltip>Enable/disable tooltips on graph</tooltip>
+								<i18nTooltip>TOOLTIP_TOOLTIPS</i18nTooltip>
 							</params>
 						</toggleTooltips>
 					</div>
 					<div class="toolbarSeparator"></div>
 					<div class="footerToolbarItem">
-						<spinner label="Levels" id="baseLevel" class="optionsSpinner">
+						<spinner label="Levels" i18nLabel="SPINNER_LEVELS" id="baseLevel" class="optionsSpinner">
 							<params>
 								<backend>Options</backend>
 								<type>baseLevel</type>
@@ -187,11 +189,11 @@
 					</div>
 					<div class="toolbarSeparator"></div>
 					<div class="footerToolbarItem buttonset">
-						<buttonset label="Labels" id="displayLabel" class="labelsMultistate">
+						<buttonset label="Labels" i18nLabel="BUTTON3STATE_LABELS" id="displayLabel" class="labelsMultistate">
 							<params>
-								<none>No</none>
-								<selected>Selected</selected>
-								<all>All</all>
+								<none>LOOKUP_LABELSNONE</none>
+								<selected>LOOKUP_LABELSSELECTED</selected>
+								<all>LOOKUP_LABELSALL</all>
 							</params>
 							<onChange>
 								<command>boolean</command>
@@ -202,7 +204,7 @@
 					<div class="toolbarSeparator"></div>
 					<div class="footerToolbarItem">
 						<div class="openLevelsSliderContainer">
-							<slider label="" id="openLevelsSlider" class=""></slider>
+							<slider label="Open on levels" i18nLabel="SLIDER_LEVELS" id="openLevelsSlider" class=""></slider>
 						</div>
 					</div>
 				</div>

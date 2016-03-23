@@ -28,13 +28,13 @@
    				{
    					type: "string",
    					name: "label",
-   					description: "Card",
+   					description: $.Cmdbuild.translations.getTranslation("COLUMNHEADER_CARD", "Card"),
    					displayableInList: true
    				},
    				{
    					type: "string",
    					name: "classDescription",
-   					description: "Class",
+   					description: $.Cmdbuild.translations.getTranslation("COLUMNHEADER_CLASS", "Class"),
    					displayableInList: true
    				},
    				{

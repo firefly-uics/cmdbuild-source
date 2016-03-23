@@ -2,25 +2,26 @@
 	<params>
 		<type>popup</type>
 		<title>Properties</title>
+		<i18nTitle>TITLEPOPUP_PROPERTIES</i18nTitle>
 	</params>
 	<div id="optionsDiv">
 		<onInit>
 			<command>initOptions</command>
 			<backend>Options</backend>
 		</onInit>
-		<checkbox id="nodeTooltipEnabled" label="Tooltip for entities" text="true">
+		<checkbox id="nodeTooltipEnabled" label="Tooltip for entities" i18nLabel="FIELD_TOOLTIP_ENTITIES" text="true">
 			<onClick>
 				<command>boolean</command>
 				<type>nodeTooltipEnabled</type>
 			</onClick>
 		</checkbox>
-		<checkbox id="edgeTooltipEnabled" label="Tooltip for relations" text="true">
+		<checkbox id="edgeTooltipEnabled" label="Tooltip for relations" i18nLabel="FIELD_TOOLTIP_EDGES" text="true">
 			<onClick>
 				<command>boolean</command>
 				<type>edgeTooltipEnabled</type>
 			</onClick>
 		</checkbox>
-		<spinner label="Threshold for clustering nodes" id="clusteringThreshold" class="optionsSpinner">
+		<spinner label="Threshold for clustering nodes" i18nLabel="FIELD_CLUSTERING" id="clusteringThreshold" class="optionsSpinner">
 			<params>
 				<backend>Options</backend>
 				<type>clusteringThreshold</type>
@@ -33,7 +34,7 @@
 				<type>clusteringThreshold</type>
 			</onChange>
 		</spinner>
-		<spinner label="Node dimension" id="spriteDimension" class="">
+		<spinner label="Node dimension" i18nLabel="FIELD_NODE_DIMENSION" id="spriteDimension" class="">
 			<params>
 				<backend>Options</backend>
 				<type>spriteDimension</type>
@@ -46,7 +47,7 @@
 				<type>spriteDimension</type>
 			</onChange>
 		</spinner>
-		<spinner label="Edge Length" id="stepRadius" class="">
+		<spinner label="Edge Length" i18nLabel="FIELD_EDGE_LENGTH" id="stepRadius" class="">
 			<params>
 				<backend>Options</backend>
 				<type>stepRadius</type>
@@ -61,25 +62,25 @@
 		</spinner>
 	</div>
 	<div class='cmdbuildFooterButtonsWrapper'>
-		<button text="Preview" id="previewOptionsDialogButton">
+		<button text="Preview" i18nText="BUTTON_PREVIEW" id="previewOptionsDialogButton">
 			<onClick>
 				<command>optionsPreview</command>
 				<dialog>commandPanelDialog</dialog>
 			</onClick>
 		</button>
-		<button text="Ok" id="okOptionsDialogButton">
+		<button text="Ok" i18nText="BUTTON_OK" id="okOptionsDialogButton">
 			<onClick>
 				<command>optionsOk</command>
 				<dialog>commandPanelDialog</dialog>
 			</onClick>
 		</button>
-		<button text="Reset" id="resetOptionsDialogButton">
+		<button text="Reset" i18nText="BUTTON_RESET" id="resetOptionsDialogButton">
 			<onClick>
 				<command>optionsReset</command>
 				<dialog>commandPanelDialog</dialog>
 			</onClick>
 		</button>
-		<button text="Cancel" id="cancelOptionsDialogButton">
+		<button text="Cancel" i18nText="BUTTON_CANCEL" id="cancelOptionsDialogButton">
 			<onClick>
 				<command>optionsCancel</command>
 				<dialog>commandPanelDialog</dialog>

@@ -31,7 +31,7 @@
 			}, {
 				type: "string",
 				name: "classDescription",
-				description: "Class",
+				description: $.Cmdbuild.translations.getTranslation("COLUMNHEADER_CLASS", "Class"),
 				displayableInList: true
 			}, {
 				type: "string",

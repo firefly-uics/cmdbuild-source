@@ -4,7 +4,7 @@
 	</params>
 	<div class="bodyToolbar">
 		<div class="toolbarButton border-box">
-			<span class="btn-selecteditems" tooltip="Show selected items">
+			<span class="btn-selecteditems" i18nTooltip="TOOLTIP_SHOWSELECTED" tooltip="Show selected items">
 				<onClick>
 					<command>tab</command>
 					<form>cardlistform</form>

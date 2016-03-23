@@ -4,7 +4,7 @@
 	</params>
 	<div class="bodyToolbar">
 		<div class="toolbarButton border-box">
-			<span class="btn-lessdetails" tooltip="Show less details">
+			<span class="btn-lessdetails" i18nTooltip="TOOLTIP_SHOWLESSDETAILS"  tooltip="Show less details">
 				<onClick>
 					<command>tab</command>
 					<form>detailform</form>

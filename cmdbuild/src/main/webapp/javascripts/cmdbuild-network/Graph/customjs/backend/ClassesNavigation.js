@@ -31,12 +31,12 @@
 			}, {
 				type: "string",
 				name: "classDescription",
-				description: "Class",
+				description: $.Cmdbuild.translations.getTranslation("COLUMNHEADER_CLASS", "Class"),
 				displayableInList: true
 			}, {
 				type: "integer",
 				name: "qt",
-				description: "Qt",
+				description: $.Cmdbuild.translations.getTranslation("COLUMNHEADER_QUANTITY", "Qt"),
 				displayableInList: true
 			}];
 			setTimeout(function() {

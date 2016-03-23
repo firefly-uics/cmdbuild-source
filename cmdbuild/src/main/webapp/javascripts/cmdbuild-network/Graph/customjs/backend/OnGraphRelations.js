@@ -23,8 +23,7 @@
 			this.attributes = [{
 				type: "string",
 				name: "domainDescription",
-				description: $.Cmdbuild.translations.getTranslation(
-						"attr_domainDescription", 'Relation'),
+				description: $.Cmdbuild.translations.getTranslation("COLUMNHEADER_RELATION", "Relation"),
 				displayableInList: true
 			}, {
 				type: "string",
@@ -35,14 +34,12 @@
 			}, {
 				type: "string",
 				name: "cardDescription",
-				description: $.Cmdbuild.translations.getTranslation(
-						"attr_itemDescription", 'Item'),
+				description: $.Cmdbuild.translations.getTranslation("COLUMNHEADER_CARD", "Card"),
 				displayableInList: true
 			}, {
 				type: "string",
 				name: "classDescription",
-				description: $.Cmdbuild.translations.getTranslation(
-						"attr_typeDescription", 'Type'),
+				description: $.Cmdbuild.translations.getTranslation("COLUMNHEADER_CLASS", "Class"),
 				displayableInList: true
 			}];
 

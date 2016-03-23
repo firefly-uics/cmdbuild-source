@@ -30,7 +30,7 @@
 			}, {
 				type: "string",
 				name: "sourceDescription",
-				description: "Class",
+				description: $.Cmdbuild.translations.getTranslation("COLUMNHEADER_CLASS", "Class"),
 				displayableInList: true
 			}, {
 				type: "string",
@@ -40,12 +40,12 @@
 			}, {
 				type: "string",
 				name: "relationDescription",
-				description: "Relation",
+				description: $.Cmdbuild.translations.getTranslation("COLUMNHEADER_RELATION", "Relation"),
 				displayableInList: true
 			}, {
 				type: "string",
 				name: "destinationDescription",
-				description: "Class",
+				description: $.Cmdbuild.translations.getTranslation("COLUMNHEADER_CLASS", "Class"),
 				displayableInList: true
 			}, {
 				type: "string",

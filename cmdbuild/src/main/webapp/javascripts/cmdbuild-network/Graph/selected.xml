@@ -4,7 +4,7 @@
 	</params>
 	<div class="bodyToolbar">
 		<div class="toolbarButton border-box">
-			<span class="btn-allitems" tooltip="Show all items">
+			<span class="btn-allitems" i18nTooltip="TOOLTIP_SHOWALL" tooltip="Show all items">
 				<onClick>
 					<command>tab</command>
 					<form>cardlistform</form>
