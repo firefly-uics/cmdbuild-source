@@ -1,4 +1,4 @@
-(function() {
+(function () {
 
 	Ext.define('CMDBuild.controller.administration.localization.Configuration', {
 		extend: 'CMDBuild.controller.common.abstract.Base',
