@@ -420,8 +420,6 @@
 				this.loadData();
 			}, this, { single: true });
 
-			editRelationWindow.show();
-
 			// Model fix to select right row(s) with select()
 			model.set({
 				Code: model.get('dst_code'),
@@ -432,14 +430,14 @@
 			});
 
 			// Select right cards as a modify routine
-			editRelationWindow.grid.getStore().load({
-				callback: function(records, operation, success) {
-					Ext.Function.createDelayed(function() { // HACK to wait store to be correctly loaded
-						if (!Ext.isEmpty(model))
-							editRelationWindow.grid.getSelectionModel().select(model);
-					}, 100)();
-				}
-			});
+			editRelationWindow.grid.getStore().on('load', function () {
+				Ext.Function.createDelayed(function() { // HACK to wait store to be correctly loaded
+					if (!Ext.isEmpty(model))
+						editRelationWindow.grid.getSelectionModel().select(model);
+				}, 100)();
+			}, this);
+
+			editRelationWindow.show();
 		},
 
 		onEditRelationSuccess: function() {
