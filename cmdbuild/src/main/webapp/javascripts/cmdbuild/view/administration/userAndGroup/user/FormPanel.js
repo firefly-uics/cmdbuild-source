@@ -63,7 +63,7 @@
 			align: 'stretch'
 		},
 
-		initComponent: function() {
+		initComponent: function () {
 			Ext.apply(this, {
 				dockedItems: [
 					Ext.create('Ext.toolbar.Toolbar', {
@@ -74,7 +74,7 @@
 								text: CMDBuild.Translation.modifyUser,
 								scope: this,
 
-								handler: function(button, e) {
+								handler: function (button, e) {
 									this.delegate.cmfg('onUserAndGroupUserModifyButtonClick');
 								}
 							}),
@@ -82,7 +82,7 @@
 								text: CMDBuild.Translation.changePassword,
 								scope: this,
 
-								handler: function(button, e) {
+								handler: function (button, e) {
 									this.delegate.cmfg('onUserAndGroupUserChangePasswordButtonClick');
 								}
 							}),
@@ -91,7 +91,7 @@
 								state2text: CMDBuild.Translation.enableUser,
 								scope: this,
 
-								handler: function(button, e) {
+								handler: function (button, e) {
 									this.delegate.cmfg('onUserAndGroupUserDisableButtonClick', button.getClickedState());
 								}
 							})
@@ -112,14 +112,14 @@
 							Ext.create('CMDBuild.core.buttons.text.Save', {
 								scope: this,
 
-								handler: function(button, e) {
+								handler: function (button, e) {
 									this.delegate.cmfg('onUserAndGroupUserSaveButtonClick');
 								}
 							}),
 							Ext.create('CMDBuild.core.buttons.text.Abort', {
 								scope: this,
 
-								handler: function(button, e) {
+								handler: function (button, e) {
 									this.delegate.cmfg('onUserAndGroupUserAbortButtonClick');
 								}
 							})
@@ -187,7 +187,7 @@
 
 								listeners: {
 									scope: this,
-									change: function(field, newValue, oldValue, eOpts) {
+									change: function (field, newValue, oldValue, eOpts) {
 										this.delegate.cmfg('onUserAndGroupUserServiceChange');
 									}
 								}
@@ -199,7 +199,7 @@
 
 								listeners: {
 									scope: this,
-									change: function(field, newValue, oldValue, eOpts) {
+									change: function (field, newValue, oldValue, eOpts) {
 										this.delegate.cmfg('onUserAndGroupUserPrivilegedChange');
 									}
 								}

@@ -1,4 +1,4 @@
-(function() {
+(function () {
 
 	Ext.define('CMDBuild.core.proxy.userAndGroup.user.User', {
 
@@ -14,7 +14,7 @@
 		/**
 		 * @param {Object} parameters
 		 */
-		create: function(parameters) {
+		create: function (parameters) {
 			parameters = Ext.isEmpty(parameters) ? {} : parameters;
 
 			Ext.apply(parameters, { url: CMDBuild.core.proxy.Index.user.create });
@@ -25,7 +25,7 @@
 		/**
 		 * @param {Object} parameters
 		 */
-		disable: function(parameters) {
+		disable: function (parameters) {
 			parameters = Ext.isEmpty(parameters) ? {} : parameters;
 
 			Ext.apply(parameters, { url: CMDBuild.core.proxy.Index.user.disable });
@@ -36,8 +36,8 @@
 		/**
 		 * @returns {Ext.data.Store or CMDBuild.core.cache.Store}
 		 */
-		getStore: function() {
-			return CMDBuild.global.Cache.requestAsStore(CMDBuild.core.constants.Proxy.USER, {
+		getStore: function () {
+			return CMDBuild.global.Cache.requestAsStore(CMDBuild.core.constants.Proxy.UNCACHED, {
 				autoLoad: false,
 				model: 'CMDBuild.model.userAndGroup.user.User',
 				proxy: {
@@ -62,7 +62,7 @@
 		/**
 		 * @returns {Ext.data.Store or CMDBuild.core.cache.Store}
 		 */
-		getStoreDefaultGroup: function() {
+		getStoreDefaultGroup: function () {
 			return CMDBuild.global.Cache.requestAsStore(CMDBuild.core.constants.Proxy.USER, {
 				autoLoad: false,
 				model: 'CMDBuild.model.userAndGroup.user.DefaultGroup',
@@ -88,7 +88,7 @@
 		/**
 		 * @param {Object} parameters
 		 */
-		read: function(parameters) {
+		read: function (parameters) {
 			parameters = Ext.isEmpty(parameters) ? {} : parameters;
 
 			Ext.apply(parameters, { url: CMDBuild.core.proxy.Index.user.read });
@@ -99,7 +99,7 @@
 		/**
 		 * @param {Object} parameters
 		 */
-		update: function(parameters) {
+		update: function (parameters) {
 			parameters = Ext.isEmpty(parameters) ? {} : parameters;
 
 			Ext.apply(parameters, { url: CMDBuild.core.proxy.Index.user.update });
