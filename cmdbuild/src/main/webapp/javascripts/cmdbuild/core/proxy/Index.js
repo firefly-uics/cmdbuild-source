@@ -1,4 +1,4 @@
-(function() {
+(function () {
 
 	/**
 	 * A class that works as index of all proxies urls

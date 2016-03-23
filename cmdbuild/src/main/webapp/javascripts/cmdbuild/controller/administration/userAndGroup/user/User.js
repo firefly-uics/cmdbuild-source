@@ -1,4 +1,4 @@
-(function() {
+(function () {
 
 	Ext.define('CMDBuild.controller.administration.userAndGroup.user.User', {
 		extend: 'CMDBuild.controller.common.abstract.Base',
@@ -58,7 +58,7 @@
 		 *
 		 * @override
 		 */
-		constructor: function(configurationObject) {
+		constructor: function (configurationObject) {
 			this.callParent(arguments);
 
 			this.view = Ext.create('CMDBuild.view.administration.userAndGroup.user.UserView', { delegate: this });
@@ -68,7 +68,7 @@
 			this.grid = this.view.grid;
 		},
 
-		onUserAndGroupUserAbortButtonClick: function() {
+		onUserAndGroupUserAbortButtonClick: function () {
 			if (!this.userAndGroupUserSelectedUserIsEmpty()) {
 				this.onUserAndGroupUserRowSelected();
 			} else {
@@ -82,7 +82,7 @@
 		 */
 		onUserAndGroupUserAccordionSelect: Ext.emptyFn,
 
-		onUserAndGroupUserAddButtonClick: function() {
+		onUserAndGroupUserAddButtonClick: function () {
 			this.grid.getSelectionModel().deselectAll();
 
 			this.userAndGroupUserSelectedUserReset();
@@ -93,14 +93,14 @@
 			this.form.loadRecord(Ext.create('CMDBuild.model.userAndGroup.user.User'));
 		},
 
-		onUserAndGroupUserChangePasswordButtonClick: function() {
+		onUserAndGroupUserChangePasswordButtonClick: function () {
 			this.form.setDisabledFieldSet(this.form.userPasswordFieldSet, false);
 
 			this.form.setDisabledTopBar(true);
 			this.form.setDisabledBottomBar(false);
 		},
 
-		onUserAndGroupUserDisableButtonClick: function() {
+		onUserAndGroupUserDisableButtonClick: function () {
 			var params = {};
 			params['userid'] = this.userAndGroupUserSelectedUserGet('userid');
 			params[CMDBuild.core.constants.Proxy.DISABLE] = this.userAndGroupUserSelectedUserGet(CMDBuild.core.constants.Proxy.IS_ACTIVE);
@@ -112,7 +112,7 @@
 			});
 		},
 
-		onUserAndGroupUserModifyButtonClick: function() {
+		onUserAndGroupUserModifyButtonClick: function () {
 			this.form.setDisabledFieldSet(this.form.userInfoFieldSet, false);
 
 			this.form.setDisabledTopBar(true);
@@ -122,12 +122,12 @@
 		/**
 		 * Privileged is a specialization of service, so if someone check privileged is implicit that is a service user
 		 */
-		onUserAndGroupUserPrivilegedChange: function() {
+		onUserAndGroupUserPrivilegedChange: function () {
 			if (this.form.privilegedCheckbox.getValue())
 				this.form.serviceCheckbox.setValue(true);
 		},
 
-		onUserAndGroupUserRowSelected: function() {
+		onUserAndGroupUserRowSelected: function () {
 			if (this.grid.getSelectionModel().hasSelection()) {
 				this.userAndGroupUserSelectedUserSet({ value: this.grid.getSelectionModel().getSelection()[0] });
 
@@ -143,7 +143,7 @@
 				this.form.defaultGroupCombo.getStore().load({
 					params: params,
 					scope: this,
-					callback: function(records, operation, success) {
+					callback: function (records, operation, success) {
 						var defaultGroup = this.form.defaultGroupCombo.getStore().findRecord('isdefault', true);
 
 						if (!Ext.isEmpty(defaultGroup))
@@ -161,7 +161,7 @@
 		/**
 		 * TODO: waiting for a refactor (new CRUD standards)
 		 */
-		onUserAndGroupUserSaveButtonClick: function() {
+		onUserAndGroupUserSaveButtonClick: function () {
 			if (this.validate(this.form)) { // Validate before save
 				var params = this.form.getData(true);
 
@@ -186,19 +186,19 @@
 		/**
 		 * Privileged is a specialization of service, so if someone uncheck service is implicit that is not a privileged user
 		 */
-		onUserAndGroupUserServiceChange: function() {
+		onUserAndGroupUserServiceChange: function () {
 			if (!this.form.serviceCheckbox.getValue())
 				this.form.privilegedCheckbox.setValue(false);
 		},
 
-		onUserAndGroupUserShow: function() { // TODO: implementation of activeOnly/all user display
+		onUserAndGroupUserShow: function () {
 			var params = {};
-			params['includeUnactive'] = this.view.includeUnactiveUsers.getValue();
+			params[CMDBuild.core.constants.Proxy.ACTIVE] = this.view.includeUnactiveUsers.getValue();
 
 			this.grid.getStore().load({
 				params: params,
 				scope: this,
-				callback: function(records, operation, success) {
+				callback: function (records, operation, success) {
 					if (!this.grid.getSelectionModel().hasSelection())
 						this.grid.getSelectionModel().select(0, true);
 				}
@@ -211,7 +211,7 @@
 			 *
 			 * @return {Mixed or undefined}
 			 */
-			userAndGroupUserSelectedUserGet: function(attributePath) {
+			userAndGroupUserSelectedUserGet: function (attributePath) {
 				var parameters = {};
 				parameters[CMDBuild.core.constants.Proxy.TARGET_VARIABLE_NAME] = 'selectedUser';
 				parameters[CMDBuild.core.constants.Proxy.ATTRIBUTE_PATH] = attributePath;
@@ -224,7 +224,7 @@
 			 *
 			 * @return {Mixed or undefined}
 			 */
-			userAndGroupUserSelectedUserIsEmpty: function(attributePath) {
+			userAndGroupUserSelectedUserIsEmpty: function (attributePath) {
 				var parameters = {};
 				parameters[CMDBuild.core.constants.Proxy.TARGET_VARIABLE_NAME] = 'selectedUser';
 				parameters[CMDBuild.core.constants.Proxy.ATTRIBUTE_PATH] = attributePath;
@@ -232,14 +232,14 @@
 				return this.propertyManageIsEmpty(parameters);
 			},
 
-			userAndGroupUserSelectedUserReset: function() {
+			userAndGroupUserSelectedUserReset: function () {
 				this.propertyManageReset('selectedUser');
 			},
 
 			/**
 			 * @param {Object} parameters
 			 */
-			userAndGroupUserSelectedUserSet: function(parameters) {
+			userAndGroupUserSelectedUserSet: function (parameters) {
 				if (!Ext.Object.isEmpty(parameters)) {
 					parameters[CMDBuild.core.constants.Proxy.MODEL_NAME] = 'CMDBuild.model.userAndGroup.user.User';
 					parameters[CMDBuild.core.constants.Proxy.TARGET_VARIABLE_NAME] = 'selectedUser';
@@ -249,23 +249,34 @@
 			},
 
 		/**
-		 * @param {Object} result
+		 * @param {Object} response
 		 * @param {Object} options
-		 * @param {Object} decodedResult
+		 * @param {Object} decodedResponse
 		 *
 		 * @private
 		 */
-		success: function(result, options, decodedResult) {
-			var me = this;
+		success: function (response, options, decodedResponse) {
+			decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.ROWS];
 
-			this.grid.getStore().load({
-				callback: function(records, operation, success) {
-					var rowIndex = this.find('userid', decodedResult.rows.userid);
+			if (Ext.isObject(decodedResponse) && !Ext.Object.isEmpty(decodedResponse)) {
+				this.view.includeUnactiveUsers.reset(); // Reset checkbox value to load all users on save
 
-					me.grid.getSelectionModel().select(rowIndex, true);
-					me.form.setDisabledModify(true);
-				}
-			});
+				var params = {};
+				params[CMDBuild.core.constants.Proxy.ACTIVE] = this.view.includeUnactiveUsers.getValue();
+
+				this.grid.getStore().load({
+					params: params,
+					scope: this,
+					callback: function (records, operation, success) {
+						var rowIndex = this.grid.getStore().find('userid', decodedResponse['userid']);
+
+						this.grid.getSelectionModel().select(rowIndex, true);
+						this.form.setDisabledModify(true);
+					}
+				});
+			} else {
+				_error('empty or unmanaged server response (' + decodedResponse + ')', this);
+			}
 		}
 	});
 

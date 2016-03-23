@@ -1,4 +1,4 @@
-(function() {
+(function () {
 
 	Ext.define('CMDBuild.view.administration.userAndGroup.user.UserView', {
 		extend: 'Ext.panel.Panel',
@@ -31,7 +31,7 @@
 		frame: false,
 		layout: 'border',
 
-		initComponent: function() {
+		initComponent: function () {
 			Ext.apply(this, {
 				dockedItems: [
 					Ext.create('Ext.toolbar.Toolbar', {
@@ -42,7 +42,7 @@
 								text: CMDBuild.Translation.addUser,
 								scope: this,
 
-								handler: function(button, e) {
+								handler: function (button, e) {
 									this.delegate.cmfg('onUserAndGroupUserAddButtonClick');
 								}
 							}),
@@ -55,7 +55,7 @@
 								checked: false, // Default as false
 								scope: this,
 
-								handler: function(checkbox, checked) {
+								handler: function (checkbox, checked) {
 									this.delegate.cmfg('onUserAndGroupUserShow');
 								}
 							})
@@ -80,7 +80,7 @@
 		},
 
 		listeners: {
-			show: function(panel, eOpts) {
+			show: function (panel, eOpts) {
 				this.delegate.cmfg('onUserAndGroupUserShow');
 			}
 		}
