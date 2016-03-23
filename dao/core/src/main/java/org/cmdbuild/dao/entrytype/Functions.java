@@ -51,7 +51,7 @@ public class Functions {
 
 		@Override
 		public CMAttribute apply(final String input) {
-			return entryType.getAttribute(input);
+			return (entryType == null) ? null : entryType.getAttribute(input);
 		}
 
 	}

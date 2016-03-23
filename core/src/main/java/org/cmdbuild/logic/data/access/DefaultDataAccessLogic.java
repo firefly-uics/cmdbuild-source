@@ -12,6 +12,7 @@ import static java.util.Collections.emptyMap;
 import static org.apache.commons.lang3.ObjectUtils.defaultIfNull;
 import static org.apache.commons.lang3.RandomStringUtils.randomAlphanumeric;
 import static org.apache.commons.lang3.StringUtils.isEmpty;
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.cmdbuild.dao.constants.Cardinality.CARDINALITY_1N;
 import static org.cmdbuild.dao.constants.Cardinality.CARDINALITY_N1;
 import static org.cmdbuild.dao.entrytype.Deactivable.IsActivePredicate.activeOnes;
@@ -495,7 +496,7 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 		 * preferred solution to avoid pre-release errors
 		 */
 		final PagedElements<Card> output;
-		if (className != null) {
+		if (isNotBlank(className)) {
 			output = fetchCardsWithClassName(className, queryOptions);
 		} else {
 			output = fetchCardsWithoutClassName(queryOptions);
