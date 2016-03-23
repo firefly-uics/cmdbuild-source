@@ -1,4 +1,4 @@
-(function() {
+(function () {
 
 	Ext.require('CMDBuild.core.constants.Proxy');
 
@@ -9,6 +9,7 @@
 		extend: 'Ext.data.Model',
 
 		fields: [
+			{ name: CMDBuild.core.constants.Proxy.ADMINISTRATOR_PASSWORD, type: 'string' },
 			{ name: CMDBuild.core.constants.Proxy.ADMINISTRATOR_USER_NAME, type: 'string' },
 			{ name: CMDBuild.core.constants.Proxy.CONNECTION_HOST, type: 'string' },
 			{ name: CMDBuild.core.constants.Proxy.CONNECTION_PASSWORD, type: 'string' },
@@ -30,7 +31,7 @@
 		 *
 		 * @returns {Object}
 		 */
-		getDataSubmit: function() {
+		getDataSubmit: function () {
 			switch (this.get(CMDBuild.core.constants.Proxy.DATABASE_TYPE)) {
 				case CMDBuild.core.constants.Proxy.DEMO:
 					return this.getDataSubmitDemo();
@@ -51,7 +52,7 @@
 		 *
 		 * @private
 		 */
-		getDataSubmitDemo: function() {
+		getDataSubmitDemo: function () {
 			var data = {
 				db_name: this.get(CMDBuild.core.constants.Proxy.DATABASE_NAME),
 				db_type: this.get(CMDBuild.core.constants.Proxy.DATABASE_TYPE),
@@ -80,7 +81,7 @@
 		 *
 		 * @private
 		 */
-		getDataSubmitEmpty: function() {
+		getDataSubmitEmpty: function () {
 			var data = {
 				admin_password: this.get(CMDBuild.core.constants.Proxy.ADMINISTRATOR_PASSWORD),
 				admin_user: this.get(CMDBuild.core.constants.Proxy.ADMINISTRATOR_USER_NAME),
@@ -111,7 +112,7 @@
 		 *
 		 * @private
 		 */
-		getDataSubmitExisting: function() {
+		getDataSubmitExisting: function () {
 			return {
 				db_name: this.get(CMDBuild.core.constants.Proxy.DATABASE_NAME),
 				db_type: this.get(CMDBuild.core.constants.Proxy.DATABASE_TYPE),
@@ -127,7 +128,7 @@
 		/**
 		 * @returns {Object} data
 		 */
-		getDataDBConnection: function() {
+		getDataDBConnection: function () {
 			var data = {};
 			data[CMDBuild.core.constants.Proxy.HOST] = this.get(CMDBuild.core.constants.Proxy.CONNECTION_HOST);
 			data[CMDBuild.core.constants.Proxy.PASSWORD] = this.get(CMDBuild.core.constants.Proxy.CONNECTION_PASSWORD);
