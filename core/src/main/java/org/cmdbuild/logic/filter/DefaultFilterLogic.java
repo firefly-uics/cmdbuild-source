@@ -1,9 +1,13 @@
 package org.cmdbuild.logic.filter;
 
+import static com.google.common.base.Functions.identity;
 import static com.google.common.collect.FluentIterable.from;
 import static com.google.common.collect.Iterables.concat;
 import static com.google.common.collect.Lists.newArrayList;
+import static com.google.common.collect.Maps.difference;
+import static com.google.common.collect.Maps.uniqueIndex;
 import static java.lang.Integer.MAX_VALUE;
+import static java.util.stream.StreamSupport.stream;
 
 import org.apache.commons.lang3.Validate;
 import org.cmdbuild.auth.UserStore;
@@ -18,6 +22,7 @@ import org.slf4j.MarkerFactory;
 
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
+import com.google.common.collect.MapDifference;
 
 public class DefaultFilterLogic implements FilterLogic {
 
@@ -210,18 +215,20 @@ public class DefaultFilterLogic implements FilterLogic {
 	public PagedElements<Filter> readShared(final String className, final int start, final int limit) {
 		logger.info(MARKER, "getting all filters starting from '{}' and with a limit of '{}'", start, limit);
 		final PagedElements<FilterStore.Filter> response = store.readSharedFilters(className, start, limit);
-		return new PagedElements<Filter>(from(response) //
-				.transform(toLogic()), //
+		return new PagedElements<Filter>(
+				from(response) //
+						.transform(toLogic()), //
 				response.totalSize());
 	}
 
 	@Override
 	public PagedElements<Filter> readNotShared(final String className, final int start, final int limit) {
-		logger.info(MARKER, "getting all filters for class '{}' starting from '{}' and with a limit of '{}'",
-				className, start, limit);
+		logger.info(MARKER, "getting all filters for class '{}' starting from '{}' and with a limit of '{}'", className,
+				start, limit);
 		final PagedElements<FilterStore.Filter> response = store.readNonSharedFilters(className, null, start, limit);
-		return new PagedElements<Filter>(from(response) //
-				.transform(toLogic()), //
+		return new PagedElements<Filter>(
+				from(response) //
+						.transform(toLogic()), //
 				response.totalSize());
 	}
 
@@ -242,13 +249,16 @@ public class DefaultFilterLogic implements FilterLogic {
 	@Override
 	public void setDefault(final Iterable<Long> filters, final Iterable<String> groups) {
 		logger.info(MARKER, "setting default filter '{}' for groups '{}'", filters, groups);
-		for (final Long filter : filters) {
-			final FilterStore.Filter stored = store.read(filter);
-			for (final String groupName : groups) {
-				store.disjoin(groupName, store.read(stored.getClassName(), groupName));
-				store.join(groupName, newArrayList(stored));
-			}
-		}
+		stream(filters.spliterator(), false) //
+				.forEach(filterId -> {
+					final FilterStore.Filter filter = store.read(filterId);
+					final MapDifference<String, String> difference = difference(uniqueIndex(groups, identity()),
+							uniqueIndex(store.joined(filterId), identity()));
+					difference.entriesOnlyOnRight().keySet().stream() //
+							.forEach(group -> store.disjoin(group, store.read(filter.getClassName(), group)));
+					difference.entriesOnlyOnLeft().keySet().stream() //
+							.forEach(group -> store.join(group, newArrayList(filter)));
+				});
 	}
 
 	@Override
