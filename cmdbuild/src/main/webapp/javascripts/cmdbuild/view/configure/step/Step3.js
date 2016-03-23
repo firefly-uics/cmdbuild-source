@@ -1,4 +1,4 @@
-(function() {
+(function () {
 
 	Ext.define('CMDBuild.view.configure.step.Step3',{
 		extend: 'Ext.panel.Panel',
@@ -18,7 +18,7 @@
 			align:'stretch'
 		},
 
-		initComponent: function() {
+		initComponent: function () {
 			Ext.apply(this, {
 				items: [
 					Ext.create('Ext.form.field.Text', {
@@ -53,7 +53,7 @@
 		},
 
 		listeners: {
-			show: function(panel, eOpts) {
+			show: function (panel, eOpts) {
 				this.delegate.cmfg('onConfigurationViewportWizardPanelShow', {
 					displayPreviusButton: true,
 					displayFinishButton: true

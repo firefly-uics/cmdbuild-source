@@ -1,4 +1,4 @@
-(function() {
+(function () {
 
 	Ext.define('CMDBuild.controller.configure.Configure', {
 		extend: 'CMDBuild.controller.common.abstract.Base',
@@ -37,7 +37,7 @@
 		 *
 		 * @override
 		 */
-		constructor: function(configurationObject) {
+		constructor: function (configurationObject) {
 			this.callParent(arguments);
 
 			this.view = Ext.create('CMDBuild.view.configure.ConfigureViewport', { delegate: this });
@@ -57,7 +57,7 @@
 		 *
 		 * @private
 		 */
-		hasNext: function() {
+		hasNext: function () {
 			return (
 				this.wizard.getLayout().getNext()
 				&& !Ext.isEmpty(this.wizard.getLayout().getNext().isDisabled()) && !this.wizard.getLayout().getNext().isDisabled()
@@ -69,7 +69,7 @@
 		 *
 		 * @private
 		 */
-		hasPrevious: function() {
+		hasPrevious: function () {
 			return (
 				this.wizard.getLayout().getPrev()
 				&& !Ext.isEmpty(this.wizard.getLayout().getPrev().isDisabled()) && !this.wizard.getLayout().getPrev().isDisabled()
@@ -79,7 +79,7 @@
 		/**
 		 * @private
 		 */
-		manageWizardButtonsDisabledState: function() {
+		manageWizardButtonsDisabledState: function () {
 			this.wizard.previousButton.setDisabled(!this.hasPrevious());
 			this.wizard.nextButton.setDisabled(!this.hasNext());
 		},
@@ -87,15 +87,15 @@
 		/**
 		 * Manages footer credits link click action
 		 */
-		onConfigurationViewportCreditsClick: function() {
+		onConfigurationViewportCreditsClick: function () {
 			Ext.create('CMDBuild.core.window.Credits').show();
 		},
 
-		onConfigurationViewportWizardConnectionCheckButtonClick: function() {
+		onConfigurationViewportWizardConnectionCheckButtonClick: function () {
 			CMDBuild.core.proxy.Configure.dbConnectionCheck({
 				params: Ext.create('CMDBuild.model.configure.Configure', this.wizard.getData()).getDataDBConnection(),
 				scope: this,
-				success: function(response, options, decodedResponse){
+				success: function (response, options, decodedResponse){
 					Ext.Msg.show({
 						title: CMDBuild.Translation.testConnection,
 						msg: CMDBuild.Translation.connectionSuccessful,
@@ -105,7 +105,7 @@
 			});
 		},
 
-		onConfigurationViewportWizardDbTypeChange: function() {
+		onConfigurationViewportWizardDbTypeChange: function () {
 			var configurationRecordModel = Ext.create('CMDBuild.model.configure.Configure', this.wizard.getData());
 			var defaultValuesModel = Ext.create('CMDBuild.model.configure.Configure'); // Default values
 
@@ -167,18 +167,18 @@
 			}
 		},
 
-		onConfigurationViewportWizardFinishButtonClick: function() {
+		onConfigurationViewportWizardFinishButtonClick: function () {
 			if (this.validate(this.wizard)) {
 				CMDBuild.core.proxy.Configure.apply({
 					params: Ext.create('CMDBuild.model.configure.Configure', this.wizard.getData()).getDataSubmit(),
 					scope: this,
-					success: function(response, options, decodedResponse) {
+					success: function (response, options, decodedResponse) {
 						Ext.Msg.show({
 							title: CMDBuild.Translation.configurationDone,
 							msg: CMDBuild.Translation.configurationWizardSuccessMessage,
 							buttons: Ext.MessageBox.OK,
 
-							fn: function(buttonId, text, opt) {
+							fn: function (buttonId, text, opt) {
 								window.location = 'administration.jsp';
 							}
 						});
@@ -192,7 +192,7 @@
 		 *
 		 * @param (String) action
 		 */
-		onConfigurationViewportWizardNavigationButtonClick: function(action) {
+		onConfigurationViewportWizardNavigationButtonClick: function (action) {
 			switch (action) {
 				case 'next': {
 					if (this.hasNext())
@@ -218,7 +218,7 @@
 		 * @param {Boolean} parameters.displayNextButton
 		 * @param {Boolean} parameters.displayPreviusButton
 		 */
-		onConfigurationViewportWizardPanelShow: function(parameters) {
+		onConfigurationViewportWizardPanelShow: function (parameters) {
 			parameters = Ext.isObject(parameters) ? parameters : {};
 
 			Ext.applyIf(parameters, {
@@ -232,7 +232,7 @@
 			this.wizard.finishButton.setVisible(parameters.displayFinishButton);
 		},
 
-		onConfigurationViewportWizardUserTypeChange: function() {
+		onConfigurationViewportWizardUserTypeChange: function () {
 			this.wizard.setDisabledFieldSet(this.wizardStep2.userFieldSet, true);
 
 			switch (this.wizardStep2.databaseUserTypeCombobox.getValue()) {

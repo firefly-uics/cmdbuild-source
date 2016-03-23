@@ -17,7 +17,7 @@
 		 *
 		 * @cfg {Boolean}
 		 */
-		fullInit: true,
+		enableServerCalls: true,
 
 		statics: {
 			/**
@@ -29,7 +29,7 @@
 				if (!Ext.isEmpty(dataObject[CMDBuild.core.constants.Proxy.DATA]))
 					dataObject = dataObject[CMDBuild.core.constants.Proxy.DATA];
 
-				CMDBuild.configuration[CMDBuild.core.constants.Proxy.INSTANCE] = Ext.create('CMDBuild.model.configuration.instance.Instance', dataObject);
+				CMDBuild.configuration.instance = Ext.create('CMDBuild.model.configuration.instance.Instance', dataObject);
 			},
 
 			/**
@@ -37,30 +37,31 @@
 			 */
 			invalid: function () {
 				if (CMDBuild.core.configurationBuilders.Instance.isValid())
-					delete CMDBuild.configuration[CMDBuild.core.constants.Proxy.INSTANCE];
+					delete CMDBuild.configuration.instance;
 			},
 
 			/**
 			 * @returns {Boolean}
 			 */
 			isValid: function () {
-				return !Ext.isEmpty(CMDBuild.configuration[CMDBuild.core.constants.Proxy.INSTANCE]);
+				return !Ext.isEmpty(CMDBuild.configuration.instance);
 			}
 		},
 
 		/**
 		 * @param {Object} configuration
 		 * @param {Function} configuration.callback
-		 * @param {Boolean} configuration.fullInit
+		 * @param {Boolean} configuration.enableServerCalls
+		 *
+		 * @override
 		 */
 		constructor: function (configuration) {
 			Ext.apply(this, configuration); // Apply configurations
 
 			Ext.ns('CMDBuild.configuration');
+			CMDBuild.configuration.instance = Ext.create('CMDBuild.model.configuration.instance.Instance'); // Instance configuration object
 
-			CMDBuild.configuration[CMDBuild.core.constants.Proxy.INSTANCE] = Ext.create('CMDBuild.model.configuration.instance.Instance'); // Instance configuration object
-
-			if (this.fullInit)
+			if (this.enableServerCalls)
 				CMDBuild.core.proxy.configuration.GeneralOptions.read({
 					loadMask: false,
 					scope: this,
