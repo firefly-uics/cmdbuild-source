@@ -57,7 +57,7 @@
 							'->',
 							this.activeOnlyCheckbox = Ext.create('Ext.form.field.Checkbox', {
 								boxLabel: CMDBuild.Translation.activeOnly,
-								boxLabelCls: 'cmtoolbaritem',
+								boxLabelCls: 'cmdb-toolbar-item',
 								checked: true, // Default
 								hidden: this.hideActiveOnlyCheckbox,
 								scope: this,

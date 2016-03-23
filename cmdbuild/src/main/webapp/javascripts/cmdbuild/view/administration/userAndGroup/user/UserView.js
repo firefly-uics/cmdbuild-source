@@ -48,8 +48,8 @@
 							}),
 							'->',
 							this.includeUnactiveUsers = Ext.create('Ext.form.field.Checkbox', {
-								boxLabel: '@@ CMDBuild.Translation.activeOnly',
-								boxLabelCls: 'cmtoolbaritem',
+								boxLabel: CMDBuild.Translation.activeOnly,
+								boxLabelCls: 'cmdb-toolbar-item',
 								inputValue: true,
 								uncheckedValue: false,
 								checked: false, // Default as false

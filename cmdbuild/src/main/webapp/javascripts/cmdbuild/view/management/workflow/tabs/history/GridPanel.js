@@ -45,7 +45,7 @@
 							'->',
 							this.includeSystemActivitiesCheckbox = Ext.create('Ext.form.field.Checkbox', {
 								boxLabel: CMDBuild.Translation.includeSystemActivities,
-								boxLabelCls: 'cmtoolbaritem',
+								boxLabelCls: 'cmdb-toolbar-item',
 								checked: false, // Default as false
 								scope: this,
 
@@ -55,7 +55,7 @@
 							}),
 							this.includeRelationsCheckbox = Ext.create('Ext.form.field.Checkbox', {
 								boxLabel: CMDBuild.Translation.includeRelations,
-								boxLabelCls: 'cmtoolbaritem',
+								boxLabelCls: 'cmdb-toolbar-item',
 								checked: false, // Default as false
 								scope: this,
 

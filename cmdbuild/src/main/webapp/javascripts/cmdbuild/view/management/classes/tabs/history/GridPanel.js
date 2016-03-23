@@ -40,7 +40,7 @@
 							'->',
 							this.includeRelationsCheckbox = Ext.create('Ext.form.field.Checkbox', {
 								boxLabel: CMDBuild.Translation.includeRelations,
-								boxLabelCls: 'cmtoolbaritem',
+								boxLabelCls: 'cmdb-toolbar-item',
 								checked: false, // Default as false
 								scope: this,
 
