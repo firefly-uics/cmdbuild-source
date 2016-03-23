@@ -1,4 +1,4 @@
-(function() {
+(function () {
 
 	Ext.define('CMDBuild.view.configure.ConfigureViewport', {
 		extend: 'Ext.container.Viewport',
@@ -17,7 +17,7 @@
 		frame: false,
 		layout: 'border',
 
-		initComponent: function() {
+		initComponent: function () {
 			Ext.apply(this, {
 				items: [
 					Ext.create('Ext.panel.Panel', {
@@ -52,7 +52,7 @@
 			this.callParent(arguments);
 
 			if (!Ext.isEmpty(Ext.get('cmdbuild-credits-link')))
-				Ext.get('cmdbuild-credits-link').on('click', function(e, t, eOpts) {
+				Ext.get('cmdbuild-credits-link').on('click', function (e, t, eOpts) {
 					if (!Ext.isEmpty(this.delegate))
 						this.delegate.cmfg('onConfigurationViewportCreditsClick');
 				}, this);

@@ -1,4 +1,4 @@
-(function() {
+(function () {
 
 	Ext.define('CMDBuild.view.configure.step.Step2',{
 		extend: 'Ext.panel.Panel',
@@ -39,7 +39,7 @@
 			align:'stretch'
 		},
 
-		initComponent: function() {
+		initComponent: function () {
 			Ext.apply(this, {
 				items: [
 					this.dbTypeAndNameFieldSet = Ext.create('Ext.form.FieldSet', {
@@ -65,7 +65,7 @@
 
 								listeners: {
 									scope: this,
-									change: function(combo, newValue, oldValue, eOpts) {
+									change: function (combo, newValue, oldValue, eOpts) {
 										this.delegate.cmfg('onConfigurationViewportWizardDbTypeChange');
 									}
 								}
@@ -133,7 +133,7 @@
 									Ext.create('CMDBuild.core.buttons.text.TestConnection', {
 										scope: this,
 
-										handler: function(button, e) {
+										handler: function (button, e) {
 											this.delegate.cmfg('onConfigurationViewportWizardConnectionCheckButtonClick');
 										}
 									})
@@ -165,7 +165,7 @@
 
 								listeners: {
 									scope: this,
-									change: function(combo, newValue, oldValue, eOpts) {
+									change: function (combo, newValue, oldValue, eOpts) {
 										this.delegate.cmfg('onConfigurationViewportWizardUserTypeChange');
 									}
 								}
@@ -203,7 +203,7 @@
 		},
 
 		listeners: {
-			show: function(panel, eOpts) {
+			show: function (panel, eOpts) {
 				this.delegate.cmfg('onConfigurationViewportWizardPanelShow', {
 					displayNextButton: true,
 					displayPreviusButton: true
