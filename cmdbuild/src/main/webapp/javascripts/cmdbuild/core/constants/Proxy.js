@@ -114,6 +114,7 @@
 		CLUSTERING_THRESHOLD: 'clusteringThreshold',
 		CMIS: 'cmis',
 		CMIS_HOST: 'cmisHost',
+		CMIS_MODEL: 'cmisModel',
 		CMIS_PASSWORD: 'cmisPassword',
 		CMIS_PATH: 'cmisPath',
 		CMIS_USER: 'cmisUser',

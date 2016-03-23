@@ -262,7 +262,7 @@
 								inputType: 'password'
 							}),
 							Ext.create('Ext.form.field.ComboBox', {
-								name: CMDBuild.core.constants.Proxy.ALFRESCO_LOOKUP_CATEGORY, // TODO
+								name: CMDBuild.core.constants.Proxy.CMIS_MODEL,
 								fieldLabel: CMDBuild.Translation.presets,
 								labelAlign: 'left',
 								labelWidth: CMDBuild.core.constants.FieldWidths.LABEL_CONFIGURATION - 10,
