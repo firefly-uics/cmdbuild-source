@@ -1,4 +1,4 @@
-(function() {
+(function () {
 
 	Ext.define('CMDBuild.controller.administration.userAndGroup.group.DefaultFilters', {
 		extend: 'CMDBuild.controller.common.abstract.Base',
@@ -59,6 +59,8 @@
 		 * @param {Object} configurationObject
 		 * @param {CMDBuild.controller.administration.userAndGroup.group.Group} configurationObject.parentDelegate
 		 *
+		 * @returns {Void}
+		 *
 		 * @override
 		 */
 		constructor: function (configurationObject) {
@@ -73,6 +75,8 @@
 		},
 
 		/**
+		 * @returns {Void}
+		 *
 		 * @private
 		 */
 		filtersBufferBuild: function () {
@@ -97,6 +101,8 @@
 		 * @param {Object} node
 		 * @param {Array} destinationArray
 		 *
+		 * @returns {Void}
+		 *
 		 * @private
 		 */
 		getAllDefaultFilters: function (node, destinationArray) {
@@ -109,6 +115,9 @@
 			}, this);
 		},
 
+		/**
+		 * @returns {Void}
+		 */
 		onUserAndGroupGroupTabDefaultFiltersAbortButtonClick: function () {
 			if (!this.cmfg('userAndGroupGroupSelectedGroupIsEmpty'))
 				this.cmfg('onUserAndGroupGroupTabDefaultFiltersShow');
@@ -116,6 +125,8 @@
 
 		/**
 		 * Disable tab on add button click
+		 *
+		 * @returns {Void}
 		 */
 		onUserAndGroupGroupTabDefaultFiltersAddButtonClick: function () {
 			this.view.disable();
@@ -123,11 +134,16 @@
 
 		/**
 		 * Enable/Disable tab evaluating selected group
+		 *
+		 * @returns {Void}
 		 */
 		onUserAndGroupGroupTabDefaultFiltersGroupSelected: function () {
 			this.view.setDisabled(this.cmfg('userAndGroupGroupSelectedGroupIsEmpty'));
 		},
 
+		/**
+		 * @returns {Void}
+		 */
 		onUserAndGroupGroupTabDefaultFiltersSaveButtonClick: function () {
 			if (!this.cmfg('userAndGroupGroupSelectedGroupIsEmpty')) {
 				var defaultFiltersNames = [];
@@ -152,6 +168,8 @@
 		/**
 		 * Builds tree store.
 		 * Wrongly tableType attribute use to recognize tree types of classes (standard, simple, processes).
+		 *
+		 * @returns {Void}
 		 */
 		onUserAndGroupGroupTabDefaultFiltersShow: function () {
 			if (!this.cmfg('userAndGroupGroupSelectedGroupIsEmpty')) {

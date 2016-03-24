@@ -56,6 +56,8 @@
 		 * @param {Object} configurationObject
 		 * @param {CMDBuild.controller.administration.userAndGroup.user.UserAndGroup} configurationObject.parentDelegate
 		 *
+		 * @returns {Void}
+		 *
 		 * @override
 		 */
 		constructor: function (configurationObject) {
@@ -68,6 +70,9 @@
 			this.grid = this.view.grid;
 		},
 
+		/**
+		 * @returns {Void}
+		 */
 		onUserAndGroupUserAbortButtonClick: function () {
 			if (!this.userAndGroupUserSelectedUserIsEmpty()) {
 				this.onUserAndGroupUserRowSelected();
@@ -82,6 +87,9 @@
 		 */
 		onUserAndGroupUserAccordionSelect: Ext.emptyFn,
 
+		/**
+		 * @returns {Void}
+		 */
 		onUserAndGroupUserAddButtonClick: function () {
 			this.grid.getSelectionModel().deselectAll();
 
@@ -93,6 +101,9 @@
 			this.form.loadRecord(Ext.create('CMDBuild.model.userAndGroup.user.User'));
 		},
 
+		/**
+		 * @returns {Void}
+		 */
 		onUserAndGroupUserChangePasswordButtonClick: function () {
 			this.form.setDisabledFieldSet(this.form.userPasswordFieldSet, false);
 
@@ -100,6 +111,9 @@
 			this.form.setDisabledBottomBar(false);
 		},
 
+		/**
+		 * @returns {Void}
+		 */
 		onUserAndGroupUserDisableButtonClick: function () {
 			var params = {};
 			params['userid'] = this.userAndGroupUserSelectedUserGet('userid');
@@ -112,6 +126,9 @@
 			});
 		},
 
+		/**
+		 * @returns {Void}
+		 */
 		onUserAndGroupUserModifyButtonClick: function () {
 			this.form.setDisabledFieldSet(this.form.userInfoFieldSet, false);
 
@@ -121,12 +138,17 @@
 
 		/**
 		 * Privileged is a specialization of service, so if someone check privileged is implicit that is a service user
+		 *
+		 * @returns {Void}
 		 */
 		onUserAndGroupUserPrivilegedChange: function () {
 			if (this.form.privilegedCheckbox.getValue())
 				this.form.serviceCheckbox.setValue(true);
 		},
 
+		/**
+		 * @returns {Void}
+		 */
 		onUserAndGroupUserRowSelected: function () {
 			if (this.grid.getSelectionModel().hasSelection()) {
 				this.userAndGroupUserSelectedUserSet({ value: this.grid.getSelectionModel().getSelection()[0] });
@@ -159,6 +181,8 @@
 		},
 
 		/**
+		 * @returns {Void}
+		 *
 		 * TODO: waiting for a refactor (new CRUD standards)
 		 */
 		onUserAndGroupUserSaveButtonClick: function () {
@@ -185,12 +209,17 @@
 
 		/**
 		 * Privileged is a specialization of service, so if someone uncheck service is implicit that is not a privileged user
+		 *
+		 * @returns {Void}
 		 */
 		onUserAndGroupUserServiceChange: function () {
 			if (!this.form.serviceCheckbox.getValue())
 				this.form.privilegedCheckbox.setValue(false);
 		},
 
+		/**
+		 * @returns {Void}
+		 */
 		onUserAndGroupUserShow: function () {
 			var params = {};
 			params[CMDBuild.core.constants.Proxy.ACTIVE] = this.view.includeUnactiveUsers.getValue();
@@ -209,7 +238,7 @@
 			/**
 			 * @param {Array or String} attributePath
 			 *
-			 * @return {Mixed or undefined}
+			 * @returns {Mixed or undefined}
 			 */
 			userAndGroupUserSelectedUserGet: function (attributePath) {
 				var parameters = {};
@@ -222,7 +251,7 @@
 			/**
 			 * @param {Array or String} attributePath
 			 *
-			 * @return {Mixed or undefined}
+			 * @returns {Mixed or undefined}
 			 */
 			userAndGroupUserSelectedUserIsEmpty: function (attributePath) {
 				var parameters = {};
@@ -238,6 +267,8 @@
 
 			/**
 			 * @param {Object} parameters
+			 *
+			 * @returns {Void}
 			 */
 			userAndGroupUserSelectedUserSet: function (parameters) {
 				if (!Ext.Object.isEmpty(parameters)) {
@@ -252,6 +283,8 @@
 		 * @param {Object} response
 		 * @param {Object} options
 		 * @param {Object} decodedResponse
+		 *
+		 * @returns {Void}
 		 *
 		 * @private
 		 */

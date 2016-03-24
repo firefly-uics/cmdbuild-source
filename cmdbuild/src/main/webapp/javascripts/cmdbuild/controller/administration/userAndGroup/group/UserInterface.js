@@ -1,4 +1,4 @@
-(function() {
+(function () {
 
 	Ext.define('CMDBuild.controller.administration.userAndGroup.group.UserInterface', {
 		extend: 'CMDBuild.controller.common.abstract.Base',
@@ -46,9 +46,11 @@
 		 * @param {Object} configurationObject
 		 * @param {CMDBuild.controller.administration.userAndGroup.group.Group} configurationObject.parentDelegate
 		 *
+		 * @returns {Void}
+		 *
 		 * @override
 		 */
-		constructor: function(configurationObject) {
+		constructor: function (configurationObject) {
 			this.callParent(arguments);
 
 			this.view = Ext.create('CMDBuild.view.administration.userAndGroup.group.userInterface.UserInterfaceView', { delegate: this });
@@ -65,7 +67,7 @@
 			 *
 			 * @private
 			 */
-			configurationGet: function(attributePath) {
+			configurationGet: function (attributePath) {
 				var parameters = {};
 				parameters[CMDBuild.core.constants.Proxy.TARGET_VARIABLE_NAME] = 'configuration';
 				parameters[CMDBuild.core.constants.Proxy.ATTRIBUTE_PATH] = attributePath;
@@ -76,9 +78,11 @@
 			/**
 			 * Loads data model and sub model data to form
 			 *
+			 * @returns {Void}
+			 *
 			 * @private
 			 */
-			configurationLoad: function() {
+			configurationLoad: function () {
 				this.form.reset();
 
 				this.form.getForm().loadRecord(this.configurationGet());
@@ -90,9 +94,11 @@
 			/**
 			 * @property {Object} parameters
 			 *
+			 * @returns {Void}
+			 *
 			 * @private
 			 */
-			configurationSet: function(parameters) {
+			configurationSet: function (parameters) {
 				if (!Ext.Object.isEmpty(parameters)) {
 					parameters[CMDBuild.core.constants.Proxy.MODEL_NAME] = 'CMDBuild.model.userAndGroup.group.userInterface.UserInterface';
 					parameters[CMDBuild.core.constants.Proxy.TARGET_VARIABLE_NAME] = 'configuration';
@@ -101,27 +107,34 @@
 				}
 			},
 
-		onUserAndGroupGroupTabUserInterfaceAbortButtonClick: function() {
+		/**
+		 * @returns {Void}
+		 */
+		onUserAndGroupGroupTabUserInterfaceAbortButtonClick: function () {
 			this.cmfg('onUserAndGroupGroupTabUserInterfaceShow');
 		},
 
 		/**
 		 * Disable tab on add button click
+		 *
+		 * @returns {Void}
 		 */
-		onUserAndGroupGroupTabUserInterfaceAddButtonClick: function() {
+		onUserAndGroupGroupTabUserInterfaceAddButtonClick: function () {
 			this.view.disable();
 		},
 
 		/**
 		 * Enable/Disable tab evaluating group privileges, CloudAdministrators couldn't change UIConfiguration of full administrator groups
+		 *
+		 * @returns {Void}
 		 */
-		onUserAndGroupGroupTabUserInterfaceGroupSelected: function() {
+		onUserAndGroupGroupTabUserInterfaceGroupSelected: function () {
 			CMDBuild.core.proxy.userAndGroup.group.Group.read({ // TODO: waiting for refactor (crud)
 				scope: this,
-				success: function(response, options, decodedResponse) {
+				success: function (response, options, decodedResponse) {
 					decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.GROUPS];
 
-					var loggedUserCurrentGroup = Ext.Array.findBy(decodedResponse, function(groupObject, i) {
+					var loggedUserCurrentGroup = Ext.Array.findBy(decodedResponse, function (groupObject, i) {
 						return CMDBuild.configuration.runtime.get(CMDBuild.core.constants.Proxy.DEFAULT_GROUP_ID) == groupObject[CMDBuild.core.constants.Proxy.ID];
 					}, this);
 
@@ -137,7 +150,10 @@
 			});
 		},
 
-		onUserAndGroupGroupTabUserInterfaceSaveButtonClick: function() {
+		/**
+		 * @returns {Void}
+		 */
+		onUserAndGroupGroupTabUserInterfaceSaveButtonClick: function () {
 			this.configurationSet({ value: this.form.getForm().getValues() });
 
 			var params = {};
@@ -147,7 +163,7 @@
 			CMDBuild.core.proxy.userAndGroup.group.UserInterface.update({
 				params: params,
 				scope: this,
-				success: function(response, options, decodedResponse) {
+				success: function (response, options, decodedResponse) {
 					CMDBuild.core.Message.success();
 
 					this.cmfg('onUserAndGroupGroupTabUserInterfaceShow');
@@ -157,8 +173,10 @@
 
 		/**
 		 * Loads tab data
+		 *
+		 * @returns {Void}
 		 */
-		onUserAndGroupGroupTabUserInterfaceShow: function() {
+		onUserAndGroupGroupTabUserInterfaceShow: function () {
 			if (!this.cmfg('userAndGroupGroupSelectedGroupIsEmpty')) {
 				var params = {};
 				params[CMDBuild.core.constants.Proxy.ID] = this.cmfg('userAndGroupGroupSelectedGroupGet', CMDBuild.core.constants.Proxy.ID);
@@ -166,7 +184,7 @@
 				CMDBuild.core.proxy.userAndGroup.group.UserInterface.read({
 					params: params,
 					scope: this,
-					success: function(response, options, decodedResponse) {
+					success: function (response, options, decodedResponse) {
 						decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.RESPONSE];
 
 						this.configurationSet({ value: decodedResponse });

@@ -1,4 +1,4 @@
-(function() {
+(function () {
 
 	Ext.define('CMDBuild.view.administration.userAndGroup.group.privileges.tabs.CustomPage', {
 		extend: 'Ext.grid.Panel',
@@ -18,7 +18,12 @@
 		frame: false,
 		title: CMDBuild.Translation.customPages,
 
-		initComponent: function() {
+		/**
+		 * @returns {Void}
+		 *
+		 * @override
+		 */
+		initComponent: function () {
 			Ext.apply(this, {
 				columns: [
 					Ext.create('Ext.grid.column.Column', {
@@ -38,10 +43,10 @@
 
 						listeners: {
 							scope: this,
-							beforecheckchange: function(column, rowIndex, checked, eOpts) { // CheckColumn cannot be unchecked
+							beforecheckchange: function (column, rowIndex, checked, eOpts) { // CheckColumn cannot be unchecked
 								return checked;
 							},
-							checkchange: function(column, rowIndex, checked, eOpts) {
+							checkchange: function (column, rowIndex, checked, eOpts) {
 								this.delegate.cmfg('onUserAndGroupGroupTabPrivilegesTabCustomPageSetPrivilege', {
 									rowIndex: rowIndex,
 									privilege: 'none_privilege'
@@ -61,10 +66,10 @@
 
 						listeners: {
 							scope: this,
-							beforecheckchange: function(column, rowIndex, checked, eOpts) { // CheckColumn cannot be unchecked
+							beforecheckchange: function (column, rowIndex, checked, eOpts) { // CheckColumn cannot be unchecked
 								return checked;
 							},
-							checkchange: function(column, rowIndex, checked, eOpts) {
+							checkchange: function (column, rowIndex, checked, eOpts) {
 								this.delegate.cmfg('onUserAndGroupGroupTabPrivilegesTabCustomPageSetPrivilege', {
 									rowIndex: rowIndex,
 									privilege: 'read_privilege'
@@ -80,7 +85,7 @@
 		},
 
 		listeners: {
-			show: function(panel, eOpts) {
+			show: function (panel, eOpts) {
 				this.delegate.cmfg('onUserAndGroupGroupTabPrivilegesTabCustomPageShow');
 			}
 		}

@@ -1,4 +1,4 @@
-(function() {
+(function () {
 
 	Ext.define('CMDBuild.view.common.field.filter.cql.MetadataWindow', {
 		extend: 'CMDBuild.core.PopupWindow',
@@ -21,7 +21,12 @@
 		closeAction: 'hide',
 		title: CMDBuild.Translation.editMetadata,
 
-		initComponent: function() {
+		/**
+		 * @returns {Void}
+		 *
+		 * @override
+		 */
+		initComponent: function () {
 			Ext.apply(this, {
 				dockedItems: [
 					Ext.create('Ext.toolbar.Toolbar', {
@@ -32,7 +37,7 @@
 							Ext.create('CMDBuild.core.buttons.iconized.add.Add', {
 								scope: this,
 
-								handler: function(button, e) {
+								handler: function (button, e) {
 									this.grid.getStore().insert(0, Ext.create('CMDBuild.model.common.field.filter.cql.Metadata'));
 								}
 							})
@@ -53,14 +58,14 @@
 							Ext.create('CMDBuild.core.buttons.text.Confirm', {
 								scope: this,
 
-								handler: function(button, e) {
+								handler: function (button, e) {
 									this.delegate.cmfg('onMetadataWindowSaveButtonClick');
 								}
 							}),
 							Ext.create('CMDBuild.core.buttons.text.Abort', {
 								scope: this,
 
-								handler: function(button, e) {
+								handler: function (button, e) {
 									this.delegate.cmfg('onMetadataWindowAbortButtonClick');
 								}
 							})
@@ -100,7 +105,7 @@
 										tooltip: CMDBuild.Translation.remove,
 										scope: this,
 
-										handler: function(grid, rowIndex, colIndex, node, e, record, rowNode) {
+										handler: function (grid, rowIndex, colIndex, node, e, record, rowNode) {
 											grid.getStore().remove(record);
 										}
 									})
@@ -124,7 +129,7 @@
 		},
 
 		listeners: {
-			show: function(window, eOpts) {
+			show: function (window, eOpts) {
 				this.delegate.cmfg('onMetadataWindowShow');
 			}
 		}

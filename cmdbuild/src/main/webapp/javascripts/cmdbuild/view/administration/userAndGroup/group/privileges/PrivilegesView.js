@@ -1,4 +1,4 @@
-(function() {
+(function () {
 
 	Ext.define('CMDBuild.view.administration.userAndGroup.group.privileges.PrivilegesView', {
 		extend: 'Ext.tab.Panel',
@@ -14,7 +14,7 @@
 		title: CMDBuild.Translation.permissions,
 
 		listeners: {
-			show: function(panel, eOpts) {
+			show: function (panel, eOpts) {
 				this.delegate.cmfg('onUserAndGroupGroupTabPrivilegesShow');
 			}
 		}

@@ -1,4 +1,4 @@
-(function() {
+(function () {
 
 	Ext.define('CMDBuild.view.administration.userAndGroup.group.privileges.UiConfigurationWindow', {
 		extend: 'CMDBuild.core.PopupWindow',
@@ -25,7 +25,12 @@
 		layout: 'fit',
 		title: CMDBuild.Translation.buttonsToDisable,
 
-		initComponent: function() {
+		/**
+		 * @returns {Void}
+		 *
+		 * @override
+		 */
+		initComponent: function () {
 			Ext.apply(this, {
 				dockedItems: [
 					Ext.create('Ext.toolbar.Toolbar', {
@@ -43,14 +48,14 @@
 							Ext.create('CMDBuild.core.buttons.text.Confirm', {
 								scope: this,
 
-								handler: function(button, e) {
+								handler: function (button, e) {
 									this.delegate.cmfg('onUserAndGroupGroupPrivilegesGridUIConfigurationSaveButtonClick');
 								}
 							}),
 							Ext.create('CMDBuild.core.buttons.text.Abort', {
 								scope: this,
 
-								handler: function(button, e) {
+								handler: function (button, e) {
 									this.delegate.cmfg('onUserAndGroupGroupPrivilegesGridUIConfigurationAbortButtonClick');
 								}
 							})
@@ -103,7 +108,7 @@
 		},
 
 		listeners: {
-			show: function(window, eOpts) {
+			show: function (window, eOpts) {
 				this.delegate.cmfg('onUserAndGroupGroupPrivilegesGridUIConfigurationShow');
 			}
 		}

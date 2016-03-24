@@ -1,4 +1,4 @@
-(function() {
+(function () {
 
 	Ext.require('CMDBuild.core.constants.Proxy');
 
@@ -20,7 +20,7 @@
 		/**
 		 * @param {Object} data
 		 */
-		constructor: function(data) {
+		constructor: function (data) {
 			this.propertiesAdapter(data);
 
 			data[CMDBuild.core.constants.Proxy.DISABLED_CARD_TABS] = Ext.create('CMDBuild.model.configuration.userInterface.DisabledCardTabs', Ext.clone(data));
@@ -35,7 +35,7 @@
 		 *
 		 * @override
 		 */
-		getData: function() {
+		getData: function () {
 			var returnedObject = this.callParent(arguments);
 			returnedObject[CMDBuild.core.constants.Proxy.DISABLED_CARD_TABS] = this.toArray(CMDBuild.core.constants.Proxy.DISABLED_CARD_TABS);
 			returnedObject[CMDBuild.core.constants.Proxy.DISABLED_MODULES] = this.toArray(CMDBuild.core.constants.Proxy.DISABLED_MODULES);
@@ -51,12 +51,14 @@
 		 *
 		 * @param {Object} data
 		 *
+		 * @returns {Void}
+		 *
 		 * @private
 		 */
-		propertiesAdapter: function(data) {
-			Ext.Object.each(data, function(key, value, myself) {
+		propertiesAdapter: function (data) {
+			Ext.Object.each(data, function (key, value, myself) {
 				if (Ext.isArray(value))
-					Ext.Array.forEach(value, function(property, i, allProperties) {
+					Ext.Array.forEach(value, function (property, i, allProperties) {
 						data[property] = true;
 					}, this);
 			}, this);
@@ -69,10 +71,10 @@
 		 *
 		 * @private
 		 */
-		toArray: function(propertyName) {
+		toArray: function (propertyName) {
 			var arrayBuffer = [];
 
-			Ext.Object.each(this.get(propertyName).getData(), function(key, value, myself) {
+			Ext.Object.each(this.get(propertyName).getData(), function (key, value, myself) {
 				if (value)
 					arrayBuffer.push(key);
 			}, this);

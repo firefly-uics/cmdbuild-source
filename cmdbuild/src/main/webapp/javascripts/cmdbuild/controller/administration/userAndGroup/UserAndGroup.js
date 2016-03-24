@@ -1,4 +1,4 @@
-(function() {
+(function () {
 
 	Ext.define('CMDBuild.controller.administration.userAndGroup.UserAndGroup', {
 		extend: 'CMDBuild.controller.common.abstract.Base',
@@ -46,9 +46,11 @@
 		 * @param {Object} configurationObject
 		 * @param {CMDBuild.controller.common.MainViewport} configurationObject.parentDelegate
 		 *
+		 * @returns {Void}
+		 *
 		 * @override
 		 */
-		constructor: function(configurationObject) {
+		constructor: function (configurationObject) {
 			this.callParent(arguments);
 
 			this.view = Ext.create('CMDBuild.view.administration.userAndGroup.UserAndGroupView', { delegate: this });
@@ -59,9 +61,11 @@
 		 *
 		 * @param {CMDBuild.model.common.Accordion} node
 		 *
+		 * @returns {Void}
+		 *
 		 * @override
 		 */
-		onUserAndGroupModuleInit: function(node) {
+		onUserAndGroupModuleInit: function (node) {
 			if (!Ext.Object.isEmpty(node)) {
 				var titleParts = [];
 				var selectedAccordionData = node.getData();
@@ -106,7 +110,7 @@
 			 *
 			 * @return {Mixed or undefined}
 			 */
-			userAndGroupSelectedAccordionGet: function(attributePath) {
+			userAndGroupSelectedAccordionGet: function (attributePath) {
 				var parameters = {};
 				parameters[CMDBuild.core.constants.Proxy.TARGET_VARIABLE_NAME] = 'selectedAccordion';
 				parameters[CMDBuild.core.constants.Proxy.ATTRIBUTE_PATH] = attributePath;
@@ -119,7 +123,7 @@
 			 *
 			 * @return {Mixed or undefined}
 			 */
-			userAndGroupSelectedAccordionIsEmpty: function(attributePath) {
+			userAndGroupSelectedAccordionIsEmpty: function (attributePath) {
 				var parameters = {};
 				parameters[CMDBuild.core.constants.Proxy.TARGET_VARIABLE_NAME] = 'selectedAccordion';
 				parameters[CMDBuild.core.constants.Proxy.ATTRIBUTE_PATH] = attributePath;
@@ -130,9 +134,11 @@
 			/**
 			 * @param {Object} parameters
 			 *
+			 * @returns {Void}
+			 *
 			 * @private
 			 */
-			userAndGroupSelectedAccordionSet: function(parameters) {
+			userAndGroupSelectedAccordionSet: function (parameters) {
 				if (!Ext.Object.isEmpty(parameters)) {
 					parameters[CMDBuild.core.constants.Proxy.MODEL_NAME] = 'CMDBuild.model.userAndGroup.SelectedAccordion';
 					parameters[CMDBuild.core.constants.Proxy.TARGET_VARIABLE_NAME] = 'selectedAccordion';

@@ -1,4 +1,4 @@
-(function() {
+(function () {
 
 	Ext.define('CMDBuild.view.administration.userAndGroup.group.users.GridPanel', {
 		extend: 'Ext.grid.Panel',
@@ -17,7 +17,12 @@
 		frame: false,
 		flex: 1,
 
-		initComponent: function() {
+		/**
+		 * @returns {Void}
+		 *
+		 * @override
+		 */
+		initComponent: function () {
 			Ext.apply(this, {
 				columns: [
 					{

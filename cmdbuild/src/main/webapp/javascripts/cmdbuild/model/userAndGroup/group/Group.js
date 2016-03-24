@@ -1,4 +1,4 @@
-(function() {
+(function () {
 
 	Ext.require('CMDBuild.core.constants.Proxy');
 
@@ -22,7 +22,7 @@
 		/**
 		 * @param {Object} data
 		 */
-		constructor: function(data) {
+		constructor: function (data) {
 			this.callParent(arguments);
 
 			// StartingClass filter (waiting server refactor)

@@ -1,4 +1,4 @@
-(function() {
+(function () {
 
 	Ext.define('CMDBuild.view.administration.userAndGroup.group.userInterface.FormPanel', {
 		extend: 'Ext.form.Panel',
@@ -26,6 +26,11 @@
 			align: 'stretch'
 		},
 
+		/**
+		 * @returns {Void}
+		 *
+		 * @override
+		 */
 		initComponent: function () {
 			Ext.apply(this, {
 				dockedItems: [

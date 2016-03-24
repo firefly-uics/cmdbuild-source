@@ -1,4 +1,4 @@
-(function() {
+(function () {
 
 	Ext.define('CMDBuild.core.proxy.userAndGroup.group.Users', {
 
@@ -13,7 +13,7 @@
 		/**
 		 * @returns {Ext.data.Store}
 		 */
-		getGroupsUserStore: function(parameters) {
+		getGroupsUserStore: function (parameters) {
 			return Ext.create('Ext.data.Store', {
 				autoLoad: false,
 				model: 'CMDBuild.model.userAndGroup.group.UsersGrid',
@@ -34,7 +34,7 @@
 		/**
 		 * @param {Object} parameters
 		 */
-		update: function(parameters) {
+		update: function (parameters) {
 			parameters = Ext.isEmpty(parameters) ? {} : parameters;
 
 			Ext.apply(parameters, { url: CMDBuild.core.proxy.Index.group.users.saveGroupUserList });
@@ -44,3 +44,4 @@
 	});
 
 })();
+

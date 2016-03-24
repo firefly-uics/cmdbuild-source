@@ -1,4 +1,4 @@
-(function() {
+(function () {
 
 	Ext.define('CMDBuild.core.proxy.userAndGroup.group.DefaultFilters', {
 

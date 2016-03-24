@@ -1,4 +1,4 @@
-(function() {
+(function () {
 
 	Ext.require('CMDBuild.core.constants.Proxy');
 
@@ -30,7 +30,7 @@
 			 *
 			 * @returns {Object} data
 			 */
-			convertFromLegacy: function(data) {
+			convertFromLegacy: function (data) {
 				data = data || {};
 
 				if (Ext.isEmpty(data[CMDBuild.core.constants.Proxy.BULK_UPDATE]))
@@ -49,9 +49,11 @@
 		/**
 		 * @param {Object} data
 		 *
+		 * @returns {Void}
+		 *
 		 * @override
 		 */
-		constructor: function(data) {
+		constructor: function (data) {
 			data = CMDBuild.model.configuration.userInterface.DisabledModules.convertFromLegacy(data);
 
 			this.callParent(arguments);

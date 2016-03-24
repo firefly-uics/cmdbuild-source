@@ -17,6 +17,11 @@
 		cls: 'cmdb-border-bottom',
 		frame: false,
 
+		/**
+		 * @returns {Void}
+		 *
+		 * @override
+		 */
 		initComponent: function () {
 			Ext.apply(this, {
 				columns: [

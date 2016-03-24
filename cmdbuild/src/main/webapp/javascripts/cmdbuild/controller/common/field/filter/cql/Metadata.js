@@ -1,4 +1,4 @@
-(function() {
+(function () {
 
 	Ext.define('CMDBuild.controller.common.field.filter.cql.Metadata', {
 		extend: 'CMDBuild.controller.common.abstract.Base',
@@ -35,7 +35,7 @@
 		 *
 		 * @override
 		 */
-		constructor: function(configurationObject) {
+		constructor: function (configurationObject) {
 			this.callParent(arguments);
 
 			this.view = Ext.create('CMDBuild.view.common.field.filter.cql.MetadataWindow', {
@@ -46,14 +46,14 @@
 			this.grid = this.view.grid;
 		},
 
-		onMetadataWindowAbortButtonClick: function() {
+		onMetadataWindowAbortButtonClick: function () {
 			this.view.hide();
 		},
 
-		onMetadataWindowSaveButtonClick: function() {
+		onMetadataWindowSaveButtonClick: function () {
 			var gridData = {};
 
-			this.grid.getStore().each(function(record) {
+			this.grid.getStore().each(function (record) {
 				gridData[record.get(CMDBuild.core.constants.Proxy.KEY)] = record.get(CMDBuild.core.constants.Proxy.VALUE);
 			}, this);
 
@@ -68,11 +68,11 @@
 		/**
 		 * Loads data object in store
 		 */
-		onMetadataWindowShow: function() {
+		onMetadataWindowShow: function () {
 			if (!this.cmfg('fieldFilterCqlFilterIsAttributeEmpty', CMDBuild.core.constants.Proxy.CONTEXT)) {
 				this.grid.getStore().removeAll();
 
-				Ext.Object.each(this.cmfg('fieldFilterCqlFilterGet', CMDBuild.core.constants.Proxy.CONTEXT), function(key, value, myself) {
+				Ext.Object.each(this.cmfg('fieldFilterCqlFilterGet', CMDBuild.core.constants.Proxy.CONTEXT), function (key, value, myself) {
 					var recordConf = {};
 					recordConf[CMDBuild.core.constants.Proxy.KEY] = key;
 					recordConf[CMDBuild.core.constants.Proxy.VALUE] = value;
@@ -85,7 +85,7 @@
 		/**
 		 * Forward method
 		 */
-		show: function() {
+		show: function () {
 			if (!Ext.isEmpty(this.view))
 				this.view.show();
 		}

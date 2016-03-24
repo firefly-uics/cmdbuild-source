@@ -1,4 +1,4 @@
-(function() {
+(function () {
 
 	Ext.define('CMDBuild.controller.administration.userAndGroup.group.Properties', {
 		extend: 'CMDBuild.controller.common.abstract.Base',
@@ -41,9 +41,11 @@
 		 * @param {Object} configurationObject
 		 * @param {CMDBuild.controller.administration.userAndGroup.group.Group} configurationObject.parentDelegate
 		 *
+		 * @returns {Void}
+		 *
 		 * @override
 		 */
-		constructor: function(configurationObject) {
+		constructor: function (configurationObject) {
 			this.callParent(arguments);
 
 			this.view = Ext.create('CMDBuild.view.administration.userAndGroup.group.properties.PropertiesView', { delegate: this });
@@ -52,7 +54,10 @@
 			this.form = this.view.form;
 		},
 
-		onUserAndGroupGroupTabPropertiesAbortButtonClick: function() {
+		/**
+		 * @returns {Void}
+		 */
+		onUserAndGroupGroupTabPropertiesAbortButtonClick: function () {
 			if (this.cmfg('userAndGroupGroupSelectedGroupIsEmpty')) {
 				this.form.reset();
 				this.form.setDisabledModify(true, true, true);
@@ -61,7 +66,10 @@
 			}
 		},
 
-		onUserAndGroupGroupTabPropertiesActiveStateToggleButtonClick: function() {
+		/**
+		 * @returns {Void}
+		 */
+		onUserAndGroupGroupTabPropertiesActiveStateToggleButtonClick: function () {
 			var params = {};
 			params[CMDBuild.core.constants.Proxy.GROUP_ID] = this.cmfg('userAndGroupGroupSelectedGroupGet', CMDBuild.core.constants.Proxy.ID);
 			params[CMDBuild.core.constants.Proxy.IS_ACTIVE] = !this.cmfg('userAndGroupGroupSelectedGroupGet', CMDBuild.core.constants.Proxy.IS_ACTIVE);
@@ -73,7 +81,10 @@
 			});
 		},
 
-		onUserAndGroupGroupTabPropertiesAddButtonClick: function() {
+		/**
+		 * @returns {Void}
+		 */
+		onUserAndGroupGroupTabPropertiesAddButtonClick: function () {
 			this.cmfg('userAndGroupGroupSelectedGroupReset');
 			this.cmfg('onUserAndGroupGroupSetActiveTab');
 
@@ -84,19 +95,26 @@
 
 		/**
 		 * Enable/Disable tab evaluating selected group
+		 *
+		 * @returns {Void}
 		 */
-		onUserAndGroupGroupTabPropertiesGroupSelected: function() {
+		onUserAndGroupGroupTabPropertiesGroupSelected: function () {
 			this.view.setDisabled(this.cmfg('userAndGroupGroupSelectedGroupIsEmpty'));
 		},
 
-		onUserAndGroupGroupTabPropertiesModifyButtonClick: function() {
+		/**
+		 * @returns {Void}
+		 */
+		onUserAndGroupGroupTabPropertiesModifyButtonClick: function () {
 			this.form.setDisabledModify(false);
 		},
 
 		/**
+		 * @returns {Void}
+		 *
 		 * TODO: waiting for a refactor (CRUD)
 		 */
-		onUserAndGroupGroupTabPropertiesSaveButtonClick: function() {
+		onUserAndGroupGroupTabPropertiesSaveButtonClick: function () {
 			if (this.validate(this.form)) { // Validate before save
 				var params = this.form.getData(true);
 
@@ -119,16 +137,18 @@
 		},
 
 		/**
+		 * @returns {Void}
+		 *
 		 * TODO: waiting for refactor (crud)
 		 */
-		onUserAndGroupGrouptabPropertiesShow: function() {
+		onUserAndGroupGrouptabPropertiesShow: function () {
 			if (!this.cmfg('userAndGroupGroupSelectedGroupIsEmpty'))
 				CMDBuild.core.proxy.userAndGroup.group.Group.read({
 					scope: this,
-					success: function(response, options, decodedResponse) {
+					success: function (response, options, decodedResponse) {
 						decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.GROUPS];
 
-						var selectedGroupModel = Ext.Array.findBy(decodedResponse, function(groupObject, i) {
+						var selectedGroupModel = Ext.Array.findBy(decodedResponse, function (groupObject, i) {
 							return this.cmfg('userAndGroupGroupSelectedGroupGet', CMDBuild.core.constants.Proxy.ID) == groupObject[CMDBuild.core.constants.Proxy.ID];
 						}, this);
 
@@ -141,7 +161,7 @@
 							this.form.startingClassCombo.getStore().load({
 								params: params,
 								scope: this,
-								callback: function(records, operation, success) {
+								callback: function (records, operation, success) {
 									this.form.loadRecord(this.cmfg('userAndGroupGroupSelectedGroupGet'));
 									this.form.activeStateToggleButton.setActiveState(this.cmfg('userAndGroupGroupSelectedGroupGet', CMDBuild.core.constants.Proxy.IS_ACTIVE));
 									this.form.setDisabledModify(true, true);
@@ -157,9 +177,11 @@
 		 * @param {Object} options
 		 * @param {Object} decodedResponse
 		 *
+		 * @returns {Void}
+		 *
 		 * @private
 		 */
-		success: function(response, options, decodedResponse) {
+		success: function (response, options, decodedResponse) {
 			this.cmfg('mainViewportAccordionDeselect', this.cmfg('identifierGet'));
 			this.cmfg('mainViewportAccordionControllerUpdateStore', {
 				identifier: this.cmfg('identifierGet'),

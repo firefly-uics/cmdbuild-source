@@ -1,4 +1,4 @@
-(function() {
+(function () {
 
 	Ext.define('CMDBuild.view.administration.userAndGroup.group.userInterface.UserInterfaceView', {
 		extend: 'Ext.panel.Panel',
@@ -19,7 +19,12 @@
 		layout: 'fit',
 		title: CMDBuild.Translation.uiConfiguration,
 
-		initComponent: function() {
+		/**
+		 * @returns {Void}
+		 *
+		 * @override
+		 */
+		initComponent: function () {
 			Ext.apply(this, {
 				items: [
 					this.form = Ext.create('CMDBuild.view.administration.userAndGroup.group.userInterface.FormPanel', { delegate: this.delegate })
@@ -30,7 +35,7 @@
 		},
 
 		listeners: {
-			show: function(panel, eOpts) {
+			show: function (panel, eOpts) {
 				this.delegate.cmfg('onUserAndGroupGroupTabUserInterfaceShow');
 			}
 		}

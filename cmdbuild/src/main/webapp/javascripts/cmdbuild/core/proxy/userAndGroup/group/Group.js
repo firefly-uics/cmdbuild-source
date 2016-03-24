@@ -1,4 +1,4 @@
-(function() {
+(function () {
 
 	Ext.define('CMDBuild.core.proxy.userAndGroup.group.Group', {
 
@@ -14,7 +14,7 @@
 		/**
 		 * @param {Object} parameters
 		 */
-		create: function(parameters) {
+		create: function (parameters) {
 			parameters = Ext.isEmpty(parameters) ? {} : parameters;
 
 			Ext.apply(parameters, { url: CMDBuild.core.proxy.Index.group.create });
@@ -25,7 +25,7 @@
 		/**
 		 * @param {Object} parameters
 		 */
-		enableDisable: function(parameters) {
+		enableDisable: function (parameters) {
 			parameters = Ext.isEmpty(parameters) ? {} : parameters;
 
 			Ext.apply(parameters, { url: CMDBuild.core.proxy.Index.group.enableDisableGroup });
@@ -36,7 +36,7 @@
 		/**
 		 * @returns {Ext.data.Store or CMDBuild.core.cache.Store}
 		 */
-		getStartingClassStore: function() {
+		getStartingClassStore: function () {
 			return CMDBuild.global.Cache.requestAsStore(CMDBuild.core.constants.Proxy.CLASS, {
 				autoLoad: false,
 				model: 'CMDBuild.model.userAndGroup.group.StartingClass',
@@ -54,7 +54,7 @@
 					}
 				},
 				filters: [
-					function(record) { // Filters root of all classes
+					function (record) { // Filters root of all classes
 						return record.get(CMDBuild.core.constants.Proxy.NAME) != 'Class';
 					}
 				],
@@ -67,7 +67,7 @@
 		/**
 		 * @returns {Ext.data.ArrayStore}
 		 */
-		getTypeStore: function() {
+		getTypeStore: function () {
 			return Ext.create('Ext.data.ArrayStore', {
 				fields: [CMDBuild.core.constants.Proxy.VALUE, CMDBuild.core.constants.Proxy.DESCRIPTION],
 				data: [
@@ -81,7 +81,7 @@
 		/**
 		 * @param {Object} parameters
 		 */
-		getUIConfiguration: function(parameters) {
+		getUIConfiguration: function (parameters) {
 			parameters = Ext.isEmpty(parameters) ? {} : parameters;
 
 			Ext.apply(parameters, {
@@ -95,7 +95,7 @@
 		/**
 		 * @param {Object} parameters
 		 */
-		read: function(parameters) {
+		read: function (parameters) {
 			parameters = Ext.isEmpty(parameters) ? {} : parameters;
 
 			Ext.apply(parameters, { url: CMDBuild.core.proxy.Index.group.read });
@@ -106,7 +106,7 @@
 		/**
 		 * @param {Object} parameters
 		 */
-		readAll: function(parameters) {
+		readAll: function (parameters) {
 			parameters = Ext.isEmpty(parameters) ? {} : parameters;
 
 			Ext.apply(parameters, { url: CMDBuild.core.proxy.Index.group.readAll });
@@ -117,7 +117,7 @@
 		/**
 		 * @param {Object} parameters
 		 */
-		update: function(parameters) {
+		update: function (parameters) {
 			parameters = Ext.isEmpty(parameters) ? {} : parameters;
 
 			Ext.apply(parameters, { url: CMDBuild.core.proxy.Index.group.update });

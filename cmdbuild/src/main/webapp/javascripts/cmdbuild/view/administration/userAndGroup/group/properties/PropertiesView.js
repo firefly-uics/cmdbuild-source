@@ -1,4 +1,4 @@
-(function() {
+(function () {
 
 	Ext.define('CMDBuild.view.administration.userAndGroup.group.properties.PropertiesView', {
 		extend: 'Ext.panel.Panel',
@@ -19,7 +19,12 @@
 		layout: 'fit',
 		title: CMDBuild.Translation.properties,
 
-		initComponent: function() {
+		/**
+		 * @returns {Void}
+		 *
+		 * @override
+		 */
+		initComponent: function () {
 			Ext.apply(this, {
 				items: [
 					this.form = Ext.create('CMDBuild.view.administration.userAndGroup.group.properties.FormPanel', { delegate: this.delegate })
@@ -30,7 +35,7 @@
 		},
 
 		listeners: {
-			show: function(panel, eOpts) {
+			show: function (panel, eOpts) {
 				this.delegate.cmfg('onUserAndGroupGrouptabPropertiesShow');
 			}
 		}

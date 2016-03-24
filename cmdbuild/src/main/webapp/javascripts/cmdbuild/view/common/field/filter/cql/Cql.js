@@ -1,4 +1,4 @@
-(function() {
+(function () {
 
 	Ext.define('CMDBuild.view.common.field.filter.cql.Cql', {
 		extend: 'Ext.form.FieldContainer',
@@ -37,7 +37,12 @@
 			align: 'stretch'
 		},
 
-		initComponent: function() {
+		/**
+		 * @returns {Void}
+		 *
+		 * @override
+		 */
+		initComponent: function () {
 			this.delegate = Ext.create('CMDBuild.controller.common.field.filter.cql.Cql', { view: this });
 
 			Ext.apply(this, {
@@ -51,7 +56,7 @@
 						maxWidth: this.buttonLabel.length * 10,
 						scope: this,
 
-						handler: function(button, e) {
+						handler: function (button, e) {
 							this.delegate.cmfg('onFieldFilterCqlMetadataButtonClick');
 						}
 					})
@@ -62,18 +67,22 @@
 		},
 
 		/**
+		 * @returns {Void}
+		 *
 		 * @override
 		 */
-		disable: function() {
+		disable: function () {
 			this.delegate.cmfg('onFieldFilterCqlDisable');
 
 			this.callParent(arguments);
 		},
 
 		/**
+		 * @returns {Void}
+		 *
 		 * @override
 		 */
-		enable: function() {
+		enable: function () {
 			this.delegate.cmfg('onFieldFilterCqlEnable');
 
 			this.callParent(arguments);
@@ -82,25 +91,29 @@
 		/**
 		 * @returns {Object}
 		 */
-		getValue: function() {
+		getValue: function () {
 			return this.delegate.cmfg('onFieldFilterCqlGetValue');
 		},
 
 		/**
 		 * @param {Boolean} state
 		 *
+		 * @returns {CMDBuild.view.common.field.filter.cql.Cql}
+		 *
 		 * @override
 		 */
-		setDisabled: function(state) {
+		setDisabled: function (state) {
 			this.delegate.cmfg('onFieldFilterCqlSetDisabled', state);
 
-			this.callParent(arguments);
+			return this.callParent(arguments);
 		},
 
 		/**
 		 * @param {Object} value
+		 *
+		 * @returns {Void}
 		 */
-		setValue: function(value) {
+		setValue: function (value) {
 			this.delegate.cmfg('onFieldFilterCqlSetValue', value);
 		}
 	});
