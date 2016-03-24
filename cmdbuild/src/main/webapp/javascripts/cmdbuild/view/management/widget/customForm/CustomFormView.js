@@ -1,4 +1,4 @@
-(function() {
+(function () {
 
 	Ext.define('CMDBuild.view.management.widget.customForm.CustomFormView', {
 		extend: 'Ext.panel.Panel',

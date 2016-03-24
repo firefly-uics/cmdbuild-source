@@ -1,4 +1,4 @@
-(function() {
+(function () {
 
 	Ext.define('CMDBuild.controller.management.widget.customForm.CustomForm', {
 		extend: 'CMDBuild.controller.common.abstract.Widget',
@@ -77,14 +77,14 @@
 			 *
 			 * @private
 			 */
-			isAlreadyDisplayed: function() {
+			isAlreadyDisplayed: function () {
 				return this.alreadyDisplayed;
 			},
 
 			/**
 			 * @private
 			 */
-			alreadyDisplayedSet: function() {
+			alreadyDisplayedSet: function () {
 				this.alreadyDisplayed = true;
 			},
 
@@ -95,13 +95,13 @@
 		 *
 		 * @private
 		 */
-		applyTemplateResolverToArray: function(target) {
+		applyTemplateResolverToArray: function (target) {
 			target = CMDBuild.core.Utils.isJsonString(target) ? Ext.decode(target) : target;
 			target = Ext.isArray(target) ? target : [target];
 
 			var decodedOutput = [];
 
-			Ext.Array.forEach(target, function(object, i, allObjects) {
+			Ext.Array.forEach(target, function (object, i, allObjects) {
 				new CMDBuild.Management.TemplateResolver({
 					clientForm: this.clientForm,
 					xaVars: object,
@@ -109,7 +109,7 @@
 				}).resolveTemplates({
 					attributes: Ext.Object.getKeys(object),
 					scope: this,
-					callback: function(out, ctx) {
+					callback: function (out, ctx) {
 						decodedOutput.push(out);
 					}
 				});
@@ -125,7 +125,7 @@
 		 *
 		 * @private
 		 */
-		applyTemplateResolverToObject: function(target) {
+		applyTemplateResolverToObject: function (target) {
 			target = CMDBuild.core.Utils.isJsonString(target) ? Ext.decode(target) : target;
 
 			var decodedOutput = {};
@@ -140,11 +140,11 @@
 				templateResolver.resolveTemplates({
 					attributes: Ext.Object.getKeys(target),
 					scope: this,
-					callback: function(out, ctx) {
+					callback: function (out, ctx) {
 						decodedOutput = out;
 
 						// Apply change event to reset data property in widgetConfiguration to avoid sql function server call
-						templateResolver.bindLocalDepsChange(function() {
+						templateResolver.bindLocalDepsChange(function () {
 							this.instancesDataStorageSet(); // Reset widget instance data storage
 						}, this);
 					}
@@ -156,7 +156,7 @@
 		/**
 		 * @private
 		 */
-		buildDataConfigurationFromFunction: function() {
+		buildDataConfigurationFromFunction: function () {
 			if (
 				!this.cmfg('widgetCustomFormConfigurationIsEmpty', CMDBuild.core.constants.Proxy.FUNCTION_DATA)
 				&& this.isRefreshNeeded()
@@ -168,13 +168,13 @@
 				CMDBuild.core.proxy.widget.CustomForm.readFromFunctions({
 					params: params,
 					scope: this,
-					success: function(response, options, decodedResponse) {
+					success: function (response, options, decodedResponse) {
 						decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.CARDS];
 
 						// Save function response to instance data storage
 						this.instancesDataStorageSet(decodedResponse);
 					},
-					callback: function(options, success, response) {
+					callback: function (options, success, response) {
 						this.buildLayout();
 					}
 				});
@@ -186,7 +186,7 @@
 		 *
 		 * @private
 		 */
-		buildLayout: function() {
+		buildLayout: function () {
 			if (!this.cmfg('widgetCustomFormConfigurationIsEmpty', CMDBuild.core.constants.Proxy.MODEL)) {
 				switch (this.cmfg('widgetCustomFormConfigurationGet', CMDBuild.core.constants.Proxy.LAYOUT)) {
 					case 'form': {
@@ -218,7 +218,7 @@
 		 *
 		 * @private
 		 */
-		isRefreshNeeded: function() {
+		isRefreshNeeded: function () {
 			switch (
 				this.cmfg('widgetCustomFormConfigurationGet', [
 					CMDBuild.core.constants.Proxy.CAPABILITIES,
@@ -237,7 +237,7 @@
 		/**
 		 * @override
 		 */
-		onWidgetCustomFormBeforeActiveView: function() {
+		onWidgetCustomFormBeforeActiveView: function () {
 			this.beforeActiveView(arguments); // CallParent alias
 
 			// Execute template resolver on model property
@@ -270,7 +270,7 @@
 		 *
 		 * @override
 		 */
-		onWidgetCustomFormEditMode: function() {
+		onWidgetCustomFormEditMode: function () {
 			this.instancesDataStorageSet(this.cmfg('widgetCustomFormConfigurationGet', CMDBuild.core.constants.Proxy.DATA));
 
 			this.cmfg('onWidgetCustomFormBeforeActiveView');
@@ -281,7 +281,7 @@
 		 *
 		 * @override
 		 */
-		onWidgetCustomFormBeforeHideView: function() {
+		onWidgetCustomFormBeforeHideView: function () {
 			this.instancesDataStorageSet(this.cmfg('widgetCustomFormLayoutControllerDataGet'));
 
 			this.beforeHideView(arguments); // CallParent alias
@@ -292,7 +292,7 @@
 		 *
 		 * @override
 		 */
-		widgetCustomFormGetData: function() {
+		widgetCustomFormGetData: function () {
 			var output = {};
 			output[CMDBuild.core.constants.Proxy.OUTPUT] = [];
 
@@ -303,7 +303,7 @@
 				])
 			) {
 				// Uses direct data property access to avoid a get problem because of generic model
-				Ext.Array.forEach(this.cmfg('widgetCustomFormLayoutControllerDataGet'), function(rowObject, i, allRowObjects) {
+				Ext.Array.forEach(this.cmfg('widgetCustomFormLayoutControllerDataGet'), function (rowObject, i, allRowObjects) {
 					var dataObject = Ext.isEmpty(rowObject.data) ? rowObject : rowObject.data; // Model/Objects management
 
 					new CMDBuild.Management.TemplateResolver({
@@ -313,7 +313,7 @@
 					}).resolveTemplates({
 						attributes: Ext.Object.getKeys(dataObject),
 						scope: this,
-						callback: function(out, ctx) {
+						callback: function (out, ctx) {
 							if (Ext.isObject(out))
 								output[CMDBuild.core.constants.Proxy.OUTPUT].push(Ext.encode(out));
 						}
@@ -329,17 +329,17 @@
 		 *
 		 * @override
 		 */
-		widgetCustomFormIsValid: function() {
+		widgetCustomFormIsValid: function () {
 			return Ext.isEmpty(this.controllerLayout) ? this.isValid() : this.cmfg('widgetCustomFormLayoutControllerIsValid');
 		},
 
 		/**
 		 * @returns {Ext.data.ArrayStore}
 		 */
-		widgetCustomFormModelStoreBuilder: function() {
+		widgetCustomFormModelStoreBuilder: function () {
 			var columnsData = [];
 
-			Ext.Array.forEach(this.cmfg('widgetCustomFormConfigurationGet', CMDBuild.core.constants.Proxy.MODEL), function(attributeModel, i, allAttributeModels) {
+			Ext.Array.forEach(this.cmfg('widgetCustomFormConfigurationGet', CMDBuild.core.constants.Proxy.MODEL), function (attributeModel, i, allAttributeModels) {
 				if (!Ext.isEmpty(attributeModel))
 					columnsData.push([
 						attributeModel.get(CMDBuild.core.constants.Proxy.NAME),
@@ -360,7 +360,7 @@
 		/**
 		 * @param {Boolean} state
 		 */
-		widgetCustomFormViewSetLoading: function(state) {
+		widgetCustomFormViewSetLoading: function (state) {
 			state = Ext.isBoolean(state) ? state : false;
 
 			this.view.setLoading(state);

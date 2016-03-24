@@ -1,4 +1,4 @@
-(function() {
+(function () {
 
 	Ext.define('CMDBuild.view.management.widget.customForm.export.ExportWindow', {
 		extend: 'CMDBuild.core.PopupWindow',
@@ -20,7 +20,10 @@
 		defaultSizeW: 0.90,
 		title: CMDBuild.Translation.exportLabel,
 
-		initComponent: function() {
+		/**
+		 * @override
+		 */
+		initComponent: function () {
 			Ext.apply(this, {
 				dockedItems: [
 					Ext.create('Ext.toolbar.Toolbar', {
@@ -38,14 +41,14 @@
 							Ext.create('CMDBuild.core.buttons.text.Export', {
 								scope: this,
 
-								handler: function(button, e) {
+								handler: function (button, e) {
 									this.delegate.cmfg('onWidgetCustomFormExportExportButtonClick');
 								}
 							}),
 							Ext.create('CMDBuild.core.buttons.text.Abort', {
 								scope: this,
 
-								handler: function(button, e) {
+								handler: function (button, e) {
 									this.delegate.cmfg('onWidgetCustomFormExportAbortButtonClick');
 								}
 							})
