@@ -137,6 +137,9 @@
 				// Add default managed functions
 				this.cmfgCatchedFunctions.push('getLabel');
 
+				// Generate a unique ID for widget
+				this.generateWidgetId(configurationObject.widgetConfiguration, configurationObject.card.data);
+
 				this.callParent(arguments);
 
 				// Setup widget configuration
@@ -166,6 +169,15 @@
 		 * @abstract
 		 */
 		beforeHideView: Ext.emptyFn,
+
+		/**
+		 * @returns {String}
+		 *
+		 * @private
+		 */
+		generateWidgetId: function (widgetConfiguration, cardData) {
+			widgetConfiguration[CMDBuild.core.constants.Proxy.ID] = cardData[CMDBuild.core.constants.Proxy.ID] + '-' + widgetConfiguration[CMDBuild.core.constants.Proxy.ID];
+		},
 
 		/**
 		 * @returns {Object or null}

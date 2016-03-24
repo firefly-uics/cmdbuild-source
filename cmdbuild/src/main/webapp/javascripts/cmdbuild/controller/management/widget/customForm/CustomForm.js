@@ -282,7 +282,6 @@
 		 * @override
 		 */
 		onWidgetCustomFormBeforeHideView: function() {
-_debug('onWidgetCustomFormBeforeHideView', this.cmfg('widgetCustomFormLayoutControllerDataGet'));
 			this.instancesDataStorageSet(this.cmfg('widgetCustomFormLayoutControllerDataGet'));
 
 			this.beforeHideView(arguments); // CallParent alias
