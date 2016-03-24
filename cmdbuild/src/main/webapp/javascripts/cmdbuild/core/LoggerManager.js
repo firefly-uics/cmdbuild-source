@@ -41,7 +41,7 @@
 			if (!Ext.isEmpty(method))
 				CMDBuild.log.warn.apply(
 					CMDBuild.log,
-					Ext.Array.insert(Ext.Array.slice(arguments, 1), 0, ['DEPRECATED (' + classWithError + '): ' + method]) // Slice arguments and prepend custom error message
+					Ext.Array.insert(Ext.Array.slice(arguments, 2), 0, ['DEPRECATED (' + classWithError + '): ' + method]) // Slice arguments and prepend custom error message
 				);
 		};
 
@@ -55,7 +55,7 @@
 			if (!Ext.isEmpty(message))
 				CMDBuild.log.error.apply(
 					CMDBuild.log,
-					Ext.Array.insert(Ext.Array.slice(arguments, 1), 0, [classWithError + ': ' + message]) // Slice arguments and prepend custom error message
+					Ext.Array.insert(Ext.Array.slice(arguments, 2), 0, [classWithError + ': ' + message]) // Slice arguments and prepend custom error message
 				);
 		};
 
@@ -80,7 +80,7 @@
 			if (!Ext.isEmpty(message))
 				CMDBuild.log.warn.apply(
 					CMDBuild.log,
-					Ext.Array.insert(Ext.Array.slice(arguments, 1), 0, [classWithError + ': ' + message]) // Slice arguments and prepend custom error message
+					Ext.Array.insert(Ext.Array.slice(arguments, 2), 0, [classWithError + ': ' + message]) // Slice arguments and prepend custom error message
 				);
 		};
 
