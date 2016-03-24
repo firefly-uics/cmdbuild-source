@@ -34,27 +34,6 @@
 				}
 			} while (true);
 		};
-		this.initialAngle = function(nChildren) {
-			var a = this.getFactors(nChildren, 1);
-			if (a === 0) {
-				a = 1;
-			}
-			var b = parseInt(nChildren / a + 1);
-			if (b === 0) {
-				b = 1;
-			}
-			return {
-				theta : 0,
-				phi : 0 + (Math.PI) / b,//STARTPHI,
-				gamma : 0,
-				thetaSteps : a,
-				phiSteps : b,
-				gammaSteps : 0,
-				dTheta : (2 * Math.PI) / a,
-				dPhi : (Math.PI) / (b +2),
-				dGamma : 0
-			};
-		};
 		this.initialLittleAngle = function(nChildren, nChildrenWithChildren,
 				isRoot) {
 			return {
@@ -71,12 +50,36 @@
 						/ nChildrenWithChildren
 			};
 		};
-		this.getActualAngle = function(angle, index) {
-			var thetaIndex = parseInt(index	% angle.thetaSteps);
-			var phiIndex = parseInt((index) % angle.phiSteps);
+		this.initialAngle = function(nChildren) {
+			var nRows = this.getFactors(nChildren, 1);
+			if (nRows === 0) {
+				nRows = 1;
+			}
+			var nColumns = parseInt(nChildren / nRows);
+			if (nColumns * nRows < nChildren) {
+				nColumns += 1;
+			}
 			return {
-				theta : angle.theta + angle.dTheta * thetaIndex,
-				phi : angle.phi + angle.dPhi * phiIndex,
+				nRows : nRows,
+				nColumns : nColumns,
+				nChildren : nChildren,
+				theta : 0,
+				phi : Math.PI / (nRows + 2),
+				gamma : 0,
+				thetaSteps : nColumns,
+				phiSteps : nRows,
+				gammaSteps : 0,
+				dTheta : (2 * Math.PI) / nColumns,
+				dPhi : Math.PI / (nRows + 2),
+				dGamma : 0
+			};
+		};
+		this.getActualAngle = function(angle, index) {
+			return {
+				theta : angle.theta + angle.dTheta
+						* parseInt(index % angle.nColumns),
+				phi : angle.phi + angle.dPhi
+						* parseInt(index / angle.nColumns + 1),
 				gamma : 0
 			};
 		};
@@ -95,13 +98,20 @@
 		};
 
 		this.getNodeQuaternion = function(angle) {
+			var quaternion = new THREE.Quaternion()
+			var m1 = new THREE.Matrix4();
+			var m2 = new THREE.Matrix4();
+			m1.makeRotationZ(angle.theta);
+			m2.makeRotationX(Math.PI - angle.phi);
+			m1.multiply(m2);
+			quaternion.setFromRotationMatrix(m1);
+			return quaternion;
+		};
+		this.getNodeQuaternionLil = function(angle) {
 			var quaternion = new THREE.Quaternion();
 			var order = (angle.gamma) ? "ZYX" : "ZYX";
 			var euler = new THREE.Euler(0, angle.phi, angle.theta, order);
 			quaternion.setFromEuler(euler);
-			var quaternionLilAngle = new THREE.Quaternion();
-			quaternionLilAngle.setFromAxisAngle(new THREE.Vector3(0, 0, 1),
-					angle.gamma);
 			return quaternion;
 		};
 		this.openChildren = function(node, isRoot) {
@@ -129,7 +139,7 @@
 				$.Cmdbuild.g3d.Model
 						.setGraphData(children[i], "isRoot", isRoot);
 				if (areChildren && !isRoot) {
-					q = this.getNodeQuaternion(this.getActualLittleAngle(
+					q = this.getNodeQuaternionLil(this.getActualLittleAngle(
 							littleAngle, i, indexWithChildren, isRoot));
 					var lilAngle = this.getActualLittleAngle(littleAngle, i,
 							indexWithChildren, isRoot);
@@ -142,7 +152,8 @@
 							"quaternion", qLilAngle);
 
 				} else {
-					q = this.getNodeQuaternion(this.getActualAngle(angle, i));
+					q = this
+							.getNodeQuaternion(this.getActualAngle(angle, i));
 					vectorPosition.applyQuaternion(q);
 					$.Cmdbuild.g3d.Model.setGraphData(children[i],
 							"quaternion", q);
