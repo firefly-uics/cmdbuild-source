@@ -288,7 +288,7 @@
 		},
 
 		/**
-		 * @return {Object} output
+		 * @returns {Object} output
 		 *
 		 * @override
 		 */
