@@ -1,4 +1,4 @@
-(function() {
+(function () {
 
 	Ext.define('CMDBuild.view.administration.userAndGroup.group.defaultFilters.DefaultFiltersView', {
 		extend: 'Ext.panel.Panel',
@@ -20,6 +20,11 @@
 		layout: 'fit',
 		title: CMDBuild.Translation.defaultFilters,
 
+		/**
+		 * @returns {Void}
+		 *
+		 * @override
+		 */
 		initComponent: function () {
 			Ext.apply(this, {
 				dockedItems: [

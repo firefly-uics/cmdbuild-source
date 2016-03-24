@@ -1,4 +1,4 @@
-(function() {
+(function () {
 
 	Ext.define('CMDBuild.view.administration.userAndGroup.group.privileges.tabs.Classes', {
 		extend: 'Ext.grid.Panel',
@@ -18,7 +18,12 @@
 		frame: false,
 		title: CMDBuild.Translation.classes,
 
-		initComponent: function() {
+		/**
+		 * @returns {Void}
+		 *
+		 * @override
+		 */
+		initComponent: function () {
 			Ext.apply(this, {
 				columns: [
 					Ext.create('Ext.grid.column.Column', {
@@ -38,10 +43,10 @@
 
 						listeners: {
 							scope: this,
-							beforecheckchange: function(column, rowIndex, checked, eOpts) { // CheckColumn cannot be unchecked
+							beforecheckchange: function (column, rowIndex, checked, eOpts) { // CheckColumn cannot be unchecked
 								return checked;
 							},
-							checkchange: function(column, rowIndex, checked, eOpts) {
+							checkchange: function (column, rowIndex, checked, eOpts) {
 								this.delegate.cmfg('onUserAndGroupGroupTabPrivilegesTabClassesSetPrivilege', {
 									rowIndex: rowIndex,
 									privilege: 'none_privilege'
@@ -61,10 +66,10 @@
 
 						listeners: {
 							scope: this,
-							beforecheckchange: function(column, rowIndex, checked, eOpts) { // CheckColumn cannot be unchecked
+							beforecheckchange: function (column, rowIndex, checked, eOpts) { // CheckColumn cannot be unchecked
 								return checked;
 							},
-							checkchange: function(column, rowIndex, checked, eOpts) {
+							checkchange: function (column, rowIndex, checked, eOpts) {
 								this.delegate.cmfg('onUserAndGroupGroupTabPrivilegesTabClassesSetPrivilege', {
 									rowIndex: rowIndex,
 									privilege: 'read_privilege'
@@ -84,10 +89,10 @@
 
 						listeners: {
 							scope: this,
-							beforecheckchange: function(column, rowIndex, checked, eOpts) { // CheckColumn cannot be unchecked
+							beforecheckchange: function (column, rowIndex, checked, eOpts) { // CheckColumn cannot be unchecked
 								return checked;
 							},
-							checkchange: function(column, rowIndex, checked, eOpts) {
+							checkchange: function (column, rowIndex, checked, eOpts) {
 								this.delegate.cmfg('onUserAndGroupGroupTabPrivilegesTabClassesSetPrivilege', {
 									rowIndex: rowIndex,
 									privilege: 'write_privilege'
@@ -109,7 +114,7 @@
 								tooltip: CMDBuild.Translation.rowAndColumnPrivileges,
 								scope: this,
 
-								handler: function(grid, rowIndex, colIndex, node, e, record, rowNode) {
+								handler: function (grid, rowIndex, colIndex, node, e, record, rowNode) {
 									this.delegate.cmfg('onUserAndGroupGroupTabPrivilegesTabClassesSetFilterClick', record);
 								}
 							}),
@@ -118,7 +123,7 @@
 								tooltip: CMDBuild.Translation.clearRowAndColumnPrivilege,
 								scope: this,
 
-								handler: function(grid, rowIndex, colIndex, node, e, record, rowNode) {
+								handler: function (grid, rowIndex, colIndex, node, e, record, rowNode) {
 									this.delegate.cmfg('onUserAndGroupGroupTabPrivilegesTabClassesRemoveFilterClick', record);
 								}
 							}),
@@ -127,11 +132,11 @@
 								tooltip: CMDBuild.Translation.uiConfigurationForGroups,
 								scope: this,
 
-								isDisabled: function(grid, rowIndex, colIndex, item, record) {
+								isDisabled: function (grid, rowIndex, colIndex, item, record) {
 									return !_CMCache.isClassById(record.get(CMDBuild.core.constants.Proxy.ID));
 								},
 
-								handler: function(grid, rowIndex, colIndex, node, e, record, rowNode) {
+								handler: function (grid, rowIndex, colIndex, node, e, record, rowNode) {
 									this.delegate.cmfg('onUserAndGroupGroupTabPrivilegesTabClassesUIConfigurationButtonClick', record);
 								}
 							})
@@ -145,7 +150,7 @@
 		},
 
 		listeners: {
-			show: function(panel, eOpts) {
+			show: function (panel, eOpts) {
 				this.delegate.cmfg('onUserAndGroupGroupTabPrivilegesTabClassesShow');
 			}
 		}

@@ -1,4 +1,4 @@
-(function() {
+(function () {
 
 	Ext.define('CMDBuild.view.administration.userAndGroup.group.properties.FormPanel', {
 		extend: 'Ext.form.Panel',
@@ -42,7 +42,12 @@
 			align:'stretch'
 		},
 
-		initComponent: function() {
+		/**
+		 * @returns {Void}
+		 *
+		 * @override
+		 */
+		initComponent: function () {
 			Ext.apply(this, {
 				dockedItems: [
 					Ext.create('Ext.toolbar.Toolbar', {
@@ -54,7 +59,7 @@
 								text: CMDBuild.Translation.modifyGroup,
 								scope: this,
 
-								handler: function(button, e) {
+								handler: function (button, e) {
 									this.delegate.cmfg('onUserAndGroupGroupTabPropertiesModifyButtonClick');
 								}
 							}),
@@ -63,7 +68,7 @@
 								state2text: CMDBuild.Translation.enableGroup,
 								scope: this,
 
-								handler: function(button, e) {
+								handler: function (button, e) {
 									this.delegate.cmfg('onUserAndGroupGroupTabPropertiesActiveStateToggleButtonClick', button.getActiveState());
 								}
 							})
@@ -84,14 +89,14 @@
 							Ext.create('CMDBuild.core.buttons.text.Save', {
 								scope: this,
 
-								handler: function(button, e) {
+								handler: function (button, e) {
 									this.delegate.cmfg('onUserAndGroupGroupTabPropertiesSaveButtonClick');
 								}
 							}),
 							Ext.create('CMDBuild.core.buttons.text.Abort', {
 								scope: this,
 
-								handler: function(button, e) {
+								handler: function (button, e) {
 									this.delegate.cmfg('onUserAndGroupGroupTabPropertiesAbortButtonClick');
 								}
 							})

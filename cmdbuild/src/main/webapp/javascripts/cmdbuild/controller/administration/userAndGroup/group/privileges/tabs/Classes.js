@@ -1,4 +1,4 @@
-(function() {
+(function () {
 
 	Ext.define('CMDBuild.controller.administration.userAndGroup.group.privileges.tabs.Classes', {
 		extend: 'CMDBuild.controller.common.abstract.Base',
@@ -67,9 +67,11 @@
 		 * @param {Object} configurationObject
 		 * @param {CMDBuild.controller.administration.userAndGroup.group.privileges.Privileges} configurationObject.parentDelegate
 		 *
+		 * @returns {Void}
+		 *
 		 * @override
 		 */
-		constructor: function(configurationObject) {
+		constructor: function (configurationObject) {
 			this.callParent(arguments);
 
 			this.view = Ext.create('CMDBuild.view.administration.userAndGroup.group.privileges.tabs.Classes', { delegate: this });
@@ -97,9 +99,11 @@
 		 * @param {Object} resultObject.columnPrivileges
 		 * @param {Object} resultObject.filter
 		 *
+		 * @returns {Void}
+		 *
 		 * @override
 		 */
-		onUserAndGroupGroupTabPrivilegesTabClassesFieldFilterAdvancedWindowgetEndpoint: function(resultObject) {
+		onUserAndGroupGroupTabPrivilegesTabClassesFieldFilterAdvancedWindowgetEndpoint: function (resultObject) {
 			if (Ext.encode(resultObject.filter).indexOf('"parameterType":"calculated"') < 0) {
 				var params = {};
 				params['privilegedObjectId'] = this.fieldFilterAdvancedSelectedClassGet(CMDBuild.core.constants.Proxy.ID);
@@ -110,7 +114,7 @@
 				CMDBuild.core.proxy.userAndGroup.group.privileges.Classes.setRowAndColumn({
 					params: params,
 					scope: this,
-					success: function(response, options, decodedResponse) {
+					success: function (response, options, decodedResponse) {
 						this.cmfg('onUserAndGroupGroupTabPrivilegesTabClassesShow');
 					}
 				});
@@ -126,16 +130,18 @@
 		/**
 		 * @param {CMDBuild.model.userAndGroup.group.privileges.GridRecord} record
 		 *
+		 * @returns {Void}
+		 *
 		 * TODO: waiting for refactor (attributes names)
 		 */
-		onUserAndGroupGroupTabPrivilegesTabClassesRemoveFilterClick: function(record) {
+		onUserAndGroupGroupTabPrivilegesTabClassesRemoveFilterClick: function (record) {
 			Ext.Msg.show({
 				title: CMDBuild.Translation.attention,
 				msg: CMDBuild.Translation.common.confirmpopup.areyousure,
 				buttons: Ext.Msg.YESNO,
 				scope: this,
 
-				fn: function(buttonId, text, opt) {
+				fn: function (buttonId, text, opt) {
 					if (buttonId == 'yes') {
 						var params = {};
 						params['privilegedObjectId'] = record.get(CMDBuild.core.constants.Proxy.ID);
@@ -145,7 +151,7 @@
 						CMDBuild.core.proxy.userAndGroup.group.privileges.Classes.setRowAndColumn({
 							params: params,
 							scope: this,
-							success: function(response, options, decodedResponse) {
+							success: function (response, options, decodedResponse) {
 								this.cmfg('onUserAndGroupGroupTabPrivilegesTabClassesShow');
 							}
 						});
@@ -156,8 +162,10 @@
 
 		/**
 		 * @param {CMDBuild.model.userAndGroup.group.privileges.GridRecord} record
+		 *
+		 * @returns {Void}
 		 */
-		onUserAndGroupGroupTabPrivilegesTabClassesSetFilterClick: function(record) {
+		onUserAndGroupGroupTabPrivilegesTabClassesSetFilterClick: function (record) {
 			// Filter advanced window configuration
 			this.filter = Ext.create('CMDBuild.model.common.field.filter.advanced.Filter', { // Manual set to avoid label setup
 				configuration: Ext.decode(record.get(CMDBuild.core.constants.Proxy.FILTER) || '{}'),
@@ -174,9 +182,11 @@
 		 * @param {Number} parameters.rowIndex
 		 * @param {String} parameters.privilege
 		 *
+		 * @returns {Void}
+		 *
 		 * TODO: waiting for refactor (attributes names)
 		 */
-		onUserAndGroupGroupTabPrivilegesTabClassesSetPrivilege: function(parameters) {
+		onUserAndGroupGroupTabPrivilegesTabClassesSetPrivilege: function (parameters) {
 			if (!Ext.isEmpty(parameters) && Ext.isObject(parameters)) {
 				var params = {};
 				params['privilege_mode'] = parameters.privilege;
@@ -186,7 +196,7 @@
 				CMDBuild.core.proxy.userAndGroup.group.privileges.Classes.update({
 					params: params,
 					scope: this,
-					success: function(response, options, decodedResponse) {
+					success: function (response, options, decodedResponse) {
 						this.cmfg('onUserAndGroupGroupTabPrivilegesTabClassesShow');
 					}
 				});
@@ -195,7 +205,10 @@
 			}
 		},
 
-		onUserAndGroupGroupTabPrivilegesTabClassesShow: function() {
+		/**
+		 * @returns {Void}
+		 */
+		onUserAndGroupGroupTabPrivilegesTabClassesShow: function () {
 			var params = {};
 			params[CMDBuild.core.constants.Proxy.GROUP_ID] = this.cmfg('userAndGroupGroupSelectedGroupGet', CMDBuild.core.constants.Proxy.ID);
 
@@ -204,8 +217,10 @@
 
 		/**
 		 * @param {CMDBuild.model.userAndGroup.group.privileges.GridRecord} record
+		 *
+		 * @returns {Void}
 		 */
-		onUserAndGroupGroupTabPrivilegesTabClassesUIConfigurationButtonClick: function(record) {
+		onUserAndGroupGroupTabPrivilegesTabClassesUIConfigurationButtonClick: function (record) {
 			this.controllerUiConfiguration.cmfg('userAndGroupGroupPrivilegesGridUIConfigurationRecordSet', record);
 			this.controllerUiConfiguration.getView().show();
 		}

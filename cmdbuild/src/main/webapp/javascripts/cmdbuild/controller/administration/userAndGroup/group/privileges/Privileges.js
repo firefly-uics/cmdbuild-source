@@ -1,4 +1,4 @@
-(function() {
+(function () {
 
 	Ext.define('CMDBuild.controller.administration.userAndGroup.group.privileges.Privileges', {
 		extend: 'CMDBuild.controller.common.abstract.Base',
@@ -53,9 +53,11 @@
 		 * @param {Object} configurationObject
 		 * @param {CMDBuild.controller.administration.userAndGroup.group.Group} configurationObject.parentDelegate
 		 *
+		 * @returns {Void}
+		 *
 		 * @override
 		 */
-		constructor: function(configurationObject) {
+		constructor: function (configurationObject) {
 			this.callParent(arguments);
 
 			this.view = Ext.create('CMDBuild.view.administration.userAndGroup.group.privileges.PrivilegesView', { delegate: this });
@@ -77,22 +79,28 @@
 
 		/**
 		 * Disable tab on add button click
+		 *
+		 * @returns {Void}
 		 */
-		onUserAndGroupGroupTabPrivilegesAddButtonClick: function() {
+		onUserAndGroupGroupTabPrivilegesAddButtonClick: function () {
 			this.view.disable();
 		},
 
 		/**
 		 * Enable/Disable tab evaluating group privileges, administrator groups have full privileges so panel is disabled
+		 *
+		 * @returns {Void}
 		 */
-		onUserAndGroupGroupTabPrivilegesGroupSelected: function() {
+		onUserAndGroupGroupTabPrivilegesGroupSelected: function () {
 			this.view.setDisabled(this.cmfg('userAndGroupGroupSelectedGroupIsEmpty') || this.cmfg('userAndGroupGroupSelectedGroupGet', CMDBuild.core.constants.Proxy.IS_ADMINISTRATOR));
 		},
 
 		/**
 		 * Evaluate group privileges to set active first tab
+		 *
+		 * @returns {Void}
 		 */
-		onUserAndGroupGroupTabPrivilegesShow: function() {
+		onUserAndGroupGroupTabPrivilegesShow: function () {
 			if (!this.cmfg('userAndGroupGroupSelectedGroupIsEmpty') && this.cmfg('userAndGroupGroupSelectedGroupGet', CMDBuild.core.constants.Proxy.IS_ADMINISTRATOR)) {
 				this.cmfg('onUserAndGroupGroupSetActiveTab');
 			} else {

@@ -1,4 +1,4 @@
-(function() {
+(function () {
 
 	Ext.define('CMDBuild.controller.administration.userAndGroup.group.Users', {
 		extend: 'CMDBuild.controller.common.abstract.Base',
@@ -32,9 +32,11 @@
 		 * @param {Object} configurationObject
 		 * @param {CMDBuild.controller.administration.userAndGroup.group.Group} configurationObject.parentDelegate
 		 *
+		 * @returns {Void}
+		 *
 		 * @override
 		 */
-		constructor: function(configurationObject) {
+		constructor: function (configurationObject) {
 			this.callParent(arguments);
 
 			this.view = Ext.create('CMDBuild.view.administration.userAndGroup.group.users.UsersView', { delegate: this });
@@ -46,25 +48,31 @@
 
 		/**
 		 * Disable tab on add button click
+		 *
+		 * @returns {Void}
 		 */
-		onUserAndGroupGroupTabUsersAddButtonClick: function() {
+		onUserAndGroupGroupTabUsersAddButtonClick: function () {
 			this.view.disable();
 		},
 
 		/**
 		 * Enable/Disable tab evaluating selected group
+		 *
+		 * @returns {Void}
 		 */
-		onUserAndGroupGroupTabUsersGroupSelected: function() {
+		onUserAndGroupGroupTabUsersGroupSelected: function () {
 			this.view.setDisabled(this.cmfg('userAndGroupGroupSelectedGroupIsEmpty'));
 		},
 
 		/**
+		 * @returns {Void}
+		 *
 		 * TODO: waiting for refactor (use an array of id not a string)
 		 */
-		onUserAndGroupGroupTabUsersSaveButtonClick: function() {
+		onUserAndGroupGroupTabUsersSaveButtonClick: function () {
 			var usersIdArray = [];
 
-			Ext.Array.forEach(this.selectedGrid.getStore().getRange(), function(record, i, allRecords) {
+			Ext.Array.forEach(this.selectedGrid.getStore().getRange(), function (record, i, allRecords) {
 				usersIdArray.push(record.get(CMDBuild.core.constants.Proxy.ID));
 			}, this);
 
@@ -75,7 +83,7 @@
 			CMDBuild.core.proxy.userAndGroup.group.Users.update({
 				params: params,
 				scope: this,
-				success: function(response, options, decodedResponse) {
+				success: function (response, options, decodedResponse) {
 					CMDBuild.core.Message.success();
 
 					this.cmfg('onUserAndGroupGroupTabUsersShow');
@@ -83,7 +91,10 @@
 			});
 		},
 
-		onUserAndGroupGroupTabUsersShow: function() {
+		/**
+		 * @returns {Void}
+		 */
+		onUserAndGroupGroupTabUsersShow: function () {
 			if (!this.cmfg('userAndGroupGroupSelectedGroupIsEmpty')) {
 				var params = {};
 				params[CMDBuild.core.constants.Proxy.GROUP_ID] = this.cmfg('userAndGroupGroupSelectedGroupGet', CMDBuild.core.constants.Proxy.ID);

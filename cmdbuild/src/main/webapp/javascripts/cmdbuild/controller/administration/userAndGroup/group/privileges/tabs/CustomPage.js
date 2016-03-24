@@ -1,4 +1,4 @@
-(function() {
+(function () {
 
 	Ext.define('CMDBuild.controller.administration.userAndGroup.group.privileges.tabs.CustomPage', {
 		extend: 'CMDBuild.controller.common.abstract.Base',
@@ -31,9 +31,11 @@
 		 * @param {Object} configurationObject
 		 * @param {CMDBuild.controller.administration.group.privileges.Privileges} configurationObject.parentDelegate
 		 *
+		 * @returns {Void}
+		 *
 		 * @override
 		 */
-		constructor: function(configurationObject) {
+		constructor: function (configurationObject) {
 			this.callParent(arguments);
 
 			this.view = Ext.create('CMDBuild.view.administration.userAndGroup.group.privileges.tabs.CustomPage', { delegate: this });
@@ -44,9 +46,11 @@
 		 * @param {Number} parameters.rowIndex
 		 * @param {String} parameters.privilege
 		 *
+		 * @returns {Void}
+		 *
 		 * TODO: waiting for refactor (attributes names)
 		 */
-		onUserAndGroupGroupTabPrivilegesTabCustomPageSetPrivilege: function(parameters) {
+		onUserAndGroupGroupTabPrivilegesTabCustomPageSetPrivilege: function (parameters) {
 			if (!Ext.isEmpty(parameters) && Ext.isObject(parameters)) {
 				var params = {};
 				params['privilege_mode'] = parameters.privilege;
@@ -56,7 +60,7 @@
 				CMDBuild.core.proxy.userAndGroup.group.privileges.CustomPage.update({
 					params: params,
 					scope: this,
-					success: function(response, options, decodedResponse) {
+					success: function (response, options, decodedResponse) {
 						this.cmfg('onUserAndGroupGroupTabPrivilegesTabCustomPageShow');
 					}
 				});
@@ -65,7 +69,10 @@
 			}
 		},
 
-		onUserAndGroupGroupTabPrivilegesTabCustomPageShow: function() {
+		/**
+		 * @returns {Void}
+		 */
+		onUserAndGroupGroupTabPrivilegesTabCustomPageShow: function () {
 			var params = {};
 			params[CMDBuild.core.constants.Proxy.GROUP_ID] = this.cmfg('userAndGroupGroupSelectedGroupGet', CMDBuild.core.constants.Proxy.ID);
 

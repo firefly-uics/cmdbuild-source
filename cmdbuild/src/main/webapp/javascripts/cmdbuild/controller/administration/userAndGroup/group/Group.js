@@ -1,4 +1,4 @@
-(function() {
+(function () {
 
 	Ext.define('CMDBuild.controller.administration.userAndGroup.group.Group', {
 		extend: 'CMDBuild.controller.common.abstract.Base',
@@ -69,9 +69,11 @@
 		 * @param {Object} configurationObject
 		 * @param {CMDBuild.controller.administration.userAndGroup.user.UserAndGroup} configurationObject.parentDelegate
 		 *
+		 * @returns {Void}
+		 *
 		 * @override
 		 */
-		constructor: function(configurationObject) {
+		constructor: function (configurationObject) {
 			this.callParent(arguments);
 
 			this.view = Ext.create('CMDBuild.view.administration.userAndGroup.group.GroupView', { delegate: this });
@@ -95,14 +97,17 @@
 			this.onUserAndGroupGroupSetActiveTab();
 		},
 
-		onUserAndGroupGroupAccordionSelect: function() {
+		/**
+		 * @returns {Void}
+		 */
+		onUserAndGroupGroupAccordionSelect: function () {
 			if (!this.cmfg('userAndGroupSelectedAccordionIsEmpty'))
 				CMDBuild.core.proxy.userAndGroup.group.Group.read({ // TODO: waiting for refactor (crud)
 					scope: this,
-					success: function(response, options, decodedResponse) {
+					success: function (response, options, decodedResponse) {
 						decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.GROUPS];
 
-						var selectedGroupModel = Ext.Array.findBy(decodedResponse, function(groupObject, i) {
+						var selectedGroupModel = Ext.Array.findBy(decodedResponse, function (groupObject, i) {
 							return this.cmfg('userAndGroupSelectedAccordionGet', CMDBuild.core.constants.Proxy.ID) == groupObject[CMDBuild.core.constants.Proxy.ID];
 						}, this);
 
@@ -119,7 +124,10 @@
 				});
 		},
 
-		onUserAndGroupGroupAddButtonClick: function() {
+		/**
+		 * @returns {Void}
+		 */
+		onUserAndGroupGroupAddButtonClick: function () {
 			this.cmfg('mainViewportAccordionDeselect', CMDBuild.core.constants.ModuleIdentifiers.getUserAndGroup());
 
 			// Forwarding
@@ -132,8 +140,10 @@
 
 		/**
 		 * @param {Number} index
+		 *
+		 * @returns {Void}
 		 */
-		onUserAndGroupGroupSetActiveTab: function(index) {
+		onUserAndGroupGroupSetActiveTab: function (index) {
 			this.view.tabPanel.setActiveTab(index || 0);
 		},
 
@@ -143,7 +153,7 @@
 			 *
 			 * @returns {Mixed or undefined}
 			 */
-			userAndGroupGroupSelectedGroupGet: function(attributePath) {
+			userAndGroupGroupSelectedGroupGet: function (attributePath) {
 				var parameters = {};
 				parameters[CMDBuild.core.constants.Proxy.TARGET_VARIABLE_NAME] = 'selectedGroup';
 				parameters[CMDBuild.core.constants.Proxy.ATTRIBUTE_PATH] = attributePath;
@@ -156,7 +166,7 @@
 			 *
 			 * @returns {Boolean}
 			 */
-			userAndGroupGroupSelectedGroupIsEmpty: function(attributePath) {
+			userAndGroupGroupSelectedGroupIsEmpty: function (attributePath) {
 				var parameters = {};
 				parameters[CMDBuild.core.constants.Proxy.TARGET_VARIABLE_NAME] = 'selectedGroup';
 				parameters[CMDBuild.core.constants.Proxy.ATTRIBUTE_PATH] = attributePath;
@@ -164,14 +174,19 @@
 				return this.propertyManageIsEmpty(parameters);
 			},
 
-			userAndGroupGroupSelectedGroupReset: function() {
+			/**
+			 * @returns {Void}
+			 */
+			userAndGroupGroupSelectedGroupReset: function () {
 				this.propertyManageReset('selectedGroup');
 			},
 
 			/**
 			 * @property {Object} parameters
+			 *
+			 * @returns {Void}
 			 */
-			userAndGroupGroupSelectedGroupSet: function(parameters) {
+			userAndGroupGroupSelectedGroupSet: function (parameters) {
 				if (!Ext.Object.isEmpty(parameters)) {
 					parameters[CMDBuild.core.constants.Proxy.MODEL_NAME] = 'CMDBuild.model.userAndGroup.group.Group';
 					parameters[CMDBuild.core.constants.Proxy.TARGET_VARIABLE_NAME] = 'selectedGroup';

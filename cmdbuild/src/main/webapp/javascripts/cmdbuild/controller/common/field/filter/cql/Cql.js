@@ -1,4 +1,4 @@
-(function() {
+(function () {
 
 	/**
 	 * Field to configure a CQL filter with an expression and extra parameters.
@@ -50,9 +50,11 @@
 		 * @param {Object} configurationObject
 		 * @param {CMDBuild.view.common.field.filter.cql.Cql} configurationObject.view
 		 *
+		 * @returns {Void}
+		 *
 		 * @override
 		 */
-		constructor: function(configurationObject) {
+		constructor: function (configurationObject) {
 			this.callParent(arguments);
 
 			this.controllerMetadata = Ext.create('CMDBuild.controller.common.field.filter.cql.Metadata', { parentDelegate: this });
@@ -64,7 +66,7 @@
 			 *
 			 * @returns {Mixed}
 			 */
-			fieldFilterCqlFilterGet: function(attributeName) {
+			fieldFilterCqlFilterGet: function (attributeName) {
 				if (!Ext.isEmpty(attributeName) && Ext.isString(attributeName))
 					return this.filterModel.get(attributeName);
 
@@ -76,7 +78,7 @@
 			 *
 			 * @returns {Boolean}
 			 */
-			fieldFilterCqlFilterIsAttributeEmpty: function(attributeName) {
+			fieldFilterCqlFilterIsAttributeEmpty: function (attributeName) {
 				if (!Ext.isEmpty(attributeName) && Ext.isString(attributeName))
 					if (
 						!Ext.isEmpty(this.filterModel)
@@ -93,8 +95,10 @@
 			 * @param {Object} parameters
 			 * @param {Object} parameters.filterObject
 			 * @param {String} parameters.propertyName
+			 *
+			 * @returns {Void}
 			 */
-			fieldFilterCqlFilterSet: function(parameters) {
+			fieldFilterCqlFilterSet: function (parameters) {
 				if (Ext.isEmpty(parameters)) {
 					this.filterModel = Ext.create('CMDBuild.model.common.field.filter.cql.Cql');
 				} else {
@@ -113,12 +117,18 @@
 				}
 			},
 
-		onFieldFilterCqlDisable: function() {
+		/**
+		 * @returns {Void}
+		 */
+		onFieldFilterCqlDisable: function () {
 			this.view.metadataButton.disable();
 			this.view.textAreaField.disable();
 		},
 
-		onFieldFilterCqlEnable: function() {
+		/**
+		 * @returns {Void}
+		 */
+		onFieldFilterCqlEnable: function () {
 			this.view.metadataButton.enable();
 			this.view.textAreaField.enable();
 		},
@@ -126,7 +136,7 @@
 		/**
 		 * @returns {Object}
 		 */
-		onFieldFilterCqlGetValue: function() {
+		onFieldFilterCqlGetValue: function () {
 			this.fieldFilterCqlFilterSet({
 				filterObject: this.view.textAreaField.getValue(),
 				propertyName: CMDBuild.core.constants.Proxy.EXPRESSION
@@ -135,22 +145,29 @@
 			return this.fieldFilterCqlFilterGet().getData();
 		},
 
-		onFieldFilterCqlMetadataButtonClick: function() {
+		/**
+		 * @returns {Void}
+		 */
+		onFieldFilterCqlMetadataButtonClick: function () {
 			this.controllerMetadata.show();
 		},
 
 		/**
 		 * @param {Boolean} state
+		 *
+		 * @returns {Void}
 		 */
-		onFieldFilterCqlSetDisabled: function(state) {
+		onFieldFilterCqlSetDisabled: function (state) {
 			this.view.metadataButton.setDisabled(state);
 			this.view.textAreaField.setDisabled(state);
 		},
 
 		/**
 		 * @param {Object} filterObjectValue
+		 *
+		 * @returns {Void}
 		 */
-		onFieldFilterCqlSetValue: function(filterObjectValue) {
+		onFieldFilterCqlSetValue: function (filterObjectValue) {
 			if (
 				Ext.isObject(filterObjectValue)
 				&& filterObjectValue.hasOwnProperty(CMDBuild.core.constants.Proxy.EXPRESSION)

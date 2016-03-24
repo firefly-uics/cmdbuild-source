@@ -1,4 +1,4 @@
-(function() {
+(function () {
 
 	Ext.define('CMDBuild.view.administration.userAndGroup.UserAndGroupView', {
 		extend: 'Ext.panel.Panel',

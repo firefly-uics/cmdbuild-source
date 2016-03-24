@@ -1,4 +1,4 @@
-(function() {
+(function () {
 
 	Ext.require('CMDBuild.core.constants.Proxy');
 
@@ -19,9 +19,11 @@
 		/**
 		 * @param {Object} data
 		 *
+		 * @returns {Void}
+		 *
 		 * TODO: waiting for server refactor
 		 */
-		constructor: function(data, id, raw) {
+		constructor: function (data, id, raw) {
 			data = raw;
 
 			// Attribute names adapter
