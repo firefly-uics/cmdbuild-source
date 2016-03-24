@@ -96,7 +96,7 @@
 								fixed: true,
 
 								items: [
-									Ext.create('CMDBuild.core.buttons.Delete', {
+									Ext.create('CMDBuild.core.buttons.iconized.Remove', {
 										tooltip: CMDBuild.Translation.remove,
 										scope: this,
 
