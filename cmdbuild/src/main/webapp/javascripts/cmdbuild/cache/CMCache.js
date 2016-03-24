@@ -115,41 +115,56 @@
 			return this.mapOfReferenceStore[id];
 		},
 
-		//private
+		/**
+		 * @param {Object} reference
+		 *
+		 * @returns {Ext.data.Store}
+		 *
+		 * @private
+		 */
 		buildReferenceStore: function(reference) {
 			var baseParams = this.buildParamsForReferenceRequest(reference),
 				isOneTime = baseParams.CQL ? true : false,
 				maxCards = parseInt(CMDBuild.Config.cmdbuild.referencecombolimit);
 
-			var s = Ext.create('Ext.data.Store', {
-				autoLoad: !isOneTime,
-				model: 'CMDBuild.cache.CMReferenceStoreModel',
-				isOneTime: isOneTime,
-				baseParams: baseParams, //retro-compatibility,
-				pageSize: maxCards,
-				proxy: {
-					type: 'ajax',
-					url: 'services/json/management/modcard/getcardlistshort',
-					reader: {
-						type: 'json',
-						root: 'rows',
-						totalProperty: 'results'
+			// Filters wrongly requested reference stores
+			if (!Ext.isEmpty(baseParams['className']) || !Ext.isEmpty(baseParams['filter']))
+				return Ext.create('Ext.data.Store', {
+					autoLoad: !isOneTime,
+					model: 'CMDBuild.cache.CMReferenceStoreModel',
+					isOneTime: isOneTime,
+					baseParams: baseParams, //retro-compatibility,
+					pageSize: maxCards,
+					proxy: {
+						type: 'ajax',
+						url: 'services/json/management/modcard/getcardlistshort',
+						reader: {
+							type: 'json',
+							root: 'rows',
+							totalProperty: 'results'
+						},
+						extraParams: baseParams
 					},
-					extraParams: baseParams
-				},
-				sorters: [
-					{ property: 'Description', direction: 'ASC' }
-				]
-			});
+					sorters: [
+						{ property: 'Description', direction: 'ASC' }
+					]
+				});
 
-			return s;
+			_warning('Invalid reference property object', this, reference);
+
+			return Ext.create('Ext.data.Store', { // Fake empty store on invalid reference property
+				fields: [],
+				data: [],
+				baseParams: {
+					IdClass: null
+				}
+			});
 		},
 
 		//private
 		buildParamsForReferenceRequest: function(reference) {
 			var idClass = reference.idClass || reference.referencedIdClass;
-			var className = reference.referencedClassName
-				|| _CMCache.getEntryTypeNameById(idClass);
+			var className = reference.referencedClassName || _CMCache.getEntryTypeNameById(idClass);
 
 			var baseParams = {
 				className: className
