@@ -84,7 +84,10 @@
 			this.tabPanel.removeAll();
 
 			// Controller build
-			this.controllerAttributes = Ext.create('CMDBuild.controller.administration.classes.CMClassAttributeController', this.view.attributesPanel);
+			this.controllerAttributes = Ext.create('CMDBuild.controller.administration.workflow.CMAttributes', { // TODO: legacy
+				parentDelegate: this,
+				view: this.view.attributesPanel,
+			});
 			this.controllerDomains = Ext.create('CMDBuild.controller.administration.workflow.tabs.Domains', { parentDelegate: this });
 			this.controllerProperties = Ext.create('CMDBuild.controller.administration.workflow.tabs.Properties', { parentDelegate: this });
 			this.controllerTasks = Ext.create('CMDBuild.controller.administration.workflow.tabs.TaskManager', { parentDelegate: this });
@@ -225,7 +228,9 @@
 		 * TODO: use AbstractController forwarding methods on controllerAttributes controller refactor
 		 */
 		workflowTabInit: function() {
-			this.controllerAttributes.onClassSelected(this.cmfg('workflowSelectedWorkflowGet', CMDBuild.core.constants.Proxy.ID)); // TODO: legacy
+			this.controllerAttributes.onClassSelected( // TODO: legacy
+				this.cmfg('workflowSelectedWorkflowGet', CMDBuild.core.constants.Proxy.ID),
+				this.cmfg('workflowSelectedWorkflowGet', CMDBuild.core.constants.Proxy.NAME));
 			this.controllerDomains.cmfg('workflowTabInit');
 			this.controllerProperties.cmfg('workflowTabInit');
 			this.controllerTasks.cmfg('workflowTabInit');
