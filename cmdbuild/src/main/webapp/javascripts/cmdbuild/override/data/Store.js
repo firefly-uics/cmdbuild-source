@@ -1,19 +1,21 @@
-(function() {
+(function () {
 
 	Ext.define('CMDBuild.override.data.Store', {
 		override: 'Ext.data.Store',
 
-		/**
-		 * Creates callback interceptor to print error message on store load
-		 *
-		 * @param {Object} options
-		 */
-		load: function(options) {
-			if (!Ext.isEmpty(options) && !Ext.isEmpty(options.callback))
-				options.callback = Ext.Function.createInterceptor(options.callback, this.interceptorFunction, this);
-
-			this.callParent(arguments);
-		},
+//		/**
+//		 * Creates callback interceptor to print error message on store load
+//		 *
+//		 * @param {Object} options
+//		 *
+//		 * @returns {Void}
+//		 */
+//		load: function (options) {
+//			if (!Ext.isEmpty(options) && !Ext.isEmpty(options.callback))
+//				options.callback = Ext.Function.createInterceptor(options.callback, this.interceptorFunction, this);
+//
+//			this.callParent(arguments);
+//		},
 
 		/**
 		 * @param {Array} records
@@ -22,7 +24,7 @@
 		 *
 		 * @returns {Boolean}
 		 */
-		interceptorFunction: function(records, operation, success) {
+		interceptorFunction: function (records, operation, success) {
 			var decoded = undefined;
 
 			if (!success) {
@@ -38,7 +40,7 @@
 					!Ext.isEmpty(decoded)
 					&& !Ext.isEmpty(decoded.errors)
 				) {
-					Ext.Array.forEach(decoded.errors, function(error, i, allErrors) {
+					Ext.Array.forEach(decoded.errors, function (error, i, allErrors) {
 						operation.error = error;
 
 						var detail = '';
