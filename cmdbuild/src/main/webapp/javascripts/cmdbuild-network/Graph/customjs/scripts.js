@@ -27,7 +27,11 @@
 			$("#" + param.id).buttonset();
 		},
 		slider : function(param) {
-			$("#" + param.id).slider();
+			$("#" + param.id).slider({
+				slide : function(event, ui) {
+					$("#" + param.id + " input").val(ui.value).trigger("change");
+				}
+			});
 		},
 		toggleTooltips : function(param) {
 			var isEnabled = true;
