@@ -22,11 +22,6 @@
 		activeCheckbox: undefined,
 
 		/**
-		 * @property {CMDBuild.core.buttons.Delete}
-		 */
-		disableButton: undefined,
-
-		/**
 		 * @property {CMDBuild.core.buttons.iconized.state.Double}
 		 */
 		activeStateToggleButton: undefined,
