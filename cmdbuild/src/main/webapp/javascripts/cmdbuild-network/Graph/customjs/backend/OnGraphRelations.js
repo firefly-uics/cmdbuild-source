@@ -93,12 +93,16 @@
 		};
 		this.getRelationCB = function(cardId, relation, callback, callbackScope) {
 			var me = this;
+			var source = this.model.getNode(cardId);
+			var classSource = $.Cmdbuild.g3d.Model.getGraphData(source, "classId");
 			var domain_info = $.Cmdbuild.customvariables.cacheDomains.getDomain(relation._type);
+				var directRelation = $.Cmdbuild.customvariables.cacheClasses.sameClass(domain_info.sourceId, classSource);
 			var domainDescription = directRelation ? domain_info.descriptionDirect : domain_info.descriptionInverse;
-			var directRelation = relation._sourceId == cardId;
-			var classId = directRelation ? relation._destinationType : relation._sourceType;
+			var classId = directRelation ? domain_info.destinationId : domain_info.sourceId;
 			var classDescription = $.Cmdbuild.customvariables.cacheClasses.getDescription(classId);
-			var cardDescription = directRelation ? relation._destinationDescription : relation._sourceDescription;
+			var cardDescription = (classSource === relation._sourceType) ? 
+					relation._destinationDescription : 
+					relation._sourceDescription;
 			var item = {
 				domainId: relation._type,
 				domainDescription: domainDescription,
