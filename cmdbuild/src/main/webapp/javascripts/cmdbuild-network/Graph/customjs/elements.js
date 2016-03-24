@@ -96,7 +96,9 @@
 			var id = $.Cmdbuild.elementsManager.getXmlElementId(xmlElement);
 			var params = $.Cmdbuild.elementsManager.getParams(xmlElement);
 			var change = $.Cmdbuild.utilities.getEventLikeString(xmlElement, "onChange");
-			htmlStr += '<div id="' + id + '" ' + change + ' />';
+			htmlStr += '<div id="' + id + '">'
+			htmlStr += '<input type="hidden" ' + change + ' />';
+			htmlStr += '</div>';
 			$.Cmdbuild.scriptsManager.push({
 				script : "slider",
 				id : id
