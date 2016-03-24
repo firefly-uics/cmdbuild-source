@@ -1,4 +1,4 @@
-(function() {
+(function () {
 
 	Ext.define('CMDBuild.view.management.widget.customForm.layout.GridPanel', {
 		extend: 'Ext.grid.Panel',
@@ -23,7 +23,10 @@
 		border: false,
 		frame: false,
 
-		initComponent: function() {
+		/**
+		 * @override
+		 */
+		initComponent: function () {
 			var isWidgetReadOnly = this.delegate.cmfg('widgetCustomFormConfigurationGet', [
 				CMDBuild.core.constants.Proxy.CAPABILITIES,
 				CMDBuild.core.constants.Proxy.READ_ONLY
@@ -48,7 +51,7 @@
 									])
 								),
 
-								handler: function(button, e) {
+								handler: function (button, e) {
 									this.delegate.cmfg('onWidgetCustomFormLayoutGridAddRowButtonClick');
 								}
 							}),
@@ -63,7 +66,7 @@
 									])
 								),
 
-								handler: function(button, e) {
+								handler: function (button, e) {
 									this.delegate.cmfg('onWidgetCustomFormLayoutGridImportButtonClick');
 								}
 							}),
@@ -78,7 +81,7 @@
 									])
 								),
 
-								handler: function(button, e) {
+								handler: function (button, e) {
 									this.delegate.cmfg('onWidgetCustomFormLayoutGridExportButtonClick');
 								}
 							}),
@@ -86,7 +89,7 @@
 								text: CMDBuild.Translation.resetToDefault,
 								scope: this,
 
-								handler: function(button, e) {
+								handler: function (button, e) {
 									this.delegate.cmfg('onWidgetCustomFormLayoutGridResetButtonClick');
 								}
 							})

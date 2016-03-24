@@ -1,4 +1,4 @@
-(function() {
+(function () {
 
 	Ext.define('CMDBuild.view.management.widget.customForm.layout.FormPanel', {
 		extend: 'Ext.form.Panel',
@@ -23,7 +23,10 @@
 			align: 'stretch'
 		},
 
-		initComponent: function() {
+		/**
+		 * @override
+		 */
+		initComponent: function () {
 			var isWidgetReadOnly = this.delegate.cmfg('widgetCustomFormConfigurationGet', [
 				CMDBuild.core.constants.Proxy.CAPABILITIES,
 				CMDBuild.core.constants.Proxy.READ_ONLY
@@ -48,7 +51,7 @@
 									])
 								),
 
-								handler: function(button, e) {
+								handler: function (button, e) {
 									this.delegate.cmfg('onWidgetCustomFormLayoutFormImportButtonClick');
 								}
 							}),
@@ -63,7 +66,7 @@
 									])
 								),
 
-								handler: function(button, e) {
+								handler: function (button, e) {
 									this.delegate.cmfg('onWidgetCustomFormLayoutFormExportButtonClick');
 								}
 							}),
@@ -71,7 +74,7 @@
 								text: CMDBuild.Translation.resetToDefault,
 								scope: this,
 
-								handler: function(button, e) {
+								handler: function (button, e) {
 									this.delegate.cmfg('onWidgetCustomFormLayoutFormResetButtonClick');
 								}
 							})

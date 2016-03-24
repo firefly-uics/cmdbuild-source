@@ -1,4 +1,4 @@
-(function() {
+(function () {
 
 	Ext.define('CMDBuild.controller.management.widget.customForm.layout.Form', {
 		extend: 'CMDBuild.controller.common.abstract.Base',
@@ -33,12 +33,15 @@
 
 		/**
 		 * @param {Object} configurationObject
+		 * @param {CMDBuild.controller.management.widget.customForm.CustomForm} configurationObject.parentDelegate
+		 *
+		 * @override
 		 */
-		constructor: function(configurationObject) {
+		constructor: function (configurationObject) {
 			this.callParent(arguments);
 
 			// Barrier to load data after reference field store's load end
-			CMDBuild.core.RequestBarrier.init('referenceStoreLoadBarrier', function() {
+			CMDBuild.core.RequestBarrier.init('referenceStoreLoadBarrier', function () {
 				if (!this.cmfg('widgetCustomFormInstancesDataStorageIsEmpty'))
 					this.setData(this.cmfg('widgetCustomFormInstancesDataStorageGet'));
 
@@ -59,13 +62,13 @@
 		 *
 		 * @private
 		 */
-		buildFields: function() {
+		buildFields: function () {
 			var itemsArray = [];
 
 			if (!this.cmfg('widgetCustomFormConfigurationIsEmpty',  CMDBuild.core.constants.Proxy.MODEL)) {
 				var fieldManager = Ext.create('CMDBuild.core.fieldManager.FieldManager', { parentDelegate: this });
 
-				Ext.Array.forEach(this.cmfg('widgetCustomFormConfigurationGet', CMDBuild.core.constants.Proxy.MODEL), function(attribute, i, allAttributes) {
+				Ext.Array.forEach(this.cmfg('widgetCustomFormConfigurationGet', CMDBuild.core.constants.Proxy.MODEL), function (attribute, i, allAttributes) {
 					if (fieldManager.isAttributeManaged(attribute.get(CMDBuild.core.constants.Proxy.TYPE))) {
 						fieldManager.attributeModelSet(Ext.create('CMDBuild.model.common.attributes.Attribute', attribute.getData()));
 						fieldManager.push(itemsArray, fieldManager.buildField());
@@ -116,18 +119,18 @@
 		/**
 		 * Opens export configuration pop-up window
 		 */
-		onWidgetCustomFormLayoutFormExportButtonClick: function() {
+		onWidgetCustomFormLayoutFormExportButtonClick: function () {
 			Ext.create('CMDBuild.controller.management.widget.customForm.Export', { parentDelegate: this });
 		},
 
 		/**
 		 * Opens import configuration pop-up window
 		 */
-		onWidgetCustomFormLayoutFormImportButtonClick: function() {
+		onWidgetCustomFormLayoutFormImportButtonClick: function () {
 			Ext.create('CMDBuild.controller.management.widget.customForm.Import', { parentDelegate: this });
 		},
 
-		onWidgetCustomFormLayoutFormResetButtonClick: function() {
+		onWidgetCustomFormLayoutFormResetButtonClick: function () {
 			this.cmfg('widgetCustomFormConfigurationSet', {
 				propertyName: CMDBuild.core.constants.Proxy.DATA,
 				value: this.cmfg('widgetCustomFormControllerPropertyGet', 'widgetConfiguration')[CMDBuild.core.constants.Proxy.DATA]
@@ -140,7 +143,7 @@
 		 * Setup form items disabled state, disable topToolBar only if is readOnly
 		 * Load grid data
 		 */
-		onWidgetCustomFormLayoutFormShow: function() {
+		onWidgetCustomFormLayoutFormShow: function () {
 			var isWidgetReadOnly = this.cmfg('widgetCustomFormConfigurationGet', [
 				CMDBuild.core.constants.Proxy.CAPABILITIES,
 				CMDBuild.core.constants.Proxy.READ_ONLY
@@ -165,7 +168,7 @@
 		 *
 		 * @private
 		 */
-		setData: function(data) {
+		setData: function (data) {
 			data = (Ext.isArray(data) && !Ext.isEmpty(data[0])) ? data[0] : data; // Get first item only from arrays
 			data = Ext.isFunction(data.getData) ? data.getData() : data; // Manage models
 
@@ -180,7 +183,7 @@
 		/**
 		 * @returns {Array}
 		 */
-		widgetCustomFormLayoutFormDataGet: function() {
+		widgetCustomFormLayoutFormDataGet: function () {
 			return [this.view.getData(true)];
 		},
 
@@ -191,7 +194,7 @@
 		 *
 		 * @returns {Boolean}
 		 */
-		widgetCustomFormLayoutFormIsValid: function(showPopup) {
+		widgetCustomFormLayoutFormIsValid: function (showPopup) {
 			return this.validate(this.view, showPopup);
 		}
 	});

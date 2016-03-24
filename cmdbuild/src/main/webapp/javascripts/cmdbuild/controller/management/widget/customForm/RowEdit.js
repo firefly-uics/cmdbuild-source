@@ -43,7 +43,7 @@
 		 *
 		 * @override
 		 */
-		constructor: function(configurationObject) {
+		constructor: function (configurationObject) {
 			this.callParent(arguments);
 
 			this.view = Ext.create('CMDBuild.view.management.widget.customForm.RowEditWindow', { delegate: this });
@@ -65,13 +65,13 @@
 		 *
 		 * @private
 		 */
-		buildFields: function() {
+		buildFields: function () {
 			var itemsArray = [];
 
 			if (!this.cmfg('widgetCustomFormConfigurationIsEmpty',  CMDBuild.core.constants.Proxy.MODEL)) {
 				var fieldManager = Ext.create('CMDBuild.core.fieldManager.FieldManager', { parentDelegate: this });
 
-				Ext.Array.forEach(this.cmfg('widgetCustomFormConfigurationGet', CMDBuild.core.constants.Proxy.MODEL), function(attribute, i, allAttributes) {
+				Ext.Array.forEach(this.cmfg('widgetCustomFormConfigurationGet', CMDBuild.core.constants.Proxy.MODEL), function (attribute, i, allAttributes) {
 					if (fieldManager.isAttributeManaged(attribute.get(CMDBuild.core.constants.Proxy.TYPE))) {
 						fieldManager.attributeModelSet(Ext.create('CMDBuild.model.common.attributes.Attribute', attribute.getData()));
 						fieldManager.push(itemsArray, fieldManager.buildField());
@@ -124,18 +124,18 @@
 		 *
 		 * @private
 		 */
-		fieldsInitialization: function() {
+		fieldsInitialization: function () {
 			var barrierId = 'rowEditFieldsInitializationBarrier';
 
 			this.view.setLoading(true);
 
-			CMDBuild.core.RequestBarrier.init(barrierId, function() {
+			CMDBuild.core.RequestBarrier.init(barrierId, function () {
 				this.form.loadRecord(this.record);
 
 				this.view.setLoading(false);
 			}, this);
 
-			Ext.Array.forEach(this.form.getForm().getFields().getRange(), function(field, i, allFields) {
+			Ext.Array.forEach(this.form.getForm().getFields().getRange(), function (field, i, allFields) {
 				if (!Ext.Object.isEmpty(field) && !Ext.isEmpty(field.resolveTemplate))
 					field.resolveTemplate();
 
@@ -151,15 +151,15 @@
 			CMDBuild.core.RequestBarrier.finalize(barrierId);
 		},
 
-		onWidgetCustomFormRowEditWindowAbortButtonClick: function() {
+		onWidgetCustomFormRowEditWindowAbortButtonClick: function () {
 			this.view.destroy();
 		},
 
 		/**
 		 * Saves data to widget's grid
 		 */
-		onWidgetCustomFormRowEditWindowSaveButtonClick: function() {
-			Ext.Object.each(this.form.getValues(), function(key, value, myself) {
+		onWidgetCustomFormRowEditWindowSaveButtonClick: function () {
+			Ext.Object.each(this.form.getValues(), function (key, value, myself) {
 				this.record.set(key, value);
 			}, this);
 

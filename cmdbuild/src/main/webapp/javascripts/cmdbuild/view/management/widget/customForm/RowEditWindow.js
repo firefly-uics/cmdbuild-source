@@ -1,4 +1,4 @@
-(function() {
+(function () {
 
 	Ext.define('CMDBuild.view.management.widget.customForm.RowEditWindow', {
 		extend: 'CMDBuild.core.PopupWindow',
@@ -20,7 +20,10 @@
 		defaultSizeH: 0.80,
 		title: CMDBuild.Translation.editRow,
 
-		initComponent: function() {
+		/**
+		 * @override
+		 */
+		initComponent: function () {
 			Ext.apply(this, {
 				dockedItems: [
 					Ext.create('Ext.toolbar.Toolbar', {
@@ -38,14 +41,14 @@
 							Ext.create('CMDBuild.core.buttons.text.Save', {
 								scope: this,
 
-								handler: function(button, e) {
+								handler: function (button, e) {
 									this.delegate.cmfg('onWidgetCustomFormRowEditWindowSaveButtonClick');
 								}
 							}),
 							Ext.create('CMDBuild.core.buttons.text.Abort', {
 								scope: this,
 
-								handler: function(button, e) {
+								handler: function (button, e) {
 									this.delegate.cmfg('onWidgetCustomFormRowEditWindowAbortButtonClick');
 								}
 							})

@@ -1,4 +1,4 @@
-(function() {
+(function () {
 
 	Ext.define('CMDBuild.view.management.widget.customForm.export.FormPanel', {
 		extend: 'Ext.form.Panel',
@@ -26,7 +26,10 @@
 			align: 'stretch'
 		},
 
-		initComponent: function() {
+		/**
+		 * @override
+		 */
+		initComponent: function () {
 			Ext.apply(this, {
 				items: [
 					Ext.create('Ext.form.field.ComboBox', { // Prepared for future implementations
