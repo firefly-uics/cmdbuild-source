@@ -389,7 +389,7 @@
 
 			// create box
 			var boxtitle = $.Cmdbuild.translations.getTranslation(
-					"boxtitle_relation", "Relation");
+					"BOXTITLE_RELATION", "Relation");
 			var $boxtitle = $("<div></div>").addClass("viewerInformationTitle")
 					.addClass("ui-widget-header").addClass("ui-helper-reset")
 					.addClass("ui-corner-top").text(boxtitle);
@@ -415,7 +415,6 @@
 			var descriptionDirect = (direct) ? domain.descriptionDirect : domain.descriptionInverse;
 			var descriptionInverse = (direct) ? domain.descriptionInverse : domain.descriptionDirect;
 			// create UI
-//			var $title = $("<h3></h3>").text(domainDescription);
 			var $source = $("<p></p>").append(
 					$("<span></span>").text(sourceClassDescription + ": ")).append(
 					$("<em></em>").text(labelSource));
@@ -447,7 +446,7 @@
 
 			// create box
 			var boxtitle = $.Cmdbuild.translations.getTranslation(
-					"boxtitle_item", "Item");
+					"BOXTITLE_CARD", "Card");
 			var $boxtitle = $("<div></div>").addClass("viewerInformationTitle")
 					.addClass("ui-widget-header").addClass("ui-helper-reset")
 					.addClass("ui-corner-top").text(boxtitle);
@@ -459,8 +458,8 @@
 			// get item info
 			var classId = $.Cmdbuild.g3d.Model.getGraphData(node, "classId");
 			var img_src = $.Cmdbuild.customvariables.cacheImages.getImage(classId);
-			var itemLabel = $.Cmdbuild.translations.getTranslation("boxlabel_item", "Item");
-			var typeLabel = $.Cmdbuild.translations.getTranslation("boxlabel_type", "Type");
+			var itemLabel = $.Cmdbuild.translations.getTranslation("BOXLABEL_CARD", "Card");
+			var typeLabel = $.Cmdbuild.translations.getTranslation("BOXLABEL_CLASS", "Class");
 			var itemDescription = $.Cmdbuild.g3d.Model.getGraphData(node, "label");
 			var typeDescription = $.Cmdbuild.customvariables.cacheClasses.getDescription(classId);
 

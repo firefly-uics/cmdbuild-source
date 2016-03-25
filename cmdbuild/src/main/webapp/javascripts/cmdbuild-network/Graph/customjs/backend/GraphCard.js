@@ -23,6 +23,10 @@
 		this.loadAttributes = function() {
 			if (!this.type) {
 				this.attributes = [];
+				this.data = [];
+				setTimeout(function() {
+					onObjectReady();
+				}, 100);
 				return;
 			}
 			if (this.type == $.Cmdbuild.g3d.constants.GUICOMPOUNDNODE) {

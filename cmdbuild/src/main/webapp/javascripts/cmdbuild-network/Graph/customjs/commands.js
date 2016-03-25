@@ -440,6 +440,9 @@
 	 */
 	function getCurrentClassDescription() {
 		var classId = $.Cmdbuild.dataModel.getValue("selectedForm", "classId");
+		if (! classId) {
+			return $.Cmdbuild.translations.getTranslation("TITLE_NOSELECTION", "No selection")
+		}
 		return $.Cmdbuild.customvariables.cacheClasses.getDescription(classId);
 	}
 
