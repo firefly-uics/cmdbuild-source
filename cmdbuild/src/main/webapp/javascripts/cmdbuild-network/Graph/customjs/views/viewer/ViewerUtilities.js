@@ -145,9 +145,6 @@
 			return object;
 		},
 		objectFromNode: function(node, position) {
-//			var sprite = $.Cmdbuild.SpriteArchive
-//					.class2Sprite($.Cmdbuild.g3d.Model.getGraphData(node,
-//							"classId"));
 			var classId = $.Cmdbuild.g3d.Model.getGraphData(node, "classId");
 			var sprite = $.Cmdbuild.customvariables.cacheImages.getImage(classId);
 			try {
