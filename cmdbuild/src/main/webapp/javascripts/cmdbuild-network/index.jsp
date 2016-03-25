@@ -13,11 +13,12 @@
 	<script type="text/javascript">
 		$(document).ready(function() {
 			$("#cmdbuilForm").cmdbuildAP({
-				debug: false,
+				debug: true,
 				apiUrl : '<%=request.getParameter("basePath")%>/services/rest/v2/',
 				appRootUrl : '<%=request.getParameter("basePath")%>/javascripts/cmdbuild-gui-framework-<%=request.getParameter("frameworkVersion")%>/',
 				appConfigUrl: '<%=request.getParameter("basePath")%>/javascripts/cmdbuild-network/Graph/',
 				access_token: 'CMDBuildSessionToken',
+				language:'<%=request.getParameter("language")%>',
 				customjs: [
 					"libraries/cytoscape.min.js",
 					"libraries/three.min.js",
