@@ -1,4 +1,16 @@
 (function($) {
+	var sliderValue = 1;
+	function reopenWithLevels(controlId, value) {
+		setTimeout(function() {
+			if (value === sliderValue) {
+				$("#" + controlId).slider('disable');
+				$("input").prop('disabled', true);
+				$.Cmdbuild.custom.commands.navigateOnNode({}, function() {
+					$("#" + controlId).slider('enable');
+				}, this);
+			}
+		}, 1000);
+	}
 	var commands = {
 		variables : {
 			BUTTONACTIVECLASS : "btn-active"
@@ -6,6 +18,16 @@
 		test : function(param) {
 			var paramActualized = $.Cmdbuild.dataModel.resolveVariables(param);
 			console.log("Test", param, paramActualized);
+		},
+		slidingLevels : function(param) {
+			var value = $("#" + param.id + " input").val();
+			if (value !== sliderValue) {
+				sliderValue = value;
+				reopenWithLevels(param.id, value);
+				$.Cmdbuild.customvariables.options.baseLevel = value;
+				$("#baseLevel").spinner("value",
+						$.Cmdbuild.customvariables.options.baseLevel);
+			}
 		},
 		filterDomains : function(param) {
 			var classDescription = $.Cmdbuild.utilities.getHtmlFieldValue("#"
@@ -62,7 +84,7 @@
 								}
 							}, this);
 		},
-		navigateOnNode : function(param) {
+		navigateOnNode : function(param, callback, callbackScope) {
 			var selected = $.Cmdbuild.customvariables.selected.getCards(0, 1);
 			if (selected.total <= 0) {
 				return;
@@ -76,13 +98,16 @@
 				$.Cmdbuild.customvariables.cacheTrees
 						.setTreeOnNavigationManager(node, function(value) {
 							if (!value) {
+								if (callback) {
+									callback.apply(callbackScope, []);
+								}
 								return;
 							}
-							this._navigateOnNode(classId, cardId);
+							this._navigateOnNode(classId, cardId, callback, callbackScope);
 						}, this);
 			} else {
-				this._navigateOnNode(classId, cardId);
-				
+				this._navigateOnNode(classId, cardId, callback, callbackScope);
+
 			}
 		},
 		applyFilters : function(param) {
@@ -133,7 +158,7 @@
 					}
 				}
 			}
-//			$.Cmdbuild.customvariables.selected.changed({});
+			// $.Cmdbuild.customvariables.selected.changed({});
 			$.Cmdbuild.standard.commands.dialogClose(param);
 		},
 		switchOnSelected : function(param) {
@@ -163,7 +188,7 @@
 								$.Cmdbuild.customvariables.options.stepRadius);
 					}, 100);
 		},
-		_navigateOnNode : function(classId, cardId) {
+		_navigateOnNode : function(classId, cardId, callback, callbackScope) {
 			$.Cmdbuild.customvariables.viewer.clearSelection();
 			$.Cmdbuild.customvariables.model.erase();
 			$.Cmdbuild.customvariables.viewer.refresh(true);
@@ -179,6 +204,9 @@
 						var me = this;
 						setTimeout(function() {
 							me.centerOnViewer();
+							if (callback) {
+								callback.apply(callbackScope, []);
+							}
 						}, 500);
 					}, this);
 		},
@@ -282,11 +310,12 @@
 			$.Cmdbuild.customvariables.commandsManager.stopped = true;
 		},
 		deleteSelection : function(param) {
-			if (! $.Cmdbuild.customvariables.selected.isEmpty()) {
+			if (!$.Cmdbuild.customvariables.selected.isEmpty()) {
 				var deleteCards = new $.Cmdbuild.g3d.commands.deleteCards(
 						$.Cmdbuild.customvariables.model,
 						$.Cmdbuild.customvariables.selected, param.selected);
-				$.Cmdbuild.customvariables.commandsManager.execute(deleteCards, {});
+				$.Cmdbuild.customvariables.commandsManager.execute(deleteCards,
+						{});
 			}
 			$.Cmdbuild.customvariables.selected.erase();
 			$.Cmdbuild.customvariables.selected.changed({});
@@ -440,8 +469,9 @@
 	 */
 	function getCurrentClassDescription() {
 		var classId = $.Cmdbuild.dataModel.getValue("selectedForm", "classId");
-		if (! classId) {
-			return $.Cmdbuild.translations.getTranslation("TITLE_NOSELECTION", "No selection")
+		if (!classId) {
+			return $.Cmdbuild.translations.getTranslation("TITLE_NOSELECTION",
+					"No selection")
 		}
 		return $.Cmdbuild.customvariables.cacheClasses.getDescription(classId);
 	}
