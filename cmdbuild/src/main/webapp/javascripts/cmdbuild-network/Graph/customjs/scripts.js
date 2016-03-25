@@ -27,22 +27,33 @@
 			$("#" + param.id).buttonset();
 		},
 		slider : function(param) {
-			$("#" + param.id).slider({
-				slide : function(event, ui) {
-					$("#" + param.id + " input").val(ui.value).trigger("change");
-				}
-			});
+			$("#" + param.id).slider(
+					{
+						slide : function(event, ui) {
+							$("#" + param.id + " input").val(ui.value).trigger(
+									"change");
+						},
+						max : 10,
+						min : 1,
+						value : 1
+
+					});
 		},
 		toggleTooltips : function(param) {
 			var isEnabled = true;
-			$("#" + param.id).ready(function() {
-				$("#" + param.id).parent().addClass(
-						$.Cmdbuild.custom.commands.variables.BUTTONACTIVECLASS);
-			});
+			$("#" + param.id)
+					.ready(
+							function() {
+								$("#" + param.id)
+										.parent()
+										.addClass(
+												$.Cmdbuild.custom.commands.variables.BUTTONACTIVECLASS);
+							});
 			$("#" + param.id)
 					.click(
 							function() {
-								if ($(this).parent()
+								if ($(this)
+										.parent()
 										.hasClass(
 												$.Cmdbuild.custom.commands.variables.BUTTONACTIVECLASS)) {
 									// TODO: disable tooltips

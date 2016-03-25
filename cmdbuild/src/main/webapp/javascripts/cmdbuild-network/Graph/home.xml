@@ -172,6 +172,20 @@
 						</toggleTooltips>
 					</div>
 					<div class="toolbarSeparator"></div>
+					<div class="footerToolbarItem buttonset">
+						<buttonset label="Labels" i18nLabel="BUTTON3STATE_LABELS" id="displayLabel" class="labelsMultistate">
+							<params>
+								<none>LOOKUP_LABELSNONE</none>
+								<selected>LOOKUP_LABELSSELECTED</selected>
+								<all>LOOKUP_LABELSALL</all>
+							</params>
+							<onChange>
+								<command>boolean</command>
+								<type>displayLabel</type>
+							</onChange>
+						</buttonset>
+					</div>
+					<div class="toolbarSeparator"></div>
 					<div class="footerToolbarItem">
 						<spinner label="Levels" i18nLabel="SPINNER_LEVELS" id="baseLevel" class="optionsSpinner">
 							<params>
@@ -188,23 +202,13 @@
 						</spinner>
 					</div>
 					<div class="toolbarSeparator"></div>
-					<div class="footerToolbarItem buttonset">
-						<buttonset label="Labels" i18nLabel="BUTTON3STATE_LABELS" id="displayLabel" class="labelsMultistate">
-							<params>
-								<none>LOOKUP_LABELSNONE</none>
-								<selected>LOOKUP_LABELSSELECTED</selected>
-								<all>LOOKUP_LABELSALL</all>
-							</params>
-							<onChange>
-								<command>boolean</command>
-								<type>displayLabel</type>
-							</onChange>
-						</buttonset>
-					</div>
-					<div class="toolbarSeparator"></div>
 					<div class="footerToolbarItem">
 						<div class="openLevelsSliderContainer">
-							<slider label="Open on levels" i18nLabel="SLIDER_LEVELS" id="openLevelsSlider" class=""></slider>
+							<slider label="Open on levels" i18nLabel="SLIDER_LEVELS" id="openLevelsSlider" class="">
+								<onChange>
+									<command>slidingLevels</command>
+								</onChange>
+							</slider>
 						</div>
 					</div>
 				</div>
