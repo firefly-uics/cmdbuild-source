@@ -4,7 +4,6 @@
 		setTimeout(function() {
 			if (value === sliderValue) {
 				$("#" + controlId).slider('disable');
-				$("input").prop('disabled', true);
 				$.Cmdbuild.custom.commands.navigateOnNode({}, function() {
 					$("#" + controlId).slider('enable');
 				}, this);
