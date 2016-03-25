@@ -101,10 +101,14 @@
 			var quaternion = new THREE.Quaternion()
 			var m1 = new THREE.Matrix4();
 			var m2 = new THREE.Matrix4();
+			var m3 = new THREE.Matrix4();
 			m1.makeRotationZ(angle.theta);
 			m2.makeRotationX(Math.PI - angle.phi);
-			m1.multiply(m2);
-			quaternion.setFromRotationMatrix(m1);
+			m3.makeRotationY(Math.PI/4);
+			var m = new THREE.Matrix4();
+			m.multiplyMatrices( m1, m2 );
+			m.multiply(m3);
+			quaternion.setFromRotationMatrix(m);
 			return quaternion;
 		};
 		this.getNodeQuaternionLil = function(angle) {
