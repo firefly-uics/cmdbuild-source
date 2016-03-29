@@ -1,4 +1,4 @@
-(function() {
+(function () {
 
 	Ext.define('CMDBuild.view.common.sessionExpired.FormPanel', {
 		extend: 'Ext.form.Panel',
@@ -20,7 +20,10 @@
 		border: false,
 		frame: true,
 
-		initComponent: function() {
+		/**
+		 * @override
+		 */
+		initComponent: function () {
 			Ext.apply(this, {
 				dockedItems: [
 					Ext.create('Ext.toolbar.Toolbar', {
@@ -39,7 +42,7 @@
 								hidden: !CMDBuild.configuration.runtime.get(CMDBuild.core.constants.Proxy.ALLOW_PASSWORD_CHANGE),
 								scope: this,
 
-								handler: function(button, e) {
+								handler: function (button, e) {
 									this.delegate.cmfg('onSessionExpiredLoginButtonClick');
 								}
 							}),
@@ -47,7 +50,7 @@
 								hidden: !CMDBuild.configuration.runtime.get(CMDBuild.core.constants.Proxy.ALLOW_PASSWORD_CHANGE),
 								scope: this,
 
-								handler: function(button, e) {
+								handler: function (button, e) {
 									this.delegate.cmfg('onSessionExpiredChangeUserButtonClick');
 								}
 							}),
@@ -55,7 +58,7 @@
 								hidden: CMDBuild.configuration.runtime.get(CMDBuild.core.constants.Proxy.ALLOW_PASSWORD_CHANGE),
 								scope: this,
 
-								handler: function(button, e) {
+								handler: function (button, e) {
 									this.delegate.cmfg('onSessionExpiredConfirmButtonClick');
 								}
 							})
@@ -78,7 +81,7 @@
 
 						listeners: {
 							scope: this,
-							specialkey: function(field, e, eOpts) {
+							specialkey: function (field, e, eOpts) {
 								if(e.getKey() == e.ENTER)
 									this.delegate.cmfg('onSessionExpiredLoginButtonClick');
 							}

@@ -1,4 +1,4 @@
-(function() {
+(function () {
 
 	Ext.define('CMDBuild.view.common.sessionExpired.SessionExpiredWindow', {
 		extend: 'Ext.window.Window',
@@ -25,7 +25,10 @@
 		title: CMDBuild.Translation.sessionExpired,
 		width: 300,
 
-		initComponent: function() {
+		/**
+		 * @override
+		 */
+		initComponent: function () {
 			Ext.apply(this, {
 				items: [
 					this.form = Ext.create('CMDBuild.view.common.sessionExpired.FormPanel', { delegate: this.delegate })

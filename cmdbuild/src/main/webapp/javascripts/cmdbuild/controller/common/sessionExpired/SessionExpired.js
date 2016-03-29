@@ -1,4 +1,4 @@
-(function() {
+(function () {
 
 	Ext.define('CMDBuild.controller.common.sessionExpired.SessionExpired', {
 		extend: 'CMDBuild.controller.common.abstract.Base',
@@ -40,9 +40,11 @@
 		 * @param {Object} configurationObject
 		 * @param {Mixed} configurationObject.parentDelegate
 		 *
+		 * @returns {Void}
+		 *
 		 * @override
 		 */
-		constructor: function(configurationObject) {
+		constructor: function (configurationObject) {
 			this.callParent(arguments);
 
 			this.view = Ext.create('CMDBuild.view.common.sessionExpired.SessionExpiredWindow', { delegate: this });
@@ -56,11 +58,17 @@
 				this.view.show();
 		},
 
-		onSessionExpiredChangeUserButtonClick: function() {
+		/**
+		 * @returns {Void}
+		 */
+		onSessionExpiredChangeUserButtonClick: function () {
 			window.location = '.';
 		},
 
-		onSessionExpiredLoginButtonClick: function() {
+		/**
+		 * @returns {Void}
+		 */
+		onSessionExpiredLoginButtonClick: function () {
 			this.view.hide();
 
 			var params = {};
@@ -74,16 +82,29 @@
 				params: params,
 				loadMask: false,
 				scope: this,
-				success: function(response, options, decodedResponse) {
-					if (Ext.Object.isEmpty(this.ajaxParameters)) {
-						window.location.reload();
-					} else {
-						CMDBuild.core.LoadMask.hide();
+				success: function (response, options, decodedResponse) {
+					CMDBuild.core.proxy.session.Rest.login({
+						params: params,
+						scope: this,
+						success: function (response, options, decodedResponse) {
+							decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.DATA];
 
-						CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.UNCACHED, this.ajaxParameters);
-					}
+							if (Ext.isObject(decodedResponse) && !Ext.Object.isEmpty(decodedResponse))
+								Ext.util.Cookies.set(CMDBuild.core.constants.Proxy.SESSION_TOKEN, decodedResponse['_id']);
+						},
+						callback: function (options, success, response) {
+							// CMDBuild redirect
+							if (Ext.Object.isEmpty(this.ajaxParameters)) {
+								window.location.reload();
+							} else {
+								CMDBuild.core.LoadMask.hide();
+
+								CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.UNCACHED, this.ajaxParameters);
+							}
+						}
+					});
 				},
-				failure: function(response, options, decodedResponse) {
+				failure: function (response, options, decodedResponse) {
 					var oldToFront = this.view.toFront;
 					this.toFront = Ext.emptyFn;
 					this.show();
