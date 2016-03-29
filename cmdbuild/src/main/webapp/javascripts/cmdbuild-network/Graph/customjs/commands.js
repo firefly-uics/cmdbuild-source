@@ -466,13 +466,20 @@
 	/**
 	 * Get current item class description from cache @
 	 */
+	var firstTimeIsGone = false;
 	function getCurrentClassDescription() {
 		var classId = $.Cmdbuild.dataModel.getValue("selectedForm", "classId");
-		if (!classId) {
+		if (!classId && firstTimeIsGone) {
 			return $.Cmdbuild.translations.getTranslation("TITLE_NOSELECTION",
 					"No selection")
 		}
-		return $.Cmdbuild.customvariables.cacheClasses.getDescription(classId);
+		else if (classId) {
+			firstTimeIsGone = true;
+			return $.Cmdbuild.customvariables.cacheClasses.getDescription(classId);
+		}
+		else {
+			return "";
+		}
 	}
 
 	/**
