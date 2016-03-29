@@ -28,7 +28,7 @@
 					'.OpenAttachment': CMDBuild.controller.management.common.widgets.CMOpenAttachmentController,
 					'.OpenNote': CMDBuild.controller.management.common.widgets.CMOpenNoteController,
 					'.OpenReport': 'CMDBuild.controller.management.common.widgets.OpenReport',
-					'.Ping': CMDBuild.controller.management.common.widgets.CMPingController,
+					'.Ping': 'CMDBuild.controller.management.widget.Ping',
 					'.PresetFromCard': CMDBuild.controller.management.common.widgets.CMPresetFromCardController,
 					'.WebService': CMDBuild.controller.management.common.widgets.CMWebServiceController,
 					'.Workflow': CMDBuild.controller.management.common.widgets.CMWorkflowController

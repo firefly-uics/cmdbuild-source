@@ -469,11 +469,6 @@ em { font-style: oblique !important; }
 
 .cm-bold { font-weight: bold; }
 
-.cm-pre {
-	font-size: 1.2em;
-	padding: 0.5em;
-}
-
 .cm-action-col-icon-spacer { margin: 0px 3px; }
 
 /* Attachemnt window */

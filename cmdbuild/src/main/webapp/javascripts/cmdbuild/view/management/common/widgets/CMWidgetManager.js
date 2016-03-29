@@ -199,7 +199,7 @@
 					 * @param {Ext.data.Model or CMDBuild.model.CMActivityInstance} card or activity
 					 */
 					'.Ping': function(widget, card) {
-						var w = new CMDBuild.view.management.common.widgets.CMPing();
+						var w = Ext.create('CMDBuild.view.management.widget.PingView');
 
 						me.widgetsContainer.addWidgt(w);
 

@@ -11,6 +11,7 @@
 		ABSOLUTE_CLASS_ORDER: 'absoluteClassOrder',
 		ACCORDION: 'accordion',
 		ACCOUNT: 'account',
+		ACTION: 'action',
 		ACTIVE: 'active',
 		ACTIVE_ONLY: 'activeOnly',
 		ACTIVITY: 'activity',

@@ -1,6 +1,6 @@
-(function () {
+(function() {
 
-	Ext.define('CMDBuild.view.management.widget.customForm.CustomFormView', {
+	Ext.define('CMDBuild.view.management.widget.PingView', {
 		extend: 'Ext.panel.Panel',
 
 		/**
@@ -8,6 +8,7 @@
 		 */
 		delegate: undefined,
 
+		autoScroll: true,
 		border: false,
 		frame: false,
 		layout: 'fit'
