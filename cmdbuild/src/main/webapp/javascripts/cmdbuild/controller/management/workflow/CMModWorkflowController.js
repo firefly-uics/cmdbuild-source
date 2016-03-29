@@ -244,18 +244,19 @@
 		setEntryType: function(entryTypeId, danglingCard, filter) {
 			var entryType = _CMCache.getEntryTypeById(entryTypeId);
 
+			if (!Ext.isEmpty(danglingCard)) {
+				if (!Ext.isEmpty(danglingCard.flowStatus))
+					this.gridController.view.setStatus(danglingCard.flowStatus);
+
+				if (!Ext.isEmpty(danglingCard.activateFirstTab))
+					this.view.cardTabPanel.activeTabSet(danglingCard.activateFirstTab);
+			}
+
 			_CMWFState.setProcessClassRef(entryType, danglingCard, false, filter);
 
 			this.view.updateTitleForEntry(entryType);
 
 			_CMUIState.onlyGridIfFullScreen();
-
-			if (
-				!Ext.isEmpty(danglingCard)
-				&& !Ext.isEmpty(danglingCard.activateFirstTab)
-			) {
-				this.view.cardTabPanel.activeTabSet(danglingCard.activateFirstTab);
-			}
 		}
 	});
 
