@@ -154,6 +154,7 @@
 						$.Cmdbuild.customvariables.model.removeEdge({
 							domainId : key
 						});
+						$.Cmdbuild.customvariables.model.changed(true);
 					}
 				}
 			}
@@ -258,6 +259,11 @@
 		boolean : function(param) {
 			var value = (param.type === "displayLabel") ? param.value
 					: $.Cmdbuild.utilities.getHtmlFieldValue("#" + param.type);
+			if (param.type === "baseLevel") {
+				$("#openLevelsSlider input").val(value);
+				$("#openLevelsSlider").slider("value", value);
+				
+			}
 			$.Cmdbuild.customvariables.options[param.type] = value;
 			$.Cmdbuild.customvariables.options.changed();
 			if ($.Cmdbuild.customvariables.viewer) {
