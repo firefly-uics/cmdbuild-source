@@ -55,7 +55,7 @@
 				}
 
 				CMDBuild.core.interfaces.Ajax.request({
-					url: "services/json/modwidget/callwidget",
+					url: "services/json/widget/callwidget",
 					method: "GET",
 					params: pingParams,
 					success: function(request, action, response) {
