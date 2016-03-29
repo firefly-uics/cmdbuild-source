@@ -480,7 +480,10 @@
 			remove: 'services/json/widget/delete',
 
 			readAll: 'services/json/widget/readall',
-			readAllForClass: 'services/json/widget/readallforclass'
+			readAllForClass: 'services/json/widget/readallforclass',
+
+			// Widgets end-points
+			ping: 'services/json/widget/callwidget'
 		},
 
 		workflow: {
