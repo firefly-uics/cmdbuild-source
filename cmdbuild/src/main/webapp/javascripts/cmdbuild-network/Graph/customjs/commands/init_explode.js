@@ -8,7 +8,7 @@
 	var init_explode = function(model, params) {
 		this.model = model;
 		this.params = params;
-		this.domainList = params.domainList;
+		this.domainList = (params.domainList) ? params.domainsList : null;
 		var batch = params.batch;
 		var backend = new $.Cmdbuild.g3d.backend.CmdbuildModel();
 		this.newElements = [];
