@@ -104,6 +104,10 @@
 		 */
 		onCardGoesInEdit: function() {
 			Ext.Object.each(this.controllers, function(id, controller, myself) {
+				// FIXME: widget instance data storage should be implemented inside this class
+				if (!Ext.isEmpty(controller.instancesDataStorageReset) && Ext.isFunction(controller.instancesDataStorageReset))
+					controller.instancesDataStorageReset();
+
 				// cmfg() implementation adapter
 				if (!Ext.isEmpty(controller.cmfg) && Ext.isFunction(controller.cmfg)) {
 					controller.cmfg('onEditMode');
