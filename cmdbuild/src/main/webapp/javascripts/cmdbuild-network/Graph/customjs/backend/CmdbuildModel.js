@@ -288,7 +288,7 @@
 			};
 			var classId = $.Cmdbuild.g3d.Model.getGraphData(parentNode,
 					"classId");
-			this.explodeChildren(elements, domainId, nodeOnNavigationTree,
+			this.explodeChildren(elements, domainId, null,//nodeOnNavigationTree,
 					parentNode, classId, parentId, children, data);
 			callback.apply(callbackScope, [ elements ]);
 		};

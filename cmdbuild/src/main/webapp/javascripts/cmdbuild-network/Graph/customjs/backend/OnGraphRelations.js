@@ -20,28 +20,35 @@
 			this.loadAttributes();
 		};
 		this.loadAttributes = function() {
-			this.attributes = [{
-				type: "string",
-				name: "domainDescription",
-				description: $.Cmdbuild.translations.getTranslation("COLUMNHEADER_RELATION", "Relation"),
-				displayableInList: true
-			}, {
-				type: "string",
-				name: "classId",
-				description: $.Cmdbuild.translations.getTranslation(
-						"attr_typeId", 'Class Id'),
-				displayableInList: false
-			}, {
-				type: "string",
-				name: "cardDescription",
-				description: $.Cmdbuild.translations.getTranslation("COLUMNHEADER_CARD", "Card"),
-				displayableInList: true
-			}, {
-				type: "string",
-				name: "classDescription",
-				description: $.Cmdbuild.translations.getTranslation("COLUMNHEADER_CLASS", "Class"),
-				displayableInList: true
-			}];
+			this.attributes = [
+					{
+						type : "string",
+						name : "domainDescription",
+						description : $.Cmdbuild.translations.getTranslation(
+								"COLUMNHEADER_RELATION", "Relation"),
+						displayableInList : true
+					},
+					{
+						type : "string",
+						name : "classId",
+						description : $.Cmdbuild.translations.getTranslation(
+								"attr_typeId", 'Class Id'),
+						displayableInList : false
+					},
+					{
+						type : "string",
+						name : "cardDescription",
+						description : $.Cmdbuild.translations.getTranslation(
+								"COLUMNHEADER_CARD", "Card"),
+						displayableInList : true
+					},
+					{
+						type : "string",
+						name : "classDescription",
+						description : $.Cmdbuild.translations.getTranslation(
+								"COLUMNHEADER_CLASS", "Class"),
+						displayableInList : true
+					} ];
 
 			var me = this;
 			setTimeout(function() {
@@ -52,13 +59,16 @@
 			var array = [];
 			for (var i = 0; i < collection.length; i++) {
 				var element = collection[i];
-				var domainId = $.Cmdbuild.g3d.Model.getGraphData(element, "domainId");
-				var domainDescription = $.Cmdbuild.g3d.Model.getGraphData(element, "label");
-				var relationId = $.Cmdbuild.g3d.Model.getGraphData(element, "relationId");
+				var domainId = $.Cmdbuild.g3d.Model.getGraphData(element,
+						"domainId");
+				var domainDescription = $.Cmdbuild.g3d.Model.getGraphData(
+						element, "label");
+				var relationId = $.Cmdbuild.g3d.Model.getGraphData(element,
+						"relationId");
 				array.push({
-					domainId: domainId,
-					domainDescription: domainDescription,
-					relationId: relationId
+					domainId : domainId,
+					domainDescription : domainDescription,
+					relationId : relationId
 				});
 			}
 			return array;
@@ -66,10 +76,11 @@
 		this.preLoadData = function() {
 			this.alldata = [];
 			var me = this;
-			var edgesCollection = $.Cmdbuild.customvariables.model.connectedEdges(param.cardId);
+			var edgesCollection = $.Cmdbuild.customvariables.model
+					.connectedEdges(param.cardId);
 			var edges = me.cyCollection2Array(edgesCollection);
 			me.getEdges(param.cardId, edges, function(response) {
-				
+
 			}, me);
 		};
 		this.getEdges = function(cardId, edges) {
@@ -89,27 +100,53 @@
 					this.getEdges(cardId, edges);
 				}, this);
 			};
-			$.Cmdbuild.utilities.proxy.getRelation(domainId, relationId, {}, relationCB, this);
+			$.Cmdbuild.utilities.proxy.getRelation(domainId, relationId, {},
+					relationCB, this);
+		};
+		this.getDirectRelation = function(cardId, relation, classSource, domain_info) {
+			var directRelation = "";
+			if (domain_info.sourceId === domain_info.destinationId) { //recursion
+				directRelation = (parseInt(relation._sourceId) === parseInt(cardId)); 
+			}
+			else {
+				directRelation = $.Cmdbuild.customvariables.cacheClasses.sameClass(
+						domain_info.sourceId, classSource);				
+			}
+			return directRelation;
 		};
 		this.getRelationCB = function(cardId, relation, callback, callbackScope) {
 			var me = this;
 			var source = this.model.getNode(cardId);
-			var classSource = $.Cmdbuild.g3d.Model.getGraphData(source, "classId");
-			var domain_info = $.Cmdbuild.customvariables.cacheDomains.getDomain(relation._type);
-				var directRelation = $.Cmdbuild.customvariables.cacheClasses.sameClass(domain_info.sourceId, classSource);
-			var domainDescription = directRelation ? domain_info.descriptionDirect : domain_info.descriptionInverse;
-			var classId = directRelation ? domain_info.destinationId : domain_info.sourceId;
-			var classDescription = $.Cmdbuild.customvariables.cacheClasses.getDescription(classId);
-			var cardDescription = (classSource === relation._sourceType) ? 
-					relation._destinationDescription : 
-					relation._sourceDescription;
+			var classSource = $.Cmdbuild.g3d.Model.getGraphData(source,
+					"classId");
+			var domain_info = $.Cmdbuild.customvariables.cacheDomains
+					.getDomain(relation._type);
+			var directRelation = this.getDirectRelation(cardId, relation, classSource,
+					domain_info);
+			var domainDescription = directRelation ? domain_info.descriptionDirect
+					: domain_info.descriptionInverse;
+			var classId = directRelation ? domain_info.destinationId
+					: domain_info.sourceId;
+			var classDescription = $.Cmdbuild.customvariables.cacheClasses
+					.getDescription(classId);
+			// var cardDescription = (classSource === relation._sourceType) ?
+			// relation._destinationDescription
+			// : relation._sourceDescription;
+			var targetId = directRelation ? relation._destinationId
+					: relation._sourceId;
+			var target = this.model.getNode(targetId);
+			var cardDescription = $.Cmdbuild.g3d.Model.getGraphData(target,
+					"label");
+			if (!cardDescription) {
+				cardDescription = $.Cmdbuild.g3d.constants.GUICOMPOUNDNODEDESCRIPTION;
+			}
 			var item = {
-				domainId: relation._type,
-				domainDescription: domainDescription,
-				relationId: relation._id,
-				classId: classId,
-				classDescription: classDescription,
-				cardDescription: cardDescription,
+				domainId : relation._type,
+				domainDescription : domainDescription,
+				relationId : relation._id,
+				classId : classId,
+				classDescription : classDescription,
+				cardDescription : cardDescription,
 				attributes : {}
 			};
 
@@ -121,13 +158,14 @@
 					var attribute = attributes.splice(0, 1)[0];
 					var value = relation[attribute._id];
 					if (value && attribute.type === "lookup") {
-						$.Cmdbuild.utilities.proxy.getLookupValue(
-								attribute.lookupType,
-								value,
-								{},
-								function(lookupvalue) {
-									item.attributes[attribute._id] = lookupvalue.description;
-								}, me);
+						$.Cmdbuild.utilities.proxy
+								.getLookupValue(
+										attribute.lookupType,
+										value,
+										{},
+										function(lookupvalue) {
+											item.attributes[attribute._id] = lookupvalue.description;
+										}, me);
 					} else if (value) {
 						item.attributes[attribute._id] = value;
 					}
@@ -144,11 +182,15 @@
 			var all_data;
 			if (this.filter && this.filter.query) {
 				var query = this.filter.query.trim().toLowerCase();
-				all_data = this.alldata.filter(function(el) {
-					return el.domainDescription.toLowerCase().search(query) !== -1
-							|| el.classDescription.toLowerCase().search(query) !== -1
-							|| el.cardDescription.toLowerCase().search(query) !== -1;
-				});
+				all_data = this.alldata
+						.filter(function(el) {
+							return el.domainDescription.toLowerCase().search(
+									query) !== -1
+									|| el.classDescription.toLowerCase()
+											.search(query) !== -1
+									|| el.cardDescription.toLowerCase().search(
+											query) !== -1;
+						});
 			} else {
 				all_data = this.alldata;
 			}
@@ -199,8 +241,7 @@
 		 */
 		this.getTotalRows = function() {
 			var metadata = this.getMetadata();
-			return metadata && metadata.total
-					? metadata.total
+			return metadata && metadata.total ? metadata.total
 					: this.alldata.length;
 		};
 
