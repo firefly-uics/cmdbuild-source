@@ -192,6 +192,9 @@
 										},
 										success: function (response, options, decodedResponse) {
 											CMDBuild.core.LoadMask.hide();
+										},
+										callback: function (response, options, decodedResponse) {
+											this.onClassPropertiesIconClassSelected(this.selectedClassModel);
 										}
 									});
 								} else {
