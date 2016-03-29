@@ -3,6 +3,7 @@
 		<type>popup</type>
 		<title>Properties</title>
 		<i18nTitle>TITLEPOPUP_PROPERTIES</i18nTitle>
+		<height>400</height>
 	</params>
 	<div id="optionsDiv">
 		<onInit>

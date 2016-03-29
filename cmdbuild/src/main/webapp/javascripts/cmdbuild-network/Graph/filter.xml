@@ -3,6 +3,7 @@
 		<type>popup</type>
 		<title>Filters</title>
 		<i18nTitle>TITLEPOPUP_FILTERS</i18nTitle>
+		<height>500</height>
 	</params>
 	<div id="filterDiv">
 		<onInit>
