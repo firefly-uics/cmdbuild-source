@@ -4,7 +4,7 @@
 	}
 	var movingNodes = {};
 	var ViewerUtilities = {
-		spotLight: function(camera, z) {
+		spotLight : function(camera, z) {
 			var light = new THREE.SpotLight(0xffffff, 1.5);
 			light.position.set(0, 500, z);
 			light.castShadow = true;
@@ -20,7 +20,7 @@
 			light.shadowMapHeight = 2048;
 			return light;
 		},
-		declareEvents: function(viewer, domElement) {
+		declareEvents : function(viewer, domElement) {
 			$(domElement).on("mousemove", viewer.onDocumentMouseMove);
 			$(domElement).on("mousedown", viewer.onDocumentMouseDown);
 			$(domElement).on("mouseup", viewer.onDocumentMouseUp);
@@ -33,7 +33,7 @@
 			});
 			window.addEventListener('resize', viewer.onWindowResize, false);
 		},
-		trackballControls: function(camera, domElement) {
+		trackballControls : function(camera, domElement) {
 			var controls = new THREE.TrackballControls(camera, domElement);
 			controls.rotateSpeed = 1.0;
 			controls.zoomSpeed = 1.2;
@@ -44,9 +44,9 @@
 			controls.dynamicDampingFactor = 0.3;
 			return controls;
 		},
-		webGlRender: function(container) {
+		webGlRender : function(container) {
 			var renderer = new THREE.WebGLRenderer({
-				antialias: false
+				antialias : false
 			});
 			renderer.setClearColor(0xf0f0f0);
 			renderer.setPixelRatio(1.0);
@@ -55,10 +55,10 @@
 			renderer.sortObjects = false;
 
 			renderer.shadowMapEnabled = false;
-//			renderer.shadowMapType = THREE.PCFShadowMap;
+			// renderer.shadowMapType = THREE.PCFShadowMap;
 			return renderer;
 		},
-		header: function() {
+		header : function() {
 			var header = document.createElement('div');
 			header.style.position = 'absolute';
 			header.style.top = '10px';
@@ -68,34 +68,34 @@
 			header.innerHTML = '<p onclick="' + strCommand + '">MENU</p>';
 			return header;
 		},
-		spacePhisycalPlane: function(normal, dist) {
+		spacePhisycalPlane : function(normal, dist) {
 			var plane = new THREE.Plane(normal, dist);
 			plane.visible = true;
 			return plane;
 		},
-		spacePlane: function(visible, w, h) {
+		spacePlane : function(visible, w, h) {
 			w = (w) ? w : 12000;
 			h = (h) ? h : 12000;
 			var plane = new THREE.Mesh(
 					new THREE.PlaneBufferGeometry(w, h, 8, 8),
 					new THREE.MeshBasicMaterial({
-						color: 0xaa0000,
-						opacity: 0.25,
-						transparent: true
+						color : 0xaa0000,
+						opacity : 0.25,
+						transparent : true
 					}));
 			plane.visible = (visible) ? visible : false;
 			return plane;
 		},
-		text: function(str, position, camera) {
+		text : function(str, position, camera) {
 			var size = 108;
 			var curveSegments = 3;
 			var text = new THREE.TextGeometry(str, {
-				font: "helvetiker",
-				size: 10,
-				height: 3,
+				font : "helvetiker",
+				size : 10,
+				height : 3,
 			});
 			var material = new THREE.MeshBasicMaterial({
-				color: '#000044'
+				color : '#000044'
 			});
 			var textMesh = new THREE.Mesh(text, material);
 			textMesh.position.x = position.x;
@@ -103,15 +103,16 @@
 			textMesh.position.z = position.z;
 			return textMesh;
 		},
-		objOnPlane: function(position) {
+		objOnPlane : function(position) {
 			var selectionShape = $.Cmdbuild.g3d.constants.SELECTION_SHAPE;
-			var sprite = $.Cmdbuild.customvariables.cacheImages.getBaseImages("selected");
+			var sprite = $.Cmdbuild.customvariables.cacheImages
+					.getBaseImages("selected");
 			THREE.ImageUtils.crossOrigin = true;
 			var map = THREE.ImageUtils.loadTexture(sprite);
 			var material = new THREE.SpriteMaterial({
-				map: map,
-				color: 0xffffff,
-				fog: false
+				map : map,
+				color : 0xffffff,
+				fog : false
 			});
 			var object = new THREE.Sprite(material);
 			object.scale.set(20, 20, 2);
@@ -120,23 +121,24 @@
 			object.material.ambient = object.material.color;
 			return object;
 		},
-		camera: function(param) {
+		camera : function(param) {
 			var fov = (param && param.fov) ? param.fov : 70;
-			var camera = new THREE.PerspectiveCamera(fov, window.innerWidth
-					/ window.innerHeight, 1, 100000);
+			var camera = new THREE.PerspectiveCamera(fov, param.width
+					/ param.height, 1, 100000);
 			camera.position.z = $.Cmdbuild.custom.configuration.camera.position.z;
 			camera.position.y = $.Cmdbuild.custom.configuration.camera.position.y;
 			return camera;
 		},
 		// OPENGL
-		selectionOnNode: function(node) {
+		selectionOnNode : function(node) {
 			var selectionShape = $.Cmdbuild.g3d.constants.SELECTION_SHAPE;
-			var sprite = $.Cmdbuild.customvariables.cacheImages.getBaseImages("selected");
+			var sprite = $.Cmdbuild.customvariables.cacheImages
+					.getBaseImages("selected");
 			var map = THREE.ImageUtils.loadTexture(sprite);
 			var material = new THREE.SpriteMaterial({
-				map: map,
-				color: 0xffffff,
-				fog: false
+				map : map,
+				color : 0xffffff,
+				fog : false
 			});
 			var object = new THREE.Sprite(material);
 			var sd = $.Cmdbuild.customvariables.options.spriteDimension;
@@ -144,22 +146,24 @@
 			object.material.ambient = object.material.color;
 			return object;
 		},
-		objectFromNode: function(node, position) {
+		objectFromNode : function(node, position) {
 			var classId = $.Cmdbuild.g3d.Model.getGraphData(node, "classId");
-			var sprite = $.Cmdbuild.customvariables.cacheImages.getImage(classId);
+			var sprite = $.Cmdbuild.customvariables.cacheImages
+					.getImage(classId);
 			try {
 				var map = THREE.ImageUtils.loadTexture(sprite, {}, function() {
 
 				});
 				if (!map) {
 					console.log("Error on Sprite: "
-							+ $.Cmdbuild.g3d.Model.getGraphData(node,
-									"classId") + " the sprite is " + sprite);
+							+ $.Cmdbuild.g3d.Model
+									.getGraphData(node, "classId")
+							+ " the sprite is " + sprite);
 				}
 				var material = new THREE.SpriteMaterial({
-					map: map,
-					color: 0xffffff,
-					fog: false
+					map : map,
+					color : 0xffffff,
+					fog : false
 				});
 				var object = new THREE.Sprite(material);
 				var sd = $.Cmdbuild.customvariables.options.spriteDimension;
@@ -179,14 +183,14 @@
 				return null;
 			}
 		},
-		lineFromEdge: function(edge) {
+		lineFromEdge : function(edge) {
 			var source = edge.source();
 			var target = edge.target();
 			var p1 = $.Cmdbuild.g3d.ViewerUtilities.getCenterPosition(source);
 			var p2 = $.Cmdbuild.g3d.ViewerUtilities.getCenterPosition(target);
 			var material = new THREE.LineBasicMaterial({
-				color: $.Cmdbuild.custom.configuration.edgeColor,
-				linewidth: 1
+				color : $.Cmdbuild.custom.configuration.edgeColor,
+				linewidth : 1
 			});
 
 			var geometry = new THREE.Geometry();
@@ -197,7 +201,7 @@
 			line.domainId = edge.data("domainId");
 			return line;
 		},
-		moveObject: function(viewer, node) {
+		moveObject : function(viewer, node) {
 			var STEPS = 10;
 			var INTERVAL = 50;
 			var me = this;
@@ -210,7 +214,7 @@
 
 			if (movingNodes[id] != undefined) {
 				movingNodes[id] = {
-					nextPosition: node
+					nextPosition : node
 				};
 				return;
 			}
@@ -218,14 +222,14 @@
 			var i = 1;
 			this.TM = setInterval(function() {
 				var glp = {
-					x: glObject.position.x,
-					y: glObject.position.y,
-					z: glObject.position.z
+					x : glObject.position.x,
+					y : glObject.position.y,
+					z : glObject.position.z
 				};
 				glObject.position.copy({
-					x: glp.x + ((p.x - glp.x) / STEPS) * i,
-					y: glp.y + ((p.y - glp.y) / STEPS) * i,
-					z: glp.z + ((p.z - glp.z) / STEPS) * i
+					x : glp.x + ((p.x - glp.x) / STEPS) * i,
+					y : glp.y + ((p.y - glp.y) / STEPS) * i,
+					z : glp.z + ((p.z - glp.z) / STEPS) * i
 				});
 				if (node.selectionOnNode) {
 					node.selectionOnNode.position.copy(glObject.position);
@@ -242,7 +246,7 @@
 				}
 			}, INTERVAL);
 		},
-		modifyLine: function(scene, edge, p1, p2) {
+		modifyLine : function(scene, edge, p1, p2) {
 			if (!edge.glLine) {
 				console.log("Line not found!");
 				return;
@@ -256,7 +260,7 @@
 			edge.glLine.geometry.verticesNeedUpdate = true;
 			edge.glLine.geometry.computeBoundingSphere();
 		},
-		clearScene: function(scene, model, nodes, edges) {
+		clearScene : function(scene, model, nodes, edges) {
 			for (var i = 0; i < edges.length; i++) {
 				var edge = edges[i];
 				scene.remove(edge);
@@ -266,15 +270,15 @@
 				scene.remove(node);
 			}
 		},
-		getCenterPosition: function(node) {
+		getCenterPosition : function(node) {
 			return node.position();
 		},
-		equals: function(p1, p2) {
+		equals : function(p1, p2) {
 			var epsilon = $.Cmdbuild.g3d.constants.MIN_MOVEMENT;
 			return !(Math.abs(p1.x - p2.x) > epsilon
 					|| Math.abs(p1.y - p2.y) > epsilon || Math.abs(p1.z - p2.z) > epsilon);
 		},
-		boundingBox: function(objects) {
+		boundingBox : function(objects) {
 			var maxx = -Number.MAX_VALUE;
 			var maxy = -Number.MAX_VALUE;
 			var maxz = -Number.MAX_VALUE;
@@ -291,50 +295,50 @@
 				maxz = Math.max(maxz, p.z);
 			}
 			return {
-				x: minx,
-				y: miny,
-				z: minz,
-				w: maxx - minx,
-				h: maxy - miny,
-				d: maxz - minz
+				x : minx,
+				y : miny,
+				z : minz,
+				w : maxx - minx,
+				h : maxy - miny,
+				d : maxz - minz
 			};
 		},
-		boundingBoxVertices: function(box) {
-			return [{
-				x: box.x,
-				y: box.y,
-				z: box.z
+		boundingBoxVertices : function(box) {
+			return [ {
+				x : box.x,
+				y : box.y,
+				z : box.z
 			}, {
-				x: box.x,
-				y: box.y,
-				z: box.d + box.z
+				x : box.x,
+				y : box.y,
+				z : box.d + box.z
 			}, {
-				x: box.x,
-				y: box.h + box.y,
-				z: box.z
+				x : box.x,
+				y : box.h + box.y,
+				z : box.z
 			}, {
-				x: box.x,
-				y: box.h + box.y,
-				z: box.d + box.z
+				x : box.x,
+				y : box.h + box.y,
+				z : box.d + box.z
 			}, {
-				x: box.w + box.x,
-				y: box.y,
-				z: box.z
+				x : box.w + box.x,
+				y : box.y,
+				z : box.z
 			}, {
-				x: box.w + box.x,
-				y: box.y,
-				z: box.d + box.z
+				x : box.w + box.x,
+				y : box.y,
+				z : box.d + box.z
 			}, {
-				x: box.w + box.x,
-				y: box.h + box.y,
-				z: box.z
+				x : box.w + box.x,
+				y : box.h + box.y,
+				z : box.z
 			}, {
-				x: box.w + box.x,
-				y: box.h + box.y,
-				z: box.d + box.z
-			}];
+				x : box.w + box.x,
+				y : box.h + box.y,
+				z : box.d + box.z
+			} ];
 		},
-		projectVector: function(vector, projectionMatrix, matrixWorld) {
+		projectVector : function(vector, projectionMatrix, matrixWorld) {
 			var projScreenMatrix = new THREE.Matrix4();
 			var matrixWorldInverse = new THREE.Matrix4();
 			matrixWorldInverse.getInverse(matrixWorld);
@@ -346,7 +350,7 @@
 			return vector;
 
 		},
-		pointOnScreen: function(vector, w, h, projectionMatrix, matrixWorld,
+		pointOnScreen : function(vector, w, h, projectionMatrix, matrixWorld,
 				bFirst) {
 			var v = new THREE.Vector3();
 			v.copy(vector);
@@ -362,7 +366,7 @@
 			}
 			return true;
 		},
-		onVideo: function(box, w, h, projectionMatrix, matrixWorld) {
+		onVideo : function(box, w, h, projectionMatrix, matrixWorld) {
 			for (var i = 0; i < box.vertices.length; i++) {
 				var vertice = box.vertices[i];
 				var vector = new THREE.Vector3(vertice.x, vertice.y, vertice.z);
@@ -374,15 +378,17 @@
 			}
 			return true;
 		},
-		closeTooltip: function() {
-			var tooltip_window = $("#" + $.Cmdbuild.g3d.constants.TOOLTIP_WINDOW);
+		closeTooltip : function() {
+			var tooltip_window = $("#"
+					+ $.Cmdbuild.g3d.constants.TOOLTIP_WINDOW);
 			tooltip_window[0].style.display = "none";
 		},
-		moveEdgeTooltip: function(intersected, node, mouseX, mouseY) {
+		moveEdgeTooltip : function(intersected, node, mouseX, mouseY) {
 			if (!$.Cmdbuild.customvariables.options.edgeTooltipEnabled) {
 				return;
 			}
-			var $tooltip_window = $("#" + $.Cmdbuild.g3d.constants.TOOLTIP_WINDOW);
+			var $tooltip_window = $("#"
+					+ $.Cmdbuild.g3d.constants.TOOLTIP_WINDOW);
 
 			// create box
 			var boxtitle = $.Cmdbuild.translations.getTranslation(
@@ -397,27 +403,38 @@
 
 			// get relation info
 			var domainId = intersected.object.domainId;
-			var domain = $.Cmdbuild.customvariables.cacheDomains.getDomain(domainId);
+			var domain = $.Cmdbuild.customvariables.cacheDomains
+					.getDomain(domainId);
 			var domainDescription = domain.domainDescription;
-//			var domainDescription = $.Cmdbuild.customvariables.cacheDomains.getDescription(domainId);
+			// var domainDescription =
+			// $.Cmdbuild.customvariables.cacheDomains.getDescription(domainId);
 			var source = intersected.object.source;
 			var target = intersected.object.target;
-			var classSource = $.Cmdbuild.g3d.Model.getGraphData(source, "classId");
-			var classTarget = $.Cmdbuild.g3d.Model.getGraphData(target, "classId");
-			var labelSource = $.Cmdbuild.g3d.Model.getGraphData(source, "label");
-			var labelTarget = $.Cmdbuild.g3d.Model.getGraphData(target, "label");
-			var sourceClassDescription = $.Cmdbuild.customvariables.cacheClasses.getDescription(classSource);
-			var targetClassDescription = $.Cmdbuild.customvariables.cacheClasses.getDescription(classTarget);
-			var direct = $.Cmdbuild.customvariables.cacheClasses.sameClass(domain.sourceId, classSource);
-			var descriptionDirect = (direct) ? domain.descriptionDirect : domain.descriptionInverse;
-			var descriptionInverse = (direct) ? domain.descriptionInverse : domain.descriptionDirect;
+			var classSource = $.Cmdbuild.g3d.Model.getGraphData(source,
+					"classId");
+			var classTarget = $.Cmdbuild.g3d.Model.getGraphData(target,
+					"classId");
+			var labelSource = $.Cmdbuild.g3d.Model
+					.getGraphData(source, "label");
+			var labelTarget = $.Cmdbuild.g3d.Model
+					.getGraphData(target, "label");
+			var sourceClassDescription = $.Cmdbuild.customvariables.cacheClasses
+					.getDescription(classSource);
+			var targetClassDescription = $.Cmdbuild.customvariables.cacheClasses
+					.getDescription(classTarget);
+			var direct = $.Cmdbuild.customvariables.cacheClasses.sameClass(
+					domain.sourceId, classSource);
+			var descriptionDirect = (direct) ? domain.descriptionDirect
+					: domain.descriptionInverse;
+			var descriptionInverse = (direct) ? domain.descriptionInverse
+					: domain.descriptionDirect;
 			// create UI
 			var $source = $("<p></p>").append(
-					$("<span></span>").text(sourceClassDescription + ": ")).append(
-					$("<em></em>").text(labelSource));
+					$("<span></span>").text(sourceClassDescription + ": "))
+					.append($("<em></em>").text(labelSource));
 			var $target = $("<p></p>").append(
-					$("<span></span>").text(targetClassDescription + ": ")).append(
-					$("<em></em>").text(labelTarget));
+					$("<span></span>").text(targetClassDescription + ": "))
+					.append($("<em></em>").text(labelTarget));
 			var $descriptionDirect = $("<p></p>").append(
 					$("<span></span>").text(descriptionDirect)).append(
 					$("<span></span>").addClass("icon")).addClass(
@@ -426,7 +443,8 @@
 					$("<span></span>").text(descriptionInverse)).append(
 					$("<span></span>").addClass("icon")).addClass(
 					"rel_desc_inverse");
-			$boxcontent.append($source).append($descriptionDirect).append($descriptionInverse).append($target);
+			$boxcontent.append($source).append($descriptionDirect).append(
+					$descriptionInverse).append($target);
 
 			// set position
 			var h = $tooltip_window.height();
@@ -435,11 +453,12 @@
 			$tooltip_window[0].style.left = mouseX - w / 2;
 			$tooltip_window[0].style.display = "block";
 		},
-		moveNodeTooltip: function(intersected, node, mouseX, mouseY) {
+		moveNodeTooltip : function(intersected, node, mouseX, mouseY) {
 			if (!$.Cmdbuild.customvariables.options.nodeTooltipEnabled) {
 				return;
 			}
-			var $tooltip_window = $("#" + $.Cmdbuild.g3d.constants.TOOLTIP_WINDOW);
+			var $tooltip_window = $("#"
+					+ $.Cmdbuild.g3d.constants.TOOLTIP_WINDOW);
 
 			// create box
 			var boxtitle = $.Cmdbuild.translations.getTranslation(
@@ -454,14 +473,20 @@
 
 			// get item info
 			var classId = $.Cmdbuild.g3d.Model.getGraphData(node, "classId");
-			var img_src = $.Cmdbuild.customvariables.cacheImages.getImage(classId);
-			var itemLabel = $.Cmdbuild.translations.getTranslation("BOXLABEL_CARD", "Card");
-			var typeLabel = $.Cmdbuild.translations.getTranslation("BOXLABEL_CLASS", "Class");
-			var itemDescription = $.Cmdbuild.g3d.Model.getGraphData(node, "label");
-			var typeDescription = $.Cmdbuild.customvariables.cacheClasses.getDescription(classId);
+			var img_src = $.Cmdbuild.customvariables.cacheImages
+					.getImage(classId);
+			var itemLabel = $.Cmdbuild.translations.getTranslation(
+					"BOXLABEL_CARD", "Card");
+			var typeLabel = $.Cmdbuild.translations.getTranslation(
+					"BOXLABEL_CLASS", "Class");
+			var itemDescription = $.Cmdbuild.g3d.Model.getGraphData(node,
+					"label");
+			var typeDescription = $.Cmdbuild.customvariables.cacheClasses
+					.getDescription(classId);
 
 			// create UI
-			var $img = $("<img></img>").attr("src", img_src).attr("width", "32").attr("height", "32");
+			var $img = $("<img></img>").attr("src", img_src)
+					.attr("width", "32").attr("height", "32");
 			var $item = $("<p></p>").append(
 					$("<span></span>").text(itemLabel + ": ")).append(
 					$("<em></em>").html(itemDescription));

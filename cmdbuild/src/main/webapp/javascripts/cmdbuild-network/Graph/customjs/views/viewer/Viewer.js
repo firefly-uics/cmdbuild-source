@@ -53,7 +53,11 @@
 			canvasDiv = $("#" + idCanvas)[0];
 			$.Cmdbuild.customvariables.commandsManager = this.commandsManager;
 
-			camera = $.Cmdbuild.g3d.ViewerUtilities.camera();
+			renderer = $.Cmdbuild.g3d.ViewerUtilities.webGlRender(canvasDiv);
+			camera = $.Cmdbuild.g3d.ViewerUtilities.camera({
+				width : renderer.domElement.width,
+				height : renderer.domElement.height
+			});
 			var cameraHelper = new THREE.CameraHelper(camera);
 			scene = new THREE.Scene();
 
@@ -64,7 +68,6 @@
 			scene.add(light);
 			plane = $.Cmdbuild.g3d.ViewerUtilities.spacePlane();
 			scene.add(plane);
-			renderer = $.Cmdbuild.g3d.ViewerUtilities.webGlRender(canvasDiv);
 			canvasDiv.appendChild(renderer.domElement);
 			controls = $.Cmdbuild.g3d.ViewerUtilities.trackballControls(camera,
 					renderer.domElement);
