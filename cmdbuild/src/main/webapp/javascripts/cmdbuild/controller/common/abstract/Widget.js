@@ -127,6 +127,10 @@
 		 * @param {Object} configurationObject.widgetConfiguration
 		 * @param {Ext.form.Basic} configurationObject.clientForm
 		 * @param {CMDBuild.model.CMActivityInstance} configurationObject.card
+		 *
+		 * @returns {Void}
+		 *
+		 * @override
 		 */
 		constructor: function (configurationObject) {
 			if (
@@ -136,9 +140,6 @@
 			) {
 				// Add default managed functions
 				this.cmfgCatchedFunctions.push('getLabel');
-
-				// Generate a unique ID for widget
-				this.generateWidgetId(configurationObject.widgetConfiguration, configurationObject.card.data);
 
 				this.callParent(arguments);
 
@@ -171,15 +172,6 @@
 		beforeHideView: Ext.emptyFn,
 
 		/**
-		 * @returns {String}
-		 *
-		 * @private
-		 */
-		generateWidgetId: function (widgetConfiguration, cardData) {
-			widgetConfiguration[CMDBuild.core.constants.Proxy.ID] = cardData[CMDBuild.core.constants.Proxy.ID] + '-' + widgetConfiguration[CMDBuild.core.constants.Proxy.ID];
-		},
-
-		/**
 		 * @returns {Object or null}
 		 */
 		getData: function () {
@@ -187,12 +179,23 @@
 		},
 
 		/**
-		 * @returns {Number}
+		 * @param {String} mode
+		 *
+		 * @returns {String}
 		 *
 		 * @private
 		 */
-		getId: function () {
-			return this.widgetConfigurationGet(CMDBuild.core.constants.Proxy.ID);
+		getId: function (mode) {
+			switch (mode) {
+				// Generates a unique ID for widget related to card data. This mode is mainly used from InstancesDataStorage methods.
+				case 'unique':
+					return this.card.data[CMDBuild.core.constants.Proxy.ID] + '-' + this.widgetConfigurationGet(CMDBuild.core.constants.Proxy.ID);
+
+				// Original widget ID generated from server
+				case 'strict':
+				default:
+					return this.widgetConfigurationGet(CMDBuild.core.constants.Proxy.ID);
+			}
 		},
 
 		/**
@@ -217,8 +220,8 @@
 			 * @returns {Mixed} or null
 			 */
 			instancesDataStorageGet: function () {
-				if (!Ext.isEmpty(this.getId()) && !Ext.isEmpty(this.instancesDataStorage[this.getId()]))
-					return this.instancesDataStorage[this.getId()];
+				if (!Ext.isEmpty(this.getId('unique')) && !Ext.isEmpty(this.instancesDataStorage[this.getId('unique')]))
+					return this.instancesDataStorage[this.getId('unique')];
 
 				return null;
 			},
@@ -227,22 +230,27 @@
 			 * @returns {Boolean}
 			 */
 			instancesDataStorageIsEmpty: function () {
-				if (!Ext.isEmpty(this.getId()))
-					return Ext.isEmpty(this.instancesDataStorage[this.getId()]);
+				if (!Ext.isEmpty(this.getId('unique')))
+					return Ext.isEmpty(this.instancesDataStorage[this.getId('unique')]);
 
 				return true;
 			},
 
+			/**
+			 * @returns {Void}
+			 */
 			instancesDataStorageReset: function () {
 				this.instancesDataStorage = {};
 			},
 
 			/**
 			 * @param {Mixed} instanceData
+			 *
+			 * @returns {Void}
 			 */
 			instancesDataStorageSet: function (instanceData) {
-				if (!Ext.isEmpty(this.getId()) && !Ext.isEmpty(instanceData))
-					this.instancesDataStorage[this.getId()] = instanceData;
+				if (!Ext.isEmpty(this.getId('unique')) && !Ext.isEmpty(instanceData))
+					this.instancesDataStorage[this.getId('unique')] = instanceData;
 			},
 
 		/**
@@ -267,6 +275,8 @@
 		 * Cannot be manage width cmfg() because requires to be executed on second step
 		 *
 		 * @param {Array} callbackChainArray
+		 *
+		 * @returns {Void}
 		 *
 		 * @public
 		 */
