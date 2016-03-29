@@ -19,7 +19,7 @@
 			<params>
 				<type>domainsGrid</type>
 				<backend>DomainsFilter</backend>
-				<nRows>10</nRows>
+				<nRows>8</nRows>
 				<selection>true</selection>
 				<classId>-1</classId>
 			</params>
