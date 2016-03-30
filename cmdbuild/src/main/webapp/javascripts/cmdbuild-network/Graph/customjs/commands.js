@@ -86,9 +86,14 @@
 		navigateOnNode : function(param, callback, callbackScope) {
 			var selected = $.Cmdbuild.customvariables.selected.getCards(0, 1);
 			if (selected.total <= 0) {
+				callback.apply(callbackScope, []);
 				return;
 			}
 			var classId = selected.rows[0].classId;
+			if (classId === $.Cmdbuild.g3d.constants.GUICOMPOUNDNODE) {
+				callback.apply(callbackScope, []);
+				return;
+			}
 			var cardId = selected.rows[0].id;
 			var navigationTree = $.Cmdbuild.customvariables.cacheTrees
 					.getCurrentNavigationTree();
