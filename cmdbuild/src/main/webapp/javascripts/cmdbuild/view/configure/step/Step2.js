@@ -89,7 +89,7 @@
 					}),
 					this.dbConnectionFieldset = Ext.create('Ext.form.FieldSet', {
 						title: CMDBuild.Translation.databaseConnection
-							+ ' (PostgreSQL ' + CMDBuild.configuration.runtime.get(CMDBuild.core.constants.Proxy.JDBC_DRIVER_VERSION) +')',
+							+ ' (' + CMDBuild.configuration.runtime.get(CMDBuild.core.constants.Proxy.JDBC_DRIVER_VERSION) +')',
 
 						layout: {
 							type: 'vbox',
