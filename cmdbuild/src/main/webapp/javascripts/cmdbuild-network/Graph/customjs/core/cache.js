@@ -282,10 +282,16 @@
 			var param = {
 				filter : filter
 			};
-			$.Cmdbuild.utilities.proxy.getDomains(param, function(response) {
-				this.getAllDomainsRecursive(response, callback, callbackScope);
-			}, this);
+			if (classId === null) {
+				callback.apply(callbackScope, []);
+			}
+			else {
+				$.Cmdbuild.utilities.proxy.getDomains(param, function(response) {
+					this.getAllDomainsRecursive(response, callback, callbackScope);
+				}, this);
+			}
 		};
+
 		this.getAllDomainsRecursive = function(domains, callback, callbackScope) {
 			if (domains.length === 0) {
 				callback.apply(callbackScope, []);
