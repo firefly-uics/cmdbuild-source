@@ -266,8 +266,6 @@
 					.getDescription(relationSample._sourceType);
 			sourceDescription = (sourceDescription) ? sourceDescription
 					: relationSample._sourceType;
-			console.log(sourceDescription + " " + destinationDescription
-					+ " relationSample ", relationSample);
 			var domain = $.Cmdbuild.customvariables.cacheDomains
 					.getDomain(domainId);
 			var direction = (relationSample._sourceId == cardId && relationSample._sourceType == classId);
