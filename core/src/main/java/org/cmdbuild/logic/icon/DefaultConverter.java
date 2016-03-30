@@ -152,7 +152,7 @@ public class DefaultConverter extends Converter<Icon, org.cmdbuild.data.store.ic
 	private Image imageOf(final org.cmdbuild.data.store.icon.Icon b) {
 		final File fileForPath = new File(b.getPath());
 		final Optional<Element> folder = stream(fileStore.folders().spliterator(), false) //
-				.filter(input -> input.getPath().equals(fileForPath.getParentFile().getAbsolutePath())) //
+				.filter(input -> input.getPath().equals(fileForPath.getParentFile().getPath())) //
 				.limit(1) //
 				.findFirst();
 		Validate.isTrue(folder.isPresent(), "missing folder");
