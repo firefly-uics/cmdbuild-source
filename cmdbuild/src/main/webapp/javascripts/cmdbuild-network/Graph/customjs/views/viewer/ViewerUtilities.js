@@ -148,8 +148,15 @@
 		},
 		objectFromNode : function(node, position) {
 			var classId = $.Cmdbuild.g3d.Model.getGraphData(node, "classId");
-			var sprite = $.Cmdbuild.customvariables.cacheImages
-					.getImage(classId);
+			var sprite = "";
+			if (classId === $.Cmdbuild.g3d.constants.GUICOMPOUNDNODE) {
+				sprite = $.Cmdbuild.customvariables.cacheImages
+						.getBaseImages("compound");
+
+			} else {
+				sprite = $.Cmdbuild.customvariables.cacheImages
+						.getImage(classId);
+			}
 			try {
 				var map = THREE.ImageUtils.loadTexture(sprite, {}, function() {
 

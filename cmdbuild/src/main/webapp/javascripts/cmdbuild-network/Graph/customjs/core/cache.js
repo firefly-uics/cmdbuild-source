@@ -149,6 +149,8 @@
 				return base_url + "selected.png";
 			case "current":
 				return base_url + "current.png";
+			case "compound":
+				return base_url + "compound.png";
 			default:
 				return "";
 			}
