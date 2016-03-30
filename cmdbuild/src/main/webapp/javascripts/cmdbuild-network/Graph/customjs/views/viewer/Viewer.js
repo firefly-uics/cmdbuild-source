@@ -137,7 +137,7 @@
 						macroCommand, {}, function() {
 							callback.apply(callbackScope, []);
 						}, this);
-
+				this.clearSelection();
 			}, this);
 		};
 		this.onDocumentMouseDblClick = function(event) {
@@ -466,6 +466,7 @@
 		this.clearSelection = function() {
 			this.removeSelectionGlObjects();
 			this.selected.erase();
+			this.selected.changed();
 		};
 		this.showSelected = function(id) {
 			var node = thisViewer.model.getNode(id);
