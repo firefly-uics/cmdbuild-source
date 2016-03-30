@@ -79,7 +79,30 @@
 				$.Cmdbuild.utilities.proxy.getClass(type, callback,
 						callbackScope);
 			}
+		},
+		//here only for this release. It's just committed in the new CORE
+		getIcons : function(config, callback, callbackScope) {
+			// params
+			var params = $.Cmdbuild.utilities.proxy.prepareParamsForList(config);
+			// get url and make request
+			var url = $.Cmdbuild.global.getApiUrl() + 'icons/';
+			var callbackObj = undefined;
+			if (typeof(callback) === "function") {
+				callbackObj = {
+						success: function(data, metadata){
+							callback.apply(callbackScope, [data, metadata]);
+						},
+						fail: function(response){
+							console.log("Error on icons! The icons cannot be load");
+							callback.apply(callbackScope, [[], []]);
+						}
+					};
+			} else  {
+				callbackObj = callback;					
+			}
+			$.Cmdbuild.authProxy.makeAjaxRequest(url, methods.GET, callbackObj, params);
 		}
+
 	};
 	$.Cmdbuild.g3d.proxy = proxy;
 })(jQuery);
