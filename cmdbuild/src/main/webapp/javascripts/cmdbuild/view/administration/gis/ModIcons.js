@@ -104,7 +104,7 @@ Ext.define("CMDBuild.Administration.ModIcons", {
 		}, this);
 
 		this.iconsGrid.getStore().on('load', function(store, records, options) {
-			if (records.length == 0) {
+			if (!Ext.isEmpty(records)) {
 				this.modifyButton.disable();
 				this.removeButton.disable();
 			}
