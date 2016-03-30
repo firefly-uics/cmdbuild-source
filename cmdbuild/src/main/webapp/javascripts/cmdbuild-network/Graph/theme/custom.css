@@ -621,7 +621,9 @@ div.waitMe {
 .DTFC_RightBodyLiner {
 	height: 0;
 }
-
+#domains4Class-menu {
+	max-height: 250px;
+}
 /**
  * CUSTOM
  */
