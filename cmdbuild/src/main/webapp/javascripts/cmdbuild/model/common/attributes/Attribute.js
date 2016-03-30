@@ -60,7 +60,7 @@
 					customValidationValue = (
 						!Ext.isEmpty(this.get(CMDBuild.core.constants.Proxy.SCALE))
 						&& !Ext.isEmpty(this.get(CMDBuild.core.constants.Proxy.PRECISION))
-						&& this.get(CMDBuild.core.constants.Proxy.SCALE) < this.get(CMDBuild.core.constants.Proxy.PRECISION)
+						&& this.get(CMDBuild.core.constants.Proxy.SCALE) <= this.get(CMDBuild.core.constants.Proxy.PRECISION)
 					);
 				} break;
 
