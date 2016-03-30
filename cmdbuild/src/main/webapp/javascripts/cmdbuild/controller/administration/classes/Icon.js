@@ -65,8 +65,6 @@
 				CMDBuild.core.proxy.classes.Icon.readAllIcons({
 					scope: this,
 					failure: function (response, options, decodedResponse) {
-						_error('readAll failure', this);
-
 						CMDBuild.core.LoadMask.hide();
 					},
 					success: function (response, options, decodedResponse) {

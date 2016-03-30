@@ -8,7 +8,8 @@
 	Ext.define('CMDBuild.core.proxy.classes.Icon', {
 
 		requires: [
-			'CMDBuild.core.constants.Proxy'
+			'CMDBuild.core.constants.Proxy',
+			'CMDBuild.core.interfaces.Ajax'
 		],
 
 		singleton: true,
@@ -33,7 +34,7 @@
 			parameters.headers = Ext.isEmpty(parameters.headers) ? {} : parameters.headers;
 			parameters.headers[CMDBuild.core.constants.Proxy.AUTHORIZATION_HEADER_KEY] = Ext.util.Cookies.get(CMDBuild.core.constants.Proxy.SESSION_TOKEN);
 
-			Ext.Ajax.request({
+			CMDBuild.core.interfaces.Ajax.request({
 				method: 'DELETE',
 				headers: parameters.headers,
 				jsonData: parameters.params,
@@ -119,4 +120,3 @@
 	});
 
 })();
-

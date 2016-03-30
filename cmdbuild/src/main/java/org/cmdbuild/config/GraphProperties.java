@@ -23,6 +23,8 @@ public class GraphProperties extends DefaultProperties implements GraphConfigura
 	private static final String STEP_RADIUS = "stepRadius";
 	private static final String VIEW_POINT_DISTANCE = "viewPointDistance";
 	private static final String VIEW_POINT_HEIGHT = "viewPointHeight";
+	private static final String USERNAME = "username";
+	private static final String PASSWORD = "password";
 
 	public GraphProperties() {
 		super();
@@ -37,6 +39,8 @@ public class GraphProperties extends DefaultProperties implements GraphConfigura
 		setProperty(STEP_RADIUS, "60");
 		setProperty(VIEW_POINT_DISTANCE, "50");
 		setProperty(VIEW_POINT_HEIGHT, "50");
+		setProperty(USERNAME, "");
+		setProperty(PASSWORD, "");
 	}
 
 	public static GraphProperties getInstance() {

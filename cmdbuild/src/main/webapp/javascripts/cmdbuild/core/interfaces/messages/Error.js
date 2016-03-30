@@ -1,4 +1,4 @@
-(function() {
+(function () {
 
 	Ext.define('CMDBuild.core.interfaces.messages.Error', {
 
@@ -13,12 +13,12 @@
 		 * @param {Object} decodedResponse
 		 * @param {Object} options
 		 */
-		display: function(decodedResponse, options) {
+		display: function (decodedResponse, options) {
 			if (
 				!Ext.isEmpty(decodedResponse)
 				&& !Ext.isEmpty(decodedResponse[CMDBuild.core.constants.Proxy.ERRORS]) && Ext.isArray(decodedResponse[CMDBuild.core.constants.Proxy.ERRORS])
 			) {
-				Ext.Array.forEach(decodedResponse[CMDBuild.core.constants.Proxy.ERRORS], function(message, i, allMessages) {
+				Ext.Array.forEach(decodedResponse[CMDBuild.core.constants.Proxy.ERRORS], function (message, i, allMessages) {
 					if (!Ext.Object.isEmpty(message))
 						CMDBuild.core.interfaces.messages.Error.showPopup(message, options);
 				}, this);
@@ -35,7 +35,7 @@
 		 *
 		 * @private
 		 */
-		formatMessage: function(reasonName, reasonParameters) {
+		formatMessage: function (reasonName, reasonParameters) {
 			if (
 				!Ext.isEmpty(CMDBuild.Translation.errors.reasons)
 				&& !Ext.isEmpty(CMDBuild.Translation.errors.reasons[reasonName])
@@ -54,7 +54,7 @@
 		 *
 		 * @private
 		 */
-		showPopup: function(message, options) {
+		showPopup: function (message, options) {
 			var errorTitle = null;
 			var errorBody = {
 				text: CMDBuild.Translation.errors.unknown_error,
@@ -112,7 +112,7 @@
 					errorBody.text = CMDBuild.Translation.errors.unknown_error;
 				} else if (response.status) {
 					errorTitle = CMDBuild.Translation.errors.error_message;
-					errorBody.text = CMDBuild.Translation.errors.server_error_code+response.status;
+					errorBody.text = CMDBuild.Translation.errors.server_error_code + response.status;
 				}
 			}
 

@@ -1,6 +1,6 @@
 (function () {
 
-	Ext.define('CMDBuild.core.interfaces.Ajax', {
+	Ext.define('CMDBuild.core.interfaces.Rest', {
 		extend: 'Ext.data.Connection',
 
 		requires: [
@@ -43,12 +43,12 @@
 		listeners: {
 			beforerequest: function (conn, options, eOpts) {
 				Ext.applyIf(options, {
-					disableAllMessages: CMDBuild.core.interfaces.Ajax.disableAllMessages,
-					disableErrors: CMDBuild.core.interfaces.Ajax.disableErrors,
-					disableWarnings: CMDBuild.core.interfaces.Ajax.disableWarnings
+					disableAllMessages: CMDBuild.core.interfaces.Rest.disableAllMessages,
+					disableErrors: CMDBuild.core.interfaces.Rest.disableErrors,
+					disableWarnings: CMDBuild.core.interfaces.Rest.disableWarnings
 				});
 
-				return CMDBuild.core.interfaces.Ajax.trapCallbacks(conn, options);
+				return CMDBuild.core.interfaces.Rest.trapCallbacks(conn, options);
 			}
 		},
 
@@ -63,7 +63,7 @@
 		 * @private
 		 */
 		adapterCallback: function (options, success, response, originalFunction) {
-			var decodedResponse = CMDBuild.core.interfaces.Ajax.decodeJson(response.responseText);
+			var decodedResponse = CMDBuild.core.interfaces.Rest.decodeJson(response.responseText);
 
 			CMDBuild.core.interfaces.service.LoadMask.manage(options.loadMask, false);
 
@@ -88,7 +88,7 @@
 		 * @private
 		 */
 		adapterSuccess: function (response, options, originalFunction) {
-			var decodedResponse = CMDBuild.core.interfaces.Ajax.decodeJson(response.responseText);
+			var decodedResponse = CMDBuild.core.interfaces.Rest.decodeJson(response.responseText);
 
 			Ext.callback(originalFunction, options.scope, [response, options, decodedResponse]);
 		},
@@ -103,7 +103,7 @@
 		 * @private
 		 */
 		adapterFailure: function (response, options, originalFunction) {
-			var decodedResponse = CMDBuild.core.interfaces.Ajax.decodeJson(response.responseText);
+			var decodedResponse = CMDBuild.core.interfaces.Rest.decodeJson(response.responseText);
 
 			Ext.callback(originalFunction, options.scope, [response, options, decodedResponse]);
 		},
@@ -126,13 +126,13 @@
 				try {
 					return Ext.decode(jsonResponse);
 				} catch (e) {
-					_error(e, 'CMDBuild.core.interfaces.Ajax');
+					_error(e, 'CMDBuild.core.interfaces.Rest');
 				}
 
 				return '';
 			}
 
-			_error('invalid json string: "' + jsonResponse + '"', 'CMDBuild.core.interfaces.Ajax');
+			_error('invalid json string: "' + jsonResponse + '"', 'CMDBuild.core.interfaces.Rest');
 
 			return '';
 		},
@@ -143,7 +143,7 @@
 		 * @private
 		 */
 		interceptorCallback: function (options) {
-			return Ext.bind(CMDBuild.core.interfaces.Ajax.adapterCallback, options.scope, [options.callback], true);
+			return Ext.bind(CMDBuild.core.interfaces.Rest.adapterCallback, options.scope, [options.callback], true);
 		},
 
 		/**
@@ -152,7 +152,7 @@
 		 * @private
 		 */
 		interceptorFailure: function (options) {
-			return Ext.bind(CMDBuild.core.interfaces.Ajax.adapterFailure, options.scope, [options.failure], true);
+			return Ext.bind(CMDBuild.core.interfaces.Rest.adapterFailure, options.scope, [options.failure], true);
 		},
 
 		/**
@@ -161,11 +161,11 @@
 		 * @private
 		 */
 		interceptorSuccess: function (options) {
-			return Ext.bind(CMDBuild.core.interfaces.Ajax.adapterSuccess, options.scope, [options.success], true);
+			return Ext.bind(CMDBuild.core.interfaces.Rest.adapterSuccess, options.scope, [options.success], true);
 		},
 
 		/**
-		 * Overrides to fix a bug that evaluates xhr status to determine success or failure. Uses response success property to determine success status.
+		 * Overrides to evaluate response status
 		 *
 		 * @param {Object} request
 		 *
@@ -175,34 +175,49 @@
 		 * @private
 		 */
 		onComplete: function (request, xdrResult) {
-			var me = this,
-				options = request.options,
-				success = true, // If response is not correctly formatted will be executed success functions as result
-				response;
+			var options = request.options;
+			var response = undefined;
+			var success = true;
 
 			if (request.aborted || request.timedout) {
-				response = me.createException(request);
+				response = this.createException(request);
 			} else {
-				response = me.createResponse(request);
+				response = this.createResponse(request);
 			}
 
-			// Check the response success property to verify real status value
-			if (!Ext.isEmpty(response.responseText) && !Ext.isEmpty(Ext.decode(response.responseText).success))
-				success = Ext.decode(response.responseText).success;
+			if (response.status < 200 || response.status >= 400) { // Manage failures
+				success = false;
+
+				var basePath = window.location.toString().split('/');
+				basePath = Ext.Array.slice(basePath, 0, basePath.length - 1).join('/');
+
+				response.responseText = Ext.encode({ // Emulate custom exception
+					success: false,
+					errors: [{
+						reason: 'ORM_CUSTOM_EXCEPTION',
+						reasonParameters: response.statusText,
+						stacktrace: response.request.options.method
+						+ ' ' + basePath
+						+ '/' + response.request.options.url
+						+ ' ' + response.status
+						+ ' (' + response.statusText + ')'
+					}]
+				});
+			}
 
 			if (success) {
-				me.fireEvent('requestcomplete', me, response, options);
+				this.fireEvent('requestcomplete', this, response, options);
 
 				Ext.callback(options.success, options.scope, [response, options]);
 			} else {
-				me.fireEvent('requestexception', me, response, options);
+				this.fireEvent('requestexception', this, response, options);
 
 				Ext.callback(options.failure, options.scope, [response, options]);
 			}
 
 			Ext.callback(options.callback, options.scope, [options, success, response]);
 
-			delete me.requests[request.id];
+			delete this.requests[request.id];
 
 			return response;
 		},
@@ -221,9 +236,9 @@
 			CMDBuild.core.interfaces.service.LoadMask.manage(options.loadMask, true);
 
 			Ext.apply(options, {
-				callback: CMDBuild.core.interfaces.Ajax.interceptorCallback(options),
-				failure: CMDBuild.core.interfaces.Ajax.interceptorFailure(options),
-				success: CMDBuild.core.interfaces.Ajax.interceptorSuccess(options)
+				callback: CMDBuild.core.interfaces.Rest.interceptorCallback(options),
+				failure: CMDBuild.core.interfaces.Rest.interceptorFailure(options),
+				success: CMDBuild.core.interfaces.Rest.interceptorSuccess(options)
 			});
 
 			return true;

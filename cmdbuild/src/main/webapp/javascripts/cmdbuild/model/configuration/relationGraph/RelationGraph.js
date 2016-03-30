@@ -1,4 +1,4 @@
-(function() {
+(function () {
 
 	Ext.require('CMDBuild.core.constants.Proxy');
 
@@ -16,7 +16,11 @@
 			{ name: CMDBuild.core.constants.Proxy.SPRITE_DIMENSION, type: 'int', defaultValue: 40, useNull: true },
 			{ name: CMDBuild.core.constants.Proxy.STEP_RADIUS, type: 'int', defaultValue: 200, useNull: true },
 			{ name: CMDBuild.core.constants.Proxy.VIEW_POINT_DISTANCE, type: 'int', defaultValue: 50, useNull: true },
-			{ name: CMDBuild.core.constants.Proxy.VIEW_POINT_HEIGHT, type: 'int', defaultValue: 50, useNull: true }
+			{ name: CMDBuild.core.constants.Proxy.VIEW_POINT_HEIGHT, type: 'int', defaultValue: 50, useNull: true },
+
+			// TODO: waiting for refactor (unique login refactor)
+			{ name: CMDBuild.core.constants.Proxy.USERNAME, type: 'string' },
+			{ name: CMDBuild.core.constants.Proxy.PASSWORD, type: 'string' }
 		]
 	});
 

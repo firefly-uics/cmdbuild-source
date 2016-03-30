@@ -44,6 +44,7 @@
 		/**
 		 * @param {Object} configuration
 		 * @param {Function} configuration.callback
+		 * @param {Object} configuration.scope
 		 */
 		constructor: function(configuration) {
 			Ext.apply(this, configuration); // Apply configurations
@@ -60,7 +61,9 @@
 
 					CMDBuild.core.configurationBuilders.RelationGraph.build(decodedResponse);
 				},
-				callback: this.callback
+				callback: function(response, options, decodedResponse) {
+					Ext.callback(this.callback, this.scope || this);
+				}
 			});
 		}
 	});
