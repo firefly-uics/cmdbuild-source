@@ -20,7 +20,7 @@
 		},
 		slidingLevels : function(param) {
 			var value = $("#" + param.id + " input").val();
-			if (value !== sliderValue) {
+			if (value !== sliderValue && ! $.Cmdbuild.customvariables.selected.isEmpty()) {
 				sliderValue = value;
 				reopenWithLevels(param.id, value);
 				$.Cmdbuild.customvariables.options.baseLevel = value;
