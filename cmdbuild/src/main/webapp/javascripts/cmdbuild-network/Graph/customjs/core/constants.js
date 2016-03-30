@@ -15,12 +15,12 @@
 		REMOVE_NAVIGATON_TREE_STRING : "Disable navigation tree",
 		COMPOUND_ATTRIBUTES : [ {
 			type : "string",
-			name : "type",
+			_id : "type",
 			description : "Type",
 			displayableInList : true
 		}, {
 			type : "string",
-			name : "description",
+			_id : "description",
 			description : "Description",
 			displayableInList : true
 		} ]
