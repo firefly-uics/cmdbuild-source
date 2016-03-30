@@ -134,10 +134,17 @@
 		this.data = [];
 		this.loadData = function(callback, callbackScope) {
 			var me = this;
-			$.Cmdbuild.utilities.proxy.getIcons({}, function(data, metadata) {
-				me.data = data;
+			try {
+				$.Cmdbuild.g3d.proxy.getIcons({}, function(data, metadata) {
+					me.data = data;
+					callback.apply(callbackScope);
+				});
+			}
+			catch (e) {
+				console.log("Error on images", $.Cmdbuild.g3d.proxy.getIcons);
+				me.data = [];
 				callback.apply(callbackScope);
-			});
+			}
 		};
 		this.getBaseImages = function(type) {
 			var base_url = $.Cmdbuild.global.getAppConfigUrl()
@@ -168,10 +175,17 @@
 			var url;
 			if (icons && icons.length) {
 				var icon = icons[0];
-				url = $.Cmdbuild.utilities.proxy
-						.getURIForFileStoreItemDownload(FILESTORE_IMAGES,
-								icon.image.details.folder,
-								icon.image.details.file);
+				try {
+					url = $.Cmdbuild.utilities.proxy
+							.getURIForFileStoreItemDownload(FILESTORE_IMAGES,
+									icon.image.details.folder,
+									icon.image.details.file);
+
+				} catch (e) {
+					console.log("Error on file : ", icon.image.details.file);
+					url = $.Cmdbuild.customvariables.cacheImages
+					.getBaseImages("default");
+				}
 			} else {
 				url = $.Cmdbuild.customvariables.cacheImages
 						.getBaseImages("default");
@@ -201,13 +215,17 @@
 				$.Cmdbuild.g3d.proxy.getClass(classId,
 						function(classAttributes) {
 							this.data[classId] = classAttributes;
-							$.Cmdbuild.customvariables.cacheTrees.pushTreeForClass(classId, function() {
-								if (!classAttributes.parent) {
-									callback.apply(callbackScope,[ classAttributes ]);
-								} else {
-									this.getLoadingClass(classAttributes.parent, callback, callbackScope);
-								}
-							}, this);
+							$.Cmdbuild.customvariables.cacheTrees
+									.pushTreeForClass(classId, function() {
+										if (!classAttributes.parent) {
+											callback.apply(callbackScope,
+													[ classAttributes ]);
+										} else {
+											this.getLoadingClass(
+													classAttributes.parent,
+													callback, callbackScope);
+										}
+									}, this);
 						}, this);
 			}
 		};
