@@ -139,8 +139,7 @@
 					me.data = data;
 					callback.apply(callbackScope);
 				});
-			}
-			catch (e) {
+			} catch (e) {
 				console.log("Error on images", $.Cmdbuild.g3d.proxy.getIcons);
 				me.data = [];
 				callback.apply(callbackScope);
@@ -158,6 +157,8 @@
 				return base_url + "current.png";
 			case "compound":
 				return base_url + "compound.png";
+			case "process":
+				return base_url + "process.png";
 			default:
 				return "";
 			}
@@ -168,6 +169,7 @@
 				type = TYPE_CLASS;
 			} else if ($.Cmdbuild.dataModel.isAProcess(classId)) {
 				type = TYPE_PROCESS;
+				return $.Cmdbuild.customvariables.cacheImages.getBaseImages("process");
 			}
 			var icons = $.grep(this.data, function(item) {
 				return item.type === type && item.details.id === classId;
@@ -184,7 +186,7 @@
 				} catch (e) {
 					console.log("Error on file : ", icon.image.details.file);
 					url = $.Cmdbuild.customvariables.cacheImages
-					.getBaseImages("default");
+							.getBaseImages("default");
 				}
 			} else {
 				url = $.Cmdbuild.customvariables.cacheImages
@@ -284,11 +286,12 @@
 			};
 			if (classId === null) {
 				callback.apply(callbackScope, []);
-			}
-			else {
-				$.Cmdbuild.utilities.proxy.getDomains(param, function(response) {
-					this.getAllDomainsRecursive(response, callback, callbackScope);
-				}, this);
+			} else {
+				$.Cmdbuild.utilities.proxy.getDomains(param,
+						function(response) {
+							this.getAllDomainsRecursive(response, callback,
+									callbackScope);
+						}, this);
 			}
 		};
 
