@@ -13,7 +13,8 @@
 		var labels = [];
 		var raycaster = new THREE.Raycaster();
 		raycaster.linePrecision = 3;
-		var mouse = new THREE.Vector2(), offset = new THREE.Vector3(), INTERSECTED, SELECTED, LASTSELECTED;
+		var mouse = new THREE.Vector2(), offset = new THREE.Vector3();
+		var INTERSECTED, SELECTED, LASTSELECTED;
 		var realMouse = new THREE.Vector2();
 		this.model = undefined;
 		var objects = [];
