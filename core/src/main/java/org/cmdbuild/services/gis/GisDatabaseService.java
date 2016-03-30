@@ -11,8 +11,6 @@ import org.cmdbuild.logger.Log;
 
 public class GisDatabaseService {
 
-	private static final Class<?> DRIVER_CLASS = org.postgresql.Driver.class;
-
 	private static String postgisVersion;
 
 	private final DataSource datasource;
@@ -24,12 +22,7 @@ public class GisDatabaseService {
 	// TODO: Move it to the driver implementation
 	public static String getDriverVersion() {
 		try {
-			// Needs to read it from the current classpath, thus we can't use
-			// the field reference directly!
-			final int major = DRIVER_CLASS.getField("MAJORVERSION").getInt(null);
-			final int minor = DRIVER_CLASS.getField("MINORVERSION").getInt(null);
-			final int build = org.postgresql.util.PSQLDriverVersion.class.getField("buildNumber").getInt(null);
-			return String.format("%d.%d-%d", major, minor, build);
+			return org.postgresql.Driver.getVersion();
 		} catch (final Exception e) {
 			return "undefined";
 		}
