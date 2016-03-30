@@ -357,8 +357,7 @@
 			return vector;
 
 		},
-		pointOnScreen : function(vector, w, h, projectionMatrix, matrixWorld,
-				bFirst) {
+		pointOnScreen : function(vector, w, h, projectionMatrix, matrixWorld) {
 			var v = new THREE.Vector3();
 			v.copy(vector);
 			this.projectVector(v, projectionMatrix, matrixWorld);

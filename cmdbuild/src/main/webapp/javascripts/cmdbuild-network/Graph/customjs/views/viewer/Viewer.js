@@ -640,7 +640,7 @@
 						controls.setY(-1);
 						stepOut();
 					}
-				}, 100);
+				}, 50);
 			}
 			stepIn();
 			stepOut();
