@@ -39,7 +39,11 @@
 		
 		// transforms processes in classes
 		getClassAttributes : function(type, callback, callbackScope) {
-			if ($.Cmdbuild.customvariables.cacheProcess.isProcess(type)) {
+			if (type === $.Cmdbuild.g3d.constants.GUICOMPOUNDNODE) {
+				console.log("ERRORE GUICOMPOUNDNODE", Error().stack);
+				callback.apply(callbackScope, []);
+			}
+			else if ($.Cmdbuild.customvariables.cacheProcess.isProcess(type)) {
 				$.Cmdbuild.utilities.proxy.getProcessAttributes(type, callback,
 						callbackScope);
 
@@ -49,7 +53,11 @@
 			}
 		},
 		getCardData : function(type, cardId, config, callback, callbackScope) {
-			if ($.Cmdbuild.customvariables.cacheProcess.isProcess(type)) {
+			if (type === $.Cmdbuild.g3d.constants.GUICOMPOUNDNODE) {
+				console.log("ERRORE GUICOMPOUNDNODE", Error().stack);
+				callback.apply(callbackScope, []);
+			}
+			else if ($.Cmdbuild.customvariables.cacheProcess.isProcess(type)) {
 				$.Cmdbuild.utilities.proxy.getCardProcess(type, cardId, config,
 						callback, callbackScope);
 
@@ -59,7 +67,11 @@
 			}
 		},
 		getClass : function(type, callback, callbackScope) {
-			if ($.Cmdbuild.customvariables.cacheProcess.isProcess(type)) {
+			if (type === $.Cmdbuild.g3d.constants.GUICOMPOUNDNODE) {
+				console.log("ERRORE GUICOMPOUNDNODE", Error().stack);
+				callback.apply(callbackScope, []);
+			}
+			else if ($.Cmdbuild.customvariables.cacheProcess.isProcess(type)) {
 				$.Cmdbuild.utilities.proxy.getProcess(type, callback,
 						callbackScope);
 
