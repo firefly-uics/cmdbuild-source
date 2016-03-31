@@ -210,7 +210,7 @@
 						name: CMDBuild.core.constants.Proxy.CARDINALITY,
 						fieldLabel: CMDBuild.Translation.cardinality,
 						labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
-						width: CMDBuild.core.constants.FieldWidths.ADMINISTRATION_SMALL,
+						maxWidth: CMDBuild.core.constants.FieldWidths.ADMINISTRATION_SMALL,
 						valueField: CMDBuild.core.constants.Proxy.NAME,
 						displayField: CMDBuild.core.constants.Proxy.VALUE,
 						allowBlank: false,
