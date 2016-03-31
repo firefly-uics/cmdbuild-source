@@ -1,4 +1,4 @@
-(function() {
+(function () {
 
 	Ext.define('CMDBuild.view.administration.navigationTree.NavigationTreeView', {
 		extend: 'Ext.panel.Panel',
@@ -23,6 +23,11 @@
 		frame: false,
 		layout: 'fit',
 
+		/**
+		 * @returns {Void}
+		 *
+		 * @override
+		 */
 		initComponent: function () {
 			Ext.apply(this, {
 				dockedItems: [

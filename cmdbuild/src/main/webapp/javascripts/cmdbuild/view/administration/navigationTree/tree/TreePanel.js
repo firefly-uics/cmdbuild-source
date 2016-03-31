@@ -1,4 +1,4 @@
-(function() {
+(function () {
 
 	Ext.define('CMDBuild.view.administration.navigationTree.tree.TreePanel', {
 		extend: 'Ext.tree.Panel',
@@ -34,6 +34,11 @@
 			markDirty: false // Workaround to avoid dirty mark on hidden checkColumn cells
 		},
 
+		/**
+		 * @returns {Void}
+		 *
+		 * @override
+		 */
 		initComponent: function () {
 			Ext.apply(this, {
 				columns: [

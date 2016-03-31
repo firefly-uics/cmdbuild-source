@@ -1,4 +1,4 @@
-(function() {
+(function () {
 
 	Ext.define('CMDBuild.controller.administration.navigationTree.Tree', {
 		extend: 'CMDBuild.controller.common.abstract.Base',
@@ -59,6 +59,8 @@
 		 * @param {Object} configurationObject
 		 * @param {CMDBuild.controller.administration.navigationTree.NavigationTree} configurationObject.parentDelegate
 		 *
+		 * @returns {Void}
+		 *
 		 * @override
 		 */
 		constructor: function (configurationObject) {
@@ -72,32 +74,29 @@
 		},
 
 		/**
-		 * Build tree nodes
+		 * Build tree nodes searching from ancestors domain and excluding one
 		 *
-		 * @param {Number} subjectEntryTypeId
-		 * @param {String} subjectEntryTypeName
-		 * @param {Number} excludeDomainId
+		 * @param {CMDBuild.model.navigationTree.Class} entryType
 		 *
 		 * @returns {Array} nodes
 		 *
 		 * @private
 		 */
-		buildNodesArray: function (subjectEntryTypeId, subjectEntryTypeName, excludeDomainId) {
+		buildNodesArray: function (entryType) {
 			var nodes = [];
 
-			if (
-				!Ext.isEmpty(subjectEntryTypeId) && Ext.isNumber(subjectEntryTypeId)
-				&& !Ext.isEmpty(subjectEntryTypeName) && Ext.isString(subjectEntryTypeName)
-			) {
-				var ancestorsDomains = this.getDomainsWithEntryType(subjectEntryTypeId, excludeDomainId);
+			if (Ext.isObject(entryType) && !Ext.Object.isEmpty(entryType)) {
+				var ancestorsDomains = this.getDomainsWithEntryType(entryType);
 
 				if (!Ext.isEmpty(ancestorsDomains) && Ext.isArray(ancestorsDomains)) {
+					var entryTypeName = entryType.get(CMDBuild.core.constants.Proxy.NAME);
+
 					Ext.Array.each(ancestorsDomains, function (anchestorDomainModel, i, allAnchestorDomainModels) {
 						if (!Ext.isEmpty(anchestorDomainModel)) {
 							var oppositeEntryTypeModel = anchestorDomainModel.get(CMDBuild.core.constants.Proxy.ORIGIN_CLASS_NAME);
 							var domainDescription = anchestorDomainModel.get(CMDBuild.core.constants.Proxy.INVERSE_DESCRIPTION);
 
-							if (subjectEntryTypeName == anchestorDomainModel.get(CMDBuild.core.constants.Proxy.ORIGIN_CLASS_NAME)) {
+							if (entryTypeName == anchestorDomainModel.get(CMDBuild.core.constants.Proxy.ORIGIN_CLASS_NAME)) {
 								oppositeEntryTypeModel = anchestorDomainModel.get(CMDBuild.core.constants.Proxy.DESTINATION_CLASS_NAME);
 								domainDescription = anchestorDomainModel.get(CMDBuild.core.constants.Proxy.DIRECT_DESCRIPTION);
 							}
@@ -162,45 +161,34 @@
 		/**
 		 * Get all domains where origin or destinations is entryTypeId (also filters excludeDomainId)
 		 *
-		 * @param {Number} entryTypeId
-		 * @param {String} excludeDomainName
+		 * @param {Number} entryType
 		 *
 		 * @returns {Array} ancestorsDomains
 		 *
 		 * @private
 		 */
-		getDomainsWithEntryType: function (entryTypeId, excludeDomainId) {
-			excludeDomainId = Ext.isNumber(excludeDomainId) ? excludeDomainId : null;
+		getDomainsWithEntryType: function (entryType) {
+			var ancestorsDomains = [];
 
-			if (!Ext.isEmpty(entryTypeId) && Ext.isNumber(entryTypeId)) {
-				var ancestorsDomains = [];
-				var ancestorsId = _CMUtils.getAncestorsId(entryTypeId);
+			if (Ext.isObject(entryType) && !Ext.Object.isEmpty(entryType)) {
+				var ancestorsId = CMDBuild.core.Utils.getEntryTypeAncestorsId(entryType);
 
-				// Cast string to number
-				if (!Ext.isEmpty(ancestorsId) && Ext.isArray(ancestorsId))
-					Ext.Array.each(ancestorsId, function (id, i, allId) {
-						if (!Ext.isEmpty(id) && Ext.isString(id))
-							ancestorsId[i] = parseInt(id);
-					}, this);
-
-				// Retrieve selectedClass related domains
+				// Retrieve entryType related domains
 				if (!Ext.isEmpty(ancestorsId) && Ext.isArray(ancestorsId))
 					this.localCacheDomainEach(function (id, model, myself) {
 						if (
-							model.get(CMDBuild.core.constants.Proxy.ID) != excludeDomainId
-							&& (
-								Ext.Array.contains(ancestorsId, model.get(CMDBuild.core.constants.Proxy.ORIGIN_CLASS_ID))
-								|| Ext.Array.contains(ancestorsId, model.get(CMDBuild.core.constants.Proxy.DESTINATION_CLASS_ID))
-							)
+							Ext.Array.contains(ancestorsId, model.get(CMDBuild.core.constants.Proxy.ORIGIN_CLASS_ID))
+							|| Ext.Array.contains(ancestorsId, model.get(CMDBuild.core.constants.Proxy.DESTINATION_CLASS_ID))
 						) {
 							ancestorsDomains.push(model);
 						}
 					}, this);
 
-				return ancestorsDomains;
 			} else {
 				_error('wrong or malformed getDomainsWithEntryType method parameters', this);
 			}
+
+			return ancestorsDomains;
 		},
 
 		/**
@@ -208,6 +196,8 @@
 		 *
 		 * @param {CMDBuild.model.navigationTree.TreeNode} node
 		 * @param {Array} stateObjectArray
+		 *
+		 * @returns {Void}
 		 *
 		 * @private
 		 */
@@ -248,6 +238,8 @@
 			 * @param {Function} callback
 			 * @param {Object} scope
 			 *
+			 * @returns {Void}
+			 *
 			 * @private
 			 */
 			localCacheDomainEach: function (callback, scope) {
@@ -256,21 +248,9 @@
 			},
 
 			/**
-			 * @param {Number} domainId
-			 *
-			 * @returns {Mixed}
-			 *
-			 * @private
-			 */
-			localCacheDomainGet: function (domainId) {
-				if (!Ext.isEmpty(domainId) && Ext.isString(domainId))
-					return this.localCache.domains[domainId];
-
-				return null;
-			},
-
-			/**
 			 * @param {Array} domainsArray
+			 *
+			 * @returns {Void}
 			 *
 			 * @private
 			 */
@@ -304,6 +284,8 @@
 			/**
 			 * @param {Array} classesArray
 			 *
+			 * @returns {Void}
+			 *
 			 * @private
 			 */
 			localCacheEntryTypeSet: function (classesArray) {
@@ -333,54 +315,8 @@
 		},
 
 		/**
-		 * @param {CMDBuild.model.navigationTree.TreeNode} node
-		 *
-		 * @private
+		 * @returns {Void}
 		 */
-		onExpandNode: function (node) {
-			if (!Ext.isEmpty(node) && Ext.isObject(node)) {
-				var nodeDomainModel = node.get(CMDBuild.core.constants.Proxy.DOMAIN);
-				var nodes = this.buildNodesArray( // Build domain's origin nodes
-					nodeDomainModel.get(CMDBuild.core.constants.Proxy.ORIGIN_CLASS_ID),
-					nodeDomainModel.get(CMDBuild.core.constants.Proxy.ORIGIN_CLASS_NAME),
-					nodeDomainModel.get(CMDBuild.core.constants.Proxy.ID)
-				);
-
-				if (!Ext.isEmpty(nodes)) {
-					CMDBuild.core.Utils.objectArraySort(nodes, CMDBuild.core.constants.Proxy.DESCRIPTION);
-
-					node.removeAll();
-					node.appendChild(nodes);
-				}
-			} else {
-				_error('wrong or malformed onExpandNode method parameters', this);
-			}
-		},
-
-		/**
-		 * @param {CMDBuild.model.navigationTree.TreeNode} node
-		 *
-		 * @private
-		 */
-		onExpandRootNode: function (node) {
-			if (!Ext.isEmpty(node) && Ext.isObject(node)) {
-				var targetClassName = node.get(CMDBuild.core.constants.Proxy.ENTRY_TYPE).get(CMDBuild.core.constants.Proxy.NAME);
-				var nodes = this.buildNodesArray(
-					this.localCacheEntryTypeGet(targetClassName, CMDBuild.core.constants.Proxy.ID),
-					targetClassName
-				);
-
-				if (!Ext.isEmpty(nodes)) {
-					CMDBuild.core.Utils.objectArraySort(nodes, CMDBuild.core.constants.Proxy.DESCRIPTION);
-
-					node.removeAll();
-					node.appendChild(nodes);
-				}
-			} else {
-				_error('wrong or malformed onExpandRootNode method parameters', this);
-			}
-		},
-
 		onNavigationTreeTabTreeAbortButtonClick: function () {
 			if (this.cmfg('navigationTreeSelectedTreeIsEmpty')) {
 				this.tree.getStore().getRootNode().removeAll();
@@ -392,6 +328,9 @@
 			}
 		},
 
+		/**
+		 * @returns {Void}
+		 */
 		onNavigationTreeTabTreeAddButtonClick: function () {
 			this.view.setDisabled(true);
 
@@ -402,6 +341,8 @@
 		 * @param {Object} parameters
 		 * @param {CMDBuild.model.navigationTree.TreeNode} parameters.node
 		 * @param {Boolean} parameters.checked
+		 *
+		 * @returns {Void}
 		 */
 		onNavigationTreeTabTreeCheckChange: function (parameters) {
 			if (
@@ -425,6 +366,9 @@
 			}
 		},
 
+		/**
+		 * @returns {Void}
+		 */
 		onNavigationTreeTabTreeModifyButtonClick: function () {
 			this.form.setDisabledModify(false);
 			this.form.setDisableFields(false, false, true); // To enable also if not visible
@@ -434,13 +378,19 @@
 
 		/**
 		 * @param {CMDBuild.model.navigationTree.TreeNode} node
+		 *
+		 * @returns {Void}
 		 */
 		onNavigationTreeTabTreeNodeExpand: function (node) {
 			if (!Ext.isEmpty(node)) {
-				if (node.getDepth() == 0) { // Expand root node
-					this.onExpandRootNode(node);
-				} else { // Expand other nodes
-					this.onExpandNode(node);
+				var nodeEntryType = node.get(CMDBuild.core.constants.Proxy.ENTRY_TYPE);
+				var nodes = this.buildNodesArray(nodeEntryType);
+
+				if (!Ext.isEmpty(nodes)) {
+					CMDBuild.core.Utils.objectArraySort(nodes, CMDBuild.core.constants.Proxy.DESCRIPTION);
+
+					node.removeAll();
+					node.appendChild(nodes);
 				}
 			} else {
 				_error('wrong or malformed onNavigationTreeTabTreeNodeExpand method parameters', this);
@@ -449,6 +399,8 @@
 
 		/**
 		 * Build root node and Classes/Domains local cache to avoid too many server calls
+		 *
+		 * @returns {Void}
 		 */
 		onNavigationTreeTabTreeSelected: function () {
 			this.view.setDisabled(this.cmfg('navigationTreeSelectedTreeIsEmpty'));
@@ -516,6 +468,8 @@
 
 		/**
 		 * @param {CMDBuild.model.navigationTree.TreeNode} node
+		 *
+		 * @returns {Void}
 		 *
 		 * @private
 		 */
