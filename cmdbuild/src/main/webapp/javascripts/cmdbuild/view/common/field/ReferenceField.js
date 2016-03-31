@@ -197,6 +197,8 @@
 				// Is one time seems that has a CQL filter
 				if (this.ensureToHaveTheValueInStore(v) || this.store.isOneTime)
 					this.callParent([v]);
+
+				this.validate();
 			}
 		},
 
@@ -234,7 +236,6 @@
 							});
 
 						this.setValue(value);
-						this.validate();
 					}
 				});
 
@@ -343,8 +344,6 @@
 							) {
 								this.setValue(records[0].get('Id'));
 							}
-
-							this.validate(); // Fail the validation if the current selection is not in the new filter
 
 							afterStoreIsLoaded();
 						}
