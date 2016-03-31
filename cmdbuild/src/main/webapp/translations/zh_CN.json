@@ -1,6 +1,6 @@
 {
 	"description": "英文",
-	"release": "2.4.0 (31/03/2016)",
+	"release": "2.4-dev",
 	"administration": {
 		"description": "管理模块",
 		"modClass": {
