@@ -159,11 +159,10 @@
 						$.Cmdbuild.customvariables.model.removeEdge({
 							domainId : key
 						});
-						$.Cmdbuild.customvariables.model.changed(true);
 					}
 				}
+				$.Cmdbuild.customvariables.model.changed(true);
 			}
-			// $.Cmdbuild.customvariables.selected.changed({});
 			$.Cmdbuild.standard.commands.dialogClose(param);
 		},
 		switchOnSelected : function(param) {
