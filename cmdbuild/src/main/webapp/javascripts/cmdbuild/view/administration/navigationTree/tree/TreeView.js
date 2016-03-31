@@ -1,4 +1,4 @@
-(function() {
+(function () {
 
 	Ext.define('CMDBuild.view.administration.navigationTree.tree.TreeView', {
 		extend: 'Ext.panel.Panel',
@@ -19,6 +19,11 @@
 		layout: 'fit',
 		title: CMDBuild.Translation.tree,
 
+		/**
+		 * @returns {Void}
+		 *
+		 * @override
+		 */
 		initComponent: function () {
 			Ext.apply(this, {
 				items: [

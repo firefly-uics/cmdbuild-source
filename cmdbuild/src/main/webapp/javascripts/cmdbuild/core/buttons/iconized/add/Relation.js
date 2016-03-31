@@ -29,7 +29,7 @@
 		/**
 		 * @param {CMDBuild.cache.CMEntryTypeModel} entryType
 		 */
-		setDomainsForEntryType: function(entryType, singleDomainId) { // TODO: rename (setDomains)
+		setDomainsForEntryType: function(entryType) { // TODO: rename (setDomains)
 			if (!Ext.isEmpty(entryType)) {
 				this.menu.removeAll();
 

@@ -1,4 +1,4 @@
-(function() {
+(function () {
 
 	Ext.define('CMDBuild.controller.administration.navigationTree.Properties', {
 		extend: 'CMDBuild.controller.common.abstract.Base',
@@ -35,6 +35,8 @@
 		 * @param {Object} configurationObject
 		 * @param {CMDBuild.controller.administration.navigationTree.NavigationTree} configurationObject.parentDelegate
 		 *
+		 * @returns {Void}
+		 *
 		 * @override
 		 */
 		constructor: function (configurationObject) {
@@ -56,6 +58,9 @@
 			return null;
 		},
 
+		/**
+		 * @returns {Void}
+		 */
 		onNavigationTreeTabPropertiesAbortButtonClick: function () {
 			if (this.cmfg('navigationTreeSelectedTreeIsEmpty')) {
 				this.form.reset();
@@ -65,6 +70,9 @@
 			}
 		},
 
+		/**
+		 * @returns {Void}
+		 */
 		onNavigationTreeTabPropertiesAddButtonClick: function () {
 			this.view.setDisabled(false);
 
@@ -73,10 +81,16 @@
 			this.form.loadRecord(Ext.create('CMDBuild.model.navigationTree.NavigationTree'));
 		},
 
+		/**
+		 * @returns {Void}
+		 */
 		onNavigationTreeTabPropertiesModifyButtonClick: function () {
 			this.form.setDisabledModify(false);
 		},
 
+		/**
+		 * @returns {Void}
+		 */
 		onNavigationTreeTabPropertiesTreeSelected: function () {
 			this.view.setDisabled(this.cmfg('navigationTreeSelectedTreeIsEmpty'));
 

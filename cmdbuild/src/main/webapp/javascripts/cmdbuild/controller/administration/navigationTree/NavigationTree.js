@@ -1,4 +1,4 @@
-(function() {
+(function () {
 
 	Ext.define('CMDBuild.controller.administration.navigationTree.NavigationTree', {
 		extend: 'CMDBuild.controller.common.abstract.Base',
@@ -64,6 +64,8 @@
 		 * @param {Object} configurationObject
 		 * @param {CMDBuild.controller.common.MainViewport} configurationObject.parentDelegate
 		 *
+		 * @returns {Void}
+		 *
 		 * @override
 		 */
 		constructor: function (configurationObject) {
@@ -89,7 +91,7 @@
 			/**
 			 * @param {Array or String} attributePath
 			 *
-			 * @return {Mixed or undefined}
+			 * @returns {Mixed or undefined}
 			 */
 			navigationTreeSelectedTreeGet: function (attributePath) {
 				var parameters = {};
@@ -102,7 +104,7 @@
 			/**
 			 * @param {Array or String} attributePath
 			 *
-			 * @return {Mixed or undefined}
+			 * @returns {Mixed or undefined}
 			 */
 			navigationTreeSelectedTreeIsEmpty: function (attributePath) {
 				var parameters = {};
@@ -113,6 +115,8 @@
 			},
 
 			/**
+			 * @returns {Void}
+			 *
 			 * @private
 			 */
 			navigationTreeSelectedTreeReset: function () {
@@ -121,6 +125,8 @@
 
 			/**
 			 * @param {Object} parameters
+			 *
+			 * @returns {Void}
 			 *
 			 * @private
 			 */
@@ -135,12 +141,17 @@
 
 		/**
 		 * Forwarder method
+		 *
+		 * @returns {Void}
 		 */
 		onNavigationTreeAbortButtonClick: function () {
 			this.controllerProperties.cmfg('onNavigationTreeTabPropertiesAbortButtonClick');
 			this.controllerTree.cmfg('onNavigationTreeTabTreeAbortButtonClick');
 		},
 
+		/**
+		 * @returns {Void}
+		 */
 		onNavigationTreeAddButtonClick: function () {
 			this.navigationTreeSelectedTreeReset();
 
@@ -155,6 +166,8 @@
 
 		/**
 		 * Forwarder method
+		 *
+		 * @returns {Void}
 		 */
 		onNavigationTreeModifyButtonClick: function () {
 			this.controllerProperties.cmfg('onNavigationTreeTabPropertiesModifyButtonClick');
@@ -165,6 +178,8 @@
 		 * Setup view items and controllers on accordion click
 		 *
 		 * @param {CMDBuild.model.navigationTree.accordion.Administration} node
+		 *
+		 * @returns {Void}
 		 *
 		 * @override
 		 */
@@ -198,6 +213,9 @@
 			}
 		},
 
+		/**
+		 * @returns {Void}
+		 */
 		onNavigationTreeRemoveButtonClick: function () {
 			Ext.Msg.show({
 				title: CMDBuild.Translation.common.confirmpopup.title,
@@ -212,6 +230,9 @@
 			});
 		},
 
+		/**
+		 * @returns {Void}
+		 */
 		onNavigationTreeSaveButtonClick: function () {
 			var propertiesForm = this.controllerProperties.cmfg('navigationTreeTabPropertiesFormGet');
 
@@ -250,6 +271,8 @@
 		},
 
 		/**
+		 * @returns {Void}
+		 *
 		 * @private
 		 */
 		removeItem: function () {
@@ -276,6 +299,8 @@
 		 * @param {Object} response
 		 * @param {Object} options
 		 * @param {Object} decodedResponse
+		 *
+		 * @returns {Void}
 		 *
 		 * @private
 		 */
