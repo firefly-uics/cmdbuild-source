@@ -3,6 +3,7 @@
 	// External implementation to avoid overrides
 	Ext.require([
 		'CMDBuild.core.constants.Global',
+		'CMDBuild.core.constants.Proxy',
 		'CMDBuild.core.Message'
 	]);
 
@@ -57,8 +58,10 @@
 
 		/**
 		 * @param {Object} configurationObject
+		 *
+		 * @returns {Void}
 		 */
-		constructor: function(configurationObject) {
+		constructor: function (configurationObject) {
 			this.stringToFunctionNameMap = {};
 
 			Ext.apply(this, configurationObject); // Apply configuration to class
@@ -76,8 +79,10 @@
 		 * @param {String} name
 		 * @param {Object} param
 		 * @param {Function} callback
+		 *
+		 * @returns {Object}
 		 */
-		cmfg: function(name, param, callBack) {
+		cmfg: function (name, param, callBack) {
 			if (
 				!Ext.isEmpty(name)
 				&& Ext.isArray(this.cmfgCatchedFunctions)
@@ -96,7 +101,7 @@
 							var values = {};
 
 							if (Ext.isArray(this.stringToFunctionNameMap[name].target))
-								Ext.Array.forEach(this.stringToFunctionNameMap[name].target, function(controller, i, allControllers) {
+								Ext.Array.forEach(this.stringToFunctionNameMap[name].target, function (controller, i, allControllers) {
 									if (Ext.isEmpty(this[controller])) {
 										_warning('undefined class property "this.' + controller + '"', this);
 									} else {
@@ -124,10 +129,12 @@
 		/**
 		 * Decodes array string inline tags (forward: '->', alias: '=')
 		 *
+		 * @returns {Void}
+		 *
 		 * @private
 		 */
-		decodeCatchedFunctionsArray: function() {
-			Ext.Array.forEach(this.cmfgCatchedFunctions, function(managedFnString, i, allManagedFnString) {
+		decodeCatchedFunctionsArray: function () {
+			Ext.Array.forEach(this.cmfgCatchedFunctions, function (managedFnString, i, allManagedFnString) {
 				if (Ext.isString(managedFnString)) {
 					// Forward inline tag
 					if (managedFnString.indexOf('->') >= 0) {
@@ -136,7 +143,7 @@
 						if (splittedString.length == 2 && Ext.String.trim(splittedString[0]).indexOf(' ') < 0) {
 							var targetsArray = Ext.String.trim(splittedString[1]).split(',');
 
-							Ext.Array.forEach(targetsArray, function(controller, i, allControllers) {
+							Ext.Array.forEach(targetsArray, function (controller, i, allControllers) {
 								targetsArray[i] = Ext.String.trim(controller);
 							}, this);
 
@@ -157,7 +164,7 @@
 						if (splittedString.length == 2 && Ext.String.trim(splittedString[0]).indexOf(' ') < 0) {
 							var aliasesArray = Ext.String.trim(splittedString[1]).split(',');
 
-							Ext.Array.forEach(aliasesArray, function(alias, i, allAliases) {
+							Ext.Array.forEach(aliasesArray, function (alias, i, allAliases) {
 								this.stringToFunctionNameMap[Ext.String.trim(alias)] = Ext.String.trim(splittedString[0]);
 							}, this);
 						}
@@ -175,7 +182,7 @@
 		/**
 		 * @returns {String}
 		 */
-		getBaseTitle: function() {
+		getBaseTitle: function () {
 			if (!Ext.isEmpty(this.view) && !Ext.isEmpty(this.view.baseTitle))
 				return this.view.baseTitle;
 
@@ -183,16 +190,16 @@
 		},
 
 		/**
-		 * @return {Object}
+		 * @returns {Object}
 		 */
-		getView: function() {
+		getView: function () {
 			return this.view;
 		},
 
 		/**
 		 * @returns {String or null}
 		 */
-		identifierGet: function() {
+		identifierGet: function () {
 			if (!Ext.isEmpty(this.identifier))
 				return this.identifier;
 
@@ -220,7 +227,7 @@
 			 *
 			 * @returns {Mixed} full model object or single property
 			 */
-			propertyManageGet: function(parameters) {
+			propertyManageGet: function (parameters) {
 				if (
 					!Ext.Object.isEmpty(parameters)
 					&& !Ext.isEmpty(parameters[CMDBuild.core.constants.Proxy.TARGET_VARIABLE_NAME]) && Ext.isString(parameters[CMDBuild.core.constants.Proxy.TARGET_VARIABLE_NAME])
@@ -236,7 +243,7 @@
 					}
 
 					if (!Ext.isEmpty(attributePath) && Ext.isArray(attributePath))
-						Ext.Array.forEach(attributePath, function(attributeName, i, allAttributeNames) {
+						Ext.Array.forEach(attributePath, function (attributeName, i, allAttributeNames) {
 							if (
 								!Ext.isEmpty(attributeName) && Ext.isString(attributeName)
 								&& !Ext.isEmpty(requiredAttribute) && Ext.isObject(requiredAttribute) && Ext.isFunction(requiredAttribute.get)
@@ -258,13 +265,13 @@
 			 *
 			 * @returns {Boolean}
 			 */
-			propertyManageIsEmpty: function(parameters) {
+			propertyManageIsEmpty: function (parameters) {
 				var requiredValue = this.propertyManageGet(parameters);
 
 				if (Ext.isObject(requiredValue) && Ext.isFunction(requiredValue.getData)) { // Model manage
 					var result = true;
 
-					Ext.Object.each(requiredValue.getData(), function(key, value, myself) {
+					Ext.Object.each(requiredValue.getData(), function (key, value, myself) {
 						result = Ext.isEmpty(value);
 
 						return result;
@@ -282,7 +289,7 @@
 			/**
 			 * @param {String} targetVariableName
 			 */
-			propertyManageReset: function(targetVariableName) {
+			propertyManageReset: function (targetVariableName) {
 				if (!Ext.isEmpty(targetVariableName) && Ext.isString(targetVariableName))
 					this[targetVariableName] = null;
 			},
@@ -295,7 +302,7 @@
 			 *
 			 * @returns {Mixed}
 			 */
-			propertyManageSet: function(parameters) {
+			propertyManageSet: function (parameters) {
 				if (
 					!Ext.Object.isEmpty(parameters)
 					&& !Ext.isEmpty(parameters[CMDBuild.core.constants.Proxy.TARGET_VARIABLE_NAME]) && Ext.isString(parameters[CMDBuild.core.constants.Proxy.TARGET_VARIABLE_NAME])
@@ -330,8 +337,10 @@
 		 * Setup view panel title as a breadcrumbs component joining array items with titleSeparator.
 		 *
 		 * @param {Array or String} titlePart
+		 *
+		 * @returns {Void}
 		 */
-		setViewTitle: function(titlePart) {
+		setViewTitle: function (titlePart) {
 			if (Ext.isEmpty(titlePart))
 				titlePart = [];
 
@@ -354,21 +363,22 @@
 		 * @param {Ext.form.Panel} form
 		 * @param {Boolean} showPopup - enable popup error message
 		 *
-		 * @return {Boolean}
+		 * @returns {Boolean}
 		 */
-		validate: function(form, showPopup) {
+		validate: function (form, showPopup) {
 			showPopup = Ext.isBoolean(showPopup) ? showPopup : true;
 
 			var invalidFieldsArray = form.getNonValidFields();
 
 			// Check for invalid fields and builds errorMessage
 			if (!Ext.isEmpty(form) && !Ext.isEmpty(invalidFieldsArray)) {
-				var errorMessage = CMDBuild.Translation.errors.invalid_fields + '<ul style="text-align: left;">';
+				var errorMessage = '<p class="' + CMDBuild.core.constants.Global.getErrorMsgCss() + '">' + CMDBuild.Translation.errors.invalid_fields + '</p>'
+					+ '<ul style="text-align: left;">';
 
 				for (index in invalidFieldsArray)
 					errorMessage += '<li>' + invalidFieldsArray[index].getFieldLabel() + '</li>';
 
-				errorMessage += '<ul>';
+				errorMessage += '</ul>';
 
 				if (showPopup)
 					CMDBuild.core.Message.error(CMDBuild.Translation.common.failure, errorMessage, false);
