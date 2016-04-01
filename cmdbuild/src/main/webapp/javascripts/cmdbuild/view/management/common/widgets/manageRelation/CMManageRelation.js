@@ -8,7 +8,7 @@
 		CHECK_NAME: "manage_relation_check",
 
 		constructor: function(c) {
-			this.widgetConf = c.widget;
+			this.widgetConf = c.widgetConf;
 			this.callParent(arguments);
 		},
 

@@ -313,7 +313,7 @@
 					}).resolveTemplates({
 						attributes: Ext.Object.getKeys(dataObject),
 						scope: this,
-						callback: function (out, ctx) {
+						callback: function(out, ctx) {
 							if (Ext.isObject(out))
 								output[CMDBuild.core.constants.Proxy.OUTPUT].push(Ext.encode(out));
 						}
