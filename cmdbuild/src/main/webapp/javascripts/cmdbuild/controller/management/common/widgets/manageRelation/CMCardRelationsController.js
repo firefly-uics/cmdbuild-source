@@ -102,7 +102,7 @@
 			var parameters = {};
 			parameters[parameterNames.CARD_ID] = this.getCardId();
 			parameters[parameterNames.CLASS_NAME] = _CMCache.getEntryTypeNameById(this.getClassId());
-			parameters[parameterNames.DOMAIN_LIMIT] = CMDBuild.Config.cmdbuild.relationlimit;
+			parameters[parameterNames.DOMAIN_LIMIT] = CMDBuild.configuration.instance.get(parameterNames.RELATION_LIMIT);
 
 			CMDBuild.ServiceProxy.relations.getList({
 				params: parameters,
@@ -346,7 +346,7 @@
 	}
 
 	function onDomainNodeExpand(node) {
-		if (node.get("relations_size") > CMDBuild.Config.cmdbuild.relationlimit) {
+		if (node.get("relations_size") > CMDBuild.configuration.instance.get('relationLimit')) {
 			node.removeAll();
 
 			var el = this.view.getEl();

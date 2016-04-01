@@ -1,4 +1,4 @@
-(function() {
+(function () {
 
 	/**
 	 * Call sequence: init() -> buildConfiguration() -> buildCache() -> buildUserInterface()
@@ -10,7 +10,6 @@
 			'CMDBuild.core.constants.ModuleIdentifiers',
 			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.proxy.Classes',
-			'CMDBuild.core.proxy.configuration.Configuration',
 			'CMDBuild.core.proxy.domain.Domain',
 			'CMDBuild.core.proxy.lookup.Type',
 			'CMDBuild.core.proxy.report.Report',
@@ -136,39 +135,18 @@
 		 * @private
 		 */
 		buildConfiguration: function () {
-			var barrierId = 'config';
+			CMDBuild.core.RequestBarrier.init('mainConfigurations', CMDBuild.core.Administration.buildCache);
 
-			/**
-			 * @deprecated
-			 */
-			Ext.ns('CMDBuild.Config');
+			Ext.create('CMDBuild.core.configurationBuilders.Instance', { callback: CMDBuild.core.RequestBarrier.getCallback('mainConfigurations') }); // CMDBuild Instance configuration
+			Ext.create('CMDBuild.core.configurationBuilders.Bim', { callback: CMDBuild.core.RequestBarrier.getCallback('mainConfigurations') }); // CMDBuild BIM configuration
+			Ext.create('CMDBuild.core.configurationBuilders.Dms', { callback: CMDBuild.core.RequestBarrier.getCallback('mainConfigurations') }); // CMDBuild DMS configuration
+			Ext.create('CMDBuild.core.configurationBuilders.Gis', { callback: CMDBuild.core.RequestBarrier.getCallback('mainConfigurations') }); // CMDBuild GIS configuration
+			Ext.create('CMDBuild.core.configurationBuilders.Localization', { callback: CMDBuild.core.RequestBarrier.getCallback('mainConfigurations') }); // CMDBuild Localization configuration
+			Ext.create('CMDBuild.core.configurationBuilders.RelationGraph', { callback: CMDBuild.core.RequestBarrier.getCallback('mainConfigurations') }); // CMDBuild RelationGraph configuration
+			Ext.create('CMDBuild.core.configurationBuilders.UserInterface', { callback: CMDBuild.core.RequestBarrier.getCallback('mainConfigurations') }); // CMDBuild UserInterface configuration
+			Ext.create('CMDBuild.core.configurationBuilders.Workflow', { callback: CMDBuild.core.RequestBarrier.getCallback('mainConfigurations') }); // CMDBuild Workflow configuration
 
-			CMDBuild.core.RequestBarrier.init(barrierId, function () {
-				CMDBuild.core.proxy.configuration.Configuration.readAll({
-					loadMask: false,
-					scope: this,
-					success: function (response, options, decodedResponse) {
-						/**
-						 * CMDBuild (aka Instance) configuration
-						 *
-						 * @deprecated (CMDBuild.configuration.instance)
-						 */
-						CMDBuild.Config.cmdbuild = decodedResponse.cmdbuild;
-					},
-					callback: CMDBuild.core.Administration.buildCache
-				});
-			});
-
-			Ext.create('CMDBuild.core.configurationBuilders.Instance', { callback: CMDBuild.core.RequestBarrier.getCallback(barrierId) }); // CMDBuild Instance configuration
-			Ext.create('CMDBuild.core.configurationBuilders.Bim', { callback: CMDBuild.core.RequestBarrier.getCallback(barrierId) }); // CMDBuild BIM configuration
-			Ext.create('CMDBuild.core.configurationBuilders.Dms', { callback: CMDBuild.core.RequestBarrier.getCallback(barrierId) }); // CMDBuild DMS configuration
-			Ext.create('CMDBuild.core.configurationBuilders.Gis', { callback: CMDBuild.core.RequestBarrier.getCallback(barrierId) }); // CMDBuild GIS configuration
-			Ext.create('CMDBuild.core.configurationBuilders.Localization', { callback: CMDBuild.core.RequestBarrier.getCallback(barrierId) }); // CMDBuild Localization configuration
-			Ext.create('CMDBuild.core.configurationBuilders.RelationGraph', { callback: CMDBuild.core.RequestBarrier.getCallback(barrierId) }); // CMDBuild RelationGraph configuration
-			Ext.create('CMDBuild.core.configurationBuilders.UserInterface', { callback: CMDBuild.core.RequestBarrier.getCallback(barrierId) }); // CMDBuild UserInterface configuration
-			Ext.create('CMDBuild.core.configurationBuilders.Workflow', { callback: CMDBuild.core.RequestBarrier.getCallback(barrierId) }); // CMDBuild Workflow configuration
-
-			CMDBuild.core.RequestBarrier.finalize(barrierId);
+			CMDBuild.core.RequestBarrier.finalize('mainConfigurations');
 		},
 
 		/**

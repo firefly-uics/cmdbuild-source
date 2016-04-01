@@ -76,7 +76,7 @@
 
 		storeIsLargerThenLimit: function() {
 			if (this.store !== null) {
-				return this.store.getTotalCount() > parseInt(CMDBuild.Config.cmdbuild.referencecombolimit);
+				return this.store.getTotalCount() > CMDBuild.configuration.instance.get('referenceComboStoreLimit'); // TODO: use proxy constants
 			}
 			return false;
 		},

@@ -125,7 +125,7 @@
 		buildReferenceStore: function(reference) {
 			var baseParams = this.buildParamsForReferenceRequest(reference),
 				isOneTime = baseParams.CQL ? true : false,
-				maxCards = parseInt(CMDBuild.Config.cmdbuild.referencecombolimit);
+				maxCards = CMDBuild.configuration.instance.get('referenceComboStoreLimit'); // TODO: use proxy constants
 
 			// Filters wrongly requested reference stores
 			if (!Ext.isEmpty(baseParams['className']) || !Ext.isEmpty(baseParams['filter']))
@@ -199,7 +199,7 @@
 				autoLoad: true,
 				model: 'CMDBuild.cache.CMReferenceStoreModel',
 				baseParams: baseParams, // Retro-compatibility
-				pageSize: parseInt(CMDBuild.Config.cmdbuild.referencecombolimit),
+				pageSize: CMDBuild.configuration.instance.get('referenceComboStoreLimit'), // TODO: use proxy constants
 				proxy: {
 					type: 'ajax',
 					url: CMDBuild.core.proxy.Index.card.getListShort,

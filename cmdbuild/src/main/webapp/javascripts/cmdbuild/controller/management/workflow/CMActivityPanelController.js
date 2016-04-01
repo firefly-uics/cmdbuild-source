@@ -177,7 +177,7 @@
 		 */
 		lock: function(success, scope) {
 			if (
-				CMDBuild.Config.cmdbuild.lockcardenabled == 'true' // TODO: implementation of model for configuration
+				CMDBuild.configuration.instance.get('enableCardLock') // TODO: use proxy constants
 				&& _CMWFState.getActivityInstance()
 				&& _CMWFState.getProcessInstance()
 			) {
@@ -197,7 +197,7 @@
 
 		unlock: function() {
 			if (
-				CMDBuild.Config.cmdbuild.lockcardenabled == 'true' // TODO: implementation of model for configuration
+				CMDBuild.configuration.instance.get('enableCardLock') // TODO: use proxy constants
 				&& !Ext.isEmpty(this.lastSelectedActivityInstance)
 				&& this.view.isInEditing()
 			) {

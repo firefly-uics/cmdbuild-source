@@ -122,7 +122,7 @@
 		},
 
 		lockCard: function(success) {
-			if (_CMUtils.lockCard.isEnabled()) {
+			if (CMDBuild.configuration.instance.get('enableCardLock')) { // TODO: use proxy constants
 				if (this.card) {
 					var id = this.card.get("Id");
 					CMDBuild.core.proxy.Card.lock({
@@ -138,7 +138,7 @@
 		},
 
 		unlockCard: function() {
-			if (_CMUtils.lockCard.isEnabled()) {
+			if (CMDBuild.configuration.instance.get('enableCardLock')) { // TODO: use proxy constants
 				if (this.card && this.view.isInEditing()) {
 					var id = this.card.get("Id");
 					CMDBuild.core.proxy.Card.unlock({

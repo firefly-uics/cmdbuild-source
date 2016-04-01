@@ -24,7 +24,7 @@
 		},
 
 		buildComponents: function() {
-			var gridratio = CMDBuild.Config.cmdbuild.grid_card_ratio || 50;
+			var gridratio = CMDBuild.configuration.instance.get('cardFormRatio') || 50; // TODO: use proxy constants
 
 			this.cardGrid = new CMDBuild.view.management.workflow.CMActivityGrid({
 				hideMode: "offsets",

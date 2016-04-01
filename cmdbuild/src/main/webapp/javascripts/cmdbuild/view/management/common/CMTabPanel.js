@@ -3,7 +3,7 @@ Ext.define("CMDBuild.view.management.common.CMTabPanel", {
 	plain: true,
 
 	initComponent: function() {
-		this.tabPosition = CMDBuild.Config.cmdbuild.card_tab_position || "top",
+		this.tabPosition = CMDBuild.configuration.instance.get('cardTabsPosition') || "top"; // TODO: use proxy constants
 		this.callParent(arguments);
 		if (this.items.getCount() == 1) {
 			this.getTabBar().hide();
@@ -13,7 +13,7 @@ Ext.define("CMDBuild.view.management.common.CMTabPanel", {
 	activateFirst: function() {
 		this.setActiveTab(0);
 	},
-	//http://www.sencha.com/forum/showthread.php?261407-4.2.0-HTML-editor-SetValue-does-not-work-when-component-is-not-rendered	
+	//http://www.sencha.com/forum/showthread.php?261407-4.2.0-HTML-editor-SetValue-does-not-work-when-component-is-not-rendered
 	//This function for fixing the above bug
 	//To delete when upgrade at extjs 4.2.1
 	showAll: function() {

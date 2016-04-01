@@ -83,8 +83,8 @@
 
 			var tabs = [];
 
-			if (CMDBuild.Config.cmdbuild.cardBrowserByDomainConfiguration.root) {
-				var root = CMDBuild.Config.cmdbuild.cardBrowserByDomainConfiguration.root;
+			if (CMDBuild.configuration.gis.get('cardBrowserByDomainConfiguration')['root']) { // TODO: use proxy constants
+				var root = CMDBuild.configuration.gis.get('cardBrowserByDomainConfiguration')['root']; // TODO: use proxy constants
 
 				this.cardBrowser = new CMDBuild.view.management.CMCardBrowserTree({
 					title: CMDBuild.Translation.management.modcard.gis.gisNavigation,
