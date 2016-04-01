@@ -153,14 +153,6 @@
 						 * @deprecated (CMDBuild.configuration.instance)
 						 */
 						CMDBuild.Config.cmdbuild = decodedResponse.cmdbuild;
-
-						/**
-						 * BIM configuration
-						 *
-						 * @deprecated (CMDBuild.configuration.bim)
-						 */
-						CMDBuild.Config.bim = decodedResponse.bim;
-						CMDBuild.Config.bim.enabled = ('true' == CMDBuild.Config.bim.enabled);
 					},
 					callback: CMDBuild.core.Management.buildCache
 				});
