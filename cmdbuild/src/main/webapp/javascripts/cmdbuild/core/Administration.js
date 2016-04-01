@@ -154,14 +154,6 @@
 						 * @deprecated (CMDBuild.configuration.instance)
 						 */
 						CMDBuild.Config.cmdbuild = decodedResponse.cmdbuild;
-
-						/**
-						 * GIS configuration
-						 *
-						 * @deprecated (CMDBuild.configuration.gis)
-						 */
-						CMDBuild.Config.gis = decodedResponse.gis;
-						CMDBuild.Config.gis.enabled = ('true' == CMDBuild.Config.gis.enabled);
 					},
 					callback: CMDBuild.core.Administration.buildCache
 				});

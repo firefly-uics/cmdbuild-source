@@ -161,39 +161,8 @@
 						 */
 						CMDBuild.Config.bim = decodedResponse.bim;
 						CMDBuild.Config.bim.enabled = ('true' == CMDBuild.Config.bim.enabled);
-
-						/**
-						 * GIS configuration
-						 *
-						 * @deprecated (CMDBuild.configuration.gis)
-						 */
-						CMDBuild.Config.gis = decodedResponse.gis;
-						CMDBuild.Config.gis.enabled = ('true' == CMDBuild.Config.gis.enabled);
-
-						/**
-						 * GIS and BIM extra configuration. Now this configurations are inside relative configuration objects
-						 *
-						 * @deprecated (CMDBuild.configuration.gis and CMDBuild.configuration.bim)
-						 */
-						CMDBuild.Config.cmdbuild.cardBrowserByDomainConfiguration = {};
-						CMDBuild.ServiceProxy.gis.getGisTreeNavigation({
-							success: function(response, options, decodedResponse) {
-								CMDBuild.Config.cmdbuild.cardBrowserByDomainConfiguration.root = decodedResponse.root;
-								CMDBuild.Config.cmdbuild.cardBrowserByDomainConfiguration.geoServerLayersMapping = decodedResponse.geoServerLayersMapping;
-
-								if (CMDBuild.Config.bim.enabled) {
-									CMDBuild.bim.proxy.rootClassName({
-										success: function(response, options, decodedResponse) {
-											CMDBuild.Config.bim.rootClass = decodedResponse.root;
-										},
-										callback: CMDBuild.core.Management.buildCache
-									});
-								} else {
-									CMDBuild.core.Management.buildCache();
-								}
-							}
-						});
-					}
+					},
+					callback: CMDBuild.core.Management.buildCache
 				});
 			});
 

@@ -137,7 +137,7 @@
 				success: function() {
 					new CMDBuild.Msg.success();
 
-					CMDBuild.Config.gis.geoserver = values.geoserver;
+					Ext.create('CMDBuild.core.configurationBuilders.Gis'); // Rebuild configuration model
 				}
 			});
 		}

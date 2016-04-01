@@ -225,11 +225,11 @@
 	}
 
 	function setMapCenter(me, map) {
-		var lon = me.lon || CMDBuild.Config.gis['center.lon'] || 0;
-		var lat = me.lat || CMDBuild.Config.gis['center.lat'] || 0;
+		var lon = me.lon || CMDBuild.configuration.gis.get('centerLongitude') || 0; // TODO: use proxy constants
+		var lat = me.lat || CMDBuild.configuration.gis.get('centerLatitude') || 0; // TODO: use proxy constants
 		var center = new OpenLayers.LonLat(lon,lat);
 		var projectedCenter = center.transform(new OpenLayers.Projection("EPSG:4326"),map.getProjectionObject());
-		var initialZoomLevel = me.initialZoomLevel || CMDBuild.Config.gis.initialZoomLevel || 0;
+		var initialZoomLevel = me.initialZoomLevel || CMDBuild.configuration.gis.get('zoomInitialLevel') || 0; // TODO: use proxy constants
 
 		map.setCenter(projectedCenter, initialZoomLevel);
 	}

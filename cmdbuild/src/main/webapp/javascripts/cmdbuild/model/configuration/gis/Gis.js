@@ -1,4 +1,4 @@
-(function() {
+(function () {
 
 	Ext.require('CMDBuild.core.constants.Proxy');
 
@@ -28,7 +28,7 @@
 			 *
 			 * @returns {Object} data
 			 */
-			convertFromLegacy: function(data) {
+			convertFromLegacy: function (data) {
 				data = data || {};
 				data[CMDBuild.core.constants.Proxy.CENTER_LATITUDE] = data['center.lat'];
 				data[CMDBuild.core.constants.Proxy.CENTER_LONGITUDE] = data['center.lon'];
@@ -41,9 +41,11 @@
 		/**
 		 * @param {Object} data
 		 *
+		 * @returns {Void}
+		 *
 		 * @override
 		 */
-		constructor: function(data) {
+		constructor: function (data) {
 			data = CMDBuild.model.configuration.gis.Gis.convertFromLegacy(data);
 			data[CMDBuild.core.constants.Proxy.GEOSERVER] = Ext.create('CMDBuild.model.configuration.gis.Geoserver', Ext.clone(data));
 			data[CMDBuild.core.constants.Proxy.GOOGLE] = Ext.create('CMDBuild.model.configuration.gis.Google', Ext.clone(data));
@@ -60,11 +62,11 @@
 		 *
 		 * @returns {Mixed}
 		 */
-		get: function(property) {
+		get: function (property) {
 			if (Ext.isArray(property) && !Ext.isEmpty(property[0])) {
 				var returnValue = this.get(property[0]);
 
-				Ext.Array.forEach(property, function(propertyName, i, allPropertyNames) {
+				Ext.Array.each(property, function (propertyName, i, allPropertyNames) {
 					if (!Ext.isEmpty(returnValue))
 						returnValue = returnValue.get(propertyName);
 				}, this);

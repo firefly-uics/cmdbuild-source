@@ -78,12 +78,6 @@
 								});
 							}
 						});
-
-						/**
-						 * @deprecated (CMDBuild.configuration.gis)
-						 */
-						CMDBuild.Config.gis = Ext.apply(CMDBuild.Config.gis, decodedResponse);
-						CMDBuild.Config.gis.enabled = ('true' == CMDBuild.Config.gis.enabled);
 					}
 				}
 			});
