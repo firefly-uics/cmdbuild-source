@@ -9,6 +9,8 @@
 //		 * @param {Object} options
 //		 *
 //		 * @returns {Void}
+//		 *
+//		 * @override
 //		 */
 //		load: function (options) {
 //			if (!Ext.isEmpty(options) && !Ext.isEmpty(options.callback))
@@ -23,6 +25,8 @@
 		 * @param {Boolean} success
 		 *
 		 * @returns {Boolean}
+		 *
+		 * @private
 		 */
 		interceptorFunction: function (records, operation, success) {
 			var decoded = undefined;

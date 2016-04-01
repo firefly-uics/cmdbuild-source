@@ -1,6 +1,6 @@
 (function () {
 
-	Ext.define('CMDBuild.override.form.FixFieldSet', {
+	Ext.define('CMDBuild.override.form.FieldSet', {
 		override: 'Ext.form.FieldSet',
 
 		/**
@@ -10,6 +10,8 @@
 
 		/**
 		 * An ExtJs fix for CellEditing plugin within FieldSet 21/03/2014
+		 *
+		 * @returns {Ext.form.FieldSet}
 		 */
 		setExpanded: function (expanded) {
 			var me = this;
@@ -50,6 +52,8 @@
 
 		/**
 		 * An ExtJs fix to have a correct fields label and field width in FieldSet - 08/04/2014
+		 *
+		 * @returns {Void}
 		 */
 		fieldWidthsFix: function () {
 			this.cascade(function (item) {
@@ -62,6 +66,8 @@
 
 		/**
 		 * An ExtJs feature implementation to reset function for FieldSet - 08/04/2014
+		 *
+		 * @returns {Void}
 		 */
 		reset: function () { // Resets all items except fieldset toglecheckbox
 			this.cascade(function (item) {
