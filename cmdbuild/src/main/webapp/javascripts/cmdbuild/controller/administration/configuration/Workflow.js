@@ -7,7 +7,7 @@
 			'CMDBuild.core.constants.ModuleIdentifiers',
 			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.proxy.configuration.Workflow',
-			'CMDBuild.model.configuration.workflow.Form'
+			'CMDBuild.model.configuration.Workflow'
 		],
 
 		/**
@@ -47,7 +47,7 @@
 		 */
 		onConfigurationWorkflowSaveButtonClick: function () {
 			CMDBuild.core.proxy.configuration.Workflow.update({
-				params: CMDBuild.model.configuration.workflow.Form.convertToLegacy(this.view.getData(true)),
+				params: CMDBuild.model.configuration.Workflow.convertToLegacy(this.view.getData(true)),
 				scope: this,
 				success: function (response, options, decodedResponse) {
 					this.cmfg('onConfigurationWorkflowTabShow');
@@ -67,9 +67,9 @@
 					decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.DATA];
 
 					if (!Ext.isEmpty(decodedResponse)) {
-						this.view.loadRecord(Ext.create('CMDBuild.model.configuration.workflow.Form', CMDBuild.model.configuration.workflow.Form.convertFromLegacy(decodedResponse)));
+						this.view.loadRecord(Ext.create('CMDBuild.model.configuration.Workflow', CMDBuild.model.configuration.Workflow.convertFromLegacy(decodedResponse)));
 
-						Ext.create('CMDBuild.core.configurationBuilders.Workflow', { // Rebuild configuration model
+						Ext.create('CMDBuild.core.configurations.builder.Workflow', { // Rebuild configuration model
 							scope: this,
 							callback: function (options, success, response) {
 								this.cmfg('mainViewportAccordionSetDisabled', {

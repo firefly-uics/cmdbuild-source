@@ -23,9 +23,9 @@
 		constructor: function (data) {
 			this.propertiesAdapter(data);
 
-			data[CMDBuild.core.constants.Proxy.DISABLED_CARD_TABS] = Ext.create('CMDBuild.model.configuration.userInterface.DisabledCardTabs', Ext.clone(data));
-			data[CMDBuild.core.constants.Proxy.DISABLED_MODULES] = Ext.create('CMDBuild.model.configuration.userInterface.DisabledModules', Ext.clone(data));
-			data[CMDBuild.core.constants.Proxy.DISABLED_PROCESS_TABS] = Ext.create('CMDBuild.model.configuration.userInterface.DisabledProcessTabs', Ext.clone(data));
+			data[CMDBuild.core.constants.Proxy.DISABLED_CARD_TABS] = Ext.create('CMDBuild.model.core.configurations.builder.userInterface.DisabledCardTabs', Ext.clone(data));
+			data[CMDBuild.core.constants.Proxy.DISABLED_MODULES] = Ext.create('CMDBuild.model.core.configurations.builder.userInterface.DisabledModules', Ext.clone(data));
+			data[CMDBuild.core.constants.Proxy.DISABLED_PROCESS_TABS] = Ext.create('CMDBuild.model.core.configurations.builder.userInterface.DisabledProcessTabs', Ext.clone(data));
 
 			this.callParent(arguments);
 		},

@@ -6,7 +6,7 @@
 		requires: [
 			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.proxy.configuration.Gis',
-			'CMDBuild.model.configuration.gis.Form'
+			'CMDBuild.model.configuration.Gis'
 		],
 
 		/**
@@ -46,7 +46,7 @@
 		 */
 		onConfigurationGisSaveButtonClick: function () {
 			CMDBuild.core.proxy.configuration.Gis.update({
-				params: CMDBuild.model.configuration.gis.Form.convertToLegacy(this.view.getData(true)),
+				params: CMDBuild.model.configuration.Gis.convertToLegacy(this.view.getData(true)),
 				scope: this,
 				callback: function (options, success, response) {
 					this.cmfg('onConfigurationGisTabShow');
@@ -67,9 +67,9 @@
 					decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.DATA];
 
 					if (!Ext.isEmpty(decodedResponse)) {
-						this.view.loadRecord(Ext.create('CMDBuild.model.configuration.gis.Form', CMDBuild.model.configuration.gis.Form.convertFromLegacy(decodedResponse)));
+						this.view.loadRecord(Ext.create('CMDBuild.model.configuration.Gis', CMDBuild.model.configuration.Gis.convertFromLegacy(decodedResponse)));
 
-						Ext.create('CMDBuild.core.configurationBuilders.Gis', { // Rebuild configuration model
+						Ext.create('CMDBuild.core.configurations.builder.Gis', { // Rebuild configuration model
 							scope: this,
 							callback: function (options, success, response) {
 								this.cmfg('mainViewportAccordionSetDisabled', {

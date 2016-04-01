@@ -6,7 +6,7 @@
 			'CMDBuild.core.constants.Global',
 			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.proxy.Index',
-			'CMDBuild.model.configuration.instance.StartingClass'
+			'CMDBuild.model.configuration.generalOptions.StartingClass'
 		],
 
 		singleton: true,
@@ -17,7 +17,7 @@
 		getStartingClassStore: function () {
 			return CMDBuild.global.Cache.requestAsStore(CMDBuild.core.constants.Proxy.CLASS, {
 				autoLoad: true,
-				model: 'CMDBuild.model.configuration.instance.StartingClass',
+				model: 'CMDBuild.model.configuration.generalOptions.StartingClass',
 				proxy: {
 					type: 'ajax',
 					url: CMDBuild.core.proxy.Index.classes.readAll,

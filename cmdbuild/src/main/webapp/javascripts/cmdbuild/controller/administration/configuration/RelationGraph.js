@@ -45,7 +45,7 @@
 		 */
 		onConfigurationRelationGraphSaveButtonClick: function () {
 			CMDBuild.core.proxy.configuration.RelationGraph.update({
-				params: Ext.create('CMDBuild.model.configuration.relationGraph.Form', this.view.getData(true)).getData(),
+				params: Ext.create('CMDBuild.model.configuration.RelationGraph', this.view.getData(true)).getData(),
 				scope: this,
 				success: function (response, options, decodedResponse) {
 					this.cmfg('onConfigurationRelationGraphTabShow');
@@ -65,9 +65,9 @@
 					decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.DATA];
 
 					if (!Ext.isEmpty(decodedResponse)) {
-						this.view.loadRecord(Ext.create('CMDBuild.model.configuration.relationGraph.Form', decodedResponse));
+						this.view.loadRecord(Ext.create('CMDBuild.model.configuration.RelationGraph', decodedResponse));
 
-						Ext.create('CMDBuild.core.configurationBuilders.RelationGraph'); // Rebuild configuration model
+						Ext.create('CMDBuild.core.configurations.builder.RelationGraph'); // Rebuild configuration model
 					}
 				}
 			});

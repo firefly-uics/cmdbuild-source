@@ -65,9 +65,9 @@
 					decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.DATA];
 
 					if (!Ext.isEmpty(decodedResponse)) {
-						this.view.loadRecord(Ext.create('CMDBuild.model.configuration.bim.Form', decodedResponse));
+						this.view.loadRecord(Ext.create('CMDBuild.model.configuration.Bim', decodedResponse));
 
-						Ext.create('CMDBuild.core.configurationBuilders.Bim', { // Rebuild configuration model
+						Ext.create('CMDBuild.core.configurations.builder.Bim', { // Rebuild configuration model
 							scope: this,
 							callback: function (options, success, response) {
 								this.cmfg('mainViewportAccordionSetDisabled', {
