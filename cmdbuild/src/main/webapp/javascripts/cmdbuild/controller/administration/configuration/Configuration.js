@@ -1,4 +1,4 @@
-(function() {
+(function () {
 
 	Ext.define('CMDBuild.controller.administration.configuration.Configuration', {
 		extend: 'CMDBuild.controller.common.abstract.Base',
@@ -30,9 +30,11 @@
 		/**
 		 * @param {Object} configurationObject
 		 *
+		 * @returns {Void}
+		 *
 		 * @override
 		 */
-		constructor: function(configurationObject) {
+		constructor: function (configurationObject) {
 			this.callParent(arguments);
 
 			this.view = Ext.create('CMDBuild.view.administration.configuration.ConfigurationView', { delegate: this });
@@ -45,7 +47,7 @@
 		 *
 		 * @private
 		 */
-		buildSectionController: function(identifier) {
+		buildSectionController: function (identifier) {
 			switch(identifier) {
 				case 'bim':
 					return Ext.create('CMDBuild.controller.administration.configuration.Bim', { parentDelegate: this });
@@ -76,9 +78,11 @@
 		 *
 		 * @param {CMDBuild.model.common.Accordion} node
 		 *
+		 * @returns {Void}
+		 *
 		 * @override
 		 */
-		onConfigurationModuleInit: function(node) {
+		onConfigurationModuleInit: function (node) {
 			if (!Ext.Object.isEmpty(node)) {
 				this.view.removeAll(true);
 

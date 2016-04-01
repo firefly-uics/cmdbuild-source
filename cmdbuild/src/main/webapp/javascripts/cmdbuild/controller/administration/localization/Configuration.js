@@ -87,8 +87,7 @@
 						success: function (response, options, decodedResponse) {
 							CMDBuild.core.Message.success();
 
-							// Rebuild configuration model
-							Ext.create('CMDBuild.core.configurationBuilders.Localization');
+							Ext.create('CMDBuild.core.configurationBuilders.Localization'); // Rebuild configuration model
 						}
 					});
 				}

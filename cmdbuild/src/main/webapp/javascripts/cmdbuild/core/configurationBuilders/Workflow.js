@@ -1,4 +1,4 @@
-(function() {
+(function () {
 
 	Ext.define('CMDBuild.core.configurationBuilders.Workflow', {
 
@@ -12,53 +12,28 @@
 		 */
 		callback: Ext.emptyFn,
 
-		statics: {
-			/**
-			 * Rebuild configuration object
-			 *
-			 * @param {Object} dataObject
-			 */
-			build: function(dataObject) {
-				if (!Ext.isEmpty(dataObject[CMDBuild.core.constants.Proxy.DATA]))
-					dataObject = dataObject[CMDBuild.core.constants.Proxy.DATA];
-
-				CMDBuild.configuration[CMDBuild.core.constants.Proxy.WORKFLOW] = Ext.create('CMDBuild.model.configuration.workflow.Workflow', dataObject);
-			},
-
-			/**
-			 * Invalidate configuration object
-			 */
-			invalid: function() {
-				if (CMDBuild.core.configurationBuilders.Workflow.isValid())
-					delete CMDBuild.configuration[CMDBuild.core.constants.Proxy.WORKFLOW];
-			},
-
-			/**
-			 * @returns {Boolean}
-			 */
-			isValid: function() {
-				return !Ext.isEmpty(CMDBuild.configuration[CMDBuild.core.constants.Proxy.WORKFLOW]);
-			}
-		},
+		/**
+		 * @cfg {Object}
+		 */
+		scope: undefined,
 
 		/**
-		 * @param {Object} configuration
-		 * @param {Function} configuration.callback
+		 * @param {Object} configurationObject
+		 * @param {Function} configurationObject.callback
+		 * @param {Object} configurationObject.scope
 		 */
-		constructor: function(configuration) {
-			Ext.apply(this, configuration); // Apply configurations
+		constructor: function (configurationObject) {
+			Ext.apply(this, configurationObject); // Apply configurations
 
 			Ext.ns('CMDBuild.configuration');
 
-			CMDBuild.configuration[CMDBuild.core.constants.Proxy.WORKFLOW] = Ext.create('CMDBuild.model.configuration.workflow.Workflow'); // Workflow configuration object
-
 			CMDBuild.core.proxy.configuration.Workflow.read({
 				loadMask: false,
-				scope: this,
-				success: function(response, options, decodedResponse) {
+				scope: this.scope || this,
+				success: function (response, options, decodedResponse) {
 					decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.DATA];
 
-					CMDBuild.core.configurationBuilders.Workflow.build(decodedResponse);
+					CMDBuild.configuration.workflow = Ext.create('CMDBuild.model.configuration.workflow.Workflow', decodedResponse); // Configuration model
 				},
 				callback: this.callback
 			});

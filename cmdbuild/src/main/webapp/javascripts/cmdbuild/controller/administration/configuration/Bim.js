@@ -1,12 +1,11 @@
-(function() {
+(function () {
 
 	Ext.define('CMDBuild.controller.administration.configuration.Bim', {
 		extend: 'CMDBuild.controller.common.abstract.Base',
 
 		requires: [
 			'CMDBuild.core.constants.Proxy',
-			'CMDBuild.core.proxy.configuration.Bim',
-			'CMDBuild.model.configuration.bim.Form'
+			'CMDBuild.core.proxy.configuration.Bim'
 		],
 
 		/**
@@ -31,19 +30,24 @@
 		 * @param {Object} configObject
 		 * @param {CMDBuild.controller.administration.configuration.Configuration} configObject.parentDelegate
 		 *
+		 * @returns {Void}
+		 *
 		 * @override
 		 */
-		constructor: function(configObject) {
+		constructor: function (configObject) {
 			this.callParent(arguments);
 
 			this.view = Ext.create('CMDBuild.view.administration.configuration.BimPanel', { delegate: this });
 		},
 
-		onConfigurationBimSaveButtonClick: function() {
+		/**
+		 * @returns {Void}
+		 */
+		onConfigurationBimSaveButtonClick: function () {
 			CMDBuild.core.proxy.configuration.Bim.update({
 				params: this.view.getData(true),
 				scope: this,
-				success: function(response, options, decodedResponse) {
+				success: function (response, options, decodedResponse) {
 					this.cmfg('onConfigurationBimTabShow');
 
 					CMDBuild.core.Message.success();
@@ -52,20 +56,25 @@
 		},
 
 		/**
-		 * NOTE: Readed enabled response parameter must be decoded by utils function because is a string, not a boolean
+		 * @returns {Void}
 		 */
-		onConfigurationBimTabShow: function() {
+		onConfigurationBimTabShow: function () {
 			CMDBuild.core.proxy.configuration.Bim.read({
 				scope: this,
-				success: function(response, options, decodedResponse) {
+				success: function (response, options, decodedResponse) {
 					decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.DATA];
 
 					if (!Ext.isEmpty(decodedResponse)) {
 						this.view.loadRecord(Ext.create('CMDBuild.model.configuration.bim.Form', decodedResponse));
 
-						this.cmfg('mainViewportAccordionSetDisabled', {
-							identifier: 'bim',
-							state: !CMDBuild.core.Utils.decodeAsBoolean(decodedResponse[CMDBuild.core.constants.Proxy.ENABLED])
+						Ext.create('CMDBuild.core.configurationBuilders.Bim', { // Rebuild configuration model
+							scope: this,
+							callback: function (options, success, response) {
+								this.cmfg('mainViewportAccordionSetDisabled', {
+									identifier: 'bim',
+									state: !CMDBuild.configuration.bim.get(CMDBuild.core.constants.Proxy.ENABLED)
+								});
+							}
 						});
 					}
 				}

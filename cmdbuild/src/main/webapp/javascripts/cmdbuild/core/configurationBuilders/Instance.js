@@ -19,39 +19,18 @@
 		 */
 		enableServerCalls: true,
 
-		statics: {
-			/**
-			 * Rebuild configuration object
-			 *
-			 * @param {Object} dataObject
-			 */
-			build: function (dataObject) {
-				if (!Ext.isEmpty(dataObject[CMDBuild.core.constants.Proxy.DATA]))
-					dataObject = dataObject[CMDBuild.core.constants.Proxy.DATA];
-
-				CMDBuild.configuration.instance = Ext.create('CMDBuild.model.configuration.instance.Instance', dataObject);
-			},
-
-			/**
-			 * Invalidate configuration object
-			 */
-			invalid: function () {
-				if (CMDBuild.core.configurationBuilders.Instance.isValid())
-					delete CMDBuild.configuration.instance;
-			},
-
-			/**
-			 * @returns {Boolean}
-			 */
-			isValid: function () {
-				return !Ext.isEmpty(CMDBuild.configuration.instance);
-			}
-		},
+		/**
+		 * @cfg {Object}
+		 */
+		scope: undefined,
 
 		/**
 		 * @param {Object} configuration
 		 * @param {Function} configuration.callback
 		 * @param {Boolean} configuration.enableServerCalls
+		 * @param {Object} configurationObject.scope
+		 *
+		 * @returns {Void}
 		 *
 		 * @override
 		 */
@@ -59,19 +38,21 @@
 			Ext.apply(this, configuration); // Apply configurations
 
 			Ext.ns('CMDBuild.configuration');
-			CMDBuild.configuration.instance = Ext.create('CMDBuild.model.configuration.instance.Instance'); // Instance configuration object
 
-			if (this.enableServerCalls)
+			if (this.enableServerCalls) {
 				CMDBuild.core.proxy.configuration.GeneralOptions.read({
 					loadMask: false,
-					scope: this,
+					scope: this.scope || this,
 					success: function (response, options, decodedResponse) {
 						decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.DATA];
 
-						CMDBuild.core.configurationBuilders.Instance.build(decodedResponse);
+						CMDBuild.configuration.instance = Ext.create('CMDBuild.model.configuration.instance.Instance', decodedResponse);
 					},
 					callback: this.callback
 				});
+			} else { // Instance configuration model with defaults
+				CMDBuild.configuration.instance = Ext.create('CMDBuild.model.configuration.instance.Instance');
+			}
 		}
 	});
 

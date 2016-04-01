@@ -1,4 +1,4 @@
-(function() {
+(function () {
 
 	Ext.define('CMDBuild.core.configurationBuilders.UserInterface', {
 
@@ -13,18 +13,26 @@
 		callback: Ext.emptyFn,
 
 		/**
-		 * @param {Object} configuration
-		 * @param {Function} configuration.callback
+		 * @cfg {Object}
 		 */
-		constructor: function(configuration) {
-			Ext.apply(this, configuration); // Apply configuration
+		scope: undefined,
+
+		/**
+		 * @param {Object} configurationObject
+		 * @param {Function} configurationObject.callback
+		 * @param {Object} configurationObject.scope
+		 *
+		 * @returns {Void}
+		 */
+		constructor: function (configurationObject) {
+			Ext.apply(this, configurationObject); // Apply configuration
 
 			Ext.ns('CMDBuild.configuration');
 
 			CMDBuild.core.proxy.userAndGroup.group.Group.getUIConfiguration({
 				loadMask: false,
-				scope: this,
-				success: function(response, options, decodedResponse) {
+				scope: this.scope || this,
+				success: function (response, options, decodedResponse) {
 					decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.RESPONSE];
 
 					CMDBuild.configuration.userInterface = Ext.create('CMDBuild.model.configuration.userInterface.UserInterface', decodedResponse);

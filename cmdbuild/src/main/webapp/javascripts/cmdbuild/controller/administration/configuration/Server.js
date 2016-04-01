@@ -1,4 +1,4 @@
-(function() {
+(function () {
 
 	Ext.define('CMDBuild.controller.administration.configuration.Server', {
 		extend: 'CMDBuild.controller.common.abstract.Base',
@@ -30,24 +30,32 @@
 		view: undefined,
 
 		/**
-		 * @param {Object} configObject
-		 * @param {CMDBuild.controller.administration.configuration.Configuration} configObject.parentDelegate
+		 * @param {Object} configurationObject
+		 * @param {CMDBuild.controller.administration.configuration.Configuration} configurationObject.parentDelegate
+		 *
+		 * @returns {Void}
 		 *
 		 * @override
 		 */
-		constructor: function(configObject) {
+		constructor: function (configurationObject) {
 			this.callParent(arguments);
 
 			this.view = Ext.create('CMDBuild.view.administration.configuration.ServerPanel', { delegate: this });
 		},
 
-		onConfigurationServerClearCacheButtonClick: function() {
+		/**
+		 * @returns {Void}
+		 */
+		onConfigurationServerClearCacheButtonClick: function () {
 			CMDBuild.core.proxy.Utils.clearCache({
 				success: CMDBuild.core.Message.success
 			});
 		},
 
-		onConfigurationServerServiceSynchButtonClick: function() {
+		/**
+		 * @returns {Void}
+		 */
+		onConfigurationServerServiceSynchButtonClick: function () {
 			CMDBuild.core.proxy.CMProxyWorkflow.synchronize({
 				success: CMDBuild.core.Message.success
 			});
@@ -55,8 +63,10 @@
 
 		/**
 		 * Unlocks all cards and processes also if proxy is specific for cards
+		 *
+		 * @returns {Void}
 		 */
-		onConfigurationServerUnlockCardsButtonClick: function() {
+		onConfigurationServerUnlockCardsButtonClick: function () {
 			CMDBuild.core.proxy.Card.unlockAll({
 				success: CMDBuild.core.Message.success
 			});

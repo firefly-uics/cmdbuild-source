@@ -1,4 +1,4 @@
-(function() {
+(function () {
 
 	Ext.define('CMDBuild.core.proxy.Gis', {
 
@@ -11,8 +11,10 @@
 
 		/**
 		 * @param {Object} parameters
+		 *
+		 * @returns {Void}
 		 */
-		readTreeNavigation: function(parameters) {
+		readTreeNavigation: function (parameters) {
 			parameters = Ext.isEmpty(parameters) ? {} : parameters;
 
 			Ext.apply(parameters, { url: CMDBuild.core.proxy.Index.gis.readTreeNavigation });
@@ -22,3 +24,4 @@
 	});
 
 })();
+

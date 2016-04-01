@@ -1,4 +1,4 @@
-(function() {
+(function () {
 
 	Ext.define('CMDBuild.core.configurationBuilders.Bim', {
 
@@ -13,64 +13,42 @@
 		 */
 		callback: Ext.emptyFn,
 
-		statics: {
-			/**
-			 * Rebuild configuration object
-			 *
-			 * @param {Object} dataObject
-			 * @param {Function} callback
-			 */
-			build: function(dataObject, callback) {
-				callback = callback || Ext.emptyFn;
-
-				if (!Ext.isEmpty(dataObject[CMDBuild.core.constants.Proxy.DATA]))
-					dataObject = dataObject[CMDBuild.core.constants.Proxy.DATA];
-
-				CMDBuild.core.proxy.Bim.readRootLayer({
-					loadMask: false,
-					success: function(response, options, decodedResponse) {
-						dataObject[CMDBuild.core.constants.Proxy.ROOT_CLASS] = decodedResponse[CMDBuild.core.constants.Proxy.ROOT];
-
-						CMDBuild.configuration[CMDBuild.core.constants.Proxy.BIM] = Ext.create('CMDBuild.model.configuration.bim.Bim', dataObject);
-					},
-					callback: callback
-				});
-			},
-
-			/**
-			 * Invalidate configuration object
-			 */
-			invalid: function() {
-				if (CMDBuild.core.configurationBuilders.Bim.isValid())
-					delete CMDBuild.configuration[CMDBuild.core.constants.Proxy.BIM];
-			},
-
-			/**
-			 * @returns {Boolean}
-			 */
-			isValid: function() {
-				return !Ext.isEmpty(CMDBuild.configuration[CMDBuild.core.constants.Proxy.BIM]);
-			}
-		},
+		/**
+		 * @cfg {Object}
+		 */
+		scope: undefined,
 
 		/**
-		 * @param {Object} configuration
-		 * @param {Function} configuration.callback
+		 * @param {Object} configurationObject
+		 * @param {Function} configurationObject.callback
+		 * @param {Object} configurationObject.scope
+		 *
+		 * @returns {Void}
 		 */
-		constructor: function(configuration) {
-			Ext.apply(this, configuration); // Apply configuration
+		constructor: function (configurationObject) {
+			Ext.apply(this, configurationObject); // Apply configuration
 
 			Ext.ns('CMDBuild.configuration');
-
-			CMDBuild.configuration[CMDBuild.core.constants.Proxy.BIM] = Ext.create('CMDBuild.model.configuration.bim.Bim'); // BIM configuration object
 
 			CMDBuild.core.proxy.configuration.Bim.read({
 				loadMask: false,
 				scope: this,
-				success: function(response, options, decodedResponse) {
-					decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.DATA];
+				success: function (response, options, decodedResponse) {
+					var bimConfigurationObject = decodedResponse[CMDBuild.core.constants.Proxy.DATA];
 
-					CMDBuild.core.configurationBuilders.Bim.build(decodedResponse, this.callback);
+					if (!Ext.isEmpty(bimConfigurationObject[CMDBuild.core.constants.Proxy.DATA]))
+						bimConfigurationObject = bimConfigurationObject[CMDBuild.core.constants.Proxy.DATA];
+
+					CMDBuild.core.proxy.Bim.readRootLayer({
+						loadMask: false,
+						scope: this.scope || this,
+						success: function (response, options, decodedResponse) {
+							bimConfigurationObject[CMDBuild.core.constants.Proxy.ROOT_CLASS] = decodedResponse[CMDBuild.core.constants.Proxy.ROOT];
+
+							CMDBuild.configuration.bim = Ext.create('CMDBuild.model.configuration.bim.Bim', bimConfigurationObject); // Configuration model
+						},
+						callback: this.callback
+					});
 				}
 			});
 		}
