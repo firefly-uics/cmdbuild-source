@@ -57,7 +57,7 @@ Ext.define('Ext.ux.CheckColumn', {
             var record = view.panel.store.getAt(recordIndex),
                 dataIndex = this.dataIndex,
                 checked = !record.get(dataIndex);
-                
+
             record.set(dataIndex, checked);
             this.fireEvent('checkchange', this, recordIndex, checked);
             // cancel selection.
@@ -73,7 +73,7 @@ Ext.define('Ext.ux.CheckColumn', {
         var cssPrefix = Ext.baseCSSPrefix,
             cls = [cssPrefix + 'grid-checkheader'];
 
-        if (CMDBuild.Utils.evalBoolean(value)) {
+        if (CMDBuild.core.Utils.decodeAsBoolean(value)) {
             cls.push(cssPrefix + 'grid-checkheader-checked');
         }
         return '<div class="' + cls.join(' ') + '">&#160;</div>';

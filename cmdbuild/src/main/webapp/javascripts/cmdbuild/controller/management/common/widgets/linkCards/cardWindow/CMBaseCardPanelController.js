@@ -312,7 +312,7 @@
 		 * @param {Function} success
 		 */
 		lockCard: function(success) {
-			if (_CMUtils.lockCard.isEnabled()) {
+			if (CMDBuild.configuration.instance.get('enableCardLock')) { // TODO: use proxy constants
 				if (
 					this.card
 					&& this.card.get("Id") >= 0 // Avoid lock on card create
@@ -330,7 +330,7 @@
 		},
 
 		unlockCard: function() {
-			if (_CMUtils.lockCard.isEnabled()) {
+			if (CMDBuild.configuration.instance.get('enableCardLock')) { // TODO: use proxy constants
 				if (
 					this.card
 					&& this.view.isInEditing()

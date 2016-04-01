@@ -53,7 +53,7 @@
 	//			});
 	//
 	// 			// do the request
-	//			Ext.Ajax.request({ 
+	//			Ext.Ajax.request({
 	//				url : '/test',
 	//				params : {},
 	//				success: function(response, opt) {
@@ -121,7 +121,7 @@
 			} else if (this.server.response) {
 				return true;
 			} else {
-				return (this.server.responses && this.server.responses.length > 0); 
+				return (this.server.responses && this.server.responses.length > 0);
 			}
 		}
 	});
@@ -160,7 +160,7 @@
 	};
 
 	// configuration structure
-	Ext.define("CMDBuild.Config", {
+	Ext.define("CMDBuild.configuration", {
 		statics: {
 			cmdbuild: {}
 		}
@@ -205,7 +205,7 @@
 	jasmine.Env.prototype.describe = function(description, specDefinitions) {
 
 		// specs to run
-		var focusSpecs = [ 
+		var focusSpecs = [
 			'CMDBuild.LoginPanel',
 			'CMDBUild.cache.CMCacheDashboardFunctions',
 			'CMDashboardModel',
@@ -238,5 +238,5 @@
 
 // *******/
 
-	
+
 })();

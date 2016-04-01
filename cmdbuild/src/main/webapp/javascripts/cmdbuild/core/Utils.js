@@ -130,6 +130,21 @@
 		},
 
 		/**
+		 * @param {String} cardPosition
+		 *
+		 * @returns {Number} pageNumber
+		 */
+		getPageNumber: function (cardPosition) {
+			if (cardPosition == 0)
+				return 1;
+
+			if (!Ext.isEmpty(cardPosition))
+				return (parseInt(cardPosition) / CMDBuild.configuration.instance.get(CMDBuild.core.constants.Proxy.ROW_LIMIT)) + 1;
+
+			return 2;
+		},
+
+		/**
 		 * @param {Array} attributes
 		 * @param {Array} attributesNamesToFilter
 		 *
@@ -368,22 +383,6 @@
 				}
 			},
 
-			lockCard: {
-				isEnabled: function () {
-					var enabled = CMDBuild.Config.cmdbuild.lockcardenabled;
-
-					return _CMUtils.evalBoolean(enabled);
-				}
-			},
-
-			evalBoolean: function (v) {
-				if (typeof v == "string") {
-					return v === "true";
-				} else {
-					return !!v; //return the boolean value of the object
-				}
-			},
-
 			// FIXME: Should be getEntryTypePrivileges
 			getClassPrivileges: function (classId) {
 				var entryType = _CMCache.getEntryTypeById(classId);
@@ -590,21 +589,6 @@
 				}
 
 				return out;
-			},
-
-			grid: {
-				getPageNumber: function getPageNumber(cardPosition) {
-					var pageSize = parseInt(CMDBuild.Config.cmdbuild.rowlimit);
-					var pageNumber = 1;
-
-					if (cardPosition == 0)
-						return pageNumber;
-
-					if (cardPosition)
-						pageNumber = parseInt(cardPosition) / pageSize;
-
-					return pageNumber + 1;
-				}
 			},
 
 			PollingFunction: function (conf) {
