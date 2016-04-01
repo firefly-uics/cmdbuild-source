@@ -65,7 +65,7 @@
 		 */
 		doLoginWithConfigurationUser: function () {
 _debug('doLoginWithConfigurationUser');
-			Ext.create('CMDBuild.core.configurationBuilders.RelationGraph', {
+			Ext.create('CMDBuild.core.configurations.builder.RelationGraph', {
 				callback: this.fakeCallToGetAuthorizationToken,
 				scope: this
 			});

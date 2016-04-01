@@ -7,7 +7,7 @@
 			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.Message',
 			'CMDBuild.core.proxy.configuration.Dms',
-			'CMDBuild.model.configuration.dms.Form'
+			'CMDBuild.model.configuration.dms.Dms'
 		],
 
 		/**
@@ -64,7 +64,7 @@
 		 */
 		onConfigurationDmsSaveButtonClick: function () {
 			CMDBuild.core.proxy.configuration.Dms.update({
-				params: CMDBuild.model.configuration.dms.Form.convertToLegacy(this.view.getData()),
+				params: CMDBuild.model.configuration.dms.Dms.convertToLegacy(this.view.getData()),
 				scope: this,
 				success: function (response, options, decodedResponse) {
 					this.cmfg('onConfigurationDmsTabShow');
@@ -85,9 +85,9 @@
 
 					if (!Ext.isEmpty(decodedResponse)) {
 						this.view.reset();
-						this.view.loadRecord(Ext.create('CMDBuild.model.configuration.dms.Form', CMDBuild.model.configuration.dms.Form.convertFromLegacy(decodedResponse)));
+						this.view.loadRecord(Ext.create('CMDBuild.model.configuration.dms.Dms', CMDBuild.model.configuration.dms.Dms.convertFromLegacy(decodedResponse)));
 
-						Ext.create('CMDBuild.core.configurationBuilders.Dms'); // Rebuild configuration model
+						Ext.create('CMDBuild.core.configurations.builder.Dms'); // Rebuild configuration model
 					}
 				}
 			});

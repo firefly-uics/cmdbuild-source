@@ -6,7 +6,7 @@
 		requires: [
 			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.proxy.configuration.GeneralOptions',
-			'CMDBuild.model.configuration.instance.Form'
+			'CMDBuild.model.configuration.generalOptions.GeneralOptions'
 		],
 
 		/**
@@ -46,7 +46,7 @@
 		 */
 		onConfigurationGeneralOptionsSaveButtonClick: function () {
 			CMDBuild.core.proxy.configuration.GeneralOptions.update({
-				params: CMDBuild.model.configuration.instance.Form.convertToLegacy(this.view.getData(true)),
+				params: CMDBuild.model.configuration.generalOptions.GeneralOptions.convertToLegacy(this.view.getData(true)),
 				scope: this,
 				success: function (response, options, decodedResponse) {
 					this.cmfg('onConfigurationGeneralOptionsTabShow');
@@ -68,13 +68,13 @@
 					decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.DATA];
 
 					if (!Ext.isEmpty(decodedResponse)) {
-						this.view.loadRecord(Ext.create('CMDBuild.model.configuration.instance.Form', CMDBuild.model.configuration.instance.Form.convertFromLegacy(decodedResponse)));
+						this.view.loadRecord(Ext.create('CMDBuild.model.configuration.generalOptions.GeneralOptions', CMDBuild.model.configuration.generalOptions.GeneralOptions.convertFromLegacy(decodedResponse)));
 
 						this.cmfg('mainViewportInstanceNameSet', decodedResponse[CMDBuild.core.constants.Proxy.INSTANCE_NAME]);
 
 						this.view.instanceNameField.translationsRead(); // Custom function call to read translations data
 
-						Ext.create('CMDBuild.core.configurationBuilders.Instance'); // Rebuild configuration model
+						Ext.create('CMDBuild.core.configurations.builder.Instance'); // Rebuild configuration model
 					}
 				}
 			});

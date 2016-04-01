@@ -3,9 +3,9 @@
 	Ext.require('CMDBuild.core.constants.Proxy');
 
 	/**
-	 * @twin {CMDBuild.model.core.configurations.builder.userInterface.DisabledModules}
+	 * @twin {CMDBuild.model.userAndGroup.group.userInterface.DisabledModules}
 	 */
-	Ext.define('CMDBuild.model.userAndGroup.group.userInterface.DisabledModules', {
+	Ext.define('CMDBuild.model.core.configurations.builder.userInterface.DisabledModules', {
 		extend: 'Ext.data.Model',
 
 		fields: [
@@ -54,10 +54,11 @@
 		 * @override
 		 */
 		constructor: function (data) {
-			data = CMDBuild.model.core.configurations.builder.userInterface.DisabledModules.convertFromLegacy(data);
+			data = this.statics().convertFromLegacy(data);
 
 			this.callParent(arguments);
 		}
 	});
 
 })();
+
