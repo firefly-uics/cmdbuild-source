@@ -68,16 +68,13 @@
 
 		/**
 		 * @param {Object} parameters
+		 *
+		 * @returns {Void}
 		 */
 		read: function (parameters) {
 			parameters = Ext.isEmpty(parameters) ? {} : parameters;
 			parameters.params = Ext.isEmpty(parameters.params) ? {} : parameters.params;
 			parameters.params[CMDBuild.core.constants.Proxy.NAME] = 'dms';
-
-			parameters.success = Ext.Function.createInterceptor(parameters.success, function (response, options, decodedResponse) {
-				if (!CMDBuild.core.configurationBuilders.Dms.isValid())
-					CMDBuild.core.configurationBuilders.Dms.build(decodedResponse); // Refresh configuration object
-			}, this);
 
 			Ext.apply(parameters, { url: CMDBuild.core.proxy.Index.configuration.read });
 
@@ -86,13 +83,13 @@
 
 		/**
 		 * @param {Object} parameters
+		 *
+		 * @returns {Void}
 		 */
 		update: function (parameters) {
 			parameters = Ext.isEmpty(parameters) ? {} : parameters;
 			parameters.params = Ext.isEmpty(parameters.params) ? {} : parameters.params;
 			parameters.params[CMDBuild.core.constants.Proxy.NAME] = 'dms';
-
-			CMDBuild.core.configurationBuilders.Dms.invalid(); // Invalidate configuration object
 
 			Ext.apply(parameters, { url: CMDBuild.core.proxy.Index.configuration.update });
 

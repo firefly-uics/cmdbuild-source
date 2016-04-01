@@ -21,14 +21,20 @@
 		enableServerCalls: true,
 
 		/**
-		 * @param {Object} configuration
-		 * @param {Function} configuration.callback
-		 * @param {Boolean} configuration.enableServerCalls
+		 * @cfg {Object}
+		 */
+		scope: undefined,
+
+		/**
+		 * @param {Object} configurationObject
+		 * @param {Function} configurationObject.callback
+		 * @param {Boolean} configurationObject.enableServerCalls
+		 * @param {Object} configurationObject.scope
 		 *
 		 * @override
 		 */
-		constructor: function (configuration) {
-			Ext.apply(this, configuration); // Apply configurations
+		constructor: function (configurationObject) {
+			Ext.apply(this, configurationObject); // Apply configurations
 
 			Ext.ns('CMDBuild.configuration');
 			CMDBuild.configuration.localization = Ext.create('CMDBuild.model.configuration.Localization'); // Localization configuration object
@@ -46,7 +52,7 @@
 							// Get server language
 							CMDBuild.core.proxy.configuration.GeneralOptions.read({ // TODO: waiting for refactor (server configuration refactoring)
 								loadMask: false,
-								scope: this,
+								scope: this.scope || this,
 								success: function (response, options, decodedResponse) {
 									decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.DATA];
 
