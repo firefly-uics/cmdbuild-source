@@ -68,25 +68,22 @@ import org.mockito.ArgumentCaptor;
 
 public class CardAttachmentsTest {
 
-	private CardAttachments service;
-
-	@Rule
-	public ServerResource server = ServerResource.newInstance() //
-			.withServiceClass(CardAttachments.class) //
-			.withService(service = mock(CardAttachments.class)) //
-			.withPort(randomPort()) //
-			.build();
-
 	@ClassRule
-	public static JsonSupport json = new JsonSupport();
+	public static ServerResource<CardAttachments> server = ServerResource.newInstance(CardAttachments.class) //
+			.withPortRange(randomPort()) //
+			.build();
 
 	@Rule
 	public TemporaryFolder temporaryFolder = new TemporaryFolder();
 
+	private static JsonSupport json = new JsonSupport();
+
+	private CardAttachments service;
 	private HttpClient httpclient;
 
 	@Before
-	public void createHttpClient() throws Exception {
+	public void setUp() throws Exception {
+		server.service(service = mock(CardAttachments.class));
 		httpclient = HttpClientBuilder.create().build();
 	}
 
@@ -107,9 +104,10 @@ public class CardAttachmentsTest {
 		// when
 		final HttpPost post = new HttpPost(server.resource("classes/foo/cards/123/attachments/"));
 		final MultipartEntity multipartEntity = new MultipartEntity();
-		multipartEntity.addPart(ATTACHMENT, new StringBody("{" //
-				+ "\"_description\": \"the description\"" //
-				+ "}", APPLICATION_JSON, UTF_8));
+		multipartEntity.addPart(ATTACHMENT,
+				new StringBody("{" //
+						+ "\"_description\": \"the description\"" //
+						+ "}", APPLICATION_JSON, UTF_8));
 		multipartEntity.addPart(FILE, new FileBody(file));
 		post.setEntity(multipartEntity);
 		final HttpResponse response = httpclient.execute(post);
@@ -274,9 +272,10 @@ public class CardAttachmentsTest {
 		// when
 		final HttpPut put = new HttpPut(server.resource("classes/foo/cards/123/attachments/bar/"));
 		final MultipartEntity multipartEntity = new MultipartEntity();
-		multipartEntity.addPart(ATTACHMENT, new StringBody("{" //
-				+ "\"_description\": \"the new description\"" //
-				+ "}", APPLICATION_JSON, UTF_8));
+		multipartEntity.addPart(ATTACHMENT,
+				new StringBody("{" //
+						+ "\"_description\": \"the new description\"" //
+						+ "}", APPLICATION_JSON, UTF_8));
 		multipartEntity.addPart(FILE, new FileBody(file));
 		put.setEntity(multipartEntity);
 		final HttpResponse response = httpclient.execute(put);
@@ -330,9 +329,10 @@ public class CardAttachmentsTest {
 		// when
 		final HttpPut put = new HttpPut(server.resource("classes/foo/cards/123/attachments/bar/"));
 		final MultipartEntity multipartEntity = new MultipartEntity();
-		multipartEntity.addPart(ATTACHMENT, new StringBody("{" //
-				+ "\"_description\": \"the new description\"" //
-				+ "}", APPLICATION_JSON, UTF_8));
+		multipartEntity.addPart(ATTACHMENT,
+				new StringBody("{" //
+						+ "\"_description\": \"the new description\"" //
+						+ "}", APPLICATION_JSON, UTF_8));
 		put.setEntity(multipartEntity);
 		final HttpResponse response = httpclient.execute(put);
 

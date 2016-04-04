@@ -53,25 +53,22 @@ import org.mockito.ArgumentCaptor;
 
 public class FileStoresTest {
 
-	private FileStores service;
-
-	@Rule
-	public ServerResource server = ServerResource.newInstance() //
-			.withServiceClass(FileStores.class) //
-			.withService(service = mock(FileStores.class)) //
+	@ClassRule
+	public static ServerResource<FileStores> server = ServerResource.newInstance(FileStores.class) //
 			.withPortRange(randomPort()) //
 			.build();
-
-	@ClassRule
-	public static JsonSupport json = new JsonSupport();
 
 	@Rule
 	public TemporaryFolder temporaryFolder = new TemporaryFolder();
 
+	private static JsonSupport json = new JsonSupport();
+
+	private FileStores service;
 	private HttpClient httpclient;
 
 	@Before
-	public void createHttpClient() throws Exception {
+	public void setUp() throws Exception {
+		server.service(service = mock(FileStores.class));
 		httpclient = HttpClientBuilder.create().build();
 	}
 

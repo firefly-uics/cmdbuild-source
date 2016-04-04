@@ -24,27 +24,24 @@ import org.cmdbuild.service.rest.v1.model.ProcessStatus;
 import org.cmdbuild.service.rest.v1.model.ResponseMultiple;
 import org.junit.Before;
 import org.junit.ClassRule;
-import org.junit.Rule;
 import org.junit.Test;
 
 public class ProcessConfigurationTest {
 
-	private ProcessesConfiguration service;
-
-	@Rule
-	public ServerResource server = ServerResource.newInstance() //
-			.withServiceClass(ProcessesConfiguration.class) //
-			.withService(service = mock(ProcessesConfiguration.class)) //
-			.withPort(randomPort()) //
+	@ClassRule
+	public static ServerResource<ProcessesConfiguration> server = ServerResource
+			.newInstance(ProcessesConfiguration.class) //
+			.withPortRange(randomPort()) //
 			.build();
 
-	@ClassRule
-	public static JsonSupport json = new JsonSupport();
+	private static JsonSupport json = new JsonSupport();
 
+	private ProcessesConfiguration service;
 	private HttpClient httpclient;
 
 	@Before
-	public void createHttpClient() throws Exception {
+	public void setUp() throws Exception {
+		server.service(service = mock(ProcessesConfiguration.class));
 		httpclient = HttpClientBuilder.create().build();
 	}
 

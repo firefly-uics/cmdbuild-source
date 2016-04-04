@@ -34,27 +34,23 @@ import org.cmdbuild.service.rest.v2.model.ResponseMultiple;
 import org.cmdbuild.service.rest.v2.model.ResponseSingle;
 import org.junit.Before;
 import org.junit.ClassRule;
-import org.junit.Rule;
 import org.junit.Test;
 
 public class DomainTreesTest {
 
-	private DomainTrees service;
-
-	@Rule
-	public ServerResource server = ServerResource.newInstance() //
-			.withServiceClass(DomainTrees.class) //
-			.withService(service = mock(DomainTrees.class)) //
+	@ClassRule
+	public static ServerResource<DomainTrees> server = ServerResource.newInstance(DomainTrees.class) //
 			.withPortRange(randomPort()) //
 			.build();
 
-	@ClassRule
-	public static JsonSupport json = new JsonSupport();
+	private static JsonSupport json = new JsonSupport();
 
+	private DomainTrees service;
 	private HttpClient httpclient;
 
 	@Before
-	public void createHttpClient() throws Exception {
+	public void setUp() throws Exception {
+		server.service(service = mock(DomainTrees.class));
 		httpclient = HttpClientBuilder.create().build();
 	}
 

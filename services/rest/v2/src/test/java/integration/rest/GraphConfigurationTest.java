@@ -22,27 +22,23 @@ import org.cmdbuild.service.rest.v2.GraphConfiguration;
 import org.cmdbuild.service.rest.v2.model.ResponseSingle;
 import org.junit.Before;
 import org.junit.ClassRule;
-import org.junit.Rule;
 import org.junit.Test;
 
 public class GraphConfigurationTest {
 
-	private GraphConfiguration service;
-
-	@Rule
-	public ServerResource server = ServerResource.newInstance() //
-			.withServiceClass(GraphConfiguration.class) //
-			.withService(service = mock(GraphConfiguration.class)) //
-			.withPort(randomPort()) //
+	@ClassRule
+	public static ServerResource<GraphConfiguration> server = ServerResource.newInstance(GraphConfiguration.class) //
+			.withPortRange(randomPort()) //
 			.build();
 
-	@ClassRule
-	public static JsonSupport json = new JsonSupport();
+	private static JsonSupport json = new JsonSupport();
 
+	private GraphConfiguration service;
 	private HttpClient httpclient;
 
 	@Before
-	public void createHttpClient() throws Exception {
+	public void setUp() throws Exception {
+		server.service(service = mock(GraphConfiguration.class));
 		httpclient = HttpClientBuilder.create().build();
 	}
 
@@ -51,23 +47,24 @@ public class GraphConfigurationTest {
 		// given
 		final ResponseSingle<org.cmdbuild.service.rest.v2.model.GraphConfiguration> expectedResponse = newResponseSingle(
 				org.cmdbuild.service.rest.v2.model.GraphConfiguration.class) //
-				.withElement(newGraphConfiguration() //
-						.withEnabledStatus(true) //
-						.withBaseLevel(1) //
-						.withClusteringThreshold(2) //
-						.withDisplayLabel("this is the label") //
-						.withEdgeColor("this is the color") //
-						.withEdgeTooltipEnabled(true) //
-						.withNodeTooltipEnabled(true) //
-						.withSpriteDimension(3) //
-						.withStepRadius(4) //
-						.withViewPointDistance(5) //
-						.withViewPointHeight(6) //
-						.build()) //
-				.withMetadata(newMetadata() //
-						// nothing to add, just needed for simplify assertions
-						.build()) //
-				.build();
+						.withElement(newGraphConfiguration() //
+								.withEnabledStatus(true) //
+								.withBaseLevel(1) //
+								.withClusteringThreshold(2) //
+								.withDisplayLabel("this is the label") //
+								.withEdgeColor("this is the color") //
+								.withEdgeTooltipEnabled(true) //
+								.withNodeTooltipEnabled(true) //
+								.withSpriteDimension(3) //
+								.withStepRadius(4) //
+								.withViewPointDistance(5) //
+								.withViewPointHeight(6) //
+								.build()) //
+						.withMetadata(newMetadata() //
+								// nothing to add, just needed for simplify
+								// assertions
+								.build()) //
+						.build();
 		when(service.read()) //
 				.thenReturn(expectedResponse);
 
