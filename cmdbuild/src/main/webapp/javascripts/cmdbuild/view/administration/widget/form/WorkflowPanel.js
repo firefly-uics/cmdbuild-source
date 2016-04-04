@@ -71,18 +71,12 @@
 					},
 
 					items: [
-						this.workflow = Ext.create('Ext.form.field.ComboBox', {
+						this.workflow = Ext.create('CMDBuild.view.common.field.comboBox.WorflowSelector', {
 							name: CMDBuild.core.constants.Proxy.WORKFLOW_NAME,
 							fieldLabel: CMDBuild.Translation.workflow,
 							labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
 							maxWidth: CMDBuild.core.constants.FieldWidths.ADMINISTRATION_BIG,
-							valueField: CMDBuild.core.constants.Proxy.NAME,
-							displayField: CMDBuild.core.constants.Proxy.TEXT, // TODO: waiting for refactor (rename description)
 							forceSelection: true,
-							editable: false,
-
-							store: CMDBuild.core.proxy.widget.Workflow.getStoreTargetWorkflow(),
-							queryMode: 'local',
 
 							listeners: {
 								scope: this,

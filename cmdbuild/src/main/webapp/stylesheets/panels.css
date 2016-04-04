@@ -1,0 +1,38 @@
+/*
+ * Background
+ */
+	.cmdb-blue-panel {
+		background-color: #dfe9f6 !important;
+		padding: 5px;
+	}
+	.cmdb-blue-panel-no-padding { background-color: #dfe9f6 !important; }
+
+	.cmdb-gray-panel {
+		background-color: #f1f1f1 !important;
+		padding: 5px 5px 0 5px;
+	}
+	.cmdb-gray-panel-no-padding { background-color: #f1f1f1 !important; }
+
+/*
+ * Border
+ */
+	.cmdb-border-top {
+		border-top-style: solid !important;
+		border-top-width: 1px !important;
+	}
+	.cmdb-border-right {
+		border-right-style: solid !important;
+		border-right-width: 1px !important;
+	}
+	.cmdb-border-bottom {
+		border-bottom-style: solid !important;
+		border-bottom-width: 1px !important;
+	}
+	.cmdb-border-left {
+		border-left-style: solid !important;
+		border-left-width: 1px !important;
+	}
+
+	/* Colors */
+	.cmdb-blue-border-color { border-color: #99bce8; }
+	.cmdb-gray-border-color { border-color: #d0d0d0; }
