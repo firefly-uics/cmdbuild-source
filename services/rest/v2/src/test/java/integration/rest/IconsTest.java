@@ -38,28 +38,24 @@ import org.cmdbuild.service.rest.v2.model.ResponseMultiple;
 import org.cmdbuild.service.rest.v2.model.ResponseSingle;
 import org.junit.Before;
 import org.junit.ClassRule;
-import org.junit.Rule;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 
 public class IconsTest {
 
-	private Icons service;
-
-	@Rule
-	public ServerResource server = ServerResource.newInstance() //
-			.withServiceClass(Icons.class) //
-			.withService(service = mock(Icons.class)) //
+	@ClassRule
+	public static ServerResource<Icons> server = ServerResource.newInstance(Icons.class) //
 			.withPortRange(randomPort()) //
 			.build();
 
-	@ClassRule
-	public static JsonSupport json = new JsonSupport();
+	private static JsonSupport json = new JsonSupport();
 
+	private Icons service;
 	private HttpClient httpclient;
 
 	@Before
-	public void createHttpClient() throws Exception {
+	public void setUp() throws Exception {
+		server.service(service = mock(Icons.class));
 		httpclient = HttpClientBuilder.create().build();
 	}
 

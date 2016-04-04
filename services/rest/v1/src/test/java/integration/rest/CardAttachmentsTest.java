@@ -49,25 +49,22 @@ import org.junit.rules.TemporaryFolder;
 
 public class CardAttachmentsTest {
 
-	private CardAttachments service;
-
-	@Rule
-	public ServerResource server = ServerResource.newInstance() //
-			.withServiceClass(CardAttachments.class) //
-			.withService(service = mock(CardAttachments.class)) //
-			.withPort(randomPort()) //
-			.build();
-
 	@ClassRule
-	public static JsonSupport json = new JsonSupport();
+	public static ServerResource<CardAttachments> server = ServerResource.newInstance(CardAttachments.class) //
+			.withPortRange(randomPort()) //
+			.build();
 
 	@Rule
 	public TemporaryFolder temporaryFolder = new TemporaryFolder();
 
+	private static JsonSupport json = new JsonSupport();
+
+	private CardAttachments service;
 	private HttpClient httpclient;
 
 	@Before
-	public void createHttpClient() throws Exception {
+	public void setUp() throws Exception {
+		server.service(service = mock(CardAttachments.class));
 		httpclient = HttpClientBuilder.create().build();
 	}
 

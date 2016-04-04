@@ -28,27 +28,23 @@ import org.cmdbuild.service.rest.v2.model.ResponseMultiple;
 import org.cmdbuild.service.rest.v2.model.ResponseSingle;
 import org.junit.Before;
 import org.junit.ClassRule;
-import org.junit.Rule;
 import org.junit.Test;
 
 public class ClassPrivilegesTest {
 
-	private ClassPrivileges service;
-
-	@Rule
-	public ServerResource server = ServerResource.newInstance() //
-			.withServiceClass(ClassPrivileges.class) //
-			.withService(service = mock(ClassPrivileges.class)) //
-			.withPort(randomPort()) //
+	@ClassRule
+	public static ServerResource<ClassPrivileges> server = ServerResource.newInstance(ClassPrivileges.class) //
+			.withPortRange(randomPort()) //
 			.build();
 
-	@ClassRule
-	public static JsonSupport json = new JsonSupport();
+	private static JsonSupport json = new JsonSupport();
 
+	private ClassPrivileges service;
 	private HttpClient httpclient;
 
 	@Before
-	public void createHttpClient() throws Exception {
+	public void setUp() throws Exception {
+		server.service(service = mock(ClassPrivileges.class));
 		httpclient = HttpClientBuilder.create().build();
 	}
 

@@ -49,25 +49,23 @@ import org.junit.rules.TemporaryFolder;
 
 public class ProcessInstanceAttachmentsTest {
 
-	private ProcessInstanceAttachments service;
-
-	@Rule
-	public ServerResource server = ServerResource.newInstance() //
-			.withServiceClass(ProcessInstanceAttachments.class) //
-			.withService(service = mock(ProcessInstanceAttachments.class)) //
-			.withPort(randomPort()) //
-			.build();
-
 	@ClassRule
-	public static JsonSupport json = new JsonSupport();
+	public static ServerResource<ProcessInstanceAttachments> server = ServerResource
+			.newInstance(ProcessInstanceAttachments.class) //
+			.withPortRange(randomPort()) //
+			.build();
 
 	@Rule
 	public TemporaryFolder temporaryFolder = new TemporaryFolder();
 
+	private static JsonSupport json = new JsonSupport();
+
+	private ProcessInstanceAttachments service;
 	private HttpClient httpclient;
 
 	@Before
-	public void createHttpClient() throws Exception {
+	public void setUp() throws Exception {
+		server.service(service = mock(ProcessInstanceAttachments.class));
 		httpclient = HttpClientBuilder.create().build();
 	}
 

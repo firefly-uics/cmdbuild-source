@@ -22,27 +22,23 @@ import org.cmdbuild.service.rest.v1.model.MenuDetail;
 import org.cmdbuild.service.rest.v1.model.ResponseSingle;
 import org.junit.Before;
 import org.junit.ClassRule;
-import org.junit.Rule;
 import org.junit.Test;
 
 public class MenuTest {
 
-	private Menu service;
-
-	@Rule
-	public ServerResource server = ServerResource.newInstance() //
-			.withServiceClass(Menu.class) //
-			.withService(service = mock(Menu.class)) //
-			.withPort(randomPort()) //
+	@ClassRule
+	public static ServerResource<Menu> server = ServerResource.newInstance(Menu.class) //
+			.withPortRange(randomPort()) //
 			.build();
 
-	@ClassRule
-	public static JsonSupport json = new JsonSupport();
+	private static JsonSupport json = new JsonSupport();
 
+	private Menu service;
 	private HttpClient httpclient;
 
 	@Before
-	public void createHttpClient() throws Exception {
+	public void setUp() throws Exception {
+		server.service(service = mock(Menu.class));
 		httpclient = HttpClientBuilder.create().build();
 	}
 
