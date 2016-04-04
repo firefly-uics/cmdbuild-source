@@ -12,8 +12,8 @@
 		config: {
 			errorMsgCss: 'cmdb-error-msg',
 			mandatoryLabelFlag: '* ',
-			rootClassNameForClasses: 'Class',
-			rootClassNameForWorkflows: 'Activity',
+			rootNameClasses: 'Class',
+			rootNameWorkflows: 'Activity',
 			tableTypeClass: 'class',
 			tableTypeProcessClass: 'processclass',
 			tableTypeSimpleTable: 'simpletable',
