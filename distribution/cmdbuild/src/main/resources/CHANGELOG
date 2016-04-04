@@ -5,6 +5,10 @@ FIXES
 
  * Tab Email: widget configuration's presence also if widget doens't exists
 
+ * REST logout error with header autenticator
+
+
+
 
 
 CMDBuild 2.4.0 (released 2016/03/31)
