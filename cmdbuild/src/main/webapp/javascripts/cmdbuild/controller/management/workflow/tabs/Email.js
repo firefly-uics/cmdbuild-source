@@ -45,6 +45,7 @@
 
 		onAbortCardClick: function() {
 			this.cmfg('tabEmailEditModeSet', false);
+			this.cmfg('tabEmailConfigurationReset');
 		},
 
 		/**
@@ -86,6 +87,7 @@
 				if (!processInstance.isNew())
 					this.parentDelegate.activityPanelController.ensureEditPanel(); // Creates editPanel with relative form fields
 
+				this.cmfg('tabEmailConfigurationReset');
 				this.cmfg('tabEmailSelectedEntitySet', {
 					selectedEntity: processInstance,
 					scope: this,
@@ -95,7 +97,6 @@
 						this.cmfg('onTabEmailPanelShow');
 					}
 				});
-
 				this.cmfg('tabEmailEditModeSet', processInstance.isNew()); // Enable/Disable tab based on model new state to separate create/view mode
 				this.controllerGrid.cmfg('tabEmailGridUiStateSet');
 			} else { // We have a closed process instance
