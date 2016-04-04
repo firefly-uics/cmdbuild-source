@@ -18,15 +18,15 @@
 		<dependencySet>
 			<includes>
 				<include>org.apache.tomcat:dbcp:jar</include>
-				<include>postgresql:postgresql:jar</include>
+				<include>org.postgresql:postgresql:jar</include>
 			</includes>
 			<outputDirectory>/extras/tomcat-libs/5.5</outputDirectory>
 		</dependencySet>
 		<dependencySet>
 			<includes>
-				<include>postgresql:postgresql:jar</include>
+				<include>org.postgresql:postgresql:jar</include>
 			</includes>
-			<outputDirectory>/extras/tomcat-libs/6.0</outputDirectory>
+			<outputDirectory>/extras/tomcat-libs/6.0 or higher</outputDirectory>
 		</dependencySet>
 	</dependencySets>
 	<fileSets>
