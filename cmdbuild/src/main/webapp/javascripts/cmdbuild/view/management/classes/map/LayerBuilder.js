@@ -26,7 +26,7 @@
     	 * {
     	 * 	classId: integer,
     	 * 	geoAttribute: a cached attribute of the class referred from classId
-    	 * 	withEditLayer: boolean to say if we want a editLayer or not 
+    	 * 	withEditLayer: boolean to say if we want a editLayer or not
     	 * }
     	 */
 		buildLayer: function(config, map) {
@@ -65,7 +65,7 @@
 		 * the layer that does not belong to the actual class
 		 * Now we want to prefix it to all. To remember this
 		 * decision, comment the condition to skip the
-		 * owned layers 
+		 * owned layers
 		 */
 
 		// if (!editLayer) {
@@ -85,8 +85,8 @@
 				/*
 				 * Select a feature if, when added to the map, refers
 				 * to the current card
-				 * 
-				 * 
+				 *
+				 *
 				 * p.feature, the OpenLayers.Feature added
 				 * p.object, the layer that fires the event
 				 * p.type, the event type
@@ -129,8 +129,8 @@
 	};
 
 	function buildGeoserverLayer(geoAttribute) {
-		var geoserver_ws = CMDBuild.Config.gis.geoserver_workspace,
-			geoserver_url = CMDBuild.Config.gis.geoserver_url;
+		var geoserver_ws = CMDBuild.configuration.gis.get(['geoserver', 'workspace']), // TODO: use proxy constants
+			geoserver_url = CMDBuild.configuration.gis.get(['geoserver', 'url']); // TODO: use proxy constants
 
 		var layer = new OpenLayers.Layer.WMS(geoAttribute.description,
 			geoserver_url + "/" + GOESERVER_SERVICE_TYPE, {

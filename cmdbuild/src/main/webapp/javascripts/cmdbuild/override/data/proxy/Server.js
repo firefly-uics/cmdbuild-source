@@ -1,9 +1,16 @@
-(function() {
+(function () {
 
 	Ext.define('CMDBuild.override.data.proxy.Server', {
 		override: 'Ext.data.proxy.Server',
 
-		constructor: function() {
+		/**
+		 * @param {Object} config
+		 *
+		 * @returns {Void}
+		 *
+		 * @override
+		 */
+		constructor: function (config) {
 			this.callParent(arguments);
 
 			Ext.apply(this, this.extraParams); // To apply extraParams to ProxyServer if defined in store create object [16/01/2015]
@@ -18,8 +25,10 @@
 		 * @param {Object} response
 		 * @param {Function} callback
 		 * @param {Object} scope
+		 *
+		 * @returns {Void}
 		 */
-		processResponse: function(success, operation, request, response, callback, scope) {
+		processResponse: function (success, operation, request, response, callback, scope) {
 			operation.response = response;
 
 			this.callParent(arguments);

@@ -297,7 +297,7 @@
 		/**
 		 * Custom fields set value manage
 		 *
-		 * @param {CMDBuild.model.configuration.dms.Form} record
+		 * @param {CMDBuild.model.configuration.dms.Dms} record
 		 *
 		 * @override
 		 */

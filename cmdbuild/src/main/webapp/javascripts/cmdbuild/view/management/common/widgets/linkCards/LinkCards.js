@@ -118,7 +118,7 @@
 				]
 			});
 
-			if (this.widgetConf[CMDBuild.core.constants.Proxy.ENABLE_MAP] && CMDBuild.Config.gis.enabled)
+			if (this.widgetConf[CMDBuild.core.constants.Proxy.ENABLE_MAP] && CMDBuild.configuration.gis.get(CMDBuild.core.constants.Proxy.ENABLED))
 				this.buildMap();
 
 			this.callParent(arguments);

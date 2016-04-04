@@ -1,21 +1,50 @@
 (function () {
 
+	Ext.require([
+		'CMDBuild.core.interfaces.messages.Error',
+		'CMDBuild.core.interfaces.messages.Warning',
+		'CMDBuild.core.Message'
+	]);
+
 	Ext.define('CMDBuild.override.data.Store', {
 		override: 'Ext.data.Store',
 
-//		/**
-//		 * Creates callback interceptor to print error message on store load
-//		 *
-//		 * @param {Object} options
-//		 *
-//		 * @returns {Void}
-//		 */
-//		load: function (options) {
-//			if (!Ext.isEmpty(options) && !Ext.isEmpty(options.callback))
-//				options.callback = Ext.Function.createInterceptor(options.callback, this.interceptorFunction, this);
-//
-//			this.callParent(arguments);
-//		},
+		/**
+		 * Parameter to disable all messages display
+		 *
+		 * @property {Boolean}
+		 */
+		disableAllMessages: false,
+
+		/**
+		 * Parameter to disable only error messages display
+		 *
+		 * @property {Boolean}
+		 */
+		disableErrors: false,
+
+		/**
+		 * Parameter to disable only warning messages display
+		 *
+		 * @property {Boolean}
+		 */
+		disableWarnings: false,
+
+		/**
+		 * Creates callback interceptor to print error message on store load - 02/10/2015
+		 *
+		 * @param {Object} options
+		 *
+		 * @returns {Void}
+		 *
+		 * @override
+		 */
+		load: function (options) {
+			if (!Ext.isEmpty(options) && !Ext.isEmpty(options.callback))
+				options.callback = Ext.Function.createInterceptor(options.callback, this.interceptorFunction, this);
+
+			this.callParent(arguments);
+		},
 
 		/**
 		 * @param {Array} records
@@ -23,9 +52,11 @@
 		 * @param {Boolean} success
 		 *
 		 * @returns {Boolean}
+		 *
+		 * @private
 		 */
 		interceptorFunction: function (records, operation, success) {
-			var decoded = undefined;
+			var decodedResponse = undefined;
 
 			if (!success) {
 				if (
@@ -33,41 +64,15 @@
 					&& !Ext.isEmpty(operation.response)
 					&& !Ext.isEmpty(operation.response.responseText)
 				) {
-					decoded = Ext.decode(operation.response.responseText);
+					decodedResponse = Ext.decode(operation.response.responseText);
 				}
 
-				if (
-					!Ext.isEmpty(decoded)
-					&& !Ext.isEmpty(decoded.errors)
-				) {
-					Ext.Array.forEach(decoded.errors, function (error, i, allErrors) {
-						operation.error = error;
+				if (!this.disableAllMessages) {
+					if (!this.disableWarnings)
+						CMDBuild.core.interfaces.messages.Warning.display(decodedResponse);
 
-						var detail = '';
-
-						// Add the URL that generate the error
-						if (
-							!Ext.isEmpty(operation)
-							&& !Ext.isEmpty(operation.request)
-							&& !Ext.isEmpty(operation.request.url)
-						) {
-							detail = 'Call: ' + operation.request.url + '\n';
-
-							var line = '';
-
-							for (var i = 0; i < detail.length; ++i)
-								line += '-';
-
-							detail += line + '\n';
-						}
-
-						detail += 'Error: ' + error.stacktrace; // Add to the details the server stacktrace
-
-						CMDBuild.core.Message.error(null, {
-							text: CMDBuild.Translation.errors.unknown_error,
-							detail: detail
-						});
-					}, this);
+					if (!this.disableErrors)
+						CMDBuild.core.interfaces.messages.Error.display(decodedResponse, operation.request);
 				}
 			}
 

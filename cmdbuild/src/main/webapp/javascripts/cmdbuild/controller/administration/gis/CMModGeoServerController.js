@@ -115,6 +115,6 @@
 	};
 
 	function geoserverIsEnabled() {
-		return CMDBuild.Config.gis.geoserver && CMDBuild.Config.gis.geoserver == "on";
+		return CMDBuild.configuration.gis.get(['geoserver', 'enabled']); // TODO: use proxy constants
 	}
 })();

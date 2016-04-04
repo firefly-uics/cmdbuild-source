@@ -7,7 +7,7 @@
 			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.Message',
 			'CMDBuild.core.proxy.configuration.Dms',
-			'CMDBuild.model.configuration.dms.Form'
+			'CMDBuild.model.configuration.dms.Dms'
 		],
 
 		/**
@@ -30,12 +30,14 @@
 		view: undefined,
 
 		/**
-		 * @param {Object} configObject
-		 * @param {CMDBuild.controller.administration.configuration.Configuration} configObject.parentDelegate
+		 * @param {Object} configurationObject
+		 * @param {CMDBuild.controller.administration.configuration.Configuration} configurationObject.parentDelegate
+		 *
+		 * @returns {Void}
 		 *
 		 * @override
 		 */
-		constructor: function (configObject) {
+		constructor: function (configurationObject) {
 			this.callParent(arguments);
 
 			this.view = Ext.create('CMDBuild.view.administration.configuration.DmsPanel', { delegate: this });
@@ -43,6 +45,8 @@
 
 		/**
 		 * @param {String} expandedFieldSetIdentifier
+		 *
+		 * @returns {Void}
 		 */
 		onConfigurationDmsFieldSetExpand: function (expandedFieldSetIdentifier) {
 			if (!Ext.isEmpty(expandedFieldSetIdentifier) && Ext.isString(expandedFieldSetIdentifier))
@@ -55,9 +59,12 @@
 				}
 		},
 
+		/**
+		 * @returns {Void}
+		 */
 		onConfigurationDmsSaveButtonClick: function () {
 			CMDBuild.core.proxy.configuration.Dms.update({
-				params: CMDBuild.model.configuration.dms.Form.convertToLegacy(this.view.getData()),
+				params: CMDBuild.model.configuration.dms.Dms.convertToLegacy(this.view.getData()),
 				scope: this,
 				success: function (response, options, decodedResponse) {
 					this.cmfg('onConfigurationDmsTabShow');
@@ -67,6 +74,9 @@
 			});
 		},
 
+		/**
+		 * @returns {Void}
+		 */
 		onConfigurationDmsTabShow: function () {
 			CMDBuild.core.proxy.configuration.Dms.read({
 				scope: this,
@@ -75,7 +85,9 @@
 
 					if (!Ext.isEmpty(decodedResponse)) {
 						this.view.reset();
-						this.view.loadRecord(Ext.create('CMDBuild.model.configuration.dms.Form', CMDBuild.model.configuration.dms.Form.convertFromLegacy(decodedResponse)));
+						this.view.loadRecord(Ext.create('CMDBuild.model.configuration.dms.Dms', CMDBuild.model.configuration.dms.Dms.convertFromLegacy(decodedResponse)));
+
+						Ext.create('CMDBuild.core.configurations.builder.Dms'); // Rebuild configuration model
 					}
 				}
 			});

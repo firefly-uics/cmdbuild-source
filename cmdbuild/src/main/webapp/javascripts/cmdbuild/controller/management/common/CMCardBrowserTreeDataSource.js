@@ -7,7 +7,7 @@
 			this.cardBrowserTree = cardBrowserTree;
 			this.cardBrowserTree.setDataSource(this);
 			this.mapState = mapState;
-			this.configuration = CMDBuild.Config.cmdbuild.cardBrowserByDomainConfiguration;
+			this.configuration = CMDBuild.configuration.gis.get('cardBrowserByDomainConfiguration'); // TODO: use proxy constants
 			this.refresh();
 			this.callParent(arguments);
 		},
@@ -20,7 +20,7 @@
 			});
 
 			// fill the first level of tree nodes
-			// asking the cards according to the 
+			// asking the cards according to the
 			// root of the configuration
 			CMDBuild.ServiceProxy.gis.expandDomainTree({
 				success: function successGetCardBasicInfoList(operation, options, response) {

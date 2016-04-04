@@ -53,7 +53,7 @@
 		},
 
 		onClassSelected: function(selection) {
-			if (CMDBuild.Config.gis.enabled && !_CMUtils.isSimpleTable(selection.id)) {
+			if (CMDBuild.configuration.gis.get('enabled') && !_CMUtils.isSimpleTable(selection.id)) { // TODO: use proxy constants
 				this.layerVisibilityGrid.enable();
 				this.layerVisibilityGrid.onClassSelected(selection);
 			} else {

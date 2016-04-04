@@ -1,4 +1,4 @@
-(function() {
+(function () {
 
 	Ext.define('CMDBuild.controller.administration.configuration.Gis', {
 		extend: 'CMDBuild.controller.common.abstract.Base',
@@ -6,7 +6,7 @@
 		requires: [
 			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.proxy.configuration.Gis',
-			'CMDBuild.model.configuration.gis.Form'
+			'CMDBuild.model.configuration.Gis'
 		],
 
 		/**
@@ -28,48 +28,56 @@
 		view: undefined,
 
 		/**
-		 * @param {Object} configObject
-		 * @param {CMDBuild.controller.administration.configuration.Configuration} configObject.parentDelegate
+		 * @param {Object} configurationObject
+		 * @param {CMDBuild.controller.administration.configuration.Configuration} configurationObject.parentDelegate
+		 *
+		 * @returns {Void}
 		 *
 		 * @override
 		 */
-		constructor: function(configObject) {
+		constructor: function (configurationObject) {
 			this.callParent(arguments);
 
 			this.view = Ext.create('CMDBuild.view.administration.configuration.GisPanel', { delegate: this });
 		},
 
-		onConfigurationGisSaveButtonClick: function() {
+		/**
+		 * @returns {Void}
+		 */
+		onConfigurationGisSaveButtonClick: function () {
 			CMDBuild.core.proxy.configuration.Gis.update({
-				params: CMDBuild.model.configuration.gis.Form.convertToLegacy(this.view.getData(true)),
+				params: CMDBuild.model.configuration.Gis.convertToLegacy(this.view.getData(true)),
 				scope: this,
-				success: function(response, options, decodedResponse) {
+				callback: function (options, success, response) {
 					this.cmfg('onConfigurationGisTabShow');
-
+				},
+				success: function (response, options, decodedResponse) {
 					CMDBuild.core.Message.success();
 				}
 			});
 		},
 
-		onConfigurationGisTabShow: function() {
+		/**
+		 * @returns {Void}
+		 */
+		onConfigurationGisTabShow: function () {
 			CMDBuild.core.proxy.configuration.Gis.read({
 				scope: this,
-				success: function(response, options, decodedResponse) {
+				success: function (response, options, decodedResponse) {
 					decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.DATA];
 
 					if (!Ext.isEmpty(decodedResponse)) {
-						this.view.loadRecord(Ext.create('CMDBuild.model.configuration.gis.Form', CMDBuild.model.configuration.gis.Form.convertFromLegacy(decodedResponse)));
+						this.view.loadRecord(Ext.create('CMDBuild.model.configuration.Gis', CMDBuild.model.configuration.Gis.convertFromLegacy(decodedResponse)));
 
-						this.cmfg('mainViewportAccordionSetDisabled', {
-							identifier: 'gis',
-							state: !CMDBuild.core.Utils.decodeAsBoolean(decodedResponse[CMDBuild.core.constants.Proxy.ENABLED])
+						Ext.create('CMDBuild.core.configurations.builder.Gis', { // Rebuild configuration model
+							scope: this,
+							callback: function (options, success, response) {
+								this.cmfg('mainViewportAccordionSetDisabled', {
+									identifier: 'gis',
+									state: !CMDBuild.configuration.gis.get(CMDBuild.core.constants.Proxy.ENABLED)
+								});
+							}
 						});
-
-						/**
-						 * @deprecated (CMDBuild.configuration.gis)
-						 */
-						CMDBuild.Config.gis = Ext.apply(CMDBuild.Config.gis, decodedResponse);
-						CMDBuild.Config.gis.enabled = ('true' == CMDBuild.Config.gis.enabled);
 					}
 				}
 			});

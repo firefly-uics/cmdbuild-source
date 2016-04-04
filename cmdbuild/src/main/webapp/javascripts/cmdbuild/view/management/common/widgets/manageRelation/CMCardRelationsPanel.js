@@ -199,7 +199,7 @@
 		var children = [],
 			attributes = domainCachedData.data.attributes || [],
 			attributesToString = "<span class=\"cm-bold\">",
-			oversize = domainResponseObj.relations_size > CMDBuild.Config.cmdbuild.relationlimit,
+			oversize = domainResponseObj.relations_size > CMDBuild.configuration.instance.get('relationLimit'), // TODO: use proxy constants
 			src = domainResponseObj.src,
 			domId = domainCachedData.get("id"),
 			node = {

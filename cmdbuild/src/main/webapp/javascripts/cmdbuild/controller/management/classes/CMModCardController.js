@@ -497,7 +497,7 @@
 	function buildBimController(me, view) {
 		if (view == null) {return;}
 
-		if (CMDBuild.Config.bim.enabled) {
+		if (CMDBuild.configuration.bim.get('enabled')) { // TODO: use proxy constants
 			new CMDBuild.bim.management.CMBimController(view);
 		}
 	}

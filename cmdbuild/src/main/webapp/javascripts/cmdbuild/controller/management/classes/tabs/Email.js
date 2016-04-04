@@ -85,6 +85,7 @@
 
 		onAbortCardClick: function() {
 			this.cmfg('tabEmailEditModeSet', false);
+			this.cmfg('tabEmailConfigurationReset');
 		},
 
 		/**
@@ -94,13 +95,12 @@
 			if (!Ext.isEmpty(card)) {
 				this.card = card;
 
+				this.cmfg('tabEmailConfigurationReset');
 				this.cmfg('tabEmailConfigurationSet', {
 					propertyName: CMDBuild.core.constants.Proxy.READ_ONLY,
 					value: false
 				});
-
 				this.cmfg('tabEmailEditModeSet', false);
-
 				this.cmfg('tabEmailSelectedEntitySet', {
 					selectedEntity: this.card,
 					scope: this,

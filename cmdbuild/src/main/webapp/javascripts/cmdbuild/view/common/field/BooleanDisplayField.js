@@ -2,7 +2,7 @@ Ext.define("Ext.form.BooleanDisplayField", {
 	extend: "Ext.form.DisplayField",
 	setRawValue : function(v) {
 		if (this.rendered) {
-			v = CMDBuild.Utils.evalBoolean(v);
+			v = CMDBuild.core.Utils.decodeAsBoolean(v);
 			v = v ? Ext.MessageBox.buttonText.yes : Ext.MessageBox.buttonText.no;
 
 			if (this.htmlEncode) {

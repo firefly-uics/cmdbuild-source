@@ -12,8 +12,7 @@
 		constructor: function(view) {
 			// this must be loaded with BIM configuration
 			// before to initialize the application
-			this.bimConfiguration = CMDBuild.Config.bim;
-			this.rootClassName = this.bimConfiguration.rootClass;
+			this.rootClassName = CMDBuild.configuration.bim.get('rootClass'); // TODO: use proxy constants
 
 			this.view = view;
 			this.view.addDelegate(this);
@@ -332,12 +331,10 @@
 	}
 
 	function doLogin(me, callback) {
-		var c = me.bimConfiguration;
-
 		me.loginProxy.login({
-			url: c.url,
-			username: c.username,
-			password: c.password,
+			url: CMDBuild.configuration.bim.get('url'), // TODO: use proxy constants
+			username: CMDBuild.configuration.bim.get('username'), // TODO: use proxy constants
+			password: CMDBuild.configuration.bim.get('password'), // TODO: use proxy constants
 			rememberMe: false,
 			success: callback,
 			failure: function() {
