@@ -36,18 +36,17 @@ CMDBuild.Management.MapBuilder = (function() {
 	function initBaseLayers() {
 		var DEFAULT_MIN_ZOOM = 0;
 		var DEFAULT_MAX_ZOOM = 18;
-		var gisConfig = CMDBuild.Config.gis;
 		var map = this;
 
 		// add OSM if configured
-		if (gisConfig.osm && gisConfig.osm == 'on') {
+		if (CMDBuild.configuration.gis.get(['osm', 'enabled'])) { // TODO: use proxy constants
 			var osm = new OpenLayers.Layer.OSM(
 				'Open Street Map',
 				null,
 				{
 					numZoomLevels: 25,
-					cmdb_minZoom: gisConfig.osm_minzoom || DEFAULT_MIN_ZOOM,
-					cmdb_maxZoom: gisConfig.osm_maxzoom || DEFAULT_MAX_ZOOM,
+					cmdb_minZoom: CMDBuild.configuration.gis.get(['osm', 'zoomMin']) || DEFAULT_MIN_ZOOM, // TODO: use proxy constants
+					cmdb_maxZoom: CMDBuild.configuration.gis.get(['osm', 'zoomMax']) || DEFAULT_MAX_ZOOM, // TODO: use proxy constants
 
 					isInZoomRange: function(zoom) {
 						var max = this.cmdb_maxZoom <= DEFAULT_MAX_ZOOM ? this.cmdb_maxZoom : DEFAULT_MAX_ZOOM;
@@ -66,13 +65,13 @@ CMDBuild.Management.MapBuilder = (function() {
 		}
 
 		// add GOOGLE if configured
-		if (gisConfig.google && gisConfig.google == 'on') {
+		if (CMDBuild.configuration.gis.get(['google', 'enabled'])) { // TODO: use proxy constants
 			var googleLayer = new OpenLayers.Layer.Google(
 				'Google Maps',
 				{
 					sphericalMercator: true,
-					cmdb_minZoom: gisConfig.google_minzoom || DEFAULT_MIN_ZOOM,
-					cmdb_maxZoom: gisConfig.google_maxzoom || DEFAULT_MAX_ZOOM,
+					cmdb_minZoom: CMDBuild.configuration.gis.get(['google', 'zoomMin']) || DEFAULT_MIN_ZOOM, // TODO: use proxy constants
+					cmdb_maxZoom: CMDBuild.configuration.gis.get(['google', 'zoomMax']) || DEFAULT_MAX_ZOOM, // TODO: use proxy constants
 
 					setVisibilityByZoom: function(zoom) {
 						var max = this.cmdb_maxZoom <= DEFAULT_MAX_ZOOM ? this.cmdb_maxZoom : DEFAULT_MAX_ZOOM;
@@ -90,13 +89,13 @@ CMDBuild.Management.MapBuilder = (function() {
 		}
 
 		// add YAHOO if configured
-		if (gisConfig.yahoo && gisConfig.yahoo == 'on') {
+		if (CMDBuild.configuration.gis.get(['yahoo', 'enabled'])) { // TODO: use proxy constants
 			var yahooLayer = new OpenLayers.Layer.Yahoo(
 				'Yahoo',
 				{
 					sphericalMercator: true,
-					cmdb_minZoom: gisConfig.yahoo_minzoom || DEFAULT_MIN_ZOOM,
-					cmdb_maxZoom: gisConfig.yahoo_maxzoom || DEFAULT_MAX_ZOOM,
+					cmdb_minZoom: CMDBuild.configuration.gis.get(['yahoo', 'zoomMin']) || DEFAULT_MIN_ZOOM, // TODO: use proxy constants
+					cmdb_maxZoom: CMDBuild.configuration.gis.get(['yahoo', 'zoomMax']) || DEFAULT_MAX_ZOOM, // TODO: use proxy constants
 
 					setVisibilityByZoom: function(zoom) {
 						var max = this.cmdb_maxZoom <= DEFAULT_MAX_ZOOM ? this.cmdb_maxZoom : DEFAULT_MAX_ZOOM;

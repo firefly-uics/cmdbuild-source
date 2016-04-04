@@ -46,6 +46,7 @@
 			'tabEmailBusyStateGet',
 			'tabEmailBusyStateSet',
 			'tabEmailConfigurationGet',
+			'tabEmailConfigurationReset',
 			'tabEmailConfigurationSet',
 			'tabEmailEditModeGet',
 			'tabEmailEditModeSet',
@@ -250,7 +251,7 @@
 		constructor: function (configurationObject) {
 			this.callParent(arguments);
 
-			this.tabEmailConfigurationReset();
+			this.cmfg('tabEmailConfigurationReset');
 
 			// Build controllers
 			this.controllerGrid = Ext.create('CMDBuild.controller.management.common.tabs.email.Grid', { parentDelegate: this });
@@ -366,6 +367,11 @@
 			forceRegenerationSet: function (mode) {
 				this.flagForceRegeneration = Ext.isBoolean(mode) ? mode : false;
 			},
+
+		/**
+		 * @abstract
+		 */
+		onAbortCardClick: Ext.emptyFn,
 
 		/**
 		 * Called from parent super controller

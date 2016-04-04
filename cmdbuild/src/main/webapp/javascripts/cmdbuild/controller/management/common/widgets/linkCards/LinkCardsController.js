@@ -8,9 +8,10 @@
 		extend: 'CMDBuild.controller.management.common.widgets.CMWidgetController',
 
 		requires: [
-			'CMDBuild.core.proxy.Card',
 			'CMDBuild.core.constants.Proxy',
-			'CMDBuild.model.widget.ModelLinkCards',
+			'CMDBuild.core.proxy.Card',
+			'CMDBuild.core.Utils',
+			'CMDBuild.model.widget.ModelLinkCards'
 		],
 
 		mixins: {
@@ -463,7 +464,7 @@
 						var position = decodedResult.position;
 
 						if (position >= 0) {
-							var	pageNumber = _CMUtils.grid.getPageNumber(position); // TODO: move in real class
+							var	pageNumber = CMDBuild.core.Utils.getPageNumber(position);
 
 							this.grid.loadPage(
 								pageNumber,

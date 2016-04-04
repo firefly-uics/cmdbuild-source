@@ -6,7 +6,8 @@
 		requires: [
 			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.Message',
-			'CMDBuild.core.proxy.Card'
+			'CMDBuild.core.proxy.Card',
+			'CMDBuild.core.Utils'
 		],
 
 		mixins: {
@@ -241,7 +242,7 @@
 		var view = me.view;
 		view.updateStoreForClassId(idClass, {
 			cb: function cbOfUpdateStoreForClassId() {
-				var	pageNumber = _CMUtils.grid.getPageNumber(position),
+				var	pageNumber = CMDBuild.core.Utils.getPageNumber(position),
 					pageSize = CMDBuild.configuration.instance.get(CMDBuild.core.constants.Proxy.ROW_LIMIT),
 					relativeIndex = position % pageSize;
 

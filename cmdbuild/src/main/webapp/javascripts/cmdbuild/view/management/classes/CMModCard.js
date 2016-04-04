@@ -138,7 +138,7 @@
 
 		// protected
 		buildComponents: function() {
-			var gridratio = CMDBuild.Config.cmdbuild.grid_card_ratio || 50;
+			var gridratio = CMDBuild.configuration.instance.get('cardFormRatio') || 50; // TODO: use proxy constants
 			var tbar = [
 				this.addCardButton = new CMDBuild.AddCardMenuButton({
 					classId: undefined,
@@ -267,7 +267,7 @@
 	});
 
 	function buildMapButton(tbar) {
-		if (CMDBuild.Config.gis.enabled) {
+		if (CMDBuild.configuration.gis.get('enabled')) { // TODO: use proxy constants
 
 			this.showMapButton = new Ext.button.Button({
 				text: CMDBuild.Translation.management.modcard.tabs.map,
@@ -283,8 +283,7 @@
 	}
 
 	function buildMapPanel() {
-		if (CMDBuild.Config.gis.enabled
-				&& this.whitMap) {
+		if (CMDBuild.configuration.gis.get('enabled') && this.whitMap) { // TODO: use proxy constants
 			this.showGridButton = new Ext.button.Button({
 				text: CMDBuild.Translation.management.modcard.add_relations_window.list_tab,
 				iconCls: 'table',

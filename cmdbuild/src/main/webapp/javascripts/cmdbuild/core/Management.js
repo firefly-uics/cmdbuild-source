@@ -1,4 +1,4 @@
-(function() {
+(function () {
 
 	/**
 	 * Call sequence: init() -> buildConfiguration() -> buildCache() -> buildUserInterface()
@@ -10,7 +10,6 @@
 			'CMDBuild.core.constants.ModuleIdentifiers',
 			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.proxy.Classes',
-			'CMDBuild.core.proxy.configuration.Configuration',
 			'CMDBuild.core.proxy.dataView.DataView',
 			'CMDBuild.core.proxy.domain.Domain',
 			'CMDBuild.core.proxy.lookup.Type',
@@ -27,7 +26,7 @@
 		/**
 		 * Entry-point
 		 */
-		init: function() {
+		init: function () {
 			CMDBuild.core.Splash.show();
 
 			CMDBuild.core.Management.buildConfiguration();
@@ -38,11 +37,11 @@
 		 *
 		 * @private
 		 */
-		buildCache: function() {
+		buildCache: function () {
 			var barrierId = 'cache';
 			var params = {};
 
-			CMDBuild.core.RequestBarrier.init(barrierId, function() {
+			CMDBuild.core.RequestBarrier.init(barrierId, function () {
 				CMDBuild.core.Management.buildUserInterface();
 			});
 
@@ -56,7 +55,7 @@
 				params: params,
 				loadMask: false,
 				scope: this,
-				success: function(response, options, decodedResponse) {
+				success: function (response, options, decodedResponse) {
 					decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.CLASSES];
 
 					_CMCache.addClasses(decodedResponse);
@@ -69,7 +68,7 @@
 					CMDBuild.core.proxy.widget.Widget.readAll({
 						loadMask: false,
 						scope: this,
-						success: function(response, options, decodedResponse) {
+						success: function (response, options, decodedResponse) {
 							decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.RESPONSE];
 
 							// A day I'll can do a request to have only the active, now the cache discards the inactive if the flag onlyActive is true
@@ -87,7 +86,7 @@
 			CMDBuild.ServiceProxy.Dashboard.fullList({
 				loadMask: false,
 				scope: this,
-				success : function(response, options, decodedResponse) {
+				success : function (response, options, decodedResponse) {
 					decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.RESPONSE];
 
 					_CMCache.addDashboards(decodedResponse.dashboards);
@@ -106,7 +105,7 @@
 				params: params,
 				loadMask: false,
 				scope: this,
-				success: function(response, options, decodedResponse) {
+				success: function (response, options, decodedResponse) {
 					decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.DOMAINS];
 
 					_CMCache.addDomains(decodedResponse);
@@ -120,7 +119,7 @@
 			CMDBuild.core.proxy.lookup.Type.readAll({
 				loadMask: false,
 				scope: this,
-				success: function(response, options, decodedResponse) {
+				success: function (response, options, decodedResponse) {
 					_CMCache.addLookupTypes(decodedResponse);
 				},
 				callback: CMDBuild.core.RequestBarrier.getCallback(barrierId)
@@ -134,79 +133,19 @@
 		 *
 		 * @private
 		 */
-		buildConfiguration: function() {
-			var barrierId = 'config';
+		buildConfiguration: function () {
+			CMDBuild.core.RequestBarrier.init('mainConfigurations', CMDBuild.core.Management.buildCache);
 
-			/**
-			 * @deprecated
-			 */
-			Ext.ns('CMDBuild.Config');
+			Ext.create('CMDBuild.core.configurations.builder.Instance', { callback: CMDBuild.core.RequestBarrier.getCallback('mainConfigurations') }); // CMDBuild Instance configuration
+			Ext.create('CMDBuild.core.configurations.builder.Bim', { callback: CMDBuild.core.RequestBarrier.getCallback('mainConfigurations') }); // CMDBuild BIM configuration
+			Ext.create('CMDBuild.core.configurations.builder.Dms', { callback: CMDBuild.core.RequestBarrier.getCallback('mainConfigurations') }); // CMDBuild DMS configuration
+			Ext.create('CMDBuild.core.configurations.builder.Gis', { callback: CMDBuild.core.RequestBarrier.getCallback('mainConfigurations') }); // CMDBuild GIS configuration
+			Ext.create('CMDBuild.core.configurations.builder.Localization', { callback: CMDBuild.core.RequestBarrier.getCallback('mainConfigurations') }); // CMDBuild Localization configuration
+			Ext.create('CMDBuild.core.configurations.builder.RelationGraph', { callback: CMDBuild.core.RequestBarrier.getCallback('mainConfigurations') }); // CMDBuild RelationGraph configuration
+			Ext.create('CMDBuild.core.configurations.builder.UserInterface', { callback: CMDBuild.core.RequestBarrier.getCallback('mainConfigurations') }); // CMDBuild UserInterface configuration
+			Ext.create('CMDBuild.core.configurations.builder.Workflow', { callback: CMDBuild.core.RequestBarrier.getCallback('mainConfigurations') }); // CMDBuild Workflow configuration
 
-			CMDBuild.core.RequestBarrier.init(barrierId, function() {
-				CMDBuild.core.proxy.configuration.Configuration.readAll({
-					loadMask: false,
-					scope: this,
-					success: function(response, options, decodedResponse) {
-						/**
-						 * CMDBuild (aka Instance) configuration
-						 *
-						 * @deprecated (CMDBuild.configuration.instance)
-						 */
-						CMDBuild.Config.cmdbuild = decodedResponse.cmdbuild;
-
-						/**
-						 * BIM configuration
-						 *
-						 * @deprecated (CMDBuild.configuration.bim)
-						 */
-						CMDBuild.Config.bim = decodedResponse.bim;
-						CMDBuild.Config.bim.enabled = ('true' == CMDBuild.Config.bim.enabled);
-
-						/**
-						 * GIS configuration
-						 *
-						 * @deprecated (CMDBuild.configuration.gis)
-						 */
-						CMDBuild.Config.gis = decodedResponse.gis;
-						CMDBuild.Config.gis.enabled = ('true' == CMDBuild.Config.gis.enabled);
-
-						/**
-						 * GIS and BIM extra configuration. Now this configurations are inside relative configuration objects
-						 *
-						 * @deprecated (CMDBuild.configuration.gis and CMDBuild.configuration.bim)
-						 */
-						CMDBuild.Config.cmdbuild.cardBrowserByDomainConfiguration = {};
-						CMDBuild.ServiceProxy.gis.getGisTreeNavigation({
-							success: function(response, options, decodedResponse) {
-								CMDBuild.Config.cmdbuild.cardBrowserByDomainConfiguration.root = decodedResponse.root;
-								CMDBuild.Config.cmdbuild.cardBrowserByDomainConfiguration.geoServerLayersMapping = decodedResponse.geoServerLayersMapping;
-
-								if (CMDBuild.Config.bim.enabled) {
-									CMDBuild.bim.proxy.rootClassName({
-										success: function(response, options, decodedResponse) {
-											CMDBuild.Config.bim.rootClass = decodedResponse.root;
-										},
-										callback: CMDBuild.core.Management.buildCache
-									});
-								} else {
-									CMDBuild.core.Management.buildCache();
-								}
-							}
-						});
-					}
-				});
-			});
-
-			Ext.create('CMDBuild.core.configurationBuilders.Instance', { callback: CMDBuild.core.RequestBarrier.getCallback(barrierId) }); // CMDBuild instance configuration
-			Ext.create('CMDBuild.core.configurationBuilders.Bim', { callback: CMDBuild.core.RequestBarrier.getCallback(barrierId) }); // CMDBuild BIM configuration
-			Ext.create('CMDBuild.core.configurationBuilders.Dms', { callback: CMDBuild.core.RequestBarrier.getCallback(barrierId) }); // CMDBuild DMS configuration
-			Ext.create('CMDBuild.core.configurationBuilders.Gis', { callback: CMDBuild.core.RequestBarrier.getCallback(barrierId) }); // CMDBuild GIS configuration
-			Ext.create('CMDBuild.core.configurationBuilders.Localization', { callback: CMDBuild.core.RequestBarrier.getCallback(barrierId) }); // CMDBuild localization configuration
-			Ext.create('CMDBuild.core.configurationBuilders.RelationGraph', { callback: CMDBuild.core.RequestBarrier.getCallback(barrierId) }); // CMDBuild RelationGraph configuration
-			Ext.create('CMDBuild.core.configurationBuilders.UserInterface', { callback: CMDBuild.core.RequestBarrier.getCallback(barrierId) }); // CMDBuild UserInterface configuration
-			Ext.create('CMDBuild.core.configurationBuilders.Workflow', { callback: CMDBuild.core.RequestBarrier.getCallback(barrierId) }); // CMDBuild Workflow configuration
-
-			CMDBuild.core.RequestBarrier.finalize(barrierId);
+			CMDBuild.core.RequestBarrier.finalize('mainConfigurations');
 		},
 
 		/**
@@ -214,7 +153,7 @@
 		 *
 		 * @private
 		 */
-		buildUserInterface: function() {
+		buildUserInterface: function () {
 			Ext.suspendLayouts();
 
 			_CMCache.syncAttachmentCategories();
@@ -279,7 +218,7 @@
 
 			Ext.resumeLayouts(true);
 
-			CMDBuild.core.Splash.hide(function() {
+			CMDBuild.core.Splash.hide(function () {
 				CMDBuild.global.controller.MainViewport.cmfg('mainViewportInstanceNameSet', CMDBuild.configuration.instance.get(CMDBuild.core.constants.Proxy.INSTANCE_NAME));
 
 				// Execute routes

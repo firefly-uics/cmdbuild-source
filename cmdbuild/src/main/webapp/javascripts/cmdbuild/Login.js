@@ -25,8 +25,8 @@
 			Ext.create('CMDBuild.core.LoggerManager'); // Logger configuration
 			Ext.create('CMDBuild.core.Data', { enableLocalized: true }); // Data connections configuration
 			Ext.create('CMDBuild.core.cache.Cache');
-			Ext.create('CMDBuild.core.configurationBuilders.Instance'); // CMDBuild instance configuration
-			Ext.create('CMDBuild.core.configurationBuilders.Localization', { // CMDBuild localization configuration
+			Ext.create('CMDBuild.core.configurations.builder.Instance'); // CMDBuild instance configuration
+			Ext.create('CMDBuild.core.configurations.builder.Localization', { // CMDBuild localization configuration
 				callback: function (options, success, response) {
 					Ext.create('CMDBuild.controller.login.Login');
 				}

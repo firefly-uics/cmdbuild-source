@@ -1,4 +1,4 @@
-(function() {
+(function () {
 
 	Ext.define('CMDBuild.core.proxy.configuration.RelationGraph', {
 
@@ -11,16 +11,13 @@
 
 		/**
 		 * @param {Object} parameters
+		 *
+		 * @returns {Void}
 		 */
-		read: function(parameters) {
+		read: function (parameters) {
 			parameters = Ext.isEmpty(parameters) ? {} : parameters;
 			parameters.params = Ext.isEmpty(parameters.params) ? {} : parameters.params;
 			parameters.params[CMDBuild.core.constants.Proxy.NAME] = 'graph';
-
-			parameters.success = Ext.Function.createInterceptor(parameters.success, function(response, options, decodedResponse) {
-				if (!CMDBuild.core.configurationBuilders.RelationGraph.isValid())
-					CMDBuild.core.configurationBuilders.RelationGraph.build(decodedResponse); // Refresh configuration object
-			}, this);
 
 			Ext.apply(parameters, { url: CMDBuild.core.proxy.Index.configuration.read });
 
@@ -29,13 +26,13 @@
 
 		/**
 		 * @param {Object} parameters
+		 *
+		 * @returns {Void}
 		 */
-		update: function(parameters) {
+		update: function (parameters) {
 			parameters = Ext.isEmpty(parameters) ? {} : parameters;
 			parameters.params = Ext.isEmpty(parameters.params) ? {} : parameters.params;
 			parameters.params[CMDBuild.core.constants.Proxy.NAME] = 'graph';
-
-			CMDBuild.core.configurationBuilders.RelationGraph.invalid(); // Invalidate configuration object
 
 			Ext.apply(parameters, { url: CMDBuild.core.proxy.Index.configuration.update });
 

@@ -1,22 +1,23 @@
-(function() {
+(function () {
 
 	Ext.define('CMDBuild.core.proxy.configuration.GeneralOptions', {
 
 		requires: [
+			'CMDBuild.core.constants.Global',
 			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.proxy.Index',
-			'CMDBuild.model.configuration.instance.StartingClass'
+			'CMDBuild.model.configuration.generalOptions.StartingClass'
 		],
 
 		singleton: true,
 
 		/**
-		 * @return {Ext.data.Store} classes and processes store
+		 * @returns {Ext.data.Store or CMDBuild.core.cache.Store}
 		 */
-		getStartingClassStore: function() {
-			return Ext.create('Ext.data.Store', {
+		getStartingClassStore: function () {
+			return CMDBuild.global.Cache.requestAsStore(CMDBuild.core.constants.Proxy.CLASS, {
 				autoLoad: true,
-				model: 'CMDBuild.model.configuration.instance.StartingClass',
+				model: 'CMDBuild.model.configuration.generalOptions.StartingClass',
 				proxy: {
 					type: 'ajax',
 					url: CMDBuild.core.proxy.Index.classes.readAll,
@@ -31,8 +32,8 @@
 					}
 				},
 				filters: [
-					function(record) { // Filters root of all classes
-						return record.get(CMDBuild.core.constants.Proxy.NAME) != 'Class';
+					function (record) { // Filters root of all classes
+						return record.get(CMDBuild.core.constants.Proxy.NAME) != CMDBuild.core.constants.Global.getRootNameClasses();
 					}
 				],
 				sorters: [
@@ -43,16 +44,13 @@
 
 		/**
 		 * @param {Object} parameters
+		 *
+		 * @returns {Void}
 		 */
-		read: function(parameters) {
+		read: function (parameters) {
 			parameters = Ext.isEmpty(parameters) ? {} : parameters;
 			parameters.params = Ext.isEmpty(parameters.params) ? {} : parameters.params;
 			parameters.params[CMDBuild.core.constants.Proxy.NAME] = 'cmdbuild';
-
-			parameters.success = Ext.Function.createInterceptor(parameters.success, function(response, options, decodedResponse) {
-				if (!CMDBuild.core.configurationBuilders.Instance.isValid())
-					CMDBuild.core.configurationBuilders.Instance.build(decodedResponse); // Refresh configuration object
-			}, this);
 
 			Ext.apply(parameters, { url: CMDBuild.core.proxy.Index.configuration.read });
 
@@ -61,13 +59,13 @@
 
 		/**
 		 * @param {Object} parameters
+		 *
+		 * @returns {Void}
 		 */
-		update: function(parameters) {
+		update: function (parameters) {
 			parameters = Ext.isEmpty(parameters) ? {} : parameters;
 			parameters.params = Ext.isEmpty(parameters.params) ? {} : parameters.params;
 			parameters.params[CMDBuild.core.constants.Proxy.NAME] = 'cmdbuild';
-
-			CMDBuild.core.configurationBuilders.Instance.invalid(); // Invalidate configuration object
 
 			Ext.apply(parameters, { url: CMDBuild.core.proxy.Index.configuration.update });
 

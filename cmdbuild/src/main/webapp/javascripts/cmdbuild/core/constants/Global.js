@@ -1,4 +1,4 @@
-(function() {
+(function () {
 
 	Ext.define('CMDBuild.core.constants.Global', {
 
@@ -22,8 +22,10 @@
 
 		/**
 		 * @param {Object} config
+		 *
+		 * @returns {Void}
 		 */
-		constructor: function(config) {
+		constructor: function (config) {
 			this.initConfig(config);
 		}
 	});

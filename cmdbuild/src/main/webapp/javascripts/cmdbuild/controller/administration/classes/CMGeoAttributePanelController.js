@@ -32,7 +32,7 @@
 		},
 
 		onClassSelected: function(classId) {
-			if (CMDBuild.Config.gis.enabled && !_CMUtils.isSimpleTable(classId)) {
+			if (CMDBuild.configuration.gis.get('enabled') && !_CMUtils.isSimpleTable(classId)) { // TODO: use procy constants
 				this.view.enable();
 			} else {
 				this.view.disable();
