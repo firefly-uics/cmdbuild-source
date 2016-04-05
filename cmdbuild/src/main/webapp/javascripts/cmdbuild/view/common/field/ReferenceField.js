@@ -170,7 +170,7 @@
 		 * @override
 		 */
 		getErrors: function (rawValue) {
-			if (this.getStore().find(this.valueField, this.getValue()) == -1)
+			if (!Ext.isEmpty(rawValue) && this.getStore().find(this.valueField, this.getValue()) == -1)
 				return [CMDBuild.Translation.errors.reference_invalid];
 
 			return this.callParent(arguments);
