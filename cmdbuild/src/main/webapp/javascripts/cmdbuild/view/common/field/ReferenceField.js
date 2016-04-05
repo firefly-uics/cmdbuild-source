@@ -162,13 +162,16 @@
 			}
 		},
 
-		getErrors: function(rawValue) {
-			if (this.templateResolver && this.store) {
-				var value = this.getValue();
-
-				if (value && this.store.find(this.valueField, value) == -1)
-					return [ CMDBuild.Translation.errors.reference_invalid ];
-			}
+		/**
+		 * @param {String} rawValue
+		 *
+		 * @returns {Array}
+		 *
+		 * @override
+		 */
+		getErrors: function (rawValue) {
+			if (this.getStore().find(this.valueField, this.getValue()) == -1)
+				return [CMDBuild.Translation.errors.reference_invalid];
 
 			return this.callParent(arguments);
 		},
