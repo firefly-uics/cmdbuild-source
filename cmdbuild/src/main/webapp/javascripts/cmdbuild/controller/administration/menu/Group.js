@@ -53,6 +53,8 @@
 		 * @param {Object} configurationObject
 		 * @param {CMDBuild.controller.administration.menu.Menu} configurationObject.parentDelegate
 		 *
+		 * @returns {Void}
+		 *
 		 * @override
 		 */
 		constructor: function (configurationObject) {
@@ -70,65 +72,36 @@
 		 * @param {Object} nodeObject
 		 *
 		 * @returns {Object} out
+		 *
+		 * @private
 		 */
 		buildNodeStructure: function (nodeObject) {
-			var out = {};
+			var entryType = null;
 			var superclass = false;
 			var type = nodeObject[CMDBuild.core.constants.Proxy.TYPE];
-			var folderType = nodeObject[CMDBuild.core.constants.Proxy.DESCRIPTION];
 
 			if (
 				(
 					type == CMDBuild.core.constants.Global.getTableTypeClass()
 					|| type == CMDBuild.core.constants.Global.getTableTypeProcessClass()
 				)
-				&& _CMCache.isEntryTypeByName(nodeObject.referencedClassName)
+				&& _CMCache.isEntryTypeByName(nodeObject[CMDBuild.core.constants.Proxy.REFERENCED_CLASS_NAME])
 			) {
-				var entryType = _CMCache.getEntryTypeByName(nodeObject.referencedClassName);
+				var entryType = _CMCache.getEntryTypeByName(nodeObject[CMDBuild.core.constants.Proxy.REFERENCED_CLASS_NAME]);
 
-				if (entryType)
+				if (!Ext.isEmpty(entryType))
 					superclass = entryType.isSuperClass();
 			}
 
-			out.folderType = folderType;
-			out.iconCls = 'cmdb-tree-' + (superclass ? 'super' : '') + type +'-icon';
-			out.index = nodeObject.index;
-			out.referencedClassName = nodeObject.referencedClassName;
-			out.referencedElementId = nodeObject.referencedElementId;
-			out.type = type;
-			out.folderType = nodeObject[CMDBuild.core.constants.Proxy.DESCRIPTION];
-			out.uuid = nodeObject.uuid;
-
-			// Label translation
-			switch (nodeObject[CMDBuild.core.constants.Proxy.DESCRIPTION]) {
-				case 'class': {
-					out.text = CMDBuild.Translation.classes;
-				} break;
-
-				case 'custompage': {
-					out.text = CMDBuild.Translation.customPages;
-				} break;
-
-				case 'dashboard': {
-					out.text = CMDBuild.Translation.dashboard;
-				} break;
-
-				case 'processclass': {
-					out.text = CMDBuild.Translation.processes;
-				} break;
-
-				case 'report': {
-					out.text = CMDBuild.Translation.report;
-				} break;
-
-				case 'view': {
-					out.text = CMDBuild.Translation.views;
-				} break;
-
-				default: {
-					out.text = nodeObject[CMDBuild.core.constants.Proxy.DESCRIPTION];
-				}
-			}
+			var out = {};
+			out['iconCls'] = 'cmdb-tree-' + (superclass ? 'super' : '') + type +'-icon';
+			out['uuid'] = nodeObject['uuid'];
+			out[CMDBuild.core.constants.Proxy.FOLDER_TYPE] = nodeObject[CMDBuild.core.constants.Proxy.DESCRIPTION];
+			out[CMDBuild.core.constants.Proxy.INDEX] = nodeObject[CMDBuild.core.constants.Proxy.INDEX];
+			out[CMDBuild.core.constants.Proxy.REFERENCED_CLASS_NAME] = nodeObject[CMDBuild.core.constants.Proxy.REFERENCED_CLASS_NAME];
+			out[CMDBuild.core.constants.Proxy.REFERENCED_ELEMENT_ID] = nodeObject[CMDBuild.core.constants.Proxy.REFERENCED_ELEMENT_ID];
+			out[CMDBuild.core.constants.Proxy.TEXT] = this.getNodeTranslation(nodeObject[CMDBuild.core.constants.Proxy.DESCRIPTION]); // Label translation
+			out[CMDBuild.core.constants.Proxy.TYPE] = type;
 
 			return out;
 		},
@@ -137,6 +110,8 @@
 		 * @param {Object} menuObject
 		 *
 		 * @returns {Object} out
+		 *
+		 * @private
 		 */
 		buildTreeStructure: function (menuObject) {
 			var out = this.buildNodeStructure(menuObject);
@@ -162,6 +137,8 @@
 		 * @param {CMDBuild.model.menu.TreeStore}
 		 *
 		 * @returns {Object}
+		 *
+		 * @private
 		 */
 		getMenuConfiguration: function (node) {
 			var menuConfiguration = {};
@@ -188,12 +165,49 @@
 			return menuConfiguration;
 		},
 
+		/**
+		 * @param {String} nodeDescription
+		 *
+		 * @returns {String}
+		 *
+		 * @private
+		 */
+		getNodeTranslation: function (nodeDescription) {
+			switch (nodeDescription) {
+				case 'class':
+					return CMDBuild.Translation.classes;
+
+				case 'custompage':
+					return CMDBuild.Translation.customPages;
+
+				case 'dashboard':
+					return CMDBuild.Translation.dashboard;
+
+				case 'processclass':
+					return CMDBuild.Translation.processes;
+
+				case 'report':
+					return CMDBuild.Translation.report;
+
+				case 'view':
+					return CMDBuild.Translation.views;
+
+				default:
+					return nodeDescription;
+			}
+		},
+
+		/**
+		 * @returns {Void}
+		 */
 		onMenuGroupAbortButtonClick: function () {
 			this.onMenuGroupMenuSelected();
 		},
 
 		/**
 		 * @param {String} folderName
+		 *
+		 * @returns {Void}
 		 */
 		onMenuGroupAddFolderButtonClick: function (folderName) {
 			if (!Ext.isEmpty(folderName)) {
@@ -208,6 +222,9 @@
 			}
 		},
 
+		/**
+		 * @returns {Void}
+		 */
 		onMenuGroupMenuSelected: function () {
 			var params = {};
 			params[CMDBuild.core.constants.Proxy.GROUP_NAME] = this.cmfg('selectedMenuNameGet');
@@ -264,10 +281,16 @@
 			return true;
 		},
 
+		/**
+		 * @returns {Void}
+		 */
 		onMenuGroupMenuTreeSelectionchange: function () {
 			this.removeItemButton.setDisabled(!this.menuTreePanel.getSelectionModel().hasSelection());
 		},
 
+		/**
+		 * @returns {Void}
+		 */
 		onMenuGroupRemoveItemButtonClick: function () {
 			var selectedNode = this.menuTreePanel.getSelectionModel().getSelection()[0];
 
@@ -275,6 +298,9 @@
 				this.removeTreeBranch(selectedNode);
 		},
 
+		/**
+		 * @returns {Void}
+		 */
 		onMenuGroupRemoveMenuButtonClick: function () {
 			Ext.Msg.show({
 				title: CMDBuild.Translation.common.confirmpopup.title,
@@ -289,6 +315,9 @@
 			});
 		},
 
+		/**
+		 * @returns {Void}
+		 */
 		onMenuGroupSaveButtonClick: function () {
 			var menuTree = this.getMenuConfiguration(this.menuTreePanel.getRootNode());
 			menuTree[CMDBuild.core.constants.Proxy.TYPE] = 'root';
@@ -323,6 +352,11 @@
 			});
 		},
 
+		/**
+		 * @returns {Void}
+		 *
+		 * @private
+		 */
 		removeItem: function () {
 			var params = {};
 			params[CMDBuild.core.constants.Proxy.GROUP_NAME] = this.cmfg('selectedMenuNameGet');
@@ -336,6 +370,11 @@
 			});
 		},
 
+		/**
+		 * @returns {Void}
+		 *
+		 * @private
+		 */
 		removeTreeBranch: function (node) {
 			while (node.hasChildNodes())
 				this.removeTreeBranch(node.childNodes[0]);
