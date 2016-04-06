@@ -47,8 +47,12 @@
 					}
 				},
 				filters: [
-					function(record) { // Filters simple classes
-						return record.get(CMDBuild.core.constants.Proxy.TABLE_TYPE) != CMDBuild.core.constants.Global.getTableTypeSimpleTable();
+					function(record) { // Filters simple, root and system classes
+						return (
+							record.get(CMDBuild.core.constants.Proxy.NAME) != CMDBuild.core.constants.Global.getRootNameClasses()
+							&& record.get(CMDBuild.core.constants.Proxy.TABLE_TYPE) != CMDBuild.core.constants.Global.getTableTypeSimpleTable()
+							&& !record.get(CMDBuild.core.constants.Proxy.SYSTEM)
+						);
 					}
 				],
 				sorters: [
