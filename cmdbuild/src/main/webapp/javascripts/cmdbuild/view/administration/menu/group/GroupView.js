@@ -45,9 +45,14 @@
 
 		layout: {
 			type: 'hbox',
-			align:'stretch'
+			align: 'stretch'
 		},
 
+		/**
+		 * @returns {Void}
+		 *
+		 * @override
+		 */
 		initComponent: function () {
 			var me = this;
 
@@ -214,9 +219,9 @@
 						margin: '5',
 
 						layout: {
-							type:'vbox',
-							pack:'center',
-							align:'center'
+							type: 'vbox',
+							pack: 'center',
+							align: 'center'
 						},
 
 						items: [
