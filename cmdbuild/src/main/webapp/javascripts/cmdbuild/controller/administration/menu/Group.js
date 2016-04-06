@@ -122,7 +122,7 @@
 				} break;
 
 				case 'view': {
-					out.text = CMDBuild.Translation.view;
+					out.text = CMDBuild.Translation.views;
 				} break;
 
 				default: {
@@ -216,12 +216,16 @@
 				params: params,
 				scope: this,
 				success: function (response, options, decodedResponse) {
-					var menu = this.buildTreeStructure(decodedResponse.menu);
+					decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.MENU];
 
-					this.menuTreePanel.getRootNode().removeAll();
+					if (!Ext.isEmpty(decodedResponse)) {
+						var menu = this.buildTreeStructure(decodedResponse);
 
-					if (!Ext.isEmpty(menu[CMDBuild.core.constants.Proxy.CHILDREN])) // If empty has no children field
-						this.menuTreePanel.getRootNode().appendChild(menu[CMDBuild.core.constants.Proxy.CHILDREN]);
+						this.menuTreePanel.getRootNode().removeAll();
+
+						if (!Ext.isEmpty(menu[CMDBuild.core.constants.Proxy.CHILDREN])) // If empty has no children field
+							this.menuTreePanel.getRootNode().appendChild(menu[CMDBuild.core.constants.Proxy.CHILDREN]);
+					}
 				}
 			});
 
@@ -229,15 +233,19 @@
 				params: params,
 				scope: this,
 				success: function (response, options, decodedResponse) {
-					var menu = this.buildTreeStructure(decodedResponse.menu);
+					decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.MENU];
 
-					this.availableItemsTreePanel.getRootNode().removeAll();
-					this.availableItemsTreePanel.getRootNode().appendChild(menu[CMDBuild.core.constants.Proxy.CHILDREN]);
+					if (!Ext.isEmpty(decodedResponse)) {
+						var menu = this.buildTreeStructure(decodedResponse);
 
-					this.menuTreePanel.getStore().sort([
-						{ property: CMDBuild.core.constants.Proxy.INDEX, direction: 'ASC' },
-						{ property: CMDBuild.core.constants.Proxy.TEXT, direction: 'ASC' }
-					]);
+						this.availableItemsTreePanel.getRootNode().removeAll();
+						this.availableItemsTreePanel.getRootNode().appendChild(menu[CMDBuild.core.constants.Proxy.CHILDREN]);
+
+						this.menuTreePanel.getStore().sort([
+							{ property: CMDBuild.core.constants.Proxy.INDEX, direction: 'ASC' },
+							{ property: CMDBuild.core.constants.Proxy.TEXT, direction: 'ASC' }
+						]);
+					}
 				}
 			});
 		},
