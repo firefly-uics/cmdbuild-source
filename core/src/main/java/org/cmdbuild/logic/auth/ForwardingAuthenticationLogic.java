@@ -2,6 +2,7 @@ package org.cmdbuild.logic.auth;
 
 import java.util.List;
 
+import org.cmdbuild.auth.ClientRequestAuthenticator.ClientRequest;
 import org.cmdbuild.auth.UserStore;
 import org.cmdbuild.auth.acl.CMGroup;
 import org.cmdbuild.auth.user.CMUser;
@@ -25,7 +26,7 @@ public abstract class ForwardingAuthenticationLogic extends ForwardingObject imp
 	}
 
 	@Override
-	public ClientAuthenticationResponse login(final ClientAuthenticationRequest request, final UserStore userStore) {
+	public ClientAuthenticationResponse login(final ClientRequest request, final UserStore userStore) {
 		return delegate().login(request, userStore);
 	}
 

@@ -13,11 +13,11 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.cmdbuild.auth.ClientRequestAuthenticator.ClientRequest;
 import org.cmdbuild.auth.UserStore;
 import org.cmdbuild.exception.RedirectException;
 import org.cmdbuild.logger.Log;
 import org.cmdbuild.logic.auth.AuthenticationLogic;
-import org.cmdbuild.logic.auth.AuthenticationLogic.ClientAuthenticationRequest;
 import org.cmdbuild.logic.auth.AuthenticationLogic.ClientAuthenticationResponse;
 import org.cmdbuild.logic.auth.StandardAuthenticationLogic;
 import org.slf4j.Logger;
@@ -34,7 +34,7 @@ public class AuthFilter implements Filter {
 	private static final Logger logger = Log.CMDBUILD;
 	private static final Marker marker = MarkerFactory.getMarker(AuthFilter.class.getName());
 
-	private static class ClientRequestWrapper implements ClientAuthenticationRequest {
+	private static class ClientRequestWrapper implements ClientRequest {
 
 		private final HttpServletRequest delegate;
 
