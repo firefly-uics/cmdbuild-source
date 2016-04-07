@@ -25,8 +25,8 @@ public abstract class ForwardingAuthenticationLogic extends ForwardingObject imp
 	}
 
 	@Override
-	public ClientAuthenticationResponse login(final ClientAuthenticationRequest request) {
-		return delegate().login(request);
+	public ClientAuthenticationResponse login(final ClientAuthenticationRequest request, final UserStore userStore) {
+		return delegate().login(request, userStore);
 	}
 
 	@Override
