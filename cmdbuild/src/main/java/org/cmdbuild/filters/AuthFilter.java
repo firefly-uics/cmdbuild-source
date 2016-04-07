@@ -13,7 +13,6 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.lang3.builder.Builder;
 import org.cmdbuild.auth.UserStore;
 import org.cmdbuild.exception.RedirectException;
 import org.cmdbuild.logger.Log;
@@ -37,62 +36,25 @@ public class AuthFilter implements Filter {
 
 	private static class ClientRequestWrapper implements ClientAuthenticationRequest {
 
-		private static class ClientRequestWrapperBuilder implements Builder<ClientRequestWrapper> {
+		private final HttpServletRequest delegate;
 
-			private HttpServletRequest request;
-			private UserStore userStore;
-
-			private ClientRequestWrapperBuilder() {
-				// prevents instantiation
-			}
-
-			@Override
-			public ClientRequestWrapper build() {
-				return new ClientRequestWrapper(this);
-			}
-
-			public ClientRequestWrapperBuilder withRequest(final HttpServletRequest request) {
-				this.request = request;
-				return this;
-			}
-
-			public ClientRequestWrapperBuilder withUserStore(final UserStore userStore) {
-				this.userStore = userStore;
-				return this;
-			}
-
-		}
-
-		public static ClientRequestWrapperBuilder newInstance() {
-			return new ClientRequestWrapperBuilder();
-		}
-
-		private final HttpServletRequest request;
-		private final UserStore userStore;
-
-		private ClientRequestWrapper(final ClientRequestWrapperBuilder builder) {
-			this.request = builder.request;
-			this.userStore = builder.userStore;
+		public ClientRequestWrapper(final HttpServletRequest delegate) {
+			this.delegate = delegate;
 		}
 
 		@Override
 		public String getRequestUrl() {
-			return request.getRequestURL().toString();
+			return delegate.getRequestURL().toString();
 		}
 
 		@Override
 		public String getHeader(final String name) {
-			return request.getHeader(name);
+			return delegate.getHeader(name);
 		}
 
 		@Override
 		public String getParameter(final String name) {
-			return request.getParameter(name);
-		}
-
-		@Override
-		public UserStore getUserStore() {
-			return userStore;
+			return delegate.getParameter(name);
 		}
 
 	}
@@ -163,10 +125,7 @@ public class AuthFilter implements Filter {
 
 	private ClientAuthenticationResponse doLogin(final HttpServletRequest httpRequest, final UserStore userStore) {
 		final ClientAuthenticationResponse clientAuthenticatorResponse = authenticationLogic
-				.login(ClientRequestWrapper.newInstance() //
-						.withRequest(httpRequest) //
-						.withUserStore(userStore) //
-						.build());
+				.login(new ClientRequestWrapper(httpRequest), userStore);
 		return clientAuthenticatorResponse;
 	}
 

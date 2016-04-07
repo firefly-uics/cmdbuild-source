@@ -130,8 +130,8 @@ public class DefaultAuthenticationLogic implements AuthenticationLogic {
 		} else if (loginDTO.isPasswordRequired()) {
 			final Login login = Login.newInstance(loginDTO.getLoginString());
 			final AuthenticatedUser authenticated = authService.authenticate(login, loginDTO.getPassword());
-			authUser = (!loginDTO.isServiceUsersAllowed() && (authenticated.isService() || authenticated.isPrivileged())) ? ANONYMOUS_USER
-					: authenticated;
+			authUser = (!loginDTO.isServiceUsersAllowed()
+					&& (authenticated.isService() || authenticated.isPrivileged())) ? ANONYMOUS_USER : authenticated;
 		} else {
 			final Login login = Login.newInstance(loginDTO.getLoginString());
 			authUser = authService.authenticate(login, new PasswordCallback() {
@@ -196,7 +196,7 @@ public class DefaultAuthenticationLogic implements AuthenticationLogic {
 	}
 
 	@Override
-	public ClientAuthenticationResponse login(final ClientAuthenticationRequest request) {
+	public ClientAuthenticationResponse login(final ClientAuthenticationRequest request, final UserStore userStore) {
 		logger.info("trying to login with no username or password");
 		final ClientAuthenticatorResponse response = authService.authenticate(request);
 		final AuthenticatedUser authenticatedUser = response.getUser();
@@ -213,11 +213,11 @@ public class DefaultAuthenticationLogic implements AuthenticationLogic {
 				final CMGroup group = getGroupWithName(groupName);
 				final PrivilegeContext privilegeContext = buildPrivilegeContext(group);
 				final OperationUser operationUser = new OperationUser(authenticatedUser, privilegeContext, group);
-				request.getUserStore().setUser(operationUser);
+				userStore.setUser(operationUser);
 			} else if (!hasOneGroupOnly) {
 				final OperationUser operationUser = new OperationUser(authenticatedUser, new NullPrivilegeContext(),
 						new NullGroup());
-				request.getUserStore().setUser(operationUser);
+				userStore.setUser(operationUser);
 			}
 		}
 		return new ClientAuthenticationResponse() {
@@ -363,7 +363,7 @@ public class DefaultAuthenticationLogic implements AuthenticationLogic {
 	}
 
 	@Override
-	public Iterable<CMUser> getAllUsers(boolean activeOnly) {
+	public Iterable<CMUser> getAllUsers(final boolean activeOnly) {
 		return authService.fetchAllUsers(activeOnly);
 	}
 

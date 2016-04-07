@@ -26,8 +26,6 @@ public interface AuthenticationLogic extends Logic {
 
 	interface ClientAuthenticationRequest extends ClientRequest {
 
-		UserStore getUserStore();
-
 	}
 
 	interface ClientAuthenticationResponse {
@@ -49,9 +47,9 @@ public interface AuthenticationLogic extends Logic {
 
 	}
 
-	Response login(LoginDTO loginDTO, final UserStore userStore);
+	Response login(LoginDTO loginDTO, UserStore userStore);
 
-	ClientAuthenticationResponse login(ClientAuthenticationRequest request);
+	ClientAuthenticationResponse login(ClientAuthenticationRequest request, UserStore userStore);
 
 	GroupInfo getGroupInfoForGroup(String groupName);
 
