@@ -474,6 +474,7 @@
 		"invalid_fields": "Certains champs ne sont pas renseignés correctement",
 		"invalidKeyAttributesInCsvFile": "<em>Invalid key attribute(s) in CSV file</em>",
 		"invalidKeyAttributesInLocalStore": "<em>Invalid key attribute(s) in local store</em>",
+		"invalidLookupValue": "<em>Invalid Lookup value</em>",
 		"no_driver": "Aucun pilote JDBC trouvé.<br />Vous pouvez le trouver dans la distribution CMDBuild et le copier dans les librairies de Tomcat.",
 		"no_selections": "Vous n'avez pas choisi la fiche à mettre à jour",
 		"printReportFilure": "L'impression du rapport a échoué",
@@ -615,9 +616,8 @@
 			"WIDGET_SERVICE_CONNECTION_ERROR": "Erreur lors de l'envoi du message. Les causes possibles: 1) Le service n'est pas déployé; 2) L'URL et/ou le numéro de port ne sont pas corrects",
 			"WIDGET_SERVICE_MALFORMED_REQUEST": "Vérifier si le nom, la mèthode et les paramètres du service web sont corrects"
 		},
-		"reference_invalid": "La valeur ne correspond pas au filtre",
-		"reportsImportError": "Erreur lors de l'import du rapport",
 		"reportsAnalizeError": "Erreur lors de l'analyse du rapport",
+		"reportsImportError": "Erreur lors de l'import du rapport",
 		"requiredFieldMessage": "Ce champ est obligatoire",
 		"routesInvalidCardIdentifier": "Erreur de routage: identifiant de fiche non valide",
 		"routesInvalidClassIdentifier": "Erreur de routage: identifiant de classe non valide",
@@ -632,6 +632,7 @@
 		"template_error": "Erreur de modèle",
 		"unknown_error": "Une erreur est survenue",
 		"unmanagedReportType": "Type de rapport non pris en charge",
+		"valueDoesNotMatchFilter": "La valeur ne correspond pas au filtre",
 		"widgetLinkCardsNoClassNameError": "Constructeur LinkCardsController: nom de classe non valide",
 		"wrong_wf_widgets": "Il y a eu une erreur d'enregistrement des widgets suivants: "
 	},

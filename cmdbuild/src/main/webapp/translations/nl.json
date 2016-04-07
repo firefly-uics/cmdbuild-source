@@ -474,6 +474,7 @@
 		"invalid_fields": "Sommige velden zijn niet correct ingevuld",
 		"invalidKeyAttributesInCsvFile": "<em>Invalid key attribute(s) in CSV file</em>",
 		"invalidKeyAttributesInLocalStore": "<em>Invalid key attribute(s) in local store</em>",
+		"invalidLookupValue": "<em>Invalid Lookup value</em>",
 		"no_driver": "Geen JDBC driver gevonden.<br />je kunt het vinden in het CMDBuild release pakket en kopieren naar de Tomcat bibliotheken.",
 		"no_selections": "Je hebt geen kaart geselecteerd voor bijwerken",
 		"printReportFilure": "<em>Print report failure</em>",
@@ -615,9 +616,8 @@
 			"WIDGET_SERVICE_CONNECTION_ERROR": "Bericht versturen mislukt. Mogelijke oorzaken: 1) De service is niet ingericht; 2) De URL en/of het poortnummer van de bestemming is niet juist",
 			"WIDGET_SERVICE_MALFORMED_REQUEST": "Controleer of de naamgeving, de methode naam en de parameters van de web service juist zijn"
 		},
-		"reference_invalid": "De waarde komt niet overeen met het filter",
-		"reportsImportError": "<em>Error while importing report</em>",
 		"reportsAnalizeError": "<em>Error while analizing report</em>",
+		"reportsImportError": "<em>Error while importing report</em>",
 		"requiredFieldMessage": "Dit veld is verplicht",
 		"routesInvalidCardIdentifier": "Route fout: ongeldig kaart label",
 		"routesInvalidClassIdentifier": "Route fout: ongeldig klassen label",
@@ -632,6 +632,7 @@
 		"template_error": "Sjabloon fout",
 		"unknown_error": "Er is een fout opgetreden",
 		"unmanagedReportType": "<em>Unmanaged report type</em>",
+		"valueDoesNotMatchFilter": "De waarde komt niet overeen met het filter",
 		"widgetLinkCardsNoClassNameError": "LinkCardsController constructeur: KlassenNaam niet geldig",
 		"wrong_wf_widgets": "Er was een fout tijdens de opslag van de volgende visual controls: "
 	},

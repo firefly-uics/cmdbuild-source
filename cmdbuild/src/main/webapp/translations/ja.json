@@ -474,6 +474,7 @@
 		"invalid_fields": "いくつかのフィールドは正しく設定されていません",
 		"invalidKeyAttributesInCsvFile": "<em>Invalid key attribute(s) in CSV file</em>",
 		"invalidKeyAttributesInLocalStore": "<em>Invalid key attribute(s) in local store</em>",
+		"invalidLookupValue": "<em>Invalid Lookup value</em>",
 		"no_driver": "JDBCドライバーが見つかりません。<br />CMDBuild リリースパッケージに含まれており、 Tomcatライブラリにコピーできます。",
 		"no_selections": "更新するカードが選択されていません",
 		"printReportFilure": "<em>Print report failure</em>",
@@ -615,9 +616,8 @@
 			"WIDGET_SERVICE_CONNECTION_ERROR": "メッセージ送信に失敗しました。考えられる原因：1）サービスが展開されていない、2）URLおよび/またはエンドポイントのポート番号が正しくありません",
 			"WIDGET_SERVICE_MALFORMED_REQUEST": "名前空間、メソッド名とWebサービスのパラメータが正しいかどうかをチェックしてください>"
 		},
-		"reference_invalid": "値がフィルタと一致しません",
-		"reportsImportError": "<em>Error while importing report</em>",
 		"reportsAnalizeError": "<em>Error while analizing report</em>",
+		"reportsImportError": "<em>Error while importing report</em>",
 		"requiredFieldMessage": "このフィールドは必須です",
 		"routesInvalidCardIdentifier": "ルートエラー: 不正なカード識別子",
 		"routesInvalidClassIdentifier": "ルートエラー: 不正なクラス識別子",
@@ -632,6 +632,7 @@
 		"template_error": "テンプレートエラー",
 		"unknown_error": "未知のエラーが発生しました",
 		"unmanagedReportType": "<em>Unmanaged report type</em>",
+		"valueDoesNotMatchFilter": "値がフィルタと一致しません",
 		"widgetLinkCardsNoClassNameError": "リンクカードコントローラーコンストラクター：クラス名が有効ではありません",
 		"wrong_wf_widgets": "以下のビジュアルコントロールを保存中にエラーが発生しました: "
 	},

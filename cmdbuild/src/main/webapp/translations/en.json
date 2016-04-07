@@ -474,6 +474,7 @@
 		"invalid_fields": "Some fields have not been filled correctly",
 		"invalidKeyAttributesInCsvFile": "Invalid key attribute(s) in CSV file",
 		"invalidKeyAttributesInLocalStore": "Invalid key attribute(s) in local store",
+		"invalidLookupValue": "Invalid Lookup value",
 		"no_driver": "No JDBC driver was found.<br />You can find it in the CMDBuild release package and copy it into the Tomcat libraries.",
 		"no_selections": "You have not selected any card to update",
 		"printReportFilure": "Print report failure",
@@ -615,9 +616,8 @@
 			"WIDGET_SERVICE_CONNECTION_ERROR": "Message send failed. Possible causes: 1) The service is not deployed; 2) The URL and/or the port number of the endpoint is not correct",
 			"WIDGET_SERVICE_MALFORMED_REQUEST": "Check if the namespace, the method name and the parameters of the web service are correct"
 		},
-		"reference_invalid": "The value doesn't match the filter",
-		"reportsImportError": "Error while importing report",
 		"reportsAnalizeError": "Error while analizing report",
+		"reportsImportError": "Error while importing report",
 		"requiredFieldMessage": "This field is required",
 		"routesInvalidCardIdentifier": "Route error: invalid card identifier",
 		"routesInvalidClassIdentifier": "Route error: invalid class identifier",
@@ -632,6 +632,7 @@
 		"template_error": "Template error",
 		"unknown_error": "An error has occurred",
 		"unmanagedReportType": "Unmanaged report type",
+		"valueDoesNotMatchFilter": "The value doesn't match the filter",
 		"widgetLinkCardsNoClassNameError": "LinkCardsController constructor: className not valid",
 		"wrong_wf_widgets": "There was an error saving the following visual controls: "
 	},

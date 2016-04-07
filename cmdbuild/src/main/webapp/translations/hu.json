@@ -474,6 +474,7 @@
 		"invalid_fields": "Néhány mező nem helyesen lett kitöltve",
 		"invalidKeyAttributesInCsvFile": "<em>Invalid key attribute(s) in CSV file</em>",
 		"invalidKeyAttributesInLocalStore": "<em>Invalid key attribute(s) in local store</em>",
+		"invalidLookupValue": "<em>Invalid Lookup value</em>",
 		"no_driver": "Nem található JDBC driver.<br />A driver megtalálható a CMDBuild release csomagban. Másolja a Tomcat libraries.mappába.",
 		"no_selections": "Nem jelölt meg egy kártyát sem frissítésre",
 		"printReportFilure": "Jelentés nyomtatási hiba",
@@ -615,9 +616,8 @@
 			"WIDGET_SERVICE_CONNECTION_ERROR": "Az üzenet küldése sikertelen. Lehetséges okok: 1) A szolgáltatás nem működik; 2) Az URL és/vagy a port nem helyes",
 			"WIDGET_SERVICE_MALFORMED_REQUEST": "Ellenőrizze, hogy a web szolgáltatás névtere, a metódus neve és paraméterei helyesek"
 		},
-		"reference_invalid": "Az értéknem illeszkedik a szűrőre",
-		"reportsImportError": "<em>Error while importing report</em>",
 		"reportsAnalizeError": "<em>Error while analizing report</em>",
+		"reportsImportError": "<em>Error while importing report</em>",
 		"requiredFieldMessage": "Ez a mező kötelező",
 		"routesInvalidCardIdentifier": "Hiba: érvénytelen kártya azonosító",
 		"routesInvalidClassIdentifier": "Hiba: érvénytelen osztály azonosító",
@@ -632,6 +632,7 @@
 		"template_error": "Sablon hiba",
 		"unknown_error": "Hiba történt",
 		"unmanagedReportType": "Nem kezelt jelentés típus",
+		"valueDoesNotMatchFilter": "Az értéknem illeszkedik a szűrőre",
 		"widgetLinkCardsNoClassNameError": "LinkCardsController konstruktor: az osztálynév nem érvényes",
 		"wrong_wf_widgets": "Hiba történt az alábbi vizuális vezérlők mentése közben: "
 	},

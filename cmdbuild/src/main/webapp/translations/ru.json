@@ -474,6 +474,7 @@
 		"invalid_fields": "Некоторые поля были заполнены с ошибками",
 		"invalidKeyAttributesInCsvFile": "<em>Invalid key attribute(s) in CSV file</em>",
 		"invalidKeyAttributesInLocalStore": "<em>Invalid key attribute(s) in local store</em>",
+		"invalidLookupValue": "<em>Invalid Lookup value</em>",
 		"no_driver": "Драйвер JDBC не найден.<br>Вы можете установить его в Tomcat из дистрибутива CMDBuild.",
 		"no_selections": "Не выбрано ни одной карточки для заполнения",
 		"printReportFilure": "<em>Print report failure</em>",
@@ -615,9 +616,8 @@
 			"WIDGET_SERVICE_CONNECTION_ERROR": "Отправка сообщения не выполнена. Возможные причины: 1) Сервис не настроен; 2) URL и/или номер порта указан неверно",
 			"WIDGET_SERVICE_MALFORMED_REQUEST": "Проверьте, что пространство имен, имя метода и параметры в вызове веб-процедуры указаны верно."
 		},
-		"reference_invalid": "Значение не совпадает с текущим фильтром",
-		"reportsImportError": "<em>Error while importing report</em>",
 		"reportsAnalizeError": "<em>Error while analizing report</em>",
+		"reportsImportError": "<em>Error while importing report</em>",
 		"requiredFieldMessage": "Это поле является обязательным",
 		"routesInvalidCardIdentifier": "<em>Route error: invalid card identifier</em>",
 		"routesInvalidClassIdentifier": "<em>Route error: invalid class identifier</em>",
@@ -632,6 +632,7 @@
 		"template_error": "Ошибка шаблона",
 		"unknown_error": "Неизвестная ошибка",
 		"unmanagedReportType": "<em>Unmanaged report type</em>",
+		"valueDoesNotMatchFilter": "Значение не совпадает с текущим фильтром",
 		"widgetLinkCardsNoClassNameError": "<em>LinkCardsController constructor: className not valid</em>",
 		"wrong_wf_widgets": "При сохранении следующих виджетов произошла ошибка: "
 	},
