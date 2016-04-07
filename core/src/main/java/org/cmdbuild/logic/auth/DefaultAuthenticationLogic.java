@@ -15,6 +15,7 @@ import java.util.List;
 import org.cmdbuild.auth.AuthenticationService;
 import org.cmdbuild.auth.AuthenticationService.ClientAuthenticatorResponse;
 import org.cmdbuild.auth.AuthenticationService.PasswordCallback;
+import org.cmdbuild.auth.ClientRequestAuthenticator.ClientRequest;
 import org.cmdbuild.auth.Login;
 import org.cmdbuild.auth.UserStore;
 import org.cmdbuild.auth.acl.CMGroup;
@@ -196,7 +197,7 @@ public class DefaultAuthenticationLogic implements AuthenticationLogic {
 	}
 
 	@Override
-	public ClientAuthenticationResponse login(final ClientAuthenticationRequest request, final UserStore userStore) {
+	public ClientAuthenticationResponse login(final ClientRequest request, final UserStore userStore) {
 		logger.info("trying to login with no username or password");
 		final ClientAuthenticatorResponse response = authService.authenticate(request);
 		final AuthenticatedUser authenticatedUser = response.getUser();

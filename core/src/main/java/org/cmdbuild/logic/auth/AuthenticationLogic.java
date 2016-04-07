@@ -24,10 +24,6 @@ public interface AuthenticationLogic extends Logic {
 
 	}
 
-	interface ClientAuthenticationRequest extends ClientRequest {
-
-	}
-
 	interface ClientAuthenticationResponse {
 
 		String getRedirectUrl();
@@ -49,7 +45,7 @@ public interface AuthenticationLogic extends Logic {
 
 	Response login(LoginDTO loginDTO, UserStore userStore);
 
-	ClientAuthenticationResponse login(ClientAuthenticationRequest request, UserStore userStore);
+	ClientAuthenticationResponse login(ClientRequest request, UserStore userStore);
 
 	GroupInfo getGroupInfoForGroup(String groupName);
 
