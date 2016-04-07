@@ -474,6 +474,7 @@
 		"invalid_fields": "Alcuni campi non sono stati compilati correttamente",
 		"invalidKeyAttributesInCsvFile": "Attributo(i) chiave non valido(i) nel file CSV",
 		"invalidKeyAttributesInLocalStore": "Attributo(i) chiave non valido(i) nello store locale",
+		"invalidLookupValue": "Valore della Lookup non valido",
 		"no_driver": "Non è presente il driver JDBC.<br />Può essere trovato nel file del rilascio di CMDBuild e copiato tra le librerie di Tomcat.",
 		"no_selections": "Non hai selezionato nessuna scheda",
 		"printReportFilure": "Errore nella stampa del report",
@@ -615,9 +616,8 @@
 			"WIDGET_SERVICE_CONNECTION_ERROR": "L'invio del messaggio è fallito. Cause possibili: 1) Il servizio non è raggiungibile 2) L'URL e/o il numero di porta del servizio non sono corretti",
 			"WIDGET_SERVICE_MALFORMED_REQUEST": "Controlla se il namespace, il nome del metodo, e i parametri del web service sono corretti"
 		},
-		"reference_invalid": "Il valore non rispetta il filtro impostato",
-		"reportsImportError": "Errore nell'importazione del report",
 		"reportsAnalizeError": "Errore nell'analisi del report",
+		"reportsImportError": "Errore nell'importazione del report",
 		"requiredFieldMessage": "Questo campo è richiesto",
 		"routesInvalidCardIdentifier": "Errore di route: identificatore di card non valido",
 		"routesInvalidClassIdentifier": "Errore di route: identificatore di classe non valido",
@@ -632,6 +632,7 @@
 		"template_error": "Errore in un template",
 		"unknown_error": "Si è verificato un errore",
 		"unmanagedReportType": "Tipologia di report non gestita",
+		"valueDoesNotMatchFilter": "Il valore non rispetta il filtro impostato",
 		"widgetLinkCardsNoClassNameError": "LinkCardsController constructor: className non valido",
 		"wrong_wf_widgets": "C'è stato un errore nel salvataggio dei seguenti controlli visuali: "
 	},

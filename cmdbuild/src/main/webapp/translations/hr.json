@@ -474,6 +474,7 @@
 		"invalid_fields": "Određena polja nisu uredno popunjena",
 		"invalidKeyAttributesInCsvFile": "<em>Invalid key attribute(s) in CSV file</em>",
 		"invalidKeyAttributesInLocalStore": "<em>Invalid key attribute(s) in local store</em>",
+		"invalidLookupValue": "<em>Invalid Lookup value</em>",
 		"no_driver": "Nedostaje odgovarajući JDBC upravljački program (driver).<br />Odgovarajući driver možete pronaći u CMDBuild instalacijskom direktoriju i kopirati u <b>lib<\/b> direktorij Tomcat servera.",
 		"no_selections": "Niste izabrali karticu podataka koja će biti ažurirana",
 		"printReportFilure": "<em>Print report failure</em>",
@@ -615,9 +616,8 @@
 			"WIDGET_SERVICE_CONNECTION_ERROR": "Slanje poruke nije uspjelo. Mogući uzroci: 1) Servis nije implementiran; 2) URL i/ili broj porta nije točan",
 			"WIDGET_SERVICE_MALFORMED_REQUEST": "Provjerite jesu li prostor imena, naziv metode i parametri web servisa točni."
 		},
-		"reference_invalid": "Vrijednost ne zadovoljava postavljeni filter",
-		"reportsImportError": "<em>Error while importing report</em>",
 		"reportsAnalizeError": "<em>Error while analizing report</em>",
+		"reportsImportError": "<em>Error while importing report</em>",
 		"requiredFieldMessage": "<em>This field is required</em>",
 		"routesInvalidCardIdentifier": "<em>Route error: invalid card identifier</em>",
 		"routesInvalidClassIdentifier": "<em>Route error: invalid class identifier</em>",
@@ -632,6 +632,7 @@
 		"template_error": "Greška u predlošku (templateu)",
 		"unknown_error": "Došlo je do greške",
 		"unmanagedReportType": "<em>Unmanaged report type</em>",
+		"valueDoesNotMatchFilter": "Vrijednost ne zadovoljava postavljeni filter",
 		"widgetLinkCardsNoClassNameError": "<em>LinkCardsController constructor: className not valid</em>",
 		"wrong_wf_widgets": "Došlo je do greške prilikom snimanja slijedeće vizualne kotrole: "
 	},

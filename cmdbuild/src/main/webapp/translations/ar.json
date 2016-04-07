@@ -474,6 +474,7 @@
 		"invalid_fields": "بعض الحقول لم تملء بشكل صحيح",
 		"invalidKeyAttributesInCsvFile": "<em>Invalid key attribute(s) in CSV file</em>",
 		"invalidKeyAttributesInLocalStore": "<em>Invalid key attribute(s) in local store</em>",
+		"invalidLookupValue": "<em>Invalid Lookup value</em>",
 		"no_driver": "لم يجد سائق JDBC.<br />يمكنك نسخه من الملف الذي نزلته للنظام إلى مكتبة توم كات.",
 		"no_selections": "لم تنتقي أية بطاقة لتحديثها",
 		"printReportFilure": "فشل في طباعة التقرير",
@@ -615,9 +616,8 @@
 			"WIDGET_SERVICE_CONNECTION_ERROR": "الرسالة لم ترسل. الأسباب المحتملة: 1) الخدمة غير نازلة; 2) الربط أو رقم المنفذ للطرف الآخر غير صحيح",
 			"WIDGET_SERVICE_MALFORMED_REQUEST": "تأكد من أن اسم مساحة العمل أو اسم الطريقة أو المعاملات لخدمة الويب صحيحة"
 		},
-		"reference_invalid": "القيمة لا تطابق المفرز",
-		"reportsImportError": "<em>Error while importing report</em>",
 		"reportsAnalizeError": "<em>Error while analizing report</em>",
+		"reportsImportError": "<em>Error while importing report</em>",
 		"requiredFieldMessage": "هذا الحقل مطلوب",
 		"routesInvalidCardIdentifier": "خطأ في التوجيه: معرف بطاقة غير صحيح",
 		"routesInvalidClassIdentifier": "خطأ في التوجيه: معرف صنف غير صحيح",
@@ -632,6 +632,7 @@
 		"template_error": "خطأ في القالب",
 		"unknown_error": "حدث خطأ",
 		"unmanagedReportType": "نوع تقرير غير مُدار",
+		"valueDoesNotMatchFilter": "القيمة لا تطابق المفرز",
 		"widgetLinkCardsNoClassNameError": "باني أداة تحكم ربط البطاقات: اسم الصنف غير صحيح",
 		"wrong_wf_widgets": "حدث خطأ أثناء حفظ أدوات التحكم المرئية التالية: "
 	},

@@ -171,7 +171,7 @@
 		 */
 		getErrors: function (rawValue) {
 			if (!Ext.isEmpty(rawValue) && this.getStore().find(this.valueField, this.getValue()) == -1)
-				return [CMDBuild.Translation.errors.reference_invalid];
+				return [CMDBuild.Translation.errors.valueDoesNotMatchFilter];
 
 			return this.callParent(arguments);
 		},

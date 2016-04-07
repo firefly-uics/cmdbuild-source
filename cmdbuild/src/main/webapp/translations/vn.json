@@ -474,6 +474,7 @@
 		"invalid_fields": "Một vài trường đã không được điền đầy đủ một cách chính xác",
 		"invalidKeyAttributesInCsvFile": "<em>Invalid key attribute(s) in CSV file</em>",
 		"invalidKeyAttributesInLocalStore": "<em>Invalid key attribute(s) in local store</em>",
+		"invalidLookupValue": "<em>Invalid Lookup value</em>",
 		"no_driver": "Không có JDBC driver nào được tìm thấy.<br />Bạn có thể tìm thấy nó trong gói CMDBuild và copy nó vào thư viện Tomcat.",
 		"no_selections": "Bạn vẫn chưa chọn bất kỷ thẻ nào để cập nhật",
 		"printReportFilure": "<em>Print report failure</em>",
@@ -615,9 +616,8 @@
 			"WIDGET_SERVICE_CONNECTION_ERROR": "Thư gửi thất bại. Nguyên nhân có thể xảy ra: 1) Các dịch vụ không được triển khai; 2) URL và/hay số cổng của endpoint không chính xác",
 			"WIDGET_SERVICE_MALFORMED_REQUEST": "Kiểm tra namespace, tên phương thức và các thông số của dịch vụ web là chính xác"
 		},
-		"reference_invalid": "Giá trị không phù hợp với bộ lọc",
-		"reportsImportError": "<em>Error while importing report</em>",
 		"reportsAnalizeError": "<em>Error while analizing report</em>",
+		"reportsImportError": "<em>Error while importing report</em>",
 		"requiredFieldMessage": "<em>This field is required</em>",
 		"routesInvalidCardIdentifier": "<em>Routes error: invalid card identifier</em>",
 		"routesInvalidClassIdentifier": "<em>Routes error: invalid class identifier</em>",
@@ -632,6 +632,7 @@
 		"template_error": "Lỗi xác định",
 		"unknown_error": "Một lỗi đã xảy ra",
 		"unmanagedReportType": "<em>Unmanaged report type</em>",
+		"valueDoesNotMatchFilter": "Giá trị không phù hợp với bộ lọc",
 		"widgetLinkCardsNoClassNameError": "<em>LinkCardsController constructor: className not valid</em>",
 		"wrong_wf_widgets": "Một lỗi xảy ra khi đang lưu các visual control sau đây: "
 	},

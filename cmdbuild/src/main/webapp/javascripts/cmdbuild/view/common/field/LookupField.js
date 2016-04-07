@@ -16,6 +16,20 @@ Ext.define("CMDBuild.view.common.field.LookupField", {
 	},
 
 	/**
+	 * @param {String} rawValue
+	 *
+	 * @returns {Array}
+	 *
+	 * @override
+	 */
+	getErrors: function (rawValue) {
+		if (!Ext.isEmpty(rawValue) && this.getStore().find(this.valueField, this.getValue()) == -1)
+			return [CMDBuild.Translation.errors.invalidLookupValue];
+
+		return this.callParent(arguments);
+	},
+
+	/**
 	 * Return value only if number
 	 *
 	 * @returns {Number}

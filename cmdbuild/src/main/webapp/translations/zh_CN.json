@@ -474,6 +474,7 @@
 		"invalid_fields": "一些字段填写不正确",
 		"invalidKeyAttributesInCsvFile": "<em>Invalid key attribute(s) in CSV file</em>",
 		"invalidKeyAttributesInLocalStore": "<em>Invalid key attribute(s) in local store</em>",
+		"invalidLookupValue": "<em>Invalid Lookup value</em>",
 		"no_driver": "未发现JDBC驱动器.<br />你可以在CMDBuild发布包中找到，并将它拷贝到Tomcat库中.",
 		"no_selections": "你没有选择任何卡片进行更新",
 		"printReportFilure": "打印报告失败",
@@ -615,9 +616,8 @@
 			"WIDGET_SERVICE_CONNECTION_ERROR": "信息发送错误. 可能的原因: 1) 服务未被安装; 2) webservice服务端的URL或端口号不正确",
 			"WIDGET_SERVICE_MALFORMED_REQUEST": "请核实webservice的名字空间，API的名字或输入参数"
 		},
-		"reference_invalid": "值与过滤器不匹配",
-		"reportsImportError": "<em>Error while importing report</em>",
 		"reportsAnalizeError": "<em>Error while analizing report</em>",
+		"reportsImportError": "<em>Error while importing report</em>",
 		"requiredFieldMessage": "此字段是必须的",
 		"routesInvalidCardIdentifier": "路径错误: 无效的卡片识别符",
 		"routesInvalidClassIdentifier": "路径错误: 无效的类识别符",
@@ -632,6 +632,7 @@
 		"template_error": "模板错误",
 		"unknown_error": "发生一个错误",
 		"unmanagedReportType": "未管理的报告类型",
+		"valueDoesNotMatchFilter": "值与过滤器不匹配",
 		"widgetLinkCardsNoClassNameError": "LinkCardsController 构造器: 数名无效",
 		"wrong_wf_widgets": "保存下列可视控件时出现一个错误: "
 	},
