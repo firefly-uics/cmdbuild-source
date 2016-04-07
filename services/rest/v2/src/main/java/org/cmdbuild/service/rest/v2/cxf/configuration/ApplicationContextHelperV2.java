@@ -8,7 +8,7 @@ import org.cmdbuild.config.GraphConfiguration;
 import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.logic.NavigationTreeLogic;
 import org.cmdbuild.logic.auth.AuthenticationLogic;
-import org.cmdbuild.logic.auth.RestAuthenticationLogicBuilder;
+import org.cmdbuild.logic.auth.RestAuthenticationLogic;
 import org.cmdbuild.logic.data.access.DataAccessLogic;
 import org.cmdbuild.logic.data.access.SystemDataAccessLogicBuilder;
 import org.cmdbuild.logic.data.access.WebServiceDataAccessLogicBuilder;
@@ -39,7 +39,7 @@ public class ApplicationContextHelperV2 {
 	private ApplicationContext applicationContext;
 
 	public AuthenticationLogic authenticationLogic() {
-		return applicationContext.getBean(RestAuthenticationLogicBuilder.class).build();
+		return applicationContext.getBean(RestAuthenticationLogic.class);
 	}
 
 	public CmdbuildConfiguration cmdbuildConfiguration() {

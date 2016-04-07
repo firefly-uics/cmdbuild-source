@@ -13,14 +13,14 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.lang3.builder.Builder;
 import org.cmdbuild.auth.UserStore;
-import org.cmdbuild.common.Builder;
 import org.cmdbuild.exception.RedirectException;
 import org.cmdbuild.logger.Log;
 import org.cmdbuild.logic.auth.AuthenticationLogic;
 import org.cmdbuild.logic.auth.AuthenticationLogic.ClientAuthenticationRequest;
 import org.cmdbuild.logic.auth.AuthenticationLogic.ClientAuthenticationResponse;
-import org.cmdbuild.logic.auth.DefaultAuthenticationLogicBuilder;
+import org.cmdbuild.logic.auth.StandardAuthenticationLogic;
 import org.slf4j.Logger;
 import org.slf4j.Marker;
 import org.slf4j.MarkerFactory;
@@ -106,8 +106,8 @@ public class AuthFilter implements Filter {
 	private AuthenticationLogic authenticationLogic;
 
 	@Autowired
-	public void setAuthenticationLogicBuilder(final DefaultAuthenticationLogicBuilder authenticationLogicBuilder) {
-		this.authenticationLogic = authenticationLogicBuilder.build();
+	public void setAuthenticationLogic(final StandardAuthenticationLogic authenticationLogic) {
+		this.authenticationLogic = authenticationLogic;
 	}
 
 	@Override
@@ -162,11 +162,11 @@ public class AuthFilter implements Filter {
 	}
 
 	private ClientAuthenticationResponse doLogin(final HttpServletRequest httpRequest, final UserStore userStore) {
-		final ClientAuthenticationResponse clientAuthenticatorResponse = authenticationLogic.login(ClientRequestWrapper
-				.newInstance() //
-				.withRequest(httpRequest) //
-				.withUserStore(userStore) //
-				.build());
+		final ClientAuthenticationResponse clientAuthenticatorResponse = authenticationLogic
+				.login(ClientRequestWrapper.newInstance() //
+						.withRequest(httpRequest) //
+						.withUserStore(userStore) //
+						.build());
 		return clientAuthenticatorResponse;
 	}
 
