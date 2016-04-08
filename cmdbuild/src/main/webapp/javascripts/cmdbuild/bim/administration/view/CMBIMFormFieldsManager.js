@@ -1,6 +1,4 @@
 (function() {
-	var NAME = _CMProxy.parameter.NAME;
-	var DESCRIPTION = _CMProxy.parameter.DESCRIPTION;
 
 	Ext.define('CMDBuild.delegate.administration.bim.CMBIMFormFieldsManager', {
 		extend: 'CMDBuild.delegate.administration.common.basepanel.CMBaseFormFiledsManager',
@@ -13,7 +11,7 @@
 				fieldLabel: CMDBuild.Translation.administration.modClass.attributeProperties.name,
 				labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
 				width: CMDBuild.core.constants.FieldWidths.ADMINISTRATION_BIG,
-				name: NAME,
+				name: CMDBuild.core.constants.Proxy.NAME,
 				allowBlank: false,
 				vtype: "alphanum",
 				cmImmutable: true
@@ -23,7 +21,7 @@
 				fieldLabel : CMDBuild.Translation.administration.modClass.attributeProperties.description,
 				labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
 				width: CMDBuild.core.constants.FieldWidths.ADMINISTRATION_BIG,
-				name: DESCRIPTION,
+				name: CMDBuild.core.constants.Proxy.DESCRIPTION,
 				allowBlank : false,
 				vtype : "cmdbcomment"
 			});
@@ -62,8 +60,8 @@
 		// translations
 		loadRecord: function(record) {
 			this.reset();
-			this.name.setValue(record.get(NAME));
-			this.description.setValue(record.get(DESCRIPTION));
+			this.name.setValue(record.get(CMDBuild.core.constants.Proxy.NAME));
+			this.description.setValue(record.get(CMDBuild.core.constants.Proxy.DESCRIPTION));
 			this.activeCheckBox.setValue(record.get('active'));
 			this.cardBinding.setValue(record.get('cardBinding'));
 		},

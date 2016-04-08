@@ -127,11 +127,12 @@
 				var filterEncoded = (! callParams) ? "" : Ext.encode({
 					CQL: callParams.CQL
 				});
-				CMDBuild.core.proxy.Card.getList({
+				CMDBuild.core.proxy.Card.readAll({
 					params: {
 						className: className,
 						filter: filterEncoded
 					},
+					loadMask: false,
 					success: function(operation, request, decoded) {
 						callBack(operation, request, decoded);
 					}
@@ -216,18 +217,18 @@
 			callBack();
 			return;
 		}
-		var parameterNames = CMDBuild.ServiceProxy.parameter;
 		var parameters = {};
-		parameters[parameterNames.CARD_ID] = node.get("cardId");
-		parameters[parameterNames.CLASS_NAME] = node.get("className");
+		parameters[CMDBuild.core.constants.Proxy.CARD_ID] = node.get("cardId");
+		parameters[CMDBuild.core.constants.Proxy.CLASS_NAME] = node.get("className");
 		var domain = _CMCache.getDomainByName(nodesIn[0].domainName);
-		parameters[parameterNames.DOMAIN_ID] = domain.get("id");
+		parameters[CMDBuild.core.constants.Proxy.DOMAIN_ID] = domain.get("id");
 		var domainDirection = getDomainDirection(domain, nodesIn[0].targetClassName);
-		parameters[parameterNames.DOMAIN_SOURCE] = domainDirection;
+		parameters[CMDBuild.core.constants.Proxy.DOMAIN_SOURCE] = domainDirection;
 		console.log(" loadForDomainChildren " + nodesIn.length + " " + nodesIn[0].filter + " " + nodesIn[0].targetClassName + " " + node.get("className"));
 		var appNodesIn = nodesIn.slice(1);
-		CMDBuild.ServiceProxy.relations.getList({
+		CMDBuild.core.proxy.Relation.readAll({
 			params: parameters,
+			loadMask: false,
 			scope: this,
 			success: function(operation, request, decoded) {
 				if (decoded.domains.length > 0) { // searching for id only one domain is possible

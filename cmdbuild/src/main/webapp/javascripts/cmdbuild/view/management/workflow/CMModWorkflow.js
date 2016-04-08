@@ -1,6 +1,6 @@
 (function() {
 
-	Ext.require('CMDBuild.core.proxy.CMProxyWorkflow');
+	Ext.require('CMDBuild.core.proxy.workflow.Workflow');
 
 	Ext.define("CMDBuild.view.management.workflow.CMModProcess", {
 		extend: "CMDBuild.view.management.classes.CMModCard",

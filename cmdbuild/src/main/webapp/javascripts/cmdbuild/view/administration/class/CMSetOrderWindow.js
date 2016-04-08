@@ -1,5 +1,7 @@
 (function() {
 
+	Ext.require(['CMDBuild.core.proxy.Attribute']);
+
 	Ext.define('CMDBuild.Administration.SetOrderWindow', {
 		extend: 'CMDBuild.PopupWindow',
 
@@ -58,7 +60,7 @@
 			params[CMDBuild.core.constants.Proxy.CLASS_NAME] = _CMCache.getEntryTypeNameById(this.idClass);
 			params[CMDBuild.core.constants.Proxy.ATTRIBUTES] = Ext.encode(attributes);
 
-			CMDBuild.ServiceProxy.attributes.updateSortConfiguration({
+			CMDBuild.core.proxy.Attribute.updateSortConfiguration({
 				params: params,
 				waitTitle: CMDBuild.Translation.pleaseWait,
 				waitMsg: CMDBuild.Translation.common.wait_msg,

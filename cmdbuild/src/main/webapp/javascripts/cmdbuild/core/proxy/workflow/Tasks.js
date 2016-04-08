@@ -1,10 +1,10 @@
-(function() {
+(function () {
 
 	Ext.define('CMDBuild.core.proxy.workflow.Tasks', {
 
 		requires: [
 			'CMDBuild.core.constants.Proxy',
-			'CMDBuild.core.proxy.Index',
+			'CMDBuild.core.proxy.index.Json',
 			'CMDBuild.model.workflow.tabs.taskManager.Grid'
 		],
 
@@ -13,13 +13,13 @@
 		/**
 		 * @returns {Ext.data.Store or CMDBuild.core.cache.Store}
 		 */
-		getStore: function() {
+		getStore: function () {
 			return CMDBuild.global.Cache.requestAsStore(CMDBuild.core.constants.Proxy.TASK, {
 				autoLoad: false,
 				model: 'CMDBuild.model.workflow.tabs.taskManager.Grid',
 				proxy: {
 					type: 'ajax',
-					url: CMDBuild.core.proxy.Index.tasks.workflow.getStoreByWorkflow,
+					url: CMDBuild.core.proxy.index.Json.tasks.workflow.getStoreByWorkflow,
 					reader: {
 						type: 'json',
 						root: CMDBuild.core.constants.Proxy.RESPONSE
@@ -34,6 +34,19 @@
 					{ property: CMDBuild.core.constants.Proxy.TYPE, direction: 'ASC' }
 				]
 			});
+		},
+
+		/**
+		 * @param {Object} parameters
+		 *
+		 * @returns {Void}
+		 */
+		remove: function (parameters) {
+			parameters = Ext.isEmpty(parameters) ? {} : parameters;
+
+			Ext.apply(parameters, { url: CMDBuild.core.proxy.index.Json.tasks.workflow.remove });
+
+			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.TASK_MANAGER, parameters, true);
 		}
 	});
 

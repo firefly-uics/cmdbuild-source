@@ -221,11 +221,12 @@
 					var me = this;
 
 					if (!processInstance.isNew() && processClassRefIsASuperclass) {
-						CMDBuild.ServiceProxy.card.get({
+						CMDBuild.core.proxy.Card.read({
 							params: {
-								Id: processInstance.getId(),
-								IdClass: processInstance.getClassId()
+								cardId: processInstance.getId(),
+								className: _CMCache.getEntryTypeNameById(processInstance.getClassId())
 							},
+							loadMask: false,
 							success: function(a,b, response) {
 								processInstance.applyValues(response.card);
 								onProcessInstanceChange();

@@ -4,7 +4,7 @@
 
 		requires: [
 			'CMDBuild.core.constants.Proxy',
-			'CMDBuild.core.proxy.Index',
+			'CMDBuild.core.proxy.index.Json',
 			'CMDBuild.model.common.attributes.ForeignKeyStore'
 		],
 
@@ -22,7 +22,7 @@
 				pageSize: CMDBuild.configuration.instance.get(CMDBuild.core.constants.Proxy.REFERENCE_COMBO_STORE_LIMIT),
 				proxy: {
 					type: 'ajax',
-					url: CMDBuild.core.proxy.Index.card.getListShort,
+					url: CMDBuild.core.proxy.index.Json.card.getListShort,
 					reader: {
 						type: 'json',
 						root: CMDBuild.core.constants.Proxy.ROWS,
@@ -38,11 +38,13 @@
 
 		/**
 		 * @property {Object} parameters
+		 *
+		 * @returns {Void}
 		 */
 		readCard: function (parameters) {
 			parameters = Ext.isEmpty(parameters) ? {} : parameters;
 
-			Ext.apply(parameters, { url: CMDBuild.core.proxy.Index.card.read });
+			Ext.apply(parameters, { url: CMDBuild.core.proxy.index.Json.card.read });
 
 			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.UNCACHED, parameters);
 		}

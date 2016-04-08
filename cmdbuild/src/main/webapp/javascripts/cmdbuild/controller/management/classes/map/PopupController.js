@@ -3,12 +3,12 @@
 		initialize: function(layers, options) {
 			layers = layers || [];
 			options = options || {};
-			
+
 			this.hover = true;
 			this.highlightOnly = true;
 			this.renderIntent = "temporary";
 			this.overFeature = onFeatureOver;
-			
+
 			// to not show the popup after the delay
 			// if the mouse is not on the feature
 			this.outFeature = function(f) {
@@ -31,11 +31,12 @@
 				buildPopUp(f);
 			} else {
 				f.CM_busy = true;
-				CMDBuild.ServiceProxy.card.get({
+				CMDBuild.core.proxy.Card.read({
 					params: {
-						Id: f.attributes.master_card,
-						IdClass: f.attributes.master_class
+						cardId: f.attributes.master_card,
+						className: _CMCache.getEntryTypeNameById(f.attributes.master_class)
 					},
+					loadMask: false,
 					scope: this,
 					success: function(response, options, decoded) {
 						f.CM_busy = false;
@@ -47,7 +48,7 @@
 			}
 		}
 
-		// defer the call to deny a pop-up explosion ;) 
+		// defer the call to deny a pop-up explosion ;)
 		Ext.Function.createDelayed(showInfoBaloon, 1000, this, arguments)();
 		return true;
 	}
@@ -60,7 +61,7 @@
 
 			if (f.layer) {
 				var popup = new OpenLayers.Popup.FramedCloud(
-						"cloud_"+f.id, 
+						"cloud_"+f.id,
 						new OpenLayers.LonLat(centeroid.x, centeroid.y), // TODO detect mouse position
 						null,
 						buildPopupContent(f),

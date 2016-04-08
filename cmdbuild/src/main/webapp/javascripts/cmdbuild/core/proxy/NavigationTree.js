@@ -1,11 +1,11 @@
-(function() {
+(function () {
 
 	Ext.define('CMDBuild.core.proxy.NavigationTree', {
 
 		requires: [
 			'CMDBuild.core.constants.Global',
 			'CMDBuild.core.constants.Proxy',
-			'CMDBuild.core.proxy.Index',
+			'CMDBuild.core.proxy.index.Json',
 			'CMDBuild.model.navigationTree.TargetClassStore'
 		],
 
@@ -13,11 +13,13 @@
 
 		/**
 		 * @param {Object} parameters
+		 *
+		 * @returns {Void}
 		 */
 		create: function (parameters) {
 			parameters = Ext.isEmpty(parameters) ? {} : parameters;
 
-			Ext.apply(parameters, { url: CMDBuild.core.proxy.Index.navigationTree.create });
+			Ext.apply(parameters, { url: CMDBuild.core.proxy.index.Json.navigationTree.create });
 
 			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.NAVIGATION_TREE, parameters, true);
 		},
@@ -31,7 +33,7 @@
 				model: 'CMDBuild.model.navigationTree.TargetClassStore',
 				proxy: {
 					type: 'ajax',
-					url: CMDBuild.core.proxy.Index.classes.readAll,
+					url: CMDBuild.core.proxy.index.Json.classes.readAll,
 					reader: {
 						type: 'json',
 						root: CMDBuild.core.constants.Proxy.CLASSES
@@ -55,44 +57,52 @@
 
 		/**
 		 * @param {Object} parameters
+		 *
+		 * @returns {Void}
 		 */
 		read: function (parameters) {
 			parameters = Ext.isEmpty(parameters) ? {} : parameters;
 
-			Ext.apply(parameters, { url: CMDBuild.core.proxy.Index.navigationTree.read });
+			Ext.apply(parameters, { url: CMDBuild.core.proxy.index.Json.navigationTree.read });
 
 			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.NAVIGATION_TREE, parameters);
 		},
 
 		/**
 		 * @param {Object} parameters
+		 *
+		 * @returns {Void}
 		 */
 		readAll: function (parameters) {
 			parameters = Ext.isEmpty(parameters) ? {} : parameters;
 
-			Ext.apply(parameters, { url: CMDBuild.core.proxy.Index.navigationTree.readAll });
+			Ext.apply(parameters, { url: CMDBuild.core.proxy.index.Json.navigationTree.readAll });
 
 			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.NAVIGATION_TREE, parameters);
 		},
 
 		/**
 		 * @param {Object} parameters
+		 *
+		 * @returns {Void}
 		 */
 		remove: function (parameters, success) {
 			parameters = Ext.isEmpty(parameters) ? {} : parameters;
 
-			Ext.apply(parameters, { url: CMDBuild.core.proxy.Index.navigationTree.remove });
+			Ext.apply(parameters, { url: CMDBuild.core.proxy.index.Json.navigationTree.remove });
 
 			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.NAVIGATION_TREE, parameters, true);
 		},
 
 		/**
 		 * @param {Object} parameters
+		 *
+		 * @returns {Void}
 		 */
 		update: function (parameters) {
 			parameters = Ext.isEmpty(parameters) ? {} : parameters;
 
-			Ext.apply(parameters, { url: CMDBuild.core.proxy.Index.navigationTree.update });
+			Ext.apply(parameters, { url: CMDBuild.core.proxy.index.Json.navigationTree.update });
 
 			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.NAVIGATION_TREE, parameters, true);
 		}

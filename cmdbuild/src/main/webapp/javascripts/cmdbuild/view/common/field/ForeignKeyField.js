@@ -4,7 +4,7 @@
 CMDBuild.Management.ForeignKeyField = (function() {
 	return {
 		build: function(attribute) {
-			var store = CMDBuild.Cache.getForeignKeyStore(attribute);
+			var store = _CMCache.getForeignKeyStore(attribute);
 
 			var field = new CMDBuild.view.common.field.SearchableCombo({
 				plugins: new CMDBuild.SetValueOnLoadPlugin(),

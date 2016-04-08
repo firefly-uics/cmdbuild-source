@@ -11,7 +11,6 @@
 
 		loadDetails: function(p) {
 			var domain = p.detail;
-			var parameterNames = CMDBuild.ServiceProxy.parameter;
 			var masterCardClassId = p.masterCard.get("IdClass");
 			var masterCardClassName = _CMCache.getEntryTypeNameById(masterCardClassId); // needed if is a subclass of the domain master class
 
@@ -32,8 +31,8 @@
 					}]
 				};
 
-				me.store.proxy.extraParams[parameterNames.FILTER] = Ext.encode(filter);
-				me.store.proxy.extraParams[parameterNames.CLASS_NAME] = domain.getDetailClassName();
+				me.store.proxy.extraParams[CMDBuild.core.constants.Proxy.FILTER] = Ext.encode(filter);
+				me.store.proxy.extraParams[CMDBuild.core.constants.Proxy.CLASS_NAME] = domain.getDetailClassName();
 
 				me.store.loadPage(1);
 			}

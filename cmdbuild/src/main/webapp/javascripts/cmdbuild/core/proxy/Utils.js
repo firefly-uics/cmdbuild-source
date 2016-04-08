@@ -1,42 +1,28 @@
-(function() {
+(function () {
 
 	Ext.define('CMDBuild.core.proxy.Utils', {
 
 		requires: [
-			'CMDBuild.core.interfaces.Ajax',
-			'CMDBuild.core.proxy.Index'
+			'CMDBuild.core.constants.Proxy',
+			'CMDBuild.core.proxy.index.Json'
 		],
 
 		singleton: true,
 
 		/**
 		 * @param {Object} parameters
+		 *
+		 * @returns {Void}
 		 */
-		clearCache: function(parameters) {
-			CMDBuild.core.interfaces.Ajax.request( {
-				url: CMDBuild.core.proxy.Index.utils.clearCache,
-				params: parameters.params,
-				loadMask: Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : true,
-				scope: parameters.scope,
-				failure: parameters.failure || Ext.emptyFn,
-				success: parameters.success || Ext.emptyFn,
-				callback: parameters.callback || Ext.emptyFn
-			});
-		},
+		generateId: function (parameters) {
+			parameters = Ext.isEmpty(parameters) ? {} : parameters;
 
-		/**
-		 * @param {Object} parameters
-		 */
-		generateId: function(parameters) {
-			CMDBuild.core.interfaces.Ajax.request({
-				url: CMDBuild.core.proxy.Index.utils.generateId,
-				params: parameters.params,
-				loadMask: Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : false,
-				scope: parameters.scope,
-				failure: parameters.failure || Ext.emptyFn,
-				success: parameters.success || Ext.emptyFn,
-				callback: parameters.callback || Ext.emptyFn
+			Ext.apply(parameters, {
+				loadMask: false,
+				url: CMDBuild.core.proxy.index.Json.utils.generateId
 			});
+
+			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.UNCACHED, parameters);
 		}
 	});
 

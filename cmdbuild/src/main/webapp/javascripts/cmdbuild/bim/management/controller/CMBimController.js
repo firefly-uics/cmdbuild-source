@@ -38,7 +38,7 @@
 		onCMCardGridColumnsReconfigured: function(grid) {
 			var entryType = _CMCardModuleState.entryType;
 			var me = this;
-			CMDBuild.bim.proxy.activeForClassName({
+			CMDBuild.bim.proxy.Proxy.activeForClassName({
 				params: {
 					className: entryType.getName()
 				},
@@ -73,7 +73,7 @@
 				CMDBuild.core.LoadMask.show();
 				var me = this;
 				var entryType = _CMCardModuleState.entryType;
-				CMDBuild.bim.proxy.roidForCardId({
+				CMDBuild.bim.proxy.Proxy.roidForCardId({
 					params: {
 						cardId: model.get("Id"),
 						className: entryType.getName(),
@@ -143,7 +143,7 @@
 		objectSelectedForLongPressure: function(sceneManager, objectId) {
 			var me = this;
 
-			CMDBuild.bim.proxy.fetchCardFromViewewId({
+			CMDBuild.bim.proxy.Proxy.fetchCardFromViewewId({
 				params: {
 					revisionId: me.roid,
 					objectId: objectId

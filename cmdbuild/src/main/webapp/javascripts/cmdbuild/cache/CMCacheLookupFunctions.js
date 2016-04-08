@@ -97,7 +97,7 @@
 					model: 'CMDBuild.model.cache.LookupFieldStore',
 					proxy: {
 						type: 'ajax',
-						url: CMDBuild.core.proxy.Index.lookup.readAll,
+						url: CMDBuild.core.proxy.index.Json.lookup.readAll,
 						reader: {
 							type: 'json',
 							root: 'rows'

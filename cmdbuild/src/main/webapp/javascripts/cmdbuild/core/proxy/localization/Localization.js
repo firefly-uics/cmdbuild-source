@@ -1,10 +1,10 @@
-(function() {
+(function () {
 
 	Ext.define('CMDBuild.core.proxy.localization.Localization', {
 
 		requires: [
 			'CMDBuild.core.constants.Proxy',
-			'CMDBuild.core.proxy.Index',
+			'CMDBuild.core.proxy.index.Json',
 			'CMDBuild.model.localization.Localization'
 		],
 
@@ -12,11 +12,13 @@
 
 		/**
 		 * @param {Object} parameters
+		 *
+		 * @returns {Void}
 		 */
 		getLanguages: function (parameters) {
 			parameters = Ext.isEmpty(parameters) ? {} : parameters;
 
-			Ext.apply(parameters, { url: CMDBuild.core.proxy.Index.utils.listAvailableTranslations });
+			Ext.apply(parameters, { url: CMDBuild.core.proxy.index.Json.utils.listAvailableTranslations });
 
 			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.LOCALIZATION, parameters);
 		},
@@ -30,7 +32,7 @@
 				model: 'CMDBuild.model.localization.Localization',
 				proxy: {
 					type: 'ajax',
-					url: CMDBuild.core.proxy.Index.utils.listAvailableTranslations,
+					url: CMDBuild.core.proxy.index.Json.utils.listAvailableTranslations,
 					reader: {
 						type: 'json',
 						root: CMDBuild.core.constants.Proxy.TRANSLATIONS
@@ -69,33 +71,39 @@
 
 		/**
 		 * @param {Object} parameters
+		 *
+		 * @returns {Void}
 		 */
 		read: function (parameters) {
 			parameters = Ext.isEmpty(parameters) ? {} : parameters;
 
-			Ext.apply(parameters, { url: CMDBuild.core.proxy.Index.localizations.translation.read });
+			Ext.apply(parameters, { url: CMDBuild.core.proxy.index.Json.localizations.translation.read });
 
 			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.LOCALIZATION, parameters);
 		},
 
 		/**
 		 * @param {Object} parameters
+		 *
+		 * @returns {Void}
 		 */
 		readAll: function (parameters) {
 			parameters = Ext.isEmpty(parameters) ? {} : parameters;
 
-			Ext.apply(parameters, { url: CMDBuild.core.proxy.Index.localizations.translation.readAll });
+			Ext.apply(parameters, { url: CMDBuild.core.proxy.index.Json.localizations.translation.readAll });
 
 			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.LOCALIZATION, parameters);
 		},
 
 		/**
 		 * @param {Object} parameters
+		 *
+		 * @returns {Void}
 		 */
 		update: function (parameters) {
 			parameters = Ext.isEmpty(parameters) ? {} : parameters;
 
-			Ext.apply(parameters, { url: CMDBuild.core.proxy.Index.localizations.translation.update });
+			Ext.apply(parameters, { url: CMDBuild.core.proxy.index.Json.localizations.translation.update });
 
 			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.LOCALIZATION, parameters, true);
 		}

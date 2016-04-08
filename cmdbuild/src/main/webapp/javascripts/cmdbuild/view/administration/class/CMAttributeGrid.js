@@ -1,21 +1,20 @@
 (function() {
 
-	var _p = _CMProxy.parameter;
 	var ATTR = {
-		INDEX: _p.INDEX,
-		NAME: _p.NAME,
-		DESCRIPTION: _p.DESCRIPTION,
-		TYPE: _p.TYPE,
-		IS_BASEDSP: _p.DISPLAY_IN_GRID,
+		INDEX: CMDBuild.core.constants.Proxy.INDEX,
+		NAME: CMDBuild.core.constants.Proxy.NAME,
+		DESCRIPTION: CMDBuild.core.constants.Proxy.DESCRIPTION,
+		TYPE: CMDBuild.core.constants.Proxy.TYPE,
+		IS_BASEDSP: CMDBuild.core.constants.Proxy.DISPLAY_IN_GRID,
 		IS_UNIQUE: 'isunique',
-		IS_NOT_NULL: _p.NOT_NULL,
+		IS_NOT_NULL: CMDBuild.core.constants.Proxy.NOT_NULL,
 		IS_INHERITED: 'inherited',
-		IS_ACTIVE: _p.ACTIVE,
-		FIELD_MODE: _p.FIELD_MODE,
-		GROUP: _p.GROUP,
+		IS_ACTIVE: CMDBuild.core.constants.Proxy.ACTIVE,
+		FIELD_MODE: CMDBuild.core.constants.Proxy.FIELD_MODE,
+		GROUP: CMDBuild.core.constants.Proxy.GROUP,
 		ABSOLUTE_CLASS_ORDER: 'absoluteClassOrder',
 		CLASS_ORDER_SIGN: 'classOrderSign',
-		EDITOR_TYPE: _p.EDITOR_TYPE
+		EDITOR_TYPE: CMDBuild.core.constants.Proxy.EDITOR_TYPE
 	};
 	var REQUEST = {
 		ROOT: 'attributes'
@@ -203,9 +202,8 @@
 		},
 
 		refreshStore: function(idClass, indexAttributeToSelectAfter) {
-			var parameterNames = CMDBuild.ServiceProxy.parameter;
 			var params = {};
-			params[parameterNames.CLASS_NAME] = _CMCache.getEntryTypeNameById(idClass);
+			params[CMDBuild.core.constants.Proxy.CLASS_NAME] = _CMCache.getEntryTypeNameById(idClass);
 
 			this.store.load({
 				params: params,

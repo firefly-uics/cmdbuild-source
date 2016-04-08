@@ -4,7 +4,7 @@
 
 		requires: [
 			'CMDBuild.core.constants.Proxy',
-			'CMDBuild.core.proxy.Index',
+			'CMDBuild.core.proxy.index.Json',
 			'CMDBuild.model.userAndGroup.group.privileges.GridRecord'
 		],
 
@@ -19,7 +19,7 @@
 				model: 'CMDBuild.model.userAndGroup.group.privileges.GridRecord',
 				proxy: {
 					type: 'ajax',
-					url: CMDBuild.core.proxy.Index.privileges.workflow.read,
+					url: CMDBuild.core.proxy.index.Json.privileges.workflow.read,
 					reader: {
 						type: 'json',
 						root: CMDBuild.core.constants.Proxy.PRIVILEGES
@@ -38,22 +38,26 @@
 
 		/**
 		 * @param {Object} parameters
+		 *
+		 * @returns {Void}
 		 */
 		setRowAndColumn: function (parameters) {
 			parameters = Ext.isEmpty(parameters) ? {} : parameters;
 
-			Ext.apply(parameters, { url: CMDBuild.core.proxy.Index.privileges.workflow.setRowAndColumnPrivileges });
+			Ext.apply(parameters, { url: CMDBuild.core.proxy.index.Json.privileges.workflow.setRowAndColumnPrivileges });
 
 			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.GROUP, parameters);
 		},
 
 		/**
 		 * @param {Object} parameters
+		 *
+		 * @returns {Void}
 		 */
 		update: function (parameters) {
 			parameters = Ext.isEmpty(parameters) ? {} : parameters;
 
-			Ext.apply(parameters, { url: CMDBuild.core.proxy.Index.privileges.workflow.update });
+			Ext.apply(parameters, { url: CMDBuild.core.proxy.index.Json.privileges.workflow.update });
 
 			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.GROUP, parameters, true);
 		}

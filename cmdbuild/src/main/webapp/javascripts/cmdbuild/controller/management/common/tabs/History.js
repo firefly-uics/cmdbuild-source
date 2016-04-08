@@ -9,7 +9,7 @@
 		requires: [
 			'CMDBuild.core.configurations.DataFormat',
 			'CMDBuild.core.constants.Proxy',
-			'CMDBuild.core.proxy.Attributes'
+			'CMDBuild.core.proxy.Attribute'
 		],
 
 		/**
@@ -224,7 +224,7 @@
 				params[CMDBuild.core.constants.Proxy.CLASS_NAME] = _CMCache.getEntryTypeNameById(this.selectedEntity.get('IdClass'));
 
 				// Request all class attributes
-				CMDBuild.core.proxy.Attributes.read({
+				CMDBuild.core.proxy.Attribute.read({
 					params: params,
 					scope: this,
 					success: function(response, options, decodedResponse) {

@@ -1,63 +1,55 @@
-(function() {
+(function () {
 
 	Ext.define('CMDBuild.core.proxy.Attachment', {
-		alternateClassName: 'CMDBuild.ServiceProxy.attachment', // Legacy class name
 
 		requires: [
-			'CMDBuild.core.proxy.CMProxy',
 			'CMDBuild.core.constants.Proxy',
-			'CMDBuild.core.proxy.Index'
+			'CMDBuild.core.proxy.index.Json'
 		],
 
 		singleton: true,
 
 		/**
-		 * @return {Ext.data.Store}
+		 * @param {Object} parameters
+		 *
+		 * @returns {Void}
 		 */
-		getStore: function() {
-			return Ext.create('Ext.data.Store', {
-				autoLoad: false,
-				model: 'CMDBuild.model.CMAttachment', // TODO: refactor
-				proxy: {
-					type: 'ajax',
-					url: CMDBuild.core.proxy.Index.attachments.getAttachmentList,
-					reader: {
-						type: 'json',
-						root: 'rows'
-					},
-					extraParams: { // Avoid to send limit, page and start parameters in server calls
-						limitParam: undefined,
-						pageParam: undefined,
-						startParam: undefined
-					}
-				},
-				sorters: {
-					property: 'Filename',
-					direction: 'ASC'
-				},
-			});
+		download: function (parameters) {
+			if (
+				Ext.isObject(parameters) && !Ext.Object.isEmpty(parameters)
+				&& Ext.isObject(parameters.params) && !Ext.Object.isEmpty(parameters.params)
+			) {
+				window.open(
+					CMDBuild.core.proxy.index.Json.attachment.download + '?' + Ext.urlEncode(parameters.params),
+					'_blank'
+				);
+			}
 		},
 
-		// TODO: refactor
+		/**
+		 * @param {Object} parameters
+		 *
+		 * @returns {Void}
+		 */
+		getDefinitions: function (parameters) {
+			parameters = Ext.isEmpty(parameters) ? {} : parameters;
 
-		download: function(params) {
-			var url = 'services/json/attachments/downloadattachment?' + Ext.urlEncode(params);
+			Ext.apply(parameters, { url: CMDBuild.core.proxy.index.Json.attachment.getContext });
 
-			window.open(url, "_blank");
+			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.ATTACHMENT, parameters);
 		},
 
-		getattachmentdefinition: function(p) {
-			p.method = "GET";
-			p.url = "services/json/attachments/getattachmentscontext";
+		/**
+		 * @param {Object} parameters
+		 *
+		 * @returns {Void}
+		 */
+		remove: function (parameters) {
+			parameters = Ext.isEmpty(parameters) ? {} : parameters;
 
-			CMDBuild.ServiceProxy.core.doRequest(p);
-		},
+			Ext.apply(parameters, { url: CMDBuild.core.proxy.index.Json.attachment.remove });
 
-		remove: function(p) {
-			p.method = "POST";
-			p.url = "services/json/attachments/deleteattachment";
-
-			CMDBuild.ServiceProxy.core.doRequest(p);
+			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.ATTACHMENT, parameters, true);
 		}
 	});
 

@@ -1,6 +1,9 @@
 (function() {
 
-	Ext.require('CMDBuild.view.common.field.translatable.Utils');
+	Ext.require([
+		'CMDBuild.view.common.field.translatable.Utils',
+		'CMDBuild.core.proxy.Attribute'
+	]);
 
 	Ext.define("CMDBuild.controller.administration.CMBaseAttributesController", {
 		constructor: function(view) {
@@ -22,27 +25,26 @@
 		},
 
 		onAttributeMoved: function() {
-			var parameterNames = CMDBuild.ServiceProxy.parameter;
 			var attributes = [];
 			var store = this.getGrid().getStore();
 
 			for (var i=0, l=store.getCount(); i<l; i++) {
 				var rec = store.getAt(i);
 				var attribute = {};
-				attribute[parameterNames.NAME] = rec.get("name");
-				attribute[parameterNames.INDEX] = i+1;
+				attribute[CMDBuild.core.constants.Proxy.NAME] = rec.get("name");
+				attribute[CMDBuild.core.constants.Proxy.INDEX] = i+1;
 				attributes.push(attribute);
 			}
 
-			var me = this;
 			var params = {};
-			params[parameterNames.ATTRIBUTES] = Ext.JSON.encode(attributes);
-			params[parameterNames.CLASS_NAME] = _CMCache.getEntryTypeNameById(this.getCurrentEntryTypeId());
+			params[CMDBuild.core.constants.Proxy.ATTRIBUTES] = Ext.encode(attributes);
+			params[CMDBuild.core.constants.Proxy.CLASS_NAME] = _CMCache.getEntryTypeNameById(this.getCurrentEntryTypeId());
 
-			CMDBuild.ServiceProxy.attributes.reorder({
+			CMDBuild.core.proxy.Attribute.reorder({
 				params: params,
-				success: function() {
-					me.anAttributeWasMoved(attributes);
+				scope: this,
+				success: function (response, options, decodedResponse) {
+					this.anAttributeWasMoved(attributes);
 				}
 			});
 		},
@@ -132,17 +134,13 @@
 		data[CMDBuild.core.constants.Proxy.CLASS_NAME] = _CMCache.getEntryTypeNameById(this.currentClassId);
 		data[CMDBuild.core.constants.Proxy.META] = Ext.JSON.encode(this.view.formPanel.referenceFilterMetadata);
 
-		var me = this;
-		CMDBuild.core.LoadMask.show();
-		_CMProxy.attributes.update({
-			params : data,
-			success : function(form, action, decoded) {
-				me.view.gridPanel.refreshStore(me.currentClassId, decoded.attribute.index);
+		CMDBuild.core.proxy.Attribute.update({
+			params: data,
+			scope: this,
+			success: function (form, action, decoded) {
+				this.view.gridPanel.refreshStore(this.currentClassId, decoded.attribute.index);
 
-				CMDBuild.view.common.field.translatable.Utils.commit(me.view.formPanel);
-			},
-			callback: function() {
-				CMDBuild.core.LoadMask.hide();
+				CMDBuild.view.common.field.translatable.Utils.commit(this.view.formPanel);
 			}
 		});
 	}
@@ -175,20 +173,17 @@
 			return; //nothing to delete
 		}
 
-		var me = this;
 		var params = {};
-		var parameterNames = CMDBuild.ServiceProxy.parameter;
-		params[parameterNames.NAME] = me.currentAttribute.get("name");
-		params[parameterNames.CLASS_NAME] = _CMCache.getEntryTypeNameById(me.currentClassId);
+		params[CMDBuild.core.constants.Proxy.NAME] = this.currentAttribute.get("name");
+		params[CMDBuild.core.constants.Proxy.CLASS_NAME] = _CMCache.getEntryTypeNameById(this.currentClassId);
 
-		CMDBuild.core.LoadMask.show();
-		CMDBuild.ServiceProxy.attributes.remove({
+		CMDBuild.core.proxy.Attribute.remove({
 			params: params,
-			callback : function() {
-				CMDBuild.core.LoadMask.hide();
-				me.view.formPanel.reset();
-				me.view.formPanel.disableModify();
-				me.view.gridPanel.refreshStore(me.currentClassId);
+			scope: this,
+			callback: function (options, success, response) {
+				this.view.formPanel.reset();
+				this.view.formPanel.disableModify();
+				this.view.gridPanel.refreshStore(this.currentClassId);
 			}
 		});
 	}

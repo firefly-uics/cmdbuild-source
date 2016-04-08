@@ -1,10 +1,10 @@
-(function() {
+(function () {
 
 	Ext.define('CMDBuild.core.proxy.widget.Calendar', {
 
 		requires: [
 			'CMDBuild.core.constants.Proxy',
-			'CMDBuild.core.proxy.Index',
+			'CMDBuild.core.proxy.index.Json',
 			'CMDBuild.model.widget.calendar.AttributeCombo',
 			'CMDBuild.model.widget.calendar.TargetClass'
 		],
@@ -16,13 +16,13 @@
 		 *
 		 * @administration
 		 */
-		getStoreTargetClass: function() {
+		getStoreTargetClass: function () {
 			return CMDBuild.global.Cache.requestAsStore(CMDBuild.core.constants.Proxy.CLASS, {
 				autoLoad: true,
 				model: 'CMDBuild.model.widget.calendar.TargetClass',
 				proxy: {
 					type: 'ajax',
-					url: CMDBuild.core.proxy.Index.classes.readAll,
+					url: CMDBuild.core.proxy.index.Json.classes.readAll,
 					reader: {
 						type: 'json',
 						root: CMDBuild.core.constants.Proxy.CLASSES
@@ -35,7 +35,7 @@
 					}
 				},
 				filters: [
-					function(record) { // Filters root of all classes
+					function (record) { // Filters root of all classes
 						return record.get(CMDBuild.core.constants.Proxy.NAME) != 'Class';
 					}
 				],
@@ -50,13 +50,13 @@
 		 *
 		 * @administration
 		 */
-		getStoreAttributesDate: function() {
+		getStoreAttributesDate: function () {
 			return CMDBuild.global.Cache.requestAsStore(CMDBuild.core.constants.Proxy.ATTRIBUTE, {
 				autoLoad: false,
 				model: 'CMDBuild.model.widget.calendar.AttributeCombo',
 				proxy: {
 					type: 'ajax',
-					url: CMDBuild.core.proxy.Index.attribute.read,
+					url: CMDBuild.core.proxy.index.Json.attribute.read,
 					reader: {
 						type: 'json',
 						root: CMDBuild.core.constants.Proxy.ATTRIBUTES
@@ -68,7 +68,7 @@
 					}
 				},
 				filters: [
-					function(record) { // Filters by attribute's type
+					function (record) { // Filters by attribute's type
 						return Ext.Array.contains(['DATE', 'TIMESTAMP'], record.get(CMDBuild.core.constants.Proxy.TYPE));
 					}
 				],
@@ -83,13 +83,13 @@
 		 *
 		 * @administration
 		 */
-		getStoreAttributesString: function() {
+		getStoreAttributesString: function () {
 			return CMDBuild.global.Cache.requestAsStore(CMDBuild.core.constants.Proxy.ATTRIBUTE, {
 				autoLoad: false,
 				model: 'CMDBuild.model.widget.calendar.AttributeCombo',
 				proxy: {
 					type: 'ajax',
-					url: CMDBuild.core.proxy.Index.attribute.read,
+					url: CMDBuild.core.proxy.index.Json.attribute.read,
 					reader: {
 						type: 'json',
 						root: CMDBuild.core.constants.Proxy.ATTRIBUTES
@@ -101,7 +101,7 @@
 					}
 				},
 				filters: [
-					function(record) { // Filters by attribute's type
+					function (record) { // Filters by attribute's type
 						return Ext.Array.contains(['TEXT', 'STRING'], record.get(CMDBuild.core.constants.Proxy.TYPE));
 					}
 				],

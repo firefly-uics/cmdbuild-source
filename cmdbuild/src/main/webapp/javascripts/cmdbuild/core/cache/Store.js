@@ -1,4 +1,4 @@
-(function() {
+(function () {
 
 	/**
 	 * To use only inside cache class
@@ -43,6 +43,8 @@
 
 		/**
 		 * @param {Function or Object} options
+		 *
+		 * @returns {Void}
 		 */
 		load: function (options) {
 			options = Ext.isEmpty(options) ? {} : options;
@@ -61,8 +63,11 @@
 					type: this.type,
 					groupId: this.groupId,
 					serviceEndpoint: this.proxy.url,
-					params: options.params
+					params: Ext.clone(options.params)
 				};
+
+				// Avoid different stores to join results adding store model to parameters
+				parameters.params.modelName = this.model.getName();
 
 				if (!CMDBuild.global.Cache.isExpired(parameters)) { // Emulation of success and callback execution
 					var cachedValues = CMDBuild.global.Cache.get(parameters);

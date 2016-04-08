@@ -1,9 +1,6 @@
 <!-- SELECTIONS -->
 <script type="text/javascript" src="javascripts/cmdbuild/selection/CMMultiPageSelectionModel.js"></script>
 
-<!-- PROXIES -->
-<script type="text/javascript" src="javascripts/cmdbuild/core/proxy/CMProxyRelations.js"></script>
-
 <!-- STATES -->
 <script type="text/javascript" src="javascripts/cmdbuild/state/CMWorkflowState.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/state/CMUIState.js"></script>
@@ -22,7 +19,6 @@
 
 <!-- VIEWS -->
 	<!-- COMMON -->
-	<script type="text/javascript" src="javascripts/cmdbuild/view/management/common/CMTabPanelWithCardGridAndFilter.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/view/management/common/CMEditablePanel.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/view/management/common/CMSideTabPanel.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/view/management/common/CMTabPanel.js"></script>

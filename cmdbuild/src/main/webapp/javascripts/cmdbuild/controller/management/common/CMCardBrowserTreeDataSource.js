@@ -1,4 +1,7 @@
 (function() {
+
+	Ext.require('CMDBuild.core.proxy.gis.Gis');
+
 	var GEOSERVER = "GeoServer";
 
 	Ext.define("CMDBuild.controller.management.classes.CMCardBrowserTreeDataSource", {
@@ -22,7 +25,8 @@
 			// fill the first level of tree nodes
 			// asking the cards according to the
 			// root of the configuration
-			CMDBuild.ServiceProxy.gis.expandDomainTree({
+			CMDBuild.core.proxy.gis.Gis.expandDomainTree({
+				loadMask: false,
 				success: function successGetCardBasicInfoList(operation, options, response) {
 					addGeoserverLayersToTree(response.root, me);
 					me.cardBrowserTree.setRootNode(response.root);

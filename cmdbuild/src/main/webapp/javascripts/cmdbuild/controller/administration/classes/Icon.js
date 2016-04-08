@@ -127,13 +127,12 @@
 		 * @private
 		 */
 		uploadImageAndBindIcon: function () {
+_debug('uploadImageAndBindIcon');
 			// Build target folder model
 			CMDBuild.core.LoadMask.show();
 			CMDBuild.core.proxy.classes.Icon.getFolders({
 				scope: this,
 				failure: function (response, options, decodedResponse) {
-					_error('read folders failure', this);
-
 					CMDBuild.core.LoadMask.hide();
 				},
 				success: function (response, options, decodedResponse) {
@@ -148,58 +147,57 @@
 
 					// Upload image
 					if (Ext.isObject(targetFolderModel) && !Ext.Object.isEmpty(targetFolderModel)) {
+						var data = this.view.getForm();
+
 						var params = {};
 						params['fileStore'] = 'images';
 						params['folder'] = targetFolderModel.get('_id');
+_debug('data', this.view.fileField.getValue());
+						if (data) {
+							CMDBuild.core.proxy.classes.Icon.createImage({
+								form: this.view.getForm(),
+								params: params,
+								scope: this,
+								failure: function (response, options, decodedResponse) {
+									CMDBuild.core.LoadMask.hide();
+								},
+								success: function (response, options, decodedResponse) {
+									var uploadedIconName = decodedResponse[CMDBuild.core.constants.Proxy.RESPONSE];
 
-						CMDBuild.core.proxy.classes.Icon.createImage({
-							form: this.view.getForm(),
-							params: params,
-							scope: this,
-							failure: function (response, options, decodedResponse) {
-								_error('upload failure', this);
-
-								CMDBuild.core.LoadMask.hide();
-							},
-							success: function (response, options, decodedResponse) {
-								var uploadedIconName = decodedResponse[CMDBuild.core.constants.Proxy.RESPONSE];
-
-								if (!Ext.isEmpty(uploadedIconName) && Ext.isString(uploadedIconName)) {
-
-									// Update uploaded image with class bind
-									CMDBuild.core.proxy.classes.Icon.update({
-										params: {
-											type: 'class',
-											details: {
-												id: this.selectedClassModel.get('name'),
-											},
-											image: {
-												type: 'filestore',
+									if (!Ext.isEmpty(uploadedIconName) && Ext.isString(uploadedIconName)) {
+										// Update uploaded image with class bind
+										CMDBuild.core.proxy.classes.Icon.update({
+											jsonData: {
+												type: 'class',
 												details: {
-													store: 'filestore',
-													folder: targetFolderModel.get('_id'),
-													file: uploadedIconName
+													id: this.selectedClassModel.get('name'),
+												},
+												image: {
+													type: 'filestore',
+													details: {
+														store: 'filestore',
+														folder: targetFolderModel.get('_id'),
+														file: uploadedIconName
+													}
 												}
+											},
+											scope: this,
+											failure: function (response, options, decodedResponse) {
+												CMDBuild.core.LoadMask.hide();
+											},
+											success: function (response, options, decodedResponse) {
+												CMDBuild.core.LoadMask.hide();
+											},
+											callback: function (response, options, decodedResponse) {
+												this.onClassPropertiesIconClassSelected(this.selectedClassModel);
 											}
-										},
-										scope: this,
-										failure: function (response, options, decodedResponse) {
-											_error('readAll failure', this);
-
-											CMDBuild.core.LoadMask.hide();
-										},
-										success: function (response, options, decodedResponse) {
-											CMDBuild.core.LoadMask.hide();
-										},
-										callback: function (response, options, decodedResponse) {
-											this.onClassPropertiesIconClassSelected(this.selectedClassModel);
-										}
-									});
-								} else {
-									_error('uploaded icon identifier error "' + uploadedIconName + '"', this);
+										});
+									} else {
+										_error('uploaded icon identifier error "' + uploadedIconName + '"', this);
+									}
 								}
-							}
-						});
+							});
+						}
 					}
 				}
 			});

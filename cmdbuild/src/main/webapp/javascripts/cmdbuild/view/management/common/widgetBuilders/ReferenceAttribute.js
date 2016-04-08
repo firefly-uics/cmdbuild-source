@@ -166,9 +166,10 @@ CMDBuild.WidgetBuilders.ReferenceAttribute.prototype.buildReadOnlyField = functi
 				params[CMDBuild.core.constants.Proxy.CARD_ID] = value;
 				params[CMDBuild.core.constants.Proxy.CLASS_NAME] = _CMCache.getEntryTypeNameById(attribute['idClass']);
 
-				CMDBuild.ServiceProxy.card.get({
-					scope: this,
+				CMDBuild.core.proxy.Card.read({
 					params: params,
+					loadMask: false,
+					scope: this,
 					success: function(response, options, decodedResponse) {
 						decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.CARD];
 

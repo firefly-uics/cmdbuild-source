@@ -140,8 +140,8 @@
 			var me = this;
 
 			var params = {};
-			params[_CMProxy.parameter.CARD_ID] = this.cloneCard ? -1 : this.card.get("Id");
-			params[_CMProxy.parameter.CLASS_NAME] = _CMCache.getEntryTypeNameById(this.card.get("IdClass"));
+			params[CMDBuild.core.constants.Proxy.CARD_ID] = this.cloneCard ? -1 : this.card.get("Id");
+			params[CMDBuild.core.constants.Proxy.CLASS_NAME] = _CMCache.getEntryTypeNameById(this.card.get("IdClass"));
 
 			addDataFromCardDataPoviders(me, params);
 
@@ -156,6 +156,7 @@
 		doFormSubmit: function (params) {
 			CMDBuild.core.proxy.Card.update({
 				params: Ext.Object.merge(params, this.view.getForm().getValues()),
+				loadMask: false,
 				scope: this,
 				success: function (response, options, decodedResponse) {
 					// Adapter to old method behaviour for classes witch extends this one
@@ -244,12 +245,10 @@
 					params[CMDBuild.core.constants.Proxy.CLASS_NAME] = _CMCache.getEntryTypeNameById(me.card.get('IdClass'));
 				}
 
-				CMDBuild.core.LoadMask.show();
-				CMDBuild.ServiceProxy.card.get({
+				CMDBuild.core.proxy.Card.read({
 					params: params,
+					loadMask: false,
 					success: function(result, options, decodedResult) {
-						CMDBuild.core.LoadMask.hide();
-
 						var data = decodedResult.card;
 
 						if (me.card) {
@@ -321,6 +320,7 @@
 						params: {
 							id: this.card.get("Id")
 						},
+						loadMask: false,
 						success: success
 					});
 				}
@@ -339,7 +339,8 @@
 					CMDBuild.core.proxy.Card.unlock({
 						params: {
 							id: this.card.get("Id")
-						}
+						},
+						loadMask: false
 					});
 				}
 			}

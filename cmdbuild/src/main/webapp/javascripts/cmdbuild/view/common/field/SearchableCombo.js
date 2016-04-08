@@ -1,5 +1,7 @@
 (function() {
 
+	Ext.require('CMDBuild.core.proxy.Card');
+
 	/**
 	 * @deprecated (CMDBuild.view.common.field.comboBox.Searchable)
 	 */
@@ -151,16 +153,15 @@
 			if (this.getStore() && (this.getStore().find('Id', id) == -1)) {
 				var params = Ext.apply({ cardId: id }, this.getStore().baseParams);
 
-				CMDBuild.core.interfaces.Ajax.request({
-					url: 'services/json/management/modcard/getcard',
+				CMDBuild.core.proxy.Card.read({
 					params: params,
-					method: 'GET',
+					loadMask: false,
 					scope: this,
-					success: function(result, options, decodedResult) {
+					success: function (response, options, decodedResponse) {
 						if (this.getStore().find('Id', id) == -1)
 							this.getStore().add({
 								Id: id,
-								Description: decodedResult.card['Description']
+								Description: decodedResponse.card['Description']
 							});
 
 						this.setValue(id);

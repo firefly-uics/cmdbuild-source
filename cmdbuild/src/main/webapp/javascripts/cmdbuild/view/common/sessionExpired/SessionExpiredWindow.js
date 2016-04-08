@@ -3,12 +3,6 @@
 	Ext.define('CMDBuild.view.common.sessionExpired.SessionExpiredWindow', {
 		extend: 'Ext.window.Window',
 
-		requires: [
-			'CMDBuild.core.interfaces.Ajax',
-			'CMDBuild.core.LoadMask',
-			'CMDBuild.core.constants.Proxy'
-		],
-
 		/**
 		 * @cfg {CMDBuild.view.common.sessionExpired.FormPanel}
 		 */

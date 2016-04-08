@@ -5,7 +5,7 @@
 		requires: [
 			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.interfaces.Rest',
-			'CMDBuild.core.proxy.Index'
+			'CMDBuild.core.proxy.index.Json'
 		],
 
 		singleton: true,
@@ -20,7 +20,7 @@
 			CMDBuild.core.interfaces.Rest.request({
 				method: 'PUT',
 				headers: parameters.headers,
-				url: CMDBuild.core.proxy.Index.session.rest
+				url: CMDBuild.core.proxy.index.Json.session.rest
 					+ '/' + parameters.urlParams[CMDBuild.core.constants.Proxy.TOKEN]
 					+ '/impersonate/' + parameters.urlParams[CMDBuild.core.constants.Proxy.USERNAME],
 				loadMask: Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : true,
@@ -38,7 +38,7 @@
 			CMDBuild.core.interfaces.Rest.request({
 				method: 'POST',
 				jsonData: parameters.params,
-				url: CMDBuild.core.proxy.Index.session.rest + '/',
+				url: CMDBuild.core.proxy.index.Json.session.rest + '/',
 				loadMask: Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : true,
 				scope: parameters.scope || this,
 				success: parameters.success || Ext.emptyFn,
@@ -57,7 +57,7 @@
 			CMDBuild.core.interfaces.Rest.request({
 				method: 'DELETE',
 				headers: parameters.headers,
-				url: CMDBuild.core.proxy.Index.session.rest + '/' + parameters.urlParams[CMDBuild.core.constants.Proxy.TOKEN] + '/',
+				url: CMDBuild.core.proxy.index.Json.session.rest + '/' + parameters.urlParams[CMDBuild.core.constants.Proxy.TOKEN] + '/',
 				loadMask: Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : true,
 				scope: parameters.scope || this,
 				success: parameters.success || Ext.emptyFn,
@@ -77,7 +77,7 @@
 				method: 'GET',
 				headers: parameters.headers,
 				jsonData: parameters.params,
-				url: CMDBuild.core.proxy.Index.session.rest + '/' + parameters.urlParams[CMDBuild.core.constants.Proxy.TOKEN] + '/',
+				url: CMDBuild.core.proxy.index.Json.session.rest + '/' + parameters.urlParams[CMDBuild.core.constants.Proxy.TOKEN] + '/',
 				disableAllMessages: true,
 				loadMask: Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : true,
 				scope: parameters.scope || this,
@@ -98,7 +98,7 @@
 				method: 'PUT',
 				headers: parameters.headers,
 				jsonData: parameters.params,
-				url: CMDBuild.core.proxy.Index.session.rest + '/' + parameters.urlParams[CMDBuild.core.constants.Proxy.TOKEN] + '/',
+				url: CMDBuild.core.proxy.index.Json.session.rest + '/' + parameters.urlParams[CMDBuild.core.constants.Proxy.TOKEN] + '/',
 				loadMask: Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : true,
 				scope: parameters.scope || this,
 				success: parameters.success || Ext.emptyFn,

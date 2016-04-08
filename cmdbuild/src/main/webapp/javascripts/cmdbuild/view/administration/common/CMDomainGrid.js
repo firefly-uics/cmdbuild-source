@@ -1,7 +1,10 @@
 (function() {
 	var tr = CMDBuild.Translation.administration.modClass.domainProperties;
 
-	Ext.require('CMDBuild.core.constants.Global');
+	Ext.require([
+		'CMDBuild.core.constants.Global',
+		'CMDBuild.core.proxy.classes.Domains'
+	]);
 
 	Ext.define("CMDBuild.Administration.DomainGrid", {
 		extend: "Ext.grid.Panel",
@@ -80,7 +83,7 @@
 					}
 				],
 				columns : columns,
-				store: CMDBuild.ServiceProxy.administration.domain.getGridStore()
+				store: CMDBuild.core.proxy.classes.Domains.getStore()
 			});
 
 			this.callParent();
