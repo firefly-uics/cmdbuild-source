@@ -14,12 +14,10 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.cmdbuild.auth.ClientRequestAuthenticator.ClientRequest;
-import org.cmdbuild.auth.UserStore;
 import org.cmdbuild.exception.RedirectException;
 import org.cmdbuild.logger.Log;
-import org.cmdbuild.logic.auth.AuthenticationLogic;
 import org.cmdbuild.logic.auth.AuthenticationLogic.ClientAuthenticationResponse;
-import org.cmdbuild.logic.auth.StandardAuthenticationLogic;
+import org.cmdbuild.logic.auth.StandardSessionLogic;
 import org.slf4j.Logger;
 import org.slf4j.Marker;
 import org.slf4j.MarkerFactory;
@@ -63,14 +61,7 @@ public class AuthFilter implements Filter {
 	public static final String LOGOUT_URL = "logout.jsp";
 
 	@Autowired
-	private UserStore userStore;
-
-	private AuthenticationLogic authenticationLogic;
-
-	@Autowired
-	public void setAuthenticationLogic(final StandardAuthenticationLogic authenticationLogic) {
-		this.authenticationLogic = authenticationLogic;
-	}
+	private StandardSessionLogic sessionLogic;
 
 	@Override
 	public void init(final FilterConfig filterConfig) throws ServletException {
@@ -93,26 +84,28 @@ public class AuthFilter implements Filter {
 				logger.debug(marker, "root page, redirecting to login");
 				redirectToLogin(httpResponse);
 			} else if (isLoginPage(uri)) {
-				if (userStore.getUser().isValid()) {
+				if (sessionLogic.isValidUser()) {
 					redirectToManagement(httpResponse);
 				} else {
 					logger.debug(marker, "user is not valid, trying login using HTTP request");
-					final ClientAuthenticationResponse clientAuthenticatorResponse = doLogin(httpRequest, userStore);
+					final ClientAuthenticationResponse clientAuthenticatorResponse = sessionLogic
+							.login(new ClientRequestWrapper(httpRequest));
 					final String authenticationRedirectUrl = clientAuthenticatorResponse.getRedirectUrl();
 					if (authenticationRedirectUrl != null) {
 						redirectToCustom(authenticationRedirectUrl);
-					} else if (userStore.getUser().isValid()) {
+					} else if (sessionLogic.isValidUser()) {
 						redirectToManagement(httpResponse);
 					}
 				}
-			} else if (isProtectedPage(uri)) {
-				if (!userStore.getUser().isValid()) {
+			} else if (!isService(uri) && !isShark(uri) && !isResouce(uri) && !isLoginPage(uri)) {
+				if (!sessionLogic.isValidUser()) {
 					logger.debug(marker, "user is not valid, trying login using HTTP request");
-					final ClientAuthenticationResponse clientAuthenticatorResponse = doLogin(httpRequest, userStore);
+					final ClientAuthenticationResponse clientAuthenticatorResponse = sessionLogic
+							.login(new ClientRequestWrapper(httpRequest));
 					final String authenticationRedirectUrl = clientAuthenticatorResponse.getRedirectUrl();
 					if (authenticationRedirectUrl != null) {
 						redirectToCustom(authenticationRedirectUrl);
-					} else if (!userStore.getUser().isValid() && !isLogoutPage(uri)) {
+					} else if (!sessionLogic.isValidUser() && !isLogoutPage(uri)) {
 						redirectToLogin(httpResponse);
 					}
 				}
@@ -121,12 +114,6 @@ public class AuthFilter implements Filter {
 		} catch (final RedirectException re) {
 			re.sendRedirect(httpResponse);
 		}
-	}
-
-	private ClientAuthenticationResponse doLogin(final HttpServletRequest httpRequest, final UserStore userStore) {
-		final ClientAuthenticationResponse clientAuthenticatorResponse = authenticationLogic
-				.login(new ClientRequestWrapper(httpRequest), userStore);
-		return clientAuthenticatorResponse;
 	}
 
 	private void redirectToManagement(final HttpServletResponse response) throws IOException, RedirectException {
@@ -144,21 +131,28 @@ public class AuthFilter implements Filter {
 		throw new RedirectException(uri);
 	}
 
-	private boolean isRootPage(final String uri) {
+	private static boolean isRootPage(final String uri) {
 		return uri.equals("/");
 	}
 
-	private boolean isLoginPage(final String uri) {
+	private static boolean isLoginPage(final String uri) {
 		return uri.equals("/" + LOGIN_URL);
 	}
 
-	private boolean isLogoutPage(final String uri) {
+	private static boolean isLogoutPage(final String uri) {
 		return uri.equals("/" + LOGOUT_URL);
 	}
 
-	protected boolean isProtectedPage(final String uri) {
-		final boolean isException = uri.startsWith("/services/") || uri.startsWith("/shark/")
-				|| uri.matches("^(.*)(css|js|png|jpg|gif)$") || isLoginPage(uri);
-		return !isException;
+	private static boolean isService(final String uri) {
+		return uri.startsWith("/services/");
 	}
+
+	private static boolean isShark(final String uri) {
+		return uri.startsWith("/shark/");
+	}
+
+	private static boolean isResouce(final String uri) {
+		return uri.matches("^(.*)(css|js|png|jpg|gif)$");
+	}
+
 }
