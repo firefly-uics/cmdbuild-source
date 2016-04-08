@@ -37,7 +37,7 @@
 
 			var view = this.view;
 			var params = {};
-			params[_CMProxy.parameter.CLASS_NAME] = _CMCache.getEntryTypeNameById(classId);
+			params[CMDBuild.core.constants.Proxy.CLASS_NAME] = _CMCache.getEntryTypeNameById(classId);
 
 			CMDBuild.core.LoadMask.show();
 			view.store.load({
@@ -120,7 +120,7 @@
 		}
 
 		var params = {};
-		params[_CMProxy.parameter.DOMAIN_NAME] = this.currentDomain.get("name");
+		params[CMDBuild.core.constants.Proxy.DOMAIN_NAME] = this.currentDomain.get("name");
 
 		CMDBuild.core.proxy.domain.Domain.remove({
 			params: params,

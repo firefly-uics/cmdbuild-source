@@ -94,7 +94,7 @@
 		});
 
 		it('call the service proxy to add a dashboard', function() {
-			var add = spyOn(CMDBuild.ServiceProxy.Dashboard, "add"),
+			var add = spyOn(CMDBuild.core.proxy.dashboard.Dashboard, "create"),
 				fieldsValue = {
 					name: "Foo",
 					description: "Bar",
@@ -111,7 +111,7 @@
 		});
 
 		it('call the service proxy to modify a dashboard', function() {
-			var modify = spyOn(CMDBuild.ServiceProxy.Dashboard, "modify"),
+			var modify = spyOn(CMDBuild.core.proxy.dashboard.Dashboard, "update"),
 				fieldsValue = {
 					name: "Foo",
 					description: "Bar",
@@ -135,7 +135,7 @@
 		});
 
 		it('call the service proxy to remove a dashboard', function() {
-			var remove = spyOn(CMDBuild.ServiceProxy.Dashboard, "remove"),
+			var remove = spyOn(CMDBuild.core.proxy.dashboard.Dashboard, "remove"),
 				dashboard = aDashboard();
 
 			controller.dashboardWasSelected(dashboard);
@@ -148,9 +148,9 @@
 
 		it('clean the view and the data when remove a dashboard', function() {
 			var dashboard = aDashboard();
-			var remove = CMDBuild.ServiceProxy.Dashboard.remove();
+			var remove = CMDBuild.core.proxy.dashboard.Dashboard.remove();
 
-			CMDBuild.ServiceProxy.Dashboard.remove = function(dashboardId, success, scope) {
+			CMDBuild.core.proxy.dashboard.Dashboard.remove = function(dashboardId, success, scope) {
 				_CMCache.removeDashboardWithId(dashboardId);
 				success.apply(scope);
 			};
@@ -164,7 +164,7 @@
 			expect(view.disableButtons).toHaveBeenCalled();
 			expect(view.disableTBarButtons).toHaveBeenCalled();
 
-			CMDBuild.ServiceProxy.Dashboard.remove = remove;
+			CMDBuild.core.proxy.dashboard.Dashboard.remove = remove;
 		})
 	});
 

@@ -106,8 +106,8 @@
 			var params = {};
 			var me = this;
 			if (this.card) {
-				params[_CMProxy.parameter.CARD_ID] = me.card.get("Id");
-				params[_CMProxy.parameter.CLASS_NAME] = _CMCache.getEntryTypeNameById(me.card.get("IdClass"));
+				params[CMDBuild.core.constants.Proxy.CARD_ID] = me.card.get("Id");
+				params[CMDBuild.core.constants.Proxy.CLASS_NAME] = _CMCache.getEntryTypeNameById(me.card.get("IdClass"));
 			}
 
 			return params;
@@ -129,6 +129,7 @@
 						params: {
 							id: id
 						},
+						loadMask: false,
 						success: success
 					});
 				}
@@ -144,7 +145,8 @@
 					CMDBuild.core.proxy.Card.unlock({
 						params: {
 							id: id
-						}
+						},
+						loadMask: false
 					});
 				}
 			}

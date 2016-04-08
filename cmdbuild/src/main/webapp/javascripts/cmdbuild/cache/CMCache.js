@@ -2,10 +2,15 @@
 
 	var dashboardClassesProcessStore = null;
 
+	Ext.ns('CMDBuild.cache');
 	Ext.define("CMDBuild.cache.CMCache", {
 		extend: "Ext.util.Observable",
 
-		requires: ['CMDBuild.core.proxy.Index'],
+		requires: [
+			'CMDBuild.core.proxy.Attribute',
+			'CMDBuild.core.proxy.gis.Gis',
+			'CMDBuild.core.proxy.index.Json'
+		],
 
 		mixins: {
 			lookup: "CMDBUild.cache.CMCacheLookupFunctions",
@@ -55,10 +60,9 @@
 
 		loadAttributes: function(classId, callback) {
 			var me = this;
-			var parameterNames = CMDBuild.ServiceProxy.parameter;
 			var params = {};
-			params[parameterNames.ACTIVE] = true;
-			params[parameterNames.CLASS_NAME] = _CMCache.getEntryTypeNameById(classId);
+			params[CMDBuild.core.constants.Proxy.ACTIVE] = true;
+			params[CMDBuild.core.constants.Proxy.CLASS_NAME] = _CMCache.getEntryTypeNameById(classId);
 
 			function success(response, options, result) {
 				var attributes = result.attributes;
@@ -78,8 +82,9 @@
 				}
 			}
 
-			CMDBuild.ServiceProxy.attributes.read({
+			CMDBuild.core.proxy.Attribute.read({
 				params: params,
+				loadMask: false,
 				success: success
 			});
 		},
@@ -202,7 +207,7 @@
 				pageSize: CMDBuild.configuration.instance.get('referenceComboStoreLimit'), // TODO: use proxy constants
 				proxy: {
 					type: 'ajax',
-					url: CMDBuild.core.proxy.Index.card.getListShort,
+					url: CMDBuild.core.proxy.index.Json.card.getListShort,
 					reader: {
 						type: 'json',
 						root: 'rows',
@@ -349,6 +354,6 @@
 		});
 	}
 
-	CMDBuild.Cache = new CMDBuild.cache.CMCache();
-	_CMCache = CMDBuild.Cache; //to uniform the variable names, maybe a day I'll can delete CMDBuild.Cache
+	_CMCache = Ext.create('CMDBuild.cache.CMCache');
+
 })();

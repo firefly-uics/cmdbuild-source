@@ -4,7 +4,7 @@
 
 		requires: [
 			'CMDBuild.core.constants.Proxy',
-			'CMDBuild.core.proxy.CMProxyTasks'
+			'CMDBuild.core.proxy.taskManager.common.WorkflowForm'
 		],
 
 		/**
@@ -227,7 +227,7 @@
 				if (Ext.isEmpty(erase))
 					erase = false;
 
-				CMDBuild.core.proxy.CMProxyTasks.getWorkflowAttributes({
+				CMDBuild.core.proxy.taskManager.common.WorkflowForm.getAttributes({
 					params: {
 						className: className
 					},

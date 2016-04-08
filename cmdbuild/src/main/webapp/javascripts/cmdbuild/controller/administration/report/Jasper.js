@@ -7,7 +7,7 @@
 			'CMDBuild.core.constants.FieldWidths',
 			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.Message',
-			'CMDBuild.core.proxy.Index',
+			'CMDBuild.core.proxy.index.Json',
 			'CMDBuild.core.proxy.report.Jasper',
 			'CMDBuild.model.report.Grid',
 			'CMDBuild.view.common.field.translatable.Utils'
@@ -188,7 +188,7 @@
 					CMDBuild.core.interfaces.FormSubmit.submit({
 						buildRuntimeForm: true,
 						params: params,
-						url: CMDBuild.core.proxy.Index.report.printReportFactory
+						url: CMDBuild.core.proxy.index.Json.report.printReportFactory
 					});
 				}
 			});

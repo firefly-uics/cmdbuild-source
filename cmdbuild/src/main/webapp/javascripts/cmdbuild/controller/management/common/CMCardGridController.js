@@ -233,13 +233,14 @@
 			// Take the current store configuration
 			// to have the sort and filter
 			var params = Ext.apply({}, store.proxy.extraParams);
-			params[_CMProxy.parameter.CARD_ID] = p.Id;
-			params[_CMProxy.parameter.CLASS_NAME] = _CMCache.getEntryTypeNameById(p.IdClass);
-			params[_CMProxy.parameter.RETRY_WITHOUT_FILTER] = retryWithoutFilter;
-			params[_CMProxy.parameter.SORT] = Ext.encode(getSorting(store));
+			params[CMDBuild.core.constants.Proxy.CARD_ID] = p.Id;
+			params[CMDBuild.core.constants.Proxy.CLASS_NAME] = _CMCache.getEntryTypeNameById(p.IdClass);
+			params[CMDBuild.core.constants.Proxy.RETRY_WITHOUT_FILTER] = retryWithoutFilter;
+			params[CMDBuild.core.constants.Proxy.SORT] = Ext.encode(getSorting(store));
 
-			CMDBuild.ServiceProxy.card.getPosition({
+			CMDBuild.core.proxy.Card.getPosition({
 				params: params,
+				loadMask: false,
 				failure: function onGetPositionFailure(response, options, decoded) {
 					// reconfigure the store and blah blah blah
 				},
@@ -399,7 +400,11 @@
 				if (filter.isLocal()) {
 					onSuccess();
 				} else {
-					CMDBuild.ServiceProxy.Filter.remove(filter, {
+					CMDBuild.core.proxy.Filter.remove({
+						params: {
+							id: filter.getId()
+						},
+						loadMask: false,
 						success: onSuccess
 					});
 				}
@@ -472,10 +477,33 @@
 			filter.setDescription(description);
 			filter.commit();
 
-			var action = filter.getId() ? "update" : "create";
-			CMDBuild.ServiceProxy.Filter[action](filter, {
-				success: onSuccess
-			});
+			if (filter.getId()) {
+				CMDBuild.core.proxy.Filter.update({
+					params: {
+						id: filter.getId(),
+						className: filter.getEntryType(),
+						configuration: Ext.encode(filter.getConfiguration()),
+						description: filter.getDescription(),
+						name: filter.getName(),
+						template: filter.isTemplate()
+					},
+					loadMask: false,
+					success: onSuccess
+				});
+			} else {
+				CMDBuild.core.proxy.Filter.create({
+					params: {
+						id: filter.getId(),
+						className: filter.getEntryType(),
+						configuration: Ext.encode(filter.getConfiguration()),
+						description: filter.getDescription(),
+						name: filter.getName(),
+						template: filter.isTemplate()
+					},
+					loadMask: false,
+					success: onSuccess
+				});
+			}
 		},
 
 		// as runtimeFilterParamsWindow

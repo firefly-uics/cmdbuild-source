@@ -1,10 +1,11 @@
-(function() {
+(function () {
 
 	Ext.define('CMDBuild.core.proxy.workflow.Properties', {
 
 		requires: [
+			'CMDBuild.core.constants.Global',
 			'CMDBuild.core.constants.Proxy',
-			'CMDBuild.core.proxy.Index',
+			'CMDBuild.core.proxy.index.Json',
 			'CMDBuild.model.workflow.tabs.properties.Parent'
 		],
 
@@ -13,13 +14,13 @@
 		/**
 		 * @returns {Ext.data.Store or CMDBuild.core.cache.Store}
 		 */
-		getStoreSuperProcesses: function() {
+		getStoreSuperProcesses: function () {
 			return CMDBuild.global.Cache.requestAsStore(CMDBuild.core.constants.Proxy.WORKFLOW, {
 				autoLoad: true,
 				model: 'CMDBuild.model.workflow.tabs.properties.Parent',
 				proxy: {
 					type: 'ajax',
-					url: CMDBuild.core.proxy.Index.classes.readAll,
+					url: CMDBuild.core.proxy.index.Json.classes.readAll,
 					reader: {
 						type: 'json',
 						root: CMDBuild.core.constants.Proxy.CLASSES
@@ -31,9 +32,9 @@
 					}
 				},
 				filters: [
-					function(record) { // Filters classes and all non superclass processes
+					function (record) { // Filters classes and all non superclass processes
 						return (
-							record.get(CMDBuild.core.constants.Proxy.TYPE) == 'processclass'
+							record.get(CMDBuild.core.constants.Proxy.TYPE) == CMDBuild.core.constants.Global.getTableTypeProcessClass()
 							&& record.get('superclass')
 						);
 					}

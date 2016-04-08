@@ -1,4 +1,4 @@
-(function() {
+(function () {
 
 	/**
 	 * Proxy for filters created by users
@@ -7,40 +7,50 @@
 
 		requires: [
 			'CMDBuild.core.constants.Proxy',
-			'CMDBuild.core.proxy.Index'
+			'CMDBuild.core.proxy.index.Json'
 		],
 
 		singleton: true,
 
 		/**
 		 * @param {Object} parameters
+		 *
+		 * @returns {Void}
 		 */
-		create: function(parameters) {},
+		create: function (parameters) {},
 
 		/**
 		 * @param {Object} parameters
+		 *
+		 * @returns {Void}
 		 */
-		read: function(parameters) {
+		read: function (parameters) {
 			parameters = Ext.isEmpty(parameters) ? {} : parameters;
 
-			Ext.apply(parameters, { url: CMDBuild.core.proxy.Index.filter.user.read });
+			Ext.apply(parameters, { url: CMDBuild.core.proxy.index.Json.filter.user.read });
 
 			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.FILTER, parameters);
 		},
 		/**
 		 * @param {Object} parameters
+		 *
+		 * @returns {Void}
 		 */
-		readAll: function(parameters) {},
+		readAll: function (parameters) {},
 
 		/**
 		 * @param {Object} parameters
+		 *
+		 * @returns {Void}
 		 */
-		remove: function(parameters) {},
+		remove: function (parameters) {},
 
 		/**
 		 * @param {Object} parameters
+		 *
+		 * @returns {Void}
 		 */
-		update: function(parameters) {}
+		update: function (parameters) {}
 	});
 
 })();

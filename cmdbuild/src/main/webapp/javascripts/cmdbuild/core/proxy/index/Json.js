@@ -1,21 +1,24 @@
 (function () {
 
-	/**
-	 * A class that works as index of all proxies urls
-	 */
-	Ext.define('CMDBuild.core.proxy.Index', {
-		alternateClassName: ['CMDBuild.ServiceProxy.url', 'CMDBuild.core.proxy.Index'], // Legacy class name
+	Ext.define('CMDBuild.core.proxy.index.Json', {
 
 		singleton: true,
 
-		attachments: {
-			getAttachmentList: 'services/json/attachments/getattachmentlist'
+		attachment: {
+			create: '',
+			read: '',
+			update: '',
+			remove: 'services/json/attachments/deleteattachment',
+
+			download: 'services/json/attachments/downloadattachment',
+			getContext: 'services/json/attachments/getattachmentscontext',
+			readAll: 'services/json/attachments/getattachmentlist'
 		},
 
 		attribute: {
-			create: '',
-			read: 'services/json/schema/modclass/getattributelist',
-			update: 'services/json/schema/modclass/saveattribute',
+			create: '', // TODO: waiting for refactor (crud)
+			read: 'services/json/schema/modclass/getattributelist', // TODO: waiting for refactor (crud)
+			update: 'services/json/schema/modclass/saveattribute', // TODO: waiting for refactor (crud)
 			remove: 'services/json/schema/modclass/deleteattribute',
 
 			reorder: 'services/json/schema/modclass/reorderattribute',
@@ -23,13 +26,32 @@
 		},
 
 		bim: {
-			readRootLayer: 'services/json/bim/rootclassname'
+			create: 'services/json/bim/create',
+			read: 'services/json/bim/read',
+			update: 'services/json/bim/update',
+			remove: '',
+
+			enable: 'services/json/bim/enableproject',
+			disable: 'services/json/bim/disableproject',
+
+			readLayer: 'services/json/bim/readbimlayer',
+			saveLayer: 'services/json/bim/savebimlayer',
+			rootLayer: 'services/json/bim/rootclassname',
+
+			roidForCardId: 'services/json/bim/getroidforcardid',
+
+			importIfc: 'services/json/bim/importifc',
+
+			activeForClassName: 'services/json/bim/getactiveforclassname',
+
+			fetchCardFromViewewId: 'services/json/bim/fetchcardfromviewewid',
+			fetchJsonForBimViewer: 'services/json/bim/fetchjsonforbimviewer'
 		},
 
 		card: {
-			create: '',
+			create: '', // TODO: waiting for refactor (crud)
 			read: 'services/json/management/modcard/getcard',
-			update: 'services/json/management/modcard/updatecard',
+			update: 'services/json/management/modcard/updatecard', // TODO: waiting for refactor (crud)
 			remove: 'services/json/management/modcard/deletecard',
 
 			bulkUpdate: 'services/json/management/modcard/bulkupdate',
@@ -47,6 +69,7 @@
 			remove: 'services/json/schema/modclass/deletetable',
 
 			readAll: 'services/json/schema/modclass/getallclasses',
+			foreignKeyTargetClass: 'services/json/schema/modclass/getfktargetingclass',
 
 			cards: {
 				lock: 'services/json/lock/lockcard',
@@ -73,9 +96,11 @@
 		csv: {
 			clearSession: 'services/json/management/importcsv/clearsession',
 			exports: 'services/json/management/exportcsv/writecsv',
-			getCsvRecords: 'services/json/management/importcsv/getcsvrecords',
-			readCsv: 'services/json/management/importcsv/readcsv',
-			uploadCsv: 'services/json/management/importcsv/uploadcsv'
+			getRecords: 'services/json/management/importcsv/getcsvrecords',
+			read: 'services/json/management/importcsv/readcsv',
+			storeRecords: 'services/json/management/importcsv/storecsvrecords',
+			updateRecords: 'services/json/management/importcsv/updatecsvrecords',
+			upload: 'services/json/management/importcsv/uploadcsv'
 		},
 
 		customPage: {
@@ -89,12 +114,28 @@
 		},
 
 		dashboard: {
-			create: '',
+			create: 'services/json/dashboard/add',
 			read: '',
-			update: '',
-			remove: '',
+			update: 'services/json/dashboard/modifybaseproperties',
+			remove: 'services/json/dashboard/remove',
 
-			readAll: 'services/json/dashboard/fulllist'
+			readAll: 'services/json/dashboard/fulllist', // fullList
+
+			chart: {
+				create: 'services/json/dashboard/addchart',
+				read: 'services/json/dashboard/getchartdata',
+				update: 'services/json/dashboard/modifychart',
+				remove: 'services/json/dashboard/removechart',
+
+				readForPreview: 'services/json/dashboard/getchartdataforpreview'
+			},
+
+			columns: {
+				create: '',
+				read: '',
+				update: 'services/json/dashboard/modifycolumns',
+				remove: '',
+			}
 		},
 
 		dataView: {
@@ -126,7 +167,7 @@
 			remove: 'services/json/schema/modclass/deletedomain',
 
 			readAll: 'services/json/schema/modclass/getalldomains',
-			getDomainList: 'services/json/schema/modclass/getdomainlist'
+			getList: 'services/json/schema/modclass/getdomainlist'
 		},
 
 		email: {
@@ -174,8 +215,6 @@
 			getStore: 'services/json/email/email/readall'
 		},
 
-		fkTargetClass: 'services/json/schema/modclass/getfktargetingclass',
-
 		filter: {
 			group: {
 				create: 'services/json/filter/create',
@@ -212,7 +251,46 @@
 		},
 
 		gis: {
-			readTreeNavigation: 'services/json/gis/getgistreenavigation'
+			geoAttribute: {
+				create: 'services/json/gis/addgeoattribute',
+				read: '',
+				remove: 'services/json/gis/deletegeoattribute',
+				update: 'services/json/gis/modifygeoattribute'
+			},
+
+			geoServer: {
+				layer: {
+					create: 'services/json/gis/addgeoserverlayer',
+					read: '',
+					remove: 'services/json/gis/deletegeoserverlayer',
+					update: 'services/json/gis/modifygeoserverlayer',
+
+					readAll: 'services/json/gis/getgeoserverlayers'
+				}
+			},
+
+			icons: {
+				create: 'services/json/icon/upload',
+				read: '',
+				remove: 'services/json/icon/remove',
+				update: 'services/json/icon/update',
+
+				readAll: 'services/json/icon/list'
+			},
+
+			treeNavigation: {
+				create: '', // TODO: waiting for refactor (CRUD)
+				read: 'services/json/gis/getgistreenavigation',
+				remove: 'services/json/gis/removegistreenavigation',
+				update: 'services/json/gis/savegistreenavigation' // TODO: waiting for refactor (CRUD)
+			},
+
+			expandDomainTree: 'services/json/gis/expanddomaintree',
+			getFeatures: 'services/json/gis/getfeature',
+			getGeoCardList: 'services/json/gis/getgeocardlist',
+			readAllLayers: 'services/json/gis/getalllayers',
+			setLayerOrder: 'services/json/gis/setlayersorder',
+			setLayerVisibility: 'services/json/gis/setlayervisibility'
 		},
 
 		group: {
@@ -243,15 +321,18 @@
 			}
 		},
 
-		history: {
+		history: { // TODO: waiting for refactor (different endpoints)
 			classes: {
 				getCardHistory: 'services/json/management/modcard/getcardhistory',
 				getHistoricCard: 'services/json/management/modcard/gethistoriccard',
 				getRelationsHistory: 'services/json/management/modcard/getrelationshistory',
 				getHistoricRelation: 'services/json/management/modcard/gethistoricrelation'
 			},
-			processes: {
-				getProcessHistory: 'services/json/management/modcard/getprocesshistory'
+			workflow: {
+				getWorkflowHistory: 'services/json/management/modcard/getprocesshistory',
+				getHistoricWorkflow: 'services/json/management/modcard/gethistoriccard',
+				getRelationsHistory: 'services/json/management/modcard/getrelationshistory',
+				getHistoricRelation: 'services/json/management/modcard/gethistoricrelation'
 			}
 		},
 
@@ -293,13 +374,13 @@
 		},
 
 		menu: {
-			create: '',
+			create: '', // TODO: waiting for refactor (crud)
 			read: 'services/json/schema/modmenu/getassignedmenu',
-			update: 'services/json/schema/modmenu/savemenu',
+			update: 'services/json/schema/modmenu/savemenu', // TODO: waiting for refactor (crud)
 			remove: 'services/json/schema/modmenu/deletemenu',
 
-			readConfiguration: 'services/json/schema/modmenu/getmenuconfiguration',
-			readAvailableItems: 'services/json/schema/modmenu/getavailablemenuitems'
+			readAvailableItems: 'services/json/schema/modmenu/getavailablemenuitems',
+			readConfiguration: 'services/json/schema/modmenu/getmenuconfiguration'
 		},
 
 		navigationTree: {
@@ -346,21 +427,15 @@
 			},
 		},
 
-		processes: {
-			instances: {
-				lock: 'services/json/lock/lockactivity',
-				unlock: 'services/json/lock/unlockactivity'
-			}
-		},
-
 		relations: {
 			create: 'services/json/management/modcard/createrelations',
-			read: 'services/json/management/modcard/getrelationlist',
+			read: '',
 			update: 'services/json/management/modcard/modifyrelation',
 			remove: 'services/json/management/modcard/deleterelation',
 
-			removeDetail: 'services/json/management/modcard/deletedetail',
-			getAlreadyRelatedCards: 'services/json/management/modcard/getalreadyrelatedcards'
+			getAlreadyRelatedCards: 'services/json/management/modcard/getalreadyrelatedcards',
+			readAll: 'services/json/management/modcard/getrelationlist',
+			removeDetail: 'services/json/management/modcard/deletedetail'
 		},
 
 		report: {
@@ -408,47 +483,51 @@
 			stop: 'services/json/schema/taskmanager/stop',
 
 			connector: {
+				create: 'services/json/schema/taskmanager/connector/create',
+				read: 'services/json/schema/taskmanager/connector/read',
+				update: 'services/json/schema/taskmanager/connector/update',
 				remove: 'services/json/schema/taskmanager/connector/delete',
-				get: 'services/json/schema/taskmanager/connector/read',
-				post: 'services/json/schema/taskmanager/connector/create',
-				put: 'services/json/schema/taskmanager/connector/update',
 
 				getStore: 'services/json/schema/taskmanager/connector/readall',
 				getSqlSources: 'services/json/schema/taskmanager/connector/availablesqlsources'
 			},
+
 			email: {
+				create: 'services/json/schema/taskmanager/reademail/create',
+				read: 'services/json/schema/taskmanager/reademail/read',
+				update: 'services/json/schema/taskmanager/reademail/update',
 				remove: 'services/json/schema/taskmanager/reademail/delete',
-				get: 'services/json/schema/taskmanager/reademail/read',
-				post: 'services/json/schema/taskmanager/reademail/create',
-				put: 'services/json/schema/taskmanager/reademail/update',
 
 				getStore: 'services/json/schema/taskmanager/reademail/readall'
 			},
+
 			event: {
 				getStore: 'services/json/schema/taskmanager/event/readall',
 
 				asynchronous: {
+					create: 'services/json/schema/taskmanager/event/asynchronous/create',
+					read: 'services/json/schema/taskmanager/event/asynchronous/read',
+					update: 'services/json/schema/taskmanager/event/asynchronous/update',
 					remove: 'services/json/schema/taskmanager/event/asynchronous/delete',
-					get: 'services/json/schema/taskmanager/event/asynchronous/read',
-					post: 'services/json/schema/taskmanager/event/asynchronous/create',
-					put: 'services/json/schema/taskmanager/event/asynchronous/update',
 
 					getStore: 'services/json/schema/taskmanager/event/asynchronous/readall'
 				},
+
 				synchronous: {
+					create: 'services/json/schema/taskmanager/event/synchronous/create',
+					read: 'services/json/schema/taskmanager/event/synchronous/read',
+					update: 'services/json/schema/taskmanager/event/synchronous/update',
 					remove: 'services/json/schema/taskmanager/event/synchronous/delete',
-					get: 'services/json/schema/taskmanager/event/synchronous/read',
-					post: 'services/json/schema/taskmanager/event/synchronous/create',
-					put: 'services/json/schema/taskmanager/event/synchronous/update',
 
 					getStore: 'services/json/schema/taskmanager/event/synchronous/readall'
 				}
 			},
+
 			workflow: {
+				create: 'services/json/schema/taskmanager/startworkflow/create',
+				read: 'services/json/schema/taskmanager/startworkflow/read',
+				update: 'services/json/schema/taskmanager/startworkflow/update',
 				remove: 'services/json/schema/taskmanager/startworkflow/delete',
-				get: 'services/json/schema/taskmanager/startworkflow/read',
-				post: 'services/json/schema/taskmanager/startworkflow/create',
-				put: 'services/json/schema/taskmanager/startworkflow/update',
 
 				getStore: 'services/json/schema/taskmanager/startworkflow/readall',
 				getStoreByWorkflow: 'services/json/schema/taskmanager/startworkflow/readallbyworkflow'
@@ -483,7 +562,8 @@
 			readAllForClass: 'services/json/widget/readallforclass',
 
 			// Widgets end-points
-			ping: 'services/json/widget/callwidget'
+			ping: 'services/json/widget/callwidget',
+			webService: 'services/json/widget/callwidget'
 		},
 
 		workflow: {
@@ -500,6 +580,11 @@
 			isProcessUpdated: 'services/json/workflow/isprocessupdated',
 			saveActivity: 'services/json/workflow/saveactivity',
 			synchronize: 'services/json/workflow/sync',
+
+			activity: {
+				lock: 'services/json/lock/lockactivity',
+				unlock: 'services/json/lock/unlockactivity'
+			},
 
 			xpdl: {
 				download: 'services/json/workflow/downloadxpdl',

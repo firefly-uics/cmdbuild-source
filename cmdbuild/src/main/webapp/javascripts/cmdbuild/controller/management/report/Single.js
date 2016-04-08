@@ -6,7 +6,7 @@
 		requires: [
 			'CMDBuild.core.Message',
 			'CMDBuild.core.constants.Proxy',
-			'CMDBuild.core.proxy.Index',
+			'CMDBuild.core.proxy.index.Json',
 			'CMDBuild.core.proxy.report.Report'
 		],
 
@@ -275,7 +275,7 @@
 			if (forceDownload) { // Force download mode
 				var form = Ext.create('Ext.form.Panel', {
 					standardSubmit: true,
-					url: CMDBuild.core.proxy.Index.report.printReportFactory + '?donotdelete=true' // Add parameter to avoid report delete
+					url: CMDBuild.core.proxy.index.Json.report.printReportFactory + '?donotdelete=true' // Add parameter to avoid report delete
 				});
 
 				form.submit({
@@ -294,7 +294,7 @@
 
 					autoEl: {
 						tag: 'iframe',
-						src: CMDBuild.core.proxy.Index.report.printReportFactory + '?donotdelete=true' // Add parameter to avoid report delete
+						src: CMDBuild.core.proxy.index.Json.report.printReportFactory + '?donotdelete=true' // Add parameter to avoid report delete
 					}
 				});
 			}

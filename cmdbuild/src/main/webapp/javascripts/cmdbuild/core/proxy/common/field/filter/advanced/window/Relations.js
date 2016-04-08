@@ -1,4 +1,4 @@
-(function() {
+(function () {
 
 	Ext.define('CMDBuild.core.proxy.common.field.filter.advanced.window.Relations', {
 
@@ -11,18 +11,18 @@
 		singleton: true,
 
 		/**
-		 * @returns {Ext.data.Store}
+		 * @returns {Ext.data.Store or CMDBuild.core.cache.Store}
 		 */
-		getDestinationStore: function() {
-			return Ext.create('Ext.data.Store', {
+		getDestinationStore: function () {
+			return CMDBuild.global.Cache.requestAsStore(CMDBuild.core.constants.Proxy.CLASS, {
 				autoLoad: false,
 				model: 'CMDBuild.model.common.field.filter.advanced.window.relations.DestinationEditorStore',
 				proxy: {
 					type: 'ajax',
-					url: CMDBuild.core.proxy.Index.classes.readAll,
+					url: CMDBuild.core.proxy.index.Json.classes.readAll,
 					reader: {
 						type: 'json',
-						root: 'classes'
+						root: CMDBuild.core.constants.Proxy.CLASSES
 					},
 					extraParams: {
 						limitParam: undefined,
@@ -39,7 +39,7 @@
 		/**
 		 * @returns {Ext.data.ArrayStore}
 		 */
-		getDomainStore: function() {
+		getDomainStore: function () {
 			return Ext.create('Ext.data.ArrayStore', {
 				model: 'CMDBuild.model.common.field.filter.advanced.window.relations.DomainGrid',
 				data: [],

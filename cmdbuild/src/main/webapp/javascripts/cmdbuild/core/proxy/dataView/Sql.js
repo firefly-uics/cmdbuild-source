@@ -1,10 +1,10 @@
-(function() {
+(function () {
 
 	Ext.define('CMDBuild.core.proxy.dataView.Sql', {
 
 		requires: [
 			'CMDBuild.core.constants.Proxy',
-			'CMDBuild.core.proxy.Index',
+			'CMDBuild.core.proxy.index.Json',
 			'CMDBuild.core.Utils',
 			'CMDBuild.model.dataView.sql.GridStore',
 			'CMDBuild.model.Function'
@@ -14,11 +14,13 @@
 
 		/**
 		 * @param {Object} parameters
+		 *
+		 * @returns {Void}
 		 */
-		create: function(parameters) {
+		create: function (parameters) {
 			parameters = Ext.isEmpty(parameters) ? {} : parameters;
 
-			Ext.apply(parameters, { url: CMDBuild.core.proxy.Index.dataView.sql.create });
+			Ext.apply(parameters, { url: CMDBuild.core.proxy.index.Json.dataView.sql.create });
 
 			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.DATA_VIEW, parameters, true);
 		},
@@ -26,13 +28,13 @@
 		/**
 		 * @returns {Ext.data.Store or CMDBuild.core.cache.Store}
 		 */
-		getStore: function() {
+		getStore: function () {
 			return CMDBuild.global.Cache.requestAsStore(CMDBuild.core.constants.Proxy.DATA_VIEW, {
 				autoLoad: false,
 				model: 'CMDBuild.model.dataView.sql.GridStore',
 				proxy: {
 					type: 'ajax',
-					url: CMDBuild.core.proxy.Index.dataView.sql.readAll,
+					url: CMDBuild.core.proxy.index.Json.dataView.sql.readAll,
 					reader: {
 						type: 'json',
 						root: CMDBuild.core.constants.Proxy.VIEWS
@@ -52,13 +54,13 @@
 		/**
 		 * @returns {Ext.data.Store or CMDBuild.core.cache.Store}
 		 */
-		getStoreDataSources: function() {
+		getStoreDataSources: function () {
 			return CMDBuild.global.Cache.requestAsStore(CMDBuild.core.constants.Proxy.FUNCTION, {
 				autoLoad: true,
 				model: 'CMDBuild.model.Function',
 				proxy: {
 					type: 'ajax',
-					url: CMDBuild.core.proxy.Index.functions.readAll,
+					url: CMDBuild.core.proxy.index.Json.functions.readAll,
 					reader: {
 						type: 'json',
 						root: CMDBuild.core.constants.Proxy.RESPONSE
@@ -77,27 +79,23 @@
 
 		/**
 		 * @param {Object} parameters
-		 * @param {Object} parameters.extraParams
-		 * @param {Array} parameters.fields
 		 *
-		 * @return {Ext.data.Store}
+		 * @returns {Ext.data.Store or CMDBuild.core.cache.Store}
 		 *
 		 * @management
 		 */
-		getStoreFromSql: function(parameters) {
-			parameters = parameters || {};
-
-			return Ext.create('Ext.data.Store', {
+		getStoreFromSql: function (parameters) {
+			return CMDBuild.global.Cache.requestAsStore(CMDBuild.core.constants.Proxy.UNCACHED, {
 				autoLoad: true,
 				fields: parameters.fields || [],
 				pageSize: CMDBuild.configuration.instance.get(CMDBuild.core.constants.Proxy.ROW_LIMIT),
 				proxy: {
 					type: 'ajax',
-					url: CMDBuild.core.proxy.Index.card.getSqlCardList,
+					url: CMDBuild.core.proxy.index.Json.card.getSqlCardList,
 					reader: {
 						type: 'json',
-						root: 'cards',
-						totalProperty: 'results'
+						root: CMDBuild.core.constants.Proxy.CARDS,
+						totalProperty: CMDBuild.core.constants.Proxy.RESULTS
 					},
 					extraParams: parameters.extraParams || {}
 				}
@@ -106,33 +104,39 @@
 
 		/**
 		 * @param {Object} parameters
+		 *
+		 * @returns {Void}
 		 */
-		read: function(parameters) {
+		read: function (parameters) {
 			parameters = Ext.isEmpty(parameters) ? {} : parameters;
 
-			Ext.apply(parameters, { url: CMDBuild.core.proxy.Index.dataView.sql.read });
+			Ext.apply(parameters, { url: CMDBuild.core.proxy.index.Json.dataView.sql.read });
 
 			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.DATA_VIEW, parameters);
 		},
 
 		/**
 		 * @param {Object} parameters
+		 *
+		 * @returns {Void}
 		 */
-		remove: function(parameters) {
+		remove: function (parameters) {
 			parameters = Ext.isEmpty(parameters) ? {} : parameters;
 
-			Ext.apply(parameters, { url: CMDBuild.core.proxy.Index.dataView.sql.remove });
+			Ext.apply(parameters, { url: CMDBuild.core.proxy.index.Json.dataView.sql.remove });
 
 			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.DATA_VIEW, parameters, true);
 		},
 
 		/**
 		 * @param {Object} parameters
+		 *
+		 * @returns {Void}
 		 */
-		update: function(parameters) {
+		update: function (parameters) {
 			parameters = Ext.isEmpty(parameters) ? {} : parameters;
 
-			Ext.apply(parameters, { url: CMDBuild.core.proxy.Index.dataView.sql.update });
+			Ext.apply(parameters, { url: CMDBuild.core.proxy.index.Json.dataView.sql.update });
 
 			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.DATA_VIEW, parameters, true);
 		}

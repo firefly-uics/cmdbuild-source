@@ -1,28 +1,28 @@
-(function() {
+(function () {
 
 	Ext.define('CMDBuild.core.proxy.common.field.filter.advanced.window.Functions', {
 
 		requires: [
 			'CMDBuild.core.constants.Proxy',
-			'CMDBuild.core.proxy.Index',
+			'CMDBuild.core.proxy.index.Json',
 			'CMDBuild.model.common.field.filter.advanced.window.Function'
 		],
 
 		singleton: true,
 
 		/**
-		 * @returns {Ext.data.Store}
+		 * @returns {Ext.data.Store or CMDBuild.core.cache.Store}
 		 */
-		getStore: function() {
-			return Ext.create('Ext.data.Store', {
+		getStore: function () {
+			return CMDBuild.global.Cache.requestAsStore(CMDBuild.core.constants.Proxy.FUNCTION, {
 				autoLoad: false,
 				model: 'CMDBuild.model.common.field.filter.advanced.window.Function',
 				proxy: {
 					type: 'ajax',
-					url: CMDBuild.core.proxy.Index.functions.readAll,
+					url: CMDBuild.core.proxy.index.Json.functions.readAll,
 					reader: {
 						type: 'json',
-						root: 'response'
+						root: CMDBuild.core.constants.Proxy.RESPONSE
 					}
 				},
 				sorters: [

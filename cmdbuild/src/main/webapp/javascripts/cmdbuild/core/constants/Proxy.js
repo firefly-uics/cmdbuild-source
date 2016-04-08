@@ -1,10 +1,9 @@
-(function() {
+(function () {
 
 	/**
 	 * Constants with the standard parameter names
 	 */
 	Ext.define('CMDBuild.core.constants.Proxy', {
-		alternateClassName: ['CMDBuild.ServiceProxy.parameter', 'CMDBuild.core.proxy.Constants'], // Legacy class name
 
 		singleton: true,
 
@@ -141,11 +140,13 @@
 		CSV: 'csv',
 		CUSTOM: 'custom',
 		CUSTOM_FORM: 'customForm',
+		CUSTOM_PAGE: 'customPage',
 		CUSTOM_PAGES: 'customPages',
 		DASHBOARD: 'dashboard',
 		DASHBOARDS: 'dashboards',
 		DATA: 'data',
 		DATA_INDEX: 'dataIndex',
+		DATA_SOURCES: 'dataSources',
 		DATA_VIEW:'dataView',
 		DATABASE_NAME: 'databaseName',
 		DATABASE_TYPE: 'databaseType',
@@ -293,8 +294,10 @@
 		HEADERS: 'headers',
 		HIDDEN: 'hidden',
 		HIDE_SIDE_PANEL: 'hideSidePanel',
+		HISTORY: 'history',
 		HOST: 'host',
 		HOUR: 'hour',
+		ICON: 'icon',
 		ID: 'id',
 		ID_DOMAIN: 'idDomain',
 		IDENTIFIER: 'identifier',
@@ -339,6 +342,7 @@
 		LANGUAGES_WITH_LOCALIZATIONS: 'languagesWithLocalizations',
 		LANGUAGES_WITH_LOCALIZATIONS_TAGS: 'languagesWithLocalizationsTags',
 		LATITUDE: 'lat',
+		LAYERS: 'layers',
 		LAYOUT: 'layout',
 		LDAP: 'ldap',
 		LEAF: 'leaf',
@@ -418,6 +422,7 @@
 		PASSWORD: 'password',
 		PATCH: 'patch',
 		PATCHES: 'patches',
+		PATH: 'path',
 		PDF: 'pdf',
 		PERFORMER_NAME: 'performerName',
 		PERFORMERS: 'performers',
@@ -555,6 +560,7 @@
 		TARGET_CLASS_NAME: 'targetClassName',
 		TARGET_VARIABLE_NAME: 'targetVariableName',
 		TASK: 'task',
+		TASK_MANAGER: 'taskManager',
 		TEMPLATE: 'template',
 		TEMPLATE_ID: 'templateId',
 		TEMPLATE_NAME: 'templateName',
@@ -583,6 +589,7 @@
 		USER_STOPPABLE: 'userStoppable',
 		USERNAME: 'username',
 		USERS: 'users',
+		UTILITY: 'utility',
 		VALUE: 'value',
 		VALUES: 'values',
 		VARIABLES: 'variables',

@@ -3,7 +3,6 @@
 	Ext.require('CMDBuild.core.constants.Global');
 
 	var NO_SELECTION = 'No selection';
-	var parameterNames = CMDBuild.ServiceProxy.parameter;
 
 	Ext.define('CMDBuild.view.management.classes.relations.CMEditRelationWindow', {
 		extend: 'CMDBuild.Management.CardListWindow', // To choose the card for the relation
@@ -172,11 +171,12 @@
 		var p = buildSaveParams(this);
 
 		if (p) {
-			if (p[parameterNames.RELATION_ID ] == -1) { // creation
-				delete p[parameterNames.RELATION_ID];
+			if (p[CMDBuild.core.constants.Proxy.RELATION_ID ] == -1) { // creation
+				delete p[CMDBuild.core.constants.Proxy.RELATION_ID];
 
-				CMDBuild.ServiceProxy.relations.add({
+				CMDBuild.core.proxy.Relation.create({
 					params: p,
+					loadMask: false,
 					scope: this,
 					success: function() {
 						this.successCb();
@@ -184,8 +184,9 @@
 					}
 				});
 			} else { // modify
-				CMDBuild.ServiceProxy.relations.modify({
+				CMDBuild.core.proxy.Relation.update({
 					params: p,
+					loadMask: false,
 					scope: this,
 					success: function() {
 						this.successCb();
@@ -228,10 +229,10 @@
 		var params = {};
 		var attributes = {};
 
-		params[parameterNames.DOMAIN_NAME] = domain.getName();
-		params[parameterNames.RELATION_ID] = me.relation.rel_id;
+		params[CMDBuild.core.constants.Proxy.DOMAIN_NAME] = domain.getName();
+		params[CMDBuild.core.constants.Proxy.RELATION_ID] = me.relation.rel_id;
 
-		params[parameterNames.RELATION_MASTER_SIDE] = me.relation.masterSide;
+		params[CMDBuild.core.constants.Proxy.RELATION_MASTER_SIDE] = me.relation.masterSide;
 		attributes[me.relation.masterSide] = [getCardAsParameter(me.sourceCard)];
 
 		try {
@@ -256,7 +257,7 @@
 			return;
 		}
 
-		params[parameterNames.ATTRIBUTES] = Ext.encode(attributes);
+		params[CMDBuild.core.constants.Proxy.ATTRIBUTES] = Ext.encode(attributes);
 
 		return params;
 	}
@@ -301,8 +302,8 @@
 	function getCardAsParameter(card) {
 		var parameter = {};
 
-		parameter[parameterNames.CARD_ID] = card.get('Id');
-		parameter[parameterNames.CLASS_NAME] = _CMCache.getEntryTypeNameById(card.get('IdClass'));
+		parameter[CMDBuild.core.constants.Proxy.CARD_ID] = card.get('Id');
+		parameter[CMDBuild.core.constants.Proxy.CLASS_NAME] = _CMCache.getEntryTypeNameById(card.get('IdClass'));
 
 		return parameter;
 	}
