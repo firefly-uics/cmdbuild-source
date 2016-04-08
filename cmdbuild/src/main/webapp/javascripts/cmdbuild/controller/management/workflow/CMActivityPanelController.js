@@ -2,6 +2,7 @@
 
 	Ext.require([
 		'CMDBuild.core.constants.Global',
+		'CMDBuild.core.proxy.workflow.Activity',
 		'CMDBuild.core.proxy.workflow.Workflow'
 	]);
 
@@ -13,8 +14,6 @@
 
 	Ext.define("CMDBuild.controller.management.workflow.CMActivityPanelController", {
 		extend: "CMDBuild.controller.management.classes.CMCardPanelController",
-
-		requires: ['CMDBuild.core.proxy.workflow.Activity'],
 
 		mixins: {
 			wfStateDelegate: "CMDBuild.state.CMWorkflowStateDelegate"
@@ -352,12 +351,14 @@
 
 		this.clearView();
 
-		CMDBuild.core.proxy.workflow.Workflow.terminateActivity({
+		CMDBuild.core.proxy.workflow.Activity.abort({
 			params: {
 				classId: processInstance.getClassId(),
 				cardId: processInstance.getId()
 			},
-			success: function(response) {
+			loadMask: false,
+			scope: this,
+			success: function (response, options, decodedResponse) {
 				me.fireEvent(me.CMEVENTS.cardRemoved);
 			}
 		});
@@ -433,7 +434,7 @@
 				_debug("save the process with params", requestParams);
 
 				CMDBuild.core.LoadMask.show();
-				CMDBuild.core.proxy.workflow.Workflow.saveActivity({
+				CMDBuild.core.proxy.workflow.Activity.update({
 					params: requestParams,
 					scope : this,
 					clientValidation: this.isAdvance, //to force the save request

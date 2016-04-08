@@ -7,8 +7,8 @@
 			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.Message',
 			'CMDBuild.core.proxy.Card',
-			'CMDBuild.core.Utils',
-			'CMDBuild.core.proxy.workflow.Workflow'
+			'CMDBuild.core.proxy.workflow.Activity',
+			'CMDBuild.core.Utils'
 		],
 
 		mixins: {
@@ -54,14 +54,16 @@
 				classId: p.classId
 			}));
 
-			CMDBuild.core.proxy.workflow.Workflow.getStartActivityTemplate({
+			CMDBuild.core.proxy.workflow.Activity.readStart({
 				params: {
 					classId: p.classId
 				},
 				important: true,
+				loadMask: false,
 				scope: this,
-				success: function success(response, request, decoded) {
-					var activity = new CMDBuild.model.CMActivityInstance(decoded.response || {});
+				success: function (response, options, decodedResponse) {
+					var activity = new CMDBuild.model.CMActivityInstance(decodedResponse.response || {});
+
 					_CMWFState.setActivityInstance(activity);
 				}
 			});
@@ -85,15 +87,17 @@
 
 			updateViewSelection(activityInfoId, me);
 
-			CMDBuild.core.proxy.workflow.Workflow.getActivityInstance({
+			CMDBuild.core.proxy.workflow.Activity.read({
 				params:{
 					classId: _CMWFState.getProcessInstance().getClassId(),
 					cardId: _CMWFState.getProcessInstance().getId(),
 					activityInstanceId: activityInfoId
 				},
 				important: true,
-				success: function (response, request, decoded) {
-					var activity = new CMDBuild.model.CMActivityInstance(decoded.response || {});
+				loadMask: false,
+				scope: this,
+				success: function (response, options, decodedResponse) {
+					var activity = new CMDBuild.model.CMActivityInstance(decodedResponse.response || {});
 
 					me.lastActivityInfoId = activityInfoId;
 					_CMWFState.setActivityInstance(activity);

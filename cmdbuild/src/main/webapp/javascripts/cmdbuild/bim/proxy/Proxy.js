@@ -57,6 +57,19 @@
 		 *
 		 * @returns {Void}
 		 */
+		downloadIfc: function (parameters) {
+			parameters = Ext.isEmpty(parameters) ? {} : parameters;
+
+			Ext.apply(parameters, { url: CMDBuild.core.proxy.index.Json.bim.downloadIfc });
+
+			CMDBuild.core.interfaces.FormSubmit.submit(parameters);
+		},
+
+		/**
+		 * @param {Object} parameters
+		 *
+		 * @returns {Void}
+		 */
 		enable: function (parameters) {
 			parameters = Ext.isEmpty(parameters) ? {} : parameters;
 

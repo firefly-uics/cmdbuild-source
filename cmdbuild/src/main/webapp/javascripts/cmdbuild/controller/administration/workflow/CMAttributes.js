@@ -1,7 +1,8 @@
 (function() {
 
 	Ext.require([
-		'CMDBuild.core.proxy.Attribute',
+		'CMDBuild.core.proxy.common.tabs.attribute.Attribute',
+		'CMDBuild.core.proxy.common.tabs.attribute.Order',
 		'CMDBuild.view.common.field.translatable.Utils'
 	]);
 
@@ -67,10 +68,11 @@
 			params[CMDBuild.core.constants.Proxy.ATTRIBUTES] = Ext.JSON.encode(attributes);
 			params[CMDBuild.core.constants.Proxy.CLASS_NAME] = _CMCache.getEntryTypeNameById(this.getCurrentEntryTypeId());
 
-			CMDBuild.core.proxy.Attribute.reorder({
+			CMDBuild.core.proxy.common.tabs.attribute.Order.reorder({
 				params: params,
-				success: function() {
-					me.anAttributeWasMoved(attributes);
+				scope: this,
+				success: function (response, options, decodedResponse) {
+					this.anAttributeWasMoved(attributes);
 				}
 			});
 		},
@@ -118,7 +120,7 @@
 
 		var me = this;
 		CMDBuild.core.LoadMask.show();
-		CMDBuild.core.proxy.Attribute.update({
+		CMDBuild.core.proxy.common.tabs.attribute.Attribute.update({
 			params : data,
 			success : function(form, action, decoded) {
 				me.view.gridPanel.refreshStore(me.currentClassId, decoded.attribute.index, me.currentClassName);
@@ -163,7 +165,7 @@
 		params[CMDBuild.core.constants.Proxy.NAME] = this.currentAttribute.get("name");
 		params[CMDBuild.core.constants.Proxy.CLASS_NAME] = _CMCache.getEntryTypeNameById(this.currentClassId);
 
-		CMDBuild.core.proxy.Attribute.remove({
+		CMDBuild.core.proxy.common.tabs.attribute.Attribute.remove({
 			params: params,
 			scope: this,
 			callback: function() {

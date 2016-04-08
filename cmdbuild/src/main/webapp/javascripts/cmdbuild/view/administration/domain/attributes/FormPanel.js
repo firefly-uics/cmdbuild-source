@@ -14,9 +14,9 @@
 
 		initComponent: function() {
 			this.callParent(arguments);
-			this.attributeTypeStore.load({
-				params : {
-					tableType : "DOMAIN"
+			this.comboType.getStore().load({
+				params: {
+					tableType: "DOMAIN"
 				}
 			});
 		},

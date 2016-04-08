@@ -12,21 +12,6 @@
 		singleton: true,
 
 		/**
-		 * @param {Object} parameters
-		 *
-		 * @returns {Void}
-		 *
-		 * @management
-		 */
-		getStartActivity: function (parameters) {
-			parameters = Ext.isEmpty(parameters) ? {} : parameters;
-
-			Ext.apply(parameters, { url: CMDBuild.core.proxy.index.Json.workflow.getStartActivity });
-
-			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.WORKFLOW, parameters);
-		},
-
-		/**
 		 * @returns {Ext.data.ArrayStore}
 		 *
 		 * @administration
@@ -103,7 +88,7 @@
 		readStartActivity: function (parameters) {
 			parameters = Ext.isEmpty(parameters) ? {} : parameters;
 
-			Ext.apply(parameters, { url: CMDBuild.core.proxy.index.Json.workflow.getStartActivity });
+			Ext.apply(parameters, { url: CMDBuild.core.proxy.index.Json.workflow.activity.readStart });
 
 			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.WORKFLOW, parameters);
 		}
