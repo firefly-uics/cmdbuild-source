@@ -1,5 +1,7 @@
 (function() {
 
+	Ext.require('CMDBuild.core.proxy.common.tabs.attribute.Attribute');
+
 	var tableTypeMap = {
 		simpletable: "SIMPLECLASS",
 		standard: "CLASS"
@@ -184,39 +186,23 @@
 				name : CMDBuild.core.constants.Proxy.ACTIVE
 			});
 
-			this.attributeTypeStore = new Ext.data.JsonStore({
-				autoLoad : false,
-				fields : ["value"],
-				proxy: {
-					type: 'ajax',
-					url : "services/json/schema/modclass/getattributetypes",
-					reader: {
-						type: 'json',
-						root : "types"
-					}
-				},
-				sorters: {
-					property: 'value',
-					direction: 'ASC'
-				}
-			});
-
-			this.comboType = new Ext.form.ComboBox({
-				plugins: [new CMDBuild.SetValueOnLoadPlugin()],
-				fieldLabel : tr.type,
+			this.comboType = Ext.create('Ext.form.field.ComboBox', {
+				name: CMDBuild.core.constants.Proxy.TYPE,
+				fieldLabel: tr.type,
 				labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
-				name : CMDBuild.core.constants.Proxy.TYPE,
-				triggerAction : "all",
-				valueField : "value",
-				displayField : "value",
-				allowBlank : false,
+				displayField: CMDBuild.core.constants.Proxy.NAME,
+				valueField: CMDBuild.core.constants.Proxy.VALUE,
+				plugins: [ new CMDBuild.SetValueOnLoadPlugin() ],
+				triggerAction: 'all',
 				editable: false,
 				cmImmutable: true,
-				queryMode: "local",
-				store : this.attributeTypeStore,
+				allowBlank: false,
 				listConfig: {
 					loadMask: false
-				}
+				},
+
+				store: CMDBuild.core.proxy.common.tabs.attribute.Attribute.getStoreTypes(),
+				queryMode: 'local'
 			});
 
 			this.stringLength = new Ext.form.NumberField({
@@ -296,38 +282,22 @@
 				queryMode : "local"
 			});
 
-			this.domainStore = new Ext.data.Store({
-				autoLoad: false,
-				model : "CMDomainModelForCombo",
-				proxy: {
-					type: 'ajax',
-					url : "services/json/schema/modclass/getreferenceabledomainlist",
-					reader: {
-						type: "json",
-						root : "domains"
-					}
-				},
-				sorters: {
-					property: 'description',
-					direction: 'ASC'
-				}
-			});
-
-			this.referenceDomains = new Ext.form.ComboBox({
-				plugins: [new CMDBuild.SetValueOnLoadPlugin()],
-				fieldLabel : tr.domain,
+			this.referenceDomains = Ext.create('Ext.form.field.ComboBox', {
+				name: CMDBuild.core.constants.Proxy.DOMAIN_NAME,
+				fieldLabel: tr.domain,
 				labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
+				displayField: CMDBuild.core.constants.Proxy.DESCRIPTION,
+				valueField: CMDBuild.core.constants.Proxy.NAME,
+				plugins: [ new CMDBuild.SetValueOnLoadPlugin() ],
 				width: CMDBuild.core.constants.FieldWidths.ADMINISTRATION_BIG,
-				name : CMDBuild.core.constants.Proxy.DOMAIN_NAME,
-				valueField : "name",
-				displayField : "description",
-				allowBlank : false,
-				cmImmutable : true,
-				store: this.domainStore,
-				queryMode : "local",
+				allowBlank: false,
+				cmImmutable: true,
 				listConfig: {
 					loadMask: false
-				}
+				},
+
+				store: CMDBuild.core.proxy.common.tabs.attribute.Attribute.getStoreRenceableDomains(),
+				queryMode: 'local'
 			});
 
 			this.foreignKeyDest = new CMDBuild.FkCombo( {
@@ -456,16 +426,12 @@
 				var params = {};
 				params[CMDBuild.core.constants.Proxy.CLASS_NAME] = _CMCache.getEntryTypeNameById(idClass);
 
-				this.domainStore.load({
-					params: params
-				});
+				this.referenceDomains. getStore().load({ params: params });
 
 				params = {};
 				params[CMDBuild.core.constants.Proxy.TABLE_TYPE] = getTableType(this.classObj);
 
-				this.attributeTypeStore.load({
-					params: params
-				});
+				this.comboType.getStore().load({ params: params });
 
 				this.hideContextualFields();
 				this.attributeUnique.cmImmutable = cannotHaveUniqueAttributes(this.classObj);

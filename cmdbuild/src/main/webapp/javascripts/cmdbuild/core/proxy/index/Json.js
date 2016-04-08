@@ -10,19 +10,26 @@
 			update: '',
 			remove: 'services/json/attachments/deleteattachment',
 
+			readAll: 'services/json/attachments/getattachmentlist',
+
 			download: 'services/json/attachments/downloadattachment',
-			getContext: 'services/json/attachments/getattachmentscontext',
-			readAll: 'services/json/attachments/getattachmentlist'
+			getContext: 'services/json/attachments/getattachmentscontext'
 		},
 
 		attribute: {
 			create: '', // TODO: waiting for refactor (crud)
-			read: 'services/json/schema/modclass/getattributelist', // TODO: waiting for refactor (crud)
-			update: 'services/json/schema/modclass/saveattribute', // TODO: waiting for refactor (crud)
+			read: 'services/json/schema/modclass/getattributelist', // TODO: waiting for refactor (crud + rename)
+			update: 'services/json/schema/modclass/saveattribute', // TODO: waiting for refactor (crud + rename)
 			remove: 'services/json/schema/modclass/deleteattribute',
 
-			reorder: 'services/json/schema/modclass/reorderattribute',
-			updateSortConfiguration: 'services/json/schema/modclass/saveordercriteria'
+			readAll: 'services/json/schema/modclass/getattributelist', // TODO: waiting for refactor (crud + rename)
+			readTypes: 'services/json/schema/modclass/getattributetypes', // TODO: waiting for refactor (rename name, description)
+			readRenceableDomains: 'services/json/schema/modclass/getreferenceabledomainlist',
+
+			sorting: {
+				reorder: 'services/json/schema/modclass/reorderattribute',
+				update: 'services/json/schema/modclass/saveordercriteria',
+			}
 		},
 
 		bim: {
@@ -33,17 +40,13 @@
 
 			enable: 'services/json/bim/enableproject',
 			disable: 'services/json/bim/disableproject',
-
 			readLayer: 'services/json/bim/readbimlayer',
 			saveLayer: 'services/json/bim/savebimlayer',
 			rootLayer: 'services/json/bim/rootclassname',
-
 			roidForCardId: 'services/json/bim/getroidforcardid',
-
 			importIfc: 'services/json/bim/importifc',
-
+			downloadIfc: 'services/json/bim/download',
 			activeForClassName: 'services/json/bim/getactiveforclassname',
-
 			fetchCardFromViewewId: 'services/json/bim/fetchcardfromviewewid',
 			fetchJsonForBimViewer: 'services/json/bim/fetchjsonforbimviewer'
 		},
@@ -574,14 +577,18 @@
 
 			readAll: 'services/json/schema/modclass/getallclasses', // TODO: waiting for refactor (crud)
 
-			abortProcess: 'services/json/workflow/abortprocess',
-			getActivityInstance: 'services/json/workflow/getactivityinstance',
-			getStartActivity: 'services/json/workflow/getstartactivity',
 			isProcessUpdated: 'services/json/workflow/isprocessupdated',
-			saveActivity: 'services/json/workflow/saveactivity',
 			synchronize: 'services/json/workflow/sync',
 
 			activity: {
+				create: '', // TODO: waiting for refactor (crud)
+				read: 'services/json/workflow/getactivityinstance', // TODO: waiting for refactor (crud)
+				update: 'services/json/workflow/saveactivity', // TODO: waiting for refactor (crud)
+				remove: '',
+
+				readStart: 'services/json/workflow/getstartactivity',
+
+				abort: 'services/json/workflow/abortprocess',
 				lock: 'services/json/lock/lockactivity',
 				unlock: 'services/json/lock/unlockactivity'
 			},

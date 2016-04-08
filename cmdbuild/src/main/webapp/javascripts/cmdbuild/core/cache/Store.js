@@ -14,6 +14,27 @@
 		],
 
 		/**
+		 * Parameter to disable all messages display
+		 *
+		 * @property {Boolean}
+		 */
+		disableAllMessages: false,
+
+		/**
+		 * Parameter to disable only error messages display
+		 *
+		 * @property {Boolean}
+		 */
+		disableErrors: false,
+
+		/**
+		 * Parameter to disable only warning messages display
+		 *
+		 * @property {Boolean}
+		 */
+		disableWarnings: false,
+
+		/**
 		 * @cfg {String}
 		 */
 		groupId: undefined,
@@ -35,8 +56,13 @@
 		callbackInterceptor: function (records, operation, success) {
 			var decodedResponse = CMDBuild.core.interfaces.Ajax.decodeJson(operation.response.responseText);
 
-			CMDBuild.core.interfaces.messages.Warning.display(decodedResponse);
-			CMDBuild.core.interfaces.messages.Error.display(decodedResponse, operation.request);
+			if (!this.disableAllMessages) {
+				if (!this.disableWarnings)
+					CMDBuild.core.interfaces.messages.Warning.display(decodedResponse);
+
+				if (!this.disableErrors)
+					CMDBuild.core.interfaces.messages.Error.display(decodedResponse, operation.request);
+			}
 
 			return true;
 		},

@@ -1,5 +1,7 @@
 (function() {
 
+	Ext.require('CMDBuild.core.proxy.common.tabs.attribute.Attribute');
+
 	var ATTR = {
 		INDEX: CMDBuild.core.constants.Proxy.INDEX,
 		NAME: CMDBuild.core.constants.Proxy.NAME,
@@ -24,8 +26,6 @@
 
 	Ext.define('CMDBuild.view.administration.classes.CMAttributeGrid', {
 		extend: 'Ext.grid.Panel',
-
-		alias: 'attributegrid',
 
 		statics: {
 			ATTRIBUTES: ATTR
@@ -61,7 +61,11 @@
 				}
 			});
 
-			this.buildStore();
+			Ext.apply(this, {
+				store: CMDBuild.core.proxy.common.tabs.attribute.Attribute.getStore(),
+				queryMode: 'local'
+			});
+
 			this.buildColumnConf();
 			this.buildTBar();
 
@@ -166,31 +170,6 @@
 					flex: 1
 				}
 			];
-		},
-
-		buildStore: function() {
-			this.store = new Ext.data.Store({
-				fields: [
-						ATTR.INDEX, ATTR.NAME, ATTR.DESCRIPTION, ATTR.TYPE, ATTR.IS_UNIQUE, ATTR.IS_BASEDSP,
-						ATTR.IS_NOT_NULL, ATTR.IS_INHERITED, ATTR.FIELD_MODE, ATTR.IS_ACTIVE, ATTR.GROUP,
-						ATTR.ABSOLUTE_CLASS_ORDER, ATTR.CLASS_ORDER_SIGN, ATTR.EDITOR_TYPE
-				],
-				autoLoad: false,
-				proxy: {
-					type: 'ajax',
-					url: 'services/json/schema/modclass/getattributelist',
-					reader: {
-						type: 'json',
-						root: REQUEST.ROOT
-					}
-				},
-				sorters: [
-					{
-						property: ATTR.INDEX,
-						direction: 'ASC'
-					}
-				]
-			});
 		},
 
 		buildTBar: function() {

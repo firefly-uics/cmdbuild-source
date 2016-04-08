@@ -7,7 +7,8 @@
 		extend: "Ext.util.Observable",
 
 		requires: [
-			'CMDBuild.core.proxy.Attribute',
+			'CMDBuild.core.proxy.common.tabs.attribute.Attribute',
+			'CMDBuild.core.proxy.Cache',
 			'CMDBuild.core.proxy.gis.Gis',
 			'CMDBuild.core.proxy.index.Json'
 		],
@@ -82,7 +83,7 @@
 				}
 			}
 
-			CMDBuild.core.proxy.Attribute.read({
+			CMDBuild.core.proxy.common.tabs.attribute.Attribute.read({
 				params: params,
 				loadMask: false,
 				success: success
@@ -129,31 +130,14 @@
 		 */
 		buildReferenceStore: function(reference) {
 			var baseParams = this.buildParamsForReferenceRequest(reference),
-				isOneTime = baseParams.CQL ? true : false,
-				maxCards = CMDBuild.configuration.instance.get('referenceComboStoreLimit'); // TODO: use proxy constants
+				isOneTime = baseParams.CQL ? true : false;
 
 			// Filters wrongly requested reference stores
 			if (!Ext.isEmpty(baseParams['className']) || !Ext.isEmpty(baseParams['filter']))
-				return Ext.create('Ext.data.Store', {
-					autoLoad: !isOneTime,
-					model: 'CMDBuild.cache.CMReferenceStoreModel',
-					isOneTime: isOneTime,
-					baseParams: baseParams, //retro-compatibility,
-					pageSize: maxCards,
-					proxy: {
-						type: 'ajax',
-						url: 'services/json/management/modcard/getcardlistshort',
-						reader: {
-							type: 'json',
-							root: 'rows',
-							totalProperty: 'results'
-						},
-						extraParams: baseParams
-					},
-					sorters: [
-						{ property: 'Description', direction: 'ASC' }
-					]
-				});
+				return CMDBuild.core.proxy.Cache.getStoreReference(
+					isOneTime,
+					baseParams
+				);
 
 			_warning('Invalid reference property object', this, reference);
 

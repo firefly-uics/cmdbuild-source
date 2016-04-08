@@ -5,7 +5,8 @@
 
 		requires: [
 			'CMDBuild.core.constants.Proxy',
-			'CMDBuild.core.proxy.Attribute'
+			'CMDBuild.core.proxy.common.tabs.attribute.Attribute',
+			'CMDBuild.core.proxy.common.tabs.attribute.Order'
 		],
 
 		/**
@@ -116,7 +117,7 @@
 		deleteAttribute: function() {
 			if (!this.cmfg('domainSelectedDomainIsEmpty') && !Ext.isEmpty(this.currentAttribute)) {
 				CMDBuild.core.LoadMask.show();
-				CMDBuild.core.proxy.Attribute.remove({
+				CMDBuild.core.proxy.common.tabs.attribute.Attribute.remove({
 					params: {
 						className: this.cmfg('domainSelectedDomainGet', CMDBuild.core.constants.Proxy.NAME),
 						name: this.currentAttribute.get(CMDBuild.core.constants.Proxy.NAME)
@@ -197,10 +198,11 @@
 			params[CMDBuild.core.constants.Proxy.ATTRIBUTES] = Ext.JSON.encode(attributes);
 			params[CMDBuild.core.constants.Proxy.CLASS_NAME] = this.cmfg('domainSelectedDomainGet', CMDBuild.core.constants.Proxy.NAME);
 
-			CMDBuild.core.proxy.Attribute.reorder({
+			CMDBuild.core.proxy.common.tabs.attribute.Order.reorder({
 				params: params,
-				success: function() {
-					me.anAttributeWasMoved(attributes);
+				scope: this,
+				success: function (response, options, decodedResponse) {
+					this.anAttributeWasMoved(attributes);
 				}
 			});
 		},
@@ -248,7 +250,7 @@
 			}
 
 			CMDBuild.core.LoadMask.show();
-			CMDBuild.core.proxy.Attribute.update({
+			CMDBuild.core.proxy.common.tabs.attribute.Attribute.update({
 				params: data,
 				loadMask: false,
 				scope: this,

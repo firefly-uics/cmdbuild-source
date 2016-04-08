@@ -105,7 +105,7 @@
 		CLASS_ORDER_SIGN: 'classOrderSign',
 		CLASS_RELATION_TAB: 'classRelationTab',
 		CLASS_TARGET_ID: 'classTargetId',
-		CLASS_WIDGET: 'classwidget',
+		CLASS_WIDGET: 'classwidget', // TODO: remove
 		CLASSES: 'classes',
 		CLIENT_FILTER: 'clientFilter',
 		CLONE: 'clone',
@@ -206,13 +206,13 @@
 		DISABLED_MODULES: 'disabledModules',
 		DISABLED_PROCESS_TABS: 'disabledProcessTabs',
 		DISPLAY_CARD_LOCKER_NAME: 'displayCardLockerName',
-		DISPLAY_IN_GRID: 'isbasedsp',
+		DISPLAY_IN_GRID: 'isbasedsp', // TODO: remove
 		DISPLAY_LABEL: 'displayLabel',
 		DMS: 'dms',
 		DOMAIN: 'domain',
 		DOMAIN_DIRECTION: 'domainDirection',
 		DOMAIN_ID: 'domainId',
-		DOMAIN_LIMIT: 'domainlimit',
+		DOMAIN_LIMIT: 'domainlimit', // TODO: remove
 		DOMAIN_NAME: 'domainName',
 		DOMAIN_SOURCE: 'src',
 		DOMAINS: 'domains',
@@ -281,7 +281,7 @@
 		FUNCTIONS: 'functions',
 		GENERIC: 'generic',
 		GEO_SERVER_LAYERS_MAPPING:'geoServerLayersMapping',
-		GEOSERVER: 'geoserver',
+		GEOSERVER: 'geoserver', // TODO: remove
 		GIS: 'gis',
 		GOOGLE: 'google',
 		GRAPH: 'graph',
@@ -341,7 +341,7 @@
 		LANGUAGES_TAGS: 'languagesTags',
 		LANGUAGES_WITH_LOCALIZATIONS: 'languagesWithLocalizations',
 		LANGUAGES_WITH_LOCALIZATIONS_TAGS: 'languagesWithLocalizationsTags',
-		LATITUDE: 'lat',
+		LATITUDE: 'lat', // TODO: remove
 		LAYERS: 'layers',
 		LAYOUT: 'layout',
 		LDAP: 'ldap',
@@ -352,7 +352,7 @@
 		LOCALIZATION: 'localization',
 		LOCALIZED: 'localized',
 		LOCALIZED_HEADER_KEY: 'CMDBuild-Localized',
-		LONGITUDE: 'lon',
+		LONGITUDE: 'lon', // TODO: remove
 		LOOKUP: 'lookup',
 		LOOKUP_TYPE: 'lookupType',
 		LOOKUP_VALUE: 'lookupValue',
@@ -386,7 +386,7 @@
 		NO_SUBJECT_PREFIX: 'noSubjectPrefix',
 		NONE: 'none',
 		NORMAL: 'normal',
-		NOT_NULL: 'isnotnull',
+		NOT_NULL: 'isnotnull', // TODO: remove
 		NOT_POSITIVES: 'notPositives',
 		NOTES: 'notes',
 		NOTIFICATION_ACTIVE: 'notificationActive',
@@ -436,7 +436,7 @@
 		POPUP_HEIGHT_PERCENTAGE: 'popupHeightPercentage',
 		POPUP_WIDTH_PERCENTAGE: 'popupWidthPercentage',
 		PORT: 'port',
-		POSTGRESQL: 'postgresql',
+		POSTGRESQL: 'postgresql', // TODO: remove
 		PRECISION: 'precision',
 		PREFIX: 'prefix',
 		PRESELECT_IF_UNIQUE: 'preselectIfUnique',
@@ -444,8 +444,8 @@
 		PRESETS: 'presets',
 		PRESETS_TYPE: 'presetsType',
 		PRIVILEGED: 'privileged',
-		PRIVILEGED_OBJ_DESCRIPTION: 'privilegedObjectDescription',
-		PRIVILEGED_OBJ_ID: 'privilegedObjectId',
+		PRIVILEGED_OBJ_DESCRIPTION: 'privilegedObjectDescription', // TODO: remove
+		PRIVILEGED_OBJ_ID: 'privilegedObjectId', // TODO: remove
 		PRIVILEGES: 'privileges',
 		PROCESS: 'process',
 		PROCESS_ATTACHMENT_TAB: 'processAttachmentTab',
@@ -481,7 +481,7 @@
 		RELATION: 'relation',
 		RELATION_ID: 'relationId',
 		RELATION_LIMIT: 'relationLimit',
-		RELATION_MASTER_SIDE: 'master',
+		RELATION_MASTER_SIDE: 'master', // TODO: remove
 		RELATIONS: 'relations',
 		RELATIONS_SIZE: 'relations_size',
 		REMOVE: 'remove',
@@ -539,9 +539,9 @@
 		STANDARD: 'standard',
 		START: 'start',
 		START_DATE: 'startDate',
-		START_MAP_WITH_LATITUDE: 'StartMapWithLatitude',
-		START_MAP_WITH_LONGITUDE: 'StartMapWithLongitude',
-		START_MAP_WITH_ZOOM: 'StartMapWithZoom',
+		START_MAP_WITH_LATITUDE: 'StartMapWithLatitude', // TODO: remove
+		START_MAP_WITH_LONGITUDE: 'StartMapWithLongitude', // TODO: remove
+		START_MAP_WITH_ZOOM: 'StartMapWithZoom', // TODO: remove
 		STARTING_CLASS: 'startingClass',
 		STARTING_CLASS_ID: 'startingClassId',
 		STATUS: 'status',
@@ -573,11 +573,12 @@
 		TO: 'to',
 		TO_ADDRESSES: 'toAddresses',
 		TOKEN: 'token',
-		TOOLBAR_BOTTOM: 'bottomToolbar',
-		TOOLBAR_TOP: 'topToolbar',
+		TOOLBAR_BOTTOM: 'bottomToolbar', // TODO: remove
+		TOOLBAR_TOP: 'topToolbar', // TODO: remove
 		TRANSLATION_UUID: 'translationUuid',
 		TRANSLATIONS: 'translations',
 		TYPE: 'type',
+		TYPES: 'types',
 		UI_CONFIGURATION: 'uiConfiguration',
 		UNCACHED: 'unchached',
 		UNIQUE: 'unique',
