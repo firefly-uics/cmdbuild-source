@@ -16,10 +16,11 @@ import org.cmdbuild.auth.UserStore;
 import org.cmdbuild.logic.auth.AuthenticationLogic;
 import org.cmdbuild.logic.auth.DefaultAuthenticationLogic;
 import org.cmdbuild.logic.auth.DefaultGroupsLogic;
+import org.cmdbuild.logic.auth.DefaultSessionLogic;
 import org.cmdbuild.logic.auth.GroupsLogic;
-import org.cmdbuild.logic.auth.RestAuthenticationLogic;
-import org.cmdbuild.logic.auth.SoapAuthenticationLogic;
-import org.cmdbuild.logic.auth.StandardAuthenticationLogic;
+import org.cmdbuild.logic.auth.RestSessionLogic;
+import org.cmdbuild.logic.auth.SoapSessionLogic;
+import org.cmdbuild.logic.auth.StandardSessionLogic;
 import org.cmdbuild.logic.auth.TransactionalGroupsLogic;
 import org.cmdbuild.privileges.DBGroupFetcher;
 import org.cmdbuild.privileges.fetchers.factories.CMClassPrivilegeFetcherFactory;
@@ -137,24 +138,24 @@ public class Authentication {
 	}
 
 	@Bean
-	public StandardAuthenticationLogic standardAuthenticationLogic() {
+	public StandardSessionLogic standardSessionLogic() {
 		final DefaultAuthenticationLogic delegate = new DefaultAuthenticationLogic(defaultAuthenticationService(),
 				privilegeManagement.privilegeContextFactory(), data.systemDataView());
-		return new StandardAuthenticationLogic(delegate);
+		return new StandardSessionLogic(new DefaultSessionLogic(delegate, userStore));
 	}
 
 	@Bean
-	public SoapAuthenticationLogic soapAuthenticationLogic() {
+	public SoapSessionLogic soapSessionLogic() {
 		final AuthenticationLogic delegate = new DefaultAuthenticationLogic(soapAuthenticationService(),
 				privilegeManagement.privilegeContextFactory(), data.systemDataView());
-		return new SoapAuthenticationLogic(delegate);
+		return new SoapSessionLogic(new DefaultSessionLogic(delegate, userStore));
 	}
 
 	@Bean
-	public RestAuthenticationLogic restAuthenticationLogic() {
+	public RestSessionLogic restSessionLogic() {
 		final AuthenticationLogic delegate = new DefaultAuthenticationLogic(restAuthenticationService(),
 				privilegeManagement.privilegeContextFactory(), data.systemDataView());
-		return new RestAuthenticationLogic(delegate);
+		return new RestSessionLogic(new DefaultSessionLogic(delegate, userStore));
 	}
 
 	@Bean
