@@ -138,7 +138,10 @@
 	Ext.define('CMDBuild.view.administration.tasks.event.synchronous.CMStep1', {
 		extend: 'Ext.panel.Panel',
 
-		requires: ['CMDBuild.core.constants.Proxy'],
+		requires: [
+			'CMDBuild.core.constants.Proxy',
+			'CMDBuild.core.proxy.taskManager.event.Synchronous'
+		],
 
 		/**
 		 * @cfg {CMDBuild.view.administration.tasks.event.synchronous.CMStep1Delegate}
@@ -151,7 +154,7 @@
 
 		layout: {
 			type: 'vbox',
-			align:'stretch'
+			align: 'stretch'
 		},
 
 		defaults: {
@@ -196,7 +199,7 @@
 				name: CMDBuild.core.constants.Proxy.PHASE,
 				fieldLabel: tr.taskEvent.phase,
 				labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
-				store: CMDBuild.core.proxy.CMProxyTasks.getPhases(),
+				store: CMDBuild.core.proxy.taskManager.event.Synchronous.getStorePhases(),
 				valueField: CMDBuild.core.constants.Proxy.VALUE,
 				displayField: CMDBuild.core.constants.Proxy.DESCRIPTION,
 				maxWidth: CMDBuild.core.constants.FieldWidths.ADMINISTRATION_BIG,

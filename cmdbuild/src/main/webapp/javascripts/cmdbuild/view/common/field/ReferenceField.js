@@ -3,6 +3,8 @@
 	var FILTER_FIELD = "_SystemFieldFilter";
 	var CHANGE_EVENT = "change";
 
+	Ext.require('CMDBuild.core.proxy.Card');
+
 	Ext.define("CMDBuild.Management.ReferenceField", {
 		statics: {
 			/**
@@ -115,7 +117,7 @@
 
 		initComponent: function() {
 			var attribute = this.attribute;
-			var store = CMDBuild.Cache.getReferenceStore(attribute);
+			var store = _CMCache.getReferenceStore(attribute);
 
 			store.on("loadexception", function() {
 				field.setValue('');
@@ -226,12 +228,11 @@
 			) {
 				var params = Ext.apply({ cardId: value }, this.getStore().baseParams);
 
-				CMDBuild.core.interfaces.Ajax.request({
-					method: 'GET',
-					url: 'services/json/management/modcard/getcard',
+				CMDBuild.core.proxy.Card.read({
 					params: params,
+					loadMask: false,
 					scope: this,
-					success: function(response, options, decodedResponse) {
+					success: function (response, options, decodedResponse) {
 						if (!Ext.isEmpty(this.getStore()))
 							this.getStore().add({
 								Id: value,

@@ -1,7 +1,10 @@
 (function() {
+
+	Ext.require('CMDBuild.core.proxy.dashboard.Chart');
+
 	Ext.define("CMDBuild.controller.common.chart.CMChartPortletControllerPreviewStrategy", {
 		doRequest: function(caller, cb) {
-			var me = caller;	
+			var me = caller;
 			var chartId = me.chartConfiguration.getId();
 			var params = me.readParamsFromForm();
 			var dsName = me.chartConfiguration.getDataSourceName();
@@ -11,14 +14,30 @@
 				me.store.loadData(data);
 				loaded = true;
 			}
-	
+
 			function callback() {
 				if (cb && typeof cb == "function") {
 					cb(loaded);
 				}
 			}
 
-			CMDBuild.ServiceProxy.Dashboard.chart.getDataForPreview(dsName, params, success, callback);
+			CMDBuild.core.proxy.dashboard.Chart.readForPreview({
+				params: {
+					dataSourceName: dsName,
+					params: Ext.encode(params)
+				},
+				loadMask: false,
+				scope: this,
+				success: function (response, options, decodedResponse) {
+					if (typeof success == "function") {
+						var response = decodedResponse.response || {};
+						response = response.rows || [];
+
+						success(response);
+					}
+				},
+				callback: callback || Ext.emptyFn
+			});
 		}
 	});
 
@@ -29,19 +48,36 @@
 			var chartId = me.chartConfiguration.getId();
 			var params = me.readParamsFromForm();
 			var loaded = false;
-	
+
 			function success(data) {
 				me.store.loadData(data);
 				loaded = true;
 			}
-	
+
 			function callback() {
 				if (cb && typeof cb == "function") {
 					cb(loaded);
 				}
 			}
 
-			CMDBuild.ServiceProxy.Dashboard.chart.getData(dashbaordId, chartId, params, success, callback);
+			CMDBuild.core.proxy.dashboard.Chart.read({
+				params: {
+					dashboardId: dashbaordId,
+					chartId: chartId,
+					params: Ext.encode(params)
+				},
+				loadMask: false,
+				scope: this,
+				success: function (operation, configuration, decodedResponse) {
+					if (typeof success == "function") {
+						var response = decodedResponse.response || {};
+						response = response.rows || [];
+
+						success(response);
+					}
+				},
+				callback: callback || Ext.emptyFn
+			});
 		}
 	});
 
@@ -57,7 +93,7 @@
 				} else {
 					fields = [chartConfiguration.getCategoryAxisField()].concat(chartConfiguration.getValueAxisFields());
 				}
-	
+
 				return Ext.create('Ext.data.JsonStore', {
 					fields : fields,
 					data : []

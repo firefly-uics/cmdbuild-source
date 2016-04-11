@@ -1,10 +1,10 @@
-(function() {
+(function () {
 
 	Ext.define('CMDBuild.core.proxy.lookup.Lookup', {
 
 		requires: [
 			'CMDBuild.core.constants.Proxy',
-			'CMDBuild.core.proxy.Index',
+			'CMDBuild.core.proxy.index.Json',
 			'CMDBuild.model.lookup.GridStore',
 			'CMDBuild.model.lookup.ParentComboStore'
 		],
@@ -13,47 +13,53 @@
 
 		/**
 		 * @param {Object} parameters
+		 *
+		 * @returns {Void}
 		 */
-		create: function(parameters) {
+		create: function (parameters) {
 			parameters = Ext.isEmpty(parameters) ? {} : parameters;
 
-			Ext.apply(parameters, { url: CMDBuild.core.proxy.Index.lookup.create });
+			Ext.apply(parameters, { url: CMDBuild.core.proxy.index.Json.lookup.create });
 
 			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.LOOKUP, parameters, true);
 		},
 
 		/**
 		 * @param {Object} parameters
+		 *
+		 * @returns {Void}
 		 */
-		disable: function(parameters, disable) {
+		disable: function (parameters, disable) {
 			parameters = Ext.isEmpty(parameters) ? {} : parameters;
 
-			Ext.apply(parameters, { url: CMDBuild.core.proxy.Index.lookup.disable });
+			Ext.apply(parameters, { url: CMDBuild.core.proxy.index.Json.lookup.disable });
 
 			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.LOOKUP, parameters, true);
 		},
 
 		/**
 		 * @param {Object} parameters
+		 *
+		 * @returns {Void}
 		 */
-		enable: function(parameters, disable) {
+		enable: function (parameters, disable) {
 			parameters = Ext.isEmpty(parameters) ? {} : parameters;
 
-			Ext.apply(parameters, { url: CMDBuild.core.proxy.Index.lookup.enable });
+			Ext.apply(parameters, { url: CMDBuild.core.proxy.index.Json.lookup.enable });
 
 			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.LOOKUP, parameters, true);
 		},
 
 		/**
-		 * @return {Ext.data.Store}
+		 * @returns {Ext.data.Store or CMDBuild.core.cache.Store}
 		 */
-		getParentStore: function() {
-			return Ext.create('Ext.data.Store', {
+		getParentStore: function () {
+			return CMDBuild.global.Cache.requestAsStore(CMDBuild.core.constants.Proxy.LOOKUP, {
 				autoLoad: false,
 				model: 'CMDBuild.model.lookup.ParentComboStore',
 				proxy: {
 					type: 'ajax',
-					url: CMDBuild.core.proxy.Index.lookup.getParentList,
+					url: CMDBuild.core.proxy.index.Json.lookup.getParentList,
 					reader: {
 						type: 'json',
 						root: CMDBuild.core.constants.Proxy.ROWS
@@ -66,15 +72,15 @@
 		},
 
 		/**
-		 * @return {Ext.data.Store}
+		 * @returns {Ext.data.Store or CMDBuild.core.cache.Store}
 		 */
-		getStore: function() {
-			return Ext.create('Ext.data.Store', {
+		getStore: function () {
+			return CMDBuild.global.Cache.requestAsStore(CMDBuild.core.constants.Proxy.LOOKUP, {
 				autoLoad: false,
 				model: 'CMDBuild.model.lookup.GridStore',
 				proxy: {
 					type: 'ajax',
-					url: CMDBuild.core.proxy.Index.lookup.readAll,
+					url: CMDBuild.core.proxy.index.Json.lookup.readAll,
 					reader: {
 						type: 'json',
 						root: CMDBuild.core.constants.Proxy.ROWS
@@ -90,44 +96,52 @@
 
 		/**
 		 * @param {Object} parameters
+		 *
+		 * @returns {Void}
 		 */
-		read: function(parameters) {
+		read: function (parameters) {
 			parameters = Ext.isEmpty(parameters) ? {} : parameters;
 
-			Ext.apply(parameters, { url: CMDBuild.core.proxy.Index.lookup.read });
+			Ext.apply(parameters, { url: CMDBuild.core.proxy.index.Json.lookup.read });
 
 			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.LOOKUP, parameters);
 		},
 
 		/**
 		 * @param {Object} parameters
+		 *
+		 * @returns {Void}
 		 */
-		readAll: function(parameters) {
+		readAll: function (parameters) {
 			parameters = Ext.isEmpty(parameters) ? {} : parameters;
 
-			Ext.apply(parameters, { url: CMDBuild.core.proxy.Index.lookup.readAll });
+			Ext.apply(parameters, { url: CMDBuild.core.proxy.index.Json.lookup.readAll });
 
 			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.LOOKUP, parameters);
 		},
 
 		/**
 		 * @param {Object} parameters
+		 *
+		 * @returns {Void}
 		 */
-		setOrder: function(parameters) {
+		setOrder: function (parameters) {
 			parameters = Ext.isEmpty(parameters) ? {} : parameters;
 
-			Ext.apply(parameters, { url: CMDBuild.core.proxy.Index.lookup.setOrder });
+			Ext.apply(parameters, { url: CMDBuild.core.proxy.index.Json.lookup.setOrder });
 
 			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.LOOKUP, parameters, true);
 		},
 
 		/**
 		 * @param {Object} parameters
+		 *
+		 * @returns {Void}
 		 */
-		update: function(parameters) {
+		update: function (parameters) {
 			parameters = Ext.isEmpty(parameters) ? {} : parameters;
 
-			Ext.apply(parameters, { url: CMDBuild.core.proxy.Index.lookup.update });
+			Ext.apply(parameters, { url: CMDBuild.core.proxy.index.Json.lookup.update });
 
 			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.LOOKUP, parameters, true);
 		}

@@ -1,5 +1,7 @@
 (function() {
 
+	Ext.require('CMDBuild.core.proxy.common.tabs.attribute.Attribute');
+
 	var tableTypeMap = {
 		simpletable: "SIMPLECLASS",
 		standard: "CLASS"
@@ -90,7 +92,7 @@
 			this.cmButtons = [this.saveButton, this.abortButton];
 
 			this.fieldMode = new Ext.form.ComboBox({
-				name: _CMProxy.parameter.FIELD_MODE,
+				name: CMDBuild.core.constants.Proxy.FIELD_MODE,
 				fieldLabel: tr.field_visibility,
 				labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
 				width: CMDBuild.MIDDLE_FIELD_WIDTH,
@@ -111,7 +113,7 @@
 			});
 
 			this.attributeGroup = new Ext.form.ComboBox({
-				name: _CMProxy.parameter.GROUP,
+				name: CMDBuild.core.constants.Proxy.GROUP,
 				fieldLabel: tr.group,
 				labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
 				width: CMDBuild.MIDDLE_FIELD_WIDTH,
@@ -131,7 +133,7 @@
 				fieldLabel : tr.name,
 				labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
 				width: CMDBuild.core.constants.FieldWidths.ADMINISTRATION_BIG,
-				name : _CMProxy.parameter.NAME,
+				name : CMDBuild.core.constants.Proxy.NAME,
 				allowBlank : false,
 				vtype : "alphanum",
 				cmImmutable : true
@@ -163,7 +165,7 @@
 			this.attributeNotNull = new Ext.ux.form.XCheckbox({
 				fieldLabel : tr.isnotnull,
 				labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
-				name : _CMProxy.parameter.NOT_NULL
+				name : CMDBuild.core.constants.Proxy.NOT_NULL
 			});
 
 			this.attributeUnique = new Ext.ux.form.XCheckbox({
@@ -175,48 +177,32 @@
 			this.isBasedsp = new Ext.ux.form.XCheckbox({
 				fieldLabel : tr.isbasedsp,
 				labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
-				name : _CMProxy.parameter.DISPLAY_IN_GRID
+				name : CMDBuild.core.constants.Proxy.DISPLAY_IN_GRID
 			});
 
 			this.isActive = new Ext.ux.form.XCheckbox({
 				fieldLabel : tr.isactive,
 				labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
-				name : _CMProxy.parameter.ACTIVE
+				name : CMDBuild.core.constants.Proxy.ACTIVE
 			});
 
-			this.attributeTypeStore = new Ext.data.JsonStore({
-				autoLoad : false,
-				fields : ["value"],
-				proxy: {
-					type: 'ajax',
-					url : "services/json/schema/modclass/getattributetypes",
-					reader: {
-						type: 'json',
-						root : "types"
-					}
-				},
-				sorters: {
-					property: 'value',
-					direction: 'ASC'
-				}
-			});
-
-			this.comboType = new Ext.form.ComboBox({
-				plugins: [new CMDBuild.SetValueOnLoadPlugin()],
-				fieldLabel : tr.type,
+			this.comboType = Ext.create('Ext.form.field.ComboBox', {
+				name: CMDBuild.core.constants.Proxy.TYPE,
+				fieldLabel: tr.type,
 				labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
-				name : _CMProxy.parameter.TYPE,
-				triggerAction : "all",
-				valueField : "value",
-				displayField : "value",
-				allowBlank : false,
+				displayField: CMDBuild.core.constants.Proxy.NAME,
+				valueField: CMDBuild.core.constants.Proxy.VALUE,
+				plugins: [ new CMDBuild.SetValueOnLoadPlugin() ],
+				triggerAction: 'all',
 				editable: false,
 				cmImmutable: true,
-				queryMode: "local",
-				store : this.attributeTypeStore,
+				allowBlank: false,
 				listConfig: {
 					loadMask: false
-				}
+				},
+
+				store: CMDBuild.core.proxy.common.tabs.attribute.Attribute.getStoreTypes(),
+				queryMode: 'local'
 			});
 
 			this.stringLength = new Ext.form.NumberField({
@@ -235,7 +221,7 @@
 				width: CMDBuild.core.constants.FieldWidths.ADMINISTRATION_SMALL,
 				minValue : 1,
 				maxValue : 20,
-				name : _CMProxy.parameter.PRECISION,
+				name : CMDBuild.core.constants.Proxy.PRECISION,
 				allowBlank : false
 			});
 
@@ -243,7 +229,7 @@
 				fieldLabel : tr.referencequery,
 				labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
 				width: CMDBuild.core.constants.FieldWidths.ADMINISTRATION_BIG,
-				name : _CMProxy.parameter.FILTER,
+				name : CMDBuild.core.constants.Proxy.FILTER,
 				allowBlank : true,
 				vtype : "comment",
 				invalidText : tr.pipeNotAllowed,
@@ -278,7 +264,7 @@
 				width: CMDBuild.core.constants.FieldWidths.ADMINISTRATION_SMALL,
 				minValue : 1,
 				maxValue : 20,
-				name : _CMProxy.parameter.SCALE,
+				name : CMDBuild.core.constants.Proxy.SCALE,
 				allowBlank : false
 			});
 
@@ -287,7 +273,7 @@
 				fieldLabel : tr.lookup,
 				labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
 				width: CMDBuild.core.constants.FieldWidths.ADMINISTRATION_BIG,
-				name : _CMProxy.parameter.LOOKUP,
+				name : CMDBuild.core.constants.Proxy.LOOKUP,
 				valueField : "type",
 				displayField : "type",
 				allowBlank : false,
@@ -296,38 +282,22 @@
 				queryMode : "local"
 			});
 
-			this.domainStore = new Ext.data.Store({
-				autoLoad: false,
-				model : "CMDomainModelForCombo",
-				proxy: {
-					type: 'ajax',
-					url : "services/json/schema/modclass/getreferenceabledomainlist",
-					reader: {
-						type: "json",
-						root : "domains"
-					}
-				},
-				sorters: {
-					property: 'description',
-					direction: 'ASC'
-				}
-			});
-
-			this.referenceDomains = new Ext.form.ComboBox({
-				plugins: [new CMDBuild.SetValueOnLoadPlugin()],
-				fieldLabel : tr.domain,
+			this.referenceDomains = Ext.create('Ext.form.field.ComboBox', {
+				name: CMDBuild.core.constants.Proxy.DOMAIN_NAME,
+				fieldLabel: tr.domain,
 				labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
+				displayField: CMDBuild.core.constants.Proxy.DESCRIPTION,
+				valueField: CMDBuild.core.constants.Proxy.NAME,
+				plugins: [ new CMDBuild.SetValueOnLoadPlugin() ],
 				width: CMDBuild.core.constants.FieldWidths.ADMINISTRATION_BIG,
-				name : _CMProxy.parameter.DOMAIN_NAME,
-				valueField : "name",
-				displayField : "description",
-				allowBlank : false,
-				cmImmutable : true,
-				store: this.domainStore,
-				queryMode : "local",
+				allowBlank: false,
+				cmImmutable: true,
 				listConfig: {
 					loadMask: false
-				}
+				},
+
+				store: CMDBuild.core.proxy.common.tabs.attribute.Attribute.getStoreRenceableDomains(),
+				queryMode: 'local'
 			});
 
 			this.foreignKeyDest = new CMDBuild.FkCombo( {
@@ -335,8 +305,8 @@
 				fieldLabel : tr.destination,
 				labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
 				width: CMDBuild.core.constants.FieldWidths.ADMINISTRATION_BIG,
-				name : _CMProxy.parameter.FK_DESTINATION,
-				hiddenName : _CMProxy.parameter.FK_DESTINATION,
+				name : CMDBuild.core.constants.Proxy.FK_DESTINATION,
+				hiddenName : CMDBuild.core.constants.Proxy.FK_DESTINATION,
 				valueField : "name",
 				displayField : "description",
 				editable : false,
@@ -347,7 +317,7 @@
 			});
 
 			this.textAttributeWidget = new Ext.form.ComboBox({
-				name: _CMProxy.parameter.EDITOR_TYPE,
+				name: CMDBuild.core.constants.Proxy.EDITOR_TYPE,
 				fieldLabel: CMDBuild.Translation.administration.modClass.attributeProperties.editorType.label,
 				labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
 				width: CMDBuild.MIDDLE_FIELD_WIDTH,
@@ -365,7 +335,7 @@
 				})
 			});
 			this.ipAttributeWidget = new Ext.form.ComboBox({
-				name: _CMProxy.parameter.IP_TYPE,
+				name: CMDBuild.core.constants.Proxy.IP_TYPE,
 				fieldLabel: CMDBuild.Translation.ipType,
 				labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
 				width: CMDBuild.MIDDLE_FIELD_WIDTH,
@@ -454,18 +424,14 @@
 
 			if (this.classObj) {
 				var params = {};
-				params[_CMProxy.parameter.CLASS_NAME] = _CMCache.getEntryTypeNameById(idClass);
+				params[CMDBuild.core.constants.Proxy.CLASS_NAME] = _CMCache.getEntryTypeNameById(idClass);
 
-				this.domainStore.load({
-					params: params
-				});
+				this.referenceDomains. getStore().load({ params: params });
 
 				params = {};
-				params[_CMProxy.parameter.TABLE_TYPE] = getTableType(this.classObj);
+				params[CMDBuild.core.constants.Proxy.TABLE_TYPE] = getTableType(this.classObj);
 
-				this.attributeTypeStore.load({
-					params: params
-				});
+				this.comboType.getStore().load({ params: params });
 
 				this.hideContextualFields();
 				this.attributeUnique.cmImmutable = cannotHaveUniqueAttributes(this.classObj);

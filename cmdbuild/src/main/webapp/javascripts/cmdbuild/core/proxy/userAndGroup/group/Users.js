@@ -4,25 +4,25 @@
 
 		requires: [
 			'CMDBuild.core.constants.Proxy',
-			'CMDBuild.core.proxy.Index',
+			'CMDBuild.core.proxy.index.Json',
 			'CMDBuild.model.userAndGroup.group.UsersGrid'
 		],
 
 		singleton: true,
 
 		/**
-		 * @returns {Ext.data.Store}
+		 * @returns {Ext.data.Store or CMDBuild.core.cache.Store}
 		 */
 		getGroupsUserStore: function (parameters) {
-			return Ext.create('Ext.data.Store', {
+			return CMDBuild.global.Cache.requestAsStore(CMDBuild.core.constants.Proxy.UNCACHED, {
 				autoLoad: false,
 				model: 'CMDBuild.model.userAndGroup.group.UsersGrid',
 				proxy: {
 					type: 'ajax',
-					url: CMDBuild.core.proxy.Index.group.users.getGroupUserList,
+					url: CMDBuild.core.proxy.index.Json.group.users.getGroupUserList,
 					reader: {
 						type: 'json',
-						root: 'users'
+						root: CMDBuild.core.constants.Proxy.USERS
 					}
 				},
 				sorters: [
@@ -33,11 +33,13 @@
 
 		/**
 		 * @param {Object} parameters
+		 *
+		 * @returns {Void}
 		 */
 		update: function (parameters) {
 			parameters = Ext.isEmpty(parameters) ? {} : parameters;
 
-			Ext.apply(parameters, { url: CMDBuild.core.proxy.Index.group.users.saveGroupUserList });
+			Ext.apply(parameters, { url: CMDBuild.core.proxy.index.Json.group.users.saveGroupUserList });
 
 			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.GROUP, parameters, true);
 		}

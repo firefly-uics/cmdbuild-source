@@ -103,7 +103,7 @@
 						disableEnableFunctions: true
 					}),
 					Ext.create('CMDBuild.view.common.field.translatable.Text', {
-						name: _CMProxy.parameter.DESCRIPTION,
+						name: CMDBuild.core.constants.Proxy.DESCRIPTION,
 						fieldLabel: CMDBuild.Translation.descriptionLabel,
 						labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
 						maxWidth: CMDBuild.core.constants.FieldWidths.ADMINISTRATION_BIG,

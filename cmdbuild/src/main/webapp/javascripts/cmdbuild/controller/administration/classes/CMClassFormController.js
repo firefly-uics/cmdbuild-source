@@ -6,6 +6,7 @@
 
 		requires: [
 			'CMDBuild.core.constants.Proxy',
+			'CMDBuild.core.proxy.Classes',
 			'CMDBuild.view.common.field.translatable.Utils'
 		],
 
@@ -48,8 +49,9 @@
 		onSaveClick: function() {
 			CMDBuild.core.LoadMask.show();
 
-			CMDBuild.ServiceProxy.classes.save({
+			CMDBuild.core.proxy.Classes.update({
 				params: this.buildSaveParams(),
+				loadMask: false,
 				callback: callback,
 				success: this.saveSuccessCB,
 				scope: this
@@ -119,10 +121,11 @@
 			CMDBuild.core.LoadMask.hide();
 
 			var params = {};
-			params[_CMProxy.parameter.CLASS_NAME] = this.selection.get("name");
+			params[CMDBuild.core.constants.Proxy.CLASS_NAME] = this.selection.get("name");
 
-			CMDBuild.ServiceProxy.classes.remove({
+			CMDBuild.core.proxy.Classes.remove({
 				params: params,
+				loadMask: false,
 				callback: callback,
 				success: this.deleteSuccessCB,
 				scope: this

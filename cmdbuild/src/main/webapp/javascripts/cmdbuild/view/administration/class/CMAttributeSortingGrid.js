@@ -1,132 +1,91 @@
-(function() {
-
-	var tr = CMDBuild.Translation.administration.modClass.attributeProperties; // Path to translation
+(function () {
 
 	Ext.define('CMDBuild.view.administration.class.CMAttributeSortingGrid', {
 		extend: 'Ext.grid.Panel',
 
+
+		requires: [
+			'CMDBuild.core.constants.Proxy',
+			'CMDBuild.core.proxy.common.tabs.attribute.Order'
+		],
+
+		border: false,
+		filter: false,
 		filtering: false,
 
-		initComponent: function() {
-			this.store = Ext.create('Ext.data.Store', {
-				fields: [
-					CMDBuild.core.constants.Proxy.NAME,
-					CMDBuild.core.constants.Proxy.DESCRIPTION,
-					CMDBuild.core.constants.Proxy.ABSOLUTE_CLASS_ORDER,
-					CMDBuild.core.constants.Proxy.CLASS_ORDER_SIGN
-				],
-				autoLoad: false,
-				proxy: {
-					type: 'ajax',
-					url: 'services/json/schema/modclass/getattributelist',
-					reader: {
-						type: 'json',
-						root: 'attributes'
-					}
-				},
-				sorters: [
-					{
-						property: CMDBuild.core.constants.Proxy.ABSOLUTE_CLASS_ORDER,
-						direction: 'ASC'
-					}
-				]
-			});
+		/**
+		 * @returns {Void}
+		 *
+		 * @override
+		 */
+		initComponent: function () {
+			Ext.apply(this, {
+				columns: [
+					Ext.create('Ext.grid.column.Column', {
+						dataIndex: CMDBuild.core.constants.Proxy.ABSOLUTE_CLASS_ORDER,
+						id: CMDBuild.core.constants.Proxy.ABSOLUTE_CLASS_ORDER,
+						menuDisabled: true,
+						hidden: true
+					}),
+					Ext.create('Ext.grid.column.Column', {
+						id: CMDBuild.core.constants.Proxy.NAME,
+						text: CMDBuild.Translation.administration.modClass.attributeProperties.name,
+						dataIndex: CMDBuild.core.constants.Proxy.NAME,
+						flex: 1
+					}),
+					Ext.create('Ext.grid.column.Column', {
+						dataIndex: CMDBuild.core.constants.Proxy.DESCRIPTION,
+						text: CMDBuild.Translation.administration.modClass.attributeProperties.description,
+						id: CMDBuild.core.constants.Proxy.DESCRIPTION,
+						flex: 1
+					}),
+					Ext.create('Ext.grid.column.Column', {
+						dataIndex: CMDBuild.core.constants.Proxy.CLASS_ORDER_SIGN,
+						text: CMDBuild.Translation.administration.modClass.attributeProperties.criterion,
+						flex: 1,
 
-			var comboOrderSign = Ext.create('Ext.form.field.ComboBox', {
-				valueField: CMDBuild.core.constants.Proxy.VALUE,
-				displayField: CMDBuild.core.constants.Proxy.DESCRIPTION,
-				listClass: 'x-combo-list-small',
-				typeAhead: true,
-				triggerAction: 'all',
-				selectOnTab: true,
-				forceSelection: true,
-				editable: false,
+						editor: {
+							xtype: 'combo',
+							valueField: CMDBuild.core.constants.Proxy.VALUE,
+							displayField: CMDBuild.core.constants.Proxy.DESCRIPTION,
+							forceSelection: true,
+							editable: false,
 
-				queryMode: 'local',
-				store: Ext.create('Ext.data.Store', {
-					fields: [CMDBuild.core.constants.Proxy.VALUE, CMDBuild.core.constants.Proxy.DESCRIPTION],
-					data: [
-						{
-							value: 1,
-							description: tr.direction.asc
+							store: CMDBuild.core.proxy.common.tabs.attribute.Order.getStoreOrderSign(),
+							queryMode: 'local'
 						},
-						{
-							value: -1,
-							description: tr.direction.desc
-						},
-						{
-							value: 0,
-							description: tr.not_in_use
+
+						renderer: function(value, metaData, record, rowIndex, colIndex, store, view) {
+							if (value > 0) {
+								return '<span>' + CMDBuild.Translation.administration.modClass.attributeProperties.direction.asc + '</span>';
+							} else if (value < 0) {
+								return '<span>' + CMDBuild.Translation.administration.modClass.attributeProperties.direction.desc + '</span>';
+							} else {
+								return '<span>' + CMDBuild.Translation.administration.modClass.attributeProperties.not_in_use + '</span>';
+							}
 						}
-					]
-				})
+					}),
+				],
+				store: CMDBuild.core.proxy.common.tabs.attribute.Order.getStore(),
+				plugins: [
+					Ext.create('Ext.grid.plugin.CellEditing', { clicksToEdit: 1 })
+				],
+				viewConfig: {
+					plugins: {
+						ptype: 'gridviewdragdrop',
+						dragGroup: 'dd',
+						dropGroup: 'dd'
+					}
+				}
 			});
-
-			this.columns = [
-				{
-					id: CMDBuild.core.constants.Proxy.ABSOLUTE_CLASS_ORDER,
-					hideable: false,
-					hidden: true,
-					dataIndex: CMDBuild.core.constants.Proxy.ABSOLUTE_CLASS_ORDER
-				},
-				{
-					id: CMDBuild.core.constants.Proxy.NAME,
-					header: tr.name,
-					dataIndex: CMDBuild.core.constants.Proxy.NAME,
-					flex: 1
-				},
-				{
-					id: CMDBuild.core.constants.Proxy.DESCRIPTION,
-					header: tr.description,
-					dataIndex: CMDBuild.core.constants.Proxy.DESCRIPTION,
-					flex: 1
-				},
-				{
-					header: tr.criterion,
-					dataIndex: CMDBuild.core.constants.Proxy.CLASS_ORDER_SIGN,
-					renderer: Ext.Function.bind(comboRender, this, [], true),
-					flex: 1,
-					editor: comboOrderSign
-				}
-			];
-
-			this.plugins = [
-				Ext.create('Ext.grid.plugin.CellEditing', {
-					clicksToEdit: 1
-				})
-			];
-
-			this.viewConfig = {
-				plugins: {
-					ptype: 'gridviewdragdrop',
-					dragGroup: 'dd',
-					dropGroup: 'dd'
-				}
-			};
 
 			this.callParent(arguments);
 
 			var params = {};
 			params[CMDBuild.core.constants.Proxy.CLASS_NAME] = _CMCache.getEntryTypeNameById(this.idClass);
 
-			this.getStore().load({
-				params: params
-			});
-
-			this.getEditor = function() {
-				return comboOrderSign;
-			};
+			this.getStore().load({ params: params });
 		}
 	});
-
-	function comboRender(value, meta, record, rowIndex, colIndex, store) {
-		if (value > 0) {
-			return '<span>' + tr.direction.asc + '</span>';
-		} else if (value < 0) {
-			return '<span>' + tr.direction.desc + '</span>';
-		} else {
-			return '<span>' + tr.not_in_use + '</span>';
-		}
-	}
 
 })();

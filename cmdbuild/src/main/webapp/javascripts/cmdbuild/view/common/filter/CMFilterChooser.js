@@ -201,6 +201,7 @@
 			if (checked)
 				CMDBuild.core.proxy.Filter.read({
 					params: params,
+					loadMask: false,
 					scope: this,
 					success: function(response, options, decodedResponse) {
 						decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.FILTERS];

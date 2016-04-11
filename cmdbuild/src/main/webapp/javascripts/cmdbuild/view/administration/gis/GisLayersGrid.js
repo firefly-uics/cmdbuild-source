@@ -1,5 +1,7 @@
 (function() {
 
+	Ext.require('CMDBuild.core.proxy.gis.GeoServer');
+
 	var tr = CMDBuild.Translation.administration.modClass.attributeProperties;
 	var tr_geo = CMDBuild.Translation.administration.modClass.geo_attributes;
 
@@ -57,7 +59,7 @@
 				}
 			];
 
-			this.gridStore = CMDBuild.ServiceProxy.geoServer.getGeoServerLayerStore();
+			this.gridStore = CMDBuild.core.proxy.gis.GeoServer.getStore();
 
 			Ext.apply(this, {
 				columns: this.gridColumns,

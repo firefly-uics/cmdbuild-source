@@ -4,7 +4,7 @@
 
 		requires: [
 			'CMDBuild.core.constants.Proxy',
-			'CMDBuild.core.proxy.Index',
+			'CMDBuild.core.proxy.index.Json',
 			'CMDBuild.model.lookup.Type'
 		],
 
@@ -12,25 +12,27 @@
 
 		/**
 		 * @param {Object} parameters
+		 *
+		 * @returns {Void}
 		 */
 		create: function (parameters) {
 			parameters = Ext.isEmpty(parameters) ? {} : parameters;
 
-			Ext.apply(parameters, { url: CMDBuild.core.proxy.Index.lookup.type.create });
+			Ext.apply(parameters, { url: CMDBuild.core.proxy.index.Json.lookup.type.create });
 
-			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.LOOKUP_TYPE, parameters, true);
+			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.LOOKUP, parameters, true);
 		},
 
 		/**
-		 * @return {Ext.data.Store}
+		 * @returns {Ext.data.Store or CMDBuild.core.cache.Store}
 		 */
 		getStore: function () {
-			return Ext.create('Ext.data.Store', {
+			return CMDBuild.global.Cache.requestAsStore(CMDBuild.core.constants.Proxy.LOOKUP, {
 				autoLoad: true,
 				model: 'CMDBuild.model.lookup.Type',
 				proxy: {
 					type: 'ajax',
-					url: CMDBuild.core.proxy.Index.lookup.type.readAll,
+					url: CMDBuild.core.proxy.index.Json.lookup.type.readAll,
 					reader: {
 						type: 'json'
 					}
@@ -43,35 +45,41 @@
 
 		/**
 		 * @param {Object} parameters
+		 *
+		 * @returns {Void}
 		 */
 		read: function (parameters) {
 			parameters = Ext.isEmpty(parameters) ? {} : parameters;
 
-			Ext.apply(parameters, { url: CMDBuild.core.proxy.Index.lookup.type.read });
+			Ext.apply(parameters, { url: CMDBuild.core.proxy.index.Json.lookup.type.read });
 
-			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.LOOKUP_TYPE, parameters);
+			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.LOOKUP, parameters);
 		},
 
 		/**
 		 * @param {Object} parameters
+		 *
+		 * @returns {Void}
 		 */
 		readAll: function (parameters) {
 			parameters = Ext.isEmpty(parameters) ? {} : parameters;
 
-			Ext.apply(parameters, { url: CMDBuild.core.proxy.Index.lookup.type.readAll });
+			Ext.apply(parameters, { url: CMDBuild.core.proxy.index.Json.lookup.type.readAll });
 
-			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.LOOKUP_TYPE, parameters);
+			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.LOOKUP, parameters);
 		},
 
 		/**
 		 * @param {Object} parameters
+		 *
+		 * @returns {Void}
 		 */
 		update: function (parameters) {
 			parameters = Ext.isEmpty(parameters) ? {} : parameters;
 
-			Ext.apply(parameters, { url: CMDBuild.core.proxy.Index.lookup.type.update });
+			Ext.apply(parameters, { url: CMDBuild.core.proxy.index.Json.lookup.type.update });
 
-			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.LOOKUP_TYPE, parameters, true);
+			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.LOOKUP, parameters, true);
 		}
 	});
 

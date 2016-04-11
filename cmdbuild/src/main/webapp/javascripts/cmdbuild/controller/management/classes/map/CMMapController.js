@@ -197,7 +197,15 @@
 						// change the zoom to the minimum to show the feature
 						me.map.setCenter(me.map.getCenter(), layer.minZoom);
 					}
-					CMDBuild.ServiceProxy.getFeature(params.IdClass, params.Id, onSuccess);
+					CMDBuild.core.proxy.gis.Gis.getFeature({
+						params: {
+							"className": _CMCache.getEntryTypeNameById(params.IdClass),
+							"cardId": params.Id
+						},
+						loadMask: false,
+						scope: this,
+						success: onSuccess
+					});
 				}
 			});
 

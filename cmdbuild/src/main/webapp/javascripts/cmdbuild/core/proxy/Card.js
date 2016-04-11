@@ -1,183 +1,108 @@
-(function() {
+(function () {
 
 	Ext.define('CMDBuild.core.proxy.Card', {
-		alternateClassName: 'CMDBuild.ServiceProxy.card', // Legacy class name
 
 		requires: [
-			'CMDBuild.core.interfaces.Ajax',
-			'CMDBuild.core.proxy.CMProxy',
 			'CMDBuild.core.constants.Proxy',
-			'CMDBuild.core.proxy.Index'
+			'CMDBuild.core.proxy.index.Json'
 		],
 
 		singleton: true,
 
 		/**
-		 * @param {Object} params
-		 */
-		bulkUpdate: function(params) {
-			params.method = 'POST';
-			params.url = CMDBuild.core.proxy.Index.card.bulkUpdate;
-
-			CMDBuild.ServiceProxy.core.doRequest(params);
-		},
-
-		/**
-		 * @param {Object} params
-		 */
-		bulkUpdateFromFilter: function(params) {
-			params.method = 'POST';
-			params.url = CMDBuild.core.proxy.Index.card.bulkUpdateFromFilter;
-
-			CMDBuild.ServiceProxy.core.doRequest(params);
-		},
-
-		/**
-		 * @param {Object} parameters
-		 */
-		getList: function(parameters) {
-			CMDBuild.core.interfaces.Ajax.request({
-				method: 'GET',
-				url: CMDBuild.core.proxy.Index.card.getList,
-				params: parameters.params,
-				scope: parameters.scope || this,
-				loadMask: Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : false,
-				failure: parameters.failure || Ext.emptyFn,
-				success: parameters.success || Ext.emptyFn,
-				callback: parameters.callback || Ext.emptyFn
-			});
-		},
-
-		/**
-		 * Retrieve the position on the DB of the required card, considering the sorting and current filter applied on the grid
+		 * Get the position on the DB of the required card, considering the sorting and current filter applied on the grid
 		 *
-		 * @param {Object} p
-		 * 		Ex: {
-		 * 			params: {
-		 * 				{Number} cardId
-		 * 				{String} className
-		 * 				{Object} filter
-		 * 				{Object} sort
-		 * 			}
-		 * 		}
+		 * @param {Object} parameters
+		 *
+		 * @returns {Void}
 		 */
-		getPosition: function(params) {
-			params.method = 'GET';
-			params.url = CMDBuild.core.proxy.Index.card.getPosition;
+		getPosition: function (parameters) {
+			parameters = Ext.isEmpty(parameters) ? {} : parameters;
 
-			CMDBuild.ServiceProxy.core.doRequest(params);
-		},
+			Ext.apply(parameters, { url: CMDBuild.core.proxy.index.Json.card.getPosition });
 
-		/**
-		 * @param {Object} params
-		 */
-		get: function(params) {
-			adaptGetCardCallParams(params);
-			params.method = 'GET';
-			params.url = CMDBuild.core.proxy.Index.card.read;
-
-			CMDBuild.ServiceProxy.core.doRequest(params);
-		},
-
-		/**
-		 * @param {Object} params
-		 */
-		remove: function(parameters) {
-			parameters.important = true;
-
-			CMDBuild.core.interfaces.Ajax.request({
-				method: 'POST',
-				url: CMDBuild.core.proxy.Index.card.remove,
-				headers: parameters.headers,
-				params: parameters.params,
-				scope: parameters.scope || this,
-				loadMask: parameters.loadMask || true,
-				failure: parameters.failure || Ext.emptyFn,
-				success: parameters.success || Ext.emptyFn,
-				callback: parameters.callback || Ext.emptyFn
-			});
-		},
-
-		/**
-		 * @property {Object} parameters
-		 */
-		update: function(parameters) {
-			CMDBuild.core.interfaces.Ajax.request({
-				method: 'POST',
-				url: CMDBuild.core.proxy.Index.card.update,
-				headers: parameters.headers,
-				params: parameters.params,
-				scope: parameters.scope || this,
-				loadMask: Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : true,
-				failure: parameters.failure || Ext.emptyFn,
-				success: parameters.success || Ext.emptyFn,
-				callback: parameters.callback || Ext.emptyFn
-			});
+			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.CARD, parameters);
 		},
 
 		// Lock/Unlock methods
 			/**
 			 * @param {Object} parameters
+			 *
+			 * @returns {Void}
 			 */
-			lock: function(parameters) {
-				CMDBuild.core.interfaces.Ajax.request({
-					method: 'POST',
-					url: CMDBuild.core.proxy.Index.classes.cards.lock,
-					headers: parameters.headers,
-					params: parameters.params,
-					loadMask: Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : false,
-					scope: parameters.scope || this,
-					failure: parameters.failure || Ext.emptyFn,
-					success: parameters.success || Ext.emptyFn,
-					callback: parameters.callback || Ext.emptyFn
-				});
+			lock: function (parameters) {
+				parameters = Ext.isEmpty(parameters) ? {} : parameters;
+
+				Ext.apply(parameters, { url: CMDBuild.core.proxy.index.Json.card.lock });
+
+				CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.CARD, parameters, true);
 			},
 
 			/**
 			 * @param {Object} parameters
+			 *
+			 * @returns {Void}
 			 */
-			unlock: function(parameters) {
-				CMDBuild.core.interfaces.Ajax.request({
-					method: 'POST',
-					url: CMDBuild.core.proxy.Index.classes.cards.unlock,
-					headers: parameters.headers,
-					params: parameters.params,
-					loadMask: Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : false,
-					scope: parameters.scope || this,
-					failure: parameters.failure || Ext.emptyFn,
-					success: parameters.success || Ext.emptyFn,
-					callback: parameters.callback || Ext.emptyFn
-				});
+			unlock: function (parameters) {
+				parameters = Ext.isEmpty(parameters) ? {} : parameters;
+
+				Ext.apply(parameters, { url: CMDBuild.core.proxy.index.Json.card.unlock });
+
+				CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.CARD, parameters, true);
 			},
 
-			/**
-			 * @param {Object} parameters
-			 */
-			unlockAll: function(parameters) {
-				CMDBuild.core.interfaces.Ajax.request({
-					method: 'POST',
-					url: CMDBuild.core.proxy.Index.classes.cards.unlockAll,
-					headers: parameters.headers,
-					params: parameters.params,
-					loadMask: Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : true,
-					scope: parameters.scope || this,
-					failure: parameters.failure || Ext.emptyFn,
-					success: parameters.success || Ext.emptyFn,
-					callback: parameters.callback || Ext.emptyFn
-				});
-			}
-	});
+		/**
+		 * @param {Object} parameters
+		 *
+		 * @returns {Void}
+		 */
+		read: function (parameters) {
+			parameters = Ext.isEmpty(parameters) ? {} : parameters;
 
-	function adaptGetCardCallParams(p) {
-		if (p.params.Id && p.params.IdClass) {
-			_deprecated('adaptGetCardCallParams', 'CMDBuild.core.proxy.Card');
+			Ext.apply(parameters, { url: CMDBuild.core.proxy.index.Json.card.read });
 
-			var parameters = {};
-			parameters[CMDBuild.core.constants.Proxy.CLASS_NAME] = _CMCache.getEntryTypeNameById(p.params.IdClass);
-			parameters[CMDBuild.core.constants.Proxy.CARD_ID] = p.params.Id;
+			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.CARD, parameters);
+		},
 
-			p.params = parameters;
+		/**
+		 * @param {Object} parameters
+		 *
+		 * @returns {Void}
+		 */
+		readAll: function (parameters) {
+			parameters = Ext.isEmpty(parameters) ? {} : parameters;
+
+			Ext.apply(parameters, { url: CMDBuild.core.proxy.index.Json.card.getList });
+
+			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.CARD, parameters);
+		},
+
+		/**
+		 * @param {Object} parameters
+		 *
+		 * @returns {Void}
+		 */
+		remove: function (parameters) {
+			parameters = Ext.isEmpty(parameters) ? {} : parameters;
+			parameters['important'] = true;
+
+			Ext.apply(parameters, { url: CMDBuild.core.proxy.index.Json.card.remove });
+
+			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.CARD, parameters, true);
+		},
+
+		/**
+		 * @param {Object} parameters
+		 *
+		 * @returns {Void}
+		 */
+		update: function (parameters) {
+			parameters = Ext.isEmpty(parameters) ? {} : parameters;
+
+			Ext.apply(parameters, { url: CMDBuild.core.proxy.index.Json.card.update });
+
+			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.CARD, parameters, true);
 		}
-	}
+	});
 
 })();

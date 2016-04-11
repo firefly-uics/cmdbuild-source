@@ -5,7 +5,7 @@
 		requires: [
 			'CMDBuild.core.constants.Global',
 			'CMDBuild.core.constants.Proxy',
-			'CMDBuild.core.proxy.Index',
+			'CMDBuild.core.proxy.index.Json',
 			'CMDBuild.model.configuration.generalOptions.StartingClass'
 		],
 
@@ -20,7 +20,7 @@
 				model: 'CMDBuild.model.configuration.generalOptions.StartingClass',
 				proxy: {
 					type: 'ajax',
-					url: CMDBuild.core.proxy.Index.classes.readAll,
+					url: CMDBuild.core.proxy.index.Json.classes.readAll,
 					reader: {
 						type: 'json',
 						root: CMDBuild.core.constants.Proxy.CLASSES
@@ -52,7 +52,7 @@
 			parameters.params = Ext.isEmpty(parameters.params) ? {} : parameters.params;
 			parameters.params[CMDBuild.core.constants.Proxy.NAME] = 'cmdbuild';
 
-			Ext.apply(parameters, { url: CMDBuild.core.proxy.Index.configuration.read });
+			Ext.apply(parameters, { url: CMDBuild.core.proxy.index.Json.configuration.read });
 
 			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.CONFIGURATION, parameters);
 		},
@@ -67,7 +67,7 @@
 			parameters.params = Ext.isEmpty(parameters.params) ? {} : parameters.params;
 			parameters.params[CMDBuild.core.constants.Proxy.NAME] = 'cmdbuild';
 
-			Ext.apply(parameters, { url: CMDBuild.core.proxy.Index.configuration.update });
+			Ext.apply(parameters, { url: CMDBuild.core.proxy.index.Json.configuration.update });
 
 			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.CONFIGURATION, parameters, true);
 		}

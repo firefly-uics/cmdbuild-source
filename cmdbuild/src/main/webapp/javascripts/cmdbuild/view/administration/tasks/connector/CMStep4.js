@@ -5,7 +5,10 @@
 	Ext.define('CMDBuild.view.administration.tasks.connector.CMStep4Delegate', {
 		extend: 'CMDBuild.controller.CMBasePanelController',
 
-		requires: ['CMDBuild.core.constants.Proxy'],
+		requires: [
+			'CMDBuild.core.constants.Proxy',
+			'CMDBuild.core.proxy.taskManager.Connector'
+		],
 
 		/**
 		 * @cfg {CMDBuild.controller.administration.tasks.CMTasksFormConnectorController}
@@ -55,7 +58,7 @@
 				editable: false,
 				allowBlank: true,
 
-				store: CMDBuild.core.proxy.CMProxyTasks.getDeletionTypes(),
+				store: CMDBuild.core.proxy.taskManager.Connector.getDeletionTypes(),
 				queryMode: 'local',
 
 				listeners: {
@@ -275,7 +278,7 @@
 							displayField: CMDBuild.core.constants.Proxy.NAME,
 							valueField: CMDBuild.core.constants.Proxy.NAME,
 
-							store: CMDBuild.core.proxy.CMProxyTasks.getSourceStore(),
+							store: CMDBuild.core.proxy.taskManager.Connector.getStoreSource(),
 
 							listeners: {
 								select: function(combo, records, eOpts) {
@@ -290,13 +293,13 @@
 						dataIndex: CMDBuild.core.constants.Proxy.CLASS_NAME,
 						editor: {
 							xtype: 'combo',
-							displayField: CMDBuild.core.constants.Proxy.DESCRIPTION,
+							displayField: CMDBuild.core.constants.Proxy.TEXT,
 							valueField: CMDBuild.core.constants.Proxy.NAME,
 							forceSelection: true,
 							editable: false,
 							allowBlank: false,
 
-							store: CMDBuild.core.proxy.CMProxyTasks.getClassStore(),
+							store: CMDBuild.core.proxy.taskManager.Connector.getStoreClasses(),
 							queryMode: 'local',
 
 							listeners: {

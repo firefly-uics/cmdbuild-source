@@ -5,7 +5,7 @@
 		requires: [
 			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.interfaces.FormSubmit',
-			'CMDBuild.core.proxy.Index',
+			'CMDBuild.core.proxy.index.Json',
 			'CMDBuild.model.common.tabs.email.attachments.TargetClass'
 		],
 
@@ -13,17 +13,21 @@
 
 		/**
 		 * @param {Object} parameters
+		 *
+		 * @returns {Void}
 		 */
 		copy: function (parameters) {
 			parameters = Ext.isEmpty(parameters) ? {} : parameters;
 
-			Ext.apply(parameters, { url: CMDBuild.core.proxy.Index.email.attachment.copy });
+			Ext.apply(parameters, { url: CMDBuild.core.proxy.index.Json.email.attachment.copy });
 
 			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.ATTACHMENT, parameters, true);
 		},
 
 		/**
 		 * @param {Object} parameters
+		 *
+		 * @returns {Void}
 		 */
 		download: function (parameters) {
 			if (
@@ -31,7 +35,7 @@
 				&& Ext.isObject(parameters.params) && !Ext.Object.isEmpty(parameters.params)
 			) {
 				window.open(
-					CMDBuild.core.proxy.Index.email.attachment.download + '?' + Ext.urlEncode(parameters.params),
+					CMDBuild.core.proxy.index.Json.email.attachment.download + '?' + Ext.urlEncode(parameters.params),
 					'_blank'
 				);
 			}
@@ -39,16 +43,44 @@
 
 		/**
 		 * @param {Object} parameters
+		 *
+		 * @returns {Void}
 		 */
 		getAll: function (parameters) {
 			parameters = Ext.isEmpty(parameters) ? {} : parameters;
 
 			Ext.apply(parameters, {
 				loadMask: false,
-				url: CMDBuild.core.proxy.Index.email.attachment.readAll
+				url: CMDBuild.core.proxy.index.Json.email.attachment.readAll
 			});
 
 			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.ATTACHMENT, parameters, true);
+		},
+
+		/**
+		 * @returns {Ext.data.Store or CMDBuild.core.cache.Store}
+		 */
+		getStore: function () {
+			return CMDBuild.global.Cache.requestAsStore(CMDBuild.core.constants.Proxy.ATTACHMENT, {
+				autoLoad: false,
+				model: 'CMDBuild.model.CMAttachment', // TODO: waiting for refactor
+				proxy: {
+					type: 'ajax',
+					url: CMDBuild.core.proxy.index.Json.attachment.readAll,
+					reader: {
+						type: 'json',
+						root: CMDBuild.core.constants.Proxy.ROWS
+					},
+					extraParams: { // Avoid to send limit, page and start parameters in server calls
+						limitParam: undefined,
+						pageParam: undefined,
+						startParam: undefined
+					}
+				},
+				sorters: [
+					{ property: 'Filename', direction: 'ASC' }
+				]
+			});
 		},
 
 		/**
@@ -60,7 +92,7 @@
 				model: 'CMDBuild.model.common.tabs.email.attachments.TargetClass',
 				proxy: {
 					type: 'ajax',
-					url: CMDBuild.core.proxy.Index.classes.readAll,
+					url: CMDBuild.core.proxy.index.Json.classes.readAll,
 					reader: {
 						type: 'json',
 						root: CMDBuild.core.constants.Proxy.CLASSES
@@ -84,22 +116,26 @@
 
 		/**
 		 * @param {Object} parameters
+		 *
+		 * @returns {Void}
 		 */
 		remove: function (parameters) {
 			parameters = Ext.isEmpty(parameters) ? {} : parameters;
 
-			Ext.apply(parameters, { url: CMDBuild.core.proxy.Index.email.attachment.remove });
+			Ext.apply(parameters, { url: CMDBuild.core.proxy.index.Json.email.attachment.remove });
 
 			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.ATTACHMENT, parameters, true);
 		},
 
 		/**
 		 * @param {Object} parameters
+		 *
+		 * @returns {Void}
 		 */
 		upload: function (parameters) {
 			parameters = Ext.isEmpty(parameters) ? {} : parameters;
 
-			Ext.apply(parameters, { url: CMDBuild.core.proxy.Index.email.attachment.upload });
+			Ext.apply(parameters, { url: CMDBuild.core.proxy.index.Json.email.attachment.upload });
 
 			CMDBuild.core.interfaces.FormSubmit.submit(parameters);
 		}

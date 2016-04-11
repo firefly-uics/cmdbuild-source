@@ -4,7 +4,7 @@
 
 		requires: [
 			'CMDBuild.core.constants.Proxy',
-			'CMDBuild.core.proxy.Index',
+			'CMDBuild.core.proxy.index.Json',
 			'CMDBuild.model.userAndGroup.group.defaultFilters.Filter'
 		],
 
@@ -19,7 +19,7 @@
 				model: 'CMDBuild.model.userAndGroup.group.defaultFilters.Filter',
 				proxy: {
 					type: 'ajax',
-					url: CMDBuild.core.proxy.Index.group.defaultFilters.readAllGroupFilters,
+					url: CMDBuild.core.proxy.index.Json.group.defaultFilters.readAllGroupFilters,
 					reader: {
 						type: 'json',
 						root: CMDBuild.core.constants.Proxy.FILTERS
@@ -33,22 +33,26 @@
 
 		/**
 		 * @param {Object} parameters
+		 *
+		 * @returns {Void}
 		 */
 		read: function (parameters) {
 			parameters = Ext.isEmpty(parameters) ? {} : parameters;
 
-			Ext.apply(parameters, { url: CMDBuild.core.proxy.Index.group.defaultFilters.read });
+			Ext.apply(parameters, { url: CMDBuild.core.proxy.index.Json.group.defaultFilters.read });
 
 			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.DEFAULT_FILTER, parameters);
 		},
 
 		/**
 		 * @param {Object} parameters
+		 *
+		 * @returns {Void}
 		 */
 		update: function (parameters) {
 			parameters = Ext.isEmpty(parameters) ? {} : parameters;
 
-			Ext.apply(parameters, { url: CMDBuild.core.proxy.Index.group.defaultFilters.update });
+			Ext.apply(parameters, { url: CMDBuild.core.proxy.index.Json.group.defaultFilters.update });
 
 			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.DEFAULT_FILTER, parameters, true);
 		}

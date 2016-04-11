@@ -1,11 +1,11 @@
-(function() {
+(function () {
 
 	Ext.define('CMDBuild.core.proxy.report.Jasper', {
 
 		requires: [
 			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.interfaces.FormSubmit',
-			'CMDBuild.core.proxy.Index',
+			'CMDBuild.core.proxy.index.Json',
 			'CMDBuild.model.report.Grid'
 		],
 
@@ -13,22 +13,26 @@
 
 		/**
 		 * @param {Object} parameters
+		 *
+		 * @returns {Void}
 		 */
-		analize: function(parameters) {
+		analize: function (parameters) {
 			parameters = Ext.isEmpty(parameters) ? {} : parameters;
 
-			Ext.apply(parameters, { url: CMDBuild.core.proxy.Index.report.jasper.analyze });
+			Ext.apply(parameters, { url: CMDBuild.core.proxy.index.Json.report.jasper.analyze });
 
 			CMDBuild.core.interfaces.FormSubmit.submit(parameters);
 		},
 
 		/**
 		 * @param {Object} parameters
+		 *
+		 * @returns {Void}
 		 */
-		create: function(parameters) {
+		create: function (parameters) {
 			parameters = Ext.isEmpty(parameters) ? {} : parameters;
 
-			Ext.apply(parameters, { url: CMDBuild.core.proxy.Index.report.jasper.create });
+			Ext.apply(parameters, { url: CMDBuild.core.proxy.index.Json.report.jasper.create });
 
 			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.REPORT, parameters, true);
 		},
@@ -36,14 +40,14 @@
 		/**
 		 * @returns {Ext.data.Store or CMDBuild.core.cache.Store}
 		 */
-		getStore: function() {
+		getStore: function () {
 			return CMDBuild.global.Cache.requestAsStore(CMDBuild.core.constants.Proxy.REPORT, {
 				autoLoad: false,
 				model: 'CMDBuild.model.report.Grid',
 				pageSize: CMDBuild.configuration.instance.get(CMDBuild.core.constants.Proxy.ROW_LIMIT),
 				proxy: {
 					type: 'ajax',
-					url: CMDBuild.core.proxy.Index.report.jasper.getReportsByType,
+					url: CMDBuild.core.proxy.index.Json.report.jasper.getReportsByType,
 					reader: {
 						type: 'json',
 						root: CMDBuild.core.constants.Proxy.ROWS,
@@ -61,44 +65,52 @@
 
 		/**
 		 * @param {Object} parameters
+		 *
+		 * @returns {Void}
 		 */
-		import: function(parameters) {
+		import: function (parameters) {
 			parameters = Ext.isEmpty(parameters) ? {} : parameters;
 
-			Ext.apply(parameters, { url: CMDBuild.core.proxy.Index.report.jasper.import });
+			Ext.apply(parameters, { url: CMDBuild.core.proxy.index.Json.report.jasper.import });
 
 			CMDBuild.core.interfaces.FormSubmit.submit(parameters);
 		},
 
 		/**
 		 * @param {Object} parameters
+		 *
+		 * @returns {Void}
 		 */
-		remove: function(parameters) {
+		remove: function (parameters) {
 			parameters = Ext.isEmpty(parameters) ? {} : parameters;
 
-			Ext.apply(parameters, { url: CMDBuild.core.proxy.Index.report.jasper.remove });
+			Ext.apply(parameters, { url: CMDBuild.core.proxy.index.Json.report.jasper.remove });
 
 			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.REPORT, parameters, true);
 		},
 
 		/**
 		 * @param {Object} parameters
+		 *
+		 * @returns {Void}
 		 */
-		resetSession: function(parameters) {
+		resetSession: function (parameters) {
 			parameters = Ext.isEmpty(parameters) ? {} : parameters;
 
-			Ext.apply(parameters, { url: CMDBuild.core.proxy.Index.report.jasper.resetSession });
+			Ext.apply(parameters, { url: CMDBuild.core.proxy.index.Json.report.jasper.resetSession });
 
 			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.REPORT, parameters);
 		},
 
 		/**
 		 * @param {Object} parameters
+		 *
+		 * @returns {Void}
 		 */
-		save: function(parameters) {
+		save: function (parameters) {
 			parameters = Ext.isEmpty(parameters) ? {} : parameters;
 
-			Ext.apply(parameters, { url: CMDBuild.core.proxy.Index.report.jasper.save });
+			Ext.apply(parameters, { url: CMDBuild.core.proxy.index.Json.report.jasper.save });
 
 			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.REPORT, parameters, true);
 		}

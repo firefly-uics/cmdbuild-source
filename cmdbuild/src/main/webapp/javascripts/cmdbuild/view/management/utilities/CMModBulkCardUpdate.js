@@ -152,16 +152,16 @@
 
 		fields: [
 			{ name: TREE_NODE_NAME_ATTRIBUTE, type: 'string' },
-			{ name: CMDBuild.ServiceProxy.parameter.TEXT, type: 'string' },
-			{ name: CMDBuild.ServiceProxy.parameter.ID, type: 'string' },
-			{ name: CMDBuild.ServiceProxy.parameter.PARENT, type: 'string' },
+			{ name: CMDBuild.core.constants.Proxy.TEXT, type: 'string' },
+			{ name: CMDBuild.core.constants.Proxy.ID, type: 'string' },
+			{ name: CMDBuild.core.constants.Proxy.PARENT, type: 'string' },
 			{ name: CM_INDEX, type: 'int' },
-			{ name: CMDBuild.ServiceProxy.parameter.NAME, type: 'string' },
-			{ name: CMDBuild.ServiceProxy.parameter.TYPE, type: 'string' },
-			{ name: CMDBuild.ServiceProxy.parameter.FILTER, type: 'auto' },
+			{ name: CMDBuild.core.constants.Proxy.NAME, type: 'string' },
+			{ name: CMDBuild.core.constants.Proxy.TYPE, type: 'string' },
+			{ name: CMDBuild.core.constants.Proxy.FILTER, type: 'auto' },
 			{ name: 'sourceFunction', type: 'auto' },
 			{ name: 'viewType', type: 'string' },
-			{ name: CMDBuild.ServiceProxy.parameter.SECTION_HIERARCHY, type: 'auto' }
+			{ name: CMDBuild.core.constants.Proxy.SECTION_HIERARCHY, type: 'auto' }
 		]
 	});
 
@@ -179,7 +179,7 @@
 				direction: 'ASC'
 			},
 			{
-				property : CMDBuild.ServiceProxy.parameter.TEXT,
+				property : CMDBuild.core.constants.Proxy.TEXT,
 				direction: 'ASC'
 			}
 		]

@@ -1,6 +1,9 @@
 (function() {
 
-	Ext.require('CMDBuild.core.constants.Global');
+	Ext.require([
+		'CMDBuild.core.constants.Global',
+		'CMDBuild.core.proxy.utility.BulkUpdate'
+	]);
 
 	Ext.define("CMDBuild.controller.management.common.CMStandAloneCardGridController", {
 		extend: "CMDBuild.controller.management.common.CMCardGridController",
@@ -84,10 +87,10 @@
 	}
 
 	function getProxyCall(me) {
-		var proxyCall = _CMProxy.card.bulkUpdate;
+		var proxyCall = CMDBuild.core.proxy.utility.BulkUpdate.bulkUpdate;
 		var reverseMode = me.gridSM.cmReverse;
 		if (reverseMode) {
-			proxyCall = _CMProxy.card.bulkUpdateFromFilter;
+			proxyCall = CMDBuild.core.proxy.utility.BulkUpdate.bulkUpdateFromFilter;
 		}
 
 		return proxyCall;
@@ -120,11 +123,12 @@
 		}
 
 		var params = builSaveParams(me);
-		params[_CMProxy.parameter.CONFIRMED] = true;
+		params[CMDBuild.core.constants.Proxy.CONFIRMED] = true;
 
 		CMDBuild.core.LoadMask.show();
 		getProxyCall(me)({
 			params: params,
+			loadMask: false,
 			success: function(response, request, decordedResp) {
 				me.view.cardGrid.reload(reselect = false);
 				onAbortButtonClick.call(me);
@@ -162,13 +166,12 @@
 	}
 
 	function builSaveParams(me) {
-		var parameterNames = _CMProxy.parameter;
 		var params = me.view.cardForm.getCheckedValues(); // the attributes
-		params[parameterNames.CARDS] = formatSelections(me);
+		params[CMDBuild.core.constants.Proxy.CARDS] = formatSelections(me);
 
 		if (me.gridSM.cmReverse) {
-			params[parameterNames.FILTER] = me.view.getFilter();
-			params[parameterNames.CLASS_NAME] = _CMCache.getEntryTypeNameById(me.currentClassId);
+			params[CMDBuild.core.constants.Proxy.FILTER] = me.view.getFilter();
+			params[CMDBuild.core.constants.Proxy.CLASS_NAME] = _CMCache.getEntryTypeNameById(me.currentClassId);
 		}
 
 		return params;
@@ -180,8 +183,8 @@
 		for (var i=0, l=selectedCards.length; i<l; i++) {
 			var card = selectedCards[i];
 			var outCard = {};
-			outCard[_CMProxy.parameter.CLASS_NAME] = _CMCache.getEntryTypeNameById(card.get("IdClass"));
-			outCard[_CMProxy.parameter.CARD_ID] = card.get("Id");
+			outCard[CMDBuild.core.constants.Proxy.CLASS_NAME] = _CMCache.getEntryTypeNameById(card.get("IdClass"));
+			outCard[CMDBuild.core.constants.Proxy.CARD_ID] = card.get("Id");
 			out.push(outCard);
 		}
 

@@ -1,10 +1,10 @@
-(function() {
+(function () {
 
 	Ext.define('CMDBuild.core.proxy.common.field.multiselect.Group', {
 
 		requires: [
 			'CMDBuild.core.constants.Proxy',
-			'CMDBuild.core.proxy.Index',
+			'CMDBuild.core.proxy.index.Json',
 			'CMDBuild.model.common.field.multiselect.Group'
 		],
 
@@ -19,7 +19,7 @@
 				model: 'CMDBuild.model.common.field.multiselect.Group',
 				proxy: {
 					type: 'ajax',
-					url: CMDBuild.core.proxy.Index.group.readAll,
+					url: CMDBuild.core.proxy.index.Json.group.readAll,
 					reader: {
 						type: 'json',
 						root: CMDBuild.core.constants.Proxy.GROUPS

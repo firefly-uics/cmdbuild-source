@@ -51,10 +51,10 @@
 		onGridAndFormPanelSaveButtonClick: function(form) {
 			var me = this;
 			var params = me.fieldManager.getValues() || {};
-			var proxyFunction = CMDBuild.bim.proxy.create;
+			var proxyFunction = CMDBuild.bim.proxy.Proxy.create;
 
 			if (this.record != null) {
-				proxyFunction = CMDBuild.bim.proxy.update;
+				proxyFunction = CMDBuild.bim.proxy.Proxy.update;
 				params['id'] = this.record.getId();
 			}
 
@@ -85,7 +85,7 @@
 
 		onImportIfc: function() {
 			if (!Ext.isEmpty(this.record))
-				CMDBuild.bim.proxy.importIfc({
+				CMDBuild.bim.proxy.Proxy.importIfc({
 					scope: this,
 					params: {
 						projectId: this.record.getId()
@@ -104,9 +104,9 @@
 			if (!me.record)
 				return;
 
-			var proxyFunction = CMDBuild.bim.proxy.disable;
+			var proxyFunction = CMDBuild.bim.proxy.Proxy.disable;
 			if (action == 'enable') {
-				proxyFunction = CMDBuild.bim.proxy.enable;
+				proxyFunction = CMDBuild.bim.proxy.Proxy.enable;
 				this.view.updateEnableDisableButton(false);
 			}
 			else {
@@ -129,7 +129,7 @@
 		bimCardBinding: function() {
 			var bindingReference = this.view.query('#bimCardBinding')[0];
 
-			CMDBuild.bim.proxy.rootClassName({
+			CMDBuild.bim.proxy.Proxy.rootClassName({
 				success: function(operation, config, response) {
 					bindingReference.initializeItems(response.root);
 				},

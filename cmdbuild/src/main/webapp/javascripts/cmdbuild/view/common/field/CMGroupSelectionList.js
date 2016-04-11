@@ -11,14 +11,14 @@
 		considerAsFieldToDisable: true,
 
 		fieldLabel: CMDBuild.Translation.enabledGroups,
-		name: CMDBuild.ServiceProxy.parameter.GROUPS,
+		name: CMDBuild.core.constants.Proxy.GROUPS,
 		dataFields: [
-			CMDBuild.ServiceProxy.parameter.NAME,
-			CMDBuild.ServiceProxy.parameter.ID,
-			CMDBuild.ServiceProxy.parameter.DESCRIPTION
+			CMDBuild.core.constants.Proxy.NAME,
+			CMDBuild.core.constants.Proxy.ID,
+			CMDBuild.core.constants.Proxy.DESCRIPTION
 		],
-		valueField: CMDBuild.ServiceProxy.parameter.ID,
-		displayField: CMDBuild.ServiceProxy.parameter.DESCRIPTION,
+		valueField: CMDBuild.core.constants.Proxy.ID,
+		displayField: CMDBuild.core.constants.Proxy.DESCRIPTION,
 		allowBlank: true,
 
 		initComponent: function() {

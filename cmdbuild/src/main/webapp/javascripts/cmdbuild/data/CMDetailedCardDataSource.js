@@ -24,8 +24,11 @@
 		 * attribute. Use it to load the full attributes of the card
 		 */
 		loadCard: function(cardToLoad) {
-			CMDBuild.ServiceProxy.card.get({
+			adaptGetCardCallParams(cardToLoad);
+
+			CMDBuild.core.proxy.Card.read({
 				params: cardToLoad,
+				loadMask: false,
 				scope: this,
 				success: function(a,b, response) {
 					var raw = response.card;
@@ -54,5 +57,17 @@
 		// override
 		loadStoreForEntryTypeId: function(entryTypeId, cb) {}
 	});
+
+	function adaptGetCardCallParams(p) {
+		if (p.Id && p.IdClass) {
+			_deprecated('adaptGetCardCallParams', this);
+
+			var parameters = {};
+			parameters[CMDBuild.core.constants.Proxy.CLASS_NAME] = _CMCache.getEntryTypeNameById(p.IdClass);
+			parameters[CMDBuild.core.constants.Proxy.CARD_ID] = p.Id;
+
+			p = parameters;
+		}
+	}
 
 })();

@@ -1,6 +1,10 @@
 (function() {
 
-	Ext.require('CMDBuild.core.constants.Global');
+	Ext.require([
+		'CMDBuild.core.constants.Global',
+		'CMDBuild.core.proxy.workflow.Activity',
+		'CMDBuild.core.proxy.workflow.Workflow'
+	]);
 
 	var ERROR_TEMPLATE = "<p class=\"{0}\">{1}</p>";
 
@@ -10,8 +14,6 @@
 
 	Ext.define("CMDBuild.controller.management.workflow.CMActivityPanelController", {
 		extend: "CMDBuild.controller.management.classes.CMCardPanelController",
-
-		requires: ['CMDBuild.core.proxy.processes.Activity'],
 
 		mixins: {
 			wfStateDelegate: "CMDBuild.state.CMWorkflowStateDelegate"
@@ -185,8 +187,9 @@
 				params[CMDBuild.core.constants.Proxy.ACTIVITY_INSTANCE_ID] = _CMWFState.getActivityInstance().data[CMDBuild.core.constants.Proxy.ID];
 				params[CMDBuild.core.constants.Proxy.PROCESS_INSTANCE_ID] = _CMWFState.getProcessInstance().data[CMDBuild.core.constants.Proxy.ID];
 
-				CMDBuild.core.proxy.processes.Activity.lock({
+				CMDBuild.core.proxy.workflow.Activity.lock({
 					params: params,
+					loadMask: false,
 					scope: scope,
 					success: success
 				});
@@ -205,8 +208,9 @@
 				params[CMDBuild.core.constants.Proxy.ACTIVITY_INSTANCE_ID] = this.lastSelectedActivityInstance.data[CMDBuild.core.constants.Proxy.ID];
 				params[CMDBuild.core.constants.Proxy.PROCESS_INSTANCE_ID] = this.lastSelectedProcessInstance.data[CMDBuild.core.constants.Proxy.ID];
 
-				CMDBuild.core.proxy.processes.Activity.unlock({
-					params: params
+				CMDBuild.core.proxy.workflow.Activity.unlock({
+					params: params,
+					loadMask: false
 				});
 			}
 		},
@@ -347,19 +351,15 @@
 
 		this.clearView();
 
-		CMDBuild.core.LoadMask.show();
-		CMDBuild.ServiceProxy.workflow.terminateActivity({
+		CMDBuild.core.proxy.workflow.Activity.abort({
 			params: {
 				classId: processInstance.getClassId(),
 				cardId: processInstance.getId()
 			},
-			success: function(response) {
-				CMDBuild.core.LoadMask.hide();
-
+			loadMask: false,
+			scope: this,
+			success: function (response, options, decodedResponse) {
 				me.fireEvent(me.CMEVENTS.cardRemoved);
-			},
-			failure: function() {
-				CMDBuild.core.LoadMask.hide();
 			}
 		});
 	}
@@ -381,8 +381,9 @@
 			beginDate: pi.get("beginDateAsLong")
 		}
 
-		CMDBuild.ServiceProxy.workflow.isPorcessUpdated({
+		CMDBuild.core.proxy.workflow.Workflow.isPorcessUpdated({
 			params: requestParams,
+			loadMask: false,
 			success: function(operation, requestConfiguration, decodedResponse) {
 				var isUpdated = decodedResponse.response.updated;
 				if (isUpdated) {
@@ -433,10 +434,11 @@
 				_debug("save the process with params", requestParams);
 
 				CMDBuild.core.LoadMask.show();
-				CMDBuild.ServiceProxy.workflow.saveActivity({
+				CMDBuild.core.proxy.workflow.Activity.update({
 					params: requestParams,
 					scope : this,
 					clientValidation: this.isAdvance, //to force the save request
+					loadMask: false,
 					callback: function(operation, success, response) {
 						CMDBuild.core.LoadMask.hide();
 					},
