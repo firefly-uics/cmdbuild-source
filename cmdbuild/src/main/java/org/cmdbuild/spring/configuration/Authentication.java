@@ -13,6 +13,10 @@ import org.cmdbuild.auth.LdapAuthenticator;
 import org.cmdbuild.auth.LegacyDBAuthenticator;
 import org.cmdbuild.auth.NotSystemUserFetcher;
 import org.cmdbuild.auth.UserStore;
+import org.cmdbuild.data.store.InMemoryStore;
+import org.cmdbuild.data.store.session.DefaultSessionStore;
+import org.cmdbuild.data.store.session.Session;
+import org.cmdbuild.data.store.session.SessionStore;
 import org.cmdbuild.logic.auth.AuthenticationLogic;
 import org.cmdbuild.logic.auth.DefaultAuthenticationLogic;
 import org.cmdbuild.logic.auth.DefaultGroupsLogic;
@@ -63,6 +67,9 @@ public class Authentication {
 
 	@Autowired
 	private View view;
+
+	@Autowired
+	private Web web;
 
 	@Bean
 	@Qualifier(DEFAULT)
@@ -141,21 +148,29 @@ public class Authentication {
 	public StandardSessionLogic standardSessionLogic() {
 		final DefaultAuthenticationLogic delegate = new DefaultAuthenticationLogic(defaultAuthenticationService(),
 				privilegeManagement.privilegeContextFactory(), data.systemDataView());
-		return new StandardSessionLogic(new DefaultSessionLogic(delegate, userStore));
+		return new StandardSessionLogic(
+				new DefaultSessionLogic(delegate, userStore, sessionStore(), web.simpleTokenGenerator()));
 	}
 
 	@Bean
 	public SoapSessionLogic soapSessionLogic() {
 		final AuthenticationLogic delegate = new DefaultAuthenticationLogic(soapAuthenticationService(),
 				privilegeManagement.privilegeContextFactory(), data.systemDataView());
-		return new SoapSessionLogic(new DefaultSessionLogic(delegate, userStore));
+		return new SoapSessionLogic(
+				new DefaultSessionLogic(delegate, userStore, sessionStore(), web.simpleTokenGenerator()));
 	}
 
 	@Bean
 	public RestSessionLogic restSessionLogic() {
 		final AuthenticationLogic delegate = new DefaultAuthenticationLogic(restAuthenticationService(),
 				privilegeManagement.privilegeContextFactory(), data.systemDataView());
-		return new RestSessionLogic(new DefaultSessionLogic(delegate, userStore));
+		return new RestSessionLogic(
+				new DefaultSessionLogic(delegate, userStore, sessionStore(), web.simpleTokenGenerator()));
+	}
+
+	@Bean
+	protected SessionStore sessionStore() {
+		return new DefaultSessionStore(InMemoryStore.of(Session.class));
 	}
 
 	@Bean

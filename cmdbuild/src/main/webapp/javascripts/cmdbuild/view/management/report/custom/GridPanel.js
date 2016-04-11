@@ -19,7 +19,7 @@
 		initComponent: function() {
 			// Apply first store to use it in paging bar
 			Ext.apply(this, {
-				store: CMDBuild.core.proxy.report.Report.getStore()
+				store: CMDBuild.core.proxy.report.Report.getStore('CUSTOM')
 			});
 
 			Ext.apply(this, {

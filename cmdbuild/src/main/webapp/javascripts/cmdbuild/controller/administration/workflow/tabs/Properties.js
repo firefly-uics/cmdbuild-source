@@ -288,6 +288,8 @@
 
 						this.cmfg('mainViewportAccordionDeselect', CMDBuild.core.constants.ModuleIdentifiers.getWorkflow());
 						this.cmfg('mainViewportAccordionControllerUpdateStore', { identifier: CMDBuild.core.constants.ModuleIdentifiers.getWorkflow() });
+
+						CMDBuild.core.Message.success();
 					}
 				});
 			}
@@ -307,10 +309,14 @@
 
 			CMDBuild.view.common.field.translatable.Utils.commit(this.propertiesPanel);
 
+			CMDBuild.core.Message.success();
+
 			this.cmfg('mainViewportAccordionControllerUpdateStore', {
 				identifier: CMDBuild.core.constants.ModuleIdentifiers.getWorkflow(),
 				nodeIdToSelect: formDataModel.get(CMDBuild.core.constants.Proxy.ID) || decodedResponse[CMDBuild.core.constants.Proxy.ID]
 			});
+
+			CMDBuild.core.Message.success();
 		},
 
 		/**

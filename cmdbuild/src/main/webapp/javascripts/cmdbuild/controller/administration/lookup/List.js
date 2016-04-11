@@ -6,7 +6,8 @@
 		requires: [
 			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.proxy.lookup.Lookup',
-			'CMDBuild.model.lookup.Lookup'
+			'CMDBuild.model.lookup.Lookup',
+			'CMDBuild.view.common.field.translatable.Utils'
 		],
 
 		/**
@@ -272,6 +273,8 @@
 			this.form.loadRecord(this.lookupListSelectedLookupGet());
 
 			CMDBuild.view.common.field.translatable.Utils.commit(this.form);
+
+			CMDBuild.core.Message.success();
 
 			this.onLookupListLookupSelected();
 		}

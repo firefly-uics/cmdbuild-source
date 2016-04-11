@@ -27,12 +27,7 @@
 						&& item instanceof CMDBuild.view.common.field.translatable.Base
 					) {
 						if (!Ext.Object.isEmpty(item.configurationGet())) {
-							CMDBuild.core.proxy.localization.Localization.update({
-								params: item.configurationGet(true, true),
-								success: function(response, options, decodedResponse) {
-									CMDBuild.core.Message.success();
-								}
-							});
+							CMDBuild.core.proxy.localization.Localization.update({ params: item.configurationGet(true, true) });
 						}
 					}
 				});
