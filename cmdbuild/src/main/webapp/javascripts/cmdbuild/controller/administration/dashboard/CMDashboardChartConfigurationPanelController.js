@@ -2,6 +2,8 @@
 
 	var tr = CMDBuild.Translation.administration.modDashboard.charts;
 
+	Ext.require('CMDBuild.core.proxy.dashboard.Chart');
+
 	Ext.define("CMDBuild.controller.administration.dashboard.CMDashboardChartConfigurationPanelControllerDelegate", {
 		dashboardChartAreChanged: Ext.emptyFn
 	});
@@ -30,7 +32,7 @@
 			this.view = view;
 			this.formController = formController;
 			this.gridController = gridController;
-			this.proxy = proxy || CMDBuild.ServiceProxy.Dashboard.chart;
+			this.proxy = proxy || CMDBuild.core.proxy.dashboard.Chart;
 			this.setDelegate(delegate);
 
 			this.view.setDelegate(this);
@@ -97,9 +99,22 @@
 			this.formController.initView();
 
 			var me = this;
-			this.proxy.remove(this.dashboard.getId(), this.chart.getId(), function(charts) {
-				me.gridController.loadCharts(charts);
-				me.delegate.dashboardChartAreChanged();
+			this.proxy.remove({
+				params: {
+					dashboardId: this.dashboard.getId(),
+					chartId: this.chart.getId()
+				},
+				loadMask: false,
+				scope: this,
+				success: function (operation, configuration, decodedResponse) {
+					var d = _CMCache.getDashboardById(this.dashboard.getId());
+					if (d) {
+						d.removeChart(this.chart.getId());
+
+						me.gridController.loadCharts(d.getCharts());
+						me.delegate.dashboardChartAreChanged();
+					}
+				}
 			});
 		},
 
@@ -121,9 +136,48 @@
 			this.formController.initView();
 
 			if (this.chart) {
-				this.proxy.modify(this.dashboard.getId(), this.chart.getId(), formData, cb);
+				this.proxy.update({
+					params: {
+						dashboardId: this.dashboard.getId(),
+						chartId: this.chart.getId(),
+						chartConfiguration: Ext.encode(formData)
+					},
+					loadMask: false,
+					scope: this,
+					success: function (operation, configuration, decodedResponse) {
+						var d = _CMCache.getDashboardById(this.dashboard.getId());
+						if (d) {
+							formData.id = this.chart.getId();
+							var chart = CMDBuild.model.CMDashboardChart.build(formData);
+							d.replaceChart(this.chart.getId(), chart);
+
+							if (typeof cb == "function") {
+								cb(d.getCharts(), chart.getId());
+							}
+						}
+					}
+				});
 			} else {
-				this.proxy.add(this.dashboard.getId(), formData, cb);
+				this.proxy.create({
+					params: {
+						dashboardId: this.dashboard.getId(),
+						chartConfiguration: Ext.encode(formData)
+					},
+					loadMask: false,
+					scope: this,
+					success: function (response, options, decodedResponse) {
+						var d = _CMCache.getDashboardById(this.dashboard.getId());
+						if (d) {
+							formData.id = decodedResponse.response;
+							var chart = CMDBuild.model.CMDashboardChart.build(formData);
+							d.addChart(chart);
+
+							if (typeof cb == "function") {
+								cb(d.getCharts(), chart.getId());
+							}
+						}
+					}
+				});
 			}
 		},
 

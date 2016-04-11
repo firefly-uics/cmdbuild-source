@@ -10,6 +10,7 @@
 			'CMDBuild.core.constants.ModuleIdentifiers',
 			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.proxy.Classes',
+			'CMDBuild.core.proxy.dashboard.Dashboard',
 			'CMDBuild.core.proxy.domain.Domain',
 			'CMDBuild.core.proxy.lookup.Type',
 			'CMDBuild.core.proxy.report.Report',
@@ -100,14 +101,14 @@
 			/**
 			 * Dashboard
 			 */
-			CMDBuild.ServiceProxy.Dashboard.fullList({
+			CMDBuild.core.proxy.dashboard.Dashboard.readAll({
 				loadMask: false,
 				scope: this,
 				success: function (response, options, decodedResponse) {
 					decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.RESPONSE];
 
-					_CMCache.addDashboards(decodedResponse.dashboards);
-					_CMCache.setAvailableDataSources(decodedResponse.dataSources);
+					_CMCache.addDashboards(decodedResponse[CMDBuild.core.constants.Proxy.DASHBOARDS]);
+					_CMCache.setAvailableDataSources(decodedResponse[CMDBuild.core.constants.Proxy.DATA_SOURCES]);
 				},
 				callback: CMDBuild.core.RequestBarrier.getCallback(barrierId)
 			});

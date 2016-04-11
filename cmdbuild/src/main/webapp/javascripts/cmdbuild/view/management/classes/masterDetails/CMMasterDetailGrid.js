@@ -1,6 +1,4 @@
 (function() {
-	var detailURL = "services/json/management/modcard/getdetaillist",
-		fkURL =  "services/json/management/modcard/getcardlist";
 
 	Ext.define("CMDBuild.Management.MasterDetailCardGrid", {
 		extend: "CMDBuild.view.management.common.CMCardGrid",
@@ -11,12 +9,11 @@
 
 		loadDetails: function(p) {
 			var domain = p.detail;
-			var parameterNames = CMDBuild.ServiceProxy.parameter;
 			var masterCardClassId = p.masterCard.get("IdClass");
 			var masterCardClassName = _CMCache.getEntryTypeNameById(masterCardClassId); // needed if is a subclass of the domain master class
 
 			function setExtraParamsAndLoad(me) {
-				me.store.proxy.url = detailURL;
+				me.store.proxy.url = "services/json/management/modcard/getdetaillist";
 
 				var filter = {
 					relation: [{
@@ -32,8 +29,8 @@
 					}]
 				};
 
-				me.store.proxy.extraParams[parameterNames.FILTER] = Ext.encode(filter);
-				me.store.proxy.extraParams[parameterNames.CLASS_NAME] = domain.getDetailClassName();
+				me.store.proxy.extraParams[CMDBuild.core.constants.Proxy.FILTER] = Ext.encode(filter);
+				me.store.proxy.extraParams[CMDBuild.core.constants.Proxy.CLASS_NAME] = domain.getDetailClassName();
 
 				me.store.loadPage(1);
 			}
@@ -46,7 +43,7 @@
 				fkClass = _CMCache.getEntryTypeById(idClass);
 
 			function setExtraParamsAndLoad(me) {
-				me.store.proxy.url = fkURL;
+				me.store.proxy.url = "services/json/management/modcard/getcardlist";
 				me.store.proxy.extraParams['IdClass'] = idClass;
 				me.store.proxy.extraParams['CQL'] = "from "
 					+ fkClass.get("name")

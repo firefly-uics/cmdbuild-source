@@ -1,5 +1,7 @@
 (function() {
 
+	Ext.require(['CMDBuild.core.proxy.common.tabs.attribute.Attribute']);
+
 	var tr = CMDBuild.Translation.management.modutilities.csv;
 
 	Ext.define("CMDBuild.view.management.utilities.CMModImportCSV", {
@@ -243,15 +245,16 @@
 		//override
 		loadAttributes: function(classId, cb) {
 			var me = this;
-			var parameterNames = CMDBuild.ServiceProxy.parameter;
 			var params = {};
-			params[parameterNames.ACTIVE] = true;
-			params[parameterNames.CLASS_NAME] = _CMCache.getEntryTypeNameById(classId);
+			params[CMDBuild.core.constants.Proxy.ACTIVE] = true;
+			params[CMDBuild.core.constants.Proxy.CLASS_NAME] = _CMCache.getEntryTypeNameById(classId);
 
-			CMDBuild.ServiceProxy.attributes.read({
+			CMDBuild.core.proxy.common.tabs.attribute.Attribute.read({
 				params: params,
-				success: function(response, options, result) {
-					var attributes = result.attributes;
+				loadMask: false,
+				scope: this,
+				success: function (response, options, decodedResponse) {
+					var attributes = decodedResponse.attributes;
 					attributes.sort( //
 						function(a,b) { //
 							return a.index - b.index;

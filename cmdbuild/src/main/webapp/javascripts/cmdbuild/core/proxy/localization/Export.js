@@ -1,28 +1,30 @@
-(function() {
+(function () {
 
 	Ext.define('CMDBuild.core.proxy.localization.Export', {
 
 		requires: [
 			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.interfaces.FormSubmit',
-			'CMDBuild.core.proxy.Index'
+			'CMDBuild.core.proxy.index.Json'
 		],
 
 		singleton: true,
 
 		/**
 		 * @param {Object} parameters
+		 *
+		 * @returns {Void}
 		 */
 		exports: function (parameters) {
 			parameters = Ext.isEmpty(parameters) ? {} : parameters;
 
-			Ext.apply(parameters, { url: CMDBuild.core.proxy.Index.localizations.importExport.exportCsv });
+			Ext.apply(parameters, { url: CMDBuild.core.proxy.index.Json.localizations.importExport.exportCsv });
 
 			CMDBuild.core.interfaces.FormSubmit.submit(parameters);
 		},
 
 		/**
-		 * @return {Ext.data.ArrayStore}
+		 * @returns {Ext.data.ArrayStore}
 		 */
 		getStoreFileFormat: function () {
 			return Ext.create('Ext.data.ArrayStore', {
@@ -37,7 +39,7 @@
 		},
 
 		/**
-		 * @return {Ext.data.ArrayStore}
+		 * @returns {Ext.data.ArrayStore}
 		 */
 		getStoreEnabledLaguages: function () {
 			var data = [];

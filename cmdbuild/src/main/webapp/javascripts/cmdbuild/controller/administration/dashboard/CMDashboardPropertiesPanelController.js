@@ -1,5 +1,7 @@
 (function() {
 
+	Ext.require('CMDBuild.core.proxy.dashboard.Dashboard');
+
 	Ext.define("CMDBuild.controller.administration.dashboard.CMDashboardPropertiesPanelController", {
 
 		alias: "controller.cmdashboardproperties",
@@ -60,15 +62,75 @@
 			}
 
 			if (this.dashboard) {
-				CMDBuild.ServiceProxy.Dashboard.modify(this.dashboard.getId(), data, proxySuccess, this);
+				CMDBuild.core.proxy.dashboard.Dashboard.update({
+					params: {
+						dashboardId: this.dashboard.getId(),
+						dashboardConfiguration: Ext.encode(data)
+					},
+					loadMask: false,
+					scope: this,
+					success: function (response, options, decodedResponse) {
+						this.dashboard = null;
+						this.onAbortButtonClick();
+
+						CMDBuild.global.controller.MainViewport.cmfg('mainViewportAccordionControllerUpdateStore', {
+							identifier: 'dashboard',
+							nodeIdToSelect: data.id
+						});
+
+						/**
+						 * @deprecated
+						 */
+						_CMCache.modifyDashboard(data, data.id);
+					}
+				});
 			} else {
-				CMDBuild.ServiceProxy.Dashboard.add(data, proxySuccess, this);
+				CMDBuild.core.proxy.dashboard.Dashboard.create({
+					params: {
+						dashboardConfiguration: Ext.encode(data)
+					},
+					loadMask: false,
+					scope: this,
+					success: function (response, options, decodedResponse) {
+						data.id = decodedResponse.response;
+
+						this.dashboard = null;
+						this.onAbortButtonClick();
+
+						CMDBuild.global.controller.MainViewport.cmfg('mainViewportAccordionControllerUpdateStore', {
+							identifier: 'dashboard',
+							nodeIdToSelect: data.id
+						});
+
+						/**
+						 * @deprecated
+						 */
+						_CMCache.addDashboard(data);
+					}
+				});
 			}
 		},
 
-		onRemoveButtonClick: function() {
-			var id = this.dashboard.getId();
-			CMDBuild.ServiceProxy.Dashboard.remove(id, proxySuccess, this);
+		onRemoveButtonClick: function () {
+			CMDBuild.core.proxy.dashboard.Dashboard.remove({
+				params: {
+					dashboardId: this.dashboard.getId()
+				},
+				loadMask: false,
+				scope: this,
+				success: function (response, options, decodedResponse) {
+					CMDBuild.global.controller.MainViewport.cmfg('mainViewportAccordionDeselect', 'dashboard');
+					CMDBuild.global.controller.MainViewport.cmfg('mainViewportAccordionControllerUpdateStore', { identifier: 'dashboard' });
+
+					/**
+					 * @deprecated
+					 */
+					_CMCache.removeDashboardWithId(this.dashboard.getId());
+
+					this.dashboard = null;
+					this.onAbortButtonClick();
+				}
+			});
 		}
 	});
 
@@ -80,8 +142,4 @@
 		});
 	}
 
-	function proxySuccess() {
-		this.dashboard = null;
-		this.onAbortButtonClick();
-	}
 })();

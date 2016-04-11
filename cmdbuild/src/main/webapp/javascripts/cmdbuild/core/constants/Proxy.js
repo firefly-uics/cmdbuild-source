@@ -1,10 +1,9 @@
-(function() {
+(function () {
 
 	/**
 	 * Constants with the standard parameter names
 	 */
 	Ext.define('CMDBuild.core.constants.Proxy', {
-		alternateClassName: ['CMDBuild.ServiceProxy.parameter', 'CMDBuild.core.proxy.Constants'], // Legacy class name
 
 		singleton: true,
 
@@ -106,7 +105,7 @@
 		CLASS_ORDER_SIGN: 'classOrderSign',
 		CLASS_RELATION_TAB: 'classRelationTab',
 		CLASS_TARGET_ID: 'classTargetId',
-		CLASS_WIDGET: 'classwidget',
+		CLASS_WIDGET: 'classwidget', // TODO: remove
 		CLASSES: 'classes',
 		CLIENT_FILTER: 'clientFilter',
 		CLONE: 'clone',
@@ -141,11 +140,13 @@
 		CSV: 'csv',
 		CUSTOM: 'custom',
 		CUSTOM_FORM: 'customForm',
+		CUSTOM_PAGE: 'customPage',
 		CUSTOM_PAGES: 'customPages',
 		DASHBOARD: 'dashboard',
 		DASHBOARDS: 'dashboards',
 		DATA: 'data',
 		DATA_INDEX: 'dataIndex',
+		DATA_SOURCES: 'dataSources',
 		DATA_VIEW:'dataView',
 		DATABASE_NAME: 'databaseName',
 		DATABASE_TYPE: 'databaseType',
@@ -205,13 +206,13 @@
 		DISABLED_MODULES: 'disabledModules',
 		DISABLED_PROCESS_TABS: 'disabledProcessTabs',
 		DISPLAY_CARD_LOCKER_NAME: 'displayCardLockerName',
-		DISPLAY_IN_GRID: 'isbasedsp',
+		DISPLAY_IN_GRID: 'isbasedsp', // TODO: remove
 		DISPLAY_LABEL: 'displayLabel',
 		DMS: 'dms',
 		DOMAIN: 'domain',
 		DOMAIN_DIRECTION: 'domainDirection',
 		DOMAIN_ID: 'domainId',
-		DOMAIN_LIMIT: 'domainlimit',
+		DOMAIN_LIMIT: 'domainlimit', // TODO: remove
 		DOMAIN_NAME: 'domainName',
 		DOMAIN_SOURCE: 'src',
 		DOMAINS: 'domains',
@@ -280,7 +281,7 @@
 		FUNCTIONS: 'functions',
 		GENERIC: 'generic',
 		GEO_SERVER_LAYERS_MAPPING:'geoServerLayersMapping',
-		GEOSERVER: 'geoserver',
+		GEOSERVER: 'geoserver', // TODO: remove
 		GIS: 'gis',
 		GOOGLE: 'google',
 		GRAPH: 'graph',
@@ -293,8 +294,10 @@
 		HEADERS: 'headers',
 		HIDDEN: 'hidden',
 		HIDE_SIDE_PANEL: 'hideSidePanel',
+		HISTORY: 'history',
 		HOST: 'host',
 		HOUR: 'hour',
+		ICON: 'icon',
 		ID: 'id',
 		ID_DOMAIN: 'idDomain',
 		IDENTIFIER: 'identifier',
@@ -338,7 +341,8 @@
 		LANGUAGES_TAGS: 'languagesTags',
 		LANGUAGES_WITH_LOCALIZATIONS: 'languagesWithLocalizations',
 		LANGUAGES_WITH_LOCALIZATIONS_TAGS: 'languagesWithLocalizationsTags',
-		LATITUDE: 'lat',
+		LATITUDE: 'lat', // TODO: remove
+		LAYERS: 'layers',
 		LAYOUT: 'layout',
 		LDAP: 'ldap',
 		LEAF: 'leaf',
@@ -348,7 +352,7 @@
 		LOCALIZATION: 'localization',
 		LOCALIZED: 'localized',
 		LOCALIZED_HEADER_KEY: 'CMDBuild-Localized',
-		LONGITUDE: 'lon',
+		LONGITUDE: 'lon', // TODO: remove
 		LOOKUP: 'lookup',
 		LOOKUP_TYPE: 'lookupType',
 		LOOKUP_VALUE: 'lookupValue',
@@ -382,7 +386,7 @@
 		NO_SUBJECT_PREFIX: 'noSubjectPrefix',
 		NONE: 'none',
 		NORMAL: 'normal',
-		NOT_NULL: 'isnotnull',
+		NOT_NULL: 'isnotnull', // TODO: remove
 		NOT_POSITIVES: 'notPositives',
 		NOTES: 'notes',
 		NOTIFICATION_ACTIVE: 'notificationActive',
@@ -418,6 +422,7 @@
 		PASSWORD: 'password',
 		PATCH: 'patch',
 		PATCHES: 'patches',
+		PATH: 'path',
 		PDF: 'pdf',
 		PERFORMER_NAME: 'performerName',
 		PERFORMERS: 'performers',
@@ -431,7 +436,7 @@
 		POPUP_HEIGHT_PERCENTAGE: 'popupHeightPercentage',
 		POPUP_WIDTH_PERCENTAGE: 'popupWidthPercentage',
 		PORT: 'port',
-		POSTGRESQL: 'postgresql',
+		POSTGRESQL: 'postgresql', // TODO: remove
 		PRECISION: 'precision',
 		PREFIX: 'prefix',
 		PRESELECT_IF_UNIQUE: 'preselectIfUnique',
@@ -439,8 +444,8 @@
 		PRESETS: 'presets',
 		PRESETS_TYPE: 'presetsType',
 		PRIVILEGED: 'privileged',
-		PRIVILEGED_OBJ_DESCRIPTION: 'privilegedObjectDescription',
-		PRIVILEGED_OBJ_ID: 'privilegedObjectId',
+		PRIVILEGED_OBJ_DESCRIPTION: 'privilegedObjectDescription', // TODO: remove
+		PRIVILEGED_OBJ_ID: 'privilegedObjectId', // TODO: remove
 		PRIVILEGES: 'privileges',
 		PROCESS: 'process',
 		PROCESS_ATTACHMENT_TAB: 'processAttachmentTab',
@@ -476,7 +481,7 @@
 		RELATION: 'relation',
 		RELATION_ID: 'relationId',
 		RELATION_LIMIT: 'relationLimit',
-		RELATION_MASTER_SIDE: 'master',
+		RELATION_MASTER_SIDE: 'master', // TODO: remove
 		RELATIONS: 'relations',
 		RELATIONS_SIZE: 'relations_size',
 		REMOVE: 'remove',
@@ -534,9 +539,9 @@
 		STANDARD: 'standard',
 		START: 'start',
 		START_DATE: 'startDate',
-		START_MAP_WITH_LATITUDE: 'StartMapWithLatitude',
-		START_MAP_WITH_LONGITUDE: 'StartMapWithLongitude',
-		START_MAP_WITH_ZOOM: 'StartMapWithZoom',
+		START_MAP_WITH_LATITUDE: 'StartMapWithLatitude', // TODO: remove
+		START_MAP_WITH_LONGITUDE: 'StartMapWithLongitude', // TODO: remove
+		START_MAP_WITH_ZOOM: 'StartMapWithZoom', // TODO: remove
 		STARTING_CLASS: 'startingClass',
 		STARTING_CLASS_ID: 'startingClassId',
 		STATUS: 'status',
@@ -555,6 +560,7 @@
 		TARGET_CLASS_NAME: 'targetClassName',
 		TARGET_VARIABLE_NAME: 'targetVariableName',
 		TASK: 'task',
+		TASK_MANAGER: 'taskManager',
 		TEMPLATE: 'template',
 		TEMPLATE_ID: 'templateId',
 		TEMPLATE_NAME: 'templateName',
@@ -567,11 +573,12 @@
 		TO: 'to',
 		TO_ADDRESSES: 'toAddresses',
 		TOKEN: 'token',
-		TOOLBAR_BOTTOM: 'bottomToolbar',
-		TOOLBAR_TOP: 'topToolbar',
+		TOOLBAR_BOTTOM: 'bottomToolbar', // TODO: remove
+		TOOLBAR_TOP: 'topToolbar', // TODO: remove
 		TRANSLATION_UUID: 'translationUuid',
 		TRANSLATIONS: 'translations',
 		TYPE: 'type',
+		TYPES: 'types',
 		UI_CONFIGURATION: 'uiConfiguration',
 		UNCACHED: 'unchached',
 		UNIQUE: 'unique',
@@ -583,6 +590,7 @@
 		USER_STOPPABLE: 'userStoppable',
 		USERNAME: 'username',
 		USERS: 'users',
+		UTILITY: 'utility',
 		VALUE: 'value',
 		VALUES: 'values',
 		VARIABLES: 'variables',

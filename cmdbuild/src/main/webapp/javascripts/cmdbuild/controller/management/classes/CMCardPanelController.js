@@ -55,11 +55,12 @@
 				}
 
 				CMDBuild.core.LoadMask.show();
-				CMDBuild.ServiceProxy.card.remove({
+				CMDBuild.core.proxy.Card.remove({
 					params : {
 						IdClass: idClass,
 						Id: idCard
 					},
+					loadMask: false,
 					success : function() {
 						me.fireEvent(me.CMEVENTS.cardRemoved, idCard, idClass);
 					},

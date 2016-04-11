@@ -98,14 +98,14 @@
 				el.mask();
 			}
 
-			var parameterNames = CMDBuild.ServiceProxy.parameter;
 			var parameters = {};
-			parameters[parameterNames.CARD_ID] = this.getCardId();
-			parameters[parameterNames.CLASS_NAME] = _CMCache.getEntryTypeNameById(this.getClassId());
-			parameters[parameterNames.DOMAIN_LIMIT] = CMDBuild.configuration.instance.get(parameterNames.RELATION_LIMIT);
+			parameters[CMDBuild.core.constants.Proxy.CARD_ID] = this.getCardId();
+			parameters[CMDBuild.core.constants.Proxy.CLASS_NAME] = _CMCache.getEntryTypeNameById(this.getClassId());
+			parameters[CMDBuild.core.constants.Proxy.DOMAIN_LIMIT] = CMDBuild.configuration.instance.get(CMDBuild.core.constants.Proxy.RELATION_LIMIT);
 
-			CMDBuild.ServiceProxy.relations.getList({
+			CMDBuild.core.proxy.Relation.readAll({
 				params: parameters,
+				loadMask: false,
 				scope: this,
 				success: function(a,b, response) {
 					el.unmask();
@@ -214,7 +214,6 @@
 			Ext.Msg.confirm(CMDBuild.Translation.management.findfilter.msg.attention,
 				CMDBuild.Translation.management.modcard.delete_relation_confirm, makeRequest, this);
 
-			var parameterNames = CMDBuild.ServiceProxy.parameter;
 			var masterAndSlave = getMasterAndSlave(model.get("src"));
 			var me = this;
 			function makeRequest(btn) {
@@ -225,25 +224,26 @@
 				var domain = _CMCache.getDomainById(model.get("dom_id"));
 				var params = {};
 				var attributes = {};
-				params[parameterNames.DOMAIN_NAME] = domain.getName();
-				params[parameterNames.RELATION_ID] = model.get("rel_id");
-				params[parameterNames.RELATION_MASTER_SIDE] = masterAndSlave.masterSide;
+				params[CMDBuild.core.constants.Proxy.DOMAIN_NAME] = domain.getName();
+				params[CMDBuild.core.constants.Proxy.RELATION_ID] = model.get("rel_id");
+				params[CMDBuild.core.constants.Proxy.RELATION_MASTER_SIDE] = masterAndSlave.masterSide;
 
 				var masterSide = {};
-				masterSide[parameterNames.CLASS_NAME] = _CMCache.getEntryTypeNameById(me.card.get("IdClass"));
-				masterSide[parameterNames.CARD_ID] = me.card.get("Id");
+				masterSide[CMDBuild.core.constants.Proxy.CLASS_NAME] = _CMCache.getEntryTypeNameById(me.card.get("IdClass"));
+				masterSide[CMDBuild.core.constants.Proxy.CARD_ID] = me.card.get("Id");
 				attributes[masterAndSlave.masterSide] = [masterSide];
 
 				var slaveSide = {};
-				slaveSide[parameterNames.CLASS_NAME] = _CMCache.getEntryTypeNameById(model.get("dst_cid"));
-				slaveSide[parameterNames.CARD_ID] = model.get("dst_id");
+				slaveSide[CMDBuild.core.constants.Proxy.CLASS_NAME] = _CMCache.getEntryTypeNameById(model.get("dst_cid"));
+				slaveSide[CMDBuild.core.constants.Proxy.CARD_ID] = model.get("dst_id");
 				attributes[masterAndSlave.slaveSide] = [slaveSide];
 
-				params[parameterNames.ATTRIBUTES] = Ext.encode(attributes);
+				params[CMDBuild.core.constants.Proxy.ATTRIBUTES] = Ext.encode(attributes);
 
 				CMDBuild.core.LoadMask.show();
-				CMDBuild.ServiceProxy.relations.remove({
+				CMDBuild.core.proxy.Relation.remove({
 					params: params,
+					loadMask: false,
 					scope: this,
 					success: this.onDeleteRelationSuccess,
 					callback: function() {
@@ -354,15 +354,15 @@
 				el.mask();
 			}
 
-			var parameterNames = CMDBuild.ServiceProxy.parameter;
 			var parameters = {};
-			parameters[parameterNames.CARD_ID] = this.getCardId();
-			parameters[parameterNames.CLASS_NAME] = _CMCache.getEntryTypeNameById(this.getClassId());
-			parameters[parameterNames.DOMAIN_ID] = node.get("dom_id");
-			parameters[parameterNames.DOMAIN_SOURCE] = node.get("src");
+			parameters[CMDBuild.core.constants.Proxy.CARD_ID] = this.getCardId();
+			parameters[CMDBuild.core.constants.Proxy.CLASS_NAME] = _CMCache.getEntryTypeNameById(this.getClassId());
+			parameters[CMDBuild.core.constants.Proxy.DOMAIN_ID] = node.get("dom_id");
+			parameters[CMDBuild.core.constants.Proxy.DOMAIN_SOURCE] = node.get("src");
 
-			CMDBuild.ServiceProxy.relations.getList({
+			CMDBuild.core.proxy.Relation.readAll({
 				params: parameters,
+				loadMask: false,
 				scope: this,
 				success: function(a,b, response) {
 					el.unmask();

@@ -1,10 +1,10 @@
-(function() {
+(function () {
 
 	Ext.define('CMDBuild.core.proxy.common.field.filter.advanced.window.Window', {
 
 		requires: [
 			'CMDBuild.core.constants.Proxy',
-			'CMDBuild.core.proxy.Index',
+			'CMDBuild.core.proxy.index.Json',
 			'CMDBuild.core.Utils',
 			'CMDBuild.model.common.field.filter.advanced.Filter'
 		],
@@ -14,20 +14,20 @@
 		/**
 		 * Returns a store with the filters for a given group
 		 *
-		 * @return {Ext.data.Store}
+		 * @returns {Ext.data.Store or CMDBuild.core.cache.Store}
 		 */
-		getGroupStore: function() {
-			return Ext.create('Ext.data.Store', {
+		getGroupStore: function () {
+			return CMDBuild.global.Cache.requestAsStore(CMDBuild.core.constants.Proxy.WORKFLOW, {
 				autoLoad: false,
 				model: 'CMDBuild.model.common.field.filter.advanced.Filter',
 				pageSize: CMDBuild.configuration.instance.get(CMDBuild.core.constants.Proxy.ROW_LIMIT),
 				proxy: {
-					url: CMDBuild.core.proxy.Index.filter.group.readAll,
+					url: CMDBuild.core.proxy.index.Json.filter.group.readAll,
 					type: 'ajax',
 					reader: {
-						root: 'filters',
 						type: 'json',
-						totalProperty: 'count'
+						root: CMDBuild.core.constants.Proxy.FILTERS,
+						totalProperty: CMDBuild.core.constants.Proxy.COUNT
 					}
 				},
 				sorters: [

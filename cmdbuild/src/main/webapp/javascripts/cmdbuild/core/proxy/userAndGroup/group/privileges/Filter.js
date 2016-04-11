@@ -4,7 +4,7 @@
 
 		requires: [
 			'CMDBuild.core.constants.Proxy',
-			'CMDBuild.core.proxy.Index',
+			'CMDBuild.core.proxy.index.Json',
 			'CMDBuild.model.userAndGroup.group.privileges.GridRecord'
 		],
 
@@ -19,7 +19,7 @@
 				model: 'CMDBuild.model.userAndGroup.group.privileges.GridRecord',
 				proxy: {
 					type: 'ajax',
-					url: CMDBuild.core.proxy.Index.privileges.filter.read,
+					url: CMDBuild.core.proxy.index.Json.privileges.filter.read,
 					reader: {
 						type: 'json',
 						root: CMDBuild.core.constants.Proxy.PRIVILEGES
@@ -38,11 +38,13 @@
 
 		/**
 		 * @param {Object} parameters
+		 *
+		 * @returns {Void}
 		 */
 		update: function (parameters) {
 			parameters = Ext.isEmpty(parameters) ? {} : parameters;
 
-			Ext.apply(parameters, { url: CMDBuild.core.proxy.Index.privileges.filter.update });
+			Ext.apply(parameters, { url: CMDBuild.core.proxy.index.Json.privileges.filter.update });
 
 			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.GROUP, parameters, true);
 		}

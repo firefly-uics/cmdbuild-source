@@ -1,11 +1,11 @@
-(function() {
+(function () {
 
 	Ext.define('CMDBuild.core.proxy.PatchManager', {
 
 		requires: [
 			'CMDBuild.core.configurations.Timeout',
 			'CMDBuild.core.constants.Proxy',
-			'CMDBuild.core.proxy.Index',
+			'CMDBuild.core.proxy.index.Json',
 			'CMDBuild.model.patchManager.Patch'
 		],
 
@@ -14,14 +14,14 @@
 		/**
 		 * @returns {Ext.data.Store or CMDBuild.core.cache.Store}
 		 */
-		getStore: function() {
+		getStore: function () {
 			return CMDBuild.global.Cache.requestAsStore(CMDBuild.core.constants.Proxy.UNCACHED, {
 				autoLoad: true,
 				model: 'CMDBuild.model.patchManager.Patch',
 				remoteSort: false,
 				proxy: {
 					type: 'ajax',
-					url: CMDBuild.core.proxy.Index.patchManager.readAll,
+					url: CMDBuild.core.proxy.index.Json.patchManager.readAll,
 					reader: {
 						type: 'json',
 						root: CMDBuild.core.constants.Proxy.PATCHES
@@ -37,13 +37,15 @@
 
 		/**
 		 * @param {Object} parameters
+		 *
+		 * @returns {Void}
 		 */
-		update: function(parameters) {
+		update: function (parameters) {
 			parameters = Ext.isEmpty(parameters) ? {} : parameters;
 
 			Ext.apply(parameters, {
 				timeout: CMDBuild.core.configurations.Timeout.getPatchManager(), // Get patch timeout from configuration
-				url: CMDBuild.core.proxy.Index.patchManager.update
+				url: CMDBuild.core.proxy.index.Json.patchManager.update
 			});
 
 			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.UNCACHED, parameters);

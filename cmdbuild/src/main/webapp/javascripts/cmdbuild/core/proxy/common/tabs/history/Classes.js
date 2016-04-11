@@ -1,11 +1,10 @@
-(function() {
+(function () {
 
 	Ext.define('CMDBuild.core.proxy.common.tabs.history.Classes', {
 
 		requires: [
-			'CMDBuild.core.interfaces.Ajax',
 			'CMDBuild.core.constants.Proxy',
-			'CMDBuild.core.proxy.Index',
+			'CMDBuild.core.proxy.index.Json',
 			'CMDBuild.model.classes.tabs.history.CardRecord'
 		],
 
@@ -13,82 +12,68 @@
 
 		/**
 		 * @property {Object} parameters
+		 *
+		 * @returns {Void}
 		 */
-		get: function(parameters) {
-			CMDBuild.core.interfaces.Ajax.request({
-				method: 'POST',
-				url: CMDBuild.core.proxy.Index.history.classes.getCardHistory,
-				headers: parameters.headers,
-				params: parameters.params,
-				scope: parameters.scope || this,
-				loadMask: Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : false,
-				failure: parameters.failure || Ext.emptyFn(),
-				success: parameters.success || Ext.emptyFn(),
-				callback: parameters.callback || Ext.emptyFn()
-			});
+		get: function (parameters) {
+			parameters = Ext.isEmpty(parameters) ? {} : parameters;
+			parameters.loadMask = Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : false; // FIXME
+
+			Ext.apply(parameters, { url: CMDBuild.core.proxy.index.Json.history.classes.getCardHistory });
+
+			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.HISTORY, parameters);
 		},
 
 		/**
 		 * @property {Object} parameters
+		 *
+		 * @returns {Void}
 		 */
-		getHistoric: function(parameters) {
-			CMDBuild.core.interfaces.Ajax.request({
-				method: 'POST',
-				url: CMDBuild.core.proxy.Index.history.classes.getHistoricCard,
-				headers: parameters.headers,
-				params: parameters.params,
-				scope: parameters.scope || this,
-				loadMask: Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : true,
-				failure: parameters.failure || Ext.emptyFn(),
-				success: parameters.success || Ext.emptyFn(),
-				callback: parameters.callback || Ext.emptyFn()
-			});
+		getHistoric: function (parameters) {
+			parameters = Ext.isEmpty(parameters) ? {} : parameters;
+
+			Ext.apply(parameters, { url: CMDBuild.core.proxy.index.Json.history.classes.getHistoricCard });
+
+			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.HISTORY, parameters);
 		},
 
 		/**
 		 * @property {Object} parameters
+		 *
+		 * @returns {Void}
 		 */
-		getRelations: function(parameters) {
-			CMDBuild.core.interfaces.Ajax.request({
-				method: 'POST',
-				url: CMDBuild.core.proxy.Index.history.classes.getRelationsHistory,
-				headers: parameters.headers,
-				params: parameters.params,
-				scope: parameters.scope || this,
-				loadMask: Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : false,
-				failure: parameters.failure || Ext.emptyFn(),
-				success: parameters.success || Ext.emptyFn(),
-				callback: parameters.callback || Ext.emptyFn()
-			});
+		getRelations: function (parameters) {
+			parameters = Ext.isEmpty(parameters) ? {} : parameters;
+			parameters.loadMask = Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : false; // FIXME
+
+			Ext.apply(parameters, { url: CMDBuild.core.proxy.index.Json.history.classes.getRelationsHistory });
+
+			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.HISTORY, parameters);
 		},
 
 		/**
 		 * @property {Object} parameters
+		 *
+		 * @returns {Void}
 		 */
-		getRelationHistoric: function(parameters) {
-			CMDBuild.core.interfaces.Ajax.request({
-				method: 'POST',
-				url: CMDBuild.core.proxy.Index.history.classes.getHistoricRelation,
-				headers: parameters.headers,
-				params: parameters.params,
-				scope: parameters.scope || this,
-				loadMask: Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : true,
-				failure: parameters.failure || Ext.emptyFn(),
-				success: parameters.success || Ext.emptyFn(),
-				callback: parameters.callback || Ext.emptyFn()
-			});
+		getRelationHistoric: function (parameters) {
+			parameters = Ext.isEmpty(parameters) ? {} : parameters;
+
+			Ext.apply(parameters, { url: CMDBuild.core.proxy.index.Json.history.classes.getHistoricRelation });
+
+			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.HISTORY, parameters);
 		},
 
 		/**
-		 * @return {Ext.data.Store}
+		 * @returns {Ext.data.Store or CMDBuild.core.cache.Store}
 		 */
-		getStore: function() {
-			return Ext.create('Ext.data.Store', {
+		getStore: function () {
+			return CMDBuild.global.Cache.requestAsStore(CMDBuild.core.constants.Proxy.HISTORY, {
 				autoLoad: false,
 				model: 'CMDBuild.model.classes.tabs.history.CardRecord',
 				proxy: {
 					type: 'ajax',
-					url: CMDBuild.core.proxy.Index.history.classes.getCardHistory,
+					url: CMDBuild.core.proxy.index.Json.history.classes.getCardHistory,
 					reader: {
 						type: 'json',
 						root: 'response.elements'

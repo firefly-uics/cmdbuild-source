@@ -1,6 +1,8 @@
 (function() {
 	var tr = CMDBuild.Translation.administration.modcartography.geoserver;
 
+	Ext.require('CMDBuild.core.proxy.gis.GeoServer');
+
 	Ext.define("CMDBuild.controller.administration.gis.CMModGeoServerController", {
 		extend: "CMDBuild.controller.CMBasePanelController",
 		constructor: function() {
@@ -51,7 +53,6 @@
 	}
 
 	function onSaveButtonClick() {
-		var url = this.lastSelection ? CMDBuild.ServiceProxy.geoServer.modifyUrl:CMDBuild.ServiceProxy.geoServer.addUrl;
 		var nameToSelect = this.view.form.getName();
 		var cardBinding = this.view.form.getCardsBinding();
 		var form = this.view.form.getForm();
@@ -60,7 +61,7 @@
 			CMDBuild.core.LoadMask.show();
 			form.submit({
 				method: 'POST',
-				url: url,
+				url: this.lastSelection ? CMDBuild.core.proxy.index.Json.gis.geoServer.layer.update : CMDBuild.core.proxy.index.Json.gis.geoServer.layer.create,
 				params: {
 					name: nameToSelect,
 					cardBinding: Ext.encode(cardBinding)
@@ -99,10 +100,13 @@
 				if (button == "yes") {
 					CMDBuild.core.LoadMask.show();
 					var layerName = me.view.form.getName();
-					CMDBuild.ServiceProxy.geoServer.deleteLayer({
+					CMDBuild.core.proxy.gis.GeoServer.remove({
 						params: {
 							name: layerName
 						},
+						loadMask: false,
+						important: true,
+						scope: this,
 						callback: function() {
 							_CMCache.onGeoAttributeDeleted("_Geoserver", layerName);
 							me.view.layersGrid.loadStoreAndSelectLayerWithName();

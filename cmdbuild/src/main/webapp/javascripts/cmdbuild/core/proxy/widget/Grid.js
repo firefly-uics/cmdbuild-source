@@ -1,11 +1,11 @@
-(function() {
+(function () {
 
 	Ext.define('CMDBuild.core.proxy.widget.Grid', {
 
 		requires: [
-			'CMDBuild.core.interfaces.Ajax',
 			'CMDBuild.core.constants.Proxy',
-			'CMDBuild.core.proxy.Index'
+			'CMDBuild.core.constants.Proxy',
+			'CMDBuild.core.proxy.index.Json'
 		],
 
 		singleton: true,
@@ -14,39 +14,41 @@
 		 * Validates presets function name
 		 *
 		 * @param {Object} parameters
+		 *
+		 * @returns {Void}
 		 */
-		getFunctions: function(parameters) {
-			CMDBuild.core.interfaces.Ajax.request({
-				method: 'POST',
-				url: CMDBuild.core.proxy.Index.functions.readAll,
-				scope: parameters.scope || this,
-				failure: parameters.failure || Ext.emptyFn(),
-				success: parameters.success || Ext.emptyFn(),
-				callback: parameters.callback || Ext.emptyFn()
+		getFunctions: function (parameters) {
+			parameters = Ext.isEmpty(parameters) ? {} : parameters;
+
+			Ext.apply(parameters, {
+				loadMask: false,
+				url: CMDBuild.core.proxy.index.Json.functions.readAll
 			});
+
+			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.FUNCTION, parameters);
 		},
 
 		/**
 		 * @param {Object} parameters
 		 *
-		 * @return {Ext.data.Store}
+		 * @returns {Ext.data.Store or CMDBuild.core.cache.Store}
 		 */
-		getStoreFromFunction: function(parameters) {
+		getStoreFromFunction: function (parameters) {
 			// Avoid to send limit, page and start parameters in server calls
 			parameters.extraParams.limitParam = undefined;
 			parameters.extraParams.pageParam = undefined;
 			parameters.extraParams.startParam = undefined;
 
-			return Ext.create('Ext.data.Store', {
+			return CMDBuild.global.Cache.requestAsStore(CMDBuild.core.constants.Proxy.UNCACHED, {
 				autoLoad: true,
 				fields: parameters.fields,
 				proxy: {
 					type: 'ajax',
-					url: CMDBuild.core.proxy.Index.functions.readCards,
+					url: CMDBuild.core.proxy.index.Json.functions.readCards,
 					reader: {
-						root: 'cards',
 						type: 'json',
-						totalProperty: 'results',
+						root: CMDBuild.core.constants.Proxy.CARDS,
+						totalProperty: CMDBuild.core.constants.Proxy.RESULTS
 					},
 					extraParams: parameters.extraParams
 				}

@@ -6,7 +6,6 @@
 		requires: [
 			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.Message',
-			'CMDBuild.core.proxy.Attachment',
 			'CMDBuild.core.proxy.Classes',
 			'CMDBuild.core.proxy.common.tabs.email.Attachment'
 		],

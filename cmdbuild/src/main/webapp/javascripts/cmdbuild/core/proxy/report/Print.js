@@ -1,67 +1,77 @@
-(function() {
+(function () {
 
 	Ext.define('CMDBuild.core.proxy.report.Print', {
 
 		requires: [
 			'CMDBuild.core.constants.Proxy',
-			'CMDBuild.core.proxy.Index'
+			'CMDBuild.core.proxy.index.Json'
 		],
 
 		singleton: true,
 
 		/**
 		 * @param {Object} parameters
+		 *
+		 * @returns {Void}
 		 */
-		createCardDetails: function(parameters) {
+		createCardDetails: function (parameters) {
 			parameters = Ext.isEmpty(parameters) ? {} : parameters;
 
-			Ext.apply(parameters, { url: CMDBuild.core.proxy.Index.report.print.cardDetails });
+			Ext.apply(parameters, { url: CMDBuild.core.proxy.index.Json.report.print.cardDetails });
 
-			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.REPORT, parameters);
+			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.UNCACHED, parameters);
 		},
 
 		/**
 		 * @param {Object} parameters
+		 *
+		 * @returns {Void}
 		 */
-		createClassSchema: function(parameters) {
+		createClassSchema: function (parameters) {
 			parameters = Ext.isEmpty(parameters) ? {} : parameters;
 
-			Ext.apply(parameters, { url: CMDBuild.core.proxy.Index.report.print.classSchema });
+			Ext.apply(parameters, { url: CMDBuild.core.proxy.index.Json.report.print.classSchema });
 
-			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.REPORT, parameters);
+			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.UNCACHED, parameters);
 		},
 
 		/**
 		 * @param {Object} parameters
+		 *
+		 * @returns {Void}
 		 */
-		createDataViewSqlSchema: function(parameters) {
+		createDataViewSqlSchema: function (parameters) {
 			parameters = Ext.isEmpty(parameters) ? {} : parameters;
 
-			Ext.apply(parameters, { url: CMDBuild.core.proxy.Index.report.print.sqlView });
+			Ext.apply(parameters, { url: CMDBuild.core.proxy.index.Json.report.print.sqlView });
 
-			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.REPORT, parameters);
+			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.UNCACHED, parameters);
 		},
 
 		/**
 		 * @param {Object} parameters
+		 *
+		 * @returns {Void}
 		 */
-		createSchema: function(parameters) {
+		createSchema: function (parameters) {
 			parameters = Ext.isEmpty(parameters) ? {} : parameters;
 
-			Ext.apply(parameters, { url: CMDBuild.core.proxy.Index.report.print.schema });
+			Ext.apply(parameters, { url: CMDBuild.core.proxy.index.Json.report.print.schema });
 
-			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.REPORT, parameters);
+			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.UNCACHED, parameters);
 		},
 
 		/**
 		 * @param {Object} parameters
+		 *
+		 * @returns {Void}
 		 */
-		createView: function(parameters) {
+		createView: function (parameters) {
 			parameters = Ext.isEmpty(parameters) ? {} : parameters;
 
-			Ext.apply(parameters, { url: CMDBuild.core.proxy.Index.report.print.currentView });
+			Ext.apply(parameters, { url: CMDBuild.core.proxy.index.Json.report.print.currentView });
 
-			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.REPORT, parameters);
+			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.UNCACHED, parameters);
 		}
 	});
 

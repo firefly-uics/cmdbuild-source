@@ -1,24 +1,26 @@
-(function() {
+(function () {
 
 	Ext.define('CMDBuild.core.proxy.Configure', {
 
 		requires: [
 			'CMDBuild.core.configurations.Timeout',
 			'CMDBuild.core.constants.Proxy',
-			'CMDBuild.core.proxy.Index'
+			'CMDBuild.core.proxy.index.Json'
 		],
 
 		singleton: true,
 
 		/**
 		 * @param {Object} parameters
+		 *
+		 * @returns {Void}
 		 */
-		apply: function(parameters) {
+		apply: function (parameters) {
 			parameters = Ext.isEmpty(parameters) ? {} : parameters;
 
 			Ext.apply(parameters, {
 				timeout: CMDBuild.core.configurations.Timeout.getConfigurationSetup(), // Get report timeout from configuration
-				url: CMDBuild.core.proxy.Index.configuration.apply
+				url: CMDBuild.core.proxy.index.Json.configuration.apply
 			});
 
 			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.UNCACHED, parameters);
@@ -26,11 +28,13 @@
 
 		/**
 		 * @param {Object} parameters
+		 *
+		 * @returns {Void}
 		 */
-		dbConnectionCheck: function(parameters) {
+		dbConnectionCheck: function (parameters) {
 			parameters = Ext.isEmpty(parameters) ? {} : parameters;
 
-			Ext.apply(parameters, { url: CMDBuild.core.proxy.Index.configuration.connectionTest });
+			Ext.apply(parameters, { url: CMDBuild.core.proxy.index.Json.configuration.connectionTest });
 
 			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.UNCACHED, parameters);
 		},
@@ -38,7 +42,7 @@
 		/**
 		 * @returns {Ext.data.ArrayStore}
 		 */
-		getStoreDbTypes: function() {
+		getStoreDbTypes: function () {
 			return Ext.create('Ext.data.ArrayStore', {
 				fields: [CMDBuild.core.constants.Proxy.VALUE, CMDBuild.core.constants.Proxy.DESCRIPTION],
 				data: [
@@ -52,7 +56,7 @@
 		/**
 		 * @returns {Ext.data.ArrayStore}
 		 */
-		getStoreUserType: function() {
+		getStoreUserType: function () {
 			return Ext.create('Ext.data.ArrayStore', {
 				fields: [CMDBuild.core.constants.Proxy.VALUE, CMDBuild.core.constants.Proxy.DESCRIPTION],
 				data: [

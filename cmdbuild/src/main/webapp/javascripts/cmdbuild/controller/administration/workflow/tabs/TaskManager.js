@@ -6,7 +6,7 @@
 		requires: [
 			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.Message',
-			'CMDBuild.core.proxy.CMProxyTasks'
+			'CMDBuild.core.proxy.workflow.Tasks'
 		],
 
 		/**
@@ -212,14 +212,10 @@
 				var params = {};
 				params[CMDBuild.core.constants.Proxy.ID] = this.selectedTaskGet(CMDBuild.core.constants.Proxy.ID);
 
-				CMDBuild.core.LoadMask.show();
-				CMDBuild.core.proxy.CMProxyTasks.remove({
-					type: 'workflow',
+				CMDBuild.core.proxy.workflow.Tasks.remove({
 					params: params,
 					scope: this,
-					success: function(response, options, decodedResponse) {
-						CMDBuild.core.LoadMask.hide();
-
+					success: function (response, options, decodedResponse) {
 						this.cmfg('onWorkflowTabTasksShow');
 					}
 				});

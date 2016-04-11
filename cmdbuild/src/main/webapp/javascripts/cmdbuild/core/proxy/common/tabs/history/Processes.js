@@ -1,12 +1,10 @@
-(function() {
+(function () {
 
-	/**
-	 * Extension of classes proxy class because this would be a right way (different end-point for different resources) .. waiting for server refactor
-	 */
 	Ext.define('CMDBuild.core.proxy.common.tabs.history.Processes', {
 
 		requires: [
-			'CMDBuild.core.proxy.common.tabs.history.Classes',
+			'CMDBuild.core.constants.Proxy',
+			'CMDBuild.core.proxy.index.Json',
 			'CMDBuild.model.workflow.tabs.history.CardRecord'
 		],
 
@@ -14,42 +12,68 @@
 
 		/**
 		 * @property {Object} parameters
+		 *
+		 * @returns {Void}
 		 */
-		get: function(parameters) {
-			CMDBuild.core.proxy.common.tabs.history.Classes.get(parameters);
+		get: function (parameters) {
+			parameters = Ext.isEmpty(parameters) ? {} : parameters;
+			parameters.loadMask = Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : false; // FIXME
+
+			Ext.apply(parameters, { url: CMDBuild.core.proxy.index.Json.history.classes.getCardHistory }); // TODO: waiting for refactor (different endpoint)
+
+			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.HISTORY, parameters);
 		},
 
 		/**
 		 * @property {Object} parameters
+		 *
+		 * @returns {Void}
 		 */
-		getHistoric: function(parameters) {
-			CMDBuild.core.proxy.common.tabs.history.Classes.getHistoric(parameters);
+		getHistoric: function (parameters) {
+			parameters = Ext.isEmpty(parameters) ? {} : parameters;
+
+			Ext.apply(parameters, { url: CMDBuild.core.proxy.index.Json.history.workflow.getHistoricWorkflow });
+
+			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.HISTORY, parameters);
 		},
 
 		/**
 		 * @property {Object} parameters
+		 *
+		 * @returns {Void}
 		 */
-		getRelations: function(parameters) {
-			CMDBuild.core.proxy.common.tabs.history.Classes.getRelations(parameters);
+		getRelations: function (parameters) {
+			parameters = Ext.isEmpty(parameters) ? {} : parameters;
+			parameters.loadMask = Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : false; // FIXME
+
+			Ext.apply(parameters, { url: CMDBuild.core.proxy.index.Json.history.workflow.getRelationsHistory });
+
+			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.HISTORY, parameters);
 		},
 
 		/**
 		 * @property {Object} parameters
+		 *
+		 * @returns {Void}
 		 */
-		getRelationHistoric: function(parameters) {
-			CMDBuild.core.proxy.common.tabs.history.Classes.getRelationHistoric(parameters);
+		getRelationHistoric: function (parameters) {
+			parameters = Ext.isEmpty(parameters) ? {} : parameters;
+
+			Ext.apply(parameters, { url: CMDBuild.core.proxy.index.Json.history.workflow.getHistoricRelation });
+
+			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.HISTORY, parameters);
 		},
 
 		/**
-		 * @return {Ext.data.Store}
+		 * @returns {Ext.data.Store or CMDBuild.core.cache.Store}
 		 */
-		getStore: function() {
-			return Ext.create('Ext.data.Store', {
+		getStore: function () {
+			return CMDBuild.global.Cache.requestAsStore(CMDBuild.core.constants.Proxy.HISTORY, {
 				autoLoad: false,
 				model: 'CMDBuild.model.workflow.tabs.history.CardRecord',
 				proxy: {
 					type: 'ajax',
-					url: CMDBuild.core.proxy.Index.history.processes.getProcessHistory,
+					url: CMDBuild.core.proxy.index.Json.history.workflow.getWorkflowHistory,
 					reader: {
 						type: 'json',
 						root: 'response.elements'

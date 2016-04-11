@@ -8,7 +8,8 @@
 		requires: [
 			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.LoadMask',
-			'CMDBuild.core.proxy.CMProxyTasks'
+			'CMDBuild.core.proxy.taskManager.Connector',
+			'CMDBuild.model.CMModelTasks'
 		],
 
 		/**
@@ -134,20 +135,41 @@
 		/**
 		 * @override
 		 */
+		removeItem: function() {
+			if (!Ext.isEmpty(this.selectedId)) {
+				CMDBuild.core.LoadMask.show();
+
+				CMDBuild.core.proxy.taskManager.Connector.remove({
+					params: {
+						id: this.selectedId
+					},
+					loadMask: false,
+					scope: this,
+					success: this.success,
+					callback: this.callback
+				});
+			}
+		},
+
+		/**
+		 * @override
+		 */
 		onRowSelected: function() {
 			if (this.selectionModel.hasSelection()) {
 				this.selectedId = this.selectionModel.getSelection()[0].get(CMDBuild.core.constants.Proxy.ID);
 
 				// Selected task asynchronous store query
-				this.selectedDataStore = CMDBuild.core.proxy.CMProxyTasks.get(this.taskType);
-				this.selectedDataStore.load({
-					scope: this,
+				CMDBuild.core.proxy.taskManager.Connector.read({
 					params: {
 						id: this.selectedId
 					},
-					callback: function(records, operation, success) {
-						if (!Ext.isEmpty(records)) {
-							var record = records[0];
+					loadMask: false,
+					scope: this,
+					success: function(rensponse, options, decodedResponse) {
+						decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.RESPONSE];
+
+						if (Ext.isObject(decodedResponse) && !Ext.Object.isEmpty(decodedResponse)) {
+							var record = Ext.create('CMDBuild.model.CMModelTasks.singleTask.connector', decodedResponse);
 
 							this.parentDelegate.loadForm(this.taskType);
 
@@ -250,17 +272,17 @@
 				submitDatas[CMDBuild.core.constants.Proxy.ID] = formData[CMDBuild.core.constants.Proxy.ID];
 
 				if (Ext.isEmpty(formData[CMDBuild.core.constants.Proxy.ID])) {
-					CMDBuild.core.proxy.CMProxyTasks.create({
-						type: this.taskType,
+					CMDBuild.core.proxy.taskManager.Connector.create({
 						params: submitDatas,
+						loadMask: false,
 						scope: this,
 						success: this.success,
 						callback: this.callback
 					});
 				} else {
-					CMDBuild.core.proxy.CMProxyTasks.update({
-						type: this.taskType,
+					CMDBuild.core.proxy.taskManager.Connector.update({
 						params: submitDatas,
+						loadMask: false,
 						scope: this,
 						success: this.success,
 						callback: this.callback

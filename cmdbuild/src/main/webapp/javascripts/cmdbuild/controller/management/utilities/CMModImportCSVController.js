@@ -1,4 +1,10 @@
 (function() {
+
+	Ext.require([
+		'CMDBuild.core.Message',
+		'CMDBuild.core.proxy.utility.ImportCsv'
+	]);
+
 	var tr = CMDBuild.Translation.management.modutilities.csv;
 	Ext.define("CMDBuild.controller.management.utilities.CMModImportCSVController", {
 		extend: "CMDBuild.controller.CMBasePanelController",
@@ -25,12 +31,12 @@
 
 	function onUploadButtonClick() {
 		CMDBuild.core.LoadMask.show();
-		this.view.form.getForm().submit({
-			method: 'POST',
-			url : 'services/json/management/importcsv/uploadcsv',
+		CMDBuild.core.proxy.utility.ImportCsv.upload({
+			form: this.view.form.getForm(),
+			loadMask: false,
 			scope: this,
 			success: updateGridRecords,
-			failure: function() {
+			failure: function (response, options, decodedResponse) {
 				CMDBuild.core.LoadMask.hide();
 			}
 		});
@@ -42,15 +48,14 @@
 			CMDBuild.core.Message.warning(tr.warning, tr.noupdate);
 		} else {
 			CMDBuild.core.LoadMask.show();
-			CMDBuild.core.interfaces.Ajax.request({
-				method : 'POST',
-				url : 'services/json/management/importcsv/updatecsvrecords',
-				params : {
-					data : Ext.JSON.encode(records)
+			CMDBuild.core.proxy.utility.ImportCsv.updateRecords({
+				params: {
+					data: Ext.encode(records)
 				},
-				scope : this,
-				success : updateGridRecords,
-				failure: function() {
+				loadMask: false,
+				scope: this,
+				success: updateGridRecords,
+				failure: function (response, options, decodedResponse) {
 					CMDBuild.core.LoadMask.hide();
 				}
 			});
@@ -58,22 +63,14 @@
 	}
 
 	function onConfirmButtonClick() {
-		CMDBuild.core.LoadMask.show();
-		CMDBuild.core.interfaces.Ajax.request({
-			method: 'POST',
-			url : 'services/json/management/importcsv/storecsvrecords',
-			waitTitle : CMDBuild.Translation.pleaseWait,
-			waitMsg : CMDBuild.Translation.common.wait_msg,
-			timeout: 600000,
+		CMDBuild.core.proxy.utility.ImportCsv.storeRecords({
 			scope: this,
-			success: function(a,b,c) {
-				CMDBuild.core.LoadMask.hide();
-				CMDBuild.Msg.info(tr.info, tr.importsuccess);
-				updateGridRecords.call(this);
+			failure: function (response, options, decodedResponse) {
+				CMDBuild.core.Message.error(tr.error, tr.importfailure, true);
 			},
-			failure: function(a,b,c) {
-				CMDBuild.core.LoadMask.hide();
-				CMDBuild.Msg.error(tr.error, tr.importfailure, true);
+			success: function (response, options, decodedResponse) {
+				CMDBuild.core.Message.info(tr.info, tr.importsuccess);
+				updateGridRecords.call(this);
 			}
 		});
 	}
@@ -85,17 +82,12 @@
 
 	// callback called after the upload of the csv file
 	// and after the update of the grid records
-	function updateGridRecords() {
-		CMDBuild.core.interfaces.Ajax.request({
-			method: 'GET',
-			url : 'services/json/management/importcsv/getcsvrecords',
+	function updateGridRecords(response, options, decodedResponse) {
+		CMDBuild.core.proxy.utility.ImportCsv.getRecords({
 			scope: this,
-			success: function(a,b,c) {
-				this.view.grid.configureHeadersAndStore(c.headers);
-				this.view.grid.loadData(c.rows);
-			},
-			callback: function() {
-				CMDBuild.core.LoadMask.hide();
+			success: function (response, options, decodedResponse) {
+				this.view.grid.configureHeadersAndStore(decodedResponse.headers);
+				this.view.grid.loadData(decodedResponse.rows);
 			}
 		});
 	}

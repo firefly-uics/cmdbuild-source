@@ -142,11 +142,12 @@
 		 * @params {Array} splittedIdentifier - ['cardParam', 'value']
 		 */
 		simpleFilter: function(splittedIdentifier) {
-			CMDBuild.core.proxy.Card.getList({
+			CMDBuild.core.proxy.Card.readAll({
 				params: {
 					className: this.classIdentifier,
 					filter: '{"attribute":{"simple":{"attribute":"' + splittedIdentifier[0] + '","operator":"equal","value":["' + splittedIdentifier[1] + '"]}}}'
 				},
+				loadMask: false,
 				scope: this,
 				success: function(result, options, decodedResult) {
 					if (decodedResult.results == 1) {
