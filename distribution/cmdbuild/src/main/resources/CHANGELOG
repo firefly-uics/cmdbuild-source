@@ -16,6 +16,8 @@ FIXES
 
  * Management report pagination errors
 
+ * Widget Grid: missing configuration model name error
+
 
 
 
