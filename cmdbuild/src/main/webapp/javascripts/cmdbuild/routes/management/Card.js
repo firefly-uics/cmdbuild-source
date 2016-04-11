@@ -1,9 +1,13 @@
 (function() {
 
-	Ext.define('CMDBuild.routes.management.Cards', {
+	Ext.define('CMDBuild.routes.management.Card', {
 		extend: 'CMDBuild.routes.Base',
 
-		requires: ['CMDBuild.core.proxy.Card'],
+		requires: [
+			'CMDBuild.core.constants.Proxy',
+			'CMDBuild.core.Message',
+			'CMDBuild.core.proxy.Card'
+		],
 
 		/**
 		 * @cfg {String}
@@ -63,7 +67,7 @@
 				) { // SimpleFilter
 					this.simpleFilter(splittedIdentifier);
 				} else {
-					CMDBuild.Msg.error(
+					CMDBuild.core.Message.error(
 						CMDBuild.Translation.common.failure,
 						CMDBuild.Translation.errors.routesInvalidCardIdentifier + ' (' + this.cardIdentifier + ')',
 						false
@@ -88,7 +92,7 @@
 				Ext.isEmpty(this.classIdentifier)
 				|| !_CMCache.isEntryTypeByName(this.classIdentifier)
 			) {
-				CMDBuild.Msg.error(
+				CMDBuild.core.Message.error(
 					CMDBuild.Translation.common.failure,
 					CMDBuild.Translation.errors.routesInvalidClassIdentifier + ' (' + this.classIdentifier + ')',
 					false
@@ -99,7 +103,7 @@
 
 			// Card identifier validation
 			if (Ext.isEmpty(this.cardIdentifier)) {
-				CMDBuild.Msg.error(
+				CMDBuild.core.Message.error(
 					CMDBuild.Translation.common.failure,
 					CMDBuild.Translation.errors.routesInvalidCardIdentifier + ' (' + this.cardIdentifier + ')',
 					false
@@ -110,7 +114,7 @@
 
 			// Print format validation
 			if (!Ext.Array.contains(this.supportedPrintFormats, this.printFormat)) {
-				CMDBuild.Msg.error(
+				CMDBuild.core.Message.error(
 					CMDBuild.Translation.common.failure,
 					CMDBuild.Translation.errors.routesInvalidPrintFormat + ' (' + this.printFormat + ')',
 					false
@@ -153,7 +157,7 @@
 					if (decodedResult.results == 1) {
 						Ext.Router.parse('exec/classes/' + this.classIdentifier + '/cards/' + decodedResult.rows[0]['Id']);
 					} else {
-						CMDBuild.Msg.error(
+						CMDBuild.core.Message.error(
 							CMDBuild.Translation.common.failure,
 							CMDBuild.Translation.errors.routesInvalidSimpleFilter,
 							false

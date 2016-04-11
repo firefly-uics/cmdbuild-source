@@ -147,7 +147,7 @@
 					params: params,
 					scope: this,
 					failure: function(response, options, decodedResponse) {
-						CMDBuild.Msg.error(
+						CMDBuild.core.Message.error(
 							CMDBuild.Translation.common.failure,
 							Ext.String.format(CMDBuild.Translation.errors.getTemplateWithNameFailure, this.emailTemplateSelectedTemplateGet(CMDBuild.core.constants.Proxy.NAME)),
 							false

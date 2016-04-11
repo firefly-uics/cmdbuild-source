@@ -1,6 +1,9 @@
 (function() {
 
-	Ext.require('CMDBuild.core.proxy.widget.OpenNote');
+	Ext.require([
+		'CMDBuild.core.Message',
+		'CMDBuild.core.proxy.widget.OpenNote'
+	]);
 
 	Ext.define("CMDBuild.controller.management.workflow.CMNoteController", {
 		extend: "CMDBuild.controller.management.classes.CMNoteController",
@@ -37,7 +40,7 @@
 			var isNew = isANewActivity(card);
 
 			if (isNew) {
-				new CMDBuild.Msg.error(CMDBuild.Translation.common.failure,
+				CMDBuild.core.Message.error(CMDBuild.Translation.common.failure,
 					CMDBuild.Translation.management.modworkflow.extattrs.notes.must_save_to_modify,
 					popup = false);
 			}

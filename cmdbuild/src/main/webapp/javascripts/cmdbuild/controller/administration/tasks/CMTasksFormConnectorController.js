@@ -8,6 +8,7 @@
 		requires: [
 			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.LoadMask',
+			'CMDBuild.core.Message',
 			'CMDBuild.core.proxy.taskManager.Connector',
 			'CMDBuild.model.CMModelTasks'
 		],
@@ -315,7 +316,7 @@
 
 			// Class-mapping validation
 			if (Ext.isEmpty(this.delegateStep[3].getData()) && enable) {
-				CMDBuild.Msg.error(CMDBuild.Translation.common.failure, tr.taskConnector.emptyClassLevelMapping, false);
+				CMDBuild.core.Message.error(CMDBuild.Translation.common.failure, tr.taskConnector.emptyClassLevelMapping, false);
 
 				this.delegateStep[3].markInvalidTable("x-grid-invalid");
 
@@ -326,7 +327,7 @@
 
 			// Attribute-mapping validation
 			if (Ext.isEmpty(this.delegateStep[4].getData()) && enable) {
-				CMDBuild.Msg.error(CMDBuild.Translation.common.failure, tr.taskConnector.emptyAttributeLevelMapping, false);
+				CMDBuild.core.Message.error(CMDBuild.Translation.common.failure, tr.taskConnector.emptyAttributeLevelMapping, false);
 
 				this.delegateStep[4].markInvalidTable("x-grid-invalid");
 
@@ -338,7 +339,7 @@
 			// Reference-mapping validation
 			// TODO: future implementation
 //			if (Ext.isEmpty(this.delegateStep[5].getData()) && enable) {
-//				CMDBuild.Msg.error(CMDBuild.Translation.common.failure, tr.taskConnector.emptyReferenceLevelMapping, false);
+//				CMDBuild.core.Message.error(CMDBuild.Translation.common.failure, tr.taskConnector.emptyReferenceLevelMapping, false);
 //
 //				return false;
 //			}

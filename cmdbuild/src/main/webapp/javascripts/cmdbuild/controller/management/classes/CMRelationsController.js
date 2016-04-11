@@ -1,6 +1,9 @@
 (function() {
 
-	Ext.require('CMDBuild.core.proxy.Relation');
+	Ext.require([
+		'CMDBuild.core.Message',
+		'CMDBuild.core.proxy.Relation'
+	]);
 
 	Ext.define('CMDBuild.controller.management.classes.CMCardRelationsController', {
 		extend: 'CMDBuild.controller.management.classes.CMModCardSubController',
@@ -190,7 +193,7 @@
 							Ext.Array.forEach(this.view.addRelationButton.menu.items.items, function(item, index, allItems) {
 								if (Ext.Array.contains(toDisableButtons, item.domain.dom_id)) { // Overwrites button handler to display error popup
 									item.setHandler(function() {
-										CMDBuild.Msg.error(
+										CMDBuild.core.Message.error(
 											CMDBuild.Translation.common.failure,
 											CMDBuild.Translation.errors.domainCardinalityViolation,
 											false

@@ -3,6 +3,8 @@
 	var ICON_ACTION = "action-open-bim";
 	var MAX_ZOOM = 15;
 
+	Ext.require('CMDBuild.core.Message');
+
 	Ext.define("CMDBuild.bim.management.CMBimController", {
 
 		mixins: {
@@ -338,7 +340,7 @@
 			rememberMe: false,
 			success: callback,
 			failure: function() {
-				CMDBuild.Msg.error( //
+				CMDBuild.core.Message.error( //
 						CMDBuild.Translation.error, //
 						CMDBUild.Translation.error_bimserver_connection, //
 						true //

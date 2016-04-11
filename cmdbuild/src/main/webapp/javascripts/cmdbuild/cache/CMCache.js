@@ -7,8 +7,9 @@
 		extend: "Ext.util.Observable",
 
 		requires: [
-			'CMDBuild.core.proxy.common.tabs.attribute.Attribute',
+			'CMDBuild.core.Message',
 			'CMDBuild.core.proxy.Cache',
+			'CMDBuild.core.proxy.common.tabs.attribute.Attribute',
 			'CMDBuild.core.proxy.gis.Gis',
 			'CMDBuild.core.proxy.index.Json'
 		],

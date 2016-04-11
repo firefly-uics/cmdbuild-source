@@ -1,6 +1,9 @@
 (function() {
 
-	Ext.require('CMDBuild.core.proxy.dashboard.Dashboard');
+	Ext.require([
+		'CMDBuild.core.Message',
+		'CMDBuild.core.proxy.dashboard.Dashboard'
+	]);
 
 	Ext.define("CMDBuild.controller.administration.dashboard.CMDashboardPropertiesPanelController", {
 
@@ -57,7 +60,7 @@
 		onSaveButtonClick: function() {
 			var data = this.view.getFieldsValue();
 			if (!data.name || !data.description) {
-				CMDBuild.Msg.error(CMDBuild.Translation.common.failure, CMDBuild.Translation.errors.invalid_fields, false);
+				CMDBuild.core.Message.error(CMDBuild.Translation.common.failure, CMDBuild.Translation.errors.invalid_fields, false);
 				return;
 			}
 

@@ -1,7 +1,12 @@
 (function() {
 
-	Ext.define('CMDBuild.routes.management.Instances', {
+	Ext.define('CMDBuild.routes.management.Instance', {
 		extend: 'CMDBuild.routes.Base',
+
+		requires: [
+			'CMDBuild.core.constants.Proxy',
+			'CMDBuild.core.Message'
+		],
 
 		/**
 		 * @cfg {String}
@@ -37,7 +42,7 @@
 						});
 					}, 500, this)();
 				} else {
-					CMDBuild.Msg.error(
+					CMDBuild.core.Message.error(
 						CMDBuild.Translation.common.failure,
 						CMDBuild.Translation.errors.routesInvalidInstanceIdentifier + ' (' + this.instanceIdentifier + ')',
 						false
@@ -61,7 +66,7 @@
 				Ext.isEmpty(this.processIdentifier)
 				|| !_CMCache.isEntryTypeByName(this.processIdentifier)
 			) {
-				CMDBuild.Msg.error(
+				CMDBuild.core.Message.error(
 					CMDBuild.Translation.common.failure,
 					CMDBuild.Translation.errors.routesInvalidProcessIdentifier + ' (' + this.processIdentifier + ')',
 					false
@@ -72,7 +77,7 @@
 
 			// Instance identifier validation
 			if (Ext.isEmpty(this.instanceIdentifier)) {
-				CMDBuild.Msg.error(
+				CMDBuild.core.Message.error(
 					CMDBuild.Translation.common.failure,
 					CMDBuild.Translation.errors.routesInvalidInstanceIdentifier + ' (' + this.instanceIdentifier + ')',
 					false

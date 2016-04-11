@@ -3,7 +3,8 @@
 	Ext.require([
 		'CMDBuild.view.common.field.translatable.Utils',
 		'CMDBuild.core.proxy.common.tabs.attribute.Attribute',
-		'CMDBuild.core.proxy.common.tabs.attribute.Order'
+		'CMDBuild.core.proxy.common.tabs.attribute.Order',
+		'CMDBuild.core.Message'
 	]);
 
 	Ext.define("CMDBuild.controller.administration.CMBaseAttributesController", {
@@ -124,7 +125,7 @@
 	function onSaveClick() {
 		var nonValid = this.view.formPanel.getNonValidFields();
 		if (nonValid.length > 0) {
-			CMDBuild.Msg.error(CMDBuild.Translation.common.failure, CMDBuild.Translation.errors.invalid_fields, false);
+			CMDBuild.core.Message.error(CMDBuild.Translation.common.failure, CMDBuild.Translation.errors.invalid_fields, false);
 			return;
 		}
 

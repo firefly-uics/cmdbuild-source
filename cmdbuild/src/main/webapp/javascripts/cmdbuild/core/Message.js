@@ -1,7 +1,6 @@
 (function() {
 
 	Ext.define('CMDBuild.core.Message', {
-		alternateClassName: 'CMDBuild.Msg', // Legacy class name
 
 		requires: ['Ext.ux.Notification'],
 

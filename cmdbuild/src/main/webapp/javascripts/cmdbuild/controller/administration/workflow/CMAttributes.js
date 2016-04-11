@@ -1,6 +1,7 @@
 (function() {
 
 	Ext.require([
+		'CMDBuild.core.Message',
 		'CMDBuild.core.proxy.common.tabs.attribute.Attribute',
 		'CMDBuild.core.proxy.common.tabs.attribute.Order',
 		'CMDBuild.view.common.field.translatable.Utils'
@@ -107,7 +108,7 @@
 	function onSaveClick() {
 		var nonValid = this.view.formPanel.getNonValidFields();
 		if (nonValid.length > 0) {
-			CMDBuild.Msg.error(CMDBuild.Translation.common.failure, CMDBuild.Translation.errors.invalid_fields, false);
+			CMDBuild.core.Message.error(CMDBuild.Translation.common.failure, CMDBuild.Translation.errors.invalid_fields, false);
 			return;
 		}
 

@@ -2,7 +2,10 @@
 
 	var tr = CMDBuild.Translation.administration.modDashboard.charts;
 
-	Ext.require('CMDBuild.core.proxy.dashboard.Chart');
+	Ext.require([
+		'CMDBuild.core.Message',
+		'CMDBuild.core.proxy.dashboard.Chart'
+	]);
 
 	Ext.define("CMDBuild.controller.administration.dashboard.CMDashboardChartConfigurationPanelControllerDelegate", {
 		dashboardChartAreChanged: Ext.emptyFn
@@ -120,7 +123,7 @@
 
 		onSaveButtonClick: function() {
 			if (!this.formController.isValid()) {
-				CMDBuild.Msg.error(CMDBuild.Translation.common.failure, CMDBuild.Translation.errors.invalid_fields, false);
+				CMDBuild.core.Message.error(CMDBuild.Translation.common.failure, CMDBuild.Translation.errors.invalid_fields, false);
 				return;
 			}
 

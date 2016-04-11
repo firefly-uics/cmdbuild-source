@@ -3,6 +3,7 @@
 	var tr = CMDBuild.Translation.management.modcard;
 
 	Ext.require([
+		'CMDBuild.core.Message',
 		'CMDBuild.core.constants.Global',
 		'CMDBuild.core.constants.Proxy',
 		'CMDBuild.core.interfaces.messages.Error',
@@ -366,7 +367,7 @@
 				}
 			}
 
-			CMDBuild.Msg.error(errorTitle, errorBody, false);
+			CMDBuild.core.Message.error(errorTitle, errorBody, false);
 		}
 	});
 

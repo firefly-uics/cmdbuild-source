@@ -1,5 +1,10 @@
 (function() {
 
+	Ext.require([
+		'CMDBuild.core.Message',
+		'CMDBuild.core.proxy.utility.ChangePassword'
+	]);
+
 	Ext.define("CMDBuild.view.management.utilities.CMModChangePassword", {
 		extend: "Ext.panel.Panel",
 		cmName: 'changepassword',
@@ -22,11 +27,11 @@
 			});
 
 			this.form = new Ext.form.Panel({
-				plugins: new CMDBuild.CallbackPlugin(),
-				url: 'services/json/schema/modsecurity/changepassword',
-				frame: true,
+				bodyCls: 'cmdb-blue-panel-no-padding',
 				border: false,
+				frame: false,
 				region: "center",
+
 				items: [{
 					xtype: 'textfield',
 					inputType:'password',
@@ -69,15 +74,20 @@
 
 	function onSaveButtonClick(){
 		if (this.form.getForm().isValid()) {
-			this.form.getForm().submit({
+			var params = this.form.getValues();
+
+			CMDBuild.core.proxy.utility.ChangePassword.change({
+				params: params,
 				scope: this,
-				callback: function(){this.form.getForm().reset()},
-				success: function(){
-					CMDBuild.Msg.info("", CMDBuild.Translation.management.modutilities.changepassword.successmsgtext);
+				callback: function (options, success, response) {
+					this.form.getForm().reset()
+				},
+				success: function (response, options, decodedResponse) {
+					CMDBuild.core.Message.info(null, CMDBuild.Translation.management.modutilities.changepassword.successmsgtext);
 				}
 			});
 		} else {
-			CMDBuild.Msg.error(CMDBuild.Translation.common.failure, CMDBuild.Translation.errors.invalid_fields, false);
+			CMDBuild.core.Message.error(CMDBuild.Translation.common.failure, CMDBuild.Translation.errors.invalid_fields, false);
 		}
 	}
 

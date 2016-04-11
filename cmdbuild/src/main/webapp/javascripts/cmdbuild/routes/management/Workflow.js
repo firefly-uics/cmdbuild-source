@@ -1,11 +1,12 @@
 (function() {
 
-	Ext.define('CMDBuild.routes.management.Processes', {
+	Ext.define('CMDBuild.routes.management.Workflow', {
 		extend: 'CMDBuild.routes.Base',
 
 		requires: [
 			'CMDBuild.core.constants.ModuleIdentifiers',
-			'CMDBuild.core.constants.Proxy'
+			'CMDBuild.core.constants.Proxy',
+			'CMDBuild.core.Message'
 		],
 
 		/**
@@ -78,7 +79,7 @@
 				Ext.isEmpty(this.processIdentifier)
 				|| !_CMCache.isEntryTypeByName(this.processIdentifier)
 			) {
-				CMDBuild.Msg.error(
+				CMDBuild.core.Message.error(
 					CMDBuild.Translation.common.failure,
 					CMDBuild.Translation.errors.routesInvalidProcessIdentifier + ' (' + this.processIdentifier + ')',
 					false
@@ -94,7 +95,7 @@
 
 			// Print format validation
 			if (!Ext.Array.contains(this.supportedPrintFormats, this.printFormat)) {
-				CMDBuild.Msg.error(
+				CMDBuild.core.Message.error(
 					CMDBuild.Translation.common.failure,
 					CMDBuild.Translation.errors.routesInvalidPrintFormat + ' (' + this.printFormat + ')',
 					false

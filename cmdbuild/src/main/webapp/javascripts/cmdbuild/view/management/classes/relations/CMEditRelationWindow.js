@@ -7,7 +7,10 @@
 	Ext.define('CMDBuild.view.management.classes.relations.CMEditRelationWindow', {
 		extend: 'CMDBuild.Management.CardListWindow', // To choose the card for the relation
 
-		requires: ['CMDBuild.core.constants.Proxy'],
+		requires: [
+			'CMDBuild.core.constants.Proxy',
+			'CMDBuild.core.Message'
+		],
 
 		successCb: Ext.emptyFn,
 
@@ -241,7 +244,7 @@
 			if (e == NO_SELECTION) {
 				var msg = Ext.String.format('<p class=\'{0}\'>{1}</p>', CMDBuild.core.constants.Global.getErrorMsgCss(), CMDBuild.Translation.errors.no_selections);
 
-				CMDBuild.Msg.error(CMDBuild.Translation.common.failure, msg, false);
+				CMDBuild.core.Message.error(CMDBuild.Translation.common.failure, msg, false);
 			}
 
 			return;
@@ -252,7 +255,7 @@
 		} catch (e) {
 			var msg = Ext.String.format('<p class=\'{0}\'>{1}</p>', CMDBuild.core.constants.Global.getErrorMsgCss(), CMDBuild.Translation.errors.invalid_attributes);
 
-			CMDBuild.Msg.error(null, msg + e, false);
+			CMDBuild.core.Message.error(null, msg + e, false);
 
 			return;
 		}

@@ -2,6 +2,7 @@
 
 	Ext.require([
 		'CMDBuild.core.constants.Global',
+		'CMDBuild.core.Message',
 		'CMDBuild.core.proxy.utility.BulkUpdate'
 	]);
 
@@ -118,7 +119,7 @@
 					CMDBuild.core.constants.Global.getErrorMsgCss(),
 					CMDBuild.Translation.errors.no_selections);
 
-			CMDBuild.Msg.error(CMDBuild.Translation.common.failure, msg, false);
+			CMDBuild.core.Message.error(CMDBuild.Translation.common.failure, msg, false);
 			return;
 		}
 

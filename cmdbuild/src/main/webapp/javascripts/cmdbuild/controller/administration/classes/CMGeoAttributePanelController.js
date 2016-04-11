@@ -1,5 +1,9 @@
 (function() {
-	Ext.require('CMDBuild.core.proxy.gis.GeoAttribute');
+
+	Ext.require([
+		'CMDBuild.core.Message',
+		'CMDBuild.core.proxy.gis.GeoAttribute'
+	]);
 
 	Ext.define("CMDBuild.controller.administration.classes.CMGeoAttributeController", {
 		constructor: function(view) {
@@ -67,7 +71,7 @@
 	function onSaveButtonFormClick() {
 		var nonValid = this.form.getNonValidFields();
 		if (nonValid.length > 0) {
-			CMDBuild.Msg.error(CMDBuild.Translation.common.failure, CMDBuild.Translation.errors.invalid_fields, false);
+			CMDBuild.core.Message.error(CMDBuild.Translation.common.failure, CMDBuild.Translation.errors.invalid_fields, false);
 			return;
 		}
 

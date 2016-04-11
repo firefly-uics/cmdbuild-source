@@ -6,6 +6,7 @@
 		requires: [
 			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.LoadMask',
+			'CMDBuild.core.Message',
 			'CMDBuild.core.proxy.Csv'
 		],
 
@@ -79,7 +80,7 @@
 				failure: function(form, action) {
 					CMDBuild.core.LoadMask.hide();
 
-					CMDBuild.Msg.error(
+					CMDBuild.core.Message.error(
 						CMDBuild.Translation.common.failure,
 						CMDBuild.Translation.errors.csvUploadOrDecodeFailure,
 						false

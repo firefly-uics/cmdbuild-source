@@ -1,3 +1,5 @@
+Ext.require(['CMDBuild.core.proxy.utility.ExportCsv']);
+
 Ext.define("CMDBuild.view.management.utilities.CMModExportCSV", {
 	extend: "Ext.panel.Panel",
 	cmName: 'exportcsv',
@@ -11,9 +13,17 @@ Ext.define("CMDBuild.view.management.utilities.CMModExportCSV", {
 
 		this.exportBtn = Ext.create('CMDBuild.core.buttons.text.Export', {
 			scope: this,
-			formBind: true,
-			handler: function(){
-				this.form.getForm().submit();
+//			formBind: true,<
+			handler: function (button, e){
+				var params = this.form.getValues();
+//				this.form.getForm().submit();
+				CMDBuild.core.proxy.utility.ExportCsv.download({
+					form: this.form.getForm(),
+					params: params,
+					success: function () {
+_debug('SICCESS');
+					}
+				});
 			}
 		});
 
@@ -46,26 +56,19 @@ Ext.define("CMDBuild.view.management.utilities.CMModExportCSV", {
 			allowBlank: false
 		});
 
-		this.form = new Ext.form.Panel({
+		this.form = Ext.create('Ext.form.Panel', {
 			region: 'center',
-			hideMode:  'offsets',
-			frame: true,
-			border: true,
+			bodyCls: 'cmdb-blue-panel-no-padding',
+			frame: false,
+			border: false,
 			monitorValid: true,
-			labelWidth: 200,
-			method: 'POST',
-			url : 'services/json/management/exportcsv/export',
-			standardSubmit:true, // IE Fix (see exportBtn for more)
+			standardSubmit: true, // IE Fix (see exportBtn for more)
 			items:	[
 				this.classList,
 				this.separator,
 				this.exportBtn
 			]
 		});
-
-		this.form.on('clientvalidation', function(form, valid){
-			this.exportBtn.setDisabled(!valid)
-		}, this);
 
 		Ext.apply(this, {
 			title: CMDBuild.Translation.management.modutilities.csv.title_export,

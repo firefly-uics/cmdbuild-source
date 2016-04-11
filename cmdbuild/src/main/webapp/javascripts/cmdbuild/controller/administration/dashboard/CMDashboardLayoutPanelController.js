@@ -1,4 +1,7 @@
-Ext.require('CMDBuild.core.proxy.dashboard.Dashboard');
+Ext.require([
+	'CMDBuild.core.Message',
+	'CMDBuild.core.proxy.dashboard.Dashboard'
+]);
 
 Ext.define("CMDBuild.controller.administration.dashboard.CMDashboardLayoutPanelController", {
 
@@ -67,7 +70,7 @@ Ext.define("CMDBuild.controller.administration.dashboard.CMDashboardLayoutPanelC
 			},
 			scope: this,
 			success: function (response, options, decodedResponse) {
-				CMDBuild.Msg.success();
+				CMDBuild.core.Message.success();
 				var d = _CMCache.getDashboardById(this.dashboard.getId());
 				if (d) {
 					d.setColumns(this.view.getColumnsConfiguration());

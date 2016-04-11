@@ -9,6 +9,7 @@
 
 		requires: [
 			'CMDBuild.core.constants.Proxy',
+			'CMDBuild.core.Message',
 			'CMDBuild.core.proxy.Card',
 			'CMDBuild.core.Utils',
 			'CMDBuild.model.widget.ModelLinkCards'
@@ -133,7 +134,7 @@
 			) {
 				targetClassName = this.getClassNameFromFilterString(this.widgetConf[CMDBuild.core.constants.Proxy.FILTER]);
 			} else {
-				return CMDBuild.Msg.error(
+				return CMDBuild.core.Message.error(
 					CMDBuild.Translation.error,
 					CMDBuild.Translation.errors.widgetLinkCardsNoClassNameError,
 					false
@@ -281,7 +282,7 @@
 						me.onGridShow();
 					},
 					failure: function() {
-						CMDBuild.Msg.error(null, CMDBuild.Translation.errors.busy_wf_widgets, false);
+						CMDBuild.core.Message.error(null, CMDBuild.Translation.errors.busy_wf_widgets, false);
 					},
 					checkFn: function() {
 						// I want exit if I'm not busy

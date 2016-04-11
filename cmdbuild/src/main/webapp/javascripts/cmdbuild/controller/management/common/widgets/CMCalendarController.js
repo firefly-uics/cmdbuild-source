@@ -1,6 +1,9 @@
 (function() {
 
-	Ext.require('CMDBuild.core.proxy.Card');
+	Ext.require([
+		'CMDBuild.core.Message',
+		'CMDBuild.core.proxy.Card'
+	]);
 
 	Ext.define("CMDBuild.controller.management.common.widgets.CMCalendarController", {
 
@@ -19,7 +22,7 @@
 			if (!this.reader.getStartDate(this.widgetConf) ||
 					!this.reader.getTitle(this.widgetConf)) {
 
-				CMDBuild.Msg.error(CMDBuild.Translation.common.failure,
+				CMDBuild.core.Message.error(CMDBuild.Translation.common.failure,
 						CMDBuild.Translation.management.modworkflow.extattrs.calendar.wrong_config);
 
 				this.skipLoading = true;

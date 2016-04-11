@@ -19,6 +19,7 @@
 
 		requires: [
 			'CMDBuild.core.constants.Proxy',
+			'CMDBuild.core.Message',
 			'CMDBuild.core.proxy.Filter'
 		],
 
@@ -309,7 +310,7 @@
 			var className = this.className;
 
 			if (Ext.isEmpty(className)) {
-				CMDBuild.Msg.error(CMDBuild.Translation.common.failure, Ext.String.format(CMDBuild.Translation.errors.reasons.CLASS_NOTFOUND, className));
+				CMDBuild.core.Message.error(CMDBuild.Translation.common.failure, Ext.String.format(CMDBuild.Translation.errors.reasons.CLASS_NOTFOUND, className));
 
 				return;
 			}

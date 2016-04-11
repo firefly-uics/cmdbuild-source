@@ -57,6 +57,8 @@
 			update: 'services/json/management/modcard/updatecard', // TODO: waiting for refactor (crud)
 			remove: 'services/json/management/modcard/deletecard',
 
+			readAllDetails: 'services/json/management/modcard/getdetaillist',
+
 			bulkUpdate: 'services/json/management/modcard/bulkupdate',
 			bulkUpdateFromFilter: 'services/json/management/modcard/bulkupdatefromfilter',
 			getList: 'services/json/management/modcard/getcardlist',
@@ -97,6 +99,7 @@
 		},
 
 		csv: {
+			download: 'services/json/management/exportcsv/export',
 			clearSession: 'services/json/management/importcsv/clearsession',
 			exports: 'services/json/management/exportcsv/writecsv',
 			getRecords: 'services/json/management/importcsv/getcsvrecords',
@@ -546,6 +549,10 @@
 			disable: 'services/json/schema/modsecurity/disableuser',
 			getGroupList: 'services/json/schema/modsecurity/getusergrouplist',
 			readAll: 'services/json/schema/modsecurity/getuserlist'
+		},
+
+		utility: {
+			changePassword: 'services/json/schema/modsecurity/changepassword'
 		},
 
 		utils: {

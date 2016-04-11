@@ -1,6 +1,9 @@
 (function() {
 
-	Ext.require('CMDBuild.core.Utils');
+	Ext.require([
+		'CMDBuild.core.Message',
+		'CMDBuild.core.Utils'
+	]);
 
 	Ext.define("CMDBuild.controller.management.common.CMCardGridController", {
 
@@ -258,7 +261,7 @@
 						}
 					} else {
 						if (retryWithoutFilter) {
-							CMDBuild.Msg.error(CMDBuild.Translation.common.failure,
+							CMDBuild.core.Message.error(CMDBuild.Translation.common.failure,
 									Ext.String.format(CMDBuild.Translation.errors.reasons.CARD_NOTFOUND, p.IdClass));
 						} else {
 							me._onGetPositionFailureWithoutForcingTheFilter(resText);

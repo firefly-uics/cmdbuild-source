@@ -3,7 +3,10 @@
 	Ext.define('CMDBuild.controller.administration.gis.ExternalServicesController', {
 		extend: 'CMDBuild.controller.CMBasePanelController',
 
-		requires: ['CMDBuild.core.proxy.configuration.Gis'],
+		requires: [
+			'CMDBuild.core.Message',
+			'CMDBuild.core.proxy.configuration.Gis'
+		],
 
 		view: undefined,
 
@@ -135,7 +138,7 @@
 			CMDBuild.core.proxy.configuration.Gis.update({
 				params: values,
 				success: function() {
-					new CMDBuild.Msg.success();
+					CMDBuild.core.Message.success();
 
 					Ext.create('CMDBuild.core.configurations.builder.Gis'); // Rebuild configuration model
 				}

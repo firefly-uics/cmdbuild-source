@@ -2,6 +2,7 @@
 
 	Ext.require([
 		'CMDBuild.core.constants.Global',
+		'CMDBuild.core.Message',
 		'CMDBuild.controller.management.classes.StaticsController'
 	]);
 
@@ -397,7 +398,7 @@
 		var invalidAttributes = CMDBuild.controller.management.classes.StaticsController.getInvalidAttributeAsHTML(form);
 		if (invalidAttributes != null) {
 			var msg = Ext.String.format("<p class=\"{0}\">{1}</p>", CMDBuild.core.constants.Global.getErrorMsgCss(), CMDBuild.Translation.errors.invalid_attributes);
-			CMDBuild.Msg.error(null, msg + invalidAttributes, false);
+			CMDBuild.core.Message.error(null, msg + invalidAttributes, false);
 			return false;
 		} else {
 			return true;

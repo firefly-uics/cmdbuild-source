@@ -1,5 +1,7 @@
 (function() {
 
+	Ext.require('CMDBuild.core.proxy.index.Json');
+
 	Ext.define("CMDBuild.Management.MasterDetailCardGrid", {
 		extend: "CMDBuild.view.management.common.CMCardGrid",
 
@@ -13,7 +15,7 @@
 			var masterCardClassName = _CMCache.getEntryTypeNameById(masterCardClassId); // needed if is a subclass of the domain master class
 
 			function setExtraParamsAndLoad(me) {
-				me.store.proxy.url = "services/json/management/modcard/getdetaillist";
+				me.store.proxy.url = CMDBuild.core.proxy.index.Json.card.readAllDetails;
 
 				var filter = {
 					relation: [{
@@ -43,7 +45,7 @@
 				fkClass = _CMCache.getEntryTypeById(idClass);
 
 			function setExtraParamsAndLoad(me) {
-				me.store.proxy.url = "services/json/management/modcard/getcardlist";
+				me.store.proxy.url = CMDBuild.core.proxy.index.Json.card.getList;
 				me.store.proxy.extraParams['IdClass'] = idClass;
 				me.store.proxy.extraParams['CQL'] = "from "
 					+ fkClass.get("name")

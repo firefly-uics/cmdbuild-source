@@ -5,6 +5,7 @@
 
 		requires: [
 			'CMDBuild.core.constants.Proxy',
+			'CMDBuild.core.Message',
 			'CMDBuild.core.proxy.Csv',
 			'CMDBuild.core.proxy.lookup.Lookup',
 			'CMDBuild.core.proxy.widget.CustomForm',
@@ -389,7 +390,7 @@
 					failure: function (form, action) {
 						this.view.setLoading(false);
 
-						CMDBuild.Msg.error(
+						CMDBuild.core.Message.error(
 							CMDBuild.Translation.common.failure,
 							CMDBuild.Translation.errors.csvUploadOrDecodeFailure,
 							false

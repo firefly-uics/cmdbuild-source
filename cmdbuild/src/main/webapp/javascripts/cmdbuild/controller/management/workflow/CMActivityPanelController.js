@@ -2,6 +2,7 @@
 
 	Ext.require([
 		'CMDBuild.core.constants.Global',
+		'CMDBuild.core.Message',
 		'CMDBuild.core.proxy.workflow.Activity',
 		'CMDBuild.core.proxy.workflow.Workflow'
 	]);
@@ -472,7 +473,7 @@
 
 		if (invalidAttributes != null) {
 			var msg = Ext.String.format("<p class=\"{0}\">{1}</p>", CMDBuild.core.constants.Global.getErrorMsgCss(), CMDBuild.Translation.errors.invalid_attributes);
-			CMDBuild.Msg.error(null, msg + invalidAttributes, false);
+			CMDBuild.core.Message.error(null, msg + invalidAttributes, false);
 
 			return false;
 		} else {
@@ -489,7 +490,7 @@
 			var msg = Ext.String.format(ERROR_TEMPLATE
 					, CMDBuild.core.constants.Global.getErrorMsgCss()
 					, CMDBuild.Translation.errors.invalid_extended_attributes);
-			CMDBuild.Msg.error(null, msg + wrongWidgets, popup = false);
+			CMDBuild.core.Message.error(null, msg + wrongWidgets, popup = false);
 		}
 
 		return valid;
