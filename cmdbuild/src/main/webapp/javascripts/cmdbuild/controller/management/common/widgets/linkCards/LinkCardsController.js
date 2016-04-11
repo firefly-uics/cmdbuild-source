@@ -457,8 +457,9 @@
 
 				this.model._silent = true;
 
-				CMDBuild.ServiceProxy.card.getPosition({
+				CMDBuild.core.proxy.Card.getPosition({
 					params: params,
+					loadMask: false,
 					scope: this,
 					success: function(result, options, decodedResult) {
 						var position = decodedResult.position;
@@ -585,8 +586,9 @@
 
 					// Do the request only if there are a default selection
 					if (defaultSelection) {
-						CMDBuild.core.proxy.Card.getList({
+						CMDBuild.core.proxy.Card.readAll({
 							params: defaultSelection,
+							loadMask: false,
 							scope: this,
 							success: function(response, options, decodedResponse) {
 								var decodedResponse = decodedResponse.rows;

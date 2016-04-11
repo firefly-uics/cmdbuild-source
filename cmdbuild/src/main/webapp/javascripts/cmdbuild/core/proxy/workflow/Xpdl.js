@@ -1,24 +1,26 @@
-(function() {
+(function () {
 
 	Ext.define('CMDBuild.core.proxy.workflow.Xpdl', {
 
 		requires: [
 			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.interfaces.FormSubmit',
-			'CMDBuild.core.proxy.Index'
+			'CMDBuild.core.proxy.index.Json'
 		],
 
 		singleton: true,
 
 		/**
 		 * @param {Object} parameters
+		 *
+		 * @returns {Void}
 		 */
-		download: function(parameters) {
+		download: function (parameters) {
 			parameters = Ext.isEmpty(parameters) ? {} : parameters;
 
 			Ext.apply(parameters, {
 				buildRuntimeForm: true,
-				url: CMDBuild.core.proxy.Index.workflow.xpdl.download
+				url: CMDBuild.core.proxy.index.Json.workflow.xpdl.download
 			});
 
 			CMDBuild.core.interfaces.FormSubmit.submit(parameters);
@@ -26,13 +28,15 @@
 
 		/**
 		 * @param {Object} parameters
+		 *
+		 * @returns {Void}
 		 */
-		downloadTemplate: function(parameters) {
+		downloadTemplate: function (parameters) {
 			parameters = Ext.isEmpty(parameters) ? {} : parameters;
 
 			Ext.apply(parameters, {
 				buildRuntimeForm: true,
-				url: CMDBuild.core.proxy.Index.workflow.xpdl.downloadTemplate
+				url: CMDBuild.core.proxy.index.Json.workflow.xpdl.downloadTemplate
 			});
 
 			CMDBuild.core.interfaces.FormSubmit.submit(parameters);
@@ -40,22 +44,26 @@
 
 		/**
 		 * @param {Object} parameters
+		 *
+		 * @returns {Void}
 		 */
-		readVersions: function(parameters) {
+		readVersions: function (parameters) {
 			parameters = Ext.isEmpty(parameters) ? {} : parameters;
 
-			Ext.apply(parameters, { url: CMDBuild.core.proxy.Index.workflow.xpdl.versions });
+			Ext.apply(parameters, { url: CMDBuild.core.proxy.index.Json.workflow.xpdl.versions });
 
 			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.XPDL, parameters);
 		},
 
 		/**
 		 * @param {Object} parameters
+		 *
+		 * @returns {Void}
 		 */
-		upload: function(parameters) {
+		upload: function (parameters) {
 			parameters = Ext.isEmpty(parameters) ? {} : parameters;
 
-			Ext.apply(parameters, { url: CMDBuild.core.proxy.Index.workflow.xpdl.upload });
+			Ext.apply(parameters, { url: CMDBuild.core.proxy.index.Json.workflow.xpdl.upload });
 
 			CMDBuild.core.interfaces.FormSubmit.submit(parameters);
 		}

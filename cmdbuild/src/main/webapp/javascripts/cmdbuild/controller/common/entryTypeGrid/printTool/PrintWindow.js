@@ -7,7 +7,7 @@
 			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.interfaces.FormSubmit',
 			'CMDBuild.core.Message',
-			'CMDBuild.core.proxy.Index',
+			'CMDBuild.core.proxy.index.Json',
 			'CMDBuild.core.proxy.report.Print'
 		],
 
@@ -155,7 +155,7 @@
 				CMDBuild.core.interfaces.FormSubmit.submit({
 					buildRuntimeForm: true,
 					params: params,
-					url: CMDBuild.core.proxy.Index.report.printReportFactory
+					url: CMDBuild.core.proxy.index.Json.report.printReportFactory
 				});
 			} else { // Add to view display mode
 				this.view.removeAll();
@@ -165,7 +165,7 @@
 
 					autoEl: {
 						tag: 'iframe',
-						src: CMDBuild.core.proxy.Index.report.printReportFactory
+						src: CMDBuild.core.proxy.index.Json.report.printReportFactory
 					}
 				});
 			}

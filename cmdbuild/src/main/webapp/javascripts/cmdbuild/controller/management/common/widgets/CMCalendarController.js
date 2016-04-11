@@ -163,8 +163,9 @@
 			});
 		}
 
-		CMDBuild.core.proxy.Card.getList({
+		CMDBuild.core.proxy.Card.readAll({
 			params: params,
+			loadMask: false,
 			success: function(response, operation, decodedResponse) {
 				me.view.clearStore();
 				var _eventData = decodedResponse.rows || [];

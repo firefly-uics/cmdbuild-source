@@ -4,7 +4,7 @@
 
 		requires: [
 			'CMDBuild.core.constants.Proxy',
-			'CMDBuild.core.proxy.Index',
+			'CMDBuild.core.proxy.index.Json',
 			'CMDBuild.model.userAndGroup.user.DefaultGroup',
 			'CMDBuild.model.userAndGroup.user.User'
 		],
@@ -13,22 +13,26 @@
 
 		/**
 		 * @param {Object} parameters
+		 *
+		 * @returns {Void}
 		 */
 		create: function (parameters) {
 			parameters = Ext.isEmpty(parameters) ? {} : parameters;
 
-			Ext.apply(parameters, { url: CMDBuild.core.proxy.Index.user.create });
+			Ext.apply(parameters, { url: CMDBuild.core.proxy.index.Json.user.create });
 
 			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.USER, parameters, true);
 		},
 
 		/**
 		 * @param {Object} parameters
+		 *
+		 * @returns {Void}
 		 */
 		disable: function (parameters) {
 			parameters = Ext.isEmpty(parameters) ? {} : parameters;
 
-			Ext.apply(parameters, { url: CMDBuild.core.proxy.Index.user.disable });
+			Ext.apply(parameters, { url: CMDBuild.core.proxy.index.Json.user.disable });
 
 			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.USER, parameters, true);
 		},
@@ -42,7 +46,7 @@
 				model: 'CMDBuild.model.userAndGroup.user.User',
 				proxy: {
 					type: 'ajax',
-					url: CMDBuild.core.proxy.Index.user.readAll,
+					url: CMDBuild.core.proxy.index.Json.user.readAll,
 					reader: {
 						type: 'json',
 						root: CMDBuild.core.constants.Proxy.ROWS
@@ -68,10 +72,10 @@
 				model: 'CMDBuild.model.userAndGroup.user.DefaultGroup',
 				proxy: {
 					type: 'ajax',
-					url: CMDBuild.core.proxy.Index.user.getGroupList,
+					url: CMDBuild.core.proxy.index.Json.user.getGroupList,
 					reader: {
 						type: 'json',
-						root: 'result'
+						root: CMDBuild.core.constants.Proxy.RESULT
 					},
 					extraParams: {
 						limitParam: undefined,
@@ -87,22 +91,26 @@
 
 		/**
 		 * @param {Object} parameters
+		 *
+		 * @returns {Void}
 		 */
 		read: function (parameters) {
 			parameters = Ext.isEmpty(parameters) ? {} : parameters;
 
-			Ext.apply(parameters, { url: CMDBuild.core.proxy.Index.user.read });
+			Ext.apply(parameters, { url: CMDBuild.core.proxy.index.Json.user.read });
 
 			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.USER, parameters);
 		},
 
 		/**
 		 * @param {Object} parameters
+		 *
+		 * @returns {Void}
 		 */
 		update: function (parameters) {
 			parameters = Ext.isEmpty(parameters) ? {} : parameters;
 
-			Ext.apply(parameters, { url: CMDBuild.core.proxy.Index.user.update });
+			Ext.apply(parameters, { url: CMDBuild.core.proxy.index.Json.user.update });
 
 			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.USER, parameters, true);
 		}

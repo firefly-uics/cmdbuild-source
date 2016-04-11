@@ -1,5 +1,7 @@
 (function() {
 
+	Ext.require('CMDBuild.core.proxy.classes.MasterDetail');
+
 	var MD = "detail";
 	var FK = "foreignkey";
 
@@ -71,31 +73,31 @@
 			}
 
 			var params = {};
-			params[_CMProxy.parameter.CLASS_NAME] = _CMCache.getEntryTypeNameById(classId);
-			CMDBuild.ServiceProxy.getFKTargetingClass( {
+			params[CMDBuild.core.constants.Proxy.CLASS_NAME] = _CMCache.getEntryTypeNameById(classId);
+
+			CMDBuild.core.proxy.classes.MasterDetail.readForeignKeyTargetingClass({
 				params: params,
-				scope: me,
-				success: takeFkAttributesAndBuildTabs
+				loadMask: false,
+				scope: this,
+				success: function (response, options, decodedResponse) {
+					this.details[FK] = {};
+					this.tabs.removeAll();
+
+					for (var i=0, l = decodedResponse.length; i < l; ++i) {
+						var attr = decodedResponse[i];
+						this.details[FK][getId(attr)] = attr;
+					}
+					this.buildingTabsDetails = false;
+
+					if (Ext.Object.isEmpty(this.details[FK]) && Ext.Object.isEmpty(this.details[MD])) {
+						this.fireEvent("empty");
+					} else {
+						this.empty = false;
+						this.enable();
+						buildTabs.call(this);
+					}
+				}
 			});
-
-			function takeFkAttributesAndBuildTabs(response, options, attributes) {
-				this.details[FK] = {};
-				this.tabs.removeAll();
-
-				for (var i=0, l = attributes.length; i < l; ++i) {
-					var attr = attributes[i];
-					this.details[FK][getId(attr)] = attr;
-				}
-				this.buildingTabsDetails = false;
-
-				if (Ext.Object.isEmpty(this.details[FK]) && Ext.Object.isEmpty(this.details[MD])) {
-					this.fireEvent("empty");
-				} else {
-					this.empty = false;
-					this.enable();
-					buildTabs.call(this);
-				}
-			}
 		},
 
 		selectDetail: function(detail) {

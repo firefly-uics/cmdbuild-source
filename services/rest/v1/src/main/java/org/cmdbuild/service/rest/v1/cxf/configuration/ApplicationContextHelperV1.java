@@ -6,7 +6,7 @@ import org.cmdbuild.auth.UserStore;
 import org.cmdbuild.config.CmdbuildConfiguration;
 import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.logic.auth.AuthenticationLogic;
-import org.cmdbuild.logic.auth.RestAuthenticationLogicBuilder;
+import org.cmdbuild.logic.auth.RestSessionLogic;
 import org.cmdbuild.logic.data.access.DataAccessLogic;
 import org.cmdbuild.logic.data.access.SystemDataAccessLogicBuilder;
 import org.cmdbuild.logic.data.access.WebServiceDataAccessLogicBuilder;
@@ -30,7 +30,7 @@ public class ApplicationContextHelperV1 {
 	private ApplicationContext applicationContext;
 
 	public AuthenticationLogic authenticationLogic() {
-		return applicationContext.getBean(RestAuthenticationLogicBuilder.class).build();
+		return applicationContext.getBean(RestSessionLogic.class);
 	}
 
 	public CmdbuildConfiguration cmdbuildConfiguration() {

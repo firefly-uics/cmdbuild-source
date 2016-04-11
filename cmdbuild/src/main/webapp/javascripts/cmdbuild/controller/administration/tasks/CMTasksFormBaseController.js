@@ -10,8 +10,7 @@
 
 		requires: [
 			'CMDBuild.core.constants.Proxy',
-			'CMDBuild.core.LoadMask',
-			'CMDBuild.core.proxy.CMProxyTasks'
+			'CMDBuild.core.LoadMask'
 		],
 
 		/**
@@ -125,22 +124,6 @@
 		 */
 		onSaveButtonClick: function() {
 			_debug('CMTasksFormBaseController: onSaveButtonClick() unimplemented method');
-		},
-
-		removeItem: function() {
-			if (!Ext.isEmpty(this.selectedId)) {
-				CMDBuild.core.LoadMask.show();
-
-				CMDBuild.core.proxy.CMProxyTasks.remove({
-					type: this.taskType,
-					params: {
-						id: this.selectedId
-					},
-					scope: this,
-					success: this.success,
-					callback: this.callback
-				});
-			}
 		},
 
 		resetIdField: function() {

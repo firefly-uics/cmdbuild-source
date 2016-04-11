@@ -11,7 +11,10 @@
 		}
 	});
 
+	Ext.require(['CMDBuild.core.proxy.Attachment']);
+
 	Ext.define("CMDBUild.cache.CMCacheAttachmentCategoryFunctions", {
+
 		statics: {
 			errors: {
 				wrongTypeOnAdd: "You are tring to add a wrong object to the attachemnt categories"
@@ -20,10 +23,11 @@
 
 		syncAttachmentCategories: function() {
 			this.resetAttachmentCategory();
-			CMDBuild.ServiceProxy.attachment.getattachmentdefinition({
+			CMDBuild.core.proxy.Attachment.getDefinitions({
+				loadMask: false,
 				scope: this,
 				success: function(response, options, decoded) {
-					if (decoded 
+					if (decoded
 							&& decoded.response
 							&& decoded.response.categories) {
 						this.addAttachmentCategoryFromJson(decoded.response.categories);

@@ -13,14 +13,11 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.cmdbuild.auth.UserStore;
-import org.cmdbuild.common.Builder;
+import org.cmdbuild.auth.ClientRequestAuthenticator.ClientRequest;
 import org.cmdbuild.exception.RedirectException;
 import org.cmdbuild.logger.Log;
-import org.cmdbuild.logic.auth.AuthenticationLogic;
-import org.cmdbuild.logic.auth.AuthenticationLogic.ClientAuthenticationRequest;
 import org.cmdbuild.logic.auth.AuthenticationLogic.ClientAuthenticationResponse;
-import org.cmdbuild.logic.auth.DefaultAuthenticationLogicBuilder;
+import org.cmdbuild.logic.auth.StandardSessionLogic;
 import org.slf4j.Logger;
 import org.slf4j.Marker;
 import org.slf4j.MarkerFactory;
@@ -35,64 +32,27 @@ public class AuthFilter implements Filter {
 	private static final Logger logger = Log.CMDBUILD;
 	private static final Marker marker = MarkerFactory.getMarker(AuthFilter.class.getName());
 
-	private static class ClientRequestWrapper implements ClientAuthenticationRequest {
+	private static class ClientRequestWrapper implements ClientRequest {
 
-		private static class ClientRequestWrapperBuilder implements Builder<ClientRequestWrapper> {
+		private final HttpServletRequest delegate;
 
-			private HttpServletRequest request;
-			private UserStore userStore;
-
-			private ClientRequestWrapperBuilder() {
-				// prevents instantiation
-			}
-
-			@Override
-			public ClientRequestWrapper build() {
-				return new ClientRequestWrapper(this);
-			}
-
-			public ClientRequestWrapperBuilder withRequest(final HttpServletRequest request) {
-				this.request = request;
-				return this;
-			}
-
-			public ClientRequestWrapperBuilder withUserStore(final UserStore userStore) {
-				this.userStore = userStore;
-				return this;
-			}
-
-		}
-
-		public static ClientRequestWrapperBuilder newInstance() {
-			return new ClientRequestWrapperBuilder();
-		}
-
-		private final HttpServletRequest request;
-		private final UserStore userStore;
-
-		private ClientRequestWrapper(final ClientRequestWrapperBuilder builder) {
-			this.request = builder.request;
-			this.userStore = builder.userStore;
+		public ClientRequestWrapper(final HttpServletRequest delegate) {
+			this.delegate = delegate;
 		}
 
 		@Override
 		public String getRequestUrl() {
-			return request.getRequestURL().toString();
+			return delegate.getRequestURL().toString();
 		}
 
 		@Override
 		public String getHeader(final String name) {
-			return request.getHeader(name);
+			return delegate.getHeader(name);
 		}
 
 		@Override
 		public String getParameter(final String name) {
-			return request.getParameter(name);
-		}
-
-		@Override
-		public UserStore getUserStore() {
-			return userStore;
+			return delegate.getParameter(name);
 		}
 
 	}
@@ -101,14 +61,7 @@ public class AuthFilter implements Filter {
 	public static final String LOGOUT_URL = "logout.jsp";
 
 	@Autowired
-	private UserStore userStore;
-
-	private AuthenticationLogic authenticationLogic;
-
-	@Autowired
-	public void setAuthenticationLogicBuilder(final DefaultAuthenticationLogicBuilder authenticationLogicBuilder) {
-		this.authenticationLogic = authenticationLogicBuilder.build();
-	}
+	private StandardSessionLogic sessionLogic;
 
 	@Override
 	public void init(final FilterConfig filterConfig) throws ServletException {
@@ -131,26 +84,28 @@ public class AuthFilter implements Filter {
 				logger.debug(marker, "root page, redirecting to login");
 				redirectToLogin(httpResponse);
 			} else if (isLoginPage(uri)) {
-				if (userStore.getUser().isValid()) {
+				if (sessionLogic.isValidUser()) {
 					redirectToManagement(httpResponse);
 				} else {
 					logger.debug(marker, "user is not valid, trying login using HTTP request");
-					final ClientAuthenticationResponse clientAuthenticatorResponse = doLogin(httpRequest, userStore);
+					final ClientAuthenticationResponse clientAuthenticatorResponse = sessionLogic
+							.login(new ClientRequestWrapper(httpRequest));
 					final String authenticationRedirectUrl = clientAuthenticatorResponse.getRedirectUrl();
 					if (authenticationRedirectUrl != null) {
 						redirectToCustom(authenticationRedirectUrl);
-					} else if (userStore.getUser().isValid()) {
+					} else if (sessionLogic.isValidUser()) {
 						redirectToManagement(httpResponse);
 					}
 				}
-			} else if (isProtectedPage(uri)) {
-				if (!userStore.getUser().isValid()) {
+			} else if (!isService(uri) && !isShark(uri) && !isResouce(uri) && !isLoginPage(uri)) {
+				if (!sessionLogic.isValidUser()) {
 					logger.debug(marker, "user is not valid, trying login using HTTP request");
-					final ClientAuthenticationResponse clientAuthenticatorResponse = doLogin(httpRequest, userStore);
+					final ClientAuthenticationResponse clientAuthenticatorResponse = sessionLogic
+							.login(new ClientRequestWrapper(httpRequest));
 					final String authenticationRedirectUrl = clientAuthenticatorResponse.getRedirectUrl();
 					if (authenticationRedirectUrl != null) {
 						redirectToCustom(authenticationRedirectUrl);
-					} else if (!userStore.getUser().isValid() && !isLogoutPage(uri)) {
+					} else if (!sessionLogic.isValidUser() && !isLogoutPage(uri)) {
 						redirectToLogin(httpResponse);
 					}
 				}
@@ -159,15 +114,6 @@ public class AuthFilter implements Filter {
 		} catch (final RedirectException re) {
 			re.sendRedirect(httpResponse);
 		}
-	}
-
-	private ClientAuthenticationResponse doLogin(final HttpServletRequest httpRequest, final UserStore userStore) {
-		final ClientAuthenticationResponse clientAuthenticatorResponse = authenticationLogic.login(ClientRequestWrapper
-				.newInstance() //
-				.withRequest(httpRequest) //
-				.withUserStore(userStore) //
-				.build());
-		return clientAuthenticatorResponse;
 	}
 
 	private void redirectToManagement(final HttpServletResponse response) throws IOException, RedirectException {
@@ -185,21 +131,28 @@ public class AuthFilter implements Filter {
 		throw new RedirectException(uri);
 	}
 
-	private boolean isRootPage(final String uri) {
+	private static boolean isRootPage(final String uri) {
 		return uri.equals("/");
 	}
 
-	private boolean isLoginPage(final String uri) {
+	private static boolean isLoginPage(final String uri) {
 		return uri.equals("/" + LOGIN_URL);
 	}
 
-	private boolean isLogoutPage(final String uri) {
+	private static boolean isLogoutPage(final String uri) {
 		return uri.equals("/" + LOGOUT_URL);
 	}
 
-	protected boolean isProtectedPage(final String uri) {
-		final boolean isException = uri.startsWith("/services/") || uri.startsWith("/shark/")
-				|| uri.matches("^(.*)(css|js|png|jpg|gif)$") || isLoginPage(uri);
-		return !isException;
+	private static boolean isService(final String uri) {
+		return uri.startsWith("/services/");
 	}
+
+	private static boolean isShark(final String uri) {
+		return uri.startsWith("/shark/");
+	}
+
+	private static boolean isResouce(final String uri) {
+		return uri.matches("^(.*)(css|js|png|jpg|gif)$");
+	}
+
 }

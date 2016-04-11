@@ -1,5 +1,7 @@
 (function() {
 
+	Ext.require(['CMDBuild.core.proxy.common.tabs.attribute.Order']);
+
 	Ext.define('CMDBuild.Administration.SetOrderWindow', {
 		extend: 'CMDBuild.PopupWindow',
 
@@ -58,10 +60,9 @@
 			params[CMDBuild.core.constants.Proxy.CLASS_NAME] = _CMCache.getEntryTypeNameById(this.idClass);
 			params[CMDBuild.core.constants.Proxy.ATTRIBUTES] = Ext.encode(attributes);
 
-			CMDBuild.ServiceProxy.attributes.updateSortConfiguration({
+			CMDBuild.core.proxy.common.tabs.attribute.Order.update({
 				params: params,
-				waitTitle: CMDBuild.Translation.pleaseWait,
-				waitMsg: CMDBuild.Translation.common.wait_msg,
+				scope: this,
 				callback: function() {
 					me.onAbort();
 				}

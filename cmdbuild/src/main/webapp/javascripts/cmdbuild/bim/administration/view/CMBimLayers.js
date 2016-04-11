@@ -55,7 +55,7 @@
 				cellEditing.completeEdit();
 				me.onAttributesComboChange(value);
 			});
-			this.store = CMDBuild.bim.proxy.layerStore();
+			this.store = CMDBuild.bim.proxy.Proxy.layerStore();
 			this.grid = Ext.create('Ext.grid.Panel', {
 				title: CMDBuild.Translation.bim + " " + CMDBuild.Translation.layers,
 				region: 'center',
@@ -114,12 +114,12 @@
 			 * Only at the last callBack the grid store is loaded. In such way
 			 * the values of the combos are initialized
 			 */
-			CMDBuild.bim.proxy.getAllLayers({
+			CMDBuild.bim.proxy.Proxy.getAllLayers({
 			    scope: this,
 			    callback: function(a, b, response) {
 			    	var me = this;
 			    	var records =  Ext.JSON.decode(response.responseText).bimLayer;
-					CMDBuild.bim.proxy.rootClassName({
+					CMDBuild.bim.proxy.Proxy.rootClassName({
 						success: function(operation, config, response) {
 							var references = [];
 							me.loadAttributes(response.root, records, records, references);

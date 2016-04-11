@@ -1,10 +1,11 @@
-(function() {
+(function () {
 
 	Ext.define('CMDBuild.core.proxy.widget.CreateModifyCard', {
 
 		requires: [
+			'CMDBuild.core.constants.Global',
 			'CMDBuild.core.constants.Proxy',
-			'CMDBuild.core.proxy.Index',
+			'CMDBuild.core.proxy.index.Json',
 			'CMDBuild.model.widget.createModifyCard.TargetClass'
 		],
 
@@ -15,13 +16,13 @@
 		 *
 		 * @administration
 		 */
-		getStoreTargetClass: function() {
+		getStoreTargetClass: function () {
 			return CMDBuild.global.Cache.requestAsStore(CMDBuild.core.constants.Proxy.CLASS, {
 				autoLoad: true,
 				model: 'CMDBuild.model.widget.createModifyCard.TargetClass',
 				proxy: {
 					type: 'ajax',
-					url: CMDBuild.core.proxy.Index.classes.readAll,
+					url: CMDBuild.core.proxy.index.Json.classes.readAll,
 					reader: {
 						type: 'json',
 						root: CMDBuild.core.constants.Proxy.CLASSES
@@ -34,8 +35,8 @@
 					}
 				},
 				filters: [
-					function(record) { // Filters root of all classes
-						return record.get(CMDBuild.core.constants.Proxy.NAME) != 'Class';
+					function (record) { // Filters root of all classes
+						return record.get(CMDBuild.core.constants.Proxy.NAME) != CMDBuild.core.constants.Global.getRootNameClasses();
 					}
 				],
 				sorters: [

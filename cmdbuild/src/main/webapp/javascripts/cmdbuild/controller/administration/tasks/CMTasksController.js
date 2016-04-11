@@ -7,7 +7,13 @@
 			'CMDBuild.core.constants.Global',
 			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.LoadMask',
-			'CMDBuild.core.proxy.CMProxyTasks',
+			'CMDBuild.core.proxy.taskManager.Connector',
+			'CMDBuild.core.proxy.taskManager.Email',
+			'CMDBuild.core.proxy.taskManager.event.Asynchronous',
+			'CMDBuild.core.proxy.taskManager.event.Event',
+			'CMDBuild.core.proxy.taskManager.event.Synchronous',
+			'CMDBuild.core.proxy.taskManager.TaskManager',
+			'CMDBuild.core.proxy.taskManager.Workflow',
 			'CMDBuild.core.Utils'
 		],
 
@@ -79,7 +85,7 @@
 				this.taskType = (this.correctTaskTypeCheck(parameters.get(CMDBuild.core.constants.Proxy.SECTION_HIERARCHY)[0]))
 					? parameters.get(CMDBuild.core.constants.Proxy.SECTION_HIERARCHY)[0] : this.tasksDatas[0];
 
-				this.grid.reconfigure(CMDBuild.core.proxy.CMProxyTasks.getStore(this.taskType));
+				this.grid.reconfigure(this.geStoreByTaskType(this.taskType));
 				this.grid.getStore().load({
 					scope: this,
 					callback: function() {
@@ -97,6 +103,39 @@
 				this.setViewTitle(parameters.get(CMDBuild.core.constants.Proxy.TEXT));
 
 				this.callParent(arguments);
+			}
+		},
+
+		/**
+		 * @returns {Mixed}
+		 *
+		 * @private
+		 */
+		geStoreByTaskType: function (type) {
+			switch (type) {
+				case 'all':
+					return CMDBuild.core.proxy.taskManager.TaskManager.getStore();
+
+				case 'connector':
+					return CMDBuild.core.proxy.taskManager.Connector.getStore();
+
+				case 'email':
+					return CMDBuild.core.proxy.taskManager.Email.getStore();
+
+				case 'event':
+					return CMDBuild.core.proxy.taskManager.event.Event.getStore();
+
+				case 'event_asynchronous':
+					return CMDBuild.core.proxy.taskManager.event.Asynchronous.getStore();
+
+				case 'event_synchronous':
+					return CMDBuild.core.proxy.taskManager.event.Synchronous.getStore();
+
+				case 'workflow':
+					return CMDBuild.core.proxy.taskManager.Workflow.getStore();
+
+				default:
+					throw 'CMProxyTasks error: url type not recognized';
 			}
 		},
 
@@ -285,11 +324,12 @@
 		onStartButtonClick: function(record) {
 			CMDBuild.core.LoadMask.show();
 
-			CMDBuild.core.proxy.CMProxyTasks.start({
-				scope: this,
+			CMDBuild.core.proxy.taskManager.TaskManager.start({
 				params: {
 					id: record.get(CMDBuild.core.constants.Proxy.ID)
 				},
+				loadMask: false,
+				scope: this,
 				success: this.success,
 				callback: this.callback
 			});
@@ -301,11 +341,12 @@
 		onStopButtonClick: function(record) {
 			CMDBuild.core.LoadMask.show();
 
-			CMDBuild.core.proxy.CMProxyTasks.stop({
-				scope: this,
+			CMDBuild.core.proxy.taskManager.TaskManager.stop({
 				params: {
 					id: record.get(CMDBuild.core.constants.Proxy.ID)
 				},
+				loadMask: false,
+				scope: this,
 				success: this.success,
 				callback: this.callback
 			});

@@ -4,7 +4,7 @@
 
 		requires: [
 			'CMDBuild.core.constants.Proxy',
-			'CMDBuild.core.proxy.Index'
+			'CMDBuild.core.proxy.index.Json'
 		],
 
 		singleton: true,
@@ -19,7 +19,7 @@
 			parameters.params = Ext.isEmpty(parameters.params) ? {} : parameters.params;
 			parameters.params[CMDBuild.core.constants.Proxy.NAME] = 'gis';
 
-			Ext.apply(parameters, { url: CMDBuild.core.proxy.Index.configuration.read });
+			Ext.apply(parameters, { url: CMDBuild.core.proxy.index.Json.configuration.read });
 
 			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.CONFIGURATION, parameters);
 		},
@@ -34,7 +34,7 @@
 			parameters.params = Ext.isEmpty(parameters.params) ? {} : parameters.params;
 			parameters.params[CMDBuild.core.constants.Proxy.NAME] = 'gis';
 
-			Ext.apply(parameters, { url: CMDBuild.core.proxy.Index.configuration.update });
+			Ext.apply(parameters, { url: CMDBuild.core.proxy.index.Json.configuration.update });
 
 			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.CONFIGURATION, parameters, true);
 		}

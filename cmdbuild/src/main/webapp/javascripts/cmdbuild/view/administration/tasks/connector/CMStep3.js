@@ -126,7 +126,10 @@
 	Ext.define('CMDBuild.view.administration.tasks.connector.CMStep3', {
 		extend: 'Ext.panel.Panel',
 
-		requires: ['CMDBuild.core.constants.Proxy'],
+		requires: [
+			'CMDBuild.core.constants.Proxy',
+			'CMDBuild.core.proxy.taskManager.Connector'
+		],
 
 		/**
 		 * @cfg {CMDBuild.view.administration.tasks.connector.CMStep3Delegate}
@@ -204,7 +207,7 @@
 					editable: false,
 					anchor: '100%',
 
-					store: CMDBuild.core.proxy.CMProxyTasks.getDbTypes(),
+					store: CMDBuild.core.proxy.taskManager.Connector.getDbTypes(),
 
 					listeners: {
 						select: function(combo, records, options) {

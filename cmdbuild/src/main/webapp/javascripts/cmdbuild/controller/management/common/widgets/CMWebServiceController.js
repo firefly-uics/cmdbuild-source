@@ -2,6 +2,8 @@
 	var DOM_NODE = "_domNode";
 	var NODE_TYPE = "_nodeType";
 
+	Ext.require(['CMDBuild.core.proxy.widget.WebService']);
+
 	Ext.define("CMDBuild.controller.management.common.widgets.CMWebServiceController", {
 		mixins: {
 			observable: "Ext.util.Observable",
@@ -189,9 +191,8 @@
 					el.mask(CMDBuild.Translation.pleaseWait);
 				}
 
-				CMDBuild.core.interfaces.Ajax.request({
-					url: "services/json/modwidget/callwidget",
-					method: "GET",
+				CMDBuild.core.proxy.widget.WebService.callWidget({
+					method: 'GET',
 					params: {
 						className: entryTypeName,
 						id: vars.Id,
@@ -199,6 +200,7 @@
 						widgetId: me.getWidgetId(),
 						params: Ext.encode(callParameters)
 					},
+					loadMask: false,
 					success: function(request, action, response) {
 						me.loaded = true;
 						var xmlString = response.response || "";

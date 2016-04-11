@@ -4,7 +4,7 @@
 
 		requires: [
 			'CMDBuild.core.constants.Proxy',
-			'CMDBuild.core.proxy.Index'
+			'CMDBuild.core.proxy.index.Json'
 		],
 
 		singleton: true,
@@ -15,7 +15,7 @@
 		login: function (parameters) {
 			parameters = Ext.isEmpty(parameters) ? {} : parameters;
 
-			Ext.apply(parameters, { url: CMDBuild.core.proxy.Index.session.jsonRpc.login });
+			Ext.apply(parameters, { url: CMDBuild.core.proxy.index.Json.session.jsonRpc.login });
 
 			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.UNCACHED, parameters);
 		},
@@ -26,7 +26,7 @@
 		logout: function (parameters) {
 			parameters = Ext.isEmpty(parameters) ? {} : parameters;
 
-			Ext.apply(parameters, { url: CMDBuild.core.proxy.Index.session.jsonRpc.logout });
+			Ext.apply(parameters, { url: CMDBuild.core.proxy.index.Json.session.jsonRpc.logout });
 
 			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.UNCACHED, parameters);
 		}

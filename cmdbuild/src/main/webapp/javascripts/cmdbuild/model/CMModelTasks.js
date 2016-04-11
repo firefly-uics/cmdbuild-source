@@ -1,17 +1,5 @@
 (function() {
 
-	Ext.define('CMDBuild.model.CMModelTasks.grid', {
-		extend: 'Ext.data.Model',
-
-		fields: [
-			{ name: CMDBuild.core.constants.Proxy.ID, type: 'int' },
-			{ name: CMDBuild.core.constants.Proxy.DESCRIPTION, type: 'string' },
-			{ name: CMDBuild.core.constants.Proxy.ACTIVE, type: 'boolean'},
-
-			{ name: CMDBuild.core.constants.Proxy.TYPE, type: 'string' }
-		]
-	});
-
 	// Model used from Processes -> Task Manager tab
 	Ext.define('CMDBuild.model.CMModelTasks.grid.workflow', {
 		extend: 'Ext.data.Model',
@@ -134,15 +122,6 @@
 	 * Inner tasks models
 	 */
 	// Connector
-		Ext.define('CMDBuild.model.CMModelTasks.connector.availableSqlSources', { // Step 3 type field store
-			extend: 'Ext.data.Model',
-
-			fields: [
-				{ name: CMDBuild.core.constants.Proxy.KEY, type: 'string' },
-				{ name: CMDBuild.core.constants.Proxy.VALUE, type: 'string' }
-			]
-		});
-
 		Ext.define('CMDBuild.model.CMModelTasks.connector.classLevel', { // Step 4 grid store
 			extend: 'Ext.data.Model',
 

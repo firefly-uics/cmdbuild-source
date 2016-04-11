@@ -7,7 +7,7 @@
 		 */
 		getStore: function() {
 			if (this.store == null) {
-				this.store = CMDBuild.bim.proxy.store();
+				this.store = CMDBuild.bim.proxy.Proxy.store();
 			}
 	
 			return this.store;

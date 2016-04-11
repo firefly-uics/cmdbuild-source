@@ -5,7 +5,7 @@
 
 		requires: [
 			'CMDBuild.core.constants.Proxy',
-			'CMDBuild.core.proxy.Attachment'
+			'CMDBuild.core.proxy.common.tabs.email.Attachment'
 		],
 
 		/**
@@ -18,6 +18,11 @@
 		frame: false,
 		split: true,
 
+		/**
+		 * @returns {Void}
+		 *
+		 * @override
+		 */
 		initComponent: function () {
 			Ext.apply(this, {
 				columns: [
@@ -33,7 +38,7 @@
 					}
 				],
 				selModel: Ext.create('Ext.selection.CheckboxModel', { injectCheckbox: 'first' }),
-				store: CMDBuild.core.proxy.Attachment.getStore()
+				store: CMDBuild.core.proxy.common.tabs.email.Attachment.getStore()
 			});
 
 			this.callParent(arguments);

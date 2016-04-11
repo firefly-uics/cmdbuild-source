@@ -1,18 +1,18 @@
-(function() {
+(function () {
 
 	Ext.define('CMDBuild.core.proxy.domain.Properties', {
 
 		requires: [
 			'CMDBuild.core.constants.Global',
 			'CMDBuild.core.constants.Proxy',
-			'CMDBuild.core.proxy.Index',
+			'CMDBuild.core.proxy.index.Json',
 			'CMDBuild.model.domain.ClassesStore'
 		],
 
 		singleton: true,
 
 		/**
-		 * @return {Ext.data.ArrayStore}
+		 * @returns {Ext.data.ArrayStore}
 		 */
 		getCardinalityStore: function () {
 			return Ext.create('Ext.data.ArrayStore', {
@@ -35,7 +35,7 @@
 				model: 'CMDBuild.model.domain.ClassesStore',
 				proxy: {
 					type: 'ajax',
-					url: CMDBuild.core.proxy.Index.classes.readAll,
+					url: CMDBuild.core.proxy.index.Json.classes.readAll,
 					reader: {
 						type: 'json',
 						root: CMDBuild.core.constants.Proxy.CLASSES

@@ -5,38 +5,42 @@
 		requires: [
 			'CMDBuild.global.Cache',
 			'CMDBuild.core.constants.Proxy',
-			'CMDBuild.core.proxy.Index'
+			'CMDBuild.core.proxy.index.Json'
 		],
 
 		singleton: true,
 
 		/**
 		 * @param {Object} parameters
+		 *
+		 * @returns {Void}
 		 */
 		getCardList: function (parameters) {
 			parameters = Ext.isEmpty(parameters) ? {} : parameters;
 
-			Ext.apply(parameters, { url: CMDBuild.core.proxy.Index.card.getListShort });
+			Ext.apply(parameters, { url: CMDBuild.core.proxy.index.Json.card.getListShort });
 
 			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.CUSTOM_FORM, parameters)
 		},
 
 		/**
 		 * @param {Object} parameters
+		 *
+		 * @returns {Void}
 		 */
 		exports: function (parameters) {
 			parameters = Ext.isEmpty(parameters) ? {} : parameters;
 
 			Ext.apply(parameters, {
 				buildRuntimeForm: true,
-				url: CMDBuild.core.proxy.Index.csv.exports
+				url: CMDBuild.core.proxy.index.Json.csv.exports
 			});
 
 			CMDBuild.core.interfaces.FormSubmit.submit(parameters);
 		},
 
 		/**
-		 * @return {Ext.data.ArrayStore}
+		 * @returns {Ext.data.ArrayStore}
 		 */
 		getStoreExportFileFormat: function () {
 			return Ext.create('Ext.data.ArrayStore', {
@@ -51,7 +55,7 @@
 		},
 
 		/**
-		 * @return {Ext.data.ArrayStore}
+		 * @returns {Ext.data.ArrayStore}
 		 */
 		getStoreImportFileFormat: function () {
 			return Ext.create('Ext.data.ArrayStore', {
@@ -67,11 +71,13 @@
 
 		/**
 		 * @param {Object} parameters
+		 *
+		 * @returns {Void}
 		 */
 		readFromFunctions: function (parameters) {
 			parameters = Ext.isEmpty(parameters) ? {} : parameters;
 
-			Ext.apply(parameters, { url: CMDBuild.core.proxy.Index.functions.readCards });
+			Ext.apply(parameters, { url: CMDBuild.core.proxy.index.Json.functions.readCards });
 
 			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.CUSTOM_FORM, parameters);
 		}

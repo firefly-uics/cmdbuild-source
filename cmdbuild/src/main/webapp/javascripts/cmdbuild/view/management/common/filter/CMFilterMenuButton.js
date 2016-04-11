@@ -486,7 +486,7 @@
 		load: function() {
 			var me = this;
 			var params = {};
-			params[_CMProxy.parameter.CLASS_NAME] = me.entryType.getName();
+			params[CMDBuild.core.constants.Proxy.CLASS_NAME] = me.entryType.getName();
 			me.getStore().load({
 				callback: me.onStoreDidLoad,
 				params: params

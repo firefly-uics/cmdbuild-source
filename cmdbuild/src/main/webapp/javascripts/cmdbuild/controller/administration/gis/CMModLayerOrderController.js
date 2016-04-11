@@ -1,5 +1,7 @@
 (function() {
 
+	Ext.require('CMDBuild.core.proxy.gis.Gis');
+
 	Ext.define("CMDBuild.controller.administration.gis.CMModLayerOrderController", {
 		extend: "CMDBuild.controller.CMBasePanelController",
 		constructor: function() {
@@ -25,9 +27,14 @@
 		var me = this;
 
 		CMDBuild.core.LoadMask.show();
-		CMDBuild.ServiceProxy.saveLayerOrder({
-			oldIndex: oldIndex,
-			newIndex: newIndex,
+		CMDBuild.core.proxy.gis.Gis.setLayerOrder({
+			params: {
+				"oldIndex": oldIndex,
+				"newIndex": newIndex
+			},
+			important: true,
+			loadMask: false,
+			scope: this,
 			callback: function() {
 				CMDBuild.core.LoadMask.hide();
 				_CMCache.onGeoAttributeSaved(); // load always to sync the index
