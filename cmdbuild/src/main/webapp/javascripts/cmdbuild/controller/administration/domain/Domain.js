@@ -5,6 +5,7 @@
 
 		requires: [
 			'CMDBuild.core.constants.Proxy',
+			'CMDBuild.core.Message',
 			'CMDBuild.core.proxy.domain.Domain',
 			'CMDBuild.model.domain.Domain',
 			'CMDBuild.view.common.field.translatable.Utils'
@@ -208,6 +209,8 @@
 						_CMCache.onDomainDeleted(this.cmfg('domainSelectedDomainGet', CMDBuild.core.constants.Proxy.ID));
 
 						this.cmfg('mainViewportAccordionControllerUpdateStore', { identifier: this.cmfg('identifierGet') });
+
+						CMDBuild.core.Message.success();
 					}
 				});
 			}
@@ -228,6 +231,8 @@
 			});
 
 			CMDBuild.view.common.field.translatable.Utils.commit(this.controllerProperties.getView().form);
+
+			CMDBuild.core.Message.success();
 		},
 
 		// SelectedDomain property methods

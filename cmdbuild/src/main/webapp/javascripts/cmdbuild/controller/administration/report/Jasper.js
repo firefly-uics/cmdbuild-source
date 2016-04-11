@@ -292,6 +292,8 @@
 						this.form.reset();
 						this.form.getLayout().setActiveItem(0);
 
+						CMDBuild.core.Message.success();
+
 						// Reset server session
 						CMDBuild.core.proxy.report.Jasper.resetSession({
 							scope: this,
@@ -348,6 +350,8 @@
 						this.form.setDisabledModify(true);
 
 						CMDBuild.view.common.field.translatable.Utils.commit(this.form.step1Panel);
+
+						CMDBuild.core.Message.success();
 					}
 				}
 			});
