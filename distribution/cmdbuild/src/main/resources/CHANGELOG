@@ -12,6 +12,10 @@ FIXES
 
  * Menu available items wrong italian translations
 
+ * PreselectIfUnique metadata sent on attribute save action
+
+ * Management report pagination errors
+
 
 
 
