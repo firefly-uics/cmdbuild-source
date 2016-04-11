@@ -31,9 +31,14 @@
 		},
 
 		/**
+		 * @param {String} type
+		 *
 		 * @returns {Ext.data.Store or CMDBuild.core.cache.Store}
 		 */
-		getStore: function () {
+		getStore: function (type) {
+			var extraParams = {};
+			extraParams[CMDBuild.core.constants.Proxy.TYPE] = type;
+
 			return CMDBuild.global.Cache.requestAsStore(CMDBuild.core.constants.Proxy.REPORT, {
 				autoLoad: false,
 				model: 'CMDBuild.model.report.Grid',
@@ -45,7 +50,8 @@
 						type: 'json',
 						root: CMDBuild.core.constants.Proxy.ROWS,
 						totalProperty: CMDBuild.core.constants.Proxy.RESULTS
-					}
+					},
+					extraParams: extraParams
 				},
 				sorters: [
 					{ property: CMDBuild.core.constants.Proxy.DESCRIPTION, direction: 'ASC' }

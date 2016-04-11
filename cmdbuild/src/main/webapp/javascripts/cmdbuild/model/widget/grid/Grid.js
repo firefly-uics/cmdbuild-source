@@ -1,11 +1,11 @@
-(function() {
+(function () {
 
 	Ext.require('CMDBuild.core.constants.Proxy');
 
 	/**
 	 * Build grid model from class attributes
 	 */
-	Ext.define('CMDBuild.model.widget.Grid', {
+	Ext.define('CMDBuild.model.widget.grid.Grid', {
 		extend: 'Ext.data.Model',
 
 		fields: [],
@@ -13,7 +13,7 @@
 		/**
 		 * @param {Array} fieldsDefinitions
 		 */
-		constructor: function(fieldsDefinitions) {
+		constructor: function (fieldsDefinitions) {
 			var fieldsForModel = [];
 
 			if (Ext.isArray(fieldsDefinitions)) {
@@ -42,7 +42,7 @@
 					}
 				}, this);
 
-				CMDBuild.model.widget.Grid.setFields(fieldsForModel);
+				CMDBuild.model.widget.grid.Grid.setFields(fieldsForModel);
 			}
 
 			this.callParent();

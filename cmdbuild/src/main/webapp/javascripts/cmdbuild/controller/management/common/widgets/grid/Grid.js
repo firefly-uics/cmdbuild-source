@@ -6,7 +6,8 @@
 		requires: [
 			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.Message',
-			'CMDBuild.core.proxy.widget.Grid'
+			'CMDBuild.core.proxy.widget.Grid',
+			'CMDBuild.model.widget.grid.Grid'
 		],
 
 		/**
@@ -91,6 +92,11 @@
 		 * @cfg {Object}
 		 */
 		widgetConf: undefined,
+
+		/**
+		 * @cfg {String}
+		 */
+		widgetConfigurationModelClassName: 'CMDBuild.model.widget.grid.Configuration',
 
 		/**
 		 * @param {CMDBuild.view.management.common.widgets.grid.GridView} configurationObject.view
@@ -333,7 +339,7 @@
 						var widgetUnmanagedVariables = this.widgetConf[CMDBuild.core.constants.Proxy.VARIABLES];
 
 						// Instantiate model to transform attributes in fields
-						Ext.create('CMDBuild.model.widget.Grid', this.cardAttributes);
+						Ext.create('CMDBuild.model.widget.grid.Grid', this.cardAttributes);
 
 						// Resolve templates for widget configuration "function" type
 						new CMDBuild.Management.TemplateResolver({
@@ -361,7 +367,7 @@
 
 						this.grid.reconfigure(
 							CMDBuild.core.proxy.widget.Grid.getStoreFromFunction({
-								fields: CMDBuild.model.widget.Grid.getFields(),
+								fields: CMDBuild.model.widget.grid.Grid.getFields(),
 								extraParams: {
 									'function': presetsString,
 									params: Ext.encode(params)
@@ -468,7 +474,7 @@
 		 * Add empty row to grid store
 		 */
 		onAddRowButtonClick: function() {
-			this.grid.getStore().insert(0, Ext.create('CMDBuild.model.widget.Grid', this.cardAttributes));
+			this.grid.getStore().insert(0, Ext.create('CMDBuild.model.widget.grid.Grid', this.cardAttributes));
 		},
 
 		/**

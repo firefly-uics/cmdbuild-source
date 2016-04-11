@@ -3,6 +3,8 @@ CMDBuild 2.4.1 (released YYYY/MM/DD)
 
 NEW FEATURES
 
+ *  Single authentication system used by all web service
+
 
 FIXES
 
@@ -11,6 +13,12 @@ FIXES
  * REST logout error with header autenticator
 
  * Menu available items wrong italian translations
+
+ * PreselectIfUnique metadata sent on attribute save action
+
+ * Management report pagination errors
+
+ * Widget Grid: missing configuration model name error
 
 
 
