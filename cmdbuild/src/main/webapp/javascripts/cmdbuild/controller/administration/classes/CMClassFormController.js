@@ -81,6 +81,8 @@
 			this.selection = _CMCache.onClassSaved(decodedResponse);
 
 			CMDBuild.view.common.field.translatable.Utils.commit(this.view.form);
+
+			CMDBuild.core.Message.success();
 		},
 
 		buildSaveParams: function() {
@@ -152,6 +154,8 @@
 			 */
 			_CMCache.onClassDeleted(removedClassId);
 			this.selection = null;
+
+			CMDBuild.core.Message.success();
 		},
 
 		onAbortClick: function() {

@@ -245,6 +245,8 @@
 
 			CMDBuild.view.common.field.translatable.Utils.commit(this.view.form);
 
+			CMDBuild.core.Message.success();
+
 			var params = {};
 			params[CMDBuild.core.constants.Proxy.FILTERS] = Ext.encode([savedFilterObject[CMDBuild.core.constants.Proxy.ID]]);
 			params[CMDBuild.core.constants.Proxy.GROUPS] = Ext.encode(this.form.defaultForGroupsField.getValue());
