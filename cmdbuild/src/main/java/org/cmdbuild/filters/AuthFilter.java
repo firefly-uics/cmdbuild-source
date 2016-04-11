@@ -84,7 +84,8 @@ public class AuthFilter implements Filter {
 				logger.debug(marker, "root page, redirecting to login");
 				redirectToLogin(httpResponse);
 			} else if (isLoginPage(uri)) {
-				if (sessionLogic.isValidUser()) {
+				if (// TODO check session id passed within headers
+				sessionLogic.isValidUser()) {
 					redirectToManagement(httpResponse);
 				} else {
 					logger.debug(marker, "user is not valid, trying login using HTTP request");
@@ -98,14 +99,17 @@ public class AuthFilter implements Filter {
 					}
 				}
 			} else if (!isService(uri) && !isShark(uri) && !isResouce(uri) && !isLoginPage(uri)) {
-				if (!sessionLogic.isValidUser()) {
+				if ( // TODO check session id passed within headers
+				!sessionLogic.isValidUser()) {
 					logger.debug(marker, "user is not valid, trying login using HTTP request");
 					final ClientAuthenticationResponse clientAuthenticatorResponse = sessionLogic
 							.login(new ClientRequestWrapper(httpRequest));
 					final String authenticationRedirectUrl = clientAuthenticatorResponse.getRedirectUrl();
 					if (authenticationRedirectUrl != null) {
 						redirectToCustom(authenticationRedirectUrl);
-					} else if (!sessionLogic.isValidUser() && !isLogoutPage(uri)) {
+					} else if (
+					// TODO check session id passed within headers
+					!sessionLogic.isValidUser() && !isLogoutPage(uri)) {
 						redirectToLogin(httpResponse);
 					}
 				}
