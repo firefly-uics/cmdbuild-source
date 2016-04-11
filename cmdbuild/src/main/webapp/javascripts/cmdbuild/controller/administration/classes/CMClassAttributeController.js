@@ -126,7 +126,11 @@
 		}
 
 		// External metadata injection
-		this.view.formPanel.referenceFilterMetadata['system.type.reference.' + CMDBuild.core.constants.Proxy.PRESELECT_IF_UNIQUE] = this.view.formPanel.preselectIfUniqueCheckbox.getValue();
+		if (this.view.formPanel.comboType.getValue() == 'REFERENCE') {
+			this.view.formPanel.referenceFilterMetadata['system.type.reference.' + CMDBuild.core.constants.Proxy.PRESELECT_IF_UNIQUE] = this.view.formPanel.preselectIfUniqueCheckbox.getValue();
+		} else {
+			this.view.formPanel.referenceFilterMetadata = {};
+		}
 
 		var data = this.view.formPanel.getData(withDisabled = true);
 		data[CMDBuild.core.constants.Proxy.CLASS_NAME] = _CMCache.getEntryTypeNameById(this.currentClassId);
