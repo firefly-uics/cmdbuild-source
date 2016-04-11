@@ -30,8 +30,13 @@
 
 		/**
 		 * @returns {Ext.data.Store}
+		 *
+		 * FIXME: generalize this implementation building controller function to get type
 		 */
 		getStore: function() {
+			var extraParams = {};
+			extraParams[CMDBuild.core.constants.Proxy.TYPE] = 'CUSTOM';
+
 			return Ext.create('Ext.data.Store', {
 				autoLoad: false,
 				model: 'CMDBuild.model.report.Grid',
@@ -43,7 +48,8 @@
 						type: 'json',
 						root: CMDBuild.core.constants.Proxy.ROWS,
 						totalProperty: 'results'
-					}
+					},
+					extraParams: extraParams
 				},
 				sorters: [
 					{ property: CMDBuild.core.constants.Proxy.DESCRIPTION, direction: 'ASC' }
