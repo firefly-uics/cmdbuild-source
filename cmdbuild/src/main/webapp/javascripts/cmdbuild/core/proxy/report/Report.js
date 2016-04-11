@@ -31,11 +31,13 @@
 		},
 
 		/**
+		 * @param {String} type
+		 *
 		 * @returns {Ext.data.Store or CMDBuild.core.cache.Store}
 		 */
-		getStore: function () {
+		getStore: function (type) {
 			var extraParams = {};
-			extraParams[CMDBuild.core.constants.Proxy.TYPE] = 'CUSTOM';
+			extraParams[CMDBuild.core.constants.Proxy.TYPE] = type;
 
 			return CMDBuild.global.Cache.requestAsStore(CMDBuild.core.constants.Proxy.REPORT, {
 				autoLoad: false,
