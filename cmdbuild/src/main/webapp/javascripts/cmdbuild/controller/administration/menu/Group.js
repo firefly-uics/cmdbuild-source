@@ -329,6 +329,9 @@
 			CMDBuild.core.proxy.Menu.save({
 				params: params,
 				scope: this,
+				success: function (response, options, decodedResponse) {
+					CMDBuild.core.Message.success();
+				},
 				callback: function (options, success, response) {
 					this.onMenuGroupMenuSelected();
 
@@ -340,12 +343,7 @@
 						) {
 							value[CMDBuild.core.constants.Proxy.TRANSLATIONS] = Ext.encode(value[CMDBuild.core.constants.Proxy.TRANSLATIONS]);
 
-							CMDBuild.core.proxy.localization.Localization.update({
-								params: value,
-								success: function (response, options, decodedResponse) {
-									CMDBuild.core.Message.success();
-								}
-							});
+							CMDBuild.core.proxy.localization.Localization.update({ params: value });
 						}
 					}, this);
 				}
@@ -364,6 +362,9 @@
 			CMDBuild.core.proxy.Menu.remove({
 				params: params,
 				scope: this,
+				success: function (response, options, decodedResponse) {
+					CMDBuild.core.Message.success();
+				},
 				callback: function (options, success, response) {
 					this.onMenuGroupMenuSelected();
 				}
