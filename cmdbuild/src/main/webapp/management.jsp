@@ -58,7 +58,7 @@
 
 		<!-- 3. Runtime configuration -->
 		<script type="text/javascript">
-			Ext.util.Cookies.set(CMDBuild.core.constants.Proxy.SESSION_ID, '<%= sessionLogic.getCurrent() %>');
+			Ext.util.Cookies.set(CMDBuild.core.constants.Proxy.AUTHORIZATION_HEADER_KEY, '<%= sessionLogic.getCurrent() %>');
 
 			Ext.ns('CMDBuild.configuration.runtime');
 

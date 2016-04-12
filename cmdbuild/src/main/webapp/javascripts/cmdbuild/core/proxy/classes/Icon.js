@@ -21,7 +21,7 @@
 			parameters = Ext.isEmpty(parameters) ? {} : parameters;
 
 			Ext.apply(parameters, {
-				url: 'services/json/file/upload?' + CMDBuild.core.constants.Proxy.AUTHORIZATION_HEADER_KEY + '=' + Ext.util.Cookies.get(CMDBuild.core.constants.Proxy.SESSION_ID) // Headers not supported in form submit
+				url: 'services/json/file/upload?' + CMDBuild.core.constants.Proxy.AUTHORIZATION_HEADER_KEY + '=' + Ext.util.Cookies.get(CMDBuild.core.constants.Proxy.AUTHORIZATION_HEADER_KEY) // Headers not supported in form submit
 			});
 
 			CMDBuild.core.interfaces.FormSubmit.submit(parameters);
