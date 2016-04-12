@@ -1,8 +1,10 @@
 package org.cmdbuild.filters;
 
+import static java.util.Arrays.stream;
 import static org.cmdbuild.spring.util.Constants.PROTOTYPE;
 
 import java.io.IOException;
+import java.util.Optional;
 import java.util.concurrent.atomic.AtomicReference;
 
 import javax.servlet.Filter;
@@ -62,6 +64,41 @@ public class AuthFilter implements Filter {
 	public static final String LOGIN_URL = "index.jsp";
 	public static final String LOGOUT_URL = "logout.jsp";
 
+	private static boolean isRootPage(final String uri) {
+		return uri.equals("/");
+	}
+
+	private static boolean isLoginPage(final String uri) {
+		return uri.equals("/" + LOGIN_URL);
+	}
+
+	private static boolean isLogoutPage(final String uri) {
+		return uri.equals("/" + LOGOUT_URL);
+	}
+
+	private static boolean isService(final String uri) {
+		return uri.startsWith("/services/");
+	}
+
+	private static boolean isShark(final String uri) {
+		return uri.startsWith("/shark/");
+	}
+
+	private static boolean isResouce(final String uri) {
+		return uri.matches("^(.*)(css|js|png|jpg|gif|ico)$");
+	}
+
+	private static final String CMDBUILD_AUTHORIZATION = "CMDBuild-Authorization";
+
+	private static String sessionId(final HttpServletRequest httpRequest) {
+		final String header = httpRequest.getHeader(CMDBUILD_AUTHORIZATION);
+		final Optional<String> cookie = stream(httpRequest.getCookies()) //
+				.filter(input -> input.getName().equals(CMDBUILD_AUTHORIZATION)) //
+				.findFirst() //
+				.map(input -> input.getValue());
+		return (header == null) ? cookie.orElse(null) : header;
+	}
+
 	@Autowired
 	private StandardSessionLogic sessionLogic;
 
@@ -79,8 +116,7 @@ public class AuthFilter implements Filter {
 		final HttpServletRequest httpRequest = (HttpServletRequest) request;
 		final HttpServletResponse httpResponse = (HttpServletResponse) response;
 		// TODO do it in another way
-		final AtomicReference<String> sessionId = new AtomicReference<>(
-				httpRequest.getHeader("CMDBuild-Authorization"));
+		final AtomicReference<String> sessionId = new AtomicReference<>(sessionId(httpRequest));
 		sessionLogic.setCurrent(sessionId.get());
 		try {
 			final String uri = httpRequest.getRequestURI().substring(httpRequest.getContextPath().length());
@@ -151,30 +187,6 @@ public class AuthFilter implements Filter {
 	private void redirectToCustom(final String uri) throws IOException, RedirectException {
 		logger.debug(marker, "redirecting to uri '{}'", uri);
 		throw new RedirectException(uri);
-	}
-
-	private static boolean isRootPage(final String uri) {
-		return uri.equals("/");
-	}
-
-	private static boolean isLoginPage(final String uri) {
-		return uri.equals("/" + LOGIN_URL);
-	}
-
-	private static boolean isLogoutPage(final String uri) {
-		return uri.equals("/" + LOGOUT_URL);
-	}
-
-	private static boolean isService(final String uri) {
-		return uri.startsWith("/services/");
-	}
-
-	private static boolean isShark(final String uri) {
-		return uri.startsWith("/shark/");
-	}
-
-	private static boolean isResouce(final String uri) {
-		return uri.matches("^(.*)(css|js|png|jpg|gif|ico)$");
 	}
 
 }
