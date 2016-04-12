@@ -503,7 +503,6 @@
 		SERVER_URL: 'serverUrl',
 		SERVICE: 'service',
 		SERVICE_ENDPOINT: 'serviceEndpoint',
-		SESSION_ID: 'sessionId',
 		SESSION_TIMEOUT: 'sessionTimeout',
 		SHORT: 'short',
 		SHOW_COLUMN: 'showColumn',

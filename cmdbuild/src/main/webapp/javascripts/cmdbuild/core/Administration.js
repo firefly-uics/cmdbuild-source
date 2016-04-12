@@ -155,7 +155,7 @@
 		 * @private
 		 */
 		buildUserInterface: function () {
-			if (!Ext.isEmpty(Ext.util.Cookies.get(CMDBuild.core.constants.Proxy.SESSION_ID))) {
+			if (!Ext.isEmpty(Ext.util.Cookies.get(CMDBuild.core.constants.Proxy.AUTHORIZATION_HEADER_KEY))) {
 				Ext.suspendLayouts();
 
 				Ext.ns('CMDBuild.global.controller');
