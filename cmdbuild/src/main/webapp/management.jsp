@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 
+<%@page import="org.cmdbuild.logic.auth.StandardSessionLogic"%>
+<%@page import="org.cmdbuild.logic.auth.SessionLogic"%>
 <%@page import="org.cmdbuild.webapp.Management"%>
 <%@ taglib uri="/WEB-INF/tags/translations.tld" prefix="tr" %>
 
@@ -17,6 +19,7 @@
 <%@ page import="org.cmdbuild.config.GisProperties" %>
 
 <%
+	final SessionLogic sessionLogic = SpringIntegrationUtils.applicationContext().getBean(StandardSessionLogic.class);
 	final SessionVars sessionVars = SpringIntegrationUtils.applicationContext().getBean(SessionVars.class);
 	final String lang = sessionVars.getLanguage();
 	final UserStore userStore = SpringIntegrationUtils.applicationContext().getBean(UserStore.class);
@@ -73,6 +76,7 @@
 			 * @deprecated (CMDBuild.configuration.runtime)
 			 */
 			Ext.ns('CMDBuild.Runtime');
+			CMDBuild.Runtime.SessionId = <%= sessionLogic.getCurrent() %>;
 			CMDBuild.Runtime.UserId = <%= operationUser.getAuthenticatedUser().getId() %>;
 			CMDBuild.Runtime.Username = '<%= StringEscapeUtils.escapeEcmaScript(operationUser.getAuthenticatedUser().getUsername()) %>';
 			CMDBuild.Runtime.DefaultGroupId = <%= group.getId() %>;

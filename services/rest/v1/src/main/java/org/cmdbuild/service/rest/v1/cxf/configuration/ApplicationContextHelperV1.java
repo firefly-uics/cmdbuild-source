@@ -1,12 +1,11 @@
 package org.cmdbuild.service.rest.v1.cxf.configuration;
 
-import org.cmdbuild.auth.TokenGenerator;
-import org.cmdbuild.auth.TokenManager;
 import org.cmdbuild.auth.UserStore;
 import org.cmdbuild.config.CmdbuildConfiguration;
 import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.logic.auth.AuthenticationLogic;
 import org.cmdbuild.logic.auth.RestSessionLogic;
+import org.cmdbuild.logic.auth.SessionLogic;
 import org.cmdbuild.logic.data.access.DataAccessLogic;
 import org.cmdbuild.logic.data.access.SystemDataAccessLogicBuilder;
 import org.cmdbuild.logic.data.access.WebServiceDataAccessLogicBuilder;
@@ -61,20 +60,16 @@ public class ApplicationContextHelperV1 {
 		return applicationContext.getBean(SecurityLogic.class);
 	}
 
+	public SessionLogic sessionLogic() {
+		return applicationContext.getBean(RestSessionLogic.class);
+	}
+
 	public DataAccessLogic systemDataAccessLogic() {
 		return applicationContext.getBean(SystemDataAccessLogicBuilder.class).build();
 	}
 
 	public CMDataView systemDataView() {
 		return applicationContext.getBean("systemDataView", CMDataView.class);
-	}
-
-	public TokenGenerator tokenGenerator() {
-		return applicationContext.getBean(TokenGenerator.class);
-	}
-
-	public TokenManager tokenManager() {
-		return applicationContext.getBean(TokenManager.class);
 	}
 
 	public DataAccessLogic userDataAccessLogic() {

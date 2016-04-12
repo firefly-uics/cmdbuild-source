@@ -55,8 +55,6 @@ import org.cmdbuild.service.rest.v1.cxf.CxfProcesses;
 import org.cmdbuild.service.rest.v1.cxf.CxfProcessesConfiguration;
 import org.cmdbuild.service.rest.v1.cxf.CxfRelations;
 import org.cmdbuild.service.rest.v1.cxf.CxfSessions;
-import org.cmdbuild.service.rest.v1.cxf.CxfSessions.AuthenticationLogicAdapter;
-import org.cmdbuild.service.rest.v1.cxf.CxfSessions.LoginHandler;
 import org.cmdbuild.service.rest.v1.cxf.DefaultEncoding;
 import org.cmdbuild.service.rest.v1.cxf.DefaultProcessStatusHelper;
 import org.cmdbuild.service.rest.v1.cxf.ErrorHandler;
@@ -152,8 +150,8 @@ public class ServicesV1 implements LoggingSupport {
 
 	@Bean
 	public Impersonate v1_impersonate() {
-		final CxfImpersonate service = new CxfImpersonate(v1_errorHandler(), v1_loginHandler(), v1_sessionStore(),
-				v1_impersonateSessionStore(), v1_operationUserStore(), v1_operationUserAllowed());
+		final CxfImpersonate service = new CxfImpersonate(v1_errorHandler(), helper.sessionLogic(),
+				v1_operationUserAllowed());
 		return proxy(Impersonate.class, service);
 	}
 
@@ -264,14 +262,8 @@ public class ServicesV1 implements LoggingSupport {
 
 	@Bean
 	public Sessions v1_sessions() {
-		final CxfSessions service = new CxfSessions(v1_errorHandler(), helper.tokenGenerator(), v1_sessionStore(),
-				v1_loginHandler(), v1_operationUserStore(), helper.tokenManager());
+		final CxfSessions service = new CxfSessions(v1_errorHandler(), helper.sessionLogic());
 		return proxy(Sessions.class, service);
-	}
-
-	@Bean
-	protected LoginHandler v1_loginHandler() {
-		return new AuthenticationLogicAdapter(helper.authenticationLogic());
 	}
 
 	@Bean

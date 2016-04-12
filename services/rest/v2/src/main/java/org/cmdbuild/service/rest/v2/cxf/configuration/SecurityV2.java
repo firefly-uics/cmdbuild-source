@@ -19,13 +19,9 @@ public class SecurityV2 implements LoggingSupport {
 	@Autowired
 	private ApplicationContextHelperV2 helper;
 
-	@Autowired
-	private ServicesV2 services;
-
 	@Bean
 	public TokenHandler v2_tokenHandler() {
-		return new TokenHandler(v2_tokenFromMessage(), services.v2_sessionStore(), services.v2_operationUserStore(),
-				helper.userStore());
+		return new TokenHandler(v2_tokenFromMessage(), helper.sessionLogic());
 	}
 
 	@Bean
