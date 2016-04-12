@@ -24,7 +24,7 @@
 
 			Ext.apply(parameters, {
 				timeout: CMDBuild.core.configurations.Timeout.getReport(),
-				url: CMDBuild.core.proxy.index.Json.report.createReportFactory
+				url: CMDBuild.core.proxy.index.Json.report.factory.create
 			});
 
 			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.REPORT, parameters, true);
@@ -45,7 +45,7 @@
 				pageSize: CMDBuild.configuration.instance.get(CMDBuild.core.constants.Proxy.ROW_LIMIT),
 				proxy: {
 					type: 'ajax',
-					url: CMDBuild.core.proxy.index.Json.report.getReportsByType,
+					url: CMDBuild.core.proxy.index.Json.report.readByType,
 					reader: {
 						type: 'json',
 						root: CMDBuild.core.constants.Proxy.ROWS,
@@ -66,10 +66,10 @@
 		 *
 		 * @management
 		 */
-		getTypesTree: function (parameters) {
+		readTypesTree: function (parameters) {
 			parameters = Ext.isEmpty(parameters) ? {} : parameters;
 
-			Ext.apply(parameters, { url: CMDBuild.core.proxy.index.Json.report.getReportTypesTree });
+			Ext.apply(parameters, { url: CMDBuild.core.proxy.index.Json.report.readTypesTree });
 
 			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.REPORT, parameters);
 		},
@@ -83,8 +83,8 @@
 			parameters = Ext.isEmpty(parameters) ? {} : parameters;
 
 			Ext.apply(parameters, {
-				timeout: CMDBuild.core.configurations.Timeout.getReport(), // Get report timeout from configuration
-				url: CMDBuild.core.proxy.index.Json.report.updateReportFactoryParams
+				timeout: CMDBuild.core.configurations.Timeout.getReport(),
+				url: CMDBuild.core.proxy.index.Json.report.factory.updateParams
 			});
 
 			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.REPORT, parameters, true);

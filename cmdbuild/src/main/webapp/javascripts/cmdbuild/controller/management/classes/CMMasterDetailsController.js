@@ -1,5 +1,7 @@
 (function() {
 
+	Ext.require(['CMDBuild.core.proxy.Card']);
+
 	var MD = "detail";
 	var FK = "foreignkey";
 

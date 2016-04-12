@@ -3,11 +3,12 @@
 	var tr = CMDBuild.Translation.management.modcard;
 
 	Ext.require([
-		'CMDBuild.core.Message',
 		'CMDBuild.core.constants.Global',
 		'CMDBuild.core.constants.Proxy',
 		'CMDBuild.core.interfaces.messages.Error',
-		'CMDBuild.core.proxy.Attachment'
+		'CMDBuild.core.Message',
+		'CMDBuild.core.proxy.Attachment',
+		'CMDBuild.core.proxy.index.Json'
 	]);
 
 	Ext.define("CMDBuild.controller.management.classes.attachments.CMCardAttachmentsController", {
@@ -286,11 +287,13 @@
 		doRequest: function(attachmentWindow) {
 			var form = attachmentWindow.form.getForm();
 			var me = this;
-			form.submit({ // TODO: should uses proxy and needs a refactor to manage errors
-				method: 'POST',
-				url: me.url,
-				scope: me,
+
+			CMDBuild.core.proxy.Attachment.confirm({
+				form: form,
 				params: me.forgeRequestParams(attachmentWindow),
+				url: me.url,
+				loadMask: false,
+				scope: me,
 				success: function(form, action) {
 					// Defer the call because Alfresco is not responsive
 					Ext.Function.createDelayed(function deferredCall() {
@@ -316,7 +319,7 @@
 			});
 		},
 
-		showError: function(response, error, options) {
+		showError: function(response, error, options) { // TODO: use core interfaces messages classes
 			var tr = CMDBuild.Translation.errors || {
 				error_message : "Error",
 				unknown_error : "Unknown error",
@@ -373,12 +376,12 @@
 
 	Ext.define("CMDBuild.controller.management.classes.attachments.AddAttachmentStrategy", {
 		extend: "CMDBuild.controller.management.classes.attachments.ConfirmAttachmentStrategy",
-		url: 'services/json/attachments/uploadattachment'
+		url: CMDBuild.core.proxy.index.Json.attachment.create
 	});
 
 	Ext.define("CMDBuild.controller.management.classes.attachments.ModifyAttachmentStrategy", {
 		extend: "CMDBuild.controller.management.classes.attachments.ConfirmAttachmentStrategy",
-		url: 'services/json/attachments/modifyattachment',
+		url: CMDBuild.core.proxy.index.Json.attachment.update,
 		forgeRequestParams: function(attachmentWindow) {
 			var out = this.callParent(arguments);
 			out["Category"] = attachmentWindow.attachmentRecord.get("Category");

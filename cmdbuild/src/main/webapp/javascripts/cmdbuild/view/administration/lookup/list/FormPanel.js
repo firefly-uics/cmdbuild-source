@@ -129,7 +129,7 @@
 						forceSelection: true,
 						editable: false,
 
-						store: CMDBuild.core.proxy.lookup.Lookup.getParentStore(),
+						store: CMDBuild.core.proxy.lookup.Lookup.getStoreParents(),
 						queryMode: 'local'
 					}),
 					Ext.create('Ext.form.field.TextArea', {

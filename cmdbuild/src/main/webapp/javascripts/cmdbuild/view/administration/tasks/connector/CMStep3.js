@@ -207,7 +207,8 @@
 					editable: false,
 					anchor: '100%',
 
-					store: CMDBuild.core.proxy.taskManager.Connector.getDbTypes(),
+					store: CMDBuild.core.proxy.taskManager.Connector.getStoreDbTypes(),
+					queryMode: 'local',
 
 					listeners: {
 						select: function(combo, records, options) {

@@ -6,7 +6,7 @@
 			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.proxy.index.Json',
 			'CMDBuild.model.lookup.GridStore',
-			'CMDBuild.model.lookup.ParentComboStore'
+			'CMDBuild.model.lookup.Parent'
 		],
 
 		singleton: true,
@@ -53,27 +53,6 @@
 		/**
 		 * @returns {Ext.data.Store or CMDBuild.core.cache.Store}
 		 */
-		getParentStore: function () {
-			return CMDBuild.global.Cache.requestAsStore(CMDBuild.core.constants.Proxy.LOOKUP, {
-				autoLoad: false,
-				model: 'CMDBuild.model.lookup.ParentComboStore',
-				proxy: {
-					type: 'ajax',
-					url: CMDBuild.core.proxy.index.Json.lookup.getParentList,
-					reader: {
-						type: 'json',
-						root: CMDBuild.core.constants.Proxy.ROWS
-					}
-				},
-				sorters: [
-					{ property: 'ParentDescription', direction: 'ASC' }
-				]
-			});
-		},
-
-		/**
-		 * @returns {Ext.data.Store or CMDBuild.core.cache.Store}
-		 */
 		getStore: function () {
 			return CMDBuild.global.Cache.requestAsStore(CMDBuild.core.constants.Proxy.LOOKUP, {
 				autoLoad: false,
@@ -90,6 +69,27 @@
 				sorters: [
 					{ property: 'Number', direction: 'ASC' },
 					{ property: 'Description', direction: 'ASC' }
+				]
+			});
+		},
+
+		/**
+		 * @returns {Ext.data.Store or CMDBuild.core.cache.Store}
+		 */
+		getStoreParents: function () {
+			return CMDBuild.global.Cache.requestAsStore(CMDBuild.core.constants.Proxy.LOOKUP, {
+				autoLoad: false,
+				model: 'CMDBuild.model.lookup.Parent',
+				proxy: {
+					type: 'ajax',
+					url: CMDBuild.core.proxy.index.Json.lookup.readAllParents,
+					reader: {
+						type: 'json',
+						root: CMDBuild.core.constants.Proxy.ROWS
+					}
+				},
+				sorters: [
+					{ property: 'ParentDescription', direction: 'ASC' }
 				]
 			});
 		},

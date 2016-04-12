@@ -6,6 +6,7 @@
 		requires: [
 			'CMDBuild.core.Message',
 			'CMDBuild.core.constants.Proxy',
+			'CMDBuild.core.proxy.userAndGroup.group.Group',
 			'CMDBuild.core.proxy.userAndGroup.group.UserInterface'
 		],
 

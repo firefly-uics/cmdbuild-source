@@ -66,6 +66,7 @@
 		BCC_ADDRESSES: 'bccAddresses',
 		BEGIN_DATE: 'beginDate',
 		BIM: 'bim',
+		BIM_LAYER: 'bimLayer',
 		BODY: 'body',
 		BULK_UPDATE: 'bulkUpdate',
 		CAPABILITIES: 'capabilities',

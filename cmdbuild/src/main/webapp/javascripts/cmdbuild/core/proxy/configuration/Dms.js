@@ -49,7 +49,7 @@
 				model: 'CMDBuild.model.configuration.dms.Lookup',
 				proxy: {
 					type: 'ajax',
-					url: CMDBuild.core.proxy.index.Json.configuration.dms.getPresets,
+					url: CMDBuild.core.proxy.index.Json.configuration.dms.readAllPreset,
 					reader: {
 						type: 'json',
 						root: CMDBuild.core.constants.Proxy.RESPONSE

@@ -18,7 +18,6 @@
 		 */
 		readAll: function (parameters) {
 			parameters = Ext.isEmpty(parameters) ? {} : parameters;
-			parameters.loadMask = Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : false; // FIXME
 
 			Ext.apply(parameters, { url: CMDBuild.core.proxy.index.Json.dataView.readAll });
 

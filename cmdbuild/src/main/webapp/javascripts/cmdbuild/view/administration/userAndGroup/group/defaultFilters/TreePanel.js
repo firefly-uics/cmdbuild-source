@@ -66,7 +66,7 @@
 							editable: false,
 							forceSelection: true,
 
-							store: CMDBuild.core.proxy.userAndGroup.group.DefaultFilters.getClassFiltersStore(),
+							store: CMDBuild.core.proxy.userAndGroup.group.DefaultFilters.getStoreClassFilters(),
 							queryMode: 'local'
 						},
 

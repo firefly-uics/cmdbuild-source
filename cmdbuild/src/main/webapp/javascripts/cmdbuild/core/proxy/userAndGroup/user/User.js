@@ -72,7 +72,7 @@
 				model: 'CMDBuild.model.userAndGroup.user.DefaultGroup',
 				proxy: {
 					type: 'ajax',
-					url: CMDBuild.core.proxy.index.Json.user.getGroupList,
+					url: CMDBuild.core.proxy.index.Json.user.readAllGroups,
 					reader: {
 						type: 'json',
 						root: CMDBuild.core.constants.Proxy.RESULT

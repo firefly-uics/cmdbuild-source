@@ -36,7 +36,7 @@
 						flex: 1
 					}
 				],
-				store: CMDBuild.core.proxy.userAndGroup.group.Users.getGroupsUserStore()
+				store: CMDBuild.core.proxy.userAndGroup.group.Users.getStoreGroupsUser()
 			});
 
 			this.callParent(arguments);

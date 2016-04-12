@@ -2,6 +2,7 @@
 
 	Ext.require([
 		'CMDBuild.core.Message',
+		'CMDBuild.core.proxy.Card',
 		'CMDBuild.core.Utils'
 	]);
 
@@ -241,7 +242,7 @@
 			params[CMDBuild.core.constants.Proxy.RETRY_WITHOUT_FILTER] = retryWithoutFilter;
 			params[CMDBuild.core.constants.Proxy.SORT] = Ext.encode(getSorting(store));
 
-			CMDBuild.core.proxy.Card.getPosition({
+			CMDBuild.core.proxy.Card.readPosition({
 				params: params,
 				loadMask: false,
 				failure: function onGetPositionFailure(response, options, decoded) {

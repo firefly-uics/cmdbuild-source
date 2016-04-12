@@ -9,21 +9,6 @@
 
 		singleton: true,
 
-		/**
-		 * Get the position on the DB of the required card, considering the sorting and current filter applied on the grid
-		 *
-		 * @param {Object} parameters
-		 *
-		 * @returns {Void}
-		 */
-		getPosition: function (parameters) {
-			parameters = Ext.isEmpty(parameters) ? {} : parameters;
-
-			Ext.apply(parameters, { url: CMDBuild.core.proxy.index.Json.card.getPosition });
-
-			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.CARD, parameters);
-		},
-
 		// Lock/Unlock methods
 			/**
 			 * @param {Object} parameters
@@ -72,7 +57,22 @@
 		readAll: function (parameters) {
 			parameters = Ext.isEmpty(parameters) ? {} : parameters;
 
-			Ext.apply(parameters, { url: CMDBuild.core.proxy.index.Json.card.getList });
+			Ext.apply(parameters, { url: CMDBuild.core.proxy.index.Json.card.readAll });
+
+			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.CARD, parameters);
+		},
+
+		/**
+		 * Get the position on the DB of the required card, considering the sorting and current filter applied on the grid
+		 *
+		 * @param {Object} parameters
+		 *
+		 * @returns {Void}
+		 */
+		readPosition: function (parameters) {
+			parameters = Ext.isEmpty(parameters) ? {} : parameters;
+
+			Ext.apply(parameters, { url: CMDBuild.core.proxy.index.Json.card.getPosition });
 
 			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.CARD, parameters);
 		},

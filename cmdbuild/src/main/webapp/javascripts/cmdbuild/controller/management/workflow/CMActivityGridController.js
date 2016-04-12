@@ -160,7 +160,7 @@
 				params[CMDBuild.core.constants.Proxy.RETRY_WITHOUT_FILTER] = false;
 				params[CMDBuild.core.constants.Proxy.SORT] = Ext.encode(getSorting(store));
 
-				CMDBuild.core.proxy.Card.getPosition({
+				CMDBuild.core.proxy.Card.readPosition({
 					params: params,
 					loadMask: false,
 					scope: this,

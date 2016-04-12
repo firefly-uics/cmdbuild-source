@@ -1,11 +1,10 @@
 (function () {
 
-	Ext.define('CMDBuild.core.proxy.Csv', {
+	Ext.define('CMDBuild.core.proxy.customForm.Csv', {
 
 		requires: [
 			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.interfaces.FormSubmit',
-			'CMDBuild.core.LoadMask',
 			'CMDBuild.core.proxy.index.Json'
 		],
 
@@ -16,10 +15,10 @@
 		 *
 		 * @returns {Void}
 		 */
-		exports: function (parameters) {
+		decode: function (parameters) {
 			parameters = Ext.isEmpty(parameters) ? {} : parameters;
 
-			Ext.apply(parameters, { url: CMDBuild.core.proxy.index.Json.csv.exports });
+			Ext.apply(parameters, { url: CMDBuild.core.proxy.index.Json.csv.import.read });
 
 			CMDBuild.core.interfaces.FormSubmit.submit(parameters);
 		},
@@ -29,25 +28,45 @@
 		 *
 		 * @returns {Void}
 		 */
-		getRecords: function (parameters) {
+		exports: function (parameters) {
 			parameters = Ext.isEmpty(parameters) ? {} : parameters;
 
 			Ext.apply(parameters, {
-				method: 'GET',
-				url: CMDBuild.core.proxy.index.Json.csv.getRecords,
-				loadMask: false,
-				callback: function (options, success, response) { // Clears server session data
-					CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.UNCACHED, {
-						method: 'GET',
-						url: CMDBuild.core.proxy.index.Json.csv.clearSession,
-						loadMask: false
-					});
-
-					CMDBuild.core.LoadMask.hide();
-				}
+				buildRuntimeForm: true,
+				url: CMDBuild.core.proxy.index.Json.csv.exports.create
 			});
 
-			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.UNCACHED, parameters);
+			CMDBuild.core.interfaces.FormSubmit.submit(parameters);
+		},
+
+		/**
+		 * @returns {Ext.data.ArrayStore}
+		 */
+		getStoreExportFileFormat: function () {
+			return Ext.create('Ext.data.ArrayStore', {
+				fields: [CMDBuild.core.constants.Proxy.DESCRIPTION, CMDBuild.core.constants.Proxy.NAME],
+				data: [
+					[CMDBuild.Translation.csv, CMDBuild.core.constants.Proxy.CSV]
+				],
+				sorters: [
+					{ property: CMDBuild.core.constants.Proxy.DESCRIPTION, direction: 'ASC' }
+				]
+			});
+		},
+
+		/**
+		 * @returns {Ext.data.ArrayStore}
+		 */
+		getStoreImportFileFormat: function () {
+			return Ext.create('Ext.data.ArrayStore', {
+				fields: [CMDBuild.core.constants.Proxy.DESCRIPTION, CMDBuild.core.constants.Proxy.NAME],
+				data: [
+					[CMDBuild.Translation.csv, CMDBuild.core.constants.Proxy.CSV]
+				],
+				sorters: [
+					{ property: CMDBuild.core.constants.Proxy.DESCRIPTION, direction: 'ASC' }
+				]
+			});
 		},
 
 		/**
@@ -87,32 +106,6 @@
 					['|']
 				]
 			});
-		},
-
-		/**
-		 * @param {Object} parameters
-		 *
-		 * @returns {Void}
-		 */
-		decode: function (parameters) {
-			parameters = Ext.isEmpty(parameters) ? {} : parameters;
-
-			Ext.apply(parameters, { url: CMDBuild.core.proxy.index.Json.csv.read });
-
-			CMDBuild.core.interfaces.FormSubmit.submit(parameters);
-		},
-
-		/**
-		 * @param {Object} parameters
-		 *
-		 * @returns {Void}
-		 */
-		upload: function (parameters) {
-			parameters = Ext.isEmpty(parameters) ? {} : parameters;
-
-			Ext.apply(parameters, { url: CMDBuild.core.proxy.index.Json.csv.upload });
-
-			CMDBuild.core.interfaces.FormSubmit.submit(parameters);
 		}
 	});
 

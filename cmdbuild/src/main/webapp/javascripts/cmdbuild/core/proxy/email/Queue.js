@@ -14,10 +14,10 @@
 		 *
 		 * @returns {Void}
 		 */
-		configurationRead: function (parameters) {
+		read: function (parameters) {
 			parameters = Ext.isEmpty(parameters) ? {} : parameters;
 
-			Ext.apply(parameters, { url: CMDBuild.core.proxy.index.Json.email.queue.configuration });
+			Ext.apply(parameters, { url: CMDBuild.core.proxy.index.Json.email.queue.read });
 
 			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.UNCACHED, parameters);
 		},
@@ -27,10 +27,10 @@
 		 *
 		 * @returns {Void}
 		 */
-		configurationSave: function (parameters) {
+		save: function (parameters) {
 			parameters = Ext.isEmpty(parameters) ? {} : parameters;
 
-			Ext.apply(parameters, { url: CMDBuild.core.proxy.index.Json.email.queue.configure });
+			Ext.apply(parameters, { url: CMDBuild.core.proxy.index.Json.email.queue.save });
 
 			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.UNCACHED, parameters);
 		},
@@ -43,7 +43,7 @@
 		isRunning: function (parameters) {
 			parameters = Ext.isEmpty(parameters) ? {} : parameters;
 
-			Ext.apply(parameters, { url: CMDBuild.core.proxy.index.Json.email.queue.running });
+			Ext.apply(parameters, { url: CMDBuild.core.proxy.index.Json.email.queue.isRunning });
 
 			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.UNCACHED, parameters);
 		},

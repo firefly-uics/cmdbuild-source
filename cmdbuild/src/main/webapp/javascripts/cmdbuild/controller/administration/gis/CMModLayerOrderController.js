@@ -1,6 +1,6 @@
 (function() {
 
-	Ext.require('CMDBuild.core.proxy.gis.Gis');
+	Ext.require('CMDBuild.core.proxy.gis.Layer');
 
 	Ext.define("CMDBuild.controller.administration.gis.CMModLayerOrderController", {
 		extend: "CMDBuild.controller.CMBasePanelController",
@@ -27,7 +27,7 @@
 		var me = this;
 
 		CMDBuild.core.LoadMask.show();
-		CMDBuild.core.proxy.gis.Gis.setLayerOrder({
+		CMDBuild.core.proxy.gis.Layer.setOrder({
 			params: {
 				"oldIndex": oldIndex,
 				"newIndex": newIndex

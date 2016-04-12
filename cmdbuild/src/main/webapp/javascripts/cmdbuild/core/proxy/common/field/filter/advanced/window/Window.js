@@ -16,7 +16,7 @@
 		 *
 		 * @returns {Ext.data.Store or CMDBuild.core.cache.Store}
 		 */
-		getGroupStore: function () {
+		getStoreGroup: function () {
 			return CMDBuild.global.Cache.requestAsStore(CMDBuild.core.constants.Proxy.WORKFLOW, {
 				autoLoad: false,
 				model: 'CMDBuild.model.common.field.filter.advanced.Filter',

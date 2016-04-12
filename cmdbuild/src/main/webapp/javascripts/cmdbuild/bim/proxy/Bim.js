@@ -1,9 +1,8 @@
 (function () {
 
-	Ext.define('CMDBuild.bim.proxy.Proxy', {
+	Ext.define('CMDBuild.bim.proxy.Bim', {
 
 		requires: [
-			'CMDBuild.bim.data.CMBimLayerModel',
 			'CMDBuild.bim.data.CMBIMProjectModel',
 			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.interfaces.FormSubmit',
@@ -57,19 +56,6 @@
 		 *
 		 * @returns {Void}
 		 */
-		downloadIfc: function (parameters) {
-			parameters = Ext.isEmpty(parameters) ? {} : parameters;
-
-			Ext.apply(parameters, { url: CMDBuild.core.proxy.index.Json.bim.downloadIfc });
-
-			CMDBuild.core.interfaces.FormSubmit.submit(parameters);
-		},
-
-		/**
-		 * @param {Object} parameters
-		 *
-		 * @returns {Void}
-		 */
 		enable: function (parameters) {
 			parameters = Ext.isEmpty(parameters) ? {} : parameters;
 
@@ -107,92 +93,9 @@
 		},
 
 		/**
-		 * @param {Object} parameters
-		 *
-		 * @returns {Void}
-		 */
-		getAllLayers: function (parameters) {
-			parameters = Ext.isEmpty(parameters) ? {} : parameters;
-
-			Ext.apply(parameters, { url: CMDBuild.core.proxy.index.Json.bim.readLayer });
-
-			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.BIM, parameters);
-		},
-
-		/**
-		 * @param {Object} parameters
-		 *
-		 * @returns {Void}
-		 */
-		importIfc: function (parameters) {
-			parameters = Ext.isEmpty(parameters) ? {} : parameters;
-
-			Ext.apply(parameters, { url: CMDBuild.core.proxy.index.Json.bim.importIfc });
-
-			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.BIM, parameters, true);
-		},
-
-		/**
 		 * @returns {Ext.data.Store or CMDBuild.core.cache.Store}
 		 */
-		layerStore: function () {
-			return CMDBuild.global.Cache.requestAsStore(CMDBuild.core.constants.Proxy.BIM, {
-				autoLoad: false,
-				model: 'CMDBuild.bim.data.CMBimLayerModel',
-				proxy: {
-					type: 'ajax',
-					url: CMDBuild.core.proxy.index.Json.bim.readLayer,
-					reader: {
-						type: 'json',
-						root: 'bimLayer'
-					}
-				}
-			});
-		},
-
-		/**
-		 * @param {Object} parameters
-		 *
-		 * @returns {Void}
-		 */
-		roidForCardId: function (parameters) {
-			parameters = Ext.isEmpty(parameters) ? {} : parameters;
-
-			Ext.apply(parameters, { url: CMDBuild.core.proxy.index.Json.bim.roidForCardId });
-
-			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.BIM, parameters);
-		},
-
-		/**
-		 * @param {Object} parameters
-		 *
-		 * @returns {Void}
-		 */
-		rootClassName: function (parameters) {
-			parameters = Ext.isEmpty(parameters) ? {} : parameters;
-
-			Ext.apply(parameters, { url: CMDBuild.core.proxy.index.Json.bim.rootLayer });
-
-			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.BIM, parameters);
-		},
-
-		/**
-		 * @param {Object} parameters
-		 *
-		 * @returns {Void}
-		 */
-		saveLayer: function (parameters) {
-			parameters = Ext.isEmpty(parameters) ? {} : parameters;
-
-			Ext.apply(parameters, { url: CMDBuild.core.proxy.index.Json.bim.saveLayer });
-
-			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.BIM, parameters, true);
-		},
-
-		/**
-		 * @returns {Ext.data.Store or CMDBuild.core.cache.Store}
-		 */
-		store: function () {
+		getStore: function () {
 			return CMDBuild.global.Cache.requestAsStore(CMDBuild.core.constants.Proxy.BIM, {
 				autoLoad: false,
 				model: 'CMDBuild.bim.data.CMBIMProjectModel',
@@ -211,6 +114,19 @@
 					{ property: CMDBuild.core.constants.Proxy.DESCRIPTION, direction: 'ASC' }
 				]
 			});
+		},
+
+		/**
+		 * @param {Object} parameters
+		 *
+		 * @returns {Void}
+		 */
+		roidForCardId: function (parameters) {
+			parameters = Ext.isEmpty(parameters) ? {} : parameters;
+
+			Ext.apply(parameters, { url: CMDBuild.core.proxy.index.Json.bim.roidForCardId });
+
+			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.BIM, parameters);
 		},
 
 		/**

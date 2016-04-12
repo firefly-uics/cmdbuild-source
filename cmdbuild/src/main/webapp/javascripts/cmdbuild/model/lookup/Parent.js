@@ -1,6 +1,6 @@
 (function() {
 
-	Ext.define('CMDBuild.model.lookup.ParentComboStore', {
+	Ext.define('CMDBuild.model.lookup.Parent', {
 		extend: 'Ext.data.Model',
 
 		fields: [

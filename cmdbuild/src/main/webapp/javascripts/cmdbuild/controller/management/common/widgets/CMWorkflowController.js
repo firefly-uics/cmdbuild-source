@@ -81,7 +81,7 @@
 						CQL: callParams.CQL
 					});
 
-					CMDBuild.core.proxy.widget.Workflow.getWorkflowByFilter({
+					CMDBuild.core.proxy.widget.Workflow.readWorkflowByFilter({
 						params: {
 							className: CMDBuild.core.constants.Global.getRootNameWorkflows(),
 							limit: 1000,

@@ -47,7 +47,7 @@
 				pageSize: CMDBuild.configuration.instance.get(CMDBuild.core.constants.Proxy.ROW_LIMIT),
 				proxy: {
 					type: 'ajax',
-					url: CMDBuild.core.proxy.index.Json.report.jasper.getReportsByType,
+					url: CMDBuild.core.proxy.index.Json.report.readByType,
 					reader: {
 						type: 'json',
 						root: CMDBuild.core.constants.Proxy.ROWS,

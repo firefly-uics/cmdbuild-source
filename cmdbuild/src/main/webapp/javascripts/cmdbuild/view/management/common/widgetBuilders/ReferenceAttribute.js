@@ -1,5 +1,7 @@
 (function() {
 
+	Ext.require(['CMDBuild.core.proxy.Card']);
+
 	var MY_USER_ID = -1;
 	var MY_USER_LABEL = "* " + CMDBuild.Translation.loggedUser + " *";
 	var MY_USER_TEMPLATE = "@MY_USER";

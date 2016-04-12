@@ -22,7 +22,7 @@
 				model: 'CMDBuild.model.classes.tabs.domains.Domain',
 				proxy: {
 					type: 'ajax',
-					url: CMDBuild.core.proxy.index.Json.domain.getList,
+					url: CMDBuild.core.proxy.index.Json.domain.readAllByClass,
 					reader: {
 						type: 'json',
 						root: CMDBuild.core.constants.Proxy.DOMAINS

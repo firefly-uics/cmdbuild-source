@@ -46,6 +46,7 @@
 			nodeIdToSelect = Ext.isNumber(nodeIdToSelect) ? nodeIdToSelect : null;
 
 			CMDBuild.core.proxy.dataView.DataView.readAll({
+				loadMask: false,
 				scope: this,
 				success: function (response, options, decodedResponse) {
 					var dataViews = decodedResponse[CMDBuild.core.constants.Proxy.VIEWS];

@@ -55,30 +55,49 @@
 	function onSaveButtonClick() {
 		var nameToSelect = this.view.form.getName();
 		var cardBinding = this.view.form.getCardsBinding();
-		var form = this.view.form.getForm();
 
 		if (form.isValid()) {
-			CMDBuild.core.LoadMask.show();
-			form.submit({
-				method: 'POST',
-				url: this.lastSelection ? CMDBuild.core.proxy.index.Json.gis.geoServer.layer.update : CMDBuild.core.proxy.index.Json.gis.geoServer.layer.create,
-				params: {
-					name: nameToSelect,
-					cardBinding: Ext.encode(cardBinding)
-				},
-				scope: this,
-				success: function() {
-					_CMCache.onGeoAttributeSaved();
-					this.view.form.disableModify();
-					this.view.layersGrid.loadStoreAndSelectLayerWithName(nameToSelect);
-				},
-				failure: function() {
-					_debug("Failed to add or modify a Geoserver Layer", arguments);
-				},
-				callback: function() {
-					CMDBuild.core.LoadMask.hide();
-				}
-			});
+			if (this.lastSelection) {
+				CMDBuild.core.proxy.gis.GeoServer.updateLayer({
+					form: this.view.form.getForm(),
+					params: {
+						name: nameToSelect,
+						cardBinding: Ext.encode(cardBinding)
+					},
+					scope: this,
+					success: function() {
+						_CMCache.onGeoAttributeSaved();
+						this.view.form.disableModify();
+						this.view.layersGrid.loadStoreAndSelectLayerWithName(nameToSelect);
+					},
+					failure: function() {
+						_debug("Failed to add or modify a Geoserver Layer", arguments);
+					},
+					callback: function() {
+						CMDBuild.core.LoadMask.hide();
+					}
+				});
+			} else {
+				CMDBuild.core.proxy.gis.GeoServer.createLayer({
+					form: this.view.form.getForm(),
+					params: {
+						name: nameToSelect,
+						cardBinding: Ext.encode(cardBinding)
+					},
+					scope: this,
+					success: function() {
+						_CMCache.onGeoAttributeSaved();
+						this.view.form.disableModify();
+						this.view.layersGrid.loadStoreAndSelectLayerWithName(nameToSelect);
+					},
+					failure: function() {
+						_debug("Failed to add or modify a Geoserver Layer", arguments);
+					},
+					callback: function() {
+						CMDBuild.core.LoadMask.hide();
+					}
+				});
+			}
 		}
 	};
 

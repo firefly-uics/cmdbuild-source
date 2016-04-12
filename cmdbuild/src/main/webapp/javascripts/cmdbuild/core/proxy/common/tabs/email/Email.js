@@ -20,7 +20,7 @@
 
 			Ext.apply(parameters, {
 				loadMask: false,
-				url: CMDBuild.core.proxy.index.Json.email.post
+				url: CMDBuild.core.proxy.index.Json.email.create
 			});
 
 			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.EMAIL, parameters, true);
@@ -35,7 +35,7 @@
 				model: 'CMDBuild.model.common.tabs.email.Email',
 				proxy: {
 					type: 'ajax',
-					url: CMDBuild.core.proxy.index.Json.email.getStore,
+					url: CMDBuild.core.proxy.index.Json.email.readAll,
 					reader: {
 						type: 'json',
 						root: CMDBuild.core.constants.Proxy.RESPONSE
@@ -95,7 +95,7 @@
 
 			Ext.apply(parameters, {
 				loadMask: false,
-				url: CMDBuild.core.proxy.index.Json.email.put
+				url: CMDBuild.core.proxy.index.Json.email.update
 			});
 
 			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.EMAIL, parameters, true);

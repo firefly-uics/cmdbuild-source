@@ -188,7 +188,7 @@
 					CMDBuild.core.interfaces.FormSubmit.submit({
 						buildRuntimeForm: true,
 						params: params,
-						url: CMDBuild.core.proxy.index.Json.report.printReportFactory
+						url: CMDBuild.core.proxy.index.Json.report.factory.print
 					});
 				}
 			});

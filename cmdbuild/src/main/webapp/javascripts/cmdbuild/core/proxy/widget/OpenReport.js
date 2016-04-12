@@ -5,6 +5,7 @@
 		requires: [
 			'CMDBuild.core.configurations.Timeout',
 			'CMDBuild.core.constants.Proxy',
+			'CMDBuild.core.interfaces.FormSubmit',
 			'CMDBuild.core.proxy.index.Json',
 			'CMDBuild.model.widget.openReport.ReportCombo'
 		],
@@ -22,8 +23,8 @@
 			parameters = Ext.isEmpty(parameters) ? {} : parameters;
 
 			Ext.apply(parameters, {
-				timeout: CMDBuild.core.configurations.Timeout.getReport(), // Get report timeout from configuration
-				url: CMDBuild.core.proxy.index.Json.report.createReportFactory
+				timeout: CMDBuild.core.configurations.Timeout.getReport(),
+				url: CMDBuild.core.proxy.index.Json.report.factory.create
 			});
 
 			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.UNCACHED, parameters);
@@ -41,7 +42,7 @@
 
 			Ext.apply(parameters, {
 				timeout: CMDBuild.core.configurations.Timeout.getReport(),
-				url: CMDBuild.core.proxy.index.Json.report.createReportFactoryByTypeCode
+				url: CMDBuild.core.proxy.index.Json.report.factory.createByTypeCode
 			});
 
 			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.UNCACHED, parameters);
@@ -96,7 +97,7 @@
 				model: 'CMDBuild.model.widget.openReport.ReportCombo',
 				proxy: {
 					type: 'ajax',
-					url: CMDBuild.core.proxy.index.Json.report.getReportsByType,
+					url: CMDBuild.core.proxy.index.Json.report.readByType,
 					reader: {
 						type: 'json',
 						root: CMDBuild.core.constants.Proxy.ROWS,
@@ -112,6 +113,16 @@
 			});
 		},
 
+		print: function (parameters) {
+			parameters = Ext.isEmpty(parameters) ? {} : parameters;
+
+			Ext.apply(parameters, {
+				url: CMDBuild.core.proxy.index.Json.report.factory.print + '?donotdelete=true'  // Add parameter to avoid report delete
+			});
+
+			CMDBuild.core.interfaces.FormSubmit.submit(parameters);
+		},
+
 		/**
 		 * @param {Object} parameters
 		 *
@@ -123,8 +134,8 @@
 			parameters = Ext.isEmpty(parameters) ? {} : parameters;
 
 			Ext.apply(parameters, {
-				timeout: CMDBuild.core.configurations.Timeout.getReport(), // Get report timeout from configuration
-				url: CMDBuild.core.proxy.index.Json.report.updateReportFactoryParams
+				timeout: CMDBuild.core.configurations.Timeout.getReport(),
+				url: CMDBuild.core.proxy.index.Json.report.factory.updateParams
 			});
 
 			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.UNCACHED, parameters);

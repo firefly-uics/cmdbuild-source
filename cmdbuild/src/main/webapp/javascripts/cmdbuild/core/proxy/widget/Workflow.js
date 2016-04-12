@@ -68,12 +68,12 @@
 		 *
 		 * @returns {Void}
 		 *
-		 * @management
+		 * @administration
 		 */
-		getWorkflowByFilter: function (parameters) {
+		readStartActivity: function (parameters) {
 			parameters = Ext.isEmpty(parameters) ? {} : parameters;
 
-			Ext.apply(parameters, { url: CMDBuild.core.proxy.index.Json.card.getListShort });
+			Ext.apply(parameters, { url: CMDBuild.core.proxy.index.Json.workflow.activity.readStart });
 
 			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.WORKFLOW, parameters);
 		},
@@ -83,12 +83,12 @@
 		 *
 		 * @returns {Void}
 		 *
-		 * @administration
+		 * @management
 		 */
-		readStartActivity: function (parameters) {
+		readWorkflowByFilter: function (parameters) {
 			parameters = Ext.isEmpty(parameters) ? {} : parameters;
 
-			Ext.apply(parameters, { url: CMDBuild.core.proxy.index.Json.workflow.activity.readStart });
+			Ext.apply(parameters, { url: CMDBuild.core.proxy.index.Json.card.readAllShort });
 
 			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.WORKFLOW, parameters);
 		}

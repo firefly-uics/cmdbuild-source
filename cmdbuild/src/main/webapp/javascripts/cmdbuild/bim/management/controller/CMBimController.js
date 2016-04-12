@@ -3,7 +3,10 @@
 	var ICON_ACTION = "action-open-bim";
 	var MAX_ZOOM = 15;
 
-	Ext.require('CMDBuild.core.Message');
+	Ext.require([
+		'CMDBuild.bim.proxy.Bim',
+		'CMDBuild.core.Message'
+	]);
 
 	Ext.define("CMDBuild.bim.management.CMBimController", {
 
@@ -40,7 +43,7 @@
 		onCMCardGridColumnsReconfigured: function(grid) {
 			var entryType = _CMCardModuleState.entryType;
 			var me = this;
-			CMDBuild.bim.proxy.Proxy.activeForClassName({
+			CMDBuild.bim.proxy.Bim.activeForClassName({
 				params: {
 					className: entryType.getName()
 				},
@@ -75,7 +78,7 @@
 				CMDBuild.core.LoadMask.show();
 				var me = this;
 				var entryType = _CMCardModuleState.entryType;
-				CMDBuild.bim.proxy.Proxy.roidForCardId({
+				CMDBuild.bim.proxy.Bim.roidForCardId({
 					params: {
 						cardId: model.get("Id"),
 						className: entryType.getName(),
@@ -145,7 +148,7 @@
 		objectSelectedForLongPressure: function(sceneManager, objectId) {
 			var me = this;
 
-			CMDBuild.bim.proxy.Proxy.fetchCardFromViewewId({
+			CMDBuild.bim.proxy.Bim.fetchCardFromViewewId({
 				params: {
 					revisionId: me.roid,
 					objectId: objectId

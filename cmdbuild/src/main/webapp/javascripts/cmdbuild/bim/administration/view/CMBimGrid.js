@@ -1,6 +1,6 @@
 (function () {
 
-	Ext.require('CMDBuild.bim.proxy.Proxy');
+	Ext.require(['CMDBuild.bim.proxy.Ifc']);
 
 	Ext.define('CMDBuild.view.administration.bim.CMBimGrid', {
 		extend: 'CMDBuild.view.administration.common.basepanel.CMGrid',
@@ -33,7 +33,7 @@
 					basicForm.standardSubmit = true;
 
 					// FIXME: should be used fake form submit feature
-					CMDBuild.bim.proxy.Proxy.downloadIfc({
+					CMDBuild.bim.proxy.Ifc.download({
 						form: basicForm,
 						target: '_self'
 					});

@@ -1,5 +1,7 @@
 (function() {
 
+	Ext.require(['CMDBuild.core.proxy.Card']);
+
 	Ext.define("CMDBuild.state.CMWorkflowStateDelegate", {
 		onProcessClassRefChange: Ext.emptyFn,
 		onProcessInstanceChange: Ext.emptyFn,

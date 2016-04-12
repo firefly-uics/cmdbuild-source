@@ -8,7 +8,7 @@
 		requires: [
 			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.proxy.configuration.GeneralOptions',
-			'CMDBuild.core.proxy.localization.Localization'
+			'CMDBuild.core.proxy.core.configurations.builder.Localization'
 		],
 
 		/**
@@ -43,7 +43,7 @@
 			CMDBuild.configuration.localization = Ext.create('CMDBuild.model.core.configurations.builder.Localization'); // Localization configuration object
 
 			if (this.enableServerCalls)
-				CMDBuild.core.proxy.localization.Localization.getLanguages({
+				CMDBuild.core.proxy.core.configurations.builder.Localization.readAllAvailableTranslations({
 					loadMask: false,
 					scope: this,
 					success: function (response, options, decodedResponse) {

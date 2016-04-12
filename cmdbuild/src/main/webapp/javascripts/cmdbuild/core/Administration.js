@@ -13,7 +13,6 @@
 			'CMDBuild.core.proxy.dashboard.Dashboard',
 			'CMDBuild.core.proxy.domain.Domain',
 			'CMDBuild.core.proxy.lookup.Type',
-			'CMDBuild.core.proxy.report.Report',
 			'CMDBuild.core.proxy.userAndGroup.group.Group',
 			'CMDBuild.core.proxy.widget.Widget',
 			'CMDBuild.core.RequestBarrier',

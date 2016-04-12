@@ -39,7 +39,7 @@
 				params[CMDBuild.core.constants.Proxy.CLASS_NAME] = entryType.get(CMDBuild.core.constants.Proxy.NAME);
 				params[CMDBuild.core.constants.Proxy.SKIP_DISABLED_CLASSES] = true;
 
-				CMDBuild.core.proxy.domain.Domain.getList({
+				CMDBuild.core.proxy.domain.Domain.readAllByClass({
 					params: params,
 					scope: this,
 					success: function(result, options, decodedResult) {

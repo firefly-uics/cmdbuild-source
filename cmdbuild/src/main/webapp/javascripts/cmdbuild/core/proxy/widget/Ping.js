@@ -14,8 +14,6 @@
 		 * @param {Object} parameters
 		 *
 		 * @returns {Void}
-		 *
-		 * TODO: waiting for refactor (crud)
 		 */
 		readClass: function (parameters) {
 			parameters = Ext.isEmpty(parameters) ? {} : parameters;

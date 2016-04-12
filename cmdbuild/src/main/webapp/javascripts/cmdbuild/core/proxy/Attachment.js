@@ -13,6 +13,19 @@
 		 * @param {Object} parameters
 		 *
 		 * @returns {Void}
+		 *
+		 * @management
+		 */
+		confirm: function (parameters) {
+			parameters = Ext.isEmpty(parameters) ? {} : parameters;
+
+			CMDBuild.core.interfaces.FormSubmit.submit(parameters);
+		},
+
+		/**
+		 * @param {Object} parameters
+		 *
+		 * @returns {Void}
 		 */
 		download: function (parameters) {
 			if (
@@ -24,19 +37,6 @@
 					'_blank'
 				);
 			}
-		},
-
-		/**
-		 * @param {Object} parameters
-		 *
-		 * @returns {Void}
-		 */
-		getDefinitions: function (parameters) {
-			parameters = Ext.isEmpty(parameters) ? {} : parameters;
-
-			Ext.apply(parameters, { url: CMDBuild.core.proxy.index.Json.attachment.getContext });
-
-			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.ATTACHMENT, parameters);
 		},
 
 		/**
@@ -64,6 +64,19 @@
 					{ property: 'Category', direction: 'ASC' }
 				]
 			});
+		},
+
+		/**
+		 * @param {Object} parameters
+		 *
+		 * @returns {Void}
+		 */
+		readDefinitions: function (parameters) {
+			parameters = Ext.isEmpty(parameters) ? {} : parameters;
+
+			Ext.apply(parameters, { url: CMDBuild.core.proxy.index.Json.attachment.getContext });
+
+			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.ATTACHMENT, parameters);
 		},
 
 		/**

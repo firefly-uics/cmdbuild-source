@@ -45,7 +45,7 @@
 				fkClass = _CMCache.getEntryTypeById(idClass);
 
 			function setExtraParamsAndLoad(me) {
-				me.store.proxy.url = CMDBuild.core.proxy.index.Json.card.getList;
+				me.store.proxy.url = CMDBuild.core.proxy.index.Json.card.readAll;
 				me.store.proxy.extraParams['IdClass'] = idClass;
 				me.store.proxy.extraParams['CQL'] = "from "
 					+ fkClass.get("name")

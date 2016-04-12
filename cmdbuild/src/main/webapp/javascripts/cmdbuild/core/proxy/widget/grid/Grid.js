@@ -1,6 +1,6 @@
 (function () {
 
-	Ext.define('CMDBuild.core.proxy.widget.Grid', {
+	Ext.define('CMDBuild.core.proxy.widget.grid.Grid', {
 
 		requires: [
 			'CMDBuild.core.constants.Proxy',

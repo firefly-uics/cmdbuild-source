@@ -13,13 +13,13 @@
 		/**
 		 * @returns {Ext.data.Store or CMDBuild.core.cache.Store}
 		 */
-		getClassFiltersStore: function () {
+		getStoreClassFilters: function () {
 			return CMDBuild.global.Cache.requestAsStore(CMDBuild.core.constants.Proxy.FILTER, {
 				autoLoad: false,
 				model: 'CMDBuild.model.userAndGroup.group.defaultFilters.Filter',
 				proxy: {
 					type: 'ajax',
-					url: CMDBuild.core.proxy.index.Json.group.defaultFilters.readAllGroupFilters,
+					url: CMDBuild.core.proxy.index.Json.filter.group.readAll,
 					reader: {
 						type: 'json',
 						root: CMDBuild.core.constants.Proxy.FILTERS
@@ -39,7 +39,7 @@
 		read: function (parameters) {
 			parameters = Ext.isEmpty(parameters) ? {} : parameters;
 
-			Ext.apply(parameters, { url: CMDBuild.core.proxy.index.Json.group.defaultFilters.read });
+			Ext.apply(parameters, { url: CMDBuild.core.proxy.index.Json.filter.defaults.read });
 
 			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.DEFAULT_FILTER, parameters);
 		},
@@ -52,7 +52,7 @@
 		update: function (parameters) {
 			parameters = Ext.isEmpty(parameters) ? {} : parameters;
 
-			Ext.apply(parameters, { url: CMDBuild.core.proxy.index.Json.group.defaultFilters.update });
+			Ext.apply(parameters, { url: CMDBuild.core.proxy.index.Json.filter.defaults.update });
 
 			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.DEFAULT_FILTER, parameters, true);
 		}

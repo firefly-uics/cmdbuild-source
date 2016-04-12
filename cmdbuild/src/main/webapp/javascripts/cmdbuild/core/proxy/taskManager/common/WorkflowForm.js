@@ -11,19 +11,6 @@
 		singleton: true,
 
 		/**
-		 * @param {Object} parameters
-		 *
-		 * @returns {Void}
-		 */
-		getAttributes: function (parameters) {
-			parameters = Ext.isEmpty(parameters) ? {} : parameters;
-
-			Ext.apply(parameters, { url: CMDBuild.core.proxy.index.Json.attribute.read });
-
-			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.ATTRIBUTE, parameters);
-		},
-
-		/**
 		 * @returns {Ext.data.Store or CMDBuild.core.cache.Store}
 		 */
 		getStore: function () {
@@ -55,6 +42,19 @@
 					{ property: CMDBuild.core.constants.Proxy.TEXT, direction: 'ASC' }
 				]
 			});
+		},
+
+		/**
+		 * @param {Object} parameters
+		 *
+		 * @returns {Void}
+		 */
+		readAllAttributes: function (parameters) {
+			parameters = Ext.isEmpty(parameters) ? {} : parameters;
+
+			Ext.apply(parameters, { url: CMDBuild.core.proxy.index.Json.attribute.readAll });
+
+			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.ATTRIBUTE, parameters);
 		}
 	});
 

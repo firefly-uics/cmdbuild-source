@@ -4,10 +4,24 @@
 
 		requires: [
 			'CMDBuild.core.constants.Proxy',
+			'CMDBuild.core.interfaces.FormSubmit',
 			'CMDBuild.core.proxy.index.Json'
 		],
 
 		singleton: true,
+
+		/**
+		 * @param {Object} parameters
+		 *
+		 * @returns {Void}
+		 */
+		createLayer: function (parameters) {
+			parameters = Ext.isEmpty(parameters) ? {} : parameters;
+
+			Ext.apply(parameters, { url: CMDBuild.core.proxy.index.Json.gis.geoServer.layer.create });
+
+			CMDBuild.core.interfaces.FormSubmit.submit(parameters);
+		},
 
 		/**
 		 * @returns {Ext.data.Store or CMDBuild.core.cache.Store} store
@@ -53,6 +67,19 @@
 			Ext.apply(parameters, { url: CMDBuild.core.proxy.index.Json.gis.geoServer.layer.remove });
 
 			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.GIS, parameters, true);
+		},
+
+		/**
+		 * @param {Object} parameters
+		 *
+		 * @returns {Void}
+		 */
+		updateLayer: function (parameters) {
+			parameters = Ext.isEmpty(parameters) ? {} : parameters;
+
+			Ext.apply(parameters, { url: CMDBuild.core.proxy.index.Json.gis.geoServer.layer.update });
+
+			CMDBuild.core.interfaces.FormSubmit.submit(parameters);
 		}
 	});
 

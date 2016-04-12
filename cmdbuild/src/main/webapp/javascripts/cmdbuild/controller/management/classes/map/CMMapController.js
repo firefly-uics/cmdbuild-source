@@ -1,5 +1,7 @@
 (function() {
 
+	Ext.require(['CMDBuild.core.proxy.gis.Gis']);
+
 	Ext.define("CMDBuild.controller.management.classes.map.CMMapController", {
 		alternateClassName: "CMDBuild.controller.management.classes.CMMapController", // Legacy class name
 		extend: "CMDBuild.controller.management.classes.CMCardDataProvider",

@@ -18,7 +18,7 @@
 		create: function (parameters) {
 			parameters = Ext.isEmpty(parameters) ? {} : parameters;
 
-			Ext.apply(parameters, { url: CMDBuild.core.proxy.index.Json.email.accounts.create });
+			Ext.apply(parameters, { url: CMDBuild.core.proxy.index.Json.email.account.create });
 
 			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.EMAIL, parameters, true);
 		},
@@ -34,7 +34,7 @@
 				model: 'CMDBuild.model.email.account.Store',
 				proxy: {
 					type: 'ajax',
-					url: CMDBuild.core.proxy.index.Json.email.accounts.readAll,
+					url: CMDBuild.core.proxy.index.Json.email.account.readAll,
 					reader: {
 						type: 'json',
 						root: 'response.elements'
@@ -59,7 +59,7 @@
 		read: function (parameters) {
 			parameters = Ext.isEmpty(parameters) ? {} : parameters;
 
-			Ext.apply(parameters, { url: CMDBuild.core.proxy.index.Json.email.accounts.read });
+			Ext.apply(parameters, { url: CMDBuild.core.proxy.index.Json.email.account.read });
 
 			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.EMAIL, parameters);
 		},
@@ -72,7 +72,7 @@
 		remove: function (parameters) {
 			parameters = Ext.isEmpty(parameters) ? {} : parameters;
 
-			Ext.apply(parameters, { url: CMDBuild.core.proxy.index.Json.email.accounts.remove });
+			Ext.apply(parameters, { url: CMDBuild.core.proxy.index.Json.email.account.remove });
 
 			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.EMAIL, parameters, true);
 		},
@@ -85,7 +85,7 @@
 		setDefault: function (parameters) {
 			parameters = Ext.isEmpty(parameters) ? {} : parameters;
 
-			Ext.apply(parameters, { url: CMDBuild.core.proxy.index.Json.email.accounts.setDefault });
+			Ext.apply(parameters, { url: CMDBuild.core.proxy.index.Json.email.account.setDefault });
 
 			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.EMAIL, parameters, true);
 		},
@@ -98,7 +98,7 @@
 		update: function (parameters) {
 			parameters = Ext.isEmpty(parameters) ? {} : parameters;
 
-			Ext.apply(parameters, { url: CMDBuild.core.proxy.index.Json.email.accounts.update });
+			Ext.apply(parameters, { url: CMDBuild.core.proxy.index.Json.email.account.update });
 
 			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.EMAIL, parameters, true);
 		}

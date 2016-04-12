@@ -38,7 +38,7 @@
 					if (!Ext.isEmpty(bimConfigurationObject[CMDBuild.core.constants.Proxy.DATA]))
 						bimConfigurationObject = bimConfigurationObject[CMDBuild.core.constants.Proxy.DATA];
 
-					CMDBuild.core.proxy.core.configurations.builder.Bim.readRootLayer({
+					CMDBuild.core.proxy.core.configurations.builder.Bim.readRootLayerName({
 						loadMask: false,
 						scope: this.scope || this,
 						success: function (response, options, decodedResponse) {

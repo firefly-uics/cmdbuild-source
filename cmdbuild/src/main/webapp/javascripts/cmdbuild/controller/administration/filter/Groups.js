@@ -120,7 +120,7 @@
 						}, this)
 					});
 
-					CMDBuild.core.proxy.filter.Group.getDefaults({
+					CMDBuild.core.proxy.filter.Group.readDefaults({
 						params: params,
 						scope: this,
 						success: function(response, options, decodedResponse) {
@@ -251,7 +251,7 @@
 			params[CMDBuild.core.constants.Proxy.FILTERS] = Ext.encode([savedFilterObject[CMDBuild.core.constants.Proxy.ID]]);
 			params[CMDBuild.core.constants.Proxy.GROUPS] = Ext.encode(this.form.defaultForGroupsField.getValue());
 
-			CMDBuild.core.proxy.filter.Group.setDefaults({ params: params });
+			CMDBuild.core.proxy.filter.Group.updateDefaults({ params: params });
 
 			this.grid.getStore().load({
 				callback: function(records, operation, success) {

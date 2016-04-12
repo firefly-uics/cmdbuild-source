@@ -58,7 +58,7 @@
 				editable: false,
 				allowBlank: true,
 
-				store: CMDBuild.core.proxy.taskManager.Connector.getDeletionTypes(),
+				store: CMDBuild.core.proxy.taskManager.Connector.getStoreDeletionTypes(),
 				queryMode: 'local',
 
 				listeners: {

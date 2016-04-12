@@ -22,7 +22,7 @@
 				pageSize: CMDBuild.configuration.instance.get(CMDBuild.core.constants.Proxy.REFERENCE_COMBO_STORE_LIMIT),
 				proxy: {
 					type: 'ajax',
-					url: CMDBuild.core.proxy.index.Json.card.getListShort,
+					url: CMDBuild.core.proxy.index.Json.card.readAllShort,
 					reader: {
 						type: 'json',
 						root: CMDBuild.core.constants.Proxy.ROWS,

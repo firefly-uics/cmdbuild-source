@@ -1,7 +1,11 @@
 (function() {
+
+	Ext.require(['CMDBuild.core.proxy.index.Json']);
+
 	var DEFAULT_MIN_ZOOM = 0;
 	var DEFAULT_MAX_ZOOM = 25;
 	var DEFAULT_POINT_DISTANCE_TOLLERANCE = 8; // the default radius of a point
+
 /**
  * @class CMDBuild.Management.CMDBuildMap.MapLayer
  */
@@ -48,7 +52,7 @@ CMDBuild.Management.CMMap.MapLayer = OpenLayers.Class(OpenLayers.Layer.Vector, {
 		});
 
 		this.protocol = new OpenLayers.Protocol.HTTP({
-			url: 'services/json/gis/getgeocardlist',
+			url: CMDBuild.core.proxy.index.Json.gis.getGeoCardList,
 			params: {
 				className: options.targetClassName,
 				attribute: options.geoAttribute.name

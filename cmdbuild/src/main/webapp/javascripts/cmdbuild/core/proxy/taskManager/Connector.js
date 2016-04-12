@@ -20,7 +20,7 @@
 		create: function (parameters) {
 			parameters = Ext.isEmpty(parameters) ? {} : parameters;
 
-			Ext.apply(parameters, { url: CMDBuild.core.proxy.index.Json.tasks.connector.create });
+			Ext.apply(parameters, { url: CMDBuild.core.proxy.index.Json.taskManager.connector.create });
 
 			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.TASK_MANAGER, parameters, true);
 		},
@@ -33,40 +33,9 @@
 		read: function (parameters) {
 			parameters = Ext.isEmpty(parameters) ? {} : parameters;
 
-			Ext.apply(parameters, { url: CMDBuild.core.proxy.index.Json.tasks.connector.read });
+			Ext.apply(parameters, { url: CMDBuild.core.proxy.index.Json.taskManager.connector.read });
 
 			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.TASK_MANAGER, parameters);
-		},
-
-		/**
-		 * @returns {Ext.data.Store or CMDBuild.core.cache.Store}
-		 */
-		getDbTypes: function () {
-			return CMDBuild.global.Cache.requestAsStore(CMDBuild.core.constants.Proxy.TASK_MANAGER, {
-				autoLoad: true,
-				model: 'CMDBuild.model.taskManager.connector.AvailableSqlSources',
-				proxy: {
-					type: 'ajax',
-					url: CMDBuild.core.proxy.index.Json.tasks.connector.getSqlSources,
-					reader: {
-						type: 'json',
-						root: CMDBuild.core.constants.Proxy.RESPONSE
-					}
-				}
-			});
-		},
-
-		/**
-		 * @returns {Ext.data.ArrayStore}
-		 */
-		getDeletionTypes: function () {
-			return Ext.create('Ext.data.ArrayStore', {
-				fields: [CMDBuild.core.constants.Proxy.DESCRIPTION, CMDBuild.core.constants.Proxy.VALUE],
-				data: [
-					[CMDBuild.Translation.administration.tasks.taskConnector.deletionTypes.deleteCard, CMDBuild.core.constants.Proxy.DELETE_CARD],
-					[CMDBuild.Translation.administration.tasks.taskConnector.deletionTypes.changeStatus, CMDBuild.core.constants.Proxy.CHANGE_STATUS]
-				]
-			});
 		},
 
 		/**
@@ -78,7 +47,7 @@
 				model: 'CMDBuild.model.taskManager.Grid',
 				proxy: {
 					type: 'ajax',
-					url: CMDBuild.core.proxy.index.Json.tasks.connector.getStore,
+					url: CMDBuild.core.proxy.index.Json.taskManager.connector.readAll,
 					reader: {
 						type: 'json',
 						root: 'response.elements'
@@ -126,6 +95,37 @@
 		},
 
 		/**
+		 * @returns {Ext.data.Store or CMDBuild.core.cache.Store}
+		 */
+		getStoreDbTypes: function () {
+			return CMDBuild.global.Cache.requestAsStore(CMDBuild.core.constants.Proxy.TASK_MANAGER, {
+				autoLoad: true,
+				model: 'CMDBuild.model.taskManager.connector.AvailableSqlSources',
+				proxy: {
+					type: 'ajax',
+					url: CMDBuild.core.proxy.index.Json.taskManager.connector.readSqlSources,
+					reader: {
+						type: 'json',
+						root: CMDBuild.core.constants.Proxy.RESPONSE
+					}
+				}
+			});
+		},
+
+		/**
+		 * @returns {Ext.data.ArrayStore}
+		 */
+		getStoreDeletionTypes: function () {
+			return Ext.create('Ext.data.ArrayStore', {
+				fields: [CMDBuild.core.constants.Proxy.DESCRIPTION, CMDBuild.core.constants.Proxy.VALUE],
+				data: [
+					[CMDBuild.Translation.administration.tasks.taskConnector.deletionTypes.deleteCard, CMDBuild.core.constants.Proxy.DELETE_CARD],
+					[CMDBuild.Translation.administration.tasks.taskConnector.deletionTypes.changeStatus, CMDBuild.core.constants.Proxy.CHANGE_STATUS]
+				]
+			});
+		},
+
+		/**
 		 * @returns {Ext.data.Store}
 		 *
 		 * TODO: implement real server call
@@ -140,7 +140,7 @@
 		remove: function (parameters) {
 			parameters = Ext.isEmpty(parameters) ? {} : parameters;
 
-			Ext.apply(parameters, { url: CMDBuild.core.proxy.index.Json.tasks.connector.remove });
+			Ext.apply(parameters, { url: CMDBuild.core.proxy.index.Json.taskManager.connector.remove });
 
 			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.TASK_MANAGER, parameters, true);
 		},
@@ -153,7 +153,7 @@
 		update: function (parameters) {
 			parameters = Ext.isEmpty(parameters) ? {} : parameters;
 
-			Ext.apply(parameters, { url: CMDBuild.core.proxy.index.Json.tasks.connector.update });
+			Ext.apply(parameters, { url: CMDBuild.core.proxy.index.Json.taskManager.connector.update });
 
 			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.TASK_MANAGER, parameters, true);
 		}

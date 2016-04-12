@@ -42,22 +42,6 @@
 		},
 
 		/**
-		 * @param {Object} parameters
-		 *
-		 * @returns {Void}
-		 */
-		getAll: function (parameters) {
-			parameters = Ext.isEmpty(parameters) ? {} : parameters;
-
-			Ext.apply(parameters, {
-				loadMask: false,
-				url: CMDBuild.core.proxy.index.Json.email.attachment.readAll
-			});
-
-			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.ATTACHMENT, parameters, true);
-		},
-
-		/**
 		 * @returns {Ext.data.Store or CMDBuild.core.cache.Store}
 		 */
 		getStore: function () {
@@ -86,7 +70,7 @@
 		/**
 		 * @returns {Ext.data.Store or CMDBuild.core.cache.Store}
 		 */
-		getTargetClassComboStore: function () {
+		getStoreTargetClass: function () {
 			return CMDBuild.global.Cache.requestAsStore(CMDBuild.core.constants.Proxy.CLASS, {
 				autoLoad: true,
 				model: 'CMDBuild.model.common.tabs.email.attachments.TargetClass',
@@ -119,6 +103,22 @@
 		 *
 		 * @returns {Void}
 		 */
+		readAll: function (parameters) {
+			parameters = Ext.isEmpty(parameters) ? {} : parameters;
+
+			Ext.apply(parameters, {
+				loadMask: false,
+				url: CMDBuild.core.proxy.index.Json.email.attachment.readAll
+			});
+
+			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.ATTACHMENT, parameters, true);
+		},
+
+		/**
+		 * @param {Object} parameters
+		 *
+		 * @returns {Void}
+		 */
 		remove: function (parameters) {
 			parameters = Ext.isEmpty(parameters) ? {} : parameters;
 
@@ -135,7 +135,7 @@
 		upload: function (parameters) {
 			parameters = Ext.isEmpty(parameters) ? {} : parameters;
 
-			Ext.apply(parameters, { url: CMDBuild.core.proxy.index.Json.email.attachment.upload });
+			Ext.apply(parameters, { url: CMDBuild.core.proxy.index.Json.email.attachment.create });
 
 			CMDBuild.core.interfaces.FormSubmit.submit(parameters);
 		}

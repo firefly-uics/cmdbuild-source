@@ -153,7 +153,7 @@
 						params[CMDBuild.core.constants.Proxy.CARD_ID] = record.get(CMDBuild.core.constants.Proxy.ID); // Historic card ID
 						params[CMDBuild.core.constants.Proxy.CLASS_NAME] = record.get(CMDBuild.core.constants.Proxy.CLASS_NAME);
 
-						this.getProxy().getHistoric({ // Get expanded card data
+						this.getProxy().readHistoric({ // Get expanded card data
 							params: params,
 							scope: this,
 							failure: function(response, options, decodedResponse) {
@@ -168,7 +168,7 @@
 									predecessorParams[CMDBuild.core.constants.Proxy.CARD_ID] = predecessorRecord.get(CMDBuild.core.constants.Proxy.ID); // Historic card ID
 									predecessorParams[CMDBuild.core.constants.Proxy.CLASS_NAME] = record.get(CMDBuild.core.constants.Proxy.CLASS_NAME);
 
-									this.getProxy().getHistoric({ // Get expanded predecessor's card data
+									this.getProxy().readHistoric({ // Get expanded predecessor's card data
 										params: predecessorParams,
 										scope: this,
 										failure: function(response, options, decodedResponse) {
@@ -196,7 +196,7 @@
 					params[CMDBuild.core.constants.Proxy.ID] = record.get(CMDBuild.core.constants.Proxy.ID); // Historic relation ID
 					params[CMDBuild.core.constants.Proxy.DOMAIN] = record.get(CMDBuild.core.constants.Proxy.DOMAIN);
 
-					this.getProxy().getRelationHistoric({
+					this.getProxy().readHistoricRelation({
 						params: params,
 						scope: this,
 						success: function(response, options, decodedResponse) {
@@ -246,8 +246,9 @@
 								this.getRowExpanderPlugin().collapseAll();
 
 								if (this.grid.includeRelationsCheckbox.getValue()) {
-									this.getProxy().getRelations({
+									this.getProxy().readRelations({
 										params: params,
+										loadMask: false,
 										scope: this,
 										failure: function(response, options, decodedResponse) {
 											_error('getCardRelationsHistory failure', this);

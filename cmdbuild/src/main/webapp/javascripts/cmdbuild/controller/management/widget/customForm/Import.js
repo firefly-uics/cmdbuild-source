@@ -6,9 +6,9 @@
 		requires: [
 			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.Message',
-			'CMDBuild.core.proxy.Csv',
+			'CMDBuild.core.proxy.customForm.Csv',
 			'CMDBuild.core.proxy.lookup.Lookup',
-			'CMDBuild.core.proxy.widget.CustomForm',
+			'CMDBuild.core.proxy.widget.customForm.CustomForm',
 			'CMDBuild.core.RequestBarrier'
 		],
 
@@ -174,7 +174,7 @@
 						}
 					});
 
-					CMDBuild.core.proxy.widget.CustomForm.getCardList({
+					CMDBuild.core.proxy.widget.customForm.CustomForm.readAllCards({
 						params: params,
 						loadMask: false,
 						scope: this,
@@ -384,7 +384,7 @@
 			if (this.validate(this.form)) {
 				this.view.setLoading(true);
 
-				CMDBuild.core.proxy.Csv.decode({
+				CMDBuild.core.proxy.customForm.Csv.decode({
 					form: this.form.getForm(),
 					scope: this,
 					failure: function (form, action) {
