@@ -2,11 +2,10 @@ package org.cmdbuild.spring.configuration;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.cmdbuild.auth.DefaultTokenManager;
-import org.cmdbuild.auth.ObservableUserStore;
+import org.cmdbuild.auth.AnonymousWhenMissingUserStore;
 import org.cmdbuild.auth.SimpleTokenGenerator;
+import org.cmdbuild.auth.ThreadLocalUserStore;
 import org.cmdbuild.auth.TokenGenerator;
-import org.cmdbuild.auth.TokenManager;
 import org.cmdbuild.auth.UserStore;
 import org.cmdbuild.listeners.ContextStore;
 import org.cmdbuild.listeners.ContextStoreNotifier;
@@ -16,7 +15,6 @@ import org.cmdbuild.listeners.ThreadLocalContextStore;
 import org.cmdbuild.listeners.ValuesStore;
 import org.cmdbuild.notification.Notifier;
 import org.cmdbuild.services.SessionVars;
-import org.cmdbuild.services.ValuesStoreBasedUserStore;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -36,15 +34,8 @@ public class Web {
 	}
 
 	@Bean
-	public UserStore observableUserStore() {
-		final ObservableUserStore bean = new ObservableUserStore(valuesStoreBasedUserStore());
-		bean.add(defaultTokenManager());
-		return bean;
-	}
-
-	// TODO should be a bean
-	private UserStore valuesStoreBasedUserStore() {
-		return new ValuesStoreBasedUserStore(httpSessionBasedValuesStore());
+	public UserStore userStore() {
+		return new AnonymousWhenMissingUserStore(new ThreadLocalUserStore());
 	}
 
 	@Bean
@@ -65,11 +56,6 @@ public class Web {
 	@Bean
 	public ContextStore threadLocalContextStore() {
 		return new ThreadLocalContextStore();
-	}
-
-	@Bean
-	public TokenManager defaultTokenManager() {
-		return new DefaultTokenManager(simpleTokenGenerator());
 	}
 
 	@Bean

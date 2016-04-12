@@ -3,6 +3,7 @@ package org.cmdbuild.filters;
 import static org.cmdbuild.spring.util.Constants.PROTOTYPE;
 
 import java.io.IOException;
+import java.util.concurrent.atomic.AtomicReference;
 
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
@@ -17,6 +18,7 @@ import org.cmdbuild.auth.ClientRequestAuthenticator.ClientRequest;
 import org.cmdbuild.exception.RedirectException;
 import org.cmdbuild.logger.Log;
 import org.cmdbuild.logic.auth.AuthenticationLogic.ClientAuthenticationResponse;
+import org.cmdbuild.logic.auth.SessionLogic.Callback;
 import org.cmdbuild.logic.auth.StandardSessionLogic;
 import org.slf4j.Logger;
 import org.slf4j.Marker;
@@ -76,6 +78,9 @@ public class AuthFilter implements Filter {
 			throws IOException, ServletException {
 		final HttpServletRequest httpRequest = (HttpServletRequest) request;
 		final HttpServletResponse httpResponse = (HttpServletResponse) response;
+		// TODO do it in another way
+		final AtomicReference<String> sessionId = new AtomicReference<>(
+				httpRequest.getHeader("CMDBuild-Authentication"));
 		try {
 			final String uri = httpRequest.getRequestURI().substring(httpRequest.getContextPath().length());
 			logger.debug(marker, "request received for '{}'", uri);
@@ -84,32 +89,44 @@ public class AuthFilter implements Filter {
 				logger.debug(marker, "root page, redirecting to login");
 				redirectToLogin(httpResponse);
 			} else if (isLoginPage(uri)) {
-				if (// TODO check session id passed within headers
-				sessionLogic.isValidUser()) {
+				if (sessionLogic.isValidUser(sessionId.get())) {
 					redirectToManagement(httpResponse);
 				} else {
 					logger.debug(marker, "user is not valid, trying login using HTTP request");
 					final ClientAuthenticationResponse clientAuthenticatorResponse = sessionLogic
-							.login(new ClientRequestWrapper(httpRequest));
+							.create(new ClientRequestWrapper(httpRequest), new Callback() {
+
+								@Override
+								public void sessionCreated(final String id) {
+									sessionId.set(id);
+									sessionLogic.setCurrent(id);
+								}
+
+							});
 					final String authenticationRedirectUrl = clientAuthenticatorResponse.getRedirectUrl();
 					if (authenticationRedirectUrl != null) {
 						redirectToCustom(authenticationRedirectUrl);
-					} else if (sessionLogic.isValidUser()) {
+					} else if (sessionLogic.isValidUser(sessionId.get())) {
 						redirectToManagement(httpResponse);
 					}
 				}
 			} else if (!isService(uri) && !isShark(uri) && !isResouce(uri) && !isLoginPage(uri)) {
-				if ( // TODO check session id passed within headers
-				!sessionLogic.isValidUser()) {
+				if (!sessionLogic.isValidUser(sessionId.get())) {
 					logger.debug(marker, "user is not valid, trying login using HTTP request");
 					final ClientAuthenticationResponse clientAuthenticatorResponse = sessionLogic
-							.login(new ClientRequestWrapper(httpRequest));
+							.create(new ClientRequestWrapper(httpRequest), new Callback() {
+
+								@Override
+								public void sessionCreated(final String id) {
+									sessionId.set(id);
+									sessionLogic.setCurrent(id);
+								}
+
+							});
 					final String authenticationRedirectUrl = clientAuthenticatorResponse.getRedirectUrl();
 					if (authenticationRedirectUrl != null) {
 						redirectToCustom(authenticationRedirectUrl);
-					} else if (
-					// TODO check session id passed within headers
-					!sessionLogic.isValidUser() && !isLogoutPage(uri)) {
+					} else if (!sessionLogic.isValidUser(sessionId.get()) && !isLogoutPage(uri)) {
 						redirectToLogin(httpResponse);
 					}
 				}
@@ -156,7 +173,7 @@ public class AuthFilter implements Filter {
 	}
 
 	private static boolean isResouce(final String uri) {
-		return uri.matches("^(.*)(css|js|png|jpg|gif)$");
+		return uri.matches("^(.*)(css|js|png|jpg|gif|ico)$");
 	}
 
 }

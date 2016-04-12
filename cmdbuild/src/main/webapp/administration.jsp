@@ -15,6 +15,7 @@
 <%@ page import="org.cmdbuild.spring.SpringIntegrationUtils" %>
 
 <%
+	final SessionLogic sessionLogic = SpringIntegrationUtils.applicationContext().getBean(StandardSessionLogic.class);
 	final String lang = SpringIntegrationUtils.applicationContext().getBean(SessionVars.class).getLanguage();
 	final UserStore userStore = SpringIntegrationUtils.applicationContext().getBean(UserStore.class);
 	final OperationUser operationUser = userStore.getUser();
@@ -72,6 +73,7 @@
 			 * @deprecated (CMDBuild.configuration.runtime)
 			 */
 			Ext.ns('CMDBuild.Runtime');
+			CMDBuild.Runtime.SessionId = <%= sessionLogic.getCurrent() %>;
 			CMDBuild.Runtime.UserId = <%= operationUser.getAuthenticatedUser().getId() %>;
 			CMDBuild.Runtime.Username = '<%= StringEscapeUtils.escapeEcmaScript(operationUser.getAuthenticatedUser().getUsername()) %>';
 			CMDBuild.Runtime.DefaultGroupId = <%= group.getId() %>;

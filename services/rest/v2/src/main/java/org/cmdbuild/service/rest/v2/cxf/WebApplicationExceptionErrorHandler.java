@@ -228,12 +228,6 @@ public class WebApplicationExceptionErrorHandler implements ErrorHandler, Loggin
 		notFound(value);
 	}
 
-	@Override
-	public void userNotFound(final String value) {
-		logger.error("user not found '{}'", value);
-		notFound(value);
-	}
-
 	private void badRequest(final Object entity) {
 		throw new WebApplicationException(Response.status(BAD_REQUEST) //
 				.entity(entity) //
