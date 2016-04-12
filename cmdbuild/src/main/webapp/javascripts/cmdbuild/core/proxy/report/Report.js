@@ -8,6 +8,7 @@
 		requires: [
 			'CMDBuild.core.configurations.Timeout',
 			'CMDBuild.core.constants.Proxy',
+			'CMDBuild.core.interfaces.FormSubmit',
 			'CMDBuild.core.proxy.index.Json',
 			'CMDBuild.model.report.Grid'
 		],
@@ -28,6 +29,21 @@
 			});
 
 			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.REPORT, parameters, true);
+		},
+
+		/**
+		 * @param {Object} parameters
+		 *
+		 * @returns {Void}
+		 */
+		download: function (parameters) {
+			parameters = Ext.isEmpty(parameters) ? {} : parameters;
+
+			Ext.apply(parameters, {
+				url: CMDBuild.core.proxy.index.Json.report.factory.print + '?donotdelete=true'  // Add parameter to avoid report delete
+			});
+
+			CMDBuild.core.interfaces.FormSubmit.submit(parameters);
 		},
 
 		/**
@@ -63,8 +79,6 @@
 		 * @param {Object} parameters
 		 *
 		 * @returns {Void}
-		 *
-		 * @management
 		 */
 		readTypesTree: function (parameters) {
 			parameters = Ext.isEmpty(parameters) ? {} : parameters;

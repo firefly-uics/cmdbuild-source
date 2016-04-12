@@ -87,7 +87,7 @@
 					scope: this,
 
 					handler: function(button, e) {
-						this.delegate.cmfg('onOpenReportSaveButtonClick');
+						this.delegate.cmfg('onWidgetOpenReportSaveButtonClick');
 					}
 				})
 			];

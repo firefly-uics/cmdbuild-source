@@ -49,6 +49,23 @@
 		},
 
 		/**
+		 * @param {Object} parameters
+		 *
+		 * @returns {Void}
+		 *
+		 * @management
+		 */
+		download: function (parameters) {
+			parameters = Ext.isEmpty(parameters) ? {} : parameters;
+
+			Ext.apply(parameters, {
+				url: CMDBuild.core.proxy.index.Json.report.factory.print + '?donotdelete=true'  // Add parameter to avoid report delete
+			});
+
+			CMDBuild.core.interfaces.FormSubmit.submit(parameters);
+		},
+
+		/**
 		 * @returns {Ext.data.ArrayStore}
 		 *
 		 * @management
@@ -111,16 +128,6 @@
 					{ property: CMDBuild.core.constants.Proxy.DESCRIPTION, direction: 'ASC' }
 				]
 			});
-		},
-
-		print: function (parameters) {
-			parameters = Ext.isEmpty(parameters) ? {} : parameters;
-
-			Ext.apply(parameters, {
-				url: CMDBuild.core.proxy.index.Json.report.factory.print + '?donotdelete=true'  // Add parameter to avoid report delete
-			});
-
-			CMDBuild.core.interfaces.FormSubmit.submit(parameters);
 		},
 
 		/**
