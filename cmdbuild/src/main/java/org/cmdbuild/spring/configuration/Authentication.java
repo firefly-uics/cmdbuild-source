@@ -1,9 +1,11 @@
 package org.cmdbuild.spring.configuration;
 
 import static java.util.Arrays.asList;
+import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.cmdbuild.spring.util.Constants.DEFAULT;
 import static org.cmdbuild.spring.util.Constants.SOAP;
 
+import org.apache.commons.lang3.tuple.Pair;
 import org.cmdbuild.auth.AuthenticationService;
 import org.cmdbuild.auth.AuthenticationStore;
 import org.cmdbuild.auth.CasAuthenticator;
@@ -13,6 +15,7 @@ import org.cmdbuild.auth.LdapAuthenticator;
 import org.cmdbuild.auth.LegacyDBAuthenticator;
 import org.cmdbuild.auth.NotSystemUserFetcher;
 import org.cmdbuild.auth.UserStore;
+import org.cmdbuild.auth.user.OperationUser;
 import org.cmdbuild.data.store.InMemoryStore;
 import org.cmdbuild.data.store.session.DefaultSessionStore;
 import org.cmdbuild.data.store.session.Session;
@@ -37,6 +40,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+
+import com.google.common.cache.Cache;
+import com.google.common.cache.CacheBuilder;
 
 @Configuration
 public class Authentication {
@@ -149,7 +155,7 @@ public class Authentication {
 		final DefaultAuthenticationLogic delegate = new DefaultAuthenticationLogic(defaultAuthenticationService(),
 				privilegeManagement.privilegeContextFactory(), data.systemDataView());
 		return new StandardSessionLogic(new DefaultSessionLogic(delegate, userStore, sessionStore(),
-				web.simpleTokenGenerator(), properties.cmdbuildProperties()));
+				web.simpleTokenGenerator(), sessionAndUserCache()));
 	}
 
 	@Bean
@@ -157,7 +163,7 @@ public class Authentication {
 		final AuthenticationLogic delegate = new DefaultAuthenticationLogic(soapAuthenticationService(),
 				privilegeManagement.privilegeContextFactory(), data.systemDataView());
 		return new SoapSessionLogic(new DefaultSessionLogic(delegate, userStore, sessionStore(),
-				web.simpleTokenGenerator(), properties.cmdbuildProperties()));
+				web.simpleTokenGenerator(), sessionAndUserCache()));
 	}
 
 	@Bean
@@ -165,7 +171,16 @@ public class Authentication {
 		final AuthenticationLogic delegate = new DefaultAuthenticationLogic(restAuthenticationService(),
 				privilegeManagement.privilegeContextFactory(), data.systemDataView());
 		return new RestSessionLogic(new DefaultSessionLogic(delegate, userStore, sessionStore(),
-				web.simpleTokenGenerator(), properties.cmdbuildProperties()));
+				web.simpleTokenGenerator(), sessionAndUserCache()));
+	}
+
+	@Bean
+	protected Cache<String, Pair<OperationUser, OperationUser>> sessionAndUserCache() {
+		// TODO needs reboot, we should avoid it
+		return CacheBuilder.newBuilder() //
+				.expireAfterAccess((properties.cmdbuildProperties().getSessionTimoutOrZero() == 0) ? Long.MAX_VALUE
+						: properties.cmdbuildProperties().getSessionTimoutOrZero(), SECONDS) //
+				.build();
 	}
 
 	@Bean
