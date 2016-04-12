@@ -28,7 +28,7 @@
 		view: undefined,
 
 		/**
-		 * @property {Ext.data.store}
+		 * @property {Ext.data.Store}
 		 */
 		workflowAttributesStore: undefined,
 
