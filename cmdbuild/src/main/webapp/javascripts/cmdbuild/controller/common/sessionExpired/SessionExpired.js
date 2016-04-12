@@ -83,16 +83,16 @@
 				loadMask: false,
 				scope: this,
 				success: function (response, options, decodedResponse) {
-					CMDBuild.core.proxy.session.Rest.login({
-						params: params,
-						scope: this,
-						success: function (response, options, decodedResponse) {
-							decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.DATA];
-
-							if (Ext.isObject(decodedResponse) && !Ext.Object.isEmpty(decodedResponse))
-								Ext.util.Cookies.set(CMDBuild.core.constants.Proxy.SESSION_TOKEN, decodedResponse['_id']);
-						},
-						callback: function (options, success, response) {
+//					CMDBuild.core.proxy.session.Rest.login({
+//						params: params,
+//						scope: this,
+//						success: function (response, options, decodedResponse) {
+//							decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.DATA];
+//
+//							if (Ext.isObject(decodedResponse) && !Ext.Object.isEmpty(decodedResponse))
+//								Ext.util.Cookies.set(CMDBuild.core.constants.Proxy.SESSION_TOKEN, decodedResponse['_id']);
+//						},
+//						callback: function (options, success, response) {
 							// CMDBuild redirect
 							if (Ext.Object.isEmpty(this.ajaxParameters)) {
 								window.location.reload();
@@ -101,8 +101,8 @@
 
 								CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.UNCACHED, this.ajaxParameters);
 							}
-						}
-					});
+//						}
+//					});
 				},
 				failure: function (response, options, decodedResponse) {
 					var oldToFront = this.view.toFront;

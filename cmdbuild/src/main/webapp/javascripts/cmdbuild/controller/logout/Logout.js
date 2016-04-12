@@ -6,7 +6,7 @@
 		requires: [
 			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.proxy.session.JsonRpc',
-			'CMDBuild.core.proxy.session.Rest'
+//			'CMDBuild.core.proxy.session.Rest'
 		],
 
 		/**
@@ -19,11 +19,11 @@
 		constructor: function (configurationObject) {
 			this.callParent(arguments);
 
-			if (!Ext.isEmpty(Ext.util.Cookies.get(CMDBuild.core.constants.Proxy.SESSION_TOKEN))) {
-				this.doRestLogout();
-			} else {
+//			if (!Ext.isEmpty(Ext.util.Cookies.get(CMDBuild.core.constants.Proxy.SESSION_TOKEN))) {
+//				this.doRestLogout();
+//			} else {
 				this.doJsonRpcLogout();
-			}
+//			}
 		},
 
 		/**
@@ -42,21 +42,21 @@
 			});
 		},
 
-		/**
-		 * @returns {Void}
-		 *
-		 * @private
-		 */
-		doRestLogout: function () {
-			var urlParams = {};
-			urlParams[CMDBuild.core.constants.Proxy.TOKEN] = Ext.util.Cookies.get(CMDBuild.core.constants.Proxy.SESSION_TOKEN);
-
-			CMDBuild.core.proxy.session.Rest.logout({
-				urlParams: urlParams,
-				scope: this,
-				callback: this.doJsonRpcLogout
-			});
-		}
+//		/**
+//		 * @returns {Void}
+//		 *
+//		 * @private
+//		 */
+//		doRestLogout: function () {
+//			var urlParams = {};
+//			urlParams[CMDBuild.core.constants.Proxy.TOKEN] = Ext.util.Cookies.get(CMDBuild.core.constants.Proxy.SESSION_TOKEN);
+//
+//			CMDBuild.core.proxy.session.Rest.logout({
+//				urlParams: urlParams,
+//				scope: this,
+//				callback: this.doJsonRpcLogout
+//			});
+//		}
 	});
 
 })();

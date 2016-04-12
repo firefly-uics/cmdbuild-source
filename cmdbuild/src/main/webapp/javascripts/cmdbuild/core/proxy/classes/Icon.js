@@ -21,7 +21,7 @@
 			parameters = Ext.isEmpty(parameters) ? {} : parameters;
 
 			Ext.apply(parameters, {
-				url: 'services/json/file/upload?'	+ CMDBuild.core.constants.Proxy.AUTHORIZATION_HEADER_KEY + '=' + Ext.util.Cookies.get(CMDBuild.core.constants.Proxy.SESSION_TOKEN) // Headers not supported in form submit
+				url: 'services/json/file/upload?' + CMDBuild.core.constants.Proxy.AUTHORIZATION_HEADER_KEY + '=' + Ext.util.Cookies.get(CMDBuild.core.constants.Proxy.SESSION_ID) // Headers not supported in form submit
 			});
 
 			CMDBuild.core.interfaces.FormSubmit.submit(parameters);
@@ -32,7 +32,7 @@
 		 */
 		remove: function (parameters) {
 			parameters.headers = Ext.isEmpty(parameters.headers) ? {} : parameters.headers;
-			parameters.headers[CMDBuild.core.constants.Proxy.AUTHORIZATION_HEADER_KEY] = Ext.util.Cookies.get(CMDBuild.core.constants.Proxy.SESSION_TOKEN);
+//			parameters.headers[CMDBuild.core.constants.Proxy.AUTHORIZATION_HEADER_KEY] = Ext.util.Cookies.get(CMDBuild.core.constants.Proxy.SESSION_TOKEN);
 
 			CMDBuild.core.interfaces.Ajax.request({
 				method: 'DELETE',
@@ -62,7 +62,7 @@
 		 */
 		getFolders: function (parameters) {
 			parameters.headers = Ext.isEmpty(parameters.headers) ? {} : parameters.headers;
-			parameters.headers[CMDBuild.core.constants.Proxy.AUTHORIZATION_HEADER_KEY] = Ext.util.Cookies.get(CMDBuild.core.constants.Proxy.SESSION_TOKEN);
+//			parameters.headers[CMDBuild.core.constants.Proxy.AUTHORIZATION_HEADER_KEY] = Ext.util.Cookies.get(CMDBuild.core.constants.Proxy.SESSION_TOKEN);
 
 			CMDBuild.core.interfaces.Ajax.request({
 				method: 'GET',
@@ -82,7 +82,7 @@
 		 */
 		readAllIcons: function (parameters) {
 			parameters.headers = Ext.isEmpty(parameters.headers) ? {} : parameters.headers;
-			parameters.headers[CMDBuild.core.constants.Proxy.AUTHORIZATION_HEADER_KEY] = Ext.util.Cookies.get(CMDBuild.core.constants.Proxy.SESSION_TOKEN);
+//			parameters.headers[CMDBuild.core.constants.Proxy.AUTHORIZATION_HEADER_KEY] = Ext.util.Cookies.get(CMDBuild.core.constants.Proxy.SESSION_TOKEN);
 
 			CMDBuild.core.interfaces.Ajax.request({
 				method: 'GET',
@@ -102,7 +102,7 @@
 		 */
 		update: function (parameters) {
 			parameters.headers = Ext.isEmpty(parameters.headers) ? {} : parameters.headers;
-			parameters.headers[CMDBuild.core.constants.Proxy.AUTHORIZATION_HEADER_KEY] = Ext.util.Cookies.get(CMDBuild.core.constants.Proxy.SESSION_TOKEN);
+//			parameters.headers[CMDBuild.core.constants.Proxy.AUTHORIZATION_HEADER_KEY] = Ext.util.Cookies.get(CMDBuild.core.constants.Proxy.SESSION_TOKEN);
 
 			CMDBuild.core.interfaces.Ajax.request({
 				method: 'POST',

@@ -82,8 +82,9 @@
 								this.view.imageIconDisplayField.setSrc(
 									'services/rest/v2/filestores/images/folders/'
 									+ this.classIconObject.image.details.folder + '/files/'
-									+ this.classIconObject.image.details.file + '/download?'
-									+ CMDBuild.core.constants.Proxy.AUTHORIZATION_HEADER_KEY + '=' + Ext.util.Cookies.get(CMDBuild.core.constants.Proxy.SESSION_TOKEN)
+									+ this.classIconObject.image.details.file + '/download/'
+//									?'
+//									+ CMDBuild.core.constants.Proxy.AUTHORIZATION_HEADER_KEY + '=' + Ext.util.Cookies.get(CMDBuild.core.constants.Proxy.SESSION_TOKEN)
 								);
 
 								CMDBuild.core.LoadMask.hide();

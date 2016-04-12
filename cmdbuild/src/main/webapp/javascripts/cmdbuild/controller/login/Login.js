@@ -7,7 +7,7 @@
 			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.LoadMask',
 			'CMDBuild.core.proxy.session.JsonRpc',
-			'CMDBuild.core.proxy.session.Rest'
+//			'CMDBuild.core.proxy.session.Rest'
 		],
 
 		/**
@@ -61,24 +61,24 @@
 					scope: this,
 					success: function (response, options, decodedResponse) {
 						if (!Ext.isEmpty(this.form.password.getValue())) {
-							CMDBuild.core.proxy.session.Rest.login({
-								params: params,
-								scope: this,
-								success: function (response, options, decodedResponse) {
-									decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.DATA];
-
-									if (Ext.isObject(decodedResponse) && !Ext.Object.isEmpty(decodedResponse))
-										Ext.util.Cookies.set(CMDBuild.core.constants.Proxy.SESSION_TOKEN, decodedResponse['_id']);
-								},
-								callback: function (options, success, response) {
+//							CMDBuild.core.proxy.session.Rest.login({
+//								params: params,
+//								scope: this,
+//								success: function (response, options, decodedResponse) {
+//									decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.DATA];
+//
+//									if (Ext.isObject(decodedResponse) && !Ext.Object.isEmpty(decodedResponse))
+//										Ext.util.Cookies.set(CMDBuild.core.constants.Proxy.SESSION_TOKEN, decodedResponse['_id']);
+//								},
+//								callback: function (options, success, response) {
 									// CMDBuild redirect
 									if (/administration.jsp$/.test(window.location)) {
 										window.location = 'administration.jsp' + window.location.hash;
 									} else {
 										window.location = 'management.jsp' + window.location.hash;
 									}
-								}
-							});
+//								}
+//							});
 						} else {
 							// CMDBuild redirect
 							if (/administration.jsp$/.test(window.location)) {
