@@ -13,16 +13,11 @@ Ext.define("CMDBuild.view.management.utilities.CMModExportCSV", {
 
 		this.exportBtn = Ext.create('CMDBuild.core.buttons.text.Export', {
 			scope: this,
-//			formBind: true,<
 			handler: function (button, e){
 				var params = this.form.getValues();
-//				this.form.getForm().submit();
 				CMDBuild.core.proxy.utility.ExportCsv.download({
 					form: this.form.getForm(),
-					params: params,
-					success: function () {
-_debug('SICCESS');
-					}
+					params: params
 				});
 			}
 		});

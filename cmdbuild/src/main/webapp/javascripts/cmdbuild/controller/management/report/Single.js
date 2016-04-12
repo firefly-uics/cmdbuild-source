@@ -273,19 +273,10 @@
 			params[CMDBuild.core.constants.Proxy.FORCE_DOWNLOAD_PARAM_KEY] = true;
 
 			if (forceDownload) { // Force download mode
-				var form = Ext.create('Ext.form.Panel', {
-					standardSubmit: true,
-					url: CMDBuild.core.proxy.index.Json.report.factory.print + '?donotdelete=true' // Add parameter to avoid report delete
-				});
-
-				form.submit({
-					target: '_blank',
+				CMDBuild.core.proxy.report.Report.download({
+					buildRuntimeForm: true,
 					params: params
 				});
-
-				Ext.defer(function() { // Form cleanup
-					form.close();
-				}, 100);
 			} else { // Add to view display mode
 				this.view.removeAll();
 

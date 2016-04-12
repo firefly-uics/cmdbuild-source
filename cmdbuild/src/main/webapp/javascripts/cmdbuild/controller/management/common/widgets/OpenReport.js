@@ -24,8 +24,8 @@
 		cmfgCatchedFunctions: [
 			'isBusy',
 			'isValid',
-			'onOpenReportSaveButtonClick',
 			'onWidgetOpenReportBeforeActiveView = beforeActiveView',
+			'onWidgetOpenReportSaveButtonClick',
 			'showReport',
 			'widgetOpenReportGetData = getData',
 			'widgetOpenReportSelectedReportRecordGet = selectedReportRecordGet'
@@ -77,6 +77,40 @@
 					}
 				});
 			}
+		},
+
+		/**
+		 * Build server call to configure and create reports
+		 */
+		onWidgetOpenReportSaveButtonClick: function() {
+			var params = {};
+
+			// Build params with fields values form server call
+			this.view.getForm().getFields().each(function(field, i, len) {
+				if (Ext.isFunction(field.getName) && Ext.isFunction(field.getValue)) {
+					var fieldValue = field.getValue();
+
+					// Date format check
+					if (Ext.isDate(fieldValue))
+						fieldValue = Ext.Date.format(fieldValue, 'd/m/Y');
+
+					params[field.getName()] = fieldValue;
+				}
+			}, this);
+
+			params['reportExtension'] = params[CMDBuild.core.constants.Proxy.EXTENSION]; // TODO: waiting for refactor (rename)
+
+			if (this.view.getForm().isValid())
+				CMDBuild.core.proxy.widget.OpenReport.update({
+					params: params,
+					scope: this,
+					success: function(response, options, decodedResponse) { // Pop-up display mode
+						Ext.create('CMDBuild.controller.management.report.Modal', {
+							parentDelegate: this,
+							extension: params[CMDBuild.core.constants.Proxy.EXTENSION]
+						});
+					}
+				});
 		},
 
 		/**
@@ -156,64 +190,16 @@
 		},
 
 		/**
-		 * Build server call to configure and create reports
-		 */
-		onOpenReportSaveButtonClick: function() {
-			var params = {};
-
-			// Build params with fields values form server call
-			this.view.getForm().getFields().each(function(field, i, len) {
-				if (Ext.isFunction(field.getName) && Ext.isFunction(field.getValue)) {
-					var fieldValue = field.getValue();
-
-					// Date format check
-					if (Ext.isDate(fieldValue))
-						fieldValue = Ext.Date.format(fieldValue, 'd/m/Y');
-
-					params[field.getName()] = fieldValue;
-				}
-			}, this);
-
-			params['reportExtension'] = params[CMDBuild.core.constants.Proxy.EXTENSION]; // TODO: waiting for refactor (rename)
-
-			if (this.view.getForm().isValid())
-				CMDBuild.core.proxy.widget.OpenReport.update({
-					params: params,
-					scope: this,
-					success: function(response, options, decodedResponse) { // Pop-up display mode
-						Ext.create('CMDBuild.controller.management.report.Modal', {
-							parentDelegate: this,
-							extension: params[CMDBuild.core.constants.Proxy.EXTENSION]
-						});
-					}
-				});
-		},
-
-		/**
 		 * @param {Boolean} forceDownload
 		 */
-		showReport: function() {
+		showReport: function() { // TODO: rename method
 			var params = {};
 			params[CMDBuild.core.constants.Proxy.FORCE_DOWNLOAD_PARAM_KEY] = true;
 
-			CMDBuild.core.proxy.widget.OpenReport.print({
+			CMDBuild.core.proxy.widget.OpenReport.download({
 				buildRuntimeForm: true,
 				params: params
 			});
-//
-//			var form = Ext.create('Ext.form.Panel', {
-//				standardSubmit: true,
-//				url: CMDBuild.core.proxy.index.Json.report.factory.print + '?donotdelete=true' // Add parameter to avoid report delete
-//			});
-//
-//			form.submit({
-//				target: '_blank',
-//				params: params
-//			});
-//
-//			Ext.defer(function() { // Form cleanup
-//				form.close();
-//			}, 100);
 		},
 
 		/**
