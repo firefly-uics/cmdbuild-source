@@ -129,8 +129,8 @@
 	};
 
 	function buildGeoserverLayer(geoAttribute) {
-		var geoserver_ws = CMDBuild.configuration.gis.get(['geoserver', 'workspace']), // TODO: use proxy constants
-			geoserver_url = CMDBuild.configuration.gis.get(['geoserver', 'url']); // TODO: use proxy constants
+		var geoserver_ws = CMDBuild.configuration.gis.get([CMDBuild.core.constants.Proxy.GEO_SERVER, 'workspace']), // TODO: use proxy constants
+			geoserver_url = CMDBuild.configuration.gis.get([CMDBuild.core.constants.Proxy.GEO_SERVER, 'url']); // TODO: use proxy constants
 
 		var layer = new OpenLayers.Layer.WMS(geoAttribute.description,
 			geoserver_url + "/" + GOESERVER_SERVICE_TYPE, {

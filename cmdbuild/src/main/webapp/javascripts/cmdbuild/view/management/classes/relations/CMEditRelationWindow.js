@@ -235,7 +235,7 @@
 		params[CMDBuild.core.constants.Proxy.DOMAIN_NAME] = domain.getName();
 		params[CMDBuild.core.constants.Proxy.RELATION_ID] = me.relation.rel_id;
 
-		params[CMDBuild.core.constants.Proxy.RELATION_MASTER_SIDE] = me.relation.masterSide;
+		params['master'] = me.relation.masterSide;
 		attributes[me.relation.masterSide] = [getCardAsParameter(me.sourceCard)];
 
 		try {

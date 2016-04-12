@@ -363,8 +363,8 @@
 								var selectionKey = Ext.Object.getKeys(modelSelections)[0];
 
 								if (!Ext.Object.isEmpty(modelSelections[selectionKey])) {
-									var lat = modelSelections[selectionKey][CMDBuild.core.constants.Proxy.LATITUDE];
-									var lon = modelSelections[selectionKey][CMDBuild.core.constants.Proxy.LONGITUDE];
+									var lat = modelSelections[selectionKey]['lat'];
+									var lon = modelSelections[selectionKey]['lon'];
 
 									modelSelections[selectionKey] = {};
 									modelSelections[selectionKey][confIndex] = new OpenLayers.Geometry.Point(lon, lat).toString();
