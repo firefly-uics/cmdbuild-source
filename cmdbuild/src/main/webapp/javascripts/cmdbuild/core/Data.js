@@ -22,11 +22,11 @@
 
 			if (!Ext.isEmpty(CMDBuild)) {
 				var defaultHeaders = {};
-				defaultHeaders[CMDBuild.core.constants.Proxy.AUTHORIZATION_HEADER_KEY] = Ext.util.Cookies.get(CMDBuild.core.constants.Proxy.SESSION_TOKEN);
+				defaultHeaders[CMDBuild.core.constants.Proxy.AUTHORIZATION_HEADER_KEY] = Ext.util.Cookies.get(CMDBuild.core.constants.Proxy.SESSION_ID);
 				defaultHeaders[CMDBuild.core.constants.Proxy.LOCALIZED_HEADER_KEY] = this.enableLocalized;
 
 				Ext.Ajax.timeout = CMDBuild.core.configurations.Timeout.getBase() * 1000;
-				Ext.Ajax[CMDBuild.core.constants.Proxy.AUTHORIZATION_HEADER_KEY] = Ext.util.Cookies.get(CMDBuild.core.constants.Proxy.SESSION_TOKEN);
+				Ext.Ajax[CMDBuild.core.constants.Proxy.AUTHORIZATION_HEADER_KEY] = Ext.util.Cookies.get(CMDBuild.core.constants.Proxy.SESSION_ID);
 				Ext.Ajax[CMDBuild.core.constants.Proxy.LOCALIZED_HEADER_KEY] = this.enableLocalized;
 
 				Ext.define('CMDBuild.data.Connection', {

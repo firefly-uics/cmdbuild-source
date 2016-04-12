@@ -152,7 +152,7 @@
 		 * @private
 		 */
 		buildUserInterface: function () {
-			if (!Ext.isEmpty(Ext.util.Cookies.get(CMDBuild.core.constants.Proxy.SESSION_TOKEN))) {
+			if (!Ext.isEmpty(Ext.util.Cookies.get(CMDBuild.core.constants.Proxy.SESSION_ID))) {
 				Ext.suspendLayouts();
 
 				_CMCache.syncAttachmentCategories();
