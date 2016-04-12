@@ -138,6 +138,6 @@
 	};
 
 	function geoserverIsEnabled() {
-		return CMDBuild.configuration.gis.get(['geoserver', 'enabled']); // TODO: use proxy constants
+		return CMDBuild.configuration.gis.get([CMDBuild.core.constants.Proxy.GEO_SERVER, 'enabled']); // TODO: use proxy constants
 	}
 })();

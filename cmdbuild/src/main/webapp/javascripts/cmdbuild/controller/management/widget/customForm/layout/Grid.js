@@ -93,7 +93,7 @@
 						}
 					}
 
-					if (Ext.isEmpty(Ext.String.trim(String(value))) && attribute[CMDBuild.core.constants.Proxy.NOT_NULL])
+					if (Ext.isEmpty(Ext.String.trim(String(value))) && attribute['isnotnull'])
 						metadata.tdCls += ' x-grid-invalid-cell-error';
 
 					return null;

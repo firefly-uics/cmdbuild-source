@@ -162,7 +162,7 @@
 			this.attributeNotNull = new Ext.ux.form.XCheckbox({
 				fieldLabel : tr.isnotnull,
 				labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
-				name : CMDBuild.core.constants.Proxy.NOT_NULL
+				name : 'isnotnull'
 			});
 
 			this.attributeUnique = new Ext.ux.form.XCheckbox({
@@ -174,7 +174,7 @@
 			this.isBasedsp = new Ext.ux.form.XCheckbox({
 				fieldLabel : tr.isbasedsp,
 				labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
-				name : CMDBuild.core.constants.Proxy.DISPLAY_IN_GRID
+				name : 'isbasedsp'
 			});
 
 			this.isActive = new Ext.ux.form.XCheckbox({

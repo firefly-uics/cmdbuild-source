@@ -35,7 +35,7 @@
 			CMDBuild.core.proxy.session.JsonRpc.logout({
 				scope: this,
 				callback: function (options, success, response) {
-					Ext.util.Cookies.clear(CMDBuild.core.constants.Proxy.SESSION_TOKEN);
+					Ext.util.Cookies.clear(CMDBuild.core.constants.Proxy.SESSION_ID);
 
 					window.location = 'index.jsp';
 				}

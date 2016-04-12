@@ -101,7 +101,7 @@
 			var parameters = {};
 			parameters[CMDBuild.core.constants.Proxy.CARD_ID] = this.getCardId();
 			parameters[CMDBuild.core.constants.Proxy.CLASS_NAME] = _CMCache.getEntryTypeNameById(this.getClassId());
-			parameters[CMDBuild.core.constants.Proxy.DOMAIN_LIMIT] = CMDBuild.configuration.instance.get(CMDBuild.core.constants.Proxy.RELATION_LIMIT);
+			parameters['domainlimit'] = CMDBuild.configuration.instance.get(CMDBuild.core.constants.Proxy.RELATION_LIMIT);
 
 			CMDBuild.core.proxy.Relation.readAll({
 				params: parameters,
@@ -226,7 +226,7 @@
 				var attributes = {};
 				params[CMDBuild.core.constants.Proxy.DOMAIN_NAME] = domain.getName();
 				params[CMDBuild.core.constants.Proxy.RELATION_ID] = model.get("rel_id");
-				params[CMDBuild.core.constants.Proxy.RELATION_MASTER_SIDE] = masterAndSlave.masterSide;
+				params['master'] = masterAndSlave.masterSide;
 
 				var masterSide = {};
 				masterSide[CMDBuild.core.constants.Proxy.CLASS_NAME] = _CMCache.getEntryTypeNameById(me.card.get("IdClass"));
