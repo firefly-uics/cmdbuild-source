@@ -46,6 +46,7 @@
 		<%@ include file="libsJsFiles.jsp"%>
 
 		<!-- 1. Main script -->
+		<script type="text/javascript" src="javascripts/cmdbuild/core/constants/Proxy.js"></script>
 		<script type="text/javascript" src="javascripts/cmdbuild/core/LoaderConfig.js"></script>
 		<script type="text/javascript" src="javascripts/cmdbuild/core/Utils.js"></script>
 		<script type="text/javascript" src="javascripts/log/log4javascript.js"></script>
@@ -57,6 +58,8 @@
 
 		<!-- 3. Runtime configuration -->
 		<script type="text/javascript">
+			Ext.util.Cookies.set(CMDBuild.core.constants.Proxy.SESSION_ID, '<%= sessionLogic.getCurrent() %>');
+
 			Ext.ns('CMDBuild.configuration.runtime');
 
 			CMDBuild.configuration.runtime = Ext.create('CMDBuild.model.configuration.Runtime');
@@ -76,7 +79,7 @@
 			 * @deprecated (CMDBuild.configuration.runtime)
 			 */
 			Ext.ns('CMDBuild.Runtime');
-			CMDBuild.Runtime.SessionId = <%= sessionLogic.getCurrent() %>;
+<%-- 			CMDBuild.Runtime.SessionId = '<%= sessionLogic.getCurrent() %>'; --%>
 			CMDBuild.Runtime.UserId = <%= operationUser.getAuthenticatedUser().getId() %>;
 			CMDBuild.Runtime.Username = '<%= StringEscapeUtils.escapeEcmaScript(operationUser.getAuthenticatedUser().getUsername()) %>';
 			CMDBuild.Runtime.DefaultGroupId = <%= group.getId() %>;

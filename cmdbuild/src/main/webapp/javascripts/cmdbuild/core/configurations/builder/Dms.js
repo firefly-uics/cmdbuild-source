@@ -23,12 +23,14 @@
 		 * @param {Options} configurationObject.scope
 		 *
 		 * @returns {Void}
+		 *
+		 * @override
 		 */
 		constructor: function (configurationObject) {
 			Ext.apply(this, configurationObject); // Apply configurations
 
 			Ext.ns('CMDBuild.configuration');
-			CMDBuild.configuration.dms = Ext.create('CMDBuild.model.core.configurations.builder.Dms'); // DMS configuration model
+			CMDBuild.configuration.dms = Ext.create('CMDBuild.model.core.configurations.builder.Dms'); // Setup configuration with defaults
 
 			CMDBuild.core.proxy.core.configurations.builder.Dms.read({
 				loadMask: false,

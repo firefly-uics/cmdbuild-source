@@ -1,6 +1,3 @@
-<!--  CONSTANTS -->
-<script type="text/javascript" src="javascripts/cmdbuild/core/constants/Proxy.js"></script>
-
 <!-- LOADER CONFIG -->
 <script type="text/javascript" src="javascripts/cmdbuild/core/LoaderConfig.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/core/Utils.js"></script>

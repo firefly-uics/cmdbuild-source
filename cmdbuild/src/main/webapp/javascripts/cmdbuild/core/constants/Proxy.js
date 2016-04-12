@@ -513,8 +513,9 @@
 		SERVER_URL: 'serverUrl',
 		SERVICE: 'service',
 		SERVICE_ENDPOINT: 'serviceEndpoint',
+		SESSION_ID: 'sessionId',
 		SESSION_TIMEOUT: 'sessionTimeout',
-		SESSION_TOKEN: 'CMDBuildSessionToken',
+		SESSION_TOKEN: 'CMDBuildSessionToken', // TODO: delete
 		SHORT: 'short',
 		SHOW_COLUMN: 'showColumn',
 		SIMPLE: 'simple',

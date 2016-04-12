@@ -23,11 +23,14 @@
 		 * @param {Object} configurationObject.scope
 		 *
 		 * @returns {Void}
+		 *
+		 * @override
 		 */
 		constructor: function (configurationObject) {
 			Ext.apply(this, configurationObject); // Apply configuration
 
 			Ext.ns('CMDBuild.configuration');
+			CMDBuild.configuration.gis = Ext.create('CMDBuild.model.core.configurations.builder.gis.Gis'); // Setup configuration with defaults
 
 			CMDBuild.core.proxy.core.configurations.builder.Gis.read({
 				loadMask: false,
