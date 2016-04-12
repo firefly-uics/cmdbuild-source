@@ -77,8 +77,6 @@ import org.cmdbuild.service.rest.v2.cxf.CxfProcessesConfiguration;
 import org.cmdbuild.service.rest.v2.cxf.CxfRelations;
 import org.cmdbuild.service.rest.v2.cxf.CxfReports;
 import org.cmdbuild.service.rest.v2.cxf.CxfSessions;
-import org.cmdbuild.service.rest.v2.cxf.CxfSessions.AuthenticationLogicAdapter;
-import org.cmdbuild.service.rest.v2.cxf.CxfSessions.LoginHandler;
 import org.cmdbuild.service.rest.v2.cxf.DefaultEncoding;
 import org.cmdbuild.service.rest.v2.cxf.DefaultIdGenerator;
 import org.cmdbuild.service.rest.v2.cxf.DefaultProcessStatusHelper;
@@ -89,10 +87,6 @@ import org.cmdbuild.service.rest.v2.cxf.ProcessStatusHelper;
 import org.cmdbuild.service.rest.v2.cxf.TranslatingAttachmentsHelper;
 import org.cmdbuild.service.rest.v2.cxf.TranslatingAttachmentsHelper.Encoding;
 import org.cmdbuild.service.rest.v2.cxf.WebApplicationExceptionErrorHandler;
-import org.cmdbuild.service.rest.v2.cxf.service.InMemoryOperationUserStore;
-import org.cmdbuild.service.rest.v2.cxf.service.InMemorySessionStore;
-import org.cmdbuild.service.rest.v2.cxf.service.OperationUserStore;
-import org.cmdbuild.service.rest.v2.cxf.service.SessionStore;
 import org.cmdbuild.service.rest.v2.logging.LoggingSupport;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -211,8 +205,8 @@ public class ServicesV2 implements LoggingSupport {
 
 	@Bean
 	public Impersonate v2_impersonate() {
-		final CxfImpersonate service = new CxfImpersonate(v2_errorHandler(), v2_loginHandler(), v2_sessionStore(),
-				v2_impersonateSessionStore(), v2_operationUserStore(), v2_operationUserAllowed());
+		final CxfImpersonate service = new CxfImpersonate(v2_errorHandler(), helper.sessionLogic(),
+				v2_operationUserAllowed());
 		return proxy(Impersonate.class, service);
 	}
 
@@ -351,41 +345,8 @@ public class ServicesV2 implements LoggingSupport {
 
 	@Bean
 	public Sessions v2_sessions() {
-		final CxfSessions service = new CxfSessions(v2_errorHandler(), helper.tokenGenerator(), v2_sessionStore(),
-				v2_loginHandler(), v2_operationUserStore(), helper.tokenManager());
+		final CxfSessions service = new CxfSessions(v2_errorHandler(), helper.sessionLogic());
 		return proxy(Sessions.class, service);
-	}
-
-	@Bean
-	protected LoginHandler v2_loginHandler() {
-		return new AuthenticationLogicAdapter(helper.authenticationLogic());
-	}
-
-	@Bean
-	public SessionStore v2_sessionStore() {
-		return new InMemorySessionStore(v2_configuration());
-	}
-
-	@Bean
-	protected SessionStore v2_impersonateSessionStore() {
-		return new InMemorySessionStore(v2_configuration());
-	}
-
-	@Bean
-	protected InMemorySessionStore.Configuration v2_configuration() {
-		return new InMemorySessionStore.Configuration() {
-
-			@Override
-			public long timeout() {
-				return helper.cmdbuildConfiguration().getSessionTimoutOrZero() * 1000;
-			}
-
-		};
-	}
-
-	@Bean
-	public OperationUserStore v2_operationUserStore() {
-		return new InMemoryOperationUserStore();
 	}
 
 	@Bean

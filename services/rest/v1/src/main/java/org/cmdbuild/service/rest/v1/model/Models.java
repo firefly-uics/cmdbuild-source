@@ -1204,7 +1204,8 @@ public class Models {
 			return this;
 		}
 
-		public ProcessInstanceAdvanceBuilder withValues(final Iterable<? extends Entry<String, ? extends Object>> values) {
+		public ProcessInstanceAdvanceBuilder withValues(
+				final Iterable<? extends Entry<String, ? extends Object>> values) {
 			return withValues(transformValues(uniqueIndex(values, KEY), VALUE));
 		}
 
@@ -1784,10 +1785,6 @@ public class Models {
 
 	public static SessionBuilder newSession() {
 		return new SessionBuilder();
-	}
-
-	public static SessionBuilder newSession(final Session existing) {
-		return new SessionBuilder(existing);
 	}
 
 	public static ValuesBuilder newValues() {
