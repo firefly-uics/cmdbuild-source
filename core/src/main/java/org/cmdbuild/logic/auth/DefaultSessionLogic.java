@@ -186,7 +186,7 @@ public class DefaultSessionLogic extends ForwardingAuthenticationLogic implement
 	@Override
 	public void setCurrent(final String id) {
 		current.set(id);
-		userStore.setUser(getUser(id));
+		userStore.setUser((id == null) ? null : getUser(id));
 	}
 
 	@Override

@@ -34,13 +34,15 @@
 		 * @param {Boolean} configurationObject.enableServerCalls
 		 * @param {Object} configurationObject.scope
 		 *
+		 * @returns {Void}
+		 *
 		 * @override
 		 */
 		constructor: function (configurationObject) {
 			Ext.apply(this, configurationObject); // Apply configurations
 
 			Ext.ns('CMDBuild.configuration');
-			CMDBuild.configuration.localization = Ext.create('CMDBuild.model.core.configurations.builder.Localization'); // Localization configuration object
+			CMDBuild.configuration.localization = Ext.create('CMDBuild.model.core.configurations.builder.Localization'); // Setup configuration with defaults
 
 			if (this.enableServerCalls)
 				CMDBuild.core.proxy.core.configurations.builder.Localization.readAllAvailableTranslations({

@@ -80,7 +80,8 @@ public class AuthFilter implements Filter {
 		final HttpServletResponse httpResponse = (HttpServletResponse) response;
 		// TODO do it in another way
 		final AtomicReference<String> sessionId = new AtomicReference<>(
-				httpRequest.getHeader("CMDBuild-Authentication"));
+				httpRequest.getHeader("CMDBuild-Authorization"));
+		sessionLogic.setCurrent(sessionId.get());
 		try {
 			final String uri = httpRequest.getRequestURI().substring(httpRequest.getContextPath().length());
 			logger.debug(marker, "request received for '{}'", uri);

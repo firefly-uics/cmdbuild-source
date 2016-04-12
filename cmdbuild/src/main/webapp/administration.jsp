@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 
+<%@page import="org.cmdbuild.logic.auth.StandardSessionLogic"%>
+<%@page import="org.cmdbuild.logic.auth.SessionLogic"%>
 <%@ taglib uri="/WEB-INF/tags/translations.tld" prefix="tr" %>
 
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
@@ -43,6 +45,7 @@
 		<%@ include file="libsJsFiles.jsp"%>
 
 		<!-- 1. Main script -->
+		<script type="text/javascript" src="javascripts/cmdbuild/core/constants/Proxy.js"></script>
 		<script type="text/javascript" src="javascripts/cmdbuild/core/LoaderConfig.js"></script>
 		<script type="text/javascript" src="javascripts/cmdbuild/core/Utils.js"></script>
 		<script type="text/javascript" src="javascripts/log/log4javascript.js"></script>
@@ -55,6 +58,8 @@
 
 		<!-- 3. Runtime configuration -->
 		<script type="text/javascript">
+			Ext.util.Cookies.set(CMDBuild.core.constants.Proxy.SESSION_ID, '<%= sessionLogic.getCurrent() %>');
+
 			Ext.ns('CMDBuild.configuration.runtime');
 
 			CMDBuild.configuration.runtime = Ext.create('CMDBuild.model.configuration.Runtime');
@@ -73,7 +78,7 @@
 			 * @deprecated (CMDBuild.configuration.runtime)
 			 */
 			Ext.ns('CMDBuild.Runtime');
-			CMDBuild.Runtime.SessionId = <%= sessionLogic.getCurrent() %>;
+<%-- 			CMDBuild.Runtime.SessionId = '<%= sessionLogic.getCurrent() %>'; --%>
 			CMDBuild.Runtime.UserId = <%= operationUser.getAuthenticatedUser().getId() %>;
 			CMDBuild.Runtime.Username = '<%= StringEscapeUtils.escapeEcmaScript(operationUser.getAuthenticatedUser().getUsername()) %>';
 			CMDBuild.Runtime.DefaultGroupId = <%= group.getId() %>;

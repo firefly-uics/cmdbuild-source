@@ -8,26 +8,11 @@
 	/**
 	 * @deprecated new class (CMDBuild.view.common.field.filter.advanced.Advanced)
 	 */
+
 	Ext.define('Functions', {
 		extend: 'Ext.data.Model',
 		fields: [
 			{ name: 'name', type: 'string' }
-		]
-	});
-
-	var functionsStore = CMDBuild.global.Cache.requestAsStore(CMDBuild.core.constants.Proxy.UNCACHED, {
-		autoLoad: true,
-		model: 'Functions',
-		proxy: {
-			type: 'ajax',
-			url: CMDBuild.core.proxy.index.Json.functions.readAll,
-			reader: {
-				type: 'json',
-				root: CMDBuild.core.constants.Proxy.RESPONSE
-			}
-		},
-		sorters: [
-			{ property: CMDBuild.core.constants.Proxy.NAME, direction: 'ASC' }
 		]
 	});
 
@@ -53,7 +38,21 @@
 
 			this.functionsCombo = Ext.create('Ext.form.ComboBox', {
 				fieldLabel: CMDBuild.Translation.management.findfilter.functions,
-				store: functionsStore,
+				store: CMDBuild.global.Cache.requestAsStore(CMDBuild.core.constants.Proxy.UNCACHED, {
+					autoLoad: true,
+					model: 'Functions',
+					proxy: {
+						type: 'ajax',
+						url: CMDBuild.core.proxy.index.Json.functions.readAll,
+						reader: {
+							type: 'json',
+							root: CMDBuild.core.constants.Proxy.RESPONSE
+						}
+					},
+					sorters: [
+						{ property: CMDBuild.core.constants.Proxy.NAME, direction: 'ASC' }
+					]
+				}),
 				name: CMDBuild.core.constants.Proxy.FUNCTION,
 				displayField: CMDBuild.core.constants.Proxy.NAME,
 				valueField: CMDBuild.core.constants.Proxy.NAME,
