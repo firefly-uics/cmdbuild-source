@@ -23,7 +23,7 @@
 
 		syncAttachmentCategories: function() {
 			this.resetAttachmentCategory();
-			CMDBuild.core.proxy.Attachment.getDefinitions({
+			CMDBuild.core.proxy.Attachment.readDefinitions({
 				loadMask: false,
 				scope: this,
 				success: function(response, options, decoded) {

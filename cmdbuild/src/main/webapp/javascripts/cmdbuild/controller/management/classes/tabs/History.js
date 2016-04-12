@@ -9,7 +9,7 @@
 		requires: [
 			'CMDBuild.core.constants.Global',
 			'CMDBuild.core.constants.Proxy',
-			'CMDBuild.core.proxy.common.tabs.history.Classes'
+			'CMDBuild.core.proxy.classes.tabs.History'
 		],
 
 		mixins: {
@@ -171,7 +171,7 @@
 				predecessorParams[CMDBuild.core.constants.Proxy.CARD_ID] = predecessorRecord.get(CMDBuild.core.constants.Proxy.ID); // Historic card ID
 				predecessorParams[CMDBuild.core.constants.Proxy.CLASS_NAME] = selectedEntityMergedData[CMDBuild.core.constants.Proxy.CLASS_NAME];
 
-				this.getProxy().getHistoric({
+				this.getProxy().readHistoric({
 					params: predecessorParams,
 					scope: this,
 					success: function(response, options, decodedResponse) {
@@ -185,13 +185,13 @@
 		},
 
 		/**
-		 * @returns {CMDBuild.core.proxy.common.tabs.history.Classes}
+		 * @returns {CMDBuild.core.proxy.classes.tabs.History}
 		 *
 		 * @override
 		 * @private
 		 */
 		getProxy: function() {
-			return CMDBuild.core.proxy.common.tabs.history.Classes;
+			return CMDBuild.core.proxy.classes.tabs.History;
 		},
 
 		/**

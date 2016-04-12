@@ -1,5 +1,7 @@
 (function() {
 
+Ext.require(['CMDBuild.core.proxy.TemplateResolver']);
+
 if (typeof CMDBuild.Management == "undefined") {
 	CMDBuild.Management = {};
 }
@@ -409,9 +411,9 @@ CMDBuild.Management.TemplateResolver.prototype = {
 	executeCQLTemplate: function(templateName, cqlQuery, ctx, callback) {
 		var queryParams = this.buildCQLQueryParameters(cqlQuery, ctx);
 		if (queryParams) {
-			CMDBuild.core.interfaces.Ajax.request({
-				url: "services/json/management/modcard/getcardlist",
+			CMDBuild.core.proxy.TemplateResolver.readAllCard({
 				params: queryParams,
+				loadMask: false,
 				success: function(response, options, decoded) {
 					var row = decoded.rows[0];
 					ctx.cql[templateName] = row;

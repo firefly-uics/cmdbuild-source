@@ -18,22 +18,9 @@
 		create: function (parameters) {
 			parameters = Ext.isEmpty(parameters) ? {} : parameters;
 
-			Ext.apply(parameters, { url: CMDBuild.core.proxy.index.Json.tasks.event.synchronous.create });
+			Ext.apply(parameters, { url: CMDBuild.core.proxy.index.Json.taskManager.event.synchronous.create });
 
 			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.TASK_MANAGER, parameters, true);
-		},
-
-		/**
-		 * @param {Object} parameters
-		 *
-		 * @returns {Void}
-		 */
-		read: function (parameters) {
-			parameters = Ext.isEmpty(parameters) ? {} : parameters;
-
-			Ext.apply(parameters, { url: CMDBuild.core.proxy.index.Json.tasks.event.synchronous.read });
-
-			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.TASK_MANAGER, parameters);
 		},
 
 		/**
@@ -45,7 +32,7 @@
 				model: 'CMDBuild.model.taskManager.Grid',
 				proxy: {
 					type: 'ajax',
-					url: CMDBuild.core.proxy.index.Json.tasks.event.synchronous.getStore,
+					url: CMDBuild.core.proxy.index.Json.taskManager.event.synchronous.readAll,
 					reader: {
 						type: 'json',
 						root: 'response.elements'
@@ -77,10 +64,23 @@
 		 *
 		 * @returns {Void}
 		 */
+		read: function (parameters) {
+			parameters = Ext.isEmpty(parameters) ? {} : parameters;
+
+			Ext.apply(parameters, { url: CMDBuild.core.proxy.index.Json.taskManager.event.synchronous.read });
+
+			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.TASK_MANAGER, parameters);
+		},
+
+		/**
+		 * @param {Object} parameters
+		 *
+		 * @returns {Void}
+		 */
 		remove: function (parameters) {
 			parameters = Ext.isEmpty(parameters) ? {} : parameters;
 
-			Ext.apply(parameters, { url: CMDBuild.core.proxy.index.Json.tasks.event.synchronous.remove });
+			Ext.apply(parameters, { url: CMDBuild.core.proxy.index.Json.taskManager.event.synchronous.remove });
 
 			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.TASK_MANAGER, parameters, true);
 		},
@@ -93,7 +93,7 @@
 		update: function (parameters) {
 			parameters = Ext.isEmpty(parameters) ? {} : parameters;
 
-			Ext.apply(parameters, { url: CMDBuild.core.proxy.index.Json.tasks.event.synchronous.update });
+			Ext.apply(parameters, { url: CMDBuild.core.proxy.index.Json.taskManager.event.synchronous.update });
 
 			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.TASK_MANAGER, parameters, true);
 		}

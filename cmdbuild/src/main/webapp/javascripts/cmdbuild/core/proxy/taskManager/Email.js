@@ -18,22 +18,9 @@
 		create: function (parameters) {
 			parameters = Ext.isEmpty(parameters) ? {} : parameters;
 
-			Ext.apply(parameters, { url: CMDBuild.core.proxy.index.Json.tasks.email.create });
+			Ext.apply(parameters, { url: CMDBuild.core.proxy.index.Json.taskManager.email.create });
 
 			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.TASK_MANAGER, parameters, true);
-		},
-
-		/**
-		 * @param {Object} parameters
-		 *
-		 * @returns {Void}
-		 */
-		read: function (parameters) {
-			parameters = Ext.isEmpty(parameters) ? {} : parameters;
-
-			Ext.apply(parameters, { url: CMDBuild.core.proxy.index.Json.tasks.email.read });
-
-			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.TASK_MANAGER, parameters);
 		},
 
 		/**
@@ -45,7 +32,7 @@
 				model: 'CMDBuild.model.taskManager.Grid',
 				proxy: {
 					type: 'ajax',
-					url: CMDBuild.core.proxy.index.Json.tasks.email.getStore,
+					url: CMDBuild.core.proxy.index.Json.taskManager.email.readAll,
 					reader: {
 						type: 'json',
 						root: 'response.elements'
@@ -62,10 +49,23 @@
 		 *
 		 * @returns {Void}
 		 */
+		read: function (parameters) {
+			parameters = Ext.isEmpty(parameters) ? {} : parameters;
+
+			Ext.apply(parameters, { url: CMDBuild.core.proxy.index.Json.taskManager.email.read });
+
+			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.TASK_MANAGER, parameters);
+		},
+
+		/**
+		 * @param {Object} parameters
+		 *
+		 * @returns {Void}
+		 */
 		remove: function (parameters) {
 			parameters = Ext.isEmpty(parameters) ? {} : parameters;
 
-			Ext.apply(parameters, { url: CMDBuild.core.proxy.index.Json.tasks.email.remove });
+			Ext.apply(parameters, { url: CMDBuild.core.proxy.index.Json.taskManager.email.remove });
 
 			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.TASK_MANAGER, parameters, true);
 		},
@@ -78,7 +78,7 @@
 		update: function (parameters) {
 			parameters = Ext.isEmpty(parameters) ? {} : parameters;
 
-			Ext.apply(parameters, { url: CMDBuild.core.proxy.index.Json.tasks.email.update });
+			Ext.apply(parameters, { url: CMDBuild.core.proxy.index.Json.taskManager.email.update });
 
 			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.TASK_MANAGER, parameters, true);
 		}

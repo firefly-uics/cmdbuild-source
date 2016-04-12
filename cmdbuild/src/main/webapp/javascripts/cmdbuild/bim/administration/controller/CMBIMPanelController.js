@@ -1,5 +1,11 @@
 (function() {
 
+	Ext.require([
+		'CMDBuild.bim.proxy.Bim',
+		'CMDBuild.bim.proxy.Ifc',
+		'CMDBuild.bim.proxy.Layer'
+	]);
+
 	Ext.define('CMDBuild.controller.administration.filter.CMBIMPanelController', {
 		extend: 'CMDBuild.controller.common.CMBasePanelController',
 
@@ -51,10 +57,10 @@
 		onGridAndFormPanelSaveButtonClick: function(form) {
 			var me = this;
 			var params = me.fieldManager.getValues() || {};
-			var proxyFunction = CMDBuild.bim.proxy.Proxy.create;
+			var proxyFunction = CMDBuild.bim.proxy.Bim.create;
 
 			if (this.record != null) {
-				proxyFunction = CMDBuild.bim.proxy.Proxy.update;
+				proxyFunction = CMDBuild.bim.proxy.Bim.update;
 				params['id'] = this.record.getId();
 			}
 
@@ -85,7 +91,7 @@
 
 		onImportIfc: function() {
 			if (!Ext.isEmpty(this.record))
-				CMDBuild.bim.proxy.Proxy.importIfc({
+				CMDBuild.bim.proxy.Ifc.import({
 					scope: this,
 					params: {
 						projectId: this.record.getId()
@@ -104,9 +110,9 @@
 			if (!me.record)
 				return;
 
-			var proxyFunction = CMDBuild.bim.proxy.Proxy.disable;
+			var proxyFunction = CMDBuild.bim.proxy.Bim.disable;
 			if (action == 'enable') {
-				proxyFunction = CMDBuild.bim.proxy.Proxy.enable;
+				proxyFunction = CMDBuild.bim.proxy.Bim.enable;
 				this.view.updateEnableDisableButton(false);
 			}
 			else {
@@ -129,7 +135,7 @@
 		bimCardBinding: function() {
 			var bindingReference = this.view.query('#bimCardBinding')[0];
 
-			CMDBuild.bim.proxy.Proxy.rootClassName({
+			CMDBuild.bim.proxy.Layer.readRootName({
 				success: function(operation, config, response) {
 					bindingReference.initializeItems(response.root);
 				},

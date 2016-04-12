@@ -6,7 +6,6 @@
 		requires: [
 			'CMDBuild.core.constants.FieldWidths',
 			'CMDBuild.core.constants.Proxy',
-			'CMDBuild.core.proxy.Csv',
 			'CMDBuild.core.proxy.localization.Import'
 		],
 
@@ -91,7 +90,7 @@
 
 						value: ';', // Default value
 
-						store: CMDBuild.core.proxy.Csv.getStoreSeparator(),
+						store: CMDBuild.core.proxy.localization.Import.getStoreSeparator(),
 						queryMode: 'local'
 					})
 				]

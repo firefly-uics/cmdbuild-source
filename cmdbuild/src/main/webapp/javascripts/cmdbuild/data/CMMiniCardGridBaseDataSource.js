@@ -39,7 +39,7 @@
 				remoteSort: true,
 				proxy: {
 					type: "ajax",
-					url: CMDBuild.core.proxy.index.Json.card.getList,
+					url: CMDBuild.core.proxy.index.Json.card.readAll,
 					reader: {
 						root: "rows",
 						type: "json",

@@ -1,5 +1,7 @@
 (function() {
 
+	Ext.require(['CMDBuild.core.proxy.Card']);
+
 	Ext.define("CMDBuild.controller.management.classes.CMCardPanelController", {
 
 		mixins : {

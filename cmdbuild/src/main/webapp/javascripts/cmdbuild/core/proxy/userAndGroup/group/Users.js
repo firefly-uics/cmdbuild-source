@@ -13,13 +13,13 @@
 		/**
 		 * @returns {Ext.data.Store or CMDBuild.core.cache.Store}
 		 */
-		getGroupsUserStore: function (parameters) {
+		getStoreGroupsUser: function (parameters) {
 			return CMDBuild.global.Cache.requestAsStore(CMDBuild.core.constants.Proxy.UNCACHED, {
 				autoLoad: false,
 				model: 'CMDBuild.model.userAndGroup.group.UsersGrid',
 				proxy: {
 					type: 'ajax',
-					url: CMDBuild.core.proxy.index.Json.group.users.getGroupUserList,
+					url: CMDBuild.core.proxy.index.Json.group.user.readAll,
 					reader: {
 						type: 'json',
 						root: CMDBuild.core.constants.Proxy.USERS
@@ -39,7 +39,7 @@
 		update: function (parameters) {
 			parameters = Ext.isEmpty(parameters) ? {} : parameters;
 
-			Ext.apply(parameters, { url: CMDBuild.core.proxy.index.Json.group.users.saveGroupUserList });
+			Ext.apply(parameters, { url: CMDBuild.core.proxy.index.Json.group.user.save });
 
 			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.GROUP, parameters, true);
 		}

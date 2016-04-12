@@ -142,7 +142,7 @@
 					params[CMDBuild.core.constants.Proxy.EMAIL_ID] = this.record.get(CMDBuild.core.constants.Proxy.ID);
 					params[CMDBuild.core.constants.Proxy.TEMPORARY] = this.record.get(CMDBuild.core.constants.Proxy.TEMPORARY);
 
-					CMDBuild.core.proxy.common.tabs.email.Attachment.getAll({
+					CMDBuild.core.proxy.common.tabs.email.Attachment.readAll({
 						params: params,
 						loadMask: this.view,
 						scope: this,

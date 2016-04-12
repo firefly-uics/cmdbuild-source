@@ -11,12 +11,9 @@
 			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.proxy.Classes',
 			'CMDBuild.core.proxy.dashboard.Dashboard',
-			'CMDBuild.core.proxy.dataView.DataView',
 			'CMDBuild.core.proxy.domain.Domain',
 			'CMDBuild.core.proxy.lookup.Type',
 			'CMDBuild.core.proxy.Menu',
-			'CMDBuild.core.proxy.report.Report',
-			'CMDBuild.core.proxy.userAndGroup.group.Group',
 			'CMDBuild.core.proxy.widget.Widget',
 			'CMDBuild.core.RequestBarrier',
 			'CMDBuild.core.Splash'

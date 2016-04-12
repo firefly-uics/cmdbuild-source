@@ -155,7 +155,7 @@
 				CMDBuild.core.interfaces.FormSubmit.submit({
 					buildRuntimeForm: true,
 					params: params,
-					url: CMDBuild.core.proxy.index.Json.report.printReportFactory
+					url: CMDBuild.core.proxy.index.Json.report.factory.print
 				});
 			} else { // Add to view display mode
 				this.view.removeAll();
@@ -165,7 +165,7 @@
 
 					autoEl: {
 						tag: 'iframe',
-						src: CMDBuild.core.proxy.index.Json.report.printReportFactory
+						src: CMDBuild.core.proxy.index.Json.report.factory.print
 					}
 				});
 			}

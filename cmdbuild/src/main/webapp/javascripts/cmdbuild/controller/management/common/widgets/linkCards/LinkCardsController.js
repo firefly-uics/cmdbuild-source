@@ -458,7 +458,7 @@
 
 				this.model._silent = true;
 
-				CMDBuild.core.proxy.Card.getPosition({
+				CMDBuild.core.proxy.Card.readPosition({
 					params: params,
 					loadMask: false,
 					scope: this,

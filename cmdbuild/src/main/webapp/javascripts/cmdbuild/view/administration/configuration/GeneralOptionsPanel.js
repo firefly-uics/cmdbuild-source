@@ -99,7 +99,7 @@
 								displayField: CMDBuild.core.constants.Proxy.TEXT,
 								forceSelection: true,
 
-								store: CMDBuild.core.proxy.configuration.GeneralOptions.getStartingClassStore(),
+								store: CMDBuild.core.proxy.configuration.GeneralOptions.getStoreStartingClass(),
 								queryMode: 'local'
 							}),
 							{

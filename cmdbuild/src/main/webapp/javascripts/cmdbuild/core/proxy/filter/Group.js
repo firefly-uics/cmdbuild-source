@@ -26,19 +26,6 @@
 		},
 
 		/**
-		 * @param {Object} parameters
-		 *
-		 * @returns {Void}
-		 */
-		getDefaults: function (parameters) {
-			parameters = Ext.isEmpty(parameters) ? {} : parameters;
-
-			Ext.apply(parameters, { url: CMDBuild.core.proxy.index.Json.filter.group.defaults.read });
-
-			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.FILTER, parameters);
-		},
-
-		/**
 		 * Returns a store with the filters for a given group
 		 *
 		 * @returns {Ext.data.Store or CMDBuild.core.cache.Store}
@@ -125,6 +112,19 @@
 		 *
 		 * @returns {Void}
 		 */
+		readDefaults: function (parameters) {
+			parameters = Ext.isEmpty(parameters) ? {} : parameters;
+
+			Ext.apply(parameters, { url: CMDBuild.core.proxy.index.Json.filter.group.defaults.read });
+
+			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.FILTER, parameters);
+		},
+
+		/**
+		 * @param {Object} parameters
+		 *
+		 * @returns {Void}
+		 */
 		remove: function (parameters) {
 			parameters = Ext.isEmpty(parameters) ? {} : parameters;
 
@@ -138,10 +138,10 @@
 		 *
 		 * @returns {Void}
 		 */
-		setDefaults: function (parameters) {
+		update: function (parameters) {
 			parameters = Ext.isEmpty(parameters) ? {} : parameters;
 
-			Ext.apply(parameters, { url: CMDBuild.core.proxy.index.Json.filter.group.defaults.update });
+			Ext.apply(parameters, { url: CMDBuild.core.proxy.index.Json.filter.group.update });
 
 			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.FILTER, parameters, true);
 		},
@@ -151,10 +151,10 @@
 		 *
 		 * @returns {Void}
 		 */
-		update: function (parameters) {
+		updateDefaults: function (parameters) {
 			parameters = Ext.isEmpty(parameters) ? {} : parameters;
 
-			Ext.apply(parameters, { url: CMDBuild.core.proxy.index.Json.filter.group.update });
+			Ext.apply(parameters, { url: CMDBuild.core.proxy.index.Json.filter.group.defaults.update });
 
 			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.FILTER, parameters, true);
 		}

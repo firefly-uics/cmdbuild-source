@@ -1,5 +1,7 @@
 (function() {
 
+	Ext.require(['CMDBuild.core.proxy.Card']);
+
 	Ext.define('CMDBuild.state.CMCardModuleStateDelegate', {
 		/**
 		 * @param {CMDBuild.state.CMCardModuleState} state The state that calls the delegate

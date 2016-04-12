@@ -13,7 +13,7 @@
 		/**
 		 * @returns {Ext.data.Store or CMDBuild.core.cache.Store}
 		 */
-		getDestinationStore: function () {
+		getStoreDestination: function () {
 			return CMDBuild.global.Cache.requestAsStore(CMDBuild.core.constants.Proxy.CLASS, {
 				autoLoad: false,
 				model: 'CMDBuild.model.common.field.filter.advanced.window.relations.DestinationEditorStore',
@@ -39,7 +39,7 @@
 		/**
 		 * @returns {Ext.data.ArrayStore}
 		 */
-		getDomainStore: function () {
+		getStoreDomain: function () {
 			return Ext.create('Ext.data.ArrayStore', {
 				model: 'CMDBuild.model.common.field.filter.advanced.window.relations.DomainGrid',
 				data: [],

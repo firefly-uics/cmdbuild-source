@@ -19,7 +19,7 @@
 				model: 'CMDBuild.model.workflow.tabs.taskManager.Grid',
 				proxy: {
 					type: 'ajax',
-					url: CMDBuild.core.proxy.index.Json.tasks.workflow.getStoreByWorkflow,
+					url: CMDBuild.core.proxy.index.Json.taskManager.workflow.readAllByWorkflow,
 					reader: {
 						type: 'json',
 						root: CMDBuild.core.constants.Proxy.RESPONSE
@@ -44,7 +44,7 @@
 		remove: function (parameters) {
 			parameters = Ext.isEmpty(parameters) ? {} : parameters;
 
-			Ext.apply(parameters, { url: CMDBuild.core.proxy.index.Json.tasks.workflow.remove });
+			Ext.apply(parameters, { url: CMDBuild.core.proxy.index.Json.taskManager.workflow.remove });
 
 			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.TASK_MANAGER, parameters, true);
 		}

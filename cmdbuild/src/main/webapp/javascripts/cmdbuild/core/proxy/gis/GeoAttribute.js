@@ -27,10 +27,10 @@
 		 *
 		 * @returns {Void}
 		 */
-		modify: function (parameters) {
+		remove: function (parameters) {
 			parameters = Ext.isEmpty(parameters) ? {} : parameters;
 
-			Ext.apply(parameters, { url: CMDBuild.core.proxy.index.Json.gis.geoAttribute.update });
+			Ext.apply(parameters, { url: CMDBuild.core.proxy.index.Json.gis.geoAttribute.remove });
 
 			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.GIS, parameters, true);
 		},
@@ -40,10 +40,10 @@
 		 *
 		 * @returns {Void}
 		 */
-		remove: function (parameters) {
+		update: function (parameters) {
 			parameters = Ext.isEmpty(parameters) ? {} : parameters;
 
-			Ext.apply(parameters, { url: CMDBuild.core.proxy.index.Json.gis.geoAttribute.remove });
+			Ext.apply(parameters, { url: CMDBuild.core.proxy.index.Json.gis.geoAttribute.update });
 
 			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.GIS, parameters, true);
 		}

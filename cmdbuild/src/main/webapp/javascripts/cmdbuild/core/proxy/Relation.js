@@ -17,7 +17,7 @@
 		create: function (parameters) {
 			parameters = Ext.isEmpty(parameters) ? {} : parameters;
 
-			Ext.apply(parameters, { url: CMDBuild.core.proxy.index.Json.relations.create });
+			Ext.apply(parameters, { url: CMDBuild.core.proxy.index.Json.relation.create });
 
 			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.RELATION, parameters, true);
 		},
@@ -30,7 +30,7 @@
 		getAlreadyRelatedCards: function (parameters) {
 			parameters = Ext.isEmpty(parameters) ? {} : parameters;
 
-			Ext.apply(parameters, { url: CMDBuild.core.proxy.index.Json.relations.getAlreadyRelatedCards });
+			Ext.apply(parameters, { url: CMDBuild.core.proxy.index.Json.relation.readAlreadyRelatedCards });
 
 			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.RELATION, parameters);
 		},
@@ -43,7 +43,7 @@
 		readAll: function (parameters) {
 			parameters = Ext.isEmpty(parameters) ? {} : parameters;
 
-			Ext.apply(parameters, { url: CMDBuild.core.proxy.index.Json.relations.readAll });
+			Ext.apply(parameters, { url: CMDBuild.core.proxy.index.Json.relation.readAll });
 
 			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.RELATION, parameters);
 		},
@@ -56,7 +56,7 @@
 		remove: function (parameters) {
 			parameters = Ext.isEmpty(parameters) ? {} : parameters;
 
-			Ext.apply(parameters, { url: CMDBuild.core.proxy.index.Json.relations.remove });
+			Ext.apply(parameters, { url: CMDBuild.core.proxy.index.Json.relation.remove });
 
 			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.RELATION, parameters, true);
 		},
@@ -69,7 +69,7 @@
 		removeDetail: function (parameters) {
 			parameters = Ext.isEmpty(parameters) ? {} : parameters;
 
-			Ext.apply(parameters, { url: CMDBuild.core.proxy.index.Json.relations.removeDetail });
+			Ext.apply(parameters, { url: CMDBuild.core.proxy.index.Json.relation.removeDetail });
 
 			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.RELATION, parameters, true);
 		},
@@ -82,7 +82,7 @@
 		update: function (parameters) {
 			parameters = Ext.isEmpty(parameters) ? {} : parameters;
 
-			Ext.apply(parameters, { url: CMDBuild.core.proxy.index.Json.relations.update });
+			Ext.apply(parameters, { url: CMDBuild.core.proxy.index.Json.relation.update });
 
 			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.RELATION, parameters, true);
 		}

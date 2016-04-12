@@ -18,7 +18,7 @@
 		download: function (parameters) {
 			parameters = Ext.isEmpty(parameters) ? {} : parameters;
 
-			Ext.apply(parameters, { url: CMDBuild.core.proxy.index.Json.csv.download });
+			Ext.apply(parameters, { url: CMDBuild.core.proxy.index.Json.csv.exports.download });
 
 			CMDBuild.core.interfaces.FormSubmit.submit(parameters);
 		}

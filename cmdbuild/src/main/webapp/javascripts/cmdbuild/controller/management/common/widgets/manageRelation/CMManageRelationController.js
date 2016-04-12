@@ -1,4 +1,7 @@
 (function() {
+
+	Ext.require(['CMDBuild.core.proxy.Card']);
+
 	var ID_CLASS = "xa:idClass",
 		ID_CARD = "xa:id",
 		CARD_CQL_SELECTOR = "objId",

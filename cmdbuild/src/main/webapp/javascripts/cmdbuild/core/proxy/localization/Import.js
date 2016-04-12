@@ -18,7 +18,7 @@
 		imports: function (parameters) {
 			parameters = Ext.isEmpty(parameters) ? {} : parameters;
 
-			Ext.apply(parameters, { url: CMDBuild.core.proxy.index.Json.localizations.importExport.importCsv });
+			Ext.apply(parameters, { url: CMDBuild.core.proxy.index.Json.localization.utility.csv.import });
 
 			CMDBuild.core.interfaces.FormSubmit.submit(parameters);
 		},
@@ -34,6 +34,20 @@
 				],
 				sorters: [
 					{ property: CMDBuild.core.constants.Proxy.DESCRIPTION, direction: 'ASC' }
+				]
+			});
+		},
+
+		/**
+		 * @returns {Ext.data.ArrayStore}
+		 */
+		getStoreSeparator: function () {
+			return Ext.create('Ext.data.ArrayStore', {
+				fields: [CMDBuild.core.constants.Proxy.VALUE],
+				data: [
+					[';'],
+					[','],
+					['|']
 				]
 			});
 		}

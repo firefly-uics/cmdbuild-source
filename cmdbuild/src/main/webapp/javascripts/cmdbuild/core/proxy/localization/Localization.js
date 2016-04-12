@@ -11,19 +11,6 @@
 		singleton: true,
 
 		/**
-		 * @param {Object} parameters
-		 *
-		 * @returns {Void}
-		 */
-		getLanguages: function (parameters) {
-			parameters = Ext.isEmpty(parameters) ? {} : parameters;
-
-			Ext.apply(parameters, { url: CMDBuild.core.proxy.index.Json.utils.listAvailableTranslations });
-
-			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.LOCALIZATION, parameters);
-		},
-
-		/**
 		 * @returns {Ext.data.Store or CMDBuild.core.cache.Store}
 		 */
 		getStoreLanguages: function () {
@@ -32,7 +19,7 @@
 				model: 'CMDBuild.model.localization.Localization',
 				proxy: {
 					type: 'ajax',
-					url: CMDBuild.core.proxy.index.Json.utils.listAvailableTranslations,
+					url: CMDBuild.core.proxy.index.Json.utils.readAllAvailableTranslations,
 					reader: {
 						type: 'json',
 						root: CMDBuild.core.constants.Proxy.TRANSLATIONS
@@ -77,7 +64,7 @@
 		read: function (parameters) {
 			parameters = Ext.isEmpty(parameters) ? {} : parameters;
 
-			Ext.apply(parameters, { url: CMDBuild.core.proxy.index.Json.localizations.translation.read });
+			Ext.apply(parameters, { url: CMDBuild.core.proxy.index.Json.localization.translation.read });
 
 			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.LOCALIZATION, parameters);
 		},
@@ -90,7 +77,7 @@
 		readAll: function (parameters) {
 			parameters = Ext.isEmpty(parameters) ? {} : parameters;
 
-			Ext.apply(parameters, { url: CMDBuild.core.proxy.index.Json.localizations.translation.readAll });
+			Ext.apply(parameters, { url: CMDBuild.core.proxy.index.Json.localization.translation.readAll });
 
 			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.LOCALIZATION, parameters);
 		},
@@ -103,7 +90,7 @@
 		update: function (parameters) {
 			parameters = Ext.isEmpty(parameters) ? {} : parameters;
 
-			Ext.apply(parameters, { url: CMDBuild.core.proxy.index.Json.localizations.translation.update });
+			Ext.apply(parameters, { url: CMDBuild.core.proxy.index.Json.localization.translation.update });
 
 			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.LOCALIZATION, parameters, true);
 		}

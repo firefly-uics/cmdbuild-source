@@ -19,7 +19,7 @@
 				model: 'CMDBuild.model.taskManager.Grid',
 				proxy: {
 					type: 'ajax',
-					url: CMDBuild.core.proxy.index.Json.tasks.event.getStore,
+					url: CMDBuild.core.proxy.index.Json.taskManager.event.readAll,
 					reader: {
 						type: 'json',
 						root: 'response.elements'

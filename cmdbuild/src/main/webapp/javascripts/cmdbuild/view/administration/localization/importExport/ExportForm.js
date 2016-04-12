@@ -6,7 +6,6 @@
 		requires: [
 			'CMDBuild.core.constants.FieldWidths',
 			'CMDBuild.core.constants.Proxy',
-			'CMDBuild.core.proxy.Csv',
 			'CMDBuild.core.proxy.localization.Export',
 			'CMDBuild.core.proxy.localization.Localization'
 		],
@@ -121,7 +120,7 @@
 
 						value: ';', // Default value
 
-						store: CMDBuild.core.proxy.Csv.getStoreSeparator(),
+						store: CMDBuild.core.proxy.localization.Export.getStoreSeparator(),
 						queryMode: 'local'
 					}),
 					this.activeOnlyCheckbox = Ext.create('Ext.form.field.Checkbox', {

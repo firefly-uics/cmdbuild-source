@@ -132,7 +132,7 @@
 
 						value: CMDBuild.core.constants.Proxy.NORMAL,
 
-						store: CMDBuild.core.proxy.userAndGroup.group.Group.getTypeStore(),
+						store: CMDBuild.core.proxy.userAndGroup.group.Group.getStoreType(),
 						queryMode: 'local'
 					}),
 					Ext.create('Ext.form.field.Text', {
@@ -153,7 +153,7 @@
 						editable: false,
 						forceSelection: true,
 
-						store: CMDBuild.core.proxy.userAndGroup.group.Group.getStartingClassStore(),
+						store: CMDBuild.core.proxy.userAndGroup.group.Group.getStoreStartingClass(),
 						queryMode: 'local'
 					}),
 					this.activeCheckbox = Ext.create('Ext.form.field.Checkbox', {

@@ -1,6 +1,6 @@
 (function() {
 
-	Ext.require('CMDBuild.core.proxy.gis.Gis');
+	Ext.require('CMDBuild.core.proxy.gis.Layer');
 
 	Ext.define("CMDBuild.Administration.LayerVisibilityGrid", {
 		extend: "CMDBuild.Administration.LayerGrid",
@@ -36,7 +36,7 @@
 			var et = _CMCache.getEntryTypeById(this.currentClassId);
 
 			CMDBuild.core.LoadMask.show();
-			CMDBuild.core.proxy.gis.Gis.setLayerVisibility({
+			CMDBuild.core.proxy.gis.Layer.setVisibility({
 				params: {
 					tableName: et.get("name"),
 					layerFullName: record.getFullName(),

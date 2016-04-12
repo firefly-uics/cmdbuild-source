@@ -43,7 +43,7 @@
 							editable: false,
 							forceSelection: true,
 
-							store: CMDBuild.core.proxy.common.field.filter.advanced.window.Relations.getDestinationStore(),
+							store: CMDBuild.core.proxy.common.field.filter.advanced.window.Relations.getStoreDestination(),
 							queryMode: 'local'
 						},
 
@@ -128,7 +128,7 @@
 						]
 					})
 				],
-				store: CMDBuild.core.proxy.common.field.filter.advanced.window.Relations.getDomainStore(),
+				store: CMDBuild.core.proxy.common.field.filter.advanced.window.Relations.getStoreDomain(),
 				plugins: [
 					Ext.create('Ext.grid.plugin.CellEditing', {
 						clicksToEdit: 1,

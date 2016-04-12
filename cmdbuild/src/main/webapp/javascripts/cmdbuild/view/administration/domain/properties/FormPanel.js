@@ -163,7 +163,7 @@
 						forceSelection: true,
 						editable: false,
 
-						store: CMDBuild.core.proxy.domain.Properties.getClassesStore(),
+						store: CMDBuild.core.proxy.domain.Properties.getStoreClasses(),
 						queryMode: 'local'
 					}),
 					Ext.create('Ext.form.field.ComboBox', {
@@ -177,7 +177,7 @@
 						forceSelection: true,
 						editable: false,
 
-						store: CMDBuild.core.proxy.domain.Properties.getClassesStore(),
+						store: CMDBuild.core.proxy.domain.Properties.getStoreClasses(),
 						queryMode: 'local'
 					}),
 					this.directDescription = Ext.create('CMDBuild.view.common.field.translatable.Text', {
@@ -218,7 +218,7 @@
 						forceSelection: true,
 						editable: false,
 
-						store: CMDBuild.core.proxy.domain.Properties.getCardinalityStore(),
+						store: CMDBuild.core.proxy.domain.Properties.getStoreCardinality(),
 						queryMode: 'local',
 
 						listeners: {

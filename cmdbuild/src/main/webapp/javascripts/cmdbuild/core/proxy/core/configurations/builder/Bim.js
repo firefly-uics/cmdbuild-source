@@ -29,10 +29,10 @@
 		 *
 		 * @returns {Void}
 		 */
-		readRootLayer: function (parameters) {
+		readRootLayerName: function (parameters) {
 			parameters = Ext.isEmpty(parameters) ? {} : parameters;
 
-			Ext.apply(parameters, { url: CMDBuild.core.proxy.index.Json.bim.rootLayer });
+			Ext.apply(parameters, { url: CMDBuild.core.proxy.index.Json.bim.layer.rootName });
 
 			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.BIM, parameters);
 		}

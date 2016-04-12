@@ -79,7 +79,6 @@
 		extraParams: undefined, // extra params for the store
 		forceSelectionOfFirst: false, // listen load event and select the first row
 		skipSelectFirst: false,
-		cmStoreUrl: CMDBuild.core.proxy.index.Json.card.getList,
 		cmPaginate: true, // to say if build or not a paging bar, default true
 		cmBasicFilter: true, // to add a basic search-field to the paging bar
 		cmAdvancedFilter: true, // to add a button to set an advanced filter
@@ -441,7 +440,7 @@
 				remoteSort: true,
 				proxy: {
 					type: 'ajax',
-					url: this.cmStoreUrl,
+					url: CMDBuild.core.proxy.index.Json.card.readAll,
 					reader: {
 						type: 'json',
 						root: 'rows',

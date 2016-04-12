@@ -14,7 +14,7 @@
 		/**
 		 * @returns {Ext.data.Store or CMDBuild.core.cache.Store}
 		 */
-		getStartingClassStore: function () {
+		getStoreStartingClass: function () {
 			return CMDBuild.global.Cache.requestAsStore(CMDBuild.core.constants.Proxy.CLASS, {
 				autoLoad: true,
 				model: 'CMDBuild.model.configuration.generalOptions.StartingClass',

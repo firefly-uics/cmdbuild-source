@@ -40,7 +40,7 @@
 		/**
 		 * @returns {Ext.data.Store or CMDBuild.core.cache.Store}
 		 */
-		getStartingClassStore: function () {
+		getStoreStartingClass: function () {
 			return CMDBuild.global.Cache.requestAsStore(CMDBuild.core.constants.Proxy.CLASS, {
 				autoLoad: false,
 				model: 'CMDBuild.model.userAndGroup.group.StartingClass',
@@ -71,7 +71,7 @@
 		/**
 		 * @returns {Ext.data.ArrayStore}
 		 */
-		getTypeStore: function () {
+		getStoreType: function () {
 			return Ext.create('Ext.data.ArrayStore', {
 				fields: [CMDBuild.core.constants.Proxy.VALUE, CMDBuild.core.constants.Proxy.DESCRIPTION],
 				data: [

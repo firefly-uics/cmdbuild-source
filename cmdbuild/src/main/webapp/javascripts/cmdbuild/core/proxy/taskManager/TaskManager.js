@@ -19,7 +19,7 @@
 				model: 'CMDBuild.model.taskManager.Grid',
 				proxy: {
 					type: 'ajax',
-					url: CMDBuild.core.proxy.index.Json.tasks.getStore,
+					url: CMDBuild.core.proxy.index.Json.taskManager.readAll,
 					reader: {
 						type: 'json',
 						root: 'response.elements'
@@ -39,7 +39,7 @@
 		start: function (parameters) {
 			parameters = Ext.isEmpty(parameters) ? {} : parameters;
 
-			Ext.apply(parameters, { url: CMDBuild.core.proxy.index.Json.tasks.start });
+			Ext.apply(parameters, { url: CMDBuild.core.proxy.index.Json.taskManager.start });
 
 			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.TASK_MANAGER, parameters, true);
 		},
@@ -52,7 +52,7 @@
 		stop: function (parameters) {
 			parameters = Ext.isEmpty(parameters) ? {} : parameters;
 
-			Ext.apply(parameters, { url: CMDBuild.core.proxy.index.Json.tasks.stop });
+			Ext.apply(parameters, { url: CMDBuild.core.proxy.index.Json.taskManager.stop });
 
 			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.TASK_MANAGER, parameters, true);
 		}

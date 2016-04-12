@@ -67,7 +67,7 @@
 
 					autoEl: {
 						tag: 'iframe',
-						src: CMDBuild.core.proxy.index.Json.report.printReportFactory + '?donotdelete=true' // Add parameter to avoid report delete
+						src: CMDBuild.core.proxy.index.Json.report.factory.print + '?donotdelete=true' // Add parameter to avoid report delete
 					}
 				});
 			}

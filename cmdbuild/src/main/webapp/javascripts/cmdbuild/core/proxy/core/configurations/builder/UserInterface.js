@@ -17,7 +17,7 @@
 		read: function (parameters) {
 			parameters = Ext.isEmpty(parameters) ? {} : parameters;
 
-			Ext.apply(parameters, { url: CMDBuild.core.proxy.index.Json.group.getUiConfiguration });
+			Ext.apply(parameters, { url: CMDBuild.core.proxy.index.Json.configuration.ui.read });
 
 			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.CONFIGURATION, parameters);
 		}

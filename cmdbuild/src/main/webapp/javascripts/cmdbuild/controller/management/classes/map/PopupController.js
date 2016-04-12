@@ -1,4 +1,7 @@
 (function() {
+
+	Ext.require(['CMDBuild.core.proxy.Card']);
+
 	CMDBuild.Management.PopupController = OpenLayers.Class(CMDBuild.Management.CMSelectFeatureController, {
 		initialize: function(layers, options) {
 			layers = layers || [];

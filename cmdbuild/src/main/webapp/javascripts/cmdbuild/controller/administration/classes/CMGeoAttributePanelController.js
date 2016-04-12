@@ -97,7 +97,7 @@
 		};
 
 		if (this.currentAttribute != null) {
-			CMDBuild.core.proxy.gis.GeoAttribute.modify(params);
+			CMDBuild.core.proxy.gis.GeoAttribute.update(params);
 		} else {
 			CMDBuild.core.proxy.gis.GeoAttribute.create(params);
 		}

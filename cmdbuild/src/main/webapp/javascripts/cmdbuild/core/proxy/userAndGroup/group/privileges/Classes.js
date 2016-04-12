@@ -19,7 +19,7 @@
 				model: 'CMDBuild.model.userAndGroup.group.privileges.GridRecord',
 				proxy: {
 					type: 'ajax',
-					url: CMDBuild.core.proxy.index.Json.privileges.classes.read,
+					url: CMDBuild.core.proxy.index.Json.privilege.classes.readAll,
 					reader: {
 						type: 'json',
 						root: CMDBuild.core.constants.Proxy.PRIVILEGES
@@ -44,7 +44,7 @@
 		readUIConfiguration: function (parameters) {
 			parameters = Ext.isEmpty(parameters) ? {} : parameters;
 
-			Ext.apply(parameters, { url: CMDBuild.core.proxy.index.Json.privileges.classes.loadClassUiConfiguration });
+			Ext.apply(parameters, { url: CMDBuild.core.proxy.index.Json.privilege.classes.uiConfiguration.read });
 
 			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.GROUP, parameters);
 		},
@@ -57,7 +57,7 @@
 		setRowAndColumn: function (parameters) {
 			parameters = Ext.isEmpty(parameters) ? {} : parameters;
 
-			Ext.apply(parameters, { url: CMDBuild.core.proxy.index.Json.privileges.classes.setRowAndColumnPrivileges });
+			Ext.apply(parameters, { url: CMDBuild.core.proxy.index.Json.privilege.classes.setRowAndColumnPrivileges });
 
 			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.GROUP, parameters, true);
 		},
@@ -70,7 +70,7 @@
 		update: function (parameters) {
 			parameters = Ext.isEmpty(parameters) ? {} : parameters;
 
-			Ext.apply(parameters, { url: CMDBuild.core.proxy.index.Json.privileges.classes.update });
+			Ext.apply(parameters, { url: CMDBuild.core.proxy.index.Json.privilege.classes.update });
 
 			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.GROUP, parameters, true);
 		},
@@ -83,7 +83,7 @@
 		updateUIConfiguration: function (parameters) {
 			parameters = Ext.isEmpty(parameters) ? {} : parameters;
 
-			Ext.apply(parameters, { url: CMDBuild.core.proxy.index.Json.privileges.classes.saveClassUiConfiguration });
+			Ext.apply(parameters, { url: CMDBuild.core.proxy.index.Json.privilege.classes.uiConfiguration.update });
 
 			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.GROUP, parameters, true);
 		}

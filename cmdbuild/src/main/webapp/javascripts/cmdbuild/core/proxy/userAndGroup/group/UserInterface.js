@@ -17,7 +17,7 @@
 		read: function (parameters) {
 			parameters = Ext.isEmpty(parameters) ? {} : parameters;
 
-			Ext.apply(parameters, { url: CMDBuild.core.proxy.index.Json.group.userInterface.getGroupUiConfiguration });
+			Ext.apply(parameters, { url: CMDBuild.core.proxy.index.Json.group.userInterface.read });
 
 			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.GROUP, parameters);
 		},
@@ -30,7 +30,7 @@
 		update: function (parameters) {
 			parameters = Ext.isEmpty(parameters) ? {} : parameters;
 
-			Ext.apply(parameters, { url: CMDBuild.core.proxy.index.Json.group.userInterface.saveGroupUiConfiguration });
+			Ext.apply(parameters, { url: CMDBuild.core.proxy.index.Json.group.userInterface.save });
 
 			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.GROUP, parameters, true);
 		}

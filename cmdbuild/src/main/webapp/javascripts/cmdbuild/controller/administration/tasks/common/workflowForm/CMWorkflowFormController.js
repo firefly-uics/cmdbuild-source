@@ -227,7 +227,7 @@
 				if (Ext.isEmpty(erase))
 					erase = false;
 
-				CMDBuild.core.proxy.taskManager.common.WorkflowForm.getAttributes({
+				CMDBuild.core.proxy.taskManager.common.WorkflowForm.readAllAttributes({
 					params: {
 						className: className
 					},

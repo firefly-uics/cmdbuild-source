@@ -89,12 +89,30 @@
 		configureForm: function(attributes) {
 			this.view.fieldContainer.removeAll();
 
-			if (!Ext.isEmpty(attributes) && Ext.isArray(attributes))
-				Ext.Array.forEach(attributes, function(attribute, i, allAttributes) {
-					var field = CMDBuild.Management.FieldManager.getFieldForAttr(attribute, false);
+			if (!Ext.isEmpty(attributes) && Ext.isArray(attributes)) {
+				var fieldManager = Ext.create('CMDBuild.core.fieldManager.FieldManager', { parentDelegate: this });
+
+				Ext.Array.each(attributes, function (attribute, i, allAttributes) {
+					if (fieldManager.isAttributeManaged(attribute[CMDBuild.core.constants.Proxy.TYPE])) {
+						var attributeCustom = Ext.create('CMDBuild.model.common.attributes.Attribute', attribute);
+						attributeCustom.setAdaptedData(attribute);
+
+						fieldManager.attributeModelSet(attributeCustom);
+
+						var field = fieldManager.buildField();
+					} else { // @deprecated - Old field manager
+						var field = CMDBuild.Management.FieldManager.getFieldForAttr(attribute, false, false);
+
+						if (!Ext.isEmpty(field)) {
+							field.maxWidth = field.width || CMDBuild.core.constants.FieldWidths.STANDARD_MEDIUM;
+
+							if (attribute.defaultvalue)
+								field.setValue(attribute.defaultvalue);
+						}
+					}
 
 					if (!Ext.isEmpty(field)) {
-						// To disable if field name is contained in widgetConfiguration.readOnlyAttributes
+						// Disable if field name is contained in widgetConfiguration.readOnlyAttributes
 						field.setDisabled(
 							Ext.Array.contains(this.widgetConfigurationGet(CMDBuild.core.constants.Proxy.READ_ONLY_ATTRIBUTES), attribute[CMDBuild.core.constants.Proxy.NAME])
 						);
@@ -102,6 +120,7 @@
 						this.view.fieldContainer.add(field);
 					}
 				}, this);
+			}
 		},
 
 		/**
@@ -171,27 +190,30 @@
 		},
 
 		/**
-		 * Get created report from server and display it in popup window
-		 *
 		 * @param {Boolean} forceDownload
 		 */
 		showReport: function() {
 			var params = {};
 			params[CMDBuild.core.constants.Proxy.FORCE_DOWNLOAD_PARAM_KEY] = true;
 
-			var form = Ext.create('Ext.form.Panel', {
-				standardSubmit: true,
-				url: CMDBuild.core.proxy.index.Json.report.printReportFactory + '?donotdelete=true' // Add parameter to avoid report delete
-			});
-
-			form.submit({
-				target: '_blank',
+			CMDBuild.core.proxy.widget.OpenReport.print({
+				buildRuntimeForm: true,
 				params: params
 			});
-
-			Ext.defer(function() { // Form cleanup
-				form.close();
-			}, 100);
+//
+//			var form = Ext.create('Ext.form.Panel', {
+//				standardSubmit: true,
+//				url: CMDBuild.core.proxy.index.Json.report.factory.print + '?donotdelete=true' // Add parameter to avoid report delete
+//			});
+//
+//			form.submit({
+//				target: '_blank',
+//				params: params
+//			});
+//
+//			Ext.defer(function() { // Form cleanup
+//				form.close();
+//			}, 100);
 		},
 
 		/**

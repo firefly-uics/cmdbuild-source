@@ -49,7 +49,7 @@
 		accordionUpdateStore: function (nodeIdToSelect) {
 			nodeIdToSelect = Ext.isNumber(nodeIdToSelect) ? nodeIdToSelect : null;
 
-			CMDBuild.core.proxy.report.Report.getTypesTree({
+			CMDBuild.core.proxy.report.Report.readTypesTree({
 				loadMask: false,
 				scope: this,
 				success: function (response, options, decodedResponse) {

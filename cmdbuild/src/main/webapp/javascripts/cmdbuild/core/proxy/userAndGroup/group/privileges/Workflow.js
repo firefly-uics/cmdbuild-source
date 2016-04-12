@@ -19,7 +19,7 @@
 				model: 'CMDBuild.model.userAndGroup.group.privileges.GridRecord',
 				proxy: {
 					type: 'ajax',
-					url: CMDBuild.core.proxy.index.Json.privileges.workflow.read,
+					url: CMDBuild.core.proxy.index.Json.privilege.workflow.readAll,
 					reader: {
 						type: 'json',
 						root: CMDBuild.core.constants.Proxy.PRIVILEGES
@@ -44,7 +44,7 @@
 		setRowAndColumn: function (parameters) {
 			parameters = Ext.isEmpty(parameters) ? {} : parameters;
 
-			Ext.apply(parameters, { url: CMDBuild.core.proxy.index.Json.privileges.workflow.setRowAndColumnPrivileges });
+			Ext.apply(parameters, { url: CMDBuild.core.proxy.index.Json.privilege.workflow.setRowAndColumnPrivileges });
 
 			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.GROUP, parameters);
 		},
@@ -57,7 +57,7 @@
 		update: function (parameters) {
 			parameters = Ext.isEmpty(parameters) ? {} : parameters;
 
-			Ext.apply(parameters, { url: CMDBuild.core.proxy.index.Json.privileges.workflow.update });
+			Ext.apply(parameters, { url: CMDBuild.core.proxy.index.Json.privilege.workflow.update });
 
 			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.GROUP, parameters, true);
 		}
