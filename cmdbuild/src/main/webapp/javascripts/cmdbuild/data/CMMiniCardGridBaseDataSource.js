@@ -32,7 +32,7 @@
 		requires: ['CMDBuild.core.proxy.index.Json'],
 
 		constructor: function() {
-			this.store = new Ext.data.Store ({
+			this.store = CMDBuild.global.Cache.requestAsStore(CMDBuild.core.constants.Proxy.UNCACHED, {
 				pageSize: CMDBuild.configuration.instance.get(CMDBuild.core.constants.Proxy.ROW_LIMIT),
 				model: 'CMDBuild.view.management.CMMiniCardGridModel',
 				autoLoad: false,

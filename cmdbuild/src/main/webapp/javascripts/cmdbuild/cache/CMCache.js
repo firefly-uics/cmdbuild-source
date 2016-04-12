@@ -125,7 +125,7 @@
 		/**
 		 * @param {Object} reference
 		 *
-		 * @returns {Ext.data.Store}
+		 * @returns {Ext.data.Store or CMDBuild.core.cache.Store}
 		 *
 		 * @private
 		 */
@@ -174,7 +174,7 @@
 		/**
 		 * @param {Object} foreignKey
 		 *
-		 * @returns {Ext.data.Store}
+		 * @returns {Ext.data.Store or CMDBuild.core.cache.Store}
 		 */
 		getForeignKeyStore: function(foreignKey) {
 			var baseParams = { className: foreignKey.fkDestination };
@@ -185,24 +185,18 @@
 				baseParams.NoFilter = true;
 			}
 
-			return Ext.create('Ext.data.Store', {
-				autoLoad: true,
-				model: 'CMDBuild.cache.CMReferenceStoreModel',
-				baseParams: baseParams, // Retro-compatibility
-				pageSize: CMDBuild.configuration.instance.get('referenceComboStoreLimit'), // TODO: use proxy constants
-				proxy: {
-					type: 'ajax',
-					url: CMDBuild.core.proxy.index.Json.card.getListShort,
-					reader: {
-						type: 'json',
-						root: 'rows',
-						totalProperty: 'results'
-					},
-					extraParams: baseParams
-				},
-				sorters: [
-					{ property: 'Description', direction: 'ASC' }
-				]
+			// Filters wrongly requested reference stores
+			if (!Ext.isEmpty(baseParams['className']) || !Ext.isEmpty(baseParams['filter']))
+				return CMDBuild.core.proxy.Cache.getStoreForeignKey(baseParams);
+
+			_warning('Invalid ForeignKey object', this, reference);
+
+			return Ext.create('Ext.data.Store', { // Fake empty store on invalid ForeignKey property
+				fields: [],
+				data: [],
+				baseParams: {
+					IdClass: null
+				}
 			});
 		},
 

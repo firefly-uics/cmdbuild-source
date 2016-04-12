@@ -107,7 +107,7 @@
 		},
 
 		/**
-		 * @returns {Ext.data.Store}
+		 * @returns {Ext.data.Store or CMDBuild.core.cache.Store}
 		 */
 		buildFieldStore: function() {
 			var extraParams = {};

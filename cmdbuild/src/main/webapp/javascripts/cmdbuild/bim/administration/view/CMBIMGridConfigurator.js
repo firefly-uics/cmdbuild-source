@@ -5,9 +5,6 @@
 	Ext.define("CMDBuild.delegate.administration.bim.CMBIMGridConfigurator", {
 		extend: "CMDBuild.delegate.administration.common.basepanel.CMBaseGridConfigurator",
 
-		/**
-		 * @return a Ext.data.Store to use for the grid
-		 */
 		getStore: function() {
 			if (this.store == null) {
 				this.store = CMDBuild.bim.proxy.Bim.getStore();

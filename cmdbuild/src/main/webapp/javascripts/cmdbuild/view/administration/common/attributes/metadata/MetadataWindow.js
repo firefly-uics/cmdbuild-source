@@ -62,7 +62,7 @@
 					})
 				],
 
-				store: Ext.create('Ext.data.Store', {
+				store: Ext.create('Ext.data.Store', { // TODO: use Ext.data.ArrayStore
 					model: 'CMDBuild.model.common.attributes.Metadata',
 					data: []
 				}),

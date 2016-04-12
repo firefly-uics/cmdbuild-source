@@ -1,6 +1,9 @@
 (function() {
 
-	Ext.require('CMDBuild.core.proxy.index.Json');
+	Ext.require([
+		'CMDBuild.core.constants.Proxy',
+		'CMDBuild.core.proxy.index.Json'
+	]);
 
 	/**
 	 * @deprecated new class (CMDBuild.view.common.field.filter.advanced.Advanced)
@@ -12,19 +15,19 @@
 		]
 	});
 
-	var functionsStore = Ext.create('Ext.data.Store', {
+	var functionsStore = CMDBuild.global.Cache.requestAsStore(CMDBuild.core.constants.Proxy.UNCACHED, {
 		autoLoad: true,
 		model: 'Functions',
 		proxy: {
 			type: 'ajax',
 			url: CMDBuild.core.proxy.index.Json.functions.readAll,
 			reader: {
-					type: 'json',
-					root: 'response'
+				type: 'json',
+				root: CMDBuild.core.constants.Proxy.RESPONSE
 			}
 		},
 		sorters: [
-			{ property: 'name', direction: 'ASC' }
+			{ property: CMDBuild.core.constants.Proxy.NAME, direction: 'ASC' }
 		]
 	});
 

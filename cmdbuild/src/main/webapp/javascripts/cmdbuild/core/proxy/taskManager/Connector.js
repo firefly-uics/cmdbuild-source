@@ -126,7 +126,7 @@
 		},
 
 		/**
-		 * @returns {Ext.data.Store}
+		 * @returns {Ext.data.Store or CMDBuild.core.cache.Store}
 		 *
 		 * TODO: implement real server call
 		 */

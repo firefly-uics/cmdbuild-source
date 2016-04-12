@@ -90,31 +90,15 @@
 			}
 		},
 
+		/**
+		 * @param {String} type
+		 *
+		 * @returns {Ext.data.Store or CMDBuild.core.cache.Store}
+		 */
 		getLookupStore: function(type) {
-			if (!lookupAttributeStoreMap[type]) {
-				lookupAttributeStoreMap[type] =Ext.create('Ext.data.Store', {
-					autoLoad: true,
-					model: 'CMDBuild.model.cache.LookupFieldStore',
-					proxy: {
-						type: 'ajax',
-						url: CMDBuild.core.proxy.index.Json.lookup.readAll,
-						reader: {
-							type: 'json',
-							root: 'rows'
-						},
-						extraParams: {
-							type: type,
-							active: true,
-							short: true
-						},
-						actionMethods: 'POST' // Lookup types can have UTF-8 names  not handled correctly
-					},
-					sorters: [
-						{ property: 'Number', direction: 'ASC' },
-						{ property: 'Description', direction: 'ASC' }
-					]
-				});
-			}
+			if (!lookupAttributeStoreMap[type])
+				lookupAttributeStoreMap[type] = CMDBuild.core.proxy.Cache.getStoreLookup(type);
+
 			return lookupAttributeStoreMap[type];
 		},
 

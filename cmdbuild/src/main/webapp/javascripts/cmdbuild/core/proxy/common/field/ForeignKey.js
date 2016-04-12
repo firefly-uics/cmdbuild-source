@@ -13,7 +13,7 @@
 		/**
 		 * @param {Object} parameters
 		 *
-		 * @return {Ext.data.Store}
+		 * @returns {Ext.data.Store or CMDBuild.core.cache.Store}
 		 */
 		getStore: function (parameters) {
 			return CMDBuild.global.Cache.requestAsStore(CMDBuild.core.constants.Proxy.UNCACHED, {

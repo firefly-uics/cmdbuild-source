@@ -87,10 +87,10 @@
 		 *
 		 * @param {String} className
 		 *
-		 * @returns {Ext.data.Store}
+		 * @returns {Ext.data.Store or CMDBuild.core.cache.Store}
 		 */
 		newGroupStore: function (className) {
-			return Ext.create('Ext.data.Store', {
+			return CMDBuild.global.Cache.requestAsStore(CMDBuild.core.constants.Proxy.UNCACHED, {
 				autoLoad: true,
 				model: 'CMDBuild.model.CMFilterModel',
 				pageSize: CMDBuild.configuration.instance.get(CMDBuild.core.constants.Proxy.ROW_LIMIT),
