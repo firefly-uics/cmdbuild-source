@@ -148,24 +148,24 @@ public class Authentication {
 	public StandardSessionLogic standardSessionLogic() {
 		final DefaultAuthenticationLogic delegate = new DefaultAuthenticationLogic(defaultAuthenticationService(),
 				privilegeManagement.privilegeContextFactory(), data.systemDataView());
-		return new StandardSessionLogic(
-				new DefaultSessionLogic(delegate, userStore, sessionStore(), web.simpleTokenGenerator()));
+		return new StandardSessionLogic(new DefaultSessionLogic(delegate, userStore, sessionStore(),
+				web.simpleTokenGenerator(), properties.cmdbuildProperties()));
 	}
 
 	@Bean
 	public SoapSessionLogic soapSessionLogic() {
 		final AuthenticationLogic delegate = new DefaultAuthenticationLogic(soapAuthenticationService(),
 				privilegeManagement.privilegeContextFactory(), data.systemDataView());
-		return new SoapSessionLogic(
-				new DefaultSessionLogic(delegate, userStore, sessionStore(), web.simpleTokenGenerator()));
+		return new SoapSessionLogic(new DefaultSessionLogic(delegate, userStore, sessionStore(),
+				web.simpleTokenGenerator(), properties.cmdbuildProperties()));
 	}
 
 	@Bean
 	public RestSessionLogic restSessionLogic() {
 		final AuthenticationLogic delegate = new DefaultAuthenticationLogic(restAuthenticationService(),
 				privilegeManagement.privilegeContextFactory(), data.systemDataView());
-		return new RestSessionLogic(
-				new DefaultSessionLogic(delegate, userStore, sessionStore(), web.simpleTokenGenerator()));
+		return new RestSessionLogic(new DefaultSessionLogic(delegate, userStore, sessionStore(),
+				web.simpleTokenGenerator(), properties.cmdbuildProperties()));
 	}
 
 	@Bean

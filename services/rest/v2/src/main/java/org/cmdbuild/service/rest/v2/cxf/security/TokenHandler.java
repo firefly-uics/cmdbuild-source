@@ -11,41 +11,32 @@ import javax.ws.rs.container.ResourceInfo;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 
-import org.cmdbuild.auth.UserStore;
-import org.cmdbuild.auth.user.OperationUser;
+import org.cmdbuild.logic.auth.SessionLogic;
 import org.cmdbuild.service.rest.v2.Unauthorized;
-import org.cmdbuild.service.rest.v2.cxf.service.OperationUserStore;
-import org.cmdbuild.service.rest.v2.cxf.service.SessionStore;
 import org.cmdbuild.service.rest.v2.cxf.util.Messages.StringFromMessage;
 import org.cmdbuild.service.rest.v2.logging.LoggingSupport;
-import org.cmdbuild.service.rest.v2.model.Session;
 
 import com.google.common.base.Optional;
 
 public class TokenHandler implements ContainerRequestFilter, LoggingSupport {
 
 	private final StringFromMessage tokenFromMessage;
-	private final SessionStore sessionStore;
-	private final OperationUserStore operationUserStore;
-	private final UserStore userStore;
+	private final SessionLogic sessionLogic;
 
 	@Context
 	private ResourceInfo resourceInfo;
 
-	public TokenHandler(final StringFromMessage tokenFromMessage, final SessionStore sessionStore,
-			final OperationUserStore operationUserStore, final UserStore userStore) {
+	public TokenHandler(final StringFromMessage tokenFromMessage, final SessionLogic sessionLogic) {
 		this.tokenFromMessage = tokenFromMessage;
-		this.sessionStore = sessionStore;
-		this.operationUserStore = operationUserStore;
-		this.userStore = userStore;
+		this.sessionLogic = sessionLogic;
 	}
 
 	/**
 	 * Usable for tests only.
 	 */
-	public TokenHandler(final StringFromMessage tokenFromMessage, final SessionStore sessionStore,
-			final OperationUserStore operationUserStore, final UserStore userStore, final ResourceInfo resourceInfo) {
-		this(tokenFromMessage, sessionStore, operationUserStore, userStore);
+	public TokenHandler(final StringFromMessage tokenFromMessage, final SessionLogic sessionLogic,
+			final ResourceInfo resourceInfo) {
+		this(tokenFromMessage, sessionLogic);
 		this.resourceInfo = resourceInfo;
 	}
 
@@ -65,21 +56,12 @@ public class TokenHandler implements ContainerRequestFilter, LoggingSupport {
 				break;
 			}
 
-			final Optional<Session> session = sessionStore.get(token.get());
-			final boolean missingSession = !session.isPresent();
-			if (missingSession) {
+			if (!sessionLogic.exists(token.get())) {
 				response = Response.status(UNAUTHORIZED).build();
 				break;
 			}
-
-			final boolean missingOperationUser = !operationUserStore.of(session.get()).get().isPresent();
-			if (missingOperationUser) {
-				response = Response.status(UNAUTHORIZED).build();
-				break;
-			}
-
-			final OperationUser operationUser = operationUserStore.of(session.get()).get().get();
-			userStore.setUser(operationUser);
+			
+			sessionLogic.setCurrent(token.get());
 		} while (false);
 		if (response != null) {
 			requestContext.abortWith(response);
