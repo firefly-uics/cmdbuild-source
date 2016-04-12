@@ -71,24 +71,6 @@
 			CMDBuild.configuration.runtime.set(CMDBuild.core.constants.Proxy.LANGUAGE, '<%= StringEscapeUtils.escapeEcmaScript(lang) %>');
 			CMDBuild.configuration.runtime.set(CMDBuild.core.constants.Proxy.USER_ID, <%= operationUser.getAuthenticatedUser().getId() %>);
 			CMDBuild.configuration.runtime.set(CMDBuild.core.constants.Proxy.USERNAME, '<%= StringEscapeUtils.escapeEcmaScript(operationUser.getAuthenticatedUser().getUsername()) %>');
-
-			/**
-			 * Compatibility mode
-			 *
-			 * @deprecated (CMDBuild.configuration.runtime)
-			 */
-			Ext.ns('CMDBuild.Runtime');
-<%-- 			CMDBuild.Runtime.SessionId = '<%= sessionLogic.getCurrent() %>'; --%>
-			CMDBuild.Runtime.UserId = <%= operationUser.getAuthenticatedUser().getId() %>;
-			CMDBuild.Runtime.Username = '<%= StringEscapeUtils.escapeEcmaScript(operationUser.getAuthenticatedUser().getUsername()) %>';
-			CMDBuild.Runtime.DefaultGroupId = <%= group.getId() %>;
-			CMDBuild.Runtime.DefaultGroupName = '<%= StringEscapeUtils.escapeEcmaScript(group.getName()) %>';
-			CMDBuild.Runtime.DefaultGroupDescription = '<%= StringEscapeUtils.escapeEcmaScript(group.getDescription()) %>';
-			CMDBuild.Runtime.AllowsPasswordLogin = <%= operationUser.getAuthenticatedUser().canChangePassword() %>;
-
-			<% if (operationUser.getAuthenticatedUser().getGroupNames().size() == 1) { %>
-				CMDBuild.Runtime.LoginGroupId = <%= group.getId() %>;
-			<% } %>
 		</script>
 
 		<%@ include file="coreJsFiles.jsp" %>
@@ -117,8 +99,6 @@
 						<% } else { %>
 							<p id="msg-inner-hidden"><tr:translation key="common.group"/>: <strong><tr:translation key="multiGroup"/></strong>
 							<script type="text/javascript">
-								CMDBuild.Runtime.GroupDescriptions = '<%= StringEscapeUtils.escapeEcmaScript(groupDecriptions) %>'; // @deprecated
-
 								CMDBuild.configuration.runtime.set(CMDBuild.core.constants.Proxy.GROUP_DESCRIPTIONS, '<%= StringEscapeUtils.escapeEcmaScript(groupDecriptions) %>');
 							</script>
 						<% } %>

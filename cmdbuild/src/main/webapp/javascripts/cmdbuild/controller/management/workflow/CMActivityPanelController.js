@@ -547,7 +547,7 @@
 		if (processClassId) {
 			var processClass = _CMCache.getEntryTypeById(processClassId);
 			if (processClass) {
-				var theUserCanStopTheProcess = processClass.isUserStoppable() || CMDBuild.Runtime.IsAdministrator;
+				var theUserCanStopTheProcess = processClass.isUserStoppable() || CMDBuild.configuration.runtime.get(CMDBuild.core.constants.Proxy.IS_ADMINISTRATOR);
 				var theProcessIsNotAlreadyTerminated = processInstance.isStateOpen() || processInstance.isStateSuspended();
 
 				if (theUserCanStopTheProcess && theProcessIsNotAlreadyTerminated) {

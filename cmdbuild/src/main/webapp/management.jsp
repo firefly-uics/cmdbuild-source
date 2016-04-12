@@ -72,26 +72,6 @@
 			CMDBuild.configuration.runtime.set(CMDBuild.core.constants.Proxy.STARTING_CLASS_ID, <%= group.getStartingClassId() %>);
 			CMDBuild.configuration.runtime.set(CMDBuild.core.constants.Proxy.USER_ID, <%= operationUser.getAuthenticatedUser().getId() %>);
 			CMDBuild.configuration.runtime.set(CMDBuild.core.constants.Proxy.USERNAME, '<%= StringEscapeUtils.escapeEcmaScript(operationUser.getAuthenticatedUser().getUsername()) %>');
-
-			/**
-			 * Compatibility mode
-			 *
-			 * @deprecated (CMDBuild.configuration.runtime)
-			 */
-			Ext.ns('CMDBuild.Runtime');
-<%-- 			CMDBuild.Runtime.SessionId = '<%= sessionLogic.getCurrent() %>'; --%>
-			CMDBuild.Runtime.UserId = <%= operationUser.getAuthenticatedUser().getId() %>;
-			CMDBuild.Runtime.Username = '<%= StringEscapeUtils.escapeEcmaScript(operationUser.getAuthenticatedUser().getUsername()) %>';
-			CMDBuild.Runtime.DefaultGroupId = <%= group.getId() %>;
-			CMDBuild.Runtime.DefaultGroupName = '<%= StringEscapeUtils.escapeEcmaScript(group.getName()) %>';
-			CMDBuild.Runtime.DefaultGroupDescription = '<%= StringEscapeUtils.escapeEcmaScript(group.getDescription()) %>';
-			CMDBuild.Runtime.IsAdministrator = <%= operationUser.hasAdministratorPrivileges() %>;
-			CMDBuild.Runtime.AllowsPasswordLogin = <%= operationUser.getAuthenticatedUser().canChangePassword() %>;
-			CMDBuild.Runtime.CanChangePassword = <%= operationUser.getAuthenticatedUser().canChangePassword() %>;
-
-			<% if (group.getStartingClassId() != null) { %>
-				CMDBuild.Runtime.StartingClassId = <%= group.getStartingClassId() %>;
-			<% } %>
 		</script>
 
 		<%@ include file="coreJsFiles.jsp" %>
@@ -140,8 +120,6 @@
 							<p id="msg-inner-hidden"><tr:translation key="common.group"/>: <strong><tr:translation key="multiGroup"/></strong>
 
 							<script type="text/javascript">
-								CMDBuild.Runtime.GroupDescriptions = '<%= StringEscapeUtils.escapeEcmaScript(groupDecriptions) %>'; // @deprecated
-
 								CMDBuild.configuration.runtime.set(CMDBuild.core.constants.Proxy.GROUP_DESCRIPTIONS, '<%= StringEscapeUtils.escapeEcmaScript(groupDecriptions) %>');
 							</script>
 						<% } %>

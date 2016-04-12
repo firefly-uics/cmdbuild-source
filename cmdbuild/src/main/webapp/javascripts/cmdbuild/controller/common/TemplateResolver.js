@@ -167,8 +167,8 @@ CMDBuild.Management.TemplateResolver.prototype = {
 	// private
 	getCurrentUserInfo: function(varName) {
 		var infoMap = {
-			name: CMDBuild.Runtime.Username,
-			id: CMDBuild.Runtime.UserId
+			name: CMDBuild.configuration.runtime.get(CMDBuild.core.constants.Proxy.USERNAME),
+			id: CMDBuild.configuration.runtime.get(CMDBuild.core.constants.Proxy.USER_ID)
 		};
 		return infoMap[varName];
 	},
@@ -176,8 +176,8 @@ CMDBuild.Management.TemplateResolver.prototype = {
 	// private
 	getCurrentGroupInfo: function(varName) {
 		var infoMap = {
-			name: CMDBuild.Runtime.DefaultGroupName,
-			id: CMDBuild.Runtime.DefaultGroupId
+			name: CMDBuild.configuration.runtime.get(CMDBuild.core.constants.Proxy.DEFAULT_GROUP_NAME),
+			id: CMDBuild.configuration.runtime.get(CMDBuild.core.constants.Proxy.DEFAULT_GROUP_ID)
 		};
 		return infoMap[varName];
 	},
