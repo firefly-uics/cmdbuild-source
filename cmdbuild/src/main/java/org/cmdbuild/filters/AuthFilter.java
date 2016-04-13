@@ -1,6 +1,7 @@
 package org.cmdbuild.filters;
 
 import static java.util.Arrays.stream;
+import static org.apache.commons.lang3.ObjectUtils.defaultIfNull;
 import static org.cmdbuild.spring.util.Constants.PROTOTYPE;
 
 import java.io.IOException;
@@ -13,6 +14,7 @@ import javax.servlet.FilterConfig;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -89,10 +91,11 @@ public class AuthFilter implements Filter {
 	}
 
 	private static final String CMDBUILD_AUTHORIZATION = "CMDBuild-Authorization";
+	private static final Cookie[] NO_COOKIES = new Cookie[] {};
 
 	private static String sessionId(final HttpServletRequest httpRequest) {
 		final String header = httpRequest.getHeader(CMDBUILD_AUTHORIZATION);
-		final Optional<String> cookie = stream(httpRequest.getCookies()) //
+		final Optional<String> cookie = stream(defaultIfNull(httpRequest.getCookies(), NO_COOKIES)) //
 				.filter(input -> input.getName().equals(CMDBUILD_AUTHORIZATION)) //
 				.findFirst() //
 				.map(input -> input.getValue());

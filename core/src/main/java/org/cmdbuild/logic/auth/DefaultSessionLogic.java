@@ -4,7 +4,9 @@ import static org.apache.commons.lang3.ObjectUtils.defaultIfNull;
 import static org.cmdbuild.auth.UserStores.inMemory;
 import static org.cmdbuild.auth.user.AuthenticatedUserImpl.ANONYMOUS_USER;
 
-import org.apache.commons.lang3.tuple.Pair;
+import java.util.concurrent.atomic.AtomicReference;
+
+import org.apache.commons.lang3.Validate;
 import org.cmdbuild.auth.AnonymousWhenMissingUserStore;
 import org.cmdbuild.auth.ClientRequestAuthenticator.ClientRequest;
 import org.cmdbuild.auth.ForwardingUserStore;
@@ -13,13 +15,82 @@ import org.cmdbuild.auth.UserStore;
 import org.cmdbuild.auth.acl.NullGroup;
 import org.cmdbuild.auth.context.NullPrivilegeContext;
 import org.cmdbuild.auth.user.OperationUser;
-import org.cmdbuild.data.store.Storable;
+import org.cmdbuild.data.store.Store;
 import org.cmdbuild.data.store.session.Session;
-import org.cmdbuild.data.store.session.SessionStore;
-
-import com.google.common.cache.Cache;
 
 public class DefaultSessionLogic extends ForwardingAuthenticationLogic implements SessionLogic {
+
+	private static class SessionImpl implements Session {
+
+		public static class Builder implements org.apache.commons.lang3.builder.Builder<SessionImpl> {
+
+			private String identifier;
+			private OperationUser user;
+			private OperationUser impersonated;
+
+			/**
+			 * Use factory method.
+			 */
+			private Builder() {
+			}
+
+			@Override
+			public SessionImpl build() {
+				validate();
+				return new SessionImpl(this);
+			}
+
+			private void validate() {
+				Validate.notBlank(identifier, "invalid identifier '%s'", identifier);
+			}
+
+			public Builder withIdentifier(final String identifier) {
+				this.identifier = identifier;
+				return this;
+			}
+
+			public Builder withUser(final OperationUser user) {
+				this.user = user;
+				return this;
+			}
+
+			public Builder withImpersonated(final OperationUser impersonated) {
+				this.impersonated = impersonated;
+				return this;
+			}
+
+		}
+
+		public static Builder newInstance() {
+			return new Builder();
+		}
+
+		private final String identifier;
+		private final OperationUser user;
+		private final OperationUser impersonated;
+
+		public SessionImpl(final Builder builder) {
+			this.identifier = builder.identifier;
+			this.user = builder.user;
+			this.impersonated = builder.impersonated;
+		}
+
+		@Override
+		public String getIdentifier() {
+			return identifier;
+		}
+
+		@Override
+		public OperationUser getUser() {
+			return user;
+		}
+
+		@Override
+		public OperationUser getImpersonated() {
+			return impersonated;
+		}
+
+	}
 
 	private static final OperationUser ANONYMOUS = new OperationUser(ANONYMOUS_USER, new NullPrivilegeContext(),
 			new NullGroup());
@@ -28,20 +99,15 @@ public class DefaultSessionLogic extends ForwardingAuthenticationLogic implement
 
 	private final AuthenticationLogic delegate;
 	private final UserStore userStore;
-	private final SessionStore sessionStore;
+	private final Store<Session> sessionStore;
 	private final TokenGenerator tokenGenerator;
-	// TODO use a better data structure
-	private final Cache<String, Pair<OperationUser, OperationUser>> cache;
 
 	public DefaultSessionLogic(final AuthenticationLogic delegate, final UserStore userStore,
-			final SessionStore sessionStore, final TokenGenerator tokenGenerator,
-			Cache<String, Pair<OperationUser, OperationUser>> cache) {
+			final Store<Session> sessionStore, final TokenGenerator tokenGenerator) {
 		this.delegate = delegate;
 		this.userStore = userStore;
 		this.sessionStore = sessionStore;
 		this.tokenGenerator = tokenGenerator;
-		this.cache = cache;
-		
 	}
 
 	@Override
@@ -49,22 +115,9 @@ public class DefaultSessionLogic extends ForwardingAuthenticationLogic implement
 		return delegate;
 	}
 
-	private Session createSession(final String value) {
-		return new Session() {
-
-			private final String identifier = tokenGenerator.generate(value);
-
-			@Override
-			public String getIdentifier() {
-				return identifier;
-			}
-
-		};
-	}
-
 	@Override
 	public String create(final LoginDTO login) {
-		final Session session = createSession(login.getLoginString());
+		final AtomicReference<String> output = new AtomicReference<>();
 		delegate().login(login, new ForwardingUserStore() {
 
 			private final UserStore delegate = new AnonymousWhenMissingUserStore(inMemory());
@@ -76,15 +129,17 @@ public class DefaultSessionLogic extends ForwardingAuthenticationLogic implement
 
 			@Override
 			public void setUser(final OperationUser user) {
-				final Storable created = sessionStore.create(session);
-				final Session stored = sessionStore.read(created);
-				sessionStore.set(stored, user);
-				cache.put(session.getIdentifier(), Pair.of(user, null));
+				final String identifier = tokenGenerator.generate(user.getAuthenticatedUser().getUsername());
+				sessionStore.create(SessionImpl.newInstance() //
+						.withIdentifier(identifier) //
+						.withUser(user) //
+						.build());
+				output.set(identifier);
 				super.setUser(user);
 			}
 
 		});
-		return session.getIdentifier();
+		return output.get();
 	}
 
 	@Override
@@ -100,12 +155,12 @@ public class DefaultSessionLogic extends ForwardingAuthenticationLogic implement
 
 			@Override
 			public void setUser(final OperationUser user) {
-				final Session session = createSession(user.getAuthenticatedUser().getUsername());
-				final Storable created = sessionStore.create(session);
-				final Session stored = sessionStore.read(created);
-				sessionStore.set(stored, user);
-				cache.put(session.getIdentifier(), Pair.of(user, null));
-				callback.sessionCreated(created.getIdentifier());
+				final String identifier = tokenGenerator.generate(user.getAuthenticatedUser().getUsername());
+				sessionStore.create(SessionImpl.newInstance() //
+						.withIdentifier(identifier) //
+						.withUser(user) //
+						.build());
+				callback.sessionCreated(identifier);
 				super.setUser(user);
 			}
 
@@ -120,7 +175,10 @@ public class DefaultSessionLogic extends ForwardingAuthenticationLogic implement
 
 	@Override
 	public void update(final String id, final LoginDTO login) {
-		final UserStore temporary = inMemory(cache.getIfPresent(id).getLeft());
+		final Session existing = sessionStore.read(SessionImpl.newInstance() //
+				.withIdentifier(id) //
+				.build());
+		final UserStore temporary = inMemory(existing.getUser());
 		delegate().login(login, new ForwardingUserStore() {
 
 			@Override
@@ -130,18 +188,10 @@ public class DefaultSessionLogic extends ForwardingAuthenticationLogic implement
 
 			@Override
 			public void setUser(final OperationUser user) {
-				final String identifier = tokenGenerator.generate(user.getAuthenticatedUser().getUsername());
-				final Storable created = sessionStore.create(new Session() {
-
-					@Override
-					public String getIdentifier() {
-						return identifier;
-					}
-
-				});
-				final Session session = sessionStore.read(created);
-				sessionStore.set(session, user);
-				cache.put(identifier, Pair.of(user, null));
+				sessionStore.update(SessionImpl.newInstance() //
+						.withIdentifier(existing.getIdentifier()) //
+						.withUser(user) //
+						.build());
 				super.setUser(user);
 			}
 
@@ -150,12 +200,18 @@ public class DefaultSessionLogic extends ForwardingAuthenticationLogic implement
 
 	@Override
 	public void delete(final String id) {
-		cache.invalidate(id);
+		sessionStore.delete(SessionImpl.newInstance() //
+				.withIdentifier(id) //
+				.build());
 	}
 
 	@Override
 	public void impersonate(final String id, final String username) {
-		final OperationUser current = cache.getIfPresent(id).getLeft();
+		final Session existing = sessionStore.read(SessionImpl.newInstance() //
+				.withIdentifier(id) //
+				.build());
+		final OperationUser current = existing //
+				.getUser();
 		if (username != null) {
 			if (!current.hasAdministratorPrivileges() && !current.getAuthenticatedUser().isService()
 					&& !current.getAuthenticatedUser().isPrivileged()) {
@@ -166,9 +222,17 @@ public class DefaultSessionLogic extends ForwardingAuthenticationLogic implement
 					.withLoginString(username) //
 					.withNoPasswordRequired() //
 					.build(), temporary);
-			cache.put(id, Pair.of(current, temporary.getUser()));
+			sessionStore.update(SessionImpl.newInstance() //
+					.withIdentifier(existing.getIdentifier()) //
+					.withUser(current) //
+					.withImpersonated(temporary.getUser()) //
+					.build());
 		} else {
-			cache.put(id, Pair.of(current, null));
+			sessionStore.update(SessionImpl.newInstance() //
+					.withIdentifier(existing.getIdentifier()) //
+					.withUser(current) //
+					.withImpersonated(null) //
+					.build());
 		}
 	}
 
@@ -190,8 +254,10 @@ public class DefaultSessionLogic extends ForwardingAuthenticationLogic implement
 
 	@Override
 	public OperationUser getUser(final String id) {
-		final Pair<OperationUser, OperationUser> pair = cache.getIfPresent(id);
-		return defaultIfNull(pair.getRight(), pair.getLeft());
+		final Session existing = sessionStore.read(SessionImpl.newInstance() //
+				.withIdentifier(id) //
+				.build());
+		return defaultIfNull(existing.getImpersonated(), existing.getUser());
 	}
 
 }

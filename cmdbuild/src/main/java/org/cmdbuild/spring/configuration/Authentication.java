@@ -5,7 +5,6 @@ import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.cmdbuild.spring.util.Constants.DEFAULT;
 import static org.cmdbuild.spring.util.Constants.SOAP;
 
-import org.apache.commons.lang3.tuple.Pair;
 import org.cmdbuild.auth.AuthenticationService;
 import org.cmdbuild.auth.AuthenticationStore;
 import org.cmdbuild.auth.CasAuthenticator;
@@ -15,11 +14,9 @@ import org.cmdbuild.auth.LdapAuthenticator;
 import org.cmdbuild.auth.LegacyDBAuthenticator;
 import org.cmdbuild.auth.NotSystemUserFetcher;
 import org.cmdbuild.auth.UserStore;
-import org.cmdbuild.auth.user.OperationUser;
-import org.cmdbuild.data.store.InMemoryStore;
-import org.cmdbuild.data.store.session.DefaultSessionStore;
+import org.cmdbuild.data.store.CachingStore;
+import org.cmdbuild.data.store.Store;
 import org.cmdbuild.data.store.session.Session;
-import org.cmdbuild.data.store.session.SessionStore;
 import org.cmdbuild.logic.auth.AuthenticationLogic;
 import org.cmdbuild.logic.auth.DefaultAuthenticationLogic;
 import org.cmdbuild.logic.auth.DefaultGroupsLogic;
@@ -154,38 +151,41 @@ public class Authentication {
 	public StandardSessionLogic standardSessionLogic() {
 		final DefaultAuthenticationLogic delegate = new DefaultAuthenticationLogic(defaultAuthenticationService(),
 				privilegeManagement.privilegeContextFactory(), data.systemDataView());
-		return new StandardSessionLogic(new DefaultSessionLogic(delegate, userStore, sessionStore(),
-				web.simpleTokenGenerator(), sessionAndUserCache()));
+		return new StandardSessionLogic(
+				new DefaultSessionLogic(delegate, userStore, sessionStore(), web.simpleTokenGenerator()));
 	}
 
 	@Bean
 	public SoapSessionLogic soapSessionLogic() {
 		final AuthenticationLogic delegate = new DefaultAuthenticationLogic(soapAuthenticationService(),
 				privilegeManagement.privilegeContextFactory(), data.systemDataView());
-		return new SoapSessionLogic(new DefaultSessionLogic(delegate, userStore, sessionStore(),
-				web.simpleTokenGenerator(), sessionAndUserCache()));
+		return new SoapSessionLogic(
+				new DefaultSessionLogic(delegate, userStore, sessionStore(), web.simpleTokenGenerator()));
 	}
 
 	@Bean
 	public RestSessionLogic restSessionLogic() {
 		final AuthenticationLogic delegate = new DefaultAuthenticationLogic(restAuthenticationService(),
 				privilegeManagement.privilegeContextFactory(), data.systemDataView());
-		return new RestSessionLogic(new DefaultSessionLogic(delegate, userStore, sessionStore(),
-				web.simpleTokenGenerator(), sessionAndUserCache()));
+		return new RestSessionLogic(
+				new DefaultSessionLogic(delegate, userStore, sessionStore(), web.simpleTokenGenerator()));
 	}
 
 	@Bean
-	protected Cache<String, Pair<OperationUser, OperationUser>> sessionAndUserCache() {
+	protected Store<Session> sessionStore() {
 		// TODO needs reboot, we should avoid it
-		return CacheBuilder.newBuilder() //
+		final Cache<String, Session> cache = CacheBuilder.newBuilder() //
 				.expireAfterAccess((properties.cmdbuildProperties().getSessionTimoutOrZero() == 0) ? Long.MAX_VALUE
 						: properties.cmdbuildProperties().getSessionTimoutOrZero(), SECONDS) //
 				.build();
-	}
+		return new CachingStore<Session>() {
 
-	@Bean
-	protected SessionStore sessionStore() {
-		return new DefaultSessionStore(InMemoryStore.of(Session.class));
+			@Override
+			protected Cache<String, Session> delegate() {
+				return cache;
+			}
+
+		};
 	}
 
 	@Bean
