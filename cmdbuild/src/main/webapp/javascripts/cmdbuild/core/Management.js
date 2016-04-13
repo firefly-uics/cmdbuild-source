@@ -9,6 +9,7 @@
 			'CMDBuild.core.configurations.Timeout',
 			'CMDBuild.core.constants.ModuleIdentifiers',
 			'CMDBuild.core.constants.Proxy',
+			'CMDBuild.core.CookiesManager',
 			'CMDBuild.core.proxy.Classes',
 			'CMDBuild.core.proxy.dashboard.Dashboard',
 			'CMDBuild.core.proxy.domain.Domain',
@@ -152,7 +153,7 @@
 		 * @private
 		 */
 		buildUserInterface: function () {
-			if (!Ext.isEmpty(Ext.util.Cookies.get(CMDBuild.core.constants.Proxy.AUTHORIZATION_HEADER_KEY))) {
+			if (!CMDBuild.core.CookiesManager.authorizationIsEmpty()) {
 				Ext.suspendLayouts();
 
 				_CMCache.syncAttachmentCategories();

@@ -5,8 +5,8 @@
 
 		requires: [
 			'CMDBuild.core.constants.Proxy',
-			'CMDBuild.core.proxy.session.JsonRpc',
-//			'CMDBuild.core.proxy.session.Rest'
+			'CMDBuild.core.CookiesManager',
+			'CMDBuild.core.proxy.session.JsonRpc'
 		],
 
 		/**
@@ -35,7 +35,7 @@
 			CMDBuild.core.proxy.session.JsonRpc.logout({
 				scope: this,
 				callback: function (options, success, response) {
-					Ext.util.Cookies.clear(CMDBuild.core.constants.Proxy.AUTHORIZATION_HEADER_KEY);
+					CMDBuild.core.CookiesManager.authorizationClear();
 
 					window.location = 'index.jsp';
 				}

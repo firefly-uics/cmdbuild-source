@@ -23,6 +23,8 @@
 		valueField: CMDBuild.core.constants.Proxy.TAG,
 
 		/**
+		 * @returns {Void}
+		 *
 		 * @override
 		 */
 		initComponent: function () {

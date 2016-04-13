@@ -68,9 +68,9 @@
 		constructor: function (configurationObject) {
 			Ext.apply(this, configurationObject);
 
+			// Setup global reference
 			Ext.ns('CMDBuild.global');
-
-			CMDBuild.global.Cache = this; // Global reference
+			CMDBuild.global.Cache = this;
 		},
 
 		/**
