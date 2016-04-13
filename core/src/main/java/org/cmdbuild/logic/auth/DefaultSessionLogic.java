@@ -4,6 +4,7 @@ import static org.apache.commons.lang3.ObjectUtils.defaultIfNull;
 import static org.cmdbuild.auth.UserStores.inMemory;
 import static org.cmdbuild.auth.user.AuthenticatedUserImpl.ANONYMOUS_USER;
 
+import java.util.NoSuchElementException;
 import java.util.concurrent.atomic.AtomicReference;
 
 import org.apache.commons.lang3.Validate;
@@ -170,7 +171,7 @@ public class DefaultSessionLogic extends ForwardingAuthenticationLogic implement
 
 	@Override
 	public boolean exists(final String id) {
-		return getUser(id) != null;
+		return getUserOrNullIfMissing(id) != null;
 	}
 
 	@Override
@@ -244,12 +245,20 @@ public class DefaultSessionLogic extends ForwardingAuthenticationLogic implement
 	@Override
 	public void setCurrent(final String id) {
 		current.set(id);
-		userStore.setUser((id == null) ? null : getUser(id));
+		userStore.setUser((id == null) ? null : getUserOrNullIfMissing(id));
+	}
+
+	private OperationUser getUserOrNullIfMissing(final String id) {
+		try {
+			return getUser(id);
+		} catch (final NoSuchElementException e) {
+			return null;
+		}
 	}
 
 	@Override
 	public boolean isValidUser(final String id) {
-		return (id == null) ? false : getUser(id).isValid();
+		return (id == null) ? false : getUserOrNullIfMissing(id).isValid();
 	}
 
 	@Override
