@@ -52,13 +52,14 @@
 		<script type="text/javascript" src="javascripts/cmdbuild/core/constants/FieldWidths.js"></script>
 		<script type="text/javascript" src="javascripts/cmdbuild/core/interfaces/Ajax.js"></script>
 		<script type="text/javascript" src="javascripts/cmdbuild/core/Message.js"></script>
+		<script type="text/javascript" src="javascripts/cmdbuild/core/CookiesManager.js"></script>
 
 		<!-- 2. Localizations -->
 		<%@ include file="localizationsJsFiles.jsp" %>
 
 		<!-- 3. Runtime configuration -->
 		<script type="text/javascript">
-			Ext.util.Cookies.set(CMDBuild.core.constants.Proxy.AUTHORIZATION_HEADER_KEY, '<%= sessionLogic.getCurrent() %>');
+			CMDBuild.core.CookiesManager.authorizationInit('<%= sessionLogic.getCurrent() %>'); // Authorization cookie setup
 
 			Ext.ns('CMDBuild.configuration.runtime');
 

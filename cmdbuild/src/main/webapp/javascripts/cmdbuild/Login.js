@@ -25,6 +25,7 @@
 			Ext.create('CMDBuild.core.LoggerManager'); // Logger configuration
 			Ext.create('CMDBuild.core.Data', { enableLocalized: true }); // Data connections configuration
 			Ext.create('CMDBuild.core.cache.Cache');
+			// Ext.create('CMDBuild.core.CookiesManager'); // TODO: future implementation should be here when runtime will be read with asynchronous call
 			Ext.create('CMDBuild.core.configurations.builder.Instance'); // CMDBuild instance configuration
 			Ext.create('CMDBuild.core.configurations.builder.Localization', { // CMDBuild localization configuration
 				callback: function (options, success, response) {

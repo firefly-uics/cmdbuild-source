@@ -54,7 +54,10 @@
 		 * @private
 		 */
 		callbackInterceptor: function (records, operation, success) {
-			var decodedResponse = CMDBuild.core.interfaces.Ajax.decodeJson(operation.response.responseText);
+			var decodedResponse = {};
+
+			if (!Ext.isEmpty(operation) && !Ext.isEmpty(operation.response) && !Ext.isEmpty(operation.response.responseText))
+				decodedResponse = CMDBuild.core.interfaces.Ajax.decodeJson(operation.response.responseText);
 
 			if (!this.disableAllMessages) {
 				if (!this.disableWarnings)
