@@ -59,16 +59,19 @@
 			 * @public
 			 */
 			authorizationExpirationUpdate: function () {
-				var date = new Date();
-console.log(date);
-console.log(date.setSeconds(date.getSeconds() + CMDBuild.configuration.instance.get(CMDBuild.core.constants.Proxy.SESSION_TIMEOUT)));
-				if (!Ext.isEmpty(CMDBuild.configuration) && !Ext.isEmpty(CMDBuild.configuration.instance))
-					Ext.util.Cookies.set(
-						CMDBuild.core.constants.Proxy.AUTHORIZATION_HEADER_KEY, // Name
-						CMDBuild.core.CookiesManager.authorizationGet(), // Value
-						date.setSeconds(date.getSeconds() + CMDBuild.configuration.instance.get(CMDBuild.core.constants.Proxy.SESSION_TIMEOUT)), // Expiration date
-						Ext.Array.slice(window.location.pathname.split('/'), 0, -1).join('/') + '/'
-					);
+				var expirationDate = null;
+
+				if (!Ext.isEmpty(CMDBuild.configuration.instance.get(CMDBuild.core.constants.Proxy.SESSION_TIMEOUT))) {
+					expirationDate = new Date();
+					expirationDate.setSeconds(expirationDate.getSeconds() + CMDBuild.configuration.instance.get(CMDBuild.core.constants.Proxy.SESSION_TIMEOUT))
+				}
+
+				Ext.util.Cookies.set(
+					CMDBuild.core.constants.Proxy.AUTHORIZATION_HEADER_KEY, // Name
+					CMDBuild.core.CookiesManager.authorizationGet(), // Value
+					expirationDate, // Expiration date
+					Ext.Array.slice(window.location.pathname.split('/'), 0, -1).join('/') + '/'
+				);
 			}
 	});
 
