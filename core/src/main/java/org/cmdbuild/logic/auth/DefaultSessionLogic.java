@@ -171,7 +171,7 @@ public class DefaultSessionLogic extends ForwardingAuthenticationLogic implement
 
 	@Override
 	public boolean exists(final String id) {
-		return getUserOrNullIfMissing(id) != null;
+		return getUserOrAnonymousIfMissing(id) != null;
 	}
 
 	@Override
@@ -245,20 +245,20 @@ public class DefaultSessionLogic extends ForwardingAuthenticationLogic implement
 	@Override
 	public void setCurrent(final String id) {
 		current.set(id);
-		userStore.setUser((id == null) ? null : getUserOrNullIfMissing(id));
+		userStore.setUser((id == null) ? null : getUserOrAnonymousIfMissing(id));
 	}
 
-	private OperationUser getUserOrNullIfMissing(final String id) {
+	private OperationUser getUserOrAnonymousIfMissing(final String id) {
 		try {
 			return getUser(id);
 		} catch (final NoSuchElementException e) {
-			return null;
+			return ANONYMOUS;
 		}
 	}
 
 	@Override
 	public boolean isValidUser(final String id) {
-		return (id == null) ? false : getUserOrNullIfMissing(id).isValid();
+		return (id == null) ? false : getUserOrAnonymousIfMissing(id).isValid();
 	}
 
 	@Override
