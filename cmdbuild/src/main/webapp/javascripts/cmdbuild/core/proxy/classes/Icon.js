@@ -9,19 +9,25 @@
 
 		requires: [
 			'CMDBuild.core.constants.Proxy',
-			'CMDBuild.core.interfaces.Ajax'
+			'CMDBuild.core.interfaces.FormSubmit',
+			'CMDBuild.core.interfaces.Rest',
+			'CMDBuild.core.proxy.index.Rest'
 		],
 
 		singleton: true,
 
 		/**
 		 * @param {Object} parameters
+		 *
+		 * @returns {Void}
 		 */
 		createImage: function (parameters) {
 			parameters = Ext.isEmpty(parameters) ? {} : parameters;
 
 			Ext.apply(parameters, {
-				url: 'services/json/file/upload?' + CMDBuild.core.constants.Proxy.AUTHORIZATION_HEADER_KEY + '=' + Ext.util.Cookies.get(CMDBuild.core.constants.Proxy.AUTHORIZATION_HEADER_KEY) // Headers not supported in form submit
+				url: 'services/json/file/upload?' // TODO: use rest index
+					+ CMDBuild.core.constants.Proxy.AUTHORIZATION_HEADER_KEY
+					+ '=' + Ext.util.Cookies.get(CMDBuild.core.constants.Proxy.AUTHORIZATION_HEADER_KEY) // Headers not supported in form submit
 			});
 
 			CMDBuild.core.interfaces.FormSubmit.submit(parameters);
@@ -29,93 +35,78 @@
 
 		/**
 		 * @param {Object} parameters
+		 *
+		 * @returns {Void}
+		 */
+		getFolders: function (parameters) {
+			parameters = Ext.isEmpty(parameters) ? {} : parameters;
+
+			Ext.apply(parameters, {
+				method: 'GET',
+				url: CMDBuild.core.proxy.index.Rest.fileStores + '/images/folders/'
+			});
+
+			CMDBuild.core.interfaces.Rest.request(parameters);
+		},
+
+		/**
+		 * @param {Object} parameters
+		 *
+		 * @returns {Void}
+		 */
+		readAllIcons: function (parameters) {
+			parameters = Ext.isEmpty(parameters) ? {} : parameters;
+
+			Ext.apply(parameters, {
+				method: 'GET',
+				url: CMDBuild.core.proxy.index.Rest.icons + '/'
+			});
+
+			CMDBuild.core.interfaces.Rest.request(parameters);
+		},
+
+		/**
+		 * @param {Object} parameters
+		 *
+		 * @returns {Void}
 		 */
 		remove: function (parameters) {
-			parameters.headers = Ext.isEmpty(parameters.headers) ? {} : parameters.headers;
-//			parameters.headers[CMDBuild.core.constants.Proxy.AUTHORIZATION_HEADER_KEY] = Ext.util.Cookies.get(CMDBuild.core.constants.Proxy.SESSION_TOKEN);
+			parameters = Ext.isEmpty(parameters) ? {} : parameters;
 
-			CMDBuild.core.interfaces.Ajax.request({
+			CMDBuild.core.interfaces.Rest.request({
 				method: 'DELETE',
-				headers: parameters.headers,
-				jsonData: parameters.params,
-				url: 'services/rest/v2/icons/' + parameters.urlParams['iconId'],
-				loadMask: Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : false,
-				scope: parameters.scope || this,
+				url: CMDBuild.core.proxy.index.Rest.icons + '/' + parameters.urlParams['iconId'],
+				scope: Ext.isEmpty(parameters.scope) ? this : parameters.scope,
 				success: function (response, options, decodedResponse) {
-					CMDBuild.core.interfaces.Ajax.request({
+					parameters = Ext.isEmpty(parameters) ? {} : parameters;
+
+					Ext.apply(parameters, {
 						method: 'DELETE',
-						headers: parameters.headers,
-						jsonData: parameters.params,
-						url: 'services/rest/v2/filestores/images/folders/' + parameters.urlParams['folderId'] + '/files/' + parameters.urlParams['imageId'] + '/',
-						loadMask: Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : false,
-						scope: parameters.scope || this,
-						success: parameters.success || Ext.emptyFn,
-						failure: parameters.failure || Ext.emptyFn,
-						callback: parameters.callback || Ext.emptyFn
+						url: CMDBuild.core.proxy.index.Rest.fileStores + '/folders/'
+							+ parameters.urlParams['folderId']
+							+ '/files/'
+							+ parameters.urlParams['imageId'] + '/'
 					});
+
+					CMDBuild.core.interfaces.Rest.request(parameters);
 				}
 			});
 		},
 
 		/**
 		 * @param {Object} parameters
-		 */
-		getFolders: function (parameters) {
-			parameters.headers = Ext.isEmpty(parameters.headers) ? {} : parameters.headers;
-//			parameters.headers[CMDBuild.core.constants.Proxy.AUTHORIZATION_HEADER_KEY] = Ext.util.Cookies.get(CMDBuild.core.constants.Proxy.SESSION_TOKEN);
-
-			CMDBuild.core.interfaces.Ajax.request({
-				method: 'GET',
-				headers: parameters.headers,
-				jsonData: parameters.params,
-				url: 'services/rest/v2/filestores/images/folders/',
-				loadMask: Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : false,
-				scope: parameters.scope || this,
-				success: parameters.success || Ext.emptyFn,
-				failure: parameters.failure || Ext.emptyFn,
-				callback: parameters.callback || Ext.emptyFn
-			});
-		},
-
-		/**
-		 * @param {Object} parameters
-		 */
-		readAllIcons: function (parameters) {
-			parameters.headers = Ext.isEmpty(parameters.headers) ? {} : parameters.headers;
-//			parameters.headers[CMDBuild.core.constants.Proxy.AUTHORIZATION_HEADER_KEY] = Ext.util.Cookies.get(CMDBuild.core.constants.Proxy.SESSION_TOKEN);
-
-			CMDBuild.core.interfaces.Ajax.request({
-				method: 'GET',
-				headers: parameters.headers,
-				jsonData: parameters.params,
-				url: 'services/rest/v2/icons/',
-				loadMask: Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : false,
-				scope: parameters.scope || this,
-				success: parameters.success || Ext.emptyFn,
-				failure: parameters.failure || Ext.emptyFn,
-				callback: parameters.callback || Ext.emptyFn
-			});
-		},
-
-		/**
-		 * @param {Object} parameters
+		 *
+		 * @returns {Void}
 		 */
 		update: function (parameters) {
-			parameters.headers = Ext.isEmpty(parameters.headers) ? {} : parameters.headers;
-//			parameters.headers[CMDBuild.core.constants.Proxy.AUTHORIZATION_HEADER_KEY] = Ext.util.Cookies.get(CMDBuild.core.constants.Proxy.SESSION_TOKEN);
+			parameters = Ext.isEmpty(parameters) ? {} : parameters;
 
-			CMDBuild.core.interfaces.Ajax.request({
+			Ext.apply(parameters, {
 				method: 'POST',
-				params: parameters.params,
-				headers: parameters.headers,
-				jsonData: parameters.params,
-				url: 'services/rest/v2/icons/',
-				loadMask: Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : false,
-				scope: parameters.scope || this,
-				success: parameters.success || Ext.emptyFn,
-				failure: parameters.failure || Ext.emptyFn,
-				callback: parameters.callback || Ext.emptyFn
+				url: CMDBuild.core.proxy.index.Rest.icons + '/'
 			});
+
+			CMDBuild.core.interfaces.Rest.request(parameters);
 		}
 	});
 

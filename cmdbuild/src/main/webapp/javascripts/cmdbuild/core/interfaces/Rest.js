@@ -65,6 +65,9 @@
 		adapterCallback: function (options, success, response, originalFunction) {
 			var decodedResponse = CMDBuild.core.interfaces.Rest.decodeJson(response.responseText);
 
+			// Update authorization cooky expiration date
+			CMDBuild.core.CookiesManager.authorizationExpirationUpdate();
+
 			CMDBuild.core.interfaces.service.LoadMask.manage(options.loadMask, false);
 
 			if (!options.disableAllMessages) {

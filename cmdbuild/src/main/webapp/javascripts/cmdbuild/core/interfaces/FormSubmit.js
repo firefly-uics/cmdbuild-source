@@ -21,6 +21,9 @@
 		 * @private
 		 */
 		adapterCallback: function (form, action, originalFunction) {
+			// Update authorization cooky expiration date
+			CMDBuild.core.CookiesManager.authorizationExpirationUpdate();
+
 			CMDBuild.core.interfaces.service.LoadMask.manage(action.loadMask, false);
 
 			CMDBuild.core.interfaces.messages.Warning.display(action.result);

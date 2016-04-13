@@ -72,6 +72,7 @@
 
 						items: [
 							this.imageIconDisplayField = Ext.create('Ext.Img', {
+								considerAsFieldToDisable: true,
 								src: '',
 								height: 50,
 								width: 50
