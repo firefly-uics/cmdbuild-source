@@ -5,7 +5,8 @@
 
 		requires: [
 			'CMDBuild.core.constants.Proxy',
-			'CMDBuild.core.proxy.session.JsonRpc'
+			'CMDBuild.core.CookiesManager',
+			'CMDBuild.core.proxy.Session'
 		],
 
 		/**
@@ -71,46 +72,87 @@
 		onSessionExpiredLoginButtonClick: function () {
 			this.view.hide();
 
-			var params = {};
-			params[CMDBuild.core.constants.Proxy.PASSWORD] = this.form.password.getValue();
-			params[CMDBuild.core.constants.Proxy.USERNAME] = CMDBuild.configuration.runtime.get(CMDBuild.core.constants.Proxy.USERNAME);
-			params[CMDBuild.core.constants.Proxy.ROLE] = CMDBuild.configuration.runtime.get(CMDBuild.core.constants.Proxy.DEFAULT_GROUP_NAME);
+			if (this.form.group.isHidden()) {
+				this.sessionCreate();
+			} else {
+				this.sessionUpdate();
+			}
+		},
 
-			// LoadMask manual manage to avoid to hide on success
-			CMDBuild.core.LoadMask.show();
-			CMDBuild.core.proxy.session.JsonRpc.login({
-				params: params,
-				loadMask: false,
-				scope: this,
-				success: function (response, options, decodedResponse) {
-//					CMDBuild.core.proxy.session.Rest.login({
-//						params: params,
-//						scope: this,
-//						success: function (response, options, decodedResponse) {
-//							decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.DATA];
-//
-//							if (Ext.isObject(decodedResponse) && !Ext.Object.isEmpty(decodedResponse))
-//								Ext.util.Cookies.set(CMDBuild.core.constants.Proxy.SESSION_TOKEN, decodedResponse['_id']);
-//						},
-//						callback: function (options, success, response) {
-							// CMDBuild redirect
+		/**
+		 * @returns {Void}
+		 *
+		 * @private
+		 */
+		sessionCreate: function () {
+			if (this.validate(this.form)) {
+				var params = {};
+				params[CMDBuild.core.constants.Proxy.PASSWORD] = this.form.password.getValue();
+				params[CMDBuild.core.constants.Proxy.USERNAME] = CMDBuild.configuration.runtime.get(CMDBuild.core.constants.Proxy.USERNAME);
+
+				CMDBuild.core.proxy.Session.create({
+					params: params,
+					scope: this,
+					success: function (response, options, decodedResponse) {
+						decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.RESPONSE];
+
+						CMDBuild.core.CookiesManager.authorizationSet(decodedResponse[CMDBuild.core.constants.Proxy.SESSION_ID]);
+
+						Ext.create('CMDBuild.core.Data'); // Reset connections header setup
+
+						if (Ext.isEmpty(decodedResponse[CMDBuild.core.constants.Proxy.GROUP])) { // Group to be selected
+							var group = Ext.Array.findBy(decodedResponse[CMDBuild.core.constants.Proxy.GROUPS], function (item, index) {
+								return item[CMDBuild.core.constants.Proxy.NAME] == CMDBuild.configuration.runtime.get(CMDBuild.core.constants.Proxy.DEFAULT_GROUP_NAME);
+							}, this);
+
+							if (!Ext.isEmpty(group)) { // Group is available
+								this.sessionUpdate();
+							} else { // Previous logged groups is no more available, enable group selection combo and show window
+								this.form.group.getStore().loadData(decodedResponse[CMDBuild.core.constants.Proxy.GROUPS]);
+
+								this.form.password.hide();
+								this.form.group.show();
+
+								this.view.show();
+							}
+						} else { // Successfully logged
+							this.view.hide();
+
 							if (Ext.Object.isEmpty(this.ajaxParameters)) {
 								window.location.reload();
 							} else {
-								CMDBuild.core.LoadMask.hide();
-
 								CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.UNCACHED, this.ajaxParameters);
 							}
-//						}
-//					});
-				},
-				failure: function (response, options, decodedResponse) {
-					var oldToFront = this.view.toFront;
-					this.toFront = Ext.emptyFn;
-					this.show();
-					this.toFront = oldToFront;
+						}
+					}
+				});
+			}
+		},
 
-					CMDBuild.core.LoadMask.hide();
+		/**
+		 * Update session with selected group
+		 *
+		 * @returns {Void}
+		 *
+		 * @private
+		 */
+		sessionUpdate: function () {
+			var params = {};
+			params[CMDBuild.core.constants.Proxy.SESSION] = CMDBuild.core.CookiesManager.authorizationGet();
+
+			if (this.form.group.isHidden()) {
+				params[CMDBuild.core.constants.Proxy.GROUP] = CMDBuild.configuration.runtime.get(CMDBuild.core.constants.Proxy.DEFAULT_GROUP_NAME);
+			} else if (!Ext.isEmpty(this.form.group.getValue())) {
+				params[CMDBuild.core.constants.Proxy.GROUP] = this.form.group.getValue();
+			} else {
+				return this.onSessionExpiredChangeUserButtonClick();
+			}
+
+			CMDBuild.core.proxy.Session.update({
+				params: params,
+				scope: this,
+				success: function (response, options, decodedResponse) {
+					window.location.reload();
 				}
 			});
 		}

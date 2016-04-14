@@ -34,7 +34,13 @@
 		<!-- 2. Localizations -->
 		<%@ include file="localizationsJsFiles.jsp" %>
 
-		<!-- 3. Logout script -->
+		<!-- 3. Runtime configuration -->
+		<script type="text/javascript">
+			Ext.ns('CMDBuild.configuration.runtime'); // Runtime configurations
+			CMDBuild.configuration.runtime = Ext.create('CMDBuild.model.configuration.Runtime');
+		</script>
+
+		<!-- 4. Logout script -->
 		<script type="text/javascript" src="javascripts/cmdbuild/Logout.js"></script>
 
 		<title>CMDBuild</title>

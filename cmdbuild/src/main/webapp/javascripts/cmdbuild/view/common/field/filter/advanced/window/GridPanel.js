@@ -3,7 +3,10 @@
 	Ext.define('CMDBuild.view.common.field.filter.advanced.window.GridPanel', {
 		extend: 'Ext.grid.Panel',
 
-		requires: ['CMDBuild.core.constants.Proxy'],
+		requires: [
+			'CMDBuild.core.constants.Proxy',
+			'CMDBuild.core.proxy.common.field.filter.advanced.window.Window'
+		],
 
 		/**
 		 * @cfg {CMDBuild.controller.common.field.filter.advanced.window.panels.relations.Relations}

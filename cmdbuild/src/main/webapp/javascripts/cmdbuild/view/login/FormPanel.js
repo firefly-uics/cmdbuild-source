@@ -8,20 +8,22 @@
 			'CMDBuild.core.constants.Proxy'
 		],
 
+		mixins: ['CMDBuild.view.common.PanelFunctions'],
+
 		/**
 		 * @cfg {CMDBuild.controller.login.Login}
 		 */
 		delegate: undefined,
 
 		/**
+		 * @property {Ext.form.field.ComboBox}
+		 */
+		group: undefined,
+
+		/**
 		 * @property {Ext.form.field.Text}
 		 */
 		password: undefined,
-
-		/**
-		 * @property {Ext.form.field.ComboBox}
-		 */
-		role: undefined,
 
 		/**
 		 * @property {Ext.form.field.Text}
@@ -38,6 +40,11 @@
 			align: 'stretch'
 		},
 
+		/**
+		 * @returns {Void}
+		 *
+		 * @override
+		 */
 		initComponent: function () {
 			Ext.apply(this, {
 				dockedItems: [
@@ -64,14 +71,12 @@
 					})
 				],
 				items: [
-					(
-						!Ext.isEmpty(CMDBuild.configuration.localization)
-						&& CMDBuild.configuration.localization.get(CMDBuild.core.constants.Proxy.LANGUAGE_PROMPT)
-					) ? Ext.create('CMDBuild.view.common.field.comboBox.Language', {
+					Ext.create('CMDBuild.view.common.field.comboBox.Language', {
 						fieldLabel: CMDBuild.Translation.language,
 						labelWidth: CMDBuild.core.constants.FieldWidths.LABEL_LOGIN,
+						hidden: !CMDBuild.configuration.localization.get(CMDBuild.core.constants.Proxy.LANGUAGE_PROMPT),
 						submitValue: false
-					}) : null,
+					}),
 					this.user = Ext.create('Ext.form.field.Text', {
 						name: CMDBuild.core.constants.Proxy.USERNAME,
 						fieldLabel: CMDBuild.Translation.username,
@@ -104,13 +109,13 @@
 							}
 						}
 					}),
-					this.role = Ext.create('Ext.form.field.ComboBox', {
-						name: CMDBuild.core.constants.Proxy.ROLE,
-						hiddenName: CMDBuild.core.constants.Proxy.ROLE,
+					this.group = Ext.create('Ext.form.field.ComboBox', {
+						name: CMDBuild.core.constants.Proxy.GROUP,
 						fieldLabel: CMDBuild.Translation.chooseAGroup,
 						labelWidth: CMDBuild.core.constants.FieldWidths.LABEL_LOGIN,
 						valueField: CMDBuild.core.constants.Proxy.NAME,
 						displayField: CMDBuild.core.constants.Proxy.DESCRIPTION,
+						hidden: true,
 						editable: false,
 						forceSelection: true,
 
@@ -127,7 +132,7 @@
 							specialkey: function (field, e, eOpts) {
 								if (e.getKey() == e.ENTER) {
 									try {
-										this.listKeyNav.selectHighlighted(e);
+										field.listKeyNav.selectHighlighted(e);
 
 										this.delegate.cmfg('onLoginViewportDoLogin');
 									} catch (e) {
