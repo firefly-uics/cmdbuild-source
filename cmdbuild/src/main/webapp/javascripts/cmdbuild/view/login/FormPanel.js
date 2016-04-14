@@ -64,7 +64,7 @@
 								scope: this,
 
 								handler: function (button, e) {
-									this.delegate.cmfg('onLoginViewportDoLogin');
+									this.delegate.cmfg('onLoginViewportLoginButtonClick');
 								}
 							})
 						]
@@ -90,7 +90,7 @@
 							},
 							specialkey: function (field, e, eOpts) {
 								if (e.getKey() == e.ENTER)
-									this.delegate.cmfg('onLoginViewportDoLogin');
+									this.delegate.cmfg('onLoginViewportLoginButtonClick');
 							}
 						}
 					}),
@@ -105,7 +105,7 @@
 							scope: this,
 							specialkey: function (field, e, eOpts) {
 								if (e.getKey() == e.ENTER)
-									this.delegate.cmfg('onLoginViewportDoLogin');
+									this.delegate.cmfg('onLoginViewportLoginButtonClick');
 							}
 						}
 					}),
@@ -134,7 +134,7 @@
 									try {
 										field.listKeyNav.selectHighlighted(e);
 
-										this.delegate.cmfg('onLoginViewportDoLogin');
+										this.delegate.cmfg('onLoginViewportLoginButtonClick');
 									} catch (e) {
 										_error('error setting the group', this);
 									}
