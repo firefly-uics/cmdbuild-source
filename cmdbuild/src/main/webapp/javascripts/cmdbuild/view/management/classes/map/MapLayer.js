@@ -52,7 +52,8 @@ CMDBuild.Management.CMMap.MapLayer = OpenLayers.Class(OpenLayers.Layer.Vector, {
 		});
 
 		this.protocol = new OpenLayers.Protocol.HTTP({
-			url: CMDBuild.core.proxy.index.Json.gis.getGeoCardList,
+			url: CMDBuild.core.proxy.index.Json.gis.getGeoCardList + '?' + CMDBuild.core.constants.Proxy.AUTHORIZATION_HEADER_KEY
+				+ '=' + Ext.util.Cookies.get(CMDBuild.core.constants.Proxy.AUTHORIZATION_HEADER_KEY), // FIXME: should use proxy
 			params: {
 				className: options.targetClassName,
 				attribute: options.geoAttribute.name

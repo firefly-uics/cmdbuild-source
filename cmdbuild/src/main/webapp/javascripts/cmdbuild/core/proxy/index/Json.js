@@ -544,12 +544,11 @@
 			}
 		},
 
-		session: { // TODO
-			jsonRpc: {
-				login: 'services/json/login/login',
-				logout: 'services/json/login/logout'
-			},
-			rest: 'services/rest/v2/sessions',
+		session: {
+			create: 'services/json/session/create',
+			read: 'services/json/session/readCurrent', // TODO
+			update: 'services/json/session/update',
+			remove: 'services/json/session/delete'
 		},
 
 		taskManager: {
