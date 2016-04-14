@@ -5,6 +5,7 @@
 
 		requires: [
 			'CMDBuild.core.constants.Proxy',
+			'CMDBuild.core.CookiesManager',
 			'CMDBuild.core.proxy.Session'
 		],
 
@@ -12,7 +13,7 @@
 		 * @cfg {Array}
 		 */
 		cmfgCatchedFunctions: [
-			'onLoginViewportDoLogin', // TODO: change method name
+			'onLoginViewportLoginButtonClick',
 			'onLoginViewportUserChange'
 		],
 
@@ -47,7 +48,7 @@
 		/**
 		 * @returns {Void}
 		 */
-		onLoginViewportDoLogin: function () {
+		onLoginViewportLoginButtonClick: function () {
 			if (this.form.group.isHidden()) {
 				this.sessionCreate();
 			} else {
@@ -59,7 +60,7 @@
 		 * @returns {Void}
 		 */
 		onLoginViewportUserChange: function () {
-			this.setupFieldsRole();
+			this.setupFieldsGroup();
 		},
 
 		/**
@@ -144,7 +145,7 @@
 				this.form.password.disable();
 			}
 
-			this.setupFieldsRole();
+			this.setupFieldsGroup();
 		},
 
 		/**
@@ -152,7 +153,7 @@
 		 *
 		 * @private
 		 */
-		setupFieldsRole: function () {
+		setupFieldsGroup: function () {
 			if (
 				!Ext.isEmpty(CMDBuild.configuration.runtime.get(CMDBuild.core.constants.Proxy.GROUPS))
 				&& Ext.isArray(CMDBuild.configuration.runtime.get(CMDBuild.core.constants.Proxy.GROUPS))

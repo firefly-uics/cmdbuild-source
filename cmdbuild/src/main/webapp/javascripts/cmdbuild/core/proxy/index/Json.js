@@ -546,7 +546,6 @@
 
 		session: {
 			create: 'services/json/session/create',
-			read: 'services/json/session/readCurrent', // TODO
 			update: 'services/json/session/update',
 			remove: 'services/json/session/delete'
 		},

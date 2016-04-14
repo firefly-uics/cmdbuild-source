@@ -97,6 +97,8 @@
 		/**
 		 * @param {Object} parameters
 		 *
+		 * @returns {Void}
+		 *
 		 * @private
 		 */
 		executeRequest: function (parameters) {
