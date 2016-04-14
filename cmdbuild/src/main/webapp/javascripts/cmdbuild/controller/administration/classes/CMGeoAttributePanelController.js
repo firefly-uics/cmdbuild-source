@@ -2,7 +2,7 @@
 
 	Ext.require([
 		'CMDBuild.core.Message',
-		'CMDBuild.core.proxy.gis.GeoAttribute'
+		'CMDBuild.proxy.gis.GeoAttribute'
 	]);
 
 	Ext.define("CMDBuild.controller.administration.classes.CMGeoAttributeController", {
@@ -97,9 +97,9 @@
 		};
 
 		if (this.currentAttribute != null) {
-			CMDBuild.core.proxy.gis.GeoAttribute.update(params);
+			CMDBuild.proxy.gis.GeoAttribute.update(params);
 		} else {
-			CMDBuild.core.proxy.gis.GeoAttribute.create(params);
+			CMDBuild.proxy.gis.GeoAttribute.create(params);
 		}
 	}
 
@@ -134,7 +134,7 @@
 		};
 
 		CMDBuild.core.LoadMask.show();
-		CMDBuild.core.proxy.gis.GeoAttribute.remove({
+		CMDBuild.proxy.gis.GeoAttribute.remove({
 			params: params,
 			loadMask: false,
 			success: function onDeleteGeoAttributeSuccess(response, request, decoded) {

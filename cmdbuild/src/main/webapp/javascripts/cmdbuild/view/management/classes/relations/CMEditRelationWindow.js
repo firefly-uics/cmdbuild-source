@@ -177,7 +177,7 @@
 			if (p[CMDBuild.core.constants.Proxy.RELATION_ID ] == -1) { // creation
 				delete p[CMDBuild.core.constants.Proxy.RELATION_ID];
 
-				CMDBuild.core.proxy.Relation.create({
+				CMDBuild.proxy.Relation.create({
 					params: p,
 					loadMask: false,
 					scope: this,
@@ -187,7 +187,7 @@
 					}
 				});
 			} else { // modify
-				CMDBuild.core.proxy.Relation.update({
+				CMDBuild.proxy.Relation.update({
 					params: p,
 					loadMask: false,
 					scope: this,

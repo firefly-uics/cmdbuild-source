@@ -7,8 +7,8 @@
 			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.interfaces.FormSubmit',
 			'CMDBuild.core.Message',
-			'CMDBuild.core.proxy.index.Json',
-			'CMDBuild.core.proxy.report.Print'
+			'CMDBuild.proxy.index.Json',
+			'CMDBuild.proxy.report.Print'
 		],
 
 		/**
@@ -88,23 +88,23 @@
 
 			switch (this.mode) {
 				case 'cardDetails': {
-					proxyCreateFunction = CMDBuild.core.proxy.report.Print.createCardDetails;
+					proxyCreateFunction = CMDBuild.proxy.report.Print.createCardDetails;
 				} break;
 
 				case 'classSchema': {
-					proxyCreateFunction = CMDBuild.core.proxy.report.Print.createClassSchema;
+					proxyCreateFunction = CMDBuild.proxy.report.Print.createClassSchema;
 				} break;
 
 				case 'dataViewSql': {
-					proxyCreateFunction = CMDBuild.core.proxy.report.Print.createDataViewSqlSchema;
+					proxyCreateFunction = CMDBuild.proxy.report.Print.createDataViewSqlSchema;
 				} break;
 
 				case 'schema': {
-					proxyCreateFunction = CMDBuild.core.proxy.report.Print.createSchema;
+					proxyCreateFunction = CMDBuild.proxy.report.Print.createSchema;
 				} break;
 
 				case 'view': {
-					proxyCreateFunction = CMDBuild.core.proxy.report.Print.createView;
+					proxyCreateFunction = CMDBuild.proxy.report.Print.createView;
 				} break;
 
 				default: {
@@ -155,7 +155,7 @@
 				CMDBuild.core.interfaces.FormSubmit.submit({
 					buildRuntimeForm: true,
 					params: params,
-					url: CMDBuild.core.proxy.index.Json.report.factory.print
+					url: CMDBuild.proxy.index.Json.report.factory.print
 				});
 			} else { // Add to view display mode
 				this.view.removeAll();
@@ -165,7 +165,7 @@
 
 					autoEl: {
 						tag: 'iframe',
-						src: CMDBuild.core.proxy.index.Json.report.factory.print
+						src: CMDBuild.proxy.index.Json.report.factory.print
 					}
 				});
 			}

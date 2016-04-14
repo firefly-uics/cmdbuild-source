@@ -1,6 +1,6 @@
 (function() {
 
-	Ext.require(['CMDBuild.core.proxy.Card']);
+	Ext.require(['CMDBuild.proxy.Card']);
 
 	var ID_CLASS = "xa:idClass",
 		ID_CARD = "xa:id",
@@ -170,7 +170,7 @@
 			parameters[CMDBuild.core.constants.Proxy.DOMAIN_ID] = domain.getId();
 			parameters[CMDBuild.core.constants.Proxy.DOMAIN_SOURCE] = getSrc(this);
 
-			CMDBuild.core.proxy.Relation.readAll({
+			CMDBuild.proxy.Relation.readAll({
 				params: parameters,
 				loadMask: false,
 				scope: this,
@@ -206,7 +206,7 @@
 		if (this.cardToDelete) {
 			var me = this;
 			CMDBuild.core.LoadMask.show();
-			CMDBuild.core.proxy.Card.remove({
+			CMDBuild.proxy.Card.remove({
 				important: true,
 				loadMask: false,
 				params : {

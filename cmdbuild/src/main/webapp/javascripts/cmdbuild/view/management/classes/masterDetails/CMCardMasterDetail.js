@@ -1,6 +1,6 @@
 (function() {
 
-	Ext.require('CMDBuild.core.proxy.classes.MasterDetail');
+	Ext.require('CMDBuild.proxy.classes.MasterDetail');
 
 	var MD = "detail";
 	var FK = "foreignkey";
@@ -75,7 +75,7 @@
 			var params = {};
 			params[CMDBuild.core.constants.Proxy.CLASS_NAME] = _CMCache.getEntryTypeNameById(classId);
 
-			CMDBuild.core.proxy.classes.MasterDetail.readForeignKeyTargetingClass({
+			CMDBuild.proxy.classes.MasterDetail.readForeignKeyTargetingClass({
 				params: params,
 				loadMask: false,
 				scope: this,

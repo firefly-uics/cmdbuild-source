@@ -7,8 +7,8 @@
 			'CMDBuild.core.constants.ModuleIdentifiers',
 			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.Message',
-			'CMDBuild.core.proxy.workflow.Workflow',
-			'CMDBuild.core.proxy.workflow.Xpdl',
+			'CMDBuild.proxy.workflow.Workflow',
+			'CMDBuild.proxy.workflow.Xpdl',
 			'CMDBuild.view.common.field.translatable.Utils'
 		],
 
@@ -115,13 +115,13 @@
 				var params = {};
 				params['idClass'] = this.cmfg('workflowSelectedWorkflowGet', CMDBuild.core.constants.Proxy.ID);
 
-				CMDBuild.core.proxy.workflow.Xpdl.downloadTemplate({ params: params });
+				CMDBuild.proxy.workflow.Xpdl.downloadTemplate({ params: params });
 			} else {
 				var params = {};
 				params['idClass'] = this.cmfg('workflowSelectedWorkflowGet', CMDBuild.core.constants.Proxy.ID);
 				params[CMDBuild.core.constants.Proxy.VERSION] = formData[CMDBuild.core.constants.Proxy.VERSION];
 
-				CMDBuild.core.proxy.workflow.Xpdl.download({ params: params });
+				CMDBuild.proxy.workflow.Xpdl.download({ params: params });
 			}
 		},
 
@@ -176,13 +176,13 @@
 				if (Ext.isEmpty(formDataModel.get(CMDBuild.core.constants.Proxy.ID))) {
 					params[CMDBuild.core.constants.Proxy.FORCE_CREATION] = true; // TODO: waiting for refactor (CRUD)
 
-					CMDBuild.core.proxy.workflow.Workflow.create({
+					CMDBuild.proxy.workflow.Workflow.create({
 						params: params,
 						scope: this,
 						success: this.success
 					});
 				} else {
-					CMDBuild.core.proxy.workflow.Workflow.update({
+					CMDBuild.proxy.workflow.Workflow.update({
 						params: params,
 						scope: this,
 						success: this.success
@@ -204,7 +204,7 @@
 				var params = {};
 				params['idClass'] = this.cmfg('workflowSelectedWorkflowGet', CMDBuild.core.constants.Proxy.ID);
 
-				CMDBuild.core.proxy.workflow.Xpdl.readVersions({
+				CMDBuild.proxy.workflow.Xpdl.readVersions({
 					params: params,
 					scope: this,
 					success: function(response, options, decodedResponse) {
@@ -246,7 +246,7 @@
 			var params = {};
 			params['idClass'] = this.cmfg('workflowSelectedWorkflowGet', CMDBuild.core.constants.Proxy.ID);
 
-			CMDBuild.core.proxy.workflow.Xpdl.upload({
+			CMDBuild.proxy.workflow.Xpdl.upload({
 				form: this.uploadXpdlPanel.getForm(),
 				params: params,
 				scope: this,
@@ -277,7 +277,7 @@
 				var params = {};
 				params[CMDBuild.core.constants.Proxy.CLASS_NAME] = this.cmfg('workflowSelectedWorkflowGet', CMDBuild.core.constants.Proxy.NAME);
 
-				CMDBuild.core.proxy.workflow.Workflow.remove({
+				CMDBuild.proxy.workflow.Workflow.remove({
 					params: params,
 					scope: this,
 					success: function(response, options, decodedResponse) {

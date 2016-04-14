@@ -6,7 +6,7 @@
 		requires: [
 			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.LoadMask',
-			'CMDBuild.core.proxy.taskManager.Email',
+			'CMDBuild.proxy.taskManager.Email',
 			'CMDBuild.model.CMModelTasks'
 		],
 
@@ -86,7 +86,7 @@
 			if (!Ext.isEmpty(this.selectedId)) {
 				CMDBuild.core.LoadMask.show();
 
-				CMDBuild.core.proxy.taskManager.Email.remove({
+				CMDBuild.proxy.taskManager.Email.remove({
 					params: {
 						id: this.selectedId
 					},
@@ -129,7 +129,7 @@
 				this.selectedId = this.selectionModel.getSelection()[0].get(CMDBuild.core.constants.Proxy.ID);
 
 				// Selected task asynchronous store query
-				CMDBuild.core.proxy.taskManager.Email.read({
+				CMDBuild.proxy.taskManager.Email.read({
 					params: {
 						id: this.selectedId
 					},
@@ -287,7 +287,7 @@
 				submitDatas[CMDBuild.core.constants.Proxy.PROCESSED_FOLDER] = formData[CMDBuild.core.constants.Proxy.PROCESSED_FOLDER];
 
 				if (Ext.isEmpty(formData[CMDBuild.core.constants.Proxy.ID])) {
-					CMDBuild.core.proxy.taskManager.Email.create({
+					CMDBuild.proxy.taskManager.Email.create({
 						params: submitDatas,
 						loadMask: false,
 						scope: this,
@@ -295,7 +295,7 @@
 						callback: this.callback
 					});
 				} else {
-					CMDBuild.core.proxy.taskManager.Email.update({
+					CMDBuild.proxy.taskManager.Email.update({
 						params: submitDatas,
 						loadMask: false,
 						scope: this,

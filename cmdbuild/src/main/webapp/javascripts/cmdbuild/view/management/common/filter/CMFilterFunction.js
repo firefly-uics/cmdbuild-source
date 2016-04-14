@@ -2,7 +2,7 @@
 
 	Ext.require([
 		'CMDBuild.core.constants.Proxy',
-		'CMDBuild.core.proxy.index.Json'
+		'CMDBuild.proxy.index.Json'
 	]);
 
 	/**
@@ -43,7 +43,7 @@
 					model: 'Functions',
 					proxy: {
 						type: 'ajax',
-						url: CMDBuild.core.proxy.index.Json.functions.readAll,
+						url: CMDBuild.proxy.index.Json.functions.readAll,
 						reader: {
 							type: 'json',
 							root: CMDBuild.core.constants.Proxy.RESPONSE

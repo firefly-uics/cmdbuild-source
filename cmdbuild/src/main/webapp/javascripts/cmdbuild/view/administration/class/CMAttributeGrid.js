@@ -1,6 +1,6 @@
 (function() {
 
-	Ext.require('CMDBuild.core.proxy.common.tabs.attribute.Attribute');
+	Ext.require('CMDBuild.proxy.common.tabs.attribute.Attribute');
 
 	var ATTR = {
 		INDEX: CMDBuild.core.constants.Proxy.INDEX,
@@ -62,7 +62,7 @@
 			});
 
 			Ext.apply(this, {
-				store: CMDBuild.core.proxy.common.tabs.attribute.Attribute.getStore(),
+				store: CMDBuild.proxy.common.tabs.attribute.Attribute.getStore(),
 				queryMode: 'local'
 			});
 

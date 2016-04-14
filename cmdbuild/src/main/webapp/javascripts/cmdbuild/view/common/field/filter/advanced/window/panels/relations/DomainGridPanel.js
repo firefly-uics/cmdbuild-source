@@ -5,7 +5,7 @@
 
 		requires: [
 			'CMDBuild.core.constants.Proxy',
-			'CMDBuild.core.proxy.common.field.filter.advanced.window.Relations'
+			'CMDBuild.proxy.common.field.filter.advanced.window.Relations'
 		],
 
 		/**
@@ -43,7 +43,7 @@
 							editable: false,
 							forceSelection: true,
 
-							store: CMDBuild.core.proxy.common.field.filter.advanced.window.Relations.getStoreDestination(),
+							store: CMDBuild.proxy.common.field.filter.advanced.window.Relations.getStoreDestination(),
 							queryMode: 'local'
 						},
 
@@ -128,7 +128,7 @@
 						]
 					})
 				],
-				store: CMDBuild.core.proxy.common.field.filter.advanced.window.Relations.getStoreDomain(),
+				store: CMDBuild.proxy.common.field.filter.advanced.window.Relations.getStoreDomain(),
 				plugins: [
 					Ext.create('Ext.grid.plugin.CellEditing', {
 						clicksToEdit: 1,

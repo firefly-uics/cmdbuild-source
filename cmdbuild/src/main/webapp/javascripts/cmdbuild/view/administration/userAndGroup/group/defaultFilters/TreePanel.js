@@ -5,7 +5,7 @@
 
 		requires: [
 			'CMDBuild.core.constants.Proxy',
-			'CMDBuild.core.proxy.userAndGroup.group.DefaultFilters',
+			'CMDBuild.proxy.userAndGroup.group.DefaultFilters',
 			'CMDBuild.model.userAndGroup.group.defaultFilters.TreeNode',
 			'CMDBuild.view.common.field.comboBox.Erasable'
 		],
@@ -66,7 +66,7 @@
 							editable: false,
 							forceSelection: true,
 
-							store: CMDBuild.core.proxy.userAndGroup.group.DefaultFilters.getStoreClassFilters(),
+							store: CMDBuild.proxy.userAndGroup.group.DefaultFilters.getStoreClassFilters(),
 							queryMode: 'local'
 						},
 

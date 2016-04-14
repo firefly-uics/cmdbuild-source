@@ -5,7 +5,7 @@
 
 		requires: [
 			'CMDBuild.core.constants.Proxy',
-			'CMDBuild.core.proxy.localization.Localization'
+			'CMDBuild.proxy.localization.Localization'
 		],
 
 		/**
@@ -34,7 +34,7 @@
 				listConfig: {
 					getInnerTpl: function () { return tpl; }
 				},
-				store: CMDBuild.core.proxy.localization.Localization.getStoreLanguages(),
+				store: CMDBuild.proxy.localization.Localization.getStoreLanguages(),
 				queryMode: 'local'
 			});
 

@@ -6,7 +6,7 @@
 		requires: [
 			'CMDBuild.core.Message',
 			'CMDBuild.core.constants.Proxy',
-			'CMDBuild.core.proxy.report.Jasper'
+			'CMDBuild.proxy.report.Jasper'
 		],
 
 		/**
@@ -20,7 +20,7 @@
 		split: true,
 
 		initComponent: function() {
-			var store = CMDBuild.core.proxy.report.Jasper.getStore();
+			var store = CMDBuild.proxy.report.Jasper.getStore();
 
 			Ext.apply(this, {
 				dockedItems: [

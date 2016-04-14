@@ -5,7 +5,7 @@
 
 		requires: [
 			'CMDBuild.core.constants.Proxy',
-			'CMDBuild.core.proxy.common.field.filter.advanced.window.Window'
+			'CMDBuild.proxy.common.field.filter.advanced.window.Window'
 		],
 
 		/**
@@ -23,7 +23,7 @@
 
 		initComponent: function() {
 			Ext.apply(this, {
-				store: CMDBuild.core.proxy.common.field.filter.advanced.window.Window.getStoreGroup()
+				store: CMDBuild.proxy.common.field.filter.advanced.window.Window.getStoreGroup()
 			});
 
 			Ext.apply(this, {

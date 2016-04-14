@@ -2,7 +2,7 @@
 
 	// Here because requires property doesn't work
 	Ext.require('CMDBuild.core.constants.Proxy');
-	Ext.require('CMDBuild.core.proxy.email.Template');
+	Ext.require('CMDBuild.proxy.email.Template');
 
 	Ext.define('CMDBuild.view.administration.tasks.common.notificationForm.CMNotificationFormTemplateCombo', {
 		extend: 'Ext.form.field.ComboBox',
@@ -23,7 +23,7 @@
 		editable: false,
 		anchor: '100%',
 
-		store: CMDBuild.core.proxy.email.Template.getStore()
+		store: CMDBuild.proxy.email.Template.getStore()
 	});
 
 })();

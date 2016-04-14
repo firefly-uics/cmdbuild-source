@@ -5,7 +5,7 @@
 		requires: [
 			'CMDBuild.bim.data.CMBimLayerModel',
 			'CMDBuild.core.constants.Proxy',
-			'CMDBuild.core.proxy.index.Json'
+			'CMDBuild.proxy.index.Json'
 		],
 
 		singleton: true,
@@ -18,7 +18,7 @@
 		download: function (parameters) {
 			parameters = Ext.isEmpty(parameters) ? {} : parameters;
 
-			Ext.apply(parameters, { url: CMDBuild.core.proxy.index.Json.bim.ifc.download });
+			Ext.apply(parameters, { url: CMDBuild.proxy.index.Json.bim.ifc.download });
 
 			CMDBuild.core.interfaces.FormSubmit.submit(parameters);
 		},
@@ -31,7 +31,7 @@
 		importIfc: function (parameters) {
 			parameters = Ext.isEmpty(parameters) ? {} : parameters;
 
-			Ext.apply(parameters, { url: CMDBuild.core.proxy.index.Json.bim.ifc.import });
+			Ext.apply(parameters, { url: CMDBuild.proxy.index.Json.bim.ifc.import });
 
 			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.BIM, parameters, true);
 		}

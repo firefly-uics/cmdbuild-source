@@ -1,7 +1,7 @@
 (function() {
 	Ext.define("CMDBuild.controller.administration.classes.CMDomainTabController", {
 
-		requires: ['CMDBuild.core.proxy.domain.Domain'],
+		requires: ['CMDBuild.proxy.domain.Domain'],
 
 		constructor: function(view) {
 			if (Ext.isEmpty(view)) {
@@ -122,7 +122,7 @@
 		var params = {};
 		params[CMDBuild.core.constants.Proxy.DOMAIN_NAME] = this.currentDomain.get("name");
 
-		CMDBuild.core.proxy.domain.Domain.remove({
+		CMDBuild.proxy.domain.Domain.remove({
 			params: params,
 			scope: this,
 			success: function(response, options, decodedResponse) {

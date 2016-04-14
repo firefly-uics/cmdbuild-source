@@ -5,7 +5,7 @@
 
 		requires: [
 			'CMDBuild.core.constants.Proxy',
-			'CMDBuild.core.proxy.index.Json'
+			'CMDBuild.proxy.index.Json'
 		],
 
 		/**

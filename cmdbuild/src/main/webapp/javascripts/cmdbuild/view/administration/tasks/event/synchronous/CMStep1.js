@@ -140,7 +140,7 @@
 
 		requires: [
 			'CMDBuild.core.constants.Proxy',
-			'CMDBuild.core.proxy.taskManager.event.Synchronous'
+			'CMDBuild.proxy.taskManager.event.Synchronous'
 		],
 
 		/**
@@ -199,7 +199,7 @@
 				name: CMDBuild.core.constants.Proxy.PHASE,
 				fieldLabel: tr.taskEvent.phase,
 				labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
-				store: CMDBuild.core.proxy.taskManager.event.Synchronous.getStorePhases(),
+				store: CMDBuild.proxy.taskManager.event.Synchronous.getStorePhases(),
 				valueField: CMDBuild.core.constants.Proxy.VALUE,
 				displayField: CMDBuild.core.constants.Proxy.DESCRIPTION,
 				maxWidth: CMDBuild.core.constants.FieldWidths.ADMINISTRATION_BIG,

@@ -1,6 +1,6 @@
 (function() {
 
-	Ext.require(['CMDBuild.core.proxy.Card']);
+	Ext.require(['CMDBuild.proxy.Card']);
 
 	Ext.define('CMDBuild.state.CMCardModuleStateDelegate', {
 		/**
@@ -71,7 +71,7 @@
 			if (card != null && typeof card.data == 'undefined') {
 				adaptGetCardCallParams(card);
 
-				CMDBuild.core.proxy.Card.read({
+				CMDBuild.proxy.Card.read({
 					params: card,
 					loadMask: false,
 					scope: this,

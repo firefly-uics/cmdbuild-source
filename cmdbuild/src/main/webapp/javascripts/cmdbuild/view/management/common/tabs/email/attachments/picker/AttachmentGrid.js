@@ -5,7 +5,7 @@
 
 		requires: [
 			'CMDBuild.core.constants.Proxy',
-			'CMDBuild.core.proxy.common.tabs.email.Attachment'
+			'CMDBuild.proxy.common.tabs.email.Attachment'
 		],
 
 		/**
@@ -38,7 +38,7 @@
 					}
 				],
 				selModel: Ext.create('Ext.selection.CheckboxModel', { injectCheckbox: 'first' }),
-				store: CMDBuild.core.proxy.common.tabs.email.Attachment.getStore()
+				store: CMDBuild.proxy.common.tabs.email.Attachment.getStore()
 			});
 
 			this.callParent(arguments);

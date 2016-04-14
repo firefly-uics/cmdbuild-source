@@ -5,7 +5,7 @@
 
 		requires: [
 			'CMDBuild.core.constants.Proxy',
-			'CMDBuild.core.proxy.common.field.multiselect.Group'
+			'CMDBuild.proxy.common.field.multiselect.Group'
 		],
 
 		/**
@@ -23,7 +23,7 @@
 		initComponent: function () {
 			Ext.apply(this, {
 				delegate: Ext.create('CMDBuild.controller.common.field.multiselect.Group', { view: this }),
-				store: CMDBuild.core.proxy.common.field.multiselect.Group.getStore()
+				store: CMDBuild.proxy.common.field.multiselect.Group.getStore()
 			});
 
 			this.callParent(arguments);

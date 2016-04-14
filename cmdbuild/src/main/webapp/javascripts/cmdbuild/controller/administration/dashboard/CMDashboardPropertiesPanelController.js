@@ -2,7 +2,7 @@
 
 	Ext.require([
 		'CMDBuild.core.Message',
-		'CMDBuild.core.proxy.dashboard.Dashboard'
+		'CMDBuild.proxy.dashboard.Dashboard'
 	]);
 
 	Ext.define("CMDBuild.controller.administration.dashboard.CMDashboardPropertiesPanelController", {
@@ -65,7 +65,7 @@
 			}
 
 			if (this.dashboard) {
-				CMDBuild.core.proxy.dashboard.Dashboard.update({
+				CMDBuild.proxy.dashboard.Dashboard.update({
 					params: {
 						dashboardId: this.dashboard.getId(),
 						dashboardConfiguration: Ext.encode(data)
@@ -88,7 +88,7 @@
 					}
 				});
 			} else {
-				CMDBuild.core.proxy.dashboard.Dashboard.create({
+				CMDBuild.proxy.dashboard.Dashboard.create({
 					params: {
 						dashboardConfiguration: Ext.encode(data)
 					},
@@ -115,7 +115,7 @@
 		},
 
 		onRemoveButtonClick: function () {
-			CMDBuild.core.proxy.dashboard.Dashboard.remove({
+			CMDBuild.proxy.dashboard.Dashboard.remove({
 				params: {
 					dashboardId: this.dashboard.getId()
 				},

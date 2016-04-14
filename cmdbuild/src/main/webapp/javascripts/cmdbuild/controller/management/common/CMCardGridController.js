@@ -2,7 +2,7 @@
 
 	Ext.require([
 		'CMDBuild.core.Message',
-		'CMDBuild.core.proxy.Card',
+		'CMDBuild.proxy.Card',
 		'CMDBuild.core.Utils'
 	]);
 
@@ -242,7 +242,7 @@
 			params[CMDBuild.core.constants.Proxy.RETRY_WITHOUT_FILTER] = retryWithoutFilter;
 			params[CMDBuild.core.constants.Proxy.SORT] = Ext.encode(getSorting(store));
 
-			CMDBuild.core.proxy.Card.readPosition({
+			CMDBuild.proxy.Card.readPosition({
 				params: params,
 				loadMask: false,
 				failure: function onGetPositionFailure(response, options, decoded) {
@@ -404,7 +404,7 @@
 				if (filter.isLocal()) {
 					onSuccess();
 				} else {
-					CMDBuild.core.proxy.Filter.remove({
+					CMDBuild.proxy.Filter.remove({
 						params: {
 							id: filter.getId()
 						},
@@ -482,7 +482,7 @@
 			filter.commit();
 
 			if (filter.getId()) {
-				CMDBuild.core.proxy.Filter.update({
+				CMDBuild.proxy.Filter.update({
 					params: {
 						id: filter.getId(),
 						className: filter.getEntryType(),
@@ -495,7 +495,7 @@
 					success: onSuccess
 				});
 			} else {
-				CMDBuild.core.proxy.Filter.create({
+				CMDBuild.proxy.Filter.create({
 					params: {
 						id: filter.getId(),
 						className: filter.getEntryType(),

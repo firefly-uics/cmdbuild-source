@@ -6,8 +6,8 @@
 		requires: [
 			'CMDBuild.core.constants.FieldWidths',
 			'CMDBuild.core.constants.Proxy',
-			'CMDBuild.core.proxy.localization.Export',
-			'CMDBuild.core.proxy.localization.Localization'
+			'CMDBuild.proxy.localization.Export',
+			'CMDBuild.proxy.localization.Localization'
 		],
 
 		mixins: ['CMDBuild.view.common.PanelFunctions'],
@@ -66,7 +66,7 @@
 
 						value: CMDBuild.core.constants.Proxy.ALL, // Default value
 
-						store: CMDBuild.core.proxy.localization.Localization.getStoreSections(),
+						store: CMDBuild.proxy.localization.Localization.getStoreSections(),
 						queryMode: 'local',
 
 						listeners: {
@@ -89,7 +89,7 @@
 						flex: 1, // Stretch vertically
 						allowBlank: false,
 
-						store: CMDBuild.core.proxy.localization.Export.getStoreEnabledLaguages(),
+						store: CMDBuild.proxy.localization.Export.getStoreEnabledLaguages(),
 						queryMode: 'local'
 					}),
 					Ext.create('Ext.form.field.ComboBox', {
@@ -105,7 +105,7 @@
 
 						value: CMDBuild.core.constants.Proxy.CSV, // Default value
 
-						store: CMDBuild.core.proxy.localization.Export.getStoreFileFormat(),
+						store: CMDBuild.proxy.localization.Export.getStoreFileFormat(),
 						queryMode: 'local'
 					}),
 					Ext.create('Ext.form.field.ComboBox', {
@@ -120,7 +120,7 @@
 
 						value: ';', // Default value
 
-						store: CMDBuild.core.proxy.localization.Export.getStoreSeparator(),
+						store: CMDBuild.proxy.localization.Export.getStoreSeparator(),
 						queryMode: 'local'
 					}),
 					this.activeOnlyCheckbox = Ext.create('Ext.form.field.Checkbox', {

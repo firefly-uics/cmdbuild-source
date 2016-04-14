@@ -2,7 +2,7 @@
 
 	Ext.require([
 		'CMDBuild.core.Message',
-		'CMDBuild.core.proxy.Relation'
+		'CMDBuild.proxy.Relation'
 	]);
 
 	Ext.define('CMDBuild.controller.management.classes.CMCardRelationsController', {
@@ -64,7 +64,7 @@
 				parameters[CMDBuild.core.constants.Proxy.SRC] = node.get('src');
 
 				this.view.setLoading(true);
-				CMDBuild.core.proxy.Relation.readAll({
+				CMDBuild.proxy.Relation.readAll({
 					params: parameters,
 					scope: this,
 					success: function (response, options, decodedResponse) {
@@ -155,7 +155,7 @@
 				parameters[CMDBuild.core.constants.Proxy.CLASS_NAME] = _CMCache.getEntryTypeNameById(this.getClassId());
 				parameters['domainlimit'] = CMDBuild.configuration.instance.get(CMDBuild.core.constants.Proxy.RELATION_LIMIT);
 
-				CMDBuild.core.proxy.Relation.readAll({
+				CMDBuild.proxy.Relation.readAll({
 					params: parameters,
 					scope: this,
 					success: function(result, options, decodedResult) {
@@ -293,7 +293,7 @@
 					parameters[CMDBuild.core.constants.Proxy.CARDS] = Ext.encode(cardsIdArray);
 					parameters[CMDBuild.core.constants.Proxy.DOMAIN_DIRECTION] = destination;
 
-					CMDBuild.core.proxy.Relation.getAlreadyRelatedCards({
+					CMDBuild.proxy.Relation.getAlreadyRelatedCards({
 						params: parameters,
 						loadMask: false,
 						scope: this,
@@ -309,7 +309,7 @@
 									parameters['domainlimit'] = CMDBuild.configuration.instance.get(CMDBuild.core.constants.Proxy.RELATION_LIMIT);
 
 									// Get all domains of grid-card to check if it have relation with current-card
-									CMDBuild.core.proxy.Relation.readAll({
+									CMDBuild.proxy.Relation.readAll({
 										params: parameters,
 										loadMask: false,
 										scope: this,
@@ -483,7 +483,7 @@
 					params[CMDBuild.core.constants.Proxy.ATTRIBUTES] = Ext.encode(attributes);
 
 					CMDBuild.core.LoadMask.show();
-					CMDBuild.core.proxy.Relation.remove({
+					CMDBuild.proxy.Relation.remove({
 						params: params,
 						loadMask: false,
 						scope: this,
@@ -584,7 +584,7 @@
 				parameters[CMDBuild.core.constants.Proxy.CLASS_NAME] = _CMCache.getEntryTypeNameById(pi.getClassId());
 				parameters['domainlimit'] = CMDBuild.configuration.instance.get(CMDBuild.core.constants.Proxy.RELATION_LIMIT);
 
-				CMDBuild.core.proxy.Relation.readAll({
+				CMDBuild.proxy.Relation.readAll({
 					params: parameters,
 					scope: this,
 					success: function(result, options, decodedResult) {

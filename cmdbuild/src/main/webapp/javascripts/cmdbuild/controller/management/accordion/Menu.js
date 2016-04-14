@@ -6,8 +6,8 @@
 		requires: [
 			'CMDBuild.core.constants.ModuleIdentifiers',
 			'CMDBuild.core.constants.Proxy',
-			'CMDBuild.core.proxy.CustomPage',
-			'CMDBuild.core.proxy.Menu',
+			'CMDBuild.proxy.CustomPage',
+			'CMDBuild.proxy.Menu',
 		],
 
 		/**
@@ -62,14 +62,14 @@
 			params[CMDBuild.core.constants.Proxy.GROUP_NAME] = CMDBuild.configuration.runtime.get(CMDBuild.core.constants.Proxy.DEFAULT_GROUP_NAME);
 			params[CMDBuild.core.constants.Proxy.LOCALIZED] = true;
 
-			CMDBuild.core.proxy.Menu.read({
+			CMDBuild.proxy.Menu.read({
 				params: params,
 				loadMask: false,
 				scope: this,
 				success: function (response, options, decodedResponse) {
 					var menuItemsResponse = decodedResponse[CMDBuild.core.constants.Proxy.MENU];
 
-					CMDBuild.core.proxy.CustomPage.readForCurrentUser({
+					CMDBuild.proxy.CustomPage.readForCurrentUser({
 						loadMask: false,
 						scope: this,
 						success: function (response, options, decodedResponse) {

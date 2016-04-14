@@ -6,7 +6,7 @@
 		requires: [
 			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.Message',
-			'CMDBuild.core.proxy.widget.grid.Grid',
+			'CMDBuild.proxy.widget.grid.Grid',
 			'CMDBuild.model.widget.grid.Grid'
 		],
 
@@ -323,7 +323,7 @@
 		 */
 		decodeFunctionPresets: function(presetsString) {
 			// Validate presetsString
-			CMDBuild.core.proxy.widget.grid.Grid.getFunctions({
+			CMDBuild.proxy.widget.grid.Grid.getFunctions({
 				scope: this,
 				success: function(result, options, decodedResult) {
 					var isPresetsStringValid = false;
@@ -366,7 +366,7 @@
 							params[functionParams[index]] = widgetUnmanagedVariables[functionParams[index]];
 
 						this.grid.reconfigure(
-							CMDBuild.core.proxy.widget.grid.Grid.getStoreFromFunction({
+							CMDBuild.proxy.widget.grid.Grid.getStoreFromFunction({
 								fields: CMDBuild.model.widget.grid.Grid.getFields(),
 								extraParams: {
 									'function': presetsString,

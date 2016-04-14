@@ -6,8 +6,8 @@
 		requires: [
 			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.Message',
-			'CMDBuild.core.proxy.index.Json',
-			'CMDBuild.core.proxy.report.Report'
+			'CMDBuild.proxy.index.Json',
+			'CMDBuild.proxy.report.Report'
 		],
 
 		mixins: ['CMDBuild.controller.management.report.Single'], // Import functions to avoid to duplicate
@@ -115,7 +115,7 @@
 					property: CMDBuild.core.constants.Proxy.ID
 				}))
 			) {
-				CMDBuild.core.proxy.report.Report.create({
+				CMDBuild.proxy.report.Report.create({
 					params: this.currentReportParametersGet({ callIdentifier: 'create' }),
 					scope: this,
 					failure: function(response, options, decodedResponse) {
@@ -302,7 +302,7 @@
 				var params = {};
 				params[CMDBuild.core.constants.Proxy.FORCE_DOWNLOAD_PARAM_KEY] = true;
 
-				CMDBuild.core.proxy.report.Report.download({
+				CMDBuild.proxy.report.Report.download({
 					buildRuntimeForm: true,
 					params: params
 				});
@@ -324,7 +324,7 @@
 		 */
 		reportCustomUpdateReport: function(forceDownload) {
 			if (!this.currentReportParametersIsEmpty('update')) {
-				CMDBuild.core.proxy.report.Report.update({
+				CMDBuild.proxy.report.Report.update({
 					params: this.currentReportParametersGet({ callIdentifier: 'update' }),
 					scope: this,
 					success: function(response, options, decodedResponse) {

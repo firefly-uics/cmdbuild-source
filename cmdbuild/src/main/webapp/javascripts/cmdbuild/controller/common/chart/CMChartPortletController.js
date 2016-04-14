@@ -1,6 +1,6 @@
 (function() {
 
-	Ext.require('CMDBuild.core.proxy.dashboard.Chart');
+	Ext.require('CMDBuild.proxy.dashboard.Chart');
 
 	Ext.define("CMDBuild.controller.common.chart.CMChartPortletControllerPreviewStrategy", {
 		doRequest: function(caller, cb) {
@@ -21,7 +21,7 @@
 				}
 			}
 
-			CMDBuild.core.proxy.dashboard.Chart.readForPreview({
+			CMDBuild.proxy.dashboard.Chart.readForPreview({
 				params: {
 					dataSourceName: dsName,
 					params: Ext.encode(params)
@@ -60,7 +60,7 @@
 				}
 			}
 
-			CMDBuild.core.proxy.dashboard.Chart.read({
+			CMDBuild.proxy.dashboard.Chart.read({
 				params: {
 					dashboardId: dashbaordId,
 					chartId: chartId,

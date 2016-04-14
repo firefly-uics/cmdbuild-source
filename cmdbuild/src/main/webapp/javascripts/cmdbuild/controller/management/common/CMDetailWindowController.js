@@ -107,7 +107,7 @@
 		updateRelation: function(form, res) {
 			var p = this.buildParamsToSaveRelation(res.params);
 
-			CMDBuild.core.proxy.Relation.update({
+			CMDBuild.proxy.Relation.update({
 				params: p,
 				loadMask: false
 			});
@@ -145,7 +145,7 @@
 		parameters[CMDBuild.core.constants.Proxy.DOMAIN_ID] = me.view.detail.get("id");
 		parameters[CMDBuild.core.constants.Proxy.DOMAIN_SOURCE] = me.view.detail.getDetailSide();
 
-		CMDBuild.core.proxy.Relation.readAll({
+		CMDBuild.proxy.Relation.readAll({
 			params: parameters,
 			loadMask: false,
 			scope: this,

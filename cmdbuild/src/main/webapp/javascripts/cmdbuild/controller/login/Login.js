@@ -6,7 +6,7 @@
 		requires: [
 			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.CookiesManager',
-			'CMDBuild.core.proxy.Session'
+			'CMDBuild.proxy.Session'
 		],
 
 		/**
@@ -87,7 +87,7 @@
 				params[CMDBuild.core.constants.Proxy.PASSWORD] = this.form.password.getValue();
 				params[CMDBuild.core.constants.Proxy.USERNAME] = this.form.user.getValue();
 
-				CMDBuild.core.proxy.Session.create({
+				CMDBuild.proxy.Session.create({
 					params: params,
 					scope: this,
 					success: function (response, options, decodedResponse) {
@@ -121,7 +121,7 @@
 				params[CMDBuild.core.constants.Proxy.GROUP] = this.form.group.getValue();
 				params[CMDBuild.core.constants.Proxy.SESSION] = CMDBuild.core.CookiesManager.authorizationGet();
 
-				CMDBuild.core.proxy.Session.update({
+				CMDBuild.proxy.Session.update({
 					params: params,
 					scope: this,
 					success: this.sectionRedirect

@@ -1,6 +1,6 @@
 (function() {
 
-	Ext.require(['CMDBuild.core.proxy.index.Json']);
+	Ext.require(['CMDBuild.proxy.index.Json']);
 
 	var DEFAULT_MIN_ZOOM = 0;
 	var DEFAULT_MAX_ZOOM = 25;
@@ -52,7 +52,7 @@ CMDBuild.Management.CMMap.MapLayer = OpenLayers.Class(OpenLayers.Layer.Vector, {
 		});
 
 		this.protocol = new OpenLayers.Protocol.HTTP({
-			url: CMDBuild.core.proxy.index.Json.gis.getGeoCardList + '?' + CMDBuild.core.constants.Proxy.AUTHORIZATION_HEADER_KEY
+			url: CMDBuild.proxy.index.Json.gis.getGeoCardList + '?' + CMDBuild.core.constants.Proxy.AUTHORIZATION_HEADER_KEY
 				+ '=' + Ext.util.Cookies.get(CMDBuild.core.constants.Proxy.AUTHORIZATION_HEADER_KEY), // FIXME: should use proxy
 			params: {
 				className: options.targetClassName,

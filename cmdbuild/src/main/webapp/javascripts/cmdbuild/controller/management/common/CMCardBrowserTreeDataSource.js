@@ -1,6 +1,6 @@
 (function() {
 
-	Ext.require('CMDBuild.core.proxy.gis.Gis');
+	Ext.require('CMDBuild.proxy.gis.Gis');
 
 	var GEOSERVER = "GeoServer";
 
@@ -25,7 +25,7 @@
 			// fill the first level of tree nodes
 			// asking the cards according to the
 			// root of the configuration
-			CMDBuild.core.proxy.gis.Gis.expandDomainTree({
+			CMDBuild.proxy.gis.Gis.expandDomainTree({
 				loadMask: false,
 				success: function successGetCardBasicInfoList(operation, options, response) {
 					addGeoserverLayersToTree(response.root, me);

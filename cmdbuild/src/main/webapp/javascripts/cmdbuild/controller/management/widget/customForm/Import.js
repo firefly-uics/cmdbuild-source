@@ -6,9 +6,9 @@
 		requires: [
 			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.Message',
-			'CMDBuild.core.proxy.customForm.Csv',
-			'CMDBuild.core.proxy.lookup.Lookup',
-			'CMDBuild.core.proxy.widget.customForm.CustomForm',
+			'CMDBuild.proxy.customForm.Csv',
+			'CMDBuild.proxy.lookup.Lookup',
+			'CMDBuild.proxy.widget.customForm.CustomForm',
 			'CMDBuild.core.RequestBarrier'
 		],
 
@@ -114,7 +114,7 @@
 				params[CMDBuild.core.constants.Proxy.TYPE] = attribute.get(CMDBuild.core.constants.Proxy.LOOKUP_TYPE);
 				params[CMDBuild.core.constants.Proxy.ACTIVE] = true;
 
-				CMDBuild.core.proxy.lookup.Lookup.readAll({
+				CMDBuild.proxy.lookup.Lookup.readAll({
 					params: params,
 					scope: this,
 					success: function (response, options, decodedResponse) {
@@ -174,7 +174,7 @@
 						}
 					});
 
-					CMDBuild.core.proxy.widget.customForm.CustomForm.readAllCards({
+					CMDBuild.proxy.widget.customForm.CustomForm.readAllCards({
 						params: params,
 						loadMask: false,
 						scope: this,
@@ -384,7 +384,7 @@
 			if (this.validate(this.form)) {
 				this.view.setLoading(true);
 
-				CMDBuild.core.proxy.customForm.Csv.decode({
+				CMDBuild.proxy.customForm.Csv.decode({
 					form: this.form.getForm(),
 					scope: this,
 					failure: function (form, action) {

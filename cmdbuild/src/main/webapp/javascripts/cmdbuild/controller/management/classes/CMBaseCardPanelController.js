@@ -15,7 +15,7 @@
 
 		requires: [
 			'CMDBuild.core.constants.Proxy',
-			'CMDBuild.core.proxy.Card'
+			'CMDBuild.proxy.Card'
 		],
 
 		cardDataProviders: [],
@@ -153,7 +153,7 @@
 		 * @param {Object} params
 		 */
 		doFormSubmit: function (params) {
-			CMDBuild.core.proxy.Card.update({
+			CMDBuild.proxy.Card.update({
 				params: Ext.Object.merge(params, this.view.getForm().getValues()),
 				loadMask: false,
 				scope: this,
@@ -244,7 +244,7 @@
 					params[CMDBuild.core.constants.Proxy.CLASS_NAME] = _CMCache.getEntryTypeNameById(me.card.get('IdClass'));
 				}
 
-				CMDBuild.core.proxy.Card.read({
+				CMDBuild.proxy.Card.read({
 					params: params,
 					loadMask: false,
 					success: function(result, options, decodedResult) {
@@ -315,7 +315,7 @@
 					this.card
 					&& this.card.get("Id") >= 0 // Avoid lock on card create
 				) {
-					CMDBuild.core.proxy.Card.lock({
+					CMDBuild.proxy.Card.lock({
 						params: {
 							id: this.card.get("Id")
 						},
@@ -335,7 +335,7 @@
 					&& this.view.isInEditing()
 					&& this.card.get("Id") >= 0 // Avoid unlock on card create
 				) {
-					CMDBuild.core.proxy.Card.unlock({
+					CMDBuild.proxy.Card.unlock({
 						params: {
 							id: this.card.get("Id")
 						},

@@ -5,7 +5,7 @@
 
 		requires: [
 			'CMDBuild.core.constants.Proxy',
-			'CMDBuild.core.proxy.workflow.Domains'
+			'CMDBuild.proxy.workflow.Domains'
 		],
 
 		/**
@@ -63,7 +63,7 @@
 						fixed: true
 					})
 				],
-				store: CMDBuild.core.proxy.workflow.Domains.getStore()
+				store: CMDBuild.proxy.workflow.Domains.getStore()
 			});
 
 			this.callParent(arguments);

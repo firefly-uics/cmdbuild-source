@@ -127,7 +127,7 @@
 						editable: false,
 						allowBlank: false,
 
-						store: CMDBuild.core.proxy.filter.Group.getStoreTargetClass(),
+						store: CMDBuild.proxy.filter.Group.getStoreTargetClass(),
 						queryMode: 'local'
 					}),
 					this.advancedFilterField = Ext.create('CMDBuild.view.common.field.filter.advanced.Advanced', {

@@ -6,7 +6,7 @@
 		requires: [
 			'CMDBuild.core.constants.FieldWidths',
 			'CMDBuild.core.constants.Proxy',
-			'CMDBuild.core.proxy.NavigationTree',
+			'CMDBuild.proxy.NavigationTree',
 			'CMDBuild.core.Utils'
 		],
 
@@ -118,7 +118,7 @@
 						forceSelection: true,
 						editable: false,
 
-						store: CMDBuild.core.proxy.NavigationTree.getStoreTargetClass(),
+						store: CMDBuild.proxy.NavigationTree.getStoreTargetClass(),
 						queryMode: 'local'
 					}),
 					Ext.create('Ext.form.field.Checkbox',{

@@ -5,7 +5,7 @@
 
 		requires: [
 			'CMDBuild.core.constants.Proxy',
-			'CMDBuild.core.proxy.NavigationTree'
+			'CMDBuild.proxy.NavigationTree'
 		],
 
 		/**
@@ -188,7 +188,7 @@
 				var params = {};
 				params[CMDBuild.core.constants.Proxy.NAME] = node.get(CMDBuild.core.constants.Proxy.ENTITY_ID);
 
-				CMDBuild.core.proxy.NavigationTree.read({
+				CMDBuild.proxy.NavigationTree.read({
 					params: params,
 					scope: this,
 					success: function(response, options, decodedResponse) {
@@ -247,7 +247,7 @@
 
 					params[CMDBuild.core.constants.Proxy.STRUCTURE] = Ext.encode(structure);
 
-					CMDBuild.core.proxy.NavigationTree.create({
+					CMDBuild.proxy.NavigationTree.create({
 						params: params,
 						scope: this,
 						success: this.success
@@ -261,7 +261,7 @@
 
 					params[CMDBuild.core.constants.Proxy.STRUCTURE] = Ext.encode(structure);
 
-					CMDBuild.core.proxy.NavigationTree.update({
+					CMDBuild.proxy.NavigationTree.update({
 						params: params,
 						scope: this,
 						success: this.success
@@ -280,7 +280,7 @@
 				var params = {};
 				params[CMDBuild.core.constants.Proxy.NAME] = this.cmfg('navigationTreeSelectedTreeGet', CMDBuild.core.constants.Proxy.NAME);
 
-				CMDBuild.core.proxy.NavigationTree.remove({
+				CMDBuild.proxy.NavigationTree.remove({
 					params: params,
 					scope: this,
 					success: function (response, options, decodedResponse) {

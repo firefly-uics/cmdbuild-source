@@ -1,6 +1,6 @@
 (function() {
 
-	Ext.require(['CMDBuild.core.proxy.gis.Gis']);
+	Ext.require(['CMDBuild.proxy.gis.Gis']);
 
 	Ext.define("CMDBuild.controller.management.classes.map.CMMapController", {
 		alternateClassName: "CMDBuild.controller.management.classes.CMMapController", // Legacy class name
@@ -199,7 +199,7 @@
 						// change the zoom to the minimum to show the feature
 						me.map.setCenter(me.map.getCenter(), layer.minZoom);
 					}
-					CMDBuild.core.proxy.gis.Gis.getFeature({
+					CMDBuild.proxy.gis.Gis.getFeature({
 						params: {
 							"className": _CMCache.getEntryTypeNameById(params.IdClass),
 							"cardId": params.Id

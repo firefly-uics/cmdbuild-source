@@ -7,13 +7,13 @@
 			'CMDBuild.core.constants.Global',
 			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.LoadMask',
-			'CMDBuild.core.proxy.taskManager.Connector',
-			'CMDBuild.core.proxy.taskManager.Email',
-			'CMDBuild.core.proxy.taskManager.event.Asynchronous',
-			'CMDBuild.core.proxy.taskManager.event.Event',
-			'CMDBuild.core.proxy.taskManager.event.Synchronous',
-			'CMDBuild.core.proxy.taskManager.TaskManager',
-			'CMDBuild.core.proxy.taskManager.Workflow',
+			'CMDBuild.proxy.taskManager.Connector',
+			'CMDBuild.proxy.taskManager.Email',
+			'CMDBuild.proxy.taskManager.event.Asynchronous',
+			'CMDBuild.proxy.taskManager.event.Event',
+			'CMDBuild.proxy.taskManager.event.Synchronous',
+			'CMDBuild.proxy.taskManager.TaskManager',
+			'CMDBuild.proxy.taskManager.Workflow',
 			'CMDBuild.core.Utils'
 		],
 
@@ -114,25 +114,25 @@
 		geStoreByTaskType: function (type) {
 			switch (type) {
 				case 'all':
-					return CMDBuild.core.proxy.taskManager.TaskManager.getStore();
+					return CMDBuild.proxy.taskManager.TaskManager.getStore();
 
 				case 'connector':
-					return CMDBuild.core.proxy.taskManager.Connector.getStore();
+					return CMDBuild.proxy.taskManager.Connector.getStore();
 
 				case 'email':
-					return CMDBuild.core.proxy.taskManager.Email.getStore();
+					return CMDBuild.proxy.taskManager.Email.getStore();
 
 				case 'event':
-					return CMDBuild.core.proxy.taskManager.event.Event.getStore();
+					return CMDBuild.proxy.taskManager.event.Event.getStore();
 
 				case 'event_asynchronous':
-					return CMDBuild.core.proxy.taskManager.event.Asynchronous.getStore();
+					return CMDBuild.proxy.taskManager.event.Asynchronous.getStore();
 
 				case 'event_synchronous':
-					return CMDBuild.core.proxy.taskManager.event.Synchronous.getStore();
+					return CMDBuild.proxy.taskManager.event.Synchronous.getStore();
 
 				case 'workflow':
-					return CMDBuild.core.proxy.taskManager.Workflow.getStore();
+					return CMDBuild.proxy.taskManager.Workflow.getStore();
 
 				default:
 					throw 'CMProxyTasks error: url type not recognized';
@@ -324,7 +324,7 @@
 		onStartButtonClick: function(record) {
 			CMDBuild.core.LoadMask.show();
 
-			CMDBuild.core.proxy.taskManager.TaskManager.start({
+			CMDBuild.proxy.taskManager.TaskManager.start({
 				params: {
 					id: record.get(CMDBuild.core.constants.Proxy.ID)
 				},
@@ -341,7 +341,7 @@
 		onStopButtonClick: function(record) {
 			CMDBuild.core.LoadMask.show();
 
-			CMDBuild.core.proxy.taskManager.TaskManager.stop({
+			CMDBuild.proxy.taskManager.TaskManager.stop({
 				params: {
 					id: record.get(CMDBuild.core.constants.Proxy.ID)
 				},

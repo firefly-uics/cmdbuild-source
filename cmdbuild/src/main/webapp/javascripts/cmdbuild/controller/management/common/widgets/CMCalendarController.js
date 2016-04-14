@@ -2,7 +2,7 @@
 
 	Ext.require([
 		'CMDBuild.core.Message',
-		'CMDBuild.core.proxy.Card'
+		'CMDBuild.proxy.Card'
 	]);
 
 	Ext.define("CMDBuild.controller.management.common.widgets.CMCalendarController", {
@@ -166,7 +166,7 @@
 			});
 		}
 
-		CMDBuild.core.proxy.Card.readAll({
+		CMDBuild.proxy.Card.readAll({
 			params: params,
 			loadMask: false,
 			success: function(response, operation, decodedResponse) {

@@ -6,7 +6,7 @@
 		requires: [
 			'CMDBuild.core.constants.FieldWidths',
 			'CMDBuild.core.constants.Proxy',
-			'CMDBuild.core.proxy.localization.Import'
+			'CMDBuild.proxy.localization.Import'
 		],
 
 		mixins: ['CMDBuild.view.common.PanelFunctions'],
@@ -68,7 +68,7 @@
 
 						value: CMDBuild.core.constants.Proxy.CSV, // Default value
 
-						store: CMDBuild.core.proxy.localization.Import.getStoreFileFormat(),
+						store: CMDBuild.proxy.localization.Import.getStoreFileFormat(),
 						queryMode: 'local'
 					}),
 					Ext.create('Ext.form.field.File', {
@@ -90,7 +90,7 @@
 
 						value: ';', // Default value
 
-						store: CMDBuild.core.proxy.localization.Import.getStoreSeparator(),
+						store: CMDBuild.proxy.localization.Import.getStoreSeparator(),
 						queryMode: 'local'
 					})
 				]

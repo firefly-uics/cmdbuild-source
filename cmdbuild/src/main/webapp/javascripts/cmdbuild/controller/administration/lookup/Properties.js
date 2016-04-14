@@ -5,7 +5,7 @@
 
 		requires: [
 			'CMDBuild.core.constants.Proxy',
-			'CMDBuild.core.proxy.lookup.Type',
+			'CMDBuild.proxy.lookup.Type',
 			'CMDBuild.model.lookup.Type'
 		],
 
@@ -87,13 +87,13 @@
 				params['orig_type'] = params[CMDBuild.core.constants.Proxy.ID]; // TODO: wrong server implementation to fix
 
 				if (Ext.isEmpty(params[CMDBuild.core.constants.Proxy.ID])) {
-					CMDBuild.core.proxy.lookup.Type.create({
+					CMDBuild.proxy.lookup.Type.create({
 						params: params,
 						scope: this,
 						success: this.success
 					});
 				} else {
-					CMDBuild.core.proxy.lookup.Type.update({
+					CMDBuild.proxy.lookup.Type.update({
 						params: params,
 						scope: this,
 						success: this.success

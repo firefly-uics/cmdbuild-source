@@ -1,6 +1,6 @@
 (function() {
 
-	Ext.require('CMDBuild.core.proxy.Attachment');
+	Ext.require('CMDBuild.proxy.Attachment');
 
 	var tr = CMDBuild.Translation.management.modcard;
 
@@ -38,7 +38,7 @@
 					{header: col_tr.description, sortable: true, dataIndex: 'Description', flex: 4},
 					{header: '&nbsp;', width: 80, sortable: false, renderer: this.renderAttachmentActions, align: 'center', tdCls: 'grid-button', dataIndex: 'Fake'}
 				],
-				store: CMDBuild.core.proxy.Attachment.getStore()
+				store: CMDBuild.proxy.Attachment.getStore()
 			});
 
 			this.callParent(arguments);

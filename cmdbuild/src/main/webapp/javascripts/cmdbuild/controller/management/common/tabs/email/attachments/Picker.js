@@ -6,8 +6,8 @@
 		requires: [
 			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.Message',
-			'CMDBuild.core.proxy.Classes',
-			'CMDBuild.core.proxy.common.tabs.email.Attachment'
+			'CMDBuild.proxy.Classes',
+			'CMDBuild.proxy.common.tabs.email.Attachment'
 		],
 
 		/**
@@ -72,7 +72,7 @@
 			var params = {};
 			params[CMDBuild.core.constants.Proxy.ACTIVE] = true;
 
-			CMDBuild.core.proxy.Classes.readAll({
+			CMDBuild.proxy.Classes.readAll({
 				params: params,
 				scope: this,
 				success: function (response, options, decodedResponse) {
@@ -120,7 +120,7 @@
 					params[CMDBuild.core.constants.Proxy.FILE_NAME] = attachment.get('Filename');
 					params[CMDBuild.core.constants.Proxy.TEMPORARY] = this.record.get(CMDBuild.core.constants.Proxy.TEMPORARY);
 
-					CMDBuild.core.proxy.common.tabs.email.Attachment.copy({
+					CMDBuild.proxy.common.tabs.email.Attachment.copy({
 						params: params,
 						loadMask: this.cmfg('tabEmailEmailWindowGetView'), // Apply load mask to target
 						scope: this,

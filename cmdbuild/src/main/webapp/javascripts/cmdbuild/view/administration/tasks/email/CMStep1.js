@@ -216,7 +216,7 @@
 
 		requires: [
 			'CMDBuild.core.constants.Proxy',
-			'CMDBuild.core.proxy.email.Account'
+			'CMDBuild.proxy.email.Account'
 		],
 
 		/**
@@ -385,7 +385,7 @@
 						forceSelection: true,
 						editable: false,
 
-						store: CMDBuild.core.proxy.email.Account.getStore(),
+						store: CMDBuild.proxy.email.Account.getStore(),
 					}),
 					this.incomingFolder = Ext.create('Ext.form.field.Text', {
 						name: CMDBuild.core.constants.Proxy.INCOMING_FOLDER,

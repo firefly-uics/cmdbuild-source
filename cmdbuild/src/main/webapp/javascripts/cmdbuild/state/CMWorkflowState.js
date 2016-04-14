@@ -1,6 +1,6 @@
 (function() {
 
-	Ext.require(['CMDBuild.core.proxy.Card']);
+	Ext.require(['CMDBuild.proxy.Card']);
 
 	Ext.define("CMDBuild.state.CMWorkflowStateDelegate", {
 		onProcessClassRefChange: Ext.emptyFn,
@@ -223,7 +223,7 @@
 					var me = this;
 
 					if (!processInstance.isNew() && processClassRefIsASuperclass) {
-						CMDBuild.core.proxy.Card.read({
+						CMDBuild.proxy.Card.read({
 							params: {
 								cardId: processInstance.getId(),
 								className: _CMCache.getEntryTypeNameById(processInstance.getClassId())

@@ -2,7 +2,7 @@
 
 	Ext.require([
 		'CMDBuild.core.Message',
-		'CMDBuild.core.proxy.utility.ImportCsv'
+		'CMDBuild.proxy.utility.ImportCsv'
 	]);
 
 	var tr = CMDBuild.Translation.management.modutilities.csv;
@@ -31,7 +31,7 @@
 
 	function onUploadButtonClick() {
 		CMDBuild.core.LoadMask.show();
-		CMDBuild.core.proxy.utility.ImportCsv.upload({
+		CMDBuild.proxy.utility.ImportCsv.upload({
 			form: this.view.form.getForm(),
 			loadMask: false,
 			scope: this,
@@ -48,7 +48,7 @@
 			CMDBuild.core.Message.warning(tr.warning, tr.noupdate);
 		} else {
 			CMDBuild.core.LoadMask.show();
-			CMDBuild.core.proxy.utility.ImportCsv.updateRecords({
+			CMDBuild.proxy.utility.ImportCsv.updateRecords({
 				params: {
 					data: Ext.encode(records)
 				},
@@ -63,7 +63,7 @@
 	}
 
 	function onConfirmButtonClick() {
-		CMDBuild.core.proxy.utility.ImportCsv.storeRecords({
+		CMDBuild.proxy.utility.ImportCsv.storeRecords({
 			scope: this,
 			failure: function (response, options, decodedResponse) {
 				CMDBuild.core.Message.error(tr.error, tr.importfailure, true);
@@ -83,7 +83,7 @@
 	// callback called after the upload of the csv file
 	// and after the update of the grid records
 	function updateGridRecords(response, options, decodedResponse) {
-		CMDBuild.core.proxy.utility.ImportCsv.getRecords({
+		CMDBuild.proxy.utility.ImportCsv.getRecords({
 			scope: this,
 			success: function (response, options, decodedResponse) {
 				this.view.grid.configureHeadersAndStore(decodedResponse.headers);

@@ -1,6 +1,6 @@
 (function() {
 
-	Ext.require(['CMDBuild.core.proxy.Card']);
+	Ext.require(['CMDBuild.proxy.Card']);
 
 	Ext.define("CMDBuild.data.CMDetailedCardDataSource", {
 
@@ -29,7 +29,7 @@
 		loadCard: function(cardToLoad) {
 			adaptGetCardCallParams(cardToLoad);
 
-			CMDBuild.core.proxy.Card.read({
+			CMDBuild.proxy.Card.read({
 				params: cardToLoad,
 				loadMask: false,
 				scope: this,

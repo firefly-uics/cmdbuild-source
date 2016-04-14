@@ -20,7 +20,7 @@
 		requires: [
 			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.Message',
-			'CMDBuild.core.proxy.Filter'
+			'CMDBuild.proxy.Filter'
 		],
 
 		mixins: {
@@ -122,7 +122,7 @@
 		 */
 		buildGrid: function() {
 			var me = this;
-			var store = CMDBuild.core.proxy.Filter.newGroupStore(this.className);
+			var store = CMDBuild.proxy.Filter.newGroupStore(this.className);
 
 			Ext.apply(this, {
 				grid: Ext.create('Ext.grid.Panel', {
@@ -200,7 +200,7 @@
 			params[CMDBuild.core.constants.Proxy.CLASS_NAME] = this.className;
 
 			if (checked)
-				CMDBuild.core.proxy.Filter.read({
+				CMDBuild.proxy.Filter.read({
 					params: params,
 					loadMask: false,
 					scope: this,

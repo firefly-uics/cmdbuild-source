@@ -6,8 +6,8 @@
 		requires: [
 			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.Message',
-			'CMDBuild.core.proxy.Card',
-			'CMDBuild.core.proxy.workflow.Activity',
+			'CMDBuild.proxy.Card',
+			'CMDBuild.proxy.workflow.Activity',
 			'CMDBuild.core.Utils'
 		],
 
@@ -54,7 +54,7 @@
 				classId: p.classId
 			}));
 
-			CMDBuild.core.proxy.workflow.Activity.readStart({
+			CMDBuild.proxy.workflow.Activity.readStart({
 				params: {
 					classId: p.classId
 				},
@@ -87,7 +87,7 @@
 
 			updateViewSelection(activityInfoId, me);
 
-			CMDBuild.core.proxy.workflow.Activity.read({
+			CMDBuild.proxy.workflow.Activity.read({
 				params:{
 					classId: _CMWFState.getProcessInstance().getClassId(),
 					cardId: _CMWFState.getProcessInstance().getId(),
@@ -160,7 +160,7 @@
 				params[CMDBuild.core.constants.Proxy.RETRY_WITHOUT_FILTER] = false;
 				params[CMDBuild.core.constants.Proxy.SORT] = Ext.encode(getSorting(store));
 
-				CMDBuild.core.proxy.Card.readPosition({
+				CMDBuild.proxy.Card.readPosition({
 					params: params,
 					loadMask: false,
 					scope: this,

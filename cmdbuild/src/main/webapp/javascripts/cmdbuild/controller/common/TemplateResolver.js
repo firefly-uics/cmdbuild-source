@@ -1,6 +1,6 @@
 (function() {
 
-Ext.require(['CMDBuild.core.proxy.TemplateResolver']);
+Ext.require(['CMDBuild.proxy.TemplateResolver']);
 
 if (typeof CMDBuild.Management == "undefined") {
 	CMDBuild.Management = {};
@@ -411,7 +411,7 @@ CMDBuild.Management.TemplateResolver.prototype = {
 	executeCQLTemplate: function(templateName, cqlQuery, ctx, callback) {
 		var queryParams = this.buildCQLQueryParameters(cqlQuery, ctx);
 		if (queryParams) {
-			CMDBuild.core.proxy.TemplateResolver.readAllCard({
+			CMDBuild.proxy.TemplateResolver.readAllCard({
 				params: queryParams,
 				loadMask: false,
 				success: function(response, options, decoded) {

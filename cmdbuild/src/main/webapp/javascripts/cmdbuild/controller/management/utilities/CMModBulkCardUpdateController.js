@@ -3,7 +3,7 @@
 	Ext.require([
 		'CMDBuild.core.constants.Global',
 		'CMDBuild.core.Message',
-		'CMDBuild.core.proxy.utility.BulkUpdate'
+		'CMDBuild.proxy.utility.BulkUpdate'
 	]);
 
 	Ext.define("CMDBuild.controller.management.common.CMStandAloneCardGridController", {
@@ -88,10 +88,10 @@
 	}
 
 	function getProxyCall(me) {
-		var proxyCall = CMDBuild.core.proxy.utility.BulkUpdate.bulkUpdate;
+		var proxyCall = CMDBuild.proxy.utility.BulkUpdate.bulkUpdate;
 		var reverseMode = me.gridSM.cmReverse;
 		if (reverseMode) {
-			proxyCall = CMDBuild.core.proxy.utility.BulkUpdate.bulkUpdateFromFilter;
+			proxyCall = CMDBuild.proxy.utility.BulkUpdate.bulkUpdateFromFilter;
 		}
 
 		return proxyCall;

@@ -1,8 +1,8 @@
 (function() {
 
 	Ext.require([
-		'CMDBuild.core.proxy.Card',
-		'CMDBuild.core.proxy.classes.tabs.Note'
+		'CMDBuild.proxy.Card',
+		'CMDBuild.proxy.classes.tabs.Note'
 	]);
 
 	Ext.define("CMDBuild.controller.management.classes.CMNoteController", {
@@ -66,7 +66,7 @@
 			var params = this._getSaveParams();
 
 			if (this.view.getForm().isValid() && this.beforeSave(this.card)) {
-				CMDBuild.core.proxy.classes.tabs.Note.update({
+				CMDBuild.proxy.classes.tabs.Note.update({
 					params: params,
 					scope: this,
 					success: function (response, options, decodedResponse) {
@@ -125,7 +125,7 @@
 			if (CMDBuild.configuration.instance.get('enableCardLock')) { // TODO: use proxy constants
 				if (this.card) {
 					var id = this.card.get("Id");
-					CMDBuild.core.proxy.Card.lock({
+					CMDBuild.proxy.Card.lock({
 						params: {
 							id: id
 						},
@@ -142,7 +142,7 @@
 			if (CMDBuild.configuration.instance.get('enableCardLock')) { // TODO: use proxy constants
 				if (this.card && this.view.isInEditing()) {
 					var id = this.card.get("Id");
-					CMDBuild.core.proxy.Card.unlock({
+					CMDBuild.proxy.Card.unlock({
 						params: {
 							id: id
 						},

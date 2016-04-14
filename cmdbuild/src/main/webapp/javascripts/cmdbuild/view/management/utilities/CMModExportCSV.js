@@ -1,4 +1,4 @@
-Ext.require(['CMDBuild.core.proxy.utility.ExportCsv']);
+Ext.require(['CMDBuild.proxy.utility.ExportCsv']);
 
 Ext.define("CMDBuild.view.management.utilities.CMModExportCSV", {
 	extend: "Ext.panel.Panel",
@@ -15,7 +15,7 @@ Ext.define("CMDBuild.view.management.utilities.CMModExportCSV", {
 			scope: this,
 			handler: function (button, e){
 				var params = this.form.getValues();
-				CMDBuild.core.proxy.utility.ExportCsv.download({
+				CMDBuild.proxy.utility.ExportCsv.download({
 					form: this.form.getForm(),
 					params: params
 				});

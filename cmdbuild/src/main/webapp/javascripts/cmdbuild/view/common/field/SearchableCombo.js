@@ -1,6 +1,6 @@
 (function() {
 
-	Ext.require('CMDBuild.core.proxy.Card');
+	Ext.require('CMDBuild.proxy.Card');
 
 	/**
 	 * @deprecated (CMDBuild.view.common.field.comboBox.Searchable)
@@ -153,7 +153,7 @@
 			if (this.getStore() && (this.getStore().find('Id', id) == -1)) {
 				var params = Ext.apply({ cardId: id }, this.getStore().baseParams);
 
-				CMDBuild.core.proxy.Card.read({
+				CMDBuild.proxy.Card.read({
 					params: params,
 					loadMask: false,
 					scope: this,

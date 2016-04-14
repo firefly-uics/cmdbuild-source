@@ -4,7 +4,7 @@
 
 	Ext.require([
 		'CMDBuild.core.Message',
-		'CMDBuild.core.proxy.dashboard.Chart'
+		'CMDBuild.proxy.dashboard.Chart'
 	]);
 
 	Ext.define("CMDBuild.controller.administration.dashboard.CMDashboardChartConfigurationPanelControllerDelegate", {
@@ -35,7 +35,7 @@
 			this.view = view;
 			this.formController = formController;
 			this.gridController = gridController;
-			this.proxy = proxy || CMDBuild.core.proxy.dashboard.Chart;
+			this.proxy = proxy || CMDBuild.proxy.dashboard.Chart;
 			this.setDelegate(delegate);
 
 			this.view.setDelegate(this);

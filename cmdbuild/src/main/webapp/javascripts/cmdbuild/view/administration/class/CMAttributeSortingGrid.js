@@ -6,7 +6,7 @@
 
 		requires: [
 			'CMDBuild.core.constants.Proxy',
-			'CMDBuild.core.proxy.common.tabs.attribute.Order'
+			'CMDBuild.proxy.common.tabs.attribute.Order'
 		],
 
 		border: false,
@@ -51,7 +51,7 @@
 							forceSelection: true,
 							editable: false,
 
-							store: CMDBuild.core.proxy.common.tabs.attribute.Order.getStoreOrderSign(),
+							store: CMDBuild.proxy.common.tabs.attribute.Order.getStoreOrderSign(),
 							queryMode: 'local'
 						},
 
@@ -66,7 +66,7 @@
 						}
 					}),
 				],
-				store: CMDBuild.core.proxy.common.tabs.attribute.Order.getStore(),
+				store: CMDBuild.proxy.common.tabs.attribute.Order.getStore(),
 				plugins: [
 					Ext.create('Ext.grid.plugin.CellEditing', { clicksToEdit: 1 })
 				],

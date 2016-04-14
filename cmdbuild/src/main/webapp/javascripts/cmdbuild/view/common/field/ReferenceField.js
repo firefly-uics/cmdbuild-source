@@ -3,7 +3,7 @@
 	var FILTER_FIELD = "_SystemFieldFilter";
 	var CHANGE_EVENT = "change";
 
-	Ext.require('CMDBuild.core.proxy.Card');
+	Ext.require('CMDBuild.proxy.Card');
 
 	Ext.define("CMDBuild.Management.ReferenceField", {
 		statics: {
@@ -228,7 +228,7 @@
 			) {
 				var params = Ext.apply({ cardId: value }, this.getStore().baseParams);
 
-				CMDBuild.core.proxy.Card.read({
+				CMDBuild.proxy.Card.read({
 					params: params,
 					loadMask: false,
 					scope: this,

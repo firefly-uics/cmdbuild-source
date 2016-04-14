@@ -7,7 +7,7 @@
 			'CMDBuild.core.constants.FieldWidths',
 			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.Message',
-			'CMDBuild.core.proxy.dataView.Sql'
+			'CMDBuild.proxy.dataView.Sql'
 		],
 
 		/**
@@ -86,7 +86,7 @@
 			var extraParams = {};
 			extraParams[CMDBuild.core.constants.Proxy.FUNCTION] = this.cmfg('dataViewSelectedGet', CMDBuild.core.constants.Proxy.SOURCE_FUNCTION);
 
-			return CMDBuild.core.proxy.dataView.Sql.getStoreFromSql({
+			return CMDBuild.proxy.dataView.Sql.getStoreFromSql({
 				fields: this.cmfg('dataViewSelectedGet', CMDBuild.core.constants.Proxy.OUTPUT),
 				extraParams: extraParams
 			});

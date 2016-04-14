@@ -1,6 +1,6 @@
 (function() {
 
-	Ext.require(['CMDBuild.core.proxy.gis.Icon']);
+	Ext.require(['CMDBuild.proxy.gis.Icon']);
 
 	var point = 'POINT',
 		line = 'LINESTRING',
@@ -223,7 +223,7 @@
 
 		this.styleFieldsMap = {
 			externalGraphic: new CMDBuild.IconsCombo({
-				store: CMDBuild.core.proxy.gis.Icon.getStore(),
+				store: CMDBuild.proxy.gis.Icon.getStore(),
 				name: "externalGraphic",
 				hiddenName: "externalGraphic",
 				fieldLabel: tr.externalGraphic,

@@ -6,7 +6,7 @@
 		requires: [
 			'CMDBuild.core.constants.FieldWidths',
 			'CMDBuild.core.constants.Proxy',
-			'CMDBuild.core.proxy.widget.OpenReport'
+			'CMDBuild.proxy.widget.OpenReport'
 		],
 
 		mixins: ['CMDBuild.view.common.PanelFunctions'],
@@ -55,7 +55,7 @@
 						editable: false,
 						forceSelection: true,
 
-						store: CMDBuild.core.proxy.widget.OpenReport.getStoreFormats(),
+						store: CMDBuild.proxy.widget.OpenReport.getStoreFormats(),
 						queryMode: 'local'
 					}),
 					this.fieldContainer = Ext.create('Ext.container.Container', { // To contains all non fixed fields
