@@ -6,8 +6,8 @@
 		requires: [
 			'CMDBuild.core.Message',
 			'CMDBuild.core.constants.Proxy',
-			'CMDBuild.core.proxy.index.Json',
-			'CMDBuild.core.proxy.report.Report'
+			'CMDBuild.proxy.index.Json',
+			'CMDBuild.proxy.report.Report'
 		],
 
 		/**

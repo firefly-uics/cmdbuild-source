@@ -1,4 +1,4 @@
-Ext.require(['CMDBuild.core.proxy.gis.Icon']);
+Ext.require(['CMDBuild.proxy.gis.Icon']);
 
 Ext.define("CMDBuild.Administration.ModIcons", {
 	extend: "Ext.panel.Panel",
@@ -16,7 +16,7 @@ Ext.define("CMDBuild.Administration.ModIcons", {
 			frame: false,
 			border: true,
 			bodyCls: 'cm-grid-autoheight',
-			store: CMDBuild.core.proxy.gis.Icon.getStore(),
+			store: CMDBuild.proxy.gis.Icon.getStore(),
 			tbar: [this.addButton],
 			sm: new Ext.selection.RowModel(),
 			columns: [{
@@ -237,9 +237,9 @@ Ext.define("CMDBuild.Administration.ModIcons", {
 			};
 
 			if (this.uploadForm.saveStatus == "add") {
-				CMDBuild.core.proxy.gis.Icon.create(config);
+				CMDBuild.proxy.gis.Icon.create(config);
 			} else {
-				CMDBuild.core.proxy.gis.Icon.update(config);
+				CMDBuild.proxy.gis.Icon.update(config);
 			}
 		}
   	},
@@ -256,7 +256,7 @@ Ext.define("CMDBuild.Administration.ModIcons", {
 	  		if (selectedRow && selectedRow.length > 0) {
 	  			var selectedData = selectedRow[0];
 	  			CMDBuild.core.LoadMask.show();
-	  			CMDBuild.core.proxy.gis.Icon.remove({
+	  			CMDBuild.proxy.gis.Icon.remove({
 					scope : this,
 					important: true,
 					loadMask: false,

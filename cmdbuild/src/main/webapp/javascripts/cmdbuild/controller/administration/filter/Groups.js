@@ -6,7 +6,7 @@
 		requires: [
 			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.Message',
-			'CMDBuild.core.proxy.filter.Group',
+			'CMDBuild.proxy.filter.Group',
 			'CMDBuild.view.common.field.translatable.Utils'
 		],
 
@@ -108,7 +108,7 @@
 			var params = {};
 			params[CMDBuild.core.constants.Proxy.ID] = selectedRecord.get(CMDBuild.core.constants.Proxy.ID);
 
-			CMDBuild.core.proxy.filter.Group.read({ // TODO: waiting for refactor (CRUD)
+			CMDBuild.proxy.filter.Group.read({ // TODO: waiting for refactor (CRUD)
 				params: params,
 				scope: this,
 				success: function(response, options, decodedResponse) {
@@ -120,7 +120,7 @@
 						}, this)
 					});
 
-					CMDBuild.core.proxy.filter.Group.readDefaults({
+					CMDBuild.proxy.filter.Group.readDefaults({
 						params: params,
 						scope: this,
 						success: function(response, options, decodedResponse) {
@@ -148,13 +148,13 @@
 				params[CMDBuild.core.constants.Proxy.CLASS_NAME] = params[CMDBuild.core.constants.Proxy.ENTRY_TYPE]; // TODO: waiting for refactor (reads a entryType parameter but i write as className)
 
 				if (Ext.isEmpty(formDataModel.get(CMDBuild.core.constants.Proxy.ID))) {
-					CMDBuild.core.proxy.filter.Group.create({
+					CMDBuild.proxy.filter.Group.create({
 						params: params,
 						scope: this,
 						success: this.success
 					});
 				} else {
-					CMDBuild.core.proxy.filter.Group.update({
+					CMDBuild.proxy.filter.Group.update({
 						params: params,
 						scope: this,
 						success: this.success
@@ -168,7 +168,7 @@
 				var params = {};
 				params[CMDBuild.core.constants.Proxy.ID] = this.filterGroupsSelectedFilterGet(CMDBuild.core.constants.Proxy.ID);
 
-				CMDBuild.core.proxy.filter.Group.remove({
+				CMDBuild.proxy.filter.Group.remove({
 					params: params,
 					scope: this,
 					success: function(response, options, decodedResponse) {
@@ -251,7 +251,7 @@
 			params[CMDBuild.core.constants.Proxy.FILTERS] = Ext.encode([savedFilterObject[CMDBuild.core.constants.Proxy.ID]]);
 			params[CMDBuild.core.constants.Proxy.GROUPS] = Ext.encode(this.form.defaultForGroupsField.getValue());
 
-			CMDBuild.core.proxy.filter.Group.updateDefaults({ params: params });
+			CMDBuild.proxy.filter.Group.updateDefaults({ params: params });
 
 			this.grid.getStore().load({
 				callback: function(records, operation, success) {

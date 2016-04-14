@@ -6,7 +6,7 @@
 		requires: [
 			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.Message',
-			'CMDBuild.core.proxy.workflow.Tasks'
+			'CMDBuild.proxy.workflow.Tasks'
 		],
 
 		/**
@@ -212,7 +212,7 @@
 				var params = {};
 				params[CMDBuild.core.constants.Proxy.ID] = this.selectedTaskGet(CMDBuild.core.constants.Proxy.ID);
 
-				CMDBuild.core.proxy.workflow.Tasks.remove({
+				CMDBuild.proxy.workflow.Tasks.remove({
 					params: params,
 					scope: this,
 					success: function (response, options, decodedResponse) {

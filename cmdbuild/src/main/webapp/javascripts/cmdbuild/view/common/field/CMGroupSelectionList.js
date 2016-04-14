@@ -6,7 +6,7 @@
 	Ext.define('CMDBuild.view.common.field.CMGroupSelectionList', { // asd
 		extend: 'Ext.ux.form.MultiSelect',
 
-		requires: ['CMDBuild.core.proxy.common.field.multiselect.Group'],
+		requires: ['CMDBuild.proxy.common.field.multiselect.Group'],
 
 		considerAsFieldToDisable: true,
 
@@ -23,7 +23,7 @@
 
 		initComponent: function() {
 			Ext.applyIf(this, {
-				store: CMDBuild.core.proxy.common.field.multiselect.Group.getStore()
+				store: CMDBuild.proxy.common.field.multiselect.Group.getStore()
 			});
 
 			this.callParent(arguments);

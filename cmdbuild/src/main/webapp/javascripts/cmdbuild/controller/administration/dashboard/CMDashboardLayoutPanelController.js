@@ -1,6 +1,6 @@
 Ext.require([
 	'CMDBuild.core.Message',
-	'CMDBuild.core.proxy.dashboard.Dashboard'
+	'CMDBuild.proxy.dashboard.Dashboard'
 ]);
 
 Ext.define("CMDBuild.controller.administration.dashboard.CMDashboardLayoutPanelController", {
@@ -63,7 +63,7 @@ Ext.define("CMDBuild.controller.administration.dashboard.CMDashboardLayoutPanelC
 	},
 
 	onSaveButtonClick: function() {
-		CMDBuild.core.proxy.dashboard.Dashboard.updateColumns({
+		CMDBuild.proxy.dashboard.Dashboard.updateColumns({
 			params: {
 				dashboardId: this.dashboard.getId(),
 				columnsConfiguration: Ext.encode(this.view.getColumnsConfiguration())

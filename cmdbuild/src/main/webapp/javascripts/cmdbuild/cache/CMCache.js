@@ -8,10 +8,10 @@
 
 		requires: [
 			'CMDBuild.core.Message',
-			'CMDBuild.core.proxy.Cache',
-			'CMDBuild.core.proxy.common.tabs.attribute.Attribute',
-			'CMDBuild.core.proxy.gis.Gis',
-			'CMDBuild.core.proxy.index.Json'
+			'CMDBuild.proxy.Cache',
+			'CMDBuild.proxy.common.tabs.attribute.Attribute',
+			'CMDBuild.proxy.gis.Gis',
+			'CMDBuild.proxy.index.Json'
 		],
 
 		mixins: {
@@ -84,7 +84,7 @@
 				}
 			}
 
-			CMDBuild.core.proxy.common.tabs.attribute.Attribute.read({
+			CMDBuild.proxy.common.tabs.attribute.Attribute.read({
 				params: params,
 				loadMask: false,
 				success: success
@@ -135,7 +135,7 @@
 
 			// Filters wrongly requested reference stores
 			if (!Ext.isEmpty(baseParams['className']) || !Ext.isEmpty(baseParams['filter']))
-				return CMDBuild.core.proxy.Cache.getStoreReference(
+				return CMDBuild.proxy.Cache.getStoreReference(
 					isOneTime,
 					baseParams
 				);
@@ -187,7 +187,7 @@
 
 			// Filters wrongly requested reference stores
 			if (!Ext.isEmpty(baseParams['className']) || !Ext.isEmpty(baseParams['filter']))
-				return CMDBuild.core.proxy.Cache.getStoreForeignKey(baseParams);
+				return CMDBuild.proxy.Cache.getStoreForeignKey(baseParams);
 
 			_warning('Invalid ForeignKey object', this, reference);
 

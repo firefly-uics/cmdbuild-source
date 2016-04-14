@@ -1,7 +1,7 @@
 (function() {
 	var tr = CMDBuild.Translation.administration.modcartography.geoserver;
 
-	Ext.require('CMDBuild.core.proxy.gis.GeoServer');
+	Ext.require('CMDBuild.proxy.gis.GeoServer');
 
 	Ext.define("CMDBuild.controller.administration.gis.CMModGeoServerController", {
 		extend: "CMDBuild.controller.CMBasePanelController",
@@ -58,7 +58,7 @@
 
 		if (form.isValid()) {
 			if (this.lastSelection) {
-				CMDBuild.core.proxy.gis.GeoServer.updateLayer({
+				CMDBuild.proxy.gis.GeoServer.updateLayer({
 					form: this.view.form.getForm(),
 					params: {
 						name: nameToSelect,
@@ -78,7 +78,7 @@
 					}
 				});
 			} else {
-				CMDBuild.core.proxy.gis.GeoServer.createLayer({
+				CMDBuild.proxy.gis.GeoServer.createLayer({
 					form: this.view.form.getForm(),
 					params: {
 						name: nameToSelect,
@@ -119,7 +119,7 @@
 				if (button == "yes") {
 					CMDBuild.core.LoadMask.show();
 					var layerName = me.view.form.getName();
-					CMDBuild.core.proxy.gis.GeoServer.remove({
+					CMDBuild.proxy.gis.GeoServer.remove({
 						params: {
 							name: layerName
 						},

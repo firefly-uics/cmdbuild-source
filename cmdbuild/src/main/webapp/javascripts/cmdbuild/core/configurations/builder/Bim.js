@@ -4,7 +4,7 @@
 
 		requires: [
 			'CMDBuild.core.constants.Proxy',
-			'CMDBuild.core.proxy.core.configurations.builder.Bim'
+			'CMDBuild.proxy.core.configurations.builder.Bim'
 		],
 
 		/**
@@ -32,7 +32,7 @@
 			Ext.ns('CMDBuild.configuration');
 			CMDBuild.configuration.bim = Ext.create('CMDBuild.model.core.configurations.builder.Bim'); // Setup configuration with defaults
 
-			CMDBuild.core.proxy.core.configurations.builder.Bim.read({
+			CMDBuild.proxy.core.configurations.builder.Bim.read({
 				loadMask: false,
 				scope: this,
 				success: function (response, options, decodedResponse) {
@@ -41,7 +41,7 @@
 					if (!Ext.isEmpty(bimConfigurationObject[CMDBuild.core.constants.Proxy.DATA]))
 						bimConfigurationObject = bimConfigurationObject[CMDBuild.core.constants.Proxy.DATA];
 
-					CMDBuild.core.proxy.core.configurations.builder.Bim.readRootLayerName({
+					CMDBuild.proxy.core.configurations.builder.Bim.readRootLayerName({
 						loadMask: false,
 						scope: this.scope || this,
 						success: function (response, options, decodedResponse) {

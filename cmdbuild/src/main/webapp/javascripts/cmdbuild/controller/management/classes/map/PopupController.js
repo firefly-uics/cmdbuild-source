@@ -1,6 +1,6 @@
 (function() {
 
-	Ext.require(['CMDBuild.core.proxy.Card']);
+	Ext.require(['CMDBuild.proxy.Card']);
 
 	CMDBuild.Management.PopupController = OpenLayers.Class(CMDBuild.Management.CMSelectFeatureController, {
 		initialize: function(layers, options) {
@@ -34,7 +34,7 @@
 				buildPopUp(f);
 			} else {
 				f.CM_busy = true;
-				CMDBuild.core.proxy.Card.read({
+				CMDBuild.proxy.Card.read({
 					params: {
 						cardId: f.attributes.master_card,
 						className: _CMCache.getEntryTypeNameById(f.attributes.master_class)

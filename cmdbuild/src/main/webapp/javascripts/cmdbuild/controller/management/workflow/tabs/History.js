@@ -7,8 +7,8 @@
 		extend: 'CMDBuild.controller.management.common.tabs.History',
 
 		requires: [
-			'CMDBuild.core.proxy.lookup.Lookup',
-			'CMDBuild.core.proxy.workflow.tabs.History'
+			'CMDBuild.proxy.lookup.Lookup',
+			'CMDBuild.proxy.workflow.tabs.History'
 		],
 
 		mixins: {
@@ -201,13 +201,13 @@
 		},
 
 		/**
-		 * @returns {CMDBuild.core.proxy.workflow.tabs.History}
+		 * @returns {CMDBuild.proxy.workflow.tabs.History}
 		 *
 		 * @override
 		 * @private
 		 */
 		getProxy: function() {
-			return CMDBuild.core.proxy.workflow.tabs.History;
+			return CMDBuild.proxy.workflow.tabs.History;
 		},
 
 		/**
@@ -291,7 +291,7 @@
 				params[CMDBuild.core.constants.Proxy.ACTIVE] = true;
 				params[CMDBuild.core.constants.Proxy.SHORT] = false;
 
-				CMDBuild.core.proxy.lookup.Lookup.readAll({
+				CMDBuild.proxy.lookup.Lookup.readAll({
 					params: params,
 					loadMask: false,
 					scope: this,

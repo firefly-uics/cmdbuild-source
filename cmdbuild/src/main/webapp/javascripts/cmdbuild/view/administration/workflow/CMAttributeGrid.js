@@ -60,7 +60,7 @@
 			});
 
 			Ext.apply(this, {
-				store: CMDBuild.core.proxy.common.tabs.attribute.Attribute.getStore(),
+				store: CMDBuild.proxy.common.tabs.attribute.Attribute.getStore(),
 				queryMode: 'local'
 			});
 

@@ -9,7 +9,7 @@
 		requires: [
 			'CMDBuild.core.constants.Global',
 			'CMDBuild.core.constants.Proxy',
-			'CMDBuild.core.proxy.classes.tabs.History'
+			'CMDBuild.proxy.classes.tabs.History'
 		],
 
 		mixins: {
@@ -185,13 +185,13 @@
 		},
 
 		/**
-		 * @returns {CMDBuild.core.proxy.classes.tabs.History}
+		 * @returns {CMDBuild.proxy.classes.tabs.History}
 		 *
 		 * @override
 		 * @private
 		 */
 		getProxy: function() {
-			return CMDBuild.core.proxy.classes.tabs.History;
+			return CMDBuild.proxy.classes.tabs.History;
 		},
 
 		/**

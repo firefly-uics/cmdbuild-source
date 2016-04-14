@@ -5,7 +5,7 @@
 
 		requires: [
 			'CMDBuild.core.constants.Proxy',
-			'CMDBuild.core.proxy.Classes'
+			'CMDBuild.proxy.Classes'
 		],
 
 		/**
@@ -186,7 +186,7 @@
 				var params = {};
 				params[CMDBuild.core.constants.Proxy.ACTIVE] = true;
 
-				CMDBuild.core.proxy.Classes.read({
+				CMDBuild.proxy.Classes.read({
 					params: params,
 					scope: this,
 					success: function (response, options, decodedResponse) {
@@ -224,7 +224,7 @@
 					params[CMDBuild.core.constants.Proxy.CLASS_NAME] = this.view.attributeModel.get(CMDBuild.core.constants.Proxy.TARGET_CLASS);
 					params[CMDBuild.core.constants.Proxy.CARD_ID] = value;
 
-					CMDBuild.core.proxy.common.field.ForeignKey.readCard({
+					CMDBuild.proxy.common.field.ForeignKey.readCard({
 						params: params,
 						scope: this,
 						success: function (response, options, decodedResponse) {

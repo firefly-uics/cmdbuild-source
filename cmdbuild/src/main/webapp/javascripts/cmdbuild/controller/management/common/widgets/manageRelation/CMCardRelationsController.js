@@ -103,7 +103,7 @@
 			parameters[CMDBuild.core.constants.Proxy.CLASS_NAME] = _CMCache.getEntryTypeNameById(this.getClassId());
 			parameters['domainlimit'] = CMDBuild.configuration.instance.get(CMDBuild.core.constants.Proxy.RELATION_LIMIT);
 
-			CMDBuild.core.proxy.Relation.readAll({
+			CMDBuild.proxy.Relation.readAll({
 				params: parameters,
 				loadMask: false,
 				scope: this,
@@ -241,7 +241,7 @@
 				params[CMDBuild.core.constants.Proxy.ATTRIBUTES] = Ext.encode(attributes);
 
 				CMDBuild.core.LoadMask.show();
-				CMDBuild.core.proxy.Relation.remove({
+				CMDBuild.proxy.Relation.remove({
 					params: params,
 					loadMask: false,
 					scope: this,
@@ -360,7 +360,7 @@
 			parameters[CMDBuild.core.constants.Proxy.DOMAIN_ID] = node.get("dom_id");
 			parameters[CMDBuild.core.constants.Proxy.DOMAIN_SOURCE] = node.get("src");
 
-			CMDBuild.core.proxy.Relation.readAll({
+			CMDBuild.proxy.Relation.readAll({
 				params: parameters,
 				loadMask: false,
 				scope: this,

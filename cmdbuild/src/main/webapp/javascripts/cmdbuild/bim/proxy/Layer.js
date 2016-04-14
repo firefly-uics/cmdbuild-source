@@ -5,7 +5,7 @@
 		requires: [
 			'CMDBuild.bim.data.CMBimLayerModel',
 			'CMDBuild.core.constants.Proxy',
-			'CMDBuild.core.proxy.index.Json'
+			'CMDBuild.proxy.index.Json'
 		],
 
 		singleton: true,
@@ -19,7 +19,7 @@
 				model: 'CMDBuild.bim.data.CMBimLayerModel',
 				proxy: {
 					type: 'ajax',
-					url: CMDBuild.core.proxy.index.Json.bim.layer.read,
+					url: CMDBuild.proxy.index.Json.bim.layer.read,
 					reader: {
 						type: 'json',
 						root: CMDBuild.core.constants.Proxy.BIM_LAYER
@@ -36,7 +36,7 @@
 		readAll: function (parameters) {
 			parameters = Ext.isEmpty(parameters) ? {} : parameters;
 
-			Ext.apply(parameters, { url: CMDBuild.core.proxy.index.Json.bim.layer.readAll });
+			Ext.apply(parameters, { url: CMDBuild.proxy.index.Json.bim.layer.readAll });
 
 			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.BIM, parameters);
 		},
@@ -49,7 +49,7 @@
 		readRootName: function (parameters) {
 			parameters = Ext.isEmpty(parameters) ? {} : parameters;
 
-			Ext.apply(parameters, { url: CMDBuild.core.proxy.index.Json.bim.layer.rootName });
+			Ext.apply(parameters, { url: CMDBuild.proxy.index.Json.bim.layer.rootName });
 
 			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.BIM, parameters);
 		},
@@ -62,7 +62,7 @@
 		update: function (parameters) {
 			parameters = Ext.isEmpty(parameters) ? {} : parameters;
 
-			Ext.apply(parameters, { url: CMDBuild.core.proxy.index.Json.bim.layer.update });
+			Ext.apply(parameters, { url: CMDBuild.proxy.index.Json.bim.layer.update });
 
 			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.BIM, parameters, true);
 		}

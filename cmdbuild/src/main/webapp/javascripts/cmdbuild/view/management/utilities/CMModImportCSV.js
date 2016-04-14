@@ -1,6 +1,6 @@
 (function() {
 
-	Ext.require(['CMDBuild.core.proxy.common.tabs.attribute.Attribute']);
+	Ext.require(['CMDBuild.proxy.common.tabs.attribute.Attribute']);
 
 	var tr = CMDBuild.Translation.management.modutilities.csv;
 
@@ -249,7 +249,7 @@
 			params[CMDBuild.core.constants.Proxy.ACTIVE] = true;
 			params[CMDBuild.core.constants.Proxy.CLASS_NAME] = _CMCache.getEntryTypeNameById(classId);
 
-			CMDBuild.core.proxy.common.tabs.attribute.Attribute.read({
+			CMDBuild.proxy.common.tabs.attribute.Attribute.read({
 				params: params,
 				loadMask: false,
 				scope: this,

@@ -3,7 +3,7 @@
 
 	Ext.require([
 		'CMDBuild.core.constants.Global',
-		'CMDBuild.core.proxy.classes.Domains'
+		'CMDBuild.proxy.classes.Domains'
 	]);
 
 	Ext.define("CMDBuild.Administration.DomainGrid", {
@@ -83,7 +83,7 @@
 					}
 				],
 				columns : columns,
-				store: CMDBuild.core.proxy.classes.Domains.getStore()
+				store: CMDBuild.proxy.classes.Domains.getStore()
 			});
 
 			this.callParent();

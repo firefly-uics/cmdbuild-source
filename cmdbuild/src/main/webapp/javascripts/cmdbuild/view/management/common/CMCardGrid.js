@@ -1,6 +1,6 @@
 (function() {
 
-	Ext.require('CMDBuild.core.proxy.index.Json');
+	Ext.require('CMDBuild.proxy.index.Json');
 
 	Ext.define("CMDBuild.view.management.common.CMCardGridDelegate", {
 		/**
@@ -440,7 +440,7 @@
 				remoteSort: true,
 				proxy: {
 					type: 'ajax',
-					url: CMDBuild.core.proxy.index.Json.card.readAll,
+					url: CMDBuild.proxy.index.Json.card.readAll,
 					reader: {
 						type: 'json',
 						root: 'rows',

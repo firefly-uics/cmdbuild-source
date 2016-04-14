@@ -2,8 +2,8 @@
 
 	Ext.require([
 		'CMDBuild.view.common.field.translatable.Utils',
-		'CMDBuild.core.proxy.common.tabs.attribute.Attribute',
-		'CMDBuild.core.proxy.common.tabs.attribute.Order',
+		'CMDBuild.proxy.common.tabs.attribute.Attribute',
+		'CMDBuild.proxy.common.tabs.attribute.Order',
 		'CMDBuild.core.Message'
 	]);
 
@@ -42,7 +42,7 @@
 			params[CMDBuild.core.constants.Proxy.ATTRIBUTES] = Ext.encode(attributes);
 			params[CMDBuild.core.constants.Proxy.CLASS_NAME] = _CMCache.getEntryTypeNameById(this.getCurrentEntryTypeId());
 
-			CMDBuild.core.proxy.common.tabs.attribute.Order.reorder({
+			CMDBuild.proxy.common.tabs.attribute.Order.reorder({
 				params: params,
 				scope: this,
 				success: function (response, options, decodedResponse) {
@@ -140,7 +140,7 @@
 		data[CMDBuild.core.constants.Proxy.CLASS_NAME] = _CMCache.getEntryTypeNameById(this.currentClassId);
 		data[CMDBuild.core.constants.Proxy.META] = Ext.JSON.encode(this.view.formPanel.referenceFilterMetadata);
 
-		CMDBuild.core.proxy.common.tabs.attribute.Attribute.update({
+		CMDBuild.proxy.common.tabs.attribute.Attribute.update({
 			params: data,
 			scope: this,
 			success: function (form, action, decoded) {
@@ -183,7 +183,7 @@
 		params[CMDBuild.core.constants.Proxy.NAME] = this.currentAttribute.get("name");
 		params[CMDBuild.core.constants.Proxy.CLASS_NAME] = _CMCache.getEntryTypeNameById(this.currentClassId);
 
-		CMDBuild.core.proxy.common.tabs.attribute.Attribute.remove({
+		CMDBuild.proxy.common.tabs.attribute.Attribute.remove({
 			params: params,
 			scope: this,
 			callback: function (options, success, response) {

@@ -5,7 +5,7 @@
 
 		requires: [
 			'CMDBuild.core.constants.Proxy',
-			'CMDBuild.core.proxy.lookup.Lookup',
+			'CMDBuild.proxy.lookup.Lookup',
 			'CMDBuild.model.lookup.Lookup',
 			'CMDBuild.view.common.field.translatable.Utils'
 		],
@@ -143,7 +143,7 @@
 			params[CMDBuild.core.constants.Proxy.TYPE] = this.cmfg('lookupSelectedLookupTypeGet', CMDBuild.core.constants.Proxy.ID);
 			params['lookuplist'] = Ext.encode(gridRowsObjects);
 
-			CMDBuild.core.proxy.lookup.Lookup.setOrder({
+			CMDBuild.proxy.lookup.Lookup.setOrder({
 				params: params,
 				scope: this,
 				success: function(result, options, decodedResult) {
@@ -157,7 +157,7 @@
 			params[CMDBuild.core.constants.Proxy.ID] = this.lookupListSelectedLookupGet(CMDBuild.core.constants.Proxy.ID);
 
 			if (this.form.activeCheckbox.getValue()) {
-				CMDBuild.core.proxy.lookup.Lookup.disable({
+				CMDBuild.proxy.lookup.Lookup.disable({
 					params: params,
 					scope: this,
 					success: function(result, options, decodedResult) {
@@ -165,7 +165,7 @@
 					}
 				});
 			} else {
-				CMDBuild.core.proxy.lookup.Lookup.enable({
+				CMDBuild.proxy.lookup.Lookup.enable({
 					params: params,
 					scope: this,
 					success: function(result, options, decodedResult) {
@@ -213,7 +213,7 @@
 				var params = {};
 				params[CMDBuild.core.constants.Proxy.TYPE] = this.cmfg('lookupSelectedLookupTypeGet', CMDBuild.core.constants.Proxy.ID);
 
-				CMDBuild.core.proxy.lookup.Lookup.read({
+				CMDBuild.proxy.lookup.Lookup.read({
 					params: params,
 					scope: this,
 					success: function(response, options, decodedResponse) {
@@ -240,13 +240,13 @@
 				params['Type'] = this.cmfg('lookupSelectedLookupTypeGet', CMDBuild.core.constants.Proxy.ID); // TODO: wrong server implementation to fix
 
 				if (Ext.isEmpty(params['Id'])) {
-					CMDBuild.core.proxy.lookup.Lookup.create({
+					CMDBuild.proxy.lookup.Lookup.create({
 						params: params,
 						scope: this,
 						success: this.success
 					});
 				} else {
-					CMDBuild.core.proxy.lookup.Lookup.update({
+					CMDBuild.proxy.lookup.Lookup.update({
 						params: params,
 						scope: this,
 						success: this.success

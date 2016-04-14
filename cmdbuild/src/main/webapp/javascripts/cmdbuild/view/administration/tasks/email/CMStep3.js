@@ -7,8 +7,8 @@
 
 		requires: [
 			'CMDBuild.core.constants.Proxy',
-			'CMDBuild.core.proxy.configuration.Dms',
-			'CMDBuild.core.proxy.lookup.Lookup'
+			'CMDBuild.proxy.configuration.Dms',
+			'CMDBuild.proxy.lookup.Lookup'
 		],
 
 		/**
@@ -78,7 +78,7 @@
 			var me = this;
 
 			if (this.view.attachmentsCombo.store.getCount() == 0)
-				CMDBuild.core.proxy.configuration.Dms.read({
+				CMDBuild.proxy.configuration.Dms.read({
 					success: function(response) {
 						var decodedJson = Ext.JSON.decode(response.responseText);
 						var params = {};
@@ -183,7 +183,7 @@
 
 		requires: [
 			'CMDBuild.core.constants.Proxy',
-			'CMDBuild.core.proxy.lookup.Lookup'
+			'CMDBuild.proxy.lookup.Lookup'
 		],
 
 		/**
@@ -357,7 +357,7 @@
 					forceSelection: true,
 					editable: false,
 
-					store: CMDBuild.core.proxy.lookup.Lookup.getStore(),
+					store: CMDBuild.proxy.lookup.Lookup.getStore(),
 					queryMode: 'local'
 				});
 

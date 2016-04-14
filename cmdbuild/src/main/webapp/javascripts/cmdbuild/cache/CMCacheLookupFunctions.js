@@ -97,7 +97,7 @@
 		 */
 		getLookupStore: function(type) {
 			if (!lookupAttributeStoreMap[type])
-				lookupAttributeStoreMap[type] = CMDBuild.core.proxy.Cache.getStoreLookup(type);
+				lookupAttributeStoreMap[type] = CMDBuild.proxy.Cache.getStoreLookup(type);
 
 			return lookupAttributeStoreMap[type];
 		},

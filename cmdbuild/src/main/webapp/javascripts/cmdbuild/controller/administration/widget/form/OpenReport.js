@@ -5,7 +5,7 @@
 
 		requires: [
 			'CMDBuild.core.constants.Proxy',
-			'CMDBuild.core.proxy.widget.OpenReport',
+			'CMDBuild.proxy.widget.OpenReport',
 			'CMDBuild.model.widget.openReport.Configuration',
 			'CMDBuild.model.widget.openReport.ReportCombo'
 		],
@@ -132,7 +132,7 @@
 				params[CMDBuild.core.constants.Proxy.ID] = parameters.selectedReport.get(CMDBuild.core.constants.Proxy.ID);
 				params[CMDBuild.core.constants.Proxy.TYPE] = 'CUSTOM';
 
-				CMDBuild.core.proxy.widget.OpenReport.create({
+				CMDBuild.proxy.widget.OpenReport.create({
 					scope: this,
 					params: params,
 					success: function (response, options, decodedResponse) {

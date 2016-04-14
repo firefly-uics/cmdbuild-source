@@ -7,7 +7,7 @@
 
 		requires: [
 			'CMDBuild.core.constants.Proxy',
-			'CMDBuild.core.proxy.taskManager.Connector'
+			'CMDBuild.proxy.taskManager.Connector'
 		],
 
 		/**
@@ -58,7 +58,7 @@
 				editable: false,
 				allowBlank: true,
 
-				store: CMDBuild.core.proxy.taskManager.Connector.getStoreDeletionTypes(),
+				store: CMDBuild.proxy.taskManager.Connector.getStoreDeletionTypes(),
 				queryMode: 'local',
 
 				listeners: {
@@ -278,7 +278,7 @@
 							displayField: CMDBuild.core.constants.Proxy.NAME,
 							valueField: CMDBuild.core.constants.Proxy.NAME,
 
-							store: CMDBuild.core.proxy.taskManager.Connector.getStoreSource(),
+							store: CMDBuild.proxy.taskManager.Connector.getStoreSource(),
 
 							listeners: {
 								select: function(combo, records, eOpts) {
@@ -299,7 +299,7 @@
 							editable: false,
 							allowBlank: false,
 
-							store: CMDBuild.core.proxy.taskManager.Connector.getStoreClasses(),
+							store: CMDBuild.proxy.taskManager.Connector.getStoreClasses(),
 							queryMode: 'local',
 
 							listeners: {

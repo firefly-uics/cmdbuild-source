@@ -5,7 +5,7 @@
 
 		requires: [
 			'CMDBuild.core.Message',
-			'CMDBuild.core.proxy.configuration.Gis'
+			'CMDBuild.proxy.configuration.Gis'
 		],
 
 		view: undefined,
@@ -60,7 +60,7 @@
 		},
 
 		/**
-		 * @param {Object} data - CMDBuild.core.proxy.configuration.Gis.read response
+		 * @param {Object} data - CMDBuild.proxy.configuration.Gis.read response
 		 */
 		collapseFieldsets: function(data) {
 			Ext.Array.each(this.view.services, function(itemService, indexService, allItemsService) {
@@ -74,7 +74,7 @@
 		},
 
 		/**
-		 * @param {Object} data - CMDBuild.core.proxy.configuration.Gis.read response
+		 * @param {Object} data - CMDBuild.proxy.configuration.Gis.read response
 		 */
 		fillForm: function(data) {
 			for (var name in data) {
@@ -89,7 +89,7 @@
 		 * Reads configuration from server call, fill form with response and expands all active fieldset
 		 */
 		getConfigFromServer: function() {
-			CMDBuild.core.proxy.configuration.Gis.read({
+			CMDBuild.proxy.configuration.Gis.read({
 				scope: this,
 				success: function(result, options, decodedResult) {
 					this.fillForm(decodedResult.data);
@@ -135,7 +135,7 @@
 		onSaveButtonClick: function() {
 			var values = this.getValues();
 
-			CMDBuild.core.proxy.configuration.Gis.update({
+			CMDBuild.proxy.configuration.Gis.update({
 				params: values,
 				success: function() {
 					CMDBuild.core.Message.success();

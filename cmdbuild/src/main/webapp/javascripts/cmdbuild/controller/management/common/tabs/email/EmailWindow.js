@@ -7,8 +7,8 @@
 			'CMDBuild.controller.common.abstract.Widget',
 			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.Message',
-			'CMDBuild.core.proxy.common.tabs.email.Attachment',
-			'CMDBuild.core.proxy.email.Template',
+			'CMDBuild.proxy.common.tabs.email.Attachment',
+			'CMDBuild.proxy.email.Template',
 			'CMDBuild.core.Utils'
 		],
 
@@ -103,7 +103,7 @@
 				this.form = this.view.form;
 
 				// Fill from template button store configuration
-				CMDBuild.core.proxy.email.Template.readAll({
+				CMDBuild.proxy.email.Template.readAll({
 					scope: this,
 					success: function (response, options, decodedResponse) {
 						decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.RESPONSE][CMDBuild.core.constants.Proxy.ELEMENTS];
@@ -142,7 +142,7 @@
 					params[CMDBuild.core.constants.Proxy.EMAIL_ID] = this.record.get(CMDBuild.core.constants.Proxy.ID);
 					params[CMDBuild.core.constants.Proxy.TEMPORARY] = this.record.get(CMDBuild.core.constants.Proxy.TEMPORARY);
 
-					CMDBuild.core.proxy.common.tabs.email.Attachment.readAll({
+					CMDBuild.proxy.common.tabs.email.Attachment.readAll({
 						params: params,
 						loadMask: this.view,
 						scope: this,
@@ -326,7 +326,7 @@
 			var params = {};
 			params[CMDBuild.core.constants.Proxy.NAME] = templateName;
 
-			CMDBuild.core.proxy.email.Template.read({
+			CMDBuild.proxy.email.Template.read({
 				params: params,
 				scope: this,
 				loadMask: true,

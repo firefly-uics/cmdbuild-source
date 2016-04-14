@@ -1,6 +1,6 @@
 (function() {
 
-	Ext.require('CMDBuild.core.proxy.index.Json');
+	Ext.require('CMDBuild.proxy.index.Json');
 
 	var STATE = "state",
 		STATE_VALUE_OPEN = "open.running",
@@ -85,7 +85,7 @@
 				remoteSort: true,
 				proxy: {
 					type: 'ajax',
-					url: CMDBuild.core.proxy.index.Json.workflow.activity.readAll,
+					url: CMDBuild.proxy.index.Json.workflow.activity.readAll,
 					reader: {
 						type: 'json',
 						root: 'response.rows',

@@ -10,7 +10,7 @@
 		requires: [
 			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.Message',
-			'CMDBuild.core.proxy.Card',
+			'CMDBuild.proxy.Card',
 			'CMDBuild.core.Utils',
 			'CMDBuild.model.widget.ModelLinkCards'
 		],
@@ -458,7 +458,7 @@
 
 				this.model._silent = true;
 
-				CMDBuild.core.proxy.Card.readPosition({
+				CMDBuild.proxy.Card.readPosition({
 					params: params,
 					loadMask: false,
 					scope: this,
@@ -587,7 +587,7 @@
 
 					// Do the request only if there are a default selection
 					if (defaultSelection) {
-						CMDBuild.core.proxy.Card.readAll({
+						CMDBuild.proxy.Card.readAll({
 							params: defaultSelection,
 							loadMask: false,
 							scope: this,

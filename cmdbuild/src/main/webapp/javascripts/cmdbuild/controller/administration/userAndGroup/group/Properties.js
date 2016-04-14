@@ -5,7 +5,7 @@
 
 		requires: [
 			'CMDBuild.core.constants.Proxy',
-			'CMDBuild.core.proxy.userAndGroup.group.Group',
+			'CMDBuild.proxy.userAndGroup.group.Group',
 			'CMDBuild.model.userAndGroup.group.Group'
 		],
 
@@ -74,7 +74,7 @@
 			params[CMDBuild.core.constants.Proxy.GROUP_ID] = this.cmfg('userAndGroupGroupSelectedGroupGet', CMDBuild.core.constants.Proxy.ID);
 			params[CMDBuild.core.constants.Proxy.IS_ACTIVE] = !this.cmfg('userAndGroupGroupSelectedGroupGet', CMDBuild.core.constants.Proxy.IS_ACTIVE);
 
-			CMDBuild.core.proxy.userAndGroup.group.Group.enableDisable({
+			CMDBuild.proxy.userAndGroup.group.Group.enableDisable({
 				params: params,
 				scope: this,
 				success: this.success
@@ -121,13 +121,13 @@
 				if (Ext.isEmpty(params[CMDBuild.core.constants.Proxy.ID])) {
 					params[CMDBuild.core.constants.Proxy.ID] = -1;
 
-					CMDBuild.core.proxy.userAndGroup.group.Group.create({
+					CMDBuild.proxy.userAndGroup.group.Group.create({
 						params: params,
 						scope: this,
 						success: this.success
 					});
 				} else {
-					CMDBuild.core.proxy.userAndGroup.group.Group.update({
+					CMDBuild.proxy.userAndGroup.group.Group.update({
 						params: params,
 						scope: this,
 						success: this.success
@@ -143,7 +143,7 @@
 		 */
 		onUserAndGroupGrouptabPropertiesShow: function () {
 			if (!this.cmfg('userAndGroupGroupSelectedGroupIsEmpty'))
-				CMDBuild.core.proxy.userAndGroup.group.Group.read({
+				CMDBuild.proxy.userAndGroup.group.Group.read({
 					scope: this,
 					success: function (response, options, decodedResponse) {
 						decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.GROUPS];

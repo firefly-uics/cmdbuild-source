@@ -6,7 +6,7 @@
 		requires: [
 			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.Message',
-			'CMDBuild.core.proxy.configuration.Dms',
+			'CMDBuild.proxy.configuration.Dms',
 			'CMDBuild.model.configuration.dms.Dms'
 		],
 
@@ -63,7 +63,7 @@
 		 * @returns {Void}
 		 */
 		onConfigurationDmsSaveButtonClick: function () {
-			CMDBuild.core.proxy.configuration.Dms.update({
+			CMDBuild.proxy.configuration.Dms.update({
 				params: CMDBuild.model.configuration.dms.Dms.convertToLegacy(this.view.getData()),
 				scope: this,
 				success: function (response, options, decodedResponse) {
@@ -78,7 +78,7 @@
 		 * @returns {Void}
 		 */
 		onConfigurationDmsTabShow: function () {
-			CMDBuild.core.proxy.configuration.Dms.read({
+			CMDBuild.proxy.configuration.Dms.read({
 				scope: this,
 				success: function (response, options, decodedResponse) {
 					decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.DATA];

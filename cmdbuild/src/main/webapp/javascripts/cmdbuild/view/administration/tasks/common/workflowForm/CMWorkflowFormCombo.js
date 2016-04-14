@@ -5,7 +5,7 @@
 
 		requires: [
 			'CMDBuild.core.constants.Proxy',
-			'CMDBuild.core.proxy.taskManager.common.WorkflowForm'
+			'CMDBuild.proxy.taskManager.common.WorkflowForm'
 		],
 
 		/**
@@ -26,7 +26,7 @@
 		forceSelection: true,
 		editable: false,
 
-		store: CMDBuild.core.proxy.taskManager.common.WorkflowForm.getStore(),
+		store: CMDBuild.proxy.taskManager.common.WorkflowForm.getStore(),
 		queryMode: 'local',
 
 		listeners: {

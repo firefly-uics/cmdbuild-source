@@ -6,7 +6,7 @@
 		requires: [
 			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.CookiesManager',
-			'CMDBuild.core.proxy.Session'
+			'CMDBuild.proxy.Session'
 		],
 
 		/**
@@ -31,7 +31,7 @@
 			var params = {};
 			params[CMDBuild.core.constants.Proxy.SESSION] = CMDBuild.core.CookiesManager.authorizationGet();
 
-			CMDBuild.core.proxy.Session.remove({
+			CMDBuild.proxy.Session.remove({
 				params: params,
 				scope: this,
 				success: function (response, options, decodedResponse) {

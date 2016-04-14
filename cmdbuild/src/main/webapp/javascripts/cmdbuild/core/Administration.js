@@ -10,12 +10,12 @@
 			'CMDBuild.core.constants.ModuleIdentifiers',
 			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.CookiesManager',
-			'CMDBuild.core.proxy.Classes',
-			'CMDBuild.core.proxy.dashboard.Dashboard',
-			'CMDBuild.core.proxy.domain.Domain',
-			'CMDBuild.core.proxy.lookup.Type',
-			'CMDBuild.core.proxy.userAndGroup.group.Group',
-			'CMDBuild.core.proxy.widget.Widget',
+			'CMDBuild.proxy.Classes',
+			'CMDBuild.proxy.dashboard.Dashboard',
+			'CMDBuild.proxy.domain.Domain',
+			'CMDBuild.proxy.lookup.Type',
+			'CMDBuild.proxy.userAndGroup.group.Group',
+			'CMDBuild.proxy.widget.Widget',
 			'CMDBuild.core.RequestBarrier',
 			'CMDBuild.core.Splash'
 		],
@@ -50,7 +50,7 @@
 			params = {};
 			params[CMDBuild.core.constants.Proxy.ACTIVE] = false;
 
-			CMDBuild.core.proxy.Classes.readAll({
+			CMDBuild.proxy.Classes.readAll({
 				params: params,
 				loadMask: false,
 				scope: this,
@@ -66,7 +66,7 @@
 			 * Domain
 			 */
 			if (!CMDBuild.configuration.userInterface.get(CMDBuild.core.constants.Proxy.CLOUD_ADMIN))
-				CMDBuild.core.proxy.domain.Domain.readAll({
+				CMDBuild.proxy.domain.Domain.readAll({
 					loadMask: false,
 					scope: this,
 					success: function (response, options, decodedResponse) {
@@ -80,7 +80,7 @@
 			/**
 			 * Groups
 			 */
-			CMDBuild.core.proxy.userAndGroup.group.Group.readAll({
+			CMDBuild.proxy.userAndGroup.group.Group.readAll({
 				loadMask: false,
 				scope: this,
 				callback: CMDBuild.core.RequestBarrier.getCallback(barrierId)
@@ -89,7 +89,7 @@
 			/**
 			 * Lookup
 			 */
-			CMDBuild.core.proxy.lookup.Type.readAll({
+			CMDBuild.proxy.lookup.Type.readAll({
 				loadMask: false,
 				scope: this,
 				success: function (response, options, decodedResponse) {
@@ -101,7 +101,7 @@
 			/**
 			 * Dashboard
 			 */
-			CMDBuild.core.proxy.dashboard.Dashboard.readAll({
+			CMDBuild.proxy.dashboard.Dashboard.readAll({
 				loadMask: false,
 				scope: this,
 				success: function (response, options, decodedResponse) {
@@ -116,7 +116,7 @@
 			/**
 			 * Widget
 			 */
-			CMDBuild.core.proxy.widget.Widget.readAll({
+			CMDBuild.proxy.widget.Widget.readAll({
 				loadMask: false,
 				scope: this,
 				success: function (response, options, decodedResponse) {

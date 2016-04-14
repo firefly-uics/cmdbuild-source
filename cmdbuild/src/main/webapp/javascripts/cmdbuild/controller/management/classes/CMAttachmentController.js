@@ -7,8 +7,8 @@
 		'CMDBuild.core.constants.Proxy',
 		'CMDBuild.core.interfaces.messages.Error',
 		'CMDBuild.core.Message',
-		'CMDBuild.core.proxy.Attachment',
-		'CMDBuild.core.proxy.index.Json'
+		'CMDBuild.proxy.Attachment',
+		'CMDBuild.proxy.index.Json'
 	]);
 
 	Ext.define("CMDBuild.controller.management.classes.attachments.CMCardAttachmentsController", {
@@ -130,7 +130,7 @@
 			params[CMDBuild.core.constants.Proxy.CARD_ID] = this.getCardId();
 			params[CMDBuild.core.constants.Proxy.CLASS_NAME] = _CMCache.getEntryTypeNameById(this.getClassId());
 
-			CMDBuild.core.proxy.Attachment.download({ params: params });
+			CMDBuild.proxy.Attachment.download({ params: params });
 		},
 
 		onAddAttachmentButtonClick: function() {
@@ -245,7 +245,7 @@
 		params[CMDBuild.core.constants.Proxy.CARD_ID] = me.getCardId();
 
 		CMDBuild.core.LoadMask.show();
-		CMDBuild.core.proxy.Attachment.remove({
+		CMDBuild.proxy.Attachment.remove({
 			params: params,
 			loadMask: false,
 			scope: this,
@@ -288,7 +288,7 @@
 			var form = attachmentWindow.form.getForm();
 			var me = this;
 
-			CMDBuild.core.proxy.Attachment.confirm({
+			CMDBuild.proxy.Attachment.confirm({
 				form: form,
 				params: me.forgeRequestParams(attachmentWindow),
 				url: me.url,
@@ -376,12 +376,12 @@
 
 	Ext.define("CMDBuild.controller.management.classes.attachments.AddAttachmentStrategy", {
 		extend: "CMDBuild.controller.management.classes.attachments.ConfirmAttachmentStrategy",
-		url: CMDBuild.core.proxy.index.Json.attachment.create
+		url: CMDBuild.proxy.index.Json.attachment.create
 	});
 
 	Ext.define("CMDBuild.controller.management.classes.attachments.ModifyAttachmentStrategy", {
 		extend: "CMDBuild.controller.management.classes.attachments.ConfirmAttachmentStrategy",
-		url: CMDBuild.core.proxy.index.Json.attachment.update,
+		url: CMDBuild.proxy.index.Json.attachment.update,
 		forgeRequestParams: function(attachmentWindow) {
 			var out = this.callParent(arguments);
 			out["Category"] = attachmentWindow.attachmentRecord.get("Category");

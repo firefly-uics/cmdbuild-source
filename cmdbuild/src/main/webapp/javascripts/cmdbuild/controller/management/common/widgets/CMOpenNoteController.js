@@ -2,7 +2,7 @@
 
 	Ext.require([
 		'CMDBuild.core.Message',
-		'CMDBuild.core.proxy.widget.OpenNote'
+		'CMDBuild.proxy.widget.OpenNote'
 	]);
 
 	Ext.define("CMDBuild.controller.management.workflow.CMNoteController", {
@@ -58,7 +58,7 @@
 			var params = this._getSaveParams();
 
 			if (form.isValid() && this.beforeSave(this.card)) {
-				CMDBuild.core.proxy.widget.OpenNote.update({
+				CMDBuild.proxy.widget.OpenNote.update({
 					params: params,
 					scope: this,
 					success: function (response, options, decodedResponse) {

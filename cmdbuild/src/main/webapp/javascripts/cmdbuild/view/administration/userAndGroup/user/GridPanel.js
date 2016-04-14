@@ -5,7 +5,7 @@
 
 		requires: [
 			'CMDBuild.core.constants.Proxy',
-			'CMDBuild.core.proxy.userAndGroup.user.User'
+			'CMDBuild.proxy.userAndGroup.user.User'
 		],
 
 		/**
@@ -46,7 +46,7 @@
 						fixed: true
 					})
 				],
-				store: CMDBuild.core.proxy.userAndGroup.user.User.getStore()
+				store: CMDBuild.proxy.userAndGroup.user.User.getStore()
 			});
 
 			this.callParent(arguments);

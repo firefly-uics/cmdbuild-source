@@ -4,8 +4,8 @@
 		'CMDBuild.controller.management.classes.StaticsController',
 		'CMDBuild.core.constants.Global',
 		'CMDBuild.core.Message',
-		'CMDBuild.core.proxy.widget.Workflow',
-		'CMDBuild.core.proxy.workflow.Activity',
+		'CMDBuild.proxy.widget.Workflow',
+		'CMDBuild.proxy.workflow.Activity',
 	]);
 
 	var ERROR_TEMPLATE = "<p class=\"{0}\">{1}</p>";
@@ -81,7 +81,7 @@
 						CQL: callParams.CQL
 					});
 
-					CMDBuild.core.proxy.widget.Workflow.readWorkflowByFilter({
+					CMDBuild.proxy.widget.Workflow.readWorkflowByFilter({
 						params: {
 							className: CMDBuild.core.constants.Global.getRootNameWorkflows(),
 							limit: 1000,
@@ -156,7 +156,7 @@
 		var name = me.widgetReader.getCode(me.typedWidgetConf);
 		var card = _CMCache.getEntryTypeByName(name);
 
-		CMDBuild.core.proxy.widget.Workflow.readStartActivity({
+		CMDBuild.proxy.widget.Workflow.readStartActivity({
 			params: {
 				classId: card.data.id
 			},
@@ -209,7 +209,7 @@
 			requestParams.advance = advance;
 			requestParams.activityInstanceId = undefined;
 			requestParams.ww = Ext.JSON.encode(me.widgetControllerManager.getData(advance));
-			CMDBuild.core.proxy.workflow.Activity.update({
+			CMDBuild.proxy.workflow.Activity.update({
 				params: requestParams,
 				scope : me,
 				clientValidation: true, //to force the save request

@@ -6,7 +6,7 @@
 		requires: [
 			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.Message',
-			'CMDBuild.core.proxy.email.Queue'
+			'CMDBuild.proxy.email.Queue'
 		],
 
 		/**
@@ -52,7 +52,7 @@
 		 * @private
 		 */
 		isQueueRunning: function () {
-			CMDBuild.core.proxy.email.Queue.isRunning({
+			CMDBuild.proxy.email.Queue.isRunning({
 				scope: this,
 				success: function (response, options, decodedResponse) {
 					decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.RESPONSE];
@@ -78,7 +78,7 @@
 				var params = {};
 				params[CMDBuild.core.constants.Proxy.TIME] = this.toManagedUnit(this.view.cycleIntervalField.getValue());
 
-				CMDBuild.core.proxy.email.Queue.save({
+				CMDBuild.proxy.email.Queue.save({
 					params: params,
 					scope: this,
 					success: function (response, options, decodedResponse) {
@@ -101,7 +101,7 @@
 		 * @returns {Void}
 		 */
 		onEmailQueueStartButtonClick: function () {
-			CMDBuild.core.proxy.email.Queue.start({
+			CMDBuild.proxy.email.Queue.start({
 				scope: this,
 				success: function (response, options, decodedResponse) {
 					this.isQueueRunning();
@@ -113,7 +113,7 @@
 		 * @returns {Void}
 		 */
 		onEmailQueueStopButtonClick: function () {
-			CMDBuild.core.proxy.email.Queue.stop({
+			CMDBuild.proxy.email.Queue.stop({
 				scope: this,
 				success: function (response, options, decodedResponse) {
 					this.isQueueRunning();
@@ -129,7 +129,7 @@
 		 * @private
 		 */
 		readConfiguration: function () {
-			CMDBuild.core.proxy.email.Queue.read({
+			CMDBuild.proxy.email.Queue.read({
 				scope: this,
 				success: function (response, options, decodedResponse) {
 					decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.RESPONSE];

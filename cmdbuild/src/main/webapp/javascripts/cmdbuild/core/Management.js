@@ -10,12 +10,12 @@
 			'CMDBuild.core.constants.ModuleIdentifiers',
 			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.CookiesManager',
-			'CMDBuild.core.proxy.Classes',
-			'CMDBuild.core.proxy.dashboard.Dashboard',
-			'CMDBuild.core.proxy.domain.Domain',
-			'CMDBuild.core.proxy.lookup.Type',
-			'CMDBuild.core.proxy.Menu',
-			'CMDBuild.core.proxy.widget.Widget',
+			'CMDBuild.proxy.Classes',
+			'CMDBuild.proxy.dashboard.Dashboard',
+			'CMDBuild.proxy.domain.Domain',
+			'CMDBuild.proxy.lookup.Type',
+			'CMDBuild.proxy.Menu',
+			'CMDBuild.proxy.widget.Widget',
 			'CMDBuild.core.RequestBarrier',
 			'CMDBuild.core.Splash'
 		],
@@ -50,7 +50,7 @@
 			params = {};
 			params[CMDBuild.core.constants.Proxy.ACTIVE] = true;
 
-			CMDBuild.core.proxy.Classes.readAll({
+			CMDBuild.proxy.Classes.readAll({
 				params: params,
 				loadMask: false,
 				scope: this,
@@ -64,7 +64,7 @@
 					 *
 					 * Widgets must be added to cache only before classes, because widget object is added to class model
 					 */
-					CMDBuild.core.proxy.widget.Widget.readAll({
+					CMDBuild.proxy.widget.Widget.readAll({
 						loadMask: false,
 						scope: this,
 						success: function (response, options, decodedResponse) {
@@ -82,7 +82,7 @@
 			/**
 			 * Dashboard
 			 */
-			CMDBuild.core.proxy.dashboard.Dashboard.readAll({
+			CMDBuild.proxy.dashboard.Dashboard.readAll({
 				loadMask: false,
 				scope: this,
 				success: function (response, options, decodedResponse) {
@@ -100,7 +100,7 @@
 			params = {};
 			params[CMDBuild.core.constants.Proxy.ACTIVE] = true;
 
-			CMDBuild.core.proxy.domain.Domain.readAll({
+			CMDBuild.proxy.domain.Domain.readAll({
 				params: params,
 				loadMask: false,
 				scope: this,
@@ -115,7 +115,7 @@
 			/**
 			 * Lookup
 			 */
-			CMDBuild.core.proxy.lookup.Type.readAll({
+			CMDBuild.proxy.lookup.Type.readAll({
 				loadMask: false,
 				scope: this,
 				success: function (response, options, decodedResponse) {

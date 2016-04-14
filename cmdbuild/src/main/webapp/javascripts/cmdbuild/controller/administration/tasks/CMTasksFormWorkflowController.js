@@ -6,7 +6,7 @@
 		requires: [
 			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.LoadMask',
-			'CMDBuild.core.proxy.taskManager.Workflow',
+			'CMDBuild.proxy.taskManager.Workflow',
 			'CMDBuild.model.CMModelTasks'
 		],
 
@@ -86,7 +86,7 @@
 			if (!Ext.isEmpty(this.selectedId)) {
 				CMDBuild.core.LoadMask.show();
 
-				CMDBuild.core.proxy.taskManager.Workflow.remove({
+				CMDBuild.proxy.taskManager.Workflow.remove({
 					params: {
 						id: this.selectedId
 					},
@@ -129,7 +129,7 @@
 				this.selectedId = this.selectionModel.getSelection()[0].get(CMDBuild.core.constants.Proxy.ID);
 
 				// Selected task asynchronous store query
-				CMDBuild.core.proxy.taskManager.Workflow.read({
+				CMDBuild.proxy.taskManager.Workflow.read({
 					params: {
 						id: this.selectedId
 					},
@@ -190,7 +190,7 @@
 				submitDatas[CMDBuild.core.constants.Proxy.WORKFLOW_CLASS_NAME] = formData[CMDBuild.core.constants.Proxy.WORKFLOW_CLASS_NAME];
 
 				if (Ext.isEmpty(formData[CMDBuild.core.constants.Proxy.ID])) {
-					CMDBuild.core.proxy.taskManager.Workflow.create({
+					CMDBuild.proxy.taskManager.Workflow.create({
 						params: submitDatas,
 						loadMask: false,
 						scope: this,
@@ -198,7 +198,7 @@
 						callback: this.callback
 					});
 				} else {
-					CMDBuild.core.proxy.taskManager.Workflow.update({
+					CMDBuild.proxy.taskManager.Workflow.update({
 						params: submitDatas,
 						loadMask: false,
 						scope: this,

@@ -2,7 +2,7 @@
 
 	Ext.require([
 		'CMDBuild.core.Message',
-		'CMDBuild.core.proxy.utility.ChangePassword'
+		'CMDBuild.proxy.utility.ChangePassword'
 	]);
 
 	Ext.define("CMDBuild.view.management.utilities.CMModChangePassword", {
@@ -76,7 +76,7 @@
 		if (this.form.getForm().isValid()) {
 			var params = this.form.getValues();
 
-			CMDBuild.core.proxy.utility.ChangePassword.change({
+			CMDBuild.proxy.utility.ChangePassword.change({
 				params: params,
 				scope: this,
 				callback: function (options, success, response) {

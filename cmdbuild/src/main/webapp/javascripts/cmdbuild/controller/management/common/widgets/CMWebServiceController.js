@@ -2,7 +2,7 @@
 	var DOM_NODE = "_domNode";
 	var NODE_TYPE = "_nodeType";
 
-	Ext.require(['CMDBuild.core.proxy.widget.WebService']);
+	Ext.require(['CMDBuild.proxy.widget.WebService']);
 
 	Ext.define("CMDBuild.controller.management.common.widgets.CMWebServiceController", {
 		mixins: {
@@ -191,7 +191,7 @@
 					el.mask(CMDBuild.Translation.pleaseWait);
 				}
 
-				CMDBuild.core.proxy.widget.WebService.callWidget({
+				CMDBuild.proxy.widget.WebService.callWidget({
 					method: 'GET',
 					params: {
 						className: entryTypeName,

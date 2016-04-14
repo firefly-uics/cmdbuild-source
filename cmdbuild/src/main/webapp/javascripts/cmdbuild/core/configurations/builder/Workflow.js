@@ -4,7 +4,7 @@
 
 		requires: [
 			'CMDBuild.core.constants.Proxy',
-			'CMDBuild.core.proxy.core.configurations.builder.Workflow'
+			'CMDBuild.proxy.core.configurations.builder.Workflow'
 		],
 
 		/**
@@ -32,7 +32,7 @@
 			Ext.ns('CMDBuild.configuration');
 			CMDBuild.configuration.workflow = Ext.create('CMDBuild.model.core.configurations.builder.Workflow'); // Setup configuration with defaults
 
-			CMDBuild.core.proxy.core.configurations.builder.Workflow.read({
+			CMDBuild.proxy.core.configurations.builder.Workflow.read({
 				loadMask: false,
 				scope: this.scope || this,
 				success: function (response, options, decodedResponse) {

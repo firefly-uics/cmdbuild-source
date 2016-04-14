@@ -29,7 +29,7 @@
 
 	Ext.define("CMDBuild.data.CMMiniCardGridBaseDataSource", {
 
-		requires: ['CMDBuild.core.proxy.index.Json'],
+		requires: ['CMDBuild.proxy.index.Json'],
 
 		constructor: function() {
 			this.store = CMDBuild.global.Cache.requestAsStore(CMDBuild.core.constants.Proxy.UNCACHED, {
@@ -39,7 +39,7 @@
 				remoteSort: true,
 				proxy: {
 					type: "ajax",
-					url: CMDBuild.core.proxy.index.Json.card.readAll,
+					url: CMDBuild.proxy.index.Json.card.readAll,
 					reader: {
 						root: "rows",
 						type: "json",

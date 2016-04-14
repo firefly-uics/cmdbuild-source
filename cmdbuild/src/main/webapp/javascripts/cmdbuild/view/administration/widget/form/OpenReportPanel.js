@@ -6,7 +6,7 @@
 		requires: [
 			'CMDBuild.core.constants.FieldWidths',
 			'CMDBuild.core.constants.Proxy',
-			'CMDBuild.core.proxy.widget.OpenReport',
+			'CMDBuild.proxy.widget.OpenReport',
 			'CMDBuild.model.widget.openReport.PresetGrid'
 		],
 
@@ -57,7 +57,7 @@
 							forceSelection: true,
 							editable: false,
 
-							store: CMDBuild.core.proxy.widget.OpenReport.getStore(),
+							store: CMDBuild.proxy.widget.OpenReport.getStore(),
 							queryMode: 'local',
 
 							listeners: {
@@ -75,7 +75,7 @@
 							displayField: CMDBuild.core.constants.Proxy.DESCRIPTION,
 							valueField: CMDBuild.core.constants.Proxy.VALUE,
 
-							store: CMDBuild.core.proxy.widget.OpenReport.getStoreForceFormat()
+							store: CMDBuild.proxy.widget.OpenReport.getStoreForceFormat()
 						}),
 						this.presetGrid = Ext.create('CMDBuild.view.common.field.grid.KeyValue', {
 							additionalColumns: [

@@ -198,7 +198,7 @@
 					loadMask: false
 				},
 
-				store: CMDBuild.core.proxy.common.tabs.attribute.Attribute.getStoreTypes(),
+				store: CMDBuild.proxy.common.tabs.attribute.Attribute.getStoreTypes(),
 				queryMode: 'local'
 			});
 
@@ -293,7 +293,7 @@
 					loadMask: false
 				},
 
-				store: CMDBuild.core.proxy.common.tabs.attribute.Attribute.getStoreRenceableDomains(),
+				store: CMDBuild.proxy.common.tabs.attribute.Attribute.getStoreRenceableDomains(),
 				queryMode: 'local'
 			});
 

@@ -6,7 +6,7 @@
 			'CMDBuild.bim.data.CMBIMProjectModel',
 			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.interfaces.FormSubmit',
-			'CMDBuild.core.proxy.index.Json'
+			'CMDBuild.proxy.index.Json'
 		],
 
 		singleton: true,
@@ -19,7 +19,7 @@
 		activeForClassName: function (parameters) {
 			parameters = Ext.isEmpty(parameters) ? {} : parameters;
 
-			Ext.apply(parameters, { url: CMDBuild.core.proxy.index.Json.bim.activeForClassName });
+			Ext.apply(parameters, { url: CMDBuild.proxy.index.Json.bim.activeForClassName });
 
 			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.BIM, parameters);
 		},
@@ -30,7 +30,7 @@
 		create: function (form, params, success, failure) {
 			CMDBuild.core.interfaces.FormSubmit.submit({
 				form: form,
-				url: CMDBuild.core.proxy.index.Json.bim.create,
+				url: CMDBuild.proxy.index.Json.bim.create,
 				params: params,
 				fileUpload: true,
 				success: success,
@@ -46,7 +46,7 @@
 		disable: function (parameters) {
 			parameters = Ext.isEmpty(parameters) ? {} : parameters;
 
-			Ext.apply(parameters, { url: CMDBuild.core.proxy.index.Json.bim.disable });
+			Ext.apply(parameters, { url: CMDBuild.proxy.index.Json.bim.disable });
 
 			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.BIM, parameters, true);
 		},
@@ -59,7 +59,7 @@
 		enable: function (parameters) {
 			parameters = Ext.isEmpty(parameters) ? {} : parameters;
 
-			Ext.apply(parameters, { url: CMDBuild.core.proxy.index.Json.bim.enable });
+			Ext.apply(parameters, { url: CMDBuild.proxy.index.Json.bim.enable });
 
 			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.BIM, parameters, true);
 		},
@@ -72,7 +72,7 @@
 		fetchCardFromViewewId: function (parameters) {
 			parameters = Ext.isEmpty(parameters) ? {} : parameters;
 
-			Ext.apply(parameters, { url: CMDBuild.core.proxy.index.Json.bim.fetchCardFromViewewId });
+			Ext.apply(parameters, { url: CMDBuild.proxy.index.Json.bim.fetchCardFromViewewId });
 
 			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.BIM, parameters);
 		},
@@ -87,7 +87,7 @@
 		fetchJsonForBimViewer: function (parameters) {
 			parameters = Ext.isEmpty(parameters) ? {} : parameters;
 
-			Ext.apply(parameters, { url: CMDBuild.core.proxy.index.Json.bim.fetchJsonForBimViewer });
+			Ext.apply(parameters, { url: CMDBuild.proxy.index.Json.bim.fetchJsonForBimViewer });
 
 			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.BIM, parameters, true);
 		},
@@ -103,7 +103,7 @@
 				pageSize: 0, // Disable paging
 				proxy: {
 					type: 'ajax',
-					url: CMDBuild.core.proxy.index.Json.bim.read,
+					url: CMDBuild.proxy.index.Json.bim.read,
 					actionMethods: 'GET',
 					reader: {
 						type: 'json',
@@ -124,7 +124,7 @@
 		roidForCardId: function (parameters) {
 			parameters = Ext.isEmpty(parameters) ? {} : parameters;
 
-			Ext.apply(parameters, { url: CMDBuild.core.proxy.index.Json.bim.roidForCardId });
+			Ext.apply(parameters, { url: CMDBuild.proxy.index.Json.bim.roidForCardId });
 
 			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.BIM, parameters);
 		},
@@ -135,7 +135,7 @@
 		update: function (form, params, success, failure) {
 			CMDBuild.core.interfaces.FormSubmit.submit({
 				form: form,
-				url: CMDBuild.core.proxy.index.Json.bim.update,
+				url: CMDBuild.proxy.index.Json.bim.update,
 				params: params,
 				fileUpload: true,
 				success: success,

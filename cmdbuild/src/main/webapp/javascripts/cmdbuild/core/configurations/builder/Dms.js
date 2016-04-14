@@ -4,7 +4,7 @@
 
 		requires: [
 			'CMDBuild.core.constants.Proxy',
-			'CMDBuild.core.proxy.core.configurations.builder.Dms'
+			'CMDBuild.proxy.core.configurations.builder.Dms'
 		],
 
 		/**
@@ -32,7 +32,7 @@
 			Ext.ns('CMDBuild.configuration');
 			CMDBuild.configuration.dms = Ext.create('CMDBuild.model.core.configurations.builder.Dms'); // Setup configuration with defaults
 
-			CMDBuild.core.proxy.core.configurations.builder.Dms.read({
+			CMDBuild.proxy.core.configurations.builder.Dms.read({
 				loadMask: false,
 				scope: this.scope || this,
 				success: function (response, options, decodedResponse) {

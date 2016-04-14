@@ -5,7 +5,7 @@
 
 		requires: [
 			'CMDBuild.core.constants.Proxy',
-			'CMDBuild.core.proxy.configuration.Bim'
+			'CMDBuild.proxy.configuration.Bim'
 		],
 
 		/**
@@ -44,7 +44,7 @@
 		 * @returns {Void}
 		 */
 		onConfigurationBimSaveButtonClick: function () {
-			CMDBuild.core.proxy.configuration.Bim.update({
+			CMDBuild.proxy.configuration.Bim.update({
 				params: this.view.getData(true),
 				scope: this,
 				success: function (response, options, decodedResponse) {
@@ -59,7 +59,7 @@
 		 * @returns {Void}
 		 */
 		onConfigurationBimTabShow: function () {
-			CMDBuild.core.proxy.configuration.Bim.read({
+			CMDBuild.proxy.configuration.Bim.read({
 				scope: this,
 				success: function (response, options, decodedResponse) {
 					decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.DATA];

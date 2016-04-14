@@ -126,7 +126,7 @@
 				var params = {};
 				params[CMDBuild.core.constants.Proxy.ACTIVE] = false;
 
-				CMDBuild.core.proxy.workflow.Workflow.read({ // TODO: waiting for refactor (CRUD)
+				CMDBuild.proxy.workflow.Workflow.read({ // TODO: waiting for refactor (CRUD)
 					params: params,
 					scope: this,
 					success: function(response, options, decodedResponse) {

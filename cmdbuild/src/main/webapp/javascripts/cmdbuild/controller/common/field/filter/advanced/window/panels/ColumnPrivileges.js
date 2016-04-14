@@ -5,7 +5,7 @@
 
 		requires: [
 			'CMDBuild.core.constants.Proxy',
-			'CMDBuild.core.proxy.common.tabs.attribute.Attribute'
+			'CMDBuild.proxy.common.tabs.attribute.Attribute'
 		],
 
 		/**
@@ -135,7 +135,7 @@
 				params[CMDBuild.core.constants.Proxy.ACTIVE] = true;
 				params[CMDBuild.core.constants.Proxy.CLASS_NAME] = this.cmfg('fieldFilterAdvancedSelectedClassGet', CMDBuild.core.constants.Proxy.NAME);
 
-				CMDBuild.core.proxy.common.tabs.attribute.Attribute.read({
+				CMDBuild.proxy.common.tabs.attribute.Attribute.read({
 					params: params,
 					scope: this,
 					success: function(response, options, decodedResponse) {

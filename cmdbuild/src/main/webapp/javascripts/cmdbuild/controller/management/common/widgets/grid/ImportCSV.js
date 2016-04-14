@@ -7,7 +7,7 @@
 			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.LoadMask',
 			'CMDBuild.core.Message',
-			'CMDBuild.core.proxy.grid.Csv'
+			'CMDBuild.proxy.grid.Csv'
 		],
 
 		/**
@@ -61,11 +61,11 @@
 		 */
 		onImportCSVUploadButtonClick: function() {
 			CMDBuild.core.LoadMask.show();
-			CMDBuild.core.proxy.grid.Csv.upload({
+			CMDBuild.proxy.grid.Csv.upload({
 				form: this.view.csvUploadForm.getForm(),
 				scope: this,
 				success: function(form, action) {
-					CMDBuild.core.proxy.grid.Csv.getRecords({
+					CMDBuild.proxy.grid.Csv.getRecords({
 						scope: this,
 						success: function(result, options, decodedResult) {
 							this.cmfg('setGridDataFromCsv', {

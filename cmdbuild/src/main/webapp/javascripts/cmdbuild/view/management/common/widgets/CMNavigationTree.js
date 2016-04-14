@@ -4,7 +4,7 @@
 	var FILTER_FIELD = "_SystemFieldFilter";
 	var cacheFields = [];
 
-	Ext.require('CMDBuild.core.proxy.Card');
+	Ext.require('CMDBuild.proxy.Card');
 
 	Ext.define("CMDBuild.view.management.common.widgets.CMNavigationTree", {
 		extend: "Ext.panel.Panel",
@@ -127,7 +127,7 @@
 				var filterEncoded = (! callParams) ? "" : Ext.encode({
 					CQL: callParams.CQL
 				});
-				CMDBuild.core.proxy.Card.readAll({
+				CMDBuild.proxy.Card.readAll({
 					params: {
 						className: className,
 						filter: filterEncoded
@@ -226,7 +226,7 @@
 		parameters[CMDBuild.core.constants.Proxy.DOMAIN_SOURCE] = domainDirection;
 		console.log(" loadForDomainChildren " + nodesIn.length + " " + nodesIn[0].filter + " " + nodesIn[0].targetClassName + " " + node.get("className"));
 		var appNodesIn = nodesIn.slice(1);
-		CMDBuild.core.proxy.Relation.readAll({
+		CMDBuild.proxy.Relation.readAll({
 			params: parameters,
 			loadMask: false,
 			scope: this,

@@ -1,6 +1,6 @@
 (function() {
 
-	Ext.require(['CMDBuild.core.proxy.Card']);
+	Ext.require(['CMDBuild.proxy.Card']);
 
 	Ext.define("CMDBuild.controller.management.classes.CMCardPanelController", {
 
@@ -57,7 +57,7 @@
 				}
 
 				CMDBuild.core.LoadMask.show();
-				CMDBuild.core.proxy.Card.remove({
+				CMDBuild.proxy.Card.remove({
 					params : {
 						IdClass: idClass,
 						Id: idCard

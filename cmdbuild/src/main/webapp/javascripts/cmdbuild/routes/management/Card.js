@@ -6,7 +6,7 @@
 		requires: [
 			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.Message',
-			'CMDBuild.core.proxy.Card'
+			'CMDBuild.proxy.Card'
 		],
 
 		/**
@@ -146,7 +146,7 @@
 		 * @params {Array} splittedIdentifier - ['cardParam', 'value']
 		 */
 		simpleFilter: function(splittedIdentifier) {
-			CMDBuild.core.proxy.Card.readAll({
+			CMDBuild.proxy.Card.readAll({
 				params: {
 					className: this.classIdentifier,
 					filter: '{"attribute":{"simple":{"attribute":"' + splittedIdentifier[0] + '","operator":"equal","value":["' + splittedIdentifier[1] + '"]}}}'

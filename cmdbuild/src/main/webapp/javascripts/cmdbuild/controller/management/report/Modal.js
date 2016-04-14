@@ -5,7 +5,7 @@
 
 		requires: [
 			'CMDBuild.core.constants.Proxy',
-			'CMDBuild.core.proxy.index.Json'
+			'CMDBuild.proxy.index.Json'
 		],
 
 		/**
@@ -67,7 +67,7 @@
 
 					autoEl: {
 						tag: 'iframe',
-						src: CMDBuild.core.proxy.index.Json.report.factory.print + '?donotdelete=true' // Add parameter to avoid report delete
+						src: CMDBuild.proxy.index.Json.report.factory.print + '?donotdelete=true' // Add parameter to avoid report delete
 					}
 				});
 			}

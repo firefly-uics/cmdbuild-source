@@ -1,6 +1,6 @@
 (function() {
 
-	Ext.require(['CMDBuild.core.proxy.Card']);
+	Ext.require(['CMDBuild.proxy.Card']);
 
 	var MD = "detail";
 	var FK = "foreignkey";
@@ -181,7 +181,7 @@
 				params.detailCardId = detailCard.get("Id");
 
 				CMDBuild.core.LoadMask.show();
-				CMDBuild.core.proxy.Relation.removeDetail({
+				CMDBuild.proxy.Relation.removeDetail({
 					params : params,
 					loadMask: false,
 					callback: function() {
@@ -267,7 +267,7 @@
 
 	function removeCard(model) {
 		CMDBuild.core.LoadMask.show();
-		CMDBuild.core.proxy.Card.remove({
+		CMDBuild.proxy.Card.remove({
 			params : {
 				"IdClass": model.get("IdClass"),
 				"Id": model.get("Id")

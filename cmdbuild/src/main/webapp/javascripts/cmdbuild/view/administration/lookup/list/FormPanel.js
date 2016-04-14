@@ -6,7 +6,7 @@
 		requires: [
 			'CMDBuild.core.constants.FieldWidths',
 			'CMDBuild.core.constants.Proxy',
-			'CMDBuild.core.proxy.lookup.Lookup'
+			'CMDBuild.proxy.lookup.Lookup'
 		],
 
 		mixins: ['CMDBuild.view.common.PanelFunctions'],
@@ -129,7 +129,7 @@
 						forceSelection: true,
 						editable: false,
 
-						store: CMDBuild.core.proxy.lookup.Lookup.getStoreParents(),
+						store: CMDBuild.proxy.lookup.Lookup.getStoreParents(),
 						queryMode: 'local'
 					}),
 					Ext.create('Ext.form.field.TextArea', {

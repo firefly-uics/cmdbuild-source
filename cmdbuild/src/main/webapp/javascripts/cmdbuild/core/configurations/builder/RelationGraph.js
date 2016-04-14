@@ -4,7 +4,7 @@
 
 		requires: [
 			'CMDBuild.core.constants.Proxy',
-			'CMDBuild.core.proxy.core.configurations.builder.RelationGraph'
+			'CMDBuild.proxy.core.configurations.builder.RelationGraph'
 		],
 
 		/**
@@ -32,7 +32,7 @@
 			Ext.ns('CMDBuild.configuration');
 			CMDBuild.configuration.graph = Ext.create('CMDBuild.model.core.configurations.builder.RelationGraph'); // Setup configuration with defaults
 
-			CMDBuild.core.proxy.core.configurations.builder.RelationGraph.read({
+			CMDBuild.proxy.core.configurations.builder.RelationGraph.read({
 				loadMask: false,
 				scope: this.scope || this,
 				success: function (response, options, decodedResponse) {

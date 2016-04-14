@@ -11,7 +11,7 @@
 		}
 	});
 
-	Ext.require(['CMDBuild.core.proxy.Attachment']);
+	Ext.require(['CMDBuild.proxy.Attachment']);
 
 	Ext.define("CMDBUild.cache.CMCacheAttachmentCategoryFunctions", {
 
@@ -23,7 +23,7 @@
 
 		syncAttachmentCategories: function() {
 			this.resetAttachmentCategory();
-			CMDBuild.core.proxy.Attachment.readDefinitions({
+			CMDBuild.proxy.Attachment.readDefinitions({
 				loadMask: false,
 				scope: this,
 				success: function(response, options, decoded) {

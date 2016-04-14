@@ -5,7 +5,7 @@
 
 		requires: [
 			'CMDBuild.core.constants.Proxy',
-			'CMDBuild.core.proxy.widget.OpenReport'
+			'CMDBuild.proxy.widget.OpenReport'
 		],
 
 		/**
@@ -57,7 +57,7 @@
 				params[CMDBuild.core.constants.Proxy.CODE] = this.cmfg('widgetOpenReportConfigurationGet', CMDBuild.core.constants.Proxy.REPORT_CODE);
 				params[CMDBuild.core.constants.Proxy.TYPE] = CMDBuild.core.constants.Proxy.CUSTOM;
 
-				CMDBuild.core.proxy.widget.OpenReport.createFactory({
+				CMDBuild.proxy.widget.OpenReport.createFactory({
 					params: params,
 					scope: this,
 					success: function (response, options, decodedResponse) {
@@ -91,7 +91,7 @@
 				var params = this.view.getValues(); // Cannot use getData() because of date field format errors
 				params['reportExtension'] = this.view.formatCombo.getValue();
 
-				CMDBuild.core.proxy.widget.OpenReport.update({
+				CMDBuild.proxy.widget.OpenReport.update({
 					params: params,
 					scope: this,
 					success: function (response, options, decodedResponse) { // Pop-up display mode
@@ -195,7 +195,7 @@
 			var params = {};
 			params[CMDBuild.core.constants.Proxy.FORCE_DOWNLOAD_PARAM_KEY] = true;
 
-			CMDBuild.core.proxy.widget.OpenReport.download({
+			CMDBuild.proxy.widget.OpenReport.download({
 				buildRuntimeForm: true,
 				params: params
 			});

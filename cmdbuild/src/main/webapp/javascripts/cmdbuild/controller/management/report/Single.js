@@ -6,8 +6,8 @@
 		requires: [
 			'CMDBuild.core.Message',
 			'CMDBuild.core.constants.Proxy',
-			'CMDBuild.core.proxy.index.Json',
-			'CMDBuild.core.proxy.report.Report'
+			'CMDBuild.proxy.index.Json',
+			'CMDBuild.proxy.report.Report'
 		],
 
 		/**
@@ -89,7 +89,7 @@
 					property: CMDBuild.core.constants.Proxy.ID
 				}))
 			) {
-				CMDBuild.core.proxy.report.Report.create({
+				CMDBuild.proxy.report.Report.create({
 					params: this.currentReportParametersGet({ callIdentifier: 'create' }),
 					scope: this,
 					failure: function(response, options, decodedResponse) {
@@ -273,7 +273,7 @@
 			params[CMDBuild.core.constants.Proxy.FORCE_DOWNLOAD_PARAM_KEY] = true;
 
 			if (forceDownload) { // Force download mode
-				CMDBuild.core.proxy.report.Report.download({
+				CMDBuild.proxy.report.Report.download({
 					buildRuntimeForm: true,
 					params: params
 				});
@@ -285,7 +285,7 @@
 
 					autoEl: {
 						tag: 'iframe',
-						src: CMDBuild.core.proxy.index.Json.report.factory.print + '?donotdelete=true' // Add parameter to avoid report delete
+						src: CMDBuild.proxy.index.Json.report.factory.print + '?donotdelete=true' // Add parameter to avoid report delete
 					}
 				});
 			}
@@ -296,7 +296,7 @@
 		 */
 		reportSingleUpdateReport: function(forceDownload) {
 			if (!this.currentReportParametersIsEmpty('update')) {
-				CMDBuild.core.proxy.report.Report.update({
+				CMDBuild.proxy.report.Report.update({
 					params: this.currentReportParametersGet({ callIdentifier: 'update' }),
 					scope: this,
 					success: function(response, options, decodedResponse) {

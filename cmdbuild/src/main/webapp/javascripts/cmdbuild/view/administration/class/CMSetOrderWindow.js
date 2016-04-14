@@ -1,6 +1,6 @@
 (function() {
 
-	Ext.require(['CMDBuild.core.proxy.common.tabs.attribute.Order']);
+	Ext.require(['CMDBuild.proxy.common.tabs.attribute.Order']);
 
 	Ext.define('CMDBuild.Administration.SetOrderWindow', {
 		extend: 'CMDBuild.core.window.AbstractModal',
@@ -60,7 +60,7 @@
 			params[CMDBuild.core.constants.Proxy.CLASS_NAME] = _CMCache.getEntryTypeNameById(this.idClass);
 			params[CMDBuild.core.constants.Proxy.ATTRIBUTES] = Ext.encode(attributes);
 
-			CMDBuild.core.proxy.common.tabs.attribute.Order.update({
+			CMDBuild.proxy.common.tabs.attribute.Order.update({
 				params: params,
 				scope: this,
 				callback: function() {

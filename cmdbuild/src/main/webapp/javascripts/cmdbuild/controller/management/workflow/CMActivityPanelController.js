@@ -3,8 +3,8 @@
 	Ext.require([
 		'CMDBuild.core.constants.Global',
 		'CMDBuild.core.Message',
-		'CMDBuild.core.proxy.workflow.Activity',
-		'CMDBuild.core.proxy.workflow.Workflow'
+		'CMDBuild.proxy.workflow.Activity',
+		'CMDBuild.proxy.workflow.Workflow'
 	]);
 
 	var ERROR_TEMPLATE = "<p class=\"{0}\">{1}</p>";
@@ -188,7 +188,7 @@
 				params[CMDBuild.core.constants.Proxy.ACTIVITY_INSTANCE_ID] = _CMWFState.getActivityInstance().data[CMDBuild.core.constants.Proxy.ID];
 				params[CMDBuild.core.constants.Proxy.PROCESS_INSTANCE_ID] = _CMWFState.getProcessInstance().data[CMDBuild.core.constants.Proxy.ID];
 
-				CMDBuild.core.proxy.workflow.Activity.lock({
+				CMDBuild.proxy.workflow.Activity.lock({
 					params: params,
 					loadMask: false,
 					scope: scope,
@@ -209,7 +209,7 @@
 				params[CMDBuild.core.constants.Proxy.ACTIVITY_INSTANCE_ID] = this.lastSelectedActivityInstance.data[CMDBuild.core.constants.Proxy.ID];
 				params[CMDBuild.core.constants.Proxy.PROCESS_INSTANCE_ID] = this.lastSelectedProcessInstance.data[CMDBuild.core.constants.Proxy.ID];
 
-				CMDBuild.core.proxy.workflow.Activity.unlock({
+				CMDBuild.proxy.workflow.Activity.unlock({
 					params: params,
 					loadMask: false
 				});
@@ -352,7 +352,7 @@
 
 		this.clearView();
 
-		CMDBuild.core.proxy.workflow.Activity.abort({
+		CMDBuild.proxy.workflow.Activity.abort({
 			params: {
 				classId: processInstance.getClassId(),
 				cardId: processInstance.getId()
@@ -382,7 +382,7 @@
 			beginDate: pi.get("beginDateAsLong")
 		}
 
-		CMDBuild.core.proxy.workflow.Workflow.isPorcessUpdated({
+		CMDBuild.proxy.workflow.Workflow.isPorcessUpdated({
 			params: requestParams,
 			loadMask: false,
 			success: function(operation, requestConfiguration, decodedResponse) {
@@ -435,7 +435,7 @@
 				_debug("save the process with params", requestParams);
 
 				CMDBuild.core.LoadMask.show();
-				CMDBuild.core.proxy.workflow.Activity.update({
+				CMDBuild.proxy.workflow.Activity.update({
 					params: requestParams,
 					scope : this,
 					clientValidation: this.isAdvance, //to force the save request
