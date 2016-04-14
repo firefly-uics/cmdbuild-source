@@ -57,7 +57,7 @@
 							forceSelection: true,
 							editable: false,
 
-							store: CMDBuild.core.proxy.widget.OpenReport.getStoreReports(),
+							store: CMDBuild.core.proxy.widget.OpenReport.getStore(),
 							queryMode: 'local',
 
 							listeners: {

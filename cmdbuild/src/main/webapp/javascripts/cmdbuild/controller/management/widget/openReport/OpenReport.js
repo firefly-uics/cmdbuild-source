@@ -1,6 +1,6 @@
-(function() {
+(function () {
 
-	Ext.define('CMDBuild.controller.management.common.widgets.OpenReport', {
+	Ext.define('CMDBuild.controller.management.widget.openReport.OpenReport', {
 		extend:'CMDBuild.controller.common.abstract.Widget',
 
 		requires: [
@@ -22,17 +22,20 @@
 		 * @cfg {Array}
 		 */
 		cmfgCatchedFunctions: [
+			'beforeHideView',
+			'getData',
 			'isBusy',
 			'isValid',
+			'onEditMode',
 			'onWidgetOpenReportBeforeActiveView = beforeActiveView',
+			'onWidgetOpenReportDownloadButtonClick',
 			'onWidgetOpenReportSaveButtonClick',
-			'showReport',
-			'widgetOpenReportGetData = getData',
-			'widgetOpenReportSelectedReportRecordGet = selectedReportRecordGet'
+			'widgetConfigurationGet = widgetOpenReportConfigurationGet',
+			'widgetConfigurationIsEmpty = widgetOpenReportConfigurationIsEmpty'
 		],
 
 		/**
-		 * @property {CMDBuild.view.management.common.widgets.OpenReport}
+		 * @property {CMDBuild.view.management.widget.openReport.OpenReportView}
 		 */
 		view: undefined,
 
@@ -42,36 +45,35 @@
 		widgetConfigurationModelClassName: 'CMDBuild.model.widget.openReport.Configuration',
 
 		/**
+		 * @returns {Void}
+		 *
 		 * @override
 		 */
-		onWidgetOpenReportBeforeActiveView: function() {
+		onWidgetOpenReportBeforeActiveView: function () {
 			this.beforeActiveView(arguments); // CallParent alias
 
-			if (
-				!this.widgetConfigurationIsEmpty()
-				&& Ext.isEmpty(this.templateResolver)
-			) {
+			if (!this.cmfg('widgetOpenReportConfigurationIsEmpty')) {
 				var params = {};
+				params[CMDBuild.core.constants.Proxy.CODE] = this.cmfg('widgetOpenReportConfigurationGet', CMDBuild.core.constants.Proxy.REPORT_CODE);
 				params[CMDBuild.core.constants.Proxy.TYPE] = CMDBuild.core.constants.Proxy.CUSTOM;
-				params[CMDBuild.core.constants.Proxy.CODE] = this.widgetConfigurationGet(CMDBuild.core.constants.Proxy.REPORT_CODE);
 
 				CMDBuild.core.proxy.widget.OpenReport.createFactory({
 					params: params,
 					scope: this,
-					success: function(response, options, decodedResponse) {
-						if (!decodedResponse.filled)
+					success: function (response, options, decodedResponse) {
+						if (!decodedResponse['filled'])
 							this.configureForm(decodedResponse[CMDBuild.core.constants.Proxy.ATTRIBUTE]);
 
 						new CMDBuild.Management.TemplateResolver({
 							clientForm: this.clientForm,
-							xaVars: this.widgetConfigurationGet(CMDBuild.core.constants.Proxy.PRESET),
+							xaVars: this.cmfg('widgetOpenReportConfigurationGet', CMDBuild.core.constants.Proxy.PRESET),
 							serverVars: this.getTemplateResolverServerVars()
 						}).resolveTemplates({
-							attributes: Ext.Object.getKeys(this.widgetConfigurationGet(CMDBuild.core.constants.Proxy.PRESET)),
+							attributes: Ext.Object.getKeys(this.cmfg('widgetOpenReportConfigurationGet', CMDBuild.core.constants.Proxy.PRESET)),
 							scope: this,
-							callback: function(out, ctx) {
+							callback: function (out, ctx) {
 								this.fillFormValues(out);
-								this.forceExtension(this.widgetConfigurationGet(CMDBuild.core.constants.Proxy.FORCE_FORMAT));
+								this.forceExtension(this.cmfg('widgetOpenReportConfigurationGet', CMDBuild.core.constants.Proxy.FORCE_FORMAT));
 							}
 						});
 					}
@@ -81,36 +83,25 @@
 
 		/**
 		 * Build server call to configure and create reports
+		 *
+		 * @returns {Void}
 		 */
-		onWidgetOpenReportSaveButtonClick: function() {
-			var params = {};
+		onWidgetOpenReportSaveButtonClick: function () {
+			if (this.validate(this.view)) {
+				var params = this.view.getValues(); // Cannot use getData() because of date field format errors
+				params['reportExtension'] = this.view.formatCombo.getValue();
 
-			// Build params with fields values form server call
-			this.view.getForm().getFields().each(function(field, i, len) {
-				if (Ext.isFunction(field.getName) && Ext.isFunction(field.getValue)) {
-					var fieldValue = field.getValue();
-
-					// Date format check
-					if (Ext.isDate(fieldValue))
-						fieldValue = Ext.Date.format(fieldValue, 'd/m/Y');
-
-					params[field.getName()] = fieldValue;
-				}
-			}, this);
-
-			params['reportExtension'] = params[CMDBuild.core.constants.Proxy.EXTENSION]; // TODO: waiting for refactor (rename)
-
-			if (this.view.getForm().isValid())
 				CMDBuild.core.proxy.widget.OpenReport.update({
 					params: params,
 					scope: this,
-					success: function(response, options, decodedResponse) { // Pop-up display mode
-						Ext.create('CMDBuild.controller.management.report.Modal', {
+					success: function (response, options, decodedResponse) { // Pop-up display mode
+						Ext.create('CMDBuild.controller.management.widget.openReport.Modal', {
 							parentDelegate: this,
-							extension: params[CMDBuild.core.constants.Proxy.EXTENSION]
+							extension: this.view.formatCombo.getValue()
 						});
 					}
 				});
+			}
 		},
 
 		/**
@@ -118,9 +109,11 @@
 		 *
 		 * @param {Array} attributes
 		 *
+		 * @returns {Void}
+		 *
 		 * @private
 		 */
-		configureForm: function(attributes) {
+		configureForm: function (attributes) {
 			this.view.fieldContainer.removeAll();
 
 			if (!Ext.isEmpty(attributes) && Ext.isArray(attributes)) {
@@ -148,7 +141,7 @@
 					if (!Ext.isEmpty(field)) {
 						// Disable if field name is contained in widgetConfiguration.readOnlyAttributes
 						field.setDisabled(
-							Ext.Array.contains(this.widgetConfigurationGet(CMDBuild.core.constants.Proxy.READ_ONLY_ATTRIBUTES), attribute[CMDBuild.core.constants.Proxy.NAME])
+							Ext.Array.contains(this.cmfg('widgetOpenReportConfigurationGet', CMDBuild.core.constants.Proxy.READ_ONLY_ATTRIBUTES), attribute[CMDBuild.core.constants.Proxy.NAME])
 						);
 
 						this.view.fieldContainer.add(field);
@@ -162,25 +155,29 @@
 		 *
 		 * @param {Object} parameters - Ex: { input_name: value, ...}
 		 *
+		 * @returns {Void}
+		 *
 		 * @private
 		 */
-		fillFormValues: function(parameters) {
+		fillFormValues: function (parameters) {
 			if (!Ext.Object.isEmpty(parameters)) {
-				Ext.Object.each(parameters, function(key, value, myself) {
+				Ext.Object.each(parameters, function (key, value, myself) {
 					if (Ext.isDate(value))
 						parameters[key] =  new Date(value);
 				}, this);
 
-				this.view.loadRecord(Ext.create('CMDBuild.DummyModel', parameters));
+				this.view.loadRecord(Ext.create('CMDBuild.model.common.Generic', parameters));
 			}
 		},
 
 		/**
 		 * @param {String} extension
 		 *
+		 * @returns {Void}
+		 *
 		 * @private
 		 */
-		forceExtension: function(extension) {
+		forceExtension: function (extension) {
 			if (!Ext.isEmpty(extension)) {
 				this.view.formatCombo.setValue(extension);
 				this.view.formatCombo.disable();
@@ -191,8 +188,10 @@
 
 		/**
 		 * @param {Boolean} forceDownload
+		 *
+		 * @returns {Void}
 		 */
-		showReport: function() { // TODO: rename method
+		onWidgetOpenReportDownloadButtonClick: function () {
 			var params = {};
 			params[CMDBuild.core.constants.Proxy.FORCE_DOWNLOAD_PARAM_KEY] = true;
 
@@ -200,17 +199,7 @@
 				buildRuntimeForm: true,
 				params: params
 			});
-		},
-
-		/**
-		 * Avoids not managed function warning
-		 */
-		widgetOpenReportGetData: Ext.emptyFn,
-
-		/**
-		 * Avoids not managed function warning
-		 */
-		widgetOpenReportSelectedReportRecordGet: Ext.emptyFn
+		}
 	});
 
 })();

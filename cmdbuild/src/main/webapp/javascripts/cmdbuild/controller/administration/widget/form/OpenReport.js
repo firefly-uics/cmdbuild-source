@@ -6,7 +6,7 @@
 		requires: [
 			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.proxy.widget.OpenReport',
-			'CMDBuild.model.widget.openReport.Definition',
+			'CMDBuild.model.widget.openReport.Configuration',
 			'CMDBuild.model.widget.openReport.ReportCombo'
 		],
 
@@ -31,7 +31,7 @@
 		 *
 		 * @private
 		 */
-		definitionModelName: 'CMDBuild.model.widget.openReport.Definition',
+		definitionModelName: 'CMDBuild.model.widget.openReport.Configuration',
 
 		/**
 		 * @cfg {CMDBuild.view.administration.widget.form.OpenReportPanel}
@@ -54,7 +54,7 @@
 		 * @return {Object} widgetDefinition
 		 */
 		classTabWidgetOpenReportDefinitionGet: function () {
-			var widgetDefinition = CMDBuild.model.widget.openReport.Definition.convertToLegacy(
+			var widgetDefinition = CMDBuild.model.widget.openReport.Configuration.convertToLegacy(
 				Ext.create(this.classTabWidgetDefinitionModelNameGet(), this.view.getData(true)).getData()
 			);
 			widgetDefinition[CMDBuild.core.constants.Proxy.PRESET] = this.presetGridGet(CMDBuild.core.constants.Proxy.DATA);
@@ -66,7 +66,7 @@
 		/**
 		 * Fills form with widget data
 		 *
-		 * @param {CMDBuild.model.widget.openReport.Definition} record
+		 * @param {CMDBuild.model.widget.openReport.Configuration} record
 		 */
 		classTabWidgetOpenReportLoadRecord: function (record) {
 			this.view.loadRecord(record);

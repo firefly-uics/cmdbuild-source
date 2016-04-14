@@ -66,6 +66,33 @@
 		},
 
 		/**
+		 * @returns {Ext.data.Store or CMDBuild.core.cache.Store}
+		 *
+		 * @administration
+		 */
+		getStore: function () {
+			return CMDBuild.global.Cache.requestAsStore(CMDBuild.core.constants.Proxy.REPORT, {
+				autoLoad: true,
+				model: 'CMDBuild.model.widget.openReport.ReportCombo',
+				proxy: {
+					type: 'ajax',
+					url: CMDBuild.core.proxy.index.Json.report.readByType,
+					reader: {
+						type: 'json',
+						root: CMDBuild.core.constants.Proxy.ROWS,
+						totalProperty: CMDBuild.core.constants.Proxy.RESULTS
+					},
+					extraParams: {
+						type: CMDBuild.core.constants.Proxy.CUSTOM
+					}
+				},
+				sorters: [
+					{ property: CMDBuild.core.constants.Proxy.DESCRIPTION, direction: 'ASC' }
+				]
+			});
+		},
+
+		/**
 		 * @returns {Ext.data.ArrayStore}
 		 *
 		 * @management
@@ -97,33 +124,6 @@
 					[CMDBuild.core.constants.Proxy.PDF, CMDBuild.Translation.pdf],
 					[CMDBuild.core.constants.Proxy.CSV, CMDBuild.Translation.csv]
 				],
-				sorters: [
-					{ property: CMDBuild.core.constants.Proxy.DESCRIPTION, direction: 'ASC' }
-				]
-			});
-		},
-
-		/**
-		 * @returns {Ext.data.Store or CMDBuild.core.cache.Store}
-		 *
-		 * @administration
-		 */
-		getStoreReports: function () {
-			return CMDBuild.global.Cache.requestAsStore(CMDBuild.core.constants.Proxy.REPORT, {
-				autoLoad: true,
-				model: 'CMDBuild.model.widget.openReport.ReportCombo',
-				proxy: {
-					type: 'ajax',
-					url: CMDBuild.core.proxy.index.Json.report.readByType,
-					reader: {
-						type: 'json',
-						root: CMDBuild.core.constants.Proxy.ROWS,
-						totalProperty: CMDBuild.core.constants.Proxy.RESULTS
-					},
-					extraParams: {
-						type: CMDBuild.core.constants.Proxy.CUSTOM
-					}
-				},
 				sorters: [
 					{ property: CMDBuild.core.constants.Proxy.DESCRIPTION, direction: 'ASC' }
 				]

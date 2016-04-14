@@ -9,7 +9,7 @@
 	/**
 	 * Class to be extended in widget controllers to adapt CMDBuild.controller.common.abstract.Base functionalities
 	 *
-	 * Required managed methods:
+	 * @requires Mandatory managed methods:
 	 * 	- beforeActiveView
 	 * 	- beforeHideView
 	 * 	- isBusy

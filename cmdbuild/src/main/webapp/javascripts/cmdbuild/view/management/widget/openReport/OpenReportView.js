@@ -1,6 +1,6 @@
-(function() {
+(function () {
 
-	Ext.define('CMDBuild.view.management.common.widgets.OpenReport', {
+	Ext.define('CMDBuild.view.management.widget.openReport.OpenReportView', {
 		extend: 'Ext.form.Panel',
 
 		requires: [
@@ -9,8 +9,10 @@
 			'CMDBuild.core.proxy.widget.OpenReport'
 		],
 
+		mixins: ['CMDBuild.view.common.PanelFunctions'],
+
 		/**
-		 * @cfg {CMDBuild.controller.management.common.widgets.OpenReport}
+		 * @cfg {CMDBuild.controller.management.widget.openReport.OpenReport}
 		 */
 		delegate: undefined,
 
@@ -24,20 +26,21 @@
 		 */
 		fieldContainer: undefined,
 
-		bodyCls: 'x-panel-body-default-framed',
+		bodyCls: 'cmdb-blue-panel',
 		border: false,
 		frame: false,
-
-		bodyStyle: {
-			padding: '5px'
-		},
 
 		layout: {
 			type: 'vbox',
 			align: 'stretch'
 		},
 
-		initComponent: function() {
+		/**
+		 * @returns {Void}
+		 *
+		 * @override
+		 */
+		initComponent: function () {
 			Ext.apply(this, {
 				items: [
 					this.formatCombo = Ext.create('Ext.form.field.ComboBox', {
@@ -81,12 +84,12 @@
 		 *
 		 * @override
 		 */
-		getExtraButtons: function() {
+		getExtraButtons: function () {
 			return [
 				Ext.create('CMDBuild.core.buttons.text.Confirm', {
 					scope: this,
 
-					handler: function(button, e) {
+					handler: function (button, e) {
 						this.delegate.cmfg('onWidgetOpenReportSaveButtonClick');
 					}
 				})

@@ -30,7 +30,7 @@
 					'.NavigationTree': CMDBuild.controller.management.common.widgets.CMNavigationTreeController,
 					'.OpenAttachment': CMDBuild.controller.management.common.widgets.CMOpenAttachmentController,
 					'.OpenNote': CMDBuild.controller.management.common.widgets.CMOpenNoteController,
-					'.OpenReport': 'CMDBuild.controller.management.common.widgets.OpenReport',
+					'.OpenReport': 'CMDBuild.controller.management.widget.openReport.OpenReport',
 					'.Ping': 'CMDBuild.controller.management.widget.Ping',
 					'.PresetFromCard': CMDBuild.controller.management.common.widgets.CMPresetFromCardController,
 					'.WebService': CMDBuild.controller.management.common.widgets.CMWebServiceController,
