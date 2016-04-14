@@ -6,7 +6,7 @@
 
 		singleton: true,
 
-		// Authorization cooky manage methods
+		// Authorization cookie manage methods
 			/**
 			 * @returns {Void}
 			 *
@@ -73,7 +73,7 @@
 						Ext.Array.slice(window.location.pathname.split('/'), 0, -1).join('/') + '/'
 					);
 
-				return _error('empty session id parameter', 'CMDBuild.core.CookiesManager', sessionId);
+				return _error('empty session id parameter', this, sessionId);
 			}
 	});
 

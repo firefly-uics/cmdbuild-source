@@ -4,10 +4,10 @@
 		extend: 'Ext.data.Connection',
 
 		requires: [
+			'CMDBuild.core.CookiesManager',
 			'CMDBuild.core.interfaces.messages.Error',
 			'CMDBuild.core.interfaces.messages.Warning',
 			'CMDBuild.core.interfaces.service.LoadMask',
-			'CMDBuild.core.CookiesManager',
 			'CMDBuild.core.Utils'
 		],
 
@@ -66,7 +66,7 @@
 		adapterCallback: function (options, success, response, originalFunction) {
 			var decodedResponse = CMDBuild.core.interfaces.Ajax.decodeJson(response.responseText);
 
-			// Update authorization cooky expiration date
+			// Update authorization cookie expiration date
 			CMDBuild.core.CookiesManager.authorizationExpirationUpdate();
 
 			CMDBuild.core.interfaces.service.LoadMask.manage(options.loadMask, false);

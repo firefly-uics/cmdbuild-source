@@ -65,7 +65,6 @@
 			Ext.create('CMDBuild.core.LoggerManager'); // Logger configuration
 			Ext.create('CMDBuild.core.Data', { enableLocalized: true }); // Data connections configuration
 			Ext.create('CMDBuild.core.cache.Cache');
-			// Ext.create('CMDBuild.core.CookiesManager'); // TODO: future implementation should be here when runtime will be read with asynchronous call
 			Ext.create('CMDBuild.core.navigation.Chronology'); // Navigation chronology
 
 			CMDBuild.core.Management.init();

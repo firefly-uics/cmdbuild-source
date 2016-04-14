@@ -104,6 +104,7 @@ public class Session extends JSONBaseWithSpringContext {
 	}
 
 	@JSONExported
+	@Unauthorized
 	public JsonResponse readCurrent() {
 		final String sessionId = authLogic().getCurrent();
 		return success(responseOf(sessionId));
@@ -135,17 +136,19 @@ public class Session extends JSONBaseWithSpringContext {
 			{
 				setSessionId(sessionId);
 
-				final OperationUser user = authLogic().getUser(sessionId);
-				setUserName(user.getAuthenticatedUser().getUsername());
-				setGroup(user.isValid() ? user.getPreferredGroup().getName() : null);
-				setGroups(user.getAuthenticatedUser().getGroupNames().stream() //
-						.map(input -> new Group() {
-					{
-						setName(input);
-						setDescription(authLogic().getGroupWithName(input).getDescription());
-					}
-				}) //
-						.collect(toList()));
+				if (sessionId != null) {
+					final OperationUser user = authLogic().getUser(sessionId);
+					setUserName(user.getAuthenticatedUser().getUsername());
+					setGroup(user.isValid() ? user.getPreferredGroup().getName() : null);
+					setGroups(user.getAuthenticatedUser().getGroupNames().stream() //
+							.map(input -> new Group() {
+						{
+							setName(input);
+							setDescription(authLogic().getGroupWithName(input).getDescription());
+						}
+					}) //
+							.collect(toList()));
+				}
 			}
 		};
 	}
