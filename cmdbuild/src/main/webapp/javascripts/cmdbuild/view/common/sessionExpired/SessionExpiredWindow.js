@@ -1,7 +1,7 @@
 (function () {
 
 	Ext.define('CMDBuild.view.common.sessionExpired.SessionExpiredWindow', {
-		extend: 'CMDBuild.core.PopupWindow',
+		extend: 'CMDBuild.core.window.AbstractModal',
 
 		/**
 		 * @cfg {CMDBuild.view.common.sessionExpired.FormPanel}

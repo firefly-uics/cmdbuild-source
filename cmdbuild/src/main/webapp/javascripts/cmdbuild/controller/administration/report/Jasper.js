@@ -127,7 +127,7 @@
 		 * @param {CMDBuild.model.report.Grid} record
 		 */
 		onReportJasperGenerateSqlButtonClick: function (record) {
-			var sqlWindow = Ext.create('CMDBuild.core.PopupWindow', {
+			var sqlWindow = Ext.create('CMDBuild.core.window.AbstractModal', {
 				autoScroll: true,
 				border: false,
 				frame: true,
