@@ -1,11 +1,11 @@
 package org.cmdbuild.logic.auth;
 
-import static org.apache.commons.lang3.ObjectUtils.defaultIfNull;
 import static org.cmdbuild.auth.UserStores.inMemory;
 import static org.cmdbuild.auth.user.AuthenticatedUserImpl.ANONYMOUS_USER;
 
 import java.util.NoSuchElementException;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.function.Predicate;
 
 import org.apache.commons.lang3.Validate;
 import org.cmdbuild.auth.AnonymousWhenMissingUserStore;
@@ -16,10 +16,38 @@ import org.cmdbuild.auth.UserStore;
 import org.cmdbuild.auth.acl.NullGroup;
 import org.cmdbuild.auth.context.NullPrivilegeContext;
 import org.cmdbuild.auth.user.OperationUser;
-import org.cmdbuild.data.store.Store;
 import org.cmdbuild.data.store.session.Session;
+import org.cmdbuild.data.store.session.SessionStore;
 
 public class DefaultSessionLogic extends ForwardingAuthenticationLogic implements SessionLogic {
+
+	public static interface Store<T> {
+
+		T get();
+
+		void set(T value);
+
+	}
+
+	public static interface CurrentSessionStore extends Store<String> {
+
+	}
+
+	public static class ThreadLocalCurrentSessionStore implements CurrentSessionStore {
+
+		private static final ThreadLocal<String> threadLocal = new ThreadLocal<>();
+
+		@Override
+		public String get() {
+			return threadLocal.get();
+		}
+
+		@Override
+		public void set(final String value) {
+			threadLocal.set(value);
+		}
+
+	}
 
 	private static class SessionImpl implements Session {
 
@@ -96,19 +124,22 @@ public class DefaultSessionLogic extends ForwardingAuthenticationLogic implement
 	private static final OperationUser ANONYMOUS = new OperationUser(ANONYMOUS_USER, new NullPrivilegeContext(),
 			new NullGroup());
 
-	private static final ThreadLocal<String> current = new ThreadLocal<>();
-
 	private final AuthenticationLogic delegate;
-	private final UserStore userStore;
-	private final Store<Session> sessionStore;
+	private final CurrentSessionStore currentSessionStore;
+	private final UserStore currentUserStore;
+	private final SessionStore sessionStore;
 	private final TokenGenerator tokenGenerator;
+	private final Predicate<OperationUser> canImpersonate;
 
-	public DefaultSessionLogic(final AuthenticationLogic delegate, final UserStore userStore,
-			final Store<Session> sessionStore, final TokenGenerator tokenGenerator) {
+	public DefaultSessionLogic(final AuthenticationLogic delegate, final CurrentSessionStore currentSessionStore,
+			final UserStore currentUserStore, final SessionStore sessionStore, final TokenGenerator tokenGenerator,
+			final Predicate<OperationUser> canImpersonate) {
 		this.delegate = delegate;
-		this.userStore = userStore;
+		this.currentSessionStore = currentSessionStore;
+		this.currentUserStore = currentUserStore;
 		this.sessionStore = sessionStore;
 		this.tokenGenerator = tokenGenerator;
+		this.canImpersonate = canImpersonate;
 	}
 
 	@Override
@@ -171,7 +202,14 @@ public class DefaultSessionLogic extends ForwardingAuthenticationLogic implement
 
 	@Override
 	public boolean exists(final String id) {
-		return getUserOrAnonymousIfMissing(id) != null;
+		try {
+			sessionStore.read(SessionImpl.newInstance() //
+					.withIdentifier(id) //
+					.build());
+			return true;
+		} catch (final NoSuchElementException e) {
+			return false;
+		}
 	}
 
 	@Override
@@ -214,8 +252,7 @@ public class DefaultSessionLogic extends ForwardingAuthenticationLogic implement
 		final OperationUser current = existing //
 				.getUser();
 		if (username != null) {
-			if (!current.hasAdministratorPrivileges() && !current.getAuthenticatedUser().isService()
-					&& !current.getAuthenticatedUser().isPrivileged()) {
+			if (!canImpersonate.test(current)) {
 				throw new IllegalStateException("cannot impersonate from current user");
 			}
 			final UserStore temporary = inMemory(ANONYMOUS);
@@ -239,16 +276,16 @@ public class DefaultSessionLogic extends ForwardingAuthenticationLogic implement
 
 	@Override
 	public String getCurrent() {
-		return current.get();
+		return currentSessionStore.get();
 	}
 
 	@Override
 	public void setCurrent(final String id) {
-		current.set(id);
-		userStore.setUser((id == null) ? null : getUserOrAnonymousIfMissing(id));
+		currentSessionStore.set(id);
+		currentUserStore.setUser((id == null) ? null : getUserOrAnonymousWhenMissing(id));
 	}
 
-	private OperationUser getUserOrAnonymousIfMissing(final String id) {
+	private OperationUser getUserOrAnonymousWhenMissing(final String id) {
 		try {
 			return getUser(id);
 		} catch (final NoSuchElementException e) {
@@ -258,7 +295,7 @@ public class DefaultSessionLogic extends ForwardingAuthenticationLogic implement
 
 	@Override
 	public boolean isValidUser(final String id) {
-		return (id == null) ? false : getUserOrAnonymousIfMissing(id).isValid();
+		return (id == null) ? false : getUserOrAnonymousWhenMissing(id).isValid();
 	}
 
 	@Override
@@ -266,7 +303,7 @@ public class DefaultSessionLogic extends ForwardingAuthenticationLogic implement
 		final Session existing = sessionStore.read(SessionImpl.newInstance() //
 				.withIdentifier(id) //
 				.build());
-		return defaultIfNull(existing.getImpersonated(), existing.getUser());
+		return sessionStore.selectUserOrImpersonated(existing);
 	}
 
 }
