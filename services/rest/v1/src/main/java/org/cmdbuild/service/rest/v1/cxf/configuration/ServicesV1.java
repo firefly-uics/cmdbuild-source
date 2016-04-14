@@ -63,10 +63,6 @@ import org.cmdbuild.service.rest.v1.cxf.ProcessStatusHelper;
 import org.cmdbuild.service.rest.v1.cxf.TranslatingAttachmentsHelper;
 import org.cmdbuild.service.rest.v1.cxf.TranslatingAttachmentsHelper.Encoding;
 import org.cmdbuild.service.rest.v1.cxf.WebApplicationExceptionErrorHandler;
-import org.cmdbuild.service.rest.v1.cxf.service.InMemoryOperationUserStore;
-import org.cmdbuild.service.rest.v1.cxf.service.InMemorySessionStore;
-import org.cmdbuild.service.rest.v1.cxf.service.OperationUserStore;
-import org.cmdbuild.service.rest.v1.cxf.service.SessionStore;
 import org.cmdbuild.service.rest.v1.logging.LoggingSupport;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -264,33 +260,6 @@ public class ServicesV1 implements LoggingSupport {
 	public Sessions v1_sessions() {
 		final CxfSessions service = new CxfSessions(v1_errorHandler(), helper.sessionLogic());
 		return proxy(Sessions.class, service);
-	}
-
-	@Bean
-	public SessionStore v1_sessionStore() {
-		return new InMemorySessionStore(v1_configuration());
-	}
-
-	@Bean
-	protected SessionStore v1_impersonateSessionStore() {
-		return new InMemorySessionStore(v1_configuration());
-	}
-
-	@Bean
-	protected InMemorySessionStore.Configuration v1_configuration() {
-		return new InMemorySessionStore.Configuration() {
-
-			@Override
-			public long timeout() {
-				return helper.cmdbuildConfiguration().getSessionTimoutOrZero() * 1000;
-			}
-
-		};
-	}
-
-	@Bean
-	public OperationUserStore v1_operationUserStore() {
-		return new InMemoryOperationUserStore();
 	}
 
 	@Bean
