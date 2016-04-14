@@ -98,7 +98,20 @@
 					{ property: 'Description', direction: 'ASC' }
 				]
 			});
-		}
+		},
+
+		/**
+		 * @param {Object} parameters
+		 *
+		 * @returns {Void}
+		 */
+		readAttachmentDefinitions: function (parameters) {
+			parameters = Ext.isEmpty(parameters) ? {} : parameters;
+
+			Ext.apply(parameters, { url: CMDBuild.proxy.index.Json.attachment.getContext });
+
+			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.ATTACHMENT, parameters);
+		},
 	});
 
 })();

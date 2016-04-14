@@ -1,6 +1,9 @@
 (function () {
 
-	Ext.define('CMDBuild.proxy.Attachment', { // TODO: move in common.tabs
+	/**
+	 * @management
+	 */
+	Ext.define('CMDBuild.proxy.classes.tabs.Attachment', {
 
 		requires: [
 			'CMDBuild.core.constants.Proxy',
@@ -13,8 +16,6 @@
 		 * @param {Object} parameters
 		 *
 		 * @returns {Void}
-		 *
-		 * @management
 		 */
 		confirm: function (parameters) {
 			parameters = Ext.isEmpty(parameters) ? {} : parameters;
@@ -64,19 +65,6 @@
 					{ property: 'Category', direction: 'ASC' }
 				]
 			});
-		},
-
-		/**
-		 * @param {Object} parameters
-		 *
-		 * @returns {Void}
-		 */
-		readDefinitions: function (parameters) {
-			parameters = Ext.isEmpty(parameters) ? {} : parameters;
-
-			Ext.apply(parameters, { url: CMDBuild.proxy.index.Json.attachment.getContext });
-
-			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.ATTACHMENT, parameters);
 		},
 
 		/**
