@@ -178,7 +178,7 @@ public class Authentication {
 	}
 
 	@Bean
-	protected  CurrentSessionStore sessionStore() {
+	protected CurrentSessionStore sessionStore() {
 		return new ThreadLocalCurrentSessionStore();
 	}
 
@@ -199,8 +199,8 @@ public class Authentication {
 	protected SessionStore defaultSessionStore() {
 		// TODO needs reboot, we should avoid it
 		final Cache<String, Session> cache = CacheBuilder.newBuilder() //
-				.expireAfterAccess((properties.cmdbuildProperties().getSessionTimoutOrZero() == 0) ? Long.MAX_VALUE
-						: properties.cmdbuildProperties().getSessionTimoutOrZero(), SECONDS) //
+				.expireAfterAccess((properties.cmdbuildProperties().getSessionTimeoutOrDefault() == 0) ? Long.MAX_VALUE
+						: properties.cmdbuildProperties().getSessionTimeoutOrDefault(), SECONDS) //
 				.build();
 		return new DefaultSessionStore(new CachingStore<Session>() {
 
