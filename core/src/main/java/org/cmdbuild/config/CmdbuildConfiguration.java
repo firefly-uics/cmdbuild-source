@@ -28,7 +28,7 @@ public interface CmdbuildConfiguration {
 
 	String getTabsPosition();
 
-	int getSessionTimoutOrZero();
+	int getSessionTimeoutOrDefault();
 
 	boolean getLockCard();
 
