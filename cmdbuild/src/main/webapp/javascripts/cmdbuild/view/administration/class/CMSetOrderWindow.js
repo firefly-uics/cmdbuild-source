@@ -3,7 +3,7 @@
 	Ext.require(['CMDBuild.core.proxy.common.tabs.attribute.Order']);
 
 	Ext.define('CMDBuild.Administration.SetOrderWindow', {
-		extend: 'CMDBuild.PopupWindow',
+		extend: 'CMDBuild.core.window.AbstractModal',
 
 		height: 300,
 		width: 300,

@@ -1,10 +1,11 @@
-(function() {
+(function () {
 
 	/**
 	 * Reads the size in percentage in the configuration file and create a modal popup-window
+	 *
+	 * @abstract
 	 */
-	Ext.define('CMDBuild.core.PopupWindow', {
-		alternateClassName: 'CMDBuild.PopupWindow', // Legacy class name
+	Ext.define('CMDBuild.core.window.AbstractModal', {
 		extend: 'Ext.window.Window',
 
 		/**
@@ -28,7 +29,12 @@
 		modal: true,
 		resizable: true,
 
-		initComponent: function() {
+		/**
+		 * @returns {Void}
+		 *
+		 * @override
+		 */
+		initComponent: function () {
 			if (!this.autoHeight) {
 				var percentualHeight;
 				var configHeight = CMDBuild.configuration.instance.get(CMDBuild.core.constants.Proxy.POPUP_HEIGHT_PERCENTAGE);

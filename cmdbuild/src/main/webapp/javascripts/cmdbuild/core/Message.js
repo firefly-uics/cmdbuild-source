@@ -115,7 +115,7 @@
  * @param {Number} detailBufferIndex
  */
 function buildDetaiWindow(detailBufferIndex) {
-	var detailsWindow = Ext.create('CMDBuild.core.PopupWindow', {
+	var detailsWindow = Ext.create('CMDBuild.core.window.AbstractModal', {
 		title: CMDBuild.Translation.details,
 
 		dockedItems: [

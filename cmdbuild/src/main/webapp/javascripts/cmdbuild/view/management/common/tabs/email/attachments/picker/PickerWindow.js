@@ -1,7 +1,7 @@
 (function () {
 
 	Ext.define('CMDBuild.view.management.common.tabs.email.attachments.picker.PickerWindow', {
-		extend: 'CMDBuild.PopupWindow',
+		extend: 'CMDBuild.core.window.AbstractModal',
 
 		requires: [
 			'CMDBuild.core.constants.FieldWidths',

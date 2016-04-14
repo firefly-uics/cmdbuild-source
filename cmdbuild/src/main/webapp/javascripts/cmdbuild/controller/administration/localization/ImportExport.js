@@ -43,7 +43,7 @@
 		exportPanel: undefined,
 
 		/**
-		 * @property {CMDBuild.core.PopupWindow}
+		 * @property {CMDBuild.core.window.AbstractModal}
 		 */
 		failuresWindow: undefined,
 
@@ -122,7 +122,7 @@
 							}, this);
 
 
-							this.failuresWindow = Ext.create('CMDBuild.core.PopupWindow', {
+							this.failuresWindow = Ext.create('CMDBuild.core.window.AbstractModal', {
 								title: CMDBuild.Translation.common.failure,
 
 								dockedItems: [

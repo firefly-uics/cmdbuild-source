@@ -38,7 +38,6 @@
 <!-- THE OTHERS -->
 <script type="text/javascript" src="javascripts/cmdbuild/controller/common/TemplateResolver.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/core/Message.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/core/PopupWindow.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/core/interfaces/Ajax.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/core/CMDelegable.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/core/xml/XMLUtility.js"></script>

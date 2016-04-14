@@ -1,7 +1,7 @@
 (function() {
 
 	Ext.define('CMDBuild.view.common.entryTypeGrid.printTool.PrintWindow', {
-		extend: 'CMDBuild.core.PopupWindow',
+		extend: 'CMDBuild.core.window.AbstractModal',
 
 		requires: ['CMDBuild.core.constants.Proxy'],
 

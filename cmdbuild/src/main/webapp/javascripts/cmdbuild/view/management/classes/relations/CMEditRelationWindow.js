@@ -5,7 +5,7 @@
 	var NO_SELECTION = 'No selection';
 
 	Ext.define('CMDBuild.view.management.classes.relations.CMEditRelationWindow', {
-		extend: 'CMDBuild.Management.CardListWindow', // To choose the card for the relation
+		extend: 'CMDBuild.view.management.common.CMCardListWindow', // To choose the card for the relation
 
 		requires: [
 			'CMDBuild.core.constants.Proxy',
