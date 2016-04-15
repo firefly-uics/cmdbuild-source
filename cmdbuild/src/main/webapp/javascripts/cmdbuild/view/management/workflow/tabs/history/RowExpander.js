@@ -1,6 +1,6 @@
-(function() {
+(function () {
 
-	Ext.define('CMDBuild.view.management.common.tabs.history.RowExpander', {
+	Ext.define('CMDBuild.view.management.workflow.tabs.history.RowExpander', {
 		extend: 'Ext.grid.plugin.RowExpander',
 
 		requires: [
@@ -16,7 +16,7 @@
 			'<tpl exec="this.formatter(' + CMDBuild.core.constants.Proxy.VALUES + ')"></tpl>',
 			'<tpl for="this.formattedArray">',
 				'<tpl if="' + CMDBuild.core.constants.Proxy.CHANGED + '">',
-					'<p class="' + CMDBuild.core.constants.Proxy.CHANGED + '">',
+					'<p class="changedRow">',
 				'<tpl else>',
 					'<p>',
 				'</tpl>',
@@ -29,11 +29,11 @@
 				/**
 				 * @param {Object} values
 				 */
-				formatter: function(values) {
+				formatter: function (values) {
 					if (!Ext.isEmpty(values)) {
 						this.formattedArray = [];
 
-						Ext.Object.each(values, function(key, value, myself) {
+						Ext.Object.each(values, function (key, value, myself) {
 							this.formattedArray.push({
 								attribute: value.get(CMDBuild.core.constants.Proxy.ATTRIBUTE_DESCRIPTION) || key,
 								changed: value.get(CMDBuild.core.constants.Proxy.CHANGED),
