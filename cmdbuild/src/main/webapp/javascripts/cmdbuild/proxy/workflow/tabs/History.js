@@ -22,13 +22,26 @@
 					url: CMDBuild.proxy.index.Json.history.workflow.activity.read,
 					reader: {
 						type: 'json',
-						root: 'response.elements'
+						root: CMDBuild.core.constants.Proxy.RESPONSE + '.' + CMDBuild.core.constants.Proxy.ELEMENTS
 					}
 				},
 				sorters: [ // Setup sorters, also if server returns ordered collection
 					{ property: CMDBuild.core.constants.Proxy.BEGIN_DATE, direction: 'DESC' }
 				]
 			});
+		},
+
+		/**
+		 * @param {Object} parameters
+		 *
+		 * @returns {Void}
+		 */
+		readAttributes: function (parameters) {
+			parameters = Ext.isEmpty(parameters) ? {} : parameters;
+
+			Ext.apply(parameters, { url: CMDBuild.proxy.index.Json.attribute.read });
+
+			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.ATTRIBUTE, parameters);
 		},
 
 		/**
@@ -55,6 +68,19 @@
 			Ext.apply(parameters, { url: CMDBuild.proxy.index.Json.history.workflow.activity.readHistoricRelation });
 
 			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.HISTORY, parameters);
+		},
+
+		/**
+		 * @param {Object} parameters
+		 *
+		 * @returns {Void}
+		 */
+		readLookups: function (parameters) {
+			parameters = Ext.isEmpty(parameters) ? {} : parameters;
+
+			Ext.apply(parameters, { url: CMDBuild.proxy.index.Json.lookup.read });
+
+			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.LOOKUP, parameters);
 		},
 
 		/**
