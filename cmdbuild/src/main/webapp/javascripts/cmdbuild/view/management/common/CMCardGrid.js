@@ -194,7 +194,7 @@
 			cb = options.cb || function(args) { // Not a good implementation but there isn't another way
 				if (!args[2]) {
 					CMDBuild.core.Message.error(null, {
-						text: CMDBuild.Translation.errors.unknown_error
+						text: CMDBuild.Translation.errors.anErrorHasOccurred
 					});
 				}
 			};

@@ -61,7 +61,7 @@ CMDBuild.Management.TemplateResolver.prototype = {
 			} else {
 				if (splitLocalName.detail) {
 					CMDBuild.log.warn("Detail can only be specified for lookup and reference types");
-					CMDBuild.core.Message.warning(CMDBuild.Translation.errors.warning_message,
+					CMDBuild.core.Message.warning(CMDBuild.Translation.warning,
 							CMDBuild.Translation.errors.template_error + ' ' + splitLocalName.name + ' ' + splitLocalName.detail);
 				}
 

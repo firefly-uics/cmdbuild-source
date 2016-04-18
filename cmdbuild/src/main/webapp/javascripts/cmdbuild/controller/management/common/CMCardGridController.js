@@ -140,7 +140,7 @@
 								// Not a good implementation but don't exists another way
 								if (!args[2]) {
 									CMDBuild.core.Message.error(null, {
-										text: CMDBuild.Translation.errors.unknown_error
+										text: CMDBuild.Translation.errors.anErrorHasOccurred
 									});
 								}
 							}
@@ -286,7 +286,7 @@
 		},
 
 		_onGetPositionFailureWithoutForcingTheFilter: function() {
-			CMDBuild.core.Message.info(undefined, CMDBuild.Translation.info.card_not_found);
+			CMDBuild.core.Message.info(undefined, CMDBuild.Translation.cardNotMatchFilter);
 		},
 		// protected
 		unApplyFilter: unApplyFilter,
@@ -676,7 +676,7 @@
 
 						if (!parameters[2]) {
 							CMDBuild.core.Message.error(null, {
-								text: CMDBuild.Translation.errors.unknown_error
+								text: CMDBuild.Translation.errors.anErrorHasOccurred
 							});
 						}
 					}

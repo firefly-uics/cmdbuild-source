@@ -37,7 +37,7 @@
 				items: [
 					Ext.create('Ext.form.field.ComboBox', {
 						name: CMDBuild.core.constants.Proxy.CLASS_NAME,
-						fieldLabel: CMDBuild.Translation.management.modutilities.csv.selectaclass,
+						fieldLabel: CMDBuild.Translation.selectAClass,
 						labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
 						maxWidth: CMDBuild.core.constants.FieldWidths.STANDARD_MEDIUM,
 						displayField: CMDBuild.core.constants.Proxy.TEXT,

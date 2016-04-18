@@ -65,7 +65,7 @@
 				items: [
 					Ext.create('Ext.form.field.Text', {
 						name: CMDBuild.core.constants.Proxy.OLD_PASSWORD,
-						fieldLabel: CMDBuild.Translation.management.modutilities.changepassword.oldpw,
+						fieldLabel: CMDBuild.Translation.oldPassword,
 						labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
 						maxWidth: CMDBuild.core.constants.FieldWidths.STANDARD_MEDIUM,
 						inputType: 'password',
@@ -73,7 +73,7 @@
 					}),
 					Ext.create('Ext.form.field.Text', {
 						name: CMDBuild.core.constants.Proxy.NEW_PASSWORD,
-						fieldLabel: CMDBuild.Translation.management.modutilities.changepassword.newpw,
+						fieldLabel: CMDBuild.Translation.newPassword,
 						labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
 						maxWidth: CMDBuild.core.constants.FieldWidths.STANDARD_MEDIUM,
 						inputType: 'password',
@@ -83,7 +83,7 @@
 					}),
 					Ext.create('Ext.form.field.Text', {
 						name: 'confirmNewPassword',
-						fieldLabel: CMDBuild.Translation.management.modutilities.changepassword.repnew,
+						fieldLabel: CMDBuild.Translation.retypeNewPassword,
 						labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
 						maxWidth: CMDBuild.core.constants.FieldWidths.STANDARD_MEDIUM,
 						inputType: 'password',

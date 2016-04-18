@@ -200,7 +200,7 @@
 				_CMWFState.setProcessInstance(new CMDBuild.model.CMProcessInstance());
 				_CMUIState.onlyGridIfFullScreen();
 			} else {
-				CMDBuild.core.Message.info(undefined, CMDBuild.Translation.info.card_not_found);
+				CMDBuild.core.Message.info(undefined, CMDBuild.Translation.cardNotMatchFilter);
 			}
 		},
 
@@ -269,7 +269,7 @@
 
 						if (!parameters[2]) {
 							CMDBuild.core.Message.error(null, {
-								text: CMDBuild.Translation.errors.unknown_error
+								text: CMDBuild.Translation.errors.anErrorHasOccurred
 							});
 						}
 					}

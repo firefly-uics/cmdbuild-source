@@ -8,7 +8,7 @@
 		 */
 		delegate: undefined,
 
-		title: CMDBuild.Translation.management.modutilities.title
+		title: CMDBuild.Translation.utility
 	});
 
 })();

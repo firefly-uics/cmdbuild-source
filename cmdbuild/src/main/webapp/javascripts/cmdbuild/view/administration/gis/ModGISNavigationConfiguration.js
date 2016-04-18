@@ -1,6 +1,6 @@
 (function() {
 
-	var DEFAULT_MENU_TEXT = CMDBuild.Translation.management.modutilities.csv.selectaclass;
+	var DEFAULT_MENU_TEXT = CMDBuild.Translation.selectAClass;
 
 	Ext.define("CMDBuild.view.administration.gis.CMModGISNavigationConfiguration", {
 		extend: "Ext.form.Panel",

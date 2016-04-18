@@ -221,7 +221,7 @@
 			if (!this.grid.getSelectionModel().cmReverse && !this.grid.getSelectionModel().hasSelection()) {
 				return CMDBuild.core.Message.error(
 						CMDBuild.Translation.common.failure,
-						'<p class="' + CMDBuild.core.constants.Global.getErrorMsgCss() + '">' + CMDBuild.Translation.errors.no_selections + '</p>',
+						'<p class="' + CMDBuild.core.constants.Global.getErrorMsgCss() + '">' + CMDBuild.Translation.errors.noSelectedCardToUpdate + '</p>',
 						false
 					);
 			} else {
@@ -252,9 +252,9 @@
 								this.cmfg('onUtilityBulkUpdateAbortButtonClick')
 							} else {
 								this.utilityBulkUpdateConfirmationModalShow(
-									'<p>' + CMDBuild.Translation.warnings.only_filtered+ '.</p>'
+									'<p>' + CMDBuild.Translation.warnings.changeAppliedOnlyToFilteredCards + '.</p>'
 									+ Ext.String.format(
-										'<p>' + CMDBuild.Translation.management.modutilities.bulkupdate.countMessage + '.</p>',
+										'<p>' + CMDBuild.Translation.cardsWillBeModified + '.</p>',
 										decordedResponse[CMDBuild.core.constants.Proxy.COUNT]
 									)
 								);
@@ -273,7 +273,7 @@
 							} else {
 								this.utilityBulkUpdateConfirmationModalShow(
 									Ext.String.format(
-										'<p>' + CMDBuild.Translation.management.modutilities.bulkupdate.countMessage + '.</p>',
+										'<p>' + CMDBuild.Translation.cardsWillBeModified + '.</p>',
 										decordedResponse[CMDBuild.core.constants.Proxy.COUNT]
 									)
 								);
@@ -338,7 +338,7 @@
 		 */
 		utilityBulkUpdateConfirmationModalShow: function (message) {
 			Ext.Msg.show({
-				title: CMDBuild.Translation.warnings.warning_message,
+				title: CMDBuild.Translation.warning,
 				msg: message,
 				buttons: Ext.Msg.OKCANCEL,
 				icon: Ext.MessageBox.WARNING,
