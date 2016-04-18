@@ -127,44 +127,10 @@
 		 * @param {CMDBuild.model.report.Grid} record
 		 */
 		onReportJasperGenerateSqlButtonClick: function (record) {
-			var sqlWindow = Ext.create('CMDBuild.core.window.AbstractModal', {
-				autoScroll: true,
-				border: false,
-				frame: true,
-				title: CMDBuild.Translation.sql,
-
-				items: [
-					Ext.create('Ext.form.field.TextArea', {
-						border: false,
-						frame: false,
-						readOnly: true,
-
-						value: record.get(CMDBuild.core.constants.Proxy.QUERY)
-					})
-				],
-
-				dockedItems: [
-					Ext.create('Ext.toolbar.Toolbar', {
-						dock: 'bottom',
-						itemId: CMDBuild.core.constants.Proxy.TOOLBAR_BOTTOM,
-						ui: 'footer',
-
-						layout: {
-							type: 'hbox',
-							align: 'middle',
-							pack: 'center'
-						},
-
-						items: [
-							Ext.create('CMDBuild.core.buttons.text.Close', {
-								handler: function (button, e) {
-									sqlWindow.destroy();
-								}
-							})
-						]
-					})
-				]
-			}).show();
+			Ext.create('CMDBuild.controller.administration.report.SqlWindow', {
+				parentDelegate: this,
+				record: record
+			});
 		},
 
 		/**
