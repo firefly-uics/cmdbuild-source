@@ -23,7 +23,7 @@
 				width: CMDBuild.core.constants.FieldWidths.ADMINISTRATION_BIG,
 				name: CMDBuild.core.constants.Proxy.DESCRIPTION,
 				allowBlank : false,
-				vtype : "cmdbcomment"
+				vtype: 'comment'
 			});
 
 			this.activeCheckBox = Ext.create('Ext.ux.form.XCheckbox', {

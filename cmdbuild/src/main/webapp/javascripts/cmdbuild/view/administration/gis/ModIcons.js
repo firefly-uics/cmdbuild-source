@@ -220,14 +220,11 @@ Ext.define("CMDBuild.Administration.ModIcons", {
 				form: form,
 				loadMask: false,
 				scope: this,
-				success: function(form, action) {
+				success: function() {
 					var description = form.getValues().description;
 					this.iconsGrid.store.load({
 					    scope: this,
 					    callback: function(records, operation, success) {
-					        // the operation object
-					        // contains all of the details of the load operation
-					        console.log(records);
 					        var r = this.iconsGrid.store.findRecord("description", description);
 					    }
 					});
