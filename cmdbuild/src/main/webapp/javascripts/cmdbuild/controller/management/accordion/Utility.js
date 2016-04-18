@@ -51,8 +51,8 @@
 //					cmName: 'changepassword',
 					cmName: 'utility',
 					iconCls: 'cmdb-tree-utility-icon',
-					text: CMDBuild.Translation.management.modutilities.changepassword.title,
-					description: CMDBuild.Translation.management.modutilities.changepassword.title,
+					text: CMDBuild.Translation.changePassword,
+					description: CMDBuild.Translation.changePassword,
 					id: this.cmfg('accordionBuildId', 'changepassword'),
 					sectionHierarchy: ['changepassword'],
 					leaf: true
@@ -63,8 +63,8 @@
 //					cmName: 'bulkcardupdate',
 					cmName: 'utility',
 					iconCls: 'cmdb-tree-utility-icon',
-					text: CMDBuild.Translation.management.modutilities.bulkupdate.title,
-					description: CMDBuild.Translation.management.modutilities.bulkupdate.title,
+					text: CMDBuild.Translation.multipleUpdate,
+					description: CMDBuild.Translation.multipleUpdate,
 					id: this.cmfg('accordionBuildId', 'bulkcardupdate'),
 					sectionHierarchy: ['bulkcardupdate'],
 					leaf: true
@@ -75,8 +75,8 @@
 //					cmName: 'importcsv',
 					cmName: 'utility',
 					iconCls: 'cmdb-tree-utility-icon',
-					text: CMDBuild.Translation.management.modutilities.csv.title,
-					description: CMDBuild.Translation.management.modutilities.csv.title,
+					text: CMDBuild.Translation.importCsvFile,
+					description: CMDBuild.Translation.importCsvFile,
 					id: this.cmfg('accordionBuildId', 'importcsv'),
 					sectionHierarchy: ['importcsv'],
 					leaf: true
@@ -87,8 +87,8 @@
 //					cmName: 'exportcsv',
 					cmName: 'utility',
 					iconCls: 'cmdb-tree-utility-icon',
-					text: CMDBuild.Translation.management.modutilities.csv.title_export,
-					description: CMDBuild.Translation.management.modutilities.csv.title_export,
+					text: CMDBuild.Translation.exportCsvFile,
+					description: CMDBuild.Translation.exportCsvFile,
 					id: this.cmfg('accordionBuildId', 'exportcsv'),
 					sectionHierarchy: ['exportcsv'],
 					leaf: true

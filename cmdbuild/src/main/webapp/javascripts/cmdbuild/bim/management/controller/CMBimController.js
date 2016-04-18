@@ -89,7 +89,7 @@
 							startBIMPlayer(me, response.ROID, response.DESCRIPTION, response.BASE_POID);
 						} else {
 							CMDBuild.core.Message.warning(
-									CMDBuild.Translation.warnings.warning_message, //
+									CMDBuild.Translation.warning, //
 									CMDBuild.Translation.no_bim_project_for_card
 							);
 						}

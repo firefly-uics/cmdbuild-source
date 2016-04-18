@@ -63,7 +63,7 @@
 				items: [
 					Ext.create('Ext.form.field.ComboBox', {
 						name: 'idClass',
-						fieldLabel: CMDBuild.Translation.management.modutilities.csv.selectaclass,
+						fieldLabel: CMDBuild.Translation.selectAClass,
 						labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
 						maxWidth: CMDBuild.core.constants.FieldWidths.STANDARD_MEDIUM,
 						displayField: CMDBuild.core.constants.Proxy.TEXT,
@@ -83,7 +83,7 @@
 					}),
 					Ext.create('Ext.form.field.File', {
 						name: CMDBuild.core.constants.Proxy.FILE,
-						fieldLabel: CMDBuild.Translation.management.modutilities.csv.csvfile,
+						fieldLabel: CMDBuild.Translation.csvfile,
 						labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
 						maxWidth: CMDBuild.core.constants.FieldWidths.ADMINISTRATION_BIG,
 						allowBlank: false

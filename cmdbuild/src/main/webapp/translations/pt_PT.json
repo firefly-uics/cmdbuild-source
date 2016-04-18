@@ -456,6 +456,7 @@
 		"weeks2": "2 semanas"
 	},
 	"errors": {
+		"anErrorHasOccurred": "Ocorreu um erro",
 		"busy_wf_widgets": "Os controles visuais estão ocupados, confira o estado do servidor antes de tentar novamente.",
 		"copyAttachmentFailure": "Erro ao copiar anexo com o nome \"{0}\"",
 		"createReportFilure": "Erro ao criar relatório",
@@ -476,7 +477,7 @@
 		"invalidKeyAttributesInLocalStore": "<em>Invalid key attribute(s) in local store</em>",
 		"invalidLookupValue": "<em>Invalid Lookup value</em>",
 		"no_driver": "Nenhum driver JDBC foi localizado.<br />Poderá encontrá-lo na distribuição do CMDBuild e copiá-lo para as bibliotecas do Tomcat.",
-		"no_selections": "Nenhum cartão selecionado para atualização",
+		"noSelectedCardToUpdate": "Nenhum cartão selecionado para atualização",
 		"printReportFilure": "Erro ao imprimir relatório",
 		"reasons": {
 			"ATTRIBUTE_NOTFOUND": "Atributo {1} de {0} não localizado",
@@ -630,7 +631,6 @@
 		"show_detail": "Mostrar detalhes",
 		"targetClassOrCqlFilterRequired": "Obrigatório selector CQL para classe ou cartão",
 		"template_error": "Erro de Modelo",
-		"unknown_error": "Ocorreu um erro",
 		"unmanagedReportType": "Tipo de relatório desconhecido",
 		"valueDoesNotMatchFilter": "O valor não corresponde ao filtro",
 		"widgetLinkCardsNoClassNameError": "<em>LinkCardsController constructor: className not valid</em>",
@@ -644,9 +644,6 @@
 	},
 	"filterWindow": {
 		"add": "Adicionar filtro"
-	},
-	"info": {
-		"card_not_found": "O cartão não corresponde o filtro atual"
 	},
 	"management": {
 		"description": "Módulo de Gestão de Dados",
@@ -799,42 +796,6 @@
 			"showgraph": "Visualizar gráfico",
 			"shownotes": "Visualizar notas"
 		},
-		"modutilities": {
-			"bulkupdate": {
-				"title": "Atualizações Múltiplas",
-				"countMessage": "{0} cartões serão modificados"
-			},
-			"changepassword": {
-				"newpw": "Password Nova",
-				"oldpw": "Password Antiga",
-				"repnew": "Redigite Password Nova",
-				"successmsgtext": "Password Alterada",
-				"title": "Alterar Password",
-				"validationtext": "Passwords não correspondem"
-			},
-			"csv": {
-				"csvfile": "Ficheiro CSV",
-				"error": "Erro",
-				"exportfile": "Exportar",
-				"importfailure": "Falha na importação",
-				"importsuccess": "Importação realizada com sucesso",
-				"info": "Info",
-				"noupdate": "Nenhum cartão para atualizar",
-				"selectaclass": "Selecione uma classe",
-				"separator": "Separador",
-				"shownonvalid": "Mostrar apenas registos inválidos",
-				"title": "Importar ficheiro CSV",
-				"title_export": "Exportar ficheiro CSV",
-				"warning": "Aviso"
-			},
-			"title": "Utilidade"
-		},
-		"modutility": {
-			"title": "Utilidade"
-		},
-		"modview": {
-			"title": "Visualizações"
-		},
 		"modworkflow": {
 			"abort_card": "Abortar processo",
 			"abort_card_confirm": "Tem a certeza que deseja abortar este processo?",
@@ -894,17 +855,16 @@
 		}
 	},
 	"warnings": {
+		"changeAppliedOnlyToFilteredCards": "As mudanças serão aplicadas apenas para os cartões que correspondem ao filtro atual",
 		"emailTemplateRelatedAttributeEdited": "Atributo relacionado com modelos de email alterado, alguns emails poderão ser recriados.",
 		"itemNotAvailable": "<em>Item not available</em>",
 		"itIsNotAllowedFilterWithCalculatedParams": "<em>It's not allowed to use a filter with calculated parameters</em>",
 		"link_cards_changed_values": "A seleção de \"{0}\" foi atualizada",
-		"only_filtered": "As mudanças serão aplicadas apenas para os cartões que correspondem ao filtro atual",
 		"popup_block": "Foi detetado um software de bloqueio de pop-ups, por favor desative o mesmo para executar a operação",
 		"reportsDuplicateImageFilename": "<em>Warning: found report images with same filename - cannot proceed.</em>",
 		"saveMenuBeforeAccess": "O menu foi guardado antes de aceder às traduções deste elemento.",
 		"thereAreNoEnabledLanguages": "<em>There are no enabled languages</em>",
-		"toSetAFilterYouMustBeforeSelectAClass": "<em>To set a filter you must before select a class</em>",
-		"warning_message": "Aviso"
+		"toSetAFilterYouMustBeforeSelectAClass": "<em>To set a filter you must before select a class</em>"
 	},
 	"account": "Conta",
 	"accounts": "Contas",
@@ -976,8 +936,10 @@
 	"card": "<em>Card</em>",
 	"cardCqlSelector": "<em>Card CQL selector</em>",
 	"cardinality": "<em>Cardinality</em>",
+	"cardNotMatchFilter": "O cartão não corresponde o filtro atual",
 	"cardPanelHeight": "Altura do painel do cartão em porcentagem",
 	"cards": "<em>Cards</em>",
+	"cardsWillBeModified": "{0} cartões serão modificados",
 	"category": "<em>Category</em>",
 	"cc": "Cc",
 	"changePassword": "<em>Alterar password</em>",
@@ -1118,6 +1080,7 @@
 	"existing": "<em>Existing</em>",
 	"expand": "<em>Expand</em>",
 	"expandAll": "<em>Expand all</em>",
+	"exportCsvFile": "Exportar ficheiro CSV",
 	"exportLabel": "Exportar",
 	"expose": "Expor",
 	"externalServices": "<em>External services</em>",
@@ -1159,15 +1122,19 @@
 	"imapPort": "Porta IMAP",
 	"imapServer": "Servidor IMAP",
 	"import": "<em>Import</em>",
+	"importCsvFile": "Importar ficheiro CSV",
 	"importExport": "<em>Import/Export</em>",
+	"importFailed": "Falha na importação",
 	"importFromCSV": "Importar de CSV",
 	"importJasperReport": "<em>Import Jasper report</em>",
+	"importWasSuccessful": "Importação realizada com sucesso",
 	"includeInherited": "<em>Include inherited</em>",
 	"includeRelations": "<em>Include relations</em>",
 	"includeSystemActivities": "<em>Include system activities</em>",
 	"includeUsersFilters": "<em>Include users filters</em>",
 	"incoming": "Entrada",
 	"incomingFolder": "Pasta de entrada",
+	"info": "Info",
 	"informationLayer": "<em>Information layer</em>",
 	"inheritsFrom": "<em>Inherits from</em>",
 	"initialLatitude": "Latitude inicial",
@@ -1236,15 +1203,18 @@
 	"modifyWidget": "<em>Modify widget</em>",
 	"move": "<em>Move</em>",
 	"multiGroup": "Multi-grupo</em>",
+	"multipleUpdate": "Atualizações Múltiplas",
 	"name": "Nome",
 	"navigation": "<em>Navigation</em>",
 	"navigationChronology": "<em>Navigation chronology</em>",
 	"navigationTree": "<em>Navigation tree</em>",
 	"navigationTrees": "<em>Navigation trees</em>",
 	"newFolder": "<em>New folder</em>",
+	"newPassword": "Password Nova",
 	"next": "<em>Next</em>",
 	"no_bim_project_for_card": "Não existe projeto BIM para este cartão",
 	"noAvailableData": "<em>No available data</em>",
+	"noCardsToUpdate": "Nenhum cartão para atualizar",
 	"nodeDistance": "<em>Node distance</em>",
 	"none": "<em>None</em>",
 	"noOne": "<em>No one</em>",
@@ -1254,6 +1224,7 @@
 	"numberOfPings": "<em>Number of pings</em>",
 	"odt": "ODT",
 	"ok": "OK",
+	"oldPassword": "Password Antiga",
 	"onDay": "No",
 	"open_3d_viewer": "Abrir visualizador 3D",
 	"openRelationGraph": "<em>Open relation graph</em>",
@@ -1264,6 +1235,7 @@
 	"parent": "<em>Parent</em>",
 	"parentDescription": "<em>Parent description</em>",
 	"password": "Password",
+	"passwordChanged": "Password Alterada",
 	"passwordsDoNotMatch": "<em>Passwords do not match</em>",
 	"pdf": "PDF",
 	"permissions": "<em>Permissions</em>",
@@ -1326,6 +1298,7 @@
 	"reset": "Reiniciar",
 	"resetToDefault": "<em>Reset to defaults</em>",
 	"restore": "<em>Restore</em>",
+	"retypeNewPassword": "Redigite Password Nova",
 	"root": "Raíz",
 	"rotate": "Rodar",
 	"rowAndColumnPrivileges": "<em>Rows and columns privileges</em>",
@@ -1361,6 +1334,7 @@
 	"setup": "Opções gerais",
 	"showDetails": "<em>Show details</em>",
 	"showHideThisFeatureOnly": "Mostrar/esconder apenas esta funcionalidade",
+	"showInvalidRecordsOnly": "Mostrar apenas registos inválidos",
 	"showLanguageChoice": "Visualizar escolha de idioma",
 	"showLanguageSelectionLoginBox": "<em>Show language selection in login box</em>",
 	"showLockerUserName": "Mostrar nome do utilizador que originou o bloqueio",
@@ -1415,6 +1389,7 @@
 	"usersAndGroups": "Utilizadores e Grupos",
 	"userStoppable": "<em>User stoppable</em>",
 	"userType": "<em>User type</em>",
+	"utility": "Utilidade",
 	"utilityChangePassword": "<em>Utility - Change password</em>",
 	"utilityExportCsv": "<em>Utility - Export CSV</em>",
 	"utilityImportCsv": "<em>Utility - Import CSV</em>",

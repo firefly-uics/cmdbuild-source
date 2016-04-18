@@ -68,7 +68,7 @@
 						this.cmfg('onUtilityChangePasswordAbortButtonClick');
 					},
 					success: function (response, options, decodedResponse) {
-						CMDBuild.core.Message.info(null, CMDBuild.Translation.management.modutilities.changepassword.successmsgtext);
+						CMDBuild.core.Message.info(null, CMDBuild.Translation.passwordChanged);
 					}
 				});
 		}

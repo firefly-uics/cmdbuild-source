@@ -102,17 +102,10 @@
 			CMDBuild.proxy.utility.ImportCsv.update({
 				scope: this,
 				failure: function (response, options, decodedResponse) {
-					CMDBuild.core.Message.error(
-						CMDBuild.Translation.management.modutilities.csv.error,
-						CMDBuild.Translation.management.modutilities.csv.importfailure,
-						true
-					);
+					CMDBuild.core.Message.error(CMDBuild.Translation.error, CMDBuild.Translation.importFailed, true);
 				},
 				success: function (response, options, decodedResponse) {
-					CMDBuild.core.Message.info(
-						CMDBuild.Translation.management.modutilities.csv.info,
-						CMDBuild.Translation.management.modutilities.csv.importsuccess
-					);
+					CMDBuild.core.Message.info(CMDBuild.Translation.info, CMDBuild.Translation.importWasSuccessful);
 
 					this.gridRefresh();
 				}
@@ -135,10 +128,7 @@
 					success: this.gridRefresh
 				});
 			} else {
-				CMDBuild.core.Message.warning(
-					CMDBuild.Translation.management.modutilities.csv.warning,
-					CMDBuild.Translation.management.modutilities.csv.noupdate
-				);
+				CMDBuild.core.Message.warning(CMDBuild.Translation.warning, CMDBuild.Translation.noCardsToUpdate);
 			}
 		},
 

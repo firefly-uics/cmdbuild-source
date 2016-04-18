@@ -140,7 +140,7 @@
 
 			this.validFlag = new Ext.form.Checkbox({
 				hideLabel: true,
-				boxLabel: CMDBuild.Translation.management.modutilities.csv.shownonvalid,
+				boxLabel: CMDBuild.Translation.showInvalidRecordsOnly,
 				checked: false,
 				scope: this,
 				handler: function(obj, checked) {
@@ -336,7 +336,7 @@
 			cb = options.cb || function(args) { // Not a good implementation but there isn't another way
 				if (!args[2]) {
 					CMDBuild.core.Message.error(null, {
-						text: CMDBuild.Translation.errors.unknown_error
+						text: CMDBuild.Translation.errors.anErrorHasOccurred
 					});
 				}
 			};
