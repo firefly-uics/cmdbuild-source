@@ -1,4 +1,4 @@
-(function() {
+(function () {
 
 	Ext.define('CMDBuild.view.administration.report.jasper.GridPanel', {
 		extend: 'Ext.grid.Panel',
@@ -19,7 +19,12 @@
 		frame: false,
 		split: true,
 
-		initComponent: function() {
+		/**
+		 * @returns {Void}
+		 *
+		 * @override
+		 */
+		initComponent: function () {
 			var store = CMDBuild.proxy.report.Jasper.getStore();
 
 			Ext.apply(this, {
@@ -59,7 +64,7 @@
 								tooltip: CMDBuild.Translation.sql,
 								scope: this,
 
-								handler: function(grid, rowIndex, colIndex, node, e, record, rowNode) {
+								handler: function (grid, rowIndex, colIndex, node, e, record, rowNode) {
 									this.delegate.cmfg('onReportJasperGenerateSqlButtonClick', record);
 								}
 							}),
@@ -68,7 +73,7 @@
 								tooltip: CMDBuild.Translation.zip,
 								scope: this,
 
-								handler: function(grid, rowIndex, colIndex, node, e, record, rowNode) {
+								handler: function (grid, rowIndex, colIndex, node, e, record, rowNode) {
 									this.delegate.cmfg('onReportJasperGenerateZipButtonClick', record);
 								}
 							})
@@ -82,11 +87,11 @@
 		},
 
 		listeners: {
-			itemdblclick: function(grid, record, item, index, e, eOpts) {
+			itemdblclick: function (grid, record, item, index, e, eOpts) {
 				this.delegate.cmfg('onReportJasperItemDoubleClick');
 			},
 
-			select: function(row, record, index) {
+			select: function (row, record, index) {
 				this.delegate.cmfg('onReportJasperRowSelected');
 			}
 		}
