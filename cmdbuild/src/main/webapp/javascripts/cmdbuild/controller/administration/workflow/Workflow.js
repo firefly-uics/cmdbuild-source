@@ -32,11 +32,6 @@
 		identifier: undefined,
 
 		/**
-		 * @cfg {Object}
-		 */
-		parentDelegate: undefined,
-
-		/**
 		 * @property {CMDBuild.controller.administration.classes.CMClassAttributeController}
 		 */
 		controllerAttributes: undefined,

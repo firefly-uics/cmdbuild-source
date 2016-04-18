@@ -1,4 +1,4 @@
-(function() {
+(function () {
 
 	Ext.define('CMDBuild.controller.management.accordion.Utility', {
 		extend: 'CMDBuild.controller.common.abstract.Accordion',
@@ -28,7 +28,7 @@
 		 *
 		 * @override
 		 */
-		constructor: function(configurationObject) {
+		constructor: function (configurationObject) {
 			this.callParent(arguments);
 
 			this.view = Ext.create('CMDBuild.view.management.accordion.Utility', { delegate: this });
@@ -41,14 +41,15 @@
 		 *
 		 * @override
 		 */
-		accordionUpdateStore: function(nodeIdToSelect) {
+		accordionUpdateStore: function (nodeIdToSelect) {
 			nodeIdToSelect = Ext.isNumber(nodeIdToSelect) ? nodeIdToSelect : null;
 
 			var nodes = [];
 
-			if (!this.isSectionDisabled(CMDBuild.core.constants.Proxy.CHANGE_PASSWORD))
+//			if (!this.isSectionDisabled(CMDBuild.core.constants.Proxy.CHANGE_PASSWORD))
 				nodes.push({
-					cmName: 'changepassword',
+//					cmName: 'changepassword',
+					cmName: 'utility',
 					iconCls: 'cmdb-tree-utility-icon',
 					text: CMDBuild.Translation.management.modutilities.changepassword.title,
 					description: CMDBuild.Translation.management.modutilities.changepassword.title,
@@ -59,7 +60,8 @@
 
 			if (!this.isSectionDisabled(CMDBuild.core.constants.Proxy.BULK_UPDATE))
 				nodes.push({
-					cmName: 'bulkcardupdate',
+//					cmName: 'bulkcardupdate',
+					cmName: 'utility',
 					iconCls: 'cmdb-tree-utility-icon',
 					text: CMDBuild.Translation.management.modutilities.bulkupdate.title,
 					description: CMDBuild.Translation.management.modutilities.bulkupdate.title,
@@ -70,7 +72,8 @@
 
 			if (!this.isSectionDisabled(CMDBuild.core.constants.Proxy.IMPORT_CSV))
 				nodes.push({
-					cmName: 'importcsv',
+//					cmName: 'importcsv',
+					cmName: 'utility',
 					iconCls: 'cmdb-tree-utility-icon',
 					text: CMDBuild.Translation.management.modutilities.csv.title,
 					description: CMDBuild.Translation.management.modutilities.csv.title,
@@ -81,7 +84,8 @@
 
 			if (!this.isSectionDisabled(CMDBuild.core.constants.Proxy.EXPORT_CSV))
 				nodes.push({
-					cmName: 'exportcsv',
+//					cmName: 'exportcsv',
+					cmName: 'utility',
 					iconCls: 'cmdb-tree-utility-icon',
 					text: CMDBuild.Translation.management.modutilities.csv.title_export,
 					description: CMDBuild.Translation.management.modutilities.csv.title_export,
@@ -106,7 +110,7 @@
 		 *
 		 * @returns {Boolean}
 		 */
-		isSectionDisabled: function(moduleName) {
+		isSectionDisabled: function (moduleName) {
 			switch (moduleName) {
 				case CMDBuild.core.constants.Proxy.CHANGE_PASSWORD:
 					return !CMDBuild.configuration.runtime.get(CMDBuild.core.constants.Proxy.ALLOW_PASSWORD_CHANGE);
@@ -123,7 +127,7 @@
 		 *
 		 * @override
 		 */
-		onAccordionExpand: function() {
+		onAccordionExpand: function () {
 			// Update store
 			if (!this.disableStoreLoad) {
 				if (this.view.getSelectionModel().hasSelection()) {
