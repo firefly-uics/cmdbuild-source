@@ -68,13 +68,6 @@
 	<!-- DASHBOARD -->
 	<script type="text/javascript" src="javascripts/cmdbuild/view/management/dashboard/CMModDashbaord.js"></script>
 
-	<!-- UTILITIES -->
-	<script type="text/javascript" src="javascripts/cmdbuild/view/management/utilities/CMModChangePassword.js"></script>
-	<script type="text/javascript" src="javascripts/cmdbuild/view/management/utilities/CMBulkCardForm.js"></script>
-	<script type="text/javascript" src="javascripts/cmdbuild/view/management/utilities/CMModBulkCardUpdate.js"></script>
-	<script type="text/javascript" src="javascripts/cmdbuild/view/management/utilities/CMModExportCSV.js"></script>
-	<script type="text/javascript" src="javascripts/cmdbuild/view/management/utilities/CMModImportCSV.js"></script>
-
 	<!-- WORKFLOW -->
 	<script type="text/javascript" src="javascripts/cmdbuild/view/management/workflow/CMModWorkflow.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/view/management/workflow/CMActivityPanel.js"></script>
@@ -116,10 +109,6 @@
 
 	<!-- DASHBOARD -->
 	<script type="text/javascript" src="javascripts/cmdbuild/controller/management/dashboard/CMModDashboardController.js"></script>
-
-	<!-- UTILITIES -->
-	<script type="text/javascript" src="javascripts/cmdbuild/controller/management/utilities/CMModBulkCardUpdateController.js"></script>
-	<script type="text/javascript" src="javascripts/cmdbuild/controller/management/utilities/CMModImportCSVController.js"></script>
 
 	<!-- CARD -->
 	<script type="text/javascript" src="javascripts/cmdbuild/controller/management/classes/CMModCardController.js"></script>
