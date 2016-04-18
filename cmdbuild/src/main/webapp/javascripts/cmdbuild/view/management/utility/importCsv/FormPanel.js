@@ -83,7 +83,7 @@
 					}),
 					Ext.create('Ext.form.field.File', {
 						name: CMDBuild.core.constants.Proxy.FILE,
-						fieldLabel: CMDBuild.Translation.csvfile,
+						fieldLabel: CMDBuild.Translation.csvFile,
 						labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
 						maxWidth: CMDBuild.core.constants.FieldWidths.ADMINISTRATION_BIG,
 						allowBlank: false

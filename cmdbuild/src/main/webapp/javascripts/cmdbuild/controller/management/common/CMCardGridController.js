@@ -66,14 +66,8 @@
 					return;
 				}
 
-				if (!me.view.isVisible(deep)) {
-					return;
-				}
-
 				var currentSelection = me.gridSM.getSelection();
-				if (Ext.isArray(currentSelection)
-						&& currentSelection.length>0) {
-
+				if (Ext.isArray(currentSelection) && currentSelection.length>0) {
 					currentSelection = currentSelection[0];
 				}
 
