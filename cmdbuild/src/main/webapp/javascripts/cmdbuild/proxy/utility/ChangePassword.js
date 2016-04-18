@@ -14,7 +14,7 @@
 		 *
 		 * @returns {Void}
 		 */
-		change: function (parameters) {
+		save: function (parameters) {
 			parameters = Ext.isEmpty(parameters) ? {} : parameters;
 
 			Ext.apply(parameters, { url: CMDBuild.proxy.index.Json.utility.changePassword });

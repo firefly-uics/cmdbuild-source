@@ -214,11 +214,11 @@
 					} break;
 
 					case 'reportcsv': {
-						nodeStructure['cmName'] = 'singlereport';
+						nodeStructure['cmName'] = CMDBuild.core.constants.ModuleIdentifiers.getReportSingle();
 						nodeStructure['iconCls'] = 'cmdb-tree-reportcsv-icon';
 						nodeStructure[CMDBuild.core.constants.Proxy.ENTITY_ID] = menuNodeObject[CMDBuild.core.constants.Proxy.REFERENCED_ELEMENT_ID];
 						nodeStructure[CMDBuild.core.constants.Proxy.ID] = this.cmfg('accordionBuildId', [
-							'singlereport',
+							CMDBuild.core.constants.ModuleIdentifiers.getReportSingle(),
 							menuNodeObject[CMDBuild.core.constants.Proxy.REFERENCED_ELEMENT_ID],
 							menuNodeObject[CMDBuild.core.constants.Proxy.INDEX]
 						]);
@@ -226,11 +226,11 @@
 					} break;
 
 					case 'reportpdf': {
-						nodeStructure['cmName'] = 'singlereport';
+						nodeStructure['cmName'] = CMDBuild.core.constants.ModuleIdentifiers.getReportSingle();
 						nodeStructure['iconCls'] = 'cmdb-tree-reportpdf-icon';
 						nodeStructure[CMDBuild.core.constants.Proxy.ENTITY_ID] = menuNodeObject[CMDBuild.core.constants.Proxy.REFERENCED_ELEMENT_ID];
 						nodeStructure[CMDBuild.core.constants.Proxy.ID] = this.cmfg('accordionBuildId', [
-							'singlereport',
+							CMDBuild.core.constants.ModuleIdentifiers.getReportSingle(),
 							menuNodeObject[CMDBuild.core.constants.Proxy.REFERENCED_ELEMENT_ID],
 							menuNodeObject[CMDBuild.core.constants.Proxy.INDEX]
 						]);

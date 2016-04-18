@@ -180,13 +180,14 @@
 						CMDBuild.configuration.userInterface.isDisabledModule(CMDBuild.core.constants.Proxy.CUSTOM_PAGES) ? null :
 							Ext.create('CMDBuild.controller.management.accordion.CustomPage', { identifier: CMDBuild.core.constants.ModuleIdentifiers.getCustomPage() })
 						,
-						Ext.create('CMDBuild.controller.management.accordion.Utility', { identifier: 'utility' })
+						Ext.create('CMDBuild.controller.management.accordion.Utility', { identifier: CMDBuild.core.constants.ModuleIdentifiers.getUtility() })
 					],
 					module: [
 						Ext.create('CMDBuild.controller.management.customPage.SinglePage', { identifier: CMDBuild.core.constants.ModuleIdentifiers.getCustomPage() }),
 						Ext.create('CMDBuild.controller.management.dataView.DataView', { identifier: CMDBuild.core.constants.ModuleIdentifiers.getDataView() }),
 						Ext.create('CMDBuild.controller.management.report.Report', { identifier: CMDBuild.core.constants.ModuleIdentifiers.getReport() }),
-						Ext.create('CMDBuild.controller.management.report.Single', { identifier: 'singlereport' }),
+						Ext.create('CMDBuild.controller.management.report.Single', { identifier: CMDBuild.core.constants.ModuleIdentifiers.getReportSingle() }),
+						Ext.create('CMDBuild.controller.management.utility.Utility', { identifier: CMDBuild.core.constants.ModuleIdentifiers.getUtility() }),
 						new CMDBuild.view.management.classes.CMModCard({
 							cmControllerType: CMDBuild.controller.management.classes.CMModCardController,
 							cmName: 'class'
@@ -199,20 +200,20 @@
 							cmControllerType: CMDBuild.controller.management.dashboard.CMModDashboardController,
 							cmName: 'dashboard'
 						}),
-						new CMDBuild.view.management.utilities.CMModChangePassword({
-							cmName: 'changepassword'
-						}),
-						new CMDBuild.view.management.utilites.CMModBulkCardUpdate({
-							cmControllerType: CMDBuild.controller.management.utilities.CMModBulkUpdateController,
-							cmName: 'bulkcardupdate'
-						}),
-						new CMDBuild.view.management.utilities.CMModImportCSV({
-							cmControllerType: CMDBuild.controller.management.utilities.CMModImportCSVController,
-							cmName: 'importcsv'
-						}),
-						new CMDBuild.view.management.utilities.CMModExportCSV({
-							cmName: 'exportcsv'
-						})
+//						new CMDBuild.view.management.utilities.CMModChangePassword({
+//							cmName: 'changepassword'
+//						}),
+//						new CMDBuild.view.management.utilites.CMModBulkCardUpdate({
+//							cmControllerType: CMDBuild.controller.management.utilities.CMModBulkUpdateController,
+//							cmName: 'bulkcardupdate'
+//						}),
+//						new CMDBuild.view.management.utilities.CMModImportCSV({
+//							cmControllerType: CMDBuild.controller.management.utilities.CMModImportCSVController,
+//							cmName: 'importcsv'
+//						}),
+//						new CMDBuild.view.management.utilities.CMModExportCSV({
+//							cmName: 'exportcsv'
+//						})
 					]
 				});
 

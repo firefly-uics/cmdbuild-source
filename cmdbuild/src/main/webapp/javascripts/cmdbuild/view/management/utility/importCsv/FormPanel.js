@@ -1,34 +1,40 @@
 (function () {
 
-	Ext.define('CMDBuild.view.administration.localization.importExport.ImportForm', {
+	Ext.define('CMDBuild.view.management.utility.importCsv.FormPanel', {
 		extend: 'Ext.form.Panel',
 
 		requires: [
 			'CMDBuild.core.constants.FieldWidths',
 			'CMDBuild.core.constants.Proxy',
-			'CMDBuild.proxy.localization.Import'
+			'CMDBuild.proxy.utility.ImportCsv'
 		],
 
 		mixins: ['CMDBuild.view.common.PanelFunctions'],
 
 		/**
-		 * @cfg {CMDBuild.controller.administration.localization.ImportExport}
+		 * @cfg {CMDBuild.controller.management.utility.importCsv.ImportCsv}
 		 */
 		delegate: undefined,
 
-		bodyCls: 'cmdb-gray-panel',
+		bodyCls: 'cmdb-blue-panel',
 		border: false,
+		cls: 'cmdb-border-bottom',
 		encoding: 'multipart/form-data',
 		fileUpload: true,
 		frame: false,
 		monitorValid: true,
-		title: CMDBuild.Translation.import,
+		overflowY: 'auto',
 
 		layout: {
 			type: 'vbox',
 			align: 'stretch'
 		},
 
+		/**
+		 * @returns {Void}
+		 *
+		 * @override
+		 */
 		initComponent: function () {
 			Ext.apply(this, {
 				dockedItems: [
@@ -44,11 +50,11 @@
 						},
 
 						items: [
-							Ext.create('CMDBuild.core.buttons.text.Import', {
+							Ext.create('CMDBuild.core.buttons.text.Upload', {
 								scope: this,
 
 								handler: function (button, e) {
-									this.delegate.cmfg('onLocalizationImportExportImportButtonClick');
+									this.delegate.cmfg('onUtilityImportCsvUploadButtonClick');
 								}
 							})
 						]
@@ -56,41 +62,44 @@
 				],
 				items: [
 					Ext.create('Ext.form.field.ComboBox', {
-						name: CMDBuild.core.constants.Proxy.FORMAT,
-						fieldLabel: CMDBuild.Translation.format,
+						name: 'idClass',
+						fieldLabel: CMDBuild.Translation.management.modutilities.csv.selectaclass,
 						labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
-						maxWidth: CMDBuild.core.constants.FieldWidths.ADMINISTRATION_MEDIUM,
-						displayField: CMDBuild.core.constants.Proxy.DESCRIPTION,
-						valueField: CMDBuild.core.constants.Proxy.NAME,
+						maxWidth: CMDBuild.core.constants.FieldWidths.STANDARD_MEDIUM,
+						displayField: CMDBuild.core.constants.Proxy.TEXT,
+						valueField: CMDBuild.core.constants.Proxy.ID,
 						editable: false,
 						allowBlank: false,
-						disabled: true,
 
-						value: CMDBuild.core.constants.Proxy.CSV, // Default value
+						store: CMDBuild.proxy.utility.ImportCsv.getStoreClasses(),
+						queryMode: 'local',
 
-						store: CMDBuild.proxy.localization.Import.getStoreFileFormat(),
-						queryMode: 'local'
+						listeners: {
+							scope: this,
+							select: function (field, records, eOpts) {
+								this.delegate.cmfg('onUtilityImportCsvClassSelected', records[0]);
+							}
+						}
 					}),
 					Ext.create('Ext.form.field.File', {
 						name: CMDBuild.core.constants.Proxy.FILE,
-						fieldLabel: CMDBuild.Translation.file,
+						fieldLabel: CMDBuild.Translation.management.modutilities.csv.csvfile,
 						labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
-						maxWidth: CMDBuild.core.constants.FieldWidths.STANDARD_BIG,
+						maxWidth: CMDBuild.core.constants.FieldWidths.ADMINISTRATION_BIG,
 						allowBlank: false
 					}),
 					Ext.create('Ext.form.field.ComboBox', {
 						name: CMDBuild.core.constants.Proxy.SEPARATOR,
 						fieldLabel: CMDBuild.Translation.separator,
 						labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
-						maxWidth: 200,
 						valueField: CMDBuild.core.constants.Proxy.VALUE,
 						displayField: CMDBuild.core.constants.Proxy.VALUE,
+						maxWidth: 200,
+						value: ';',
 						editable: false,
 						allowBlank: false,
 
-						value: ';', // Default value
-
-						store: CMDBuild.proxy.localization.Import.getStoreSeparator(),
+						store: CMDBuild.proxy.utility.ImportCsv.getStoreSeparator(),
 						queryMode: 'local'
 					})
 				]
