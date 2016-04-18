@@ -1,4 +1,4 @@
-(function() {
+(function () {
 
 	Ext.define('CMDBuild.controller.administration.workflow.tabs.Domains', {
 		extend: 'CMDBuild.controller.common.abstract.Base',
@@ -54,9 +54,11 @@
 		 * @param {Object} configurationObject
 		 * @param {CMDBuild.controller.administration.workflow.Workflow} configurationObject.parentDelegate
 		 *
+		 * @returns {Void}
+		 *
 		 * @override
 		 */
-		constructor: function(configurationObject) {
+		constructor: function (configurationObject) {
 			this.callParent(arguments);
 
 			this.view = Ext.create('CMDBuild.view.administration.workflow.tabs.domains.DomainsView', { delegate: this });
@@ -64,15 +66,18 @@
 			// Shorthands
 			this.grid = this.view.grid;
 
-			this.grid.getStore().on('load', function(store, records, successful, eOpts) {
+			this.grid.getStore().on('load', function (store, records, successful, eOpts) {
 				this.cmfg('onWorkflowTabDomainsIncludeInheritedCheck');
 			}, this);
 		},
 
-		onWorkflowTabDomainsAddButtonClick: function() {
+		/**
+		 * @returns {Void}
+		 */
+		onWorkflowTabDomainsAddButtonClick: function () {
 			this.cmfg('mainViewportAccordionDeselect', CMDBuild.core.constants.ModuleIdentifiers.getDomain());
 
-			this.cmfg('mainViewportAccordionControllerGet', CMDBuild.core.constants.ModuleIdentifiers.getDomain()).getView().on('storeload', function(accordion, eOpts) {
+			this.cmfg('mainViewportAccordionControllerGet', CMDBuild.core.constants.ModuleIdentifiers.getDomain()).getView().on('storeload', function (accordion, eOpts) {
 				this.cmfg('mainViewportModuleControllerGet', CMDBuild.core.constants.ModuleIdentifiers.getDomain()).cmfg('onDomainAddButtonClick');
 			}, this, { single: true });
 
@@ -80,13 +85,19 @@
 			this.cmfg('mainViewportAccordionControllerExpand', CMDBuild.core.constants.ModuleIdentifiers.getDomain());
 		},
 
-		onWorkflowTabDomainsAddWorkflowButtonClick: function() {
+		/**
+		 * @returns {Void}
+		 */
+		onWorkflowTabDomainsAddWorkflowButtonClick: function () {
 			this.view.disable();
 		},
 
-		onWorkflowTabDomainsIncludeInheritedCheck: function() {
+		/**
+		 * @returns {Void}
+		 */
+		onWorkflowTabDomainsIncludeInheritedCheck: function () {
 			if (this.view.includeInheritedCheckbox.getValue()) {
-				this.grid.getStore().filterBy(function(record) {
+				this.grid.getStore().filterBy(function (record) {
 					return !record.get(CMDBuild.core.constants.Proxy.INHERITED);
 				});
 			} else {
@@ -94,7 +105,10 @@
 			}
 		},
 
-		onWorkflowTabDomainsItemDoubleClick: function() {
+		/**
+		 * @returns {Void}
+		 */
+		onWorkflowTabDomainsItemDoubleClick: function () {
 			if (!this.selectedDomainIsEmpty()) {
 				this.cmfg('mainViewportAccordionDeselect', CMDBuild.core.constants.ModuleIdentifiers.getDomain());
 				this.cmfg('mainViewportAccordionControllerGet', CMDBuild.core.constants.ModuleIdentifiers.getDomain()).disableStoreLoad = true;
@@ -106,14 +120,17 @@
 			}
 		},
 
-		onWorkflowTabDomainsModifyButtonClick: function() {
+		/**
+		 * @returns {Void}
+		 */
+		onWorkflowTabDomainsModifyButtonClick: function () {
 			if (!this.selectedDomainIsEmpty()) {
 				this.cmfg('mainViewportAccordionDeselect', CMDBuild.core.constants.ModuleIdentifiers.getDomain());
 				this.cmfg('mainViewportAccordionControllerGet', CMDBuild.core.constants.ModuleIdentifiers.getDomain()).disableStoreLoad = true;
 				this.cmfg('mainViewportAccordionControllerExpand', CMDBuild.core.constants.ModuleIdentifiers.getDomain());
 
-				this.cmfg('mainViewportAccordionControllerGet', CMDBuild.core.constants.ModuleIdentifiers.getDomain()).getView().on('storeload', function(accordion, eOpts) {
-					Ext.Function.createDelayed(function() {
+				this.cmfg('mainViewportAccordionControllerGet', CMDBuild.core.constants.ModuleIdentifiers.getDomain()).getView().on('storeload', function (accordion, eOpts) {
+					Ext.Function.createDelayed(function () {
 						this.cmfg('mainViewportModuleControllerGet', CMDBuild.core.constants.ModuleIdentifiers.getDomain()).cmfg('onDomainModifyButtonClick');
 					}, 100, this)();
 				}, this, { single: true });
@@ -125,35 +142,44 @@
 			}
 		},
 
-		onWorkflowTabDomainsRemoveButtonClick: function() {
+		/**
+		 * @returns {Void}
+		 */
+		onWorkflowTabDomainsRemoveButtonClick: function () {
 			Ext.Msg.show({
 				title: CMDBuild.Translation.common.confirmpopup.title,
 				msg: CMDBuild.Translation.common.confirmpopup.areyousure,
 				buttons: Ext.Msg.YESNO,
 				scope: this,
 
-				fn: function(buttonId, text, opt) {
+				fn: function (buttonId, text, opt) {
 					if (buttonId == 'yes')
 						this.removeItem();
 				}
 			});
 		},
 
-		onWorkflowTabDomainsRowSelect: function() {
+		/**
+		 * @returns {Void}
+		 */
+		onWorkflowTabDomainsRowSelect: function () {
 			if (this.grid.getSelectionModel().hasSelection())
 				this.selectedDomainSet({ value: this.grid.getSelectionModel().getSelection()[0] });
 
 			this.view.setDisabledTopBar(!this.grid.getSelectionModel().hasSelection());
 		},
 
-		onWorkflowTabDomainsShow: function() {
+		/**
+		 * @returns {Void}
+		 */
+		onWorkflowTabDomainsShow: function () {
 			var params = {};
 			params[CMDBuild.core.constants.Proxy.CLASS_NAME] = this.cmfg('workflowSelectedWorkflowGet', CMDBuild.core.constants.Proxy.NAME);
 
 			this.grid.getStore().load({
 				params: params,
 				scope: this,
-				callback: function(records, operation, success) {
+				callback: function (records, operation, success) {
 					if (!this.grid.getSelectionModel().hasSelection())
 						this.grid.getSelectionModel().select(0, true);
 
@@ -164,8 +190,10 @@
 
 		/**
 		 * Translations of grid records domain's class name to description
+		 *
+		 * @returns {Void}
 		 */
-		onWorkflowTabDomainsStoreLoad: function() {
+		onWorkflowTabDomainsStoreLoad: function () {
 			if (!Ext.isEmpty(this.grid.getStore().getRange()) && Ext.isArray(this.grid.getStore().getRange())) {
 				var params = {};
 				params[CMDBuild.core.constants.Proxy.ACTIVE] = true;
@@ -173,14 +201,14 @@
 				CMDBuild.proxy.Classes.readAll({
 					params: params,
 					scope: this,
-					success: function(response, options, decodedResponse) {
+					success: function (response, options, decodedResponse) {
 						decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.CLASSES] || [];
 
-						Ext.Array.forEach(this.grid.getStore().getRange(), function(gridRecord, i, allGridRecords) {
+						Ext.Array.forEach(this.grid.getStore().getRange(), function (gridRecord, i, allGridRecords) {
 							var foundClassObject = undefined;
 
 							// Translate class1 name to description
-							foundClassObject = Ext.Array.findBy(decodedResponse, function(record, i) {
+							foundClassObject = Ext.Array.findBy(decodedResponse, function (record, i) {
 								return gridRecord.get('class1') == record[CMDBuild.core.constants.Proxy.NAME];
 							}, this);
 
@@ -188,7 +216,7 @@
 								gridRecord.set('class1', foundClassObject[CMDBuild.core.constants.Proxy.TEXT]);
 
 							// Translate class2 name to description
-							foundClassObject = Ext.Array.findBy(decodedResponse, function(record, i) {
+							foundClassObject = Ext.Array.findBy(decodedResponse, function (record, i) {
 								return gridRecord.get('class2') == record[CMDBuild.core.constants.Proxy.NAME];
 							}, this);
 
@@ -203,9 +231,11 @@
 		},
 
 		/**
+		 * @returns {Void}
+		 *
 		 * @private
 		 */
-		removeItem: function() {
+		removeItem: function () {
 			if (!this.selectedDomainIsEmpty()) {
 				var params = {};
 				params[CMDBuild.core.constants.Proxy.DOMAIN_NAME] = this.selectedDomainGet(CMDBuild.core.constants.Proxy.NAME);
@@ -213,7 +243,7 @@
 				CMDBuild.proxy.domain.Domain.remove({
 					params: params,
 					scope: this,
-					success: function(response, options, decodedResponse) {
+					success: function (response, options, decodedResponse) {
 						this.selectedDomainReset();
 
 						this.cmfg('onWorkflowTabDomainsShow');
@@ -230,7 +260,7 @@
 			 *
 			 * @private
 			 */
-			selectedDomainGet: function(attributePath) {
+			selectedDomainGet: function (attributePath) {
 				var parameters = {};
 				parameters[CMDBuild.core.constants.Proxy.TARGET_VARIABLE_NAME] = 'selectedDomain';
 				parameters[CMDBuild.core.constants.Proxy.ATTRIBUTE_PATH] = attributePath;
@@ -245,7 +275,7 @@
 			 *
 			 * @private
 			 */
-			selectedDomainIsEmpty: function(attributePath) {
+			selectedDomainIsEmpty: function (attributePath) {
 				var parameters = {};
 				parameters[CMDBuild.core.constants.Proxy.TARGET_VARIABLE_NAME] = 'selectedDomain';
 				parameters[CMDBuild.core.constants.Proxy.ATTRIBUTE_PATH] = attributePath;
@@ -258,7 +288,7 @@
 			 *
 			 * @private
 			 */
-			selectedDomainReset: function(parameters) {
+			selectedDomainReset: function (parameters) {
 				this.propertyManageReset('selectedDomain');
 			},
 
@@ -267,7 +297,7 @@
 			 *
 			 * @private
 			 */
-			selectedDomainSet: function(parameters) {
+			selectedDomainSet: function (parameters) {
 				if (!Ext.Object.isEmpty(parameters)) {
 					parameters[CMDBuild.core.constants.Proxy.MODEL_NAME] = 'CMDBuild.model.workflow.tabs.domains.Grid';
 					parameters[CMDBuild.core.constants.Proxy.TARGET_VARIABLE_NAME] = 'selectedDomain';
@@ -278,8 +308,10 @@
 
 		/**
 		 * Enable/Disable tab on workflow selection
+		 *
+		 * @returns {Void}
 		 */
-		workflowTabDomainsInit: function() {
+		workflowTabDomainsInit: function () {
 			this.view.setDisabled(
 				this.cmfg('workflowSelectedWorkflowIsEmpty')
 				|| this.cmfg('workflowSelectedWorkflowGet', CMDBuild.core.constants.Proxy.TABLE_TYPE) == CMDBuild.core.constants.Global.getTableTypeSimpleTable()

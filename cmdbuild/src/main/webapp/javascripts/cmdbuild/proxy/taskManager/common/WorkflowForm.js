@@ -3,6 +3,7 @@
 	Ext.define('CMDBuild.proxy.taskManager.common.WorkflowForm', {
 
 		requires: [
+			'CMDBuild.core.constants.Global',
 			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.proxy.index.Json',
 			'CMDBuild.model.taskManager.common.workflowForm.Workflow'

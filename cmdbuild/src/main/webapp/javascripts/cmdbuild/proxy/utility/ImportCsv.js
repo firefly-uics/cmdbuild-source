@@ -4,6 +4,7 @@
 
 		requires: [
 			'CMDBuild.core.configurations.Timeout',
+			'CMDBuild.core.constants.Global',
 			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.interfaces.FormSubmit',
 			'CMDBuild.model.utility.importCsv.Class',

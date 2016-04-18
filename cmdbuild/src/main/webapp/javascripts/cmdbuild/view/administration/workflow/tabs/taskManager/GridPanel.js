@@ -1,4 +1,4 @@
-(function() {
+(function () {
 
 	Ext.define('CMDBuild.view.administration.workflow.tabs.taskManager.GridPanel', {
 		extend: 'Ext.grid.Panel',
@@ -16,7 +16,12 @@
 		border: false,
 		frame: false,
 
-		initComponent: function() {
+		/**
+		 * @returns {Void}
+		 *
+		 * @override
+		 */
+		initComponent: function () {
 			Ext.apply(this, {
 				columns: [
 					{
@@ -43,11 +48,11 @@
 		},
 
 		listeners: {
-			itemdblclick: function(grid, record, item, index, e, eOpts) {
+			itemdblclick: function (grid, record, item, index, e, eOpts) {
 				this.delegate.cmfg('onWorkflowTabTasksItemDoubleClick');
 			},
 
-			select: function(row, record, index) {
+			select: function (row, record, index) {
 				this.delegate.cmfg('onWorkflowTabTasksRowSelect');
 			}
 		}
