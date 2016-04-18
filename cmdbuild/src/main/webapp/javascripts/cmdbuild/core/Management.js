@@ -199,21 +199,7 @@
 						new CMDBuild.view.management.dashboard.CMModDashboard({
 							cmControllerType: CMDBuild.controller.management.dashboard.CMModDashboardController,
 							cmName: 'dashboard'
-						}),
-//						new CMDBuild.view.management.utilities.CMModChangePassword({
-//							cmName: 'changepassword'
-//						}),
-//						new CMDBuild.view.management.utilites.CMModBulkCardUpdate({
-//							cmControllerType: CMDBuild.controller.management.utilities.CMModBulkUpdateController,
-//							cmName: 'bulkcardupdate'
-//						}),
-//						new CMDBuild.view.management.utilities.CMModImportCSV({
-//							cmControllerType: CMDBuild.controller.management.utilities.CMModImportCSVController,
-//							cmName: 'importcsv'
-//						}),
-//						new CMDBuild.view.management.utilities.CMModExportCSV({
-//							cmName: 'exportcsv'
-//						})
+						})
 					]
 				});
 
