@@ -46,9 +46,8 @@
 
 			var nodes = [];
 
-//			if (!this.isSectionDisabled(CMDBuild.core.constants.Proxy.CHANGE_PASSWORD))
+			if (!this.isSectionDisabled(CMDBuild.core.constants.Proxy.CHANGE_PASSWORD))
 				nodes.push({
-//					cmName: 'changepassword',
 					cmName: 'utility',
 					iconCls: 'cmdb-tree-utility-icon',
 					text: CMDBuild.Translation.changePassword,
@@ -60,7 +59,6 @@
 
 			if (!this.isSectionDisabled(CMDBuild.core.constants.Proxy.BULK_UPDATE))
 				nodes.push({
-//					cmName: 'bulkcardupdate',
 					cmName: 'utility',
 					iconCls: 'cmdb-tree-utility-icon',
 					text: CMDBuild.Translation.multipleUpdate,
@@ -72,7 +70,6 @@
 
 			if (!this.isSectionDisabled(CMDBuild.core.constants.Proxy.IMPORT_CSV))
 				nodes.push({
-//					cmName: 'importcsv',
 					cmName: 'utility',
 					iconCls: 'cmdb-tree-utility-icon',
 					text: CMDBuild.Translation.importCsvFile,
@@ -84,7 +81,6 @@
 
 			if (!this.isSectionDisabled(CMDBuild.core.constants.Proxy.EXPORT_CSV))
 				nodes.push({
-//					cmName: 'exportcsv',
 					cmName: 'utility',
 					iconCls: 'cmdb-tree-utility-icon',
 					text: CMDBuild.Translation.exportCsvFile,
@@ -118,29 +114,6 @@
 				default:
 					return CMDBuild.configuration.userInterface.isDisabledModule(moduleName);
 			}
-		},
-
-		/**
-		 * Avoid to try to bring on front utility related module, that doesn't exists
-		 *
-		 * TODO: waiting for refactor
-		 *
-		 * @override
-		 */
-		onAccordionExpand: function () {
-			// Update store
-			if (!this.disableStoreLoad) {
-				if (this.view.getSelectionModel().hasSelection()) {
-					var selection = this.view.getSelectionModel().getSelection()[0];
-
-					this.cmfg('accordionUpdateStore', selection.get(CMDBuild.core.constants.Proxy.ENTITY_ID));
-				} else {
-					this.cmfg('accordionUpdateStore');
-				}
-			}
-
-			// DisableStoreLoad flag reset
-			this.disableStoreLoad = false;
 		}
 	});
 

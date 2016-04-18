@@ -11,7 +11,7 @@
 		/**
 		 * @cfg {String}
 		 */
-		baseTitle: 'CMDBuild.Translation.utility',
+		baseTitle: CMDBuild.Translation.utility,
 
 		bodyCls: 'cmdb-blue-panel-no-padding',
 		border: true,
