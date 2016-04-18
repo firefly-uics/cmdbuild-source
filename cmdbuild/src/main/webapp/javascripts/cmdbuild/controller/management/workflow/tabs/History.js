@@ -426,9 +426,6 @@
 											params: params,
 											loadMask: false,
 											scope: this,
-											failure: function (response, options, decodedResponse) {
-												_error('getCardRelationsHistory failure', this);
-											},
 											success: function (response, options, decodedResponse) {
 												decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.RESPONSE];
 												decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.ELEMENTS];
@@ -475,9 +472,6 @@
 						CMDBuild.proxy.workflow.tabs.History.readHistoric({ // Get expanded card data
 							params: params,
 							scope: this,
-							failure: function (response, options, decodedResponse) {
-								_error('get historic card failure', this);
-							},
 							success: function (response, options, decodedResponse) {
 								var cardValuesObject = decodedResponse.response[CMDBuild.core.constants.Proxy.VALUES];
 								var predecessorRecord = this.getRecordPredecessor(record);
@@ -490,9 +484,6 @@
 									CMDBuild.proxy.workflow.tabs.History.readHistoric({ // Get expanded predecessor's card data
 										params: predecessorParams,
 										scope: this,
-										failure: function (response, options, decodedResponse) {
-											_error('get historic predecessor card failure', this);
-										},
 										success: function (response, options, decodedResponse) {
 											decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.RESPONSE];
 
