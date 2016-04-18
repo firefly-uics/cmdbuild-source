@@ -1,10 +1,7 @@
 (function () {
 
 	// External implementation to avoid overrides
-	Ext.require([
-		'CMDBuild.core.constants.Global',
-		'CMDBuild.core.constants.Proxy'
-	]);
+	Ext.require(['CMDBuild.core.constants.Proxy']);
 
 	/**
 	 * Class to be extended in widget controllers to adapt CMDBuild.controller.common.abstract.Base functionalities

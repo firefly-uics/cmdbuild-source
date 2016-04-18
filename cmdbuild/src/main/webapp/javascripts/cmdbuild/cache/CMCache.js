@@ -10,7 +10,7 @@
 			'CMDBuild.core.Message',
 			'CMDBuild.proxy.Cache',
 			'CMDBuild.proxy.common.tabs.attribute.Attribute',
-			'CMDBuild.proxy.gis.Gis',
+			'CMDBuild.proxy.gis.Layer',
 			'CMDBuild.proxy.index.Json'
 		],
 

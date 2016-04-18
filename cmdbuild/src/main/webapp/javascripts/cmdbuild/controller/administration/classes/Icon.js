@@ -99,12 +99,10 @@
 
 		onClassPropertiesIconUploadButtonClick: function () {
 			var targetFolderModel = null;
-_debug('onClassPropertiesIconUploadButtonClick', this.classIconObject);
+
 			if (Ext.Object.isEmpty(this.classIconObject)) {
-_debug('if');
 				this.uploadImageAndBindIcon();
 			} else { // Delete icon after upload new one
-_debug('else');
 				this.deleteImageAndIcon();
 			}
 		},

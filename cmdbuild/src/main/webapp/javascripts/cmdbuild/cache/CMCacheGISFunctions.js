@@ -5,7 +5,7 @@
 	Ext.define("CMDBUild.cache.CMCacheGisFunctions", {
 		getAllLayers: function(cb) {
 			if (typeof layers == "undefined") {
-				CMDBuild.proxy.gis.Gis.readAllLayers({
+				CMDBuild.proxy.gis.Layer.readAll({
 					success: function (operation, request, decoded) {
 						layers = decoded.layers;
 						cb(layers);

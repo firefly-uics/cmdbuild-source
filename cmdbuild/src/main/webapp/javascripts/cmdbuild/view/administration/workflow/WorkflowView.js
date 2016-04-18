@@ -1,4 +1,4 @@
-(function() {
+(function () {
 
 	Ext.define('CMDBuild.view.administration.workflow.WorkflowView', {
 		extend: 'Ext.panel.Panel',
@@ -23,7 +23,12 @@
 		frame: false,
 		layout: 'fit',
 
-		initComponent: function() {
+		/**
+		 * @returns {Void}
+		 *
+		 * @override
+		 */
+		initComponent: function () {
 			Ext.apply(this, {
 				// TODO: legacy waiting for refactor (attribute module refactor)
 				attributesPanel: Ext.create('CMDBuild.view.administration.workflow.CMProcessAttributes', {
@@ -41,7 +46,7 @@
 								text: CMDBuild.Translation.addProcess,
 								scope: this,
 
-								handler: function(button, e) {
+								handler: function (button, e) {
 									this.delegate.cmfg('onWorkflowAddButtonClick');
 								}
 							}),

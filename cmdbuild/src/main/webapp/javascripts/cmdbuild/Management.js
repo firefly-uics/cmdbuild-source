@@ -53,6 +53,9 @@
 			'exec/processes/:processIdentifier/instances/:instanceIdentifier/': 'CMDBuild.routes.management.Instance#detail',
 		},
 
+		/**
+		 * @returns {Void}
+		 */
 		launch: function () {
 			Ext.WindowManager.getNextZSeed(); // To increase the default zseed. Is needed for the combo on windows probably it fix also the prev problem
 			Ext.enableFx = false;

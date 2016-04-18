@@ -24,6 +24,10 @@
 
 		/**
 		 * Entry-point
+		 *
+		 * @returns {Void}
+		 *
+		 * @public
 		 */
 		init: function () {
 			CMDBuild.core.Splash.show(true);
@@ -33,6 +37,8 @@
 
 		/**
 		 * Builds all entities cache objects
+		 *
+		 * @returns {Void}
 		 *
 		 * @private
 		 */
@@ -133,6 +139,8 @@
 		/**
 		 * Builds CMDBuild configurations objects
 		 *
+		 * @returns {Void}
+		 *
 		 * @private
 		 */
 		buildConfiguration: function () {
@@ -152,6 +160,8 @@
 
 		/**
 		 * Build all UI modules if runtime sessionId property isn't empty
+		 *
+		 * @returns {Void}
 		 *
 		 * @private
 		 */

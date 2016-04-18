@@ -4,6 +4,7 @@
 		extend: 'CMDBuild.controller.common.abstract.Base',
 
 		requires: [
+			'CMDBuild.core.constants.Global',
 			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.proxy.Classes',
 			'CMDBuild.model.Classes'

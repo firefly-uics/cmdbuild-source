@@ -3,7 +3,6 @@
 	Ext.define('CMDBuild.proxy.userAndGroup.group.Group', {
 
 		requires: [
-			'CMDBuild.core.constants.Global',
 			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.proxy.index.Json',
 			'CMDBuild.model.userAndGroup.group.StartingClass'
