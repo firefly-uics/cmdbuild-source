@@ -60,6 +60,7 @@
 			});
 			this.store = CMDBuild.bim.proxy.Layer.getStore();
 			this.grid = Ext.create('Ext.grid.Panel', {
+				border: false,
 				title: CMDBuild.Translation.bim + " " + CMDBuild.Translation.layers,
 				region: 'center',
 				store: this.store,
