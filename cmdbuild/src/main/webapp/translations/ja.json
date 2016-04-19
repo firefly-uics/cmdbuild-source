@@ -456,6 +456,7 @@
 		"weeks2": "<em>In 2 weeks</em>"
 	},
 	"errors": {
+		"anErrorHasOccurred": "未知のエラーが発生しました",
 		"busy_wf_widgets": "画面コントロールがビジーです、再実行する前にサーバのステータスをチェックください。",
 		"copyAttachmentFailure": "<em>Copy attachment with name \"{0}\" failure</em>",
 		"createReportFilure": "<em>Create report failure</em>",
@@ -476,7 +477,7 @@
 		"invalidKeyAttributesInLocalStore": "<em>Invalid key attribute(s) in local store</em>",
 		"invalidLookupValue": "<em>Invalid Lookup value</em>",
 		"no_driver": "JDBCドライバーが見つかりません。<br />CMDBuild リリースパッケージに含まれており、 Tomcatライブラリにコピーできます。",
-		"no_selections": "更新するカードが選択されていません",
+		"noSelectedCardToUpdate": "更新するカードが選択されていません",
 		"printReportFilure": "<em>Print report failure</em>",
 		"reasons": {
 			"ATTRIBUTE_NOTFOUND": "{0}の属性{1}が見つかりません",
@@ -630,7 +631,6 @@
 		"show_detail": "詳細表示",
 		"targetClassOrCqlFilterRequired": "ターゲットクラスまたはカードCQLセレクターが必要です",
 		"template_error": "テンプレートエラー",
-		"unknown_error": "未知のエラーが発生しました",
 		"unmanagedReportType": "<em>Unmanaged report type</em>",
 		"valueDoesNotMatchFilter": "値がフィルタと一致しません",
 		"widgetLinkCardsNoClassNameError": "リンクカードコントローラーコンストラクター：クラス名が有効ではありません",
@@ -644,9 +644,6 @@
 	},
 	"filterWindow": {
 		"add": "フィルターを追加"
-	},
-	"info": {
-		"card_not_found": "カードは現在のフィルタと一致しません"
 	},
 	"management": {
 		"description": "データ管理モジュール",
@@ -799,42 +796,6 @@
 			"showgraph": "グラフ表示",
 			"shownotes": "ノート表示"
 		},
-		"modutilities": {
-			"bulkupdate": {
-				"title": "多重更新",
-				"countMessage": "{0} カードが更新されます"
-			},
-			"changepassword": {
-				"newpw": "新しいパスワード",
-				"oldpw": "古いパスワード",
-				"repnew": "再　新しいパスワード",
-				"successmsgtext": "パスワードは変更されました",
-				"title": "パスワード変更",
-				"validationtext": "パスワードが一致しません"
-			},
-			"csv": {
-				"csvfile": "CSV ファイル",
-				"error": "エラー",
-				"exportfile": "エキスポート",
-				"importfailure": "インポート失敗",
-				"importsuccess": "インポート成功",
-				"info": "情報",
-				"noupdate": "更新されるカードはありません",
-				"selectaclass": "クラスを選択",
-				"separator": "セパレータ",
-				"shownonvalid": "無効なレコードのみ表示",
-				"title": "CSV ファイルインポート",
-				"title_export": "CSV ファイルエキスポート",
-				"warning": "警告"
-			},
-			"title": "ユーティリティ"
-		},
-		"modutility": {
-			"title": "ユーティリティ"
-		},
-		"modview": {
-			"title": "ビュー"
-		},
 		"modworkflow": {
 			"abort_card": "プロセスを中止",
 			"abort_card_confirm": "本当にこのプロセスを中止しますか?",
@@ -894,17 +855,16 @@
 		}
 	},
 	"warnings": {
+		"changeAppliedOnlyToFilteredCards": "現在のフィルターに一致しているカードにのみ変更は適用されます",
 		"emailTemplateRelatedAttributeEdited": "<em>Attribute related with email templates changed, some e-mail could be regenerated.</em>",
 		"itemNotAvailable": "<em>Item not available</em>",
 		"itIsNotAllowedFilterWithCalculatedParams": "計算されたパラメータでフィルタを使用することを許可されていません",
 		"link_cards_changed_values": "\"{0}\" の選択は更新されました",
-		"only_filtered": "現在のフィルターに一致しているカードにのみ変更は適用されます",
 		"popup_block": "ポップアップブロックが有効になっています。操作と行うためにはそれを無効にしてください。",
 		"reportsDuplicateImageFilename": "警告: 同名のレポートイメージがあります。処理を継続できません。",
 		"saveMenuBeforeAccess": "このエレメントの翻訳にアクセスする前にメニューは保存される必要があります。",
 		"thereAreNoEnabledLanguages": "<em>There are no enabled languages</em>",
-		"toSetAFilterYouMustBeforeSelectAClass": "<em>To set a filter you must before select a class</em>",
-		"warning_message": "警告"
+		"toSetAFilterYouMustBeforeSelectAClass": "<em>To set a filter you must before select a class</em>"
 	},
 	"account": "アカウント",
 	"accounts": "アカウント",
@@ -976,8 +936,10 @@
 	"card": "カード",
 	"cardCqlSelector": "カードCQL選択",
 	"cardinality": "関係性",
+	"cardNotMatchFilter": "カードは現在のフィルタと一致しません",
 	"cardPanelHeight": "カードパネルの高さ(%)",
 	"cards": "カード",
+	"cardsWillBeModified": "{0} カードが更新されます",
 	"category": "<em>Category</em>",
 	"cc": "Cc",
 	"changePassword": "パスワード変更",
@@ -1118,6 +1080,7 @@
 	"existing": "存在している",
 	"expand": "<em>Expand</em>",
 	"expandAll": "<em>Expand all</em>",
+	"exportCsvFile": "CSV ファイルエキスポート",
 	"exportLabel": "エキスポート",
 	"expose": "公開",
 	"externalServices": "外部サービス",
@@ -1159,15 +1122,19 @@
 	"imapPort": "IMAPポート",
 	"imapServer": "IMAPサーバー",
 	"import": "<em>Import</em>",
+	"importCsvFile": "CSV ファイルインポート",
 	"importExport": "<em>Import/Export</em>",
+	"importFailed": "インポート失敗",
 	"importFromCSV": "CSVからインポート",
 	"importJasperReport": "jasperレポートをインポート",
+	"importWasSuccessful": "インポート成功",
 	"includeInherited": "継承を含む",
 	"includeRelations": "<em>Include relations</em>",
 	"includeSystemActivities": "<em>Include system activities</em>",
 	"includeUsersFilters": "<em>Include users filters</em>",
 	"incoming": "受信",
 	"incomingFolder": "受信フォルダー",
+	"info": "情報",
 	"informationLayer": "<em>Information layer</em>",
 	"inheritsFrom": "継承元",
 	"initialLatitude": "初期緯度",
@@ -1236,15 +1203,18 @@
 	"modifyWidget": "<em>Modify widget</em>",
 	"move": "<em>Move</em>",
 	"multiGroup": "マルチグループ",
+	"multipleUpdate": "多重更新",
 	"name": "名前",
 	"navigation": "ナビゲーション",
 	"navigationChronology": "<em>Navigation chronology</em>",
 	"navigationTree": "ナビゲーションツリー",
 	"navigationTrees": "ナビゲーションツリー",
 	"newFolder": "新しいフォルダ",
+	"newPassword": "新しいパスワード",
 	"next": "次",
 	"no_bim_project_for_card": "このカードにはBMIプロジェクトがありません",
 	"noAvailableData": "<em>No available data</em>",
+	"noCardsToUpdate": "更新されるカードはありません",
 	"nodeDistance": "<em>Node distance</em>",
 	"none": "権限なし",
 	"noOne": "何もない",
@@ -1254,6 +1224,7 @@
 	"numberOfPings": "pings回数",
 	"odt": "ODT",
 	"ok": "確認",
+	"oldPassword": "古いパスワード",
 	"onDay": "On",
 	"open_3d_viewer": "3Dビューアを開く",
 	"openRelationGraph": "リレーショングラフを開く",
@@ -1264,6 +1235,7 @@
 	"parent": "親",
 	"parentDescription": "親の説明",
 	"password": "パスワード",
+	"passwordChanged": "パスワードは変更されました",
 	"passwordsDoNotMatch": "パスワードが一致しません",
 	"pdf": "PDF",
 	"permissions": "許可",
@@ -1326,6 +1298,7 @@
 	"reset": "リセット",
 	"resetToDefault": "<em>Reset to defaults</em>",
 	"restore": "<em>Restore</em>",
+	"retypeNewPassword": "再　新しいパスワード",
 	"root": "ルート",
 	"rotate": "回転",
 	"rowAndColumnPrivileges": "行と列の権限",
@@ -1361,6 +1334,7 @@
 	"setup": "一般オプション",
 	"showDetails": "詳細表示",
 	"showHideThisFeatureOnly": "表示/非表示　この特徴のみ",
+	"showInvalidRecordsOnly": "無効なレコードのみ表示",
 	"showLanguageChoice": "言語選択",
 	"showLanguageSelectionLoginBox": "ログイン画面に言語選択を表示",
 	"showLockerUserName": "ロックしているユーザー名を表示",
@@ -1415,6 +1389,7 @@
 	"usersAndGroups": "ユーザーとグループ",
 	"userStoppable": "ユーザーによる中断可能",
 	"userType": "ユーザータイプ",
+	"utility": "ユーティリティ",
 	"utilityChangePassword": "ユーティリティ - パスワード変更",
 	"utilityExportCsv": "ユーティリティ - CSV ファイルエキスポート",
 	"utilityImportCsv": "ユーティリティ - CSV ファイルインポート",

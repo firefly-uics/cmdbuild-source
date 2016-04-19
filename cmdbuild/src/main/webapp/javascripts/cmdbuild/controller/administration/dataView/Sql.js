@@ -6,7 +6,7 @@
 		requires: [
 			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.Message',
-			'CMDBuild.core.proxy.dataView.Sql',
+			'CMDBuild.proxy.dataView.Sql',
 			'CMDBuild.view.common.field.translatable.Utils'
 		],
 
@@ -108,7 +108,7 @@
 			var params = {};
 			params[CMDBuild.core.constants.Proxy.ID] = selectedViewId;
 
-			CMDBuild.core.proxy.dataView.Sql.read({ // TODO: waiting for refactor (CRUD)
+			CMDBuild.proxy.dataView.Sql.read({ // TODO: waiting for refactor (CRUD)
 				params: params,
 				scope: this,
 				success: function(response, options, decodedResponse) {
@@ -131,13 +131,13 @@
 				var formData = Ext.create('CMDBuild.model.dataView.sql.SelectedView',this.form.getData(true));
 
 				if (Ext.isEmpty(formData.get(CMDBuild.core.constants.Proxy.ID))) {
-					CMDBuild.core.proxy.dataView.Sql.create({
+					CMDBuild.proxy.dataView.Sql.create({
 						params: formData.getData(),
 						scope: this,
 						success: this.success
 					});
 				} else {
-					CMDBuild.core.proxy.dataView.Sql.update({
+					CMDBuild.proxy.dataView.Sql.update({
 						params: formData.getData(),
 						scope: this,
 						success: this.success
@@ -154,7 +154,7 @@
 				var params = {};
 				params[CMDBuild.core.constants.Proxy.ID] = this.selectedViewGet(CMDBuild.core.constants.Proxy.ID);
 
-				CMDBuild.core.proxy.dataView.Sql.remove({
+				CMDBuild.proxy.dataView.Sql.remove({
 					params: params,
 					scope: this,
 					success: function(response, options, decodedResponse) {

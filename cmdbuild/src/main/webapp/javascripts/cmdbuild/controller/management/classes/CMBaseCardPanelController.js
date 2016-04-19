@@ -2,6 +2,7 @@
 
 	Ext.require([
 		'CMDBuild.core.constants.Global',
+		'CMDBuild.core.Message',
 		'CMDBuild.controller.management.classes.StaticsController'
 	]);
 
@@ -14,7 +15,7 @@
 
 		requires: [
 			'CMDBuild.core.constants.Proxy',
-			'CMDBuild.core.proxy.Card'
+			'CMDBuild.proxy.Card'
 		],
 
 		cardDataProviders: [],
@@ -138,8 +139,8 @@
 			var me = this;
 
 			var params = {};
-			params[_CMProxy.parameter.CARD_ID] = this.cloneCard ? -1 : this.card.get("Id");
-			params[_CMProxy.parameter.CLASS_NAME] = _CMCache.getEntryTypeNameById(this.card.get("IdClass"));
+			params[CMDBuild.core.constants.Proxy.CARD_ID] = this.cloneCard ? -1 : this.card.get("Id");
+			params[CMDBuild.core.constants.Proxy.CLASS_NAME] = _CMCache.getEntryTypeNameById(this.card.get("IdClass"));
 
 			addDataFromCardDataPoviders(me, params);
 
@@ -152,8 +153,9 @@
 		 * @param {Object} params
 		 */
 		doFormSubmit: function (params) {
-			CMDBuild.core.proxy.Card.update({
+			CMDBuild.proxy.Card.update({
 				params: Ext.Object.merge(params, this.view.getForm().getValues()),
+				loadMask: false,
 				scope: this,
 				success: function (response, options, decodedResponse) {
 					// Adapter to old method behaviour for classes witch extends this one
@@ -242,12 +244,10 @@
 					params[CMDBuild.core.constants.Proxy.CLASS_NAME] = _CMCache.getEntryTypeNameById(me.card.get('IdClass'));
 				}
 
-				CMDBuild.core.LoadMask.show();
-				CMDBuild.ServiceProxy.card.get({
+				CMDBuild.proxy.Card.read({
 					params: params,
+					loadMask: false,
 					success: function(result, options, decodedResult) {
-						CMDBuild.core.LoadMask.hide();
-
 						var data = decodedResult.card;
 
 						if (me.card) {
@@ -315,10 +315,11 @@
 					this.card
 					&& this.card.get("Id") >= 0 // Avoid lock on card create
 				) {
-					CMDBuild.core.proxy.Card.lock({
+					CMDBuild.proxy.Card.lock({
 						params: {
 							id: this.card.get("Id")
 						},
+						loadMask: false,
 						success: success
 					});
 				}
@@ -334,10 +335,11 @@
 					&& this.view.isInEditing()
 					&& this.card.get("Id") >= 0 // Avoid unlock on card create
 				) {
-					CMDBuild.core.proxy.Card.unlock({
+					CMDBuild.proxy.Card.unlock({
 						params: {
 							id: this.card.get("Id")
-						}
+						},
+						loadMask: false
 					});
 				}
 			}
@@ -396,7 +398,7 @@
 		var invalidAttributes = CMDBuild.controller.management.classes.StaticsController.getInvalidAttributeAsHTML(form);
 		if (invalidAttributes != null) {
 			var msg = Ext.String.format("<p class=\"{0}\">{1}</p>", CMDBuild.core.constants.Global.getErrorMsgCss(), CMDBuild.Translation.errors.invalid_attributes);
-			CMDBuild.Msg.error(null, msg + invalidAttributes, false);
+			CMDBuild.core.Message.error(null, msg + invalidAttributes, false);
 			return false;
 		} else {
 			return true;

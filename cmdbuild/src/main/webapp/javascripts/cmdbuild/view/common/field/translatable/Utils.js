@@ -3,7 +3,7 @@
 	Ext.define('CMDBuild.view.common.field.translatable.Utils', {
 
 		requires: [
-			'CMDBuild.core.proxy.localization.Localization',
+			'CMDBuild.proxy.localization.Localization',
 			'CMDBuild.view.common.field.translatable.Base'
 		],
 
@@ -27,7 +27,7 @@
 						&& item instanceof CMDBuild.view.common.field.translatable.Base
 					) {
 						if (!Ext.Object.isEmpty(item.configurationGet())) {
-							CMDBuild.core.proxy.localization.Localization.update({ params: item.configurationGet(true, true) });
+							CMDBuild.proxy.localization.Localization.update({ params: item.configurationGet(true, true) });
 						}
 					}
 				});

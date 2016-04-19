@@ -7,8 +7,7 @@
 			'CMDBuild.core.constants.FieldWidths',
 			'CMDBuild.core.constants.Global',
 			'CMDBuild.core.constants.Proxy',
-			'CMDBuild.core.proxy.Csv',
-			'CMDBuild.core.proxy.widget.CustomForm'
+			'CMDBuild.proxy.customForm.Csv'
 		],
 
 		mixins: ['CMDBuild.view.common.PanelFunctions'],
@@ -46,7 +45,7 @@
 
 						value: CMDBuild.core.constants.Proxy.CSV, // Default value
 
-						store: CMDBuild.core.proxy.widget.CustomForm.getStoreExportFileFormat(),
+						store: CMDBuild.proxy.customForm.Csv.getStoreExportFileFormat(),
 						queryMode: 'local'
 					}),
 					Ext.create('Ext.form.field.Text', {
@@ -70,7 +69,7 @@
 						editable: false,
 						allowBlank: false,
 
-						store: CMDBuild.core.proxy.Csv.getStoreSeparator(),
+						store: CMDBuild.proxy.customForm.Csv.getStoreSeparator(),
 						queryMode: 'local'
 					}),
 					Ext.create('CMDBuild.view.common.field.multiselect.Multiselect', {

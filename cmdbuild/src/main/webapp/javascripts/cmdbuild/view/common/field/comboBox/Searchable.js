@@ -33,6 +33,22 @@
 		},
 
 		/**
+		 * Check if field returned value exists inside store
+		 *
+		 * @param {String} rawValue
+		 *
+		 * @returns {Array}
+		 *
+		 * @override
+		 */
+		getErrors: function (rawValue) {
+			if (!Ext.isEmpty(rawValue) && this.getStore().find(this.valueField, this.getValue()) == -1)
+				return [CMDBuild.Translation.errors.valueDoesNotMatchFilter];
+
+			return this.callParent(arguments);
+		},
+
+		/**
 		 * Compatibility with template resolver.
 		 * Used by the template resolver to know if a field is a combo and to take the value of multilevel lookup
 		 *
@@ -40,6 +56,19 @@
 		 */
 		getReadableValue: function () {
 			return this.getRawValue();
+		},
+
+		/**
+		 * Return value only if number, to avoid wrong and massive server requests from template resolver where returned value from field is a string
+		 *
+		 * @returns {Number}
+		 *
+		 * @override
+		 */
+		getValue: function () {
+			var value = this.callParent(arguments);
+
+			return Ext.isNumber(value) ? value : '';
 		},
 
 		/**

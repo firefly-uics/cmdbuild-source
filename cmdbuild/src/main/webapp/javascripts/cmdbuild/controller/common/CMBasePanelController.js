@@ -1,5 +1,7 @@
 (function() {
 
+	Ext.require('CMDBuild.core.Message');
+
 	/**
 	 * @deprecated
 	 */
@@ -59,7 +61,7 @@
 
 				errorMessage += '<ul>';
 
-				CMDBuild.Msg.error(CMDBuild.Translation.common.failure, errorMessage, false);
+				CMDBuild.core.Message.error(CMDBuild.Translation.common.failure, errorMessage, false);
 
 				return false;
 			}

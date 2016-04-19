@@ -4,7 +4,7 @@
 
 		requires: [
 			'CMDBuild.core.constants.Proxy',
-			'CMDBuild.core.proxy.core.configurations.builder.Instance'
+			'CMDBuild.proxy.core.configurations.builder.Instance'
 		],
 
 		/**
@@ -38,9 +38,10 @@
 			Ext.apply(this, configuration); // Apply configurations
 
 			Ext.ns('CMDBuild.configuration');
+			CMDBuild.configuration.instance = Ext.create('CMDBuild.model.core.configurations.builder.Instance'); // Setup configuration with defaults
 
 			if (this.enableServerCalls) {
-				CMDBuild.core.proxy.core.configurations.builder.Instance.read({
+				CMDBuild.proxy.core.configurations.builder.Instance.read({
 					loadMask: false,
 					scope: this.scope || this,
 					success: function (response, options, decodedResponse) {

@@ -5,8 +5,7 @@
 
 		requires: [
 			'CMDBuild.core.constants.FieldWidths',
-			'CMDBuild.core.constants.Proxy',
-			'CMDBuild.core.proxy.localization.Localization'
+			'CMDBuild.core.constants.Proxy'
 		],
 
 		border: false,

@@ -1,11 +1,11 @@
-(function() {
+(function () {
 
 	Ext.define('CMDBuild.view.administration.workflow.tabs.domains.GridPanel', {
 		extend: 'Ext.grid.Panel',
 
 		requires: [
 			'CMDBuild.core.constants.Proxy',
-			'CMDBuild.core.proxy.workflow.Domains'
+			'CMDBuild.proxy.workflow.Domains'
 		],
 
 		/**
@@ -16,7 +16,12 @@
 		border: false,
 		frame: false,
 
-		initComponent: function() {
+		/**
+		 * @returns {Void}
+		 *
+		 * @override
+		 */
+		initComponent: function () {
 			Ext.apply(this, {
 				columns: [
 					{
@@ -63,22 +68,22 @@
 						fixed: true
 					})
 				],
-				store: CMDBuild.core.proxy.workflow.Domains.getStore()
+				store: CMDBuild.proxy.workflow.Domains.getStore()
 			});
 
 			this.callParent(arguments);
 
-			this.getStore().on('load', function(store, records, successful, eOpts) {
+			this.getStore().on('load', function (store, records, successful, eOpts) {
 				this.delegate.cmfg('onWorkflowTabDomainsStoreLoad');
 			}, this);
 		},
 
 		listeners: {
-			itemdblclick: function(grid, record, item, index, e, eOpts) {
+			itemdblclick: function (grid, record, item, index, e, eOpts) {
 				this.delegate.cmfg('onWorkflowTabDomainsItemDoubleClick');
 			},
 
-			select: function(row, record, index) {
+			select: function (row, record, index) {
 				this.delegate.cmfg('onWorkflowTabDomainsRowSelect');
 			}
 		}

@@ -1,4 +1,4 @@
-(function() {
+(function () {
 
 	Ext.require([
 		'CMDBuild.core.configurations.DataFormat',

@@ -5,7 +5,7 @@
 
 		requires: [
 			'CMDBuild.core.constants.Proxy',
-			'CMDBuild.core.proxy.configuration.Gis',
+			'CMDBuild.proxy.configuration.Gis',
 			'CMDBuild.model.configuration.Gis'
 		],
 
@@ -45,7 +45,7 @@
 		 * @returns {Void}
 		 */
 		onConfigurationGisSaveButtonClick: function () {
-			CMDBuild.core.proxy.configuration.Gis.update({
+			CMDBuild.proxy.configuration.Gis.update({
 				params: CMDBuild.model.configuration.Gis.convertToLegacy(this.view.getData(true)),
 				scope: this,
 				callback: function (options, success, response) {
@@ -61,7 +61,7 @@
 		 * @returns {Void}
 		 */
 		onConfigurationGisTabShow: function () {
-			CMDBuild.core.proxy.configuration.Gis.read({
+			CMDBuild.proxy.configuration.Gis.read({
 				scope: this,
 				success: function (response, options, decodedResponse) {
 					decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.DATA];

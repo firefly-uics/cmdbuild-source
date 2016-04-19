@@ -1,5 +1,7 @@
 package org.cmdbuild.config;
 
+import static java.lang.Integer.valueOf;
+
 import java.util.Locale;
 
 import org.cmdbuild.services.Settings;
@@ -29,6 +31,8 @@ public class CmdbuildProperties extends DefaultProperties implements CmdbuildCon
 
 	private static final String DEMO_MODE_ADMIN = "demomode";
 
+	private static final int DEFAULT_SESSION_TIMEOUT = 3600;
+
 	public CmdbuildProperties() {
 		super();
 		setProperty(REFERENCE_COMBO_LIMIT, "500");
@@ -40,7 +44,7 @@ public class CmdbuildProperties extends DefaultProperties implements CmdbuildCon
 		setProperty(GRID_CARD_RATIO, "50");
 		setProperty(ROW_LIMIT, "20");
 		setProperty(LANGUAGE_PROMPT, String.valueOf(true));
-		setProperty(SESSION_TIMEOUT, "");
+		setProperty(SESSION_TIMEOUT, Integer.toString(DEFAULT_SESSION_TIMEOUT));
 		setProperty(INSTANCE_NAME, "");
 		setProperty(TABS_POSITION, "bottom");
 		setProperty(LOCK_CARD, String.valueOf(false));
@@ -119,11 +123,12 @@ public class CmdbuildProperties extends DefaultProperties implements CmdbuildCon
 	}
 
 	@Override
-	public int getSessionTimoutOrZero() {
+	public int getSessionTimeoutOrDefault() {
 		try {
-			return Integer.parseInt(getProperty(SESSION_TIMEOUT));
-		} catch (final Exception e) {
-			return 0;
+			final int value = valueOf(getProperty(SESSION_TIMEOUT));
+			return (value < 0) ? DEFAULT_SESSION_TIMEOUT : value;
+		} catch (final NumberFormatException e) {
+			return DEFAULT_SESSION_TIMEOUT;
 		}
 	}
 

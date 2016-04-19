@@ -1,4 +1,7 @@
 (function() {
+
+	Ext.require(['CMDBuild.proxy.Card']);
+
 	var ID_CLASS = "xa:idClass",
 		ID_CARD = "xa:id",
 		CARD_CQL_SELECTOR = "objId",
@@ -161,15 +164,15 @@
 
 			buildAdapterForExpandNode.call(this);
 
-			var parameterNames = CMDBuild.ServiceProxy.parameter;
 			var parameters = {};
-			parameters[parameterNames.CARD_ID] =  this.cardId;
-			parameters[parameterNames.CLASS_NAME] = _CMCache.getEntryTypeNameById(this.idClass);
-			parameters[parameterNames.DOMAIN_ID] = domain.getId();
-			parameters[parameterNames.DOMAIN_SOURCE] = getSrc(this);
+			parameters[CMDBuild.core.constants.Proxy.CARD_ID] =  this.cardId;
+			parameters[CMDBuild.core.constants.Proxy.CLASS_NAME] = _CMCache.getEntryTypeNameById(this.idClass);
+			parameters[CMDBuild.core.constants.Proxy.DOMAIN_ID] = domain.getId();
+			parameters[CMDBuild.core.constants.Proxy.DOMAIN_SOURCE] = getSrc(this);
 
-			CMDBuild.ServiceProxy.relations.getList({
+			CMDBuild.proxy.Relation.readAll({
 				params: parameters,
+				loadMask: false,
 				scope: this,
 				success: function(a,b, response) {
 					if (el) {
@@ -203,8 +206,9 @@
 		if (this.cardToDelete) {
 			var me = this;
 			CMDBuild.core.LoadMask.show();
-			CMDBuild.ServiceProxy.card.remove({
+			CMDBuild.proxy.Card.remove({
 				important: true,
+				loadMask: false,
 				params : {
 					"IdClass": me.cardToDelete.get("dst_cid"),
 					"Id": me.cardToDelete.get("dst_id")

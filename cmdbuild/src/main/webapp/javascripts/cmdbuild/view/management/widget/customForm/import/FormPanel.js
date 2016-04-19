@@ -7,8 +7,7 @@
 			'CMDBuild.core.constants.FieldWidths',
 			'CMDBuild.core.constants.Global',
 			'CMDBuild.core.constants.Proxy',
-			'CMDBuild.core.proxy.Csv',
-			'CMDBuild.core.proxy.widget.CustomForm'
+			'CMDBuild.proxy.customForm.Csv'
 		],
 
 		mixins: ['CMDBuild.view.common.PanelFunctions'],
@@ -57,7 +56,7 @@
 
 						value: CMDBuild.core.constants.Proxy.CSV, // Default value
 
-						store: CMDBuild.core.proxy.widget.CustomForm.getStoreImportFileFormat(),
+						store: CMDBuild.proxy.customForm.Csv.getStoreImportFileFormat(),
 						queryMode: 'local'
 					}),
 					Ext.create('Ext.form.field.File', {
@@ -80,7 +79,7 @@
 						editable: false,
 						allowBlank: false,
 
-						store: CMDBuild.core.proxy.Csv.getStoreSeparator(),
+						store: CMDBuild.proxy.customForm.Csv.getStoreSeparator(),
 						queryMode: 'local'
 					}),
 					this.modeCombo = Ext.create('Ext.form.field.ComboBox', {
@@ -95,7 +94,7 @@
 						editable: false,
 						allowBlank: false,
 
-						store: CMDBuild.core.proxy.Csv.getStoreImportMode(
+						store: CMDBuild.proxy.customForm.Csv.getStoreImportMode(
 							// Remove add option from store in form layout
 							this.delegate.cmfg('widgetCustomFormConfigurationGet', CMDBuild.core.constants.Proxy.LAYOUT) == 'form' ? ['add'] : null
 						),

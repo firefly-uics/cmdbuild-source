@@ -5,9 +5,10 @@
 
 		requires: [
 			'CMDBuild.core.constants.Proxy',
-			'CMDBuild.core.proxy.Csv',
-			'CMDBuild.core.proxy.lookup.Lookup',
-			'CMDBuild.core.proxy.widget.CustomForm',
+			'CMDBuild.core.Message',
+			'CMDBuild.proxy.customForm.Csv',
+			'CMDBuild.proxy.lookup.Lookup',
+			'CMDBuild.proxy.widget.customForm.CustomForm',
 			'CMDBuild.core.RequestBarrier'
 		],
 
@@ -113,7 +114,7 @@
 				params[CMDBuild.core.constants.Proxy.TYPE] = attribute.get(CMDBuild.core.constants.Proxy.LOOKUP_TYPE);
 				params[CMDBuild.core.constants.Proxy.ACTIVE] = true;
 
-				CMDBuild.core.proxy.lookup.Lookup.readAll({
+				CMDBuild.proxy.lookup.Lookup.readAll({
 					params: params,
 					scope: this,
 					success: function (response, options, decodedResponse) {
@@ -173,7 +174,7 @@
 						}
 					});
 
-					CMDBuild.core.proxy.widget.CustomForm.getCardList({
+					CMDBuild.proxy.widget.customForm.CustomForm.readAllCards({
 						params: params,
 						loadMask: false,
 						scope: this,
@@ -383,13 +384,13 @@
 			if (this.validate(this.form)) {
 				this.view.setLoading(true);
 
-				CMDBuild.core.proxy.Csv.decode({
+				CMDBuild.proxy.customForm.Csv.decode({
 					form: this.form.getForm(),
 					scope: this,
 					failure: function (form, action) {
 						this.view.setLoading(false);
 
-						CMDBuild.Msg.error(
+						CMDBuild.core.Message.error(
 							CMDBuild.Translation.common.failure,
 							CMDBuild.Translation.errors.csvUploadOrDecodeFailure,
 							false

@@ -6,7 +6,7 @@
 		requires: [
 			'CMDBuild.core.Message',
 			'CMDBuild.core.constants.Proxy',
-			'CMDBuild.core.proxy.widget.CustomForm',
+			'CMDBuild.proxy.widget.customForm.CustomForm',
 			'CMDBuild.core.Utils'
 		],
 
@@ -165,7 +165,7 @@
 				params[CMDBuild.core.constants.Proxy.FUNCTION] = this.cmfg('widgetCustomFormConfigurationGet', CMDBuild.core.constants.Proxy.FUNCTION_DATA);
 				params[CMDBuild.core.constants.Proxy.PARAMS] = Ext.encode(this.cmfg('widgetCustomFormConfigurationGet', CMDBuild.core.constants.Proxy.VARIABLES));
 
-				CMDBuild.core.proxy.widget.CustomForm.readFromFunctions({
+				CMDBuild.proxy.widget.customForm.CustomForm.readFromFunctions({
 					params: params,
 					scope: this,
 					success: function (response, options, decodedResponse) {

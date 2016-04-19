@@ -1,20 +1,28 @@
-Ext.define("CMDBuild.form.HexColorField", {
-	extend: "Ext.form.ColorField",
+(function () {
 
-	editable: false,
+	/**
+	 * @deprecated (CMDBuild.view.common.field.picker.Color)
+	 */
+	Ext.define('CMDBuild.form.HexColorField', {
+		extend: 'Ext.form.ColorField',
 
-	setValue: function(value) {
-		if (value && value[0] == "#") {
-			value = value.slice(1);
+		editable: false,
+
+		setValue: function (value) {
+			if (value && value[0] == '#')
+				value = value.slice(1);
+
+			CMDBuild.form.HexColorField.superclass.setValue.call(this, value);
+		},
+
+		getValue: function () {
+			var value = this.value;
+
+			if (value && value[0] != '#')
+				value = '#'+value;
+
+			return value;
 		}
-		CMDBuild.form.HexColorField.superclass.setValue.call(this, value);
-	},
+	});
 
-	getValue: function() {
-		var value = this.value;
-		if (value && value[0] != "#") {
-			value = "#"+value;
-		}
-		return value;
-	}
-});
+})();

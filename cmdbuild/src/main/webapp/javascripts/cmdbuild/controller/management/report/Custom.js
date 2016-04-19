@@ -6,11 +6,16 @@
 		requires: [
 			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.Message',
-			'CMDBuild.core.proxy.Index',
-			'CMDBuild.core.proxy.report.Report'
+			'CMDBuild.proxy.index.Json',
+			'CMDBuild.proxy.report.Report'
 		],
 
 		mixins: ['CMDBuild.controller.management.report.Single'], // Import functions to avoid to duplicate
+
+		/**
+		 * @cfg {CMDBuild.controller.management.report.Report}
+		 */
+		parentDelegate: undefined,
 
 		/**
 		 * @cfg {Array}
@@ -82,6 +87,8 @@
 		/**
 		 * @param {Object} configurationObject
 		 * @param {Mixed} configurationObject.parentDelegate
+		 *
+		 * @returns {Void}
 		 */
 		constructor: function(configurationObject) {
 			this.callParent(arguments);
@@ -95,6 +102,8 @@
 		/**
 		 * @param {Boolean} forceDownload
 		 *
+		 * @returns {Void}
+		 *
 		 * @private
 		 */
 		createReport: function(forceDownload) {
@@ -106,7 +115,7 @@
 					property: CMDBuild.core.constants.Proxy.ID
 				}))
 			) {
-				CMDBuild.core.proxy.report.Report.create({
+				CMDBuild.proxy.report.Report.create({
 					params: this.currentReportParametersGet({ callIdentifier: 'create' }),
 					scope: this,
 					failure: function(response, options, decodedResponse) {
@@ -135,7 +144,7 @@
 			/**
 			 * @param {Array or String} attributePath
 			 *
-			 * @return {Mixed or undefined}
+			 * @returns {Mixed or undefined}
 			 */
 			reportCustomSelectedReportRecordGet: function(attributePath) {
 				var parameters = {};
@@ -147,6 +156,8 @@
 
 			/**
 			 * @param {CMDBuild.model.report.Grid} record
+			 *
+			 * @returns {Void}
 			 *
 			 * @private
 			 */
@@ -163,6 +174,8 @@
 
 		/**
 		 * @param {Object} reportInfo
+		 *
+		 * @returns {Void}
 		 */
 		onReportCustomGenerateButtonClick: function(reportInfo) {
 			if (Ext.Array.contains(this.managedReportTypes, reportInfo[CMDBuild.core.constants.Proxy.TYPE])) {
@@ -187,6 +200,9 @@
 			}
 		},
 
+		/**
+		 * @returns {Void}
+		 */
 		onReportCustomShow: function() {
 			if (!this.cmfg('reportSelectedAccordionIsEmpty')) {
 				var params = {};
@@ -243,6 +259,8 @@
 			 * @param {Object} parameters
 			 * @param {Object} parameters.params
 			 * @param {String} parameters.callIdentifier - managed identifiers (create, update)
+			 *
+			 * @returns {Void}
 			 */
 			reportCustomSelectedReportParametersSet: function(parameters) {
 				if (!Ext.isEmpty(parameters) && Ext.isObject(parameters)) {
@@ -274,27 +292,20 @@
 		 * Get created report from server and display it in popup window
 		 *
 		 * @param {Boolean} forceDownload
+		 *
+		 * @returns {Void}
 		 */
 		reportCustomShowReport: function(forceDownload) {
-			forceDownload = forceDownload || false;
+			forceDownload = Ext.isBoolean(forceDownload) ? forceDownload : false;
 
 			if (forceDownload) { // Force download mode
 				var params = {};
 				params[CMDBuild.core.constants.Proxy.FORCE_DOWNLOAD_PARAM_KEY] = true;
 
-				var form = Ext.create('Ext.form.Panel', {
-					standardSubmit: true,
-					url: CMDBuild.core.proxy.Index.report.printReportFactory + '?donotdelete=true' // Add parameter to avoid report delete
-				});
-
-				form.submit({
-					target: '_blank',
+				CMDBuild.proxy.report.Report.download({
+					buildRuntimeForm: true,
 					params: params
 				});
-
-				Ext.defer(function() { // Form cleanup
-					form.close();
-				}, 100);
 			} else { // Pop-up display mode
 				Ext.create('CMDBuild.controller.management.report.Modal', {
 					parentDelegate: this,
@@ -308,10 +319,12 @@
 
 		/**
 		 * @param {Boolean} forceDownload
+		 *
+		 * @returns {Void}
 		 */
 		reportCustomUpdateReport: function(forceDownload) {
 			if (!this.currentReportParametersIsEmpty('update')) {
-				CMDBuild.core.proxy.report.Report.update({
+				CMDBuild.proxy.report.Report.update({
 					params: this.currentReportParametersGet({ callIdentifier: 'update' }),
 					scope: this,
 					success: function(response, options, decodedResponse) {

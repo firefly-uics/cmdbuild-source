@@ -1,4 +1,10 @@
 (function() {
+
+	Ext.require([
+		'CMDBuild.core.Message',
+		'CMDBuild.proxy.gis.GeoAttribute'
+	]);
+
 	Ext.define("CMDBuild.controller.administration.classes.CMGeoAttributeController", {
 		constructor: function(view) {
 			if (Ext.isEmpty(view)) {
@@ -65,7 +71,7 @@
 	function onSaveButtonFormClick() {
 		var nonValid = this.form.getNonValidFields();
 		if (nonValid.length > 0) {
-			CMDBuild.Msg.error(CMDBuild.Translation.common.failure, CMDBuild.Translation.errors.invalid_fields, false);
+			CMDBuild.core.Message.error(CMDBuild.Translation.common.failure, CMDBuild.Translation.errors.invalid_fields, false);
 			return;
 		}
 
@@ -81,6 +87,8 @@
 			params: Ext.apply(attributeConfig, {
 				className: _CMCache.getEntryTypeNameById(this.currentClassId)
 			}),
+			important: true,
+			loadMask: false,
 			callback: callback,
 			success: function(a, b, decoded) {
 				_CMCache.onGeoAttributeSaved();
@@ -89,9 +97,9 @@
 		};
 
 		if (this.currentAttribute != null) {
-			CMDBuild.ServiceProxy.geoAttribute.modify(params);
+			CMDBuild.proxy.gis.GeoAttribute.update(params);
 		} else {
-			CMDBuild.ServiceProxy.geoAttribute.save(params);
+			CMDBuild.proxy.gis.GeoAttribute.create(params);
 		}
 	}
 
@@ -126,8 +134,9 @@
 		};
 
 		CMDBuild.core.LoadMask.show();
-		CMDBuild.ServiceProxy.geoAttribute.remove({
+		CMDBuild.proxy.gis.GeoAttribute.remove({
 			params: params,
+			loadMask: false,
 			success: function onDeleteGeoAttributeSuccess(response, request, decoded) {
 				_CMCache.onGeoAttributeDeleted(params.masterTableName, params.name);
 				me.view.onClassSelected(me.currentClassId);
@@ -155,12 +164,12 @@
 	}
 
 	function isItMineOrOfMyParents(attr, classId) {
-		var table = CMDBuild.Cache.getTableById(classId);
+		var table = _CMCache.getTableById(classId);
 		while (table) {
 			if (attr.masterTableId == table.id) {
 				return true;
 			} else {
-				table = CMDBuild.Cache.getTableById(table.parent);
+				table = _CMCache.getTableById(table.parent);
 			}
 		}
 		return false;

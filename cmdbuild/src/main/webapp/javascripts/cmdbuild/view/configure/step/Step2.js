@@ -6,7 +6,7 @@
 		requires: [
 			'CMDBuild.core.constants.FieldWidths',
 			'CMDBuild.core.constants.Proxy',
-			'CMDBuild.core.proxy.Configure',
+			'CMDBuild.proxy.Configure',
 			'CMDBuild.core.Utils'
 		],
 
@@ -60,7 +60,7 @@
 								displayField: CMDBuild.core.constants.Proxy.DESCRIPTION,
 								editable: false,
 
-								store: CMDBuild.core.proxy.Configure.getStoreDbTypes(),
+								store: CMDBuild.proxy.Configure.getStoreDbTypes(),
 								queryMode: 'local',
 
 								listeners: {
@@ -160,7 +160,7 @@
 								disablePanelFunctions: true,
 								editable: false,
 
-								store: CMDBuild.core.proxy.Configure.getStoreUserType(),
+								store: CMDBuild.proxy.Configure.getStoreUserType(),
 								queryMode: 'local',
 
 								listeners: {

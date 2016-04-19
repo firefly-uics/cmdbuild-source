@@ -5,7 +5,7 @@
 
 		requires: [
 			'CMDBuild.core.constants.Proxy',
-			'CMDBuild.core.proxy.userAndGroup.group.privileges.Workflow'
+			'CMDBuild.proxy.userAndGroup.group.privileges.Workflow'
 		],
 
 		/**
@@ -130,7 +130,7 @@
 						]
 					})
 				],
-				store: CMDBuild.core.proxy.userAndGroup.group.privileges.Workflow.getStore()
+				store: CMDBuild.proxy.userAndGroup.group.privileges.Workflow.getStore()
 			});
 
 			this.callParent(arguments);

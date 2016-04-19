@@ -107,8 +107,9 @@
 		updateRelation: function(form, res) {
 			var p = this.buildParamsToSaveRelation(res.params);
 
-			CMDBuild.ServiceProxy.relations.modify({
-				params: p
+			CMDBuild.proxy.Relation.update({
+				params: p,
+				loadMask: false
 			});
 		},
 
@@ -138,15 +139,15 @@
 	});
 
 	function loadRelationToFillRelationAttributes(me) {
-		var parameterNames = CMDBuild.ServiceProxy.parameter;
 		var parameters = {};
-		parameters[parameterNames.CARD_ID] =  me.card.get("Id");
-		parameters[parameterNames.CLASS_NAME] = me.entryType.getName();
-		parameters[parameterNames.DOMAIN_ID] = me.view.detail.get("id");
-		parameters[parameterNames.DOMAIN_SOURCE] = me.view.detail.getDetailSide();
+		parameters[CMDBuild.core.constants.Proxy.CARD_ID] =  me.card.get("Id");
+		parameters[CMDBuild.core.constants.Proxy.CLASS_NAME] = me.entryType.getName();
+		parameters[CMDBuild.core.constants.Proxy.DOMAIN_ID] = me.view.detail.get("id");
+		parameters[CMDBuild.core.constants.Proxy.DOMAIN_SOURCE] = me.view.detail.getDetailSide();
 
-		CMDBuild.ServiceProxy.relations.getList({
+		CMDBuild.proxy.Relation.readAll({
 			params: parameters,
+			loadMask: false,
 			scope: this,
 			success: function(a,b, response) {
 				var domains = response.domains;

@@ -103,7 +103,7 @@
 						disableEnableFunctions: true
 					}),
 					Ext.create('CMDBuild.view.common.field.translatable.Text', {
-						name: _CMProxy.parameter.DESCRIPTION,
+						name: CMDBuild.core.constants.Proxy.DESCRIPTION,
 						fieldLabel: CMDBuild.Translation.descriptionLabel,
 						labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
 						maxWidth: CMDBuild.core.constants.FieldWidths.ADMINISTRATION_BIG,
@@ -127,7 +127,7 @@
 						editable: false,
 						allowBlank: false,
 
-						store: CMDBuild.core.proxy.filter.Group.getStoreTargetClass(),
+						store: CMDBuild.proxy.filter.Group.getStoreTargetClass(),
 						queryMode: 'local'
 					}),
 					this.advancedFilterField = Ext.create('CMDBuild.view.common.field.filter.advanced.Advanced', {

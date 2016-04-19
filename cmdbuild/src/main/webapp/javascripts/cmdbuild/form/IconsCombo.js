@@ -25,7 +25,7 @@ Ext.define("CMDBuild.IconsCombo", {
 						'<img class="cm-icon-list-item-img" src="{path}" alt="{description}" class="icon-item-image"/>' +
 						'<span class="cm-icon-list-item-label">{description}</span>' +
 					'</span>' +
-				'</tpl>'; 
+				'</tpl>';
 			}
 		}
 

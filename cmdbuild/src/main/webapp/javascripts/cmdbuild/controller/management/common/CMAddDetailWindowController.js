@@ -40,8 +40,9 @@
 
 			var p = this.buildParamsToSaveRelation(detailData);
 
-			CMDBuild.ServiceProxy.relations.add({
-				params: p
+			CMDBuild.proxy.Relation.create({
+				params: p,
+				loadMask: false
 			});
 		}
 	});

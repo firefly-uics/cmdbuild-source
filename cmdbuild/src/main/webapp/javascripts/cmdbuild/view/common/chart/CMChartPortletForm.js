@@ -76,14 +76,14 @@
 					user: function(parameterConfiguration) {
 						return new Ext.form.field.Hidden({
 							name: parameterConfiguration.name,
-							value: CMDBuild.Runtime.Username
+							value: CMDBuild.configuration.runtime.get(CMDBuild.core.constants.Proxy.USERNAME)
 						});
 					},
 
 					group: function(parameterConfiguration) {
 						return new Ext.form.field.Hidden({
 							name: parameterConfiguration.name,
-							value: CMDBuild.Runtime.DefaultGroupName
+							value: CMDBuild.configuration.runtime.get(CMDBuild.core.constants.Proxy.DEFAULT_GROUP_NAME)
 						});
 					}
 				};
@@ -144,14 +144,14 @@
 					user: function(parameterConfiguration) {
 						return new Ext.form.field.Hidden({
 							name: parameterConfiguration.name,
-							value: CMDBuild.Runtime.UserId
+							value: CMDBuild.configuration.runtime.get(CMDBuild.core.constants.Proxy.USER_ID)
 						});
 					},
 
 					group: function(parameterConfiguration) {
 						return new Ext.form.field.Hidden({
 							name: parameterConfiguration.name,
-							value: CMDBuild.Runtime.DefaultGroupId
+							value: CMDBuild.configuration.runtime.get(CMDBuild.core.constants.Proxy.DEFAULT_GROUP_ID)
 						});
 					},
 
