@@ -144,9 +144,9 @@
 					callback: function (out, ctx) {
 						decodedOutput = out;
 
-						// Apply change event to reset data property in widgetConfiguration to avoid sql function server call
+						// Apply change event to reset data property in widgetConfiguration to avoid SQL function server call
 						templateResolver.bindLocalDepsChange(function () {
-							this.instancesDataStorageSet(); // Reset widget instance data storage
+							this.instancesDataStorageReset('single'); // Reset widget instance data storage
 						}, this);
 					}
 				});
@@ -293,6 +293,11 @@
 			if (!this.cmfg('widgetCustomFormConfigurationIsEmpty', CMDBuild.core.constants.Proxy.DATA)) { // Refill widget with data configuration
 				this.controllerLayout.cmfg('widgetCustomFormDataSet', this.cmfg('widgetCustomFormConfigurationGet', CMDBuild.core.constants.Proxy.DATA));
 			} else if (!this.cmfg('widgetCustomFormConfigurationIsEmpty', CMDBuild.core.constants.Proxy.FUNCTION_DATA)) { // Get data from function
+				this.cmfg('widgetCustomFormConfigurationSet', {
+					propertyName: CMDBuild.core.constants.Proxy.VARIABLES,
+					value: this.applyTemplateResolverToObject(this.widgetConfiguration[CMDBuild.core.constants.Proxy.VARIABLES])
+				});
+
 				this.executeConfigurationSqlFunction({
 					scope: this,
 					success: function (response, options, decodedResponse) {
