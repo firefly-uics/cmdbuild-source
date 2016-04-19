@@ -11,14 +11,29 @@
 		delegate: undefined,
 
 		/**
+		 * @property {CMDBuild.core.buttons.iconized.add.Add}
+		 */
+		addButton: undefined,
+
+		/**
 		 * @cfg {Array}
 		 */
 		columns: [],
 
 		/**
+		 * @property {CMDBuild.core.buttons.iconized.Export}
+		 */
+		exportButton: undefined,
+
+		/**
 		 * @property {Ext.grid.plugin.CellEditing}
 		 */
 		gridEditorPlugin: undefined,
+
+		/**
+		 * @property {CMDBuild.core.buttons.iconized.Import}
+		 */
+		importButton: undefined,
 
 		border: false,
 		frame: false,
@@ -39,47 +54,23 @@
 						itemId: CMDBuild.core.constants.Proxy.TOOLBAR_TOP,
 
 						items: [
-							Ext.create('CMDBuild.core.buttons.iconized.add.Add', {
+							this.addButton = Ext.create('CMDBuild.core.buttons.iconized.add.Add', {
 								text: CMDBuild.Translation.addRow,
 								scope: this,
-
-								disabled: (
-									isWidgetReadOnly
-									|| this.delegate.cmfg('widgetCustomFormConfigurationGet', [
-										CMDBuild.core.constants.Proxy.CAPABILITIES,
-										CMDBuild.core.constants.Proxy.ADD_DISABLED
-									])
-								),
 
 								handler: function (button, e) {
 									this.delegate.cmfg('onWidgetCustomFormLayoutGridAddRowButtonClick');
 								}
 							}),
-							Ext.create('CMDBuild.core.buttons.iconized.Import', {
+							this.importButton = Ext.create('CMDBuild.core.buttons.iconized.Import', {
 								scope: this,
-
-								disabled: (
-									isWidgetReadOnly
-									|| this.delegate.cmfg('widgetCustomFormConfigurationGet', [
-										CMDBuild.core.constants.Proxy.CAPABILITIES,
-										CMDBuild.core.constants.Proxy.IMPORT_DISABLED
-									])
-								),
 
 								handler: function (button, e) {
 									this.delegate.cmfg('onWidgetCustomFormLayoutGridImportButtonClick');
 								}
 							}),
-							Ext.create('CMDBuild.core.buttons.iconized.Export', {
+							this.exportButton = Ext.create('CMDBuild.core.buttons.iconized.Export', {
 								scope: this,
-
-								disabled: (
-									isWidgetReadOnly
-									|| this.delegate.cmfg('widgetCustomFormConfigurationGet', [
-										CMDBuild.core.constants.Proxy.CAPABILITIES,
-										CMDBuild.core.constants.Proxy.EXPORT_DISABLED
-									])
-								),
 
 								handler: function (button, e) {
 									this.delegate.cmfg('onWidgetCustomFormLayoutGridExportButtonClick');
