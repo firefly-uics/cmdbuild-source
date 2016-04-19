@@ -1,7 +1,9 @@
 package org.cmdbuild.filters;
 
 import static java.util.Arrays.stream;
+import static java.util.Optional.ofNullable;
 import static org.apache.commons.lang3.ObjectUtils.defaultIfNull;
+import static org.apache.commons.lang3.StringUtils.defaultIfBlank;
 import static org.cmdbuild.spring.util.Constants.PROTOTYPE;
 
 import java.io.IOException;
@@ -94,12 +96,24 @@ public class AuthFilter implements Filter {
 	private static final Cookie[] NO_COOKIES = new Cookie[] {};
 
 	private static String sessionId(final HttpServletRequest httpRequest) {
-		final String header = httpRequest.getHeader(CMDBUILD_AUTHORIZATION);
+		final Optional<String> header = ofNullable(defaultIfBlank(httpRequest.getHeader(CMDBUILD_AUTHORIZATION), null));
+		final Optional<String> parameter = ofNullable(
+				defaultIfBlank(httpRequest.getParameter(CMDBUILD_AUTHORIZATION), null));
 		final Optional<String> cookie = stream(defaultIfNull(httpRequest.getCookies(), NO_COOKIES)) //
 				.filter(input -> input.getName().equals(CMDBUILD_AUTHORIZATION)) //
 				.findFirst() //
 				.map(input -> input.getValue());
-		return (header == null) ? cookie.orElse(null) : header;
+		final String output;
+		if (header.isPresent()) {
+			output = header.get();
+		} else if (parameter.isPresent()) {
+			output = parameter.get();
+		} else if (cookie.isPresent()) {
+			output = cookie.get();
+		} else {
+			output = null;
+		}
+		return output;
 	}
 
 	@Autowired
