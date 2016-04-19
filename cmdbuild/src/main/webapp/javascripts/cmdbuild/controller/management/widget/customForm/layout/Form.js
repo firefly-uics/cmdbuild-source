@@ -135,23 +135,42 @@
 		 * Load grid data
 		 */
 		onWidgetCustomFormLayoutFormShow: function () {
+			this.updateUiState();
+
+			if (!this.cmfg('widgetCustomFormInstancesDataStorageIsEmpty'))
+				this.cmfg('widgetCustomFormLayoutFormDataSet', this.cmfg('widgetCustomFormInstancesDataStorageGet'));
+		},
+
+		/**
+		 * @returns {Void}
+		 *
+		 * @private
+		 */
+		updateUiState: function () {
 			var isWidgetReadOnly = this.cmfg('widgetCustomFormConfigurationGet', [
 				CMDBuild.core.constants.Proxy.CAPABILITIES,
 				CMDBuild.core.constants.Proxy.READ_ONLY
 			]);
 
-			if (
-				isWidgetReadOnly
- 				|| this.cmfg('widgetCustomFormConfigurationGet', [
-					CMDBuild.core.constants.Proxy.CAPABILITIES,
-					CMDBuild.core.constants.Proxy.MODIFY_DISABLED
-				])
-			) {
-				this.view.setDisabledModify(true, true, isWidgetReadOnly);
-			}
+			// Setup fields state
+			if (isWidgetReadOnly)
+				this.view.setDisabledModify(true, true, true);
 
-			if (!this.cmfg('widgetCustomFormInstancesDataStorageIsEmpty'))
-				this.cmfg('widgetCustomFormLayoutFormDataSet', this.cmfg('widgetCustomFormInstancesDataStorageGet'));
+			// Setup toolbar buttons
+			this.view.exportButton.setDisabled(
+				isWidgetReadOnly
+				|| this.cmfg('widgetCustomFormConfigurationGet', [
+					CMDBuild.core.constants.Proxy.CAPABILITIES,
+					CMDBuild.core.constants.Proxy.IMPORT_DISABLED
+				])
+			);
+			this.view.importButton.setDisabled(
+				isWidgetReadOnly
+				|| this.cmfg('widgetCustomFormConfigurationGet', [
+					CMDBuild.core.constants.Proxy.CAPABILITIES,
+					CMDBuild.core.constants.Proxy.EXPORT_DISABLED
+				])
+			);
 		},
 
 		/**
