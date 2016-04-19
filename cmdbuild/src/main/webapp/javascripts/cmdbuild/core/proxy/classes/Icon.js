@@ -38,7 +38,7 @@
 				method: 'DELETE',
 				headers: parameters.headers,
 				jsonData: parameters.params,
-				url: 'services/rest/v2/icons/' + parameters.urlParams['iconId'],
+				url: 'services/rest/v2/icons/' + parameters.restUrlParams['iconId'],
 				loadMask: Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : false,
 				scope: parameters.scope || this,
 				success: function (response, options, decodedResponse) {
@@ -46,7 +46,7 @@
 						method: 'DELETE',
 						headers: parameters.headers,
 						jsonData: parameters.params,
-						url: 'services/rest/v2/filestores/images/folders/' + parameters.urlParams['folderId'] + '/files/' + parameters.urlParams['imageId'] + '/',
+						url: 'services/rest/v2/filestores/images/folders/' + parameters.restUrlParams['folderId'] + '/files/' + parameters.restUrlParams['imageId'] + '/',
 						loadMask: Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : false,
 						scope: parameters.scope || this,
 						success: parameters.success || Ext.emptyFn,

@@ -18,6 +18,8 @@ FIXES
 
  * Widget Grid: missing configuration model name error
 
+ * Error while editing icon from administration class edit form
+
 
 
 

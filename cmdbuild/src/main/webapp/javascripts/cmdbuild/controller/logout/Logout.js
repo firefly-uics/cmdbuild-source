@@ -48,11 +48,11 @@
 		 * @private
 		 */
 		doRestLogout: function () {
-			var urlParams = {};
-			urlParams[CMDBuild.core.constants.Proxy.TOKEN] = Ext.util.Cookies.get(CMDBuild.core.constants.Proxy.SESSION_TOKEN);
+			var restUrlParams = {};
+			restUrlParams[CMDBuild.core.constants.Proxy.TOKEN] = Ext.util.Cookies.get(CMDBuild.core.constants.Proxy.SESSION_TOKEN);
 
 			CMDBuild.core.proxy.session.Rest.logout({
-				urlParams: urlParams,
+				restUrlParams: restUrlParams,
 				scope: this,
 				callback: this.doJsonRpcLogout
 			});
