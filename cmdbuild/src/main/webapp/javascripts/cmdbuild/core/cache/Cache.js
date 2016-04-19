@@ -270,6 +270,7 @@
 		 * @param {String} parameters.method [DELETE, GET, POST, PUT]
 		 * @param {String} parameters.url
 		 * @param {Object} parameters.params
+		 * @param {Object} parameters.restUrlParams
 		 * @param {Object} parameters.headers
 		 * @param {Object} parameters.jsonData
 		 * @param {Object} parameters.loadMask
