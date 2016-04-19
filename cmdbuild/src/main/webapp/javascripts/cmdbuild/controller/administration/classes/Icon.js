@@ -113,7 +113,7 @@
 		 */
 		deleteImageAndIcon: function (callback) {
 			CMDBuild.core.proxy.classes.Icon.remove({
-				urlParams: {
+				restUrlParams: {
 					iconId: this.classIconObject._id,
 					folderId: this.classIconObject.image.details.folder,
 					imageId: this.classIconObject.image.details.file
