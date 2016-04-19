@@ -72,7 +72,7 @@
 
 				CMDBuild.core.RequestBarrier.init(barrierId, function () {
 					// Forwards to parent delegate
-					this.cmfg('widgetCustomFormImportData', this.importDataModeManager(csvData));
+					this.cmfg('widgetCustomFormDataSet', this.importDataModeManager(csvData));
 					this.cmfg('onWidgetCustomFormImportAbortButtonClick');
 
 					this.view.setLoading(false);
