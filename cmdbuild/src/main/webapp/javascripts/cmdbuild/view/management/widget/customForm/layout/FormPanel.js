@@ -75,7 +75,7 @@
 								scope: this,
 
 								handler: function (button, e) {
-									this.delegate.cmfg('onWidgetCustomFormLayoutFormResetButtonClick');
+									this.delegate.cmfg('onWidgetCustomFormResetButtonClick');
 								}
 							})
 						]
