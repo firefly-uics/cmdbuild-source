@@ -1,4 +1,14 @@
-(function() {
+(function () {
+
+	Ext.Loader.setConfig({
+		enabled: true,
+		disableCaching: false,
+		paths: {
+			'CMDBuild': './javascripts/cmdbuild',
+			'Ext.ux': './javascripts/ext-' + getExtJsVersion({ release: false }) + '-ux',
+			'Logger': './javascripts/log'
+		}
+	});
 
 	/**
 	 * Returns string with custom formatted ExtJs version (copy of CMDBuild.core.Utils to avoid dependences problems)
@@ -39,16 +49,5 @@
 
 		return outputArray.join(format.separator);
 	};
-
-	Ext.Loader.setConfig({
-		enabled: true,
-		disableCaching: false,
-		paths: {
-			'CMDBuild.app': './javascripts/cmdbuild',
-			'CMDBuild': './javascripts/cmdbuild',
-			'Ext.ux': './javascripts/ext-' + getExtJsVersion({ release: false }) + '-ux',
-			'Logger': './javascripts/log'
-		}
-	});
 
 })();
