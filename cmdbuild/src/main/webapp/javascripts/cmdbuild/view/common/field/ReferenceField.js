@@ -1,7 +1,6 @@
 (function() {
 
 	var FILTER_FIELD = "_SystemFieldFilter";
-	var CHANGE_EVENT = "change";
 
 	Ext.define("CMDBuild.Management.ReferenceField", {
 		statics: {
@@ -69,16 +68,15 @@
 
 	function buildReferencePanel(field, subFields) {
 		// If the field has no value the relation attributes must be disabled
-		field.mon(field, CHANGE_EVENT, function(combo, val) {
-			var disabled = val == "";
-
-			for (var i = 0; i < subFields.length; ++i) {
-				var sf = subFields[i];
-
-				if (sf)
-					sf.setDisabled(disabled);
-			}
-		});
+		field.on('change', function (combo, newValue, oldValue, eOpts) {
+			Ext.Function.defer(function (combo) { // I cannot understand why deferring function it works, but that the only way...
+				if (!Ext.isEmpty(subFields) && Ext.isArray(subFields))
+					Ext.Array.each(subFields, function (subField, i, allSubFields) {
+						if (!Ext.isEmpty(subField))
+							subField.setDisabled(Ext.isEmpty(combo.getValue()));
+					}, this);
+			}, 100, this, [combo]);
+		}, this);
 
 		var fieldContainer = {
 			xtype: 'container',
@@ -97,6 +95,7 @@
 
 		return Ext.create('Ext.container.Container', {
 			margin: "0 0 5 0",
+			mainField: field, // Custom attribute to create a reference to main reference field
 			items: [fieldContainer].concat(subFields),
 			resolveTemplate: function(barrierCallbackDefinitionObject) {
 				field.resolveTemplate(barrierCallbackDefinitionObject);

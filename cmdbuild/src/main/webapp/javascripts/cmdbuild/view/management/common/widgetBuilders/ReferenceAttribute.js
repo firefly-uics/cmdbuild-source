@@ -96,7 +96,14 @@ function manageCalculatedValues(field, attribute) {
 CMDBuild.WidgetBuilders.ReferenceAttribute.prototype.buildField = function(attribute, hideLabel, skipSubAttributes) {
 	var field = this.buildAttributeField(attribute, skipSubAttributes);
 	field.hideLabel = hideLabel;
-	return this.markAsRequired(field, attribute);
+
+	if (!Ext.isEmpty(field.mainField)) {
+		this.markAsRequired(field.mainField, attribute);
+	} else {
+		this.markAsRequired(field, attribute)
+	}
+
+	return field;
 };
 
 /**
