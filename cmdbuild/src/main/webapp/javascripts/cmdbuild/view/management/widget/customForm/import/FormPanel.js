@@ -37,6 +37,8 @@
 		},
 
 		/**
+		 * @returns {Void}
+		 *
 		 * @override
 		 */
 		initComponent: function () {

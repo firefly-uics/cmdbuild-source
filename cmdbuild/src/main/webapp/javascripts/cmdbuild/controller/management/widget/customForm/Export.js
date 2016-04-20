@@ -35,6 +35,8 @@
 		 * @param {Object} configurationObject
 		 * @param {Mixed} configurationObject.parentDelegate
 		 *
+		 * @returns {Void}
+		 *
 		 * @override
 		 */
 		constructor: function (configurationObject) {
@@ -50,12 +52,17 @@
 				this.view.show();
 		},
 
+		/**
+		 * @returns {Void}
+		 */
 		onWidgetCustomFormExportAbortButtonClick: function () {
 			this.view.destroy();
 		},
 
 		/**
 		 * Uses exportCSV calls to build and download file
+		 *
+		 * @returns {Void}
 		 */
 		onWidgetCustomFormExportExportButtonClick: function () {
 			if (this.validate(this.form)) {

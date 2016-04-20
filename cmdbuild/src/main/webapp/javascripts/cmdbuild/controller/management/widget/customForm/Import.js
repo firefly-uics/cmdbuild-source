@@ -40,6 +40,8 @@
 		 * @param {Object} configurationObject
 		 * @param {Mixed} configurationObject.parentDelegate
 		 *
+		 * @returns {Void}
+		 *
 		 * @override
 		 */
 		constructor: function (configurationObject) {
@@ -61,6 +63,8 @@
 		 * 	- Reference: from code to id
 		 *
 		 * @param {Array} csvData
+		 *
+		 * @returns {Void}
 		 *
 		 * @private
 		 */
@@ -99,6 +103,8 @@
 		 * @param {Array} csvData
 		 * @param {CMDBuild.model.widget.customForm.Attribute} attribute
 		 * @param {String} barrierId
+		 *
+		 * @returns {Void}
 		 *
 		 * @private
 		 */
@@ -142,6 +148,8 @@
 		 * @param {Array} csvData
 		 * @param {CMDBuild.model.widget.customForm.Attribute} attribute
 		 * @param {String} barrierId
+		 *
+		 * @returns {Void}
 		 *
 		 * @private
 		 */
@@ -209,6 +217,8 @@
 
 		/**
 		 * @param {Array} csvData
+		 *
+		 * @returns {Void}
 		 *
 		 * @private
 		 */
@@ -367,10 +377,16 @@
 			return false;
 		},
 
+		/**
+		 * @returns {Void}
+		 */
 		onWidgetCustomFormImportAbortButtonClick: function () {
 			this.view.destroy();
 		},
 
+		/**
+		 * @returns {Void}
+		 */
 		onWidgetCustomFormImportModeChange: function () {
 			this.form.keyAttributesMultiselect.setDisabled(
 				this.form.modeCombo.getValue() != 'merge'
@@ -379,6 +395,8 @@
 
 		/**
 		 * Uses importCSV calls to store and get CSV data from server and check if CSV has right fields
+		 *
+		 * @returns {Void}
 		 */
 		onWidgetCustomFormImportUploadButtonClick: function () {
 			if (this.validate(this.form)) {

@@ -21,6 +21,8 @@
 		title: CMDBuild.Translation.editRow,
 
 		/**
+		 * @returns {Void}
+		 *
 		 * @override
 		 */
 		initComponent: function () {
