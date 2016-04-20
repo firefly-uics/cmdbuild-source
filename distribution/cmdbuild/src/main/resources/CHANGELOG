@@ -26,6 +26,8 @@ FIXES
 
  * Reference fields errors with domain's attributes
 
+ * Lookup fields no mandatory label flag in display panels
+
 
 
 
