@@ -22,6 +22,8 @@ FIXES
 
  * Login page errors
 
+ * LDAP connection timeout freezes UI for long time
+
  * Widget CustomForm: reset to default behaviour error with functions
 
  * Reference fields errors with domain's attributes
