@@ -22,6 +22,8 @@ FIXES
 
  * Login page errors
 
+ * LDAP connection timeout freezes UI for long time
+
 
 
 
