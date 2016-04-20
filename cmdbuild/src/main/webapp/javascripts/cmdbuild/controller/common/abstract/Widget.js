@@ -234,10 +234,21 @@
 			},
 
 			/**
+			 * @param {String} mode ['full' || 'single']
+			 *
 			 * @returns {Void}
 			 */
-			instancesDataStorageReset: function () {
-				this.instancesDataStorage = {};
+			instancesDataStorageReset: function (mode) {
+				mode = !Ext.isEmpty(mode) && Ext.isString(mode) ? mode : 'full';
+
+				switch (mode) {
+					case 'single':
+						return this.instancesDataStorage[this.getId('unique')] = null;
+
+					case 'full':
+					default:
+						return this.instancesDataStorage = {};
+				}
 			},
 
 			/**

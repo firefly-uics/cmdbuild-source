@@ -44,7 +44,7 @@
 			Ext.ns('CMDBuild.configuration');
 			CMDBuild.configuration.localization = Ext.create('CMDBuild.model.core.configurations.builder.Localization'); // Setup configuration with defaults
 
-			if (this.enableServerCalls)
+			if (this.enableServerCalls) {
 				CMDBuild.proxy.core.configurations.builder.Localization.readAllAvailableTranslations({
 					loadMask: false,
 					scope: this,
@@ -72,6 +72,9 @@
 						}
 					}
 				});
+			} else {
+				Ext.callback(this.callback, this.scope || this);
+			}
 		}
 	});
 
