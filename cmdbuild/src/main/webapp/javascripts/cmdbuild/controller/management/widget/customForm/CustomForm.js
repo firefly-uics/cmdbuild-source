@@ -48,6 +48,7 @@
 			'onWidgetCustomFormBeforeActiveView = beforeActiveView',
 			'onWidgetCustomFormBeforeHideView = beforeHideView',
 			'onWidgetCustomFormEditMode = onEditMode',
+			'onWidgetCustomFormResetButtonClick',
 			'widgetConfigurationGet = widgetCustomFormConfigurationGet',
 			'widgetConfigurationIsEmpty = widgetCustomFormConfigurationIsEmpty',
 			'widgetConfigurationSet = widgetCustomFormConfigurationSet',
@@ -143,9 +144,9 @@
 					callback: function (out, ctx) {
 						decodedOutput = out;
 
-						// Apply change event to reset data property in widgetConfiguration to avoid sql function server call
+						// Apply change event to reset data property in widgetConfiguration to avoid SQL function server call
 						templateResolver.bindLocalDepsChange(function () {
-							this.instancesDataStorageSet(); // Reset widget instance data storage
+							this.instancesDataStorageReset('single'); // Reset widget instance data storage
 						}, this);
 					}
 				});
@@ -212,6 +213,34 @@
 		},
 
 		/**
+		 * @param {Object} parameters
+		 * @param {Function} parameters.callback
+		 * @param {Object} parameters.scope
+		 * @param {Function} parameters.success
+		 *
+		 * @returns {Void}
+		 *
+		 * @private
+		 */
+		executeConfigurationSqlFunction: function (parameters) {
+			if (
+				!this.cmfg('widgetCustomFormConfigurationIsEmpty', CMDBuild.core.constants.Proxy.FUNCTION_DATA)
+				&& this.isRefreshNeeded()
+			) {
+				var params = {};
+				params[CMDBuild.core.constants.Proxy.FUNCTION] = this.cmfg('widgetCustomFormConfigurationGet', CMDBuild.core.constants.Proxy.FUNCTION_DATA);
+				params[CMDBuild.core.constants.Proxy.PARAMS] = Ext.encode(this.cmfg('widgetCustomFormConfigurationGet', CMDBuild.core.constants.Proxy.VARIABLES));
+
+				CMDBuild.core.proxy.widget.CustomForm.readFromFunctions({
+					params: params,
+					scope: this,
+					callback: parameters.callback || Ext.emptyFn,
+					success: parameters.success || Ext.emptyFn
+				});
+			}
+		},
+
+		/**
 		 * Refresh behaviour manage method
 		 *
 		 * @returns {Boolean}
@@ -241,7 +270,7 @@
 			this.beforeActiveView(arguments); // CallParent alias
 
 			// Execute template resolver on model property
-			if (!Ext.isEmpty(this.cmfg('widgetCustomFormConfigurationGet', CMDBuild.core.constants.Proxy.MODEL)))
+			if (this.cmfg('widgetCustomFormConfigurationIsEmpty', CMDBuild.core.constants.Proxy.MODEL))
 				this.cmfg('widgetCustomFormConfigurationSet', {
 					propertyName: CMDBuild.core.constants.Proxy.MODEL,
 					value: this.applyTemplateResolverToArray(this.widgetConfiguration[CMDBuild.core.constants.Proxy.MODEL])
@@ -249,9 +278,9 @@
 
 			// Execute template resolver on variables property
 			if (
-				Ext.isEmpty(this.cmfg('widgetCustomFormConfigurationGet', CMDBuild.core.constants.Proxy.DATA)) // Widget configuration data property is empty
+				this.cmfg('widgetCustomFormConfigurationIsEmpty', CMDBuild.core.constants.Proxy.DATA) // Widget configuration data property is empty
 				&& this.cmfg('widgetCustomFormInstancesDataStorageIsEmpty') // Local store buffer is empty
-				&& !Ext.isEmpty(this.cmfg('widgetCustomFormConfigurationGet', CMDBuild.core.constants.Proxy.FUNCTION_DATA))
+				&& !this.cmfg('widgetCustomFormConfigurationIsEmpty', CMDBuild.core.constants.Proxy.FUNCTION_DATA)
 			) {
 				this.cmfg('widgetCustomFormConfigurationSet', {
 					propertyName: CMDBuild.core.constants.Proxy.VARIABLES,
@@ -259,7 +288,16 @@
 				});
 
 				// Build data configurations from function definition
-				this.buildDataConfigurationFromFunction();
+				this.executeConfigurationSqlFunction({
+					scope: this,
+					success: function (response, options, decodedResponse) {
+						decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.CARDS];
+
+						// Save function response to instance data storage
+						this.instancesDataStorageSet(decodedResponse);
+					},
+					callback: this.buildLayout
+				});
 			} else {
 				this.buildLayout();
 			}
@@ -274,6 +312,29 @@
 			this.instancesDataStorageSet(this.cmfg('widgetCustomFormConfigurationGet', CMDBuild.core.constants.Proxy.DATA));
 
 			this.cmfg('onWidgetCustomFormBeforeActiveView');
+		},
+
+		/**
+		 * @returns {Void}
+		 */
+		onWidgetCustomFormResetButtonClick: function () {
+			if (!this.cmfg('widgetCustomFormConfigurationIsEmpty', CMDBuild.core.constants.Proxy.DATA)) { // Refill widget with data configuration
+				this.controllerLayout.cmfg('widgetCustomFormDataSet', this.cmfg('widgetCustomFormConfigurationGet', CMDBuild.core.constants.Proxy.DATA));
+			} else if (!this.cmfg('widgetCustomFormConfigurationIsEmpty', CMDBuild.core.constants.Proxy.FUNCTION_DATA)) { // Get data from function
+				this.cmfg('widgetCustomFormConfigurationSet', {
+					propertyName: CMDBuild.core.constants.Proxy.VARIABLES,
+					value: this.applyTemplateResolverToObject(this.widgetConfiguration[CMDBuild.core.constants.Proxy.VARIABLES])
+				});
+
+				this.executeConfigurationSqlFunction({
+					scope: this,
+					success: function (response, options, decodedResponse) {
+						decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.CARDS];
+
+						this.controllerLayout.cmfg('widgetCustomFormDataSet', decodedResponse);
+					}
+				});
+			}
 		},
 
 		/**

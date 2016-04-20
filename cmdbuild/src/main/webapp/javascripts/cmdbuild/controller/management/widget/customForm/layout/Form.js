@@ -21,8 +21,8 @@
 			'onWidgetCustomFormLayoutFormImportButtonClick',
 			'onWidgetCustomFormLayoutFormResetButtonClick',
 			'onWidgetCustomFormLayoutFormShow = onWidgetCustomFormShow',
-			'setData = widgetCustomFormImportData',
 			'widgetCustomFormLayoutFormDataGet = widgetCustomFormLayoutControllerDataGet',
+			'widgetCustomFormLayoutFormDataSet = widgetCustomFormDataSet',
 			'widgetCustomFormLayoutFormIsValid = widgetCustomFormLayoutControllerIsValid'
 		],
 
@@ -43,7 +43,7 @@
 			// Barrier to load data after reference field store's load end
 			CMDBuild.core.RequestBarrier.init('referenceStoreLoadBarrier', function () {
 				if (!this.cmfg('widgetCustomFormInstancesDataStorageIsEmpty'))
-					this.setData(this.cmfg('widgetCustomFormInstancesDataStorageGet'));
+					this.cmfg('widgetCustomFormLayoutFormDataSet', this.cmfg('widgetCustomFormInstancesDataStorageGet'));
 
 				this.cmfg('widgetCustomFormViewSetLoading', false);
 			}, this);
@@ -130,45 +130,62 @@
 			Ext.create('CMDBuild.controller.management.widget.customForm.Import', { parentDelegate: this });
 		},
 
-		onWidgetCustomFormLayoutFormResetButtonClick: function () {
-			this.cmfg('widgetCustomFormConfigurationSet', {
-				propertyName: CMDBuild.core.constants.Proxy.DATA,
-				value: this.cmfg('widgetCustomFormControllerPropertyGet', 'widgetConfiguration')[CMDBuild.core.constants.Proxy.DATA]
-			});
-
-			this.setData(this.cmfg('widgetCustomFormConfigurationGet', CMDBuild.core.constants.Proxy.DATA));
-		},
-
 		/**
 		 * Setup form items disabled state, disable topToolBar only if is readOnly
 		 * Load grid data
 		 */
 		onWidgetCustomFormLayoutFormShow: function () {
+			this.updateUiState();
+
+			if (!this.cmfg('widgetCustomFormInstancesDataStorageIsEmpty'))
+				this.cmfg('widgetCustomFormLayoutFormDataSet', this.cmfg('widgetCustomFormInstancesDataStorageGet'));
+		},
+
+		/**
+		 * @returns {Void}
+		 *
+		 * @private
+		 */
+		updateUiState: function () {
 			var isWidgetReadOnly = this.cmfg('widgetCustomFormConfigurationGet', [
 				CMDBuild.core.constants.Proxy.CAPABILITIES,
 				CMDBuild.core.constants.Proxy.READ_ONLY
 			]);
 
-			if (
-				isWidgetReadOnly
- 				|| this.cmfg('widgetCustomFormConfigurationGet', [
-					CMDBuild.core.constants.Proxy.CAPABILITIES,
-					CMDBuild.core.constants.Proxy.MODIFY_DISABLED
-				])
-			) {
-				this.view.setDisabledModify(true, true, isWidgetReadOnly);
-			}
+			// Setup fields state
+			if (isWidgetReadOnly)
+				this.view.setDisabledModify(true, true, true);
 
-			if (!this.cmfg('widgetCustomFormInstancesDataStorageIsEmpty'))
-				this.setData(this.cmfg('widgetCustomFormInstancesDataStorageGet'));
+			// Setup toolbar buttons
+			this.view.exportButton.setDisabled(
+				isWidgetReadOnly
+				|| this.cmfg('widgetCustomFormConfigurationGet', [
+					CMDBuild.core.constants.Proxy.CAPABILITIES,
+					CMDBuild.core.constants.Proxy.IMPORT_DISABLED
+				])
+			);
+			this.view.importButton.setDisabled(
+				isWidgetReadOnly
+				|| this.cmfg('widgetCustomFormConfigurationGet', [
+					CMDBuild.core.constants.Proxy.CAPABILITIES,
+					CMDBuild.core.constants.Proxy.EXPORT_DISABLED
+				])
+			);
+		},
+
+		/**
+		 * @returns {Array}
+		 */
+		widgetCustomFormLayoutFormDataGet: function () {
+			return [this.view.getData(true)];
 		},
 
 		/**
 		 * @param {Array} data
 		 *
-		 * @private
+		 * @returns {Void}
 		 */
-		setData: function (data) {
+		widgetCustomFormLayoutFormDataSet: function (data) {
 			data = (Ext.isArray(data) && !Ext.isEmpty(data[0])) ? data[0] : data; // Get first item only from arrays
 			data = Ext.isFunction(data.getData) ? data.getData() : data; // Manage models
 
@@ -178,13 +195,6 @@
 				this.view.getForm().setValues(data);
 
 			this.cmfg('widgetCustomFormLayoutFormIsValid', false);
-		},
-
-		/**
-		 * @returns {Array}
-		 */
-		widgetCustomFormLayoutFormDataGet: function () {
-			return [this.view.getData(true)];
 		},
 
 		/**

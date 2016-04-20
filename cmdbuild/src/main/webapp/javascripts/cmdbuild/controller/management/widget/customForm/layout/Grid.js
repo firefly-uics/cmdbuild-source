@@ -26,8 +26,8 @@
 			'onWidgetCustomFormLayoutGridImportButtonClick',
 			'onWidgetCustomFormLayoutGridResetButtonClick',
 			'onWidgetCustomFormLayoutGridShow = onWidgetCustomFormShow',
-			'setData = widgetCustomFormImportData',
 			'widgetCustomFormLayoutGridDataGet = widgetCustomFormLayoutControllerDataGet',
+			'widgetCustomFormLayoutGridDataSet = widgetCustomFormDataSet',
 			'widgetCustomFormLayoutGridIsValid = widgetCustomFormLayoutControllerIsValid'
 		],
 
@@ -48,7 +48,7 @@
 			// Barrier to load data after reference field store's load end
 			CMDBuild.core.RequestBarrier.init('referenceStoreLoadBarrier', function () {
 				if (!this.cmfg('widgetCustomFormInstancesDataStorageIsEmpty'))
-					this.setData(this.cmfg('widgetCustomFormInstancesDataStorageGet'));
+					this.cmfg('widgetCustomFormLayoutGridDataSet', this.cmfg('widgetCustomFormInstancesDataStorageGet'));
 
 				this.cmfg('widgetCustomFormViewSetLoading', false);
 			}, this);
@@ -360,21 +360,14 @@
 			Ext.create('CMDBuild.controller.management.widget.customForm.Import', { parentDelegate: this });
 		},
 
-		onWidgetCustomFormLayoutGridResetButtonClick: function () {
-			this.cmfg('widgetCustomFormConfigurationSet', {
-				propertyName: CMDBuild.core.constants.Proxy.DATA,
-				value: this.cmfg('widgetCustomFormControllerPropertyGet', 'widgetConfiguration')[CMDBuild.core.constants.Proxy.DATA]
-			});
-
-			this.setData(this.cmfg('widgetCustomFormConfigurationGet', CMDBuild.core.constants.Proxy.DATA));
-		},
-
 		/**
 		 * Load grid data
 		 */
 		onWidgetCustomFormLayoutGridShow: function () {
+			this.updateUiState();
+
 			if (!this.cmfg('widgetCustomFormInstancesDataStorageIsEmpty'))
-				this.setData(this.cmfg('widgetCustomFormInstancesDataStorageGet'));
+				this.cmfg('widgetCustomFormLayoutGridDataSet', this.cmfg('widgetCustomFormInstancesDataStorageGet'));
 
 			// Fixes reference field renderer to avoid blank cell content render
 			Ext.Function.createDelayed(function () {
@@ -384,17 +377,38 @@
 		},
 
 		/**
-		 * @param {Array} data
+		 * @returns {Void}
 		 *
 		 * @private
 		 */
-		setData: function (data) {
-			this.view.getStore().removeAll();
+		updateUiState: function () {
+			var isWidgetReadOnly = this.cmfg('widgetCustomFormConfigurationGet', [
+				CMDBuild.core.constants.Proxy.CAPABILITIES,
+				CMDBuild.core.constants.Proxy.READ_ONLY
+			]);
 
-			if (!Ext.isEmpty(data))
-				this.view.getStore().loadData(data);
-
-			this.cmfg('widgetCustomFormLayoutGridIsValid');
+			// Setup toolbar buttons
+			this.view.addButton.setDisabled(
+				isWidgetReadOnly
+				|| this.cmfg('widgetCustomFormConfigurationGet', [
+					CMDBuild.core.constants.Proxy.CAPABILITIES,
+					CMDBuild.core.constants.Proxy.ADD_DISABLED
+				])
+			);
+			this.view.exportButton.setDisabled(
+				isWidgetReadOnly
+				|| this.cmfg('widgetCustomFormConfigurationGet', [
+					CMDBuild.core.constants.Proxy.CAPABILITIES,
+					CMDBuild.core.constants.Proxy.IMPORT_DISABLED
+				])
+			);
+			this.view.importButton.setDisabled(
+				isWidgetReadOnly
+				|| this.cmfg('widgetCustomFormConfigurationGet', [
+					CMDBuild.core.constants.Proxy.CAPABILITIES,
+					CMDBuild.core.constants.Proxy.EXPORT_DISABLED
+				])
+			);
 		},
 
 		/**
@@ -409,6 +423,20 @@
 			}, this);
 
 			return storeRecordsData;
+		},
+
+		/**
+		 * @param {Array} data
+		 *
+		 * @returns {Void}
+		 */
+		widgetCustomFormLayoutGridDataSet: function (data) {
+			this.view.getStore().removeAll();
+
+			if (!Ext.isEmpty(data))
+				this.view.getStore().loadData(data);
+
+			this.cmfg('widgetCustomFormLayoutGridIsValid');
 		},
 
 		/**

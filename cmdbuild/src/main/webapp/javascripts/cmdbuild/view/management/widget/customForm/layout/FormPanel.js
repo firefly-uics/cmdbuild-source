@@ -12,6 +12,16 @@
 		 */
 		delegate: undefined,
 
+		/**
+		 * @property {CMDBuild.core.buttons.iconized.Export}
+		 */
+		exportButton: undefined,
+
+		/**
+		 * @property {CMDBuild.core.buttons.iconized.Import}
+		 */
+		importButton: undefined,
+
 		bodyCls: 'x-panel-body-default-framed',
 		bodyPadding: 5,
 		border: false,
@@ -27,11 +37,6 @@
 		 * @override
 		 */
 		initComponent: function () {
-			var isWidgetReadOnly = this.delegate.cmfg('widgetCustomFormConfigurationGet', [
-				CMDBuild.core.constants.Proxy.CAPABILITIES,
-				CMDBuild.core.constants.Proxy.READ_ONLY
-			]);
-
 			Ext.apply(this, {
 				dockedItems: [
 					Ext.create('Ext.toolbar.Toolbar', {
@@ -39,32 +44,16 @@
 						itemId: CMDBuild.core.constants.Proxy.TOOLBAR_TOP,
 
 						items: [
-							Ext.create('CMDBuild.core.buttons.iconized.Import', {
+							this.importButton = Ext.create('CMDBuild.core.buttons.iconized.Import', {
 								text: CMDBuild.Translation.import,
 								scope: this,
-
-								disabled: (
-									isWidgetReadOnly
-									|| this.delegate.cmfg('widgetCustomFormConfigurationGet', [
-										CMDBuild.core.constants.Proxy.CAPABILITIES,
-										CMDBuild.core.constants.Proxy.IMPORT_DISABLED
-									])
-								),
 
 								handler: function (button, e) {
 									this.delegate.cmfg('onWidgetCustomFormLayoutFormImportButtonClick');
 								}
 							}),
-							Ext.create('CMDBuild.core.buttons.iconized.Export', {
+							this.exportButton = Ext.create('CMDBuild.core.buttons.iconized.Export', {
 								scope: this,
-
-								disabled: (
-									isWidgetReadOnly
-									|| this.delegate.cmfg('widgetCustomFormConfigurationGet', [
-										CMDBuild.core.constants.Proxy.CAPABILITIES,
-										CMDBuild.core.constants.Proxy.EXPORT_DISABLED
-									])
-								),
 
 								handler: function (button, e) {
 									this.delegate.cmfg('onWidgetCustomFormLayoutFormExportButtonClick');
@@ -75,7 +64,7 @@
 								scope: this,
 
 								handler: function (button, e) {
-									this.delegate.cmfg('onWidgetCustomFormLayoutFormResetButtonClick');
+									this.delegate.cmfg('onWidgetCustomFormResetButtonClick');
 								}
 							})
 						]
