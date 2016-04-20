@@ -21,6 +21,8 @@
 		title: CMDBuild.Translation.import,
 
 		/**
+		 * @returns {Void}
+		 *
 		 * @override
 		 */
 		initComponent: function () {

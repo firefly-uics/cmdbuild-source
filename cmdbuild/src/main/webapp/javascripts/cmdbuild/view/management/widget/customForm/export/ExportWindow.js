@@ -21,6 +21,8 @@
 		title: CMDBuild.Translation.exportLabel,
 
 		/**
+		 * @returns {Void}
+		 *
 		 * @override
 		 */
 		initComponent: function () {
