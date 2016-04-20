@@ -1,5 +1,7 @@
 (function() {
 
+	Ext.require(['CMDBuild.core.Utils']);
+
 	/**
 	 * @class CMDBuild.WidgetBuilders.LookupAttribute
 	 * @extends CMDBuild.WidgetBuilders.ComboAttribute
@@ -81,7 +83,15 @@
 			}
 		};
 
-		return this.markAsRequired(field, attribute);
+		// markAsRequired method
+		if (attribute.isnotnull || attribute.fieldmode == "required") {
+			field.allowBlank = false;
+
+			if (field.fieldLabel)
+				field.fieldLabel = CMDBuild.core.Utils.prependMandatoryLabel(field.fieldLabel);
+		}
+
+		return field;
 	};
 
 	/**
