@@ -13,6 +13,7 @@
 
 	Ext.define('Ext.ux.form.field.TinyMCE', {
 		extend: 'Ext.form.field.TextArea',
+
 		alias: 'widget.tinymcefield',
 
 		requires: ['Ext.ux.form.field.TinyMCEWindowManager'],

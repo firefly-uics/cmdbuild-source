@@ -66,6 +66,11 @@
 		considerAsFieldToDisable: true,
 		minHeight: 150,
 
+		/**
+		 * @returns {Void}
+		 *
+		 * @override
+		 */
 		initComponent: function () {
 			var validIdentifiers = ['full', 'standard'];
 
@@ -94,6 +99,9 @@
 			}, this);
 		},
 
+		/**
+		 * @returns {Void}
+		 */
 		initValue: function () {
 			this.dirty = false;
 		},
@@ -112,6 +120,9 @@
 			return false;
 		},
 
+		/**
+		 * @returns {Void}
+		 */
 		setDirty: function () {
 			this.dirty = true;
 		},
@@ -119,9 +130,11 @@
 		/**
 		 * Override to avoid event suspend that deny correct editor rendering
 		 *
+		 * @returns {Void}
+		 *
 		 * @override
 		 */
-		suspendEvents: undefined
+		suspendEvents: Ext.emptyFn
 	});
 
 })();
