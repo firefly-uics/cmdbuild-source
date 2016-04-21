@@ -83,8 +83,8 @@
 							var xaVars = CMDBuild.Utils.Metadata.extractMetaByNS(attribute.meta, 'system.template.');
 							xaVars['_SystemFieldFilter'] = attribute.filter;
 
-							var templateResolver = new CMDBuild.Management.TemplateResolver({ // TODO: implementation of serverside template resolver
-								clientForm: this.cmfg('widgetCustomFormControllerPropertyGet', 'getClientForm'),
+							var templateResolver = new CMDBuild.Management.TemplateResolver({
+								clientForm: this.cmfg('widgetCustomFormControllerPropertyGet', 'clientForm'),
 								xaVars: xaVars,
 								serverVars: this.cmfg('widgetCustomFormGetTemplateResolverServerVars')
 							});

@@ -68,11 +68,9 @@
 				!Ext.isEmpty(csvData) && Ext.isArray(csvData)
 				&& !this.cmfg('widgetCustomFormConfigurationIsEmpty',  CMDBuild.core.constants.Proxy.MODEL)
 			) {
-				var barrierId = 'dataManageBarrier';
-
-				CMDBuild.core.RequestBarrier.init(barrierId, function () {
+				CMDBuild.core.RequestBarrier.init('dataManageBarrier', function () {
 					// Forwards to parent delegate
-					this.cmfg('widgetCustomFormDataSet', this.importDataModeManager(csvData));
+					this.cmfg('widgetCustomFormLayoutDataSet', this.importDataModeManager(csvData));
 					this.cmfg('onWidgetCustomFormImportAbortButtonClick');
 
 					this.view.setLoading(false);
@@ -81,16 +79,16 @@
 				Ext.Array.forEach(this.cmfg('widgetCustomFormConfigurationGet', CMDBuild.core.constants.Proxy.MODEL), function (attribute, i, allAttributes) {
 					switch (attribute.get(CMDBuild.core.constants.Proxy.TYPE)) {
 						case 'lookup': {
-							this.dataManageLookup(csvData, attribute, barrierId);
+							this.dataManageLookup(csvData, attribute, 'dataManageBarrier');
 						} break;
 
 						case 'reference': {
-							this.dataManageReference(csvData, attribute, barrierId);
+							this.dataManageReference(csvData, attribute, 'dataManageBarrier');
 						} break;
 					}
 				}, this);
 
-				CMDBuild.core.RequestBarrier.finalize(barrierId);
+				CMDBuild.core.RequestBarrier.finalize('dataManageBarrier');
 			}
 		},
 
@@ -217,7 +215,7 @@
 			if (!Ext.isEmpty(csvData) && Ext.isArray(csvData))
 				switch (this.form.modeCombo.getValue()) {
 					case 'add':
-						return Ext.Array.push(this.cmfg('widgetCustomFormLayoutControllerDataGet'), csvData);
+						return Ext.Array.push(this.cmfg('widgetCustomFormLayoutDataGet'), csvData);
 
 					case 'merge':
 						return this.importDataModeManagerMerge(csvData);
@@ -248,7 +246,7 @@
 			) {
 				var outputData = [];
 
-				Ext.Array.forEach(this.cmfg('widgetCustomFormLayoutControllerDataGet'), function (storeRowObject, i, allStoreRowObjects) {
+				Ext.Array.forEach(this.cmfg('widgetCustomFormLayoutDataGet'), function (storeRowObject, i, allStoreRowObjects) {
 					if (Ext.isObject(storeRowObject) && !Ext.Object.isEmpty(storeRowObject)) {
 						var foundCsvRowObject = Ext.Array.findBy(csvData, function (csvRowObject, i, allCsvRowObjects) {
 							var isValid = true;
@@ -271,7 +269,7 @@
 				return outputData;
 			}
 
-			return this.cmfg('widgetCustomFormLayoutControllerDataGet');
+			return this.cmfg('widgetCustomFormLayoutDataGet');
 		},
 
 		/**
@@ -337,7 +335,7 @@
 				var keyAttributeCsvValues = [];
 
 				// Build keyAttributeCsvValues array with append algorithm
-				Ext.Array.forEach(this.cmfg('widgetCustomFormLayoutControllerDataGet'), function (storeRowObject, i, allStoreRowObjects) {
+				Ext.Array.forEach(this.cmfg('widgetCustomFormLayoutDataGet'), function (storeRowObject, i, allStoreRowObjects) {
 					var key = '';
 
 					Ext.Array.forEach(keyAttributes, function (name, i, allNames) {
