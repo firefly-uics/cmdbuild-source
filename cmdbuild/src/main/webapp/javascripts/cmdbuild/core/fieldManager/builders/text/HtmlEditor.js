@@ -42,6 +42,7 @@
 				allowBlank: !this.cmfg('attributeModelGet', CMDBuild.core.constants.Proxy.MANDATORY),
 				disabled: !this.cmfg('attributeModelGet', CMDBuild.core.constants.Proxy.WRITABLE),
 				name: this.cmfg('attributeModelGet', CMDBuild.core.constants.Proxy.NAME),
+				minWidth: CMDBuild.core.constants.FieldWidths.EDITOR_HTML,
 				readOnly: !this.cmfg('attributeModelGet', CMDBuild.core.constants.Proxy.WRITABLE)
 			});
 		},

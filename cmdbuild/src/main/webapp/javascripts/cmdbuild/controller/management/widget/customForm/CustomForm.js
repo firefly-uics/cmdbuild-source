@@ -321,19 +321,15 @@
 		 * @public
 		 */
 		onBeforeSave: function (callbackChainArray, i) {
-			var executed = false;
-
 			// Manage SQL function as data source
 			this.manageSqlFunctionAsDataSource({
 				scope: this,
 				callback: function () {
-					executed = true;
+					this.controllerLayout.cmfg('onWidgetCustomFormShow');
+
 					this.beforeSaveCallbackChainManager(callbackChainArray, i);
 				}
 			});
-
-			if (!executed)
-				this.callParent(arguments);
 		},
 
 		/**
@@ -424,6 +420,8 @@
 					CMDBuild.core.constants.Proxy.READ_ONLY
 				])
 			) {
+				this.controllerLayout.cmfg('onWidgetCustomFormShow');
+
 				// Uses direct data property access to avoid a get problem because of generic model
 				Ext.Array.forEach(this.cmfg('widgetCustomFormLayoutDataGet'), function (rowObject, i, allRowObjects) {
 					var dataObject = Ext.isEmpty(rowObject.data) ? rowObject : rowObject.data; // Model/Objects management
