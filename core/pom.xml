@@ -14,7 +14,7 @@
 	<properties>
 		<antlr.version>3.5.2</antlr.version>
 		<itext.version>2.1.7</itext.version> <!-- jasperreports dependency -->
-		<jasperreports.version>5.1.2</jasperreports.version>
+		<jasperreports.version>6.2.1</jasperreports.version>
 		<json-java.version>20110113</json-java.version>
 		<restlet.version>2.0.1</restlet.version>
 	</properties>
@@ -151,7 +151,6 @@
 		<dependency>
 			<groupId>org.codehaus.groovy</groupId>
 			<artifactId>groovy-all</artifactId>
-			<version>2.2.2</version>
 		</dependency>
 		<dependency>
 			<groupId>net.sourceforge.barbecue</groupId>

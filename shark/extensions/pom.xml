@@ -12,10 +12,6 @@
 	<packaging>jar</packaging>
 	<name>CMDBuild Shark Extensions</name>
 
-	<properties>
-		<groovy.version>2.4.5</groovy.version>
-	</properties>
-
 	<dependencies>
 		<dependency>
 			<groupId>${project.groupId}</groupId>
@@ -101,8 +97,7 @@
 		</dependency>
 		<dependency>
 			<groupId>org.codehaus.groovy</groupId>
-			<artifactId>groovy</artifactId>
-			<version>${groovy.version}</version>
+			<artifactId>groovy-all</artifactId>
 		</dependency>
 
 		<!-- Local Shark instance -->
