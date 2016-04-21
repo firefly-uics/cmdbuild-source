@@ -32,6 +32,9 @@ FIXES
 
  * Widget CustomForm: server persistence manage errors
 
+ * HTML editor rendering problems while used as cell editor
+
+
 
 
 
