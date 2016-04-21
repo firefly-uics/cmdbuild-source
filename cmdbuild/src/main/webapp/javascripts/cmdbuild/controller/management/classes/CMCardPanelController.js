@@ -1,5 +1,7 @@
 (function() {
 
+	Ext.require(['CMDBuild.proxy.Card']);
+
 	Ext.define("CMDBuild.controller.management.classes.CMCardPanelController", {
 
 		mixins : {
@@ -55,11 +57,12 @@
 				}
 
 				CMDBuild.core.LoadMask.show();
-				CMDBuild.ServiceProxy.card.remove({
+				CMDBuild.proxy.Card.remove({
 					params : {
 						IdClass: idClass,
 						Id: idCard
 					},
+					loadMask: false,
 					success : function() {
 						me.fireEvent(me.CMEVENTS.cardRemoved, idCard, idClass);
 					},

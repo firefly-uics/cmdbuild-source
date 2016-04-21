@@ -4,9 +4,8 @@
 		extend: 'CMDBuild.controller.common.abstract.Accordion',
 
 		requires: [
-			'CMDBuild.core.constants.Global',
 			'CMDBuild.core.constants.Proxy',
-			'CMDBuild.core.proxy.Classes'
+			'CMDBuild.proxy.Classes'
 		],
 
 		/**

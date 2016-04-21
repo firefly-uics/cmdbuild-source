@@ -7,7 +7,7 @@
 			'CMDBuild.core.constants.FieldWidths',
 			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.Message',
-			'CMDBuild.core.proxy.localization.Localization'
+			'CMDBuild.proxy.localization.Localization'
 		],
 
 		/**
@@ -99,7 +99,7 @@
 				this.form.reset();
 
 				if (this.ownerField.translationsGet().isEmpty()) {
-					CMDBuild.core.proxy.localization.Localization.read({
+					CMDBuild.proxy.localization.Localization.read({
 						params: this.ownerField.configurationGet(),
 						scope: this,
 						success: function(response, options, decodedResponse) {

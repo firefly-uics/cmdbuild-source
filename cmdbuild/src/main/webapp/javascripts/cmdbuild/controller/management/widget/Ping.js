@@ -5,7 +5,7 @@
 
 		requires: [
 			'CMDBuild.core.constants.Proxy',
-			'CMDBuild.core.proxy.widget.Ping'
+			'CMDBuild.proxy.widget.Ping'
 		],
 
 		/**
@@ -61,7 +61,7 @@
 			var params = {};
 			params[CMDBuild.core.constants.Proxy.ACTIVE] = true;
 
-			CMDBuild.core.proxy.widget.Ping.readClass({ // TODO: waiting for refactor (CRUD)
+			CMDBuild.proxy.widget.Ping.readClass({ // TODO: waiting for refactor (CRUD)
 				params: params,
 				scope: this,
 				success: function (response, options, decodedResponse) {
@@ -109,7 +109,7 @@
 						params[CMDBuild.core.constants.Proxy.PARAMS] = Ext.encode({ address: out['_address'] });
 						params[CMDBuild.core.constants.Proxy.WIDGET_ID] = this.cmfg('widgetPingIdGet');
 
-						CMDBuild.core.proxy.widget.Ping.ping({
+						CMDBuild.proxy.widget.Ping.ping({
 							params: params,
 							loadMask: this.view, // Apply load mask to view
 							scope: this,

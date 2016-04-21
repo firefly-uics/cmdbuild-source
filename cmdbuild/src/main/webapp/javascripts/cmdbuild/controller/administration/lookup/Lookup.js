@@ -6,7 +6,7 @@
 		requires: [
 			'CMDBuild.core.constants.ModuleIdentifiers',
 			'CMDBuild.core.constants.Proxy',
-			'CMDBuild.core.proxy.lookup.Type',
+			'CMDBuild.proxy.lookup.Type',
 			'CMDBuild.model.lookup.Type'
 		],
 
@@ -136,7 +136,7 @@
 		 */
 		onLookupModuleInit: function(node) {
 			if (!Ext.isEmpty(node)) {
-				CMDBuild.core.proxy.lookup.Type.read({ // TODO: waiting for refactor (crud + rename)
+				CMDBuild.proxy.lookup.Type.read({ // TODO: waiting for refactor (crud + rename)
 					scope: this,
 					success: function(response, options, decodedResponse) {
 						var lookupObject = Ext.Array.findBy(decodedResponse, function(item, i) {

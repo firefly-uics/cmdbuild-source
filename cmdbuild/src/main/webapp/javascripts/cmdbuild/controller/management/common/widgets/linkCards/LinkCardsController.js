@@ -9,7 +9,8 @@
 
 		requires: [
 			'CMDBuild.core.constants.Proxy',
-			'CMDBuild.core.proxy.Card',
+			'CMDBuild.core.Message',
+			'CMDBuild.proxy.Card',
 			'CMDBuild.core.Utils',
 			'CMDBuild.model.widget.ModelLinkCards'
 		],
@@ -133,7 +134,7 @@
 			) {
 				targetClassName = this.getClassNameFromFilterString(this.widgetConf[CMDBuild.core.constants.Proxy.FILTER]);
 			} else {
-				return CMDBuild.Msg.error(
+				return CMDBuild.core.Message.error(
 					CMDBuild.Translation.error,
 					CMDBuild.Translation.errors.widgetLinkCardsNoClassNameError,
 					false
@@ -281,7 +282,7 @@
 						me.onGridShow();
 					},
 					failure: function() {
-						CMDBuild.Msg.error(null, CMDBuild.Translation.errors.busy_wf_widgets, false);
+						CMDBuild.core.Message.error(null, CMDBuild.Translation.errors.busy_wf_widgets, false);
 					},
 					checkFn: function() {
 						// I want exit if I'm not busy
@@ -362,8 +363,8 @@
 								var selectionKey = Ext.Object.getKeys(modelSelections)[0];
 
 								if (!Ext.Object.isEmpty(modelSelections[selectionKey])) {
-									var lat = modelSelections[selectionKey][CMDBuild.core.constants.Proxy.LATITUDE];
-									var lon = modelSelections[selectionKey][CMDBuild.core.constants.Proxy.LONGITUDE];
+									var lat = modelSelections[selectionKey]['lat'];
+									var lon = modelSelections[selectionKey]['lon'];
 
 									modelSelections[selectionKey] = {};
 									modelSelections[selectionKey][confIndex] = new OpenLayers.Geometry.Point(lon, lat).toString();
@@ -457,8 +458,9 @@
 
 				this.model._silent = true;
 
-				CMDBuild.ServiceProxy.card.getPosition({
+				CMDBuild.proxy.Card.readPosition({
 					params: params,
+					loadMask: false,
 					scope: this,
 					success: function(result, options, decodedResult) {
 						var position = decodedResult.position;
@@ -585,8 +587,9 @@
 
 					// Do the request only if there are a default selection
 					if (defaultSelection) {
-						CMDBuild.core.proxy.Card.getList({
+						CMDBuild.proxy.Card.readAll({
 							params: defaultSelection,
+							loadMask: false,
 							scope: this,
 							success: function(response, options, decodedResponse) {
 								var decodedResponse = decodedResponse.rows;

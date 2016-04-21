@@ -15,8 +15,9 @@
 		 */
 		cardPanel: undefined,
 
-		cls: 'x-panel-body-default-framed cmdb-border-top',
+		bodyCls: 'cmdb-blue-panel-no-padding',
 		border: false,
+		cls: 'cmdb-border-top',
 		frame: false,
 		split: true,
 

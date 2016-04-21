@@ -456,6 +456,7 @@
 		"weeks2": "在2周内"
 	},
 	"errors": {
+		"anErrorHasOccurred": "发生一个错误",
 		"busy_wf_widgets": "可视控件忙, 在重试前请检查服务器状态。",
 		"copyAttachmentFailure": "以名称\"{0}\"拷贝附件失败",
 		"createReportFilure": "创建报告失败",
@@ -476,7 +477,7 @@
 		"invalidKeyAttributesInLocalStore": "<em>Invalid key attribute(s) in local store</em>",
 		"invalidLookupValue": "<em>Invalid Lookup value</em>",
 		"no_driver": "未发现JDBC驱动器.<br />你可以在CMDBuild发布包中找到，并将它拷贝到Tomcat库中.",
-		"no_selections": "你没有选择任何卡片进行更新",
+		"noSelectedCardToUpdate": "你没有选择任何卡片进行更新",
 		"printReportFilure": "打印报告失败",
 		"reasons": {
 			"ATTRIBUTE_NOTFOUND": "属性{1} of {0}未发现",
@@ -630,7 +631,6 @@
 		"show_detail": "显示详细内容",
 		"targetClassOrCqlFilterRequired": "目标类或卡片CQL选择器是必须的",
 		"template_error": "模板错误",
-		"unknown_error": "发生一个错误",
 		"unmanagedReportType": "未管理的报告类型",
 		"valueDoesNotMatchFilter": "值与过滤器不匹配",
 		"widgetLinkCardsNoClassNameError": "LinkCardsController 构造器: 数名无效",
@@ -644,9 +644,6 @@
 	},
 	"filterWindow": {
 		"add": "增加过滤器"
-	},
-	"info": {
-		"card_not_found": "卡片与当前的过滤器不匹配"
 	},
 	"management": {
 		"description": "数据管理模块",
@@ -799,42 +796,6 @@
 			"showgraph": "显示图表",
 			"shownotes": "显示注释"
 		},
-		"modutilities": {
-			"bulkupdate": {
-				"title": "多次更新",
-				"countMessage": "{0} 卡片将被修改"
-			},
-			"changepassword": {
-				"newpw": "新的密码",
-				"oldpw": "旧的密码",
-				"repnew": "重新输入新密码",
-				"successmsgtext": "密码已修改",
-				"title": "更改密码",
-				"validationtext": "密码不匹配"
-			},
-			"csv": {
-				"csvfile": "CSV文件",
-				"error": "错误",
-				"exportfile": "导出",
-				"importfailure": "导入失败",
-				"importsuccess": "导入已成功",
-				"info": "信息",
-				"noupdate": "没有更新的卡片",
-				"selectaclass": "选择类",
-				"separator": "分离器",
-				"shownonvalid": "只显示无效记录",
-				"title": "导入CSV文件",
-				"title_export": "导出CSV文件",
-				"warning": "警告"
-			},
-			"title": "应用组件"
-		},
-		"modutility": {
-			"title": "应用组件"
-		},
-		"modview": {
-			"title": "预览"
-		},
 		"modworkflow": {
 			"abort_card": "放弃进程",
 			"abort_card_confirm": "你确定要放弃此进程吗?",
@@ -894,17 +855,16 @@
 		}
 	},
 	"warnings": {
+		"changeAppliedOnlyToFilteredCards": "变更只能应用于满足当前过滤器的卡片",
 		"emailTemplateRelatedAttributeEdited": "与email模板相关联的属性变化, email不能生成.",
 		"itemNotAvailable": "<em>Item not available</em>",
 		"itIsNotAllowedFilterWithCalculatedParams": "不允许使用已被计算过的参数来过滤",
 		"link_cards_changed_values": "选择\"{0}\" 已更新",
-		"only_filtered": "变更只能应用于满足当前过滤器的卡片",
 		"popup_block": "我们检测到你的计算机安装了防止弹出窗口的软件, 禁止此软件，以便正常弹出窗口",
 		"reportsDuplicateImageFilename": "<emWarning: found report images with same filename - cannot proceed.</em>",
 		"saveMenuBeforeAccess": "此下拉菜单在被翻译前已被保存。",
 		"thereAreNoEnabledLanguages": "<em>There are no enabled languages</em>",
-		"toSetAFilterYouMustBeforeSelectAClass": "<em>To set a filter you must before select a class</em>",
-		"warning_message": "警告"
+		"toSetAFilterYouMustBeforeSelectAClass": "<em>To set a filter you must before select a class</em>"
 	},
 	"account": "帐户",
 	"accounts": "帐户",
@@ -976,8 +936,10 @@
 	"card": "卡片",
 	"cardCqlSelector": "卡片CQL选择器",
 	"cardinality": "<em>Cardinality</em>",
+	"cardNotMatchFilter": "卡片与当前的过滤器不匹配",
 	"cardPanelHeight": "卡片显示区间用百分比表示",
 	"cards": "<em>Cards</em>",
+	"cardsWillBeModified": "{0} 卡片将被修改",
 	"category": "<em>Category</em>",
 	"cc": "Cc",
 	"changePassword": "更改密码",
@@ -1118,6 +1080,7 @@
 	"existing": "存在",
 	"expand": "<em>Expand</em>",
 	"expandAll": "<em>Expand all</em>",
+	"exportCsvFile": "导出CSV文件",
 	"exportLabel": "导出",
 	"expose": "Expose",
 	"externalServices": "外部服务",
@@ -1159,15 +1122,19 @@
 	"imapPort": "IMAP 端口",
 	"imapServer": "IMAP服务器",
 	"import": "<em>Import</em>",
+	"importCsvFile": "导入CSV文件",
 	"importExport": "<em>Import/Export</em>",
+	"importFailed": "导入失败",
 	"importFromCSV": "从CSV导入",
 	"importJasperReport": "<em>Import Jasper report</em>",
+	"importWasSuccessful": "导入已成功",
 	"includeInherited": "包括继承的",
 	"includeRelations": "包括关系",
 	"includeSystemActivities": "包括系统活动",
 	"includeUsersFilters": "<em>Include users filters</em>",
 	"incoming": "Incoming",
 	"incomingFolder": "Incoming folder",
+	"info": "信息",
 	"informationLayer": "<em>Information layer</em>",
 	"inheritsFrom": "从...继承",
 	"initialLatitude": "初始纬度",
@@ -1236,15 +1203,18 @@
 	"modifyWidget": "<em>Modify widget</em>",
 	"move": "<em>Move</em>",
 	"multiGroup": "群组",
+	"multipleUpdate": "多次更新",
 	"name": "名称",
 	"navigation": "<em>Navigation</em>",
 	"navigationChronology": "<em>Navigation chronology</em>",
 	"navigationTree": "导航树",
 	"navigationTrees": "导航树",
 	"newFolder": "<em>New folder</em>",
+	"newPassword": "新的密码",
 	"next": "下一个",
 	"no_bim_project_for_card": "此卡片没有BIM项目",
 	"noAvailableData": "<em>No available data</em>",
+	"noCardsToUpdate": "没有更新的卡片",
 	"nodeDistance": "<em>Node distance</em>",
 	"none": "<em>None</em>",
 	"noOne": "没人",
@@ -1254,6 +1224,7 @@
 	"numberOfPings": "pings的数量",
 	"odt": "ODT",
 	"ok": "OK",
+	"oldPassword": "旧的密码",
 	"onDay": "On",
 	"open_3d_viewer": "打开3D浏览器",
 	"openRelationGraph": "打开关系图表",
@@ -1264,6 +1235,7 @@
 	"parent": "<em>Parent</em>",
 	"parentDescription": "<em>Parent description</em>",
 	"password": "密码",
+	"passwordChanged": "密码已修改",
 	"passwordsDoNotMatch": "密码不匹配",
 	"pdf": "PDF",
 	"permissions": "<em>Permissions</em>",
@@ -1326,6 +1298,7 @@
 	"reset": "重置",
 	"resetToDefault": "<em>Reset to defaults</em>",
 	"restore": "<em>Restore</em>",
+	"retypeNewPassword": "重新输入新密码",
 	"root": "根",
 	"rotate": "旋转",
 	"rowAndColumnPrivileges": "行和列的特权",
@@ -1361,6 +1334,7 @@
 	"setup": "安装",
 	"showDetails": "<em>Show details</em>",
 	"showHideThisFeatureOnly": "只显示/隐藏这个特征",
+	"showInvalidRecordsOnly": "只显示无效记录",
 	"showLanguageChoice": "显示语言选择",
 	"showLanguageSelectionLoginBox": "显示在登录框中使用的语言",
 	"showLockerUserName": "显示锁柜用户名称",
@@ -1415,6 +1389,7 @@
 	"usersAndGroups": "用户及组",
 	"userStoppable": "用户可停止的",
 	"userType": "用户类型",
+	"utility": "应用组件",
 	"utilityChangePassword": "<em>Utility - Change password</em>",
 	"utilityExportCsv": "<em>Utility - Export CSV</em>",
 	"utilityImportCsv": "<em>Utility - Import CSV</em>",

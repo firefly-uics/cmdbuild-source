@@ -6,7 +6,7 @@
 		requires: [
 			'CMDBuild.core.constants.FieldWidths',
 			'CMDBuild.core.constants.Proxy',
-			'CMDBuild.core.proxy.userAndGroup.group.Group'
+			'CMDBuild.proxy.userAndGroup.group.Group'
 		],
 
 		mixins: ['CMDBuild.view.common.PanelFunctions'],
@@ -132,7 +132,7 @@
 
 						value: CMDBuild.core.constants.Proxy.NORMAL,
 
-						store: CMDBuild.core.proxy.userAndGroup.group.Group.getTypeStore(),
+						store: CMDBuild.proxy.userAndGroup.group.Group.getStoreType(),
 						queryMode: 'local'
 					}),
 					Ext.create('Ext.form.field.Text', {
@@ -153,7 +153,7 @@
 						editable: false,
 						forceSelection: true,
 
-						store: CMDBuild.core.proxy.userAndGroup.group.Group.getStartingClassStore(),
+						store: CMDBuild.proxy.userAndGroup.group.Group.getStoreStartingClass(),
 						queryMode: 'local'
 					}),
 					this.activeCheckbox = Ext.create('Ext.form.field.Checkbox', {

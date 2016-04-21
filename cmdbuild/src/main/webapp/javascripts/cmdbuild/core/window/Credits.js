@@ -1,4 +1,4 @@
-(function() {
+(function () {
 
 	Ext.define('CMDBuild.core.window.Credits', {
 		extend: 'Ext.window.Window',
@@ -6,7 +6,12 @@
 		modal: true,
 		resizable: false,
 
-		initComponent: function() {
+		/**
+		 * @returns {Void}
+		 *
+		 * @override
+		 */
+		initComponent: function () {
 			Ext.apply(this, {
 				contentEl: Ext.create('Ext.Element', {
 					html: '<div id="cm-credits-content" class="cm-credits-container">'

@@ -9,7 +9,6 @@ import org.cmdbuild.auth.ClientRequestAuthenticator.ClientRequest;
 import org.cmdbuild.auth.acl.CMGroup;
 import org.cmdbuild.auth.user.AuthenticatedUser;
 import org.cmdbuild.auth.user.CMUser;
-import org.cmdbuild.auth.user.OperationUser;
 import org.cmdbuild.logic.auth.GroupDTO;
 import org.cmdbuild.logic.auth.UserDTO;
 
@@ -51,8 +50,6 @@ public interface AuthenticationService {
 
 	void setGroupFetcher(final GroupFetcher groupFetcher);
 
-	void setUserStore(final UserStore userStore);
-
 	/**
 	 * Actively checks the user credentials and returns the authenticated user
 	 * on success.
@@ -85,14 +82,6 @@ public interface AuthenticationService {
 	 * @return response object with the authenticated user or a redirect URL
 	 */
 	ClientAuthenticatorResponse authenticate(final ClientRequest request);
-
-	/**
-	 * Get the currently authenticated user. It can be anonymous but it will
-	 * never be null.
-	 * 
-	 * @return the authenticated user
-	 */
-	OperationUser getOperationUser();
 
 	List<CMUser> fetchUsersByGroupId(Long groupId);
 

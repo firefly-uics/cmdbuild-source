@@ -1,12 +1,12 @@
 (function () {
 
 	Ext.define('CMDBuild.view.management.common.tabs.email.attachments.picker.PickerWindow', {
-		extend: 'CMDBuild.PopupWindow',
+		extend: 'CMDBuild.core.window.AbstractModal',
 
 		requires: [
 			'CMDBuild.core.constants.FieldWidths',
 			'CMDBuild.core.constants.Proxy',
-			'CMDBuild.core.proxy.common.tabs.email.Attachment'
+			'CMDBuild.proxy.common.tabs.email.Attachment'
 		],
 
 		/**
@@ -46,7 +46,7 @@
 								valueField: CMDBuild.core.constants.Proxy.ID,
 								displayField: CMDBuild.core.constants.Proxy.TEXT,
 
-								store: CMDBuild.core.proxy.common.tabs.email.Attachment.getTargetClassComboStore(),
+								store: CMDBuild.proxy.common.tabs.email.Attachment.getStoreTargetClass(),
 								queryMode: 'local',
 
 								listeners: {

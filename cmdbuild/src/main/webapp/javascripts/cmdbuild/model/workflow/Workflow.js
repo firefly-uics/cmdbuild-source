@@ -1,4 +1,4 @@
-(function() {
+(function () {
 
 	Ext.require('CMDBuild.core.constants.Proxy');
 
@@ -28,7 +28,7 @@
 			 *
 			 * @returns {Object} data
 			 */
-			convertFromLegacy: function(data) {
+			convertFromLegacy: function (data) {
 				data = data || {};
 				data[CMDBuild.core.constants.Proxy.CAPABILITIES] = data['ui_card_edit_mode'];
 				data[CMDBuild.core.constants.Proxy.DESCRIPTION] = data['text'] || data[CMDBuild.core.constants.Proxy.DESCRIPTION];
@@ -46,9 +46,11 @@
 		/**
 		 * @param {Object} data
 		 *
+		 * @returns {Void}
+		 *
 		 * @override
 		 */
-		constructor: function(data) {
+		constructor: function (data) {
 			data = this.self.convertFromLegacy(data);
 
 			this.callParent(arguments);

@@ -1,3 +1,5 @@
+Ext.require(['CMDBuild.proxy.gis.Icon']);
+
 Ext.define("CMDBuild.Administration.ModIcons", {
 	extend: "Ext.panel.Panel",
 
@@ -14,7 +16,7 @@ Ext.define("CMDBuild.Administration.ModIcons", {
 			frame: false,
 			border: true,
 			bodyCls: 'cm-grid-autoheight',
-			store: CMDBuild.ServiceProxy.Icons.getIconStore(),
+			store: CMDBuild.proxy.gis.Icon.getStore(),
 			tbar: [this.addButton],
 			sm: new Ext.selection.RowModel(),
 			columns: [{
@@ -215,15 +217,14 @@ Ext.define("CMDBuild.Administration.ModIcons", {
 		if (form.isValid()) {
 			CMDBuild.core.LoadMask.show();
 			var config = {
+				form: form,
+				loadMask: false,
 				scope: this,
-				success: function(form, action) {
+				success: function() {
 					var description = form.getValues().description;
 					this.iconsGrid.store.load({
 					    scope: this,
 					    callback: function(records, operation, success) {
-					        // the operation object
-					        // contains all of the details of the load operation
-					        console.log(records);
 					        var r = this.iconsGrid.store.findRecord("description", description);
 					    }
 					});
@@ -233,9 +234,9 @@ Ext.define("CMDBuild.Administration.ModIcons", {
 			};
 
 			if (this.uploadForm.saveStatus == "add") {
-				CMDBuild.ServiceProxy.Icons.upload(form, config);
+				CMDBuild.proxy.gis.Icon.create(config);
 			} else {
-				CMDBuild.ServiceProxy.Icons.update(form, config);
+				CMDBuild.proxy.gis.Icon.update(config);
 			}
 		}
   	},
@@ -252,9 +253,10 @@ Ext.define("CMDBuild.Administration.ModIcons", {
 	  		if (selectedRow && selectedRow.length > 0) {
 	  			var selectedData = selectedRow[0];
 	  			CMDBuild.core.LoadMask.show();
-	  			CMDBuild.ServiceProxy.Icons.remove({
+	  			CMDBuild.proxy.gis.Icon.remove({
 					scope : this,
 					important: true,
+					loadMask: false,
 					params : {
 						"name": selectedData.get("name")
 					},

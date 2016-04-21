@@ -1,6 +1,9 @@
 (function() {
 
-	Ext.require(['CMDBuild.controller.management.common.widgets.manageRelation.CMManageRelationController']); // Legacy
+	Ext.require([ // Legacy
+		'CMDBuild.controller.management.common.widgets.manageRelation.CMManageRelationController',
+		'CMDBuild.core.Message'
+	]);
 
 	Ext.define("CMDBuild.controller.management.common.widgets.linkCards.cardWindow.CMWidgetManagerController", {
 
@@ -27,7 +30,7 @@
 					'.NavigationTree': CMDBuild.controller.management.common.widgets.CMNavigationTreeController,
 					'.OpenAttachment': CMDBuild.controller.management.common.widgets.CMOpenAttachmentController,
 					'.OpenNote': CMDBuild.controller.management.common.widgets.CMOpenNoteController,
-					'.OpenReport': 'CMDBuild.controller.management.common.widgets.OpenReport',
+					'.OpenReport': 'CMDBuild.controller.management.widget.openReport.OpenReport',
 					'.Ping': 'CMDBuild.controller.management.widget.Ping',
 					'.PresetFromCard': CMDBuild.controller.management.common.widgets.CMPresetFromCardController,
 					'.WebService': CMDBuild.controller.management.common.widgets.CMWebServiceController,
@@ -233,7 +236,7 @@
 					new _CMUtils.PollingFunction({
 						success: cb,
 						failure: function failure() {
-							CMDBuild.Msg.error(null,CMDBuild.Translation.errors.busy_wf_widgets, false);
+							CMDBuild.core.Message.error(null,CMDBuild.Translation.errors.busy_wf_widgets, false);
 						},
 						checkFn: function() {
 							// I want exit if there are no busy wc

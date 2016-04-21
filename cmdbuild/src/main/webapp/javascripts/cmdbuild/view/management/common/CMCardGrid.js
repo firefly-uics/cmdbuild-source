@@ -1,5 +1,7 @@
 (function() {
 
+	Ext.require('CMDBuild.proxy.index.Json');
+
 	Ext.define("CMDBuild.view.management.common.CMCardGridDelegate", {
 		/**
 		 *
@@ -77,7 +79,6 @@
 		extraParams: undefined, // extra params for the store
 		forceSelectionOfFirst: false, // listen load event and select the first row
 		skipSelectFirst: false,
-		cmStoreUrl: 'services/json/management/modcard/getcardlist',
 		cmPaginate: true, // to say if build or not a paging bar, default true
 		cmBasicFilter: true, // to add a basic search-field to the paging bar
 		cmAdvancedFilter: true, // to add a button to set an advanced filter
@@ -193,7 +194,7 @@
 			cb = options.cb || function(args) { // Not a good implementation but there isn't another way
 				if (!args[2]) {
 					CMDBuild.core.Message.error(null, {
-						text: CMDBuild.Translation.errors.unknown_error
+						text: CMDBuild.Translation.errors.anErrorHasOccurred
 					});
 				}
 			};
@@ -439,7 +440,7 @@
 				remoteSort: true,
 				proxy: {
 					type: 'ajax',
-					url: this.cmStoreUrl,
+					url: CMDBuild.proxy.index.Json.card.readAll,
 					reader: {
 						type: 'json',
 						root: 'rows',

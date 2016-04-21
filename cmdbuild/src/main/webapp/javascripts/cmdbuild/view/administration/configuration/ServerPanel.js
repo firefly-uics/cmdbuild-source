@@ -10,7 +10,7 @@
 
 		bodyCls: 'cmdb-gray-panel',
 		border: false,
-		frame: true,
+		frame: false,
 		overflowY: 'auto',
 
 		initComponent: function() {

@@ -4,6 +4,7 @@
 
 		requires: [
 			'CMDBuild.core.constants.Proxy',
+			'CMDBuild.core.CookiesManager',
 			'CMDBuild.core.interfaces.messages.Error',
 			'CMDBuild.core.interfaces.messages.Warning',
 			'CMDBuild.core.interfaces.service.LoadMask'
@@ -21,6 +22,9 @@
 		 * @private
 		 */
 		adapterCallback: function (form, action, originalFunction) {
+			// Update authorization cookie expiration date
+			CMDBuild.core.CookiesManager.authorizationExpirationUpdate();
+
 			CMDBuild.core.interfaces.service.LoadMask.manage(action.loadMask, false);
 
 			CMDBuild.core.interfaces.messages.Warning.display(action.result);

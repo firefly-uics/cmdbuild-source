@@ -6,7 +6,7 @@
 		requires: [
 			'CMDBuild.core.constants.ModuleIdentifiers',
 			'CMDBuild.core.constants.Proxy',
-			'CMDBuild.core.proxy.configuration.Workflow',
+			'CMDBuild.proxy.configuration.Workflow',
 			'CMDBuild.model.configuration.Workflow'
 		],
 
@@ -46,7 +46,7 @@
 		 * @returns {Void}
 		 */
 		onConfigurationWorkflowSaveButtonClick: function () {
-			CMDBuild.core.proxy.configuration.Workflow.update({
+			CMDBuild.proxy.configuration.Workflow.update({
 				params: CMDBuild.model.configuration.Workflow.convertToLegacy(this.view.getData(true)),
 				scope: this,
 				success: function (response, options, decodedResponse) {
@@ -61,7 +61,7 @@
 		 * @returns {Void}
 		 */
 		onConfigurationWorkflowTabShow: function () {
-			CMDBuild.core.proxy.configuration.Workflow.read({
+			CMDBuild.proxy.configuration.Workflow.read({
 				scope: this,
 				success: function (response, options, decodedResponse) {
 					decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.DATA];

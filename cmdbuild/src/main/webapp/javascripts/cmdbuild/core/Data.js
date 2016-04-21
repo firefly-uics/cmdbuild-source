@@ -1,10 +1,11 @@
-(function() {
+(function () {
 
 	Ext.define('CMDBuild.core.Data', {
 
 		requires: [
 			'CMDBuild.core.configurations.Timeout',
-			'CMDBuild.core.constants.Proxy'
+			'CMDBuild.core.constants.Proxy',
+			'CMDBuild.core.CookiesManager'
 		],
 
 		/**
@@ -16,15 +17,21 @@
 
 		/**
 		 * Setup with overrides of all data configurations (timeouts, defaultHeaders)
+		 *
+		 * @param {Object} configurationObject
+		 *
+		 * @returns {Void}
 		 */
 		constructor: function (configurationObject) {
 			Ext.apply(this, configurationObject); // Apply configurations
 
 			if (!Ext.isEmpty(CMDBuild)) {
 				var defaultHeaders = {};
+				defaultHeaders[CMDBuild.core.constants.Proxy.AUTHORIZATION_HEADER_KEY] = CMDBuild.core.CookiesManager.authorizationGet();
 				defaultHeaders[CMDBuild.core.constants.Proxy.LOCALIZED_HEADER_KEY] = this.enableLocalized;
 
 				Ext.Ajax.timeout = CMDBuild.core.configurations.Timeout.getBase() * 1000;
+				Ext.Ajax[CMDBuild.core.constants.Proxy.AUTHORIZATION_HEADER_KEY] = CMDBuild.core.CookiesManager.authorizationGet();
 				Ext.Ajax[CMDBuild.core.constants.Proxy.LOCALIZED_HEADER_KEY] = this.enableLocalized;
 
 				Ext.define('CMDBuild.data.Connection', {

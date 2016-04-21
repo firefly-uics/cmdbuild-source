@@ -5,7 +5,7 @@
 
 		requires: [
 			'CMDBuild.core.constants.Proxy',
-			'CMDBuild.core.proxy.PatchManager'
+			'CMDBuild.proxy.PatchManager'
 		],
 
 		/**
@@ -52,7 +52,7 @@
 						flex: 4
 					})
 				],
-				store: CMDBuild.core.proxy.PatchManager.getStore()
+				store: CMDBuild.proxy.PatchManager.getStore()
 			});
 
 			this.callParent(arguments);

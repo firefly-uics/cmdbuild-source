@@ -19,7 +19,8 @@
 
 		requires: [
 			'CMDBuild.core.constants.Proxy',
-			'CMDBuild.core.proxy.Filter'
+			'CMDBuild.core.Message',
+			'CMDBuild.proxy.Filter'
 		],
 
 		mixins: {
@@ -121,7 +122,7 @@
 		 */
 		buildGrid: function() {
 			var me = this;
-			var store = CMDBuild.core.proxy.Filter.newGroupStore(this.className);
+			var store = CMDBuild.proxy.Filter.newGroupStore(this.className);
 
 			Ext.apply(this, {
 				grid: Ext.create('Ext.grid.Panel', {
@@ -199,8 +200,9 @@
 			params[CMDBuild.core.constants.Proxy.CLASS_NAME] = this.className;
 
 			if (checked)
-				CMDBuild.core.proxy.Filter.read({
+				CMDBuild.proxy.Filter.read({
 					params: params,
+					loadMask: false,
 					scope: this,
 					success: function(response, options, decodedResponse) {
 						decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.FILTERS];
@@ -308,7 +310,7 @@
 			var className = this.className;
 
 			if (Ext.isEmpty(className)) {
-				CMDBuild.Msg.error(CMDBuild.Translation.common.failure, Ext.String.format(CMDBuild.Translation.errors.reasons.CLASS_NOTFOUND, className));
+				CMDBuild.core.Message.error(CMDBuild.Translation.common.failure, Ext.String.format(CMDBuild.Translation.errors.reasons.CLASS_NOTFOUND, className));
 
 				return;
 			}

@@ -1,21 +1,22 @@
 (function() {
 
-	var _p = _CMProxy.parameter;
+	Ext.require('CMDBuild.proxy.common.tabs.attribute.Attribute');
+
 	var ATTR = {
-		INDEX: _p.INDEX,
-		NAME: _p.NAME,
-		DESCRIPTION: _p.DESCRIPTION,
-		TYPE: _p.TYPE,
-		IS_BASEDSP: _p.DISPLAY_IN_GRID,
+		INDEX: CMDBuild.core.constants.Proxy.INDEX,
+		NAME: CMDBuild.core.constants.Proxy.NAME,
+		DESCRIPTION: CMDBuild.core.constants.Proxy.DESCRIPTION,
+		TYPE: CMDBuild.core.constants.Proxy.TYPE,
+		IS_BASEDSP: 'isbasedsp',
 		IS_UNIQUE: 'isunique',
-		IS_NOT_NULL: _p.NOT_NULL,
+		IS_NOT_NULL: 'isnotnull',
 		IS_INHERITED: 'inherited',
-		IS_ACTIVE: _p.ACTIVE,
-		FIELD_MODE: _p.FIELD_MODE,
-		GROUP: _p.GROUP,
+		IS_ACTIVE: CMDBuild.core.constants.Proxy.ACTIVE,
+		FIELD_MODE: CMDBuild.core.constants.Proxy.FIELD_MODE,
+		GROUP: CMDBuild.core.constants.Proxy.GROUP,
 		ABSOLUTE_CLASS_ORDER: 'absoluteClassOrder',
 		CLASS_ORDER_SIGN: 'classOrderSign',
-		EDITOR_TYPE: _p.EDITOR_TYPE
+		EDITOR_TYPE: CMDBuild.core.constants.Proxy.EDITOR_TYPE
 	};
 	var REQUEST = {
 		ROOT: 'attributes'
@@ -25,8 +26,6 @@
 
 	Ext.define('CMDBuild.view.administration.classes.CMAttributeGrid', {
 		extend: 'Ext.grid.Panel',
-
-		alias: 'attributegrid',
 
 		statics: {
 			ATTRIBUTES: ATTR
@@ -62,7 +61,11 @@
 				}
 			});
 
-			this.buildStore();
+			Ext.apply(this, {
+				store: CMDBuild.proxy.common.tabs.attribute.Attribute.getStore(),
+				queryMode: 'local'
+			});
+
 			this.buildColumnConf();
 			this.buildTBar();
 
@@ -169,31 +172,6 @@
 			];
 		},
 
-		buildStore: function() {
-			this.store = new Ext.data.Store({
-				fields: [
-						ATTR.INDEX, ATTR.NAME, ATTR.DESCRIPTION, ATTR.TYPE, ATTR.IS_UNIQUE, ATTR.IS_BASEDSP,
-						ATTR.IS_NOT_NULL, ATTR.IS_INHERITED, ATTR.FIELD_MODE, ATTR.IS_ACTIVE, ATTR.GROUP,
-						ATTR.ABSOLUTE_CLASS_ORDER, ATTR.CLASS_ORDER_SIGN, ATTR.EDITOR_TYPE
-				],
-				autoLoad: false,
-				proxy: {
-					type: 'ajax',
-					url: 'services/json/schema/modclass/getattributelist',
-					reader: {
-						type: 'json',
-						root: REQUEST.ROOT
-					}
-				},
-				sorters: [
-					{
-						property: ATTR.INDEX,
-						direction: 'ASC'
-					}
-				]
-			});
-		},
-
 		buildTBar: function() {
 			this.tbar = [this.addAttributeButton, this.orderButton, '->', this.inheriteFlag];
 		},
@@ -203,9 +181,8 @@
 		},
 
 		refreshStore: function(idClass, indexAttributeToSelectAfter) {
-			var parameterNames = CMDBuild.ServiceProxy.parameter;
 			var params = {};
-			params[parameterNames.CLASS_NAME] = _CMCache.getEntryTypeNameById(idClass);
+			params[CMDBuild.core.constants.Proxy.CLASS_NAME] = _CMCache.getEntryTypeNameById(idClass);
 
 			this.store.load({
 				params: params,

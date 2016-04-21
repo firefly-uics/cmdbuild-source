@@ -2,15 +2,14 @@ package unit.cxf;
 
 import static com.google.common.base.Predicates.alwaysFalse;
 import static com.google.common.base.Predicates.alwaysTrue;
-import static org.cmdbuild.service.rest.v2.model.Models.newSession;
-import static org.mockito.Matchers.any;
+import static org.cmdbuild.auth.user.AuthenticatedUserImpl.ANONYMOUS_USER;
+import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
-import static org.mockito.Matchers.isNotNull;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
 
 import javax.ws.rs.WebApplicationException;
 
@@ -18,18 +17,12 @@ import org.cmdbuild.auth.acl.NullGroup;
 import org.cmdbuild.auth.context.NullPrivilegeContext;
 import org.cmdbuild.auth.user.AuthenticatedUser;
 import org.cmdbuild.auth.user.OperationUser;
-import org.cmdbuild.logic.auth.LoginDTO;
+import org.cmdbuild.logic.auth.SessionLogic;
 import org.cmdbuild.service.rest.v2.cxf.CxfImpersonate;
-import org.cmdbuild.service.rest.v2.cxf.CxfSessions.LoginHandler;
 import org.cmdbuild.service.rest.v2.cxf.ErrorHandler;
-import org.cmdbuild.service.rest.v2.cxf.service.OperationUserStore;
-import org.cmdbuild.service.rest.v2.cxf.service.OperationUserStore.BySession;
-import org.cmdbuild.service.rest.v2.cxf.service.SessionStore;
-import org.cmdbuild.service.rest.v2.model.Session;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.google.common.base.Optional;
 import com.google.common.base.Predicate;
 import com.google.common.collect.ForwardingObject;
 
@@ -72,166 +65,90 @@ public class CxfImpersonateTest {
 	private static final Predicate<OperationUser> alwaysFalse = alwaysFalse();
 
 	private ErrorHandler errorHandler;
-	private LoginHandler loginHandler;
-	private SessionStore sessionStore;
-	private SessionStore impersonateSessionStore;
-	private BySession operationUserStoreBySession;
-	private OperationUserStore operationUserStore;
+	private SessionLogic sessionLogic;
 	private SettablePredicate<OperationUser> operationUserAllowed;
-
-	private CxfImpersonate cxfImpersonate;
+	private CxfImpersonate underTest;
 
 	@Before
 	public void setUp() throws Exception {
 		errorHandler = mock(ErrorHandler.class);
-		loginHandler = mock(LoginHandler.class);
-		sessionStore = mock(SessionStore.class);
-		impersonateSessionStore = mock(SessionStore.class);
-		operationUserStore = mock(OperationUserStore.class);
-		operationUserStoreBySession = mock(BySession.class);
-		doReturn(operationUserStoreBySession) //
-				.when(operationUserStore).of(any(Session.class));
+		sessionLogic = mock(SessionLogic.class);
 		operationUserAllowed = new SettablePredicate<OperationUser>();
 		operationUserAllowed.setDelegate(alwaysTrue);
-
-		cxfImpersonate = new CxfImpersonate(errorHandler, loginHandler, sessionStore, impersonateSessionStore,
-				operationUserStore, operationUserAllowed);
+		underTest = new CxfImpersonate(errorHandler, sessionLogic, operationUserAllowed);
 	}
 
 	@Test(expected = WebApplicationException.class)
-	public void start_missingSessionThrowsException() throws Exception {
+	public void missingSessionThrowsExceptionWhenImpersonating() throws Exception {
 		// given
-		doReturn(Optional.absent()) //
-				.when(sessionStore).get(eq("token"));
+		doReturn(false) //
+				.when(sessionLogic).exists(eq("token"));
 		doThrow(new WebApplicationException()) //
 				.when(errorHandler).sessionNotFound(eq("token"));
 
 		// when
-		cxfImpersonate.start("token", "user");
+		underTest.start("token", "user");
 	}
 
 	@Test(expected = WebApplicationException.class)
-	public void start_missingUserThrowsException() throws Exception {
+	public void userNotAllowedThrowsExceptionWhenImpersonating() throws Exception {
 		// given
-		final Session session = newSession() //
-				.withId("foo") //
-				.build();
-		doReturn(Optional.of(session)) //
-				.when(sessionStore).get(eq("token"));
-		doReturn(Optional.absent()) //
-				.when(operationUserStoreBySession).get();
-		doThrow(new WebApplicationException()) //
-				.when(errorHandler).userNotFound(eq("token"));
-
-		// when
-		cxfImpersonate.start("token", "user");
-	}
-
-	@Test(expected = WebApplicationException.class)
-	public void start_UserNotAllowedThrowsException() throws Exception {
-		// given
-		final Session session = newSession() //
-				.withId("foo") //
-				.build();
-		doReturn(Optional.of(session)) //
-				.when(sessionStore).get(eq("token"));
-		final OperationUser operationUser = new OperationUser(mock(AuthenticatedUser.class),
-				new NullPrivilegeContext(), new NullGroup());
-		doReturn(Optional.of(operationUser)) //
-				.when(operationUserStoreBySession).get();
 		operationUserAllowed.setDelegate(alwaysFalse);
+		doReturn(true) //
+				.when(sessionLogic).exists(eq("token"));
+		doReturn(new OperationUser(ANONYMOUS_USER, new NullPrivilegeContext(), new NullGroup())) //
+				.when(sessionLogic).getUser(eq("token"));
 		doThrow(new WebApplicationException()) //
 				.when(errorHandler).notAuthorized();
 
 		// when
-		cxfImpersonate.start("token", "user");
+		underTest.start("token", "user");
 	}
 
 	@Test
-	public void start_sessionAndOperationUserReplaced() throws Exception {
+	public void userSuccessfullyImpersonated() throws Exception {
 		// given
-		final Session session = newSession() //
-				.withId("foo") //
-				.build();
-		doReturn(Optional.of(session)) //
-				.when(sessionStore).get(eq("token"));
+		doReturn(true) //
+				.when(sessionLogic).exists(anyString());
 		final OperationUser actual = new OperationUser(mock(AuthenticatedUser.class), new NullPrivilegeContext(),
 				new NullGroup());
-		doReturn(Optional.of(actual)) //
-				.when(operationUserStoreBySession).get();
-		final OperationUser impersonated = new OperationUser(mock(AuthenticatedUser.class), new NullPrivilegeContext(),
-				new NullGroup());
-		doReturn(impersonated) //
-				.when(loginHandler).login(any(LoginDTO.class));
+		doReturn(actual) //
+				.when(sessionLogic).getUser(anyString());
 
 		// when
-		cxfImpersonate.start("token", "user");
+		underTest.start("token", "user");
 
 		// then
-		verify(sessionStore).get(eq("token"));
-		verify(loginHandler).login(eq(LoginDTO.newInstance() //
-				.withLoginString("user") //
-				.withNoPasswordRequired() //
-				.build()));
-		verify(sessionStore).put(eq(newSession(session) //
-				.withUsername("user") //
-				.withAvailableRoles(impersonated.getAuthenticatedUser().getGroupNames()) //
-				.build()));
-		verify(impersonateSessionStore).put(eq(session));
-		verify(operationUserStore, times(2)).of(eq(session));
-		verify(operationUserStoreBySession).impersonate(eq(impersonated));
+		verify(sessionLogic).exists(eq("token"));
+		verify(sessionLogic).getUser(eq("token"));
+		verify(sessionLogic).impersonate(eq("token"), eq("user"));
+		verifyNoMoreInteractions(errorHandler, sessionLogic);
 	}
 
 	@Test(expected = WebApplicationException.class)
-	public void stop_missingSessionThrowsException() throws Exception {
+	public void missingSessionThrowsExceptionWhenRestoringPreviousUser() throws Exception {
 		// given
-		doReturn(Optional.absent()) //
-				.when(sessionStore).get(eq("token"));
+		doReturn(false) //
+				.when(sessionLogic).exists(eq("token"));
 		doThrow(new WebApplicationException()) //
 				.when(errorHandler).sessionNotFound(eq("token"));
 
 		// when
-		cxfImpersonate.stop("token");
+		underTest.stop("token");
 	}
 
-	@Test(expected = WebApplicationException.class)
-	public void stop_missingPreviousSessionThrowsException() throws Exception {
+	public void userSuccessfullyRestored() throws Exception {
 		// given
-		final Session session = newSession() //
-				.withId("foo") //
-				.build();
-		doReturn(Optional.of(session)) //
-				.when(sessionStore).get(eq("token"));
-		doReturn(Optional.absent()) //
-				.when(impersonateSessionStore).get(eq("token"));
-		doThrow(new WebApplicationException()) //
-				.when(errorHandler).sessionNotFound(eq("token"));
+		doReturn(true) //
+				.when(sessionLogic).exists(anyString());
 
 		// when
-		cxfImpersonate.stop("token");
-	}
-
-	public void stop_sessionAndOperationUserRestored() throws Exception {
-		// given
-		final Session foo = newSession() //
-				.withId("foo") //
-				.build();
-		doReturn(Optional.of(foo)) //
-				.when(sessionStore).get(eq("token"));
-		final Session bar = newSession() //
-				.withId("bar") //
-				.build();
-		doReturn(Optional.of(bar)) //
-				.when(impersonateSessionStore).get(eq("token"));
-
-		// when
-		cxfImpersonate.stop("token");
+		underTest.stop("token");
 
 		// then
-		verify(sessionStore).put(eq(bar));
-		verify(impersonateSessionStore).remove(eq("foo"));
-		verify(operationUserStore).of(eq(foo));
-		verify(operationUserStoreBySession).impersonate(isNotNull(OperationUser.class));
+		verify(sessionLogic).exists(eq("token"));
+		verify(sessionLogic).impersonate(eq("token"), null);
+		verifyNoMoreInteractions(errorHandler, sessionLogic);
 	}
 
 }
