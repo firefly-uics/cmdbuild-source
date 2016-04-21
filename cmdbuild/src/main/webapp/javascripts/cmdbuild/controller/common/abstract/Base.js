@@ -290,6 +290,7 @@
 			/**
 			 * @param {Object} parameters
 			 * @param {String} parameters.modelName
+			 * @param {String} parameters.propertyName
 			 * @param {String} parameters.targetVariableName
 			 * @param {Object} parameters.value
 			 *
@@ -300,10 +301,9 @@
 					!Ext.Object.isEmpty(parameters)
 					&& !Ext.isEmpty(parameters[CMDBuild.core.constants.Proxy.TARGET_VARIABLE_NAME]) && Ext.isString(parameters[CMDBuild.core.constants.Proxy.TARGET_VARIABLE_NAME])
 					&& !Ext.isEmpty(parameters[CMDBuild.core.constants.Proxy.MODEL_NAME])
-					&& !Ext.isEmpty(parameters[CMDBuild.core.constants.Proxy.VALUE])
 				) {
 					var modelName = parameters[CMDBuild.core.constants.Proxy.MODEL_NAME];
-					var value = parameters[CMDBuild.core.constants.Proxy.VALUE];
+					var value = Ext.isEmpty(parameters[CMDBuild.core.constants.Proxy.VALUE]) ? null :parameters[CMDBuild.core.constants.Proxy.VALUE];
 
 					// Single property management
 					if (!Ext.isEmpty(parameters[CMDBuild.core.constants.Proxy.PROPERTY_NAME]) && Ext.isString(parameters[CMDBuild.core.constants.Proxy.PROPERTY_NAME])) {

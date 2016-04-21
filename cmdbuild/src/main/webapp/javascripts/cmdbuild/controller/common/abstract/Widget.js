@@ -169,6 +169,23 @@
 		beforeHideView: Ext.emptyFn,
 
 		/**
+		 * Service function to manage callbackChain
+		 *
+		 * @param {Array} callbackChainArray
+		 *
+		 * @returns {Void}
+		 *
+		 * @private
+		 */
+		beforeSaveCallbackChainManager: function (callbackChainArray, i) {
+			if (!Ext.isEmpty(callbackChainArray[i])) {
+				var callbackObject = callbackChainArray[i];
+
+				Ext.callback(callbackObject.fn, callbackObject.scope, [callbackChainArray, i + 1]);
+			}
+		},
+
+		/**
 		 * @returns {Object or null}
 		 */
 		getData: function () {
@@ -213,6 +230,16 @@
 		},
 
 		// InstancesDataStorage methods (multiple widget instances support)
+			/**
+			 * @returns {Boolean}
+			 */
+			instancesDataStorageExists: function () {
+				if (!Ext.isEmpty(this.getId('unique')))
+					return this.instancesDataStorage.hasOwnProperty(this.getId('unique'));
+
+				return false;
+			},
+
 			/**
 			 * @returns {Mixed} or null
 			 */
@@ -289,11 +316,7 @@
 		 * @public
 		 */
 		onBeforeSave: function (callbackChainArray, i) {
-			if (!Ext.isEmpty(callbackChainArray[i])) {
-				var callbackObject = callbackChainArray[i];
-
-				Ext.callback(callbackObject.fn, callbackObject.scope, [callbackChainArray, i + 1]);
-			}
+			this.onBeforeSaveManager(callbackChainArray, i);
 		},
 
 		/**

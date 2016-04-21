@@ -26,9 +26,9 @@
 			'onWidgetCustomFormLayoutGridImportButtonClick',
 			'onWidgetCustomFormLayoutGridResetButtonClick',
 			'onWidgetCustomFormLayoutGridShow = onWidgetCustomFormShow',
-			'widgetCustomFormLayoutGridDataGet = widgetCustomFormLayoutControllerDataGet',
-			'widgetCustomFormLayoutGridDataSet = widgetCustomFormDataSet',
-			'widgetCustomFormLayoutGridIsValid = widgetCustomFormLayoutControllerIsValid'
+			'widgetCustomFormLayoutGridDataGet = widgetCustomFormLayoutDataGet',
+			'widgetCustomFormLayoutGridDataSet = widgetCustomFormLayoutDataSet',
+			'widgetCustomFormLayoutGridIsValid = widgetCustomFormLayoutIsValid'
 		],
 
 		/**
@@ -361,6 +361,7 @@
 		},
 
 		/**
+		 * Setup form items disabled state, disable topToolBar only if is readOnly
 		 * Load grid data
 		 */
 		onWidgetCustomFormLayoutGridShow: function () {

@@ -3,6 +3,7 @@ package org.cmdbuild.auth;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.apache.commons.lang3.StringUtils.isNotEmpty;
 
+import java.util.Hashtable;
 import java.util.Properties;
 
 import javax.naming.Context;
@@ -67,7 +68,7 @@ public class LdapAuthenticator implements PasswordAuthenticator {
 	}
 
 	private DirContext initialize() throws NamingException {
-		final Properties env = new Properties();
+		final Hashtable<Object, Object> env = new Hashtable<>(System.getProperties());
 		env.put(Context.INITIAL_CONTEXT_FACTORY, INITIAL_CONTEXT_FACTORY);
 		env.put(Context.PROVIDER_URL, configuration.getLdapUrl());
 		env.put(Context.REFERRAL, "follow");
