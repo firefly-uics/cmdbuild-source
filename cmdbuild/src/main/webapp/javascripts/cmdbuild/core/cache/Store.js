@@ -1,4 +1,4 @@
-(function() {
+(function () {
 
 	/**
 	 * To use only inside cache class
@@ -12,6 +12,27 @@
 			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.interfaces.Ajax'
 		],
+
+		/**
+		 * Parameter to disable all messages display
+		 *
+		 * @property {Boolean}
+		 */
+		disableAllMessages: false,
+
+		/**
+		 * Parameter to disable only error messages display
+		 *
+		 * @property {Boolean}
+		 */
+		disableErrors: false,
+
+		/**
+		 * Parameter to disable only warning messages display
+		 *
+		 * @property {Boolean}
+		 */
+		disableWarnings: false,
 
 		/**
 		 * @cfg {String}
@@ -33,16 +54,26 @@
 		 * @private
 		 */
 		callbackInterceptor: function (records, operation, success) {
-			var decodedResponse = CMDBuild.core.interfaces.Ajax.decodeJson(operation.response.responseText);
+			var decodedResponse = {};
 
-			CMDBuild.core.interfaces.messages.Warning.display(decodedResponse);
-			CMDBuild.core.interfaces.messages.Error.display(decodedResponse, operation.request);
+			if (!Ext.isEmpty(operation) && !Ext.isEmpty(operation.response) && !Ext.isEmpty(operation.response.responseText))
+				decodedResponse = CMDBuild.core.interfaces.Ajax.decodeJson(operation.response.responseText);
+
+			if (!this.disableAllMessages) {
+				if (!this.disableWarnings)
+					CMDBuild.core.interfaces.messages.Warning.display(decodedResponse);
+
+				if (!this.disableErrors)
+					CMDBuild.core.interfaces.messages.Error.display(decodedResponse, operation.request);
+			}
 
 			return true;
 		},
 
 		/**
 		 * @param {Function or Object} options
+		 *
+		 * @returns {Void}
 		 */
 		load: function (options) {
 			options = Ext.isEmpty(options) ? {} : options;
@@ -61,8 +92,11 @@
 					type: this.type,
 					groupId: this.groupId,
 					serviceEndpoint: this.proxy.url,
-					params: options.params
+					params: Ext.clone(options.params)
 				};
+
+				// Avoid different stores to join results adding store model to parameters
+				parameters.params.modelName = this.model.getName();
 
 				if (!CMDBuild.global.Cache.isExpired(parameters)) { // Emulation of success and callback execution
 					var cachedValues = CMDBuild.global.Cache.get(parameters);

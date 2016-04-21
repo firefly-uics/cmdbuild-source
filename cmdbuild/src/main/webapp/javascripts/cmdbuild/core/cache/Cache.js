@@ -8,7 +8,8 @@
 		requires: [
 			'CMDBuild.core.configurations.Timeout',
 			'CMDBuild.core.constants.Proxy',
-			'CMDBuild.core.interfaces.Ajax'
+			'CMDBuild.core.interfaces.Ajax',
+			'CMDBuild.core.interfaces.Rest'
 		],
 
 		/**
@@ -61,13 +62,15 @@
 
 		/**
 		 * @param {Object} configurationObject
+		 *
+		 * @returns {Void}
 		 */
 		constructor: function (configurationObject) {
 			Ext.apply(this, configurationObject);
 
+			// Setup global reference
 			Ext.ns('CMDBuild.global');
-
-			CMDBuild.global.Cache = this; // Global reference
+			CMDBuild.global.Cache = this;
 		},
 
 		/**
@@ -89,6 +92,27 @@
 				&& !Ext.isEmpty(this.bufferObject[parameters.type][parameters.groupId][parameters.serviceEndpoint])
 				&& !Ext.isEmpty(this.bufferObject[parameters.type][parameters.groupId][parameters.serviceEndpoint][Ext.encode(parameters.params)])
 			);
+		},
+
+		/**
+		 * @param {Object} parameters
+		 *
+		 * @returns {Void}
+		 *
+		 * @private
+		 */
+		executeRequest: function (parameters) {
+			switch (parameters.mode) {
+				case 'ajax':
+					return CMDBuild.core.interfaces.Ajax.request(parameters);
+
+				case 'rest':
+					return CMDBuild.core.interfaces.Rest.request(parameters);
+
+				default: {
+					_error('unmanaged or missing mode parameter', this, parameters);
+				}
+			}
 		},
 
 		/**
@@ -122,6 +146,8 @@
 		 *
 		 * @param {String} parameters.type
 		 * @param {String} parameters.groupId
+		 *
+		 * @returns {Void}
 		 *
 		 * @private
 		 */
@@ -240,15 +266,21 @@
 		/**
 		 * @param {String} cacheGroupIdentifier
 		 * @param {Object} parameters
-		 * @param {String} parameters.method
+		 * @param {String} parameters.mode [ajax, rest]
+		 * @param {String} parameters.method [DELETE, GET, POST, PUT]
 		 * @param {String} parameters.url
 		 * @param {Object} parameters.params
+		 * @param {Object} parameters.restUrlParams
 		 * @param {Object} parameters.headers
+		 * @param {Object} parameters.jsonData
+		 * @param {Object} parameters.loadMask
 		 * @param {Object} parameters.scope
 		 * @param {Function} parameters.callback
 		 * @param {Function} parameters.failure
 		 * @param {Function} parameters.success
 		 * @param {Boolean} invalidateOnSuccess
+		 *
+		 * @returns {Void}
 		 *
 		 * @public
 		 */
@@ -262,6 +294,7 @@
 			) {
 				// Apply defaults
 				Ext.applyIf(parameters, {
+					mode: 'ajax',
 					method: 'POST',
 					loadMask: true,
 					scope: this,
@@ -319,10 +352,10 @@
 							}
 						}, parameters.success);
 
-						CMDBuild.core.interfaces.Ajax.request(parameters);
+						this.executeRequest(parameters);
 					}
 				} else { // Uncacheable endpoints manage
-					CMDBuild.core.interfaces.Ajax.request(parameters);
+					this.executeRequest(parameters);
 				}
 			} else {
 				_error('invalid request parameters', this);

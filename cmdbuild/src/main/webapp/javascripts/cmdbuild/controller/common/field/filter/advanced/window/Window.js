@@ -9,7 +9,7 @@
 		requires: [
 			'CMDBuild.core.Message',
 			'CMDBuild.core.constants.Proxy',
-			'CMDBuild.core.proxy.filter.User'
+			'CMDBuild.proxy.filter.User'
 		],
 
 		/**
@@ -347,7 +347,7 @@
 			params[CMDBuild.core.constants.Proxy.CLASS_NAME] = this.cmfg('fieldFilterAdvancedSelectedClassGet', CMDBuild.core.constants.Proxy.NAME);
 
 			if (this.grid.includeUsersFiltersCheckbox.getValue())
-				CMDBuild.core.proxy.filter.User.read({
+				CMDBuild.proxy.filter.User.read({
 					params: params,
 					scope: this,
 					success: function(response, options, decodedResponse) {

@@ -223,11 +223,11 @@
 
 	var calculatedValuesMapping = {};
 	calculatedValuesMapping["@MY_USER"] = function() {
-		return CMDBuild.Runtime.UserId;
+		return CMDBuild.configuration.runtime.get(CMDBuild.core.constants.Proxy.USER_ID);
 	};
 
 	calculatedValuesMapping["@MY_GROUP"] = function() {
-		return CMDBuild.Runtime.DefaultGroupId;
+		return CMDBuild.configuration.runtime.get(CMDBuild.core.constants.Proxy.DEFAULT_GROUP_ID);
 	};
 
 	/**

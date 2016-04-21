@@ -72,7 +72,7 @@
 						children: []
 					},
 					sorters: [
-						{ property: CMDBuild.ServiceProxy.parameter.DESCRIPTION, direction: 'ASC' }
+						{ property: CMDBuild.core.constants.Proxy.DESCRIPTION, direction: 'ASC' }
 					]
 				})
 			});

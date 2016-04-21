@@ -1,4 +1,4 @@
-(function() {
+(function () {
 
 	Ext.define('CMDBuild.view.administration.workflow.tabs.properties.panel.UploadXpdl', {
 		extend: 'Ext.form.Panel',
@@ -27,7 +27,12 @@
 			align: 'stretch'
 		},
 
-		initComponent: function() {
+		/**
+		 * @returns {Void}
+		 *
+		 * @override
+		 */
+		initComponent: function () {
 			Ext.apply(this, {
 				items: [
 					Ext.create('Ext.form.field.File', {
@@ -46,7 +51,7 @@
 							Ext.create('CMDBuild.core.buttons.text.Upload', {
 								scope: this,
 
-								handler: function(button, e) {
+								handler: function (button, e) {
 									this.delegate.cmfg('onWorkflowTabPropertiesUploadXpdlPanelUploadButtonClick');
 								}
 							})

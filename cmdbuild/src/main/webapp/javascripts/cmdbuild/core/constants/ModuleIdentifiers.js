@@ -1,4 +1,4 @@
-(function() {
+(function () {
 
 	/**
 	 * Module's identifiers used to get module controllers and accordions
@@ -24,14 +24,18 @@
 			menu: 'menu',
 			navigationTree: 'navigationtree',
 			report: 'report',
+			reportSingle: 'reportsingle',
 			userAndGroup: 'userandgroup',
+			utility: 'utility',
 			workflow: 'workflow'
 		},
 
 		/**
 		 * @param {Object} config
+		 *
+		 * @returns {Void}
 		 */
-		constructor: function(config) {
+		constructor: function (config) {
 			this.initConfig(config);
 		}
 	});

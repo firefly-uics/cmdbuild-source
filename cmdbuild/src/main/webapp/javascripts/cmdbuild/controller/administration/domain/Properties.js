@@ -3,10 +3,7 @@
 	Ext.define('CMDBuild.controller.administration.domain.Properties', {
 		extend: 'CMDBuild.controller.common.abstract.Base',
 
-		requires: [
-			'CMDBuild.core.constants.Proxy',
-			'CMDBuild.core.proxy.domain.Domain'
-		],
+		requires: ['CMDBuild.core.constants.Proxy'],
 
 		/**
 		 * @cfg {CMDBuild.controller.administration.domain.Domain}

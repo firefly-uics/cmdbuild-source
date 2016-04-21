@@ -4,10 +4,10 @@
 		extend: 'CMDBuild.controller.common.abstract.Widget',
 
 		requires: [
-			'CMDBuild.core.Message',
 			'CMDBuild.core.constants.Proxy',
-			'CMDBuild.core.proxy.widget.CustomForm',
-			'CMDBuild.core.Utils'
+			'CMDBuild.core.Message',
+			'CMDBuild.core.Utils',
+			'CMDBuild.proxy.widget.customForm.CustomForm'
 		],
 
 		/**
@@ -82,6 +82,8 @@
 			},
 
 			/**
+			 * @returns {Void}
+			 *
 			 * @private
 			 */
 			alreadyDisplayedSet: function () {
@@ -191,6 +193,8 @@
 		/**
 		 * Builds layout controller and inject view
 		 *
+		 * @returns {Void}
+		 *
 		 * @private
 		 */
 		buildLayout: function () {
@@ -215,6 +219,8 @@
 				this.controllerLayout.cmfg('onWidgetCustomFormShow');
 
 				this.alreadyDisplayedSet();
+			} else {
+				_error('empty model configuration parameter', this);
 			}
 		},
 
@@ -237,7 +243,7 @@
 				params[CMDBuild.core.constants.Proxy.FUNCTION] = this.cmfg('widgetCustomFormConfigurationGet', CMDBuild.core.constants.Proxy.FUNCTION_DATA);
 				params[CMDBuild.core.constants.Proxy.PARAMS] = Ext.encode(this.cmfg('widgetCustomFormConfigurationGet', CMDBuild.core.constants.Proxy.VARIABLES));
 
-				CMDBuild.core.proxy.widget.CustomForm.readFromFunctions({
+				CMDBuild.proxy.widget.customForm.CustomForm.readFromFunctions({
 					params: params,
 					scope: Ext.isEmpty(parameters.scope) ? this : parameters.scope,
 					callback: Ext.isFunction(parameters.callback) ? parameters.callback :  Ext.emptyFn,
@@ -331,6 +337,8 @@
 		},
 
 		/**
+		 * @returns {Void}
+		 *
 		 * @override
 		 */
 		onWidgetCustomFormBeforeActiveView: function () {
@@ -354,12 +362,16 @@
 		/**
 		 * Preset data in instanceDataStorage variable
 		 *
+		 * @returns {Void}
+		 *
 		 * @override
 		 */
 		onWidgetCustomFormEditMode: function () {
 			this.instancesDataStorageSet(this.cmfg('widgetCustomFormConfigurationGet', CMDBuild.core.constants.Proxy.DATA));
 
 			this.cmfg('onWidgetCustomFormBeforeActiveView');
+
+			this.onEditMode(arguments); // CallParent alias
 		},
 
 		/**
@@ -386,6 +398,8 @@
 
 		/**
 		 * Save data in storage attribute
+		 *
+		 * @returns {Void}
 		 *
 		 * @override
 		 */
@@ -467,6 +481,8 @@
 
 		/**
 		 * @param {Boolean} state
+		 *
+		 * @returns {Void}
 		 */
 		widgetCustomFormViewSetLoading: function (state) {
 			state = Ext.isBoolean(state) ? state : false;

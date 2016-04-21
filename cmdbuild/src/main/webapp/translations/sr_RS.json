@@ -456,6 +456,7 @@
 		"weeks2": "<em>In 2 weeks</em>"
 	},
 	"errors": {
+		"anErrorHasOccurred": "Дошло је до грешке",
 		"busy_wf_widgets": "Визелне контроле су недоступне, проверите статус сервера пре поновног покушаја.",
 		"copyAttachmentFailure": "<em>Copy attachment with name \"{0}\" failure</em>",
 		"createReportFilure": "<em>Create report failure</em>",
@@ -476,7 +477,7 @@
 		"invalidKeyAttributesInLocalStore": "<em>Invalid key attribute(s) in local store</em>",
 		"invalidLookupValue": "<em>Invalid Lookup value</em>",
 		"no_driver": "Недостаје одговарајући JDBC управљачки програм (драјвер).<br />Одговарајући драјвер можете пронаћи у CMDBuild инсталационом фолдеру и копирати у <b>lib<\/b> фолдер Tomcat сервера.",
-		"no_selections": "Нисте изабрали картицу података која ће бити ажурирана",
+		"noSelectedCardToUpdate": "Нисте изабрали картицу података која ће бити ажурирана",
 		"printReportFilure": "<em>Print report failure</em>",
 		"reasons": {
 			"ATTRIBUTE_NOTFOUND": "Атрибут {1} не постоји у {0}",
@@ -630,7 +631,6 @@
 		"show_detail": "Прикажи детаље",
 		"targetClassOrCqlFilterRequired": "Неопходна је циљна класа или CQL селектор картице",
 		"template_error": "Грешка у шаблону (темплејту)",
-		"unknown_error": "Дошло је до грешке",
 		"unmanagedReportType": "<em>Unmanaged report type</em>",
 		"valueDoesNotMatchFilter": "Вредност не задовољава постављени филтер",
 		"widgetLinkCardsNoClassNameError": "LinkCardsController конструктор: Погрешан назив класе",
@@ -644,9 +644,6 @@
 	},
 	"filterWindow": {
 		"add": "Додај филтер"
-	},
-	"info": {
-		"card_not_found": "Картица не одговара тренутним условима филтрирања"
 	},
 	"management": {
 		"description": "Модул за управљање подацима",
@@ -799,42 +796,6 @@
 			"showgraph": "Прикажи у графу",
 			"shownotes": "Прикажи напомене"
 		},
-		"modutilities": {
-			"bulkupdate": {
-				"title": "Масовна измена картица",
-				"countMessage": "{0} картица ће бити измењено"
-			},
-			"changepassword": {
-				"newpw": "Нова лозинка",
-				"oldpw": "Стара лозинка",
-				"repnew": "Понови нову лозинку",
-				"successmsgtext": "Промена лозинке успешно извршена",
-				"title": "Промени лозинку",
-				"validationtext": "Унете лозинке се разликују"
-			},
-			"csv": {
-				"csvfile": "CSV датотека",
-				"error": "Грешка",
-				"exportfile": "Извези",
-				"importfailure": "Увоз података није успео",
-				"importsuccess": "Увоз података успешно извршен",
-				"info": "Информација",
-				"noupdate": "Ниједна картица није измењена",
-				"selectaclass": "Изаберите класу",
-				"separator": "Сепаратор",
-				"shownonvalid": "Прикажи само невалидне записе",
-				"title": "Увези CSV датотеку",
-				"title_export": "Извези CSV датотеку",
-				"warning": "Пажња"
-			},
-			"title": "Алати"
-		},
-		"modutility": {
-			"title": "Алати"
-		},
-		"modview": {
-			"title": "Прикази"
-		},
 		"modworkflow": {
 			"abort_card": "Прекини процес",
 			"abort_card_confirm": "Да ли сте сигурни да желите прекинути процес?",
@@ -894,17 +855,16 @@
 		}
 	},
 	"warnings": {
+		"changeAppliedOnlyToFilteredCards": "Измене ће бити примењене само на картице података које задовољавају постављени филтер.",
 		"emailTemplateRelatedAttributeEdited": "<em>Attribute related with email templates changed, some e-mail could be regenerated.</em>",
 		"itemNotAvailable": "<em>Item not available</em>",
 		"itIsNotAllowedFilterWithCalculatedParams": "Није дозвољена употреба филтера са параметрима који се калкулишу",
 		"link_cards_changed_values": "Изабрани(а) \"{0}\" је ажуриран(а)",
-		"only_filtered": "Измене ће бити примењене само на картице података које задовољавају постављени филтер.",
 		"popup_block": "Детектован је програм за блокирање popup прозора, искључите га како бисте могли наставити операцију",
 		"reportsDuplicateImageFilename": "Пажња! Немогуће је обавити операцију - Извештај садржи дуплиране слике са истим именом.",
 		"saveMenuBeforeAccess": "Мени мора бити снимљен пре приступа преводу елемента.",
 		"thereAreNoEnabledLanguages": "<em>There are no enabled languages</em>",
-		"toSetAFilterYouMustBeforeSelectAClass": "<em>To set a filter you must before select a class</em>",
-		"warning_message": "Пажња"
+		"toSetAFilterYouMustBeforeSelectAClass": "<em>To set a filter you must before select a class</em>"
 	},
 	"account": "Кориснички налог",
 	"accounts": "Кориснички налози",
@@ -976,8 +936,10 @@
 	"card": "Картица",
 	"cardCqlSelector": "CQL селектор картице",
 	"cardinality": "Кардиналитет",
+	"cardNotMatchFilter": "Картица не одговара тренутним условима филтрирања",
 	"cardPanelHeight": "Висина (у процентима) панела за картице ",
 	"cards": "Картице података",
+	"cardsWillBeModified": "{0} картица ће бити измењено",
 	"category": "<em>Category</em>",
 	"cc": "Cc",
 	"changePassword": "Промени лозинку",
@@ -1118,6 +1080,7 @@
 	"existing": "Постојећа",
 	"expand": "<em>Expand</em>",
 	"expandAll": "<em>Expand all</em>",
+	"exportCsvFile": "Извези CSV датотеку",
 	"exportLabel": "Извези",
 	"expose": "Прикажи",
 	"externalServices": "Спољни сервиси",
@@ -1159,15 +1122,19 @@
 	"imapPort": "IMAP порт",
 	"imapServer": "IMAP сервер",
 	"import": "<em>Import</em>",
+	"importCsvFile": "Увези CSV датотеку",
 	"importExport": "<em>Import/Export</em>",
+	"importFailed": "Увоз података није успео",
 	"importFromCSV": "Увоз из CSV",
 	"importJasperReport": "Увоз Jasper извештаја",
+	"importWasSuccessful": "Увоз података успешно извршен",
 	"includeInherited": "Укључујући наслеђене",
 	"includeRelations": "<em>Include relations</em>",
 	"includeSystemActivities": "<em>Include system activities</em>",
 	"includeUsersFilters": "<em>Include users filters</em>",
 	"incoming": "Долазне",
 	"incomingFolder": "Долазни фолдер",
+	"info": "Информација",
 	"informationLayer": "<em>Information layer</em>",
 	"inheritsFrom": "Наследник",
 	"initialLatitude": "Почетна географска ширина",
@@ -1236,15 +1203,18 @@
 	"modifyWidget": "<em>Modify widget</em>",
 	"move": "<em>Move</em>",
 	"multiGroup": "Више група",
+	"multipleUpdate": "Масовна измена картица",
 	"name": "Назив",
 	"navigation": "Навигација",
 	"navigationChronology": "<em>Navigation chronology</em>",
 	"navigationTree": "Стабло навигације",
 	"navigationTrees": "Стабла навигације",
 	"newFolder": "Нови фолдер",
+	"newPassword": "Нова лозинка",
 	"next": "Следећа",
 	"no_bim_project_for_card": "Не постоји BIM пројекат за ову картицу",
 	"noAvailableData": "<em>No available data</em>",
+	"noCardsToUpdate": "Ниједна картица није измењена",
 	"nodeDistance": "<em>Node distance</em>",
 	"none": "Без икаквих права",
 	"noOne": "Ниједан",
@@ -1254,6 +1224,7 @@
 	"numberOfPings": "Број ping покушаја",
 	"odt": "ODT",
 	"ok": "Потврди",
+	"oldPassword": "Стара лозинка",
 	"onDay": "Дана",
 	"open_3d_viewer": "Open 3D viewer",
 	"openRelationGraph": "Отвори граф релација",
@@ -1264,6 +1235,7 @@
 	"parent": "Родитељ",
 	"parentDescription": "Опис родитеља",
 	"password": "Лозинка",
+	"passwordChanged": "Промена лозинке успешно извршена",
 	"passwordsDoNotMatch": "Поновљена лозинка је погрешна",
 	"pdf": "PDF",
 	"permissions": "Права",
@@ -1326,6 +1298,7 @@
 	"reset": "Поништи",
 	"resetToDefault": "<em>Reset to defaults</em>",
 	"restore": "<em>Restore</em>",
+	"retypeNewPassword": "Понови нову лозинку",
 	"root": "Корен",
 	"rotate": "Ротирај",
 	"rowAndColumnPrivileges": "Права над редовима и колонама",
@@ -1361,6 +1334,7 @@
 	"setup": "Општа подешавања",
 	"showDetails": "Прикажи детаље",
 	"showHideThisFeatureOnly": "Прикажи/сакриј само ову особину",
+	"showInvalidRecordsOnly": "Прикажи само невалидне записе",
 	"showLanguageChoice": "Прикажи избор језика",
 	"showLanguageSelectionLoginBox": "Прикажи избор језика у прозору за пријављивање",
 	"showLockerUserName": "Прикажи им екорисника који је закључао",
@@ -1415,6 +1389,7 @@
 	"usersAndGroups": "Корисници и групе",
 	"userStoppable": "Корисник може прекинути процес",
 	"userType": "Тип корисника",
+	"utility": "Алати",
 	"utilityChangePassword": "Алати - Промени лозинку",
 	"utilityExportCsv": "Алати - Извези CSV датотеку",
 	"utilityImportCsv": "Алати - Увези CSV датотеку",

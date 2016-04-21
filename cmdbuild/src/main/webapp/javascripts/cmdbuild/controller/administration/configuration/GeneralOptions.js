@@ -5,7 +5,7 @@
 
 		requires: [
 			'CMDBuild.core.constants.Proxy',
-			'CMDBuild.core.proxy.configuration.GeneralOptions',
+			'CMDBuild.proxy.configuration.GeneralOptions',
 			'CMDBuild.model.configuration.generalOptions.GeneralOptions'
 		],
 
@@ -45,7 +45,7 @@
 		 * @returns {Void}
 		 */
 		onConfigurationGeneralOptionsSaveButtonClick: function () {
-			CMDBuild.core.proxy.configuration.GeneralOptions.update({
+			CMDBuild.proxy.configuration.GeneralOptions.update({
 				params: CMDBuild.model.configuration.generalOptions.GeneralOptions.convertToLegacy(this.view.getData(true)),
 				scope: this,
 				success: function (response, options, decodedResponse) {
@@ -62,7 +62,7 @@
 		 * @returns {Void}
 		 */
 		onConfigurationGeneralOptionsTabShow: function () {
-			CMDBuild.core.proxy.configuration.GeneralOptions.read({
+			CMDBuild.proxy.configuration.GeneralOptions.read({
 				scope: this,
 				success: function (response, options, decodedResponse) {
 					decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.DATA];

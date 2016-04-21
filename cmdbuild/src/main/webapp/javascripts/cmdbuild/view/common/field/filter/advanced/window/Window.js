@@ -1,12 +1,9 @@
 (function() {
 
 	Ext.define('CMDBuild.view.common.field.filter.advanced.window.Window', {
-		extend: 'CMDBuild.core.PopupWindow',
+		extend: 'CMDBuild.core.window.AbstractModal',
 
-		requires: [
-			'CMDBuild.core.constants.Proxy',
-			'CMDBuild.core.proxy.common.field.filter.advanced.window.Window'
-		],
+		requires: ['CMDBuild.core.constants.Proxy'],
 
 		/**
 		 * @cfg {CMDBuild.controller.common.field.filter.advanced.window.Window}

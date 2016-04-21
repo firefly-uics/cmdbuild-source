@@ -5,7 +5,7 @@
 
 		requires: [
 			'CMDBuild.core.constants.Proxy',
-			'CMDBuild.core.proxy.widget.CustomForm'
+			'CMDBuild.proxy.customForm.Csv'
 		],
 
 		/**
@@ -35,6 +35,8 @@
 		 * @param {Object} configurationObject
 		 * @param {Mixed} configurationObject.parentDelegate
 		 *
+		 * @returns {Void}
+		 *
 		 * @override
 		 */
 		constructor: function (configurationObject) {
@@ -50,12 +52,17 @@
 				this.view.show();
 		},
 
+		/**
+		 * @returns {Void}
+		 */
 		onWidgetCustomFormExportAbortButtonClick: function () {
 			this.view.destroy();
 		},
 
 		/**
 		 * Uses exportCSV calls to build and download file
+		 *
+		 * @returns {Void}
 		 */
 		onWidgetCustomFormExportExportButtonClick: function () {
 			if (this.validate(this.form)) {
@@ -63,7 +70,7 @@
 				params[CMDBuild.core.constants.Proxy.DATA] = Ext.encode(this.cmfg('widgetCustomFormDataGet'));
 				params[CMDBuild.core.constants.Proxy.HEADERS] = Ext.encode(params[CMDBuild.core.constants.Proxy.HEADERS].split(','));
 
-				CMDBuild.core.proxy.widget.CustomForm.exports({ params: params });
+				CMDBuild.proxy.customForm.Csv.exports({ params: params });
 
 				this.cmfg('onWidgetCustomFormExportAbortButtonClick');
 			}

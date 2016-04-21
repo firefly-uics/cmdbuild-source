@@ -25,7 +25,6 @@ import org.cmdbuild.auth.DefaultAuthenticationService.Configuration;
 import org.cmdbuild.auth.Login;
 import org.cmdbuild.auth.PasswordAuthenticator;
 import org.cmdbuild.auth.UserFetcher;
-import org.cmdbuild.auth.UserStore;
 import org.cmdbuild.auth.user.AnonymousUser;
 import org.cmdbuild.auth.user.AuthenticatedUser;
 import org.cmdbuild.auth.user.CMUser;
@@ -54,8 +53,6 @@ public class AuthenticationServiceTest {
 	private ClientRequestAuthenticator clientRequestAuthenticatorMock;
 	@Mock
 	private UserFetcher userFectcherMock;
-	@Mock
-	private UserStore userStoreMock;
 	@Mock
 	private CMUser user;
 
@@ -102,12 +99,6 @@ public class AuthenticationServiceTest {
 	public void userFetchersMustHaveNotNullElements() {
 		final AuthenticationService as = authenticationService();
 		as.setUserFetchers(new UserFetcher[] { null });
-	}
-
-	@Test(expected = NullPointerException.class)
-	public void userStoreMustBeNotNull() {
-		final AuthenticationService as = authenticationService();
-		as.setUserStore(null);
 	}
 
 	/*
@@ -328,7 +319,8 @@ public class AuthenticationServiceTest {
 	@Test
 	public void configurationFiltersPasswordAuthenticators() {
 		// given
-		final PasswordAuthenticator namedAuthenticatorMock = mock(PasswordAuthenticator.class, withSettings().name("b"));
+		final PasswordAuthenticator namedAuthenticatorMock = mock(PasswordAuthenticator.class,
+				withSettings().name("b"));
 		when(namedAuthenticatorMock.getName()).thenReturn("a");
 		final Configuration conf = mock(Configuration.class);
 		when(conf.getActiveAuthenticators()).thenReturn(Sets.newHashSet("a"));
@@ -346,7 +338,8 @@ public class AuthenticationServiceTest {
 	@Test
 	public void configurationFiltersPasswordCallbackAuthenticators() {
 		// given
-		final PasswordAuthenticator namedAuthenticatorMock = mock(PasswordAuthenticator.class, withSettings().name("b"));
+		final PasswordAuthenticator namedAuthenticatorMock = mock(PasswordAuthenticator.class,
+				withSettings().name("b"));
 		when(namedAuthenticatorMock.getName()).thenReturn("a");
 		final Configuration conf = mock(Configuration.class);
 		when(conf.getActiveAuthenticators()).thenReturn(Sets.newHashSet("a"));
@@ -385,7 +378,6 @@ public class AuthenticationServiceTest {
 
 	private AuthenticationService emptyAuthenticatorService() {
 		final AuthenticationService as = authenticationService();
-		as.setUserStore(userStoreMock);
 		return as;
 	}
 
@@ -399,7 +391,6 @@ public class AuthenticationServiceTest {
 		as.setPasswordAuthenticators(passwordAuthenticatorMock);
 		as.setClientRequestAuthenticators(clientRequestAuthenticatorMock);
 		as.setUserFetchers(userFectcherMock);
-		as.setUserStore(userStoreMock);
 	}
 
 	private AuthenticatedUser anonymousUser() {

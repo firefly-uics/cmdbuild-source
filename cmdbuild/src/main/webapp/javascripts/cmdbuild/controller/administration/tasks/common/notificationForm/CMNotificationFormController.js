@@ -3,8 +3,7 @@
 	Ext.define('CMDBuild.controller.administration.tasks.common.notificationForm.CMNotificationFormController', {
 
 		requires: [
-			'CMDBuild.core.constants.Proxy',
-			'CMDBuild.core.proxy.CMProxyTasks'
+			'CMDBuild.core.constants.Proxy'
 		],
 
 		/**

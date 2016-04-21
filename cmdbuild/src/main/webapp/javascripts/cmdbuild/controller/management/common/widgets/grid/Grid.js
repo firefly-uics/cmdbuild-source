@@ -6,7 +6,7 @@
 		requires: [
 			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.Message',
-			'CMDBuild.core.proxy.widget.Grid',
+			'CMDBuild.proxy.widget.grid.Grid',
 			'CMDBuild.model.widget.grid.Grid'
 		],
 
@@ -146,7 +146,7 @@
 							value = me.formatDate(value);
 						}
 
-						if (Ext.isEmpty(Ext.String.trim(String(value))) && attribute[CMDBuild.core.constants.Proxy.NOT_NULL])
+						if (Ext.isEmpty(Ext.String.trim(String(value))) && attribute['isnotnull'])
 							value = '<div style="width: 100%; height: 100%; border: 1px dotted red;">';
 
 						return value;
@@ -251,7 +251,7 @@
 					if (!Ext.isEmpty(header)) {
 						editor.disabled = attribute[CMDBuild.core.constants.Proxy.FIELD_MODE] == CMDBuild.core.constants.Proxy.READ;
 
-						if (attribute[CMDBuild.core.constants.Proxy.NOT_NULL]) {
+						if (attribute['isnotnull']) {
 							header.header = '* ' + header.header; // TODO: header property is deprecated, should use "text" but FieldManager uses header so ...
 
 							header[CMDBuild.core.constants.Proxy.REQUIRED] = true;
@@ -323,7 +323,7 @@
 		 */
 		decodeFunctionPresets: function(presetsString) {
 			// Validate presetsString
-			CMDBuild.core.proxy.widget.Grid.getFunctions({
+			CMDBuild.proxy.widget.grid.Grid.getFunctions({
 				scope: this,
 				success: function(result, options, decodedResult) {
 					var isPresetsStringValid = false;
@@ -366,7 +366,7 @@
 							params[functionParams[index]] = widgetUnmanagedVariables[functionParams[index]];
 
 						this.grid.reconfigure(
-							CMDBuild.core.proxy.widget.Grid.getStoreFromFunction({
+							CMDBuild.proxy.widget.grid.Grid.getStoreFromFunction({
 								fields: CMDBuild.model.widget.grid.Grid.getFields(),
 								extraParams: {
 									'function': presetsString,

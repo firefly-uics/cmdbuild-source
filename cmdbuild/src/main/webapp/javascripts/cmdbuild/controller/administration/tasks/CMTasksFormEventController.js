@@ -6,7 +6,9 @@
 		requires: [
 			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.LoadMask',
-			'CMDBuild.core.proxy.CMProxyTasks'
+			'CMDBuild.proxy.taskManager.event.Asynchronous',
+			'CMDBuild.proxy.taskManager.event.Synchronous',
+			'CMDBuild.model.CMModelTasks'
 		],
 
 		/**
@@ -99,6 +101,25 @@
 		},
 
 		/**
+		 * @override
+		 */
+		removeItem: function() {
+			if (!Ext.isEmpty(this.selectedId)) {
+				CMDBuild.core.LoadMask.show();
+
+				CMDBuild.proxy.taskManager.Event.remove({ // TODO
+					params: {
+						id: this.selectedId
+					},
+					loadMask: false,
+					scope: this,
+					success: this.success,
+					callback: this.callback
+				});
+			}
+		},
+
+		/**
 		 * @param {String} className
 		 */
 		onClassSelected: function(className) {
@@ -115,22 +136,24 @@
 				this.selectedType = this.selectionModel.getSelection()[0].get(CMDBuild.core.constants.Proxy.TYPE);
 
 				// Selected task asynchronous store query
-				this.selectedDataStore = CMDBuild.core.proxy.CMProxyTasks.get(this.selectedType);
-				this.selectedDataStore.load({
-					scope: this,
-					params: {
-						id: this.selectedId
-					},
-					callback: function(records, operation, success) {
-						if (!Ext.isEmpty(records)) {
-							var record = records[0];
+				switch (this.selectedType) {
+					case 'event_asynchronous': {
+						CMDBuild.proxy.taskManager.event.Asynchronous.read({
+							params: {
+								id: this.selectedId
+							},
+							loadMask: false,
+							scope: this,
+							success: function(rensponse, options, decodedResponse) {
+								decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.RESPONSE];
 
-							this.parentDelegate.loadForm(this.selectedType);
+								if (Ext.isObject(decodedResponse) && !Ext.Object.isEmpty(decodedResponse)) {
+									var record = Ext.create('CMDBuild.model.CMModelTasks.singleTask.event_asynchronous', decodedResponse);
 
-							// HOPING FOR A FIX: loadRecord() fails with comboboxes, and i can't find good fix, so i must set all fields manually
+									this.parentDelegate.loadForm(this.selectedType);
 
-							switch (this.selectedType) {
-								case 'event_asynchronous': { // TODO
+									// HOPING FOR A FIX: loadRecord() fails with comboboxes, and i can't find good fix, so i must set all fields manually
+
 									// Set step1 [0] datas
 									this.delegateStep[0].setValueActive(record.get(CMDBuild.core.constants.Proxy.ACTIVE));
 									this.delegateStep[0].setValueClassName(record.get(CMDBuild.core.constants.Proxy.CLASS_NAME));
@@ -150,13 +173,35 @@
 									this.delegateStep[3].setValueNotificationFieldsetCheckbox(record.get(CMDBuild.core.constants.Proxy.NOTIFICATION_ACTIVE));
 									this.delegateStep[3].setValueNotificationAccount(record.get(CMDBuild.core.constants.Proxy.NOTIFICATION_EMAIL_ACCOUNT));
 									this.delegateStep[3].setValueNotificationTemplate(record.get(CMDBuild.core.constants.Proxy.NOTIFICATION_EMAIL_TEMPLATE));
-// TODO: future implementation
+		// TODO: future implementation
 //									this.delegateStep[3].setValueWorkflowAttributesGrid(record.get(CMDBuild.core.constants.Proxy.WORKFLOW_ATTRIBUTES));
 //									this.delegateStep[3].setValueWorkflowCombo(record.get(CMDBuild.core.constants.Proxy.WORKFLOW_CLASS_NAME));
 //									this.delegateStep[3].setValueWorkflowFieldsetCheckbox(record.get(CMDBuild.core.constants.Proxy.WORKFLOW_ACTIVE));
-								} break;
 
-								case 'event_synchronous': {
+
+									this.view.disableModify(true);
+								}
+							}
+						});
+					} break;
+
+					case 'event_synchronous': {
+						CMDBuild.proxy.taskManager.event.Synchronous.read({
+							params: {
+								id: this.selectedId
+							},
+							loadMask: false,
+							scope: this,
+							success: function(rensponse, options, decodedResponse) {
+								decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.RESPONSE];
+
+								if (Ext.isObject(decodedResponse) && !Ext.Object.isEmpty(decodedResponse)) {
+									var record = Ext.create('CMDBuild.model.CMModelTasks.singleTask.event_synchronous', decodedResponse);
+
+									this.parentDelegate.loadForm(this.selectedType);
+
+									// HOPING FOR A FIX: loadRecord() fails with comboboxes, and i can't find good fix, so i must set all fields manually
+
 									// Set step1 [0] datas
 									this.delegateStep[0].selectGroups(record.get(CMDBuild.core.constants.Proxy.GROUPS));
 									this.delegateStep[0].setValueActive(record.get(CMDBuild.core.constants.Proxy.ACTIVE));
@@ -177,16 +222,13 @@
 									this.delegateStep[2].setValueWorkflowAttributesGrid(record.get(CMDBuild.core.constants.Proxy.WORKFLOW_ATTRIBUTES));
 									this.delegateStep[2].setValueWorkflowCombo(record.get(CMDBuild.core.constants.Proxy.WORKFLOW_CLASS_NAME));
 									this.delegateStep[2].setValueWorkflowFieldsetCheckbox(record.get(CMDBuild.core.constants.Proxy.WORKFLOW_ACTIVE));
-								} break;
 
-								default:
-									_debug('CMTasksFormEventController error: onRowSelected task type not recognized');
+									this.view.disableModify(true);
+								}
 							}
-
-							this.view.disableModify(true);
-						}
-					}
-				});
+						});
+					} break;
+				}
 
 				this.parentDelegate.changeItem(0);
 			}
@@ -269,21 +311,49 @@
 				submitDatas[CMDBuild.core.constants.Proxy.ID] = formData[CMDBuild.core.constants.Proxy.ID];
 
 				if (Ext.isEmpty(formData[CMDBuild.core.constants.Proxy.ID])) {
-					CMDBuild.core.proxy.CMProxyTasks.create({
-						type: taskType,
-						params: submitDatas,
-						scope: this,
-						success: this.success,
-						callback: this.callback
-					});
+					switch (taskType) {
+						case 'event_asynchronous': {
+							CMDBuild.proxy.taskManager.event.Asynchronous.create({
+								params: submitDatas,
+								loadMask: false,
+								scope: this,
+								success: this.success,
+								callback: this.callback
+							});
+						} break;
+
+						case 'event_synchronous': {
+							CMDBuild.proxy.taskManager.event.Synchronous.create({
+								params: submitDatas,
+								loadMask: false,
+								scope: this,
+								success: this.success,
+								callback: this.callback
+							});
+						} break;
+					}
 				} else {
-					CMDBuild.core.proxy.CMProxyTasks.update({
-						type: taskType,
-						params: submitDatas,
-						scope: this,
-						success: this.success,
-						callback: this.callback
-					});
+					switch (taskType) {
+						case 'event_asynchronous': {
+							CMDBuild.proxy.taskManager.event.Asynchronous.update({
+								params: submitDatas,
+								loadMask: false,
+								scope: this,
+								success: this.success,
+								callback: this.callback
+							});
+						} break;
+
+						case 'event_synchronous': {
+							CMDBuild.proxy.taskManager.event.Synchronous.update({
+								params: submitDatas,
+								loadMask: false,
+								scope: this,
+								success: this.success,
+								callback: this.callback
+							});
+						} break;
+					}
 				}
 			}
 		},
@@ -295,15 +365,31 @@
 			if (!Ext.isEmpty(this.selectedId)) {
 				CMDBuild.core.LoadMask.show();
 
-				CMDBuild.core.proxy.CMProxyTasks.remove({
-					type: this.selectedType,
-					params: {
-						id: this.selectedId
-					},
-					scope: this,
-					success: this.success,
-					callback: this.callback
-				});
+				switch (this.selectedType) {
+					case 'event_asynchronous': {
+						CMDBuild.proxy.taskManager.event.Asynchronous.remove({
+							params: {
+								id: this.selectedId
+							},
+							loadMask: false,
+							scope: this,
+							success: this.success,
+							callback: this.callback
+						});
+					} break;
+
+					case 'event_synchronous': {
+						CMDBuild.proxy.taskManager.event.Synchronous.remove({
+							params: {
+								id: this.selectedId
+							},
+							loadMask: false,
+							scope: this,
+							success: this.success,
+							callback: this.callback
+						});
+					} break;
+				}
 			}
 		},
 

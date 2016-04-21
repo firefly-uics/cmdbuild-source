@@ -456,6 +456,7 @@
 		"weeks2": "2 hét alatt"
 	},
 	"errors": {
+		"anErrorHasOccurred": "Hiba történt",
 		"busy_wf_widgets": "A vizuális vezérlők elfoglaltak, ellenőrizze a szervert mielőtt újra próbálkozik.",
 		"copyAttachmentFailure": "Hiba a \"{0}\" nevű csatolmány másolása közben",
 		"createReportFilure": "Jelentés létrehozási hiba",
@@ -476,7 +477,7 @@
 		"invalidKeyAttributesInLocalStore": "<em>Invalid key attribute(s) in local store</em>",
 		"invalidLookupValue": "<em>Invalid Lookup value</em>",
 		"no_driver": "Nem található JDBC driver.<br />A driver megtalálható a CMDBuild release csomagban. Másolja a Tomcat libraries.mappába.",
-		"no_selections": "Nem jelölt meg egy kártyát sem frissítésre",
+		"noSelectedCardToUpdate": "Nem jelölt meg egy kártyát sem frissítésre",
 		"printReportFilure": "Jelentés nyomtatási hiba",
 		"reasons": {
 			"ATTRIBUTE_NOTFOUND": "A {1} attribútum nem található a {0} közül",
@@ -630,7 +631,6 @@
 		"show_detail": "Részletek megjelenítése",
 		"targetClassOrCqlFilterRequired": "Cél osztály vagy kártya CQL selector szükséges",
 		"template_error": "Sablon hiba",
-		"unknown_error": "Hiba történt",
 		"unmanagedReportType": "Nem kezelt jelentés típus",
 		"valueDoesNotMatchFilter": "Az értéknem illeszkedik a szűrőre",
 		"widgetLinkCardsNoClassNameError": "LinkCardsController konstruktor: az osztálynév nem érvényes",
@@ -644,9 +644,6 @@
 	},
 	"filterWindow": {
 		"add": "Szűrő hozzáadása"
-	},
-	"info": {
-		"card_not_found": "A kártya nem illeszkedik az aktuális szűrőre"
 	},
 	"management": {
 		"description": "Adatkezelő modul",
@@ -799,42 +796,6 @@
 			"showgraph": "Gráf megjelenítése",
 			"shownotes": "Jegyzet megjelenítése"
 		},
-		"modutilities": {
-			"bulkupdate": {
-				"title": "Többszörös frissítés",
-				"countMessage": "{0} kártya lesz módosítva"
-			},
-			"changepassword": {
-				"newpw": "Új jelszó",
-				"oldpw": "Eddigi jelszó",
-				"repnew": "Írja be újra az új jelszót",
-				"successmsgtext": "A jelszó megváltozott",
-				"title": "Jelszó megváltoztatása",
-				"validationtext": "A jelszavak nem egyeznek"
-			},
-			"csv": {
-				"csvfile": "CSV file",
-				"error": "Hiba",
-				"exportfile": "Exportálás",
-				"importfailure": "Az importálás sikertelen",
-				"importsuccess": "Az import sikeres",
-				"info": "Információ",
-				"noupdate": "Nincs frissítendő kártya",
-				"selectaclass": "Válasszon osztályt",
-				"separator": "Elválasztó",
-				"shownonvalid": "Csak az érvénytelen tételek mutatása",
-				"title": "CSV fájl importálása",
-				"title_export": "Exportálás CSV fájlba",
-				"warning": "Figyelem"
-			},
-			"title": "Eszközök"
-		},
-		"modutility": {
-			"title": "Eszközök"
-		},
-		"modview": {
-			"title": "Nézetek"
-		},
 		"modworkflow": {
 			"abort_card": "Folyamat megszakítása",
 			"abort_card_confirm": "Biztos hogy meg akarja szakítani a folyamatot?",
@@ -894,17 +855,16 @@
 		}
 	},
 	"warnings": {
+		"changeAppliedOnlyToFilteredCards": "A változtatások csak a szűrőre illeszkedő kártyákon lesznek végrehajtva",
 		"emailTemplateRelatedAttributeEdited": "Email sablonnal összefüggő attribútumok megváltoztak, néhány levelet újra kell generálni.",
 		"itemNotAvailable": "<em>Item not available</em>",
 		"itIsNotAllowedFilterWithCalculatedParams": "Nem engedélyezett a szűrők kalkulált paraméterrel történő használata",
 		"link_cards_changed_values": "A \"{0}\" kiválasztott értékei frissítve lettek",
-		"only_filtered": "A változtatások csak a szűrőre illeszkedő kártyákon lesznek végrehajtva",
 		"popup_block": "Kérem kapcsolja ki a popup blokkolást ezen az oldalon.",
 		"reportsDuplicateImageFilename": "<em>Warning: found report images with same filename - cannot proceed.</em>",
 		"saveMenuBeforeAccess": "A menüt el kell menteni mielőtt az elem fordításához kezd.",
 		"thereAreNoEnabledLanguages": "<em>There are no enabled languages</em>",
-		"toSetAFilterYouMustBeforeSelectAClass": "<em>To set a filter you must before select a class</em>",
-		"warning_message": "Figyelem"
+		"toSetAFilterYouMustBeforeSelectAClass": "<em>To set a filter you must before select a class</em>"
 	},
 	"account": "Fiók",
 	"accounts": "Fiókok",
@@ -976,8 +936,10 @@
 	"card": "Kártya",
 	"cardCqlSelector": "Kártya CQL kiválasztó",
 	"cardinality": "<em>Cardinality</em>",
+	"cardNotMatchFilter": "A kártya nem illeszkedik az aktuális szűrőre",
 	"cardPanelHeight": "Kártyapanel magassága százalékban",
 	"cards": "Kártyák",
+	"cardsWillBeModified": "{0} kártya lesz módosítva",
 	"category": "<em>Category</em>",
 	"cc": "Másolat",
 	"changePassword": "Jelszó változtatás",
@@ -1118,6 +1080,7 @@
 	"existing": "Létező",
 	"expand": "<em>Expand</em>",
 	"expandAll": "<em>Expand all</em>",
+	"exportCsvFile": "Exportálás CSV fájlba",
 	"exportLabel": "Exportálás",
 	"expose": "Tegye",
 	"externalServices": "Külső szolgáltatás",
@@ -1159,15 +1122,19 @@
 	"imapPort": "IMAP port",
 	"imapServer": "IMAP szerver",
 	"import": "<em>Import</em>",
+	"importCsvFile": "CSV fájl importálása",
 	"importExport": "<em>Import/Export</em>",
+	"importFailed": "Az importálás sikertelen",
 	"importFromCSV": "CSV importálása",
 	"importJasperReport": "<em>Import Jasper report</em>",
+	"importWasSuccessful": "Az import sikeres",
 	"includeInherited": "Örököltek belefoglalása",
 	"includeRelations": "Relációk belefoglalása",
 	"includeSystemActivities": "Rendszer aktivitások belefoglalása",
 	"includeUsersFilters": "<em>Include users filters</em>",
 	"incoming": "Bejövő",
 	"incomingFolder": "Bejövő mappa",
+	"info": "Információ",
 	"informationLayer": "<em>Information layer</em>",
 	"inheritsFrom": "Öröklés innen",
 	"initialLatitude": "Kezdeti szélesség",
@@ -1236,15 +1203,18 @@
 	"modifyWidget": "<em>Modify widget</em>",
 	"move": "<em>Move</em>",
 	"multiGroup": "Több csoport",
+	"multipleUpdate": "Többszörös frissítés",
 	"name": "Név",
 	"navigation": "Navigation",
 	"navigationChronology": "<em>Navigation chronology</em>",
 	"navigationTree": "Navigációs fa",
 	"navigationTrees": "Navigációs fák",
 	"newFolder": "New folder",
+	"newPassword": "Új jelszó",
 	"next": "Következő",
 	"no_bim_project_for_card": "Nincs BIM projekt ehhez a kártyához",
 	"noAvailableData": "<em>No available data</em>",
+	"noCardsToUpdate": "Nincs frissítendő kártya",
 	"nodeDistance": "<em>Node distance</em>",
 	"none": "Semmi",
 	"noOne": "Semmi",
@@ -1254,6 +1224,7 @@
 	"numberOfPings": "Ping mennyisége",
 	"odt": "ODT",
 	"ok": "OK",
+	"oldPassword": "Eddigi jelszó",
 	"onDay": "Be",
 	"open_3d_viewer": "3D megtekintő megnyitása",
 	"openRelationGraph": "Relációs gráf megnyitása",
@@ -1264,6 +1235,7 @@
 	"parent": "<em>Parent</em>",
 	"parentDescription": "<em>Parent description</em>",
 	"password": "Jelszó",
+	"passwordChanged": "A jelszó megváltozott",
 	"passwordsDoNotMatch": "A jelszavak nem egyeznek",
 	"pdf": "PDF",
 	"permissions": "Engedélyek",
@@ -1326,6 +1298,7 @@
 	"reset": "Reset",
 	"resetToDefault": "<em>Reset to defaults</em>",
 	"restore": "<em>Restore</em>",
+	"retypeNewPassword": "Írja be újra az új jelszót",
 	"root": "Root",
 	"rotate": "Forgatás",
 	"rowAndColumnPrivileges": "Sor és oszlop privilégiumok",
@@ -1361,6 +1334,7 @@
 	"setup": "Beállítás",
 	"showDetails": "<em>Show details</em>",
 	"showHideThisFeatureOnly": "Ezen funkció elrejtése/megjelenítése",
+	"showInvalidRecordsOnly": "Csak az érvénytelen tételek mutatása",
 	"showLanguageChoice": "Mutassa a nyelv választót",
 	"showLanguageSelectionLoginBox": "Legyen elérhető a nyelvválasztás a bejelentkező oldalon",
 	"showLockerUserName": "Mutassa a lezáró felhasználó nevét",
@@ -1415,6 +1389,7 @@
 	"usersAndGroups": "Felhasználók és Csoportok",
 	"userStoppable": "Felhasználói megállíthatóság",
 	"userType": "Felhasználó típusa",
+	"utility": "Eszközök",
 	"utilityChangePassword": "Eszközök - Jelszó megváltoztatása",
 	"utilityExportCsv": "Eszközök - Exportálás CSV fájlba",
 	"utilityImportCsv": "Eszközök - CSV fájl importálása",

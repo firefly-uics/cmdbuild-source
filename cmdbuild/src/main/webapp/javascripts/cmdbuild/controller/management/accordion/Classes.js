@@ -6,7 +6,7 @@
 		requires: [
 			'CMDBuild.core.constants.Global',
 			'CMDBuild.core.constants.Proxy',
-			'CMDBuild.core.proxy.Classes'
+			'CMDBuild.proxy.Classes'
 		],
 
 		/**
@@ -53,7 +53,7 @@
 			var params = {};
 			params[CMDBuild.core.constants.Proxy.ACTIVE] = true;
 
-			CMDBuild.core.proxy.Classes.readAll({
+			CMDBuild.proxy.Classes.readAll({
 				params: params,
 				loadMask: false,
 				scope: this,
@@ -69,7 +69,7 @@
 					decodedResponse = Ext.Array.filter(decodedResponse, function (item, i, array) {
 						return (
 							item[CMDBuild.core.constants.Proxy.TYPE] != CMDBuild.core.constants.Global.getTableTypeProcessClass() // Discard processes
-							&& item[CMDBuild.core.constants.Proxy.NAME] != 'Class' // Discard root class of all classes
+							&& item[CMDBuild.core.constants.Proxy.NAME] != CMDBuild.core.constants.Global.getRootNameClasses() // Discard root class of all classes
 							&& !item[CMDBuild.core.constants.Proxy.SYSTEM] // Discard system classes
 						);
 					}, this);

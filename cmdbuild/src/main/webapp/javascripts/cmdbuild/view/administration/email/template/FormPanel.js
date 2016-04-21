@@ -6,7 +6,7 @@
 		requires: [
 			'CMDBuild.core.constants.FieldWidths',
 			'CMDBuild.core.constants.Proxy',
-			'CMDBuild.core.proxy.email.Account'
+			'CMDBuild.proxy.email.Account'
 		],
 
 		mixins: ['CMDBuild.view.common.PanelFunctions'],
@@ -169,7 +169,7 @@
 								forceSelection: true,
 								editable: false,
 
-								store: CMDBuild.core.proxy.email.Account.getStore(true),
+								store: CMDBuild.proxy.email.Account.getStore(true),
 								queryMode: 'local'
 							}),
 							{

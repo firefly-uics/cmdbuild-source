@@ -352,7 +352,7 @@
 					accordionController.cmfg('accordionExpand');
 					accordionController.cmfg('accordionSelectNodeById', parameters['IdClass']);
 				} else {
-					CMDBuild.core.Message.warning(CMDBuild.Translation.errors.warning_message, CMDBuild.Translation.warnings.itemNotAvailable);
+					CMDBuild.core.Message.warning(CMDBuild.Translation.warning, CMDBuild.Translation.warnings.itemNotAvailable);
 				}
 			} else {
 				_error('malformed parameters in openCard method', this);

@@ -41,6 +41,8 @@
 		 * @param {CMDBuild.controller.management.widget.customForm.layout.Grid} configurationObject.parentDelegate
 		 * @param {Object} configurationObject.record
 		 *
+		 * @returns {Void}
+		 *
 		 * @override
 		 */
 		constructor: function (configurationObject) {
@@ -61,7 +63,7 @@
 		},
 
 		/**
-		 * @return {Array} itemsArray
+		 * @returns {Array} itemsArray
 		 *
 		 * @private
 		 */
@@ -122,6 +124,8 @@
 		/**
 		 * Calls field template resolver, store load and loads record only at the end of all store loads
 		 *
+		 * @returns {Void}
+		 *
 		 * @private
 		 */
 		fieldsInitialization: function () {
@@ -151,12 +155,17 @@
 			CMDBuild.core.RequestBarrier.finalize(barrierId);
 		},
 
+		/**
+		 * @returns {Void}
+		 */
 		onWidgetCustomFormRowEditWindowAbortButtonClick: function () {
 			this.view.destroy();
 		},
 
 		/**
 		 * Saves data to widget's grid
+		 *
+		 * @returns {Void}
 		 */
 		onWidgetCustomFormRowEditWindowSaveButtonClick: function () {
 			Ext.Object.each(this.form.getValues(), function (key, value, myself) {
