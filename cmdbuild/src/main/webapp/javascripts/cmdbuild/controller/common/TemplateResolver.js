@@ -594,7 +594,7 @@ CMDBuild.Management.TemplateResolver.prototype = {
 					} else {
 						f.changed = true;
 					}
-				}, this);
+				}, scope);
 
 				field.mon(field, "blur", function(f) {
 					if (f.changed) {
@@ -602,7 +602,7 @@ CMDBuild.Management.TemplateResolver.prototype = {
 
 						callback.call(scope);
 					}
-				}, this);
+				}, scope);
 			}
 		}
 	},

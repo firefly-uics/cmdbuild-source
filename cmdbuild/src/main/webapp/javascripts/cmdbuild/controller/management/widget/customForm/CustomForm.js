@@ -51,13 +51,12 @@
 			'onWidgetCustomFormResetButtonClick',
 			'widgetConfigurationGet = widgetCustomFormConfigurationGet',
 			'widgetConfigurationIsEmpty = widgetCustomFormConfigurationIsEmpty',
-			'widgetConfigurationSet = widgetCustomFormConfigurationSet',
 			'widgetControllerPropertyGet = widgetCustomFormControllerPropertyGet',
 			'widgetCustomFormAlreadyDisplayedGet',
 			'widgetCustomFormGetData = getData',
 			'widgetCustomFormIsValid = isValid',
-			'widgetCustomFormLayoutControllerDataGet -> controllerLayout',
-			'widgetCustomFormLayoutControllerIsValid -> controllerLayout',
+			'widgetCustomFormLayoutDataGet -> controllerLayout',
+			'widgetCustomFormLayoutIsValid -> controllerLayout',
 			'widgetCustomFormModelStoreBuilder',
 			'widgetCustomFormViewSetLoading'
 		],
@@ -103,15 +102,22 @@
 			var decodedOutput = [];
 
 			Ext.Array.forEach(target, function (object, i, allObjects) {
-				new CMDBuild.Management.TemplateResolver({
+				var templateResolver = new CMDBuild.Management.TemplateResolver({
 					clientForm: this.clientForm,
 					xaVars: object,
 					serverVars: this.cmfg('widgetCustomFormGetTemplateResolverServerVars')
-				}).resolveTemplates({
+				});
+
+				templateResolver.resolveTemplates({
 					attributes: Ext.Object.getKeys(object),
 					scope: this,
 					callback: function (out, ctx) {
 						decodedOutput.push(out);
+
+						// Apply change event to reset data property in widgetConfiguration to avoid SQL function server call
+						templateResolver.bindLocalDepsChange(function () {
+							this.instancesDataStorageReset('single'); // Reset widget instance data storage
+						}, this);
 					}
 				});
 			}, this);
@@ -131,7 +137,7 @@
 
 			var decodedOutput = {};
 
-			if (Ext.isObject(target))
+			if (Ext.isObject(target)) {
 				var templateResolver = new CMDBuild.Management.TemplateResolver({
 					clientForm: this.clientForm,
 					xaVars: target,
@@ -150,8 +156,36 @@
 						}, this);
 					}
 				});
+			}
 
 			return decodedOutput;
+		},
+
+		/**
+		 * @param {String} property
+		 *
+		 * @returns {Void}
+		 *
+		 * @private
+		 */
+		applyTemplateResolverToConfigurationProperty: function (property) {
+			if (!Ext.isEmpty(property) && Ext.isString(property)) {
+				switch (Ext.typeOf(this.widgetConfiguration[property])) {
+					case 'array':
+						return this.widgetConfigurationSet({
+							propertyName: property,
+							value: this.applyTemplateResolverToArray(this.widgetConfiguration[property])
+						});
+
+					case 'object':
+						return this.widgetConfigurationSet({
+							propertyName: property,
+							value: this.applyTemplateResolverToObject(this.widgetConfiguration[property])
+						});
+				}
+			} else {
+				_error('empty property parameter name', this);
+			}
 		},
 
 		/**
@@ -205,9 +239,9 @@
 
 				CMDBuild.core.proxy.widget.CustomForm.readFromFunctions({
 					params: params,
-					scope: this,
-					callback: parameters.callback || Ext.emptyFn,
-					success: parameters.success || Ext.emptyFn
+					scope: Ext.isEmpty(parameters.scope) ? this : parameters.scope,
+					callback: Ext.isFunction(parameters.callback) ? parameters.callback :  Ext.emptyFn,
+					success: Ext.isFunction(parameters.success) ? parameters.success :  Ext.emptyFn
 				});
 			}
 		},
@@ -236,43 +270,85 @@
 		},
 
 		/**
-		 * @override
+		 * Execute template resolver on variables property and SQL function to get data
+		 *
+		 * @param {Object} parameters
+		 * @param {Function} parameters.callback
+		 * @param {Object} parameters.scope
+		 *
+		 * @returns {Void}
+		 *
+		 * @private
 		 */
-		onWidgetCustomFormBeforeActiveView: function () {
-			this.beforeActiveView(arguments); // CallParent alias
-
-			// Execute template resolver on model property
-			if (this.cmfg('widgetCustomFormConfigurationIsEmpty', CMDBuild.core.constants.Proxy.MODEL))
-				this.cmfg('widgetCustomFormConfigurationSet', {
-					propertyName: CMDBuild.core.constants.Proxy.MODEL,
-					value: this.applyTemplateResolverToArray(this.widgetConfiguration[CMDBuild.core.constants.Proxy.MODEL])
-				});
-
-			// Execute template resolver on variables property
+		manageSqlFunctionAsDataSource: function (parameters) {
 			if (
-				this.cmfg('widgetCustomFormConfigurationIsEmpty', CMDBuild.core.constants.Proxy.DATA) // Widget configuration data property is empty
-				&& this.cmfg('widgetCustomFormInstancesDataStorageIsEmpty') // Local store buffer is empty
+				this.cmfg('widgetCustomFormInstancesDataStorageIsEmpty') // Local store buffer is empty
 				&& !this.cmfg('widgetCustomFormConfigurationIsEmpty', CMDBuild.core.constants.Proxy.FUNCTION_DATA)
 			) {
-				this.cmfg('widgetCustomFormConfigurationSet', {
-					propertyName: CMDBuild.core.constants.Proxy.VARIABLES,
-					value: this.applyTemplateResolverToObject(this.widgetConfiguration[CMDBuild.core.constants.Proxy.VARIABLES])
-				});
+				this.applyTemplateResolverToConfigurationProperty(CMDBuild.core.constants.Proxy.VARIABLES);
 
 				// Build data configurations from function definition
 				this.executeConfigurationSqlFunction({
-					scope: this,
+					scope: Ext.isEmpty(parameters.scope) ? this : parameters.scope,
 					success: function (response, options, decodedResponse) {
 						decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.CARDS];
 
 						// Save function response to instance data storage
 						this.instancesDataStorageSet(decodedResponse);
 					},
-					callback: this.buildLayout
+					callback: Ext.isFunction(parameters.callback) ? parameters.callback :  Ext.emptyFn
 				});
 			} else {
-				this.buildLayout();
+				Ext.callback(
+					Ext.isFunction(parameters.callback) ? parameters.callback :  Ext.emptyFn,
+					Ext.isEmpty(parameters.scope) ? this : parameters.scope
+				);
 			}
+		},
+
+		/**
+		 * @param {Array} callbackChainArray
+		 *
+		 * @returns {Void}
+		 *
+		 * @override
+		 * @public
+		 */
+		onBeforeSave: function (callbackChainArray, i) {
+			var executed = false;
+
+			// Manage SQL function as data source
+			this.manageSqlFunctionAsDataSource({
+				scope: this,
+				callback: function () {
+					executed = true;
+					this.beforeSaveCallbackChainManager(callbackChainArray, i);
+				}
+			});
+
+			if (!executed)
+				this.callParent(arguments);
+		},
+
+		/**
+		 * @override
+		 */
+		onWidgetCustomFormBeforeActiveView: function () {
+			this.beforeActiveView(arguments); // CallParent alias
+
+			// Create buffer with data configuration parameter if exists
+			if (!this.instancesDataStorageExists())
+				this.instancesDataStorageSet(this.cmfg('widgetCustomFormConfigurationGet', CMDBuild.core.constants.Proxy.DATA));
+
+			// Execute template resolver on model properties
+			this.applyTemplateResolverToConfigurationProperty(CMDBuild.core.constants.Proxy.MODEL);
+			this.applyTemplateResolverToConfigurationProperty(CMDBuild.core.constants.Proxy.VARIABLES);
+
+			// Manage SQL function as data source
+			this.manageSqlFunctionAsDataSource({
+				scope: this,
+				callback: this.buildLayout
+			});
 		},
 
 		/**
@@ -291,19 +367,18 @@
 		 */
 		onWidgetCustomFormResetButtonClick: function () {
 			if (!this.cmfg('widgetCustomFormConfigurationIsEmpty', CMDBuild.core.constants.Proxy.DATA)) { // Refill widget with data configuration
-				this.controllerLayout.cmfg('widgetCustomFormDataSet', this.cmfg('widgetCustomFormConfigurationGet', CMDBuild.core.constants.Proxy.DATA));
+				this.instancesDataStorageSet(this.cmfg('widgetCustomFormConfigurationGet', CMDBuild.core.constants.Proxy.DATA));
+
+				this.controllerLayout.cmfg('onWidgetCustomFormShow');
 			} else if (!this.cmfg('widgetCustomFormConfigurationIsEmpty', CMDBuild.core.constants.Proxy.FUNCTION_DATA)) { // Get data from function
-				this.cmfg('widgetCustomFormConfigurationSet', {
-					propertyName: CMDBuild.core.constants.Proxy.VARIABLES,
-					value: this.applyTemplateResolverToObject(this.widgetConfiguration[CMDBuild.core.constants.Proxy.VARIABLES])
-				});
+				this.applyTemplateResolverToConfigurationProperty(CMDBuild.core.constants.Proxy.VARIABLES);
 
 				this.executeConfigurationSqlFunction({
 					scope: this,
 					success: function (response, options, decodedResponse) {
 						decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.CARDS];
 
-						this.controllerLayout.cmfg('widgetCustomFormDataSet', decodedResponse);
+						this.instancesDataStorageSet(decodedResponse);
 					}
 				});
 			}
@@ -315,7 +390,7 @@
 		 * @override
 		 */
 		onWidgetCustomFormBeforeHideView: function () {
-			this.instancesDataStorageSet(this.cmfg('widgetCustomFormLayoutControllerDataGet'));
+			this.instancesDataStorageSet(this.cmfg('widgetCustomFormLayoutDataGet'));
 
 			this.beforeHideView(arguments); // CallParent alias
 		},
@@ -336,7 +411,7 @@
 				])
 			) {
 				// Uses direct data property access to avoid a get problem because of generic model
-				Ext.Array.forEach(this.cmfg('widgetCustomFormLayoutControllerDataGet'), function (rowObject, i, allRowObjects) {
+				Ext.Array.forEach(this.cmfg('widgetCustomFormLayoutDataGet'), function (rowObject, i, allRowObjects) {
 					var dataObject = Ext.isEmpty(rowObject.data) ? rowObject : rowObject.data; // Model/Objects management
 
 					new CMDBuild.Management.TemplateResolver({
@@ -363,7 +438,7 @@
 		 * @override
 		 */
 		widgetCustomFormIsValid: function () {
-			return Ext.isEmpty(this.controllerLayout) ? this.isValid() : this.cmfg('widgetCustomFormLayoutControllerIsValid');
+			return Ext.isEmpty(this.controllerLayout) ? this.isValid() : this.cmfg('widgetCustomFormLayoutIsValid');
 		},
 
 		/**
