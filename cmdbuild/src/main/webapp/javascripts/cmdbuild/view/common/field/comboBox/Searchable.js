@@ -26,6 +26,11 @@
 		trigger2Cls: Ext.baseCSSPrefix + 'form-clear-trigger',
 		trigger3Cls: Ext.baseCSSPrefix + 'form-search-trigger',
 
+		/**
+		 * @returns {Void}
+		 *
+		 * @override
+		 */
 		initComponent: function () {
 			this.delegate = Ext.create('CMDBuild.controller.common.field.comboBox.Searchable', { view: this });
 
@@ -72,6 +77,8 @@
 		},
 
 		/**
+		 * @returns {Void}
+		 *
 		 * @override
 		 */
 		onKeyUp: function () {
@@ -82,14 +89,23 @@
 			}
 		},
 
+		/**
+		 * @returns {Void}
+		 */
 		onTrigger1Click: function () {
 			this.delegate.cmfg('onFieldComboBoxSearchableTrigger1Click');
 		},
 
+		/**
+		 * @returns {Void}
+		 */
 		onTrigger2Click: function () {
 			this.delegate.cmfg('onFieldComboBoxSearchableTrigger2Click');
 		},
 
+		/**
+		 * @returns {Void}
+		 */
 		onTrigger3Click: function (value) {
 			this.delegate.cmfg('onFieldComboBoxSearchableTrigger3Click');
 		},

@@ -35,13 +35,15 @@
 		grid: undefined,
 
 		/**
-		 * @property {Mixed}
+		 * @property {CMDBuild.view.common.field.searchWindow.SearchWindow}
 		 */
 		view: undefined,
 
 		/**
 		 * @param {Object} configurationObject
 		 * @param {CMDBuild.controller.common.field.comboBox.Searchable} configurationObject.parentDelegate
+		 *
+		 * @returns {Void}
 		 *
 		 * @override
 		 */
@@ -82,6 +84,8 @@
 
 			/**
 			 * @param {Object} parameters
+			 *
+			 * @returns {Void}
 			 */
 			fieldSearchWindowConfigurationSet: function (parameters) {
 				if (!Ext.Object.isEmpty(parameters)) {
@@ -92,6 +96,9 @@
 				}
 			},
 
+		/**
+		 * @returns {Void}
+		 */
 		onFieldSearchWindowSaveButtonClick: function () {
 			if (this.grid.getSelectionModel().hasSelection())
 				this.cmfg('fieldValueSet', this.grid.getSelectionModel().getSelection()[0]);
@@ -99,12 +106,17 @@
 			this.view.hide();
 		},
 
+		/**
+		 * @returns {Void}
+		 */
 		onFieldSearchWindowSelectionChange: function () {
 			this.view.saveButton.setDisabled(!this.grid.getSelectionModel().hasSelection());
 		},
 
 		/**
 		 * After window show setup presets (title, quick search filter, selection)
+		 *
+		 * @returns {Void}
 		 */
 		onFieldSearchWindowShow: function () {
 			if (this.fieldSearchWindowConfigurationIsEmpty()) {
@@ -124,23 +136,24 @@
 
 		/**
 		 * Selected value setup
+		 *
+		 * @returns {Void}
 		 */
 		onFieldSearchWindowStoreLoad: function () {
 			if (!Ext.isEmpty(this.cmfg('fieldValueGet')))
 				this.grid.getSelectionModel().select(
-					this.grid.getStore().find(
-						this.cmfg('fiedlValueFieldGet'),
-						this.cmfg('fieldValueGet')
-					)
+					this.grid.getStore().find(this.cmfg('fiedlValueFieldGet'), this.cmfg('fieldValueGet'))
 				);
 		},
 
 		/**
 		 * Adapter function
 		 *
+		 * @returns {Void}
+		 *
 		 * @private
 		 *
-		 * TODO: waiting for refactor (CMDBuild.view.management.common.CMCardWindow)
+		 * TODO: waiting for refactor (CMDBuild.view.common.field.searchWindow.GridPanel)
 		 */
 		setupViewAddCardButton: function () {
 			this.view.addCardButton.setDisabled(this.cmfg('fieldSearchWindowConfigurationGet', CMDBuild.core.constants.Proxy.READ_ONLY));
@@ -170,9 +183,13 @@
 		},
 
 		/**
+		 * Adapter function
+		 *
+		 * @returns {Void}
+		 *
 		 * @private
 		 *
-		 * TODO: waiting for refactor (CMDBuild.view.management.common.CMCardWindow)
+		 * TODO: waiting for refactor (CMDBuild.view.common.field.searchWindow.GridPanel)
 		 */
 		setupViewGrid: function () {
 			this.view.removeAll(false);
@@ -200,7 +217,7 @@
 							this.cmfg('fieldSearchWindowConfigurationGet', [
 								CMDBuild.core.constants.Proxy.GRID_CONFIGURATION,
 								CMDBuild.core.constants.Proxy.PRESETS,
-								'quickSearch'
+								CMDBuild.core.constants.Proxy.QUICK_SEARCH
 							])
 						);
 
