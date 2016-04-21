@@ -43,12 +43,22 @@ public class NullOperatorAndValueVisitor implements OperatorAndValueVisitor {
 	}
 
 	@Override
+	public void visit(final GreaterThanOrEqualToOperatorAndValue operatorAndValue) {
+		// nothing to do
+	}
+
+	@Override
 	public void visit(final InOperatorAndValue operatorAndValue) {
 		// nothing to do
 	}
 
 	@Override
 	public void visit(final LessThanOperatorAndValue operatorAndValue) {
+		// nothing to do
+	}
+
+	@Override
+	public void visit(final LessThanOrEqualToOperatorAndValue operatorAndValue) {
 		// nothing to do
 	}
 

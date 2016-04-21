@@ -10,15 +10,17 @@ import static org.cmdbuild.dao.driver.postgres.Const.SystemAttributes.DomainId2;
 import static org.cmdbuild.dao.driver.postgres.Const.SystemAttributes.Id;
 import static org.cmdbuild.dao.query.clause.QueryAliasAttribute.attribute;
 import static org.cmdbuild.dao.query.clause.where.AndWhereClause.and;
-import static org.cmdbuild.dao.query.clause.where.BeginsWithOperatorAndValue.beginsWith;
-import static org.cmdbuild.dao.query.clause.where.ContainsOperatorAndValue.contains;
-import static org.cmdbuild.dao.query.clause.where.EndsWithOperatorAndValue.endsWith;
-import static org.cmdbuild.dao.query.clause.where.EqualsOperatorAndValue.eq;
-import static org.cmdbuild.dao.query.clause.where.GreaterThanOperatorAndValue.gt;
-import static org.cmdbuild.dao.query.clause.where.InOperatorAndValue.in;
-import static org.cmdbuild.dao.query.clause.where.LessThanOperatorAndValue.lt;
 import static org.cmdbuild.dao.query.clause.where.NotWhereClause.not;
 import static org.cmdbuild.dao.query.clause.where.NullOperatorAndValue.isNull;
+import static org.cmdbuild.dao.query.clause.where.OperatorAndValues.beginsWith;
+import static org.cmdbuild.dao.query.clause.where.OperatorAndValues.contains;
+import static org.cmdbuild.dao.query.clause.where.OperatorAndValues.endsWith;
+import static org.cmdbuild.dao.query.clause.where.OperatorAndValues.eq;
+import static org.cmdbuild.dao.query.clause.where.OperatorAndValues.gt;
+import static org.cmdbuild.dao.query.clause.where.OperatorAndValues.gteq;
+import static org.cmdbuild.dao.query.clause.where.OperatorAndValues.in;
+import static org.cmdbuild.dao.query.clause.where.OperatorAndValues.lt;
+import static org.cmdbuild.dao.query.clause.where.OperatorAndValues.lteq;
 import static org.cmdbuild.dao.query.clause.where.OperatorAndValues.networkContained;
 import static org.cmdbuild.dao.query.clause.where.OperatorAndValues.networkContainedOrEqual;
 import static org.cmdbuild.dao.query.clause.where.OperatorAndValues.networkContains;
@@ -210,8 +212,8 @@ public class JsonAttributeFilterBuilder implements Builder<WhereClause> {
 			return condition(attribute, lt(type.convertValue(get(values, 0))));
 		} else if (operator.equals(FilterOperator.BETWEEN.toString())) {
 			Validate.isTrue(size(values) == 2);
-			return and(condition(attribute, gt(type.convertValue(get(values, 0)))),
-					condition(attribute, lt(type.convertValue(get(values, 1)))));
+			return and(condition(attribute, gteq(type.convertValue(get(values, 0)))),
+					condition(attribute, lteq(type.convertValue(get(values, 1)))));
 		} else if (operator.equals(FilterOperator.LIKE.toString())) {
 			Validate.isTrue(size(values) == 1);
 			return condition(attribute, contains(type.convertValue(get(values, 0))));

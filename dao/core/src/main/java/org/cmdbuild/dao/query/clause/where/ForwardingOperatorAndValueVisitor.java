@@ -44,12 +44,22 @@ public abstract class ForwardingOperatorAndValueVisitor extends ForwardingObject
 	}
 
 	@Override
+	public void visit(final GreaterThanOrEqualToOperatorAndValue operatorAndValue) {
+		delegate().visit(operatorAndValue);
+	}
+
+	@Override
 	public void visit(final InOperatorAndValue operatorAndValue) {
 		delegate().visit(operatorAndValue);
 	}
 
 	@Override
 	public void visit(final LessThanOperatorAndValue operatorAndValue) {
+		delegate().visit(operatorAndValue);
+	}
+
+	@Override
+	public void visit(final LessThanOrEqualToOperatorAndValue operatorAndValue) {
 		delegate().visit(operatorAndValue);
 	}
 
