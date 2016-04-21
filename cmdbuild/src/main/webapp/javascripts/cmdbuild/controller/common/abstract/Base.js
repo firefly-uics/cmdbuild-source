@@ -242,15 +242,16 @@
 
 					if (!Ext.isEmpty(attributePath) && Ext.isArray(attributePath))
 						Ext.Array.forEach(attributePath, function (attributeName, i, allAttributeNames) {
-							if (!Ext.isEmpty(attributeName) && Ext.isString(attributeName))
-								if (
-									Ext.isObject(requiredAttribute) && !Ext.Object.isEmpty(requiredAttribute)
-									&& Ext.isFunction(requiredAttribute.get)
-								) { // Manage model object
+							if (
+								!Ext.isEmpty(attributeName) && Ext.isString(attributeName)
+								&& Ext.isObject(requiredAttribute) && !Ext.Object.isEmpty(requiredAttribute)
+							) {
+								if (Ext.isFunction(requiredAttribute.get)) { // Manage model object
 									requiredAttribute = requiredAttribute.get(attributeName);
 								} else if (requiredAttribute.hasOwnProperty(attributeName)) { // Manage simple object
 									requiredAttribute = requiredAttribute[attributeName];
 								}
+							}
 						}, this);
 
 					return requiredAttribute;
