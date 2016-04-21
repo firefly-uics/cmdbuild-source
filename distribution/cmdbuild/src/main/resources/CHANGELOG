@@ -30,6 +30,8 @@ FIXES
 
  * Lookup fields no mandatory label flag in display panels
 
+ * Widget CustomForm: server persistence manage errors
+
 
 
 
