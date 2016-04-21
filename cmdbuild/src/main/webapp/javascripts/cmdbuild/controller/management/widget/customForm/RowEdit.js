@@ -129,11 +129,9 @@
 		 * @private
 		 */
 		fieldsInitialization: function () {
-			var barrierId = 'rowEditFieldsInitializationBarrier';
-
 			this.view.setLoading(true);
 
-			CMDBuild.core.RequestBarrier.init(barrierId, function () {
+			CMDBuild.core.RequestBarrier.init('rowEditFieldsInitializationBarrier', function () {
 				this.form.loadRecord(this.record);
 
 				this.view.setLoading(false);
@@ -148,11 +146,11 @@
 				if (!Ext.Object.isEmpty(field) && Ext.isFunction(field.getStore) && field.getStore().count() == 0)
 					field.getStore().load({
 						scope: this,
-						callback: CMDBuild.core.RequestBarrier.getCallback(barrierId)
+						callback: CMDBuild.core.RequestBarrier.getCallback('rowEditFieldsInitializationBarrier')
 					});
 			}, this);
 
-			CMDBuild.core.RequestBarrier.finalize(barrierId);
+			CMDBuild.core.RequestBarrier.finalize('rowEditFieldsInitializationBarrier');
 		},
 
 		/**
@@ -174,7 +172,7 @@
 
 			this.record.commit();
 
-			this.onWidgetCustomFormRowEditWindowAbortButtonClick();
+			this.cmfg('onWidgetCustomFormRowEditWindowAbortButtonClick');
 		}
 	});
 
