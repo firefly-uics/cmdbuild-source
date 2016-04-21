@@ -2,6 +2,9 @@ package org.cmdbuild.config;
 
 import static java.lang.Integer.valueOf;
 
+import java.io.IOException;
+import java.util.Collection;
+import java.util.HashSet;
 import java.util.Locale;
 
 import org.cmdbuild.services.Settings;
@@ -33,8 +36,11 @@ public class CmdbuildProperties extends DefaultProperties implements CmdbuildCon
 
 	private static final int DEFAULT_SESSION_TIMEOUT = 3600;
 
+	private final Collection<ChangeListener> changeListeners;
+
 	public CmdbuildProperties() {
 		super();
+		changeListeners = new HashSet<>();
 		setProperty(REFERENCE_COMBO_LIMIT, "500");
 		setProperty(STARTING_CLASS, "");
 		setProperty(RELATION_LIMIT, "20");
@@ -55,6 +61,23 @@ public class CmdbuildProperties extends DefaultProperties implements CmdbuildCon
 
 	public static CmdbuildProperties getInstance() {
 		return (CmdbuildProperties) Settings.getInstance().getModule(MODULE_NAME);
+	}
+
+	@Override
+	public void addListener(final ChangeListener listener) {
+		changeListeners.add(listener);
+	}
+
+	@Override
+	public void store() throws IOException {
+		super.store();
+		notifyListeners();
+	}
+
+	private void notifyListeners() {
+		for (final ChangeListener changeListener : changeListeners) {
+			changeListener.changed();
+		}
 	}
 
 	@Override

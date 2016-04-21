@@ -1,8 +1,17 @@
 package org.cmdbuild.config;
 
+import java.util.EventListener;
 import java.util.Locale;
 
 public interface CmdbuildConfiguration {
+
+	interface ChangeListener extends EventListener {
+
+		void changed();
+
+	}
+
+	void addListener(ChangeListener listener);
 
 	Locale getLocale();
 

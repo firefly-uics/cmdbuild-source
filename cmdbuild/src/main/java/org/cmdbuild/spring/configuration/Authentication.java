@@ -1,10 +1,12 @@
 package org.cmdbuild.spring.configuration;
 
+import static java.lang.Long.MAX_VALUE;
 import static java.util.Arrays.asList;
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.cmdbuild.spring.util.Constants.DEFAULT;
 import static org.cmdbuild.spring.util.Constants.SOAP;
 
+import java.util.Map.Entry;
 import java.util.function.Predicate;
 
 import org.cmdbuild.auth.AuthenticationService;
@@ -17,6 +19,8 @@ import org.cmdbuild.auth.LegacyDBAuthenticator;
 import org.cmdbuild.auth.NotSystemUserFetcher;
 import org.cmdbuild.auth.UserStore;
 import org.cmdbuild.auth.user.OperationUser;
+import org.cmdbuild.config.CmdbuildConfiguration;
+import org.cmdbuild.config.CmdbuildConfiguration.ChangeListener;
 import org.cmdbuild.data.store.CachingStore;
 import org.cmdbuild.data.store.session.DefaultSessionStore;
 import org.cmdbuild.data.store.session.Session;
@@ -197,16 +201,47 @@ public class Authentication {
 
 	@Bean
 	protected SessionStore defaultSessionStore() {
-		// TODO needs reboot, we should avoid it
-		final Cache<String, Session> cache = CacheBuilder.newBuilder() //
-				.expireAfterAccess((properties.cmdbuildProperties().getSessionTimeoutOrDefault() == 0) ? Long.MAX_VALUE
-						: properties.cmdbuildProperties().getSessionTimeoutOrDefault(), SECONDS) //
-				.build();
+		final CmdbuildConfiguration cmdbuildProperties = properties.cmdbuildProperties();
 		return new DefaultSessionStore(new CachingStore<Session>() {
+
+			private int duration = -1;
+			private Cache<String, Session> cache;
+
+			{
+				cmdbuildProperties.addListener(new ChangeListener() {
+
+					@Override
+					public void changed() {
+						setupCache();
+					}
+
+				});
+				setupCache();
+			}
 
 			@Override
 			protected Cache<String, Session> delegate() {
-				return cache;
+				synchronized (this) {
+					return cache;
+				}
+			}
+
+			private void setupCache() {
+				synchronized (this) {
+					final int value = cmdbuildProperties.getSessionTimeoutOrDefault();
+					if (value != duration) {
+						duration = value;
+						final Cache<String, Session> old = cache;
+						cache = CacheBuilder.newBuilder() //
+								.expireAfterAccess((duration == 0) ? MAX_VALUE : duration, SECONDS) //
+								.build();
+						if (old != null) {
+							for (final Entry<String, Session> entry : old.asMap().entrySet()) {
+								cache.put(entry.getKey(), entry.getValue());
+							}
+						}
+					}
+				}
 			}
 
 		});
