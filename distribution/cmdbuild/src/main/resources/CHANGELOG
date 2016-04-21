@@ -36,6 +36,8 @@ FIXES
 
  * The print of built-in reports generates an error
 
+ * The "between" operator of the advanced filter does not includes ends
+
 
 
 
