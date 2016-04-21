@@ -5,7 +5,7 @@
 
 		requires: [
 			'CMDBuild.core.constants.Proxy',
-			'CMDBuild.core.proxy.configuration.RelationGraph'
+			'CMDBuild.proxy.configuration.RelationGraph'
 		],
 
 		/**
@@ -44,7 +44,7 @@
 		 * @returns {Void}
 		 */
 		onConfigurationRelationGraphSaveButtonClick: function () {
-			CMDBuild.core.proxy.configuration.RelationGraph.update({
+			CMDBuild.proxy.configuration.RelationGraph.update({
 				params: Ext.create('CMDBuild.model.configuration.RelationGraph', this.view.getData(true)).getData(),
 				scope: this,
 				success: function (response, options, decodedResponse) {
@@ -59,7 +59,7 @@
 		 * @returns {Void}
 		 */
 		onConfigurationRelationGraphTabShow: function () {
-			CMDBuild.core.proxy.configuration.RelationGraph.read({
+			CMDBuild.proxy.configuration.RelationGraph.read({
 				scope: this,
 				success: function (response, options, decodedResponse) {
 					decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.DATA];

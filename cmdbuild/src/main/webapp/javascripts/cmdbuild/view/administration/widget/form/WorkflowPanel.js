@@ -6,7 +6,7 @@
 		requires: [
 			'CMDBuild.core.constants.FieldWidths',
 			'CMDBuild.core.constants.Proxy',
-			'CMDBuild.core.proxy.widget.Workflow',
+			'CMDBuild.proxy.widget.Workflow',
 			'CMDBuild.model.widget.workflow.PresetGrid'
 		],
 
@@ -81,7 +81,7 @@
 							forceSelection: true,
 							editable: false,
 
-							store: CMDBuild.core.proxy.widget.Workflow.getStoreTargetWorkflow(),
+							store: CMDBuild.proxy.widget.Workflow.getStoreTargetWorkflow(),
 							queryMode: 'local',
 
 							listeners: {
@@ -121,7 +121,7 @@
 					forceSelection: true,
 					editable: false,
 
-					store: CMDBuild.core.proxy.widget.Workflow.getStoreSelectionType(),
+					store: CMDBuild.proxy.widget.Workflow.getStoreSelectionType(),
 					queryMode: 'local',
 
 					listeners: {

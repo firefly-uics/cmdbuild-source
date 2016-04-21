@@ -7,8 +7,8 @@
 			'CMDBuild.core.constants.FieldWidths',
 			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.Message',
-			'CMDBuild.core.proxy.Index',
-			'CMDBuild.core.proxy.report.Jasper',
+			'CMDBuild.proxy.index.Json',
+			'CMDBuild.proxy.report.Jasper',
 			'CMDBuild.model.report.Grid',
 			'CMDBuild.view.common.field.translatable.Utils'
 		],
@@ -92,7 +92,7 @@
 		 * @private
 		 */
 		import: function () {
-			CMDBuild.core.proxy.report.Jasper.import({
+			CMDBuild.proxy.report.Jasper.import({
 				form: this.form.step2Panel.getForm(),
 				scope: this,
 				failure: function (response, options, decodedResponse) {
@@ -127,44 +127,10 @@
 		 * @param {CMDBuild.model.report.Grid} record
 		 */
 		onReportJasperGenerateSqlButtonClick: function (record) {
-			var sqlWindow = Ext.create('CMDBuild.core.PopupWindow', {
-				autoScroll: true,
-				border: false,
-				frame: true,
-				title: CMDBuild.Translation.sql,
-
-				items: [
-					Ext.create('Ext.form.field.TextArea', {
-						border: false,
-						frame: false,
-						readOnly: true,
-
-						value: record.get(CMDBuild.core.constants.Proxy.QUERY)
-					})
-				],
-
-				dockedItems: [
-					Ext.create('Ext.toolbar.Toolbar', {
-						dock: 'bottom',
-						itemId: CMDBuild.core.constants.Proxy.TOOLBAR_BOTTOM,
-						ui: 'footer',
-
-						layout: {
-							type: 'hbox',
-							align: 'middle',
-							pack: 'center'
-						},
-
-						items: [
-							Ext.create('CMDBuild.core.buttons.text.Close', {
-								handler: function (button, e) {
-									sqlWindow.destroy();
-								}
-							})
-						]
-					})
-				]
-			}).show();
+			Ext.create('CMDBuild.controller.administration.report.SqlWindow', {
+				parentDelegate: this,
+				record: record
+			});
 		},
 
 		/**
@@ -178,7 +144,7 @@
 			params[CMDBuild.core.constants.Proxy.TYPE] = record.get(CMDBuild.core.constants.Proxy.TYPE);
 			params[CMDBuild.core.constants.Proxy.EXTENSION] = CMDBuild.core.constants.Proxy.ZIP;
 
-			CMDBuild.core.proxy.report.Jasper.create({
+			CMDBuild.proxy.report.Jasper.create({
 				params: params,
 				scope: this,
 				success: function (response, options, decodedResponse) {
@@ -188,7 +154,7 @@
 					CMDBuild.core.interfaces.FormSubmit.submit({
 						buildRuntimeForm: true,
 						params: params,
-						url: CMDBuild.core.proxy.Index.report.printReportFactory
+						url: CMDBuild.proxy.index.Json.report.factory.print
 					});
 				}
 			});
@@ -238,7 +204,7 @@
 				params[CMDBuild.core.constants.Proxy.NAME] = this.form.step1Panel.name.getValue(); // TODO: waiting for refactor (read title parameter, write as name)
 				params[CMDBuild.core.constants.Proxy.REPORT_ID] = this.form.step1Panel.reportId.getValue() || -1; // TODO: waiting for refactor (read id parameter, write as reportId)
 
-				CMDBuild.core.proxy.report.Jasper.analize({
+				CMDBuild.proxy.report.Jasper.analize({
 					form: this.form.step1Panel.getForm(),
 					params: params,
 					scope: this,
@@ -247,7 +213,7 @@
 					},
 					success: function (response, options, decodedResponse) {
 						if (Ext.isBoolean(decodedResponse.skipSecondStep) && decodedResponse.skipSecondStep) {
-							CMDBuild.core.proxy.report.Jasper.save({
+							CMDBuild.proxy.report.Jasper.save({
 								scope: this,
 								success: this.success
 							});
@@ -285,7 +251,7 @@
 				var params = {};
 				params[CMDBuild.core.constants.Proxy.ID] = this.selectedReport.get(CMDBuild.core.constants.Proxy.ID);
 
-				CMDBuild.core.proxy.report.Jasper.remove({
+				CMDBuild.proxy.report.Jasper.remove({
 					params: params,
 					scope: this,
 					success: function (response, options, decodedResponse) {
@@ -295,7 +261,7 @@
 						CMDBuild.core.Message.success();
 
 						// Reset server session
-						CMDBuild.core.proxy.report.Jasper.resetSession({
+						CMDBuild.proxy.report.Jasper.resetSession({
 							scope: this,
 							success: function (response, options, decodedResponse) {
 								this.form.getLayout().setActiveItem(0);
@@ -334,7 +300,7 @@
 						this.form.step2Panel.removeAll();
 
 						// Reset server session
-						CMDBuild.core.proxy.report.Jasper.resetSession({
+						CMDBuild.proxy.report.Jasper.resetSession({
 							scope: this,
 							success: function (response, options, decodedResponse) {
 								this.form.getLayout().setActiveItem(0);

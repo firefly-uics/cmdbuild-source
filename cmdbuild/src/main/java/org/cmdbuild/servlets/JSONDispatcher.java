@@ -22,9 +22,6 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.cmdbuild.auth.DefaultTokenManager;
-import org.cmdbuild.auth.UserStore;
-import org.cmdbuild.auth.user.OperationUser;
 import org.cmdbuild.config.DatabaseProperties;
 import org.cmdbuild.exception.AuthException;
 import org.cmdbuild.exception.AuthException.AuthExceptionType;
@@ -62,14 +59,14 @@ public class JSONDispatcher extends HttpServlet {
 	private static final Logger logger = Log.JSONRPC;
 
 	@Override
-	public void doPost(final HttpServletRequest request, final HttpServletResponse response) throws IOException,
-			ServletException {
+	public void doPost(final HttpServletRequest request, final HttpServletResponse response)
+			throws IOException, ServletException {
 		dispatch(request, response);
 	}
 
 	@Override
-	public void doGet(final HttpServletRequest request, final HttpServletResponse response) throws IOException,
-			ServletException {
+	public void doGet(final HttpServletRequest request, final HttpServletResponse response)
+			throws IOException, ServletException {
 		dispatch(request, response);
 	}
 
@@ -207,12 +204,10 @@ public class JSONDispatcher extends HttpServlet {
 		return printValue;
 	}
 
-	private void writeResponse(final MethodInfo methodInfo, Object methodResponse,
-			final HttpServletRequest httpRequest, final HttpServletResponse httpResponse) throws JSONException,
-			IOException {
+	private void writeResponse(final MethodInfo methodInfo, Object methodResponse, final HttpServletRequest httpRequest,
+			final HttpServletResponse httpResponse) throws JSONException, IOException {
 		methodResponse = addSuccessAndWarningsIfJSON(methodInfo, methodResponse);
 		setContentType(methodInfo, methodResponse, httpRequest, httpResponse);
-		addCustomHeaders(methodInfo, methodResponse, httpRequest, httpResponse);
 		writeResponseData(methodInfo, methodResponse, httpResponse);
 	}
 
@@ -255,7 +250,7 @@ public class JSONDispatcher extends HttpServlet {
 
 	private void setContentType(final MethodInfo methodInfo, final Object methodResponse,
 			final HttpServletRequest httpRequest, final HttpServletResponse httpResponse)
-			throws UnsupportedEncodingException {
+					throws UnsupportedEncodingException {
 		if (methodResponse instanceof DataHandler) {
 			final String forceDownloadHeader = httpRequest.getHeader("force-download");
 			final String forceDownloadParameter = httpRequest.getParameter("force-download");
@@ -284,16 +279,6 @@ public class JSONDispatcher extends HttpServlet {
 			httpResponse.setContentType("text/plain");
 		} else {
 			httpResponse.setContentType(methodInfo.getMethodAnnotation().contentType());
-		}
-	}
-
-	private void addCustomHeaders(final MethodInfo methodInfo, final Object methodResponse,
-			final HttpServletRequest httpRequest, final HttpServletResponse httpResponse) {
-		final UserStore userStore = applicationContext().getBean(UserStore.class);
-		final OperationUser operationUser = userStore.getUser();
-		if (!operationUser.getAuthenticatedUser().isAnonymous()) {
-			final DefaultTokenManager tokenManager = applicationContext().getBean(DefaultTokenManager.class);
-			httpResponse.setHeader("CMDBuild-Authorization", tokenManager.getToken(operationUser));
 		}
 	}
 
@@ -396,8 +381,8 @@ public class JSONDispatcher extends HttpServlet {
 	static private JSONArray serializeExceptionParameters(final String[] exceptionParameters) {
 		final JSONArray jsonParameters = new JSONArray();
 		if (exceptionParameters != null) {
-			for (int i = 0; i < exceptionParameters.length; ++i) {
-				jsonParameters.put(exceptionParameters[i]);
+			for (final String exceptionParameter : exceptionParameters) {
+				jsonParameters.put(exceptionParameter);
 			}
 		}
 		return jsonParameters;

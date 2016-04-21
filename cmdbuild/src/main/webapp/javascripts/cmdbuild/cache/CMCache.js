@@ -2,10 +2,17 @@
 
 	var dashboardClassesProcessStore = null;
 
+	Ext.ns('CMDBuild.cache');
 	Ext.define("CMDBuild.cache.CMCache", {
 		extend: "Ext.util.Observable",
 
-		requires: ['CMDBuild.core.proxy.Index'],
+		requires: [
+			'CMDBuild.core.Message',
+			'CMDBuild.proxy.Cache',
+			'CMDBuild.proxy.common.tabs.attribute.Attribute',
+			'CMDBuild.proxy.gis.Layer',
+			'CMDBuild.proxy.index.Json'
+		],
 
 		mixins: {
 			lookup: "CMDBUild.cache.CMCacheLookupFunctions",
@@ -55,10 +62,9 @@
 
 		loadAttributes: function(classId, callback) {
 			var me = this;
-			var parameterNames = CMDBuild.ServiceProxy.parameter;
 			var params = {};
-			params[parameterNames.ACTIVE] = true;
-			params[parameterNames.CLASS_NAME] = _CMCache.getEntryTypeNameById(classId);
+			params[CMDBuild.core.constants.Proxy.ACTIVE] = true;
+			params[CMDBuild.core.constants.Proxy.CLASS_NAME] = _CMCache.getEntryTypeNameById(classId);
 
 			function success(response, options, result) {
 				var attributes = result.attributes;
@@ -78,8 +84,9 @@
 				}
 			}
 
-			CMDBuild.ServiceProxy.attributes.read({
+			CMDBuild.proxy.common.tabs.attribute.Attribute.read({
 				params: params,
+				loadMask: false,
 				success: success
 			});
 		},
@@ -118,37 +125,20 @@
 		/**
 		 * @param {Object} reference
 		 *
-		 * @returns {Ext.data.Store}
+		 * @returns {Ext.data.Store or CMDBuild.core.cache.Store}
 		 *
 		 * @private
 		 */
 		buildReferenceStore: function(reference) {
 			var baseParams = this.buildParamsForReferenceRequest(reference),
-				isOneTime = baseParams.CQL ? true : false,
-				maxCards = CMDBuild.configuration.instance.get('referenceComboStoreLimit'); // TODO: use proxy constants
+				isOneTime = baseParams.CQL ? true : false;
 
 			// Filters wrongly requested reference stores
 			if (!Ext.isEmpty(baseParams['className']) || !Ext.isEmpty(baseParams['filter']))
-				return Ext.create('Ext.data.Store', {
-					autoLoad: !isOneTime,
-					model: 'CMDBuild.cache.CMReferenceStoreModel',
-					isOneTime: isOneTime,
-					baseParams: baseParams, //retro-compatibility,
-					pageSize: maxCards,
-					proxy: {
-						type: 'ajax',
-						url: 'services/json/management/modcard/getcardlistshort',
-						reader: {
-							type: 'json',
-							root: 'rows',
-							totalProperty: 'results'
-						},
-						extraParams: baseParams
-					},
-					sorters: [
-						{ property: 'Description', direction: 'ASC' }
-					]
-				});
+				return CMDBuild.proxy.Cache.getStoreReference(
+					isOneTime,
+					baseParams
+				);
 
 			_warning('Invalid reference property object', this, reference);
 
@@ -184,7 +174,7 @@
 		/**
 		 * @param {Object} foreignKey
 		 *
-		 * @returns {Ext.data.Store}
+		 * @returns {Ext.data.Store or CMDBuild.core.cache.Store}
 		 */
 		getForeignKeyStore: function(foreignKey) {
 			var baseParams = { className: foreignKey.fkDestination };
@@ -195,24 +185,18 @@
 				baseParams.NoFilter = true;
 			}
 
-			return Ext.create('Ext.data.Store', {
-				autoLoad: true,
-				model: 'CMDBuild.cache.CMReferenceStoreModel',
-				baseParams: baseParams, // Retro-compatibility
-				pageSize: CMDBuild.configuration.instance.get('referenceComboStoreLimit'), // TODO: use proxy constants
-				proxy: {
-					type: 'ajax',
-					url: CMDBuild.core.proxy.Index.card.getListShort,
-					reader: {
-						type: 'json',
-						root: 'rows',
-						totalProperty: 'results'
-					},
-					extraParams: baseParams
-				},
-				sorters: [
-					{ property: 'Description', direction: 'ASC' }
-				]
+			// Filters wrongly requested reference stores
+			if (!Ext.isEmpty(baseParams['className']) || !Ext.isEmpty(baseParams['filter']))
+				return CMDBuild.proxy.Cache.getStoreForeignKey(baseParams);
+
+			_warning('Invalid ForeignKey object', this, reference);
+
+			return Ext.create('Ext.data.Store', { // Fake empty store on invalid ForeignKey property
+				fields: [],
+				data: [],
+				baseParams: {
+					IdClass: null
+				}
 			});
 		},
 
@@ -349,6 +333,6 @@
 		});
 	}
 
-	CMDBuild.Cache = new CMDBuild.cache.CMCache();
-	_CMCache = CMDBuild.Cache; //to uniform the variable names, maybe a day I'll can delete CMDBuild.Cache
+	_CMCache = Ext.create('CMDBuild.cache.CMCache');
+
 })();

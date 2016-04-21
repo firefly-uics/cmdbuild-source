@@ -1,7 +1,7 @@
 (function () {
 
 	Ext.define('CMDBuild.view.management.widget.customForm.RowEditWindow', {
-		extend: 'CMDBuild.core.PopupWindow',
+		extend: 'CMDBuild.core.window.AbstractModal',
 
 		requires: ['CMDBuild.core.constants.Proxy'],
 
@@ -21,6 +21,8 @@
 		title: CMDBuild.Translation.editRow,
 
 		/**
+		 * @returns {Void}
+		 *
 		 * @override
 		 */
 		initComponent: function () {

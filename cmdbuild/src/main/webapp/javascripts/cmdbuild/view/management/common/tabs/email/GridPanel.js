@@ -5,7 +5,7 @@
 
 		requires: [
 			'CMDBuild.core.constants.Proxy',
-			'CMDBuild.core.proxy.common.tabs.email.Email'
+			'CMDBuild.proxy.common.tabs.email.Email'
 		],
 
 		mixins: {
@@ -243,7 +243,7 @@
 						enableGroupingMenu: false
 					}
 				],
-				store: CMDBuild.core.proxy.common.tabs.email.Email.getStore()
+				store: CMDBuild.proxy.common.tabs.email.Email.getStore()
 			});
 
 			this.callParent(arguments);

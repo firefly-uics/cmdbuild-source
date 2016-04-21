@@ -3,7 +3,7 @@
 	Ext.define('CMDBuild.controller.patchManager.PatchManager', {
 		extend: 'CMDBuild.controller.common.abstract.Base',
 
-		requires: ['CMDBuild.core.proxy.PatchManager'],
+		requires: ['CMDBuild.proxy.PatchManager'],
 
 		/**
 		 * @cfg {Array}
@@ -38,7 +38,7 @@
 		},
 
 		onPatchManagerViewportApplyButtonClick: function() {
-			CMDBuild.core.proxy.PatchManager.update({
+			CMDBuild.proxy.PatchManager.update({
 				scope: this,
 				failure: function(response, options, decodedResponse) {
 					this.grid.getStore().load();

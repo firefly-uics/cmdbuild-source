@@ -6,7 +6,7 @@
 		requires: [
 			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.Message',
-			'CMDBuild.core.proxy.dataView.Sql'
+			'CMDBuild.proxy.dataView.Sql'
 		],
 
 		/**
@@ -37,7 +37,7 @@
 						flex: 1
 					}
 				],
-				store: CMDBuild.core.proxy.dataView.Sql.getStore()
+				store: CMDBuild.proxy.dataView.Sql.getStore()
 			});
 
 			this.callParent(arguments);

@@ -1,4 +1,4 @@
-(function() {
+(function () {
 
 	Ext.define('CMDBuild.controller.administration.workflow.tabs.Properties', {
 		extend: 'CMDBuild.controller.common.abstract.Base',
@@ -7,8 +7,8 @@
 			'CMDBuild.core.constants.ModuleIdentifiers',
 			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.Message',
-			'CMDBuild.core.proxy.workflow.Workflow',
-			'CMDBuild.core.proxy.workflow.Xpdl',
+			'CMDBuild.proxy.workflow.Workflow',
+			'CMDBuild.proxy.workflow.Xpdl',
 			'CMDBuild.view.common.field.translatable.Utils'
 		],
 
@@ -62,9 +62,11 @@
 		 * @param {Object} configurationObject
 		 * @param {CMDBuild.controller.administration.workflow.Workflow} configurationObject.parentDelegate
 		 *
+		 * @returns {Void}
+		 *
 		 * @override
 		 */
-		constructor: function(configurationObject) {
+		constructor: function (configurationObject) {
 			this.callParent(arguments);
 
 			this.view = Ext.create('CMDBuild.view.administration.workflow.tabs.properties.PropertiesView', { delegate: this });
@@ -76,16 +78,22 @@
 			this.uploadXpdlPanel = this.view.form.uploadXpdlPanel;
 		},
 
-		onWorkflowTabPropertiesAbortButtonClick: function() {
+		/**
+		 * @returns {Void}
+		 */
+		onWorkflowTabPropertiesAbortButtonClick: function () {
 			if (!this.cmfg('workflowSelectedWorkflowIsEmpty')) {
-				this.onWorkflowTabPropertiesShow();
+				this.cmfg('onWorkflowTabPropertiesShow');
 			} else {
 				this.form.reset();
 				this.form.setDisabledModify(true, true, true);
 			}
 		},
 
-		onWorkflowTabPropertiesAddWorkflowButtonClick: function() {
+		/**
+		 * @returns {Void}
+		 */
+		onWorkflowTabPropertiesAddWorkflowButtonClick: function () {
 			this.form.reset();
 			this.form.setDisabledModify(false, true);
 			this.form.loadRecord(Ext.create('CMDBuild.model.workflow.Workflow'));
@@ -93,8 +101,8 @@
 			// Set parent default selection
 			this.propertiesPanel.parentCombo.getStore().load({
 				scope: this,
-				callback: function(records, operation, success) {
-					this.propertiesPanel.parentCombo.getStore().each(function(record) {
+				callback: function (records, operation, success) {
+					this.propertiesPanel.parentCombo.getStore().each(function (record) {
 						if (record.get(CMDBuild.core.constants.Proxy.NAME) == 'Activity') {
 							this.propertiesPanel.parentCombo.setValue(record);
 
@@ -108,24 +116,30 @@
 			this.uploadXpdlPanel.setDisabledModify(true);
 		},
 
-		onWorkflowTabPropertiesDownloadXpdlPanelDownloadButtonClick: function() {
+		/**
+		 * @returns {Void}
+		 */
+		onWorkflowTabPropertiesDownloadXpdlPanelDownloadButtonClick: function () {
 			var formData = this.downloadXpdlPanel.getData();
 
 			if (Ext.isEmpty(formData[CMDBuild.core.constants.Proxy.VERSION])) {
 				var params = {};
 				params['idClass'] = this.cmfg('workflowSelectedWorkflowGet', CMDBuild.core.constants.Proxy.ID);
 
-				CMDBuild.core.proxy.workflow.Xpdl.downloadTemplate({ params: params });
+				CMDBuild.proxy.workflow.Xpdl.downloadTemplate({ params: params });
 			} else {
 				var params = {};
 				params['idClass'] = this.cmfg('workflowSelectedWorkflowGet', CMDBuild.core.constants.Proxy.ID);
 				params[CMDBuild.core.constants.Proxy.VERSION] = formData[CMDBuild.core.constants.Proxy.VERSION];
 
-				CMDBuild.core.proxy.workflow.Xpdl.download({ params: params });
+				CMDBuild.proxy.workflow.Xpdl.download({ params: params });
 			}
 		},
 
-		onWorkflowTabPropertiesModifyButtonClick: function() {
+		/**
+		 * @returns {Void}
+		 */
+		onWorkflowTabPropertiesModifyButtonClick: function () {
 			this.form.setDisabledModify(false);
 			this.downloadXpdlPanel.setDisabledModify(true);
 			this.uploadXpdlPanel.setDisabledModify(true);
@@ -133,8 +147,10 @@
 
 		/**
 		 * @param {String} format
+		 *
+		 * @returns {Void}
 		 */
-		onWorkflowTabPropertiesPrintButtonClick: function(format) {
+		onWorkflowTabPropertiesPrintButtonClick: function (format) {
 			if (!Ext.isEmpty(format)) {
 				var params = {};
 				params[CMDBuild.core.constants.Proxy.CLASS_NAME] = this.cmfg('workflowSelectedWorkflowGet', CMDBuild.core.constants.Proxy.NAME);
@@ -149,40 +165,46 @@
 			}
 		},
 
-		onWorkflowTabPropertiesRemoveButtonClick: function() {
+		/**
+		 * @returns {Void}
+		 */
+		onWorkflowTabPropertiesRemoveButtonClick: function () {
 			Ext.Msg.show({
 				title: CMDBuild.Translation.common.confirmpopup.title,
 				msg: CMDBuild.Translation.common.confirmpopup.areyousure,
 				buttons: Ext.Msg.YESNO,
 				scope: this,
 
-				fn: function(buttonId, text, opt) {
+				fn: function (buttonId, text, opt) {
 					if (buttonId == 'yes')
 						this.removeItem();
 				}
 			});
 		},
 
-		onWorkflowTabPropertiesSaveButtonClick: function() {
+		/**
+		 * @returns {Void}
+		 */
+		onWorkflowTabPropertiesSaveButtonClick: function () {
 			if (this.validate(this.propertiesPanel)) {
 				var formDataModel = Ext.create('CMDBuild.model.workflow.Workflow', this.propertiesPanel.getData(true));
 
 				var params = formDataModel.getData();
-				params['inherits'] = params[CMDBuild.core.constants.Proxy.PARENT]; // TODO: waiting for refactor (rename)
+				params['inherits'] = params[CMDBuild.core.constants.Proxy.PARENT];
 				params['isprocess'] = false;
-				params['superclass'] = params[CMDBuild.core.constants.Proxy.IS_SUPER_CLASS]; // TODO: waiting for refactor (rename)
-				params['userstoppable'] = params[CMDBuild.core.constants.Proxy.USER_STOPPABLE]; // TODO: waiting for refactor (rename)
+				params['superclass'] = params[CMDBuild.core.constants.Proxy.IS_SUPER_CLASS];
+				params['userstoppable'] = params[CMDBuild.core.constants.Proxy.USER_STOPPABLE];
 
 				if (Ext.isEmpty(formDataModel.get(CMDBuild.core.constants.Proxy.ID))) {
-					params[CMDBuild.core.constants.Proxy.FORCE_CREATION] = true; // TODO: waiting for refactor (CRUD)
+					params[CMDBuild.core.constants.Proxy.FORCE_CREATION] = true;
 
-					CMDBuild.core.proxy.workflow.Workflow.create({
+					CMDBuild.proxy.workflow.Workflow.create({
 						params: params,
 						scope: this,
 						success: this.success
 					});
 				} else {
-					CMDBuild.core.proxy.workflow.Workflow.update({
+					CMDBuild.proxy.workflow.Workflow.update({
 						params: params,
 						scope: this,
 						success: this.success
@@ -191,7 +213,10 @@
 			}
 		},
 
-		onWorkflowTabPropertiesShow: function() {
+		/**
+		 * @returns {Void}
+		 */
+		onWorkflowTabPropertiesShow: function () {
 			this.form.reset();
 			this.form.setDisabledModify(true, true);
 			this.form.loadRecord(this.cmfg('workflowSelectedWorkflowGet'));
@@ -204,10 +229,10 @@
 				var params = {};
 				params['idClass'] = this.cmfg('workflowSelectedWorkflowGet', CMDBuild.core.constants.Proxy.ID);
 
-				CMDBuild.core.proxy.workflow.Xpdl.readVersions({
+				CMDBuild.proxy.workflow.Xpdl.readVersions({
 					params: params,
 					scope: this,
-					success: function(response, options, decodedResponse) {
+					success: function (response, options, decodedResponse) {
 						decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.RESPONSE];
 
 						var storeData = [];
@@ -222,7 +247,7 @@
 
 						// Add XPDL versions to the begin of array
 						if (!Ext.isEmpty(decodedResponse) && Ext.isArray(decodedResponse))
-							Ext.Array.forEach(decodedResponse, function(version, i, allValues) {
+							Ext.Array.forEach(decodedResponse, function (version, i, allValues) {
 								var dataObject = {};
 								dataObject[CMDBuild.core.constants.Proxy.DESCRIPTION] = version;
 								dataObject[CMDBuild.core.constants.Proxy.ID] = version;
@@ -242,22 +267,25 @@
 			}
 		},
 
-		onWorkflowTabPropertiesUploadXpdlPanelUploadButtonClick: function() {
+		/**
+		 * @returns {Void}
+		 */
+		onWorkflowTabPropertiesUploadXpdlPanelUploadButtonClick: function () {
 			var params = {};
 			params['idClass'] = this.cmfg('workflowSelectedWorkflowGet', CMDBuild.core.constants.Proxy.ID);
 
-			CMDBuild.core.proxy.workflow.Xpdl.upload({
+			CMDBuild.proxy.workflow.Xpdl.upload({
 				form: this.uploadXpdlPanel.getForm(),
 				params: params,
 				scope: this,
-				failure: function(response, options, decodedResponse) {
+				failure: function (response, options, decodedResponse) {
 					CMDBuild.core.Message.error(
 						CMDBuild.Translation.common.failure,
 						CMDBuild.Translation.errorWhileUploadingXpdlFile,
 						true
 					);
 				},
-				success: function(response, options, decodedResponse) {
+				success: function (response, options, decodedResponse) {
 					decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.RESPONSE];
 
 					if (!Ext.isEmpty(decodedResponse) && Ext.isArray(decodedResponse))
@@ -270,17 +298,19 @@
 		},
 
 		/**
+		 * @returns {Void}
+		 *
 		 * @private
 		 */
-		removeItem: function() {
+		removeItem: function () {
 			if (!this.cmfg('workflowSelectedWorkflowIsEmpty')) {
 				var params = {};
 				params[CMDBuild.core.constants.Proxy.CLASS_NAME] = this.cmfg('workflowSelectedWorkflowGet', CMDBuild.core.constants.Proxy.NAME);
 
-				CMDBuild.core.proxy.workflow.Workflow.remove({
+				CMDBuild.proxy.workflow.Workflow.remove({
 					params: params,
 					scope: this,
-					success: function(response, options, decodedResponse) {
+					success: function (response, options, decodedResponse) {
 						this.cmfg('workflowSelectedWorkflowReset');
 
 						this.form.reset();
@@ -300,16 +330,16 @@
 		 * @param {Object} options
 		 * @param {Object} decodedResponse
 		 *
+		 * @returns {Void}
+		 *
 		 * @private
 		 */
-		success: function(response, options, decodedResponse) {
+		success: function (response, options, decodedResponse) {
 			decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.TABLE] || [];
 
 			var formDataModel = Ext.create('CMDBuild.model.workflow.Workflow', this.propertiesPanel.getData(true));
 
 			CMDBuild.view.common.field.translatable.Utils.commit(this.propertiesPanel);
-
-			CMDBuild.core.Message.success();
 
 			this.cmfg('mainViewportAccordionControllerUpdateStore', {
 				identifier: CMDBuild.core.constants.ModuleIdentifiers.getWorkflow(),
@@ -321,8 +351,10 @@
 
 		/**
 		 * Enable/Disable tab on workflow selection
+		 *
+		 * @returns {Void}
 		 */
-		workflowTabPropertiesInit: function() {
+		workflowTabPropertiesInit: function () {
 			this.view.setDisabled(this.cmfg('workflowSelectedWorkflowIsEmpty'));
 		}
 	});

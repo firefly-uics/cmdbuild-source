@@ -41,6 +41,8 @@
 		 * @param {CMDBuild.controller.management.widget.customForm.layout.Grid} configurationObject.parentDelegate
 		 * @param {Object} configurationObject.record
 		 *
+		 * @returns {Void}
+		 *
 		 * @override
 		 */
 		constructor: function (configurationObject) {
@@ -61,7 +63,7 @@
 		},
 
 		/**
-		 * @return {Array} itemsArray
+		 * @returns {Array} itemsArray
 		 *
 		 * @private
 		 */
@@ -122,14 +124,14 @@
 		/**
 		 * Calls field template resolver, store load and loads record only at the end of all store loads
 		 *
+		 * @returns {Void}
+		 *
 		 * @private
 		 */
 		fieldsInitialization: function () {
-			var barrierId = 'rowEditFieldsInitializationBarrier';
-
 			this.view.setLoading(true);
 
-			CMDBuild.core.RequestBarrier.init(barrierId, function () {
+			CMDBuild.core.RequestBarrier.init('rowEditFieldsInitializationBarrier', function () {
 				this.form.loadRecord(this.record);
 
 				this.view.setLoading(false);
@@ -144,19 +146,24 @@
 				if (!Ext.Object.isEmpty(field) && Ext.isFunction(field.getStore) && field.getStore().count() == 0)
 					field.getStore().load({
 						scope: this,
-						callback: CMDBuild.core.RequestBarrier.getCallback(barrierId)
+						callback: CMDBuild.core.RequestBarrier.getCallback('rowEditFieldsInitializationBarrier')
 					});
 			}, this);
 
-			CMDBuild.core.RequestBarrier.finalize(barrierId);
+			CMDBuild.core.RequestBarrier.finalize('rowEditFieldsInitializationBarrier');
 		},
 
+		/**
+		 * @returns {Void}
+		 */
 		onWidgetCustomFormRowEditWindowAbortButtonClick: function () {
 			this.view.destroy();
 		},
 
 		/**
 		 * Saves data to widget's grid
+		 *
+		 * @returns {Void}
 		 */
 		onWidgetCustomFormRowEditWindowSaveButtonClick: function () {
 			Ext.Object.each(this.form.getValues(), function (key, value, myself) {
@@ -165,7 +172,7 @@
 
 			this.record.commit();
 
-			this.onWidgetCustomFormRowEditWindowAbortButtonClick();
+			this.cmfg('onWidgetCustomFormRowEditWindowAbortButtonClick');
 		}
 	});
 

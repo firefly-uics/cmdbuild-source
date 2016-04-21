@@ -4,6 +4,7 @@
 		extend: 'Ext.data.Connection',
 
 		requires: [
+			'CMDBuild.core.CookiesManager',
 			'CMDBuild.core.interfaces.messages.Error',
 			'CMDBuild.core.interfaces.messages.Warning',
 			'CMDBuild.core.interfaces.service.LoadMask',
@@ -64,6 +65,9 @@
 		 */
 		adapterCallback: function (options, success, response, originalFunction) {
 			var decodedResponse = CMDBuild.core.interfaces.Ajax.decodeJson(response.responseText);
+
+			// Update authorization cookie expiration date
+			CMDBuild.core.CookiesManager.authorizationExpirationUpdate();
 
 			CMDBuild.core.interfaces.service.LoadMask.manage(options.loadMask, false);
 
@@ -175,15 +179,14 @@
 		 * @private
 		 */
 		onComplete: function (request, xdrResult) {
-			var me = this,
-				options = request.options,
-				success = true, // If response is not correctly formatted will be executed success functions as result
-				response;
+			var options = request.options;
+			var success = true; // If response is not correctly formatted will be executed success functions as result
+			var response;
 
 			if (request.aborted || request.timedout) {
-				response = me.createException(request);
+				response = this.createException(request);
 			} else {
-				response = me.createResponse(request);
+				response = this.createResponse(request);
 			}
 
 			// Check the response success property to verify real status value
@@ -191,18 +194,18 @@
 				success = Ext.decode(response.responseText).success;
 
 			if (success) {
-				me.fireEvent('requestcomplete', me, response, options);
+				this.fireEvent('requestcomplete', this, response, options);
 
 				Ext.callback(options.success, options.scope, [response, options]);
 			} else {
-				me.fireEvent('requestexception', me, response, options);
+				this.fireEvent('requestexception', this, response, options);
 
 				Ext.callback(options.failure, options.scope, [response, options]);
 			}
 
 			Ext.callback(options.callback, options.scope, [options, success, response]);
 
-			delete me.requests[request.id];
+			delete this.requests[request.id];
 
 			return response;
 		},

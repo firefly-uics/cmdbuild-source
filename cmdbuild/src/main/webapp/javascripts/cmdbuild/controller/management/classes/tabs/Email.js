@@ -8,7 +8,7 @@
 
 		requires: [
 			'CMDBuild.core.constants.Proxy',
-			'CMDBuild.core.proxy.common.tabs.email.Email'
+			'CMDBuild.proxy.common.tabs.email.Email'
 		],
 
 		mixins: {
@@ -160,7 +160,7 @@
 			params[CMDBuild.core.constants.Proxy.CLASS_NAME] = _CMCache.getEntryTypeNameById(this.card.get('IdClass'));
 			params[CMDBuild.core.constants.Proxy.CARD_ID] = this.card.get(CMDBuild.core.constants.Proxy.ID);
 
-			CMDBuild.core.proxy.common.tabs.email.Email.isEmailEnabledForCard({
+			CMDBuild.proxy.common.tabs.email.Email.isEmailEnabledForCard({
 				params: params,
 				scope: this,
 				loadMask: true,

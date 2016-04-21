@@ -1,11 +1,9 @@
 package org.cmdbuild.spring.configuration;
 
-import static org.cmdbuild.spring.util.Constants.DEFAULT;
 import static org.cmdbuild.spring.util.Constants.PROTOTYPE;
 import static org.cmdbuild.spring.util.Constants.SYSTEM;
 
 import org.apache.commons.lang3.builder.Builder;
-import org.cmdbuild.auth.AuthenticationService;
 import org.cmdbuild.auth.UserStore;
 import org.cmdbuild.auth.acl.PrivilegeContext;
 import org.cmdbuild.common.template.TemplateResolver;
@@ -50,8 +48,7 @@ import org.springframework.context.annotation.Scope;
 public class Workflow {
 
 	@Autowired
-	@Qualifier(DEFAULT)
-	private AuthenticationService authenticationService;
+	private Authentication authentication;
 
 	@Autowired
 	private Data data;
@@ -99,15 +96,14 @@ public class Workflow {
 
 	@Bean
 	protected GroupQueryAdapter groupQueryAdapter() {
-		return new DefaultGroupQueryAdapter(authenticationService);
+		return new DefaultGroupQueryAdapter(authentication.defaultAuthenticationService());
 	}
 
 	@Bean
 	protected XpdlExtendedAttributeVariableFactory xpdlExtendedAttributeVariableFactory() {
 		return new SharkStyleXpdlExtendedAttributeVariableFactory();
 	}
-	
-	
+
 	@Bean
 	protected XpdlExtendedAttributeMetadataFactory xpdlExtendedAttributeMetadataFactory() {
 		return new SharkStyleXpdlExtendedAttributeMetadataFactory();
@@ -127,8 +123,8 @@ public class Workflow {
 
 	@Bean
 	protected XpdlProcessDefinitionStore processDefinitionStore() {
-		return new XpdlProcessDefinitionStore(workflowService(), xpdlExtendedAttributeVariableFactory(),xpdlExtendedAttributeMetadataFactory(),
-				xpdlExtendedAttributeWidgetFactory());
+		return new XpdlProcessDefinitionStore(workflowService(), xpdlExtendedAttributeVariableFactory(),
+				xpdlExtendedAttributeMetadataFactory(), xpdlExtendedAttributeWidgetFactory());
 	}
 
 	@Bean
@@ -193,7 +189,7 @@ public class Workflow {
 				.withService(workflowService()) //
 				.withTypesConverter(workflowTypesConverter()) //
 				.withEventListener(workflowLogger()) //
-				.withAuthenticationService(authenticationService) //
+				.withAuthenticationService(authentication.defaultAuthenticationService()) //
 				.withWorkflowConfiguration(workflowConfiguration);
 	}
 

@@ -43,7 +43,6 @@ public abstract class ForwardingStore<T extends Storable> extends ForwardingObje
 	@Override
 	public void delete(final Storable storable) {
 		delegate().delete(storable);
-
 	}
 
 }

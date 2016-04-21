@@ -102,7 +102,7 @@
 		 */
 		onUserAndGroupGroupAccordionSelect: function () {
 			if (!this.cmfg('userAndGroupSelectedAccordionIsEmpty'))
-				CMDBuild.core.proxy.userAndGroup.group.Group.read({ // TODO: waiting for refactor (crud)
+				CMDBuild.proxy.userAndGroup.group.Group.read({ // TODO: waiting for refactor (crud)
 					scope: this,
 					success: function (response, options, decodedResponse) {
 						decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.GROUPS];

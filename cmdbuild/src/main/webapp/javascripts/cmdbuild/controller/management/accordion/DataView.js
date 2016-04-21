@@ -5,8 +5,8 @@
 
 		requires: [
 			'CMDBuild.core.constants.Proxy',
-			'CMDBuild.core.proxy.Classes',
-			'CMDBuild.core.proxy.dataView.DataView',
+			'CMDBuild.proxy.Classes',
+			'CMDBuild.proxy.dataView.DataView',
 		],
 
 		/**
@@ -45,7 +45,8 @@
 		accordionUpdateStore: function (nodeIdToSelect) {
 			nodeIdToSelect = Ext.isNumber(nodeIdToSelect) ? nodeIdToSelect : null;
 
-			CMDBuild.core.proxy.dataView.DataView.readAll({
+			CMDBuild.proxy.dataView.DataView.readAll({
+				loadMask: false,
 				scope: this,
 				success: function (response, options, decodedResponse) {
 					var dataViews = decodedResponse[CMDBuild.core.constants.Proxy.VIEWS];
@@ -54,7 +55,7 @@
 						var params = {};
 						params[CMDBuild.core.constants.Proxy.ACTIVE] = true;
 
-						CMDBuild.core.proxy.Classes.readAll({
+						CMDBuild.proxy.Classes.readAll({
 							params: params,
 							loadMask: false,
 							scope: this,

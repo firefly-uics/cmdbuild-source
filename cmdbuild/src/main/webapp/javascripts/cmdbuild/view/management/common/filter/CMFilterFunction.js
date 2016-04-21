@@ -1,28 +1,18 @@
 (function() {
 
+	Ext.require([
+		'CMDBuild.core.constants.Proxy',
+		'CMDBuild.proxy.index.Json'
+	]);
+
 	/**
 	 * @deprecated new class (CMDBuild.view.common.field.filter.advanced.Advanced)
 	 */
+
 	Ext.define('Functions', {
 		extend: 'Ext.data.Model',
 		fields: [
 			{ name: 'name', type: 'string' }
-		]
-	});
-
-	var functionsStore = Ext.create('Ext.data.Store', {
-		autoLoad: true,
-		model: 'Functions',
-		proxy: {
-			type: 'ajax',
-			url: CMDBuild.ServiceProxy.url.functions.readAll,
-			reader: {
-					type: 'json',
-					root: 'response'
-			}
-		},
-		sorters: [
-			{ property: 'name', direction: 'ASC' }
 		]
 	});
 
@@ -48,10 +38,24 @@
 
 			this.functionsCombo = Ext.create('Ext.form.ComboBox', {
 				fieldLabel: CMDBuild.Translation.management.findfilter.functions,
-				store: functionsStore,
-				name: CMDBuild.ServiceProxy.parameter.FUNCTION,
-				displayField: CMDBuild.ServiceProxy.parameter.NAME,
-				valueField: CMDBuild.ServiceProxy.parameter.NAME,
+				store: CMDBuild.global.Cache.requestAsStore(CMDBuild.core.constants.Proxy.UNCACHED, {
+					autoLoad: true,
+					model: 'Functions',
+					proxy: {
+						type: 'ajax',
+						url: CMDBuild.proxy.index.Json.functions.readAll,
+						reader: {
+							type: 'json',
+							root: CMDBuild.core.constants.Proxy.RESPONSE
+						}
+					},
+					sorters: [
+						{ property: CMDBuild.core.constants.Proxy.NAME, direction: 'ASC' }
+					]
+				}),
+				name: CMDBuild.core.constants.Proxy.FUNCTION,
+				displayField: CMDBuild.core.constants.Proxy.NAME,
+				valueField: CMDBuild.core.constants.Proxy.NAME,
 				trigger1Cls: Ext.baseCSSPrefix + 'form-arrow-trigger',
 				trigger2Cls: Ext.baseCSSPrefix + 'form-clear-trigger',
 				hideTrigger1: false,

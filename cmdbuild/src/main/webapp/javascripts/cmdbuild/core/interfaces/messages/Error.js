@@ -57,7 +57,7 @@
 		showPopup: function (message, options) {
 			var errorTitle = null;
 			var errorBody = {
-				text: CMDBuild.Translation.errors.unknown_error,
+				text: CMDBuild.Translation.errors.anErrorHasOccurred,
 				detail: undefined
 			};
 
@@ -109,7 +109,7 @@
 					|| response.status == 0
 				) {
 					errorTitle = CMDBuild.Translation.errors.error_message;
-					errorBody.text = CMDBuild.Translation.errors.unknown_error;
+					errorBody.text = CMDBuild.Translation.errors.anErrorHasOccurred;
 				} else if (response.status) {
 					errorTitle = CMDBuild.Translation.errors.error_message;
 					errorBody.text = CMDBuild.Translation.errors.server_error_code + response.status;

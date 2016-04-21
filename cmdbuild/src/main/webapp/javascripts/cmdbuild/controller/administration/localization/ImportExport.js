@@ -6,8 +6,8 @@
 		requires: [
 			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.Message',
-			'CMDBuild.core.proxy.localization.Export',
-			'CMDBuild.core.proxy.localization.Import'
+			'CMDBuild.proxy.localization.Export',
+			'CMDBuild.proxy.localization.Import'
 		],
 
 		/**
@@ -43,7 +43,7 @@
 		exportPanel: undefined,
 
 		/**
-		 * @property {CMDBuild.core.PopupWindow}
+		 * @property {CMDBuild.core.window.AbstractModal}
 		 */
 		failuresWindow: undefined,
 
@@ -81,7 +81,7 @@
 			params[CMDBuild.core.constants.Proxy.ACTIVE_ONLY] = formValues[CMDBuild.core.constants.Proxy.ACTIVE_ONLY];
 			params[CMDBuild.core.constants.Proxy.FORCE_DOWNLOAD_PARAM_KEY] = true;
 
-			CMDBuild.core.proxy.localization.Export.exports({
+			CMDBuild.proxy.localization.Export.exports({
 				form: this.exportPanel.getForm(),
 				params: params
 			});
@@ -103,7 +103,7 @@
 
 		onLocalizationImportExportImportButtonClick: function () {
 			if (this.validate(this.importPanel))
-				CMDBuild.core.proxy.localization.Import.imports({
+				CMDBuild.proxy.localization.Import.imports({
 					form: this.importPanel.getForm(),
 					scope: this,
 					success: function (response, options, decodedResponse) {
@@ -122,7 +122,7 @@
 							}, this);
 
 
-							this.failuresWindow = Ext.create('CMDBuild.core.PopupWindow', {
+							this.failuresWindow = Ext.create('CMDBuild.core.window.AbstractModal', {
 								title: CMDBuild.Translation.common.failure,
 
 								dockedItems: [

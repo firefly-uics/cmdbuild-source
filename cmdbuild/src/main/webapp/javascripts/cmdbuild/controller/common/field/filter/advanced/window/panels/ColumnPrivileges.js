@@ -3,7 +3,10 @@
 	Ext.define('CMDBuild.controller.common.field.filter.advanced.window.panels.ColumnPrivileges', {
 		extend: 'CMDBuild.controller.common.abstract.Base',
 
-		requires: ['CMDBuild.core.constants.Proxy'],
+		requires: [
+			'CMDBuild.core.constants.Proxy',
+			'CMDBuild.proxy.common.tabs.attribute.Attribute'
+		],
 
 		/**
 		 * @cfg {CMDBuild.controller.common.field.filter.advanced.window.Window}
@@ -132,7 +135,7 @@
 				params[CMDBuild.core.constants.Proxy.ACTIVE] = true;
 				params[CMDBuild.core.constants.Proxy.CLASS_NAME] = this.cmfg('fieldFilterAdvancedSelectedClassGet', CMDBuild.core.constants.Proxy.NAME);
 
-				CMDBuild.core.proxy.Attributes.read({
+				CMDBuild.proxy.common.tabs.attribute.Attribute.read({
 					params: params,
 					scope: this,
 					success: function(response, options, decodedResponse) {

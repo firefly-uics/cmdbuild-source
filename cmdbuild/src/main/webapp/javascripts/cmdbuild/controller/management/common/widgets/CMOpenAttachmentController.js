@@ -1,5 +1,7 @@
 (function() {
 
+	Ext.require(['CMDBuild.core.Message']);
+
 	Ext.define("CMDBuild.controller.management.workflow.CMActivityAttachmentsController", {
 
 		extend : "CMDBuild.controller.management.classes.attachments.CMCardAttachmentsController",
@@ -39,7 +41,7 @@
 		onAddAttachmentButtonClick: function() {
 			var pi = _CMWFState.getProcessInstance();
 			if (pi && pi.isNew()) {
-				new CMDBuild.Msg.error(CMDBuild.Translation.common.failure,
+				CMDBuild.core.Message.error(CMDBuild.Translation.common.failure,
 						CMDBuild.Translation.management.modworkflow.extattrs.attachments.must_save_to_add,
 						popup = false);
 

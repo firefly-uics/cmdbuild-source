@@ -1,10 +1,9 @@
-(function() {
+(function () {
 
 	Ext.define('CMDBuild.view.administration.workflow.CMProcessAttributes', {
 		extend: "Ext.panel.Panel",
 
-		constructor: function() {
-
+		constructor: function () {
 			this.formPanel = this.buildFormPanel();
 
 			this.gridPanel = Ext.create('CMDBuild.view.administration.workflow.CMAttributeGrid', {
@@ -19,8 +18,12 @@
 			this.formPanel.disableModify();
 		},
 
-		initComponent: function() {
-
+		/**
+		 * @returns {Void}
+		 *
+		 * @override
+		 */
+		initComponent: function () {
 			Ext.apply(this, {
 				layout: "border",
 				items: [this.formPanel, this.gridPanel]
@@ -29,13 +32,22 @@
 			this.callParent(arguments);
 		},
 
-		onClassSelected: function(idClass, className) {
+		/**
+		 * @returns {Void}
+		 *
+		 * @private
+		 */
+		onClassSelected: function (idClass, className) {
 			this.formPanel.onClassSelected(idClass, className);
 			this.gridPanel.onClassSelected(idClass, className);
 		},
 
-		// override
-		buildFormPanel: function() {
+		/**
+		 * @returns {Void}
+		 *
+		 * @private
+		 */
+		buildFormPanel: function () {
 			return Ext.create('CMDBuild.view.administration.workflow.CMProcessAttributesForm', {
 				region: 'center'
 			});

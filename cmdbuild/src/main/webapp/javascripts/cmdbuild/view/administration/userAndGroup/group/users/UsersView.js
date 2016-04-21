@@ -20,9 +20,8 @@
 		 */
 		selectedGrid: undefined,
 
-		bodyCls: 'cmdb-gray-panel-no-padding',
+		bodyCls: 'cmdb-gray-panel',
 		border: false,
-		cls: 'cmdb-gray-panel-no-padding',
 		frame: false,
 		overflowY: 'auto',
 		split: true,

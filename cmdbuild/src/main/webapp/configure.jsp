@@ -38,7 +38,6 @@
 		<!-- 3. Runtime configuration -->
 		<script type="text/javascript">
 			Ext.ns('CMDBuild.configuration.runtime');
-
 			CMDBuild.configuration.runtime = Ext.create('CMDBuild.model.configuration.Configure');
 			CMDBuild.configuration.runtime.set(CMDBuild.core.constants.Proxy.JDBC_DRIVER_VERSION, '<%= StringEscapeUtils.escapeEcmaScript(jdbcDriverVersion) %>');
 			CMDBuild.configuration.runtime.set(CMDBuild.core.constants.Proxy.LANGUAGE, '<%= StringEscapeUtils.escapeEcmaScript(lang) %>');
