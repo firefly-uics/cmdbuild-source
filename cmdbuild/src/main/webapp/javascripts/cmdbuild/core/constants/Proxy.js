@@ -456,6 +456,7 @@
 		PROPERTY_IDENTIFIER: 'propertyIdentifier',
 		PROPERTY_NAME: 'propertyName',
 		QUERY: 'query',
+		QUICK_SEARCH: 'quickSearch',
 		READ: 'read',
 		READ_ONLY: 'readOnly',
 		READ_ONLY_ATTRIBUTES: 'readOnlyAttributes',
