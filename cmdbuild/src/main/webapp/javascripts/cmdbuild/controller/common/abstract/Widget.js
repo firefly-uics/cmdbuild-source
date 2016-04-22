@@ -170,6 +170,8 @@
 
 		/**
 		 * @returns {Object or null}
+		 *
+		 * @abstract
 		 */
 		getData: function () {
 			return null;
