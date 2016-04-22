@@ -31,7 +31,6 @@
 			'getData',
 			'getId = widgetPingIdGet',
 			'getTemplateResolverServerVars = widgetPingGetTemplateResolverServerVars',
-			'isBusy',
 			'isValid',
 			'onEditMode',
 			'onWidgetPingBeforeActiveView = beforeActiveView',

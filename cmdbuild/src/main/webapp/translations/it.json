@@ -457,7 +457,7 @@
 	},
 	"errors": {
 		"anErrorHasOccurred": "Si è verificato un errore",
-		"busy_wf_widgets": "I controlli visuali risultano occupati, controlla lo stato del server prima di riprovare.",
+		"busyVisualControls": "I controlli visuali risultano occupati, controlla lo stato del server prima di riprovare.",
 		"copyAttachmentFailure": "Copia dell'allegato \"{0}\" fallita",
 		"createReportFilure": "Errore nella creazione del report",
 		"csvUploadOrDecodeFailure": "Errore nel caricamento o decodifica del file CSV",

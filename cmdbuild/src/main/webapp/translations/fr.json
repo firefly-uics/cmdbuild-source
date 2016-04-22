@@ -457,7 +457,7 @@
 	},
 	"errors": {
 		"anErrorHasOccurred": "Une erreur est survenue",
-		"busy_wf_widgets": "Les widgets ne sont pas disponibles actuellement, vérifiez l'état du serveur avant de recommencer l'opération.",
+		"busyVisualControls": "Les widgets ne sont pas disponibles actuellement, vérifiez l'état du serveur avant de recommencer l'opération.",
 		"copyAttachmentFailure": "La copie de la pièce jointe \"{0}\" a échoué",
 		"createReportFilure": "La création du rapport a échoué",
 		"csvUploadOrDecodeFailure": "Erreur lors du téléchargement ou du décodage du fichier CSV",

@@ -16,7 +16,6 @@
 			'CMDBuild.proxy.lookup.Type',
 			'CMDBuild.proxy.userAndGroup.group.Group',
 			'CMDBuild.proxy.widget.Widget',
-			'CMDBuild.core.RequestBarrier',
 			'CMDBuild.core.Splash'
 		],
 
@@ -43,11 +42,10 @@
 		 * @private
 		 */
 		buildCache: function () {
-			var barrierId = 'cache';
 			var params = {};
-
-			CMDBuild.core.RequestBarrier.init(barrierId, function () {
-				CMDBuild.core.Administration.buildUserInterface();
+			var requestBarrier = Ext.create('CMDBuild.core.RequestBarrier', {
+				id: 'administrationBuildCacheBarrier',
+				callback: CMDBuild.core.Administration.buildUserInterface
 			});
 
 			/**
@@ -65,7 +63,7 @@
 
 					_CMCache.addClasses(decodedResponse);
 				},
-				callback: CMDBuild.core.RequestBarrier.getCallback(barrierId)
+				callback: requestBarrier.getCallback('administrationBuildCacheBarrier')
 			});
 
 			/**
@@ -80,7 +78,7 @@
 
 						_CMCache.addDomains(decodedResponse);
 					},
-					callback: CMDBuild.core.RequestBarrier.getCallback(barrierId)
+					callback: requestBarrier.getCallback('administrationBuildCacheBarrier')
 				});
 
 			/**
@@ -89,7 +87,7 @@
 			CMDBuild.proxy.userAndGroup.group.Group.readAll({
 				loadMask: false,
 				scope: this,
-				callback: CMDBuild.core.RequestBarrier.getCallback(barrierId)
+				callback: requestBarrier.getCallback('administrationBuildCacheBarrier')
 			});
 
 			/**
@@ -101,7 +99,7 @@
 				success: function (response, options, decodedResponse) {
 					_CMCache.addLookupTypes(decodedResponse);
 				},
-				callback: CMDBuild.core.RequestBarrier.getCallback(barrierId)
+				callback: requestBarrier.getCallback('administrationBuildCacheBarrier')
 			});
 
 			/**
@@ -116,7 +114,7 @@
 					_CMCache.addDashboards(decodedResponse[CMDBuild.core.constants.Proxy.DASHBOARDS]);
 					_CMCache.setAvailableDataSources(decodedResponse[CMDBuild.core.constants.Proxy.DATA_SOURCES]);
 				},
-				callback: CMDBuild.core.RequestBarrier.getCallback(barrierId)
+				callback: requestBarrier.getCallback('administrationBuildCacheBarrier')
 			});
 
 			/**
@@ -130,10 +128,10 @@
 
 					_CMCache.addWidgetToEntryTypes(decodedResponse);
 				},
-				callback: CMDBuild.core.RequestBarrier.getCallback(barrierId)
+				callback: requestBarrier.getCallback('administrationBuildCacheBarrier')
 			});
 
-			CMDBuild.core.RequestBarrier.finalize(barrierId);
+			requestBarrier.finalize('administrationBuildCacheBarrier', true);
 		},
 
 		/**
@@ -144,18 +142,21 @@
 		 * @private
 		 */
 		buildConfiguration: function () {
-			CMDBuild.core.RequestBarrier.init('mainConfigurations', CMDBuild.core.Administration.buildCache);
+			var requestBarrier = Ext.create('CMDBuild.core.RequestBarrier', {
+				id: 'administrationBuildConfigurationBarrier',
+				callback: CMDBuild.core.Administration.buildCache
+			});
 
-			Ext.create('CMDBuild.core.configurations.builder.Instance', { callback: CMDBuild.core.RequestBarrier.getCallback('mainConfigurations') }); // CMDBuild Instance configuration
-			Ext.create('CMDBuild.core.configurations.builder.Bim', { callback: CMDBuild.core.RequestBarrier.getCallback('mainConfigurations') }); // CMDBuild BIM configuration
-			Ext.create('CMDBuild.core.configurations.builder.Dms', { callback: CMDBuild.core.RequestBarrier.getCallback('mainConfigurations') }); // CMDBuild DMS configuration
-			Ext.create('CMDBuild.core.configurations.builder.Gis', { callback: CMDBuild.core.RequestBarrier.getCallback('mainConfigurations') }); // CMDBuild GIS configuration
-			Ext.create('CMDBuild.core.configurations.builder.Localization', { callback: CMDBuild.core.RequestBarrier.getCallback('mainConfigurations') }); // CMDBuild Localization configuration
-			Ext.create('CMDBuild.core.configurations.builder.RelationGraph', { callback: CMDBuild.core.RequestBarrier.getCallback('mainConfigurations') }); // CMDBuild RelationGraph configuration
-			Ext.create('CMDBuild.core.configurations.builder.UserInterface', { callback: CMDBuild.core.RequestBarrier.getCallback('mainConfigurations') }); // CMDBuild UserInterface configuration
-			Ext.create('CMDBuild.core.configurations.builder.Workflow', { callback: CMDBuild.core.RequestBarrier.getCallback('mainConfigurations') }); // CMDBuild Workflow configuration
+			Ext.create('CMDBuild.core.configurations.builder.Instance', { callback: requestBarrier.getCallback('administrationBuildConfigurationBarrier') }); // CMDBuild Instance configuration
+			Ext.create('CMDBuild.core.configurations.builder.Bim', { callback: requestBarrier.getCallback('administrationBuildConfigurationBarrier') }); // CMDBuild BIM configuration
+			Ext.create('CMDBuild.core.configurations.builder.Dms', { callback: requestBarrier.getCallback('administrationBuildConfigurationBarrier') }); // CMDBuild DMS configuration
+			Ext.create('CMDBuild.core.configurations.builder.Gis', { callback: requestBarrier.getCallback('administrationBuildConfigurationBarrier') }); // CMDBuild GIS configuration
+			Ext.create('CMDBuild.core.configurations.builder.Localization', { callback: requestBarrier.getCallback('administrationBuildConfigurationBarrier') }); // CMDBuild Localization configuration
+			Ext.create('CMDBuild.core.configurations.builder.RelationGraph', { callback: requestBarrier.getCallback('administrationBuildConfigurationBarrier') }); // CMDBuild RelationGraph configuration
+			Ext.create('CMDBuild.core.configurations.builder.UserInterface', { callback: requestBarrier.getCallback('administrationBuildConfigurationBarrier') }); // CMDBuild UserInterface configuration
+			Ext.create('CMDBuild.core.configurations.builder.Workflow', { callback: requestBarrier.getCallback('administrationBuildConfigurationBarrier') }); // CMDBuild Workflow configuration
 
-			CMDBuild.core.RequestBarrier.finalize('mainConfigurations');
+			requestBarrier.finalize('administrationBuildConfigurationBarrier', true);
 		},
 
 		/**

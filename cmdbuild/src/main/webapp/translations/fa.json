@@ -457,7 +457,7 @@
 	},
 	"errors": {
 		"anErrorHasOccurred": "خطایی رخ داد",
-		"busy_wf_widgets": "کنترل های تصویری شلوغ اند، لطفا قبل از اینکه دوباره تکرار کنید وضعیت سرور را چک کنید",
+		"busyVisualControls": "کنترل های تصویری شلوغ اند، لطفا قبل از اینکه دوباره تکرار کنید وضعیت سرور را چک کنید",
 		"copyAttachmentFailure": "<em>Copy attachment with name \"{0}\" failure</em>",
 		"createReportFilure": "<em>Create report failure</em>",
 		"csvUploadOrDecodeFailure": "<em>CSV upload or decode error</em>",

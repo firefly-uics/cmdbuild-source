@@ -3,10 +3,7 @@
 	Ext.define('CMDBuild.controller.management.widget.customForm.layout.Form', {
 		extend: 'CMDBuild.controller.common.abstract.Base',
 
-		requires: [
-			'CMDBuild.core.constants.Proxy',
-			'CMDBuild.core.RequestBarrier'
-		],
+		requires: ['CMDBuild.core.constants.Proxy'],
 
 		/**
 		 * @cfg {CMDBuild.controller.management.widget.customForm.CustomForm}
@@ -41,28 +38,36 @@
 			this.callParent(arguments);
 
 			// Barrier to load data after reference field store's load end
-			CMDBuild.core.RequestBarrier.init('referenceStoreLoadBarrier', function () {
-				if (!this.cmfg('widgetCustomFormInstancesDataStorageIsEmpty'))
-					this.cmfg('widgetCustomFormLayoutFormDataSet', this.cmfg('widgetCustomFormInstancesDataStorageGet'));
+			var barrierId = 'widgetCustomFormLayoutFormBarrier-' + this.cmfg('widgetCustomFormIdGet'); // Unique widget barrier id
+			var requestBarrier = Ext.create('CMDBuild.core.RequestBarrier', {
+				id: barrierId,
+				scope: this,
+				callback: function () {
+					if (!this.cmfg('widgetCustomFormInstancesDataStorageIsEmpty'))
+						this.cmfg('widgetCustomFormLayoutFormDataSet', this.cmfg('widgetCustomFormInstancesDataStorageGet'));
 
-				this.cmfg('widgetCustomFormViewSetLoading', false);
-			}, this);
+					this.cmfg('widgetCustomFormViewSetLoading', false);
+				}
+			});
 
 			this.view = Ext.create('CMDBuild.view.management.widget.customForm.layout.FormPanel', { delegate: this });
 
-			this.view.add(this.buildFields());
+			this.view.add(this.buildFields(requestBarrier, barrierId));
 
 			this.cmfg('widgetCustomFormViewSetLoading', true);
 
-			CMDBuild.core.RequestBarrier.finalize('referenceStoreLoadBarrier');
+			requestBarrier.finalize(barrierId, true);
 		},
 
 		/**
+		 * @param {CMDBuild.core.RequestBarrier} requestBarrier
+		 * @param {String} barrierId
+		 *
 		 * @return {Array} itemsArray
 		 *
 		 * @private
 		 */
-		buildFields: function () {
+		buildFields: function (requestBarrier, barrierId) {
 			var itemsArray = [];
 
 			if (!this.cmfg('widgetCustomFormConfigurationIsEmpty',  CMDBuild.core.constants.Proxy.MODEL)) {
@@ -89,7 +94,7 @@
 							// Required label fix
 							if (attribute[CMDBuild.core.constants.Proxy.MANDATORY] || attribute['isnotnull']) {
 								attribute[CMDBuild.core.constants.Proxy.DESCRIPTION] = (!Ext.isEmpty(attribute['isnotnull']) && attribute['isnotnull'] ? '* ' : '')
-								+ attribute.description || attribute.name;
+									+ attribute.description || attribute.name;
 							}
 
 							item = CMDBuild.Management.ReferenceField.buildEditor(attribute, templateResolver);
@@ -100,7 +105,7 @@
 
 							// Apply event for store load barrier
 							if (!Ext.isEmpty(item) && Ext.isFunction(item.getStore) && item.getStore().count() == 0)
-								item.getStore().on('load', CMDBuild.core.RequestBarrier.getCallback('referenceStoreLoadBarrier'), this);
+								item.getStore().on('load', requestBarrier.getCallback(barrierId), this);
 						} else {
 							item = CMDBuild.Management.FieldManager.getFieldForAttr(attribute, false, false);
 						}

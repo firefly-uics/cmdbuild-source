@@ -35,7 +35,6 @@
 		 */
 		cmfgCatchedFunctions: [
 			'getCardAttributes',
-			'isBusy',
 			'onAddRowButtonClick' ,
 			'onCSVImportButtonClick',
 			'onDeleteRowButtonClick',

@@ -457,7 +457,7 @@
 	},
 	"errors": {
 		"anErrorHasOccurred": "Es handelte sich um einen Fehler",
-		"busy_wf_widgets": "Das Widget antwortet nicht. Prüfen Sie den Server-Status, bevor Sie die Operation wiederholen.",
+		"busyVisualControls": "Das Widget antwortet nicht. Prüfen Sie den Server-Status, bevor Sie die Operation wiederholen.",
 		"copyAttachmentFailure": "<em>Copy attachment with name \"{0}\" failure</em>",
 		"createReportFilure": "<em>Create report failure</em>",
 		"csvUploadOrDecodeFailure": "<em>CSV upload or decode error</em>",

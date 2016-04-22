@@ -375,16 +375,26 @@
 			var invalidFieldsArray = form.getNonValidFields();
 
 			// Check for invalid fields and builds errorMessage
-			if (!Ext.isEmpty(form) && !Ext.isEmpty(invalidFieldsArray)) {
-				var errorMessage = CMDBuild.Translation.errors.invalid_fields + '<ul style="text-align: left;">';
+			if (
+				!Ext.isEmpty(form)
+				&& !Ext.isEmpty(invalidFieldsArray) && Ext.isArray(invalidFieldsArray)
+				&& showPopup
+			) {
+				var errorMessage = '';
 
-				for (index in invalidFieldsArray)
-					errorMessage += '<li>' + invalidFieldsArray[index].getFieldLabel() + '</li>';
+				Ext.Array.each(invalidFieldsArray, function (invalidField, i, allInvalidFields) {
+					if (!Ext.isEmpty(invalidField) && Ext.isFunction(invalidField.getFieldLabel))
+						errorMessage += '<li>' + invalidField.getFieldLabel() + '</li>';
+				}, this);
 
-				errorMessage += '<ul>';
-
-				if (showPopup)
-					CMDBuild.core.Message.error(CMDBuild.Translation.common.failure, errorMessage, false);
+				CMDBuild.core.Message.error(
+					CMDBuild.Translation.common.failure,
+					'<b>' + CMDBuild.Translation.errors.invalid_fields + '</b>'
+					+ '<ul style="text-align: left;">'
+						+ errorMessage
+					+ '</ul>',
+					false
+				);
 
 				return false;
 			}

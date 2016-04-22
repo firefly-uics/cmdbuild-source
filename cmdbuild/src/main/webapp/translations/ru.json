@@ -457,7 +457,7 @@
 	},
 	"errors": {
 		"anErrorHasOccurred": "Неизвестная ошибка",
-		"busy_wf_widgets": "Виджеты заняты. Проверьте состояние сервера перед повторной попыткой.",
+		"busyVisualControls": "Виджеты заняты. Проверьте состояние сервера перед повторной попыткой.",
 		"copyAttachmentFailure": "<em>Copy attachment with name \"{0}\" failure</em>",
 		"createReportFilure": "<em>Create report failure</em>",
 		"csvUploadOrDecodeFailure": "<em>CSV upload or decode error</em>",

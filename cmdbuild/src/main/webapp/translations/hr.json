@@ -457,7 +457,7 @@
 	},
 	"errors": {
 		"anErrorHasOccurred": "Došlo je do greške",
-		"busy_wf_widgets": "Vizualne kontrole su nedostupne, provjerite status servera prije ponovnog pokušaja.",
+		"busyVisualControls": "Vizualne kontrole su nedostupne, provjerite status servera prije ponovnog pokušaja.",
 		"copyAttachmentFailure": "<em>Copy attachment with name \"{0}\" failure</em>",
 		"createReportFilure": "<em>Create report failure</em>",
 		"csvUploadOrDecodeFailure": "<em>CSV upload or decode error</em>",

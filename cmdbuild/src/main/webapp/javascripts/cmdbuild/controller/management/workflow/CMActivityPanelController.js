@@ -260,7 +260,7 @@
 
 		onAdvanceCardButtonClick: function() {
 			this.isAdvance = true;
-			this.widgetControllerManager.waitForBusyWidgets(save, this);
+			this.widgetControllerManager.waitForBusyWidgets(save, this); // Check for busy widgets on advance
 		},
 
 		clearView: function() {

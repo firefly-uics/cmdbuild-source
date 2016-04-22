@@ -457,7 +457,7 @@
 	},
 	"errors": {
 		"anErrorHasOccurred": "发生一个错误",
-		"busy_wf_widgets": "可视控件忙, 在重试前请检查服务器状态。",
+		"busyVisualControls": "可视控件忙, 在重试前请检查服务器状态。",
 		"copyAttachmentFailure": "以名称\"{0}\"拷贝附件失败",
 		"createReportFilure": "创建报告失败",
 		"csvUploadOrDecodeFailure": "CSV上传或解码失败",

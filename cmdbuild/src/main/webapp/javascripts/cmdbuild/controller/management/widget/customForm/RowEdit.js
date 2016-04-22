@@ -3,10 +3,7 @@
 	Ext.define('CMDBuild.controller.management.widget.customForm.RowEdit', {
 		extend: 'CMDBuild.controller.common.abstract.Base',
 
-		requires: [
-			'CMDBuild.core.constants.Proxy',
-			'CMDBuild.core.RequestBarrier'
-		],
+		requires: ['CMDBuild.core.constants.Proxy'],
 
 		/**
 		 * @cfg {CMDBuild.controller.management.widget.customForm.layout.Grid}
@@ -131,11 +128,15 @@
 		fieldsInitialization: function () {
 			this.view.setLoading(true);
 
-			CMDBuild.core.RequestBarrier.init('rowEditFieldsInitializationBarrier', function () {
-				this.form.loadRecord(this.record);
+			var requestBarrier = Ext.create('CMDBuild.core.RequestBarrier', {
+				id: 'widgetCustomFormRowEditBarrier',
+				scope: this,
+				callback: function () {
+					this.form.loadRecord(this.record);
 
-				this.view.setLoading(false);
-			}, this);
+					this.view.setLoading(false);
+				}
+			});
 
 			Ext.Array.forEach(this.form.getForm().getFields().getRange(), function (field, i, allFields) {
 				if (!Ext.Object.isEmpty(field) && !Ext.isEmpty(field.resolveTemplate))
@@ -146,11 +147,11 @@
 				if (!Ext.Object.isEmpty(field) && Ext.isFunction(field.getStore) && field.getStore().count() == 0)
 					field.getStore().load({
 						scope: this,
-						callback: CMDBuild.core.RequestBarrier.getCallback('rowEditFieldsInitializationBarrier')
+						callback: requestBarrier.getCallback('widgetCustomFormRowEditBarrier')
 					});
 			}, this);
 
-			CMDBuild.core.RequestBarrier.finalize('rowEditFieldsInitializationBarrier');
+			requestBarrier.finalize('widgetCustomFormRowEditBarrier', true);
 		},
 
 		/**

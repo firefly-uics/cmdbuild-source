@@ -282,7 +282,7 @@
 						me.onGridShow();
 					},
 					failure: function() {
-						CMDBuild.core.Message.error(null, CMDBuild.Translation.errors.busy_wf_widgets, false);
+						CMDBuild.core.Message.error(null, CMDBuild.Translation.errors.busyVisualControls, false);
 					},
 					checkFn: function() {
 						// I want exit if I'm not busy
