@@ -40,6 +40,8 @@ FIXES
 
  * Lookup fields marked as invalid first displaied time in edit mode
 
+ * SQL data views sort order problems
+
 
 
 

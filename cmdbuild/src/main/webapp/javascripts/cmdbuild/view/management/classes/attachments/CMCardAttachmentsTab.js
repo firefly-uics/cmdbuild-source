@@ -123,8 +123,6 @@ function buildStore() {
 				root: 'rows'
 			}
 		},
-
-		remoteSort: false,
 		groupField: 'Category',
 		sorters: {property: 'Category', direction: "ASC"}
 	});

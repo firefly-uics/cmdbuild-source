@@ -9,8 +9,7 @@
 			this.store = new Ext.data.Store ({
 				pageSize: CMDBuild.configuration.instance.get(CMDBuild.core.constants.Proxy.ROW_LIMIT),
 				model: 'CMDBuild.view.management.CMMiniCardGridModel',
-				autoLoad: false,
-				remoteSort: false
+				autoLoad: false
 			});
 		},
 

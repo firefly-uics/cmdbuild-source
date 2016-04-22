@@ -91,6 +91,7 @@
 				autoLoad: true,
 				fields: parameters.fields || [],
 				pageSize: CMDBuild.configuration.instance.get(CMDBuild.core.constants.Proxy.ROW_LIMIT),
+				remoteSort: true,
 				proxy: {
 					type: 'ajax',
 					url: CMDBuild.core.proxy.Index.card.getSqlCardList,
