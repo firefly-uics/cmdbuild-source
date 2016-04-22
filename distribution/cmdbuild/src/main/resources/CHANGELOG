@@ -42,6 +42,8 @@ FIXES
 
  * SQL data views sort order problems
 
+ * The row privileges are ignored when selecting a superclass and there are some row privileges set in a subclass
+
 
 
 
