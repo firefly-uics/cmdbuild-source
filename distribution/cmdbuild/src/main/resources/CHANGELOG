@@ -38,6 +38,8 @@ FIXES
 
  * The "between" operator of the advanced filter does not includes ends
 
+ * Lookup fields marked as invalid first displaied time in edit mode
+
 
 
 
