@@ -60,7 +60,7 @@ public class DataViewRowAndColumnPrivilegeFetcher implements RowAndColumnPrivile
 		if (privilegeContext.hasAdministratorPrivileges() && entryType.isActive()) {
 			return EMPTY_WHERE_CLAUSES;
 		}
-		final PrivilegedObjectMetadata metadata = privilegeContext.getMetadata(entryType);
+		final PrivilegedObjectMetadata metadata = privilegeContext.getMetadata(entryTypeForClauses);
 		if (metadata == null) {
 			return EMPTY_WHERE_CLAUSES;
 		}
