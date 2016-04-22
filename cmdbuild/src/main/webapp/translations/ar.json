@@ -457,7 +457,7 @@
 	},
 	"errors": {
 		"anErrorHasOccurred": "حدث خطأ",
-		"busy_wf_widgets": "أدوات التحكم المرئية مشغولة، أفحص حالة الخادم قبل إعادة المحاولة.",
+		"busyVisualControls": "أدوات التحكم المرئية مشغولة، أفحص حالة الخادم قبل إعادة المحاولة.",
 		"copyAttachmentFailure": "فشل في نسخ المرفق ذا الاسم \"{0}\"",
 		"createReportFilure": "خطأ في إنشاء التقرير",
 		"csvUploadOrDecodeFailure": "خطأ في رفع أو فك ملف الإكسل",

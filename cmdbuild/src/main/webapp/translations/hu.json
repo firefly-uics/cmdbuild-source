@@ -457,7 +457,7 @@
 	},
 	"errors": {
 		"anErrorHasOccurred": "Hiba történt",
-		"busy_wf_widgets": "A vizuális vezérlők elfoglaltak, ellenőrizze a szervert mielőtt újra próbálkozik.",
+		"busyVisualControls": "A vizuális vezérlők elfoglaltak, ellenőrizze a szervert mielőtt újra próbálkozik.",
 		"copyAttachmentFailure": "Hiba a \"{0}\" nevű csatolmány másolása közben",
 		"createReportFilure": "Jelentés létrehozási hiba",
 		"csvUploadOrDecodeFailure": "CSV feltöltési vagy dekódolási hiba",

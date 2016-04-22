@@ -457,7 +457,7 @@
 	},
 	"errors": {
 		"anErrorHasOccurred": "Um erro ocorreu",
-		"busy_wf_widgets": "Os controles visuais estão ocupados, confira o estado do servidor antes de tentar novamente.",
+		"busyVisualControls": "Os controles visuais estão ocupados, confira o estado do servidor antes de tentar novamente.",
 		"copyAttachmentFailure": "<em>Copy attachment with name \"{0}\" failure</em>",
 		"createReportFilure": "<em>Create report failure</em>",
 		"csvUploadOrDecodeFailure": "<em>CSV upload or decode error</em>",

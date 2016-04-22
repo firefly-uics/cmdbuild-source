@@ -457,7 +457,7 @@
 	},
 	"errors": {
 		"anErrorHasOccurred": "An error has occurred",
-		"busy_wf_widgets": "The visual controls are busy, check the status of the server before trying again.",
+		"busyVisualControls": "The visual controls are busy, check the status of the server before trying again.",
 		"copyAttachmentFailure": "Copy attachment with name \"{0}\" failure",
 		"createReportFilure": "Create report failure",
 		"csvUploadOrDecodeFailure": "CSV upload or decode error",

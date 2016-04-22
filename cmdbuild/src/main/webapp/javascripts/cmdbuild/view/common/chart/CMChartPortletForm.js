@@ -3,10 +3,7 @@
 	Ext.define("CMDBuild.view.management.dashboard.CMChartPortletForm", {
 		extend: "Ext.form.Panel",
 
-		requires: [
-			'CMDBuild.core.constants.Proxy',
-			'CMDBuild.core.RequestBarrier'
-		],
+		requires: ['CMDBuild.core.constants.Proxy'],
 
 		initComponent: function() {
 			this.callParent(arguments);
@@ -30,7 +27,10 @@
 		checkStoreLoad: function (callback) {
 			var barrierId = 'chart' + this.id; // Use different id for each chart to avoid initialize problems
 
-			CMDBuild.core.RequestBarrier.init(barrierId, callback);
+			var requestBarrier = Ext.create('CMDBuild.core.RequestBarrier', {
+				id: barrierId,
+				callback: callback
+			});
 
 			this.cascade(function(item) {
 				if (
@@ -38,11 +38,11 @@
 					&& Ext.isFunction(item.getStore) && !Ext.isEmpty(item.getStore())
 					&& !Ext.isEmpty(item.getStore().getProxy()) && !Ext.isEmpty(item.getStore().getProxy().url)
 				) {
-					item.getStore().load({ callback: CMDBuild.core.RequestBarrier.getCallback(barrierId) });
+					item.getStore().load({ callback: requestBarrier.getCallback(barrierId) });
 				}
 			});
 
-			CMDBuild.core.RequestBarrier.finalize(barrierId);
+			requestBarrier.finalize(barrierId, true);
 		}
 	});
 

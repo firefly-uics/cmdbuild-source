@@ -9,8 +9,8 @@
 	 * @requires Mandatory managed methods:
 	 * 	- beforeActiveView
 	 * 	- beforeHideView
-	 * 	- isBusy
 	 * 	- isValid
+	 * 	- onBeforeSave
 	 * 	- onEditMode
 	 *
 	 * @abstract
@@ -148,7 +148,7 @@
 				if (this.enableDelegateApply)
 					this.view.delegate = this;
 			} else {
-				_error('wrong configuration object or empty widget view', this);
+				_error('wrong configuration object or empty widget view', this, configurationObject);
 			}
 		},
 
@@ -167,23 +167,6 @@
 		 * @abstract
 		 */
 		beforeHideView: Ext.emptyFn,
-
-		/**
-		 * Service function to manage callbackChain
-		 *
-		 * @param {Array} callbackChainArray
-		 *
-		 * @returns {Void}
-		 *
-		 * @private
-		 */
-		beforeSaveCallbackChainManager: function (callbackChainArray, i) {
-			if (!Ext.isEmpty(callbackChainArray[i])) {
-				var callbackObject = callbackChainArray[i];
-
-				Ext.callback(callbackObject.fn, callbackObject.scope, [callbackChainArray, i + 1]);
-			}
-		},
 
 		/**
 		 * @returns {Object or null}
@@ -293,30 +276,29 @@
 		 *
 		 * @abstract
 		 */
-		isBusy: function () {
-			return false;
-		},
-
-		/**
-		 * @returns {Boolean}
-		 *
-		 * @abstract
-		 */
 		isValid: function () {
 			return true;
 		},
 
 		/**
-		 * Cannot be manage width cmfg() because requires to be executed on second step
-		 *
-		 * @param {Array} callbackChainArray
+		 * @param {Object} parameters
+		 * @param {Function} parameters.callback
+		 * @param {Object} parameters.scope
 		 *
 		 * @returns {Void}
-		 *
-		 * @public
 		 */
-		onBeforeSave: function (callbackChainArray, i) {
-			this.onBeforeSaveManager(callbackChainArray, i);
+		onBeforeSave: function (parameters) {
+			if (
+				Ext.isObject(parameters) && !Ext.Object.isEmpty(parameters)
+				&& Ext.isFunction(parameters.callback)
+			) {
+				Ext.callback(
+					parameters.callback,
+					Ext.isEmpty(parameters.scope) ? this : parameters.scope
+				);
+			} else {
+				_error('[' + this.getLabel() + '] onBeforeSave invalid parameters', this, parameters);
+			}
 		},
 
 		/**

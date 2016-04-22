@@ -24,7 +24,6 @@
 		cmfgCatchedFunctions: [
 			'beforeHideView',
 			'getData',
-			'isBusy',
 			'isValid',
 			'onEditMode',
 			'onWidgetOpenReportBeforeActiveView = beforeActiveView',

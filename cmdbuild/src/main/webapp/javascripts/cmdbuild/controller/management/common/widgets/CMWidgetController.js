@@ -1,5 +1,8 @@
 (function() {
 
+	/**
+	 * @deprecated (CMDBuild.controller.common.abstract.Widget)
+	 */
 	Ext.define('CMDBuild.controller.management.common.widgets.CMWidgetController', {
 
 		requires: ['CMDBuild.core.constants.Proxy'],
@@ -123,25 +126,28 @@
 		/**
 		 * @return {Boolean}
 		 */
-		isBusy: function() {
-			return false;
-		},
-
-		/**
-		 * @return {Boolean}
-		 */
 		isValid: function() {
 			return true;
 		},
 
 		/**
-		 * @param {Array} callbackChainArray
+		 * @param {Object} parameters
+		 * @param {Function} parameters.callback
+		 * @param {Object} parameters.scope
+		 *
+		 * @returns {Void}
 		 */
-		onBeforeSave: function(callbackChainArray, i) {
-			if (!Ext.isEmpty(callbackChainArray[i])) {
-				var callbackObject = callbackChainArray[i];
-
-				Ext.callback(callbackObject.fn, callbackObject.scope, [callbackChainArray, i + 1]);
+		onBeforeSave: function (parameters) {
+			if (
+				Ext.isObject(parameters) && !Ext.Object.isEmpty(parameters)
+				&& Ext.isFunction(parameters.callback)
+			) {
+				Ext.callback(
+					parameters.callback,
+					Ext.isEmpty(parameters.scope) ? this : parameters.scope
+				);
+			} else {
+				_error('[' + this.getLabel() + '] onBeforeSave invalid parameters', this);
 			}
 		},
 
