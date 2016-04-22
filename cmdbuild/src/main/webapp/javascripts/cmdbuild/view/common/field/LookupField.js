@@ -80,6 +80,7 @@ Ext.define("CMDBuild.view.common.field.LookupField", {
 			} else {
 				this.setParentIdAndFilterStore(undefined);
 			}
+			this.validate(); // Validate to avoid to mark as invalid
 		}
 
 		if (this.parentField) {
