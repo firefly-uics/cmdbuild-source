@@ -44,6 +44,8 @@ FIXES
 
  * The row privileges are ignored when selecting a superclass and there are some row privileges set in a subclass
 
+ * "None" grant on classes causes exposure of merged permissions
+
 
 
 
