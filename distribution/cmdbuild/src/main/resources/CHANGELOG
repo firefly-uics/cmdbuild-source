@@ -40,6 +40,14 @@ FIXES
 
  * The "between" operator of the advanced filter does not includes ends
 
+ * Lookup fields marked as invalid first displaied time in edit mode
+
+ * SQL data views sort order problems
+
+ * The row privileges are ignored when selecting a superclass and there are some row privileges set in a subclass
+
+ * "None" grant on classes causes exposure of merged permissions
+
 
 
 
