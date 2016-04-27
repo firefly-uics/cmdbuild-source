@@ -1,7 +1,7 @@
 (function() {
 
 	Ext.require([ // Legacy
-		'CMDBuild.controller.management.common.widgets.manageRelation.CMManageRelationController',
+		'CMDBuild.controller.management.widget.manageRelation.CMManageRelationController',
 		'CMDBuild.core.configurations.Timeout',
 		'CMDBuild.core.Message'
 	]);
@@ -27,7 +27,7 @@
 					'.Grid': 'CMDBuild.controller.management.common.widgets.grid.Grid',
 					'.LinkCards': CMDBuild.controller.management.common.widgets.linkCards.LinkCardsController,
 					'.ManageEmail': 'CMDBuild.controller.management.widget.ManageEmail',
-					'.ManageRelation': CMDBuild.controller.management.common.widgets.manageRelation.CMManageRelationController,
+					'.ManageRelation': CMDBuild.controller.management.widget.manageRelation.CMManageRelationController,
 					'.NavigationTree': CMDBuild.controller.management.common.widgets.CMNavigationTreeController,
 					'.OpenAttachment': CMDBuild.controller.management.common.widgets.CMOpenAttachmentController,
 					'.OpenNote': CMDBuild.controller.management.common.widgets.CMOpenNoteController,

@@ -1,30 +1,35 @@
-(function() {
+(function () {
 
-	/**
-	 * Old implementation of relations tab controller class to fix compatibility problems (to delete on widget refactor)
-	 */
+	Ext.define('CMDBuild.view.management.widget.manageRelation.CMEditRelationWindow', {
+		extend: 'CMDBuild.core.window.AbstractModal',
 
-	Ext.require([
-		'CMDBuild.core.constants.Global',
-		'CMDBuild.core.Message'
-	]);
-
-	var NO_SELECTION = 'No selection';
-
-	Ext.define('CMDBuild.view.management.common.widgets.manageRelation.CMEditRelationWindow', {
-		extend: 'CMDBuild.view.management.common.CMCardListWindow', // To choose the card for the relation
+		requires: [
+			'CMDBuild.core.constants.Global',
+			'CMDBuild.core.Message'
+		],
 
 		successCb: Ext.emptyFn,
 
 		// configuration
+			ClassName: undefined, // passed at instantiation
+			extraParams: {},
+			filterType: undefined, // passed at instantiation
+			gridConfig: {}, // passed at instantiation
+			idClass: undefined, // passed at instantiation
+			multiSelect: false,
+			readOnly: undefined, // passed at instantiation
 			relation: undefined, // {dst_id: '', dst_cid: '', dom_id: '', rel_id: '', masterSide: '_1', slaveSide: '_2', rel_attr: []}
+			selModel: undefined, // if undefined is used the default selType
+			selType: 'rowmodel', // to allow the opportunity to pass a selection model to the grid
 			sourceCard: undefined, // the source of the relation
 		// configuration
 
 		/**
+		 * @returns {Void}
+		 *
 		 * @override
 		 */
-		initComponent: function() {
+		initComponent: function () {
 			if (this.relation == undefined) {
 				throw 'You must pass a relation to the CMEditRelationWindow';
 			} else {
@@ -38,7 +43,7 @@
 
 			this.abortButton = Ext.create('CMDBuild.core.buttons.text.Abort', {
 				scope: this,
-				handler: function() {
+				handler: function () {
 					this.close();
 				}
 			});
@@ -46,13 +51,78 @@
 			this.buttonAlign = 'center';
 			this.buttons = [this.saveButton, this.abortButton];
 
+			if (typeof this.idClass == 'undefined' && typeof this.ClassName == 'undefined') {
+				throw 'There are no Class Id or Class Name to load';
+			}
+
+			this.title = CMDBuild.Translation.management.modcard.title + getClassDescription(this);
+			this.grid = new CMDBuild.view.management.common.CMCardGrid(this.buildGrdiConfiguration());
+			this.setItems();
+
 			this.callParent(arguments);
 		},
 
-		/**
-		 * @override
-		 */
-		setItems: function() {
+		buildAddButton: function () {
+			var addCardButton = new CMDBuild.AddCardMenuButton();
+			var entry = _CMCache.getEntryTypeById(this.getIdClass());
+
+			addCardButton.updateForEntry(entry);
+			this.mon(addCardButton, 'cmClick', function buildTheAddWindow(p) {
+				var w = new CMDBuild.view.management.common.CMCardWindow({
+					withButtons: true,
+					title: p.className
+				});
+
+				new CMDBuild.controller.management.common.CMCardWindowController(w, {
+					cmEditMode: true,
+					card: null,
+					entryType: p.classId
+				});
+				w.show();
+
+				this.mon(w, 'destroy', function () {
+					this.grid.reload();
+				}, this);
+
+			}, this);
+
+			return addCardButton;
+		},
+
+		buildGrdiConfiguration: function () {
+			var gridConfig = Ext.apply(this.gridConfig, {
+				cmAdvancedFilter: false,
+				columns: [],
+				CQL: this.extraParams,
+				frame: false,
+				border: false,
+				selType: this.selType,
+				multiSelect: this.multiSelect
+			});
+
+			if (typeof this.selModel == 'undefined') {
+				gridConfig['selType'] = this.selType;
+			} else {
+				gridConfig['selModel'] = this.selModel;
+			}
+
+			return gridConfig;
+		},
+
+		getIdClass: function () {
+			if (this.idClass) {
+				return this.idClass;
+			} else {
+				var et = _CMCache.getEntryTypeByName(this.ClassName);
+				if (et) {
+					return et.getId();
+				}
+			}
+
+			throw 'No class info for ' + Ext.getClassName(this);
+		},
+
+		setItems: function () {
 			var attributes = _CMCache.getDomainById(this.relation.dom_id).get('attributes');
 
 			this.attributesPanel = CMDBuild.Management.EditablePanel.build({
@@ -69,7 +139,16 @@
 				}
 			});
 
-			this.callParent(arguments);
+			this.items = [this.grid];
+
+			if (
+				!this.readOnly
+				&& _CMCache.getEntryTypeById(this.getIdClass()).get('type') == 'class' // Create add button and topBar only for classes (no for processes)
+			) {
+				this.tbar = [
+					this.addCardButton = this.buildAddButton()
+				];
+			}
 
 			if (this.attributesPanel != null) {
 				this.layout = 'border';
@@ -77,15 +156,21 @@
 				this.grid.addCls('cmdb-border-bottom');
 				this.items.push(this.attributesPanel);
 			} else {
-				this.attributesPanel = buildNullObject();
+				this.attributesPanel = {
+					editMode: Ext.emptyFn,
+					getFields: function () {
+						return {};
+					}
+				};
 			}
 		},
 
 		/**
 		 * @override
 		 */
-		show: function() {
+		show: function () {
 			this.callParent(arguments);
+			this.grid.updateStoreForClassId(this.getIdClass());
 
 			this.attributesPanel.editMode();
 
@@ -112,8 +197,8 @@
 						store.load({
 							value: val,
 							field: f,
-							callback: function(records, operation, success) {
-								Ext.Array.each(records, function(item, index, allItems) {
+							callback: function (records, operation, success) {
+								Ext.Array.each(records, function (item, index, allItems) {
 									if (operation['value'] == item.raw['Description']) {
 										operation['field'].setValue(item.raw['Id']);
 
@@ -139,7 +224,7 @@
 					params: p,
 					loadMask: false,
 					scope: this,
-					success: function() {
+					success: function () {
 						this.successCb();
 						this.close();
 					}
@@ -149,7 +234,7 @@
 					params: p,
 					loadMask: false,
 					scope: this,
-					success: function() {
+					success: function () {
 						this.successCb();
 						this.close();
 					}
@@ -199,7 +284,7 @@
 		try {
 			attributes[me.relation.slaveSide] = getSelections(me);
 		} catch (e) {
-			if (e == NO_SELECTION) {
+			if (e == 'No selection') {
 				var msg = Ext.String.format('<p class=\'{0}\'>{1}</p>', CMDBuild.core.constants.Global.getErrorMsgCss(), CMDBuild.Translation.errors.noSelectedCardToUpdate);
 
 				CMDBuild.core.Message.error(CMDBuild.Translation.common.failure, msg, false);
@@ -237,7 +322,7 @@
 		} else {
 			if (me.relation.rel_id == -1) {
 				// we are add a new relation, the selection is mandatory
-				throw NO_SELECTION;
+				throw 'No selection';
 			} else {
 				// is editing a relations and there are relations selected it could be that are updating only the attributes.
 				// Retrieve the already related card
@@ -249,7 +334,7 @@
 				selectedCards.push(
 						// mock a card to use the same function to have the parameters
 						getCardAsParameter({
-							get: function(key) {
+							get: function (key) {
 								return relatedCardData[key];
 							}
 						})
@@ -292,13 +377,14 @@
 		}
 	}
 
-	function buildNullObject() {
-		return {
-			editMode: Ext.emptyFn,
-			getFields: function() {
-				return {};
-			}
-		};
+	function getClassDescription(me) {
+		var entryType = _CMCache.getEntryTypeById(me.getIdClass());
+		var description = '';
+		if (entryType) {
+			description = entryType.getDescription();
+		}
+
+		return description;
 	}
 
 })();

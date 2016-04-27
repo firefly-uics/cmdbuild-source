@@ -3,7 +3,6 @@
 	Ext.define('CMDBuild.proxy.widget.customForm.CustomForm', {
 
 		requires: [
-			'CMDBuild.global.Cache',
 			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.proxy.index.Json'
 		],

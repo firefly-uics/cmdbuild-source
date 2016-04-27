@@ -1,18 +1,18 @@
-(function() {
+(function () {
 
 	/**
 	 * Old implementation of relations tab controller class to fix compatibility problems (to delete on widget refactor)
+	 *
+	 * @legacy
 	 */
-	Ext.define("CMDBuild.view.management.common.widgets.manageRelation.AddRelationMenuButton", {
-		extend: "Ext.button.Split",
+	Ext.define('CMDBuild.view.management.widget.manageRelation.AddRelationMenuButton', {
+		extend: 'Ext.button.Split',
 		iconCls: 'add',
 
-		//custom fields
 		baseText: CMDBuild.Translation.management.modcard.add_relations,
 		textPrefix: CMDBuild.Translation.management.modcard.add_relations,
 
-		//private
-		initComponent: function() {
+		initComponent: function () {
 			Ext.apply(this, {
 				text: this.baseText,
 				menu : {items :[]},
@@ -23,7 +23,7 @@
 			this.callParent(arguments);
 		},
 
-		setDomainsForEntryType: function(et, singleDomainId) {
+		setDomainsForEntryType: function (et, singleDomainId) {
 			if (!et) {
 				return;
 			}
@@ -33,7 +33,7 @@
 			var d,
 				domains = _CMCache.getDirectedDomainsByEntryType(et),
 				empty = true,
-				addAll = (typeof singleDomainId == "undefined");
+				addAll = (typeof singleDomainId == 'undefined');
 
 			for (var i=0, l=domains.length; i<l; ++i) {
 				d = domains[i];
@@ -46,8 +46,8 @@
 								text: d.description,
 								domain: d,
 								scope: this,
-								handler: function(item, e){
-									this.fireEvent("cmClick", item.domain);
+								handler: function (item, e){
+									this.fireEvent('cmClick', item.domain);
 								}
 							});
 							empty = false;
@@ -61,17 +61,17 @@
 			return domains.length > 0;
 		},
 
-		setTextSuffix: function(suffix) {
-			this.setText(this.textPrefix +" "+suffix);
+		setTextSuffix: function (suffix) {
+			this.setText(this.textPrefix +' '+suffix);
 		},
 
 		//private
-		isEmpty: function(){
+		isEmpty: function (){
 			return (this.menu.items.items.length == 0 );
 		},
 
 		//private
-		resetText: function() {
+		resetText: function () {
 			this.setText(this.baseText);
 		}
 
