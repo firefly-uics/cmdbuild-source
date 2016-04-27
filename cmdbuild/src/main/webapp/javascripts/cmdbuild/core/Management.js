@@ -87,7 +87,7 @@
 			/**
 			 * Dashboard
 			 */
-			CMDBuild.proxy.dashboard.Dashboard.readAll({
+			CMDBuild.proxy.dashboard.Dashboard.readAllVisible({
 				loadMask: false,
 				scope: this,
 				success: function (response, options, decodedResponse) {
