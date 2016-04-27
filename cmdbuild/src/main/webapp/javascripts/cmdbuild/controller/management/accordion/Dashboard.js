@@ -49,13 +49,15 @@
 		accordionUpdateStore: function (nodeIdToSelect) {
 			nodeIdToSelect = Ext.isNumber(nodeIdToSelect) ? nodeIdToSelect : null;
 
-			CMDBuild.proxy.dashboard.Dashboard.readAll({
+			CMDBuild.proxy.dashboard.Dashboard.readAllVisible({
 				loadMask: false,
 				scope: this,
 				success: function (response, options, decodedResponse) {
 					decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.RESPONSE][CMDBuild.core.constants.Proxy.DASHBOARDS];
 
 					var nodes = [];
+
+					this.view.getStore().getRootNode().removeAll();
 
 					if (!Ext.Object.isEmpty(decodedResponse)) {
 						Ext.Object.each(decodedResponse, function (id, dashboardObject, myself) {
@@ -73,7 +75,6 @@
 						}, this);
 
 						if (!Ext.isEmpty(nodes)) {
-							this.view.getStore().getRootNode().removeAll();
 							this.view.getStore().getRootNode().appendChild(nodes);
 							this.view.getStore().sort();
 						}

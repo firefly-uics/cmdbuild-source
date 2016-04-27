@@ -145,7 +145,8 @@
 			update: 'services/json/dashboard/modifybaseproperties',
 			remove: 'services/json/dashboard/remove',
 
-			readAll: 'services/json/dashboard/fulllist', // fullList
+			readAll: 'services/json/dashboard/fulllist', // @administration
+			readAllVisible: 'services/json/dashboard/list', // @management - manage permissions
 
 			chart: {
 				create: 'services/json/dashboard/addchart',

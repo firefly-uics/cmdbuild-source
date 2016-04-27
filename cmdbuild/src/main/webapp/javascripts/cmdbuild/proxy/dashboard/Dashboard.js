@@ -26,11 +26,28 @@
 		 * @param {Object} parameters
 		 *
 		 * @returns {Void}
+		 *
+		 * @administration
 		 */
 		readAll: function (parameters) {
 			parameters = Ext.isEmpty(parameters) ? {} : parameters;
 
 			Ext.apply(parameters, { url: CMDBuild.proxy.index.Json.dashboard.readAll });
+
+			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.DASHBOARD, parameters);
+		},
+
+		/**
+		 * @param {Object} parameters
+		 *
+		 * @returns {Void}
+		 *
+		 * @management
+		 */
+		readAllVisible: function (parameters) {
+			parameters = Ext.isEmpty(parameters) ? {} : parameters;
+
+			Ext.apply(parameters, { url: CMDBuild.proxy.index.Json.dashboard.readAllVisible });
 
 			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.DASHBOARD, parameters);
 		},
