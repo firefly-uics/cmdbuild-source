@@ -3,7 +3,10 @@
 	Ext.define('CMDBuild.view.common.sessionExpired.FormPanel', {
 		extend: 'Ext.form.Panel',
 
-		requires: ['CMDBuild.core.constants.Proxy'],
+		requires: [
+			'CMDBuild.core.constants.FieldWidths',
+			'CMDBuild.core.constants.Proxy'
+		],
 
 		mixins: ['CMDBuild.view.common.PanelFunctions'],
 
