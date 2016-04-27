@@ -18,7 +18,6 @@
 			return CMDBuild.global.Cache.requestAsStore(CMDBuild.core.constants.Proxy.UNCACHED, {
 				autoLoad: true,
 				model: 'CMDBuild.model.patchManager.Patch',
-				remoteSort: false,
 				proxy: {
 					type: 'ajax',
 					url: CMDBuild.proxy.index.Json.patchManager.readAll,

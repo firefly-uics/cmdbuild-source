@@ -137,7 +137,7 @@ public class UserQuerySpecs extends ForwardingQuerySpecs {
 		final List<WhereClause> superClassesWhereClauses = Lists.newArrayList();
 		for (CMClass parentType = type.getParent(); parentType != null; parentType = parentType.getParent()) {
 			final Iterable<? extends WhereClause> privilegeWhereClause = rowAndColumnPrivilegeFetcher
-					.fetchPrivilegeFiltersFor(parentType, type, alias);
+					.fetchPrivilegeFiltersFor(parentType, alias);
 			if (!isEmpty(privilegeWhereClause)) {
 				superClassesWhereClauses.add(or(privilegeWhereClause));
 			}
@@ -151,7 +151,7 @@ public class UserQuerySpecs extends ForwardingQuerySpecs {
 	 */
 	private WhereClause safeFilterFor(final Alias alias, final CMClass root, final CMClass type) {
 		try {
-			final WhereClause filter = filterFor(alias, root, type);
+			final WhereClause filter = filterFor(type, alias);
 			return (filter == null) ? trueWhereClause() : filter;
 		} catch (final Exception e) {
 			return trueWhereClause();
@@ -162,19 +162,18 @@ public class UserQuerySpecs extends ForwardingQuerySpecs {
 	 * Returns the global {@link WhereClause} for the specified {@link CMClass}
 	 * including sub-classes.
 	 * 
-	 * @param root
 	 * @param type
 	 * 
 	 * @return the global {@link WhereClause} for the specified {@link CMClass}
 	 *         or {@code null} if the filter is not available.
 	 */
-	private WhereClause filterFor(final Alias alias, final CMClass root, final CMClass type) {
+	private WhereClause filterFor(final CMClass type, final Alias alias) {
 		final Iterable<? extends WhereClause> currentWhereClauses = rowAndColumnPrivilegeFetcher
-				.fetchPrivilegeFiltersFor(root, type, alias);
+				.fetchPrivilegeFiltersFor(type, alias);
 		final List<WhereClause> childrenWhereClauses = Lists.newArrayList();
 		final List<Long> childrenWithNoFilter = Lists.newArrayList();
 		for (final CMClass child : type.getChildren()) {
-			final WhereClause childWhereClause = filterFor(alias, root, child);
+			final WhereClause childWhereClause = filterFor(child, alias);
 			if (childWhereClause != null) {
 				childrenWhereClauses.add(childWhereClause);
 			} else {

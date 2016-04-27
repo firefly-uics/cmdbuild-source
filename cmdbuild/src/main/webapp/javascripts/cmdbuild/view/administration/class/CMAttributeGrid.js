@@ -32,7 +32,6 @@
 		},
 
 		cls: 'cmdb-border-bottom',
-		remoteSort: false,
 		includeInherited: true,
 		eventtype: 'class',
 

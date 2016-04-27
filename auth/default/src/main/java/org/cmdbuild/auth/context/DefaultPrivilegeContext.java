@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.Validate;
 import org.cmdbuild.auth.acl.CMPrivilege;
@@ -166,10 +167,9 @@ public class DefaultPrivilegeContext implements PrivilegeContext {
 			final Map<String, PrivilegedObjectMetadata> metadataMap = Maps.newHashMap();
 			for (final String privilegeId : privilegeFilters.keySet()) {
 				final PrivilegedObjectMetadata metadata = new DefaultPrivilegedObjectMetadata();
-				final List<String> privilegeFiltersForClass = privilegeFilters.get(privilegeId);
-				if (!privilegeFiltersForClass.contains(null)) {
-					metadata.getFilters().addAll(privilegeFiltersForClass);
-				}
+				privilegeFilters.get(privilegeId).stream() //
+						.filter(input -> input != null) //
+						.forEach(input -> metadata.getFilters().add(input));
 				metadata.getAttributesPrivileges().addAll(disabledAttributes.get(privilegeId));
 				metadataMap.put(privilegeId, metadata);
 			}
