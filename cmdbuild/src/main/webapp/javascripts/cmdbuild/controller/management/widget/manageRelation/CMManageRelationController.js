@@ -63,7 +63,7 @@
 
 			this.templateResolver = new CMDBuild.Management.TemplateResolver({
 				clientForm: clientForm,
-				xaVars: widgetDef, // TODO: pass only the 'objId'??
+				xaVars: this.widgetConf, // TODO: pass only the 'objId'??
 				serverVars: this.getTemplateResolverServerVars()
 			});
 
@@ -179,7 +179,7 @@
 			}
 		},
 
-		onDeleteCard: function (model) { // TODO: fix with removeCard call
+		onDeleteCard: function (model) {
 			this.cardToDelete = model;
 			this.onDeleteRelationClick(model);
 		},
@@ -449,7 +449,7 @@
 		};
 	}
 
-	function openCardWindow(model, editable) { // TODO: separate from external code
+	function openCardWindow(model, editable) {
 		var w = new CMDBuild.view.management.common.CMCardWindow({
 			cmEditMode: editable,
 			withButtons: editable,
@@ -491,6 +491,7 @@
 				},
 				callback : function () {
 					delete me.cardToDelete;
+
 					me.loadData();
 				}
 			});
@@ -512,8 +513,20 @@
 	function getSrc(me) {
 		var src = me.widgetConf['source'];
 		if (src == null) {
-			// TODO: do this check server side
-			var targetClassId = _CMUtils.getAncestorsId(me.targetEntryType.getId()); // TODO: separate from external code
+			// Same code of CMDBuild.core.Utils.getEntryTypeAncestorsId()
+			var entryType = _CMCache.getEntryTypeById(me.targetEntryType.getId());
+			var targetClassId = [];
+
+			if (entryType) {
+				targetClassId.push(entryType.get("id"));
+
+				while (entryType.get("parent") != "") {
+					entryType = _CMCache.getEntryTypeById(entryType.get("parent"));
+					targetClassId.push(entryType.get("id"));
+				}
+			}
+			// END: Same code of CMDBuild.core.Utils.getEntryTypeAncestorsId()
+
 			if (Ext.Array.contains(targetClassId, me.domain.get('idClass1'))) {
 				src = '_1';
 			} else {
