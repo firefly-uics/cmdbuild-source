@@ -157,7 +157,7 @@ public class QuerySpecsBuilderFiller {
 			private final String entryTypeAlias = queryAttribute.getEntryTypeAlias().toString();
 			private final String attributeName = queryAttribute.getName();
 			private final CMAttribute cmAttribute = entryType.getAttribute(attributeName);
-			private final CMAttributeType<?> cmAttributeType = cmAttribute.getType();
+			private final CMAttributeType<?> cmAttributeType = (cmAttribute == null) ? null : cmAttribute.getType();
 
 			private Optional<String> pattern;
 
@@ -168,7 +168,9 @@ public class QuerySpecsBuilderFiller {
 
 			public Optional<String> pattern() {
 				pattern = absent();
-				cmAttributeType.accept(this);
+				if (cmAttributeType != null) {
+					cmAttributeType.accept(this);
+				}
 				return pattern;
 			}
 
@@ -227,7 +229,8 @@ public class QuerySpecsBuilderFiller {
 	/**
 	 * TODO: split into different private methods
 	 */
-	private void fillQuerySpecsBuilderWithFilterOptions(final QuerySpecsBuilder querySpecsBuilder) throws JSONException {
+	private void fillQuerySpecsBuilderWithFilterOptions(final QuerySpecsBuilder querySpecsBuilder)
+			throws JSONException {
 		final List<WhereClause> whereClauses = newArrayList();
 		final JSONObject filterObject = queryOptions.getFilter();
 		new JsonFilterValidator(queryOptions.getFilter()).validate();

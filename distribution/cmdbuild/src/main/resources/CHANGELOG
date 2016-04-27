@@ -46,6 +46,8 @@ FIXES
 
  * "None" grant on classes causes exposure of merged permissions
 
+ * Error when trying to get cards sorted for an hidden attribute
+
 
 
 
