@@ -1,5 +1,6 @@
 package org.cmdbuild.dao.driver.postgres.query;
 
+import static com.google.common.base.Joiner.on;
 import static java.lang.String.format;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.apache.commons.lang3.StringUtils.join;
@@ -15,10 +16,10 @@ import static org.cmdbuild.dao.driver.postgres.Const.SystemAttributes.Id;
 import static org.cmdbuild.dao.driver.postgres.Const.SystemAttributes.IdClass;
 import static org.cmdbuild.dao.driver.postgres.Const.SystemAttributes.User;
 import static org.cmdbuild.dao.driver.postgres.Utils.nameForSystemAttribute;
+import static org.cmdbuild.dao.driver.postgres.query.NumberingAndOrderPartCreator.quotedOrderClauses;
 import static org.cmdbuild.dao.query.clause.alias.NameAlias.as;
 
 import org.cmdbuild.dao.driver.postgres.Const.SystemAttributes;
-import org.cmdbuild.dao.driver.postgres.quote.AliasQuoter;
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.entrytype.CMDomain;
 import org.cmdbuild.dao.entrytype.CMEntryTypeVisitor;
@@ -126,9 +127,10 @@ public class SelectPartCreator extends PartCreator {
 
 	private String distinct() {
 		return querySpecs.distinct() ? //
-		format(" %s (%s) ", //
-				DISTINCT_ON, //
-				AliasQuoter.quote(as(nameForSystemAttribute(querySpecs.getFromClause().getAlias(), Id)))) //
+				format(" %s (%s) ", //
+						DISTINCT_ON, //
+						on(", ") //
+								.join(quotedOrderClauses(querySpecs).keySet())) //
 				: EMPTY;
 	}
 
