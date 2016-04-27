@@ -483,16 +483,16 @@
 
 	function removeCard() {
 		if (this.cardToDelete) {
-			var me = this;
 			CMDBuild.proxy.widget.ManageRelation.removeCard({
-				params : {
-					'IdClass': me.cardToDelete.get('dst_cid'),
-					'Id': me.cardToDelete.get('dst_id')
+				params: {
+					'IdClass': this.cardToDelete.get('dst_cid'),
+					'Id': this.cardToDelete.get('dst_id')
 				},
-				callback : function () {
-					delete me.cardToDelete;
+				scope: this,
+				callback: function (options, success, response) {
+					delete this.cardToDelete;
 
-					me.loadData();
+					this.loadData();
 				}
 			});
 		}
