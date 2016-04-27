@@ -48,6 +48,8 @@ FIXES
 
  * Error when trying to get cards sorted for an hidden attribute
 
+ * SQL error when filtering cards using a filter based on relations and no count is required
+
 
 
 
