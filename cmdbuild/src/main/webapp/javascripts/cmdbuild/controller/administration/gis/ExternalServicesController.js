@@ -3,7 +3,10 @@
 	Ext.define('CMDBuild.controller.administration.gis.ExternalServicesController', {
 		extend: 'CMDBuild.controller.CMBasePanelController',
 
-		requires: ['CMDBuild.core.proxy.configuration.Gis'],
+		requires: [
+			'CMDBuild.core.Message',
+			'CMDBuild.proxy.configuration.Gis'
+		],
 
 		view: undefined,
 
@@ -57,7 +60,7 @@
 		},
 
 		/**
-		 * @param {Object} data - CMDBuild.core.proxy.configuration.Gis.read response
+		 * @param {Object} data - CMDBuild.proxy.configuration.Gis.read response
 		 */
 		collapseFieldsets: function(data) {
 			Ext.Array.each(this.view.services, function(itemService, indexService, allItemsService) {
@@ -71,7 +74,7 @@
 		},
 
 		/**
-		 * @param {Object} data - CMDBuild.core.proxy.configuration.Gis.read response
+		 * @param {Object} data - CMDBuild.proxy.configuration.Gis.read response
 		 */
 		fillForm: function(data) {
 			for (var name in data) {
@@ -86,7 +89,7 @@
 		 * Reads configuration from server call, fill form with response and expands all active fieldset
 		 */
 		getConfigFromServer: function() {
-			CMDBuild.core.proxy.configuration.Gis.read({
+			CMDBuild.proxy.configuration.Gis.read({
 				scope: this,
 				success: function(result, options, decodedResult) {
 					this.fillForm(decodedResult.data);
@@ -132,10 +135,10 @@
 		onSaveButtonClick: function() {
 			var values = this.getValues();
 
-			CMDBuild.core.proxy.configuration.Gis.update({
+			CMDBuild.proxy.configuration.Gis.update({
 				params: values,
 				success: function() {
-					new CMDBuild.Msg.success();
+					CMDBuild.core.Message.success();
 
 					Ext.create('CMDBuild.core.configurations.builder.Gis'); // Rebuild configuration model
 				}

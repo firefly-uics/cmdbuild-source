@@ -456,7 +456,8 @@
 		"weeks2": "<em>In 2 weeks</em>"
 	},
 	"errors": {
-		"busy_wf_widgets": "Das Widget antwortet nicht. Prüfen Sie den Server-Status, bevor Sie die Operation wiederholen.",
+		"anErrorHasOccurred": "Es handelte sich um einen Fehler",
+		"busyVisualControls": "Das Widget antwortet nicht. Prüfen Sie den Server-Status, bevor Sie die Operation wiederholen.",
 		"copyAttachmentFailure": "<em>Copy attachment with name \"{0}\" failure</em>",
 		"createReportFilure": "<em>Create report failure</em>",
 		"csvUploadOrDecodeFailure": "<em>CSV upload or decode error</em>",
@@ -476,7 +477,7 @@
 		"invalidKeyAttributesInLocalStore": "<em>Invalid key attribute(s) in local store</em>",
 		"invalidLookupValue": "<em>Invalid Lookup value</em>",
 		"no_driver": "JDBC Treiber nicht anwesend.<br />Er kann in der CMDBuild Freigabedatei gefunden und in den Tomcat-Bibliotheken kopiert werden.",
-		"no_selections": "Sie haben keine Karte markiert",
+		"noSelectedCardToUpdate": "Sie haben keine Karte markiert",
 		"printReportFilure": "<em>Print report failure</em>",
 		"reasons": {
 			"ATTRIBUTE_NOTFOUND": "Attribut {1} von {0} nicht gefunden",
@@ -630,7 +631,6 @@
 		"show_detail": "Details einblenden",
 		"targetClassOrCqlFilterRequired": "<em>Target class or Card CQL selector are required</em>",
 		"template_error": "Fehler in einem Template",
-		"unknown_error": "Es handelte sich um einen Fehler",
 		"unmanagedReportType": "<em>Unmanaged report type</em>",
 		"valueDoesNotMatchFilter": "Der Wert stimmt das Filter nicht überein",
 		"widgetLinkCardsNoClassNameError": "<em>LinkCardsController constructor: className not valid</em>",
@@ -644,9 +644,6 @@
 	},
 	"filterWindow": {
 		"add": "Filter hinzufügen"
-	},
-	"info": {
-		"card_not_found": "Die Karte stimmt nicht mehr mit dem eingestellten Filter überein"
 	},
 	"management": {
 		"description": "Datenmanagement-Modul",
@@ -799,42 +796,6 @@
 			"showgraph": "Ansicht Graph",
 			"shownotes": "Ansicht Notizen"
 		},
-		"modutilities": {
-			"bulkupdate": {
-				"title": "Mehrfach-Update",
-				"countMessage": "{0} Karten werden bearbeitet"
-			},
-			"changepassword": {
-				"newpw": "Neues Passwort",
-				"oldpw": "Altes Passwort",
-				"repnew": "Neues Passwort wiederholen",
-				"successmsgtext": "Das Passwort wurde richtig geändert",
-				"title": "Passwort ändern",
-				"validationtext": "Die eingegebenen Passwörter stimmen nicht überein"
-			},
-			"csv": {
-				"csvfile": "CSV Datei",
-				"error": "Fehler",
-				"exportfile": "Exportieren",
-				"importfailure": "Fehlimport",
-				"importsuccess": "Import war erfolgreich",
-				"info": "Information",
-				"noupdate": "Keine aktualisierenden Karten",
-				"selectaclass": "Eine Klasse markieren",
-				"separator": "Trennzeichen",
-				"shownonvalid": "Nur ungültige Datensätze einblenden",
-				"title": "CSV Dateien importieren",
-				"title_export": "CSV Dateien exportieren",
-				"warning": "Achtung"
-			},
-			"title": "Dienstprogramm"
-		},
-		"modutility": {
-			"title": "Dienstprogramm"
-		},
-		"modview": {
-			"title": "Sicht"
-		},
 		"modworkflow": {
 			"abort_card": "Vorgang abbrechen",
 			"abort_card_confirm": "Sind Sie sicher, dass Sie diesen Vorgang abbrechen möchten?",
@@ -894,17 +855,16 @@
 		}
 	},
 	"warnings": {
+		"changeAppliedOnlyToFilteredCards": "Die Abänderungen können nur in die das laufende Filter respektierenden Karten Wirkungen zeigen",
 		"emailTemplateRelatedAttributeEdited": "<em>Attribute related with email templates changed, some e-mail could be regenerated.</em>",
 		"itemNotAvailable": "<em>Item not available</em>",
 		"itIsNotAllowedFilterWithCalculatedParams": "Es ist nicht erlaubt, ein Filter mit gerechneten Parametern zu benutzen",
 		"link_cards_changed_values": "Die Auswahl von \"{0}\" wurde aktualisiert",
-		"only_filtered": "Die Abänderungen können nur in die das laufende Filter respektierenden Karten Wirkungen zeigen",
 		"popup_block": "Es wurde ein Pop-up-Blocker erkannt. Bitte den Blocker ausschalten, um diese Operation auszuführen",
 		"reportsDuplicateImageFilename": "Fortsetzen ist unmöglich: Der Bericht enthält Bilddateien mit demselben Name.",
 		"saveMenuBeforeAccess": "<em>The menu has to been saved before access at the translations of this element.</em>",
 		"thereAreNoEnabledLanguages": "<em>There are no enabled languages</em>",
-		"toSetAFilterYouMustBeforeSelectAClass": "<em>To set a filter you must before select a class</em>",
-		"warning_message": "Achtung"
+		"toSetAFilterYouMustBeforeSelectAClass": "<em>To set a filter you must before select a class</em>"
 	},
 	"account": "Benutzerkonto",
 	"accounts": "Benutzerkonten",
@@ -976,8 +936,10 @@
 	"card": "Karte",
 	"cardCqlSelector": "CQL Auswertung",
 	"cardinality": "Kardinalität",
+	"cardNotMatchFilter": "Die Karte stimmt nicht mehr mit dem eingestellten Filter überein",
 	"cardPanelHeight": "Prozenthöhe der Karte",
 	"cards": "Datenkarten",
+	"cardsWillBeModified": "{0} Karten werden bearbeitet",
 	"category": "<em>Category</em>",
 	"cc": "Cc",
 	"changePassword": "Passwort ändern",
@@ -1118,6 +1080,7 @@
 	"existing": "Bestehend",
 	"expand": "<em>Expand</em>",
 	"expandAll": "<em>Expand all</em>",
+	"exportCsvFile": "CSV Dateien exportieren",
 	"exportLabel": "Exportieren",
 	"expose": "Ausstellen",
 	"externalServices": "Externe Dienste",
@@ -1159,15 +1122,19 @@
 	"imapPort": "IMAP port",
 	"imapServer": "IMAP server",
 	"import": "<em>Import</em>",
+	"importCsvFile": "CSV Dateien importieren",
 	"importExport": "<em>Import/Export</em>",
+	"importFailed": "Fehlimport",
 	"importFromCSV": "<em>Import from CSV</em>",
 	"importJasperReport": "Jasper bericht importieren",
+	"importWasSuccessful": "Import war erfolgreich",
 	"includeInherited": "Geerbte enthalten",
 	"includeRelations": "<em>Include relations</em>",
 	"includeSystemActivities": "<em>Include system activities</em>",
 	"includeUsersFilters": "<em>Include users filters</em>",
 	"incoming": "Eingehend",
 	"incomingFolder": "Ordner für eingegangene E-Mails",
+	"info": "Information",
 	"informationLayer": "<em>Information layer</em>",
 	"inheritsFrom": "Vererbt von",
 	"initialLatitude": "Anfangsbreite",
@@ -1198,6 +1165,7 @@
 	"loggedGroup": "Angemeldete Gruppe",
 	"loggedUser": "Angemeldeter Benutzer",
 	"login": "Anmelden",
+	"logon": "Anmelden",
 	"lookup": "<em>Lookup</em>",
 	"lookupList": "Liste der Punkte",
 	"lookupTypes": "Lookup Typ",
@@ -1236,15 +1204,18 @@
 	"modifyWidget": "<em>Modify widget</em>",
 	"move": "<em>Move</em>",
 	"multiGroup": "Multigruppe",
+	"multipleUpdate": "Mehrfach-Update",
 	"name": "Name",
 	"navigation": "Navigieren",
 	"navigationChronology": "<em>Navigation chronology</em>",
 	"navigationTree": "Baumansicht",
 	"navigationTrees": "Baumansichten",
 	"newFolder": "Neuer ordner",
+	"newPassword": "Neues Passwort",
 	"next": "Nächste",
 	"no_bim_project_for_card": "Es gibt keinen BIM Projekt für diese Karte",
 	"noAvailableData": "<em>No available data</em>",
+	"noCardsToUpdate": "Keine aktualisierenden Karten",
 	"nodeDistance": "<em>Node distance</em>",
 	"none": "Kein",
 	"noOne": "Keine",
@@ -1254,6 +1225,7 @@
 	"numberOfPings": "Ping nummer",
 	"odt": "ODT",
 	"ok": "Bestätigen",
+	"oldPassword": "Altes Passwort",
 	"onDay": "<em>On</em>",
 	"open_3d_viewer": "3D-Ansicht öffnen",
 	"openRelationGraph": "Beziehungsgraph öffnen",
@@ -1264,6 +1236,7 @@
 	"parent": "Superklasse",
 	"parentDescription": "Beschreibung der Superklasse",
 	"password": "Passwort",
+	"passwordChanged": "Das Passwort wurde richtig geändert",
 	"passwordsDoNotMatch": "Passwort ungültig",
 	"pdf": "PDF",
 	"permissions": "Erlaubnis",
@@ -1326,6 +1299,7 @@
 	"reset": "Auf null stellen",
 	"resetToDefault": "<em>Reset to defaults</em>",
 	"restore": "<em>Restore</em>",
+	"retypeNewPassword": "Neues Passwort wiederholen",
 	"root": "Quelle",
 	"rotate": "Rotieren",
 	"rowAndColumnPrivileges": "Zeilen- und Spalten-Privilegien",
@@ -1361,6 +1335,7 @@
 	"setup": "Allgemeine Optionen",
 	"showDetails": "Details einblenden",
 	"showHideThisFeatureOnly": "<em>Show/hide this feature only</em>",
+	"showInvalidRecordsOnly": "Nur ungültige Datensätze einblenden",
 	"showLanguageChoice": "Sprachauswahl anzeigen",
 	"showLanguageSelectionLoginBox": "Bei der Anmeldung die Sprachauswahl anzeigen",
 	"showLockerUserName": "Den Namen des Benutzers anzeigen, der die Karte gesperrt hat",
@@ -1415,6 +1390,7 @@
 	"usersAndGroups": "Benutzer und Gruppen",
 	"userStoppable": "Durch den Benutzer anhaltbar",
 	"userType": "Benutzer Typ",
+	"utility": "Dienstprogramm",
 	"utilityChangePassword": "Dienstprogramm - Passwort ändern",
 	"utilityExportCsv": "Dienstprogramm - CSV Dateien exportieren",
 	"utilityImportCsv": "Dienstprogramm - CSV Dateien importieren",

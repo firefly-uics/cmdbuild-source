@@ -5,7 +5,7 @@
 
 		requires: [
 			'CMDBuild.core.constants.Proxy',
-			'CMDBuild.core.proxy.common.tabs.email.Attachment'
+			'CMDBuild.proxy.common.tabs.email.Attachment'
 		],
 
 		/**
@@ -66,7 +66,7 @@
 			params[CMDBuild.core.constants.Proxy.EMAIL_ID] = this.record.get(CMDBuild.core.constants.Proxy.ID);
 			params[CMDBuild.core.constants.Proxy.TEMPORARY] = this.record.get(CMDBuild.core.constants.Proxy.TEMPORARY);
 
-			CMDBuild.core.proxy.common.tabs.email.Attachment.upload({
+			CMDBuild.proxy.common.tabs.email.Attachment.upload({
 				form: this.view.attachmentButtonsContainer.attachmentUploadForm.getForm(),
 				params: params,
 				loadMask: this.cmfg('tabEmailEmailWindowGetView'),
@@ -88,7 +88,7 @@
 			params[CMDBuild.core.constants.Proxy.FILE_NAME] = attachmentPanel[CMDBuild.core.constants.Proxy.FILE_NAME];
 			params[CMDBuild.core.constants.Proxy.TEMPORARY] = this.record.get(CMDBuild.core.constants.Proxy.TEMPORARY);
 
-			CMDBuild.core.proxy.common.tabs.email.Attachment.download({ params: params });
+			CMDBuild.proxy.common.tabs.email.Attachment.download({ params: params });
 		},
 
 		/**
@@ -100,7 +100,7 @@
 			params[CMDBuild.core.constants.Proxy.FILE_NAME] = attachmentPanel[CMDBuild.core.constants.Proxy.FILE_NAME];
 			params[CMDBuild.core.constants.Proxy.TEMPORARY] = this.record.get(CMDBuild.core.constants.Proxy.TEMPORARY);
 
-			CMDBuild.core.proxy.common.tabs.email.Attachment.remove({
+			CMDBuild.proxy.common.tabs.email.Attachment.remove({
 				params: params,
 				loadMask: this.cmfg('tabEmailEmailWindowGetView'), // Apply load mask to target
 				scope: this,

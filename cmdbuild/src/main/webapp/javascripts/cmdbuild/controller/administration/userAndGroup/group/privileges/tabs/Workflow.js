@@ -6,8 +6,7 @@
 		requires: [
 			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.Message',
-			'CMDBuild.core.proxy.Attributes',
-			'CMDBuild.core.proxy.userAndGroup.group.privileges.Workflow'
+			'CMDBuild.proxy.userAndGroup.group.privileges.Workflow'
 		],
 
 		mixins: ['CMDBuild.controller.common.field.filter.advanced.Advanced'], // Import fieldConfiguration, filter, selectedClass property methods
@@ -104,7 +103,7 @@
 				params[CMDBuild.core.constants.Proxy.FILTER] = Ext.encode(resultObject.filter);
 				params[CMDBuild.core.constants.Proxy.GROUP_ID] = this.cmfg('userAndGroupGroupSelectedGroupGet', CMDBuild.core.constants.Proxy.ID);
 
-				CMDBuild.core.proxy.userAndGroup.group.privileges.Workflow.setRowAndColumn({
+				CMDBuild.proxy.userAndGroup.group.privileges.Workflow.setRowAndColumn({
 					params: params,
 					scope: this,
 					success: function (response, options, decodedResponse) {
@@ -141,7 +140,7 @@
 						params[CMDBuild.core.constants.Proxy.GROUP_ID] = this.cmfg('userAndGroupGroupSelectedGroupGet', CMDBuild.core.constants.Proxy.ID);
 
 						// Set empty filter to clear value
-						CMDBuild.core.proxy.userAndGroup.group.privileges.Workflow.setRowAndColumn({
+						CMDBuild.proxy.userAndGroup.group.privileges.Workflow.setRowAndColumn({
 							params: params,
 							scope: this,
 							success: function (response, options, decodedResponse) {
@@ -186,7 +185,7 @@
 				params['privilegedObjectId'] = this.view.store.getAt(parameters.rowIndex).get(CMDBuild.core.constants.Proxy.ID);
 				params[CMDBuild.core.constants.Proxy.GROUP_ID] = this.cmfg('userAndGroupGroupSelectedGroupGet', CMDBuild.core.constants.Proxy.ID);
 
-				CMDBuild.core.proxy.userAndGroup.group.privileges.Workflow.update({
+				CMDBuild.proxy.userAndGroup.group.privileges.Workflow.update({
 					params: params,
 					scope: this,
 					success: function (response, options, decodedResponse) {

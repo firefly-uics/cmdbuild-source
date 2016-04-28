@@ -1,3 +1,8 @@
+Ext.require([
+	'CMDBuild.core.Message',
+	'CMDBuild.proxy.dashboard.Dashboard'
+]);
+
 Ext.define("CMDBuild.controller.administration.dashboard.CMDashboardLayoutPanelController", {
 
 	alias: ["controller.cmdashboardlayoutconf"],
@@ -11,7 +16,6 @@ Ext.define("CMDBuild.controller.administration.dashboard.CMDashboardLayoutPanelC
 		this.view = view;
 		this.view.setDelegate(this);
 		this.dashboard = null;
-		this.proxy = CMDBuild.ServiceProxy.Dashboard;
 	},
 
 	// called by the super-controller
@@ -59,7 +63,20 @@ Ext.define("CMDBuild.controller.administration.dashboard.CMDashboardLayoutPanelC
 	},
 
 	onSaveButtonClick: function() {
-		this.proxy.modifyColumns(this.dashboard.getId(), this.view.getColumnsConfiguration());
+		CMDBuild.proxy.dashboard.Dashboard.updateColumns({
+			params: {
+				dashboardId: this.dashboard.getId(),
+				columnsConfiguration: Ext.encode(this.view.getColumnsConfiguration())
+			},
+			scope: this,
+			success: function (response, options, decodedResponse) {
+				CMDBuild.core.Message.success();
+				var d = _CMCache.getDashboardById(this.dashboard.getId());
+				if (d) {
+					d.setColumns(this.view.getColumnsConfiguration());
+				}
+			}
+		});
 	},
 
 	onAbortButtonClick: function() {

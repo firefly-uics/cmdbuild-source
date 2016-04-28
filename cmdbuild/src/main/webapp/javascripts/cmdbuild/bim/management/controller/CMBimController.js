@@ -3,6 +3,11 @@
 	var ICON_ACTION = "action-open-bim";
 	var MAX_ZOOM = 15;
 
+	Ext.require([
+		'CMDBuild.bim.proxy.Bim',
+		'CMDBuild.core.Message'
+	]);
+
 	Ext.define("CMDBuild.bim.management.CMBimController", {
 
 		mixins: {
@@ -38,7 +43,7 @@
 		onCMCardGridColumnsReconfigured: function(grid) {
 			var entryType = _CMCardModuleState.entryType;
 			var me = this;
-			CMDBuild.bim.proxy.activeForClassName({
+			CMDBuild.bim.proxy.Bim.activeForClassName({
 				params: {
 					className: entryType.getName()
 				},
@@ -73,7 +78,7 @@
 				CMDBuild.core.LoadMask.show();
 				var me = this;
 				var entryType = _CMCardModuleState.entryType;
-				CMDBuild.bim.proxy.roidForCardId({
+				CMDBuild.bim.proxy.Bim.roidForCardId({
 					params: {
 						cardId: model.get("Id"),
 						className: entryType.getName(),
@@ -84,7 +89,7 @@
 							startBIMPlayer(me, response.ROID, response.DESCRIPTION, response.BASE_POID);
 						} else {
 							CMDBuild.core.Message.warning(
-									CMDBuild.Translation.warnings.warning_message, //
+									CMDBuild.Translation.warning, //
 									CMDBuild.Translation.no_bim_project_for_card
 							);
 						}
@@ -143,7 +148,7 @@
 		objectSelectedForLongPressure: function(sceneManager, objectId) {
 			var me = this;
 
-			CMDBuild.bim.proxy.fetchCardFromViewewId({
+			CMDBuild.bim.proxy.Bim.fetchCardFromViewewId({
 				params: {
 					revisionId: me.roid,
 					objectId: objectId
@@ -338,7 +343,7 @@
 			rememberMe: false,
 			success: callback,
 			failure: function() {
-				CMDBuild.Msg.error( //
+				CMDBuild.core.Message.error( //
 						CMDBuild.Translation.error, //
 						CMDBUild.Translation.error_bimserver_connection, //
 						true //

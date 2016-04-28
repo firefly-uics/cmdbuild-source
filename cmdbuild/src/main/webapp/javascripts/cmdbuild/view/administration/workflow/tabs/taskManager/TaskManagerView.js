@@ -1,4 +1,4 @@
-(function() {
+(function () {
 
 	Ext.define('CMDBuild.view.administration.workflow.tabs.taskManager.TaskManagerView', {
 		extend: 'Ext.panel.Panel',
@@ -22,7 +22,7 @@
 		layout: 'fit',
 		title: CMDBuild.Translation.taskManager,
 
-		initComponent: function() {
+		initComponent: function () {
 			Ext.apply(this, {
 				dockedItems: [
 					Ext.create('Ext.toolbar.Toolbar', {
@@ -35,7 +35,7 @@
 								disablePanelFunctions: true,
 								scope: this,
 
-								handler: function(button, e) {
+								handler: function (button, e) {
 									this.delegate.cmfg('onWorkflowTabTasksAddButtonClick');
 								}
 							}),
@@ -43,7 +43,7 @@
 								text: CMDBuild.Translation.modifyTask,
 								scope: this,
 
-								handler: function(button, e) {
+								handler: function (button, e) {
 									this.delegate.cmfg('onWorkflowTabTasksModifyButtonClick');
 								}
 							}),
@@ -51,7 +51,7 @@
 								text: CMDBuild.Translation.removeTask,
 								scope: this,
 
-								handler: function(button, e) {
+								handler: function (button, e) {
 									this.delegate.cmfg('onWorkflowTabTasksRemoveButtonClick');
 								}
 							})
@@ -67,7 +67,7 @@
 		},
 
 		listeners: {
-			show: function(panel, eOpts) {
+			show: function (panel, eOpts) {
 				this.delegate.cmfg('onWorkflowTabTasksShow');
 			}
 		}

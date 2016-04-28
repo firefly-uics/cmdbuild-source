@@ -6,7 +6,7 @@
 		requires: [
 			'CMDBuild.core.constants.FieldWidths',
 			'CMDBuild.core.constants.Proxy',
-			'CMDBuild.core.proxy.widget.Calendar'
+			'CMDBuild.proxy.widget.Calendar'
 		],
 
 		/**
@@ -61,7 +61,7 @@
 							editable: false,
 							forceSelection: true,
 
-							store: CMDBuild.core.proxy.widget.Calendar.getStoreTargetClass(),
+							store: CMDBuild.proxy.widget.Calendar.getStoreTargetClass(),
 							queryMode: 'local',
 
 							listeners: {
@@ -81,7 +81,7 @@
 							editable: false,
 							forceSelection: true,
 
-							store: CMDBuild.core.proxy.widget.Calendar.getStoreAttributesDate(),
+							store: CMDBuild.proxy.widget.Calendar.getStoreAttributesDate(),
 							queryMode: 'local'
 						}),
 						this.endDate = Ext.create('CMDBuild.view.common.field.comboBox.Erasable', {
@@ -94,7 +94,7 @@
 							editable: false,
 							forceSelection: true,
 
-							store: CMDBuild.core.proxy.widget.Calendar.getStoreAttributesDate(),
+							store: CMDBuild.proxy.widget.Calendar.getStoreAttributesDate(),
 							queryMode: 'local'
 						}),
 						this.defaultDate = Ext.create('CMDBuild.view.common.field.comboBox.Erasable', {
@@ -107,7 +107,7 @@
 							editable: false,
 							forceSelection: true,
 
-							store: CMDBuild.core.proxy.widget.Calendar.getStoreAttributesDate(),
+							store: CMDBuild.proxy.widget.Calendar.getStoreAttributesDate(),
 							queryMode: 'local'
 						}),
 						this.eventTitle = Ext.create('CMDBuild.view.common.field.comboBox.Erasable', {
@@ -120,7 +120,7 @@
 							editable: false,
 							forceSelection: true,
 
-							store: CMDBuild.core.proxy.widget.Calendar.getStoreAttributesString(),
+							store: CMDBuild.proxy.widget.Calendar.getStoreAttributesString(),
 							queryMode: 'local'
 						}),
 						Ext.create('Ext.form.field.TextArea', {

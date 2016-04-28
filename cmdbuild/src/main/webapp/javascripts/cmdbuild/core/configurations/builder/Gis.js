@@ -4,7 +4,7 @@
 
 		requires: [
 			'CMDBuild.core.constants.Proxy',
-			'CMDBuild.core.proxy.core.configurations.builder.Gis'
+			'CMDBuild.proxy.core.configurations.builder.Gis'
 		],
 
 		/**
@@ -23,13 +23,16 @@
 		 * @param {Object} configurationObject.scope
 		 *
 		 * @returns {Void}
+		 *
+		 * @override
 		 */
 		constructor: function (configurationObject) {
 			Ext.apply(this, configurationObject); // Apply configuration
 
 			Ext.ns('CMDBuild.configuration');
+			CMDBuild.configuration.gis = Ext.create('CMDBuild.model.core.configurations.builder.gis.Gis'); // Setup configuration with defaults
 
-			CMDBuild.core.proxy.core.configurations.builder.Gis.read({
+			CMDBuild.proxy.core.configurations.builder.Gis.read({
 				loadMask: false,
 				scope: this,
 				success: function (response, options, decodedResponse) {
@@ -38,7 +41,7 @@
 					if (!Ext.isEmpty(gisConfigurationObject[CMDBuild.core.constants.Proxy.DATA]))
 						gisConfigurationObject = gisConfigurationObject[CMDBuild.core.constants.Proxy.DATA];
 
-					CMDBuild.core.proxy.core.configurations.builder.Gis.readTreeNavigation({
+					CMDBuild.proxy.core.configurations.builder.Gis.readTreeNavigation({
 						loadMask: false,
 						scope: this.scope || this,
 						success: function (response, options, decodedResponse) {

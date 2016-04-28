@@ -1,4 +1,4 @@
-(function() {
+(function () {
 
 	Ext.define('CMDBuild.view.administration.workflow.tabs.properties.panel.BaseProperties', {
 		extend: 'Ext.form.Panel',
@@ -6,7 +6,7 @@
 		requires: [
 			'CMDBuild.core.constants.FieldWidths',
 			'CMDBuild.core.constants.Proxy',
-			'CMDBuild.core.proxy.workflow.Properties'
+			'CMDBuild.proxy.workflow.Properties'
 		],
 
 		mixins: ['CMDBuild.view.common.PanelFunctions'],
@@ -35,7 +35,12 @@
 			align: 'stretch'
 		},
 
-		initComponent: function() {
+		/**
+		 * @returns {Void}
+		 *
+		 * @override
+		 */
+		initComponent: function () {
 			Ext.apply(this, {
 				items: [
 					Ext.create('Ext.form.field.Text', {
@@ -80,7 +85,7 @@
 						editable: false,
 						disableEnableFunctions: true,
 
-						store: CMDBuild.core.proxy.workflow.Properties.getStoreSuperProcesses(),
+						store: CMDBuild.proxy.workflow.Properties.getStoreSuperProcesses(),
 						queryMode: 'local'
 					}),
 					Ext.create('Ext.form.field.Checkbox',{
@@ -123,14 +128,14 @@
 								margin: '5',
 								scope: this,
 
-								handler: function(button, e) {
+								handler: function (button, e) {
 									this.delegate.cmfg('onWorkflowTabPropertiesSaveButtonClick');
 								}
 							}),
 							Ext.create('CMDBuild.core.buttons.text.Abort', {
 								scope: this,
 
-								handler: function(button, e) {
+								handler: function (button, e) {
 									this.delegate.cmfg('onWorkflowTabPropertiesAbortButtonClick');
 								}
 							})

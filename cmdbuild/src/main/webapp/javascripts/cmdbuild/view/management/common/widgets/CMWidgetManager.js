@@ -161,7 +161,7 @@
 					 * @param {CMDBuild.model.CMActivityInstance} card or activity
 					 */
 					'.ManageRelation': function(widget, card) {
-						var w = Ext.create('CMDBuild.view.management.common.widgets.manageRelation.CMManageRelation', {
+						var w = Ext.create('CMDBuild.view.management.widget.manageRelation.CMManageRelation', {
 							widget: widget // TODO: this dependency should be deleted
 						});
 
@@ -187,7 +187,7 @@
 					 * @param {Ext.data.Model or CMDBuild.model.CMActivityInstance} card or activity
 					 */
 					'.OpenReport': function(widget, card) {
-						var w = Ext.create('CMDBuild.view.management.common.widgets.OpenReport');
+						var w = Ext.create('CMDBuild.view.management.widget.openReport.OpenReportView');
 
 						me.widgetsContainer.addWidgt(w);
 

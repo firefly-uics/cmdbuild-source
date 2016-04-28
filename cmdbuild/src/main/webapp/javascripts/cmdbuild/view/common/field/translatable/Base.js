@@ -1,9 +1,12 @@
 (function() {
 
+	Ext.require([
+		'CMDBuild.core.constants.Proxy',
+		'CMDBuild.proxy.localization.Localization'
+	]);
+
 	Ext.define('CMDBuild.view.common.field.translatable.Base', {
 		extend: 'Ext.form.FieldContainer',
-
-		requires: ['CMDBuild.core.constants.Proxy'],
 
 		/**
 		 * @cfg {Boolean}
@@ -230,7 +233,7 @@
 
 			translationsRead: function() {
 				if (this.isConfigurationValid()) {
-					CMDBuild.core.proxy.localization.Localization.read({
+					CMDBuild.proxy.localization.Localization.read({
 						params: this.configurationGet(),
 						scope: this,
 						success: function(response, options, decodedResponse) {

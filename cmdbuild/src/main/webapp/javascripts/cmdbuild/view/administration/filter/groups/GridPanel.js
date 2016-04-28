@@ -6,7 +6,7 @@
 		requires: [
 			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.Message',
-			'CMDBuild.core.proxy.filter.Group'
+			'CMDBuild.proxy.filter.Group'
 		],
 
 		/**
@@ -19,7 +19,7 @@
 		frame: false,
 
 		initComponent: function() {
-			var store = CMDBuild.core.proxy.filter.Group.getStore();
+			var store = CMDBuild.proxy.filter.Group.getStore();
 
 			Ext.apply(this, {
 				dockedItems: [

@@ -4,9 +4,8 @@
 		extend: 'CMDBuild.controller.common.abstract.Base',
 
 		requires: [
-			'CMDBuild.core.Message',
-			'CMDBuild.core.proxy.Attributes',
-			'CMDBuild.core.constants.Proxy'
+			'CMDBuild.core.constants.Proxy',
+			'CMDBuild.core.Message'
 		],
 
 		/**

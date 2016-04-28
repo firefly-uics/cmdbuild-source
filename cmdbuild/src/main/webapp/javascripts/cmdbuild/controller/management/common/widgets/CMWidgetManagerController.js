@@ -1,6 +1,10 @@
 (function() {
 
-	Ext.require(['CMDBuild.controller.management.common.widgets.manageRelation.CMManageRelationController']); // Legacy
+	Ext.require([ // Legacy
+		'CMDBuild.controller.management.widget.manageRelation.CMManageRelationController',
+		'CMDBuild.core.configurations.Timeout',
+		'CMDBuild.core.Message'
+	]);
 
 	Ext.define("CMDBuild.controller.management.common.CMWidgetManagerController", {
 
@@ -23,11 +27,11 @@
 					'.Grid': 'CMDBuild.controller.management.common.widgets.grid.Grid',
 					'.LinkCards': CMDBuild.controller.management.common.widgets.linkCards.LinkCardsController,
 					'.ManageEmail': 'CMDBuild.controller.management.widget.ManageEmail',
-					'.ManageRelation': CMDBuild.controller.management.common.widgets.manageRelation.CMManageRelationController,
+					'.ManageRelation': CMDBuild.controller.management.widget.manageRelation.CMManageRelationController,
 					'.NavigationTree': CMDBuild.controller.management.common.widgets.CMNavigationTreeController,
 					'.OpenAttachment': CMDBuild.controller.management.common.widgets.CMOpenAttachmentController,
 					'.OpenNote': CMDBuild.controller.management.common.widgets.CMOpenNoteController,
-					'.OpenReport': 'CMDBuild.controller.management.common.widgets.OpenReport',
+					'.OpenReport': 'CMDBuild.controller.management.widget.openReport.OpenReport',
 					'.Ping': 'CMDBuild.controller.management.widget.Ping',
 					'.PresetFromCard': CMDBuild.controller.management.common.widgets.CMPresetFromCardController,
 					'.WebService': CMDBuild.controller.management.common.widgets.CMWebServiceController,
@@ -144,7 +148,7 @@
 				}
 			}, this);
 
-			return widgetsAreValid ? null : '<ul>' + out + '</ul>';
+			return widgetsAreValid ? null : '<ul style="text-align: left;">' + out + '</ul>';
 		},
 
 		removeAll: function clearWidgetControllers() {
@@ -158,96 +162,38 @@
 		},
 
 		/**
-		 * @returns {Boolean} widgetsBusyState
+		 * @param {Function} callback
+		 * @param {Object} callback
 		 *
-		 * @private
+		 * @returns {Void}
 		 */
-		areThereBusyWidget: function() {
-			var widgetsBusyState = false;
+		waitForBusyWidgets: function (callback, scope) {
+			var requestBarrier = Ext.create('CMDBuild.core.RequestBarrier', {
+				id: 'widgetManagerBeforeSaveBarrier',
+				executionTimeout: CMDBuild.core.configurations.Timeout.getWorkflowWidgetsExecutionTimeout(),
+				scope: scope,
+				callback: callback,
+				failure: function () {
+					CMDBuild.core.Message.error(null, CMDBuild.Translation.errors.busyVisualControls, false);
+				}
+			});
 
-			Ext.Object.each(this.controllers, function(id, controller, myself) {
+			Ext.Object.each(this.controllers, function (id, controller, myself) {
 				// cmfg() implementation adapter
 				if (!Ext.isEmpty(controller.cmfg) && Ext.isFunction(controller.cmfg)) {
-					widgetsBusyState = controller.cmfg('isBusy');
-
-					return !widgetsBusyState;
-				} else if (!Ext.isEmpty(controller.isValid) && Ext.isFunction(controller.isValid)) {
-					widgetsBusyState = controller.isBusy();
-
-					return !widgetsBusyState;
+					controller.cmfg('onBeforeSave', {
+						scope: this,
+						callback: requestBarrier.getCallback('widgetManagerBeforeSaveBarrier')
+					});
+				} else if (Ext.isFunction(controller.onBeforeSave)) {
+					controller.onBeforeSave({
+						scope: this,
+						callback: requestBarrier.getCallback('widgetManagerBeforeSaveBarrier')
+					});
 				}
 			}, this);
 
-			return widgetsBusyState;
-		},
-
-		/**
-		 * Trigger onBeforeSave method on all widgets creating an execution chain on all widget onBeforeSave() functions
-		 *
-		 * @param {Function} lastCallback
-		 *
-		 * @private
-		 */
-		beforeSaveTriggerManager: function(lastCallback) {
-			var controllersArray = Ext.Object.getValues(this.controllers);
-			var chainArray = [];
-
-			if (!Ext.isEmpty(lastCallback) && Ext.isFunction(lastCallback)) {
-				if (Ext.Object.isEmpty(controllersArray)) { // No active widgets
-					return lastCallback();
-				} else {
-					Ext.Array.forEach(controllersArray, function(controller, i, allControllers) {
-						var nextControllerFunction = Ext.emptyFn;
-						var scope = this;
-
-						if (!Ext.isEmpty(controller.onBeforeSave) && Ext.isFunction(controller.onBeforeSave)) {
-							if (i + 1 < controllersArray.length) {
-								nextControllerFunction = controllersArray[i + 1].onBeforeSave;
-								scope = controllersArray[i + 1];
-							} else {
-								nextControllerFunction = lastCallback;
-								scope = this;
-							}
-
-							chainArray.push({
-								fn: nextControllerFunction,
-								scope: scope
-							});
-						}
-					}, this);
-
-					// Execute first chain function
-					if (!Ext.isEmpty(controllersArray[0]) && Ext.isFunction(controllersArray[0].onBeforeSave)) {
-						controllersArray[0].onBeforeSave(chainArray, 0);
-					} else {
-						_error('onBeforeSaveTrigger controllersArray head function error', this);
-					}
-				}
-			} else {
-				_error('onBeforeSaveTrigger lastCallback function error', this);
-			}
-		},
-
-		waitForBusyWidgets: function(cb, cbScope) {
-			var me = this;
-
-			CMDBuild.core.LoadMask.show();
-			this.beforeSaveTriggerManager(
-				function() {
-					new _CMUtils.PollingFunction({
-						success: cb,
-						failure: function failure() {
-							CMDBuild.Msg.error(null,CMDBuild.Translation.errors.busy_wf_widgets, false);
-						},
-						checkFn: function() {
-							// I want exit if there are no busy wc
-							return !me.areThereBusyWidget();
-						},
-						cbScope: cbScope,
-						checkFnScope: this
-					}).run();
-				}
-			);
+			requestBarrier.finalize('widgetManagerBeforeSaveBarrier', true);
 		},
 
 		/**
@@ -316,10 +262,6 @@
 			}
 
 			return controller;
-		},
-
-		hideWidgetsContainer: function() {
-			this.view.hideWidgetsContainer();
 		},
 
 		takeWidgetFromCard: function(card) {

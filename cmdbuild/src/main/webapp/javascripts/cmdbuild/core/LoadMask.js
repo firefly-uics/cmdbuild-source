@@ -1,4 +1,4 @@
-(function() {
+(function () {
 
 	/**
 	 * Global LoadMask management class
@@ -23,7 +23,7 @@
 		 *
 		 * @returns {Ext.LoadMask}
 		 */
-		build: function(message) {
+		build: function (message) {
 			message = Ext.isString(message) ? message : CMDBuild.Translation.pleaseWait;
 
 			if (Ext.isEmpty(CMDBuild.core.LoadMask.instance))
@@ -35,7 +35,7 @@
 			return CMDBuild.core.LoadMask.instance;
 		},
 
-		hide: function() {
+		hide: function () {
 			CMDBuild.core.LoadMask.build().hide();
 
 			if (
@@ -50,7 +50,7 @@
 		/**
 		 * @param {String} message
 		 */
-		show: function(message) {
+		show: function (message) {
 			if (
 				Ext.isEmpty(CMDBuild.core.Splash)
 				|| !Ext.isFunction(CMDBuild.core.Splash.build)

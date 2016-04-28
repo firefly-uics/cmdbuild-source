@@ -1,5 +1,7 @@
 (function() {
 
+	Ext.require(['CMDBuild.bim.proxy.Bim']);
+
 	BIMProjectLoader = function(delegate, classNames, progressBar) {
 		this.currentAction = {};
 
@@ -20,9 +22,9 @@
 		/**
 		 * this array contains the name
 		 * of the loaded layers
-		 * 
+		 *
 		 * ex: xfcRoof, xfcDoor
-		 * 
+		 *
 		 * it's filled incrementally
 		 * after each call to load a layer
 		 */
@@ -39,13 +41,13 @@
 		};
 
 		CMDBuild.core.LoadMask.show();
-		CMDBuild.bim.proxy.fetchJsonForBimViewer({
+		CMDBuild.bim.proxy.Bim.fetchJsonForBimViewer({
 			params: {
 				baseProjectId: basePoid, //
 				revisionId: roid
 			},
 			success: function(fp, request, response) {
-				if (me.delegate 
+				if (me.delegate
 						&& typeof me.delegate.projectDidLoad == "function") {
 
 						me.delegate.projectDidLoad(response);
@@ -58,7 +60,7 @@
 	};
 
 	BIMProjectLoader.prototype.loadGeometries = function(ifcTypes) {
-		
+
 		var me = this;
 		window._BIM_SERVER_API.call( //
 			"PluginInterface", //
@@ -89,7 +91,7 @@
 		}
 		var className = this.typeDownloadQueue[0];
 		this.typeDownloadQueue = this.typeDownloadQueue.slice(1);
-		
+
 		var me = this;
 
 		window._BIM_SERVER_API.call( //
@@ -110,7 +112,7 @@
 				me.currentAction.laid = laid;
 				me.currentAction.roid = roid;
 				me.currentAction.className = className;
-				
+
 				window._BIM_SERVER_API.call( //
 					"Bimsie1NotificationRegistryInterface", //
 					"getProgress", //
@@ -125,7 +127,7 @@
 						window._BIM_LOGGER.log("GET_PROGRESS_FAIL");
 					}
 				);
-	
+
 			} //
 		);
 	};
@@ -136,21 +138,21 @@
 			serializerOid : me.currentAction.serializerOid,
 			laid : me.currentAction.laid
 		});
-			
-		
+
+
 		$.getJSON(url, function(data) {
 			var currentLayerName = me.currentAction.className;
 			var currentLayerId = currentLayerName.toLowerCase();
-	
+
 			me.loadedTypes.push(currentLayerName);
 			me.loadGeometry(me.currentAction.roid, me.currentAction.serializerOid);
-			
+
 			if (me.delegate
 				&& typeof me.delegate.putGeometriesInScene == "function") {
-				
+
 				me.delegate.putGeometriesInScene(data, currentLayerName, currentLayerId);
 			}
-	
+
 		});
 	};
 
@@ -170,7 +172,7 @@
 		return this.loadedTypes.indexOf(typeName) > -1;
 	};
 
-	// http://stackoverflow.com/questions/1885557/simplest-code-for-array-intersection-in-javascript	
+	// http://stackoverflow.com/questions/1885557/simplest-code-for-array-intersection-in-javascript
 	function intersect_safe(a, b) {
 		var ai=0, bi=0;
 		var result = new Array();

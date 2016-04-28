@@ -1,7 +1,9 @@
 (function() {
 
+	Ext.require('CMDBuild.core.Message');
+
 	/**
-	 * @deprecated
+	 * @deprecated (CMDBuild.controller.common.abstract.Base)
 	 */
 	Ext.define('CMDBuild.controller.common.CMBasePanelController', {
 		alternateClassName: 'CMDBuild.controller.CMBasePanelController', // Legacy class name
@@ -57,9 +59,9 @@
 				for (index in invalidFieldsArray)
 					errorMessage += '<li>' + invalidFieldsArray[index].fieldLabel + '</li>';
 
-				errorMessage += '<ul>';
+				errorMessage += '</ul>';
 
-				CMDBuild.Msg.error(CMDBuild.Translation.common.failure, errorMessage, false);
+				CMDBuild.core.Message.error(CMDBuild.Translation.common.failure, errorMessage, false);
 
 				return false;
 			}

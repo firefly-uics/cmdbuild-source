@@ -8,7 +8,7 @@
 
 		requires: [
 			'CMDBuild.core.constants.Proxy',
-			'CMDBuild.core.proxy.localization.Localization'
+			'CMDBuild.proxy.localization.Localization'
 		],
 
 		/**
@@ -236,7 +236,7 @@
 			params[CMDBuild.core.constants.Proxy.ACTIVE] = this.view.activeOnlyCheckbox.getValue();
 			params[CMDBuild.core.constants.Proxy.TYPE] = this.getSectionId();
 
-			CMDBuild.core.proxy.localization.Localization.readAll({
+			CMDBuild.proxy.localization.Localization.readAll({
 				params: params,
 				scope: this,
 				success: function (response, options, decodedResponse) {
@@ -267,7 +267,7 @@
 				if (!Ext.isEmpty(node.get(CMDBuild.core.constants.Proxy.OWNER)))
 					params[CMDBuild.core.constants.Proxy.OWNER] = node.get(CMDBuild.core.constants.Proxy.OWNER);
 
-				CMDBuild.core.proxy.localization.Localization.update({
+				CMDBuild.proxy.localization.Localization.update({
 					params: params,
 					success: function (response, options, decodedResponse) {
 						CMDBuild.core.Message.success();

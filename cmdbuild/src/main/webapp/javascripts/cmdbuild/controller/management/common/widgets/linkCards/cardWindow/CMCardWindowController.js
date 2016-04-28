@@ -1,6 +1,9 @@
 (function() {
 
-	Ext.require('CMDBuild.core.constants.Global');
+	Ext.require([
+		'CMDBuild.core.constants.Global',
+		'CMDBuild.core.Message'
+	]);
 
 	Ext.define('CMDBuild.controller.management.common.widgets.linkCards.cardWindow.CMCardWindowController', {
 		extend: 'CMDBuild.controller.management.common.widgets.linkCards.cardWindow.CMBaseCardPanelController',
@@ -77,7 +80,7 @@
 			if (form.isValid()) {
 				this.doFormSubmit(params);
 			} else {
-				CMDBuild.Msg.error(
+				CMDBuild.core.Message.error(
 					null,
 					Ext.String.format(
 						'<p class="{0}">{1}</p>',
