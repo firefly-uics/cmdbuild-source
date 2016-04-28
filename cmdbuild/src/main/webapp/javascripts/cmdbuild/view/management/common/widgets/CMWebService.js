@@ -96,7 +96,7 @@
 	}
 
 	Ext.define("CMDBuild.view.management.common.widgets.CMXMLWindow", {
-		extend: "CMDBuild.PopupWindow",
+		extend: "CMDBuild.core.window.AbstractModal",
 
 		// configuration
 		xmlNode: null,

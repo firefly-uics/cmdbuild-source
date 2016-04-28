@@ -3,6 +3,8 @@ CMDBuild 2.4.1 (released YYYY/MM/DD)
 
 NEW FEATURES
 
+ *  Single authentication system used by all web service
+
 
 FIXES
 
@@ -45,6 +47,8 @@ FIXES
  * The row privileges are ignored when selecting a superclass and there are some row privileges set in a subclass
 
  * "None" grant on classes causes exposure of merged permissions
+
+ * Dashboard permissions not working
 
  * Error when trying to get cards sorted for an hidden attribute
 

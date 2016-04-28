@@ -6,7 +6,7 @@
 		requires: [
 			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.Message',
-			'CMDBuild.core.proxy.email.Account'
+			'CMDBuild.proxy.email.Account'
 		],
 
 		/**
@@ -108,7 +108,7 @@
 				var params = {};
 				params[CMDBuild.core.constants.Proxy.NAME] = this.grid.getSelectionModel().getSelection()[0].get(CMDBuild.core.constants.Proxy.NAME);
 
-				CMDBuild.core.proxy.email.Account.read({
+				CMDBuild.proxy.email.Account.read({
 					params: params,
 					scope: this,
 					success: function (response, options, decodedResponse) {
@@ -134,13 +134,13 @@
 				var formData = this.form.getData(true);
 
 				if (Ext.isEmpty(formData.id)) {
-					CMDBuild.core.proxy.email.Account.create({
+					CMDBuild.proxy.email.Account.create({
 						params: formData,
 						scope: this,
 						success: this.success
 					});
 				} else {
-					CMDBuild.core.proxy.email.Account.update({
+					CMDBuild.proxy.email.Account.update({
 						params: formData,
 						scope: this,
 						success: this.success
@@ -153,7 +153,7 @@
 			var params = {};
 			params[CMDBuild.core.constants.Proxy.NAME] = this.emailAccountSelectedAccountGet(CMDBuild.core.constants.Proxy.NAME);
 
-			CMDBuild.core.proxy.email.Account.setDefault({
+			CMDBuild.proxy.email.Account.setDefault({
 				params: params,
 				scope: this,
 				success: this.success
@@ -178,7 +178,7 @@
 				var params = {};
 				params[CMDBuild.core.constants.Proxy.NAME] = this.emailAccountSelectedAccountGet(CMDBuild.core.constants.Proxy.NAME);
 
-				CMDBuild.core.proxy.email.Account.remove({
+				CMDBuild.proxy.email.Account.remove({
 					params: params,
 					scope: this,
 					success: function (response, options, decodedResponse) {

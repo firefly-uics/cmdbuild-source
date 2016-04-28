@@ -456,7 +456,8 @@
 		"weeks2": "2 settimane"
 	},
 	"errors": {
-		"busy_wf_widgets": "I controlli visuali risultano occupati, controlla lo stato del server prima di riprovare.",
+		"anErrorHasOccurred": "Si è verificato un errore",
+		"busyVisualControls": "I controlli visuali risultano occupati, controlla lo stato del server prima di riprovare.",
 		"copyAttachmentFailure": "Copia dell'allegato \"{0}\" fallita",
 		"createReportFilure": "Errore nella creazione del report",
 		"csvUploadOrDecodeFailure": "Errore nel caricamento o decodifica del file CSV",
@@ -476,7 +477,7 @@
 		"invalidKeyAttributesInLocalStore": "Attributo(i) chiave non valido(i) nello store locale",
 		"invalidLookupValue": "Valore della Lookup non valido",
 		"no_driver": "Non è presente il driver JDBC.<br />Può essere trovato nel file del rilascio di CMDBuild e copiato tra le librerie di Tomcat.",
-		"no_selections": "Non hai selezionato nessuna scheda",
+		"noSelectedCardToUpdate": "Non hai selezionato nessuna scheda",
 		"printReportFilure": "Errore nella stampa del report",
 		"reasons": {
 			"ATTRIBUTE_NOTFOUND": "Attributo {1} di {0} non trovato",
@@ -630,7 +631,6 @@
 		"show_detail": "Mostra dettagli",
 		"targetClassOrCqlFilterRequired": "Classe di riferimento o Selettore CQLsono obbligatori",
 		"template_error": "Errore in un template",
-		"unknown_error": "Si è verificato un errore",
 		"unmanagedReportType": "Tipologia di report non gestita",
 		"valueDoesNotMatchFilter": "Il valore non rispetta il filtro impostato",
 		"widgetLinkCardsNoClassNameError": "LinkCardsController constructor: className non valido",
@@ -644,9 +644,6 @@
 	},
 	"filterWindow": {
 		"add": "Aggiungi filtro"
-	},
-	"info": {
-		"card_not_found": "La scheda non rispetta più il filtro impostato"
 	},
 	"management": {
 		"description": "Modulo gestione dati",
@@ -799,42 +796,6 @@
 			"showgraph": "Visualizza grafo",
 			"shownotes": "Visualizza note"
 		},
-		"modutilities": {
-			"bulkupdate": {
-				"title": "Modifica massiva schede",
-				"countMessage": "Saranno modificate {0} schede"
-			},
-			"changepassword": {
-				"newpw": "Nuova password",
-				"oldpw": "Vecchia password",
-				"repnew": "Ripeti nuova password",
-				"successmsgtext": "Password modificata correttamente",
-				"title": "Cambia password",
-				"validationtext": "Le password non coincidono"
-			},
-			"csv": {
-				"csvfile": "File CSV",
-				"error": "Errore",
-				"exportfile": "Esporta",
-				"importfailure": "Import fallito",
-				"importsuccess": "Import avvenuto con successo",
-				"info": "Informazione",
-				"noupdate": "Non ci sono schede da aggiornare",
-				"selectaclass": "Seleziona una classe",
-				"separator": "Separatore",
-				"shownonvalid": "Mostra solo record non validi",
-				"title": "Importa file CSV",
-				"title_export": "Esporta file CSV",
-				"warning": "Attenzione"
-			},
-			"title": "Utilità"
-		},
-		"modutility": {
-			"title": "Utilità"
-		},
-		"modview": {
-			"title": "Viste"
-		},
 		"modworkflow": {
 			"abort_card": "Interrompi processo",
 			"abort_card_confirm": "Sicuro di voler interrompere questo processo?",
@@ -894,17 +855,16 @@
 		}
 	},
 	"warnings": {
+		"changeAppliedOnlyToFilteredCards": "Le modifiche avranno effetto solo sulle schede che rispettano il filtro corrente",
 		"emailTemplateRelatedAttributeEdited": "Modificato attributo contenuto in una mail,qualche email potrebbe venir rigenerata.",
 		"itemNotAvailable": "Elemento non disponibile",
 		"itIsNotAllowedFilterWithCalculatedParams": "Non è permesso usare filtri con parametri calcolati",
 		"link_cards_changed_values": "La selezione di \"{0}\" è stata aggiornata",
-		"only_filtered": "Le modifiche avranno effetto solo sulle schede che rispettano il filtro corrente",
 		"popup_block": "Abbiamo rilevato un blocco popup, disabilitato per eseguire questa operazione",
 		"reportsDuplicateImageFilename": "Impossibile continuare: il report contiene file immagini con lo stesso nome.",
 		"saveMenuBeforeAccess": "Il menu deve essere salvato prima di accedere alla traduzione di questo elemento.",
 		"thereAreNoEnabledLanguages": "Non ci sono lingue abilitate.",
-		"toSetAFilterYouMustBeforeSelectAClass": "Per impostare un filtro è necessario prima selezionare una classe.",
-		"warning_message": "Attenzione"
+		"toSetAFilterYouMustBeforeSelectAClass": "Per impostare un filtro è necessario prima selezionare una classe."
 	},
 	"account": "Account",
 	"accounts": "Account",
@@ -976,8 +936,10 @@
 	"card": "Scheda",
 	"cardCqlSelector": "Selettore CQL",
 	"cardinality": "Cardinalità",
+	"cardNotMatchFilter": "La scheda non rispetta più il filtro impostato",
 	"cardPanelHeight": "Altezza in percentuale del pannello scheda",
 	"cards": "Schede dati",
+	"cardsWillBeModified": "Saranno modificate {0} schede",
 	"category": "Categoria",
 	"cc": "Cc",
 	"changePassword": "Cambia password",
@@ -1118,6 +1080,7 @@
 	"existing": "Esistente",
 	"expand": "Espandi",
 	"expandAll": "Espandi tutto",
+	"exportCsvFile": "Esporta file CSV",
 	"exportLabel": "Esporta",
 	"expose": "Esponi",
 	"externalServices": "Servizi esterni",
@@ -1159,15 +1122,19 @@
 	"imapPort": "Porta IMAP",
 	"imapServer": "Server IMAP",
 	"import": "Importa",
+	"importCsvFile": "Importa file CSV",
 	"importExport": "Importa/Esporta",
+	"importFailed": "Import fallito",
 	"importFromCSV": "Importa da CSV",
 	"importJasperReport": "Importazione report Jasper",
+	"importWasSuccessful": "Import avvenuto con successo",
 	"includeInherited": "Includi ereditati",
 	"includeRelations": "Includi relazioni",
 	"includeSystemActivities": "Includi attività di sistema",
 	"includeUsersFilters": "Includi filtri utente",
 	"incoming": "In arrivo",
 	"incomingFolder": "Cartella in arrivo",
+	"info": "Informazione",
 	"informationLayer": "Layed informativo",
 	"inheritsFrom": "Eredita da",
 	"initialLatitude": "Latitudine iniziale",
@@ -1198,6 +1165,7 @@
 	"loggedGroup": "Gruppo corrente",
 	"loggedUser": "Utente corrente",
 	"login": "Accedi",
+	"logon": "Accedi",
 	"lookup": "Lookup",
 	"lookupList": "Lista voci",
 	"lookupTypes": "Tipo lookup",
@@ -1236,15 +1204,18 @@
 	"modifyWidget": "Modifica widget",
 	"move": "Sposta",
 	"multiGroup": "Multi gruppo",
+	"multipleUpdate": "Modifica massiva schede",
 	"name": "Nome",
 	"navigation": "Navigazione",
 	"navigationChronology": "Cronologia navigazione",
 	"navigationTree": "Albero di navigazione",
 	"navigationTrees": "Alberi di navigazione",
 	"newFolder": "Nuova cartella",
+	"newPassword": "Nuova password",
 	"next": "Successivo",
 	"no_bim_project_for_card": "Non ho trovato un progetto BIM per questa card",
 	"noAvailableData": "Dati non disponibili",
+	"noCardsToUpdate": "Non ci sono schede da aggiornare",
 	"nodeDistance": "Distanza nodi",
 	"none": "Nessuno",
 	"noOne": "Nessuna",
@@ -1254,6 +1225,7 @@
 	"numberOfPings": "Numero di ping",
 	"odt": "ODT",
 	"ok": "Conferma",
+	"oldPassword": "Vecchia password",
 	"onDay": "Il giorno",
 	"open_3d_viewer": "Apri il visualizzatore 3D",
 	"openRelationGraph": "Apri grafo delle relazioni",
@@ -1264,6 +1236,7 @@
 	"parent": "Padre",
 	"parentDescription": "Descrizione padre",
 	"password": "Password",
+	"passwordChanged": "Password modificata correttamente",
 	"passwordsDoNotMatch": "Hai sbagliato a ridigitare la password",
 	"pdf": "PDF",
 	"permissions": "Permessi",
@@ -1326,6 +1299,7 @@
 	"reset": "Reset",
 	"resetToDefault": "Resetta a default",
 	"restore": "Ripristina",
+	"retypeNewPassword": "Ripeti nuova password",
 	"root": "Root",
 	"rotate": "Ruota",
 	"rowAndColumnPrivileges": "Privilegi su righe e colonne",
@@ -1361,6 +1335,7 @@
 	"setup": "Configurazione",
 	"showDetails": "Mostra dettagli",
 	"showHideThisFeatureOnly": "Mostra/nascondi solo questa funzione",
+	"showInvalidRecordsOnly": "Mostra solo record non validi",
 	"showLanguageChoice": "Mostra scelta della lingua",
 	"showLanguageSelectionLoginBox": "Mostra la scelta della lingua al login",
 	"showLockerUserName": "Mostra il nome dell'utente che ha bloccato la scheda",
@@ -1415,6 +1390,7 @@
 	"usersAndGroups": "Utenti e Gruppi",
 	"userStoppable": "Fermabile dall'utente",
 	"userType": "Tipo utente",
+	"utility": "Utilità",
 	"utilityChangePassword": "Utilità - Cambia password",
 	"utilityExportCsv": "Utilità - Esporta file CSV",
 	"utilityImportCsv": "Utilità - Importa file CSV",

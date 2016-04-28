@@ -47,6 +47,11 @@
 			align: 'stretch'
 		},
 
+		/**
+		 * @returns {Void}
+		 *
+		 * @override
+		 */
 		initComponent: function () {
 			Ext.apply(this, {
 				items: [

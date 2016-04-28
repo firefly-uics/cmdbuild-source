@@ -94,7 +94,8 @@
 			this.reset();
 			this.inheriteCombo.store.cmFill();
 			this.enableModify(all=true);
-			this.iconForm.setDisabledModify(true);
+			this.iconForm.imageIconDisplayField.setSrc('');
+			this.iconForm.setDisabledModify(true, true);
 			this.setDefaults();
 		},
 

@@ -5,7 +5,7 @@
 
 		requires: [
 			'CMDBuild.core.constants.Proxy',
-			'CMDBuild.core.proxy.localization.Localization'
+			'CMDBuild.proxy.localization.Localization'
 		],
 
 		/**

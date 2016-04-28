@@ -13,6 +13,9 @@
 		appFolder: './javascripts/cmdbuild',
 		name: 'CMDBuild',
 
+		/**
+		 * @returns {Void}
+		 */
 		launch: function () {
 			Ext.WindowManager.getNextZSeed(); // To increase the default zseed. Is needed for the combo on windows probably it fix also the prev problem
 			Ext.enableFx = false;
@@ -25,6 +28,7 @@
 			Ext.create('CMDBuild.core.LoggerManager'); // Logger configuration
 			Ext.create('CMDBuild.core.Data', { enableLocalized: true }); // Data connections configuration
 			Ext.create('CMDBuild.core.cache.Cache');
+			Ext.create('CMDBuild.core.configurations.builder.Instance'); // CMDBuild instance configuration
 
 			Ext.create('CMDBuild.controller.logout.Logout');
 		}

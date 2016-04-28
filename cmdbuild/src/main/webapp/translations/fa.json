@@ -456,7 +456,8 @@
 		"weeks2": "<em>In 2 weeks</em>"
 	},
 	"errors": {
-		"busy_wf_widgets": "کنترل های تصویری شلوغ اند، لطفا قبل از اینکه دوباره تکرار کنید وضعیت سرور را چک کنید",
+		"anErrorHasOccurred": "خطایی رخ داد",
+		"busyVisualControls": "کنترل های تصویری شلوغ اند، لطفا قبل از اینکه دوباره تکرار کنید وضعیت سرور را چک کنید",
 		"copyAttachmentFailure": "<em>Copy attachment with name \"{0}\" failure</em>",
 		"createReportFilure": "<em>Create report failure</em>",
 		"csvUploadOrDecodeFailure": "<em>CSV upload or decode error</em>",
@@ -476,7 +477,7 @@
 		"invalidKeyAttributesInLocalStore": "<em>Invalid key attribute(s) in local store</em>",
 		"invalidLookupValue": "<em>Invalid Lookup value</em>",
 		"no_driver": "No JDBC driver was found.<br />You can find it in the CMDBuild release package and copy it into the Tomcat libraries.",
-		"no_selections": "شما هیچ کارتی را برای آپدیت انتخاب نکردید",
+		"noSelectedCardToUpdate": "شما هیچ کارتی را برای آپدیت انتخاب نکردید",
 		"printReportFilure": "<em>Print report failure</em>",
 		"reasons": {
 			"ATTRIBUTE_NOTFOUND": "خاصیت {1} از {0} پیدا نشد",
@@ -630,7 +631,6 @@
 		"show_detail": "نمایش جزئیات",
 		"targetClassOrCqlFilterRequired": "<em>Target class or Card CQL selector are required</em>",
 		"template_error": "خطای قالب",
-		"unknown_error": "خطایی رخ داد",
 		"unmanagedReportType": "<em>Unmanaged report type</em>",
 		"valueDoesNotMatchFilter": "مقدار با فیلتر همخوانی ندارد",
 		"widgetLinkCardsNoClassNameError": "<em>LinkCardsController constructor: className not valid</em>",
@@ -644,9 +644,6 @@
 	},
 	"filterWindow": {
 		"add": "اضافه کردن فیلتر"
-	},
-	"info": {
-		"card_not_found": "کارت با فیلترهای کنونی همخوانی ندارد"
 	},
 	"management": {
 		"description": "ماژول مدیریت اطلاعات",
@@ -799,42 +796,6 @@
 			"showgraph": "نمایش گراف",
 			"shownotes": "نمایش یاداشتها"
 		},
-		"modutilities": {
-			"bulkupdate": {
-				"title": "آپدیت چندگانه",
-				"countMessage": "{0} کارت تغییر میکنند"
-			},
-			"changepassword": {
-				"newpw": "رمز عبور جدید",
-				"oldpw": "رمز عبور قدیمی",
-				"repnew": "دوباره رمز عبور جدید را وارد کنید",
-				"successmsgtext": "رمز عبور تغییر کرد",
-				"title": "تغییر رمز عبور",
-				"validationtext": "رمزها یکی نیستند"
-			},
-			"csv": {
-				"csvfile": "CSV file",
-				"error": "خطا",
-				"exportfile": "خروجی گرفتن",
-				"importfailure": "ورودی دادن با مشکل مواجه شد",
-				"importsuccess": "با موفقیت ورودی داده شد",
-				"info": "اطلاعات",
-				"noupdate": "هیچی کارتی آپدیت نشد",
-				"selectaclass": "یک کلاس انتخاب کنید",
-				"separator": "جدا کننده",
-				"shownonvalid": "فقط رکوردهای غیر مجاز را نمایش بده",
-				"title": "Import CSV file",
-				"title_export": "Export CSV file",
-				"warning": "هشدار"
-			},
-			"title": "کاربرد همگانی"
-		},
-		"modutility": {
-			"title": "کاربرد همگانی"
-		},
-		"modview": {
-			"title": "نمایشها"
-		},
 		"modworkflow": {
 			"abort_card": "نگه داشتن پروسه",
 			"abort_card_confirm": "آیا مطمئنید که میخواهید این پروسه را نگه دارید؟",
@@ -894,17 +855,16 @@
 		}
 	},
 	"warnings": {
+		"changeAppliedOnlyToFilteredCards": "تغییرات تنها در کارتهایی که با فیلتر کنونی سازگاری دارند اتفاق خواهد افتاد",
 		"emailTemplateRelatedAttributeEdited": "<em>Attribute related with email templates changed, some e-mail could be regenerated.</em>",
 		"itemNotAvailable": "<em>Item not available</em>",
 		"itIsNotAllowedFilterWithCalculatedParams": "اجازه ندارید که از فیلتر با پارامترهای محاسبه شده استفاده کنید",
 		"link_cards_changed_values": "<em>The selection of \"{0}\" has been updated.</em>",
-		"only_filtered": "تغییرات تنها در کارتهایی که با فیلتر کنونی سازگاری دارند اتفاق خواهد افتاد",
 		"popup_block": "<em>We have detected that you are using popup blocking software, please disable to run operation.</em>",
 		"reportsDuplicateImageFilename": "هشدار: تصویر گزارش با همین نام وجود دارد، نمیشود ادامه داد",
 		"saveMenuBeforeAccess": "<em>The menu has to been saved before access at the translations of this element.</em>",
 		"thereAreNoEnabledLanguages": "<em>There are no enabled languages</em>",
-		"toSetAFilterYouMustBeforeSelectAClass": "<em>To set a filter you must before select a class</em>",
-		"warning_message": "هشدار"
+		"toSetAFilterYouMustBeforeSelectAClass": "<em>To set a filter you must before select a class</em>"
 	},
 	"account": "حساب",
 	"accounts": "حسابها",
@@ -976,8 +936,10 @@
 	"card": "کارت",
 	"cardCqlSelector": "Card CQL selector",
 	"cardinality": "کاردینالیتی",
+	"cardNotMatchFilter": "کارت با فیلترهای کنونی همخوانی ندارد",
 	"cardPanelHeight": "ارتفاع پنل کارت بر حسب صدک",
 	"cards": "کارتها",
+	"cardsWillBeModified": "{0} کارت تغییر میکنند",
 	"category": "<em>Category</em>",
 	"cc": "Cc",
 	"changePassword": "تغییر رمز عبور",
@@ -1117,6 +1079,7 @@
 	"existing": "<em>Existing</em>",
 	"expand": "<em>Expand</em>",
 	"expandAll": "<em>Expand all</em>",
+	"exportCsvFile": "Export CSV file",
 	"exportLabel": "خروچی گرفتن",
 	"expose": "در معرض",
 	"externalServices": "سرویسهای خارجی",
@@ -1158,15 +1121,19 @@
 	"imapPort": "IMAP port",
 	"imapServer": "IMAP server",
 	"import": "<em>Import</em>",
+	"importCsvFile": "Import CSV file",
 	"importExport": "<em>Import/Export</em>",
+	"importFailed": "ورودی دادن با مشکل مواجه شد",
 	"importFromCSV": "<em>Import from CSV</em>",
 	"importJasperReport": "Import jasper report",
+	"importWasSuccessful": "با موفقیت ورودی داده شد",
 	"includeInherited": "شامل وراثت شود",
 	"includeRelations": "<em>Include relations</em>",
 	"includeSystemActivities": "<em>Include system activities</em>",
 	"includeUsersFilters": "<em>Include users filters</em>",
 	"incoming": "ورودی",
 	"incomingFolder": "فولدر ورودی",
+	"info": "اطلاعات",
 	"informationLayer": "<em>Information layer</em>",
 	"inheritsFrom": "به ارث رسیده از",
 	"initialLatitude": "Initial latitude",
@@ -1197,6 +1164,7 @@
 	"loggedGroup": "گروه لاگ شده",
 	"loggedUser": "کاربر لاگ شده",
 	"login": "ورود",
+	"logon": "ورود",
 	"lookup": "<em>Lookup</em>",
 	"lookupList": "لیست جستجوها",
 	"lookupTypes": "انواع جستجو",
@@ -1235,15 +1203,18 @@
 	"modifyWidget": "<em>Modify widget</em>",
 	"move": "<em>Move</em>",
 	"multiGroup": "چند گروهی",
+	"multipleUpdate": "آپدیت چندگانه",
 	"name": "نام",
 	"navigation": "هدایت",
 	"navigationChronology": "<em>Navigation chronology</em>",
 	"navigationTree": "درخت هدایت",
 	"navigationTrees": "درخت هدایت",
 	"newFolder": "پوشه جدید",
+	"newPassword": "رمز عبور جدید",
 	"next": "بعدی",
 	"no_bim_project_for_card": "There is no BIM project for this card",
 	"noAvailableData": "<em>No available data</em>",
+	"noCardsToUpdate": "هیچی کارتی آپدیت نشد",
 	"nodeDistance": "<em>Node distance</em>",
 	"none": "هیچ",
 	"noOne": "هیچ کدام",
@@ -1253,6 +1224,7 @@
 	"numberOfPings": "تعداد پینگها",
 	"odt": "ODT",
 	"ok": "OK",
+	"oldPassword": "رمز عبور قدیمی",
 	"onDay": "<em>On</em>",
 	"open_3d_viewer": "Open 3D viewer",
 	"openRelationGraph": "باز کردن گراف رابطه",
@@ -1263,6 +1235,7 @@
 	"parent": "والدین",
 	"parentDescription": "توضیحات والدین",
 	"password": "رمز عبور",
+	"passwordChanged": "رمز عبور تغییر کرد",
 	"passwordsDoNotMatch": "<em>Passwords do not match</em>",
 	"pdf": "PDF",
 	"permissions": "اجازه",
@@ -1325,6 +1298,7 @@
 	"reset": "ریست",
 	"resetToDefault": "<em>Reset to defaults</em>",
 	"restore": "<em>Restore</em>",
+	"retypeNewPassword": "دوباره رمز عبور جدید را وارد کنید",
 	"root": "<em>Root</em>",
 	"rotate": "چرخش",
 	"rowAndColumnPrivileges": "دسترسی سطر و ستونها",
@@ -1360,6 +1334,7 @@
 	"setup": "General Options",
 	"showDetails": "نمایش جزئیات",
 	"showHideThisFeatureOnly": "<em>Show/hide this feature only</em>",
+	"showInvalidRecordsOnly": "فقط رکوردهای غیر مجاز را نمایش بده",
 	"showLanguageChoice": "نمایش انتخاب زبان",
 	"showLanguageSelectionLoginBox": "<em>Show language selection in login box</em>",
 	"showLockerUserName": "نام کاربری قفل کننده را نمایش بده",
@@ -1415,6 +1390,7 @@
 	"usersAndGroups": "کاربران و گروهها",
 	"userStoppable": "<em>User stoppable</em>",
 	"userType": "<em>User type</em>",
+	"utility": "کاربرد همگانی",
 	"utilityChangePassword": "کاربرد همگانی - تغییر رمز عبور",
 	"utilityExportCsv": "کاربرد همگانی - Export CSV",
 	"utilityImportCsv": "کاربرد همگانی - Import CSV",

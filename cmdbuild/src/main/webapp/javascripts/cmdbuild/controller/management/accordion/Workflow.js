@@ -6,7 +6,7 @@
 		requires: [
 			'CMDBuild.core.constants.Global',
 			'CMDBuild.core.constants.Proxy',
-			'CMDBuild.core.proxy.Classes'
+			'CMDBuild.proxy.Classes'
 		],
 
 		/**
@@ -53,7 +53,7 @@
 			var params = {};
 			params[CMDBuild.core.constants.Proxy.ACTIVE] = true;
 
-			CMDBuild.core.proxy.Classes.readAll({
+			CMDBuild.proxy.Classes.readAll({
 				params: params,
 				loadMask: false,
 				scope: this,

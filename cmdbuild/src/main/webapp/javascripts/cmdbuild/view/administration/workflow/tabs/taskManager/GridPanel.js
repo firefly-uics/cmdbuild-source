@@ -1,11 +1,11 @@
-(function() {
+(function () {
 
 	Ext.define('CMDBuild.view.administration.workflow.tabs.taskManager.GridPanel', {
 		extend: 'Ext.grid.Panel',
 
 		requires: [
 			'CMDBuild.core.constants.Proxy',
-			'CMDBuild.core.proxy.workflow.Tasks'
+			'CMDBuild.proxy.workflow.Tasks'
 		],
 
 		/**
@@ -16,7 +16,12 @@
 		border: false,
 		frame: false,
 
-		initComponent: function() {
+		/**
+		 * @returns {Void}
+		 *
+		 * @override
+		 */
+		initComponent: function () {
 			Ext.apply(this, {
 				columns: [
 					{
@@ -36,18 +41,18 @@
 						fixed: true
 					})
 				],
-				store: CMDBuild.core.proxy.workflow.Tasks.getStore()
+				store: CMDBuild.proxy.workflow.Tasks.getStore()
 			});
 
 			this.callParent(arguments);
 		},
 
 		listeners: {
-			itemdblclick: function(grid, record, item, index, e, eOpts) {
+			itemdblclick: function (grid, record, item, index, e, eOpts) {
 				this.delegate.cmfg('onWorkflowTabTasksItemDoubleClick');
 			},
 
-			select: function(row, record, index) {
+			select: function (row, record, index) {
 				this.delegate.cmfg('onWorkflowTabTasksRowSelect');
 			}
 		}

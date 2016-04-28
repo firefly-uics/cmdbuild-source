@@ -47,7 +47,7 @@
 		 * @override
 		 */
 		constructor: function(data) {
-			data = this.self.convertFromLegacy(data);
+			data = this.statics().convertFromLegacy(data);
 
 			this.callParent(arguments);
 		}

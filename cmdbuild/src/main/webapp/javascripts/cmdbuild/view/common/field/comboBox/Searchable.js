@@ -26,10 +26,31 @@
 		trigger2Cls: Ext.baseCSSPrefix + 'form-clear-trigger',
 		trigger3Cls: Ext.baseCSSPrefix + 'form-search-trigger',
 
+		/**
+		 * @returns {Void}
+		 *
+		 * @override
+		 */
 		initComponent: function () {
 			this.delegate = Ext.create('CMDBuild.controller.common.field.comboBox.Searchable', { view: this });
 
 			this.callParent(arguments);
+		},
+
+		/**
+		 * Check if field returned value exists inside store
+		 *
+		 * @param {String} rawValue
+		 *
+		 * @returns {Array}
+		 *
+		 * @override
+		 */
+		getErrors: function (rawValue) {
+			if (!Ext.isEmpty(rawValue) && this.getStore().find(this.valueField, this.getValue()) == -1)
+				return [CMDBuild.Translation.errors.valueDoesNotMatchFilter];
+
+			return this.callParent(arguments);
 		},
 
 		/**
@@ -43,6 +64,21 @@
 		},
 
 		/**
+		 * Return value only if number, to avoid wrong and massive server requests from template resolver where returned value from field is a string
+		 *
+		 * @returns {Number}
+		 *
+		 * @override
+		 */
+		getValue: function () {
+			var value = this.callParent(arguments);
+
+			return Ext.isNumber(value) ? value : '';
+		},
+
+		/**
+		 * @returns {Void}
+		 *
 		 * @override
 		 */
 		onKeyUp: function () {
@@ -53,14 +89,23 @@
 			}
 		},
 
+		/**
+		 * @returns {Void}
+		 */
 		onTrigger1Click: function () {
 			this.delegate.cmfg('onFieldComboBoxSearchableTrigger1Click');
 		},
 
+		/**
+		 * @returns {Void}
+		 */
 		onTrigger2Click: function () {
 			this.delegate.cmfg('onFieldComboBoxSearchableTrigger2Click');
 		},
 
+		/**
+		 * @returns {Void}
+		 */
 		onTrigger3Click: function (value) {
 			this.delegate.cmfg('onFieldComboBoxSearchableTrigger3Click');
 		},

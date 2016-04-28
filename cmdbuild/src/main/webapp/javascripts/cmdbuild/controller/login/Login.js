@@ -5,16 +5,15 @@
 
 		requires: [
 			'CMDBuild.core.constants.Proxy',
-			'CMDBuild.core.LoadMask',
-			'CMDBuild.core.proxy.session.JsonRpc',
-			'CMDBuild.core.proxy.session.Rest'
+			'CMDBuild.core.CookiesManager',
+			'CMDBuild.proxy.Session'
 		],
 
 		/**
 		 * @cfg {Array}
 		 */
 		cmfgCatchedFunctions: [
-			'onLoginViewportDoLogin',
+			'onLoginViewportLoginButtonClick',
 			'onLoginViewportUserChange'
 		],
 
@@ -31,6 +30,8 @@
 		/**
 		 * @param {Object} configurationObject
 		 *
+		 * @returns {Void}
+		 *
 		 * @override
 		 */
 		constructor: function (configurationObject) {
@@ -44,105 +45,125 @@
 			this.setupFields();
 		},
 
-		onLoginViewportDoLogin: function () {
-			if (!Ext.isEmpty(this.form.role.getValue()) || this.form.getForm().isValid()) {
+		/**
+		 * @returns {Void}
+		 */
+		onLoginViewportLoginButtonClick: function () {
+			if (this.form.group.isHidden()) {
+				this.sessionCreate();
+			} else {
+				this.sessionUpdate();
+			}
+		},
+
+		/**
+		 * @returns {Void}
+		 */
+		onLoginViewportUserChange: function () {
+			this.setupFieldsGroup();
+		},
+
+		/**
+		 * @returns {Void}
+		 *
+		 * @private
+		 */
+		sectionRedirect: function () {
+			if (/administration.jsp$/.test(window.location)) {
+				window.location = 'administration.jsp' + window.location.hash;
+			} else {
+				window.location = 'management.jsp' + window.location.hash;
+			}
+		},
+
+		/**
+		 * @returns {Void}
+		 *
+		 * @private
+		 */
+		sessionCreate: function () {
+			if (this.validate(this.form)) {
 				var params = {};
 				params[CMDBuild.core.constants.Proxy.PASSWORD] = this.form.password.getValue();
 				params[CMDBuild.core.constants.Proxy.USERNAME] = this.form.user.getValue();
 
-				if (!this.form.role.isHidden())
-					params[CMDBuild.core.constants.Proxy.ROLE] = this.form.role.getValue();
-
-				// LoadMask manual manage to avoid to hide on success
-				CMDBuild.core.LoadMask.show();
-				CMDBuild.core.proxy.session.JsonRpc.login({
+				CMDBuild.proxy.Session.create({
 					params: params,
-					loadMask: false,
 					scope: this,
 					success: function (response, options, decodedResponse) {
-						if (!Ext.isEmpty(this.form.password.getValue())) {
-							CMDBuild.core.proxy.session.Rest.login({
-								params: params,
-								scope: this,
-								success: function (response, options, decodedResponse) {
-									decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.DATA];
+						decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.RESPONSE];
 
-									if (Ext.isObject(decodedResponse) && !Ext.Object.isEmpty(decodedResponse))
-										Ext.util.Cookies.set(CMDBuild.core.constants.Proxy.SESSION_TOKEN, decodedResponse['_id']);
-								},
-								callback: function (options, success, response) {
-									// CMDBuild redirect
-									if (/administration.jsp$/.test(window.location)) {
-										window.location = 'administration.jsp' + window.location.hash;
-									} else {
-										window.location = 'management.jsp' + window.location.hash;
-									}
-								}
-							});
-						} else {
-							// CMDBuild redirect
-							if (/administration.jsp$/.test(window.location)) {
-								window.location = 'administration.jsp' + window.location.hash;
-							} else {
-								window.location = 'management.jsp' + window.location.hash;
-							}
-						}
-					},
-					failure: function (response, options, decodedResponse) {
-						CMDBuild.core.LoadMask.hide();
+						CMDBuild.core.CookiesManager.authorizationSet(decodedResponse[CMDBuild.core.constants.Proxy.SESSION_ID]);
 
-						if (!Ext.isEmpty(decodedResponse) && decodedResponse[CMDBuild.core.constants.Proxy.REASON] == 'AUTH_MULTIPLE_GROUPS') {
+						if (Ext.isEmpty(decodedResponse[CMDBuild.core.constants.Proxy.GROUP])) { // Group to be selected
 							CMDBuild.configuration.runtime.set(CMDBuild.core.constants.Proxy.USERNAME, this.form.user.getValue());
 							CMDBuild.configuration.runtime.set(CMDBuild.core.constants.Proxy.GROUPS, decodedResponse[CMDBuild.core.constants.Proxy.GROUPS]);
 
 							this.setupFields();
-
-							return false;
-						} else {
-							decodedResponse.stacktrace = undefined; // To not show the detail link in the error pop-up
+						} else { // Succesfully logged
+							this.sectionRedirect();
 						}
 					}
 				});
 			}
 		},
 
-		onLoginViewportUserChange: function () {
-			this.setupFieldsRole(false);
-		},
-
 		/**
+		 * Update session with selected group
+		 *
+		 * @returns {Void}
+		 *
 		 * @private
 		 */
-		setupFields: function () {
-			if (!Ext.isEmpty(CMDBuild.configuration.runtime)) {
-				if (Ext.isEmpty(CMDBuild.configuration.runtime.get(CMDBuild.core.constants.Proxy.USERNAME))) {
-					this.form.user.focus();
-				} else {
-					this.form.user.setValue(CMDBuild.configuration.runtime.get(CMDBuild.core.constants.Proxy.USERNAME));
-					this.form.user.disable();
+		sessionUpdate: function () {
+			if (this.validate(this.form)) {
+				var params = {};
+				params[CMDBuild.core.constants.Proxy.GROUP] = this.form.group.getValue();
+				params[CMDBuild.core.constants.Proxy.SESSION] = CMDBuild.core.CookiesManager.authorizationGet();
 
-					this.form.password.hide();
-					this.form.password.disable();
-				}
-
-				this.setupFieldsRole(!Ext.isEmpty(CMDBuild.configuration.runtime.get(CMDBuild.core.constants.Proxy.GROUPS)));
+				CMDBuild.proxy.Session.update({
+					params: params,
+					scope: this,
+					success: this.sectionRedirect
+				});
 			}
 		},
 
 		/**
-		 * @param {Boolean} state
+		 * @returns {Void}
 		 *
 		 * @private
 		 */
-		setupFieldsRole: function (state) {
-			state = Ext.isBoolean(state) ? state : false;
-
-			if (state && !Ext.isEmpty(CMDBuild.configuration.runtime.get(CMDBuild.core.constants.Proxy.GROUPS))) {
-				this.form.role.getStore().loadData(CMDBuild.configuration.runtime.get(CMDBuild.core.constants.Proxy.GROUPS));
-				this.form.role.show();
-				this.form.role.focus();
+		setupFields: function () {
+			if (!Ext.isEmpty(CMDBuild.configuration.runtime) && Ext.isEmpty(CMDBuild.configuration.runtime.get(CMDBuild.core.constants.Proxy.USERNAME))) {
+				this.form.user.focus();
 			} else {
-				this.form.role.hide();
+				this.form.user.setValue(CMDBuild.configuration.runtime.get(CMDBuild.core.constants.Proxy.USERNAME));
+				this.form.user.disable();
+
+				this.form.password.hide();
+				this.form.password.disable();
+			}
+
+			this.setupFieldsGroup();
+		},
+
+		/**
+		 * @returns {Void}
+		 *
+		 * @private
+		 */
+		setupFieldsGroup: function () {
+			if (
+				!Ext.isEmpty(CMDBuild.configuration.runtime.get(CMDBuild.core.constants.Proxy.GROUPS))
+				&& Ext.isArray(CMDBuild.configuration.runtime.get(CMDBuild.core.constants.Proxy.GROUPS))
+			) {
+				this.form.group.getStore().loadData(CMDBuild.configuration.runtime.get(CMDBuild.core.constants.Proxy.GROUPS));
+
+				this.form.group.show();
+				this.form.group.focus();
+			} else {
+				this.form.group.hide();
 			}
 		}
 	});

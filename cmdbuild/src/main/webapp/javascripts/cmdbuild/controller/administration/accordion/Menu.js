@@ -5,7 +5,7 @@
 
 		requires: [
 			'CMDBuild.core.constants.Proxy',
-			'CMDBuild.core.proxy.userAndGroup.group.Group',
+			'CMDBuild.proxy.userAndGroup.group.Group',
 			'CMDBuild.core.Utils'
 		],
 
@@ -45,7 +45,7 @@
 		accordionUpdateStore: function (nodeIdToSelect) {
 			nodeIdToSelect = Ext.isNumber(nodeIdToSelect) ? nodeIdToSelect : null;
 
-			CMDBuild.core.proxy.userAndGroup.group.Group.readAll({
+			CMDBuild.proxy.userAndGroup.group.Group.readAll({
 				scope: this,
 				success: function (result, options, decodedResult) {
 					decodedResult = decodedResult[CMDBuild.core.constants.Proxy.GROUPS];

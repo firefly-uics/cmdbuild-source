@@ -1,4 +1,4 @@
-(function() {
+(function () {
 
 	Ext.define('CMDBuild.view.administration.workflow.tabs.domains.DomainsView', {
 		extend: 'Ext.panel.Panel',
@@ -27,7 +27,12 @@
 		layout: 'fit',
 		title: CMDBuild.Translation.domains,
 
-		initComponent: function() {
+		/**
+		 * @returns {Void}
+		 *
+		 * @override
+		 */
+		initComponent: function () {
 			Ext.apply(this, {
 				dockedItems: [
 					Ext.create('Ext.toolbar.Toolbar', {
@@ -40,7 +45,7 @@
 								disablePanelFunctions: true,
 								scope: this,
 
-								handler: function(button, e) {
+								handler: function (button, e) {
 									this.delegate.cmfg('onWorkflowTabDomainsAddButtonClick');
 								}
 							}),
@@ -48,7 +53,7 @@
 								text: CMDBuild.Translation.modifyDomain,
 								scope: this,
 
-								handler: function(button, e) {
+								handler: function (button, e) {
 									this.delegate.cmfg('onWorkflowTabDomainsModifyButtonClick');
 								}
 							}),
@@ -56,7 +61,7 @@
 								text: CMDBuild.Translation.removeDomain,
 								scope: this,
 
-								handler: function(button, e) {
+								handler: function (button, e) {
 									this.delegate.cmfg('onWorkflowTabDomainsRemoveButtonClick');
 								}
 							}),
@@ -70,7 +75,7 @@
 								disablePanelFunctions: true,
 								scope: this,
 
-								handler: function(checkbox, checked) {
+								handler: function (checkbox, checked) {
 									this.delegate.cmfg('onWorkflowTabDomainsIncludeInheritedCheck');
 								}
 							})
@@ -86,7 +91,7 @@
 		},
 
 		listeners: {
-			show: function(panel, eOpts) {
+			show: function (panel, eOpts) {
 				this.delegate.cmfg('onWorkflowTabDomainsShow');
 			}
 		}

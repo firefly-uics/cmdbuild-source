@@ -1,7 +1,7 @@
 (function () {
 
 	Ext.define('CMDBuild.view.management.common.tabs.email.emailWindow.ViewWindow', {
-		extend: 'CMDBuild.core.PopupWindow',
+		extend: 'CMDBuild.core.window.AbstractModal',
 
 		requires: [
 			'CMDBuild.core.constants.FieldWidths',

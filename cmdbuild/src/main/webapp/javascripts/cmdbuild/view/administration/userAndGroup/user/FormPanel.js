@@ -6,7 +6,7 @@
 		requires: [
 			'CMDBuild.core.constants.FieldWidths',
 			'CMDBuild.core.constants.Proxy',
-			'CMDBuild.core.proxy.userAndGroup.user.User'
+			'CMDBuild.proxy.userAndGroup.user.User'
 		],
 
 		mixins: ['CMDBuild.view.common.PanelFunctions'],
@@ -177,7 +177,7 @@
 								editable: false,
 								allowBlank: true,
 
-								store: CMDBuild.core.proxy.userAndGroup.user.User.getStoreDefaultGroup(),
+								store: CMDBuild.proxy.userAndGroup.user.User.getStoreDefaultGroup(),
 								queryMode: 'local'
 							}),
 							Ext.create('Ext.form.field.Checkbox', {

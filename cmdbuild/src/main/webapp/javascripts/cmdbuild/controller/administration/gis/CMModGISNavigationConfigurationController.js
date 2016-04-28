@@ -1,5 +1,7 @@
 (function() {
 
+	Ext.require(['CMDBuild.proxy.gis.TreeNavigation']);
+
 	Ext.define("CMDBuild.controller.administration.gis.CMModGISNavigationConfigurationController", {
 		extend: "CMDBuild.controller.CMBasePanelController",
 
@@ -20,7 +22,8 @@
 				me.view.classesMenu.readClasses();
 
 				CMDBuild.core.LoadMask.show();
-				CMDBuild.ServiceProxy.gis.getGisTreeNavigation({
+				CMDBuild.proxy.gis.TreeNavigation.read({
+					loadMask: false,
 					success: function(operation, config, response) {
 						me.loaded = true;
 						var root = response.root;
@@ -47,16 +50,17 @@
 				});
 			}
 		},
-	
+
 		// as gisNavigationConfigurationPanel
 
 		onGISNavigationSaveButtonClick: function(panel) {
 			var structure = panel.getTreeStructure();
 			CMDBuild.core.LoadMask.show();
-			CMDBuild.ServiceProxy.gis.saveGisTreeNavigation({
+			CMDBuild.proxy.gis.TreeNavigation.update({
 				params: {
 					structure: Ext.encode(structure)
 				},
+				loadMask: false,
 				callback: function() {
 					CMDBuild.core.LoadMask.hide();
 				}
@@ -72,10 +76,11 @@
 				fn: function(button) {
 					if (button == "yes") {
 						CMDBuild.core.LoadMask.show();
-						CMDBuild.ServiceProxy.gis.removeGisTreeNavigation({
+						CMDBuild.proxy.gis.TreeNavigation.remove({
 							success: function() {
 								me.view.resetView();;
 							},
+							loadMask: false,
 							callback: function() {
 								CMDBuild.core.LoadMask.hide();
 							}

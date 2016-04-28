@@ -253,6 +253,7 @@ public class CommunicationConstants {
 			SCALE = "scale", //
 			SEPARATOR = "separator", //
 			SERVICE = "service", //
+			SESSION = "session", //
 			SHARK_SCHEMA = "shark_schema", //
 			SHORT = "short", //
 			SHOW_IN_GRID = "isbasedsp", //

@@ -37,7 +37,7 @@
 	});
 
 	Ext.define('CMDBuild.view.management.common.filter.CMFilterWindow', {
-		extend: 'CMDBuild.PopupWindow',
+		extend: 'CMDBuild.core.window.AbstractModal',
 
 		mixins: {
 			delegable: 'CMDBuild.core.CMDelegable'

@@ -3,7 +3,10 @@
 	Ext.define('CMDBuild.view.common.field.filter.advanced.window.GridPanel', {
 		extend: 'Ext.grid.Panel',
 
-		requires: ['CMDBuild.core.constants.Proxy'],
+		requires: [
+			'CMDBuild.core.constants.Proxy',
+			'CMDBuild.proxy.common.field.filter.advanced.window.Window'
+		],
 
 		/**
 		 * @cfg {CMDBuild.controller.common.field.filter.advanced.window.panels.relations.Relations}
@@ -20,7 +23,7 @@
 
 		initComponent: function() {
 			Ext.apply(this, {
-				store: CMDBuild.core.proxy.common.field.filter.advanced.window.Window.getGroupStore()
+				store: CMDBuild.proxy.common.field.filter.advanced.window.Window.getStoreGroup()
 			});
 
 			Ext.apply(this, {

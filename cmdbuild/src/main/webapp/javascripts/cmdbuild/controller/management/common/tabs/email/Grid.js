@@ -7,7 +7,7 @@
 			'CMDBuild.controller.management.common.tabs.email.Email',
 			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.Message',
-			'CMDBuild.core.proxy.common.tabs.email.Email'
+			'CMDBuild.proxy.common.tabs.email.Email'
 		],
 
 		/**
@@ -280,7 +280,7 @@
 				parameters.scope = Ext.isEmpty(parameters.scope) ? this : parameters.scope;
 
 				if (!Ext.Object.isEmpty(parameters.record)) {
-					CMDBuild.core.proxy.common.tabs.email.Email.create({
+					CMDBuild.proxy.common.tabs.email.Email.create({
 						params: parameters.record.getAsParams(),
 						scope: parameters.scope,
 						loadMask: this.cmfg('tabEmailGlobalLoadMaskGet'),
@@ -310,7 +310,7 @@
 				parameters.regenerationTrafficLightArray = Ext.isArray(parameters.regenerationTrafficLightArray) ? parameters.regenerationTrafficLightArray : [];
 
 				if (!Ext.Object.isEmpty(parameters.record)) {
-					CMDBuild.core.proxy.common.tabs.email.Email.update({
+					CMDBuild.proxy.common.tabs.email.Email.update({
 						params: parameters.record.getAsParams(),
 						scope: this,
 						loadMask: this.cmfg('tabEmailGlobalLoadMaskGet'),
@@ -369,7 +369,7 @@
 		 */
 		tabEmailGridRecordRemove: function (record, regenerationTrafficLightArray) {
 			if (!Ext.Object.isEmpty(record)) {
-				CMDBuild.core.proxy.common.tabs.email.Email.remove({
+				CMDBuild.proxy.common.tabs.email.Email.remove({
 					params: record.getAsParams([CMDBuild.core.constants.Proxy.ID, CMDBuild.core.constants.Proxy.TEMPORARY]),
 					scope: this,
 					loadMask: this.cmfg('tabEmailGlobalLoadMaskGet'),

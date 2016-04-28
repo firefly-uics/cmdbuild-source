@@ -1,5 +1,8 @@
 (function() {
 
+	/**
+	 * @deprecated (CMDBuild.model.common.Generic)
+	 */
 	Ext.define("CMDBuild.DummyModel", {
 		extend: "Ext.data.Model",
 		fields:[],

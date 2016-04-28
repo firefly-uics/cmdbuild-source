@@ -456,7 +456,8 @@
 		"weeks2": "<em>In 2 weeks</em>"
 	},
 	"errors": {
-		"busy_wf_widgets": "De visuele controls zijn bezig, controleer de status van de server voor volgende poging.",
+		"anErrorHasOccurred": "Er is een fout opgetreden",
+		"busyVisualControls": "De visuele controls zijn bezig, controleer de status van de server voor volgende poging.",
 		"copyAttachmentFailure": "<em>Copy attachment with name \"{0}\" failure</em>",
 		"createReportFilure": "<em>Create report failure</em>",
 		"csvUploadOrDecodeFailure": "<em>CSV upload or decode error</em>",
@@ -476,7 +477,7 @@
 		"invalidKeyAttributesInLocalStore": "<em>Invalid key attribute(s) in local store</em>",
 		"invalidLookupValue": "<em>Invalid Lookup value</em>",
 		"no_driver": "Geen JDBC driver gevonden.<br />je kunt het vinden in het CMDBuild release pakket en kopieren naar de Tomcat bibliotheken.",
-		"no_selections": "Je hebt geen kaart geselecteerd voor bijwerken",
+		"noSelectedCardToUpdate": "Je hebt geen kaart geselecteerd voor bijwerken",
 		"printReportFilure": "<em>Print report failure</em>",
 		"reasons": {
 			"ATTRIBUTE_NOTFOUND": "Attribuut {1} van {0} niet gevonden",
@@ -630,7 +631,6 @@
 		"show_detail": "Toon details",
 		"targetClassOrCqlFilterRequired": "Doelklas of Kaart CQL selector zijn vereist",
 		"template_error": "Sjabloon fout",
-		"unknown_error": "Er is een fout opgetreden",
 		"unmanagedReportType": "<em>Unmanaged report type</em>",
 		"valueDoesNotMatchFilter": "De waarde komt niet overeen met het filter",
 		"widgetLinkCardsNoClassNameError": "LinkCardsController constructeur: KlassenNaam niet geldig",
@@ -644,9 +644,6 @@
 	},
 	"filterWindow": {
 		"add": "Filter toevoegen"
-	},
-	"info": {
-		"card_not_found": "De kaart past niet bij het huidige filter"
 	},
 	"management": {
 		"description": "Gegevens beheer module",
@@ -799,42 +796,6 @@
 			"showgraph": "Toon grafiek",
 			"shownotes": "Toon notities"
 		},
-		"modutilities": {
-			"bulkupdate": {
-				"title": "Meerdere aanpassingen",
-				"countMessage": "{0} kaarten worden aangepast"
-			},
-			"changepassword": {
-				"newpw": "Nieuw wachtwoord",
-				"oldpw": "Oud wachtwoord",
-				"repnew": "Herhaal nieuw wachtwoord",
-				"successmsgtext": "Wachtwoord gewijzigd",
-				"title": "Verander wachtwoord",
-				"validationtext": "Wachtwoorden komen niet overeen"
-			},
-			"csv": {
-				"csvfile": "CSV bestand",
-				"error": "Fout",
-				"exportfile": "Export",
-				"importfailure": "Importeren mislukt",
-				"importsuccess": "Importeren is succesvol verlopen",
-				"info": "Info",
-				"noupdate": "Geen kaarten bij te werken",
-				"selectaclass": "Selecteer een klas",
-				"separator": "Scheidingsteken",
-				"shownonvalid": "Toon alleen ongeldige records",
-				"title": "Importeer CSV bestand",
-				"title_export": "Exporteer CSV bestand",
-				"warning": "Waarschuwing"
-			},
-			"title": "Hulpprogramma's"
-		},
-		"modutility": {
-			"title": "Hulpprogramma's"
-		},
-		"modview": {
-			"title": "Views"
-		},
 		"modworkflow": {
 			"abort_card": "Proces afbreken",
 			"abort_card_confirm": "Weet je zeker dat je dit proces wilt afbreken?",
@@ -894,17 +855,16 @@
 		}
 	},
 	"warnings": {
+		"changeAppliedOnlyToFilteredCards": "De wijzigingen worden alleen toegepast bij kaarten welke bij het huidige filter passen",
 		"emailTemplateRelatedAttributeEdited": "<em>Attribute related with email templates changed, some e-mail could be regenerated.</em>",
 		"itemNotAvailable": "<em>Item not available</em>",
 		"itIsNotAllowedFilterWithCalculatedParams": "Het is niet toegestaan een filter te gebruiken met berekende parameters",
 		"link_cards_changed_values": "De selectie van \"{0}\" is bijgewerkt",
-		"only_filtered": "De wijzigingen worden alleen toegepast bij kaarten welke bij het huidige filter passen",
 		"popup_block": "We hebben ontdekt dat u popup blokkeer software gebruikt, schakel deze uit om dit programma te draaien",
 		"reportsDuplicateImageFilename": "Waarschuwing: rapport samenstelling gevonden met gelijke bestandsnaam - kan niet doorgaan.",
 		"saveMenuBeforeAccess": "Het menu moet worden opgeslagen voor toegang tot de vertalingen van dit element.",
 		"thereAreNoEnabledLanguages": "<em>There are no enabled languages</em>",
-		"toSetAFilterYouMustBeforeSelectAClass": "<em>To set a filter you must before select a class</em>",
-		"warning_message": "Waarschuwing"
+		"toSetAFilterYouMustBeforeSelectAClass": "<em>To set a filter you must before select a class</em>"
 	},
 	"account": "Gebruiker",
 	"accounts": "Gebruikers",
@@ -976,8 +936,10 @@
 	"card": "Kaart",
 	"cardCqlSelector": "Kaart CQL kiezer",
 	"cardinality": "Cardinaliteit",
+	"cardNotMatchFilter": "De kaart past niet bij het huidige filter",
 	"cardPanelHeight": "Hoogte van het kaart paneel in procenten",
 	"cards": "Kaarten",
+	"cardsWillBeModified": "{0} kaarten worden aangepast",
 	"category": "<em>Category</em>",
 	"cc": "Cc",
 	"changePassword": "Wachtwoord veranderen",
@@ -1118,6 +1080,7 @@
 	"existing": "Bestaand",
 	"expand": "<em>Expand</em>",
 	"expandAll": "<em>Expand all</em>",
+	"exportCsvFile": "Exporteer CSV bestand",
 	"exportLabel": "Export",
 	"expose": "Tonen",
 	"externalServices": "Externe Services",
@@ -1159,15 +1122,19 @@
 	"imapPort": "IMAP poort",
 	"imapServer": "IMAP server",
 	"import": "<em>Import</em>",
+	"importCsvFile": "Importeer CSV bestand",
 	"importExport": "<em>Import/Export</em>",
+	"importFailed": "Importeren mislukt",
 	"importFromCSV": "Importeer vanaf CSV",
 	"importJasperReport": "Ophalen Jasper rapport",
+	"importWasSuccessful": "Importeren is succesvol verlopen",
 	"includeInherited": "Inclusief ge-erfte",
 	"includeRelations": "<em>Include relations</em>",
 	"includeSystemActivities": "<em>Include system activities</em>",
 	"includeUsersFilters": "<em>Include users filters</em>",
 	"incoming": "Inkomende",
 	"incomingFolder": "Map inkomend",
+	"info": "Info",
 	"informationLayer": "<em>Information layer</em>",
 	"inheritsFrom": "Ge-erft van",
 	"initialLatitude": "Initiele latitude",
@@ -1198,6 +1165,7 @@
 	"loggedGroup": "Gelogde Groep",
 	"loggedUser": "Gelogde gebruiker",
 	"login": "Login",
+	"logon": "Login",
 	"lookup": "<em>Lookup</em>",
 	"lookupList": "Zoeklijst Lijst",
 	"lookupTypes": "Zoeklijst soort",
@@ -1236,15 +1204,18 @@
 	"modifyWidget": "<em>Modify widget</em>",
 	"move": "<em>Move</em>",
 	"multiGroup": "Multi groep",
+	"multipleUpdate": "Meerdere aanpassingen",
 	"name": "Naam",
 	"navigation": "Navigatie",
 	"navigationChronology": "<em>Navigation chronology</em>",
 	"navigationTree": "Navigatie boomstructuur",
 	"navigationTrees": "Navigatie boomstructuren",
 	"newFolder": "Nieuwe map",
+	"newPassword": "Nieuw wachtwoord",
 	"next": "Volgende",
 	"no_bim_project_for_card": "Er is geen BIM project voor deze kaart",
 	"noAvailableData": "<em>No available data</em>",
+	"noCardsToUpdate": "Geen kaarten bij te werken",
 	"nodeDistance": "<em>Node distance</em>",
 	"none": "Geen",
 	"noOne": "Geen enkele",
@@ -1254,6 +1225,7 @@
 	"numberOfPings": "Aantal pings",
 	"odt": "ODT",
 	"ok": "OK",
+	"oldPassword": "Oud wachtwoord",
 	"onDay": "Op",
 	"open_3d_viewer": "Start 3D viewer",
 	"openRelationGraph": "Open relatie grafiek",
@@ -1264,6 +1236,7 @@
 	"parent": "Bovenliggend",
 	"parentDescription": "Bovenliggende omschrijving",
 	"password": "Wachtwoord",
+	"passwordChanged": "Wachtwoord gewijzigd",
 	"passwordsDoNotMatch": "Wachtwoorden zijn niet gelijk",
 	"pdf": "PDF",
 	"permissions": "Permissies",
@@ -1326,6 +1299,7 @@
 	"reset": "Herstart",
 	"resetToDefault": "<em>Reset to defaults</em>",
 	"restore": "<em>Restore</em>",
+	"retypeNewPassword": "Herhaal nieuw wachtwoord",
 	"root": "Begin",
 	"rotate": "Draaien",
 	"rowAndColumnPrivileges": "Rij en kolom rechten",
@@ -1361,6 +1335,7 @@
 	"setup": "Algemene Opties",
 	"showDetails": "Toon details",
 	"showHideThisFeatureOnly": "Toon/verberg alleen deze optie",
+	"showInvalidRecordsOnly": "Toon alleen ongeldige records",
 	"showLanguageChoice": "Toon taal keuze",
 	"showLanguageSelectionLoginBox": "Toon taal selectie in login box",
 	"showLockerUserName": "Toon blokkeerder gebruikersnaam",
@@ -1415,6 +1390,7 @@
 	"usersAndGroups": "Gebruikers en Groepen",
 	"userStoppable": "Stopbare gebruiker",
 	"userType": "Gebruiker soort",
+	"utility": "Hulpprogramma's",
 	"utilityChangePassword": "Hulpprogramma's - Verander wachtwoord",
 	"utilityExportCsv": "Hulpprogramma's - Exporteer CSV bestand",
 	"utilityImportCsv": "Hulpprogramma's - Importeer CSV bestand",

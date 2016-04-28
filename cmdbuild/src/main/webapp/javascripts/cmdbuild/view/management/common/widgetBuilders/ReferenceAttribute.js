@@ -1,5 +1,7 @@
 (function() {
 
+	Ext.require(['CMDBuild.proxy.Card']);
+
 	var MY_USER_ID = -1;
 	var MY_USER_LABEL = "* " + CMDBuild.Translation.loggedUser + " *";
 	var MY_USER_TEMPLATE = "@MY_USER";
@@ -173,9 +175,10 @@ CMDBuild.WidgetBuilders.ReferenceAttribute.prototype.buildReadOnlyField = functi
 				params[CMDBuild.core.constants.Proxy.CARD_ID] = value;
 				params[CMDBuild.core.constants.Proxy.CLASS_NAME] = _CMCache.getEntryTypeNameById(attribute['idClass']);
 
-				CMDBuild.ServiceProxy.card.get({
-					scope: this,
+				CMDBuild.proxy.Card.read({
 					params: params,
+					loadMask: false,
+					scope: this,
 					success: function(response, options, decodedResponse) {
 						decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.CARD];
 

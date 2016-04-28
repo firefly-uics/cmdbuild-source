@@ -5,7 +5,7 @@
 
 		requires: [
 			'CMDBuild.core.constants.Proxy',
-			'CMDBuild.core.proxy.lookup.Type',
+			'CMDBuild.proxy.lookup.Type',
 		],
 
 		/**
@@ -44,7 +44,7 @@
 		accordionUpdateStore: function (nodeIdToSelect) {
 			nodeIdToSelect = Ext.isString(nodeIdToSelect) ? nodeIdToSelect : null;
 
-			CMDBuild.core.proxy.lookup.Type.readAll({
+			CMDBuild.proxy.lookup.Type.readAll({
 				scope: this,
 				success: function (response, options, decodedResponse) {
 					if (!Ext.isEmpty(decodedResponse)) {

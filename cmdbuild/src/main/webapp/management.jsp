@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 
+<%@page import="org.cmdbuild.logic.auth.StandardSessionLogic"%>
+<%@page import="org.cmdbuild.logic.auth.SessionLogic"%>
 <%@page import="org.cmdbuild.webapp.Management"%>
 <%@ taglib uri="/WEB-INF/tags/translations.tld" prefix="tr" %>
 
@@ -17,6 +19,7 @@
 <%@ page import="org.cmdbuild.config.GisProperties" %>
 
 <%
+	final SessionLogic sessionLogic = SpringIntegrationUtils.applicationContext().getBean(StandardSessionLogic.class);
 	final SessionVars sessionVars = SpringIntegrationUtils.applicationContext().getBean(SessionVars.class);
 	final String lang = sessionVars.getLanguage();
 	final UserStore userStore = SpringIntegrationUtils.applicationContext().getBean(UserStore.class);
@@ -43,19 +46,22 @@
 		<%@ include file="libsJsFiles.jsp"%>
 
 		<!-- 1. Main script -->
+		<script type="text/javascript" src="javascripts/cmdbuild/core/constants/Proxy.js"></script>
 		<script type="text/javascript" src="javascripts/cmdbuild/core/LoaderConfig.js"></script>
 		<script type="text/javascript" src="javascripts/cmdbuild/core/Utils.js"></script>
 		<script type="text/javascript" src="javascripts/log/log4javascript.js"></script>
 		<script type="text/javascript" src="javascripts/cmdbuild/core/interfaces/Ajax.js"></script>
 		<script type="text/javascript" src="javascripts/cmdbuild/core/Message.js"></script>
+		<script type="text/javascript" src="javascripts/cmdbuild/core/CookiesManager.js"></script>
 
 		<!-- 2. Localizations -->
 		<%@ include file="localizationsJsFiles.jsp" %>
 
 		<!-- 3. Runtime configuration -->
 		<script type="text/javascript">
-			Ext.ns('CMDBuild.configuration.runtime');
+			CMDBuild.core.CookiesManager.authorizationSet('<%= sessionLogic.getCurrent() %>'); // Authorization cookie setup
 
+			Ext.ns('CMDBuild.configuration.runtime');
 			CMDBuild.configuration.runtime = Ext.create('CMDBuild.model.configuration.Runtime');
 			CMDBuild.configuration.runtime.set(CMDBuild.core.constants.Proxy.ALLOW_PASSWORD_CHANGE, <%= operationUser.getAuthenticatedUser().canChangePassword() %>);
 			CMDBuild.configuration.runtime.set(CMDBuild.core.constants.Proxy.DEFAULT_GROUP_DESCRIPTION, '<%= StringEscapeUtils.escapeEcmaScript(group.getDescription()) %>');
@@ -66,25 +72,6 @@
 			CMDBuild.configuration.runtime.set(CMDBuild.core.constants.Proxy.STARTING_CLASS_ID, <%= group.getStartingClassId() %>);
 			CMDBuild.configuration.runtime.set(CMDBuild.core.constants.Proxy.USER_ID, <%= operationUser.getAuthenticatedUser().getId() %>);
 			CMDBuild.configuration.runtime.set(CMDBuild.core.constants.Proxy.USERNAME, '<%= StringEscapeUtils.escapeEcmaScript(operationUser.getAuthenticatedUser().getUsername()) %>');
-
-			/**
-			 * Compatibility mode
-			 *
-			 * @deprecated (CMDBuild.configuration.runtime)
-			 */
-			Ext.ns('CMDBuild.Runtime');
-			CMDBuild.Runtime.UserId = <%= operationUser.getAuthenticatedUser().getId() %>;
-			CMDBuild.Runtime.Username = '<%= StringEscapeUtils.escapeEcmaScript(operationUser.getAuthenticatedUser().getUsername()) %>';
-			CMDBuild.Runtime.DefaultGroupId = <%= group.getId() %>;
-			CMDBuild.Runtime.DefaultGroupName = '<%= StringEscapeUtils.escapeEcmaScript(group.getName()) %>';
-			CMDBuild.Runtime.DefaultGroupDescription = '<%= StringEscapeUtils.escapeEcmaScript(group.getDescription()) %>';
-			CMDBuild.Runtime.IsAdministrator = <%= operationUser.hasAdministratorPrivileges() %>;
-			CMDBuild.Runtime.AllowsPasswordLogin = <%= operationUser.getAuthenticatedUser().canChangePassword() %>;
-			CMDBuild.Runtime.CanChangePassword = <%= operationUser.getAuthenticatedUser().canChangePassword() %>;
-
-			<% if (group.getStartingClassId() != null) { %>
-				CMDBuild.Runtime.StartingClassId = <%= group.getStartingClassId() %>;
-			<% } %>
 		</script>
 
 		<%@ include file="coreJsFiles.jsp" %>
@@ -133,8 +120,6 @@
 							<p id="msg-inner-hidden"><tr:translation key="common.group"/>: <strong><tr:translation key="multiGroup"/></strong>
 
 							<script type="text/javascript">
-								CMDBuild.Runtime.GroupDescriptions = '<%= StringEscapeUtils.escapeEcmaScript(groupDecriptions) %>'; // @deprecated
-
 								CMDBuild.configuration.runtime.set(CMDBuild.core.constants.Proxy.GROUP_DESCRIPTIONS, '<%= StringEscapeUtils.escapeEcmaScript(groupDecriptions) %>');
 							</script>
 						<% } %>

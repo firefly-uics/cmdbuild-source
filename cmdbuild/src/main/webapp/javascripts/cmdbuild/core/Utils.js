@@ -41,9 +41,7 @@
 		 * @returns {Ext.data.Store} clonedStore
 		 */
 		deepCloneStore: function (sourceStore) {
-			var clonedStore = Ext.create('Ext.data.Store', {
-				model: sourceStore.model
-			});
+			var clonedStore = Ext.create('Ext.data.Store', { model: sourceStore.model });
 
 			sourceStore.each(function (record) {
 				var newRecordData = Ext.clone(record.copy().data);

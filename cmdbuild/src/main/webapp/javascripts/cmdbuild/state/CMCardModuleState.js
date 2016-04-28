@@ -1,5 +1,7 @@
 (function() {
 
+	Ext.require(['CMDBuild.proxy.Card']);
+
 	Ext.define('CMDBuild.state.CMCardModuleStateDelegate', {
 		/**
 		 * @param {CMDBuild.state.CMCardModuleState} state The state that calls the delegate
@@ -67,8 +69,11 @@
 			enableDelegatesCall = (!Ext.isEmpty(enableDelegatesCall)) ? enableDelegatesCall : true;
 
 			if (card != null && typeof card.data == 'undefined') {
-				CMDBuild.ServiceProxy.card.get({
+				adaptGetCardCallParams(card);
+
+				CMDBuild.proxy.Card.read({
 					params: card,
+					loadMask: false,
 					scope: this,
 					success: function(a, b, response) {
 						var raw = response.card;
@@ -96,5 +101,17 @@
 
 	// Define a global variable
 	_CMCardModuleState = new CMDBuild.state.CMCardModuleState();
+
+	function adaptGetCardCallParams(p) {
+		if (p.Id && p.IdClass) {
+			_deprecated('adaptGetCardCallParams', this);
+
+			var parameters = {};
+			parameters[CMDBuild.core.constants.Proxy.CLASS_NAME] = _CMCache.getEntryTypeNameById(p.IdClass);
+			parameters[CMDBuild.core.constants.Proxy.CARD_ID] = p.Id;
+
+			p = parameters;
+		}
+	}
 
 })();

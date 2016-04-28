@@ -23,9 +23,9 @@ import org.cmdbuild.listeners.ContextStore;
 import org.cmdbuild.logic.DashboardLogic;
 import org.cmdbuild.logic.GISLogic;
 import org.cmdbuild.logic.NavigationTreeLogic;
-import org.cmdbuild.logic.auth.AuthenticationLogic;
-import org.cmdbuild.logic.auth.DefaultAuthenticationLogicBuilder;
 import org.cmdbuild.logic.auth.GroupsLogic;
+import org.cmdbuild.logic.auth.SessionLogic;
+import org.cmdbuild.logic.auth.StandardSessionLogic;
 import org.cmdbuild.logic.bim.DefaultLayerLogic;
 import org.cmdbuild.logic.bim.DefaultSynchronizationLogic;
 import org.cmdbuild.logic.bim.DefaultViewerLogic;
@@ -154,8 +154,8 @@ public class JSONBaseWithSpringContext extends JSONBase {
 	 * Logics
 	 */
 
-	protected AuthenticationLogic authLogic() {
-		return applicationContext().getBean(DefaultAuthenticationLogicBuilder.class).build();
+	protected SessionLogic authLogic() {
+		return applicationContext().getBean(StandardSessionLogic.class);
 	}
 
 	protected ProjectLogic bimProjectLogic() {

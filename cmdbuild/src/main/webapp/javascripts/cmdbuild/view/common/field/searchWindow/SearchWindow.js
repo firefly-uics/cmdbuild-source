@@ -1,7 +1,7 @@
 (function () {
 
 	Ext.define('CMDBuild.view.common.field.searchWindow.SearchWindow', {
-		extend: 'CMDBuild.core.PopupWindow',
+		extend: 'CMDBuild.core.window.AbstractModal',
 
 		/**
 		 * @cfg {CMDBuild.controller.common.field.searchWindow.SearchWindow}
@@ -25,6 +25,11 @@
 
 		closeAction: 'hide',
 
+		/**
+		 * @returns {Void}
+		 *
+		 * @override
+		 */
 		initComponent: function () {
 			Ext.apply(this, {
 				dockedItems: [

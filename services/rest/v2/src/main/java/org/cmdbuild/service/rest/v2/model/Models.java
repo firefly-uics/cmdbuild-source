@@ -2343,15 +2343,6 @@ public class Models {
 			// use factory method
 		}
 
-		private SessionBuilder(final Session existing) {
-			// use factory method
-			this.id = existing.getId();
-			this.username = existing.getUsername();
-			this.password = existing.getPassword();
-			this.role = existing.getRole();
-			this.availableRoles.addAll(defaultIfNull(existing.getAvailableRoles(), NO_ROLES));
-		}
-
 		@Override
 		protected Session doBuild() {
 			final Session output = new Session();
@@ -2665,10 +2656,6 @@ public class Models {
 
 	public static SessionBuilder newSession() {
 		return new SessionBuilder();
-	}
-
-	public static SessionBuilder newSession(final Session existing) {
-		return new SessionBuilder(existing);
 	}
 
 	public static ValuesBuilder newValues() {

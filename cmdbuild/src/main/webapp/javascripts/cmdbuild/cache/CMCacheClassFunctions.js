@@ -100,7 +100,7 @@
 			} else if (p) {
 				return p;
 			} else {
-				CMDBuild.Msg.error(CMDBuild.Translation.common.failure,
+				CMDBuild.core.Message.error(CMDBuild.Translation.common.failure,
 						Ext.String.format(CMDBuild.Translation.errors.reasons.CLASS_NOTFOUND, id));
 			}
 		},
@@ -132,7 +132,7 @@
 				}
 			}
 
-			CMDBuild.Msg.error(CMDBuild.Translation.common.failure,
+			CMDBuild.core.Message.error(CMDBuild.Translation.common.failure,
 					Ext.String.format(CMDBuild.Translation.errors.reasons.CLASS_NOTFOUND, name));
 
 			return null;
