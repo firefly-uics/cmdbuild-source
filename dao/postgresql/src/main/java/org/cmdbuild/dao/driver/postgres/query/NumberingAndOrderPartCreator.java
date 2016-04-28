@@ -129,7 +129,7 @@ public class NumberingAndOrderPartCreator extends PartCreator {
 				.map(input -> {
 					final String key = input.getKey();
 					final Direction value = input.getValue();
-					return format(ORDER_BY_ATTRIBUTE_EXPRESSION, key, (value == null) ? SPACE : value);
+					return (value == null) ? key : format(ORDER_BY_ATTRIBUTE_EXPRESSION, key, value);
 				}) //
 				.collect(toList());
 	}
