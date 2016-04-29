@@ -76,7 +76,7 @@
 
 					this.view.getStore().getRootNode().removeAll();
 
-					if (!Ext.isEmpty(decodedResponse)) {
+					if (!Ext.isEmpty(decodedResponse) && Ext.isArray(decodedResponse)) {
 						Ext.Array.each(decodedResponse, function (classObject, i, allClassObjects) {
 							var nodeObject = {};
 							nodeObject['cmName'] = this.cmfg('accordionIdentifierGet');
@@ -144,12 +144,13 @@
 								}
 							];
 						}
+
 						if (!Ext.isEmpty(nodes))
 							this.view.getStore().getRootNode().appendChild(nodes);
-
-						// Alias of this.callParent(arguments), inside proxy function doesn't work
-						this.updateStoreCommonEndpoint(nodeIdToSelect);
 					}
+
+					// Alias of this.callParent(arguments), inside proxy function doesn't work
+					this.updateStoreCommonEndpoint(nodeIdToSelect);
 				}
 			});
 

@@ -37,7 +37,7 @@
 		],
 
 		/**
-		 * All accordions views
+		 * Accordion definition objects
 		 *
 		 * @cfg {Array}
 		 */
@@ -70,7 +70,7 @@
 		isAdministration: false,
 
 		/**
-		 * All module views
+		 * Module definition objects
 		 *
 		 * @cfg {Array}
 		 */
@@ -113,7 +113,7 @@
 
 		// Accordion manage methods
 			/**
-			 * Accordions doen't uses standard CMDBuild logic (controller builds view) but view creates controller
+			 * Request barrier implementation to synchronize accordion creation
 			 *
 			 * @private
 			 */
@@ -121,22 +121,32 @@
 				if (!Ext.isEmpty(this.accordion) && Ext.isArray(this.accordion)) {
 					var accordionViewsBuffer = [];
 
-					Ext.Array.forEach(this.accordion, function (accordionController, i, allAccordionControllers) {
-						if (!Ext.isEmpty(accordionController)) {
-							if (Ext.isFunction(accordionController.cmfg) && !Ext.isEmpty(accordionController.cmfg('accordionIdentifierGet'))) {
-								accordionController.parentDelegate = this; // Inject as parentDelegate in accordion controllers
+					var requestBarrier = Ext.create('CMDBuild.core.RequestBarrier', {
+						id: 'mainViewportAccordionBarrier',
+						scope: this,
+						callback: function () {
+							if (!Ext.isEmpty(accordionViewsBuffer))
+								this.accordionContainer.add(accordionViewsBuffer);
+						}
+					});
 
-								this.accordionControllers[accordionController.cmfg('accordionIdentifierGet')] = accordionController;
+					Ext.Array.forEach(this.accordion, function (accordionControllerObject, i, allAccordionControllerObjects) {
+						if (
+							Ext.isObject(accordionControllerObject) && !Ext.Object.isEmpty(accordionControllerObject)
+							&& !Ext.isEmpty(accordionControllerObject.className) && Ext.isString(accordionControllerObject.className)
+							&& !Ext.isEmpty(accordionControllerObject.identifier) && Ext.isString(accordionControllerObject.identifier)
+						) {
+							this.accordionControllers[accordionControllerObject.identifier] = Ext.create(accordionControllerObject.className, {
+								parentDelegate: this, // Inject as parentDelegate in accordion controllers
+								identifier: accordionControllerObject.identifier,
+								callback: requestBarrier.getCallback('mainViewportAccordionBarrier')
+							});
 
-								accordionViewsBuffer.push(accordionController.getView());
-							} else {
-								_warning('identifier not found in accordion object', this, accordionController);
-							}
+							accordionViewsBuffer.push(this.accordionControllers[accordionControllerObject.identifier].getView());
 						}
 					}, this);
 
-					if (!Ext.isEmpty(accordionViewsBuffer))
-						this.accordionContainer.add(accordionViewsBuffer);
+					requestBarrier.finalize('mainViewportAccordionBarrier', true);
 				}
 			},
 
@@ -348,14 +358,18 @@
 				this.danglingCardSet(parameters);
 
 				if (!Ext.isEmpty(accordionController) && Ext.isFunction(accordionController.cmfg)) {
-					accordionController.cmfg('accordionDeselect'); // Instruction required or selection doesn't work if exists another selection
-					accordionController.cmfg('accordionExpand');
-					accordionController.cmfg('accordionSelectNodeById', parameters['IdClass']);
+					accordionController.cmfg('accordionExpand', {
+						scope: this,
+						callback: function (panel, eOpts) {
+							accordionController.cmfg('accordionDeselect'); // Instruction required or selection doesn't work if exists another selection
+							accordionController.cmfg('accordionSelectNodeById', parameters['IdClass']);
+						}
+					});
 				} else {
 					CMDBuild.core.Message.warning(CMDBuild.Translation.warning, CMDBuild.Translation.warnings.itemNotAvailable);
 				}
 			} else {
-				_error('malformed parameters in openCard method', this);
+				_error('malformed openCard method parameters', this);
 			}
 		},
 
@@ -403,8 +417,12 @@
 			var node = null;
 
 			if (!Ext.isEmpty(accordionWithNodeController)) {
-				accordionWithNodeController.cmfg('accordionExpand');
-				accordionWithNodeController.cmfg('accordionSelectNodeById', startingClassId);
+				accordionWithNodeController.cmfg('accordionExpand', {
+					scope: this,
+					callback: function (panel, eOpts) {
+						accordionWithNodeController.cmfg('accordionSelectNodeById', startingClassId);
+					}
+				});
 
 				node = accordionWithNodeController.cmfg('accordionNodeByIdGet', startingClassId); // To manage selection if accordion are collapsed
 			} else { // If no statingClass to select try to select fist selectable node
