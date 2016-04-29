@@ -171,63 +171,37 @@
 				_CMCache.syncAttachmentCategories();
 
 				// Building accordion definitions object array (display order)
-				var accordionDefinitionObjectsArray = [
-					{
-						className: 'CMDBuild.controller.management.accordion.Menu',
-						identifier: CMDBuild.core.constants.ModuleIdentifiers.getMenu()
-					}
-				];
+				var accordionDefinitionObjectsArray = [{ className: 'CMDBuild.controller.management.accordion.Menu', identifier: CMDBuild.core.constants.ModuleIdentifiers.getMenu() }];
 
 				if (!CMDBuild.configuration.userInterface.isDisabledModule(CMDBuild.core.constants.Proxy.CLASS))
-					accordionDefinitionObjectsArray.push({
-						className: 'CMDBuild.controller.management.accordion.Classes',
-						identifier: 'class'
-					});
+					accordionDefinitionObjectsArray.push({ className: 'CMDBuild.controller.management.accordion.Classes', identifier: 'class' });
 
 				if (!CMDBuild.configuration.userInterface.isDisabledModule(CMDBuild.core.constants.Proxy.PROCESS) && CMDBuild.configuration.workflow.get(CMDBuild.core.constants.Proxy.ENABLED))
-					accordionDefinitionObjectsArray.push({
-						className: 'CMDBuild.controller.management.accordion.Workflow',
-						identifier: CMDBuild.core.constants.ModuleIdentifiers.getWorkflow()
-					});
+					accordionDefinitionObjectsArray.push({ className: 'CMDBuild.controller.management.accordion.Workflow', identifier: CMDBuild.core.constants.ModuleIdentifiers.getWorkflow() });
 
 				if (!CMDBuild.configuration.userInterface.isDisabledModule(CMDBuild.core.constants.Proxy.DATA_VIEW))
-					accordionDefinitionObjectsArray.push({
-						className: 'CMDBuild.controller.management.accordion.DataView',
-						identifier: CMDBuild.core.constants.ModuleIdentifiers.getDataView()
-					});
+					accordionDefinitionObjectsArray.push({ className: 'CMDBuild.controller.management.accordion.DataView', identifier: CMDBuild.core.constants.ModuleIdentifiers.getDataView() });
 
-				if (!CMDBuild.configuration.userInterface.isDisabledModule('dashboard'))
-					accordionDefinitionObjectsArray.push({
-						className: 'CMDBuild.controller.management.accordion.Dashboard',
-						identifier: 'dashboard'
-					});
+				if (!CMDBuild.configuration.userInterface.isDisabledModule(CMDBuild.core.constants.Proxy.DASHBOARD))
+					accordionDefinitionObjectsArray.push({ className: 'CMDBuild.controller.management.accordion.Dashboard', identifier: 'dashboard' });
 
-				if (!CMDBuild.configuration.userInterface.isDisabledModule('report'))
-					accordionDefinitionObjectsArray.push({
-						className: 'CMDBuild.controller.management.accordion.Report',
-						identifier: CMDBuild.core.constants.ModuleIdentifiers.getReport()
-					});
+				if (!CMDBuild.configuration.userInterface.isDisabledModule(CMDBuild.core.constants.Proxy.REPORT))
+					accordionDefinitionObjectsArray.push({ className: 'CMDBuild.controller.management.accordion.Report', identifier: CMDBuild.core.constants.ModuleIdentifiers.getReport() });
 
 				if (!CMDBuild.configuration.userInterface.isDisabledModule(CMDBuild.core.constants.Proxy.CUSTOM_PAGES))
-					accordionDefinitionObjectsArray.push({
-						className: 'CMDBuild.controller.management.accordion.CustomPage',
-						identifier: CMDBuild.core.constants.ModuleIdentifiers.getCustomPage()
-					});
+					accordionDefinitionObjectsArray.push({ className: 'CMDBuild.controller.management.accordion.CustomPage', identifier: CMDBuild.core.constants.ModuleIdentifiers.getCustomPage() });
 
-				accordionDefinitionObjectsArray.push({
-					className: 'CMDBuild.controller.management.accordion.Utility',
-					identifier: CMDBuild.core.constants.ModuleIdentifiers.getUtility()
-				});
+				accordionDefinitionObjectsArray.push({ className: 'CMDBuild.controller.management.accordion.Utility', identifier: CMDBuild.core.constants.ModuleIdentifiers.getUtility() });
 
 				Ext.ns('CMDBuild.global.controller');
 				CMDBuild.global.controller.MainViewport = Ext.create('CMDBuild.controller.common.MainViewport', {
 					accordion: accordionDefinitionObjectsArray,
 					module: [
-						Ext.create('CMDBuild.controller.management.customPage.SinglePage', { identifier: CMDBuild.core.constants.ModuleIdentifiers.getCustomPage() }),
-						Ext.create('CMDBuild.controller.management.dataView.DataView', { identifier: CMDBuild.core.constants.ModuleIdentifiers.getDataView() }),
-						Ext.create('CMDBuild.controller.management.report.Report', { identifier: CMDBuild.core.constants.ModuleIdentifiers.getReport() }),
-						Ext.create('CMDBuild.controller.management.report.Single', { identifier: CMDBuild.core.constants.ModuleIdentifiers.getReportSingle() }),
-						Ext.create('CMDBuild.controller.management.utility.Utility', { identifier: CMDBuild.core.constants.ModuleIdentifiers.getUtility() }),
+						{ className: 'CMDBuild.controller.management.customPage.SinglePage', identifier: CMDBuild.core.constants.ModuleIdentifiers.getCustomPage() },
+						{ className: 'CMDBuild.controller.management.dataView.DataView', identifier: CMDBuild.core.constants.ModuleIdentifiers.getDataView() },
+						{ className: 'CMDBuild.controller.management.report.Report', identifier: CMDBuild.core.constants.ModuleIdentifiers.getReport() },
+						{ className: 'CMDBuild.controller.management.report.Single', identifier: CMDBuild.core.constants.ModuleIdentifiers.getReportSingle() },
+						{ className: 'CMDBuild.controller.management.utility.Utility', identifier: CMDBuild.core.constants.ModuleIdentifiers.getUtility() },
 						new CMDBuild.view.management.classes.CMModCard({
 							cmControllerType: CMDBuild.controller.management.classes.CMModCardController,
 							cmName: 'class'
