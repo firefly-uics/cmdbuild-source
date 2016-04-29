@@ -174,88 +174,37 @@
 				var accordionDefinitionObjectsArray = [];
 
 				if (!CMDBuild.configuration.userInterface.get(CMDBuild.core.constants.Proxy.CLOUD_ADMIN))
-					accordionDefinitionObjectsArray.push({
-						className: 'CMDBuild.controller.administration.accordion.Classes',
-						identifier: 'class'
-					});
+					accordionDefinitionObjectsArray.push({ className: 'CMDBuild.controller.administration.accordion.Classes', identifier: 'class' });
 
 				if (!CMDBuild.configuration.userInterface.get(CMDBuild.core.constants.Proxy.CLOUD_ADMIN))
-					accordionDefinitionObjectsArray.push({
-						className: 'CMDBuild.controller.administration.accordion.Workflow',
-						identifier: CMDBuild.core.constants.ModuleIdentifiers.getWorkflow()
-					});
+					accordionDefinitionObjectsArray.push({ className: 'CMDBuild.controller.administration.accordion.Workflow', identifier: CMDBuild.core.constants.ModuleIdentifiers.getWorkflow() });
 
 				if (!CMDBuild.configuration.userInterface.get(CMDBuild.core.constants.Proxy.CLOUD_ADMIN))
-					accordionDefinitionObjectsArray.push({
-						className: 'CMDBuild.controller.administration.accordion.Domain',
-						identifier: CMDBuild.core.constants.ModuleIdentifiers.getDomain()
-					});
+					accordionDefinitionObjectsArray.push({ className: 'CMDBuild.controller.administration.accordion.Domain', identifier: CMDBuild.core.constants.ModuleIdentifiers.getDomain() });
 
 				if (!CMDBuild.configuration.userInterface.get(CMDBuild.core.constants.Proxy.CLOUD_ADMIN))
-					accordionDefinitionObjectsArray.push({
-						className: 'CMDBuild.controller.administration.accordion.DataView',
-						identifier: CMDBuild.core.constants.ModuleIdentifiers.getDataView()
-					});
+					accordionDefinitionObjectsArray.push({ className: 'CMDBuild.controller.administration.accordion.DataView', identifier: CMDBuild.core.constants.ModuleIdentifiers.getDataView() });
 
-				accordionDefinitionObjectsArray.push({
-					className: 'CMDBuild.controller.administration.accordion.Filter',
-					identifier: CMDBuild.core.constants.ModuleIdentifiers.getFilter()
-				});
+				accordionDefinitionObjectsArray.push({ className: 'CMDBuild.controller.administration.accordion.Filter', identifier: CMDBuild.core.constants.ModuleIdentifiers.getFilter() });
 
 				if (!CMDBuild.configuration.userInterface.get(CMDBuild.core.constants.Proxy.CLOUD_ADMIN))
-					accordionDefinitionObjectsArray.push({
-						className: 'CMDBuild.controller.administration.accordion.NavigationTree',
-						identifier: CMDBuild.core.constants.ModuleIdentifiers.getNavigationTree()
-					});
+					accordionDefinitionObjectsArray.push({ className: 'CMDBuild.controller.administration.accordion.NavigationTree', identifier: CMDBuild.core.constants.ModuleIdentifiers.getNavigationTree() });
 
-				accordionDefinitionObjectsArray.push({
-					className: 'CMDBuild.controller.administration.accordion.Lookup',
-					identifier: CMDBuild.core.constants.ModuleIdentifiers.getLookupType()
-				});
+				accordionDefinitionObjectsArray.push({ className: 'CMDBuild.controller.administration.accordion.Lookup', identifier: CMDBuild.core.constants.ModuleIdentifiers.getLookupType() });
 
 				if (!CMDBuild.configuration.userInterface.get(CMDBuild.core.constants.Proxy.CLOUD_ADMIN))
-					accordionDefinitionObjectsArray.push({
-						className: 'CMDBuild.controller.administration.accordion.Dashboard',
-						identifier: 'dashboard'
-					});
+					accordionDefinitionObjectsArray.push({ className: 'CMDBuild.controller.administration.accordion.Dashboard', identifier: 'dashboard' });
 
 				Ext.Array.push(accordionDefinitionObjectsArray, [
-					{
-						className: 'CMDBuild.controller.administration.accordion.Report',
-						identifier: CMDBuild.core.constants.ModuleIdentifiers.getReport()
-					},
-					{
-						className: 'CMDBuild.controller.administration.accordion.Menu',
-						identifier: CMDBuild.core.constants.ModuleIdentifiers.getMenu()
-					},
-					{
-						className: 'CMDBuild.controller.administration.accordion.UserAndGroup',
-						identifier: CMDBuild.core.constants.ModuleIdentifiers.getUserAndGroup()
-					},
-					{
-						className: 'CMDBuild.controller.administration.accordion.Task',
-						identifier: 'task'
-					},
-					{
-						className: 'CMDBuild.controller.administration.accordion.Email',
-						identifier: CMDBuild.core.constants.ModuleIdentifiers.getEmail()
-					},
-					{
-						className: 'CMDBuild.controller.administration.accordion.Gis',
-						identifier: 'gis'
-					},
-					{
-						className: 'CMDBuild.controller.administration.accordion.Bim',
-						identifier: 'bim'
-					},
-					{
-						className: 'CMDBuild.controller.administration.accordion.Localization',
-						identifier: CMDBuild.core.constants.ModuleIdentifiers.getLocalization()
-					},
-					{
-						className: 'CMDBuild.controller.administration.accordion.Configuration',
-						identifier: CMDBuild.core.constants.ModuleIdentifiers.getConfiguration()
-					}
+					{ className: 'CMDBuild.controller.administration.accordion.Report', identifier: CMDBuild.core.constants.ModuleIdentifiers.getReport() },
+					{ className: 'CMDBuild.controller.administration.accordion.Menu', identifier: CMDBuild.core.constants.ModuleIdentifiers.getMenu() },
+					{ className: 'CMDBuild.controller.administration.accordion.UserAndGroup', identifier: CMDBuild.core.constants.ModuleIdentifiers.getUserAndGroup() },
+					{ className: 'CMDBuild.controller.administration.accordion.Task', identifier: 'task' },
+					{ className: 'CMDBuild.controller.administration.accordion.Email', identifier: CMDBuild.core.constants.ModuleIdentifiers.getEmail() },
+					{ className: 'CMDBuild.controller.administration.accordion.Gis', identifier: 'gis' },
+					{ className: 'CMDBuild.controller.administration.accordion.Bim', identifier: 'bim' },
+					{ className: 'CMDBuild.controller.administration.accordion.Localization', identifier: CMDBuild.core.constants.ModuleIdentifiers.getLocalization() },
+					{ className: 'CMDBuild.controller.administration.accordion.Configuration', identifier: CMDBuild.core.constants.ModuleIdentifiers.getConfiguration() }
 				]);
 
 				Ext.ns('CMDBuild.global.controller');
@@ -263,18 +212,18 @@
 					isAdministration: true,
 					accordion: accordionDefinitionObjectsArray,
 					module: [
-						Ext.create('CMDBuild.controller.administration.configuration.Configuration', { identifier: CMDBuild.core.constants.ModuleIdentifiers.getConfiguration() }),
-						Ext.create('CMDBuild.controller.administration.dataView.DataView', { identifier: CMDBuild.core.constants.ModuleIdentifiers.getDataView() }),
-						Ext.create('CMDBuild.controller.administration.domain.Domain', { identifier: CMDBuild.core.constants.ModuleIdentifiers.getDomain() }),
-						Ext.create('CMDBuild.controller.administration.email.Email', { identifier: CMDBuild.core.constants.ModuleIdentifiers.getEmail() }),
-						Ext.create('CMDBuild.controller.administration.filter.Filter', { identifier: CMDBuild.core.constants.ModuleIdentifiers.getFilter() }),
-						Ext.create('CMDBuild.controller.administration.localization.Localization', { identifier: CMDBuild.core.constants.ModuleIdentifiers.getLocalization() }),
-						Ext.create('CMDBuild.controller.administration.lookup.Lookup', { identifier: CMDBuild.core.constants.ModuleIdentifiers.getLookupType() }),
-						Ext.create('CMDBuild.controller.administration.menu.Menu', { identifier: CMDBuild.core.constants.ModuleIdentifiers.getMenu() }),
-						Ext.create('CMDBuild.controller.administration.navigationTree.NavigationTree', { identifier: CMDBuild.core.constants.ModuleIdentifiers.getNavigationTree() }), // TODO: identifier in class
-						Ext.create('CMDBuild.controller.administration.report.Report', { identifier: CMDBuild.core.constants.ModuleIdentifiers.getReport() }),
-						Ext.create('CMDBuild.controller.administration.userAndGroup.UserAndGroup', { identifier: CMDBuild.core.constants.ModuleIdentifiers.getUserAndGroup() }),
-						Ext.create('CMDBuild.controller.administration.workflow.Workflow', { identifier: CMDBuild.core.constants.ModuleIdentifiers.getWorkflow() }),
+						{ className: 'CMDBuild.controller.administration.configuration.Configuration', identifier: CMDBuild.core.constants.ModuleIdentifiers.getConfiguration() },
+						{ className: 'CMDBuild.controller.administration.dataView.DataView', identifier: CMDBuild.core.constants.ModuleIdentifiers.getDataView() },
+						{ className: 'CMDBuild.controller.administration.domain.Domain', identifier: CMDBuild.core.constants.ModuleIdentifiers.getDomain() },
+						{ className: 'CMDBuild.controller.administration.email.Email', identifier: CMDBuild.core.constants.ModuleIdentifiers.getEmail() },
+						{ className: 'CMDBuild.controller.administration.filter.Filter', identifier: CMDBuild.core.constants.ModuleIdentifiers.getFilter() },
+						{ className: 'CMDBuild.controller.administration.localization.Localization', identifier: CMDBuild.core.constants.ModuleIdentifiers.getLocalization() },
+						{ className: 'CMDBuild.controller.administration.lookup.Lookup', identifier: CMDBuild.core.constants.ModuleIdentifiers.getLookupType() },
+						{ className: 'CMDBuild.controller.administration.menu.Menu', identifier: CMDBuild.core.constants.ModuleIdentifiers.getMenu() },
+						{ className: 'CMDBuild.controller.administration.navigationTree.NavigationTree', identifier: CMDBuild.core.constants.ModuleIdentifiers.getNavigationTree() },
+						{ className: 'CMDBuild.controller.administration.report.Report', identifier: CMDBuild.core.constants.ModuleIdentifiers.getReport() },
+						{ className: 'CMDBuild.controller.administration.userAndGroup.UserAndGroup', identifier: CMDBuild.core.constants.ModuleIdentifiers.getUserAndGroup() },
+						{ className: 'CMDBuild.controller.administration.workflow.Workflow', identifier: CMDBuild.core.constants.ModuleIdentifiers.getWorkflow() },
 						Ext.create('CMDBuild.view.administration.gis.CMModGeoServer', {
 							cmControllerType: 'CMDBuild.controller.administration.gis.CMModGeoServerController',
 							cmName: 'gis-geoserver'

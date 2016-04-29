@@ -15,6 +15,8 @@
 		parentDelegate: undefined,
 
 		/**
+		 * Store update callback functions
+		 *
 		 * @cfg {Function}
 		 */
 		callback: undefined,
@@ -67,6 +69,8 @@
 		lastSelection: undefined,
 
 		/**
+		 * Store update scope object
+		 *
 		 * @cfg {Object}
 		 */
 		scope: this,
@@ -91,7 +95,7 @@
 		 *
 		 * @param {Array} components
 		 *
-		 * @return {String}
+		 * @returns {String}
 		 */
 		accordionBuildId: function (components) {
 			if (!Ext.isEmpty(components)) {
@@ -108,6 +112,9 @@
 			return CMDBuild.core.constants.Proxy.ACCORDION + '-' + this.cmfg('accordionIdentifierGet') + '-' + Date.now();
 		},
 
+		/**
+		 * @returns {Void}
+		 */
 		accordionDeselect: function () {
 			this.view.getSelectionModel().deselectAll();
 
@@ -118,6 +125,8 @@
 		 * @param {Object} parameters
 		 * @param {Function} parameters.callback
 		 * @param {Object} parameters.scope
+		 *
+		 * @returns {Void}
 		 */
 		accordionExpand: function (parameters) {
 			if (!Ext.isEmpty(this.view)) {
@@ -186,6 +195,9 @@
 			);
 		},
 
+		/**
+		 * @returns {Void}
+		 */
 		accordionSelectFirstSelectableNode: function () {
 			var firstSelectableNode = this.cmfg('accordionFirtsSelectableNodeGet');
 
@@ -201,6 +213,8 @@
 
 		/**
 		 * @param {Number or String} id
+		 *
+		 * @returns {Void}
 		 */
 		accordionSelectNodeById: function (id) {
 			if (!Ext.isEmpty(id)) {
@@ -220,6 +234,8 @@
 
 		/**
 		 * @param {Number or String} nodeIdToSelect
+		 *
+		 * @returns {Void}
 		 *
 		 * @abstract
 		 */
@@ -258,6 +274,9 @@
 			return this.isNodeSelectable(node);
 		},
 
+		/**
+		 * @returns {Void}
+		 */
 		onAccordionExpand: function () {
 			this.cmfg('mainViewportModuleShow', { identifier: this.cmfg('accordionIdentifierGet') });
 
@@ -277,6 +296,9 @@
 			this.disableStoreLoad = false;
 		},
 
+		/**
+		 * @returns {Void}
+		 */
 		onAccordionSelectionChange: function () {
 			if (this.view.getSelectionModel().hasSelection()) {
 				var selection = this.view.getSelectionModel().getSelection()[0];
@@ -301,6 +323,8 @@
 
 		/**
 		 * @param {Number or String} nodeIdToSelect
+		 *
+		 * @returns {Void}
 		 *
 		 * @private
 		 */
