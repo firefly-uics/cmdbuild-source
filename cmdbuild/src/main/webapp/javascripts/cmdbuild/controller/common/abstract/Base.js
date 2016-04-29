@@ -57,6 +57,7 @@
 
 		/**
 		 * @param {Object} configurationObject
+		 * @param {Object} configurationObject.parentDelegate
 		 *
 		 * @returns {Void}
 		 */
@@ -179,6 +180,8 @@
 
 		/**
 		 * @returns {String}
+		 *
+		 * @private
 		 */
 		getBaseTitle: function () {
 			if (!Ext.isEmpty(this.view) && !Ext.isEmpty(this.view.baseTitle))
@@ -189,6 +192,8 @@
 
 		/**
 		 * @returns {Object}
+		 *
+		 * @public
 		 */
 		getView: function () {
 			return this.view;
@@ -206,6 +211,8 @@
 
 		/**
 		 * Method to manage module initialization (to localize)
+		 *
+		 * @returns {Void}
 		 *
 		 * @abstract
 		 */

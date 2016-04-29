@@ -20,11 +20,16 @@
 
 		/**
 		 * @property {CMDBuild.view.administration.accordion.Dashboard}
+		 * @param {CMDBuild.controller.common.MainViewport} configurationObject.parentDelegate
+		 *
+		 * @returns {Void}
 		 */
 		view: undefined,
 
 		/**
 		 * @param {Object} configurationObject
+		 *
+		 * @returns {Void}
 		 *
 		 * @override
 		 */
