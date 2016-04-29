@@ -1,8 +1,17 @@
 package org.cmdbuild.config;
 
+import java.util.EventListener;
 import java.util.Locale;
 
 public interface CmdbuildConfiguration {
+
+	interface ChangeListener extends EventListener {
+
+		void changed();
+
+	}
+
+	void addListener(ChangeListener listener);
 
 	Locale getLocale();
 
@@ -28,7 +37,7 @@ public interface CmdbuildConfiguration {
 
 	String getTabsPosition();
 
-	int getSessionTimoutOrZero();
+	int getSessionTimeoutOrDefault();
 
 	boolean getLockCard();
 

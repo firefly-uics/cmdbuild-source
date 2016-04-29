@@ -1,5 +1,7 @@
 (function() {
 
+	Ext.require(['CMDBuild.proxy.Card']);
+
 	Ext.define("CMDBuild.state.CMWorkflowStateDelegate", {
 		onProcessClassRefChange: Ext.emptyFn,
 		onProcessInstanceChange: Ext.emptyFn,
@@ -221,11 +223,12 @@
 					var me = this;
 
 					if (!processInstance.isNew() && processClassRefIsASuperclass) {
-						CMDBuild.ServiceProxy.card.get({
+						CMDBuild.proxy.Card.read({
 							params: {
-								Id: processInstance.getId(),
-								IdClass: processInstance.getClassId()
+								cardId: processInstance.getId(),
+								className: _CMCache.getEntryTypeNameById(processInstance.getClassId())
 							},
+							loadMask: false,
 							success: function(a,b, response) {
 								processInstance.applyValues(response.card);
 								onProcessInstanceChange();

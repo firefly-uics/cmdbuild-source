@@ -456,7 +456,8 @@
 		"weeks2": "In 2 weeks"
 	},
 	"errors": {
-		"busy_wf_widgets": "The visual controls are busy, check the status of the server before trying again.",
+		"anErrorHasOccurred": "An error has occurred",
+		"busyVisualControls": "The visual controls are busy, check the status of the server before trying again.",
 		"copyAttachmentFailure": "Copy attachment with name \"{0}\" failure",
 		"createReportFilure": "Create report failure",
 		"csvUploadOrDecodeFailure": "CSV upload or decode error",
@@ -476,7 +477,7 @@
 		"invalidKeyAttributesInLocalStore": "Invalid key attribute(s) in local store",
 		"invalidLookupValue": "Invalid Lookup value",
 		"no_driver": "No JDBC driver was found.<br />You can find it in the CMDBuild release package and copy it into the Tomcat libraries.",
-		"no_selections": "You have not selected any card to update",
+		"noSelectedCardToUpdate": "You have not selected any card to update",
 		"printReportFilure": "Print report failure",
 		"reasons": {
 			"ATTRIBUTE_NOTFOUND": "Attribute {1} of {0} non found",
@@ -630,7 +631,6 @@
 		"show_detail": "Show details",
 		"targetClassOrCqlFilterRequired": "Target class or Card CQL selector are required",
 		"template_error": "Template error",
-		"unknown_error": "An error has occurred",
 		"unmanagedReportType": "Unmanaged report type",
 		"valueDoesNotMatchFilter": "The value doesn't match the filter",
 		"widgetLinkCardsNoClassNameError": "LinkCardsController constructor: className not valid",
@@ -644,9 +644,6 @@
 	},
 	"filterWindow": {
 		"add": "Add filter"
-	},
-	"info": {
-		"card_not_found": "The card doesn't match the current filter"
 	},
 	"management": {
 		"description": "Data management module",
@@ -799,42 +796,6 @@
 			"showgraph": "Show graph",
 			"shownotes": "Show notes"
 		},
-		"modutilities": {
-			"bulkupdate": {
-				"title": "Multiple update",
-				"countMessage": "{0} cards will be modified"
-			},
-			"changepassword": {
-				"newpw": "New password",
-				"oldpw": "Old password",
-				"repnew": "Retype new password",
-				"successmsgtext": "Password changed",
-				"title": "Change password",
-				"validationtext": "Passwords do not match"
-			},
-			"csv": {
-				"csvfile": "CSV file",
-				"error": "Error",
-				"exportfile": "Export",
-				"importfailure": "Import failed",
-				"importsuccess": "Import was successful",
-				"info": "Info",
-				"noupdate": "No cards to update",
-				"selectaclass": "Select a class",
-				"separator": "Separator",
-				"shownonvalid": "Show invalid records only",
-				"title": "Import CSV file",
-				"title_export": "Export CSV file",
-				"warning": "Warning"
-			},
-			"title": "Utility"
-		},
-		"modutility": {
-			"title": "Utility"
-		},
-		"modview": {
-			"title": "Views"
-		},
 		"modworkflow": {
 			"abort_card": "Abort process",
 			"abort_card_confirm": "Are you sure you want to abort this process?",
@@ -894,17 +855,16 @@
 		}
 	},
 	"warnings": {
+		"changeAppliedOnlyToFilteredCards": "The changes will be applied only to cards that meet the current filter",
 		"emailTemplateRelatedAttributeEdited": "Attribute related with email templates changed, some e-mail could be regenerated.",
 		"itemNotAvailable": "Item not available",
 		"itIsNotAllowedFilterWithCalculatedParams": "It's not allowed to use a filter with calculated parameters",
 		"link_cards_changed_values": "The selection of \"{0}\" has been updated",
-		"only_filtered": "The changes will be applied only to the cards that meet the current filter",
 		"popup_block": "We have detected that you are using popup blocking software, please disable to run operation",
 		"reportsDuplicateImageFilename": "Warning: found report images with same filename - cannot proceed.",
 		"saveMenuBeforeAccess": "The menu has to been saved before access at the translations of this element.",
 		"thereAreNoEnabledLanguages": "There are no enabled languages",
-		"toSetAFilterYouMustBeforeSelectAClass": "To set a filter you must before select a class",
-		"warning_message": "Warning"
+		"toSetAFilterYouMustBeforeSelectAClass": "To set a filter you must before select a class"
 	},
 	"account": "Account",
 	"accounts": "Accounts",
@@ -976,8 +936,10 @@
 	"card": "Card",
 	"cardCqlSelector": "Card CQL selector",
 	"cardinality": "Cardinality",
+	"cardNotMatchFilter": "The card doesn't match the current filter",
 	"cardPanelHeight": "Height of card panel in percentiles",
 	"cards": "Cards",
+	"cardsWillBeModified": "{0} cards will be modified",
 	"category": "Category",
 	"cc": "Cc",
 	"changePassword": "Change password",
@@ -1118,6 +1080,7 @@
 	"existing": "Existing",
 	"expand": "Expand",
 	"expandAll": "Expand all",
+	"exportCsvFile": "Export CSV file",
 	"exportLabel": "Export",
 	"expose": "Expose",
 	"externalServices": "External services",
@@ -1159,15 +1122,19 @@
 	"imapPort": "IMAP port",
 	"imapServer": "IMAP server",
 	"import": "Import",
+	"importCsvFile": "Import CSV file",
 	"importExport": "Import/Export",
+	"importFailed": "Import failed",
 	"importFromCSV": "Import from CSV",
 	"importJasperReport": "Import Jasper report",
+	"importWasSuccessful": "Import was successful",
 	"includeInherited": "Include inherited",
 	"includeRelations": "Include relations",
 	"includeSystemActivities": "Include system activities",
 	"includeUsersFilters": "Include users filters",
 	"incoming": "Incoming",
 	"incomingFolder": "Incoming folder",
+	"info": "Info",
 	"informationLayer": "Information layer",
 	"inheritsFrom": "Inherits from",
 	"initialLatitude": "Initial latitude",
@@ -1198,6 +1165,7 @@
 	"loggedGroup": "Logged Group",
 	"loggedUser": "Logged User",
 	"login": "Login",
+	"loginTitle": "Login",
 	"lookup": "Lookup",
 	"lookupList": "Lookup list",
 	"lookupTypes": "Lookup types",
@@ -1236,15 +1204,18 @@
 	"modifyWidget": "Modify widget",
 	"move": "Move",
 	"multiGroup": "Multi group",
+	"multipleUpdate": "Multiple update",
 	"name": "Name",
 	"navigation": "Navigation",
 	"navigationChronology": "Navigation chronology",
 	"navigationTree": "Navigation tree",
 	"navigationTrees": "Navigation trees",
 	"newFolder": "New folder",
+	"newPassword": "New password",
 	"next": "Next",
 	"no_bim_project_for_card": "There is no BIM project for this card",
 	"noAvailableData": "No available data",
+	"noCardsToUpdate": "No cards to update",
 	"nodeDistance": "Node distance",
 	"none": "None",
 	"noOne": "No one",
@@ -1254,6 +1225,7 @@
 	"numberOfPings": "Number of pings",
 	"odt": "ODT",
 	"ok": "OK",
+	"oldPassword": "Old password",
 	"onDay": "On",
 	"open_3d_viewer": "Open 3D viewer",
 	"openRelationGraph": "Open relation graph",
@@ -1264,6 +1236,7 @@
 	"parent": "Parent",
 	"parentDescription": "Parent description",
 	"password": "Password",
+	"passwordChanged": "Password changed",
 	"passwordsDoNotMatch": "Passwords do not match",
 	"pdf": "PDF",
 	"permissions": "Permissions",
@@ -1326,6 +1299,7 @@
 	"reset": "Reset",
 	"resetToDefault": "Reset to defaults",
 	"restore": "Restore",
+	"retypeNewPassword": "Retype new password",
 	"root": "Root",
 	"rotate": "Rotate",
 	"rowAndColumnPrivileges": "Rows and columns privileges",
@@ -1361,6 +1335,7 @@
 	"setup": "Setup",
 	"showDetails": "Show details",
 	"showHideThisFeatureOnly": "Show/hide this feature only",
+	"showInvalidRecordsOnly": "Show invalid records only",
 	"showLanguageChoice": "Show language choice",
 	"showLanguageSelectionLoginBox": "Show language selection in login box",
 	"showLockerUserName": "Show locker username",
@@ -1415,6 +1390,7 @@
 	"usersAndGroups": "Users and Groups",
 	"userStoppable": "User stoppable",
 	"userType": "User type",
+	"utility": "Utility",
 	"utilityChangePassword": "Utility - Change password",
 	"utilityExportCsv": "Utility - Export CSV",
 	"utilityImportCsv": "Utility - Import CSV",

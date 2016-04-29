@@ -6,7 +6,7 @@
 		requires: [
 			'CMDBuild.core.constants.FieldWidths',
 			'CMDBuild.core.constants.Proxy',
-			'CMDBuild.core.proxy.common.field.filter.advanced.window.Functions'
+			'CMDBuild.proxy.common.field.filter.advanced.window.Functions'
 		],
 
 		/**
@@ -42,7 +42,7 @@
 						editable: false,
 						forceSelection: true,
 
-						store: CMDBuild.core.proxy.common.field.filter.advanced.window.Functions.getStore(),
+						store: CMDBuild.proxy.common.field.filter.advanced.window.Functions.getStore(),
 						queryMode: 'local'
 					})
 				]

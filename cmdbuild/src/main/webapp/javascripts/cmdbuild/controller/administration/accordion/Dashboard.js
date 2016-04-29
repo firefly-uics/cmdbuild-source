@@ -4,8 +4,8 @@
 		extend: 'CMDBuild.controller.common.abstract.Accordion',
 
 		requires: [
-			'CMDBuild.core.constants.Global',
-			'CMDBuild.core.constants.Proxy'
+			'CMDBuild.core.constants.Proxy',
+			'CMDBuild.proxy.dashboard.Dashboard'
 		],
 
 		/**
@@ -20,11 +20,16 @@
 
 		/**
 		 * @property {CMDBuild.view.administration.accordion.Dashboard}
+		 * @param {CMDBuild.controller.common.MainViewport} configurationObject.parentDelegate
+		 *
+		 * @returns {Void}
 		 */
 		view: undefined,
 
 		/**
 		 * @param {Object} configurationObject
+		 *
+		 * @returns {Void}
 		 *
 		 * @override
 		 */
@@ -44,7 +49,7 @@
 		accordionUpdateStore: function (nodeIdToSelect) {
 			nodeIdToSelect = Ext.isNumber(nodeIdToSelect) ? nodeIdToSelect : null;
 
-			CMDBuild.ServiceProxy.Dashboard.fullList({
+			CMDBuild.proxy.dashboard.Dashboard.readAll({
 				scope: this,
 				success: function (response, options, decodedResponse) {
 					decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.RESPONSE][CMDBuild.core.constants.Proxy.DASHBOARDS] || [];
@@ -72,10 +77,10 @@
 							this.view.getStore().getRootNode().appendChild(nodes);
 							this.view.getStore().sort();
 						}
-
-						// Alias of this.callParent(arguments), inside proxy function doesn't work
-						this.updateStoreCommonEndpoint(nodeIdToSelect);
 					}
+
+					// Alias of this.callParent(arguments), inside proxy function doesn't work
+					this.updateStoreCommonEndpoint(nodeIdToSelect);
 				}
 			});
 

@@ -456,7 +456,8 @@
 		"weeks2": "<em>In 2 weeks</em>"
 	},
 	"errors": {
-		"busy_wf_widgets": "Виджеты заняты. Проверьте состояние сервера перед повторной попыткой.",
+		"anErrorHasOccurred": "Неизвестная ошибка",
+		"busyVisualControls": "Виджеты заняты. Проверьте состояние сервера перед повторной попыткой.",
 		"copyAttachmentFailure": "<em>Copy attachment with name \"{0}\" failure</em>",
 		"createReportFilure": "<em>Create report failure</em>",
 		"csvUploadOrDecodeFailure": "<em>CSV upload or decode error</em>",
@@ -476,7 +477,7 @@
 		"invalidKeyAttributesInLocalStore": "<em>Invalid key attribute(s) in local store</em>",
 		"invalidLookupValue": "<em>Invalid Lookup value</em>",
 		"no_driver": "Драйвер JDBC не найден.<br>Вы можете установить его в Tomcat из дистрибутива CMDBuild.",
-		"no_selections": "Не выбрано ни одной карточки для заполнения",
+		"noSelectedCardToUpdate": "Не выбрано ни одной карточки для заполнения",
 		"printReportFilure": "<em>Print report failure</em>",
 		"reasons": {
 			"ATTRIBUTE_NOTFOUND": "Атрибут {1} из {0} не найден",
@@ -630,7 +631,6 @@
 		"show_detail": "Подробно",
 		"targetClassOrCqlFilterRequired": "<em>Target class or Card CQL selector are required</em>",
 		"template_error": "Ошибка шаблона",
-		"unknown_error": "Неизвестная ошибка",
 		"unmanagedReportType": "<em>Unmanaged report type</em>",
 		"valueDoesNotMatchFilter": "Значение не совпадает с текущим фильтром",
 		"widgetLinkCardsNoClassNameError": "<em>LinkCardsController constructor: className not valid</em>",
@@ -644,9 +644,6 @@
 	},
 	"filterWindow": {
 		"add": "Создать фильтр"
-	},
-	"info": {
-		"card_not_found": "Данные не совпадают с текущим фильтром"
 	},
 	"management": {
 		"description": "Управление данными",
@@ -799,42 +796,6 @@
 			"showgraph": "Показать диаграмму связей",
 			"shownotes": "Показать комментарии"
 		},
-		"modutilities": {
-			"bulkupdate": {
-				"title": "Массовое обновление",
-				"countMessage": "Количество обновляемых карточек: {0}"
-			},
-			"changepassword": {
-				"newpw": "Новый пароль",
-				"oldpw": "Старый пароль",
-				"repnew": "Повтор нового пароля",
-				"successmsgtext": "Пароль был изменен",
-				"title": "Изменить пароль",
-				"validationtext": "Пароли не совпадают"
-			},
-			"csv": {
-				"csvfile": "Файл CSV",
-				"error": "Ошибка",
-				"exportfile": "Экспорт",
-				"importfailure": "Ошибка импорта",
-				"importsuccess": "Импорт выполнен успешно",
-				"info": "Информация",
-				"noupdate": "Нет обновляемых карточек",
-				"selectaclass": "Выберите класс",
-				"separator": "Разделитель",
-				"shownonvalid": "Показывать только неверные записи",
-				"title": "Импорт из CSV файла",
-				"title_export": "Экспорт в CSV файл",
-				"warning": "Предупреждение"
-			},
-			"title": "Инструменты"
-		},
-		"modutility": {
-			"title": "Инструменты"
-		},
-		"modview": {
-			"title": "Views"
-		},
 		"modworkflow": {
 			"abort_card": "Прервать процесс",
 			"abort_card_confirm": "Действительно удалить процесс?",
@@ -894,17 +855,16 @@
 		}
 	},
 	"warnings": {
+		"changeAppliedOnlyToFilteredCards": "Изменения будут применены только к карточкам, совпадающим с текущим фильтром",
 		"emailTemplateRelatedAttributeEdited": "<em>Attribute related with email templates changed, some e-mail could be regenerated.</em>",
 		"itemNotAvailable": "<em>Item not available</em>",
 		"itIsNotAllowedFilterWithCalculatedParams": "Не допускается использовать фильтр с вычисляемыми параметрами",
 		"link_cards_changed_values": "<em>The selection of \"{0}\" has been updated.</em>",
-		"only_filtered": "Изменения будут применены только к карточкам, совпадающим с текущим фильтром",
 		"popup_block": "Пожалуйста, отключите блокировку всплывающих окон в браузере для нормальной работы",
 		"reportsDuplicateImageFilename": "Невозможно выполнить: найдены изображения с дублирующимися именами файлов.",
 		"saveMenuBeforeAccess": "<em>The menu has to been saved before access at the translations of this element.</em>",
 		"thereAreNoEnabledLanguages": "<em>There are no enabled languages</em>",
-		"toSetAFilterYouMustBeforeSelectAClass": "<em>To set a filter you must before select a class</em>",
-		"warning_message": "Предупреждение"
+		"toSetAFilterYouMustBeforeSelectAClass": "<em>To set a filter you must before select a class</em>"
 	},
 	"account": "Учетная запись",
 	"accounts": "Учетные записи",
@@ -976,8 +936,10 @@
 	"card": "Данные",
 	"cardCqlSelector": "CQL отбор",
 	"cardinality": "Тип связи",
+	"cardNotMatchFilter": "Данные не совпадают с текущим фильтром",
 	"cardPanelHeight": "Высота панели карточек в процентах",
 	"cards": "Конфигурационные единицы",
+	"cardsWillBeModified": "Количество обновляемых карточек: {0}",
 	"category": "<em>Category</em>",
 	"cc": "Копия",
 	"changePassword": "Изменить пароль",
@@ -1118,6 +1080,7 @@
 	"existing": "Существующая",
 	"expand": "<em>Expand</em>",
 	"expandAll": "<em>Expand all</em>",
+	"exportCsvFile": "Экспорт в CSV файл",
 	"exportLabel": "Экспорт",
 	"expose": "<em>Expose</em>",
 	"externalServices": "Внешние сервисы",
@@ -1159,15 +1122,19 @@
 	"imapPort": "IMAP порт",
 	"imapServer": "IMAP сервер",
 	"import": "<em>Import</em>",
+	"importCsvFile": "Импорт из CSV файла",
 	"importExport": "<em>Import/Export</em>",
+	"importFailed": "Ошибка импорта",
 	"importFromCSV": "<em>Import from CSV</em>",
 	"importJasperReport": "Импортировать отчет Jasper",
+	"importWasSuccessful": "Импорт выполнен успешно",
 	"includeInherited": "Показывать наследуемые",
 	"includeRelations": "<em>Include relations</em>",
 	"includeSystemActivities": "<em>Include system activities</em>",
 	"includeUsersFilters": "<em>Include users filters</em>",
 	"incoming": "Входящая почта",
 	"incomingFolder": "Папка входящей почты",
+	"info": "Информация",
 	"informationLayer": "<em>Information layer</em>",
 	"inheritsFrom": "Наследуется от",
 	"initialLatitude": "Начальная широта",
@@ -1198,6 +1165,7 @@
 	"loggedGroup": "Группа",
 	"loggedUser": "Пользователь",
 	"login": "Вход в систему",
+	"loginTitle": "Вход в систему",
 	"lookup": "<em>Lookup</em>",
 	"lookupList": "Перечень",
 	"lookupTypes": "Перечень",
@@ -1236,15 +1204,18 @@
 	"modifyWidget": "<em>Modify widget</em>",
 	"move": "<em>Move</em>",
 	"multiGroup": "Несколько групп",
+	"multipleUpdate": "Массовое обновление",
 	"name": "Имя",
 	"navigation": "Навигация",
 	"navigationChronology": "<em>Navigation chronology</em>",
 	"navigationTree": "Навигационное дерево",
 	"navigationTrees": "Навигационные деревья",
 	"newFolder": "Новая папка",
+	"newPassword": "Новый пароль",
 	"next": "Далее",
 	"no_bim_project_for_card": "Для данной карточки не задан BIM-проект",
 	"noAvailableData": "<em>No available data</em>",
+	"noCardsToUpdate": "Нет обновляемых карточек",
 	"nodeDistance": "<em>Node distance</em>",
 	"none": "Нет",
 	"noOne": "Ни один из",
@@ -1254,6 +1225,7 @@
 	"numberOfPings": "Количество пакетов",
 	"odt": "ODT",
 	"ok": "ОК",
+	"oldPassword": "Старый пароль",
 	"onDay": "<em>On</em>",
 	"open_3d_viewer": "Открыть 3D просмотр",
 	"openRelationGraph": "Показать диаграмму связей",
@@ -1264,6 +1236,7 @@
 	"parent": "Родитель",
 	"parentDescription": "Родитель",
 	"password": "Пароль",
+	"passwordChanged": "Пароль был изменен",
 	"passwordsDoNotMatch": "Пароли не совпадают",
 	"pdf": "PDF",
 	"permissions": "Разрешения",
@@ -1326,6 +1299,7 @@
 	"reset": "Сброс",
 	"resetToDefault": "<em>Reset to defaults</em>",
 	"restore": "<em>Restore</em>",
+	"retypeNewPassword": "Повтор нового пароля",
 	"root": "Корень",
 	"rotate": "Повернуть",
 	"rowAndColumnPrivileges": "Права доступа к строкам и колонкам",
@@ -1361,6 +1335,7 @@
 	"setup": "Настройки CMDBuild",
 	"showDetails": "Подробно",
 	"showHideThisFeatureOnly": "<em>Show/hide this feature only</em>",
+	"showInvalidRecordsOnly": "Показывать только неверные записи",
 	"showLanguageChoice": "Показывать окно выбора языка",
 	"showLanguageSelectionLoginBox": "Показывать окно выбора языка",
 	"showLockerUserName": "Показать имя пользователя, заблокировавшего карточку",
@@ -1415,6 +1390,7 @@
 	"usersAndGroups": "Пользователи и группы",
 	"userStoppable": "Может быть остановлен пользователем",
 	"userType": "Тип пользователя",
+	"utility": "Инструменты",
 	"utilityChangePassword": "Инструменты - Изменить пароль",
 	"utilityExportCsv": "Инструменты - Экспорт в CSV файл",
 	"utilityImportCsv": "Инструменты - Импорт из CSV файла",

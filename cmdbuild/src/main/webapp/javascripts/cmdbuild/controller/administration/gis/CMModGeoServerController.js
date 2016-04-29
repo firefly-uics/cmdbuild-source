@@ -1,6 +1,8 @@
 (function() {
 	var tr = CMDBuild.Translation.administration.modcartography.geoserver;
 
+	Ext.require('CMDBuild.proxy.gis.GeoServer');
+
 	Ext.define("CMDBuild.controller.administration.gis.CMModGeoServerController", {
 		extend: "CMDBuild.controller.CMBasePanelController",
 		constructor: function() {
@@ -51,33 +53,51 @@
 	}
 
 	function onSaveButtonClick() {
-		var url = this.lastSelection ? CMDBuild.ServiceProxy.geoServer.modifyUrl:CMDBuild.ServiceProxy.geoServer.addUrl;
 		var nameToSelect = this.view.form.getName();
 		var cardBinding = this.view.form.getCardsBinding();
-		var form = this.view.form.getForm();
 
 		if (form.isValid()) {
-			CMDBuild.core.LoadMask.show();
-			form.submit({
-				method: 'POST',
-				url: url,
-				params: {
-					name: nameToSelect,
-					cardBinding: Ext.encode(cardBinding)
-				},
-				scope: this,
-				success: function() {
-					_CMCache.onGeoAttributeSaved();
-					this.view.form.disableModify();
-					this.view.layersGrid.loadStoreAndSelectLayerWithName(nameToSelect);
-				},
-				failure: function() {
-					_debug("Failed to add or modify a Geoserver Layer", arguments);
-				},
-				callback: function() {
-					CMDBuild.core.LoadMask.hide();
-				}
-			});
+			if (this.lastSelection) {
+				CMDBuild.proxy.gis.GeoServer.updateLayer({
+					form: this.view.form.getForm(),
+					params: {
+						name: nameToSelect,
+						cardBinding: Ext.encode(cardBinding)
+					},
+					scope: this,
+					success: function() {
+						_CMCache.onGeoAttributeSaved();
+						this.view.form.disableModify();
+						this.view.layersGrid.loadStoreAndSelectLayerWithName(nameToSelect);
+					},
+					failure: function() {
+						_debug("Failed to add or modify a Geoserver Layer", arguments);
+					},
+					callback: function() {
+						CMDBuild.core.LoadMask.hide();
+					}
+				});
+			} else {
+				CMDBuild.proxy.gis.GeoServer.createLayer({
+					form: this.view.form.getForm(),
+					params: {
+						name: nameToSelect,
+						cardBinding: Ext.encode(cardBinding)
+					},
+					scope: this,
+					success: function() {
+						_CMCache.onGeoAttributeSaved();
+						this.view.form.disableModify();
+						this.view.layersGrid.loadStoreAndSelectLayerWithName(nameToSelect);
+					},
+					failure: function() {
+						_debug("Failed to add or modify a Geoserver Layer", arguments);
+					},
+					callback: function() {
+						CMDBuild.core.LoadMask.hide();
+					}
+				});
+			}
 		}
 	};
 
@@ -99,10 +119,13 @@
 				if (button == "yes") {
 					CMDBuild.core.LoadMask.show();
 					var layerName = me.view.form.getName();
-					CMDBuild.ServiceProxy.geoServer.deleteLayer({
+					CMDBuild.proxy.gis.GeoServer.remove({
 						params: {
 							name: layerName
 						},
+						loadMask: false,
+						important: true,
+						scope: this,
 						callback: function() {
 							_CMCache.onGeoAttributeDeleted("_Geoserver", layerName);
 							me.view.layersGrid.loadStoreAndSelectLayerWithName();
@@ -115,6 +138,6 @@
 	};
 
 	function geoserverIsEnabled() {
-		return CMDBuild.configuration.gis.get(['geoserver', 'enabled']); // TODO: use proxy constants
+		return CMDBuild.configuration.gis.get([CMDBuild.core.constants.Proxy.GEO_SERVER, 'enabled']); // TODO: use proxy constants
 	}
 })();

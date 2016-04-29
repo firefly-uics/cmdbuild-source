@@ -7,8 +7,8 @@
 
 		requires: [
 			'CMDBuild.core.constants.Proxy',
-			'CMDBuild.core.proxy.configuration.GeneralOptions',
-			'CMDBuild.core.proxy.localization.Localization'
+			'CMDBuild.proxy.configuration.GeneralOptions',
+			'CMDBuild.proxy.core.configurations.builder.Localization'
 		],
 
 		/**
@@ -34,16 +34,18 @@
 		 * @param {Boolean} configurationObject.enableServerCalls
 		 * @param {Object} configurationObject.scope
 		 *
+		 * @returns {Void}
+		 *
 		 * @override
 		 */
 		constructor: function (configurationObject) {
 			Ext.apply(this, configurationObject); // Apply configurations
 
 			Ext.ns('CMDBuild.configuration');
-			CMDBuild.configuration.localization = Ext.create('CMDBuild.model.core.configurations.builder.Localization'); // Localization configuration object
+			CMDBuild.configuration.localization = Ext.create('CMDBuild.model.core.configurations.builder.Localization'); // Setup configuration with defaults
 
 			if (this.enableServerCalls) {
-				CMDBuild.core.proxy.localization.Localization.getLanguages({
+				CMDBuild.proxy.core.configurations.builder.Localization.readAllAvailableTranslations({
 					loadMask: false,
 					scope: this,
 					success: function (response, options, decodedResponse) {
@@ -53,7 +55,7 @@
 							CMDBuild.configuration.localization.set(CMDBuild.core.constants.Proxy.LANGUAGES, decodedResponse); // Build all languages array
 
 							// Get server language
-							CMDBuild.core.proxy.configuration.GeneralOptions.read({ // TODO: waiting for refactor (server configuration refactoring)
+							CMDBuild.proxy.configuration.GeneralOptions.read({ // TODO: waiting for refactor (server configuration refactoring)
 								loadMask: false,
 								scope: this.scope || this,
 								success: function (response, options, decodedResponse) {

@@ -456,7 +456,8 @@
 		"weeks2": "Dans 2 semaines"
 	},
 	"errors": {
-		"busy_wf_widgets": "Les widgets ne sont pas disponibles actuellement, vérifiez l'état du serveur avant de recommencer l'opération.",
+		"anErrorHasOccurred": "Une erreur est survenue",
+		"busyVisualControls": "Les widgets ne sont pas disponibles actuellement, vérifiez l'état du serveur avant de recommencer l'opération.",
 		"copyAttachmentFailure": "La copie de la pièce jointe \"{0}\" a échoué",
 		"createReportFilure": "La création du rapport a échoué",
 		"csvUploadOrDecodeFailure": "Erreur lors du téléchargement ou du décodage du fichier CSV",
@@ -476,7 +477,7 @@
 		"invalidKeyAttributesInLocalStore": "<em>Invalid key attribute(s) in local store</em>",
 		"invalidLookupValue": "<em>Invalid Lookup value</em>",
 		"no_driver": "Aucun pilote JDBC trouvé.<br />Vous pouvez le trouver dans la distribution CMDBuild et le copier dans les librairies de Tomcat.",
-		"no_selections": "Vous n'avez pas choisi la fiche à mettre à jour",
+		"noSelectedCardToUpdate": "Vous n'avez pas choisi la fiche à mettre à jour",
 		"printReportFilure": "L'impression du rapport a échoué",
 		"reasons": {
 			"ATTRIBUTE_NOTFOUND": "Attribut {1} de {0} non trouvé",
@@ -630,7 +631,6 @@
 		"show_detail": "Voir les détails",
 		"targetClassOrCqlFilterRequired": "Une classe cible ou un sélecteur CQL de fiche doit être indiqué",
 		"template_error": "Erreur de modèle",
-		"unknown_error": "Une erreur est survenue",
 		"unmanagedReportType": "Type de rapport non pris en charge",
 		"valueDoesNotMatchFilter": "La valeur ne correspond pas au filtre",
 		"widgetLinkCardsNoClassNameError": "Constructeur LinkCardsController: nom de classe non valide",
@@ -644,9 +644,6 @@
 	},
 	"filterWindow": {
 		"add": "Ajouter un filtre"
-	},
-	"info": {
-		"card_not_found": "Aucune fiche ne correspond au filtre choisi"
 	},
 	"management": {
 		"description": "Module de gestion des données",
@@ -799,42 +796,6 @@
 			"showgraph": "Voir le graphe",
 			"shownotes": "Voir les notes"
 		},
-		"modutilities": {
-			"bulkupdate": {
-				"title": "Mises à jour multiples",
-				"countMessage": "{0} fiches vont être modifiées"
-			},
-			"changepassword": {
-				"newpw": "Nouveau mot de passe",
-				"oldpw": "Ancien mot de passe",
-				"repnew": "Resaisir le nouveau mot de passe",
-				"successmsgtext": "Mot de passe modifié",
-				"title": "Changement du mot de passe",
-				"validationtext": "Les mots de passe ne sont pas identiques"
-			},
-			"csv": {
-				"csvfile": "fichier CSV",
-				"error": "Erreur",
-				"exportfile": "Export",
-				"importfailure": "Import échoué",
-				"importsuccess": "Import réussi",
-				"info": "Info",
-				"noupdate": "Aucune fiche à mettre à jour",
-				"selectaclass": "Choisir une classe",
-				"separator": "Séparateur",
-				"shownonvalid": "Voir les enregistrements invalides seulement",
-				"title": "Import fichier CSV",
-				"title_export": "Export fichier CSV",
-				"warning": "Attention"
-			},
-			"title": "Utilitaire"
-		},
-		"modutility": {
-			"title": "Utilitaires"
-		},
-		"modview": {
-			"title": "Vues"
-		},
 		"modworkflow": {
 			"abort_card": "Abandonner le processus",
 			"abort_card_confirm": "Êtes-vous sûr de vouloir abandonner le processus ?",
@@ -894,17 +855,16 @@
 		}
 	},
 	"warnings": {
+		"changeAppliedOnlyToFilteredCards": "Les changements seront appliqués sur les fiches avec le filtre en cours.",
 		"emailTemplateRelatedAttributeEdited": "Des attributs utilisés dans les modèles d'email ont été modifiés, certains emails pourraient être regénérés.",
 		"itemNotAvailable": "<em>Item not available</em>",
 		"itIsNotAllowedFilterWithCalculatedParams": "Il est interdit d'utiliser un filtre avec des paramètres calculés",
 		"link_cards_changed_values": "La sélection de \"{0}\" a été mise à jour",
-		"only_filtered": "Les changements seront appliqués sur les fiches avec le filtre en cours.",
 		"popup_block": "Nous avons détecté que vous utilisez un programme pour bloquer les popups, merci de le désactiver",
 		"reportsDuplicateImageFilename": "Attention : des images du rapport possèdent le même nom - impossible de continuer.",
 		"saveMenuBeforeAccess": "Le menu doit être enregistré avant de pouvoir accéder aux traductions de cet élément.",
 		"thereAreNoEnabledLanguages": "<em>There are no enabled languages</em>",
-		"toSetAFilterYouMustBeforeSelectAClass": "Pour configurer un filtre, vous devez d'abord choisir une classe",
-		"warning_message": "Attention"
+		"toSetAFilterYouMustBeforeSelectAClass": "Pour configurer un filtre, vous devez d'abord choisir une classe"
 	},
 	"account": "Compte",
 	"accounts": "Comptes",
@@ -976,8 +936,10 @@
 	"card": "Fiche",
 	"cardCqlSelector": "Choisir une fiche CQL",
 	"cardinality": "Cardinalité",
+	"cardNotMatchFilter": "Aucune fiche ne correspond au filtre choisi",
 	"cardPanelHeight": "Hauteur de la fenêtre en pourcentage",
 	"cards": "Fiches",
+	"cardsWillBeModified": "{0} fiches vont être modifiées",
 	"category": "Catégorie",
 	"cc": "Cc",
 	"changePassword": "Changer le mot de passe",
@@ -1118,6 +1080,7 @@
 	"existing": "Déjà existante",
 	"expand": "Développer",
 	"expandAll": "Tout développer",
+	"exportCsvFile": "Export fichier CSV",
 	"exportLabel": "Exporter",
 	"expose": "Exposer",
 	"externalServices": "Services externes",
@@ -1159,15 +1122,19 @@
 	"imapPort": "Port IMAP",
 	"imapServer": "Serveur IMAP",
 	"import": "Importer",
+	"importCsvFile": "Import fichier CSV",
 	"importExport": "Importer/Exporter",
+	"importFailed": "Import échoué",
 	"importFromCSV": "Import au format CSV",
 	"importJasperReport": "Importation de rapport jasper",
+	"importWasSuccessful": "Import réussi",
 	"includeInherited": "Inclure les éléments hérités",
 	"includeRelations": "Inclure les liens",
 	"includeSystemActivities": "Inclure les activités système",
 	"includeUsersFilters": "Inclure les filtres des utilisateurs",
 	"incoming": "Entrée",
 	"incomingFolder": "Répertoire d'entrée",
+	"info": "Info",
 	"informationLayer": "Calque d'information",
 	"inheritsFrom": "Hérite de",
 	"initialLatitude": "Latitude Initiale",
@@ -1198,6 +1165,7 @@
 	"loggedGroup": "Groupe connecté",
 	"loggedUser": "Utilisateur connecté",
 	"login": "Se connecter",
+	"loginTitle": "Se connecter",
 	"lookup": "Valeur de liste",
 	"lookupList": "Liste de valeurs",
 	"lookupTypes": "Listes de valeurs",
@@ -1236,15 +1204,18 @@
 	"modifyWidget": "Modifier le widget",
 	"move": "Déplacer",
 	"multiGroup": "Multi-groupes",
+	"multipleUpdate": "Mises à jour multiples",
 	"name": "Nom",
 	"navigation": "Navigation",
 	"navigationChronology": "Chronologie de navigation",
 	"navigationTree": "Arbre de navigation",
 	"navigationTrees": "Arbres de navigation",
 	"newFolder": "Nouveau dossier",
+	"newPassword": "Nouveau mot de passe",
 	"next": "Suivant",
 	"no_bim_project_for_card": "Il n'existe pas de projet BIM pour cette fiche",
 	"noAvailableData": "Aucune donnée disponible",
+	"noCardsToUpdate": "Aucune fiche à mettre à jour",
 	"nodeDistance": "Distance des noeuds",
 	"none": "Aucun",
 	"noOne": "Pas Un",
@@ -1254,6 +1225,7 @@
 	"numberOfPings": "Nombre de pings",
 	"odt": "ODT",
 	"ok": "Confirmer",
+	"oldPassword": "Ancien mot de passe",
 	"onDay": "Travaillé",
 	"open_3d_viewer": "Ouvrir la visionneuse 3D",
 	"openRelationGraph": "Ouvrir le graphe de relations",
@@ -1264,6 +1236,7 @@
 	"parent": "Parent",
 	"parentDescription": "Description globale",
 	"password": "Mot de passe",
+	"passwordChanged": "Mot de passe modifié",
 	"passwordsDoNotMatch": "Mot de passe incorrect",
 	"pdf": "PDF",
 	"permissions": "Permissions",
@@ -1326,6 +1299,7 @@
 	"reset": "Réinitialiser",
 	"resetToDefault": "Réinitialiser avec les valeurs par défaut",
 	"restore": "Restorer",
+	"retypeNewPassword": "Resaisir le nouveau mot de passe",
 	"root": "Racine",
 	"rotate": "Pivoter",
 	"rowAndColumnPrivileges": "Droits sur les lignes et les colonnes",
@@ -1361,6 +1335,7 @@
 	"setup": "Options générales",
 	"showDetails": "Voir les détails",
 	"showHideThisFeatureOnly": "Montrer/masquer seulement cette fonctionnalité",
+	"showInvalidRecordsOnly": "Voir les enregistrements invalides seulement",
 	"showLanguageChoice": "Choix de la langue",
 	"showLanguageSelectionLoginBox": "Choix de la langue sélectionnée lors de la connexion",
 	"showLockerUserName": "Voir les utilisateurs verrouillés",
@@ -1415,6 +1390,7 @@
 	"usersAndGroups": "Utilisateurs et groupes",
 	"userStoppable": "Arrêtable par un utilisateur",
 	"userType": "Type d'utilisateur",
+	"utility": "Utilitaire",
 	"utilityChangePassword": "Utilitaire - Changement du mot de passe",
 	"utilityExportCsv": "Utilitaire - Export fichier CSV",
 	"utilityImportCsv": "Utilitaire - Import fichier CSV",

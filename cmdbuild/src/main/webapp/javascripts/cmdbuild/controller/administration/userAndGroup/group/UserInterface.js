@@ -6,7 +6,8 @@
 		requires: [
 			'CMDBuild.core.Message',
 			'CMDBuild.core.constants.Proxy',
-			'CMDBuild.core.proxy.userAndGroup.group.UserInterface'
+			'CMDBuild.proxy.userAndGroup.group.Group',
+			'CMDBuild.proxy.userAndGroup.group.UserInterface'
 		],
 
 		/**
@@ -129,7 +130,7 @@
 		 * @returns {Void}
 		 */
 		onUserAndGroupGroupTabUserInterfaceGroupSelected: function () {
-			CMDBuild.core.proxy.userAndGroup.group.Group.read({ // TODO: waiting for refactor (crud)
+			CMDBuild.proxy.userAndGroup.group.Group.read({ // TODO: waiting for refactor (crud)
 				scope: this,
 				success: function (response, options, decodedResponse) {
 					decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.GROUPS];
@@ -160,7 +161,7 @@
 			params[CMDBuild.core.constants.Proxy.ID] = this.cmfg('userAndGroupGroupSelectedGroupGet', CMDBuild.core.constants.Proxy.ID);
 			params[CMDBuild.core.constants.Proxy.UI_CONFIGURATION] = Ext.encode(this.configurationGet().getData());
 
-			CMDBuild.core.proxy.userAndGroup.group.UserInterface.update({
+			CMDBuild.proxy.userAndGroup.group.UserInterface.update({
 				params: params,
 				scope: this,
 				success: function (response, options, decodedResponse) {
@@ -181,7 +182,7 @@
 				var params = {};
 				params[CMDBuild.core.constants.Proxy.ID] = this.cmfg('userAndGroupGroupSelectedGroupGet', CMDBuild.core.constants.Proxy.ID);
 
-				CMDBuild.core.proxy.userAndGroup.group.UserInterface.read({
+				CMDBuild.proxy.userAndGroup.group.UserInterface.read({
 					params: params,
 					scope: this,
 					success: function (response, options, decodedResponse) {

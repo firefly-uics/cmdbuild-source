@@ -5,7 +5,7 @@
 
 		requires: [
 			'CMDBuild.core.constants.Proxy',
-			'CMDBuild.core.proxy.lookup.Type',
+			'CMDBuild.proxy.lookup.Type',
 		],
 
 		/**
@@ -25,6 +25,9 @@
 
 		/**
 		 * @param {Object} configurationObject
+		 * @param {CMDBuild.controller.common.MainViewport} configurationObject.parentDelegate
+		 *
+		 * @returns {Void}
 		 *
 		 * @override
 		 */
@@ -39,12 +42,14 @@
 		/**
 		 * @param {Number} nodeIdToSelect
 		 *
+		 * @returns {Void}
+		 *
 		 * @override
 		 */
 		accordionUpdateStore: function (nodeIdToSelect) {
 			nodeIdToSelect = Ext.isString(nodeIdToSelect) ? nodeIdToSelect : null;
 
-			CMDBuild.core.proxy.lookup.Type.readAll({
+			CMDBuild.proxy.lookup.Type.readAll({
 				scope: this,
 				success: function (response, options, decodedResponse) {
 					if (!Ext.isEmpty(decodedResponse)) {
@@ -89,10 +94,10 @@
 							this.view.getStore().getRootNode().appendChild(nodes);
 							this.view.getStore().sort();
 						}
-
-						// Alias of this.callParent(arguments), inside proxy function doesn't work
-						this.updateStoreCommonEndpoint(nodeIdToSelect);
 					}
+
+					// Alias of this.callParent(arguments), inside proxy function doesn't work
+					this.updateStoreCommonEndpoint(nodeIdToSelect);
 				}
 			});
 

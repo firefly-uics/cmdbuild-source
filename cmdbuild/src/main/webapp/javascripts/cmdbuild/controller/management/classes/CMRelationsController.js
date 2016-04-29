@@ -1,6 +1,9 @@
 (function() {
 
-	Ext.require('CMDBuild.core.proxy.CMProxyRelations');
+	Ext.require([
+		'CMDBuild.core.Message',
+		'CMDBuild.proxy.Relation'
+	]);
 
 	Ext.define('CMDBuild.controller.management.classes.CMCardRelationsController', {
 		extend: 'CMDBuild.controller.management.classes.CMModCardSubController',
@@ -61,9 +64,8 @@
 				parameters[CMDBuild.core.constants.Proxy.SRC] = node.get('src');
 
 				this.view.setLoading(true);
-				CMDBuild.core.proxy.CMProxyRelations.getList({
+				CMDBuild.proxy.Relation.readAll({
 					params: parameters,
-					loadMask: true,
 					scope: this,
 					success: function (response, options, decodedResponse) {
 						this.view.setLoading(false);
@@ -151,11 +153,10 @@
 				var parameters = {};
 				parameters[CMDBuild.core.constants.Proxy.CARD_ID] = this.getCardId();
 				parameters[CMDBuild.core.constants.Proxy.CLASS_NAME] = _CMCache.getEntryTypeNameById(this.getClassId());
-				parameters[CMDBuild.core.constants.Proxy.DOMAIN_LIMIT] = CMDBuild.configuration.instance.get(CMDBuild.core.constants.Proxy.RELATION_LIMIT);
+				parameters['domainlimit'] = CMDBuild.configuration.instance.get(CMDBuild.core.constants.Proxy.RELATION_LIMIT);
 
-				CMDBuild.core.proxy.CMProxyRelations.getList({
+				CMDBuild.proxy.Relation.readAll({
 					params: parameters,
-					loadMask: true,
 					scope: this,
 					success: function(result, options, decodedResult) {
 						el.unmask();
@@ -192,7 +193,7 @@
 							Ext.Array.forEach(this.view.addRelationButton.menu.items.items, function(item, index, allItems) {
 								if (Ext.Array.contains(toDisableButtons, item.domain.dom_id)) { // Overwrites button handler to display error popup
 									item.setHandler(function() {
-										CMDBuild.Msg.error(
+										CMDBuild.core.Message.error(
 											CMDBuild.Translation.common.failure,
 											CMDBuild.Translation.errors.domainCardinalityViolation,
 											false
@@ -292,8 +293,9 @@
 					parameters[CMDBuild.core.constants.Proxy.CARDS] = Ext.encode(cardsIdArray);
 					parameters[CMDBuild.core.constants.Proxy.DOMAIN_DIRECTION] = destination;
 
-					CMDBuild.core.proxy.CMProxyRelations.getAlreadyRelatedCards({
+					CMDBuild.proxy.Relation.getAlreadyRelatedCards({
 						params: parameters,
+						loadMask: false,
 						scope: this,
 						success: function(result, options, decodedResult) {
 							var alreadyRelatedCardsIds = [];
@@ -304,11 +306,12 @@
 									var parameters = {};
 									parameters[CMDBuild.core.constants.Proxy.CARD_ID] = alreadyRelatedItem[CMDBuild.core.constants.Proxy.ID];
 									parameters[CMDBuild.core.constants.Proxy.CLASS_NAME] = alreadyRelatedItem[CMDBuild.core.constants.Proxy.CLASS_NAME];
-									parameters[CMDBuild.core.constants.Proxy.DOMAIN_LIMIT] = CMDBuild.configuration.instance.get(CMDBuild.core.constants.Proxy.RELATION_LIMIT);
+									parameters['domainlimit'] = CMDBuild.configuration.instance.get(CMDBuild.core.constants.Proxy.RELATION_LIMIT);
 
 									// Get all domains of grid-card to check if it have relation with current-card
-									CMDBuild.core.proxy.CMProxyRelations.getList({
+									CMDBuild.proxy.Relation.readAll({
 										params: parameters,
+										loadMask: false,
 										scope: this,
 										success: function(result, options, decodedResult) {
 											// Loop through domains array
@@ -446,7 +449,6 @@
 		 */
 		onDeleteRelationClick: function(model) {
 			var me = this;
-			var parameterNames = CMDBuild.ServiceProxy.parameter;
 			var masterAndSlave = getMasterAndSlave(model.get(CMDBuild.core.constants.Proxy.SOURCE));
 
 			Ext.Msg.confirm(
@@ -462,27 +464,28 @@
 					var params = {};
 					var attributes = {};
 
-					params[parameterNames.DOMAIN_NAME] = domain.getName();
-					params[parameterNames.RELATION_ID] = model.get('rel_id');
-					params[parameterNames.RELATION_MASTER_SIDE] = masterAndSlave.masterSide;
+					params[CMDBuild.core.constants.Proxy.DOMAIN_NAME] = domain.getName();
+					params[CMDBuild.core.constants.Proxy.RELATION_ID] = model.get('rel_id');
+					params['master'] = masterAndSlave.masterSide;
 
 					var masterSide = {};
-					masterSide[parameterNames.CLASS_NAME] = _CMCache.getEntryTypeNameById(me.card.get('IdClass'));
-					masterSide[parameterNames.CARD_ID] = me.card.get('Id');
+					masterSide[CMDBuild.core.constants.Proxy.CLASS_NAME] = _CMCache.getEntryTypeNameById(me.card.get('IdClass'));
+					masterSide[CMDBuild.core.constants.Proxy.CARD_ID] = me.card.get('Id');
 
 					attributes[masterAndSlave.masterSide] = [masterSide];
 
 					var slaveSide = {};
-					slaveSide[parameterNames.CLASS_NAME] = _CMCache.getEntryTypeNameById(model.get('dst_cid'));
-					slaveSide[parameterNames.CARD_ID] = model.get('dst_id');
+					slaveSide[CMDBuild.core.constants.Proxy.CLASS_NAME] = _CMCache.getEntryTypeNameById(model.get('dst_cid'));
+					slaveSide[CMDBuild.core.constants.Proxy.CARD_ID] = model.get('dst_id');
 
 					attributes[masterAndSlave.slaveSide] = [slaveSide];
 
-					params[parameterNames.ATTRIBUTES] = Ext.encode(attributes);
+					params[CMDBuild.core.constants.Proxy.ATTRIBUTES] = Ext.encode(attributes);
 
 					CMDBuild.core.LoadMask.show();
-					CMDBuild.core.proxy.CMProxyRelations.remove({
+					CMDBuild.proxy.Relation.remove({
 						params: params,
+						loadMask: false,
 						scope: this,
 						success: this.onDeleteRelationSuccess,
 						callback: function() {
@@ -576,15 +579,13 @@
 				if (el)
 					el.mask();
 
-				var parameterNames = CMDBuild.ServiceProxy.parameter;
 				var parameters = {};
-				parameters[parameterNames.CARD_ID] =  pi.getId();
-				parameters[parameterNames.CLASS_NAME] = _CMCache.getEntryTypeNameById(pi.getClassId());
-				parameters[parameterNames.DOMAIN_LIMIT] = CMDBuild.configuration.instance.get(CMDBuild.core.constants.Proxy.RELATION_LIMIT);
+				parameters[CMDBuild.core.constants.Proxy.CARD_ID] =  pi.getId();
+				parameters[CMDBuild.core.constants.Proxy.CLASS_NAME] = _CMCache.getEntryTypeNameById(pi.getClassId());
+				parameters['domainlimit'] = CMDBuild.configuration.instance.get(CMDBuild.core.constants.Proxy.RELATION_LIMIT);
 
-				CMDBuild.core.proxy.CMProxyRelations.getList({
+				CMDBuild.proxy.Relation.readAll({
 					params: parameters,
-					loadMask: true,
 					scope: this,
 					success: function(result, options, decodedResult) {
 						el.unmask();

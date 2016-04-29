@@ -6,8 +6,8 @@
 		requires: [
 			'CMDBuild.core.constants.ModuleIdentifiers',
 			'CMDBuild.core.constants.Proxy',
-			'CMDBuild.core.proxy.CustomPage',
-			'CMDBuild.core.proxy.Menu',
+			'CMDBuild.proxy.CustomPage',
+			'CMDBuild.proxy.Menu',
 		],
 
 		/**
@@ -39,6 +39,9 @@
 
 		/**
 		 * @param {Object} configurationObject
+		 * @param {CMDBuild.controller.common.MainViewport} configurationObject.parentDelegate
+		 *
+		 * @returns {Void}
 		 *
 		 * @override
 		 */
@@ -53,6 +56,8 @@
 		/**
 		 * @param {Number} nodeIdToSelect
 		 *
+		 * @returns {Void}
+		 *
 		 * @override
 		 */
 		accordionUpdateStore: function (nodeIdToSelect) {
@@ -62,14 +67,14 @@
 			params[CMDBuild.core.constants.Proxy.GROUP_NAME] = CMDBuild.configuration.runtime.get(CMDBuild.core.constants.Proxy.DEFAULT_GROUP_NAME);
 			params[CMDBuild.core.constants.Proxy.LOCALIZED] = true;
 
-			CMDBuild.core.proxy.Menu.read({
+			CMDBuild.proxy.Menu.read({
 				params: params,
 				loadMask: false,
 				scope: this,
 				success: function (response, options, decodedResponse) {
 					var menuItemsResponse = decodedResponse[CMDBuild.core.constants.Proxy.MENU];
 
-					CMDBuild.core.proxy.CustomPage.readForCurrentUser({
+					CMDBuild.proxy.CustomPage.readForCurrentUser({
 						loadMask: false,
 						scope: this,
 						success: function (response, options, decodedResponse) {
@@ -84,10 +89,10 @@
 								this.view.getStore().getRootNode().removeAll();
 								this.view.getStore().getRootNode().appendChild(this.menuStructureChildrenBuilder(menuItemsResponse));
 								this.view.getStore().sort();
-
-								// Alias of this.callParent(arguments), inside proxy function doesn't work
-								this.updateStoreCommonEndpoint(nodeIdToSelect);
 							}
+
+							// Alias of this.callParent(arguments), inside proxy function doesn't work
+							this.updateStoreCommonEndpoint(nodeIdToSelect);
 						}
 					});
 				}
@@ -214,11 +219,11 @@
 					} break;
 
 					case 'reportcsv': {
-						nodeStructure['cmName'] = 'singlereport';
+						nodeStructure['cmName'] = CMDBuild.core.constants.ModuleIdentifiers.getReportSingle();
 						nodeStructure['iconCls'] = 'cmdb-tree-reportcsv-icon';
 						nodeStructure[CMDBuild.core.constants.Proxy.ENTITY_ID] = menuNodeObject[CMDBuild.core.constants.Proxy.REFERENCED_ELEMENT_ID];
 						nodeStructure[CMDBuild.core.constants.Proxy.ID] = this.cmfg('accordionBuildId', [
-							'singlereport',
+							CMDBuild.core.constants.ModuleIdentifiers.getReportSingle(),
 							menuNodeObject[CMDBuild.core.constants.Proxy.REFERENCED_ELEMENT_ID],
 							menuNodeObject[CMDBuild.core.constants.Proxy.INDEX]
 						]);
@@ -226,11 +231,11 @@
 					} break;
 
 					case 'reportpdf': {
-						nodeStructure['cmName'] = 'singlereport';
+						nodeStructure['cmName'] = CMDBuild.core.constants.ModuleIdentifiers.getReportSingle();
 						nodeStructure['iconCls'] = 'cmdb-tree-reportpdf-icon';
 						nodeStructure[CMDBuild.core.constants.Proxy.ENTITY_ID] = menuNodeObject[CMDBuild.core.constants.Proxy.REFERENCED_ELEMENT_ID];
 						nodeStructure[CMDBuild.core.constants.Proxy.ID] = this.cmfg('accordionBuildId', [
-							'singlereport',
+							CMDBuild.core.constants.ModuleIdentifiers.getReportSingle(),
 							menuNodeObject[CMDBuild.core.constants.Proxy.REFERENCED_ELEMENT_ID],
 							menuNodeObject[CMDBuild.core.constants.Proxy.INDEX]
 						]);

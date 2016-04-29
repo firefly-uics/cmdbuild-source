@@ -26,15 +26,15 @@
 	statics: {
 
 		loadAttributes: function(classId, callback) {
-			CMDBuild.Cache.getAttributeList(classId, callback);		
+			_CMCache.getAttributeList(classId, callback);
 		},
 
 		getAttributesMap: function () {
 			return attributesMap;
-		}, 
-		
+		},
+
 		getFieldForAttr: function(attribute, readonly, skipSubAttributes) {
-			if (attribute.fieldmode == "hidden" || attributeTypeIsNotHandled(attribute)) { 
+			if (attribute.fieldmode == "hidden" || attributeTypeIsNotHandled(attribute)) {
 				return undefined;
 			}
 
