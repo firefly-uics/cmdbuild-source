@@ -207,18 +207,24 @@ public class DefaultAuthenticationLogic implements AuthenticationLogic {
 		logger.debug("user has one group only: {}", hasOneGroupOnly);
 		logger.debug("user default group: {}", hasDefaultGroup);
 		if (isValidUser) {
-			if (hasOneGroupOnly || hasDefaultGroup) {
-				final String groupName = (hasDefaultGroup) ? authenticatedUser.getDefaultGroupName()
-						: authenticatedUser.getGroupNames().iterator().next();
-				final CMGroup group = getGroupWithName(groupName);
-				final PrivilegeContext privilegeContext = buildPrivilegeContext(group);
-				final OperationUser operationUser = new OperationUser(authenticatedUser, privilegeContext, group);
-				request.getUserStore().setUser(operationUser);
-			} else if (!hasOneGroupOnly) {
-				final OperationUser operationUser = new OperationUser(authenticatedUser, new NullPrivilegeContext(),
-						new NullGroup());
-				request.getUserStore().setUser(operationUser);
+			final CMGroup group;
+			final PrivilegeContext privilegeContext;
+			if (hasOneGroupOnly) {
+				final String name = authenticatedUser.getGroupNames().iterator().next();
+				group = getGroupWithName(name);
+				privilegeContext = buildPrivilegeContext(group);
+			} else if (hasDefaultGroup) {
+				group = getGroupWithName(authenticatedUser.getDefaultGroupName());
+				final CMGroup[] groups = authenticatedUser.getGroupNames().stream() //
+						.map(input -> getGroupWithName(input)) //
+						.toArray(CMGroup[]::new);
+				privilegeContext = buildPrivilegeContext(groups);
+			} else {
+				group = new NullGroup();
+				privilegeContext = new NullPrivilegeContext();
 			}
+			final OperationUser operationUser = new OperationUser(authenticatedUser, privilegeContext, group);
+			request.getUserStore().setUser(operationUser);
 		}
 		return new ClientAuthenticationResponse() {
 
