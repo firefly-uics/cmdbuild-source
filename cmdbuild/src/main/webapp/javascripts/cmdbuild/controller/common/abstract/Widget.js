@@ -119,11 +119,12 @@
 		},
 
 		/**
-		 * @param {Mixed} configurationObject.view
+		 * @param {Object} configurationObject
 		 * @param {CMDBuild.controller.management.common.CMWidgetManagerController} configurationObject.parentDelegate
-		 * @param {Object} configurationObject.widgetConfiguration
-		 * @param {Ext.form.Basic} configurationObject.clientForm
 		 * @param {CMDBuild.model.CMActivityInstance} configurationObject.card
+		 * @param {Ext.form.Basic} configurationObject.clientForm
+		 * @param {Mixed} configurationObject.view
+		 * @param {Object} configurationObject.widgetConfiguration
 		 *
 		 * @returns {Void}
 		 *
@@ -153,6 +154,8 @@
 		},
 
 		/**
+		 * @returns {Void}
+		 *
 		 * @abstract
 		 */
 		beforeActiveView: function () {
@@ -163,6 +166,8 @@
 
 		/**
 		 * Executed before window hide perform
+		 *
+		 * @returns {Void}
 		 *
 		 * @abstract
 		 */
@@ -304,6 +309,8 @@
 		},
 
 		/**
+		 * @returns {Void}
+		 *
 		 * @abstract
 		 */
 		onEditMode: Ext.emptyFn,

@@ -3,6 +3,8 @@
 	Ext.define('CMDBuild.controller.management.accordion.Utility', {
 		extend: 'CMDBuild.controller.common.abstract.Accordion',
 
+		requires: ['CMDBuild.core.constants.Proxy'],
+
 		/**
 		 * @cfg {CMDBuild.controller.common.MainViewport}
 		 */
@@ -25,6 +27,9 @@
 
 		/**
 		 * @param {Object} configurationObject
+		 * @param {CMDBuild.controller.common.MainViewport} configurationObject.parentDelegate
+		 *
+		 * @returns {Void}
 		 *
 		 * @override
 		 */
@@ -38,6 +43,8 @@
 
 		/**
 		 * @param {Number} nodeIdToSelect
+		 *
+		 * @returns {Void}
 		 *
 		 * @override
 		 */

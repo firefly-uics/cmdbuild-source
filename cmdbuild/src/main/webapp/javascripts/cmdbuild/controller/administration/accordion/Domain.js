@@ -39,6 +39,8 @@
 		/**
 		 * @param {Number} nodeIdToSelect
 		 *
+		 * @returns {Void}
+		 *
 		 * @override
 		 */
 		accordionUpdateStore: function (nodeIdToSelect) {
