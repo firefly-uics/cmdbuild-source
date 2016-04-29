@@ -6,7 +6,7 @@
 		requires: [
 			'CMDBuild.core.constants.Global',
 			'CMDBuild.core.constants.Proxy',
-			'CMDBuild.core.proxy.Classes'
+			'CMDBuild.proxy.Classes'
 		],
 
 		/**
@@ -31,6 +31,9 @@
 
 		/**
 		 * @param {Object} configurationObject
+		 * @param {CMDBuild.controller.common.MainViewport} configurationObject.parentDelegate
+		 *
+		 * @returns {Void}
 		 *
 		 * @override
 		 */
@@ -45,6 +48,8 @@
 		/**
 		 * @param {Number} nodeIdToSelect
 		 *
+		 * @returns {Void}
+		 *
 		 * @override
 		 */
 		accordionUpdateStore: function (nodeIdToSelect) {
@@ -53,7 +58,7 @@
 			var params = {};
 			params[CMDBuild.core.constants.Proxy.ACTIVE] = true;
 
-			CMDBuild.core.proxy.Classes.readAll({
+			CMDBuild.proxy.Classes.readAll({
 				params: params,
 				loadMask: false,
 				scope: this,
@@ -69,14 +74,14 @@
 					decodedResponse = Ext.Array.filter(decodedResponse, function (item, i, array) {
 						return (
 							item[CMDBuild.core.constants.Proxy.TYPE] != CMDBuild.core.constants.Global.getTableTypeProcessClass() // Discard processes
-							&& item[CMDBuild.core.constants.Proxy.NAME] != 'Class' // Discard root class of all classes
+							&& item[CMDBuild.core.constants.Proxy.NAME] != CMDBuild.core.constants.Global.getRootNameClasses() // Discard root class of all classes
 							&& !item[CMDBuild.core.constants.Proxy.SYSTEM] // Discard system classes
 						);
 					}, this);
 
 					this.view.getStore().getRootNode().removeAll();
 
-					if (!Ext.isEmpty(decodedResponse)) {
+					if (!Ext.isEmpty(decodedResponse) && Ext.isArray(decodedResponse)) {
 						Ext.Array.each(decodedResponse, function (classObject, i, allClassObjects) {
 							var nodeObject = {};
 							nodeObject['cmName'] = this.cmfg('accordionIdentifierGet');
@@ -144,12 +149,13 @@
 								}
 							];
 						}
+
 						if (!Ext.isEmpty(nodes))
 							this.view.getStore().getRootNode().appendChild(nodes);
-
-						// Alias of this.callParent(arguments), inside proxy function doesn't work
-						this.updateStoreCommonEndpoint(nodeIdToSelect);
 					}
+
+					// Alias of this.callParent(arguments), inside proxy function doesn't work
+					this.updateStoreCommonEndpoint(nodeIdToSelect);
 				}
 			});
 

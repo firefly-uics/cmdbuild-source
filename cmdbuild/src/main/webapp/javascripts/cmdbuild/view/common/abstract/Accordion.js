@@ -32,6 +32,11 @@
 			background: '#ffffff'
 		},
 
+		/**
+		 * @returns {Void}
+		 *
+		 * @override
+		 */
 		initComponent: function () {
 			Ext.apply(this, {
 				store: Ext.create('Ext.data.TreeStore', {

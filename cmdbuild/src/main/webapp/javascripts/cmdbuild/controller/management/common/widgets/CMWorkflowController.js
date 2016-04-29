@@ -1,8 +1,11 @@
 (function() {
 
 	Ext.require([
+		'CMDBuild.controller.management.classes.StaticsController',
 		'CMDBuild.core.constants.Global',
-		'CMDBuild.controller.management.classes.StaticsController'
+		'CMDBuild.core.Message',
+		'CMDBuild.proxy.widget.Workflow',
+		'CMDBuild.proxy.workflow.Activity',
 	]);
 
 	var ERROR_TEMPLATE = "<p class=\"{0}\">{1}</p>";
@@ -77,20 +80,22 @@
 					var filter = Ext.encode({
 						CQL: callParams.CQL
 					});
-					Ext.Ajax.request({
-						url: 'services/json/management/modcard/getcardlistshort',
-					    params: {
-					    	className: "Activity",
-					        limit: 1000,
-					        start: 0,
-					        filter: filter
-					    },
-					    success: function(response){
-					        var data = Ext.JSON.decode(response.responseText).rows;
-					        me.view.clearComboValues(data);
-					        me.view.loadComboValues(data);
-					        // process server response here
-					    }
+
+					CMDBuild.proxy.widget.Workflow.readWorkflowByFilter({
+						params: {
+							className: CMDBuild.core.constants.Global.getRootNameWorkflows(),
+							limit: 1000,
+							start: 0,
+							filter: filter
+						},
+						loadMask: false,
+						scope: this,
+						success: function (response, options, decodedResponse){
+							var data = decodedResponse.rows;
+							me.view.clearComboValues(data);
+							me.view.loadComboValues(data);
+							// process server response here
+						}
 					});
 				}
 			});
@@ -151,14 +156,13 @@
 		var name = me.widgetReader.getCode(me.typedWidgetConf);
 		var card = _CMCache.getEntryTypeByName(name);
 
-		Ext.Ajax.request({
-			url : 'services/json/workflow/getstartactivity',
-			params : {
+		CMDBuild.proxy.widget.Workflow.readStartActivity({
+			params: {
 				classId: card.data.id
 			},
-			success : function(response) {
-				var ret = Ext.JSON.decode(response.responseText);
-				me.attributes = CMDBuild.controller.management.workflow.StaticsController.filterAttributesInStep(me.cardAttributes, ret.response.variables);
+			scope: me,
+			success: function (response, options, decodedResponse) {
+				me.attributes = CMDBuild.controller.management.workflow.StaticsController.filterAttributesInStep(me.cardAttributes, decodedResponse.response.variables);
 				me.view.configureForm(me.attributes);
 				me.templateResolver = new CMDBuild.Management.TemplateResolver({
 					clientForm: me.clientForm,
@@ -167,12 +171,11 @@
 				});
 
 				resolveTemplate(me);
-				me.widgetControllerManager.buildControllers(ret.response.widgets, card);
+				me.widgetControllerManager.buildControllers(decodedResponse.response.widgets, card);
 				me.view.getWidgetButtonsPanel().editMode();
 				me.view.setLoading(false);
 				me.configured = true;
-			},
-			scope: me
+			}
 		});
 	}
 
@@ -206,10 +209,11 @@
 			requestParams.advance = advance;
 			requestParams.activityInstanceId = undefined;
 			requestParams.ww = Ext.JSON.encode(me.widgetControllerManager.getData(advance));
-			CMDBuild.ServiceProxy.workflow.saveActivity({
+			CMDBuild.proxy.workflow.Activity.update({
 				params: requestParams,
 				scope : me,
 				clientValidation: true, //to force the save request
+				loadMask: false,
 				callback: function(operation, success, response) {
 					CMDBuild.core.LoadMask.hide();
 				},
@@ -232,7 +236,7 @@
 
 		if (invalidAttributes != null) {
 			var msg = Ext.String.format("<p class=\"{0}\">{1}</p>", CMDBuild.core.constants.Global.getErrorMsgCss(), CMDBuild.Translation.errors.invalid_attributes);
-			CMDBuild.Msg.error(null, msg + invalidAttributes, false);
+			CMDBuild.core.Message.error(null, msg + invalidAttributes, false);
 
 			return false;
 		} else {
@@ -249,7 +253,7 @@
 			var msg = Ext.String.format(ERROR_TEMPLATE
 					, CMDBuild.core.constants.Global.getErrorMsgCss()
 					, CMDBuild.Translation.errors.invalid_extended_attributes);
-			CMDBuild.Msg.error(null, msg + wrongWidgets, popup = false);
+			CMDBuild.core.Message.error(null, msg + wrongWidgets, popup = false);
 		}
 
 		return valid;

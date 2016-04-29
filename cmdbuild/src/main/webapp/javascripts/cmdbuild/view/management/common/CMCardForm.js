@@ -1,8 +1,6 @@
 (function() {
 	var tr = CMDBuild.Translation.management.modcard;
 
-	Ext.require(['CMDBuild.core.RequestBarrier']); // TODO: should be fixed (require outside class because of wrong class name)
-
 	Ext.define("CMDBuild.view.management.classes.CMCardForm", {
 		extend: "Ext.form.Panel",
 

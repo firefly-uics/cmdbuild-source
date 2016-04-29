@@ -5,7 +5,7 @@
 
 		requires: [
 			'CMDBuild.core.constants.Proxy',
-			'CMDBuild.core.proxy.userAndGroup.group.Users'
+			'CMDBuild.proxy.userAndGroup.group.Users'
 		],
 
 		/**
@@ -80,7 +80,7 @@
 			params[CMDBuild.core.constants.Proxy.GROUP_ID] = this.cmfg('userAndGroupGroupSelectedGroupGet', CMDBuild.core.constants.Proxy.ID);
 			params[CMDBuild.core.constants.Proxy.USERS] = usersIdArray.join();
 
-			CMDBuild.core.proxy.userAndGroup.group.Users.update({
+			CMDBuild.proxy.userAndGroup.group.Users.update({
 				params: params,
 				scope: this,
 				success: function (response, options, decodedResponse) {

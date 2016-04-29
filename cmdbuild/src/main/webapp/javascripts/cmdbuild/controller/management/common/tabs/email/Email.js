@@ -11,8 +11,8 @@
 		requires: [
 			'CMDBuild.controller.management.common.widgets.CMWidgetController',
 			'CMDBuild.core.constants.Proxy',
-			'CMDBuild.core.proxy.Utils',
-			'CMDBuild.core.proxy.email.Template',
+			'CMDBuild.proxy.Utils',
+			'CMDBuild.proxy.email.Template',
 			'CMDBuild.core.Message'
 		],
 
@@ -699,7 +699,7 @@
 			var params = {};
 			params[CMDBuild.core.constants.Proxy.TEMPLATES] = Ext.encode(this.emailTemplatesIdentifiers);
 
-			CMDBuild.core.proxy.email.Template.readAll({
+			CMDBuild.proxy.email.Template.readAll({
 				params: params,
 				loadMask: this.cmfg('tabEmailGlobalLoadMaskGet'),
 				scope: this,
@@ -940,7 +940,7 @@
 				var params = {};
 				params[CMDBuild.core.constants.Proxy.NOT_POSITIVES] = true;
 
-				CMDBuild.core.proxy.Utils.generateId({
+				CMDBuild.proxy.Utils.generateId({
 					params: params,
 					scope: this,
 					success: function (response, options, decodedResponse) {
@@ -984,7 +984,7 @@
 						var params = {};
 						params[CMDBuild.core.constants.Proxy.NOT_POSITIVES] = true;
 
-						CMDBuild.core.proxy.Utils.generateId({
+						CMDBuild.proxy.Utils.generateId({
 							params: params,
 							scope: this,
 							success: function (response, options, decodedResponse) {
@@ -1001,7 +1001,7 @@
 						var params = {};
 						params[CMDBuild.core.constants.Proxy.NOT_POSITIVES] = true;
 
-						CMDBuild.core.proxy.Utils.generateId({
+						CMDBuild.proxy.Utils.generateId({
 							params: params,
 							scope: this,
 							success: function (response, options, decodedResponse) {

@@ -6,7 +6,7 @@
 		requires: [
 			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.Message',
-			'CMDBuild.core.proxy.domain.Domain',
+			'CMDBuild.proxy.domain.Domain',
 			'CMDBuild.model.domain.Domain',
 			'CMDBuild.view.common.field.translatable.Utils'
 		],
@@ -123,7 +123,7 @@
 			if (!Ext.isEmpty(node)) {
 				var params = {};
 
-				CMDBuild.core.proxy.domain.Domain.read({ // TODO: waiting for refactor (crud)
+				CMDBuild.proxy.domain.Domain.read({ // TODO: waiting for refactor (crud)
 					params: params,
 					scope: this,
 					success: function(response, options, decodedResponse) {
@@ -176,13 +176,13 @@
 				).getDataForSubmit();
 
 				if (Ext.isEmpty(params[CMDBuild.core.constants.Proxy.ID])) {
-					CMDBuild.core.proxy.domain.Domain.create({
+					CMDBuild.proxy.domain.Domain.create({
 						params: params,
 						scope: this,
 						success: this.success
 					});
 				} else {
-					CMDBuild.core.proxy.domain.Domain.update({
+					CMDBuild.proxy.domain.Domain.update({
 						params: params,
 						scope: this,
 						success: this.success
@@ -199,7 +199,7 @@
 				var params = {};
 				params[CMDBuild.core.constants.Proxy.DOMAIN_NAME] = this.cmfg('domainSelectedDomainGet', CMDBuild.core.constants.Proxy.NAME);
 
-				CMDBuild.core.proxy.domain.Domain.remove({
+				CMDBuild.proxy.domain.Domain.remove({
 					params: params,
 					scope: this,
 					success: function(response, options, decodedResponse) {

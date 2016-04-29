@@ -26,11 +26,11 @@
 		 * @cfg {Array}
 		 */
 		cmfgCatchedFunctions: [
+			'onWidgetManageEmailBeforeSave = onBeforeSave',
 			'widgetConfigurationGet = widgetManageEmailConfigurationGet',
 			'widgetManageEmailBeforeActiveView = beforeActiveView',
 			'widgetManageEmailEditMode = onEditMode',
 			'widgetManageEmailGetData = getData',
-			'widgetManageEmailIsBusy = isBusy',
 			'widgetManageEmailIsValid = isValid'
 		],
 
@@ -121,47 +121,6 @@
 		},
 
 		/**
-		 * @param {Array} callbackChainArray
-		 *
-		 * @override
-		 */
-		onBeforeSave: function (callbackChainArray, i) {
-			if (!Ext.isEmpty(callbackChainArray[i])) {
-				this.tabDelegate.cmfg('tabEmailGlobalLoadMaskSet', false);
-
-				this.beforeSaveCallbackObject = {
-					array: callbackChainArray,
-					index: i
-				};
-
-				// Setup end-point callback to close widget save callback loop
-				var callbackDefinitionObject = {};
-				callbackDefinitionObject[CMDBuild.core.constants.Proxy.SCOPE] = this;
-				callbackDefinitionObject[CMDBuild.core.constants.Proxy.FUNCTION] =  function () {
-					if (!Ext.Object.isEmpty(this.beforeSaveCallbackObject)) {
-						var index = this.beforeSaveCallbackObject.index;
-
-						Ext.callback(
-							this.beforeSaveCallbackObject.array[index].fn,
-							this.beforeSaveCallbackObject.array[index].scope,
-							[
-								this.beforeSaveCallbackObject.array,
-								index + 1
-							]
-						);
-					}
-
-					this.tabDelegate.cmfg('tabEmailRegenerationEndPointCallbackReset'); // Reset callback function
-				};
-
-				this.tabDelegate.cmfg('tabEmailRegenerationEndPointCallbackSet', { value: callbackDefinitionObject });
-
-				this.tabDelegate.cmfg('tabEmailRegenerateAllEmailsSet', true);
-				this.tabDelegate.controllerGrid.cmfg('tabEmailGridStoreLoad');
-			}
-		},
-
-		/**
 		 * @param {CMDBuild.view.management.common.tabs.email.EmailView} panel
 		 * @param {Object} eOpts
 		 *
@@ -178,6 +137,35 @@
 
 			if (Ext.Array.contains(cardWidgetTypes, this.cmfg('widgetManageEmailConfigurationGet', CMDBuild.core.constants.Proxy.TYPE)))
 				this.tabDelegate.getView().getDockedComponent(CMDBuild.core.constants.Proxy.TOOLBAR_BOTTOM).show();
+		},
+
+		/**
+		 * @param {Object} parameters
+		 * @param {Function} parameters.callback
+		 * @param {Object} parameters.scope
+		 *
+		 * @returns {Void}
+		 *
+		 * @override
+		 */
+		onWidgetManageEmailBeforeSave: function (parameters) {
+			if (!Ext.isEmpty(callbackChainArray[i])) {
+				this.tabDelegate.cmfg('tabEmailGlobalLoadMaskSet', false);
+
+				// Setup end-point callback to close widget save callback loop
+				var callbackDefinitionObject = {};
+				callbackDefinitionObject[CMDBuild.core.constants.Proxy.SCOPE] = this;
+				callbackDefinitionObject[CMDBuild.core.constants.Proxy.FUNCTION] =  function () {
+					this.onBeforeSave(parameters); // CallParent alias
+
+					this.tabDelegate.cmfg('tabEmailRegenerationEndPointCallbackReset'); // Reset callback function
+				};
+
+				this.tabDelegate.cmfg('tabEmailRegenerationEndPointCallbackSet', { value: callbackDefinitionObject });
+
+				this.tabDelegate.cmfg('tabEmailRegenerateAllEmailsSet', true);
+				this.tabDelegate.controllerGrid.cmfg('tabEmailGridStoreLoad');
+			}
 		},
 
 		/**
@@ -206,17 +194,6 @@
 			output[CMDBuild.core.constants.Proxy.OUTPUT] = this.tabDelegate.cmfg('tabEmailSelectedEntityGet', CMDBuild.core.constants.Proxy.ID);
 
 			return output;
-		},
-
-		/**
-		 * Used to mark widget as busy during regenerations, especially useful for getData() regeneration
-		 *
-		 * @returns {Boolean}
-		 *
-		 * @override
-		 */
-		widgetManageEmailIsBusy: function () {
-			return this.tabDelegate.cmfg('tabEmailBusyStateGet');
 		},
 
 		/**

@@ -5,7 +5,7 @@
 
 		requires: [
 			'CMDBuild.core.constants.Proxy',
-			'CMDBuild.core.proxy.lookup.Lookup'
+			'CMDBuild.proxy.lookup.Lookup'
 		],
 
 		/**
@@ -85,7 +85,7 @@
 						processEvent: Ext.emptyFn // Makes column readOnly
 					})
 				],
-				store: CMDBuild.core.proxy.lookup.Lookup.getStore()
+				store: CMDBuild.proxy.lookup.Lookup.getStore()
 			});
 
 			this.callParent(arguments);

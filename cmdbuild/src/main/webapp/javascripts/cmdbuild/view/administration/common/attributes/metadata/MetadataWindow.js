@@ -1,7 +1,7 @@
 (function() {
 
 	Ext.define('CMDBuild.view.administration.common.attributes.metadata.MetadataWindow', {
-		extend: 'CMDBuild.core.PopupWindow',
+		extend: 'CMDBuild.core.window.AbstractModal',
 
 		requires: [
 			'CMDBuild.core.constants.Proxy',
@@ -62,7 +62,7 @@
 					})
 				],
 
-				store: Ext.create('Ext.data.Store', {
+				store: Ext.create('Ext.data.Store', { // TODO: use Ext.data.ArrayStore
 					model: 'CMDBuild.model.common.attributes.Metadata',
 					data: []
 				}),

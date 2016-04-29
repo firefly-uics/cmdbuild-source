@@ -5,7 +5,7 @@
 
 		requires: [
 			'CMDBuild.core.constants.Proxy',
-			'CMDBuild.core.proxy.userAndGroup.user.User'
+			'CMDBuild.proxy.userAndGroup.user.User'
 		],
 
 		/**
@@ -119,7 +119,7 @@
 			params['userid'] = this.userAndGroupUserSelectedUserGet('userid');
 			params[CMDBuild.core.constants.Proxy.DISABLE] = this.userAndGroupUserSelectedUserGet(CMDBuild.core.constants.Proxy.IS_ACTIVE);
 
-			CMDBuild.core.proxy.userAndGroup.user.User.disable({
+			CMDBuild.proxy.userAndGroup.user.User.disable({
 				params: params,
 				scope: this,
 				success: this.success
@@ -192,13 +192,13 @@
 				if (Ext.isEmpty(params['userid'])) {
 					params['userid'] = -1;
 
-					CMDBuild.core.proxy.userAndGroup.user.User.create({
+					CMDBuild.proxy.userAndGroup.user.User.create({
 						params: params,
 						scope: this,
 						success: this.success
 					});
 				} else {
-					CMDBuild.core.proxy.userAndGroup.user.User.update({
+					CMDBuild.proxy.userAndGroup.user.User.update({
 						params: params,
 						scope: this,
 						success: this.success

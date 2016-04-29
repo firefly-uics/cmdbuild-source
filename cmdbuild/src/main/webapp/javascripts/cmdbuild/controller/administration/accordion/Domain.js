@@ -5,7 +5,7 @@
 
 		requires: [
 			'CMDBuild.core.constants.Proxy',
-			'CMDBuild.core.proxy.domain.Domain'
+			'CMDBuild.proxy.domain.Domain'
 		],
 
 		/**
@@ -39,12 +39,14 @@
 		/**
 		 * @param {Number} nodeIdToSelect
 		 *
+		 * @returns {Void}
+		 *
 		 * @override
 		 */
 		accordionUpdateStore: function (nodeIdToSelect) {
 			nodeIdToSelect = Ext.isEmpty(nodeIdToSelect) ? null : nodeIdToSelect;
 
-			CMDBuild.core.proxy.domain.Domain.readAll({
+			CMDBuild.proxy.domain.Domain.readAll({
 				scope: this,
 				success: function (response, options, decodedResponse) {
 					decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.DOMAINS];
@@ -76,10 +78,10 @@
 							this.view.getStore().getRootNode().appendChild(nodes);
 							this.view.getStore().sort();
 						}
-
-						// Alias of this.callParent(arguments), inside proxy function doesn't work
-						this.updateStoreCommonEndpoint(nodeIdToSelect);
 					}
+
+					// Alias of this.callParent(arguments), inside proxy function doesn't work
+					this.updateStoreCommonEndpoint(nodeIdToSelect);
 				}
 			});
 

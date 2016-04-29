@@ -1,5 +1,7 @@
 (function() {
 
+Ext.require(['CMDBuild.proxy.TemplateResolver']);
+
 if (typeof CMDBuild.Management == "undefined") {
 	CMDBuild.Management = {};
 }
@@ -59,7 +61,7 @@ CMDBuild.Management.TemplateResolver.prototype = {
 			} else {
 				if (splitLocalName.detail) {
 					CMDBuild.log.warn("Detail can only be specified for lookup and reference types");
-					CMDBuild.core.Message.warning(CMDBuild.Translation.errors.warning_message,
+					CMDBuild.core.Message.warning(CMDBuild.Translation.warning,
 							CMDBuild.Translation.errors.template_error + ' ' + splitLocalName.name + ' ' + splitLocalName.detail);
 				}
 
@@ -165,8 +167,8 @@ CMDBuild.Management.TemplateResolver.prototype = {
 	// private
 	getCurrentUserInfo: function(varName) {
 		var infoMap = {
-			name: CMDBuild.Runtime.Username,
-			id: CMDBuild.Runtime.UserId
+			name: CMDBuild.configuration.runtime.get(CMDBuild.core.constants.Proxy.USERNAME),
+			id: CMDBuild.configuration.runtime.get(CMDBuild.core.constants.Proxy.USER_ID)
 		};
 		return infoMap[varName];
 	},
@@ -174,8 +176,8 @@ CMDBuild.Management.TemplateResolver.prototype = {
 	// private
 	getCurrentGroupInfo: function(varName) {
 		var infoMap = {
-			name: CMDBuild.Runtime.DefaultGroupName,
-			id: CMDBuild.Runtime.DefaultGroupId
+			name: CMDBuild.configuration.runtime.get(CMDBuild.core.constants.Proxy.DEFAULT_GROUP_NAME),
+			id: CMDBuild.configuration.runtime.get(CMDBuild.core.constants.Proxy.DEFAULT_GROUP_ID)
 		};
 		return infoMap[varName];
 	},
@@ -409,9 +411,9 @@ CMDBuild.Management.TemplateResolver.prototype = {
 	executeCQLTemplate: function(templateName, cqlQuery, ctx, callback) {
 		var queryParams = this.buildCQLQueryParameters(cqlQuery, ctx);
 		if (queryParams) {
-			CMDBuild.core.interfaces.Ajax.request({
-				url: "services/json/management/modcard/getcardlist",
+			CMDBuild.proxy.TemplateResolver.readAllCard({
 				params: queryParams,
+				loadMask: false,
 				success: function(response, options, decoded) {
 					var row = decoded.rows[0];
 					ctx.cql[templateName] = row;

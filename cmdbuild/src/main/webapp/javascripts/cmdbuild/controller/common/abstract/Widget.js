@@ -1,19 +1,16 @@
 (function () {
 
 	// External implementation to avoid overrides
-	Ext.require([
-		'CMDBuild.core.constants.Global',
-		'CMDBuild.core.constants.Proxy'
-	]);
+	Ext.require(['CMDBuild.core.constants.Proxy']);
 
 	/**
 	 * Class to be extended in widget controllers to adapt CMDBuild.controller.common.abstract.Base functionalities
 	 *
-	 * Required managed methods:
+	 * @requires Mandatory managed methods:
 	 * 	- beforeActiveView
 	 * 	- beforeHideView
-	 * 	- isBusy
 	 * 	- isValid
+	 * 	- onBeforeSave
 	 * 	- onEditMode
 	 *
 	 * @abstract
@@ -122,11 +119,12 @@
 		},
 
 		/**
-		 * @param {Mixed} configurationObject.view
+		 * @param {Object} configurationObject
 		 * @param {CMDBuild.controller.management.common.CMWidgetManagerController} configurationObject.parentDelegate
-		 * @param {Object} configurationObject.widgetConfiguration
-		 * @param {Ext.form.Basic} configurationObject.clientForm
 		 * @param {CMDBuild.model.CMActivityInstance} configurationObject.card
+		 * @param {Ext.form.Basic} configurationObject.clientForm
+		 * @param {Mixed} configurationObject.view
+		 * @param {Object} configurationObject.widgetConfiguration
 		 *
 		 * @returns {Void}
 		 *
@@ -151,11 +149,13 @@
 				if (this.enableDelegateApply)
 					this.view.delegate = this;
 			} else {
-				_error('wrong configuration object or empty widget view', this);
+				_error('wrong configuration object or empty widget view', this, configurationObject);
 			}
 		},
 
 		/**
+		 * @returns {Void}
+		 *
 		 * @abstract
 		 */
 		beforeActiveView: function () {
@@ -167,29 +167,16 @@
 		/**
 		 * Executed before window hide perform
 		 *
+		 * @returns {Void}
+		 *
 		 * @abstract
 		 */
 		beforeHideView: Ext.emptyFn,
 
 		/**
-		 * Service function to manage callbackChain
-		 *
-		 * @param {Array} callbackChainArray
-		 *
-		 * @returns {Void}
-		 *
-		 * @private
-		 */
-		beforeSaveCallbackChainManager: function (callbackChainArray, i) {
-			if (!Ext.isEmpty(callbackChainArray[i])) {
-				var callbackObject = callbackChainArray[i];
-
-				Ext.callback(callbackObject.fn, callbackObject.scope, [callbackChainArray, i + 1]);
-			}
-		},
-
-		/**
 		 * @returns {Object or null}
+		 *
+		 * @abstract
 		 */
 		getData: function () {
 			return null;
@@ -296,33 +283,34 @@
 		 *
 		 * @abstract
 		 */
-		isBusy: function () {
-			return false;
-		},
-
-		/**
-		 * @returns {Boolean}
-		 *
-		 * @abstract
-		 */
 		isValid: function () {
 			return true;
 		},
 
 		/**
-		 * Cannot be manage width cmfg() because requires to be executed on second step
-		 *
-		 * @param {Array} callbackChainArray
+		 * @param {Object} parameters
+		 * @param {Function} parameters.callback
+		 * @param {Object} parameters.scope
 		 *
 		 * @returns {Void}
-		 *
-		 * @public
 		 */
-		onBeforeSave: function (callbackChainArray, i) {
-			this.onBeforeSaveManager(callbackChainArray, i);
+		onBeforeSave: function (parameters) {
+			if (
+				Ext.isObject(parameters) && !Ext.Object.isEmpty(parameters)
+				&& Ext.isFunction(parameters.callback)
+			) {
+				Ext.callback(
+					parameters.callback,
+					Ext.isEmpty(parameters.scope) ? this : parameters.scope
+				);
+			} else {
+				_error('[' + this.getLabel() + '] onBeforeSave invalid parameters', this, parameters);
+			}
 		},
 
 		/**
+		 * @returns {Void}
+		 *
 		 * @abstract
 		 */
 		onEditMode: Ext.emptyFn,

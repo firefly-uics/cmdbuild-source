@@ -1,8 +1,7 @@
 (function() {
 
 	Ext.define('CMDBuild.view.management.common.CMCardListWindow', {
-		alternateClassName: 'CMDBuild.Management.CardListWindow', // Legacy class name
-		extend: 'CMDBuild.core.PopupWindow',
+		extend: 'CMDBuild.core.window.AbstractModal',
 
 		ClassName: undefined, // passed at instantiation
 		idClass: undefined, // passed at instantiation

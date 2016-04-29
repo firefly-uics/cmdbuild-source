@@ -142,9 +142,10 @@ public class WebApplicationExceptionErrorHandler implements ErrorHandler, Loggin
 	@Override
 	public void propagate(final Throwable e) {
 		logger.error("unhandled exception", e);
-		throw new WebApplicationException(e, Response.serverError() //
-				.entity(e) //
-				.build());
+		throw new WebApplicationException(e,
+				Response.serverError() //
+						.entity(e) //
+						.build());
 	}
 
 	@Override
@@ -162,12 +163,6 @@ public class WebApplicationExceptionErrorHandler implements ErrorHandler, Loggin
 	@Override
 	public void sessionNotFound(final String id) {
 		logger.error("session not found '{}'", id);
-		notFound(id);
-	}
-
-	@Override
-	public void userNotFound(final String id) {
-		logger.error("user not found '{}'", id);
 		notFound(id);
 	}
 

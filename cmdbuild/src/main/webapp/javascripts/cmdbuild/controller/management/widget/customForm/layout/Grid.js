@@ -5,8 +5,7 @@
 
 		requires: [
 			'CMDBuild.core.Message',
-			'CMDBuild.core.constants.Proxy',
-			'CMDBuild.core.RequestBarrier'
+			'CMDBuild.core.constants.Proxy'
 		],
 
 		/**
@@ -46,22 +45,27 @@
 			this.callParent(arguments);
 
 			// Barrier to load data after reference field store's load end
-			CMDBuild.core.RequestBarrier.init('referenceStoreLoadBarrier', function () {
-				if (!this.cmfg('widgetCustomFormInstancesDataStorageIsEmpty'))
-					this.cmfg('widgetCustomFormLayoutGridDataSet', this.cmfg('widgetCustomFormInstancesDataStorageGet'));
+			var barrierId = 'widgetCustomFormLayoutGridBarrier-' + this.cmfg('widgetCustomFormIdGet'); // Unique widget barrier id
+			var requestBarrier = Ext.create('CMDBuild.core.RequestBarrier', {
+				id: barrierId,
+				scope: this,
+				callback: function () {
+					if (!this.cmfg('widgetCustomFormInstancesDataStorageIsEmpty'))
+						this.cmfg('widgetCustomFormLayoutGridDataSet', this.cmfg('widgetCustomFormInstancesDataStorageGet'));
 
-				this.cmfg('widgetCustomFormViewSetLoading', false);
-			}, this);
+					this.cmfg('widgetCustomFormViewSetLoading', false);
+				}
+			});
 
 			this.view = Ext.create('CMDBuild.view.management.widget.customForm.layout.GridPanel', {
 				delegate: this,
-				columns: this.buildColumns(),
+				columns: this.buildColumns(requestBarrier, barrierId),
 				store: this.buildDataStore()
 			});
 
 			this.cmfg('widgetCustomFormViewSetLoading', true);
 
-			CMDBuild.core.RequestBarrier.finalize('referenceStoreLoadBarrier');
+			requestBarrier.finalize(barrierId, true);
 		},
 
 		/**
@@ -93,7 +97,7 @@
 						}
 					}
 
-					if (Ext.isEmpty(Ext.String.trim(String(value))) && attribute[CMDBuild.core.constants.Proxy.NOT_NULL])
+					if (Ext.isEmpty(Ext.String.trim(String(value))) && attribute['isnotnull'])
 						metadata.tdCls += ' x-grid-invalid-cell-error';
 
 					return null;
@@ -189,13 +193,16 @@
 		},
 
 		/**
+		 * @param {CMDBuild.core.RequestBarrier} requestBarrier
+		 * @param {String} barrierId
+		 *
 		 * @returns {Array} columns definitions
 		 *
 		 * TODO: this implementation should be refactored with FieldManager class
 		 *
 		 * @private
 		 */
-		buildColumns: function () {
+		buildColumns: function (requestBarrier, barrierId) {
 			var columns = [];
 
 			if (!this.cmfg('widgetCustomFormConfigurationIsEmpty',  CMDBuild.core.constants.Proxy.MODEL)) {
@@ -270,7 +277,7 @@
 
 						// Force editor fields store load (must be done because FieldManager field don't works properly)
 						if (!Ext.isEmpty(editor) && !Ext.isEmpty(editor.store) && editor.store.count() == 0)
-							editor.store.load({ callback: CMDBuild.core.RequestBarrier.getCallback('referenceStoreLoadBarrier') });
+							editor.store.load({ callback: requestBarrier.getCallback(barrierId) });
 					}
 				}, this);
 			}

@@ -52,7 +52,7 @@ public class HttpSessionBasedValuesStore implements ValuesStore {
 			HttpSession session = element.getSession(false);
 			if (session == null) {
 				session = element.getSession(true);
-				final int sessionTimeout = configuration.getSessionTimoutOrZero();
+				final int sessionTimeout = configuration.getSessionTimeoutOrDefault();
 				if (sessionTimeout > 0) {
 					session.setMaxInactiveInterval(sessionTimeout);
 				}
