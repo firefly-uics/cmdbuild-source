@@ -84,10 +84,10 @@
 								this.view.getStore().getRootNode().removeAll();
 								this.view.getStore().getRootNode().appendChild(this.menuStructureChildrenBuilder(menuItemsResponse));
 								this.view.getStore().sort();
-
-								// Alias of this.callParent(arguments), inside proxy function doesn't work
-								this.updateStoreCommonEndpoint(nodeIdToSelect);
 							}
+
+							// Alias of this.callParent(arguments), inside proxy function doesn't work
+							this.updateStoreCommonEndpoint(nodeIdToSelect);
 						}
 					});
 				}

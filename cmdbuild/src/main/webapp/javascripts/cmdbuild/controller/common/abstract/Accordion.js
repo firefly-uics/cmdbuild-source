@@ -15,6 +15,11 @@
 		parentDelegate: undefined,
 
 		/**
+		 * @cfg {Function}
+		 */
+		callback: undefined,
+
+		/**
 		 * @cfg {Array}
 		 */
 		cmfgCatchedFunctions: [
@@ -62,6 +67,11 @@
 		lastSelection: undefined,
 
 		/**
+		 * @cfg {Object}
+		 */
+		scope: this,
+
+		/**
 		 * @property {Object}
 		 */
 		view: undefined,
@@ -104,9 +114,29 @@
 			this.cmfg('onAccordionSelectionChange');
 		},
 
-		accordionExpand: function () {
-			if (!Ext.isEmpty(this.view))
+		/**
+		 * @param {Object} parameters
+		 * @param {Function} parameters.callback
+		 * @param {Object} parameters.scope
+		 */
+		accordionExpand: function (parameters) {
+			if (!Ext.isEmpty(this.view)) {
+
+				if (
+					Ext.isObject(parameters) && !Ext.Object.isEmpty(parameters)
+					&& !Ext.isEmpty(parameters.callback) && Ext.isFunction(parameters.callback)
+				) {
+					parameters.scope = Ext.isEmpty(parameters.scope) ? this : parameters.scope;
+
+					if (this.view.getCollapsed() === false && this.view.isVisible()) { // Accordion already expanded
+						Ext.callback(parameters.callback, parameters.scope);
+					} else { // Accordion needs to be expanded
+						this.view.on('expand', parameters.callback, parameters.scope, { single: true });
+					}
+				}
+
 				this.view.expand();
+			}
 		},
 
 		/**
@@ -160,8 +190,12 @@
 			var firstSelectableNode = this.cmfg('accordionFirtsSelectableNodeGet');
 
 			if (!Ext.isEmpty(firstSelectableNode)) {
-				this.cmfg('accordionExpand');
-				this.cmfg('accordionSelectNodeById', firstSelectableNode.get(CMDBuild.core.constants.Proxy.ID));
+				this.cmfg('accordionExpand', {
+					scope: this,
+					callback: function (panel, eOpts) {
+						this.cmfg('accordionSelectNodeById', firstSelectableNode.get(CMDBuild.core.constants.Proxy.ID));
+					}
+				});
 			}
 		},
 
@@ -173,11 +207,9 @@
 				var node = this.cmfg('accordionNodeByIdGet', id);
 
 				if (!Ext.isEmpty(node)) {
-					// Expand fail if the accordion is not visible. I can't know when accordion's parent will be visible, so skip only the expand to avoid to fail
-					if (this.view.isVisible(true))
-						node.bubble(function () {
-							this.expand();
-						});
+					node.bubble(function () {
+						this.expand();
+					});
 
 					this.view.getSelectionModel().select(node);
 				} else {
@@ -278,7 +310,7 @@
 					this.cmfg('accordionSelectNodeById', nodeIdToSelect);
 
 				// Select first selectable item if no selection and expanded
-				if (!this.view.getSelectionModel().hasSelection() && this.view.getCollapsed() === false)
+				if (!this.view.getSelectionModel().hasSelection() && this.view.getCollapsed() === false && this.view.isVisible())
 					this.cmfg('accordionSelectFirstSelectableNode');
 			}
 
@@ -288,6 +320,10 @@
 			// Hide if accordion is empty
 			if (this.hideIfEmpty && this.isEmpty())
 				this.view.hide();
+
+			// Accordion creation callback
+			if (!Ext.isEmpty(this.callback) && Ext.isFunction(this.callback))
+				Ext.callback(this.callback, this.scope);
 
 			// DisableSelection flag reset
 			this.disableSelection = false;

@@ -170,30 +170,58 @@
 
 				_CMCache.syncAttachmentCategories();
 
+				// Building accordion definitions object array (display order)
+				var accordionDefinitionObjectsArray = [
+					{
+						className: 'CMDBuild.controller.management.accordion.Menu',
+						identifier: CMDBuild.core.constants.ModuleIdentifiers.getMenu()
+					}
+				];
+
+				if (!CMDBuild.configuration.userInterface.isDisabledModule(CMDBuild.core.constants.Proxy.CLASS))
+					accordionDefinitionObjectsArray.push({
+						className: 'CMDBuild.controller.management.accordion.Classes',
+						identifier: 'class'
+					});
+
+				if (!CMDBuild.configuration.userInterface.isDisabledModule(CMDBuild.core.constants.Proxy.PROCESS) && CMDBuild.configuration.workflow.get(CMDBuild.core.constants.Proxy.ENABLED))
+					accordionDefinitionObjectsArray.push({
+						className: 'CMDBuild.controller.management.accordion.Workflow',
+						identifier: CMDBuild.core.constants.ModuleIdentifiers.getWorkflow()
+					});
+
+				if (!CMDBuild.configuration.userInterface.isDisabledModule(CMDBuild.core.constants.Proxy.DATA_VIEW))
+					accordionDefinitionObjectsArray.push({
+						className: 'CMDBuild.controller.management.accordion.DataView',
+						identifier: CMDBuild.core.constants.ModuleIdentifiers.getDataView()
+					});
+
+				if (!CMDBuild.configuration.userInterface.isDisabledModule('dashboard'))
+					accordionDefinitionObjectsArray.push({
+						className: 'CMDBuild.controller.management.accordion.Dashboard',
+						identifier: 'dashboard'
+					});
+
+				if (!CMDBuild.configuration.userInterface.isDisabledModule('report'))
+					accordionDefinitionObjectsArray.push({
+						className: 'CMDBuild.controller.management.accordion.Report',
+						identifier: CMDBuild.core.constants.ModuleIdentifiers.getReport()
+					});
+
+				if (!CMDBuild.configuration.userInterface.isDisabledModule(CMDBuild.core.constants.Proxy.CUSTOM_PAGES))
+					accordionDefinitionObjectsArray.push({
+						className: 'CMDBuild.controller.management.accordion.CustomPage',
+						identifier: CMDBuild.core.constants.ModuleIdentifiers.getCustomPage()
+					});
+
+				accordionDefinitionObjectsArray.push({
+					className: 'CMDBuild.controller.management.accordion.Utility',
+					identifier: CMDBuild.core.constants.ModuleIdentifiers.getUtility()
+				});
+
 				Ext.ns('CMDBuild.global.controller');
 				CMDBuild.global.controller.MainViewport = Ext.create('CMDBuild.controller.common.MainViewport', {
-					accordion: [ // Display order
-						Ext.create('CMDBuild.controller.management.accordion.Menu', { identifier: CMDBuild.core.constants.ModuleIdentifiers.getMenu() }),
-						CMDBuild.configuration.userInterface.isDisabledModule('class') ? null :
-							Ext.create('CMDBuild.controller.management.accordion.Classes', { identifier: 'class' })
-						,
-						CMDBuild.configuration.userInterface.isDisabledModule('process') || !CMDBuild.configuration.workflow.get(CMDBuild.core.constants.Proxy.ENABLED) ? null :
-							Ext.create('CMDBuild.controller.management.accordion.Workflow', { identifier: CMDBuild.core.constants.ModuleIdentifiers.getWorkflow() })
-						,
-						CMDBuild.configuration.userInterface.isDisabledModule(CMDBuild.core.constants.Proxy.DATA_VIEW) ? null :
-							Ext.create('CMDBuild.controller.management.accordion.DataView', { identifier: CMDBuild.core.constants.ModuleIdentifiers.getDataView() })
-						,
-						CMDBuild.configuration.userInterface.isDisabledModule('dashboard') ? null :
-							Ext.create('CMDBuild.controller.management.accordion.Dashboard', { identifier: 'dashboard' })
-						,
-						CMDBuild.configuration.userInterface.isDisabledModule('report') ? null :
-							Ext.create('CMDBuild.controller.management.accordion.Report', { identifier: CMDBuild.core.constants.ModuleIdentifiers.getReport() })
-						,
-						CMDBuild.configuration.userInterface.isDisabledModule(CMDBuild.core.constants.Proxy.CUSTOM_PAGES) ? null :
-							Ext.create('CMDBuild.controller.management.accordion.CustomPage', { identifier: CMDBuild.core.constants.ModuleIdentifiers.getCustomPage() })
-						,
-						Ext.create('CMDBuild.controller.management.accordion.Utility', { identifier: CMDBuild.core.constants.ModuleIdentifiers.getUtility() })
-					],
+					accordion: accordionDefinitionObjectsArray,
 					module: [
 						Ext.create('CMDBuild.controller.management.customPage.SinglePage', { identifier: CMDBuild.core.constants.ModuleIdentifiers.getCustomPage() }),
 						Ext.create('CMDBuild.controller.management.dataView.DataView', { identifier: CMDBuild.core.constants.ModuleIdentifiers.getDataView() }),
