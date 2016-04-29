@@ -33,7 +33,7 @@
 		border: true,
 		frame: true,
 		padding: 10,
-		title: CMDBuild.Translation.login,
+		title: CMDBuild.Translation.loginTitle,
 
 		layout: {
 			type: 'vbox',
