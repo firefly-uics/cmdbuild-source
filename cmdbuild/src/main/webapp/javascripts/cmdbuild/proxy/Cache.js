@@ -111,7 +111,7 @@
 			Ext.apply(parameters, { url: CMDBuild.proxy.index.Json.attachment.getContext });
 
 			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.ATTACHMENT, parameters);
-		},
+		}
 	});
 
 })();
