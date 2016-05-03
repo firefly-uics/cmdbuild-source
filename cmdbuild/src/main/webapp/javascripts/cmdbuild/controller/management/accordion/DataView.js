@@ -56,26 +56,26 @@
 				success: function (response, options, decodedResponse) {
 					var dataViews = decodedResponse[CMDBuild.core.constants.Proxy.VIEWS];
 
-					if (!Ext.isEmpty(dataViews)) {
-						var params = {};
-						params[CMDBuild.core.constants.Proxy.ACTIVE] = true;
+					var params = {};
+					params[CMDBuild.core.constants.Proxy.ACTIVE] = true;
 
-						CMDBuild.proxy.Classes.readAll({
-							params: params,
-							loadMask: false,
-							scope: this,
-							success: function (response, options, decodedResponse) {
-								decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.CLASSES];
+					CMDBuild.proxy.Classes.readAll({
+						params: params,
+						loadMask: false,
+						scope: this,
+						success: function (response, options, decodedResponse) {
+							decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.CLASSES];
 
-								var classesSearchableObject = {};
+							var classesSearchableObject = {};
 
-								Ext.Array.forEach(decodedResponse, function (classObject, i, allClassObjects) {
-									classesSearchableObject[classObject[CMDBuild.core.constants.Proxy.NAME]] = classObject;
-								}, this);
+							Ext.Array.forEach(decodedResponse, function (classObject, i, allClassObjects) {
+								classesSearchableObject[classObject[CMDBuild.core.constants.Proxy.NAME]] = classObject;
+							}, this);
 
-								var nodes = [];
+							var nodes = [];
 
-								Ext.Array.forEach(dataViews, function (viewObject, i, allViewObjects) {
+							if (!Ext.isEmpty(dataViews) && Ext.isArray(dataViews))
+								Ext.Array.each(dataViews, function (viewObject, i, allViewObjects) {
 									var nodeObject = {};
 									nodeObject[CMDBuild.core.constants.Proxy.TEXT] = viewObject[CMDBuild.core.constants.Proxy.DESCRIPTION];
 									nodeObject[CMDBuild.core.constants.Proxy.DESCRIPTION] = viewObject[CMDBuild.core.constants.Proxy.DESCRIPTION];
@@ -108,17 +108,16 @@
 									nodes.push(nodeObject);
 								}, this);
 
-								if (!Ext.isEmpty(nodes)) {
-									this.view.getStore().getRootNode().removeAll();
-									this.view.getStore().getRootNode().appendChild(nodes);
-									this.view.getStore().sort();
-								}
-
-								// Alias of this.callParent(arguments), inside proxy function doesn't work
-								this.updateStoreCommonEndpoint(nodeIdToSelect);
+							if (!Ext.isEmpty(nodes)) {
+								this.view.getStore().getRootNode().removeAll();
+								this.view.getStore().getRootNode().appendChild(nodes);
+								this.view.getStore().sort();
 							}
-						});
-					}
+
+							// Alias of this.callParent(arguments), inside proxy function doesn't work
+							this.updateStoreCommonEndpoint(nodeIdToSelect);
+						}
+					});
 				}
 			});
 
