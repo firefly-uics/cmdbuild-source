@@ -6,11 +6,6 @@
 	Ext.define('CMDBuild.core.RequestBarrier', {
 
 		/**
-		 * @cfg {Boolean}
-		 */
-		enableBufferReset: false,
-
-		/**
 		 * @property {Object}
 		 * 	{
 		 * 		{Function} callback,
@@ -20,7 +15,12 @@
 		 *
 		 * @private
 		 */
-		memorizationBuffer: {},
+		buffer: {},
+
+		/**
+		 * @cfg {Boolean}
+		 */
+		enableBufferReset: false,
 
 		/**
 		 * @param {Object} parameters
@@ -38,7 +38,7 @@
 				&& !Ext.isEmpty(parameters.id) && Ext.isString(parameters.id)
 				&& !Ext.isEmpty(parameters.callback) && Ext.isFunction(parameters.callback)
 			) {
-				this.memorizationBuffer[parameters.id] = {
+				this.buffer[parameters.id] = {
 					callback: parameters.callback,
 					index: 0,
 					scope: Ext.isEmpty(parameters.scope) ? this : parameters.scope
@@ -50,7 +50,7 @@
 					&& !Ext.isEmpty(parameters.failure) && Ext.isFunction(parameters.failure)
 				) {
 					Ext.defer(function () {
-						if (!Ext.Object.isEmpty(this.memorizationBuffer[parameters.id]))
+						if (!Ext.Object.isEmpty(this.buffer[parameters.id]))
 							Ext.callback(parameters[parameters.id].failure, parameters[parameters.id].scope);
 					}, 5000, this);
 				}
@@ -69,9 +69,9 @@
 		callback: function (id) {
 			if (
 				!Ext.isEmpty(id) && Ext.isString(id)
-				&& !Ext.Object.isEmpty(this.memorizationBuffer[id])
+				&& !Ext.Object.isEmpty(this.buffer[id])
 			) {
-				this.memorizationBuffer[id].index--;
+				this.buffer[id].index--;
 
 				this.finalize(id);
 			}
@@ -91,17 +91,14 @@
 
 			if (
 				!Ext.isEmpty(id) && Ext.isString(id)
-				&& !Ext.Object.isEmpty(this.memorizationBuffer[id])
-				&& this.memorizationBuffer[id].index == 0
+				&& !Ext.Object.isEmpty(this.buffer[id])
+				&& this.buffer[id].index == 0
 			) {
-				Ext.callback(
-					this.memorizationBuffer[id].callback,
-					this.memorizationBuffer[id].scope
-				);
+				Ext.callback(this.buffer[id].callback, this.buffer[id].scope);
 
-				// Buffer reset should be launched only after last getCallback, so at barrier's initialization end
+				// Buffer reset should be launched only after last getCallback (barrier's initialization ends)
 				if (this.enableBufferReset)
-					delete this.memorizationBuffer[id]; // Buffer reset
+					delete this.buffer[id]; // Buffer reset
 			}
 		},
 
@@ -113,9 +110,9 @@
 		getCallback: function (id) {
 			if (
 				!Ext.isEmpty(id) && Ext.isString(id)
-				&& !Ext.Object.isEmpty(this.memorizationBuffer[id])
+				&& !Ext.Object.isEmpty(this.buffer[id])
 			) {
-				this.memorizationBuffer[id].index++;
+				this.buffer[id].index++;
 
 				return Ext.bind(this.callback, this, [id]);
 			}
