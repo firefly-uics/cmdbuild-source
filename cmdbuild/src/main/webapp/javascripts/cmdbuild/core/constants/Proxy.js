@@ -485,6 +485,7 @@
 		REQUIRED: 'required',
 		RESPONSE: 'response',
 		RESTRICTED_ADMIN: 'restrictedAdmin',
+		RESULT: 'result',
 		RESULTS: 'results',
 		RETRY_WITHOUT_FILTER: 'retryWithoutFilter',
 		ROLE: 'role',
