@@ -62,6 +62,8 @@ FIXES
 
  * DefaultGroup comboBox empty on user manage form
 
+ * User's e-mail cannot be deleted
+
 
 
 
