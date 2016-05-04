@@ -624,7 +624,6 @@
 		 * @returns {Void}
 		 */
 		onMainViewportAccordionSelect: function (parameters) {
-_debug('onMainViewportAccordionSelect', parameters);
 			if (
 				Ext.isObject(parameters) && !Ext.Object.isEmpty(parameters)
 				&& Ext.isObject(parameters.selectedNodeModel) && !Ext.Object.isEmpty(parameters.selectedNodeModel)
