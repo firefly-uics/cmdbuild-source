@@ -1,7 +1,7 @@
 (function() {
 
 	Ext.define('CMDBuild.view.management.common.widgets.linkCards.cardWindow.CMCardWindow', {
-		extend: 'CMDBuild.PopupWindow',
+		extend: 'CMDBuild.core.window.AbstractModal',
 
 		// Configuration
 			cmEditMode: false, // If true, after the attributes load go in edit mode

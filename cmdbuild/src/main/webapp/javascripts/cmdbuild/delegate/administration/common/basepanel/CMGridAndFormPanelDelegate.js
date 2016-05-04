@@ -1,3 +1,5 @@
+Ext.require(['CMDBuild.core.Message']);
+
 /**
  * Give a base implementation of the delegates
  * 	CMDBuild.delegate.administration.common.basepanel.CMFormDelegate
@@ -97,7 +99,7 @@ Ext.define("CMDBuild.delegate.administration.common.basepanel.CMGridAndFormPanel
 			this.view.disableModify();
 			this.onGridAndFormPanelSaveButtonClick(form);
 		} else {
-			CMDBuild.Msg.error(CMDBuild.Translation.common.failure, CMDBuild.Translation.errors.invalid_fields, false);
+			CMDBuild.core.Message.error(CMDBuild.Translation.common.failure, CMDBuild.Translation.errors.invalid_fields, false);
 		}
 	},
 

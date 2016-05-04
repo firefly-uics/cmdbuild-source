@@ -1,7 +1,7 @@
 (function() {
 
 	Ext.define('CMDBuild.view.management.common.CMNoteWindow', {
-		extend: 'CMDBuild.PopupWindow',
+		extend: 'CMDBuild.core.window.AbstractModal',
 
 		withButtons: false,
 		withTbar: true,

@@ -6,7 +6,8 @@
 		requires: [
 			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.Message',
-			'CMDBuild.core.proxy.Card',
+			'CMDBuild.proxy.Card',
+			'CMDBuild.proxy.workflow.Activity',
 			'CMDBuild.core.Utils'
 		],
 
@@ -53,18 +54,18 @@
 				classId: p.classId
 			}));
 
-			CMDBuild.core.LoadMask.show();
-
-			CMDBuild.ServiceProxy.workflow.getstartactivitytemplate(p.classId, {
+			CMDBuild.proxy.workflow.Activity.readStart({
+				params: {
+					classId: p.classId
+				},
+				important: true,
+				loadMask: false,
 				scope: this,
-				success: function success(response, request, decoded) {
-					var activity = new CMDBuild.model.CMActivityInstance(decoded.response || {});
+				success: function (response, options, decodedResponse) {
+					var activity = new CMDBuild.model.CMActivityInstance(decodedResponse.response || {});
+
 					_CMWFState.setActivityInstance(activity);
-				},
-				callback: function() {
-					CMDBuild.core.LoadMask.hide();
-				},
-				important: true
+				}
 			});
 		},
 
@@ -86,25 +87,22 @@
 
 			updateViewSelection(activityInfoId, me);
 
-			CMDBuild.core.LoadMask.show();
-
-			CMDBuild.ServiceProxy.workflow.getActivityInstance(
-				{
+			CMDBuild.proxy.workflow.Activity.read({
+				params:{
 					classId: _CMWFState.getProcessInstance().getClassId(),
 					cardId: _CMWFState.getProcessInstance().getId(),
 					activityInstanceId: activityInfoId
 				},
-				{
-					success: function(response, request, decoded) {
-						CMDBuild.core.LoadMask.hide();
+				important: true,
+				loadMask: false,
+				scope: this,
+				success: function (response, options, decodedResponse) {
+					var activity = new CMDBuild.model.CMActivityInstance(decodedResponse.response || {});
 
-						var activity = new CMDBuild.model.CMActivityInstance(decoded.response || {});
-
-						me.lastActivityInfoId = activityInfoId;
-						_CMWFState.setActivityInstance(activity);
-					}
+					me.lastActivityInfoId = activityInfoId;
+					_CMWFState.setActivityInstance(activity);
 				}
-			);
+			});
 		},
 
 		/**
@@ -162,8 +160,9 @@
 				params[CMDBuild.core.constants.Proxy.RETRY_WITHOUT_FILTER] = false;
 				params[CMDBuild.core.constants.Proxy.SORT] = Ext.encode(getSorting(store));
 
-				CMDBuild.core.proxy.Card.getPosition({
+				CMDBuild.proxy.Card.readPosition({
 					params: params,
+					loadMask: false,
 					scope: this,
 					success: function (response, options, decodedResponse) {
 						var position = decodedResponse.position;
@@ -201,7 +200,7 @@
 				_CMWFState.setProcessInstance(new CMDBuild.model.CMProcessInstance());
 				_CMUIState.onlyGridIfFullScreen();
 			} else {
-				CMDBuild.core.Message.info(undefined, CMDBuild.Translation.info.card_not_found);
+				CMDBuild.core.Message.info(undefined, CMDBuild.Translation.cardNotMatchFilter);
 			}
 		},
 
@@ -270,7 +269,7 @@
 
 						if (!parameters[2]) {
 							CMDBuild.core.Message.error(null, {
-								text: CMDBuild.Translation.errors.unknown_error
+								text: CMDBuild.Translation.errors.anErrorHasOccurred
 							});
 						}
 					}

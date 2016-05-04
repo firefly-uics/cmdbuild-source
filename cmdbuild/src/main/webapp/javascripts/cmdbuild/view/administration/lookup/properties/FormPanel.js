@@ -6,7 +6,7 @@
 		requires: [
 			'CMDBuild.core.constants.FieldWidths',
 			'CMDBuild.core.constants.Proxy',
-			'CMDBuild.core.proxy.lookup.Type'
+			'CMDBuild.proxy.lookup.Type'
 		],
 
 		mixins: ['CMDBuild.view.common.PanelFunctions'],
@@ -97,7 +97,7 @@
 						disabled: true,
 						disableEnableFunctions: true,
 
-						store: CMDBuild.core.proxy.lookup.Type.getStore(),
+						store: CMDBuild.proxy.lookup.Type.getStore(),
 						queryMode: 'local'
 					}),
 					{

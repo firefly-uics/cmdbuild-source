@@ -13,6 +13,7 @@
 		 */
 		baseTitle: CMDBuild.Translation.views,
 
+		bodyCls: 'cmdb-blue-panel-no-padding',
 		border: true,
 		frame: false,
 		layout: 'fit',

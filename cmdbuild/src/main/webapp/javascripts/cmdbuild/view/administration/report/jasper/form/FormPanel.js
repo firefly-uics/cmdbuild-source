@@ -28,6 +28,11 @@
 		frame: false,
 		layout: 'card',
 
+		/**
+		 * @returns {Void}
+		 *
+		 * @override
+		 */
 		initComponent: function () {
 			Ext.apply(this, {
 				dockedItems: [

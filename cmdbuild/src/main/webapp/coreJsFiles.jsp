@@ -1,6 +1,3 @@
-<!--  CONSTANTS -->
-<script type="text/javascript" src="javascripts/cmdbuild/core/constants/Proxy.js"></script>
-
 <!-- LOADER CONFIG -->
 <script type="text/javascript" src="javascripts/cmdbuild/core/LoaderConfig.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/core/Utils.js"></script>
@@ -18,24 +15,10 @@
 <script type="text/javascript" src="javascripts/cmdbuild/override/layout/container/Editor.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/override/selection/CheckboxModel.js"></script>
 
-<!--  PROXYES -->
-<script type="text/javascript" src="javascripts/cmdbuild/core/proxy/Index.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/core/proxy/CMProxy.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/core/proxy/Attachment.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/core/proxy/Attributes.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/core/proxy/Card.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/core/proxy/Classes.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/core/proxy/Filter.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/core/proxy/CMProxyAdministration.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/core/proxy/CMProxyDashboard.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/core/proxy/CMProxyGIS.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/core/proxy/CMProxyIcon.js"></script>
-
 <!-- MODELS -->
 <script type="text/javascript" src="javascripts/cmdbuild/model/report/Cache.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/model/CMCacheModels.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/model/CMFilterModel.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/model/CMDomainModels.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/model/CMDashboardModels.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/model/CMAttachmentModels.js"></script>
 
@@ -55,7 +38,6 @@
 <!-- THE OTHERS -->
 <script type="text/javascript" src="javascripts/cmdbuild/controller/common/TemplateResolver.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/core/Message.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/core/PopupWindow.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/core/interfaces/Ajax.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/core/CMDelegable.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/core/xml/XMLUtility.js"></script>
@@ -153,4 +135,3 @@
 <script type="text/javascript" src="javascripts/cmdbuild/bim/package.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/bim/data/CMBIMProjectModel.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/bim/data/CMBimLayerModel.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/bim/proxy/CMBIMProxy.js"></script>

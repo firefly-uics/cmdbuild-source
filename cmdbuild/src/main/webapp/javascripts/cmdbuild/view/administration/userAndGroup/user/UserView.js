@@ -27,7 +27,7 @@
 
 		baseTitle: CMDBuild.Translation.users,
 		bodyCls: 'cmdb-gray-panel-no-padding',
-		border: true,
+		border: false,
 		frame: false,
 		layout: 'border',
 

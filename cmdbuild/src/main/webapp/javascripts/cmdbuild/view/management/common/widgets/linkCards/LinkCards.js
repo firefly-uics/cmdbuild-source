@@ -144,9 +144,9 @@
 				frame: false,
 				border: false,
 
-				lon: this.widgetConf[CMDBuild.core.constants.Proxy.START_MAP_WITH_LONGITUDE] || this.widgetConf[CMDBuild.core.constants.Proxy.MAP_LONGITUDE],
-				lat: this.widgetConf[CMDBuild.core.constants.Proxy.START_MAP_WITH_LATITUDE] || this.widgetConf[CMDBuild.core.constants.Proxy.MAP_LATITATUDE],
-				initialZoomLevel: this.widgetConf[CMDBuild.core.constants.Proxy.START_MAP_WITH_ZOOM] || this.widgetConf[CMDBuild.core.constants.Proxy.MAP_ZOOM]
+				lon: this.widgetConf['StartMapWithLongitude'] || this.widgetConf[CMDBuild.core.constants.Proxy.MAP_LONGITUDE],
+				lat: this.widgetConf['StartMapWithLatitude'] || this.widgetConf[CMDBuild.core.constants.Proxy.MAP_LATITATUDE],
+				initialZoomLevel: this.widgetConf['StartMapWithZoom'] || this.widgetConf[CMDBuild.core.constants.Proxy.MAP_ZOOM]
 			});
 
 			Ext.apply(this, {

@@ -39,6 +39,8 @@
 		frame: false,
 
 		/**
+		 * @returns {Void}
+		 *
 		 * @override
 		 */
 		initComponent: function () {

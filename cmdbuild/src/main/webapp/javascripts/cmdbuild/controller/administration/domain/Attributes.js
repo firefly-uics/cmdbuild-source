@@ -3,7 +3,12 @@
 	Ext.define('CMDBuild.controller.administration.domain.Attributes', {
 		extend: 'CMDBuild.controller.administration.CMBaseAttributesController',
 
-		requires: ['CMDBuild.core.constants.Proxy'],
+		requires: [
+			'CMDBuild.core.constants.Proxy',
+			'CMDBuild.core.Message',
+			'CMDBuild.proxy.common.tabs.attribute.Attribute',
+			'CMDBuild.proxy.common.tabs.attribute.Order'
+		],
 
 		/**
 		 * @cfg {CMDBuild.controller.administration.domain.Domain}
@@ -113,11 +118,12 @@
 		deleteAttribute: function() {
 			if (!this.cmfg('domainSelectedDomainIsEmpty') && !Ext.isEmpty(this.currentAttribute)) {
 				CMDBuild.core.LoadMask.show();
-				CMDBuild.ServiceProxy.administration.domain.attribute.remove({
+				CMDBuild.proxy.common.tabs.attribute.Attribute.remove({
 					params: {
 						className: this.cmfg('domainSelectedDomainGet', CMDBuild.core.constants.Proxy.NAME),
 						name: this.currentAttribute.get(CMDBuild.core.constants.Proxy.NAME)
 					},
+					loadMask: false,
 					scope: this,
 					success: function(result, options, decodedResult) {
 						this.form.reset();
@@ -193,10 +199,11 @@
 			params[CMDBuild.core.constants.Proxy.ATTRIBUTES] = Ext.JSON.encode(attributes);
 			params[CMDBuild.core.constants.Proxy.CLASS_NAME] = this.cmfg('domainSelectedDomainGet', CMDBuild.core.constants.Proxy.NAME);
 
-			CMDBuild.ServiceProxy.attributes.reorder({
+			CMDBuild.proxy.common.tabs.attribute.Order.reorder({
 				params: params,
-				success: function() {
-					me.anAttributeWasMoved(attributes);
+				scope: this,
+				success: function (response, options, decodedResponse) {
+					this.anAttributeWasMoved(attributes);
 				}
 			});
 		},
@@ -238,14 +245,15 @@
 			data[CMDBuild.core.constants.Proxy.CLASS_NAME] = this.cmfg('domainSelectedDomainGet', CMDBuild.core.constants.Proxy.NAME);
 
 			if (nonValid.length > 0) {
-				CMDBuild.Msg.error(CMDBuild.Translation.common.failure, CMDBuild.Translation.errors.invalid_fields, false);
+				CMDBuild.core.Message.error(CMDBuild.Translation.common.failure, CMDBuild.Translation.errors.invalid_fields, false);
 
 				return;
 			}
 
 			CMDBuild.core.LoadMask.show();
-			CMDBuild.ServiceProxy.administration.domain.attribute.save({
+			CMDBuild.proxy.common.tabs.attribute.Attribute.update({
 				params: data,
+				loadMask: false,
 				scope: this,
 				success: function(result, options, decodedResult) {
 					var attribute = decodedResult.attribute;

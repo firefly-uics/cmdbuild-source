@@ -6,8 +6,8 @@
 		requires: [
 			'CMDBuild.core.constants.Global',
 			'CMDBuild.core.constants.Proxy',
-			'CMDBuild.core.proxy.localization.Localization',
-			'CMDBuild.core.proxy.Menu'
+			'CMDBuild.proxy.localization.Localization',
+			'CMDBuild.proxy.Menu'
 		],
 
 		/**
@@ -229,7 +229,7 @@
 			var params = {};
 			params[CMDBuild.core.constants.Proxy.GROUP_NAME] = this.cmfg('selectedMenuNameGet');
 
-			CMDBuild.core.proxy.Menu.readConfiguration({
+			CMDBuild.proxy.Menu.readConfiguration({
 				params: params,
 				scope: this,
 				success: function (response, options, decodedResponse) {
@@ -246,7 +246,7 @@
 				}
 			});
 
-			CMDBuild.core.proxy.Menu.readAvailableItems({
+			CMDBuild.proxy.Menu.readAvailableItems({
 				params: params,
 				scope: this,
 				success: function (response, options, decodedResponse) {
@@ -326,7 +326,7 @@
 			params[CMDBuild.core.constants.Proxy.GROUP_NAME] = this.cmfg('selectedMenuNameGet');
 			params[CMDBuild.core.constants.Proxy.MENU] = Ext.encode(menuTree);
 
-			CMDBuild.core.proxy.Menu.save({
+			CMDBuild.proxy.Menu.save({
 				params: params,
 				scope: this,
 				success: function (response, options, decodedResponse) {
@@ -343,7 +343,7 @@
 						) {
 							value[CMDBuild.core.constants.Proxy.TRANSLATIONS] = Ext.encode(value[CMDBuild.core.constants.Proxy.TRANSLATIONS]);
 
-							CMDBuild.core.proxy.localization.Localization.update({ params: value });
+							CMDBuild.proxy.localization.Localization.update({ params: value });
 						}
 					}, this);
 				}
@@ -359,7 +359,7 @@
 			var params = {};
 			params[CMDBuild.core.constants.Proxy.GROUP_NAME] = this.cmfg('selectedMenuNameGet');
 
-			CMDBuild.core.proxy.Menu.remove({
+			CMDBuild.proxy.Menu.remove({
 				params: params,
 				scope: this,
 				success: function (response, options, decodedResponse) {

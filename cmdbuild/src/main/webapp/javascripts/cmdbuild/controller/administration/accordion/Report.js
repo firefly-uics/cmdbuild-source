@@ -4,9 +4,8 @@
 		extend: 'CMDBuild.controller.common.abstract.Accordion',
 
 		requires: [
-			'CMDBuild.core.constants.Global',
 			'CMDBuild.core.constants.Proxy',
-			'CMDBuild.core.proxy.Classes'
+			'CMDBuild.proxy.Classes'
 		],
 
 		/**
@@ -26,6 +25,9 @@
 
 		/**
 		 * @param {Object} configurationObject
+		 * @param {CMDBuild.controller.common.MainViewport} configurationObject.parentDelegate
+		 *
+		 * @returns {Void}
 		 *
 		 * @override
 		 */
@@ -39,6 +41,8 @@
 
 		/**
 		 * @param {Number} nodeIdToSelect
+		 *
+		 * @returns {Void}
 		 *
 		 * @override
 		 */

@@ -1,7 +1,7 @@
 (function () {
 
 	Ext.define('CMDBuild.view.administration.userAndGroup.group.privileges.UiConfigurationWindow', {
-		extend: 'CMDBuild.core.PopupWindow',
+		extend: 'CMDBuild.core.window.AbstractModal',
 
 		requires: [
 			'CMDBuild.core.constants.FieldWidths',

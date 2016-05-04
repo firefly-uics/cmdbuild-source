@@ -72,6 +72,4 @@ public interface ErrorHandler {
 
 	void sessionNotFound(String value);
 
-	void userNotFound(String value);
-
 }

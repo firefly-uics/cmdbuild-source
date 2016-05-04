@@ -3,7 +3,7 @@
 	// TODO: fix to use class property requires (unusable at the moment because of class wrong name)
 	Ext.require([
 		'CMDBuild.core.constants.Proxy',
-		'CMDBuild.core.proxy.userAndGroup.group.DefaultFilters'
+		'CMDBuild.proxy.userAndGroup.group.DefaultFilters'
 	]);
 
 	Ext.define('CMDBuild.controller.management.common.CMModController', {
@@ -38,7 +38,7 @@
 					params[CMDBuild.core.constants.Proxy.CLASS_NAME] = entryType.get(CMDBuild.core.constants.Proxy.NAME);
 					params[CMDBuild.core.constants.Proxy.GROUP] = CMDBuild.configuration.runtime.get(CMDBuild.core.constants.Proxy.DEFAULT_GROUP_NAME);
 
-					CMDBuild.core.proxy.userAndGroup.group.DefaultFilters.read({
+					CMDBuild.proxy.userAndGroup.group.DefaultFilters.read({
 						params: params,
 						scope: this,
 						success: function (response, options, decodedResponse) {

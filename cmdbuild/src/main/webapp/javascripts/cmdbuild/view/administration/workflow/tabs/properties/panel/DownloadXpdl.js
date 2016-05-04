@@ -1,4 +1,4 @@
-(function() {
+(function () {
 
 	Ext.define('CMDBuild.view.administration.workflow.tabs.properties.panel.DownloadXpdl', {
 		extend: 'Ext.form.Panel',
@@ -30,7 +30,12 @@
 			align: 'stretch'
 		},
 
-		initComponent: function() {
+		/**
+		 * @returns {Void}
+		 *
+		 * @override
+		 */
+		initComponent: function () {
 			Ext.apply(this, {
 				items: [
 					this.versionCombo = Ext.create('Ext.form.field.ComboBox', {
@@ -64,7 +69,7 @@
 								margins: '0 0 0 5',
 								scope: this,
 
-								handler: function(button, e) {
+								handler: function (button, e) {
 									this.delegate.cmfg('onWorkflowTabPropertiesDownloadXpdlPanelDownloadButtonClick');
 								}
 							})

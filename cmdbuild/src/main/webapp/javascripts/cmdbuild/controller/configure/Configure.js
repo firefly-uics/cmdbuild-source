@@ -5,7 +5,7 @@
 
 		requires: [
 			'CMDBuild.core.constants.Proxy',
-			'CMDBuild.core.proxy.Configure'
+			'CMDBuild.proxy.Configure'
 		],
 
 		/**
@@ -91,7 +91,7 @@
 		},
 
 		onConfigurationViewportWizardConnectionCheckButtonClick: function () {
-			CMDBuild.core.proxy.Configure.dbConnectionCheck({
+			CMDBuild.proxy.Configure.dbConnectionCheck({
 				params: Ext.create('CMDBuild.model.configure.Configure', this.wizard.getData()).getDataDBConnection(),
 				scope: this,
 				success: function (response, options, decodedResponse){
@@ -168,7 +168,7 @@
 
 		onConfigurationViewportWizardFinishButtonClick: function () {
 			if (this.validate(this.wizard)) {
-				CMDBuild.core.proxy.Configure.apply({
+				CMDBuild.proxy.Configure.apply({
 					params: Ext.create('CMDBuild.model.configure.Configure', this.wizard.getData()).getDataSubmit(),
 					scope: this,
 					success: function (response, options, decodedResponse) {

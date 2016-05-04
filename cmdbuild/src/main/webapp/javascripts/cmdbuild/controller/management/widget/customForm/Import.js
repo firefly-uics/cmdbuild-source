@@ -5,10 +5,10 @@
 
 		requires: [
 			'CMDBuild.core.constants.Proxy',
-			'CMDBuild.core.proxy.Csv',
-			'CMDBuild.core.proxy.lookup.Lookup',
-			'CMDBuild.core.proxy.widget.CustomForm',
-			'CMDBuild.core.RequestBarrier'
+			'CMDBuild.core.Message',
+			'CMDBuild.proxy.customForm.Csv',
+			'CMDBuild.proxy.lookup.Lookup',
+			'CMDBuild.proxy.widget.customForm.CustomForm'
 		],
 
 		/**
@@ -39,6 +39,8 @@
 		 * @param {Object} configurationObject
 		 * @param {Mixed} configurationObject.parentDelegate
 		 *
+		 * @returns {Void}
+		 *
 		 * @override
 		 */
 		constructor: function (configurationObject) {
@@ -61,6 +63,8 @@
 		 *
 		 * @param {Array} csvData
 		 *
+		 * @returns {Void}
+		 *
 		 * @private
 		 */
 		dataManageAndForward: function (csvData) {
@@ -68,42 +72,48 @@
 				!Ext.isEmpty(csvData) && Ext.isArray(csvData)
 				&& !this.cmfg('widgetCustomFormConfigurationIsEmpty',  CMDBuild.core.constants.Proxy.MODEL)
 			) {
-				CMDBuild.core.RequestBarrier.init('dataManageBarrier', function () {
-					// Forwards to parent delegate
-					this.cmfg('widgetCustomFormLayoutDataSet', this.importDataModeManager(csvData));
-					this.cmfg('onWidgetCustomFormImportAbortButtonClick');
+				var requestBarrier = Ext.create('CMDBuild.core.RequestBarrier', {
+					id: 'widgetCustomFormImportBarrier',
+					scope: this,
+					callback: function () {
+						// Forwards to parent delegate
+						this.cmfg('widgetCustomFormLayoutDataSet', this.importDataModeManager(csvData));
+						this.cmfg('onWidgetCustomFormImportAbortButtonClick');
 
-					this.view.setLoading(false);
-				}, this);
+						this.view.setLoading(false);
+					}
+				});
 
 				Ext.Array.forEach(this.cmfg('widgetCustomFormConfigurationGet', CMDBuild.core.constants.Proxy.MODEL), function (attribute, i, allAttributes) {
 					switch (attribute.get(CMDBuild.core.constants.Proxy.TYPE)) {
 						case 'lookup': {
-							this.dataManageLookup(csvData, attribute, 'dataManageBarrier');
+							this.dataManageLookup(csvData, attribute, requestBarrier);
 						} break;
 
 						case 'reference': {
-							this.dataManageReference(csvData, attribute, 'dataManageBarrier');
+							this.dataManageReference(csvData, attribute, requestBarrier);
 						} break;
 					}
 				}, this);
 
-				CMDBuild.core.RequestBarrier.finalize('dataManageBarrier');
+				requestBarrier.finalize('widgetCustomFormImportBarrier', true);
 			}
 		},
 
 		/**
 		 * @param {Array} csvData
 		 * @param {CMDBuild.model.widget.customForm.Attribute} attribute
-		 * @param {String} barrierId
+		 * @param {String} requestBarrier
+		 *
+		 * @returns {Void}
 		 *
 		 * @private
 		 */
-		dataManageLookup: function (csvData, attribute, barrierId) {
+		dataManageLookup: function (csvData, attribute, requestBarrier) {
 			if (
 				!Ext.isEmpty(csvData) && Ext.isArray(csvData)
 				&& !Ext.isEmpty(attribute)
-				&& !Ext.isEmpty(barrierId) && Ext.isString(barrierId)
+				&& !Ext.isEmpty(requestBarrier) && Ext.isString(requestBarrier)
 			) {
 				var attributeName = attribute.get(CMDBuild.core.constants.Proxy.NAME);
 
@@ -111,7 +121,7 @@
 				params[CMDBuild.core.constants.Proxy.TYPE] = attribute.get(CMDBuild.core.constants.Proxy.LOOKUP_TYPE);
 				params[CMDBuild.core.constants.Proxy.ACTIVE] = true;
 
-				CMDBuild.core.proxy.lookup.Lookup.readAll({
+				CMDBuild.proxy.lookup.Lookup.readAll({
 					params: params,
 					scope: this,
 					success: function (response, options, decodedResponse) {
@@ -128,7 +138,7 @@
 							}
 						}, this);
 					},
-					callback: CMDBuild.core.RequestBarrier.getCallback(barrierId)
+					callback: requestBarrier.getCallback('widgetCustomFormImportBarrier')
 				});
 			} else {
 				_error('malformed parameters in Lookup data manage', this);
@@ -138,15 +148,17 @@
 		/**
 		 * @param {Array} csvData
 		 * @param {CMDBuild.model.widget.customForm.Attribute} attribute
-		 * @param {String} barrierId
+		 * @param {String} requestBarrier
+		 *
+		 * @returns {Void}
 		 *
 		 * @private
 		 */
-		dataManageReference: function (csvData, attribute, barrierId) {
+		dataManageReference: function (csvData, attribute, requestBarrier) {
 			if (
 				!Ext.isEmpty(csvData) && Ext.isArray(csvData)
 				&& !Ext.isEmpty(attribute)
-				&& !Ext.isEmpty(barrierId) && Ext.isString(barrierId)
+				&& !Ext.isEmpty(requestBarrier) && Ext.isString(requestBarrier)
 			) {
 				var attributeName = attribute.get(CMDBuild.core.constants.Proxy.NAME);
 				var cardsCodesToManage = [];
@@ -171,7 +183,7 @@
 						}
 					});
 
-					CMDBuild.core.proxy.widget.CustomForm.getCardList({
+					CMDBuild.proxy.widget.customForm.CustomForm.readAllCards({
 						params: params,
 						loadMask: false,
 						scope: this,
@@ -196,7 +208,7 @@
 								}, this);
 							}
 						},
-						callback: CMDBuild.core.RequestBarrier.getCallback(barrierId)
+						callback: requestBarrier.getCallback('widgetCustomFormImportBarrier')
 					});
 				}
 			} else {
@@ -206,6 +218,8 @@
 
 		/**
 		 * @param {Array} csvData
+		 *
+		 * @returns {Void}
 		 *
 		 * @private
 		 */
@@ -364,10 +378,16 @@
 			return false;
 		},
 
+		/**
+		 * @returns {Void}
+		 */
 		onWidgetCustomFormImportAbortButtonClick: function () {
 			this.view.destroy();
 		},
 
+		/**
+		 * @returns {Void}
+		 */
 		onWidgetCustomFormImportModeChange: function () {
 			this.form.keyAttributesMultiselect.setDisabled(
 				this.form.modeCombo.getValue() != 'merge'
@@ -376,18 +396,20 @@
 
 		/**
 		 * Uses importCSV calls to store and get CSV data from server and check if CSV has right fields
+		 *
+		 * @returns {Void}
 		 */
 		onWidgetCustomFormImportUploadButtonClick: function () {
 			if (this.validate(this.form)) {
 				this.view.setLoading(true);
 
-				CMDBuild.core.proxy.Csv.decode({
+				CMDBuild.proxy.customForm.Csv.decode({
 					form: this.form.getForm(),
 					scope: this,
 					failure: function (form, action) {
 						this.view.setLoading(false);
 
-						CMDBuild.Msg.error(
+						CMDBuild.core.Message.error(
 							CMDBuild.Translation.common.failure,
 							CMDBuild.Translation.errors.csvUploadOrDecodeFailure,
 							false

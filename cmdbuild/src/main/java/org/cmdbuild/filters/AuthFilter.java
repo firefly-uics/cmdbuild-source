@@ -1,8 +1,14 @@
 package org.cmdbuild.filters;
 
+import static java.util.Arrays.stream;
+import static java.util.Optional.ofNullable;
+import static org.apache.commons.lang3.ObjectUtils.defaultIfNull;
+import static org.apache.commons.lang3.StringUtils.defaultIfBlank;
 import static org.cmdbuild.spring.util.Constants.PROTOTYPE;
 
 import java.io.IOException;
+import java.util.Optional;
+import java.util.concurrent.atomic.AtomicReference;
 
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
@@ -10,17 +16,16 @@ import javax.servlet.FilterConfig;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.cmdbuild.auth.UserStore;
-import org.cmdbuild.common.Builder;
+import org.cmdbuild.auth.ClientRequestAuthenticator.ClientRequest;
 import org.cmdbuild.exception.RedirectException;
 import org.cmdbuild.logger.Log;
-import org.cmdbuild.logic.auth.AuthenticationLogic;
-import org.cmdbuild.logic.auth.AuthenticationLogic.ClientAuthenticationRequest;
 import org.cmdbuild.logic.auth.AuthenticationLogic.ClientAuthenticationResponse;
-import org.cmdbuild.logic.auth.DefaultAuthenticationLogicBuilder;
+import org.cmdbuild.logic.auth.SessionLogic.Callback;
+import org.cmdbuild.logic.auth.StandardSessionLogic;
 import org.slf4j.Logger;
 import org.slf4j.Marker;
 import org.slf4j.MarkerFactory;
@@ -35,64 +40,27 @@ public class AuthFilter implements Filter {
 	private static final Logger logger = Log.CMDBUILD;
 	private static final Marker marker = MarkerFactory.getMarker(AuthFilter.class.getName());
 
-	private static class ClientRequestWrapper implements ClientAuthenticationRequest {
+	private static class ClientRequestWrapper implements ClientRequest {
 
-		private static class ClientRequestWrapperBuilder implements Builder<ClientRequestWrapper> {
+		private final HttpServletRequest delegate;
 
-			private HttpServletRequest request;
-			private UserStore userStore;
-
-			private ClientRequestWrapperBuilder() {
-				// prevents instantiation
-			}
-
-			@Override
-			public ClientRequestWrapper build() {
-				return new ClientRequestWrapper(this);
-			}
-
-			public ClientRequestWrapperBuilder withRequest(final HttpServletRequest request) {
-				this.request = request;
-				return this;
-			}
-
-			public ClientRequestWrapperBuilder withUserStore(final UserStore userStore) {
-				this.userStore = userStore;
-				return this;
-			}
-
-		}
-
-		public static ClientRequestWrapperBuilder newInstance() {
-			return new ClientRequestWrapperBuilder();
-		}
-
-		private final HttpServletRequest request;
-		private final UserStore userStore;
-
-		private ClientRequestWrapper(final ClientRequestWrapperBuilder builder) {
-			this.request = builder.request;
-			this.userStore = builder.userStore;
+		public ClientRequestWrapper(final HttpServletRequest delegate) {
+			this.delegate = delegate;
 		}
 
 		@Override
 		public String getRequestUrl() {
-			return request.getRequestURL().toString();
+			return delegate.getRequestURL().toString();
 		}
 
 		@Override
 		public String getHeader(final String name) {
-			return request.getHeader(name);
+			return delegate.getHeader(name);
 		}
 
 		@Override
 		public String getParameter(final String name) {
-			return request.getParameter(name);
-		}
-
-		@Override
-		public UserStore getUserStore() {
-			return userStore;
+			return delegate.getParameter(name);
 		}
 
 	}
@@ -100,15 +68,56 @@ public class AuthFilter implements Filter {
 	public static final String LOGIN_URL = "index.jsp";
 	public static final String LOGOUT_URL = "logout.jsp";
 
-	@Autowired
-	private UserStore userStore;
-
-	private AuthenticationLogic authenticationLogic;
-
-	@Autowired
-	public void setAuthenticationLogicBuilder(final DefaultAuthenticationLogicBuilder authenticationLogicBuilder) {
-		this.authenticationLogic = authenticationLogicBuilder.build();
+	private static boolean isRootPage(final String uri) {
+		return uri.equals("/");
 	}
+
+	private static boolean isLoginPage(final String uri) {
+		return uri.equals("/" + LOGIN_URL);
+	}
+
+	private static boolean isLogoutPage(final String uri) {
+		return uri.equals("/" + LOGOUT_URL);
+	}
+
+	private static boolean isService(final String uri) {
+		return uri.startsWith("/services/");
+	}
+
+	private static boolean isShark(final String uri) {
+		return uri.startsWith("/shark/");
+	}
+
+	private static boolean isResouce(final String uri) {
+		return uri.matches("^(.*)(css|js|png|jpg|gif|ico)$");
+	}
+
+	private static final String CMDBUILD_AUTHORIZATION = "CMDBuild-Authorization";
+	private static final Cookie[] NO_COOKIES = new Cookie[] {};
+
+	private static String sessionId(final HttpServletRequest httpRequest) {
+		final Optional<String> header = ofNullable(defaultIfBlank(httpRequest.getHeader(CMDBUILD_AUTHORIZATION), null));
+		final Optional<String> parameter = ofNullable(
+				defaultIfBlank(httpRequest.getParameter(CMDBUILD_AUTHORIZATION), null));
+		final Optional<String> cookie = stream(defaultIfNull(httpRequest.getCookies(), NO_COOKIES)) //
+				.filter(input -> input.getName().equals(CMDBUILD_AUTHORIZATION)) //
+				.findFirst() //
+				.map(input -> input.getValue());
+		final String output;
+		if (header.isPresent()) {
+			output = header.get();
+		} else if (parameter.isPresent()) {
+			output = parameter.get();
+		} else if (cookie.isPresent()) {
+			output = cookie.get();
+		} else {
+			output = null;
+		}
+		return output;
+	}
+
+	@Autowired
+	private StandardSessionLogic sessionLogic;
 
 	@Override
 	public void init(final FilterConfig filterConfig) throws ServletException {
@@ -123,6 +132,9 @@ public class AuthFilter implements Filter {
 			throws IOException, ServletException {
 		final HttpServletRequest httpRequest = (HttpServletRequest) request;
 		final HttpServletResponse httpResponse = (HttpServletResponse) response;
+		// TODO do it in another way
+		final AtomicReference<String> sessionId = new AtomicReference<>(sessionId(httpRequest));
+		sessionLogic.setCurrent(sessionId.get());
 		try {
 			final String uri = httpRequest.getRequestURI().substring(httpRequest.getContextPath().length());
 			logger.debug(marker, "request received for '{}'", uri);
@@ -131,26 +143,44 @@ public class AuthFilter implements Filter {
 				logger.debug(marker, "root page, redirecting to login");
 				redirectToLogin(httpResponse);
 			} else if (isLoginPage(uri)) {
-				if (userStore.getUser().isValid()) {
+				if (sessionLogic.isValidUser(sessionId.get())) {
 					redirectToManagement(httpResponse);
 				} else {
 					logger.debug(marker, "user is not valid, trying login using HTTP request");
-					final ClientAuthenticationResponse clientAuthenticatorResponse = doLogin(httpRequest, userStore);
+					final ClientAuthenticationResponse clientAuthenticatorResponse = sessionLogic
+							.create(new ClientRequestWrapper(httpRequest), new Callback() {
+
+								@Override
+								public void sessionCreated(final String id) {
+									sessionId.set(id);
+									sessionLogic.setCurrent(id);
+								}
+
+							});
 					final String authenticationRedirectUrl = clientAuthenticatorResponse.getRedirectUrl();
 					if (authenticationRedirectUrl != null) {
 						redirectToCustom(authenticationRedirectUrl);
-					} else if (userStore.getUser().isValid()) {
+					} else if (sessionLogic.isValidUser(sessionId.get())) {
 						redirectToManagement(httpResponse);
 					}
 				}
-			} else if (isProtectedPage(uri)) {
-				if (!userStore.getUser().isValid()) {
+			} else if (!isService(uri) && !isShark(uri) && !isResouce(uri) && !isLoginPage(uri)) {
+				if (!sessionLogic.isValidUser(sessionId.get())) {
 					logger.debug(marker, "user is not valid, trying login using HTTP request");
-					final ClientAuthenticationResponse clientAuthenticatorResponse = doLogin(httpRequest, userStore);
+					final ClientAuthenticationResponse clientAuthenticatorResponse = sessionLogic
+							.create(new ClientRequestWrapper(httpRequest), new Callback() {
+
+								@Override
+								public void sessionCreated(final String id) {
+									sessionId.set(id);
+									sessionLogic.setCurrent(id);
+								}
+
+							});
 					final String authenticationRedirectUrl = clientAuthenticatorResponse.getRedirectUrl();
 					if (authenticationRedirectUrl != null) {
 						redirectToCustom(authenticationRedirectUrl);
-					} else if (!userStore.getUser().isValid() && !isLogoutPage(uri)) {
+					} else if (!sessionLogic.isValidUser(sessionId.get()) && !isLogoutPage(uri)) {
 						redirectToLogin(httpResponse);
 					}
 				}
@@ -159,15 +189,6 @@ public class AuthFilter implements Filter {
 		} catch (final RedirectException re) {
 			re.sendRedirect(httpResponse);
 		}
-	}
-
-	private ClientAuthenticationResponse doLogin(final HttpServletRequest httpRequest, final UserStore userStore) {
-		final ClientAuthenticationResponse clientAuthenticatorResponse = authenticationLogic.login(ClientRequestWrapper
-				.newInstance() //
-				.withRequest(httpRequest) //
-				.withUserStore(userStore) //
-				.build());
-		return clientAuthenticatorResponse;
 	}
 
 	private void redirectToManagement(final HttpServletResponse response) throws IOException, RedirectException {
@@ -185,21 +206,4 @@ public class AuthFilter implements Filter {
 		throw new RedirectException(uri);
 	}
 
-	private boolean isRootPage(final String uri) {
-		return uri.equals("/");
-	}
-
-	private boolean isLoginPage(final String uri) {
-		return uri.equals("/" + LOGIN_URL);
-	}
-
-	private boolean isLogoutPage(final String uri) {
-		return uri.equals("/" + LOGOUT_URL);
-	}
-
-	protected boolean isProtectedPage(final String uri) {
-		final boolean isException = uri.startsWith("/services/") || uri.startsWith("/shark/")
-				|| uri.matches("^(.*)(css|js|png|jpg|gif)$") || isLoginPage(uri);
-		return !isException;
-	}
 }

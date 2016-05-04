@@ -4,9 +4,8 @@
 		extend: 'CMDBuild.controller.common.abstract.Accordion',
 
 		requires: [
-			'CMDBuild.core.constants.Global',
 			'CMDBuild.core.constants.Proxy',
-			'CMDBuild.core.proxy.NavigationTree'
+			'CMDBuild.proxy.NavigationTree'
 		],
 
 		/**
@@ -26,6 +25,9 @@
 
 		/**
 		 * @param {Object} configurationObject
+		 * @param {CMDBuild.controller.common.MainViewport} configurationObject.parentDelegate
+		 *
+		 * @returns {Void}
 		 *
 		 * @override
 		 */
@@ -40,12 +42,14 @@
 		/**
 		 * @param {Number} nodeIdToSelect
 		 *
+		 * @returns {Void}
+		 *
 		 * @override
 		 */
 		accordionUpdateStore: function (nodeIdToSelect) {
 			nodeIdToSelect = Ext.isNumber(nodeIdToSelect) ? nodeIdToSelect : null;
 
-			CMDBuild.core.proxy.NavigationTree.readAll({
+			CMDBuild.proxy.NavigationTree.readAll({
 				scope: this,
 				success: function (response, options, decodedResponse) {
 					decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.RESPONSE];
@@ -73,10 +77,10 @@
 							this.view.getStore().getRootNode().appendChild(nodes);
 							this.view.getStore().sort();
 						}
-
-						// Alias of this.callParent(arguments), inside proxy function doesn't work
-						this.updateStoreCommonEndpoint(nodeIdToSelect);
 					}
+
+					// Alias of this.callParent(arguments), inside proxy function doesn't work
+					this.updateStoreCommonEndpoint(nodeIdToSelect);
 				}
 			});
 

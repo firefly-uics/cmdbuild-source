@@ -1,4 +1,4 @@
-(function() {
+( function () {
 
 	Ext.define('CMDBuild.view.common.MainViewport', {
 		extend: 'Ext.container.Viewport',
@@ -24,7 +24,12 @@
 		frame: false,
 		layout: 'border',
 
-		initComponent: function() {
+		/**
+		 * @returns {Void}
+		 *
+		 * @override
+		 */
+		initComponent:  function () {
 			Ext.apply(this, {
 				items: [
 					Ext.create('Ext.panel.Panel', {
@@ -74,7 +79,7 @@
 			this.callParent(arguments);
 
 			if (!Ext.isEmpty(Ext.get('cmdbuild-credits-link')))
-				Ext.get('cmdbuild-credits-link').on('click', function(e, t, eOpts) {
+				Ext.get('cmdbuild-credits-link').on('click',  function (e, t, eOpts) {
 					if (!Ext.isEmpty(this.delegate))
 						this.delegate.cmfg('onMainViewportCreditsClick');
 				}, this);
@@ -82,14 +87,16 @@
 			if (!Ext.isEmpty(CMDBuild.configuration.runtime.get(CMDBuild.core.constants.Proxy.GROUP_DESCRIPTIONS)))
 				Ext.create('Ext.tip.ToolTip', {
 					target: 'msg-inner-hidden',
-					html: Ext.String.format(
-						'<div class="msg-inner-hidden-tooltip">'
-							+ '<p><strong>' + CMDBuild.Translation.groups + ':</strong> {0}</p>'
-							+ '<p><strong>' + CMDBuild.Translation.defaultGroup + ':</strong> {1}</p>'
-						+ '</div>',
-						CMDBuild.configuration.runtime.get(CMDBuild.core.constants.Proxy.GROUP_DESCRIPTIONS),
-						CMDBuild.configuration.runtime.get(CMDBuild.core.constants.Proxy.DEFAULT_GROUP_DESCRIPTION)
-					)
+					html: '<div class="msg-inner-hidden-tooltip">'
+						+ '<p>'
+							+'<strong>' + CMDBuild.Translation.groups + ':</strong> '
+							+ CMDBuild.configuration.runtime.get(CMDBuild.core.constants.Proxy.GROUP_DESCRIPTIONS)
+						+ '</p>'
+						+ '<p>'
+							+'<strong>' + CMDBuild.Translation.defaultGroup + ':</strong> '
+							+ CMDBuild.configuration.runtime.get(CMDBuild.core.constants.Proxy.DEFAULT_GROUP_DESCRIPTION)
+						+ '</p>'
+					+ '</div>'
 				});
 		}
 	});

@@ -9,7 +9,7 @@
 			{ name: 'alwaysenabled', type: 'boolean' },
 			{ name: CMDBuild.core.constants.Proxy.ACTIVE, type: 'boolean' },
 			{ name: CMDBuild.core.constants.Proxy.CAPABILITIES, type: 'auto' }, // Object to gather all UI disable flags
-			{ name: CMDBuild.core.constants.Proxy.DATA, type: 'auto' }, // Encoded array of CMDBuild.model.common.Generic models strings
+			{ name: CMDBuild.core.constants.Proxy.DATA, type: 'auto' }, // Encoded array of CMDBuild.model.common.attributes.Generic models strings
 			{ name: CMDBuild.core.constants.Proxy.FUNCTION_DATA, type: 'auto' }, // Function data to be resolved with TemplateResolver (data attribute alias)
 			{ name: CMDBuild.core.constants.Proxy.ID, type: 'string' },
 			{ name: CMDBuild.core.constants.Proxy.LABEL, type: 'string' },
@@ -63,7 +63,7 @@
 						}, this);
 
 						Ext.Array.forEach(newValue, function(attributeObject, i, allAttributeObjects) {
-							attributesArray.push(Ext.create('CMDBuild.model.common.Generic', {
+							attributesArray.push(Ext.create('CMDBuild.model.common.attributes.Generic', {
 								data: attributeObject,
 								dataTypes: attributesDataTypes
 							}));

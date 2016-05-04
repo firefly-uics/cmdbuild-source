@@ -6,7 +6,7 @@
 		requires: [
 			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.Message',
-			'CMDBuild.core.proxy.dataView.Filter',
+			'CMDBuild.proxy.dataView.Filter',
 			'CMDBuild.core.Utils',
 			'CMDBuild.view.common.field.translatable.Utils'
 		],
@@ -109,7 +109,7 @@
 			var params = {};
 			params[CMDBuild.core.constants.Proxy.ID] = selectedViewId;
 
-			CMDBuild.core.proxy.dataView.Filter.read({ // TODO: waiting for refactor (CRUD)
+			CMDBuild.proxy.dataView.Filter.read({ // TODO: waiting for refactor (CRUD)
 				params: params,
 				scope: this,
 				success: function(response, options, decodedResponse) {
@@ -142,13 +142,13 @@
 				params[CMDBuild.core.constants.Proxy.FILTER] = Ext.encode(params[CMDBuild.core.constants.Proxy.FILTER]);
 
 				if (Ext.isEmpty(formDataModel.get(CMDBuild.core.constants.Proxy.ID))) {
-					CMDBuild.core.proxy.dataView.Filter.create({
+					CMDBuild.proxy.dataView.Filter.create({
 						params: params,
 						scope: this,
 						success: this.success
 					});
 				} else {
-					CMDBuild.core.proxy.dataView.Filter.update({
+					CMDBuild.proxy.dataView.Filter.update({
 						params: params,
 						scope: this,
 						success: this.success
@@ -165,7 +165,7 @@
 				var params = {};
 				params[CMDBuild.core.constants.Proxy.ID] = this.selectedViewGet(CMDBuild.core.constants.Proxy.ID);
 
-				CMDBuild.core.proxy.dataView.Filter.remove({
+				CMDBuild.proxy.dataView.Filter.remove({
 					params: params,
 					scope: this,
 					success: function(response, options, decodedResponse) {

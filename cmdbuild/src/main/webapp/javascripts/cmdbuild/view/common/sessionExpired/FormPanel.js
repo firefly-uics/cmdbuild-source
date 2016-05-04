@@ -4,8 +4,11 @@
 		extend: 'Ext.form.Panel',
 
 		requires: [
+			'CMDBuild.core.constants.FieldWidths',
 			'CMDBuild.core.constants.Proxy'
 		],
+
+		mixins: ['CMDBuild.view.common.PanelFunctions'],
 
 		/**
 		 * @cfg {CMDBuild.view.common.sessionExpired.FormPanel}
@@ -21,6 +24,8 @@
 		frame: true,
 
 		/**
+		 * @returns {Void}
+		 *
 		 * @override
 		 */
 		initComponent: function () {
@@ -84,6 +89,39 @@
 							specialkey: function (field, e, eOpts) {
 								if(e.getKey() == e.ENTER)
 									this.delegate.cmfg('onSessionExpiredLoginButtonClick');
+							}
+						}
+					}),
+					this.group = Ext.create('Ext.form.field.ComboBox', {
+						name: CMDBuild.core.constants.Proxy.GROUP,
+						fieldLabel: CMDBuild.Translation.chooseAGroup,
+						labelWidth: CMDBuild.core.constants.FieldWidths.LABEL_LOGIN,
+						valueField: CMDBuild.core.constants.Proxy.NAME,
+						displayField: CMDBuild.core.constants.Proxy.DESCRIPTION,
+						hidden: true,
+						editable: false,
+						forceSelection: true,
+
+						store: Ext.create('Ext.data.ArrayStore', {
+							fields: [CMDBuild.core.constants.Proxy.NAME, CMDBuild.core.constants.Proxy.DESCRIPTION],
+							sorters: [
+								{ property: CMDBuild.core.constants.Proxy.DESCRIPTION, direction: 'ASC' }
+							]
+						}),
+						queryMode: 'local',
+
+						listeners: {
+							scope: this,
+							specialkey: function (field, e, eOpts) {
+								if (e.getKey() == e.ENTER) {
+									try {
+										field.listKeyNav.selectHighlighted(e);
+
+										this.delegate.cmfg('onSessionExpiredLoginButtonClick');
+									} catch (e) {
+										_error('error setting the group', this);
+									}
+								}
 							}
 						}
 					})

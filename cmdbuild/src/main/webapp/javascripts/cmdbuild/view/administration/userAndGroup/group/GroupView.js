@@ -21,7 +21,7 @@
 		tabPanel: undefined,
 
 		bodyCls: 'cmdb-gray-panel-no-padding',
-		border: true,
+		border: false,
 		frame: false,
 		layout: 'fit',
 
