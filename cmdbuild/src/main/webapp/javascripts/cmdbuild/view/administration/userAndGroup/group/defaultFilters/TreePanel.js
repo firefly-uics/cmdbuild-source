@@ -21,7 +21,6 @@
 		gridEditorPlugin: undefined,
 
 		autoScroll: true,
-		bodyCls: 'cmdb-gray-panel-no-padding',
 		border: false,
 		cls: 'cmdb-border-bottom',
 		collapsible: true,
