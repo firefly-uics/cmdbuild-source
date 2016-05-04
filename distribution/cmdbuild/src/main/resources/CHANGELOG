@@ -64,6 +64,10 @@ FIXES
 
  * User's e-mail cannot be deleted
 
+ * No navigation accordion synchronization with Class an Workflow selections
+
+ * Relations tab displayed in row group's privileges window
+
 
 
 
