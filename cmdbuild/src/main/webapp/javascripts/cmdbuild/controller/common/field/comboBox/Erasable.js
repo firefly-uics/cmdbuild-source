@@ -25,11 +25,16 @@
 
 		/**
 		 * If store has more than configuration limit records, no drop down but opens searchWindow
+		 *
+		 * @returns {Void}
 		 */
 		onFieldComboBoxErasableTrigger1Click: function () {
 			this.view.onTriggerClick();
 		},
 
+		/**
+		 * @returns {Void}
+		 */
 		onFieldComboBoxErasableTrigger2Click: function () {
 			if (!this.view.isDisabled())
 				this.view.setValue();
