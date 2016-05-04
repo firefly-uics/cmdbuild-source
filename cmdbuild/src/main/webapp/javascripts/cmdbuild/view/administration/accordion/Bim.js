@@ -3,6 +3,8 @@
 	Ext.define('CMDBuild.view.administration.accordion.Bim', {
 		extend: 'CMDBuild.view.common.abstract.Accordion',
 
+		requires: ['CMDBuild.core.constants.Proxy'],
+
 		/**
 		 * @cfg {CMDBuild.controller.administration.accordion.Bim}
 		 */

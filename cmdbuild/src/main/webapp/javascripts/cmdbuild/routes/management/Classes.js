@@ -3,6 +3,11 @@
 	Ext.define('CMDBuild.routes.management.Classes', {
 		extend: 'CMDBuild.routes.Base',
 
+		requires: [
+			'CMDBuild.core.constants.Proxy',
+			'CMDBuild.core.Message'
+		],
+
 		/**
 		 * @cfg {String}
 		 */
@@ -71,7 +76,7 @@
 				Ext.isEmpty(this.classIdentifier)
 				|| !_CMCache.isEntryTypeByName(this.classIdentifier)
 			) {
-				CMDBuild.Msg.error(
+				CMDBuild.core.Message.error(
 					CMDBuild.Translation.common.failure,
 					CMDBuild.Translation.errors.routesInvalidClassIdentifier + ' (' + this.classIdentifier + ')',
 					false
@@ -87,7 +92,7 @@
 
 			// Print format validation
 			if (!Ext.Array.contains(this.supportedPrintFormats, this.printFormat)) {
-				CMDBuild.Msg.error(
+				CMDBuild.core.Message.error(
 					CMDBuild.Translation.common.failure,
 					CMDBuild.Translation.errors.routesInvalidPrintFormat + ' (' + this.printFormat + ')',
 					false

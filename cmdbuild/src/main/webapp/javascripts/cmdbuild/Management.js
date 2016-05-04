@@ -9,10 +9,10 @@
 		requires: [
 			'Ext.tip.QuickTipManager', // Avoid core override
 			'Ext.ux.Router',
-			'CMDBuild.routes.management.Cards',
+			'CMDBuild.routes.management.Card',
 			'CMDBuild.routes.management.Classes',
-			'CMDBuild.routes.management.Instances',
-			'CMDBuild.routes.management.Processes',
+			'CMDBuild.routes.management.Instance',
+			'CMDBuild.routes.management.Workflow',
 			'CMDBuild.core.Management'
 		],
 
@@ -30,29 +30,32 @@
 			'exec/classes/:classIdentifier/print': 'CMDBuild.routes.management.Classes#print',
 
 			// Cards
-			'classes/:classIdentifier/cards/:cardIdentifier': 'CMDBuild.routes.management.Cards#saveRoute', // Alias (wrong implementation, to delete in future)
-			'classes/:classIdentifier/cards/:cardIdentifier/': 'CMDBuild.routes.management.Cards#saveRoute',
-			'classes/:classIdentifier/cards/:cardIdentifier/print': 'CMDBuild.routes.management.Cards#saveRoute',
+			'classes/:classIdentifier/cards/:cardIdentifier': 'CMDBuild.routes.management.Card#saveRoute', // Alias (wrong implementation, to delete in future)
+			'classes/:classIdentifier/cards/:cardIdentifier/': 'CMDBuild.routes.management.Card#saveRoute',
+			'classes/:classIdentifier/cards/:cardIdentifier/print': 'CMDBuild.routes.management.Card#saveRoute',
 
-			'exec/classes/:classIdentifier/cards/:cardIdentifier': 'CMDBuild.routes.management.Cards#detail', // Alias (wrong implementation, to delete in future)
-			'exec/classes/:classIdentifier/cards/:cardIdentifier/': 'CMDBuild.routes.management.Cards#detail',
-			'exec/classes/:classIdentifier/cards/:cardIdentifier/print': 'CMDBuild.routes.management.Cards#print',
+			'exec/classes/:classIdentifier/cards/:cardIdentifier': 'CMDBuild.routes.management.Card#detail', // Alias (wrong implementation, to delete in future)
+			'exec/classes/:classIdentifier/cards/:cardIdentifier/': 'CMDBuild.routes.management.Card#detail',
+			'exec/classes/:classIdentifier/cards/:cardIdentifier/print': 'CMDBuild.routes.management.Card#print',
 
 			// Processes
-			'processes/:processIdentifier/instances/': 'CMDBuild.routes.management.Processes#saveRoute',
-			'processes/:processIdentifier/print': 'CMDBuild.routes.management.Processes#saveRoute',
-			'processes/': 'CMDBuild.routes.management.Processes#saveRoute',
+			'processes/:processIdentifier/instances/': 'CMDBuild.routes.management.Workflow#saveRoute',
+			'processes/:processIdentifier/print': 'CMDBuild.routes.management.Workflow#saveRoute',
+			'processes/': 'CMDBuild.routes.management.Workflow#saveRoute',
 
-			'exec/processes/:processIdentifier/instances/': 'CMDBuild.routes.management.Processes#detail',
-			'exec/processes/:processIdentifier/print': 'CMDBuild.routes.management.Processes#print',
-			'exec/processes/': 'CMDBuild.routes.management.Processes#showAll',
+			'exec/processes/:processIdentifier/instances/': 'CMDBuild.routes.management.Workflow#detail',
+			'exec/processes/:processIdentifier/print': 'CMDBuild.routes.management.Workflow#print',
+			'exec/processes/': 'CMDBuild.routes.management.Workflow#showAll',
 
 			// Instances
-			'processes/:processIdentifier/instances/:instanceIdentifier/': 'CMDBuild.routes.management.Instances#saveRoute',
+			'processes/:processIdentifier/instances/:instanceIdentifier/': 'CMDBuild.routes.management.Instance#saveRoute',
 
-			'exec/processes/:processIdentifier/instances/:instanceIdentifier/': 'CMDBuild.routes.management.Instances#detail',
+			'exec/processes/:processIdentifier/instances/:instanceIdentifier/': 'CMDBuild.routes.management.Instance#detail',
 		},
 
+		/**
+		 * @returns {Void}
+		 */
 		launch: function () {
 			Ext.WindowManager.getNextZSeed(); // To increase the default zseed. Is needed for the combo on windows probably it fix also the prev problem
 			Ext.enableFx = false;
@@ -65,7 +68,6 @@
 			Ext.create('CMDBuild.core.LoggerManager'); // Logger configuration
 			Ext.create('CMDBuild.core.Data', { enableLocalized: true }); // Data connections configuration
 			Ext.create('CMDBuild.core.cache.Cache');
-			Ext.create('CMDBuild.core.Rest'); // Setup REST connection
 			Ext.create('CMDBuild.core.navigation.Chronology'); // Navigation chronology
 
 			CMDBuild.core.Management.init();

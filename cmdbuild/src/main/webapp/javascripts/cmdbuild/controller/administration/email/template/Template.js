@@ -6,7 +6,7 @@
 		requires: [
 			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.Message',
-			'CMDBuild.core.proxy.email.Template'
+			'CMDBuild.proxy.email.Template'
 		],
 
 		/**
@@ -143,11 +143,11 @@
 				var params = {};
 				params[CMDBuild.core.constants.Proxy.NAME] = this.grid.getSelectionModel().getSelection()[0].get(CMDBuild.core.constants.Proxy.NAME);
 
-				CMDBuild.core.proxy.email.Template.read({
+				CMDBuild.proxy.email.Template.read({
 					params: params,
 					scope: this,
 					failure: function(response, options, decodedResponse) {
-						CMDBuild.Msg.error(
+						CMDBuild.core.Message.error(
 							CMDBuild.Translation.common.failure,
 							Ext.String.format(CMDBuild.Translation.errors.getTemplateWithNameFailure, this.emailTemplateSelectedTemplateGet(CMDBuild.core.constants.Proxy.NAME)),
 							false
@@ -175,13 +175,13 @@
 				formData[CMDBuild.core.constants.Proxy.VARIABLES] = Ext.encode(this.cmfg('emailTemplateValuesDataGet'));
 
 				if (Ext.isEmpty(formData.id)) {
-					CMDBuild.core.proxy.email.Template.create({
+					CMDBuild.proxy.email.Template.create({
 						params: formData,
 						scope: this,
 						success: this.success
 					});
 				} else {
-					CMDBuild.core.proxy.email.Template.update({
+					CMDBuild.proxy.email.Template.update({
 						params: formData,
 						scope: this,
 						success: this.success
@@ -209,7 +209,7 @@
 				var params = {};
 				params[CMDBuild.core.constants.Proxy.NAME] = this.emailTemplateSelectedTemplateGet(CMDBuild.core.constants.Proxy.NAME);
 
-				CMDBuild.core.proxy.email.Template.remove({
+				CMDBuild.proxy.email.Template.remove({
 					params: params,
 					scope: this,
 					success: function(response, options, decodedResponse) {

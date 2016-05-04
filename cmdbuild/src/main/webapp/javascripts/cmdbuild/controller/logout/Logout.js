@@ -5,8 +5,8 @@
 
 		requires: [
 			'CMDBuild.core.constants.Proxy',
-			'CMDBuild.core.proxy.session.JsonRpc',
-			'CMDBuild.core.proxy.session.Rest'
+			'CMDBuild.core.CookiesManager',
+			'CMDBuild.proxy.Session'
 		],
 
 		/**
@@ -19,11 +19,7 @@
 		constructor: function (configurationObject) {
 			this.callParent(arguments);
 
-			if (!Ext.isEmpty(Ext.util.Cookies.get(CMDBuild.core.constants.Proxy.SESSION_TOKEN))) {
-				this.doRestLogout();
-			} else {
-				this.doJsonRpcLogout();
-			}
+			this.sessionRemove();
 		},
 
 		/**
@@ -31,30 +27,18 @@
 		 *
 		 * @private
 		 */
-		doJsonRpcLogout: function () {
-			CMDBuild.core.proxy.session.JsonRpc.logout({
+		sessionRemove: function () {
+			var params = {};
+			params[CMDBuild.core.constants.Proxy.SESSION] = CMDBuild.core.CookiesManager.authorizationGet();
+
+			CMDBuild.proxy.Session.remove({
+				params: params,
 				scope: this,
-				callback: function (options, success, response) {
-					Ext.util.Cookies.clear(CMDBuild.core.constants.Proxy.SESSION_TOKEN);
+				success: function (response, options, decodedResponse) {
+					CMDBuild.core.CookiesManager.authorizationClear();
 
 					window.location = 'index.jsp';
 				}
-			});
-		},
-
-		/**
-		 * @returns {Void}
-		 *
-		 * @private
-		 */
-		doRestLogout: function () {
-			var restUrlParams = {};
-			restUrlParams[CMDBuild.core.constants.Proxy.TOKEN] = Ext.util.Cookies.get(CMDBuild.core.constants.Proxy.SESSION_TOKEN);
-
-			CMDBuild.core.proxy.session.Rest.logout({
-				restUrlParams: restUrlParams,
-				scope: this,
-				callback: this.doJsonRpcLogout
 			});
 		}
 	});

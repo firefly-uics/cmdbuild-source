@@ -6,7 +6,7 @@
 		requires: [
 			'CMDBuild.core.constants.FieldWidths',
 			'CMDBuild.core.constants.Proxy',
-			'CMDBuild.core.proxy.widget.CreateModifyCard'
+			'CMDBuild.proxy.widget.CreateModifyCard'
 		],
 
 		/**
@@ -56,7 +56,7 @@
 							editable: false,
 							forceSelection: true,
 
-							store: CMDBuild.core.proxy.widget.CreateModifyCard.getStoreTargetClass(),
+							store: CMDBuild.proxy.widget.CreateModifyCard.getStoreTargetClass(),
 							queryMode: 'local'
 						}),
 						this.filter = Ext.create('Ext.form.field.TextArea', {

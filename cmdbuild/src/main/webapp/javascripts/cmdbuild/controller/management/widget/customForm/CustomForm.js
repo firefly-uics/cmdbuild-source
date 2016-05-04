@@ -4,10 +4,10 @@
 		extend: 'CMDBuild.controller.common.abstract.Widget',
 
 		requires: [
-			'CMDBuild.core.Message',
 			'CMDBuild.core.constants.Proxy',
-			'CMDBuild.core.proxy.widget.CustomForm',
-			'CMDBuild.core.Utils'
+			'CMDBuild.core.Message',
+			'CMDBuild.core.Utils',
+			'CMDBuild.proxy.widget.customForm.CustomForm'
 		],
 
 		/**
@@ -41,12 +41,13 @@
 		 * @cfg {Array}
 		 */
 		cmfgCatchedFunctions: [
+			'getId = widgetCustomFormIdGet',
 			'getTemplateResolverServerVars = widgetCustomFormGetTemplateResolverServerVars',
 			'instancesDataStorageGet = widgetCustomFormInstancesDataStorageGet',
 			'instancesDataStorageIsEmpty = widgetCustomFormInstancesDataStorageIsEmpty',
-			'isBusy',
 			'onWidgetCustomFormBeforeActiveView = beforeActiveView',
 			'onWidgetCustomFormBeforeHideView = beforeHideView',
+			'onWidgetCustomFormBeforeSave = onBeforeSave',
 			'onWidgetCustomFormEditMode = onEditMode',
 			'onWidgetCustomFormResetButtonClick',
 			'widgetConfigurationGet = widgetCustomFormConfigurationGet',
@@ -82,6 +83,8 @@
 			},
 
 			/**
+			 * @returns {Void}
+			 *
 			 * @private
 			 */
 			alreadyDisplayedSet: function () {
@@ -191,6 +194,8 @@
 		/**
 		 * Builds layout controller and inject view
 		 *
+		 * @returns {Void}
+		 *
 		 * @private
 		 */
 		buildLayout: function () {
@@ -215,6 +220,8 @@
 				this.controllerLayout.cmfg('onWidgetCustomFormShow');
 
 				this.alreadyDisplayedSet();
+			} else {
+				_error('empty model configuration parameter', this);
 			}
 		},
 
@@ -237,7 +244,7 @@
 				params[CMDBuild.core.constants.Proxy.FUNCTION] = this.cmfg('widgetCustomFormConfigurationGet', CMDBuild.core.constants.Proxy.FUNCTION_DATA);
 				params[CMDBuild.core.constants.Proxy.PARAMS] = Ext.encode(this.cmfg('widgetCustomFormConfigurationGet', CMDBuild.core.constants.Proxy.VARIABLES));
 
-				CMDBuild.core.proxy.widget.CustomForm.readFromFunctions({
+				CMDBuild.proxy.widget.customForm.CustomForm.readFromFunctions({
 					params: params,
 					scope: Ext.isEmpty(parameters.scope) ? this : parameters.scope,
 					callback: Ext.isFunction(parameters.callback) ? parameters.callback :  Ext.emptyFn,
@@ -296,37 +303,19 @@
 						// Save function response to instance data storage
 						this.instancesDataStorageSet(decodedResponse);
 					},
-					callback: Ext.isFunction(parameters.callback) ? parameters.callback :  Ext.emptyFn
+					callback: Ext.isFunction(parameters.callback) ? parameters.callback : Ext.emptyFn
 				});
 			} else {
 				Ext.callback(
-					Ext.isFunction(parameters.callback) ? parameters.callback :  Ext.emptyFn,
+					Ext.isFunction(parameters.callback) ? parameters.callback : Ext.emptyFn,
 					Ext.isEmpty(parameters.scope) ? this : parameters.scope
 				);
 			}
 		},
 
 		/**
-		 * @param {Array} callbackChainArray
-		 *
 		 * @returns {Void}
 		 *
-		 * @override
-		 * @public
-		 */
-		onBeforeSave: function (callbackChainArray, i) {
-			// Manage SQL function as data source
-			this.manageSqlFunctionAsDataSource({
-				scope: this,
-				callback: function () {
-					this.controllerLayout.cmfg('onWidgetCustomFormShow');
-
-					this.beforeSaveCallbackChainManager(callbackChainArray, i);
-				}
-			});
-		},
-
-		/**
 		 * @override
 		 */
 		onWidgetCustomFormBeforeActiveView: function () {
@@ -348,7 +337,30 @@
 		},
 
 		/**
+		 * @param {Object} parameters
+		 * @param {Function} parameters.callback
+		 * @param {Object} parameters.scope
+		 *
+		 * @returns {Void}
+		 *
+		 * @override
+		 */
+		onWidgetCustomFormBeforeSave: function (parameters) {
+			// Manage SQL function as data source
+			this.manageSqlFunctionAsDataSource({
+				scope: this,
+				callback: function () {
+					this.controllerLayout.cmfg('onWidgetCustomFormShow');
+
+					this.onBeforeSave(parameters); // CallParent alias
+				}
+			});
+		},
+
+		/**
 		 * Preset data in instanceDataStorage variable
+		 *
+		 * @returns {Void}
 		 *
 		 * @override
 		 */
@@ -356,6 +368,8 @@
 			this.instancesDataStorageSet(this.cmfg('widgetCustomFormConfigurationGet', CMDBuild.core.constants.Proxy.DATA));
 
 			this.cmfg('onWidgetCustomFormBeforeActiveView');
+
+			this.onEditMode(arguments); // CallParent alias
 		},
 
 		/**
@@ -383,6 +397,8 @@
 		/**
 		 * Save data in storage attribute
 		 *
+		 * @returns {Void}
+		 *
 		 * @override
 		 */
 		onWidgetCustomFormBeforeHideView: function () {
@@ -409,7 +425,7 @@
 				this.controllerLayout.cmfg('onWidgetCustomFormShow');
 
 				// Uses direct data property access to avoid a get problem because of generic model
-				Ext.Array.forEach(this.cmfg('widgetCustomFormLayoutDataGet'), function (rowObject, i, allRowObjects) {
+				Ext.Array.each(this.cmfg('widgetCustomFormLayoutDataGet'), function (rowObject, i, allRowObjects) {
 					var dataObject = Ext.isEmpty(rowObject.data) ? rowObject : rowObject.data; // Model/Objects management
 
 					new CMDBuild.Management.TemplateResolver({
@@ -465,6 +481,8 @@
 
 		/**
 		 * @param {Boolean} state
+		 *
+		 * @returns {Void}
 		 */
 		widgetCustomFormViewSetLoading: function (state) {
 			state = Ext.isBoolean(state) ? state : false;

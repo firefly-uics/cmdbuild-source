@@ -1,16 +1,15 @@
 (function () {
 
+	Ext.require([
+		'CMDBuild.core.constants.Proxy',
+		'CMDBuild.core.Utils'
+	]);
+
 	/**
 	 * @abstract
 	 */
 	Ext.define('CMDBuild.core.fieldManager.builders.Abstract', {
 		extend: 'CMDBuild.controller.common.abstract.Base',
-
-		requires: [
-			'CMDBuild.core.constants.Proxy',
-			'CMDBuild.core.constants.Global',
-			'CMDBuild.core.Utils'
-		],
 
 		/**
 		 * @cfg {CMDBuild.core.fieldManager.FieldManager}

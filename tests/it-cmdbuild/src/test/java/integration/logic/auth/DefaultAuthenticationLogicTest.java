@@ -26,7 +26,7 @@ import org.cmdbuild.exception.AuthException;
 import org.cmdbuild.exception.AuthException.AuthExceptionType;
 import org.cmdbuild.logic.auth.AuthenticationLogic;
 import org.cmdbuild.logic.auth.AuthenticationLogic.Response;
-import org.cmdbuild.logic.auth.DefaultAuthenticationLogicBuilder;
+import org.cmdbuild.logic.auth.DefaultAuthenticationLogic;
 import org.cmdbuild.logic.auth.LoginDTO;
 import org.cmdbuild.privileges.DBGroupFetcher;
 import org.cmdbuild.privileges.fetchers.factories.PrivilegeFetcherFactory;
@@ -34,11 +34,11 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import utils.IntegrationTestBase;
-import utils.UserRolePrivilegeFixture;
-
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
+
+import utils.IntegrationTestBase;
+import utils.UserRolePrivilegeFixture;
 
 public class DefaultAuthenticationLogicTest extends IntegrationTestBase {
 
@@ -72,11 +72,7 @@ public class DefaultAuthenticationLogicTest extends IntegrationTestBase {
 		service.setUserFetchers(dbAuthenticator);
 		service.setGroupFetcher(new DBGroupFetcher(dbDataView(), Lists.<PrivilegeFetcherFactory> newArrayList()));
 		IN_MEMORY_STORE = inMemory(operationUser());
-		authLogic = new DefaultAuthenticationLogicBuilder( //
-				service, //
-				new DefaultPrivilegeContextFactory(), //
-				dbDataView()) //
-				.build();
+		authLogic = new DefaultAuthenticationLogic(service, new DefaultPrivilegeContextFactory(), dbDataView());
 
 		populateDatabaseWithUsersGroupsAndPrivileges();
 	}

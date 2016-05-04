@@ -359,7 +359,7 @@ em { font-style: oblique !important; }
 
 	.map_cloud_item span{ padding-left: 0.4em; }
 
-/* OpenLayer overrid */
+/* OpenLayer override */
 	.olControlMousePosition {
 		font-size: 1em;
 		font-weight: bold;
@@ -396,25 +396,26 @@ em { font-style: oblique !important; }
 	.x-window-header .x-message-box-question,
 	.x-window-header .x-message-box-error { background-size: 16px 16px; }
 
-/* Toolbar*/
+/*
+ * Toolbars
+ */
+	.cmdb-administration-body .x-toolbar-default { border-color: #d0d0d0 !important; } /* FIX: for darker toolbars border color with tab panels */
 	.cmdb-toolbar-item {
 		color: #333333 !important;
 		font-size: 11px !important;
 		padding: 0px 5px !important;
 	}
-
 	.x-form-item-label {
 		font-weight: bold !important;
 		color: #555555 !important;
 	}
-
 	.cmdb-error-msg {
 		font-weight: bold;
 		padding-bottom: 1em;
 	}
 
 /*
- * Panels styles
+ * Panels
  */
  	/* Background */
  	.cmdb-administration-body { background-color: #eeeeee !important; }

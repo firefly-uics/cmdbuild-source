@@ -13,7 +13,7 @@
 			{ name: CMDBuild.core.constants.Proxy.CENTER_LATITUDE, type: 'int', defaultValue: 0 },
 			{ name: CMDBuild.core.constants.Proxy.CENTER_LONGITUDE, type: 'int', defaultValue: 0 },
 			{ name: CMDBuild.core.constants.Proxy.ENABLED, type: 'boolean', defaultValue: false },
-			{ name: CMDBuild.core.constants.Proxy.GEOSERVER, type: 'auto' }, // {CMDBuild.model.core.configurations.builder.gis.Geoserver}
+			{ name: CMDBuild.core.constants.Proxy.GEO_SERVER, type: 'auto' }, // {CMDBuild.model.core.configurations.builder.gis.Geoserver}
 			{ name: CMDBuild.core.constants.Proxy.GOOGLE, type: 'auto' }, // {CMDBuild.model.core.configurations.builder.gis.Google}
 			{ name: CMDBuild.core.constants.Proxy.OSM, type: 'auto' }, // {CMDBuild.model.core.configurations.builder.gis.Osm}
 			{ name: CMDBuild.core.constants.Proxy.YAHOO, type: 'auto' }, // {CMDBuild.model.core.configurations.builder.gis.Yahoo}
@@ -47,7 +47,7 @@
 		 */
 		constructor: function (data) {
 			data = CMDBuild.model.core.configurations.builder.gis.Gis.convertFromLegacy(data);
-			data[CMDBuild.core.constants.Proxy.GEOSERVER] = Ext.create('CMDBuild.model.core.configurations.builder.gis.Geoserver', Ext.clone(data));
+			data[CMDBuild.core.constants.Proxy.GEO_SERVER] = Ext.create('CMDBuild.model.core.configurations.builder.gis.Geoserver', Ext.clone(data));
 			data[CMDBuild.core.constants.Proxy.GOOGLE] = Ext.create('CMDBuild.model.core.configurations.builder.gis.Google', Ext.clone(data));
 			data[CMDBuild.core.constants.Proxy.OSM] = Ext.create('CMDBuild.model.core.configurations.builder.gis.Osm', Ext.clone(data));
 			data[CMDBuild.core.constants.Proxy.YAHOO] = Ext.create('CMDBuild.model.core.configurations.builder.gis.Yahoo', Ext.clone(data));

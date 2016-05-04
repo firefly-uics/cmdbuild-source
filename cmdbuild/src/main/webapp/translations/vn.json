@@ -456,7 +456,8 @@
 		"weeks2": "<em>In 2 weeks</em>"
 	},
 	"errors": {
-		"busy_wf_widgets": "Các bộ điều khiển trực quan đang bận, kiểm tra tình trạng của máy chủ trước khi thử lại lần nữa.",
+		"anErrorHasOccurred": "Một lỗi đã xảy ra",
+		"busyVisualControls": "Các bộ điều khiển trực quan đang bận, kiểm tra tình trạng của máy chủ trước khi thử lại lần nữa.",
 		"copyAttachmentFailure": "<em>Copy attachment with name \"{0}\" failure</em>",
 		"createReportFilure": "<em>Create report failure</em>",
 		"csvUploadOrDecodeFailure": "<em>CSV upload or decode error</em>",
@@ -476,7 +477,7 @@
 		"invalidKeyAttributesInLocalStore": "<em>Invalid key attribute(s) in local store</em>",
 		"invalidLookupValue": "<em>Invalid Lookup value</em>",
 		"no_driver": "Không có JDBC driver nào được tìm thấy.<br />Bạn có thể tìm thấy nó trong gói CMDBuild và copy nó vào thư viện Tomcat.",
-		"no_selections": "Bạn vẫn chưa chọn bất kỷ thẻ nào để cập nhật",
+		"noSelectedCardToUpdate": "Bạn vẫn chưa chọn bất kỷ thẻ nào để cập nhật",
 		"printReportFilure": "<em>Print report failure</em>",
 		"reasons": {
 			"ATTRIBUTE_NOTFOUND": "Thuộc tính {1} of {0} không tìm thấy",
@@ -630,7 +631,6 @@
 		"show_detail": "Hiện thị chi tiết",
 		"targetClassOrCqlFilterRequired": "<em>Target class or Card CQL selector are required</em>",
 		"template_error": "Lỗi xác định",
-		"unknown_error": "Một lỗi đã xảy ra",
 		"unmanagedReportType": "<em>Unmanaged report type</em>",
 		"valueDoesNotMatchFilter": "Giá trị không phù hợp với bộ lọc",
 		"widgetLinkCardsNoClassNameError": "<em>LinkCardsController constructor: className not valid</em>",
@@ -644,9 +644,6 @@
 	},
 	"filterWindow": {
 		"add": "<em>Add filter</em>"
-	},
-	"info": {
-		"card_not_found": "Thẻ không phù hợp với bộ lọc hiện tại"
 	},
 	"management": {
 		"description": "Danh muc quản lí dữ liệu",
@@ -799,42 +796,6 @@
 			"showgraph": "Hiện thị đồ thị",
 			"shownotes": "Hiện thị các ghi chú"
 		},
-		"modutilities": {
-			"bulkupdate": {
-				"title": "Nhiều cập nhật",
-				"countMessage": "{0} Các thẻ sẽ được sửa đổi"
-			},
-			"changepassword": {
-				"newpw": "Mật khẩu mới",
-				"oldpw": "Mật khẩu cũ",
-				"repnew": "Gõ lại mật khẩu mới",
-				"successmsgtext": "Mật khẩu đã được thay đổi",
-				"title": "Thay đổi mật khẩu",
-				"validationtext": "Một số mật khẩu không khớp"
-			},
-			"csv": {
-				"csvfile": "Tập tin CSV",
-				"error": "Lỗi",
-				"exportfile": "Xuất",
-				"importfailure": "Nhập thất bại",
-				"importsuccess": "Nhập đã được thành công",
-				"info": "Thông tin",
-				"noupdate": "Không có thẻ nào để cập nhật",
-				"selectaclass": "Chọn một class",
-				"separator": "Phân cách",
-				"shownonvalid": "Chỉ hiện thị những báo cáo không phù hợp",
-				"title": "Nhập tập tin CSV",
-				"title_export": "Xuất tập tin CSV",
-				"warning": "Cảnh báo"
-			},
-			"title": "Tiện ích"
-		},
-		"modutility": {
-			"title": "Tiện ích"
-		},
-		"modview": {
-			"title": "Lượt xem"
-		},
 		"modworkflow": {
 			"abort_card": "Hủy bỏ quá trình",
 			"abort_card_confirm": "Bạn có chắc là bạn muốn hủy bỏ quá trình?",
@@ -894,17 +855,16 @@
 		}
 	},
 	"warnings": {
+		"changeAppliedOnlyToFilteredCards": "Những thay đổi chỉ sẽ được áp dụng cho các thẻ đáp ứng được bộ lọc hiện tại",
 		"emailTemplateRelatedAttributeEdited": "<em>Attribute related with email templates changed, some e-mail could be regenerated.</em>",
 		"itemNotAvailable": "<em>Item not available</em>",
 		"itIsNotAllowedFilterWithCalculatedParams": " Không được phép sử dụng  bộ lọc voi các thông số được tính toán ",
 		"link_cards_changed_values": "Sự lựa chọn của\"{0}\" đã được cập nhật",
-		"only_filtered": "Những thay đổi chỉ sẽ được áp dụng cho các thẻ đáp ứng được bộ lọc hiện tại",
 		"popup_block": "Chúng tôi phát hiện bạn đang sử dụng phần mềm chan cac cua so tu dong xuat hien, vui lòng tắt phan mem do để chạy hoạt động",
 		"reportsDuplicateImageFilename": "Cảnh báo: báo cáo hình ảnh được tìm thấy trùng tên với một tập tin khác- không thể tiến hành.",
 		"saveMenuBeforeAccess": "<em>The menu has to been saved before access at the translations of this element.</em>",
 		"thereAreNoEnabledLanguages": "<em>There are no enabled languages</em>",
-		"toSetAFilterYouMustBeforeSelectAClass": "<em>To set a filter you must before select a class</em>",
-		"warning_message": "Cảnh báo"
+		"toSetAFilterYouMustBeforeSelectAClass": "<em>To set a filter you must before select a class</em>"
 	},
 	"account": "<em>Account</em>",
 	"accounts": "<em>Accounts</em>",
@@ -976,8 +936,10 @@
 	"card": "Thẻ",
 	"cardCqlSelector": "Bộ chọn thẻ CQL",
 	"cardinality": "Số lượng",
+	"cardNotMatchFilter": "Thẻ không phù hợp với bộ lọc hiện tại",
 	"cardPanelHeight": "Độ cao bảng điều khiển theo phần trăm",
 	"cards": "Các thẻ",
+	"cardsWillBeModified": "{0} Các thẻ sẽ được sửa đổi",
 	"category": "<em>Category</em>",
 	"cc": "<em>Cc</em>",
 	"changePassword": "Đổi mật khẩu",
@@ -1118,6 +1080,7 @@
 	"existing": "Tồn tại",
 	"expand": "<em>Expand</em>",
 	"expandAll": "<em>Expand all</em>",
+	"exportCsvFile": "Xuất tập tin CSV",
 	"exportLabel": "Xuất",
 	"expose": "<em>Expose</em>",
 	"externalServices": "Các dịch vụ ngoài",
@@ -1159,15 +1122,19 @@
 	"imapPort": "<em>IMAP port</em>",
 	"imapServer": "<em>IMAP server</em>",
 	"import": "<em>Import</em>",
+	"importCsvFile": "Nhập tập tin CSV",
 	"importExport": "<em>Import/Export</em>",
+	"importFailed": "Nhập thất bại",
 	"importFromCSV": "<em>Import from CSV</em>",
 	"importJasperReport": "Nhập báo cáo Jasper",
+	"importWasSuccessful": "Nhập đã được thành công",
 	"includeInherited": "Bao gồm các kế thừa",
 	"includeRelations": "<em>Include relations</em>",
 	"includeSystemActivities": "<em>Include system activities</em>",
 	"includeUsersFilters": "<em>Include users filters</em>",
 	"incoming": "<em>Incoming</em>",
 	"incomingFolder": "<em>Incoming folder</em>",
+	"info": "Thông tin",
 	"informationLayer": "<em>Information layer</em>",
 	"inheritsFrom": "Kế thừa từ",
 	"initialLatitude": "Vĩ độ ban đầu",
@@ -1198,6 +1165,7 @@
 	"loggedGroup": "Đăng nhập nhóm",
 	"loggedUser": "Đăng nhập người dùng",
 	"login": "Đăng nhập",
+	"loginTitle": "Đăng nhập",
 	"lookup": "<em>Lookup</em>",
 	"lookupList": "Danh sách tra cứu",
 	"lookupTypes": "Loại tra cứu",
@@ -1236,15 +1204,18 @@
 	"modifyWidget": "<em>Modify widget</em>",
 	"move": "<em>Move</em>",
 	"multiGroup": "<em>Multi group</em>",
+	"multipleUpdate": "Nhiều cập nhật",
 	"name": "Tên",
 	"navigation": "Hướng",
 	"navigationChronology": "<em>Navigation chronology</em>",
 	"navigationTree": "<em>Navigation tree</em>",
 	"navigationTrees": "<em>Navigation trees</em>",
 	"newFolder": "Thư mục mới",
+	"newPassword": "Mật khẩu mới",
 	"next": "<em>Next</em>",
 	"no_bim_project_for_card": "<em>There is no BIM project for this card</em>",
 	"noAvailableData": "<em>No available data</em>",
+	"noCardsToUpdate": "Không có thẻ nào để cập nhật",
 	"nodeDistance": "<em>Node distance</em>",
 	"none": "Không có",
 	"noOne": "Không có",
@@ -1254,6 +1225,7 @@
 	"numberOfPings": "Số lần Ping",
 	"odt": "ODT",
 	"ok": "OK",
+	"oldPassword": "Mật khẩu cũ",
 	"onDay": "<em>On</em>",
 	"open_3d_viewer": "<em>Open 3D viewer</em>",
 	"openRelationGraph": "Mở rộng đồ thị mối quan hệ",
@@ -1264,6 +1236,7 @@
 	"parent": "Trước đó",
 	"parentDescription": "Mô tả trước",
 	"password": "<em>Password</em>",
+	"passwordChanged": "Mật khẩu đã được thay đổi",
 	"passwordsDoNotMatch": "Mật khẩu không trùng khớp",
 	"pdf": "PDF",
 	"permissions": "Quyền truy cập",
@@ -1326,6 +1299,7 @@
 	"reset": "<em>Reset</em>",
 	"resetToDefault": "<em>Reset to defaults</em>",
 	"restore": "<em>Restore</em>",
+	"retypeNewPassword": "Gõ lại mật khẩu mới",
 	"root": "<em>Root</em>",
 	"rotate": "<em>Rotate</em>",
 	"rowAndColumnPrivileges": "Đặc quyền của các hàng và các cột",
@@ -1361,6 +1335,7 @@
 	"setup": "Các lựa chọn tổng quát",
 	"showDetails": "Hiện thị chi tiết",
 	"showHideThisFeatureOnly": "<em>Show/hide this feature only</em>",
+	"showInvalidRecordsOnly": "Chỉ hiện thị những báo cáo không phù hợp",
 	"showLanguageChoice": "Hiện thị phần lựa chọn ngôn ngữ",
 	"showLanguageSelectionLoginBox": "Hiện thị ngôn ngữ được chọn trong ô đăng nhập",
 	"showLockerUserName": "Hiện thị tên người khóa",
@@ -1415,6 +1390,7 @@
 	"usersAndGroups": "Người dùng và các nhóm",
 	"userStoppable": "Người dùng có thể ngưng sử dụng",
 	"userType": "Loại người dùng",
+	"utility": "Tiện ích",
 	"utilityChangePassword": "Tiện ích - Thay đổi mật khẩu",
 	"utilityExportCsv": "Tiện ích - Xuất tập tin CSV",
 	"utilityImportCsv": "Tiện ích - Nhập tập tin CSV",

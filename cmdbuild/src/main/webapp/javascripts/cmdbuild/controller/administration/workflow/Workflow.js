@@ -1,4 +1,4 @@
-(function() {
+(function () {
 
 	Ext.define('CMDBuild.controller.administration.workflow.Workflow', {
 		extend: 'CMDBuild.controller.common.abstract.Base',
@@ -30,11 +30,6 @@
 		 * @cfg {String}
 		 */
 		identifier: undefined,
-
-		/**
-		 * @cfg {Object}
-		 */
-		parentDelegate: undefined,
 
 		/**
 		 * @property {CMDBuild.controller.administration.classes.CMClassAttributeController}
@@ -70,10 +65,13 @@
 
 		/**
 		 * @param {Object} configurationObject
+		 * @param {CMDBuild.controller.common.MainViewport} configurationObject.parentDelegate
+		 *
+		 * @returns {Void}
 		 *
 		 * @override
 		 */
-		constructor: function(configurationObject) {
+		constructor: function (configurationObject) {
 			this.callParent(arguments);
 
 			this.view = Ext.create('CMDBuild.view.administration.workflow.WorkflowView', { delegate: this });
@@ -99,12 +97,15 @@
 			this.tabPanel.add(this.controllerTasks.getView());
 		},
 
-		onWorkflowAddButtonClick: function() {
+		/**
+		 * @returns {Void}
+		 */
+		onWorkflowAddButtonClick: function () {
 			this.cmfg('mainViewportAccordionDeselect', CMDBuild.core.constants.ModuleIdentifiers.getWorkflow());
 
 			this.setViewTitle();
 
-			this.workflowSelectedWorkflowReset();
+			this.cmfg('workflowSelectedWorkflowReset');
 
 			this.tabPanel.setActiveTab(0);
 
@@ -119,20 +120,22 @@
 		 *
 		 * @param {CMDBuild.model.common.Accordion} node
 		 *
+		 * @returns {Void}
+		 *
 		 * @override
 		 */
-		onWorkflowModuleInit: function(node) {
+		onWorkflowModuleInit: function (node) {
 			if (!Ext.Object.isEmpty(node)) {
 				var params = {};
 				params[CMDBuild.core.constants.Proxy.ACTIVE] = false;
 
-				CMDBuild.core.proxy.workflow.Workflow.read({ // TODO: waiting for refactor (CRUD)
+				CMDBuild.proxy.workflow.Workflow.read({
 					params: params,
 					scope: this,
-					success: function(response, options, decodedResponse) {
+					success: function (response, options, decodedResponse) {
 						decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.CLASSES] || [];
 
-						var selectedWorkflow = Ext.Array.findBy(decodedResponse, function(workflowObject, i) {
+						var selectedWorkflow = Ext.Array.findBy(decodedResponse, function (workflowObject, i) {
 							return node.get(CMDBuild.core.constants.Proxy.ENTITY_ID) == workflowObject[CMDBuild.core.constants.Proxy.ID];
 						}, this);
 
@@ -157,8 +160,10 @@
 
 		/**
 		 * @param {String} format
+		 *
+		 * @returns {Void}
 		 */
-		onWorkflowPrintSchemaButtonClick: function(format) {
+		onWorkflowPrintSchemaButtonClick: function (format) {
 			if (!Ext.isEmpty(format)) {
 				var params = {};
 				params[CMDBuild.core.constants.Proxy.FORMAT] = format;
@@ -178,7 +183,7 @@
 			 *
 			 * @returns {Mixed or undefined}
 			 */
-			workflowSelectedWorkflowGet: function(attributePath) {
+			workflowSelectedWorkflowGet: function (attributePath) {
 				var parameters = {};
 				parameters[CMDBuild.core.constants.Proxy.TARGET_VARIABLE_NAME] = 'selectedWorkflow';
 				parameters[CMDBuild.core.constants.Proxy.ATTRIBUTE_PATH] = attributePath;
@@ -190,10 +195,8 @@
 			 * @param {Array or String} attributePath
 			 *
 			 * @returns {Boolean}
-			 *
-			 * @private
 			 */
-			workflowSelectedWorkflowIsEmpty: function(attributePath) {
+			workflowSelectedWorkflowIsEmpty: function (attributePath) {
 				var parameters = {};
 				parameters[CMDBuild.core.constants.Proxy.TARGET_VARIABLE_NAME] = 'selectedWorkflow';
 				parameters[CMDBuild.core.constants.Proxy.ATTRIBUTE_PATH] = attributePath;
@@ -204,18 +207,20 @@
 			/**
 			 * @param {Object} parameters
 			 *
-			 * @private
+			 * @returns {Void}
 			 */
-			workflowSelectedWorkflowReset: function(parameters) {
+			workflowSelectedWorkflowReset: function (parameters) {
 				this.propertyManageReset('selectedWorkflow');
 			},
 
 			/**
 			 * @param {Object} parameters
 			 *
+			 * @returns {Void}
+			 *
 			 * @private
 			 */
-			workflowSelectedWorkflowSet: function(parameters) {
+			workflowSelectedWorkflowSet: function (parameters) {
 				if (!Ext.Object.isEmpty(parameters)) {
 					parameters[CMDBuild.core.constants.Proxy.MODEL_NAME] = 'CMDBuild.model.workflow.Workflow';
 					parameters[CMDBuild.core.constants.Proxy.TARGET_VARIABLE_NAME] = 'selectedWorkflow';
@@ -227,7 +232,7 @@
 		/**
 		 * TODO: use AbstractController forwarding methods on controllerAttributes controller refactor
 		 */
-		workflowTabInit: function() {
+		workflowTabInit: function () {
 			this.controllerAttributes.onClassSelected( // TODO: legacy
 				this.cmfg('workflowSelectedWorkflowGet', CMDBuild.core.constants.Proxy.ID),
 				this.cmfg('workflowSelectedWorkflowGet', CMDBuild.core.constants.Proxy.NAME));

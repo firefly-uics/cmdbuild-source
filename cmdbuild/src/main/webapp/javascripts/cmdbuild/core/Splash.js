@@ -1,4 +1,4 @@
-(function() {
+(function () {
 
 	Ext.define('CMDBuild.core.Splash', {
 
@@ -16,7 +16,7 @@
 		 *
 		 * @returns {Ext.window.Window}
 		 */
-		build: function(isAdministration) {
+		build: function (isAdministration) {
 			isAdministration = Ext.isBoolean(isAdministration) ? isAdministration : false;
 
 			if (Ext.isEmpty(CMDBuild.core.Splash.instance))
@@ -47,13 +47,13 @@
 		 * @param {Function} callback
 		 * @param {Object} scope
 		 */
-		hide: function(callback, scope) {
+		hide: function (callback, scope) {
 			callback = Ext.isFunction(callback) ? callback : Ext.emptyFn;
 
 			CMDBuild.core.Splash.build().hide();
 
 			// Remove class from HTML dom elements
-			Ext.Array.forEach(Ext.DomQuery.select('div[class="display-none"]'), function(div, i, allDivs) {
+			Ext.Array.forEach(Ext.DomQuery.select('div[class="display-none"]'), function (div, i, allDivs) {
 				new Ext.Element(div).removeCls('display-none');
 			}, this);
 
@@ -63,7 +63,7 @@
 		/**
 		 * @param {Boolean} isAdministration
 		 */
-		show: function(isAdministration) {
+		show: function (isAdministration) {
 			CMDBuild.core.Splash.build(isAdministration).show();
 		}
 	});

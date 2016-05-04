@@ -5,7 +5,7 @@
 
 		requires: [
 			'CMDBuild.core.constants.Proxy',
-			'CMDBuild.core.proxy.userAndGroup.group.privileges.Classes'
+			'CMDBuild.proxy.userAndGroup.group.privileges.Classes'
 		],
 
 		/**
@@ -70,7 +70,7 @@
 			params[CMDBuild.core.constants.Proxy.CLASS_ID] = this.record.get(CMDBuild.core.constants.Proxy.ID);;
 			params[CMDBuild.core.constants.Proxy.GROUP_ID] = this.cmfg('userAndGroupGroupSelectedGroupGet', CMDBuild.core.constants.Proxy.ID);
 
-			CMDBuild.core.proxy.userAndGroup.group.privileges.Classes.updateUIConfiguration({
+			CMDBuild.proxy.userAndGroup.group.privileges.Classes.updateUIConfiguration({
 				params: params,
 				scope: this,
 				success: function (response, options, decodedResponse) {
@@ -91,7 +91,7 @@
 			params[CMDBuild.core.constants.Proxy.CLASS_ID] = this.record.get(CMDBuild.core.constants.Proxy.ID);;
 			params[CMDBuild.core.constants.Proxy.GROUP_ID] = this.cmfg('userAndGroupGroupSelectedGroupGet', CMDBuild.core.constants.Proxy.ID);
 
-			CMDBuild.core.proxy.userAndGroup.group.privileges.Classes.readUIConfiguration({
+			CMDBuild.proxy.userAndGroup.group.privileges.Classes.readUIConfiguration({
 				params: params,
 				scope: this,
 				success: function (response, options, decodedResponse) {

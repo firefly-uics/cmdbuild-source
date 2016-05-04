@@ -456,7 +456,8 @@
 		"weeks2": "في اسبوعان"
 	},
 	"errors": {
-		"busy_wf_widgets": "أدوات التحكم المرئية مشغولة، أفحص حالة الخادم قبل إعادة المحاولة.",
+		"anErrorHasOccurred": "حدث خطأ",
+		"busyVisualControls": "أدوات التحكم المرئية مشغولة، أفحص حالة الخادم قبل إعادة المحاولة.",
 		"copyAttachmentFailure": "فشل في نسخ المرفق ذا الاسم \"{0}\"",
 		"createReportFilure": "خطأ في إنشاء التقرير",
 		"csvUploadOrDecodeFailure": "خطأ في رفع أو فك ملف الإكسل",
@@ -476,7 +477,7 @@
 		"invalidKeyAttributesInLocalStore": "<em>Invalid key attribute(s) in local store</em>",
 		"invalidLookupValue": "<em>Invalid Lookup value</em>",
 		"no_driver": "لم يجد سائق JDBC.<br />يمكنك نسخه من الملف الذي نزلته للنظام إلى مكتبة توم كات.",
-		"no_selections": "لم تنتقي أية بطاقة لتحديثها",
+		"noSelectedCardToUpdate": "لم تنتقي أية بطاقة لتحديثها",
 		"printReportFilure": "فشل في طباعة التقرير",
 		"reasons": {
 			"ATTRIBUTE_NOTFOUND": "السمة {1} من {0} لا توجد",
@@ -630,7 +631,6 @@
 		"show_detail": "عرض التفاصيل",
 		"targetClassOrCqlFilterRequired": "الصنف المستهدف أو تحديد بطاقة بالـ CQL مطلوب",
 		"template_error": "خطأ في القالب",
-		"unknown_error": "حدث خطأ",
 		"unmanagedReportType": "نوع تقرير غير مُدار",
 		"valueDoesNotMatchFilter": "القيمة لا تطابق المفرز",
 		"widgetLinkCardsNoClassNameError": "باني أداة تحكم ربط البطاقات: اسم الصنف غير صحيح",
@@ -644,9 +644,6 @@
 	},
 	"filterWindow": {
 		"add": "أضف مفرز"
-	},
-	"info": {
-		"card_not_found": "البطاقة لا تطابق الفرز الحالي"
 	},
 	"management": {
 		"description": "وحدة إدارة البيانات",
@@ -799,42 +796,6 @@
 			"showgraph": "أظهر الرسمة",
 			"shownotes": "أظهر الملاحظات"
 		},
-		"modutilities": {
-			"bulkupdate": {
-				"title": "تحديثات متعددة",
-				"countMessage": "{0} بطاقة سيتم تعديلها"
-			},
-			"changepassword": {
-				"newpw": "كلمة السر الجديدة",
-				"oldpw": "كلمة السر القديمة",
-				"repnew": "إعادة كتابة كلمة السر الجديدة",
-				"successmsgtext": "كلمة السر تغيرت",
-				"title": "تغيير كلمة السر",
-				"validationtext": "كلمتا السر لا تتطابقان"
-			},
-			"csv": {
-				"csvfile": "ملف CSV",
-				"error": "خطأ",
-				"exportfile": "تصدير",
-				"importfailure": "فشل الاستيراد",
-				"importsuccess": "كان الاستيراد ناجح",
-				"info": "معلومات",
-				"noupdate": "ليس هناك من بطاقات لتحديثها",
-				"selectaclass": "انتقي صنف",
-				"separator": "الفيصل",
-				"shownonvalid": "أظهر السجلات غير الصحيحة فقط",
-				"title": "استيراد ملف CSV",
-				"title_export": "تصدير ملف CSV",
-				"warning": "تنبيه"
-			},
-			"title": "أدوات مساعدة"
-		},
-		"modutility": {
-			"title": "أدوات مساعدة"
-		},
-		"modview": {
-			"title": "المشتقات"
-		},
 		"modworkflow": {
 			"abort_card": "إجهاض الآلية",
 			"abort_card_confirm": "هل أنت متأكد من أنك تريد أن تجهض هذه الآلية؟",
@@ -894,17 +855,16 @@
 		}
 	},
 	"warnings": {
+		"changeAppliedOnlyToFilteredCards": "التغييرات ستُعمَل فقط على البطاقات التي قابلت الفرز الحالي",
 		"emailTemplateRelatedAttributeEdited": "السمة المتعلقة بقوالب البريد الإلكتروني تغيرت، يمكن تجديد بعض البريدات الإلكترونية.",
 		"itemNotAvailable": "<em>Item not available</em>",
 		"itIsNotAllowedFilterWithCalculatedParams": "<em>It's not allowed to use a filter with calculated parameters</em>",
 		"link_cards_changed_values": "المنتقاة من \"{0}\" تم تحديثه",
-		"only_filtered": "التغييرات ستُعمَل فقط على البطاقات التي قابلت الفرز الحالي",
 		"popup_block": "اكتشفنا أنك تستخدم برنامج حظر النوافذ المنبثقة، فضلا عطلها لتشغل العملية",
 		"reportsDuplicateImageFilename": "<em>Warning: found report images with same filename - cannot proceed.</em>",
 		"saveMenuBeforeAccess": "يجب حفظ القائمة قبل دخول ترجمات هذا العنصر.",
 		"thereAreNoEnabledLanguages": "<em>There are no enabled languages</em>",
-		"toSetAFilterYouMustBeforeSelectAClass": "<em>To set a filter you must before select a class</em>",
-		"warning_message": "تنبيه"
+		"toSetAFilterYouMustBeforeSelectAClass": "<em>To set a filter you must before select a class</em>"
 	},
 	"account": "الحساب",
 	"accounts": "الحسابات",
@@ -976,8 +936,10 @@
 	"card": "البطاقة",
 	"cardCqlSelector": "<em>Card CQL selector</em>",
 	"cardinality": "<em>Cardinality</em>",
+	"cardNotMatchFilter": "البطاقة لا تطابق الفرز الحالي",
 	"cardPanelHeight": "ارتفاع لوحة البطاقة بالمئوية",
 	"cards": "البطاقات",
+	"cardsWillBeModified": "{0} بطاقة سيتم تعديلها",
 	"category": "الفئة",
 	"cc": "نسخة كربونية",
 	"changePassword": "تغيير كلمة السر",
@@ -1118,6 +1080,7 @@
 	"existing": "موجودة",
 	"expand": "<em>Expand</em>",
 	"expandAll": "<em>Expand all</em>",
+	"exportCsvFile": "تصدير ملف CSV",
 	"exportLabel": "تصدير",
 	"expose": "كشف",
 	"externalServices": "<em>External services</em>",
@@ -1159,15 +1122,19 @@
 	"imapPort": "منفذ IMAP",
 	"imapServer": "خادم IMAP",
 	"import": "استيراد",
+	"importCsvFile": "استيراد ملف CSV",
 	"importExport": "<em>Import/Export</em>",
+	"importFailed": "فشل الاستيراد",
 	"importFromCSV": "استيراد من CSV",
 	"importJasperReport": "<em>Import Jasper report</em>",
+	"importWasSuccessful": "كان الاستيراد ناجح",
 	"includeInherited": "أدرج الموروث",
 	"includeRelations": "أدرج العلاقات",
 	"includeSystemActivities": "أدرج نشاطات النظام",
 	"includeUsersFilters": "أدرج فِرَز النظام",
 	"incoming": "وارد",
 	"incomingFolder": "مجلد الوارد",
+	"info": "معلومات",
 	"informationLayer": "<em>Information layer</em>",
 	"inheritsFrom": "يرث من",
 	"initialLatitude": "خط العرض المبدئي",
@@ -1198,6 +1165,7 @@
 	"loggedGroup": "المجموعة الداخلة",
 	"loggedUser": "المستخدم الداخل",
 	"login": "<em>Login</em>",
+	"loginTitle": "<em>Login</em>",
 	"lookup": "<em>Lookup</em>",
 	"lookupList": "<em>Lookup list</em>",
 	"lookupTypes": "<em>Lookup types</em>",
@@ -1236,15 +1204,18 @@
 	"modifyWidget": "<em>Modify widget</em>",
 	"move": "<em>Move</em>",
 	"multiGroup": "متعدد المجموعة",
+	"multipleUpdate": "تحديثات متعددة",
 	"name": "اسم",
 	"navigation": "<em>Navigation</em>",
 	"navigationChronology": "<em>Navigation chronology</em>",
 	"navigationTree": "شجرة الملاحة",
 	"navigationTrees": "<em>Navigation trees</em>",
 	"newFolder": "<em>New folder</em>",
+	"newPassword": "كلمة السر الجديدة",
 	"next": "التالي",
 	"no_bim_project_for_card": "لا يوجد لهذه البطاقة مشروع BIM",
 	"noAvailableData": "ليس هناك بيانات",
+	"noCardsToUpdate": "ليس هناك من بطاقات لتحديثها",
 	"nodeDistance": "<em>Node distance</em>",
 	"none": "لا",
 	"noOne": "<em>No one</em>",
@@ -1254,6 +1225,7 @@
 	"numberOfPings": "<em>Number of pings</em>",
 	"odt": "ODT",
 	"ok": "حسنًا",
+	"oldPassword": "كلمة السر القديمة",
 	"onDay": "في",
 	"open_3d_viewer": "فتح المنظر ثلاثي الأبعاد",
 	"openRelationGraph": "<em>Open relation graph</em>",
@@ -1264,6 +1236,7 @@
 	"parent": "<em>Parent<em>",
 	"parentDescription": "<em>Parent description</em>",
 	"password": "كلمة السر",
+	"passwordChanged": "كلمة السر تغيرت",
 	"passwordsDoNotMatch": "كلمتا السر لا تتطابقان",
 	"pdf": "PDF",
 	"permissions": "التراخيص",
@@ -1326,6 +1299,7 @@
 	"reset": "إعادة تعيين",
 	"resetToDefault": "أعادة تعيين الافتراضيات",
 	"restore": "<em>Restore</em>",
+	"retypeNewPassword": "إعادة كتابة كلمة السر الجديدة",
 	"root": "الجذر",
 	"rotate": "تدوير",
 	"rowAndColumnPrivileges": "صلاحيات الصفوف والأعمدة",
@@ -1361,6 +1335,7 @@
 	"setup": "إعداد",
 	"showDetails": "عرض التفاصيل",
 	"showHideThisFeatureOnly": "عرض/إخفاء الميزة هذه فقط",
+	"showInvalidRecordsOnly": "أظهر السجلات غير الصحيحة فقط",
 	"showLanguageChoice": "عرض خيار اللغة",
 	"showLanguageSelectionLoginBox": "عرض قائمة اللغات أثناء الدخول",
 	"showLockerUserName": "عرض اسم المستخدم القافل",
@@ -1415,6 +1390,7 @@
 	"usersAndGroups": "المستخدمين والمجموعات",
 	"userStoppable": "المستخدم يمكن إيقافه",
 	"userType": "نوع المستخدم",
+	"utility": "أدوات مساعدة",
 	"utilityChangePassword": "أداة مساعدة - تغيير كلمة السر",
 	"utilityExportCsv": "أداة مساعدة - تصدير CSV",
 	"utilityImportCsv": "أداة مساعدة - استيراد CSV",

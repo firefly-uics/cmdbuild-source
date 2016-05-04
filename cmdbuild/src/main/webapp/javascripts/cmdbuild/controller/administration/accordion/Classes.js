@@ -6,7 +6,7 @@
 		requires: [
 			'CMDBuild.core.constants.Global',
 			'CMDBuild.core.constants.Proxy',
-			'CMDBuild.core.proxy.Classes'
+			'CMDBuild.proxy.Classes'
 		],
 
 		/**
@@ -26,6 +26,9 @@
 
 		/**
 		 * @param {Object} configurationObject
+		 * @param {CMDBuild.controller.common.MainViewport} configurationObject.parentDelegate
+		 *
+		 * @returns {Void}
 		 *
 		 * @override
 		 */
@@ -40,12 +43,14 @@
 		/**
 		 * @param {Number} nodeIdToSelect
 		 *
+		 * @returns {Void}
+		 *
 		 * @override
 		 */
 		accordionUpdateStore: function (nodeIdToSelect) {
 			nodeIdToSelect = Ext.isNumber(nodeIdToSelect) ? nodeIdToSelect : null;
 
-			CMDBuild.core.proxy.Classes.readAll({
+			CMDBuild.proxy.Classes.readAll({
 				scope: this,
 				success: function (response, options, decodedResponse) {
 					decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.CLASSES] || [];
@@ -139,10 +144,10 @@
 
 						if (!Ext.isEmpty(nodes))
 							this.view.getStore().getRootNode().appendChild(nodes);
-
-						// Alias of this.callParent(arguments), inside proxy function doesn't work
-						this.updateStoreCommonEndpoint(nodeIdToSelect);
 					}
+
+					// Alias of this.callParent(arguments), inside proxy function doesn't work
+					this.updateStoreCommonEndpoint(nodeIdToSelect);
 				}
 			});
 

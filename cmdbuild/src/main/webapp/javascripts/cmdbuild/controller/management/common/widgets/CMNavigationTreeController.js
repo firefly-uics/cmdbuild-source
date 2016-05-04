@@ -1,6 +1,6 @@
 (function() {
 
-	Ext.require(['CMDBuild.core.proxy.NavigationTree']);
+	Ext.require(['CMDBuild.proxy.NavigationTree']);
 
 	Ext.define("CMDBuild.controller.management.common.widgets.CMNavigationTreeController", {
 		mixins: {
@@ -42,7 +42,7 @@
 			var params = {};
 			params['name'] = this.navigationTree
 
-			CMDBuild.core.proxy.NavigationTree.read({
+			CMDBuild.proxy.NavigationTree.read({
 				params: params,
 				success: function(operation, request, decoded) {
 					me.tree = Ext.JSON.decode(decoded.response);

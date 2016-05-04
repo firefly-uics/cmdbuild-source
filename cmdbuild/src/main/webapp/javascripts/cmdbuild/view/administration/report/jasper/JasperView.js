@@ -25,6 +25,11 @@
 		frame: false,
 		layout: 'border',
 
+		/**
+		 * @returns {Void}
+		 *
+		 * @override
+		 */
 		initComponent: function () {
 			Ext.apply(this, {
 				dockedItems: [

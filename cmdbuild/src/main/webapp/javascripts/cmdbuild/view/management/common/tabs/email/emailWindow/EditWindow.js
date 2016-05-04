@@ -1,7 +1,7 @@
 (function () {
 
 	Ext.define('CMDBuild.view.management.common.tabs.email.emailWindow.EditWindow', {
-		extend: 'CMDBuild.core.PopupWindow',
+		extend: 'CMDBuild.core.window.AbstractModal',
 
 		requires: ['CMDBuild.core.constants.Proxy'],
 

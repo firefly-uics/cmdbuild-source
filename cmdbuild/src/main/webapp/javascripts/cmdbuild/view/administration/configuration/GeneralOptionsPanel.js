@@ -6,7 +6,7 @@
 		requires: [
 			'CMDBuild.core.constants.FieldWidths',
 			'CMDBuild.core.constants.Proxy',
-			'CMDBuild.core.proxy.configuration.GeneralOptions'
+			'CMDBuild.proxy.configuration.GeneralOptions'
 		],
 
 		mixins: ['CMDBuild.view.common.PanelFunctions'],
@@ -99,7 +99,7 @@
 								displayField: CMDBuild.core.constants.Proxy.TEXT,
 								forceSelection: true,
 
-								store: CMDBuild.core.proxy.configuration.GeneralOptions.getStartingClassStore(),
+								store: CMDBuild.proxy.configuration.GeneralOptions.getStoreStartingClass(),
 								queryMode: 'local'
 							}),
 							{
@@ -136,11 +136,11 @@
 								displayField: CMDBuild.core.constants.Proxy.DESCRIPTION,
 								valueField: CMDBuild.core.constants.Proxy.VALUE,
 
-								store: Ext.create('Ext.data.Store', {
+								store: Ext.create('Ext.data.ArrayStore', {
 									fields: [CMDBuild.core.constants.Proxy.VALUE, CMDBuild.core.constants.Proxy.DESCRIPTION],
 									data: [
-										{ value: 'top', description: CMDBuild.Translation.top },
-										{ value: 'bottom', description: CMDBuild.Translation.bottom }
+										['top', CMDBuild.Translation.top],
+										['bottom', CMDBuild.Translation.bottom]
 									]
 								}),
 								queryMode: 'local'
