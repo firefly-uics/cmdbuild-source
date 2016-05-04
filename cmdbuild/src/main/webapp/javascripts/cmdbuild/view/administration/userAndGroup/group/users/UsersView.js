@@ -21,6 +21,7 @@
 		selectedGrid: undefined,
 
 		bodyCls: 'cmdb-gray-panel',
+		cls: 'cmdb-gray-panel-no-padding',
 		border: false,
 		frame: false,
 		overflowY: 'auto',
