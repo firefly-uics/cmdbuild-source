@@ -4,6 +4,7 @@
 		extend: 'CMDBuild.controller.common.abstract.Base',
 
 		requires: [
+			'CMDBuild.core.constants.ModuleIdentifiers',
 			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.Message'
 		],
@@ -33,6 +34,7 @@
 			'mainViewportModuleShow',
 			'mainViewportSelectFirstExpandedAccordionSelectableNode',
 			'mainViewportStartingEntitySelect',
+			'onMainViewportAccordionSelect',
 			'onMainViewportCreditsClick'
 		],
 
@@ -63,6 +65,14 @@
 		 * @private
 		 */
 		danglingCard: null,
+
+		/**
+		 * @cfg {Array}
+		 */
+		enableSynchronizationForAccordions: [
+			'class',
+			CMDBuild.core.constants.ModuleIdentifiers.getWorkflow()
+		],
 
 		/**
 		 * @cfg {Boolean}
@@ -382,7 +392,7 @@
 						scope: this,
 						callback: function (panel, eOpts) {
 							accordionController.cmfg('accordionDeselect'); // Instruction required or selection doesn't work if exists another selection
-							accordionController.cmfg('accordionSelectNodeById', parameters['IdClass']);
+							accordionController.cmfg('accordionNodeByIdSelect', parameters['IdClass']);
 						}
 					});
 				} else {
@@ -423,7 +433,7 @@
 			if (!Ext.isEmpty(expandedAccordionController)) {
 				this.cmfg('mainViewportModuleShow', { identifier: expandedAccordionController.cmfg('accordionIdentifierGet') });
 
-				expandedAccordionController.cmfg('accordionSelectFirstSelectableNode');
+				expandedAccordionController.cmfg('accordionFirstSelectableNodeSelect');
 			}
 		},
 
@@ -446,7 +456,7 @@
 				accordionWithNodeController.cmfg('accordionExpand', {
 					scope: this,
 					callback: function (panel, eOpts) {
-						accordionWithNodeController.cmfg('accordionSelectNodeById', startingClassId);
+						accordionWithNodeController.cmfg('accordionNodeByIdSelect', startingClassId);
 					}
 				});
 
@@ -455,7 +465,7 @@
 				var accordionController = this.accordionControllerWithSelectableNodeGet();
 
 				if (!Ext.isEmpty(accordionController)) {
-					accordionController.cmfg('accordionSelectFirstSelectableNode');
+					accordionController.cmfg('accordionFirstSelectableNodeSelect');
 
 					node = accordionController.cmfg('accordionFirtsSelectableNodeGet'); // To manage selection if accordion are collapsed
 				}
@@ -603,6 +613,32 @@
 
 				return toShow;
 			},
+
+		/**
+		 * Synchronize Class and Workflow selection from relative accordions with Navigation accordion, active only in management side
+		 *
+		 * @param {Object} parameters
+		 * @param {String} parameters.sourceAccordionIdentifier
+		 * @param {CMDBuild.model.common.Accordion} parameters.selectedNodeModel
+		 *
+		 * @returns {Void}
+		 */
+		onMainViewportAccordionSelect: function (parameters) {
+_debug('onMainViewportAccordionSelect', parameters);
+			if (
+				Ext.isObject(parameters) && !Ext.Object.isEmpty(parameters)
+				&& Ext.isObject(parameters.selectedNodeModel) && !Ext.Object.isEmpty(parameters.selectedNodeModel)
+				&& Ext.isString(parameters.sourceAccordionIdentifier) && !Ext.isEmpty(parameters.sourceAccordionIdentifier)
+				&& Ext.Array.contains(this.enableSynchronizationForAccordions, parameters.sourceAccordionIdentifier)
+				&& !this.isAdministration
+			) {
+				var menuAccordionController = this.cmfg('mainViewportAccordionControllerGet', CMDBuild.core.constants.ModuleIdentifiers.getNavigation());
+				var selectedNodeModel = parameters.selectedNodeModel;
+
+				if (menuAccordionController.cmfg('accordionNodeByIdExists', selectedNodeModel.get(CMDBuild.core.constants.Proxy.ENTITY_ID)))
+					menuAccordionController.cmfg('accordionNodeByIdSelect', selectedNodeModel.get(CMDBuild.core.constants.Proxy.ENTITY_ID));
+			}
+		},
 
 		/**
 		 * Manages footer credits link click action

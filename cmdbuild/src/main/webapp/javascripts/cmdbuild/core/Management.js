@@ -171,7 +171,7 @@
 				_CMCache.syncAttachmentCategories();
 
 				// Building accordion definitions object array (display order)
-				var accordionDefinitionObjectsArray = [{ className: 'CMDBuild.controller.management.accordion.Menu', identifier: CMDBuild.core.constants.ModuleIdentifiers.getMenu() }];
+				var accordionDefinitionObjectsArray = [{ className: 'CMDBuild.controller.management.accordion.Menu', identifier: CMDBuild.core.constants.ModuleIdentifiers.getNavigation() }];
 
 				if (!CMDBuild.configuration.userInterface.isDisabledModule(CMDBuild.core.constants.Proxy.CLASS))
 					accordionDefinitionObjectsArray.push({ className: 'CMDBuild.controller.management.accordion.Classes', identifier: 'class' });
