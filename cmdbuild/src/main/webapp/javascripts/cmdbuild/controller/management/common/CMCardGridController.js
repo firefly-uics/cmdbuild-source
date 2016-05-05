@@ -114,7 +114,11 @@
 
 							me.view.enableFilterMenuButton();
 						} else {
-							filter = new CMDBuild.model.CMFilterModel({ configuration: Ext.decode(viewFilter) });
+							filter = Ext.create('CMDBuild.model.CMFilterModel', {
+								configuration: Ext.decode(viewFilter),
+								entryType: entryType.get('name'),
+								name: CMDBuild.Translation.parameters
+							});
 						}
 
 						applyFilter(me, filter);
