@@ -54,7 +54,10 @@
 			 * @public
 			 */
 			authorizationIsEmpty: function () {
-				return Ext.isEmpty(CMDBuild.core.CookiesManager.authorizationGet());
+				return (
+					Ext.isEmpty(CMDBuild.core.CookiesManager.authorizationGet())
+					|| CMDBuild.core.CookiesManager.authorizationGet() == 'null'
+				);
 			},
 
 			/**

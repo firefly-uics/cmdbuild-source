@@ -28,18 +28,22 @@
 		 * @private
 		 */
 		sessionRemove: function () {
-			var params = {};
-			params[CMDBuild.core.constants.Proxy.SESSION] = CMDBuild.core.CookiesManager.authorizationGet();
+			if (!CMDBuild.core.CookiesManager.authorizationIsEmpty()) {
+				var params = {};
+				params[CMDBuild.core.constants.Proxy.SESSION] = CMDBuild.core.CookiesManager.authorizationGet();
 
-			CMDBuild.proxy.Session.remove({
-				params: params,
-				scope: this,
-				success: function (response, options, decodedResponse) {
-					CMDBuild.core.CookiesManager.authorizationClear();
+				CMDBuild.proxy.Session.remove({
+					params: params,
+					scope: this,
+					success: function (response, options, decodedResponse) {
+						CMDBuild.core.CookiesManager.authorizationClear();
 
-					window.location = 'index.jsp';
-				}
-			});
+						window.location = 'index.jsp';
+					}
+				});
+			} else {
+				window.location = 'index.jsp';
+			}
 		}
 	});
 
