@@ -572,47 +572,49 @@
 		var runtimeAttributeConfigurations = filter.getRuntimeParameters();
 		var runtimeAttributes = [];
 		var showWindowToFillRuntimeParameters = runtimeAttributeConfigurations.length > 0;
+
 		if (showWindowToFillRuntimeParameters) {
 			var referredEntryTypeName = filter.getEntryType();
 			var referredEntryType = _CMCache.getEntryTypeByName(referredEntryTypeName);
 
 			if (referredEntryType) {
 				_CMCache.getAttributeList(referredEntryType.getId(), //
-						function(attributes) { //
-							for (var i=0; i<runtimeAttributeConfigurations.length; ++i) {
-								var runtimeAttributeToSearch = runtimeAttributeConfigurations[i];
+					function(attributes) { //
+						for (var i=0; i<runtimeAttributeConfigurations.length; ++i) {
+							var runtimeAttributeToSearch = runtimeAttributeConfigurations[i];
 
-								for (var j=0; j<attributes.length; ++j) {
-									/*
-									 * Force the attribute to be writable
-									 * to allow the user to edit it
-									 * in the RealTimeParameterWindow
-									 */
-									var attribute = Ext.apply({}, attributes[j]);
-									attribute.fieldmode = "write";
+							for (var j=0; j<attributes.length; ++j) {
+								/*
+								 * Force the attribute to be writable
+								 * to allow the user to edit it
+								 * in the RealTimeParameterWindow
+								 */
+								var attribute = Ext.apply({}, attributes[j]);
+								attribute.fieldmode = "write";
 
-									if (attribute.name == runtimeAttributeToSearch.attribute) {
-										var field = CMDBuild.Management.FieldManager.getFieldForAttr(attribute);
-										field._cmOperator = runtimeAttributeToSearch.operator;
-										runtimeAttributes.push(field);
+								if (attribute.name == runtimeAttributeToSearch.attribute) {
+									var field = CMDBuild.Management.FieldManager.getFieldForAttr(attribute);
+									field._cmOperator = runtimeAttributeToSearch.operator;
+									runtimeAttributes.push(field);
 
-										break;
-									}
+									break;
 								}
 							}
-						} //
-					); //
+						}
+					}
+				);
 			}
 
-			var runtimeParametersWindow = new CMDBuild.view.management.common.filter.CMRuntimeParameterWindow({
-				runtimeAttributes: runtimeAttributes,
-				filter: filter,
-				title: filter.getName()
-			});
+			if (!Ext.isEmpty(runtimeAttributes) && Ext.isArray(runtimeAttributes)) {
+				var runtimeParametersWindow = new CMDBuild.view.management.common.filter.CMRuntimeParameterWindow({
+					runtimeAttributes: runtimeAttributes,
+					filter: filter,
+					title: filter.getName()
+				});
 
-			runtimeParametersWindow.addDelegate(me);
-
-			runtimeParametersWindow.show();
+				runtimeParametersWindow.addDelegate(me);
+				runtimeParametersWindow.show();
+			}
 		}
 
 		return showWindowToFillRuntimeParameters;

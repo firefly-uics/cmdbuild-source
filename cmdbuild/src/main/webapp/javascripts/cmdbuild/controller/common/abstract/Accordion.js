@@ -186,7 +186,7 @@
 					this.cmfg('accordionExpand', {
 						scope: this,
 						callback: function (panel, eOpts) {
-							this.cmfg('accordionNodeByIdSelect', firstSelectableNode.get(CMDBuild.core.constants.Proxy.ID));
+							this.cmfg('accordionNodeByIdSelect', { id: firstSelectableNode.get(CMDBuild.core.constants.Proxy.ID) });
 						}
 					});
 				}
@@ -227,20 +227,28 @@
 			},
 
 			/**
-			 * @param {Number or String} id
+			 * @param {Object} parameters
+			 * @param {Number or String} parameters.id
+			 * @param {String} parameters.mode [normal || silently]
 			 *
 			 * @returns {Void}
 			 */
-			accordionNodeByIdSelect: function (id) {
-				if (!Ext.isEmpty(id)) {
-					var node = this.cmfg('accordionNodeByIdGet', id);
+			accordionNodeByIdSelect: function (parameters) {
+				parameters = Ext.isObject(parameters) ? parameters : {};
+
+				if (!Ext.Object.isEmpty(parameters) && !Ext.isEmpty(parameters.id)) {
+					var node = this.cmfg('accordionNodeByIdGet', parameters.id);
 
 					if (!Ext.isEmpty(node)) {
 						node.bubble(function () {
 							this.expand();
 						});
 
-						this.view.getSelectionModel().select(node);
+						this.view.getSelectionModel().select(
+							node,
+							false,
+							Ext.isString(parameters.mode) && parameters.mode == 'silently' // Silently mode
+						);
 					} else {
 						this.cmfg('accordionFirstSelectableNodeSelect');
 					}
@@ -352,7 +360,7 @@
 		updateStoreCommonEndpoint: function (nodeIdToSelect) {
 			if (!this.disableSelection) {
 				if (!Ext.isEmpty(nodeIdToSelect))
-					this.cmfg('accordionNodeByIdSelect', nodeIdToSelect);
+					this.cmfg('accordionNodeByIdSelect', { id: nodeIdToSelect });
 
 				// Select first selectable item if no selection and expanded
 				if (!this.view.getSelectionModel().hasSelection() && this.view.getCollapsed() === false && this.view.isVisible())

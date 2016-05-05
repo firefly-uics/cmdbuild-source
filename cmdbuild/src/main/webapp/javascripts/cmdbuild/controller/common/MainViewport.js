@@ -392,7 +392,7 @@
 						scope: this,
 						callback: function (panel, eOpts) {
 							accordionController.cmfg('accordionDeselect'); // Instruction required or selection doesn't work if exists another selection
-							accordionController.cmfg('accordionNodeByIdSelect', parameters['IdClass']);
+							accordionController.cmfg('accordionNodeByIdSelect', { id: parameters['IdClass'] });
 						}
 					});
 				} else {
@@ -456,7 +456,7 @@
 				accordionWithNodeController.cmfg('accordionExpand', {
 					scope: this,
 					callback: function (panel, eOpts) {
-						accordionWithNodeController.cmfg('accordionNodeByIdSelect', startingClassId);
+						accordionWithNodeController.cmfg('accordionNodeByIdSelect', { id: startingClassId });
 					}
 				});
 
@@ -635,7 +635,10 @@
 				var selectedNodeModel = parameters.selectedNodeModel;
 
 				if (menuAccordionController.cmfg('accordionNodeByIdExists', selectedNodeModel.get(CMDBuild.core.constants.Proxy.ENTITY_ID)))
-					menuAccordionController.cmfg('accordionNodeByIdSelect', selectedNodeModel.get(CMDBuild.core.constants.Proxy.ENTITY_ID));
+					menuAccordionController.cmfg('accordionNodeByIdSelect', {
+						id: selectedNodeModel.get(CMDBuild.core.constants.Proxy.ENTITY_ID),
+						mode: 'silently'
+					});
 			}
 		},
 
