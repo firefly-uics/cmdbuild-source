@@ -68,6 +68,8 @@ FIXES
 
  * Relations tab displayed in row group's privileges window
 
+ * DataViews from Filter with runtime parameters show error
+
 
 
 

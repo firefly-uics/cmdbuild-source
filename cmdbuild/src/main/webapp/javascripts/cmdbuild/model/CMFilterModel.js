@@ -246,19 +246,22 @@
 				var conf = attributeConf.simple;
 
 				if (conf.parameterType == "runtime") {
+					var fieldIndex = undefined;
 
 					// Find field index
 					for(var i = 0; i < runtimeParameterFields.length; i++)
 						if (runtimeParameterFields[i].name == conf.attribute)
 							fieldIndex = i;
 
-					var field = runtimeParameterFields[fieldIndex];
-					var value = [field.getValue()];
+					if (!Ext.isEmpty(fieldIndex)) {
+						var field = runtimeParameterFields[fieldIndex];
+						var value = [field.getValue()];
 
-					if (field._cmSecondField)
-						value.push(field._cmSecondField.getValue());
+						if (field._cmSecondField)
+							value.push(field._cmSecondField.getValue());
 
-					conf.value = value;
+						conf.value = value;
+					}
 				} else if (conf.parameterType == "calculated") {
 					var value = conf.value[0];
 
