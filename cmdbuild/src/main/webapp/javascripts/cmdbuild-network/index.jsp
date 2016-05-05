@@ -17,7 +17,7 @@
 				apiUrl : '<%=request.getParameter("basePath")%>/services/rest/v2/',
 				appRootUrl : '<%=request.getParameter("basePath")%>/javascripts/cmdbuild-gui-framework-<%=request.getParameter("frameworkVersion")%>/',
 				appConfigUrl: '<%=request.getParameter("basePath")%>/javascripts/cmdbuild-network/Graph/',
-				access_token: 'CMDBuildSessionToken',
+				access_token: 'CMDBuild-Authorization',
 				language:'<%=request.getParameter("language")%>',
 				customjs: [
 					"libraries/cytoscape.min.js",
