@@ -76,6 +76,8 @@ FIXES
 
  * Widget CustomForm: Unsupported from SQL date format
 
+ * Reference field store URL too long because of filter wrong parameter
+
 
 
 
