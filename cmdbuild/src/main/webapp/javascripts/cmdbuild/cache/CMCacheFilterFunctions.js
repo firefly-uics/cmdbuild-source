@@ -2,13 +2,6 @@
 
 	Ext.define("CMDBuild.cache.CMCacheFilterFunctions", {
 
-		filterStoreByEntryTypeName: function(entryTypeName) {
-			var filterBy = entryTypeName || "";
-
-			filterStore.clearFilter();
-			filterStore.filter("entryType", filterBy);
-		},
-
 		addFilter: function(store, filter, atFirst) {
 			if (Ext.getClassName(filter) == "CMDBuild.model.CMFilterModel") {
 				removeFilterIfAlreadyExists(store, filter);
