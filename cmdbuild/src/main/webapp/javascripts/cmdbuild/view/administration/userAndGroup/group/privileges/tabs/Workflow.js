@@ -29,7 +29,7 @@
 					Ext.create('Ext.grid.column.Column', {
 						dataIndex: CMDBuild.core.constants.Proxy.DESCRIPTION,
 						text: CMDBuild.Translation.descriptionLabel,
-						flex: 1,
+						flex: 1
 					}),
 					Ext.create('Ext.grid.column.CheckColumn', {
 						dataIndex: 'none_privilege',

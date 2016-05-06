@@ -45,7 +45,7 @@
 						}
 					}),
 					this.field
-				],
+				]
 			});
 
 			this.callParent(arguments);

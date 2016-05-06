@@ -62,7 +62,7 @@
 
 				handler: function(button, e) {
 					this.showMenu();
-				},
+				}
 			});
 
 			this.callParent(arguments);

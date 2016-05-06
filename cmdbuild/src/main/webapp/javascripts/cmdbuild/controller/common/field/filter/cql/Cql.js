@@ -26,7 +26,7 @@
 			'onFieldFilterCqlGetValue',
 			'onFieldFilterCqlMetadataButtonClick',
 			'onFieldFilterCqlSetDisabled',
-			'onFieldFilterCqlSetValue',
+			'onFieldFilterCqlSetValue'
 		],
 
 		/**

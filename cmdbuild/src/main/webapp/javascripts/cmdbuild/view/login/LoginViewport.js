@@ -41,7 +41,7 @@
 						items: [
 							this.formContainer = Ext.create('CMDBuild.view.login.FormContainer', { delegate: this.delegate })
 						]
-					}),
+					})
 				]
 			});
 

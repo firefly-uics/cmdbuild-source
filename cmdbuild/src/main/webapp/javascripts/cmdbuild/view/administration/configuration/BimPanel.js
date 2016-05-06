@@ -75,7 +75,7 @@
 						xtype: 'textfield',
 						name: CMDBuild.core.constants.Proxy.URL,
 						fieldLabel: CMDBuild.Translation.url,
-						maxWidth: CMDBuild.core.constants.FieldWidths.CONFIGURATION_BIG,
+						maxWidth: CMDBuild.core.constants.FieldWidths.CONFIGURATION_BIG
 					},
 					{
 						xtype: 'textfield',

@@ -50,7 +50,7 @@
 			// Instances
 			'processes/:processIdentifier/instances/:instanceIdentifier/': 'CMDBuild.routes.management.Instance#saveRoute',
 
-			'exec/processes/:processIdentifier/instances/:instanceIdentifier/': 'CMDBuild.routes.management.Instance#detail',
+			'exec/processes/:processIdentifier/instances/:instanceIdentifier/': 'CMDBuild.routes.management.Instance#detail'
 		},
 
 		/**

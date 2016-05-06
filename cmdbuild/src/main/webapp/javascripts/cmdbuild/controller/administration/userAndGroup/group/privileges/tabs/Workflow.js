@@ -34,7 +34,7 @@
 			'onUserAndGroupGroupTabPrivilegesTabWorkflowRemoveFilterClick',
 			'onUserAndGroupGroupTabPrivilegesTabWorkflowSetFilterClick',
 			'onUserAndGroupGroupTabPrivilegesTabWorkflowSetPrivilege',
-			'onUserAndGroupGroupTabPrivilegesTabWorkflowShow',
+			'onUserAndGroupGroupTabPrivilegesTabWorkflowShow'
 		],
 
 		/**
@@ -82,7 +82,7 @@
 							selectAtRuntimeCheckDisabled: true // BUSINNESS RULE: user couldn't create privilege's filter with runtime parameters
 						}
 					}
-				},
+				}
 			});
 		},
 

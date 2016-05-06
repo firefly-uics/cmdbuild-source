@@ -306,7 +306,7 @@
 				// Step validate
 				this.delegate.parentDelegate.validateStepGrid(this.referenceMappingGrid.getStore());
 			}
-		},
+		}
 	});
 
 })();

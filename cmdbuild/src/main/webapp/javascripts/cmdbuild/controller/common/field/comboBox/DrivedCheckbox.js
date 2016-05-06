@@ -10,7 +10,7 @@
 		 */
 		cmfgCatchedFunctions: [
 			'fieldComboboDrivedCheckboxCheckboxFieldChange',
-			'fieldComboboDrivedCheckboxValueSet',
+			'fieldComboboDrivedCheckboxValueSet'
 		],
 
 		/**

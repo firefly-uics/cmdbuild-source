@@ -28,7 +28,7 @@
 
 			sorting: {
 				reorder: 'services/json/schema/modclass/reorderattribute',
-				update: 'services/json/schema/modclass/saveordercriteria',
+				update: 'services/json/schema/modclass/saveordercriteria'
 			}
 		},
 
@@ -108,7 +108,7 @@
 			},
 
 			ui: {
-				read: 'services/json/schema/modsecurity/getuiconfiguration',
+				read: 'services/json/schema/modsecurity/getuiconfiguration'
 			}
 		},
 
@@ -121,7 +121,7 @@
 				update: '',
 				remove: '',
 
-				download: 'services/json/management/exportcsv/export',
+				download: 'services/json/management/exportcsv/export'
 			},
 
 			import: {
@@ -161,7 +161,7 @@
 				create: '',
 				read: '',
 				update: 'services/json/dashboard/modifycolumns',
-				remove: '',
+				remove: ''
 			}
 		},
 
@@ -330,7 +330,7 @@
 				readAll: 'services/json/gis/getalllayers',
 
 				setOrder: 'services/json/gis/setlayersorder',
-				setVisibility: 'services/json/gis/setlayervisibility',
+				setVisibility: 'services/json/gis/setlayervisibility'
 			},
 
 			treeNavigation: {

@@ -4,7 +4,7 @@
 		extend: 'CMDBuild.core.buttons.Base',
 
 		iconCls: 'email-reply',
-		textDefault: CMDBuild.Translation.reply,
+		textDefault: CMDBuild.Translation.reply
 	});
 
 })();

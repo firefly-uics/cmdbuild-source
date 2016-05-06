@@ -88,7 +88,7 @@
 							selectAtRuntimeCheckDisabled: true // BUSINNESS RULE: user couldn't create privilege's filter with runtime parameters
 						}
 					}
-				},
+				}
 			});
 			this.controllerUiConfiguration = Ext.create('CMDBuild.controller.administration.userAndGroup.group.privileges.UiConfiguration', { parentDelegate: this });
 		},

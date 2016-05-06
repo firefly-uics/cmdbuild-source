@@ -4,7 +4,7 @@
 		extend: 'CMDBuild.core.buttons.Base',
 
 		iconCls: 'email-send',
-		textDefault: CMDBuild.Translation.send,
+		textDefault: CMDBuild.Translation.send
 	});
 
 })();

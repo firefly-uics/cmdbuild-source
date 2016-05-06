@@ -1,4 +1,4 @@
-(function() {
+(function () {
 
 	Ext.require('CMDBuild.core.constants.Proxy');
 
@@ -7,7 +7,7 @@
 
 		fields: [
 			{ name: CMDBuild.core.constants.Proxy.DESCRIPTION,  type: 'string' },
-			{ name: CMDBuild.core.constants.Proxy.TAG, type: 'string' },
+			{ name: CMDBuild.core.constants.Proxy.TAG, type: 'string' }
 		]
 	});
 

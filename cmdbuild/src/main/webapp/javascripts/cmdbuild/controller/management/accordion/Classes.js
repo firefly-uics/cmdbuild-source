@@ -145,7 +145,7 @@
 									children: simple,
 									expanded: true,
 									selectable: false,
-									leaf: false,
+									leaf: false
 								}
 							];
 						}

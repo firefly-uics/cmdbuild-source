@@ -17,7 +17,7 @@
 			{ name: CMDBuild.core.constants.Proxy.GOOGLE, type: 'auto' }, // {CMDBuild.model.core.configurations.builder.gis.Google}
 			{ name: CMDBuild.core.constants.Proxy.OSM, type: 'auto' }, // {CMDBuild.model.core.configurations.builder.gis.Osm}
 			{ name: CMDBuild.core.constants.Proxy.YAHOO, type: 'auto' }, // {CMDBuild.model.core.configurations.builder.gis.Yahoo}
-			{ name: CMDBuild.core.constants.Proxy.ZOOM_INITIAL_LEVEL, type: 'int', defaultValue: 3 },
+			{ name: CMDBuild.core.constants.Proxy.ZOOM_INITIAL_LEVEL, type: 'int', defaultValue: 3 }
 		],
 
 		statics: {

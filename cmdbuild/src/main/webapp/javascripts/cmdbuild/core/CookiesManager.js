@@ -68,7 +68,7 @@
 			 * @public
 			 */
 			authorizationSet: function (sessionId) {
-				if (!Ext.isEmpty(sessionId))
+				if (!Ext.isEmpty(sessionId) || sessionId != 'null')
 					return Ext.util.Cookies.set(
 						CMDBuild.core.constants.Proxy.AUTHORIZATION_HEADER_KEY,
 						sessionId,
