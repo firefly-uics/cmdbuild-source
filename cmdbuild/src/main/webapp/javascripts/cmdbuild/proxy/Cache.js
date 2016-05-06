@@ -75,14 +75,14 @@
 		 * @param {Boolean} isOneTime
 		 * @param {Object} baseParams
 		 *
-		 * @returns {Ext.data.Store or CMDBuild.core.cache.Store}
+		 * @returns {Ext.data.Store or CMDBuild.core.cache.Store} store
 		 */
 		getStoreReference: function (isOneTime, baseParams) {
-			return CMDBuild.global.Cache.requestAsStore(CMDBuild.core.constants.Proxy.UNCACHED, {
+			var store = CMDBuild.global.Cache.requestAsStore(CMDBuild.core.constants.Proxy.UNCACHED, {
 				autoLoad: !isOneTime,
 				model: 'CMDBuild.cache.CMReferenceStoreModel',
 				isOneTime: isOneTime,
-				baseParams: baseParams, //retro-compatibility,
+				baseParams: baseParams, // Retro-compatibility,
 				pageSize: CMDBuild.configuration.instance.get(CMDBuild.core.constants.Proxy.REFERENCE_COMBO_STORE_LIMIT),
 				proxy: {
 					type: 'ajax',
@@ -98,6 +98,12 @@
 					{ property: 'Description', direction: 'ASC' }
 				]
 			});
+
+			// Disable filter method to avoid filter parameter stack witch drive to get url overflow error (reason is unknown)
+			if (baseParams.NoFilter)
+				store.filter = Ext.emptyFn;
+
+			return store;
 		},
 
 		/**
