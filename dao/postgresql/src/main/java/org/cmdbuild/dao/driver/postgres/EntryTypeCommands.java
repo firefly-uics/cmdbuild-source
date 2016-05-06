@@ -635,30 +635,52 @@ public class EntryTypeCommands implements LoggingSupport {
 	private List<DBAttribute> userEntryTypeAttributesFor(final long entryTypeId) {
 		sqlLogger.trace("getting attributes for entry type with id '{}'", entryTypeId);
 		// Note: Sort the attributes in the query
-		final List<DBAttribute> entityTypeAttributes = jdbcTemplate.query("SELECT A.name" //
-				+ ", _cm_comment_for_attribute(A.cid, A.name) AS comment" //
-				+ ", _cm_attribute_is_notnull(A.cid, A.name) AS not_null_constraint" //
-				+ ", _cm_attribute_is_unique(A.cid, A.name) AS unique_constraint" //
-				+ ", _cm_get_attribute_sqltype(A.cid, A.name) AS sql_type" //
-				+ ", _cm_attribute_is_inherited(A.cid, name) AS inherited" //
-				+ ", _cm_get_attribute_default (A.cid, A.name) AS default_value" //
-				+ " FROM (SELECT C.cid, _cm_attribute_list(C.cid) AS name FROM (SELECT ? AS cid) AS C) AS A" //
-				+ " WHERE _cm_read_comment(_cm_comment_for_attribute(A.cid, A.name), 'MODE') NOT ILIKE 'reserved'" //
-				+ " ORDER BY _cm_read_comment(_cm_comment_for_attribute(A.cid, A.name), 'INDEX')::int", //
-				new Object[] { entryTypeId }, new RowMapper<DBAttribute>() {
-					@Override
-					public DBAttribute mapRow(final ResultSet rs, final int rowNum) throws SQLException {
-						final String name = rs.getString("name");
-						final String comment = rs.getString("comment");
-						final AttributeMetadata meta = attributeCommentToMetadata(comment);
-						meta.put(AttributeMetadata.INHERITED, Boolean.toString(rs.getBoolean("inherited")));
-						meta.put(AttributeMetadata.DEFAULT, rs.getString("default_value"));
-						meta.put(AttributeMetadata.MANDATORY, Boolean.toString(rs.getBoolean("not_null_constraint")));
-						meta.put(AttributeMetadata.UNIQUE, Boolean.toString(rs.getBoolean("unique_constraint")));
-						final CMAttributeType<?> type = createAttributeType(rs.getString("sql_type"), meta);
-						return new DBAttribute(name, type, meta);
-					}
-				});
+		final List<DBAttribute> entityTypeAttributes = jdbcTemplate
+				.query("SELECT A.name" //
+						+ ", _cm_comment_for_attribute(A.cid, A.name) AS comment" //
+						+ ", _cm_attribute_is_notnull(A.cid, A.name) AS not_null_constraint" //
+						// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+						/*
+						 * using the function
+						 * 
+						 * _cm_attribute_is_unique(...)
+						 * 
+						 * with versions 9.3 and 9.5 of PostgreSQL and the
+						 * parameter
+						 * 
+						 * enable_nestloop = off
+						 * 
+						 * the query was very slow. Therefore it was decided to
+						 * explode the functions. The solution is to be
+						 * considered temporary until the problem will be
+						 * analyzed better.
+						 */
+						+ ", (SELECT (count(*) > 0) AS unique_constraint" //
+						+ "			FROM pg_class" //
+						+ "			JOIN pg_index ON pg_class.oid = pg_index.indexrelid" //
+						+ "			WHERE pg_index.indrelid = A.cid AND relname = (SELECT '_Unique_'|| pg_class.relname::text ||'_'|| A.name FROM pg_class WHERE pg_class.oid = A.cid))" //
+						// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+						+ ", _cm_get_attribute_sqltype(A.cid, A.name) AS sql_type" //
+						+ ", _cm_attribute_is_inherited(A.cid, name) AS inherited" //
+						+ ", _cm_get_attribute_default (A.cid, A.name) AS default_value" //
+						+ " FROM (SELECT C.cid, _cm_attribute_list(C.cid) AS name FROM (SELECT ? AS cid) AS C) AS A" //
+						+ " WHERE _cm_read_comment(_cm_comment_for_attribute(A.cid, A.name), 'MODE') NOT ILIKE 'reserved'" //
+						+ " ORDER BY _cm_read_comment(_cm_comment_for_attribute(A.cid, A.name), 'INDEX')::int", //
+						new Object[] { entryTypeId }, new RowMapper<DBAttribute>() {
+							@Override
+							public DBAttribute mapRow(final ResultSet rs, final int rowNum) throws SQLException {
+								final String name = rs.getString("name");
+								final String comment = rs.getString("comment");
+								final AttributeMetadata meta = attributeCommentToMetadata(comment);
+								meta.put(AttributeMetadata.INHERITED, Boolean.toString(rs.getBoolean("inherited")));
+								meta.put(AttributeMetadata.DEFAULT, rs.getString("default_value"));
+								meta.put(AttributeMetadata.MANDATORY,
+										Boolean.toString(rs.getBoolean("not_null_constraint")));
+								meta.put(AttributeMetadata.UNIQUE, Boolean.toString(rs.getBoolean("unique_constraint")));
+								final CMAttributeType<?> type = createAttributeType(rs.getString("sql_type"), meta);
+								return new DBAttribute(name, type, meta);
+							}
+						});
 		return entityTypeAttributes;
 	}
 
