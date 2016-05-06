@@ -20,7 +20,7 @@
 		/**
 		 * @cfg {Boolean}
 		 */
-		enableBufferReset: false,
+		enableCallbackExecution: false,
 
 		/**
 		 * @param {Object} parameters
@@ -78,27 +78,26 @@
 		},
 
 		/**
-		 * Check callback index and launch last callback
+		 * Check callback index and launch last callback but only if enableCallbackExecution parameter is set to true (avoids problems on configurations without delay)
+		 * EnableCallbackExecution must be set to true only on last finalize call before barrier setup
 		 *
 		 * @param {String} id
-		 * @param {Boolean} enableBufferReset
+		 * @param {Boolean} enableCallbackExecution
 		 *
 		 * @returns {Void}
 		 */
-		finalize: function (id, enableBufferReset) {
-			if (!this.enableBufferReset)
-				this.enableBufferReset = Ext.isBoolean(enableBufferReset) ? enableBufferReset : false;
+		finalize: function (id, enableCallbackExecution) {
+			if (!this.enableCallbackExecution) // IMPORTANT: this parameter must not be overridden every call to avoid problems on configurations with delay
+				this.enableCallbackExecution = Ext.isBoolean(enableCallbackExecution) ? enableCallbackExecution : false;
 
 			if (
 				!Ext.isEmpty(id) && Ext.isString(id)
-				&& !Ext.Object.isEmpty(this.buffer[id])
-				&& this.buffer[id].index == 0
+				&& !Ext.Object.isEmpty(this.buffer[id]) && this.buffer[id].index == 0
+				&& this.enableCallbackExecution
 			) {
 				Ext.callback(this.buffer[id].callback, this.buffer[id].scope);
 
-				// Buffer reset should be launched only after last getCallback (barrier's initialization ends)
-				if (this.enableBufferReset)
-					delete this.buffer[id]; // Buffer reset
+				delete this.buffer[id]; // Buffer reset
 			}
 		},
 
