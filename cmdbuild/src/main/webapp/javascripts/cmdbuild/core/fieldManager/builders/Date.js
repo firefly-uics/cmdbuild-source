@@ -81,7 +81,19 @@
 		 * @returns {Object}
 		 */
 		buildStoreField: function() {
-			return { name: this.cmfg('attributeModelGet', CMDBuild.core.constants.Proxy.NAME), type: 'date', dateFormat: CMDBuild.core.configurations.DataFormat.getDate() };
+			return {
+				name: this.cmfg('attributeModelGet', CMDBuild.core.constants.Proxy.NAME),
+				type: 'date',
+				dateFormat: CMDBuild.core.configurations.DataFormat.getDate(),
+				convert: function (value, record) { // Converter to standardize input date format
+					var dateObject = new Date(value);
+
+					if (!Ext.isEmpty(value) && dateObject != 'Invalid Date')
+						return Ext.util.Format.date(dateObject, CMDBuild.core.configurations.DataFormat.getDate());
+
+					return value;
+				}
+			};
 		},
 
 		/**
