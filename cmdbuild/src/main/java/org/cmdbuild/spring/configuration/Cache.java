@@ -36,6 +36,9 @@ public class Cache {
 	private DmsService dmsService;
 
 	@Autowired
+	private Files files;
+
+	@Autowired
 	@Qualifier(SOAP)
 	private NotSystemUserFetcher notSystemUserFetcher;
 
@@ -47,7 +50,9 @@ public class Cache {
 				data.cachedLookupStore(), //
 				translationServiceWrapper(), //
 				jsonDispatcherServiceWrapper(), //
-				notSystemUserFetcher));
+				notSystemUserFetcher, //
+				files.cachedFileSystemFacade(), //
+				files.cachedHashing()));
 	}
 
 	@Bean

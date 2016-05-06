@@ -1,9 +1,9 @@
-(function() {
+(function () {
 
 	Ext.define('CMDBuild.controller.common.field.searchWindow.SearchWindow', {
-		extend: 'CMDBuild.controller.common.AbstractController',
+		extend: 'CMDBuild.controller.common.abstract.Base',
 
-		requires: ['CMDBuild.core.proxy.CMProxyConstants'],
+		requires: ['CMDBuild.core.constants.Proxy'],
 
 		/**
 		 * @cfg {CMDBuild.controller.common.field.comboBox.Searchable}
@@ -15,6 +15,7 @@
 		 */
 		cmfgCatchedFunctions: [
 			'fieldSearchWindowConfigurationGet',
+			'fieldSearchWindowConfigurationSet',
 			'onFieldSearchWindowSaveButtonClick = onFieldSearchWindowItemDoubleClick',
 			'onFieldSearchWindowSelectionChange',
 			'onFieldSearchWindowShow',
@@ -34,7 +35,7 @@
 		grid: undefined,
 
 		/**
-		 * @property {Mixed}
+		 * @property {CMDBuild.view.common.field.searchWindow.SearchWindow}
 		 */
 		view: undefined,
 
@@ -42,9 +43,11 @@
 		 * @param {Object} configurationObject
 		 * @param {CMDBuild.controller.common.field.comboBox.Searchable} configurationObject.parentDelegate
 		 *
+		 * @returns {Void}
+		 *
 		 * @override
 		 */
-		constructor: function(configurationObject) {
+		constructor: function (configurationObject) {
 			this.callParent(arguments);
 
 			this.view = Ext.create('CMDBuild.view.common.field.searchWindow.SearchWindow', { delegate: this });
@@ -52,115 +55,113 @@
 
 		// Configuration property methods
 			/**
-			 * Attribute could be a single string (attribute name) or an array of strings that declares path to required attribute through model object's properties
-			 *
 			 * @param {Array or String} attributePath
 			 *
-			 * @returns {Mixed}
+			 * @returns {Mixed or undefined}
 			 */
-			fieldSearchWindowConfigurationGet: function(attributePath) {
-				attributePath = Ext.isArray(attributePath) ? attributePath : [attributePath];
+			fieldSearchWindowConfigurationGet: function (attributePath) {
+				var parameters = {};
+				parameters[CMDBuild.core.constants.Proxy.TARGET_VARIABLE_NAME] = 'configuration';
+				parameters[CMDBuild.core.constants.Proxy.ATTRIBUTE_PATH] = attributePath;
 
-				var requiredAttribute = this.configuration;
-
-				if (!Ext.isEmpty(attributePath))
-					Ext.Array.forEach(attributePath, function(attributeName, i, allAttributeNames) {
-						if (!Ext.isEmpty(attributeName) && Ext.isString(attributeName))
-							if (
-								!Ext.isEmpty(requiredAttribute)
-								&& Ext.isObject(requiredAttribute)
-								&& Ext.isFunction(requiredAttribute.get)
-							) { // Model management
-								requiredAttribute = requiredAttribute.get(attributeName);
-							} else if (
-								!Ext.isEmpty(requiredAttribute)
-								&& Ext.isObject(requiredAttribute)
-							) { // Simple object management
-								requiredAttribute = requiredAttribute[attributeName];
-							}
-					}, this);
-
-				return requiredAttribute;
+				return this.propertyManageGet(parameters);
 			},
 
 			/**
-			 * @param {String} attribute
+			 * @param {Array or String} attributePath
 			 *
 			 * @returns {Boolean}
+			 *
+			 * @private
 			 */
-			fieldSearchWindowConfigurationIsEmpty: function(attribute) {
-				if (!Ext.isEmpty(attribute))
-					return Ext.isEmpty(this.fieldSearchWindowConfigurationGet(attribute));
+			fieldSearchWindowConfigurationIsEmpty: function (attributePath) {
+				var parameters = {};
+				parameters[CMDBuild.core.constants.Proxy.TARGET_VARIABLE_NAME] = 'configuration';
+				parameters[CMDBuild.core.constants.Proxy.ATTRIBUTE_PATH] = attributePath;
 
-				return Ext.isEmpty(this.configuration);
+				return this.propertyManageIsEmpty(parameters);
 			},
 
 			/**
-			 * @param {CMDBuild.model.common.field.searchWindow.Configuration} configurationObject
+			 * @param {Object} parameters
+			 *
+			 * @returns {Void}
 			 */
-			fieldSearchWindowConfigurationSet: function(configurationObject) {
-				if (
-					!Ext.isEmpty(configurationObject)
-					&& Ext.isObject(configurationObject)
-				) {
-					this.configuration = Ext.create('CMDBuild.model.common.field.searchWindow.Configuration', configurationObject);
-				} else {
-					_error('invalid window configurationObject', this);
+			fieldSearchWindowConfigurationSet: function (parameters) {
+				if (!Ext.Object.isEmpty(parameters)) {
+					parameters[CMDBuild.core.constants.Proxy.MODEL_NAME] = 'CMDBuild.model.common.field.searchWindow.Configuration';
+					parameters[CMDBuild.core.constants.Proxy.TARGET_VARIABLE_NAME] = 'configuration';
+
+					this.propertyManageSet(parameters);
 				}
 			},
 
-		onFieldSearchWindowSaveButtonClick: function() {
+		/**
+		 * @returns {Void}
+		 */
+		onFieldSearchWindowSaveButtonClick: function () {
 			if (this.grid.getSelectionModel().hasSelection())
-				this.cmfg('fiedlSetValue', this.grid.getSelectionModel().getSelection()[0]);
+				this.cmfg('fieldValueSet', this.grid.getSelectionModel().getSelection()[0]);
 
 			this.view.hide();
 		},
 
-		onFieldSearchWindowSelectionChange: function() {
+		/**
+		 * @returns {Void}
+		 */
+		onFieldSearchWindowSelectionChange: function () {
 			this.view.saveButton.setDisabled(!this.grid.getSelectionModel().hasSelection());
 		},
 
 		/**
 		 * After window show setup presets (title, quick search filter, selection)
+		 *
+		 * @returns {Void}
 		 */
-		onFieldSearchWindowShow: function() {
+		onFieldSearchWindowShow: function () {
 			if (this.fieldSearchWindowConfigurationIsEmpty()) {
 				_error('search window configuration empty', this);
 			} else {
 				this.setupViewGrid();
 
 				// Set window title
-				this.setViewTitle(this.fieldSearchWindowConfigurationGet([CMDBuild.core.proxy.CMProxyConstants.ENTRY_TYPE, CMDBuild.core.proxy.CMProxyConstants.TEXT]));
+				this.setViewTitle(this.cmfg('fieldSearchWindowConfigurationGet', [CMDBuild.core.constants.Proxy.ENTRY_TYPE, CMDBuild.core.constants.Proxy.TEXT]));
 
 				this.setupViewAddCardButton();
 
 				// Setup save button
-				this.onFieldSearchWindowSelectionChange();
+				this.cmfg('onFieldSearchWindowSelectionChange');
 			}
 		},
 
 		/**
 		 * Selected value setup
+		 *
+		 * @returns {Void}
 		 */
-		onFieldSearchWindowStoreLoad: function() {
-			if (!Ext.isEmpty(this.cmfg('fiedlGetValue')))
+		onFieldSearchWindowStoreLoad: function () {
+			if (!Ext.isEmpty(this.cmfg('fieldValueGet')))
 				this.grid.getSelectionModel().select(
-					this.grid.getStore().find('Id', this.cmfg('fiedlGetValue'))
+					this.grid.getStore().find(this.cmfg('fiedlValueFieldGet'), this.cmfg('fieldValueGet'))
 				);
 		},
 
 		/**
 		 * Adapter function
 		 *
-		 * TODO: waiting for refactor (CMDBuild.view.management.common.CMCardWindow)
+		 * @returns {Void}
+		 *
+		 * @private
+		 *
+		 * TODO: waiting for refactor (CMDBuild.view.common.field.searchWindow.GridPanel)
 		 */
-		setupViewAddCardButton: function() {
-			this.view.addCardButton.setDisabled(this.cmfg('fieldSearchWindowConfigurationGet', CMDBuild.core.proxy.CMProxyConstants.READ_ONLY));
+		setupViewAddCardButton: function () {
+			this.view.addCardButton.setDisabled(this.cmfg('fieldSearchWindowConfigurationGet', CMDBuild.core.constants.Proxy.READ_ONLY));
 
-			if (!this.cmfg('fieldSearchWindowConfigurationGet', CMDBuild.core.proxy.CMProxyConstants.READ_ONLY)) {
-				this.view.addCardButton.updateForEntry(this.cmfg('fieldSearchWindowConfigurationGet', CMDBuild.core.proxy.CMProxyConstants.ENTRY_TYPE));
+			if (!this.cmfg('fieldSearchWindowConfigurationGet', CMDBuild.core.constants.Proxy.READ_ONLY)) {
+				this.view.addCardButton.updateForEntry(this.cmfg('fieldSearchWindowConfigurationGet', CMDBuild.core.constants.Proxy.ENTRY_TYPE));
 
-				this.view.mon(this.view.addCardButton, 'cmClick', function(p) {
+				this.view.mon(this.view.addCardButton, 'cmClick', function (p) {
 					var w = new CMDBuild.view.management.common.CMCardWindow({
 						withButtons: true,
 						title: p.className
@@ -173,7 +174,7 @@
 					});
 					w.show();
 
-					this.view.mon(w, 'destroy', function() {
+					this.view.mon(w, 'destroy', function () {
 						this.grid.reload();
 					}, this);
 
@@ -181,12 +182,21 @@
 			}
 		},
 
-		setupViewGrid: function() {
+		/**
+		 * Adapter function
+		 *
+		 * @returns {Void}
+		 *
+		 * @private
+		 *
+		 * TODO: waiting for refactor (CMDBuild.view.common.field.searchWindow.GridPanel)
+		 */
+		setupViewGrid: function () {
 			this.view.removeAll(false);
 			this.view.add(
 				this.grid = Ext.create('CMDBuild.view.common.field.searchWindow.GridPanel', {
 					delegate: this,
-					CQL: Ext.isEmpty(this.cmfg('fiedlGetStore')) ? null : this.cmfg('fiedlGetStore').getProxy().extraParams,
+					CQL: Ext.isEmpty(this.cmfg('fieldStoreGet')) ? null : this.cmfg('fieldStoreGet').getProxy().extraParams,
 					selModel: Ext.create('CMDBuild.selection.CMMultiPageSelectionModel', {
 						mode: 'SINGLE',
 						idProperty: 'Id' // Required to identify the records for the data and not the id of Ext
@@ -195,23 +205,23 @@
 			);
 
 			this.grid.updateStoreForClassId(
-				this.fieldSearchWindowConfigurationGet([CMDBuild.core.proxy.CMProxyConstants.ENTRY_TYPE, CMDBuild.core.proxy.CMProxyConstants.ID]),
+				this.cmfg('fieldSearchWindowConfigurationGet', [CMDBuild.core.constants.Proxy.ENTRY_TYPE, CMDBuild.core.constants.Proxy.ID]),
 				{
 					scope: this,
-					cb: function(grid) {
+					cb: function (grid) {
 						this.grid.getStore().loadPage(1);
 
 						// Setup quick search value
 						this.grid.gridSearchField.focus();
 						this.grid.gridSearchField.setValue(
-							this.fieldSearchWindowConfigurationGet([
-								CMDBuild.core.proxy.CMProxyConstants.GRID_CONFIGURATION,
-								CMDBuild.core.proxy.CMProxyConstants.PRESETS,
-								'quickSearch'
+							this.cmfg('fieldSearchWindowConfigurationGet', [
+								CMDBuild.core.constants.Proxy.GRID_CONFIGURATION,
+								CMDBuild.core.constants.Proxy.PRESETS,
+								CMDBuild.core.constants.Proxy.QUICK_SEARCH
 							])
 						);
 
-						this.grid.getStore().on('load', function(store, records, successful, eOpts) {
+						this.grid.getStore().on('load', function (store, records, successful, eOpts) {
 							this.cmfg('onFieldSearchWindowStoreLoad');
 						}, this);
 					}

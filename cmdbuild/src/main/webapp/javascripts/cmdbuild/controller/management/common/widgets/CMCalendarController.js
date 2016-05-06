@@ -1,16 +1,15 @@
 (function() {
 
-	Ext.require('CMDBuild.core.proxy.Card');
+	Ext.require([
+		'CMDBuild.core.Message',
+		'CMDBuild.proxy.Card'
+	]);
 
 	Ext.define("CMDBuild.controller.management.common.widgets.CMCalendarController", {
 
 		mixins: {
 			observable: "Ext.util.Observable",
 			widgetcontroller: "CMDBuild.controller.management.common.widgets.CMWidgetController"
-		},
-
-		statics: {
-			WIDGET_NAME: CMDBuild.view.management.common.widgets.CMCalendar.WIDGET_NAME
 		},
 
 		constructor: function(view, ownerController, widgetDef, clientForm, card) {
@@ -23,7 +22,7 @@
 			if (!this.reader.getStartDate(this.widgetConf) ||
 					!this.reader.getTitle(this.widgetConf)) {
 
-				CMDBuild.Msg.error(CMDBuild.Translation.common.failure,
+				CMDBuild.core.Message.error(CMDBuild.Translation.common.failure,
 						CMDBuild.Translation.management.modworkflow.extattrs.calendar.wrong_config);
 
 				this.skipLoading = true;
@@ -167,8 +166,9 @@
 			});
 		}
 
-		CMDBuild.core.proxy.Card.getList({
+		CMDBuild.proxy.Card.readAll({
 			params: params,
+			loadMask: false,
 			success: function(response, operation, decodedResponse) {
 				me.view.clearStore();
 				var _eventData = decodedResponse.rows || [];

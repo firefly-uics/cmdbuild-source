@@ -1,19 +1,16 @@
 .add { background-image: url("../images/icons/add.png") !important; }
 .add_filter { background-image: url("../images/icons/add_filter.png") !important; }
-.arrow_left { background-image: url("../images/icons/arrow_left.png") !important; }
-.arrow_refresh { background-image: url("../images/icons/arrow_refresh.png") !important; }
-.arrow_right { background-image: url("../images/icons/arrow_right.png") !important; }
 .attach { background-image: url("../images/icons/attach.png") !important; }
 .clear_filter { background-image: url("../images/icons/clear_find.png") !important; }
 .clone { background-image: url("../images/icons/clone.png") !important; }
-.delete { background-image: url("../images/icons/cross.png") !important; }
+.delete { background-image: url("../images/icons/cross.png") !important; } /* @deprecated */
 .down { background-image: url("../images/icons/down.gif") !important;}
 .down-hover { background-image: url("../images/icons/down-hover.gif") !important; }
 .download { background-image: url("../images/icons/page_white_put.png") !important; }
 .edit_form { background-image: url("../images/icons/application_form_edit.png") !important; }
 .find { background-image: url("../images/icons/find.png") !important; }
 .foreignkey { background-image: url("../images/icons/database_table.png") !important; }
-.graph { background-image: url("../images/icons/chart_organisation.png") !important; }
+.graph { background-image: url("../images/icons/graph.png") !important; }
 .map { background-image: url("../images/icons/map.png") !important; }
 .modify { background-image: url("../images/icons/modify.png") !important; }
 .note { background-image: url("../images/icons/note.png") !important; }
@@ -22,6 +19,7 @@
 .password { background-image: url("../images/icons/key.png") !important; }
 .preview { background-image: url("../images/icons/preview.png") !important; }
 .print { background-image: url("../images/icons/print.png") !important; }
+.remove { background-image: url("../images/icons/remove.png") !important; }
 .save { background-image: url("../images/icons/disk.png") !important; }
 .search { background-image: url("../images/icons/search.gif") !important; }
 .start { background-image: url("../images/icons/start.png") !important; }
@@ -32,8 +30,13 @@
 .up-hover { background-image: url("../images/icons/up-hover.gif") !important; }
 .userInterface { background-image: url("../images/icons/userInterface.png") !important; }
 
-.detail,
-.domain { background-image: url("../images/icons/table_link.png") !important; }
+.arrow_left, /* @deprecated */
+.arrowLeft{ background-image: url("../images/icons/arrow_left.png") !important; }
+.arrow_refresh, /* @deprecated */
+.arrowRefresh { background-image: url("../images/icons/arrow_refresh.png") !important; }
+.arrow_right, /* @deprecated */
+.arrowRight { background-image: url("../images/icons/arrow_right.png") !important; }
+.collapse { background-image: url("../images/icons/collapse.png") !important; }
 .expand,
 .cmdisplayfield-expandbutton { background-image: url("../images/icons/expand.png") !important; }
 
@@ -61,3 +64,10 @@
 /* Import/Export */
 	.export { background-image: url("../images/icons/export.png") !important; }
 	.import { background-image: url("../images/icons/import.png") !important; }
+
+/* Navigation chronology */
+	.navigation-chronology { background-image: url("../images/icons/navigation/chronology.png") !important; }
+
+/* Trigger fields */
+	.trigger-add { background-image: url("../images/form/trigger-add.png") !important; }
+	.trigger-edit { background-image: url("../images/form/trigger-edit.png") !important; }

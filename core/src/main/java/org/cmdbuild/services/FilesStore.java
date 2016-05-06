@@ -24,13 +24,13 @@ public interface FilesStore {
 
 	void save(FileItem file, String filePath) throws IOException;
 
-	void save(InputStream inputStream, String filePath) throws IOException;
+	File save(InputStream inputStream, String filePath) throws IOException;
 
 	String getRelativeRootDirectory();
 
 	String getAbsoluteRootDirectory();
 
-	File getFile(String path);
+	File getRoot();
 
 	boolean isImage(FileItem file);
 

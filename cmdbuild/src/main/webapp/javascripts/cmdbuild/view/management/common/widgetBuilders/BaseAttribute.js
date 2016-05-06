@@ -43,7 +43,7 @@
 			});
 
 			return new Ext.form.ComboBox({
-				labelWidth: CMDBuild.LABEL_WIDTH,
+				labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
 				fieldLabel: attribute.description,
 				labelSeparator: "",
 				hideLabel: true,
@@ -108,9 +108,9 @@
 			var field = new Ext.form.DisplayField({
 				allowBlank: true,
 				labelAlign: "right",
-				labelWidth: CMDBuild.LABEL_WIDTH,
+				labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
 				fieldLabel: attribute.description || attribute.name,
-				width: CMDBuild.BIG_FIELD_WIDTH,
+				width: CMDBuild.core.constants.FieldWidths.STANDARD_BIG,
 				submitValue: false,
 				name: attribute.name,
 				disabled: false,

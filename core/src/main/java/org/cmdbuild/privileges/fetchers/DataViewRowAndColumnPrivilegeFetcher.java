@@ -1,10 +1,10 @@
 package org.cmdbuild.privileges.fetchers;
 
 import static com.google.common.collect.Iterables.isEmpty;
+import static java.util.Collections.emptyList;
 import static org.cmdbuild.dao.query.clause.alias.Aliases.canonical;
 import static org.cmdbuild.dao.query.clause.where.AndWhereClause.and;
 
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -30,7 +30,7 @@ public class DataViewRowAndColumnPrivilegeFetcher implements RowAndColumnPrivile
 
 	private static final Logger logger = Log.PERSISTENCE;
 
-	private static final Iterable<? extends WhereClause> EMPTY_WHERE_CLAUSES = Collections.emptyList();
+	private static final Iterable<WhereClause> EMPTY_WHERE_CLAUSES = emptyList();
 
 	private final CMDataView dataView;
 	private final PrivilegeContext privilegeContext;
@@ -50,13 +50,12 @@ public class DataViewRowAndColumnPrivilegeFetcher implements RowAndColumnPrivile
 	 * when relations are specified
 	 */
 	@Override
-	public Iterable<? extends WhereClause> fetchPrivilegeFiltersFor(final CMEntryType entryType) {
-		return fetchPrivilegeFiltersFor(entryType, entryType, canonical(entryType));
+	public Iterable<WhereClause> fetchPrivilegeFiltersFor(final CMEntryType entryType) {
+		return fetchPrivilegeFiltersFor(entryType, canonical(entryType));
 	}
 
 	@Override
-	public Iterable<? extends WhereClause> fetchPrivilegeFiltersFor(final CMEntryType entryType,
-			final CMEntryType entryTypeForClauses, final Alias entryTypeForClausesAlias) {
+	public Iterable<WhereClause> fetchPrivilegeFiltersFor(final CMEntryType entryType, final Alias alias) {
 		if (privilegeContext.hasAdministratorPrivileges() && entryType.isActive()) {
 			return EMPTY_WHERE_CLAUSES;
 		}
@@ -68,8 +67,7 @@ public class DataViewRowAndColumnPrivilegeFetcher implements RowAndColumnPrivile
 		final List<WhereClause> whereClauseFilters = Lists.newArrayList();
 		for (final String privilegeFilter : privilegeFilters) {
 			try {
-				final Iterable<WhereClause> whereClauses = createWhereClausesFrom(privilegeFilter, entryTypeForClauses,
-						entryTypeForClausesAlias);
+				final Iterable<WhereClause> whereClauses = createWhereClausesFrom(privilegeFilter, entryType, alias);
 				if (!isEmpty(whereClauses)) {
 					whereClauseFilters.add(and(whereClauses));
 				}
@@ -129,7 +127,7 @@ public class DataViewRowAndColumnPrivilegeFetcher implements RowAndColumnPrivile
 				mergedAttributesPrivileges.put( //
 						attributeName, //
 						groupLevelAttributePrivileges.get(attributeName) //
-						);
+				);
 			}
 		}
 

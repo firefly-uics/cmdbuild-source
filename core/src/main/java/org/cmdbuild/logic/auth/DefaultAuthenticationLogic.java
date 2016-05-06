@@ -15,6 +15,7 @@ import java.util.List;
 import org.cmdbuild.auth.AuthenticationService;
 import org.cmdbuild.auth.AuthenticationService.ClientAuthenticatorResponse;
 import org.cmdbuild.auth.AuthenticationService.PasswordCallback;
+import org.cmdbuild.auth.ClientRequestAuthenticator.ClientRequest;
 import org.cmdbuild.auth.Login;
 import org.cmdbuild.auth.UserStore;
 import org.cmdbuild.auth.acl.CMGroup;
@@ -130,8 +131,8 @@ public class DefaultAuthenticationLogic implements AuthenticationLogic {
 		} else if (loginDTO.isPasswordRequired()) {
 			final Login login = Login.newInstance(loginDTO.getLoginString());
 			final AuthenticatedUser authenticated = authService.authenticate(login, loginDTO.getPassword());
-			authUser = (!loginDTO.isServiceUsersAllowed() && (authenticated.isService() || authenticated.isPrivileged())) ? ANONYMOUS_USER
-					: authenticated;
+			authUser = (!loginDTO.isServiceUsersAllowed()
+					&& (authenticated.isService() || authenticated.isPrivileged())) ? ANONYMOUS_USER : authenticated;
 		} else {
 			final Login login = Login.newInstance(loginDTO.getLoginString());
 			authUser = authService.authenticate(login, new PasswordCallback() {
@@ -196,7 +197,7 @@ public class DefaultAuthenticationLogic implements AuthenticationLogic {
 	}
 
 	@Override
-	public ClientAuthenticationResponse login(final ClientAuthenticationRequest request) {
+	public ClientAuthenticationResponse login(final ClientRequest request, final UserStore userStore) {
 		logger.info("trying to login with no username or password");
 		final ClientAuthenticatorResponse response = authService.authenticate(request);
 		final AuthenticatedUser authenticatedUser = response.getUser();
@@ -207,18 +208,24 @@ public class DefaultAuthenticationLogic implements AuthenticationLogic {
 		logger.debug("user has one group only: {}", hasOneGroupOnly);
 		logger.debug("user default group: {}", hasDefaultGroup);
 		if (isValidUser) {
-			if (hasOneGroupOnly || hasDefaultGroup) {
-				final String groupName = (hasDefaultGroup) ? authenticatedUser.getDefaultGroupName()
-						: authenticatedUser.getGroupNames().iterator().next();
-				final CMGroup group = getGroupWithName(groupName);
-				final PrivilegeContext privilegeContext = buildPrivilegeContext(group);
-				final OperationUser operationUser = new OperationUser(authenticatedUser, privilegeContext, group);
-				request.getUserStore().setUser(operationUser);
-			} else if (!hasOneGroupOnly) {
-				final OperationUser operationUser = new OperationUser(authenticatedUser, new NullPrivilegeContext(),
-						new NullGroup());
-				request.getUserStore().setUser(operationUser);
+			final CMGroup group;
+			final PrivilegeContext privilegeContext;
+			if (hasOneGroupOnly) {
+				final String name = authenticatedUser.getGroupNames().iterator().next();
+				group = getGroupWithName(name);
+				privilegeContext = buildPrivilegeContext(group);
+			} else if (hasDefaultGroup) {
+				group = getGroupWithName(authenticatedUser.getDefaultGroupName());
+				final CMGroup[] groups = authenticatedUser.getGroupNames().stream() //
+						.map(input -> getGroupWithName(input)) //
+						.toArray(CMGroup[]::new);
+				privilegeContext = buildPrivilegeContext(groups);
+			} else {
+				group = new NullGroup();
+				privilegeContext = new NullPrivilegeContext();
 			}
+			final OperationUser operationUser = new OperationUser(authenticatedUser, privilegeContext, group);
+			userStore.setUser(operationUser);
 		}
 		return new ClientAuthenticationResponse() {
 
@@ -363,8 +370,8 @@ public class DefaultAuthenticationLogic implements AuthenticationLogic {
 	}
 
 	@Override
-	public List<CMUser> getAllUsers() {
-		return authService.fetchAllUsers();
+	public Iterable<CMUser> getAllUsers(final boolean activeOnly) {
+		return authService.fetchAllUsers(activeOnly);
 	}
 
 	@Override

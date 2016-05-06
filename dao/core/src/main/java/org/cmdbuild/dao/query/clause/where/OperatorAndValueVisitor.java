@@ -14,9 +14,13 @@ public interface OperatorAndValueVisitor {
 
 	void visit(GreaterThanOperatorAndValue operatorAndValue);
 
+	void visit(GreaterThanOrEqualToOperatorAndValue operatorAndValue);
+
 	void visit(InOperatorAndValue operatorAndValue);
 
 	void visit(LessThanOperatorAndValue operatorAndValue);
+
+	void visit(LessThanOrEqualToOperatorAndValue operatorAndValue);
 
 	void visit(NetworkContained operatorAndValue);
 

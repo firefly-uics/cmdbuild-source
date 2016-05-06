@@ -2,6 +2,15 @@
 
 	var tr = CMDBuild.Translation.management.modcard;
 
+	Ext.require([
+		'CMDBuild.core.constants.Global',
+		'CMDBuild.core.constants.Proxy',
+		'CMDBuild.core.interfaces.messages.Error',
+		'CMDBuild.core.Message',
+		'CMDBuild.proxy.classes.tabs.Attachment',
+		'CMDBuild.proxy.index.Json'
+	]);
+
 	Ext.define("CMDBuild.controller.management.classes.attachments.CMCardAttachmentsController", {
 		extend: "CMDBuild.controller.management.classes.CMModCardSubController",
 
@@ -75,14 +84,14 @@
 
 		setViewExtraParams: function() {
 			var params = {};
-			params[CMDBuild.ServiceProxy.parameter.CLASS_NAME] = _CMCache.getEntryTypeNameById(this.getClassId());
-			params[CMDBuild.ServiceProxy.parameter.CARD_ID] = this.getCardId();
+			params[CMDBuild.core.constants.Proxy.CLASS_NAME] = _CMCache.getEntryTypeNameById(this.getClassId());
+			params[CMDBuild.core.constants.Proxy.CARD_ID] = this.getCardId();
 
 			this.view.setExtraParams(params);
 		},
 
 		disableTheTabBeforeCardSelection: function(entryType) {
-			return (entryType && entryType.get("tableType") == CMDBuild.Constants.cachedTableType.simpletable);
+			return (entryType && entryType.get("tableType") == CMDBuild.core.constants.Global.getTableTypeSimpleTable());
 		},
 
 		onAddCardButtonClick: function(classIdOfNewCard) {
@@ -115,15 +124,13 @@
 		 		}, this);
 		},
 
-		onDownloadAttachmentClick: function(record) {
-			var params = {
-				Filename: record.get("Filename")
-			};
+		onDownloadAttachmentClick: function (record) {
+			var params = {};
+			params['Filename'] = record.get('Filename');
+			params[CMDBuild.core.constants.Proxy.CARD_ID] = this.getCardId();
+			params[CMDBuild.core.constants.Proxy.CLASS_NAME] = _CMCache.getEntryTypeNameById(this.getClassId());
 
-			params[CMDBuild.ServiceProxy.parameter.CLASS_NAME] = _CMCache.getEntryTypeNameById(this.getClassId());
-			params[CMDBuild.ServiceProxy.parameter.CARD_ID] = this.getCardId();
-
-			CMDBuild.ServiceProxy.attachment.download(params);
+			CMDBuild.proxy.classes.tabs.Attachment.download({ params: params });
 		},
 
 		onAddAttachmentButtonClick: function() {
@@ -173,7 +180,7 @@
 		},
 
 		theModuleIsDisabled: function() {
-			return !CMDBuild.Config.dms.enabled;
+			return !CMDBuild.configuration.dms.get(CMDBuild.core.constants.Proxy.ENABLED);
 		},
 
 		// as attachment window delegate
@@ -186,7 +193,7 @@
 			}
 
 			if (this.confirmStrategy) {
-				CMDBuild.LoadMask.get().show();
+				CMDBuild.core.LoadMask.show();
 				attachmentWindow.mask();
 				this.confirmStrategy.doRequest(attachmentWindow);
 			}
@@ -234,22 +241,24 @@
 			Filename: record.get("Filename")
 		};
 
-		params[CMDBuild.ServiceProxy.parameter.CLASS_NAME] = _CMCache.getEntryTypeNameById(me.getClassId());
-		params[CMDBuild.ServiceProxy.parameter.CARD_ID] = me.getCardId();
+		params[CMDBuild.core.constants.Proxy.CLASS_NAME] = _CMCache.getEntryTypeNameById(me.getClassId());
+		params[CMDBuild.core.constants.Proxy.CARD_ID] = me.getCardId();
 
-		CMDBuild.LoadMask.get().show();
-		CMDBuild.ServiceProxy.attachment.remove({
+		CMDBuild.core.LoadMask.show();
+		CMDBuild.proxy.classes.tabs.Attachment.remove({
 			params: params,
+			loadMask: false,
+			scope: this,
 			success: function() {
 				// Defer the call because Alfresco is not responsive
 				Ext.Function.createDelayed(function deferredCall() {
-					CMDBuild.LoadMask.get().hide();
+					CMDBuild.core.LoadMask.hide();
 					me.view.reloadCard();
-				}, CMDBuild.Config.dms.delay, me)();
+				}, CMDBuild.configuration.dms.get(CMDBuild.core.constants.Proxy.ALFRESCO_DELAY), me)();
 			},
 
 			failure: function() {
-				CMDBuild.LoadMask.get().hide();
+				CMDBuild.core.LoadMask.hide();
 			}
 		});
 	}
@@ -269,8 +278,8 @@
 				Metadata: Ext.encode(attachmentWindow.getMetadataValues())
 			};
 
-			params[CMDBuild.ServiceProxy.parameter.CLASS_NAME] = _CMCache.getEntryTypeNameById(this.ownerController.getClassId());
-			params[CMDBuild.ServiceProxy.parameter.CARD_ID] = this.ownerController.getCardId();
+			params[CMDBuild.core.constants.Proxy.CLASS_NAME] = _CMCache.getEntryTypeNameById(this.ownerController.getClassId());
+			params[CMDBuild.core.constants.Proxy.CARD_ID] = this.ownerController.getCardId();
 
 			return params;
 		},
@@ -278,23 +287,25 @@
 		doRequest: function(attachmentWindow) {
 			var form = attachmentWindow.form.getForm();
 			var me = this;
-			form.submit({ // TODO: should uses proxy and needs a refactor to manage errors
-				method: 'POST',
-				url: me.url,
-				scope: me,
+
+			CMDBuild.proxy.classes.tabs.Attachment.confirm({
+				form: form,
 				params: me.forgeRequestParams(attachmentWindow),
+				url: me.url,
+				loadMask: false,
+				scope: me,
 				success: function(form, action) {
 					// Defer the call because Alfresco is not responsive
 					Ext.Function.createDelayed(function deferredCall() {
 						me.ownerController.view.reloadCard();
 						attachmentWindow.unmask();
 						attachmentWindow.close();
-						CMDBuild.LoadMask.get().hide();
-					}, CMDBuild.Config.dms.delay, this)();
+						CMDBuild.core.LoadMask.hide();
+					}, CMDBuild.configuration.dms.get(CMDBuild.core.constants.Proxy.ALFRESCO_DELAY), this)();
 				},
 				failure: function(form, action) {
 					attachmentWindow.unmask();
-					CMDBuild.LoadMask.get().hide();
+					CMDBuild.core.LoadMask.hide();
 
 					// Workaround to show form submit error
 					if (action && action.result && action.result.errors && action.result.errors.length) {
@@ -308,7 +319,7 @@
 			});
 		},
 
-		showError: function(response, error, options) {
+		showError: function(response, error, options) { // TODO: use core interfaces messages classes
 			var tr = CMDBuild.Translation.errors || {
 				error_message : "Error",
 				unknown_error : "Unknown error",
@@ -339,12 +350,12 @@
 				var reason = error.reason;
 				if (reason) {
 					if (reason == 'AUTH_NOT_LOGGED_IN' || reason == 'AUTH_MULTIPLE_GROUPS') {
-						CMDBuild.LoginWindow.addAjaxOptions(options);
-						CMDBuild.LoginWindow.setAuthFieldsEnabled(reason == 'AUTH_NOT_LOGGED_IN');
-						CMDBuild.LoginWindow.show();
-						return;
+						Ext.create('CMDBuild.controller.common.sessionExpired.SessionExpired', {
+							ajaxParameters: options,
+							passwordFieldEnable: reason == 'AUTH_NOT_LOGGED_IN'
+						});
 					}
-					var translatedErrorString = CMDBuild.Ajax.formatError(reason, error.reasonParameters);
+					var translatedErrorString = CMDBuild.core.interfaces.messages.Error.formatMessage(reason, error.reasonParameters);
 					if (translatedErrorString) {
 						errorBody.text = translatedErrorString;
 					}
@@ -359,18 +370,18 @@
 				}
 			}
 
-			CMDBuild.Msg.error(errorTitle, errorBody, false);
+			CMDBuild.core.Message.error(errorTitle, errorBody, false);
 		}
 	});
 
 	Ext.define("CMDBuild.controller.management.classes.attachments.AddAttachmentStrategy", {
 		extend: "CMDBuild.controller.management.classes.attachments.ConfirmAttachmentStrategy",
-		url: 'services/json/attachments/uploadattachment'
+		url: CMDBuild.proxy.index.Json.attachment.create
 	});
 
 	Ext.define("CMDBuild.controller.management.classes.attachments.ModifyAttachmentStrategy", {
 		extend: "CMDBuild.controller.management.classes.attachments.ConfirmAttachmentStrategy",
-		url: 'services/json/attachments/modifyattachment',
+		url: CMDBuild.proxy.index.Json.attachment.update,
 		forgeRequestParams: function(attachmentWindow) {
 			var out = this.callParent(arguments);
 			out["Category"] = attachmentWindow.attachmentRecord.get("Category");

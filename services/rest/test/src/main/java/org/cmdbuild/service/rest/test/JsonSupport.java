@@ -9,14 +9,12 @@ import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.map.SerializationConfig;
 import org.codehaus.jackson.node.ObjectNode;
-import org.junit.rules.ExternalResource;
 
-public class JsonSupport extends ExternalResource {
+public class JsonSupport {
 
-	private ObjectMapper objectMapper;
+	private final ObjectMapper objectMapper;
 
-	@Override
-	protected void before() throws Throwable {
+	public JsonSupport() {
 		objectMapper = new ObjectMapper();
 		final SerializationConfig serializationConfig = objectMapper.getSerializationConfig() //
 				.without(FAIL_ON_EMPTY_BEANS);

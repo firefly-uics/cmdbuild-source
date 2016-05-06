@@ -26,6 +26,10 @@ public class OperatorAndValues {
 		return GreaterThanOperatorAndValue.gt(value);
 	}
 
+	public static OperatorAndValue gteq(final Object value) {
+		return new GreaterThanOrEqualToOperatorAndValue(value);
+	}
+
 	public static OperatorAndValue in(final Object... objects) {
 		return InOperatorAndValue.in(objects);
 	}
@@ -36,6 +40,10 @@ public class OperatorAndValues {
 
 	public static OperatorAndValue lt(final Object value) {
 		return LessThanOperatorAndValue.lt(value);
+	}
+
+	public static OperatorAndValue lteq(final Object value) {
+		return new LessThanOrEqualToOperatorAndValue(value);
 	}
 
 	public static OperatorAndValue networkContained(final Object value) {

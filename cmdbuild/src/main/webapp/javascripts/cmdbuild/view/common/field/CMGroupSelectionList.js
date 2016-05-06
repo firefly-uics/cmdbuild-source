@@ -1,35 +1,30 @@
 (function() {
 
-	Ext.define('CMDBuild.view.common.field.CMGroupSelectionList', {
+	/**
+	 * @deprecated (CMDBuild.view.common.field.multiselect.Group)
+	 */
+	Ext.define('CMDBuild.view.common.field.CMGroupSelectionList', { // asd
 		extend: 'Ext.ux.form.MultiSelect',
+
+		requires: ['CMDBuild.proxy.common.field.multiselect.Group'],
 
 		considerAsFieldToDisable: true,
 
-		fieldLabel: CMDBuild.Translation.administration.modreport.importJRFormStep1.enabled_groups,
-		name: CMDBuild.ServiceProxy.parameter.GROUPS,
+		fieldLabel: CMDBuild.Translation.enabledGroups,
+		name: CMDBuild.core.constants.Proxy.GROUPS,
 		dataFields: [
-			CMDBuild.ServiceProxy.parameter.NAME,
-			CMDBuild.ServiceProxy.parameter.ID,
-			CMDBuild.ServiceProxy.parameter.DESCRIPTION
+			CMDBuild.core.constants.Proxy.NAME,
+			CMDBuild.core.constants.Proxy.ID,
+			CMDBuild.core.constants.Proxy.DESCRIPTION
 		],
-		valueField: CMDBuild.ServiceProxy.parameter.ID,
-		displayField: CMDBuild.ServiceProxy.parameter.DESCRIPTION,
+		valueField: CMDBuild.core.constants.Proxy.ID,
+		displayField: CMDBuild.core.constants.Proxy.DESCRIPTION,
 		allowBlank: true,
 
 		initComponent: function() {
-			if (!this.store) {
-				if (
-					_CMCache
-					&& typeof _CMCache.getActiveGroupsStore == 'function'
-				) {
-					this.store = _CMCache.getActiveGroupsStore();
-				} else {
-					this.store = Ext.create('Ext.data.Store', {
-						fields: ['fake'],
-						data: []
-					});
-				}
-			}
+			Ext.applyIf(this, {
+				store: CMDBuild.proxy.common.field.multiselect.Group.getStore()
+			});
 
 			this.callParent(arguments);
 		},

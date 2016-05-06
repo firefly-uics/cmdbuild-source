@@ -2,13 +2,13 @@
  * @deprecated (CMDBuild.view.common.field.searchWindow.SearchWindow)
  */
 Ext.define("CMDBuild.Management.ReferenceSearchWindow", {
-	extend: "CMDBuild.Management.CardListWindow",
+	extend: "CMDBuild.view.management.common.CMCardListWindow",
 
 	initComponent: function() {
 		this.selection = null;
 
 		this.saveButton = new Ext.Button({
-			text : CMDBuild.Translation.common.buttons.save,
+			text : CMDBuild.Translation.save,
 			name: 'saveButton',
 			disabled: true,
 			handler : this.onSave,

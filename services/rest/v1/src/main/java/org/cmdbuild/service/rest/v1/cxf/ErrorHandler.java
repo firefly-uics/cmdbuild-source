@@ -50,6 +50,4 @@ public interface ErrorHandler {
 
 	void sessionNotFound(String id);
 
-	void userNotFound(String id);
-
 }

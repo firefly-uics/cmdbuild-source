@@ -3,26 +3,17 @@
 	Ext.define('CMDBuild.view.administration.domain.enabledClasses.TreePanel', {
 		extend: 'Ext.tree.Panel',
 
-		requires: ['CMDBuild.core.proxy.CMProxyConstants'],
+		requires: ['CMDBuild.core.constants.Proxy'],
 
 		/**
 		 * @cfg {CMDBuild.controller.administration.domain.EnabledClasses}
 		 */
 		delegate: undefined,
 
-		/**
-		 * @cfg {Array}
-		 */
-		disabledClasses: [],
-
-		/**
-		 * @cfg {String}
-		 */
-		type: undefined,
-
 		autoScroll: true,
 		border: true,
 		collapsible: false,
+		considerAsFieldToDisable: true,
 		enableColumnHide: false,
 		flex: 1,
 		frame: false,
@@ -30,20 +21,24 @@
 		rootVisible: false,
 		sortableColumns: false, // BUGGED in ExtJs 4.2, workaround setting sortable: false to columns
 
+		viewConfig: {
+			markDirty: false // Workaround to avoid dirty mark on hidden checkColumn cells
+		},
+
 		initComponent: function() {
 			Ext.apply(this, {
 				columns: [
 					{
 						xtype: 'treecolumn',
 						text: CMDBuild.Translation.className,
-						dataIndex: CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION,
+						dataIndex: CMDBuild.core.constants.Proxy.DESCRIPTION,
 						flex: 1,
 						sortable: false,
 						draggable: false
 					},
 					Ext.create('Ext.grid.column.CheckColumn', {
-						header: CMDBuild.Translation.enabled,
-						dataIndex: CMDBuild.core.proxy.CMProxyConstants.ENABLED,
+						text: CMDBuild.Translation.enabled,
+						dataIndex: CMDBuild.core.constants.Proxy.ENABLED,
 						width: 60,
 						align: 'center',
 						sortable: false,
@@ -51,7 +46,7 @@
 						menuDisabled: true,
 						fixed: true,
 
-						renderer: function(value, meta, record, rowIndex, colIndex, store, view, returna) {
+						renderer: function(value, meta, record, rowIndex, colIndex, store, view) {
 							if (record.childNodes.length > 0) {
 								return '';
 							} else {// HACK: to recreate original renderer method behaviour, callParent doesn't work
@@ -69,7 +64,17 @@
 						}
 					})
 				],
-				store: this.delegate.buildClassesStore(this.disabledClasses, this.type)
+				store: Ext.create('Ext.data.TreeStore', {
+					model: 'CMDBuild.model.Classes.domainsTreePanel',
+					root: {
+						text: 'ROOT',
+						expanded: true,
+						children: []
+					},
+					sorters: [
+						{ property: CMDBuild.core.constants.Proxy.DESCRIPTION, direction: 'ASC' }
+					]
+				})
 			});
 
 			this.callParent(arguments);
@@ -87,7 +92,7 @@
 				Ext.isEmpty(this.getStore().getRootNode().childNodes)
 				|| ( // if root has more than one child and that child is not a superclass
 					this.getStore().getRootNode().childNodes.length <= 1
-					&& this.getStore().getRootNode().getChildAt(0).childNodes.length <= 1 // TODO: use model function isSuperClass
+					&& this.getStore().getRootNode().getChildAt(0).isLeaf()
 				)
 			) {
 				return this.callParent([true]);

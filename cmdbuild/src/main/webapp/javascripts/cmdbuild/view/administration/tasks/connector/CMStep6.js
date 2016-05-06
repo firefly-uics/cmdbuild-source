@@ -5,7 +5,7 @@
 	Ext.define('CMDBuild.view.administration.tasks.connector.CMStep6Delegate', {
 		extend: 'CMDBuild.controller.CMBasePanelController',
 
-		requires: ['CMDBuild.core.proxy.CMProxyConstants'],
+		requires: ['CMDBuild.core.constants.Proxy'],
 
 		/**
 		 * @cfg {CMDBuild.controller.administration.tasks.CMTasksFormConnectorController}
@@ -46,8 +46,8 @@
 
 			this.view.referenceMappingGrid.columns[0].setEditor({
 				xtype: 'combo',
-				displayField: CMDBuild.core.proxy.CMProxyConstants.NAME,
-				valueField: CMDBuild.core.proxy.CMProxyConstants.NAME,
+				displayField: CMDBuild.core.constants.Proxy.NAME,
+				valueField: CMDBuild.core.constants.Proxy.NAME,
 				forceSelection: true,
 				editable: false,
 				allowBlank: false,
@@ -73,8 +73,8 @@
 				var me = this;
 				var domainStore = _CMCache.getDomainsBy(function(domain) {
 					return (
-						(domain.get(CMDBuild.core.proxy.CMProxyConstants.NAME_CLASS_1) == className)
-						|| (domain.get(CMDBuild.core.proxy.CMProxyConstants.NAME_CLASS_2) == className)
+						(domain.get(CMDBuild.core.constants.Proxy.NAME_CLASS_1) == className)
+						|| (domain.get(CMDBuild.core.constants.Proxy.NAME_CLASS_2) == className)
 					);
 				});
 
@@ -84,15 +84,15 @@
 				if (domainStore.length > 0) {
 					this.view.referenceMappingGrid.columns[1].setEditor({
 						xtype: 'combo',
-						displayField: CMDBuild.core.proxy.CMProxyConstants.NAME,
-						valueField: CMDBuild.core.proxy.CMProxyConstants.NAME,
+						displayField: CMDBuild.core.constants.Proxy.NAME,
+						valueField: CMDBuild.core.constants.Proxy.NAME,
 						forceSelection: true,
 						editable: false,
 						allowBlank: false,
 
 						store: Ext.create('Ext.data.Store', {
 							autoLoad: true,
-							fields: [CMDBuild.core.proxy.CMProxyConstants.NAME],
+							fields: [CMDBuild.core.constants.Proxy.NAME],
 							data: domainStore
 						}),
 
@@ -125,13 +125,13 @@
 					// To validate and filter grid rows
 					this.view.referenceMappingGrid.getStore().each(function(record) {
 						if (
-							!Ext.isEmpty(record.get(CMDBuild.core.proxy.CMProxyConstants.CLASS_NAME))
-							&& !Ext.isEmpty(record.get(CMDBuild.core.proxy.CMProxyConstants.DOMAIN_NAME))
+							!Ext.isEmpty(record.get(CMDBuild.core.constants.Proxy.CLASS_NAME))
+							&& !Ext.isEmpty(record.get(CMDBuild.core.constants.Proxy.DOMAIN_NAME))
 						) {
 							var buffer = {};
 
-							buffer[CMDBuild.core.proxy.CMProxyConstants.CLASS_NAME] = record.get(CMDBuild.core.proxy.CMProxyConstants.CLASS_NAME);
-							buffer[CMDBuild.core.proxy.CMProxyConstants.DOMAIN_NAME] = record.get(CMDBuild.core.proxy.CMProxyConstants.DOMAIN_NAME);
+							buffer[CMDBuild.core.constants.Proxy.CLASS_NAME] = record.get(CMDBuild.core.constants.Proxy.CLASS_NAME);
+							buffer[CMDBuild.core.constants.Proxy.DOMAIN_NAME] = record.get(CMDBuild.core.constants.Proxy.DOMAIN_NAME);
 
 							data.push(buffer);
 						}
@@ -148,9 +148,9 @@
 		 */
 		onBeforeEdit: function(fieldName, rowData) {
 			switch (fieldName) {
-				case CMDBuild.core.proxy.CMProxyConstants.DOMAIN_NAME: {
-					if (!Ext.isEmpty(rowData[CMDBuild.core.proxy.CMProxyConstants.CLASS_NAME])) {
-						this.buildDomainCombo(rowData[CMDBuild.core.proxy.CMProxyConstants.CLASS_NAME]);
+				case CMDBuild.core.constants.Proxy.DOMAIN_NAME: {
+					if (!Ext.isEmpty(rowData[CMDBuild.core.constants.Proxy.CLASS_NAME])) {
+						this.buildDomainCombo(rowData[CMDBuild.core.constants.Proxy.CLASS_NAME]);
 					} else {
 						var columnModel = this.view.referenceMappingGrid.columns[1];
 						var columnEditor = columnModel.getEditor();
@@ -176,7 +176,7 @@
 	Ext.define('CMDBuild.view.administration.tasks.connector.CMStep6', {
 		extend: 'Ext.panel.Panel',
 
-		requires: ['CMDBuild.core.proxy.CMProxyConstants'],
+		requires: ['CMDBuild.core.constants.Proxy'],
 
 		/**
 		 * @cfg {CMDBuild.view.administration.tasks.connector.CMStep6Delegate}
@@ -219,14 +219,14 @@
 				title: tr.referenceMapping,
 				considerAsFieldToDisable: true,
 				margin: '0 0 5 0',
-				minWidth: CMDBuild.ADM_BIG_FIELD_WIDTH,
+				minWidth: CMDBuild.core.constants.FieldWidths.ADMINISTRATION_BIG,
 
 				plugins: [this.gridEditorPlugin],
 
 				columns: [
 					{
 						header: tr.className,
-						dataIndex: CMDBuild.core.proxy.CMProxyConstants.CLASS_NAME,
+						dataIndex: CMDBuild.core.constants.Proxy.CLASS_NAME,
 						editor: {
 							xtype: 'combo',
 							disabled: true
@@ -235,7 +235,7 @@
 					},
 					{
 						header: tr.domainName,
-						dataIndex: CMDBuild.core.proxy.CMProxyConstants.DOMAIN_NAME,
+						dataIndex: CMDBuild.core.constants.Proxy.DOMAIN_NAME,
 						editor: {
 							xtype: 'combo',
 							disabled: true
@@ -254,7 +254,7 @@
 						items: [
 							{
 								icon: 'images/icons/cross.png',
-								tooltip: CMDBuild.Translation.common.buttons.remove,
+								tooltip: CMDBuild.Translation.remove,
 								handler: function(grid, rowIndex, colIndex, node, e, record, rowNode) {
 									me.referenceMappingGrid.store.remove(record);
 								}
@@ -272,10 +272,10 @@
 					{
 						xtype: 'toolbar',
 						dock: 'top',
-						itemId: CMDBuild.core.proxy.CMProxyConstants.TOOLBAR_TOP,
+						itemId: CMDBuild.core.constants.Proxy.TOOLBAR_TOP,
 						items: [
 							{
-								text: CMDBuild.Translation.common.buttons.add,
+								text: CMDBuild.Translation.add,
 								iconCls: 'add',
 								handler: function() {
 									me.referenceMappingGrid.store.insert(0, Ext.create('CMDBuild.model.CMModelTasks.connector.referenceLevel'));

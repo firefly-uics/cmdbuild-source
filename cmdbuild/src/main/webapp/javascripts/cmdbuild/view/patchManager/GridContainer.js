@@ -3,8 +3,6 @@
 	Ext.define('CMDBuild.view.patchManager.GridContainer', {
 		extend: 'Ext.panel.Panel',
 
-		requires: ['CMDBuild.core.buttons.Buttons'],
-
 		/**
 		 * @cfg {CMDBuild.controller.patchManager.PatchManager}
 		 */
@@ -15,17 +13,18 @@
 		 */
 		grid: undefined,
 
-		border: true,
-		frame: true,
+		border: false,
+		cls: 'cmdb-blue-panel',
+		frame: false,
 		layout: 'fit',
-		title: CMDBuild.Translation.availablePatchesList,
+		padding: '0 0 5 0',
 
 		initComponent: function() {
 			Ext.apply(this, {
 				dockedItems: [
 					Ext.create('Ext.toolbar.Toolbar', {
 						dock: 'bottom',
-						itemId: CMDBuild.core.proxy.CMProxyConstants.TOOLBAR_BOTTOM,
+						itemId: CMDBuild.core.constants.Proxy.TOOLBAR_BOTTOM,
 						ui: 'footer',
 
 						layout: {
@@ -35,11 +34,11 @@
 						},
 
 						items: [
-							Ext.create('CMDBuild.core.buttons.Apply', {
+							Ext.create('CMDBuild.core.buttons.text.Apply', {
 								scope: this,
 
 								handler: function(button, e) {
-									this.delegate.cmfg('onPatchManagerApplyButtonClick');
+									this.delegate.cmfg('onPatchManagerViewportApplyButtonClick');
 								}
 							})
 						]
@@ -47,7 +46,7 @@
 				],
 				items: [
 					this.grid = Ext.create('CMDBuild.view.patchManager.GridPanel', { delegate: this.delegate })
-				],
+				]
 			});
 
 			this.callParent(arguments);

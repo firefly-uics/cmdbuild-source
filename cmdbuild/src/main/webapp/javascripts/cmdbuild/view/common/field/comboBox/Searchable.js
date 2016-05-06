@@ -1,4 +1,4 @@
-(function() {
+(function () {
 
 	Ext.define('CMDBuild.view.common.field.comboBox.Searchable', {
 		extend: 'Ext.form.field.ComboBox',
@@ -26,10 +26,31 @@
 		trigger2Cls: Ext.baseCSSPrefix + 'form-clear-trigger',
 		trigger3Cls: Ext.baseCSSPrefix + 'form-search-trigger',
 
-		initComponent: function() {
+		/**
+		 * @returns {Void}
+		 *
+		 * @override
+		 */
+		initComponent: function () {
 			this.delegate = Ext.create('CMDBuild.controller.common.field.comboBox.Searchable', { view: this });
 
 			this.callParent(arguments);
+		},
+
+		/**
+		 * Check if field returned value exists inside store
+		 *
+		 * @param {String} rawValue
+		 *
+		 * @returns {Array}
+		 *
+		 * @override
+		 */
+		getErrors: function (rawValue) {
+			if (!Ext.isEmpty(rawValue) && this.getStore().find(this.valueField, this.getValue()) == -1)
+				return [CMDBuild.Translation.errors.valueDoesNotMatchFilter];
+
+			return this.callParent(arguments);
 		},
 
 		/**
@@ -38,14 +59,29 @@
 		 *
 		 * @returns {String}
 		 */
-		getReadableValue: function() {
+		getReadableValue: function () {
 			return this.getRawValue();
 		},
 
 		/**
+		 * Return value only if number, to avoid wrong and massive server requests from template resolver where returned value from field is a string
+		 *
+		 * @returns {Number}
+		 *
 		 * @override
 		 */
-		onKeyUp: function() {
+		getValue: function () {
+			var value = this.callParent(arguments);
+
+			return Ext.isNumber(value) ? value : '';
+		},
+
+		/**
+		 * @returns {Void}
+		 *
+		 * @override
+		 */
+		onKeyUp: function () {
 			if (this.delegate.cmfg('fieldComboBoxSearchableStoreExceedsLimit')) {
 				this.delegate.cmfg('onFieldComboBoxSearchableKeyUp');
 			} else {
@@ -53,15 +89,24 @@
 			}
 		},
 
-		onTrigger1Click: function() {
+		/**
+		 * @returns {Void}
+		 */
+		onTrigger1Click: function () {
 			this.delegate.cmfg('onFieldComboBoxSearchableTrigger1Click');
 		},
 
-		onTrigger2Click: function() {
+		/**
+		 * @returns {Void}
+		 */
+		onTrigger2Click: function () {
 			this.delegate.cmfg('onFieldComboBoxSearchableTrigger2Click');
 		},
 
-		onTrigger3Click: function(value) {
+		/**
+		 * @returns {Void}
+		 */
+		onTrigger3Click: function (value) {
 			this.delegate.cmfg('onFieldComboBoxSearchableTrigger3Click');
 		},
 
@@ -70,14 +115,20 @@
 		 *
 		 * @param {String} value
 		 *
+		 * @returns {CMDBuild.view.common.field.comboBox.Searchable}
+		 *
 		 * @override
 		 */
 		setValue: function (value) {
-			if (this.getStore().find(this.valueField, value) >= 0) {
-				return this.callParent(arguments);
-			} else {
-				return this.delegate.cmfg('onFieldComboBoxSearchableSetValue', value);
-			}
+			value = this.delegate.cmfg('fieldComboBoxSearchableNormalizeValue', value);
+
+			if (Ext.isEmpty(value))
+				return this.callParent();
+
+			if (this.getStore().find(this.valueField, value) >= 0)
+				return this.callParent([value]);
+
+			return this.delegate.cmfg('onFieldComboBoxSearchableValueSet', value);
 		}
 	});
 

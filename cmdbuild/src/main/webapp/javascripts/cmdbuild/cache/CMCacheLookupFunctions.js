@@ -1,15 +1,28 @@
 (function() {
 	var constants = CMDBuild.Constants;
-	
-	var lookupTypeStore = getFakeStore()
+
+	var lookupTypeStore = getFakeStore();
 	var lookupTypeStoreOnlyLeves = getFakeStore();
 
-	
+
 	var lookupTypes = {};
-	
+
 	var lookupAttributeStoreMap = {};
 
+	Ext.define('CMDBuild.model.cache.LookupFieldStore', {
+		extend: 'Ext.data.Model',
+
+		fields: [
+			{ name: 'Description', type: 'string' },
+			{ name: 'Id', type: 'int', defaultValue: '' },
+			{ name: 'Number', type: 'int' },
+			{ name: 'ParentId', type: 'int' },
+			{ name: 'TranslationUuid', type: 'string' }
+		]
+	});
+
 	Ext.define("CMDBUild.cache.CMCacheLookupFunctions", {
+
 		getLookupTypes: function() {
 			return lookupTypes;
 		},
@@ -31,7 +44,7 @@
 				lookupTypeStore = buildLookupTypeStore(onlyLeaves = false);
 				lookupTypeStore.cmFill();
 			}
-			
+
 			return lookupTypeStore;
 		},
 
@@ -40,7 +53,7 @@
 				lookupTypeStoreOnlyLeves = buildLookupTypeStore(onlyLeaves = true);
 				lookupTypeStoreOnlyLeves.cmFill();
 			}
-	
+
 			return lookupTypeStoreOnlyLeves;
 		},
 
@@ -76,11 +89,16 @@
 				}
 			}
 		},
-		
+
+		/**
+		 * @param {String} type
+		 *
+		 * @returns {Ext.data.Store or CMDBuild.core.cache.Store}
+		 */
 		getLookupStore: function(type) {
-			if (!lookupAttributeStoreMap[type]) {
-				lookupAttributeStoreMap[type] = CMDBuild.ServiceProxy.lookup.getLookupFieldStore(type);
-			}
+			if (!lookupAttributeStoreMap[type])
+				lookupAttributeStoreMap[type] = CMDBuild.proxy.Cache.getStoreLookup(type);
+
 			return lookupAttributeStoreMap[type];
 		},
 
@@ -110,7 +128,7 @@
 
 	function buildLookupTypeStore(onlyLeaves) {
 		var store = new Ext.data.Store({
-			model: "CMLookupTypeForCombo",
+			model: "CMDBuild.cache.Lookup.typeComboStore",
 			cmOnlyLeaves: onlyLeaves,
 			cmFill: function() {
 				this.removeAll();

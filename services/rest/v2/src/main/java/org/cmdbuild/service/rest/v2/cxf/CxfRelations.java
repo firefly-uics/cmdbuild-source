@@ -177,7 +177,7 @@ public class CxfRelations implements Relations {
 
 	@Override
 	public ResponseMultiple<Relation> read(final String domainId, final String filter, final Integer limit,
-			final Integer offset) {
+			final Integer offset, final boolean detailed) {
 		final CMDomain targetDomain = dataAccessLogic.findDomain(domainId);
 		if (targetDomain == null) {
 			errorHandler.domainNotFound(domainId);
@@ -222,7 +222,7 @@ public class CxfRelations implements Relations {
 			final List<Relation> elements = newArrayList();
 			for (final DomainInfo domainInfo : response) {
 				addAll(elements, from(domainInfo) //
-						.transform(BASIC_DETAILS));
+						.transform(detailed ? FULL_DETAILS : BASIC_DETAILS));
 			}
 			return newResponseMultiple(Relation.class) //
 					.withElements(elements) //

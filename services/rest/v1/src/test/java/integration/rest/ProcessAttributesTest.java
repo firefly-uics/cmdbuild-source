@@ -32,27 +32,23 @@ import org.cmdbuild.service.rest.v1.model.Attribute;
 import org.cmdbuild.service.rest.v1.model.ResponseMultiple;
 import org.junit.Before;
 import org.junit.ClassRule;
-import org.junit.Rule;
 import org.junit.Test;
 
 public class ProcessAttributesTest {
 
-	private ProcessAttributes service;
-
-	@Rule
-	public ServerResource server = ServerResource.newInstance() //
-			.withServiceClass(ProcessAttributes.class) //
-			.withService(service = mock(ProcessAttributes.class)) //
-			.withPort(randomPort()) //
+	@ClassRule
+	public static ServerResource<ProcessAttributes> server = ServerResource.newInstance(ProcessAttributes.class) //
+			.withPortRange(randomPort()) //
 			.build();
 
-	@ClassRule
-	public static JsonSupport json = new JsonSupport();
+	private static JsonSupport json = new JsonSupport();
 
+	private ProcessAttributes service;
 	private HttpClient httpclient;
 
 	@Before
-	public void createHttpClient() throws Exception {
+	public void setUp() throws Exception {
+		server.service(service = mock(ProcessAttributes.class));
 		httpclient = HttpClientBuilder.create().build();
 	}
 

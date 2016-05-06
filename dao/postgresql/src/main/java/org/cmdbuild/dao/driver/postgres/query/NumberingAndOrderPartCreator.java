@@ -2,6 +2,7 @@ package org.cmdbuild.dao.driver.postgres.query;
 
 import static com.google.common.collect.Lists.newArrayList;
 import static java.lang.String.format;
+import static java.util.stream.Collectors.toList;
 import static org.apache.commons.lang3.StringUtils.join;
 import static org.apache.commons.lang3.SystemUtils.LINE_SEPARATOR;
 import static org.cmdbuild.dao.driver.postgres.Const.SystemAttributes.Id;
@@ -13,7 +14,9 @@ import static org.cmdbuild.dao.driver.postgres.query.SelectPartCreator.ATTRIBUTE
 import static org.cmdbuild.dao.driver.postgres.quote.AliasQuoter.quote;
 import static org.cmdbuild.dao.query.clause.alias.Aliases.name;
 
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.cmdbuild.dao.entrytype.CMEntryType;
 import org.cmdbuild.dao.entrytype.CMEntryTypeVisitor;
@@ -22,6 +25,7 @@ import org.cmdbuild.dao.entrytype.ForwardingEntryTypeVisitor;
 import org.cmdbuild.dao.entrytype.NullEntryTypeVisitor;
 import org.cmdbuild.dao.query.QuerySpecs;
 import org.cmdbuild.dao.query.clause.OrderByClause;
+import org.cmdbuild.dao.query.clause.OrderByClause.Direction;
 import org.cmdbuild.dao.query.clause.QueryAliasAttribute;
 
 public class NumberingAndOrderPartCreator extends PartCreator {
@@ -79,9 +83,7 @@ public class NumberingAndOrderPartCreator extends PartCreator {
 			}
 
 			/*
-			 * row number (if possible)
-			 * 
-			 * uses row_number feature for ordering
+			 * row number (if possible) uses row_number feature for ordering
 			 */
 			if (querySpecs.numbered() && !orderByAttributesExpression.isEmpty()) {
 				selectAttributes.add(format("row_number() OVER (%s %s) AS %s", //
@@ -122,19 +124,28 @@ public class NumberingAndOrderPartCreator extends PartCreator {
 	 * 
 	 * @return a list of ordering expressions (if any).
 	 */
-	private List<String> expressionsForOrdering(final QuerySpecs querySpecs) {
-		final List<String> expressions = newArrayList();
+	private static List<String> expressionsForOrdering(final QuerySpecs querySpecs) {
+		return quotedOrderClauses(querySpecs).entrySet().stream() //
+				.map(input -> {
+					final String key = input.getKey();
+					final Direction value = input.getValue();
+					return (value == null) ? key : format(ORDER_BY_ATTRIBUTE_EXPRESSION, key, value);
+				}) //
+				.collect(toList());
+	}
+
+	static Map<String, Direction> quotedOrderClauses(final QuerySpecs querySpecs) {
+		final Map<String, Direction> output = new LinkedHashMap<>();
 		for (final OrderByClause clause : querySpecs.getOrderByClauses()) {
 			final QueryAliasAttribute attribute = clause.getAttribute();
-			expressions.add(format(ORDER_BY_ATTRIBUTE_EXPRESSION, //
-					quote(name(nameForUserAttribute(attribute.getEntryTypeAlias(), attribute.getName()))), //
-					clause.getDirection()));
+			output.put(quote(name(nameForUserAttribute(attribute.getEntryTypeAlias(), attribute.getName()))),
+					clause.getDirection());
 		}
-		if ((!expressions.isEmpty() || !querySpecs.skipDefaultOrdering())
+		if ((!output.isEmpty() || !querySpecs.skipDefaultOrdering())
 				&& specialFeaturesChecker.addDefaultOrderings(querySpecs.getFromClause().getType())) {
-			expressions.add(quote(name(nameForSystemAttribute(querySpecs.getFromClause().getAlias(), Id))));
+			output.put(quote(name(nameForSystemAttribute(querySpecs.getFromClause().getAlias(), Id))), null);
 		}
-
-		return expressions;
+		return output;
 	}
+
 }

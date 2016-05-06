@@ -1,20 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
-	xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
 		<groupId>org.cmdbuild</groupId>
-		<artifactId>cmdbuild-main</artifactId>
-		<version>2.3.5-SNAPSHOT</version>
-		<relativePath>../..</relativePath>
+		<artifactId>cmdbuild-parent</artifactId>
+		<version>2.4.1-SNAPSHOT</version>
+		<relativePath>../../parent</relativePath>
 	</parent>
 	<artifactId>cmdbuild-bim-bimserver</artifactId>
 	<name>CMDBuild BIM BimServer</name>
 	<properties>
 		<bimserver.libraries.dir>${basedir}/src/lib</bimserver.libraries.dir>
 		<bimserver.version>1.2</bimserver.version>
-		<maven-resources-plugin>2.6</maven-resources-plugin>
+		<maven-install-plugin.version>2.5.2</maven-install-plugin.version>
 	</properties>
 	<dependencies>
 		<dependency>
@@ -164,7 +163,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-install-plugin</artifactId>
-				<version>2.4</version>
+				<version>${maven-install-plugin.version}</version>
 				<executions>
 					<execution>
 						<id>bimserver</id>
@@ -283,7 +282,7 @@
 		</plugins>
 		<pluginManagement>
 			<plugins>
-				<!-- This plugin's configuration is used to store Eclipse m2e settings 
+				<!-- This plugin's configuration is used to store Eclipse m2e settings
 					only. It has no influence on the Maven build itself. -->
 				<plugin>
 					<groupId>org.eclipse.m2e</groupId>
@@ -296,7 +295,7 @@
 									<pluginExecutionFilter>
 										<groupId>org.apache.maven.plugins</groupId>
 										<artifactId>maven-install-plugin</artifactId>
-										<versionRange>[2.4,)</versionRange>
+										<versionRange>[${maven-install-plugin.version},)</versionRange>
 										<goals>
 											<goal>install-file</goal>
 										</goals>

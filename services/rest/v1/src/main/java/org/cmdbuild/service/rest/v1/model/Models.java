@@ -180,6 +180,7 @@ public class Models {
 		private String name;
 		private String description;
 		private Boolean displayableInList;
+		private String domainName;
 		private Boolean unique;
 		private Boolean mandatory;
 		private Boolean inherited;
@@ -210,6 +211,7 @@ public class Models {
 			output.setName(name);
 			output.setDescription(description);
 			output.setDisplayableInList(isTrue(displayableInList));
+			output.setDomainName(domainName);
 			output.setUnique(isTrue(unique));
 			output.setMandatory(isTrue(mandatory));
 			output.setInherited(isTrue(inherited));
@@ -252,6 +254,11 @@ public class Models {
 
 		public AttributeBuilder thatIsDisplayableInList(final Boolean displayableInList) {
 			this.displayableInList = displayableInList;
+			return this;
+		}
+
+		public AttributeBuilder withDomainName(final String domainName) {
+			this.domainName = domainName;
 			return this;
 		}
 
@@ -1197,7 +1204,8 @@ public class Models {
 			return this;
 		}
 
-		public ProcessInstanceAdvanceBuilder withValues(final Iterable<? extends Entry<String, ? extends Object>> values) {
+		public ProcessInstanceAdvanceBuilder withValues(
+				final Iterable<? extends Entry<String, ? extends Object>> values) {
 			return withValues(transformValues(uniqueIndex(values, KEY), VALUE));
 		}
 
@@ -1777,10 +1785,6 @@ public class Models {
 
 	public static SessionBuilder newSession() {
 		return new SessionBuilder();
-	}
-
-	public static SessionBuilder newSession(final Session existing) {
-		return new SessionBuilder(existing);
 	}
 
 	public static ValuesBuilder newValues() {

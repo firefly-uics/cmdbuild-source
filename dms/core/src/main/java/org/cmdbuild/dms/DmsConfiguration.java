@@ -1,78 +1,41 @@
 package org.cmdbuild.dms;
 
-import java.lang.reflect.InvocationHandler;
-import java.lang.reflect.Method;
-import java.lang.reflect.Proxy;
-
-import org.cmdbuild.dms.exception.MissingConfigurationException;
+import java.util.EventListener;
 
 public interface DmsConfiguration {
 
+	static interface ChangeListener extends EventListener {
+
+		void configurationChanged();
+
+	}
+
+	void addListener(ChangeListener listener);
+
 	boolean isEnabled();
 
-	String getServerURL();
-
-	String getFtpPort();
-
-	String getFtpHost();
-
-	String getAlfrescoUser();
-
-	String getAlfrescoPassword();
+	String getService();
 
 	String getCmdbuildCategory();
 
-	String getRepositoryFSPath();
-
-	String getRepositoryWSPath();
-
-	String getRepositoryApp();
+	/**
+	 * Returns the content of the file containing the custom model definition.
+	 * 
+	 * @return the content of the file or an empty string if the file doesn't
+	 *         exist or there was an error during file access.
+	 * 
+	 */
+	String getCustomModelFileContent();
 
 	String getAlfrescoCustomUri();
 
-	String getAlfrescoCustomPrefix();
-
-	String getAlfrescoCustomModelFileName();
-
-	String getAlfrescoCustomModelFileContent();
-
-	String getMetadataAutocompletionFileName();
-
-	String getMetadataAutocompletionFileContent();
-
-	long getDelayBetweenFtpAndWebserviceOperations();
-
-	/*
-	 * Utilities
+	/**
+	 * Returns the content of the file containing the custom model definition.
+	 * 
+	 * @return the content of the file or an empty string if the file doesn't
+	 *         exist or there was an error during file access.
+	 * 
 	 */
-
-	class NullDmsConfiguration {
-
-		private NullDmsConfiguration() {
-			// prevents instantiation
-		}
-
-		private static Object createProxy() {
-			final Class<?> cl = DmsConfiguration.class;
-			final ClassLoader classLoader = cl.getClassLoader();
-			final Class<?>[] interfaces = new Class<?>[] { DmsConfiguration.class };
-			return Proxy.newProxyInstance( //
-					classLoader, //
-					interfaces, //
-					new InvocationHandler() {
-						@Override
-						public Object invoke(final Object proxy, final Method method, final Object[] args)
-								throws Throwable {
-							throw new MissingConfigurationException();
-						}
-					});
-		}
-
-		public static DmsConfiguration newInstance() {
-			final Object proxy = createProxy();
-			return DmsConfiguration.class.cast(proxy);
-		}
-
-	}
+	String getMetadataAutocompletionFileContent();
 
 }

@@ -1,61 +1,43 @@
 (function() {
 
-	/**
-	 * This class uses only partially currentReportParameters methods, because update functionalities to keep parameters selection aren't required.
-	 */
 	Ext.define('CMDBuild.controller.management.report.Report', {
-		extend: 'CMDBuild.controller.management.report.SingleReport',
+		extend: 'CMDBuild.controller.common.abstract.Base',
 
 		requires: [
-			'CMDBuild.core.Message',
-			'CMDBuild.core.proxy.CMProxyConstants',
-			'CMDBuild.core.proxy.CMProxyUrlIndex',
-			'CMDBuild.core.proxy.report.Report'
+			'CMDBuild.core.constants.Proxy',
+			'CMDBuild.proxy.index.Json'
 		],
+
+		/**
+		 * @cfg {CMDBuild.controller.common.MainViewport}
+		 */
+		parentDelegate: undefined,
 
 		/**
 		 * @cfg {Array}
 		 */
 		cmfgCatchedFunctions: [
-			'currentReportParametersGet',
-			'currentReportParametersSet',
-			'currentReportRecordGet',
-			'onReportGenerateButtonClick',
-			'showReport',
-			'updateReport'
+			'onReportModuleInit = onModuleInit',
+			'reportSelectedAccordionGet',
+			'reportSelectedAccordionIsEmpty'
 		],
 
 		/**
-		 * @property {CMDBuild.model.report.Grid}
+		 * @cfg {String}
+		 */
+		identifier: undefined,
+
+		/**
+		 * @property {Object}
+		 */
+		sectionController: undefined,
+
+		/**
+		 * @property {CMDBuild.model.report.accordion.Management}
 		 *
 		 * @private
 		 */
-		currentReportRecord: undefined,
-
-		/**
-		 * Witch report types will be viewed inside modal pop-up
-		 *
-		 * @cfg {Array}
-		 */
-		forceDownloadTypes: [
-			CMDBuild.core.proxy.CMProxyConstants.ODT,
-			CMDBuild.core.proxy.CMProxyConstants.RTF
-		],
-
-		/**
-		 * @property {CMDBuild.view.management.report.GridPanel}
-		 */
-		grid: undefined,
-
-		/**
-		 * @cfg {Array}
-		 */
-		managedReportTypes: [
-			CMDBuild.core.proxy.CMProxyConstants.CSV,
-			CMDBuild.core.proxy.CMProxyConstants.ODT,
-			CMDBuild.core.proxy.CMProxyConstants.PDF,
-			CMDBuild.core.proxy.CMProxyConstants.RTF
-		],
+		selectedAccordion: undefined,
 
 		/**
 		 * @cfg {CMDBuild.view.management.report.ReportView}
@@ -63,190 +45,99 @@
 		view: undefined,
 
 		/**
-		 * @param {CMDBuild.view.management.report.ReportView} view
+		 * @param {Object} configurationObject
+		 *
+		 * @override
 		 */
-		constructor: function(view) {
+		constructor: function(configurationObject) {
 			this.callParent(arguments);
 
-			this.grid = Ext.create('CMDBuild.view.management.report.GridPanel', { delegate: this });
-
-			this.view.add(this.grid);
+			this.view = Ext.create('CMDBuild.view.management.report.ReportView', { delegate: this });
 		},
 
 		/**
-		 * @param {Boolean} forceDownload
+		 * Setup view items and controllers on accordion click
+		 *
+		 * @param {CMDBuild.model.report.accordion.Management} node
+		 *
+		 * @override
 		 */
-		createReport: function(forceDownload) {
-			forceDownload = forceDownload || false;
-
-			if (
-				!Ext.isEmpty(this.currentReportParametersGet({
-					callIdentifier: 'create',
-					property: CMDBuild.core.proxy.CMProxyConstants.ID
-				}))
-			) {
-				CMDBuild.core.proxy.report.Report.create({
-					params: this.currentReportParametersGet({ callIdentifier: 'create' }),
-					scope: this,
-					failure: function(response, options, decodedResponse) {
-						CMDBuild.core.Message.error(
-							CMDBuild.Translation.error,
-							CMDBuild.Translation.errors.createReportFilure,
-							false
-						);
-					},
-					success: function(response, options, decodedResponse) {
-						if(decodedResponse.filled) { // Report with no parameters
-							this.showReport(forceDownload);
-						} else { // Show parameters window
-							Ext.create('CMDBuild.controller.management.report.Parameters', {
-								parentDelegate: this,
-								attributeList: decodedResponse.attribute,
-								forceDownload: forceDownload
-							});
-						}
-					}
-				});
-			}
-		},
-
-		// CurrentReportRecord methods
-			/**
-			 * Returns full model object or just one property if required
-			 *
-			 * @param {String} parameterName
-			 *
-			 * @returns {CMDBuild.model.report.Grid} or Mixed
-			 */
-			currentReportRecordGet: function(parameterName) {
-				if (!Ext.isEmpty(parameterName))
-					return this.currentReportRecord.get(parameterName);
-
-				return this.currentReportRecord;
-			},
-
-			/**
-			 * @param {CMDBuild.model.report.Grid} record
-			 */
-			currentReportRecordSet: function(record) {
-				this.currentReportRecord = null;
-
-				if (!Ext.isEmpty(record))
-					this.currentReportRecord = record;
-			},
-
-		/**
-		 * @param {Object} reportInfo
-		 */
-		onReportGenerateButtonClick: function(reportInfo) {
-			if (Ext.Array.contains(this.managedReportTypes, reportInfo[CMDBuild.core.proxy.CMProxyConstants.TYPE])) {
-				this.currentReportParametersSet({
-					callIdentifier: 'create',
-					params: {
-						extension: reportInfo[CMDBuild.core.proxy.CMProxyConstants.TYPE],
-						id: reportInfo[CMDBuild.core.proxy.CMProxyConstants.RECORD].get(CMDBuild.core.proxy.CMProxyConstants.ID)
-					}
-				});
-
-				this.currentReportRecordSet(reportInfo[CMDBuild.core.proxy.CMProxyConstants.RECORD]);
-
-				// Force download true for PDF and CSV
-				this.createReport(Ext.Array.contains(this.forceDownloadTypes, reportInfo[CMDBuild.core.proxy.CMProxyConstants.TYPE]));
-			} else {
-				CMDBuild.core.Message.error(
-					CMDBuild.Translation.error,
-					CMDBuild.Translation.errors.unmanagedReportType,
-					false
-				);
-			}
-		},
-
-		/**
-		 * @param {CMDBuild.view.common.CMAccordionStoreModel} node
-		 */
-		onViewOnFront: function(node) {
+		onReportModuleInit: function(node) {
 			if (!Ext.Object.isEmpty(node)) {
-				this.grid.getStore().load({
-					scope: this,
-					callback: function(records, operation, success) {
-						if (!success) {
-							CMDBuild.core.Message.error(null, {
-								text: CMDBuild.Translation.errors.unknown_error,
-								detail: operation.error
-							});
-						}
+				var nodeData = node.getData();
+				nodeData[CMDBuild.core.constants.Proxy.TYPE] = nodeData[CMDBuild.core.constants.Proxy.ENTITY_ID];
+
+				this.reportSelectedAccordionSet({ value: nodeData });
+
+				this.view.removeAll(true);
+
+				switch (this.reportSelectedAccordionGet(CMDBuild.core.constants.Proxy.SECTION_HIERARCHY)[0]) {
+					case 'custom':
+					default: {
+						this.sectionController = Ext.create('CMDBuild.controller.management.report.Custom', { parentDelegate: this });
+					}
+				}
+
+				this.setViewTitle(node.get(CMDBuild.core.constants.Proxy.TEXT));
+
+				this.view.add(this.sectionController.getView());
+
+				this.sectionController.cmfg('onReportShow');
+
+				// History record save
+				CMDBuild.global.navigation.Chronology.cmfg('navigationChronologyRecordSave', {
+					moduleId: this.cmfg('identifierGet'),
+					entryType: {
+						description: this.reportSelectedAccordionGet(CMDBuild.core.constants.Proxy.DESCRIPTION),
+						id: this.reportSelectedAccordionGet(CMDBuild.core.constants.Proxy.ID),
+						object: this.reportSelectedAccordionGet()
 					}
 				});
 
-				if (
-					!Ext.isEmpty(node.get(CMDBuild.core.proxy.CMProxyConstants.ID))
-					&& node.get(CMDBuild.core.proxy.CMProxyConstants.ID) != CMDBuild.core.proxy.CMProxyConstants.CUSTOM
-				) {
-					this.currentReportParametersSet({
-						callIdentifier: 'create',
-						params: {
-							extension: node.get(CMDBuild.core.proxy.CMProxyConstants.TYPE).replace(/report/i, ''), // Removes 'report' string from type property in node object
-							id: node.get(CMDBuild.core.proxy.CMProxyConstants.ID),
-						}
-					});
+				this.onModuleInit(node); // Custom callParent() implementation
+			}
+		},
 
-					this.createReport();
+		// SelectedAccordion property methods
+			/**
+			 * @param {Array or String} attributePath
+			 *
+			 * @return {Mixed or undefined}
+			 */
+			reportSelectedAccordionGet: function(attributePath) {
+				var parameters = {};
+				parameters[CMDBuild.core.constants.Proxy.TARGET_VARIABLE_NAME] = 'selectedAccordion';
+				parameters[CMDBuild.core.constants.Proxy.ATTRIBUTE_PATH] = attributePath;
 
-					this.callParent(arguments);
+				return this.propertyManageGet(parameters);
+			},
+
+			/**
+			 * @param {Array or String} attributePath
+			 *
+			 * @return {Mixed or undefined}
+			 */
+			reportSelectedAccordionIsEmpty: function(attributePath) {
+				var parameters = {};
+				parameters[CMDBuild.core.constants.Proxy.TARGET_VARIABLE_NAME] = 'selectedAccordion';
+				parameters[CMDBuild.core.constants.Proxy.ATTRIBUTE_PATH] = attributePath;
+
+				return this.propertyManageIsEmpty(parameters);
+			},
+
+			/**
+			 * @param {Object} parameters
+			 *
+			 * @private
+			 */
+			reportSelectedAccordionSet: function(parameters) {
+				if (!Ext.Object.isEmpty(parameters)) {
+					parameters[CMDBuild.core.constants.Proxy.MODEL_NAME] = 'CMDBuild.model.report.SelectedAccordion';
+					parameters[CMDBuild.core.constants.Proxy.TARGET_VARIABLE_NAME] = 'selectedAccordion';
+
+					this.propertyManageSet(parameters);
 				}
 			}
-		},
-
-		/**
-		 * Get created report from server and display it in popup window
-		 *
-		 * @param {Boolean} forceDownload
-		 */
-		showReport: function(forceDownload) {
-			forceDownload = forceDownload || false;
-
-			if (forceDownload) { // Force download mode
-				var params = {};
-				params[CMDBuild.core.proxy.CMProxyConstants.FORCE_DOWNLOAD_PARAM_KEY] = true;
-
-				var form = Ext.create('Ext.form.Panel', {
-					standardSubmit: true,
-					url: CMDBuild.core.proxy.CMProxyUrlIndex.reports.printReportFactory + '?donotdelete=true' // Add parameter to avoid report delete
-				});
-
-				form.submit({
-					target: '_blank',
-					params: params
-				});
-
-				Ext.defer(function() { // Form cleanup
-					form.close();
-				}, 100);
-			} else { // Pop-up display mode
-				Ext.create('CMDBuild.controller.management.report.Modal', {
-					parentDelegate: this,
-					extension: this.currentReportParametersGet({
-						callIdentifier: 'create',
-						property: CMDBuild.core.proxy.CMProxyConstants.EXTENSION
-					})
-				});
-			}
-		},
-
-		/**
-		 * @param {Boolean} forceDownload
-		 */
-		updateReport: function(forceDownload) {
-			if (!this.currentReportParametersIsEmpty('update')) {
-				CMDBuild.core.proxy.report.Report.update({
-					params: this.currentReportParametersGet({ callIdentifier: 'update' }),
-					scope: this,
-					success: function(response, options, decodedResponse) {
-						this.showReport(forceDownload);
-					}
-				});
-			}
-		}
 	});
 
 })();

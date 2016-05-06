@@ -1,180 +1,182 @@
 package unit.cxf.security;
 
-import static com.google.common.base.Predicates.alwaysTrue;
-import static com.google.common.base.Predicates.not;
-import static org.cmdbuild.auth.UserStores.inMemory;
-import static org.cmdbuild.auth.user.AuthenticatedUserImpl.ANONYMOUS_USER;
-import static org.cmdbuild.service.rest.v2.model.Models.newSession;
+import static com.google.common.base.Optional.absent;
+import static com.google.common.base.Optional.of;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyZeroInteractions;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
 
+import javax.ws.rs.container.ContainerRequestContext;
+import javax.ws.rs.container.ResourceInfo;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
-import org.apache.cxf.jaxrs.model.ClassResourceInfo;
-import org.apache.cxf.message.Message;
-import org.cmdbuild.auth.UserStore;
-import org.cmdbuild.auth.acl.NullGroup;
-import org.cmdbuild.auth.context.NullPrivilegeContext;
-import org.cmdbuild.auth.user.OperationUser;
+import org.cmdbuild.logic.auth.SessionLogic;
+import org.cmdbuild.service.rest.v2.Unauthorized;
 import org.cmdbuild.service.rest.v2.cxf.security.TokenHandler;
-import org.cmdbuild.service.rest.v2.cxf.service.InMemoryOperationUserStore;
-import org.cmdbuild.service.rest.v2.cxf.service.InMemorySessionStore;
-import org.cmdbuild.service.rest.v2.cxf.service.InMemorySessionStore.Configuration;
-import org.cmdbuild.service.rest.v2.cxf.service.OperationUserStore;
-import org.cmdbuild.service.rest.v2.cxf.service.SessionStore;
-import org.cmdbuild.service.rest.v2.model.Session;
+import org.cmdbuild.service.rest.v2.cxf.util.Messages.StringFromMessage;
 import org.junit.Before;
 import org.junit.Test;
-
-import com.google.common.base.Optional;
-import com.google.common.base.Predicate;
+import org.mockito.ArgumentCaptor;
 
 public class TokenHandlerTest {
 
-	private static final ClassResourceInfo DUMMY_CLASS_RESOURCE_INFO = new ClassResourceInfo(TokenHandlerTest.class);
+	private static interface Dummy {
 
-	private static final Predicate<Class<?>> IS_UNAUTHORIZED = alwaysTrue();
-	private static final Predicate<Class<?>> IS_AUTHORIZED = not(IS_UNAUTHORIZED);
+		void dummy();
 
-	private static final Optional<String> MISSING_TOKEN = Optional.absent();
-	private static final Optional<String> TOKEN_FOO = Optional.of("foo");
+	}
 
-	private SessionStore sessionStore;
-	private OperationUserStore operationUserStore;
-	private UserStore userStore;
-	private org.cmdbuild.service.rest.v2.cxf.util.Messages.StringFromMessage tokenExtractor;
+	private static class DummyUnauthorized implements Dummy {
+
+		@Override
+		@Unauthorized
+		public void dummy() {
+		}
+
+	}
+
+	private static class DummyAuthorized implements Dummy {
+
+		@Override
+		public void dummy() {
+		}
+
+	}
+
+	private StringFromMessage tokenExtractor;
+	private SessionLogic sessionLogic;
 
 	@Before
 	public void setUp() throws Exception {
-		sessionStore = new InMemorySessionStore(new Configuration() {
-
-			@Override
-			public long timeout() {
-				return 0L;
-			}
-
-		});
-		operationUserStore = new InMemoryOperationUserStore();
-		userStore = inMemory();
-		tokenExtractor = mock(org.cmdbuild.service.rest.v2.cxf.util.Messages.StringFromMessage.class);
+		tokenExtractor = mock(StringFromMessage.class);
+		sessionLogic = mock(SessionLogic.class);
 	}
 
 	@Test
-	public void nullResponseForUnauthorizedServiceWhenNoTokenReceiced() throws Exception {
+	public void unauthorizedServicesHaveNoOtherRequirements() throws Exception {
 		// given
-		final TokenHandler tokenHandler = new TokenHandler(tokenExtractor, IS_UNAUTHORIZED, sessionStore,
-				operationUserStore, userStore);
-		doReturn(MISSING_TOKEN) //
-				.when(tokenExtractor).apply(any(Message.class));
-		final Message message = mock(Message.class);
+		final ResourceInfo resourceInfo = mock(ResourceInfo.class);
+		doReturn(DummyUnauthorized.class.getMethod("dummy")) //
+				.when(resourceInfo).getResourceMethod();
+		final TokenHandler tokenHandler = new TokenHandler(tokenExtractor, sessionLogic, resourceInfo);
+		final ContainerRequestContext requestContext = mock(ContainerRequestContext.class);
 
 		// when
-		final Response response = tokenHandler.handleRequest(message, DUMMY_CLASS_RESOURCE_INFO);
+		tokenHandler.filter(requestContext);
 
 		// then
-		assertThat(response, equalTo(null));
-		verifyZeroInteractions(tokenExtractor);
-	}
-
-	@Test
-	public void nullResponseForUnauthorizedServiceWhenTokenReceiced() throws Exception {
-		// given
-		final TokenHandler tokenHandler = new TokenHandler(tokenExtractor, IS_UNAUTHORIZED, sessionStore,
-				operationUserStore, userStore);
-		doReturn(TOKEN_FOO) //
-				.when(tokenExtractor).apply(any(Message.class));
-		final Message message = mock(Message.class);
-
-		// when
-		final Response response = tokenHandler.handleRequest(message, DUMMY_CLASS_RESOURCE_INFO);
-
-		// then
-		assertThat(response, equalTo(null));
-		verifyZeroInteractions(tokenExtractor);
+		verify(resourceInfo).getResourceMethod();
+		verifyNoMoreInteractions(tokenExtractor, sessionLogic, resourceInfo, requestContext);
 	}
 
 	@Test
 	public void unauthorizedResponseForAuthorizedServiceWhenNoTokenReceiced() throws Exception {
 		// given
-		final TokenHandler tokenHandler = new TokenHandler(tokenExtractor, IS_AUTHORIZED, sessionStore,
-				operationUserStore, userStore);
-		doReturn(MISSING_TOKEN) //
-				.when(tokenExtractor).apply(any(Message.class));
-		final Message message = mock(Message.class);
+		final ResourceInfo resourceInfo = mock(ResourceInfo.class);
+		doReturn(DummyAuthorized.class.getMethod("dummy")) //
+				.when(resourceInfo).getResourceMethod();
+		final TokenHandler tokenHandler = new TokenHandler(tokenExtractor, sessionLogic, resourceInfo);
+		doReturn(absent()) //
+				.when(tokenExtractor).apply(any(ContainerRequestContext.class));
+		final ContainerRequestContext requestContext = mock(ContainerRequestContext.class);
 
 		// when
-		final Response response = tokenHandler.handleRequest(message, DUMMY_CLASS_RESOURCE_INFO);
+		tokenHandler.filter(requestContext);
 
 		// then
-		assertThat(response.getStatus(), equalTo(Status.UNAUTHORIZED.getStatusCode()));
-		verify(tokenExtractor).apply(eq(message));
+		verify(resourceInfo).getResourceMethod();
+		verify(tokenExtractor).apply(requestContext);
+		final ArgumentCaptor<Response> captor = ArgumentCaptor.forClass(Response.class);
+		verify(requestContext).abortWith(captor.capture());
+		verifyNoMoreInteractions(tokenExtractor, sessionLogic, resourceInfo, requestContext);
+
+		assertThat(captor.getValue().getStatus(), equalTo(Status.UNAUTHORIZED.getStatusCode()));
 	}
 
 	@Test
 	public void unauthorizedResponseResponseForAuthorizedServiceWhenInvalidTokenReceiced() throws Exception {
 		// given
-		sessionStore.put(newSession().withId("bar").build());
-		final TokenHandler tokenHandler = new TokenHandler(tokenExtractor, IS_AUTHORIZED, sessionStore,
-				operationUserStore, userStore);
-		doReturn(TOKEN_FOO) //
-				.when(tokenExtractor).apply(any(Message.class));
-		final Message message = mock(Message.class);
+		doReturn(false) //
+				.when(sessionLogic).exists(anyString());
+		final ResourceInfo resourceInfo = mock(ResourceInfo.class);
+		doReturn(DummyAuthorized.class.getMethod("dummy")) //
+				.when(resourceInfo).getResourceMethod();
+		final TokenHandler tokenHandler = new TokenHandler(tokenExtractor, sessionLogic, resourceInfo);
+		doReturn(of("foo")) //
+				.when(tokenExtractor).apply(any(ContainerRequestContext.class));
+		final ContainerRequestContext requestContext = mock(ContainerRequestContext.class);
 
 		// when
-		final Response response = tokenHandler.handleRequest(message, DUMMY_CLASS_RESOURCE_INFO);
+		tokenHandler.filter(requestContext);
 
 		// then
-		assertThat(response.getStatus(), equalTo(Status.UNAUTHORIZED.getStatusCode()));
-		verify(tokenExtractor).apply(eq(message));
+		verify(resourceInfo).getResourceMethod();
+		verify(tokenExtractor).apply(requestContext);
+		verify(sessionLogic).exists(eq("foo"));
+		final ArgumentCaptor<Response> captor = ArgumentCaptor.forClass(Response.class);
+		verify(requestContext).abortWith(captor.capture());
+		verifyNoMoreInteractions(tokenExtractor, sessionLogic, resourceInfo, requestContext);
+
+		assertThat(captor.getValue().getStatus(), equalTo(Status.UNAUTHORIZED.getStatusCode()));
 	}
 
 	@Test
 	public void unauthorizedResponseForAuthorizedServiceWhenExistingTokenReceicedButMissingOperationUser()
 			throws Exception {
 		// given
-		sessionStore.put(newSession().withId("foo").build());
-		final TokenHandler tokenHandler = new TokenHandler(tokenExtractor, IS_AUTHORIZED, sessionStore,
-				operationUserStore, userStore);
-		doReturn(TOKEN_FOO) //
-				.when(tokenExtractor).apply(any(Message.class));
-		final Message message = mock(Message.class);
+		doReturn(false) //
+				.when(sessionLogic).exists(anyString());
+		final ResourceInfo resourceInfo = mock(ResourceInfo.class);
+		doReturn(DummyAuthorized.class.getMethod("dummy")) //
+				.when(resourceInfo).getResourceMethod();
+		final TokenHandler tokenHandler = new TokenHandler(tokenExtractor, sessionLogic, resourceInfo);
+		doReturn(of("foo")) //
+				.when(tokenExtractor).apply(any(ContainerRequestContext.class));
+		final ContainerRequestContext requestContext = mock(ContainerRequestContext.class);
 
 		// when
-		final Response response = tokenHandler.handleRequest(message, DUMMY_CLASS_RESOURCE_INFO);
+		tokenHandler.filter(requestContext);
 
 		// then
-		assertThat(response.getStatus(), equalTo(Status.UNAUTHORIZED.getStatusCode()));
-		verify(tokenExtractor).apply(eq(message));
+		verify(resourceInfo).getResourceMethod();
+		verify(tokenExtractor).apply(requestContext);
+		verify(sessionLogic).exists(eq("foo"));
+		final ArgumentCaptor<Response> captor = ArgumentCaptor.forClass(Response.class);
+		verify(requestContext).abortWith(captor.capture());
+		verifyNoMoreInteractions(tokenExtractor, sessionLogic, resourceInfo, requestContext);
+
+		assertThat(captor.getValue().getStatus(), equalTo(Status.UNAUTHORIZED.getStatusCode()));
 	}
 
 	@Test
 	public void nullResponseForAuthorizedServiceWhenExistingTokenReceicedAndExistingOperationUser() throws Exception {
 		// given
-		final Session session = newSession().withId("foo").build();
-		final OperationUser operationUser = new OperationUser(ANONYMOUS_USER, new NullPrivilegeContext(),
-				new NullGroup());
-		sessionStore.put(session);
-		operationUserStore.of(session).main(operationUser);
-		final TokenHandler tokenHandler = new TokenHandler(tokenExtractor, IS_AUTHORIZED, sessionStore,
-				operationUserStore, userStore);
-		doReturn(TOKEN_FOO) //
-				.when(tokenExtractor).apply(any(Message.class));
-		final Message message = mock(Message.class);
+		doReturn(true) //
+				.when(sessionLogic).exists(anyString());
+		final ResourceInfo resourceInfo = mock(ResourceInfo.class);
+		doReturn(DummyAuthorized.class.getMethod("dummy")) //
+				.when(resourceInfo).getResourceMethod();
+		final TokenHandler tokenHandler = new TokenHandler(tokenExtractor, sessionLogic, resourceInfo);
+		doReturn(of("foo")) //
+				.when(tokenExtractor).apply(any(ContainerRequestContext.class));
+		final ContainerRequestContext requestContext = mock(ContainerRequestContext.class);
 
 		// when
-		final Response response = tokenHandler.handleRequest(message, DUMMY_CLASS_RESOURCE_INFO);
+		tokenHandler.filter(requestContext);
 
 		// then
-		assertThat(response, equalTo(null));
-		assertThat(userStore.getUser(), equalTo(operationUser));
-		verify(tokenExtractor).apply(eq(message));
+		verify(resourceInfo).getResourceMethod();
+		verify(tokenExtractor).apply(requestContext);
+		verify(sessionLogic).exists(eq("foo"));
+		verify(sessionLogic).setCurrent(eq("foo"));
+		verifyNoMoreInteractions(tokenExtractor, sessionLogic, resourceInfo, requestContext);
 	}
 
 }

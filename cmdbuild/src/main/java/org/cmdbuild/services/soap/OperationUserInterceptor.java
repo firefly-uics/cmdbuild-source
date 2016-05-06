@@ -23,7 +23,7 @@ import org.cmdbuild.logger.Log;
 import org.cmdbuild.logic.auth.AuthenticationLogic;
 import org.cmdbuild.logic.auth.AuthenticationLogic.Response;
 import org.cmdbuild.logic.auth.LoginDTO;
-import org.cmdbuild.logic.auth.SoapAuthenticationLogicBuilder;
+import org.cmdbuild.logic.auth.SoapSessionLogic;
 import org.cmdbuild.services.auth.UserType;
 import org.cmdbuild.services.soap.security.LoginAndGroup;
 import org.cmdbuild.services.soap.security.PasswordHandler.AuthenticationString;
@@ -129,7 +129,7 @@ public class OperationUserInterceptor extends AbstractPhaseInterceptor<Message> 
 	}
 
 	private AuthenticationLogic authenticationLogic() {
-		return applicationContext.getBean(SoapAuthenticationLogicBuilder.class).build();
+		return applicationContext.getBean(SoapSessionLogic.class);
 	}
 
 	@Override

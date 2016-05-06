@@ -1,9 +1,7 @@
 (function() {
 
-	var TITLE_PREFIX = CMDBuild.Translation.management.modcard.title;
-
-	Ext.define("CMDBuild.Management.CardListWindow", {
-		extend: "CMDBuild.PopupWindow",
+	Ext.define('CMDBuild.view.management.common.CMCardListWindow', {
+		extend: 'CMDBuild.core.window.AbstractModal',
 
 		ClassName: undefined, // passed at instantiation
 		idClass: undefined, // passed at instantiation
@@ -16,18 +14,18 @@
 		gridConfig: {}, // passed at instantiation
 
 		initComponent: function() {
-			if (typeof this.idClass == "undefined" && typeof this.ClassName == "undefined") {
-				throw "There are no Class Id or Class Name to load";
+			if (typeof this.idClass == 'undefined' && typeof this.ClassName == 'undefined') {
+				throw 'There are no Class Id or Class Name to load';
 			}
 
-			this.title = TITLE_PREFIX + getClassDescription(this);
+			this.title = CMDBuild.Translation.management.modcard.title + getClassDescription(this);
 			this.grid = new CMDBuild.view.management.common.CMCardGrid(this.buildGrdiConfiguration());
 			this.setItems();
 
 			this.callParent(arguments);
 
-			this.mon(this.grid.getSelectionModel(), "selectionchange", this.onSelectionChange, this);
-			this.mon(this.grid, "itemdblclick", this.onGridDoubleClick, this);
+			this.mon(this.grid.getSelectionModel(), 'selectionchange', this.onSelectionChange, this);
+			this.mon(this.grid, 'itemdblclick', this.onGridDoubleClick, this);
 		},
 
 		show: function() {
@@ -38,13 +36,19 @@
 			return this;
 		},
 
-		// protected
+		/**
+		 * @private
+		 */
 		setItems: function() {
 			this.items = [this.grid];
 
-			if (!this.readOnly) {
-				this.addCardButton = this.buildAddButton();
-				this.tbar = [this.addCardButton];
+			if (
+				!this.readOnly
+				&& _CMCache.getEntryTypeById(this.getIdClass()).get('type') == 'class' // Create add button and topBar only for classes (no for processes)
+			) {
+				this.tbar = [
+					this.addCardButton = this.buildAddButton()
+				];
 			}
 		},
 
@@ -53,7 +57,7 @@
 			var entry = _CMCache.getEntryTypeById(this.getIdClass());
 
 			addCardButton.updateForEntry(entry);
-			this.mon(addCardButton, "cmClick", function buildTheAddWindow(p) {
+			this.mon(addCardButton, 'cmClick', function buildTheAddWindow(p) {
 				var w = new CMDBuild.view.management.common.CMCardWindow({
 					withButtons: true,
 					title: p.className
@@ -66,7 +70,7 @@
 				});
 				w.show();
 
-				this.mon(w, "destroy", function() {
+				this.mon(w, 'destroy', function() {
 					this.grid.reload();
 				}, this);
 
@@ -85,7 +89,7 @@
 				}
 			}
 
-			throw "No class info for " + Ext.getClassName(this);
+			throw 'No class info for ' + Ext.getClassName(this);
 		},
 
 		buildGrdiConfiguration: function() {
@@ -99,10 +103,10 @@
 				multiSelect: this.multiSelect
 			});
 
-			if (typeof this.selModel == "undefined") {
-				gridConfig["selType"] = this.selType;
+			if (typeof this.selModel == 'undefined') {
+				gridConfig['selType'] = this.selType;
 			} else {
-				gridConfig["selModel"] = this.selModel;
+				gridConfig['selModel'] = this.selModel;
 			}
 
 			return gridConfig;
@@ -114,11 +118,12 @@
 
 	function getClassDescription(me) {
 		var entryType = _CMCache.getEntryTypeById(me.getIdClass());
-		var description = "";
+		var description = '';
 		if (entryType) {
 			description = entryType.getDescription();
 		}
 
 		return description;
 	}
+
 })();

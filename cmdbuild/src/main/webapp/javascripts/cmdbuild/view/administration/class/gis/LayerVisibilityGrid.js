@@ -1,5 +1,7 @@
 (function() {
 
+	Ext.require('CMDBuild.proxy.gis.Layer');
+
 	Ext.define("CMDBuild.Administration.LayerVisibilityGrid", {
 		extend: "CMDBuild.Administration.LayerGrid",
 		currentClass: undefined,
@@ -11,11 +13,11 @@
 			var me = this;
 
 			this.mon(this, "activate", function() {
-				CMDBuild.LoadMask.get().show();
+				CMDBuild.core.LoadMask.show();
 				me.store.load({
 					callback: function(records, operation, success) {
 						selectVisibleLayers.call(me, me.currentClassId);
-						CMDBuild.LoadMask.get().hide();
+						CMDBuild.core.LoadMask.hide();
 					}
 				});
 			}, null);
@@ -33,13 +35,15 @@
 			var record = this.store.getAt(recordIndex);
 			var et = _CMCache.getEntryTypeById(this.currentClassId);
 
-			CMDBuild.LoadMask.get().show();
-			CMDBuild.ServiceProxy.saveLayerVisibility({
+			CMDBuild.core.LoadMask.show();
+			CMDBuild.proxy.gis.Layer.setVisibility({
 				params: {
 					tableName: et.get("name"),
 					layerFullName: record.getFullName(),
 					visible: checked
 				},
+				important: true,
+				loadMask: false,
 				success: function() {
 					_CMCache.onGeoAttributeVisibilityChanged();
 					record.setVisibilityForTableName(et.get("name"), checked);
@@ -48,7 +52,7 @@
 					record.set(column.dataIndex, !checked);
 				},
 				callback: function() {
-					CMDBuild.LoadMask.get().hide();
+					CMDBuild.core.LoadMask.hide();
 					record.commit();
 				}
 			});

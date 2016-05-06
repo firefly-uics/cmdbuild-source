@@ -3,15 +3,21 @@
 	var TRIGGER_LENGTH = 20;
 	var PADDING = 20;
 
-	Ext.define('CMDBuild.field.CMBaseCombo', {
+
+	Ext.define('CMDBuild.view.common.field.CMBaseCombo', {
 		extend: 'Ext.form.field.ComboBox',
 		alias: 'cmbasecombo',
 
+		requires: ['CMDBuild.core.constants.FieldWidths'],
+
 		cmGreatestItem: '',
 
-		maxWidth: CMDBuild.BIG_FIELD_WIDTH, // Avoid too wide fields
 
-		initComponent : function() {
+		initComponent: function() {
+			Ext.applyIf(this, {
+				maxWidth: CMDBuild.core.constants.FieldWidths.STANDARD_BIG, // Avoid too wide fields
+			});
+
 			this.callParent(arguments);
 
 			this.mon(this.store, 'load', function(store, records, successful, operation) {
@@ -130,7 +136,7 @@
 				&& typeof value == 'object' // The new serialization of reference and lookup
 				&& !Ext.isArray(value) // Is an array when select a value from the UI
 			) {
-				value = value[CMDBuild.core.proxy.CMProxyConstants.ID];
+				value = value[CMDBuild.core.constants.Proxy.ID];
 			}
 
 			// Fixes a bug where number was recognized as string and ComboBox where display valueField in place of displayField attributes (In JS language "92" != 92)

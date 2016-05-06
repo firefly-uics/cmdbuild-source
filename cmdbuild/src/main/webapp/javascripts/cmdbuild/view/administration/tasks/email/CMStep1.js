@@ -71,7 +71,7 @@
 			},
 
 		onFilterTypeComboChange: function () {
-			this.view.filterDefinitionContainer.removeAll();
+			this.view.filterDefinitionContainer.removeAll(false);
 
 			switch (this.view.filterTypeCombobox.getValue()) {
 				case 'regex':
@@ -214,7 +214,10 @@
 	Ext.define('CMDBuild.view.administration.tasks.email.CMStep1', {
 		extend: 'Ext.panel.Panel',
 
-		requires: ['CMDBuild.core.proxy.CMProxyConstants'],
+		requires: [
+			'CMDBuild.core.constants.Proxy',
+			'CMDBuild.proxy.email.Account'
+		],
 
 		/**
 		 * @cfg {CMDBuild.view.administration.tasks.email.CMStep1Delegate}
@@ -266,7 +269,7 @@
 		},
 
 		defaults: {
-			maxWidth: CMDBuild.CFG_BIG_FIELD_WIDTH,
+			maxWidth: CMDBuild.core.constants.FieldWidths.CONFIGURATION_BIG,
 			anchor: '100%'
 		},
 
@@ -275,40 +278,40 @@
 
 			// Filter configuration
 				this.fromAddresFilter = Ext.create('CMDBuild.view.administration.tasks.common.emailFilterForm.CMEmailFilterForm', {
-					maxWidth: CMDBuild.CFG_BIG_FIELD_WIDTH - 5,
-					labelWidth: CMDBuild.LABEL_WIDTH - 5,
+					maxWidth: CMDBuild.core.constants.FieldWidths.CONFIGURATION_BIG - 5,
+					labelWidth: CMDBuild.core.constants.FieldWidths.LABEL - 5,
 
 					fieldContainer: {
-						fieldLabel: CMDBuild.Translation.fromAddress
+						fieldLabel: CMDBuild.Translation.sender
 					},
 					textarea: {
-						name: CMDBuild.core.proxy.CMProxyConstants.FILTER_FROM_ADDRESS,
+						name: CMDBuild.core.constants.Proxy.FILTER_FROM_ADDRESS,
 						id: 'FromAddresFilterField'
 					},
 					button: {
-						titleWindow: tr.taskEmail.fromAddressFilter
+						titleWindow: CMDBuild.Translation.sender
 					}
 				});
 				this.subjectFilter = Ext.create('CMDBuild.view.administration.tasks.common.emailFilterForm.CMEmailFilterForm', {
-					maxWidth: CMDBuild.CFG_BIG_FIELD_WIDTH - 5,
-					labelWidth: CMDBuild.LABEL_WIDTH - 5,
+					maxWidth: CMDBuild.core.constants.FieldWidths.CONFIGURATION_BIG - 5,
+					labelWidth: CMDBuild.core.constants.FieldWidths.LABEL - 5,
 
 					fieldContainer: {
 						fieldLabel: CMDBuild.Translation.subject
 					},
 					textarea: {
-						name: CMDBuild.core.proxy.CMProxyConstants.FILTER_SUBJECT,
+						name: CMDBuild.core.constants.Proxy.FILTER_SUBJECT,
 						id: 'SubjectFilterField'
 					},
 					button: {
-						titleWindow: tr.taskEmail.subjectFilter
+						titleWindow: CMDBuild.Translation.subject
 					}
 				});
 				this.filterFunctionCombobox = Ext.create('Ext.form.field.ComboBox', {
-					name: CMDBuild.core.proxy.CMProxyConstants.FILTER_FUNCTION,
+					name: CMDBuild.core.constants.Proxy.FILTER_FUNCTION,
 					fieldLabel: CMDBuild.Translation.functionLabel,
-					labelWidth: CMDBuild.LABEL_WIDTH - 5,
-					maxWidth: CMDBuild.ADM_BIG_FIELD_WIDTH - 5,
+					labelWidth: CMDBuild.core.constants.FieldWidths.LABEL - 5,
+					maxWidth: CMDBuild.core.constants.FieldWidths.CONFIGURATION_BIG - 5,
 					valueField: 'name',
 					displayField: 'name',
 					editable: false,
@@ -321,15 +324,15 @@
 
 			// Rejected configuration
 				this.rejectedFolder = Ext.create('Ext.form.field.Text', {
-					name: CMDBuild.core.proxy.CMProxyConstants.REJECTED_FOLDER,
+					name: CMDBuild.core.constants.Proxy.REJECTED_FOLDER,
 					fieldLabel: CMDBuild.Translation.rejectedFolder,
-					labelWidth: CMDBuild.LABEL_WIDTH,
-					maxWidth: CMDBuild.CFG_BIG_FIELD_WIDTH - 10, // FIX: field with inside FieldSet is narrow
+					labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
+					maxWidth: CMDBuild.core.constants.FieldWidths.CONFIGURATION_BIG - 10, // FIX: field with inside FieldSet is narrow
 					anchor: '100%'
 				});
 
 				this.rejectedFieldset = Ext.create('Ext.form.FieldSet', {
-					checkboxName: CMDBuild.core.proxy.CMProxyConstants.REJECT_NOT_MATCHING,
+					checkboxName: CMDBuild.core.constants.Proxy.REJECT_NOT_MATCHING,
 					title: CMDBuild.Translation.enableMoveRejectedNotMatching,
 					checkboxToggle: true,
 					collapsed: true,
@@ -337,6 +340,11 @@
 					toggleOnTitleClick: true,
 					overflowY: 'auto',
 					maxWidth: 'auto',
+
+					layout: {
+						type: 'vbox',
+						align: 'stretch'
+					},
 
 					items: [this.rejectedFolder]
 				});
@@ -348,8 +356,8 @@
 				items: [
 					this.typeField = Ext.create('Ext.form.field.Text', {
 						fieldLabel: CMDBuild.Translation.administration.tasks.type,
-						labelWidth: CMDBuild.LABEL_WIDTH,
-						name: CMDBuild.core.proxy.CMProxyConstants.TYPE,
+						labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
+						name: CMDBuild.core.constants.Proxy.TYPE,
 						value: tr.tasksTypes.email,
 						disabled: true,
 						cmImmutable: true,
@@ -357,31 +365,32 @@
 						submitValue: false
 					}),
 					this.descriptionField = Ext.create('Ext.form.field.Text', {
-						name: CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION,
+						name: CMDBuild.core.constants.Proxy.DESCRIPTION,
 						fieldLabel: CMDBuild.Translation.description_,
-						labelWidth: CMDBuild.LABEL_WIDTH,
+						labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
 						allowBlank: false
 					}),
 					this.activeField = Ext.create('Ext.form.field.Checkbox', {
-						name: CMDBuild.core.proxy.CMProxyConstants.ACTIVE,
+						name: CMDBuild.core.constants.Proxy.ACTIVE,
 						fieldLabel: CMDBuild.Translation.administration.tasks.startOnSave,
-						labelWidth: CMDBuild.LABEL_WIDTH
+						labelWidth: CMDBuild.core.constants.FieldWidths.LABEL
 					}),
 					this.emailAccountCombo = Ext.create('Ext.form.field.ComboBox', {
-						name: CMDBuild.core.proxy.CMProxyConstants.EMAIL_ACCOUNT,
+						name: CMDBuild.core.constants.Proxy.EMAIL_ACCOUNT,
 						fieldLabel: tr.taskEmail.emailAccount,
-						labelWidth: CMDBuild.LABEL_WIDTH,
-						store: CMDBuild.core.proxy.email.Accounts.getStore(),
-						displayField: CMDBuild.core.proxy.CMProxyConstants.NAME,
-						valueField: CMDBuild.core.proxy.CMProxyConstants.NAME,
-						maxWidth: CMDBuild.ADM_BIG_FIELD_WIDTH,
+						labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
+						displayField: CMDBuild.core.constants.Proxy.NAME,
+						valueField: CMDBuild.core.constants.Proxy.NAME,
+						maxWidth: CMDBuild.core.constants.FieldWidths.ADMINISTRATION_BIG,
 						forceSelection: true,
-						editable: false
+						editable: false,
+
+						store: CMDBuild.proxy.email.Account.getStore(),
 					}),
 					this.incomingFolder = Ext.create('Ext.form.field.Text', {
-						name: CMDBuild.core.proxy.CMProxyConstants.INCOMING_FOLDER,
+						name: CMDBuild.core.constants.Proxy.INCOMING_FOLDER,
 						fieldLabel: CMDBuild.Translation.incomingFolder,
-						labelWidth: CMDBuild.LABEL_WIDTH
+						labelWidth: CMDBuild.core.constants.FieldWidths.LABEL
 					}),
 					this.filterDefinitionFieldset = Ext.create('Ext.form.FieldSet', {
 						title: CMDBuild.Translation.filter,
@@ -391,27 +400,27 @@
 
 						layout: {
 							type: 'vbox',
-							align:'stretch'
+							align: 'stretch'
 						},
 
 						items: [
 							this.filterTypeCombobox = Ext.create('Ext.form.field.ComboBox', {
-								name: CMDBuild.core.proxy.CMProxyConstants.FILTER_TYPE,
+								name: CMDBuild.core.constants.Proxy.FILTER_TYPE,
 								fieldLabel: CMDBuild.Translation.type,
-								labelWidth: CMDBuild.LABEL_WIDTH - 5,
-								displayField: CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION,
-								valueField: CMDBuild.core.proxy.CMProxyConstants.VALUE,
-								maxWidth: CMDBuild.ADM_BIG_FIELD_WIDTH - 5,
-								value: CMDBuild.core.proxy.CMProxyConstants.NONE, // Default value
+								labelWidth: CMDBuild.core.constants.FieldWidths.LABEL - 5,
+								displayField: CMDBuild.core.constants.Proxy.DESCRIPTION,
+								valueField: CMDBuild.core.constants.Proxy.VALUE,
+								maxWidth: CMDBuild.core.constants.FieldWidths.ADMINISTRATION_BIG - 5,
+								value: CMDBuild.core.constants.Proxy.NONE, // Default value
 								forceSelection: true,
 								editable: false,
 
 								store: Ext.create('Ext.data.ArrayStore', { // TODO: move to proxy
-									fields: [CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION, CMDBuild.core.proxy.CMProxyConstants.VALUE],
+									fields: [CMDBuild.core.constants.Proxy.DESCRIPTION, CMDBuild.core.constants.Proxy.VALUE],
 									data: [
-										[CMDBuild.Translation.none, CMDBuild.core.proxy.CMProxyConstants.NONE],
-										[CMDBuild.Translation.regex, CMDBuild.core.proxy.CMProxyConstants.REGEX],
-										[CMDBuild.Translation.functionLabel, CMDBuild.core.proxy.CMProxyConstants.FUNCTION]
+										[CMDBuild.Translation.none, CMDBuild.core.constants.Proxy.NONE],
+										[CMDBuild.Translation.regex, CMDBuild.core.constants.Proxy.REGEX],
+										[CMDBuild.Translation.functionLabel, CMDBuild.core.constants.Proxy.FUNCTION]
 									]
 								}),
 								queryMode: 'local',
@@ -426,7 +435,7 @@
 							this.filterDefinitionContainer = Ext.create('Ext.container.Container', {
 								layout: {
 									type: 'vbox',
-									align:'stretch'
+									align: 'stretch'
 								},
 
 								items: []
@@ -434,13 +443,13 @@
 						]
 					}),
 					this.processedFolder = Ext.create('Ext.form.field.Text', {
-						name: CMDBuild.core.proxy.CMProxyConstants.PROCESSED_FOLDER,
+						name: CMDBuild.core.constants.Proxy.PROCESSED_FOLDER,
 						fieldLabel: CMDBuild.Translation.processedFolder,
-						labelWidth: CMDBuild.LABEL_WIDTH
+						labelWidth: CMDBuild.core.constants.FieldWidths.LABEL
 					}),
 					this.rejectedFieldset,
 					this.idField = Ext.create('Ext.form.field.Hidden', {
-						name: CMDBuild.core.proxy.CMProxyConstants.ID
+						name: CMDBuild.core.constants.Proxy.ID
 					})
 				]
 			});

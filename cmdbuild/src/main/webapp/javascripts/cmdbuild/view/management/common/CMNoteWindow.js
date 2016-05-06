@@ -1,7 +1,7 @@
 (function() {
 
 	Ext.define('CMDBuild.view.management.common.CMNoteWindow', {
-		extend: 'CMDBuild.PopupWindow',
+		extend: 'CMDBuild.core.window.AbstractModal',
 
 		withButtons: false,
 		withTbar: true,
@@ -15,7 +15,7 @@
 
 				getExtraButtons: function() {
 					return Ext.create('Ext.button.Button', {
-						text: CMDBuild.Translation.common.buttons.close,
+						text: CMDBuild.Translation.close,
 
 						handler: function() {
 							me.destroy();

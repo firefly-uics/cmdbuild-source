@@ -1,8 +1,11 @@
 (function() {
 
+	/**
+	 * @deprecated (CMDBuild.controller.common.abstract.Widget)
+	 */
 	Ext.define('CMDBuild.controller.management.common.widgets.CMWidgetController', {
 
-		requires: ['CMDBuild.core.proxy.CMProxyConstants'],
+		requires: ['CMDBuild.core.constants.Proxy'],
 
 		statics: {
 			WIDGET_NAME: '',
@@ -89,20 +92,9 @@
 
 		/**
 		 * @param {String}
-		 *
-		 * @deprecated
 		 */
 		getLabel: function() {
-			_deprecated('getLabel', this);
-
-			return this.widgetConf[CMDBuild.core.proxy.CMProxyConstants.LABEL];
-		},
-
-		/**
-		 * @param {String}
-		 */
-		getWidgetLabel: function() {
-			return this.widgetConf[CMDBuild.core.proxy.CMProxyConstants.LABEL];
+			return this.widgetConf[CMDBuild.core.constants.Proxy.LABEL];
 		},
 
 		/**
@@ -128,14 +120,7 @@
 		 * @return {Number}
 		 */
 		getWidgetId: function() {
-			return this.widgetConf[CMDBuild.core.proxy.CMProxyConstants.ID];
-		},
-
-		/**
-		 * @return {Boolean}
-		 */
-		isBusy: function() {
-			return false;
+			return this.widgetConf[CMDBuild.core.constants.Proxy.ID];
 		},
 
 		/**
@@ -146,13 +131,23 @@
 		},
 
 		/**
-		 * @param {Array} callbackChainArray
+		 * @param {Object} parameters
+		 * @param {Function} parameters.callback
+		 * @param {Object} parameters.scope
+		 *
+		 * @returns {Void}
 		 */
-		onBeforeSave: function(callbackChainArray, i) {
-			if (!Ext.isEmpty(callbackChainArray[i])) {
-				var callbackObject = callbackChainArray[i];
-
-				Ext.callback(callbackObject.fn, callbackObject.scope, [callbackChainArray, i + 1]);
+		onBeforeSave: function (parameters) {
+			if (
+				Ext.isObject(parameters) && !Ext.Object.isEmpty(parameters)
+				&& Ext.isFunction(parameters.callback)
+			) {
+				Ext.callback(
+					parameters.callback,
+					Ext.isEmpty(parameters.scope) ? this : parameters.scope
+				);
+			} else {
+				_error('[' + this.getLabel() + '] onBeforeSave invalid parameters', this);
 			}
 		},
 

@@ -42,7 +42,8 @@ public interface DocumentCreator {
 			Long cardId, //
 			String filename, //
 			String category, //
-			String description);
+			String description, //
+			String author);
 
 	DocumentUpdate createDocumentUpdate( //
 			String className, //
@@ -50,6 +51,7 @@ public interface DocumentCreator {
 			String filename, //
 			String category, //
 			String description, //
+			String author, //
 			Iterable<MetadataGroup> metadataGroups);
 
 }

@@ -42,8 +42,8 @@
 			this.dataSourceCombo = new Ext.form.field.ComboBox({
 				name: "dataSourceName",
 				fieldLabel: tr.fields.dataSource,
-				labelWidth: CMDBuild.LABEL_WIDTH,
-				width: CMDBuild.ADM_BIG_FIELD_WIDTH,
+				labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
+				width: CMDBuild.core.constants.FieldWidths.ADMINISTRATION_BIG,
 				valueField: "name",
 				displayField: "name",
 				queryMode: "local",
@@ -124,12 +124,12 @@
 		}
 	});
 
-	var SUBFIELD_LABEL_WIDTH = CMDBuild.LABEL_WIDTH - 15;
+	var SUBFIELD_LABEL_WIDTH = CMDBuild.core.constants.FieldWidths.LABEL - 15;
 
 	Ext.define("CMDBuild.view.administration.dashboard._DataSourceInputFildSet", {
 		extend: "Ext.form.FieldSet",
 
-		requires: ['CMDBuild.core.proxy.CMProxyConstants'],
+		requires: ['CMDBuild.core.constants.Proxy'],
 
 		statics: {
 			builders: {
@@ -194,7 +194,7 @@
 				fieldLabel: tr.fields.required,
 				name: "required",
 				labelWidth: SUBFIELD_LABEL_WIDTH,
-				width: CMDBuild.ADM_BIG_FIELD_WIDTH,
+				width: CMDBuild.core.constants.FieldWidths.ADMINISTRATION_BIG,
 				disabled: me.typeComboIsdisabled()
 			});
 
@@ -204,7 +204,7 @@
 				me.fieldType = new Ext.form.field.ComboBox({
 					fieldLabel: tr.fields.fieldType,
 					labelWidth: SUBFIELD_LABEL_WIDTH,
-					width: CMDBuild.ADM_BIG_FIELD_WIDTH,
+					width: CMDBuild.core.constants.FieldWidths.ADMINISTRATION_BIG,
 					valueField: "value",
 					displayField: "description",
 					queryMode: "local",
@@ -254,7 +254,7 @@
 
 			this.defaultField.setDisabled(this.typeComboIsdisabled());
 
-			if (Ext.getClassName(this.defaultField) == "CMDBuild.field.LookupCombo") {
+			if (Ext.getClassName(this.defaultField) == "CMDBuild.view.common.field.LookupField") {
 				this.defaultField.labelWidth = SUBFIELD_LABEL_WIDTH;
 				this.defaultField.labelAlign = "left";
 			} else if (Ext.getClassName(this.defaultField) == "CMDBuild.field.MultiLevelLookupPanel") {
@@ -274,7 +274,7 @@
 		addClassesFieldForDefault: function() {
 			this.resetFieldset();
 
-			this.defaultField = new CMDBuild.field.ErasableCombo({
+			this.defaultField = new CMDBuild.view.common.field.CMErasableCombo({
 				fieldLabel : tr.fields.defaultValue,
 				labelWidth: SUBFIELD_LABEL_WIDTH,
 				valueField : this.input.type == "STRING" ? 'name' : 'id',
@@ -291,7 +291,7 @@
 		addClassesFieldForReferenceWidget: function() {
 			this.resetFieldset();
 
-			this.classToUseForReferenceWidget = new CMDBuild.field.ErasableCombo({
+			this.classToUseForReferenceWidget = new CMDBuild.view.common.field.CMErasableCombo({
 				fieldLabel : tr.fields.fromClass,
 				labelWidth: SUBFIELD_LABEL_WIDTH,
 				valueField : 'id',
@@ -308,9 +308,9 @@
 			if (this.input.type == 'INTEGER') {
 				this.fieldFilter = Ext.create('CMDBuild.view.common.field.filter.cql.Cql', {
 					fieldLabel: CMDBuild.Translation.filter,
-					fieldName: CMDBuild.core.proxy.CMProxyConstants.FILTER,
-					labelWidth: CMDBuild.LABEL_WIDTH - 15,
-					maxWidth: CMDBuild.ADM_BIG_FIELD_WIDTH
+					fieldName: CMDBuild.core.constants.Proxy.FILTER,
+					labelWidth: CMDBuild.core.constants.FieldWidths.LABEL - 15,
+					maxWidth: CMDBuild.core.constants.FieldWidths.ADMINISTRATION_BIG
 				});
 
 				this.fieldFilter.setDisabled(this.typeComboIsdisabled());
@@ -333,7 +333,7 @@
 						me.remove(me.defaultField);
 					}
 
-					me.defaultField = new CMDBuild.field.ErasableCombo({
+					me.defaultField = new CMDBuild.view.common.field.CMErasableCombo({
 						fieldLabel : tr.fields.defaultValue,
 						labelWidth: SUBFIELD_LABEL_WIDTH,
 						valueField: "Id",
@@ -356,7 +356,7 @@
 
 			this.resetFieldset();
 
-			this.lookupTypeField = new CMDBuild.field.ErasableCombo({
+			this.lookupTypeField = new CMDBuild.view.common.field.CMErasableCombo({
 				fieldLabel: tr.fields.lookupType,
 				labelWidth: SUBFIELD_LABEL_WIDTH,
 				queryMode : 'local',
@@ -458,7 +458,7 @@
 					this.classToUseForReferenceWidget.setValue(data.classToUseForReferenceWidget);
 
 				if (!Ext.isEmpty(data.filter) && !Ext.isEmpty(this.fieldFilter))
-					this.fieldFilter.setValue(data[CMDBuild.core.proxy.CMProxyConstants.FILTER]);
+					this.fieldFilter.setValue(data[CMDBuild.core.constants.Proxy.FILTER]);
 			}
 
 			if (data.defaultValue && this.defaultField)

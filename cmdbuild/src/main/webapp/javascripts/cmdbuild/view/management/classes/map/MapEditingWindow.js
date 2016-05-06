@@ -15,11 +15,11 @@
 	/**
 	 * @class CMDBuild.view.management.map.MapEditingWindow
 	 * @extends Ext.Window
-	 * 
+	 *
 	 * This window looks like an external toolbar (Photoshop style)
 	 * After the creation is possible to say to the window to show the tools
 	 * for a specific geometry type
-	 * 
+	 *
 	 * The window can be shown only if the owner panel is visible
 	 */
 	Ext.define("CMDBuild.view.management.map.CMMapEditingToolsWindow", {
@@ -64,7 +64,7 @@
 			});
 
 			this.addButton = new Ext.Button({
-				text: this.translation.common.buttons.add,
+				text: this.translation.add,
 				creationControl: undefined,
 				iconCls: 'add',
 				enableToggle: true,
@@ -77,7 +77,7 @@
 			});
 
 			this.removeButton = new Ext.Button({
-				text: this.translation.common.buttons.remove,
+				text: this.translation.remove,
 				iconCls: 'delete',
 				scope: this,
 				disabled: true,

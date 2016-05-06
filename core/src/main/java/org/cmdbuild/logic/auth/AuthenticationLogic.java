@@ -24,12 +24,6 @@ public interface AuthenticationLogic extends Logic {
 
 	}
 
-	interface ClientAuthenticationRequest extends ClientRequest {
-
-		UserStore getUserStore();
-
-	}
-
 	interface ClientAuthenticationResponse {
 
 		String getRedirectUrl();
@@ -49,9 +43,9 @@ public interface AuthenticationLogic extends Logic {
 
 	}
 
-	Response login(LoginDTO loginDTO, final UserStore userStore);
+	Response login(LoginDTO loginDTO, UserStore userStore);
 
-	ClientAuthenticationResponse login(ClientAuthenticationRequest request);
+	ClientAuthenticationResponse login(ClientRequest request, UserStore userStore);
 
 	GroupInfo getGroupInfoForGroup(String groupName);
 
@@ -77,7 +71,7 @@ public interface AuthenticationLogic extends Logic {
 
 	Iterable<CMGroup> getAllGroups();
 
-	List<CMUser> getAllUsers();
+	Iterable<CMUser> getAllUsers(boolean activeOnly);
 
 	Iterable<CMUser> getServiceOrPrivilegedUsers();
 

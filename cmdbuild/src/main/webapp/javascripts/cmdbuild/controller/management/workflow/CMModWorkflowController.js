@@ -114,7 +114,7 @@
 		},
 
 		buildTabControllerEmail: function() {
-			if (!CMDBuild.configuration.userInterface.isDisabledProcessTab(CMDBuild.core.proxy.CMProxyConstants.PROCESS_EMAIL_TAB)) {
+			if (!CMDBuild.configuration.userInterface.isDisabledProcessTab(CMDBuild.core.constants.Proxy.PROCESS_EMAIL_TAB)) {
 				this.controllerTabEmail = Ext.create('CMDBuild.controller.management.workflow.tabs.Email', { parentDelegate: this });
 
 				this.subControllers.push(this.controllerTabEmail);
@@ -126,7 +126,7 @@
 		},
 
 		buildTabControllerHistory: function() {
-			if (!CMDBuild.configuration.userInterface.isDisabledProcessTab(CMDBuild.core.proxy.CMProxyConstants.PROCESS_HISTORY_TAB)) {
+			if (!CMDBuild.configuration.userInterface.isDisabledProcessTab(CMDBuild.core.constants.Proxy.PROCESS_HISTORY_TAB)) {
 				this.controllerTabHistory = Ext.create('CMDBuild.controller.management.workflow.tabs.History', { parentDelegate: this });
 
 				this.subControllers.push(this.controllerTabHistory);
@@ -244,13 +244,19 @@
 		setEntryType: function(entryTypeId, danglingCard, filter) {
 			var entryType = _CMCache.getEntryTypeById(entryTypeId);
 
+			if (!Ext.isEmpty(danglingCard)) {
+				if (!Ext.isEmpty(danglingCard.flowStatus))
+					this.gridController.view.setStatus(danglingCard.flowStatus);
+
+				if (!Ext.isEmpty(danglingCard.activateFirstTab))
+					this.view.cardTabPanel.activeTabSet(danglingCard.activateFirstTab);
+			}
+
 			_CMWFState.setProcessClassRef(entryType, danglingCard, false, filter);
 
 			this.view.updateTitleForEntry(entryType);
 
 			_CMUIState.onlyGridIfFullScreen();
-
-			this.view.activateFirstTab();
 		}
 	});
 

@@ -3,7 +3,7 @@
 	Ext.define('CMDBuild.view.management.dataView.sql.SqlView', {
 		extend: 'Ext.panel.Panel',
 
-		requires: ['CMDBuild.core.proxy.CMProxyConstants'],
+		requires: ['CMDBuild.core.constants.Proxy'],
 
 		/**
 		 * @cfg {CMDBuild.controller.management.dataView.Sql}
@@ -27,7 +27,6 @@
 
 		border: false,
 		frame: false,
-		header: false,
 		layout: 'border',
 
 		initComponent: function() {
@@ -39,15 +38,19 @@
 					}),
 					this.form = Ext.create('CMDBuild.view.management.dataView.sql.FormPanel', {
 						delegate: this.delegate,
-						height: (CMDBuild.Config.cmdbuild.grid_card_ratio || 50) + '%',
 						region: 'south',
-						split: true
+						height: CMDBuild.configuration.instance.get(CMDBuild.core.constants.Proxy.CARD_FORM_RATIO) + '%'
 					})
-				],
-				tools: []
+				]
 			});
 
 			this.callParent(arguments);
+		},
+
+		listeners: {
+			show: function(panel, eOpts) {
+				this.delegate.cmfg('onDataViewSqlPanelShow');
+			}
 		}
 	});
 

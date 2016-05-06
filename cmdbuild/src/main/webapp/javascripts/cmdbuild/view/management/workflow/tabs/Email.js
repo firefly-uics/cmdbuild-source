@@ -6,7 +6,7 @@
 	Ext.define('CMDBuild.view.management.workflow.tabs.Email', {
 		extend: 'CMDBuild.view.management.common.tabs.email.EmailView',
 
-		requires: ['CMDBuild.core.proxy.CMProxyConstants'],
+		requires: ['CMDBuild.core.constants.Proxy'],
 
 
 		/**

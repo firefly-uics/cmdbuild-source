@@ -1,5 +1,7 @@
 (function() {
 
+	Ext.require('CMDBuild.proxy.gis.GeoServer');
+
 	var tr = CMDBuild.Translation.administration.modClass.attributeProperties;
 	var tr_geo = CMDBuild.Translation.administration.modClass.geo_attributes;
 
@@ -20,7 +22,7 @@
 					hideable: true,
 					hidden: false,
 					sortable: false,
-					dataIndex: CMDBuild.core.proxy.CMProxyConstants.NAME,
+					dataIndex: CMDBuild.core.constants.Proxy.NAME,
 					flex: 1
 				},
 				{
@@ -28,7 +30,7 @@
 					hideable: true,
 					hidden: false,
 					sortable: false,
-					dataIndex: CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION,
+					dataIndex: CMDBuild.core.constants.Proxy.DESCRIPTION,
 					flex: 1
 				},
 				{
@@ -36,7 +38,7 @@
 					hideable: true,
 					hidden: false,
 					sortable: false,
-					dataIndex: CMDBuild.core.proxy.CMProxyConstants.TYPE,
+					dataIndex: CMDBuild.core.constants.Proxy.TYPE,
 					flex: 1
 				},
 				{
@@ -57,7 +59,7 @@
 				}
 			];
 
-			this.gridStore = CMDBuild.ServiceProxy.geoServer.getGeoServerLayerStore();
+			this.gridStore = CMDBuild.proxy.gis.GeoServer.getStore();
 
 			Ext.apply(this, {
 				columns: this.gridColumns,
@@ -116,7 +118,7 @@
 
 			this.store.load({
 				callback: function(records, operation, success) {
-					var toSelect = me.store.find(CMDBuild.core.proxy.CMProxyConstants.NAME, name);
+					var toSelect = me.store.find(CMDBuild.core.constants.Proxy.NAME, name);
 
 					if (toSelect >= 0) {
 						me.getSelectionModel().select(toSelect);

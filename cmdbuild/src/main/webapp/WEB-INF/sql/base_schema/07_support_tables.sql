@@ -131,6 +131,7 @@ SELECT cm_create_class_attribute('_DomainTreeNavigation', 'BaseNode', 'boolean',
 SELECT cm_create_class_attribute('_DomainTreeNavigation', 'TargetClassName', 'character varying', NULL, FALSE, FALSE, 'MODE: write|STATUS: active');
 SELECT cm_create_class_attribute('_DomainTreeNavigation', 'TargetClassDescription', 'character varying', NULL, FALSE, FALSE, 'MODE: write|STATUS: active');
 SELECT cm_create_class_attribute('_DomainTreeNavigation', 'TargetFilter', 'character varying', NULL, FALSE, FALSE, 'MODE: write|STATUS: active');
+SELECT cm_create_class_attribute('_DomainTreeNavigation', 'EnableRecursion', 'boolean', NULL, FALSE, FALSE, 'MODE: write|STATUS: active');
 ---------------------------------------------
 -- Create Layer class
 ---------------------------------------------
@@ -312,3 +313,10 @@ SELECT cm_create_class_attribute('Email', 'Delay', 'int4', null, false, false, '
 -- Custom Pages
 ---------------------------------------------
 SELECT cm_create_class('_CustomPage', 'Class', 'MODE: reserved|TYPE: class|DESCR: CustomPage|SUPERCLASS: false|STATUS: active');
+
+---------------------------------------------
+-- Icons
+---------------------------------------------
+SELECT cm_create_class('_Icon', NULL, 'MODE: reserved|TYPE: simpleclass|DESCR: _Icon|SUPERCLASS: false|STATUS: active');
+SELECT cm_create_class_attribute('_Icon', 'Element', 'text', null, true, true, 'MODE: write|DESCR: Element|STATUS: active');
+SELECT cm_create_class_attribute('_Icon', 'Path', 'text', null, true, false, 'MODE: write|DESCR: Path|STATUS: active');

@@ -44,7 +44,7 @@
 				frame: false,
 				border: false,
 				cls: "x-panel-body-default-framed",
-				bodyCls: 'cmgraypanel',
+				bodyCls: 'cmdb-gray-panel',
 				items: [],
 				buttons: buttons(me)
 			});
@@ -176,8 +176,8 @@
 			fieldLabel: CMDBuild.Translation.administration.modDashboard.properties.fields.name,
 			name: "name",
 			allowBlank: false,
-			labelWidth: CMDBuild.LABEL_WIDTH,
-			width: CMDBuild.ADM_BIG_FIELD_WIDTH,
+			labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
+			width: CMDBuild.core.constants.FieldWidths.ADMINISTRATION_BIG,
 			disabled: true
 		});
 
@@ -185,16 +185,14 @@
 			fieldLabel:CMDBuild.Translation.administration.modDashboard.properties.fields.description,
 			name: "description",
 			allowBlank: false,
-			labelWidth: CMDBuild.LABEL_WIDTH,
-			width: CMDBuild.ADM_BIG_FIELD_WIDTH,
-			translationsKeyType: "Dashboard",
-			translationsKeyField: "Description",
+			labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
+			width: CMDBuild.core.constants.FieldWidths.ADMINISTRATION_BIG,
 			disabled: true
 		});
 
 		me.groupsSelectionList = new CMDBuild.view.common.field.CMGroupSelectionList({
-			labelWidth: CMDBuild.LABEL_WIDTH,
-			width: CMDBuild.ADM_BIG_FIELD_WIDTH,
+			labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
+			width: CMDBuild.core.constants.FieldWidths.ADMINISTRATION_BIG,
 			dataFields : ['name', 'description'],
 			valueField : 'name',
 			height: 300,
@@ -206,7 +204,7 @@
 
 	function buttons(me) {
 		me.saveButton = new Ext.button.Button({
-			text: CMDBuild.Translation.common.buttons.save,
+			text: CMDBuild.Translation.save,
 			disabled: true,
 			handler: function() {
 				me.delegate.onSaveButtonClick();
@@ -214,7 +212,7 @@
 		});
 
 		me.abortButton = new Ext.button.Button({
-			text: CMDBuild.Translation.common.buttons.abort,
+			text: CMDBuild.Translation.cancel,
 			disabled: true,
 			handler: function() {
 				me.delegate.onAbortButtonClick();

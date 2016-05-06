@@ -1,6 +1,6 @@
 (function() {
-	var detailURL = "services/json/management/modcard/getdetaillist",
-		fkURL =  "services/json/management/modcard/getcardlist";
+
+	Ext.require('CMDBuild.proxy.index.Json');
 
 	Ext.define("CMDBuild.Management.MasterDetailCardGrid", {
 		extend: "CMDBuild.view.management.common.CMCardGrid",
@@ -11,12 +11,11 @@
 
 		loadDetails: function(p) {
 			var domain = p.detail;
-			var parameterNames = CMDBuild.ServiceProxy.parameter;
 			var masterCardClassId = p.masterCard.get("IdClass");
 			var masterCardClassName = _CMCache.getEntryTypeNameById(masterCardClassId); // needed if is a subclass of the domain master class
 
 			function setExtraParamsAndLoad(me) {
-				me.store.proxy.url = detailURL;
+				me.store.proxy.url = CMDBuild.proxy.index.Json.card.readAllDetails;
 
 				var filter = {
 					relation: [{
@@ -32,8 +31,8 @@
 					}]
 				};
 
-				me.store.proxy.extraParams[parameterNames.FILTER] = Ext.encode(filter);
-				me.store.proxy.extraParams[parameterNames.CLASS_NAME] = domain.getDetailClassName();
+				me.store.proxy.extraParams[CMDBuild.core.constants.Proxy.FILTER] = Ext.encode(filter);
+				me.store.proxy.extraParams[CMDBuild.core.constants.Proxy.CLASS_NAME] = domain.getDetailClassName();
 
 				me.store.loadPage(1);
 			}
@@ -46,7 +45,7 @@
 				fkClass = _CMCache.getEntryTypeById(idClass);
 
 			function setExtraParamsAndLoad(me) {
-				me.store.proxy.url = fkURL;
+				me.store.proxy.url = CMDBuild.proxy.index.Json.card.readAll;
 				me.store.proxy.extraParams['IdClass'] = idClass;
 				me.store.proxy.extraParams['CQL'] = "from "
 					+ fkClass.get("name")
@@ -115,11 +114,11 @@
 			icons = ["showDetail", "deleteDetail", "note"];
 		}
 
-		if (CMDBuild.Config.graph.enabled=="true") {
+		if (CMDBuild.configuration.graph.get(CMDBuild.core.constants.Proxy.ENABLED)) {
 			icons.push("showGraph");
 
 		}
-		if (CMDBuild.Config.dms.enabled) {
+		if (CMDBuild.configuration.dms.get(CMDBuild.core.constants.Proxy.ENABLED)) {
 			icons.push("attach");
 		}
 
@@ -152,7 +151,7 @@
 				showGraph: {
 					title: CMDBuild.Translation.management.moddetail.showgraph,
 					event: "graph",
-					icon: "chart_organisation"
+					icon: "graph"
 				},
 				note: {
 					title: CMDBuild.Translation.management.moddetail.shownotes,

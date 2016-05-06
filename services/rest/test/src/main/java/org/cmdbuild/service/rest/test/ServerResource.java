@@ -1,8 +1,13 @@
 package org.cmdbuild.service.rest.test;
 
+import static com.google.common.reflect.Reflection.newProxy;
 import static java.lang.String.format;
 import static org.apache.commons.lang3.ObjectUtils.defaultIfNull;
+import static org.apache.commons.lang3.Range.between;
 
+import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.Random;
 
 import org.apache.commons.lang3.Range;
@@ -14,83 +19,116 @@ import org.junit.rules.ExternalResource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class ServerResource extends ExternalResource {
+public class ServerResource<T> extends ExternalResource {
 
 	private static final Logger logger = LoggerFactory.getLogger(ServerResource.class);
 
-	public static class Builder implements org.apache.commons.lang3.builder.Builder<ServerResource> {
+	public static class Builder<T> implements org.apache.commons.lang3.builder.Builder<ServerResource<T>> {
 
 		private static final int DEFAULT_RETRIES = 3;
 
-		private Class<?> serviceClass;
-		private Object service;
+		private final Class<T> serviceClass;
+		private T service;
 		private Range<Integer> portRange;
 		private Integer retries;
 
+		public Builder(final Class<T> serviceClass) {
+			this.serviceClass = serviceClass;
+		}
+
 		@Override
-		public ServerResource build() {
+		public ServerResource<T> build() {
 			validate();
-			return new ServerResource(this);
+			return new ServerResource<T>(this);
 		}
 
 		private void validate() {
 			retries = defaultIfNull(retries, DEFAULT_RETRIES);
 		}
 
-		public Builder withServiceClass(final Class<?> serviceClass) {
-			this.serviceClass = serviceClass;
-			return this;
-		}
-
-		public Builder withService(final Object service) {
+		public Builder<T> withService(final T service) {
 			this.service = service;
 			return this;
 		}
 
-		/**
-		 * @deprecated use {@link withPortRange(Range)} instead.
-		 */
-		@Deprecated
-		public Builder withPort(final Range<Integer> range) {
-			return withPortRange(range);
-		}
-
-		public Builder withPortRange(final Range<Integer> range) {
+		public Builder<T> withPortRange(final Range<Integer> range) {
 			this.portRange = range;
 			return this;
 		}
 
-		public Builder setRetries(final int retries) {
+		public Builder<T> setRetries(final int retries) {
 			this.retries = retries;
 			return this;
 		}
 
 	}
 
-	public static Builder newInstance() {
-		return new Builder();
+	public static <T> Builder<T> newInstance(final Class<T> serviceClass) {
+		return new Builder<>(serviceClass);
+	}
+
+	public static final int DEFAULT_RANGE_MIN_INCLUSIVE = 1024;
+	public static final int DEFAULT_RANGE_MAX_INCLUSIVE = 65535;
+	public static final Range<Integer> DEFAULT_RANGE = between(DEFAULT_RANGE_MIN_INCLUSIVE,
+			DEFAULT_RANGE_MAX_INCLUSIVE);
+
+	public static Range<Integer> randomPort() {
+		return randomPort(DEFAULT_RANGE);
+	}
+
+	public static Range<Integer> randomPort(final Range<Integer> range) {
+		return range;
+	}
+
+	private static class DelegatingService<T> {
+
+		private final T proxy;
+		private T delegate;
+
+		private DelegatingService(final Class<T> type) {
+			proxy = newProxy(type, new InvocationHandler() {
+
+				@Override
+				public Object invoke(final Object proxy, final Method method, final Object[] args) throws Throwable {
+					try {
+						return method.invoke(delegate, args);
+					} catch (final InvocationTargetException e) {
+						throw e.getCause();
+					}
+				}
+
+			});
+		}
+
+		public T delegate() {
+			return proxy;
+		}
+
+		public void delegate(final T delegate) {
+			this.delegate = delegate;
+		}
+
 	}
 
 	private static final Random random = new Random();
 
-	public static final int DEFAULT_RANGE_MIN_INCLUSIVE = 1024;
-	public static final int DEFAULT_RANGE_MAX_INCLUSIVE = 65535;
-	public static final Range<Integer> DEFAULT_RANGE = Range.between(DEFAULT_RANGE_MIN_INCLUSIVE,
-			DEFAULT_RANGE_MAX_INCLUSIVE);
-
 	public static final JacksonJaxbJsonProvider JSON_PROVIDER = new JacksonJaxbJsonProvider();
 
-	private final Class<?> serviceClass;
-	private final Object service;
+	private final Class<T> serviceClass;
+	private final DelegatingService<T> service;
 	private final Range<Integer> portRange;
 	private final int retries;
 
 	private String address;
 	private Server server;
 
-	private ServerResource(final Builder builder) {
+	private ServerResource(final Builder<T> builder) {
 		this.serviceClass = builder.serviceClass;
-		this.service = builder.service;
+		this.service = new DelegatingService<T>(serviceClass) {
+			{
+				delegate(builder.service);
+			}
+		};
 		this.portRange = builder.portRange;
 		this.retries = builder.retries;
 	}
@@ -107,7 +145,7 @@ public class ServerResource extends ExternalResource {
 				address = format("http://localhost:%d", _port);
 				final JAXRSServerFactoryBean serverFactory = new JAXRSServerFactoryBean();
 				serverFactory.setResourceClasses(serviceClass);
-				serverFactory.setResourceProvider(serviceClass, new SingletonResourceProvider(service));
+				serverFactory.setResourceProvider(serviceClass, new SingletonResourceProvider(service.delegate()));
 				serverFactory.setAddress(address);
 				serverFactory.setProvider(JSON_PROVIDER);
 
@@ -129,16 +167,12 @@ public class ServerResource extends ExternalResource {
 		server.destroy();
 	}
 
+	public void service(final T service) {
+		this.service.delegate(service);
+	}
+
 	public String resource(final String resource) {
 		return format("%s/%s", address, resource);
-	}
-
-	public static Range<Integer> randomPort() {
-		return randomPort(DEFAULT_RANGE);
-	}
-
-	public static Range<Integer> randomPort(final Range<Integer> range) {
-		return range;
 	}
 
 }

@@ -1,7 +1,7 @@
 package org.cmdbuild.services.soap;
 
 import static org.cmdbuild.spring.SpringIntegrationUtils.applicationContext;
-import static org.cmdbuild.spring.configuration.FileStore.ROOT;
+import static org.cmdbuild.spring.configuration.Files.ROOT;
 import static org.cmdbuild.spring.configuration.User.BEAN_USER_DATA_VIEW;
 
 import java.util.Collections;

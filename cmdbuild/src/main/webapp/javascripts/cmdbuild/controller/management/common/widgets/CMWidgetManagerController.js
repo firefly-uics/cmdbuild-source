@@ -1,20 +1,46 @@
 (function() {
 
-	// Requires all widget controllers to avoid to include manually
-	// TODO: rename of this class to use property "requires"
-	Ext.require([
-		'CMDBuild.controller.management.common.widgets.ManageEmail',
-		'CMDBuild.controller.management.common.widgets.manageRelation.CMManageRelationController'
+	Ext.require([ // Legacy
+		'CMDBuild.controller.management.widget.manageRelation.CMManageRelationController',
+		'CMDBuild.core.configurations.Timeout',
+		'CMDBuild.core.Message'
 	]);
 
 	Ext.define("CMDBuild.controller.management.common.CMWidgetManagerController", {
 
-		constructor: function(view) {
-			this.view = view;
-			this.view.delegate = this;
-			this.controllers = {};
+		/**
+		 * @property {Object}
+		 */
+		controllerClasses: {},
 
-			initBuilders(this);
+		/**
+		 * @property {Object}
+		 */
+		controllers: {},
+
+		constructor: function(view) {
+			Ext.apply(this, {
+				controllerClasses: {
+					'.Calendar': CMDBuild.controller.management.common.widgets.CMCalendarController,
+					'.CreateModifyCard': CMDBuild.controller.management.common.widgets.CMCreateModifyCardController,
+					'.CustomForm': 'CMDBuild.controller.management.widget.customForm.CustomForm',
+					'.Grid': 'CMDBuild.controller.management.common.widgets.grid.Grid',
+					'.LinkCards': CMDBuild.controller.management.common.widgets.linkCards.LinkCardsController,
+					'.ManageEmail': 'CMDBuild.controller.management.widget.ManageEmail',
+					'.ManageRelation': CMDBuild.controller.management.widget.manageRelation.CMManageRelationController,
+					'.NavigationTree': CMDBuild.controller.management.common.widgets.CMNavigationTreeController,
+					'.OpenAttachment': CMDBuild.controller.management.common.widgets.CMOpenAttachmentController,
+					'.OpenNote': CMDBuild.controller.management.common.widgets.CMOpenNoteController,
+					'.OpenReport': 'CMDBuild.controller.management.widget.openReport.OpenReport',
+					'.Ping': 'CMDBuild.controller.management.widget.Ping',
+					'.PresetFromCard': CMDBuild.controller.management.common.widgets.CMPresetFromCardController,
+					'.WebService': CMDBuild.controller.management.common.widgets.CMWebServiceController,
+					'.Workflow': CMDBuild.controller.management.common.widgets.CMWorkflowController
+				},
+				view: view
+			});
+
+			this.view.delegate = this;
 		},
 
 		setDelegate: function(delegate) {
@@ -22,11 +48,19 @@
 		},
 
 		/**
-		 * @param {Object} widgetController
+		 * Forwarder method
+		 *
+		 * @param {Object} controller
 		 */
-		beforeHideView: function(widgetController) {
-			if (!Ext.isEmpty(widgetController) && Ext.isFunction(widgetController.beforeHideView))
-				widgetController.beforeHideView();
+		beforeHideView: function(controller) {
+			if (!Ext.isEmpty(controller)) {
+				// cmfg() implementation adapter
+				if (!Ext.isEmpty(controller.cmfg) && Ext.isFunction(controller.cmfg)) {
+					controller.cmfg('beforeHideView');
+				} else if (Ext.isFunction(controller.beforeHideView)) {
+					controller.beforeHideView();
+				}
+			}
 		},
 
 		buildControllers: function(card) {
@@ -56,38 +90,65 @@
 				var wc = me.controllers[me.getWidgetId(w)];
 				if (wc) {
 					me.view.showWidget(wc.view, me.getWidgetLable(w));
-					wc.beforeActiveView();
+
+					// cmfg() implementation adapter
+					if (!Ext.isEmpty(wc.cmfg) && Ext.isFunction(wc.cmfg)) {
+						wc.cmfg('beforeActiveView');
+					} else if (Ext.isFunction(wc.beforeActiveView)) {
+						wc.beforeActiveView();
+					}
 				}
 			}, 1);
 		},
 
+		/**
+		 * Forwarder method
+		 *
+		 * @public
+		 */
 		onCardGoesInEdit: function() {
-			for (var wc in this.controllers) {
-				wc = this.controllers[wc];
-				if (typeof wc.onEditMode == "function") {
-					wc.onEditMode();
+			Ext.Object.each(this.controllers, function(id, controller, myself) {
+				// FIXME: widget instance data storage should be implemented inside this class
+				if (!Ext.isEmpty(controller.instancesDataStorageReset) && Ext.isFunction(controller.instancesDataStorageReset))
+					controller.instancesDataStorageReset();
+
+				// cmfg() implementation adapter
+				if (!Ext.isEmpty(controller.cmfg) && Ext.isFunction(controller.cmfg)) {
+					controller.cmfg('onEditMode');
+				} else if (!Ext.isEmpty(controller.onEditMode) && Ext.isFunction(controller.onEditMode)) {
+					controller.onEditMode();
 				}
-			}
+			}, this);
 		},
 
-		getWrongWFAsHTML: function getWrongWFAsHTML() {
-			var out = "<ul>",
-				valid = true;
+		/**
+		 * @returns {String or null}
+		 *
+		 * @public
+		 */
+		getWrongWFAsHTML: function () {
+			var out = '';
+			var widgetsAreValid = true;
 
-			for (var wc in this.controllers) {
-				wc = this.controllers[wc];
-				if (!wc.isValid()) {
-					valid = false;
-					out += "<li>" + wc.getWidgetLabel() + "</li>";
+			Ext.Object.each(this.controllers, function (id, controller, myself) {
+				// cmfg() implementation adapter
+				if (
+					!Ext.isEmpty(controller.cmfg) && Ext.isFunction(controller.cmfg)
+					&& !controller.cmfg('isValid')
+				) {
+					widgetsAreValid = false;
+					out += '<li>' + controller.cmfg('getLabel') + '</li>';
+				} else if (
+					!Ext.isEmpty(controller.isValid) && Ext.isFunction(controller.isValid)
+					&& !Ext.isEmpty(controller.getLabel) && Ext.isFunction(controller.getLabel)
+					&& !controller.isValid()
+				) {
+					widgetsAreValid = false;
+					out += '<li>' + controller.getLabel() + '</li>';
 				}
-			}
-			out + "</ul>";
+			}, this);
 
-			if (valid) {
-				return null;
-			} else {
-				return out;
-			}
+			return widgetsAreValid ? null : '<ul style="text-align: left;">' + out + '</ul>';
 		},
 
 		removeAll: function clearWidgetControllers() {
@@ -100,100 +161,69 @@
 			}
 		},
 
-		areThereBusyWidget: function areThereBusyWidget() {
-			for (var wc in this.controllers) {
-				wc = this.controllers[wc];
-				if (wc.isBusy()) {
-					return true;
-				} else {
-					continue;
+		/**
+		 * @param {Function} callback
+		 * @param {Object} callback
+		 *
+		 * @returns {Void}
+		 */
+		waitForBusyWidgets: function (callback, scope) {
+			var requestBarrier = Ext.create('CMDBuild.core.RequestBarrier', {
+				id: 'widgetManagerBeforeSaveBarrier',
+				executionTimeout: CMDBuild.core.configurations.Timeout.getWorkflowWidgetsExecutionTimeout(),
+				scope: scope,
+				callback: callback,
+				failure: function () {
+					CMDBuild.core.Message.error(null, CMDBuild.Translation.errors.busyVisualControls, false);
 				}
-			}
+			});
 
-			return false;
+			Ext.Object.each(this.controllers, function (id, controller, myself) {
+				// cmfg() implementation adapter
+				if (!Ext.isEmpty(controller.cmfg) && Ext.isFunction(controller.cmfg)) {
+					controller.cmfg('onBeforeSave', {
+						scope: this,
+						callback: requestBarrier.getCallback('widgetManagerBeforeSaveBarrier')
+					});
+				} else if (Ext.isFunction(controller.onBeforeSave)) {
+					controller.onBeforeSave({
+						scope: this,
+						callback: requestBarrier.getCallback('widgetManagerBeforeSaveBarrier')
+					});
+				}
+			}, this);
+
+			requestBarrier.finalize('widgetManagerBeforeSaveBarrier', true);
 		},
 
 		/**
-		 * Trigger onBeforeSave method on all widgets creating an execution chain on all widget onBeforeSave() functions
+		 * Forwarder method
 		 *
-		 * @param {Function} lastCallback
+		 * @param {Object} parameters
+		 *
+		 * @returns {Object} widgetsData
+		 *
+		 * @public
 		 */
-		onBeforeSaveTrigger: function(lastCallback) {
-			var controllersArray = Ext.Object.getValues(this.controllers);
-			var chainArray = [];
+		getData: function(parameters) {
+			var widgetsData = {};
 
-			if (!Ext.isEmpty(lastCallback) && typeof lastCallback == 'function') {
-				if (Ext.isEmpty(controllersArray)) { // No activity widgets
-					return lastCallback();
-				} else {
-					Ext.Array.forEach(controllersArray, function(controller, i, allControllers) {
-						var nextControllerFunction = Ext.emptyFn;
-						var scope = this;
+			Ext.Object.each(this.controllers, function(id, controller, myself) {
+				// cmfg() implementation adapter
+				if (!Ext.isEmpty(controller.cmfg) && Ext.isFunction(controller.cmfg)) {
+					var widgetData = controller.cmfg('getData', parameters);
 
-						if (typeof controller.onBeforeSave == 'function') {
-							if (i + 1 < controllersArray.length) {
-								nextControllerFunction = controllersArray[i + 1].onBeforeSave;
-								scope = controllersArray[i + 1];
-							} else {
-								nextControllerFunction = lastCallback;
-								scope = this;
-							}
+					if (!Ext.isEmpty(widgetData))
+						widgetsData[id] = widgetData;
+				} else if (Ext.isFunction(controller.getData)) {
+					var widgetData = controller.getData(parameters);
 
-							chainArray.push({
-								fn: nextControllerFunction,
-								scope: scope
-							});
-						}
-					}, this);
-
-					// Execute first chain function
-					if (!Ext.isEmpty(controllersArray[0]) && typeof controllersArray[0].onBeforeSave == 'function') {
-						controllersArray[0].onBeforeSave(chainArray, 0);
-					} else {
-						_msg('CMDBuild.controller.management.common.CMWidgetManagerController onBeforeSaveTrigger controllersArray head function error!');
-					}
+					if (!Ext.isEmpty(widgetData))
+						widgetsData[id] = widgetData;
 				}
-			} else {
-				_msg('CMDBuild.controller.management.common.CMWidgetManagerController onBeforeSaveTrigger lastCallback function error!');
-			}
-		},
+			}, this);
 
-		waitForBusyWidgets: function(cb, cbScope) {
-			var me = this;
-
-			CMDBuild.LoadMask.get().show();
-			this.onBeforeSaveTrigger(
-				function() {
-					new _CMUtils.PollingFunction({
-						success: cb,
-						failure: function failure() {
-							CMDBuild.Msg.error(null,CMDBuild.Translation.errors.busy_wf_widgets, false);
-						},
-						checkFn: function() {
-							// I want exit if there are no busy wc
-							return !me.areThereBusyWidget();
-						},
-						cbScope: cbScope,
-						checkFnScope: this
-					}).run();
-				}
-			);
-		},
-
-		getData: function(advance) {
-			var ww = {};
-			for (var wc in this.controllers) {
-				wc = this.controllers[wc];
-
-				if (typeof wc.getData == "function") {
-					var wcData = wc.getData(advance);
-					if (wcData != null) {
-						ww[wc.getWidgetId()] = wcData;
-					}
-				}
-			}
-
-			return ww;
+			return widgetsData;
 		},
 
 		hideWidgetsContainer: function() {
@@ -234,10 +264,6 @@
 			return controller;
 		},
 
-		hideWidgetsContainer: function() {
-			this.view.hideWidgetsContainer();
-		},
-
 		takeWidgetFromCard: function(card) {
 			var widgets = [];
 			if (Ext.getClassName(card) == "CMDBuild.model.CMActivityInstance") {
@@ -264,55 +290,6 @@
 			this.view.activateFirstTab();
 		}
 	});
-
-	function initBuilders(me) {
-		me.controllerClasses = {};
-		me.controllerClasses['.CustomForm'] = 'CMDBuild.controller.management.common.widgets.customForm.CustomForm';
-		me.controllerClasses['.Grid'] = 'CMDBuild.controller.management.common.widgets.grid.Grid';
-		me.controllerClasses['.ManageEmail'] = 'CMDBuild.controller.management.common.widgets.ManageEmail';
-
-		var commonControllers = CMDBuild.controller.management.common.widgets;
-
-		function addControllerClass(controller) {
-			me.controllerClasses[controller.WIDGET_NAME] = controller;
-		}
-
-		// openNote
-		addControllerClass(commonControllers.CMOpenNoteController);
-
-		// openAttachment
-		addControllerClass(commonControllers.CMOpenAttachmentController);
-
-		// createModifyCard
-		addControllerClass(commonControllers.CMCreateModifyCardController);
-
-		// calendar
-		addControllerClass(commonControllers.CMCalendarController);
-
-		// workflow
-		addControllerClass(commonControllers.CMWorkflowController);
-
-		// navigationTree
-		addControllerClass(commonControllers.CMNavigationTreeController);
-
-		// openReport
-		addControllerClass(commonControllers.CMOpenReportController);
-
-		// LinkCards
-		addControllerClass(CMDBuild.controller.management.common.widgets.linkCards.LinkCardsController);
-
-		// ManageRelation
-		addControllerClass(CMDBuild.controller.management.common.widgets.manageRelation.CMManageRelationController);
-
-		// ping
-		addControllerClass(commonControllers.CMPingController);
-
-		// webService
-		addControllerClass(commonControllers.CMWebServiceController);
-
-		// presetFromCard
-		addControllerClass(commonControllers.CMPresetFromCardController);
-	}
 
 	Ext.define("CMDBuild.controller.management.common.CMWidgetManagerControllerPopup", {
 		extend: "CMDBuild.controller.management.common.CMWidgetManagerController",

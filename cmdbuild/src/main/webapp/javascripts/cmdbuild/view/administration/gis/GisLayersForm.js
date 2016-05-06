@@ -12,10 +12,10 @@
 		},
 
 		autoScroll: false,
-		bodyCls:'cmgraypanel',
+		bodyCls:'cmdb-gray-panel',
 		border: false,
 		buttonAlign: 'center',
-		cls: 'x-panel-body-default-framed cmbordertop',
+		cls: 'x-panel-body-default-framed cmdb-border-top',
 		fileUpload: true,
 		frame: false,
 		hideMode: 'offsets',
@@ -46,16 +46,16 @@
 				];
 
 				this.cmButtons = [
-					this.saveButton = Ext.create('CMDBuild.buttons.SaveButton'),
-					this.abortButton = Ext.create('CMDBuild.buttons.AbortButton')
+					this.saveButton = Ext.create('CMDBuild.core.buttons.text.Save'),
+					this.abortButton = Ext.create('CMDBuild.core.buttons.text.Abort')
 				];
 			// END: Buttons configuration
 
 			this.nameField = Ext.create('Ext.form.field.Text', {
 				fieldLabel: tr_attribute.name,
-				labelWidth: CMDBuild.LABEL_WIDTH,
-				width: CMDBuild.ADM_BIG_FIELD_WIDTH,
-				name: CMDBuild.core.proxy.CMProxyConstants.NAME,
+				labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
+				width: CMDBuild.core.constants.FieldWidths.ADMINISTRATION_BIG,
+				name: CMDBuild.core.constants.Proxy.NAME,
 				allowBlank: false,
 				cmImmutable: true,
 				vtype: 'alphanum',
@@ -71,18 +71,18 @@
 			this.typesCombo = Ext.create('Ext.form.field.ComboBox', {
 				allowBlank: false,
 				autoScroll: true,
-				name: CMDBuild.core.proxy.CMProxyConstants.TYPE,
+				name: CMDBuild.core.constants.Proxy.TYPE,
 				fieldLabel: tr_attribute.type,
-				labelWidth: CMDBuild.LABEL_WIDTH,
-				valueField: CMDBuild.core.proxy.CMProxyConstants.VALUE,
-				displayField: CMDBuild.core.proxy.CMProxyConstants.NAME,
-				hiddenName: CMDBuild.core.proxy.CMProxyConstants.TYPE,
+				labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
+				valueField: CMDBuild.core.constants.Proxy.VALUE,
+				displayField: CMDBuild.core.constants.Proxy.NAME,
+				hiddenName: CMDBuild.core.constants.Proxy.TYPE,
 				triggerAction: 'all',
 				cmImmutable: true,
 				disabled: true,
 
 				store: Ext.create('Ext.data.SimpleStore', {
-					fields: [CMDBuild.core.proxy.CMProxyConstants.VALUE, CMDBuild.core.proxy.CMProxyConstants.NAME],
+					fields: [CMDBuild.core.constants.Proxy.VALUE, CMDBuild.core.constants.Proxy.NAME],
 					data: [
 						['GEOTIFF', 'GeoTiff'],
 						['WORLDIMAGE', 'WorldImage'],
@@ -95,8 +95,8 @@
 			this.rangeFields = Ext.create('CMDBuild.form.RangeSliders', {
 				maxSliderField: Ext.create('Ext.slider.Single', {
 					fieldLabel: tr.max_zoom,
-					labelWidth: CMDBuild.LABEL_WIDTH,
-					width: CMDBuild.ADM_BIG_FIELD_WIDTH,
+					labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
+					width: CMDBuild.core.constants.FieldWidths.ADMINISTRATION_BIG,
 					minValue: 0,
 					maxValue: 25,
 					value: 25,
@@ -105,8 +105,8 @@
 				}),
 				minSliderField: Ext.create('Ext.slider.Single', {
 					fieldLabel: tr.min_zoom,
-					labelWidth: CMDBuild.LABEL_WIDTH,
-					width: CMDBuild.ADM_BIG_FIELD_WIDTH,
+					labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
+					width: CMDBuild.core.constants.FieldWidths.ADMINISTRATION_BIG,
 					minValue: 0,
 					maxValue: 25,
 					name: 'minZoom',
@@ -117,17 +117,17 @@
 
 			this.descriptionField = Ext.create('Ext.form.field.Text', {
 				fieldLabel: tr_attribute.description,
-				labelWidth: CMDBuild.LABEL_WIDTH,
-				width: CMDBuild.ADM_BIG_FIELD_WIDTH,
-				name: CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION,
+				labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
+				width: CMDBuild.core.constants.FieldWidths.ADMINISTRATION_BIG,
+				name: CMDBuild.core.constants.Proxy.DESCRIPTION,
 				allowBlank: false,
 				disabled: true
 			});
 
 			this.fileField = Ext.create('Ext.form.field.File', {
 				fieldLabel: tr_geoserver.file,
-				labelWidth: CMDBuild.LABEL_WIDTH,
-				width: CMDBuild.ADM_BIG_FIELD_WIDTH,
+				labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
+				width: CMDBuild.core.constants.FieldWidths.ADMINISTRATION_BIG,
 				name: 'file',
 				form: this,
 				disabled: true
@@ -157,7 +157,7 @@
 					{
 						xtype: 'toolbar',
 						dock: 'top',
-						itemId: CMDBuild.core.proxy.CMProxyConstants.TOOLBAR_TOP,
+						itemId: CMDBuild.core.constants.Proxy.TOOLBAR_TOP,
 						items: this.cmTBar
 					}
 				],

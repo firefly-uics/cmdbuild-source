@@ -31,27 +31,23 @@ import org.cmdbuild.service.rest.v1.model.ResponseMultiple;
 import org.cmdbuild.service.rest.v1.model.ResponseSingle;
 import org.junit.Before;
 import org.junit.ClassRule;
-import org.junit.Rule;
 import org.junit.Test;
 
 public class LookupTypeValuesTest {
 
-	private LookupTypeValues service;
-
-	@Rule
-	public ServerResource server = ServerResource.newInstance() //
-			.withServiceClass(LookupTypeValues.class) //
-			.withService(service = mock(LookupTypeValues.class)) //
-			.withPort(randomPort()) //
+	@ClassRule
+	public static ServerResource<LookupTypeValues> server = ServerResource.newInstance(LookupTypeValues.class) //
+			.withPortRange(randomPort()) //
 			.build();
 
-	@ClassRule
-	public static JsonSupport json = new JsonSupport();
+	private static JsonSupport json = new JsonSupport();
 
+	private LookupTypeValues service;
 	private HttpClient httpclient;
 
 	@Before
-	public void createHttpClient() throws Exception {
+	public void setUp() throws Exception {
+		server.service(service = mock(LookupTypeValues.class));
 		httpclient = HttpClientBuilder.create().build();
 	}
 

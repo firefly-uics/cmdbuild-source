@@ -1,5 +1,7 @@
 (function() {
 
+	Ext.require(['CMDBuild.proxy.gis.Gis']);
+
 	Ext.define("CMDBuild.controller.management.classes.map.CMMapController", {
 		alternateClassName: "CMDBuild.controller.management.classes.CMMapController", // Legacy class name
 		extend: "CMDBuild.controller.management.classes.CMCardDataProvider",
@@ -197,7 +199,15 @@
 						// change the zoom to the minimum to show the feature
 						me.map.setCenter(me.map.getCenter(), layer.minZoom);
 					}
-					CMDBuild.ServiceProxy.getFeature(params.IdClass, params.Id, onSuccess);
+					CMDBuild.proxy.gis.Gis.getFeature({
+						params: {
+							"className": _CMCache.getEntryTypeNameById(params.IdClass),
+							"cardId": params.Id
+						},
+						loadMask: false,
+						scope: this,
+						success: onSuccess
+					});
 				}
 			});
 
@@ -562,7 +572,7 @@
 		} else {
 			var data = o.feature.data;
 
-			if (CMDBuild.Config.cmdbuild.cardBrowserByDomainConfiguration.root) {
+			if (CMDBuild.configuration.gis.get('cardBrowserByDomainConfiguration')['root']) { // TODO: use proxy constants
 				if (!this.mapState.isFeatureVisible(data.master_className, data.master_card)) { // could be also null, or undefined
 					layer.hideFeatureWithCardId(data.master_card, o.feature);
 					return false;

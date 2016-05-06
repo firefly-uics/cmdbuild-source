@@ -34,7 +34,7 @@
 			});
 
 			this.tableView = new CMDBuild.view.management.dashboard.CMChartPortletTableView({
-				cls: "cmbordertop",
+				cls: "cmdb-border-top",
 				region: 'south',
 				split: true,
 				autoScroll: true,
@@ -51,8 +51,8 @@
 				chartConfiguration: this.chartConfiguration,
 				region: 'north',
 				frame: false,
-				bodyCls: "x-panel-body-default-framed cmborderbottom",
-				cls: "cmborderbottom",
+				bodyCls: "x-panel-body-default-framed cmdb-border-bottom",
+				cls: "cmdb-border-bottom",
 				style: {
 					padding: "0 0 3px 0"
 				},
@@ -60,7 +60,7 @@
 					padding: "5px 0 0 0"
 				},
 				buttons: [{
-					text: CMDBuild.Translation.common.buttons.load,
+					text: CMDBuild.Translation.load,
 					handler: function() {
 						if (me.delegate) {
 							me.delegate.onFormLoadButtonClick(this.form);
@@ -112,7 +112,7 @@
 			buttons.push(this.showTableViewButton, this.reloadButton);
 			this.chartBuilder = new CMDBuild.view.management.dashboard.CMChartConfigurationReader();
 
-			
+
 			this.title = this.chartConfiguration.getDescription() || this.chartConfiguration.getName() || "";
 			this.layout = 'border';
 			this.height = 100;
@@ -182,7 +182,7 @@
 
 		adjustSize: function(height) {
 			this.setSize({
-				height: height, 
+				height: height,
 				width: this.getWidth()	// looks useless but without this there
 										// could be rendering problems if the chart
 										// was moved between two columns
@@ -240,7 +240,7 @@
 	});
 
 	Ext.define("CMDBuild.view.management.dashboard.CMChartWindow", {
-		extend: "CMDBuild.PopupWindow",
+		extend: "CMDBuild.core.window.AbstractModal",
 
 		initComponent: function() {
 			this.chartPortlet = new CMDBuild.view.management.dashboard.CMChartPortlet({
@@ -272,7 +272,7 @@
 				gauge: gauge,
 				bar: bar,
 				line: line,
-				pie: pie 
+				pie: pie
 			};
 
 			if (typeof readers[chartConfiguration.getType()] == "function") {

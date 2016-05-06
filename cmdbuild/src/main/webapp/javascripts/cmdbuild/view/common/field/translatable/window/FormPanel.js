@@ -3,6 +3,10 @@
 	Ext.define('CMDBuild.view.common.field.translatable.window.FormPanel', {
 		extend: 'Ext.form.Panel',
 
+		requires: ['CMDBuild.core.constants.FieldWidths'],
+
+		mixins: ['CMDBuild.view.common.PanelFunctions'],
+
 		/**
 		 * @cfg {CMDBuild.controller.common.field.translatable.Window}
 		 */
@@ -15,6 +19,7 @@
 
 		frame: true,
 		border: false,
+		overflowY: 'auto',
 
 		layout: {
 			type: 'vbox',
@@ -22,15 +27,8 @@
 		},
 
 		defaults: {
-			maxWidth: CMDBuild.CFG_BIG_FIELD_WIDTH,
-			anchor: '100%'
-		},
-
-		/**
-		 * @return {Object}
-		 */
-		getOldValues: function() {
-			return this.oldValues;
+			labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
+			maxWidth: CMDBuild.core.constants.FieldWidths.CONFIGURATION_BIG
 		}
 	});
 

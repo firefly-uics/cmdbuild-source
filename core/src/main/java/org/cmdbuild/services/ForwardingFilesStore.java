@@ -54,8 +54,8 @@ public abstract class ForwardingFilesStore extends ForwardingObject implements F
 	}
 
 	@Override
-	public void save(final InputStream inputStream, final String filePath) throws IOException {
-		delegate().save(inputStream, filePath);
+	public File save(final InputStream inputStream, final String filePath) throws IOException {
+		return delegate().save(inputStream, filePath);
 	}
 
 	@Override
@@ -66,6 +66,11 @@ public abstract class ForwardingFilesStore extends ForwardingObject implements F
 	@Override
 	public String getAbsoluteRootDirectory() {
 		return delegate().getAbsoluteRootDirectory();
+	}
+	
+	@Override
+	public File getRoot() {
+		return delegate().getRoot();
 	}
 
 	@Override

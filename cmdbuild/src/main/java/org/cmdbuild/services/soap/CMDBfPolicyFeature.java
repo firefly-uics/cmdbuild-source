@@ -83,8 +83,6 @@ public class CMDBfPolicyFeature extends AbstractFeature implements ApplicationCo
             ext.addExtensor(uee);
         } catch (XMLStreamException ex) {
             throw new RuntimeException("Could not serialize policy", ex);
-        } catch (ParserConfigurationException e) {
-            throw new RuntimeException("Could not serialize policy", e);
         }        
     }
 }

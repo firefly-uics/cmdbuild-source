@@ -19,32 +19,29 @@
 		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 		<link rel="stylesheet" type="text/css" href="stylesheets/cmdbuild.css" />
 		<link rel="stylesheet" type="text/css" href="javascripts/ext-<%= extVersion %>/resources/css/ext-all.css" />
-		<link rel="icon" href="images/favicon.ico" />
+		<link rel="icon" type="image/x-icon" href="images/favicon.ico" />
 
 		<!-- 0. ExtJS -->
 		<script type="text/javascript" src="javascripts/ext-<%= extVersion %>/ext-all.js"></script>
 		<script type="text/javascript" src="javascripts/ext-<%= extVersion %>-ux/Notification.js"></script>
 
 		<!-- 1. Main script -->
-		<script type="text/javascript" src="javascripts/cmdbuild/core/Utils.js"></script>
+		<script type="text/javascript" src="javascripts/cmdbuild/core/constants/Proxy.js"></script>
 		<script type="text/javascript" src="javascripts/cmdbuild/core/LoaderConfig.js"></script>
 		<script type="text/javascript" src="javascripts/log/log4javascript.js"></script>
-		<script type="text/javascript" src="javascripts/cmdbuild/application.js"></script>
 		<script type="text/javascript" src="javascripts/cmdbuild/core/Message.js"></script>
-		<script type="text/javascript" src="javascripts/cmdbuild/core/Ajax.js"></script>
 
-		<!-- 2. Translations -->
-		<script type="text/javascript" src="javascripts/ext-<%= extVersion %>/locale/ext-lang-<%= lang %>.js"></script>
-		<script type="text/javascript" src="services/json/utils/gettranslationobject"></script>
+		<!-- 2. Localizations -->
+		<%@ include file="localizationsJsFiles.jsp" %>
 
-		<!-- 3. Logout script -->
-		<script type="text/javascript" src="javascripts/cmdbuild/app/Logout.js"></script>
-
+		<!-- 3. Runtime configuration -->
 		<script type="text/javascript">
-			Ext.onReady(function() {
-				CMDBuild.app.Logout.doLogout();
-			});
+			Ext.ns('CMDBuild.configuration.runtime'); // Runtime configurations
+			CMDBuild.configuration.runtime = Ext.create('CMDBuild.model.configuration.Runtime');
 		</script>
+
+		<!-- 4. Logout script -->
+		<script type="text/javascript" src="javascripts/cmdbuild/Logout.js"></script>
 
 		<title>CMDBuild</title>
 	</head>

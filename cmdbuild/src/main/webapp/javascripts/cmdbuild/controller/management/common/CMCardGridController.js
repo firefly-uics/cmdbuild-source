@@ -1,4 +1,11 @@
 (function() {
+
+	Ext.require([
+		'CMDBuild.core.Message',
+		'CMDBuild.proxy.Card',
+		'CMDBuild.core.Utils'
+	]);
+
 	Ext.define("CMDBuild.controller.management.common.CMCardGridController", {
 
 		mixins: {
@@ -59,14 +66,8 @@
 					return;
 				}
 
-				if (!me.view.isVisible(deep)) {
-					return;
-				}
-
 				var currentSelection = me.gridSM.getSelection();
-				if (Ext.isArray(currentSelection)
-						&& currentSelection.length>0) {
-
+				if (Ext.isArray(currentSelection) && currentSelection.length>0) {
 					currentSelection = currentSelection[0];
 				}
 
@@ -133,19 +134,13 @@
 								// Not a good implementation but don't exists another way
 								if (!args[2]) {
 									CMDBuild.core.Message.error(null, {
-										text: CMDBuild.Translation.errors.unknown_error
+										text: CMDBuild.Translation.errors.anErrorHasOccurred
 									});
 								}
 							}
 						});
 					}
 				};
-			}
-
-			if (viewFilter) {
-				me.view.disableFilterMenuButton();
-			} else {
-				me.view.enableFilterMenuButton();
 			}
 
 			me.view.updateStoreForClassId(me.getEntryType().get("id"), {
@@ -164,9 +159,9 @@
 		onPrintGridMenuClick: function(format) {
 			if (!Ext.isEmpty(format)) {
 				var params = Ext.apply({}, this.view.getStore().proxy.extraParams);
-				params[CMDBuild.core.proxy.CMProxyConstants.ATTRIBUTES] = Ext.encode(this.view.getVisibleColumns());
-				params[CMDBuild.core.proxy.CMProxyConstants.SORT] = Ext.encode(this.view.getStore().getSorters());
-				params[CMDBuild.core.proxy.CMProxyConstants.TYPE] = format;
+				params[CMDBuild.core.constants.Proxy.ATTRIBUTES] = Ext.encode(this.view.getVisibleColumns());
+				params[CMDBuild.core.constants.Proxy.SORT] = Ext.encode(this.view.getStore().getSorters());
+				params[CMDBuild.core.constants.Proxy.TYPE] = format;
 
 				Ext.create('CMDBuild.controller.common.entryTypeGrid.printTool.PrintWindow', {
 					parentDelegate: this,
@@ -236,13 +231,14 @@
 			// Take the current store configuration
 			// to have the sort and filter
 			var params = Ext.apply({}, store.proxy.extraParams);
-			params[_CMProxy.parameter.CARD_ID] = p.Id;
-			params[_CMProxy.parameter.CLASS_NAME] = _CMCache.getEntryTypeNameById(p.IdClass);
-			params[_CMProxy.parameter.RETRY_WITHOUT_FILTER] = retryWithoutFilter;
-			params[_CMProxy.parameter.SORT] = Ext.encode(getSorting(store));
+			params[CMDBuild.core.constants.Proxy.CARD_ID] = p.Id;
+			params[CMDBuild.core.constants.Proxy.CLASS_NAME] = _CMCache.getEntryTypeNameById(p.IdClass);
+			params[CMDBuild.core.constants.Proxy.RETRY_WITHOUT_FILTER] = retryWithoutFilter;
+			params[CMDBuild.core.constants.Proxy.SORT] = Ext.encode(getSorting(store));
 
-			CMDBuild.ServiceProxy.card.getPosition({
+			CMDBuild.proxy.Card.readPosition({
 				params: params,
+				loadMask: false,
 				failure: function onGetPositionFailure(response, options, decoded) {
 					// reconfigure the store and blah blah blah
 				},
@@ -260,7 +256,7 @@
 						}
 					} else {
 						if (retryWithoutFilter) {
-							CMDBuild.Msg.error(CMDBuild.Translation.common.failure,
+							CMDBuild.core.Message.error(CMDBuild.Translation.common.failure,
 									Ext.String.format(CMDBuild.Translation.errors.reasons.CARD_NOTFOUND, p.IdClass));
 						} else {
 							me._onGetPositionFailureWithoutForcingTheFilter(resText);
@@ -283,8 +279,8 @@
 			updateStoreAndSelectGivenPosition(me, p.IdClass, position);
 		},
 
-		_onGetPositionFailureWithoutForcingTheFilter: function(resText) {
-			CMDBuild.Msg.info(undefined, CMDBuild.Translation.info.card_not_found);
+		_onGetPositionFailureWithoutForcingTheFilter: function() {
+			CMDBuild.core.Message.info(undefined, CMDBuild.Translation.cardNotMatchFilter);
 		},
 		// protected
 		unApplyFilter: unApplyFilter,
@@ -402,7 +398,11 @@
 				if (filter.isLocal()) {
 					onSuccess();
 				} else {
-					CMDBuild.ServiceProxy.Filter.remove(filter, {
+					CMDBuild.proxy.Filter.remove({
+						params: {
+							id: filter.getId()
+						},
+						loadMask: false,
 						success: onSuccess
 					});
 				}
@@ -475,10 +475,33 @@
 			filter.setDescription(description);
 			filter.commit();
 
-			var action = filter.getId() ? "update" : "create";
-			CMDBuild.ServiceProxy.Filter[action](filter, {
-				success: onSuccess
-			});
+			if (filter.getId()) {
+				CMDBuild.proxy.Filter.update({
+					params: {
+						id: filter.getId(),
+						className: filter.getEntryType(),
+						configuration: Ext.encode(filter.getConfiguration()),
+						description: filter.getDescription(),
+						name: filter.getName(),
+						template: filter.isTemplate()
+					},
+					loadMask: false,
+					success: onSuccess
+				});
+			} else {
+				CMDBuild.proxy.Filter.create({
+					params: {
+						id: filter.getId(),
+						className: filter.getEntryType(),
+						configuration: Ext.encode(filter.getConfiguration()),
+						description: filter.getDescription(),
+						name: filter.getName(),
+						template: filter.isTemplate()
+					},
+					loadMask: false,
+					success: onSuccess
+				});
+			}
 		},
 
 		// as runtimeFilterParamsWindow
@@ -592,6 +615,9 @@
 	}
 
 	function unApplyFilter(me) {
+		if (me.gridSM.hasSelection())
+			me.gridSM.deselectAll();
+
 		if (me.appliedFilter) {
 			setStoreFilterUnapplied(me, me.appliedFilter);
 			me.appliedFilter = undefined;
@@ -616,8 +642,8 @@
 		var view = me.view;
 		view.updateStoreForClassId(idClass, {
 			cb: function cbOfUpdateStoreForClassId() {
-				var	pageNumber = _CMUtils.grid.getPageNumber(position),
-					pageSize = _CMUtils.grid.getPageSize(),
+				var	pageNumber = CMDBuild.core.Utils.getPageNumber(position),
+					pageSize = CMDBuild.configuration.instance.get(CMDBuild.core.constants.Proxy.ROW_LIMIT),
 					relativeIndex = position % pageSize;
 
 				view.loadPage(pageNumber, {
@@ -644,7 +670,7 @@
 
 						if (!parameters[2]) {
 							CMDBuild.core.Message.error(null, {
-								text: CMDBuild.Translation.errors.unknown_error
+								text: CMDBuild.Translation.errors.anErrorHasOccurred
 							});
 						}
 					}

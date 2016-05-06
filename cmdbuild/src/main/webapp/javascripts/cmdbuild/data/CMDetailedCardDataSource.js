@@ -1,4 +1,7 @@
 (function() {
+
+	Ext.require(['CMDBuild.proxy.Card']);
+
 	Ext.define("CMDBuild.data.CMDetailedCardDataSource", {
 
 		extend: "CMDBuild.data.CMMiniCardGridBaseDataSource",
@@ -7,10 +10,9 @@
 			this.callParent(arguments);
 
 			this.store = new Ext.data.Store ({
-				pageSize: getPageSize(),
+				pageSize: CMDBuild.configuration.instance.get(CMDBuild.core.constants.Proxy.ROW_LIMIT),
 				model: 'CMDBuild.view.management.CMMiniCardGridModel',
-				autoLoad: false,
-				remoteSort: false
+				autoLoad: false
 			});
 		},
 
@@ -19,13 +21,16 @@
 		},
 
 		/**
-		 * 
+		 *
 		 * @param {object} cardToLoad Object with an Id and an IdClass
 		 * attribute. Use it to load the full attributes of the card
 		 */
 		loadCard: function(cardToLoad) {
-			CMDBuild.ServiceProxy.card.get({
+			adaptGetCardCallParams(cardToLoad);
+
+			CMDBuild.proxy.Card.read({
 				params: cardToLoad,
+				loadMask: false,
 				scope: this,
 				success: function(a,b, response) {
 					var raw = response.card;
@@ -55,14 +60,16 @@
 		loadStoreForEntryTypeId: function(entryTypeId, cb) {}
 	});
 
-	function getPageSize() {
-		var pageSize;
-		try {
-			pageSize = parseInt(CMDBuild.Config.cmdbuild.rowlimit);
-		} catch (e) {
-			pageSize = 20;
-		}
+	function adaptGetCardCallParams(p) {
+		if (p.Id && p.IdClass) {
+			_deprecated('adaptGetCardCallParams', this);
 
-		return pageSize;
+			var parameters = {};
+			parameters[CMDBuild.core.constants.Proxy.CLASS_NAME] = _CMCache.getEntryTypeNameById(p.IdClass);
+			parameters[CMDBuild.core.constants.Proxy.CARD_ID] = p.Id;
+
+			p = parameters;
+		}
 	}
+
 })();

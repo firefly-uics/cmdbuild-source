@@ -3,8 +3,7 @@
 	Ext.define('CMDBuild.controller.administration.tasks.common.emailFilterForm.CMEmailFilterFormController', {
 
 		requires: [
-			'CMDBuild.core.proxy.CMProxyConstants',
-			'CMDBuild.core.proxy.CMProxyTasks'
+			'CMDBuild.core.constants.Proxy'
 		],
 
 		/**

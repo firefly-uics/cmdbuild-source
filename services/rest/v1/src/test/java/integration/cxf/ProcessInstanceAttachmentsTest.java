@@ -52,25 +52,23 @@ import org.mockito.ArgumentCaptor;
 
 public class ProcessInstanceAttachmentsTest {
 
-	private ProcessInstanceAttachments service;
-
-	@Rule
-	public ServerResource server = ServerResource.newInstance() //
-			.withServiceClass(ProcessInstanceAttachments.class) //
-			.withService(service = mock(ProcessInstanceAttachments.class)) //
-			.withPort(randomPort()) //
-			.build();
-
 	@ClassRule
-	public static JsonSupport json = new JsonSupport();
+	public static ServerResource<ProcessInstanceAttachments> server = ServerResource
+			.newInstance(ProcessInstanceAttachments.class) //
+			.withPortRange(randomPort()) //
+			.build();
 
 	@Rule
 	public TemporaryFolder temporaryFolder = new TemporaryFolder();
 
+	private static JsonSupport json = new JsonSupport();
+
+	private ProcessInstanceAttachments service;
 	private HttpClient httpclient;
 
 	@Before
-	public void createHttpClient() throws Exception {
+	public void setUp() throws Exception {
+		server.service(service = mock(ProcessInstanceAttachments.class));
 		httpclient = HttpClientBuilder.create().build();
 	}
 
@@ -88,9 +86,10 @@ public class ProcessInstanceAttachmentsTest {
 		// when
 		final HttpPost post = new HttpPost(server.resource("processes/foo/instances/123/attachments/"));
 		final MultipartEntity multipartEntity = new MultipartEntity();
-		multipartEntity.addPart(ATTACHMENT, new StringBody("{" //
-				+ "\"_description\": \"the description\"" //
-				+ "}", APPLICATION_JSON, UTF_8));
+		multipartEntity.addPart(ATTACHMENT,
+				new StringBody("{" //
+						+ "\"_description\": \"the description\"" //
+						+ "}", APPLICATION_JSON, UTF_8));
 		multipartEntity.addPart(FILE, new FileBody(file));
 		post.setEntity(multipartEntity);
 		final HttpResponse response = httpclient.execute(post);
@@ -151,9 +150,10 @@ public class ProcessInstanceAttachmentsTest {
 		// when
 		final HttpPut put = new HttpPut(server.resource("processes/foo/instances/123/attachments/bar/"));
 		final MultipartEntity multipartEntity = new MultipartEntity();
-		multipartEntity.addPart(ATTACHMENT, new StringBody("{" //
-				+ "\"_description\": \"the new description\"" //
-				+ "}", APPLICATION_JSON, UTF_8));
+		multipartEntity.addPart(ATTACHMENT,
+				new StringBody("{" //
+						+ "\"_description\": \"the new description\"" //
+						+ "}", APPLICATION_JSON, UTF_8));
 		multipartEntity.addPart(FILE, new FileBody(file));
 		put.setEntity(multipartEntity);
 		final HttpResponse response = httpclient.execute(put);
@@ -207,9 +207,10 @@ public class ProcessInstanceAttachmentsTest {
 		// when
 		final HttpPut put = new HttpPut(server.resource("processes/foo/instances/123/attachments/bar/"));
 		final MultipartEntity multipartEntity = new MultipartEntity();
-		multipartEntity.addPart(ATTACHMENT, new StringBody("{" //
-				+ "\"_description\": \"the new description\"" //
-				+ "}", APPLICATION_JSON, UTF_8));
+		multipartEntity.addPart(ATTACHMENT,
+				new StringBody("{" //
+						+ "\"_description\": \"the new description\"" //
+						+ "}", APPLICATION_JSON, UTF_8));
 		put.setEntity(multipartEntity);
 		final HttpResponse response = httpclient.execute(put);
 

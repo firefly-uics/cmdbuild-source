@@ -103,7 +103,7 @@
 	Ext.define('CMDBuild.view.administration.tasks.event.asynchronous.CMStep1', {
 		extend: 'Ext.panel.Panel',
 
-		requires: ['CMDBuild.core.proxy.CMProxyConstants'],
+		requires: ['CMDBuild.core.constants.Proxy'],
 
 		/**
 		 * @cfg {CMDBuild.view.administration.tasks.event.asynchronous.CMStep1Delegate}
@@ -120,7 +120,7 @@
 		},
 
 		defaults: {
-			maxWidth: CMDBuild.CFG_BIG_FIELD_WIDTH,
+			maxWidth: CMDBuild.core.constants.FieldWidths.CONFIGURATION_BIG,
 			anchor: '100%'
 		},
 
@@ -131,8 +131,8 @@
 
 			this.typeField = Ext.create('Ext.form.field.Text', {
 				fieldLabel: tr.type,
-				labelWidth: CMDBuild.LABEL_WIDTH,
-				name: CMDBuild.core.proxy.CMProxyConstants.TYPE,
+				labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
+				name: CMDBuild.core.constants.Proxy.TYPE,
 				value: tr.tasksTypes.event + ' ' + tr.tasksTypes.eventTypes.asynchronous.toLowerCase(),
 				disabled: true,
 				cmImmutable: true,
@@ -141,29 +141,29 @@
 			});
 
 			this.idField = Ext.create('Ext.form.field.Hidden', {
-				name: CMDBuild.core.proxy.CMProxyConstants.ID
+				name: CMDBuild.core.constants.Proxy.ID
 			});
 
 			this.descriptionField = Ext.create('Ext.form.field.Text', {
-				name: CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION,
+				name: CMDBuild.core.constants.Proxy.DESCRIPTION,
 				fieldLabel: CMDBuild.Translation.description_,
-				labelWidth: CMDBuild.LABEL_WIDTH,
+				labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
 				allowBlank: false
 			});
 
 			this.activeField = Ext.create('Ext.form.field.Checkbox', {
-				name: CMDBuild.core.proxy.CMProxyConstants.ACTIVE,
+				name: CMDBuild.core.constants.Proxy.ACTIVE,
 				fieldLabel: tr.startOnSave,
-				labelWidth: CMDBuild.LABEL_WIDTH
+				labelWidth: CMDBuild.core.constants.FieldWidths.LABEL
 			});
 
 			this.classNameCombo = Ext.create('Ext.form.field.ComboBox', {
-				name: CMDBuild.core.proxy.CMProxyConstants.CLASS_NAME,
+				name: CMDBuild.core.constants.Proxy.CLASS_NAME,
 				fieldLabel: CMDBuild.Translation.classLabel,
-				labelWidth: CMDBuild.LABEL_WIDTH,
-				valueField: CMDBuild.core.proxy.CMProxyConstants.NAME,
-				displayField: CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION,
-				maxWidth: CMDBuild.ADM_BIG_FIELD_WIDTH,
+				labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
+				valueField: CMDBuild.core.constants.Proxy.NAME,
+				displayField: CMDBuild.core.constants.Proxy.DESCRIPTION,
+				maxWidth: CMDBuild.core.constants.FieldWidths.ADMINISTRATION_BIG,
 				allowBlank: false,
 				forceSelection: true,
 				editable: false,

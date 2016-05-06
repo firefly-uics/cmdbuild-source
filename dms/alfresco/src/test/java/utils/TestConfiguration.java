@@ -5,9 +5,9 @@ import static org.apache.commons.lang3.StringUtils.EMPTY;
 import java.io.File;
 
 import org.apache.commons.io.FileUtils;
-import org.cmdbuild.dms.DmsConfiguration;
+import org.cmdbuild.dms.alfresco.AlfrescoDmsConfiguration;
 
-public class TestConfiguration implements DmsConfiguration {
+public class TestConfiguration implements AlfrescoDmsConfiguration {
 
 	private static final String FTP_HOST = "localhost";
 	private static final String FTP_PORT = "2121";
@@ -21,7 +21,6 @@ public class TestConfiguration implements DmsConfiguration {
 	private static final String PASSWORD = "admin";
 
 	private static final String ALFRESCO_CATEGORY = "AlfrescoCategory";
-	private static final String LOOKUP_NAME_FOR_ATTACHMENTS = "Attachment";
 
 	private static final String ALFRESCO_CUSTOM_URI = "org.cmdbuild.dms.alfresco";
 	private static final String ALFRESCO_CUSTOM_PREFIX = "cmdbuild";
@@ -29,6 +28,16 @@ public class TestConfiguration implements DmsConfiguration {
 	private static final String METADATA_AUTOCOMPLETION_FILENAME = "metadataAutocompletion.xml";
 
 	private static final long DELAY = 1000L;
+
+	@Override
+	public void addListener(final ChangeListener listener) {
+		// not handled
+	}
+
+	@Override
+	public String getService() {
+		throw new UnsupportedOperationException("should never be called");
+	}
 
 	@Override
 	public boolean isEnabled() {
@@ -91,23 +100,13 @@ public class TestConfiguration implements DmsConfiguration {
 	}
 
 	@Override
-	public String getAlfrescoCustomModelFileName() {
-		return ALFRESCO_CUSTOM_MODEL_FILENAME;
-	}
-
-	@Override
-	public String getAlfrescoCustomModelFileContent() {
-		return contentOf(getAlfrescoCustomModelFileName());
-	}
-
-	@Override
-	public String getMetadataAutocompletionFileName() {
-		return METADATA_AUTOCOMPLETION_FILENAME;
+	public String getCustomModelFileContent() {
+		return contentOf(ALFRESCO_CUSTOM_MODEL_FILENAME);
 	}
 
 	@Override
 	public String getMetadataAutocompletionFileContent() {
-		return contentOf(getMetadataAutocompletionFileName());
+		return contentOf(METADATA_AUTOCOMPLETION_FILENAME);
 	}
 
 	private String contentOf(final String filename) {

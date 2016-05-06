@@ -1,9 +1,12 @@
 (function() {
 
+	Ext.require([
+		'CMDBuild.proxy.Card',
+		'CMDBuild.proxy.classes.tabs.Note'
+	]);
+
 	Ext.define("CMDBuild.controller.management.classes.CMNoteController", {
 		extend: "CMDBuild.controller.management.classes.CMModCardSubController",
-
-		requires: ['CMDBuild.core.proxy.Card'],
 
 		constructor: function(view, supercontroller) {
 
@@ -56,26 +59,22 @@
 			this.view.updateWritePrivileges(privileges.write && ! privileges.crudDisabled.modify);
 		},
 
-		onSaveNoteClick: function() {
-			var me = this,
-				form = me.view.getForm(),
-				params = me._getSaveParams();
+		/**
+		 * @returns {Void}
+		 */
+		onSaveNoteClick: function () {
+			var params = this._getSaveParams();
 
-			if (form.isValid() && me.beforeSave(me.card)) {
-				CMDBuild.LoadMask.get().show();
-				form.submit({
-					method : 'POST',
-					url : 'services/json/management/modcard/updatecard',
+			if (this.view.getForm().isValid() && this.beforeSave(this.card)) {
+				CMDBuild.proxy.classes.tabs.Note.update({
 					params: params,
-					success : function() {
-						CMDBuild.LoadMask.get().hide();
-						me.view.disableModify(enableToolbar = true);
-						var val = me.view.syncForms();
-						me.syncSavedNoteWithModel(me.card, val);
-						me.fireEvent(me.CMEVENTS.noteWasSaved, me.card);
-					},
-					failure: function() {
-						CMDBuild.LoadMask.get().hide();
+					scope: this,
+					success: function (response, options, decodedResponse) {
+						this.view.disableModify(enableToolbar = true);
+
+						var val = this.view.syncForms();
+						this.syncSavedNoteWithModel(this.card, val);
+						this.fireEvent(this.CMEVENTS.noteWasSaved, this.card);
 					}
 				});
 			}
@@ -104,10 +103,11 @@
 
 		_getSaveParams: function() {
 			var params = {};
-			var me = this;
+			params['Notes'] = this.view.getForm().getValues()['Notes'];
+
 			if (this.card) {
-				params[_CMProxy.parameter.CARD_ID] = me.card.get("Id");
-				params[_CMProxy.parameter.CLASS_NAME] = _CMCache.getEntryTypeNameById(me.card.get("IdClass"));
+				params[CMDBuild.core.constants.Proxy.CARD_ID] = this.card.get("Id");
+				params[CMDBuild.core.constants.Proxy.CLASS_NAME] = _CMCache.getEntryTypeNameById(this.card.get("IdClass"));
 			}
 
 			return params;
@@ -122,13 +122,14 @@
 		},
 
 		lockCard: function(success) {
-			if (_CMUtils.lockCard.isEnabled()) {
+			if (CMDBuild.configuration.instance.get('enableCardLock')) { // TODO: use proxy constants
 				if (this.card) {
 					var id = this.card.get("Id");
-					CMDBuild.core.proxy.Card.lock({
+					CMDBuild.proxy.Card.lock({
 						params: {
 							id: id
 						},
+						loadMask: false,
 						success: success
 					});
 				}
@@ -138,13 +139,14 @@
 		},
 
 		unlockCard: function() {
-			if (_CMUtils.lockCard.isEnabled()) {
+			if (CMDBuild.configuration.instance.get('enableCardLock')) { // TODO: use proxy constants
 				if (this.card && this.view.isInEditing()) {
 					var id = this.card.get("Id");
-					CMDBuild.core.proxy.Card.unlock({
+					CMDBuild.proxy.Card.unlock({
 						params: {
 							id: id
-						}
+						},
+						loadMask: false
 					});
 				}
 			}

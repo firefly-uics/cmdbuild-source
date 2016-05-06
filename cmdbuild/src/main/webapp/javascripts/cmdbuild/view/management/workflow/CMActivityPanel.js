@@ -71,7 +71,7 @@
 			this.cmTBar = [
 				this.modifyCardButton,
 				this.deleteCardButton,
-				CMDBuild.Config.graph.enabled=="true" ? this.graphButton : '-',
+				CMDBuild.configuration.graph.get(CMDBuild.core.constants.Proxy.ENABLED) ? this.graphButton : '-',
 				'->','-',
 				this.activityPerformerName,
 				'-',
@@ -86,7 +86,7 @@
 			this.callParent(arguments);
 			var me = this;
 			this.advanceButton = new Ext.button.Button({
-				text: CMDBuild.Translation.common.buttons.workflow.advance,
+				text: CMDBuild.Translation.advance,
 				handler: function() {
 					me.fireEvent(me.CMEVENTS.advanceCardButtonClick);
 				}
@@ -100,11 +100,11 @@
 		 * The controller must ask to the
 		 * server if the editing process
 		 * is in its last version.
-		 * 
+		 *
 		 * So here must defer the real behavior
 		 * of this method after the asynchronous
 		 * check.
-		 * 
+		 *
 		 * To do that, pass a function to
 		 * the controller
 		 */

@@ -1,5 +1,4 @@
 (function() {
-	var NAME = _CMProxy.parameter.NAME;
 
 	Ext.define("CMDBuild.delegate.administration.common.basepanel.CMBaseFormFiledsManager", {
 		extend: "CMDBuild.delegate.administration.common.basepanel.CMFormFiledsManager",
@@ -11,9 +10,9 @@
 		build: function() {
 			this.name = new Ext.form.TextField({
 				fieldLabel: CMDBuild.Translation.administration.modClass.attributeProperties.name,
-				labelWidth: CMDBuild.LABEL_WIDTH,
-				width: CMDBuild.ADM_BIG_FIELD_WIDTH,
-				name: NAME,
+				labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
+				width: CMDBuild.core.constants.FieldWidths.ADMINISTRATION_BIG,
+				name: CMDBuild.core.constants.Proxy.NAME,
 				allowBlank: false,
 				vtype: "alphanum",
 				cmImmutable: true
@@ -21,11 +20,11 @@
 
 			this.description= Ext.create('CMDBuild.view.common.field.translatable.Text', {
 				fieldLabel: CMDBuild.Translation.administration.modClass.attributeProperties.description,
-				labelWidth: CMDBuild.LABEL_WIDTH,
-				width: CMDBuild.ADM_BIG_FIELD_WIDTH,
-				name: _CMProxy.parameter.DESCRIPTION,
+				labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
+				width: CMDBuild.core.constants.FieldWidths.ADMINISTRATION_BIG,
+				name: CMDBuild.core.constants.Proxy.DESCRIPTION,
 				allowBlank: false,
-				vtype: "cmdbcomment"
+				vtype: "commentextended"
 			});
 
 			return [this.name, this.description];
@@ -39,8 +38,8 @@
 		// override
 		loadRecord: function(record) {
 			this.reset();
-			this.name.setValue(record.get(NAME));
-			this.description.setValue(record.get(_CMProxy.parameter.DESCRIPTION));
+			this.name.setValue(record.get(CMDBuild.core.constants.Proxy.NAME));
+			this.description.setValue(record.get(CMDBuild.core.constants.Proxy.DESCRIPTION));
 		},
 
 		/**
@@ -50,8 +49,8 @@
 		// override
 		getValues: function() {
 			var values = {};
-			values[_CMProxy.parameter.NAME] = this.name.getValue();
-			values[_CMProxy.parameter.DESCRIPTION] = this.description.getValue();
+			values[CMDBuild.core.constants.Proxy.NAME] = this.name.getValue();
+			values[CMDBuild.core.constants.Proxy.DESCRIPTION] = this.description.getValue();
 
 			return values;
 		},

@@ -820,9 +820,9 @@ public class CmdbMDR implements ManagementDataRepository {
 									newDocument.getCategory(), newDocument.getDescription(),
 									newDocument.getMetadataGroups());
 						} else {
-							dmsLogic.updateDescriptionAndMetadata(card.getClassName(), card.getId(),
-									newDocument.getName(), null, newDocument.getDescription(),
-									newDocument.getMetadataGroups());
+							dmsLogic.updateDescriptionAndMetadata(operationUser.getAuthenticatedUser().getUsername(),
+									card.getClassName(), card.getId(), newDocument.getName(), null,
+									newDocument.getDescription(), newDocument.getMetadataGroups());
 						}
 					} else {
 						throw new RegistrationErrorFault("Record " + recordQName + " Out of date");

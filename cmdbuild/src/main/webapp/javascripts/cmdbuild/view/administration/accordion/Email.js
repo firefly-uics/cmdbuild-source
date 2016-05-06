@@ -1,42 +1,14 @@
 (function() {
 
 	Ext.define('CMDBuild.view.administration.accordion.Email', {
-		extend: 'CMDBuild.view.common.CMBaseAccordion',
-
-		cmName: 'email',
-		title: CMDBuild.Translation.email,
-
-		constructor: function(){
-			this.callParent(arguments);
-
-			this.updateStore();
-		},
+		extend: 'CMDBuild.view.common.abstract.Accordion',
 
 		/**
-		 * @override
+		 * @cfg {CMDBuild.controller.administration.accordion.Task}
 		 */
-		updateStore: function() {
-			this.store.getRootNode().appendChild([
-				{
-					id: 'accounts',
-					cmName: 'email',
-					leaf: true,
-					text: CMDBuild.Translation.accounts
-				},
-				{
-					id: 'templates',
-					cmName: 'email',
-					leaf: true,
-					text: CMDBuild.Translation.templates,
-				},
-				{
-					id: 'queue',
-					cmName: 'email',
-					leaf: true,
-					text: CMDBuild.Translation.queue,
-				}
-			]);
-		}
+		delegate: undefined,
+
+		title: CMDBuild.Translation.email
 	});
 
 })();

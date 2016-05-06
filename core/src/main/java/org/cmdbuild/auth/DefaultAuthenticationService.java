@@ -2,7 +2,6 @@ package org.cmdbuild.auth;
 
 import static org.apache.commons.lang3.BooleanUtils.isTrue;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
-import static org.cmdbuild.auth.UserStores.unsupported;
 import static org.cmdbuild.auth.user.AuthenticatedUserImpl.ANONYMOUS_USER;
 import static org.cmdbuild.common.Constants.ROLE_CLASS_NAME;
 import static org.cmdbuild.dao.query.clause.AnyAttribute.anyAttribute;
@@ -24,7 +23,6 @@ import org.cmdbuild.auth.user.AnonymousUser;
 import org.cmdbuild.auth.user.AuthenticatedUser;
 import org.cmdbuild.auth.user.AuthenticatedUserImpl;
 import org.cmdbuild.auth.user.CMUser;
-import org.cmdbuild.auth.user.OperationUser;
 import org.cmdbuild.common.digest.Base64Digester;
 import org.cmdbuild.common.digest.Digester;
 import org.cmdbuild.dao.Const.Role;
@@ -71,7 +69,6 @@ public class DefaultAuthenticationService implements AuthenticationService {
 	private ClientRequestAuthenticator[] clientRequestAuthenticators;
 	private UserFetcher[] userFetchers;
 	private GroupFetcher groupFetcher;
-	private UserStore userStore;
 	private final CMDataView view;
 
 	private final Collection<String> authenticatorNames;
@@ -93,7 +90,6 @@ public class DefaultAuthenticationService implements AuthenticationService {
 		passwordAuthenticators = new PasswordAuthenticator[0];
 		clientRequestAuthenticators = new ClientRequestAuthenticator[0];
 		userFetchers = new UserFetcher[0];
-		userStore = unsupported();
 		view = dataView;
 	}
 
@@ -119,12 +115,6 @@ public class DefaultAuthenticationService implements AuthenticationService {
 	public void setGroupFetcher(final GroupFetcher groupFetcher) {
 		Validate.notNull(groupFetcher);
 		this.groupFetcher = groupFetcher;
-	}
-
-	@Override
-	public void setUserStore(final UserStore userStore) {
-		Validate.notNull(userStore);
-		this.userStore = userStore;
 	}
 
 	private boolean isInactive(final CMAuthenticator authenticator) {
@@ -194,11 +184,6 @@ public class DefaultAuthenticationService implements AuthenticationService {
 			}
 		}
 		return ClientAuthenticatorResponse.EMTPY_RESPONSE;
-	}
-
-	@Override
-	public OperationUser getOperationUser() {
-		return userStore.getUser();
 	}
 
 	@Override
@@ -305,10 +290,9 @@ public class DefaultAuthenticationService implements AuthenticationService {
 			final boolean isNewDefaultGroup = relation.getCard2Id().equals(defaultGroupId);
 			final CMRelationDefinition definition = view.update(relation) //
 					/*
-					 * TODO implement within dao layer
-					 * 
-					 * at the moment queried relations doesn't have card1 and
-					 * card2, so we must set them until it will be fixed
+					 * TODO implement within dao layer at the moment queried
+					 * relations doesn't have card1 and card2, so we must set
+					 * them until it will be fixed
 					 */
 					.setCard1(cardId1Of(relation)) //
 					.setCard2(cardId2Of(relation)) //
@@ -352,9 +336,10 @@ public class DefaultAuthenticationService implements AuthenticationService {
 
 	private CMCard fetchUserCardWithId(final Long userId) throws NoSuchElementException {
 		final Alias userClassAlias = EntryTypeAlias.canonicalAlias(userClass());
-		return view.select(attribute(userClassAlias, User.USERNAME), //
-				attribute(userClassAlias, User.DESCRIPTION), //
-				attribute(userClassAlias, User.PASSWORD)) //
+		return view
+				.select(attribute(userClassAlias, User.USERNAME), //
+						attribute(userClassAlias, User.DESCRIPTION), //
+						attribute(userClassAlias, User.PASSWORD)) //
 				.from(userClass(), as(userClassAlias)) //
 				.where(condition(attribute(userClassAlias, ID), eq(userId))) //
 				.limit(1) //
@@ -385,9 +370,9 @@ public class DefaultAuthenticationService implements AuthenticationService {
 	}
 
 	@Override
-	public List<CMUser> fetchAllUsers() {
+	public Iterable<CMUser> fetchAllUsers(boolean activeOnly) {
 		for (final UserFetcher uf : userFetchers) {
-			return uf.fetchAllUsers();
+			return uf.fetchAllUsers(activeOnly);
 		}
 		return Lists.newArrayList();
 	}

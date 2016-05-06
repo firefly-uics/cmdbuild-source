@@ -25,7 +25,7 @@ Ext.define("CMDBuild.view.management.common.CMFormWithWidgetButtons", {
 		this.widgets = new CMDBuild.view.management.common.widget.CMWidgetButtonsPanel({
 			region: 'east',
 			hideMode: 'offsets',
-			cls: "cmborderleft",
+			cls: "cmdb-border-left",
 			autoScroll: true,
 			frame: true,
 			border: false,

@@ -7,8 +7,8 @@
 		extend: 'CMDBuild.controller.management.common.tabs.email.Email',
 
 		requires: [
-			'CMDBuild.core.proxy.CMProxyConstants',
-			'CMDBuild.core.proxy.common.tabs.email.Email'
+			'CMDBuild.core.constants.Proxy',
+			'CMDBuild.proxy.common.tabs.email.Email'
 		],
 
 		mixins: {
@@ -49,16 +49,15 @@
 
 			this.callParent(arguments);
 
-			// View build
-			this.view = Ext.create('CMDBuild.view.management.common.tabs.email.EmailView', {
-				delegate: this
-			});
-
+			this.view = Ext.create('CMDBuild.view.management.common.tabs.email.EmailView', { delegate: this });
 			this.view.add(this.grid);
 
 			this.buildCardModuleStateDelegate();
 		},
 
+		/**
+		 * @private
+		 */
 		buildCardModuleStateDelegate: function() {
 			var me = this;
 
@@ -85,39 +84,53 @@
 		},
 
 		onAbortCardClick: function() {
-			this.editModeSet(true);
+			this.cmfg('tabEmailEditModeSet', false);
+			this.cmfg('tabEmailConfigurationReset');
 		},
 
 		/**
 		 * @param {Ext.data.Model} card
 		 */
 		onCardSelected: function(card) {
-			var me = this;
+			if (!Ext.isEmpty(card)) {
+				this.card = card;
 
-			this.card = card;
-
-			this.configuration.readOnly = false; // TODO: fix evaluating functionalities
-			this.editModeSet(true);
-
-			this.selectedEntitySet(this.card, function() {
-				me.regenerateAllEmailsSet(Ext.isEmpty(this.card));
-				me.forceRegenerationSet(Ext.isEmpty(this.card));
-				me.cmfg('onEmailPanelShow');
-			});
+				this.cmfg('tabEmailConfigurationReset');
+				this.cmfg('tabEmailConfigurationSet', {
+					propertyName: CMDBuild.core.constants.Proxy.READ_ONLY,
+					value: false
+				});
+				this.cmfg('tabEmailEditModeSet', false);
+				this.cmfg('tabEmailSelectedEntitySet', {
+					selectedEntity: this.card,
+					scope: this,
+					callbackFunction: function(options, success, response) {
+						this.cmfg('tabEmailRegenerateAllEmailsSet', Ext.isEmpty(this.card));
+						this.forceRegenerationSet(Ext.isEmpty(this.card));
+						this.cmfg('onTabEmailPanelShow');
+					}
+				});
+			}
 		},
 
 		onCloneCard: function() {
-			var me = this;
-
 			this.card = null;
 
-			this.configuration.readOnly = false; // TODO: fix evaluating functionalities
-			this.editModeSet(true);
+			this.cmfg('tabEmailConfigurationSet', {
+				propertyName: CMDBuild.core.constants.Proxy.READ_ONLY,
+				value: false
+			});
 
-			this.selectedEntitySet(this.card, function() {
-				me.regenerateAllEmailsSet(Ext.isEmpty(this.card));
-				me.forceRegenerationSet(Ext.isEmpty(this.card));
-				me.cmfg('onEmailPanelShow');
+			this.cmfg('tabEmailEditModeSet', true);
+
+			this.cmfg('tabEmailSelectedEntitySet', {
+				selectedEntity: this.card,
+				scope: this,
+				callbackFunction: function(options, success, response) {
+					this.cmfg('tabEmailRegenerateAllEmailsSet', Ext.isEmpty(this.card));
+					this.forceRegenerationSet(Ext.isEmpty(this.card));
+					this.cmfg('onTabEmailPanelShow');
+				}
 			});
 		},
 
@@ -129,8 +142,12 @@
 		onEntryTypeSelected: function(entryType, dc, filter) {
 			this.entryType = entryType;
 
-			this.configuration.readOnly = false; // TODO: fix evaluating functionalities
-			this.editModeSet(true);
+			this.cmfg('tabEmailConfigurationSet', {
+				propertyName: CMDBuild.core.constants.Proxy.READ_ONLY,
+				value: false
+			});
+
+			this.cmfg('tabEmailEditModeSet', false);
 		},
 
 		/**
@@ -140,36 +157,66 @@
 		 */
 		onModifyCardClick: function() {
 			var params = {};
-			params[CMDBuild.core.proxy.CMProxyConstants.CLASS_NAME] = _CMCache.getEntryTypeNameById(this.card.get('IdClass'));
-			params[CMDBuild.core.proxy.CMProxyConstants.CARD_ID] = this.card.get(CMDBuild.core.proxy.CMProxyConstants.ID);
+			params[CMDBuild.core.constants.Proxy.CLASS_NAME] = _CMCache.getEntryTypeNameById(this.card.get('IdClass'));
+			params[CMDBuild.core.constants.Proxy.CARD_ID] = this.card.get(CMDBuild.core.constants.Proxy.ID);
 
-			CMDBuild.core.proxy.common.tabs.email.Email.isEmailEnabledForCard({
+			CMDBuild.proxy.common.tabs.email.Email.isEmailEnabledForCard({
 				params: params,
 				scope: this,
 				loadMask: true,
-				failure: function(response, options, decodedResponse) {
-					_warning('Emails enabled for card (' + this.card.get(CMDBuild.core.proxy.CMProxyConstants.ID) + ') unknown', this);
-				},
 				success: function(response, options, decodedResponse) {
-					this.cmfg('configurationSet', {
-						readOnly: !decodedResponse.response
+					this.cmfg('tabEmailConfigurationSet', {
+						propertyName: CMDBuild.core.constants.Proxy.READ_ONLY,
+						value: !decodedResponse[CMDBuild.core.constants.Proxy.RESPONSE]
 					});
+
+					this.cmfg('tabEmailEditModeSet', decodedResponse[CMDBuild.core.constants.Proxy.RESPONSE]);
+
+					if (!this.grid.getStore().isLoading())
+						this.cmfg('onTabEmailGlobalRegenerationButtonClick');
 				}
 			});
-
-			this.callParent(arguments);
 		},
 
 		/**
 		 * Launch regeneration on save button click and send all draft emails
 		 */
 		onSaveCardClick: function() {
-			this.cmfg('sendAllOnSaveSet', true);
+			this.cmfg('tabEmailSendAllOnSaveSet', true);
 
 			if (!this.grid.getStore().isLoading()) {
-				this.regenerateAllEmailsSet(true);
-				this.cmfg('onEmailPanelShow');
+				this.cmfg('tabEmailRegenerateAllEmailsSet', true);
+				this.cmfg('onTabEmailPanelShow');
 			}
+		},
+
+		/**
+		 * @override
+		 */
+		onTabEmailPanelShow: function() {
+			if (this.view.isVisible()) {
+				// History record save
+				if (!Ext.isEmpty(_CMCardModuleState.entryType) && !Ext.isEmpty(_CMCardModuleState.card))
+					CMDBuild.global.navigation.Chronology.cmfg('navigationChronologyRecordSave', {
+						moduleId: 'class',
+						entryType: {
+							description: _CMCardModuleState.entryType.get(CMDBuild.core.constants.Proxy.TEXT),
+							id: _CMCardModuleState.entryType.get(CMDBuild.core.constants.Proxy.ID),
+							object: _CMCardModuleState.entryType
+						},
+						item: {
+							description: _CMCardModuleState.card.get('Description') || _CMCardModuleState.card.get('Code'),
+							id: _CMCardModuleState.card.get(CMDBuild.core.constants.Proxy.ID),
+							object: _CMCardModuleState.card
+						},
+						section: {
+							description: this.view.title,
+							object: this.view
+						}
+					});
+			}
+
+			this.callParent(arguments);
 		}
 	});
 

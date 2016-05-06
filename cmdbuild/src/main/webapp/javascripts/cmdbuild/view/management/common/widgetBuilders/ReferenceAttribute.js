@@ -1,5 +1,7 @@
 (function() {
 
+	Ext.require(['CMDBuild.proxy.Card']);
+
 	var MY_USER_ID = -1;
 	var MY_USER_LABEL = "* " + CMDBuild.Translation.loggedUser + " *";
 	var MY_USER_TEMPLATE = "@MY_USER";
@@ -96,7 +98,14 @@ function manageCalculatedValues(field, attribute) {
 CMDBuild.WidgetBuilders.ReferenceAttribute.prototype.buildField = function(attribute, hideLabel, skipSubAttributes) {
 	var field = this.buildAttributeField(attribute, skipSubAttributes);
 	field.hideLabel = hideLabel;
-	return this.markAsRequired(field, attribute);
+
+	if (!Ext.isEmpty(field.mainField)) {
+		this.markAsRequired(field.mainField, attribute);
+	} else {
+		this.markAsRequired(field, attribute)
+	}
+
+	return field;
 };
 
 /**
@@ -123,8 +132,8 @@ CMDBuild.WidgetBuilders.ReferenceAttribute.prototype.buildAttributeField = funct
 CMDBuild.WidgetBuilders.ReferenceAttribute.prototype.buildReadOnlyField = function(attribute) {
 	var field = new Ext.form.DisplayField ({
 		labelAlign: "right",
-		labelWidth: CMDBuild.LABEL_WIDTH,
-		width: CMDBuild.BIG_FIELD_WIDTH,
+		labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
+		width: CMDBuild.core.constants.FieldWidths.STANDARD_BIG,
 		fieldLabel: attribute.description || attribute.name,
 		submitValue: false,
 		name: attribute.name,
@@ -149,12 +158,12 @@ CMDBuild.WidgetBuilders.ReferenceAttribute.prototype.buildReadOnlyField = functi
 	var originalSetValue = field.setValue;
 	field.setValue = function(value) {
 		if (!Ext.isEmpty(value)) {
-			if (value.hasOwnProperty(CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION)) {
-				value = value[CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION];
+			if (value.hasOwnProperty(CMDBuild.core.constants.Proxy.DESCRIPTION)) {
+				value = value[CMDBuild.core.constants.Proxy.DESCRIPTION];
 			} else if (value.hasOwnProperty('Description')) {
 				value = value['Description'];
-			} else if (value.hasOwnProperty(CMDBuild.core.proxy.CMProxyConstants.ID)) {
-				value = value[CMDBuild.core.proxy.CMProxyConstants.ID];
+			} else if (value.hasOwnProperty(CMDBuild.core.constants.Proxy.ID)) {
+				value = value[CMDBuild.core.constants.Proxy.ID];
 			} else if (value.hasOwnProperty('Id')) {
 				value = value['Id'];
 			} else if (typeof value == 'string' && !isNaN(parseInt(value))) {
@@ -163,14 +172,15 @@ CMDBuild.WidgetBuilders.ReferenceAttribute.prototype.buildReadOnlyField = functi
 
 			if (!Ext.isEmpty(value) && typeof value == 'number') {
 				var params = {};
-				params[CMDBuild.core.proxy.CMProxyConstants.CARD_ID] = value;
-				params[CMDBuild.core.proxy.CMProxyConstants.CLASS_NAME] = _CMCache.getEntryTypeNameById(attribute['idClass']);
+				params[CMDBuild.core.constants.Proxy.CARD_ID] = value;
+				params[CMDBuild.core.constants.Proxy.CLASS_NAME] = _CMCache.getEntryTypeNameById(attribute['idClass']);
 
-				CMDBuild.ServiceProxy.card.get({
-					scope: this,
+				CMDBuild.proxy.Card.read({
 					params: params,
+					loadMask: false,
+					scope: this,
 					success: function(response, options, decodedResponse) {
-						decodedResponse = decodedResponse[CMDBuild.core.proxy.CMProxyConstants.CARD];
+						decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.CARD];
 
 						originalSetValue.call(field, decodedResponse['Description']);
 					}

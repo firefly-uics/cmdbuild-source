@@ -1,27 +1,38 @@
-(function() {
+(function () {
 
 	Ext.define('CMDBuild.core.Data', {
 
 		requires: [
 			'CMDBuild.core.configurations.Timeout',
-			'CMDBuild.core.proxy.CMProxyConstants'
+			'CMDBuild.core.constants.Proxy',
+			'CMDBuild.core.CookiesManager'
 		],
 
 		/**
-		 * Setup with overrides of all data configurations (timeouts, defaultHeaders)
+		 * Enable/Disable header to get localized server responses
+		 *
+		 * @cfg {Boolean}
 		 */
-		constructor: function() {
-			if (
-				!Ext.isEmpty(CMDBuild)
-				&& !Ext.isEmpty(CMDBuild.Config)
-			) {
-				var toLocalize = Ext.isEmpty(CMDBuild.app.Administration); // I'm on Management so i must localize
+		enableLocalized: false,
 
+		/**
+		 * Setup with overrides of all data configurations (timeouts, defaultHeaders)
+		 *
+		 * @param {Object} configurationObject
+		 *
+		 * @returns {Void}
+		 */
+		constructor: function (configurationObject) {
+			Ext.apply(this, configurationObject); // Apply configurations
+
+			if (!Ext.isEmpty(CMDBuild)) {
 				var defaultHeaders = {};
-				defaultHeaders[CMDBuild.core.proxy.CMProxyConstants.LOCALIZED_HEADER_KEY] = toLocalize;
+				defaultHeaders[CMDBuild.core.constants.Proxy.AUTHORIZATION_HEADER_KEY] = CMDBuild.core.CookiesManager.authorizationGet();
+				defaultHeaders[CMDBuild.core.constants.Proxy.LOCALIZED_HEADER_KEY] = this.enableLocalized;
 
 				Ext.Ajax.timeout = CMDBuild.core.configurations.Timeout.getBase() * 1000;
-				Ext.Ajax[CMDBuild.core.proxy.CMProxyConstants.LOCALIZED_HEADER_KEY] = toLocalize;
+				Ext.Ajax[CMDBuild.core.constants.Proxy.AUTHORIZATION_HEADER_KEY] = CMDBuild.core.CookiesManager.authorizationGet();
+				Ext.Ajax[CMDBuild.core.constants.Proxy.LOCALIZED_HEADER_KEY] = this.enableLocalized;
 
 				Ext.define('CMDBuild.data.Connection', {
 					override: 'Ext.data.Connection',

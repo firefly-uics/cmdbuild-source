@@ -1,9 +1,24 @@
 (function() {
+
+	Ext.require([
+		'CMDBuild.core.Message',
+		'CMDBuild.proxy.gis.GeoAttribute'
+	]);
+
 	Ext.define("CMDBuild.controller.administration.classes.CMGeoAttributeController", {
 		constructor: function(view) {
-			this.view = view;
-			this.form = view.form;
-			this.grid = view.grid;
+			if (Ext.isEmpty(view)) {
+				this.view = new CMDBuild.view.administration.classes.CMGeoAttributesPanel({
+					title: CMDBuild.Translation.administration.modClass.tabs.geo_attributes,
+					disabled: true
+				});
+				this.form = this.view.form;
+				this.grid = this.view.grid;
+			} else {
+				this.view = view;
+				this.form = view.form;
+				this.grid = view.grid;
+			}
 
 			this.gridSM = this.grid.getSelectionModel();
 			this.gridSM.on('selectionchange', onSelectionChanged , this);
@@ -18,8 +33,12 @@
 			this.grid.addAttributeButton.on("click", onAddAttributeClick, this);
 		},
 
+		getView: function() {
+			return this.view;
+		},
+
 		onClassSelected: function(classId) {
-			if (CMDBuild.Config.gis.enabled && !_CMUtils.isSimpleTable(classId)) {
+			if (CMDBuild.configuration.gis.get('enabled') && !_CMUtils.isSimpleTable(classId)) { // TODO: use procy constants
 				this.view.enable();
 			} else {
 				this.view.disable();
@@ -52,12 +71,12 @@
 	function onSaveButtonFormClick() {
 		var nonValid = this.form.getNonValidFields();
 		if (nonValid.length > 0) {
-			CMDBuild.Msg.error(CMDBuild.Translation.common.failure, CMDBuild.Translation.errors.invalid_fields, false);
+			CMDBuild.core.Message.error(CMDBuild.Translation.common.failure, CMDBuild.Translation.errors.invalid_fields, false);
 			return;
 		}
 
 		this.form.enableModify(all = true);
-		CMDBuild.LoadMask.get().show();
+		CMDBuild.core.LoadMask.show();
 
 		var attributeConfig = this.form.getData();
 		attributeConfig.style = Ext.encode(this.form.getStyle());
@@ -68,6 +87,8 @@
 			params: Ext.apply(attributeConfig, {
 				className: _CMCache.getEntryTypeNameById(this.currentClassId)
 			}),
+			important: true,
+			loadMask: false,
 			callback: callback,
 			success: function(a, b, decoded) {
 				_CMCache.onGeoAttributeSaved();
@@ -76,9 +97,9 @@
 		};
 
 		if (this.currentAttribute != null) {
-			CMDBuild.ServiceProxy.geoAttribute.modify(params);
+			CMDBuild.proxy.gis.GeoAttribute.update(params);
 		} else {
-			CMDBuild.ServiceProxy.geoAttribute.save(params);
+			CMDBuild.proxy.gis.GeoAttribute.create(params);
 		}
 	}
 
@@ -112,9 +133,10 @@
 			"name": me.currentAttribute.get("name")
 		};
 
-		CMDBuild.LoadMask.get().show();
-		CMDBuild.ServiceProxy.geoAttribute.remove({
-			params: params, 
+		CMDBuild.core.LoadMask.show();
+		CMDBuild.proxy.gis.GeoAttribute.remove({
+			params: params,
+			loadMask: false,
 			success: function onDeleteGeoAttributeSuccess(response, request, decoded) {
 				_CMCache.onGeoAttributeDeleted(params.masterTableName, params.name);
 				me.view.onClassSelected(me.currentClassId);
@@ -138,16 +160,16 @@
 	}
 
 	function callback() {
-		CMDBuild.LoadMask.get().hide();
+		CMDBuild.core.LoadMask.hide();
 	}
 
 	function isItMineOrOfMyParents(attr, classId) {
-		var table = CMDBuild.Cache.getTableById(classId);
+		var table = _CMCache.getTableById(classId);
 		while (table) {
 			if (attr.masterTableId == table.id) {
 				return true;
 			} else {
-				table = CMDBuild.Cache.getTableById(table.parent);
+				table = _CMCache.getTableById(table.parent);
 			}
 		}
 		return false;

@@ -1,14 +1,30 @@
 (function() {
 	Ext.define("CMDBuild.controller.administration.classes.CMDomainTabController", {
+
+		requires: ['CMDBuild.proxy.domain.Domain'],
+
 		constructor: function(view) {
-			this.view = view;
+			if (Ext.isEmpty(view)) {
+				this.view = new CMDBuild.Administration.DomainGrid({
+					title : CMDBuild.Translation.administration.modClass.tabs.domains,
+					border: false,
+					disabled: true
+				});
+			} else {
+				this.view = view;
+			}
+
 			this.selection = null;
-			
+
 			this.view.on("itemdblclick", onItemDoubleClick, this);
 			this.view.getSelectionModel().on("selectionchange", onSelectionChange, this);
 			this.view.addDomainButton.on("click", onAddDomainButton, this);
 			this.view.modifyButton.on("click", onModifyDomainButton, this);
 			this.view.deleteButton.on("click", onDeleteDomainButton, this);
+		},
+
+		getView: function() {
+			return this.view;
 		},
 
 		onClassSelected: function(classId) {
@@ -21,13 +37,13 @@
 
 			var view = this.view;
 			var params = {};
-			params[_CMProxy.parameter.CLASS_NAME] = _CMCache.getEntryTypeNameById(classId);
+			params[CMDBuild.core.constants.Proxy.CLASS_NAME] = _CMCache.getEntryTypeNameById(classId);
 
-			CMDBuild.LoadMask.get().show();
+			CMDBuild.core.LoadMask.show();
 			view.store.load({
 				params: params,
 				callback: function() {
-					CMDBuild.LoadMask.get().hide();
+					CMDBuild.core.LoadMask.hide();
 					view.filterInherited(view.filtering);
 				}
 			});
@@ -43,7 +59,7 @@
 		}
 
 	});
-	
+
 	function onSelectionChange(sm, selection) {
 		if (selection.length > 0) {
 			this.currentDomain = selection[0];
@@ -53,23 +69,36 @@
 	}
 
 	function onItemDoubleClick(grid, record) {
-		var domainAccordion = _CMMainViewportController.findAccordionByCMName("domain");
-		domainAccordion.expand();
-		Ext.Function.createDelayed(function() {
-			domainAccordion.selectNodeById(record.get("idDomain"));
-		}, 100)();
-		
+		if (!Ext.isEmpty(record)) {
+			CMDBuild.global.controller.MainViewport.cmfg('mainViewportAccordionDeselect', 'domain');
+			CMDBuild.global.controller.MainViewport.cmfg('mainViewportAccordionControllerGet', 'domain').disableStoreLoad = true;
+			CMDBuild.global.controller.MainViewport.cmfg('mainViewportAccordionControllerExpand', 'domain');
+			CMDBuild.global.controller.MainViewport.cmfg('mainViewportAccordionControllerUpdateStore', {
+				identifier: 'domain',
+				nodeIdToSelect: record.get('idDomain')
+			});
+		}
 	}
 
 	function onModifyDomainButton() {
 		if (this.currentDomain) {
-			onItemDoubleClick(this.view, this.currentDomain);
-			Ext.Function.createDelayed(function() {
-				_CMMainViewportController.panelControllers["domain"].view.domainForm.enableModify();
-			}, 500)();
+			CMDBuild.global.controller.MainViewport.cmfg('mainViewportAccordionDeselect', 'domain');
+			CMDBuild.global.controller.MainViewport.cmfg('mainViewportAccordionControllerGet', 'domain').disableStoreLoad = true;
+			CMDBuild.global.controller.MainViewport.cmfg('mainViewportAccordionControllerExpand', 'domain');
+
+			CMDBuild.global.controller.MainViewport.cmfg('mainViewportAccordionControllerGet', 'domain').getView().on('storeload', function(accordion, eOpts) {
+				Ext.Function.createDelayed(function() {
+					CMDBuild.global.controller.MainViewport.cmfg('mainViewportModuleControllerGet', 'domain').cmfg('onDomainModifyButtonClick');
+				}, 100, this)();
+			}, this, { single: true });
+
+			CMDBuild.global.controller.MainViewport.cmfg('mainViewportAccordionControllerUpdateStore', {
+				identifier: 'domain',
+				nodeIdToSelect: this.currentDomain.get('idDomain')
+			});
 		}
 	}
-	
+
 	function onDeleteDomainButton() {
 		Ext.Msg.show({
 			title: CMDBuild.Translation.administration.modClass.domainProperties.delete_domain,
@@ -90,28 +119,30 @@
 			return;
 		}
 
-		var me = this;
 		var params = {};
-		params[_CMProxy.parameter.DOMAIN_NAME] = this.currentDomain.get("name");
+		params[CMDBuild.core.constants.Proxy.DOMAIN_NAME] = this.currentDomain.get("name");
 
-		CMDBuild.LoadMask.get().show();
-		CMDBuild.ServiceProxy.administration.domain.remove({
+		CMDBuild.proxy.domain.Domain.remove({
 			params: params,
-			success : function(form, action) {
-				me.onClassSelected(me.selection);
-				_CMCache.onDomainDeleted(me.currentDomain.get("idDomain"));
-				me.currentDomain = null;
-			},
-			callback : function() {
-				CMDBuild.LoadMask.get().hide();
+			scope: this,
+			success: function(response, options, decodedResponse) {
+				this.onClassSelected(this.selection);
+
+				_CMCache.onDomainDeleted(this.currentDomain.get("idDomain"));
+
+				this.currentDomain = null;
 			}
 		});
 	}
-	
+
 	function onAddDomainButton() {
-		var domainAccordion = _CMMainViewportController.accordionControllers["domain"];
-		if (domainAccordion) {
-			domainAccordion.expandForAdd();
-		}
+		CMDBuild.global.controller.MainViewport.cmfg('mainViewportAccordionDeselect', 'domain');
+
+		CMDBuild.global.controller.MainViewport.cmfg('mainViewportAccordionControllerGet', 'domain').getView().on('storeload', function(accordion, eOpts) {
+			CMDBuild.global.controller.MainViewport.cmfg('mainViewportModuleControllerGet', 'domain').cmfg('onDomainAddButtonClick');
+		}, this, { single: true });
+
+		CMDBuild.global.controller.MainViewport.cmfg('mainViewportAccordionControllerGet', 'domain').disableSelection = true;
+		CMDBuild.global.controller.MainViewport.cmfg('mainViewportAccordionControllerExpand', 'domain');
 	}
 })();

@@ -15,7 +15,6 @@ import org.cmdbuild.config.GisProperties;
 import org.cmdbuild.config.GraphProperties;
 import org.cmdbuild.config.WorkflowConfiguration;
 import org.cmdbuild.config.WorkflowProperties;
-import org.cmdbuild.dms.DmsConfiguration;
 import org.cmdbuild.services.soap.security.SoapConfiguration;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
@@ -40,7 +39,7 @@ public class Properties {
 	}
 
 	@Bean
-	public DmsConfiguration dmsProperties() {
+	public DmsProperties dmsProperties() {
 		return DmsProperties.getInstance();
 	}
 

@@ -30,9 +30,7 @@
 
 			this.callParent(arguments);
 
-			// View build
 			this.view = Ext.create('CMDBuild.view.management.workflow.tabs.Email', { delegate: this });
-
 			this.view.add(this.grid);
 
 			_CMWFState.addDelegate(this);
@@ -46,7 +44,8 @@
 		onActivityInstanceChange: Ext.emptyFn,
 
 		onAbortCardClick: function() {
-			this.editModeSet(false);
+			this.cmfg('tabEmailEditModeSet', false);
+			this.cmfg('tabEmailConfigurationReset');
 		},
 
 		/**
@@ -55,15 +54,16 @@
 		 * @override
 		 */
 		onAddCardButtonClick: function() {
-			var me = this;
-
 			this.callParent(arguments);
 
-			 // Reset selected entity, regenerate email and load store
-			this.selectedEntitySet(null, function() {
-				me.regenerateAllEmailsSet(true);
-				me.forceRegenerationSet(true);
-				me.cmfg('onEmailPanelShow');
+			// Reset selected entity, regenerate email and load store
+			this.cmfg('tabEmailSelectedEntityInit', {
+				scope: this,
+				callbackFunction: function(options, success, response) {
+					this.cmfg('tabEmailRegenerateAllEmailsSet', true);
+					this.forceRegenerationSet(true);
+					this.cmfg('onTabEmailPanelShow');
+				}
 			});
 		},
 
@@ -73,7 +73,7 @@
 		 * @param {CMDBuild.cache.CMEntryTypeModel} entryType
 		 */
 		onProcessClassRefChange: function(entryType) {
-			this.editModeSet(false);
+			this.cmfg('tabEmailEditModeSet', false);
 		},
 
 		/**
@@ -83,23 +83,29 @@
 		 * @param {CMDBuild.model.CMProcessInstance} processInstance
 		 */
 		onProcessInstanceChange: function(processInstance) {
-			var me = this;
-
 			if (!Ext.isEmpty(processInstance) && processInstance.isStateOpen()) {
 				if (!processInstance.isNew())
 					this.parentDelegate.activityPanelController.ensureEditPanel(); // Creates editPanel with relative form fields
 
-				this.selectedEntitySet(processInstance, function() {
-					me.regenerateAllEmailsSet(processInstance.isNew());
-					me.forceRegenerationSet(processInstance.isNew());
-					me.cmfg('onEmailPanelShow');
+				this.cmfg('tabEmailConfigurationReset');
+				this.cmfg('tabEmailSelectedEntitySet', {
+					selectedEntity: processInstance,
+					scope: this,
+					callbackFunction: function(options, success, response) {
+						this.cmfg('tabEmailRegenerateAllEmailsSet', processInstance.isNew());
+						this.forceRegenerationSet(processInstance.isNew());
+						this.cmfg('onTabEmailPanelShow');
+					}
 				});
-
-				this.editModeSet(processInstance.isNew()); // Enable/Disable tab based on model new state to separate create/view mode
-				this.cmfg('setUiState');
+				this.cmfg('tabEmailEditModeSet', processInstance.isNew()); // Enable/Disable tab based on model new state to separate create/view mode
+				this.controllerGrid.cmfg('tabEmailGridUiStateSet');
 			} else { // We have a closed process instance
-				this.selectedEntitySet(processInstance, function() {
-					me.cmfg('onEmailPanelShow');
+				this.cmfg('tabEmailSelectedEntitySet', {
+					selectedEntity: processInstance,
+					scope: this,
+					callbackFunction: function(options, success, response) {
+						this.cmfg('onTabEmailPanelShow');
+					}
 				});
 			}
 		},
@@ -109,9 +115,38 @@
 		 */
 		onSaveCardClick: function() {
 			if (!this.grid.getStore().isLoading()) {
-				this.regenerateAllEmailsSet(true);
-				this.cmfg('onEmailPanelShow');
+				this.cmfg('tabEmailRegenerateAllEmailsSet', true);
+				this.cmfg('onTabEmailPanelShow');
 			}
+		},
+
+		/**
+		 * @override
+		 */
+		onTabEmailPanelShow: function() {
+			if (this.view.isVisible()) {
+				// History record save
+				if (!Ext.isEmpty(_CMWFState.getProcessClassRef()) && !Ext.isEmpty( _CMWFState.getProcessInstance()))
+					CMDBuild.global.navigation.Chronology.cmfg('navigationChronologyRecordSave', {
+						moduleId: 'workflow',
+						entryType: {
+							description: _CMWFState.getProcessClassRef().get(CMDBuild.core.constants.Proxy.TEXT),
+							id: _CMWFState.getProcessClassRef().get(CMDBuild.core.constants.Proxy.ID),
+							object: _CMWFState.getProcessClassRef()
+						},
+						item: {
+							description: _CMWFState.getProcessInstance().get(CMDBuild.core.constants.Proxy.TEXT),
+							id: _CMWFState.getProcessInstance().get(CMDBuild.core.constants.Proxy.ID),
+							object: _CMWFState.getProcessInstance()
+						},
+						section: {
+							description: this.view.title,
+							object: this.view
+						}
+					});
+			}
+
+			this.callParent(arguments);
 		}
 	});
 

@@ -66,7 +66,9 @@ public interface Const {
 
 	static final String OPERATOR_EQ = "=";
 	static final String OPERATOR_LT = "<";
+	static final String OPERATOR_LT_EQ = "<=";
 	static final String OPERATOR_GT = ">";
+	static final String OPERATOR_GT_EQ = ">=";
 	static final String OPERATOR_LIKE = "ILIKE";
 	static final String OPERATOR_NULL = "IS NULL";
 	static final String OPERATOR_IN = "IN";
