@@ -74,6 +74,8 @@ FIXES
 
  * Internet Explorer code cleaning
 
+ * Widget CustomForm: Unsupported from SQL date format
+
 
 
 
