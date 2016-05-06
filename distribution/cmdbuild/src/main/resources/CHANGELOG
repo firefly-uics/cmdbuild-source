@@ -72,6 +72,8 @@ FIXES
 
  * Default filters with runtime parameters doesn't properly work in management side
 
+ * Internet Explorer code cleaning
+
 
 
 
