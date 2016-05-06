@@ -128,7 +128,7 @@
 						allowBlank: false,
 
 						store: CMDBuild.proxy.dataView.Sql.getStoreDataSources(),
-						queryMode: 'local',
+						queryMode: 'local'
 					}),
 					{
 						xtype: 'hiddenfield',

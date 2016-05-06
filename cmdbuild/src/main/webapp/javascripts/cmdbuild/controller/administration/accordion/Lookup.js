@@ -5,7 +5,7 @@
 
 		requires: [
 			'CMDBuild.core.constants.Proxy',
-			'CMDBuild.proxy.lookup.Type',
+			'CMDBuild.proxy.lookup.Type'
 		],
 
 		/**

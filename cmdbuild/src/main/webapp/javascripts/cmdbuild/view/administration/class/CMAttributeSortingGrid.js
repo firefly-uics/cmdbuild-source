@@ -64,7 +64,7 @@
 								return '<span>' + CMDBuild.Translation.administration.modClass.attributeProperties.not_in_use + '</span>';
 							}
 						}
-					}),
+					})
 				],
 				store: CMDBuild.proxy.common.tabs.attribute.Order.getStore(),
 				plugins: [

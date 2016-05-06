@@ -87,7 +87,7 @@
 					'repository.wspath': data[CMDBuild.core.constants.Proxy.ALFRESCO_REPOSITORY_WEB_SERVICE_PATH],
 					'server.url': data[CMDBuild.core.constants.Proxy.ALFRESCO_HOST],
 					delay: data[CMDBuild.core.constants.Proxy.ALFRESCO_DELAY],
-					enabled: data[CMDBuild.core.constants.Proxy.ENABLED],
+					enabled: data[CMDBuild.core.constants.Proxy.ENABLED]
 				};
 			}
 		}

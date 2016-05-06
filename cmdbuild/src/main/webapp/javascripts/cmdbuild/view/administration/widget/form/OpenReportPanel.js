@@ -86,7 +86,7 @@
 									align: 'center',
 									hideable: false,
 									menuDisabled: true,
-									fixed: true,
+									fixed: true
 								})
 							],
 							enableCellEditing: true,

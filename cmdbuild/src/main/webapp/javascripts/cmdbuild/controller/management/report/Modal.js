@@ -26,7 +26,7 @@
 		 */
 		cmfgCatchedFunctions: [
 			'onReportModalWindowDownloadButtonClick',
-			'onReportModalWindowShow',
+			'onReportModalWindowShow'
 		],
 
 		/**

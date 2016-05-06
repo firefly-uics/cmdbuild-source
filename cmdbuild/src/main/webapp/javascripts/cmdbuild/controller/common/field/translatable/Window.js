@@ -16,7 +16,7 @@
 		cmfgCatchedFunctions: [
 			'onTranslatableWindowAbortButtonClick',
 			'onTranslatableWindowBeforeShow',
-			'onTranslatableWindowConfirmButtonClick',
+			'onTranslatableWindowConfirmButtonClick'
 		],
 
 		/**

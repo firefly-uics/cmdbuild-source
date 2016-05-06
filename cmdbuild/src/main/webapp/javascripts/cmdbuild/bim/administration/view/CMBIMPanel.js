@@ -24,7 +24,7 @@
 				gridConfig.cls = 'cmdb-border-bottom';
 
 			return new CMDBuild.view.administration.bim.CMBimGrid(gridConfig);
-		},
+		}
 	});
 
 })();

@@ -6,7 +6,7 @@
 		requires: [
 			'CMDBuild.core.constants.FieldWidths',
 			'CMDBuild.core.constants.Proxy',
-			'CMDBuild.model.workflow.tabs.properties.XpdlVersion',
+			'CMDBuild.model.workflow.tabs.properties.XpdlVersion'
 		],
 
 		mixins: ['CMDBuild.view.common.PanelFunctions'],

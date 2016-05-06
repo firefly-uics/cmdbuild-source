@@ -5,7 +5,7 @@
 		'CMDBuild.core.constants.Global',
 		'CMDBuild.core.Message',
 		'CMDBuild.proxy.widget.Workflow',
-		'CMDBuild.proxy.workflow.Activity',
+		'CMDBuild.proxy.workflow.Activity'
 	]);
 
 	var ERROR_TEMPLATE = "<p class=\"{0}\">{1}</p>";

@@ -20,7 +20,7 @@
 			'onUserAndGroupGroupTabUsersAddButtonClick',
 			'onUserAndGroupGroupTabUsersGroupSelected = onUserAndGroupGroupSelected',
 			'onUserAndGroupGroupTabUsersSaveButtonClick',
-			'onUserAndGroupGroupTabUsersShow',
+			'onUserAndGroupGroupTabUsersShow'
 		],
 
 		/**

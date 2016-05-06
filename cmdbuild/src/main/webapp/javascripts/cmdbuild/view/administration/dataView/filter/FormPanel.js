@@ -134,7 +134,7 @@
 						fieldConfiguration: {
 							targetClassField: classesCombobox,
 							enabledPanels: ['attribute', 'relation']
-						},
+						}
 					}),
 					{
 						xtype: 'hiddenfield',

@@ -84,7 +84,7 @@
 			// Controller build
 			this.controllerAttributes = Ext.create('CMDBuild.controller.administration.workflow.CMAttributes', { // TODO: legacy
 				parentDelegate: this,
-				view: this.view.attributesPanel,
+				view: this.view.attributesPanel
 			});
 			this.controllerDomains = Ext.create('CMDBuild.controller.administration.workflow.tabs.Domains', { parentDelegate: this });
 			this.controllerProperties = Ext.create('CMDBuild.controller.administration.workflow.tabs.Properties', { parentDelegate: this });

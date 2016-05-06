@@ -37,7 +37,7 @@
 				handler: function(button, e) {
 					if (!button.isDisabled())
 						button.showMenu();
-				},
+				}
 			});
 
 			this.callParent(arguments);

@@ -97,6 +97,6 @@ Ext.define("CMDBuild.view.management.common.widget.CMWidgetButtonsPanelPopup", {
 				me.delegate.onWidgetButtonClick(widget);
 			}
 		}));
-	},
+	}
 });
 
