@@ -53,7 +53,7 @@
 		 * @param {Object} controller
 		 */
 		beforeHideView: function(controller) {
-			if (controller.widgetConfiguration['type'] == '.OpenReport') // FIXME: hack to hide errors on OpenReport widget button click because of row permissions
+			if (!Ext.isEmpty(controller.widgetConfiguration) && controller.widgetConfiguration['type'] == '.OpenReport') // FIXME: hack to hide errors on OpenReport widget button click because of row permissions
 				CMDBuild.global.interfaces.Configurations.set('disableAllMessages', false);
 
 			if (!Ext.isEmpty(controller)) {
@@ -95,8 +95,8 @@
 		 */
 		onWidgetButtonClick: function (widgetConfigurationObject) {
 			var controller = this.controllers[this.getWidgetId(widgetConfigurationObject)];
-_debug('widgetConfigurationObject', widgetConfigurationObject);
-			if (widgetConfigurationObject['type'] == '.OpenReport') // FIXME: hack to hide errors on OpenReport widget button click because of row permissions
+
+			if (!Ext.Object.isEmpty(widgetConfigurationObject) && widgetConfigurationObject['type'] == '.OpenReport') // FIXME: hack to hide errors on OpenReport widget button click because of row permissions
 				CMDBuild.global.interfaces.Configurations.set('disableAllMessages', true);
 
 			this.delegate.ensureEditPanel(); // Creates editPanel with relative form fields
