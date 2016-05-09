@@ -80,6 +80,8 @@ FIXES
 
  * Widget ManageEmail: error on workflow advance
 
+ * Widget CreateReport: error on widget display with row permissions
+
 
 
 
