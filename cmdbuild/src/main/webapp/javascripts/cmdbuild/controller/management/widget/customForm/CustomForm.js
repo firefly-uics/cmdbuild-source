@@ -416,32 +416,25 @@
 			var output = {};
 			output[CMDBuild.core.constants.Proxy.OUTPUT] = [];
 
-			if (
-				!this.cmfg('widgetCustomFormConfigurationGet', [
-					CMDBuild.core.constants.Proxy.CAPABILITIES,
-					CMDBuild.core.constants.Proxy.READ_ONLY
-				])
-			) {
-				this.controllerLayout.cmfg('onWidgetCustomFormShow');
+			this.controllerLayout.cmfg('onWidgetCustomFormShow'); // Force widget layout build
 
-				// Uses direct data property access to avoid a get problem because of generic model
-				Ext.Array.each(this.cmfg('widgetCustomFormLayoutDataGet'), function (rowObject, i, allRowObjects) {
-					var dataObject = Ext.isEmpty(rowObject.data) ? rowObject : rowObject.data; // Model/Objects management
+			// Uses direct data property access to avoid a get problem because of generic model
+			Ext.Array.each(this.cmfg('widgetCustomFormLayoutDataGet'), function (rowObject, i, allRowObjects) {
+				var dataObject = Ext.isEmpty(rowObject.data) ? rowObject : rowObject.data; // Model/Objects management
 
-					new CMDBuild.Management.TemplateResolver({
-						clientForm: this.clientForm,
-						xaVars: dataObject,
-						serverVars: this.cmfg('widgetCustomFormGetTemplateResolverServerVars')
-					}).resolveTemplates({
-						attributes: Ext.Object.getKeys(dataObject),
-						scope: this,
-						callback: function (out, ctx) {
-							if (Ext.isObject(out))
-								output[CMDBuild.core.constants.Proxy.OUTPUT].push(Ext.encode(out));
-						}
-					});
-				}, this);
-			}
+				new CMDBuild.Management.TemplateResolver({
+					clientForm: this.clientForm,
+					xaVars: dataObject,
+					serverVars: this.cmfg('widgetCustomFormGetTemplateResolverServerVars')
+				}).resolveTemplates({
+					attributes: Ext.Object.getKeys(dataObject),
+					scope: this,
+					callback: function (out, ctx) {
+						if (Ext.isObject(out))
+							output[CMDBuild.core.constants.Proxy.OUTPUT].push(Ext.encode(out));
+					}
+				});
+			}, this);
 
 			return output;
 		},

@@ -84,6 +84,8 @@ FIXES
 
  * Widget createModifyCard: getCard empty parameter error
 
+ * Widget CustomForm: empty output with readOnly configuration
+
 
 
 
