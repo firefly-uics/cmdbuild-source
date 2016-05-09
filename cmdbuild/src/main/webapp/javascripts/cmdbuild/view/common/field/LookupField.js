@@ -45,6 +45,17 @@ Ext.define("CMDBuild.view.common.field.LookupField", {
 		return '';
 	},
 
+	/**
+	 * @param {Object} value
+	 *
+	 * @returns {Void}
+	 */
+	setValue: function (value) {
+		this.callParent(arguments);
+
+		this.validate();
+	},
+
 	onTrigger2Click: function() {
 		if (!this.disabled) {
 			this.focus(); // to fire the change event in the single lookup fields
