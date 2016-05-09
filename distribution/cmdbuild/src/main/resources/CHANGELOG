@@ -88,6 +88,8 @@ FIXES
 
  * Widget LinkCard: filter button doesn't enable filter
 
+ * Widget OpenReport: doen't submits readOnly parameters
+
 
 
 

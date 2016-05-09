@@ -88,7 +88,7 @@
 		 */
 		onWidgetOpenReportSaveButtonClick: function () {
 			if (this.validate(this.view)) {
-				var params = this.view.getValues(); // Cannot use getData() because of date field format errors
+				var params = Ext.apply(this.view.getData(true), this.view.getValues()); // Cannot use only getData() because of date field format errors
 				params['reportExtension'] = this.view.formatCombo.getValue();
 
 				CMDBuild.proxy.widget.OpenReport.update({
