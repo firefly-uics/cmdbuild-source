@@ -149,23 +149,21 @@
 		 * @override
 		 */
 		onWidgetManageEmailBeforeSave: function (parameters) {
-			if (!Ext.isEmpty(callbackChainArray[i])) {
-				this.tabDelegate.cmfg('tabEmailGlobalLoadMaskSet', false);
+			this.tabDelegate.cmfg('tabEmailGlobalLoadMaskSet', false);
 
-				// Setup end-point callback to close widget save callback loop
-				var callbackDefinitionObject = {};
-				callbackDefinitionObject[CMDBuild.core.constants.Proxy.SCOPE] = this;
-				callbackDefinitionObject[CMDBuild.core.constants.Proxy.FUNCTION] =  function () {
-					this.onBeforeSave(parameters); // CallParent alias
+			// Setup end-point callback to close widget save callback loop
+			var callbackDefinitionObject = {};
+			callbackDefinitionObject[CMDBuild.core.constants.Proxy.SCOPE] = this;
+			callbackDefinitionObject[CMDBuild.core.constants.Proxy.FUNCTION] =  function () {
+				this.onBeforeSave(parameters); // CallParent alias
 
-					this.tabDelegate.cmfg('tabEmailRegenerationEndPointCallbackReset'); // Reset callback function
-				};
+				this.tabDelegate.cmfg('tabEmailRegenerationEndPointCallbackReset'); // Reset callback function
+			};
 
-				this.tabDelegate.cmfg('tabEmailRegenerationEndPointCallbackSet', { value: callbackDefinitionObject });
+			this.tabDelegate.cmfg('tabEmailRegenerationEndPointCallbackSet', { value: callbackDefinitionObject });
 
-				this.tabDelegate.cmfg('tabEmailRegenerateAllEmailsSet', true);
-				this.tabDelegate.controllerGrid.cmfg('tabEmailGridStoreLoad');
-			}
+			this.tabDelegate.cmfg('tabEmailRegenerateAllEmailsSet', true);
+			this.tabDelegate.controllerGrid.cmfg('tabEmailGridStoreLoad');
 		},
 
 		/**

@@ -78,6 +78,8 @@ FIXES
 
  * Reference field store URL too long because of filter wrong parameter
 
+ * Widget ManageEmail: error on workflow advance
+
 
 
 
