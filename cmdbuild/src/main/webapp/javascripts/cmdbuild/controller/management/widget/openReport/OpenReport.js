@@ -25,6 +25,7 @@
 			'beforeHideView',
 			'getData',
 			'isValid',
+			'onBeforeSave',
 			'onEditMode',
 			'onWidgetOpenReportBeforeActiveView = beforeActiveView',
 			'onWidgetOpenReportDownloadButtonClick',
