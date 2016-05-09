@@ -82,6 +82,8 @@ FIXES
 
  * Widget CreateReport: error on widget display with row permissions
 
+ * Widget createModifyCard: getCard empty parameter error
+
 
 
 
