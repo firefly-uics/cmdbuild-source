@@ -17,7 +17,7 @@
 			// Global interfaces configuration object
 			Ext.ns('CMDBuild.global.interfaces.Configurations');
 			CMDBuild.global.interfaces.Configurations = Ext.create('CMDBuild.core.interfaces.Configurations');
-		},
+		}
 	});
 
 })();
