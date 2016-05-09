@@ -86,6 +86,8 @@ FIXES
 
  * Widget CustomForm: empty output with readOnly configuration
 
+ * Widget LinkCard: filter button doesn't enable filter
+
 
 
 
