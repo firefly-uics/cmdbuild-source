@@ -53,6 +53,9 @@
 		 * @param {Object} controller
 		 */
 		beforeHideView: function(controller) {
+			if (controller.widgetConfiguration['type'] == '.OpenReport') // FIXME: hack to hide errors on OpenReport widget button click because of row permissions
+				CMDBuild.global.interfaces.Configurations.set('disableAllMessages', false);
+
 			if (!Ext.isEmpty(controller)) {
 				// cmfg() implementation adapter
 				if (!Ext.isEmpty(controller.cmfg) && Ext.isFunction(controller.cmfg)) {
@@ -83,26 +86,37 @@
 			}
 		},
 
-		onWidgetButtonClick: function(w) {
-			this.delegate.ensureEditPanel();
-			var me = this;
-			Ext.defer(function() {
-				var wc = me.controllers[me.getWidgetId(w)];
-				if (wc) {
-					me.view.showWidget(wc.view, me.getWidgetLable(w));
+		/**
+		 * @param {Object} widgetConfigurationObject
+		 *
+		 * @returns {Void}
+		 *
+		 * @public
+		 */
+		onWidgetButtonClick: function (widgetConfigurationObject) {
+			var controller = this.controllers[this.getWidgetId(widgetConfigurationObject)];
+_debug('widgetConfigurationObject', widgetConfigurationObject);
+			if (widgetConfigurationObject['type'] == '.OpenReport') // FIXME: hack to hide errors on OpenReport widget button click because of row permissions
+				CMDBuild.global.interfaces.Configurations.set('disableAllMessages', true);
 
-					// cmfg() implementation adapter
-					if (!Ext.isEmpty(wc.cmfg) && Ext.isFunction(wc.cmfg)) {
-						wc.cmfg('beforeActiveView');
-					} else if (Ext.isFunction(wc.beforeActiveView)) {
-						wc.beforeActiveView();
-					}
+			this.delegate.ensureEditPanel(); // Creates editPanel with relative form fields
+
+			if (!Ext.isEmpty(controller)) {
+				this.view.showWidget(controller.view, this.getWidgetLable(widgetConfigurationObject));
+
+				// cmfg() implementation adapter
+				if (!Ext.isEmpty(controller.cmfg) && Ext.isFunction(controller.cmfg)) {
+					controller.cmfg('beforeActiveView');
+				} else if (Ext.isFunction(controller.beforeActiveView)) {
+					controller.beforeActiveView();
 				}
-			}, 1);
+			}
 		},
 
 		/**
 		 * Forwarder method
+		 *
+		 * @returns {Void}
 		 *
 		 * @public
 		 */
