@@ -51,7 +51,7 @@
 				) {
 					Ext.defer(function () {
 						if (!Ext.Object.isEmpty(this.buffer[parameters.id]))
-							Ext.callback(parameters[parameters.id].failure, parameters[parameters.id].scope);
+							Ext.callback(this.buffer[parameters.id].failure, this.buffer[parameters.id].scope);
 					}, 5000, this);
 				}
 			} else {

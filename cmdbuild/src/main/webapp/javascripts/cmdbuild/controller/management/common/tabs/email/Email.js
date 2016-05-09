@@ -669,32 +669,37 @@
 		},
 
 		tabEmailGetAllTemplatesData: function () {
+			var templatesFromConfiguration = this.cmfg('tabEmailConfigurationGet', CMDBuild.core.constants.Proxy.TEMPLATES);
+			var gridsDraftEmail = this.controllerGrid.cmfg('tabEmailGridDraftEmailsGet');
+
 			// Reset local storage arrays
 			this.emailTemplatesObjects = [];
 			this.emailTemplatesIdentifiers = [];
 
 			// Loads configuration templates to local array and push key in emailTemplatesIdentifiers array
-			Ext.Array.forEach(this.cmfg('tabEmailConfigurationGet', CMDBuild.core.constants.Proxy.TEMPLATES), function (template, i, allItems) {
-				if (!Ext.isEmpty(template) && !Ext.Array.contains(this.emailTemplatesIdentifiers, template.get(CMDBuild.core.constants.Proxy.KEY))) {
-					this.emailTemplatesObjects.push(template);
-					this.emailTemplatesIdentifiers.push(template.get(CMDBuild.core.constants.Proxy.KEY));
-				}
-			}, this);
+			if (!Ext.isEmpty(templatesFromConfiguration) && Ext.isArray(templatesFromConfiguration))
+				Ext.Array.each(templatesFromConfiguration, function (template, i, allItems) {
+					if (!Ext.isEmpty(template) && !Ext.Array.contains(this.emailTemplatesIdentifiers, template.get(CMDBuild.core.constants.Proxy.KEY))) {
+						this.emailTemplatesObjects.push(template);
+						this.emailTemplatesIdentifiers.push(template.get(CMDBuild.core.constants.Proxy.KEY));
+					}
+				}, this);
 
 			// Load grid's draft templates names to local array
-			Ext.Array.forEach(this.controllerGrid.cmfg('tabEmailGridDraftEmailsGet'), function (record, i, allItems) {
-				var templateIdentifier = null;
-				var template = record.get(CMDBuild.core.constants.Proxy.TEMPLATE);
+			if (!Ext.isEmpty(gridsDraftEmail) && Ext.isArray(gridsDraftEmail))
+				Ext.Array.each(gridsDraftEmail, function (record, i, allItems) {
+					var templateIdentifier = null;
+					var template = record.get(CMDBuild.core.constants.Proxy.TEMPLATE);
 
-				if (Ext.isObject(template)) {
-					templateIdentifier = template.get(CMDBuild.core.constants.Proxy.KEY) || template.get(CMDBuild.core.constants.Proxy.NAME);
-				} else if (!Ext.isEmpty(template)) {
-					templateIdentifier = template;
-				}
+					if (Ext.isObject(template)) {
+						templateIdentifier = template.get(CMDBuild.core.constants.Proxy.KEY) || template.get(CMDBuild.core.constants.Proxy.NAME);
+					} else if (!Ext.isEmpty(template)) {
+						templateIdentifier = template;
+					}
 
-				if (!Ext.isEmpty(templateIdentifier) && !Ext.Array.contains(this.emailTemplatesIdentifiers, templateIdentifier))
-					this.emailTemplatesIdentifiers.push(templateIdentifier);
-			}, this);
+					if (!Ext.isEmpty(templateIdentifier) && !Ext.Array.contains(this.emailTemplatesIdentifiers, templateIdentifier))
+						this.emailTemplatesIdentifiers.push(templateIdentifier);
+				}, this);
 
 			var params = {};
 			params[CMDBuild.core.constants.Proxy.TEMPLATES] = Ext.encode(this.emailTemplatesIdentifiers);
@@ -749,7 +754,9 @@
 			 * to reload grid only at real end of calls and avoid to have multiple and useless store load calls.
 			 */
 			regenerateAllEmails: function () {
+				var gridsDraftEmail = this.controllerGrid.cmfg('tabEmailGridDraftEmailsGet');
 				var isRegenerationStarted = false; // Marks that regeneration process is started
+				var templatesFromConfiguration = this.cmfg('tabEmailConfigurationGet', CMDBuild.core.constants.Proxy.TEMPLATES);
 
 				if (this.tabEmailRegenerateAllEmailsGet()) {
 					var regenerationTrafficLightArray = [];
@@ -761,52 +768,54 @@
 						var emailTemplatesToRegenerate = this.checkTemplatesToRegenerate();
 
 						// Build records to regenerate array
-						Ext.Array.forEach(this.controllerGrid.cmfg('tabEmailGridDraftEmailsGet'), function (item, i, allItems) {
-							var recordTemplate = item.get(CMDBuild.core.constants.Proxy.TEMPLATE);
+						if (!Ext.isEmpty(gridsDraftEmail) && Ext.isArray(gridsDraftEmail))
+							Ext.Array.each(gridsDraftEmail, function (item, i, allItems) {
+								var recordTemplate = item.get(CMDBuild.core.constants.Proxy.TEMPLATE);
 
-							if (
-								this.controllerGrid.cmfg('tabEmailGridRecordIsRegenerable', item)
-								&& (
-									Ext.Array.contains(emailTemplatesToRegenerate, recordTemplate)
-									|| this.forceRegenerationGet()
-								)
-								&& item.get(CMDBuild.core.constants.Proxy.KEEP_SYNCHRONIZATION)
-							) {
-								if (item.get(CMDBuild.core.constants.Proxy.PROMPT_SYNCHRONIZATION) && !this.forceRegenerationGet()) { // PromptSynch implementation
-									this.controllerConfirmRegenerationWindow.addRecordToArray(item);
-								} else {
-									isRegenerationStarted = true;
+								if (
+									this.controllerGrid.cmfg('tabEmailGridRecordIsRegenerable', item)
+									&& (
+										Ext.Array.contains(emailTemplatesToRegenerate, recordTemplate)
+										|| this.forceRegenerationGet()
+									)
+									&& item.get(CMDBuild.core.constants.Proxy.KEEP_SYNCHRONIZATION)
+								) {
+									if (item.get(CMDBuild.core.constants.Proxy.PROMPT_SYNCHRONIZATION) && !this.forceRegenerationGet()) { // PromptSynch implementation
+										this.controllerConfirmRegenerationWindow.addRecordToArray(item);
+									} else {
+										isRegenerationStarted = true;
 
-									this.regenerateEmail(item, regenerationTrafficLightArray);
+										this.regenerateEmail(item, regenerationTrafficLightArray);
+									}
 								}
-							}
 
-							templatesCheckedForRegenerationIdentifiers.push(recordTemplate);
-						}, this);
+								templatesCheckedForRegenerationIdentifiers.push(recordTemplate);
+							}, this);
 
 						// Build template to regenerate array
-						Ext.Array.forEach(this.cmfg('tabEmailConfigurationGet', CMDBuild.core.constants.Proxy.TEMPLATES), function (item, i, allItems) {
-							var templateIdentifier = item.get(CMDBuild.core.constants.Proxy.KEY);
+						if (!Ext.isEmpty(templatesFromConfiguration) && Ext.isArray(templatesFromConfiguration))
+							Ext.Array.each(templatesFromConfiguration, function (item, i, allItems) {
+								var templateIdentifier = item.get(CMDBuild.core.constants.Proxy.KEY);
 
-							if (
-								!Ext.isEmpty(templateIdentifier)
-								&& (
-									Ext.Array.contains(emailTemplatesToRegenerate, templateIdentifier)
-									|| this.forceRegenerationGet()
-								)
-								&& !Ext.Array.contains(templatesCheckedForRegenerationIdentifiers, templateIdentifier) // Avoid to generate already regenerated templates
-							) {
-								if (item.get(CMDBuild.core.constants.Proxy.PROMPT_SYNCHRONIZATION) && !this.forceRegenerationGet()) { // PromptSynch implementation
-									this.controllerConfirmRegenerationWindow.addTemplateToArray(item);
-								} else {
-									isRegenerationStarted = true;
+								if (
+									!Ext.isEmpty(templateIdentifier)
+									&& (
+										Ext.Array.contains(emailTemplatesToRegenerate, templateIdentifier)
+										|| this.forceRegenerationGet()
+									)
+									&& !Ext.Array.contains(templatesCheckedForRegenerationIdentifiers, templateIdentifier) // Avoid to generate already regenerated templates
+								) {
+									if (item.get(CMDBuild.core.constants.Proxy.PROMPT_SYNCHRONIZATION) && !this.forceRegenerationGet()) { // PromptSynch implementation
+										this.controllerConfirmRegenerationWindow.addTemplateToArray(item);
+									} else {
+										isRegenerationStarted = true;
 
-									this.regenerateTemplate(item, regenerationTrafficLightArray);
+										this.regenerateTemplate(item, regenerationTrafficLightArray);
+									}
 								}
-							}
 
-							templatesCheckedForRegenerationIdentifiers.push(templateIdentifier);
-						}, this);
+								templatesCheckedForRegenerationIdentifiers.push(templateIdentifier);
+							}, this);
 
 						this.controllerConfirmRegenerationWindow.beforeShow();
 
