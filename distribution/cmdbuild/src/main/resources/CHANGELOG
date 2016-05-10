@@ -92,6 +92,8 @@ FIXES
 
  * Error editing relation on relation tab in 1:N domain on side 1
 
+ * Error on showing son of hidden class
+
 
 
 
