@@ -391,7 +391,7 @@
 			var data = model.raw || model.getData();
 			var classData = _CMCache.getEntryTypeById(model.get('dst_cid'));
 			var domain = _CMCache.getDomainById(model.get('dom_id'));
-			var masterAndSlave = getMasterAndSlave(model.get(CMDBuild.core.constants.Proxy.SOURCE));
+			var masterAndSlave = getMasterAndSlave(model.get(CMDBuild.core.constants.Proxy.SRC));
 
 			var editRelationWindow = Ext.create('CMDBuild.view.management.classes.relations.CMEditRelationWindow', {
 				domain: domain,
