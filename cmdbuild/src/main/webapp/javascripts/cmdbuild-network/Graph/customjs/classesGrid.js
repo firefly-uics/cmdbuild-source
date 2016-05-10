@@ -6,6 +6,8 @@
 			var form2Hook = $.Cmdbuild.dataModel.forms.classesForm;
 			form2Hook.selectRows($.Cmdbuild.custom.classesGrid.getAllSelected());
 		};
+		this.onLoad = function() {
+		};
 		this.refresh = function() {
 			if ($.Cmdbuild.customvariables.commandInExecution === true) {
 				return;

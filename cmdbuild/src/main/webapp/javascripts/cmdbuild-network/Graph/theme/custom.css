@@ -105,6 +105,9 @@ a {
 .centerOnSelection {
 	background:transparent url("images/icons/icon_center_on_selection.png") right 50% no-repeat;
 }
+.emptyFilter {
+	background:transparent url("images/icons/icon_folder_empty.png") right 50% no-repeat;
+}
 .selectAll {
 	background:transparent url("images/icons/icon_select_all.png") right 50% no-repeat;
 }
@@ -129,6 +132,12 @@ a {
 .filter {
 	background:transparent url("images/icons/icon_filter.png") right 50% no-repeat;
 }
+.print {
+	background:transparent url("images/icons/icon_print.png") right 50% no-repeat;
+}
+.nofilter {
+	background:transparent url("images/icons/icon_nofilter.png") right 50% no-repeat;
+}
 .btn-lessdetails {
 	background:transparent url("images/icons/icon_show_less.png") right 50% no-repeat;
 }
@@ -141,14 +150,29 @@ a {
 .btn-allitems {
 	background:transparent url("images/icons/icon_show_more.png") right 50% no-repeat;
 }
+.btn-onlyclasses {
+	background:transparent url("images/icons/icon_show_less.png") right 50% no-repeat;
+}
+.btn-alsosuperclasses {
+	background:transparent url("images/icons/icon_show_more.png") right 50% no-repeat;
+}
 .btn-attributes {
 	background:transparent url("images/icons/icon_attributes.png") right 50% no-repeat;
+}
+.btn-find {
+	background:transparent url("images/icons/icon_find.png") right 50% no-repeat;
 }
 .btn-navigationtree {
 	background:transparent url("images/icons/icon_navigation_tree.png") right 50% no-repeat;
 }
 .btn-toggletooltips {
 	background:transparent url("images/icons/icon_tooltip.png") right 50% no-repeat;
+}
+.btn-togglefilter {
+	background:transparent url("images/icons/icon_nofilter.png") right 50% no-repeat;
+}
+.btn-toggleblocklayout {
+	background:transparent url("images/icons/icon_stop_layout.png") right 50% no-repeat;
 }
 /**
  * HEADER TOOLBAR
@@ -483,11 +507,13 @@ a {
  */
  
 #detailform > .ui-tabs-nav.ui-widget-header,
+#classlistform > .ui-tabs-nav.ui-widget-header,
 #cardlistform > .ui-tabs-nav.ui-widget-header {
 	display: none;
 }
 #cardOverview, #card,
-#cards, #selected {
+#classes, #superClasses,
+#cards, #selected  {
 	border: 0;
 	padding: 0;
 }

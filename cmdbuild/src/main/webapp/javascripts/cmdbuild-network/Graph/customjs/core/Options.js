@@ -1,5 +1,5 @@
 (function($) {
-//	var INCLUDED_FILE = "NetworkConfigurationFile";
+	// var INCLUDED_FILE = "NetworkConfigurationFile";
 	if (!$.Cmdbuild.g3d) {
 		$.Cmdbuild.g3d = {};
 	}
@@ -34,16 +34,27 @@
 		$.Cmdbuild.customvariables.options.spriteDimension = $.Cmdbuild.custom.configuration.spriteDimension;
 		$.Cmdbuild.customvariables.options.stepRadius = $.Cmdbuild.custom.configuration.stepRadius;
 		$.Cmdbuild.customvariables.options.baseLevel = $.Cmdbuild.custom.configuration.baseLevel;
+		$.Cmdbuild.customvariables.options.filterEnabled = true;
 	};
 	$.Cmdbuild.g3d.Options.initFields = function() {
 		$("#baseLevel").spinner("value",
 				$.Cmdbuild.customvariables.options.baseLevel);
-
+		$("#" + $.Cmdbuild.customvariables.options.displayLabel).attr(
+				"checked", "checked").button('refresh');
 	};
 	$.Cmdbuild.g3d.Options.loadConfiguration = function(callback, callbackScope) {
 		$.Cmdbuild.g3d.proxy.getGraphConfiguration(
 				function(graphConfiguration) {
 					callback.apply(callbackScope, [ graphConfiguration ]);
 				}, this);
+	};
+	$.Cmdbuild.g3d.Options.getFileFromServer = function(url, doneCallback) {
+		$.ajax({
+			url : url,
+			cache : false,
+			success : function(data) {
+				doneCallback(data);
+			}
+		});
 	};
 })(jQuery);

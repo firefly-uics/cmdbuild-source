@@ -4,42 +4,44 @@
 	</params>
 	<div class="bodyToolbar">
 		<div class="toolbarButton border-box">
-			<span class="btn-alsosuperclasses" i18nTooltip="TOOLTIP_SHOWALSOSUPERCLASSES" tooltip="Show selected items">
+			<span class="btn-onlyclasses" i18nTooltip="TOOLTIP_SHOWONLYCLASSES" tooltip="Show selected items">
 				<onClick>
 					<command>tab</command>
 					<form>classlistform</form>
-					<activeTab>1</activeTab>
+					<activeTab>0</activeTab>
 				</onClick>
 			</span>
 		</div>
 	</div>
 	<div class="cmdbuildClear"></div>
-	<div id="classesFormContainer">
+	<div id="superClassesFormContainer">
 		<onInit>
 			<command>navigate</command>
-			<container>classesFormContainer</container>
-			<form>classesForm</form>
+			<container>superClassesFormContainer</container>
+			<form>superClassesForm</form>
 		</onInit>
-		<form id="classesForm">
+		<form id="superClassesForm">
 	 		<params>
 				<type>classesGrid</type>
 				<backend>ClassesNavigation</backend>
 				<nRows>10</nRows>
 				<hookParent>true</hookParent>
-				<superClasses>false</superClasses>
+				<superClasses>true</superClasses>
+					<classId>$superClassesForm.id</classId>
 			</params>
 			<rowButton i18nTooltip="TOOLTIP_ATTRIBUTES" class="grid-btn btn-find" tooltip="Zoom on Card">
 				<onClick>
 					<command>navigateOnAttributes</command>
 					<form>searchOnAttributes</form>
 					<dialog>searchAttributesPanelDialog</dialog>
-					<caller>classesForm</caller>
-					<classId>$classesForm.id</classId>
+					<classId>$superClassesForm.classId</classId>
+					<caller>superClassesForm</caller>
 				</onClick>
 			</rowButton>
 			<onChange>
 				<command>selectClass</command>
-				<node>$classesForm.id</node>
+				<node>$superClassesForm.id</node>
+				<superClasses>true</superClasses>
 			</onChange>
 		</form>
 	</div>

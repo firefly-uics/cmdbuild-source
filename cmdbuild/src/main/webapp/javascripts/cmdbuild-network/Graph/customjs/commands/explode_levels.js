@@ -8,7 +8,6 @@
 	var explode_levels = function(model, params) {
 		this.model = model;
 		this.params = params;
-		this.domainList = params.domainList;
 		var batch = params.batch;
 		var backend = new $.Cmdbuild.g3d.backend.CmdbuildModel();
 		backend.setModel(this.model);
@@ -46,7 +45,7 @@
 			} else {
 				$.Cmdbuild.g3d.Model.setGraphData(parentNode,
 						"exploded_children", true);
-				backend.getANodesBunch(id, this.domainList, function(elements) {
+				backend.getANodesBunch(id, function(elements) {
 					this.explodeMyChildren(parentNode, elements, oldChildren,
 							batch, levels, callback, callbackScope);
 				}, this);
