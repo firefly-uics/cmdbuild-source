@@ -12,10 +12,10 @@
 		this.saved4Undo = [];
 		this.execute = function(callback, callbackScope) {
 			var me = this;
-			 me.deleteInBackground(deleteSelection, callback, callbackScope);
+			me.deleteInBackground(deleteSelection, callback, callbackScope);
 		};
 		this.deleteInBackground = function(deleteSelection, callback, callbackScope) {
-			if (deleteSelection == "true") {
+			if (deleteSelection === "true" || deleteSelection === true) {
 				this.deleteSelected(selectedEles);
 			}
 			else {

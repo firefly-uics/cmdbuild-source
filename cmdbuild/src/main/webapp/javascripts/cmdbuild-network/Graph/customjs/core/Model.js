@@ -13,7 +13,6 @@
 		this.doLayout = function(options) {
 			this.layout.clean();
 			this.changed();
-			// this.layout.layoutPositions(cy.nodes());
 		};
 		this.changeLayout = function(options) {
 			this.layout = cy.elements().makeLayout(options);
@@ -70,16 +69,16 @@
 		};
 		this.copyNode = function(from) {
 			var to = {
-					id : from.id,
-					classId : from.classId,
-					label : from.label,
-					color : from.color,
-					compoundData : from.compoundData,
-					domainId : from.domainId,
-					children : from.children,
-					previousPathNode : from.previousPathNode,
-					nodeOnNavigationTree : from.nodeOnNavigationTree,
-					fromDomain : from.fromDomain
+				id : from.id,
+				classId : from.classId,
+				label : from.label,
+				color : from.color,
+				compoundData : from.compoundData,
+				domainId : from.domainId,
+				children : from.children,
+				previousPathNode : from.previousPathNode,
+				nodeOnNavigationTree : from.nodeOnNavigationTree,
+				fromDomain : from.fromDomain	
 			};
 			return to;
 		};
@@ -98,6 +97,7 @@
 					z : node.data.position.z
 				}
 			});
+			$.Cmdbuild.g3d.Model.setGraphData(cyNode, $.Cmdbuild.g3d.constants.OBJECT_STATUS_NEW, true);
 			return cyNode;
 		};
 		this.insertEdge = function(edge) {
@@ -201,7 +201,9 @@
 					this.classes[classId] = {
 						classId : classId,
 						classDescription : classDescription,
-						qt : 1
+						qt : 1,
+						superClasses : $.Cmdbuild.customvariables.cacheClasses
+								.getAllParents(classId)
 					};
 				} else {
 					this.classes[classId].qt += 1;
@@ -220,9 +222,7 @@
 				rows : retCards
 			};
 		};
-		this.getCards = function(first, rows, filter) {
-			first = parseInt(first);
-			rows = parseInt(rows);
+		this.getCards = function(filter) {
 			var arClasses = [];
 			var nodes = this.getNodes();
 			for (var i = 0; i < nodes.length; i++) {
@@ -246,16 +246,9 @@
 					label : label
 				});
 			}
-			var retCards = [];
-			if (first >= arClasses.length) {
-				first = 0;
-			}
-			for (i = first; i < first + rows && i < arClasses.length; i++) {
-				retCards.push(arClasses[i]);
-			}
 			return {
 				total : arClasses.length,
-				rows : retCards
+				rows : arClasses
 			};
 		};
 		this.pathClasses = function(path, node) {
@@ -279,21 +272,55 @@
 			return this.pathClasses(path, previousPathNode);
 		};
 
-		this.getNodesByClassName = function(classId) {
-			return cy.filter(function(i, element) {
-				if (element.isNode()
-						&& $.Cmdbuild.g3d.Model
-								.getGraphData(element, "classId") == classId) {
+		this.inSuperClasses = function(classId, superClasses) {
+			for (var i = 0; i < superClasses.length; i++) {
+				if (superClasses[i] === classId) {
 					return true;
+				}
+			}
+			return false;
+		};
+		this.getNodesBySuperClassName = function(classId) {
+			var classes = this.getDistinctClasses();
+			for (var i = 0; i < classes.rows.length; i++) {
+				if (classes.rows[i].classId === classId) {
+					return this.getNodesByClassName(classId, false);
+				}
+			}
+			// is a superClass
+			var realClasses = [];
+			for (var i = 0; i < classes.rows.length; i++) {
+				if (this.inSuperClasses(classId, classes.rows[i].superClasses)) {
+					realClasses.push(classes.rows[i].classId);
+				}
+			}
+			return this.getNodesByClassNames(realClasses);
+		};
+		this.getNodesByClassNames = function(classIds) {
+			return cy.filter(function(i, element) {
+				if (element.isNode()) {
+					for (var i = 0; i < classIds.length; i++) {
+						if ($.Cmdbuild.g3d.Model.getGraphData(element,
+								"classId") === classIds[i]) {
+
+							return true;
+						}
+					}
 				}
 				return false;
 			});
+		};
+		this.getNodesByClassName = function(classId, canBeASuperClass) {
+			if (canBeASuperClass) {
+				return this.getNodesBySuperClassName(classId);
+			}
+			return this.getNodesByClassNames([classId]);
 		};
 		this.getChildrenByClassName = function(node, classId) {
 			return $.Cmdbuild.g3d.Model.getChildrenByFunct(node,
 					function(element) {
 						return ($.Cmdbuild.g3d.Model.getGraphData(element,
-								"classId") == classId);
+								"classId") === classId);
 					});
 		};
 		this.collection = function() {

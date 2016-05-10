@@ -24,8 +24,9 @@
 			<onClick>
 				<command>applyFilters</command>
 				<dialog>commandPanelDialog</dialog>
-				<filterByClass>filterByClassForm</filterByClass>
+				<filterByClass>filterByClassFormGrid</filterByClass>
 				<filterByDomain>filterByDomainForm</filterByDomain>
+				<filterByAttributes>filterByAttributesForm</filterByAttributes>
 			</onClick>
 		</button>
 	</div>

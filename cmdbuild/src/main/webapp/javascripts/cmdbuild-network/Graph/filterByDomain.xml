@@ -2,7 +2,7 @@
 	<params>
 		<type>div</type>
 	</params>
-	<select label="Class" id="domains4Class" class="optionsSelect">
+	<select label="Class" i18nLabel="LABEL_FILTERCLASS" id="domains4Class" class="optionsSelect">
 		<params>
 			<backend>DomainsFilterClasses</backend>
 		</params>
