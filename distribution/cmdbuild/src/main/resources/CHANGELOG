@@ -90,6 +90,8 @@ FIXES
 
  * Widget OpenReport: doen't submits readOnly parameters
 
+ * Error editing relation on relation tab in 1:N domain on side 1
+
 
 
 
