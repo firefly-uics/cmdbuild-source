@@ -96,6 +96,8 @@ FIXES
 
  * Description not required in email template creation
 
+ * Widget's controllers reference lose
+
 
 
 
