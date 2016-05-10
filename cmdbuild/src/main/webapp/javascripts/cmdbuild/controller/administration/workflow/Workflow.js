@@ -101,13 +101,12 @@
 		 * @returns {Void}
 		 */
 		onWorkflowAddButtonClick: function () {
+			this.tabPanel.setActiveTab(0); // Must be first to avoid tab show errors
+
 			this.cmfg('mainViewportAccordionDeselect', CMDBuild.core.constants.ModuleIdentifiers.getWorkflow());
-
-			this.setViewTitle();
-
 			this.cmfg('workflowSelectedWorkflowReset');
 
-			this.tabPanel.setActiveTab(0);
+			this.setViewTitle();
 
 			this.controllerAttributes.onAddClassButtonClick(); // TODO: legacy
 			this.controllerDomains.cmfg('onWorkflowTabDomainsAddWorkflowButtonClick');
