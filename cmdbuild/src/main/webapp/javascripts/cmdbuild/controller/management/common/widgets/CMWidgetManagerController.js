@@ -72,6 +72,7 @@
 
 			if (card) {
 				var definitions = me.takeWidgetFromCard(card);
+				var controllers = {};
 				for (var i=0, l=definitions.length, w=null, ui=null; i<l; ++i) {
 					w = definitions[i];
 					ui = me.view.buildWidget(w, card);
@@ -79,10 +80,12 @@
 					if (ui) {
 						var wc = me.buildWidgetController(ui, w, card);
 						if (wc) {
-							me.controllers[me.getWidgetId(w)] = wc;
+							controllers[me.getWidgetId(w)] = wc;
 						}
 					}
 				}
+
+				this.controllers = Ext.clone(controllers); // Fixes problem of multiple instantiation of this class and losing controller pointers
 			}
 		},
 
