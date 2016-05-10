@@ -22,7 +22,7 @@
 		};
 		this.clean = function() {
 			nodes[0].position(center);
-			$.Cmdbuild.g3d.Model.removeGraphData(nodes, "moved");
+			$.Cmdbuild.g3d.Model.removeGraphData(nodes, $.Cmdbuild.g3d.constants.OBJECT_STATUS_MOVED);
 		};
 		this.getFactors = function(n, a) {
 			do {
@@ -126,11 +126,19 @@
 					lChildrenWithChildren, isRoot);
 			for (var i = 0; i < children.length; i++) {
 				var areChildren = withChildren(children[i]);
-				if ($.Cmdbuild.g3d.Model.getGraphData(children[i], "moved")) {
-					if (areChildren) {
-						indexWithChildren++;
+				var moved = $.Cmdbuild.g3d.Model.getGraphData(children[i], $.Cmdbuild.g3d.constants.OBJECT_STATUS_MOVED);
+				var isNew = $.Cmdbuild.g3d.Model.getGraphData(children[i], $.Cmdbuild.g3d.constants.OBJECT_STATUS_NEW);
+				var blocked = $.Cmdbuild.customvariables.options.blockedLayout;
+				if (! isNew) {
+					if (moved || blocked) {
+						if (areChildren) {
+							indexWithChildren++;
+						}
+						continue;
 					}
-					continue;
+				}
+				else {
+					$.Cmdbuild.g3d.Model.setGraphData(children[i], $.Cmdbuild.g3d.constants.OBJECT_STATUS_NEW, false);
 				}
 				var r = (!areChildren) ? STEPRADIUS : STEPRADIUS * 2;
 				var rLilAngle = (areChildren && !isRoot) ? STEPRADIUS : 0;
@@ -174,7 +182,8 @@
 			for (var i = 0; i < nodes.length; i++) {
 				if (!$.Cmdbuild.g3d.Model.getGraphData(nodes[i],
 						"previousPathNode")
-						|| $.Cmdbuild.g3d.Model.getGraphData(nodes[i], "moved") === true) {
+						|| $.Cmdbuild.customvariables.options.blockedLayout
+						|| $.Cmdbuild.g3d.Model.getGraphData(nodes[i], $.Cmdbuild.g3d.constants.OBJECT_STATUS_MOVED) === true) {
 					this.openChildren(nodes[i], true);
 				}
 			}
@@ -195,7 +204,7 @@
 	function composeQuaternions(node, vector) {
 		while (node) {
 			if (!$.Cmdbuild.g3d.Model.getGraphData(node, "previousPathNode")
-					|| $.Cmdbuild.g3d.Model.getGraphData(node, "moved") === true) {
+					|| $.Cmdbuild.g3d.Model.getGraphData(node, $.Cmdbuild.g3d.constants.OBJECT_STATUS_MOVED) === true) {
 				vector.add(node.position());
 				break;
 			} else {

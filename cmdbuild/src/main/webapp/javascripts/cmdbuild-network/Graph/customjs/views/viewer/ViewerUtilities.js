@@ -3,6 +3,7 @@
 		$.Cmdbuild.g3d = {};
 	}
 	var movingNodes = {};
+	var images = [];
 	var ViewerUtilities = {
 		spotLight : function(camera, z) {
 			var light = new THREE.SpotLight(0xffffff, 1.5);
@@ -46,7 +47,8 @@
 		},
 		webGlRender : function(container) {
 			var renderer = new THREE.WebGLRenderer({
-				antialias : false
+				antialias : false,
+				preserveDrawingBuffer: true
 			});
 			renderer.setClearColor(0xf0f0f0);
 			renderer.setPixelRatio(1.0);
@@ -58,16 +60,16 @@
 			// renderer.shadowMapType = THREE.PCFShadowMap;
 			return renderer;
 		},
-		header : function() {
-			var header = document.createElement('div');
-			header.style.position = 'absolute';
-			header.style.top = '10px';
-			header.style.width = '100%';
-			header.style.textAlign = 'left';
-			var strCommand = "$.Cmdbuild.standard.commands.navigate({form: 'commandPanel', dialog: 'commandPanelDialog' });";
-			header.innerHTML = '<p onclick="' + strCommand + '">MENU</p>';
-			return header;
-		},
+//		header : function() {
+//			var header = document.createElement('div');
+//			header.style.position = 'absolute';
+//			header.style.top = '10px';
+//			header.style.width = '100%';
+//			header.style.textAlign = 'left';
+//			var strCommand = "$.Cmdbuild.standard.commands.navigate({form: 'commandPanel', dialog: 'commandPanelDialog' });";
+//			header.innerHTML = '<p onclick="' + strCommand + '">MENU</p>';
+//			return header;
+//		},
 		spacePhisycalPlane : function(normal, dist) {
 			var plane = new THREE.Plane(normal, dist);
 			plane.visible = true;
@@ -157,16 +159,8 @@
 				sprite = $.Cmdbuild.customvariables.cacheImages
 						.getImage(classId);
 			}
-			try {
-				var map = THREE.ImageUtils.loadTexture(sprite, {}, function() {
-
+				var map = THREE.ImageUtils.loadTexture(sprite, {}, function(text) {
 				});
-				if (!map) {
-					console.log("Error on Sprite: "
-							+ $.Cmdbuild.g3d.Model
-									.getGraphData(node, "classId")
-							+ " the sprite is " + sprite);
-				}
 				var material = new THREE.SpriteMaterial({
 					map : map,
 					color : 0xffffff,
@@ -183,12 +177,6 @@
 				$.Cmdbuild.g3d.Model.setGraphData(node, "glId", object.id);
 				object.name = node.id();
 				return object;
-			} catch (e) {
-				console.log("Error on Sprite: "
-						+ $.Cmdbuild.g3d.Model.getGraphData(node, "classId")
-						+ " the sprite is " + sprite);
-				return null;
-			}
 		},
 		lineFromEdge : function(edge) {
 			var source = edge.source();
@@ -246,6 +234,11 @@
 					clearInterval(me.TM);
 					var nextPosition = movingNodes[id].nextPosition;
 					delete movingNodes[id];
+					if (! glObject.material.map.image) {
+						var map = THREE.ImageUtils.loadTexture(glObject.material.map.sourceFile);
+						glObject.material.map = map;
+						glObject.needsUpdate = true;
+					}
 					if (nextPosition) {
 						new $.Cmdbuild.g3d.ViewerUtilities.moveObject(viewer,
 								nextPosition);
