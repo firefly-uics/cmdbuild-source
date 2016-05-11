@@ -106,6 +106,8 @@ FIXES
 
  * Suspended process instances displays all attributes like closed ones
 
+ * Start activities are never writable when read from REST web services
+
 
 
 
