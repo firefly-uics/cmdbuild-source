@@ -346,6 +346,8 @@
 				nodeIdToSelect: formDataModel.get(CMDBuild.core.constants.Proxy.ID) || decodedResponse[CMDBuild.core.constants.Proxy.ID]
 			});
 
+			this.cmfg('onWorkflowTabPropertiesShow');
+
 			CMDBuild.core.Message.success();
 		},
 
