@@ -102,6 +102,8 @@ FIXES
 
  * Include inherited checkbox reverse operation
 
+ * No regeneration alert popup display on related attribute change
+
 
 
 
