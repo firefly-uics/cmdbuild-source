@@ -35,7 +35,7 @@
 
 		layout: {
 			type: 'vbox',
-			align:'stretch'
+			align: 'stretch'
 		},
 
 		initComponent: function () {
@@ -77,7 +77,7 @@
 
 						layout: {
 							type: 'vbox',
-							align:'stretch'
+							align: 'stretch'
 						},
 
 						defaults: {

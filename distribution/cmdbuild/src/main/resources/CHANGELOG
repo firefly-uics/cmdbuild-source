@@ -98,6 +98,8 @@ FIXES
 
  * Widget's controllers reference lose
 
+ * Flag image not displayed after selecting default language in administration localization configuration
+
 
 
 
