@@ -38,7 +38,6 @@ public class DefaultEmailTemplate implements EmailTemplate {
 
 		private void validate() {
 			Validate.isTrue(isNotBlank(name), "invalid name");
-			Validate.isTrue(isNotBlank(description), "invalid description");
 		}
 
 		@Override

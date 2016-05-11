@@ -52,8 +52,8 @@ public class DefaultEmailTemplateLogicTest {
 		logic = new DefaultEmailTemplateLogic(store, emailAccountFacade);
 	}
 
-	@Test
-	public void elementCreatedWhenThereAreNoOtherElements() throws Exception {
+	@Test(expected = IllegalArgumentException.class)
+	public void cannotCreateElementWhenDesctipionIsMissing() throws Exception {
 		// given
 		when(store.readAll()) //
 				.thenReturn(NO_ELEMENTS);
@@ -80,7 +80,37 @@ public class DefaultEmailTemplateLogicTest {
 	}
 
 	@Test
-	public void elementCreatedWhenThereIsNoOtherOneWithSameName() throws Exception {
+	public void elementCreatedWhenThereAreNoOtherElements() throws Exception {
+		// given
+		when(store.readAll()) //
+				.thenReturn(NO_ELEMENTS);
+		when(store.read(any(Storable.class))) //
+				.thenReturn(extended(DefaultEmailTemplate.newInstance() //
+						.withId(42L) //
+						.withName("foo") //
+						.build()));
+		final Template newOne = mock(Template.class);
+		when(newOne.getName()) //
+				.thenReturn("foo");
+		when(newOne.getDescription()) //
+				.thenReturn("Foo");
+
+		// when
+		final Long id = logic.create(newOne);
+
+		// then
+		final InOrder inOrder = inOrder(store);
+		inOrder.verify(store).readAll();
+		inOrder.verify(store).create(captor.capture());
+		inOrder.verify(store).read(any(Storable.class));
+		final EmailTemplate captured = captor.getValue();
+		assertThat(captured.getName(), equalTo("foo"));
+		assertThat(captured.getDescription(), equalTo("Foo"));
+		assertThat(id, equalTo(42L));
+	}
+
+	@Test
+	public void elementCreatedWhenThereIsAnotherOneWithDifferentName() throws Exception {
 		// given
 		final ExtendedEmailTemplate stored = extended(DefaultEmailTemplate.newInstance() //
 				.withName("bar") //
@@ -95,6 +125,8 @@ public class DefaultEmailTemplateLogicTest {
 		final Template newOne = mock(Template.class);
 		when(newOne.getName()) //
 				.thenReturn("foo");
+		when(newOne.getDescription()) //
+				.thenReturn("Foo");
 
 		// when
 		final Long id = logic.create(newOne);
@@ -105,6 +137,7 @@ public class DefaultEmailTemplateLogicTest {
 		inOrder.verify(store).create(captor.capture());
 		final EmailTemplate captured = captor.getValue();
 		assertThat(captured.getName(), equalTo("foo"));
+		assertThat(captured.getDescription(), equalTo("Foo"));
 		assertThat(id, equalTo(42L));
 	}
 
@@ -168,8 +201,8 @@ public class DefaultEmailTemplateLogicTest {
 		}
 	}
 
-	@Test
-	public void elementUpdatedWhenOneIsFound() throws Exception {
+	@Test(expected = IllegalArgumentException.class)
+	public void cannotUpdatedElementWhenDescriptionIsMissing() throws Exception {
 		// given
 		final ExtendedEmailTemplate stored = extended(DefaultEmailTemplate.newInstance() //
 				.withName("foo") //
@@ -181,6 +214,31 @@ public class DefaultEmailTemplateLogicTest {
 				.thenReturn("foo");
 
 		// when
+		try {
+			logic.update(existing);
+		} finally {
+			// then
+			final InOrder inOrder = inOrder(store);
+			inOrder.verify(store).readAll();
+			verifyNoMoreInteractions(store);
+		}
+	}
+
+	@Test
+	public void elementUpdatedWhenOneIsFound() throws Exception {
+		// given
+		final ExtendedEmailTemplate stored = extended(DefaultEmailTemplate.newInstance() //
+				.withName("foo") //
+				.build());
+		when(store.readAll()) //
+				.thenReturn(asList(stored));
+		final Template existing = mock(Template.class);
+		when(existing.getName()) //
+				.thenReturn("foo");
+		when(existing.getDescription()) //
+				.thenReturn("Foo");
+
+		// when
 		logic.update(existing);
 
 		// then
@@ -190,6 +248,7 @@ public class DefaultEmailTemplateLogicTest {
 		verifyNoMoreInteractions(store);
 		final EmailTemplate captured = captor.getValue();
 		assertThat(captured.getName(), equalTo("foo"));
+		assertThat(captured.getDescription(), equalTo("Foo"));
 	}
 
 	@Test(expected = IllegalArgumentException.class)
