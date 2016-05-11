@@ -97,11 +97,11 @@
 		 */
 		onWorkflowTabDomainsIncludeInheritedCheck: function () {
 			if (this.view.includeInheritedCheckbox.getValue()) {
+				this.grid.getStore().clearFilter();
+			} else {
 				this.grid.getStore().filterBy(function (record) {
 					return !record.get(CMDBuild.core.constants.Proxy.INHERITED);
 				});
-			} else {
-				this.grid.getStore().clearFilter();
 			}
 		},
 
