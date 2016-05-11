@@ -279,14 +279,13 @@
 			}
 
 			function onAttributesLoaded(attributes) {
-
-				if (activityInstance.isNew()
-						|| processInstance.isStateOpen()) {
-
+				// Filter attributes to show, if we have a closed process who all attributes
+				if (
+					activityInstance.isNew()
+					|| processInstance.isStateOpen()
+					|| processInstance.isStateSuspended()
+				) {
 					attributes = CMDBuild.controller.management.workflow.StaticsController.filterAttributesInStep(attributes, variables);
-				} else {
-					// if here, we have a closed process, so show
-					// all the attributes
 				}
 
 				me.view.fillForm(attributes, editMode = false);
