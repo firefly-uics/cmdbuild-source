@@ -83,8 +83,6 @@
 			$.Cmdbuild.custom.configuration.temporaryFilterByAttributes = (classes) ? $.Cmdbuild.utilities
 					.clone(classes)
 					: {};
-			// console.log($.Cmdbuild.custom.configuration.filterByAttributes.classes,
-			// "<<<<", classes);
 			$.Cmdbuild.dataModel.prepareCallerParameters(param.caller, {
 				classId : param.classId
 			});
@@ -355,8 +353,6 @@
 			var attribute = $.Cmdbuild.g3d.backend.CmdbuildModel
 					.getJsonFilterAttributes(classes[index].data);
 			this.attributeCascade(key);
-			// /////qui va fatto il filtro composto
-			// /in verita' prima di trasformarlo in json
 			if (attribute && nodesForClass.length > 0) {
 				var jsonValues = this.getIdsArray(nodesForClass);
 				$.Cmdbuild.g3d.backend.CmdbuildModel
@@ -385,7 +381,7 @@
 			param = $.Cmdbuild.dataModel.resolveVariables(param);
 			var nodesForClass = $.Cmdbuild.customvariables.model
 					.getNodesByClassName(param.classId, true);
-			var classes = param.filterByAttributes;// $.Cmdbuild.custom.configuration.filterByAttributes;
+			var classes = param.filterByAttributes;
 			var attribute = $.Cmdbuild.g3d.backend.CmdbuildModel
 					.getJsonFilterAttributes(classes[param.classId]);
 			if (attribute && nodesForClass.length > 0) {
@@ -564,10 +560,11 @@
 		selectClass : function(param) {
 			var paramActualized = $.Cmdbuild.dataModel.resolveVariables(param);
 			$.Cmdbuild.customvariables.selected.selectByClassName(
-					paramActualized.node, param.addSelection, param.superClasses === "true");
+					paramActualized.node, param.addSelection,
+					param.superClasses === "true");
 			var form2Hook = $.Cmdbuild.dataModel.forms[paramActualized.id];
-			form2Hook
-					.selectRows($.Cmdbuild.custom.classesGrid.getAllSelected());
+			form2Hook.selectRows($.Cmdbuild.custom.classesGrid
+					.getAllSelected(paramActualized.node));
 		},
 		selectNode : function(param) {
 			var paramActualized = $.Cmdbuild.dataModel.resolveVariables(param);
