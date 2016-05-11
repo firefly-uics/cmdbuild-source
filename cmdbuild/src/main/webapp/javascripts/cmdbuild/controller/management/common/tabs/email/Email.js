@@ -579,7 +579,7 @@
 						this.relatedAttributeChanged = true;
 
 						if (
-							!parameters.record.get(CMDBuild.core.constants.Proxy.KEEP_SYNCHRONIZATION)
+							parameters.record.get(CMDBuild.core.constants.Proxy.KEEP_SYNCHRONIZATION)
 							&& !parameters.record.get(CMDBuild.core.constants.Proxy.PROMPT_SYNCHRONIZATION)
 						) {
 							CMDBuild.core.Message.warning(null, CMDBuild.Translation.warnings.emailTemplateRelatedAttributeEdited);
