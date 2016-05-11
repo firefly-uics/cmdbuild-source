@@ -247,8 +247,8 @@
 				CMDBuild.proxy.widget.customForm.CustomForm.readFromFunctions({
 					params: params,
 					scope: Ext.isEmpty(parameters.scope) ? this : parameters.scope,
-					callback: Ext.isFunction(parameters.callback) ? parameters.callback :  Ext.emptyFn,
-					success: Ext.isFunction(parameters.success) ? parameters.success :  Ext.emptyFn
+					callback: Ext.isFunction(parameters.callback) ? parameters.callback : Ext.emptyFn,
+					success: Ext.isFunction(parameters.success) ? parameters.success : Ext.emptyFn
 				});
 			}
 		},
@@ -389,6 +389,8 @@
 						decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.CARDS];
 
 						this.instancesDataStorageSet(decodedResponse);
+
+						this.controllerLayout.cmfg('onWidgetCustomFormShow');
 					}
 				});
 			}
