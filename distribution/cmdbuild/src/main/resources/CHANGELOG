@@ -104,6 +104,8 @@ FIXES
 
  * No regeneration alert popup display on related attribute change
 
+ * Suspended process instances displays all attributes like closed ones
+
 
 
 
