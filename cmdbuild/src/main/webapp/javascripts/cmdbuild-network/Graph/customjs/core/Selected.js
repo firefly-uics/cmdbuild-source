@@ -53,15 +53,13 @@
 			if (! bAddSelection) {
 				this.erase();
 			}
-			var nodes = this.model.getNodesByClassName(classId, canBeASuperClass);//getNodes();
+			var nodes = this.model.getNodesByClassName(classId, canBeASuperClass);
 			for (var i = 0; i < nodes.length; i++) {
-//				if ($.Cmdbuild.g3d.Model.getGraphData(nodes[i], "classId") == classId) {
-					if (this.selected[nodes[i].id()] === true && bAddSelection) {
-						delete this.selected[nodes[i].id()];
-					} else {
-						this.selected[nodes[i].id()] = true;
-					}
-//				}
+				if (this.selected[nodes[i].id()] === true && bAddSelection) {
+					delete this.selected[nodes[i].id()];
+				} else {
+					this.selected[nodes[i].id()] = true;
+				}
 			}
 			this.changed({});
 		};
