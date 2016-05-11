@@ -17,9 +17,8 @@
 		editable: false,
 		fieldCls: 'ux-icon-combo-input ux-icon-combo-item',
 		forceSelection: true,
-		iconClsField: 'name', // could be changed on instantiation
 		iconClsField: CMDBuild.core.constants.Proxy.TAG,
-		iconClsPrefix: 'ux-flag-', // could be changed on instantiation
+		iconClsPrefix: 'ux-flag-',
 		valueField: CMDBuild.core.constants.Proxy.TAG,
 
 		/**
@@ -28,24 +27,23 @@
 		 * @override
 		 */
 		initComponent: function () {
-			var tpl = '<div class="x-combo-list-item ux-icon-combo-item ' + this.iconClsPrefix + '{' + this.iconClsField + '}">{' + this.displayField +'}</div>';
-
 			Ext.apply(this, {
-				listConfig: {
-					getInnerTpl: function () { return tpl; }
-				},
+				tpl: new Ext.XTemplate(
+					'<tpl for=".">',
+						'<div class="x-boundlist-item x-combo-list-item ux-icon-combo-item ' + this.iconClsPrefix + '{' + this.iconClsField + '}">{' + this.displayField + '}</div>',
+					'</tpl>'
+				),
 				store: CMDBuild.proxy.localization.Localization.getStoreLanguages(),
 				queryMode: 'local'
 			});
 
 			this.callParent(arguments);
 
-			this.setValue = Ext.Function.createInterceptor(this.setValue, function (v) {
-				if (this.lastFlagCls && !Ext.isEmpty(this.inputEl)) {
+			this.setValue = Ext.Function.createInterceptor(this.setValue, function (value) {
+				if (this.lastFlagCls && !Ext.isEmpty(this.inputEl))
 					this.inputEl.removeCls(this.lastFlagCls);
-				}
 
-				this.lastFlagCls = this.iconClsPrefix + v;
+				this.lastFlagCls = this.iconClsPrefix + value;
 
 				if (!Ext.isEmpty(this.inputEl))
 					this.inputEl.addCls(this.lastFlagCls);
@@ -58,6 +56,8 @@
 
 		listeners: {
 			select: function (field, records, eOpts) {
+				this.setValue(this.getValue()); // Fixes flag image render error
+
 				if (this.enableChangeLanguage)
 					this.changeLanguage(records[0].get(CMDBuild.core.constants.Proxy.TAG));
 			}
@@ -65,6 +65,8 @@
 
 		/**
 		 * @param {String} language
+		 *
+		 * @returns {Void}
 		 *
 		 * @private
 		 */
