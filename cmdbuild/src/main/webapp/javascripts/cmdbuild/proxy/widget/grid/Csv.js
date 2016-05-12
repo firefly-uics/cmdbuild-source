@@ -26,7 +26,7 @@
 				callback: function (options, success, response) { // Clears server session data
 					CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.UNCACHED, {
 						method: 'GET',
-						url: CMDBuild.proxy.index.Json.csv.import.clearSession,
+						url: CMDBuild.proxy.index.Json.csv.imports.clearSession,
 						loadMask: false
 					});
 
@@ -84,7 +84,7 @@
 		upload: function (parameters) {
 			parameters = Ext.isEmpty(parameters) ? {} : parameters;
 
-			Ext.apply(parameters, { url: CMDBuild.proxy.index.Json.csv.import.create });
+			Ext.apply(parameters, { url: CMDBuild.proxy.index.Json.csv.imports.create });
 
 			CMDBuild.core.interfaces.FormSubmit.submit(parameters);
 		}

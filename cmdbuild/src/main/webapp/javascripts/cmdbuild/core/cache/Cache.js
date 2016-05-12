@@ -207,7 +207,7 @@
 				isExpired = (
 					Ext.isEmpty(cachedObject)
 					|| Ext.Object.isEmpty(cachedObject)
-					|| cachedObject.get(CMDBuild.core.constants.Proxy.DATE) < (Date.now() - CMDBuild.core.configurations.Timeout.getCache())
+					|| cachedObject.get(CMDBuild.core.constants.Proxy.DATE) < (new Date().valueOf() - CMDBuild.core.configurations.Timeout.getCache()) // Compatibility mode with IE older than IE 9 (Date.now())
 				);
 
 				if (isExpired)
@@ -403,7 +403,7 @@
 				&& this.isCacheable(parameters.groupId)
 			) {
 				var cacheObject = {};
-				cacheObject[CMDBuild.core.constants.Proxy.DATE] = Date.now();
+				cacheObject[CMDBuild.core.constants.Proxy.DATE] = new Date().valueOf(); // Compatibility mode with IE older than IE 9 (Date.now())
 				cacheObject[CMDBuild.core.constants.Proxy.PARAMETERS] = parameters.params;
 				cacheObject[CMDBuild.core.constants.Proxy.RESPONSE] = parameters.values;
 

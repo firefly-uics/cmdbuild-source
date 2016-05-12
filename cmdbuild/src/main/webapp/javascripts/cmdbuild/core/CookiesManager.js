@@ -13,7 +13,14 @@
 			 * @public
 			 */
 			authorizationClear: function () {
-				Ext.util.Cookies.clear(CMDBuild.core.constants.Proxy.AUTHORIZATION_HEADER_KEY);
+				Ext.util.Cookies.set( // Reset cookie value
+					CMDBuild.core.constants.Proxy.AUTHORIZATION_HEADER_KEY,
+					null,
+					null,
+					Ext.Array.slice(window.location.pathname.split('/'), 0, -1).join('/') + '/'
+				);
+
+				Ext.util.Cookies.clear(CMDBuild.core.constants.Proxy.AUTHORIZATION_HEADER_KEY); // Sets expiration date to past
 			},
 
 			/**
@@ -31,9 +38,9 @@
 					}
 
 					Ext.util.Cookies.set(
-						CMDBuild.core.constants.Proxy.AUTHORIZATION_HEADER_KEY, // Name
-						CMDBuild.core.CookiesManager.authorizationGet(), // Value
-						expirationDate, // Expiration date
+						CMDBuild.core.constants.Proxy.AUTHORIZATION_HEADER_KEY,
+						CMDBuild.core.CookiesManager.authorizationGet(),
+						expirationDate,
 						Ext.Array.slice(window.location.pathname.split('/'), 0, -1).join('/') + '/'
 					);
 				}
@@ -72,7 +79,7 @@
 					return Ext.util.Cookies.set(
 						CMDBuild.core.constants.Proxy.AUTHORIZATION_HEADER_KEY,
 						sessionId,
-						null, // Expiration date
+						null,
 						Ext.Array.slice(window.location.pathname.split('/'), 0, -1).join('/') + '/'
 					);
 

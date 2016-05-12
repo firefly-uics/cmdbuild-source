@@ -113,7 +113,7 @@ public class ClassSerializer extends Serializer {
 		addUiCardModePrivileges(cmClass, jsonObject);
 
 		final CMClass parent = cmClass.getParent();
-		if (parent != null && parent.isActive()) {
+		if (parent != null) {
 			jsonObject.put(PARENT, parent.getId());
 		}
 

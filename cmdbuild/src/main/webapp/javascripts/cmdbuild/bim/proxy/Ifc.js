@@ -31,7 +31,7 @@
 		importIfc: function (parameters) {
 			parameters = Ext.isEmpty(parameters) ? {} : parameters;
 
-			Ext.apply(parameters, { url: CMDBuild.proxy.index.Json.bim.ifc.import });
+			Ext.apply(parameters, { url: CMDBuild.proxy.index.Json.bim.ifc.imports });
 
 			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.BIM, parameters, true);
 		}

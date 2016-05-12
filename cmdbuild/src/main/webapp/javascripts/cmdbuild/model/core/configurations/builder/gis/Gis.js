@@ -63,11 +63,11 @@
 		 * @returns {Mixed}
 		 */
 		get: function (property) {
-			if (Ext.isArray(property) && !Ext.isEmpty(property[0])) {
-				var returnValue = this.get(property[0]);
+			if (!Ext.isEmpty(property) && Ext.isArray(property)) {
+				var returnValue = this;
 
 				Ext.Array.each(property, function (propertyName, i, allPropertyNames) {
-					if (!Ext.isEmpty(returnValue))
+					if (!Ext.isEmpty(returnValue) && Ext.isFunction(returnValue.get))
 						returnValue = returnValue.get(propertyName);
 				}, this);
 
