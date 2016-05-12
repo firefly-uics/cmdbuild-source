@@ -108,6 +108,8 @@ FIXES
 
  * Start activities are never writable when read from REST web services
 
+ * No default language selection on login page
+
 
 
 

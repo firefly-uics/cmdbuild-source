@@ -23,7 +23,7 @@
 			 *
 			 * @returns {Object} data
 			 */
-			convertFromLegacy: function (data) {
+			convertFromLegacy: function (data) { // TODO: remove on refactor
 				data = data || {};
 				data[CMDBuild.core.constants.Proxy.DEFAULT_LANGUAGE] = data[CMDBuild.core.constants.Proxy.LANGUAGE];
 
