@@ -228,7 +228,7 @@
 						name: 'geoserver_admin_password',
 						fieldLabel: tr.admin_password,
 						inputType: 'password'
-					},
+					}
 				]
 			});
 

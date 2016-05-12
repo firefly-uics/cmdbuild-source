@@ -318,7 +318,7 @@
 					allowBlank: false,
 
 					store: _CMCache.getAvailableDataSourcesStore(),
-					queryMode: 'local',
+					queryMode: 'local'
 				});
 			// END: Filter configuration
 
@@ -385,7 +385,7 @@
 						forceSelection: true,
 						editable: false,
 
-						store: CMDBuild.proxy.email.Account.getStore(),
+						store: CMDBuild.proxy.email.Account.getStore()
 					}),
 					this.incomingFolder = Ext.create('Ext.form.field.Text', {
 						name: CMDBuild.core.constants.Proxy.INCOMING_FOLDER,

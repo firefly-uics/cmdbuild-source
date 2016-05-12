@@ -122,7 +122,9 @@ public class DefaultAuthenticationLogic implements AuthenticationLogic {
 		logger.trace("login information '{}'", loginDTO);
 		final AuthenticatedUser authUser;
 		final OperationUser actualOperationUser = userStore.getUser();
-		if (!actualOperationUser.getAuthenticatedUser().isAnonymous() && !actualOperationUser.isValid()) {
+		if (actualOperationUser.isValid()) {
+			authUser = actualOperationUser.getAuthenticatedUser();
+		} else if (!actualOperationUser.getAuthenticatedUser().isAnonymous() && !actualOperationUser.isValid()) {
 			/*
 			 * header authentication in progress, only group selection is
 			 * missing

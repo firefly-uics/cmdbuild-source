@@ -6,7 +6,7 @@
 		requires: [
 			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.proxy.Classes',
-			'CMDBuild.proxy.dataView.DataView',
+			'CMDBuild.proxy.dataView.DataView'
 		],
 
 		/**

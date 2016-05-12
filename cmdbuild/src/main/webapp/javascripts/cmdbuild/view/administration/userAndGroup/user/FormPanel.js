@@ -243,7 +243,7 @@
 								twinFieldId: 'userPassword',
 								vtype: 'password',
 								submitValue: false
-							}),
+							})
 						]
 					})
 				]

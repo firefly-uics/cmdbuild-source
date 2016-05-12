@@ -50,7 +50,7 @@
 			// Instances
 			'processes/:processIdentifier/instances/:instanceIdentifier/': 'CMDBuild.routes.management.Instance#saveRoute',
 
-			'exec/processes/:processIdentifier/instances/:instanceIdentifier/': 'CMDBuild.routes.management.Instance#detail',
+			'exec/processes/:processIdentifier/instances/:instanceIdentifier/': 'CMDBuild.routes.management.Instance#detail'
 		},
 
 		/**
@@ -66,6 +66,7 @@
 			delete Ext.tip.Tip.prototype.minWidth;
 
 			Ext.create('CMDBuild.core.LoggerManager'); // Logger configuration
+			Ext.create('CMDBuild.core.interfaces.Init'); // Interfaces configuration
 			Ext.create('CMDBuild.core.Data', { enableLocalized: true }); // Data connections configuration
 			Ext.create('CMDBuild.core.cache.Cache');
 			Ext.create('CMDBuild.core.navigation.Chronology'); // Navigation chronology

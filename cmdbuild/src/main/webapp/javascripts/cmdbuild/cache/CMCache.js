@@ -118,10 +118,6 @@
 			return oneTimeStore || this.mapOfReferenceStore[key];
 		},
 
-		getReferenceStoreById: function(id) {
-			return this.mapOfReferenceStore[id];
-		},
-
 		/**
 		 * @param {Object} reference
 		 *
@@ -130,15 +126,12 @@
 		 * @private
 		 */
 		buildReferenceStore: function(reference) {
-			var baseParams = this.buildParamsForReferenceRequest(reference),
-				isOneTime = baseParams.CQL ? true : false;
+			var baseParams = this.buildParamsForReferenceRequest(reference);
+			var isOneTime = baseParams.CQL ? true : false;
 
 			// Filters wrongly requested reference stores
 			if (!Ext.isEmpty(baseParams['className']) || !Ext.isEmpty(baseParams['filter']))
-				return CMDBuild.proxy.Cache.getStoreReference(
-					isOneTime,
-					baseParams
-				);
+				return CMDBuild.proxy.Cache.getStoreReference(isOneTime, baseParams);
 
 			_warning('Invalid reference property object', this, reference);
 

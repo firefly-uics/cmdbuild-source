@@ -266,7 +266,7 @@
 	function NodeToObject(node) {
 		return {
 			cardId: node.get("cardId"),
-			className: node.get("className"),
+			className: node.get("className")
 		};
 	}
 

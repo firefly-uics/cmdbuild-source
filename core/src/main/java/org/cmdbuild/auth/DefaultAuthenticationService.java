@@ -275,9 +275,7 @@ public class DefaultAuthenticationService implements AuthenticationService {
 		if (userDTO.getDescription() != null) {
 			cardToBeUpdated.set(User.DESCRIPTION, userDTO.getDescription());
 		}
-		if (isNotBlank(userDTO.getEmail())) {
-			cardToBeUpdated.set(User.EMAIL, userDTO.getEmail());
-		}
+		cardToBeUpdated.set(User.EMAIL, userDTO.getEmail());
 		if (isNotBlank(userDTO.getPassword())) {
 			cardToBeUpdated.set(User.PASSWORD, digester.encrypt(userDTO.getPassword()));
 		}

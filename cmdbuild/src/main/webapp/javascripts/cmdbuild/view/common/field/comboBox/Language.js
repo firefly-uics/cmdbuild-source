@@ -5,8 +5,13 @@
 
 		requires: [
 			'CMDBuild.core.constants.Proxy',
-			'CMDBuild.proxy.localization.Localization'
+			'CMDBuild.proxy.common.field.comboBox.Language'
 		],
+
+		/**
+		 * @cfg {CMDBuild.controller.common.field.comboBox.Language}
+		 */
+		delegate: undefined,
 
 		/**
 		 * @cfg {Boolean}
@@ -17,9 +22,8 @@
 		editable: false,
 		fieldCls: 'ux-icon-combo-input ux-icon-combo-item',
 		forceSelection: true,
-		iconClsField: 'name', // could be changed on instantiation
 		iconClsField: CMDBuild.core.constants.Proxy.TAG,
-		iconClsPrefix: 'ux-flag-', // could be changed on instantiation
+		iconClsPrefix: 'ux-flag-',
 		valueField: CMDBuild.core.constants.Proxy.TAG,
 
 		/**
@@ -28,65 +32,41 @@
 		 * @override
 		 */
 		initComponent: function () {
-			var tpl = '<div class="x-combo-list-item ux-icon-combo-item ' + this.iconClsPrefix + '{' + this.iconClsField + '}">{' + this.displayField +'}</div>';
-
 			Ext.apply(this, {
-				listConfig: {
-					getInnerTpl: function () { return tpl; }
-				},
-				store: CMDBuild.proxy.localization.Localization.getStoreLanguages(),
+				delegate: Ext.create('CMDBuild.controller.common.field.comboBox.Language', { view: this }),
+				tpl: new Ext.XTemplate(
+					'<tpl for=".">',
+						'<div class="x-boundlist-item x-combo-list-item ux-icon-combo-item ' + this.iconClsPrefix + '{' + this.iconClsField + '}">{' + this.displayField + '}</div>',
+					'</tpl>'
+				),
+				store: CMDBuild.proxy.common.field.comboBox.Language.getStore(),
 				queryMode: 'local'
 			});
 
 			this.callParent(arguments);
 
-			this.setValue = Ext.Function.createInterceptor(this.setValue, function (v) {
-				if (this.lastFlagCls && !Ext.isEmpty(this.inputEl)) {
-					this.inputEl.removeCls(this.lastFlagCls);
-				}
-
-				this.lastFlagCls = this.iconClsPrefix + v;
-
-				if (!Ext.isEmpty(this.inputEl))
-					this.inputEl.addCls(this.lastFlagCls);
-			}, this);
-
 			this.getStore().on('load', function (store, records, successful, eOpts) {
-				this.setValue(this.getCurrentLanguage());
+				this.delegate.cmfg('onFieldComboBoxLanguageStoreLoad');
 			}, this);
 		},
 
 		listeners: {
 			select: function (field, records, eOpts) {
-				if (this.enableChangeLanguage)
-					this.changeLanguage(records[0].get(CMDBuild.core.constants.Proxy.TAG));
+				this.delegate.cmfg('onFieldComboBoxLanguageSelect', records[0]);
 			}
 		},
 
 		/**
-		 * @param {String} language
+		 * @param {String} value
 		 *
-		 * @private
-		 */
-		changeLanguage: function (language) {
-			language = !Ext.isEmpty(language) && Ext.isString(language) ? language : CMDBuild.configuration.localization.get(CMDBuild.core.constants.Proxy.DEFAULT_LANGUAGE);
-
-			window.location = '?' + CMDBuild.core.constants.Proxy.LANGUAGE + '=' + language;
-		},
-
-		/**
-		 * @returns {String}
+		 * @returns {Void}
 		 *
-		 * @private
+		 * @public
 		 */
-		getCurrentLanguage: function () {
-			// Step 1: check URL
-			if (!Ext.isEmpty(window.location.search))
-				return Ext.Object.fromQueryString(window.location.search)[CMDBuild.core.constants.Proxy.LANGUAGE];
+		setValue: function (value) {
+			this.delegate.cmfg('onFieldComboBoxLanguageValueSet', value);
 
-			// Step 2: check CMDBuild configuration (default)
-			if (!Ext.isEmpty(CMDBuild) && !Ext.isEmpty(CMDBuild.configuration) && !Ext.isEmpty(CMDBuild.configuration.localization))
-				return CMDBuild.configuration.localization.get(CMDBuild.core.constants.Proxy.DEFAULT_LANGUAGE);
+			this.callParent(arguments);
 		}
 	});
 

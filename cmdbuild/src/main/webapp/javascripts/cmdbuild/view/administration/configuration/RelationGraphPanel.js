@@ -128,7 +128,7 @@
 									data: [
 										[CMDBuild.core.constants.Proxy.NONE, CMDBuild.Translation.none],
 										[CMDBuild.core.constants.Proxy.ALL, CMDBuild.Translation.all],
-										[CMDBuild.core.constants.Proxy.SELECTED, CMDBuild.Translation.selected],
+										[CMDBuild.core.constants.Proxy.SELECTED, CMDBuild.Translation.selected]
 									]
 								}),
 								queryMode: 'local'

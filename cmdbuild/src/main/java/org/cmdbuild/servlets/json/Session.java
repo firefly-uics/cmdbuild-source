@@ -16,6 +16,7 @@ import org.cmdbuild.auth.acl.CMGroup;
 import org.cmdbuild.auth.user.OperationUser;
 import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.dao.view.DBDataView;
+import org.cmdbuild.listeners.CMDBContext;
 import org.cmdbuild.logic.auth.LoginDTO;
 import org.cmdbuild.privileges.DBGroupFetcher;
 import org.cmdbuild.privileges.fetchers.factories.PrivilegeFetcherFactory;
@@ -24,6 +25,8 @@ import org.cmdbuild.servlets.utils.Parameter;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import com.google.common.base.Optional;
 
 public class Session extends JSONBaseWithSpringContext {
 
@@ -128,6 +131,16 @@ public class Session extends JSONBaseWithSpringContext {
 			@Parameter(value = SESSION) final String sessionId //
 	) {
 		authLogic().delete(sessionId);
+		{
+			/*
+			 * It's needed because the HTTP session is still used for other
+			 * stuff (e.g. reports).
+			 */
+			final Optional<CMDBContext> element = contextStore().get();
+			if (element.isPresent()) {
+				element.get().getRequest().getSession().invalidate();
+			}
+		}
 		return success();
 	}
 

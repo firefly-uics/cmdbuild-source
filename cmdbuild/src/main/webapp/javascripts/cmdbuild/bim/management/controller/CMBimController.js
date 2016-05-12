@@ -281,7 +281,7 @@
 
 		onOpenCardIconClick: function(classId, cardId) {
 			openCard(this, classId, cardId);
-		},
+		}
 	});
 
 	function openCard(me, classId, cardId) {
@@ -348,7 +348,7 @@
 						CMDBUild.Translation.error_bimserver_connection, //
 						true //
 					);
-			},
+			}
 		});
 
 	}
@@ -384,7 +384,7 @@
 			if (me.bimSceneManager == null) {
 				me.bimSceneManager = new BIMSceneManager({
 					canvasId: me.bimWindow.CANVAS_ID,
-					viewportId: me.bimWindow.getId()//,
+					viewportId: me.bimWindow.getId()
 				});
 				me.bimSceneManager.addDelegate(me);
 

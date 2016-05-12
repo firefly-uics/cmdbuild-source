@@ -53,6 +53,9 @@
 		 * @param {Object} controller
 		 */
 		beforeHideView: function(controller) {
+			if (!Ext.isEmpty(controller.widgetConfiguration) && controller.widgetConfiguration['type'] == '.OpenReport') // FIXME: hack to hide errors on OpenReport widget button click because of row permissions
+				CMDBuild.global.interfaces.Configurations.set('disableAllMessages', false);
+
 			if (!Ext.isEmpty(controller)) {
 				// cmfg() implementation adapter
 				if (!Ext.isEmpty(controller.cmfg) && Ext.isFunction(controller.cmfg)) {
@@ -69,6 +72,7 @@
 
 			if (card) {
 				var definitions = me.takeWidgetFromCard(card);
+				var controllers = {};
 				for (var i=0, l=definitions.length, w=null, ui=null; i<l; ++i) {
 					w = definitions[i];
 					ui = me.view.buildWidget(w, card);
@@ -76,33 +80,46 @@
 					if (ui) {
 						var wc = me.buildWidgetController(ui, w, card);
 						if (wc) {
-							me.controllers[me.getWidgetId(w)] = wc;
+							controllers[me.getWidgetId(w)] = wc;
 						}
 					}
+				}
+
+				this.controllers = Ext.clone(controllers); // Fixes problem of multiple instantiation of this class and losing controller pointers
+			}
+		},
+
+		/**
+		 * @param {Object} widgetConfigurationObject
+		 *
+		 * @returns {Void}
+		 *
+		 * @public
+		 */
+		onWidgetButtonClick: function (widgetConfigurationObject) {
+			var controller = this.controllers[this.getWidgetId(widgetConfigurationObject)];
+
+			if (!Ext.Object.isEmpty(widgetConfigurationObject) && widgetConfigurationObject['type'] == '.OpenReport') // FIXME: hack to hide errors on OpenReport widget button click because of row permissions
+				CMDBuild.global.interfaces.Configurations.set('disableAllMessages', true);
+
+			this.delegate.ensureEditPanel(); // Creates editPanel with relative form fields
+
+			if (!Ext.isEmpty(controller)) {
+				this.view.showWidget(controller.view, this.getWidgetLable(widgetConfigurationObject));
+
+				// cmfg() implementation adapter
+				if (!Ext.isEmpty(controller.cmfg) && Ext.isFunction(controller.cmfg)) {
+					controller.cmfg('beforeActiveView');
+				} else if (Ext.isFunction(controller.beforeActiveView)) {
+					controller.beforeActiveView();
 				}
 			}
 		},
 
-		onWidgetButtonClick: function(w) {
-			this.delegate.ensureEditPanel();
-			var me = this;
-			Ext.defer(function() {
-				var wc = me.controllers[me.getWidgetId(w)];
-				if (wc) {
-					me.view.showWidget(wc.view, me.getWidgetLable(w));
-
-					// cmfg() implementation adapter
-					if (!Ext.isEmpty(wc.cmfg) && Ext.isFunction(wc.cmfg)) {
-						wc.cmfg('beforeActiveView');
-					} else if (Ext.isFunction(wc.beforeActiveView)) {
-						wc.beforeActiveView();
-					}
-				}
-			}, 1);
-		},
-
 		/**
 		 * Forwarder method
+		 *
+		 * @returns {Void}
 		 *
 		 * @public
 		 */

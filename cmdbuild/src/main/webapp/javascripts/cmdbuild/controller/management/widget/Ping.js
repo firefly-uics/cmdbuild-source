@@ -141,7 +141,7 @@
 					border: false,
 					frame: false,
 					padding: '0 10',
-					html: '<pre>' + result + '</pre>',
+					html: '<pre>' + result + '</pre>'
 				})
 			);
 		}

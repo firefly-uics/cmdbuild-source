@@ -177,9 +177,7 @@ public class Translation extends JSONBaseWithSpringContext {
 			@Parameter(value = SEPARATOR, required = false) final String separator //
 	) throws JSONException, IOException {
 
-		// final File testFile = new File("/home/tecnoteca/Desktop/test.csv");
 		final DataHandler input = new DataHandler(FileItemDataSource.of(file));
-		// final DataHandler input = new DataHandler(testFile.toURI().toURL());
 
 		final Iterable<CsvTranslationRecord> records = DefaultCsvImporter.newInstance() //
 				.withDataHandler(input) //

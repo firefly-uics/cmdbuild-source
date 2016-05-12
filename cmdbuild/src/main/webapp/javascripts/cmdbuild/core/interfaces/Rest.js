@@ -44,9 +44,9 @@
 		listeners: {
 			beforerequest: function (conn, options, eOpts) {
 				Ext.applyIf(options, {
-					disableAllMessages: CMDBuild.core.interfaces.Rest.disableAllMessages,
-					disableErrors: CMDBuild.core.interfaces.Rest.disableErrors,
-					disableWarnings: CMDBuild.core.interfaces.Rest.disableWarnings
+					disableAllMessages: CMDBuild.core.interfaces.Ajax.disableAllMessages || CMDBuild.global.interfaces.Configurations.get('disableAllMessages'),
+					disableErrors: CMDBuild.core.interfaces.Ajax.disableErrors || CMDBuild.global.interfaces.Configurations.get('disableErrors'),
+					disableWarnings: CMDBuild.core.interfaces.Ajax.disableWarnings || CMDBuild.global.interfaces.Configurations.get('disableWarnings')
 				});
 
 				return CMDBuild.core.interfaces.Rest.trapCallbacks(conn, options);

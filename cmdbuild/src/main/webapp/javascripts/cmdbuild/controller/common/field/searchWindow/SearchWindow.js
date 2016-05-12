@@ -200,7 +200,7 @@
 					selModel: Ext.create('CMDBuild.selection.CMMultiPageSelectionModel', {
 						mode: 'SINGLE',
 						idProperty: 'Id' // Required to identify the records for the data and not the id of Ext
-					}),
+					})
 				})
 			);
 

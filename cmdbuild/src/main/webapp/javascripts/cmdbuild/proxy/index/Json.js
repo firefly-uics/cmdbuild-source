@@ -28,7 +28,7 @@
 
 			sorting: {
 				reorder: 'services/json/schema/modclass/reorderattribute',
-				update: 'services/json/schema/modclass/saveordercriteria',
+				update: 'services/json/schema/modclass/saveordercriteria'
 			}
 		},
 
@@ -108,7 +108,7 @@
 			},
 
 			ui: {
-				read: 'services/json/schema/modsecurity/getuiconfiguration',
+				read: 'services/json/schema/modsecurity/getuiconfiguration'
 			}
 		},
 
@@ -121,7 +121,7 @@
 				update: '',
 				remove: '',
 
-				download: 'services/json/management/exportcsv/export',
+				download: 'services/json/management/exportcsv/export'
 			},
 
 			import: {
@@ -161,7 +161,7 @@
 				create: '',
 				read: '',
 				update: 'services/json/dashboard/modifycolumns',
-				remove: '',
+				remove: ''
 			}
 		},
 
@@ -330,7 +330,7 @@
 				readAll: 'services/json/gis/getalllayers',
 
 				setOrder: 'services/json/gis/setlayersorder',
-				setVisibility: 'services/json/gis/setlayervisibility',
+				setVisibility: 'services/json/gis/setlayervisibility'
 			},
 
 			treeNavigation: {
@@ -546,8 +546,8 @@
 		},
 
 		session: {
-			create: 'services/json/session/create',
-			update: 'services/json/session/update',
+			create: 'services/json/session/create', // @unauthorized
+			update: 'services/json/session/update', // @unauthorized
 			remove: 'services/json/session/delete'
 		},
 
@@ -629,8 +629,8 @@
 		utils: {
 			clearCache: 'services/json/utils/clearcache',
 			generateId: 'services/json/utils/generateid',
-			getLanguage: 'services/json/utils/getlanguage',
-			readAllAvailableTranslations: 'services/json/utils/listavailabletranslations'
+			readAllAvailableTranslations: 'services/json/utils/listavailabletranslations', // @unauthorized
+			readDefaultLanguage: 'services/json/utils/getdefaultlanguage' // @unauthorized
 		},
 
 		widget: {

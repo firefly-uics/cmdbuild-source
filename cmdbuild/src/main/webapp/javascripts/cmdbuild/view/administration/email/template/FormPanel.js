@@ -113,7 +113,8 @@
 							{
 								xtype: 'textareafield',
 								name: CMDBuild.core.constants.Proxy.DESCRIPTION,
-								fieldLabel: CMDBuild.Translation.descriptionLabel
+								fieldLabel: CMDBuild.Translation.descriptionLabel,
+								allowBlank: false
 							},
 							{
 								xtype: 'checkbox',

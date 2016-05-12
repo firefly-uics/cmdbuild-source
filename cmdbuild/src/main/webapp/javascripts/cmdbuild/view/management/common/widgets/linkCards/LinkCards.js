@@ -70,23 +70,11 @@
 						itemId: CMDBuild.core.constants.Proxy.TOOLBAR_TOP,
 
 						items: [
-//							this.toggleGridFilterButton = Ext.create('Ext.button.Button', { // TODO: build toggle/cycle button class
-//								text: CMDBuild.Translation.disableGridFilter,
-//								iconCls: 'clear_filter',
-//								filterEnabled: true, // FilterEnabled (true/false) used to mark state grid's filter
-//								scope: this,
-//
-//								handler: function(button, e) {
-//									this.delegate.cmOn('onToggleGridFilterButtonClick');
-//								}
-//							}),
 							this.toggleGridFilterButton = Ext.create('CMDBuild.core.buttons.iconized.state.Double', {
 								state1text: CMDBuild.Translation.disableGridFilter,
 								state1icon: 'clear_filter',
-//								state1stateId: true, // TODO: implementation of enable/disable
 								state2text: CMDBuild.Translation.enableGridFilter,
 								state2icon: 'find',
-//								state1stateId: false, // TODO: implementation of enable/disable
 								scope: this,
 
 								handler: function(button, e) {

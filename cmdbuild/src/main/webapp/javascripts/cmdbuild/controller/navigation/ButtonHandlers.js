@@ -81,7 +81,7 @@
 						scope: this,
 						callback: function (panel, eOpts) {
 							accordionController.cmfg('accordionDeselect'); // Instruction required or selection doesn't work if exists another selection
-							accordionController.cmfg('accordionSelectNodeById', record.get([CMDBuild.core.constants.Proxy.ENTRY_TYPE, CMDBuild.core.constants.Proxy.ID]));
+							accordionController.cmfg('accordionNodeByIdSelect', { id: record.get([CMDBuild.core.constants.Proxy.ENTRY_TYPE, CMDBuild.core.constants.Proxy.ID]) });
 						}
 					});
 				}

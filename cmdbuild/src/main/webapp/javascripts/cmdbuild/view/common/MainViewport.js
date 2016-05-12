@@ -64,7 +64,7 @@
 							border: '0px'
 						},
 
-						items: [],
+						items: []
 					}),
 					Ext.create('Ext.panel.Panel', {
 						region: 'south',

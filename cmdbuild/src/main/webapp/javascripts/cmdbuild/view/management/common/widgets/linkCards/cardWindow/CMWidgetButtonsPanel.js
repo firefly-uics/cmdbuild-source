@@ -97,5 +97,5 @@ Ext.define("CMDBuild.view.management.common.widgets.linkCards.cardWindow.CMWidge
 				me.delegate.onWidgetButtonClick(widget);
 			}
 		}));
-	},
+	}
 });

@@ -137,7 +137,7 @@
 						fieldConfiguration: {
 							targetClassField: this.targetClassCombobox,
 							enabledPanels: ['attribute', 'relation']
-						},
+						}
 					}),
 					this.defaultForGroupsField = Ext.create('CMDBuild.view.common.field.multiselect.Group', {
 						name: CMDBuild.core.constants.Proxy.DEFAULT_FOR_GROUPS,

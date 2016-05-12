@@ -42,7 +42,7 @@
 							overflowX: 'hidden',
 							flex: 1
 						})
-					],
+					]
 				});
 			}
 

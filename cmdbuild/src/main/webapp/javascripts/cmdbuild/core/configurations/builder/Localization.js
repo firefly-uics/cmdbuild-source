@@ -44,17 +44,16 @@
 			Ext.ns('CMDBuild.configuration');
 			CMDBuild.configuration.localization = Ext.create('CMDBuild.model.core.configurations.builder.Localization'); // Setup configuration with defaults
 
-			if (this.enableServerCalls) {
-				CMDBuild.proxy.core.configurations.builder.Localization.readAllAvailableTranslations({
-					loadMask: false,
-					scope: this,
-					success: function (response, options, decodedResponse) {
-						decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.TRANSLATIONS];
+			CMDBuild.proxy.core.configurations.builder.Localization.readAllAvailableTranslations({
+				loadMask: false,
+				scope: this,
+				success: function (response, options, decodedResponse) {
+					decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.TRANSLATIONS];
 
-						if (!Ext.isEmpty(decodedResponse) && Ext.isArray(decodedResponse)) {
-							CMDBuild.configuration.localization.set(CMDBuild.core.constants.Proxy.LANGUAGES, decodedResponse); // Build all languages array
+					if (!Ext.isEmpty(decodedResponse) && Ext.isArray(decodedResponse)) {
+						CMDBuild.configuration.localization.set(CMDBuild.core.constants.Proxy.LANGUAGES, decodedResponse); // Build all languages array
 
-							// Get server language
+						if (this.enableServerCalls) {// Read configurations and complete model data
 							CMDBuild.proxy.configuration.GeneralOptions.read({ // TODO: waiting for refactor (server configuration refactoring)
 								loadMask: false,
 								scope: this.scope || this,
@@ -69,12 +68,22 @@
 								},
 								callback: this.callback
 							});
+						} else { // Just ask for default language
+							CMDBuild.proxy.core.configurations.builder.Localization.readDefaultLanguage({
+								loadMask: false,
+								scope: this.scope || this,
+								success: function (response, options, decodedResponse) {
+									var defaultLanguage = decodedResponse[CMDBuild.core.constants.Proxy.LANGUAGE];
+
+									if (!Ext.isEmpty(defaultLanguage) && Ext.isString(defaultLanguage))
+										CMDBuild.configuration.localization.set(CMDBuild.core.constants.Proxy.DEFAULT_LANGUAGE, defaultLanguage);
+								},
+								callback: this.callback
+							});
 						}
 					}
-				});
-			} else {
-				Ext.callback(this.callback, this.scope || this);
-			}
+				}
+			});
 		}
 	});
 

@@ -11,7 +11,7 @@
 		requires: ['CMDBuild.controller.management.classes.StaticsController'],
 
 		mixins: {
-			observable : 'Ext.util.Observable'
+			observable: 'Ext.util.Observable'
 		},
 
 		/**

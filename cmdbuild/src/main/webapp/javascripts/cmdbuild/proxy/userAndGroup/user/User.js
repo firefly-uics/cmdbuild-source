@@ -4,9 +4,9 @@
 
 		requires: [
 			'CMDBuild.core.constants.Proxy',
-			'CMDBuild.proxy.index.Json',
 			'CMDBuild.model.userAndGroup.user.DefaultGroup',
-			'CMDBuild.model.userAndGroup.user.User'
+			'CMDBuild.model.userAndGroup.user.User',
+			'CMDBuild.proxy.index.Json'
 		],
 
 		singleton: true,
@@ -67,7 +67,7 @@
 		 * @returns {Ext.data.Store or CMDBuild.core.cache.Store}
 		 */
 		getStoreDefaultGroup: function () {
-			return CMDBuild.global.Cache.requestAsStore(CMDBuild.core.constants.Proxy.USER, {
+			return CMDBuild.global.Cache.requestAsStore(CMDBuild.core.constants.Proxy.GROUP, {
 				autoLoad: false,
 				model: 'CMDBuild.model.userAndGroup.user.DefaultGroup',
 				proxy: {
