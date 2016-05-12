@@ -34,14 +34,42 @@
 		},
 
 		addClasses: function(etypes) {
+			var rootClassId = undefined;
+			var rootWorkflowId = undefined;
+
 			for (var i=0, l=etypes.length; i<l; ++i) {
 				var et = etypes[i];
+
+				// Find root class id
+				if (et['name'] == 'Class')
+					rootClassId = et['id'];
+
+				// Find root workflow id
+				if (et['name'] == 'Activity')
+					rootWorkflowId = et['id'];
+
 				if (et.type == "class") {
 					this.addClass(etypes[i]);
 				} else if(et.type == "processclass") {
 					this.addProcess(etypes[i]);
 				}
 			}
+
+			// Classes consistency fix (fixes parent class disabled cache errors)
+			Ext.Object.each(classes, function (id, object, myself) {
+				var parent = object.get('parent');
+
+				if (!Ext.isEmpty(parent) && Ext.isEmpty(classes[parent]))
+					classes[id].set('parent', rootClassId);
+			}, this);
+
+			// Workflow consistency fix (fixes parent workflow disabled cache errors)
+			Ext.Object.each(processes, function (id, object, myself) {
+				var parent = object.get('parent');
+
+				if (!Ext.isEmpty(parent) && Ext.isEmpty(classes[parent]))
+					processes[id].set('parent', rootWorkflowId);
+			}, this);
 
 			callCmFillForStores();
 		},
