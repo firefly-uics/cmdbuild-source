@@ -66,10 +66,11 @@
 			if (!Ext.Object.isEmpty(entryType)) {
 				out.push(parseInt(entryType.get(CMDBuild.core.constants.Proxy.ID)));
 
-				while (!Ext.isEmpty(entryType.get(CMDBuild.core.constants.Proxy.PARENT))) {
+				while (!Ext.isEmpty(entryType) && !Ext.isEmpty(entryType.get(CMDBuild.core.constants.Proxy.PARENT))) {
 					entryType = _CMCache.getEntryTypeById(entryType.get(CMDBuild.core.constants.Proxy.PARENT));
 
-					out.push(parseInt(entryType.get(CMDBuild.core.constants.Proxy.ID)));
+					if (!Ext.isEmpty(entryType))
+						out.push(parseInt(entryType.get(CMDBuild.core.constants.Proxy.ID)));
 				}
 			}
 
@@ -533,9 +534,11 @@
 				if (et) {
 					out.push(et.get("id"));
 
-					while (et.get("parent") != "") {
+					while (!Ext.isEmpty(et) && et.get("parent") != "") {
 						et = _CMCache.getEntryTypeById(et.get("parent"));
-						out.push(et.get("id"));
+
+						if (!Ext.isEmpty(et))
+							out.push(et.get("id"));
 					}
 				}
 

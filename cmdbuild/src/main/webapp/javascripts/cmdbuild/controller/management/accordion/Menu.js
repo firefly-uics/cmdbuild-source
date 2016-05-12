@@ -7,7 +7,7 @@
 			'CMDBuild.core.constants.ModuleIdentifiers',
 			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.proxy.CustomPage',
-			'CMDBuild.proxy.Menu',
+			'CMDBuild.proxy.Menu'
 		],
 
 		/**

@@ -32,7 +32,7 @@
 		 * @param {String} dataIndex the name of the clicked column
 		 * @param {boolean or String} the new value of the column
 		 */
-		onDataColumnChange: function(grid, record, dataIndex, value) {},
+		onDataColumnChange: function(grid, record, dataIndex, value) {}
 	});
 
 	Ext.define("CMDBuild.bim.administration.view.CMBimLayers", {
@@ -144,7 +144,7 @@
 					root: records[i].root,
 					exported: records[i].exported,
 					container: records[i].container,
-					rootreference: (! records[i].rootreference) ? "" : records[i].className + SEPARATOR + records[i].rootreference,
+					rootreference: (! records[i].rootreference) ? "" : records[i].className + SEPARATOR + records[i].rootreference
 				};
 				this.store.add(model);
 			}

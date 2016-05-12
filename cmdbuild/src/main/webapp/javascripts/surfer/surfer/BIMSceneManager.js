@@ -21,11 +21,11 @@
 /**
  * 	To avoid framework specific event managements
  * 	this object implements a delegation system.
- * 
+ *
  * 	use addDelegate(xxx) to add a delegate to this object
- * 
+ *
  * 	the delegates could  implements the following methods:
- * 
+ *
  * 		sceneLoaded(sceneManager, scene)
  * 		objectSelectedForLongPressure(sceneManager, objectId)
  * 		objectSelected(sceneManager, objectId)
@@ -43,13 +43,13 @@
 		/**
 		 * this array contains the
 		 * names of the visible layers
-		 * 
+		 *
 		 * after load a layer is set as visible
 		 * by default
-		 * 
+		 *
 		 * use the methods showLayer(layerName)
 		 * and hideLayer(layerName)
-		 * 
+		 *
 		 * to change the visibility of a layer
 		 */
 		this.visibleLayers = [];
@@ -67,9 +67,9 @@
 				pickRecord : null
 			}
 		};
-	
+
 		this.queryArgs = {}; // TODO: ???
-	
+
 		this.camera = {
 			distanceLimits: [0.0, 0.0]
 		};
@@ -84,7 +84,7 @@
 			boundfactor : 0,
 			autoLoadPath : ""
 		};
-	
+
 		this.lookAt = {
 			defaultParameters : {
 				look : {
@@ -105,16 +105,16 @@
 			}
 		};
 
-		this.classNames = config.classNames || [ 
-			"IfcColumn", 
-			"IfcStair", 
-			"IfcSlab", 
-			"IfcWindow", 
-			"IfcDoor", 
+		this.classNames = config.classNames || [
+			"IfcColumn",
+			"IfcStair",
+			"IfcSlab",
+			"IfcWindow",
+			"IfcDoor",
 			//"IfcBuildingElementProxy",
-			"IfcWallStandardCase", 
-			"IfcWall", 
-			"IfcBeam", 
+			"IfcWallStandardCase",
+			"IfcWall",
+			"IfcBeam",
 			"IfcRailing",
 			"IfcProxy",
 			"IfcRoof",
@@ -175,10 +175,10 @@
 				o = obj.nodes[o];
 				if (o.type == "light") {
 					var newLight = {
-							"specular": true, 
-							"id": "sun-light2", 
-							"dir": {"x" : -o.dir.x, "y" : -o.dir.y, "z" : -o.dir.z}, 
-							"color": {"r" : o.color.r/1.2, "g" : o.color.g/1.2, "b" : o.color.b/1.2}, 
+							"specular": true,
+							"id": "sun-light2",
+							"dir": {"x" : -o.dir.x, "y" : -o.dir.y, "z" : -o.dir.z},
+							"color": {"r" : o.color.r/1.2, "g" : o.color.g/1.2, "b" : o.color.b/1.2},
 							"diffuse": true,
 							"type" : "light",
 							"mode" : "dir"
@@ -205,7 +205,7 @@
 			SceneJS._nodeStack = [];
 			SceneJS._stackLen = 0;
 		}
-	
+
 		try {
 			this.scene = SceneJS.createScene(sceneData);
 			// othis.viewportInit();
@@ -217,7 +217,7 @@
 
 				// Calculate Scalefactor
 				var ref, len, i, unit, sizingFactor;
-	
+
 				unit = this.scene.data().unit;
 				window._BIM_LOGGER.log("Unit: " + unit);
 				ref = this.scene.data().bounds;
@@ -232,10 +232,10 @@
 					// viewside
 				}
 				this.propertyValues.scalefactor = parseFloat(unit);
-	
+
 				// setting viewfactor for different views
 				this.propertyValues.viewfactor = SceneJS_math_lenVec3(this.scene.data().bounds);
-	
+
 				// set Navigation Mode to rotate
 				this.setNavigationMode(0);
 
@@ -297,7 +297,7 @@
 	};
 
 	BIMSceneManager.prototype.putGeometriesInScene = function(data, currentLayerName, currentLayerId) {
-		
+
 		var me = this;
 		var library = me.scene.findNode("library");
 		var bounds = me.scene.data().bounds2;
@@ -384,7 +384,7 @@
 	};
 
 	// ##################################################
-	// Managing viewpoint 
+	// Managing viewpoint
 	// ##################################################
 
 	BIMSceneManager.prototype.setNavigationMode = function(_mouseRotate) {
@@ -637,7 +637,7 @@
 				coreid : 'flagsTransparent',
 				flags : {
 					picking : false, // Picking enabled
-					transparent : true,
+					transparent : true
 				}
 			} ]
 		};
@@ -808,7 +808,7 @@
 			var children = getChildren(root);
 			var searchedNode = null;
 			for (var i=0, l=children.length; i<l; ++i) {
-				var child = children[i]; 
+				var child = children[i];
 				searchedNode = findNode(objectId, child, currentStorey);
 				if (searchedNode) {
 					return searchedNode;
@@ -891,7 +891,7 @@
 	}
 
 	// ##################################################
-	// Object selection 
+	// Object selection
 	// ##################################################
 
 	BIMSceneManager.prototype.selectObject = function(objectId, fromViewer) {
@@ -948,17 +948,17 @@
 	function getCubeView(cube) {
 		var maxDistance = Math.max(cube.max.x - cube.min.x, cube.max.z - cube.min.z) * 4;
 		var view = {
-				x : cube.min.x + (cube.max.x - cube.min.x) / 2,	
-				y : cube.max.y + maxDistance,	
-				z : cube.max.z// + (cube.max.z - cube.min.z) / 2,	
+				x : cube.min.x + (cube.max.x - cube.min.x) / 2,
+				y : cube.max.y + maxDistance,
+				z : cube.max.z// + (cube.max.z - cube.min.z) / 2,
 		};
 		return view;
 	}
 	function getCubeCenter(cube) {
 		var center = {
-				x : cube.min.x + (cube.max.x - cube.min.x) / 2,	
-				y : cube.min.y + (cube.max.y - cube.min.y) / 2,	
-				z : cube.min.z + (cube.max.z - cube.min.z) / 2,	
+				x : cube.min.x + (cube.max.x - cube.min.x) / 2,
+				y : cube.min.y + (cube.max.y - cube.min.y) / 2,
+				z : cube.min.z + (cube.max.z - cube.min.z) / 2
 		};
 		return center;
 	}
@@ -983,7 +983,7 @@
 			}
 		}
 		var cube = {
-			"min": {"x" : minx, "y" : miny, "z" : minz}, 
+			"min": {"x" : minx, "y" : miny, "z" : minz},
 			"max": {"x" : maxx, "y" : maxy, "z" : maxz}
 		};
 		return cube;

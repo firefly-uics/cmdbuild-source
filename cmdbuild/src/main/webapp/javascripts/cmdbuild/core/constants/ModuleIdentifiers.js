@@ -22,6 +22,7 @@
 			localization: 'localization',
 			lookupType: 'lookuptype',
 			menu: 'menu',
+			navigation: 'navigation',
 			navigationTree: 'navigationtree',
 			report: 'report',
 			reportSingle: 'reportsingle',

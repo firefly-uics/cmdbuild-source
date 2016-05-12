@@ -25,7 +25,7 @@
 			'onNavigationTreeModuleInit = onModuleInit',
 			'onNavigationTreeRemoveButtonClick',
 			'onNavigationTreeSaveButtonClick',
-			'onNavigationTreeSelected -> controllerProperties, controllerTree',
+			'onNavigationTreeSelected -> controllerProperties, controllerTree'
 		],
 
 		/**
@@ -309,7 +309,7 @@
 				identifier: this.cmfg('identifierGet'),
 //				nodeIdToSelect: decodedResponse[CMDBuild.core.constants.Proxy.RESPONSE][CMDBuild.core.constants.Proxy.ID] // TODO: waiting for refactor
 			});
-		},
+		}
 	});
 
 })();

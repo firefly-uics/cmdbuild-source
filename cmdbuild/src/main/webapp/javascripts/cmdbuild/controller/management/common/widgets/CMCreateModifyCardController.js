@@ -167,8 +167,8 @@
 
 				this.lockCard(function() {
 					me.loadCard(true, {
-						Id: me.cardId,
-						IdClass: classId
+						cardId: me.cardId,
+						className: _CMCache.getEntryTypeNameById(classId)
 					});
 				});
 			}

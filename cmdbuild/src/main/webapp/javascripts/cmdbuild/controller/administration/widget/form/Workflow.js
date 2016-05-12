@@ -23,7 +23,7 @@
 			'classTabWidgetWorkflowDefinitionGet = classTabWidgetDefinitionGet',
 			'classTabWidgetWorkflowLoadRecord = classTabWidgetLoadRecord',
 			'onClassTabWidgetWorkflowFilterTypeChange',
-			'onClassTabWidgetWorkflowSelectedWorkflowChange',
+			'onClassTabWidgetWorkflowSelectedWorkflowChange'
 		],
 
 		/**

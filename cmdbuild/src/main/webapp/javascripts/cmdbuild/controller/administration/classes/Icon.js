@@ -168,7 +168,7 @@
 										jsonData: {
 											type: 'class',
 											details: {
-												id: this.selectedClassModel.get('name'),
+												id: this.selectedClassModel.get('name')
 											},
 											image: {
 												type: 'filestore',

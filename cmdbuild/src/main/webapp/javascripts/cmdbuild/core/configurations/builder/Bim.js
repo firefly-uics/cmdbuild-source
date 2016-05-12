@@ -36,9 +36,9 @@
 				loadMask: false,
 				scope: this,
 				success: function (response, options, decodedResponse) {
-					var bimConfigurationObject = decodedResponse[CMDBuild.core.constants.Proxy.DATA];
+					var bimConfigurationObject = decodedResponse[CMDBuild.core.constants.Proxy.DATA] || {};
 
-					if (!Ext.isEmpty(bimConfigurationObject[CMDBuild.core.constants.Proxy.DATA]))
+					if (!Ext.isEmpty(bimConfigurationObject) && !Ext.isEmpty(bimConfigurationObject[CMDBuild.core.constants.Proxy.DATA]))
 						bimConfigurationObject = bimConfigurationObject[CMDBuild.core.constants.Proxy.DATA];
 
 					CMDBuild.proxy.core.configurations.builder.Bim.readRootLayerName({

@@ -30,7 +30,7 @@
 		card: undefined,
 
 		/**
-		 * @property {{Ext.form.Basic}}
+		 * @property {Ext.form.Basic}
 		 */
 		clientForm: undefined,
 
@@ -191,7 +191,7 @@
 					return this.onGridShow();
 
 				case 'onToggleGridFilterButtonClick':
-					return this.onToggleGridFilterButtonClick();
+					return this.onToggleGridFilterButtonClick(param);
 
 				case 'onToggleMapButtonClick' :
 					return this.onToggleMapButtonClick();
@@ -542,7 +542,7 @@
 			if (Ext.isBoolean(forceState))
 				this.view.toggleGridFilterButton.setActiveState(forceState ? CMDBuild.core.constants.Proxy.ENABLE : CMDBuild.core.constants.Proxy.DISABLE);
 
-			if (this.view.toggleGridFilterButton.getState() == CMDBuild.core.constants.Proxy.ENABLE) {
+			if (forceState == CMDBuild.core.constants.Proxy.ENABLE) {
 				this.resolveFilterTemplate(cqlQuery, classId);
 			} else {
 				this.resolveFilterTemplate(null, classId);

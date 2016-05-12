@@ -26,7 +26,7 @@
 		 */
 		translateValue: function(value) {
 			return Ext.create('CMDBuild.view.common.field.delay.Delay', {
-				value: value,
+				value: value
 			}).getRawValue();
 		}
 

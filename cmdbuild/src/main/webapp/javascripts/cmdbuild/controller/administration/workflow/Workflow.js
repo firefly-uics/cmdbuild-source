@@ -84,7 +84,7 @@
 			// Controller build
 			this.controllerAttributes = Ext.create('CMDBuild.controller.administration.workflow.CMAttributes', { // TODO: legacy
 				parentDelegate: this,
-				view: this.view.attributesPanel,
+				view: this.view.attributesPanel
 			});
 			this.controllerDomains = Ext.create('CMDBuild.controller.administration.workflow.tabs.Domains', { parentDelegate: this });
 			this.controllerProperties = Ext.create('CMDBuild.controller.administration.workflow.tabs.Properties', { parentDelegate: this });
@@ -101,13 +101,12 @@
 		 * @returns {Void}
 		 */
 		onWorkflowAddButtonClick: function () {
+			this.tabPanel.setActiveTab(0); // Must be first to avoid tab show errors
+
 			this.cmfg('mainViewportAccordionDeselect', CMDBuild.core.constants.ModuleIdentifiers.getWorkflow());
-
-			this.setViewTitle();
-
 			this.cmfg('workflowSelectedWorkflowReset');
 
-			this.tabPanel.setActiveTab(0);
+			this.setViewTitle();
 
 			this.controllerAttributes.onAddClassButtonClick(); // TODO: legacy
 			this.controllerDomains.cmfg('onWorkflowTabDomainsAddWorkflowButtonClick');

@@ -9,7 +9,7 @@
 	Ext.define("CMDBuild.controller.management.common.widgets.linkCards.cardWindow.CMBaseCardPanelController", {
 		extend: "CMDBuild.controller.management.common.widgets.linkCards.cardWindow.CMModCardSubController",
 
-		mixins : {
+		mixins: {
 			observable : "Ext.util.Observable"
 		},
 

@@ -40,8 +40,10 @@
 		 * @override
 		 */
 		load: function (options) {
-			if (!Ext.isEmpty(options) && !Ext.isEmpty(options.callback))
+			if (!Ext.isEmpty(options)) {
+				options.callback = Ext.isEmpty(options.callback) || !Ext.isFunction(options.callback) ? Ext.emptyFn : options.callback;
 				options.callback = Ext.Function.createInterceptor(options.callback, this.interceptorFunction, this);
+			}
 
 			this.callParent(arguments);
 		},

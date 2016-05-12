@@ -16,7 +16,7 @@
 			{ name: CMDBuild.core.constants.Proxy.PERMISSIONS, type: 'auto', defaultValue: {} },
 			{ name: CMDBuild.core.constants.Proxy.TABLE_TYPE, type: 'string' },
 			{ name: CMDBuild.core.constants.Proxy.DESCRIPTION, type: 'string' },
-			{ name: CMDBuild.core.constants.Proxy.TYPE, type: 'string' },
+			{ name: CMDBuild.core.constants.Proxy.TYPE, type: 'string' }
 		],
 
 		statics: {

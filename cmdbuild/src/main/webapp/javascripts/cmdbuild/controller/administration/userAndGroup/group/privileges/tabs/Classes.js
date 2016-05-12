@@ -76,7 +76,7 @@
 			this.view = Ext.create('CMDBuild.view.administration.userAndGroup.group.privileges.tabs.Classes', { delegate: this });
 
 			// Filter advanced window configuration
-			this.fieldFilterAdvancedConfigurationSet({ enabledPanels: ['attribute', 'relation', 'function', 'columnPrivileges'] });
+			this.fieldFilterAdvancedConfigurationSet({ enabledPanels: ['attribute', 'function', 'columnPrivileges'] });
 
 			// Build sub controller
 			this.controllerFilterWindow = Ext.create('CMDBuild.controller.common.field.filter.advanced.window.Window', {
@@ -88,7 +88,7 @@
 							selectAtRuntimeCheckDisabled: true // BUSINNESS RULE: user couldn't create privilege's filter with runtime parameters
 						}
 					}
-				},
+				}
 			});
 			this.controllerUiConfiguration = Ext.create('CMDBuild.controller.administration.userAndGroup.group.privileges.UiConfiguration', { parentDelegate: this });
 		},

@@ -29,7 +29,7 @@
 
 			Ext.apply(this, {
 				buttons: [this.saveBtn, this.abortBtn],
-				items: [this.grid],
+				items: [this.grid]
 			});
 
 			this.callParent(arguments);

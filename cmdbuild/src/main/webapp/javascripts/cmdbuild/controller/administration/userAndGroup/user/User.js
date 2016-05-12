@@ -239,6 +239,8 @@
 			 * @param {Array or String} attributePath
 			 *
 			 * @returns {Mixed or undefined}
+			 *
+			 * @private
 			 */
 			userAndGroupUserSelectedUserGet: function (attributePath) {
 				var parameters = {};
@@ -252,6 +254,8 @@
 			 * @param {Array or String} attributePath
 			 *
 			 * @returns {Mixed or undefined}
+			 *
+			 * @private
 			 */
 			userAndGroupUserSelectedUserIsEmpty: function (attributePath) {
 				var parameters = {};
@@ -261,6 +265,11 @@
 				return this.propertyManageIsEmpty(parameters);
 			},
 
+			/**
+			 * @returns {Void}
+			 *
+			 * @private
+			 */
 			userAndGroupUserSelectedUserReset: function () {
 				this.propertyManageReset('selectedUser');
 			},
@@ -269,6 +278,8 @@
 			 * @param {Object} parameters
 			 *
 			 * @returns {Void}
+			 *
+			 * @private
 			 */
 			userAndGroupUserSelectedUserSet: function (parameters) {
 				if (!Ext.Object.isEmpty(parameters)) {

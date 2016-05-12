@@ -28,11 +28,12 @@
 			'accordionBuildId',
 			'accordionDeselect',
 			'accordionExpand',
+			'accordionFirstSelectableNodeSelect',
 			'accordionFirtsSelectableNodeGet',
 			'accordionIdentifierGet',
+			'accordionNodeByIdExists',
 			'accordionNodeByIdGet',
-			'accordionSelectFirstSelectableNode',
-			'accordionSelectNodeById',
+			'accordionNodeByIdSelect',
 			'accordionUpdateStore',
 			'onAccordionBeforeSelect',
 			'onAccordionExpand',
@@ -151,28 +152,45 @@
 			}
 		},
 
-		/**
-		 * @returns {CMDBuild.model.common.Accordion or null} node
-		 */
-		accordionFirtsSelectableNodeGet: function () {
-			var node = null;
+		// First selectable node manage methods
+			/**
+			 * @returns {CMDBuild.model.common.Accordion or null} node
+			 */
+			accordionFirtsSelectableNodeGet: function () {
+				var node = null;
 
-			if (!this.view.isDisabled()) {
-				var inspectedNode = this.view.getRootNode();
+				if (!this.view.isDisabled()) {
+					var inspectedNode = this.view.getRootNode();
 
-				while (inspectedNode) {
-					if (this.isNodeSelectable(inspectedNode)) {
-						node = inspectedNode;
+					while (inspectedNode) {
+						if (this.isNodeSelectable(inspectedNode)) {
+							node = inspectedNode;
 
-						break;
-					} else {
-						inspectedNode = inspectedNode.firstChild;
+							break;
+						} else {
+							inspectedNode = inspectedNode.firstChild;
+						}
 					}
 				}
-			}
 
-			return node;
-		},
+				return node;
+			},
+
+			/**
+			 * @returns {Void}
+			 */
+			accordionFirstSelectableNodeSelect: function () {
+				var firstSelectableNode = this.cmfg('accordionFirtsSelectableNodeGet');
+
+				if (!Ext.isEmpty(firstSelectableNode)) {
+					this.cmfg('accordionExpand', {
+						scope: this,
+						callback: function (panel, eOpts) {
+							this.cmfg('accordionNodeByIdSelect', { id: firstSelectableNode.get(CMDBuild.core.constants.Proxy.ID) });
+						}
+					});
+				}
+			},
 
 		/**
 		 * @returns {String or null}
@@ -184,56 +202,58 @@
 			return null;
 		},
 
-		/**
-		 * Search in entityId and id parameter
-		 *
-		 * @param {Number or String} id
-		 *
-		 * @returns {CMDBuild.model.common.Accordion}
-		 */
-		accordionNodeByIdGet: function (id) {
-			return (
-				this.view.getStore().getRootNode().findChild(CMDBuild.core.constants.Proxy.ID, id, true)
-				|| this.view.getStore().getRootNode().findChild(CMDBuild.core.constants.Proxy.ENTITY_ID, id, true)
-			);
-		},
+		// Node by Id manage methods
+			/**
+			 * @param {Number or String} id
+			 *
+			 * @returns {Boolean}
+			 */
+			accordionNodeByIdExists: function (id) {
+				return !Ext.isEmpty(this.cmfg('accordionNodeByIdGet', id));
+			},
 
-		/**
-		 * @returns {Void}
-		 */
-		accordionSelectFirstSelectableNode: function () {
-			var firstSelectableNode = this.cmfg('accordionFirtsSelectableNodeGet');
+			/**
+			 * Search in entityId and id parameter
+			 *
+			 * @param {Number or String} id
+			 *
+			 * @returns {CMDBuild.model.common.Accordion}
+			 */
+			accordionNodeByIdGet: function (id) {
+				return (
+					this.view.getStore().getRootNode().findChild(CMDBuild.core.constants.Proxy.ID, id, true)
+					|| this.view.getStore().getRootNode().findChild(CMDBuild.core.constants.Proxy.ENTITY_ID, id, true)
+				);
+			},
 
-			if (!Ext.isEmpty(firstSelectableNode)) {
-				this.cmfg('accordionExpand', {
-					scope: this,
-					callback: function (panel, eOpts) {
-						this.cmfg('accordionSelectNodeById', firstSelectableNode.get(CMDBuild.core.constants.Proxy.ID));
+			/**
+			 * @param {Object} parameters
+			 * @param {Number or String} parameters.id
+			 * @param {String} parameters.mode [normal || silently]
+			 *
+			 * @returns {Void}
+			 */
+			accordionNodeByIdSelect: function (parameters) {
+				parameters = Ext.isObject(parameters) ? parameters : {};
+
+				if (!Ext.Object.isEmpty(parameters) && !Ext.isEmpty(parameters.id)) {
+					var node = this.cmfg('accordionNodeByIdGet', parameters.id);
+
+					if (!Ext.isEmpty(node)) {
+						node.bubble(function () {
+							this.expand();
+						});
+
+						this.view.getSelectionModel().select(
+							node,
+							false,
+							Ext.isString(parameters.mode) && parameters.mode == 'silently' // Silently mode
+						);
+					} else {
+						this.cmfg('accordionFirstSelectableNodeSelect');
 					}
-				});
-			}
-		},
-
-		/**
-		 * @param {Number or String} id
-		 *
-		 * @returns {Void}
-		 */
-		accordionSelectNodeById: function (id) {
-			if (!Ext.isEmpty(id)) {
-				var node = this.cmfg('accordionNodeByIdGet', id);
-
-				if (!Ext.isEmpty(node)) {
-					node.bubble(function () {
-						this.expand();
-					});
-
-					this.view.getSelectionModel().select(node);
-				} else {
-					this.cmfg('accordionSelectFirstSelectableNode');
 				}
-			}
-		},
+			},
 
 		/**
 		 * @param {Number or String} nodeIdToSelect
@@ -320,7 +340,13 @@
 					}
 				} else {
 					this.lastSelection = selection;
-				};
+				}
+
+				// Notify accordion selection event to mainViewport's controller (accordion selection synchronizations)
+				this.cmfg('onMainViewportAccordionSelect', {
+					sourceAccordionIdentifier: this.cmfg('accordionIdentifierGet'),
+					selectedNodeModel: selection
+				});
 			}
 		},
 
@@ -334,11 +360,11 @@
 		updateStoreCommonEndpoint: function (nodeIdToSelect) {
 			if (!this.disableSelection) {
 				if (!Ext.isEmpty(nodeIdToSelect))
-					this.cmfg('accordionSelectNodeById', nodeIdToSelect);
+					this.cmfg('accordionNodeByIdSelect', { id: nodeIdToSelect });
 
 				// Select first selectable item if no selection and expanded
 				if (!this.view.getSelectionModel().hasSelection() && this.view.getCollapsed() === false && this.view.isVisible())
-					this.cmfg('accordionSelectFirstSelectableNode');
+					this.cmfg('accordionFirstSelectableNodeSelect');
 			}
 
 			// Accordion store update end event fire

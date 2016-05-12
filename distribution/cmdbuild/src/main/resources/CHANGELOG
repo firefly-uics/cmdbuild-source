@@ -58,6 +58,60 @@ FIXES
 
  * Selecting starting class errors when Navigation accordion is hidden
 
+ * Wrong panel background colors
+
+ * DefaultGroup comboBox empty on user manage form
+
+ * User's e-mail cannot be deleted
+
+ * No navigation accordion synchronization with Class an Workflow selections
+
+ * Relations tab displayed in row group's privileges window
+
+ * DataViews from Filter with runtime parameters show error
+
+ * Default filters with runtime parameters doesn't properly work in management side
+
+ * Internet Explorer code cleaning
+
+ * Widget CustomForm: Unsupported from SQL date format
+
+ * Reference field store URL too long because of filter wrong parameter
+
+ * Widget ManageEmail: error on workflow advance
+
+ * Widget CreateReport: error on widget display with row permissions
+
+ * Widget createModifyCard: getCard empty parameter error
+
+ * Widget CustomForm: empty output with readOnly configuration
+
+ * Widget LinkCard: filter button doesn't enable filter
+
+ * Widget OpenReport: doen't submits readOnly parameters
+
+ * Error editing relation on relation tab in 1:N domain on side 1
+
+ * Error on showing son of hidden class
+
+ * Description not required in email template creation
+
+ * Widget's controllers reference lose
+
+ * Flag image not displayed after selecting default language in administration localization configuration
+
+ * Include inherited checkbox reverse operation
+
+ * No regeneration alert popup display on related attribute change
+
+ * Suspended process instances displays all attributes like closed ones
+
+ * Start activities are never writable when read from REST web services
+
+ * No default language selection on login page
+
+ * Reference attributes of domains with attributes doesn't display required label
+
 
 
 

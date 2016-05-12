@@ -45,7 +45,7 @@
 						allowBlank: false,
 
 						store: CMDBuild.proxy.utility.ExportCsv.getStoreClasses(),
-						queryMode: 'local',
+						queryMode: 'local'
 					}),
 					Ext.create('Ext.form.field.ComboBox', {
 						name: CMDBuild.core.constants.Proxy.SEPARATOR,

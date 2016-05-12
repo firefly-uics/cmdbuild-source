@@ -21,7 +21,7 @@
 		 */
 		cmfgCatchedFunctions: [
 			'onPrintWindowDownloadButtonClick',
-			'onPrintWindowShow',
+			'onPrintWindowShow'
 		],
 
 		/**
