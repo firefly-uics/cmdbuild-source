@@ -102,7 +102,7 @@ CMDBuild.WidgetBuilders.ReferenceAttribute.prototype.buildField = function(attri
 	if (!Ext.isEmpty(field.mainField)) {
 		this.markAsRequired(field.mainField, attribute);
 	} else {
-		this.markAsRequired(field, attribute)
+		this.markAsRequired(field, attribute);
 	}
 
 	return field;
@@ -199,7 +199,7 @@ CMDBuild.WidgetBuilders.ReferenceAttribute.prototype.buildReadOnlyField = functi
 				new CMDBuild.field.CMToggleButtonToShowReferenceAttributes({
 					subFields: subFields
 				}),
-				field
+				this.markAsRequired(field, attribute)
 			]
 		};
 
@@ -208,7 +208,6 @@ CMDBuild.WidgetBuilders.ReferenceAttribute.prototype.buildReadOnlyField = functi
 		return new Ext.container.Container({
 			items: [fieldContainer].concat(subFields)
 		});
-
 	} else {
 		return this.markAsRequired(field, attribute);
 	}
