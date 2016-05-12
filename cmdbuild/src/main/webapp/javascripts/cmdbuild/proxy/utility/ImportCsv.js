@@ -84,7 +84,7 @@
 
 			Ext.apply(parameters, {
 				timeout: CMDBuild.core.configurations.Timeout.getCsvUtility(),
-				url: CMDBuild.proxy.index.Json.csv.import.update
+				url: CMDBuild.proxy.index.Json.csv.imports.update
 			});
 
 			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.CSV, parameters, true);
@@ -98,7 +98,7 @@
 		updateRecords: function (parameters) {
 			parameters = Ext.isEmpty(parameters) ? {} : parameters;
 
-			Ext.apply(parameters, { url: CMDBuild.proxy.index.Json.csv.import.updateRecords });
+			Ext.apply(parameters, { url: CMDBuild.proxy.index.Json.csv.imports.updateRecords });
 
 			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.CSV, parameters);
 		},
@@ -111,7 +111,7 @@
 		upload: function (parameters) {
 			parameters = Ext.isEmpty(parameters) ? {} : parameters;
 
-			Ext.apply(parameters, { url: CMDBuild.proxy.index.Json.csv.import.create });
+			Ext.apply(parameters, { url: CMDBuild.proxy.index.Json.csv.imports.create });
 
 			CMDBuild.core.interfaces.FormSubmit.submit(parameters);
 		}

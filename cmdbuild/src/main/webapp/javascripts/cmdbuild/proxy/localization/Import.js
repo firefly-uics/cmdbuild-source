@@ -18,7 +18,7 @@
 		imports: function (parameters) {
 			parameters = Ext.isEmpty(parameters) ? {} : parameters;
 
-			Ext.apply(parameters, { url: CMDBuild.proxy.index.Json.localization.utility.csv.import });
+			Ext.apply(parameters, { url: CMDBuild.proxy.index.Json.localization.utility.csv.imports });
 
 			CMDBuild.core.interfaces.FormSubmit.submit(parameters);
 		},

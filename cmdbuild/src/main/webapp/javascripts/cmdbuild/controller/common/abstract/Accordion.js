@@ -113,7 +113,7 @@
 				return components.join('-');
 			}
 
-			return CMDBuild.core.constants.Proxy.ACCORDION + '-' + this.cmfg('accordionIdentifierGet') + '-' + Date.now();
+			return CMDBuild.core.constants.Proxy.ACCORDION + '-' + this.cmfg('accordionIdentifierGet') + '-' + new Date().valueOf(); // Compatibility mode with IE older than IE 9 (Date.now())
 		},
 
 		/**

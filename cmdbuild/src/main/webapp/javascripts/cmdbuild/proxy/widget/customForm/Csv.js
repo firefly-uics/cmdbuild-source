@@ -18,7 +18,7 @@
 		decode: function (parameters) {
 			parameters = Ext.isEmpty(parameters) ? {} : parameters;
 
-			Ext.apply(parameters, { url: CMDBuild.proxy.index.Json.csv.import.read });
+			Ext.apply(parameters, { url: CMDBuild.proxy.index.Json.csv.imports.read });
 
 			CMDBuild.core.interfaces.FormSubmit.submit(parameters);
 		},

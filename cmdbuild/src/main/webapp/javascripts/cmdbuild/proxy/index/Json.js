@@ -47,7 +47,7 @@
 
 			ifc: {
 				download: 'services/json/bim/download',
-				import: 'services/json/bim/importifc'
+				imports: 'services/json/bim/importifc'
 			},
 
 			layer: {
@@ -124,7 +124,7 @@
 				download: 'services/json/management/exportcsv/export'
 			},
 
-			import: {
+			imports: {
 				create: 'services/json/management/importcsv/uploadcsv',
 				read: 'services/json/management/importcsv/readcsv',
 				update: 'services/json/management/importcsv/storecsvrecords', // TODO: waiting for refactor (rename)
@@ -405,7 +405,7 @@
 			utility: {
 				csv: {
 					exports: 'services/json/schema/translation/exportcsv',
-					import: 'services/json/schema/translation/importcsv'
+					imports: 'services/json/schema/translation/importcsv'
 				}
 			}
 		},
@@ -532,7 +532,7 @@
 				save: 'services/json/schema/modreport/savejasperreport',
 
 				analyze: 'services/json/schema/modreport/analyzejasperreport',
-				import: 'services/json/schema/modreport/importjasperreport',
+				imports: 'services/json/schema/modreport/importjasperreport',
 				resetSession: 'services/json/schema/modreport/resetsession'
 			},
 

@@ -71,7 +71,7 @@
 		import: function (parameters) {
 			parameters = Ext.isEmpty(parameters) ? {} : parameters;
 
-			Ext.apply(parameters, { url: CMDBuild.proxy.index.Json.report.jasper.import });
+			Ext.apply(parameters, { url: CMDBuild.proxy.index.Json.report.jasper.imports });
 
 			CMDBuild.core.interfaces.FormSubmit.submit(parameters);
 		},
