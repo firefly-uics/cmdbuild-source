@@ -14,6 +14,7 @@ import static org.cmdbuild.service.rest.v2.constants.Serialization.INHERITED;
 import static org.cmdbuild.service.rest.v2.constants.Serialization.LENGTH;
 import static org.cmdbuild.service.rest.v2.constants.Serialization.LOOKUP_TYPE;
 import static org.cmdbuild.service.rest.v2.constants.Serialization.MANDATORY;
+import static org.cmdbuild.service.rest.v2.constants.Serialization.METADATA;
 import static org.cmdbuild.service.rest.v2.constants.Serialization.NAME;
 import static org.cmdbuild.service.rest.v2.constants.Serialization.PARAMS;
 import static org.cmdbuild.service.rest.v2.constants.Serialization.PRECISION;
@@ -116,6 +117,7 @@ public class Attribute extends ModelWithStringId {
 	private Collection<String> values;
 	private boolean writable;
 	private boolean hidden;
+	private Map<String, String> metadata;
 
 	Attribute() {
 		// package visibility
@@ -328,6 +330,15 @@ public class Attribute extends ModelWithStringId {
 		this.hidden = hidden;
 	}
 
+	@XmlElement(name = METADATA, nillable = true)
+	public Map<String, String> getMetadata() {
+		return metadata;
+	}
+
+	void setMetadata(final Map<String, String> metadata) {
+		this.metadata = metadata;
+	}
+
 	@Override
 	protected boolean doEquals(final Object obj) {
 		if (this == obj) {
@@ -362,6 +373,7 @@ public class Attribute extends ModelWithStringId {
 				.append(this.filter, other.filter) //
 				.append(this.writable, other.writable) //
 				.append(this.hidden, other.hidden) //
+				.append(this.metadata, other.metadata) //
 				.isEquals();
 	}
 
@@ -390,6 +402,7 @@ public class Attribute extends ModelWithStringId {
 				.append(filter) //
 				.append(writable) //
 				.append(hidden) //
+				.append(metadata) //
 				.toHashCode();
 	}
 
