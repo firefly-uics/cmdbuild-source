@@ -197,6 +197,30 @@
 	};
 	var cacheClasses = function() {
 		this.data = {};
+		this.classInFilter = function(classId) {
+			var filterByAttributes = $.Cmdbuild.custom.configuration.filterByAttributes;
+			for (var key in filterByAttributes) {
+				if (this.sameClass(classId, key)) {
+					return filterByAttributes[key];	
+				}
+			}
+			return null;
+		};
+		this.getAllParents = function(currentClass) {
+			var classes = [];
+			do {
+				var classAttributes = this.getClass(currentClass);
+				if (! classAttributes) {
+					// GUICOMPOUNDNODEconsole.log("Error!", currentClass, classes);
+					break;
+				}
+				currentClass = classAttributes.parent;
+				if (currentClass) {
+					classes.push(currentClass);
+				}
+			} while (currentClass);
+			return classes;
+		}
 		this.sameClass = function(superClass, currentClass) {
 			if (superClass === currentClass) {
 				return true;
@@ -284,7 +308,7 @@
 			var param = {
 				filter : filter
 			};
-			if (classId === null) {
+			if (! classId) {
 				callback.apply(callbackScope, []);
 			} else {
 				$.Cmdbuild.utilities.proxy.getDomains(param,

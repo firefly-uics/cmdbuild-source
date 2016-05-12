@@ -49,18 +49,16 @@
 		this.erase = function() {
 			this.selected = {};
 		};
-		this.selectByClassName =  function(classId, bAddSelection) {
+		this.selectByClassName =  function(classId, bAddSelection, canBeASuperClass) {
 			if (! bAddSelection) {
 				this.erase();
 			}
-			var nodes = this.model.getNodes();
+			var nodes = this.model.getNodesByClassName(classId, canBeASuperClass);
 			for (var i = 0; i < nodes.length; i++) {
-				if ($.Cmdbuild.g3d.Model.getGraphData(nodes[i], "classId") == classId) {
-					if (this.selected[nodes[i].id()] === true && bAddSelection) {
-						delete this.selected[nodes[i].id()];
-					} else {
-						this.selected[nodes[i].id()] = true;
-					}
+				if (this.selected[nodes[i].id()] === true && bAddSelection) {
+					delete this.selected[nodes[i].id()];
+				} else {
+					this.selected[nodes[i].id()] = true;
 				}
 			}
 			this.changed({});
@@ -84,6 +82,13 @@
 					classDescription: classDescription,
 					label: label
 				});
+			}
+			if (rows === -1) {
+				return {
+					total: arClasses.length,
+					rows: arClasses
+				};
+				
 			}
 			var retCards = [];
 			for (var i = first; i < first + rows && i < arClasses.length; i++) {

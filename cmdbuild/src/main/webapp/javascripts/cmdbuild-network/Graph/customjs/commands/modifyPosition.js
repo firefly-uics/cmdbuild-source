@@ -12,7 +12,7 @@
 		this.oldValue = $.Cmdbuild.utilities.clone(node.position());
 		this.execute = function(callback, callbackScope) {
 			var node = this.model.getNode(this.id);
-			$.Cmdbuild.g3d.Model.setGraphData(node, "moved", true);
+			$.Cmdbuild.g3d.Model.setGraphData(node, $.Cmdbuild.g3d.constants.OBJECT_STATUS_MOVED, true);
 			this.model.modifyPosition(this.id, position);
 			callback.apply(callbackScope, []);
 			this.model.changed();
