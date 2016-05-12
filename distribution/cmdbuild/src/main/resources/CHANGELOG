@@ -110,6 +110,8 @@ FIXES
 
  * No default language selection on login page
 
+ * Reference attributes of domains with attributes doesn't display required label
+
 
 
 
