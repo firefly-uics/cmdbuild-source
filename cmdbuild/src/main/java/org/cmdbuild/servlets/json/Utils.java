@@ -31,10 +31,11 @@ public class Utils extends JSONBaseWithSpringContext {
 	}
 
 	@JSONExported
-	public JSONObject getLanguage() throws JSONException {
+	@Unauthorized
+	public JSONObject getDefaultLanguage() throws JSONException {
 		final JSONObject j = new JSONObject();
 
-		j.put("language", languageStore().getLanguage());
+		j.put("language", cmdbuildConfiguration().getLanguage());
 
 		return j;
 	}

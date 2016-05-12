@@ -546,8 +546,8 @@
 		},
 
 		session: {
-			create: 'services/json/session/create',
-			update: 'services/json/session/update',
+			create: 'services/json/session/create', // @unauthorized
+			update: 'services/json/session/update', // @unauthorized
 			remove: 'services/json/session/delete'
 		},
 
@@ -629,8 +629,8 @@
 		utils: {
 			clearCache: 'services/json/utils/clearcache',
 			generateId: 'services/json/utils/generateid',
-			getLanguage: 'services/json/utils/getlanguage',
-			readAllAvailableTranslations: 'services/json/utils/listavailabletranslations'
+			readAllAvailableTranslations: 'services/json/utils/listavailabletranslations', // @unauthorized
+			readDefaultLanguage: 'services/json/utils/getdefaultlanguage' // @unauthorized
 		},
 
 		widget: {

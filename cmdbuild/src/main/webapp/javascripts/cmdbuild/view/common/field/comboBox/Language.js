@@ -5,8 +5,13 @@
 
 		requires: [
 			'CMDBuild.core.constants.Proxy',
-			'CMDBuild.proxy.localization.Localization'
+			'CMDBuild.proxy.common.field.comboBox.Language'
 		],
+
+		/**
+		 * @cfg {CMDBuild.controller.common.field.comboBox.Language}
+		 */
+		delegate: undefined,
 
 		/**
 		 * @cfg {Boolean}
@@ -28,67 +33,40 @@
 		 */
 		initComponent: function () {
 			Ext.apply(this, {
+				delegate: Ext.create('CMDBuild.controller.common.field.comboBox.Language', { view: this }),
 				tpl: new Ext.XTemplate(
 					'<tpl for=".">',
 						'<div class="x-boundlist-item x-combo-list-item ux-icon-combo-item ' + this.iconClsPrefix + '{' + this.iconClsField + '}">{' + this.displayField + '}</div>',
 					'</tpl>'
 				),
-				store: CMDBuild.proxy.localization.Localization.getStoreLanguages(),
+				store: CMDBuild.proxy.common.field.comboBox.Language.getStore(),
 				queryMode: 'local'
 			});
 
 			this.callParent(arguments);
 
-			this.setValue = Ext.Function.createInterceptor(this.setValue, function (value) {
-				if (this.lastFlagCls && !Ext.isEmpty(this.inputEl))
-					this.inputEl.removeCls(this.lastFlagCls);
-
-				this.lastFlagCls = this.iconClsPrefix + value;
-
-				if (!Ext.isEmpty(this.inputEl))
-					this.inputEl.addCls(this.lastFlagCls);
-			}, this);
-
 			this.getStore().on('load', function (store, records, successful, eOpts) {
-				this.setValue(this.getCurrentLanguage());
+				this.delegate.cmfg('onFieldComboBoxLanguageStoreLoad');
 			}, this);
 		},
 
 		listeners: {
 			select: function (field, records, eOpts) {
-				this.setValue(this.getValue()); // Fixes flag image render error
-
-				if (this.enableChangeLanguage)
-					this.changeLanguage(records[0].get(CMDBuild.core.constants.Proxy.TAG));
+				this.delegate.cmfg('onFieldComboBoxLanguageSelect', records[0]);
 			}
 		},
 
 		/**
-		 * @param {String} language
+		 * @param {String} value
 		 *
 		 * @returns {Void}
 		 *
-		 * @private
+		 * @public
 		 */
-		changeLanguage: function (language) {
-			language = !Ext.isEmpty(language) && Ext.isString(language) ? language : CMDBuild.configuration.localization.get(CMDBuild.core.constants.Proxy.DEFAULT_LANGUAGE);
+		setValue: function (value) {
+			this.delegate.cmfg('onFieldComboBoxLanguageValueSet', value);
 
-			window.location = '?' + CMDBuild.core.constants.Proxy.LANGUAGE + '=' + language;
-		},
-
-		/**
-		 * @returns {String}
-		 *
-		 * @private
-		 */
-		getCurrentLanguage: function () {
-			// Step 1: check URL
-			if (!Ext.isEmpty(window.location.search))
-				return Ext.Object.fromQueryString(window.location.search)[CMDBuild.core.constants.Proxy.LANGUAGE];
-
-			// Step 2: check CMDBuild configuration (default)
-			if (!Ext.isEmpty(CMDBuild) && !Ext.isEmpty(CMDBuild.configuration) && !Ext.isEmpty(CMDBuild.configuration.localization))
-				return CMDBuild.configuration.localization.get(CMDBuild.core.constants.Proxy.DEFAULT_LANGUAGE);
+			this.callParent(arguments);
 		}
 	});
 
