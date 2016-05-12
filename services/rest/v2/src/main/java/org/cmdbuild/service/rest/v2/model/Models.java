@@ -17,6 +17,7 @@ import static org.cmdbuild.common.utils.guava.Functions.toKey;
 import static org.cmdbuild.common.utils.guava.Functions.toValue;
 
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -179,6 +180,7 @@ public class Models {
 	public static class AttributeBuilder extends ModelBuilder<Attribute> {
 
 		private static final Iterable<String> NO_VALUES = emptyList();
+		private static final Map<String, String> NO_METADATA = emptyMap();
 
 		private String id;
 		private String type;
@@ -204,6 +206,7 @@ public class Models {
 		private Iterable<String> values;
 		private Boolean writable;
 		private Boolean hidden;
+		private Map<String, String> metadata;
 
 		private AttributeBuilder() {
 			// use factory method
@@ -236,6 +239,7 @@ public class Models {
 			output.setValues(newArrayList(defaultIfNull(values, NO_VALUES)));
 			output.setWritable(isTrue(writable));
 			output.setHidden(isTrue(hidden));
+			output.setMetadata(new HashMap<>(defaultIfNull(metadata, NO_METADATA)));
 			return output;
 		}
 
@@ -356,6 +360,11 @@ public class Models {
 
 		public AttributeBuilder thatIsHidden(final Boolean hidden) {
 			this.hidden = hidden;
+			return this;
+		}
+
+		public AttributeBuilder withMetadata(final Map<String, String> metadata) {
+			this.metadata = metadata;
 			return this;
 		}
 
