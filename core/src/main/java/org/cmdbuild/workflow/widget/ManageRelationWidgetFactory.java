@@ -6,6 +6,10 @@ import static org.cmdbuild.dao.query.clause.QueryAliasAttribute.attribute;
 import static org.cmdbuild.dao.query.clause.where.EqualsOperatorAndValue.eq;
 import static org.cmdbuild.dao.query.clause.where.SimpleWhereClause.condition;
 
+import static org.apache.commons.lang3.StringUtils.defaultIfBlank;
+import static org.apache.commons.lang3.StringUtils.EMPTY;
+import static org.apache.commons.lang3.StringUtils.leftPad;
+
 import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
@@ -60,7 +64,7 @@ public class ManageRelationWidgetFactory extends ValuePairWidgetFactory {
 		}
 		widget.setRequired(definition.containsKey(REQUIRED));
 		setSource(widget, definition.get(IS_DIRECT));
-		setEnabledFunctions(widget, readString(definition.get(FUNCTIONS)));
+		setEnabledFunctions(widget, leftPad(defaultIfBlank(readString(definition.get(FUNCTIONS)),EMPTY), 8, '0').substring(0, 8));
 
 		configureWidgetDestinationClassName(widget, readString(definition.get(DOMAIN)), className);
 
@@ -109,9 +113,8 @@ public class ManageRelationWidgetFactory extends ValuePairWidgetFactory {
 			final char c = functions.charAt(index);
 			enabled = c == '1';
 		} catch (final IndexOutOfBoundsException e) {
-			// ignore
+			logger.warn("error checking enabled function at '{}'", index);
 		}
-
 		return enabled;
 	}
 
