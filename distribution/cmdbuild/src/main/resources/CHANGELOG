@@ -114,6 +114,8 @@ FIXES
 
  * Username field enabled on user modify
 
+ * Cannot download report using REST web service when passing a date parameter
+
 
 
 
