@@ -5,13 +5,12 @@ import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import java.math.BigDecimal;
 import java.sql.Time;
 import java.sql.Timestamp;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import net.sf.jasperreports.engine.JRParameter;
 
-import org.cmdbuild.common.Constants;
 import org.cmdbuild.exception.ReportException.ReportExceptionType;
+import org.joda.time.DateTime;
 
 public class RPSimple extends ReportParameter implements LoggingSupport {
 
@@ -49,13 +48,11 @@ public class RPSimple extends ReportParameter implements LoggingSupport {
 				} else if (getJrParameter().getValueClass() == BigDecimal.class) {
 					output = new BigDecimal(Integer.parseInt(newValue));
 				} else if (getJrParameter().getValueClass() == Date.class) {
-					output = new SimpleDateFormat(Constants.DATE_TWO_DIGIT_YEAR_FORMAT).parse(newValue);
+					output = parseDate(newValue);
 				} else if (getJrParameter().getValueClass() == Timestamp.class) {
-					final Date date = new SimpleDateFormat(Constants.DATETIME_TWO_DIGIT_YEAR_FORMAT).parse(newValue);
-					output = new Timestamp(date.getTime());
+					output = new Timestamp(parseDate(newValue).getTime());
 				} else if (getJrParameter().getValueClass() == Time.class) {
-					final Date date = new SimpleDateFormat(Constants.DATETIME_TWO_DIGIT_YEAR_FORMAT).parse(newValue);
-					output = new Time(date.getTime());
+					output = new Time(parseDate(newValue).getTime());
 				} else if (getJrParameter().getValueClass() == Double.class) {
 					output = Double.parseDouble(newValue);
 				} else if (getJrParameter().getValueClass() == Float.class) {
@@ -74,6 +71,15 @@ public class RPSimple extends ReportParameter implements LoggingSupport {
 					e);
 			throw ReportExceptionType.REPORT_INVALID_PARAMETER_VALUE.createException();
 		}
+	}
+
+	private Date parseDate(final String newValue) {
+		return DateTime.class
+				.cast(ReportParameterConverter.of(this) //
+						.toCMAttribute() //
+						.getType() //
+						.convertValue(newValue)) //
+				.toDate();
 	}
 
 }
