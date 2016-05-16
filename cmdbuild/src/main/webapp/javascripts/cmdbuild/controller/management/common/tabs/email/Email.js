@@ -571,7 +571,7 @@
 			) {
 				parameters.scope = Ext.isEmpty(parameters.scope) ? this : parameters.scope;
 
-				parameters.templateResolver.bindLocalDepsChange(function () {
+				parameters.templateResolver.bindLocalDepsChange(function (field) {
 					if (
 						!Ext.Object.isEmpty(parameters.record)
 						&& !this.relatedAttributeChanged
