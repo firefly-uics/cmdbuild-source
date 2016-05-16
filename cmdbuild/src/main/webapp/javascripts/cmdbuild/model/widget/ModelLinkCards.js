@@ -61,6 +61,9 @@
 
 					this.fireEvent('deselect', selection);
 				}
+
+			if (Ext.Object.isEmpty(this.selections))
+				this.lastSelection = undefined;
 		},
 
 		defreeze: function() {
