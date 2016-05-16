@@ -274,7 +274,7 @@
 			 * @returns {Void}
 			 */
 			instancesDataStorageSet: function (instanceData) {
-				if (!Ext.isEmpty(this.getId('unique')) && !Ext.isEmpty(instanceData))
+				if (!Ext.isEmpty(this.getId('unique')))
 					this.instancesDataStorage[this.getId('unique')] = instanceData;
 			},
 
