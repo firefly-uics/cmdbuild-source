@@ -105,6 +105,15 @@
 			camera.lookAt(position);
 			controls.target.set(position.x, position.y, position.z);
 		};
+		this.getRenderer = function() {
+			return renderer;
+		};
+		this.getCamera = function() {
+			return camera;
+		};
+		this.getScene = function() {
+			return scene;
+		};
 		this.getOpenCompoundCommands = function(node, callback, callbackScope) {
 			var compoundData = $.Cmdbuild.g3d.Model.getGraphData(node,
 					"compoundData");
@@ -155,7 +164,6 @@
 			} else {
 				thisViewer.explodeNode({
 					id : LASTSELECTED.elementId,
-					domainList : null,
 					levels : $.Cmdbuild.customvariables.options.baseLevel
 				});
 			}
@@ -164,7 +172,6 @@
 			var explode = new $.Cmdbuild.g3d.commands.explode_levels(
 					thisViewer.model, {
 						id : params.id,
-						domainList : params.domainList,
 						levels : params.levels
 					});
 			thisViewer.commandsManager.execute(explode, {}, function() {
@@ -370,12 +377,12 @@
 			this.refreshNodes(scene, rough);
 			this.refreshRelations(scene, rough);
 			this.duringRefresh = false;
-			if (this.toRefreshAgain === true) {
-				this.toRefreshAgain = false;
-				this.refresh(false);
-			} else {
+//			if (this.toRefreshAgain === true) {
+//				this.toRefreshAgain = false;
+//				this.refresh(false);
+//			} else {
 				this.refreshLabels();
-			}
+//			}
 		};
 		this.refreshNodes = function(scene, rough) {
 			var nodes = this.model.getNodes();
@@ -386,11 +393,11 @@
 				}
 				var glObject = scene.getObjectById($.Cmdbuild.g3d.Model
 						.getGraphData(node, "glId"));// node.glObject;//
+				var me = this;
 				if (glObject && !rough) {
 					if (!$.Cmdbuild.g3d.ViewerUtilities.equals(
 							glObject.position, node.position())) {
-						new $.Cmdbuild.g3d.ViewerUtilities.moveObject(this,
-								node);
+						new $.Cmdbuild.g3d.ViewerUtilities.moveObject(me, node);
 					}
 					objects.push(glObject);
 				} else {
@@ -408,7 +415,7 @@
 					node.glObject = object;
 					scene.add(object);
 					objects.push(object);
-					new $.Cmdbuild.g3d.ViewerUtilities.moveObject(this, node);
+					new $.Cmdbuild.g3d.ViewerUtilities.moveObject(me, node);
 				}
 			}
 		};

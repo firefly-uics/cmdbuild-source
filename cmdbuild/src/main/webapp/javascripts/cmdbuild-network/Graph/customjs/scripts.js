@@ -6,6 +6,30 @@
 		counter : function(param) {
 			new counter(param);
 		},
+		selectFilter : function(param) {
+			try {
+				$('#' + param.id).selectmenu();
+				$('#' + param.id).selectmenu({
+					select : function(event, ui) {
+						var value = ui.item.value;
+						var count = 0;
+						for (var i = 0; i < param.operatorsList.length; i++) {
+							if (value === param.operatorsList[i][0]) {
+								count = param.operatorsList[i][2]
+								break;
+							}
+						}
+						param.indexData.operator = [ value, "", count ];
+						$.Cmdbuild.standard.commands.navigate({
+							form : param.navigationForm,
+							container : param.navigationContainer
+						});
+					}
+				});
+			} catch (e) {
+				$.Cmdbuild.errorsManager.log(e);
+			}
+		},
 		navigationTreesBtnMenu : function(param) {
 			var $ul = $("<ul></ul>").menu();
 			var $div = $("<div></div>").addClass("menu-icon-separator");
@@ -39,15 +63,15 @@
 
 					});
 		},
-		toggleTooltips : function(param) {
+		toggler : function(param) {
 			var isEnabled = true;
 			$("#" + param.id)
 					.ready(
 							function() {
-								$("#" + param.id)
-										.parent()
-										.addClass(
-												$.Cmdbuild.custom.commands.variables.BUTTONACTIVECLASS);
+								var val = $.Cmdbuild.custom.commands.variables.BUTTONACTIVECLASS
+								if (param.initValue === "active") {
+									$("#" + param.id).parent().addClass(val);
+								}
 							});
 			$("#" + param.id)
 					.click(
@@ -57,18 +81,16 @@
 										.hasClass(
 												$.Cmdbuild.custom.commands.variables.BUTTONACTIVECLASS)) {
 									// TODO: disable tooltips
-									$.Cmdbuild.custom.commands
-											.updateToggleTooltips({
-												id : param.id,
-												active : false
-											});
+									$.Cmdbuild.custom.commands[param.command]({
+										id : param.id,
+										active : false
+									});
 								} else {
 									// TODO: active tooltips
-									$.Cmdbuild.custom.commands
-											.updateToggleTooltips({
-												id : param.id,
-												active : true
-											});
+									$.Cmdbuild.custom.commands[param.command]({
+										id : param.id,
+										active : true
+									});
 								}
 							});
 		}
@@ -103,3 +125,4 @@ function counter(param) {
 		}
 	}
 }
+

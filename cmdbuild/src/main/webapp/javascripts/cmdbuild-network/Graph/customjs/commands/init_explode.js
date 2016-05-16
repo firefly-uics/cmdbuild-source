@@ -8,7 +8,6 @@
 	var init_explode = function(model, params) {
 		this.model = model;
 		this.params = params;
-		this.domainList = (params.domainList) ? params.domainsList : null;
 		var batch = params.batch;
 		var backend = new $.Cmdbuild.g3d.backend.CmdbuildModel();
 		this.newElements = [];
@@ -53,7 +52,7 @@
 			}
 			var parentNode = this.model.getNode(id);
 			var oldChildren = $.Cmdbuild.g3d.Model.getGraphData(parentNode, "children");
-			backend.getANodesBunch(id, this.domainList, function(elements) {
+			backend.getANodesBunch(id, function(elements) {
 				var newElements = [];
 				this.model.pushElements(elements, function() {
 					for (var i = 0; i < elements.nodes.length; i++) {
