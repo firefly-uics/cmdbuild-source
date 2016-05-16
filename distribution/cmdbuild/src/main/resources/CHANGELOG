@@ -116,6 +116,8 @@ FIXES
 
  * Cannot download report using REST web service when passing a date parameter
 
+ * Widget OpenReport: ForeignKey attributes not filled
+
 
 
 

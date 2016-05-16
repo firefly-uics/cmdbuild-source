@@ -125,9 +125,11 @@
 			if (Ext.isEmpty(value))
 				return this.callParent();
 
+			// Value in store
 			if (this.getStore().find(this.valueField, value) >= 0)
 				return this.callParent([value]);
 
+			// Value not in store
 			return this.delegate.cmfg('onFieldComboBoxSearchableValueSet', value);
 		}
 	});
