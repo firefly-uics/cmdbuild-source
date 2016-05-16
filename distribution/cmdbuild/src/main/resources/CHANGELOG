@@ -116,6 +116,10 @@ FIXES
 
  * Cannot download report using REST web service when passing a date parameter
 
+ * Widget OpenReport: ForeignKey attributes not filled
+
+ * Widget LinkCard: on deselect all selections on next widget window open last selected row still checked
+
 
 
 

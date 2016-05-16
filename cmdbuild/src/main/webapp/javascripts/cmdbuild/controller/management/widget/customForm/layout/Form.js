@@ -43,7 +43,7 @@
 				id: barrierId,
 				scope: this,
 				callback: function () {
-					if (!this.cmfg('widgetCustomFormInstancesDataStorageIsEmpty'))
+					if (this.cmfg('instancesDataStorageExists'))
 						this.cmfg('widgetCustomFormLayoutFormDataSet', this.cmfg('widgetCustomFormInstancesDataStorageGet'));
 
 					this.cmfg('widgetCustomFormViewSetLoading', false);
@@ -142,7 +142,7 @@
 		onWidgetCustomFormLayoutFormShow: function () {
 			this.updateUiState();
 
-			if (!this.cmfg('widgetCustomFormInstancesDataStorageIsEmpty'))
+			if (this.cmfg('instancesDataStorageExists'))
 				this.cmfg('widgetCustomFormLayoutFormDataSet', this.cmfg('widgetCustomFormInstancesDataStorageGet'));
 		},
 

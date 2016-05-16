@@ -574,25 +574,20 @@ CMDBuild.Management.TemplateResolver.prototype = {
 		return out;
 	},
 
-	bindLocalDepsChange: function(callback, scope) {
-		var ld = this.getLocalDepsAsField(),
-			callback = callback || Ext.empltyFn,
-			scope = scope || this;
+	bindLocalDepsChange: function (callback, scope) {
+		var ld = this.getLocalDepsAsField();
+		var callback = callback || Ext.emptyFn;
+		var scope = scope || this;
 
 		for (var i in ld) {
-			//before the blur if the value is changed
+			// Before the blur if the value is changed
 			var field = ld[i];
 
 			if (field) {
-				// For check-box and HTMLEditor, call directly the
-				// callback. For other attributes set the field
-				// as changed, and call the callback at blur
+				// For check-box and HTMLEditor, call directly the callback. For other attributes set the field as changed, and call the callback at blur
 				field.mon(field, "change", function(f) {
-					if (Ext.getClassName(f) == "Ext.ux.form.XCheckbox" ||
-							Ext.getClassName(f) == "CMDBuild.view.common.field.HtmlEditor"
-						) {
-
-						callback.call(scope);
+					if (Ext.getClassName(f) == "Ext.ux.form.XCheckbox" || Ext.getClassName(f) == "CMDBuild.view.common.field.HtmlEditor") {
+						Ext.callback(callback, scope, [field]);
 					} else {
 						f.changed = true;
 					}
@@ -602,7 +597,7 @@ CMDBuild.Management.TemplateResolver.prototype = {
 					if (f.changed) {
 						f.changed = false;
 
-						callback.call(scope);
+						Ext.callback(callback, scope, [field]);
 					}
 				}, scope);
 			}
