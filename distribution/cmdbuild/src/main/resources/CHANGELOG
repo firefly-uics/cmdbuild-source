@@ -120,6 +120,8 @@ FIXES
 
  * Widget LinkCard: on deselect all selections on next widget window open last selected row still checked
 
+ * Domain attribute update fails on recursive domains
+
 
 
 
