@@ -118,6 +118,8 @@ FIXES
 
  * Widget OpenReport: ForeignKey attributes not filled
 
+ * Widget LinkCard: on deselect all selections on next widget window open last selected row still checked
+
 
 
 
