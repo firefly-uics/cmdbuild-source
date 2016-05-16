@@ -115,13 +115,16 @@
 		 *
 		 * @param {Mixed} value
 		 *
-		 * @returns {String}
+		 * @returns {Mixed}
 		 */
 		fieldComboBoxSearchableNormalizeValue: function (value) {
 			if (!Ext.isEmpty(value)) {
 				switch (Ext.typeOf(value)) {
 					case 'array':
 						return this.cmfg('fieldComboBoxSearchableNormalizeValue', value[0]);
+
+					case 'string':
+						return isNana(parseInt(value)) ? value : parseInt(value);
 
 					case 'object': {
 						if (Ext.isFunction(value.get))

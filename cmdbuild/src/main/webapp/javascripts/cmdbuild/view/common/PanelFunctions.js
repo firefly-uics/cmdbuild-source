@@ -221,11 +221,21 @@
 						&& Ext.isFunction(item.setDisabled)
 						&& (
 							this.isManagedField(item)
+							|| item instanceof Ext.button.Button
 							|| item.considerAsFieldToDisable
 						)
 						&& !item.disablePanelFunctions
 					) {
-						item.setDisabled(state);
+						if (state) {
+							item.setDisabled(state);
+						} else {
+							if (
+								!item.disableEnableFunctions
+								&& (item.isVisible() || disableIsVisibleCheck)
+							) {
+								item.setDisabled(state);
+							}
+						}
 					}
 				}, this);
 		},

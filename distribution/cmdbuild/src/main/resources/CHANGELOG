@@ -112,6 +112,16 @@ FIXES
 
  * Reference attributes of domains with attributes doesn't display required label
 
+ * Username field enabled on user modify
+
+ * Cannot download report using REST web service when passing a date parameter
+
+ * Widget OpenReport: ForeignKey attributes not filled
+
+ * Widget LinkCard: on deselect all selections on next widget window open last selected row still checked
+
+ * Domain attribute update fails on recursive domains
+
 
 
 

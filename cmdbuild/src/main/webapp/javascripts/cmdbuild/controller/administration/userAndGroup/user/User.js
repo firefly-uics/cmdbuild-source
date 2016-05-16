@@ -131,7 +131,6 @@
 		 */
 		onUserAndGroupUserModifyButtonClick: function () {
 			this.form.setDisabledFieldSet(this.form.userInfoFieldSet, false);
-
 			this.form.setDisabledTopBar(true);
 			this.form.setDisabledBottomBar(false);
 		},
