@@ -43,6 +43,7 @@
 		cmfgCatchedFunctions: [
 			'getId = widgetCustomFormIdGet',
 			'getTemplateResolverServerVars = widgetCustomFormGetTemplateResolverServerVars',
+			'instancesDataStorageExists = widgetCustomFormInstancesDataStorageExists',
 			'instancesDataStorageGet = widgetCustomFormInstancesDataStorageGet',
 			'instancesDataStorageIsEmpty = widgetCustomFormInstancesDataStorageIsEmpty',
 			'onWidgetCustomFormBeforeActiveView = beforeActiveView',
@@ -117,9 +118,19 @@
 					callback: function (out, ctx) {
 						decodedOutput.push(out);
 
-						// Apply change event to reset data property in widgetConfiguration to avoid SQL function server call
-						templateResolver.bindLocalDepsChange(function () {
-							this.instancesDataStorageReset('single'); // Reset widget instance data storage
+						Ext.Object.each(templateResolver.getLocalDepsAsField(), function (name, field, myself) {
+							if (Ext.isEmpty(field.observerControllers))
+								field.observerControllers = [];
+
+							field.observerControllers = Ext.Array.merge(field.observerControllers, [this]); // Alias of add if unique
+						}, this);
+
+						// Apply change event to reset data property in widgetConfiguration to enable SQL function server call
+						templateResolver.bindLocalDepsChange(function (field) {
+							if (!Ext.isEmpty(field.observerControllers) && Ext.isArray(field.observerControllers))
+								Ext.Array.each(field.observerControllers, function (observer, i, allObservers) {
+									observer.instancesDataStorageReset('single'); // Reset widget instance data storage
+								}, this);
 						}, this);
 					}
 				});
@@ -153,9 +164,19 @@
 					callback: function (out, ctx) {
 						decodedOutput = out;
 
-						// Apply change event to reset data property in widgetConfiguration to avoid SQL function server call
-						templateResolver.bindLocalDepsChange(function () {
-							this.instancesDataStorageReset('single'); // Reset widget instance data storage
+						Ext.Object.each(templateResolver.getLocalDepsAsField(), function (name, field, myself) {
+							if (Ext.isEmpty(field.observerControllers))
+								field.observerControllers = [];
+
+							field.observerControllers = Ext.Array.merge(field.observerControllers, [this]); // Alias of add if unique
+						}, this);
+
+						// Apply change event to reset data property in widgetConfiguration to enable SQL function server call
+						templateResolver.bindLocalDepsChange(function (field) {
+							if (!Ext.isEmpty(field.observerControllers) && Ext.isArray(field.observerControllers))
+								Ext.Array.each(field.observerControllers, function (observer, i, allObservers) {
+									observer.instancesDataStorageReset('single'); // Reset widget instance data storage
+								}, this);
 						}, this);
 					}
 				});
@@ -389,7 +410,7 @@
 						decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.CARDS];
 
 						this.instancesDataStorageSet(decodedResponse);
-
+_debug('decodedResponse', decodedResponse, this.instancesDataStorageGet());
 						this.controllerLayout.cmfg('onWidgetCustomFormShow');
 					}
 				});

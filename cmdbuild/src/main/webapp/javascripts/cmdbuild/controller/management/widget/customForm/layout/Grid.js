@@ -50,7 +50,7 @@
 				id: barrierId,
 				scope: this,
 				callback: function () {
-					if (!this.cmfg('widgetCustomFormInstancesDataStorageIsEmpty'))
+					if (this.cmfg('instancesDataStorageExists'))
 						this.cmfg('widgetCustomFormLayoutGridDataSet', this.cmfg('widgetCustomFormInstancesDataStorageGet'));
 
 					this.cmfg('widgetCustomFormViewSetLoading', false);
@@ -374,7 +374,7 @@
 		onWidgetCustomFormLayoutGridShow: function () {
 			this.updateUiState();
 
-			if (!this.cmfg('widgetCustomFormInstancesDataStorageIsEmpty'))
+			if (this.cmfg('instancesDataStorageExists'))
 				this.cmfg('widgetCustomFormLayoutGridDataSet', this.cmfg('widgetCustomFormInstancesDataStorageGet'));
 
 			// Fixes reference field renderer to avoid blank cell content render
