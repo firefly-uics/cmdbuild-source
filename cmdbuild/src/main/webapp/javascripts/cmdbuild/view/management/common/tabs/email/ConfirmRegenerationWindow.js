@@ -28,7 +28,6 @@
 		 */
 		grid: undefined,
 
-		autoScroll: true,
 		closeAction: 'hide',
 		title: CMDBuild.Translation.confirmRegeneration,
 
@@ -68,14 +67,11 @@
 					},
 					this.grid = Ext.create('Ext.grid.Panel', {
 						region: 'center',
-						autoScroll: true,
 						border: false,
 						collapsible: false,
 						frame: false,
 
-						selModel: Ext.create('Ext.selection.CheckboxModel', {
-							injectCheckbox: 'last'
-						}),
+						selModel: Ext.create('Ext.selection.CheckboxModel', { injectCheckbox: 'last' }),
 
 						columns: [
 							{

@@ -5,8 +5,9 @@
 
 		requires: [
 			'CMDBuild.controller.management.common.tabs.email.Email',
-			'CMDBuild.core.LoadMask',
-			'CMDBuild.core.constants.Proxy'
+			'CMDBuild.controller.management.common.widgets.CMWidgetController',
+			'CMDBuild.core.constants.Proxy',
+			'CMDBuild.core.LoadMask'
 		],
 
 		/**
@@ -130,7 +131,7 @@
 						var templateResolver = new CMDBuild.Management.TemplateResolver({
 							clientForm: me.parentDelegate.clientForm,
 							xaVars: xaVars,
-							serverVars: me.parentDelegate.getTemplateResolverServerVars()
+							serverVars: CMDBuild.controller.management.common.widgets.CMWidgetController.getTemplateResolverServerVars()
 						});
 
 						templateResolver.resolveTemplates({

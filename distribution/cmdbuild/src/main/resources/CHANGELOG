@@ -122,6 +122,10 @@ FIXES
 
  * Domain attribute update fails on recursive domains
 
+ * GIS configuration - GeoServer layers - Cards Binding empty combo
+
+ * GIS map errors
+
 
 
 
