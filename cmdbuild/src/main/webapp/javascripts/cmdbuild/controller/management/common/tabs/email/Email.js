@@ -109,8 +109,6 @@
 		flagRegenerateAllEmails: false,
 
 		/**
-		 * Shorthand to view grid
-		 *
 		 * @property {CMDBuild.view.management.common.tabs.email.GridPanel}
 		 */
 		grid: undefined,
@@ -421,6 +419,10 @@
 		/**
 		 * @param {Mixed} record
 		 * @param {Array} regenerationTrafficLightArray
+		 *
+		 * @returns {Void}
+		 *
+		 * @private
 		 */
 		regenerateEmail: function (record, regenerationTrafficLightArray) {
 			if (
@@ -488,6 +490,10 @@
 		/**
 		 * @param {CMDBuild.model.common.tabs.email.Template} template
 		 * @param {Array} regenerationTrafficLightArray
+		 *
+		 * @returns {Void}
+		 *
+		 * @private
 		 */
 		regenerateTemplate: function (template, regenerationTrafficLightArray) {
 			if (
@@ -573,13 +579,14 @@
 
 				parameters.templateResolver.bindLocalDepsChange(function (field) {
 					if (
-						!Ext.Object.isEmpty(parameters.record)
+						Ext.isObject(parameters.record) && !Ext.Object.isEmpty(parameters.record)
 						&& !this.relatedAttributeChanged
 					) {
 						this.relatedAttributeChanged = true;
 
+						// FIXME: wrong conditions check, no sense to display a change warning message when keepSynch flag is disabled and you don't wanna synch email
 						if (
-							parameters.record.get(CMDBuild.core.constants.Proxy.KEEP_SYNCHRONIZATION)
+							!parameters.record.get(CMDBuild.core.constants.Proxy.KEEP_SYNCHRONIZATION)
 							&& !parameters.record.get(CMDBuild.core.constants.Proxy.PROMPT_SYNCHRONIZATION)
 						) {
 							CMDBuild.core.Message.warning(null, CMDBuild.Translation.warnings.emailTemplateRelatedAttributeEdited);
@@ -587,7 +594,7 @@
 					}
 				}, parameters.scope);
 			} else {
-				_error('error on tabEmailBindLocalDepsChangeEvent() parameters', this);
+				_error('error on tabEmailBindLocalDepsChangeEvent() parameters', this, parameters);
 			}
 		},
 
@@ -752,6 +759,10 @@
 			 *
 			 * {regenerationTrafficLightArray} Implements a trafficLight functionality to manage multiple asynchronous calls and have a global callback
 			 * to reload grid only at real end of calls and avoid to have multiple and useless store load calls.
+			 *
+			 * @returns {Void}
+			 *
+			 * @private
 			 */
 			regenerateAllEmails: function () {
 				var gridsDraftEmail = this.controllerGrid.cmfg('tabEmailGridDraftEmailsGet');
@@ -869,18 +880,16 @@
 		 * @param {Array} records
 		 */
 		tabEmailRegenerateSelectedEmails: function (records) {
-			if (!Ext.isEmpty(records)) {
+			if (!Ext.isEmpty(records) && Ext.isArray(records)) {
 				var regenerationTrafficLightArray = [];
 
-				Ext.Array.forEach(records, function (item, i, allItems) {
+				Ext.Array.each(records, function (item, i, allItems) {
 					var recordTemplate = item.get(CMDBuild.core.constants.Proxy.TEMPLATE);
 
-					if (!Ext.isEmpty(recordTemplate)) {
-						if (Ext.isEmpty(item.get(CMDBuild.core.constants.Proxy.ID))) { // If there isn't an id the record is a new email generated from template
-							this.regenerateTemplate(item, regenerationTrafficLightArray);
-						} else {
-							this.regenerateEmail(item, regenerationTrafficLightArray);
-						}
+					if (Ext.isEmpty(recordTemplate)) {
+						this.regenerateEmail(item, regenerationTrafficLightArray);
+					} else {
+						this.regenerateTemplate(item, regenerationTrafficLightArray);
 					}
 				}, this);
 
