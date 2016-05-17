@@ -26,7 +26,7 @@
 		 * attribute. Use it to load the full attributes of the card
 		 */
 		loadCard: function(cardToLoad) {
-			adaptGetCardCallParams(cardToLoad);
+			cardToLoad = adaptGetCardCallParams(cardToLoad);
 
 			CMDBuild.proxy.Card.read({
 				params: cardToLoad,
@@ -70,6 +70,8 @@
 
 			p = parameters;
 		}
+
+		return p;
 	}
 
 })();

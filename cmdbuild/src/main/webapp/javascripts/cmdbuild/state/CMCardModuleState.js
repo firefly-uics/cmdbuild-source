@@ -69,7 +69,7 @@
 			enableDelegatesCall = (!Ext.isEmpty(enableDelegatesCall)) ? enableDelegatesCall : true;
 
 			if (card != null && typeof card.data == 'undefined') {
-				adaptGetCardCallParams(card);
+				card = adaptGetCardCallParams(card);
 
 				CMDBuild.proxy.Card.read({
 					params: card,
@@ -112,6 +112,8 @@
 
 			p = parameters;
 		}
+
+		return p;
 	}
 
 })();
