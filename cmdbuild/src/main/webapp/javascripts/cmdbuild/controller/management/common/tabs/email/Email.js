@@ -584,6 +584,7 @@
 					) {
 						this.relatedAttributeChanged = true;
 
+						// FIXME: wrong conditions check, no sense to display a change warning message when keepSynch flag is disabled and you don't wanna synch email
 						if (
 							!parameters.record.get(CMDBuild.core.constants.Proxy.KEEP_SYNCHRONIZATION)
 							&& !parameters.record.get(CMDBuild.core.constants.Proxy.PROMPT_SYNCHRONIZATION)
