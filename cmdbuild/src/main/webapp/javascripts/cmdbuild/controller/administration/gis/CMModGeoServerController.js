@@ -9,9 +9,9 @@
 			this.callParent(arguments);
 
 			this.view.on("show", function() {
-				this.layersGrid.onModShow(this.firstShow);
-				this.firstShow = false;
-			}, this.view);
+				this.view.layersGrid.onModShow(this.view.firstShow);
+				this.view.firstShow = false;
+			}, this);
 
 			this.view.layersGrid.getSelectionModel().on("selectionchange", onLayerSelect, this);
 
@@ -56,7 +56,7 @@
 		var nameToSelect = this.view.form.getName();
 		var cardBinding = this.view.form.getCardsBinding();
 
-		if (form.isValid()) {
+		if (this.view.form.isValid()) {
 			if (this.lastSelection) {
 				CMDBuild.proxy.gis.GeoServer.updateLayer({
 					form: this.view.form.getForm(),
