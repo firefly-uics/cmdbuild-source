@@ -579,7 +579,7 @@
 
 				parameters.templateResolver.bindLocalDepsChange(function (field) {
 					if (
-						!Ext.Object.isEmpty(parameters.record)
+						Ext.isObject(parameters.record) && !Ext.Object.isEmpty(parameters.record)
 						&& !this.relatedAttributeChanged
 					) {
 						this.relatedAttributeChanged = true;
@@ -593,7 +593,7 @@
 					}
 				}, parameters.scope);
 			} else {
-				_error('error on tabEmailBindLocalDepsChangeEvent() parameters', this);
+				_error('error on tabEmailBindLocalDepsChangeEvent() parameters', this, parameters);
 			}
 		},
 
