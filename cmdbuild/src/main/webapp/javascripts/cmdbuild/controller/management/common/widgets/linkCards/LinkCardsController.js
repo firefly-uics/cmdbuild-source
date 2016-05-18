@@ -255,42 +255,39 @@
 		 */
 		beforeActiveView: function() {
 			if (!Ext.isEmpty(this.targetClass)) {
-				var me = this;
-				var classId = this.targetClass.getId();
-				var cqlQuery = this.widgetConf[CMDBuild.core.constants.Proxy.FILTER];
-
-				// Disable toggle grid filter button
-				this.toggleGridFilterButtonManageState();
-
 				this.gisMapEnabled = this.widgetConf[CMDBuild.core.constants.Proxy.ENABLE_MAP] && CMDBuild.configuration.gis.get(CMDBuild.core.constants.Proxy.ENABLED);
 
-				// Hide checkcolumn if readonly mode
-				this.grid.getSelectionModel().setLocked(this.widgetConf[CMDBuild.core.constants.Proxy.READ_ONLY]);
+				// Manage UI items display state
+				this.toggleGridFilterButtonManageState();// Disable toggle grid filter button
+				this.grid.getSelectionModel().setLocked(this.widgetConf[CMDBuild.core.constants.Proxy.READ_ONLY]); // Hide checkcolumn if readonly mode
 
 				new _CMUtils.PollingFunction({
 					success: function() {
 						// CQL filter and regular filter cannot be merged now.
 						// The filter button should be enabled only if no other filter is present.
-						if (cqlQuery) {
-							me.resolveFilterTemplate(cqlQuery, classId);
+						if (
+							!Ext.isEmpty(this.widgetConf[CMDBuild.core.constants.Proxy.FILTER])
+							&& this.view.toggleGridFilterButton.getActiveState() == CMDBuild.core.constants.Proxy.ENABLE
+						) {
+							this.resolveFilterTemplate(this.widgetConf[CMDBuild.core.constants.Proxy.FILTER], this.targetClass.getId());
 						} else {
-							me.updateViewGrid(classId);
+							this.updateViewGrid(this.targetClass.getId());
 						}
 
-						if (!me.model.hasSelection())
-							me.resolveDefaultSelectionTemplate();
+						if (!this.model.hasSelection())
+							this.resolveDefaultSelectionTemplate();
 
-						me.onGridShow();
+						this.onGridShow();
 					},
 					failure: function() {
 						CMDBuild.core.Message.error(null, CMDBuild.Translation.errors.busyVisualControls, false);
 					},
 					checkFn: function() {
 						// I want exit if I'm not busy
-						return !me.isBusy();
+						return !this.isBusy();
 					},
-					cbScope: me,
-					checkFnScope: me
+					cbScope: this,
+					checkFnScope: this
 				}).run();
 			}
 		},
@@ -676,6 +673,7 @@
 		 * @param {Object} cqlParams
 		 */
 		updateViewGrid: function(classId, cqlParams) {
+_debug('updateViewGrid', classId, cqlParams);
 			this.grid.CQL = cqlParams;
 			this.grid.store.proxy.extraParams = this.grid.getStoreExtraParams();
 			this.grid.updateStoreForClassId(classId);
