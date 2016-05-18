@@ -5,7 +5,7 @@
 
 		requires: [
 			'CMDBuild.core.constants.Proxy',
-			'CMDBuild.proxy.customForm.Csv'
+			'CMDBuild.proxy.widget.customForm.Csv'
 		],
 
 		/**
@@ -66,11 +66,31 @@
 		 */
 		onWidgetCustomFormExportExportButtonClick: function () {
 			if (this.validate(this.form)) {
+				var gridData = [];
+
+				// Uses direct data property access to avoid a get problem because of generic model
+				Ext.Array.each(this.cmfg('widgetCustomFormLayoutDataGet'), function (rowObject, i, allRowObjects) {
+					var dataObject = Ext.isEmpty(rowObject.data) ? rowObject : rowObject.data; // Model/Objects management
+
+					new CMDBuild.Management.TemplateResolver({
+						clientForm: this.cmfg('widgetCustomFormControllerPropertyGet', 'clientForm'),
+						xaVars: dataObject,
+						serverVars: this.cmfg('widgetCustomFormGetTemplateResolverServerVars')
+					}).resolveTemplates({
+						attributes: Ext.Object.getKeys(dataObject),
+						scope: this,
+						callback: function (out, ctx) {
+							if (Ext.isObject(out))
+								gridData.push(out);
+						}
+					});
+				}, this);
+
 				var params = this.form.getData();
-				params[CMDBuild.core.constants.Proxy.DATA] = Ext.encode(this.cmfg('widgetCustomFormDataGet'));
+				params[CMDBuild.core.constants.Proxy.DATA] = Ext.encode(gridData);
 				params[CMDBuild.core.constants.Proxy.HEADERS] = Ext.encode(params[CMDBuild.core.constants.Proxy.HEADERS].split(','));
 
-				CMDBuild.proxy.customForm.Csv.exports({ params: params });
+				CMDBuild.proxy.widget.customForm.Csv.exports({ params: params });
 
 				this.cmfg('onWidgetCustomFormExportAbortButtonClick');
 			}

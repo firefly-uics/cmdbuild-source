@@ -192,7 +192,7 @@
 		 */
 		widgetCustomFormLayoutFormDataSet: function (data) {
 			data = (Ext.isArray(data) && !Ext.isEmpty(data[0])) ? data[0] : data; // Get first item only from arrays
-			data = Ext.isFunction(data.getData) ? data.getData() : data; // Manage models
+			data = (!Ext.isEmpty(data) && Ext.isFunction(data.getData)) ? data.getData() : data; // Manage models
 
 			this.view.reset();
 
