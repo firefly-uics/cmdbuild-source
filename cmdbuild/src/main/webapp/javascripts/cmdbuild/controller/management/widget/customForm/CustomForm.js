@@ -410,7 +410,7 @@
 						decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.CARDS];
 
 						this.instancesDataStorageSet(decodedResponse);
-_debug('decodedResponse', decodedResponse, this.instancesDataStorageGet());
+
 						this.controllerLayout.cmfg('onWidgetCustomFormShow');
 					}
 				});
