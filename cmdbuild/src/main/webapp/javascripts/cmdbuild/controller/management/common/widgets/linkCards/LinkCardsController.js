@@ -10,9 +10,9 @@
 		requires: [
 			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.Message',
-			'CMDBuild.proxy.Card',
 			'CMDBuild.core.Utils',
-			'CMDBuild.model.widget.ModelLinkCards'
+			'CMDBuild.model.widget.ModelLinkCards',
+			'CMDBuild.proxy.Card'
 		],
 
 		mixins: {
@@ -40,6 +40,13 @@
 		 * @private
 		 */
 		firstWidgetVisualization: true,
+
+		/**
+		 * @property {Boolean}
+		 *
+		 * @private
+		 */
+		gisMapEnabled: false,
 
 		/**
 		 * @property {CMDBuild.view.management.common.widgets.linkCards.LinkCardsGrid}
@@ -153,9 +160,7 @@
 			this.grid.delegate = this;
 			this.view.widgetConf = this.widgetConf;
 
-			this.model = Ext.create('CMDBuild.model.widget.ModelLinkCards', {
-				singleSelect: this.singleSelect
-			});
+			this.model = Ext.create('CMDBuild.model.widget.ModelLinkCards', { singleSelect: this.singleSelect });
 
 			this.templateResolver = new CMDBuild.Management.TemplateResolver({
 				clientForm: this.clientForm,
@@ -163,7 +168,7 @@
 				serverVars: this.getTemplateResolverServerVars()
 			});
 
-			if (this.view.hasMap())
+			if (this.gisMapEnabled && !Ext.isEmpty(this.view.getMapPanel()))
 				this.mapController = Ext.create('CMDBuild.controller.management.common.widgets.linkCards.LinkCardsMapController', {
 					view: this.view.getMapPanel(),
 					model: this.model,
@@ -262,6 +267,8 @@
 					this.view.toggleGridFilterButton.setDisabled(true);
 				}
 
+				this.gisMapEnabled = this.widgetConf[CMDBuild.core.constants.Proxy.ENABLE_MAP] && CMDBuild.configuration.gis.get(CMDBuild.core.constants.Proxy.ENABLED);
+
 				// Hide checkcolumn if readonly mode
 				this.grid.getSelectionModel().setLocked(this.widgetConf[CMDBuild.core.constants.Proxy.READ_ONLY]);
 
@@ -278,7 +285,6 @@
 						if (!me.model.hasSelection())
 							me.resolveDefaultSelectionTemplate();
 
-						me.grid.disableFilterMenuButton();
 						me.onGridShow();
 					},
 					failure: function() {
@@ -552,7 +558,7 @@
 		},
 
 		onToggleMapButtonClick: function() {
-			if (this.view.hasMap()) {
+			if (this.gisMapEnabled && !Ext.isEmpty(this.view.getMapPanel())) {
 				if (this.grid.isVisible()) {
 					this.view.showMap();
 					this.view.mapButton.setIconCls('table');
