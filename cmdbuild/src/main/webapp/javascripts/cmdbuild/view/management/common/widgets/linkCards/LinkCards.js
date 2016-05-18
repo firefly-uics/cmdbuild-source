@@ -31,7 +31,7 @@
 		grid: undefined,
 
 		/**
-		 * @property {Ext.button.Button}
+		 * @property {CMDBuild.core.buttons.iconized.state.Map}
 		 */
 		mapButton: undefined,
 
@@ -41,7 +41,7 @@
 		mapPanel: undefined,
 
 		/**
-		 * @property {Ext.button.Button}
+		 * @property {CMDBuild.core.buttons.iconized.state.Double}
 		 */
 		toggleGridFilterButton: undefined,
 
@@ -71,6 +71,7 @@
 								state1icon: 'clear_filter',
 								state2text: CMDBuild.Translation.enableGridFilter,
 								state2icon: 'find',
+								disabled: true,
 								scope: this,
 
 								handler: function(button, e) {
@@ -87,13 +88,11 @@
 								}
 							}),
 							'->',
-							this.mapButton = Ext.create('Ext.button.Button', { // TODO: build custom button (use same in CMCardGrid)
-								text: CMDBuild.Translation.management.modcard.tabs.map,
-								iconCls: 'map',
+							this.mapButton = Ext.create('CMDBuild.core.buttons.iconized.state.Map', {
 								hidden: !this.gisMapEnabled,
 								scope: this,
 
-								handler: function(button, e) {
+								handler: function (button, e) {
 									this.delegate.cmOn('onToggleMapButtonClick');
 								}
 							})
