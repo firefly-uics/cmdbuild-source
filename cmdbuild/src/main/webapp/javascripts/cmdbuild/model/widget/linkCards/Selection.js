@@ -1,8 +1,8 @@
-(function() {
+(function () {
 
 	Ext.require('CMDBuild.core.constants.Proxy');
 
-	Ext.define('CMDBuild.model.widget.ModelLinkCards', {
+	Ext.define('CMDBuild.model.widget.linkCards.Selection', {
 		extend: 'Ext.util.Observable',
 
 		/**
@@ -38,7 +38,7 @@
 		 *
 		 * @override
 		 */
-		constructor: function(configuration) {
+		constructor: function (configuration) {
 			configuration = configuration || {};
 
 			this.singleSelect = configuration[CMDBuild.core.constants.Proxy.SINGLE_SELECT];
@@ -54,7 +54,7 @@
 		/**
 		 * @param {Int} selection - card id
 		 */
-		deselect: function(selection) {
+		deselect: function (selection) {
 			if (!this._silent)
 				if (this.isSelected(selection)) {
 					delete this.selections[selection];
@@ -66,43 +66,43 @@
 				this.lastSelection = undefined;
 		},
 
-		defreeze: function() {
+		defreeze: function () {
 			this.selections = Ext.apply({}, this._freezed);
 		},
 
-		freeze: function() {
+		freeze: function () {
 			this._freezed = Ext.apply({}, this.selections);
 		},
 
 		/**
 		 * @return {Int} cardId of last selection
 		 */
-		getLastSelection: function() {
+		getLastSelection: function () {
 			return this.lastSelection || null;
 		},
 
 		/**
 		 * @return {Array} selections - each element is a cardId
 		 */
-		getSelections: function() {
+		getSelections: function () {
 			return this.selections;
 		},
 
 		/**
 		 * @return {Boolean}
 		 */
-		hasSelection: function() {
+		hasSelection: function () {
 			return Ext.Object.getKeys(this.getSelections()).length > 0;
 		},
 
 		/**
 		 * @param {Int} selection - card id
 		 */
-		isSelected: function(selection) {
+		isSelected: function (selection) {
 			return this.selections.hasOwnProperty(selection);
 		},
 
-		reset: function() {
+		reset: function () {
 			for (var selection in this.selections)
 				this.deselect(selection);
 
@@ -113,7 +113,7 @@
 		 * @param {Int} selection - card id
 		 * @param {Object} metadata
 		 */
-		select: function(selection, metadata) {
+		select: function (selection, metadata) {
 			metadata = metadata || {};
 
 			if (!this._silent && !this.isSelected(selection)) {
