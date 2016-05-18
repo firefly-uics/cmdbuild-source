@@ -1410,7 +1410,7 @@
 	"vtypeNumericInvalidCharacterText": "Nedozvoljeni karakter",
 	"vtypeNumericMaxDecimalDigitsText": "Maksimalno je dozvoljeno {0} decimalnih mesta",
 	"vtypeNumericMaxIntegerDigitsText": "Maksimalno je dozvoljeno {0} cifara za celobrojni deo",
-	"vtypeTimeText": "{0} je nedozvoljena vrednost. Vrednost mora biti u formatu {1}",
+	"vtypeTimeText": "<em>Invalid time value format, must be H:i:s</em>",
 	"warning": "Pažnja",
 	"webServicePath": "Putanja web servisa",
 	"webServices": "<em>Web services</em>",

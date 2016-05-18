@@ -161,7 +161,7 @@
 		// Password (password)
 			/**
 			 * @param {String} value
-			 * @param {String} field
+			 * @param {Object} field
 			 *
 			 * @returns {Boolean}
 			 */
@@ -181,7 +181,25 @@
 			 *
 			 * @type {String}
 			 */
-			passwordText: CMDBuild.Translation.passwordsDoNotMatch
+			passwordText: CMDBuild.Translation.passwordsDoNotMatch,
+
+		// Time fields (time)
+			/**
+			 * @param {String} value
+			 * @param {Object} field
+			 *
+			 * @returns {Boolean}
+			 */
+			time: function (value, field) {
+				return Ext.Date.parse(value, field.format);
+			},
+
+			/**
+			 * The error text to display when the time validation function returns false
+			 *
+			 * @type {String}
+			 */
+			timeText: CMDBuild.Translation.vtypeTimeText
 	});
 
 })();

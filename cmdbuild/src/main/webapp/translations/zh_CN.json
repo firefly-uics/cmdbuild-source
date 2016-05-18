@@ -1410,7 +1410,7 @@
 	"vtypeNumericInvalidCharacterText": "无效字符",
 	"vtypeNumericMaxDecimalDigitsText": "Max {0} 小数数字",
 	"vtypeNumericMaxIntegerDigitsText": "Max {0} 整数数字",
-	"vtypeTimeText": "{0} 不是有效数据. 必须是 {1}的格式",
+	"vtypeTimeText": "<em>Invalid time value format, must be H:i:s</em>",
 	"warning": "<em>Warning</em>",
 	"webServicePath": "Web服务路径",
 	"webServices": "<em>Web services</em>",

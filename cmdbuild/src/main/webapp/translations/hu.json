@@ -1410,7 +1410,7 @@
 	"vtypeNumericInvalidCharacterText": "Érvénytelen karakter",
 	"vtypeNumericMaxDecimalDigitsText": "Max {0} decimális érték",
 	"vtypeNumericMaxIntegerDigitsText": "Max {0} integer érték",
-	"vtypeTimeText": "{0} nem érvényes érték. {1} a megfelelő formátum",
+	"vtypeTimeText": "<em>Invalid time value format, must be H:i:s</em>",
 	"warning": "<em>Warning</em>",
 	"webServicePath": "Web service elérési út",
 	"webServices": "<em>Web services</em>",

@@ -74,10 +74,5 @@ Ext.apply(Ext.form.VTypes, {
 		field.vtypeText = valid.message;
 
 		return valid.valid;
-	},
-
-	time: function(value, field) {
-		field.vtypeText = Ext.String.format(CMDBuild.Translation.vtype_text.wrong_time, value, field.format);
-		return Ext.Date.parse(value, field.format);
 	}
 });

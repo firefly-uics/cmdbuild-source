@@ -1410,7 +1410,7 @@
 	"vtypeNumericInvalidCharacterText": "Các ký tự không hợp lệ",
 	"vtypeNumericMaxDecimalDigitsText": "Tối đa {0} chữ số thập phân",
 	"vtypeNumericMaxIntegerDigitsText": "Tối đa {0} số nguyên",
-	"vtypeTimeText": "{0} giá trị không hợp lệ. Nó cần phải có định dạng {1}",
+	"vtypeTimeText": "<em>Invalid time value format, must be H:i:s</em>",
 	"warning": "Cảnh báo",
 	"webServicePath": "Đường dẫn web service",
 	"webServices": "<em>Web services</em>",

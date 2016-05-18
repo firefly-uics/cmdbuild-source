@@ -1410,7 +1410,7 @@
 	"vtypeNumericInvalidCharacterText": "کاراکتر غیر مجاز",
 	"vtypeNumericMaxDecimalDigitsText": "حداکثر {0} رقم",
 	"vtypeNumericMaxIntegerDigitsText": "حداکثر {0} رقم",
-	"vtypeTimeText": "مقدار {0}، مقدار مناسبی نیست. باید به فرمت {1} باشد",
+	"vtypeTimeText": "<em>Invalid time value format, must be H:i:s</em>",
 	"warning": "هشدار",
 	"webServicePath": "Web service path",
 	"webServices": "<em>Web services</em>",

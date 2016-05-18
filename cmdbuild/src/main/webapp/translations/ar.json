@@ -1410,7 +1410,7 @@
 	"vtypeNumericInvalidCharacterText": "حرف غير صحيح",
 	"vtypeNumericMaxDecimalDigitsText": "أقصى عدد لأرقام الجزء العشري {0}",
 	"vtypeNumericMaxIntegerDigitsText": "أقصى عدد لأرقام العدد الصحيح {0}",
-	"vtypeTimeText": "{0} ليس بقيمة صحيحة. يجب أن يكون بالتنسيق {1}",
+	"vtypeTimeText": "<em>Invalid time value format, must be H:i:s</em>",
 	"warning": "تنبيه",
 	"webServicePath": "مسار خدمة الويب",
 	"webServices": "<em>Web services</em>",
