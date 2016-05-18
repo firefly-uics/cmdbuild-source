@@ -1410,7 +1410,7 @@
 	"vtypeNumericInvalidCharacterText": "Неверный символ",
 	"vtypeNumericMaxDecimalDigitsText": "Не более {0} десятичных знаков",
 	"vtypeNumericMaxIntegerDigitsText": "Не более {0} целочисленных знаков",
-	"vtypeTimeText": "{0} не является верным значением. Требуемый формат {1}",
+	"vtypeTimeText": "<em>Invalid time value format, must be H:i:s</em>",
 	"warning": "Предупреждение",
 	"webServicePath": "Путь в веб-сервисах",
 	"webServices": "<em>Web services</em>",

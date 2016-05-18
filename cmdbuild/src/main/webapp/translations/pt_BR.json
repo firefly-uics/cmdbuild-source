@@ -1410,7 +1410,7 @@
 	"vtypeNumericInvalidCharacterText": "Caractere Inválido",
 	"vtypeNumericMaxDecimalDigitsText": "Max {0} Digitos Decimais",
 	"vtypeNumericMaxIntegerDigitsText": "Max {0} Digitos Inteiros",
-	"vtypeTimeText": "{0} não é um valor válido. Ele deve estar no formato {1}",
+	"vtypeTimeText": "<em>Invalid time value format, must be H:i:s</em>",
 	"warning": "Aviso",
 	"webServicePath": "Caminho para o Serviço Web",
 	"webServices": "<em>Web services</em>",
