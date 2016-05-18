@@ -453,7 +453,7 @@
 				params[CMDBuild.core.constants.Proxy.RETRY_WITHOUT_FILTER] = false;
 				params[CMDBuild.core.constants.Proxy.SORT] = Ext.encode(this.grid.getStore().sorters.getRange());
 
-				if (this.view.toggleGridFilterButton.getState() == CMDBuild.core.constants.Proxy.ENABLE)
+				if (this.view.toggleGridFilterButton.getActiveState() == CMDBuild.core.constants.Proxy.ENABLE)
 					params[CMDBuild.core.constants.Proxy.FILTER] = this.grid.getStore().getProxy().extraParams[CMDBuild.core.constants.Proxy.FILTER];
 
 				this.model._silent = true;
