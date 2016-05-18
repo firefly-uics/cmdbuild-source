@@ -1,4 +1,4 @@
-(function() {
+(function () {
 
 	Ext.define('CMDBuild.view.management.common.widgets.linkCards.LinkCards', {
 		extend: 'Ext.panel.Panel',
@@ -56,7 +56,7 @@
 
 		layout: 'card',
 
-		initComponent: function() {
+		initComponent: function () {
 			this.gisMapEnabled = this.widgetConf[CMDBuild.core.constants.Proxy.ENABLE_MAP] && CMDBuild.configuration.gis.get(CMDBuild.core.constants.Proxy.ENABLED);
 
 			Ext.apply(this, {
@@ -74,7 +74,7 @@
 								disabled: true,
 								scope: this,
 
-								handler: function(button, e) {
+								handler: function (button, e) {
 									this.delegate.cmOn('onToggleGridFilterButtonClick', button.getActiveState());
 								}
 							}),
@@ -83,7 +83,7 @@
 								disabled: Ext.isEmpty(this.widgetConf[CMDBuild.core.constants.Proxy.DEFAULT_SELECTION]),
 								scope: this,
 
-								handler: function(button, e) {
+								handler: function (button, e) {
 									this.delegate.cmOn('onLinkCardApplyDefaultSelectionButtonClick');
 								}
 							}),
@@ -120,7 +120,7 @@
 			this.callParent(arguments);
 
 			// To listener to select right cards on pageChange
-			this.grid.pagingBar.on('change', function(pagingBar, options) {
+			this.grid.pagingBar.on('change', function (pagingBar, options) {
 				this.delegate.cmOn('onGridPageChange');
 			}, this);
 		},
@@ -129,7 +129,7 @@
 		 * @returns {Ext.selection.RowModel}
 		 * @returns {CMDBuild.selection.CMMultiPageSelectionModel} single select or multi select
 		 */
-		getSelectionModel: function() {
+		getSelectionModel: function () {
 			if (this.widgetConf[CMDBuild.core.constants.Proxy.READ_ONLY])
 				return Ext.create('Ext.selection.RowModel');
 
@@ -144,7 +144,7 @@
 			/**
 			 * @returns {CMDBuild.view.management.common.widgets.linkCards.map.CMMapPanel}
 			 */
-			getMapPanel: function() {
+			getMapPanel: function () {
 				if (this.gisMapEnabled)
 					return this.mapPanel;
 			},
@@ -152,14 +152,14 @@
 			/**
 			 * @return {Boolean}
 			 */
-			hasMap: function() {
+			hasMap: function () {
 				return !Ext.isEmpty(this.mapPanel);
 			},
 
 			/**
 			 * @returns {Void}
 			 */
-			showGrid: function() {
+			showGrid: function () {
 				if (this.gisMapEnabled) {
 					this.getLayout().setActiveItem(this.grid.id);
 
@@ -171,7 +171,7 @@
 			/**
 			 * @returns {Void}
 			 */
-			showMap: function() {
+			showMap: function () {
 				if (this.gisMapEnabled) {
 					this.getLayout().setActiveItem(this.mapPanel.id);
 

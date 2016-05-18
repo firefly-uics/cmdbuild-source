@@ -1,4 +1,4 @@
-(function() {
+(function () {
 
 	Ext.define('CMDBuild.controller.management.common.widgets.linkCards.LinkCardsMapController', {
 		extend: 'CMDBuild.controller.management.common.widgets.linkCards.map.CMMapController',
@@ -45,7 +45,7 @@
 		miniCardGridWindowController: undefined,
 
 		/**
-		 * @property {CMDBuild.model.widget.ModelLinkCards}
+		 * @property {CMDBuild.model.widget.linkCards.Selection}
 		 */
 		model: undefined,
 
@@ -75,12 +75,12 @@
 		 * @param {Object} configuration
 		 *	{
 		 *		{CMDBuild.view.management.common.widgets.linkCards.map.CMMapPanel} view
-		 *		{CMDBuild.model.widget.ModelLinkCards} model
+		 *		{CMDBuild.model.widget.linkCards.Selection} model
 		 *		{CMDBuild.controller.management.common.widgets.linkCards.LinkCardsController} parentDelegate,
 		 *		{Object} widgetConf
 		 *	}
 		 */
-		constructor: function(configuration) {
+		constructor: function (configuration) {
 			var me = this;
 
 			this.view = this.mapPanel = configuration.view; // Use mapPanel for compatibility mode with extended class
@@ -93,7 +93,7 @@
 			this.mon(
 				this.view,
 				'afterrender',
-				function() {
+				function () {
 					this.view.addDelegate(this);
 
 					// Set me as delegate of the OpenLayers.Map (pimped in CMMap)
@@ -137,7 +137,7 @@
 						hover: false,
 						renderIntent: 'default',
 						eventListeners: {
-							featurehighlighted: function(e) {
+							featurehighlighted: function (e) {
 								me.onFeatureSelect(e);
 							}
 						}
@@ -162,7 +162,7 @@
 		 * @param {OpenLayers.Feature.Vector} e.feature
 		 * @param {CMDBuild.controller.management.common.widgets.linkCards.map.CMSelectFeatureController} e.object
 		 */
-		onFeatureSelect: function(e) {
+		onFeatureSelect: function (e) {
 			var attributes = e.feature.attributes;
 			var layer = e.feature.layer;
 			var selectedCoordinates = this.map.getLonLatFromPixel(e.object.handlers.feature.evt.xy);
@@ -189,7 +189,7 @@
 		/**
 		 * @param {Object} or {Int} card
 		 */
-		onCardSelected: function(card) {
+		onCardSelected: function (card) {
 			if (this.view.cmVisible) {
 				var id = card;
 
@@ -226,7 +226,7 @@
 		/**
 		 * Executed after zoomEvent to update mapState object and manually redraw all map's layers
 		 */
-		onZoomEnd: function() {
+		onZoomEnd: function () {
 			var zoom = this.map.getZoom();
 
 			this.mapState.updateForZoom(zoom);
@@ -235,7 +235,7 @@
 			var haveABaseLayer = false;
 
 			// Manually force redraw of all layers to fix a problem with GoogleMaps
-			Ext.Array.each(this.map.layers, function(item, index, allItems) {
+			Ext.Array.each(this.map.layers, function (item, index, allItems) {
 				item.redraw();
 			});
 
