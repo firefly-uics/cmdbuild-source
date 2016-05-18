@@ -260,12 +260,7 @@
 				var cqlQuery = this.widgetConf[CMDBuild.core.constants.Proxy.FILTER];
 
 				// Disable toggle grid filter button
-				if (
-					this.widgetConf.hasOwnProperty(CMDBuild.core.constants.Proxy.DISABLE_GRID_FILTER_TOGGLER)
-					&& this.widgetConf[CMDBuild.core.constants.Proxy.DISABLE_GRID_FILTER_TOGGLER]
-				) {
-					this.view.toggleGridFilterButton.setDisabled(true);
-				}
+				this.toggleGridFilterButtonManageState();
 
 				this.gisMapEnabled = this.widgetConf[CMDBuild.core.constants.Proxy.ENABLE_MAP] && CMDBuild.configuration.gis.get(CMDBuild.core.constants.Proxy.ENABLED);
 
@@ -297,6 +292,29 @@
 					cbScope: me,
 					checkFnScope: me
 				}).run();
+			}
+		},
+
+		/**
+		 * @param {Boolean} forceState
+		 *
+		 * @returns {Void}
+		 *
+		 * @private
+		 */
+		toggleGridFilterButtonManageState: function (forceState) {
+			forceState = Ext.isBoolean(forceState) ? forceState : null;
+
+			if (Ext.isEmpty(forceState)) { // Manage state evaluating widget configuration
+				this.view.toggleGridFilterButton.setDisabled(
+					(
+						this.widgetConf.hasOwnProperty(CMDBuild.core.constants.Proxy.DISABLE_GRID_FILTER_TOGGLER)
+						&& this.widgetConf[CMDBuild.core.constants.Proxy.DISABLE_GRID_FILTER_TOGGLER]
+					)
+					|| Ext.isEmpty(this.widgetConf[CMDBuild.core.constants.Proxy.FILTER])
+				);
+			} else { // Set forced state
+				this.view.toggleGridFilterButton.setDisabled(forceState);
 			}
 		},
 
@@ -557,20 +575,19 @@
 			this.onGridShow();
 		},
 
+		/**
+		 * @returns {Void}
+		 */
 		onToggleMapButtonClick: function() {
 			if (this.gisMapEnabled && !Ext.isEmpty(this.view.getMapPanel())) {
 				if (this.grid.isVisible()) {
 					this.view.showMap();
-					this.view.mapButton.setIconCls('table');
-					this.view.mapButton.setText(CMDBuild.Translation.management.modcard.add_relations_window.list_tab);
 
-					this.view.toggleGridFilterButton.setDisabled(true);
+					this.toggleGridFilterButtonManageState(true);
 				} else {
 					this.view.showGrid();
-					this.view.mapButton.setIconCls('map');
-					this.view.mapButton.setText(CMDBuild.Translation.management.modcard.tabs.map);
 
-					this.view.toggleGridFilterButton.setDisabled(false);
+					this.toggleGridFilterButtonManageState();
 				}
 			}
 		},
