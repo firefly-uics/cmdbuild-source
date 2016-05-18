@@ -96,7 +96,7 @@
 		// configuration
 		columns: [],
 		extraParams: undefined, // extra params for the store
-		skipSelectFirst: false,
+		skipSelectFirst: true,
 		cmPaginate: true, // to say if build or not a paging bar, default true
 		cmBasicFilter: true, // to add a basic search-field to the paging bar
 		cmAddGraphColumn: true, // to say if build or not a column to open the mystical graph window, default true
@@ -156,18 +156,6 @@
 			show: function (grid, eOpts) {
 				this.delegate.cmOn('onGridShow');
 			}
-		},
-
-		shouldSelectFirst: function () {
-			var out = !this.skipSelectFirst;
-
-			this.skipSelectFirst = false;
-
-			return out;
-		},
-
-		skipNextSelectFirst: function () {
-			this.skipSelectFirst = true;
 		},
 
 		// protected
@@ -391,19 +379,6 @@
 			this.mon(s, "load", function (store, records) {
 				this.callDelegates("onCMCardGridLoad", this);
 				this.fireEvent("load", arguments); // TODO remove?
-
-				if (this.shouldSelectFirst() && !this.getSelectionModel().hasSelection()
-						&& records && records.length > 0) {
-
-					try {
-						this.getSelectionModel().select(0);
-					} catch (e) {
-						this.fireEvent("cmWrongSelection");
-						CMDBuild.log.info("Not selected the first record");
-						_trace();
-					}
-				}
-
 			}, this);
 
 			return s;
