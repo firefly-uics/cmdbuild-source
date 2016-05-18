@@ -443,22 +443,19 @@
 			});
 		},
 
-		//protected
+		/**
+		 * @returns {Object} extraParams
+		 */
 		getStoreExtraParams: function() {
-			var p = {
-				className: ""
-			};
+			var extraParams = {};
+			extraParams['className'] = this.currentClassId ? _CMCache.getEntryTypeNameById(this.currentClassId) : '';
 
-			if (this.currentClassId) {
-				p.className = _CMCache.getEntryTypeNameById(this.currentClassId);
+			if (!Ext.isEmpty(this.CQL)) {
+				extraParams = Ext.apply(extraParams, this.CQL); // RetroCompatibility
+				extraParams['filter'] = Ext.encode(this.CQL);
 			}
 
-			if (this.CQL) {
-				p = Ext.apply(p, this.CQL); // RettoCompatibility
-				p.filter = Ext.encode(this.CQL);
-			}
-
-			return p;
+			return extraParams;
 		},
 
 		/**
