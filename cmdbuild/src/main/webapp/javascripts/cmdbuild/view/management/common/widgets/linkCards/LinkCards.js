@@ -9,7 +9,7 @@
 		],
 
 		/**
-		 * @cfg {Object}
+		 * @cfg {CMDBuild.controller.management.common.widgets.linkCards.LinkCardsController}
 		 */
 		delegate: undefined,
 
@@ -17,6 +17,13 @@
 		 * @property {CMDBuild.core.buttons.iconized.Reload}
 		 */
 		applyDefaultSelectionButton: undefined,
+
+		/**
+		 * @property {Boolean}
+		 *
+		 * @private
+		 */
+		gisMapEnabled: false,
 
 		/**
 		 * @property {CMDBuild.view.management.common.widgets.linkCards.LinkCardsGrid}
@@ -29,7 +36,7 @@
 		mapButton: undefined,
 
 		/**
-		 * @property {CMDBuild.view.management.classes.map.CMMapPanel}
+		 * @property {CMDBuild.view.management.common.widgets.linkCards.map.CMMapPanel}
 		 */
 		mapPanel: undefined,
 
@@ -47,21 +54,10 @@
 		border: false,
 		frame: false,
 
-		layout: 'border',
+		layout: 'card',
 
 		initComponent: function() {
-			var allowEditCard = false;
-			var allowShowCard = false;
-
-			if (this.widgetConf[CMDBuild.core.constants.Proxy.ALLOW_CARD_EDITING]) {
-				var priv = CMDBuild.core.Utils.getEntryTypePrivilegesByName(this.widgetConf[CMDBuild.core.constants.Proxy.CLASS_NAME]);
-
-				if (priv && priv.write) {
-					allowEditCard = true;
-				} else {
-					allowShowCard = true;
-				}
-			}
+			this.gisMapEnabled = this.widgetConf[CMDBuild.core.constants.Proxy.ENABLE_MAP] && CMDBuild.configuration.gis.get(CMDBuild.core.constants.Proxy.ENABLED);
 
 			Ext.apply(this, {
 				dockedItems: [
@@ -89,6 +85,17 @@
 								handler: function(button, e) {
 									this.delegate.cmOn('onLinkCardApplyDefaultSelectionButtonClick');
 								}
+							}),
+							'->',
+							this.mapButton = Ext.create('Ext.button.Button', { // TODO: build custom button (use same in CMCardGrid)
+								text: CMDBuild.Translation.management.modcard.tabs.map,
+								iconCls: 'map',
+								hidden: !this.gisMapEnabled,
+								scope: this,
+
+								handler: function(button, e) {
+									this.delegate.cmOn('onToggleMapButtonClick');
+								}
 							})
 						]
 					})
@@ -98,16 +105,18 @@
 						autoScroll: true,
 						selModel: this.getSelectionModel(),
 						hideMode: 'offsets',
-						region: 'center',
+						border: false
+					}),
+					this.gisMapEnabled ? this.mapPanel = Ext.create('CMDBuild.view.management.common.widgets.linkCards.map.CMMapPanel', {
+						frame: false,
 						border: false,
-						cmAllowEditCard: allowEditCard,
-						cmAllowShowCard: allowShowCard
-					})
+
+						lon: this.widgetConf['StartMapWithLongitude'] || this.widgetConf[CMDBuild.core.constants.Proxy.MAP_LONGITUDE],
+						lat: this.widgetConf['StartMapWithLatitude'] || this.widgetConf[CMDBuild.core.constants.Proxy.MAP_LATITATUDE],
+						initialZoomLevel: this.widgetConf['StartMapWithZoom'] || this.widgetConf[CMDBuild.core.constants.Proxy.MAP_ZOOM]
+					}) : null
 				]
 			});
-
-			if (this.widgetConf[CMDBuild.core.constants.Proxy.ENABLE_MAP] && CMDBuild.configuration.gis.get(CMDBuild.core.constants.Proxy.ENABLED))
-				this.buildMap();
 
 			this.callParent(arguments);
 
@@ -117,64 +126,9 @@
 			}, this);
 		},
 
-		buildMap: function() {
-			this.mapButton = Ext.create('Ext.button.Button', {
-				text: CMDBuild.Translation.management.modcard.tabs.map,
-				iconCls: 'map',
-				scope: this,
-
-				handler: function(button, e) {
-					this.delegate.cmOn('onToggleMapButtonClick');
-				}
-			});
-
-			this.mapPanel = Ext.create('CMDBuild.view.management.classes.map.CMMapPanel', {
-				frame: false,
-				border: false,
-
-				lon: this.widgetConf['StartMapWithLongitude'] || this.widgetConf[CMDBuild.core.constants.Proxy.MAP_LONGITUDE],
-				lat: this.widgetConf['StartMapWithLatitude'] || this.widgetConf[CMDBuild.core.constants.Proxy.MAP_LATITATUDE],
-				initialZoomLevel: this.widgetConf['StartMapWithZoom'] || this.widgetConf[CMDBuild.core.constants.Proxy.MAP_ZOOM]
-			});
-
-			Ext.apply(this, {
-				dockedItems: [
-					Ext.create('Ext.toolbar.Toolbar', {
-						dock: 'top',
-						itemId: CMDBuild.core.constants.Proxy.TOOLBAR_TOP,
-
-						items: [this.toggleGridFilterButton, '->', this.mapButton]
-					})
-				],
-				layout: 'card',
-				items: [this.grid, this.mapPanel]
-			});
-
-			// Function definitions
-				this.showMap = function() {
-					this.layout.setActiveItem(this.mapPanel.id);
-
-					this.mapPanel.updateSize();
-
-					this.mapPanel.setCmVisible(true);
-					this.grid.setCmVisible(false);
-				};
-
-				this.showGrid = function() {
-					this.layout.setActiveItem(this.grid.id);
-
-					this.grid.setCmVisible(true);
-					this.mapPanel.setCmVisible(false);
-				};
-
-				this.getMapPanel = function() {
-					return this.mapPanel;
-				};
-		},
-
 		/**
-		 * @return {Ext.selection.RowModel}
-		 * @return {CMDBuild.selection.CMMultiPageSelectionModel} single select or multi select
+		 * @returns {Ext.selection.RowModel}
+		 * @returns {CMDBuild.selection.CMMultiPageSelectionModel} single select or multi select
 		 */
 		getSelectionModel: function() {
 			if (this.widgetConf[CMDBuild.core.constants.Proxy.READ_ONLY])
@@ -187,12 +141,47 @@
 			});
 		},
 
-		/**
-		 * @return {Boolean}
-		 */
-		hasMap: function() {
-			return !Ext.isEmpty(this.mapPanel);
-		}
+		// Map methods
+			/**
+			 * @returns {CMDBuild.view.management.common.widgets.linkCards.map.CMMapPanel}
+			 */
+			getMapPanel: function() {
+				if (this.gisMapEnabled)
+					return this.mapPanel;
+			},
+
+			/**
+			 * @return {Boolean}
+			 */
+			hasMap: function() {
+				return !Ext.isEmpty(this.mapPanel);
+			},
+
+			/**
+			 * @returns {Void}
+			 */
+			showGrid: function() {
+				if (this.gisMapEnabled) {
+					this.getLayout().setActiveItem(this.grid.id);
+
+					this.grid.setCmVisible(true);
+					this.mapPanel.setCmVisible(false);
+				}
+			},
+
+			/**
+			 * @returns {Void}
+			 */
+			showMap: function() {
+				if (this.gisMapEnabled) {
+					this.getLayout().setActiveItem(this.mapPanel.id);
+
+					this.mapPanel.updateSize();
+
+					this.mapPanel.setCmVisible(true);
+					this.grid.setCmVisible(false);
+				}
+			}
 	});
 
 })();
