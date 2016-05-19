@@ -1,4 +1,4 @@
-/*
+/**
  * This file is part of Ext JS 4.2
  *
  * Copyright (c) 2011-2013 Sencha Inc
@@ -17,7 +17,7 @@
  * at http://www.sencha.com/contact.
  *
  * Build date: 2013-03-11 22:33:40 (aed16176e68b5e8aa1433452b12805c0ad913836)
-*/
+ */
 /**
  * Czech Translations
  * Translated by Tomáš Korčák (72)
