@@ -19,8 +19,9 @@
  * Build date: 2013-03-11 22:33:40 (aed16176e68b5e8aa1433452b12805c0ad913836)
  */
 /**
- * Portuguese/Portugal (pt_PT) Translation
- * by Nuno Franco da Costa - francodacosta.com
+ * Czech Translations
+ * Translated by Tomáš Korčák (72)
+ * 2008/02/08 18:02, Ext-2.0.1
  */
 (function () {
 
@@ -29,13 +30,13 @@
 		var exists = Ext.Function.bind(cm.get, cm);
 
 		if (Ext.Updater)
-			Ext.Updater.defaults.indicatorText = '<div class="loading-indicator">A carregar...</div>';
+			Ext.Updater.defaults.indicatorText = '<div class="loading-indicator">Prosím čekejte...</div>';
 
 		if (exists('Ext.data.Types'))
 			Ext.data.Types.stripRe = /[\$,%]/g;
 
 		if (Ext.Date) {
-			Ext.Date.monthNames = ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'];
+			Ext.Date.monthNames = ['Leden', 'Únor', 'Březen', 'Duben', 'Květen', 'Červen', 'Červenec', 'Srpen', 'Září', 'Říjen', 'Listopad', 'Prosinec'];
 
 			Ext.Date.getShortMonthName = function (month) {
 				return Ext.Date.monthNames[month].substring(0, 3);
@@ -60,255 +61,256 @@
 				return Ext.Date.monthNumbers[name.substring(0, 1).toUpperCase() + name.substring(1, 3).toLowerCase()];
 			};
 
-			Ext.Date.dayNames = ['Domingo', 'Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado'];
+			Ext.Date.dayNames = ['Neděle', 'Pondělí', 'Úterý', 'Středa', 'Čtvrtek', 'Pátek', 'Sobota'];
 
 			Ext.Date.getShortDayName = function (day) {
 				return Ext.Date.dayNames[day].substring(0, 3);
 			};
 
-//			Ext.Date.parseCodes.S.s = '(?:st|nd|rd|th)';
+			Ext.Date.parseCodes.S.s = "(?:st|nd|rd|th)";
 		}
 
-		if (Ext.MessageBox)
+		if (Ext.MessageBox) {
 			Ext.MessageBox.buttonText = {
 				ok: 'OK',
-				cancel: 'Cancel',
-				yes: 'Yes',
-				no: 'No'
+				cancel: 'Storno',
+				yes: 'Ano',
+				no: 'Ne'
 			};
+		}
 
 		if (exists('Ext.util.Format'))
 			Ext.apply(Ext.util.Format, {
-				thousandSeparator: '.',
-				decimalSeparator: ',',
-				currencySign: '\u20ac', // Portugese Euro
-				dateFormat: 'Y/m/d'
+				thousandSeparator: ',',
+				decimalSeparator: '.',
+				currencySign: '$',
+				dateFormat: 'm/d/Y'
 			});
 
 		if (exists('Ext.form.field.VTypes'))
 			Ext.apply(Ext.form.field.VTypes, {
-				emailText: 'This field should be an e-mail address in the format "user@example.com"',
-				urlText: 'This field should be a URL in the format "http:/' + '/www.example.com"',
-				alphaText: 'This field should only contain letters and _',
-				alphanumText: 'This field should only contain letters, numbers and _'
+				emailText: 'V tomto poli může být vyplněna pouze emailová adresa ve formátu "uživatel@doména.cz"',
+				urlText: 'V tomto poli může být vyplněna pouze URL (adresa internetové stránky) ve formátu "http:/' + '/www.doména.cz"',
+				alphaText: 'Toto pole může obsahovat pouze písmena abecedy a znak _',
+				alphanumText: 'Toto pole může obsahovat pouze písmena abecedy, čísla a znak _'
 			});
 	});
 
-	Ext.define('Ext.locale.pt_PT.view.View', {
+	Ext.define('Ext.locale.en.view.View', {
 		override: 'Ext.view.View',
 
 		emptyText: ''
 	});
 
-	Ext.define('Ext.locale.pt_PT.grid.plugin.DragDrop', {
+	Ext.define('Ext.locale.en.grid.plugin.DragDrop', {
 		override: 'Ext.grid.plugin.DragDrop',
 
-		dragText: '{0} linha(s) seleccionada(s)'
+		dragText: '{0} vybraných řádků{1}'
 	});
 
 	// changing the msg text below will affect the LoadMask
-	Ext.define('Ext.locale.pt_PT.view.AbstractView', {
+	Ext.define('Ext.locale.en.view.AbstractView', {
 		override: 'Ext.view.AbstractView',
 
-		msg: 'A carregar...'
+		msg: 'Prosím čekejte...'
 	});
 
-	Ext.define('Ext.locale.pt_PT.picker.Date', {
+	Ext.define('Ext.locale.en.picker.Date', {
 		override: 'Ext.picker.Date',
 
-		todayText: 'Hoje',
-		minText: 'A data é anterior ao mínimo definido',
-		maxText: 'A data é posterior ao máximo definido',
+		todayText: 'Dnes',
+		minText: 'Datum nesmí být starší než je minimální',
+		maxText: 'Datum nesmí být dřívější než je maximální',
 		disabledDaysText: '',
 		disabledDatesText: '',
 		monthNames: Ext.Date.monthNames,
 		dayNames: Ext.Date.dayNames,
-		nextText: 'Mês Seguinte (Control+Right)',
-		prevText: 'Mês Anterior (Control+Left)',
-		monthYearText: 'Escolha um mês (Control+Up/Down avaç;ar/recuar anos)',
-		todayTip: '{0} (barra de espaç;o)',
-		format: 'y/m/d',
+		nextText: 'Následující měsíc (Control+Right)',
+		prevText: 'Předcházející měsíc (Control+Left)',
+		monthYearText: 'Zvolte měsíc (ke změně let použijte Control+Up/Down)',
+		todayTip: '{0} (Spacebar)',
+		format: 'm/d/y',
 		startDay: 0
 	});
 
-	Ext.define('Ext.locale.pt_PT.picker.Month', {
+	Ext.define('Ext.locale.en.picker.Month', {
 		override: 'Ext.picker.Month',
 
-		okText: '&#160;OK&#160;',
-		cancelText: 'Cancelar'
+			okText: '&#160;OK&#160;',
+			cancelText: 'Storno'
 	});
 
-	Ext.define('Ext.locale.pt_PT.toolbar.Paging', {
+	Ext.define('Ext.locale.en.toolbar.Paging', {
 		override: 'Ext.PagingToolbar',
 
-		beforePageText: 'Página',
-		afterPageText: 'de {0}',
-		firstText: 'Primeira Página',
-		prevText: 'Página Anterior',
-		nextText: 'Pr%oacute;xima Página',
-		lastText: 'Última Página',
-		refreshText: 'Recaregar',
-		displayMsg: 'A mostrar {0} - {1} de {2}',
-		emptyMsg: 'Sem dados para mostrar'
+		beforePageText: 'Strana',
+		afterPageText: 'z {0}',
+		firstText: 'První strana',
+		prevText: 'Přecházející strana',
+		nextText: 'Následující strana',
+		lastText: 'Poslední strana',
+		refreshText: 'Aktualizovat',
+		displayMsg: 'Zobrazeno {0} - {1} z celkových {2}',
+		emptyMsg: 'Žádné záznamy nebyly nalezeny'
 	});
 
 	Ext.define('Ext.locale.en.form.Basic', {
 		override: 'Ext.form.Basic',
 
-		waitTitle: 'Please Wait...'
+		waitTitle: 'Prosím čekejte...'
 	});
 
-	Ext.define('Ext.locale.pt_PT.form.field.Base', {
+	Ext.define('Ext.locale.en.form.field.Base', {
 		override: 'Ext.form.field.Base',
 
-		invalidText: 'O valor deste campo é inválido'
+		invalidText: 'Hodnota v tomto poli je neplatná'
 	});
 
-	Ext.define('Ext.locale.pt_PT.form.field.Text', {
+	Ext.define('Ext.locale.en.form.field.Text', {
 		override: 'Ext.form.field.Text',
 
-		minLengthText: 'O comprimento mínimo deste campo &eaute; {0}',
-		maxLengthText: 'O comprimento máximo deste campo &eaute; {0}',
-		blankText: 'Este campo é de preenchimento obrigatório',
+		minLengthText: 'Pole nesmí mít méně {0} znaků',
+		maxLengthText: 'Pole nesmí být delší než {0} znaků',
+		blankText: 'Povinné pole',
 		regexText: '',
 		emptyText: null
 	});
 
-	Ext.define('Ext.locale.pt_PT.form.field.Number', {
+	Ext.define('Ext.locale.en.form.field.Number', {
 		override: 'Ext.form.field.Number',
 
 		decimalSeparator: '.',
 		decimalPrecision: 2,
-		minText: 'O valor mínimo deste campo &eaute; {0}',
-		maxText: 'O valor máximo deste campo &eaute; {0}',
-		nanText: '{0} não é um numero'
+		minText: 'Hodnota v tomto poli nesmí být menší než {0}',
+		maxText: 'Hodnota v tomto poli nesmí být větší než {0}',
+		nanText: '{0} není platné číslo'
 	});
 
-	Ext.define('Ext.locale.pt_PT.form.field.Date', {
+	Ext.define('Ext.locale.en.form.field.Date', {
 		override: 'Ext.form.field.Date',
 
-		disabledDaysText: 'Desabilitado',
-		disabledDatesText: 'Desabilitado',
-		minText: 'A data deste campo deve ser posterior a {0}',
-		maxText: 'A data deste campo deve ser anterior a {0}',
-		invalidText: '{0} não é uma data válida - deve estar no seguinte formato{1}',
-		format: 'y/m/d',
-		altFormats: 'm/d/Y|m-d-y|m-d-Y|m/d|m-d|md|mdy|mdY|d|Y-m-d'
+		disabledDaysText: 'Neaktivní',
+		disabledDatesText: 'Neaktivní',
+		minText: 'Datum v tomto poli nesmí být starší než {0}',
+		maxText: 'Datum v tomto poli nesmí být novější než {0}',
+		invalidText: '{0} není platným datem - zkontrolujte zda-li je ve formátu {1}',
+		format: 'd.m.Y',
+		altFormats: 'd/m/Y|d-m-y|d-m-Y|d/m|d-m|dm|dmy|dmY|d|Y-m-d'
 	});
 
-	Ext.define('Ext.locale.pt_PT.form.field.ComboBox', {
+	Ext.define('Ext.locale.en.form.field.ComboBox', {
 		override: 'Ext.form.field.ComboBox',
 
 		valueNotFoundText: undefined
 	}, function () {
 		Ext.apply(Ext.form.field.ComboBox.prototype.defaultListConfig, {
-			loadingText: 'A carregar...'
+			loadingText: 'Prosím čekejte...'
 		});
 	});
 
-	Ext.define('Ext.locale.pt_PT.form.field.HtmlEditor', {
+	Ext.define('Ext.locale.en.form.field.HtmlEditor', {
 		override: 'Ext.form.field.HtmlEditor',
 
-		createLinkText: 'Indique o endereç;o do link:'
+		createLinkText: 'Zadejte URL adresu odkazu:'
 	}, function () {
 		Ext.apply(Ext.form.field.HtmlEditor.prototype, {
 			buttonTips: {
 				bold: {
-					title: 'Negrito (Ctrl+B)',
-					text: 'Transforma o texto em Negrito.',
+					title: 'Tučné (Ctrl+B)',
+					text: 'Označí vybraný text tučně.',
 					cls: Ext.baseCSSPrefix + 'html-editor-tip'
 				},
 				italic: {
-					title: 'Itálico (Ctrl+I)',
-					text: 'Transforma o texto em itálico.',
+					title: 'Kurzíva (Ctrl+I)',
+					text: 'Označí vybraný text kurzívou.',
 					cls: Ext.baseCSSPrefix + 'html-editor-tip'
 				},
 				underline: {
-					title: 'Sublinhar (Ctrl+U)',
-					text: 'Sublinha o texto.',
+					title: 'Podtržení (Ctrl+U)',
+					text: 'Podtrhne vybraný text.',
 					cls: Ext.baseCSSPrefix + 'html-editor-tip'
 				},
 				increasefontsize: {
-					title: 'Aumentar texto',
-					text: 'Aumenta o tamanho da fonte.',
+					title: 'Zvětšit písmo',
+					text: 'Zvětší velikost písma.',
 					cls: Ext.baseCSSPrefix + 'html-editor-tip'
 				},
 				decreasefontsize: {
-					title: 'Encolher texto',
-					text: 'Diminui o tamanho da fonte.',
+					title: 'Zúžit písmo',
+					text: 'Zmenší velikost písma.',
 					cls: Ext.baseCSSPrefix + 'html-editor-tip'
 				},
 				backcolor: {
-					title: 'C&ocirc;r de fundo do texto',
-					text: 'Altera a c&ocirc;r de fundo do texto.',
+					title: 'Barva zvýraznění textu',
+					text: 'Označí vybraný text tak, aby vypadal jako označený zvýrazňovačem.',
 					cls: Ext.baseCSSPrefix + 'html-editor-tip'
 				},
 				forecolor: {
-					title: 'C&ocirc;r do texo',
-					text: 'Altera a a&ocirc;r do texo.',
+					title: 'Barva písma',
+					text: 'Změní barvu textu.',
 					cls: Ext.baseCSSPrefix + 'html-editor-tip'
 				},
 				justifyleft: {
-					title: 'ALinhar à esquerda',
-					text: 'ALinha o texto à esquerda.',
+					title: 'Zarovnat text vlevo',
+					text: 'Zarovná text doleva.',
 					cls: Ext.baseCSSPrefix + 'html-editor-tip'
 				},
 				justifycenter: {
-					title: 'Centrar',
-					text: 'Centra o texto.',
+					title: 'Zarovnat na střed',
+					text: 'Zarovná text na střed.',
 					cls: Ext.baseCSSPrefix + 'html-editor-tip'
 				},
 				justifyright: {
-					title: 'ALinhar à direita',
-					text: 'ALinha o texto &agravce; direita.',
+					title: 'Zarovnat text vpravo',
+					text: 'Zarovná text doprava.',
 					cls: Ext.baseCSSPrefix + 'html-editor-tip'
 				},
 				insertunorderedlist: {
-					title: 'Lista',
-					text: 'Inicia uma lista.',
+					title: 'Odrážky',
+					text: 'Začne seznam s odrážkami.',
 					cls: Ext.baseCSSPrefix + 'html-editor-tip'
 				},
 				insertorderedlist: {
-					title: 'Lista Numerada',
-					text: 'Inicia uma lista numerada.',
+					title: 'Číslování',
+					text: 'Začne číslovaný seznam.',
 					cls: Ext.baseCSSPrefix + 'html-editor-tip'
 				},
 				createlink: {
-					title: 'Hyperlink',
-					text: 'Transforma o texto num hyperlink.',
+					title: 'Internetový odkaz',
+					text: 'Z vybraného textu vytvoří internetový odkaz.',
 					cls: Ext.baseCSSPrefix + 'html-editor-tip'
 				},
 				sourceedit: {
-					title: 'Editar código',
-					text: 'Alterar para o modo de ediç;ão de código.',
+					title: 'Zdrojový kód',
+					text: 'Přepne do módu úpravy zdrojového kódu.',
 					cls: Ext.baseCSSPrefix + 'html-editor-tip'
 				}
 			}
 		});
 	});
 
-	Ext.define('Ext.locale.pt_PT.grid.header.Container', {
+	Ext.define('Ext.locale.en.grid.header.Container', {
 		override: 'Ext.grid.header.Container',
 
-		sortAscText: 'Ordenaç;ão Crescente',
-		sortDescText: 'Ordenaç;ão Decrescente',
-		columnsText: 'Colunas'
+		sortAscText: 'Řadit vzestupně',
+		sortDescText: 'Řadit sestupně',
+		columnsText: 'Sloupce'
 	});
 
-	Ext.define('Ext.locale.pt_PT.grid.GroupingFeature', {
+	Ext.define('Ext.locale.en.grid.GroupingFeature', {
 		override: 'Ext.grid.GroupingFeature',
 
-		emptyGroupText: '(Nenhum)',
-		groupByText: 'Agrupar por este campo',
-		showGroupsText: 'Mostrar nos Grupos'
+	    emptyGroupText: '(Žádná data)',
+	    groupByText: 'Seskupit dle tohoto pole',
+	    showGroupsText: 'Zobrazit ve skupině'
 	});
 
-	Ext.define('Ext.locale.pt_PT.grid.PropertyColumnModel', {
+	Ext.define('Ext.locale.en.grid.PropertyColumnModel', {
 		override: 'Ext.grid.PropertyColumnModel',
 
-		nameText: 'Nome',
-		valueText: 'Valor',
-		dateFormat: 'Y/j/m',
+		nameText: 'Název',
+		valueText: 'Hodnota',
+		dateFormat: 'm/j/Y',
 		trueText: 'true',
 		falseText: 'false'
 	});
@@ -356,7 +358,7 @@
 	});
 
 	// This is needed until we can refactor all of the locales into individual files
-	Ext.define('Ext.locale.pt_PT.Component', {
+	Ext.define('Ext.locale.en.Component', {
 		override: 'Ext.Component'
 	});
 
