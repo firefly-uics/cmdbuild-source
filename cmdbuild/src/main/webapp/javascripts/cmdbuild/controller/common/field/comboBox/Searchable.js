@@ -124,7 +124,7 @@
 						return this.cmfg('fieldComboBoxSearchableNormalizeValue', value[0]);
 
 					case 'string':
-						return isNana(parseInt(value)) ? value : parseInt(value);
+						return isNaN(parseInt(value)) ? value : parseInt(value);
 
 					case 'object': {
 						if (Ext.isFunction(value.get))

@@ -2,7 +2,7 @@
  * @class CMDBuild.WidgetBuilders.TimeAttribute
  * @extends CMDBuild.WidgetBuilders.StringAttribute
  */
-Ext.ns("CMDBuild.WidgetBuilders"); 
+Ext.ns("CMDBuild.WidgetBuilders");
 CMDBuild.WidgetBuilders.TimeAttribute = function() {};
 CMDBuild.extend(CMDBuild.WidgetBuilders.TimeAttribute, CMDBuild.WidgetBuilders.DateAttribute);
 CMDBuild.WidgetBuilders.TimeAttribute.prototype.format = "H:i:s";
@@ -22,5 +22,5 @@ CMDBuild.WidgetBuilders.TimeAttribute.prototype.buildAttributeField = function(a
 		vtype: "time",
 		width: CMDBuild.core.constants.FieldWidths.STANDARD_SMALL,
 		CMAttribute: attribute
-	});	
+	});
 };

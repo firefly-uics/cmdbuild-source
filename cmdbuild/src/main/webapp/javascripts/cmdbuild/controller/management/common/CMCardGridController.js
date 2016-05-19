@@ -71,14 +71,20 @@
 					currentSelection = currentSelection[0];
 				}
 
-				var id = currentSelection.get("Id");
-				if (id && id == card.get("Id")) {
-					return;
-				} else {
-					me.openCard({
-						Id: card.get("Id"),
-						IdClass: card.get("IdClass")
-					});
+				if (
+					!Ext.isEmpty(currentSelection)
+					&& !Ext.isEmpty(currentSelection.get) && Ext.isFunction(currentSelection.get)
+				) {
+					var id = currentSelection.get("Id");
+
+					if (id && id == card.get("Id")) {
+						return;
+					} else {
+						me.openCard({
+							Id: card.get("Id"),
+							IdClass: card.get("IdClass")
+						});
+					}
 				}
 			};
 

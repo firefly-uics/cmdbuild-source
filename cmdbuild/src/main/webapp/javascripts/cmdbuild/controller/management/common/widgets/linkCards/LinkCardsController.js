@@ -1,4 +1,4 @@
-(function() {
+(function () {
 
 	/*
 	 * The grid must be reload when is shown, so resolve the template and load it.
@@ -10,9 +10,8 @@
 		requires: [
 			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.Message',
-			'CMDBuild.proxy.Card',
 			'CMDBuild.core.Utils',
-			'CMDBuild.model.widget.ModelLinkCards'
+			'CMDBuild.proxy.widget.linkCards.LinkCards'
 		],
 
 		mixins: {
@@ -42,6 +41,13 @@
 		firstWidgetVisualization: true,
 
 		/**
+		 * @property {Boolean}
+		 *
+		 * @private
+		 */
+		gisMapEnabled: false,
+
+		/**
 		 * @property {CMDBuild.view.management.common.widgets.linkCards.LinkCardsGrid}
 		 */
 		grid: undefined,
@@ -52,7 +58,7 @@
 		mapController: undefined,
 
 		/**
-		 * @property {CMDBuild.model.widget.ModelLinkCards}
+		 * @property {CMDBuild.model.widget.linkCards.Selection}
 		 */
 		model: undefined,
 
@@ -112,7 +118,7 @@
 		 *
 		 * @override
 		 */
-		constructor: function(view, ownerController, widgetConf, clientForm, card) {
+		constructor: function (view, ownerController, widgetConf, clientForm, card) {
 			var me = this;
 			var targetClassName = null;
 
@@ -153,9 +159,7 @@
 			this.grid.delegate = this;
 			this.view.widgetConf = this.widgetConf;
 
-			this.model = Ext.create('CMDBuild.model.widget.ModelLinkCards', {
-				singleSelect: this.singleSelect
-			});
+			this.model = Ext.create('CMDBuild.model.widget.linkCards.Selection', { singleSelect: this.singleSelect });
 
 			this.templateResolver = new CMDBuild.Management.TemplateResolver({
 				clientForm: this.clientForm,
@@ -163,7 +167,7 @@
 				serverVars: this.getTemplateResolverServerVars()
 			});
 
-			if (this.view.hasMap())
+			if (this.gisMapEnabled && !Ext.isEmpty(this.view.getMapPanel()))
 				this.mapController = Ext.create('CMDBuild.controller.management.common.widgets.linkCards.LinkCardsMapController', {
 					view: this.view.getMapPanel(),
 					model: this.model,
@@ -179,7 +183,7 @@
 		 * @param {Object} param
 		 * @param {Function} callback
 		 */
-		cmOn: function(name, param, callBack) {
+		cmOn: function (name, param, callBack) {
 			switch (name) {
 				case 'onDeselect':
 					return this.onDeselect(param);
@@ -218,7 +222,7 @@
 		/**
 		 * @return {Object} variables
 		 */
-		_extractVariablesForTemplateResolver: function() {
+		_extractVariablesForTemplateResolver: function () {
 			var variables = {};
 			variables[CMDBuild.core.constants.Proxy.DEFAULT_SELECTION] = this.widgetConf[CMDBuild.core.constants.Proxy.DEFAULT_SELECTION];
 			variables[CMDBuild.core.constants.Proxy.FILTER] = this.widgetConf[CMDBuild.core.constants.Proxy.FILTER];
@@ -228,7 +232,7 @@
 			return variables;
 		},
 
-		alertIfNeeded: function() {
+		alertIfNeeded: function () {
 			if (this.alertIfChangeDefaultSelection) {
 				CMDBuild.core.Message.warning(
 					null,
@@ -248,49 +252,65 @@
 		 *
 		 * @override
 		 */
-		beforeActiveView: function() {
+		beforeActiveView: function () {
 			if (!Ext.isEmpty(this.targetClass)) {
-				var me = this;
-				var classId = this.targetClass.getId();
-				var cqlQuery = this.widgetConf[CMDBuild.core.constants.Proxy.FILTER];
+				this.gisMapEnabled = this.widgetConf[CMDBuild.core.constants.Proxy.ENABLE_MAP] && CMDBuild.configuration.gis.get(CMDBuild.core.constants.Proxy.ENABLED);
 
-				// Disable toggle grid filter button
-				if (
-					this.widgetConf.hasOwnProperty(CMDBuild.core.constants.Proxy.DISABLE_GRID_FILTER_TOGGLER)
-					&& this.widgetConf[CMDBuild.core.constants.Proxy.DISABLE_GRID_FILTER_TOGGLER]
-				) {
-					this.view.toggleGridFilterButton.setDisabled(true);
-				}
-
-				// Hide checkcolumn if readonly mode
-				this.grid.getSelectionModel().setLocked(this.widgetConf[CMDBuild.core.constants.Proxy.READ_ONLY]);
+				// Manage UI items display state
+				this.toggleGridFilterButtonManageState();// Disable toggle grid filter button
+				this.grid.getSelectionModel().setLocked(this.widgetConf[CMDBuild.core.constants.Proxy.READ_ONLY]); // Hide checkcolumn if readonly mode
 
 				new _CMUtils.PollingFunction({
-					success: function() {
+					success: function () {
 						// CQL filter and regular filter cannot be merged now.
 						// The filter button should be enabled only if no other filter is present.
-						if (cqlQuery) {
-							me.resolveFilterTemplate(cqlQuery, classId);
+						if (
+							!Ext.isEmpty(this.widgetConf[CMDBuild.core.constants.Proxy.FILTER])
+							&& this.view.toggleGridFilterButton.getActiveState() == CMDBuild.core.constants.Proxy.ENABLE
+						) {
+							this.resolveFilterTemplate(this.widgetConf[CMDBuild.core.constants.Proxy.FILTER], this.targetClass.getId());
 						} else {
-							me.updateViewGrid(classId);
+							this.updateViewGrid(this.targetClass.getId());
 						}
 
-						if (!me.model.hasSelection())
-							me.resolveDefaultSelectionTemplate();
+						if (!this.model.hasSelection())
+							this.resolveDefaultSelectionTemplate();
 
-						me.grid.disableFilterMenuButton();
-						me.onGridShow();
+						this.onGridShow();
 					},
-					failure: function() {
+					failure: function () {
 						CMDBuild.core.Message.error(null, CMDBuild.Translation.errors.busyVisualControls, false);
 					},
-					checkFn: function() {
+					checkFn: function () {
 						// I want exit if I'm not busy
-						return !me.isBusy();
+						return !this.isBusy();
 					},
-					cbScope: me,
-					checkFnScope: me
+					cbScope: this,
+					checkFnScope: this
 				}).run();
+			}
+		},
+
+		/**
+		 * @param {Boolean} forceState
+		 *
+		 * @returns {Void}
+		 *
+		 * @private
+		 */
+		toggleGridFilterButtonManageState: function (forceState) {
+			forceState = Ext.isBoolean(forceState) ? forceState : null;
+
+			if (Ext.isEmpty(forceState)) { // Manage state evaluating widget configuration
+				this.view.toggleGridFilterButton.setDisabled(
+					(
+						this.widgetConf.hasOwnProperty(CMDBuild.core.constants.Proxy.DISABLE_GRID_FILTER_TOGGLER)
+						&& this.widgetConf[CMDBuild.core.constants.Proxy.DISABLE_GRID_FILTER_TOGGLER]
+					)
+					|| Ext.isEmpty(this.widgetConf[CMDBuild.core.constants.Proxy.FILTER])
+				);
+			} else { // Set forced state
+				this.view.toggleGridFilterButton.setDisabled(forceState);
 			}
 		},
 
@@ -298,7 +318,7 @@
 		 * @param {Ext.data.Model} model
 		 * @param {Boolean] editable
 		 */
-		getCardWindow: function(model, editable) {
+		getCardWindow: function (model, editable) {
 			var cardWindow = Ext.create('CMDBuild.view.management.common.widgets.linkCards.cardWindow.CMCardWindow', {
 				cmEditMode: editable,
 				withButtons: editable,
@@ -324,7 +344,7 @@
 		 *
 		 * @return {String}
 		 */
-		getClassNameFromFilterString: function(cqlFilter) {
+		getClassNameFromFilterString: function (cqlFilter) {
 			var splitFilter = cqlFilter.trim().split('from');
 			splitFilter = splitFilter[1].trim();
 
@@ -348,7 +368,7 @@
 		 *
 		 * @override
 		 */
-		getData: function() {
+		getData: function () {
 			var out = null;
 
 			if (!this.readOnly) {
@@ -388,7 +408,7 @@
 		/**
 		 * @return {Object} targetClass
 		 */
-		getTargetClass: function() {
+		getTargetClass: function () {
 			return this.targetClass;
 		},
 
@@ -397,7 +417,7 @@
 		 *
 		 * @override
 		 */
-		isBusy: function() {
+		isBusy: function () {
 			return this.templateResolverIsBusy;
 		},
 
@@ -406,7 +426,7 @@
 		 *
 		 * @override
 		 */
-		isValid: function() {
+		isValid: function () {
 			if (!this.readOnly && this.widgetConf[CMDBuild.core.constants.Proxy.REQUIRED]) {
 				return this.model.hasSelection();
 			} else {
@@ -420,14 +440,14 @@
 		 * 		{Ext.data.Model} record
 		 * 	}
 		 */
-		onDeselect: function(params) {
+		onDeselect: function (params) {
 			this.model.deselect(params.record.get('Id'));
 		},
 
 		/**
 		 * Event to select right cards on grid page change
 		 */
-		onGridPageChange: function() {
+		onGridPageChange: function () {
 			var modelSelections = this.model.getSelections();
 
 			this.grid.getSelectionModel().deselectAll();
@@ -443,7 +463,7 @@
 		 *
 		 * @private
 		 */
-		onGridShow: function() {
+		onGridShow: function () {
 			var lastSelectionId = this.model.getLastSelection();
 
 			if (!Ext.isEmpty(lastSelectionId)) {
@@ -453,26 +473,24 @@
 				params[CMDBuild.core.constants.Proxy.RETRY_WITHOUT_FILTER] = false;
 				params[CMDBuild.core.constants.Proxy.SORT] = Ext.encode(this.grid.getStore().sorters.getRange());
 
-				if (this.view.toggleGridFilterButton.getState() == CMDBuild.core.constants.Proxy.ENABLE)
+				if (this.view.toggleGridFilterButton.getActiveState() == CMDBuild.core.constants.Proxy.ENABLE)
 					params[CMDBuild.core.constants.Proxy.FILTER] = this.grid.getStore().getProxy().extraParams[CMDBuild.core.constants.Proxy.FILTER];
 
 				this.model._silent = true;
 
-				CMDBuild.proxy.Card.readPosition({
+				CMDBuild.proxy.widget.linkCards.LinkCards.readCardPosition({
 					params: params,
 					loadMask: false,
 					scope: this,
-					success: function(result, options, decodedResult) {
+					success: function (result, options, decodedResult) {
 						var position = decodedResult.position;
 
 						if (position >= 0) {
-							var	pageNumber = CMDBuild.core.Utils.getPageNumber(position);
-
 							this.grid.loadPage(
-								pageNumber,
+								CMDBuild.core.Utils.getPageNumber(position),
 								{
 									scope: this,
-									cb: function() {
+									cb: function () {
 										this.grid.getSelectionModel().select(
 											this.grid.getStore().find(CMDBuild.core.constants.Proxy.ID, lastSelectionId)
 										);
@@ -499,10 +517,10 @@
 		/**
 		 * @param {Ext.data.Model} model
 		 */
-		onRowEditButtonClick: function(model) {
+		onRowEditButtonClick: function (model) {
 			var cardWindow = this.getCardWindow(model, true);
 
-			cardWindow.on('destroy', function() {
+			cardWindow.on('destroy', function () {
 				this.grid.reload();
 			}, this, { single: true });
 
@@ -512,14 +530,14 @@
 		/**
 		 * @param {Ext.data.Model} model
 		 */
-		onRowViewButtonClick: function(model) {
+		onRowViewButtonClick: function (model) {
 			this.getCardWindow(model, false).show();
 		},
 
 		/**
 		 * @param {Object} record
 		 */
-		onSelect: function(record) {
+		onSelect: function (record) {
 			if (!Ext.isEmpty(record) && !Ext.isEmpty(record.get('Id'))) {
 				_CMCardModuleState.setCard(record, null, false);
 
@@ -535,7 +553,7 @@
 		 *
 		 * @param {Boolean} forceState
 		 */
-		onToggleGridFilterButtonClick: function(forceState) {
+		onToggleGridFilterButtonClick: function (forceState) {
 			var classId = this.targetClass.getId();
 			var cqlQuery = this.widgetConf[CMDBuild.core.constants.Proxy.FILTER];
 
@@ -551,53 +569,59 @@
 			this.onGridShow();
 		},
 
-		onToggleMapButtonClick: function() {
-			if (this.view.hasMap()) {
+		/**
+		 * @returns {Void}
+		 */
+		onToggleMapButtonClick: function () {
+			if (this.gisMapEnabled && !Ext.isEmpty(this.view.getMapPanel())) {
 				if (this.grid.isVisible()) {
 					this.view.showMap();
-					this.view.mapButton.setIconCls('table');
-					this.view.mapButton.setText(CMDBuild.Translation.management.modcard.add_relations_window.list_tab);
 
-					this.view.toggleGridFilterButton.setDisabled(true);
+					this.toggleGridFilterButtonManageState(true);
 				} else {
 					this.view.showGrid();
-					this.view.mapButton.setIconCls('map');
-					this.view.mapButton.setText(CMDBuild.Translation.management.modcard.tabs.map);
 
-					this.view.toggleGridFilterButton.setDisabled(false);
+					this.toggleGridFilterButtonManageState();
 				}
 			}
 		},
 
-		onLinkCardApplyDefaultSelectionButtonClick: function() {
+		/**
+		 * @returns {Void}
+		 */
+		onLinkCardApplyDefaultSelectionButtonClick: function () {
 			this.resolveDefaultSelectionTemplate();
 		},
 
-		resolveDefaultSelectionTemplate: function() {
-			var me = this;
-
+		/**
+		 * @returns {Void}
+		 *
+		 * @private
+		 */
+		resolveDefaultSelectionTemplate: function () {
 			this.templateResolverIsBusy = true;
 			this.viewReset();
 			this.alertIfNeeded();
 
 			this.templateResolver.resolveTemplates({
 				attributes: [CMDBuild.core.constants.Proxy.DEFAULT_SELECTION],
-				callback: function(out, ctx) {
-					var defaultSelection = me.templateResolver.buildCQLQueryParameters(out[CMDBuild.core.constants.Proxy.DEFAULT_SELECTION], ctx);
+				scope: this,
+				callback: function (out, ctx) {
+					var defaultSelection = this.templateResolver.buildCQLQueryParameters(out[CMDBuild.core.constants.Proxy.DEFAULT_SELECTION], ctx);
 
 					// Do the request only if there are a default selection
-					if (defaultSelection) {
-						CMDBuild.proxy.Card.readAll({
+					if (!Ext.isEmpty(defaultSelection)) {
+						CMDBuild.proxy.widget.linkCards.LinkCards.readAllCards({
 							params: defaultSelection,
 							loadMask: false,
 							scope: this,
-							success: function(response, options, decodedResponse) {
+							success: function (response, options, decodedResponse) {
 								var decodedResponse = decodedResponse.rows;
 								var lastSelection = undefined;
 
 								if (!Ext.isEmpty(decodedResponse)) {
-									Ext.Array.forEach(decodedResponse, function(row, i, allRows) {
-										me.model.select(row['Id']);
+									Ext.Array.forEach(decodedResponse, function (row, i, allRows) {
+										this.model.select(row['Id']);
 
 										lastSelection = row;
 									}, this);
@@ -612,17 +636,17 @@
 									);
 								}
 
-								me.templateResolverIsBusy = false;
+								this.templateResolverIsBusy = false;
 
-								me.onGridShow();
+								this.onGridShow();
 							}
 						});
 
-						me.templateResolver.bindLocalDepsChange(function() {
-							me.resolveDefaultSelectionTemplate();
+						this.templateResolver.bindLocalDepsChange(function () {
+							this.resolveDefaultSelectionTemplate();
 						});
 					} else {
-						me.templateResolverIsBusy = false;
+						this.templateResolverIsBusy = false;
 					}
 				}
 			});
@@ -632,16 +656,16 @@
 		 * @param {String} cqlQuery
 		 * @param {Int} classId
 		 */
-		resolveFilterTemplate: function(cqlQuery, classId) {
+		resolveFilterTemplate: function (cqlQuery, classId) {
 			var me = this;
 
 			this.templateResolver.resolveTemplates({
 				attributes: [CMDBuild.core.constants.Proxy.FILTER],
-				callback: function(out, ctx) {
+				callback: function (out, ctx) {
 					var cardReqParams = me.templateResolver.buildCQLQueryParameters(cqlQuery, ctx);
 					me.updateViewGrid(classId, cardReqParams);
 
-					me.templateResolver.bindLocalDepsChange(function() {
+					me.templateResolver.bindLocalDepsChange(function () {
 						me.viewReset();
 					});
 				}
@@ -652,13 +676,13 @@
 		 * @param {Int} classId
 		 * @param {Object} cqlParams
 		 */
-		updateViewGrid: function(classId, cqlParams) {
+		updateViewGrid: function (classId, cqlParams) {
 			this.grid.CQL = cqlParams;
 			this.grid.store.proxy.extraParams = this.grid.getStoreExtraParams();
 			this.grid.updateStoreForClassId(classId);
 		},
 
-		viewReset: function() {
+		viewReset: function () {
 			this.grid.getSelectionModel().deselectAll();
 			this.model.reset();
 		}

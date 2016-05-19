@@ -1,7 +1,13 @@
-(function() {
+(function () {
 
 	Ext.define('CMDBuild.controller.management.common.widgets.linkCards.LinkCardsMapController', {
-		extend: 'CMDBuild.controller.management.classes.map.CMMapController',
+		extend: 'CMDBuild.controller.management.common.widgets.linkCards.map.CMMapController',
+
+		requires: [
+			'CMDBuild.controller.management.common.widgets.linkCards.map.CMCardBrowserTreeDataSource',
+			'CMDBuild.controller.management.common.widgets.linkCards.map.CMMapLayerSwitcherController',
+			'CMDBuild.controller.management.common.widgets.linkCards.map.CMSelectFeatureController'
+		],
 
 		/**
 		 * @property {Object}
@@ -19,7 +25,7 @@
 		currentCardId: undefined,
 
 		/**
-		 * @property {CMDBuild.controller.management.classes.map.CMMapEditingWindowDelegate}
+		 * @property {CMDBuild.controller.management.common.widgets.linkCards.map.CMMapEditingWindowDelegate}
 		 */
 		editingWindowDelegate: undefined,
 
@@ -34,17 +40,17 @@
 		mapState: undefined,
 
 		/**
-		 * @property {CMDBuild.controller.management.CMMiniCardGridWindowFeaturesController}
+		 * @property {CMDBuild.controller.management.common.widgets.linkCards.map.CMMiniCardGridWindowFeaturesController}
 		 */
 		miniCardGridWindowController: undefined,
 
 		/**
-		 * @property {CMDBuild.model.widget.ModelLinkCards}
+		 * @property {CMDBuild.model.widget.linkCards.Selection}
 		 */
 		model: undefined,
 
 		/**
-		 * @property {CMDBuild.Management.CMSelectFeatureController}
+		 * @property {CMDBuild.controller.management.common.widgets.linkCards.map.CMSelectFeatureController}
 		 */
 		selectControl: undefined,
 
@@ -54,9 +60,10 @@
 		targetClass: undefined,
 
 		/**
-		 * @property {CMDBuild.view.management.classes.map.CMMapPanel}
+		 * @property {CMDBuild.view.management.common.widgets.linkCards.map.CMMapPanel}
 		 */
 		view: undefined,
+
 		mapPanel: undefined,
 
 		/**
@@ -67,15 +74,13 @@
 		/**
 		 * @param {Object} configuration
 		 *	{
-		 *		{CMDBuild.view.management.classes.map.CMMapPanel} view
-		 *		{CMDBuild.model.widget.ModelLinkCards} model
+		 *		{CMDBuild.view.management.common.widgets.linkCards.map.CMMapPanel} view
+		 *		{CMDBuild.model.widget.linkCards.Selection} model
 		 *		{CMDBuild.controller.management.common.widgets.linkCards.LinkCardsController} parentDelegate,
 		 *		{Object} widgetConf
 		 *	}
-		 *
-		 * @override
 		 */
-		constructor: function(configuration) {
+		constructor: function (configuration) {
 			var me = this;
 
 			this.view = this.mapPanel = configuration.view; // Use mapPanel for compatibility mode with extended class
@@ -88,7 +93,7 @@
 			this.mon(
 				this.view,
 				'afterrender',
-				function() {
+				function () {
 					this.view.addDelegate(this);
 
 					// Set me as delegate of the OpenLayers.Map (pimped in CMMap)
@@ -105,7 +110,7 @@
 					var layerSwitcher = this.view.getLayerSwitcherPanel();
 					this.view.addDelegate(
 						// TODO: use Ext.create with object as parameter
-						new CMDBuild.controller.management.classes.CMMapLayerSwitcherController(layerSwitcher, this.map)
+						new CMDBuild.controller.management.common.widgets.linkCards.map.CMMapLayerSwitcherController(layerSwitcher, this.map)
 					);
 
 					// Set me as a delegate of the switcher
@@ -115,24 +120,24 @@
 					var cardBrowserPanel = this.view.getCardBrowserPanel();
 					if (cardBrowserPanel) {
 						// TODO: use Ext.create with object as parameter
-						new CMDBuild.controller.management.classes.CMCardBrowserTreeDataSource(cardBrowserPanel, this.mapState);
-						cardBrowserPanel.addDelegate(Ext.create('CMDBuild.controller.management.classes.map.CMCardBrowserDelegate', this));
+						new CMDBuild.controller.management.common.widgets.linkCards.map.CMCardBrowserTreeDataSource(cardBrowserPanel, this.mapState);
+						cardBrowserPanel.addDelegate(Ext.create('CMDBuild.controller.management.common.widgets.linkCards.map.CMCardBrowserDelegate', this));
 					}
 
 					// Set me as delegate of the mini card grid
 					this.view.getMiniCardGrid().addDelegate(this);
 
 					// Init the miniCardGridWindowController
-					this.miniCardGridWindowController = Ext.create('CMDBuild.controller.management.CMMiniCardGridWindowFeaturesController');
+					this.miniCardGridWindowController = Ext.create('CMDBuild.controller.management.common.widgets.linkCards.map.CMMiniCardGridWindowFeaturesController');
 
 					// Initialize editing control
-					this.editingWindowDelegate = Ext.create('CMDBuild.controller.management.classes.map.CMMapEditingWindowDelegate', this);
+					this.editingWindowDelegate = Ext.create('CMDBuild.controller.management.common.widgets.linkCards.map.CMMapEditingWindowDelegate', this);
 					this.view.editingWindow.addDelegate(this.editingWindowDelegate);
-					this.selectControl = new CMDBuild.Management.CMSelectFeatureController([], {
+					this.selectControl = new CMDBuild.controller.management.common.widgets.linkCards.map.CMSelectFeatureController([], {
 						hover: false,
 						renderIntent: 'default',
 						eventListeners: {
-							featurehighlighted: function(e) {
+							featurehighlighted: function (e) {
 								me.onFeatureSelect(e);
 							}
 						}
@@ -155,11 +160,9 @@
 		/**
 		 * @param {Object} e
 		 * @param {OpenLayers.Feature.Vector} e.feature
-		 * @param {CMDBuild.Management.CMSelectFeatureController} e.object
-		 *
-		 * @override
+		 * @param {CMDBuild.controller.management.common.widgets.linkCards.map.CMSelectFeatureController} e.object
 		 */
-		onFeatureSelect: function(e) {
+		onFeatureSelect: function (e) {
 			var attributes = e.feature.attributes;
 			var layer = e.feature.layer;
 			var selectedCoordinates = this.map.getLonLatFromPixel(e.object.handlers.feature.evt.xy);
@@ -185,10 +188,8 @@
 
 		/**
 		 * @param {Object} or {Int} card
-		 *
-		 * @override
 		 */
-		onCardSelected: function(card) {
+		onCardSelected: function (card) {
 			if (this.view.cmVisible) {
 				var id = card;
 
@@ -224,10 +225,8 @@
 
 		/**
 		 * Executed after zoomEvent to update mapState object and manually redraw all map's layers
-		 *
-		 * @override
 		 */
-		onZoomEnd: function() {
+		onZoomEnd: function () {
 			var zoom = this.map.getZoom();
 
 			this.mapState.updateForZoom(zoom);
@@ -236,7 +235,7 @@
 			var haveABaseLayer = false;
 
 			// Manually force redraw of all layers to fix a problem with GoogleMaps
-			Ext.Array.each(this.map.layers, function(item, index, allItems) {
+			Ext.Array.each(this.map.layers, function (item, index, allItems) {
 				item.redraw();
 			});
 

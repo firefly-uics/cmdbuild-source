@@ -6,7 +6,7 @@
 		requires: [
 			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.Message',
-			'CMDBuild.proxy.customForm.Csv',
+			'CMDBuild.proxy.widget.customForm.Csv',
 			'CMDBuild.proxy.lookup.Lookup',
 			'CMDBuild.proxy.widget.customForm.CustomForm'
 		],
@@ -113,7 +113,7 @@
 			if (
 				!Ext.isEmpty(csvData) && Ext.isArray(csvData)
 				&& !Ext.isEmpty(attribute)
-				&& !Ext.isEmpty(requestBarrier) && Ext.isString(requestBarrier)
+				&& !Ext.isEmpty(requestBarrier)
 			) {
 				var attributeName = attribute.get(CMDBuild.core.constants.Proxy.NAME);
 
@@ -141,7 +141,7 @@
 					callback: requestBarrier.getCallback('widgetCustomFormImportBarrier')
 				});
 			} else {
-				_error('malformed parameters in Lookup data manage', this);
+				_error('malformed parameters in Lookup data manage', this, csvData, attribute, requestBarrier);
 			}
 		},
 
@@ -158,7 +158,7 @@
 			if (
 				!Ext.isEmpty(csvData) && Ext.isArray(csvData)
 				&& !Ext.isEmpty(attribute)
-				&& !Ext.isEmpty(requestBarrier) && Ext.isString(requestBarrier)
+				&& !Ext.isEmpty(requestBarrier)
 			) {
 				var attributeName = attribute.get(CMDBuild.core.constants.Proxy.NAME);
 				var cardsCodesToManage = [];
@@ -212,7 +212,7 @@
 					});
 				}
 			} else {
-				_error('malformed parameters in Reference data manage', this);
+				_error('malformed parameters in Reference data manage', this, csvData, attribute, requestBarrier);
 			}
 		},
 
@@ -403,7 +403,7 @@
 			if (this.validate(this.form)) {
 				this.view.setLoading(true);
 
-				CMDBuild.proxy.customForm.Csv.decode({
+				CMDBuild.proxy.widget.customForm.Csv.decode({
 					form: this.form.getForm(),
 					scope: this,
 					failure: function (form, action) {
