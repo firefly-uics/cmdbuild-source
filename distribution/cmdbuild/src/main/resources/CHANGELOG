@@ -3,7 +3,9 @@ CMDBuild 2.4.1 (released YYYY/MM/DD)
 
 NEW FEATURES
 
- *  Single authentication system used by all web service
+ * Single authentication system used by all web service
+
+ * Added Czech translation
 
 
 FIXES
@@ -127,6 +129,8 @@ FIXES
  * GIS map errors
 
  * GIS map card selection error
+
+ * Cannot load interface when "translations" directory contains unexpected files
 
 
 
