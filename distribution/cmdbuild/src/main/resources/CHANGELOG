@@ -3,7 +3,9 @@ CMDBuild 2.4.1 (released YYYY/MM/DD)
 
 NEW FEATURES
 
- *  Single authentication system used by all web service
+ * Single authentication system used by all web service
+
+ * Added Czech translation
 
 
 FIXES
