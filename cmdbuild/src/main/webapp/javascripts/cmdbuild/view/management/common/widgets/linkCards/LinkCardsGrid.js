@@ -96,7 +96,6 @@
 		// configuration
 		columns: [],
 		extraParams: undefined, // extra params for the store
-		skipSelectFirst: true,
 		cmPaginate: true, // to say if build or not a paging bar, default true
 		cmBasicFilter: true, // to add a basic search-field to the paging bar
 		cmAddGraphColumn: true, // to say if build or not a column to open the mystical graph window, default true
