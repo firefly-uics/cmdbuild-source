@@ -130,6 +130,8 @@ FIXES
 
  * GIS map card selection error
 
+ * Cannot load interface when "translations" directory contains unexpected files
+
 
 
 
