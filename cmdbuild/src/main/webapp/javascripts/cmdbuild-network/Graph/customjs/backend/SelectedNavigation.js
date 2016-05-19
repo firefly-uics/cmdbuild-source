@@ -42,7 +42,7 @@
 			setTimeout(function() { onObjectReady(); }, 100);
 		};
 		this.loadData = function(param, callback, callbackScope) {
-			var data = this.model.getCards(param.firstRow, param.nRows, this.filter);
+			var data = this.model.getCards(-1, -1, this.filter);
 			this.total = data.total;
 			if (param.sort) {
 				var sortingColumn = param.sort;
@@ -53,7 +53,7 @@
 						return (a[sortingColumn] < b[sortingColumn]) ? 1  : -1;
 				});
 			}
-			this.data = data.rows;
+			this.data = data.rows.splice(param.firstRow, param.nRows);
 			callback.apply(callbackScope, this.data);
 		};
 		this.getAttributes = function() {
