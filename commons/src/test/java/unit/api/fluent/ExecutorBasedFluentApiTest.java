@@ -19,6 +19,7 @@ import org.cmdbuild.api.fluent.Attachment;
 import org.cmdbuild.api.fluent.AttachmentDescriptor;
 import org.cmdbuild.api.fluent.CardDescriptor;
 import org.cmdbuild.api.fluent.CreateReport;
+import org.cmdbuild.api.fluent.ExecutorBasedFluentApi;
 import org.cmdbuild.api.fluent.ExistingCard;
 import org.cmdbuild.api.fluent.ExistingRelation;
 import org.cmdbuild.api.fluent.FluentApi;
@@ -40,7 +41,7 @@ import org.mockito.Captor;
 import org.mockito.runners.MockitoJUnitRunner;
 
 @RunWith(MockitoJUnitRunner.class)
-public class FluentApiTest {
+public class ExecutorBasedFluentApiTest {
 
 	private static final String CLASS_NAME = "class";
 	private static final String DOMAIN_NAME = "domain";
@@ -71,7 +72,7 @@ public class FluentApiTest {
 	@Before
 	public void createApi() throws Exception {
 		executor = mock(FluentApiExecutor.class);
-		api = new FluentApi(executor);
+		api = new ExecutorBasedFluentApi(executor);
 	}
 
 	@Test
