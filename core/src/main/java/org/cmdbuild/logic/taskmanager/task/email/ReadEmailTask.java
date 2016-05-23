@@ -13,7 +13,7 @@ import java.util.Map;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import org.cmdbuild.logic.taskmanager.ScheduledTask;
-import org.cmdbuild.logic.taskmanager.TaskVistor;
+import org.cmdbuild.logic.taskmanager.TaskVisitor;
 import org.cmdbuild.logic.taskmanager.task.email.mapper.MapperEngine;
 import org.cmdbuild.logic.taskmanager.task.email.mapper.NullMapperEngine;
 import org.joda.time.DateTime;
@@ -263,7 +263,7 @@ public class ReadEmailTask implements ScheduledTask {
 	}
 
 	@Override
-	public void accept(final TaskVistor visitor) {
+	public void accept(final TaskVisitor visitor) {
 		visitor.visit(this);
 	}
 
@@ -285,6 +285,11 @@ public class ReadEmailTask implements ScheduledTask {
 	@Override
 	public String getCronExpression() {
 		return cronExpression;
+	}
+
+	@Override
+	public boolean isExecutable() {
+		return true;
 	}
 
 	@Override

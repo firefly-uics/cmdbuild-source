@@ -59,11 +59,9 @@ public class DefaultSchedulerFacade implements SchedulerFacade {
 	public void create(final ScheduledTask task, final Callback callback) {
 		logger.info(MARKER, "creating a new scheduled task '{}'", task);
 		if (task.isActive()) {
-			final Job job = converter.from(task).toJob();
-			final Job jobWithCallback = new JobWithCallback(job, callback);
-			final Job jobWithLogging = new JobWithCallback(jobWithCallback, LoggingCallback.of(jobWithCallback));
+			final Job job = jobFrom(task, callback);
 			final Trigger trigger = RecurringTrigger.at(addSecondsField(task.getCronExpression()));
-			schedulerService.add(jobWithLogging, trigger);
+			schedulerService.add(job, trigger);
 		}
 	}
 
@@ -78,6 +76,19 @@ public class DefaultSchedulerFacade implements SchedulerFacade {
 			final Job job = converter.from(task).withNoExecution().toJob();
 			schedulerService.remove(job);
 		}
+	}
+
+	@Override
+	public void execute(final ScheduledTask task, final Callback callback) {
+		logger.info(MARKER, "executing an existing scheduled task '{}'", task);
+		jobFrom(task, callback).execute();
+	}
+
+	private Job jobFrom(final ScheduledTask task, final Callback callback) {
+		final Job job = converter.from(task).toJob();
+		final Job jobWithCallback = new JobWithCallback(job, callback);
+		final Job jobWithLogging = new JobWithCallback(jobWithCallback, LoggingCallback.of(jobWithCallback));
+		return jobWithLogging;
 	}
 
 }

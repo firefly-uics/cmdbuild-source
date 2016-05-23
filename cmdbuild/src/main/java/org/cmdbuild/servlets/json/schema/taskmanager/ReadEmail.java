@@ -4,12 +4,14 @@ import static com.google.common.collect.FluentIterable.from;
 import static org.apache.commons.lang3.ObjectUtils.defaultIfNull;
 import static org.cmdbuild.common.utils.BuilderUtils.a;
 import static org.cmdbuild.logic.dms.Utils.valueForCategory;
+import static org.cmdbuild.services.json.dto.JsonResponse.success;
 import static org.cmdbuild.servlets.json.CommunicationConstants.ACTIVE;
 import static org.cmdbuild.servlets.json.CommunicationConstants.ATTACHMENTS_ACTIVE;
 import static org.cmdbuild.servlets.json.CommunicationConstants.ATTACHMENTS_CATEGORY;
 import static org.cmdbuild.servlets.json.CommunicationConstants.CRON_EXPRESSION;
 import static org.cmdbuild.servlets.json.CommunicationConstants.DESCRIPTION;
 import static org.cmdbuild.servlets.json.CommunicationConstants.EMAIL_ACCOUNT;
+import static org.cmdbuild.servlets.json.CommunicationConstants.EXECUTABLE;
 import static org.cmdbuild.servlets.json.CommunicationConstants.FILTER_FROM_ADDRESS;
 import static org.cmdbuild.servlets.json.CommunicationConstants.FILTER_FUNCTION;
 import static org.cmdbuild.servlets.json.CommunicationConstants.FILTER_SUBJECT;
@@ -89,6 +91,11 @@ public class ReadEmail extends JSONBaseWithSpringContext {
 		@JsonProperty(CRON_EXPRESSION)
 		public String getCronExpression() {
 			return delegate.getCronExpression();
+		}
+
+		@JsonProperty(EXECUTABLE)
+		public boolean executable() {
+			return delegate.isExecutable();
 		}
 
 		@JsonProperty(EMAIL_ACCOUNT)
@@ -287,11 +294,11 @@ public class ReadEmail extends JSONBaseWithSpringContext {
 				//
 				// mapping
 				.withMapperEngine(mapperEngine(mapperActive, keyInit, keyEnd, valueInit, valueEnd) //
-				)
+		)
 				//
 				.build();
 		final Long id = taskManagerLogic().create(task);
-		return JsonResponse.success(id);
+		return success(id);
 	}
 
 	@JSONExported
@@ -302,13 +309,13 @@ public class ReadEmail extends JSONBaseWithSpringContext {
 				.withId(id) //
 				.build();
 		final ReadEmailTask readed = taskManagerLogic().read(task, ReadEmailTask.class);
-		return JsonResponse.success(toJson(readed));
+		return success(toJson(readed));
 	}
 
 	@JSONExported
 	public JsonResponse readAll() {
 		final Iterable<? extends Task> tasks = taskManagerLogic().read(ReadEmailTask.class);
-		return JsonResponse.success(JsonElements.of(from(tasks) //
+		return success(JsonElements.of(from(tasks) //
 				.transform(TASK_TO_JSON_TASK)));
 	}
 
@@ -383,7 +390,7 @@ public class ReadEmail extends JSONBaseWithSpringContext {
 				//
 				.build();
 		taskManagerLogic().update(task);
-		return JsonResponse.success();
+		return success();
 	}
 
 	@Admin
@@ -395,6 +402,18 @@ public class ReadEmail extends JSONBaseWithSpringContext {
 				.withId(id) //
 				.build();
 		taskManagerLogic().delete(task);
+	}
+
+	@Admin
+	@JSONExported
+	public JsonResponse execute( //
+			@Parameter(ID) final Long id //
+	) {
+		final ReadEmailTask task = ReadEmailTask.newInstance() //
+				.withId(id) //
+				.build();
+		taskManagerLogic().execute(task);
+		return success();
 	}
 
 	private String lookupValueOf(final Long id) {

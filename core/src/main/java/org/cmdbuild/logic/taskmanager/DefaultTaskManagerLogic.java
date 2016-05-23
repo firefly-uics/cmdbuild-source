@@ -2,6 +2,8 @@ package org.cmdbuild.logic.taskmanager;
 
 import static com.google.common.base.Predicates.instanceOf;
 import static com.google.common.collect.FluentIterable.from;
+import static com.google.common.reflect.Reflection.newProxy;
+import static org.cmdbuild.common.utils.Reflection.unsupported;
 import static org.joda.time.DateTime.now;
 
 import org.apache.commons.lang3.Validate;
@@ -64,7 +66,7 @@ public class DefaultTaskManagerLogic implements TaskManagerLogic {
 
 	}
 
-	private static class Create implements Action<Long>, TaskVistor {
+	private static class Create implements Action<Long>, TaskVisitor {
 
 		private final LogicAndStoreConverter converter;
 		private final TaskStore store;
@@ -135,7 +137,8 @@ public class DefaultTaskManagerLogic implements TaskManagerLogic {
 			this(converter, store, null);
 		}
 
-		public ReadAll(final LogicAndStoreConverter converter, final TaskStore store, final Class<? extends Task> type) {
+		public ReadAll(final LogicAndStoreConverter converter, final TaskStore store,
+				final Class<? extends Task> type) {
 			this.converter = converter;
 			this.store = store;
 			this.type = (type == null) ? ALL_TYPES : type;
@@ -217,8 +220,8 @@ public class DefaultTaskManagerLogic implements TaskManagerLogic {
 			return null;
 		}
 
-		private TaskVistor before() {
-			return new TaskVistor() {
+		private TaskVisitor before() {
+			return new TaskVisitor() {
 
 				@Override
 				public void visit(final AsynchronousEventTask task) {
@@ -248,8 +251,8 @@ public class DefaultTaskManagerLogic implements TaskManagerLogic {
 			};
 		}
 
-		private TaskVistor after() {
-			return new TaskVistor() {
+		private TaskVisitor after() {
+			return new TaskVisitor() {
 
 				@Override
 				public void visit(final AsynchronousEventTask task) {
@@ -285,7 +288,7 @@ public class DefaultTaskManagerLogic implements TaskManagerLogic {
 
 	}
 
-	private static class Delete implements Action<Void>, TaskVistor {
+	private static class Delete implements Action<Void>, TaskVisitor {
 
 		private final LogicAndStoreConverter converter;
 		private final TaskStore store;
@@ -339,7 +342,7 @@ public class DefaultTaskManagerLogic implements TaskManagerLogic {
 
 	}
 
-	private static class Activate implements Action<Void>, TaskVistor {
+	private static class Activate implements Action<Void>, TaskVisitor {
 
 		private final LogicAndStoreConverter converter;
 		private final TaskStore store;
@@ -406,7 +409,7 @@ public class DefaultTaskManagerLogic implements TaskManagerLogic {
 
 	}
 
-	private static class Deactivate implements Action<Void>, TaskVistor {
+	private static class Deactivate implements Action<Void>, TaskVisitor {
 
 		private final LogicAndStoreConverter converter;
 		private final TaskStore store;
@@ -465,6 +468,68 @@ public class DefaultTaskManagerLogic implements TaskManagerLogic {
 		@Override
 		public void visit(final SynchronousEventTask task) {
 			synchronousEventFacade.delete(task);
+		}
+
+	}
+
+	private static class Execute extends ForwardingTaskVisitor implements Action<Void> {
+
+		private static TaskVisitor UNSUPPORTED = newProxy(TaskVisitor.class,
+				unsupported("execution not supported for this kind of task"));
+
+		private final LogicAndStoreConverter converter;
+		private final TaskStore store;
+		private final SchedulerFacade schedulerFacade;
+		private final Task task;
+
+		public Execute(final LogicAndStoreConverter converter, final TaskStore store,
+				final SchedulerFacade schedulerFacade, final Task task) {
+			this.converter = converter;
+			this.store = store;
+			this.schedulerFacade = schedulerFacade;
+			this.task = task;
+		}
+
+		@Override
+		protected TaskVisitor delegate() {
+			return UNSUPPORTED;
+		}
+
+		@Override
+		public Void execute() {
+			final org.cmdbuild.data.store.task.Task storable = converter.from(task).toStore();
+			final org.cmdbuild.data.store.task.Task stored = store.read(storable);
+			final Task executable = converter.from(stored).toLogic();
+			executable.accept(this);
+			return null;
+		}
+
+		@Override
+		public void visit(final AsynchronousEventTask task) {
+			execute(task);
+		}
+
+		@Override
+		public void visit(final ConnectorTask task) {
+			execute(task);
+		}
+
+		@Override
+		public void visit(final ReadEmailTask task) {
+			execute(task);
+		}
+
+		@Override
+		public void visit(final StartWorkflowTask task) {
+			execute(task);
+		}
+
+		private void execute(final ScheduledTask task) {
+			schedulerFacade.execute(task, storeLastExecutionOf(task));
+		}
+
+		private StoreLastExecutionCallback storeLastExecutionOf(final ScheduledTask task) {
+			return new StoreLastExecutionCallback(store, task);
 		}
 
 	}
@@ -555,6 +620,12 @@ public class DefaultTaskManagerLogic implements TaskManagerLogic {
 		execute(doDeactivate(id));
 	}
 
+	@Override
+	public void execute(final Task task) {
+		logger.info(MARKER, "executing an existing task '{}'", task);
+		execute(doExecute(task));
+	}
+
 	private Create doCreate(final Task task) {
 		return new Create(converter, store, schedulerFacade, synchronousEventFacade, task);
 	}
@@ -589,6 +660,10 @@ public class DefaultTaskManagerLogic implements TaskManagerLogic {
 
 	private DeleteEmails doDeleteEmails(final Task task) {
 		return new DeleteEmails(emailLogic, task);
+	}
+
+	private Execute doExecute(final Task task) {
+		return new Execute(converter, store, schedulerFacade, task);
 	}
 
 	private <T> T execute(final Action<T> action) {
