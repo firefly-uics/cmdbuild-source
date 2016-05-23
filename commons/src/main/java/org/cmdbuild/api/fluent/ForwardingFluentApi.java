@@ -4,6 +4,12 @@ import com.google.common.collect.ForwardingObject;
 
 public abstract class ForwardingFluentApi extends ForwardingObject implements FluentApi {
 
+	/**
+	 * Usable by subclasses only.
+	 */
+	protected ForwardingFluentApi() {
+	}
+
 	@Override
 	protected abstract FluentApi delegate();
 
