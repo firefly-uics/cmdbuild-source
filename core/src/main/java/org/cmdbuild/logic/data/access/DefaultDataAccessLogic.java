@@ -1,5 +1,6 @@
 package org.cmdbuild.logic.data.access;
 
+import static com.google.common.base.Predicates.and;
 import static com.google.common.base.Predicates.not;
 import static com.google.common.collect.FluentIterable.from;
 import static com.google.common.collect.Iterables.filter;
@@ -12,6 +13,7 @@ import static java.util.Collections.emptyMap;
 import static org.apache.commons.lang3.ObjectUtils.defaultIfNull;
 import static org.apache.commons.lang3.RandomStringUtils.randomAlphanumeric;
 import static org.apache.commons.lang3.StringUtils.isEmpty;
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.cmdbuild.dao.constants.Cardinality.CARDINALITY_1N;
 import static org.cmdbuild.dao.constants.Cardinality.CARDINALITY_N1;
 import static org.cmdbuild.dao.entrytype.Deactivable.IsActivePredicate.activeOnes;
@@ -264,7 +266,7 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 	}
 
 	/**
-	 * 
+	 *
 	 * @return only active classes (all classes, included superclasses, simple
 	 *         classes and process classes).
 	 */
@@ -275,7 +277,7 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 	}
 
 	/**
-	 * 
+	 *
 	 * @return active and non active domains
 	 */
 	@Override
@@ -284,7 +286,7 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 	}
 
 	/**
-	 * 
+	 *
 	 * @return only active domains
 	 */
 	@Override
@@ -328,7 +330,7 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 	}
 
 	/**
-	 * 
+	 *
 	 * @return a predicate that will filter classes whose mode does not start
 	 *         with sys... (e.g. sysread or syswrite)
 	 */
@@ -377,7 +379,7 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 	/**
 	 * Fetches the card with the specified Id from the class with the specified
 	 * name
-	 * 
+	 *
 	 * @param className
 	 * @param cardId
 	 * @throws NoSuchElementException
@@ -484,7 +486,7 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 
 	/**
 	 * Retrieve the cards of a given class that matches the given query options
-	 * 
+	 *
 	 * @param className
 	 * @param queryOptions
 	 * @return a FetchCardListResponse
@@ -495,7 +497,7 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 		 * preferred solution to avoid pre-release errors
 		 */
 		final PagedElements<Card> output;
-		if (className != null) {
+		if (isNotBlank(className)) {
 			output = fetchCardsWithClassName(className, queryOptions);
 		} else {
 			output = fetchCardsWithoutClassName(queryOptions);
@@ -566,7 +568,7 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 	/**
 	 * Execute a given SQL function to select a set of rows Return these rows as
 	 * fake cards
-	 * 
+	 *
 	 * @param functionName
 	 * @param queryOptions
 	 * @return
@@ -609,7 +611,7 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param className
 	 * @param cardId
 	 * @param queryOptions
@@ -774,7 +776,7 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 				final CMClass sourceClass = domain.getClass1();
 				final CMClass destinationClass = domain.getClass2();
 
-				if (sourceClass.isAncestorOf(dataView.findClass(fetchedCard.getClassName()))) {
+				if (domain.getCardinality().equals("N:1")) {
 					sourceCardId = storedCardId;
 					destinationCardId = referencedCardId;
 				} else {
@@ -876,7 +878,7 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 			 * Usually null == null is false. But, here we wanna know if the
 			 * value is been changed, so if it was null, and now is still null,
 			 * the attribute value is not changed.
-			 * 
+			 *
 			 * Do you know that the CardReferences (value of reference and
 			 * lookup attributes) sometimes are null and sometimes is a
 			 * null-object... Cool! isn't it? So compare them could be a little
@@ -912,6 +914,7 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 					.clone(card) //
 					.clearAttributes() //
 					.withAllAttributes(attributes) //
+					.withUser(operationUser.getAuthenticatedUser().getUsername()) //
 					.build();
 			storeOf(updatedCard).update(updatedCard);
 		}
@@ -953,13 +956,13 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 		}
 		return from(dataView.findDomains()) //
 				.filter(domainFor(fetchedClass)) //
-				.filter(skipDisabledClasses ? not(disabledClass(fetchedClass)) : allDomains()) //
+				.filter(skipDisabledClasses ? and(activeOnes(), not(disabledClass(fetchedClass))) : allDomains()) //
 				.filter(CMDomain.class);
 	}
 
 	/**
 	 * Tells if the given class is a subclass of Activity
-	 * 
+	 *
 	 * @return {@code true} if if the given class is a subclass of Activity,
 	 *         {@code false} otherwise
 	 */

@@ -1,9 +1,21 @@
-(function() {
+(function () {
 
 	Ext.define('CMDBuild.core.buttons.iconized.state.Double', {
 		extend: 'Ext.button.Cycle',
 
-		requires: ['CMDBuild.core.proxy.CMProxyConstants'],
+		requires: ['CMDBuild.core.constants.Proxy'],
+
+		/**
+		 * @cfg {String}
+		 */
+		state1icon: 'delete',
+
+		/**
+		 * Identifier of clicked state
+		 *
+		 * @cfg {String}
+		 */
+		state1stateId: CMDBuild.core.constants.Proxy.ENABLE,
 
 		/**
 		 * @cfg {String}
@@ -13,12 +25,24 @@
 		/**
 		 * @cfg {String}
 		 */
+		state2icon: 'ok',
+
+		/**
+		 * Identifier of clicked state
+		 *
+		 * @cfg {String}
+		 */
+		state2stateId: CMDBuild.core.constants.Proxy.DISABLE,
+
+		/**
+		 * @cfg {String}
+		 */
 		state2text: CMDBuild.Translation.enable,
 
 		arrowCls: '', // Disable menu arrow
 		showText: true,
 
-		initComponent: function() {
+		initComponent: function () {
 			var me = this;
 
 			Ext.apply(this, {
@@ -26,13 +50,13 @@
 					items: [
 						{
 							text: me.state1text,
-							iconCls: 'delete',
-							clickedStateIdentifier: CMDBuild.core.proxy.CMProxyConstants.ENABLE // Identifier of clicked state
+							iconCls: me.state1icon,
+							clickedStateIdentifier: me.state1stateId
 						},
 						{
 							text: me.state2text,
-							iconCls: 'ok',
-							clickedStateIdentifier: CMDBuild.core.proxy.CMProxyConstants.DISABLE // Identifier of clicked state
+							iconCls: me.state2icon,
+							clickedStateIdentifier: me.state2stateId
 						}
 					]
 				}
@@ -42,18 +66,18 @@
 		},
 
 		/**
-		 * @param {Boolean} currentState
+		 * @returns {String} clickedStateIdentifier
 		 */
-		setActiveState: function(currentState) {
-			if (Ext.isBoolean(currentState))
-				this.setActiveItem(currentState ? this.menu.items.items[0] : this.menu.items.items[1]);
+		getActiveState: function () {
+			return this.getActiveItem().clickedStateIdentifier;
 		},
 
 		/**
-		 * @returns {String} clickedStateIdentifier
+		 * @param {Boolean} currentState
 		 */
-		getClickedState: function() {
-			return this.getActiveItem().clickedStateIdentifier;
+		setActiveState: function (currentState) {
+			if (Ext.isBoolean(currentState))
+				this.setActiveItem(currentState ? this.menu.items.items[0] : this.menu.items.items[1]);
 		}
 	});
 

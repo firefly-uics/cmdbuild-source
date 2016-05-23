@@ -29,7 +29,7 @@
 				this.saveRelationAction(form, res);
 			}
 			this.view.destroy();
-			CMDBuild.LoadMask.get().hide();
+			CMDBuild.core.LoadMask.hide();
 		},
 
 		addRelation: function(form, res) {
@@ -40,8 +40,9 @@
 
 			var p = this.buildParamsToSaveRelation(detailData);
 
-			CMDBuild.ServiceProxy.relations.add({
-				params: p
+			CMDBuild.proxy.Relation.create({
+				params: p,
+				loadMask: false
 			});
 		}
 	});

@@ -77,7 +77,7 @@
 
 			expect(dsFieldSet.defaultField).not.toBeDefined();
 			dsFieldSet.addClassesFieldForDefault();
-			expect(Ext.getClassName(dsFieldSet.defaultField)).toBe("CMDBuild.field.ErasableCombo");
+			expect(Ext.getClassName(dsFieldSet.defaultField)).toBe("CMDBuild.view.common.field.CMErasableCombo");
 			expect(dsFieldSet.defaultField.store.cmType).toBe("fake_store");
 
 			_CMCache.getClassesAndProcessesStore = realGetClassesAndProcessesStore;
@@ -89,7 +89,7 @@
 
 			expect(dsFieldSet.lookupTypeField).not.toBeDefined();
 			dsFieldSet.addLookupTypesField();
-			expect(Ext.getClassName(dsFieldSet.lookupTypeField)).toBe("CMDBuild.field.ErasableCombo");
+			expect(Ext.getClassName(dsFieldSet.lookupTypeField)).toBe("CMDBuild.view.common.field.CMErasableCombo");
 			expect(dsFieldSet.lookupTypeField.store.cmType).toBe("fake_store");
 
 			_CMCache.getLookupTypeAsStore = realGetLookupTypeAsStore;

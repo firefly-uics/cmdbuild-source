@@ -17,10 +17,9 @@ public interface RowAndColumnPrivilegeFetcher {
 	 * @return all {@link WhereClause}s related to the specified
 	 *         {@link CMEntryType}.
 	 */
-	Iterable<? extends WhereClause> fetchPrivilegeFiltersFor(CMEntryType entryType);
+	Iterable<WhereClause> fetchPrivilegeFiltersFor(CMEntryType entryType);
 
-	Iterable<? extends WhereClause> fetchPrivilegeFiltersFor(CMEntryType entryType, CMEntryType entryTypeForClauses,
-			Alias entryTypeForClausesAlias);
+	Iterable<WhereClause> fetchPrivilegeFiltersFor(CMEntryType entryType, Alias alias);
 
 	/**
 	 * This method fetches column privileges for the currently logged user.

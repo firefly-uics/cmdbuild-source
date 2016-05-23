@@ -5,12 +5,12 @@ public class Serialization {
 	public static final String NAMESPACE = "http://cmdbuild.org/services/rest/v2/";
 
 	public static final String //
-			ID = "id", //
+	ID = "id", //
 			ID_CAPITALIZED = "Id", //
 			PROCESS_CAPITAL = "Process";
 
 	public static final String //
-			ACCOUNT = "account", //
+	ACCOUNT = "account", //
 			ACTIVE = "active", //
 			ACTIVITY = "activity", //
 			ADVANCE = "advance", //
@@ -22,6 +22,7 @@ public class Serialization {
 			ATTRIBUTES = "attributes", //
 			AUTHOR = "author", //
 			AVAILABLE_ROLES = "availableRoles", //
+			BASE_LEVEL = "baseLevel", //
 			BCC = "bcc", //
 			BODY = "body", //
 			CARD = "card", //
@@ -33,6 +34,8 @@ public class Serialization {
 			CHILDREN = "children", //
 			CLASS = "class", //
 			CLASS_ID = CLASS + ID_CAPITALIZED, //
+			CLASS_NAME = CLASS + "Name", //
+			CLUSTERING_THRESHOLD = "clusteringThreshold", //
 			CODE_CAPITALIZED = "Code", //
 			CODE = "code", //
 			CREATED = "created", //
@@ -52,14 +55,21 @@ public class Serialization {
 			DESCRIPTION_MASTER_DETAIL = DESCRIPTION + "MasterDetail", //
 			DESTINATION = "destination", //
 			DESTINATION_PROCESS = DESTINATION + PROCESS_CAPITAL, //
+			DETAILED = "detailed", //
+			DETAILS = "details", //
 			DIRECTION = "direction", //
 			DISPLAYABLE_IN_LIST = "displayableInList", //
+			DISPLAY_LABEL = "displayLabel", //
 			DOMAIN = "domain", //
 			DOMAIN_ID = DOMAIN + ID_CAPITALIZED, //
+			DOMAIN_NAME = "domainName", //
 			DOMAIN_SOURCE = DOMAIN + "Source", //
+			EDGE_COLOR = "edgeColor", //
+			EDGE_TOOLTIP_ENABLED = "edgeTooltipEnabled", //
 			EDITOR_TYPE = "editorType", //
 			EMAIL = "email", //
 			EMAIL_ID = EMAIL + ID_CAPITALIZED, //
+			ENABLED = "enabled", //
 			EXTENSION = "extension", //
 			EXTRA = "extra", //
 			FILE = "file", //
@@ -69,6 +79,8 @@ public class Serialization {
 			FUNCTION_ID = FUNCTION + ID_CAPITALIZED, //
 			GROUP = "group", //
 			HIDDEN = "hidden", //
+			ICON = "icon", //
+			IMAGE = "image", //
 			INDEX = "index", //
 			INHERITED = "inherited", //
 			INPUTS = "inputs", //
@@ -84,6 +96,8 @@ public class Serialization {
 			MODE = "mode", //
 			MODIFIED = "modified", //
 			NAME = "name", //
+			NODE_TOOLTIP_ENABLED = "nodeTooltipEnabled", //
+			NODES = "nodes", //
 			NO_SUBJECT_PREFIX = "noSubjectPrefix", //
 			NOTIFY_WITH = "notifyWith", //
 			NUMBER = "number", //
@@ -102,6 +116,7 @@ public class Serialization {
 			PRECISION = "precision", //
 			PROMPT_SYNCHRONIZATION = "promptSynchronization", //
 			PROTOTYPE = "prototype", //
+			RECURSION_ENABLED = "recursionEnabled", //
 			REFERENCES = "references", //
 			RELATION = "relation", //
 			RELATION_ID = RELATION + ID_CAPITALIZED, //
@@ -116,9 +131,11 @@ public class Serialization {
 			SORT = "sort", //
 			SOURCE = "source", //
 			SOURCE_PROCESS = SOURCE + PROCESS_CAPITAL, //
+			SPRITE_DIMENSION = "spriteDimension", //
 			START = "start", //
 			STATUSES = "statuses", //
 			STATUS = "status", //
+			STEP_RADIUS = "stepRadius", //
 			STOPPABLE = "stoppable", //
 			SUBJECT = "subject", //
 			TARGET_CLASS = "targetClass", //
@@ -135,18 +152,20 @@ public class Serialization {
 			VALUES = "values", //
 			VALUE = "value", //
 			VERSION = "version", //
+			VIEW_POINT_DISTANCE = "viewPointDistance", //
+			VIEW_POINT_HEIGHT = "viewPointHeight", //
 			WIDGETS = "widgets", //
 			WRITABLE = "writable";
 
 	public static final String //
-			LOOKUP = "lookup", //
+	LOOKUP = "lookup", //
 			LOOKUP_TYPE = LOOKUP + "Type", //
 			LOOKUP_TYPE_ID = LOOKUP_TYPE + ID_CAPITALIZED, //
 			LOOKUP_VALUE = LOOKUP + "Value", //
 			LOOKUP_VALUE_ID = LOOKUP_VALUE + ID_CAPITALIZED;
 
 	public static final String //
-			PROCESS = "process", //
+	PROCESS = "process", //
 			PROCESS_ACTIVITY = PROCESS + "Activity", //
 			PROCESS_ACTIVITY_ID = PROCESS_ACTIVITY + ID_CAPITALIZED, //
 			PROCESS_ID = PROCESS + ID_CAPITALIZED, //
@@ -154,7 +173,7 @@ public class Serialization {
 			PROCESS_INSTANCE_ID = PROCESS_INSTANCE + ID_CAPITALIZED;
 
 	public static final String //
-			TYPE_BOOLEAN = "boolean", //
+	TYPE_BOOLEAN = "boolean", //
 			TYPE_CHAR = "char", //
 			TYPE_DATE = "date", //
 			TYPE_DATE_TIME = "dateTime", //
@@ -173,7 +192,7 @@ public class Serialization {
 			TYPE_TIME = "time";
 
 	public static final String //
-			UNDERSCORED_ACTIVITY = "_activity", //
+	UNDERSCORED_ACTIVITY = "_activity", //
 			UNDERSCORED_ADVANCE = "_" + ADVANCE, //
 			UNDERSCORED_ATTACHMENT = "_" + ATTACHMENT, //
 			UNDERSCORED_AUTHOR = "_" + AUTHOR, //

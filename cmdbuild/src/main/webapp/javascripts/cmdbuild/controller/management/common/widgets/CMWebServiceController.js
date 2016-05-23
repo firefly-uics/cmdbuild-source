@@ -2,15 +2,13 @@
 	var DOM_NODE = "_domNode";
 	var NODE_TYPE = "_nodeType";
 
+	Ext.require(['CMDBuild.proxy.widget.WebService']);
+
 	Ext.define("CMDBuild.controller.management.common.widgets.CMWebServiceController", {
 		mixins: {
 			observable: "Ext.util.Observable",
 			widgetcontroller: "CMDBuild.controller.management.common.widgets.CMWidgetController",
 			webServiceWidgetDelegate: "CMDBuild.view.management.common.widgets.CMWebServiceDelegate"
-		},
-
-		statics: {
-			WIDGET_NAME: CMDBuild.view.management.common.widgets.CMWebService.WIDGET_NAME
 		},
 
 		constructor: function(view, ownerController, widgetDef, clientForm, card) {
@@ -86,9 +84,9 @@
 
 		// as WebServiceWidgetDelegate
 		/**
-		 * 
+		 *
 		 * @param {CMDBuild.view.management.common.widgets.CMWebService} widget
-		 * the widget that calls the method 
+		 * the widget that calls the method
 		 * @param {Ext.data.Model} model
 		 * the model of the grid row for which the button was clicked
 		 */
@@ -190,12 +188,11 @@
 
 				var el = me.view.getEl();
 				if (el) {
-					el.mask(CMDBuild.Translation.common.wait_title);
+					el.mask(CMDBuild.Translation.pleaseWait);
 				}
 
-				CMDBuild.Ajax.request({
-					url: "services/json/modwidget/callwidget",
-					method: "GET",
+				CMDBuild.proxy.widget.WebService.callWidget({
+					method: 'GET',
 					params: {
 						className: entryTypeName,
 						id: vars.Id,
@@ -203,6 +200,7 @@
 						widgetId: me.getWidgetId(),
 						params: Ext.encode(callParameters)
 					},
+					loadMask: false,
 					success: function(request, action, response) {
 						me.loaded = true;
 						var xmlString = response.response || "";

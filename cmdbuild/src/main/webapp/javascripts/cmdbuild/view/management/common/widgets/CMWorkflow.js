@@ -13,8 +13,8 @@
 		initComponent: function() {
 			this.queryWorkflow = Ext.create('Ext.form.ComboBox', {
 			    fieldLabel: CMDBuild.Translation.workflow,
-				labelWidth: CMDBuild.LABEL_WIDTH,
-				width: CMDBuild.ADM_BIG_FIELD_WIDTH,
+				labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
+				width: CMDBuild.core.constants.FieldWidths.ADMINISTRATION_BIG,
 				labelAlign: "right",
 			    store: queryWorkflowStore,
 			    queryMode: 'local',
@@ -68,7 +68,7 @@
 				delegate: this,
 				region: 'east',
 				hideMode: 'offsets',
-				cls: "cmborderleft",
+				cls: "cmdb-border-left",
 				autoScroll: true,
 				frame: true,
 				border: false,
@@ -101,7 +101,7 @@
 		getExtraButtons: function() {
 			var me = this;
 			this.saveButton = new Ext.Button( {
-				text : CMDBuild.Translation.common.buttons.save,
+				text : CMDBuild.Translation.save,
 				name : 'saveButton',
 				hidden: true,
 				handler: function() {
@@ -109,7 +109,7 @@
 				}
 			});
 			this.advanceButton =  new Ext.Button( {
-				text : CMDBuild.Translation.common.buttons.workflow.advance,
+				text : CMDBuild.Translation.advance,
 				name : 'advanceButton',
 				hidden: true,
 				handler: function() {

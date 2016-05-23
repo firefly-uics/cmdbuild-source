@@ -1,5 +1,5 @@
 Ext.define("CMDBuild.view.management.common.CMAttachmentsWindow", {
-	extend: "CMDBuild.PopupWindow",
+	extend: "CMDBuild.core.window.AbstractModal",
 
 	initComponent: function() {
 		this.grid = new CMDBuild.view.management.classes.attachments.CMCardAttachmentsPanel({
@@ -7,7 +7,7 @@ Ext.define("CMDBuild.view.management.common.CMAttachmentsWindow", {
 		});
 
 		var closeButton = new Ext.Button({
-			text: CMDBuild.Translation.common.buttons.close,
+			text: CMDBuild.Translation.close,
 			name: 'saveButton',
 			formBind: true,
 			handler: function() {

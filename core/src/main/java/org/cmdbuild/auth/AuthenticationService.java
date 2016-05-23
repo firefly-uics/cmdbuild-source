@@ -9,7 +9,6 @@ import org.cmdbuild.auth.ClientRequestAuthenticator.ClientRequest;
 import org.cmdbuild.auth.acl.CMGroup;
 import org.cmdbuild.auth.user.AuthenticatedUser;
 import org.cmdbuild.auth.user.CMUser;
-import org.cmdbuild.auth.user.OperationUser;
 import org.cmdbuild.logic.auth.GroupDTO;
 import org.cmdbuild.logic.auth.UserDTO;
 
@@ -25,8 +24,8 @@ public interface AuthenticationService {
 		private final AuthenticatedUser user;
 		private final String redirectUrl;
 
-		public static final ClientAuthenticatorResponse EMTPY_RESPONSE = new ClientAuthenticatorResponse(
-				ANONYMOUS_USER, null);
+		public static final ClientAuthenticatorResponse EMTPY_RESPONSE = new ClientAuthenticatorResponse(ANONYMOUS_USER,
+				null);
 
 		public ClientAuthenticatorResponse(final AuthenticatedUser user, final String redirectUrl) {
 			Validate.notNull(user);
@@ -50,8 +49,6 @@ public interface AuthenticationService {
 	void setUserFetchers(final UserFetcher... userFetchers);
 
 	void setGroupFetcher(final GroupFetcher groupFetcher);
-
-	void setUserStore(final UserStore userStore);
 
 	/**
 	 * Actively checks the user credentials and returns the authenticated user
@@ -85,14 +82,6 @@ public interface AuthenticationService {
 	 * @return response object with the authenticated user or a redirect URL
 	 */
 	ClientAuthenticatorResponse authenticate(final ClientRequest request);
-
-	/**
-	 * Get the currently authenticated user. It can be anonymous but it will
-	 * never be null.
-	 * 
-	 * @return the authenticated user
-	 */
-	OperationUser getOperationUser();
 
 	List<CMUser> fetchUsersByGroupId(Long groupId);
 
@@ -170,10 +159,11 @@ public interface AuthenticationService {
 	Iterable<CMGroup> fetchAllGroups();
 
 	/**
+	 * @param activeOnly
 	 * 
 	 * @return a collection of all users stored in the database
 	 */
-	List<CMUser> fetchAllUsers();
+	Iterable<CMUser> fetchAllUsers(boolean activeOnly);
 
 	Iterable<CMUser> fetchServiceOrPrivilegedUsers();
 

@@ -37,9 +37,9 @@ CMDBuild.WidgetBuilders.StringAttribute.prototype.buildGridHeader = function(att
 CMDBuild.WidgetBuilders.StringAttribute.prototype.buildReadOnlyField = function(attribute) {
 	var field = new CMDBuild.view.common.field.CMDisplayField({
 		labelAlign: "right",
-		labelWidth: CMDBuild.LABEL_WIDTH,
+		labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
 		fieldLabel: attribute.description || attribute.name,
-		width: CMDBuild.BIG_FIELD_WIDTH,
+		width: CMDBuild.core.constants.FieldWidths.STANDARD_BIG,
 		submitValue: false,
 		name: attribute.name,
 		disabled: false,
@@ -73,26 +73,26 @@ CMDBuild.WidgetBuilders.StringAttribute.prototype.buildAttributeField = function
 	if (attribute.len > this.MAXWIDTH) {
 		field = new Ext.form.TextArea({
 			labelAlign: "right",
-			labelWidth: CMDBuild.LABEL_WIDTH,
+			labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
  			fieldLabel: attribute.description || attribute.name,
     		name: attribute.name,
     		allowBlank: !attribute.isnotnull,
-    		width: CMDBuild.BIG_FIELD_WIDTH
+    		width: CMDBuild.core.constants.FieldWidths.STANDARD_BIG
 		});
 	} else {
 		field = new Ext.form.TextField({
 			labelAlign: "right",
-			labelWidth: CMDBuild.LABEL_WIDTH,
+			labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
  			fieldLabel: attribute.description || attribute.name,
  			name: attribute.name,
     		maxLength: attribute.len,
     		allowBlank: !attribute.isnotnull,
-			width: CMDBuild.LABEL_WIDTH + (function(length) {
+			width: CMDBuild.core.constants.FieldWidths.LABEL + (function(length) {
 				length = (length * 13) + 12; // arbitrary choice
-				if (length < CMDBuild.BIG_FIELD_ONLY_WIDTH) {
+				if (length < CMDBuild.core.constants.FieldWidths.STANDARD_BIG_FIELD_ONLY) {
     				return length;
     			} else {
-    				return CMDBuild.BIG_FIELD_ONLY_WIDTH;
+    				return CMDBuild.core.constants.FieldWidths.STANDARD_BIG_FIELD_ONLY;
     			}
     		})(attribute.len)
 		});
@@ -107,7 +107,7 @@ CMDBuild.WidgetBuilders.StringAttribute.prototype.buildAttributeField = function
 CMDBuild.WidgetBuilders.StringAttribute.prototype.buildCellEditor = function(attribute) {
 	return new Ext.form.TextField({
 		labelAlign: "right",
-		labelWidth: CMDBuild.LABEL_WIDTH,
+		labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
 		fieldLabel: attribute.description || attribute.name,
 		name: attribute.name,
 		maxLength: attribute.len,

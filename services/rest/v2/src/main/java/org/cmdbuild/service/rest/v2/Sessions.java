@@ -23,6 +23,7 @@ public interface Sessions {
 
 	@POST
 	@Path(EMPTY)
+	@Unauthorized
 	ResponseSingle<Session> create( //
 			Session session //
 	);

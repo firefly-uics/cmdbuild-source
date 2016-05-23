@@ -5,7 +5,7 @@
 Ext.ns("CMDBuild.WidgetBuilders");
 CMDBuild.WidgetBuilders.DecimalAttribute = function() {};
 CMDBuild.extend(CMDBuild.WidgetBuilders.DecimalAttribute, CMDBuild.WidgetBuilders.RangeQueryAttribute);
-CMDBuild.WidgetBuilders.DecimalAttribute.prototype.MAXWIDTH = CMDBuild.SMALL_FIELD_ONLY_WIDTH;
+CMDBuild.WidgetBuilders.DecimalAttribute.prototype.MAXWIDTH = 100;
 CMDBuild.WidgetBuilders.DecimalAttribute.prototype.customVType = "numeric";
 /**
  * @override
@@ -29,11 +29,11 @@ CMDBuild.WidgetBuilders.DecimalAttribute.prototype.buildGridHeader = function(at
 CMDBuild.WidgetBuilders.DecimalAttribute.prototype.buildAttributeField = function(attribute) {
 	return new Ext.form.TextField({
 		labelAlign: "right",
-		labelWidth: CMDBuild.LABEL_WIDTH,
+		labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
 		fieldLabel: attribute.description || attribute.name,
 		name: attribute.name,
 		allowBlank: !attribute.isnotnull,
-		width: CMDBuild.LABEL_WIDTH + this.MAXWIDTH,
+		width: CMDBuild.core.constants.FieldWidths.LABEL + this.MAXWIDTH,
 		scale: attribute.scale,
 		precision: attribute.precision,
 		vtype: this.customVType,

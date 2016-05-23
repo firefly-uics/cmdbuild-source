@@ -1,7 +1,6 @@
 package org.cmdbuild.servlets.json.schema;
 
 import static org.apache.commons.lang3.ObjectUtils.defaultIfNull;
-import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.cmdbuild.servlets.json.CommunicationConstants.DATA;
 import static org.cmdbuild.servlets.json.CommunicationConstants.NAME;
 import static org.cmdbuild.servlets.json.CommunicationConstants.NAMES;
@@ -62,8 +61,8 @@ public class Setup extends JSONBaseWithSpringContext {
 		final JSONObject data = new JSONObject();
 		for (final Entry<String, String> entry : config.entrySet()) {
 			if (entry.getKey().equals(INSTANCE_NAME)) {
-				final TranslationObject translationObject = InstanceConverter.of(InstanceConverter.nameField()).create(
-						EMPTY);
+				final TranslationObject translationObject = InstanceConverter.of(InstanceConverter.nameField()) //
+						.create();
 				final String translatedInstanceName = translationFacade().read(translationObject);
 				data.put(entry.getKey(), defaultIfNull(translatedInstanceName, entry.getValue()));
 			} else {

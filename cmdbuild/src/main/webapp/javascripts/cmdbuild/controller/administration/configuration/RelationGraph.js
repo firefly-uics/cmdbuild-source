@@ -1,7 +1,12 @@
-(function() {
+(function () {
 
 	Ext.define('CMDBuild.controller.administration.configuration.RelationGraph', {
-		extend: 'CMDBuild.controller.common.AbstractController',
+		extend: 'CMDBuild.controller.common.abstract.Base',
+
+		requires: [
+			'CMDBuild.core.constants.Proxy',
+			'CMDBuild.proxy.configuration.RelationGraph'
+		],
 
 		/**
 		 * @cfg {CMDBuild.controller.administration.configuration.Configuration}
@@ -12,14 +17,9 @@
 		 * @cfg {Array}
 		 */
 		cmfgCatchedFunctions: [
-			'onRelationGraphAbortButtonClick',
-			'onRelationGraphSaveButtonClick'
+			'onConfigurationRelationGraphSaveButtonClick',
+			'onConfigurationRelationGraphTabShow = onConfigurationRelationGraphAbortButtonClick'
 		],
-
-		/**
-		 * @cfg {String}
-		 */
-		configFileName: 'graph',
 
 		/**
 		 * @property {CMDBuild.view.administration.configuration.RelationGraphPanel}
@@ -27,35 +27,49 @@
 		view: undefined,
 
 		/**
-		 * @param {Object} configObject
-		 * @param {CMDBuild.controller.administration.configuration.Configuration} configObject.parentDelegate
+		 * @param {Object} configurationObject
+		 * @param {CMDBuild.controller.administration.configuration.Configuration} configurationObject.parentDelegate
+		 *
+		 * @returns {Void}
 		 *
 		 * @override
 		 */
-		constructor: function(configObject) {
+		constructor: function (configurationObject) {
 			this.callParent(arguments);
 
-			this.view = Ext.create('CMDBuild.view.administration.configuration.RelationGraphPanel', {
-				delegate: this
-			});
+			this.view = Ext.create('CMDBuild.view.administration.configuration.RelationGraphPanel', { delegate: this });
+		},
 
-			this.cmfg('onConfigurationRead', {
-				configFileName: this.configFileName,
-				view: this.view
+		/**
+		 * @returns {Void}
+		 */
+		onConfigurationRelationGraphSaveButtonClick: function () {
+			CMDBuild.proxy.configuration.RelationGraph.update({
+				params: Ext.create('CMDBuild.model.configuration.RelationGraph', this.view.getData(true)).getData(),
+				scope: this,
+				success: function (response, options, decodedResponse) {
+					this.cmfg('onConfigurationRelationGraphTabShow');
+
+					CMDBuild.core.Message.success();
+				}
 			});
 		},
 
-		onRelationGraphAbortButtonClick: function() {
-			this.cmfg('onConfigurationRead', {
-				configFileName: this.configFileName,
-				view: this.view
-			});
-		},
+		/**
+		 * @returns {Void}
+		 */
+		onConfigurationRelationGraphTabShow: function () {
+			CMDBuild.proxy.configuration.RelationGraph.read({
+				scope: this,
+				success: function (response, options, decodedResponse) {
+					decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.DATA];
 
-		onRelationGraphSaveButtonClick: function() {
-			this.cmfg('onConfigurationSave', {
-				configFileName: this.configFileName,
-				view: this.view
+					if (!Ext.isEmpty(decodedResponse)) {
+						this.view.loadRecord(Ext.create('CMDBuild.model.configuration.RelationGraph', decodedResponse));
+
+						Ext.create('CMDBuild.core.configurations.builder.RelationGraph'); // Rebuild configuration model
+					}
+				}
 			});
 		}
 	});

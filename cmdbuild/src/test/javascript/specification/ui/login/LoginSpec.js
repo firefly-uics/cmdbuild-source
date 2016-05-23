@@ -68,10 +68,10 @@
 
 	function addNeededDomStuff() {
 		var loginDiv = document.createElement("div");
-		loginDiv.id = "login_box";
+		loginDiv.id = "login-container";
 
 		var releaseDiv = document.createElement("div");
-		releaseDiv.id = "release_box";
+		releaseDiv.id = "release-box";
 
 		document.body.appendChild(loginDiv);
 		document.body.appendChild(releaseDiv);

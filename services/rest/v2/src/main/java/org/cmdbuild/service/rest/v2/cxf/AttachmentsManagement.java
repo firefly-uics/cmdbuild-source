@@ -54,9 +54,8 @@ public class AttachmentsManagement implements AttachmentsHelper {
 			final DataHandler dataHandler) throws Exception {
 		if (dataHandler != null) {
 			final Attachment _attachment = defaultIfNull(attachment, nullAttachment());
-			final String author = userStore.getUser().getAuthenticatedUser().getUsername();
 			dmsLogic.upload( //
-					author, //
+					userStore.getUser().getAuthenticatedUser().getUsername(), //
 					classId, //
 					cardId, //
 					dataHandler.getInputStream(), //
@@ -66,7 +65,9 @@ public class AttachmentsManagement implements AttachmentsHelper {
 					metadataGroupsOf(_attachment) //
 			);
 		} else if (attachment != null) {
-			dmsLogic.updateDescriptionAndMetadata(classId, //
+			dmsLogic.updateDescriptionAndMetadata( //
+					userStore.getUser().getAuthenticatedUser().getUsername(), //
+					classId, //
 					cardId, //
 					attachmentId, //
 					attachment.getCategory(), //

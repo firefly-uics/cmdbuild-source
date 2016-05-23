@@ -1,6 +1,4 @@
 (function() {
-	var NAME = _CMProxy.parameter.NAME;
-	var DESCRIPTION = _CMProxy.parameter.DESCRIPTION;
 
 	Ext.define('CMDBuild.delegate.administration.bim.CMBIMFormFieldsManager', {
 		extend: 'CMDBuild.delegate.administration.common.basepanel.CMBaseFormFiledsManager',
@@ -11,9 +9,9 @@
 		build: function() {
 			this.name = new Ext.form.TextField({
 				fieldLabel: CMDBuild.Translation.administration.modClass.attributeProperties.name,
-				labelWidth: CMDBuild.LABEL_WIDTH,
-				width: CMDBuild.ADM_BIG_FIELD_WIDTH,
-				name: NAME,
+				labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
+				width: CMDBuild.core.constants.FieldWidths.ADMINISTRATION_BIG,
+				name: CMDBuild.core.constants.Proxy.NAME,
 				allowBlank: false,
 				vtype: "alphanum",
 				cmImmutable: true
@@ -21,24 +19,24 @@
 
 			this.description= new Ext.form.TextField({
 				fieldLabel : CMDBuild.Translation.administration.modClass.attributeProperties.description,
-				labelWidth: CMDBuild.LABEL_WIDTH,
-				width: CMDBuild.ADM_BIG_FIELD_WIDTH,
-				name: DESCRIPTION,
+				labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
+				width: CMDBuild.core.constants.FieldWidths.ADMINISTRATION_BIG,
+				name: CMDBuild.core.constants.Proxy.DESCRIPTION,
 				allowBlank : false,
-				vtype : "cmdbcomment"
+				vtype: 'comment'
 			});
 
 			this.activeCheckBox = Ext.create('Ext.ux.form.XCheckbox', {
 				fieldLabel: CMDBuild.Translation.active,
-				labelWidth: CMDBuild.LABEL_WIDTH,
-				width: CMDBuild.ADM_BIG_FIELD_WIDTH,
+				labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
+				width: CMDBuild.core.constants.FieldWidths.ADMINISTRATION_BIG,
 				name: 'active'
 			});
 
 			this.fileField = Ext.create('Ext.form.field.File', {
 				fieldLabel: CMDBuild.Translation.ifc_file,
-				labelWidth: CMDBuild.LABEL_WIDTH,
-				width: CMDBuild.ADM_BIG_FIELD_WIDTH,
+				labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
+				width: CMDBuild.core.constants.FieldWidths.ADMINISTRATION_BIG,
 				name: 'fileIFC'
 			});
 
@@ -62,8 +60,8 @@
 		// translations
 		loadRecord: function(record) {
 			this.reset();
-			this.name.setValue(record.get(NAME));
-			this.description.setValue(record.get(DESCRIPTION));
+			this.name.setValue(record.get(CMDBuild.core.constants.Proxy.NAME));
+			this.description.setValue(record.get(CMDBuild.core.constants.Proxy.DESCRIPTION));
 			this.activeCheckBox.setValue(record.get('active'));
 			this.cardBinding.setValue(record.get('cardBinding'));
 		},
@@ -110,7 +108,7 @@
 		rootClassName: undefined,
 		delegate: null, // pass it on creation
 
-		cls: 'x-panel-body-default-framed cmbordertop',
+		cls: 'x-panel-body-default-framed cmdb-border-top',
 		itemId: 'bimCardBinding',
 		layout: 'hbox',
 		padding: '10 0 0 0',
@@ -151,8 +149,8 @@
 			this.className = Ext.create('Ext.form.field.Text', {
 				margin: '0 5 0 0',
 				fieldLabel: CMDBuild.Translation.administration.modClass.geo_attributes.card_binding,
-				labelWidth: CMDBuild.LABEL_WIDTH,
-				width: CMDBuild.ADM_BIG_FIELD_WIDTH,
+				labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
+				width: CMDBuild.core.constants.FieldWidths.ADMINISTRATION_BIG,
 				disabled: true,
 				cmImmutable: true,
 				value: rootClassName

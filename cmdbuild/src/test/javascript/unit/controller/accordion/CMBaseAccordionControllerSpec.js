@@ -5,7 +5,7 @@
 
 	describe("CMDBuild.controller.accordion.CMBaseAccordionController", function() {
 		beforeEach(function() {
-			_CMMainViewportController = { // have to be global
+			CMDBuild.global.controller.MainViewport = { // have to be global
 				bringTofrontPanelByCmName: function() {}
 			};
 
@@ -23,14 +23,14 @@
 		});
 
 		afterEach(function () {
-			delete _CMMainViewportController;
+			delete CMDBuild.global.controller.MainViewport;
 			delete view;
 			delete selectionModel;
 			delete controller;
 		});
 
 		it("Notify to the main-viewport-controller that a node was selected", function() {
-			var bringTofrontPanelByCmName = spyOn(_CMMainViewportController, 'bringTofrontPanelByCmName'),
+			var bringTofrontPanelByCmName = spyOn(CMDBuild.global.controller.MainViewport, 'bringTofrontPanelByCmName'),
 				panelName = "Purple Haze";
 				s = {
 					get: function() {

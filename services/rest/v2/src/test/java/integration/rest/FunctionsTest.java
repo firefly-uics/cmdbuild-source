@@ -44,27 +44,23 @@ import org.cmdbuild.service.rest.v2.model.ResponseSingle;
 import org.cmdbuild.service.rest.v2.model.Values;
 import org.junit.Before;
 import org.junit.ClassRule;
-import org.junit.Rule;
 import org.junit.Test;
 
 public class FunctionsTest {
 
-	private Functions service;
-
-	@Rule
-	public ServerResource server = ServerResource.newInstance() //
-			.withServiceClass(Functions.class) //
-			.withService(service = mock(Functions.class)) //
+	@ClassRule
+	public static ServerResource<Functions> server = ServerResource.newInstance(Functions.class) //
 			.withPortRange(randomPort()) //
 			.build();
 
-	@ClassRule
-	public static JsonSupport json = new JsonSupport();
+	private static JsonSupport json = new JsonSupport();
 
+	private Functions service;
 	private HttpClient httpclient;
 
 	@Before
-	public void createHttpClient() throws Exception {
+	public void setUp() throws Exception {
+		server.service(service = mock(Functions.class));
 		httpclient = HttpClientBuilder.create().build();
 	}
 
@@ -73,21 +69,21 @@ public class FunctionsTest {
 		// given
 		final ResponseMultiple<FunctionWithBasicDetails> expectedResponse = newResponseMultiple(
 				FunctionWithBasicDetails.class) //
-				.withElements(asList( //
-						newFunctionWithBasicDetails() //
-								.withId(1L) //
-								.withName("foo") //
-								.withDescription("Foo") //
-								.build(), //
-						newFunctionWithBasicDetails() //
-								.withId(2L) //
-								.withName("bar") //
-								.withDescription("Bar") //
-								.build())) //
-				.withMetadata(newMetadata() //
-						.withTotal(2L) //
-						.build()) //
-				.build();
+						.withElements(asList( //
+								newFunctionWithBasicDetails() //
+										.withId(1L) //
+										.withName("foo") //
+										.withDescription("Foo") //
+										.build(), //
+								newFunctionWithBasicDetails() //
+										.withId(2L) //
+										.withName("bar") //
+										.withDescription("Bar") //
+										.build())) //
+						.withMetadata(newMetadata() //
+								.withTotal(2L) //
+								.build()) //
+						.build();
 		when(service.readAll(anyInt(), anyInt(), anyString())) //
 				.thenReturn(expectedResponse);
 
@@ -111,15 +107,16 @@ public class FunctionsTest {
 		// given
 		final ResponseSingle<FunctionWithFullDetails> expectedResponse = newResponseSingle(
 				FunctionWithFullDetails.class) //
-				.withElement(newFunctionWithFullDetails() //
-						.withId(1L) //
-						.withName("foo") //
-						.withDescription("Foo") //
-						.build()) //
-				.withMetadata(newMetadata() //
-						// nothing to add, just needed for simplify assertions
-						.build()) //
-				.build();
+						.withElement(newFunctionWithFullDetails() //
+								.withId(1L) //
+								.withName("foo") //
+								.withDescription("Foo") //
+								.build()) //
+						.withMetadata(newMetadata() //
+								// nothing to add, just needed for simplify
+								// assertions
+								.build()) //
+						.build();
 		when(service.read(anyLong())) //
 				.thenReturn(expectedResponse);
 

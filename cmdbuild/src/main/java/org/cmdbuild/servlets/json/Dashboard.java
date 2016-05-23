@@ -30,8 +30,8 @@ public class Dashboard extends JSONBaseWithSpringContext {
 	@JSONExported
 	public JsonResponse fullList() {
 		final DashboardLogic logic = dashboardLogic();
-		final Map<Integer, DashboardDefinition> allDashboards = logic.fullListDashboards();
-		final JsonDashboardListResponse response = new JsonDashboardListResponse(allDashboards, logic.listDataSources());
+		final JsonDashboardListResponse response = new JsonDashboardListResponse(logic.fullListDashboards(),
+				logic.listDataSources());
 		return JsonResponse.success(response);
 	}
 
@@ -41,7 +41,8 @@ public class Dashboard extends JSONBaseWithSpringContext {
 	@JSONExported
 	public JsonResponse list() {
 		final DashboardLogic logic = dashboardLogic();
-		final JsonDashboardListResponse response = new JsonDashboardListResponse(logic.listDashboards());
+		final JsonDashboardListResponse response = new JsonDashboardListResponse(logic.listDashboards(),
+				logic.listDataSources());
 		return JsonResponse.success(response);
 	}
 

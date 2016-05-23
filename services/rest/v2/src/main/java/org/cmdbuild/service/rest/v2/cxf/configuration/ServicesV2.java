@@ -20,9 +20,13 @@ import org.cmdbuild.service.rest.v2.ClassPrivileges;
 import org.cmdbuild.service.rest.v2.Classes;
 import org.cmdbuild.service.rest.v2.Cql;
 import org.cmdbuild.service.rest.v2.DomainAttributes;
+import org.cmdbuild.service.rest.v2.DomainTrees;
 import org.cmdbuild.service.rest.v2.Domains;
 import org.cmdbuild.service.rest.v2.EmailTemplates;
+import org.cmdbuild.service.rest.v2.FileStores;
 import org.cmdbuild.service.rest.v2.Functions;
+import org.cmdbuild.service.rest.v2.GraphConfiguration;
+import org.cmdbuild.service.rest.v2.Icons;
 import org.cmdbuild.service.rest.v2.Impersonate;
 import org.cmdbuild.service.rest.v2.LookupTypeValues;
 import org.cmdbuild.service.rest.v2.LookupTypes;
@@ -50,9 +54,13 @@ import org.cmdbuild.service.rest.v2.cxf.CxfClassPrivileges;
 import org.cmdbuild.service.rest.v2.cxf.CxfClasses;
 import org.cmdbuild.service.rest.v2.cxf.CxfCql;
 import org.cmdbuild.service.rest.v2.cxf.CxfDomainAttributes;
+import org.cmdbuild.service.rest.v2.cxf.CxfDomainTrees;
 import org.cmdbuild.service.rest.v2.cxf.CxfDomains;
 import org.cmdbuild.service.rest.v2.cxf.CxfEmailTemplates;
+import org.cmdbuild.service.rest.v2.cxf.CxfFileStores;
 import org.cmdbuild.service.rest.v2.cxf.CxfFunctions;
+import org.cmdbuild.service.rest.v2.cxf.CxfGraphConfiguration;
+import org.cmdbuild.service.rest.v2.cxf.CxfIcons;
 import org.cmdbuild.service.rest.v2.cxf.CxfImpersonate;
 import org.cmdbuild.service.rest.v2.cxf.CxfLookupTypeValues;
 import org.cmdbuild.service.rest.v2.cxf.CxfLookupTypes;
@@ -69,8 +77,6 @@ import org.cmdbuild.service.rest.v2.cxf.CxfProcessesConfiguration;
 import org.cmdbuild.service.rest.v2.cxf.CxfRelations;
 import org.cmdbuild.service.rest.v2.cxf.CxfReports;
 import org.cmdbuild.service.rest.v2.cxf.CxfSessions;
-import org.cmdbuild.service.rest.v2.cxf.CxfSessions.AuthenticationLogicAdapter;
-import org.cmdbuild.service.rest.v2.cxf.CxfSessions.LoginHandler;
 import org.cmdbuild.service.rest.v2.cxf.DefaultEncoding;
 import org.cmdbuild.service.rest.v2.cxf.DefaultIdGenerator;
 import org.cmdbuild.service.rest.v2.cxf.DefaultProcessStatusHelper;
@@ -81,10 +87,6 @@ import org.cmdbuild.service.rest.v2.cxf.ProcessStatusHelper;
 import org.cmdbuild.service.rest.v2.cxf.TranslatingAttachmentsHelper;
 import org.cmdbuild.service.rest.v2.cxf.TranslatingAttachmentsHelper.Encoding;
 import org.cmdbuild.service.rest.v2.cxf.WebApplicationExceptionErrorHandler;
-import org.cmdbuild.service.rest.v2.cxf.service.InMemoryOperationUserStore;
-import org.cmdbuild.service.rest.v2.cxf.service.InMemorySessionStore;
-import org.cmdbuild.service.rest.v2.cxf.service.OperationUserStore;
-import org.cmdbuild.service.rest.v2.cxf.service.SessionStore;
 import org.cmdbuild.service.rest.v2.logging.LoggingSupport;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -174,6 +176,13 @@ public class ServicesV2 implements LoggingSupport {
 	}
 
 	@Bean
+	public Icons v2_icons() {
+		final CxfIcons service = new CxfIcons(v2_errorHandler(), helper.iconsLogic(),
+				new CxfIcons.ConverterImpl(v2_errorHandler()));
+		return proxy(Icons.class, service);
+	}
+
+	@Bean
 	@Scope(value = SCOPE_REQUEST, proxyMode = TARGET_CLASS)
 	public Relations v2_relations() {
 		final CxfRelations service = new CxfRelations(v2_errorHandler(), helper.userDataAccessLogic());
@@ -188,9 +197,16 @@ public class ServicesV2 implements LoggingSupport {
 	}
 
 	@Bean
+	@Scope()
+	public DomainTrees v2_domainTrees() {
+		final CxfDomainTrees service = new CxfDomainTrees(v2_errorHandler(), helper.navigationTreeLogic());
+		return proxy(DomainTrees.class, service);
+	}
+
+	@Bean
 	public Impersonate v2_impersonate() {
-		final CxfImpersonate service = new CxfImpersonate(v2_errorHandler(), v2_loginHandler(), v2_sessionStore(),
-				v2_impersonateSessionStore(), v2_operationUserStore(), v2_operationUserAllowed());
+		final CxfImpersonate service = new CxfImpersonate(v2_errorHandler(), helper.sessionLogic(),
+				v2_operationUserAllowed());
 		return proxy(Impersonate.class, service);
 	}
 
@@ -329,41 +345,8 @@ public class ServicesV2 implements LoggingSupport {
 
 	@Bean
 	public Sessions v2_sessions() {
-		final CxfSessions service = new CxfSessions(v2_errorHandler(), helper.tokenGenerator(), v2_sessionStore(),
-				v2_loginHandler(), v2_operationUserStore(), helper.tokenManager());
+		final CxfSessions service = new CxfSessions(v2_errorHandler(), helper.sessionLogic());
 		return proxy(Sessions.class, service);
-	}
-
-	@Bean
-	protected LoginHandler v2_loginHandler() {
-		return new AuthenticationLogicAdapter(helper.authenticationLogic());
-	}
-
-	@Bean
-	public SessionStore v2_sessionStore() {
-		return new InMemorySessionStore(v2_configuration());
-	}
-
-	@Bean
-	protected SessionStore v2_impersonateSessionStore() {
-		return new InMemorySessionStore(v2_configuration());
-	}
-
-	@Bean
-	protected InMemorySessionStore.Configuration v2_configuration() {
-		return new InMemorySessionStore.Configuration() {
-
-			@Override
-			public long timeout() {
-				return helper.cmdbuildConfiguration().getSessionTimoutOrZero() * 1000;
-			}
-
-		};
-	}
-
-	@Bean
-	public OperationUserStore v2_operationUserStore() {
-		return new InMemoryOperationUserStore();
 	}
 
 	@Bean
@@ -412,6 +395,18 @@ public class ServicesV2 implements LoggingSupport {
 	@Bean
 	public HeaderResponseHandler v2_headerResponseHandler() {
 		return new HeaderResponseHandler();
+	}
+
+	@Bean
+	public GraphConfiguration v2_graphConfiguration() {
+		final CxfGraphConfiguration service = new CxfGraphConfiguration(helper.graphConfiguration());
+		return proxy(GraphConfiguration.class, service);
+	}
+
+	@Bean
+	public FileStores v2_fileStores() {
+		final CxfFileStores service = new CxfFileStores(v2_errorHandler(), helper.fileLogic());
+		return proxy(FileStores.class, service);
 	}
 
 }

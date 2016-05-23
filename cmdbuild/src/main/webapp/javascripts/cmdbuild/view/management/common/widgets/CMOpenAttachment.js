@@ -4,7 +4,7 @@
 
 		initComponent: function() {
 			this.backToActivityButton = new Ext.button.Button({
-				text: CMDBuild.Translation.common.buttons.workflow.back
+				text: CMDBuild.Translation.back
 			});
 
 			Ext.apply(this, {
@@ -37,7 +37,7 @@
 		cmActivate: function() {
 			this.enable();
 
-			// rendering issues, call showBackButton only after	
+			// rendering issues, call showBackButton only after
 			// that the  panel did actually activated
 			this.mon(this, "activate", this.showBackButton, this, {single: true});
 
@@ -51,6 +51,19 @@
 		showBackButton: function() {
 			this.backToActivityButton.show();
 			this.ownerCt.doLayout();
+		},
+
+		/**
+		 * @param {Boolean} writePrivilege
+		 *
+		 * @override
+		 */
+		updateWritePrivileges: function(writePrivilege) {
+			this.writePrivileges = writePrivilege;
+			this.addAttachmentButton.setDisabled(
+				!writePrivilege
+				|| !CMDBuild.configuration.workflow.get(CMDBuild.core.constants.Proxy.ENABLE_ADD_ATTACHMENT_ON_CLOSED_ACTIVITIES)
+			);
 		}
 	});
 })();

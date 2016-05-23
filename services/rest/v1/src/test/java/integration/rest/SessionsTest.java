@@ -31,28 +31,24 @@ import org.cmdbuild.service.rest.v1.model.ResponseSingle;
 import org.cmdbuild.service.rest.v1.model.Session;
 import org.junit.Before;
 import org.junit.ClassRule;
-import org.junit.Rule;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 
 public class SessionsTest {
 
-	private Sessions service;
-
-	@Rule
-	public ServerResource server = ServerResource.newInstance() //
-			.withServiceClass(Sessions.class) //
-			.withService(service = mock(Sessions.class)) //
-			.withPort(randomPort()) //
+	@ClassRule
+	public static ServerResource<Sessions> server = ServerResource.newInstance(Sessions.class) //
+			.withPortRange(randomPort()) //
 			.build();
 
-	@ClassRule
-	public static JsonSupport json = new JsonSupport();
+	private static JsonSupport json = new JsonSupport();
 
+	private Sessions service;
 	private HttpClient httpclient;
 
 	@Before
-	public void createHttpClient() throws Exception {
+	public void setUp() throws Exception {
+		server.service(service = mock(Sessions.class));
 		httpclient = HttpClientBuilder.create().build();
 	}
 
@@ -102,7 +98,7 @@ public class SessionsTest {
 						.withRole("the role") //
 						.withAvailableRoles(asList("foo", "bar", "baz")) //
 						.build() //
-				) //
+		) //
 				.build();
 		doReturn(sentResponse) //
 				.when(service).read(anyString());

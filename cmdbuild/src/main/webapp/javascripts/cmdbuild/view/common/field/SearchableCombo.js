@@ -1,11 +1,12 @@
 (function() {
 
+	Ext.require('CMDBuild.proxy.Card');
+
 	/**
 	 * @deprecated (CMDBuild.view.common.field.comboBox.Searchable)
 	 */
 	Ext.define("CMDBuild.view.common.field.SearchableCombo", {
-		extend: "CMDBuild.field.CMBaseCombo",
-		alternateClassName: 'CMDBuild.Management.SearchableCombo', // Legacy class name
+		extend: "CMDBuild.view.common.field.CMBaseCombo",
 
 		trigger1Cls: Ext.baseCSSPrefix + 'form-arrow-trigger',
 		trigger2Cls: Ext.baseCSSPrefix + 'form-clear-trigger',
@@ -77,7 +78,7 @@
 
 		storeIsLargerThenLimit: function() {
 			if (this.store !== null) {
-				return this.store.getTotalCount() > parseInt(CMDBuild.Config.cmdbuild.referencecombolimit);
+				return this.store.getTotalCount() > CMDBuild.configuration.instance.get('referenceComboStoreLimit'); // TODO: use proxy constants
 			}
 			return false;
 		},
@@ -152,16 +153,15 @@
 			if (this.getStore() && (this.getStore().find('Id', id) == -1)) {
 				var params = Ext.apply({ cardId: id }, this.getStore().baseParams);
 
-				CMDBuild.Ajax.request({
-					url: 'services/json/management/modcard/getcard',
+				CMDBuild.proxy.Card.read({
 					params: params,
-					method: 'GET',
+					loadMask: false,
 					scope: this,
-					success: function(result, options, decodedResult) {
+					success: function (response, options, decodedResponse) {
 						if (this.getStore().find('Id', id) == -1)
 							this.getStore().add({
 								Id: id,
-								Description: decodedResult.card['Description']
+								Description: decodedResponse.card['Description']
 							});
 
 						this.setValue(id);
@@ -175,7 +175,7 @@
 			try {
 				return record.get("Description").replace(/\n/g," ");
 			} catch (e) {
-				_debug('CMDBuild.Management.SearchableCombo recordDescriptionFixedForCarriageReturnBugOnComboBoxes error', e);
+				_error('CMDBuild.view.common.field.SearchableCombo recordDescriptionFixedForCarriageReturnBugOnComboBoxes error', e);
 			}
 		},
 

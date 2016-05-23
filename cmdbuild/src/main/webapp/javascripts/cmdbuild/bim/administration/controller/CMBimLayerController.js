@@ -1,3 +1,5 @@
+Ext.require(['CMDBuild.bim.proxy.Layer']);
+
 Ext.define("CMDBuild.controller.administration.filter.CMBimLayerController", {
 	extend: "CMDBuild.controller.CMBasePanelController",
 
@@ -17,8 +19,8 @@ Ext.define("CMDBuild.controller.administration.filter.CMBimLayerController", {
 		var me = this;
 		var className = record.get("className");
 
-		CMDBuild.LoadMask.instance.show();
-		CMDBuild.bim.proxy.saveLayer({
+		CMDBuild.core.LoadMask.show();
+		CMDBuild.bim.proxy.Layer.update({
 			params: {
 				className: className,
 				attribute: dataIndex,
@@ -34,7 +36,7 @@ Ext.define("CMDBuild.controller.administration.filter.CMBimLayerController", {
 			},
 
 			callback: function() {
-				CMDBuild.LoadMask.instance.hide();
+				CMDBuild.core.LoadMask.hide();
 			}
 
 		});

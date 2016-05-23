@@ -24,6 +24,7 @@ public class CxfProcessStartActivities implements ProcessStartActivities {
 	private static final ToProcessActivityWithBasicDetailsFromCMActivity TO_ACTIVITY_BASIC = ToProcessActivityWithBasicDetailsFromCMActivity
 			.newInstance().build();
 	private static final ToProcessActivityDefinition TO_ACTIVITY_FULL = ToProcessActivityDefinition.newInstance()
+			.withWritableStatus(true) //
 			.build();
 
 	private final ErrorHandler errorHandler;

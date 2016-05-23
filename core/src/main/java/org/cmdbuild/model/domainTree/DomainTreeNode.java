@@ -10,6 +10,7 @@ public class DomainTreeNode {
 	private Long idParent, idGroup, id;
 	private boolean direct, baseNode;
 	private List<DomainTreeNode> childNodes;
+	private boolean enableRecursion;
 
 	public DomainTreeNode() {
 		childNodes = new LinkedList<DomainTreeNode>();
@@ -113,6 +114,14 @@ public class DomainTreeNode {
 
 	public void setDescription(final String description) {
 		this.description = description;
+	}
+
+	public boolean isEnableRecursion() {
+		return enableRecursion;
+	}
+
+	public void setEnableRecursion(final boolean enableRecursion) {
+		this.enableRecursion = enableRecursion;
 	}
 
 }

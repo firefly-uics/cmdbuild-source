@@ -1,11 +1,13 @@
 (function () {
 
 	Ext.define('CMDBuild.controller.management.common.widgets.grid.ImportCSV', {
-		extend: 'CMDBuild.controller.common.AbstractController',
+		extend: 'CMDBuild.controller.common.abstract.Base',
 
 		requires: [
-			'CMDBuild.core.proxy.CMProxyConstants',
-			'CMDBuild.core.proxy.Csv'
+			'CMDBuild.core.constants.Proxy',
+			'CMDBuild.core.LoadMask',
+			'CMDBuild.core.Message',
+			'CMDBuild.proxy.grid.Csv'
 		],
 
 		/**
@@ -58,12 +60,12 @@
 		 * Uses importCSV calls to store and get CSV data from server and check if CSV has right fields
 		 */
 		onImportCSVUploadButtonClick: function() {
-			CMDBuild.LoadMask.get().show();
-			CMDBuild.core.proxy.Csv.upload({
+			CMDBuild.core.LoadMask.show();
+			CMDBuild.proxy.grid.Csv.upload({
 				form: this.view.csvUploadForm.getForm(),
 				scope: this,
 				success: function(form, action) {
-					CMDBuild.core.proxy.Csv.getRecords({
+					CMDBuild.proxy.grid.Csv.getRecords({
 						scope: this,
 						success: function(result, options, decodedResult) {
 							this.cmfg('setGridDataFromCsv', {
@@ -76,9 +78,9 @@
 					});
 				},
 				failure: function(form, action) {
-					CMDBuild.LoadMask.get().hide();
+					CMDBuild.core.LoadMask.hide();
 
-					CMDBuild.Msg.error(
+					CMDBuild.core.Message.error(
 						CMDBuild.Translation.common.failure,
 						CMDBuild.Translation.errors.csvUploadOrDecodeFailure,
 						false

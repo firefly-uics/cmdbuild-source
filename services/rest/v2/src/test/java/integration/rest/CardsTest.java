@@ -51,28 +51,24 @@ import org.cmdbuild.service.rest.v2.model.ResponseMultiple;
 import org.cmdbuild.service.rest.v2.model.ResponseSingle;
 import org.junit.Before;
 import org.junit.ClassRule;
-import org.junit.Rule;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 
 public class CardsTest {
 
-	private Cards service;
-
-	@Rule
-	public ServerResource server = ServerResource.newInstance() //
-			.withServiceClass(Cards.class) //
-			.withService(service = mock(Cards.class)) //
-			.withPort(randomPort()) //
+	@ClassRule
+	public static ServerResource<Cards> server = ServerResource.newInstance(Cards.class) //
+			.withPortRange(randomPort()) //
 			.build();
 
-	@ClassRule
-	public static JsonSupport json = new JsonSupport();
+	private static JsonSupport json = new JsonSupport();
 
+	private Cards service;
 	private HttpClient httpclient;
 
 	@Before
-	public void createHttpClient() throws Exception {
+	public void setUp() throws Exception {
+		server.service(service = mock(Cards.class));
 		httpclient = HttpClientBuilder.create().build();
 	}
 
@@ -99,7 +95,7 @@ public class CardsTest {
 								.withId(secondId) //
 								.withValues(secondValues) //
 								.build() //
-						)) //
+		)) //
 				.withMetadata(newMetadata() //
 						.withTotal(2L) //
 						.build()) //
@@ -116,7 +112,7 @@ public class CardsTest {
 								.chainablePut(UNDERSCORED_TYPE, type) //
 								.chainablePut(UNDERSCORED_ID, secondId) //
 								.chainablePutAll(secondValues) //
-						)) //
+		)) //
 				.withMetadata(newMetadata() //
 						.withTotal(2L) //
 						.build()) //
@@ -193,7 +189,7 @@ public class CardsTest {
 						.withId(firstId) //
 						.withValues(firstValues) //
 						.build() //
-				) //
+		) //
 				.withMetadata(newMetadata() //
 						// nothing to add, just needed for simplify assertions
 						.build()) //
@@ -203,7 +199,7 @@ public class CardsTest {
 						.chainablePut(UNDERSCORED_TYPE, type) //
 						.chainablePut(UNDERSCORED_ID, firstId) //
 						.chainablePutAll(firstValues) //
-				) //
+		) //
 				.withMetadata(newMetadata() //
 						// nothing to add, just needed for simplify assertions
 						.build()) //

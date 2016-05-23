@@ -3,7 +3,7 @@
 	Ext.define('CMDBuild.view.common.field.multiselect.Multiselect', {
 		extend: 'Ext.ux.form.MultiSelect',
 
-		requires: ['CMDBuild.core.proxy.CMProxyConstants'],
+		requires: ['CMDBuild.core.constants.Proxy'],
 
 		/**
 		 * @property {CMDBuild.controller.common.field.multiselect.Multiselect}
@@ -33,7 +33,7 @@
 		},
 
 		/**
-		 * @returns {Ext.data.Store}
+		 * @returns {Ext.data.Store or CMDBuild.core.cache.Store}
 		 */
 		getStore: function() {
 			return this.delegate.cmfg('onFieldMultiselectGetStore');

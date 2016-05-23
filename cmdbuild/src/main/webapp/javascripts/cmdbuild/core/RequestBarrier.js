@@ -1,52 +1,103 @@
-(function() {
+(function () {
 
 	/**
 	 * Traffic light class with multiple instances support (id parameter)
 	 */
 	Ext.define('CMDBuild.core.RequestBarrier', {
 
-		singleton: true,
-
 		/**
 		 * @property {Object}
+		 * 	{
+		 * 		{Function} callback,
+		 * 		{Number} index
+		 * 		{Object} scope
+		 * 	}
 		 *
 		 * @private
 		 */
-		barrierConfigurations: {},
+		buffer: {},
 
 		/**
-		 * @param {String} id
-		 *
-		 * @private
+		 * @cfg {Boolean}
 		 */
-		callback: function(id) {
-			if (
-				!Ext.isEmpty(id) && Ext.isString(id)
-				&& !Ext.isEmpty(CMDBuild.core.RequestBarrier.barrierConfigurations[id])
-			) {
-				CMDBuild.core.RequestBarrier.barrierConfigurations[id].index--;
+		enableCallbackExecution: false,
 
-				CMDBuild.core.RequestBarrier.finalize(id);
+		/**
+		 * @param {Object} parameters
+		 * @param {Function} parameters.callback
+		 * @param {Number} parameters.executionTimeout
+		 * @param {Function} parameters.failure
+		 * @param {String} parameters.id
+		 * @param {Object} parameters.scope
+		 *
+		 * @returns {Void}
+		 */
+		constructor: function (parameters) {
+			if (
+				Ext.isObject(parameters) && !Ext.Object.isEmpty(parameters)
+				&& !Ext.isEmpty(parameters.id) && Ext.isString(parameters.id)
+				&& !Ext.isEmpty(parameters.callback) && Ext.isFunction(parameters.callback)
+			) {
+				this.buffer[parameters.id] = {
+					callback: parameters.callback,
+					index: 0,
+					scope: Ext.isEmpty(parameters.scope) ? this : parameters.scope
+				};
+
+				// Failure defered function initialization
+				if (
+					Ext.isNumber(parameters.executionTimeout) && parameters.executionTimeout > 0
+					&& !Ext.isEmpty(parameters.failure) && Ext.isFunction(parameters.failure)
+				) {
+					Ext.defer(function () {
+						if (!Ext.Object.isEmpty(this.buffer[parameters.id]))
+							Ext.callback(this.buffer[parameters.id].failure, this.buffer[parameters.id].scope);
+					}, 5000, this);
+				}
+			} else {
+				_error('invalid initialization parameters', this, parameters);
 			}
 		},
 
 		/**
-		 * Check callback index and launch last callback
-		 *
 		 * @param {String} id
+		 *
+		 * @returns {Void}
+		 *
+		 * @private
 		 */
-		finalize: function(id) {
+		callback: function (id) {
 			if (
 				!Ext.isEmpty(id) && Ext.isString(id)
-				&& !Ext.isEmpty(CMDBuild.core.RequestBarrier.barrierConfigurations[id])
-				&& CMDBuild.core.RequestBarrier.barrierConfigurations[id].index == 0
+				&& !Ext.Object.isEmpty(this.buffer[id])
 			) {
-				Ext.callback(
-					CMDBuild.core.RequestBarrier.barrierConfigurations[id].callback,
-					CMDBuild.core.RequestBarrier.barrierConfigurations[id].scope
-				);
+				this.buffer[id].index--;
 
-				delete CMDBuild.core.RequestBarrier.barrierConfigurations[id];
+				this.finalize(id);
+			}
+		},
+
+		/**
+		 * Check callback index and launch last callback but only if enableCallbackExecution parameter is set to true (avoids problems on configurations without delay)
+		 * EnableCallbackExecution must be set to true only on last finalize call before barrier setup
+		 *
+		 * @param {String} id
+		 * @param {Boolean} enableCallbackExecution
+		 *
+		 * @returns {Void}
+		 */
+		finalize: function (id, enableCallbackExecution) {
+			if (!this.enableCallbackExecution) // IMPORTANT: this parameter must not be overridden every call to avoid problems on configurations with delay
+				this.enableCallbackExecution = Ext.isBoolean(enableCallbackExecution) ? enableCallbackExecution : false;
+
+			if (
+				!Ext.isEmpty(id) && Ext.isString(id)
+				&& !Ext.Object.isEmpty(this.buffer[id]) && this.buffer[id].index == 0
+				&& this.enableCallbackExecution
+			) {
+				Ext.callback(this.buffer[id].callback, this.buffer[id].scope);
+
+				delete this.buffer[id]; // Buffer reset
 			}
 		},
 
@@ -55,36 +106,14 @@
 		 *
 		 * @returns {Function}
 		 */
-		getCallback: function(id) {
+		getCallback: function (id) {
 			if (
 				!Ext.isEmpty(id) && Ext.isString(id)
-				&& !Ext.isEmpty(CMDBuild.core.RequestBarrier.barrierConfigurations[id])
+				&& !Ext.Object.isEmpty(this.buffer[id])
 			) {
-				CMDBuild.core.RequestBarrier.barrierConfigurations[id].index++;
+				this.buffer[id].index++;
 
-				return function(response, options, decodedResponse) {
-					CMDBuild.core.RequestBarrier.callback(id);
-				};
-			}
-		},
-
-		/**
-		 * @param {Function} callback
-		 * @param {String} id
-		 * @param {object} scope
-		 */
-		init: function(id, callback, scope) {
-			if (
-				!Ext.isEmpty(id) && Ext.isString(id)
-				&& !Ext.isEmpty(callback) && Ext.isFunction(callback)
-			) {
-				CMDBuild.core.RequestBarrier.barrierConfigurations[id] = {
-					callback: callback,
-					index: 0,
-					scope: scope || this
-				};
-			} else {
-				_error('barrier identifier or callback not defined', this);
+				return Ext.bind(this.callback, this, [id]);
 			}
 		}
 	});

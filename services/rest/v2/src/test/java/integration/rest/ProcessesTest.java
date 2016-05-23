@@ -36,27 +36,23 @@ import org.cmdbuild.service.rest.v2.model.ResponseMultiple;
 import org.cmdbuild.service.rest.v2.model.ResponseSingle;
 import org.junit.Before;
 import org.junit.ClassRule;
-import org.junit.Rule;
 import org.junit.Test;
 
 public class ProcessesTest {
 
-	private Processes service;
-
-	@Rule
-	public ServerResource server = ServerResource.newInstance() //
-			.withServiceClass(Processes.class) //
-			.withService(service = mock(Processes.class)) //
-			.withPort(randomPort()) //
+	@ClassRule
+	public static ServerResource<Processes> server = ServerResource.newInstance(Processes.class) //
+			.withPortRange(randomPort()) //
 			.build();
 
-	@ClassRule
-	public static JsonSupport json = new JsonSupport();
+	private static JsonSupport json = new JsonSupport();
 
+	private Processes service;
 	private HttpClient httpclient;
 
 	@Before
-	public void createHttpClient() throws Exception {
+	public void setUp() throws Exception {
+		server.service(service = mock(Processes.class));
 		httpclient = HttpClientBuilder.create().build();
 	}
 
@@ -65,17 +61,17 @@ public class ProcessesTest {
 		// given
 		final ResponseMultiple<ProcessWithBasicDetails> expectedResponse = newResponseMultiple(
 				ProcessWithBasicDetails.class) //
-				.withElements(asList( //
-						newProcessWithBasicDetails() //
-								.withName("foo") //
-								.build(), //
-						newProcessWithBasicDetails() //
-								.withName("bar") //
-								.build())) //
-				.withMetadata(newMetadata() //
-						.withTotal(2L) //
-						.build()) //
-				.build();
+						.withElements(asList( //
+								newProcessWithBasicDetails() //
+										.withName("foo") //
+										.build(), //
+								newProcessWithBasicDetails() //
+										.withName("bar") //
+										.build())) //
+						.withMetadata(newMetadata() //
+								.withTotal(2L) //
+								.build()) //
+						.build();
 		when(service.readAll(anyBoolean(), anyInt(), anyInt())) //
 				.thenReturn(expectedResponse);
 

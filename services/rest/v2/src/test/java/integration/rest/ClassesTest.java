@@ -37,27 +37,23 @@ import org.cmdbuild.service.rest.v2.model.ResponseMultiple;
 import org.cmdbuild.service.rest.v2.model.ResponseSingle;
 import org.junit.Before;
 import org.junit.ClassRule;
-import org.junit.Rule;
 import org.junit.Test;
 
 public class ClassesTest {
 
-	private Classes service;
-
-	@Rule
-	public ServerResource server = ServerResource.newInstance() //
-			.withServiceClass(Classes.class) //
-			.withService(service = mock(Classes.class)) //
-			.withPort(randomPort()) //
+	@ClassRule
+	public static ServerResource<Classes> server = ServerResource.newInstance(Classes.class) //
+			.withPortRange(randomPort()) //
 			.build();
 
-	@ClassRule
-	public static JsonSupport json = new JsonSupport();
+	private static JsonSupport json = new JsonSupport();
 
+	private Classes service;
 	private HttpClient httpclient;
 
 	@Before
-	public void createHttpClient() throws Exception {
+	public void setUp() throws Exception {
+		server.service(service = mock(Classes.class));
 		httpclient = HttpClientBuilder.create().build();
 	}
 
@@ -66,17 +62,17 @@ public class ClassesTest {
 		// given
 		final ResponseMultiple<ClassWithBasicDetails> expectedResponse = newResponseMultiple(
 				ClassWithBasicDetails.class) //
-				.withElements(asList( //
-						newClassWithBasicDetails() //
-								.withName("foo") //
-								.build(), //
-						newClassWithBasicDetails() //
-								.withName("bar") //
-								.build())) //
-				.withMetadata(newMetadata() //
-						.withTotal(2L) //
-						.build()) //
-				.build();
+						.withElements(asList( //
+								newClassWithBasicDetails() //
+										.withName("foo") //
+										.build(), //
+								newClassWithBasicDetails() //
+										.withName("bar") //
+										.build())) //
+						.withMetadata(newMetadata() //
+								.withTotal(2L) //
+								.build()) //
+						.build();
 		when(service.readAll(anyBoolean(), anyInt(), anyInt())) //
 				.thenReturn(expectedResponse);
 
@@ -110,7 +106,7 @@ public class ClassesTest {
 										.withAttribute("baz") //
 										.withDirection("descending") //
 										.build() //
-								)) //
+		)) //
 						.build()) //
 				.withMetadata(newMetadata() //
 						// nothing to add, just needed for simplify assertions

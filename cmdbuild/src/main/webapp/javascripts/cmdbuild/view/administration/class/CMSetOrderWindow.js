@@ -1,7 +1,9 @@
 (function() {
 
+	Ext.require(['CMDBuild.proxy.common.tabs.attribute.Order']);
+
 	Ext.define('CMDBuild.Administration.SetOrderWindow', {
-		extend: 'CMDBuild.PopupWindow',
+		extend: 'CMDBuild.core.window.AbstractModal',
 
 		height: 300,
 		width: 300,
@@ -10,12 +12,12 @@
 		title: CMDBuild.Translation.administration.modClass.attributeProperties.set_sorting_criteria,
 
 		initComponent: function() {
-			this.saveBtn = Ext.create('CMDBuild.buttons.SaveButton', {
+			this.saveBtn = Ext.create('CMDBuild.core.buttons.text.Save', {
 				handler: this.onSave,
 				scope: this
 			});
 
-			this.abortBtn = Ext.create('CMDBuild.buttons.AbortButton', {
+			this.abortBtn = Ext.create('CMDBuild.core.buttons.text.Abort', {
 				handler: this.onAbort,
 				scope: this
 			});
@@ -27,7 +29,7 @@
 
 			Ext.apply(this, {
 				buttons: [this.saveBtn, this.abortBtn],
-				items: [this.grid],
+				items: [this.grid]
 			});
 
 			this.callParent(arguments);
@@ -55,13 +57,12 @@
 			}
 
 			var params = {};
-			params[CMDBuild.core.proxy.CMProxyConstants.CLASS_NAME] = _CMCache.getEntryTypeNameById(this.idClass);
-			params[CMDBuild.core.proxy.CMProxyConstants.ATTRIBUTES] = Ext.encode(attributes);
+			params[CMDBuild.core.constants.Proxy.CLASS_NAME] = _CMCache.getEntryTypeNameById(this.idClass);
+			params[CMDBuild.core.constants.Proxy.ATTRIBUTES] = Ext.encode(attributes);
 
-			CMDBuild.ServiceProxy.attributes.updateSortConfiguration({
+			CMDBuild.proxy.common.tabs.attribute.Order.update({
 				params: params,
-				waitTitle: CMDBuild.Translation.common.wait_title,
-				waitMsg: CMDBuild.Translation.common.wait_msg,
+				scope: this,
 				callback: function() {
 					me.onAbort();
 				}

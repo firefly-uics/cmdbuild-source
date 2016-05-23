@@ -387,7 +387,7 @@ public class DataViewWorkflowPersistence implements WorkflowPersistence {
 			final QueryOptions queryOptions, final Iterable<Long> cardId) {
 		final UserProcessClass target = findProcessClass(className);
 		final Iterable<Long> _cardId = defaultIfNull(cardId, NO_VALUE);
-		final Long id = isEmpty(_cardId) ? 0 : get(_cardId, 0);
+		final Long id = isEmpty(_cardId) ? Long.valueOf(0L) : get(_cardId, 0);
 		final PagedElements<CMQueryRow> rows = DataViewCardFetcher.newInstance() //
 				.withDataView(dataView) //
 				.withClassName(className) //

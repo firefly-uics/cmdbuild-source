@@ -8,11 +8,6 @@
 			widgetcontroller: "CMDBuild.controller.management.common.widgets.CMWidgetController"
 		},
 
-		statics: {
-			WIDGET_NAME: CMDBuild.view.management.common.widgets.CMCreateModifyCard.WIDGET_NAME
-		},
-
-
 		constructor: function(view, supercontroller, widget, clientForm, card) {
 			var widgetControllerManager = new CMDBuild.controller.management.common.CMWidgetManagerController(view.getWidgetManager());
 			this.callParent([view, supercontroller, widgetControllerManager]);
@@ -172,8 +167,8 @@
 
 				this.lockCard(function() {
 					me.loadCard(true, {
-						Id: me.cardId,
-						IdClass: classId
+						cardId: me.cardId,
+						className: _CMCache.getEntryTypeNameById(classId)
 					});
 				});
 			}

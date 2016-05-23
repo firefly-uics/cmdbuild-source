@@ -3,6 +3,11 @@
 	var ICON_ACTION = "action-open-bim";
 	var MAX_ZOOM = 15;
 
+	Ext.require([
+		'CMDBuild.bim.proxy.Bim',
+		'CMDBuild.core.Message'
+	]);
+
 	Ext.define("CMDBuild.bim.management.CMBimController", {
 
 		mixins: {
@@ -12,8 +17,7 @@
 		constructor: function(view) {
 			// this must be loaded with BIM configuration
 			// before to initialize the application
-			this.bimConfiguration = CMDBuild.Config.bim;
-			this.rootClassName = this.bimConfiguration.rootClass;
+			this.rootClassName = CMDBuild.configuration.bim.get('rootClass'); // TODO: use proxy constants
 
 			this.view = view;
 			this.view.addDelegate(this);
@@ -33,13 +37,13 @@
 		 * ******************************************************* */
 
 		/**
-		 * 
+		 *
 		 * @param {CMDBuild.view.management.common.CMCardGrid} grid
 		 */
 		onCMCardGridColumnsReconfigured: function(grid) {
 			var entryType = _CMCardModuleState.entryType;
 			var me = this;
-			CMDBuild.bim.proxy.activeForClassName({
+			CMDBuild.bim.proxy.Bim.activeForClassName({
 				params: {
 					className: entryType.getName()
 				},
@@ -56,7 +60,7 @@
 							sortable: false,
 							width: 30
 						});
-						
+
 						grid.headerCt.insert(grid.columns.length - 1, column);
 						grid.getView().refresh();
 					}
@@ -66,15 +70,15 @@
 		},
 
 		/**
-		 * 
+		 *
 		 * @param {CMDBuild.view.management.common.CMCardGrid} grid
 		 */
 		onCMCardGridIconRowClick: function(grid, action, model) {
 			if (action == ICON_ACTION) {
-				CMDBuild.LoadMask.get().show();
+				CMDBuild.core.LoadMask.show();
 				var me = this;
 				var entryType = _CMCardModuleState.entryType;
-				CMDBuild.bim.proxy.roidForCardId({
+				CMDBuild.bim.proxy.Bim.roidForCardId({
 					params: {
 						cardId: model.get("Id"),
 						className: entryType.getName(),
@@ -84,15 +88,15 @@
 						if (response.ROID) {
 							startBIMPlayer(me, response.ROID, response.DESCRIPTION, response.BASE_POID);
 						} else {
-							CMDBuild.Msg.warn(
-									CMDBuild.Translation.warnings.warning_message, //
+							CMDBuild.core.Message.warning(
+									CMDBuild.Translation.warning, //
 									CMDBuild.Translation.no_bim_project_for_card
 							);
 						}
-						CMDBuild.LoadMask.get().hide();
+						CMDBuild.core.LoadMask.hide();
 					},
 					failure: function() {
-						CMDBuild.LoadMask.get().hide();
+						CMDBuild.core.LoadMask.hide();
 					}
 				});
 			}
@@ -107,7 +111,7 @@
 				var sceneData = scene.data();
 				var ifcTypes = sceneData.ifcTypes;
 				var data = [];
-	
+
 				for (var i=0, l=ifcTypes.length; i<l; ++i) {
 					var ifcType = ifcTypes[i];
 
@@ -144,7 +148,7 @@
 		objectSelectedForLongPressure: function(sceneManager, objectId) {
 			var me = this;
 
-			CMDBuild.bim.proxy.fetchCardFromViewewId({
+			CMDBuild.bim.proxy.Bim.fetchCardFromViewewId({
 				params: {
 					revisionId: me.roid,
 					objectId: objectId
@@ -277,12 +281,12 @@
 
 		onOpenCardIconClick: function(classId, cardId) {
 			openCard(this, classId, cardId);
-		},
+		}
 	});
 
 	function openCard(me, classId, cardId) {
 		me.bimWindow.hide();
-		_CMMainViewportController.openCard({
+		CMDBuild.global.controller.MainViewport.cmfg('mainViewportCardSelect', {
 			IdClass: classId,
 			Id: cardId
 		});
@@ -332,21 +336,19 @@
 	}
 
 	function doLogin(me, callback) {
-		var c = me.bimConfiguration;
-
 		me.loginProxy.login({
-			url: c.url,
-			username: c.username,
-			password: c.password,
+			url: CMDBuild.configuration.bim.get('url'), // TODO: use proxy constants
+			username: CMDBuild.configuration.bim.get('username'), // TODO: use proxy constants
+			password: CMDBuild.configuration.bim.get('password'), // TODO: use proxy constants
 			rememberMe: false,
 			success: callback,
 			failure: function() {
-				CMDBuild.Msg.error( //
+				CMDBuild.core.Message.error( //
 						CMDBuild.Translation.error, //
 						CMDBUild.Translation.error_bimserver_connection, //
 						true //
 					);
-			},
+			}
 		});
 
 	}
@@ -372,7 +374,7 @@
 			if (me.bimWindow == null) {
 				me.bimWindow = new CMDBuild.bim.management.view.CMBimWindow({
 					delegate: me
-					
+
 				});
 			}
 			me.bimWindow.show();
@@ -382,7 +384,7 @@
 			if (me.bimSceneManager == null) {
 				me.bimSceneManager = new BIMSceneManager({
 					canvasId: me.bimWindow.CANVAS_ID,
-					viewportId: me.bimWindow.getId()//,
+					viewportId: me.bimWindow.getId()
 				});
 				me.bimSceneManager.addDelegate(me);
 
@@ -418,8 +420,8 @@
 
 	function renderBimIcon() {
 		return '<img style="cursor:pointer"' +
-			'" class="' + ICON_ACTION + 
-			'" title="' + CMDBuild.Translation.open_3d_viewer + 
+			'" class="' + ICON_ACTION +
+			'" title="' + CMDBuild.Translation.open_3d_viewer +
 			'" src="images/icons/application_home.png"/>';
 	}
 })();

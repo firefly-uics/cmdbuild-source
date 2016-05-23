@@ -46,11 +46,11 @@
 					anchor: "-30",
 					border: false,
 					frame: false,
-					bodyCls: 'cmgraypanel'
+					bodyCls: 'cmdb-gray-panel'
 				};
 
 			this.dataSourcePanel = new CMDBuild.view.administration.dashboard.CMDashboardChartConfigurationDataSourcePanel(Ext.apply(subPanelConf, {
-				cls: 'cmborderbottom',
+				cls: 'cmdb-border-bottom',
 				afterComboValueChanged: function(value) {
 					if (me.delegate) {
 						me.delegate.onDataSourceChanged(cleanComboValue(value, "name"));
@@ -70,7 +70,7 @@
 				items: [{
 					padding: '0 0 5 0',
 					items: mainPropertiesItems(me),
-					cls: 'cmborderbottom'
+					cls: 'cmdb-border-bottom'
 				},
 					this.dataSourcePanel
 				, {
@@ -205,33 +205,33 @@
 			me.nameField = new Ext.form.field.Text({
 				fieldLabel: tr.fields.name,
 				name: "name",
-				labelWidth: CMDBuild.LABEL_WIDTH,
-				width: CMDBuild.ADM_BIG_FIELD_WIDTH,
+				labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
+				width: CMDBuild.core.constants.FieldWidths.ADMINISTRATION_BIG,
 				cmImmutable: true,
 				disabled: true
 			}),
 
 			me.descriptionArea = Ext.create('Ext.form.field.TextArea', {
 				fieldLabel: tr.fields.description,
-				name: CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION,
-				labelWidth: CMDBuild.LABEL_WIDTH,
-				width: CMDBuild.ADM_BIG_FIELD_WIDTH,
+				name: CMDBuild.core.constants.Proxy.DESCRIPTION,
+				labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
+				width: CMDBuild.core.constants.FieldWidths.ADMINISTRATION_BIG,
 				disabled: true
 			}),
 
 			me.activeCheck = new Ext.form.field.Checkbox({
 				fieldLabel: tr.fields.active,
 				name: "active",
-				labelWidth: CMDBuild.LABEL_WIDTH,
-				width: CMDBuild.ADM_BIG_FIELD_WIDTH,
+				labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
+				width: CMDBuild.core.constants.FieldWidths.ADMINISTRATION_BIG,
 				disabled: true
 			}),
 
 			me.autoLoadCheck = new Ext.form.field.Checkbox({
 				fieldLabel: tr.fields.autoload,
 				name: "autoLoad",
-				labelWidth: CMDBuild.LABEL_WIDTH,
-				width: CMDBuild.ADM_BIG_FIELD_WIDTH,
+				labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
+				width: CMDBuild.core.constants.FieldWidths.ADMINISTRATION_BIG,
 				disabled: true
 			})
 		];
@@ -242,8 +242,8 @@
 			me.typeField = new Ext.form.field.ComboBox({
 				fieldLabel: tr.fields.chartType,
 				name: "type",
-				labelWidth: CMDBuild.LABEL_WIDTH,
-				width: CMDBuild.ADM_BIG_FIELD_WIDTH,
+				labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
+				width: CMDBuild.core.constants.FieldWidths.ADMINISTRATION_BIG,
 				valueField: "value",
 				displayField: "name",
 				queryMode: "local",
@@ -264,8 +264,8 @@
 			me.showLegend = new Ext.form.field.Checkbox({
 				fieldLabel: tr.fields.legend,
 				name: "legend",
-				labelWidth: CMDBuild.LABEL_WIDTH,
-				width: CMDBuild.ADM_BIG_FIELD_WIDTH,
+				labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
+				width: CMDBuild.core.constants.FieldWidths.ADMINISTRATION_BIG,
 				disabled: true,
 				hidden: true
 			}),
@@ -274,8 +274,8 @@
 				name: "maximum",
 				fieldLabel: tr.fields.max,
 				minValue: 0,
-				labelWidth: CMDBuild.LABEL_WIDTH,
-				width: CMDBuild.ADM_SMALL_FIELD_WIDTH,
+				labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
+				width: CMDBuild.core.constants.FieldWidths.ADMINISTRATION_SMALL,
 				disabled: true,
 				hidden: true
 			}),
@@ -284,8 +284,8 @@
 				name: "minimum",
 				fieldLabel: tr.fields.min,
 				minValue: 0,
-				labelWidth: CMDBuild.LABEL_WIDTH,
-				width: CMDBuild.ADM_SMALL_FIELD_WIDTH,
+				labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
+				width: CMDBuild.core.constants.FieldWidths.ADMINISTRATION_SMALL,
 				disabled: true,
 				hidden: true
 			}),
@@ -294,16 +294,16 @@
 				name: "steps",
 				fieldLabel: tr.fields.steps,
 				minValue: 1,
-				labelWidth: CMDBuild.LABEL_WIDTH,
-				width: CMDBuild.ADM_SMALL_FIELD_WIDTH,
+				labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
+				width: CMDBuild.core.constants.FieldWidths.ADMINISTRATION_SMALL,
 				disabled: true,
 				hidden: true
 			}),
 
 			me.fgColorField = new CMDBuild.form.HexColorField( {
 				name: "fgcolor",
-				labelWidth: CMDBuild.LABEL_WIDTH,
-				width: CMDBuild.ADM_MEDIUM_FIELD_WIDTH,
+				labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
+				width: CMDBuild.core.constants.FieldWidths.ADMINISTRATION_MEDIUM,
 				fieldLabel: tr.fields.foreground,
 				disabled: true,
 				hidden: true
@@ -311,8 +311,8 @@
 
 			me.bgColorField = new CMDBuild.form.HexColorField( {
 				name: "bgcolor",
-				labelWidth: CMDBuild.LABEL_WIDTH,
-				width: CMDBuild.ADM_MEDIUM_FIELD_WIDTH,
+				labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
+				width: CMDBuild.core.constants.FieldWidths.ADMINISTRATION_MEDIUM,
 				fieldLabel: tr.fields.background,
 				disabled: true,
 				hidden: true
@@ -324,8 +324,8 @@
 			me.orientationField = new Ext.form.field.ComboBox({
 				fieldLabel: tr.fields.orientation.label,
 				name: "chartOrientation",
-				labelWidth: CMDBuild.LABEL_WIDTH,
-				width: CMDBuild.ADM_BIG_FIELD_WIDTH,
+				labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
+				width: CMDBuild.core.constants.FieldWidths.ADMINISTRATION_BIG,
 				valueField: "value",
 				displayField: "description",
 				queryMode: "local",
@@ -384,8 +384,8 @@
 			this.categoryAxesLabel = new Ext.form.field.Text({
 				fieldLabel: tr.fields.title,
 				name: "categoryAxisLabel",
-				labelWidth: CMDBuild.LABEL_WIDTH,
-				width: CMDBuild.ADM_BIG_FIELD_WIDTH,
+				labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
+				width: CMDBuild.core.constants.FieldWidths.ADMINISTRATION_BIG,
 				disabled: true,
 				hidden: true
 			}),
@@ -412,8 +412,8 @@
 		initComponent: function() {
 			this.valueAxesFields = new CMDBuild.view.common.field.CMGroupSelectionList({
 				fieldLabel: tr.fields.valueField,
-				labelWidth: CMDBuild.LABEL_WIDTH,
-				width: CMDBuild.ADM_BIG_FIELD_WIDTH,
+				labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
+				width: CMDBuild.core.constants.FieldWidths.ADMINISTRATION_BIG,
 				value: [],
 				store: new Ext.data.SimpleStore({
 					fields: ["value"],
@@ -431,8 +431,8 @@
 			this.valueAxesLabel = new Ext.form.field.Text({
 				fieldLabel: tr.fields.title,
 				name: "valueAxisLabel",
-				labelWidth: CMDBuild.LABEL_WIDTH,
-				width: CMDBuild.ADM_BIG_FIELD_WIDTH,
+				labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
+				width: CMDBuild.core.constants.FieldWidths.ADMINISTRATION_BIG,
 				disabled: true,
 				hidden: true
 			}),
@@ -516,8 +516,8 @@
 		return new Ext.form.field.ComboBox({
 			fieldLabel: label,
 			name: name,
-			labelWidth: CMDBuild.LABEL_WIDTH,
-			width: CMDBuild.ADM_BIG_FIELD_WIDTH,
+			labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
+			width: CMDBuild.core.constants.FieldWidths.ADMINISTRATION_BIG,
 			valueField: "value",
 			displayField: "value",
 			queryMode: "local",

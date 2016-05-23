@@ -1,6 +1,10 @@
 (function() {
 
-	Ext.require('CMDBuild.controller.management.classes.StaticsController');
+	Ext.require([
+		'CMDBuild.core.constants.Global',
+		'CMDBuild.core.Message',
+		'CMDBuild.controller.management.classes.StaticsController'
+	]);
 
 	Ext.define("CMDBuild.controller.management.classes.CMBaseCardPanelController", {
 		extend: "CMDBuild.controller.management.classes.CMModCardSubController",
@@ -10,8 +14,8 @@
 		},
 
 		requires: [
-			'CMDBuild.core.proxy.CMProxyConstants',
-			'CMDBuild.core.proxy.Card'
+			'CMDBuild.core.constants.Proxy',
+			'CMDBuild.proxy.Card'
 		],
 
 		cardDataProviders: [],
@@ -87,7 +91,7 @@
 			var loadRemoteData = true;
 
 			// If the entryType id and the id of the card are different the fields are not right, refill the form before the loadCard
-			var reloadFields = this.entryType.get(CMDBuild.core.proxy.CMProxyConstants.ID) != this.card.get("IdClass");
+			var reloadFields = this.entryType.get(CMDBuild.core.constants.Proxy.ID) != this.card.get("IdClass");
 
 			// Defer this call to release the UI event manage
 			Ext.defer(buildWidgetControllers, 1, this, [card]);
@@ -99,6 +103,22 @@
 			} else {
 				me.loadCard(loadRemoteData);
 			}
+
+			// History record save
+			if (!Ext.isEmpty(_CMCardModuleState.entryType) && !Ext.isEmpty(card))
+				CMDBuild.global.navigation.Chronology.cmfg('navigationChronologyRecordSave', {
+					moduleId: 'class',
+					entryType: {
+						description: _CMCardModuleState.entryType.get(CMDBuild.core.constants.Proxy.TEXT),
+						id: _CMCardModuleState.entryType.get(CMDBuild.core.constants.Proxy.ID),
+						object: _CMCardModuleState.entryType
+					},
+					item: {
+						description: card.get('Description') || card.raw['Description'] || card.get('Code') || card.raw['Code'],
+						id: card.get(CMDBuild.core.constants.Proxy.ID),
+						object: card
+					}
+				});
 		},
 
 		onModifyCardClick: function() {
@@ -119,8 +139,8 @@
 			var me = this;
 
 			var params = {};
-			params[_CMProxy.parameter.CARD_ID] = this.cloneCard ? -1 : this.card.get("Id");
-			params[_CMProxy.parameter.CLASS_NAME] = _CMCache.getEntryTypeNameById(this.card.get("IdClass"));
+			params[CMDBuild.core.constants.Proxy.CARD_ID] = this.cloneCard ? -1 : this.card.get("Id");
+			params[CMDBuild.core.constants.Proxy.CLASS_NAME] = _CMCache.getEntryTypeNameById(this.card.get("IdClass"));
 
 			addDataFromCardDataPoviders(me, params);
 
@@ -133,8 +153,9 @@
 		 * @param {Object} params
 		 */
 		doFormSubmit: function (params) {
-			CMDBuild.core.proxy.Card.update({
+			CMDBuild.proxy.Card.update({
 				params: Ext.Object.merge(params, this.view.getForm().getValues()),
+				loadMask: false,
 				scope: this,
 				success: function (response, options, decodedResponse) {
 					// Adapter to old method behaviour for classes witch extends this one
@@ -155,8 +176,8 @@
 			this.view.displayMode();
 
 			var cardData = {
-				Id: operation.result[CMDBuild.core.proxy.CMProxyConstants.ID] || this.card.get("Id"), // if is a new card, the id is given by the request
-				IdClass: this.entryType.get(CMDBuild.core.proxy.CMProxyConstants.ID)
+				Id: operation.result[CMDBuild.core.constants.Proxy.ID] || this.card.get("Id"), // if is a new card, the id is given by the request
+				IdClass: this.entryType.get(CMDBuild.core.constants.Proxy.ID)
 			};
 
 			this.fireEvent(this.CMEVENTS.cardSaved, cardData);
@@ -219,16 +240,14 @@
 			if (cardId && cardId != '-1' && (loadRemoteData || me.view.hasDomainAttributes())) {
 				if (!params) {
 					var params = {};
-					params[CMDBuild.core.proxy.CMProxyConstants.CARD_ID] = me.card.get('Id');
-					params[CMDBuild.core.proxy.CMProxyConstants.CLASS_NAME] = _CMCache.getEntryTypeNameById(me.card.get('IdClass'));
+					params[CMDBuild.core.constants.Proxy.CARD_ID] = me.card.get('Id');
+					params[CMDBuild.core.constants.Proxy.CLASS_NAME] = _CMCache.getEntryTypeNameById(me.card.get('IdClass'));
 				}
 
-				CMDBuild.LoadMask.get().show();
-				CMDBuild.ServiceProxy.card.get({
+				CMDBuild.proxy.Card.read({
 					params: params,
+					loadMask: false,
 					success: function(result, options, decodedResult) {
-						CMDBuild.LoadMask.get().hide();
-
 						var data = decodedResult.card;
 
 						if (me.card) {
@@ -291,15 +310,16 @@
 		 * @param {Function} success
 		 */
 		lockCard: function(success) {
-			if (_CMUtils.lockCard.isEnabled()) {
+			if (CMDBuild.configuration.instance.get('enableCardLock')) { // TODO: use proxy constants
 				if (
 					this.card
 					&& this.card.get("Id") >= 0 // Avoid lock on card create
 				) {
-					CMDBuild.core.proxy.Card.lock({
+					CMDBuild.proxy.Card.lock({
 						params: {
 							id: this.card.get("Id")
 						},
+						loadMask: false,
 						success: success
 					});
 				}
@@ -309,16 +329,17 @@
 		},
 
 		unlockCard: function() {
-			if (_CMUtils.lockCard.isEnabled()) {
+			if (CMDBuild.configuration.instance.get('enableCardLock')) { // TODO: use proxy constants
 				if (
 					this.card
 					&& this.view.isInEditing()
 					&& this.card.get("Id") >= 0 // Avoid unlock on card create
 				) {
-					CMDBuild.core.proxy.Card.unlock({
+					CMDBuild.proxy.Card.unlock({
 						params: {
 							id: this.card.get("Id")
-						}
+						},
+						loadMask: false
 					});
 				}
 			}
@@ -376,8 +397,8 @@
 		var form = me.view.getForm();
 		var invalidAttributes = CMDBuild.controller.management.classes.StaticsController.getInvalidAttributeAsHTML(form);
 		if (invalidAttributes != null) {
-			var msg = Ext.String.format("<p class=\"{0}\">{1}</p>", CMDBuild.Constants.css.error_msg, CMDBuild.Translation.errors.invalid_attributes);
-			CMDBuild.Msg.error(null, msg + invalidAttributes, false);
+			var msg = Ext.String.format("<p class=\"{0}\">{1}</p>", CMDBuild.core.constants.Global.getErrorMsgCss(), CMDBuild.Translation.errors.invalid_attributes);
+			CMDBuild.core.Message.error(null, msg + invalidAttributes, false);
 			return false;
 		} else {
 			return true;

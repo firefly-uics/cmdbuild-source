@@ -50,29 +50,25 @@ import org.cmdbuild.service.rest.v1.model.ResponseSingle;
 import org.cmdbuild.service.rest.v1.model.adapter.ProcessInstanceAdapter;
 import org.junit.Before;
 import org.junit.ClassRule;
-import org.junit.Rule;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 
 public class ProcessInstancesTest {
 
-	private ProcessInstances service;
-
-	@Rule
-	public ServerResource server = ServerResource.newInstance() //
-			.withServiceClass(ProcessInstances.class) //
-			.withService(service = mock(ProcessInstances.class)) //
-			.withPort(randomPort()) //
+	@ClassRule
+	public static ServerResource<ProcessInstances> server = ServerResource.newInstance(ProcessInstances.class) //
+			.withPortRange(randomPort()) //
 			.build();
 
-	@ClassRule
-	public static JsonSupport json = new JsonSupport();
+	private static JsonSupport json = new JsonSupport();
 
+	private ProcessInstances service;
 	private HttpClient httpclient;
 	private ProcessInstanceAdapter adapter;
 
 	@Before
 	public void createHttpClient() throws Exception {
+		server.service(service = mock(ProcessInstances.class));
 		httpclient = HttpClientBuilder.create().build();
 		adapter = new ProcessInstanceAdapter();
 	}

@@ -1,7 +1,8 @@
 (function() {
 
 	var FILTER_FIELD = "_SystemFieldFilter";
-	var CHANGE_EVENT = "change";
+
+	Ext.require('CMDBuild.proxy.Card');
 
 	Ext.define("CMDBuild.Management.ReferenceField", {
 		statics: {
@@ -69,16 +70,15 @@
 
 	function buildReferencePanel(field, subFields) {
 		// If the field has no value the relation attributes must be disabled
-		field.mon(field, CHANGE_EVENT, function(combo, val) {
-			var disabled = val == "";
-
-			for (var i = 0; i < subFields.length; ++i) {
-				var sf = subFields[i];
-
-				if (sf)
-					sf.setDisabled(disabled);
-			}
-		});
+		field.on('change', function (combo, newValue, oldValue, eOpts) {
+			Ext.Function.defer(function (combo) { // I cannot understand why deferring function it works, but that the only way...
+				if (!Ext.isEmpty(subFields) && Ext.isArray(subFields))
+					Ext.Array.each(subFields, function (subField, i, allSubFields) {
+						if (!Ext.isEmpty(subField))
+							subField.setDisabled(Ext.isEmpty(combo.getValue()));
+					}, this);
+			}, 100, this, [combo]);
+		}, this);
 
 		var fieldContainer = {
 			xtype: 'container',
@@ -97,6 +97,7 @@
 
 		return Ext.create('Ext.container.Container', {
 			margin: "0 0 5 0",
+			mainField: field, // Custom attribute to create a reference to main reference field
 			items: [fieldContainer].concat(subFields),
 			resolveTemplate: function(barrierCallbackDefinitionObject) {
 				field.resolveTemplate(barrierCallbackDefinitionObject);
@@ -105,7 +106,7 @@
 	}
 
 	Ext.define("CMDBuild.Management.ReferenceField.Field", {
-		extend: "CMDBuild.Management.SearchableCombo",
+		extend: "CMDBuild.view.common.field.SearchableCombo",
 
 		mixins: {
 			observable: 'Ext.util.Observable'
@@ -115,7 +116,7 @@
 
 		initComponent: function() {
 			var attribute = this.attribute;
-			var store = CMDBuild.Cache.getReferenceStore(attribute);
+			var store = _CMCache.getReferenceStore(attribute);
 
 			store.on("loadexception", function() {
 				field.setValue('');
@@ -123,7 +124,7 @@
 
 			Ext.apply(this, {
 				fieldLabel: attribute.description || attribute.name,
-				labelWidth: CMDBuild.LABEL_WIDTH,
+				labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
 				name: attribute.name,
 				store: store,
 				queryMode: "local",
@@ -152,7 +153,7 @@
 							!Ext.isEmpty(combo.getStore())
 							&& !Ext.isEmpty(this.attribute)
 							&& !Ext.isEmpty(this.attribute.meta)
-							&& this.attribute.meta['system.type.reference.' + CMDBuild.core.proxy.CMProxyConstants.PRESELECT_IF_UNIQUE] === 'true'
+							&& this.attribute.meta['system.type.reference.' + CMDBuild.core.constants.Proxy.PRESELECT_IF_UNIQUE] === 'true'
 							&& combo.getStore().getCount() == 1
 						) {
 							combo.setValue(records[0].get('Id'));
@@ -162,15 +163,35 @@
 			}
 		},
 
-		getErrors: function(rawValue) {
-			if (this.templateResolver && this.store) {
-				var value = this.getValue();
-
-				if (value && this.store.find(this.valueField, value) == -1)
-					return [ CMDBuild.Translation.errors.reference_invalid ];
-			}
+		/**
+		 * @param {String} rawValue
+		 *
+		 * @returns {Array}
+		 *
+		 * @override
+		 */
+		getErrors: function (rawValue) {
+			if (!Ext.isEmpty(rawValue) && this.getStore().find(this.valueField, this.getValue()) == -1)
+				return [CMDBuild.Translation.errors.valueDoesNotMatchFilter];
 
 			return this.callParent(arguments);
+		},
+
+		/**
+		 * Return value only if number, to avoid wrong and massive server requests where returned value from ReferenceField
+		 * is a string (if you type something and don't exist the store's relative value, typed string will be returned).
+		 *
+		 * @returns {Number}
+		 *
+		 * @override
+		 */
+		getValue: function () {
+			var value = this.callParent(arguments);
+
+			if (Ext.isNumber(value))
+				return value;
+
+			return '';
 		},
 
 		setValue: function(v) {
@@ -180,6 +201,8 @@
 				// Is one time seems that has a CQL filter
 				if (this.ensureToHaveTheValueInStore(v) || this.store.isOneTime)
 					this.callParent([v]);
+
+				this.validate();
 			}
 		},
 
@@ -201,16 +224,14 @@
 				&& this.getStore().find(this.valueField, value) == -1
 				&& !Ext.isEmpty(this.attribute)
 				&& !Ext.isEmpty(this.attribute.meta)
-				&& this.attribute.meta['system.type.reference.' + CMDBuild.core.proxy.CMProxyConstants.PRESELECT_IF_UNIQUE] !== 'true'
 			) {
 				var params = Ext.apply({ cardId: value }, this.getStore().baseParams);
 
-				CMDBuild.Ajax.request({
-					method: 'GET',
-					url: 'services/json/management/modcard/getcard',
+				CMDBuild.proxy.Card.read({
 					params: params,
+					loadMask: false,
 					scope: this,
-					success: function(response, options, decodedResponse) {
+					success: function (response, options, decodedResponse) {
 						if (!Ext.isEmpty(this.getStore()))
 							this.getStore().add({
 								Id: value,
@@ -218,7 +239,6 @@
 							});
 
 						this.setValue(value);
-						this.validate();
 					}
 				});
 
@@ -322,13 +342,11 @@
 								!Ext.isEmpty(this.getStore())
 								&& !Ext.isEmpty(this.attribute)
 								&& !Ext.isEmpty(this.attribute.meta)
-								&& this.attribute.meta['system.type.reference.' + CMDBuild.core.proxy.CMProxyConstants.PRESELECT_IF_UNIQUE] === 'true'
+								&& this.attribute.meta['system.type.reference.' + CMDBuild.core.constants.Proxy.PRESELECT_IF_UNIQUE] === 'true'
 								&& this.getStore().getCount() == 1
 							) {
 								this.setValue(records[0].get('Id'));
 							}
-
-							this.validate(); // Fail the validation if the current selection is not in the new filter
 
 							afterStoreIsLoaded();
 						}

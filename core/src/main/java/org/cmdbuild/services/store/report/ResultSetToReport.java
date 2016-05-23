@@ -4,7 +4,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import org.cmdbuild.report.ReportFactory.ReportType;
-import org.postgresql.jdbc4.Jdbc4Array;
+import org.postgresql.jdbc.PgArray;
 
 import com.google.common.base.Function;
 
@@ -57,7 +57,7 @@ public class ResultSetToReport implements Function<ResultSet, Report> {
 	private Integer[] toIntegerArray(final Object resultSetOutput) throws SQLException {
 		final Integer[] out;
 		if (resultSetOutput != null) {
-			final Jdbc4Array array = (Jdbc4Array) resultSetOutput;
+			final PgArray array = (PgArray) resultSetOutput;
 			out = (Integer[]) array.getArray();
 		} else {
 			out = new Integer[0];
@@ -70,7 +70,7 @@ public class ResultSetToReport implements Function<ResultSet, Report> {
 		final String[] out;
 
 		if (resultSetOutput != null) {
-			final Jdbc4Array array = (Jdbc4Array) resultSetOutput;
+			final PgArray array = (PgArray) resultSetOutput;
 			out = (String[]) array.getArray();
 		} else {
 			out = new String[0];

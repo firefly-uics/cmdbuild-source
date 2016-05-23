@@ -1,12 +1,17 @@
 (function() {
 	var tr = CMDBuild.Translation.administration.modClass.domainProperties;
 
+	Ext.require([
+		'CMDBuild.core.constants.Global',
+		'CMDBuild.proxy.classes.Domains'
+	]);
+
 	Ext.define("CMDBuild.Administration.DomainGrid", {
 		extend: "Ext.grid.Panel",
 
 		initComponent: function() {
-		
-			this.addDomainButton = new Ext.button.Button({	
+
+			this.addDomainButton = new Ext.button.Button({
 				iconCls : 'add',
 				text : tr.add_domain
 			});
@@ -51,15 +56,15 @@
 				header : tr.cardinality,
 				dataIndex : 'cardinality',
 				flex : 1
-			}, 
-			
+			},
+
 			new Ext.ux.CheckColumn( {
 				header : tr.m_d,
 				dataIndex : 'md',
 				cmReadOnly: true,
 				width: 30
 			})];
-	
+
 			Ext.apply(this, {
 				tbar: [
 					this.addDomainButton,
@@ -69,7 +74,7 @@
 					{
 						xtype: 'checkbox',
 						boxLabel: CMDBuild.Translation.administration.modClass.include_inherited,
-						boxLabelCls: "cmtoolbaritem",
+						boxLabelCls: "cmdb-toolbar-item",
 						checked: true,
 						handler: function(obj, checked) {
 							this.filterInherited(!checked);
@@ -78,7 +83,7 @@
 					}
 				],
 				columns : columns,
-				store: CMDBuild.ServiceProxy.administration.domain.getGridStore()
+				store: CMDBuild.proxy.classes.Domains.getStore()
 			});
 
 			this.callParent();
@@ -87,11 +92,11 @@
 			_CMEventBus.subscribe('cmdb-init-'+this.eventtype, this.loadData, this);
 			_CMEventBus.subscribe('cmdb-modified-'+this.eventtype+'domain', this.loadData, this);
 		},
-		
+
 		loadData: function(params) {
 			if (params.idClass) {
 				var table = _CMCache.getEntryTypeById(params.idClass);
-				if (table.tableType == CMDBuild.Constants.cachedTableType.simpletable) {
+				if (table.tableType == CMDBuild.core.constants.Global.getTableTypeSimpleTable()) {
 					return;
 				}
 			}
@@ -106,7 +111,7 @@
 				scope : this
 			});
 		},
-	
+
 		filterInherited: function(filter) {
 			this.filtering = filter;
 			if (filter) {
@@ -119,12 +124,12 @@
 				});
 			}
 		},
-	
+
 		onDomainSelected: function(sm, row, rec) {
 			var eventParams = {
 				record: new Ext.data.Record(rec.json)
 			}
-	
+
 			this.publish('cmdb-load-'+this.eventtype+'domain', eventParams);
 		}
 

@@ -6,6 +6,7 @@ import static org.cmdbuild.servlets.json.CommunicationConstants.CLASS_NAME;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import javax.activation.DataHandler;
 
@@ -102,7 +103,7 @@ public class Attachments extends JSONBaseWithSpringContext {
 				category, //
 				description, //
 				metadataGroupsFrom(categoryDefinition(category), metadataValues) //
-				);
+		);
 	}
 
 	/**
@@ -127,9 +128,11 @@ public class Attachments extends JSONBaseWithSpringContext {
 
 		final Map<String, Map<String, Object>> metadataValues = metadataValuesFromJson(jsonMetadataValues);
 		dmsLogic().updateDescriptionAndMetadata( //
-				className, cardId, //
+				operationUser().getAuthenticatedUser().getUsername(), //
+				className, //
+				cardId, //
 				filename, //
-				null, //
+				category, //
 				description, //
 				metadataGroupsFrom(categoryDefinition(category), metadataValues));
 	}
@@ -155,7 +158,8 @@ public class Attachments extends JSONBaseWithSpringContext {
 				@Override
 				public Iterable<Metadata> getMetadata() {
 					final List<Metadata> metadata = Lists.newArrayList();
-					for (final MetadataDefinition metadataDefinition : metadataGroupDefinition.getMetadataDefinitions()) {
+					for (final MetadataDefinition metadataDefinition : metadataGroupDefinition
+							.getMetadataDefinitions()) {
 						final String metadataName = metadataDefinition.getName();
 						final Object rawValue = allMetadataMap.get(metadataName);
 						metadata.add(new Metadata() {
@@ -211,6 +215,32 @@ public class Attachments extends JSONBaseWithSpringContext {
 			notifier().warn(e);
 			return definitionsFactory.newDocumentTypeDefinitionWithNoMetadata(category);
 		}
+	}
+
+	private static class Preset {
+
+		private final String id;
+		private final String description;
+
+		public Preset(final String id, final String description) {
+			this.id = id;
+			this.description = description;
+		}
+
+		public String getId() {
+			return id;
+		}
+
+		public String getDescription() {
+			return description;
+		}
+
+	}
+
+	@JSONExported
+	public JsonResponse getPresets() throws JSONException, CMDBException {
+		final List<Preset> elements = dmsLogic().presets().entrySet().stream().map(t->new Preset(t.getKey(), t.getValue())).collect(Collectors.toList());
+		return JsonResponse.success(elements);
 	}
 
 }

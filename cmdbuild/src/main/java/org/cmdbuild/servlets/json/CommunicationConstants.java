@@ -10,6 +10,7 @@ public class CommunicationConstants {
 			ACCOUNT = "account", //
 			ACTIVE = "active", //
 			ACTIVE_CAPITAL = "Active", //
+			ACTIVE_ONLY = ACTIVE + "Only", //
 			ACTIVITY_INSTANCE_ID = "activityInstanceId", //
 			ACTIVITY_NAME = "activityName", //
 			ADDRESS = "address", //
@@ -44,6 +45,7 @@ public class CommunicationConstants {
 			CLASS_ID = "classId", //
 			CLASS_MAPPING = "classMapping", //
 			CLASS_NAME = "className", //
+			CLASS_NAMES = "classNames", //
 			CODE_CAPITAL = "Code", //
 			CODE = "code", //
 			CONFIGURATION = "configuration", //
@@ -159,6 +161,7 @@ public class CommunicationConstants {
 			KEEP_SYNCHRONIZATION = "keepSynchronization", //
 			KEY = "key", //
 			LANGUAGE = "language", //
+			LANGUAGES = "languages", //
 			LANGUAGE_PROMPT = "language_prompt", //
 			LAST_CHECKIN = "lastCheckin", //
 			LENGTH = "len", //
@@ -250,6 +253,7 @@ public class CommunicationConstants {
 			SCALE = "scale", //
 			SEPARATOR = "separator", //
 			SERVICE = "service", //
+			SESSION = "session", //
 			SHARK_SCHEMA = "shark_schema", //
 			SHORT = "short", //
 			SHOW_IN_GRID = "isbasedsp", //

@@ -13,15 +13,14 @@ import javax.security.auth.callback.UnsupportedCallbackException;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
-import org.apache.ws.security.WSPasswordCallback;
-import org.cmdbuild.auth.AuthenticationService;
+import org.apache.wss4j.common.ext.WSPasswordCallback;
 import org.cmdbuild.auth.AuthenticationService.PasswordCallback;
+import org.cmdbuild.auth.DefaultAuthenticationService;
 import org.cmdbuild.auth.Login;
 import org.cmdbuild.auth.user.AuthenticatedUser;
 import org.cmdbuild.config.AuthProperties;
 import org.cmdbuild.exception.AuthException.AuthExceptionType;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 
 /**
  * PasswordHandler class is used only with WSSecurity. This class verifies if
@@ -85,8 +84,7 @@ public class PasswordHandler implements CallbackHandler {
 	}
 
 	@Autowired
-	@Qualifier("default")
-	private AuthenticationService authenticationService;
+	private DefaultAuthenticationService authenticationService;
 
 	@Override
 	public void handle(final Callback[] callbacks) throws IOException, UnsupportedCallbackException {

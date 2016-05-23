@@ -1,5 +1,7 @@
 (function() {
 
+	Ext.require(['CMDBuild.core.constants.Global']);
+
 	Ext.define('CMDBuild.controller.management.workflow.StaticsController', {
 
 		singleton: true,
@@ -58,8 +60,8 @@
 						var fieldLabel = field.getFieldLabel();
 
 						// Strip label required flag
-						if (fieldLabel.indexOf('* ') == 0)
-							fieldLabel = fieldLabel.replace('* ', '');
+						if (fieldLabel.indexOf(CMDBuild.core.constants.Global.getMandatoryLabelFlag()) == 0)
+							fieldLabel = fieldLabel.replace(CMDBuild.core.constants.Global.getMandatoryLabelFlag(), '');
 
 						out += '<li>' + fieldLabel + '</li>';
 					}

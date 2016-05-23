@@ -29,17 +29,17 @@
 
 	Ext.define("CMDBuild.data.CMMiniCardGridBaseDataSource", {
 
-		requires: ['CMDBuild.core.proxy.CMProxyUrlIndex'],
+		requires: ['CMDBuild.proxy.index.Json'],
 
 		constructor: function() {
-			this.store = new Ext.data.Store ({
-				pageSize: _CMUtils.grid.getPageSize(),
+			this.store = CMDBuild.global.Cache.requestAsStore(CMDBuild.core.constants.Proxy.UNCACHED, {
+				pageSize: CMDBuild.configuration.instance.get(CMDBuild.core.constants.Proxy.ROW_LIMIT),
 				model: 'CMDBuild.view.management.CMMiniCardGridModel',
 				autoLoad: false,
 				remoteSort: true,
 				proxy: {
 					type: "ajax",
-					url: CMDBuild.core.proxy.CMProxyUrlIndex.card.getList,
+					url: CMDBuild.proxy.index.Json.card.readAll,
 					reader: {
 						root: "rows",
 						type: "json",

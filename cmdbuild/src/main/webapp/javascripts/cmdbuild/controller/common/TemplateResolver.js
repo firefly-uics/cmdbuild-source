@@ -1,5 +1,7 @@
 (function() {
 
+Ext.require(['CMDBuild.proxy.TemplateResolver']);
+
 if (typeof CMDBuild.Management == "undefined") {
 	CMDBuild.Management = {};
 }
@@ -59,7 +61,7 @@ CMDBuild.Management.TemplateResolver.prototype = {
 			} else {
 				if (splitLocalName.detail) {
 					CMDBuild.log.warn("Detail can only be specified for lookup and reference types");
-					CMDBuild.Msg.warn(CMDBuild.Translation.errors.warning_message,
+					CMDBuild.core.Message.warning(CMDBuild.Translation.warning,
 							CMDBuild.Translation.errors.template_error + ' ' + splitLocalName.name + ' ' + splitLocalName.detail);
 				}
 
@@ -165,8 +167,8 @@ CMDBuild.Management.TemplateResolver.prototype = {
 	// private
 	getCurrentUserInfo: function(varName) {
 		var infoMap = {
-			name: CMDBuild.Runtime.Username,
-			id: CMDBuild.Runtime.UserId
+			name: CMDBuild.configuration.runtime.get(CMDBuild.core.constants.Proxy.USERNAME),
+			id: CMDBuild.configuration.runtime.get(CMDBuild.core.constants.Proxy.USER_ID)
 		};
 		return infoMap[varName];
 	},
@@ -174,8 +176,8 @@ CMDBuild.Management.TemplateResolver.prototype = {
 	// private
 	getCurrentGroupInfo: function(varName) {
 		var infoMap = {
-			name: CMDBuild.Runtime.DefaultGroupName,
-			id: CMDBuild.Runtime.DefaultGroupId
+			name: CMDBuild.configuration.runtime.get(CMDBuild.core.constants.Proxy.DEFAULT_GROUP_NAME),
+			id: CMDBuild.configuration.runtime.get(CMDBuild.core.constants.Proxy.DEFAULT_GROUP_ID)
 		};
 		return infoMap[varName];
 	},
@@ -409,9 +411,9 @@ CMDBuild.Management.TemplateResolver.prototype = {
 	executeCQLTemplate: function(templateName, cqlQuery, ctx, callback) {
 		var queryParams = this.buildCQLQueryParameters(cqlQuery, ctx);
 		if (queryParams) {
-			CMDBuild.Ajax.request({
-				url: "services/json/management/modcard/getcardlist",
+			CMDBuild.proxy.TemplateResolver.readAllCard({
 				params: queryParams,
+				loadMask: false,
 				success: function(response, options, decoded) {
 					var row = decoded.rows[0];
 					ctx.cql[templateName] = row;
@@ -572,37 +574,32 @@ CMDBuild.Management.TemplateResolver.prototype = {
 		return out;
 	},
 
-	bindLocalDepsChange: function(callback, scope) {
-		var ld = this.getLocalDepsAsField(),
-			callback = callback || Ext.empltyFn,
-			scope = scope || this;
+	bindLocalDepsChange: function (callback, scope) {
+		var ld = this.getLocalDepsAsField();
+		var callback = callback || Ext.emptyFn;
+		var scope = scope || this;
 
 		for (var i in ld) {
-			//before the blur if the value is changed
+			// Before the blur if the value is changed
 			var field = ld[i];
 
 			if (field) {
-				// For check-box and HTMLEditor, call directly the
-				// callback. For other attributes set the field
-				// as changed, and call the callback at blur
+				// For check-box and HTMLEditor, call directly the callback. For other attributes set the field as changed, and call the callback at blur
 				field.mon(field, "change", function(f) {
-					if (Ext.getClassName(f) == "Ext.ux.form.XCheckbox" ||
-							Ext.getClassName(f) == "CMDBuild.view.common.field.CMHtmlEditorField"
-						) {
-
-						callback.call(scope);
+					if (Ext.getClassName(f) == "Ext.ux.form.XCheckbox" || Ext.getClassName(f) == "CMDBuild.view.common.field.HtmlEditor") {
+						Ext.callback(callback, scope, [field]);
 					} else {
 						f.changed = true;
 					}
-				}, this);
+				}, scope);
 
 				field.mon(field, "blur", function(f) {
 					if (f.changed) {
 						f.changed = false;
 
-						callback.call(scope);
+						Ext.callback(callback, scope, [field]);
 					}
-				}, this);
+				}, scope);
 			}
 		}
 	},

@@ -1,23 +1,23 @@
-/*
-This file is part of Ext JS 4.2
-
-Copyright (c) 2011-2013 Sencha Inc
-
-Contact:  http://www.sencha.com/contact
-
-GNU General Public License Usage
-This file may be used under the terms of the GNU General Public License version 3.0 as
-published by the Free Software Foundation and appearing in the file LICENSE included in the
-packaging of this file.
-
-Please review the following information to ensure the GNU General Public License version 3.0
-requirements will be met: http://www.gnu.org/copyleft/gpl.html.
-
-If you are unsure which license is appropriate for your use, please contact the sales department
-at http://www.sencha.com/contact.
-
-Build date: 2013-03-11 22:33:40 (aed16176e68b5e8aa1433452b12805c0ad913836)
-*/
+/**
+ * This file is part of Ext JS 4.2
+ *
+ * Copyright (c) 2011-2013 Sencha Inc
+ *
+ * Contact:  http://www.sencha.com/contact
+ *
+ * GNU General Public License Usage
+ * This file may be used under the terms of the GNU General Public License version 3.0 as
+ * published by the Free Software Foundation and appearing in the file LICENSE included in the
+ * packaging of this file.
+ *
+ * Please review the following information to ensure the GNU General Public License version 3.0
+ * requirements will be met: http://www.gnu.org/copyleft/gpl.html.
+ *
+ * If you are unsure which license is appropriate for your use, please contact the sales department
+ * at http://www.sencha.com/contact.
+ *
+ * Build date: 2013-03-11 22:33:40 (aed16176e68b5e8aa1433452b12805c0ad913836)
+ */
 /**
  * France (France) translation
  * By Thylia
@@ -54,7 +54,7 @@ Ext.onReady(function() {
             "Mai": 4,
             "Juin": 5,
             "Juillet": 6,
-            "Juil": 6, 
+            "Juil": 6,
             "Août": 7,
             "Septembre": 8,
             "Sept": 8,
@@ -193,9 +193,9 @@ Ext.define("Ext.locale.fr.form.field.Number", {
     nanText: "{0} n'est pas un nombre valide"
 });
 
-Ext.define("Ext.locale.fr.form.field.File", { 
-    override: "Ext.form.field.File", 
-    buttonText: "Parcourir..." 
+Ext.define("Ext.locale.fr.form.field.File", {
+    override: "Ext.form.field.File",
+    buttonText: "Parcourir..."
 });
 
 Ext.define("Ext.locale.fr.form.field.Date", {
@@ -341,7 +341,7 @@ Ext.define("Ext.locale.fr.form.RadioGroup", {
 });
 
 // This is needed until we can refactor all of the locales into individual files
-Ext.define("Ext.locale.fr.Component", {	
+Ext.define("Ext.locale.fr.Component", {
     override: "Ext.Component"
 });
 

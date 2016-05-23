@@ -1,9 +1,9 @@
 (function() {
 
 	Ext.define('CMDBuild.controller.common.field.delay.Display', {
-		extend: 'CMDBuild.controller.common.AbstractController',
+		extend: 'CMDBuild.controller.common.abstract.Base',
 
-		requires: ['CMDBuild.core.proxy.CMProxyConstants'],
+		requires: ['CMDBuild.core.constants.Proxy'],
 
 		/**
 		 * @cfg {Array}
@@ -26,7 +26,7 @@
 		 */
 		translateValue: function(value) {
 			return Ext.create('CMDBuild.view.common.field.delay.Delay', {
-				value: value,
+				value: value
 			}).getRawValue();
 		}
 

@@ -142,7 +142,7 @@ public class PrivilegedDmsLogicTest {
 		final Iterable<MetadataGroup> metadataGroups = asList();
 
 		// when
-		underTest.updateDescriptionAndMetadata("foo", 42L, "the filename", "the category", "the description",
+		underTest.updateDescriptionAndMetadata("dummy user", "foo", 42L, "the filename", "the category", "the description",
 				metadataGroups);
 	}
 
@@ -153,12 +153,12 @@ public class PrivilegedDmsLogicTest {
 		final Iterable<MetadataGroup> metadataGroups = asList();
 
 		// when
-		underTest.updateDescriptionAndMetadata("foo", 42L, "the filename", "the category", "the description",
+		underTest.updateDescriptionAndMetadata("dummy user", "foo", 42L, "the filename", "the category", "the description",
 				metadataGroups);
 
 		// then
 		verify(dmsPrivileges).writable("foo");
-		verify(delegate).updateDescriptionAndMetadata("foo", 42L, "the filename", "the category", "the description",
+		verify(delegate).updateDescriptionAndMetadata("dummy user", "foo", 42L, "the filename", "the category", "the description",
 				metadataGroups);
 		verifyNoMoreInteractions(delegate, dmsPrivileges);
 	}

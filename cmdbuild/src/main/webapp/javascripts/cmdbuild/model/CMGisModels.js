@@ -1,12 +1,4 @@
 (function() {
-	Ext.define('IconsModel', {
-		extend: 'Ext.data.Model',
-		fields: [
-			{name: 'name', type: 'string'},
-			{name: 'description', type: 'string'},
-			{name: 'path', type: 'string'}
-		]
-	});
 
 	Ext.define('GISLayerModel', {
 		extend: 'Ext.data.Model',

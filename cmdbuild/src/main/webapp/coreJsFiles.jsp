@@ -1,74 +1,35 @@
-<%
-	final String locale = sessionVars.getLanguage();
-
-	if ("it".equals(locale)) {
-%>
-	<script type="text/javascript" src="javascripts/cmdbuild/locale/it.js"></script>
-<%
-	} else {
-%>
-	<script type="text/javascript" src="javascripts/cmdbuild/locale/en.js"></script>
-<%
-	}
-%>
-
 <!-- LOADER CONFIG -->
-<script type="text/javascript" src="javascripts/cmdbuild/core/Utils.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/core/LoaderConfig.js"></script>
+<script type="text/javascript" src="javascripts/cmdbuild/core/Utils.js"></script>
 
-<!-- OVERRIDES and FIXES -->
-<script type="text/javascript" src="javascripts/cmdbuild/override/JSON.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/override/data/proxy/FixServer.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/override/form/FixFieldSet.js"></script>
+<!-- OVERRIDES -->
+<script type="text/javascript" src="javascripts/cmdbuild/override/data/proxy/Server.js"></script>
+<script type="text/javascript" src="javascripts/cmdbuild/override/data/Store.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/override/form/field/Display.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/override/form/field/FixCheckbox.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/override/form/field/FixComboBox.js"></script>
+<script type="text/javascript" src="javascripts/cmdbuild/override/form/field/Checkbox.js"></script>
+<script type="text/javascript" src="javascripts/cmdbuild/override/form/field/ComboBox.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/override/form/field/VTypes.js"></script>
+<script type="text/javascript" src="javascripts/cmdbuild/override/form/FieldSet.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/override/grid/plugin/RowExpander.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/override/layout/container/FixEditor.js"></script>
-
-<!--  PROXYES -->
-<script type="text/javascript" src="javascripts/cmdbuild/core/proxy/CMProxyConstants.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/core/proxy/CMProxyUrlIndex.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/core/proxy/CMProxy.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/core/proxy/Attachment.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/core/proxy/Attributes.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/core/proxy/Card.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/core/proxy/Classes.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/core/proxy/Configuration.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/core/proxy/Filter.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/core/proxy/CMProxyAdministration.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/core/proxy/CMProxyDashboard.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/core/proxy/CMProxyDataView.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/core/proxy/CMProxyGIS.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/core/proxy/CMProxyIcon.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/core/proxy/CMProxyLookup.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/core/proxy/CMProxyMenu.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/core/proxy/CMProxyNavigationTrees.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/core/proxy/CMProxyTranslations.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/core/proxy/CMProxyWidgetConfiguration.js"></script>
+<script type="text/javascript" src="javascripts/cmdbuild/override/JSON.js"></script>
+<script type="text/javascript" src="javascripts/cmdbuild/override/layout/container/Editor.js"></script>
+<script type="text/javascript" src="javascripts/cmdbuild/override/selection/CheckboxModel.js"></script>
 
 <!-- MODELS -->
+<script type="text/javascript" src="javascripts/cmdbuild/model/report/Cache.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/model/CMCacheModels.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/model/CMFilterModel.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/model/CMDomainModels.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/model/CMGroupModels.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/model/CMDashboardModels.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/model/CMAttachmentModels.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/model/Report.js"></script>
 
 <!-- SELECTION -->
 <script type="text/javascript" src="javascripts/cmdbuild/selection/CMMultiPageSelectionModel.js"></script>
 
 <!-- CACHE -->
-<script type="text/javascript" src="javascripts/cmdbuild/cache/CMCacheNavigationTreesFunctions.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/cache/CMCacheFilterFunctions.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/cache/CMCacheClassFunctions.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/cache/CMCacheReportFunctions.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/cache/CMCacheLookupFunctions.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/cache/CMCacheGroupsFunctions.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/cache/CMCacheDomainFunctions.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/cache/CMCacheTranslationsFunctions.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/cache/CMCacheDashboardFunctions.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/cache/CMCacheAttachmentCategoryFunctions.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/cache/CMCacheGISFunctions.js"></script>
@@ -77,15 +38,11 @@
 <!-- THE OTHERS -->
 <script type="text/javascript" src="javascripts/cmdbuild/controller/common/TemplateResolver.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/core/Message.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/core/PopupWindow.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/core/LoginWindow.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/core/Ajax.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/core/Constants.js"></script>
+<script type="text/javascript" src="javascripts/cmdbuild/core/interfaces/Ajax.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/core/CMDelegable.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/core/xml/XMLUtility.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/core/buttons/CMClassesMenuButton.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/core/buttons/AddCardMenuButton.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/core/buttons/AddRelationMenuButton.js"></script>
 
 <!-- FORM STUFF -->
 <script type="text/javascript" src="javascripts/cmdbuild/form/CallbackPlugin.js"></script>
@@ -125,7 +82,7 @@
 <script type="text/javascript" src="javascripts/cmdbuild/view/common/field/FieldManager.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/view/common/field/BooleanDisplayField.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/view/common/field/CMDisplayField.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/view/common/field/CMHtmlEditorField.js"></script>
+<script type="text/javascript" src="javascripts/cmdbuild/view/common/field/HtmlEditor.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/view/common/field/LookupField.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/view/common/field/GridSearchField.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/view/common/field/LocaleSearchField.js"></script>
@@ -141,12 +98,8 @@
 		<script type="text/javascript" src="javascripts/cmdbuild/delegate/common/filter/CMFilterMenuButtonDelegate.js"></script>
 
 <!--  VIEWS -->
-<script type="text/javascript" src="javascripts/cmdbuild/view/common/CMBaseAccordion.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/view/common/CMUnconfiguredModPanel.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/view/common/CMFormFuncions.js"></script>
-
-<script type="text/javascript" src="javascripts/cmdbuild/view/common/workflow/CMProcessAccordion.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/view/CMMainViewport.js"></script>
 
 <!-- TODO: remove from management -->
 <script type="text/javascript" src="javascripts/cmdbuild/view/management/common/CMCardGrid.js"></script>
@@ -169,9 +122,7 @@
 	<script type="text/javascript" src="javascripts/cmdbuild/view/common/chart/CMChartPortlet.js"></script>
 
 <!--  CONTROLLERS -->
-<script type="text/javascript" src="javascripts/cmdbuild/controller/accordion/CMBaseAccordionController.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/controller/common/CMBasePanelController.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/controller/common/CMMainViewportController.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/controller/common/CMUnconfiguredModPanelController.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/controller/management/classes/StaticsController.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/controller/management/workflow/StaticsController.js"></script>
@@ -184,4 +135,3 @@
 <script type="text/javascript" src="javascripts/cmdbuild/bim/package.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/bim/data/CMBIMProjectModel.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/bim/data/CMBimLayerModel.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/bim/proxy/CMBIMProxy.js"></script>

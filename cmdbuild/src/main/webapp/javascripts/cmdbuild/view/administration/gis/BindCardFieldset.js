@@ -2,11 +2,13 @@
 
 	var tr = CMDBuild.Translation.administration.modClass.geo_attributes;
 
+	Ext.require(['CMDBuild.proxy.gis.GeoServer']);
+
 	Ext.define('CMDBuild.view.administration.gis.BindCardFieldset', {
 		extend: 'Ext.form.FieldSet',
 
 		border: false,
-		cls: 'cmbordertop',
+		cls: 'cmdb-border-top',
 		style: { 'border-color': '#d0d0d0' },
 		margin: '5 0 0 0',
 
@@ -102,7 +104,16 @@
 	Ext.define('CMDBuild.view.administration.gis.BindCardFieldsetItem', {
 		extend: 'Ext.container.Container',
 
-		delegate: undefined, // Pass it on creation
+		/**
+		 * @cfg {Object}
+		 */
+		delegate: undefined,
+
+		/**
+		 * @property {CMDBuild.view.common.field.comboBox.Erasable}
+		 */
+		classCombo: undefined,
+
 		isFirst: true,
 
 		layout: {
@@ -112,17 +123,17 @@
 		initComponent: function() {
 			var me = this;
 
-			this.classCombo =  Ext.create('CMDBuild.view.common.field.CMErasableCombo', {
+			this.classCombo =  Ext.create('CMDBuild.view.common.field.comboBox.Erasable', {
 				fieldLabel: me.isFirst ? tr.card_binding : ' ',
 				labelSeparator: me.isFirst ? ':' : '',
-				labelWidth: CMDBuild.LABEL_WIDTH,
-				width: CMDBuild.ADM_BIG_FIELD_WIDTH,
-				valueField: CMDBuild.core.proxy.CMProxyConstants.NAME,
-				displayField: CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION,
+				labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
+				width: CMDBuild.core.constants.FieldWidths.ADMINISTRATION_BIG,
+				valueField: CMDBuild.core.constants.Proxy.NAME,
+				displayField: CMDBuild.core.constants.Proxy.TEXT,
 				editable: false,
 				margin: '0 5 0 0',
 
-				store: _CMCache.getClassesAndProcessesAndDahboardsStore(),
+				store: CMDBuild.proxy.gis.GeoServer.getStoreCardBind(),
 				queryMode: 'local',
 
 				listeners: {

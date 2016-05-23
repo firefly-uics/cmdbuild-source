@@ -1,6 +1,7 @@
 package org.cmdbuild.dms;
 
 import java.util.List;
+import java.util.Map;
 
 import javax.activation.DataHandler;
 
@@ -19,16 +20,6 @@ public abstract class ForwardingDmsService extends ForwardingObject implements D
 
 	@Override
 	protected abstract DmsService delegate();
-
-	@Override
-	public DmsConfiguration getConfiguration() {
-		return delegate().getConfiguration();
-	}
-
-	@Override
-	public void setConfiguration(final DmsConfiguration configuration) {
-		delegate().setConfiguration(configuration);
-	}
 
 	@Override
 	public Iterable<DocumentTypeDefinition> getTypeDefinitions() throws DmsError {
@@ -71,12 +62,14 @@ public abstract class ForwardingDmsService extends ForwardingObject implements D
 	}
 
 	@Override
-	public void move(final StoredDocument document, final DocumentSearch from, final DocumentSearch to) throws DmsError {
+	public void move(final StoredDocument document, final DocumentSearch from, final DocumentSearch to)
+			throws DmsError {
 		delegate().move(document, from, to);
 	}
 
 	@Override
-	public void copy(final StoredDocument document, final DocumentSearch from, final DocumentSearch to) throws DmsError {
+	public void copy(final StoredDocument document, final DocumentSearch from, final DocumentSearch to)
+			throws DmsError {
 		delegate().copy(document, from, to);
 	}
 
@@ -88,6 +81,11 @@ public abstract class ForwardingDmsService extends ForwardingObject implements D
 	@Override
 	public void delete(final DocumentSearch position) throws DmsError {
 		delegate().delete(position);
+	}
+
+	@Override
+	public Map<String, String> getPresets() {
+		return delegate().getPresets();
 	}
 
 }

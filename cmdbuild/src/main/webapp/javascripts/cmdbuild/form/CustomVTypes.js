@@ -9,7 +9,7 @@ var numericValidation = function (value, scale, precision) {
 	if (value.match(numericRegExp) == null) {
 		out = {
 			valid: false,
-			message: CMDBuild.Translation.vtype_text.invalid_character
+			message: CMDBuild.Translation.vtypeNumericInvalidCharacterText
 		};
 	}
 	var splitByDecimalSeparator = value.split(".");
@@ -21,7 +21,7 @@ var numericValidation = function (value, scale, precision) {
 		if (integerPart && new String(integerPart).length > integerPartMaxlength) {
 			out = {
 				valid: false,
-				message: Ext.String.format(CMDBuild.Translation.vtype_text.wrong_integer_part ,integerPartMaxlength)
+				message: Ext.String.format(CMDBuild.Translation.vtypeNumericMaxIntegerDigitsText ,integerPartMaxlength)
 			};
 		}
 	};
@@ -30,7 +30,7 @@ var numericValidation = function (value, scale, precision) {
 		if (decimalPart && decimalPart.length > scale) {
 			out = {
 				valid: false,
-				message: Ext.String.format(CMDBuild.Translation.vtype_text.wrong_decimal_part, scale)
+				message: Ext.String.format(CMDBuild.Translation.vtypeNumericMaxDecimalDigitsText, scale)
 			};
 		}
 	}
@@ -39,16 +39,6 @@ var numericValidation = function (value, scale, precision) {
 };
 
 Ext.apply(Ext.form.VTypes, {
-		cmdbcomment : function(val, field) {
-		return !val.match("[|']");
-		},
-	cmdbcommentText : CMDBuild.Translation.vtype_text.cmdbcomment || 'Pipe or apostrophe not allowed',
-
-		cmdbcommentrelaxed : function(val, field) {
-		return !val.match("[|]");
-		},
-	cmdbcommentrelaxedText :  CMDBuild.Translation.vtype_text.cmdbcommentrelaxedText || 'Pipe not allowed',
-
 	emailaddrspec : function(v) {
 		 var inner = v.match(fullemailspec);
 		 if (inner) {
@@ -84,18 +74,5 @@ Ext.apply(Ext.form.VTypes, {
 		field.vtypeText = valid.message;
 
 		return valid.valid;
-	},
-
-	time: function(value, field) {
-		field.vtypeText = Ext.String.format(CMDBuild.Translation.vtype_text.wrong_time, value, field.format);
-		return Ext.Date.parse(value, field.format);
-	},
-	password : function(val, field) {
-		if (field.initialPassField) {
-			var pwd = Ext.getCmp(field.initialPassField);
-			return (val == pwd.getValue());
-		}
-		return true;
-	},
-	passwordText : CMDBuild.Translation.configure.step2.msg.pswnomatch
+	}
 });

@@ -7,6 +7,7 @@ import java.util.Map;
 
 import org.cmdbuild.logic.translation.TranslationObject;
 import org.cmdbuild.logic.translation.converter.ClassConverter;
+import org.cmdbuild.logic.translation.converter.Converter;
 import org.cmdbuild.logic.translation.object.ClassDescription;
 import org.cmdbuild.logic.translation.object.MenuItemDescription;
 import org.junit.Test;
@@ -25,12 +26,14 @@ public class MenuItemDescriptionObjectCreationTest {
 	@Test
 	public void forDescriptionFieldReturnsValidObject() {
 		// given
-		final org.cmdbuild.logic.translation.converter.MenuItemConverter converter = org.cmdbuild.logic.translation.converter.MenuItemConverter //
+		final Converter converter = org.cmdbuild.logic.translation.converter.MenuItemConverter //
 				.of(field)//
 				.withTranslations(map);
 
 		// when
-		final TranslationObject translationObject = converter.create(menuItemUuid);
+		final TranslationObject translationObject = converter //
+				.withIdentifier(menuItemUuid) //
+				.create();
 
 		// then
 		assertTrue(converter.isValid());
@@ -42,11 +45,13 @@ public class MenuItemDescriptionObjectCreationTest {
 	@Test
 	public void converterIsCaseInsensitiveForTheField() {
 		// given
-		final ClassConverter converter = ClassConverter //
-				.of(field).withTranslations(map);
+		final Converter converter = ClassConverter //
+				.of(field) //
+				.withIdentifier(menuItemUuid) //
+				.withTranslations(map);
 
 		// when
-		final TranslationObject translationObject = converter.create(menuItemUuid);
+		final TranslationObject translationObject = converter.create();
 
 		// then
 		assertTrue(converter.isValid());

@@ -28,27 +28,24 @@ import org.cmdbuild.service.rest.v2.model.Attribute;
 import org.cmdbuild.service.rest.v2.model.ResponseMultiple;
 import org.junit.Before;
 import org.junit.ClassRule;
-import org.junit.Rule;
 import org.junit.Test;
 
 public class AttachmentsConfigurationTest {
 
-	private AttachmentsConfiguration service;
-
-	@Rule
-	public ServerResource server = ServerResource.newInstance() //
-			.withServiceClass(AttachmentsConfiguration.class) //
-			.withService(service = mock(AttachmentsConfiguration.class)) //
-			.withPort(randomPort()) //
+	@ClassRule
+	public static ServerResource<AttachmentsConfiguration> server = ServerResource
+			.newInstance(AttachmentsConfiguration.class) //
+			.withPortRange(randomPort()) //
 			.build();
 
-	@ClassRule
-	public static JsonSupport json = new JsonSupport();
+	private static JsonSupport json = new JsonSupport();
 
+	private AttachmentsConfiguration service;
 	private HttpClient httpclient;
 
 	@Before
-	public void createHttpClient() throws Exception {
+	public void setUp() throws Exception {
+		server.service(service = mock(AttachmentsConfiguration.class));
 		httpclient = HttpClientBuilder.create().build();
 	}
 

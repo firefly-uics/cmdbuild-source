@@ -57,7 +57,7 @@ Ext.define("CMDBuild.view.administration.common.basepanel.CMGridAndFormPanel", {
 		};
 
 		if (this.withPagingBar) {
-			gridConfig.cls = "cmborderbottom";
+			gridConfig.cls = "cmdb-border-bottom";
 		}
 
 		return new CMDBuild.view.administration.common.basepanel.CMGrid(gridConfig);
@@ -76,8 +76,8 @@ Ext.define("CMDBuild.view.administration.common.basepanel.CMGridAndFormPanel", {
 			split: true,
 			frame: false,
 			border: false,
-			cls: "x-panel-body-default-framed cmbordertop",
-			bodyCls: 'cmgraypanel'
+			cls: "x-panel-body-default-framed cmdb-border-top",
+			bodyCls: 'cmdb-gray-panel'
 		});
 
 		return form;

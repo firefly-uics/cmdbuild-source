@@ -1,5 +1,11 @@
 (function() {
 
+	Ext.require([
+		'CMDBuild.bim.proxy.Bim',
+		'CMDBuild.bim.proxy.Ifc',
+		'CMDBuild.bim.proxy.Layer'
+	]);
+
 	Ext.define('CMDBuild.controller.administration.filter.CMBIMPanelController', {
 		extend: 'CMDBuild.controller.common.CMBasePanelController',
 
@@ -51,22 +57,22 @@
 		onGridAndFormPanelSaveButtonClick: function(form) {
 			var me = this;
 			var params = me.fieldManager.getValues() || {};
-			var proxyFunction = CMDBuild.bim.proxy.create;
+			var proxyFunction = CMDBuild.bim.proxy.Bim.create;
 
 			if (this.record != null) {
-				proxyFunction = CMDBuild.bim.proxy.update;
+				proxyFunction = CMDBuild.bim.proxy.Bim.update;
 				params['id'] = this.record.getId();
 			}
 
 			if (form != null) {
-				CMDBuild.LoadMask.get().show();
+				CMDBuild.core.LoadMask.show();
 
 				this.view.enableModify();
 
 				proxyFunction(form, params,
 					function onSuccess() {
 						me.fieldManager.enableFileField();
-						CMDBuild.LoadMask.instance.hide();
+						CMDBuild.core.LoadMask.hide();
 						me.gridConfigurator.getStore().load();
 						me.view.disableModify(me.enableCMTBar = false);
 						form.reset();
@@ -77,7 +83,7 @@
 						form.reset();
 						me.view.grid.getSelectionModel().deselectAll();
 
-						CMDBuild.LoadMask.instance.hide();
+						CMDBuild.core.LoadMask.hide();
 					}
 				);
 			}
@@ -85,7 +91,7 @@
 
 		onImportIfc: function() {
 			if (!Ext.isEmpty(this.record))
-				CMDBuild.bim.proxy.importIfc({
+				CMDBuild.bim.proxy.Ifc.import({
 					scope: this,
 					params: {
 						projectId: this.record.getId()
@@ -104,22 +110,22 @@
 			if (!me.record)
 				return;
 
-			var proxyFunction = CMDBuild.bim.proxy.disable;
+			var proxyFunction = CMDBuild.bim.proxy.Bim.disable;
 			if (action == 'enable') {
-				proxyFunction = CMDBuild.bim.proxy.enable;
+				proxyFunction = CMDBuild.bim.proxy.Bim.enable;
 				this.view.updateEnableDisableButton(false);
 			}
 			else {
 				this.view.updateEnableDisableButton(true);
 			}
 
-			CMDBuild.LoadMask.get().show();
+			CMDBuild.core.LoadMask.show();
 			proxyFunction({
 				params: {
 					id: me.record.getId()
 				},
 				callback: function() {
-					CMDBuild.LoadMask.instance.hide();
+					CMDBuild.core.LoadMask.hide();
 					me.gridConfigurator.getStore().load();
 				}
 			});
@@ -129,7 +135,7 @@
 		bimCardBinding: function() {
 			var bindingReference = this.view.query('#bimCardBinding')[0];
 
-			CMDBuild.bim.proxy.rootClassName({
+			CMDBuild.bim.proxy.Layer.readRootName({
 				success: function(operation, config, response) {
 					bindingReference.initializeItems(response.root);
 				},

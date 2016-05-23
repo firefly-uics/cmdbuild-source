@@ -30,13 +30,15 @@ public class DefaultFilesStore implements FilesStore {
 
 	private final String relativeRootDirectory;
 	private final String absoluteRootDirectory;
+	private final File root;
 
-	private static final String[] ALLOWED_IMAGE_TYPES = { "image/png", "image/gif", "image/jpeg", "image/pjpeg",
-			"image/x-png" };
+	private static final String[] ALLOWED_IMAGE_TYPES = {
+			"image/png", "image/gif", "image/jpeg", "image/pjpeg", "image/x-png" };
 
 	public DefaultFilesStore(final String root, final String pathFromRoot) {
-		relativeRootDirectory = pathFromRoot + separator;
-		absoluteRootDirectory = root + separator + relativeRootDirectory;
+		this.relativeRootDirectory = pathFromRoot + separator;
+		this.absoluteRootDirectory = root + separator + relativeRootDirectory;
+		this.root = new File(absoluteRootDirectory);
 	}
 
 	@Override
@@ -105,7 +107,7 @@ public class DefaultFilesStore implements FilesStore {
 	}
 
 	@Override
-	public void save(final InputStream inputStream, final String filePath) throws IOException {
+	public File save(final InputStream inputStream, final String filePath) throws IOException {
 		FileOutputStream outputStream = null;
 		try {
 			final File destinationFile = newFile(absoluteRootDirectory, filePath);
@@ -118,6 +120,7 @@ public class DefaultFilesStore implements FilesStore {
 			while ((i = inputStream.read(buf)) != -1) {
 				outputStream.write(buf, 0, i);
 			}
+			return destinationFile;
 		} catch (final FileNotFoundException e) {
 			throw ORMExceptionType.ORM_ICONS_FILE_NOT_FOUND.createException();
 		} catch (final IOException e) {
@@ -151,12 +154,8 @@ public class DefaultFilesStore implements FilesStore {
 	}
 
 	@Override
-	public File getFile(final String path) {
-		final File file = new File(path);
-		if (!file.exists()) {
-			throw ORMExceptionType.ORM_ICONS_FILE_NOT_FOUND.createException();
-		}
-		return file;
+	public File getRoot() {
+		return root;
 	}
 
 	@Override

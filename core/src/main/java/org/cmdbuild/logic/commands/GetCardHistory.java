@@ -16,6 +16,7 @@ import java.util.List;
 
 import org.apache.commons.lang3.Validate;
 import org.cmdbuild.dao.entry.CMCard;
+import org.cmdbuild.dao.entrytype.CMAttribute;
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.query.CMQueryResult;
 import org.cmdbuild.dao.query.CMQueryRow;
@@ -28,6 +29,7 @@ import org.cmdbuild.logic.data.access.resolver.ForeignReferenceResolver;
 import org.cmdbuild.model.data.Card;
 
 import com.google.common.base.Function;
+import com.google.common.base.Optional;
 
 public class GetCardHistory {
 
@@ -43,17 +45,40 @@ public class GetCardHistory {
 		Validate.notNull(card);
 		final CMClass target = dataView.findClass(card.getClassName());
 		historyClass = history(target);
-		final Collection<? extends QueryAliasAttribute> attributes;
+		final Collection<QueryAliasAttribute> attributes;
 		if (allAttributes) {
 			attributes = asList(anyAttribute(historyClass));
-		} else if (dataView.getActivityClass().isAncestorOf(target)) {
-			attributes = asList( //
-					attribute(historyClass, target.getCodeAttributeName()), //
-					attribute(historyClass, FlowStatus.dbColumnName()), //
-					attribute(historyClass, CurrentActivityPerformers.dbColumnName()) //
-			);
 		} else {
-			attributes = asList(attribute(historyClass, target.getCodeAttributeName()));
+			/*
+			 * "Code" attribute is a bit special meaning but it can be disabled.
+			 * When "Code" is disabled it's not added to the query attributes.
+			 */
+			attributes = newArrayList();
+			final boolean hasCode = target.getAttribute(target.getCodeAttributeName()) != null;
+			if (dataView.getActivityClass().isAncestorOf(target)) {
+				if (hasCode) {
+					attributes.add(attribute(historyClass, target.getCodeAttributeName()));
+				}
+				attributes.add(attribute(historyClass, FlowStatus.dbColumnName()));
+				attributes.add(attribute(historyClass, CurrentActivityPerformers.dbColumnName()));
+			} else {
+				if (hasCode) {
+					attributes.add(attribute(historyClass, target.getCodeAttributeName()));
+				}
+			}
+			if (attributes.isEmpty()) {
+				/*
+				 * When no attributes has been added, then adds the first active
+				 * attribute or all attributes (leaving the query generator to
+				 * handle the issue).
+				 */
+				final Optional<? extends CMAttribute> firstAttribute = from(target.getActiveAttributes()).first();
+				if (firstAttribute.isPresent()) {
+					attributes.add(attribute(historyClass, firstAttribute.get().getName()));
+				} else {
+					attributes.add(anyAttribute(historyClass));
+				}
+			}
 		}
 		final CMQueryResult historyCardsResult = dataView.select(attributes.toArray()) //
 				.from(historyClass) //

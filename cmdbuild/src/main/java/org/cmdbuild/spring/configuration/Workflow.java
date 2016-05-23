@@ -1,11 +1,9 @@
 package org.cmdbuild.spring.configuration;
 
-import static org.cmdbuild.spring.util.Constants.DEFAULT;
 import static org.cmdbuild.spring.util.Constants.PROTOTYPE;
 import static org.cmdbuild.spring.util.Constants.SYSTEM;
 
 import org.apache.commons.lang3.builder.Builder;
-import org.cmdbuild.auth.AuthenticationService;
 import org.cmdbuild.auth.UserStore;
 import org.cmdbuild.auth.acl.PrivilegeContext;
 import org.cmdbuild.common.template.TemplateResolver;
@@ -32,8 +30,10 @@ import org.cmdbuild.workflow.event.WorkflowEventManager;
 import org.cmdbuild.workflow.service.AbstractSharkService;
 import org.cmdbuild.workflow.service.AbstractSharkService.UpdateOperationListener;
 import org.cmdbuild.workflow.service.RemoteSharkService;
+import org.cmdbuild.workflow.xpdl.SharkStyleXpdlExtendedAttributeMetadataFactory;
 import org.cmdbuild.workflow.xpdl.SharkStyleXpdlExtendedAttributeVariableFactory;
 import org.cmdbuild.workflow.xpdl.ValuePairXpdlExtendedAttributeWidgetFactory;
+import org.cmdbuild.workflow.xpdl.XpdlExtendedAttributeMetadataFactory;
 import org.cmdbuild.workflow.xpdl.XpdlExtendedAttributeVariableFactory;
 import org.cmdbuild.workflow.xpdl.XpdlManager;
 import org.cmdbuild.workflow.xpdl.XpdlManager.GroupQueryAdapter;
@@ -48,8 +48,7 @@ import org.springframework.context.annotation.Scope;
 public class Workflow {
 
 	@Autowired
-	@Qualifier(DEFAULT)
-	private AuthenticationService authenticationService;
+	private Authentication authentication;
 
 	@Autowired
 	private Data data;
@@ -58,7 +57,7 @@ public class Workflow {
 	private Email email;
 
 	@Autowired
-	private FileStore fileStore;
+	private Files fileStore;
 
 	@Autowired
 	private Lock lock;
@@ -97,12 +96,17 @@ public class Workflow {
 
 	@Bean
 	protected GroupQueryAdapter groupQueryAdapter() {
-		return new DefaultGroupQueryAdapter(authenticationService);
+		return new DefaultGroupQueryAdapter(authentication.defaultAuthenticationService());
 	}
 
 	@Bean
 	protected XpdlExtendedAttributeVariableFactory xpdlExtendedAttributeVariableFactory() {
 		return new SharkStyleXpdlExtendedAttributeVariableFactory();
+	}
+
+	@Bean
+	protected XpdlExtendedAttributeMetadataFactory xpdlExtendedAttributeMetadataFactory() {
+		return new SharkStyleXpdlExtendedAttributeMetadataFactory();
 	}
 
 	@Bean
@@ -120,7 +124,7 @@ public class Workflow {
 	@Bean
 	protected XpdlProcessDefinitionStore processDefinitionStore() {
 		return new XpdlProcessDefinitionStore(workflowService(), xpdlExtendedAttributeVariableFactory(),
-				xpdlExtendedAttributeWidgetFactory());
+				xpdlExtendedAttributeMetadataFactory(), xpdlExtendedAttributeWidgetFactory());
 	}
 
 	@Bean
@@ -185,7 +189,7 @@ public class Workflow {
 				.withService(workflowService()) //
 				.withTypesConverter(workflowTypesConverter()) //
 				.withEventListener(workflowLogger()) //
-				.withAuthenticationService(authenticationService) //
+				.withAuthenticationService(authentication.defaultAuthenticationService()) //
 				.withWorkflowConfiguration(workflowConfiguration);
 	}
 
