@@ -655,10 +655,10 @@ public class EntryTypeCommands implements LoggingSupport {
 						 * considered temporary until the problem will be
 						 * analyzed better.
 						 */
-						+ ", (SELECT (count(*) > 0) AS unique_constraint" //
+						+ ", (SELECT (count(*) > 0)" //
 						+ "			FROM pg_class" //
 						+ "			JOIN pg_index ON pg_class.oid = pg_index.indexrelid" //
-						+ "			WHERE pg_index.indrelid = A.cid AND relname = (SELECT '_Unique_'|| pg_class.relname::text ||'_'|| A.name FROM pg_class WHERE pg_class.oid = A.cid))" //
+						+ "			WHERE pg_index.indrelid = A.cid AND relname = (SELECT '_Unique_'|| pg_class.relname::text ||'_'|| A.name FROM pg_class WHERE pg_class.oid = A.cid)) AS unique_constraint" //
 						// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 						+ ", _cm_get_attribute_sqltype(A.cid, A.name) AS sql_type" //
 						+ ", _cm_attribute_is_inherited(A.cid, name) AS inherited" //
