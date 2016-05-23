@@ -4,7 +4,7 @@ import static java.lang.Boolean.FALSE;
 import static org.apache.commons.lang3.ObjectUtils.defaultIfNull;
 
 import org.cmdbuild.logic.taskmanager.ScheduledTask;
-import org.cmdbuild.logic.taskmanager.TaskVistor;
+import org.cmdbuild.logic.taskmanager.TaskVisitor;
 import org.joda.time.DateTime;
 
 public class AsynchronousEventTask implements ScheduledTask {
@@ -118,7 +118,7 @@ public class AsynchronousEventTask implements ScheduledTask {
 	}
 
 	@Override
-	public void accept(final TaskVistor visitor) {
+	public void accept(final TaskVisitor visitor) {
 		visitor.visit(this);
 	}
 
@@ -135,6 +135,11 @@ public class AsynchronousEventTask implements ScheduledTask {
 	@Override
 	public boolean isActive() {
 		return active;
+	}
+
+	@Override
+	public boolean isExecutable() {
+		return true;
 	}
 
 	@Override

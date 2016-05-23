@@ -1,10 +1,12 @@
 package org.cmdbuild.servlets.json.schema.taskmanager.event;
 
 import static com.google.common.collect.FluentIterable.from;
+import static org.cmdbuild.services.json.dto.JsonResponse.success;
 import static org.cmdbuild.servlets.json.CommunicationConstants.ACTIVE;
 import static org.cmdbuild.servlets.json.CommunicationConstants.CLASS_NAME;
 import static org.cmdbuild.servlets.json.CommunicationConstants.CRON_EXPRESSION;
 import static org.cmdbuild.servlets.json.CommunicationConstants.DESCRIPTION;
+import static org.cmdbuild.servlets.json.CommunicationConstants.EXECUTABLE;
 import static org.cmdbuild.servlets.json.CommunicationConstants.FILTER;
 import static org.cmdbuild.servlets.json.CommunicationConstants.ID;
 import static org.cmdbuild.servlets.json.CommunicationConstants.NOTIFICATION_ACTIVE;
@@ -48,6 +50,11 @@ public class Asynchronous extends JSONBaseWithSpringContext {
 		@JsonProperty(CRON_EXPRESSION)
 		public String getCronExpression() {
 			return delegate.getCronExpression();
+		}
+
+		@JsonProperty(EXECUTABLE)
+		public boolean executable() {
+			return delegate.isExecutable();
 		}
 
 		@JsonProperty(CLASS_NAME)
@@ -100,7 +107,7 @@ public class Asynchronous extends JSONBaseWithSpringContext {
 				.withNotificationErrorTemplate(emailTemplate) //
 				.build();
 		final Long id = taskManagerLogic().create(task);
-		return JsonResponse.success(id);
+		return success(id);
 	}
 
 	@JSONExported
@@ -111,13 +118,13 @@ public class Asynchronous extends JSONBaseWithSpringContext {
 				.withId(id) //
 				.build();
 		final AsynchronousEventTask readed = taskManagerLogic().read(task, AsynchronousEventTask.class);
-		return JsonResponse.success(new JsonAsynchronousEventTask(readed));
+		return success(new JsonAsynchronousEventTask(readed));
 	}
 
 	@JSONExported
 	public JsonResponse readAll() {
 		final Iterable<? extends Task> tasks = taskManagerLogic().read(AsynchronousEventTask.class);
-		return JsonResponse.success(JsonElements.of(from(tasks) //
+		return success(JsonElements.of(from(tasks) //
 				.transform(TASK_TO_JSON_TASK)));
 	}
 
@@ -146,7 +153,7 @@ public class Asynchronous extends JSONBaseWithSpringContext {
 				.withNotificationErrorTemplate(emailTemplate) //
 				.build();
 		taskManagerLogic().update(task);
-		return JsonResponse.success();
+		return success();
 	}
 
 	@Admin
@@ -158,6 +165,18 @@ public class Asynchronous extends JSONBaseWithSpringContext {
 				.withId(id) //
 				.build();
 		taskManagerLogic().delete(task);
+	}
+
+	@Admin
+	@JSONExported
+	public JsonResponse execute( //
+			@Parameter(ID) final Long id //
+	) {
+		final AsynchronousEventTask task = AsynchronousEventTask.newInstance() //
+				.withId(id) //
+				.build();
+		taskManagerLogic().execute(task);
+		return success();
 	}
 
 }

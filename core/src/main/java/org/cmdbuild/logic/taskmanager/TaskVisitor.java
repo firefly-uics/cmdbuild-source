@@ -6,7 +6,7 @@ import org.cmdbuild.logic.taskmanager.task.event.asynchronous.AsynchronousEventT
 import org.cmdbuild.logic.taskmanager.task.event.synchronous.SynchronousEventTask;
 import org.cmdbuild.logic.taskmanager.task.process.StartWorkflowTask;
 
-public interface TaskVistor {
+public interface TaskVisitor {
 
 	void visit(AsynchronousEventTask task);
 
