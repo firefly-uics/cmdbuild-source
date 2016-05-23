@@ -2,13 +2,11 @@ package org.cmdbuild.logic.translation.converter;
 
 import java.util.Map;
 
-import org.cmdbuild.logic.translation.TranslationObject;
 import org.cmdbuild.logic.translation.object.ReportDescription;
-import org.cmdbuild.logic.translation.object.ViewDescription;
 
 import com.google.common.collect.Maps;
 
-public enum ReportConverter {
+public enum ReportConverter implements Converter {
 
 	DESCRIPTION(description()) {
 
@@ -18,13 +16,7 @@ public enum ReportConverter {
 		}
 
 		@Override
-		public ReportConverter withTranslations(final Map<String, String> map) {
-			translations = map;
-			return this;
-		}
-
-		@Override
-		public ReportDescription create(final String name) {
+		public ReportDescription create() {
 			final ReportDescription.Builder builder = ReportDescription //
 					.newInstance() //
 					.withName(name);
@@ -44,27 +36,35 @@ public enum ReportConverter {
 		}
 
 		@Override
-		public ReportConverter withTranslations(final Map<String, String> map) {
-			throw new UnsupportedOperationException();
-		}
-
-		@Override
-		public ViewDescription create(final String name) {
+		public ReportDescription create() {
 			throw new UnsupportedOperationException();
 		}
 	};
 
 	private final String fieldName;
+
+	private static String name;
 	private static Map<String, String> translations = Maps.newHashMap();
 
 	private static final String DESCRIPTION_FIELD = "description";
 	private static final String UNDEFINED_FIELD = "undefined";
 
-	public abstract TranslationObject create(String name);
+	@Override
+	public Converter withIdentifier(final String identifier) {
+		name = identifier;
+		return this;
+	}
 
-	public abstract ReportConverter withTranslations(Map<String, String> map);
+	@Override
+	public Converter withOwner(final String parentIdentifier) {
+		return this;
+	}
 
-	public abstract boolean isValid();
+	@Override
+	public Converter withTranslations(final Map<String, String> map) {
+		translations = map;
+		return this;
+	}
 
 	public static String description() {
 		return DESCRIPTION_FIELD;

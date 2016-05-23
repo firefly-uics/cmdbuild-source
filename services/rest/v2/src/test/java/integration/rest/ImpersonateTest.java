@@ -13,34 +13,25 @@ import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpDelete;
 import org.apache.http.client.methods.HttpPut;
 import org.apache.http.impl.client.HttpClientBuilder;
-import org.cmdbuild.service.rest.test.JsonSupport;
 import org.cmdbuild.service.rest.test.ServerResource;
 import org.cmdbuild.service.rest.v2.Impersonate;
 import org.junit.Before;
 import org.junit.ClassRule;
-import org.junit.Rule;
 import org.junit.Test;
-
-;
 
 public class ImpersonateTest {
 
-	private Impersonate service;
-
-	@Rule
-	public ServerResource server = ServerResource.newInstance() //
-			.withServiceClass(Impersonate.class) //
-			.withService(service = mock(Impersonate.class)) //
-			.withPort(randomPort()) //
+	@ClassRule
+	public static ServerResource<Impersonate> server = ServerResource.newInstance(Impersonate.class) //
+			.withPortRange(randomPort()) //
 			.build();
 
-	@ClassRule
-	public static JsonSupport json = new JsonSupport();
-
+	private Impersonate service;
 	private HttpClient httpclient;
 
 	@Before
 	public void createHttpClient() throws Exception {
+		server.service(service = mock(Impersonate.class));
 		httpclient = HttpClientBuilder.create().build();
 	}
 

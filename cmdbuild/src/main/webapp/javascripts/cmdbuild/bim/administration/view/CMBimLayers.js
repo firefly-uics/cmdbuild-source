@@ -1,4 +1,7 @@
 (function() {
+
+	Ext.require(['CMDBuild.bim.proxy.Layer']);
+
 	var SEPARATOR = "@79@";
 	var attributesStore;
 	var cellEditing = Ext.create('Ext.grid.plugin.CellEditing', {
@@ -29,7 +32,7 @@
 		 * @param {String} dataIndex the name of the clicked column
 		 * @param {boolean or String} the new value of the column
 		 */
-		onDataColumnChange: function(grid, record, dataIndex, value) {},
+		onDataColumnChange: function(grid, record, dataIndex, value) {}
 	});
 
 	Ext.define("CMDBuild.bim.administration.view.CMBimLayers", {
@@ -55,8 +58,9 @@
 				cellEditing.completeEdit();
 				me.onAttributesComboChange(value);
 			});
-			this.store = CMDBuild.bim.proxy.layerStore();
+			this.store = CMDBuild.bim.proxy.Layer.getStore();
 			this.grid = Ext.create('Ext.grid.Panel', {
+				border: false,
 				title: CMDBuild.Translation.bim + " " + CMDBuild.Translation.layers,
 				region: 'center',
 				store: this.store,
@@ -114,12 +118,12 @@
 			 * Only at the last callBack the grid store is loaded. In such way
 			 * the values of the combos are initialized
 			 */
-			CMDBuild.bim.proxy.getAllLayers({
+			CMDBuild.bim.proxy.Layer.readAll({
 			    scope: this,
 			    callback: function(a, b, response) {
 			    	var me = this;
 			    	var records =  Ext.JSON.decode(response.responseText).bimLayer;
-					CMDBuild.bim.proxy.rootClassName({
+					CMDBuild.bim.proxy.Layer.readRootName({
 						success: function(operation, config, response) {
 							var references = [];
 							me.loadAttributes(response.root, records, records, references);
@@ -140,7 +144,7 @@
 					root: records[i].root,
 					exported: records[i].exported,
 					container: records[i].container,
-					rootreference: (! records[i].rootreference) ? "" : records[i].className + SEPARATOR + records[i].rootreference,
+					rootreference: (! records[i].rootreference) ? "" : records[i].className + SEPARATOR + records[i].rootreference
 				};
 				this.store.add(model);
 			}

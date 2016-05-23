@@ -30,27 +30,24 @@ import org.cmdbuild.service.rest.v1.model.ResponseMultiple;
 import org.cmdbuild.service.rest.v1.model.ResponseSingle;
 import org.junit.Before;
 import org.junit.ClassRule;
-import org.junit.Rule;
 import org.junit.Test;
 
 public class ProcessStartActivitiesTest {
 
-	private ProcessStartActivities service;
-
-	@Rule
-	public ServerResource server = ServerResource.newInstance() //
-			.withServiceClass(ProcessStartActivities.class) //
-			.withService(service = mock(ProcessStartActivities.class)) //
-			.withPort(randomPort()) //
+	@ClassRule
+	public static ServerResource<ProcessStartActivities> server = ServerResource
+			.newInstance(ProcessStartActivities.class) //
+			.withPortRange(randomPort()) //
 			.build();
 
-	@ClassRule
-	public static JsonSupport json = new JsonSupport();
+	private static JsonSupport json = new JsonSupport();
 
+	private ProcessStartActivities service;
 	private HttpClient httpclient;
 
 	@Before
-	public void createHttpClient() throws Exception {
+	public void setUp() throws Exception {
+		server.service(service = mock(ProcessStartActivities.class));
 		httpclient = HttpClientBuilder.create().build();
 	}
 
@@ -67,11 +64,11 @@ public class ProcessStartActivitiesTest {
 				.build();
 		final ResponseMultiple<ProcessActivityWithBasicDetails> sentResponse = newResponseMultiple(
 				ProcessActivityWithBasicDetails.class) //
-				.withElements(asList(firstActivity, secondActivity)) //
-				.withMetadata(newMetadata() //
-						.withTotal(3L) //
-						.build()) //
-				.build();
+						.withElements(asList(firstActivity, secondActivity)) //
+						.withMetadata(newMetadata() //
+								.withTotal(3L) //
+								.build()) //
+						.build();
 		final ResponseMultiple<ProcessActivityWithBasicDetails> expectedResponse = sentResponse;
 		doReturn(sentResponse) //
 				.when(service).read(anyString());
@@ -97,8 +94,8 @@ public class ProcessStartActivitiesTest {
 				.build();
 		final ResponseSingle<ProcessActivityWithFullDetails> sentResponse = newResponseSingle(
 				ProcessActivityWithFullDetails.class) //
-				.withElement(firstActivity) //
-				.build();
+						.withElement(firstActivity) //
+						.build();
 		final ResponseSingle<ProcessActivityWithFullDetails> expectedResponse = sentResponse;
 		doReturn(sentResponse) //
 				.when(service).read(anyString(), anyString());

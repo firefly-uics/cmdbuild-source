@@ -3,6 +3,11 @@
 	Ext.define('CMDBuild.routes.management.Classes', {
 		extend: 'CMDBuild.routes.Base',
 
+		requires: [
+			'CMDBuild.core.constants.Proxy',
+			'CMDBuild.core.Message'
+		],
+
 		/**
 		 * @cfg {String}
 		 */
@@ -22,8 +27,8 @@
 		 * @cfg {Array}
 		 */
 		supportedPrintFormats: [
-			CMDBuild.core.proxy.CMProxyConstants.PDF,
-			CMDBuild.core.proxy.CMProxyConstants.CSV
+			CMDBuild.core.constants.Proxy.PDF,
+			CMDBuild.core.constants.Proxy.CSV
 		],
 
 		/**
@@ -32,9 +37,9 @@
 		applyClientFilter: function() {
 			if (!Ext.isEmpty(this.clientFilter))
 				Ext.Function.createDelayed(function() {
-					this.entryType.set(CMDBuild.core.proxy.CMProxyConstants.FILTER, this.clientFilter); // Inject filter in entryType object
+					this.entryType.set(CMDBuild.core.constants.Proxy.FILTER, this.clientFilter); // Inject filter in entryType object
 
-					_CMMainViewportController.panelControllers[CMDBuild.core.proxy.CMProxyConstants.CLASS].onViewOnFront(this.entryType);
+					CMDBuild.global.controller.MainViewport.cmfg('mainViewportModuleControllerGet', 'class').onViewOnFront(this.entryType);
 				}, 1500, this)();
 		},
 
@@ -49,7 +54,8 @@
 			if (this.paramsValidation(params)) {
 				this.entryType = _CMCache.getEntryTypeByName(this.classIdentifier);
 
-				CMDBuild.Runtime.StartingClassId = this.entryType.get(CMDBuild.core.proxy.CMProxyConstants.ID); // Use runtime configuration to select class
+				// Use runtime configuration to select class
+				CMDBuild.configuration.runtime.set(CMDBuild.core.constants.Proxy.STARTING_CLASS_ID, this.entryType.get(CMDBuild.core.constants.Proxy.ID));
 
 				this.applyClientFilter();
 			}
@@ -61,16 +67,16 @@
 		 * @return  {Boolean}
 		 */
 		paramsValidation: function(params) {
-			this.classIdentifier = params[CMDBuild.core.proxy.CMProxyConstants.CLASS_IDENTIFIER];
-			this.clientFilter = params[CMDBuild.core.proxy.CMProxyConstants.CLIENT_FILTER];
-			this.printFormat = params[CMDBuild.core.proxy.CMProxyConstants.FORMAT] || CMDBuild.core.proxy.CMProxyConstants.PDF;
+			this.classIdentifier = params[CMDBuild.core.constants.Proxy.CLASS_IDENTIFIER];
+			this.clientFilter = params[CMDBuild.core.constants.Proxy.CLIENT_FILTER];
+			this.printFormat = params[CMDBuild.core.constants.Proxy.FORMAT] || CMDBuild.core.constants.Proxy.PDF;
 
 			// Class identifier validation
 			if (
 				Ext.isEmpty(this.classIdentifier)
 				|| !_CMCache.isEntryTypeByName(this.classIdentifier)
 			) {
-				CMDBuild.Msg.error(
+				CMDBuild.core.Message.error(
 					CMDBuild.Translation.common.failure,
 					CMDBuild.Translation.errors.routesInvalidClassIdentifier + ' (' + this.classIdentifier + ')',
 					false
@@ -86,7 +92,7 @@
 
 			// Print format validation
 			if (!Ext.Array.contains(this.supportedPrintFormats, this.printFormat)) {
-				CMDBuild.Msg.error(
+				CMDBuild.core.Message.error(
 					CMDBuild.Translation.common.failure,
 					CMDBuild.Translation.errors.routesInvalidPrintFormat + ' (' + this.printFormat + ')',
 					false
@@ -108,7 +114,7 @@
 			this.detail(params, path, router);
 
 			Ext.Function.createDelayed(function() {
-				_CMMainViewportController.panelControllers[CMDBuild.core.proxy.CMProxyConstants.CLASS].gridController.onPrintGridMenuClick(this.printFormat);
+				CMDBuild.global.controller.MainViewport.cmfg('mainViewportModuleControllerGet', 'class').gridController.onPrintGridMenuClick(this.printFormat);
 			}, 500, this)();
 		}
 	});

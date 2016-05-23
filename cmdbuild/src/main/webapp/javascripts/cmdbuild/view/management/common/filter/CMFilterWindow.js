@@ -1,5 +1,9 @@
 (function() {
 
+	/**
+	 * @deprecated new class (CMDBuild.view.common.field.filter.advanced.Advanced)
+	 */
+
 	var titleTemplate = '{0} - {1} - {2}';
 
 	Ext.define('CMDBuild.view.management.common.filter.CMFilterWindowDelegate', {
@@ -33,7 +37,7 @@
 	});
 
 	Ext.define('CMDBuild.view.management.common.filter.CMFilterWindow', {
-		extend: 'CMDBuild.PopupWindow',
+		extend: 'CMDBuild.core.window.AbstractModal',
 
 		mixins: {
 			delegable: 'CMDBuild.core.CMDelegable'
@@ -148,7 +152,7 @@
 					}
 				},
 				{
-					text: CMDBuild.Translation.common.buttons.abort,
+					text: CMDBuild.Translation.cancel,
 					handler: function() {
 						me.callDelegates('onCMFilterWindowAbortButtonClick', [me]);
 					}
@@ -253,19 +257,19 @@
 			var canEditTheName = this.filter.isLocal();
 
 			this.nameField = Ext.create('Ext.form.field.Text', {
-				name: CMDBuild.core.proxy.CMProxyConstants.NAME,
+				name: CMDBuild.core.constants.Proxy.NAME,
 				fieldLabel: CMDBuild.Translation.administration.modClass.attributeProperties.name,
 				value: this.filter.getName(),
 				disabled: !canEditTheName,
-				width: CMDBuild.BIG_FIELD_WIDTH,
+				width: CMDBuild.core.constants.FieldWidths.STANDARD_BIG,
 				allowBlank: false // Requires a non-empty value
 			});
 
 			this.descriptionField = Ext.create('Ext.form.field.TextArea', {
-				name: CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION,
+				name: CMDBuild.core.constants.Proxy.DESCRIPTION,
 				fieldLabel: CMDBuild.Translation.administration.modClass.attributeProperties.description,
 				value: this.filter.getDescription(),
-				width: CMDBuild.BIG_FIELD_WIDTH,
+				width: CMDBuild.core.constants.FieldWidths.STANDARD_BIG,
 				allowBlank: false // Requires a non-empty value
 			});
 
@@ -273,7 +277,7 @@
 
 			this.buttons = [
 				{
-					text: CMDBuild.Translation.common.buttons.save,
+					text: CMDBuild.Translation.save,
 					handler: function() {
 						var name = me.nameField.getValue();
 						var description = me.descriptionField.getValue();
@@ -282,7 +286,7 @@
 					}
 				},
 				{
-					text: CMDBuild.Translation.common.buttons.abort,
+					text: CMDBuild.Translation.cancel,
 					handler: function() {
 						me.destroy();
 					}

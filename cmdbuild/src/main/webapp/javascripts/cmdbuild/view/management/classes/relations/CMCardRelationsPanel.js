@@ -116,7 +116,7 @@
 
 			this.tbar = [];
 
-			this.addRelationButton = Ext.create('CMDBuild.core.buttons.AddRelationMenuButton');
+			this.addRelationButton = Ext.create('CMDBuild.core.buttons.iconized.add.Relation');
 
 			this.mon(this.addRelationButton, 'cmClick', function(d) {
 				me.fireEvent(me.CMEVENTS.addButtonClick, d);
@@ -125,12 +125,12 @@
 			if (this.cmWithAddButton)
 				this.tbar.push(this.addRelationButton);
 
-			if (CMDBuild.Config.graph.enabled == 'true') {
-				this.graphButton = new Ext.button.Button({
-					iconCls: 'graph',
-					text: CMDBuild.Translation.management.graph.action,
-					handler: function() {
-						me.fireEvent(me.CMEVENTS.openGraphClick);
+			if (CMDBuild.configuration.graph.get(CMDBuild.core.constants.Proxy.ENABLED)) {
+				this.graphButton = Ext.create('CMDBuild.core.buttons.iconized.RelationGraph', {
+					scope: this,
+
+					handler: function(button, e) {
+						this.fireEvent(this.CMEVENTS.openGraphClick);
 					}
 				});
 
@@ -198,7 +198,7 @@
 		var children = [],
 			attributes = domainCachedData.data.attributes || [],
 			attributesToString = "<span class=\"cm-bold\">",
-			oversize = domainResponseObj.relations_size > CMDBuild.Config.cmdbuild.relationlimit,
+			oversize = domainResponseObj.relations_size > CMDBuild.configuration.instance.get('relationLimit'), // TODO: use proxy constants
 			src = domainResponseObj.src,
 			domId = domainCachedData.get("id"),
 			node = {
@@ -319,7 +319,7 @@
 			actionsHtml += '<img style="cursor:pointer" title="' + tr.view_relation + '" class="action-relation-viewcard" src="images/icons/zoom.png"/>';
 		}
 
-		if (CMDBuild.Config.dms.enabled)
+		if (CMDBuild.configuration.dms.get(CMDBuild.core.constants.Proxy.ENABLED))
 			actionsHtml += '<img style="cursor:pointer" title="' + tr.showattach + '" class="action-relation-attach" src="images/icons/attach.png"/>';
 
 		return actionsHtml;

@@ -1,8 +1,6 @@
 (function() {
 	var tr = CMDBuild.Translation.management.modcard;
 
-	Ext.require(['CMDBuild.core.RequestBarrier']); // TODO: should be fixed (require outside class because of wrong class name)
-
 	Ext.define("CMDBuild.view.management.classes.CMCardForm", {
 		extend: "Ext.form.Panel",
 
@@ -54,7 +52,7 @@
 				frame: false,
 				border: false,
 				hideMode: "offsets",
-				bodyCls: "x-panel-body-default-framed cmbordertop",
+				bodyCls: "x-panel-body-default-framed cmdb-border-top",
 				bodyStyle: {
 					padding: "5px 5px 0 5px"
 				},
@@ -169,11 +167,15 @@
 		},
 
 		ensureEditPanel: function() {
-			if (this.tabPanel && !this._isInEditMode) {
+			if (this.tabPanel
+					&& !this._isInEditMode) {
+
 				this.tabPanel.ensureEditPanel();
 
-				if (this._lastCard)
+				if (this._lastCard) {
 					this.loadCard(this._lastCard, bothPanels=true);
+					this.callFieldTemplateResolverIfNeeded();
+				}
 			}
 		},
 
@@ -198,6 +200,16 @@
 			return false;
 		},
 
+		callFieldTemplateResolverIfNeeded: function() {
+			var fields = this.getForm().getFields().items;
+			for (var i=0;  i<fields.length; ++i) {
+				var field = fields[i];
+				if (field && field.resolveTemplate) {
+					field.resolveTemplate();
+				}
+			}
+		},
+
 		isInEditing: function() {
 			return this._isInEditMode;
 		},
@@ -220,65 +232,48 @@
 	}
 
 	/**
-	 * Fills form fields with 4 steps to avoid reference fields empty problems depending on store's load times:
-	 * 	1. Suspend envets
-	 * 	2. Set values
-	 * 	3. Load all field's stores
-	 * 	4. Resume events
-	 *
 	 * @param {CMDBuild.view.management.classes.CMCardForm} me
 	 * @param {Object} data
 	 * @param {Object} referenceAttributes
 	 * @param {Function} fieldSelector
-	 *
-	 * @private
 	 */
 	function _fillFields(me, data, referenceAttributes, fieldSelector) {
-		var fields = me.getForm().getFields().getRange();
+		var fields = me.getForm().getFields();
 
-		addReferenceAttrsToData(data, referenceAttributes);
+		if (Ext.getClassName(fields) == 'Ext.util.MixedCollection')
+			fields = fields.items;
 
 		// Suspend all events on fields to prevent values modifications by internal fields events listeners
 		// This fixes ReferenceFields empty values going on editMode
-		if (!Ext.isEmpty(fields) && Ext.isArray(fields)) {
-			Ext.Array.forEach(fields, function (field, i, allFields) {
-				if (!Ext.isEmpty(field) && Ext.isFunction(field.suspendEvents) && !(Ext.isFunction(fieldSelector) && !fieldSelector(field)))
-					field.suspendEvents(false);
-			});
+		for (var idx in fields)
+			if (fields[idx].isObservable && Ext.isFunction(fields[idx].suspendEvents))
+				fields[idx].suspendEvents(false);
 
-			// Set field's values
-			Ext.Array.forEach(fields, function (field, i, allFields) {
-				if (!(Ext.isFunction(fieldSelector) && !fieldSelector(field))) {
-					field.setValue(data[field.name]);
+		addReferenceAttrsToData(data, referenceAttributes);
 
-					if (Ext.isFunction(field.isFiltered) && field.isFiltered())
-						field.setServerVarsForTemplate(data);
+		if (fields) {
+			for (var i=0, l=fields.length; i<l; ++i) {
+				var f = fields[i];
+
+				if (!(typeof fieldSelector == 'function' && !fieldSelector(f))) {
+					try {
+						f.setValue(data[f.name]);
+						if (typeof f.isFiltered == 'function' && f.isFiltered()) {
+							f.setServerVarsForTemplate(data);
+						}
+					} catch (e) {
+						_msg('[Field name: ' + f.name + '] ' + e.message);
+					}
 				}
-			});
-
-			// Load field's stores with barrier to load data after reference field store's load end
-			CMDBuild.core.RequestBarrier.init('referenceStoreLoadBarrier', function () {
-				// Resume events on fields
-				Ext.Array.forEach(fields, function (field, i, allFields) {
-					if (!Ext.isEmpty(field) && Ext.isFunction(field.resumeEvents) && !(Ext.isFunction(fieldSelector) && !fieldSelector(field)))
-						field.resumeEvents();
-				});
-
-				me.fireEvent(me.CMEVENTS.formFilled);
-			}, me);
-
-			Ext.Array.forEach(fields, function (field, i, allFields) {
-				if (
-					!Ext.isEmpty(field)
-					&& Ext.isFunction(field.isFiltered) && field.isFiltered()
-					&& Ext.isFunction(field.resolveTemplate)
-				) {
-					field.resolveTemplate({ callback: CMDBuild.core.RequestBarrier.getCallback('referenceStoreLoadBarrier') });
-				}
-			});
-
-			CMDBuild.core.RequestBarrier.finalize('referenceStoreLoadBarrier');
+			}
 		}
+
+		// Resume events on fields
+		for (var idx in fields)
+			if (fields[idx].isObservable && Ext.isFunction(fields[idx].resumeEvents))
+				fields[idx].resumeEvents();
+
+		me.fireEvent(me.CMEVENTS.formFilled);
 	}
 
 	// FIXME: probably never reached 'couse the reference's attributes are added in the controller
@@ -412,13 +407,13 @@
 				}
 			});
 
-			this.printCardMenu = Ext.create('CMDBuild.core.buttons.iconized.Print', {
+			this.printCardMenu = Ext.create('CMDBuild.core.buttons.iconized.split.Print', {
 				formatList: [
-					CMDBuild.core.proxy.CMProxyConstants.PDF,
-					CMDBuild.core.proxy.CMProxyConstants.ODT
+					CMDBuild.core.constants.Proxy.PDF,
+					CMDBuild.core.constants.Proxy.ODT
 				],
 				mode: 'legacy',
-				text: CMDBuild.Translation.common.buttons.print + ' ' + CMDBuild.Translation.management.modcard.tabs.card.toLowerCase()
+				text: CMDBuild.Translation.print + ' ' + CMDBuild.Translation.management.modcard.tabs.card.toLowerCase()
 			});
 
 			this.mon(this.printCardMenu, "click", function(format) {
@@ -431,15 +426,15 @@
 				this.cloneCardButton
 			];
 
-			this.graphButton = new Ext.button.Button({
-				iconCls : "graph",
-				text : CMDBuild.Translation.management.graph.action,
-				handler: function() {
-					me.fireEvent(me.CMEVENTS.openGraphButtonClick);
+			this.graphButton = Ext.create('CMDBuild.core.buttons.iconized.RelationGraph', {
+				scope: this,
+
+				handler: function(button, e) {
+					this.fireEvent(this.CMEVENTS.openGraphButtonClick);
 				}
 			});
 
-			if (CMDBuild.Config.graph.enabled=="true") {
+			if (CMDBuild.configuration.graph.get(CMDBuild.core.constants.Proxy.ENABLED)) {
 				this.cmTBar.push(this.graphButton);
 			}
 
@@ -451,14 +446,14 @@
 		if (this.withButtons) {
 			var me = this;
 			this.saveButton = new Ext.button.Button({
-				text: CMDBuild.Translation.common.buttons.save,
+				text: CMDBuild.Translation.save,
 				handler: function() {
 					me.fireEvent(me.CMEVENTS.saveCardButtonClick);
 				}
 			});
 
 			this.cancelButton = new Ext.button.Button( {
-				text: this.readOnlyForm ? CMDBuild.Translation.common.buttons.close : CMDBuild.Translation.common.buttons.abort,
+				text: this.readOnlyForm ? CMDBuild.Translation.close : CMDBuild.Translation.cancel,
 				handler: function() {
 					me.fireEvent(me.CMEVENTS.abortButtonClick);
 				}

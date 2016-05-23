@@ -3,7 +3,7 @@
 	var CANVAS_ID = "scenejsCanvas";
 
 	Ext.define("CMDBuild.bim.management.view.CMBimWindow", {
-		extend: "CMDBuild.PopupWindow",
+		extend: "CMDBuild.core.window.AbstractModal",
 		titleAlign: 'center',
 		initComponent: function() {
 			this.CANVAS_ID = CANVAS_ID;

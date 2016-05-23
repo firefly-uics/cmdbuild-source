@@ -1,38 +1,21 @@
-(function() {
+(function () {
 
 	Ext.define('CMDBuild.view.management.accordion.Report', {
-		extend: 'CMDBuild.view.common.CMBaseAccordion',
+		extend: 'CMDBuild.view.common.abstract.Accordion',
 
-		requires: ['CMDBuild.core.proxy.CMProxyConstants'],
-
-		title: CMDBuild.Translation.administration.modreport.title,
+		requires: ['CMDBuild.model.report.accordion.Management'],
 
 		/**
-		 * @param {CMDBuild.model.Report} report
-		 *
-		 * @return {Object} nodeConf
+		 * @cfg {CMDBuild.controller.management.accordion.Report}
 		 */
-		buildNodeConf: function(report) {
-			var nodeConf = report.getData();
-			nodeConf['cmName'] = this.cmName;
-			nodeConf['leaf'] = true;
-
-			return nodeConf;
-		},
+		delegate: undefined,
 
 		/**
-		 * @return {Array} nodes
+		 * @cfg {String}
 		 */
-		buildTreeStructure: function() {
-			var nodes = [];
-			var reports = _CMCache.getReports();
+		storeModelName: 'CMDBuild.model.report.accordion.Management',
 
-			for (var key in reports)
-				nodes.push(this.buildNodeConf(reports[key]));
-
-			return nodes;
-
-		}
+		title: CMDBuild.Translation.report
 	});
 
 })();

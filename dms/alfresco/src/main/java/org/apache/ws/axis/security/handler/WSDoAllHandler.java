@@ -30,7 +30,7 @@ import org.apache.axis.MessageContext;
 import org.apache.axis.components.logger.LogFactory;
 import org.apache.axis.utils.LockableHashtable;
 import org.apache.commons.logging.Log;
-import org.apache.ws.security.handler.WSHandler;
+import org.apache.wss4j.dom.handler.WSHandler;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 

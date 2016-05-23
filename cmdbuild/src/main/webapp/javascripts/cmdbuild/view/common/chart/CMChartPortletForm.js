@@ -3,7 +3,7 @@
 	Ext.define("CMDBuild.view.management.dashboard.CMChartPortletForm", {
 		extend: "Ext.form.Panel",
 
-		requires: ['CMDBuild.core.proxy.CMProxyConstants'],
+		requires: ['CMDBuild.core.constants.Proxy'],
 
 		initComponent: function() {
 			this.callParent(arguments);
@@ -18,33 +18,31 @@
 			}
 		},
 
-		/*
-		 * Used from the controller of the portlet
-		 * to syncronize the store load with the request of the data
-		 * for the chart. We want to load only the remove stores that
-		 * are the ones with a url setted on the proxy
-		 * */
-		checkStoreLoad: function(cb) {
-			var requestBarrier = new CMDBuild.Utils.CMRequestBarrier(cb);
-			var someStore = false;
+		/**
+		 * Used from the controller of the portlet to syncronize the store load with the request of the data for the chart. We want to load only the remove stores that
+		 * are the ones with a url setted on the proxy.
+		 *
+		 * @param {Function} callback
+		 */
+		checkStoreLoad: function (callback) {
+			var barrierId = 'chart' + this.id; // Use different id for each chart to avoid initialize problems
+
+			var requestBarrier = Ext.create('CMDBuild.core.RequestBarrier', {
+				id: barrierId,
+				callback: callback
+			});
 
 			this.cascade(function(item) {
-				if (item
-						&& item.store
-						&& item.store.proxy
-						&& item.store.proxy.url) {
-
-					someStore = true;
-					item.store.load({callback: requestBarrier.getCallback()});
+				if (
+					!Ext.isEmpty(item)
+					&& Ext.isFunction(item.getStore) && !Ext.isEmpty(item.getStore())
+					&& !Ext.isEmpty(item.getStore().getProxy()) && !Ext.isEmpty(item.getStore().getProxy().url)
+				) {
+					item.getStore().load({ callback: requestBarrier.getCallback(barrierId) });
 				}
 			});
 
-			// call the callback directly if there is no store to load
-			if (!someStore) {
-				cb();
-			} else {
-				requestBarrier.start();
-			}
+			requestBarrier.finalize(barrierId, true);
 		}
 	});
 
@@ -57,11 +55,11 @@
 			STRING: function(parameterConfiguration) {
 				var types = {
 					classes: function(parameterConfiguration) {
-						var f = new CMDBuild.field.ErasableCombo({
+						var f = new CMDBuild.view.common.field.CMErasableCombo({
 							plugins: [new CMDBuild.SetValueOnLoadPlugin()],
 							name: parameterConfiguration.name,
 							fieldLabel : parameterConfiguration.name,
-							labelWidth: CMDBuild.LABEL_WIDTH,
+							labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
 							labelAlign: "right",
 							valueField : 'name',
 							displayField : 'description',
@@ -78,14 +76,14 @@
 					user: function(parameterConfiguration) {
 						return new Ext.form.field.Hidden({
 							name: parameterConfiguration.name,
-							value: CMDBuild.Runtime.Username
+							value: CMDBuild.configuration.runtime.get(CMDBuild.core.constants.Proxy.USERNAME)
 						});
 					},
 
 					group: function(parameterConfiguration) {
 						return new Ext.form.field.Hidden({
 							name: parameterConfiguration.name,
-							value: CMDBuild.Runtime.DefaultGroupName
+							value: CMDBuild.configuration.runtime.get(CMDBuild.core.constants.Proxy.DEFAULT_GROUP_NAME)
 						});
 					}
 				};
@@ -101,11 +99,11 @@
 				var defaultValue = parseInt(parameterConfiguration.defaultValue) || null;
 				var types = {
 					classes: function(parameterConfiguration) {
-						var f = new CMDBuild.field.ErasableCombo({
+						var f = new CMDBuild.view.common.field.CMErasableCombo({
 							plugins: [new CMDBuild.SetValueOnLoadPlugin()],
 							name: parameterConfiguration.name,
 							fieldLabel : parameterConfiguration.name,
-							labelWidth: CMDBuild.LABEL_WIDTH,
+							labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
 							labelAlign: "right",
 							valueField : 'id',
 							displayField : 'description',
@@ -146,14 +144,14 @@
 					user: function(parameterConfiguration) {
 						return new Ext.form.field.Hidden({
 							name: parameterConfiguration.name,
-							value: CMDBuild.Runtime.UserId
+							value: CMDBuild.configuration.runtime.get(CMDBuild.core.constants.Proxy.USER_ID)
 						});
 					},
 
 					group: function(parameterConfiguration) {
 						return new Ext.form.field.Hidden({
 							name: parameterConfiguration.name,
-							value: CMDBuild.Runtime.DefaultGroupId
+							value: CMDBuild.configuration.runtime.get(CMDBuild.core.constants.Proxy.DEFAULT_GROUP_ID)
 						});
 					},
 
@@ -166,21 +164,21 @@
 					 * @returns {CMDBuild.Management.ReferenceField.Field} field
 					 */
 					card: function(parameterConfiguration) {
-						var required = parameterConfiguration[CMDBuild.core.proxy.CMProxyConstants.REQUIRED];
-						var filter = parameterConfiguration[CMDBuild.core.proxy.CMProxyConstants.FILTER];
+						var required = parameterConfiguration[CMDBuild.core.constants.Proxy.REQUIRED];
+						var filter = parameterConfiguration[CMDBuild.core.constants.Proxy.FILTER];
 						var meta = {};
 
 						if (!Ext.isEmpty(filter))
-							Ext.Object.each(filter[CMDBuild.core.proxy.CMProxyConstants.CONTEXT], function(key, value, myself) {
+							Ext.Object.each(filter[CMDBuild.core.constants.Proxy.CONTEXT], function(key, value, myself) {
 								meta['system.template.' + key] = value;
 							}, this);
 
 						var field = CMDBuild.Management.ReferenceField.build({
-							description: (required ? '* ' : '' ) + parameterConfiguration[CMDBuild.core.proxy.CMProxyConstants.NAME],
-							filter: !Ext.isEmpty(filter) ? filter[CMDBuild.core.proxy.CMProxyConstants.EXPRESSION] : null,
+							description: (required ? '* ' : '' ) + parameterConfiguration[CMDBuild.core.constants.Proxy.NAME],
+							filter: !Ext.isEmpty(filter) ? filter[CMDBuild.core.constants.Proxy.EXPRESSION] : null,
 							isnotnull: required,
 							meta: meta,
-							name: parameterConfiguration[CMDBuild.core.proxy.CMProxyConstants.NAME],
+							name: parameterConfiguration[CMDBuild.core.constants.Proxy.NAME],
 							referencedIdClass: parameterConfiguration.classToUseForReferenceWidget
 						});
 

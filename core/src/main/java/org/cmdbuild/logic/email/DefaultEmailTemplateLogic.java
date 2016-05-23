@@ -2,6 +2,7 @@ package org.cmdbuild.logic.email;
 
 import static com.google.common.base.Predicates.equalTo;
 import static com.google.common.collect.FluentIterable.from;
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.cmdbuild.data.store.Storables.storableOf;
 import static org.cmdbuild.data.store.Stores.nullOnNotFoundRead;
 
@@ -219,6 +220,7 @@ public class DefaultEmailTemplateLogic implements EmailTemplateLogic {
 	public Long create(final Template template) {
 		logger.info(marker, "creating template '{}'", template);
 		assureNoOneWithName(template.getName());
+		Validate.isTrue(isNotBlank(template.getDescription()), "invalid description");
 		final Storable created = store.create(template_To_EmailTemplate.apply(template));
 		final EmailTemplate readed = store.read(created);
 		return readed.getId();
@@ -228,6 +230,7 @@ public class DefaultEmailTemplateLogic implements EmailTemplateLogic {
 	public void update(final Template template) {
 		logger.info(marker, "updating template '{}'", template);
 		assureOneOnlyWithName(template.getName());
+		Validate.isTrue(isNotBlank(template.getDescription()), "invalid description");
 		store.update(template_To_EmailTemplate.apply(template));
 	}
 

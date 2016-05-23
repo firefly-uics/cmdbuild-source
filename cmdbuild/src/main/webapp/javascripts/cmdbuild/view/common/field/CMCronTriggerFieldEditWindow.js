@@ -89,7 +89,7 @@
 					this.step,
 					{
 						frame: true,
-						labelWidth: CMDBuild.LABEL_WIDTH,
+						labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
 
 						layout: {
 							type: 'vbox',
@@ -101,7 +101,7 @@
 					this.range,
 					{
 						frame: true,
-						labelWidth: CMDBuild.LABEL_WIDTH,
+						labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
 
 						layout: {
 							type: 'vbox',
@@ -116,7 +116,7 @@
 					this.exactly,
 					{
 						frame: true,
-						labelWidth: CMDBuild.LABEL_WIDTH,
+						labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
 
 						layout: {
 							type: 'vbox',
@@ -130,12 +130,12 @@
 				buttons: [
 					{
 						scope: this,
-						text: CMDBuild.Translation.common.buttons.save,
+						text: CMDBuild.Translation.save,
 						handler: this.onSave
 					},
 					{
 						scope: this,
-						text: CMDBuild.Translation.common.buttons.abort,
+						text: CMDBuild.Translation.cancel,
 						handler: function() {
 							this.destroy();
 						}

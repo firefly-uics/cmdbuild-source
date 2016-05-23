@@ -1,4 +1,10 @@
 (function() {
+
+	Ext.require([
+		'CMDBuild.core.Message',
+		'CMDBuild.proxy.widget.OpenNote'
+	]);
+
 	Ext.define("CMDBuild.controller.management.workflow.CMNoteController", {
 		extend: "CMDBuild.controller.management.classes.CMNoteController",
 
@@ -13,7 +19,7 @@
 
 		// override to deny to add a note to a new process
 		disableTheTabBeforeCardSelection: function(processInstance) {
-			if (!processInstance 
+			if (!processInstance
 					|| processInstance.isNew()) {
 				return true;
 			} else {
@@ -34,7 +40,7 @@
 			var isNew = isANewActivity(card);
 
 			if (isNew) {
-				new CMDBuild.Msg.error(CMDBuild.Translation.common.failure,
+				CMDBuild.core.Message.error(CMDBuild.Translation.common.failure,
 					CMDBuild.Translation.management.modworkflow.extattrs.notes.must_save_to_modify,
 					popup = false);
 			}
@@ -42,35 +48,31 @@
 			return !isNew;
 		},
 
-		// override
-		onSaveNoteClick: function() {
-			var me = this,
-				form = me.view.getForm(),
-				params = me._getSaveParams();
+		/**
+		 * @returns {Void}
+		 *
+		 * @override
+		 */
+		onSaveNoteClick: function () {
+			var form = this.view.getForm();
+			var params = this._getSaveParams();
 
-			if (form.isValid() && me.beforeSave(me.card)) {
-				CMDBuild.LoadMask.get().show();
-				form.submit({
-					method : 'POST',
-					url : 'services/json/workflow/saveactivity',
+			if (form.isValid() && this.beforeSave(this.card)) {
+				CMDBuild.proxy.widget.OpenNote.update({
 					params: params,
-					success : function(basicForm, submitAction) {
-						CMDBuild.LoadMask.get().hide();
-						me.view.disableModify(enableToolbar = true);
+					scope: this,
+					success: function (response, options, decodedResponse) {
+						decodedResponse = decodedResponse['response'];
 
-						var noteValue = me.view.syncForms();
-						var returnedData = submitAction.result;
-						var processData = null;
-						if (returnedData) {
-							processData = returnedData.response;
-						}
+						this.view.disableModify(enableToolbar = true);
 
-						me.syncSavedNoteWithModel(me.card, noteValue, processData);
+						this.syncSavedNoteWithModel(
+							this.card,
+							this.view.syncForms(),
+							decodedResponse
+						);
 
-						me.fireEvent(me.CMEVENTS.noteWasSaved);
-					},
-					failure: function() {
-						CMDBuild.LoadMask.get().hide();
+						this.fireEvent(this.CMEVENTS.noteWasSaved);
 					}
 				});
 			}
@@ -85,6 +87,7 @@
 			var ai = _CMWFState.getActivityInstance();
 
 			if (pi && ai) {
+				params['Notes'] = this.view.getForm().getValues()['Notes'];
 				params.classId = pi.getClassId();
 				params.cardId = pi.getId();
 				params.activityInstanceId = ai.getId();
@@ -143,10 +146,6 @@
 		mixins: {
 			observable: "Ext.util.Observable",
 			widgetcontroller: "CMDBuild.controller.management.common.widgets.CMWidgetController"
-		},
-
-		statics: {
-			WIDGET_NAME: ".OpenNote"
 		},
 
 		constructor: function(view, supercontroller, widget, templateResolver, card) {

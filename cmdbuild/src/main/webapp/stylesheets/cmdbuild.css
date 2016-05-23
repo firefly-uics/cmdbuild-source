@@ -1,7 +1,10 @@
 @import url("./flags.css");
 @import url("./grids.css");
 @import url("./icons.css");
+@import url("./splashScreen.css");
 @import url("./trees.css");
+@import url("./footer.css");
+@import url("./windows.css");
 
 html {
 	height: 100%;
@@ -52,15 +55,7 @@ em { font-style: oblique !important; }
 	margin: 14px 4px;
 	width: 16px;
 }
-
-#release_box {
-	text-align: center;
-	padding-top: 1em;
-	color: #04408c;
-	font-weight: bold;
-}
-
-.cm_no_display { display: none; }
+.display-none { display: none; }
 
 /* INFO AND SUPPORTS */
 .cm-credits-container {
@@ -150,49 +145,54 @@ em { font-style: oblique !important; }
 	border-radius: 5px;
 }
 
-/* LOGIN */
-#login_box_wrap {
-	text-align: center;
-	width: 100%;
-}
+/*
+ * Login
+ */
+	#login-wrapper {
+		text-align: center;
+		width: 100%;
+	}
+	#login-container {
+		margin: 100px auto;
+		text-align: left;
+		width: 300px;
+	}
+	#release-box {
+		color: #04408c;
+		font-weight: bold;
+		padding-top: 1em;
+		text-align: center;
+	}
 
-#login_box {
-	width: 300px;
-	text-align: left;
-	margin: 100px auto;
-}
-
-/* HEADER */
-#header {
-	height: 45px;
-	color: #666666;
-	padding: 3px 0 0 3px;
-	margin: 0;
-}
-
-#header img {
-	float: left;
-	height: 35px;
-	margin-top: 2px;
-	margin-left: 2px;
-}
-
-#header_po {
-	float: right;
-	font-size: 10px;
-	height: 45px;
-	margin: 0;
-	padding: 8px 10px 0 0;
-	text-align: right;
-	line-height: 1.3em;
-	width: 20em;
-	text-align: right;
-}
-
-#header #instance_name {
-	float: left;
-	padding: 0.8em 0 0 0
-}
+/*
+ * Header
+ */
+	#header {
+		color: #666666;
+		height: 45px;
+		margin: 0;
+		padding: 3px 0px 0px 3px;
+	}
+	#header .description {
+		float: right;
+		font-size: 10px;
+		height: 45px;
+		line-height: 1.3em;
+		margin: 0px;
+		padding: 8px 10px 0px 0px;
+		text-align: right;
+		width: 200px;
+	}
+	#header img {
+		float: left;
+		height: 35px;
+		margin-top: 2px;
+		margin-left: 2px;
+	}
+	#header #instance-name {
+		float: left;
+		padding: 0.8em 0 0 0
+	}
 
 #lang_bar {
 	float: right;
@@ -246,139 +246,6 @@ em { font-style: oblique !important; }
 	padding: 0;
 	margin: 0.5em 0 0 0;
 }
-
-/* splash */
-.cmMask { background: #eeeeee !important; }
-
-.splashScreen_image,
-.splashScreen_image_administration {
-	height: 217px;
-	width: 381px;
-	display: block;
-	background-image: url("../images/splash.png");
-	background-position: top left;
-	background-repeat: no-repeat;
-}
-
-.splashScreen_image_administration { background-image: url("../images/splash-gray.png"); }
-
-.splashScreen_central {
-	font-family: sans-serif;
-	color: #666666;
-	line-height: 1.4em;
-	font-size: 11px;
-	padding: 0;
-	margin: 0;
-	width: 395px;
-	height: 63px;
-	padding-left: 10px;
-	padding-top: 135px;
-}
-
-.splashScreen_central a {
-	font-family: sans-serif;
-	line-height: 1.4em;
-	color: #666666;
-	text-decoration: none;
-}
-
-#splashScreen_text {
-	float: left;
-	font-family: sans-serif;
-	font-size: 11px;
-	line-height: 1.4em;
-	padding-left: 25px;
-	z-index: 50002;
-}
-
-#splashScreen_text a {
-	text-decoration: none;
-	color: #1c4196;
-}
-
-#splashScreen_version {
-	float: right;
-	font-family: sans-serif;
-	font-size: 11px;
-	line-height: 1.4em;
-	margin-right: 21px;
-	margin-top: 38px;
-	z-index: 50002;
-	font-size: 10px;
-	color: #1c4196;
-}
-
-.splashBold {
-	font-size: 11px;
-	font-weight: bold;
-	color: #666666;
-	padding: 0 0.1em 0 0;
-}
-
-.spalshMotto {
-	color: #1c4196;
-	font-size: 14px;
-	letter-spacing: -.5px;
-	padding-top: 8px;
-	margin-bottom: 3px;
-}
-
-.splashSubTitle {
-	font-size: 9px;
-	float: left;
-}
-
-/* FOOTER */
-#footer {
-	color: #727262;
-	font-family: Verdana, Arial, Helvetica, sans-serif;
-	font-size: 9px;
-	padding-left: 1%;
-	position: absolute;
-	height: 16px;
-	line-height: 16px;
-	bottom: 0;
-	width: 98%;
-}
-
-#footer .fl {
-	font-family: Verdana, Arial, Helvetica, sans-serif;
-	font-size: 10px;
-	margin: 0px;
-	padding: 0px 0px 0px 3px;
-	width: 25%;
-	float: left;
-	text-align: left;
-}
-
-#footer .fc {
-	font-family: Verdana, Arial, Helvetica, sans-serif;
-	font-size: 10px;
-	margin: 0px;
-	padding: 0px;
-	width: 48%;
-	float: left;
-	text-align: center;
-}
-
-#footer .fr {
-	font-family: Verdana, Arial, Helvetica, sans-serif;
-	font-size: 10px;
-	margin: 0px;
-	padding: 0px 3px 0px 0px;
-	width: 25%;
-	float: right;
-	text-align: right;
-}
-
-#footer a {
-	color: #727262;
-	font-family: Verdana, Arial, Helvetica, sans-serif;
-	font-size: 10px;
-	text-decoration: none;
-}
-
-#cmdbuild_credits_link { cursor: pointer;}
 
 /*custom rulse*/
 .cmdbuild_unconfigured_modpanel {
@@ -492,7 +359,7 @@ em { font-style: oblique !important; }
 
 	.map_cloud_item span{ padding-left: 0.4em; }
 
-/* OpenLayer overrid */
+/* OpenLayer override */
 	.olControlMousePosition {
 		font-size: 1em;
 		font-weight: bold;
@@ -529,63 +396,57 @@ em { font-style: oblique !important; }
 	.x-window-header .x-message-box-question,
 	.x-window-header .x-message-box-error { background-size: 16px 16px; }
 
-/* Toolbar*/
-	.cmtoolbaritem {
+/*
+ * Toolbars
+ */
+	.cmdb-administration-body .x-toolbar-default { border-color: #d0d0d0 !important; } /* FIX: for darker toolbars border color with tab panels */
+	.cmdb-toolbar-item {
+		color: #333333 !important;
 		font-size: 11px !important;
 		padding: 0px 5px !important;
-		color: #333 !important;
 	}
-
 	.x-form-item-label {
 		font-weight: bold !important;
 		color: #555555 !important;
 	}
-
 	.cmdb-error-msg {
 		font-weight: bold;
 		padding-bottom: 1em;
 	}
 
-/*override*/
-	.x-panel-header { padding: 2px 2px 2px 4px !important; }
-
-	#cmbodyAdministration {
-		background-color: #EEE !important; /* to change the color of the border of the mainvieport*/
-	}
-
-	.cmgraypanel {
-		background: #f1f1f1 !important;
+/*
+ * Panels
+ */
+ 	/* Background */
+ 	.cmdb-administration-body { background-color: #eeeeee !important; }
+	.cmdb-gray-panel {
+		background-color: #f1f1f1 !important;
 		padding: 5px 5px 0 5px;
 	}
-
-	.cmgraypanel-nopadding { background: #f1f1f1 !important; }
-
-	.cmborder {
-		border-style: solid !important;
-		border-width: 1px !important;
+	.cmdb-gray-panel-no-padding { background-color: #f1f1f1 !important; }
+	.cmdb-blue-panel {
+		background-color: #dfe9f6 !important;
+		padding: 5px;
 	}
+	.cmdb-blue-panel-no-padding { background-color: #dfe9f6 !important; }
 
-	.cmbordertop {
+	/* Borders */
+	.cmdb-border-top {
 		border-top-style: solid !important;
 		border-top-width: 1px !important;
 	}
-
-	.cmborderbottom {
-		border-bottom-style: solid !important;
-		border-bottom-width: 1px !important;
-	}
-
-	.cmborderright {
+	.cmdb-border-right {
 		border-right-style: solid !important;
 		border-right-width: 1px !important;
 	}
-
-	.cmborderleft {
+	.cmdb-border-bottom {
+		border-bottom-style: solid !important;
+		border-bottom-width: 1px !important;
+	}
+	.cmdb-border-left {
 		border-left-style: solid !important;
 		border-left-width: 1px !important;
 	}
-
-	.cmnoborder { border: none !important; }
 
 /* fieldset */
 	.cmfieldset {
@@ -608,11 +469,6 @@ em { font-style: oblique !important; }
 	}
 
 .cm-bold { font-weight: bold; }
-
-.cm-pre {
-	font-size: 1.2em;
-	padding: 0.5em;
-}
 
 .cm-action-col-icon-spacer { margin: 0px 3px; }
 
@@ -654,6 +510,9 @@ em { font-style: oblique !important; }
 	height: 100%;
 	width: 100%;
 }
+
+/* Overrides */
+	.x-panel-header { padding: 2px 2px 2px 4px !important; }
 
 /* FIX: Fieldset label CheckBox */
 	.x-form-cb-wrap { height: auto !important; }

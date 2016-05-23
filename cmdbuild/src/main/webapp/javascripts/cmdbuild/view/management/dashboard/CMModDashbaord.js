@@ -1,15 +1,24 @@
 (function() {
-	Ext.define("CMDBuild.view.management.dashboard.CMModDashboard", {
 
+	Ext.define("CMDBuild.view.management.dashboard.CMModDashboard", {
 		extend: "Ext.panel.Panel",
-		cmName: "dashboard",
+
+		border: true,
+		frame: false,
+		layout: "card",
 
 		initComponent: function() {
-			this.layout = "card";
-			this.items = [{xtype: "panel"}];
 			this.renderdDashboards = {};
 			this.dashbaord = null;
-			this.border = false;
+
+			Ext.apply(this, {
+				tools: [
+					Ext.create('CMDBuild.view.common.panel.gridAndForm.tools.Properties', {
+						style: {} // Reset margin setup
+					})
+				]
+			});
+
 			this.callParent(arguments);
 		},
 
@@ -24,12 +33,12 @@
 					var columnsConf = dashboard.getColumns();
 					var columns = [];
 					var me = this;
-	
+
 					this.dashbaord = dashboard;
-	
+
 					for (var i=0, l=columnsConf.length, conf; i<l; ++i) {
 						conf = columnsConf[i];
-	
+
 						columns.push(new CMDBuild.view.management.dashboard.CMDashboardColumn({
 							columnWidth : conf.width,
 							charts: conf.charts,

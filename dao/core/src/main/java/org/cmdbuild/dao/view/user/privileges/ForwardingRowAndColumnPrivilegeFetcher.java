@@ -8,8 +8,8 @@ import org.cmdbuild.dao.query.clause.where.WhereClause;
 
 import com.google.common.collect.ForwardingObject;
 
-public abstract class ForwardingRowAndColumnPrivilegeFetcher extends ForwardingObject implements
-		RowAndColumnPrivilegeFetcher {
+public abstract class ForwardingRowAndColumnPrivilegeFetcher extends ForwardingObject
+		implements RowAndColumnPrivilegeFetcher {
 
 	/**
 	 * Usable by subclasses only.
@@ -21,14 +21,13 @@ public abstract class ForwardingRowAndColumnPrivilegeFetcher extends ForwardingO
 	protected abstract RowAndColumnPrivilegeFetcher delegate();
 
 	@Override
-	public Iterable<? extends WhereClause> fetchPrivilegeFiltersFor(final CMEntryType entryType) {
+	public Iterable<WhereClause> fetchPrivilegeFiltersFor(final CMEntryType entryType) {
 		return delegate().fetchPrivilegeFiltersFor(entryType);
 	}
 
 	@Override
-	public Iterable<? extends WhereClause> fetchPrivilegeFiltersFor(final CMEntryType entryType,
-			final CMEntryType entryTypeForClauses, final Alias entryTypeForClausesAlias) {
-		return delegate().fetchPrivilegeFiltersFor(entryType, entryTypeForClauses, entryTypeForClausesAlias);
+	public Iterable<WhereClause> fetchPrivilegeFiltersFor(final CMEntryType entryType, final Alias alias) {
+		return delegate().fetchPrivilegeFiltersFor(entryType, alias);
 	}
 
 	@Override

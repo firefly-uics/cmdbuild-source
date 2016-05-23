@@ -29,8 +29,10 @@ public class Translation {
 		return new DefaultTranslationFacade(translationLogic(), requestHandlerSetupFacade());
 	}
 
-	@Bean
-	protected SetupFacade requestHandlerSetupFacade() {
+	public static final String REQUEST_HANDLER_SETUP_FACADE = "RequestHandlerSetupFacade";
+
+	@Bean(name = REQUEST_HANDLER_SETUP_FACADE)
+	public RequestHandlerSetupFacade requestHandlerSetupFacade() {
 		return new RequestHandlerSetupFacade(setup.setupFacade());
 	}
 

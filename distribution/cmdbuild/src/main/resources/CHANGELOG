@@ -1,3 +1,371 @@
+CMDBuild 2.4.1 (released YYYY/MM/DD)
+
+
+NEW FEATURES
+
+ * Single authentication system used by all web service
+
+ * Added Czech translation
+
+
+FIXES
+
+ * Tab Email: widget configuration's presence also if widget doens't exists
+
+ * REST logout error with header autenticator
+
+ * Menu available items wrong italian translations
+
+ * PreselectIfUnique metadata sent on attribute save action
+
+ * Management report pagination errors
+
+ * Widget Grid: missing configuration model name error
+
+ * Error while editing icon from administration class edit form
+
+ * Login page errors
+
+ * LDAP connection timeout freezes UI for long time
+
+ * Widget CustomForm: reset to default behaviour error with functions
+
+ * Reference fields errors with domain's attributes
+
+ * Lookup fields no mandatory label flag in display panels
+
+ * Widget CustomForm: server persistence manage errors
+
+ * HTML editor rendering problems while used as cell editor
+
+ * The print of built-in reports generates an error
+
+ * The "between" operator of the advanced filter does not includes ends
+
+ * Lookup fields marked as invalid first displaied time in edit mode
+
+ * SQL data views sort order problems
+
+ * The row privileges are ignored when selecting a superclass and there are some row privileges set in a subclass
+
+ * "None" grant on classes causes exposure of merged permissions
+
+ * Dashboard permissions not working
+
+ * Error when trying to get cards sorted for an hidden attribute
+
+ * SQL error when filtering cards using a filter based on relations and no count is required
+
+ * Enable modify relations in manageRelation
+
+ * Selecting starting class errors when Navigation accordion is hidden
+
+ * Wrong panel background colors
+
+ * DefaultGroup comboBox empty on user manage form
+
+ * User's e-mail cannot be deleted
+
+ * No navigation accordion synchronization with Class an Workflow selections
+
+ * Relations tab displayed in row group's privileges window
+
+ * DataViews from Filter with runtime parameters show error
+
+ * Default filters with runtime parameters doesn't properly work in management side
+
+ * Internet Explorer code cleaning
+
+ * Widget CustomForm: Unsupported from SQL date format
+
+ * Reference field store URL too long because of filter wrong parameter
+
+ * Widget ManageEmail: error on workflow advance
+
+ * Widget CreateReport: error on widget display with row permissions
+
+ * Widget createModifyCard: getCard empty parameter error
+
+ * Widget CustomForm: empty output with readOnly configuration
+
+ * Widget LinkCard: filter button doesn't enable filter
+
+ * Widget OpenReport: doen't submits readOnly parameters
+
+ * Error editing relation on relation tab in 1:N domain on side 1
+
+ * Error on showing son of hidden class
+
+ * Description not required in email template creation
+
+ * Widget's controllers reference lose
+
+ * Flag image not displayed after selecting default language in administration localization configuration
+
+ * Include inherited checkbox reverse operation
+
+ * No regeneration alert popup display on related attribute change
+
+ * Suspended process instances displays all attributes like closed ones
+
+ * Start activities are never writable when read from REST web services
+
+ * No default language selection on login page
+
+ * Reference attributes of domains with attributes doesn't display required label
+
+ * Username field enabled on user modify
+
+ * Cannot download report using REST web service when passing a date parameter
+
+ * Widget OpenReport: ForeignKey attributes not filled
+
+ * Widget LinkCard: on deselect all selections on next widget window open last selected row still checked
+
+ * Domain attribute update fails on recursive domains
+
+ * GIS configuration - GeoServer layers - Cards Binding empty combo
+
+ * GIS map errors
+
+ * GIS map card selection error
+
+ * Cannot load interface when "translations" directory contains unexpected files
+
+
+
+
+
+CMDBuild 2.4.0 (released 2016/03/31)
+
+
+NEW FEATURES
+
+ * Localization table
+
+ * Set service user from administration interface
+
+ * CMIS support for accessing DMS
+
+ * Custom Form widget
+
+ * Relations graph
+
+ * Navigation history
+
+ * Filters for report and dashboard parameters
+
+ * Adoption of Java 8
+
+ * REST - "user stoppable" information for processes
+
+ * REST - Target type for reference and foreign key attributes
+
+ * REST - Default order for classes and processes
+
+ * Lock management disabled by default
+
+ * Add a checkbox to user's administration for show all or only active ones
+
+ * REST - Functions management
+
+ * Remove e-mail from queue when it has no reference
+
+ * Workflow API within legacy Groovy toolagent
+
+ * REST - writable status also for process instance activitiy details
+
+ * Extension to the visibility of process instances
+
+ * Add attachments on closed activities
+
+ * STARTTLS support for e-mail management
+
+ * Filters based on functions within e-mail tasks
+
+ * Metadata for process instance activities
+
+ * Feedback on follow relation action
+
+ * Added Arabic translation
+
+ * Added Chinese translation
+
+ * Added European Portuguesse translation
+
+ * New query parameter for multiple response to determine what kind of relations' info we need - with attributes or without.
+
+ * Updated French translations
+
+ * Updated Dutch translations
+
+
+FIXES
+
+ * Add card button enabled also on empty superclasses
+
+ * Missing lookup values are wrongly serialized when translations are enabled
+
+ * Add group filter checkbox wrong translation
+
+ * Add index field for ordering card widgets
+
+ * Administration: error not shown on add report action
+
+ * Administration error on print button click selecting ODT format
+
+ * Administration GIS icons interface errors
+
+ * Administration menu: wrong available elements menu node's names
+
+ * Administration search filter: grid doesn't reload after filter save
+
+ * Attribute comments corrupted after their modification
+
+ * Bulk update does not update card's last user
+
+ * Cannot disable Lookups
+
+ * Cannot download reports with no parameters using FluentAPI
+
+ * Card not in filter message on process complete
+
+ * Cards lock expiration error wrong translation
+
+ * Classes add detail action null error
+
+ * Class Relations tab: error on edit class-to-process domain relation
+
+ * CMDBf issues
+
+ * "cm_modify_attribute" cannot filter subclasses
+
+ * Dashboards with attributes with store dowsn't load correctly
+
+ * DataView SQL: grid pagination problems
+
+ * Decimal attributes definition validation errors in FieldManager
+
+ * Default filter don't correctly manage runtime values
+
+ * Default filter not managed on processes
+
+ * Default for group multiselect not sorted in Search filters administration form
+
+ * Destination card's notes not displayed following card relation from relation tab
+
+ * Empty ReferenceField values on modify card
+
+ * Error on collapseAll on localization trees with huge number of nodes
+
+ * Error on process instance advancement when initializing missing XPDL variables
+
+ * Errors not managed on grid store load
+
+ * Error when creating card from relations tab
+
+ * Error when filling reference comboboxes that have a CQL filter
+
+ * Error while starting a process with disabled email tab
+
+ * Field Reference to process add button enabled
+
+ * Group's default filter cannot be deleted from User & Groups interface
+
+ * Hide "Custom pages" management accordion if empty
+
+ * HTML editor: is possible to open field links also if editor is disabled
+
+ * Interface translations errors if default language is not checked as enabled language
+
+ * Ipv6 field don't validate CIDR IP formats
+
+ * Login form not showed at first try
+
+ * Lookup fields returns wrong string values
+
+ * Menu administration: removing a node from custom menu tree don't adds node to available menu tree
+
+ * Missing of mandatory flag on field label in classes add attachment window
+
+ * Missing reports within management module when user logs in with multi-group
+
+ * Navigation chronology: errors while navigate to class tabs
+
+ * No error display on administration report interface submission
+
+ * No error display on card grid load
+
+ * No error/warning manage on form submit responses
+
+ * No login popup displayed on user not logged error
+
+ * No warning when modified card isn't included in grid filtered cards
+
+ * NullPointer errors on Dashboard viasualization
+
+ * NullPointer exceptions displayed on edit relation window show
+
+ * On card grid filter buttons are disabled appears a grey background behind them
+
+ * OpenReport widget issues
+
+ * Processes not shown in EnabledClasses window
+
+ * Reference fields issues
+
+ * Reports issues
+
+ * REST web service issues
+
+ * Search filters: starting class combo store problems
+
+ * Secondary patch manager not working correctly when patches of a non-default category has never been added
+
+ * SMTP and IMAP ports are mandatory in administration email account configuration
+
+ * Sometimes form in empty while switching from class to view in Navigation accordion
+
+ * SQL view displays HTML inside grid
+
+ * Starting error with GIS enabled
+
+ * Card tabs issues
+
+ * The upload of subreports does not handle part names corectly
+
+ * Administration module for user and groups issues
+
+ * User not set when processes aborted
+
+ * CustomForm widget issues
+
+ * Grid widget issues
+
+ * LinkCard widget issues
+
+ * ManageEmail widget issues
+
+ * Ping widget issues
+
+ * Widget's button doesn't work after switching classes processes from accordion
+
+ * StartWorkflow widget issues
+
+ * Workflow administration: wrong translations on Properties tab buttons
+
+ * Wrong default filter selection on processes
+
+ * Wrong directory used for storing attachments uploaded from FluentApi
+
+ * Wrong informations on main configuration footer bar
+
+ * Wrong lookup store order
+
+
+
+
+
 CMDBuild 2.3.4 (released 2015/10/21)
 
 

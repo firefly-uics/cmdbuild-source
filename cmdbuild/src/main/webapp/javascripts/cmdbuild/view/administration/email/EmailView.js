@@ -1,7 +1,7 @@
 (function() {
 
 	Ext.define('CMDBuild.view.administration.email.EmailView', {
-		extend: 'Ext.form.Panel',
+		extend: 'Ext.panel.Panel',
 
 		/**
 		 * @cfg {CMDBuild.controller.administration.email.Email}
@@ -13,7 +13,7 @@
 		 */
 		baseTitle: CMDBuild.Translation.email,
 
-		bodyCls: 'cmgraypanel-nopadding',
+		bodyCls: 'cmdb-gray-panel-no-padding',
 		border: true,
 		frame: false,
 		layout: 'fit'

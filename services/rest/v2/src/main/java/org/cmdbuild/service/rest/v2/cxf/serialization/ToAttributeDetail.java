@@ -1,5 +1,6 @@
 package org.cmdbuild.service.rest.v2.cxf.serialization;
 
+import static com.google.common.collect.Maps.newHashMap;
 import static com.google.common.reflect.Reflection.newProxy;
 import static java.util.Collections.emptyList;
 import static org.apache.commons.lang3.ObjectUtils.defaultIfNull;
@@ -37,7 +38,6 @@ import org.cmdbuild.service.rest.v2.model.Models.AttributeBuilder;
 import org.cmdbuild.services.meta.MetadataStoreFactory;
 
 import com.google.common.base.Function;
-import com.google.common.collect.Maps;
 
 public class ToAttributeDetail implements Function<CMAttribute, Attribute> {
 
@@ -156,7 +156,8 @@ public class ToAttributeDetail implements Function<CMAttribute, Attribute> {
 				.withDefaultValue(input.getDefaultValue()) //
 				.withGroup(input.getGroup()) //
 				.thatIsWritable(WRITE.equals(input.getMode())) //
-				.thatIsHidden(HIDDEN.equals(input.getMode()));
+				.thatIsHidden(HIDDEN.equals(input.getMode())) //
+				.withMetadata(toMap(metadataStoreFactory.storeForAttribute(input).readAll()));
 		new ForwardingAttributeTypeVisitor() {
 
 			private static final String CLASS = "class";
@@ -225,19 +226,12 @@ public class ToAttributeDetail implements Function<CMAttribute, Attribute> {
 
 				builder.withTargetClass(target.getName()) //
 						.withTargetType(dataView.getActivityClass().isAncestorOf(target) ? PROCESS : CLASS) //
+						.withDomainName(domain.getName()) //
 						.withFilter(newFilter() //
 								.withText(attribute.getFilter()) //
 								.withParams(toMap(metadataStoreFactory.storeForAttribute(attribute).readAll())) //
 								.build());
 			};
-
-			private Map<String, String> toMap(final Collection<Metadata> elements) {
-				final Map<String, String> map = Maps.newHashMap();
-				for (final Metadata element : elements) {
-					map.put(element.name(), element.value());
-				}
-				return map;
-			}
 
 			@Override
 			public void visit(final StringAttributeType attributeType) {
@@ -251,6 +245,14 @@ public class ToAttributeDetail implements Function<CMAttribute, Attribute> {
 
 		}.fill(input, builder);
 		return builder.build();
+	}
+
+	private static Map<String, String> toMap(final Collection<Metadata> elements) {
+		final Map<String, String> map = newHashMap();
+		for (final Metadata element : elements) {
+			map.put(element.name(), element.value());
+		}
+		return map;
 	}
 
 }

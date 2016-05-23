@@ -39,27 +39,23 @@ import org.cmdbuild.service.rest.v2.model.ResponseMultiple;
 import org.cmdbuild.service.rest.v2.model.ResponseSingle;
 import org.junit.Before;
 import org.junit.ClassRule;
-import org.junit.Rule;
 import org.junit.Test;
 
 public class ReportsTest {
 
-	private Reports service;
-
-	@Rule
-	public ServerResource server = ServerResource.newInstance() //
-			.withServiceClass(Reports.class) //
-			.withService(service = mock(Reports.class)) //
-			.withPort(randomPort()) //
+	@ClassRule
+	public static ServerResource<Reports> server = ServerResource.newInstance(Reports.class) //
+			.withPortRange(randomPort()) //
 			.build();
 
-	@ClassRule
-	public static JsonSupport json = new JsonSupport();
+	private static JsonSupport json = new JsonSupport();
 
+	private Reports service;
 	private HttpClient httpclient;
 
 	@Before
-	public void createHttpClient() throws Exception {
+	public void setUp() throws Exception {
+		server.service(service = mock(Reports.class));
 		httpclient = HttpClientBuilder.create().build();
 	}
 
@@ -76,10 +72,11 @@ public class ReportsTest {
 								.withId(2L) //
 								.withDescription("bar") //
 								.build() //
-						)) //
+		)) //
 				.withMetadata(newMetadata() //
 						.withTotal(42L) //
-						.build()).build();
+						.build())
+				.build();
 		doReturn(sentResponse) //
 				.when(service).readAll(anyString(), anyInt(), anyInt());
 

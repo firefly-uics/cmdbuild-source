@@ -171,8 +171,9 @@ public class EntryTypeCommands implements LoggingSupport {
 		final String name = nameFrom(identifier);
 		dataDefinitionSqlLogger.info(String.format("SELECT * FROM cm_create_class('%s', '%s', '%s');", name,
 				parentName, classComment));
-		final long id = jdbcTemplate.queryForInt( //
+		final long id = jdbcTemplate.queryForObject( //
 				"SELECT * FROM cm_create_class(?, ?, ?)", //
+				Long.class, //
 				new Object[] { name, parentName, classComment });
 		final DBClass newClass = DBClass.newClass() //
 				.withIdentifier(identifier) //
@@ -542,7 +543,8 @@ public class EntryTypeCommands implements LoggingSupport {
 		final String name = nameFrom(identifier);
 		final String domainComment = commentFrom(definition);
 		dataDefinitionSqlLogger.info(String.format("SELECT * FROM cm_create_domain('%s', '%s');", name, domainComment));
-		final long id = jdbcTemplate.queryForInt("SELECT * FROM cm_create_domain(?, ?)", //
+		final long id = jdbcTemplate.queryForObject("SELECT * FROM cm_create_domain(?, ?)", //
+				Long.class, //
 				new Object[] { name, domainComment });
 		return DBDomain.newDomain() //
 				.withIdentifier(identifier) //

@@ -1,5 +1,6 @@
 package org.cmdbuild.servlets.json.schema;
 
+import static org.cmdbuild.servlets.json.CommunicationConstants.ACTIVE;
 import static org.cmdbuild.servlets.json.CommunicationConstants.ALREADY_ASSOCIATED;
 import static org.cmdbuild.servlets.json.CommunicationConstants.ATTRIBUTES;
 import static org.cmdbuild.servlets.json.CommunicationConstants.CLASS_ID;
@@ -163,9 +164,8 @@ public class ModSecurity extends JSONBaseWithSpringContext {
 		final List<CMUser> associatedUsers = authLogic.getUsersForGroupWithId(groupId);
 
 		if (!associated) {
-			final List<CMUser> allUsers = authLogic.getAllUsers();
 			final List<CMUser> notAssociatedUsers = Lists.newArrayList();
-			for (final CMUser user : allUsers) {
+			for (final CMUser user : authLogic.getAllUsers(false)) {
 				if (associatedUsers.contains(user)) {
 					continue;
 				}
@@ -413,11 +413,11 @@ public class ModSecurity extends JSONBaseWithSpringContext {
 	 */
 
 	@JSONExported
-	public JSONObject getUserList() throws JSONException, AuthException {
-		final List<CMUser> usersList = authLogic().getAllUsers();
+	public JSONObject getUserList( //
+			@Parameter(value = ACTIVE, required = false) final boolean activeOnly //
+	) throws JSONException, AuthException {
 		final JSONObject out = new JSONObject();
-		out.put(ROWS, Serializer.serializeUsers(usersList));
-
+		out.put(ROWS, Serializer.serializeUsers(authLogic().getAllUsers(activeOnly)));
 		return out;
 	}
 

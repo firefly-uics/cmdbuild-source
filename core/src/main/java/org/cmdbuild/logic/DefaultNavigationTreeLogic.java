@@ -5,6 +5,8 @@ import java.util.Map;
 import org.cmdbuild.model.domainTree.DomainTreeNode;
 import org.cmdbuild.services.store.DBDomainTreeStore;
 
+import com.google.common.base.Predicate;
+
 public class DefaultNavigationTreeLogic implements NavigationTreeLogic {
 
 	private final DBDomainTreeStore domainTreeStore;
@@ -24,8 +26,8 @@ public class DefaultNavigationTreeLogic implements NavigationTreeLogic {
 	}
 
 	@Override
-	public Map<String, String> get() {
-		return domainTreeStore.getTreeNames();
+	public Map<String, String> get(final Predicate<DomainTreeNode> predicate) {
+		return domainTreeStore.getTreeNames(predicate);
 	}
 
 	@Override

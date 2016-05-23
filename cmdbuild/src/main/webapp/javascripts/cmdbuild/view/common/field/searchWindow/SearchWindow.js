@@ -1,7 +1,7 @@
-(function() {
+(function () {
 
 	Ext.define('CMDBuild.view.common.field.searchWindow.SearchWindow', {
-		extend: 'CMDBuild.core.PopupWindow',
+		extend: 'CMDBuild.core.window.AbstractModal',
 
 		/**
 		 * @cfg {CMDBuild.controller.common.field.searchWindow.SearchWindow}
@@ -19,16 +19,23 @@
 		baseTitle: CMDBuild.Translation.list,
 
 		/**
-		 * @property {CMDBuild.core.buttons.Save}
+		 * @property {CMDBuild.core.buttons.text.Save}
 		 */
 		saveButton: undefined,
 
-		initComponent: function() {
+		closeAction: 'hide',
+
+		/**
+		 * @returns {Void}
+		 *
+		 * @override
+		 */
+		initComponent: function () {
 			Ext.apply(this, {
 				dockedItems: [
 					Ext.create('Ext.toolbar.Toolbar', {
 						dock: 'top',
-						itemId: CMDBuild.core.proxy.CMProxyConstants.TOOLBAR_TOP,
+						itemId: CMDBuild.core.constants.Proxy.TOOLBAR_TOP,
 
 						items: [
 							this.addCardButton = Ext.create('CMDBuild.core.buttons.AddCardMenuButton')
@@ -36,7 +43,7 @@
 					}),
 					Ext.create('Ext.toolbar.Toolbar', {
 						dock: 'bottom',
-						itemId: CMDBuild.core.proxy.CMProxyConstants.TOOLBAR_BOTTOM,
+						itemId: CMDBuild.core.constants.Proxy.TOOLBAR_BOTTOM,
 						ui: 'footer',
 
 						layout: {
@@ -46,10 +53,10 @@
 						},
 
 						items: [
-							this.saveButton = Ext.create('CMDBuild.core.buttons.Save', {
+							this.saveButton = Ext.create('CMDBuild.core.buttons.text.Save', {
 								scope: this,
 
-								handler: function(button, e) {
+								handler: function (button, e) {
 									this.delegate.cmfg('onFieldSearchWindowSaveButtonClick');
 								}
 							})
@@ -62,18 +69,9 @@
 		},
 
 		listeners: {
-			show: function(window, eOpts) {
+			show: function (window, eOpts) {
 				this.delegate.cmfg('onFieldSearchWindowShow');
 			}
-		},
-
-		/**
-		 * Override close action to avoid window destroy. Close is called by Esc button press and using top-right close toolButton.
-		 *
-		 * @override
-		 */
-		close: function() {
-			this.hide();
 		}
 	});
 

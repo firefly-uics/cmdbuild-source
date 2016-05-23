@@ -28,7 +28,7 @@
 				}
 			});
 
-			var htmlField = Ext.create('CMDBuild.view.common.field.CMHtmlEditorField', {
+			var htmlField = Ext.create('CMDBuild.view.common.field.HtmlEditor', {
 				name: 'Notes',
 				hideLabel: true
 			});
@@ -97,7 +97,7 @@
 
 				this.buttons = [
 					this.saveButton = new Ext.button.Button({
-						text : CMDBuild.Translation.common.buttons.save,
+						text : CMDBuild.Translation.save,
 						name: 'saveButton',
 						formBind : true,
 						handler: function() {
@@ -106,7 +106,7 @@
 					}),
 
 					this.cancelButton = new Ext.button.Button({
-						text : CMDBuild.Translation.common.buttons.abort,
+						text : CMDBuild.Translation.cancel,
 						name: 'cancelButton',
 						handler : function() {
 							me.fireEvent(me.CMEVENTS.cancelNoteButtonClick);

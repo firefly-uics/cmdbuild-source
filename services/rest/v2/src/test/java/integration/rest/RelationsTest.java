@@ -20,6 +20,7 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasEntry;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyBoolean;
 import static org.mockito.Matchers.anyInt;
 import static org.mockito.Matchers.anyLong;
 import static org.mockito.Matchers.anyString;
@@ -55,7 +56,6 @@ import org.cmdbuild.service.rest.v2.model.adapter.RelationAdapter;
 import org.codehaus.jackson.node.ObjectNode;
 import org.junit.Before;
 import org.junit.ClassRule;
-import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
@@ -65,25 +65,22 @@ import org.mockito.runners.MockitoJUnitRunner;
 @RunWith(MockitoJUnitRunner.class)
 public class RelationsTest {
 
-	private Relations service;
-
-	@Rule
-	public ServerResource server = ServerResource.newInstance() //
-			.withServiceClass(Relations.class) //
-			.withService(service = mock(Relations.class)) //
-			.withPort(randomPort()) //
+	@ClassRule
+	public static ServerResource<Relations> server = ServerResource.newInstance(Relations.class) //
+			.withPortRange(randomPort()) //
 			.build();
 
-	@ClassRule
-	public static JsonSupport json = new JsonSupport();
+	private static JsonSupport json = new JsonSupport();
 
 	@Captor
 	private ArgumentCaptor<MultivaluedMap<String, String>> multivaluedMapCaptor;
 
+	private Relations service;
 	private HttpClient httpclient;
 
 	@Before
-	public void createHttpClient() throws Exception {
+	public void setUp() throws Exception {
+		server.service(service = mock(Relations.class));
 		httpclient = HttpClientBuilder.create().build();
 	}
 
@@ -169,13 +166,13 @@ public class RelationsTest {
 				.withElements(Arrays.<Map<String, Object>> asList( //
 						relationAdapter.marshal(firstRelation), //
 						relationAdapter.marshal(secondRelation) //
-						)) //
+		)) //
 				.withMetadata(newMetadata() //
 						.withTotal(2L) //
 						.build()) //
 				.build();
 		doReturn(sentResponse) //
-				.when(service).read(anyString(), anyString(), anyInt(), anyInt());
+				.when(service).read(anyString(), anyString(), anyInt(), anyInt(), anyBoolean());
 
 		// when
 		final HttpGet get = new HttpGet(new URIBuilder(server.resource("domains/dummy/relations/")) //
@@ -190,7 +187,7 @@ public class RelationsTest {
 		assertThat(statusCodeOf(response), equalTo(200));
 		assertThat(json.from(contentOf(response)), equalTo(json.from(expectedResponse)));
 
-		verify(service).read(eq("dummy"), eq("filter"), eq(56), eq(78));
+		verify(service).read(eq("dummy"), eq("filter"), eq(56), eq(78), eq(false));
 	}
 
 	@Test

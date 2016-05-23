@@ -1,9 +1,11 @@
+Ext.require(['CMDBuild.proxy.gis.Icon']);
+
 Ext.define("CMDBuild.Administration.ModIcons", {
 	extend: "Ext.panel.Panel",
 
 	cmName:"gis-icons",
 	translation: CMDBuild.Translation.administration.modcartography.icons,
-	buttonsTr: CMDBuild.Translation.common.buttons,
+	buttonsTr: CMDBuild.Translation,
 
 	initComponent : function() {
 		this.buildUIButtons();
@@ -14,7 +16,7 @@ Ext.define("CMDBuild.Administration.ModIcons", {
 			frame: false,
 			border: true,
 			bodyCls: 'cm-grid-autoheight',
-			store: CMDBuild.ServiceProxy.Icons.getIconStore(),
+			store: CMDBuild.proxy.gis.Icon.getStore(),
 			tbar: [this.addButton],
 			sm: new Ext.selection.RowModel(),
 			columns: [{
@@ -39,11 +41,11 @@ Ext.define("CMDBuild.Administration.ModIcons", {
 
 		this.description = Ext.create('Ext.form.field.Text', {
 			fieldLabel: this.translation.description,
-			labelWidth: CMDBuild.LABEL_WIDTH,
-			width: CMDBuild.ADM_BIG_FIELD_WIDTH,
+			labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
+			width: CMDBuild.core.constants.FieldWidths.ADMINISTRATION_BIG,
 			name: 'description',
 			allowBlank: false,
-			vtype: 'cmdbcomment'
+			vtype: 'commentextended'
 		});
 		this.uploadForm = new Ext.form.FormPanel({
 			monitorValid: true,
@@ -54,8 +56,8 @@ Ext.define("CMDBuild.Administration.ModIcons", {
 			split: true,
 			frame: false,
 			border: false,
-			cls: "x-panel-body-default-framed cmbordertop",
-			bodyCls: 'cmgraypanel',
+			cls: "x-panel-body-default-framed cmdb-border-top",
+			bodyCls: 'cmdb-gray-panel',
 			layout: "border",
 			tbar: [this.modifyButton, this.removeButton],
 			items: [{
@@ -63,8 +65,8 @@ Ext.define("CMDBuild.Administration.ModIcons", {
 				region: "center",
 				frame: true,
 				defaults: {
-					labelWidth: CMDBuild.LABEL_WIDTH,
-					width: CMDBuild.ADM_BIG_FIELD_WIDTH
+					labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
+					width: CMDBuild.core.constants.FieldWidths.ADMINISTRATION_BIG
 				},
 				items: [{
 					xtype:'hidden',
@@ -72,7 +74,7 @@ Ext.define("CMDBuild.Administration.ModIcons", {
 				},{
 					xtype: 'filefield',
 					allowBlank: true,
-					width: CMDBuild.ADM_BIG_FIELD_WIDTH,
+					width: CMDBuild.core.constants.FieldWidths.ADMINISTRATION_BIG,
 					fieldLabel: this.translation.file,
 					name: 'file'
 				}, this.description
@@ -104,7 +106,7 @@ Ext.define("CMDBuild.Administration.ModIcons", {
 		}, this);
 
 		this.iconsGrid.getStore().on('load', function(store, records, options) {
-			if (records.length == 0) {
+			if (!Ext.isEmpty(records)) {
 				this.modifyButton.disable();
 				this.removeButton.disable();
 			}
@@ -119,39 +121,31 @@ Ext.define("CMDBuild.Administration.ModIcons", {
 
 	//private
 	buildUIButtons: function() {
-		this.addButton = new Ext.Button({
-			text: this.buttonsTr.add,
-			iconCls: 'add',
+		this.addButton = Ext.create('CMDBuild.core.buttons.iconized.add.Add', {
 			scope: this,
 			handler: this.onAddClick
 		});
 
-		this.saveButton = new Ext.Button({
-			text: this.buttonsTr.save,
+		this.saveButton = Ext.create('CMDBuild.core.buttons.text.Save', {
 			scope: this,
 			disabled: true,
 			formBind: true,
 			handler: this.onSave
 		});
 
-		this.abortButton = new Ext.Button({
-			text: this.buttonsTr.abort,
+		this.abortButton = Ext.create('CMDBuild.core.buttons.text.Abort', {
 			scope: this,
 			disabled: true,
 			handler: this.onAbort
 		});
 
-		this.modifyButton = new Ext.Button({
-	    	text: this.buttonsTr.modify,
-	    	iconCls: 'modify',
+		this.modifyButton = Ext.create('CMDBuild.core.buttons.iconized.Modify', {
 	    	scope: this,
 	    	disabled: true,
 	    	handler: this.onModify
 	    });
 
-		this.removeButton = new Ext.Button({
-	    	text: this.buttonsTr.remove,
-	    	iconCls: 'delete',
+		this.removeButton = Ext.create('CMDBuild.core.buttons.iconized.Remove', {
 	    	scope: this,
 	    	disabled: true,
 	    	handler: this.onRemove
@@ -166,9 +160,6 @@ Ext.define("CMDBuild.Administration.ModIcons", {
   		this.removeButton.enable();
   		this.uploadForm.getForm().reset();
   		this.uploadForm.getForm().loadRecord(record);
-		Ext.apply(this.description, {
-			translationsKeyName: record.get("name")
-		});
   	},
 
   	//private
@@ -177,7 +168,6 @@ Ext.define("CMDBuild.Administration.ModIcons", {
 		this.uploadForm.getForm().reset();
 		this.enableModify();
 		this.uploadForm.saveStatus = "add";
-		_CMCache.initAddingTranslations();
 	},
 
   	//private
@@ -195,7 +185,6 @@ Ext.define("CMDBuild.Administration.ModIcons", {
   			descriptionField[0].disable();
   		}
   		this.uploadForm.saveStatus = "modify";
-		_CMCache.initModifyingTranslations();
  	},
 
   	//private
@@ -226,19 +215,17 @@ Ext.define("CMDBuild.Administration.ModIcons", {
   		//the save request
 
 		if (form.isValid()) {
-			CMDBuild.LoadMask.get().show();
+			CMDBuild.core.LoadMask.show();
 			var config = {
+				form: form,
+				loadMask: false,
 				scope: this,
-				success: function(form, action) {
+				success: function() {
 					var description = form.getValues().description;
 					this.iconsGrid.store.load({
 					    scope: this,
 					    callback: function(records, operation, success) {
-					        // the operation object
-					        // contains all of the details of the load operation
-					        console.log(records);
 					        var r = this.iconsGrid.store.findRecord("description", description);
-					        _CMCache.flushTranslationsToSave(r.get("name"));
 					    }
 					});
 				},
@@ -247,9 +234,9 @@ Ext.define("CMDBuild.Administration.ModIcons", {
 			};
 
 			if (this.uploadForm.saveStatus == "add") {
-				CMDBuild.ServiceProxy.Icons.upload(form, config);
+				CMDBuild.proxy.gis.Icon.create(config);
 			} else {
-				CMDBuild.ServiceProxy.Icons.update(form, config);
+				CMDBuild.proxy.gis.Icon.update(config);
 			}
 		}
   	},
@@ -265,10 +252,11 @@ Ext.define("CMDBuild.Administration.ModIcons", {
 	  		var selectedRow = this.iconsGrid.getSelectionModel().getSelection();
 	  		if (selectedRow && selectedRow.length > 0) {
 	  			var selectedData = selectedRow[0];
-	  			CMDBuild.LoadMask.get().show();
-	  			CMDBuild.ServiceProxy.Icons.remove({
+	  			CMDBuild.core.LoadMask.show();
+	  			CMDBuild.proxy.gis.Icon.remove({
 					scope : this,
 					important: true,
+					loadMask: false,
 					params : {
 						"name": selectedData.get("name")
 					},
@@ -289,7 +277,7 @@ Ext.define("CMDBuild.Administration.ModIcons", {
 
   	//private
   	requestCallback: function() {
-  		CMDBuild.LoadMask.get().hide();
+  		CMDBuild.core.LoadMask.hide();
 		this.disableModify();
   	}
 });

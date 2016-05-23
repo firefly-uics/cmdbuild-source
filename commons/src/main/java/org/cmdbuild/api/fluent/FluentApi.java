@@ -1,63 +1,31 @@
 package org.cmdbuild.api.fluent;
 
-public class FluentApi {
+public interface FluentApi {
 
-	private final FluentApiExecutor executor;
+	NewCard newCard(String className);
 
-	public FluentApi(final FluentApiExecutor executor) {
-		this.executor = executor;
-	}
+	ExistingCard existingCard(CardDescriptor descriptor);
 
-	public NewCard newCard(final String className) {
-		return new NewCard(executor, className);
-	}
+	ExistingCard existingCard(String className, int id);
 
-	public ExistingCard existingCard(final CardDescriptor descriptor) {
-		return new ExistingCard(executor, descriptor.getClassName(), descriptor.getId());
-	}
+	NewRelation newRelation(String domainName);
 
-	public ExistingCard existingCard(final String className, final int id) {
-		return new ExistingCard(executor, className, id);
-	}
+	ExistingRelation existingRelation(String domainName);
 
-	public NewRelation newRelation(final String domainName) {
-		return new NewRelation(executor, domainName);
-	}
+	QueryClass queryClass(String className);
 
-	public ExistingRelation existingRelation(final String domainName) {
-		return new ExistingRelation(executor, domainName);
-	}
+	FunctionCall callFunction(String functionName);
 
-	public QueryClass queryClass(final String className) {
-		return new QueryClass(executor, className);
-	}
+	CreateReport createReport(String title, String format);
 
-	public FunctionCall callFunction(final String functionName) {
-		return new FunctionCall(executor, functionName);
-	}
+	ActiveQueryRelations queryRelations(CardDescriptor descriptor);
 
-	public CreateReport createReport(final String title, final String format) {
-		return new CreateReport(executor, title, format);
-	}
+	ActiveQueryRelations queryRelations(String className, int id);
 
-	public ActiveQueryRelations queryRelations(final CardDescriptor descriptor) {
-		return new ActiveQueryRelations(executor, descriptor.getClassName(), descriptor.getId());
-	}
+	NewProcessInstance newProcessInstance(String processClassName);
 
-	public ActiveQueryRelations queryRelations(final String className, final int id) {
-		return new ActiveQueryRelations(executor, className, id);
-	}
+	ExistingProcessInstance existingProcessInstance(String processClassName, int processId);
 
-	public NewProcessInstance newProcessInstance(final String processClassName) {
-		return new NewProcessInstance(executor, processClassName);
-	}
-
-	public ExistingProcessInstance existingProcessInstance(final String processClassName, final int processId) {
-		return new ExistingProcessInstance(executor, processClassName, processId);
-	}
-
-	public QueryAllLookup queryLookup(final String type) {
-		return new QueryAllLookup(executor, type);
-	}
+	QueryAllLookup queryLookup(String type);
 
 }

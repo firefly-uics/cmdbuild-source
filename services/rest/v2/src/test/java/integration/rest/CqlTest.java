@@ -40,27 +40,23 @@ import org.cmdbuild.service.rest.v2.model.Models;
 import org.cmdbuild.service.rest.v2.model.ResponseMultiple;
 import org.junit.Before;
 import org.junit.ClassRule;
-import org.junit.Rule;
 import org.junit.Test;
 
 public class CqlTest {
 
-	private Cql service;
-
-	@Rule
-	public ServerResource server = ServerResource.newInstance() //
-			.withServiceClass(Cql.class) //
-			.withService(service = mock(Cql.class)) //
-			.withPort(randomPort()) //
+	@ClassRule
+	public static ServerResource<Cql> server = ServerResource.newInstance(Cql.class) //
+			.withPortRange(randomPort()) //
 			.build();
 
-	@ClassRule
-	public static JsonSupport json = new JsonSupport();
+	private static JsonSupport json = new JsonSupport();
 
+	private Cql service;
 	private HttpClient httpclient;
 
 	@Before
-	public void createHttpClient() throws Exception {
+	public void setUp() throws Exception {
+		server.service(service = mock(Cql.class));
 		httpclient = HttpClientBuilder.create().build();
 	}
 
@@ -87,7 +83,7 @@ public class CqlTest {
 								.withId(secondId) //
 								.withValues(secondValues) //
 								.build() //
-						)) //
+		)) //
 				.withMetadata(newMetadata() //
 						.withTotal(2L) //
 						.build()) //
@@ -104,7 +100,7 @@ public class CqlTest {
 								.chainablePut(UNDERSCORED_TYPE, type) //
 								.chainablePut(UNDERSCORED_ID, secondId) //
 								.chainablePutAll(secondValues) //
-						)) //
+		)) //
 				.withMetadata(newMetadata() //
 						.withTotal(2L) //
 						.build()) //

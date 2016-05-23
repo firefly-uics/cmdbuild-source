@@ -1,78 +1,76 @@
 package org.cmdbuild.service.rest.v1.cxf.security;
 
 import static javax.ws.rs.core.Response.Status.UNAUTHORIZED;
+import static org.springframework.core.annotation.AnnotationUtils.findAnnotation;
 
+import java.io.IOException;
+
+import javax.ws.rs.container.ContainerRequestContext;
+import javax.ws.rs.container.ContainerRequestFilter;
+import javax.ws.rs.container.ResourceInfo;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 
-import org.apache.cxf.jaxrs.ext.RequestHandler;
-import org.apache.cxf.jaxrs.model.ClassResourceInfo;
-import org.apache.cxf.message.Message;
-import org.cmdbuild.auth.UserStore;
-import org.cmdbuild.auth.user.OperationUser;
-import org.cmdbuild.service.rest.v1.cxf.service.OperationUserStore;
-import org.cmdbuild.service.rest.v1.cxf.service.SessionStore;
+import org.cmdbuild.logic.auth.SessionLogic;
+import org.cmdbuild.service.rest.v1.Unauthorized;
 import org.cmdbuild.service.rest.v1.logging.LoggingSupport;
-import org.cmdbuild.service.rest.v1.model.Session;
 
 import com.google.common.base.Optional;
-import com.google.common.base.Predicate;
 
-public class TokenHandler implements RequestHandler, LoggingSupport {
+public class TokenHandler implements ContainerRequestFilter, LoggingSupport {
 
 	public static interface TokenExtractor {
 
-		Optional<String> extract(Message message);
+		Optional<String> extract(ContainerRequestContext value);
 
 	}
 
 	private final TokenExtractor tokenExtractor;
-	private final Predicate<Class<?>> unauthorizedServices;
-	private final SessionStore sessionStore;
-	private final OperationUserStore operationUserStore;
-	private final UserStore userStore;
+	private final SessionLogic sessionLogic;
 
-	public TokenHandler(final TokenExtractor tokenExtractor, final Predicate<Class<?>> unauthorizedServices,
-			final SessionStore sessionStore, final OperationUserStore operationUserStore, final UserStore userStore) {
-		this.unauthorizedServices = unauthorizedServices;
-		this.sessionStore = sessionStore;
-		this.operationUserStore = operationUserStore;
-		this.userStore = userStore;
+	@Context
+	private ResourceInfo resourceInfo;
+
+	public TokenHandler(final TokenExtractor tokenExtractor, final SessionLogic sessionLogic) {
 		this.tokenExtractor = tokenExtractor;
+		this.sessionLogic = sessionLogic;
+	}
+
+	/**
+	 * Usable for tests only.
+	 */
+	public TokenHandler(final TokenExtractor tokenExtractor, final SessionLogic sessionLogic,
+			final ResourceInfo resourceInfo) {
+		this(tokenExtractor, sessionLogic);
+		this.resourceInfo = resourceInfo;
 	}
 
 	@Override
-	public Response handleRequest(final Message message, final ClassResourceInfo resourceClass) {
+	public void filter(final ContainerRequestContext requestContext) throws IOException {
 		Response response = null;
 		do {
-			final boolean unauthorized = unauthorizedServices.apply(resourceClass.getServiceClass());
+			final boolean unauthorized = (findAnnotation(resourceInfo.getResourceMethod(), Unauthorized.class) != null);
 			if (unauthorized) {
 				break;
 			}
 
-			final Optional<String> token = tokenExtractor.extract(message);
+			final Optional<String> token = tokenExtractor.extract(requestContext);
 			final boolean missingToken = !token.isPresent();
 			if (missingToken) {
 				response = Response.status(UNAUTHORIZED).build();
 				break;
 			}
 
-			final Optional<Session> session = sessionStore.get(token.get());
-			final boolean missingSession = !session.isPresent();
-			if (missingSession) {
+			if (!sessionLogic.exists(token.get())) {
 				response = Response.status(UNAUTHORIZED).build();
 				break;
 			}
-
-			final boolean missingOperationUser = !operationUserStore.of(session.get()).get().isPresent();
-			if (missingOperationUser) {
-				response = Response.status(UNAUTHORIZED).build();
-				break;
-			}
-
-			final OperationUser operationUser = operationUserStore.of(session.get()).get().get();
-			userStore.setUser(operationUser);
+			
+			sessionLogic.setCurrent(token.get());
 		} while (false);
-		return response;
+		if (response != null) {
+			requestContext.abortWith(response);
+		}
 	}
 
 }

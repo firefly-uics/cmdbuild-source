@@ -13,32 +13,16 @@
 		 */
 		baseTitle: CMDBuild.Translation.views,
 
+		bodyCls: 'cmdb-blue-panel-no-padding',
 		border: true,
 		frame: false,
 		layout: 'fit',
 
 		tools: [
-			{
-				type: 'minimize',
-
-				handler: function(event, toolEl, panel) {
-					_CMUIState.onlyForm();
-				}
-			},
-			{
-				type: 'maximize',
-
-				handler: function(event, toolEl, panel) {
-					_CMUIState.onlyGrid();
-				}
-			},
-			{
-				type: 'restore',
-
-				handler: function(event, toolEl, panel) {
-					_CMUIState.fullScreenOff();
-				}
-			}
+			Ext.create('CMDBuild.view.common.panel.gridAndForm.tools.Properties'),
+			Ext.create('CMDBuild.view.common.panel.gridAndForm.tools.Minimize'),
+			Ext.create('CMDBuild.view.common.panel.gridAndForm.tools.Maximize'),
+			Ext.create('CMDBuild.view.common.panel.gridAndForm.tools.Restore')
 		]
 	});
 

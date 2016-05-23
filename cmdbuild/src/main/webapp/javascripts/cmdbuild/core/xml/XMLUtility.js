@@ -120,14 +120,14 @@
 		var node = {
 			text: text + childNodes.textContent,
 			domNode: xmlNode,
-			iconCls: "cm_no_display",
+			iconCls: "display-none",
 			leaf: !folder
 		};
 
 		if (folder) {
 			node.children = childNodes.children;
 		} else {
-			node.iconCls = "cmdbuild-tree-no-icon";
+			node.iconCls = "cmdb-tree-no-icon";
 		}
 
 		return node;
@@ -155,7 +155,7 @@
 
 	function serializeToString(xmlNode) {
 		// IE
-		if (xmlNode.xml) { 
+		if (xmlNode.xml) {
 			return xmlNode.xml;
 		} else {
 			return (new XMLSerializer()).serializeToString(xmlNode);
@@ -175,7 +175,7 @@
 			}
 
 		// The others
-		} else if (window.DOMParser 
+		} else if (window.DOMParser
 				&& typeof window.DOMParser != "undefined") {
 
 			var parser = new window.DOMParser();

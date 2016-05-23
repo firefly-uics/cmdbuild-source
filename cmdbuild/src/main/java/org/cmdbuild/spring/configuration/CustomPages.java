@@ -28,7 +28,7 @@ public class CustomPages {
 	private Data data;
 
 	@Autowired
-	private FileStore fileStore;
+	private Files fileStore;
 
 	@Autowired
 	private UserStore userStore;

@@ -1,6 +1,6 @@
 (function() {
-Ext.define("CMDBuild.field.LookupCombo", {
-	extend: "CMDBuild.field.ErasableCombo",
+Ext.define("CMDBuild.view.common.field.LookupField", {
+	extend: "CMDBuild.view.common.field.CMErasableCombo",
 	plugins: new CMDBuild.SetValueOnLoadPlugin(),
 	parentId: '',
 
@@ -13,6 +13,47 @@ Ext.define("CMDBuild.field.LookupCombo", {
 
 			this.filterStoreByParentId();
 		}, this);
+	},
+
+	/**
+	 * @param {String} rawValue
+	 *
+	 * @returns {Array}
+	 *
+	 * @override
+	 */
+	getErrors: function (rawValue) {
+		if (!Ext.isEmpty(rawValue) && this.getStore().find(this.valueField, this.getValue()) == -1)
+			return [CMDBuild.Translation.errors.invalidLookupValue];
+
+		return this.callParent(arguments);
+	},
+
+	/**
+	 * Return value only if number
+	 *
+	 * @returns {Number}
+	 *
+	 * @override
+	 */
+	getValue: function () {
+		var value = this.callParent(arguments);
+
+		if (Ext.isNumber(value))
+			return value;
+
+		return '';
+	},
+
+	/**
+	 * @param {Object} value
+	 *
+	 * @returns {Void}
+	 */
+	setValue: function (value) {
+		this.callParent(arguments);
+
+		this.validate();
 	},
 
 	onTrigger2Click: function() {
@@ -33,7 +74,7 @@ Ext.define("CMDBuild.field.LookupCombo", {
 	setValueAndUpdateParents: function(value) {
 		if (!this.store) {
 			// TODO why sometimes there are lookups without store?
-			_debug("Lookup without store");
+			_error("Lookup without store");
 			return;
 		}
 
@@ -50,6 +91,7 @@ Ext.define("CMDBuild.field.LookupCombo", {
 			} else {
 				this.setParentIdAndFilterStore(undefined);
 			}
+			this.validate(); // Validate to avoid to mark as invalid
 		}
 
 		if (this.parentField) {
@@ -90,7 +132,7 @@ Ext.define("CMDBuild.field.MultiLevelLookupPanel", {
 	frame: false,
 	autoHeight: true,
 	hideMode: 'offsets',
-	labelWidth: CMDBuild.LABEL_WIDTH,
+	labelWidth: 150,
 	bodyCls: "x-panel-default-framed",
 	isMultiLevel: true,
 	bodyStyle: {
@@ -272,7 +314,7 @@ var buildSingleLookupField = function(attribute, hideLabel) {
 	if (hideLabel) {
 		fieldLabel = "";
 		labelSeparator = "";
-		padding = "0 0 0 " + (CMDBuild.LABEL_WIDTH + 5);
+		padding = "0 0 0 " + (CMDBuild.core.constants.FieldWidths.LABEL + 5);
 	} else {
 		fieldLabel = attribute.description || attribute.name;
 		if (!canBeBlank(attribute)) {
@@ -281,9 +323,9 @@ var buildSingleLookupField = function(attribute, hideLabel) {
 		labelSeparator = ":";
 	}
 
-	var field = new CMDBuild.field.LookupCombo({
+	var field = new CMDBuild.view.common.field.LookupField({
 		labelAlign: "right",
-		labelWidth: CMDBuild.LABEL_WIDTH,
+		labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
 		fieldLabel: fieldLabel,
 		labelSeparator: labelSeparator,
 		padding: padding,

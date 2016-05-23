@@ -4,9 +4,11 @@ import static java.lang.String.format;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.cmdbuild.dao.driver.postgres.Const.OPERATOR_EQ;
 import static org.cmdbuild.dao.driver.postgres.Const.OPERATOR_GT;
+import static org.cmdbuild.dao.driver.postgres.Const.OPERATOR_GT_EQ;
 import static org.cmdbuild.dao.driver.postgres.Const.OPERATOR_IN;
 import static org.cmdbuild.dao.driver.postgres.Const.OPERATOR_LIKE;
 import static org.cmdbuild.dao.driver.postgres.Const.OPERATOR_LT;
+import static org.cmdbuild.dao.driver.postgres.Const.OPERATOR_LT_EQ;
 import static org.cmdbuild.dao.driver.postgres.Const.OPERATOR_NULL;
 import static org.cmdbuild.dao.query.clause.QueryAliasAttribute.attribute;
 
@@ -40,8 +42,10 @@ import org.cmdbuild.dao.query.clause.where.EqualsOperatorAndValue;
 import org.cmdbuild.dao.query.clause.where.FalseWhereClause;
 import org.cmdbuild.dao.query.clause.where.FunctionWhereClause;
 import org.cmdbuild.dao.query.clause.where.GreaterThanOperatorAndValue;
+import org.cmdbuild.dao.query.clause.where.GreaterThanOrEqualToOperatorAndValue;
 import org.cmdbuild.dao.query.clause.where.InOperatorAndValue;
 import org.cmdbuild.dao.query.clause.where.LessThanOperatorAndValue;
+import org.cmdbuild.dao.query.clause.where.LessThanOrEqualToOperatorAndValue;
 import org.cmdbuild.dao.query.clause.where.NetworkContained;
 import org.cmdbuild.dao.query.clause.where.NetworkContainedOrEqual;
 import org.cmdbuild.dao.query.clause.where.NetworkContains;
@@ -190,8 +194,20 @@ public class WherePartCreator extends PartCreator implements WhereClauseVisitor 
 			}
 
 			@Override
+			public void visit(final GreaterThanOrEqualToOperatorAndValue operatorAndValue) {
+				append(attributeFilter(whereClause.getAttribute(), whereClause.getAttributeNameCast(), OPERATOR_GT_EQ,
+						valueOf(operatorAndValue.getValue())));
+			}
+
+			@Override
 			public void visit(final LessThanOperatorAndValue operatorAndValue) {
 				append(attributeFilter(whereClause.getAttribute(), whereClause.getAttributeNameCast(), OPERATOR_LT,
+						valueOf(operatorAndValue.getValue())));
+			}
+
+			@Override
+			public void visit(final LessThanOrEqualToOperatorAndValue operatorAndValue) {
+				append(attributeFilter(whereClause.getAttribute(), whereClause.getAttributeNameCast(), OPERATOR_LT_EQ,
 						valueOf(operatorAndValue.getValue())));
 			}
 
@@ -396,7 +412,6 @@ public class WherePartCreator extends PartCreator implements WhereClauseVisitor 
 					 * attribute not found, probably it's a superclass so we
 					 * search within all subclasses (leaves) hoping to find it:
 					 * the first one is selected, keeping fingers crossed...
-					 * 
 					 * TODO the query generation must be implemented is a
 					 * different way or the QueryAliasAttribute must keep an
 					 * information of it's owner (entry type)

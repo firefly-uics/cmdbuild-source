@@ -9,9 +9,9 @@
 			uistatedelegate: "CMDBuild.state.UIStateDelegate"
 		},
 
-		cmName: "class",
-
 		whitMap: true,
+		layout: "border",
+		border: true,
 
 		constructor: function() {
 			this.CMEVENTS = {
@@ -36,7 +36,7 @@
 				layout: "card",
 				activeItem: 0,
 				hideMode: "offsets",
-				cls: "cmborderbottom",
+				cls: "cmdb-border-bottom",
 				border: false,
 				frame: false,
 				cardGrid: this.cardGrid,
@@ -61,31 +61,20 @@
 			});
 
 			Ext.apply(this, {
-				layout: "border",
-				border: true,
 				items: [this.centralPanel, this.cardTabPanel],
-				tools:[{
-					type:'minimize',
-					handler: function () {
-						_CMUIState.onlyForm();
-					}
-				},{
-					type:'maximize',
-					handler: function () {
-						_CMUIState.onlyGrid();
-					}
-				},{
-					type: "restore",
-					handler: function () {
-						_CMUIState.fullScreenOff();
-					}
-				}]
+				tools: [
+					Ext.create('CMDBuild.view.common.panel.gridAndForm.tools.Properties'),
+					Ext.create('CMDBuild.view.common.panel.gridAndForm.tools.Minimize'),
+					Ext.create('CMDBuild.view.common.panel.gridAndForm.tools.Maximize'),
+					Ext.create('CMDBuild.view.common.panel.gridAndForm.tools.Restore')
+				]
 			});
 
 			this.callParent(arguments);
 
 			_CMUtils.forwardMethods(this, this.cardTabPanel, [
 				"activateFirstTab",
+				"setActivateTab",
 				"getCardPanel",
 				"getNotePanel",
 				"getMDPanel",
@@ -94,6 +83,12 @@
 				"getRelationsPanel",
 				"getEmailPanel"
 			]);
+
+			// Defer map controller build after view render
+			this.on('afterrender', function (panel, eOpts) {
+				if (Ext.isFunction(this.delegate.buildMapController))
+					this.delegate.buildMapController();
+			}, this);
 		},
 
 		minimize: function() {
@@ -143,7 +138,7 @@
 
 		// protected
 		buildComponents: function() {
-			var gridratio = CMDBuild.Config.cmdbuild.grid_card_ratio || 50;
+			var gridratio = CMDBuild.configuration.instance.get('cardFormRatio') || 50; // TODO: use proxy constants
 			var tbar = [
 				this.addCardButton = new CMDBuild.AddCardMenuButton({
 					classId: undefined,
@@ -167,7 +162,7 @@
 			});
 
 			this.cardTabPanel = new CMDBuild.view.management.classes.CMCardTabPanel({
-				cls: "cmbordertop",
+				cls: "cmdb-border-top",
 				region: "south",
 				hideMode: "offsets",
 				border: false,
@@ -272,7 +267,7 @@
 	});
 
 	function buildMapButton(tbar) {
-		if (CMDBuild.Config.gis.enabled) {
+		if (CMDBuild.configuration.gis.get('enabled')) { // TODO: use proxy constants
 
 			this.showMapButton = new Ext.button.Button({
 				text: CMDBuild.Translation.management.modcard.tabs.map,
@@ -288,8 +283,7 @@
 	}
 
 	function buildMapPanel() {
-		if (CMDBuild.Config.gis.enabled
-				&& this.whitMap) {
+		if (CMDBuild.configuration.gis.get('enabled') && this.whitMap) { // TODO: use proxy constants
 			this.showGridButton = new Ext.button.Button({
 				text: CMDBuild.Translation.management.modcard.add_relations_window.list_tab,
 				iconCls: 'table',

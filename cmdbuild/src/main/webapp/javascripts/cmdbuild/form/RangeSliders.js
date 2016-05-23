@@ -1,7 +1,6 @@
 (function() {
 
 	Ext.define('CMDBuild.form.RangeSliders', {
-		alternateClassName: 'CMDBuild.RangeSlidersFieldSet', // Legacy class name
 		extend: 'Ext.container.Container',
 
 		maxSliderField: undefined,

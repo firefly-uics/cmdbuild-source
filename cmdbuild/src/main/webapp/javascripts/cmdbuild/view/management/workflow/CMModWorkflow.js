@@ -1,11 +1,9 @@
 (function() {
 
-	Ext.require('CMDBuild.core.proxy.CMProxyWorkflow');
+	Ext.require('CMDBuild.proxy.workflow.Workflow');
 
 	Ext.define("CMDBuild.view.management.workflow.CMModProcess", {
 		extend: "CMDBuild.view.management.classes.CMModCard",
-
-		cmName: "process",
 
 		whitMap: false,
 
@@ -26,7 +24,7 @@
 		},
 
 		buildComponents: function() {
-			var gridratio = CMDBuild.Config.cmdbuild.grid_card_ratio || 50;
+			var gridratio = CMDBuild.configuration.instance.get('cardFormRatio') || 50; // TODO: use proxy constants
 
 			this.cardGrid = new CMDBuild.view.management.workflow.CMActivityGrid({
 				hideMode: "offsets",
@@ -37,7 +35,7 @@
 			});
 
 			this.cardTabPanel = new CMDBuild.view.management.workflow.CMActivityTabPanel({
-				cls: "cmbordertop",
+				cls: "cmdb-border-top",
 				region: "south",
 				hideMode: "offsets",
 				split: true,

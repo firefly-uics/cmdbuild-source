@@ -1,4 +1,4 @@
-(function() {
+(function () {
 
 	Ext.define('CMDBuild.view.management.common.tabs.email.attachments.picker.CardGrid', {
 		extend: 'CMDBuild.view.management.common.CMCardGrid',
@@ -24,14 +24,16 @@
 		cmAdvancedFilter: false,
 
 		border: false,
+		cls: 'cmdb-border-bottom',
+		frame: false,
 
 		listeners: {
-			load: function(store, records, successful, eOpts) {
-				this.delegate.cmfg('onPickerWindowCardGridStoreLoad', records);
+			load: function (store, records, successful, eOpts) {
+				this.delegate.cmfg('onTabEmailAttachmentPickerCardGridStoreLoad', records);
 			},
 
-			select: function(selectionModel, record, index, eOpts) {
-				this.delegate.cmfg('onPickerWindowCardSelected', record);
+			select: function (selectionModel, record, index, eOpts) {
+				this.delegate.cmfg('onTabEmailAttachmentPickerCardSelected', record);
 			}
 		}
 	});

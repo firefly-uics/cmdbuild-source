@@ -5,7 +5,7 @@ Ext.define("CMDBuild.delegate.administration.common.basepanel.CMBaseGridConfigur
 	 * @return a Ext.data.Store to use for the grid
 	 */
 	getStore: function() {
-		
+
 	},
 
 	/**
@@ -14,11 +14,11 @@ Ext.define("CMDBuild.delegate.administration.common.basepanel.CMBaseGridConfigur
 	getColumns: function() {
 		return [{
 			header: CMDBuild.Translation.administration.modClass.attributeProperties.name,
-			dataIndex: _CMProxy.parameter.NAME,
+			dataIndex: CMDBuild.core.constants.Proxy.NAME,
 			flex: 1
 		}, {
 			header: CMDBuild.Translation.administration.modClass.attributeProperties.description,
-			dataIndex: _CMProxy.parameter.DESCRIPTION,
+			dataIndex: CMDBuild.core.constants.Proxy.DESCRIPTION,
 			flex: 1
 		}];
 	}

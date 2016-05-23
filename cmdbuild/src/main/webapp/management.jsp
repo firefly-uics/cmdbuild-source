@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 
+<%@page import="org.cmdbuild.logic.auth.StandardSessionLogic"%>
+<%@page import="org.cmdbuild.logic.auth.SessionLogic"%>
+<%@page import="org.cmdbuild.webapp.Management"%>
 <%@ taglib uri="/WEB-INF/tags/translations.tld" prefix="tr" %>
 
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
@@ -16,6 +19,7 @@
 <%@ page import="org.cmdbuild.config.GisProperties" %>
 
 <%
+	final SessionLogic sessionLogic = SpringIntegrationUtils.applicationContext().getBean(StandardSessionLogic.class);
 	final SessionVars sessionVars = SpringIntegrationUtils.applicationContext().getBean(SessionVars.class);
 	final String lang = sessionVars.getLanguage();
 	final UserStore userStore = SpringIntegrationUtils.applicationContext().getBean(UserStore.class);
@@ -25,6 +29,7 @@
 	final Collection<String> groupDescriptionList = operationUser.getAuthenticatedUser().getGroupDescriptions();
 	final String groupDecriptions = Joiner.on(", ").join(groupDescriptionList);
 	final String extVersion = "4.2.0";
+	final Management helper = new Management();
 %>
 
 <html>
@@ -36,82 +41,75 @@
 		<link rel="stylesheet" type="text/css" href="javascripts/ext-<%= extVersion %>-ux/css/MultiSelect.css" />
 		<link rel="stylesheet" type="text/css" href="javascripts/ext-<%= extVersion %>-ux/css/portal.css" />
 		<link rel="stylesheet" type="text/css" href="javascripts/extensible-1.5.1/resources/css/extensible-all.css" />
-		<link rel="icon" href="images/favicon.ico" />
+		<link rel="icon" type="image/x-icon" href="images/favicon.ico" />
 
 		<%@ include file="libsJsFiles.jsp"%>
 
+		<!-- 1. Main script -->
+		<script type="text/javascript" src="javascripts/cmdbuild/core/constants/Proxy.js"></script>
+		<script type="text/javascript" src="javascripts/cmdbuild/core/LoaderConfig.js"></script>
+		<script type="text/javascript" src="javascripts/cmdbuild/core/Utils.js"></script>
+		<script type="text/javascript" src="javascripts/log/log4javascript.js"></script>
+		<script type="text/javascript" src="javascripts/cmdbuild/core/interfaces/Ajax.js"></script>
+		<script type="text/javascript" src="javascripts/cmdbuild/core/Message.js"></script>
+		<script type="text/javascript" src="javascripts/cmdbuild/core/CookiesManager.js"></script>
+
+		<!-- 2. Localizations -->
+		<%@ include file="localizationsJsFiles.jsp" %>
+
+		<!-- 3. Runtime configuration -->
 		<script type="text/javascript">
-			Ext.ns('CMDBuild.Runtime'); // runtime configurations
-			CMDBuild.Runtime.UserId = <%= operationUser.getAuthenticatedUser().getId() %>;
-			CMDBuild.Runtime.Username = '<%= StringEscapeUtils.escapeEcmaScript(operationUser.getAuthenticatedUser().getUsername()) %>';
+			CMDBuild.core.CookiesManager.authorizationSet('<%= sessionLogic.getCurrent() %>'); // Authorization cookie setup
 
-			CMDBuild.Runtime.DefaultGroupId = <%= group.getId() %>;
-			CMDBuild.Runtime.DefaultGroupName = '<%= StringEscapeUtils.escapeEcmaScript(group.getName()) %>';
-			CMDBuild.Runtime.DefaultGroupDescription = '<%= StringEscapeUtils.escapeEcmaScript(group.getDescription()) %>';
-			CMDBuild.Runtime.IsAdministrator = <%= operationUser.hasAdministratorPrivileges() %>;
-			<%
-				// FIXME: The field LoginGroupId is currently never used, remove it from here?
-				if (operationUser.getAuthenticatedUser().getGroupNames().size() == 1) {
-			%>
-					CMDBuild.Runtime.LoginGroupId = <%= group.getId() %>;
-			<%	} %>
-					CMDBuild.Runtime.AllowsPasswordLogin = <%= operationUser.getAuthenticatedUser().canChangePassword() %>;
-					CMDBuild.Runtime.CanChangePassword = <%= operationUser.getAuthenticatedUser().canChangePassword() %>;
-			<%
-				if (group.getStartingClassId() != null) {
-			%>
-					CMDBuild.Runtime.StartingClassId = <%= group.getStartingClassId() %>;
-			<%
-				}
-			%>
+			Ext.ns('CMDBuild.configuration.runtime');
+			CMDBuild.configuration.runtime = Ext.create('CMDBuild.model.configuration.Runtime');
+			CMDBuild.configuration.runtime.set(CMDBuild.core.constants.Proxy.ALLOW_PASSWORD_CHANGE, <%= operationUser.getAuthenticatedUser().canChangePassword() %>);
+			CMDBuild.configuration.runtime.set(CMDBuild.core.constants.Proxy.DEFAULT_GROUP_DESCRIPTION, '<%= StringEscapeUtils.escapeEcmaScript(group.getDescription()) %>');
+			CMDBuild.configuration.runtime.set(CMDBuild.core.constants.Proxy.DEFAULT_GROUP_ID, <%= group.getId() %>);
+			CMDBuild.configuration.runtime.set(CMDBuild.core.constants.Proxy.DEFAULT_GROUP_NAME, '<%= StringEscapeUtils.escapeEcmaScript(group.getName()) %>');
+			CMDBuild.configuration.runtime.set(CMDBuild.core.constants.Proxy.IS_ADMINISTRATOR, <%= operationUser.hasAdministratorPrivileges() %>);
+			CMDBuild.configuration.runtime.set(CMDBuild.core.constants.Proxy.LANGUAGE, '<%= StringEscapeUtils.escapeEcmaScript(lang) %>');
+			CMDBuild.configuration.runtime.set(CMDBuild.core.constants.Proxy.STARTING_CLASS_ID, <%= group.getStartingClassId() %>);
+			CMDBuild.configuration.runtime.set(CMDBuild.core.constants.Proxy.USER_ID, <%= operationUser.getAuthenticatedUser().getId() %>);
+			CMDBuild.configuration.runtime.set(CMDBuild.core.constants.Proxy.USERNAME, '<%= StringEscapeUtils.escapeEcmaScript(operationUser.getAuthenticatedUser().getUsername()) %>');
 		</script>
-		<script type="text/javascript" src="javascripts/cmdbuild/application.js"></script>
-		<script type="text/javascript" src="services/json/utils/gettranslationobject"></script>
 
-		<%@ include file="coreJsFiles.jsp"%>
-		<%@ include file="managementJsFiles.jsp"%>
-		<%@ include file="bimJsFiles.jsp"%>
+		<%@ include file="coreJsFiles.jsp" %>
+		<%@ include file="managementJsFiles.jsp" %>
+		<%@ include file="bimJsFiles.jsp" %>
 <!--
 		<script type="text/javascript" src="javascripts/cmdbuild/cmdbuild-core.js"></script>
 		<script type="text/javascript" src="javascripts/cmdbuild/cmdbuild-management.js"></script>
 -->
 
 		<!-- GIS -->
-			<%
-				GisProperties g =  GisProperties.getInstance();
-				if (g.isEnabled()) {
-					if (g.isServiceOn(GisProperties.GOOGLE)) {
-			%>
-						<script src="http://maps.google.com/maps/api/js?v=3&amp;sensor=false"></script>
-			<%
-					}
+		<%
+			if (helper.isGisEnabled()) {
+				if (helper.isGoogleServiceOn()) {
+		%>
+					<script src="http://maps.google.com/maps/api/js?v=3&amp;sensor=false"></script>
+			<% } %>
 
-					if (g.isServiceOn(GisProperties.YAHOO)) {
-			%>
-						<script src="http://api.maps.yahoo.com/ajaxymap?v=3.0&appid=<%=g.getYahooKey()%>"></script>
-			<%
-					}
-			%>
-					<%@ include file="gisJsFiles.jsp" %>
-			<%
-				}
-			%>
+			<% if (helper.isYahooServiceOn()) { %>
+						<script src="http://api.maps.yahoo.com/ajaxymap?v=3.0&appid=<%=helper.getYahooKey()%>"></script>
+			<% } %>
+			<%@ include file="gisJsFiles.jsp" %>
+		<% } %>
 
-		<script type="text/javascript">
-			Ext.onReady(function() {
-				CMDBuild.app.Management.init();
-			});
-		</script>
+		<!-- 4. Modules -->
+		<script type="text/javascript" src="javascripts/cmdbuild/Management.js"></script>
 
 		<title>CMDBuild</title>
 	</head>
 	<body>
-		<div id="header" class="cm_no_display">
-			<a href="http://www.cmdbuild.org" target="_blank"><img alt="CMDBuild logo" src="images/logo.jpg" /></a>
-			<div id="instance_name"></div>
-			<div id="header_po">Open Source Configuration and Management Database</div>
-			<!-- required to display the map-->
+		<div id="header" class="display-none">
+			<a href="http://www.cmdbuild.org" target="_blank"><img src="images/logo.jpg" alt="CMDBuild logo" /></a>
+			<div id="instance-name"></div>
+			<div class="description">Open Source Configuration and Management Database</div>
+
+			<!-- Required to display the map-->
 			<div id="map"> </div>
+
 			<div id="msg-ct" class="msg-blue">
 				<div id="msg">
 					<div id="msg-inner">
@@ -122,7 +120,7 @@
 							<p id="msg-inner-hidden"><tr:translation key="common.group"/>: <strong><tr:translation key="multiGroup"/></strong>
 
 							<script type="text/javascript">
-								CMDBuild.Runtime.GroupDescriptions = '<%= StringEscapeUtils.escapeEcmaScript(groupDecriptions) %>';
+								CMDBuild.configuration.runtime.set(CMDBuild.core.constants.Proxy.GROUP_DESCRIPTIONS, '<%= StringEscapeUtils.escapeEcmaScript(groupDecriptions) %>');
 							</script>
 						<% } %>
 
@@ -135,10 +133,10 @@
 			</div>
 		</div>
 
-		<div id="footer" class="cm_no_display">
-			<div class="fl"><a href="http://www.cmdbuild.org" target="_blank">www.cmdbuild.org</a></div>
-			<div id="cmdbuild_credits_link" class="fc"><tr:translation key="common.credits"/></div>
-			<div class="fr"><a href="http://www.tecnoteca.com" target="_blank">Copyright &copy; Tecnoteca srl</a></div>
+		<div id="footer" class="display-none">
+			<div class="left"><a href="http://www.cmdbuild.org" target="_blank">www.cmdbuild.org</a></div>
+			<div id="cmdbuild-credits-link" class="center"><tr:translation key="common.credits"/></div>
+			<div class="right"><a href="http://www.tecnoteca.com" target="_blank">Copyright &copy; Tecnoteca srl</a></div>
 		</div>
 	</body>
 </html>

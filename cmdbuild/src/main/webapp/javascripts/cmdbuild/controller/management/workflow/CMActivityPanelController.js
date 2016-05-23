@@ -1,5 +1,12 @@
 (function() {
 
+	Ext.require([
+		'CMDBuild.core.constants.Global',
+		'CMDBuild.core.Message',
+		'CMDBuild.proxy.workflow.Activity',
+		'CMDBuild.proxy.workflow.Workflow'
+	]);
+
 	var ERROR_TEMPLATE = "<p class=\"{0}\">{1}</p>";
 
 	Ext.define("CMDBuild.controller.management.workflow.CMActivityPanelControllerDelegate", {
@@ -8,8 +15,6 @@
 
 	Ext.define("CMDBuild.controller.management.workflow.CMActivityPanelController", {
 		extend: "CMDBuild.controller.management.classes.CMCardPanelController",
-
-		requires: ['CMDBuild.core.proxy.processes.Activity'],
 
 		mixins: {
 			wfStateDelegate: "CMDBuild.state.CMWorkflowStateDelegate"
@@ -68,6 +73,22 @@
 			} else {
 				enableStopButtonIfUserCanUseIt(this, processInstance);
 			}
+
+			// History record save
+			if (!Ext.isEmpty(_CMWFState.getProcessClassRef()) && !Ext.isEmpty( _CMWFState.getProcessInstance()))
+				CMDBuild.global.navigation.Chronology.cmfg('navigationChronologyRecordSave', {
+					moduleId: 'workflow',
+					entryType: {
+						description: _CMWFState.getProcessClassRef().get(CMDBuild.core.constants.Proxy.TEXT),
+						id: _CMWFState.getProcessClassRef().get(CMDBuild.core.constants.Proxy.ID),
+						object: _CMWFState.getProcessClassRef()
+					},
+					item: {
+						description: _CMWFState.getProcessInstance().get(CMDBuild.core.constants.Proxy.TEXT),
+						id: _CMWFState.getProcessInstance().get(CMDBuild.core.constants.Proxy.ID),
+						object: _CMWFState.getProcessInstance()
+					}
+				});
 		},
 
 		// wfStateDelegate
@@ -159,16 +180,17 @@
 		 */
 		lock: function(success, scope) {
 			if (
-				CMDBuild.Config.cmdbuild.lockcardenabled == 'true' // TODO: implementation of model for configuration
+				CMDBuild.configuration.instance.get('enableCardLock') // TODO: use proxy constants
 				&& _CMWFState.getActivityInstance()
 				&& _CMWFState.getProcessInstance()
 			) {
 				var params = {};
-				params[CMDBuild.core.proxy.CMProxyConstants.ACTIVITY_INSTANCE_ID] = _CMWFState.getActivityInstance().data[CMDBuild.core.proxy.CMProxyConstants.ID];
-				params[CMDBuild.core.proxy.CMProxyConstants.PROCESS_INSTANCE_ID] = _CMWFState.getProcessInstance().data[CMDBuild.core.proxy.CMProxyConstants.ID];
+				params[CMDBuild.core.constants.Proxy.ACTIVITY_INSTANCE_ID] = _CMWFState.getActivityInstance().data[CMDBuild.core.constants.Proxy.ID];
+				params[CMDBuild.core.constants.Proxy.PROCESS_INSTANCE_ID] = _CMWFState.getProcessInstance().data[CMDBuild.core.constants.Proxy.ID];
 
-				CMDBuild.core.proxy.processes.Activity.lock({
+				CMDBuild.proxy.workflow.Activity.lock({
 					params: params,
+					loadMask: false,
 					scope: scope,
 					success: success
 				});
@@ -179,16 +201,17 @@
 
 		unlock: function() {
 			if (
-				CMDBuild.Config.cmdbuild.lockcardenabled == 'true' // TODO: implementation of model for configuration
+				CMDBuild.configuration.instance.get('enableCardLock') // TODO: use proxy constants
 				&& !Ext.isEmpty(this.lastSelectedActivityInstance)
 				&& this.view.isInEditing()
 			) {
 				var params = {};
-				params[CMDBuild.core.proxy.CMProxyConstants.ACTIVITY_INSTANCE_ID] = this.lastSelectedActivityInstance.data[CMDBuild.core.proxy.CMProxyConstants.ID];
-				params[CMDBuild.core.proxy.CMProxyConstants.PROCESS_INSTANCE_ID] = this.lastSelectedProcessInstance.data[CMDBuild.core.proxy.CMProxyConstants.ID];
+				params[CMDBuild.core.constants.Proxy.ACTIVITY_INSTANCE_ID] = this.lastSelectedActivityInstance.data[CMDBuild.core.constants.Proxy.ID];
+				params[CMDBuild.core.constants.Proxy.PROCESS_INSTANCE_ID] = this.lastSelectedProcessInstance.data[CMDBuild.core.constants.Proxy.ID];
 
-				CMDBuild.core.proxy.processes.Activity.unlock({
-					params: params
+				CMDBuild.proxy.workflow.Activity.unlock({
+					params: params,
+					loadMask: false
 				});
 			}
 		},
@@ -237,7 +260,7 @@
 
 		onAdvanceCardButtonClick: function() {
 			this.isAdvance = true;
-			this.widgetControllerManager.waitForBusyWidgets(save, this);
+			this.widgetControllerManager.waitForBusyWidgets(save, this); // Check for busy widgets on advance
 		},
 
 		clearView: function() {
@@ -256,14 +279,13 @@
 			}
 
 			function onAttributesLoaded(attributes) {
-
-				if (activityInstance.isNew()
-						|| processInstance.isStateOpen()) {
-
+				// Filter attributes to show, if we have a closed process who all attributes
+				if (
+					activityInstance.isNew()
+					|| processInstance.isStateOpen()
+					|| processInstance.isStateSuspended()
+				) {
 					attributes = CMDBuild.controller.management.workflow.StaticsController.filterAttributesInStep(attributes, variables);
-				} else {
-					// if here, we have a closed process, so show
-					// all the attributes
 				}
 
 				me.view.fillForm(attributes, editMode = false);
@@ -290,13 +312,17 @@
 			}
 		},
 
-		// override
+		/**
+		 * @override
+		 */
 		onShowGraphClick: function() {
 			var pi = _CMWFState.getProcessInstance();
-			var classId = pi.getClassId();
-			var cardId = pi.getId();
 
-			CMDBuild.Management.showGraphWindow(classId, cardId);
+			Ext.create('CMDBuild.controller.management.common.graph.Graph', {
+				parentDelegate: this,
+				classId: pi.getClassId(),
+				cardId: pi.getId()
+			});
 		},
 
 		onEditMode: function() {
@@ -325,19 +351,15 @@
 
 		this.clearView();
 
-		CMDBuild.LoadMask.get().show();
-		CMDBuild.ServiceProxy.workflow.terminateActivity({
+		CMDBuild.proxy.workflow.Activity.abort({
 			params: {
 				classId: processInstance.getClassId(),
 				cardId: processInstance.getId()
 			},
-			success: function(response) {
-				CMDBuild.LoadMask.get().hide();
-
+			loadMask: false,
+			scope: this,
+			success: function (response, options, decodedResponse) {
 				me.fireEvent(me.CMEVENTS.cardRemoved);
-			},
-			failure: function() {
-				CMDBuild.LoadMask.get().hide();
 			}
 		});
 	}
@@ -359,8 +381,9 @@
 			beginDate: pi.get("beginDateAsLong")
 		}
 
-		CMDBuild.ServiceProxy.workflow.isPorcessUpdated({
+		CMDBuild.proxy.workflow.Workflow.isPorcessUpdated({
 			params: requestParams,
+			loadMask: false,
 			success: function(operation, requestConfiguration, decodedResponse) {
 				var isUpdated = decodedResponse.response.updated;
 				if (isUpdated) {
@@ -410,13 +433,14 @@
 				requestParams["ww"] = Ext.JSON.encode(this.widgetControllerManager.getData(me.advance));
 				_debug("save the process with params", requestParams);
 
-				CMDBuild.LoadMask.get().show();
-				CMDBuild.ServiceProxy.workflow.saveActivity({
+				CMDBuild.core.LoadMask.show();
+				CMDBuild.proxy.workflow.Activity.update({
 					params: requestParams,
 					scope : this,
 					clientValidation: this.isAdvance, //to force the save request
+					loadMask: false,
 					callback: function(operation, success, response) {
-						CMDBuild.LoadMask.get().hide();
+						CMDBuild.core.LoadMask.hide();
 					},
 					failure: function(response, options, decodedResponse) {
 						this.delegate.reload(); // Reload store also on failure
@@ -433,7 +457,7 @@
 							_CMUIState.onlyGridIfFullScreen();
 						}
 
-						this.delegate.onCardSaved(savedCardId);
+						this.delegate.onCardSaved(savedCardId, decodedResponse.response.flowStatus);
 					}
 				});
 			}
@@ -447,8 +471,8 @@
 		var invalidAttributes = CMDBuild.controller.management.workflow.StaticsController.getInvalidAttributeAsHTML(form);
 
 		if (invalidAttributes != null) {
-			var msg = Ext.String.format("<p class=\"{0}\">{1}</p>", CMDBuild.Constants.css.error_msg, CMDBuild.Translation.errors.invalid_attributes);
-			CMDBuild.Msg.error(null, msg + invalidAttributes, false);
+			var msg = Ext.String.format("<p class=\"{0}\">{1}</p>", CMDBuild.core.constants.Global.getErrorMsgCss(), CMDBuild.Translation.errors.invalid_attributes);
+			CMDBuild.core.Message.error(null, msg + invalidAttributes, false);
 
 			return false;
 		} else {
@@ -463,9 +487,9 @@
 		if (wrongWidgets != null) {
 			valid = false;
 			var msg = Ext.String.format(ERROR_TEMPLATE
-					, CMDBuild.Constants.css.error_msg
+					, CMDBuild.core.constants.Global.getErrorMsgCss()
 					, CMDBuild.Translation.errors.invalid_extended_attributes);
-			CMDBuild.Msg.error(null, msg + wrongWidgets, popup = false);
+			CMDBuild.core.Message.error(null, msg + wrongWidgets, popup = false);
 		}
 
 		return valid;
@@ -522,7 +546,7 @@
 		if (processClassId) {
 			var processClass = _CMCache.getEntryTypeById(processClassId);
 			if (processClass) {
-				var theUserCanStopTheProcess = processClass.isUserStoppable() || CMDBuild.Runtime.IsAdministrator;
+				var theUserCanStopTheProcess = processClass.isUserStoppable() || CMDBuild.configuration.runtime.get(CMDBuild.core.constants.Proxy.IS_ADMINISTRATOR);
 				var theProcessIsNotAlreadyTerminated = processInstance.isStateOpen() || processInstance.isStateSuspended();
 
 				if (theUserCanStopTheProcess && theProcessIsNotAlreadyTerminated) {

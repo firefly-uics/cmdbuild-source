@@ -1,9 +1,9 @@
-(function() {
+(function () {
 
 	Ext.define('CMDBuild.view.common.field.filter.cql.Cql', {
 		extend: 'Ext.form.FieldContainer',
 
-		requires: ['CMDBuild.core.proxy.CMProxyConstants'],
+		requires: ['CMDBuild.core.constants.Proxy'],
 
 		/**
 		 * @property {CMDBuild.controller.common.field.filter.cql.Cql}
@@ -18,10 +18,10 @@
 		/**
 		 * @cfg {String}
 		 */
-		fieldName: CMDBuild.core.proxy.CMProxyConstants.FILTER,
+		fieldName: CMDBuild.core.constants.Proxy.FILTER,
 
 		/**
-		 * @property {CMDBuild.core.buttons.Modify}
+		 * @property {CMDBuild.core.buttons.iconized.Modify}
 		 */
 		metadataButton: undefined,
 
@@ -37,21 +37,26 @@
 			align: 'stretch'
 		},
 
-		initComponent: function() {
+		/**
+		 * @returns {Void}
+		 *
+		 * @override
+		 */
+		initComponent: function () {
 			this.delegate = Ext.create('CMDBuild.controller.common.field.filter.cql.Cql', { view: this });
 
 			Ext.apply(this, {
 				items: [
 					this.textAreaField = Ext.create('Ext.form.field.TextArea', {
 						name: this.fieldName,
-						vtype: 'cmdbcommentrelaxed'
+						vtype: 'comment'
 					}),
-					this.metadataButton = Ext.create('CMDBuild.core.buttons.Modify', {
+					this.metadataButton = Ext.create('CMDBuild.core.buttons.iconized.Modify', {
 						text: this.buttonLabel,
 						maxWidth: this.buttonLabel.length * 10,
 						scope: this,
 
-						handler: function(button, e) {
+						handler: function (button, e) {
 							this.delegate.cmfg('onFieldFilterCqlMetadataButtonClick');
 						}
 					})
@@ -62,18 +67,22 @@
 		},
 
 		/**
+		 * @returns {Void}
+		 *
 		 * @override
 		 */
-		disable: function() {
+		disable: function () {
 			this.delegate.cmfg('onFieldFilterCqlDisable');
 
 			this.callParent(arguments);
 		},
 
 		/**
+		 * @returns {Void}
+		 *
 		 * @override
 		 */
-		enable: function() {
+		enable: function () {
 			this.delegate.cmfg('onFieldFilterCqlEnable');
 
 			this.callParent(arguments);
@@ -82,25 +91,29 @@
 		/**
 		 * @returns {Object}
 		 */
-		getValue: function() {
+		getValue: function () {
 			return this.delegate.cmfg('onFieldFilterCqlGetValue');
 		},
 
 		/**
 		 * @param {Boolean} state
 		 *
+		 * @returns {CMDBuild.view.common.field.filter.cql.Cql}
+		 *
 		 * @override
 		 */
-		setDisabled: function(state) {
+		setDisabled: function (state) {
 			this.delegate.cmfg('onFieldFilterCqlSetDisabled', state);
 
-			this.callParent(arguments);
+			return this.callParent(arguments);
 		},
 
 		/**
 		 * @param {Object} value
+		 *
+		 * @returns {Void}
 		 */
-		setValue: function(value) {
+		setValue: function (value) {
 			this.delegate.cmfg('onFieldFilterCqlSetValue', value);
 		}
 	});

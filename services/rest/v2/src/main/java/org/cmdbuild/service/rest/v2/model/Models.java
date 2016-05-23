@@ -3,6 +3,7 @@ package org.cmdbuild.service.rest.v2.model;
 import static com.google.common.collect.Iterables.addAll;
 import static com.google.common.collect.Lists.newArrayList;
 import static com.google.common.collect.Maps.immutableEntry;
+import static com.google.common.collect.Maps.newHashMap;
 import static com.google.common.collect.Maps.transformValues;
 import static com.google.common.collect.Maps.uniqueIndex;
 import static com.google.common.collect.Sets.newHashSet;
@@ -16,6 +17,7 @@ import static org.cmdbuild.common.utils.guava.Functions.toKey;
 import static org.cmdbuild.common.utils.guava.Functions.toValue;
 
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -178,12 +180,14 @@ public class Models {
 	public static class AttributeBuilder extends ModelBuilder<Attribute> {
 
 		private static final Iterable<String> NO_VALUES = emptyList();
+		private static final Map<String, String> NO_METADATA = emptyMap();
 
 		private String id;
 		private String type;
 		private String name;
 		private String description;
 		private Boolean displayableInList;
+		private String domainName;
 		private Boolean unique;
 		private Boolean mandatory;
 		private Boolean inherited;
@@ -202,6 +206,7 @@ public class Models {
 		private Iterable<String> values;
 		private Boolean writable;
 		private Boolean hidden;
+		private Map<String, String> metadata;
 
 		private AttributeBuilder() {
 			// use factory method
@@ -215,6 +220,7 @@ public class Models {
 			output.setName(name);
 			output.setDescription(description);
 			output.setDisplayableInList(isTrue(displayableInList));
+			output.setDomainName(domainName);
 			output.setUnique(isTrue(unique));
 			output.setMandatory(isTrue(mandatory));
 			output.setInherited(isTrue(inherited));
@@ -233,6 +239,7 @@ public class Models {
 			output.setValues(newArrayList(defaultIfNull(values, NO_VALUES)));
 			output.setWritable(isTrue(writable));
 			output.setHidden(isTrue(hidden));
+			output.setMetadata(new HashMap<>(defaultIfNull(metadata, NO_METADATA)));
 			return output;
 		}
 
@@ -258,6 +265,11 @@ public class Models {
 
 		public AttributeBuilder thatIsDisplayableInList(final Boolean displayableInList) {
 			this.displayableInList = displayableInList;
+			return this;
+		}
+
+		public AttributeBuilder withDomainName(final String domainName) {
+			this.domainName = domainName;
 			return this;
 		}
 
@@ -348,6 +360,11 @@ public class Models {
 
 		public AttributeBuilder thatIsHidden(final Boolean hidden) {
 			this.hidden = hidden;
+			return this;
+		}
+
+		public AttributeBuilder withMetadata(final Map<String, String> metadata) {
+			this.metadata = metadata;
 			return this;
 		}
 
@@ -648,6 +665,47 @@ public class Models {
 
 		public ClassWithFullDetailsBuilder withParent(final String parent) {
 			this.parent = parent;
+			return this;
+		}
+
+	}
+
+	public static class DomainTreeBuilder extends ModelBuilder<DomainTree> {
+
+		private String id;
+		private String description;
+		private final Collection<Node> nodes = newArrayList();
+
+		private DomainTreeBuilder() {
+			// use factory method
+		}
+
+		@Override
+		protected DomainTree doBuild() {
+			final DomainTree output = new DomainTree();
+			output.setId(id);
+			output.setDescription(description);
+			output.setNodes(nodes);
+			return output;
+		}
+
+		public DomainTreeBuilder withId(final String id) {
+			this.id = id;
+			return this;
+		}
+
+		public DomainTreeBuilder withDescription(final String description) {
+			this.description = description;
+			return this;
+		}
+
+		public DomainTreeBuilder withNode(final Node node) {
+			this.nodes.add(node);
+			return this;
+		}
+
+		public DomainTreeBuilder withNodes(final Iterable<Node> nodes) {
+			addAll(this.nodes, nodes);
 			return this;
 		}
 
@@ -1014,6 +1072,42 @@ public class Models {
 
 	}
 
+	public static class FileSystemObjectBuilder extends ModelBuilder<FileSystemObject> {
+
+		private String id;
+		private String name;
+		private String parent;
+
+		private FileSystemObjectBuilder() {
+			// use factory method
+		}
+
+		@Override
+		protected FileSystemObject doBuild() {
+			final FileSystemObject output = new FileSystemObject();
+			output.setId(id);
+			output.setName(name);
+			output.setParent(parent);
+			return output;
+		}
+
+		public FileSystemObjectBuilder withId(final String id) {
+			this.id = id;
+			return this;
+		}
+
+		public FileSystemObjectBuilder withName(final String name) {
+			this.name = name;
+			return this;
+		}
+
+		public FileSystemObjectBuilder withParent(final String parent) {
+			this.parent = parent;
+			return this;
+		}
+
+	}
+
 	public static class FilterBuilder extends ModelBuilder<Filter> {
 
 		private String text;
@@ -1115,6 +1209,94 @@ public class Models {
 
 	}
 
+	public static class GraphConfigurationBuilder extends ModelBuilder<GraphConfiguration> {
+
+		private boolean enabled;
+		private int baseLevel;
+		private int clusteringThreshold;
+		private String displayLabel;
+		private String edgeColor;
+		private boolean edgeTooltipEnabled;
+		private boolean nodeTooltipEnabled;
+		private int spriteDimension;
+		private int stepRadius;
+		private int viewPointDistance;
+		private int viewPointHeight;
+
+		@Override
+		protected GraphConfiguration doBuild() {
+			final GraphConfiguration output = new GraphConfiguration();
+			output.setEnabled(enabled);
+			output.setBaseLevel(baseLevel);
+			output.setClusteringThreshold(clusteringThreshold);
+			output.setDisplayLabel(displayLabel);
+			output.setEdgeColor(edgeColor);
+			output.setEdgeTooltipEnabled(edgeTooltipEnabled);
+			output.setNodeTooltipEnabled(nodeTooltipEnabled);
+			output.setSpriteDimension(spriteDimension);
+			output.setStepRadius(stepRadius);
+			output.setViewPointDistance(viewPointDistance);
+			output.setViewPointHeight(viewPointHeight);
+			return output;
+		}
+
+		public GraphConfigurationBuilder withEnabledStatus(final boolean value) {
+			this.enabled = value;
+			return this;
+		}
+
+		public GraphConfigurationBuilder withBaseLevel(final int value) {
+			this.baseLevel = value;
+			return this;
+		}
+
+		public GraphConfigurationBuilder withClusteringThreshold(final int value) {
+			this.clusteringThreshold = value;
+			return this;
+		}
+
+		public GraphConfigurationBuilder withDisplayLabel(final String value) {
+			this.displayLabel = value;
+			return this;
+		}
+
+		public GraphConfigurationBuilder withEdgeColor(final String value) {
+			this.edgeColor = value;
+			return this;
+		}
+
+		public GraphConfigurationBuilder withEdgeTooltipEnabled(final boolean value) {
+			this.edgeTooltipEnabled = value;
+			return this;
+		}
+
+		public GraphConfigurationBuilder withNodeTooltipEnabled(final boolean value) {
+			this.nodeTooltipEnabled = value;
+			return this;
+		}
+
+		public GraphConfigurationBuilder withSpriteDimension(final int value) {
+			this.spriteDimension = value;
+			return this;
+		}
+
+		public GraphConfigurationBuilder withStepRadius(final int value) {
+			this.stepRadius = value;
+			return this;
+		}
+
+		public GraphConfigurationBuilder withViewPointDistance(final int value) {
+			this.viewPointDistance = value;
+			return this;
+		}
+
+		public GraphConfigurationBuilder withViewPointHeight(final int value) {
+			this.viewPointHeight = value;
+			return this;
+		}
+
+	}
+
 	public static class LongIdBuilder extends ModelBuilder<LongId> {
 
 		private Long id;
@@ -1132,6 +1314,88 @@ public class Models {
 
 		public LongIdBuilder withId(final Long id) {
 			this.id = id;
+			return this;
+		}
+
+	}
+
+	public static class IconBuilder extends ModelBuilder<Icon> {
+
+		private Long id;
+		private String type;
+		private final Map<String, Object> details = newHashMap();
+		private Image image;
+
+		private IconBuilder() {
+			// use factory method
+		}
+
+		@Override
+		protected Icon doBuild() {
+			final Icon output = new Icon();
+			output.setId(id);
+			output.setType(type);
+			output.setDetails(details);
+			output.setImage(image);
+			return output;
+		}
+
+		public IconBuilder withId(final Long id) {
+			this.id = id;
+			return this;
+		}
+
+		public IconBuilder withType(final String type) {
+			this.type = type;
+			return this;
+		}
+
+		public IconBuilder withDetail(final String key, final Object value) {
+			this.details.put(key, value);
+			return this;
+		}
+
+		public IconBuilder withDetails(final Map<String, Object> details) {
+			this.details.putAll(details);
+			return this;
+		}
+
+		public IconBuilder withImage(final Image image) {
+			this.image = image;
+			return this;
+		}
+
+	}
+
+	public static class ImageBuilder extends ModelBuilder<Image> {
+
+		private String type;
+		private final Map<String, Object> details = newHashMap();
+
+		private ImageBuilder() {
+			// use factory method
+		}
+
+		@Override
+		protected Image doBuild() {
+			final Image output = new Image();
+			output.setType(type);
+			output.setDetails(details);
+			return output;
+		}
+
+		public ImageBuilder withType(final String type) {
+			this.type = type;
+			return this;
+		}
+
+		public ImageBuilder withDetail(final String key, final Object value) {
+			this.details.put(key, value);
+			return this;
+		}
+
+		public ImageBuilder withDetails(final Map<String, Object> details) {
+			this.details.putAll(details);
 			return this;
 		}
 
@@ -1396,6 +1660,42 @@ public class Models {
 
 	}
 
+	public static class NodeBuilder extends ModelBuilder<Node> {
+
+		private Long id;
+		private Long parent;
+		private final Map<String, Object> metadata = newHashMap();
+
+		private NodeBuilder() {
+			// use factory method
+		}
+
+		@Override
+		protected Node doBuild() {
+			final Node output = new Node();
+			output.setId(id);
+			output.setParent(parent);
+			output.setMetadata(metadata);
+			return output;
+		}
+
+		public NodeBuilder withId(final Long id) {
+			this.id = id;
+			return this;
+		}
+
+		public NodeBuilder withParent(final Long parent) {
+			this.parent = parent;
+			return this;
+		}
+
+		public NodeBuilder withMetadata(final String key, final Object value) {
+			metadata.put(key, value);
+			return this;
+		}
+
+	}
+
 	public static class ProcessActivityWithBasicDetailsBuilder extends ModelBuilder<ProcessActivityWithBasicDetails> {
 
 		private String id;
@@ -1644,7 +1944,8 @@ public class Models {
 			return this;
 		}
 
-		public ProcessInstanceAdvanceBuilder withValues(final Iterable<? extends Entry<String, ? extends Object>> values) {
+		public ProcessInstanceAdvanceBuilder withValues(
+				final Iterable<? extends Entry<String, ? extends Object>> values) {
 			return withValues(transformValues(uniqueIndex(values, KEY), VALUE));
 		}
 
@@ -2020,7 +2321,6 @@ public class Models {
 			return output;
 		}
 
-		@SuppressWarnings("unchecked")
 		public ResponseMultipleBuilder<T> withElement(final T element) {
 			addAll(this.elements, (element == null) ? NO_ELEMENTS : asList(element));
 			return this;
@@ -2050,15 +2350,6 @@ public class Models {
 
 		private SessionBuilder() {
 			// use factory method
-		}
-
-		private SessionBuilder(final Session existing) {
-			// use factory method
-			this.id = existing.getId();
-			this.username = existing.getUsername();
-			this.password = existing.getPassword();
-			this.role = existing.getRole();
-			this.availableRoles.addAll(defaultIfNull(existing.getAvailableRoles(), NO_ROLES));
 		}
 
 		@Override
@@ -2234,6 +2525,10 @@ public class Models {
 		return new ClassWithFullDetailsBuilder();
 	}
 
+	public static DomainTreeBuilder newDomainTree() {
+		return new DomainTreeBuilder();
+	}
+
 	public static DomainWithBasicDetailsBuilder newDomainWithBasicDetails() {
 		return new DomainWithBasicDetailsBuilder();
 	}
@@ -2250,6 +2545,10 @@ public class Models {
 		return new EmailTemplateBuilder();
 	}
 
+	public static FileSystemObjectBuilder newFileSystemObject() {
+		return new FileSystemObjectBuilder();
+	}
+
 	public static FilterBuilder newFilter() {
 		return new FilterBuilder();
 	}
@@ -2260,6 +2559,18 @@ public class Models {
 
 	public static FunctionWithFullDetailsBuilder newFunctionWithFullDetails() {
 		return new FunctionWithFullDetailsBuilder();
+	}
+
+	public static GraphConfigurationBuilder newGraphConfiguration() {
+		return new GraphConfigurationBuilder();
+	}
+
+	public static IconBuilder newIcon() {
+		return new IconBuilder();
+	}
+
+	public static ImageBuilder newImage() {
+		return new ImageBuilder();
 	}
 
 	public static LongIdBuilder newLongId() {
@@ -2284,6 +2595,10 @@ public class Models {
 
 	public static MetadataBuilder newMetadata() {
 		return new MetadataBuilder();
+	}
+
+	public static NodeBuilder newNode() {
+		return new NodeBuilder();
 	}
 
 	public static ProcessActivityWithBasicDetailsBuilder newProcessActivityWithBasicDetails() {
@@ -2350,10 +2665,6 @@ public class Models {
 
 	public static SessionBuilder newSession() {
 		return new SessionBuilder();
-	}
-
-	public static SessionBuilder newSession(final Session existing) {
-		return new SessionBuilder(existing);
 	}
 
 	public static ValuesBuilder newValues() {

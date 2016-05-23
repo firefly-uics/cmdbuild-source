@@ -168,7 +168,7 @@
 							}
 						}
 					}*/]
-				}],
+				}]
 			}];
 
 			this.callParent(arguments);

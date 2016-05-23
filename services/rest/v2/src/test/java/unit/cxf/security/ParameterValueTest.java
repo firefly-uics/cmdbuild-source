@@ -1,16 +1,17 @@
 package unit.cxf.security;
 
-import static org.apache.commons.lang3.StringUtils.EMPTY;
-import static org.apache.cxf.message.Message.QUERY_STRING;
+import static java.util.Arrays.asList;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.eq;
+import static org.mockito.Matchers.anyBoolean;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
-import org.apache.cxf.message.Message;
+import javax.ws.rs.container.ContainerRequestContext;
+import javax.ws.rs.core.MultivaluedHashMap;
+import javax.ws.rs.core.UriInfo;
+
 import org.cmdbuild.service.rest.v2.cxf.util.Messages.ParameterValue;
 import org.junit.Test;
 
@@ -21,106 +22,159 @@ public class ParameterValueTest {
 	@Test
 	public void absentWhenQueryStringIsNull() throws Exception {
 		// given
-		final Message message = mock(Message.class);
+		final ContainerRequestContext containerRequestContext = mock(ContainerRequestContext.class);
+		final UriInfo uriInfo = mock(UriInfo.class);
+		doReturn(uriInfo) //
+				.when(containerRequestContext).getUriInfo();
 		doReturn(null) //
-				.when(message).get(any(String.class));
+				.when(uriInfo).getQueryParameters(anyBoolean());
 
 		// when
-		final Optional<String> optional = ParameterValue.of("dummy").apply(message);
+		final Optional<String> optional = ParameterValue.of("dummy").apply(containerRequestContext);
 
 		// then
 		assertThat(optional, equalTo(Optional.<String> absent()));
-		verify(message).get(eq(QUERY_STRING));
+		verify(containerRequestContext).getUriInfo();
+		verify(uriInfo).getQueryParameters(true);
 	}
 
 	@Test
 	public void absentWhenQueryStringIsEmpty() throws Exception {
 		// given
-		final Message message = mock(Message.class);
-		doReturn(EMPTY) //
-				.when(message).get(any(String.class));
+		final ContainerRequestContext containerRequestContext = mock(ContainerRequestContext.class);
+		final UriInfo uriInfo = mock(UriInfo.class);
+		doReturn(uriInfo) //
+				.when(containerRequestContext).getUriInfo();
+		doReturn(new MultivaluedHashMap<String, String>()) //
+				.when(uriInfo).getQueryParameters(anyBoolean());
 
 		// when
-		final Optional<String> optional = ParameterValue.of("dummy").apply(message);
+		final Optional<String> optional = ParameterValue.of("dummy").apply(containerRequestContext);
 
 		// then
 		assertThat(optional, equalTo(Optional.<String> absent()));
-		verify(message).get(eq(QUERY_STRING));
+		verify(containerRequestContext).getUriInfo();
+		verify(uriInfo).getQueryParameters(true);
 	}
 
 	@Test
 	public void absentWhenQueryStringIsDummyNameOnly() throws Exception {
 		// given
-		final Message message = mock(Message.class);
-		doReturn("foo") //
-				.when(message).get(any(String.class));
+		final ContainerRequestContext containerRequestContext = mock(ContainerRequestContext.class);
+		final UriInfo uriInfo = mock(UriInfo.class);
+		doReturn(uriInfo) //
+				.when(containerRequestContext).getUriInfo();
+		doReturn(new MultivaluedHashMap<String, String>() {
+			{
+				putSingle("foo", null);
+			}
+		}) //
+				.when(uriInfo).getQueryParameters(anyBoolean());
 
 		// when
-		final Optional<String> optional = ParameterValue.of("dummy").apply(message);
+		final Optional<String> optional = ParameterValue.of("dummy").apply(containerRequestContext);
 
 		// then
 		assertThat(optional, equalTo(Optional.<String> absent()));
-		verify(message).get(eq(QUERY_STRING));
+		verify(containerRequestContext).getUriInfo();
+		verify(uriInfo).getQueryParameters(true);
 	}
 
 	@Test
 	public void absentWhenQueryStringIsDummyNamesOnly() throws Exception {
 		// given
-		final Message message = mock(Message.class);
-		doReturn("foo&bar") //
-				.when(message).get(any(String.class));
+		final ContainerRequestContext containerRequestContext = mock(ContainerRequestContext.class);
+		final UriInfo uriInfo = mock(UriInfo.class);
+		doReturn(uriInfo) //
+				.when(containerRequestContext).getUriInfo();
+		doReturn(new MultivaluedHashMap<String, String>() {
+			{
+				putSingle("foo", null);
+				putSingle("bar", null);
+			}
+		}) //
+				.when(uriInfo).getQueryParameters(anyBoolean());
 
 		// when
-		final Optional<String> optional = ParameterValue.of("dummy").apply(message);
+		final Optional<String> optional = ParameterValue.of("dummy").apply(containerRequestContext);
 
 		// then
 		assertThat(optional, equalTo(Optional.<String> absent()));
-		verify(message).get(eq(QUERY_STRING));
+		verify(containerRequestContext).getUriInfo();
+		verify(uriInfo).getQueryParameters(true);
 	}
 
 	@Test
 	public void absentWhenQueryStringIsDummyNameAndValues() throws Exception {
 		// given
-		final Message message = mock(Message.class);
-		doReturn("foo=FOO&bar=BAR") //
-				.when(message).get(any(String.class));
+		final ContainerRequestContext containerRequestContext = mock(ContainerRequestContext.class);
+		final UriInfo uriInfo = mock(UriInfo.class);
+		doReturn(uriInfo) //
+				.when(containerRequestContext).getUriInfo();
+		doReturn(new MultivaluedHashMap<String, String>() {
+			{
+				putSingle("foo", "FOO");
+				putSingle("bar", "BAR");
+			}
+		}) //
+				.when(uriInfo).getQueryParameters(anyBoolean());
 
 		// when
-		final Optional<String> optional = ParameterValue.of("dummy").apply(message);
+		final Optional<String> optional = ParameterValue.of("dummy").apply(containerRequestContext);
 
 		// then
 		assertThat(optional, equalTo(Optional.<String> absent()));
-		verify(message).get(eq(QUERY_STRING));
+		verify(containerRequestContext).getUriInfo();
+		verify(uriInfo).getQueryParameters(true);
 	}
 
 	@Test
 	public void absentWhenQueryStringIsTokenKeyOnly() throws Exception {
 		// given
-		final Message message = mock(Message.class);
-		doReturn("dummy") //
-				.when(message).get(any(String.class));
+		final ContainerRequestContext containerRequestContext = mock(ContainerRequestContext.class);
+		final UriInfo uriInfo = mock(UriInfo.class);
+		doReturn(uriInfo) //
+				.when(containerRequestContext).getUriInfo();
+		doReturn(new MultivaluedHashMap<String, String>() {
+			{
+				putSingle("dummy", null);
+			}
+		}) //
+				.when(uriInfo).getQueryParameters(anyBoolean());
 
 		// when
-		final Optional<String> optional = ParameterValue.of("dummy").apply(message);
+		final Optional<String> optional = ParameterValue.of("dummy").apply(containerRequestContext);
 
 		// then
 		assertThat(optional, equalTo(Optional.<String> absent()));
-		verify(message).get(eq(QUERY_STRING));
+		verify(containerRequestContext).getUriInfo();
+		verify(uriInfo).getQueryParameters(true);
 	}
 
 	@Test
 	public void valuedWithTheFirstOccurrence() throws Exception {
 		// given
-		final Message message = mock(Message.class);
-		doReturn("foo=FOO&" + "dummy" + "=12345678&bar=BAR&dummy=abcdefgh&baz=BAZ") //
-				.when(message).get(any(String.class));
+		final ContainerRequestContext containerRequestContext = mock(ContainerRequestContext.class);
+		final UriInfo uriInfo = mock(UriInfo.class);
+		doReturn(uriInfo) //
+				.when(containerRequestContext).getUriInfo();
+		doReturn(new MultivaluedHashMap<String, String>() {
+			{
+				putSingle("foo", "FOO");
+				put("dummy", asList("12345678", "abcdefgh"));
+				putSingle("bar", "BAR");
+				putSingle("baz", "BAZ");
+			}
+		}) //
+				.when(uriInfo).getQueryParameters(anyBoolean());
 
 		// when
-		final Optional<String> optional = ParameterValue.of("dummy").apply(message);
+		final Optional<String> optional = ParameterValue.of("dummy").apply(containerRequestContext);
 
 		// then
 		assertThat(optional, equalTo(Optional.of("12345678")));
-		verify(message).get(eq(QUERY_STRING));
+		verify(containerRequestContext).getUriInfo();
+		verify(uriInfo).getQueryParameters(true);
 	}
 
 }

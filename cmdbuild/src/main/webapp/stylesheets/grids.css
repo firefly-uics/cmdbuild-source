@@ -65,13 +65,15 @@
 	}
 	.filterMenuButtonGrid-description { color: #666666; }
 
-/* History items */
-	.history_panel .x-grid-rowbody p {
+/*
+ * History
+ */
+	.cmdb-history-grid .x-grid-rowbody p {
 		margin: 0px !important;
 		padding: 0px 0px 0px 35px;
 		white-space: nowrap;
 	}
-	.history_panel .x-grid-rowbody p.changed {
+	.cmdb-history-grid .x-grid-rowbody p.changedRow {
 		background-color: #e9f4e7;
 		color: #0d5f07;
 	}
@@ -101,3 +103,6 @@
 		background: #ffffff url("../images/grid/invalid_line.gif") repeat-x bottom !important;
 		border: 1px solid #cc3300 !important;
 	}
+
+/* Checkbox selection model */
+	.x-grid-row-checker { margin: 0px auto; }

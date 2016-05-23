@@ -1,8 +1,15 @@
 (function() {
-	var STATE_VALUE_COMPLETED = "closed.completed";
 
 	Ext.define("CMDBuild.controller.management.workflow.CMActivityGridController", {
 		extend: "CMDBuild.controller.management.common.CMCardGridController",
+
+		requires: [
+			'CMDBuild.core.constants.Proxy',
+			'CMDBuild.core.Message',
+			'CMDBuild.proxy.Card',
+			'CMDBuild.proxy.workflow.Activity',
+			'CMDBuild.core.Utils'
+		],
 
 		mixins: {
 			activityPanelControllerDelegate: "CMDBuild.controller.management.workflow.CMActivityPanelControllerDelegate"
@@ -47,18 +54,18 @@
 				classId: p.classId
 			}));
 
-			CMDBuild.LoadMask.get().show();
-
-			CMDBuild.ServiceProxy.workflow.getstartactivitytemplate(p.classId, {
+			CMDBuild.proxy.workflow.Activity.readStart({
+				params: {
+					classId: p.classId
+				},
+				important: true,
+				loadMask: false,
 				scope: this,
-				success: function success(response, request, decoded) {
-					var activity = new CMDBuild.model.CMActivityInstance(decoded.response || {});
+				success: function (response, options, decodedResponse) {
+					var activity = new CMDBuild.model.CMActivityInstance(decodedResponse.response || {});
+
 					_CMWFState.setActivityInstance(activity);
-				},
-				callback: function() {
-					CMDBuild.LoadMask.get().hide();
-				},
-				important: true
+				}
 			});
 		},
 
@@ -80,25 +87,22 @@
 
 			updateViewSelection(activityInfoId, me);
 
-			CMDBuild.LoadMask.get().show();
-
-			CMDBuild.ServiceProxy.workflow.getActivityInstance(
-				{
+			CMDBuild.proxy.workflow.Activity.read({
+				params:{
 					classId: _CMWFState.getProcessInstance().getClassId(),
 					cardId: _CMWFState.getProcessInstance().getId(),
 					activityInstanceId: activityInfoId
 				},
-				{
-					success: function(response, request, decoded) {
-						CMDBuild.LoadMask.get().hide();
+				important: true,
+				loadMask: false,
+				scope: this,
+				success: function (response, options, decodedResponse) {
+					var activity = new CMDBuild.model.CMActivityInstance(decodedResponse.response || {});
 
-						var activity = new CMDBuild.model.CMActivityInstance(decoded.response || {});
-
-						me.lastActivityInfoId = activityInfoId;
-						_CMWFState.setActivityInstance(activity);
-					}
+					me.lastActivityInfoId = activityInfoId;
+					_CMWFState.setActivityInstance(activity);
 				}
-			);
+			});
 		},
 
 		/**
@@ -116,7 +120,7 @@
 
 					this.lastActivityInfoId = null;
 
-					CMDBuild.LoadMask.get().show();
+					CMDBuild.core.LoadMask.show();
 
 					_CMWFState.setProcessInstance(pi, function() {
 						if (activities.length > 0) {
@@ -131,9 +135,52 @@
 							_debug('A proces without activities', pi);
 						}
 
-						CMDBuild.LoadMask.get().hide();
+						CMDBuild.core.LoadMask.hide();
 					});
 				}
+			}
+		},
+
+		/**
+		 *
+		 * @param {Object} parameters
+		 * @param {Number} parameters.IdClass
+		 * @param {Number} parameters.Id
+		 * @param {String} parameters.flowStatus
+		 */
+		openCard: function(parameters) {
+			var store = this.view.getStore();
+
+			if (!Ext.isEmpty(store) && !Ext.isEmpty(store.proxy) && !Ext.isEmpty(store.proxy.extraParams)) {
+				// Take the current store configuration
+				// to have the sort and filter
+				var params = Ext.apply({}, store.proxy.extraParams);
+				params[CMDBuild.core.constants.Proxy.CARD_ID] = parameters['Id'];
+				params[CMDBuild.core.constants.Proxy.CLASS_NAME] = _CMCache.getEntryTypeNameById(parameters['IdClass']);
+				params[CMDBuild.core.constants.Proxy.RETRY_WITHOUT_FILTER] = false;
+				params[CMDBuild.core.constants.Proxy.SORT] = Ext.encode(getSorting(store));
+
+				CMDBuild.proxy.Card.readPosition({
+					params: params,
+					loadMask: false,
+					scope: this,
+					success: function (response, options, decodedResponse) {
+						var position = decodedResponse.position;
+
+						if (position >= 0) {
+							if (decodedResponse.outOfFilter) {
+								this._onGetPositionSuccessForcingTheFilter(parameters, position, decodedResponse);
+								this.view.gridSearchField.onUnapplyFilter();
+							} else {
+								updateStoreAndSelectGivenPosition(this, parameters.IdClass, position);
+							}
+						} else {
+							this._onGetPositionFailureWithoutForcingTheFilter(parameters.flowStatus);
+
+							this.view.store.loadPage(1);
+						}
+					}
+				});
 			}
 		},
 
@@ -143,21 +190,18 @@
 			this.callParent(arguments);
 		},
 
-		// override
-		_onGetPositionFailureWithoutForcingTheFilter: function(response) {
-			/**
-			 * FIXME
-			 * The FlowStatus is not returned
-			 * if the card is not found...
-			 */
-//			var flowStatusOfSearchedCard = response.FlowStatus;
-//			if (flowStatusOfSearchedCard == STATE_VALUE_COMPLETED) {
+		/**
+		 * @param {String} flowStatus
+		 */
+		_onGetPositionFailureWithoutForcingTheFilter: function(flowStatus) {
+			if (flowStatus == 'COMPLETED') {
 				this.view.skipNextSelectFirst();
+
 				_CMWFState.setProcessInstance(new CMDBuild.model.CMProcessInstance());
 				_CMUIState.onlyGridIfFullScreen();
-//			} else {
-//				this.callParent(arguments);
-//			}
+			} else {
+				CMDBuild.core.Message.info(undefined, CMDBuild.Translation.cardNotMatchFilter);
+			}
 		},
 
 		// override
@@ -166,13 +210,17 @@
 			this.view.addCardButton.updateForEntry(entryType);
 		},
 
-		// activityPanelControllerDelegate
-		onCardSaved: function(cardId) {
+		/**
+		 * activityPanelControllerDelegate
+		 *
+		 * @param {Number} cardId
+		 * @param {String} cardFlowStatus
+		 */
+		onCardSaved: function(cardId, cardFlowStatus) {
 			this.openCard({
 				Id: cardId,
-				// use the id class of the grid to use the right filter
-				// when look for the position
-				IdClass: this.getEntryType().get("id")
+				IdClass: this.getEntryType().get("id"), // use the id class of the grid to use the right filter when look for the position
+				flowStatus: cardFlowStatus
 			});
 		}
 	});
@@ -189,6 +237,47 @@
 		}
 	}
 
+	function updateStoreAndSelectGivenPosition(me, idClass, position) {
+		var view = me.view;
+		view.updateStoreForClassId(idClass, {
+			cb: function cbOfUpdateStoreForClassId() {
+				var	pageNumber = CMDBuild.core.Utils.getPageNumber(position),
+					pageSize = CMDBuild.configuration.instance.get(CMDBuild.core.constants.Proxy.ROW_LIMIT),
+					relativeIndex = position % pageSize;
+
+				view.loadPage(pageNumber, {
+					cb: function() {
+						var parameters = arguments[0];
+
+						try {
+							me.gridSM.deselectAll();
+							me.gridSM.select(relativeIndex);
+
+							// Force row expanding on select
+							if (
+								!Ext.isEmpty(me.view)
+								&& !Ext.isEmpty(me.view.plugins)
+								&& !Ext.isEmpty(me.view.plugins[0])
+								&& me.view.plugins[0].ptype == 'activityrowexpander'
+							) {
+								me.view.plugins[0].toggleRow(relativeIndex, me.view.getStore().getAt(relativeIndex));
+							}
+						} catch (e) {
+							view.fireEvent("cmWrongSelection");
+							_warning("I was not able to select the record at " + relativeIndex, this);
+						}
+
+						if (!parameters[2]) {
+							CMDBuild.core.Message.error(null, {
+								text: CMDBuild.Translation.errors.anErrorHasOccurred
+							});
+						}
+					}
+				});
+			}
+		});
+	}
+
 	function updateViewSelection(activityInfoId, me) {
 		try {
 			var activityRowEl = Ext.query('p[id='+activityInfoId+']', me.view.getEl().dom)[0];
@@ -199,5 +288,19 @@
 		} catch (e) {
 			_debug("Can't select the activity " + activityInfoId);
 		}
+	}
+
+	function getSorting(store) {
+		var sorters = store.getSorters();
+		var out = [];
+		for (var i=0, l=sorters.length; i<l; ++i) {
+			var s = sorters[i];
+			out.push({
+				property: s.property,
+				direction: s.direction
+			});
+		}
+
+		return out;
 	}
 })();

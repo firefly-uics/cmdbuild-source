@@ -1,7 +1,6 @@
-(function() {
+(function () {
 
 	Ext.define('CMDBuild.core.Message', {
-		alternateClassName: 'CMDBuild.Msg', // Legacy class name
 
 		requires: ['Ext.ux.Notification'],
 
@@ -18,7 +17,7 @@
 		 * @param {Boolean} popup
 		 * @param {String} iconCls
 		 */
-		alert: function(title, text, popup, iconCls) {
+		alert: function (title, text, popup, iconCls) {
 			title = title || '';
 			text = text || '';
 			popup = Ext.isBoolean(popup) ? popup : false;
@@ -55,7 +54,7 @@
 		 *
 		 * @private
 		 */
-		buildDetailLink: function(id, stacktrace) {
+		buildDetailLink: function (id, stacktrace) {
 			CMDBuild.core.Message.detailBuffer[id] = stacktrace;
 
 			return '<p class="show_detail_link" id="errorDetails_" onClick="javascript:buildDetaiWindow(' + id + ')">' + CMDBuild.Translation.showDetails + '</p>';
@@ -66,7 +65,7 @@
 		 * @param {Mixed} body
 		 * @param {Boolean} popup
 		 */
-		error: function(title, body, popup) {
+		error: function (title, body, popup) {
 			title = title || CMDBuild.Translation.error;
 			popup = Ext.isBoolean(popup) ? popup : false;
 
@@ -87,11 +86,11 @@
 		 * @param {Mixed} body
 		 * @param {Boolean} popup
 		 */
-		info: function(title, text, popup) {
+		info: function (title, text, popup) {
 			CMDBuild.core.Message.alert(title, text, popup, Ext.MessageBox.INFO);
 		},
 
-		success: function() {
+		success: function () {
 			CMDBuild.core.Message.alert('', CMDBuild.Translation.success, false, Ext.MessageBox.INFO);
 		},
 
@@ -100,7 +99,7 @@
 		 * @param {Mixed} body
 		 * @param {Boolean} popup
 		 */
-		warn: function(title, text, popup) {
+		warning: function (title, text, popup) {
 			CMDBuild.core.Message.alert(
 				title || CMDBuild.Translation.warning,
 				text,
@@ -116,13 +115,13 @@
  * @param {Number} detailBufferIndex
  */
 function buildDetaiWindow(detailBufferIndex) {
-	var detailsWindow = Ext.create('CMDBuild.core.PopupWindow', {
+	var detailsWindow = Ext.create('CMDBuild.core.window.AbstractModal', {
 		title: CMDBuild.Translation.details,
 
 		dockedItems: [
 			Ext.create('Ext.toolbar.Toolbar', {
 				dock: 'bottom',
-				itemId: CMDBuild.core.proxy.CMProxyConstants.TOOLBAR_BOTTOM,
+				itemId: CMDBuild.core.constants.Proxy.TOOLBAR_BOTTOM,
 				ui: 'footer',
 
 				layout: {
@@ -132,10 +131,10 @@ function buildDetaiWindow(detailBufferIndex) {
 				},
 
 				items: [
-					Ext.create('CMDBuild.core.buttons.Close', {
+					Ext.create('CMDBuild.core.buttons.text.Close', {
 						scope: this,
 
-						handler: function(button, e) {
+						handler: function (button, e) {
 							detailsWindow.destroy();
 						}
 					})

@@ -9,8 +9,8 @@
 		extend: 'CMDBuild.controller.common.CMBasePanelController',
 
 		requires: [
-			'CMDBuild.core.proxy.CMProxyConstants',
-			'CMDBuild.core.proxy.CMProxyTasks'
+			'CMDBuild.core.constants.Proxy',
+			'CMDBuild.core.LoadMask'
 		],
 
 		/**
@@ -102,10 +102,11 @@
 			Ext.Msg.show({
 				title: CMDBuild.Translation.common.confirmpopup.title,
 				msg: CMDBuild.Translation.common.confirmpopup.areyousure,
-				scope: this,
 				buttons: Ext.Msg.YESNO,
-				fn: function(button) {
-					if (button == 'yes')
+				scope: this,
+
+				fn: function(buttonId, text, opt) {
+					if (buttonId == 'yes')
 						this.removeItem();
 				}
 			});
@@ -123,22 +124,6 @@
 		 */
 		onSaveButtonClick: function() {
 			_debug('CMTasksFormBaseController: onSaveButtonClick() unimplemented method');
-		},
-
-		removeItem: function() {
-			if (!Ext.isEmpty(this.selectedId)) {
-				CMDBuild.LoadMask.get().show();
-
-				CMDBuild.core.proxy.CMProxyTasks.remove({
-					type: this.taskType,
-					params: {
-						id: this.selectedId
-					},
-					scope: this,
-					success: this.success,
-					callback: this.callback
-				});
-			}
 		},
 
 		resetIdField: function() {
@@ -166,7 +151,7 @@
 					me.view.removeAll();
 
 					var rowIndex = this.find(
-						CMDBuild.core.proxy.CMProxyConstants.ID,
+						CMDBuild.core.constants.Proxy.ID,
 						(decodedResult.response) ? decodedResult.response : taskId
 					);
 

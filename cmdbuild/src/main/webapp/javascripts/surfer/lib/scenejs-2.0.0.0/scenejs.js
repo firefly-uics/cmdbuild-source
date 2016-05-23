@@ -13,7 +13,7 @@
  * Includes WebGL-Debug
  * Various functions for helping debug WebGL apps.
  * http://khronos.org/webgl/wiki/Debugging
- * Copyright (c) 2009 The Chromium Authors. All rights reserved. 
+ * Copyright (c) 2009 The Chromium Authors. All rights reserved.
  */
 /** Generic map of IDs to items - can generate own IDs or accept given IDs.
  * Given IDs should be strings in order to not clash with internally generated IDs, which are numbers.
@@ -568,7 +568,7 @@ SceneJS._Node.prototype._compileNodes = function() { // Selected children - usef
             SceneJS_compileModule.postVisitNode(child);
         }
     }
-    
+
     if (this.listeners["rendered"]) {
         SceneJS_nodeEventsModule.postVisitNode(this);
     }
@@ -1006,7 +1006,7 @@ SceneJS._Node.prototype.destroy = function() {
         this._destroyed = true;
         this._scheduleNodeDestroy();
     }
-    SceneJS_compileModule.nodeUpdated(this, "destroyed"); // Compile again to rebuild display        
+    SceneJS_compileModule.nodeUpdated(this, "destroyed"); // Compile again to rebuild display
     return this;
 };
 
@@ -1279,7 +1279,7 @@ SceneJS.Services = new (function() {
 
     this.addService(this.NODE_LOADER_SERVICE_ID, {
 
-        /** Loads node and attaches to parent          
+        /** Loads node and attaches to parent
          */
         loadNode: function(parentId, nodeId) {
         }
@@ -2172,7 +2172,7 @@ SceneJS.errors._getErrorName = function(code) {
 
 
 
-/* 
+/*
  * Optimizations made based on glMatrix by Brandon Jones
  */
 
@@ -4480,9 +4480,9 @@ var SceneJS_webgl_Shader = function(context, type, source, logging) {
  * @param logging Program and shaders will write to logging's debug channel as they compile and link
  */
 var SceneJS_webgl_Program = function(hash, context, vertexSources, fragmentSources, logging) {
-    
+
     var a, i, u, u_name, location, shader;
-    
+
     this.hash = hash;
 
     /* Create shaders from sources
@@ -5509,7 +5509,7 @@ SceneJS.bind = function(name, func) {
                         sceneId : params.sceneId
                     });
                 });
-            break;       
+            break;
 
         case "scene-rendered" : SceneJS_eventModule.addListener(
                 SceneJS_eventModule.SCENE_COMPILED,
@@ -5652,7 +5652,7 @@ var SceneJS_compileCfg = new (function() {
             mul: {
                 level: this.REDRAW
             }
-        },               
+        },
 
         "layer": {
             "set" : {
@@ -6022,7 +6022,7 @@ var SceneJS_compileModule = new (function() {
     this._stackLen = 0;
 
     /*-----------------------------------------------------------------------------------------------------------------
-     * Priority queue of compilations, optimised for minimal garbage collection and implicit sort. Each entry has 
+     * Priority queue of compilations, optimised for minimal garbage collection and implicit sort. Each entry has
      * a scene graph node and a compilation level. Entries are ordered in descending order of compilation level.
      *---------------------------------------------------------------------------------------------------------------*/
 
@@ -6633,7 +6633,7 @@ var SceneJS_loggingModule = new (function() {
  *
  * @private
  */
-var SceneJS_errorModule = new (function() {   
+var SceneJS_errorModule = new (function() {
 
     this.fatalError = function(code, message) {
         if (typeof code == "string") {
@@ -6693,7 +6693,7 @@ var SceneJS_errorModule = new (function() {
     Layer.prototype._init = function(params) {
         if (this.core._nodeCount == 1) { // This node defines the resource
             this.core.priority = params.priority || 0;
-            this.core.enabled = params.enabled !== false; 
+            this.core.enabled = params.enabled !== false;
         }
     };
 
@@ -6728,7 +6728,7 @@ var SceneJS_errorModule = new (function() {
 })();
 
 
-(function() {    
+(function() {
     var Library = SceneJS.createNodeType("library");
     Library.prototype._compile = function() { // Bypass child nodes
     };
@@ -7036,7 +7036,7 @@ new (function() {
      * Starts the render loop for this scene
      */
     Scene.prototype.start = function(cfg) {
-        
+
         if (this._destroyed) {
             throw SceneJS_errorModule.fatalError(SceneJS.errors.NODE_ILLEGAL_STATE, "Scene has been destroyed");
         }
@@ -9020,7 +9020,7 @@ var SceneJS_DrawList = new (function() {
 
         if (normals && (fragmentHooks.worldNormal || fragmentHooks.viewNormal)) {
 
-            src.push("varying vec3 SCENEJS_vWorldNormal;");                  // World-space normal            
+            src.push("varying vec3 SCENEJS_vWorldNormal;");                  // World-space normal
             src.push("varying vec3 SCENEJS_vViewNormal;");                   // View-space normal
         }
         /*-----------------------------------------------------------------------------------
@@ -9086,7 +9086,7 @@ var SceneJS_DrawList = new (function() {
             src.push(fragmentHooks.viewNormal + "(SCENEJS_vViewNormal);");
         }
 
-        src.push("    if (SCENEJS_uRayPickMode) {");        
+        src.push("    if (SCENEJS_uRayPickMode) {");
         src.push("          float zNormalizedDepth = abs((SCENEJS_uZNear + SCENEJS_vViewVertex.z) / (SCENEJS_uZFar - SCENEJS_uZNear));");
         src.push("          gl_FragColor = packDepth(zNormalizedDepth); ");
 
@@ -9153,7 +9153,7 @@ var SceneJS_DrawList = new (function() {
         var morphing = morphState.morph && true;
 
         var src = [
-            "precision mediump float;",
+            "precision mediump float;"
         ];
 
         src.push("attribute vec3 SCENEJS_aVertex;");                // Model coordinates
@@ -11538,7 +11538,7 @@ new (function() {
         var newProps = propStack[stackLen - 1];
         dirty = true;
     }
-   
+
     var Renderer = SceneJS.createNodeType("renderer");
 
     Renderer.prototype._init = function(params) {
@@ -11898,7 +11898,7 @@ new (function() {
     };
 
     Flags.prototype.setFlags = function(flags) {
-        SceneJS._apply(flags, this.core.flags, true); // Node's flags object is shared with drawlist node   
+        SceneJS._apply(flags, this.core.flags, true); // Node's flags object is shared with drawlist node
     };
 
     Flags.prototype.addFlags = function(flags) {
@@ -18828,7 +18828,7 @@ new (function() {
                     positions.push(0);
                     positions.push(ybot);
                     positions.push(0);
-                    
+
                     // top vertex
                     normals.push(0);
                     normals.push(1);
@@ -18853,8 +18853,8 @@ new (function() {
                     //
                     // Create the outer set of vertices,
                     // two for the bottom and two for the top.
-                    // 
-                    
+                    //
+
                     // bottom vertex, facing the disk axis
                     normals.push(0);
                     normals.push(-1);
@@ -18864,7 +18864,7 @@ new (function() {
                     positions.push(radius * x);
                     positions.push(ybot);
                     positions.push(radius * z);
-                    
+
                     // bottom vertex, facing outwards
                     normals.push(x);
                     normals.push(0);
@@ -18884,7 +18884,7 @@ new (function() {
                     positions.push(radius * x);
                     positions.push(ytop);
                     positions.push(radius * z);
-                    
+
                     // top vertex, facing outwards
                     normals.push(x);
                     normals.push(0);
@@ -18912,7 +18912,7 @@ new (function() {
                         positions.push(innerRadius * x);
                         positions.push(ybot);
                         positions.push(innerRadius * z);
-                        
+
                         // bottom vertex, facing inwards
                         normals.push(-x);
                         normals.push(0);
@@ -18932,7 +18932,7 @@ new (function() {
                         positions.push(innerRadius * x);
                         positions.push(ytop);
                         positions.push(innerRadius * z);
-                        
+
                         // top vertex, facing inwards
                         normals.push(-x);
                         normals.push(0);
@@ -18943,13 +18943,13 @@ new (function() {
                         positions.push(ytop);
                         positions.push(innerRadius * z);
                     }
-                    
+
                     if (ringNum + 1 > ringLimit){
 
                         //
                         // Create (outer) vertices for end caps.
                         //
-                    
+
                         // bottom vertex for the first end cap
                         normals.push(0);
                         normals.push(0);
@@ -18959,7 +18959,7 @@ new (function() {
                         positions.push(radius * semiMajorAxis);
                         positions.push(ybot);
                         positions.push(0);
-                        
+
                         // top vertex for the first end cap
                         normals.push(0);
                         normals.push(0);
@@ -18969,7 +18969,7 @@ new (function() {
                         positions.push(radius * semiMajorAxis);
                         positions.push(ytop);
                         positions.push(0);
-                    
+
                         // bottom vertex for the second end cap
                         normals.push(-z);
                         normals.push(0);
@@ -18979,7 +18979,7 @@ new (function() {
                         positions.push(radius * x);
                         positions.push(ybot);
                         positions.push(radius * z);
-                        
+
                         // top vertex for the second end cap
                         normals.push(-z);
                         normals.push(0);
@@ -18996,7 +18996,7 @@ new (function() {
                             // Disk with a hole.
                             // Create inner vertices for end caps.
                             //
-                                                
+
                             // bottom vertex for the first end cap
                             normals.push(0);
                             normals.push(0);
@@ -19006,7 +19006,7 @@ new (function() {
                             positions.push(innerRadius * semiMajorAxis);
                             positions.push(ybot);
                             positions.push(0);
-                            
+
                             // top vertex for the first end cap
                             normals.push(0);
                             normals.push(0);
@@ -19016,7 +19016,7 @@ new (function() {
                             positions.push(innerRadius * semiMajorAxis);
                             positions.push(ytop);
                             positions.push(0);
-                        
+
                             // bottom vertex for the second end cap
                             normals.push(-z);
                             normals.push(0);
@@ -19026,7 +19026,7 @@ new (function() {
                             positions.push(innerRadius * x);
                             positions.push(ybot);
                             positions.push(innerRadius * z);
-                            
+
                             // top vertex for the second end cap
                             normals.push(-z);
                             normals.push(0);
@@ -19052,7 +19052,7 @@ new (function() {
                             positions.push(0);
                             positions.push(ybot);
                             positions.push(0);
-                            
+
                             // top vertex for the first end cap
                             normals.push(0);
                             normals.push(0);
@@ -19062,7 +19062,7 @@ new (function() {
                             positions.push(0);
                             positions.push(ytop);
                             positions.push(0);
-                        
+
                             // bottom vertex for the second end cap
                             normals.push(-z);
                             normals.push(0);
@@ -19072,7 +19072,7 @@ new (function() {
                             positions.push(0);
                             positions.push(ybot);
                             positions.push(0);
-                            
+
                             // top vertex for the second end cap
                             normals.push(-z);
                             normals.push(0);
@@ -19083,7 +19083,7 @@ new (function() {
                             positions.push(ytop);
                             positions.push(0);
                         }
-                        
+
                         break;
                     }
                 }
@@ -19110,62 +19110,62 @@ new (function() {
                             //
 
                             index = (ringNum + 1) * 8;    // the first vertex after the regular vertices
-                            
+
                             // start cap
                             indices.push(index);
                             indices.push(index + 4);
                             indices.push(index + 5);
-                            
+
                             indices.push(index);
                             indices.push(index + 5);
                             indices.push(index + 1);
-                            
+
                             // end cap
                             indices.push(index + 2);
                             indices.push(index + 7);
                             indices.push(index + 6);
-                            
+
                             indices.push(index + 2);
                             indices.push(index + 3);
                             indices.push(index + 7);
-                            
+
                             break;
                         }
 
                         index = ringNum * 8;
-                        
+
                         // outer ring segment quad
                         indices.push(index + 1);
                         indices.push(index + 3);
                         indices.push(index + 11);
-                        
+
                         indices.push(index + 1);
                         indices.push(index + 11);
                         indices.push(index + 9);
-                        
+
                         // inner ring segment quad
                         indices.push(index + 5);
                         indices.push(index + 7);
                         indices.push(index + 15);
-                        
+
                         indices.push(index + 5);
                         indices.push(index + 15);
                         indices.push(index + 13);
-                        
+
                         // bottom disk segment
                         indices.push(index);
                         indices.push(index + 8);
                         indices.push(index + 12);
-                        
+
                         indices.push(index + 0);
                         indices.push(index + 12);
                         indices.push(index + 4);
-                        
+
                         // top disk segment
                         indices.push(index + 2);
                         indices.push(index + 6);
                         indices.push(index + 14);
-                        
+
                         indices.push(index + 2);
                         indices.push(index + 14);
                         indices.push(index + 10);
@@ -19175,7 +19175,7 @@ new (function() {
                     //
                     // Create a solid disk without a hole in the middle.
                     //
-                    
+
                     for (var ringNum = 0; ringNum < rings; ringNum++) {
 
                         if (ringNum + 1 > ringLimit){
@@ -19185,20 +19185,20 @@ new (function() {
                             indices.push(index);
                             indices.push(index + 4);
                             indices.push(index + 5);
-                            
+
                             indices.push(index + 0);
                             indices.push(index + 5);
                             indices.push(index + 1);
-        
+
                             // end cap
                             indices.push(index + 2);
                             indices.push(index + 7);
                             indices.push(index + 6);
-                            
+
                             indices.push(index + 2);
                             indices.push(index + 3);
                             indices.push(index + 7);
-                            
+
                             break;
                         }
 
@@ -19207,16 +19207,16 @@ new (function() {
                         //
 
                         var index = ringNum * 4 + 2;
-                        
+
                         // outer ring segment quad
                         indices.push(index + 1);
                         indices.push(index + 3);
                         indices.push(index + 7);
-                        
+
                         indices.push(index + 1);
                         indices.push(index + 7);
                         indices.push(index + 5);
-                        
+
                         // bottom disk segment
                         indices.push(index);
                         indices.push(0);
@@ -19228,7 +19228,7 @@ new (function() {
                         indices.push(index + 6);
                     }
                 }
-                
+
                 return {
                     primitive : "triangles",
                     positions : positions,
@@ -20780,7 +20780,7 @@ var SceneJS_bitmapTextModule = new (function() {
         var x = 0;
         var y = (size / 2);
         cx.fillText(text, x, y);
-     
+
         return {
             image: canvas,
             width: canvas.width,
@@ -20974,7 +20974,7 @@ var SceneJS_modelTransformModule = new (function() {
         stackLen--;
         if (stackLen > 0) {
             nodeId = idStack[stackLen - 1];
-            this.transform = transformStack[stackLen - 1];            
+            this.transform = transformStack[stackLen - 1];
         } else {
             nodeId = null;
             this.transform = DEFAULT_TRANSFORM;
@@ -21951,7 +21951,7 @@ var SceneJS_viewTransformModule = new (function() {
 
     Stationary.prototype._compile = function() {
 
-        
+
         var origMemoLevel = this._compileMemoLevel;
 
         var superXform = SceneJS_viewTransformModule.transform;
@@ -22554,7 +22554,7 @@ new (function() {
         //        this._material.fixed = (origMemoLevel == 1); // State not changed because of update to this node
 
         idStack[stackLen] = this.core._coreId; // Tie draw list state to core, not to scene node - reduces amount of state
-        materialStack[stackLen] = this.core;       
+        materialStack[stackLen] = this.core;
         stackLen++;
         dirty = true;
     };
@@ -22951,7 +22951,7 @@ var SceneJS_textureModule = new (function() {
                             this.scene,
                             layer.creationParams,
 
-                            function() { // onComplete                                
+                            function() { // onComplete
                                 SceneJS_sceneStatusModule.nodeLoaded(self);
                                 self._fireEvent("loaded");
                                 if (self._destroyed) {
@@ -23444,7 +23444,7 @@ new (function() {
                  */
                 SceneJS._apply(createMorphGeometry(this.scene, this._createMorphData(params), params.options), this.core);
             }
-            
+
             this.setFactor(params.factor);
         }
 

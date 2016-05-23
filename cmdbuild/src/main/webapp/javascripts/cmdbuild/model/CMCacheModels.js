@@ -1,5 +1,8 @@
 (function() {
 
+	/**
+	 * @deprecated (CMDBuild.model.common.Generic)
+	 */
 	Ext.define("CMDBuild.DummyModel", {
 		extend: "Ext.data.Model",
 		fields:[],
@@ -14,6 +17,24 @@
 			CMDBuild.DummyModel.setFields(Ext.Object.getKeys(data));
 			this.callParent(arguments);
 		}
+	});
+
+	// TODO: should be fixed with id as int but if try to do it all comboboxes will display id in place of description because '123' != 123
+	Ext.define("CMTableForComboModel", {
+		extend: 'Ext.data.Model',
+		fields: [
+			{name: "name", type: 'string'},
+			{name: "id",  type: 'string'},
+			{name: "description",  type: 'string'}
+		]
+	});
+
+	Ext.define('CMDBuild.cache.Lookup.typeComboStore', {
+		extend: 'Ext.data.Model',
+
+		fields: [
+			{ name: CMDBuild.core.constants.Proxy.TYPE, type: 'string' }
+		]
 	});
 
 	Ext.define("CMDBuild.cache.CMLookupTypeModel", {
@@ -156,6 +177,11 @@
 		}
 	});
 
+	/**
+	 * Use "CMDBuild.model.domain.Domain" and complete functionalities
+	 *
+	 * @deprecated
+	 */
 	Ext.define("CMDBuild.cache.CMDomainModel", {
 		extend: 'Ext.data.Model',
 		fields: [

@@ -1,12 +1,16 @@
 (function() {
 
+	Ext.require('CMDBuild.core.constants.Global');
+
 	var NO_SELECTION = 'No selection';
-	var parameterNames = CMDBuild.ServiceProxy.parameter;
 
 	Ext.define('CMDBuild.view.management.classes.relations.CMEditRelationWindow', {
-		extend: 'CMDBuild.Management.CardListWindow', // To choose the card for the relation
+		extend: 'CMDBuild.view.management.common.CMCardListWindow', // To choose the card for the relation
 
-		requires: ['CMDBuild.core.proxy.CMProxyConstants'],
+		requires: [
+			'CMDBuild.core.constants.Proxy',
+			'CMDBuild.core.Message'
+		],
 
 		successCb: Ext.emptyFn,
 
@@ -27,12 +31,12 @@
 				this.idClass = this.relation.dst_cid;
 			}
 
-			this.saveButton = Ext.create('CMDBuild.buttons.SaveButton', {
+			this.saveButton = Ext.create('CMDBuild.core.buttons.text.Save', {
 				scope: this,
 				handler: onSaveButtonClick
 			});
 
-			this.abortButton = Ext.create('CMDBuild.buttons.AbortButton', {
+			this.abortButton = Ext.create('CMDBuild.core.buttons.text.Abort', {
 				scope: this,
 				handler: function() {
 					this.close();
@@ -44,7 +48,7 @@
 
 			// Setup advancedFilter to exclude cards from hidden classes
 			var attributesAndConditionArray = [];
-			var disabledArray = this.classObject.get(CMDBuild.core.proxy.CMProxyConstants.ID) == this.domain.get('idClass1') ? this.domain.get('disabled1') : this.domain.get('disabled2');
+			var disabledArray = this.classObject.get(CMDBuild.core.constants.Proxy.ID) == this.domain.get('idClass1') ? this.domain.get('disabled1') : this.domain.get('disabled2');
 
 			if (!Ext.isEmpty(disabledArray)) {
 				// HACK to avoid filter error for a and condition with only one parameter
@@ -52,7 +56,7 @@
 					'simple': {
 						'attribute': 'IdClass',
 						'operator': 'notequal',
-						'value': [parseInt(_CMCache.getEntryTypeByName(disabledArray[0]).get(CMDBuild.core.proxy.CMProxyConstants.ID))]
+						'value': [parseInt(_CMCache.getEntryTypeByName(disabledArray[0]).get(CMDBuild.core.constants.Proxy.ID))]
 					}
 				});
 
@@ -61,7 +65,7 @@
 						'simple': {
 							'attribute': 'IdClass',
 							'operator': 'notequal',
-							'value': [parseInt(_CMCache.getEntryTypeByName(className).get(CMDBuild.core.proxy.CMProxyConstants.ID))]
+							'value': [parseInt(_CMCache.getEntryTypeByName(className).get(CMDBuild.core.constants.Proxy.ID))]
 						}
 					});
 				}, this);
@@ -75,8 +79,16 @@
 
 			this.callParent(arguments);
 
-			this.grid.applyFilterToStore();
-			this.grid.getStore().load();
+			if (
+				Ext.isObject(this.classObject) && !Ext.Object.isEmpty(this.classObject)
+				&& Ext.isFunction(this.classObject.get)
+			) {
+				var params = {};
+				params[CMDBuild.core.constants.Proxy.CLASS_NAME] = this.classObject.get(CMDBuild.core.constants.Proxy.NAME);
+
+				this.grid.applyFilterToStore();
+				this.grid.getStore().load({ params: params });
+			}
 		},
 
 		/**
@@ -104,7 +116,7 @@
 			if (this.attributesPanel != null) {
 				this.layout = 'border';
 				this.grid.region = 'center';
-				this.grid.addCls('cmborderbottom');
+				this.grid.addCls('cmdb-border-bottom');
 				this.items.push(this.attributesPanel);
 			} else {
 				this.attributesPanel = buildNullObject();
@@ -162,11 +174,12 @@
 		var p = buildSaveParams(this);
 
 		if (p) {
-			if (p[parameterNames.RELATION_ID ] == -1) { // creation
-				delete p[parameterNames.RELATION_ID];
+			if (p[CMDBuild.core.constants.Proxy.RELATION_ID ] == -1) { // creation
+				delete p[CMDBuild.core.constants.Proxy.RELATION_ID];
 
-				CMDBuild.ServiceProxy.relations.add({
+				CMDBuild.proxy.Relation.create({
 					params: p,
+					loadMask: false,
 					scope: this,
 					success: function() {
 						this.successCb();
@@ -174,8 +187,9 @@
 					}
 				});
 			} else { // modify
-				CMDBuild.ServiceProxy.relations.modify({
+				CMDBuild.proxy.Relation.update({
 					params: p,
+					loadMask: false,
 					scope: this,
 					success: function() {
 						this.successCb();
@@ -218,19 +232,19 @@
 		var params = {};
 		var attributes = {};
 
-		params[parameterNames.DOMAIN_NAME] = domain.getName();
-		params[parameterNames.RELATION_ID] = me.relation.rel_id;
+		params[CMDBuild.core.constants.Proxy.DOMAIN_NAME] = domain.getName();
+		params[CMDBuild.core.constants.Proxy.RELATION_ID] = me.relation.rel_id;
 
-		params[parameterNames.RELATION_MASTER_SIDE] = me.relation.masterSide;
+		params['master'] = me.relation.masterSide;
 		attributes[me.relation.masterSide] = [getCardAsParameter(me.sourceCard)];
 
 		try {
 			attributes[me.relation.slaveSide] = getSelections(me);
 		} catch (e) {
 			if (e == NO_SELECTION) {
-				var msg = Ext.String.format('<p class=\'{0}\'>{1}</p>', CMDBuild.Constants.css.error_msg, CMDBuild.Translation.errors.no_selections);
+				var msg = Ext.String.format('<p class=\'{0}\'>{1}</p>', CMDBuild.core.constants.Global.getErrorMsgCss(), CMDBuild.Translation.errors.noSelectedCardToUpdate);
 
-				CMDBuild.Msg.error(CMDBuild.Translation.common.failure, msg, false);
+				CMDBuild.core.Message.error(CMDBuild.Translation.common.failure, msg, false);
 			}
 
 			return;
@@ -239,14 +253,14 @@
 		try {
 			attributes = Ext.apply(attributes, getData(me.attributesPanel));
 		} catch (e) {
-			var msg = Ext.String.format('<p class=\'{0}\'>{1}</p>', CMDBuild.Constants.css.error_msg, CMDBuild.Translation.errors.invalid_attributes);
+			var msg = Ext.String.format('<p class=\'{0}\'>{1}</p>', CMDBuild.core.constants.Global.getErrorMsgCss(), CMDBuild.Translation.errors.invalid_attributes);
 
-			CMDBuild.Msg.error(null, msg + e, false);
+			CMDBuild.core.Message.error(null, msg + e, false);
 
 			return;
 		}
 
-		params[parameterNames.ATTRIBUTES] = Ext.encode(attributes);
+		params[CMDBuild.core.constants.Proxy.ATTRIBUTES] = Ext.encode(attributes);
 
 		return params;
 	}
@@ -291,8 +305,8 @@
 	function getCardAsParameter(card) {
 		var parameter = {};
 
-		parameter[parameterNames.CARD_ID] = card.get('Id');
-		parameter[parameterNames.CLASS_NAME] = _CMCache.getEntryTypeNameById(card.get('IdClass'));
+		parameter[CMDBuild.core.constants.Proxy.CARD_ID] = card.get('Id');
+		parameter[CMDBuild.core.constants.Proxy.CLASS_NAME] = _CMCache.getEntryTypeNameById(card.get('IdClass'));
 
 		return parameter;
 	}

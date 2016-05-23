@@ -117,7 +117,7 @@
 				margin: "8 10"
 			});
 
-			var	popup = new CMDBuild.PopupWindow({
+			var	popup = Ext.create('CMDBuild.core.window.AbstractModal', {
 				title: field.fieldLabel,
 				items:[{
 					xtype: "container",
@@ -127,7 +127,7 @@
 				buttonAlign: "center",
 				autoScroll: true,
 				buttons: [{
-					text: CMDBuild.Translation.common.buttons.close,
+					text: CMDBuild.Translation.close,
 					handler: function() {
 						popup.destroy();
 					}

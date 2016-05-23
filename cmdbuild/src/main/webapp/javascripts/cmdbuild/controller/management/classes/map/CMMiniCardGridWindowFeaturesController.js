@@ -34,7 +34,7 @@
 		},
 
 		miniCardGridWantOpenCard: function(grid, card) {
-			_CMMainViewportController.openCard(card);
+			CMDBuild.global.controller.MainViewport.cmfg('mainViewportCardSelect', card);
 			this.miniGridWindow.close();
 		},
 
@@ -63,8 +63,8 @@
 			for (var i=0, f=null; i<this.features.length; ++i) {
 				f = this.features[i];
 				this.getDataSource().loadCard({
-					Id: f.data.master_card,
-					IdClass: f.data.master_class
+					cardId: f.data.master_card,
+					className: f.data.master_className
 				});
 			}
 		}

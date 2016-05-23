@@ -1,15 +1,16 @@
 (function() {
 
 	Ext.define('CMDBuild.controller.patchManager.PatchManager', {
-		extend: 'CMDBuild.controller.common.AbstractController',
+		extend: 'CMDBuild.controller.common.abstract.Base',
 
-		requires: ['CMDBuild.core.proxy.PatchManager'],
+		requires: ['CMDBuild.proxy.PatchManager'],
 
 		/**
 		 * @cfg {Array}
 		 */
 		cmfgCatchedFunctions: [
-			'onPatchManagerApplyButtonClick'
+			'onPatchManagerViewportApplyButtonClick',
+			'onPatchManagerViewportCreditsClick'
 		],
 
 		/**
@@ -24,6 +25,8 @@
 
 		/**
 		 * @param {Object} configurationObject
+		 *
+		 * @override
 		 */
 		constructor: function(configurationObject) {
 			this.callParent(arguments);
@@ -34,8 +37,8 @@
 			this.grid = this.view.gridContainer.grid;
 		},
 
-		onPatchManagerApplyButtonClick: function() {
-			CMDBuild.core.proxy.PatchManager.update({
+		onPatchManagerViewportApplyButtonClick: function() {
+			CMDBuild.proxy.PatchManager.update({
 				scope: this,
 				failure: function(response, options, decodedResponse) {
 					this.grid.getStore().load();
@@ -44,6 +47,13 @@
 					window.location = 'management.jsp';
 				}
 			});
+		},
+
+		/**
+		 * Manages footer credits link click action
+		 */
+		onPatchManagerViewportCreditsClick: function() {
+			Ext.create('CMDBuild.core.window.Credits').show();
 		}
 	});
 

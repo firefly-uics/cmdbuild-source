@@ -1,4 +1,7 @@
 (function() {
+
+	Ext.require('CMDBuild.proxy.index.Json');
+
 	var STATE = "state",
 		STATE_VALUE_OPEN = "open.running",
 		STATE_VALUE_SUSPENDED = "open.not_running.suspended",
@@ -6,14 +9,10 @@
 		STATE_VALUE_ABORTED = "closed.aborted",
 		STATE_VALUE_ALL = "all", // Not existent
 
-		GET_PROCESS_INSTANCE_URL = "services/json/workflow/getprocessinstancelist",
-
 		tr = CMDBuild.Translation.management.modworkflow;
 
 	Ext.define("CMDBuild.view.management.workflow.CMActivityGrid", {
 		extend: "CMDBuild.view.management.common.CMCardGrid",
-
-		cmStoreUrl: GET_PROCESS_INSTANCE_URL,
 
 		constructor: function() {
 
@@ -67,24 +66,34 @@
 			return ep;
 		},
 
-		// override
+		/**
+		 * @param {Array} fields
+		 * @param {Number} pageSize
+		 *
+		 * @returns {Ext.data.Store or CMDBuild.core.cache.Store}
+		 *
+		 * @override
+		 * @private
+		 *
+		 * TODO: waiting for refactor (build grid proxy)
+		 */
 		buildStore: function(fields, pageSize) {
-			return new Ext.data.Store({
+			return CMDBuild.global.Cache.requestAsStore(CMDBuild.core.constants.Proxy.UNCACHED, {
+				autoLoad: false,
 				model: CMDBuild.model.CMProcessInstance,
 				pageSize: pageSize,
 				remoteSort: true,
 				proxy: {
-					type: "ajax",
-					url: this.cmStoreUrl,
+					type: 'ajax',
+					url: CMDBuild.proxy.index.Json.workflow.activity.readAll,
 					reader: {
-						type: "json",
-						root: "response.rows",
-						totalProperty: "response.results",
-						idProperty: "id"
+						type: 'json',
+						root: 'response.rows',
+						totalProperty: 'response.results',
+						idProperty: 'id'
 					},
 					extraParams: this.getStoreExtraParams()
-				},
-				autoLoad: false
+				}
 			});
 		},
 

@@ -4,15 +4,15 @@
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
 		<groupId>org.cmdbuild</groupId>
-		<artifactId>cmdbuild-main</artifactId>
-		<version>2.3.5-SNAPSHOT</version>
-		<relativePath>../..</relativePath>
+		<artifactId>cmdbuild-parent</artifactId>
+		<version>2.4.1-SNAPSHOT</version>
+		<relativePath>../../parent</relativePath>
 	</parent>
 	<artifactId>cmdbuild-dms-alfresco</artifactId>
 	<name>CMDBuild DMS Alfresco</name>
 	<properties>
 		<alfresco.version>3.4.e</alfresco.version>
-		<commons-net.version>3.0.1</commons-net.version>
+		<commons-net.version>3.4</commons-net.version>
 	</properties>
 	<dependencies>
 		<dependency>
@@ -54,11 +54,10 @@
 			<artifactId>commons-io</artifactId>
 			<scope>test</scope>
 		</dependency>
-		<!-- needed for importing wss4j -->
+		<!-- used for importing wss4j -->
 		<dependency>
 			<groupId>org.apache.cxf</groupId>
 			<artifactId>cxf-rt-ws-security</artifactId>
-			<version>${cxf.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>joda-time</groupId>

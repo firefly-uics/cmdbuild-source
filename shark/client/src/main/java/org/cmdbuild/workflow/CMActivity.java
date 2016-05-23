@@ -3,6 +3,7 @@ package org.cmdbuild.workflow;
 import java.util.List;
 
 import org.cmdbuild.dao.entry.CMValueSet;
+import org.cmdbuild.workflow.xpdl.CMActivityMetadata;
 import org.cmdbuild.workflow.xpdl.CMActivityVariableToProcess;
 
 /**
@@ -37,6 +38,8 @@ public interface CMActivity extends CMActivityWidgetsHolder {
 	 */
 	List<CMActivityVariableToProcess> getVariables();
 
+	Iterable<CMActivityMetadata> getMetadata();
+
 	/**
 	 * Returns the activity widgets without the expansion of "server" variables,
 	 * since there is no process where to get them from.
@@ -55,4 +58,5 @@ public interface CMActivity extends CMActivityWidgetsHolder {
 	 * @return ordered list of widgets for this activity
 	 */
 	List<CMActivityWidget> getWidgets(CMValueSet processInstanceVariables);
+
 }

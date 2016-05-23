@@ -1,11 +1,11 @@
-(function() {
+(function () {
 
 	Ext.define('CMDBuild.view.management.common.tabs.email.attachments.picker.AttachmentGrid', {
 		extend: 'Ext.grid.Panel',
 
 		requires: [
-			'CMDBuild.core.proxy.Attachment',
-			'CMDBuild.core.proxy.CMProxyConstants'
+			'CMDBuild.core.constants.Proxy',
+			'CMDBuild.proxy.common.tabs.email.Attachment'
 		],
 
 		/**
@@ -14,26 +14,31 @@
 		delegate: undefined,
 
 		border: false,
+		cls: 'cmdb-border-top',
+		frame: false,
 		split: true,
 
-		initComponent: function() {
+		/**
+		 * @returns {Void}
+		 *
+		 * @override
+		 */
+		initComponent: function () {
 			Ext.apply(this, {
 				columns: [
 					{
 						text: CMDBuild.Translation.fileName,
-						dataIndex: 'Filename', // TODO: use proxy constants
+						dataIndex: 'Filename', // TODO: waiting for refactor (rename)
 						flex: 1
 					},
 					{
 						text: CMDBuild.Translation.descriptionLabel,
-						dataIndex: 'Description', // TODO: use proxy constants
+						dataIndex: 'Description', // TODO: waiting for refactor (rename)
 						flex: 1
 					}
 				],
-				selModel: Ext.create('Ext.selection.CheckboxModel', {
-					injectCheckbox: 'first'
-				}),
-				store: CMDBuild.core.proxy.Attachment.getStore()
+				selModel: Ext.create('Ext.selection.CheckboxModel', { injectCheckbox: 'first' }),
+				store: CMDBuild.proxy.common.tabs.email.Attachment.getStore()
 			});
 
 			this.callParent(arguments);
