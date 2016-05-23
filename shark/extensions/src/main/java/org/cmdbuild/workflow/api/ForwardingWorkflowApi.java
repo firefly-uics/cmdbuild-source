@@ -27,6 +27,12 @@ import com.google.common.collect.ForwardingObject;
 
 public abstract class ForwardingWorkflowApi extends ForwardingObject implements WorkflowApi {
 
+	/**
+	 * Usable by subclasses only.
+	 */
+	protected ForwardingWorkflowApi() {
+	}
+
 	@Override
 	protected abstract WorkflowApi delegate();
 
