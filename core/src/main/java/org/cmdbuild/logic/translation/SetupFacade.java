@@ -6,6 +6,12 @@ public interface SetupFacade {
 
 	abstract class ForwardingSetupFacade extends ForwardingObject implements SetupFacade {
 
+		/**
+		 * Usable by subclasses only.
+		 */
+		protected ForwardingSetupFacade() {
+		}
+
 		@Override
 		protected abstract SetupFacade delegate();
 

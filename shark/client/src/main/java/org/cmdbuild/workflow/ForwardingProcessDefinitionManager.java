@@ -6,6 +6,12 @@ import com.google.common.collect.ForwardingObject;
 
 public abstract class ForwardingProcessDefinitionManager extends ForwardingObject implements ProcessDefinitionManager {
 
+	/**
+	 * Usable by subclasses only.
+	 */
+	protected ForwardingProcessDefinitionManager() {
+	}
+
 	@Override
 	protected abstract ProcessDefinitionManager delegate();
 

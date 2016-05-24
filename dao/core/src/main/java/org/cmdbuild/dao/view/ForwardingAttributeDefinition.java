@@ -8,6 +8,12 @@ import com.google.common.collect.ForwardingObject;
 
 public abstract class ForwardingAttributeDefinition extends ForwardingObject implements CMAttributeDefinition {
 
+	/**
+	 * Usable by subclasses only.
+	 */
+	protected ForwardingAttributeDefinition() {
+	}
+
 	@Override
 	protected abstract CMAttributeDefinition delegate();
 

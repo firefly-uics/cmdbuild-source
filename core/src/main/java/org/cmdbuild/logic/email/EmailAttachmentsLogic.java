@@ -23,6 +23,12 @@ public interface EmailAttachmentsLogic extends Logic {
 
 	abstract class ForwardingAttachment extends ForwardingObject implements Attachment {
 
+		/**
+		 * Usable by subclasses only.
+		 */
+		protected ForwardingAttachment() {
+		}
+
 		@Override
 		protected abstract Attachment delegate();
 
@@ -44,6 +50,12 @@ public interface EmailAttachmentsLogic extends Logic {
 	}
 
 	abstract class ForwardingEmailAttachmentsLogic extends ForwardingObject implements EmailAttachmentsLogic {
+
+		/**
+		 * Usable by subclasses only.
+		 */
+		protected ForwardingEmailAttachmentsLogic() {
+		}
 
 		@Override
 		protected abstract EmailAttachmentsLogic delegate();
