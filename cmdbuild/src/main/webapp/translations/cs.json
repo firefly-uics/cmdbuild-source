@@ -136,7 +136,7 @@
 			},
 			"title": "Správa tříd",
 			"tree_title": "Seznam tříd"
-		},		
+		},
 		"modDashboard": {
 			"charts": {
 				"alert": {
@@ -1309,6 +1309,7 @@
 	"rowsPrivileges": "Řádková oprávnění",
 	"rtf": "RTF",
 	"save": "Uložit",
+	"saveAndApply": "Uložit a použít",
 	"scope": "Rozsah",
 	"searchFilters": "Vyhledávací filtry",
 	"section": "Sekce",
