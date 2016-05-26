@@ -14,7 +14,7 @@
 		/**
 		 * @cfg {String}
 		 */
-		baseTitle: CMDBuild.Translation.management.findfilter.window_title,
+		baseTitle: CMDBuild.Translation.searchFilter,
 
 		/**
 		 * @cfg {String}

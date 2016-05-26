@@ -2,9 +2,7 @@
  * @class CMDBuild.WidgetBuilders.SimpleQueryAttribute
  * @extends CMDBuild.WidgetBuilders.BaseAttribute
  **/
-Ext.ns("CMDBuild.WidgetBuilders"); 
-var translation = CMDBuild.Translation.management.findfilter;
-
+Ext.ns("CMDBuild.WidgetBuilders");
 CMDBuild.WidgetBuilders.SimpleQueryAttribute = function(){};
 CMDBuild.extend(CMDBuild.WidgetBuilders.SimpleQueryAttribute, CMDBuild.WidgetBuilders.BaseAttribute);
 /**
@@ -13,9 +11,9 @@ CMDBuild.extend(CMDBuild.WidgetBuilders.SimpleQueryAttribute, CMDBuild.WidgetBui
 CMDBuild.WidgetBuilders.SimpleQueryAttribute.prototype.getQueryOptions = function() {
 	var operator = CMDBuild.WidgetBuilders.BaseAttribute.FilterOperator;
 	return [
-		[operator.EQUAL, translation.equals],
-		[operator.NULL, translation.nullo],
-		[operator.NOT_NULL, translation.notnull]
+		[operator.EQUAL, CMDBuild.Translation.equals],
+		[operator.NULL, CMDBuild.Translation.isNull],
+		[operator.NOT_NULL, CMDBuild.Translation.isNotNull]
 	];
 };
 /**

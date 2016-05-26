@@ -202,7 +202,7 @@
 		 * @returns {Void}
 		 */
 		entryTypeGridFilterAdvancedManageToggleButtonLabelSet: function (label) {
-			this.view.manageToggleButton.setText(Ext.isEmpty(label) ? CMDBuild.Translation.management.findfilter.set_filter : Ext.String.ellipsis(label, 20));
+			this.view.manageToggleButton.setText(Ext.isEmpty(label) ? CMDBuild.Translation.searchFilter : Ext.String.ellipsis(label, 20));
 			this.view.manageToggleButton.setTooltip(Ext.isEmpty(label) ? '' : label);
 		},
 

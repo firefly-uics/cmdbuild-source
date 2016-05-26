@@ -490,7 +490,7 @@
 		// protected
 		buildClassColumn: function() {
 			return {
-				header: CMDBuild.Translation.management.modcard.subclass,
+				header: CMDBuild.Translation.subClass,
 				width: 100,
 				sortable: false,
 				dataIndex: this.CLASS_COLUMN_DATA_INDEX

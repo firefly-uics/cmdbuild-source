@@ -92,7 +92,7 @@
 	Ext.define('CMDBuild.view.management.common.filter.CMRelations', {
 		extend: 'Ext.panel.Panel',
 
-		title: CMDBuild.Translation.management.findfilter.relations,
+		title: CMDBuild.Translation.relations,
 
 		mixins: {
 			domainGridDelegate: 'CMDBuild.view.management.common.filter.CMDomainGridDelegate'

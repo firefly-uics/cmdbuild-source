@@ -32,7 +32,7 @@
 		closeAction: 'hide',
 		frame: true,
 		layout: 'fit',
-		title: 'CMDBuild.Translation.filterParameters', // TODO
+		title: CMDBuild.Translation.filterParameters,
 
 		/**
 		 * @returns {Void}

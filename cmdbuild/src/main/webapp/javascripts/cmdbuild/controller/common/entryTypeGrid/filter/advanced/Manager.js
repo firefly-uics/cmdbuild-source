@@ -154,7 +154,7 @@
 		onEntryTypeGridFilterAdvancedManagerAddButtonClick: function () {
 			var emptyFilterObject = {};
 			emptyFilterObject[CMDBuild.core.constants.Proxy.ENTRY_TYPE] = this.cmfg('entryTypeGridFilterAdvancedEntryTypeGet', CMDBuild.core.constants.Proxy.NAME);
-			emptyFilterObject[CMDBuild.core.constants.Proxy.NAME] = CMDBuild.Translation.management.findfilter.newfilter;
+			emptyFilterObject[CMDBuild.core.constants.Proxy.NAME] = CMDBuild.Translation.newSearchFilter;
 
 			this.cmfg('entryTypeGridFilterAdvancedManagerSelectedFilterSet', { value: emptyFilterObject }); // Manual save call (with empty data)
 
@@ -170,7 +170,7 @@
 			if (Ext.isObject(filter) && !Ext.Object.isEmpty(filter)) {
 				var clonedFilterObject = filter.getData();
 				clonedFilterObject[CMDBuild.core.constants.Proxy.ID] = null;
-				clonedFilterObject[CMDBuild.core.constants.Proxy.NAME] = CMDBuild.Translation.management.findfilter.copyof + ' ' + filter.get(CMDBuild.core.constants.Proxy.NAME);
+				clonedFilterObject[CMDBuild.core.constants.Proxy.NAME] = CMDBuild.Translation.copyOf + ' ' + filter.get(CMDBuild.core.constants.Proxy.NAME);
 
 				this.cmfg('entryTypeGridFilterAdvancedManagerSelectedFilterSet', { value: clonedFilterObject }); // Manual save call (with cloned data)
 
@@ -202,7 +202,7 @@
 		 */
 		onEntryTypeGridFilterAdvancedManagerRemoveButtonClick: function (filter) {
 			Ext.MessageBox.confirm(
-				CMDBuild.Translation.management.findfilter.msg.attention,
+				CMDBuild.Translation.attention,
 				CMDBuild.Translation.common.confirmpopup.areyousure,
 				function (buttonId, text, opt) {
 					if (buttonId == 'yes')
@@ -326,7 +326,7 @@
 			if (!this.cmfg('entryTypeGridFilterAdvancedManagerSelectedFilterIsEmpty')) {
 				var filter = this.cmfg('entryTypeGridFilterAdvancedManagerSelectedFilterGet');
 				var params = {};
-				params[CMDBuild.core.constants.Proxy.CLASS_NAME] = filter.get(CMDBuild.core.constants.Proxy.ENTRY_TYPE);
+				params[CMDBuild.core.constants.Proxy.CLASS_NAME] = filter.get(CMDBuild.core.constants.Proxy.ENTRY_TYPE); // FIXME: i read entryType and write className (rename)
 				params[CMDBuild.core.constants.Proxy.CONFIGURATION] = Ext.encode(filter.get(CMDBuild.core.constants.Proxy.CONFIGURATION));
 				params[CMDBuild.core.constants.Proxy.DESCRIPTION] = filter.get(CMDBuild.core.constants.Proxy.DESCRIPTION);
 				params[CMDBuild.core.constants.Proxy.NAME] = filter.get(CMDBuild.core.constants.Proxy.NAME);
@@ -360,7 +360,10 @@
 						params: params,
 						scope: this,
 						success: function (response, options, decodedResponse) {
-							decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.FILTER];
+							// FIXME: hack as workaround, should be fixed on server side returning all saved filter object
+							decodedResponse = params;
+							decodedResponse[CMDBuild.core.constants.Proxy.ENTRY_TYPE] = decodedResponse[CMDBuild.core.constants.Proxy.CLASS_NAME];
+							decodedResponse[CMDBuild.core.constants.Proxy.CONFIGURATION] = Ext.decode(decodedResponse[CMDBuild.core.constants.Proxy.CONFIGURATION]);
 
 							if (Ext.isObject(decodedResponse) && !Ext.isEmpty(decodedResponse)) {
 								this.controllerSaveDialog.cmfg('onEntryTypeGridFilterAdvancedSaveDialogAbortButtonClick'); // Close save dialog view

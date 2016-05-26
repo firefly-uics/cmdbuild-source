@@ -100,8 +100,8 @@
 
 			// If new filter model
 			if (Ext.isEmpty(filterModelObject[CMDBuild.core.constants.Proxy.ID])) {
-				filterModelObject[CMDBuild.core.constants.Proxy.DESCRIPTION] = CMDBuild.Translation.management.findfilter.newfilter;
-				filterModelObject[CMDBuild.core.constants.Proxy.NAME] = CMDBuild.Translation.management.findfilter.newfilter;
+				filterModelObject[CMDBuild.core.constants.Proxy.DESCRIPTION] = CMDBuild.Translation.newSearchFilter;
+				filterModelObject[CMDBuild.core.constants.Proxy.NAME] = CMDBuild.Translation.newSearchFilter;
 			}
 
 			this.cmfg('entryTypeGridFilterAdvancedManagerSelectedFilterSet', { value: filterModelObject });
