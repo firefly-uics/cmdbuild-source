@@ -10,7 +10,6 @@
 
 		mixins: {
 			observable: "Ext.util.Observable",
-			filterMenuButton: "CMDBuild.delegate.common.filter.CMFilterMenuButtonDelegate",
 			filterWindow: "CMDBuild.view.management.common.filter.CMFilterWindowDelegate",
 			saveFilterWindow: "CMDBuild.view.management.common.filter.CMSaveFilterWindowDelegate",
 			runtimeFilterParamsWindow: "CMDBuild.delegate.common.filter.CMRuntimeParameterWindowDelegate"
@@ -26,6 +25,7 @@
 				this.view = view;
 			}
 
+			this.view.delegate = this;
 			this.supercontroller = supercontroller;
 			this.gridSM = this.view.getSelectionModel();
 
@@ -48,9 +48,6 @@
 			this.mon(this.view.printGridMenu, "click", this.onPrintGridMenuClick, this);
 
 			this.stateDelegate = this.buildStateDelegate();
-			if (this.view.filterMenuButton) {
-				this.view.filterMenuButton.addDelegate(this);
-			}
 		},
 
 		buildStateDelegate: function() {
@@ -296,222 +293,13 @@
 		unApplyFilter: unApplyFilter,
 
 		// As filterMentuButtonDelegate
-
 		/**
-		 * Called by the CMFilterMenuButton when click
-		 * to on the save icon on a row of the picker
-		 *
-		 * @param {object} filter, the filter to save
-		 * @param {CMDBuild.view.management.common.filter.CMFilterMenuButton} button
-		 * the button that calls the delegate
-		 */
-		onFilterMenuButtonSaveActionClick: function(button, filter) {
-			if (!filter.dirty) {
-				return;
-			}
-
-			showSaveFilterDialog(this, filter);
-		},
-
-		/**
-		 * Called by the CMFilterMenuButton when click
-		 * to the clear button
-		 */
-		onFilterMenuButtonClearActionClick: function(button) {
-			unApplyFilter(this);
-			this.view.reload();
-		},
-
-		/**
-		 * Called by the CMFilterMenuButton when click
-		 * to on the apply icon on a row of the picker
+		 * Called by the CMFilterMenuButton when click to on the apply icon on a row of the picker
 		 *
 		 * @param {object} filter, the filter to apply
 		 */
 		onFilterMenuButtonApplyActionClick: function(button, filter) {
 			applyFilter(this, filter);
-		},
-
-		/**
-		 * Called by the CMFilterMenuButton when click
-		 * to the new button
-		 */
-		onFilterMenuButtonNewActionClick: function(button) {
-			var filter = new CMDBuild.model.CMFilterModel({
-				entryType: this.getEntryType(),
-				local: true,
-				name: CMDBuild.Translation.management.findfilter.newfilter + " " + _CMUtils.nextId()
-			});
-
-			this.onFilterMenuButtonModifyActionClick(button, filter);
-		},
-
-		/**
-		 * Called by the CMFilterMenuButton when click
-		 * to on the modify icon on a row of the picker
-		 *
-		 * @param {object} filter, the filter to modify
-		 * @param {CMDBuild.view.management.common.filter.CMFilterMenuButton} button
-		 * the button that calls the delegate
-		 */
-		onFilterMenuButtonCloneActionClick: function(button, filter) {
-			filter.set("id", "");
-			filter.setLocal(true);
-			filter.setName(CMDBuild.Translation.management.findfilter.copyof + " " + filter.getName());
-			this.onFilterMenuButtonModifyActionClick(button, filter);
-		},
-
-		/**
-		 * Called by the CMFilterMenuButton when click to on the modify icon on a row of the picker
-		 *
-		 * @param {Object} filter - the filter to modify
-		 */
-		onFilterMenuButtonModifyActionClick: function(button, filter) {
-			var filterWindow = Ext.create('CMDBuild.view.management.common.filter.CMFilterWindow', {
-				filter: filter,
-				attributes: this.view.classAttributes,
-				className: _CMCache.getEntryTypeNameById(this.view.currentClassId),
-				filterTabToEnable: {
-					attributeTab: true,
-					relationTab: true,
-					functionTab: false
-				}
-			});
-
-			filterWindow.addDelegate(this);
-			filterWindow.show();
-		},
-
-		/**
-		 * Called by the CMFilterMenuButton when click
-		 * to on the remove icon on a row of the picker
-		 *
-		 * @param {object} filter, the filter to remove
-		 */
-		onFilterMenuButtonRemoveActionClick: function(button, filter) {
-			var me = this;
-
-			function onSuccess() {
-				if (filter.isApplied()) {
-					me.onFilterMenuButtonClearActionClick(button);
-				}
-
-				removeFilterFromStore(me, filter);
-				button.setFilterButtonLabel();
-			}
-
-			function makeRequest(btn) {
-				if (btn != 'yes') {
-					return;
-				}
-
-				if (filter.isLocal()) {
-					onSuccess();
-				} else {
-					CMDBuild.proxy.Filter.remove({
-						params: {
-							id: filter.getId()
-						},
-						loadMask: false,
-						success: onSuccess
-					});
-				}
-			};
-
-			Ext.Msg.confirm(CMDBuild.Translation.management.findfilter.msg.attention, CMDBuild.Translation.common.confirmpopup.areyousure, makeRequest, this);
-		},
-
-		// as cmFilterWindow
-
-		/**
-		 * @params {CMDBuild.view.management.common.filter.CMFilterWindow} filterWindow
-		 * The filter window that call the delegate
-		 */
-		onCMFilterWindowSaveAndApplyButtonClick: function(filterWindow, filter) {
-			showSaveFilterDialog(this, filter, filterWindow);
-		},
-
-		/**
-		 * @params {CMDBuild.view.management.common.filter.CMFilterWindow} filterWindow
-		 * The filter window that call the delegate
-		 */
-		onCMFilterWindowApplyButtonClick: function(filterWindow, filter) {
-			applyFilter(this, filter);
-			if (filterWindow) {
-				filterWindow.destroy();
-			}
-		},
-
-		/**
-		 * @params {CMDBuild.view.management.common.filter.CMFilterWindow} filterWindow
-		 * The filter window that call the delegate
-		 */
-		onCMFilterWindowAbortButtonClick: function(filterWindow) {
-			filterWindow.destroy();
-		},
-
-		// as saveFilterWindow
-
-		/**
-		 * @param {CMDBuild.view.management.common.filter.CMSaveFilterWindow} window
-		 * the window that calls the delegate
-		 * @param {CMDBuild.model.CMFilterModel} filter
-		 * the filter to save
-		 * @param {String} name
-		 * the name set in the form
-		 * @param {String} the description set in the form
-		 */
-		onSaveFilterWindowConfirm: function(saveFilterWindow, filter, name, description) {
-			var me = this;
-			function onSuccess() {
-				me.view.filterMenuButton.load();
-
-				if (saveFilterWindow.referredFilterWindow) {
-					me.onCMFilterWindowApplyButtonClick(saveFilterWindow.referredFilterWindow, filter);
-				}
-
-				saveFilterWindow.destroy();
-				me.view.selectAppliedFilter();
-
-				if (filter.isApplied()) {
-					var s = (Ext.String.trim(filter.getDescription()) == "") ? filter.getName() : filter.getDescription();
-					me.view.setFilterButtonLabel(s);
-				}
-			}
-
-			removeFilterFromStore(me, filter);
-
-			filter.setName(name);
-			filter.setDescription(description);
-			filter.commit();
-
-			if (filter.getId()) {
-				CMDBuild.proxy.Filter.update({
-					params: {
-						id: filter.getId(),
-						className: filter.getEntryType(),
-						configuration: Ext.encode(filter.getConfiguration()),
-						description: filter.getDescription(),
-						name: filter.getName(),
-						template: filter.isTemplate()
-					},
-					loadMask: false,
-					success: onSuccess
-				});
-			} else {
-				CMDBuild.proxy.Filter.create({
-					params: {
-						id: filter.getId(),
-						className: filter.getEntryType(),
-						configuration: Ext.encode(filter.getConfiguration()),
-						description: filter.getDescription(),
-						name: filter.getName(),
-						template: filter.isTemplate()
-					},
-					loadMask: false,
-					success: onSuccess
-				});
-			}
 		},
 
 		// as runtimeFilterParamsWindow
@@ -523,19 +311,11 @@
 	});
 
 	function getFilterStore(me) {
-		return me.view.filterMenuButton.getFilterStore();
-	}
-
-	function removeFilterFromStore(me, filter) {
-		_CMCache.removeFilter(getFilterStore(me), filter);
+		return me.view.controllerAdvancedFilterButtons.getView().getFilterStore();
 	}
 
 	function addFilterToStore(me, filter, atFirst) {
 		_CMCache.addFilter(getFilterStore(me), filter, atFirst);
-	}
-
-	function updateFilterToStore(me, filter) {
-		_CMCache.updateFilter(getFilterStore(me), filter);
 	}
 
 	function setStoredFilterApplied(me, filter) {

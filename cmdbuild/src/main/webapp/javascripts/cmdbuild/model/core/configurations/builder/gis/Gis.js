@@ -61,6 +61,8 @@
 		 * @param {Array or String} property
 		 *
 		 * @returns {Mixed}
+		 *
+		 * @override
 		 */
 		get: function (property) {
 			if (!Ext.isEmpty(property) && Ext.isArray(property)) {

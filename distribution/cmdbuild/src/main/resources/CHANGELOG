@@ -132,6 +132,8 @@ FIXES
 
  * Cannot load interface when "translations" directory contains unexpected files
 
+ * Search filter popup dialog visible also if grid is no more displayed
+
 
 
 

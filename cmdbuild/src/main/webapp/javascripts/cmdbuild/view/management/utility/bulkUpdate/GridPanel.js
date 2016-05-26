@@ -95,8 +95,7 @@
 		border: true,
 
 		constructor: function(c) {
-			this.mixins.delegable.constructor.call(this,
-				"CMDBuild.view.management.utility.bulkUpdate.CMCardGridDelegate");
+			this.mixins.delegable.constructor.call(this, "CMDBuild.view.management.utility.bulkUpdate.CMCardGridDelegate");
 
 			this.callParent(arguments);
 		},
@@ -173,9 +172,8 @@
 					this.gridSearchField.setValue(""); // clear only the field without reload the grid
 				}
 
-				if (this.filterMenuButton) {
-					this.filterMenuButton.reconfigureForEntryType(_CMCache.getEntryTypeById(classId));
-				}
+				if (this.cmAdvancedFilter)
+					this.controllerAdvancedFilterButtons.cmfg('entryTypeSet', { value: _CMCache.getEntryTypeById(classId).getData() });
 
 				if (me.printGridMenu) {
 					me.printGridMenu.setDisabled(!classId);
@@ -499,16 +497,24 @@
 			};
 		},
 
-		disableFilterMenuButton: function() {
-			if (this.cmAdvancedFilter) {
-				this.filterMenuButton.disable();
-			}
+		/**
+		 * Forwarder method
+		 *
+		 * @returns {Void}
+		 */
+		disableFilterMenuButton: function () {
+			if (this.cmAdvancedFilter)
+				this.controllerAdvancedFilterButtons.getView().disable();
 		},
 
-		enableFilterMenuButton: function() {
-			if (this.cmAdvancedFilter) {
-				this.filterMenuButton.enable();
-			}
+		/**
+		 * Forwarder method
+		 *
+		 * @returns {Void}
+		 */
+		enableFilterMenuButton: function () {
+			if (this.cmAdvancedFilter)
+				this.controllerAdvancedFilterButtons.getView().enable();
 		},
 
 		applyFilterToStore: function(filter) {
@@ -534,16 +540,13 @@
 		}
 
 		if (me.cmAdvancedFilter) {
-			me.filterMenuButton = new CMDBuild.view.management.common.filter.CMFilterMenuButton();
-			_CMUtils.forwardMethods(me, me.filterMenuButton, [
+			me.controllerAdvancedFilterButtons = Ext.create('CMDBuild.controller.common.entryTypeGrid.filter.advanced.Advanced', { masterGrid: me });
+			_CMUtils.forwardMethods(me, me.controllerAdvancedFilterButtons.getView(), [
 				"enableClearFilterButton",
 				"disableClearFilterButton",
-				"enableSaveFilterButton",
-				"disableSaveFilterButton",
-				"setFilterButtonLabel",
-				"selectAppliedFilter"
+				"setFilterButtonLabel"
 			]);
-			items.push(me.filterMenuButton);
+			items.push(me.controllerAdvancedFilterButtons.getView());
 		}
 
 		if (me.cmAddPrintButton) {

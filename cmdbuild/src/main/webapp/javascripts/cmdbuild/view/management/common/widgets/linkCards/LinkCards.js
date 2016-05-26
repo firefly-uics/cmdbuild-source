@@ -68,9 +68,9 @@
 						items: [
 							this.toggleGridFilterButton = Ext.create('CMDBuild.core.buttons.iconized.state.Double', {
 								state1text: CMDBuild.Translation.disableGridFilter,
-								state1icon: 'clear_filter',
+								state1icon: 'searchFilterClear',
 								state2text: CMDBuild.Translation.enableGridFilter,
-								state2icon: 'find',
+								state2icon: 'searchFilter',
 								disabled: true,
 								scope: this,
 

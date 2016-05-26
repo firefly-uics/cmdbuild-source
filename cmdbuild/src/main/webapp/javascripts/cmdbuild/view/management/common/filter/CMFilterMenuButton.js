@@ -1,7 +1,7 @@
 (function() {
 
 	/**
-	 * @deprecated new class (CMDBuild.view.common.field.filter.advanced.Advanced)
+	 * @deprecated CMDBuild.controller.common.entryTypeGrid.filter.advanced.Advanced
 	 */
 
 	// Constants to identify the icons that the user
@@ -52,7 +52,7 @@
 
 			this.showListButton = new Ext.button.Button({
 				text: FILTER_BUTTON_LABEL,
-				iconCls: 'find',
+				iconCls: 'searchFilter',
 				enableToggle: true,
 				toggleHandler: function(button, state) {
 					return showPicker(me, button, state);
@@ -61,7 +61,7 @@
 
 			this.clearButton = new Ext.button.Button({
 				text: CLEAR_FILTER_BUTTON_LABEL,
-				iconCls: "clear_filter",
+				iconCls: "searchFilterClear",
 				disabled: true,
 				handler: function() {
 					me.callDelegates("onFilterMenuButtonClearActionClick", me);
