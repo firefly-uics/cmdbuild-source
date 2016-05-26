@@ -54,8 +54,8 @@ public abstract class ForwardingTaskManagerLogic extends ForwardingObject implem
 	}
 
 	@Override
-	public void execute(final Task task) {
-		delegate().execute(task);
+	public void execute(final Long id) {
+		delegate().execute(id);
 	}
 
 }

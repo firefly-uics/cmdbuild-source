@@ -214,6 +214,7 @@ public class Synchronous extends JSONBaseWithSpringContext {
 		return JsonResponse.success(id);
 	}
 
+	@Admin
 	@JSONExported
 	public JsonResponse read( //
 			@Parameter(value = ID) final Long id //
@@ -225,6 +226,7 @@ public class Synchronous extends JSONBaseWithSpringContext {
 		return JsonResponse.success(new JsonSynchronousEventTask(readed));
 	}
 
+	@Admin
 	@JSONExported
 	public JsonResponse readAll() {
 		final Iterable<? extends Task> tasks = taskManagerLogic().read(SynchronousEventTask.class);

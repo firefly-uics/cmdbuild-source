@@ -539,6 +539,7 @@ public class Connector extends JSONBaseWithSpringContext {
 		return success(id);
 	}
 
+	@Admin
 	@JSONExported
 	public JsonResponse read( //
 			@Parameter(value = ID) final Long id //
@@ -550,6 +551,7 @@ public class Connector extends JSONBaseWithSpringContext {
 		return success(new JsonConnectorTask(readed));
 	}
 
+	@Admin
 	@JSONExported
 	public JsonResponse readAll() {
 		final Iterable<? extends Task> tasks = taskManagerLogic().read(ConnectorTask.class);
@@ -597,18 +599,6 @@ public class Connector extends JSONBaseWithSpringContext {
 				.withId(id) //
 				.build();
 		taskManagerLogic().delete(task);
-	}
-
-	@Admin
-	@JSONExported
-	public JsonResponse execute( //
-			@Parameter(ID) final Long id //
-	) {
-		final ConnectorTask task = ConnectorTask.newInstance() //
-				.withId(id) //
-				.build();
-		taskManagerLogic().execute(task);
-		return success();
 	}
 
 	/*
