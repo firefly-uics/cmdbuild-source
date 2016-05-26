@@ -3,6 +3,7 @@
 	/**
 	 * Reads the size in percentage in the configuration file and create a modal popup-window
 	 *
+	 * @deprecated (CMDBuild.core.window.AbstractCustomModal)
 	 * @abstract
 	 */
 	Ext.define('CMDBuild.core.window.AbstractModal', {

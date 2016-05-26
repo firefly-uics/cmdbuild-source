@@ -78,22 +78,14 @@
 
 		// configuration
 		columns: [],
-		extraParams: undefined, // extra params for the store
-		forceSelectionOfFirst: false, // listen load event and select the first row
-		skipSelectFirst: false,
-		cmPaginate: false, // to say if build or not a paging bar, default true
-		cmBasicFilter: true, // to add a basic search-field to the paging bar
-		cmAdvancedFilter: true, // to add a button to set an advanced filter
-		cmAddGraphColumn: false, // to say if build or not a column to open the mystical graph window, default true
-		cmAddPrintButton: true, // to add a button to set an chose the print format
+		extraParams: {}, // extra params for the store
 		// configuration
 
 		border: false,
 		cls: 'cmdb-border-top cmdb-border-bottom',
 
 		constructor: function(c) {
-			this.mixins.delegable.constructor.call(this,
-				"CMDBuild.view.management.utility.importCsv.CMCardGridDelegate");
+			this.mixins.delegable.constructor.call(this, "CMDBuild.view.management.utility.importCsv.CMCardGridDelegate");
 
 			this.cellEditing = Ext.create('Ext.grid.plugin.CellEditing', {
 				clicksToEdit : 1,
@@ -171,10 +163,6 @@
 			this.loadMask = false;
 			this.store = this.getStoreForFields([]);
 
-			if (this.cmPaginate) {
-				buildPagingBar(this);
-			}
-
 			this.viewConfig = {
 				stripeRows: true,
 				// Business rule: voluntarily hide the horizontal scroll-bar
@@ -248,16 +236,6 @@
 			}
 		},
 
-		shouldSelectFirst: function() {
-			var out = this.forceSelectionOfFirst && !this.skipSelectFirst;
-			this.skipSelectFirst = false;
-			return out;
-		},
-
-		skipNextSelectFirst: function() {
-			this.skipSelectFirst = true;
-		},
-
 		updateStoreForClassId: function(classId, o) {
 
 			var me = this;
@@ -277,10 +255,6 @@
 
 				if (this.gridSearchField) {
 					this.gridSearchField.setValue(""); // clear only the field without reload the grid
-				}
-
-				if (this.filterMenuButton) {
-					this.filterMenuButton.reconfigureForEntryType(_CMCache.getEntryTypeById(classId));
 				}
 
 				if (me.printGridMenu) {
@@ -511,10 +485,6 @@
 				}
 			}
 
-			if (this.cmAddGraphColumn && CMDBuild.configuration.graph.get(CMDBuild.core.constants.Proxy.ENABLED)) {
-				buildGraphIconColumn.call(this, headers);
-			}
-
 			return {
 				headers: headers,
 				fields: fields
@@ -613,18 +583,6 @@
 			};
 		},
 
-		disableFilterMenuButton: function() {
-			if (this.cmAdvancedFilter) {
-				this.filterMenuButton.disable();
-			}
-		},
-
-		enableFilterMenuButton: function() {
-			if (this.cmAdvancedFilter) {
-				this.filterMenuButton.enable();
-			}
-		},
-
 		applyFilterToStore: function(filter) {
 			try {
 				var encoded = filter;
@@ -638,53 +596,6 @@
 			}
 		}
 	});
-
-
-	function buildPagingBar(me) {
-		var items = [];
-
-		if (me.cmBasicFilter) {
-			me.gridSearchField = new CMDBuild.field.GridSearchField({grid: me});
-			items.push(me.gridSearchField);
-		}
-
-		if (me.cmAdvancedFilter) {
-			me.filterMenuButton = new CMDBuild.view.management.common.filter.CMFilterMenuButton();
-			_CMUtils.forwardMethods(me, me.filterMenuButton, [
-				"enableClearFilterButton",
-				"disableClearFilterButton",
-				"enableSaveFilterButton",
-				"disableSaveFilterButton",
-				"setFilterButtonLabel",
-				"selectAppliedFilter"
-			]);
-			items.push(me.filterMenuButton);
-		}
-
-		if (me.cmAddPrintButton) {
-			me.printGridMenu = Ext.create('CMDBuild.core.buttons.iconized.split.Print', {
-				formatList: [
-					CMDBuild.core.constants.Proxy.PDF,
-					CMDBuild.core.constants.Proxy.CSV
-				],
-				mode: 'legacy',
-				disabled: true
-			});
-
-			items.push(me.printGridMenu);
-		}
-
-		me.pagingBar = new CMDBuild.view.management.utility.importCsv.CMCardGridPagingBar({
-			grid: me,
-			store: me.store,
-			displayInfo: true,
-			displayMsg: ' {0} - {1} ' + CMDBuild.Translation.common.display_topic_of+' {2}',
-			emptyMsg: CMDBuild.Translation.common.display_topic_none,
-			items: items
-		});
-
-		me.bbar = me.pagingBar;
-	}
 
 	/**
 	 * @param {Array} headers

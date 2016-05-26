@@ -10,11 +10,19 @@
 		 */
 		delegate: undefined,
 
+		/**
+		 * @property {CMDBuild.controller.common.entryTypeGrid.filter.advanced.Advanced}
+		 */
+		controllerAdvancedFilterButtons: undefined,
+
 		border: false,
 		cls: 'cmdb-border-bottom',
 		frame: false,
 
 		initComponent: function() {
+			this.controllerAdvancedFilterButtons = Ext.create('CMDBuild.controller.common.entryTypeGrid.filter.advanced.Advanced', { masterGrid: this });
+			this.controllerAdvancedFilterButtons.cmfg('onEntryTypeGridFilterAdvancedDisable'); // Disable advanced filter buttons
+
 			Ext.apply(this, { store: this.delegate.cmfg('dataViewSqlBuildStore') });
 
 			Ext.apply(this, {
@@ -38,7 +46,7 @@
 						emptyMsg: CMDBuild.Translation.common.display_topic_none,
 						items: [
 							new CMDBuild.field.GridSearchField({ grid: this }),
-							new CMDBuild.view.management.common.filter.CMFilterMenuButton({ disabled: true }),
+							this.controllerAdvancedFilterButtons.getView(),
 							Ext.create('CMDBuild.core.buttons.iconized.split.Print', {
 								delegate: this.delegate,
 								formatList: [
