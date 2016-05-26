@@ -428,7 +428,7 @@
 		// protected
 		buildClassColumn: function () {
 			return {
-				header: CMDBuild.Translation.management.modcard.subclass,
+				header: CMDBuild.Translation.subClass,
 				width: 100,
 				sortable: false,
 				dataIndex: 'IdClass_value'

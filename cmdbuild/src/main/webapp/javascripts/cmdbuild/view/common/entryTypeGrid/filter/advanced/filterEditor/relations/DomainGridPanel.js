@@ -1,5 +1,8 @@
 (function () {
 
+	/**
+	 * @link CMDBuild.view.management.common.filter.CMDomainGrid
+	 */
 	Ext.define('CMDBuild.view.common.entryTypeGrid.filter.advanced.filterEditor.relations.DomainGridPanel', {
 		extend: 'Ext.grid.Panel',
 

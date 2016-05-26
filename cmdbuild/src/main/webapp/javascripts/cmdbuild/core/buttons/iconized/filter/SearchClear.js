@@ -4,7 +4,7 @@
 		extend: 'CMDBuild.core.buttons.Base',
 
 		iconCls: 'searchFilterClear',
-		textDefault: CMDBuild.Translation.management.findfilter.clear_filter
+		textDefault: CMDBuild.Translation.clearFilter
 	});
 
 })();

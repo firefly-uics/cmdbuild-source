@@ -13,8 +13,8 @@
 		cloneFilter: "action-filter-clone"
 	};
 
-	var FILTER_BUTTON_LABEL = CMDBuild.Translation.management.findfilter.set_filter;
-	var CLEAR_FILTER_BUTTON_LABEL = CMDBuild.Translation.management.findfilter.clear_filter;
+	var FILTER_BUTTON_LABEL = CMDBuild.Translation.searchFilter;
+	var CLEAR_FILTER_BUTTON_LABEL = CMDBuild.Translation.clearFilter;
 
 	var TOOLTIP = {
 		save: CMDBuild.Translation.save,
@@ -154,22 +154,21 @@
 		}
 	});
 
-	var translation = CMDBuild.Translation.management.findfilter;
 	var operator = CMDBuild.WidgetBuilders.BaseAttribute.FilterOperator;
 	var CONDITION_TRANSLATION_MAP = {};
-	CONDITION_TRANSLATION_MAP[operator.EQUAL] = translation.equals;
-	CONDITION_TRANSLATION_MAP[operator.NOT_EQUAL] = translation.different;
-	CONDITION_TRANSLATION_MAP[operator.NULL] = translation.nullo;
-	CONDITION_TRANSLATION_MAP[operator.NOT_NULL] = translation.notnull;
-	CONDITION_TRANSLATION_MAP[operator.GREATER_THAN] = translation.major;
-	CONDITION_TRANSLATION_MAP[operator.LESS_THAN] = translation.minor;
-	CONDITION_TRANSLATION_MAP[operator.BETWEEN] = translation.between;
-	CONDITION_TRANSLATION_MAP[operator.CONTAIN] = translation.like;
-	CONDITION_TRANSLATION_MAP[operator.NOT_CONTAIN] = translation.dontlike;
-	CONDITION_TRANSLATION_MAP[operator.BEGIN] = translation.begin;
-	CONDITION_TRANSLATION_MAP[operator.NOT_BEGIN] = translation.dontbegin;
-	CONDITION_TRANSLATION_MAP[operator.END] = translation.end;
-	CONDITION_TRANSLATION_MAP[operator.NOT_END] = translation.dontend;
+	CONDITION_TRANSLATION_MAP[operator.EQUAL] = CMDBuild.Translation.equals;
+	CONDITION_TRANSLATION_MAP[operator.NOT_EQUAL] = CMDBuild.Translation.different;
+	CONDITION_TRANSLATION_MAP[operator.NULL] = CMDBuild.Translation.isNull;
+	CONDITION_TRANSLATION_MAP[operator.NOT_NULL] = CMDBuild.Translation.isNotNull;
+	CONDITION_TRANSLATION_MAP[operator.GREATER_THAN] = CMDBuild.Translation.greaterThan;
+	CONDITION_TRANSLATION_MAP[operator.LESS_THAN] = CMDBuild.Translation.lessThan;
+	CONDITION_TRANSLATION_MAP[operator.BETWEEN] = CMDBuild.Translation.between;
+	CONDITION_TRANSLATION_MAP[operator.CONTAIN] = CMDBuild.Translation.contains;
+	CONDITION_TRANSLATION_MAP[operator.NOT_CONTAIN] = CMDBuild.Translation.doesNotContain;
+	CONDITION_TRANSLATION_MAP[operator.BEGIN] = CMDBuild.Translation.beginsWith;
+	CONDITION_TRANSLATION_MAP[operator.NOT_BEGIN] = CMDBuild.Translation.doesNotBeginWith;
+	CONDITION_TRANSLATION_MAP[operator.END] = CMDBuild.Translation.endsWith;
+	CONDITION_TRANSLATION_MAP[operator.NOT_END] = CMDBuild.Translation.doesNotEndWith;
 
 	Ext.define("CMDBuild.view.management.common.filter.CMRuntimeParameterWindowField", {
 		extend: "Ext.form.FieldContainer",
@@ -264,7 +263,7 @@
 
 			this.buttonAlign = "center";
 			this.buttons = [{
-				text:  CMDBuild.Translation.management.findfilter.apply,
+				text:  CMDBuild.Translation.apply,
 				handler: function() {
 					me.callDelegates("onRuntimeParameterWindowSaveButtonClick", [me, me.filter]);
 				}
@@ -414,7 +413,7 @@
 				hideHeaders: true,
 				store: store,
 				tbar: [{
-					text: CMDBuild.Translation.management.findfilter.add,
+					text: CMDBuild.Translation.add,
 					iconCls: "add",
 					handler: function() {
 						me.fireEvent("addFilter");

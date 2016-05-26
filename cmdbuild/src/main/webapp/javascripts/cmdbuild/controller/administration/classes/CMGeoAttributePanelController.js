@@ -114,7 +114,7 @@
 
 	function onCancelButtonFormClick() {
 		Ext.Msg.show({
-			title: CMDBuild.Translation.management.findfilter.msg.attention,
+			title: CMDBuild.Translation.attention,
 			msg: CMDBuild.Translation.common.confirmpopup.areyousure,
 			scope: this,
 			buttons: Ext.Msg.YESNO,

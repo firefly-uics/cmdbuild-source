@@ -318,7 +318,7 @@
 			var filter = this.filter || Ext.create('CMDBuild.model.CMFilterModel', {
 				entryType: className,
 				local: true,
-				name: CMDBuild.Translation.management.findfilter.newfilter + ' ' + _CMUtils.nextId()
+				name: CMDBuild.Translation.newSearchFilter + ' ' + _CMUtils.nextId()
 			});
 
 			var entryType = _CMCache.getEntryTypeByName(className);
