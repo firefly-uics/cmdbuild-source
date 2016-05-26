@@ -1,6 +1,7 @@
 package org.cmdbuild.servlets.json.schema;
 
 import static com.google.common.collect.FluentIterable.from;
+import static org.cmdbuild.services.json.dto.JsonResponse.success;
 import static org.cmdbuild.servlets.json.CommunicationConstants.ACTIVE;
 import static org.cmdbuild.servlets.json.CommunicationConstants.DESCRIPTION;
 import static org.cmdbuild.servlets.json.CommunicationConstants.ELEMENTS;
@@ -170,27 +171,39 @@ public class TaskManager extends JSONBaseWithSpringContext {
 
 	};
 
+	@Admin
 	@JSONExported
 	public JsonResponse readAll() {
 		final Iterable<Task> tasks = taskManagerLogic().read();
-		return JsonResponse.success(JsonElements.of(from(tasks) //
+		return success(JsonElements.of(from(tasks) //
 				.transform(TASK_TO_JSON_TASK)));
 	}
 
+	@Admin
 	@JSONExported
 	public JsonResponse start( //
 			@Parameter(value = ID) final Long id //
 	) {
 		taskManagerLogic().activate(id);
-		return JsonResponse.success();
+		return success();
 	}
 
+	@Admin
 	@JSONExported
 	public JsonResponse stop( //
 			@Parameter(value = ID) final Long id //
 	) {
 		taskManagerLogic().deactivate(id);
-		return JsonResponse.success();
+		return success();
+	}
+
+	@Admin
+	@JSONExported
+	public JsonResponse execute( //
+			@Parameter(value = ID) final Long id //
+	) {
+		taskManagerLogic().execute(id);
+		return success();
 	}
 
 }

@@ -730,17 +730,10 @@ public class DefaultTaskManagerLogicTest {
 	@Test(expected = UnsupportedOperationException.class)
 	public void synchronousEventTaskCannotBeExecuted() throws Exception {
 		// given
-		final SynchronousEventTask task = SynchronousEventTask.newInstance() //
-				.build();
-		final org.cmdbuild.data.store.task.SynchronousEventTask storable = org.cmdbuild.data.store.task.SynchronousEventTask
-				.newInstance() //
-				.build();
-		when(logicAsSourceConverter.toStore()) //
-				.thenReturn(storable);
 		final org.cmdbuild.data.store.task.SynchronousEventTask stored = org.cmdbuild.data.store.task.SynchronousEventTask
 				.newInstance() //
 				.build();
-		when(store.read(any(Storable.class))) //
+		when(store.read(anyLong())) //
 				.thenReturn(stored);
 		final SynchronousEventTask storedTask = SynchronousEventTask.newInstance() //
 				.build();
@@ -749,14 +742,12 @@ public class DefaultTaskManagerLogicTest {
 
 		// when
 		try {
-			taskManagerLogic.execute(task);
+			taskManagerLogic.execute(ID);
 		} finally {
 			// then
 			final InOrder inOrder = inOrder(converter, logicAsSourceConverter, storeAsSourceConverter, store,
 					scheduledTaskFacade, synchronousEventFacade, emailLogic);
-			inOrder.verify(converter).from(eq(task));
-			inOrder.verify(logicAsSourceConverter).toStore();
-			inOrder.verify(store).read(eq(storable));
+			inOrder.verify(store).read(eq(ID));
 			inOrder.verify(converter).from(eq(stored));
 			inOrder.verify(storeAsSourceConverter).toLogic();
 			inOrder.verifyNoMoreInteractions();
@@ -766,17 +757,10 @@ public class DefaultTaskManagerLogicTest {
 	@Test
 	public void asynchronousEventTaskExecuted() throws Exception {
 		// given
-		final AsynchronousEventTask task = AsynchronousEventTask.newInstance() //
-				.build();
-		final org.cmdbuild.data.store.task.AsynchronousEventTask storable = org.cmdbuild.data.store.task.AsynchronousEventTask //
-				.newInstance() //
-				.build();
-		when(logicAsSourceConverter.toStore()) //
-				.thenReturn(storable);
 		final org.cmdbuild.data.store.task.AsynchronousEventTask stored = org.cmdbuild.data.store.task.AsynchronousEventTask
 				.newInstance() //
 				.build();
-		when(store.read(any(Storable.class))) //
+		when(store.read(anyLong())) //
 				.thenReturn(stored);
 		final AsynchronousEventTask storedTask = AsynchronousEventTask.newInstance() //
 				.build();
@@ -784,14 +768,12 @@ public class DefaultTaskManagerLogicTest {
 				.thenReturn(storedTask);
 
 		// when
-		taskManagerLogic.execute(task);
+		taskManagerLogic.execute(ID);
 
 		// then
 		final InOrder inOrder = inOrder(converter, logicAsSourceConverter, storeAsSourceConverter, store,
 				scheduledTaskFacade, synchronousEventFacade, emailLogic);
-		inOrder.verify(converter).from(eq(task));
-		inOrder.verify(logicAsSourceConverter).toStore();
-		inOrder.verify(store).read(eq(storable));
+		inOrder.verify(store).read(eq(ID));
 		inOrder.verify(converter).from(eq(stored));
 		inOrder.verify(storeAsSourceConverter).toLogic();
 		inOrder.verify(scheduledTaskFacade).execute(eq(storedTask), any(Callback.class));
@@ -801,17 +783,10 @@ public class DefaultTaskManagerLogicTest {
 	@Test
 	public void connectorTaskExecuted() throws Exception {
 		// given
-		final ConnectorTask task = ConnectorTask.newInstance() //
-				.build();
-		final org.cmdbuild.data.store.task.ConnectorTask storable = org.cmdbuild.data.store.task.ConnectorTask //
-				.newInstance() //
-				.build();
-		when(logicAsSourceConverter.toStore()) //
-				.thenReturn(storable);
 		final org.cmdbuild.data.store.task.ConnectorTask stored = org.cmdbuild.data.store.task.ConnectorTask
 				.newInstance() //
 				.build();
-		when(store.read(any(Storable.class))) //
+		when(store.read(anyLong())) //
 				.thenReturn(stored);
 		final ConnectorTask storedTask = ConnectorTask.newInstance() //
 				.build();
@@ -819,14 +794,12 @@ public class DefaultTaskManagerLogicTest {
 				.thenReturn(storedTask);
 
 		// when
-		taskManagerLogic.execute(task);
+		taskManagerLogic.execute(ID);
 
 		// then
 		final InOrder inOrder = inOrder(converter, logicAsSourceConverter, storeAsSourceConverter, store,
 				scheduledTaskFacade, synchronousEventFacade, emailLogic);
-		inOrder.verify(converter).from(eq(task));
-		inOrder.verify(logicAsSourceConverter).toStore();
-		inOrder.verify(store).read(eq(storable));
+		inOrder.verify(store).read(eq(ID));
 		inOrder.verify(converter).from(eq(stored));
 		inOrder.verify(storeAsSourceConverter).toLogic();
 		inOrder.verify(scheduledTaskFacade).execute(eq(storedTask), any(Callback.class));
@@ -836,17 +809,10 @@ public class DefaultTaskManagerLogicTest {
 	@Test
 	public void readEmailTaskExecuted() throws Exception {
 		// given
-		final ReadEmailTask task = ReadEmailTask.newInstance() //
-				.build();
-		final org.cmdbuild.data.store.task.ReadEmailTask storable = org.cmdbuild.data.store.task.ReadEmailTask //
-				.newInstance() //
-				.build();
-		when(logicAsSourceConverter.toStore()) //
-				.thenReturn(storable);
 		final org.cmdbuild.data.store.task.ReadEmailTask stored = org.cmdbuild.data.store.task.ReadEmailTask
 				.newInstance() //
 				.build();
-		when(store.read(any(Storable.class))) //
+		when(store.read(anyLong())) //
 				.thenReturn(stored);
 		final ReadEmailTask storedTask = ReadEmailTask.newInstance() //
 				.build();
@@ -854,14 +820,12 @@ public class DefaultTaskManagerLogicTest {
 				.thenReturn(storedTask);
 
 		// when
-		taskManagerLogic.execute(task);
+		taskManagerLogic.execute(ID);
 
 		// then
 		final InOrder inOrder = inOrder(converter, logicAsSourceConverter, storeAsSourceConverter, store,
 				scheduledTaskFacade, synchronousEventFacade, emailLogic);
-		inOrder.verify(converter).from(eq(task));
-		inOrder.verify(logicAsSourceConverter).toStore();
-		inOrder.verify(store).read(eq(storable));
+		inOrder.verify(store).read(eq(ID));
 		inOrder.verify(converter).from(eq(stored));
 		inOrder.verify(storeAsSourceConverter).toLogic();
 		inOrder.verify(scheduledTaskFacade).execute(eq(storedTask), any(Callback.class));
@@ -871,17 +835,10 @@ public class DefaultTaskManagerLogicTest {
 	@Test
 	public void startProcessTaskExecuted() throws Exception {
 		// given
-		final StartWorkflowTask task = StartWorkflowTask.newInstance() //
-				.build();
-		final org.cmdbuild.data.store.task.StartWorkflowTask storable = org.cmdbuild.data.store.task.StartWorkflowTask //
-				.newInstance() //
-				.build();
-		when(logicAsSourceConverter.toStore()) //
-				.thenReturn(storable);
 		final org.cmdbuild.data.store.task.StartWorkflowTask stored = org.cmdbuild.data.store.task.StartWorkflowTask
 				.newInstance() //
 				.build();
-		when(store.read(any(Storable.class))) //
+		when(store.read(anyLong())) //
 				.thenReturn(stored);
 		final StartWorkflowTask storedTask = StartWorkflowTask.newInstance() //
 				.build();
@@ -889,14 +846,12 @@ public class DefaultTaskManagerLogicTest {
 				.thenReturn(storedTask);
 
 		// when
-		taskManagerLogic.execute(task);
+		taskManagerLogic.execute(ID);
 
 		// then
 		final InOrder inOrder = inOrder(converter, logicAsSourceConverter, storeAsSourceConverter, store,
 				scheduledTaskFacade, synchronousEventFacade, emailLogic);
-		inOrder.verify(converter).from(eq(task));
-		inOrder.verify(logicAsSourceConverter).toStore();
-		inOrder.verify(store).read(eq(storable));
+		inOrder.verify(store).read(eq(ID));
 		inOrder.verify(converter).from(eq(stored));
 		inOrder.verify(storeAsSourceConverter).toLogic();
 		inOrder.verify(scheduledTaskFacade).execute(eq(storedTask), any(Callback.class));

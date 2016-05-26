@@ -301,6 +301,7 @@ public class ReadEmail extends JSONBaseWithSpringContext {
 		return success(id);
 	}
 
+	@Admin
 	@JSONExported
 	public JsonResponse read( //
 			@Parameter(value = ID) final Long id //
@@ -312,6 +313,7 @@ public class ReadEmail extends JSONBaseWithSpringContext {
 		return success(toJson(readed));
 	}
 
+	@Admin
 	@JSONExported
 	public JsonResponse readAll() {
 		final Iterable<? extends Task> tasks = taskManagerLogic().read(ReadEmailTask.class);
@@ -402,18 +404,6 @@ public class ReadEmail extends JSONBaseWithSpringContext {
 				.withId(id) //
 				.build();
 		taskManagerLogic().delete(task);
-	}
-
-	@Admin
-	@JSONExported
-	public JsonResponse execute( //
-			@Parameter(ID) final Long id //
-	) {
-		final ReadEmailTask task = ReadEmailTask.newInstance() //
-				.withId(id) //
-				.build();
-		taskManagerLogic().execute(task);
-		return success();
 	}
 
 	private String lookupValueOf(final Long id) {

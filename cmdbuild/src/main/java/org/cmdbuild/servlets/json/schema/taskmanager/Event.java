@@ -16,6 +16,7 @@ import org.cmdbuild.servlets.json.schema.TaskManager.JsonElements;
 
 public class Event extends JSONBaseWithSpringContext {
 
+	@Admin
 	@JSONExported
 	public JsonResponse readAll() {
 		final Collection<Task> allTasks = newHashSet();

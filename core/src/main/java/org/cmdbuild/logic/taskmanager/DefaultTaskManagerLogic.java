@@ -480,14 +480,14 @@ public class DefaultTaskManagerLogic implements TaskManagerLogic {
 		private final LogicAndStoreConverter converter;
 		private final TaskStore store;
 		private final SchedulerFacade schedulerFacade;
-		private final Task task;
+		private final Long id;
 
 		public Execute(final LogicAndStoreConverter converter, final TaskStore store,
-				final SchedulerFacade schedulerFacade, final Task task) {
+				final SchedulerFacade schedulerFacade, final Long id) {
 			this.converter = converter;
 			this.store = store;
 			this.schedulerFacade = schedulerFacade;
-			this.task = task;
+			this.id = id;
 		}
 
 		@Override
@@ -497,8 +497,8 @@ public class DefaultTaskManagerLogic implements TaskManagerLogic {
 
 		@Override
 		public Void execute() {
-			final org.cmdbuild.data.store.task.Task storable = converter.from(task).toStore();
-			final org.cmdbuild.data.store.task.Task stored = store.read(storable);
+			Validate.isTrue(id != null, "invalid id");
+			final org.cmdbuild.data.store.task.Task stored = store.read(id);
 			final Task executable = converter.from(stored).toLogic();
 			executable.accept(this);
 			return null;
@@ -621,9 +621,9 @@ public class DefaultTaskManagerLogic implements TaskManagerLogic {
 	}
 
 	@Override
-	public void execute(final Task task) {
-		logger.info(MARKER, "executing an existing task '{}'", task);
-		execute(doExecute(task));
+	public void execute(final Long id) {
+		logger.info(MARKER, "executing teh existing task '{}'", id);
+		execute(doExecute(id));
 	}
 
 	private Create doCreate(final Task task) {
@@ -662,8 +662,8 @@ public class DefaultTaskManagerLogic implements TaskManagerLogic {
 		return new DeleteEmails(emailLogic, task);
 	}
 
-	private Execute doExecute(final Task task) {
-		return new Execute(converter, store, schedulerFacade, task);
+	private Execute doExecute(final Long id) {
+		return new Execute(converter, store, schedulerFacade, id);
 	}
 
 	private <T> T execute(final Action<T> action) {
