@@ -29,8 +29,8 @@ public abstract class ForwardingLockLogic extends ForwardingObject implements Lo
 	}
 
 	@Override
-	public void checkCardLockedbyUser(final Long cardId, final String user) {
-		delegate().checkCardLockedbyUser(cardId, user);
+	public void checkCardLockedbyUser(final Long cardId) {
+		delegate().checkCardLockedbyUser(cardId);
 	}
 
 	@Override
@@ -44,8 +44,8 @@ public abstract class ForwardingLockLogic extends ForwardingObject implements Lo
 	}
 
 	@Override
-	public void checkActivityLockedbyUser(final Long instanceId, final String activityId, final String user) {
-		delegate().checkActivityLockedbyUser(instanceId, activityId, user);
+	public void checkActivityLockedbyUser(final Long instanceId, final String activityId) {
+		delegate().checkActivityLockedbyUser(instanceId, activityId);
 	}
 
 	@Override

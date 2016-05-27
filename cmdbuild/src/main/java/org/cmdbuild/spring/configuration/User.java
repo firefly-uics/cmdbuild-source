@@ -139,7 +139,6 @@ public class User {
 	@Qualifier(USER)
 	public UserWorkflowLogicBuilder userWorkflowLogicBuilder() {
 		return new UserWorkflowLogicBuilder( //
-				operationUser(), //
 				operationUser().getPrivilegeContext(), //
 				userWorkflowEngineBuilder(), //
 				userDataView(), //
@@ -159,7 +158,6 @@ public class User {
 	@Qualifier(SOAP)
 	public WebserviceWorkflowLogicBuilder webserviceWorkflowLogicBuilder() {
 		return new WebserviceWorkflowLogicBuilder( //
-				userStore.getUser(), //
 				userStore.getUser().getPrivilegeContext(), //
 				userWorkflowEngineBuilder(), //
 				userDataView(), //

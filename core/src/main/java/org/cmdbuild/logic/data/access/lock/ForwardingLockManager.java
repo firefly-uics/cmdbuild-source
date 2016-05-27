@@ -14,12 +14,12 @@ public abstract class ForwardingLockManager extends ForwardingObject implements 
 	protected abstract LockManager delegate();
 
 	@Override
-	public void lock(final Lockable lockable) throws LockedByAnotherUser {
+	public void lock(final Lockable lockable) throws LockedByAnother {
 		delegate().lock(lockable);
 	}
 
 	@Override
-	public void unlock(final Lockable lockable) throws LockedByAnotherUser {
+	public void unlock(final Lockable lockable) throws LockedByAnother {
 		delegate().unlock(lockable);
 	}
 
@@ -29,14 +29,13 @@ public abstract class ForwardingLockManager extends ForwardingObject implements 
 	}
 
 	@Override
-	public void checkNotLocked(final Lockable lockable) throws LockedByAnotherUser {
+	public void checkNotLocked(final Lockable lockable) throws LockedByAnother {
 		delegate().checkNotLocked(lockable);
 	}
 
 	@Override
-	public void checkLockedByUser(final Lockable lockable, final String userName) throws ExpectedLocked,
-			LockedByAnotherUser {
-		delegate().checkLockedByUser(lockable, userName);
+	public void checkLockedByCurrent(final Lockable lockable) throws ExpectedLocked, LockedByAnother {
+		delegate().checkLockedByCurrent(lockable);
 	}
 
 }

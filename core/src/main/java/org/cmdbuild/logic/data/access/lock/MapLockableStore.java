@@ -2,30 +2,35 @@ package org.cmdbuild.logic.data.access.lock;
 
 import static com.google.common.base.Optional.fromNullable;
 import static com.google.common.collect.Lists.newArrayList;
-import static com.google.common.collect.Maps.newHashMap;
 
 import java.util.Map;
 
 import org.cmdbuild.logic.data.access.lock.LockableStore.Lock;
 
 import com.google.common.base.Optional;
+import com.google.common.collect.ForwardingMap;
 
-public class InMemoryLockableStore<M extends Lock> implements LockableStore<M> {
+public class MapLockableStore<M extends Lock> extends ForwardingMap<Lockable, M> implements LockableStore<M> {
 
-	private final Map<Lockable, M> map;
+	private final Map<Lockable, M> delegate;
 
-	public InMemoryLockableStore() {
-		this.map = newHashMap();
+	public MapLockableStore(final Map<Lockable, M> delegate) {
+		this.delegate = delegate;
+	}
+
+	@Override
+	protected Map<Lockable, M> delegate() {
+		return delegate;
 	}
 
 	@Override
 	public void add(final Lockable lockable, final M lock) {
-		map.put(lockable, lock);
+		delegate().put(lockable, lock);
 	}
 
 	@Override
 	public void remove(final Lockable lockable) {
-		map.remove(lockable);
+		delegate().remove(lockable);
 	}
 
 	@Override
@@ -35,17 +40,17 @@ public class InMemoryLockableStore<M extends Lock> implements LockableStore<M> {
 
 	@Override
 	public Optional<M> get(final Lockable lockable) {
-		return fromNullable(map.get(lockable));
+		return fromNullable(delegate().get(lockable));
 	}
 
 	@Override
 	public Iterable<Lockable> stored() {
-		return newArrayList(map.keySet());
+		return newArrayList(delegate().keySet());
 	}
 
 	@Override
 	public void removeAll() {
-		map.clear();
+		delegate().clear();
 	}
 
 }
