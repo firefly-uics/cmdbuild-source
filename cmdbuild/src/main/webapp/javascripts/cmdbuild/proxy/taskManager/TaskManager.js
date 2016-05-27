@@ -3,9 +3,10 @@
 	Ext.define('CMDBuild.proxy.taskManager.TaskManager', {
 
 		requires: [
+			'CMDBuild.core.configurations.Timeout',
 			'CMDBuild.core.constants.Proxy',
-			'CMDBuild.proxy.index.Json',
-			'CMDBuild.model.taskManager.Grid'
+			'CMDBuild.model.taskManager.Grid',
+			'CMDBuild.proxy.index.Json'
 		],
 
 		singleton: true,
@@ -52,7 +53,10 @@
 		singleExecution: function (parameters) {
 			parameters = Ext.isEmpty(parameters) ? {} : parameters;
 
-			Ext.apply(parameters, { url: CMDBuild.proxy.index.Json.taskManager.singleExecution });
+			Ext.apply(parameters, {
+				timeout: CMDBuild.core.configurations.Timeout.getTaskSingleExecution(),
+				url: CMDBuild.proxy.index.Json.taskManager.singleExecution
+			});
 
 			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.TASK_MANAGER, parameters, true);
 		},

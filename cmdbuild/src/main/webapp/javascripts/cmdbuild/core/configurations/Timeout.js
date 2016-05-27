@@ -17,6 +17,7 @@
 			gisTreeExpand: 300000, // 5m (milliseconds)
 			patchManager: 600000, // 10m (milliseconds)
 			report: 7200000, // 2h (milliseconds)
+			taskSingleExecution: 7200000, // 2h (milliseconds)
 			workflowWidgetsExecutionTimeout: 30000 // 30s (milliseconds)
 		},
 

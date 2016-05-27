@@ -326,13 +326,14 @@
 		 *
 		 * @returns {Void}
 		 */
-		onCyclicExecutionButtonClick: function(record) {
+		onCyclicExecutionButtonClick: function (record) {
+			var params = {};
+			params[CMDBuild.core.constants.Proxy.ID] = record.get(CMDBuild.core.constants.Proxy.ID);
+
 			CMDBuild.core.LoadMask.show();
 
 			CMDBuild.proxy.taskManager.TaskManager.cyclicExecution({
-				params: {
-					id: record.get(CMDBuild.core.constants.Proxy.ID)
-				},
+				params: params,
 				loadMask: false,
 				scope: this,
 				success: this.success,
@@ -346,12 +347,11 @@
 		 * @returns {Void}
 		 */
 		onSingleExecutionButtonClick: function(record) {
-			CMDBuild.core.LoadMask.show();
+			var params = {};
+			params[CMDBuild.core.constants.Proxy.ID] = record.get(CMDBuild.core.constants.Proxy.ID);
 
 			CMDBuild.proxy.taskManager.TaskManager.singleExecution({
-				params: {
-					id: record.get(CMDBuild.core.constants.Proxy.ID)
-				},
+				params: params,
 				loadMask: false,
 				scope: this,
 				success: this.success,
@@ -361,14 +361,17 @@
 
 		/**
 		 * @param {Object} record
+		 *
+		 * @returns {Void}
 		 */
-		onStopButtonClick: function(record) {
+		onStopButtonClick: function (record) {
+			var params = {};
+			params[CMDBuild.core.constants.Proxy.ID] = record.get(CMDBuild.core.constants.Proxy.ID);
+
 			CMDBuild.core.LoadMask.show();
 
 			CMDBuild.proxy.taskManager.TaskManager.stop({
-				params: {
-					id: record.get(CMDBuild.core.constants.Proxy.ID)
-				},
+				params: params,
 				loadMask: false,
 				scope: this,
 				success: this.success,
