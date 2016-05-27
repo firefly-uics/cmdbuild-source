@@ -151,6 +151,9 @@
 				case 'onAddButtonClick':
 					return this.onAddButtonClick(name, param, callBack);
 
+				case 'onCyclicExecutionButtonClick':
+					return this.onCyclicExecutionButtonClick(param);
+
 				case 'onItemDoubleClick':
 					return this.onItemDoubleClick();
 
@@ -163,8 +166,8 @@
 				case 'onRowSelected':
 					return this.onRowSelected(name, param, callBack);
 
-				case 'onStartButtonClick':
-					return this.onStartButtonClick(param);
+				case 'onSingleExecutionButtonClick':
+					return this.onSingleExecutionButtonClick(param);
 
 				case 'onStopButtonClick':
 					return this.onStopButtonClick(param);
@@ -320,11 +323,32 @@
 
 		/**
 		 * @param {Object} record
+		 *
+		 * @returns {Void}
 		 */
-		onStartButtonClick: function(record) {
+		onCyclicExecutionButtonClick: function(record) {
 			CMDBuild.core.LoadMask.show();
 
-			CMDBuild.proxy.taskManager.TaskManager.start({
+			CMDBuild.proxy.taskManager.TaskManager.cyclicExecution({
+				params: {
+					id: record.get(CMDBuild.core.constants.Proxy.ID)
+				},
+				loadMask: false,
+				scope: this,
+				success: this.success,
+				callback: this.callback
+			});
+		},
+
+		/**
+		 * @param {Object} record
+		 *
+		 * @returns {Void}
+		 */
+		onSingleExecutionButtonClick: function(record) {
+			CMDBuild.core.LoadMask.show();
+
+			CMDBuild.proxy.taskManager.TaskManager.singleExecution({
 				params: {
 					id: record.get(CMDBuild.core.constants.Proxy.ID)
 				},
