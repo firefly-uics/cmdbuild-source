@@ -8,7 +8,13 @@
 		 */
 		delegate: undefined,
 
-		title: CMDBuild.Translation.classes
+		title: CMDBuild.Translation.classes,
+
+		listeners: {
+			collapse: function (panel, eOpts) {
+				this.delegate.cmfg('onAccordionClassesCollapse');
+			}
+		}
 	});
 
 })();
