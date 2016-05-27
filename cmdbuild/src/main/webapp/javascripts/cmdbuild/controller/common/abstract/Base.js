@@ -3,6 +3,7 @@
 	// External implementation to avoid overrides
 	Ext.require([
 		'CMDBuild.core.constants.Global',
+		'CMDBuild.core.constants.Proxy',
 		'CMDBuild.core.Message'
 	]);
 

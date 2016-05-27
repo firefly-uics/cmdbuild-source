@@ -71,7 +71,7 @@
 		 * @private
 		 */
 		buildFields: function () {
-			if (this.attributeList.length > 0) {
+			if (Ext.isArray(this.attributeList) && !Ext.isEmpty(this.attributeList)) {
 				var fieldManager = Ext.create('CMDBuild.core.fieldManager.FieldManager', {
 					parentDelegate: this,
 					targetForm: this.form
@@ -80,7 +80,7 @@
 				Ext.Array.each(this.attributeList, function (attribute, i, allAttributes) {
 					if (fieldManager.isAttributeManaged(attribute[CMDBuild.core.constants.Proxy.TYPE])) {
 						var attributeCustom = Ext.create('CMDBuild.model.common.attributes.Attribute', attribute);
-						attributeCustom.setAdaptedData(attribute);
+						attributeCustom.setAdaptedData(attribute); // Legaxy attribute model adapter
 
 						fieldManager.attributeModelSet(attributeCustom);
 						fieldManager.add(this.form, fieldManager.buildField());
