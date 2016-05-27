@@ -15,6 +15,26 @@
 		parentDelegate: undefined,
 
 		/**
+		 * @cfg {Array}
+		 */
+		cmfgCatchedFunctions: [
+			'accordionBuildId',
+			'accordionDeselect',
+			'accordionExpand',
+			'accordionFirstSelectableNodeSelect',
+			'accordionFirtsSelectableNodeGet',
+			'accordionIdentifierGet',
+			'accordionNodeByIdExists',
+			'accordionNodeByIdGet',
+			'accordionNodeByIdSelect',
+			'accordionUpdateStore',
+			'onAccordionBeforeSelect',
+			'onAccordionClassesCollapse',
+			'onAccordionExpand',
+			'onAccordionSelectionChange'
+		],
+
+		/**
 		 * @cfg {Boolean}
 		 */
 		hideIfEmpty: true,
@@ -160,6 +180,25 @@
 			});
 
 			this.callParent(arguments);
+		},
+
+		/**
+		 * Manage accordion collapse to exit from card edit mode
+		 *
+		 * @returns {Void}
+		 *
+		 * @legacy
+		 */
+		onAccordionClassesCollapse: function () {
+			if (this.cmfg('mainViewportModuleControllerExists', 'class')) {
+				var controller = this.cmfg('mainViewportModuleControllerGet', 'class');
+				var controllerCardPanel = controller.cardPanelController;
+
+				if (!Ext.isEmpty(controllerCardPanel) && Ext.isFunction(controllerCardPanel.onAbortCardClick))
+					controllerCardPanel.onAbortCardClick();
+			} else {
+				_error('onAccordionClassesCollapse(): non-existent module controller', this);
+			}
 		}
 	});
 
