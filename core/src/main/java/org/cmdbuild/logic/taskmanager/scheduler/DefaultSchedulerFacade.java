@@ -18,6 +18,30 @@ public class DefaultSchedulerFacade implements SchedulerFacade {
 	private static final Logger logger = Logic.logger;
 	private static final Marker MARKER = MarkerFactory.getMarker(DefaultSchedulerFacade.class.getName());
 
+	private static class SuppressedExceptionJob extends ForwardingJob {
+
+		private final Job delegate;
+
+		private SuppressedExceptionJob(final Job delegate) {
+			this.delegate = delegate;
+		}
+
+		@Override
+		protected Job delegate() {
+			return delegate;
+		}
+
+		@Override
+		public void execute() {
+			try {
+				delegate().execute();
+			} catch (final Throwable e) {
+				logger.warn("error executing job", e);
+			}
+		}
+
+	}
+
 	private static class JobWithCallback extends ForwardingJob {
 
 		private final Job delegate;
@@ -59,7 +83,7 @@ public class DefaultSchedulerFacade implements SchedulerFacade {
 	public void create(final ScheduledTask task, final Callback callback) {
 		logger.info(MARKER, "creating a new scheduled task '{}'", task);
 		if (task.isActive()) {
-			final Job job = jobFrom(task, callback);
+			final Job job = new SuppressedExceptionJob(jobFrom(task, callback));
 			final Trigger trigger = RecurringTrigger.at(addSecondsField(task.getCronExpression()));
 			schedulerService.add(job, trigger);
 		}
