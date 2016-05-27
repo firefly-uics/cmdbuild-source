@@ -1,7 +1,6 @@
 package org.cmdbuild.logic.taskmanager.scheduler;
 
 import static org.cmdbuild.scheduler.command.Commands.nullCommand;
-import static org.cmdbuild.scheduler.command.Commands.safe;
 
 import org.cmdbuild.logic.taskmanager.ScheduledTask;
 import org.cmdbuild.scheduler.Job;
@@ -23,7 +22,7 @@ public abstract class AbstractJobFactory<T extends ScheduledTask> implements Job
 		final T specificTask = getType().cast(task);
 		return BuildableCommandBasedJob.newInstance() //
 				.withName(name(specificTask)) //
-				.withCommand(execution ? safe(command(specificTask)) : nullCommand()) //
+				.withCommand(execution ? command(specificTask) : nullCommand()) //
 				.build();
 	}
 
