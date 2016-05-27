@@ -245,6 +245,7 @@
 		ERRORS: 'errors',
 		EVENT_CLASS: 'eventClass',
 		EVENT_TITLE: 'eventTitle',
+		EXECUTABLE: 'executable',
 		EXISTING: 'existing',
 		EXPORT_CSV: 'exportCsv',
 		EXPORT_DISABLED: 'exportDisabled',

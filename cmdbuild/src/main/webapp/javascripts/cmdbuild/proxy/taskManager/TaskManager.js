@@ -36,10 +36,23 @@
 		 *
 		 * @returns {Void}
 		 */
-		start: function (parameters) {
+		cyclicExecution: function (parameters) {
 			parameters = Ext.isEmpty(parameters) ? {} : parameters;
 
-			Ext.apply(parameters, { url: CMDBuild.proxy.index.Json.taskManager.start });
+			Ext.apply(parameters, { url: CMDBuild.proxy.index.Json.taskManager.cyclicExecution });
+
+			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.TASK_MANAGER, parameters, true);
+		},
+
+		/**
+		 * @param {Object} parameters
+		 *
+		 * @returns {Void}
+		 */
+		singleExecution: function (parameters) {
+			parameters = Ext.isEmpty(parameters) ? {} : parameters;
+
+			Ext.apply(parameters, { url: CMDBuild.proxy.index.Json.taskManager.singleExecution });
 
 			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.TASK_MANAGER, parameters, true);
 		},

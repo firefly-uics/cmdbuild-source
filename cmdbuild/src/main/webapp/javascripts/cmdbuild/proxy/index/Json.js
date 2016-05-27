@@ -554,7 +554,8 @@
 		taskManager: {
 			readAll: 'services/json/schema/taskmanager/readall',
 
-			start: 'services/json/schema/taskmanager/start',
+			cyclicExecution: 'services/json/schema/taskmanager/start',
+			singleExecution: 'services/json/schema/taskmanager/execute',
 			stop: 'services/json/schema/taskmanager/stop',
 
 			connector: {
