@@ -11,6 +11,8 @@ NEW FEATURES
 
  * Locks related to a user session must be removed when the session is closed or expired
 
+ * Single execution of a task without scheduling
+
 
 FIXES
 
