@@ -580,6 +580,7 @@
 			"REPORT_UPLOAD_ERROR": "خطای آپلود",
 			"SCHEDULER_INTERNAL_ERROR": "خطای داخلی زمانبند: {0}",
 			"SERVICE_UNAVAILABLE": "سرویس در دسترس نیست",
+			"TASK_EXECUTION_ERROR": "<em>Error executing task {0}, see logs</em>",
 			"WF_CANNOT_ABORT_PROCESS": "نمیتوان پروسه را لغو کرد",
 			"WF_CANNOT_ACCEPT_WORKITEM": "نمیتوان فعالیت کاربر را قبول کرد",
 			"WF_CANNOT_COMPLETE_WORKITEM": "نمیتوان فعالیت کاربر را کامل کرد",

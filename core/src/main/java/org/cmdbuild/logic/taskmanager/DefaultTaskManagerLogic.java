@@ -9,6 +9,7 @@ import static org.joda.time.DateTime.now;
 import org.apache.commons.lang3.Validate;
 import org.cmdbuild.data.store.Storable;
 import org.cmdbuild.data.store.task.TaskStore;
+import org.cmdbuild.exception.TaskManagerException.TaskManagerExceptionType;
 import org.cmdbuild.logic.email.EmailLogic;
 import org.cmdbuild.logic.email.EmailLogic.Email;
 import org.cmdbuild.logic.taskmanager.event.SynchronousEventFacade;
@@ -622,8 +623,12 @@ public class DefaultTaskManagerLogic implements TaskManagerLogic {
 
 	@Override
 	public void execute(final Long id) {
-		logger.info(MARKER, "executing teh existing task '{}'", id);
-		execute(doExecute(id));
+		try {
+			logger.info(MARKER, "executing the existing task '{}'", id);
+			execute(doExecute(id));
+		} catch (final Throwable e) {
+			throw TaskManagerExceptionType.TASK_EXECUTION_ERROR.createException(e, id.toString());
+		}
 	}
 
 	private Create doCreate(final Task task) {

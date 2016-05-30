@@ -580,6 +580,7 @@
 			"REPORT_UPLOAD_ERROR": "Feltöltési hiba",
 			"SCHEDULER_INTERNAL_ERROR": "Rendező belső hiba: {0}",
 			"SERVICE_UNAVAILABLE": "A szolgáltatás nem elérhető",
+			"TASK_EXECUTION_ERROR": "<em>Error executing task {0}, see logs</em>",
 			"WF_CANNOT_ABORT_PROCESS": "A folyamat nem megszakítható",
 			"WF_CANNOT_ACCEPT_WORKITEM": "A felhasználói aktivitás nem elfogadható",
 			"WF_CANNOT_COMPLETE_WORKITEM": "A felhasználói aktivitás nem befejezhető",

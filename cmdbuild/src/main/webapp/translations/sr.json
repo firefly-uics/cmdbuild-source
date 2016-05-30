@@ -580,6 +580,7 @@
 			"REPORT_UPLOAD_ERROR": "Pojavila se greška prilikom postavljanja izveštaja na server",
 			"SCHEDULER_INTERNAL_ERROR": "Interna greška u raspoređivaču poslova: {0}",
 			"SERVICE_UNAVAILABLE": "Servis je nedostupan",
+			"TASK_EXECUTION_ERROR": "<em>Error executing task {0}, see logs</em>",
 			"WF_CANNOT_ABORT_PROCESS": "Nemoguće je prekinuti proces",
 			"WF_CANNOT_ACCEPT_WORKITEM": "Prihvatanje zadatka nije uspelo",
 			"WF_CANNOT_COMPLETE_WORKITEM": "Pokušaj završetka korisničkog zadatka nije uspeo",

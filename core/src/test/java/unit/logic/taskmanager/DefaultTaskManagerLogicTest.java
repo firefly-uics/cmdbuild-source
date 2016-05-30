@@ -16,6 +16,7 @@ import static org.mockito.Mockito.when;
 import org.cmdbuild.data.store.Storable;
 import org.cmdbuild.data.store.task.TaskStore;
 import org.cmdbuild.data.store.task.TaskVisitor;
+import org.cmdbuild.exception.TaskManagerException;
 import org.cmdbuild.logic.email.EmailLogic;
 import org.cmdbuild.logic.email.EmailLogic.Email;
 import org.cmdbuild.logic.taskmanager.DefaultTaskManagerLogic;
@@ -727,7 +728,7 @@ public class DefaultTaskManagerLogicTest {
 		assertThat(scheduledTask.isActive(), is(false));
 	}
 
-	@Test(expected = UnsupportedOperationException.class)
+	@Test(expected = TaskManagerException.class)
 	public void synchronousEventTaskCannotBeExecuted() throws Exception {
 		// given
 		final org.cmdbuild.data.store.task.SynchronousEventTask stored = org.cmdbuild.data.store.task.SynchronousEventTask

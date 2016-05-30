@@ -580,6 +580,7 @@
 			"REPORT_UPLOAD_ERROR": "Upload error",
 			"SCHEDULER_INTERNAL_ERROR": "Scheduler internal error: {0}",
 			"SERVICE_UNAVAILABLE": "Service unavailable",
+			"TASK_EXECUTION_ERROR": "Error executing task {0}, see logs",
 			"WF_CANNOT_ABORT_PROCESS": "Cannot abort process",
 			"WF_CANNOT_ACCEPT_WORKITEM": "Cannot accept user activity",
 			"WF_CANNOT_COMPLETE_WORKITEM": "Cannot complete user activity",

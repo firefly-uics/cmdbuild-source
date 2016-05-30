@@ -580,6 +580,7 @@
 			"REPORT_UPLOAD_ERROR": "Erreur de téléchargement",
 			"SCHEDULER_INTERNAL_ERROR": "Erreur interne de planification : {0}",
 			"SERVICE_UNAVAILABLE": "Service indisponible",
+			"TASK_EXECUTION_ERROR": "<em>Error executing task {0}, see logs</em>",
 			"WF_CANNOT_ABORT_PROCESS": "Impossible d'abandonner le processus",
 			"WF_CANNOT_ACCEPT_WORKITEM": "Impossible d'accepter l'activité d'un utilisateur",
 			"WF_CANNOT_COMPLETE_WORKITEM": "Impossible de terminer l'activité utilisateur",

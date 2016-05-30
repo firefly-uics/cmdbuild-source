@@ -580,6 +580,7 @@
 			"REPORT_UPLOAD_ERROR": "Fehler beim Laden des Berichts",
 			"SCHEDULER_INTERNAL_ERROR": "Scheduler interner Fehler: {0}",
 			"SERVICE_UNAVAILABLE": "Dienst nicht verfügbar",
+			"TASK_EXECUTION_ERROR": "<em>Error executing task {0}, see logs</em>",
 			"WF_CANNOT_ABORT_PROCESS": "Der Vorgang ist unlöschbar",
 			"WF_CANNOT_ACCEPT_WORKITEM": "Die Benutzeraktivität kann nicht bestätigt werden",
 			"WF_CANNOT_COMPLETE_WORKITEM": "Die Benutzeraktivität kann nicht ergänzt werden",

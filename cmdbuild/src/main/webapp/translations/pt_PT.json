@@ -580,6 +580,7 @@
 			"REPORT_UPLOAD_ERROR": "Erro no Upload",
 			"SCHEDULER_INTERNAL_ERROR": "Erro no agendador Interno: {0}",
 			"SERVICE_UNAVAILABLE": "Serviço não disponível",
+			"TASK_EXECUTION_ERROR": "<em>Error executing task {0}, see logs</em>",
 			"WF_CANNOT_ABORT_PROCESS": "Não foi possível abortar o processo",
 			"WF_CANNOT_ACCEPT_WORKITEM": "Não foi possível aceitar a atividade do utilizador",
 			"WF_CANNOT_COMPLETE_WORKITEM": "Não foi possível completar a atividade do utilizador",

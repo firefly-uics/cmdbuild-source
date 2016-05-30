@@ -580,6 +580,7 @@
 			"REPORT_UPLOAD_ERROR": "上传错误",
 			"SCHEDULER_INTERNAL_ERROR": "调度程序内部错误: {0}",
 			"SERVICE_UNAVAILABLE": "服务无效",
+			"TASK_EXECUTION_ERROR": "<em>Error executing task {0}, see logs</em>",
 			"WF_CANNOT_ABORT_PROCESS": "不能中止进程",
 			"WF_CANNOT_ACCEPT_WORKITEM": "不能接受用户活动",
 			"WF_CANNOT_COMPLETE_WORKITEM": "不能编辑用户活动",
