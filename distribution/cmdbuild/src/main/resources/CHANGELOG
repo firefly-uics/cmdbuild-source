@@ -9,6 +9,8 @@ NEW FEATURES
 
  * Keep sync checkbox checked by default on administration email template form
 
+ * Locks related to a user session must be removed when the session is closed or expired
+
 
 FIXES
 
