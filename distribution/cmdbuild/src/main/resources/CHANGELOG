@@ -13,6 +13,8 @@ NEW FEATURES
 
  * Single execution of a task without scheduling
 
+ * Impersonate another user and/or group using workflow API
+
 
 FIXES
 
