@@ -580,6 +580,7 @@
 			"REPORT_UPLOAD_ERROR": "Појавила се грешка приликом постављања извештаја на сервер",
 			"SCHEDULER_INTERNAL_ERROR": "Интерна грешка у распоређивачу послова: {0}",
 			"SERVICE_UNAVAILABLE": "Сервис је недоступан",
+			"TASK_EXECUTION_ERROR": "<em>Error executing task {0}, see logs</em>",
 			"WF_CANNOT_ABORT_PROCESS": "Немогуће је прекинути процес",
 			"WF_CANNOT_ACCEPT_WORKITEM": "Прихватање задатка није успело",
 			"WF_CANNOT_COMPLETE_WORKITEM": "Покушај завршетка корисничког задатка није успео",

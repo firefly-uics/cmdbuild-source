@@ -580,6 +580,7 @@
 			"REPORT_UPLOAD_ERROR": "Error durante la carga del informe",
 			"SCHEDULER_INTERNAL_ERROR": "Error interno del planificador: {0}",
 			"SERVICE_UNAVAILABLE": "Servicio no disponible",
+			"TASK_EXECUTION_ERROR": "<em>Error executing task {0}, see logs</em>",
 			"WF_CANNOT_ABORT_PROCESS": "Imposible eliminar el proceso",
 			"WF_CANNOT_ACCEPT_WORKITEM": "Imposible confirmar la actividad del usuario",
 			"WF_CANNOT_COMPLETE_WORKITEM": "Imposible completar la actividad del usuario",

@@ -580,6 +580,7 @@
 			"REPORT_UPLOAD_ERROR": "Ошибка загрузки",
 			"SCHEDULER_INTERNAL_ERROR": "Внутренняя ошибка планировщика: {0}",
 			"SERVICE_UNAVAILABLE": "Сервис недоступен",
+			"TASK_EXECUTION_ERROR": "<em>Error executing task {0}, see logs</em>",
 			"WF_CANNOT_ABORT_PROCESS": "Невозможно прервать процесс",
 			"WF_CANNOT_ACCEPT_WORKITEM": "Cannot accept user activity",
 			"WF_CANNOT_COMPLETE_WORKITEM": "Cannot complete user activity",

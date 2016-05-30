@@ -580,6 +580,7 @@
 			"REPORT_UPLOAD_ERROR": "Cập nhật lỗi",
 			"SCHEDULER_INTERNAL_ERROR": "Trình lập thời biểu các lỗi nội bộ: {0}",
 			"SERVICE_UNAVAILABLE": "Dịch vụ không thể sử dụng",
+			"TASK_EXECUTION_ERROR": "<em>Error executing task {0}, see logs</em>",
 			"WF_CANNOT_ABORT_PROCESS": "Không thể hủy bỏ quá trình",
 			"WF_CANNOT_ACCEPT_WORKITEM": "Không đồng ý các hoạt động của người dùng",
 			"WF_CANNOT_COMPLETE_WORKITEM": "Không thể hoàn thành hoạt động của người dùng",

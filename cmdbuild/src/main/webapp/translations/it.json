@@ -580,6 +580,7 @@
 			"REPORT_UPLOAD_ERROR": "Errore durante l'upload del report",
 			"SCHEDULER_INTERNAL_ERROR": "Errore interno allo scheduler: {0}",
 			"SERVICE_UNAVAILABLE": "Servizio non disponibile",
+			"TASK_EXECUTION_ERROR": "Errore durante l'esecuzione del task {0}, controllare i log</em>",
 			"WF_CANNOT_ABORT_PROCESS": "Impossibile eliminare il processo",
 			"WF_CANNOT_ACCEPT_WORKITEM": "Impossibile confermare l'attività utente",
 			"WF_CANNOT_COMPLETE_WORKITEM": "Impossibile completare l'attività utente",

@@ -580,6 +580,7 @@
 			"REPORT_UPLOAD_ERROR": "Fout tijdens ophalen",
 			"SCHEDULER_INTERNAL_ERROR": "Interne Scheduler fout: {0}",
 			"SERVICE_UNAVAILABLE": "Service niet beschikbaar",
+			"TASK_EXECUTION_ERROR": "<em>Error executing task {0}, see logs</em>",
 			"WF_CANNOT_ABORT_PROCESS": "Kan het proces niet afbreken",
 			"WF_CANNOT_ACCEPT_WORKITEM": "Kan gebruiker aktiviteit niet accepteren",
 			"WF_CANNOT_COMPLETE_WORKITEM": "Kan gebruiker aktiviteit niet afronden",

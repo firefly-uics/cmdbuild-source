@@ -580,6 +580,7 @@
 			"REPORT_UPLOAD_ERROR": "خطأ في الرفع",
 			"SCHEDULER_INTERNAL_ERROR": "خطأ داخلي في المُجَدوِل: {0}",
 			"SERVICE_UNAVAILABLE": "الخدمة غير متاحة",
+			"TASK_EXECUTION_ERROR": "<em>Error executing task {0}, see logs</em>",
 			"WF_CANNOT_ABORT_PROCESS": "لا يمكن إحباط الآلية",
 			"WF_CANNOT_ACCEPT_WORKITEM": "لا يمكن قبول نشاط المستخدم",
 			"WF_CANNOT_COMPLETE_WORKITEM": "لا يمكن إكمال نشاط المستخدم",

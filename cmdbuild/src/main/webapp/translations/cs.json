@@ -580,6 +580,7 @@
 			"REPORT_UPLOAD_ERROR": "Chyba při načítání sestavy",
 			"SCHEDULER_INTERNAL_ERROR": "Vnitřní chyba plánovače: {0}",
 			"SERVICE_UNAVAILABLE": "Služba není dostupná",
+			"TASK_EXECUTION_ERROR": "<em>Error executing task {0}, see logs</em>",
 			"WF_CANNOT_ABORT_PROCESS": "Proces nelze přerušit",
 			"WF_CANNOT_ACCEPT_WORKITEM": "Nelze akceptovat uživatelský krok procesu",
 			"WF_CANNOT_COMPLETE_WORKITEM": "Nelze dokončit uživatelský krok procesu",

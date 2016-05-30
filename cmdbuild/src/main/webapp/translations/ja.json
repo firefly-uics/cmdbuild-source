@@ -580,6 +580,7 @@
 			"REPORT_UPLOAD_ERROR": "アップロードエラー",
 			"SCHEDULER_INTERNAL_ERROR": "スケジューラ内部エラー: {0}",
 			"SERVICE_UNAVAILABLE": "サービスが利用できません",
+			"TASK_EXECUTION_ERROR": "<em>Error executing task {0}, see logs</em>",
 			"WF_CANNOT_ABORT_PROCESS": "プロセスを中止出来ません",
 			"WF_CANNOT_ACCEPT_WORKITEM": "ユーザーアクティビティを受け入れできません",
 			"WF_CANNOT_COMPLETE_WORKITEM": "ユーザーアクティビティを完了出来ません",
