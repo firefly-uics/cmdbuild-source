@@ -134,6 +134,8 @@ FIXES
 
  * Cannot load interface when "translations" directory contains unexpected files
 
+ * Wrong sort attribute in getcardlist server call with starting class
+
 
 
 
