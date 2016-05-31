@@ -137,8 +137,8 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 
 	};
 
-	private static final String USER = "__user__";
-	private static final String ROLE = "__role__";
+	public static final String USER = "__user__";
+	public static final String ROLE = "__role__";
 
 	private final CMDataView systemDataView;
 	private final LookupStore lookupStore;
@@ -565,7 +565,7 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 		return new PagedElements<Card>(cards, fetchedCards.totalSize());
 	}
 
-	private static final Map<String, Object> NO_PARAMETERS = emptyMap();
+	public static final Map<String, Object> NO_PARAMETERS = emptyMap();
 
 	/**
 	 * Execute a given SQL function to select a set of rows Return these rows as
