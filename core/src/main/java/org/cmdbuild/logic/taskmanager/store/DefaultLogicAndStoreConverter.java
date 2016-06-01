@@ -25,6 +25,7 @@ import org.cmdbuild.logic.taskmanager.TaskManagerLogic;
 import org.cmdbuild.logic.taskmanager.TaskVisitor;
 import org.cmdbuild.logic.taskmanager.store.ParameterNames.AsynchronousEvent;
 import org.cmdbuild.logic.taskmanager.store.ParameterNames.Connector;
+import org.cmdbuild.logic.taskmanager.store.ParameterNames.Generic;
 import org.cmdbuild.logic.taskmanager.store.ParameterNames.ReadEmail;
 import org.cmdbuild.logic.taskmanager.store.ParameterNames.StartWorkflow;
 import org.cmdbuild.logic.taskmanager.store.ParameterNames.SynchronousEvent;
@@ -42,6 +43,7 @@ import org.cmdbuild.logic.taskmanager.task.email.mapper.NullMapperEngine;
 import org.cmdbuild.logic.taskmanager.task.event.asynchronous.AsynchronousEventTask;
 import org.cmdbuild.logic.taskmanager.task.event.synchronous.SynchronousEventTask;
 import org.cmdbuild.logic.taskmanager.task.event.synchronous.SynchronousEventTask.Phase;
+import org.cmdbuild.logic.taskmanager.task.generic.GenericTask;
 import org.cmdbuild.logic.taskmanager.task.process.StartWorkflowTask;
 import org.slf4j.Logger;
 import org.slf4j.Marker;
@@ -414,6 +416,20 @@ public class DefaultLogicAndStoreConverter implements LogicAndStoreConverter {
 		}
 
 		@Override
+		public void visit(final GenericTask task) {
+			this.target = org.cmdbuild.data.store.task.GenericTask.newInstance() //
+					.withId(task.getId()) //
+					.withDescription(task.getDescription()) //
+					.withRunningStatus(task.isActive()) //
+					.withCronExpression(task.getCronExpression()) //
+					.withLastExecution(task.getLastExecution()) //
+					.withParameter(Generic.EMAIL_ACTIVE, Boolean.toString(task.isEmailActive())) //
+					.withParameter(Generic.EMAIL_TEMPLATE, task.getEmailTemplate()) //
+					.withParameter(Generic.EMAIL_ACCOUNT, task.getEmailAccount()) //
+					.build();
+		}
+
+		@Override
 		public void visit(final ReadEmailTask task) {
 			this.target = org.cmdbuild.data.store.task.ReadEmailTask.newInstance() //
 					.withId(task.getId()) //
@@ -604,6 +620,20 @@ public class DefaultLogicAndStoreConverter implements LogicAndStoreConverter {
 						.build();
 			}
 			return sourceConfiguration;
+		}
+
+		@Override
+		public void visit(final org.cmdbuild.data.store.task.GenericTask task) {
+			target = GenericTask.newInstance() //
+					.withId(task.getId()) //
+					.withDescription(task.getDescription()) //
+					.withActiveStatus(task.isRunning()) //
+					.withCronExpression(task.getCronExpression()) //
+					.withLastExecution(task.getLastExecution()) //
+					.withEmailActive(Boolean.valueOf(task.getParameter(Generic.EMAIL_ACTIVE))) //
+					.withEmailTemplate(task.getParameter(Generic.EMAIL_TEMPLATE)) //
+					.withEmailAccount(task.getParameter(Generic.EMAIL_ACCOUNT)) //
+					.build();
 		}
 
 		@Override

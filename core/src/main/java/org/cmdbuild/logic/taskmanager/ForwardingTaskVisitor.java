@@ -4,6 +4,7 @@ import org.cmdbuild.logic.taskmanager.task.connector.ConnectorTask;
 import org.cmdbuild.logic.taskmanager.task.email.ReadEmailTask;
 import org.cmdbuild.logic.taskmanager.task.event.asynchronous.AsynchronousEventTask;
 import org.cmdbuild.logic.taskmanager.task.event.synchronous.SynchronousEventTask;
+import org.cmdbuild.logic.taskmanager.task.generic.GenericTask;
 import org.cmdbuild.logic.taskmanager.task.process.StartWorkflowTask;
 
 import com.google.common.collect.ForwardingObject;
@@ -26,6 +27,11 @@ public abstract class ForwardingTaskVisitor extends ForwardingObject implements 
 
 	@Override
 	public void visit(final ConnectorTask task) {
+		delegate().visit(task);
+	}
+
+	@Override
+	public void visit(final GenericTask task) {
 		delegate().visit(task);
 	}
 

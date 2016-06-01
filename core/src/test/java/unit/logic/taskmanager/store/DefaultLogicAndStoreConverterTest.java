@@ -28,6 +28,7 @@ import org.cmdbuild.logic.taskmanager.Task;
 import org.cmdbuild.logic.taskmanager.store.DefaultLogicAndStoreConverter;
 import org.cmdbuild.logic.taskmanager.store.ParameterNames.AsynchronousEvent;
 import org.cmdbuild.logic.taskmanager.store.ParameterNames.Connector;
+import org.cmdbuild.logic.taskmanager.store.ParameterNames.Generic;
 import org.cmdbuild.logic.taskmanager.store.ParameterNames.ReadEmail;
 import org.cmdbuild.logic.taskmanager.store.ParameterNames.StartWorkflow;
 import org.cmdbuild.logic.taskmanager.store.ParameterNames.SynchronousEvent;
@@ -42,6 +43,7 @@ import org.cmdbuild.logic.taskmanager.task.email.mapper.MapperEngine;
 import org.cmdbuild.logic.taskmanager.task.event.asynchronous.AsynchronousEventTask;
 import org.cmdbuild.logic.taskmanager.task.event.synchronous.SynchronousEventTask;
 import org.cmdbuild.logic.taskmanager.task.event.synchronous.SynchronousEventTask.Phase;
+import org.cmdbuild.logic.taskmanager.task.generic.GenericTask;
 import org.cmdbuild.logic.taskmanager.task.process.StartWorkflowTask;
 import org.joda.time.DateTime;
 import org.junit.Before;
@@ -603,6 +605,71 @@ public class DefaultLogicAndStoreConverterTest {
 	}
 
 	@Test
+	public void genericTaskSuccessfullyConvertedToStore() throws Exception {
+		// given
+		final GenericTask source = a(GenericTask.newInstance() //
+				.withId(42L) //
+				.withDescription("description") //
+				.withActiveStatus(true) //
+				.withCronExpression("cron expression") //
+				.withLastExecution(NOW) //
+				.withEmailActive(true) //
+				.withEmailTemplate("email template") //
+				.withEmailAccount("email account") //
+		);
+
+		// when
+		final org.cmdbuild.data.store.task.Task converted = converter.from(source).toStore();
+
+		// then
+		assertThat(converted, instanceOf(org.cmdbuild.data.store.task.GenericTask.class));
+		assertThat(converted,
+				equalTo(a(org.cmdbuild.data.store.task.GenericTask.newInstance() //
+						.withId(42L) //
+						.withDescription("description") //
+						.withRunningStatus(true) //
+						.withCronExpression("cron expression") //
+						.withLastExecution(NOW) //
+						.withParameter(Generic.EMAIL_ACTIVE, "true") //
+						.withParameter(Generic.EMAIL_TEMPLATE, "email template") //
+						.withParameter(Generic.EMAIL_ACCOUNT, "email account") //
+		)));
+	}
+
+	@Test
+	public void genericTaskSuccessfullyConvertedToLogic() throws Exception {
+		// given
+		final org.cmdbuild.data.store.task.GenericTask source = a(org.cmdbuild.data.store.task.GenericTask.newInstance() //
+				.withId(42L) //
+				.withDescription("description") //
+				.withRunningStatus(true) //
+				.withCronExpression("cron expression") //
+				.withLastExecution(NOW) //
+				.withParameter(Generic.EMAIL_ACTIVE, "true") //
+				.withParameter(Generic.EMAIL_TEMPLATE, "email template") //
+				.withParameter(Generic.EMAIL_ACCOUNT, "email account") //
+		);
+
+		// when
+		final Task _converted = converter.from(source).toLogic();
+
+		// then
+		assertThat(_converted, instanceOf(GenericTask.class));
+		final GenericTask converted = GenericTask.class.cast(_converted);
+		assertThat(converted,
+				equalTo(a(GenericTask.newInstance() //
+						.withId(42L) //
+						.withDescription("description") //
+						.withActiveStatus(true) //
+						.withCronExpression("cron expression") //
+						.withLastExecution(NOW) //
+						.withEmailActive(true) //
+						.withEmailTemplate("email template") //
+						.withEmailAccount("email account") //
+		)));
+	}
+
+	@Test
 	public void readEmailTaskSuccessfullyConvertedToStore() throws Exception {
 		// given
 		final Map<String, String> attributes = newLinkedHashMap();
@@ -653,7 +720,8 @@ public class DefaultLogicAndStoreConverterTest {
 		assertThat(parameters, hasEntry(ReadEmail.PROCESSED_FOLDER, "processed folder"));
 		assertThat(parameters, hasEntry(ReadEmail.REJECTED_FOLDER, "rejected folder"));
 		assertThat(parameters, hasEntry(ReadEmail.FILTER_REJECT, "true"));
-		assertThat(parameters, hasEntry(ReadEmail.FILTER_TYPE, "filter type"));		assertThat(parameters,
+		assertThat(parameters, hasEntry(ReadEmail.FILTER_TYPE, "filter type"));
+		assertThat(parameters,
 				hasEntry(ReadEmail.FILTER_FROM_REGEX,
 						"regex" + SPECIAL_SEPARATOR //
 								+ "from" + SPECIAL_SEPARATOR //
@@ -663,7 +731,8 @@ public class DefaultLogicAndStoreConverterTest {
 						"regex" + SPECIAL_SEPARATOR //
 								+ "subject" + SPECIAL_SEPARATOR //
 								+ "filter"));
-		assertThat(parameters, hasEntry(ReadEmail.FILTER_FUNCTION_NAME, "filter function"));		assertThat(parameters, hasEntry(ReadEmail.NOTIFICATION_ACTIVE, "true"));
+		assertThat(parameters, hasEntry(ReadEmail.FILTER_FUNCTION_NAME, "filter function"));
+		assertThat(parameters, hasEntry(ReadEmail.NOTIFICATION_ACTIVE, "true"));
 		assertThat(parameters, hasEntry(ReadEmail.NOTIFICATION_TEMPLATE, "template"));
 		assertThat(parameters, hasEntry(ReadEmail.ATTACHMENTS_ACTIVE, "true"));
 		assertThat(parameters, hasEntry(ReadEmail.ATTACHMENTS_CATEGORY, "category"));
@@ -732,8 +801,7 @@ public class DefaultLogicAndStoreConverterTest {
 						.withParameter(ReadEmail.NOTIFICATION_ACTIVE, "true") //
 						.withParameter(ReadEmail.NOTIFICATION_TEMPLATE, "template") //
 						.withParameter(ReadEmail.ATTACHMENTS_ACTIVE, "true") //
-						.withParameter(ReadEmail.ATTACHMENTS_CATEGORY, "category") // -rf :cmdbuild-core
-
+						.withParameter(ReadEmail.ATTACHMENTS_CATEGORY, "category") //
 						.withParameter(ReadEmail.WORKFLOW_ACTIVE, "true") //
 						.withParameter(ReadEmail.WORKFLOW_CLASS_NAME, "workflow class name") //
 						.withParameter(ReadEmail.WORKFLOW_FIELDS_MAPPING,

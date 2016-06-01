@@ -20,6 +20,7 @@ import org.cmdbuild.logic.taskmanager.task.connector.ConnectorTask;
 import org.cmdbuild.logic.taskmanager.task.email.ReadEmailTask;
 import org.cmdbuild.logic.taskmanager.task.event.asynchronous.AsynchronousEventTask;
 import org.cmdbuild.logic.taskmanager.task.event.synchronous.SynchronousEventTask;
+import org.cmdbuild.logic.taskmanager.task.generic.GenericTask;
 import org.cmdbuild.logic.taskmanager.task.process.StartWorkflowTask;
 import org.slf4j.Marker;
 import org.slf4j.MarkerFactory;
@@ -102,6 +103,11 @@ public class DefaultTaskManagerLogic implements TaskManagerLogic {
 
 		@Override
 		public void visit(final ConnectorTask task) {
+			schedulerFacade.create(task, storeLastExecutionOf(task));
+		}
+
+		@Override
+		public void visit(final GenericTask task) {
 			schedulerFacade.create(task, storeLastExecutionOf(task));
 		}
 
@@ -235,6 +241,11 @@ public class DefaultTaskManagerLogic implements TaskManagerLogic {
 				}
 
 				@Override
+				public void visit(final GenericTask task) {
+					schedulerFacade.delete(task);
+				}
+
+				@Override
 				public void visit(final ReadEmailTask task) {
 					schedulerFacade.delete(task);
 				}
@@ -262,6 +273,11 @@ public class DefaultTaskManagerLogic implements TaskManagerLogic {
 
 				@Override
 				public void visit(final ConnectorTask task) {
+					schedulerFacade.create(task, storeLastExecutionOf(task));
+				}
+
+				@Override
+				public void visit(final GenericTask task) {
 					schedulerFacade.create(task, storeLastExecutionOf(task));
 				}
 
@@ -327,6 +343,11 @@ public class DefaultTaskManagerLogic implements TaskManagerLogic {
 		}
 
 		@Override
+		public void visit(final GenericTask task) {
+			schedulerFacade.delete(task);
+		}
+
+		@Override
 		public void visit(final ReadEmailTask task) {
 			schedulerFacade.delete(task);
 		}
@@ -386,6 +407,11 @@ public class DefaultTaskManagerLogic implements TaskManagerLogic {
 
 		@Override
 		public void visit(final ConnectorTask task) {
+			schedulerFacade.create(task, storeLastExecutionOf(task));
+		}
+
+		@Override
+		public void visit(final GenericTask task) {
 			schedulerFacade.create(task, storeLastExecutionOf(task));
 		}
 
@@ -457,6 +483,11 @@ public class DefaultTaskManagerLogic implements TaskManagerLogic {
 		}
 
 		@Override
+		public void visit(final GenericTask task) {
+			schedulerFacade.delete(task);
+		}
+
+		@Override
 		public void visit(final ReadEmailTask task) {
 			schedulerFacade.delete(task);
 		}
@@ -512,6 +543,11 @@ public class DefaultTaskManagerLogic implements TaskManagerLogic {
 
 		@Override
 		public void visit(final ConnectorTask task) {
+			execute(task);
+		}
+
+		@Override
+		public void visit(final GenericTask task) {
 			execute(task);
 		}
 

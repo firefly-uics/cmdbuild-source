@@ -4,6 +4,7 @@ import static org.apache.commons.lang3.StringUtils.EMPTY;
 
 import org.cmdbuild.data.store.task.AsynchronousEventTaskDefinition;
 import org.cmdbuild.data.store.task.ConnectorTaskDefinition;
+import org.cmdbuild.data.store.task.GenericTaskDefinition;
 import org.cmdbuild.data.store.task.ReadEmailTaskDefinition;
 import org.cmdbuild.data.store.task.StartWorkflowTaskDefinition;
 import org.cmdbuild.data.store.task.SynchronousEventTaskDefinition;
@@ -71,6 +72,24 @@ public class ParameterNames {
 		public static final String MAPPING_ATTRIBUTES = MAPPING_PREFIX + "attributes";
 
 		static final String MAPPING_SEPARATOR = ",";
+
+	}
+
+	/**
+	 * Container for all {@link GenericTaskDefinition} parameter names.
+	 */
+	public static class Generic {
+
+		private Generic() {
+			// prevents instantiation
+		}
+
+		private static final String ALL_PREFIX = EMPTY;
+
+		private static final String EMAIL_PREFIX = ALL_PREFIX + "email.";
+		public static final String EMAIL_ACTIVE = EMAIL_PREFIX + "active";
+		public static final String EMAIL_TEMPLATE = EMAIL_PREFIX + "template";
+		public static final String EMAIL_ACCOUNT = EMAIL_PREFIX + "account";
 
 	}
 
