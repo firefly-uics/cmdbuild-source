@@ -9,6 +9,7 @@ import static org.cmdbuild.servlets.json.CommunicationConstants.EXECUTABLE;
 import static org.cmdbuild.servlets.json.CommunicationConstants.ID;
 import static org.cmdbuild.servlets.json.CommunicationConstants.TASK_ASYNCHRONOUS_EVENT;
 import static org.cmdbuild.servlets.json.CommunicationConstants.TASK_CONNECTOR;
+import static org.cmdbuild.servlets.json.CommunicationConstants.TASK_GENERIC;
 import static org.cmdbuild.servlets.json.CommunicationConstants.TASK_READ_EMAIL;
 import static org.cmdbuild.servlets.json.CommunicationConstants.TASK_START_WORKFLOW;
 import static org.cmdbuild.servlets.json.CommunicationConstants.TASK_SYNCHRONOUS_EVENT;
@@ -25,6 +26,7 @@ import org.cmdbuild.logic.taskmanager.task.connector.ConnectorTask;
 import org.cmdbuild.logic.taskmanager.task.email.ReadEmailTask;
 import org.cmdbuild.logic.taskmanager.task.event.asynchronous.AsynchronousEventTask;
 import org.cmdbuild.logic.taskmanager.task.event.synchronous.SynchronousEventTask;
+import org.cmdbuild.logic.taskmanager.task.generic.GenericTask;
 import org.cmdbuild.logic.taskmanager.task.process.StartWorkflowTask;
 import org.cmdbuild.services.json.dto.JsonResponse;
 import org.cmdbuild.servlets.json.JSONBaseWithSpringContext;
@@ -40,6 +42,7 @@ public class TaskManager extends JSONBaseWithSpringContext {
 
 		ASYNCHRONOUS_EVENT(TASK_ASYNCHRONOUS_EVENT), //
 		CONNECTOR(TASK_CONNECTOR), //
+		GENERIC(TASK_GENERIC), //
 		READ_EMAIL(TASK_READ_EMAIL), //
 		START_WORKFLOW(TASK_START_WORKFLOW), //
 		SYNCHRONOUS_EVENT(TASK_SYNCHRONOUS_EVENT), //
@@ -84,6 +87,11 @@ public class TaskManager extends JSONBaseWithSpringContext {
 		@Override
 		public void visit(final ConnectorTask task) {
 			type = TaskType.CONNECTOR;
+		}
+
+		@Override
+		public void visit(final GenericTask task) {
+			type = TaskType.GENERIC;
 		}
 
 		@Override

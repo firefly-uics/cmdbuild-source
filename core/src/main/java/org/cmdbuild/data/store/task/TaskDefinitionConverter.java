@@ -31,6 +31,14 @@ public class TaskDefinitionConverter extends BaseStorableConverter<TaskDefinitio
 			}
 
 		}, //
+		GENERIC(TYPE_GENERIC) {
+
+			@Override
+			protected Builder<? extends TaskDefinition> create(final CMCard card) {
+				return GenericTaskDefinition.newInstance();
+			}
+
+		}, //
 		READ_EMAIL(TYPE_EMAIL) {
 
 			@Override
@@ -97,6 +105,11 @@ public class TaskDefinitionConverter extends BaseStorableConverter<TaskDefinitio
 				}
 
 				@Override
+				public void visit(final GenericTaskDefinition taskDefinition) {
+					element = GENERIC;
+				}
+
+				@Override
 				public void visit(final ReadEmailTaskDefinition taskDefinition) {
 					element = READ_EMAIL;
 				}
@@ -125,8 +138,9 @@ public class TaskDefinitionConverter extends BaseStorableConverter<TaskDefinitio
 	private static final String TYPE_ASYNCHRONOUS_EVENT = "asynchronous_event";
 	private static final String TYPE_CONNECTOR = "connector";
 	private static final String TYPE_EMAIL = "emailService";
-	private static final String TYPE_WORKFLOW = "workflow";
+	private static final String TYPE_GENERIC = "generic";
 	private static final String TYPE_SYNCHRONOUS_EVENT = "synchronous_event";
+	private static final String TYPE_WORKFLOW = "workflow";
 
 	@Override
 	public String getClassName() {

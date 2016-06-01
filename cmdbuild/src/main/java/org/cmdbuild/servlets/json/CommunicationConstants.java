@@ -288,6 +288,7 @@ public class CommunicationConstants {
 			TABLE_TYPE = "tableType", //
 			TASK_ASYNCHRONOUS_EVENT = "event_asynchronous", //
 			TASK_CONNECTOR = "connector", //
+			TASK_GENERIC = "generic", //
 			TASK_READ_EMAIL = "email", //
 			TASK_START_WORKFLOW = "workflow", //
 			TASK_SYNCHRONOUS_EVENT = "event_synchronous", //
