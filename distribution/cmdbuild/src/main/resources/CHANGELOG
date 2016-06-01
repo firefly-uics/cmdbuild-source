@@ -17,6 +17,8 @@ NEW FEATURES
 
  * User and current group ids available within functions used for dashboards
 
+ * Workflow metadata implementation
+
 
 FIXES
 
