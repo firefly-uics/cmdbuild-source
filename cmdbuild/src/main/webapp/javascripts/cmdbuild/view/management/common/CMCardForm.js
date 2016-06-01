@@ -63,7 +63,7 @@
 				buttons: this.cmButtons,
 				layout: {
 					type: 'hbox',
-					align:'stretch'
+					align: 'stretch'
 				}
 			});
 
@@ -167,9 +167,7 @@
 		},
 
 		ensureEditPanel: function() {
-			if (this.tabPanel
-					&& !this._isInEditMode) {
-
+			if (this.tabPanel && !this._isInEditMode) {
 				this.tabPanel.ensureEditPanel();
 
 				if (this._lastCard) {
