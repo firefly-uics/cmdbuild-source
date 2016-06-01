@@ -605,6 +605,8 @@
 		WORKFLOW_ACTIVE: 'workflowActive',
 		WORKFLOW_ATTRIBUTES: 'workflowAttributes',
 		WORKFLOW_CLASS_NAME: 'workflowClassName',
+		WORKFLOW_METADATA_ADDITIONAL_ACTIVITY_LABEL: 'AdditionalActivityLabel',
+		WORKFLOW_METADATA_SELECTED_ATTRIBUTES_GROUP: 'SelectedAttributesGroup',
 		WORKFLOW_NAME: 'workflowName',
 		WORKSPACE: 'workspace',
 		WRITABLE: 'writable',
