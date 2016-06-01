@@ -344,7 +344,15 @@ public class DefaultSecurityLogic implements Logic, SecurityLogic {
 		final Map<String, String> privileges = newHashMap();
 		for (final CMAttribute attribute : entryType.getActiveAttributes()) {
 			if (attribute.isActive()) {
-				final String mode = attribute.getMode().name().toLowerCase();
+				final String mode;
+				switch (attribute.getMode()) {
+				case HIDDEN:
+					mode = "none";
+					break;
+				default:
+					mode = attribute.getMode().name().toLowerCase();
+					break;
+				}
 				privileges.put(attribute.getName(), mode);
 			}
 		}
