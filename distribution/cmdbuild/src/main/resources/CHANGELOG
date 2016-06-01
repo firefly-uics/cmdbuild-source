@@ -146,6 +146,8 @@ FIXES
 
  * Unlock cards or processes on accordion change
 
+ * Wrong sort attribute in getcardlist server call with starting class
+
 
 
 
