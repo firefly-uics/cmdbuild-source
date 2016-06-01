@@ -151,6 +151,9 @@
 				case 'onAddButtonClick':
 					return this.onAddButtonClick(name, param, callBack);
 
+				case 'onCyclicExecutionButtonClick':
+					return this.onCyclicExecutionButtonClick(param);
+
 				case 'onItemDoubleClick':
 					return this.onItemDoubleClick();
 
@@ -163,8 +166,8 @@
 				case 'onRowSelected':
 					return this.onRowSelected(name, param, callBack);
 
-				case 'onStartButtonClick':
-					return this.onStartButtonClick(param);
+				case 'onSingleExecutionButtonClick':
+					return this.onSingleExecutionButtonClick(param);
 
 				case 'onStopButtonClick':
 					return this.onStopButtonClick(param);
@@ -320,14 +323,17 @@
 
 		/**
 		 * @param {Object} record
+		 *
+		 * @returns {Void}
 		 */
-		onStartButtonClick: function(record) {
+		onCyclicExecutionButtonClick: function (record) {
+			var params = {};
+			params[CMDBuild.core.constants.Proxy.ID] = record.get(CMDBuild.core.constants.Proxy.ID);
+
 			CMDBuild.core.LoadMask.show();
 
-			CMDBuild.proxy.taskManager.TaskManager.start({
-				params: {
-					id: record.get(CMDBuild.core.constants.Proxy.ID)
-				},
+			CMDBuild.proxy.taskManager.TaskManager.cyclicExecution({
+				params: params,
 				loadMask: false,
 				scope: this,
 				success: this.success,
@@ -337,14 +343,35 @@
 
 		/**
 		 * @param {Object} record
+		 *
+		 * @returns {Void}
 		 */
-		onStopButtonClick: function(record) {
+		onSingleExecutionButtonClick: function(record) {
+			var params = {};
+			params[CMDBuild.core.constants.Proxy.ID] = record.get(CMDBuild.core.constants.Proxy.ID);
+
+			CMDBuild.proxy.taskManager.TaskManager.singleExecution({
+				params: params,
+				loadMask: false,
+				scope: this,
+				success: this.success,
+				callback: this.callback
+			});
+		},
+
+		/**
+		 * @param {Object} record
+		 *
+		 * @returns {Void}
+		 */
+		onStopButtonClick: function (record) {
+			var params = {};
+			params[CMDBuild.core.constants.Proxy.ID] = record.get(CMDBuild.core.constants.Proxy.ID);
+
 			CMDBuild.core.LoadMask.show();
 
 			CMDBuild.proxy.taskManager.TaskManager.stop({
-				params: {
-					id: record.get(CMDBuild.core.constants.Proxy.ID)
-				},
+				params: params,
 				loadMask: false,
 				scope: this,
 				success: this.success,

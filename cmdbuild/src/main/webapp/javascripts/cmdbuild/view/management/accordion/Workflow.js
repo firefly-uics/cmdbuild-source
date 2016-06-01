@@ -8,7 +8,13 @@
 		 */
 		delegate: undefined,
 
-		title: CMDBuild.Translation.processes
+		title: CMDBuild.Translation.processes,
+
+		listeners: {
+			collapse: function (panel, eOpts) {
+				this.delegate.cmfg('onAccordionWorkflowCollapse');
+			}
+		}
 	});
 
 })();

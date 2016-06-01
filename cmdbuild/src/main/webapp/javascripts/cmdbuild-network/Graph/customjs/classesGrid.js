@@ -2,10 +2,8 @@
 	var classesGrid = function(param) {
 		this.param = param;
 		this.grid = new $.Cmdbuild.standard.grid();
-		this.refreshSelected = function() {
-			var form2Hook = $.Cmdbuild.dataModel.forms.classesForm;
-			form2Hook.selectRows($.Cmdbuild.custom.classesGrid.getAllSelected());
-		};
+		this.refreshSelected = function() {};
+		this.onLoad = function() {};
 		this.refresh = function() {
 			if ($.Cmdbuild.customvariables.commandInExecution === true) {
 				return;
@@ -49,15 +47,9 @@
 		};
 	};
 	$.Cmdbuild.custom.classesGrid = classesGrid;
-	$.Cmdbuild.custom.classesGrid.getAllSelected =  function() {
+	$.Cmdbuild.custom.classesGrid.getAllSelected =  function(classId) {
 		var classes = {};
-		var nodes = $.Cmdbuild.customvariables.model.getNodes();
-		for (var i = 0; i < nodes.length; i++) {
-			var classId = $.Cmdbuild.g3d.Model.getGraphData(nodes[i], "classId");
-			if (classes[classId] === undefined || classes[classId] === true) {
-				classes[classId] = $.Cmdbuild.customvariables.selected.isSelect(nodes[i].id());
-			}
-		}
+		classes[classId] = true;
 		return classes;
 	};
 }) (jQuery);

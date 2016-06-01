@@ -1,6 +1,12 @@
 package org.cmdbuild.spring.configuration;
 
-import org.cmdbuild.auth.UserStore;
+import static com.google.common.base.Predicates.not;
+import static com.google.common.base.Predicates.or;
+
+import java.util.HashMap;
+import java.util.Map;
+
+import org.cmdbuild.logic.auth.SessionLogic;
 import org.cmdbuild.logic.data.ConfigurationAwareLockLogic;
 import org.cmdbuild.logic.data.DefaultLockLogic;
 import org.cmdbuild.logic.data.DummyLockLogic;
@@ -8,14 +14,17 @@ import org.cmdbuild.logic.data.LockLogic;
 import org.cmdbuild.logic.data.access.lock.CmdbuildConfigurationAdapter;
 import org.cmdbuild.logic.data.access.lock.DefaultLockManager;
 import org.cmdbuild.logic.data.access.lock.DefaultLockManager.DurationExpired;
+import org.cmdbuild.logic.data.access.lock.DefaultLockManager.Owner;
+import org.cmdbuild.logic.data.access.lock.DefaultLockManager.OwnerAccepted;
 import org.cmdbuild.logic.data.access.lock.DisposingLockableStore;
 import org.cmdbuild.logic.data.access.lock.DisposingLockableStore.Disposer;
 import org.cmdbuild.logic.data.access.lock.DisposingLockableStore.PredicateBasedDisposer;
-import org.cmdbuild.logic.data.access.lock.InMemoryLockableStore;
 import org.cmdbuild.logic.data.access.lock.LockManager;
+import org.cmdbuild.logic.data.access.lock.Lockable;
 import org.cmdbuild.logic.data.access.lock.LockableStore;
+import org.cmdbuild.logic.data.access.lock.MapLockableStore;
+import org.cmdbuild.logic.data.access.lock.SessionSupplier;
 import org.cmdbuild.logic.data.access.lock.SynchronizedLockManager;
-import org.cmdbuild.logic.data.access.lock.UsernameSupplier;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -27,10 +36,10 @@ import com.google.common.base.Supplier;
 public class Lock {
 
 	@Autowired
-	private Properties properties;
+	private Authentication authentication;
 
 	@Autowired
-	private UserStore userStore;
+	private Properties properties;
 
 	public static final String USER_LOCK_LOGIC = "UserLockLogic";
 
@@ -57,22 +66,23 @@ public class Lock {
 
 	@Bean
 	protected LockManager defaultLockManager() {
-		return new DefaultLockManager(disposingLockableStore(), usernameSupplier());
+		return new DefaultLockManager(disposingLockableStore(), ownerSupplier());
 	}
 
 	@Bean
 	protected LockableStore<DefaultLockManager.Lock> disposingLockableStore() {
-		return new DisposingLockableStore<DefaultLockManager.Lock>(inMemoryLockableStore(), predicateBasedDisposer());
+		return new DisposingLockableStore<>(inMemoryLockableStore(), predicateBasedDisposer());
 	}
 
 	@Bean
 	protected LockableStore<DefaultLockManager.Lock> inMemoryLockableStore() {
-		return new InMemoryLockableStore<DefaultLockManager.Lock>();
+		final Map<Lockable, DefaultLockManager.Lock> map = new HashMap<>();
+		return new MapLockableStore<DefaultLockManager.Lock>(map);
 	}
 
 	@Bean
 	protected Disposer<DefaultLockManager.Lock> predicateBasedDisposer() {
-		return new PredicateBasedDisposer<DefaultLockManager.Lock>(durationExpired());
+		return new PredicateBasedDisposer<>(or(durationExpired(), ownerNotAccepted()));
 	}
 
 	@Bean
@@ -81,13 +91,29 @@ public class Lock {
 	}
 
 	@Bean
+	protected Predicate<DefaultLockManager.Lock> ownerNotAccepted() {
+		return not(new OwnerAccepted(new Predicate<Owner>() {
+
+			@Override
+			public boolean apply(final Owner input) {
+				return sessionLogic().exists(input.getId());
+			}
+
+		}));
+	}
+
+	@Bean
 	protected CmdbuildConfigurationAdapter cmdbuildConfigurationAdapter() {
 		return new CmdbuildConfigurationAdapter(properties.cmdbuildProperties());
 	}
 
 	@Bean
-	protected Supplier<String> usernameSupplier() {
-		return new UsernameSupplier(userStore);
+	protected Supplier<Owner> ownerSupplier() {
+		return new SessionSupplier(sessionLogic());
+	}
+
+	private SessionLogic sessionLogic() {
+		return authentication.standardSessionLogic();
 	}
 
 }

@@ -16,6 +16,7 @@ import static org.mockito.Mockito.when;
 import org.cmdbuild.data.store.Storable;
 import org.cmdbuild.data.store.task.TaskStore;
 import org.cmdbuild.data.store.task.TaskVisitor;
+import org.cmdbuild.exception.TaskManagerException;
 import org.cmdbuild.logic.email.EmailLogic;
 import org.cmdbuild.logic.email.EmailLogic.Email;
 import org.cmdbuild.logic.taskmanager.DefaultTaskManagerLogic;
@@ -25,8 +26,11 @@ import org.cmdbuild.logic.taskmanager.event.SynchronousEventFacade;
 import org.cmdbuild.logic.taskmanager.scheduler.SchedulerFacade;
 import org.cmdbuild.logic.taskmanager.scheduler.SchedulerFacade.Callback;
 import org.cmdbuild.logic.taskmanager.store.LogicAndStoreConverter;
+import org.cmdbuild.logic.taskmanager.task.connector.ConnectorTask;
 import org.cmdbuild.logic.taskmanager.task.email.ReadEmailTask;
+import org.cmdbuild.logic.taskmanager.task.event.asynchronous.AsynchronousEventTask;
 import org.cmdbuild.logic.taskmanager.task.event.synchronous.SynchronousEventTask;
+import org.cmdbuild.logic.taskmanager.task.process.StartWorkflowTask;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
@@ -283,7 +287,7 @@ public class DefaultTaskManagerLogicTest {
 						.withId(ID) //
 						.withDescription("should be deleted from scheduler facade") //
 						.build() //
-				);
+		);
 		final ScheduledTask task = ReadEmailTask.newInstance() //
 				.withId(ID) //
 				.withDescription(NEW_DESCRIPTION) //
@@ -523,7 +527,7 @@ public class DefaultTaskManagerLogicTest {
 						.withId(ID) //
 						.withDescription("should be deleted from facade") //
 						.build() //
-				);
+		);
 		final SynchronousEventTask task = SynchronousEventTask.newInstance() //
 				.withId(ID) //
 				.withDescription(NEW_DESCRIPTION) //
@@ -722,6 +726,137 @@ public class DefaultTaskManagerLogicTest {
 		final Task scheduledTask = taskCaptor.getValue();
 		assertThat(scheduledTask.getId(), equalTo(ID));
 		assertThat(scheduledTask.isActive(), is(false));
+	}
+
+	@Test(expected = TaskManagerException.class)
+	public void synchronousEventTaskCannotBeExecuted() throws Exception {
+		// given
+		final org.cmdbuild.data.store.task.SynchronousEventTask stored = org.cmdbuild.data.store.task.SynchronousEventTask
+				.newInstance() //
+				.build();
+		when(store.read(anyLong())) //
+				.thenReturn(stored);
+		final SynchronousEventTask storedTask = SynchronousEventTask.newInstance() //
+				.build();
+		when(storeAsSourceConverter.toLogic()) //
+				.thenReturn(storedTask);
+
+		// when
+		try {
+			taskManagerLogic.execute(ID);
+		} finally {
+			// then
+			final InOrder inOrder = inOrder(converter, logicAsSourceConverter, storeAsSourceConverter, store,
+					scheduledTaskFacade, synchronousEventFacade, emailLogic);
+			inOrder.verify(store).read(eq(ID));
+			inOrder.verify(converter).from(eq(stored));
+			inOrder.verify(storeAsSourceConverter).toLogic();
+			inOrder.verifyNoMoreInteractions();
+		}
+	}
+
+	@Test
+	public void asynchronousEventTaskExecuted() throws Exception {
+		// given
+		final org.cmdbuild.data.store.task.AsynchronousEventTask stored = org.cmdbuild.data.store.task.AsynchronousEventTask
+				.newInstance() //
+				.build();
+		when(store.read(anyLong())) //
+				.thenReturn(stored);
+		final AsynchronousEventTask storedTask = AsynchronousEventTask.newInstance() //
+				.build();
+		when(storeAsSourceConverter.toLogic()) //
+				.thenReturn(storedTask);
+
+		// when
+		taskManagerLogic.execute(ID);
+
+		// then
+		final InOrder inOrder = inOrder(converter, logicAsSourceConverter, storeAsSourceConverter, store,
+				scheduledTaskFacade, synchronousEventFacade, emailLogic);
+		inOrder.verify(store).read(eq(ID));
+		inOrder.verify(converter).from(eq(stored));
+		inOrder.verify(storeAsSourceConverter).toLogic();
+		inOrder.verify(scheduledTaskFacade).execute(eq(storedTask), any(Callback.class));
+		inOrder.verifyNoMoreInteractions();
+	}
+
+	@Test
+	public void connectorTaskExecuted() throws Exception {
+		// given
+		final org.cmdbuild.data.store.task.ConnectorTask stored = org.cmdbuild.data.store.task.ConnectorTask
+				.newInstance() //
+				.build();
+		when(store.read(anyLong())) //
+				.thenReturn(stored);
+		final ConnectorTask storedTask = ConnectorTask.newInstance() //
+				.build();
+		when(storeAsSourceConverter.toLogic()) //
+				.thenReturn(storedTask);
+
+		// when
+		taskManagerLogic.execute(ID);
+
+		// then
+		final InOrder inOrder = inOrder(converter, logicAsSourceConverter, storeAsSourceConverter, store,
+				scheduledTaskFacade, synchronousEventFacade, emailLogic);
+		inOrder.verify(store).read(eq(ID));
+		inOrder.verify(converter).from(eq(stored));
+		inOrder.verify(storeAsSourceConverter).toLogic();
+		inOrder.verify(scheduledTaskFacade).execute(eq(storedTask), any(Callback.class));
+		inOrder.verifyNoMoreInteractions();
+	}
+
+	@Test
+	public void readEmailTaskExecuted() throws Exception {
+		// given
+		final org.cmdbuild.data.store.task.ReadEmailTask stored = org.cmdbuild.data.store.task.ReadEmailTask
+				.newInstance() //
+				.build();
+		when(store.read(anyLong())) //
+				.thenReturn(stored);
+		final ReadEmailTask storedTask = ReadEmailTask.newInstance() //
+				.build();
+		when(storeAsSourceConverter.toLogic()) //
+				.thenReturn(storedTask);
+
+		// when
+		taskManagerLogic.execute(ID);
+
+		// then
+		final InOrder inOrder = inOrder(converter, logicAsSourceConverter, storeAsSourceConverter, store,
+				scheduledTaskFacade, synchronousEventFacade, emailLogic);
+		inOrder.verify(store).read(eq(ID));
+		inOrder.verify(converter).from(eq(stored));
+		inOrder.verify(storeAsSourceConverter).toLogic();
+		inOrder.verify(scheduledTaskFacade).execute(eq(storedTask), any(Callback.class));
+		inOrder.verifyNoMoreInteractions();
+	}
+
+	@Test
+	public void startProcessTaskExecuted() throws Exception {
+		// given
+		final org.cmdbuild.data.store.task.StartWorkflowTask stored = org.cmdbuild.data.store.task.StartWorkflowTask
+				.newInstance() //
+				.build();
+		when(store.read(anyLong())) //
+				.thenReturn(stored);
+		final StartWorkflowTask storedTask = StartWorkflowTask.newInstance() //
+				.build();
+		when(storeAsSourceConverter.toLogic()) //
+				.thenReturn(storedTask);
+
+		// when
+		taskManagerLogic.execute(ID);
+
+		// then
+		final InOrder inOrder = inOrder(converter, logicAsSourceConverter, storeAsSourceConverter, store,
+				scheduledTaskFacade, synchronousEventFacade, emailLogic);
+		inOrder.verify(store).read(eq(ID));
+		inOrder.verify(converter).from(eq(stored));
+		inOrder.verify(storeAsSourceConverter).toLogic();
+		inOrder.verify(scheduledTaskFacade).execute(eq(storedTask), any(Callback.class));
+		inOrder.verifyNoMoreInteractions();
 	}
 
 }

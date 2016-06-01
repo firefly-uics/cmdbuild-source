@@ -1,5 +1,6 @@
 package org.cmdbuild.spring.configuration;
 
+import org.cmdbuild.api.fluent.ExecutorBasedFluentApi;
 import org.cmdbuild.api.fluent.FluentApi;
 import org.cmdbuild.api.fluent.FluentApiExecutor;
 import org.cmdbuild.core.api.fluent.LogicFluentApiExecutor;
@@ -19,7 +20,7 @@ public class Api {
 
 	@Bean
 	public FluentApi systemFluentApi() {
-		return new FluentApi(systemFluentApiExecutor());
+		return new ExecutorBasedFluentApi(systemFluentApiExecutor());
 	}
 
 	@Bean

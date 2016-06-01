@@ -9,7 +9,7 @@ import java.util.Map;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import org.cmdbuild.logic.taskmanager.Task;
-import org.cmdbuild.logic.taskmanager.TaskVistor;
+import org.cmdbuild.logic.taskmanager.TaskVisitor;
 
 import com.google.common.collect.Maps;
 
@@ -246,7 +246,7 @@ public class SynchronousEventTask implements Task {
 	}
 
 	@Override
-	public void accept(final TaskVistor visitor) {
+	public void accept(final TaskVisitor visitor) {
 		visitor.visit(this);
 	}
 
@@ -263,6 +263,11 @@ public class SynchronousEventTask implements Task {
 	@Override
 	public boolean isActive() {
 		return active;
+	}
+
+	@Override
+	public boolean isExecutable() {
+		return false;
 	}
 
 	public Phase getPhase() {

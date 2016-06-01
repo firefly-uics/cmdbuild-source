@@ -245,7 +245,7 @@
 			}, {
 				dataIndex: "orientedDescription",
 				flex: 1,
-				header: CMDBuild.Translation.management.findfilter.direction
+				header: CMDBuild.Translation.direction
 			}, {
 				field: this.destinationCombo,
 				flex: 1,
@@ -254,11 +254,11 @@
 					return record.getDestination().getDescription();
 				}
 			}, {
-				header: CMDBuild.Translation.management.findfilter.relations,
+				header: CMDBuild.Translation.relations,
 				columns: [
-					getCheckColumnConfig(me, CMDBuild.Translation.management.findfilter.notinrel, 'noone'),
-					getCheckColumnConfig(me, CMDBuild.Translation.management.findfilter.all, 'any'),
-					getCheckColumnConfig(me, CMDBuild.Translation.management.findfilter.fromSelection, 'oneof')
+					getCheckColumnConfig(me, CMDBuild.Translation.noOne, 'noone'),
+					getCheckColumnConfig(me, CMDBuild.Translation.any, 'any'),
+					getCheckColumnConfig(me, CMDBuild.Translation.fromSelection, 'oneof')
 				]
 			}];
 		},

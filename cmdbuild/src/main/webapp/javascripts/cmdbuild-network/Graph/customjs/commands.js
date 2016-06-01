@@ -18,15 +18,182 @@
 			var paramActualized = $.Cmdbuild.dataModel.resolveVariables(param);
 			console.log("Test", param, paramActualized);
 		},
+		print : function(param) {
+			var file = $.Cmdbuild.global.getAppConfigUrl()
+					+ $.Cmdbuild.g3d.constants.TEMPLATES_PATH
+					+ $.Cmdbuild.g3d.constants.PRINT_TEMPLATE;
+
+			var mywindow = window.open('', 'my div', 'height=600,width=900');
+			$.Cmdbuild.g3d.Options.getFileFromServer(file, function(template) {
+				var renderer = $.Cmdbuild.customvariables.viewer.getRenderer();
+				var strImg = "<img src='"
+						+ renderer.domElement.toDataURL("image/png") + "'";
+				var res = template.replace("%PRINT_NETWORK_IMAGE", strImg);
+				Popup(res);
+
+				function Popup(data) {
+					mywindow.document.write(data);
+
+					mywindow.document.close(); // necessary for IE >= 10
+					mywindow.focus(); // necessary for IE >= 10
+
+					mywindow.print();
+					mywindow.close();
+
+					return true;
+				}
+
+			});
+
+		},
+		showSearchByAttributes : function(param) {
+			var paramActualized = $.Cmdbuild.dataModel.resolveVariables(param);
+			var description = $.Cmdbuild.customvariables.cacheClasses
+					.getDescription(paramActualized.classId);
+			$("#cmdbuildSearchClassDescription").text(description);
+			$.Cmdbuild.standard.commands.navigate({
+				form : param.navigationForm,
+				container : param.navigationContainer
+			});
+		},
+		showFilterByAttributes : function(param) {
+			var paramActualized = $.Cmdbuild.dataModel.resolveVariables(param);
+			var description = $.Cmdbuild.customvariables.cacheClasses
+					.getDescription(paramActualized.classId);
+			$("#cmdbuildClassDescription").text(description);
+			$.Cmdbuild.standard.commands.navigate({
+				form : param.navigationForm,
+				container : param.navigationContainer
+			});
+		},
 		slidingLevels : function(param) {
 			var value = $("#" + param.id + " input").val();
-			if (value !== sliderValue && ! $.Cmdbuild.customvariables.selected.isEmpty()) {
+			if (value !== sliderValue
+					&& !$.Cmdbuild.customvariables.selected.isEmpty()) {
 				sliderValue = value;
 				reopenWithLevels(param.id, value);
 				$.Cmdbuild.customvariables.options.baseLevel = value;
 				$("#baseLevel").spinner("value",
 						$.Cmdbuild.customvariables.options.baseLevel);
 			}
+		},
+		navigateOnAttributes : function(param) {
+			var paramActualized = $.Cmdbuild.dataModel.resolveVariables(param);
+			var classes = $.Cmdbuild.custom.configuration.filterByAttributes;
+			$.Cmdbuild.custom.configuration.temporaryFilterByAttributes = (classes) ? $.Cmdbuild.utilities
+					.clone(classes)
+					: {};
+			$.Cmdbuild.dataModel.prepareCallerParameters(param.caller, {
+				classId : param.classId
+			});
+			$.Cmdbuild.standard.commands.navigate({
+				form : paramActualized.form,
+				dialog : paramActualized.dialog,
+				classId : paramActualized.classId
+			});
+		},
+		closeSearchAttributesDialog : function(param) {
+			$.Cmdbuild.standard.commands.dialogClose(param);
+			$.Cmdbuild.customvariables.selected.erase();
+
+			var temporaryClasses = $.Cmdbuild.custom.configuration.temporaryFilterByAttributes;
+			$.Cmdbuild.custom.commands.selectByFilter({
+				classId : param.classId,
+				filterByAttributes : $.Cmdbuild.utilities
+						.clone(temporaryClasses)
+			});
+		},
+		closeFilterAttributesDialog : function(param) {
+			var temporaryClasses = $.Cmdbuild.custom.configuration.temporaryFilterByAttributes;
+			if (!$.Cmdbuild.custom.configuration.filterByAttributes) {
+				$.Cmdbuild.custom.configuration.filterByAttributes = {};
+			}
+			$.Cmdbuild.custom.configuration.filterByAttributes = $.Cmdbuild.utilities
+					.clone(temporaryClasses);
+			$.Cmdbuild.standard.commands.dialogClose(param);
+			$.Cmdbuild.standard.commands.navigate({
+				form : param.navigationForm,
+				container : param.navigationContainer,
+				stayOnRow : param.stayOnRow
+			});
+		},
+		addFilterAttribute : function(param) {
+			var formObject = $.Cmdbuild.dataModel.forms[param.navigationForm];
+			param = $.Cmdbuild.dataModel.resolveVariables(param);
+			var attributeId = $.Cmdbuild.utilities.getHtmlFieldValue("#"
+					+ param.id);
+			if (!attributeId) {
+				$.Cmdbuild.standard.commands.navigate({
+					form : param.navigationForm,
+					container : param.navigationContainer
+				});
+				return;
+			}
+			var attributeDescription = $(
+					"#" + param.id + " option[value='" + attributeId + "']")
+					.text();
+			if (!$.Cmdbuild.custom.configuration.temporaryFilterByAttributes) {
+				$.Cmdbuild.custom.configuration.temporaryFilterByAttributes = {};
+			}
+			var fAttributes = $.Cmdbuild.custom.configuration.temporaryFilterByAttributes;
+			if (!fAttributes[param.classId]) {
+				fAttributes[param.classId] = {};
+			}
+			$.Cmdbuild.g3d.proxy.getClassAttributes(param.classId, function(
+					response) {
+				var attribute = this.getAttribute(response, attributeId);
+				if (!attribute) {
+					console.log("Error on attribute", param.classId,
+							attributeId);
+				}
+				if (attribute.type === "hidden") {
+					attribute.type = "string";
+				}
+				attribute.hidden = false;
+				attribute.writable = true;
+				if (!fAttributes[param.classId][attribute._id]) {
+					fAttributes[param.classId][attribute._id] = {
+						attribute : attribute,
+						data : []
+					};
+				}
+				fAttributes[param.classId][attribute._id].data.push({
+					operator : this.firstOperatorOnType(attribute),
+					data : {
+						firstParameter : "",
+						secondParameter : ""
+					}
+				});
+
+				$.Cmdbuild.standard.commands.navigate({
+					form : param.navigationForm,
+					container : param.navigationContainer
+				});
+			}, this);
+
+		},
+		firstOperatorOnType : function(attribute) {
+			var options = $.Cmdbuild.custom.formAttributesFilter
+					.getSpecificOperators(attribute);
+			return options[0];
+		},
+		fieldChanged : function(configuration) {
+			$.Cmdbuild.standard.commands.fieldChanged(configuration);
+			if ($.Cmdbuild.customvariables.selectObservers) {
+				var observers = $.Cmdbuild.customvariables.selectObservers;
+				for (var i = 0; i < observers.length; i++) {
+					observers[i].changedSelect(configuration);
+				}
+
+			}
+		},
+		getAttribute : function(attributes, id) {
+			for (var i = 0; i < attributes.length; i++) {
+				if (id === attributes[i]._id) {
+					return attributes[i];
+				}
+			}
+			return null;
 		},
 		filterDomains : function(param) {
 			var classDescription = $.Cmdbuild.utilities.getHtmlFieldValue("#"
@@ -107,14 +274,15 @@
 								}
 								return;
 							}
-							this._navigateOnNode(classId, cardId, callback, callbackScope);
+							this._navigateOnNode(classId, cardId, callback,
+									callbackScope);
 						}, this);
 			} else {
 				this._navigateOnNode(classId, cardId, callback, callbackScope);
 
 			}
 		},
-		applyFilters : function(param) {
+		applyFiltersByClass : function(param) {
 			var formObject = $.Cmdbuild.dataModel.forms[param.filterByClass];
 			var configuration = $.Cmdbuild.custom.configuration;
 			configuration.filterClasses = [];
@@ -131,7 +299,10 @@
 			$.Cmdbuild.custom.commands.deleteSelection({
 				selected : "true"
 			});
-			formObject = $.Cmdbuild.dataModel.forms[param.filterByDomain];
+		},
+		applyFiltersByDomain : function(param) {
+			var configuration = $.Cmdbuild.custom.configuration;
+			var formObject = $.Cmdbuild.dataModel.forms[param.filterByDomain];
 			if (formObject) {
 				configuration.filterClassesDomains = [];
 				for ( var key in formObject.checked) {
@@ -163,6 +334,117 @@
 				}
 				$.Cmdbuild.customvariables.model.changed(true);
 			}
+		},
+		attributeCascade : function(classId) {
+			var fAttributes = $.Cmdbuild.custom.configuration.temporaryFilterByAttributes;
+			var parents = $.Cmdbuild.customvariables.cacheClasses
+					.getAllParents(classId);
+			// /// EMPTY
+		},
+		applyFiltersByAttributeRecursive : function(index, classes, toDelete,
+				callback, callbackScope) {
+			if (index >= classes.length) {
+				callback.apply(callbackScope, []);
+				return;
+			}
+			var key = classes[index].key;
+			var nodesForClass = $.Cmdbuild.customvariables.model
+					.getNodesByClassName(key);
+			var attribute = $.Cmdbuild.g3d.backend.CmdbuildModel
+					.getJsonFilterAttributes(classes[index].data);
+			this.attributeCascade(key);
+			if (attribute && nodesForClass.length > 0) {
+				var jsonValues = this.getIdsArray(nodesForClass);
+				$.Cmdbuild.g3d.backend.CmdbuildModel
+						.getFilteredCardList(key, jsonValues, attribute,
+								function(response) {
+									this.deleteIfNotInFilter(nodesForClass,
+											this.toTable(response), toDelete);
+									this.applyFiltersByAttributeRecursive(
+											index + 1, classes, toDelete,
+											callback, callbackScope);
+								}, this);
+			} else {
+
+				this.applyFiltersByAttributeRecursive(index + 1, classes,
+						toDelete, callback, callbackScope);
+			}
+		},
+		getIdsArray : function(nodesForClass) {
+			var ids = [];
+			for (var i = 0; i < nodesForClass.length; i++) {
+				ids.push(parseInt(nodesForClass[i].id()));
+			}
+			return ids;
+		},
+		selectByFilter : function(param) {
+			param = $.Cmdbuild.dataModel.resolveVariables(param);
+			var nodesForClass = $.Cmdbuild.customvariables.model
+					.getNodesByClassName(param.classId, true);
+			var classes = param.filterByAttributes;
+			var attribute = $.Cmdbuild.g3d.backend.CmdbuildModel
+					.getJsonFilterAttributes(classes[param.classId]);
+			if (attribute && nodesForClass.length > 0) {
+				var jsonValues = this.getIdsArray(nodesForClass);
+				$.Cmdbuild.g3d.backend.CmdbuildModel.getFilteredCardList(
+						param.classId, jsonValues, attribute,
+						function(response) {
+							for (var i = 0; i < response.length; i++) {
+								$.Cmdbuild.customvariables.selected.select(
+										response[i]._id, true);
+							}
+							$.Cmdbuild.customvariables.selected.changed();
+						}, this);
+			}
+		},
+		applyFiltersByAttribute : function(param) {
+			var configuration = $.Cmdbuild.custom.configuration;
+			var toDelete = [];
+			var classes = $.Cmdbuild.custom.configuration.filterByAttributes;
+			this.applyFiltersByAttributeRecursive(0, this.toArray(classes),
+					toDelete, function() {
+						this.deleteBunch(toDelete);
+					}, this);
+		},
+		deleteBunch : function(ids) {
+			$.Cmdbuild.customvariables.selected.erase();
+			for (var i = 0; i < ids.length; i++) {
+				$.Cmdbuild.customvariables.selected.select(ids[i], true);
+			}
+			var deleteCards = new $.Cmdbuild.g3d.commands.deleteCards(
+					$.Cmdbuild.customvariables.model,
+					$.Cmdbuild.customvariables.selected, "true");
+			$.Cmdbuild.customvariables.commandsManager.execute(deleteCards, {});
+		},
+		toArray : function(classes) {
+			var ar = [];
+			for ( var key in classes) {
+				ar.push({
+					key : key,
+					data : classes[key]
+				})
+			}
+			return ar;
+		},
+		toTable : function(cards) {
+			var obj = {};
+			for (var i = 0; i < cards.length; i++) {
+				obj[cards[i]._id] = true;
+			}
+			return obj;
+		},
+		deleteIfNotInFilter : function(nodesForClass, tableCards, toDelete) {
+			for (var i = 0; i < nodesForClass.length; i++) {
+				var id = nodesForClass[i].id();
+				if (!tableCards[id]) {
+					toDelete.push(id);
+				}
+			}
+		},
+		applyFilters : function(param) {
+			this.applyFiltersByClass(param);
+			this.applyFiltersByDomain(param);
+			this.applyFiltersByAttribute(param);
 			$.Cmdbuild.standard.commands.dialogClose(param);
 		},
 		switchOnSelected : function(param) {
@@ -266,7 +548,7 @@
 			if (param.type === "baseLevel") {
 				$("#openLevelsSlider input").val(value);
 				$("#openLevelsSlider").slider("value", value);
-				
+
 			}
 			$.Cmdbuild.customvariables.options[param.type] = value;
 			$.Cmdbuild.customvariables.options.changed();
@@ -278,10 +560,11 @@
 		selectClass : function(param) {
 			var paramActualized = $.Cmdbuild.dataModel.resolveVariables(param);
 			$.Cmdbuild.customvariables.selected.selectByClassName(
-					paramActualized.node, param.addSelection);
+					paramActualized.node, param.addSelection,
+					param.superClasses === "true");
 			var form2Hook = $.Cmdbuild.dataModel.forms[paramActualized.id];
-			form2Hook
-					.selectRows($.Cmdbuild.custom.classesGrid.getAllSelected());
+			form2Hook.selectRows($.Cmdbuild.custom.classesGrid
+					.getAllSelected(paramActualized.node));
 		},
 		selectNode : function(param) {
 			var paramActualized = $.Cmdbuild.dataModel.resolveVariables(param);
@@ -302,14 +585,46 @@
 			var form2Hook = $.Cmdbuild.dataModel.forms[paramActualized.id];
 			form2Hook.selectRows($.Cmdbuild.customvariables.selected.getData());
 		},
+		showOnlyClasses : function(param) {
+			$.Cmdbuild.customvariables.filterClassSuperclasses = false;
+			$.Cmdbuild.customvariables.filterClassOnlyClasses = true;
+			$.Cmdbuild.standard.commands.navigate({
+				form : param.formButtons,
+				container : param.containerButtons
+			});
+			$.Cmdbuild.standard.commands.navigate({
+				form : param.form,
+				container : param.container
+			});
+
+		},
+		showSuperClasses : function(param) {
+			$.Cmdbuild.customvariables.filterClassSuperclasses = true;
+			$.Cmdbuild.customvariables.filterClassOnlyClasses = false;
+			$.Cmdbuild.standard.commands.navigate({
+				form : param.formButtons,
+				container : param.containerButtons
+			});
+			$.Cmdbuild.standard.commands.navigate({
+				form : param.form,
+				container : param.container
+			});
+
+		},
 		initialize : function(callback) {
 			$.Cmdbuild.customvariables.model = new $.Cmdbuild.g3d.Model();
 			$.Cmdbuild.customvariables.selected = new $.Cmdbuild.g3d.Selected(
 					$.Cmdbuild.customvariables.model);
 
 			new $.Cmdbuild.g3d.cache(callback, this);
+			$.Cmdbuild.customvariables.filterClassSuperclasses = false;
+			$.Cmdbuild.customvariables.filterClassOnlyClasses = true;
 		},
 		doLayout : function(param) {
+			this.blockLayout({
+				active : false,
+				id : param.blockButton
+			});
 			$.Cmdbuild.customvariables.model.doLayout();
 		},
 		undo : function(param) {
@@ -411,6 +726,48 @@
 				$.Cmdbuild.customvariables.options.nodeTooltipEnabled = false;
 				$.Cmdbuild.customvariables.options.edgeTooltipEnabled = false;
 			}
+		},
+		/**
+		 * Update UI of toggleTooltips element
+		 * 
+		 * @param {Object}
+		 *            params
+		 * @param {String}
+		 *            params.id
+		 * @param {Boolean}
+		 *            params.active
+		 */
+		updateToggleFilter : function(params) {
+			if (params.active) {
+				$("#" + params.id).parent().addClass(
+						$.Cmdbuild.custom.commands.variables.BUTTONACTIVECLASS);
+				$.Cmdbuild.customvariables.options.filterEnabled = true;
+			} else {
+				$("#" + params.id).parent().removeClass(
+						$.Cmdbuild.custom.commands.variables.BUTTONACTIVECLASS);
+				$.Cmdbuild.customvariables.options.filterEnabled = false;
+			}
+		},
+		/**
+		 * Block the layout
+		 * 
+		 * @param {Object}
+		 *            params
+		 * @param {String}
+		 *            params.id
+		 * @param {Boolean}
+		 *            params.active
+		 */
+		blockLayout : function(params) {
+			if (params.active) {
+				$("#" + params.id).parent().addClass(
+						$.Cmdbuild.custom.commands.variables.BUTTONACTIVECLASS);
+				$.Cmdbuild.customvariables.options.blockedLayout = true;
+			} else {
+				$("#" + params.id).parent().removeClass(
+						$.Cmdbuild.custom.commands.variables.BUTTONACTIVECLASS);
+				$.Cmdbuild.customvariables.options.blockedLayout = false;
+			}
 		}
 
 	};
@@ -482,12 +839,11 @@
 		if (!classId && firstTimeIsGone) {
 			return $.Cmdbuild.translations.getTranslation("TITLE_NOSELECTION",
 					"No selection")
-		}
-		else if (classId) {
+		} else if (classId) {
 			firstTimeIsGone = true;
-			return $.Cmdbuild.customvariables.cacheClasses.getDescription(classId);
-		}
-		else {
+			return $.Cmdbuild.customvariables.cacheClasses
+					.getDescription(classId);
+		} else {
 			return "";
 		}
 	}

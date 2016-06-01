@@ -9,6 +9,14 @@ NEW FEATURES
 
  * Keep sync checkbox checked by default on administration email template form
 
+ * Locks related to a user session must be removed when the session is closed or expired
+
+ * Single execution of a task without scheduling
+
+ * Impersonate another user and/or group using workflow API
+
+ * User and current group ids available within functions used for dashboards
+
 
 FIXES
 
@@ -133,6 +141,10 @@ FIXES
  * GIS map card selection error
 
  * Cannot load interface when "translations" directory contains unexpected files
+
+ * Search filter popup dialog visible also if grid is no more displayed
+
+ * Unlock cards or processes on accordion change
 
  * Wrong sort attribute in getcardlist server call with starting class
 

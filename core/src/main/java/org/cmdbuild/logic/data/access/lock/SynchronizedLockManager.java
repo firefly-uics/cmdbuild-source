@@ -14,12 +14,12 @@ public class SynchronizedLockManager extends ForwardingLockManager {
 	}
 
 	@Override
-	public synchronized void lock(final Lockable lockable) throws LockedByAnotherUser {
+	public synchronized void lock(final Lockable lockable) throws LockedByAnother {
 		super.lock(lockable);
 	}
 
 	@Override
-	public synchronized void unlock(final Lockable lockable) throws LockedByAnotherUser {
+	public synchronized void unlock(final Lockable lockable) throws LockedByAnother {
 		super.unlock(lockable);
 	}
 

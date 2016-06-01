@@ -156,7 +156,7 @@
 		},
 
 		onDeleteDetailClick: function(model) {
-			Ext.Msg.confirm(CMDBuild.Translation.management.findfilter.msg.attention,
+			Ext.Msg.confirm(CMDBuild.Translation.attention,
 				CMDBuild.Translation.management.modcard.delete_card_confirm,
 				makeRequest, this);
 

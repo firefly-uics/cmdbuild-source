@@ -5,6 +5,7 @@ import static org.mockito.Mockito.mock;
 
 import org.cmdbuild.api.fluent.FluentApi;
 import org.cmdbuild.api.fluent.FluentApiExecutor;
+import org.cmdbuild.api.fluent.ExecutorBasedFluentApi;
 import org.cmdbuild.api.fluent.ws.WsFluentApiExecutor;
 import org.cmdbuild.services.soap.Card;
 import org.cmdbuild.services.soap.Private;
@@ -47,7 +48,7 @@ public abstract class AbstractWsFluentApiTest {
 		proxy = mock(Private.class);
 		final FluentApiExecutor executor = new WsFluentApiExecutor(proxy);
 
-		api = new FluentApi(executor);
+		api = new ExecutorBasedFluentApi(executor);
 	}
 
 	protected Private proxy() {

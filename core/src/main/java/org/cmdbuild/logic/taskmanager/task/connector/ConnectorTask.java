@@ -13,7 +13,7 @@ import org.apache.commons.lang3.builder.ToStringStyle;
 import org.cmdbuild.common.java.sql.DataSourceHelper;
 import org.cmdbuild.common.java.sql.DataSourceTypes.DataSourceType;
 import org.cmdbuild.logic.taskmanager.ScheduledTask;
-import org.cmdbuild.logic.taskmanager.TaskVistor;
+import org.cmdbuild.logic.taskmanager.TaskVisitor;
 import org.joda.time.DateTime;
 
 import com.google.common.collect.Sets;
@@ -66,8 +66,8 @@ public class ConnectorTask implements ScheduledTask {
 
 	}
 
-	public static final class SqlSourceConfiguration extends AbstractSourceConfiguration implements
-			DataSourceHelper.Configuration {
+	public static final class SqlSourceConfiguration extends AbstractSourceConfiguration
+			implements DataSourceHelper.Configuration {
 
 		public static class Builder implements org.apache.commons.lang3.builder.Builder<SqlSourceConfiguration> {
 
@@ -617,7 +617,7 @@ public class ConnectorTask implements ScheduledTask {
 	}
 
 	@Override
-	public void accept(final TaskVistor visitor) {
+	public void accept(final TaskVisitor visitor) {
 		visitor.visit(this);
 	}
 
@@ -634,6 +634,11 @@ public class ConnectorTask implements ScheduledTask {
 	@Override
 	public boolean isActive() {
 		return active;
+	}
+
+	@Override
+	public boolean isExecutable() {
+		return true;
 	}
 
 	@Override

@@ -34,7 +34,7 @@ public class DurationExpiredTest {
 	@Test(timeout = TIMEOUT_FOR_TESTS)
 	public void durationNotExpired() throws Exception {
 		// given
-		final Lock lock = new Lock("test", new Date());
+		final Lock lock = Lock.newInstance().withTime(new Date()).build();
 
 		// when
 		final boolean output = predicate.apply(lock);
@@ -46,7 +46,7 @@ public class DurationExpiredTest {
 	@Test(timeout = TIMEOUT_FOR_TESTS)
 	public void durationExpired() throws Exception {
 		// given
-		final Lock lock = new Lock("test", new Date());
+		final Lock lock = Lock.newInstance().withTime(new Date()).build();
 
 		currentThread();
 		// when

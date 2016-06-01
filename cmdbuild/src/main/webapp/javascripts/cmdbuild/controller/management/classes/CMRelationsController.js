@@ -452,7 +452,7 @@
 			var masterAndSlave = getMasterAndSlave(model.get(CMDBuild.core.constants.Proxy.SOURCE));
 
 			Ext.Msg.confirm(
-				CMDBuild.Translation.management.findfilter.msg.attention,
+				CMDBuild.Translation.attention,
 				CMDBuild.Translation.management.modcard.delete_relation_confirm,
 				makeRequest,
 				this
