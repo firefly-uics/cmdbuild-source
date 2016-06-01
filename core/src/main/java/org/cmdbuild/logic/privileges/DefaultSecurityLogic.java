@@ -35,6 +35,7 @@ import static org.cmdbuild.dao.query.clause.QueryAliasAttribute.attribute;
 import static org.cmdbuild.dao.query.clause.where.AndWhereClause.and;
 import static org.cmdbuild.dao.query.clause.where.EqualsOperatorAndValue.eq;
 import static org.cmdbuild.dao.query.clause.where.SimpleWhereClause.condition;
+import static org.cmdbuild.logic.privileges.PrivilegeInfo.EMPTY_ATTRIBUTES_PRIVILEGES;
 
 import java.util.List;
 import java.util.Map;
@@ -274,7 +275,7 @@ public class DefaultSecurityLogic implements Logic, SecurityLogic {
 		return null;
 	}
 
-	/*
+	/**
 	 * FIXME
 	 * 
 	 * this methods is called for two different purposes
@@ -308,31 +309,39 @@ public class DefaultSecurityLogic implements Logic, SecurityLogic {
 						privilegeInfo.setAttributesPrivileges((String[]) attributes);
 					}
 				} else {
-					/*
-					 * Iterate over the attributes privileges and keep only the
-					 * ones that override the mode of the attribute
-					 */
-					final CMEntryType entryType = view.findClass(entryTypeId);
-					final Map<String, String> attributeModes = attributesMode(entryType);
-					final List<String> attributesPrivilegesToSave = newArrayList();
-					for (final String attributePrivilege : privilegeInfo.getAttributesPrivileges()) {
-						final String[] parts = attributePrivilege.split(":");
-						final String attributeName = parts[0];
-						final String privilege = parts[1];
-						if (attributeModes.containsKey(attributeName)) {
-							if (!attributeModes.get(attributeName).equals(privilege)) {
-								attributesPrivilegesToSave.add(attributePrivilege);
-							}
-						}
+					if (privilegeInfo.getPrivilegeFilter() == null) {
+						privilegeInfo.setPrivilegeFilter(grantCard.get(PRIVILEGE_FILTER_ATTRIBUTE, String.class));
 					}
 
-					privilegeInfo.setAttributesPrivileges( //
-							attributesPrivilegesToSave.toArray( //
-									new String[attributesPrivilegesToSave.size()] //
-									));
+					if (privilegeInfo.getAttributesPrivileges() == null) {
+						privilegeInfo.setAttributesPrivileges(
+								grantCard.get(ATTRIBUTES_PRIVILEGES_ATTRIBUTE, String[].class));
+					} else {
+						/*
+						 * Iterate over the attributes privileges and keep only
+						 * the ones that override the mode of the attribute
+						 */
+						final CMEntryType entryType = view.findClass(entryTypeId);
+						final Map<String, String> attributeModes = attributesMode(entryType);
+						final List<String> attributesPrivilegesToSave = newArrayList();
+						for (final String attributePrivilege : privilegeInfo.getAttributesPrivileges()) {
+							final String[] parts = attributePrivilege.split(":");
+							final String attributeName = parts[0];
+							final String privilege = parts[1];
+							if (attributeModes.containsKey(attributeName)) {
+								if (!attributeModes.get(attributeName).equals(privilege)) {
+									attributesPrivilegesToSave.add(attributePrivilege);
+								}
+							}
+						}
+						privilegeInfo.setAttributesPrivileges( //
+								attributesPrivilegesToSave.toArray( //
+										new String[attributesPrivilegesToSave.size()] //
+						));
+					}
 				}
-				privilegeInfo.setCardEditMode(CardEditMode.PERSISTENCE_TO_LOGIC.apply((String) grantCard
-						.get(UI_CARD_EDIT_MODE_ATTRIBUTE)));
+				privilegeInfo.setCardEditMode(
+						CardEditMode.PERSISTENCE_TO_LOGIC.apply((String) grantCard.get(UI_CARD_EDIT_MODE_ATTRIBUTE)));
 				updateGrantCard(grantCard, privilegeInfo);
 			}
 		} else {
@@ -367,9 +376,7 @@ public class DefaultSecurityLogic implements Logic, SecurityLogic {
 
 	@Override
 	public void saveViewPrivilege(final PrivilegeInfo privilegeInfo) {
-		final CMQueryResult result = view
-				.select(anyAttribute(grantClass))
-				.from(grantClass)
+		final CMQueryResult result = view.select(anyAttribute(grantClass)).from(grantClass)
 				.where(and(condition(attribute(grantClass, GROUP_ID_ATTRIBUTE), eq(privilegeInfo.getGroupId())),
 						condition(attribute(grantClass, TYPE_ATTRIBUTE), eq(VIEW.getValue())))) //
 				.run();
@@ -388,9 +395,7 @@ public class DefaultSecurityLogic implements Logic, SecurityLogic {
 
 	@Override
 	public void saveFilterPrivilege(final PrivilegeInfo privilegeInfo) {
-		final CMQueryResult result = view
-				.select(anyAttribute(grantClass))
-				.from(grantClass)
+		final CMQueryResult result = view.select(anyAttribute(grantClass)).from(grantClass)
 				.where(and(condition(attribute(grantClass, GROUP_ID_ATTRIBUTE), eq(privilegeInfo.getGroupId())),
 						condition(attribute(grantClass, TYPE_ATTRIBUTE), eq(FILTER.getValue())))) //
 				.run();
@@ -409,9 +414,7 @@ public class DefaultSecurityLogic implements Logic, SecurityLogic {
 
 	@Override
 	public void saveCustomPagePrivilege(final PrivilegeInfo privilegeInfo) {
-		final CMQueryResult result = view
-				.select(anyAttribute(grantClass))
-				.from(grantClass)
+		final CMQueryResult result = view.select(anyAttribute(grantClass)).from(grantClass)
 				.where(and(condition(attribute(grantClass, GROUP_ID_ATTRIBUTE), eq(privilegeInfo.getGroupId())),
 						condition(attribute(grantClass, TYPE_ATTRIBUTE), eq(CUSTOMPAGE.getValue())))) //
 				.run();
@@ -441,7 +444,8 @@ public class DefaultSecurityLogic implements Logic, SecurityLogic {
 
 		mutableGrantCard //
 				.set(PRIVILEGE_FILTER_ATTRIBUTE, privilegeInfo.getPrivilegeFilter()) //
-				.set(ATTRIBUTES_PRIVILEGES_ATTRIBUTE, privilegeInfo.getAttributesPrivileges()) //
+				.set(ATTRIBUTES_PRIVILEGES_ATTRIBUTE,
+						defaultIfNull(privilegeInfo.getAttributesPrivileges(), EMPTY_ATTRIBUTES_PRIVILEGES)) //
 				.set(UI_CARD_EDIT_MODE_ATTRIBUTE, persistenceCardEditMode) //
 				.save();
 	}
@@ -461,7 +465,8 @@ public class DefaultSecurityLogic implements Logic, SecurityLogic {
 				.set(MODE_ATTRIBUTE, privilegeMode.getValue()) //
 				.set(TYPE_ATTRIBUTE, CLASS.getValue()) //
 				.set(PRIVILEGE_FILTER_ATTRIBUTE, privilegeInfo.getPrivilegeFilter()) //
-				.set(ATTRIBUTES_PRIVILEGES_ATTRIBUTE, privilegeInfo.getAttributesPrivileges()) //
+				.set(ATTRIBUTES_PRIVILEGES_ATTRIBUTE,
+						defaultIfNull(privilegeInfo.getAttributesPrivileges(), EMPTY_ATTRIBUTES_PRIVILEGES)) //
 				.set(STATUS_ATTRIBUTE, CardStatus.ACTIVE.value()) //
 				.set(UI_CARD_EDIT_MODE_ATTRIBUTE, persistenceCardEditMode) //
 				.save();
@@ -528,8 +533,8 @@ public class DefaultSecurityLogic implements Logic, SecurityLogic {
 		uiConfiguration.setFullScreenMode((Boolean) roleCard.get(GROUP_ATTRIBUTE_FULLSCREEN));
 		uiConfiguration.setSimpleHistoryModeForCard((Boolean) roleCard.get(GROUP_ATTRIBUTE_SIMPLE_HISTORY_CARD));
 		uiConfiguration.setSimpleHistoryModeForProcess((Boolean) roleCard.get(GROUP_ATTRIBUTE_SIMPLE_HISTORY_PROCESS));
-		uiConfiguration.setProcessWidgetAlwaysEnabled((Boolean) roleCard
-				.get(GROUP_ATTRIBUTE_PROCESS_WIDGET_ALWAYS_ENABLED));
+		uiConfiguration
+				.setProcessWidgetAlwaysEnabled((Boolean) roleCard.get(GROUP_ATTRIBUTE_PROCESS_WIDGET_ALWAYS_ENABLED));
 		uiConfiguration.setCloudAdmin((Boolean) roleCard.get(GROUP_ATTRIBUTE_CLOUD_ADMIN));
 
 		return uiConfiguration;
@@ -594,8 +599,8 @@ public class DefaultSecurityLogic implements Logic, SecurityLogic {
 			final PrivilegeMode classMode = of(privilegeCard.get(MODE_ATTRIBUTE));
 			final Object attributesPrivileges = privilegeCard.get(ATTRIBUTES_PRIVILEGES_ATTRIBUTE);
 			final Object privilegeFilter = privilegeCard.get(PRIVILEGE_FILTER_ATTRIBUTE);
-			final SerializablePrivilege privilegeObject = privilegeObjectFromId(privilegeInfoToSave
-					.getPrivilegedObjectId());
+			final SerializablePrivilege privilegeObject = privilegeObjectFromId(
+					privilegeInfoToSave.getPrivilegedObjectId());
 
 			Builder privilegeBuilder = PrivilegeInfo.newInstance() //
 					.withGroupId(privilegeInfoToSave.getGroupId()) //
@@ -615,16 +620,15 @@ public class DefaultSecurityLogic implements Logic, SecurityLogic {
 	}
 
 	private Optional<CMCard> getPrivilegeCard(final PrivilegeInfo privilegeInfoToSave) {
-		final CMQueryResult rowsForGroupAndClass = view
-				.select(anyAttribute(grantClass))
-				.from(grantClass)
+		final CMQueryResult rowsForGroupAndClass = view.select(anyAttribute(grantClass)).from(grantClass)
 				.where( //
-				and( //
-				condition(attribute(grantClass, GROUP_ID_ATTRIBUTE), eq(privilegeInfoToSave.getGroupId())), //
-						condition(attribute(grantClass, TYPE_ATTRIBUTE), eq(CLASS.getValue())), //
-						condition(attribute(grantClass, PRIVILEGED_CLASS_ID_ATTRIBUTE),
-								eq(privilegeInfoToSave.getPrivilegedObjectId()))) //
-				) //
+						and( //
+								condition(attribute(grantClass, GROUP_ID_ATTRIBUTE),
+										eq(privilegeInfoToSave.getGroupId())), //
+								condition(attribute(grantClass, TYPE_ATTRIBUTE), eq(CLASS.getValue())), //
+								condition(attribute(grantClass, PRIVILEGED_CLASS_ID_ATTRIBUTE),
+										eq(privilegeInfoToSave.getPrivilegedObjectId()))) //
+		) //
 				.limit(1) //
 				.skipDefaultOrdering() //
 				.run();
