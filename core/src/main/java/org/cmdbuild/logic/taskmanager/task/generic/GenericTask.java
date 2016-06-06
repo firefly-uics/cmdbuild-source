@@ -1,6 +1,7 @@
 package org.cmdbuild.logic.taskmanager.task.generic;
 
 import static java.lang.Boolean.FALSE;
+import static java.util.Collections.emptyMap;
 import static org.apache.commons.lang3.ObjectUtils.defaultIfNull;
 import static org.apache.commons.lang3.builder.ToStringBuilder.reflectionToString;
 import static org.apache.commons.lang3.builder.ToStringStyle.SHORT_PREFIX_STYLE;
@@ -16,6 +17,8 @@ import org.joda.time.DateTime;
 public class GenericTask extends AbstractScheduledTask {
 
 	public static class Builder implements org.apache.commons.lang3.builder.Builder<GenericTask> {
+
+		private static final Map<String, String> NO_PARAMETERS = emptyMap();
 
 		private Long id;
 		private String description;
@@ -44,6 +47,7 @@ public class GenericTask extends AbstractScheduledTask {
 			active = defaultIfNull(active, FALSE);
 			emailActive = defaultIfNull(emailActive, FALSE);
 			reportActive = defaultIfNull(reportActive, FALSE);
+			reportParameters = defaultIfNull(reportParameters, NO_PARAMETERS);
 		}
 
 		public Builder withId(final Long id) {

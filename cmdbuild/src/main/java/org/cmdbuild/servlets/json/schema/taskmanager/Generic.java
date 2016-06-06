@@ -17,6 +17,8 @@ import static org.cmdbuild.servlets.json.CommunicationConstants.REPORT_PARAMETER
 import static org.cmdbuild.servlets.json.schema.TaskManager.TASK_TO_JSON_TASK;
 import static org.cmdbuild.servlets.json.schema.Utils.toMap;
 
+import java.util.Map;
+
 import org.cmdbuild.logic.taskmanager.Task;
 import org.cmdbuild.logic.taskmanager.task.generic.GenericTask;
 import org.cmdbuild.services.json.dto.JsonResponse;
@@ -74,6 +76,26 @@ public class Generic extends JSONBaseWithSpringContext {
 		@JsonProperty(EMAIL_ACCOUNT)
 		public String getEmailAcount() {
 			return delegate.getEmailAccount();
+		}
+
+		@JsonProperty(REPORT_ACTIVE)
+		public boolean isReportActive() {
+			return delegate.isReportActive();
+		}
+
+		@JsonProperty(REPORTNAME)
+		public String getReportName() {
+			return delegate.getReportName();
+		}
+
+		@JsonProperty(REPORT_EXTENSION)
+		public String getReportExtension() {
+			return delegate.getReportExtension();
+		}
+
+		@JsonProperty(REPORT_PARAMETERS)
+		public Map<String, String> getReportParameters() {
+			return delegate.getReportParameters();
 		}
 
 	}
