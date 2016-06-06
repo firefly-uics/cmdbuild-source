@@ -22,6 +22,8 @@ import javax.activation.DataHandler;
 
 import org.bimserver.utils.FileDataSource;
 import org.cmdbuild.common.collect.ChainablePutMap;
+import org.cmdbuild.common.template.TemplateResolver;
+import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.data.store.email.EmailAccount;
 import org.cmdbuild.data.store.email.EmailAccountFacade;
 import org.cmdbuild.logic.email.EmailTemplateLogic;
@@ -31,6 +33,7 @@ import org.cmdbuild.logic.report.ReportLogic.Extension;
 import org.cmdbuild.logic.report.ReportLogic.Report;
 import org.cmdbuild.logic.taskmanager.task.generic.GenericTask;
 import org.cmdbuild.logic.taskmanager.task.generic.GenericTaskJobFactory;
+import org.cmdbuild.services.template.engine.DatabaseEngine;
 import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Test;
@@ -47,6 +50,8 @@ public class GenericTaskJobFactoryTest {
 	private EmailAccountFacade emailAccountFacade;
 	private EmailTemplateLogic emailTemplateLogic;
 	private ReportLogic reportLogic;
+	private CMDataView dataView;
+	private DatabaseEngine databaseEngine;
 	private EmailTemplateSenderFactory emailTemplateSenderFactory;
 	private GenericTaskJobFactory underTest;
 
@@ -55,9 +60,11 @@ public class GenericTaskJobFactoryTest {
 		emailAccountFacade = mock(EmailAccountFacade.class);
 		emailTemplateLogic = mock(EmailTemplateLogic.class);
 		reportLogic = mock(ReportLogic.class);
+		dataView = mock(CMDataView.class);
+		databaseEngine = mock(DatabaseEngine.class);
 		emailTemplateSenderFactory = mock(EmailTemplateSenderFactory.class);
-		underTest = new GenericTaskJobFactory(emailAccountFacade, emailTemplateLogic, reportLogic,
-				emailTemplateSenderFactory);
+		underTest = new GenericTaskJobFactory(emailAccountFacade, emailTemplateLogic, reportLogic, dataView,
+				databaseEngine, emailTemplateSenderFactory);
 	}
 
 	@Test
@@ -72,7 +79,8 @@ public class GenericTaskJobFactoryTest {
 		underTest.create(task, true).execute();
 
 		// then
-		verifyNoMoreInteractions(emailAccountFacade, emailTemplateLogic, reportLogic, emailTemplateSenderFactory);
+		verifyNoMoreInteractions(emailAccountFacade, emailTemplateLogic, reportLogic, dataView, databaseEngine,
+				emailTemplateSenderFactory);
 	}
 
 	@Test
@@ -87,7 +95,8 @@ public class GenericTaskJobFactoryTest {
 		underTest.create(task, true);
 
 		// then
-		verifyNoMoreInteractions(emailAccountFacade, emailTemplateLogic, reportLogic, emailTemplateSenderFactory);
+		verifyNoMoreInteractions(emailAccountFacade, emailTemplateLogic, reportLogic, dataView, databaseEngine,
+				emailTemplateSenderFactory);
 	}
 
 	@Test
@@ -108,6 +117,8 @@ public class GenericTaskJobFactoryTest {
 				.when(queue).withAttachments(any(Iterable.class));
 		doReturn(queue) //
 				.when(queue).withReference(anyLong());
+		doReturn(queue) //
+				.when(queue).withTemplateResolver(any(TemplateResolver.class));
 		final EmailTemplateSenderFactory.EmailTemplateSender sender = mock(
 				EmailTemplateSenderFactory.EmailTemplateSender.class);
 		doReturn(sender) //
@@ -123,11 +134,12 @@ public class GenericTaskJobFactoryTest {
 		verify(queue).withTemplate(suppliers.capture());
 		verify(queue).withAttachments(any(Iterable.class));
 		verify(queue).withReference(eq(42L));
+		verify(queue).withTemplateResolver(any(TemplateResolver.class));
 		verify(queue).build();
 		verify(sender).execute();
 
-		verifyNoMoreInteractions(emailAccountFacade, emailTemplateLogic, reportLogic, emailTemplateSenderFactory, queue,
-				sender);
+		verifyNoMoreInteractions(emailAccountFacade, emailTemplateLogic, reportLogic, dataView, databaseEngine,
+				emailTemplateSenderFactory, queue, sender);
 	}
 
 	@Test
@@ -150,6 +162,8 @@ public class GenericTaskJobFactoryTest {
 				.when(queue).withAttachments(any(Iterable.class));
 		doReturn(queue) //
 				.when(queue).withReference(anyLong());
+		doReturn(queue) //
+				.when(queue).withTemplateResolver(any(TemplateResolver.class));
 		final EmailTemplateSenderFactory.EmailTemplateSender sender = mock(
 				EmailTemplateSenderFactory.EmailTemplateSender.class);
 		doReturn(sender) //
@@ -173,6 +187,7 @@ public class GenericTaskJobFactoryTest {
 		verify(queue).withTemplate(suppliers.capture());
 		verify(queue).withAttachments(any(Iterable.class));
 		verify(queue).withReference(eq(42L));
+		verify(queue).withTemplateResolver(any(TemplateResolver.class));
 		verify(queue).build();
 		verify(sender).execute();
 
@@ -185,8 +200,8 @@ public class GenericTaskJobFactoryTest {
 		assertThat((EmailTemplateLogic.Template) suppliers.getAllValues().get(1).get(), equalTo(template));
 		verify(emailTemplateLogic).read(eq("email template"));
 
-		verifyNoMoreInteractions(emailAccountFacade, emailTemplateLogic, reportLogic, emailTemplateSenderFactory, queue,
-				sender);
+		verifyNoMoreInteractions(emailAccountFacade, emailTemplateLogic, reportLogic, dataView, databaseEngine,
+				emailTemplateSenderFactory, queue, sender);
 	}
 
 	@Test
@@ -207,6 +222,8 @@ public class GenericTaskJobFactoryTest {
 				.when(queue).withAttachments(any(Iterable.class));
 		doReturn(queue) //
 				.when(queue).withReference(anyLong());
+		doReturn(queue) //
+				.when(queue).withTemplateResolver(any(TemplateResolver.class));
 		final EmailTemplateSenderFactory.EmailTemplateSender sender = mock(
 				EmailTemplateSenderFactory.EmailTemplateSender.class);
 		doReturn(sender) //
@@ -222,14 +239,15 @@ public class GenericTaskJobFactoryTest {
 		verify(queue).withTemplate(any(Supplier.class));
 		verify(queue).withAttachments(iterables.capture());
 		verify(queue).withReference(eq(42L));
+		verify(queue).withTemplateResolver(any(TemplateResolver.class));
 		verify(queue).build();
 		verify(sender).execute();
 
 		final Iterable<?> attachments = iterables.getValue();
 		assertThat(attachments.iterator().hasNext(), equalTo(false));
 
-		verifyNoMoreInteractions(emailAccountFacade, emailTemplateLogic, reportLogic, emailTemplateSenderFactory, queue,
-				sender);
+		verifyNoMoreInteractions(emailAccountFacade, emailTemplateLogic, reportLogic, dataView, databaseEngine,
+				emailTemplateSenderFactory, queue, sender);
 	}
 
 	@Test
@@ -255,6 +273,8 @@ public class GenericTaskJobFactoryTest {
 				.when(queue).withAttachments(any(Iterable.class));
 		doReturn(queue) //
 				.when(queue).withReference(anyLong());
+		doReturn(queue) //
+				.when(queue).withTemplateResolver(any(TemplateResolver.class));
 		final EmailTemplateSenderFactory.EmailTemplateSender sender = mock(
 				EmailTemplateSenderFactory.EmailTemplateSender.class);
 		doReturn(sender) //
@@ -283,6 +303,7 @@ public class GenericTaskJobFactoryTest {
 		verify(queue).withTemplate(any(Supplier.class));
 		verify(queue).withAttachments(iterables.capture());
 		verify(queue).withReference(eq(42L));
+		verify(queue).withTemplateResolver(any(TemplateResolver.class));
 		verify(queue).build();
 		verify(sender).execute();
 
@@ -294,8 +315,8 @@ public class GenericTaskJobFactoryTest {
 						.chainablePut("foo", "oof")));
 		assertThat(output, equalTo(dataHandler));
 
-		verifyNoMoreInteractions(emailAccountFacade, emailTemplateLogic, reportLogic, emailTemplateSenderFactory, queue,
-				sender);
+		verifyNoMoreInteractions(emailAccountFacade, emailTemplateLogic, reportLogic, dataView, databaseEngine,
+				emailTemplateSenderFactory, queue, sender);
 	}
 
 }

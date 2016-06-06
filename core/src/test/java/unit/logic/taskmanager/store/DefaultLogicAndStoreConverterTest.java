@@ -614,6 +614,15 @@ public class DefaultLogicAndStoreConverterTest {
 				.withDescription("description") //
 				.withActiveStatus(true) //
 				.withCronExpression("cron expression") //
+				.withContext(ChainablePutMap.of(new HashMap<String, Map<String, String>>()) //
+						.chainablePut("foo",
+								ChainablePutMap.of(new HashMap<String, String>()) //
+										.chainablePut("f", "o") //
+										.chainablePut("o", "!")) //
+						.chainablePut("bar",
+								ChainablePutMap.of(new HashMap<String, String>()) //
+										.chainablePut("b", "a") //
+										.chainablePut("r", "!"))) //
 				.withLastExecution(NOW) //
 				.withEmailActive(true) //
 				.withEmailTemplate("email template") //
@@ -639,6 +648,10 @@ public class DefaultLogicAndStoreConverterTest {
 						.withRunningStatus(true) //
 						.withCronExpression("cron expression") //
 						.withLastExecution(NOW) //
+						.withParameter(Generic.context("foo", "f"), "o") //
+						.withParameter(Generic.context("foo", "o"), "!") //
+						.withParameter(Generic.context("bar", "b"), "a") //
+						.withParameter(Generic.context("bar", "r"), "!") //
 						.withParameter(Generic.EMAIL_ACTIVE, "true") //
 						.withParameter(Generic.EMAIL_TEMPLATE, "email template") //
 						.withParameter(Generic.EMAIL_ACCOUNT, "email account") //
@@ -660,6 +673,10 @@ public class DefaultLogicAndStoreConverterTest {
 				.withRunningStatus(true) //
 				.withCronExpression("cron expression") //
 				.withLastExecution(NOW) //
+				.withParameter(Generic.context("foo", "f"), "o") //
+				.withParameter(Generic.context("foo", "o"), "!") //
+				.withParameter(Generic.context("bar", "b"), "a") //
+				.withParameter(Generic.context("bar", "r"), "!") //
 				.withParameter(Generic.EMAIL_ACTIVE, "true") //
 				.withParameter(Generic.EMAIL_TEMPLATE, "email template") //
 				.withParameter(Generic.EMAIL_ACCOUNT, "email account") //
@@ -684,16 +701,25 @@ public class DefaultLogicAndStoreConverterTest {
 						.withActiveStatus(true) //
 						.withCronExpression("cron expression") //
 						.withLastExecution(NOW) //
-						.withEmailActive(true) //
-						.withEmailTemplate("email template") //
-						.withEmailAccount("email account") //
-						.withReportActive(true) //
-						.withReportName("report name") //
-						.withReportExtension("report extension") //
-						.withReportParameters(ChainablePutMap.of(new HashMap<String, String>()) //
-								.chainablePut("foo", "oof") //
-								.chainablePut("bar", "rab") //
-								.chainablePut("baz", "zab")) //
+						.withContext(ChainablePutMap.of(new HashMap<String, Map<String, String>>()) //
+								.chainablePut("foo",
+										ChainablePutMap.of(new HashMap<String, String>()) //
+												.chainablePut("f", "o") //
+												.chainablePut("o", "!")) //
+								.chainablePut("bar",
+										ChainablePutMap.of(new HashMap<String, String>()) //
+												.chainablePut("b", "a") //
+												.chainablePut("r", "!"))) //
+				.withEmailActive(true) //
+				.withEmailTemplate("email template") //
+				.withEmailAccount("email account") //
+				.withReportActive(true) //
+				.withReportName("report name") //
+				.withReportExtension("report extension") //
+				.withReportParameters(ChainablePutMap.of(new HashMap<String, String>()) //
+						.chainablePut("foo", "oof") //
+						.chainablePut("bar", "rab") //
+						.chainablePut("baz", "zab")) //
 		)));
 	}
 
