@@ -306,8 +306,8 @@ public class DefaultObserverFactory implements ObserverFactory {
 				final Supplier<EmailAccount> emailAccountSupplier = account.isPresent() ? ofInstance(account.get())
 						: null;
 				emailTemplateSenderFactory.queued() //
-						.withEmailAccountSupplier(emailAccountSupplier) //
-						.withEmailTemplateSupplier(emailTemplateSupplier) //
+						.withAccount(emailAccountSupplier) //
+						.withTemplate(emailTemplateSupplier) //
 						.withTemplateResolver(templateResolverOf(context)) //
 						.withReference(task.getId()) //
 						.build() //

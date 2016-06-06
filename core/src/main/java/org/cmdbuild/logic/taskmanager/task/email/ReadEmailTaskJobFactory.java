@@ -273,8 +273,8 @@ public class ReadEmailTaskJobFactory extends AbstractJobFactory<ReadEmailTask> {
 										DB_TEMPLATE) //
 								.build();
 						emailTemplateSenderFactory.queued() //
-								.withEmailAccountSupplier(emailAccountSupplier) //
-								.withEmailTemplateSupplier(emailTemplateSupplier) //
+								.withAccount(emailAccountSupplier) //
+								.withTemplate(emailTemplateSupplier) //
 								.withTemplateResolver(templateResolver) //
 								.withReference(task.getId()) //
 								.build() //

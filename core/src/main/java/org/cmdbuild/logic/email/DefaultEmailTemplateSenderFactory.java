@@ -1,13 +1,16 @@
 package org.cmdbuild.logic.email;
 
 import static com.google.common.base.Splitter.on;
-import static java.util.Collections.emptyList;
+import static java.util.stream.Collectors.toList;
+import static java.util.stream.StreamSupport.stream;
 import static org.apache.commons.lang3.ObjectUtils.defaultIfNull;
 import static org.apache.commons.lang3.StringUtils.defaultString;
 import static org.cmdbuild.common.template.TemplateResolvers.identity;
 import static org.cmdbuild.data.store.email.EmailConstants.ADDRESSES_SEPARATOR;
 import static org.cmdbuild.logic.email.EmailLogic.Statuses.outgoing;
 import static org.joda.time.DateTime.now;
+
+import javax.activation.DataHandler;
 
 import org.apache.commons.lang3.Validate;
 import org.cmdbuild.common.template.TemplateResolver;
@@ -27,8 +30,9 @@ public class DefaultEmailTemplateSenderFactory implements EmailTemplateSenderFac
 
 	private static abstract class Builder implements EmailTemplateSenderFactory.Builder {
 
-		protected Supplier<EmailAccount> emailAccoutSupplier;
-		protected Supplier<Template> emailTemplateSupplier;
+		protected Supplier<EmailAccount> account;
+		protected Supplier<Template> template;
+		protected Iterable<Supplier<? extends DataHandler>> attachments;
 		protected TemplateResolver templateResolver;
 		protected Long reference;
 
@@ -39,14 +43,20 @@ public class DefaultEmailTemplateSenderFactory implements EmailTemplateSenderFac
 		}
 
 		@Override
-		public Builder withEmailAccountSupplier(final Supplier<EmailAccount> emailAccoutSupplier) {
-			this.emailAccoutSupplier = emailAccoutSupplier;
+		public Builder withAccount(final Supplier<EmailAccount> account) {
+			this.account = account;
 			return this;
 		}
 
 		@Override
-		public Builder withEmailTemplateSupplier(final Supplier<Template> emailTemplateSupplier) {
-			this.emailTemplateSupplier = emailTemplateSupplier;
+		public Builder withTemplate(final Supplier<Template> template) {
+			this.template = template;
+			return this;
+		}
+
+		@Override
+		public Builder withAttachments(final Iterable<Supplier<? extends DataHandler>> attachments) {
+			this.attachments = attachments;
 			return this;
 		}
 
@@ -69,8 +79,9 @@ public class DefaultEmailTemplateSenderFactory implements EmailTemplateSenderFac
 		}
 
 		protected void validate() {
-			Validate.notNull(emailAccoutSupplier, "missing '%s' supplier", EmailAccount.class);
-			Validate.notNull(emailTemplateSupplier, "missing '%s' supplier", Template.class);
+			Validate.notNull(account, "missing '%s' supplier", EmailAccount.class);
+			Validate.notNull(template, "missing '%s' supplier", Template.class);
+			Validate.notNull(attachments, "missing '%s' suppliers", DataHandler.class);
 			templateResolver = defaultIfNull(templateResolver, identity());
 		}
 
@@ -106,37 +117,59 @@ public class DefaultEmailTemplateSenderFactory implements EmailTemplateSenderFac
 		}
 
 		private final EmailServiceFactory emailServiceFactory;
-		private final Supplier<EmailAccount> emailAccoutSupplier;
-		private final Supplier<Template> emailTemplateSupplier;
+		private final Supplier<EmailAccount> account;
+		private final Supplier<Template> template;
+		private final Iterable<Supplier<? extends DataHandler>> attachments;
 		private final TemplateResolver templateResolver;
 
 		private DirectEmailTemplateSender(final Builder builder) {
 			this.emailServiceFactory = builder.emailServiceFactory;
-			this.emailAccoutSupplier = builder.emailAccoutSupplier;
-			this.emailTemplateSupplier = builder.emailTemplateSupplier;
+			this.account = builder.account;
+			this.template = builder.template;
+			this.attachments = builder.attachments;
 			this.templateResolver = builder.templateResolver;
 		}
 
 		@Override
 		public void execute() {
-			final EmailService emailService = emailServiceFactory.create(emailAccoutSupplier);
-			final Template template = emailTemplateSupplier.get();
-			emailService.send(new TemplateAdapter(template, templateResolver));
+			final EmailService emailService = emailServiceFactory.create(account);
+			emailService.send(new TemplateAdapter(template.get(), attachments, templateResolver));
+		}
+
+	}
+
+	private static class DataHandlerAdapter implements Attachment {
+
+		private final DataHandler delegate;
+
+		public DataHandlerAdapter(final DataHandler delegate) {
+			this.delegate = delegate;
+		}
+
+		@Override
+		public String getName() {
+			return delegate.getName();
+		}
+
+		@Override
+		public DataHandler getDataHandler() {
+			return delegate;
 		}
 
 	}
 
 	private static class TemplateAdapter implements Email {
 
-		private static final Iterable<Attachment> NO_ATTACHMENTS = emptyList();
-
 		private final DateTime OBJECT_CREATION_TIME = now();
 
 		private final Template template;
+		private final Iterable<Supplier<? extends DataHandler>> attachments;
 		private final TemplateResolver templateResolver;
 
-		public TemplateAdapter(final Template template, final TemplateResolver templateResolver) {
+		public TemplateAdapter(final Template template, final Iterable<Supplier<? extends DataHandler>> attachments,
+				final TemplateResolver templateResolver) {
 			this.template = template;
+			this.attachments = attachments;
 			this.templateResolver = templateResolver;
 		}
 
@@ -184,7 +217,9 @@ public class DefaultEmailTemplateSenderFactory implements EmailTemplateSenderFac
 
 		@Override
 		public Iterable<Attachment> getAttachments() {
-			return NO_ATTACHMENTS;
+			return stream(attachments.spliterator(), false) //
+					.map(input -> new DataHandlerAdapter(input.get())) //
+					.collect(toList());
 		}
 
 		@Override
@@ -204,9 +239,11 @@ public class DefaultEmailTemplateSenderFactory implements EmailTemplateSenderFac
 		private static class Builder extends DefaultEmailTemplateSenderFactory.Builder {
 
 			private final EmailLogic emailLogic;
+			private final EmailAttachmentsLogic emailAttachmentsLogic;
 
-			public Builder(final EmailLogic emailLogic) {
+			public Builder(final EmailLogic emailLogic, final EmailAttachmentsLogic emailAttachmentsLogic) {
 				this.emailLogic = emailLogic;
+				this.emailAttachmentsLogic = emailAttachmentsLogic;
 			}
 
 			@Override
@@ -222,30 +259,35 @@ public class DefaultEmailTemplateSenderFactory implements EmailTemplateSenderFac
 
 		}
 
-		public static Builder newInstance(final EmailLogic emailLogic) {
-			return new Builder(emailLogic);
+		public static Builder newInstance(final EmailLogic emailLogic,
+				final EmailAttachmentsLogic emailAttachmentsLogic) {
+			return new Builder(emailLogic, emailAttachmentsLogic);
 		}
 
 		private final EmailLogic emailLogic;
-		private final Supplier<EmailAccount> emailAccoutSupplier;
-		private final Supplier<Template> emailTemplateSupplier;
+		private final EmailAttachmentsLogic emailAttachmentsLogic;
+		private final Supplier<EmailAccount> account;
+		private final Supplier<Template> template;
+		private final Iterable<Supplier<? extends DataHandler>> attachments;
 		private final TemplateResolver templateResolver;
 		private final Long reference;
 
 		private QueuedEmailTemplateSender(final Builder builder) {
 			this.emailLogic = builder.emailLogic;
-			this.emailAccoutSupplier = builder.emailAccoutSupplier;
-			this.emailTemplateSupplier = builder.emailTemplateSupplier;
+			this.emailAttachmentsLogic = builder.emailAttachmentsLogic;
+			this.account = builder.account;
+			this.template = builder.template;
+			this.attachments = builder.attachments;
 			this.templateResolver = builder.templateResolver;
 			this.reference = builder.reference;
 		}
 
 		@Override
 		public void execute() {
-			final EmailLogic.Email email = new OutgoingEmail(emailTemplateSupplier.get(), reference,
-					emailAccoutSupplier.get(), templateResolver);
+			final EmailLogic.Email email = new OutgoingEmail(template.get(), reference, account.get(),
+					templateResolver);
 			final Long id = emailLogic.create(email);
-			emailLogic.update(new ForwardingEmail() {
+			final EmailLogic.Email emailWithId = new ForwardingEmail() {
 
 				@Override
 				protected EmailLogic.Email delegate() {
@@ -257,7 +299,11 @@ public class DefaultEmailTemplateSenderFactory implements EmailTemplateSenderFac
 					return id;
 				}
 
-			});
+			};
+			for (final Supplier<? extends DataHandler> element : attachments) {
+				emailAttachmentsLogic.upload(emailWithId, element.get());
+			}
+			emailLogic.update(emailWithId);
 		}
 	}
 
@@ -372,10 +418,13 @@ public class DefaultEmailTemplateSenderFactory implements EmailTemplateSenderFac
 
 	private final EmailServiceFactory emailServiceFactory;
 	private final EmailLogic emailLogic;
+	private final EmailAttachmentsLogic emailAttachmentsLogic;
 
-	public DefaultEmailTemplateSenderFactory(final EmailServiceFactory emailServiceFactory, final EmailLogic emailLogic) {
+	public DefaultEmailTemplateSenderFactory(final EmailServiceFactory emailServiceFactory, final EmailLogic emailLogic,
+			final EmailAttachmentsLogic emailAttachmentsLogic) {
 		this.emailServiceFactory = emailServiceFactory;
 		this.emailLogic = emailLogic;
+		this.emailAttachmentsLogic = emailAttachmentsLogic;
 	}
 
 	@Override
@@ -385,7 +434,7 @@ public class DefaultEmailTemplateSenderFactory implements EmailTemplateSenderFac
 
 	@Override
 	public Builder queued() {
-		return QueuedEmailTemplateSender.newInstance(emailLogic);
+		return QueuedEmailTemplateSender.newInstance(emailLogic, emailAttachmentsLogic);
 	}
 
 }
