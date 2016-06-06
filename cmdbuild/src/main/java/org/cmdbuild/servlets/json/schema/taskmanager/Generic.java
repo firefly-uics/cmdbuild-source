@@ -3,6 +3,7 @@ package org.cmdbuild.servlets.json.schema.taskmanager;
 import static com.google.common.collect.FluentIterable.from;
 import static org.cmdbuild.services.json.dto.JsonResponse.success;
 import static org.cmdbuild.servlets.json.CommunicationConstants.ACTIVE;
+import static org.cmdbuild.servlets.json.CommunicationConstants.CONTEXT;
 import static org.cmdbuild.servlets.json.CommunicationConstants.CRON_EXPRESSION;
 import static org.cmdbuild.servlets.json.CommunicationConstants.DESCRIPTION;
 import static org.cmdbuild.servlets.json.CommunicationConstants.EMAIL_ACCOUNT;
@@ -17,6 +18,7 @@ import static org.cmdbuild.servlets.json.CommunicationConstants.REPORT_PARAMETER
 import static org.cmdbuild.servlets.json.schema.TaskManager.TASK_TO_JSON_TASK;
 import static org.cmdbuild.servlets.json.schema.Utils.toMap;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import org.cmdbuild.logic.taskmanager.Task;
@@ -27,8 +29,12 @@ import org.cmdbuild.servlets.json.schema.TaskManager.JsonElements;
 import org.cmdbuild.servlets.utils.Parameter;
 import org.codehaus.jackson.annotate.JsonProperty;
 import org.json.JSONObject;
+import org.slf4j.Marker;
+import org.slf4j.MarkerFactory;
 
 public class Generic extends JSONBaseWithSpringContext {
+
+	private static final Marker marker = MarkerFactory.getMarker(Generic.class.getName());
 
 	private static class JsonGenericTask {
 
@@ -61,6 +67,11 @@ public class Generic extends JSONBaseWithSpringContext {
 		@JsonProperty(EXECUTABLE)
 		public boolean isExecutable() {
 			return delegate.isExecutable();
+		}
+
+		@JsonProperty(CONTEXT)
+		public Map<String, Map<String, String>> getContext() {
+			return delegate.getContext();
 		}
 
 		@JsonProperty(EMAIL_ACTIVE)
@@ -100,12 +111,28 @@ public class Generic extends JSONBaseWithSpringContext {
 
 	}
 
+	private static Map<String, Map<String, String>> context(final JSONObject json) {
+		try {
+			final Map<String, Map<String, String>> map = new HashMap<>();
+			if (json != null && json.length() > 0) {
+				for (final String key : JSONObject.getNames(json)) {
+					map.put(key, toMap(json.getJSONObject(key)));
+				}
+			}
+			return map;
+		} catch (final Exception e) {
+			logger.warn(marker, "error parsing json data");
+			throw new RuntimeException(e);
+		}
+	}
+
 	@Admin
 	@JSONExported
 	public JsonResponse create( //
 			@Parameter(DESCRIPTION) final String description, //
 			@Parameter(ACTIVE) final Boolean active, //
 			@Parameter(CRON_EXPRESSION) final String cronExpression, //
+			@Parameter(value = CONTEXT, required = false) final JSONObject context, //
 			@Parameter(value = EMAIL_ACTIVE, required = false) final Boolean emailActive, //
 			@Parameter(value = EMAIL_TEMPLATE, required = false) final String emailTemplate, //
 			@Parameter(value = EMAIL_ACCOUNT, required = false) final String emailAccount, //
@@ -118,6 +145,8 @@ public class Generic extends JSONBaseWithSpringContext {
 				.withDescription(description) //
 				.withActiveStatus(active) //
 				.withCronExpression(cronExpression) //
+				//
+				.withContext(context(context)) //
 				//
 				.withEmailActive(emailActive) //
 				.withEmailTemplate(emailTemplate) //
@@ -159,6 +188,7 @@ public class Generic extends JSONBaseWithSpringContext {
 			@Parameter(DESCRIPTION) final String description, //
 			@Parameter(ACTIVE) final Boolean active, //
 			@Parameter(CRON_EXPRESSION) final String cronExpression, //
+			@Parameter(value = CONTEXT, required = false) final JSONObject context, //
 			@Parameter(value = EMAIL_ACTIVE, required = false) final Boolean emailActive, //
 			@Parameter(value = EMAIL_TEMPLATE, required = false) final String emailTemplate, //
 			@Parameter(value = EMAIL_ACCOUNT, required = false) final String emailAccount, //
@@ -172,6 +202,8 @@ public class Generic extends JSONBaseWithSpringContext {
 				.withDescription(description) //
 				.withActiveStatus(active) //
 				.withCronExpression(cronExpression) //
+				//
+				.withContext(context(context)) //
 				//
 				.withEmailActive(emailActive) //
 				.withEmailTemplate(emailTemplate) //

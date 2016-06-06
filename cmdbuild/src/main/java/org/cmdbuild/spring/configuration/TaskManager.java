@@ -198,6 +198,8 @@ public class TaskManager {
 				email.emailAccountFacade(), //
 				email.emailTemplateLogic(), //
 				report.reportLogic(), //
+				data.systemDataView(), //
+				template.databaseTemplateEngine(), //
 				emailTemplateSenderFactory() //
 		);
 	}

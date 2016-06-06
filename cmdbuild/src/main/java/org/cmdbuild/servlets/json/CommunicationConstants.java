@@ -51,6 +51,7 @@ public class CommunicationConstants {
 			CONFIGURATION = "configuration", //
 			CONFIRMED = "confirmed", //
 			CONTAINER = "container", //
+			CONTEXT = "context", //
 			COUNT = "count", //
 			CREATE = "create", //
 			CRON_EXPRESSION = "cronExpression", //

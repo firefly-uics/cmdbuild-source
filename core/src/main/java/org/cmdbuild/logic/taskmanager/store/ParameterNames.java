@@ -1,5 +1,6 @@
 package org.cmdbuild.logic.taskmanager.store;
 
+import static java.lang.String.format;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
 
 import org.cmdbuild.data.store.task.AsynchronousEventTaskDefinition;
@@ -85,6 +86,12 @@ public class ParameterNames {
 		}
 
 		private static final String ALL_PREFIX = EMPTY;
+
+		public static final String CONTEXT_PREFIX = ALL_PREFIX + "context.";
+
+		public static String context(final String context, final String key) {
+			return format("%s%s.%s", CONTEXT_PREFIX, context, key);
+		}
 
 		private static final String EMAIL_PREFIX = ALL_PREFIX + "email.";
 		public static final String EMAIL_ACTIVE = EMAIL_PREFIX + "active";

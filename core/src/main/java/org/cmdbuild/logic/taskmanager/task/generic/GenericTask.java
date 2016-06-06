@@ -18,6 +18,7 @@ public class GenericTask extends AbstractScheduledTask {
 
 	public static class Builder implements org.apache.commons.lang3.builder.Builder<GenericTask> {
 
+		private static final Map<String, Map<String, String>> NO_CONTEXT = emptyMap();
 		private static final Map<String, String> NO_PARAMETERS = emptyMap();
 
 		private Long id;
@@ -25,6 +26,7 @@ public class GenericTask extends AbstractScheduledTask {
 		private Boolean active;
 		private String cronExpression;
 		private DateTime lastExecution;
+		private Map<String, Map<String, String>> context;
 		private Boolean emailActive;
 		private String emailTemplate;
 		private String emailAccount;
@@ -47,6 +49,7 @@ public class GenericTask extends AbstractScheduledTask {
 			active = defaultIfNull(active, FALSE);
 			emailActive = defaultIfNull(emailActive, FALSE);
 			reportActive = defaultIfNull(reportActive, FALSE);
+			context = defaultIfNull(context, NO_CONTEXT);
 			reportParameters = defaultIfNull(reportParameters, NO_PARAMETERS);
 		}
 
@@ -72,6 +75,11 @@ public class GenericTask extends AbstractScheduledTask {
 
 		public Builder withLastExecution(final DateTime lastExecution) {
 			this.lastExecution = lastExecution;
+			return this;
+		}
+
+		public Builder withContext(final Map<String, Map<String, String>> context) {
+			this.context = context;
 			return this;
 		}
 
@@ -121,6 +129,7 @@ public class GenericTask extends AbstractScheduledTask {
 	private final boolean active;
 	private final String cronExpression;
 	private final DateTime lastExecution;
+	private final Map<String, Map<String, String>> context;
 	private final boolean emailActive;
 	private final String emailTemplate;
 	private final String emailAccount;
@@ -135,6 +144,7 @@ public class GenericTask extends AbstractScheduledTask {
 		this.active = builder.active;
 		this.cronExpression = builder.cronExpression;
 		this.lastExecution = builder.lastExecution;
+		this.context = builder.context;
 		this.emailActive = builder.emailActive;
 		this.emailTemplate = builder.emailTemplate;
 		this.emailAccount = builder.emailAccount;
@@ -177,6 +187,10 @@ public class GenericTask extends AbstractScheduledTask {
 	@Override
 	public DateTime getLastExecution() {
 		return lastExecution;
+	}
+
+	public Map<String, Map<String, String>> getContext() {
+		return context;
 	}
 
 	public boolean isEmailActive() {
@@ -222,6 +236,7 @@ public class GenericTask extends AbstractScheduledTask {
 				.append(this.active, other.active) //
 				.append(this.cronExpression, other.cronExpression) //
 				.append(this.lastExecution, other.lastExecution) //
+				.append(this.context, other.context) //
 				.append(this.emailActive, other.emailActive) //
 				.append(this.emailTemplate, other.emailTemplate) //
 				.append(this.emailAccount, other.emailAccount) //
@@ -240,6 +255,7 @@ public class GenericTask extends AbstractScheduledTask {
 				.append(active) //
 				.append(cronExpression) //
 				.append(lastExecution) //
+				.append(context) //
 				.append(emailActive) //
 				.append(emailTemplate) //
 				.append(emailAccount) //
