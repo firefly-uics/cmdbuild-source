@@ -21,9 +21,11 @@ import static org.hamcrest.Matchers.nullValue;
 import static org.junit.Assert.assertThat;
 
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.cmdbuild.common.collect.ChainablePutMap;
 import org.cmdbuild.logic.taskmanager.Task;
 import org.cmdbuild.logic.taskmanager.store.DefaultLogicAndStoreConverter;
 import org.cmdbuild.logic.taskmanager.store.ParameterNames.AsynchronousEvent;
@@ -616,6 +618,13 @@ public class DefaultLogicAndStoreConverterTest {
 				.withEmailActive(true) //
 				.withEmailTemplate("email template") //
 				.withEmailAccount("email account") //
+				.withReportActive(true) //
+				.withReportName("report name") //
+				.withReportExtension("report extension") //
+				.withReportParameters(ChainablePutMap.of(new HashMap<String, String>()) //
+						.chainablePut("foo", "oof") //
+						.chainablePut("bar", "rab") //
+						.chainablePut("baz", "zab")) //
 		);
 
 		// when
@@ -633,6 +642,12 @@ public class DefaultLogicAndStoreConverterTest {
 						.withParameter(Generic.EMAIL_ACTIVE, "true") //
 						.withParameter(Generic.EMAIL_TEMPLATE, "email template") //
 						.withParameter(Generic.EMAIL_ACCOUNT, "email account") //
+						.withParameter(Generic.REPORT_ACTIVE, "true") //
+						.withParameter(Generic.REPORT_NAME, "report name") //
+						.withParameter(Generic.REPORT_EXTENSION, "report extension") //
+						.withParameter(Generic.REPORT_PARAMETERS_PREFIX + "foo", "oof") //
+						.withParameter(Generic.REPORT_PARAMETERS_PREFIX + "bar", "rab") //
+						.withParameter(Generic.REPORT_PARAMETERS_PREFIX + "baz", "zab") //
 		)));
 	}
 
@@ -648,6 +663,12 @@ public class DefaultLogicAndStoreConverterTest {
 				.withParameter(Generic.EMAIL_ACTIVE, "true") //
 				.withParameter(Generic.EMAIL_TEMPLATE, "email template") //
 				.withParameter(Generic.EMAIL_ACCOUNT, "email account") //
+				.withParameter(Generic.REPORT_ACTIVE, "true") //
+				.withParameter(Generic.REPORT_NAME, "report name") //
+				.withParameter(Generic.REPORT_EXTENSION, "report extension") //
+				.withParameter(Generic.REPORT_PARAMETERS_PREFIX + "foo", "oof") //
+				.withParameter(Generic.REPORT_PARAMETERS_PREFIX + "bar", "rab") //
+				.withParameter(Generic.REPORT_PARAMETERS_PREFIX + "baz", "zab") //
 		);
 
 		// when
@@ -666,6 +687,13 @@ public class DefaultLogicAndStoreConverterTest {
 						.withEmailActive(true) //
 						.withEmailTemplate("email template") //
 						.withEmailAccount("email account") //
+						.withReportActive(true) //
+						.withReportName("report name") //
+						.withReportExtension("report extension") //
+						.withReportParameters(ChainablePutMap.of(new HashMap<String, String>()) //
+								.chainablePut("foo", "oof") //
+								.chainablePut("bar", "rab") //
+								.chainablePut("baz", "zab")) //
 		)));
 	}
 

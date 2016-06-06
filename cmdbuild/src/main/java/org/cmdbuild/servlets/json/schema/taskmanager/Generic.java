@@ -10,7 +10,12 @@ import static org.cmdbuild.servlets.json.CommunicationConstants.EMAIL_ACTIVE;
 import static org.cmdbuild.servlets.json.CommunicationConstants.EMAIL_TEMPLATE;
 import static org.cmdbuild.servlets.json.CommunicationConstants.EXECUTABLE;
 import static org.cmdbuild.servlets.json.CommunicationConstants.ID;
+import static org.cmdbuild.servlets.json.CommunicationConstants.REPORTNAME;
+import static org.cmdbuild.servlets.json.CommunicationConstants.REPORT_ACTIVE;
+import static org.cmdbuild.servlets.json.CommunicationConstants.REPORT_EXTENSION;
+import static org.cmdbuild.servlets.json.CommunicationConstants.REPORT_PARAMETERS;
 import static org.cmdbuild.servlets.json.schema.TaskManager.TASK_TO_JSON_TASK;
+import static org.cmdbuild.servlets.json.schema.Utils.toMap;
 
 import org.cmdbuild.logic.taskmanager.Task;
 import org.cmdbuild.logic.taskmanager.task.generic.GenericTask;
@@ -19,6 +24,7 @@ import org.cmdbuild.servlets.json.JSONBaseWithSpringContext;
 import org.cmdbuild.servlets.json.schema.TaskManager.JsonElements;
 import org.cmdbuild.servlets.utils.Parameter;
 import org.codehaus.jackson.annotate.JsonProperty;
+import org.json.JSONObject;
 
 public class Generic extends JSONBaseWithSpringContext {
 
@@ -80,7 +86,11 @@ public class Generic extends JSONBaseWithSpringContext {
 			@Parameter(CRON_EXPRESSION) final String cronExpression, //
 			@Parameter(value = EMAIL_ACTIVE, required = false) final Boolean emailActive, //
 			@Parameter(value = EMAIL_TEMPLATE, required = false) final String emailTemplate, //
-			@Parameter(value = EMAIL_ACCOUNT, required = false) final String emailAccount //
+			@Parameter(value = EMAIL_ACCOUNT, required = false) final String emailAccount, //
+			@Parameter(value = REPORT_ACTIVE, required = false) final Boolean reportActive, //
+			@Parameter(value = REPORTNAME, required = false) final String reportName, //
+			@Parameter(value = REPORT_EXTENSION, required = false) final String reportExtension, //
+			@Parameter(value = REPORT_PARAMETERS, required = false) final JSONObject reportParameters //
 	) {
 		final GenericTask task = GenericTask.newInstance() //
 				.withDescription(description) //
@@ -90,6 +100,10 @@ public class Generic extends JSONBaseWithSpringContext {
 				.withEmailActive(emailActive) //
 				.withEmailTemplate(emailTemplate) //
 				.withEmailAccount(emailAccount) //
+				.withReportActive(reportActive) //
+				.withReportName(reportName) //
+				.withReportExtension(reportExtension) //
+				.withReportParameters(toMap(reportParameters)) //
 				//
 				.build();
 		final Long id = taskManagerLogic().create(task);
@@ -125,7 +139,11 @@ public class Generic extends JSONBaseWithSpringContext {
 			@Parameter(CRON_EXPRESSION) final String cronExpression, //
 			@Parameter(value = EMAIL_ACTIVE, required = false) final Boolean emailActive, //
 			@Parameter(value = EMAIL_TEMPLATE, required = false) final String emailTemplate, //
-			@Parameter(value = EMAIL_ACCOUNT, required = false) final String emailAccount //
+			@Parameter(value = EMAIL_ACCOUNT, required = false) final String emailAccount, //
+			@Parameter(value = REPORT_ACTIVE, required = false) final Boolean reportActive, //
+			@Parameter(value = REPORTNAME, required = false) final String reportName, //
+			@Parameter(value = REPORT_EXTENSION, required = false) final String reportExtension, //
+			@Parameter(value = REPORT_PARAMETERS, required = false) final JSONObject reportParameters //
 	) {
 		final GenericTask task = GenericTask.newInstance() //
 				.withId(id) //
@@ -136,6 +154,10 @@ public class Generic extends JSONBaseWithSpringContext {
 				.withEmailActive(emailActive) //
 				.withEmailTemplate(emailTemplate) //
 				.withEmailAccount(emailAccount) //
+				.withReportActive(reportActive) //
+				.withReportName(reportName) //
+				.withReportExtension(reportExtension) //
+				.withReportParameters(toMap(reportParameters)) //
 				//
 				.build();
 		taskManagerLogic().update(task);

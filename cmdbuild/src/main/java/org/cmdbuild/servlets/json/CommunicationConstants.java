@@ -243,8 +243,11 @@ public class CommunicationConstants {
 			REJECTED_FOLDER = "rejectedFolder", //
 			REJECT_NOT_MATCHING = "rejectNotMatching", //
 			RELATION_ID = "relationId", //
+			REPORT_ACTIVE = "reportActive", //
+			REPORT_EXTENSION = "reportExtension", //
 			REPORT_ID = "reportId", //
 			REPORTNAME = "reportName", //
+			REPORT_PARAMETERS = "reportParameters", //
 			RESULT = "result", //
 			RESULTS = "results", //
 			RETRY_WITHOUT_FILTER = "retryWithoutFilter", //

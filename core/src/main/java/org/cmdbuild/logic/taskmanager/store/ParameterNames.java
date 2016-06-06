@@ -91,6 +91,15 @@ public class ParameterNames {
 		public static final String EMAIL_TEMPLATE = EMAIL_PREFIX + "template";
 		public static final String EMAIL_ACCOUNT = EMAIL_PREFIX + "account";
 
+		private static final String EMAIL_ATTACHMENT_PREFIX = EMAIL_PREFIX + "attachments.";
+		private static final String EMAIL_ATTACHMENT_REPORT_PREFIX = EMAIL_ATTACHMENT_PREFIX + "report.";
+
+		public static final String REPORT_ACTIVE = EMAIL_ATTACHMENT_REPORT_PREFIX + "active";
+		public static final String REPORT_NAME = EMAIL_ATTACHMENT_REPORT_PREFIX + "name";
+		public static final String REPORT_EXTENSION = EMAIL_ATTACHMENT_REPORT_PREFIX + "extension";
+
+		public static final String REPORT_PARAMETERS_PREFIX = EMAIL_ATTACHMENT_REPORT_PREFIX + "parameters.";
+
 	}
 
 	/**

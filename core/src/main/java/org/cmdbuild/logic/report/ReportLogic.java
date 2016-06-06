@@ -148,6 +148,6 @@ public interface ReportLogic extends Logic {
 
 	Iterable<CMAttribute> parameters(int id);
 
-	DataHandler download(int reportId, Extension extension, Map<String, Object> parameters);
+	DataHandler download(int reportId, Extension extension, Map<String, ? extends Object> parameters);
 
 }

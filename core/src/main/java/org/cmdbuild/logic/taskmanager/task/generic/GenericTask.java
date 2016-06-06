@@ -5,6 +5,8 @@ import static org.apache.commons.lang3.ObjectUtils.defaultIfNull;
 import static org.apache.commons.lang3.builder.ToStringBuilder.reflectionToString;
 import static org.apache.commons.lang3.builder.ToStringStyle.SHORT_PREFIX_STYLE;
 
+import java.util.Map;
+
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.cmdbuild.logic.taskmanager.AbstractScheduledTask;
@@ -23,6 +25,10 @@ public class GenericTask extends AbstractScheduledTask {
 		private Boolean emailActive;
 		private String emailTemplate;
 		private String emailAccount;
+		private Boolean reportActive;
+		private String reportName;
+		private String reportExtension;
+		private Map<String, String> reportParameters;
 
 		private Builder() {
 			// use factory method
@@ -37,6 +43,7 @@ public class GenericTask extends AbstractScheduledTask {
 		private void validate() {
 			active = defaultIfNull(active, FALSE);
 			emailActive = defaultIfNull(emailActive, FALSE);
+			reportActive = defaultIfNull(reportActive, FALSE);
 		}
 
 		public Builder withId(final Long id) {
@@ -79,6 +86,26 @@ public class GenericTask extends AbstractScheduledTask {
 			return this;
 		}
 
+		public Builder withReportActive(final Boolean reportActive) {
+			this.reportActive = reportActive;
+			return this;
+		}
+
+		public Builder withReportName(final String reportName) {
+			this.reportName = reportName;
+			return this;
+		}
+
+		public Builder withReportExtension(final String reportExtension) {
+			this.reportExtension = reportExtension;
+			return this;
+		}
+
+		public Builder withReportParameters(final Map<String, String> reportParameters) {
+			this.reportParameters = reportParameters;
+			return this;
+		}
+
 	}
 
 	public static Builder newInstance() {
@@ -93,6 +120,10 @@ public class GenericTask extends AbstractScheduledTask {
 	private final boolean emailActive;
 	private final String emailTemplate;
 	private final String emailAccount;
+	private final boolean reportActive;
+	private final String reportName;
+	private final String reportExtension;
+	private final Map<String, String> reportParameters;
 
 	private GenericTask(final Builder builder) {
 		this.id = builder.id;
@@ -103,6 +134,10 @@ public class GenericTask extends AbstractScheduledTask {
 		this.emailActive = builder.emailActive;
 		this.emailTemplate = builder.emailTemplate;
 		this.emailAccount = builder.emailAccount;
+		this.reportActive = builder.reportActive;
+		this.reportName = builder.reportName;
+		this.reportExtension = builder.reportExtension;
+		this.reportParameters = builder.reportParameters;
 	}
 
 	@Override
@@ -152,6 +187,22 @@ public class GenericTask extends AbstractScheduledTask {
 		return emailAccount;
 	}
 
+	public boolean isReportActive() {
+		return reportActive;
+	}
+
+	public String getReportName() {
+		return reportName;
+	}
+
+	public String getReportExtension() {
+		return reportExtension;
+	}
+
+	public Map<String, String> getReportParameters() {
+		return reportParameters;
+	}
+
 	@Override
 	protected boolean doEquals(final Object obj) {
 		if (obj == this) {
@@ -170,6 +221,10 @@ public class GenericTask extends AbstractScheduledTask {
 				.append(this.emailActive, other.emailActive) //
 				.append(this.emailTemplate, other.emailTemplate) //
 				.append(this.emailAccount, other.emailAccount) //
+				.append(this.reportActive, other.reportActive) //
+				.append(this.reportName, other.reportName) //
+				.append(this.reportExtension, other.reportExtension) //
+				.append(this.reportParameters, other.reportParameters) //
 				.isEquals();
 	}
 
@@ -184,6 +239,10 @@ public class GenericTask extends AbstractScheduledTask {
 				.append(emailActive) //
 				.append(emailTemplate) //
 				.append(emailAccount) //
+				.append(reportActive) //
+				.append(reportName) //
+				.append(reportExtension) //
+				.append(reportParameters) //
 				.toHashCode();
 	}
 

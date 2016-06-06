@@ -1,5 +1,7 @@
 package org.cmdbuild.logic.email;
 
+import javax.activation.DataHandler;
+
 import org.cmdbuild.common.template.TemplateResolver;
 import org.cmdbuild.data.store.email.EmailAccount;
 import org.cmdbuild.logic.Action;
@@ -11,9 +13,11 @@ public interface EmailTemplateSenderFactory {
 
 	interface Builder extends org.apache.commons.lang3.builder.Builder<EmailTemplateSender> {
 
-		Builder withEmailAccountSupplier(Supplier<EmailAccount> emailAccountSupplier);
+		Builder withAccount(Supplier<EmailAccount> account);
 
-		Builder withEmailTemplateSupplier(Supplier<Template> emailTemplateSupplier);
+		Builder withTemplate(Supplier<Template> template);
+
+		Builder withAttachments(Iterable<Supplier<? extends DataHandler>> attachments);
 
 		Builder withTemplateResolver(TemplateResolver templateResolver);
 
