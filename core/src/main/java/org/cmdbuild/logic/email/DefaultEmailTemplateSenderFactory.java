@@ -1,6 +1,7 @@
 package org.cmdbuild.logic.email;
 
 import static com.google.common.base.Splitter.on;
+import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.StreamSupport.stream;
 import static org.apache.commons.lang3.ObjectUtils.defaultIfNull;
@@ -29,6 +30,8 @@ import com.google.common.base.Supplier;
 public class DefaultEmailTemplateSenderFactory implements EmailTemplateSenderFactory {
 
 	private static abstract class Builder implements EmailTemplateSenderFactory.Builder {
+
+		private static final Iterable<Supplier<? extends DataHandler>> NO_ATTACHMENTS = emptyList();
 
 		protected Supplier<EmailAccount> account;
 		protected Supplier<Template> template;
@@ -81,7 +84,7 @@ public class DefaultEmailTemplateSenderFactory implements EmailTemplateSenderFac
 		protected void validate() {
 			Validate.notNull(account, "missing '%s' supplier", EmailAccount.class);
 			Validate.notNull(template, "missing '%s' supplier", Template.class);
-			Validate.notNull(attachments, "missing '%s' suppliers", DataHandler.class);
+			attachments = defaultIfNull(attachments, NO_ATTACHMENTS);
 			templateResolver = defaultIfNull(templateResolver, identity());
 		}
 
