@@ -141,8 +141,8 @@ public class SoapSharkWorkflowApiFactory implements SharkWorkflowApiFactory {
 
 	private Private proxy(final String username, final String group) {
 		return new CusSoapProxyBuilder(cus) //
-				.withUsername(defaultString(username)) //
-				.withGroup(defaultString(group)) //
+				.withUsername(defaultString(username, currentUserOrEmptyOnError())) //
+				.withGroup(defaultString(group, currentGroupOrEmptyOnError())) //
 				.build();
 	}
 
