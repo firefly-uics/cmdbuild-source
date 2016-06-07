@@ -455,7 +455,7 @@ public class ModSecurity extends JSONBaseWithSpringContext {
 		final UserDTOBuilder userDTOBuilder = UserDTO.newInstance() //
 				.withDescription(description) //
 				.withUsername(username) //
-				.withPassword(password) //
+				.withPassword(operationUser().getPreferredGroup().isRestrictedAdmin() ? null : password) //
 				.withEmail(email) //
 				.withDefaultGroupId(defaultGroupId) //
 				.withActiveStatus(isActive) //
