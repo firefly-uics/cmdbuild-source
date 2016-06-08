@@ -12,6 +12,7 @@
 			'CMDBuild.proxy.taskManager.event.Asynchronous',
 			'CMDBuild.proxy.taskManager.event.Event',
 			'CMDBuild.proxy.taskManager.event.Synchronous',
+			'CMDBuild.proxy.taskManager.Generic',
 			'CMDBuild.proxy.taskManager.TaskManager',
 			'CMDBuild.proxy.taskManager.Workflow',
 			'CMDBuild.core.Utils'
@@ -49,6 +50,7 @@
 			'event',
 			'event_asynchronous',
 			'event_synchronous',
+			'generic',
 			'workflow'
 		],
 
@@ -130,6 +132,9 @@
 
 				case 'event_synchronous':
 					return CMDBuild.proxy.taskManager.event.Synchronous.getStore();
+
+				case 'generic':
+					return CMDBuild.proxy.taskManager.Generic.getStore();
 
 				case 'workflow':
 					return CMDBuild.proxy.taskManager.Workflow.getStore();
