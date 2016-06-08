@@ -31,13 +31,6 @@
 			}
 		},
 
-//		/**
-//		 * @return {String}
-//		 */
-//		checkWorkflowComboSelected: function () {
-//			return this.getReportDelegate().getValueCombo();
-//		},
-
 		// GETters functions
 			/**
 			 * @return {CMDBuild.controller.administration.tasks.common.workflowForm.CMWorkflowFormController} delegate
@@ -129,7 +122,7 @@
 			Ext.apply(this, {
 				items: [
 					this.reportFieldset = Ext.create('Ext.form.FieldSet', {
-						title: '@@ CMDBuild.Translation.administration.tasks.attachReport',
+						title: CMDBuild.Translation.report,
 						checkboxName: CMDBuild.core.constants.Proxy.WORKFLOW_ACTIVE,
 						checkboxToggle: true,
 						collapsed: true,

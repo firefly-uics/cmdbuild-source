@@ -125,20 +125,33 @@
 						{
 							cmName: this.cmfg('accordionIdentifierGet'),
 							iconCls: 'cmdb-tree-tasks-icon',
-							text: '@@ CMDBuild.Translation.administration.tasks.tasksTypes.generic',
-							description: '@@ CMDBuild.Translation.administration.tasks.tasksTypes.generic',
-							id: this.cmfg('accordionBuildId', 'generic'),
-							sectionHierarchy: ['generic'],
-							leaf: true
-						},
-						{
-							cmName: this.cmfg('accordionIdentifierGet'),
-							iconCls: 'cmdb-tree-tasks-icon',
 							text: CMDBuild.Translation.administration.tasks.tasksTypes.workflow,
 							description: CMDBuild.Translation.administration.tasks.tasksTypes.workflow,
 							id: this.cmfg('accordionBuildId', 'workflow'),
 							sectionHierarchy: ['workflow'],
 							leaf: true
+						},
+						{
+							cmName: this.cmfg('accordionIdentifierGet'),
+							iconCls: 'cmdb-tree-taskGroup-icon',
+							text: CMDBuild.Translation.others,
+							description: CMDBuild.Translation.others,
+							expanded: true,
+							id: this.cmfg('accordionBuildId', 'others'),
+							sectionHierarchy: ['generic'],
+							leaf: false,
+
+							children: [
+								{
+									cmName: this.cmfg('accordionIdentifierGet'),
+									iconCls: 'cmdb-tree-tasks-icon',
+									text: CMDBuild.Translation.sendEmail,
+									description: CMDBuild.Translation.sendEmail,
+									id: this.cmfg('accordionBuildId', 'generic'),
+									sectionHierarchy: ['generic'],
+									leaf: true
+								}
+							]
 						}
 					]
 				}

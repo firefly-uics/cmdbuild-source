@@ -77,10 +77,7 @@
 	Ext.define('CMDBuild.view.administration.tasks.generic.CMStep1', {
 		extend: 'Ext.panel.Panel',
 
-		requires: [
-			'CMDBuild.core.constants.Proxy',
-			'CMDBuild.proxy.email.Account'
-		],
+		requires: ['CMDBuild.core.constants.Proxy'],
 
 		/**
 		 * @cfg {CMDBuild.view.administration.tasks.generic.CMStep1Delegate}
@@ -135,7 +132,7 @@
 						fieldLabel: CMDBuild.Translation.administration.tasks.type,
 						labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
 						name: CMDBuild.core.constants.Proxy.TYPE,
-						value: '@@ CMDBuild.Translation.administration.tasks.tasksTypes.generic',
+						value: CMDBuild.Translation.others,
 						disabled: true,
 						cmImmutable: true,
 						readOnly: true,

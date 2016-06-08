@@ -21,8 +21,8 @@
 		considerAsFieldToDisable: true,
 		disabled: true,
 		margin: '0 0 0 ' + (CMDBuild.core.constants.FieldWidths.LABEL - 5),
-		minWidth: CMDBuild.core.constants.FieldWidths.ADMINISTRATION_BIG,
-		title: CMDBuild.Translation.attributes,
+		maxWidth: CMDBuild.core.constants.FieldWidths.CONFIGURATION_BIG,
+		title: CMDBuild.Translation.parameters,
 
 		/**
 		 * @returns {View}
@@ -34,20 +34,13 @@
 				columns: [
 					{
 						dataIndex: CMDBuild.core.constants.Proxy.DESCRIPTION,
-						text: CMDBuild.Translation.attribute,
+						text: CMDBuild.Translation.descriptionLabel,
 						flex: 1
-					},
-					{
-						dataIndex: CMDBuild.core.constants.Proxy.VALUE,
-						text: CMDBuild.Translation.value,
-						flex: 1,
-
-						editor: { xtype: 'textfield' }
 					},
 					Ext.create('Ext.grid.column.CheckColumn', {
 						dataIndex: CMDBuild.core.constants.Proxy.EDITING_MODE,
-						text: '@@ Free editor',
-						width: 60,
+						text: CMDBuild.Translation.cqlExpression,
+						width: 100,
 						align: 'center',
 						hideable: false,
 						menuDisabled: true,
@@ -61,6 +54,13 @@
 							}
 						}
 					}),
+					{
+						dataIndex: CMDBuild.core.constants.Proxy.VALUE,
+						text: CMDBuild.Translation.value,
+						flex: 1,
+
+						editor: { xtype: 'textfield' }
+					}
 				],
 				plugins: [
 					this.cellEditingPlugin = Ext.create('Ext.grid.plugin.CellEditing', {

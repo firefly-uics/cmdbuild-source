@@ -135,7 +135,7 @@
 							this.delegateStep[2].setData(record.get(CMDBuild.core.constants.Proxy.CONTEXT));
 
 							// Set step4 [3] data
-							this.delegateStep[3].setValueEmailFieldsetCheckbox(record.get(CMDBuild.core.constants.Proxy.EMAIL_ACTIVE));
+//							this.delegateStep[3].setValueEmailFieldsetCheckbox(record.get(CMDBuild.core.constants.Proxy.EMAIL_ACTIVE));
 							this.delegateStep[3].setValueEmailAccount(record.get(CMDBuild.core.constants.Proxy.EMAIL_ACCOUNT));
 							this.delegateStep[3].setValueEmailTemplate(record.get(CMDBuild.core.constants.Proxy.EMAIL_TEMPLATE));
 
@@ -169,6 +169,9 @@
 				submitDatas[CMDBuild.core.constants.Proxy.ACTIVE] = formData[CMDBuild.core.constants.Proxy.ACTIVE];
 				submitDatas[CMDBuild.core.constants.Proxy.CRON_EXPRESSION] = this.delegateStep[1].getCronDelegate().getValue();
 				submitDatas[CMDBuild.core.constants.Proxy.DESCRIPTION] = formData[CMDBuild.core.constants.Proxy.DESCRIPTION];
+				submitDatas[CMDBuild.core.constants.Proxy.EMAIL_ACCOUNT] = formData[CMDBuild.core.constants.Proxy.EMAIL_ACCOUNT];
+				submitDatas[CMDBuild.core.constants.Proxy.EMAIL_ACTIVE] = true; // Fixed value untill refactor
+				submitDatas[CMDBuild.core.constants.Proxy.EMAIL_TEMPLATE] = formData[CMDBuild.core.constants.Proxy.EMAIL_TEMPLATE];
 				submitDatas[CMDBuild.core.constants.Proxy.ID] = formData[CMDBuild.core.constants.Proxy.ID];
 
 				var contextData = this.delegateStep[2].getData();
@@ -176,13 +179,6 @@
 					submitDatas[CMDBuild.core.constants.Proxy.CONTEXT] = Ext.encode({ client: contextData }); // FIXME: multiple sub-context predisposition
 
 				// Fieldset submitting filter to avoid to send datas if fieldset are collapsed
-					var emailFieldsetCheckboxValue = this.delegateStep[3].getValueEmailFieldsetCheckbox();
-					if (emailFieldsetCheckboxValue) {
-						submitDatas[CMDBuild.core.constants.Proxy.EMAIL_ACTIVE] = emailFieldsetCheckboxValue;
-						submitDatas[CMDBuild.core.constants.Proxy.EMAIL_ACCOUNT] = formData[CMDBuild.core.constants.Proxy.EMAIL_ACCOUNT];
-						submitDatas[CMDBuild.core.constants.Proxy.EMAIL_TEMPLATE] = formData[CMDBuild.core.constants.Proxy.EMAIL_TEMPLATE];
-					}
-
 					var reportFieldsetCheckboxValue = this.delegateStep[4].getValueReportFieldsetCheckbox();
 					if (reportFieldsetCheckboxValue) {
 						var attributesGridValues = this.delegateStep[4].getValueReportAttributeGrid();
