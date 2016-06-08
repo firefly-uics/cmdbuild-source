@@ -16,7 +16,7 @@
 				debug: true,
 				apiUrl : '<%=request.getParameter("basePath")%>/services/rest/v2/',
 				appRootUrl : '<%=request.getParameter("basePath")%>/javascripts/cmdbuild-gui-framework-<%=request.getParameter("frameworkVersion")%>/',
-				appConfigUrl: '<%=request.getParameter("basePath")%>/javascripts/cmdbuild-network/Graph/',
+				appConfigUrl: '<%=request.getParameter("basePath")%>/javascripts/cmdbuild-network/Graph-1.0.1/',
 				access_token: 'CMDBuild-Authorization',
 				language:'<%=request.getParameter("language")%>',
 				customjs: [
