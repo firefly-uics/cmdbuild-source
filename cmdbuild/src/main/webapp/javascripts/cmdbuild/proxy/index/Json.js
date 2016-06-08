@@ -600,6 +600,15 @@
 				}
 			},
 
+			generic: {
+				create: 'services/json/schema/taskmanager/generic/create',
+				read: 'services/json/schema/taskmanager/generic/read',
+				update: 'services/json/schema/taskmanager/generic/update',
+				remove: 'services/json/schema/taskmanager/generic/delete',
+
+				readAll: 'services/json/schema/taskmanager/generic/readall'
+			},
+
 			workflow: {
 				create: 'services/json/schema/taskmanager/startworkflow/create',
 				read: 'services/json/schema/taskmanager/startworkflow/read',

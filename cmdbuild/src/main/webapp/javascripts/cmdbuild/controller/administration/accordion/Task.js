@@ -125,6 +125,15 @@
 						{
 							cmName: this.cmfg('accordionIdentifierGet'),
 							iconCls: 'cmdb-tree-tasks-icon',
+							text: '@@ CMDBuild.Translation.administration.tasks.tasksTypes.generic',
+							description: '@@ CMDBuild.Translation.administration.tasks.tasksTypes.generic',
+							id: this.cmfg('accordionBuildId', 'generic'),
+							sectionHierarchy: ['generic'],
+							leaf: true
+						},
+						{
+							cmName: this.cmfg('accordionIdentifierGet'),
+							iconCls: 'cmdb-tree-tasks-icon',
 							text: CMDBuild.Translation.administration.tasks.tasksTypes.workflow,
 							description: CMDBuild.Translation.administration.tasks.tasksTypes.workflow,
 							id: this.cmfg('accordionBuildId', 'workflow'),
