@@ -270,7 +270,6 @@
 						&& Ext.isFunction(button.setDisabled)
 						&& !button.disablePanelFunctions
 					) {
-_debug('button', button, state);
 						button.setDisabled(Ext.isBoolean(button.forceDisabledState) ? button.forceDisabledState : state);
 					}
 				}, this);
