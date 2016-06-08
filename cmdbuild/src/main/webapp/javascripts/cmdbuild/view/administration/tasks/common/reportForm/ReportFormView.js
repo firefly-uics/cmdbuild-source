@@ -79,7 +79,7 @@
 					}),
 					this.extension = Ext.create('Ext.form.field.ComboBox', { // Prepared for future implementations
 						name: CMDBuild.core.constants.Proxy.REPORT_EXTENSION,
-						fieldLabel: '@@ CMDBuild.Translation.extension',
+						fieldLabel: CMDBuild.Translation.format,
 						labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
 						displayField: CMDBuild.core.constants.Proxy.DESCRIPTION,
 						valueField: CMDBuild.core.constants.Proxy.NAME,

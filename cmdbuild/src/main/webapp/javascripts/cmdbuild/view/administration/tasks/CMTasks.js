@@ -115,10 +115,18 @@
 											]
 										},
 										{
-											text: '@@ CMDBuild.Translation.administration.tasks.tasksTypes.generic',
+											text: CMDBuild.Translation.administration.tasks.tasksTypes.workflow,
+											scope: this,
+
+											handler: function(button, e) {
+												this.delegate.cmOn('onAddButtonClick', { type: 'workflow' });
+											}
+										},
+										{
+											text: CMDBuild.Translation.others,
 											menu: [
 												{
-													text: '@@ Send by e-mail',
+													text: CMDBuild.Translation.sendEmail,
 													scope: this,
 
 													handler: function(button, e) {
@@ -126,14 +134,6 @@
 													}
 												}
 											]
-										},
-										{
-											text: CMDBuild.Translation.administration.tasks.tasksTypes.workflow,
-											scope: this,
-
-											handler: function(button, e) {
-												this.delegate.cmOn('onAddButtonClick', { type: 'workflow' });
-											}
 										}
 									]
 								})

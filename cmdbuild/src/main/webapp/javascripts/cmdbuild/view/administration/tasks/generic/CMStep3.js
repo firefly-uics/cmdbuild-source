@@ -122,7 +122,7 @@
 			Ext.apply(this, {
 				items: [
 					this.grid = Ext.create('Ext.grid.Panel', {
-						title: '@@ Context',
+						title: CMDBuild.Translation.contextVariables,
 						considerAsFieldToDisable: true,
 
 						columns: [

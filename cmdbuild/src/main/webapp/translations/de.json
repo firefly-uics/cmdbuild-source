@@ -60,7 +60,8 @@
 				"standard": "Standard",
 				"superclass": "Superklasse",
 				"type": "Typ",
-				"wait_msg": "Eingabe der Daten ..."
+				"wait_msg": "Eingabe der Daten ...",
+				"wait_title": "<em>Connecting</em>"
 			},
 			"class_property": "Eigenschaften",
 			"classtype": {
@@ -366,6 +367,7 @@
 					"asynchronous": "Asynchron",
 					"synchronous": "Synchron"
 				},
+				"generic": "<em>Others</em>",
 				"workflow": "Prozess"
 			},
 			"workflow": "Prozess",
@@ -941,8 +943,10 @@
 	"container": "Container",
 	"contains": "Enthält",
 	"containsorequal": "<em>Contains or equal</em>",
+	"contextVariables": "<em>Context variables</em>",
 	"controls": "Controls",
 	"copyOf": "Kopien von",
+	"cqlExpression": "<em>CQL expression</em>",
 	"cqlFilter": "CQL Filter",
 	"createLimitedUser": "Begrenzter Benutzer erstellen",
 	"createModifyCard": "Karte erstellen oder bearbeiten",
@@ -1201,6 +1205,7 @@
 	"openRelationGraph": "Beziehungsgraph öffnen",
 	"origin": "Ursprung",
 	"otherOptions": "Weitere optionen",
+	"others": "<em>Others</em>",
 	"outgoing": "Ausgehende",
 	"pan": "Schwenken",
 	"parameters": "<em>Parameters</em>",
@@ -1290,6 +1295,7 @@
 	"selectedUsers": "Ausgewählte Benutzer",
 	"selection": "Markierung",
 	"send": "<em>Send</em>",
+	"sendEmail": "<em>Send e-mail</em>",
 	"sender": "<em>Sender</em>",
 	"sentFolder": "<em>Sent folder</em>",
 	"separator": "Trennzeichen",
