@@ -16,7 +16,7 @@
 				debug: true,
 				apiUrl : '<%=request.getParameter("basePath")%>/services/rest/v2/',
 				appRootUrl : '<%=request.getParameter("basePath")%>/javascripts/cmdbuild-gui-framework-<%=request.getParameter("frameworkVersion")%>/',
-				appConfigUrl: '<%=request.getParameter("basePath")%>/javascripts/cmdbuild-network/Graph/',
+				appConfigUrl: '<%=request.getParameter("basePath")%>/javascripts/cmdbuild-network/Graph-1.0.0/',
 				access_token: 'CMDBuild-Authorization',
 				language:'<%=request.getParameter("language")%>',
 				customjs: [
@@ -34,8 +34,6 @@
 					"backend/GraphCard.js",
 					"backend/DomainsFilterClasses.js",
 					"backend/OnGraphRelations.js",
-					"backend/FilterAttributesNavigation.js",
-					"backend/FilterAttributes.js",
 					"commands/modifyPosition.js",
 					"commands/macroCommand.js",
 					"commands/explode_levels.js",
@@ -51,7 +49,6 @@
 					"selectedGrid.js",
 					"relationsGrid.js",
 					"scripts.js",
-					"formAttributesFilter.js",
 					"navigationTreesBtnMenu.js",
 					"core/cache.js",
 					"core/proxy.js",
@@ -66,6 +63,7 @@
 					"views/viewer/ViewerUtilities.js",
 					"views/viewer/Camera.js",
 					"TrackballControls.js",
+					"plugins/GuiCircle.js", 
 					"plugins/GuiSpringy.js",
 					"plugins/GuiSphere.js"
 				], 

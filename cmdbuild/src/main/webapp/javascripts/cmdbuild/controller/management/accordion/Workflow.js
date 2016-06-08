@@ -5,14 +5,35 @@
 
 		requires: [
 			'CMDBuild.core.constants.Global',
+			'CMDBuild.core.constants.ModuleIdentifiers',
 			'CMDBuild.core.constants.Proxy',
-			'CMDBuild.proxy.Classes'
+			'CMDBuild.proxy.Classes' // FIXME: build own proxy (workflow)
 		],
 
 		/**
 		 * @cfg {CMDBuild.controller.common.MainViewport}
 		 */
 		parentDelegate: undefined,
+
+		/**
+		 * @cfg {Array}
+		 */
+		cmfgCatchedFunctions: [
+			'accordionBuildId',
+			'accordionDeselect',
+			'accordionExpand',
+			'accordionFirstSelectableNodeSelect',
+			'accordionFirtsSelectableNodeGet',
+			'accordionIdentifierGet',
+			'accordionNodeByIdExists',
+			'accordionNodeByIdGet',
+			'accordionNodeByIdSelect',
+			'accordionUpdateStore',
+			'onAccordionBeforeSelect',
+			'onAccordionExpand',
+			'onAccordionSelectionChange',
+			'onAccordionWorkflowCollapse'
+		],
 
 		/**
 		 * @cfg {Boolean}
@@ -119,6 +140,25 @@
 			});
 
 			this.callParent(arguments);
+		},
+
+		/**
+		 * Manage accordion collapse to exit from card edit mode
+		 *
+		 * @returns {Void}
+		 *
+		 * @legacy
+		 */
+		onAccordionWorkflowCollapse: function () {
+			if (this.cmfg('mainViewportModuleControllerExists', CMDBuild.core.constants.ModuleIdentifiers.getWorkflow())) {
+				var controller = this.cmfg('mainViewportModuleControllerGet', CMDBuild.core.constants.ModuleIdentifiers.getWorkflow());
+				var controllerActivityPanel = controller.activityPanelController;
+
+				if (!Ext.isEmpty(controllerActivityPanel) && Ext.isFunction(controllerActivityPanel.onAbortCardClick))
+					controllerActivityPanel.onAbortCardClick();
+			} else {
+				_error('onAccordionClassesCollapse(): non-existent module controller', this);
+			}
 		}
 	});
 

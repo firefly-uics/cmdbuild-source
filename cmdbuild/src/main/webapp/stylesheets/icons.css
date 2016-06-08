@@ -69,6 +69,10 @@
 /* Navigation chronology */
 	.navigation-chronology { background-image: url("../images/icons/navigation/chronology.png") !important; }
 
+/* Task Manager */
+	.task-manager-cyclic-execution { background-image: url("../images/icons/taskManager/cyclicExecution.png") !important; }
+	.task-manager-single-execution { background-image: url("../images/icons/taskManager/singleExecution.png") !important; }
+
 /* Trigger fields */
 	.trigger-add { background-image: url("../images/form/trigger-add.png") !important; }
 	.trigger-edit { background-image: url("../images/form/trigger-edit.png") !important; }

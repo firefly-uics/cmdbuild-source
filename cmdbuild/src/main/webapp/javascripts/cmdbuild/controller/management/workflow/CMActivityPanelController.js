@@ -2,6 +2,7 @@
 
 	Ext.require([
 		'CMDBuild.core.constants.Global',
+		'CMDBuild.core.constants.Proxy',
 		'CMDBuild.core.Message',
 		'CMDBuild.proxy.workflow.Activity',
 		'CMDBuild.proxy.workflow.Workflow'
@@ -30,6 +31,16 @@
 		 */
 		lastSelectedProcessInstance: undefined,
 
+		/**
+		 * @param {CMDBuild.view.management.workflow.CMActivityPanel} view
+		 * @param {CMDBuild.controller.management.workflow.CMModWorkflowController} supercontroller
+		 * @param {CMDBuild.controller.management.common.CMWidgetManagerController} widgetControllerManager
+		 * @param {???} delegate
+		 *
+		 * @returns {Void}
+		 *
+		 * @override
+		 */
 		constructor: function(view, supercontroller, widgetControllerManager, delegate) {
 			this.callParent(arguments);
 
@@ -94,22 +105,18 @@
 		// wfStateDelegate
 		onActivityInstanceChange: function(activityInstance) {
 			var me = this;
+			var activityMetadata = activityInstance.data[CMDBuild.core.constants.Proxy.METADATA];
 			var processInstance = _CMWFState.getProcessInstance();
 
 			this.unlock();
 
 			this.lastSelectedActivityInstance = activityInstance; // Used to unlock last locked card
 
-			// reduce the layouts work while
-			// fill the panel and build the widgets.
-			// Resume it at the end
-			// and force a layout update
-
+			// Reduce the layouts work while fill the panel and build the widgets.
+			// Resume it at the end and force a layout update
 			Ext.suspendLayouts();
 
-			if (!activityInstance.nullObject
-					&& activityInstance.isNew()) {
-
+			if (!activityInstance.nullObject && activityInstance.isNew()) {
 				/*
 				 * I could be in a tab different to the first one,
 				 * but to edit a new card is necessary to have the editing form.
@@ -135,18 +142,36 @@
 				me.widgetControllerManager.buildControllers(null);
 			}
 
-			// resume the layouts here
-			// because the form already suspend
-			// the layouts automatically
+			// Resume the layouts here because the form already suspend the layouts automatically
 			Ext.resumeLayouts();
+
 			this.view.doLayout();
 
 			// Load always the fields
 			me.loadFields(processInstance.getClassId(), function loadFieldsCb() {
-				// fill always the process to trigger the
-				// template resolver of filtered references
+				// Fill always the process to trigger the template resolver of filtered references
 				me.fillFormWithProcessInstanceData(processInstance);
 				manageEditability(me, activityInstance, processInstance);
+
+				// Manage metadata (SelectedAttributesGroup)
+				if (Ext.isArray(activityMetadata) && !Ext.isEmpty(activityMetadata)) {
+					Ext.Array.each(activityMetadata, function (metadataObject, i, allMetadataObjects) {
+						if (Ext.isObject(metadataObject) && !Ext.Object.isEmpty(metadataObject))
+							switch (metadataObject[CMDBuild.core.constants.Proxy.NAME]) {
+								case CMDBuild.core.constants.Proxy.WORKFLOW_METADATA_SELECTED_ATTRIBUTES_GROUP: {
+									var preselectedTab = null;
+
+									this.view.form.tabPanel.items.each(function (item, index, len) {
+										if (item.title == metadataObject[CMDBuild.core.constants.Proxy.VALUE])
+											preselectedTab = item;
+									}, this);
+
+									if (!Ext.isEmpty(preselectedTab))
+										this.view.form.tabPanel.setActiveTab(preselectedTab);
+								} break;
+							}
+					}, me);
+				}
 			});
 
 		},

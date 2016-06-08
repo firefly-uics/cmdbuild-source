@@ -38,7 +38,7 @@
 		 * @override
 		 */
 		initComponent: function () {
-			Ext.apply(this, {
+			Ext.applyIf(this, {
 				store: Ext.create('Ext.data.TreeStore', {
 					autoLoad: true,
 					model: this.storeModelName,

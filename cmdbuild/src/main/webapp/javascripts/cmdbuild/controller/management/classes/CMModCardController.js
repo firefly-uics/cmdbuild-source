@@ -75,7 +75,7 @@
 		 */
 		setEntryType: function(entryTypeId, dc, filter) {
 			this.entryType = _CMCache.getEntryTypeById(entryTypeId);
-			this.setCard(null);
+			this.setCard(null); // Reset selected card
 			this.callForSubControllers('onEntryTypeSelected', [this.entryType, dc, filter]);
 
 			if (!Ext.isEmpty(dc) && !Ext.isEmpty(dc.activateFirstTab))
@@ -458,8 +458,6 @@
 		 */
 		setEntryType: function (entryTypeId, dc, filter) {
 			var entryType = _CMCache.getEntryTypeById(entryTypeId);
-
-			this.setCard(null); // Reset selected card to avoid EditMode persistence on accordion switch
 
 			this.view.addCardButton.updateForEntry(entryType);
 			this.view.mapAddCardButton.updateForEntry(entryType);

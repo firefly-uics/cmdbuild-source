@@ -453,6 +453,7 @@
 			var node = null;
 
 			if (!Ext.isEmpty(accordionWithNodeController)) {
+				accordionWithNodeController.disableSelection = true; // Disable first accordion selection to avoid double node selection
 				accordionWithNodeController.cmfg('accordionExpand', {
 					scope: this,
 					callback: function (panel, eOpts) {

@@ -10,6 +10,7 @@ import org.cmdbuild.logic.taskmanager.task.connector.ConnectorTask;
 import org.cmdbuild.logic.taskmanager.task.email.ReadEmailTask;
 import org.cmdbuild.logic.taskmanager.task.event.asynchronous.AsynchronousEventTask;
 import org.cmdbuild.logic.taskmanager.task.event.synchronous.SynchronousEventTask;
+import org.cmdbuild.logic.taskmanager.task.generic.GenericTask;
 import org.cmdbuild.logic.taskmanager.task.process.StartWorkflowTask;
 import org.cmdbuild.scheduler.Job;
 import org.slf4j.Logger;
@@ -55,6 +56,11 @@ public class DefaultLogicAndSchedulerConverter implements LogicAndSchedulerConve
 
 		@Override
 		public void visit(final ConnectorTask task) {
+			job = factories.get(task.getClass()).create(task, execution);
+		}
+
+		@Override
+		public void visit(final GenericTask task) {
 			job = factories.get(task.getClass()).create(task, execution);
 		}
 

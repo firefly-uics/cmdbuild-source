@@ -2,8 +2,13 @@ package org.cmdbuild.logic;
 
 import static com.google.common.collect.FluentIterable.from;
 import static com.google.common.collect.Iterables.contains;
+import static com.google.common.collect.Maps.newHashMap;
+import static org.apache.commons.lang3.ObjectUtils.defaultIfNull;
 import static org.cmdbuild.dao.query.clause.AnyAttribute.anyAttribute;
 import static org.cmdbuild.dao.query.clause.Clauses.call;
+import static org.cmdbuild.logic.data.access.DefaultDataAccessLogic.NO_PARAMETERS;
+import static org.cmdbuild.logic.data.access.DefaultDataAccessLogic.ROLE;
+import static org.cmdbuild.logic.data.access.DefaultDataAccessLogic.USER;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -13,6 +18,7 @@ import java.util.Map.Entry;
 import java.util.UUID;
 
 import org.cmdbuild.auth.user.OperationUser;
+import org.cmdbuild.common.collect.ChainablePutMap;
 import org.cmdbuild.dao.function.CMFunction;
 import org.cmdbuild.dao.function.CMFunction.Category;
 import org.cmdbuild.dao.query.CMQueryResult;
@@ -126,9 +132,12 @@ public class DashboardLogic implements Logic {
 	}
 
 	public GetChartDataResponse getChartData(final String functionName, final Map<String, Object> params) {
+		final Map<String, Object> _params = ChainablePutMap.of(newHashMap(defaultIfNull(params, NO_PARAMETERS))) //
+				.chainablePut(USER, operationUser.getAuthenticatedUser().getId()) //
+				.chainablePut(ROLE, operationUser.getPreferredGroup().getId());
 		final CMFunction function = view.findFunctionByName(functionName);
 		final NameAlias f = NameAlias.as("f");
-		final CMQueryResult queryResult = view.select(anyAttribute(function, f)).from(call(function, params), f).run();
+		final CMQueryResult queryResult = view.select(anyAttribute(function, f)).from(call(function, _params), f).run();
 		final GetChartDataResponse response = new GetChartDataResponse();
 		for (final CMQueryRow row : queryResult) {
 			response.addRow(row.getValueSet(f).getValues());

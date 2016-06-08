@@ -59,7 +59,7 @@ public class JsonWorkflowDTOs {
 		public Iterable<CMActivityVariableToProcess> getVariables() {
 			return activity.getVariables();
 		}
-		
+
 		public Iterable<CMActivityMetadata> getMetadata() {
 			return from(activity.getMetadata()) //
 					.toList();
@@ -95,6 +95,11 @@ public class JsonWorkflowDTOs {
 
 		public Boolean isWritable() {
 			return activityInstance.isWritable();
+		}
+
+		public Iterable<CMActivityMetadata> getMetadata() throws CMWorkflowException {
+			return from(activityInstance.getDefinition().getMetadata()) //
+					.toList();
 		}
 
 	}
@@ -167,8 +172,8 @@ public class JsonWorkflowDTOs {
 		public String getEndDate() {
 			return formatDateTime(processInstance.getEndDate());
 		}
-		
-		public String getUser(){
+
+		public String getUser() {
 			return processInstance.getUser();
 		}
 

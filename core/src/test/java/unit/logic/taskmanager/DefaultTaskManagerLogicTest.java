@@ -16,6 +16,7 @@ import static org.mockito.Mockito.when;
 import org.cmdbuild.data.store.Storable;
 import org.cmdbuild.data.store.task.TaskStore;
 import org.cmdbuild.data.store.task.TaskVisitor;
+import org.cmdbuild.exception.TaskManagerException;
 import org.cmdbuild.logic.email.EmailLogic;
 import org.cmdbuild.logic.email.EmailLogic.Email;
 import org.cmdbuild.logic.taskmanager.DefaultTaskManagerLogic;
@@ -29,6 +30,7 @@ import org.cmdbuild.logic.taskmanager.task.connector.ConnectorTask;
 import org.cmdbuild.logic.taskmanager.task.email.ReadEmailTask;
 import org.cmdbuild.logic.taskmanager.task.event.asynchronous.AsynchronousEventTask;
 import org.cmdbuild.logic.taskmanager.task.event.synchronous.SynchronousEventTask;
+import org.cmdbuild.logic.taskmanager.task.generic.GenericTask;
 import org.cmdbuild.logic.taskmanager.task.process.StartWorkflowTask;
 import org.junit.Before;
 import org.junit.Test;
@@ -727,7 +729,7 @@ public class DefaultTaskManagerLogicTest {
 		assertThat(scheduledTask.isActive(), is(false));
 	}
 
-	@Test(expected = UnsupportedOperationException.class)
+	@Test(expected = TaskManagerException.class)
 	public void synchronousEventTaskCannotBeExecuted() throws Exception {
 		// given
 		final org.cmdbuild.data.store.task.SynchronousEventTask stored = org.cmdbuild.data.store.task.SynchronousEventTask
@@ -789,6 +791,31 @@ public class DefaultTaskManagerLogicTest {
 		when(store.read(anyLong())) //
 				.thenReturn(stored);
 		final ConnectorTask storedTask = ConnectorTask.newInstance() //
+				.build();
+		when(storeAsSourceConverter.toLogic()) //
+				.thenReturn(storedTask);
+
+		// when
+		taskManagerLogic.execute(ID);
+
+		// then
+		final InOrder inOrder = inOrder(converter, logicAsSourceConverter, storeAsSourceConverter, store,
+				scheduledTaskFacade, synchronousEventFacade, emailLogic);
+		inOrder.verify(store).read(eq(ID));
+		inOrder.verify(converter).from(eq(stored));
+		inOrder.verify(storeAsSourceConverter).toLogic();
+		inOrder.verify(scheduledTaskFacade).execute(eq(storedTask), any(Callback.class));
+		inOrder.verifyNoMoreInteractions();
+	}
+
+	@Test
+	public void genericTaskExecuted() throws Exception {
+		// given
+		final org.cmdbuild.data.store.task.GenericTask stored = org.cmdbuild.data.store.task.GenericTask.newInstance() //
+				.build();
+		when(store.read(anyLong())) //
+				.thenReturn(stored);
+		final GenericTask storedTask = GenericTask.newInstance() //
 				.build();
 		when(storeAsSourceConverter.toLogic()) //
 				.thenReturn(storedTask);

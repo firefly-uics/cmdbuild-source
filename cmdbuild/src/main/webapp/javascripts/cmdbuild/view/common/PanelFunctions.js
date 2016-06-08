@@ -7,6 +7,7 @@
 	 * 	- {Boolean} considerAsFieldToDisable: enable setDisable function on processed item also if it's not inherits from Ext.form.Field
 	 * 	- {Boolean} disableEnableFunctions: disable enable/setDisabled(false) on processed item (ex. cmImmutable)
 	 * 	- {Boolean} disablePanelFunctions: disable PanelFunctions class actions on processed item
+	 * 	- {Boolean} forceDisabledState: force item to be disabled
 	 */
 	Ext.define('CMDBuild.view.common.PanelFunctions', {
 
@@ -144,7 +145,7 @@
 						&& Ext.isFunction(button.setDisabled)
 						&& !button.disablePanelFunctions
 					) {
-						button.setDisabled(state);
+						button.setDisabled(Ext.isBoolean(button.forceDisabledState) ? button.forceDisabledState : state);
 					}
 				}, this);
 		},
@@ -269,10 +270,7 @@
 						&& Ext.isFunction(button.setDisabled)
 						&& !button.disablePanelFunctions
 					) {
-						if (Ext.isBoolean(button.forceDisabledState)) // Force disabled state implementation
-							state = button.forceDisabledState;
-
-						button.setDisabled(state);
+						button.setDisabled(Ext.isBoolean(button.forceDisabledState) ? button.forceDisabledState : state);
 					}
 				}, this);
 		}
