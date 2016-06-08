@@ -85,6 +85,7 @@
 							}),
 							Ext.create('CMDBuild.core.buttons.iconized.Password', {
 								text: CMDBuild.Translation.changePassword,
+								forceDisabledState: CMDBuild.configuration.userInterface.get(CMDBuild.core.constants.Proxy.CLOUD_ADMIN),
 								scope: this,
 
 								handler: function (button, e) {

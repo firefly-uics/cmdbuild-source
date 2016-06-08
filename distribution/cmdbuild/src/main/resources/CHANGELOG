@@ -136,6 +136,8 @@ FIXES
 
  * Wrong sort attribute in getcardlist server call with starting class
 
+ * A user logged in as a limited administrator can change the passwords of other users
+
 
 
 
