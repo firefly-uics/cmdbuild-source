@@ -16,10 +16,7 @@ import java.util.Map.Entry;
 
 import javax.activation.DataSource;
 
-import net.jcip.annotations.NotThreadSafe;
-
 import org.cmdbuild.auth.acl.PrivilegeContext;
-import org.cmdbuild.auth.user.OperationUser;
 import org.cmdbuild.common.Constants;
 import org.cmdbuild.common.utils.PagedElements;
 import org.cmdbuild.config.WorkflowConfiguration;
@@ -60,10 +57,12 @@ import com.google.common.base.Function;
 import com.google.common.base.Optional;
 import com.google.common.base.Predicate;
 
+import net.jcip.annotations.NotThreadSafe;
+
 class DefaultWorkflowLogic implements WorkflowLogic {
 
-	private static class UserProcessInstanceWithPositionImpl extends ForwardingUserProcessInstance implements
-			UserProcessInstanceWithPosition {
+	private static class UserProcessInstanceWithPositionImpl extends ForwardingUserProcessInstance
+			implements UserProcessInstanceWithPosition {
 
 		private final UserProcessInstance delegate;
 		private final Long position;
@@ -90,7 +89,6 @@ class DefaultWorkflowLogic implements WorkflowLogic {
 	private static final String BEGIN_DATE_ATTRIBUTE = "beginDate";
 	private static final String SKETCH_PATH = "images" + File.separator + "workflow" + File.separator;
 
-	private final OperationUser operationUser;
 	private final PrivilegeContext privilegeContext;
 	private final QueryableUserWorkflowEngine workflowEngine;
 	private final CMDataView dataView;
@@ -99,7 +97,6 @@ class DefaultWorkflowLogic implements WorkflowLogic {
 	private final LockLogic lockLogic;
 
 	public DefaultWorkflowLogic( //
-			final OperationUser operationUser, //
 			final PrivilegeContext privilegeContext, //
 			final QueryableUserWorkflowEngine workflowEngine, //
 			final CMDataView dataView, //
@@ -107,7 +104,6 @@ class DefaultWorkflowLogic implements WorkflowLogic {
 			final FilesStore filesStore, //
 			final LockLogic lockLogic //
 	) {
-		this.operationUser = operationUser;
 		this.privilegeContext = privilegeContext;
 		this.workflowEngine = workflowEngine;
 		this.dataView = dataView;
@@ -146,8 +142,8 @@ class DefaultWorkflowLogic implements WorkflowLogic {
 	@Override
 	public PagedElements<UserProcessInstanceWithPosition> queryWithPosition(final String className,
 			final QueryOptions queryOptions, final Iterable<Long> cardId) {
-		final PagedElements<UserProcessInstanceWithPosition> fetchedProcesses = workflowEngine.queryWithPosition(
-				className, queryOptions, cardId);
+		final PagedElements<UserProcessInstanceWithPosition> fetchedProcesses = workflowEngine
+				.queryWithPosition(className, queryOptions, cardId);
 		return new PagedElements<UserProcessInstanceWithPosition>( //
 				from(fetchedProcesses) //
 						.transform(new Function<UserProcessInstanceWithPosition, UserProcessInstanceWithPosition>() {
@@ -246,7 +242,7 @@ class DefaultWorkflowLogic implements WorkflowLogic {
 
 	/**
 	 * Returns the process start activity for the current user.
-	 * 
+	 *
 	 * @param process
 	 *            class name
 	 * @return the start activity definition
@@ -330,7 +326,7 @@ class DefaultWorkflowLogic implements WorkflowLogic {
 	 * Retrieve the processInstance and check if the given date is the same of
 	 * the process begin date in this case, we assume that the process is
 	 * updated
-	 * 
+	 *
 	 * @param processClassName
 	 * @param processInstanceId
 	 * @param givenBeginDate
@@ -355,16 +351,16 @@ class DefaultWorkflowLogic implements WorkflowLogic {
 	/**
 	 * Starts the process, kills every activity except for the one that this
 	 * user wanted to start, advances it if requested.
-	 * 
+	 *
 	 * @param processClassName
 	 *            process class name
 	 * @param vars
 	 *            values
 	 * @param widgetSubmission
 	 * @param advance
-	 * 
+	 *
 	 * @return the created process instance
-	 * 
+	 *
 	 * @throws CMWorkflowException
 	 */
 	@Override
@@ -377,16 +373,16 @@ class DefaultWorkflowLogic implements WorkflowLogic {
 	/**
 	 * Starts the process, kills every activity except for the one that this
 	 * user wanted to start, advances it if requested.
-	 * 
+	 *
 	 * @param processClassId
 	 *            process class id
 	 * @param vars
 	 *            values
 	 * @param widgetSubmission
 	 * @param advance
-	 * 
+	 *
 	 * @return the created process instance
-	 * 
+	 *
 	 * @throws CMWorkflowException
 	 */
 	@Override
@@ -401,8 +397,8 @@ class DefaultWorkflowLogic implements WorkflowLogic {
 		final UserProcessInstance procInst = workflowEngine.startProcess(process, vars);
 		final List<UserActivityInstance> activities = procInst.getActivities();
 		if (activities.size() != 1) {
-			throw new UnsupportedOperationException(format("Not just one activity to advance! (%d activities)",
-					activities.size()));
+			throw new UnsupportedOperationException(
+					format("Not just one activity to advance! (%d activities)", activities.size()));
 		}
 		final UserActivityInstance firstActInst = activities.get(0);
 		final Map<String, Object> mergedVars = mergeVars( //
@@ -425,8 +421,8 @@ class DefaultWorkflowLogic implements WorkflowLogic {
 	 * for initialize correctly workflow instance variables).
 	 */
 	@NotThreadSafe
-	private static class ValuesFilter extends ForwardingAttributeTypeVisitor implements
-			Predicate<Entry<String, Object>> {
+	private static class ValuesFilter extends ForwardingAttributeTypeVisitor
+			implements Predicate<Entry<String, Object>> {
 
 		private final CMAttributeTypeVisitor DELEGATE = NullAttributeTypeVisitor.getInstance();
 
@@ -493,12 +489,12 @@ class DefaultWorkflowLogic implements WorkflowLogic {
 	 * This awful hack is needed because SOMEONE decided that it was a good idea
 	 * to specify default attributes in the database, so old clients did it and
 	 * now we have to deal with it.
-	 * 
+	 *
 	 * @param databaseValues
 	 *            values as they are in the newly created database row
 	 * @param entrySet
 	 *            values submitted in the form
-	 * 
+	 *
 	 * @return database values overridden by the submitted ones
 	 */
 	private Map<String, Object> mergeVars(final Iterable<Entry<String, Object>> databaseValues,
@@ -531,8 +527,7 @@ class DefaultWorkflowLogic implements WorkflowLogic {
 	public UserProcessInstance updateProcess(final Long processClassId, final Long processCardId,
 			final String activityInstanceId, final Map<String, ?> vars, final Map<String, Object> widgetSubmission,
 			final boolean advance) throws CMWorkflowException {
-		final String currentlyLoggedUser = operationUser.getAuthenticatedUser().getUsername();
-		lockLogic.checkActivityLockedbyUser(processCardId, activityInstanceId, currentlyLoggedUser);
+		lockLogic.checkActivityLockedbyUser(processCardId, activityInstanceId);
 
 		final CMProcessClass processClass = workflowEngine.findProcessClassById(processClassId);
 		final UserProcessInstance processInstance = workflowEngine.findProcessInstance(processClass, processCardId);

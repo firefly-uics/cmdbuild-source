@@ -6,6 +6,12 @@ import com.google.common.collect.ForwardingObject;
 public class Predicates {
 
 	private static abstract class WidgetPredicate<T> extends ForwardingObject implements Predicate<Widget> {
+		
+		/**
+		 * Usable by subclasses only.
+		 */
+		protected WidgetPredicate() {
+		}
 
 		@Override
 		protected abstract Predicate<T> delegate();

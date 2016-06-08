@@ -99,7 +99,6 @@
 		cmPaginate: true, // to say if build or not a paging bar, default true
 		cmBasicFilter: true, // to add a basic search-field to the paging bar
 		cmAddGraphColumn: true, // to say if build or not a column to open the mystical graph window, default true
-		cmAddPrintButton: true, // to add a button to set an chose the print format
 		// configuration
 
 		constructor: function (c) {
@@ -489,7 +488,7 @@
 		// protected
 		buildClassColumn: function () {
 			return {
-				header: CMDBuild.Translation.management.modcard.subclass,
+				header: CMDBuild.Translation.subClass,
 				width: 100,
 				sortable: false,
 				dataIndex: 'IdClass_value'
@@ -562,15 +561,6 @@
 						this.gridSearchField.setValue(""); // clear only the field without reload the grid
 					}
 
-					if (this.filterMenuButton) {
-						this.filterMenuButton.reconfigureForEntryType(_CMCache.getEntryTypeById(classId));
-					}
-
-					// FIXME: it doesn't works
-//					if (me.printGridMenu) {
-//						me.printGridMenu.setDisabled(!classId);
-//					}
-
 					me.loadAttributes( //
 						classId, //
 						function (attributes) { //
@@ -596,19 +586,6 @@
 		if (me.cmBasicFilter) {
 			me.gridSearchField = new CMDBuild.field.GridSearchField({grid: me});
 			items.push(me.gridSearchField);
-		}
-
-		if (me.cmAddPrintButton) {
-			me.printGridMenu = Ext.create('CMDBuild.core.buttons.iconized.split.Print', {
-				formatList: [
-					CMDBuild.core.constants.Proxy.PDF,
-					CMDBuild.core.constants.Proxy.CSV
-				],
-				mode: 'legacy',
-				disabled: true
-			});
-
-			items.push(me.printGridMenu);
 		}
 
 		me.pagingBar = Ext.create('CMDBuild.view.management.common.widgets.linkCards.CMCardGridPagingBar', {

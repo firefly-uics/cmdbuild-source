@@ -5,6 +5,7 @@ import static com.google.common.collect.Lists.newArrayList;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.unmodifiableList;
 import static java.util.Collections.unmodifiableMap;
+import static org.apache.commons.lang3.ObjectUtils.defaultIfNull;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.cmdbuild.api.fluent.ws.ClassAttribute.classAttribute;
 import static org.cmdbuild.api.fluent.ws.FunctionInput.functionInput;
@@ -36,10 +37,10 @@ import org.cmdbuild.api.fluent.Card;
 import org.cmdbuild.api.fluent.CardDescriptor;
 import org.cmdbuild.api.fluent.CreateReport;
 import org.cmdbuild.api.fluent.DownloadedReport;
+import org.cmdbuild.api.fluent.ExecutorBasedFluentApi;
 import org.cmdbuild.api.fluent.ExistingCard;
 import org.cmdbuild.api.fluent.ExistingProcessInstance;
 import org.cmdbuild.api.fluent.ExistingRelation;
-import org.cmdbuild.api.fluent.FluentApi;
 import org.cmdbuild.api.fluent.FluentApiExecutor;
 import org.cmdbuild.api.fluent.Function;
 import org.cmdbuild.api.fluent.FunctionCall;
@@ -162,10 +163,10 @@ public class WsFluentApiExecutor implements FluentApiExecutor, LoggingSupport {
 
 	};
 
-	private final Private proxy;
+	private static interface EntityAttributeCreator {
 
-	private interface EntityAttributeCreator {
 		EntryTypeAttribute attributeFor(String entryTypeName, String attributeName);
+
 	}
 
 	private static EntityAttributeCreator cardAttributeCreator = new EntityAttributeCreator() {
@@ -192,21 +193,19 @@ public class WsFluentApiExecutor implements FluentApiExecutor, LoggingSupport {
 
 	};
 
+	private final Private proxy;
 	private EntryTypeConverter entryTypeConverter;
 	private RawTypeConverter rawTypeConverter;
 
 	public WsFluentApiExecutor(final Private proxy) {
+		this(proxy, IDENTITY_ENTRY_TYPE_CONVERTER, IDENTITY_RAW_TYPE_CONVERTER);
+	}
+
+	public WsFluentApiExecutor(final Private proxy, final EntryTypeConverter entryTypeConverter,
+			final RawTypeConverter rawTypeConverter) {
 		this.proxy = proxy;
-		this.entryTypeConverter = IDENTITY_ENTRY_TYPE_CONVERTER;
-		this.rawTypeConverter = IDENTITY_RAW_TYPE_CONVERTER;
-	}
-
-	public void setEntryTypeConverter(final EntryTypeConverter entryTypeConverter) {
-		this.entryTypeConverter = (entryTypeConverter == null) ? IDENTITY_ENTRY_TYPE_CONVERTER : entryTypeConverter;
-	}
-
-	public void setRawTypeConverter(final RawTypeConverter rawTypeConverter) {
-		this.rawTypeConverter = (rawTypeConverter == null) ? IDENTITY_RAW_TYPE_CONVERTER : rawTypeConverter;
+		this.entryTypeConverter = defaultIfNull(entryTypeConverter, IDENTITY_ENTRY_TYPE_CONVERTER);
+		this.rawTypeConverter = defaultIfNull(rawTypeConverter, IDENTITY_RAW_TYPE_CONVERTER);
 	}
 
 	public CardDescriptor create(final NewCard card) {
@@ -339,7 +338,7 @@ public class WsFluentApiExecutor implements FluentApiExecutor, LoggingSupport {
 	}
 
 	private ExistingCard existingCardFrom(final org.cmdbuild.services.soap.Card soapCard) {
-		return new FluentApi(NULL_NEVER_USED_EXECUTOR) //
+		return new ExecutorBasedFluentApi(NULL_NEVER_USED_EXECUTOR) //
 				.existingCard(soapCard.getClassName(), soapCard.getId());
 	}
 
@@ -398,7 +397,8 @@ public class WsFluentApiExecutor implements FluentApiExecutor, LoggingSupport {
 		return new DownloadedReport(file);
 	}
 
-	private List<ReportParams> compileParams(final List<AttributeSchema> paramSchemas, final Map<String, Object> params) {
+	private List<ReportParams> compileParams(final List<AttributeSchema> paramSchemas,
+			final Map<String, Object> params) {
 		final List<ReportParams> reportParameters = new ArrayList<ReportParams>();
 		for (final AttributeSchema attributeSchema : paramSchemas) {
 			final String paramName = attributeSchema.getName();
@@ -452,8 +452,8 @@ public class WsFluentApiExecutor implements FluentApiExecutor, LoggingSupport {
 	}
 
 	public Iterable<AttachmentDescriptor> fetchAttachments(final CardDescriptor source) {
-		final List<org.cmdbuild.services.soap.Attachment> soapAttachments = proxy.getAttachmentList(
-				source.getClassName(), source.getId());
+		final List<org.cmdbuild.services.soap.Attachment> soapAttachments = proxy
+				.getAttachmentList(source.getClassName(), source.getId());
 		return from(soapAttachments) //
 				.transform(
 						new com.google.common.base.Function<org.cmdbuild.services.soap.Attachment, AttachmentDescriptor>() {
@@ -501,10 +501,10 @@ public class WsFluentApiExecutor implements FluentApiExecutor, LoggingSupport {
 		}
 	}
 
-	private Attachment download(final CardDescriptor source, final AttachmentDescriptor attachment) throws IOException,
-			MalformedURLException {
-		final DataHandler remote = proxy
-				.downloadAttachment(source.getClassName(), source.getId(), attachment.getName());
+	private Attachment download(final CardDescriptor source, final AttachmentDescriptor attachment)
+			throws IOException, MalformedURLException {
+		final DataHandler remote = proxy.downloadAttachment(source.getClassName(), source.getId(),
+				attachment.getName());
 
 		final TempDataSource tempDataSource = TempDataSource.newInstance() //
 				.withName(attachment.getName()) //
@@ -599,7 +599,7 @@ public class WsFluentApiExecutor implements FluentApiExecutor, LoggingSupport {
 					attributeName, //
 					entryTypeConverter.toClientType(attributeCreator.attributeFor(entryTypeName, attributeName),
 							wsValue) //
-					);
+			);
 		}
 		return clientAttributes;
 	}

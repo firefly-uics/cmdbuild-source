@@ -3,13 +3,16 @@ package org.cmdbuild.dao.driver.postgres.query;
 import static com.google.common.collect.FluentIterable.from;
 import static java.lang.String.format;
 import static org.apache.commons.lang3.StringUtils.join;
+import static org.cmdbuild.dao.driver.postgres.Const.SystemAttributes.Status;
 import static org.cmdbuild.dao.driver.postgres.Utils.quoteAttribute;
+import static org.cmdbuild.dao.driver.postgres.quote.AliasQuoter.quote;
+import static org.cmdbuild.dao.driver.postgres.quote.EntryTypeQuoter.quote;
 
 import java.util.Iterator;
 
-import org.cmdbuild.dao.driver.postgres.quote.AliasQuoter;
-import org.cmdbuild.dao.driver.postgres.quote.EntryTypeQuoter;
+import org.cmdbuild.dao.CardStatus;
 import org.cmdbuild.dao.query.QuerySpecs;
+import org.cmdbuild.dao.query.clause.HistoricEntryType;
 import org.cmdbuild.dao.query.clause.QueryAliasAttribute;
 import org.cmdbuild.dao.query.clause.join.DirectJoinClause;
 
@@ -28,13 +31,22 @@ public class DirectJoinPartCreator extends PartCreator {
 		public String apply(final DirectJoinClause input) {
 			final QueryAliasAttribute sourceAttribute = input.getSourceAttribute();
 			final QueryAliasAttribute targetAttribute = input.getTargetAttribute();
-			return format(FORMAT, //
+			String output = format(FORMAT, //
 					input.isLeft() ? LEFT_JOIN : JOIN, //
-					EntryTypeQuoter.quote(input.getTargetClass()),//
-					AliasQuoter.quote(input.getTargetClassAlias()), //
+					quote(input.getTargetClass()),//
+					quote(input.getTargetClassAlias()), //
 					quoteAttribute(targetAttribute.getEntryTypeAlias(), targetAttribute.getName()), //
 					quoteAttribute(sourceAttribute.getEntryTypeAlias(), sourceAttribute.getName()) //
 			);
+			if (input.getTargetClass().holdsHistory() && !(input.getTargetClass() instanceof HistoricEntryType)) {
+				output = format("%s AND %s = '%s'", //
+						output, //
+						quoteAttribute(targetAttribute.getEntryTypeAlias(), Status), //
+						CardStatus.ACTIVE.value() //
+				);
+
+			}
+			return output;
 		}
 
 	}

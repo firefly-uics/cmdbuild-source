@@ -1,12 +1,15 @@
 package org.cmdbuild.servlets.json.schema;
 
 import static com.google.common.collect.FluentIterable.from;
+import static org.cmdbuild.services.json.dto.JsonResponse.success;
 import static org.cmdbuild.servlets.json.CommunicationConstants.ACTIVE;
 import static org.cmdbuild.servlets.json.CommunicationConstants.DESCRIPTION;
 import static org.cmdbuild.servlets.json.CommunicationConstants.ELEMENTS;
+import static org.cmdbuild.servlets.json.CommunicationConstants.EXECUTABLE;
 import static org.cmdbuild.servlets.json.CommunicationConstants.ID;
 import static org.cmdbuild.servlets.json.CommunicationConstants.TASK_ASYNCHRONOUS_EVENT;
 import static org.cmdbuild.servlets.json.CommunicationConstants.TASK_CONNECTOR;
+import static org.cmdbuild.servlets.json.CommunicationConstants.TASK_GENERIC;
 import static org.cmdbuild.servlets.json.CommunicationConstants.TASK_READ_EMAIL;
 import static org.cmdbuild.servlets.json.CommunicationConstants.TASK_START_WORKFLOW;
 import static org.cmdbuild.servlets.json.CommunicationConstants.TASK_SYNCHRONOUS_EVENT;
@@ -18,11 +21,12 @@ import org.apache.commons.lang3.Validate;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import org.cmdbuild.logic.taskmanager.Task;
-import org.cmdbuild.logic.taskmanager.TaskVistor;
+import org.cmdbuild.logic.taskmanager.TaskVisitor;
 import org.cmdbuild.logic.taskmanager.task.connector.ConnectorTask;
 import org.cmdbuild.logic.taskmanager.task.email.ReadEmailTask;
 import org.cmdbuild.logic.taskmanager.task.event.asynchronous.AsynchronousEventTask;
 import org.cmdbuild.logic.taskmanager.task.event.synchronous.SynchronousEventTask;
+import org.cmdbuild.logic.taskmanager.task.generic.GenericTask;
 import org.cmdbuild.logic.taskmanager.task.process.StartWorkflowTask;
 import org.cmdbuild.services.json.dto.JsonResponse;
 import org.cmdbuild.servlets.json.JSONBaseWithSpringContext;
@@ -38,6 +42,7 @@ public class TaskManager extends JSONBaseWithSpringContext {
 
 		ASYNCHRONOUS_EVENT(TASK_ASYNCHRONOUS_EVENT), //
 		CONNECTOR(TASK_CONNECTOR), //
+		GENERIC(TASK_GENERIC), //
 		READ_EMAIL(TASK_READ_EMAIL), //
 		START_WORKFLOW(TASK_START_WORKFLOW), //
 		SYNCHRONOUS_EVENT(TASK_SYNCHRONOUS_EVENT), //
@@ -55,7 +60,7 @@ public class TaskManager extends JSONBaseWithSpringContext {
 
 	}
 
-	private static class TaskTypeResolver implements TaskVistor {
+	private static class TaskTypeResolver implements TaskVisitor {
 
 		public static TaskTypeResolver of(final Task task) {
 			return new TaskTypeResolver(task);
@@ -75,13 +80,18 @@ public class TaskManager extends JSONBaseWithSpringContext {
 		}
 
 		@Override
-		public void visit(AsynchronousEventTask task) {
+		public void visit(final AsynchronousEventTask task) {
 			type = TaskType.ASYNCHRONOUS_EVENT;
 		}
 
 		@Override
-		public void visit(ConnectorTask task) {
+		public void visit(final ConnectorTask task) {
 			type = TaskType.CONNECTOR;
+		}
+
+		@Override
+		public void visit(final GenericTask task) {
+			type = TaskType.GENERIC;
 		}
 
 		@Override
@@ -129,6 +139,11 @@ public class TaskManager extends JSONBaseWithSpringContext {
 			return delegate.isActive();
 		}
 
+		@JsonProperty(EXECUTABLE)
+		public boolean executable() {
+			return delegate.isExecutable();
+		}
+
 	}
 
 	public static class JsonElements<T> {
@@ -164,27 +179,39 @@ public class TaskManager extends JSONBaseWithSpringContext {
 
 	};
 
+	@Admin
 	@JSONExported
 	public JsonResponse readAll() {
 		final Iterable<Task> tasks = taskManagerLogic().read();
-		return JsonResponse.success(JsonElements.of(from(tasks) //
+		return success(JsonElements.of(from(tasks) //
 				.transform(TASK_TO_JSON_TASK)));
 	}
 
+	@Admin
 	@JSONExported
 	public JsonResponse start( //
 			@Parameter(value = ID) final Long id //
 	) {
 		taskManagerLogic().activate(id);
-		return JsonResponse.success();
+		return success();
 	}
 
+	@Admin
 	@JSONExported
 	public JsonResponse stop( //
 			@Parameter(value = ID) final Long id //
 	) {
 		taskManagerLogic().deactivate(id);
-		return JsonResponse.success();
+		return success();
+	}
+
+	@Admin
+	@JSONExported
+	public JsonResponse execute( //
+			@Parameter(value = ID) final Long id //
+	) {
+		taskManagerLogic().execute(id);
+		return success();
 	}
 
 }

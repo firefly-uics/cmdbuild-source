@@ -180,7 +180,7 @@ public class ModSecurity extends JSONBaseWithSpringContext {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param users
 	 *            a String of comma separated user identifiers. These are the id
 	 *            of the users that belong to the group with id = groupId
@@ -396,10 +396,14 @@ public class ModSecurity extends JSONBaseWithSpringContext {
 		);
 
 		// from jsonArray to string array
-		final int l = jsonAttributes == null ? 0 : jsonAttributes.length();
-		final String[] attributes = l > 0 ? new String[l] : null;
-		for (int i = 0; i < l; ++i) {
-			attributes[i] = jsonAttributes.getString(i);
+		final String[] attributes;
+		if (jsonAttributes == null) {
+			attributes = null;
+		} else {
+			attributes = new String[jsonAttributes.length()];
+			for (int i = 0; i < attributes.length; ++i) {
+				attributes[i] = jsonAttributes.getString(i);
+			}
 		}
 
 		privilegeInfoToSave.setAttributesPrivileges(attributes);
@@ -472,7 +476,7 @@ public class ModSecurity extends JSONBaseWithSpringContext {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param serializer
 	 * @param userId
 	 * @return the groups to which the current user belongs
@@ -482,7 +486,7 @@ public class ModSecurity extends JSONBaseWithSpringContext {
 	@JSONExported
 	public JSONObject getUserGroupList( //
 			@Parameter(value = USER_ID) final Long userId) //
-			throws JSONException {
+					throws JSONException {
 		final AuthenticationLogic authLogic = authLogic();
 		final CMUser user = authLogic.getUserWithId(userId);
 		final List<GroupInfo> groupsForLogin = Lists.newArrayList();
@@ -527,7 +531,7 @@ public class ModSecurity extends JSONBaseWithSpringContext {
 	@Admin(AdminAccess.DEMOSAFE)
 	@JSONExported
 	public JsonResponse saveClassUiConfiguration(
-	//
+			//
 			@Parameter(GROUP_ID) final Long groupId, //
 			@Parameter(CLASS_ID) final Long classId, //
 			@Parameter(CREATE) final boolean disableCreate, //

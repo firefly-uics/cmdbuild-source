@@ -10,6 +10,12 @@ import com.google.common.collect.ForwardingObject;
 
 public abstract class ForwardingFilesStore extends ForwardingObject implements FilesStore {
 
+	/**
+	 * Usable by subclasses only.
+	 */
+	protected ForwardingFilesStore() {
+	}
+
 	@Override
 	protected abstract FilesStore delegate();
 
@@ -67,7 +73,7 @@ public abstract class ForwardingFilesStore extends ForwardingObject implements F
 	public String getAbsoluteRootDirectory() {
 		return delegate().getAbsoluteRootDirectory();
 	}
-	
+
 	@Override
 	public File getRoot() {
 		return delegate().getRoot();

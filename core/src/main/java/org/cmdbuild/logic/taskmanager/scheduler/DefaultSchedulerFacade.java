@@ -18,6 +18,30 @@ public class DefaultSchedulerFacade implements SchedulerFacade {
 	private static final Logger logger = Logic.logger;
 	private static final Marker MARKER = MarkerFactory.getMarker(DefaultSchedulerFacade.class.getName());
 
+	private static class SuppressedExceptionJob extends ForwardingJob {
+
+		private final Job delegate;
+
+		private SuppressedExceptionJob(final Job delegate) {
+			this.delegate = delegate;
+		}
+
+		@Override
+		protected Job delegate() {
+			return delegate;
+		}
+
+		@Override
+		public void execute() {
+			try {
+				delegate().execute();
+			} catch (final Throwable e) {
+				logger.warn("error executing job", e);
+			}
+		}
+
+	}
+
 	private static class JobWithCallback extends ForwardingJob {
 
 		private final Job delegate;
@@ -59,11 +83,9 @@ public class DefaultSchedulerFacade implements SchedulerFacade {
 	public void create(final ScheduledTask task, final Callback callback) {
 		logger.info(MARKER, "creating a new scheduled task '{}'", task);
 		if (task.isActive()) {
-			final Job job = converter.from(task).toJob();
-			final Job jobWithCallback = new JobWithCallback(job, callback);
-			final Job jobWithLogging = new JobWithCallback(jobWithCallback, LoggingCallback.of(jobWithCallback));
+			final Job job = new SuppressedExceptionJob(jobFrom(task, callback));
 			final Trigger trigger = RecurringTrigger.at(addSecondsField(task.getCronExpression()));
-			schedulerService.add(jobWithLogging, trigger);
+			schedulerService.add(job, trigger);
 		}
 	}
 
@@ -78,6 +100,19 @@ public class DefaultSchedulerFacade implements SchedulerFacade {
 			final Job job = converter.from(task).withNoExecution().toJob();
 			schedulerService.remove(job);
 		}
+	}
+
+	@Override
+	public void execute(final ScheduledTask task, final Callback callback) {
+		logger.info(MARKER, "executing an existing scheduled task '{}'", task);
+		jobFrom(task, callback).execute();
+	}
+
+	private Job jobFrom(final ScheduledTask task, final Callback callback) {
+		final Job job = converter.from(task).toJob();
+		final Job jobWithCallback = new JobWithCallback(job, callback);
+		final Job jobWithLogging = new JobWithCallback(jobWithCallback, LoggingCallback.of(jobWithCallback));
+		return jobWithLogging;
 	}
 
 }

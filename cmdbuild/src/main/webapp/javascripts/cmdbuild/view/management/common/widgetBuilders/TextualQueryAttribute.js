@@ -1,8 +1,8 @@
 /**
  * @class CMDBuild.WidgetBuilders.TextualQueryAttribute
  * @extends CMDBuild.WidgetBuilders.BaseAttribute
- **/
-var translation = CMDBuild.Translation.management.findfilter;
+ *
+ */
 Ext.ns("CMDBuild.WidgetBuilders");
 CMDBuild.WidgetBuilders.TextualQueryAttribute = function(){};
 CMDBuild.extend(CMDBuild.WidgetBuilders.TextualQueryAttribute, CMDBuild.WidgetBuilders.BaseAttribute);
@@ -12,16 +12,16 @@ CMDBuild.extend(CMDBuild.WidgetBuilders.TextualQueryAttribute, CMDBuild.WidgetBu
 CMDBuild.WidgetBuilders.TextualQueryAttribute.prototype.getQueryOptions = function() {
 	var operator = CMDBuild.WidgetBuilders.BaseAttribute.FilterOperator;
 	return [
-		[operator.BEGIN, translation.begin],
-		[operator.CONTAIN, translation.like],
-		[operator.END, translation.end],
-		[operator.EQUAL, translation.equals],
-		[operator.NOT_BEGIN, translation.dontbegin],
-		[operator.NOT_CONTAIN, translation.dontlike],
-		[operator.NOT_END, translation.dontend],
-		[operator.NOT_EQUAL, translation.different],
-		[operator.NOT_NULL, translation.notnull],
-		[operator.NULL, translation.nullo]
+		[operator.BEGIN, CMDBuild.Translation.beginsWith],
+		[operator.CONTAIN, CMDBuild.Translation.contains],
+		[operator.END, CMDBuild.Translation.endsWith],
+		[operator.EQUAL, CMDBuild.Translation.equals],
+		[operator.NOT_BEGIN, CMDBuild.Translation.doesNotBeginWith],
+		[operator.NOT_CONTAIN, CMDBuild.Translation.doesNotContain],
+		[operator.NOT_END, CMDBuild.Translation.doesNotEndWith],
+		[operator.NOT_EQUAL, CMDBuild.Translation.different],
+		[operator.NOT_NULL, CMDBuild.Translation.isNotNull],
+		[operator.NULL, CMDBuild.Translation.isNull]
 	];
 };
 
