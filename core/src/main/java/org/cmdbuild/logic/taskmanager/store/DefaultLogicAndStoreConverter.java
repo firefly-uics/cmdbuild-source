@@ -25,6 +25,7 @@ import org.cmdbuild.logic.taskmanager.TaskManagerLogic;
 import org.cmdbuild.logic.taskmanager.TaskVisitor;
 import org.cmdbuild.logic.taskmanager.store.ParameterNames.AsynchronousEvent;
 import org.cmdbuild.logic.taskmanager.store.ParameterNames.Connector;
+import org.cmdbuild.logic.taskmanager.store.ParameterNames.Generic;
 import org.cmdbuild.logic.taskmanager.store.ParameterNames.ReadEmail;
 import org.cmdbuild.logic.taskmanager.store.ParameterNames.StartWorkflow;
 import org.cmdbuild.logic.taskmanager.store.ParameterNames.SynchronousEvent;
@@ -42,6 +43,7 @@ import org.cmdbuild.logic.taskmanager.task.email.mapper.NullMapperEngine;
 import org.cmdbuild.logic.taskmanager.task.event.asynchronous.AsynchronousEventTask;
 import org.cmdbuild.logic.taskmanager.task.event.synchronous.SynchronousEventTask;
 import org.cmdbuild.logic.taskmanager.task.event.synchronous.SynchronousEventTask.Phase;
+import org.cmdbuild.logic.taskmanager.task.generic.GenericTask;
 import org.cmdbuild.logic.taskmanager.task.process.StartWorkflowTask;
 import org.slf4j.Logger;
 import org.slf4j.Marker;
@@ -414,6 +416,43 @@ public class DefaultLogicAndStoreConverter implements LogicAndStoreConverter {
 		}
 
 		@Override
+		public void visit(final GenericTask task) {
+			this.target = org.cmdbuild.data.store.task.GenericTask.newInstance() //
+					.withId(task.getId()) //
+					.withDescription(task.getDescription()) //
+					.withRunningStatus(task.isActive()) //
+					.withCronExpression(task.getCronExpression()) //
+					.withLastExecution(task.getLastExecution()) //
+					.withParameters(context(task)) //
+					.withParameter(Generic.EMAIL_ACTIVE, Boolean.toString(task.isEmailActive())) //
+					.withParameter(Generic.EMAIL_TEMPLATE, task.getEmailTemplate()) //
+					.withParameter(Generic.EMAIL_ACCOUNT, task.getEmailAccount()) //
+					.withParameter(Generic.REPORT_ACTIVE, Boolean.toString(task.isReportActive())) //
+					.withParameter(Generic.REPORT_NAME, task.getReportName()) //
+					.withParameter(Generic.REPORT_EXTENSION, task.getReportExtension()) //
+					.withParameters(reportParameters(task)) //
+					.build();
+		}
+
+		private Map<String, ? extends String> context(final GenericTask task) {
+			final Map<String, String> output = newHashMap();
+			task.getContext().entrySet().stream() //
+					.forEach(input -> input.getValue().entrySet().stream() //
+							.forEach(_input -> output.put(Generic.context(input.getKey(), _input.getKey()),
+									_input.getValue()))
+
+			);
+			return output;
+		}
+
+		private Map<String, ? extends String> reportParameters(final GenericTask task) {
+			final Map<String, String> output = newHashMap();
+			task.getReportParameters().entrySet().stream() //
+					.forEach(input -> output.put(Generic.REPORT_PARAMETERS_PREFIX + input.getKey(), input.getValue()));
+			return output;
+		}
+
+		@Override
 		public void visit(final ReadEmailTask task) {
 			this.target = org.cmdbuild.data.store.task.ReadEmailTask.newInstance() //
 					.withId(task.getId()) //
@@ -604,6 +643,55 @@ public class DefaultLogicAndStoreConverter implements LogicAndStoreConverter {
 						.build();
 			}
 			return sourceConfiguration;
+		}
+
+		@Override
+		public void visit(final org.cmdbuild.data.store.task.GenericTask task) {
+			target = GenericTask.newInstance() //
+					.withId(task.getId()) //
+					.withDescription(task.getDescription()) //
+					.withActiveStatus(task.isRunning()) //
+					.withCronExpression(task.getCronExpression()) //
+					.withLastExecution(task.getLastExecution()) //
+					.withContext(context(task)) //
+					.withEmailActive(Boolean.valueOf(task.getParameter(Generic.EMAIL_ACTIVE))) //
+					.withEmailTemplate(task.getParameter(Generic.EMAIL_TEMPLATE)) //
+					.withEmailAccount(task.getParameter(Generic.EMAIL_ACCOUNT)) //
+					.withReportActive(Boolean.valueOf(task.getParameter(Generic.REPORT_ACTIVE))) //
+					.withReportName(task.getParameter(Generic.REPORT_NAME)) //
+					.withReportExtension(task.getParameter(Generic.REPORT_EXTENSION)) //
+					.withReportParameters(reportParameters(task)) //
+					.build();
+		}
+
+		private Map<String, Map<String, String>> context(final org.cmdbuild.data.store.task.GenericTask task) {
+			final Map<String, Map<String, String>> output = newHashMap();
+			task.getParameters().entrySet().stream() //
+					.filter(input -> input.getKey().startsWith(Generic.CONTEXT_PREFIX)) //
+					.forEach(input -> {
+						final String contextAndKey = input.getKey().substring(Generic.CONTEXT_PREFIX.length());
+						final String[] elements = contextAndKey.split("\\.");
+						final String context = elements[0];
+						final String key = elements[1];
+						final Map<String, String> sub;
+						if (output.containsKey(context)) {
+							sub = output.get(context);
+						} else {
+							sub = newHashMap();
+							output.put(context, sub);
+						}
+						sub.put(key, input.getValue());
+					});
+			return output;
+		}
+
+		private Map<String, String> reportParameters(final org.cmdbuild.data.store.task.GenericTask task) {
+			final Map<String, String> output = newHashMap();
+			task.getParameters().entrySet().stream() //
+					.filter(input -> input.getKey().startsWith(Generic.REPORT_PARAMETERS_PREFIX)) //
+					.forEach(input -> output.put(input.getKey().substring(Generic.REPORT_PARAMETERS_PREFIX.length()),
+							input.getValue()));
+			return output;
 		}
 
 		@Override

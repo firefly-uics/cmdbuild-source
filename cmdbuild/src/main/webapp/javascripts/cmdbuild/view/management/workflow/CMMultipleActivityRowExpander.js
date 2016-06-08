@@ -1,30 +1,24 @@
-(function() {
+(function () {
+
+	Ext.require([
+		'CMDBuild.core.constants.Proxy',
+		'CMDBuild.core.Utils'
+	]);
 
 	var activityRowClass = "cm_activity_row";
 	var activityRowClass_selected = "cm_activity_row_selected";
 	var activityRowClass_over = "cm_activity_row_over";
-	var activityRowLabelClass = "cm_activity_row_label";
-	var activityRowNotEditable = "cm_activity_row_not_editable";
 	var singleActivityRowClass = "cm_single_activity";
-
 
 	/**
 	 * ATTENTION!
 	 *
-	 * This override is a super hack
-	 * to "resolve" an IE crash
-	 *
-	 * When reconfigure a grid, this
-	 * method are called. The assignment
-	 * surrounded by try-catch throws
-	 * an exception, BUT ONLY ON IE!!!
-	 *
-	 * So, is an assignment, and I
-	 * really don't know what could
-	 * be wrong...
+	 * This override is a super hack to "resolve" an IE crash.
+	 * When reconfigure a grid, this method are called. The assignment surrounded by try-catch throws an exception, BUT ONLY ON IE!!!
+	 * So, is an assignment, and I really don't know what could be wrong...
 	 */
 	Ext.override(Ext.grid.feature.RowBody, {
-		onColumnsChanged: function(headerCt) {
+		onColumnsChanged: function (headerCt) {
 			var items = this.view.el.query(this.rowBodyTdSelector),
 				colspan = headerCt.getVisibleGridColumns().length,
 				len = items.length,
@@ -43,41 +37,70 @@
 	Ext.define("CMDBuild.view.management.common.CMMultipleActivityRowExpander", {
 		extend: "Ext.grid.plugin.RowExpander",
 		alias: 'plugin.activityrowexpander',
+
 		expandOnDblClick: false,
 		rowBodyTpl: "ROW EXPANDER REQUIRES THIS TO BE DEFINED",
 
-		// override
-		getRowBodyFeatureData: function(record, idx, rowValues) {
+		/**
+		 * Build multiple activities row HTML body and manage metadata property to personalize sub-activity desctiption
+		 *
+		 * @param {CMDBuild.model.CMProcessInstance} record
+		 * @param {Number} idx
+		 * @param {Object} rowValues
+		 *
+		 * @returns {Void}
+		 *
+		 * @override
+		 */
+		getRowBodyFeatureData: function (record, idx, rowValues) {
 			Ext.grid.plugin.RowExpander.prototype.getRowBodyFeatureData.apply(this, arguments);
-			var activities = record.getActivityInfoList();
 
-			// Sort activities by description ascending
-			CMDBuild.core.Utils.objectArraySort(activities, CMDBuild.core.constants.Proxy.DESCRIPTION);
+			var activities = record.get(CMDBuild.core.constants.Proxy.ACTIVITY_INSTANCE_INFO_LIST);
+			var values = record.get(CMDBuild.core.constants.Proxy.VALUES);
 
-			rowValues.rowBody = (function(activities) {
-				var out = "";
-				// if have a single activity we don't need
-				// to have the subrows
-				if (activities.length <= 1) {
-					out = '<p class="' + singleActivityRowClass + '"></p>';
+			CMDBuild.core.Utils.objectArraySort(activities, CMDBuild.core.constants.Proxy.DESCRIPTION); // Sort activities by description ascending
+
+			rowValues.rowBody = '';
+
+			// Build RowBody HTML
+			if (Ext.isArray(activities) && !Ext.isEmpty(activities))
+				if (activities.length <= 1) { // If have a single activity we don't need to have the subrows
+					rowValues.rowBody = '<p class="' + singleActivityRowClass + '"></p>';
 				} else {
-					for (var i=0, l=activities.length; i<l; ++i) {
-						var a = activities[i];
-						var pClass = activityRowClass;
+					Ext.Array.each(activities, function (activityObject, i, allActivityObjects) {
+						if (Ext.isObject(activityObject) && !Ext.Object.isEmpty(activityObject)) {
+							var activityMetadata = activityObject[CMDBuild.core.constants.Proxy.METADATA];
+							var rowClass = 'cm_activity_row' + (activityObject[CMDBuild.core.constants.Proxy.WRITABLE] ? '' : ' cm_activity_row_not_editable');
+							var rowText = '<span class="cm_activity_row_label">' + activityObject[CMDBuild.core.constants.Proxy.PERFORMER_NAME] + ':</span> '
+								+ activityObject[CMDBuild.core.constants.Proxy.DESCRIPTION];
 
-						if (!a.writable) {
-							pClass += (" " + activityRowNotEditable);
+							// Manage metadata (AdditionalActivityLabel)
+							if (Ext.isArray(activityMetadata) && !Ext.isEmpty(activityMetadata)) {
+								Ext.Array.each(activityMetadata, function (metadataObject, i, allMetadataObjects) {
+									if (Ext.isObject(metadataObject) && !Ext.Object.isEmpty(metadataObject))
+										switch (metadataObject[CMDBuild.core.constants.Proxy.NAME]) {
+											case CMDBuild.core.constants.Proxy.WORKFLOW_METADATA_ADDITIONAL_ACTIVITY_LABEL: {
+												if (
+													Ext.isObject(values) && !Ext.Object.isEmpty(values)
+													&& !Ext.isEmpty(values[metadataObject[CMDBuild.core.constants.Proxy.VALUE]])
+												) {
+													rowText += ' - ' + values[metadataObject[CMDBuild.core.constants.Proxy.VALUE]];
+												}
+											} break;
+										}
+								}, this);
+							}
+
+							rowValues.rowBody += '<p id="' + activityObject[CMDBuild.core.constants.Proxy.ID] + '" class="' + rowClass + '">' + rowText + '</p>';
 						}
-
-						out += Ext.String.format('<p id={0} class="{1}"> <span class="{2}">{3}: </span>{4}</p>', a.id, pClass, activityRowLabelClass, a.performerName, a.description);
-					}
+					}, this);
 				}
-				return out;
-			})(activities);
 		},
 
-		// override
-		beforeReconfigure: function(grid, store, columns, oldStore, oldColumns) {
+		/**
+		 * @override
+		 */
+		beforeReconfigure: function (grid, store, columns, oldStore, oldColumns) {
 			var expander = this.getHeaderConfig();
 			expander.locked = true;
 			if (columns) {
@@ -85,22 +108,26 @@
 			}
 		},
 
-		// override
-		init: function(grid) {
+		/**
+		 * @override
+		 */
+		init: function (grid) {
 			this.callParent(arguments);
 
-			grid.mon(grid, "select", function() {
+			grid.mon(grid, "select", function () {
 				selectSubRow(grid, null);
 			});
 		},
 
-		// override
-		getHeaderConfig: function() {
+		/**
+		 * @override
+		 */
+		getHeaderConfig: function () {
 			var config = this.callParent(arguments);
 			var realRenderer = config.renderer || Ext.emptyFn;
 
 			// show the expander only if have more than one activity
-			config.renderer = function(value, metadata, record, rowIndex, colIndex, store, view) {
+			config.renderer = function (value, metadata, record, rowIndex, colIndex, store, view) {
 				var out = "";
 				if (record.getActivityInfoList().length > 1) {
 					out = realRenderer(value, metadata);
@@ -113,14 +140,15 @@
 			return config;
 		},
 
-		/*
-		 * override
+		/**
 		 * Add the calls to onRowExpanded and onRowCollapsed
 		 * to extend the behaviour after row toggle
 		 *
 		 * Add the forceExpand parameter
+		 *
+		 * @override
 		 */
-		toggleRow: function(rowIdx, record) {
+		toggleRow: function (rowIdx, record) {
 			var rowNode = this.view.getNode(rowIdx);
 			var row = Ext.get(rowNode);
 
@@ -158,7 +186,7 @@
 			}
 		},
 
-		onRowExpanded: function(grid, rowNode, record, nextBd) {
+		onRowExpanded: function (grid, rowNode, record, nextBd) {
 			grid.view.refreshSize();
 			if (nextBd && record) {
 				// listen some event on the activity rows
@@ -172,7 +200,7 @@
 						return !overElement.hasCls(activityRowClass_selected);
 					});
 
-					rowEl.addListener("click", function(evt, e, o) {
+					rowEl.addListener("click", function (evt, e, o) {
 						if (!isDoubleClick(evt, grid)) {
 							selectSubRow(grid, this);
 							grid.onActivitySelected(this.id);
@@ -182,7 +210,7 @@
 			}
 		},
 
-		onRowCollapsed: function(grid, rowNode, record, nextBd) {
+		onRowCollapsed: function (grid, rowNode, record, nextBd) {
 			if (nextBd && record) {
 				var activityRows = nextBd.query("p." + activityRowClass) || [];
 				for (var i=0, l=activityRows.length, sr = null; i<l; ++i) {
@@ -211,15 +239,15 @@
 		}
 	}
 
-	var TIME_LIMIT = 500;
 	function isDoubleClick(evt, me) {
 		var out = false;
 		var timeStamp = evt.browserEvent.timeStamp;
 		if (me.lastSubRowClickTime) {
 			var delta = timeStamp - me.lastSubRowClickTime;
-			out = delta < TIME_LIMIT;
+			out = delta < 500;
 		}
 		me.lastSubRowClickTime = timeStamp;
 		return out;
 	}
+
 })();

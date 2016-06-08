@@ -121,7 +121,7 @@ public class DefaultPatchManager implements PatchManager {
 					logger.debug("extracting description from first line of file '{}'", file);
 					final Matcher matcher = compile(FIRST_LINE_PATTERN).matcher(firstLineOfFile());
 					if (!matcher.lookingAt()) {
-						logger.error("first line does not match expected pattern");
+						logger.error("first line '{}' does not match expected pattern", firstLineOfFile());
 						throw ORMExceptionType.ORM_MALFORMED_PATCH.createException();
 					}
 					description = matcher.group(1);

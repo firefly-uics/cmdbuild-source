@@ -145,7 +145,7 @@
 		 *
 		 * @param {Boolean} withEditor
 		 *
-		 * @returns {Mixed}
+		 * @returns {Object}
 		 */
 		buildColumn: function(withEditor) {
 			withEditor = Ext.isBoolean(withEditor) ? withEditor : false;
@@ -158,7 +158,16 @@
 		 *
 		 * @param {CMDBuild.model.common.attributes.Attribute} attributeModel
 		 *
-		 * @returns {Mixed}
+		 * @returns {Object}
+		 */
+		buildEditor: function() {
+			return this.buildAttributeController().buildEditor();
+		},
+
+		/**
+		 * Builds Ext.form.field.* object
+		 *
+		 * @returns {Object}
 		 */
 		buildField: function() {
 			return this.buildAttributeController().buildField();
@@ -167,9 +176,7 @@
 		/**
 		 * Builds Ext.data.Store field definition object
 		 *
-		 * @param {CMDBuild.model.common.attributes.Attribute} attributeModel
-		 *
-		 * @returns {Mixed}
+		 * @returns {Object}
 		 */
 		buildStoreField: function() {
 			return this.buildAttributeController().buildStoreField();
@@ -237,6 +244,8 @@
 		// TemplateResolver property methods
 			/**
 			 * @returns {Object}
+			 *
+			 * @private
 			 */
 			templateResolverAttributesDataGet: function() {
 				var attributesData = {};
@@ -250,6 +259,8 @@
 
 			/**
 			 * @returns {Array}
+			 *
+			 * @private
 			 */
 			templateResolverAttributesGet: function() {
 				return this.templateResolverAttributes;
@@ -257,6 +268,8 @@
 
 			/**
 			 * @returns {Boolean}
+			 *
+			 * @private
 			 */
 			templateResolverAttributesHasTemplates: function() {
 				var encodedAttributesModel = Ext.encode(this.attributeModelGet().getData());
@@ -268,6 +281,8 @@
 
 			/**
 			 * @param {Array} attributes
+			 *
+			 * @private
 			 */
 			templateResolverAttributesSet: function(attributes) {
 				this.templateResolverAttributes = [];
@@ -280,6 +295,8 @@
 			 * @param {Array} attributes
 			 *
 			 * @returns {CMDBuild.Management.TemplateResolver} templateResolver
+			 *
+			 * @private
 			 */
 			templateResolverBuild: function(attributes) {
 				var templateResolver = undefined;
@@ -303,7 +320,7 @@
 			/**
 			 * Resolve template of filter attribute
 			 *
-			 * @param {Function}
+			 * @private
 			 */
 			templateResolverGetResolveFunction: function() {
 				return function() { // This is field object

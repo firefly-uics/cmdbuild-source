@@ -137,8 +137,8 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 
 	};
 
-	private static final String USER = "__user__";
-	private static final String ROLE = "__role__";
+	public static final String USER = "__user__";
+	public static final String ROLE = "__role__";
 
 	private final CMDataView systemDataView;
 	private final LookupStore lookupStore;
@@ -190,8 +190,8 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 
 	@Override
 	public GetRelationListResponse getRelationListEmptyForWrongId(final Card srcCard, final DomainWithSource dom) {
-		return new GetRelationList(dataView).emptyForWrongId()
-				.exec(srcCard, dom, QueryOptions.newQueryOption().build());
+		return new GetRelationList(dataView).emptyForWrongId().exec(srcCard, dom,
+				QueryOptions.newQueryOption().build());
 	}
 
 	@Override
@@ -313,8 +313,8 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 	public Iterable<? extends CMClass> findClasses(final boolean activeOnly) {
 		final Iterable<? extends CMClass> fetchedClasses = activeOnly ? findActiveClasses() : findAllClasses();
 		final Iterable<? extends CMClass> nonProcessClasses = filter(fetchedClasses, nonProcessClasses());
-		final Iterable<? extends CMClass> classesToBeReturned = activeOnly ? filter(nonProcessClasses,
-				nonSystemButUsable()) : nonProcessClasses;
+		final Iterable<? extends CMClass> classesToBeReturned = activeOnly
+				? filter(nonProcessClasses, nonSystemButUsable()) : nonProcessClasses;
 		return classesToBeReturned;
 	}
 
@@ -348,8 +348,8 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 	public PagedElements<CMAttribute> getAttributes(final String className, final boolean onlyActive,
 			final AttributesQuery attributesQuery) {
 		final CMClass target = findClass(className);
-		final Iterable<? extends CMAttribute> elements = onlyActive ? target.getActiveAttributes() : target
-				.getAttributes();
+		final Iterable<? extends CMAttribute> elements = onlyActive ? target.getActiveAttributes()
+				: target.getAttributes();
 		final Iterable<? extends CMAttribute> ordered = Ordering.from(NAME_ASC).sortedCopy(elements);
 		final Integer offset = attributesQuery.offset();
 		final Integer limit = attributesQuery.limit();
@@ -364,8 +364,8 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 	public PagedElements<CMAttribute> getDomainAttributes(final String className, final boolean onlyActive,
 			final AttributesQuery attributesQuery) {
 		final CMDomain target = findDomain(className);
-		final Iterable<? extends CMAttribute> elements = onlyActive ? target.getActiveAttributes() : target
-				.getAttributes();
+		final Iterable<? extends CMAttribute> elements = onlyActive ? target.getActiveAttributes()
+				: target.getAttributes();
 		final Iterable<? extends CMAttribute> ordered = Ordering.from(NAME_ASC).sortedCopy(elements);
 		final Integer offset = attributesQuery.offset();
 		final Integer limit = attributesQuery.limit();
@@ -410,16 +410,17 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 					.skipDefaultOrdering() //
 					.run() //
 					.getOnlyRow();
-			/**
-			 * FIXME: delete it when ForeignReferenceResolver will be unused.
-			 */
-			final Iterable<CMCard> cards = ForeignReferenceResolver.<CMCard> newInstance() //
-					.withEntries(asList(row.getCard(entryType))) //
-					.withEntryFiller(CardEntryFiller.newInstance() //
-							.build()) //
-					.withSerializer(new CardSerializer<CMCard>()) //
-					.build() //
-					.resolve();
+					/**
+					 * FIXME: delete it when ForeignReferenceResolver will be
+					 * unused.
+					 */
+					final Iterable<CMCard> cards = ForeignReferenceResolver.<CMCard> newInstance() //
+							.withEntries(asList(row.getCard(entryType))) //
+							.withEntryFiller(CardEntryFiller.newInstance() //
+									.build()) //
+							.withSerializer(new CardSerializer<CMCard>()) //
+							.build() //
+							.resolve();
 
 			return from(cards) //
 					.first() //
@@ -536,7 +537,8 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 		return cardsWithForeingReferences;
 	}
 
-	public Iterable<Card> resolveCardForeignReferences(final CMClass fetchedClass, final Iterable<CMCard> fetchedCards) {
+	public Iterable<Card> resolveCardForeignReferences(final CMClass fetchedClass,
+			final Iterable<CMCard> fetchedCards) {
 		final Iterable<CMCard> cardsWithForeingReferences = resolveCMCardForeignReferences(fetchedClass, fetchedCards);
 		return from(cardsWithForeingReferences) //
 				.transform(CMCARD_TO_CARD);
@@ -563,7 +565,7 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 		return new PagedElements<Card>(cards, fetchedCards.totalSize());
 	}
 
-	private static final Map<String, Object> NO_PARAMETERS = emptyMap();
+	public static final Map<String, Object> NO_PARAMETERS = emptyMap();
 
 	/**
 	 * Execute a given SQL function to select a set of rows Return these rows as
@@ -619,7 +621,8 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 	 *         current sorting and filter
 	 */
 	@Override
-	public CMCardWithPosition getCardPosition(final String className, final Long cardId, final QueryOptions queryOptions) {
+	public CMCardWithPosition getCardPosition(final String className, final Long cardId,
+			final QueryOptions queryOptions) {
 		try {
 			final PagedElements<CMCardWithPosition> cards = fetchCardsWithPosition(className, queryOptions, cardId);
 			return cards.iterator().next();
@@ -690,8 +693,7 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 
 	@Override
 	public void updateCard(final Card userGivenCard) {
-		final String currentlyLoggedUser = operationUser.getAuthenticatedUser().getUsername();
-		lockLogic.checkCardLockedbyUser(userGivenCard.getId(), currentlyLoggedUser);
+		lockLogic.checkCardLockedbyUser(userGivenCard.getId());
 		final Card _userGivenCard = updateCard0(userGivenCard);
 		lockLogic.unlockCard(_userGivenCard.getId());
 	}
@@ -796,7 +798,7 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 						.where(and( //
 								condition(attribute(sourceClass, ID_ATTRIBUTE), eq(sourceCardId)), //
 								condition(attribute(DST, ID_ATTRIBUTE), eq(destinationCardId)) //
-						)) //
+				)) //
 						.limit(1) //
 						.skipDefaultOrdering() //
 						.run() //
@@ -829,10 +831,10 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 	) {
 
 		final Long fetchedCardAttributeValue = getReferenceCardIdAsLong( //
-		fetchedCard.getAttribute(referenceAttributeName));
+				fetchedCard.getAttribute(referenceAttributeName));
 
 		final Long userGivenCardAttributeValue = getReferenceCardIdAsLong( //
-		userGivenCard.getAttribute(referenceAttributeName));
+				userGivenCard.getAttribute(referenceAttributeName));
 
 		boolean output;
 		if (fetchedCardAttributeValue == null) {
@@ -877,12 +879,10 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 			/*
 			 * Usually null == null is false. But, here we wanna know if the
 			 * value is been changed, so if it was null, and now is still null,
-			 * the attribute value is not changed.
-			 *
-			 * Do you know that the CardReferences (value of reference and
-			 * lookup attributes) sometimes are null and sometimes is a
-			 * null-object... Cool! isn't it? So compare them could be a little
-			 * tricky
+			 * the attribute value is not changed. Do you know that the
+			 * CardReferences (value of reference and lookup attributes)
+			 * sometimes are null and sometimes is a null-object... Cool! isn't
+			 * it? So compare them could be a little tricky
 			 */
 			if (oldAttributeValue == null) {
 				if (newValueConverted == null) {
@@ -1093,15 +1093,15 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 			whereCondition = and( //
 					condition(attribute(srcClass, ID_ATTRIBUTE), eq(srcCardId)), //
 					and( //
-					condition(attribute(domainAlias, ID_ATTRIBUTE), eq(relationDTO.relationId)), //
+							condition(attribute(domainAlias, ID_ATTRIBUTE), eq(relationDTO.relationId)), //
 							condition(attribute(domainAlias, "_Src"), eq("_1")) //
-					));
+			));
 		} else {
 			directedSource = dstClass;
 			whereCondition = and( //
 					condition(attribute(dstClass, ID_ATTRIBUTE), eq(dstCardId)), //
 					and( //
-					condition(attribute(domainAlias, ID_ATTRIBUTE), eq(relationDTO.relationId)), //
+							condition(attribute(domainAlias, ID_ATTRIBUTE), eq(relationDTO.relationId)), //
 							condition(attribute(domainAlias, "_Src"), eq("_2"))));
 		}
 
@@ -1171,7 +1171,7 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 				.where(and( //
 						condition(attribute(sourceClass, ID_ATTRIBUTE), eq(srcCardId)), //
 						condition(attribute(DST, ID_ATTRIBUTE), eq(dstCardId)) //
-				)) //
+		)) //
 				.limit(1) //
 				.skipDefaultOrdering() //
 				.run() //

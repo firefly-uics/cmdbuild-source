@@ -80,7 +80,7 @@
 		buildStore: function(fields, pageSize) {
 			return CMDBuild.global.Cache.requestAsStore(CMDBuild.core.constants.Proxy.UNCACHED, {
 				autoLoad: false,
-				model: CMDBuild.model.CMProcessInstance,
+				model: 'CMDBuild.model.CMProcessInstance',
 				pageSize: pageSize,
 				remoteSort: true,
 				proxy: {

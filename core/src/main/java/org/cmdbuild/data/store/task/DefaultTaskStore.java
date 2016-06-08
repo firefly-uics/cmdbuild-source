@@ -28,7 +28,7 @@ import com.google.common.collect.Maps.EntryTransformer;
 
 /**
  * This {@link Store} handles the saving process of {@link Task} elements.
- * 
+ *
  * @since 2.2
  */
 public class DefaultTaskStore implements TaskStore {
@@ -96,6 +96,11 @@ public class DefaultTaskStore implements TaskStore {
 				}
 
 				@Override
+				public void visit(final GenericTask task) {
+					builder = GenericTaskDefinition.newInstance();
+				}
+
+				@Override
 				public void visit(final ReadEmailTask task) {
 					builder = ReadEmailTaskDefinition.newInstance();
 				}
@@ -142,6 +147,11 @@ public class DefaultTaskStore implements TaskStore {
 				}
 
 				@Override
+				public void visit(final GenericTaskDefinition taskDefinition) {
+					builder = GenericTask.newInstance();
+				}
+
+				@Override
 				public void visit(final ReadEmailTaskDefinition taskDefinition) {
 					builder = ReadEmailTask.newInstance();
 				}
@@ -168,7 +178,8 @@ public class DefaultTaskStore implements TaskStore {
 					.build();
 		}
 
-		protected EntryTransformer<String, String, TaskParameter> toTaskParameterMapOf(final TaskDefinition definition) {
+		protected EntryTransformer<String, String, TaskParameter> toTaskParameterMapOf(
+				final TaskDefinition definition) {
 			return new EntryTransformer<String, String, TaskParameter>() {
 
 				@Override
@@ -231,9 +242,10 @@ public class DefaultTaskStore implements TaskStore {
 			final TaskDefinition definition = definitionsStore.read(definitionOf(task));
 			final Iterable<TaskParameter> parameters = parametersStore.readAll(groupedBy(definition));
 			final Optional<TaskRuntime> _runtime = from(runtimeStore.readAll(groupedBy(definition))).first();
-			final TaskRuntime runtime = _runtime.isPresent() ? _runtime.get() : TaskRuntime.newInstance() //
-					.withOwner(definition.getId()) //
-					.build();
+			final TaskRuntime runtime = _runtime.isPresent() ? _runtime.get()
+					: TaskRuntime.newInstance() //
+							.withOwner(definition.getId()) //
+							.build();
 			return merge(definition, parameters, runtime);
 		}
 
@@ -256,8 +268,8 @@ public class DefaultTaskStore implements TaskStore {
 
 		@Override
 		public List<Task> execute() {
-			final Iterable<TaskDefinition> list = (groupable == null) ? definitionsStore.readAll() : definitionsStore
-					.readAll(groupable);
+			final Iterable<TaskDefinition> list = (groupable == null) ? definitionsStore.readAll()
+					: definitionsStore.readAll(groupable);
 			return from(list) //
 					.transform(new Function<TaskDefinition, Task>() {
 
@@ -265,10 +277,10 @@ public class DefaultTaskStore implements TaskStore {
 						public Task apply(final TaskDefinition input) {
 							final Iterable<TaskParameter> parameters = parametersStore.readAll(groupedBy(input));
 							final Optional<TaskRuntime> _runtime = from(runtimeStore.readAll(groupedBy(input))).first();
-							final TaskRuntime runtime = _runtime.isPresent() ? _runtime.get() : TaskRuntime
-									.newInstance() //
-									.withOwner(input.getId()) //
-									.build();
+							final TaskRuntime runtime = _runtime.isPresent() ? _runtime.get()
+									: TaskRuntime.newInstance() //
+											.withOwner(input.getId()) //
+											.build();
 							return merge(input, parameters, runtime);
 						}
 

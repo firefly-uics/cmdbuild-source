@@ -76,8 +76,8 @@ public class ConnectorTaskJobFactory extends AbstractJobFactory<ConnectorTask> {
 					.getAccount(), task.getNotificationAccount()));
 			final Supplier<EmailAccount> emailAccountSupplier = account.isPresent() ? ofInstance(account.get()) : null;
 			command = SchedulerCommandWrapper.of(a(emailTemplateSenderFactory.queued() //
-					.withEmailAccountSupplier(emailAccountSupplier) //
-					.withEmailTemplateSupplier(emailTemplateSupplier) //
+					.withAccount(emailAccountSupplier) //
+					.withTemplate(emailTemplateSupplier) //
 					.withReference(task.getId()) //
 					));
 		} else {

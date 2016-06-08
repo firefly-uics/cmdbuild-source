@@ -41,9 +41,19 @@
 		relationPanel: undefined,
 
 		/**
+		 * @property {Ext.panel.Panel}
+		 */
+		rowPrivileges: undefined,
+
+		/**
 		 * @property {Ext.tab.Panel}
 		 */
 		tabPanel: undefined,
+
+		/**
+		 * @property {Ext.tab.Panel}
+		 */
+		windowTabPanel: undefined,
 
 		closeAction: 'hide',
 
@@ -86,12 +96,12 @@
 				Ext.apply(this, {
 					layout: 'fit',
 					items: [
-						Ext.create('Ext.tab.Panel', {
+						this.windowTabPanel = Ext.create('Ext.tab.Panel', {
 							border: false,
 							frame: false,
 
 							items: [
-								Ext.create('Ext.panel.Panel', {
+								this.rowPrivileges = Ext.create('Ext.panel.Panel', {
 									title: CMDBuild.Translation.rowsPrivileges,
 									layout: 'border',
 									border: false,

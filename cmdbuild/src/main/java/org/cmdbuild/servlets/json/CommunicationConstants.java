@@ -51,6 +51,7 @@ public class CommunicationConstants {
 			CONFIGURATION = "configuration", //
 			CONFIRMED = "confirmed", //
 			CONTAINER = "container", //
+			CONTEXT = "context", //
 			COUNT = "count", //
 			CREATE = "create", //
 			CRON_EXPRESSION = "cronExpression", //
@@ -243,8 +244,11 @@ public class CommunicationConstants {
 			REJECTED_FOLDER = "rejectedFolder", //
 			REJECT_NOT_MATCHING = "rejectNotMatching", //
 			RELATION_ID = "relationId", //
+			REPORT_ACTIVE = "reportActive", //
+			REPORT_EXTENSION = "reportExtension", //
 			REPORT_ID = "reportId", //
 			REPORTNAME = "reportName", //
+			REPORT_PARAMETERS = "reportParameters", //
 			RESULT = "result", //
 			RESULTS = "results", //
 			RETRY_WITHOUT_FILTER = "retryWithoutFilter", //
@@ -288,6 +292,7 @@ public class CommunicationConstants {
 			TABLE_TYPE = "tableType", //
 			TASK_ASYNCHRONOUS_EVENT = "event_asynchronous", //
 			TASK_CONNECTOR = "connector", //
+			TASK_GENERIC = "generic", //
 			TASK_READ_EMAIL = "email", //
 			TASK_START_WORKFLOW = "workflow", //
 			TASK_SYNCHRONOUS_EVENT = "event_synchronous", //

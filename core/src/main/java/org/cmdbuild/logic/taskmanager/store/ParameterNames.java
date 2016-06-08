@@ -1,9 +1,11 @@
 package org.cmdbuild.logic.taskmanager.store;
 
+import static java.lang.String.format;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
 
 import org.cmdbuild.data.store.task.AsynchronousEventTaskDefinition;
 import org.cmdbuild.data.store.task.ConnectorTaskDefinition;
+import org.cmdbuild.data.store.task.GenericTaskDefinition;
 import org.cmdbuild.data.store.task.ReadEmailTaskDefinition;
 import org.cmdbuild.data.store.task.StartWorkflowTaskDefinition;
 import org.cmdbuild.data.store.task.SynchronousEventTaskDefinition;
@@ -71,6 +73,39 @@ public class ParameterNames {
 		public static final String MAPPING_ATTRIBUTES = MAPPING_PREFIX + "attributes";
 
 		static final String MAPPING_SEPARATOR = ",";
+
+	}
+
+	/**
+	 * Container for all {@link GenericTaskDefinition} parameter names.
+	 */
+	public static class Generic {
+
+		private Generic() {
+			// prevents instantiation
+		}
+
+		private static final String ALL_PREFIX = EMPTY;
+
+		public static final String CONTEXT_PREFIX = ALL_PREFIX + "context.";
+
+		public static String context(final String context, final String key) {
+			return format("%s%s.%s", CONTEXT_PREFIX, context, key);
+		}
+
+		private static final String EMAIL_PREFIX = ALL_PREFIX + "email.";
+		public static final String EMAIL_ACTIVE = EMAIL_PREFIX + "active";
+		public static final String EMAIL_TEMPLATE = EMAIL_PREFIX + "template";
+		public static final String EMAIL_ACCOUNT = EMAIL_PREFIX + "account";
+
+		private static final String EMAIL_ATTACHMENT_PREFIX = EMAIL_PREFIX + "attachments.";
+		private static final String EMAIL_ATTACHMENT_REPORT_PREFIX = EMAIL_ATTACHMENT_PREFIX + "report.";
+
+		public static final String REPORT_ACTIVE = EMAIL_ATTACHMENT_REPORT_PREFIX + "active";
+		public static final String REPORT_NAME = EMAIL_ATTACHMENT_REPORT_PREFIX + "name";
+		public static final String REPORT_EXTENSION = EMAIL_ATTACHMENT_REPORT_PREFIX + "extension";
+
+		public static final String REPORT_PARAMETERS_PREFIX = EMAIL_ATTACHMENT_REPORT_PREFIX + "parameters.";
 
 	}
 
