@@ -237,4 +237,29 @@ public class DefaultSchedulerFacadeTest {
 		inOrder.verifyNoMoreInteractions();
 	}
 
+	@Test
+	public void scheduleExecuted() throws Exception {
+		// given
+		final ScheduledTask task = ReadEmailTask.newInstance() //
+				.build();
+		final Job job = mock(Job.class);
+		when(job.getName()) //
+				.thenReturn("foo");
+		final LogicAsSourceConverter toJobConverter = mock(LogicAsSourceConverter.class);
+		when(toJobConverter.toJob()) //
+				.thenReturn(job);
+		when(converter.from(task)) //
+				.thenReturn(toJobConverter);
+
+		// when
+		schedulerFacade.execute(task, callback);
+
+		// then
+		final InOrder inOrder = inOrder(schedulerService, converter, job);
+		inOrder.verify(converter).from(task);
+		inOrder.verify(job).execute();
+		inOrder.verify(job).getName();
+		inOrder.verifyNoMoreInteractions();
+	}
+
 }

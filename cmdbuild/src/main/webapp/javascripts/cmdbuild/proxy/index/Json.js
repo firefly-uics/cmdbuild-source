@@ -554,7 +554,8 @@
 		taskManager: {
 			readAll: 'services/json/schema/taskmanager/readall',
 
-			start: 'services/json/schema/taskmanager/start',
+			cyclicExecution: 'services/json/schema/taskmanager/start',
+			singleExecution: 'services/json/schema/taskmanager/execute',
 			stop: 'services/json/schema/taskmanager/stop',
 
 			connector: {
@@ -597,6 +598,15 @@
 
 					readAll: 'services/json/schema/taskmanager/event/synchronous/readall'
 				}
+			},
+
+			generic: {
+				create: 'services/json/schema/taskmanager/generic/create',
+				read: 'services/json/schema/taskmanager/generic/read',
+				update: 'services/json/schema/taskmanager/generic/update',
+				remove: 'services/json/schema/taskmanager/generic/delete',
+
+				readAll: 'services/json/schema/taskmanager/generic/readall'
 			},
 
 			workflow: {

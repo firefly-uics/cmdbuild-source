@@ -5,7 +5,7 @@ import org.cmdbuild.auth.privileges.constants.PrivilegeMode;
 
 public class PrivilegeInfo {
 
-	private final String[] EMPTY_ATTRIBUTES_PRIVILEGES = new String[0];
+	public static final String[] EMPTY_ATTRIBUTES_PRIVILEGES = new String[0];
 
 	private final Long groupId;
 	private final PrivilegeMode classMode;
@@ -45,7 +45,7 @@ public class PrivilegeInfo {
 	}
 
 	public String[] getAttributesPrivileges() {
-		return (attributesPrivileges == null) ? EMPTY_ATTRIBUTES_PRIVILEGES : attributesPrivileges;
+		return attributesPrivileges;
 	}
 
 	public void setAttributesPrivileges(final String[] attributesPrivileges) {
@@ -55,7 +55,7 @@ public class PrivilegeInfo {
 	public void setCardEditMode(final CardEditMode cardEditMode) {
 		this.cardEditMode = cardEditMode;
 	}
-	
+
 	public SerializablePrivilege getPrivilegedObject() {
 		return privilegedObject;
 	}

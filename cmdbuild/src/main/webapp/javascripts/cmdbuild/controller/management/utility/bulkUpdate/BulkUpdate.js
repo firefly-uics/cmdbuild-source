@@ -155,12 +155,8 @@
 								this.selectedClassSet({ value: selectedClass });
 
 								// Grid update
-								if (!this.selectedClassIsEmpty()) {
-
-
-									this.grid.filterMenuButton.reconfigureForEntryType(this.selectedClassGet());
+								if (!this.selectedClassIsEmpty())
 									this.cardGridController.onEntryTypeSelected(this.selectedClassGet(), this); // @legacy
-								}
 
 								// Form update
 								var params = {};

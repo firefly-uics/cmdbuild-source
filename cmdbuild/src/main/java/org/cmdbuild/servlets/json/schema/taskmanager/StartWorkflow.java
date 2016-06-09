@@ -1,9 +1,11 @@
 package org.cmdbuild.servlets.json.schema.taskmanager;
 
 import static com.google.common.collect.FluentIterable.from;
+import static org.cmdbuild.services.json.dto.JsonResponse.success;
 import static org.cmdbuild.servlets.json.CommunicationConstants.ACTIVE;
 import static org.cmdbuild.servlets.json.CommunicationConstants.CRON_EXPRESSION;
 import static org.cmdbuild.servlets.json.CommunicationConstants.DESCRIPTION;
+import static org.cmdbuild.servlets.json.CommunicationConstants.EXECUTABLE;
 import static org.cmdbuild.servlets.json.CommunicationConstants.ID;
 import static org.cmdbuild.servlets.json.CommunicationConstants.WORKFLOW_ATTRIBUTES;
 import static org.cmdbuild.servlets.json.CommunicationConstants.WORKFLOW_CLASS_NAME;
@@ -55,6 +57,11 @@ public class StartWorkflow extends JSONBaseWithSpringContext {
 			return delegate.getCronExpression();
 		}
 
+		@JsonProperty(EXECUTABLE)
+		public boolean executable() {
+			return delegate.isExecutable();
+		}
+
 		@JsonProperty(WORKFLOW_CLASS_NAME)
 		public String getProcessClass() {
 			return delegate.getProcessClass();
@@ -84,9 +91,10 @@ public class StartWorkflow extends JSONBaseWithSpringContext {
 				.withAttributes(toMap(jsonParameters)) //
 				.build();
 		final Long id = taskManagerLogic().create(task);
-		return JsonResponse.success(id);
+		return success(id);
 	}
 
+	@Admin
 	@JSONExported
 	public JsonResponse read( //
 			@Parameter(value = ID) final Long id //
@@ -95,16 +103,18 @@ public class StartWorkflow extends JSONBaseWithSpringContext {
 				.withId(id) //
 				.build();
 		final StartWorkflowTask readed = taskManagerLogic().read(task, StartWorkflowTask.class);
-		return JsonResponse.success(new JsonStartWorkflowTask(readed));
+		return success(new JsonStartWorkflowTask(readed));
 	}
 
+	@Admin
 	@JSONExported
 	public JsonResponse readAll() {
 		final Iterable<? extends Task> tasks = taskManagerLogic().read(StartWorkflowTask.class);
-		return JsonResponse.success(JsonElements.of(from(tasks) //
+		return success(JsonElements.of(from(tasks) //
 				.transform(TASK_TO_JSON_TASK)));
 	}
 
+	@Admin
 	@JSONExported
 	public JsonResponse readAllByWorkflow( //
 			@Parameter(WORKFLOW_CLASS_NAME) final String className //
@@ -113,7 +123,7 @@ public class StartWorkflow extends JSONBaseWithSpringContext {
 				.filter(StartWorkflowTask.class) //
 				.filter(className(className)) //
 				.toList();
-		return JsonResponse.success(tasks);
+		return success(tasks);
 	}
 
 	private Predicate<StartWorkflowTask> className(final String className) {
@@ -146,7 +156,7 @@ public class StartWorkflow extends JSONBaseWithSpringContext {
 				.withAttributes(toMap(jsonParameters)) //
 				.build();
 		taskManagerLogic().update(task);
-		return JsonResponse.success();
+		return success();
 	}
 
 	@Admin
@@ -159,9 +169,5 @@ public class StartWorkflow extends JSONBaseWithSpringContext {
 				.build();
 		taskManagerLogic().delete(task);
 	}
-
-	/*
-	 * Utilities
-	 */
 
 }

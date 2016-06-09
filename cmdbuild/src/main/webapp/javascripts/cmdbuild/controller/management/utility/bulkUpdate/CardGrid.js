@@ -41,9 +41,8 @@
 
 			this.entryType = entryType;
 			this.unApplyFilter(this);
-			this.view.filterMenuButton.reconfigureForEntryType(entryType);
 
-			me.view.updateStoreForClassId(entryType.get('id'), {
+			this.view.updateStoreForClassId(entryType.get('id'), {
 				cb: function cbUpdateStoreForClassId() {
 					me.view.loadPage(1);
 				}

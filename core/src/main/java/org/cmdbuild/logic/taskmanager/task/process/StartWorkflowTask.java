@@ -9,7 +9,7 @@ import java.util.Map;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import org.cmdbuild.logic.taskmanager.ScheduledTask;
-import org.cmdbuild.logic.taskmanager.TaskVistor;
+import org.cmdbuild.logic.taskmanager.TaskVisitor;
 import org.joda.time.DateTime;
 
 public class StartWorkflowTask implements ScheduledTask {
@@ -101,7 +101,7 @@ public class StartWorkflowTask implements ScheduledTask {
 	}
 
 	@Override
-	public void accept(final TaskVistor visitor) {
+	public void accept(final TaskVisitor visitor) {
 		visitor.visit(this);
 	}
 
@@ -118,6 +118,11 @@ public class StartWorkflowTask implements ScheduledTask {
 	@Override
 	public boolean isActive() {
 		return active;
+	}
+
+	@Override
+	public boolean isExecutable() {
+		return true;
 	}
 
 	@Override

@@ -20,12 +20,12 @@ import java.util.Map;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.Validate;
 import org.cmdbuild.common.java.sql.DataSourceTypes.DataSourceType;
-import org.cmdbuild.data.store.task.TaskVisitor;
 import org.cmdbuild.logic.taskmanager.Task;
 import org.cmdbuild.logic.taskmanager.TaskManagerLogic;
-import org.cmdbuild.logic.taskmanager.TaskVistor;
+import org.cmdbuild.logic.taskmanager.TaskVisitor;
 import org.cmdbuild.logic.taskmanager.store.ParameterNames.AsynchronousEvent;
 import org.cmdbuild.logic.taskmanager.store.ParameterNames.Connector;
+import org.cmdbuild.logic.taskmanager.store.ParameterNames.Generic;
 import org.cmdbuild.logic.taskmanager.store.ParameterNames.ReadEmail;
 import org.cmdbuild.logic.taskmanager.store.ParameterNames.StartWorkflow;
 import org.cmdbuild.logic.taskmanager.store.ParameterNames.SynchronousEvent;
@@ -43,6 +43,7 @@ import org.cmdbuild.logic.taskmanager.task.email.mapper.NullMapperEngine;
 import org.cmdbuild.logic.taskmanager.task.event.asynchronous.AsynchronousEventTask;
 import org.cmdbuild.logic.taskmanager.task.event.synchronous.SynchronousEventTask;
 import org.cmdbuild.logic.taskmanager.task.event.synchronous.SynchronousEventTask.Phase;
+import org.cmdbuild.logic.taskmanager.task.generic.GenericTask;
 import org.cmdbuild.logic.taskmanager.task.process.StartWorkflowTask;
 import org.slf4j.Logger;
 import org.slf4j.Marker;
@@ -104,7 +105,7 @@ public class DefaultLogicAndStoreConverter implements LogicAndStoreConverter {
 							Boolean.toString(input.isCreate()), //
 							Boolean.toString(input.isUpdate()), //
 							Boolean.toString(input.isDelete()) //
-					));
+			));
 		}
 
 	};
@@ -120,7 +121,7 @@ public class DefaultLogicAndStoreConverter implements LogicAndStoreConverter {
 							input.getTargetType(), //
 							input.getTargetAttribute(), //
 							Boolean.toString(input.isKey()) //
-					));
+			));
 		}
 
 	};
@@ -219,11 +220,11 @@ public class DefaultLogicAndStoreConverter implements LogicAndStoreConverter {
 						.withKey( //
 								parameters.get(ReadEmail.KeyValueMapperEngine.KEY_INIT), //
 								parameters.get(ReadEmail.KeyValueMapperEngine.KEY_END) //
-						) //
+				) //
 						.withValue( //
 								parameters.get(ReadEmail.KeyValueMapperEngine.VALUE_INIT), //
 								parameters.get(ReadEmail.KeyValueMapperEngine.VALUE_END) //
-						) //
+				) //
 						.build();
 			}
 
@@ -324,7 +325,7 @@ public class DefaultLogicAndStoreConverter implements LogicAndStoreConverter {
 
 	}
 
-	private static class DefaultLogicAsSourceConverter implements LogicAsSourceConverter, TaskVistor {
+	private static class DefaultLogicAsSourceConverter implements LogicAsSourceConverter, TaskVisitor {
 
 		private final Task source;
 
@@ -373,16 +374,18 @@ public class DefaultLogicAndStoreConverter implements LogicAndStoreConverter {
 					.withParameter(Connector.NOTIFICATION_ACCOUNT, task.getNotificationAccount()) //
 					.withParameter(Connector.NOTIFICATION_ERROR_TEMPLATE, task.getNotificationErrorTemplate()) //
 					.withParameters(parametersOf(sourceConfiguration)) //
-					.withParameter(Connector.MAPPING_TYPES, Joiner.on(SPECIAL_SEPARATOR) //
-							.join( //
-							FluentIterable.from(task.getClassMappings()) //
-									.transform(CLASS_MAPPING_TO_STRING)) //
-					) //
-					.withParameter(Connector.MAPPING_ATTRIBUTES, Joiner.on(SPECIAL_SEPARATOR) //
-							.join( //
-							FluentIterable.from(task.getAttributeMappings()) //
-									.transform(ATTRIBUTE_MAPPING_TO_STRING)) //
-					) //
+					.withParameter(Connector.MAPPING_TYPES,
+							Joiner.on(SPECIAL_SEPARATOR) //
+									.join( //
+											FluentIterable.from(task.getClassMappings()) //
+													.transform(CLASS_MAPPING_TO_STRING)) //
+			) //
+					.withParameter(Connector.MAPPING_ATTRIBUTES,
+							Joiner.on(SPECIAL_SEPARATOR) //
+									.join( //
+											FluentIterable.from(task.getAttributeMappings()) //
+													.transform(ATTRIBUTE_MAPPING_TO_STRING)) //
+			) //
 					.build();
 		}
 
@@ -402,13 +405,51 @@ public class DefaultLogicAndStoreConverter implements LogicAndStoreConverter {
 					map.put(Connector.SQL_PASSWORD, sourceConfiguration.getPassword());
 					map.put(Connector.SQL_FILTER, sourceConfiguration.getFilter());
 					parameters.put(Connector.DATA_SOURCE_TYPE, "sql");
-					parameters.put(Connector.DATA_SOURCE_CONFIGURATION, Joiner.on(SPECIAL_SEPARATOR) //
-							.withKeyValueSeparator(KEY_VALUE_SEPARATOR) //
-							.useForNull(EMPTY) //
-							.join(map));
+					parameters.put(Connector.DATA_SOURCE_CONFIGURATION,
+							Joiner.on(SPECIAL_SEPARATOR) //
+									.withKeyValueSeparator(KEY_VALUE_SEPARATOR) //
+									.useForNull(EMPTY) //
+									.join(map));
 				}
 			});
 			return parameters;
+		}
+
+		@Override
+		public void visit(final GenericTask task) {
+			this.target = org.cmdbuild.data.store.task.GenericTask.newInstance() //
+					.withId(task.getId()) //
+					.withDescription(task.getDescription()) //
+					.withRunningStatus(task.isActive()) //
+					.withCronExpression(task.getCronExpression()) //
+					.withLastExecution(task.getLastExecution()) //
+					.withParameters(context(task)) //
+					.withParameter(Generic.EMAIL_ACTIVE, Boolean.toString(task.isEmailActive())) //
+					.withParameter(Generic.EMAIL_TEMPLATE, task.getEmailTemplate()) //
+					.withParameter(Generic.EMAIL_ACCOUNT, task.getEmailAccount()) //
+					.withParameter(Generic.REPORT_ACTIVE, Boolean.toString(task.isReportActive())) //
+					.withParameter(Generic.REPORT_NAME, task.getReportName()) //
+					.withParameter(Generic.REPORT_EXTENSION, task.getReportExtension()) //
+					.withParameters(reportParameters(task)) //
+					.build();
+		}
+
+		private Map<String, ? extends String> context(final GenericTask task) {
+			final Map<String, String> output = newHashMap();
+			task.getContext().entrySet().stream() //
+					.forEach(input -> input.getValue().entrySet().stream() //
+							.forEach(_input -> output.put(Generic.context(input.getKey(), _input.getKey()),
+									_input.getValue()))
+
+			);
+			return output;
+		}
+
+		private Map<String, ? extends String> reportParameters(final GenericTask task) {
+			final Map<String, String> output = newHashMap();
+			task.getReportParameters().entrySet().stream() //
+					.forEach(input -> output.put(Generic.REPORT_PARAMETERS_PREFIX + input.getKey(), input.getValue()));
+			return output;
 		}
 
 		@Override
@@ -425,10 +466,12 @@ public class DefaultLogicAndStoreConverter implements LogicAndStoreConverter {
 					.withParameter(ReadEmail.REJECTED_FOLDER, task.getRejectedFolder()) //
 					.withParameter(ReadEmail.FILTER_REJECT, Boolean.toString(task.isRejectNotMatching())) //
 					.withParameter(ReadEmail.FILTER_TYPE, task.getFilterType()) //
-					.withParameter(ReadEmail.FILTER_FROM_REGEX, Joiner.on(SPECIAL_SEPARATOR) //
-							.join(task.getRegexFromFilter())) //
-					.withParameter(ReadEmail.FILTER_SUBJECT_REGEX, Joiner.on(SPECIAL_SEPARATOR) //
-							.join(task.getRegexSubjectFilter())) //
+					.withParameter(ReadEmail.FILTER_FROM_REGEX,
+							Joiner.on(SPECIAL_SEPARATOR) //
+									.join(task.getRegexFromFilter())) //
+					.withParameter(ReadEmail.FILTER_SUBJECT_REGEX,
+							Joiner.on(SPECIAL_SEPARATOR) //
+									.join(task.getRegexSubjectFilter())) //
 					.withParameter(ReadEmail.FILTER_FUNCTION_NAME, task.getFilterFunction()) //
 					.withParameter(ReadEmail.NOTIFICATION_ACTIVE, //
 							Boolean.toString(task.isNotificationActive())) //
@@ -441,9 +484,10 @@ public class DefaultLogicAndStoreConverter implements LogicAndStoreConverter {
 					.withParameter(ReadEmail.WORKFLOW_ACTIVE, //
 							Boolean.toString(task.isWorkflowActive())) //
 					.withParameter(ReadEmail.WORKFLOW_CLASS_NAME, task.getWorkflowClassName()) //
-					.withParameter(ReadEmail.WORKFLOW_FIELDS_MAPPING, Joiner.on(SPECIAL_SEPARATOR) //
-							.withKeyValueSeparator(KEY_VALUE_SEPARATOR) //
-							.join(task.getWorkflowAttributes())) //
+					.withParameter(ReadEmail.WORKFLOW_FIELDS_MAPPING,
+							Joiner.on(SPECIAL_SEPARATOR) //
+									.withKeyValueSeparator(KEY_VALUE_SEPARATOR) //
+									.join(task.getWorkflowAttributes())) //
 					.withParameter(ReadEmail.WORKFLOW_ADVANCE, //
 							Boolean.toString(task.isWorkflowAdvanceable())) //
 					.withParameter(ReadEmail.WORKFLOW_ATTACHMENTS_SAVE, //
@@ -463,9 +507,10 @@ public class DefaultLogicAndStoreConverter implements LogicAndStoreConverter {
 					.withCronExpression(task.getCronExpression()) //
 					.withLastExecution(task.getLastExecution()) //
 					.withParameter(StartWorkflow.CLASSNAME, task.getProcessClass()) //
-					.withParameter(StartWorkflow.ATTRIBUTES, Joiner.on(SPECIAL_SEPARATOR) //
-							.withKeyValueSeparator(KEY_VALUE_SEPARATOR) //
-							.join(task.getAttributes())) //
+					.withParameter(StartWorkflow.ATTRIBUTES,
+							Joiner.on(SPECIAL_SEPARATOR) //
+									.withKeyValueSeparator(KEY_VALUE_SEPARATOR) //
+									.join(task.getAttributes())) //
 					.build();
 		}
 
@@ -476,8 +521,9 @@ public class DefaultLogicAndStoreConverter implements LogicAndStoreConverter {
 					.withDescription(task.getDescription()) //
 					.withRunningStatus(task.isActive()) //
 					.withParameter(SynchronousEvent.PHASE, new PhaseToStoreConverter(task).toStore()) //
-					.withParameter(SynchronousEvent.FILTER_GROUPS, Joiner.on(GROUPS_SEPARATOR) //
-							.join(task.getGroups())) //
+					.withParameter(SynchronousEvent.FILTER_GROUPS,
+							Joiner.on(GROUPS_SEPARATOR) //
+									.join(task.getGroups())) //
 					.withParameter(SynchronousEvent.FILTER_CLASSNAME, task.getTargetClassname()) //
 					.withParameter(SynchronousEvent.FILTER_CARDS, task.getFilter()) //
 					.withParameter(SynchronousEvent.EMAIL_ACTIVE, //
@@ -487,9 +533,10 @@ public class DefaultLogicAndStoreConverter implements LogicAndStoreConverter {
 					.withParameter(SynchronousEvent.WORKFLOW_ACTIVE, //
 							Boolean.toString(task.isWorkflowEnabled())) //
 					.withParameter(SynchronousEvent.WORKFLOW_CLASS_NAME, task.getWorkflowClassName()) //
-					.withParameter(SynchronousEvent.WORKFLOW_ATTRIBUTES, Joiner.on(SPECIAL_SEPARATOR) //
-							.withKeyValueSeparator(KEY_VALUE_SEPARATOR) //
-							.join(task.getWorkflowAttributes())) //
+					.withParameter(SynchronousEvent.WORKFLOW_ATTRIBUTES,
+							Joiner.on(SPECIAL_SEPARATOR) //
+									.withKeyValueSeparator(KEY_VALUE_SEPARATOR) //
+									.join(task.getWorkflowAttributes())) //
 					.withParameter(SynchronousEvent.WORKFLOW_ADVANCE, //
 							Boolean.toString(task.isWorkflowAdvanceable())) //
 					.withParameter(SynchronousEvent.ACTION_SCRIPT_ACTIVE, Boolean.toString(task.isScriptingEnabled())) //
@@ -500,7 +547,8 @@ public class DefaultLogicAndStoreConverter implements LogicAndStoreConverter {
 		}
 	}
 
-	private static class DefaultStoreAsSourceConverter implements StoreAsSourceConverter, TaskVisitor {
+	private static class DefaultStoreAsSourceConverter
+			implements StoreAsSourceConverter, org.cmdbuild.data.store.task.TaskVisitor {
 
 		private static final Iterable<ClassMapping> NO_CLASS_MAPPINGS = Collections.emptyList();
 		private static final Iterable<AttributeMapping> NO_ATTRIBUTE_MAPPINGS = Collections.emptyList();
@@ -559,15 +607,19 @@ public class DefaultLogicAndStoreConverter implements LogicAndStoreConverter {
 					.withNotificationErrorTemplate(task.getParameter(Connector.NOTIFICATION_ERROR_TEMPLATE)) //
 					.withSourceConfiguration(sourceConfigurationOf(dataSourceConfiguration)) //
 					.withClassMappings( //
-							isEmpty(typeMapping) ? NO_CLASS_MAPPINGS : FluentIterable.from( //
-									Splitter.on(SPECIAL_SEPARATOR) //
-											.split(typeMapping)) //
-									.transform(STRING_TO_CLASS_MAPPING)) //
+							isEmpty(typeMapping) ? NO_CLASS_MAPPINGS
+									: FluentIterable
+											.from( //
+													Splitter.on(SPECIAL_SEPARATOR) //
+															.split(typeMapping)) //
+											.transform(STRING_TO_CLASS_MAPPING)) //
 					.withAttributeMappings( //
-							isEmpty(attributeMapping) ? NO_ATTRIBUTE_MAPPINGS : FluentIterable.from( //
-									Splitter.on(SPECIAL_SEPARATOR) //
-											.split(attributeMapping)) //
-									.transform(STRING_TO_ATTRIBUTE_MAPPING)) //
+							isEmpty(attributeMapping) ? NO_ATTRIBUTE_MAPPINGS
+									: FluentIterable
+											.from( //
+													Splitter.on(SPECIAL_SEPARATOR) //
+															.split(attributeMapping)) //
+											.transform(STRING_TO_ATTRIBUTE_MAPPING)) //
 					.build();
 		}
 
@@ -594,6 +646,55 @@ public class DefaultLogicAndStoreConverter implements LogicAndStoreConverter {
 		}
 
 		@Override
+		public void visit(final org.cmdbuild.data.store.task.GenericTask task) {
+			target = GenericTask.newInstance() //
+					.withId(task.getId()) //
+					.withDescription(task.getDescription()) //
+					.withActiveStatus(task.isRunning()) //
+					.withCronExpression(task.getCronExpression()) //
+					.withLastExecution(task.getLastExecution()) //
+					.withContext(context(task)) //
+					.withEmailActive(Boolean.valueOf(task.getParameter(Generic.EMAIL_ACTIVE))) //
+					.withEmailTemplate(task.getParameter(Generic.EMAIL_TEMPLATE)) //
+					.withEmailAccount(task.getParameter(Generic.EMAIL_ACCOUNT)) //
+					.withReportActive(Boolean.valueOf(task.getParameter(Generic.REPORT_ACTIVE))) //
+					.withReportName(task.getParameter(Generic.REPORT_NAME)) //
+					.withReportExtension(task.getParameter(Generic.REPORT_EXTENSION)) //
+					.withReportParameters(reportParameters(task)) //
+					.build();
+		}
+
+		private Map<String, Map<String, String>> context(final org.cmdbuild.data.store.task.GenericTask task) {
+			final Map<String, Map<String, String>> output = newHashMap();
+			task.getParameters().entrySet().stream() //
+					.filter(input -> input.getKey().startsWith(Generic.CONTEXT_PREFIX)) //
+					.forEach(input -> {
+						final String contextAndKey = input.getKey().substring(Generic.CONTEXT_PREFIX.length());
+						final String[] elements = contextAndKey.split("\\.");
+						final String context = elements[0];
+						final String key = elements[1];
+						final Map<String, String> sub;
+						if (output.containsKey(context)) {
+							sub = output.get(context);
+						} else {
+							sub = newHashMap();
+							output.put(context, sub);
+						}
+						sub.put(key, input.getValue());
+					});
+			return output;
+		}
+
+		private Map<String, String> reportParameters(final org.cmdbuild.data.store.task.GenericTask task) {
+			final Map<String, String> output = newHashMap();
+			task.getParameters().entrySet().stream() //
+					.filter(input -> input.getKey().startsWith(Generic.REPORT_PARAMETERS_PREFIX)) //
+					.forEach(input -> output.put(input.getKey().substring(Generic.REPORT_PARAMETERS_PREFIX.length()),
+							input.getValue()));
+			return output;
+		}
+
+		@Override
 		public void visit(final org.cmdbuild.data.store.task.ReadEmailTask task) {
 			final String fromRegexFilters = task.getParameter(ReadEmail.FILTER_FROM_REGEX);
 			final String subjectRegexFilters = task.getParameter(ReadEmail.FILTER_SUBJECT_REGEX);
@@ -612,11 +713,13 @@ public class DefaultLogicAndStoreConverter implements LogicAndStoreConverter {
 							Boolean.valueOf(task.getParameter(ReadEmail.FILTER_REJECT))) //
 					.withFilterType(task.getParameter(ReadEmail.FILTER_TYPE)) //
 					.withRegexFromFilter( //
-							isEmpty(fromRegexFilters) ? EMPTY_FILTERS : Splitter.on(SPECIAL_SEPARATOR) //
-									.split(fromRegexFilters)) //
+							isEmpty(fromRegexFilters) ? EMPTY_FILTERS
+									: Splitter.on(SPECIAL_SEPARATOR) //
+											.split(fromRegexFilters)) //
 					.withRegexSubjectFilter( //
-							isEmpty(subjectRegexFilters) ? EMPTY_FILTERS : Splitter.on(SPECIAL_SEPARATOR) //
-									.split(subjectRegexFilters)) //
+							isEmpty(subjectRegexFilters) ? EMPTY_FILTERS
+									: Splitter.on(SPECIAL_SEPARATOR) //
+											.split(subjectRegexFilters)) //
 					.withFilterFunction(task.getParameter(ReadEmail.FILTER_FUNCTION_NAME)) //
 					.withNotificationStatus( //
 							Boolean.valueOf(task.getParameter(ReadEmail.NOTIFICATION_ACTIVE))) //
@@ -670,8 +773,9 @@ public class DefaultLogicAndStoreConverter implements LogicAndStoreConverter {
 					.withPhase( //
 							new PhaseToLogicConverter(task.getParameter(SynchronousEvent.PHASE)) //
 									.toLogic()) //
-					.withGroups(isEmpty(groupsAsString) ? EMPTY_GROUPS : Splitter.on(GROUPS_SEPARATOR) //
-							.split(groupsAsString)) //
+					.withGroups(isEmpty(groupsAsString) ? EMPTY_GROUPS
+							: Splitter.on(GROUPS_SEPARATOR) //
+									.split(groupsAsString)) //
 					.withTargetClass(task.getParameter(SynchronousEvent.FILTER_CLASSNAME)) //
 					.withFilter(task.getParameter(SynchronousEvent.FILTER_CARDS)) //
 					.withEmailEnabled( //

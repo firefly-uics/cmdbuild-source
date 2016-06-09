@@ -3,9 +3,6 @@
 	/**
 	 * @deprecated new class (CMDBuild.view.common.field.filter.advanced.Advanced)
 	 */
-
-	var tr = CMDBuild.Translation.management.findfilter;
-
 	Ext.define('CMDBuild.view.management.common.filter.CMFilterAttributes.AttributeFieldsetDelegate', {
 		/**
 		 * @param {CMDBuild.view.management.common.filter.CMFilterAttributes.AttributeFieldset} fieldset the fieldset that is empty
@@ -20,7 +17,7 @@
 			attributeFieldsetDelegate: 'CMDBuild.view.management.common.filter.CMFilterAttributes.AttributeFieldsetDelegate'
 		},
 
-		title: tr.attributes,
+		title: CMDBuild.Translation.attributes,
 		autoScroll: true,
 		bodyCls: 'x-panel-default-framed',
 		defaults: {
@@ -47,7 +44,7 @@
 
 				fillMenu(this);
 				tbar.push({
-					text: tr.title,
+					text: CMDBuild.Translation.chooseAnAttribute,
 					iconCls: 'add',
 					menu: this.menu
 				});
@@ -57,7 +54,7 @@
 				tbar.push('->');
 				tbar.push(this.filterButton);
 				this.resetFilterButton = Ext.create('Ext.button.Button', {
-					text: CMDBuild.Translation.management.findfilter.clear_filter,
+					text: CMDBuild.Translation.clearFilter,
 					iconCls: 'delete'
 				});
 				tbar.push(this.resetFilterButton);

@@ -19,7 +19,7 @@
 	Ext.define('CMDBuild.view.management.common.filter.CMFunctions', {
 		extend: 'Ext.panel.Panel',
 
-		title: CMDBuild.Translation.management.findfilter.functions,
+		title: CMDBuild.Translation.functionLabel,
 		bodyCls: 'x-panel-body-default-framed cmdb-border-top',
 		bodyStyle: {
 			padding: '5px 5px 0px 5px'
@@ -37,7 +37,7 @@
 			});
 
 			this.functionsCombo = Ext.create('Ext.form.ComboBox', {
-				fieldLabel: CMDBuild.Translation.management.findfilter.functions,
+				fieldLabel: CMDBuild.Translation.functionLabel,
 				store: CMDBuild.global.Cache.requestAsStore(CMDBuild.core.constants.Proxy.UNCACHED, {
 					autoLoad: true,
 					model: 'Functions',

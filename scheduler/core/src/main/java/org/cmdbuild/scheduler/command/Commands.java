@@ -106,6 +106,27 @@ public class Commands {
 		return new ConditionalCommand(delegate, predicate);
 	}
 
+	private static class CompositeCommand implements Command {
+
+		private final Iterable<Command> delegates;
+
+		public CompositeCommand(final Iterable<Command> delegates) {
+			this.delegates = delegates;
+		}
+
+		@Override
+		public void execute() {
+			for (final Command element : delegates) {
+				element.execute();
+			}
+		}
+
+	}
+
+	public static Command composite(final Iterable<Command> delegates) {
+		return new CompositeCommand(delegates);
+	}
+
 	private Commands() {
 		// prevents instantiation
 	}

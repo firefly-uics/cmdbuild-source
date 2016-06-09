@@ -4,6 +4,23 @@
 	Ext.require(['CMDBuild.core.constants.Proxy']);
 
 	/**
+	 * Common methods
+	 *
+	 * Required managed functions:
+	 * 	- accordionBuildId'
+	 * 	- accordionDeselect'
+	 * 	- accordionExpand'
+	 * 	- accordionFirstSelectableNodeSelect'
+	 * 	- accordionFirtsSelectableNodeGet'
+	 * 	- accordionIdentifierGet'
+	 * 	- accordionNodeByIdExists'
+	 * 	- accordionNodeByIdGet'
+	 * 	- accordionNodeByIdSelect'
+	 * 	- accordionUpdateStore'
+	 * 	- onAccordionBeforeSelect'
+	 * 	- onAccordionExpand
+	 * 	- onAccordionSelectionChange
+	 *
 	 * @abstract
 	 */
 	Ext.define('CMDBuild.controller.common.abstract.Accordion', {
@@ -20,25 +37,6 @@
 		 * @cfg {Function}
 		 */
 		callback: undefined,
-
-		/**
-		 * @cfg {Array}
-		 */
-		cmfgCatchedFunctions: [
-			'accordionBuildId',
-			'accordionDeselect',
-			'accordionExpand',
-			'accordionFirstSelectableNodeSelect',
-			'accordionFirtsSelectableNodeGet',
-			'accordionIdentifierGet',
-			'accordionNodeByIdExists',
-			'accordionNodeByIdGet',
-			'accordionNodeByIdSelect',
-			'accordionUpdateStore',
-			'onAccordionBeforeSelect',
-			'onAccordionExpand',
-			'onAccordionSelectionChange'
-		],
 
 		/**
 		 * Flag to disable next selection, will be reset on next store update
@@ -80,19 +78,6 @@
 		 * @property {Object}
 		 */
 		view: undefined,
-
-		/**
-		 * @param {Object} configurationObject
-		 * @param {CMDBuild.controller.common.MainViewport} configurationObject.parentDelegate
-		 *
-		 * @returns {Void}
-		 *
-		 * @override
-		 * @abstract
-		 */
-		constructor: function (configurationObject) {
-			this.callParent(arguments);
-		},
 
 		/**
 		 * Generates an unique id for the menu accordion, prepend to components array "accordion" string and identifier.

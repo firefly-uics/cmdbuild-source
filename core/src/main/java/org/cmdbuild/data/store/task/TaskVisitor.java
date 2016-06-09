@@ -6,6 +6,8 @@ public interface TaskVisitor {
 
 	void visit(ConnectorTask task);
 
+	void visit(GenericTask task);
+
 	void visit(ReadEmailTask task);
 
 	void visit(StartWorkflowTask task);

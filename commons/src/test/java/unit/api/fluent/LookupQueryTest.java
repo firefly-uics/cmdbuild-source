@@ -10,6 +10,7 @@ import static org.mockito.Mockito.when;
 
 import java.util.Arrays;
 
+import org.cmdbuild.api.fluent.ExecutorBasedFluentApi;
 import org.cmdbuild.api.fluent.FluentApi;
 import org.cmdbuild.api.fluent.FluentApiExecutor;
 import org.cmdbuild.api.fluent.Lookup;
@@ -27,7 +28,7 @@ public class LookupQueryTest {
 	@Before
 	public void setUp() throws Exception {
 		executor = mock(FluentApiExecutor.class);
-		api = new FluentApi(executor);
+		api = new ExecutorBasedFluentApi(executor);
 	}
 
 	@Test

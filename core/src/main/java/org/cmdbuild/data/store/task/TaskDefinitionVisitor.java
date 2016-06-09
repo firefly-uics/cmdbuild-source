@@ -4,7 +4,9 @@ public interface TaskDefinitionVisitor {
 
 	void visit(AsynchronousEventTaskDefinition taskDefinition);
 
-	void visit(ConnectorTaskDefinition connectorTaskDefinition);
+	void visit(ConnectorTaskDefinition taskDefinition);
+
+	void visit(GenericTaskDefinition taskDefinition);
 
 	void visit(ReadEmailTaskDefinition taskDefinition);
 

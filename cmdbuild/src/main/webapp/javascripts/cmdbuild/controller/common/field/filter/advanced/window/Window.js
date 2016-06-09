@@ -305,25 +305,28 @@
 		 * Fill filter model with tab's data
 		 */
 		onFieldFilterAdvancedWindowConfirmButtonClick: function() {
+			var activeTab = this.view.windowTabPanel.getActiveTab()
 			var columnPrivilegesArray = [];
 			var filterObject = {};
 
-			if (this.cmfg('fieldFilterAdvancedConfigurationIsPanelEnabled', 'attribute'))
-				Ext.apply(filterObject, this.controllerTabAttributes.cmfg('onFieldFilterAdvancedWindowAttributesGetData'));
+			if (Ext.getClassName(activeTab) == 'CMDBuild.view.common.field.filter.advanced.window.panels.columnPrivileges.ColumnPrivilegesView') {
+				if (this.cmfg('fieldFilterAdvancedConfigurationIsPanelEnabled', 'columnPrivileges'))
+					columnPrivilegesArray = this.controllerTabColumnPrivileges.cmfg('onFieldFilterAdvancedWindowColumnPrivilegesGetData');
 
-			if (this.cmfg('fieldFilterAdvancedConfigurationIsPanelEnabled', 'columnPrivileges'))
-				columnPrivilegesArray = this.controllerTabColumnPrivileges.cmfg('onFieldFilterAdvancedWindowColumnPrivilegesGetData');
+				this.cmfg('onFieldFilterAdvancedWindowgetEndpoint', { columnPrivileges: columnPrivilegesArray });
+			} else if (Ext.getClassName(activeTab) == 'Ext.panel.Panel') {
+				if (this.cmfg('fieldFilterAdvancedConfigurationIsPanelEnabled', 'attribute'))
+					Ext.apply(filterObject, this.controllerTabAttributes.cmfg('onFieldFilterAdvancedWindowAttributesGetData'));
 
-			if (this.cmfg('fieldFilterAdvancedConfigurationIsPanelEnabled', 'function'))
-				Ext.apply(filterObject, this.controllerTabFunctions.cmfg('onFieldFilterAdvancedWindowFunctionsGetData'));
+				if (this.cmfg('fieldFilterAdvancedConfigurationIsPanelEnabled', 'function'))
+					Ext.apply(filterObject, this.controllerTabFunctions.cmfg('onFieldFilterAdvancedWindowFunctionsGetData'));
 
-			if (this.cmfg('fieldFilterAdvancedConfigurationIsPanelEnabled', 'relation'))
-				Ext.apply(filterObject, this.controllerTabRelations.cmfg('onFieldFilterAdvancedWindowRelationsGetData'));
+				if (this.cmfg('fieldFilterAdvancedConfigurationIsPanelEnabled', 'relation'))
+					Ext.apply(filterObject, this.controllerTabRelations.cmfg('onFieldFilterAdvancedWindowRelationsGetData'));
 
-			this.cmfg('onFieldFilterAdvancedWindowgetEndpoint', {
-				columnPrivileges: columnPrivilegesArray,
-				filter: filterObject
-			});
+				this.cmfg('onFieldFilterAdvancedWindowgetEndpoint', { filter: filterObject });
+			}
+
 
 			this.onFieldFilterAdvancedWindowAbortButtonClick();
 		},
