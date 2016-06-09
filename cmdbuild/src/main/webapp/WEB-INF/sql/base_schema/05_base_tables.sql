@@ -80,3 +80,22 @@ SELECT cm_create_class_attribute('LookUp', 'ParentId', 'integer', NULL, FALSE, F
 SELECT cm_create_class_attribute('LookUp', 'Number', 'integer', NULL, TRUE, FALSE, 'MODE: read');
 SELECT cm_create_class_attribute('LookUp', 'IsDefault', 'boolean', NULL, FALSE, FALSE, 'MODE: read');
 SELECT cm_create_class_attribute('LookUp', 'TranslationUuid', 'text', NULL, FALSE, FALSE, 'MODE: write|DESCR: Translations Uuid|STATUS: active');
+
+CREATE OR REPLACE FUNCTION cm_set_translationuuid() RETURNS trigger AS $$
+BEGIN
+	IF(coalesce(NEW."TranslationUuid",'') = '') THEN 
+		IF(TG_OP='INSERT') THEN
+			NEW."TranslationUuid" = md5(random()::text)::uuid;
+		ELSE
+			NEW."TranslationUuid" = OLD."TranslationUuid";	
+		END IF;
+	END IF;
+	RETURN NEW;
+END;
+$$ LANGUAGE PLPGSQL;
+
+CREATE TRIGGER cm_set_translationuuid
+	BEFORE INSERT OR UPDATE
+	ON "LookUp"
+	FOR EACH ROW
+	EXECUTE PROCEDURE cm_set_translationuuid();
