@@ -11,6 +11,7 @@ import static org.cmdbuild.logic.email.EmailLogic.Statuses.draft;
 import static org.cmdbuild.logic.email.EmailLogic.Statuses.outgoing;
 import static org.cmdbuild.logic.email.EmailLogic.Statuses.received;
 import static org.cmdbuild.logic.email.EmailLogic.Statuses.sent;
+import static org.cmdbuild.services.email.EmailUtils.addLineBreakForHtml;
 
 import java.util.UUID;
 
@@ -167,7 +168,7 @@ public class DefaultEmailLogic implements EmailLogic {
 					.withCcAddresses(input.getCcAddresses()) //
 					.withBccAddresses(input.getBccAddresses()) //
 					.withSubject(input.getSubject()) //
-					.withContent(input.getContent()) //
+					.withContent(addLineBreakForHtml(input.getContent())) //
 					.withNotifyWith(input.getNotifyWith()) //
 					.withDate(input.getDate()) //
 					.withStatus(StatusConverter.of(input.getStatus()).status()) //
