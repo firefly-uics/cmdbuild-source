@@ -2,6 +2,7 @@ package org.cmdbuild.logic.auth;
 
 import static com.google.common.collect.Iterables.getFirst;
 import static org.apache.commons.lang3.StringUtils.isBlank;
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.cmdbuild.auth.user.AuthenticatedUserImpl.ANONYMOUS_USER;
 import static org.cmdbuild.common.Constants.ROLE_CLASS_NAME;
 import static org.cmdbuild.dao.query.clause.QueryAliasAttribute.attribute;
@@ -105,15 +106,18 @@ public class DefaultAuthenticationLogic implements AuthenticationLogic {
 	private final AuthenticationService authService;
 	private final PrivilegeContextFactory privilegeContextFactory;
 	private final CMDataView view;
+	private final UserStore userStore;
 
 	public DefaultAuthenticationLogic( //
 			final AuthenticationService authenticationService, //
 			final PrivilegeContextFactory privilegeContextFactory, //
-			final CMDataView dataView //
+			final CMDataView dataView, //
+			final UserStore userStore //
 	) {
 		this.authService = authenticationService;
 		this.privilegeContextFactory = privilegeContextFactory;
 		this.view = dataView;
+		this.userStore = userStore;
 	}
 
 	@Override
@@ -346,6 +350,14 @@ public class DefaultAuthenticationLogic implements AuthenticationLogic {
 		final ModelValidator<UserDTO> validator = new UserDTOUpdateValidator();
 		if (!validator.validate(userDTO)) {
 			throw ORMExceptionType.ORM_ERROR_CARD_UPDATE.createException();
+		}
+		if (userStore.getUser().getPreferredGroup().isRestrictedAdmin() && isNotBlank(userDTO.getPassword())) {
+			final CMUser user = authService.fetchUserByUsername(userDTO.getUsername());
+			for (final String element : user.getGroupNames()) {
+				if (authService.fetchGroupWithName(element).isAdmin()) {
+					throw AuthExceptionType.AUTH_NOT_AUTHORIZED.createException();
+				}
+			}
 		}
 		final CMUser updatedUser = authService.updateUser(userDTO);
 		return updatedUser;

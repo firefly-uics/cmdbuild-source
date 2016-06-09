@@ -20,7 +20,10 @@ import org.cmdbuild.auth.UserStore;
 import org.cmdbuild.auth.acl.CMGroup;
 import org.cmdbuild.auth.acl.NullGroup;
 import org.cmdbuild.auth.context.DefaultPrivilegeContextFactory;
+import org.cmdbuild.auth.context.SystemPrivilegeContext;
+import org.cmdbuild.auth.user.AnonymousUser;
 import org.cmdbuild.auth.user.CMUser;
+import org.cmdbuild.auth.user.OperationUser;
 import org.cmdbuild.dao.entry.DBCard;
 import org.cmdbuild.exception.AuthException;
 import org.cmdbuild.exception.AuthException.AuthExceptionType;
@@ -51,6 +54,10 @@ public class DefaultAuthenticationLogicTest extends IntegrationTestBase {
 	private static final String USER_DEFAULT_GROUP = "userdef";
 	private static final String PASSWORD_DEFAULT_GROUP = "userdef_password";
 
+	private static OperationUser anonymous() {
+		return new OperationUser(new AnonymousUser(), new SystemPrivilegeContext(), new NullGroup());
+	}
+
 	private UserRolePrivilegeFixture fixture;
 
 	private AuthenticationLogic authLogic;
@@ -72,7 +79,8 @@ public class DefaultAuthenticationLogicTest extends IntegrationTestBase {
 		service.setUserFetchers(dbAuthenticator);
 		service.setGroupFetcher(new DBGroupFetcher(dbDataView(), Lists.<PrivilegeFetcherFactory> newArrayList()));
 		IN_MEMORY_STORE = inMemory(operationUser());
-		authLogic = new DefaultAuthenticationLogic(service, new DefaultPrivilegeContextFactory(), dbDataView());
+		authLogic = new DefaultAuthenticationLogic(service, new DefaultPrivilegeContextFactory(), dbDataView(),
+				IN_MEMORY_STORE);
 
 		populateDatabaseWithUsersGroupsAndPrivileges();
 	}
@@ -143,7 +151,7 @@ public class DefaultAuthenticationLogicTest extends IntegrationTestBase {
 				.withGroupName((String) groupA.getCode()) //
 				.build();
 		// when
-		final Response response = authLogic.login(loginDTO, IN_MEMORY_STORE);
+		final Response response = authLogic.login(loginDTO, inMemory(anonymous()));
 
 		// then
 		assertFalse(response.isSuccess());
@@ -180,7 +188,7 @@ public class DefaultAuthenticationLogicTest extends IntegrationTestBase {
 				.build();
 
 		// when
-		final Response response = authLogic.login(loginDTO, IN_MEMORY_STORE);
+		final Response response = authLogic.login(loginDTO, inMemory(anonymous()));
 
 		// then
 		assertTrue(response.isSuccess());
@@ -196,7 +204,7 @@ public class DefaultAuthenticationLogicTest extends IntegrationTestBase {
 				.build();
 
 		// when
-		final Response response = authLogic.login(loginDTO, IN_MEMORY_STORE);
+		final Response response = authLogic.login(loginDTO, inMemory(anonymous()));
 
 		// then
 		assertTrue(response.isSuccess());
@@ -213,7 +221,7 @@ public class DefaultAuthenticationLogicTest extends IntegrationTestBase {
 				.build();
 
 		// when
-		final Response response = authLogic.login(loginDTO, IN_MEMORY_STORE);
+		final Response response = authLogic.login(loginDTO, inMemory(anonymous()));
 
 		// then
 		assertFalse(response.isSuccess());
@@ -231,7 +239,7 @@ public class DefaultAuthenticationLogicTest extends IntegrationTestBase {
 				.withGroupName((String) groupA.getCode()) //
 				.build();
 		// when
-		final Response response = authLogic.login(loginDTO, IN_MEMORY_STORE);
+		final Response response = authLogic.login(loginDTO, inMemory(anonymous()));
 
 		// then
 		assertFalse(response.isSuccess());

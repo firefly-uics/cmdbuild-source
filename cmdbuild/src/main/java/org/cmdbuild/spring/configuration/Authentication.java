@@ -160,7 +160,7 @@ public class Authentication {
 	@Bean
 	public StandardSessionLogic standardSessionLogic() {
 		final DefaultAuthenticationLogic delegate = new DefaultAuthenticationLogic(defaultAuthenticationService(),
-				privilegeManagement.privilegeContextFactory(), data.systemDataView());
+				privilegeManagement.privilegeContextFactory(), data.systemDataView(), userStore);
 		return new StandardSessionLogic(new DefaultSessionLogic(delegate, sessionStore(), userStore,
 				defaultSessionStore(), web.simpleTokenGenerator(), canImpersonate()));
 	}
@@ -168,7 +168,7 @@ public class Authentication {
 	@Bean
 	public SoapSessionLogic soapSessionLogic() {
 		final AuthenticationLogic delegate = new DefaultAuthenticationLogic(soapAuthenticationService(),
-				privilegeManagement.privilegeContextFactory(), data.systemDataView());
+				privilegeManagement.privilegeContextFactory(), data.systemDataView(), userStore);
 		return new SoapSessionLogic(new DefaultSessionLogic(delegate, sessionStore(), userStore, defaultSessionStore(),
 				web.simpleTokenGenerator(), canImpersonate()));
 	}
@@ -176,7 +176,7 @@ public class Authentication {
 	@Bean
 	public RestSessionLogic restSessionLogic() {
 		final AuthenticationLogic delegate = new DefaultAuthenticationLogic(restAuthenticationService(),
-				privilegeManagement.privilegeContextFactory(), data.systemDataView());
+				privilegeManagement.privilegeContextFactory(), data.systemDataView(), userStore);
 		return new RestSessionLogic(new DefaultSessionLogic(delegate, sessionStore(), userStore, defaultSessionStore(),
 				web.simpleTokenGenerator(), canImpersonate()));
 	}

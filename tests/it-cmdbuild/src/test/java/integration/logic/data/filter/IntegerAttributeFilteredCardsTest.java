@@ -121,7 +121,7 @@ public class IntegerAttributeFilteredCardsTest extends FilteredCardsFixture {
 		final Iterable<Card> fetchedCards = dataAccessLogic.fetchCards(createdClass.getName(), queryOptions).elements();
 
 		// then
-		assertEquals(1, size(fetchedCards));
+		assertEquals(3, size(fetchedCards));
 	}
 
 	@Test
