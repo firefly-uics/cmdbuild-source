@@ -23,6 +23,7 @@ import static org.cmdbuild.dao.query.clause.Clauses.call;
 import static org.cmdbuild.data.store.Storables.storableOf;
 import static org.cmdbuild.data.store.email.EmailConstants.EMAIL_CLASS_NAME;
 import static org.cmdbuild.logic.taskmanager.task.email.Actions.safe;
+import static org.cmdbuild.services.email.EmailUtils.addLineBreakForHtml;
 import static org.cmdbuild.services.template.engine.EngineNames.CARD_PREFIX;
 import static org.cmdbuild.services.template.engine.EngineNames.CQL_PREFIX;
 import static org.cmdbuild.services.template.engine.EngineNames.DB_TEMPLATE;
@@ -74,6 +75,7 @@ import org.cmdbuild.services.email.Attachment;
 import org.cmdbuild.services.email.Email;
 import org.cmdbuild.services.email.EmailService;
 import org.cmdbuild.services.email.EmailServiceFactory;
+import org.cmdbuild.services.email.ForwardingEmail;
 import org.cmdbuild.services.template.engine.CardEngine;
 import org.cmdbuild.services.template.engine.CqlEngine;
 import org.cmdbuild.services.template.engine.DatabaseEngine;
@@ -224,6 +226,19 @@ public class ReadEmailTaskJobFactory extends AbstractJobFactory<ReadEmailTask> {
 								.getName(), stored.getReference());
 						final CMCard processCard = workflowLogic.getProcessInstance(genericProcessCard.getType()
 								.getName(), stored.getReference());
+						final Email htmlEmail = new ForwardingEmail() {
+
+							@Override
+							protected Email delegate() {
+								return email;
+							}
+							
+							@Override
+							public String getContent() {
+								return addLineBreakForHtml(super.getContent());
+							}
+
+						};
 						final EngineBasedTemplateResolver templateResolver = EngineBasedTemplateResolver.newInstance() //
 								.withEngine(emptyStringOnNull(nullOnError( //
 										UserEmailEngine.newInstance() //
@@ -244,7 +259,7 @@ public class ReadEmailTaskJobFactory extends AbstractJobFactory<ReadEmailTask> {
 										GROUP_USERS_PREFIX) //
 								.withEngine(emptyStringOnNull(nullOnError( //
 										EmailEngine.newInstance() //
-												.withEmail(email) //
+												.withEmail(htmlEmail) //
 												.build())), //
 										EMAIL_PREFIX) //
 								.withEngine(emptyStringOnNull(nullOnError(map( //

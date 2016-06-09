@@ -156,6 +156,8 @@ FIXES
 
  * A user logged in as a limited administrator can change the passwords of other users
 
+ * "TranslationUUID" for "LookUp" table always valid
+
 
 
 
