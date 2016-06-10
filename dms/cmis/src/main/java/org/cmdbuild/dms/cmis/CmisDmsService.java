@@ -775,7 +775,7 @@ public class CmisDmsService implements DmsService, LoggingSupport, ChangeListene
 					}
 				}
 			} else {
-				if (model().getCategory() != null) {
+				if (model().getCategory() != null && cmisDocument != null) {
 					final Property<Object> property = cmisDocument.getProperty(model().getCategory());
 					if (property != null) {
 						category = converterOf(property.getDefinition()).convertFromCmisValue(session,
@@ -784,19 +784,19 @@ public class CmisDmsService implements DmsService, LoggingSupport, ChangeListene
 				}
 			}
 
+			final List<Object> secondaryTypes = newArrayList();
+			if (model().getSecondaryTypeList() != null) {
+				logger.info(MARKER, "secondary type list legth '{}'", model().getSecondaryTypeList().size());
+				for (final String secondaryType : model().getSecondaryTypeList()) {
+					logger.info(MARKER, "adding secondary types '{}'", secondaryType);
+					secondaryTypes.add(secondaryType);
+				}
+			} else {
+				logger.info(MARKER, "no secondary type list in model");
+			}
+
 			if (category != null) {
 				logger.info(MARKER, "processing secondary types  for '{}'", category);
-				final List<Object> secondaryTypes = newArrayList();
-				if (model().getSecondaryTypeList() != null) {
-					logger.info(MARKER, "secondary type list legth '{}'", model().getSecondaryTypeList().size());
-					for (final String secondaryType : model().getSecondaryTypeList()) {
-						logger.info(MARKER, "adding secondary types '{}'", secondaryType);
-						secondaryTypes.add(secondaryType);
-					}
-				} else {
-					logger.info(MARKER, "no secondary type list in model");
-				}
-
 				final CmisDocumentType documentType = documentTypeDefinitions.get().get(category);
 				if (documentType != null) {
 					for (final MetadataGroupDefinition group : documentType.getMetadataGroupDefinitions()) {
@@ -853,9 +853,8 @@ public class CmisDmsService implements DmsService, LoggingSupport, ChangeListene
 				} else {
 					logger.info(MARKER, "cmisdocument is null");
 				}
-
-				properties.put(SECONDARY_OBJECT_TYPE_IDS, secondaryTypes);
 			}
+			properties.put(SECONDARY_OBJECT_TYPE_IDS, secondaryTypes);
 		}
 
 		if (cmisDocument == null) {

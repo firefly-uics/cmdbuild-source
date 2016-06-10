@@ -48,34 +48,34 @@ public class DisposingLockableStore<L extends Lock> extends ForwardingLockableSt
 
 	@Override
 	public void add(final Lockable lockable, final L lock) {
-		disposer.dispose(lockable, delegate);
-		super.add(lockable, lock);
+		disposer.dispose(lockable, delegate());
+		delegate().add(lockable, lock);
 	}
 
 	@Override
 	public void remove(final Lockable lockable) {
-		disposer.dispose(lockable, delegate);
-		super.remove(lockable);
+		disposer.dispose(lockable, delegate());
+		delegate().remove(lockable);
 	}
 
 	@Override
 	public boolean isPresent(final Lockable lockable) {
-		disposer.dispose(lockable, delegate);
-		return super.isPresent(lockable);
+		disposer.dispose(lockable, delegate());
+		return delegate().isPresent(lockable);
 	}
 
 	@Override
 	public Optional<L> get(final Lockable lockable) {
-		disposer.dispose(lockable, delegate);
-		return super.get(lockable);
+		disposer.dispose(lockable, delegate());
+		return delegate().get(lockable);
 	}
 
 	@Override
 	public Iterable<Lockable> stored() {
-		for (final Lockable lockable : delegate.stored()) {
-			disposer.dispose(lockable, delegate);
+		for (final Lockable lockable : delegate().stored()) {
+			disposer.dispose(lockable, delegate());
 		}
-		return super.stored();
+		return delegate().stored();
 	}
 
 }

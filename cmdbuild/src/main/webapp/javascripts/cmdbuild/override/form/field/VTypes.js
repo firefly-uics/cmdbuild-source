@@ -3,6 +3,7 @@
 	/**
 	 * Custom VTypes:
 	 * 	- alphanumextended: to validate user names (alphanum and _ - .)
+	 * 	- alphanumlines: alphanumeric and lines ("_" and "-")
 	 * 	- comment: all except pipe (all excluded |)
 	 * 	- commentextended: all except pipe and apostrophe (all excluded | ')
 	 * 	- ipv4: ipv4 validation (CIDR support)
@@ -30,6 +31,26 @@
 			 * @type {RegExp}
 			 */
 			alphanumextendedMask: /^[a-zA-Z0-9_.+#@-]+$/i,
+
+		// Alpha-numeric lines (alphanumlines)
+			/**
+			 * @param {String} value
+			 *
+			 * @returns {Boolean}
+			 */
+			alphanumlines: function (value) {
+				return this.alphanumlinesMask.test(value);
+			},
+
+			/**
+			 * @type {String}
+			 */
+			alphanumlinesText: 'This field should only contain letters, numbers, underscore (_) and hyphen (-)',
+
+			/**
+			 * @type {RegExp}
+			 */
+			alphanumlinesMask: /^[a-zA-Z0-9_-]+$/i,
 
 		// Comment (comment)
 			/**

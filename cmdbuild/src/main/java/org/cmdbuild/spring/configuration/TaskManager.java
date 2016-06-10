@@ -36,6 +36,8 @@ import org.cmdbuild.logic.taskmanager.task.email.ReadEmailTask;
 import org.cmdbuild.logic.taskmanager.task.email.ReadEmailTaskJobFactory;
 import org.cmdbuild.logic.taskmanager.task.event.asynchronous.AsynchronousEventTask;
 import org.cmdbuild.logic.taskmanager.task.event.asynchronous.AsynchronousEventTaskJobFactory;
+import org.cmdbuild.logic.taskmanager.task.generic.GenericTask;
+import org.cmdbuild.logic.taskmanager.task.generic.GenericTaskJobFactory;
 import org.cmdbuild.logic.taskmanager.task.process.StartWorkflowTask;
 import org.cmdbuild.logic.taskmanager.task.process.StartWorkflowTaskJobFactory;
 import org.cmdbuild.services.event.DefaultObserverCollector;
@@ -64,6 +66,9 @@ public class TaskManager {
 	private Other other;
 
 	@Autowired
+	private Report report;
+
+	@Autowired
 	private Scheduler scheduler;
 
 	@Autowired
@@ -86,7 +91,7 @@ public class TaskManager {
 				defaultSchedulerTaskFacade(), //
 				defaultSynchronousEventFacade(), //
 				email.emailLogic() //
-				));
+		));
 	}
 
 	@Bean
@@ -153,6 +158,7 @@ public class TaskManager {
 		final DefaultLogicAndSchedulerConverter converter = new DefaultLogicAndSchedulerConverter();
 		converter.register(AsynchronousEventTask.class, asynchronousEventTaskJobFactory());
 		converter.register(ConnectorTask.class, connectorTaskJobFactory());
+		converter.register(GenericTask.class, genericTaskJobFactory());
 		converter.register(ReadEmailTask.class, readEmailTaskJobFactory());
 		converter.register(StartWorkflowTask.class, startWorkflowTaskJobFactory());
 		return converter;
@@ -175,7 +181,7 @@ public class TaskManager {
 		return new ConnectorTaskJobFactory( //
 				data.systemDataView(), //
 				other.dataSourceHelper(), //
-				defaultAttributeValueAdapter(),//
+				defaultAttributeValueAdapter(), //
 				email.emailAccountFacade(), //
 				email.emailTemplateLogic(), //
 				emailTemplateSenderFactory() //
@@ -185,6 +191,17 @@ public class TaskManager {
 	@Bean
 	protected DefaultAttributeValueAdapter defaultAttributeValueAdapter() {
 		return new DefaultAttributeValueAdapter(data.systemDataView(), data.lookupStore());
+	}
+
+	private GenericTaskJobFactory genericTaskJobFactory() {
+		return new GenericTaskJobFactory( //
+				email.emailAccountFacade(), //
+				email.emailTemplateLogic(), //
+				report.reportLogic(), //
+				data.systemDataView(), //
+				template.databaseTemplateEngine(), //
+				emailTemplateSenderFactory() //
+		);
 	}
 
 	@Bean
@@ -242,7 +259,8 @@ public class TaskManager {
 
 	@Bean
 	protected EmailTemplateSenderFactory emailTemplateSenderFactory() {
-		return new DefaultEmailTemplateSenderFactory(email.emailServiceFactory(), email.emailLogic());
+		return new DefaultEmailTemplateSenderFactory(email.emailServiceFactory(), email.emailLogic(),
+				email.emailAttachmentsLogic());
 	}
 
 }

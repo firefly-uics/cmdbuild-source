@@ -1,5 +1,7 @@
 package org.cmdbuild.servlets.json.serializers;
 
+import static org.apache.commons.lang3.ObjectUtils.defaultIfNull;
+import static org.cmdbuild.logic.privileges.PrivilegeInfo.EMPTY_ATTRIBUTES_PRIVILEGES;
 import static org.cmdbuild.servlets.json.CommunicationConstants.ATTRIBUTES_PRIVILEGES;
 import static org.cmdbuild.servlets.json.CommunicationConstants.GROUP_ID;
 import static org.cmdbuild.servlets.json.CommunicationConstants.PRIVILEGES;
@@ -33,7 +35,8 @@ public class PrivilegeSerializer {
 		jsonPrivilege.put(PRIVILEGE_OBJ_NAME, privilege.getPrivilegedObjectName());
 		jsonPrivilege.put(PRIVILEGE_OBJ_DESCRIPTION, privilege.getPrivilegedObjectDescription());
 		jsonPrivilege.put(PRIVILEGE_FILTER, privilege.getPrivilegeFilter());
-		jsonPrivilege.put(ATTRIBUTES_PRIVILEGES, privilege.getAttributesPrivileges());
+		jsonPrivilege.put(ATTRIBUTES_PRIVILEGES,
+				defaultIfNull(privilege.getAttributesPrivileges(), EMPTY_ATTRIBUTES_PRIVILEGES));
 		// TODO serialize cardEditMode too
 		return jsonPrivilege;
 	}
@@ -50,7 +53,7 @@ public class PrivilegeSerializer {
 								privilege.getPrivilegedObjectId() + //
 								") while searching for grant for group " + //
 								privilege.getGroupId() //
-						);
+				);
 			}
 		}
 

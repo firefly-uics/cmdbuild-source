@@ -71,6 +71,16 @@
 			delegable: "CMDBuild.core.CMDelegable"
 		},
 
+		/**
+		 * @cfg {CMDBuild.controller.management.common.CMCardGridController}
+		 */
+		delegate: undefined,
+
+		/**
+		 * @property {CMDBuild.controller.common.entryTypeGrid.filter.advanced.Advanced}
+		 */
+		controllerAdvancedFilterButtons: undefined,
+
 		CLASS_COLUMN_DATA_INDEX: 'IdClass_value',	// for the header configuration
 													// the name is used for the server-side sorting
 
@@ -159,9 +169,8 @@
 					this.gridSearchField.setValue(""); // clear only the field without reload the grid
 				}
 
-				if (this.filterMenuButton) {
-					this.filterMenuButton.reconfigureForEntryType(_CMCache.getEntryTypeById(classId));
-				}
+				if (this.cmAdvancedFilter)
+					this.controllerAdvancedFilterButtons.cmfg('entryTypeSet', { value: _CMCache.getEntryTypeById(classId).getData() });
 
 				if (me.printGridMenu) {
 					me.printGridMenu.setDisabled(!classId);
@@ -478,23 +487,31 @@
 		// protected
 		buildClassColumn: function() {
 			return {
-				header: CMDBuild.Translation.management.modcard.subclass,
+				header: CMDBuild.Translation.subClass,
 				width: 100,
 				sortable: false,
 				dataIndex: this.CLASS_COLUMN_DATA_INDEX
 			};
 		},
 
-		disableFilterMenuButton: function() {
-			if (this.cmAdvancedFilter) {
-				this.filterMenuButton.disable();
-			}
+		/**
+		 * Forwarder method
+		 *
+		 * @returns {Void}
+		 */
+		disableFilterMenuButton: function () {
+			if (this.cmAdvancedFilter)
+				this.controllerAdvancedFilterButtons.getView().disable();
 		},
 
-		enableFilterMenuButton: function() {
-			if (this.cmAdvancedFilter) {
-				this.filterMenuButton.enable();
-			}
+		/**
+		 * Forwarder method
+		 *
+		 * @returns {Void}
+		 */
+		enableFilterMenuButton: function () {
+			if (this.cmAdvancedFilter)
+				this.controllerAdvancedFilterButtons.getView().enable();
 		},
 
 		applyFilterToStore: function(filter) {
@@ -520,16 +537,13 @@
 		}
 
 		if (me.cmAdvancedFilter) {
-			me.filterMenuButton = new CMDBuild.view.management.common.filter.CMFilterMenuButton();
-			_CMUtils.forwardMethods(me, me.filterMenuButton, [
+			me.controllerAdvancedFilterButtons = Ext.create('CMDBuild.controller.common.entryTypeGrid.filter.advanced.Advanced', { masterGrid: me });
+			_CMUtils.forwardMethods(me, me.controllerAdvancedFilterButtons.getView(), [
 				"enableClearFilterButton",
 				"disableClearFilterButton",
-				"enableSaveFilterButton",
-				"disableSaveFilterButton",
-				"setFilterButtonLabel",
-				"selectAppliedFilter"
+				"setFilterButtonLabel"
 			]);
-			items.push(me.filterMenuButton);
+			items.push(me.controllerAdvancedFilterButtons.getView());
 		}
 
 		if (me.cmAddPrintButton) {

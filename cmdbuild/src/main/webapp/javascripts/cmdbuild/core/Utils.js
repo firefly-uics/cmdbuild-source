@@ -58,7 +58,8 @@
 		 *
 		 * @returns {Array} out
 		 *
-		 * TODO: parseInt will be useless when model will be refactored
+		 * FIXME: parseInt will be useless when model will be refactored
+		 * FIXME: to avoid to use cache just wrap this function in readAllClasses server call
 		 */
 		getEntryTypeAncestorsId: function (entryType) {
 			var out = [];

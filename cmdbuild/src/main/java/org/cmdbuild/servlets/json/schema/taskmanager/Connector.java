@@ -8,6 +8,7 @@ import static org.cmdbuild.common.java.sql.DataSourceTypes.oracle;
 import static org.cmdbuild.common.java.sql.DataSourceTypes.postgresql;
 import static org.cmdbuild.common.java.sql.DataSourceTypes.sqlserver;
 import static org.cmdbuild.logic.taskmanager.task.connector.ConnectorTask.NULL_SOURCE_CONFIGURATION;
+import static org.cmdbuild.services.json.dto.JsonResponse.success;
 import static org.cmdbuild.servlets.json.CommunicationConstants.ACTIVE;
 import static org.cmdbuild.servlets.json.CommunicationConstants.ATTRIBUTE_MAPPING;
 import static org.cmdbuild.servlets.json.CommunicationConstants.CLASS_ATTRIBUTE;
@@ -28,6 +29,7 @@ import static org.cmdbuild.servlets.json.CommunicationConstants.DATA_SOURCE_TYPE
 import static org.cmdbuild.servlets.json.CommunicationConstants.DATA_SOURCE_TYPE_SQL;
 import static org.cmdbuild.servlets.json.CommunicationConstants.DELETE;
 import static org.cmdbuild.servlets.json.CommunicationConstants.DESCRIPTION;
+import static org.cmdbuild.servlets.json.CommunicationConstants.EXECUTABLE;
 import static org.cmdbuild.servlets.json.CommunicationConstants.ID;
 import static org.cmdbuild.servlets.json.CommunicationConstants.IS_KEY;
 import static org.cmdbuild.servlets.json.CommunicationConstants.MYSQL_LABEL;
@@ -53,13 +55,13 @@ import org.apache.commons.lang3.Validate;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.cmdbuild.common.java.sql.DataSourceTypes.DataSourceType;
+import org.cmdbuild.logic.taskmanager.Task;
 import org.cmdbuild.logic.taskmanager.task.connector.ConnectorTask;
 import org.cmdbuild.logic.taskmanager.task.connector.ConnectorTask.AttributeMapping;
 import org.cmdbuild.logic.taskmanager.task.connector.ConnectorTask.ClassMapping;
 import org.cmdbuild.logic.taskmanager.task.connector.ConnectorTask.SourceConfiguration;
 import org.cmdbuild.logic.taskmanager.task.connector.ConnectorTask.SourceConfigurationVisitor;
 import org.cmdbuild.logic.taskmanager.task.connector.ConnectorTask.SqlSourceConfiguration;
-import org.cmdbuild.logic.taskmanager.Task;
 import org.cmdbuild.services.json.dto.JsonResponse;
 import org.cmdbuild.servlets.json.CommunicationConstants;
 import org.cmdbuild.servlets.json.JSONBaseWithSpringContext;
@@ -353,6 +355,11 @@ public class Connector extends JSONBaseWithSpringContext {
 			return delegate.getCronExpression();
 		}
 
+		@JsonProperty(EXECUTABLE)
+		public boolean executable() {
+			return delegate.isExecutable();
+		}
+
 		@JsonProperty(NOTIFICATION_ACTIVE)
 		public boolean isNotificationActive() {
 			return delegate.isNotificationActive();
@@ -500,7 +507,7 @@ public class Connector extends JSONBaseWithSpringContext {
 			final JsonSqlSourceHandler handler = JsonSqlSourceHandler.of(element);
 			availableTypes.add(JsonImmutableEntry.of(handler.client, handler.label));
 		}
-		return JsonResponse.success(availableTypes);
+		return success(availableTypes);
 	}
 
 	@Admin
@@ -529,9 +536,10 @@ public class Connector extends JSONBaseWithSpringContext {
 				.withAttributeMappings(attributeMappingOf(jsonAttributeMapping)) //
 				.build();
 		final Long id = taskManagerLogic().create(task);
-		return JsonResponse.success(id);
+		return success(id);
 	}
 
+	@Admin
 	@JSONExported
 	public JsonResponse read( //
 			@Parameter(value = ID) final Long id //
@@ -540,13 +548,14 @@ public class Connector extends JSONBaseWithSpringContext {
 				.withId(id) //
 				.build();
 		final ConnectorTask readed = taskManagerLogic().read(task, ConnectorTask.class);
-		return JsonResponse.success(new JsonConnectorTask(readed));
+		return success(new JsonConnectorTask(readed));
 	}
 
+	@Admin
 	@JSONExported
 	public JsonResponse readAll() {
 		final Iterable<? extends Task> tasks = taskManagerLogic().read(ConnectorTask.class);
-		return JsonResponse.success(JsonElements.of(from(tasks) //
+		return success(JsonElements.of(from(tasks) //
 				.transform(TASK_TO_JSON_TASK)));
 	}
 
@@ -578,7 +587,7 @@ public class Connector extends JSONBaseWithSpringContext {
 				.withAttributeMappings(attributeMappingOf(jsonAttributeMapping)) //
 				.build();
 		taskManagerLogic().update(task);
-		return JsonResponse.success();
+		return success();
 	}
 
 	@Admin
@@ -663,8 +672,8 @@ public class Connector extends JSONBaseWithSpringContext {
 		return JsonSourceConfigurationHandler.of(type).convert(jsonConfiguration);
 	}
 
-	private Iterable<ClassMapping> classMappingOf(final String json) throws JsonParseException, JsonMappingException,
-			IOException {
+	private Iterable<ClassMapping> classMappingOf(final String json)
+			throws JsonParseException, JsonMappingException, IOException {
 		final Iterable<JsonClassMapping> jsonClassMapping;
 		if (isBlank(json)) {
 			jsonClassMapping = NO_CLASS_MAPPINGS;
@@ -676,8 +685,8 @@ public class Connector extends JSONBaseWithSpringContext {
 				.transform(JSON_CLASS_MAPPING_TO_CLASS_MAPPING);
 	}
 
-	private Iterable<AttributeMapping> attributeMappingOf(final String json) throws JsonParseException,
-			JsonMappingException, IOException {
+	private Iterable<AttributeMapping> attributeMappingOf(final String json)
+			throws JsonParseException, JsonMappingException, IOException {
 		final Iterable<JsonAttributeMapping> jsonAttributeMappings;
 		if (isBlank(json)) {
 			jsonAttributeMappings = NO_ATTRIBUTE_MAPPINGS;

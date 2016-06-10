@@ -251,6 +251,12 @@ public class Predicates {
 
 	private static abstract class AttributePredicate<T> extends ForwardingObject implements Predicate<CMAttribute> {
 
+		/**
+		 * Usable by subclasses only.
+		 */
+		protected AttributePredicate() {
+		}
+
 		@Override
 		protected abstract Predicate<T> delegate();
 
@@ -337,6 +343,12 @@ public class Predicates {
 
 	private static abstract class FunctionPredicate<T> extends ForwardingObject implements Predicate<CMFunction> {
 
+		/**
+		 * Usable by subclasses only.
+		 */
+		protected FunctionPredicate() {
+		}
+
 		@Override
 		protected abstract Predicate<T> delegate();
 
@@ -373,8 +385,14 @@ public class Predicates {
 		return new FunctionId(delegate);
 	}
 
-	private static abstract class FunctionParameterPredicate<T> extends ForwardingObject implements
-			Predicate<CMFunctionParameter> {
+	private static abstract class FunctionParameterPredicate<T> extends ForwardingObject
+			implements Predicate<CMFunctionParameter> {
+
+		/**
+		 * Usable by subclasses only.
+		 */
+		protected FunctionParameterPredicate() {
+		}
 
 		@Override
 		protected abstract Predicate<T> delegate();
@@ -413,6 +431,12 @@ public class Predicates {
 	}
 
 	private static abstract class EntryTypePredicate<T> extends ForwardingObject implements Predicate<CMEntryType> {
+
+		/**
+		 * Usable by subclasses only.
+		 */
+		protected EntryTypePredicate() {
+		}
 
 		@Override
 		protected abstract Predicate<T> delegate();

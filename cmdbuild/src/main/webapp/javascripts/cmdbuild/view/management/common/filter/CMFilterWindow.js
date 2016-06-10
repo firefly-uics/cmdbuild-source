@@ -126,7 +126,7 @@
 		 * @protected
 		 */
 		setWindowTitle: function() {
-			var prefix = CMDBuild.Translation.management.findfilter.window_title;
+			var prefix = CMDBuild.Translation.searchFilter;
 			var et = _CMCache.getEntryTypeByName(this.className);
 
 			this.title = Ext.String.format(titleTemplate, prefix, this.filter.getName(), et.getDescription());
@@ -140,13 +140,13 @@
 
 			this.buttons = [
 				{
-					text: CMDBuild.Translation.management.findfilter.apply,
+					text: CMDBuild.Translation.apply,
 					handler: function() {
 						me.callDelegates('onCMFilterWindowApplyButtonClick', [me, me.getFilter()]);
 					}
 				},
 				{
-					text: CMDBuild.Translation.management.findfilter.saveandapply,
+					text: CMDBuild.Translation.saveAndApply,
 					handler: function() {
 						me.callDelegates('onCMFilterWindowSaveAndApplyButtonClick', [me, me.getFilter()]);
 					}

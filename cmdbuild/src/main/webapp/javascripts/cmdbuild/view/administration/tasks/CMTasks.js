@@ -1,7 +1,5 @@
 (function() {
 
-	var tr = CMDBuild.Translation.administration.tasks;
-
 	Ext.define('CMDBuild.view.administration.tasks.CMTasks', {
 		extend: 'Ext.panel.Panel',
 
@@ -15,7 +13,7 @@
 		/**
 		 * @cfg {String}
 		 */
-		baseTitle: tr.title,
+		baseTitle: CMDBuild.Translation.administration.tasks.title,
 
 		/**
 		 * @property {CMDBuild.view.administration.tasks.CMTasksForm}
@@ -71,7 +69,7 @@
 						this.getDockedComponent(CMDBuild.core.constants.Proxy.TOOLBAR_TOP).add(
 							Ext.create('Ext.button.Split', {
 								iconCls: 'add',
-								text: tr.add,
+								text: CMDBuild.Translation.administration.tasks.add,
 
 								handler: function() {
 									this.showMenu();
@@ -80,7 +78,7 @@
 								menu: Ext.create('Ext.menu.Menu', { // Rendered as dropdown menu on button click
 									items: [
 										{
-											text: tr.tasksTypes.connector,
+											text: CMDBuild.Translation.administration.tasks.tasksTypes.connector,
 											scope: this,
 
 											handler: function(button, e) {
@@ -88,7 +86,7 @@
 											}
 										},
 										{
-											text: tr.tasksTypes.email,
+											text: CMDBuild.Translation.administration.tasks.tasksTypes.email,
 											scope: this,
 
 											handler: function(button, e) {
@@ -96,10 +94,10 @@
 											}
 										},
 										{
-											text: tr.tasksTypes.event,
+											text: CMDBuild.Translation.administration.tasks.tasksTypes.event,
 											menu: [
 												{
-													text: tr.tasksTypes.eventTypes.asynchronous,
+													text: CMDBuild.Translation.administration.tasks.tasksTypes.eventTypes.asynchronous,
 													scope: this,
 
 													handler: function(button, e) {
@@ -107,7 +105,7 @@
 													}
 												},
 												{
-													text: tr.tasksTypes.eventTypes.synchronous,
+													text: CMDBuild.Translation.administration.tasks.tasksTypes.eventTypes.synchronous,
 													scope: this,
 
 													handler: function(button, e) {
@@ -117,12 +115,25 @@
 											]
 										},
 										{
-											text: tr.tasksTypes.workflow,
+											text: CMDBuild.Translation.administration.tasks.tasksTypes.workflow,
 											scope: this,
 
 											handler: function(button, e) {
 												this.delegate.cmOn('onAddButtonClick', { type: 'workflow' });
 											}
+										},
+										{
+											text: CMDBuild.Translation.others,
+											menu: [
+												{
+													text: CMDBuild.Translation.sendEmail,
+													scope: this,
+
+													handler: function(button, e) {
+														this.delegate.cmOn('onAddButtonClick', { type: 'generic' });
+													}
+												}
+											]
 										}
 									]
 								})
@@ -134,7 +145,7 @@
 						this.getDockedComponent(CMDBuild.core.constants.Proxy.TOOLBAR_TOP).add(
 							Ext.create('Ext.button.Split', {
 								iconCls: 'add',
-								text: tr.add,
+								text: CMDBuild.Translation.administration.tasks.add,
 
 								handler: function() {
 									this.showMenu();
@@ -143,17 +154,17 @@
 								menu: Ext.create('Ext.menu.Menu', { // Rendered as dropdown menu on button click
 									items: [
 										{
-											text: tr.tasksTypes.event,
+											text: CMDBuild.Translation.administration.tasks.tasksTypes.event,
 											menu: [
 												{
-													text: tr.tasksTypes.eventTypes.asynchronous,
+													text: CMDBuild.Translation.administration.tasks.tasksTypes.eventTypes.asynchronous,
 													scope: this,
 													handler: function() {
 														this.delegate.cmOn('onAddButtonClick', { type: 'event_asynchronous' });
 													}
 												},
 												{
-													text: tr.tasksTypes.eventTypes.synchronous,
+													text: CMDBuild.Translation.administration.tasks.tasksTypes.eventTypes.synchronous,
 													scope: this,
 													handler: function() {
 														this.delegate.cmOn('onAddButtonClick', { type: 'event_synchronous' });
@@ -170,7 +181,7 @@
 					default: {
 						this.getDockedComponent(CMDBuild.core.constants.Proxy.TOOLBAR_TOP).add(
 							Ext.create('CMDBuild.core.buttons.iconized.add.Add', {
-								text: tr.add,
+								text: CMDBuild.Translation.administration.tasks.add,
 								scope: this,
 
 								handler: function(button, e) {

@@ -34,38 +34,45 @@
 		},
 
 		setFilterApplied: function(store, filter, applied) {
-			var storedFilter = getStoredFilter(store, filter);
-			if (storedFilter) {
-				storedFilter.setApplied(applied);
+			if (Ext.getClassName(filter) == "CMDBuild.model.CMFilterModel") {
+				var storedFilter = getStoredFilter(store, filter);
+				if (storedFilter && Ext.isFunction(storedFilter.setApplied)) {
+					storedFilter.setApplied(applied);
+				}
 			}
 		}
 	});
 
 	function removeFilterIfAlreadyExists(store, filter) {
-		var storedFilter = getStoredFilter(store, filter);
-		if (storedFilter) {
-			store.remove(storedFilter);
+		if (Ext.getClassName(filter) == "CMDBuild.model.CMFilterModel") {
+			var storedFilter = getStoredFilter(store, filter);
+			if (storedFilter) {
+				store.remove(storedFilter);
+			}
 		}
 	}
 
 	function getStoredFilter(store, filter) {
-		var storedFilter = null;
-		if (!store) {
+		if (Ext.getClassName(filter) == "CMDBuild.model.CMFilterModel") {
+			var storedFilter = null;
+			if (!store) {
+				return storedFilter;
+			}
+
+			var recordIndex = store.findBy(function(record) {
+				return (filter.getName() == record.get('name')) && (filter.dirty == record.dirty);
+			});
+			if (recordIndex >= 0) {
+				storedFilter = store.getAt(recordIndex);
+			}
+
 			return storedFilter;
 		}
-
-		var recordIndex = store.findBy(function(record) {
-			return (filter.getName() == record.getName()) && (filter.dirty == record.dirty);
-		});
-		if (recordIndex >= 0) {
-			storedFilter = store.getAt(recordIndex);
-		}
-
-		return storedFilter;
 	}
 
 	function getFilterByName(me, name, checkDirty) {
 		var s = me.getAvailableFilterStore();
 		return s.findRecord("name", name);
 	}
+
 })();

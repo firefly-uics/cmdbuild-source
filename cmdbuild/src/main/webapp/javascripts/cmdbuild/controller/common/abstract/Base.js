@@ -248,15 +248,17 @@
 					}
 
 					if (!Ext.isEmpty(attributePath) && Ext.isArray(attributePath))
-						Ext.Array.forEach(attributePath, function (attributeName, i, allAttributeNames) {
+						Ext.Array.each(attributePath, function (attributeName, i, allAttributeNames) {
 							if (
-								!Ext.isEmpty(attributeName) && Ext.isString(attributeName)
+								Ext.isString(attributeName) && !Ext.isEmpty(attributeName)
 								&& Ext.isObject(requiredAttribute) && !Ext.Object.isEmpty(requiredAttribute)
 							) {
 								if (Ext.isFunction(requiredAttribute.get)) { // Manage model object
 									requiredAttribute = requiredAttribute.get(attributeName);
-								} else if (requiredAttribute.hasOwnProperty(attributeName)) { // Manage simple object
+								} else if (!Ext.isEmpty(requiredAttribute[attributeName])) { // Manage simple object
 									requiredAttribute = requiredAttribute[attributeName];
+								} else { // Object hasn't required property
+									requiredAttribute = undefined;
 								}
 							}
 						}, this);
@@ -334,7 +336,7 @@
 						}
 
 						return this[parameters[CMDBuild.core.constants.Proxy.TARGET_VARIABLE_NAME]].set(parameters[CMDBuild.core.constants.Proxy.PROPERTY_NAME], value);
-					} else if (!Ext.isEmpty(value) && Ext.isObject(value)) { // Full object management
+					} else if (Ext.isObject(value) && !Ext.Object.isEmpty(value)) { // Full object management
 						if (Ext.getClassName(value) == modelName) {
 							this[parameters[CMDBuild.core.constants.Proxy.TARGET_VARIABLE_NAME]] = value;
 						} else {
@@ -350,14 +352,14 @@
 		 * @param {Array or String} titlePart
 		 *
 		 * @returns {Void}
+		 *
+		 * @private
 		 */
 		setViewTitle: function (titlePart) {
-			if (Ext.isEmpty(titlePart))
-				titlePart = [];
-
+			titlePart = Ext.isEmpty(titlePart) ? [] : titlePart;
 			titlePart = Ext.isArray(titlePart) ? titlePart : [titlePart];
 
-			if (!Ext.isEmpty(this.view)) {
+			if (!Ext.isEmpty(this.view))
 				if (Ext.isEmpty(titlePart)) {
 					this.view.setTitle(this.getBaseTitle());
 				} else {
@@ -365,7 +367,6 @@
 						this.getBaseTitle() + CMDBuild.core.constants.Global.getTitleSeparator() + titlePart.join(CMDBuild.core.constants.Global.getTitleSeparator())
 					);
 				}
-			}
 		},
 
 		/**

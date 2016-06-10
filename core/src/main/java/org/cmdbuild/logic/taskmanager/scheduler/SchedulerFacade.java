@@ -24,4 +24,9 @@ public interface SchedulerFacade {
 	 */
 	void delete(ScheduledTask task);
 
+	/**
+	 * Execute an existing {@link ScheduledTask}.
+	 */
+	void execute(ScheduledTask task, Callback callback);
+
 }

@@ -5,11 +5,12 @@ import java.util.Map;
 import org.apache.commons.lang3.Validate;
 import org.cmdbuild.logic.taskmanager.ScheduledTask;
 import org.cmdbuild.logic.taskmanager.TaskManagerLogic;
-import org.cmdbuild.logic.taskmanager.TaskVistor;
+import org.cmdbuild.logic.taskmanager.TaskVisitor;
 import org.cmdbuild.logic.taskmanager.task.connector.ConnectorTask;
 import org.cmdbuild.logic.taskmanager.task.email.ReadEmailTask;
 import org.cmdbuild.logic.taskmanager.task.event.asynchronous.AsynchronousEventTask;
 import org.cmdbuild.logic.taskmanager.task.event.synchronous.SynchronousEventTask;
+import org.cmdbuild.logic.taskmanager.task.generic.GenericTask;
 import org.cmdbuild.logic.taskmanager.task.process.StartWorkflowTask;
 import org.cmdbuild.scheduler.Job;
 import org.slf4j.Logger;
@@ -20,7 +21,7 @@ public class DefaultLogicAndSchedulerConverter implements LogicAndSchedulerConve
 
 	static final Logger logger = TaskManagerLogic.logger;
 
-	private static class DefaultLogicAsSourceConverter implements LogicAsSourceConverter, TaskVistor {
+	private static class DefaultLogicAsSourceConverter implements LogicAsSourceConverter, TaskVisitor {
 
 		private final Map<Class<? extends ScheduledTask>, JobFactory<? extends ScheduledTask>> factories;
 		private final ScheduledTask source;
@@ -55,6 +56,11 @@ public class DefaultLogicAndSchedulerConverter implements LogicAndSchedulerConve
 
 		@Override
 		public void visit(final ConnectorTask task) {
+			job = factories.get(task.getClass()).create(task, execution);
+		}
+
+		@Override
+		public void visit(final GenericTask task) {
 			job = factories.get(task.getClass()).create(task, execution);
 		}
 

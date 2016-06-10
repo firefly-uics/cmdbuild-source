@@ -185,7 +185,7 @@
 		},
 
 		onDeleteRelationClick: function (model) {
-			Ext.Msg.confirm(CMDBuild.Translation.management.findfilter.msg.attention,
+			Ext.Msg.confirm(CMDBuild.Translation.attention,
 				CMDBuild.Translation.management.modcard.delete_relation_confirm, makeRequest, this);
 
 			var masterAndSlave = getMasterAndSlave(model.get('src'));

@@ -3,11 +3,11 @@ package org.cmdbuild.servlets.json;
 public class CommunicationConstants {
 
 	public static final String //
-			ID = "id", //
+	ID = "id", //
 			ID_CAPITAL = "Id";
 
 	public static final String //
-			ACCOUNT = "account", //
+	ACCOUNT = "account", //
 			ACTIVE = "active", //
 			ACTIVE_CAPITAL = "Active", //
 			ACTIVE_ONLY = ACTIVE + "Only", //
@@ -51,6 +51,7 @@ public class CommunicationConstants {
 			CONFIGURATION = "configuration", //
 			CONFIRMED = "confirmed", //
 			CONTAINER = "container", //
+			CONTEXT = "context", //
 			COUNT = "count", //
 			CREATE = "create", //
 			CRON_EXPRESSION = "cronExpression", //
@@ -91,7 +92,7 @@ public class CommunicationConstants {
 			DOMAIN_CARDINALITY = "cardinality", //
 			DOMAIN_DESCRIPTION_STARTING_AT_THE_FIRST_CLASS = "descr_1", //
 			DOMAIN_DESCRIPTION_STARTING_AT_THE_SECOND_CLASS = "descr_2", //
-			DOMAIN_DIRECTION = "domainDirection",//
+			DOMAIN_DIRECTION = "domainDirection", //
 			DOMAIN = "domain", //
 			DOMAIN_FIRST_CLASS_ID = "idClass1", //
 			DOMAIN_ID = "domainId", //
@@ -113,6 +114,7 @@ public class CommunicationConstants {
 			END_DATE = "endDate", //
 			ENTRIES = "entries", //
 			ENTRY_TYPE = "entryType", //
+			EXECUTABLE = "executable", //
 			EXPORTED = "exported", //
 			EXPORT_MAPPING = "ExportMapping", //
 			EXTENSION = "extension", //
@@ -144,7 +146,7 @@ public class CommunicationConstants {
 			IMAP_SERVER = "imapServer", //
 			IMAP_SSL = "imapSsl", //
 			IMAP_STARTTLS = "imapStartTls", //
-			IMPORT_MAPPING = "ImportMapping",//
+			IMPORT_MAPPING = "ImportMapping", //
 			INCOMING_FOLDER = "incomingFolder", //
 			INDEX = "index", //
 			INHERITED = "inherited", //
@@ -242,8 +244,11 @@ public class CommunicationConstants {
 			REJECTED_FOLDER = "rejectedFolder", //
 			REJECT_NOT_MATCHING = "rejectNotMatching", //
 			RELATION_ID = "relationId", //
+			REPORT_ACTIVE = "reportActive", //
+			REPORT_EXTENSION = "reportExtension", //
 			REPORT_ID = "reportId", //
 			REPORTNAME = "reportName", //
+			REPORT_PARAMETERS = "reportParameters", //
 			RESULT = "result", //
 			RESULTS = "results", //
 			RETRY_WITHOUT_FILTER = "retryWithoutFilter", //
@@ -287,6 +292,7 @@ public class CommunicationConstants {
 			TABLE_TYPE = "tableType", //
 			TASK_ASYNCHRONOUS_EVENT = "event_asynchronous", //
 			TASK_CONNECTOR = "connector", //
+			TASK_GENERIC = "generic", //
 			TASK_READ_EMAIL = "email", //
 			TASK_START_WORKFLOW = "workflow", //
 			TASK_SYNCHRONOUS_EVENT = "event_synchronous", //
@@ -313,9 +319,9 @@ public class CommunicationConstants {
 			USER_TYPE = "user_type", //
 			USER = "user", //
 			MENU_ITEM_UUID = "uuid", //
-			VALUE = "value",//
-			VALUES = "values",//
-			VARIABLES = "variables",//
+			VALUE = "value", //
+			VALUES = "values", //
+			VARIABLES = "variables", //
 			VERSION = "version", //
 			VIEWNAME = "viewName", //
 			VIEWS = "views", //

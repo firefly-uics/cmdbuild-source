@@ -1,14 +1,12 @@
 .add { background-image: url("../images/icons/add.png") !important; }
 .add_filter { background-image: url("../images/icons/add_filter.png") !important; }
 .attach { background-image: url("../images/icons/attach.png") !important; }
-.clear_filter { background-image: url("../images/icons/clear_find.png") !important; }
 .clone { background-image: url("../images/icons/clone.png") !important; }
 .delete { background-image: url("../images/icons/cross.png") !important; } /* @deprecated */
 .down { background-image: url("../images/icons/down.gif") !important;}
 .down-hover { background-image: url("../images/icons/down-hover.gif") !important; }
 .download { background-image: url("../images/icons/page_white_put.png") !important; }
 .edit_form { background-image: url("../images/icons/application_form_edit.png") !important; }
-.find { background-image: url("../images/icons/find.png") !important; }
 .foreignkey { background-image: url("../images/icons/database_table.png") !important; }
 .graph { background-image: url("../images/icons/graph.png") !important; }
 .map { background-image: url("../images/icons/map.png") !important; }
@@ -20,7 +18,7 @@
 .preview { background-image: url("../images/icons/preview.png") !important; }
 .print { background-image: url("../images/icons/print.png") !important; }
 .remove { background-image: url("../images/icons/remove.png") !important; }
-.save { background-image: url("../images/icons/disk.png") !important; }
+.save { background-image: url("../images/icons/save.png") !important; }
 .search { background-image: url("../images/icons/search.gif") !important; }
 .start { background-image: url("../images/icons/start.png") !important; }
 .stop { background-image: url("../images/icons/stop.png") !important; }
@@ -41,6 +39,9 @@
 .cmdisplayfield-expandbutton { background-image: url("../images/icons/expand.png") !important; }
 
 /* Filter and Privileges */
+	.searchFilter { background-image: url("../images/icons/filter/search.png") !important; }
+	.searchFilterClear { background-image: url("../images/icons/filter/searchClear.png") !important; }
+
 	.privileges { background-image: url("../images/icons/privileges/update.png") !important; }
 	.privilegesClear { background-image: url("../images/icons/privileges/clear.png") !important; }
 
@@ -67,6 +68,10 @@
 
 /* Navigation chronology */
 	.navigation-chronology { background-image: url("../images/icons/navigation/chronology.png") !important; }
+
+/* Task Manager */
+	.task-manager-cyclic-execution { background-image: url("../images/icons/taskManager/cyclicExecution.png") !important; }
+	.task-manager-single-execution { background-image: url("../images/icons/taskManager/singleExecution.png") !important; }
 
 /* Trigger fields */
 	.trigger-add { background-image: url("../images/form/trigger-add.png") !important; }

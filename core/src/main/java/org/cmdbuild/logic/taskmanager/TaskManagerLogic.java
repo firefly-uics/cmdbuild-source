@@ -47,4 +47,9 @@ public interface TaskManagerLogic extends Logic {
 	 */
 	void deactivate(Long id);
 
+	/**
+	 * Executes the {@link Task} with the specified id.
+	 */
+	void execute(Long id);
+
 }

@@ -217,8 +217,8 @@ public class AsynchronousEventTaskJobFactory extends AbstractJobFactory<Asynchro
 						CARD_PREFIX) //
 				.build();
 		final Command command = SchedulerCommandWrapper.of(a(emailTemplateSenderFactory.queued() //
-				.withEmailAccountSupplier(emailAccountSupplier) //
-				.withEmailTemplateSupplier(emailTemplateSupplier) //
+				.withAccount(emailAccountSupplier) //
+				.withTemplate(emailTemplateSupplier) //
 				.withTemplateResolver(templateResolver) //
 				.withReference(task.getId()) //
 				));

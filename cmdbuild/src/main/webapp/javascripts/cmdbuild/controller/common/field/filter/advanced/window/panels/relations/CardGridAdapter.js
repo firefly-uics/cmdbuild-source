@@ -43,8 +43,9 @@
 		/**
 		 * @param {CMDBuild.view.management.common.CMCardGrid} grid
 		 * @param {Ext.data.Model} record
+		 *
+		 * @override
 		 */
-		// override
 		onCMCardGridDeselect: function(grid, record) {
 			this.parentDelegate.cmfg('onFieldFilterAdvancedWindowRelationsCardSelectionChange');
 		},

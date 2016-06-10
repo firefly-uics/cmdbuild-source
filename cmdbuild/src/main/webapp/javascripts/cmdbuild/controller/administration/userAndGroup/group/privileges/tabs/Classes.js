@@ -106,17 +106,48 @@
 			if (Ext.encode(resultObject.filter).indexOf('"parameterType":"calculated"') < 0) {
 				var params = {};
 				params['privilegedObjectId'] = this.fieldFilterAdvancedSelectedClassGet(CMDBuild.core.constants.Proxy.ID);
-				params[CMDBuild.core.constants.Proxy.ATTRIBUTES] = Ext.encode(resultObject.columnPrivileges);
-				params[CMDBuild.core.constants.Proxy.FILTER] = Ext.encode(resultObject.filter);
 				params[CMDBuild.core.constants.Proxy.GROUP_ID] = this.cmfg('userAndGroupGroupSelectedGroupGet', CMDBuild.core.constants.Proxy.ID);
 
-				CMDBuild.proxy.userAndGroup.group.privileges.Classes.setRowAndColumn({
-					params: params,
-					scope: this,
-					success: function (response, options, decodedResponse) {
-						this.cmfg('onUserAndGroupGroupTabPrivilegesTabClassesShow');
-					}
-				});
+				if (
+					Ext.isObject(resultObject) && !Ext.Object.isEmpty(resultObject)
+					&& !Ext.isEmpty(resultObject.columnPrivileges)
+				) {
+					params[CMDBuild.core.constants.Proxy.ATTRIBUTES] = Ext.encode(resultObject.columnPrivileges);
+
+					CMDBuild.proxy.userAndGroup.group.privileges.Classes.setRowAndColumn({
+						params: params,
+						scope: this,
+						success: function (response, options, decodedResponse) {
+							CMDBuild.core.Message.info(
+								CMDBuild.Translation.success,
+								CMDBuild.Translation.columnPrivilegesSaved,
+								false
+							);
+
+							this.cmfg('onUserAndGroupGroupTabPrivilegesTabClassesShow');
+						}
+					});
+				} else if (
+					Ext.isObject(resultObject) && !Ext.Object.isEmpty(resultObject)
+					&& !Ext.isEmpty(resultObject.filter)
+				) {
+					params[CMDBuild.core.constants.Proxy.FILTER] = Ext.encode(resultObject.filter);
+
+					CMDBuild.proxy.userAndGroup.group.privileges.Classes.setRowAndColumn({
+						params: params,
+						scope: this,
+						success: function (response, options, decodedResponse) {
+							CMDBuild.core.Message.info(
+								CMDBuild.Translation.success,
+								CMDBuild.Translation.rowPrivilegesSaved,
+								false
+							);
+
+							this.cmfg('onUserAndGroupGroupTabPrivilegesTabClassesShow');
+						}
+					});
+				}
+
 			} else {
 				CMDBuild.core.Message.error(
 					CMDBuild.Translation.error,
@@ -127,6 +158,8 @@
 		},
 
 		/**
+		 * Send empty row and columns properties to reset values
+		 *
 		 * @param {CMDBuild.model.userAndGroup.group.privileges.GridRecord} record
 		 *
 		 * @returns {Void}
@@ -144,6 +177,8 @@
 					if (buttonId == 'yes') {
 						var params = {};
 						params['privilegedObjectId'] = record.get(CMDBuild.core.constants.Proxy.ID);
+						params[CMDBuild.core.constants.Proxy.ATTRIBUTES] = Ext.encode([]);
+						params[CMDBuild.core.constants.Proxy.FILTER] = Ext.encode({});
 						params[CMDBuild.core.constants.Proxy.GROUP_ID] = this.cmfg('userAndGroupGroupSelectedGroupGet', CMDBuild.core.constants.Proxy.ID);
 
 						// Set empty filter to clear value

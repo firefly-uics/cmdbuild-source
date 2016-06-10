@@ -8,6 +8,7 @@ import static org.cmdbuild.common.collect.Factory.entry;
 import static org.cmdbuild.common.collect.Factory.linkedHashMapOf;
 import static org.cmdbuild.common.collect.Factory.treeMapOf;
 import static org.cmdbuild.common.utils.Reflection.unsupported;
+import static org.cmdbuild.workflow.api.WorkflowApiImpl.context;
 import static utils.TestLoggerConstants.LOGGER_CATEGORY;
 import static utils.TestLoggerConstants.UNUSED_SHANDLE;
 
@@ -24,6 +25,7 @@ import org.cmdbuild.api.fluent.Card;
 import org.cmdbuild.api.fluent.CardDescriptor;
 import org.cmdbuild.api.fluent.CreateReport;
 import org.cmdbuild.api.fluent.DownloadedReport;
+import org.cmdbuild.api.fluent.ExecutorBasedFluentApi;
 import org.cmdbuild.api.fluent.ExistingCard;
 import org.cmdbuild.api.fluent.ExistingProcessInstance;
 import org.cmdbuild.api.fluent.ExistingRelation;
@@ -45,6 +47,7 @@ import org.cmdbuild.services.soap.Private;
 import org.cmdbuild.workflow.api.SchemaApi;
 import org.cmdbuild.workflow.api.SharkWorkflowApiFactory;
 import org.cmdbuild.workflow.api.WorkflowApi;
+import org.cmdbuild.workflow.api.WorkflowApiImpl;
 import org.cmdbuild.workflow.type.LookupType;
 import org.cmdbuild.workflow.type.ReferenceType;
 import org.enhydra.shark.api.client.wfmc.wapi.WMSessionHandle;
@@ -88,12 +91,12 @@ public class LoggingWorkflowApiFactory implements SharkWorkflowApiFactory {
 		FAKE_FUNCTION_RESPONSE.put("ReferenceOutput", FOUND_REFERENCE.getId());
 
 		final FluentApiExecutor UNUSED_EXECUTOR = null;
-		FOUND_CARD = new FluentApi(UNUSED_EXECUTOR) //
+		FOUND_CARD = new ExecutorBasedFluentApi(UNUSED_EXECUTOR) //
 				.existingCard(CLASS_NAME, CARD_ID) //
 				.with(INTEGER_ATTRIBUTE, Integer.toString(INTEGER_ATTRIBUTE_VALUE)) //
 				.with(STRING_ATTRIBUTE, STRING_ATTRIBUTE_VALUE) //
 				.with(REFERENCE_ATTRIBUTE, FOUND_REFERENCE);
-		FOUND_CARD_FOR_REFERENCE = new FluentApi(UNUSED_EXECUTOR) //
+		FOUND_CARD_FOR_REFERENCE = new ExecutorBasedFluentApi(UNUSED_EXECUTOR) //
 				.existingCard(FOUND_REFERENCE_CLASSNAME, FOUND_REFERENCE.getId()) //
 				.with(DESCRIPTION_ATTRIBUTE, FOUND_REFERENCE.getDescription());
 	}
@@ -114,7 +117,7 @@ public class LoggingWorkflowApiFactory implements SharkWorkflowApiFactory {
 	public WorkflowApi createWorkflowApi() {
 		final Private UNSUPPORTED_PRIVATE = newProxy(Private.class, unsupported("method not supported"));
 		final MailApi UNSUPPORTED_MAILAPI = newProxy(MailApi.class, unsupported("method not supported"));
-		return new WorkflowApi(new ForwardingFluentApiExecutor() {
+		final FluentApi fluentApi = new ExecutorBasedFluentApi(new ForwardingFluentApiExecutor() {
 
 			private final FluentApiExecutor UNSUPPORTED = newProxy(FluentApiExecutor.class,
 					unsupported("method not supported"));
@@ -260,7 +263,8 @@ public class LoggingWorkflowApiFactory implements SharkWorkflowApiFactory {
 								processCard.getId()));
 			}
 
-		}, UNSUPPORTED_PRIVATE, new SchemaApi() {
+		});
+		return new WorkflowApiImpl(context(fluentApi, UNSUPPORTED_PRIVATE, new SchemaApi() {
 
 			@Override
 			public ClassInfo findClass(final String className) {
@@ -316,7 +320,7 @@ public class LoggingWorkflowApiFactory implements SharkWorkflowApiFactory {
 				return FOUND_LOOKUP;
 			}
 
-		}, UNSUPPORTED_MAILAPI);
+		}, UNSUPPORTED_MAILAPI));
 	}
 
 	@SuppressWarnings("unchecked")
@@ -373,14 +377,14 @@ public class LoggingWorkflowApiFactory implements SharkWorkflowApiFactory {
 
 	@SuppressWarnings("unchecked")
 	public static String callFunctionLogLine(final String functionName, final Map<String, Object> params) {
-		return logLine(
-				"callFunctionLogLine", //
+		return logLine("callFunctionLogLine", //
 				linkedHashMapOf(entry("functionName", functionName),
 						entry("params", "{" + serializeAttributes(treeMapOf(params)) + "}")));
 	}
 
 	@SuppressWarnings("unchecked")
-	public static String downloadReportLogLine(final String title, final String format, final Map<String, Object> params) {
+	public static String downloadReportLogLine(final String title, final String format,
+			final Map<String, Object> params) {
 		return logLine("createReport", //
 				linkedHashMapOf(entry("title", title), entry("format", format)), treeMapOf(params));
 	}

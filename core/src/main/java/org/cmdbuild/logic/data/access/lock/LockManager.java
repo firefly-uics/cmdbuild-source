@@ -16,19 +16,19 @@ public interface LockManager {
 	}
 
 	@SuppressWarnings("serial")
-	class LockedByAnotherUser extends Exception {
+	class LockedByAnother extends Exception {
 
-		private final String user;
+		private final String owner;
 		private final Date time;
 
-		public LockedByAnotherUser(final String user, final Date time) {
-			super(format("locked by user '%s' since '%s'", user, time));
-			this.user = user;
+		public LockedByAnother(final String owner, final Date time) {
+			super(format("locked by owner '%s' since '%s'", owner, time));
+			this.owner = owner;
 			this.time = time;
 		}
 
-		public String getUser() {
-			return user;
+		public String getOwner() {
+			return owner;
 		}
 
 		public Date getTime() {
@@ -37,14 +37,14 @@ public interface LockManager {
 
 	}
 
-	void lock(Lockable lockable) throws LockedByAnotherUser;
+	void lock(Lockable lockable) throws LockedByAnother;
 
-	void unlock(Lockable lockable) throws LockedByAnotherUser;
+	void unlock(Lockable lockable) throws LockedByAnother;
 
 	void unlockAll();
 
-	void checkNotLocked(Lockable lockable) throws LockedByAnotherUser;
+	void checkNotLocked(Lockable lockable) throws LockedByAnother;
 
-	void checkLockedByUser(Lockable lockable, String userName) throws LockedByAnotherUser, ExpectedLocked;
+	void checkLockedByCurrent(Lockable lockable) throws LockedByAnother, ExpectedLocked;
 
 }

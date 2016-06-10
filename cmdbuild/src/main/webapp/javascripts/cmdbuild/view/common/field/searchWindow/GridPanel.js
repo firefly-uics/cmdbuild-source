@@ -1,6 +1,8 @@
 (function () {
 
-	Ext.define("CMDBuild.view.common.field.searchWindow.CMCardGridDelegate", {
+	Ext.require('CMDBuild.proxy.index.Json');
+
+	Ext.define("CMDBuild.view.common.field.searchWindow.GridPanelDelegate", {
 		/**
 		 *
 		 * @param {CMDBuild.view.management.common.CMCardGrid} grid
@@ -41,7 +43,7 @@
 
 	});
 
-	Ext.define("CMDBuild.view.common.field.searchWindow.CMCardGridPagingBar", {
+	Ext.define("CMDBuild.view.common.field.searchWindow.GridPanelPagingBar", {
 		extend: "Ext.toolbar.Paging",
 
 		// configuration
@@ -63,11 +65,7 @@
 	Ext.define('CMDBuild.view.common.field.searchWindow.GridPanel', {
 		extend: 'Ext.grid.Panel',
 
-		requires: [
-			'CMDBuild.core.constants.Global',
-			'CMDBuild.core.constants.Proxy',
-			'CMDBuild.proxy.index.Json'
-		],
+		requires: ['CMDBuild.core.constants.Global'],
 
 		mixins: {
 			delegable: "CMDBuild.core.CMDelegable"
@@ -85,19 +83,17 @@
 		skipSelectFirst: false,
 		cmPaginate: true, // to say if build or not a paging bar, default true
 		cmBasicFilter: true, // to add a basic search-field to the paging bar
-		cmAdvancedFilter: false, // to add a button to set an advanced filter
-		cmAddGraphColumn: false, // to say if build or not a column to open the mystical graph window, default true
-		cmAddPrintButton: false, // to add a button to set an chose the print format
 		cmVisible: true,
 		// configuration
 
+		border: false,
+		frame: false,
+
 		constructor: function(c) {
-			this.mixins.delegable.constructor.call(this,
-				"CMDBuild.view.common.field.searchWindow.CMCardGridDelegate");
+			this.mixins.delegable.constructor.call(this, "CMDBuild.view.common.field.searchWindow.GridPanelDelegate");
 
 			this.callParent(arguments);
 		},
-
 
 		initComponent: function() {
 			this.loadMask = false;
@@ -173,10 +169,6 @@
 
 				if (this.gridSearchField) {
 					this.gridSearchField.setValue(""); // clear only the field without reload the grid
-				}
-
-				if (this.filterMenuButton) {
-					this.filterMenuButton.reconfigureForEntryType(_CMCache.getEntryTypeById(classId));
 				}
 
 				if (me.printGridMenu) {
@@ -323,10 +315,6 @@
 			}
 
 			headers = headers.concat(this.buildExtraColumns());
-
-			if (this.cmAddGraphColumn && CMDBuild.configuration.graph.get(CMDBuild.core.constants.Proxy.ENABLED)) {
-				buildGraphIconColumn.call(this, headers);
-			}
 
 			return {
 				headers: headers,
@@ -481,24 +469,26 @@
 		// protected
 		buildClassColumn: function() {
 			return {
-				header: CMDBuild.Translation.management.modcard.subclass,
+				header: CMDBuild.Translation.subClass,
 				width: 100,
 				sortable: false,
 				dataIndex: 'IdClass_value'
 			};
 		},
 
-		disableFilterMenuButton: function() {
-			if (this.cmAdvancedFilter) {
-				this.filterMenuButton.disable();
-			}
-		},
+		/**
+		 * Forwarder method
+		 *
+		 * @returns {Void}
+		 */
+		disableFilterMenuButton: Ext.emptyFn,
 
-		enableFilterMenuButton: function() {
-			if (this.cmAdvancedFilter) {
-				this.filterMenuButton.enable();
-			}
-		},
+		/**
+		 * Forwarder method
+		 *
+		 * @returns {Void}
+		 */
+		enableFilterMenuButton: Ext.emptyFn,
 
 		applyFilterToStore: function(filter) {
 			try {
@@ -522,33 +512,7 @@
 			items.push(me.gridSearchField);
 		}
 
-		if (me.cmAdvancedFilter) {
-			me.filterMenuButton = new CMDBuild.view.management.common.filter.CMFilterMenuButton();
-			_CMUtils.forwardMethods(me, me.filterMenuButton, [
-				"enableClearFilterButton",
-				"disableClearFilterButton",
-				"enableSaveFilterButton",
-				"disableSaveFilterButton",
-				"setFilterButtonLabel",
-				"selectAppliedFilter"
-			]);
-			items.push(me.filterMenuButton);
-		}
-
-		if (me.cmAddPrintButton) {
-			me.printGridMenu = Ext.create('CMDBuild.core.buttons.iconized.split.Print', {
-				formatList: [
-					CMDBuild.core.constants.Proxy.PDF,
-					CMDBuild.core.constants.Proxy.CSV
-				],
-				mode: 'legacy',
-				disabled: true
-			});
-
-			items.push(me.printGridMenu);
-		}
-
-		me.pagingBar = new CMDBuild.view.common.field.searchWindow.CMCardGridPagingBar({
+		me.pagingBar = new CMDBuild.view.common.field.searchWindow.GridPanelPagingBar({
 			grid: me,
 			store: me.store,
 			displayInfo: true,
