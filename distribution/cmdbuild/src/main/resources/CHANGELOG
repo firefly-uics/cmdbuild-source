@@ -140,6 +140,8 @@ FIXES
 
  * "TranslationUUID" for "LookUp" table always valid
 
+ * The wizard connector synchronizes entries even if no values has been changed when a timestamp column is included within mapping
+
 
 
 
