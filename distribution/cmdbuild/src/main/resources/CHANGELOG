@@ -142,6 +142,8 @@ FIXES
 
  * The wizard connector synchronizes entries even if no values has been changed when a timestamp column is included within mapping
 
+ * The Data Definition Log reports a wrong statement when creating a class with no parent
+
 
 
 
