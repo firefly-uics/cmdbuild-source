@@ -8,6 +8,7 @@ import static org.apache.commons.lang3.StringUtils.defaultIfBlank;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.regex.Matcher;
@@ -22,6 +23,7 @@ import org.cmdbuild.services.sync.store.ClassType;
 import org.cmdbuild.services.sync.store.Entry;
 import org.cmdbuild.services.sync.store.Store;
 import org.cmdbuild.services.sync.store.Type;
+import org.joda.time.DateTime;
 import org.slf4j.Marker;
 import org.slf4j.MarkerFactory;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -134,7 +136,7 @@ public class SqlStore implements Store, LoggingSupport {
 						/**
 						 * Adjusts some values, see details.
 						 */
-						private Object adjust(Object object) {
+						private Object adjust(final Object object) {
 							final Object output;
 							if (object instanceof String) {
 								/*
@@ -142,6 +144,8 @@ public class SqlStore implements Store, LoggingSupport {
 								 * they are always I was treated as null.
 								 */
 								output = defaultIfBlank(String.class.cast(object), null);
+							} else if (object instanceof Timestamp) {
+								output = new DateTime(Timestamp.class.cast(object).getTime());
 							} else {
 								output = object;
 							}
