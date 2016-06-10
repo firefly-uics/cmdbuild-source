@@ -169,8 +169,8 @@ public class EntryTypeCommands implements LoggingSupport {
 		final String classComment = commentFrom(definition);
 		final CMIdentifier identifier = definition.getIdentifier();
 		final String name = nameFrom(identifier);
-		dataDefinitionSqlLogger.info(String.format("SELECT * FROM cm_create_class('%s', '%s', '%s');", name,
-				parentName, classComment));
+		dataDefinitionSqlLogger.info(String.format("SELECT * FROM cm_create_class('%s', %s, '%s');", name,
+				parentName == null ? "null" : "'" + parentName + "'", classComment));
 		final long id = jdbcTemplate.queryForObject( //
 				"SELECT * FROM cm_create_class(?, ?, ?)", //
 				Long.class, //
