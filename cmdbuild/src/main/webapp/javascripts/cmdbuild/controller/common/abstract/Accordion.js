@@ -242,13 +242,42 @@
 			},
 
 		/**
-		 * @param {Number or String} nodeIdToSelect
+		 * @param {Object} parameters
+		 * @param {Function} parameters.callback
+		 * @param {Number or String} parameters.nodeIdToSelect
+		 * @param {Object} parameters.scope
 		 *
 		 * @returns {Void}
 		 *
 		 * @abstract
 		 */
-		accordionUpdateStore: Ext.emptyFn,
+		accordionUpdateStore: function (parameters) {
+			parameters = Ext.isObject(parameters) ? parameters : {};
+			parameters.nodeIdToSelect = Ext.isNumber(parameters.nodeIdToSelect) ? parameters.nodeIdToSelect : null;
+
+			if (!this.disableSelection) {
+				if (!Ext.isEmpty(parameters.nodeIdToSelect))
+					this.cmfg('accordionNodeByIdSelect', { id: parameters.nodeIdToSelect });
+
+				// Select first selectable item if no selection and expanded
+				if (!this.view.getSelectionModel().hasSelection() && this.view.getCollapsed() === false && this.view.isVisible())
+					this.cmfg('accordionFirstSelectableNodeSelect');
+			}
+
+			// Accordion store update end event fire
+			this.view.fireEvent('storeload');
+
+			// Hide if accordion is empty
+			if (this.hideIfEmpty && this.isEmpty())
+				this.view.hide();
+
+			// Accordion creation callback
+			if (!Ext.isEmpty(this.callback) && Ext.isFunction(this.callback))
+				Ext.callback(this.callback, this.scope);
+
+			// DisableSelection flag reset
+			this.disableSelection = false;
+		},
 
 		/**
 		 * @returns {Boolean}
@@ -334,38 +363,6 @@
 					selectedNodeModel: selection
 				});
 			}
-		},
-
-		/**
-		 * @param {Number or String} nodeIdToSelect
-		 *
-		 * @returns {Void}
-		 *
-		 * @private
-		 */
-		updateStoreCommonEndpoint: function (nodeIdToSelect) {
-			if (!this.disableSelection) {
-				if (!Ext.isEmpty(nodeIdToSelect))
-					this.cmfg('accordionNodeByIdSelect', { id: nodeIdToSelect });
-
-				// Select first selectable item if no selection and expanded
-				if (!this.view.getSelectionModel().hasSelection() && this.view.getCollapsed() === false && this.view.isVisible())
-					this.cmfg('accordionFirstSelectableNodeSelect');
-			}
-
-			// Accordion store update end event fire
-			this.view.fireEvent('storeload');
-
-			// Hide if accordion is empty
-			if (this.hideIfEmpty && this.isEmpty())
-				this.view.hide();
-
-			// Accordion creation callback
-			if (!Ext.isEmpty(this.callback) && Ext.isFunction(this.callback))
-				Ext.callback(this.callback, this.scope);
-
-			// DisableSelection flag reset
-			this.disableSelection = false;
 		}
 	});
 

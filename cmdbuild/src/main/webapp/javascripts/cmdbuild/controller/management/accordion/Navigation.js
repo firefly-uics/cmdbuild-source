@@ -26,7 +26,7 @@
 			'accordionNodeByIdExists',
 			'accordionNodeByIdGet',
 			'accordionNodeByIdSelect',
-			'accordionUpdateStore',
+			'accordionNavigationUpdateStore = accordionUpdateStore',
 			'onAccordionBeforeSelect',
 			'onAccordionExpand',
 			'onAccordionSelectionChange'
@@ -67,19 +67,20 @@
 
 			this.view = Ext.create('CMDBuild.view.management.accordion.Navigation', { delegate: this });
 
-			this.cmfg('accordionUpdateStore');
+			this.cmfg('accordionNavigationUpdateStore');
 		},
 
 		/**
-		 * @param {Number} nodeIdToSelect
+		 * @param {Object} parameters
+		 * @param {Function} parameters.callback
+		 * @param {Number or String} parameters.nodeIdToSelect
+		 * @param {Object} parameters.scope
 		 *
 		 * @returns {Void}
 		 *
 		 * @override
 		 */
-		accordionUpdateStore: function (nodeIdToSelect) {
-			nodeIdToSelect = Ext.isNumber(nodeIdToSelect) ? nodeIdToSelect : null;
-
+		accordionNavigationUpdateStore: function (parameters) {
 			var params = {};
 			params[CMDBuild.core.constants.Proxy.GROUP_NAME] = CMDBuild.configuration.runtime.get(CMDBuild.core.constants.Proxy.DEFAULT_GROUP_NAME);
 			params[CMDBuild.core.constants.Proxy.LOCALIZED] = true;
@@ -107,14 +108,11 @@
 								this.view.getStore().sort();
 							}
 
-							// Alias of this.callParent(arguments), inside proxy function doesn't work
-							this.updateStoreCommonEndpoint(nodeIdToSelect);
+							this.accordionUpdateStore(arguments); // Custom callParent implementation
 						}
 					});
 				}
 			});
-
-			this.callParent(arguments);
 		},
 
 		/**

@@ -24,7 +24,7 @@
 			'accordionNodeByIdExists',
 			'accordionNodeByIdGet',
 			'accordionNodeByIdSelect',
-			'accordionUpdateStore',
+			'accordionCustomPageUpdateStore = accordionUpdateStore',
 			'onAccordionBeforeSelect',
 			'onAccordionExpand',
 			'onAccordionSelectionChange'
@@ -58,19 +58,20 @@
 
 			this.view = Ext.create('CMDBuild.view.management.accordion.CustomPage', { delegate: this });
 
-			this.cmfg('accordionUpdateStore');
+			this.cmfg('accordionCustomPageUpdateStore');
 		},
 
 		/**
-		 * @param {Number} nodeIdToSelect
+		 * @param {Object} parameters
+		 * @param {Function} parameters.callback
+		 * @param {Number or String} parameters.nodeIdToSelect
+		 * @param {Object} parameters.scope
 		 *
 		 * @returns {Void}
 		 *
 		 * @override
 		 */
-		accordionUpdateStore: function (nodeIdToSelect) {
-			nodeIdToSelect = Ext.isNumber(nodeIdToSelect) ? nodeIdToSelect : null;
-
+		accordionCustomPageUpdateStore: function (parameters) {
 			CMDBuild.proxy.CustomPage.readForCurrentUser({
 				loadMask: false,
 				scope: this,
@@ -80,7 +81,7 @@
 					if (!Ext.isEmpty(decodedResponse)) {
 						var nodes = [];
 
-						Ext.Array.forEach(decodedResponse, function (pageObject, i, allGroupObjects) {
+						Ext.Array.each(decodedResponse, function (pageObject, i, allGroupObjects) {
 							var nodeObject = {};
 							nodeObject['cmName'] = this.accordionIdentifierGet();
 							nodeObject['iconCls'] = 'cmdb-tree-custompage-icon';
@@ -101,12 +102,9 @@
 						}
 					}
 
-					// Alias of this.callParent(arguments), inside proxy function doesn't work
-					this.updateStoreCommonEndpoint(nodeIdToSelect);
+					this.accordionUpdateStore(arguments); // Custom callParent implementation
 				}
 			});
-
-			this.callParent(arguments);
 		}
 	});
 
