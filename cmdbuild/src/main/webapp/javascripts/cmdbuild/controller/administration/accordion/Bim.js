@@ -12,12 +12,10 @@
 		 * @cfg {Array}
 		 */
 		cmfgCatchedFunctions: [
-			'accordionBuildId',
 			'accordionDeselect',
 			'accordionExpand',
 			'accordionFirstSelectableNodeSelect',
 			'accordionFirtsSelectableNodeGet',
-			'accordionIdentifierGet',
 			'accordionNodeByIdExists',
 			'accordionNodeByIdGet',
 			'accordionNodeByIdSelect',
@@ -68,7 +66,7 @@
 					iconCls: 'cmdb-tree-bim-icon',
 					text: CMDBuild.Translation.projects,
 					description: CMDBuild.Translation.projects,
-					id: this.cmfg('accordionBuildId', 'bim-project'),
+					id: this.accordionBuildId('bim-project'),
 					sectionHierarchy: ['bim-project'],
 					leaf: true
 				},
@@ -77,7 +75,7 @@
 					iconCls: 'cmdb-tree-bim-icon',
 					text: CMDBuild.Translation.layers,
 					description: CMDBuild.Translation.layers,
-					id: this.cmfg('accordionBuildId', 'bim-layers'),
+					id: this.accordionBuildId('bim-layers'),
 					sectionHierarchy: ['bim-layers'],
 					leaf: true
 				}

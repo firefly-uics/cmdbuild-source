@@ -7,12 +7,10 @@
 	 * Common methods
 	 *
 	 * Required managed functions:
-	 * 	- accordionBuildId'
 	 * 	- accordionDeselect'
 	 * 	- accordionExpand'
 	 * 	- accordionFirstSelectableNodeSelect'
 	 * 	- accordionFirtsSelectableNodeGet'
-	 * 	- accordionIdentifierGet'
 	 * 	- accordionNodeByIdExists'
 	 * 	- accordionNodeByIdGet'
 	 * 	- accordionNodeByIdSelect'
@@ -85,11 +83,13 @@
 		 * @param {Array} components
 		 *
 		 * @returns {String}
+		 *
+		 * @private
 		 */
 		accordionBuildId: function (components) {
 			if (!Ext.isEmpty(components)) {
 				components = Ext.isArray(components) ? Ext.Array.clean(components) : [components];
-				components = Ext.Array.push([CMDBuild.core.constants.Proxy.ACCORDION, this.cmfg('accordionIdentifierGet')], components);
+				components = Ext.Array.push([CMDBuild.core.constants.Proxy.ACCORDION, this.accordionIdentifierGet()], components);
 
 				Ext.Array.each(components, function (component, i, allComponents) {
 					components[i] = Ext.String.trim(String(component));
@@ -98,7 +98,7 @@
 				return components.join('-');
 			}
 
-			return CMDBuild.core.constants.Proxy.ACCORDION + '-' + this.cmfg('accordionIdentifierGet') + '-' + new Date().valueOf(); // Compatibility mode with IE older than IE 9 (Date.now())
+			return CMDBuild.core.constants.Proxy.ACCORDION + '-' + this.accordionIdentifierGet() + '-' + new Date().valueOf(); // Compatibility mode with IE older than IE 9 (Date.now())
 		},
 
 		/**
@@ -178,6 +178,8 @@
 
 		/**
 		 * @returns {String or null}
+		 *
+		 * @private
 		 */
 		accordionIdentifierGet: function () {
 			if (!Ext.isEmpty(this.identifier))
@@ -285,7 +287,7 @@
 		 * @returns {Void}
 		 */
 		onAccordionExpand: function () {
-			this.cmfg('mainViewportModuleShow', { identifier: this.cmfg('accordionIdentifierGet') });
+			this.cmfg('mainViewportModuleShow', { identifier: this.accordionIdentifierGet() });
 
 			// Update store
 			if (!this.disableStoreLoad) {
@@ -328,7 +330,7 @@
 
 				// Notify accordion selection event to mainViewport's controller (accordion selection synchronizations)
 				this.cmfg('onMainViewportAccordionSelect', {
-					sourceAccordionIdentifier: this.cmfg('accordionIdentifierGet'),
+					sourceAccordionIdentifier: this.accordionIdentifierGet(),
 					selectedNodeModel: selection
 				});
 			}

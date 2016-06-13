@@ -17,12 +17,10 @@
 		 * @cfg {Array}
 		 */
 		cmfgCatchedFunctions: [
-			'accordionBuildId',
 			'accordionDeselect',
 			'accordionExpand',
 			'accordionFirstSelectableNodeSelect',
 			'accordionFirtsSelectableNodeGet',
-			'accordionIdentifierGet',
 			'accordionNodeByIdExists',
 			'accordionNodeByIdGet',
 			'accordionNodeByIdSelect',
@@ -80,12 +78,12 @@
 
 						Ext.Array.forEach(decodedResult, function (groupObject, i, allGroupObjects) {
 							var nodeObject = {};
-							nodeObject['cmName'] = this.cmfg('accordionIdentifierGet');
+							nodeObject['cmName'] = this.accordionIdentifierGet();
 							nodeObject['iconCls'] = 'cmdb-tree-group-icon';
 							nodeObject[CMDBuild.core.constants.Proxy.TEXT] = groupObject[CMDBuild.core.constants.Proxy.DESCRIPTION];
 							nodeObject[CMDBuild.core.constants.Proxy.DESCRIPTION] = groupObject[CMDBuild.core.constants.Proxy.DESCRIPTION];
 							nodeObject[CMDBuild.core.constants.Proxy.ENTITY_ID] = groupObject[CMDBuild.core.constants.Proxy.ID];
-							nodeObject[CMDBuild.core.constants.Proxy.ID] = this.cmfg('accordionBuildId', groupObject[CMDBuild.core.constants.Proxy.ID]);
+							nodeObject[CMDBuild.core.constants.Proxy.ID] = this.accordionBuildId(groupObject[CMDBuild.core.constants.Proxy.ID]);
 							nodeObject[CMDBuild.core.constants.Proxy.SECTION_HIERARCHY] = ['group'];
 							nodeObject[CMDBuild.core.constants.Proxy.LEAF] = true;
 
@@ -94,7 +92,7 @@
 
 						this.view.getStore().getRootNode().appendChild([
 							{
-								cmName: this.cmfg('accordionIdentifierGet'),
+								cmName: this.accordionIdentifierGet(),
 								iconCls: 'cmdb-tree-userGroup-icon',
 								text: CMDBuild.Translation.groups,
 								description: CMDBuild.Translation.groups,
@@ -104,11 +102,11 @@
 								children: nodes
 							},
 							{
-								cmName: this.cmfg('accordionIdentifierGet'),
+								cmName: this.accordionIdentifierGet(),
 								iconCls: 'cmdb-tree-user-icon',
 								text: CMDBuild.Translation.users,
 								description: CMDBuild.Translation.users,
-								id: this.cmfg('accordionBuildId', 'user'),
+								id: this.accordionBuildId('user'),
 								sectionHierarchy: ['user'],
 								leaf: true
 							}

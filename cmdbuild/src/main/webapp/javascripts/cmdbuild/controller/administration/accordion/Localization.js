@@ -12,12 +12,10 @@
 		 * @cfg {Array}
 		 */
 		cmfgCatchedFunctions: [
-			'accordionBuildId',
 			'accordionDeselect',
 			'accordionExpand',
 			'accordionFirstSelectableNodeSelect',
 			'accordionFirtsSelectableNodeGet',
-			'accordionIdentifierGet',
 			'accordionNodeByIdExists',
 			'accordionNodeByIdGet',
 			'accordionNodeByIdSelect',
@@ -64,29 +62,29 @@
 			this.view.getStore().getRootNode().removeAll();
 			this.view.getStore().getRootNode().appendChild([
 				{
-					cmName: this.cmfg('accordionIdentifierGet'),
+					cmName: this.accordionIdentifierGet(),
 					iconCls: 'cmdb-tree-localization-icon',
 					text: CMDBuild.Translation.configuration,
 					description: CMDBuild.Translation.configuration,
-					id: this.cmfg('accordionBuildId', 'configuration'),
+					id: this.accordionBuildId('configuration'),
 					sectionHierarchy: ['configuration'],
 					leaf: true
 				},
 				{
-					cmName: this.cmfg('accordionIdentifierGet'),
+					cmName: this.accordionIdentifierGet(),
 					iconCls: 'cmdb-tree-localization-icon',
 					text: CMDBuild.Translation.localization,
 					description: CMDBuild.Translation.localization,
-					id: this.cmfg('accordionBuildId', 'advancedTranslationsTable'),
+					id: this.accordionBuildId('advancedTranslationsTable'),
 					sectionHierarchy: ['advancedTranslationsTable'],
 					leaf: true
 				},
 				{
-					cmName: this.cmfg('accordionIdentifierGet'),
+					cmName: this.accordionIdentifierGet(),
 					iconCls: 'cmdb-tree-localization-icon',
 					text: CMDBuild.Translation.importExport,
 					description: CMDBuild.Translation.importExport,
-					id: this.cmfg('accordionBuildId', 'importExport'),
+					id: this.accordionBuildId('importExport'),
 					sectionHierarchy: ['importExport'],
 					leaf: true
 				}
