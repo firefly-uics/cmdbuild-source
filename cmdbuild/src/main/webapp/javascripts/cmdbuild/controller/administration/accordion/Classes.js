@@ -6,7 +6,7 @@
 		requires: [
 			'CMDBuild.core.constants.Global',
 			'CMDBuild.core.constants.Proxy',
-			'CMDBuild.proxy.Classes'
+			'CMDBuild.proxy.Classes',
 		],
 
 		/**
@@ -25,7 +25,7 @@
 			'accordionNodeByIdExists',
 			'accordionNodeByIdGet',
 			'accordionNodeByIdSelect',
-			'accordionUpdateStore',
+			'accordionClassesUpdateStore = accordionUpdateStore',
 			'onAccordionBeforeSelect',
 			'onAccordionExpand',
 			'onAccordionSelectionChange'
@@ -54,19 +54,20 @@
 
 			this.view = Ext.create('CMDBuild.view.administration.accordion.Classes', { delegate: this });
 
-			this.cmfg('accordionUpdateStore');
+			this.cmfg('accordionClassesUpdateStore');
 		},
 
 		/**
-		 * @param {Number} nodeIdToSelect
+		 * @param {Object} parameters
+		 * @param {Function} parameters.callback
+		 * @param {Number or String} parameters.nodeIdToSelect
+		 * @param {Object} parameters.scope
 		 *
 		 * @returns {Void}
 		 *
 		 * @override
 		 */
-		accordionUpdateStore: function (nodeIdToSelect) {
-			nodeIdToSelect = Ext.isNumber(nodeIdToSelect) ? nodeIdToSelect : null;
-
+		accordionClassesUpdateStore: function (parameters) {
 			CMDBuild.proxy.Classes.readAll({
 				scope: this,
 				success: function (response, options, decodedResponse) {
@@ -81,7 +82,7 @@
 					decodedResponse = Ext.Array.filter(decodedResponse, function (item, i, array) {
 						return (
 							item[CMDBuild.core.constants.Proxy.TYPE] != CMDBuild.core.constants.Global.getTableTypeProcessClass() // Discard processes
-							&& item[CMDBuild.core.constants.Proxy.NAME] != 'Class' // Discard root class of all classes
+							&& item[CMDBuild.core.constants.Proxy.NAME] != CMDBuild.core.constants.Global.getRootNameClasses() // Discard root class of all classes
 							&& !item[CMDBuild.core.constants.Proxy.SYSTEM] // Discard system classes
 						);
 					}, this);
@@ -163,12 +164,9 @@
 							this.view.getStore().getRootNode().appendChild(nodes);
 					}
 
-					// Alias of this.callParent(arguments), inside proxy function doesn't work
-					this.updateStoreCommonEndpoint(nodeIdToSelect);
+					this.accordionUpdateStore(arguments); // Custom callParent implementation
 				}
 			});
-
-			this.callParent(arguments);
 		}
 	});
 

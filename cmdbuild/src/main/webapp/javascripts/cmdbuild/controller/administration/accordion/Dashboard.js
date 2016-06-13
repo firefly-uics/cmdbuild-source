@@ -24,7 +24,7 @@
 			'accordionNodeByIdExists',
 			'accordionNodeByIdGet',
 			'accordionNodeByIdSelect',
-			'accordionUpdateStore',
+			'accordionDashboardUpdateStore = accordionUpdateStore',
 			'onAccordionBeforeSelect',
 			'onAccordionExpand',
 			'onAccordionSelectionChange'
@@ -45,6 +45,7 @@
 
 		/**
 		 * @param {Object} configurationObject
+		 * @param {CMDBuild.controller.common.MainViewport} configurationObject.parentDelegate
 		 *
 		 * @returns {Void}
 		 *
@@ -55,17 +56,20 @@
 
 			this.view = Ext.create('CMDBuild.view.administration.accordion.Dashboard', { delegate: this });
 
-			this.cmfg('accordionUpdateStore');
+			this.cmfg('accordionDashboardUpdateStore');
 		},
 
 		/**
-		 * @param {Number} nodeIdToSelect
+		 * @param {Object} parameters
+		 * @param {Function} parameters.callback
+		 * @param {Number or String} parameters.nodeIdToSelect
+		 * @param {Object} parameters.scope
+		 *
+		 * @returns {Void}
 		 *
 		 * @override
 		 */
-		accordionUpdateStore: function (nodeIdToSelect) {
-			nodeIdToSelect = Ext.isNumber(nodeIdToSelect) ? nodeIdToSelect : null;
-
+		accordionDashboardUpdateStore: function (parameters) {
 			CMDBuild.proxy.dashboard.Dashboard.readAll({
 				scope: this,
 				success: function (response, options, decodedResponse) {
@@ -96,12 +100,9 @@
 						}
 					}
 
-					// Alias of this.callParent(arguments), inside proxy function doesn't work
-					this.updateStoreCommonEndpoint(nodeIdToSelect);
+					this.accordionUpdateStore(arguments); // Custom callParent implementation
 				}
 			});
-
-			this.callParent(arguments);
 		}
 	});
 

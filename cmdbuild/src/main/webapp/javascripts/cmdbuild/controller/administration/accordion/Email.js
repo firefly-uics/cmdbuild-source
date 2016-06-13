@@ -19,7 +19,7 @@
 			'accordionNodeByIdExists',
 			'accordionNodeByIdGet',
 			'accordionNodeByIdSelect',
-			'accordionUpdateStore',
+			'accordionEmailUpdateStore = accordionUpdateStore',
 			'onAccordionBeforeSelect',
 			'onAccordionExpand',
 			'onAccordionSelectionChange'
@@ -48,17 +48,20 @@
 
 			this.view = Ext.create('CMDBuild.view.administration.accordion.Email', { delegate: this });
 
-			this.cmfg('accordionUpdateStore');
+			this.cmfg('accordionEmailUpdateStore');
 		},
 
 		/**
-		 * @param {Number} nodeIdToSelect
+		 * @param {Object} parameters
+		 * @param {Function} parameters.callback
+		 * @param {Number or String} parameters.nodeIdToSelect
+		 * @param {Object} parameters.scope
 		 *
 		 * @returns {Void}
 		 *
 		 * @override
 		 */
-		accordionUpdateStore: function (nodeIdToSelect) {
+		accordionEmailUpdateStore: function (parameters) {
 			this.view.getStore().getRootNode().removeAll();
 			this.view.getStore().getRootNode().appendChild([
 				{
@@ -90,10 +93,7 @@
 				}
 			]);
 
-			// Alias of this.callParent(arguments), inside proxy function doesn't work
-			this.updateStoreCommonEndpoint(nodeIdToSelect);
-
-			this.callParent(arguments);
+			this.accordionUpdateStore(arguments); // Custom callParent implementation
 		}
 	});
 
