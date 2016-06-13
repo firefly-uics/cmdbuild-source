@@ -12,12 +12,10 @@
 		 * @cfg {Array}
 		 */
 		cmfgCatchedFunctions: [
-			'accordionBuildId',
 			'accordionDeselect',
 			'accordionExpand',
 			'accordionFirstSelectableNodeSelect',
 			'accordionFirtsSelectableNodeGet',
-			'accordionIdentifierGet',
 			'accordionNodeByIdExists',
 			'accordionNodeByIdGet',
 			'accordionNodeByIdSelect',
@@ -64,29 +62,29 @@
 			this.view.getStore().getRootNode().removeAll();
 			this.view.getStore().getRootNode().appendChild([
 				{
-					cmName: this.cmfg('accordionIdentifierGet'),
+					cmName: this.accordionIdentifierGet(),
 					iconCls: 'cmdb-tree-email-icon',
 					text: CMDBuild.Translation.accounts,
 					description: CMDBuild.Translation.accounts,
-					id: this.cmfg('accordionBuildId', 'accounts'),
+					id: this.accordionBuildId('accounts'),
 					sectionHierarchy: ['accounts'],
 					leaf: true
 				},
 				{
-					cmName: this.cmfg('accordionIdentifierGet'),
+					cmName: this.accordionIdentifierGet(),
 					iconCls: 'cmdb-tree-email-icon',
 					text: CMDBuild.Translation.templates,
 					description: CMDBuild.Translation.templates,
-					id: this.cmfg('accordionBuildId', 'templates'),
+					id: this.accordionBuildId('templates'),
 					sectionHierarchy: ['templates'],
 					leaf: true
 				},
 				{
-					cmName: this.cmfg('accordionIdentifierGet'),
+					cmName: this.accordionIdentifierGet(),
 					iconCls: 'cmdb-tree-email-icon',
 					text: CMDBuild.Translation.queue,
 					description: CMDBuild.Translation.queue,
-					id: this.cmfg('accordionBuildId', 'queue'),
+					id: this.accordionBuildId('queue'),
 					sectionHierarchy: ['queue'],
 					leaf: true
 				}
