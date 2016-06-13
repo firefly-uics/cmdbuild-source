@@ -12,12 +12,10 @@
 		 * @cfg {Array}
 		 */
 		cmfgCatchedFunctions: [
-			'accordionBuildId',
 			'accordionDeselect',
 			'accordionExpand',
 			'accordionFirstSelectableNodeSelect',
 			'accordionFirtsSelectableNodeGet',
-			'accordionIdentifierGet',
 			'accordionNodeByIdExists',
 			'accordionNodeByIdGet',
 			'accordionNodeByIdSelect',
@@ -64,18 +62,18 @@
 			this.view.getStore().getRootNode().removeAll();
 			this.view.getStore().getRootNode().appendChild([
 				{
-					cmName: this.cmfg('accordionIdentifierGet'),
+					cmName: this.accordionIdentifierGet(),
 					text: CMDBuild.Translation.filterView,
 					description: CMDBuild.Translation.filterView,
-					id: this.cmfg('accordionBuildId', 'filter'),
+					id: this.accordionBuildId('filter'),
 					sectionHierarchy: ['filter'],
 					leaf: true
 				},
 				{
-					cmName: this.cmfg('accordionIdentifierGet'),
+					cmName: this.accordionIdentifierGet(),
 					text: CMDBuild.Translation.sqlView,
 					description: CMDBuild.Translation.sqlView,
-					id: this.cmfg('accordionBuildId', 'sql'),
+					id: this.accordionBuildId('sql'),
 					sectionHierarchy: ['sql'],
 					leaf: true
 				}
