@@ -17,12 +17,10 @@
 		 * @cfg {Array}
 		 */
 		cmfgCatchedFunctions: [
-			'accordionBuildId',
 			'accordionDeselect',
 			'accordionExpand',
 			'accordionFirstSelectableNodeSelect',
 			'accordionFirtsSelectableNodeGet',
-			'accordionIdentifierGet',
 			'accordionNodeByIdExists',
 			'accordionNodeByIdGet',
 			'accordionNodeByIdSelect',
@@ -69,11 +67,11 @@
 			this.view.getStore().getRootNode().removeAll();
 			this.view.getStore().getRootNode().appendChild([
 				{
-					cmName: this.cmfg('accordionIdentifierGet'),
+					cmName: this.accordionIdentifierGet(),
 					iconCls: 'cmdb-tree-report-icon',
 					text: CMDBuild.Translation.reportMenuJasper,
 					description: CMDBuild.Translation.reportMenuJasper,
-					id: this.cmfg('accordionBuildId', 'jasper'),
+					id: this.accordionBuildId('jasper'),
 					sectionHierarchy: ['jasper'],
 					leaf: true
 				}

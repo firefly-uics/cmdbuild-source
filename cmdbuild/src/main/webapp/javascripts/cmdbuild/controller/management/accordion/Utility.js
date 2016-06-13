@@ -14,12 +14,10 @@
 		 * @cfg {Array}
 		 */
 		cmfgCatchedFunctions: [
-			'accordionBuildId',
 			'accordionDeselect',
 			'accordionExpand',
 			'accordionFirstSelectableNodeSelect',
 			'accordionFirtsSelectableNodeGet',
-			'accordionIdentifierGet',
 			'accordionNodeByIdExists',
 			'accordionNodeByIdGet',
 			'accordionNodeByIdSelect',
@@ -78,7 +76,7 @@
 					iconCls: 'cmdb-tree-utility-icon',
 					text: CMDBuild.Translation.changePassword,
 					description: CMDBuild.Translation.changePassword,
-					id: this.cmfg('accordionBuildId', 'changepassword'),
+					id: this.accordionBuildId('changepassword'),
 					sectionHierarchy: ['changepassword'],
 					leaf: true
 				});
@@ -89,7 +87,7 @@
 					iconCls: 'cmdb-tree-utility-icon',
 					text: CMDBuild.Translation.multipleUpdate,
 					description: CMDBuild.Translation.multipleUpdate,
-					id: this.cmfg('accordionBuildId', 'bulkcardupdate'),
+					id: this.accordionBuildId('bulkcardupdate'),
 					sectionHierarchy: ['bulkcardupdate'],
 					leaf: true
 				});
@@ -100,7 +98,7 @@
 					iconCls: 'cmdb-tree-utility-icon',
 					text: CMDBuild.Translation.importCsvFile,
 					description: CMDBuild.Translation.importCsvFile,
-					id: this.cmfg('accordionBuildId', 'importcsv'),
+					id: this.accordionBuildId('importcsv'),
 					sectionHierarchy: ['importcsv'],
 					leaf: true
 				});
@@ -111,7 +109,7 @@
 					iconCls: 'cmdb-tree-utility-icon',
 					text: CMDBuild.Translation.exportCsvFile,
 					description: CMDBuild.Translation.exportCsvFile,
-					id: this.cmfg('accordionBuildId', 'exportcsv'),
+					id: this.accordionBuildId('exportcsv'),
 					sectionHierarchy: ['exportcsv'],
 					leaf: true
 				});
