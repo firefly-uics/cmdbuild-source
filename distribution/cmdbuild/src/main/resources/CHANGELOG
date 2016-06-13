@@ -162,6 +162,8 @@ FIXES
 
  * The Data Definition Log reports a wrong statement when creating a class with no parent
 
+ * Error while selecting node with no children
+
 
 
 
