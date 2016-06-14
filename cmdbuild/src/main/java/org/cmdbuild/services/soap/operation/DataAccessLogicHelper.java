@@ -313,7 +313,12 @@ public class DataAccessLogicHelper implements SoapLogicHelper {
 	private Map<String, Object> transform(final List<Attribute> attributes, final CMEntryType entryType) {
 		final Map<String, Object> keysAndValues = Maps.newHashMap();
 		for (final Attribute attribute : attributes) {
-			final CMAttributeType<?> attributeType = entryType.getAttribute(attribute.getName()).getType();
+			final CMAttribute _attribute = entryType.getAttribute(attribute.getName());
+			if (_attribute == null) {
+				logger.warn("missing attribute '{}' for type '{}'", attribute.getName(), entryType.getName());
+				continue;
+			}
+			final CMAttributeType<?> attributeType = _attribute.getType();
 			final String name = attribute.getName();
 			Object value = attribute.getValue();
 			if (attributeType instanceof LookupAttributeType) {
