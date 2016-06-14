@@ -88,13 +88,17 @@
 					propertyName: CMDBuild.core.constants.Proxy.DESCRIPTION,
 					value: formData[CMDBuild.core.constants.Proxy.DESCRIPTION]
 				});
-
 				this.cmfg('entryTypeGridFilterAdvancedManagerSelectedFilterSet', {
 					propertyName: CMDBuild.core.constants.Proxy.NAME,
 					value: formData[CMDBuild.core.constants.Proxy.NAME]
 				});
 
-				this.cmfg('entryTypeGridFilterAdvancedManagerSave', this.enableApply);
+				this.cmfg('entryTypeGridFilterAdvancedManagerSave', {
+					enableApply: this.enableApply,
+					enableSaveDialog: false
+				});
+
+				this.cmfg('onEntryTypeGridFilterAdvancedSaveDialogAbortButtonClick');
 			}
 		}
 	});

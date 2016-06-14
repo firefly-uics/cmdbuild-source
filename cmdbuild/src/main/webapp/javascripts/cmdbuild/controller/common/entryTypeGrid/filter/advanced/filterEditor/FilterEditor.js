@@ -125,14 +125,8 @@
 				this.controllerRelations.cmfg('entryTypeGridFilterAdvancedFilterEditorRelationsDataGet')
 			);
 
-			// If new filter model
-			if (Ext.isEmpty(filterModelObject[CMDBuild.core.constants.Proxy.ID])) {
-				filterModelObject[CMDBuild.core.constants.Proxy.DESCRIPTION] = '';
-				filterModelObject[CMDBuild.core.constants.Proxy.NAME] = '';
-			}
-
 			this.cmfg('entryTypeGridFilterAdvancedManagerSelectedFilterSet', { value: filterModelObject });
-			this.cmfg('entryTypeGridFilterAdvancedManagerSave', true);
+			this.cmfg('entryTypeGridFilterAdvancedManagerSave', { enableApply: true });
 		},
 
 		/**
