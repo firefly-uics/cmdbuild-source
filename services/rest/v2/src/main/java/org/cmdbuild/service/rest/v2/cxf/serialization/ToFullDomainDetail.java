@@ -60,6 +60,7 @@ public class ToFullDomainDetail implements Function<CMDomain, DomainWithFullDeta
 				.withDescriptionDirect(input.getDescription1()) //
 				.withDescriptionInverse(input.getDescription2()) //
 				.withDescriptionMasterDetail(input.getMasterDetailDescription()) //
+				.withActive(input.isActive()) //
 				.build();
 	}
 
