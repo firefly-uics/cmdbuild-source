@@ -1,5 +1,6 @@
 package org.cmdbuild.service.rest.v2.model;
 
+import static org.cmdbuild.service.rest.v2.constants.Serialization.ACTIVE;
 import static org.cmdbuild.service.rest.v2.constants.Serialization.CARDINALITY;
 import static org.cmdbuild.service.rest.v2.constants.Serialization.DESCRIPTION_DIRECT;
 import static org.cmdbuild.service.rest.v2.constants.Serialization.DESCRIPTION_INVERSE;
@@ -26,6 +27,7 @@ public class DomainWithFullDetails extends DomainWithBasicDetails {
 	private String descriptionDirect;
 	private String descriptionInverse;
 	private String descriptionMasterDetail;
+	private boolean active;
 
 	DomainWithFullDetails() {
 		// package visibility
@@ -103,6 +105,15 @@ public class DomainWithFullDetails extends DomainWithBasicDetails {
 		this.descriptionMasterDetail = descriptionMasterDetail;
 	}
 
+	@XmlAttribute(name = ACTIVE)
+	public boolean isActive() {
+		return active;
+	}
+
+	void setActive(boolean active) {
+		this.active = active;
+	}
+
 	@Override
 	protected boolean doEquals(final Object obj) {
 		if (this == obj) {
@@ -121,6 +132,7 @@ public class DomainWithFullDetails extends DomainWithBasicDetails {
 				.append(this.descriptionDirect, other.descriptionDirect) //
 				.append(this.descriptionInverse, other.descriptionInverse) //
 				.append(this.descriptionMasterDetail, other.descriptionMasterDetail) //
+				.append(this.active, other.active) //
 				.isEquals();
 	}
 
@@ -134,6 +146,7 @@ public class DomainWithFullDetails extends DomainWithBasicDetails {
 				.append(descriptionDirect) //
 				.append(descriptionInverse) //
 				.append(descriptionMasterDetail) //
+				.append(active) //
 				.toHashCode();
 	}
 

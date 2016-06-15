@@ -6,6 +6,7 @@ import static com.google.common.collect.Sets.newHashSet;
 import static java.lang.String.format;
 import static org.apache.commons.lang3.builder.ToStringStyle.SHORT_PREFIX_STYLE;
 import static org.cmdbuild.dao.entrytype.Functions.name;
+import static org.cmdbuild.service.rest.v2.constants.Serialization.ACTIVE;
 import static org.cmdbuild.service.rest.v2.constants.Serialization.DESTINATION;
 import static org.cmdbuild.service.rest.v2.constants.Serialization.SOURCE;
 
@@ -27,7 +28,8 @@ import org.slf4j.MarkerFactory;
 import com.google.common.base.Predicate;
 import com.google.common.collect.FluentIterable;
 
-public class DomainAttributePredicate extends ForwardingPredicateVisitor implements Predicate<CMDomain>, LoggingSupport {
+public class DomainAttributePredicate extends ForwardingPredicateVisitor
+		implements Predicate<CMDomain>, LoggingSupport {
 
 	private static final Marker marker = MarkerFactory.getMarker(DomainAttributePredicate.class.getName());
 
@@ -85,6 +87,17 @@ public class DomainAttributePredicate extends ForwardingPredicateVisitor impleme
 			_output = input.getClass1().getName().equals(expected);
 		} else if (DESTINATION.equals(attribute.getName())) {
 			_output = input.getClass2().getName().equals(expected);
+		} else if (ACTIVE.equals(attribute.getName())) {
+			final boolean value;
+			if (expected instanceof Boolean) {
+				value = Boolean.class.cast(expected);
+			} else if (expected instanceof String) {
+				value = Boolean.valueOf(String.class.cast(expected));
+			} else {
+				logger.warn(marker, format("cannot convert '%s' to boolean", expected));
+				value = input.isActive();
+			}
+			_output = (value == input.isActive());
 		} else {
 			logger.warn(marker, format("attribute '%s' not supported", attribute.getName()));
 			_output = true;
