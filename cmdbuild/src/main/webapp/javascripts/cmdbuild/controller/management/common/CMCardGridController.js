@@ -303,7 +303,7 @@
 		 */
 		onFilterMenuButtonApplyActionClick: function (filter) {
 			if (filter.getRuntimeParameters().length > 0) {
-				showRuntimeParameterWindow(me, filter);
+				showRuntimeParameterWindow(this, filter);
 			} else {
 				this.appliedFilter = filter;
 
