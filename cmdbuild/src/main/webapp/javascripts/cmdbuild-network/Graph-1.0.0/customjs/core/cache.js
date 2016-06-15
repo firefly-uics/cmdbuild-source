@@ -418,18 +418,28 @@
 		this.getFilterForDomain = function(classId) {
 			var filter = {
 				attribute : {
-					or : [ {
+					and : [ {
 						simple : {
-							attribute : "source",
-							operator : "contain",
-							value : [ classId ]
+							attribute : "active",
+							operator : "equal",
+							value : [ "true" ]
 						}
-					}, {
-						simple : {
-							attribute : "destination",
-							operator : "contain",
-							value : [ classId ]
-						}
+						
+					},
+					{
+						or : [ {
+							simple : {
+								attribute : "source",
+								operator : "contain",
+								value : [ classId ]
+							}
+						}, {
+							simple : {
+								attribute : "destination",
+								operator : "contain",
+								value : [ classId ]
+							}
+						} ]
 					} ]
 				}
 			};
