@@ -14,16 +14,14 @@
 		 * @cfg {Array}
 		 */
 		cmfgCatchedFunctions: [
-			'accordionBuildId',
 			'accordionDeselect',
 			'accordionExpand',
 			'accordionFirstSelectableNodeSelect',
 			'accordionFirtsSelectableNodeGet',
-			'accordionIdentifierGet',
 			'accordionNodeByIdExists',
 			'accordionNodeByIdGet',
 			'accordionNodeByIdSelect',
-			'accordionUpdateStore',
+			'accordionUtilityUpdateStore = accordionUpdateStore',
 			'onAccordionBeforeSelect',
 			'onAccordionExpand',
 			'onAccordionSelectionChange'
@@ -57,19 +55,20 @@
 
 			this.view = Ext.create('CMDBuild.view.management.accordion.Utility', { delegate: this });
 
-			this.cmfg('accordionUpdateStore');
+			this.cmfg('accordionUtilityUpdateStore');
 		},
 
 		/**
-		 * @param {Number} nodeIdToSelect
+		 * @param {Object} parameters
+		 * @param {Function} parameters.callback
+		 * @param {Number or String} parameters.nodeIdToSelect
+		 * @param {Object} parameters.scope
 		 *
 		 * @returns {Void}
 		 *
 		 * @override
 		 */
-		accordionUpdateStore: function (nodeIdToSelect) {
-			nodeIdToSelect = Ext.isNumber(nodeIdToSelect) ? nodeIdToSelect : null;
-
+		accordionUtilityUpdateStore: function (parameters) {
 			var nodes = [];
 
 			if (!this.isSectionDisabled(CMDBuild.core.constants.Proxy.CHANGE_PASSWORD))
@@ -78,7 +77,7 @@
 					iconCls: 'cmdb-tree-utility-icon',
 					text: CMDBuild.Translation.changePassword,
 					description: CMDBuild.Translation.changePassword,
-					id: this.cmfg('accordionBuildId', 'changepassword'),
+					id: this.accordionBuildId('changepassword'),
 					sectionHierarchy: ['changepassword'],
 					leaf: true
 				});
@@ -89,7 +88,7 @@
 					iconCls: 'cmdb-tree-utility-icon',
 					text: CMDBuild.Translation.multipleUpdate,
 					description: CMDBuild.Translation.multipleUpdate,
-					id: this.cmfg('accordionBuildId', 'bulkcardupdate'),
+					id: this.accordionBuildId('bulkcardupdate'),
 					sectionHierarchy: ['bulkcardupdate'],
 					leaf: true
 				});
@@ -100,7 +99,7 @@
 					iconCls: 'cmdb-tree-utility-icon',
 					text: CMDBuild.Translation.importCsvFile,
 					description: CMDBuild.Translation.importCsvFile,
-					id: this.cmfg('accordionBuildId', 'importcsv'),
+					id: this.accordionBuildId('importcsv'),
 					sectionHierarchy: ['importcsv'],
 					leaf: true
 				});
@@ -111,7 +110,7 @@
 					iconCls: 'cmdb-tree-utility-icon',
 					text: CMDBuild.Translation.exportCsvFile,
 					description: CMDBuild.Translation.exportCsvFile,
-					id: this.cmfg('accordionBuildId', 'exportcsv'),
+					id: this.accordionBuildId('exportcsv'),
 					sectionHierarchy: ['exportcsv'],
 					leaf: true
 				});
@@ -121,10 +120,7 @@
 				this.view.getStore().getRootNode().appendChild(nodes);
 			}
 
-			// Alias of this.callParent(arguments), inside proxy function doesn't work
-			this.updateStoreCommonEndpoint(nodeIdToSelect);
-
-			this.callParent(arguments);
+			this.accordionUpdateStore(arguments); // Custom callParent implementation
 		},
 
 		/**

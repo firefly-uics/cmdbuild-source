@@ -18,16 +18,14 @@
 		 * @cfg {Array}
 		 */
 		cmfgCatchedFunctions: [
-			'accordionBuildId',
 			'accordionDeselect',
 			'accordionExpand',
 			'accordionFirstSelectableNodeSelect',
 			'accordionFirtsSelectableNodeGet',
-			'accordionIdentifierGet',
 			'accordionNodeByIdExists',
 			'accordionNodeByIdGet',
 			'accordionNodeByIdSelect',
-			'accordionUpdateStore',
+			'accordionDataViewUpdateStore = accordionUpdateStore',
 			'onAccordionBeforeSelect',
 			'onAccordionExpand',
 			'onAccordionSelectionChange'
@@ -56,19 +54,20 @@
 
 			this.view = Ext.create('CMDBuild.view.management.accordion.DataView', { delegate: this });
 
-			this.cmfg('accordionUpdateStore');
+			this.cmfg('accordionDataViewUpdateStore');
 		},
 
 		/**
-		 * @param {Number} nodeIdToSelect
+		 * @param {Object} parameters
+		 * @param {Function} parameters.callback
+		 * @param {Number or String} parameters.nodeIdToSelect
+		 * @param {Object} parameters.scope
 		 *
 		 * @returns {Void}
 		 *
 		 * @override
 		 */
-		accordionUpdateStore: function (nodeIdToSelect) {
-			nodeIdToSelect = Ext.isNumber(nodeIdToSelect) ? nodeIdToSelect : null;
-
+		accordionDataViewUpdateStore: function (parameters) {
 			CMDBuild.proxy.dataView.DataView.readAll({
 				loadMask: false,
 				scope: this,
@@ -108,7 +107,7 @@
 											if (!Ext.isEmpty(viewSourceClassObject)) {
 												nodeObject['cmName'] = 'class'; // To act as a regular class node
 												nodeObject[CMDBuild.core.constants.Proxy.ENTITY_ID] = viewSourceClassObject[CMDBuild.core.constants.Proxy.ID];
-												nodeObject[CMDBuild.core.constants.Proxy.ID] = this.cmfg('accordionBuildId', viewObject[CMDBuild.core.constants.Proxy.ID]);
+												nodeObject[CMDBuild.core.constants.Proxy.ID] = this.accordionBuildId(viewObject[CMDBuild.core.constants.Proxy.ID]);
 												nodeObject[CMDBuild.core.constants.Proxy.SECTION_HIERARCHY] = ['filter'];
 												nodeObject[CMDBuild.core.constants.Proxy.FILTER] = viewObject[CMDBuild.core.constants.Proxy.FILTER];
 											}
@@ -116,9 +115,9 @@
 
 										case 'SQL':
 										default: {
-											nodeObject['cmName'] = this.cmfg('accordionIdentifierGet');
+											nodeObject['cmName'] = this.accordionIdentifierGet();
 											nodeObject[CMDBuild.core.constants.Proxy.ENTITY_ID] = viewObject[CMDBuild.core.constants.Proxy.ID];
-											nodeObject[CMDBuild.core.constants.Proxy.ID] = this.cmfg('accordionBuildId', viewObject[CMDBuild.core.constants.Proxy.ID]);
+											nodeObject[CMDBuild.core.constants.Proxy.ID] = this.accordionBuildId(viewObject[CMDBuild.core.constants.Proxy.ID]);
 											nodeObject[CMDBuild.core.constants.Proxy.SECTION_HIERARCHY] = ['sql'];
 											nodeObject[CMDBuild.core.constants.Proxy.SOURCE_FUNCTION] = viewObject[CMDBuild.core.constants.Proxy.SOURCE_FUNCTION];
 										}
@@ -133,14 +132,11 @@
 								this.view.getStore().sort();
 							}
 
-							// Alias of this.callParent(arguments), inside proxy function doesn't work
-							this.updateStoreCommonEndpoint(nodeIdToSelect);
+							this.accordionUpdateStore(arguments); // Custom callParent implementation
 						}
 					});
 				}
 			});
-
-			this.callParent(arguments);
 		}
 	});
 

@@ -17,16 +17,14 @@
 		 * @cfg {Array}
 		 */
 		cmfgCatchedFunctions: [
-			'accordionBuildId',
 			'accordionDeselect',
 			'accordionExpand',
 			'accordionFirstSelectableNodeSelect',
 			'accordionFirtsSelectableNodeGet',
-			'accordionIdentifierGet',
 			'accordionNodeByIdExists',
 			'accordionNodeByIdGet',
 			'accordionNodeByIdSelect',
-			'accordionUpdateStore',
+			'accordionDomainUpdateStore = accordionUpdateStore',
 			'onAccordionBeforeSelect',
 			'onAccordionExpand',
 			'onAccordionSelectionChange'
@@ -44,6 +42,9 @@
 
 		/**
 		 * @param {Object} configurationObject
+		 * @param {CMDBuild.controller.common.MainViewport} configurationObject.parentDelegate
+		 *
+		 * @returns {Void}
 		 *
 		 * @override
 		 */
@@ -52,19 +53,20 @@
 
 			this.view = Ext.create('CMDBuild.view.administration.accordion.Domain', { delegate: this });
 
-			this.cmfg('accordionUpdateStore');
+			this.cmfg('accordionDomainUpdateStore');
 		},
 
 		/**
-		 * @param {Number} nodeIdToSelect
+		 * @param {Object} parameters
+		 * @param {Function} parameters.callback
+		 * @param {Number or String} parameters.nodeIdToSelect
+		 * @param {Object} parameters.scope
 		 *
 		 * @returns {Void}
 		 *
 		 * @override
 		 */
-		accordionUpdateStore: function (nodeIdToSelect) {
-			nodeIdToSelect = Ext.isEmpty(nodeIdToSelect) ? null : nodeIdToSelect;
-
+		accordionDomainUpdateStore: function (parameters) {
 			CMDBuild.proxy.domain.Domain.readAll({
 				scope: this,
 				success: function (response, options, decodedResponse) {
@@ -82,12 +84,12 @@
 
 						Ext.Array.forEach(decodedResponse, function (domainObject, i, allDomainObjects) {
 							var nodeObject = {};
-							nodeObject['cmName'] = this.cmfg('accordionIdentifierGet');
+							nodeObject['cmName'] = this.accordionIdentifierGet();
 							nodeObject['iconCls'] = 'cmdb-tree-domain-icon';
 							nodeObject[CMDBuild.core.constants.Proxy.TEXT] = domainObject[CMDBuild.core.constants.Proxy.DESCRIPTION];
 							nodeObject[CMDBuild.core.constants.Proxy.DESCRIPTION] = domainObject[CMDBuild.core.constants.Proxy.DESCRIPTION];
 							nodeObject[CMDBuild.core.constants.Proxy.ENTITY_ID] = domainObject[CMDBuild.core.constants.Proxy.ID_DOMAIN];
-							nodeObject[CMDBuild.core.constants.Proxy.ID] = this.cmfg('accordionBuildId', domainObject[CMDBuild.core.constants.Proxy.ID_DOMAIN]);
+							nodeObject[CMDBuild.core.constants.Proxy.ID] = this.accordionBuildId(domainObject[CMDBuild.core.constants.Proxy.ID_DOMAIN]);
 							nodeObject[CMDBuild.core.constants.Proxy.LEAF] = true;
 
 							nodes.push(nodeObject);
@@ -99,12 +101,9 @@
 						}
 					}
 
-					// Alias of this.callParent(arguments), inside proxy function doesn't work
-					this.updateStoreCommonEndpoint(nodeIdToSelect);
+					this.accordionUpdateStore(arguments); // Custom callParent implementation
 				}
 			});
-
-			this.callParent(arguments);
 		}
 	});
 

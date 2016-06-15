@@ -1,12 +1,12 @@
 (function () {
 
-	Ext.define('CMDBuild.view.management.accordion.Menu', {
+	Ext.define('CMDBuild.view.management.accordion.Navigation', {
 		extend: 'CMDBuild.view.common.abstract.Accordion',
 
 		requires: ['CMDBuild.model.menu.accordion.Management'],
 
 		/**
-		 * @cfg {CMDBuild.controller.management.accordion.Menu}
+		 * @cfg {CMDBuild.controller.management.accordion.Navigation}
 		 */
 		delegate: undefined,
 

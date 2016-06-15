@@ -12,16 +12,14 @@
 		 * @cfg {Array}
 		 */
 		cmfgCatchedFunctions: [
-			'accordionBuildId',
 			'accordionDeselect',
 			'accordionExpand',
 			'accordionFirstSelectableNodeSelect',
 			'accordionFirtsSelectableNodeGet',
-			'accordionIdentifierGet',
 			'accordionNodeByIdExists',
 			'accordionNodeByIdGet',
 			'accordionNodeByIdSelect',
-			'accordionUpdateStore',
+			'accordionDataViewUpdateStore = accordionUpdateStore',
 			'onAccordionBeforeSelect',
 			'onAccordionExpand',
 			'onAccordionSelectionChange'
@@ -50,41 +48,41 @@
 
 			this.view = Ext.create('CMDBuild.view.administration.accordion.DataView', { delegate: this });
 
-			this.cmfg('accordionUpdateStore');
+			this.cmfg('accordionDataViewUpdateStore');
 		},
 
 		/**
-		 * @param {Number} nodeIdToSelect
+		 * @param {Object} parameters
+		 * @param {Function} parameters.callback
+		 * @param {Number or String} parameters.nodeIdToSelect
+		 * @param {Object} parameters.scope
 		 *
 		 * @returns {Void}
 		 *
 		 * @override
 		 */
-		accordionUpdateStore: function (nodeIdToSelect) {
+		accordionDataViewUpdateStore: function (parameters) {
 			this.view.getStore().getRootNode().removeAll();
 			this.view.getStore().getRootNode().appendChild([
 				{
-					cmName: this.cmfg('accordionIdentifierGet'),
+					cmName: this.accordionIdentifierGet(),
 					text: CMDBuild.Translation.filterView,
 					description: CMDBuild.Translation.filterView,
-					id: this.cmfg('accordionBuildId', 'filter'),
+					id: this.accordionBuildId('filter'),
 					sectionHierarchy: ['filter'],
 					leaf: true
 				},
 				{
-					cmName: this.cmfg('accordionIdentifierGet'),
+					cmName: this.accordionIdentifierGet(),
 					text: CMDBuild.Translation.sqlView,
 					description: CMDBuild.Translation.sqlView,
-					id: this.cmfg('accordionBuildId', 'sql'),
+					id: this.accordionBuildId('sql'),
 					sectionHierarchy: ['sql'],
 					leaf: true
 				}
 			]);
 
-			// Alias of this.callParent(arguments), inside proxy function doesn't work
-			this.updateStoreCommonEndpoint(nodeIdToSelect);
-
-			this.callParent(arguments);
+			this.accordionUpdateStore(arguments); // Custom callParent implementation
 		}
 	});
 

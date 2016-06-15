@@ -17,16 +17,14 @@
 		 * @cfg {Array}
 		 */
 		cmfgCatchedFunctions: [
-			'accordionBuildId',
 			'accordionDeselect',
 			'accordionExpand',
 			'accordionFirstSelectableNodeSelect',
 			'accordionFirtsSelectableNodeGet',
-			'accordionIdentifierGet',
 			'accordionNodeByIdExists',
 			'accordionNodeByIdGet',
 			'accordionNodeByIdSelect',
-			'accordionUpdateStore',
+			'accordionLookupUpdateStore = accordionUpdateStore',
 			'onAccordionBeforeSelect',
 			'onAccordionExpand',
 			'onAccordionSelectionChange'
@@ -55,19 +53,20 @@
 
 			this.view = Ext.create('CMDBuild.view.administration.accordion.Lookup', { delegate: this });
 
-			this.cmfg('accordionUpdateStore');
+			this.cmfg('accordionLookupUpdateStore');
 		},
 
 		/**
-		 * @param {Number} nodeIdToSelect
+		 * @param {Object} parameters
+		 * @param {Function} parameters.callback
+		 * @param {Number or String} parameters.nodeIdToSelect
+		 * @param {Object} parameters.scope
 		 *
 		 * @returns {Void}
 		 *
 		 * @override
 		 */
-		accordionUpdateStore: function (nodeIdToSelect) {
-			nodeIdToSelect = Ext.isString(nodeIdToSelect) ? nodeIdToSelect : null;
-
+		accordionLookupUpdateStore: function (parameters) {
 			CMDBuild.proxy.lookup.Type.readAll({
 				scope: this,
 				success: function (response, options, decodedResponse) {
@@ -79,11 +78,11 @@
 						Ext.Array.forEach(decodedResponse, function (lookupTypeObject, i, allLookupTypeObjects) {
 							var nodeObject = {};
 							nodeObject['iconCls'] = 'cmdb-tree-lookup-icon';
-							nodeObject['cmName'] = this.cmfg('accordionIdentifierGet');
+							nodeObject['cmName'] = this.accordionIdentifierGet();
 							nodeObject[CMDBuild.core.constants.Proxy.TEXT] = lookupTypeObject[CMDBuild.core.constants.Proxy.TEXT];
 							nodeObject[CMDBuild.core.constants.Proxy.DESCRIPTION] = lookupTypeObject[CMDBuild.core.constants.Proxy.TEXT];
 							nodeObject[CMDBuild.core.constants.Proxy.ENTITY_ID] = lookupTypeObject[CMDBuild.core.constants.Proxy.ID];
-							nodeObject[CMDBuild.core.constants.Proxy.ID] = this.cmfg('accordionBuildId', lookupTypeObject[CMDBuild.core.constants.Proxy.ID]);
+							nodeObject[CMDBuild.core.constants.Proxy.ID] = this.accordionBuildId(lookupTypeObject[CMDBuild.core.constants.Proxy.ID]);
 							nodeObject[CMDBuild.core.constants.Proxy.PARENT] = lookupTypeObject[CMDBuild.core.constants.Proxy.PARENT];
 							nodeObject[CMDBuild.core.constants.Proxy.LEAF] = true;
 
@@ -115,12 +114,9 @@
 						}
 					}
 
-					// Alias of this.callParent(arguments), inside proxy function doesn't work
-					this.updateStoreCommonEndpoint(nodeIdToSelect);
+					this.accordionUpdateStore(arguments); // Custom callParent implementation
 				}
 			});
-
-			this.callParent(arguments);
 		}
 	});
 

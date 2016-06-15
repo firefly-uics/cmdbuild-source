@@ -431,7 +431,7 @@
 			var expandedAccordionController = this.accordionControllerExpandedGet();
 
 			if (!Ext.isEmpty(expandedAccordionController)) {
-				this.cmfg('mainViewportModuleShow', { identifier: expandedAccordionController.cmfg('accordionIdentifierGet') });
+				this.cmfg('mainViewportModuleShow', { identifier: expandedAccordionController.accordionIdentifierGet() });
 
 				expandedAccordionController.cmfg('accordionFirstSelectableNodeSelect');
 			}

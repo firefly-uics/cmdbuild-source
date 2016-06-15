@@ -12,16 +12,14 @@
 		 * @cfg {Array}
 		 */
 		cmfgCatchedFunctions: [
-			'accordionBuildId',
 			'accordionDeselect',
 			'accordionExpand',
 			'accordionFirstSelectableNodeSelect',
 			'accordionFirtsSelectableNodeGet',
-			'accordionIdentifierGet',
 			'accordionNodeByIdExists',
 			'accordionNodeByIdGet',
 			'accordionNodeByIdSelect',
-			'accordionUpdateStore',
+			'accordionLocalizationUpdateStore = accordionUpdateStore',
 			'onAccordionBeforeSelect',
 			'onAccordionExpand',
 			'onAccordionSelectionChange'
@@ -50,52 +48,52 @@
 
 			this.view = Ext.create('CMDBuild.view.administration.accordion.Localization', { delegate: this });
 
-			this.cmfg('accordionUpdateStore');
+			this.cmfg('accordionLocalizationUpdateStore');
 		},
 
 		/**
-		 * @param {Number} nodeIdToSelect
+		 * @param {Object} parameters
+		 * @param {Function} parameters.callback
+		 * @param {Number or String} parameters.nodeIdToSelect
+		 * @param {Object} parameters.scope
 		 *
 		 * @returns {Void}
 		 *
 		 * @override
 		 */
-		accordionUpdateStore: function (nodeIdToSelect) {
+		accordionLocalizationUpdateStore: function (parameters) {
 			this.view.getStore().getRootNode().removeAll();
 			this.view.getStore().getRootNode().appendChild([
 				{
-					cmName: this.cmfg('accordionIdentifierGet'),
+					cmName: this.accordionIdentifierGet(),
 					iconCls: 'cmdb-tree-localization-icon',
 					text: CMDBuild.Translation.configuration,
 					description: CMDBuild.Translation.configuration,
-					id: this.cmfg('accordionBuildId', 'configuration'),
+					id: this.accordionBuildId('configuration'),
 					sectionHierarchy: ['configuration'],
 					leaf: true
 				},
 				{
-					cmName: this.cmfg('accordionIdentifierGet'),
+					cmName: this.accordionIdentifierGet(),
 					iconCls: 'cmdb-tree-localization-icon',
 					text: CMDBuild.Translation.localization,
 					description: CMDBuild.Translation.localization,
-					id: this.cmfg('accordionBuildId', 'advancedTranslationsTable'),
+					id: this.accordionBuildId('advancedTranslationsTable'),
 					sectionHierarchy: ['advancedTranslationsTable'],
 					leaf: true
 				},
 				{
-					cmName: this.cmfg('accordionIdentifierGet'),
+					cmName: this.accordionIdentifierGet(),
 					iconCls: 'cmdb-tree-localization-icon',
 					text: CMDBuild.Translation.importExport,
 					description: CMDBuild.Translation.importExport,
-					id: this.cmfg('accordionBuildId', 'importExport'),
+					id: this.accordionBuildId('importExport'),
 					sectionHierarchy: ['importExport'],
 					leaf: true
 				}
 			]);
 
-			// Alias of this.callParent(arguments), inside proxy function doesn't work
-			this.updateStoreCommonEndpoint(nodeIdToSelect);
-
-			this.callParent(arguments);
+			this.accordionUpdateStore(arguments); // Custom callParent implementation
 		}
 	});
 
