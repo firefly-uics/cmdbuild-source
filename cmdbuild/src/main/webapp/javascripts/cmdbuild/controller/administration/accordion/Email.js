@@ -12,16 +12,14 @@
 		 * @cfg {Array}
 		 */
 		cmfgCatchedFunctions: [
-			'accordionBuildId',
 			'accordionDeselect',
 			'accordionExpand',
 			'accordionFirstSelectableNodeSelect',
 			'accordionFirtsSelectableNodeGet',
-			'accordionIdentifierGet',
 			'accordionNodeByIdExists',
 			'accordionNodeByIdGet',
 			'accordionNodeByIdSelect',
-			'accordionUpdateStore',
+			'accordionEmailUpdateStore = accordionUpdateStore',
 			'onAccordionBeforeSelect',
 			'onAccordionExpand',
 			'onAccordionSelectionChange'
@@ -50,52 +48,52 @@
 
 			this.view = Ext.create('CMDBuild.view.administration.accordion.Email', { delegate: this });
 
-			this.cmfg('accordionUpdateStore');
+			this.cmfg('accordionEmailUpdateStore');
 		},
 
 		/**
-		 * @param {Number} nodeIdToSelect
+		 * @param {Object} parameters
+		 * @param {Function} parameters.callback
+		 * @param {Number or String} parameters.nodeIdToSelect
+		 * @param {Object} parameters.scope
 		 *
 		 * @returns {Void}
 		 *
 		 * @override
 		 */
-		accordionUpdateStore: function (nodeIdToSelect) {
+		accordionEmailUpdateStore: function (parameters) {
 			this.view.getStore().getRootNode().removeAll();
 			this.view.getStore().getRootNode().appendChild([
 				{
-					cmName: this.cmfg('accordionIdentifierGet'),
+					cmName: this.accordionIdentifierGet(),
 					iconCls: 'cmdb-tree-email-icon',
 					text: CMDBuild.Translation.accounts,
 					description: CMDBuild.Translation.accounts,
-					id: this.cmfg('accordionBuildId', 'accounts'),
+					id: this.accordionBuildId('accounts'),
 					sectionHierarchy: ['accounts'],
 					leaf: true
 				},
 				{
-					cmName: this.cmfg('accordionIdentifierGet'),
+					cmName: this.accordionIdentifierGet(),
 					iconCls: 'cmdb-tree-email-icon',
 					text: CMDBuild.Translation.templates,
 					description: CMDBuild.Translation.templates,
-					id: this.cmfg('accordionBuildId', 'templates'),
+					id: this.accordionBuildId('templates'),
 					sectionHierarchy: ['templates'],
 					leaf: true
 				},
 				{
-					cmName: this.cmfg('accordionIdentifierGet'),
+					cmName: this.accordionIdentifierGet(),
 					iconCls: 'cmdb-tree-email-icon',
 					text: CMDBuild.Translation.queue,
 					description: CMDBuild.Translation.queue,
-					id: this.cmfg('accordionBuildId', 'queue'),
+					id: this.accordionBuildId('queue'),
 					sectionHierarchy: ['queue'],
 					leaf: true
 				}
 			]);
 
-			// Alias of this.callParent(arguments), inside proxy function doesn't work
-			this.updateStoreCommonEndpoint(nodeIdToSelect);
-
-			this.callParent(arguments);
+			this.accordionUpdateStore(arguments); // Custom callParent implementation
 		}
 	});
 

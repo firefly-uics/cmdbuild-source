@@ -17,16 +17,14 @@
 		 * @cfg {Array}
 		 */
 		cmfgCatchedFunctions: [
-			'accordionBuildId',
 			'accordionDeselect',
 			'accordionExpand',
 			'accordionFirstSelectableNodeSelect',
 			'accordionFirtsSelectableNodeGet',
-			'accordionIdentifierGet',
 			'accordionNodeByIdExists',
 			'accordionNodeByIdGet',
 			'accordionNodeByIdSelect',
-			'accordionUpdateStore',
+			'accordionUserAndGroupUpdateStore = accordionUpdateStore',
 			'onAccordionBeforeSelect',
 			'onAccordionExpand',
 			'onAccordionSelectionChange'
@@ -55,19 +53,20 @@
 
 			this.view = Ext.create('CMDBuild.view.administration.accordion.UserAndGroup', { delegate: this });
 
-			this.cmfg('accordionUpdateStore');
+			this.cmfg('accordionUserAndGroupUpdateStore');
 		},
 
 		/**
-		 * @param {Number} nodeIdToSelect
+		 * @param {Object} parameters
+		 * @param {Function} parameters.callback
+		 * @param {Number or String} parameters.nodeIdToSelect
+		 * @param {Object} parameters.scope
 		 *
 		 * @returns {Void}
 		 *
 		 * @override
 		 */
-		accordionUpdateStore: function (nodeIdToSelect) {
-			nodeIdToSelect = Ext.isNumber(nodeIdToSelect) ? nodeIdToSelect : null;
-
+		accordionUserAndGroupUpdateStore: function (parameters) {
 			CMDBuild.proxy.userAndGroup.group.Group.readAll({
 				scope: this,
 				success: function (result, options, decodedResult) {
@@ -80,12 +79,12 @@
 
 						Ext.Array.forEach(decodedResult, function (groupObject, i, allGroupObjects) {
 							var nodeObject = {};
-							nodeObject['cmName'] = this.cmfg('accordionIdentifierGet');
+							nodeObject['cmName'] = this.accordionIdentifierGet();
 							nodeObject['iconCls'] = 'cmdb-tree-group-icon';
 							nodeObject[CMDBuild.core.constants.Proxy.TEXT] = groupObject[CMDBuild.core.constants.Proxy.DESCRIPTION];
 							nodeObject[CMDBuild.core.constants.Proxy.DESCRIPTION] = groupObject[CMDBuild.core.constants.Proxy.DESCRIPTION];
 							nodeObject[CMDBuild.core.constants.Proxy.ENTITY_ID] = groupObject[CMDBuild.core.constants.Proxy.ID];
-							nodeObject[CMDBuild.core.constants.Proxy.ID] = this.cmfg('accordionBuildId', groupObject[CMDBuild.core.constants.Proxy.ID]);
+							nodeObject[CMDBuild.core.constants.Proxy.ID] = this.accordionBuildId(groupObject[CMDBuild.core.constants.Proxy.ID]);
 							nodeObject[CMDBuild.core.constants.Proxy.SECTION_HIERARCHY] = ['group'];
 							nodeObject[CMDBuild.core.constants.Proxy.LEAF] = true;
 
@@ -94,7 +93,7 @@
 
 						this.view.getStore().getRootNode().appendChild([
 							{
-								cmName: this.cmfg('accordionIdentifierGet'),
+								cmName: this.accordionIdentifierGet(),
 								iconCls: 'cmdb-tree-userGroup-icon',
 								text: CMDBuild.Translation.groups,
 								description: CMDBuild.Translation.groups,
@@ -104,11 +103,11 @@
 								children: nodes
 							},
 							{
-								cmName: this.cmfg('accordionIdentifierGet'),
+								cmName: this.accordionIdentifierGet(),
 								iconCls: 'cmdb-tree-user-icon',
 								text: CMDBuild.Translation.users,
 								description: CMDBuild.Translation.users,
-								id: this.cmfg('accordionBuildId', 'user'),
+								id: this.accordionBuildId('user'),
 								sectionHierarchy: ['user'],
 								leaf: true
 							}
@@ -116,12 +115,9 @@
 						this.view.getStore().sort();
 					}
 
-					// Alias of this.callParent(arguments), inside proxy function doesn't work
-					this.updateStoreCommonEndpoint(nodeIdToSelect);
+					this.accordionUpdateStore(arguments); // Custom callParent implementation
 				}
 			});
-
-			this.callParent(arguments);
 		}
 	});
 

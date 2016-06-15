@@ -7,7 +7,7 @@
 			'CMDBuild.core.constants.Global',
 			'CMDBuild.core.constants.ModuleIdentifiers',
 			'CMDBuild.core.constants.Proxy',
-			'CMDBuild.proxy.Classes' // FIXME: build own proxy (workflow)
+			'CMDBuild.proxy.workflow.Workflow'
 		],
 
 		/**
@@ -19,16 +19,14 @@
 		 * @cfg {Array}
 		 */
 		cmfgCatchedFunctions: [
-			'accordionBuildId',
 			'accordionDeselect',
 			'accordionExpand',
 			'accordionFirstSelectableNodeSelect',
 			'accordionFirtsSelectableNodeGet',
-			'accordionIdentifierGet',
 			'accordionNodeByIdExists',
 			'accordionNodeByIdGet',
 			'accordionNodeByIdSelect',
-			'accordionUpdateStore',
+			'accordionWorkflowUpdateStore = accordionUpdateStore',
 			'onAccordionBeforeSelect',
 			'onAccordionExpand',
 			'onAccordionSelectionChange',
@@ -63,23 +61,24 @@
 
 			this.view = Ext.create('CMDBuild.view.management.accordion.Workflow', { delegate: this });
 
-			this.cmfg('accordionUpdateStore');
+			this.cmfg('accordionWorkflowUpdateStore');
 		},
 
 		/**
-		 * @param {Number} nodeIdToSelect
+		 * @param {Object} parameters
+		 * @param {Function} parameters.callback
+		 * @param {Number or String} parameters.nodeIdToSelect
+		 * @param {Object} parameters.scope
 		 *
 		 * @returns {Void}
 		 *
 		 * @override
 		 */
-		accordionUpdateStore: function (nodeIdToSelect) {
-			nodeIdToSelect = Ext.isNumber(nodeIdToSelect) ? nodeIdToSelect : null;
-
+		accordionWorkflowUpdateStore: function (parameters) {
 			var params = {};
 			params[CMDBuild.core.constants.Proxy.ACTIVE] = true;
 
-			CMDBuild.proxy.Classes.readAll({
+			CMDBuild.proxy.workflow.Workflow.readAll({
 				params: params,
 				loadMask: false,
 				scope: this,
@@ -97,12 +96,12 @@
 					if (!Ext.isEmpty(decodedResponse)) {
 						Ext.Array.forEach(decodedResponse, function (classObject, i, allClassObjects) {
 							var nodeObject = {};
-							nodeObject['cmName'] = this.cmfg('accordionIdentifierGet');
+							nodeObject['cmName'] = this.accordionIdentifierGet();
 							nodeObject['iconCls'] = classObject['superclass'] ? 'cmdb-tree-superprocessclass-icon' : 'cmdb-tree-processclass-icon';
 							nodeObject[CMDBuild.core.constants.Proxy.TEXT] = classObject[CMDBuild.core.constants.Proxy.TEXT];
 							nodeObject[CMDBuild.core.constants.Proxy.DESCRIPTION] = classObject[CMDBuild.core.constants.Proxy.TEXT];
 							nodeObject[CMDBuild.core.constants.Proxy.ENTITY_ID] = classObject[CMDBuild.core.constants.Proxy.ID];
-							nodeObject[CMDBuild.core.constants.Proxy.ID] = this.cmfg('accordionBuildId', classObject[CMDBuild.core.constants.Proxy.ID]);
+							nodeObject[CMDBuild.core.constants.Proxy.ID] = this.accordionBuildId(classObject[CMDBuild.core.constants.Proxy.ID]);
 							nodeObject[CMDBuild.core.constants.Proxy.PARENT] = classObject[CMDBuild.core.constants.Proxy.PARENT];
 							nodeObject[CMDBuild.core.constants.Proxy.NAME] = classObject[CMDBuild.core.constants.Proxy.NAME];
 							nodeObject[CMDBuild.core.constants.Proxy.LEAF] = true;
@@ -134,12 +133,9 @@
 						}
 					}
 
-					// Alias of this.callParent(arguments), inside proxy function doesn't work
-					this.updateStoreCommonEndpoint(nodeIdToSelect);
+					this.accordionUpdateStore(arguments); // Custom callParent implementation
 				}
 			});
-
-			this.callParent(arguments);
 		},
 
 		/**

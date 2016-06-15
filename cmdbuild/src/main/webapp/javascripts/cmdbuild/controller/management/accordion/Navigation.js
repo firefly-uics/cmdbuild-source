@@ -1,6 +1,6 @@
 (function () {
 
-	Ext.define('CMDBuild.controller.management.accordion.Menu', {
+	Ext.define('CMDBuild.controller.management.accordion.Navigation', {
 		extend: 'CMDBuild.controller.common.abstract.Accordion',
 
 		requires: [
@@ -19,16 +19,14 @@
 		 * @cfg {Array}
 		 */
 		cmfgCatchedFunctions: [
-			'accordionBuildId',
 			'accordionDeselect',
 			'accordionExpand',
 			'accordionFirstSelectableNodeSelect',
 			'accordionFirtsSelectableNodeGet',
-			'accordionIdentifierGet',
 			'accordionNodeByIdExists',
 			'accordionNodeByIdGet',
 			'accordionNodeByIdSelect',
-			'accordionUpdateStore',
+			'accordionNavigationUpdateStore = accordionUpdateStore',
 			'onAccordionBeforeSelect',
 			'onAccordionExpand',
 			'onAccordionSelectionChange'
@@ -52,7 +50,7 @@
 		identifier: undefined,
 
 		/**
-		 * @property {CMDBuild.view.management.accordion.Menu}
+		 * @property {CMDBuild.view.management.accordion.Navigation}
 		 */
 		view: undefined,
 
@@ -67,21 +65,22 @@
 		constructor: function (configurationObject) {
 			this.callParent(arguments);
 
-			this.view = Ext.create('CMDBuild.view.management.accordion.Menu', { delegate: this });
+			this.view = Ext.create('CMDBuild.view.management.accordion.Navigation', { delegate: this });
 
-			this.cmfg('accordionUpdateStore');
+			this.cmfg('accordionNavigationUpdateStore');
 		},
 
 		/**
-		 * @param {Number} nodeIdToSelect
+		 * @param {Object} parameters
+		 * @param {Function} parameters.callback
+		 * @param {Number or String} parameters.nodeIdToSelect
+		 * @param {Object} parameters.scope
 		 *
 		 * @returns {Void}
 		 *
 		 * @override
 		 */
-		accordionUpdateStore: function (nodeIdToSelect) {
-			nodeIdToSelect = Ext.isNumber(nodeIdToSelect) ? nodeIdToSelect : null;
-
+		accordionNavigationUpdateStore: function (parameters) {
 			var params = {};
 			params[CMDBuild.core.constants.Proxy.GROUP_NAME] = CMDBuild.configuration.runtime.get(CMDBuild.core.constants.Proxy.DEFAULT_GROUP_NAME);
 			params[CMDBuild.core.constants.Proxy.LOCALIZED] = true;
@@ -109,14 +108,11 @@
 								this.view.getStore().sort();
 							}
 
-							// Alias of this.callParent(arguments), inside proxy function doesn't work
-							this.updateStoreCommonEndpoint(nodeIdToSelect);
+							this.accordionUpdateStore(arguments); // Custom callParent implementation
 						}
 					});
 				}
 			});
-
-			this.callParent(arguments);
 		},
 
 		/**
@@ -172,7 +168,7 @@
 							nodeStructure['iconCls'] = 'cmdb-tree-' + (entryType.isSuperClass() ? 'super' : '') + 'class-icon';
 							nodeStructure[CMDBuild.core.constants.Proxy.ENTITY_ID] = entryType.getId();
 							nodeStructure[CMDBuild.core.constants.Proxy.FILTER] = menuNodeObject[CMDBuild.core.constants.Proxy.FILTER];
-							nodeStructure[CMDBuild.core.constants.Proxy.ID] = this.cmfg('accordionBuildId', [
+							nodeStructure[CMDBuild.core.constants.Proxy.ID] = this.accordionBuildId([
 								menuNodeObject[CMDBuild.core.constants.Proxy.TYPE],
 								entryType.getId(),
 								menuNodeObject[CMDBuild.core.constants.Proxy.INDEX],
@@ -192,7 +188,7 @@
 
 						nodeStructure['cmName'] = menuNodeObject[CMDBuild.core.constants.Proxy.TYPE];
 						nodeStructure['iconCls'] = 'cmdb-tree-custompage-icon';
-						nodeStructure[CMDBuild.core.constants.Proxy.ID] = this.cmfg('accordionBuildId', [
+						nodeStructure[CMDBuild.core.constants.Proxy.ID] = this.accordionBuildId([
 							menuNodeObject[CMDBuild.core.constants.Proxy.TYPE],
 							menuNodeObject[CMDBuild.core.constants.Proxy.INDEX],
 							menuNodeObject['uuid']
@@ -204,7 +200,7 @@
 						nodeStructure['cmName'] = 'dashboard';
 						nodeStructure['iconCls'] = 'cmdb-tree-dashboard-icon';
 						nodeStructure[CMDBuild.core.constants.Proxy.ENTITY_ID] = menuNodeObject[CMDBuild.core.constants.Proxy.REFERENCED_ELEMENT_ID];
-						nodeStructure[CMDBuild.core.constants.Proxy.ID] = this.cmfg('accordionBuildId', [
+						nodeStructure[CMDBuild.core.constants.Proxy.ID] = this.accordionBuildId([
 							menuNodeObject[CMDBuild.core.constants.Proxy.TYPE],
 							menuNodeObject[CMDBuild.core.constants.Proxy.REFERENCED_ELEMENT_ID],
 							menuNodeObject[CMDBuild.core.constants.Proxy.INDEX],
@@ -227,7 +223,7 @@
 							nodeStructure['iconCls'] = 'cmdb-tree-' + (entryType.isSuperClass() ? 'super' : '') + 'processclass-icon';
 							nodeStructure[CMDBuild.core.constants.Proxy.ENTITY_ID] = entryType.getId();
 							nodeStructure[CMDBuild.core.constants.Proxy.FILTER] = menuNodeObject[CMDBuild.core.constants.Proxy.FILTER];
-							nodeStructure[CMDBuild.core.constants.Proxy.ID] = this.cmfg('accordionBuildId', [
+							nodeStructure[CMDBuild.core.constants.Proxy.ID] = this.accordionBuildId([
 								menuNodeObject[CMDBuild.core.constants.Proxy.TYPE],
 								entryType.getId(),
 								menuNodeObject[CMDBuild.core.constants.Proxy.INDEX],
@@ -241,7 +237,7 @@
 						nodeStructure['cmName'] = CMDBuild.core.constants.ModuleIdentifiers.getReportSingle();
 						nodeStructure['iconCls'] = 'cmdb-tree-reportcsv-icon';
 						nodeStructure[CMDBuild.core.constants.Proxy.ENTITY_ID] = menuNodeObject[CMDBuild.core.constants.Proxy.REFERENCED_ELEMENT_ID];
-						nodeStructure[CMDBuild.core.constants.Proxy.ID] = this.cmfg('accordionBuildId', [
+						nodeStructure[CMDBuild.core.constants.Proxy.ID] = this.accordionBuildId([
 							CMDBuild.core.constants.ModuleIdentifiers.getReportSingle(),
 							menuNodeObject[CMDBuild.core.constants.Proxy.REFERENCED_ELEMENT_ID],
 							menuNodeObject[CMDBuild.core.constants.Proxy.INDEX]
@@ -253,7 +249,7 @@
 						nodeStructure['cmName'] = CMDBuild.core.constants.ModuleIdentifiers.getReportSingle();
 						nodeStructure['iconCls'] = 'cmdb-tree-reportpdf-icon';
 						nodeStructure[CMDBuild.core.constants.Proxy.ENTITY_ID] = menuNodeObject[CMDBuild.core.constants.Proxy.REFERENCED_ELEMENT_ID];
-						nodeStructure[CMDBuild.core.constants.Proxy.ID] = this.cmfg('accordionBuildId', [
+						nodeStructure[CMDBuild.core.constants.Proxy.ID] = this.accordionBuildId([
 							CMDBuild.core.constants.ModuleIdentifiers.getReportSingle(),
 							menuNodeObject[CMDBuild.core.constants.Proxy.REFERENCED_ELEMENT_ID],
 							menuNodeObject[CMDBuild.core.constants.Proxy.INDEX]
@@ -271,7 +267,7 @@
 								if (!Ext.isEmpty(entryType)) {
 									nodeStructure['cmName'] = 'class';
 									nodeStructure[CMDBuild.core.constants.Proxy.ENTITY_ID] = entryType.getId();
-									nodeStructure[CMDBuild.core.constants.Proxy.ID] = this.cmfg('accordionBuildId', [
+									nodeStructure[CMDBuild.core.constants.Proxy.ID] = this.accordionBuildId([
 										'dataview-filter',
 										entryType.getId(),
 										menuNodeObject[CMDBuild.core.constants.Proxy.INDEX],
@@ -284,7 +280,7 @@
 
 							case 'SQL': { // TODO: check if fill with SQL or do something else
 								nodeStructure['cmName'] = CMDBuild.core.constants.ModuleIdentifiers.getDataView();
-								nodeStructure[CMDBuild.core.constants.Proxy.ID] = this.cmfg('accordionBuildId', [
+								nodeStructure[CMDBuild.core.constants.Proxy.ID] = this.accordionBuildId([
 									'dataview-sql',
 									menuNodeObject[CMDBuild.core.constants.Proxy.INDEX],
 									menuNodeObject['uuid']

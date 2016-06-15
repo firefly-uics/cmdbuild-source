@@ -18,16 +18,14 @@
 		 * @cfg {Array}
 		 */
 		cmfgCatchedFunctions: [
-			'accordionBuildId',
 			'accordionDeselect',
 			'accordionExpand',
 			'accordionFirstSelectableNodeSelect',
 			'accordionFirtsSelectableNodeGet',
-			'accordionIdentifierGet',
 			'accordionNodeByIdExists',
 			'accordionNodeByIdGet',
 			'accordionNodeByIdSelect',
-			'accordionUpdateStore',
+			'accordionWorkflowUpdateStore = accordionUpdateStore',
 			'onAccordionBeforeSelect',
 			'onAccordionExpand',
 			'onAccordionSelectionChange'
@@ -39,7 +37,7 @@
 		identifier: undefined,
 
 		/**
-		 * @property {CMDBuild.view.management.accordion.Workflow}
+		 * @property {CMDBuild.view.administration.accordion.Workflow}
 		 */
 		view: undefined,
 
@@ -54,22 +52,25 @@
 		constructor: function (configurationObject) {
 			this.callParent(arguments);
 
-			this.view = Ext.create('CMDBuild.view.management.accordion.Workflow', {
+			this.view = Ext.create('CMDBuild.view.administration.accordion.Workflow', {
 				delegate: this,
 				disabled: !CMDBuild.configuration.workflow.get(CMDBuild.core.constants.Proxy.ENABLED)
 			});
 
-			this.cmfg('accordionUpdateStore');
+			this.cmfg('accordionWorkflowUpdateStore');
 		},
 
 		/**
-		 * @param {Number} nodeIdToSelect
+		 * @param {Object} parameters
+		 * @param {Function} parameters.callback
+		 * @param {Number or String} parameters.nodeIdToSelect
+		 * @param {Object} parameters.scope
 		 *
 		 * @returns {Void}
 		 *
 		 * @override
 		 */
-		accordionUpdateStore: function (nodeIdToSelect) {
+		accordionWorkflowUpdateStore: function (nodeIdToSelect) {
 			nodeIdToSelect = Ext.isNumber(nodeIdToSelect) ? nodeIdToSelect : null;
 
 			CMDBuild.proxy.workflow.Workflow.readAll({
@@ -84,7 +85,7 @@
 					decodedResponse = Ext.Array.filter(decodedResponse, function (item, i, array) {
 						return (
 							item[CMDBuild.core.constants.Proxy.TYPE] == CMDBuild.core.constants.Global.getTableTypeProcessClass() // Discard processes
-							&& item[CMDBuild.core.constants.Proxy.NAME] != 'Activity' // Discard root workflow of all Workflows
+							&& item[CMDBuild.core.constants.Proxy.NAME] != CMDBuild.core.constants.Global.getRootNameWorkflows() // Discard root workflow of all Workflows
 						);
 					}, this);
 
@@ -93,12 +94,12 @@
 					if (!Ext.isEmpty(decodedResponse)) {
 						Ext.Array.forEach(decodedResponse, function (classObject, i, allClassObjects) {
 							var nodeObject = {};
-							nodeObject['cmName'] = this.cmfg('accordionIdentifierGet');
+							nodeObject['cmName'] = this.accordionIdentifierGet();
 							nodeObject['iconCls'] = classObject['superclass'] ? 'cmdb-tree-superprocessclass-icon' : 'cmdb-tree-processclass-icon';
 							nodeObject[CMDBuild.core.constants.Proxy.TEXT] = classObject[CMDBuild.core.constants.Proxy.TEXT];
 							nodeObject[CMDBuild.core.constants.Proxy.DESCRIPTION] = classObject[CMDBuild.core.constants.Proxy.TEXT];
 							nodeObject[CMDBuild.core.constants.Proxy.ENTITY_ID] = classObject[CMDBuild.core.constants.Proxy.ID];
-							nodeObject[CMDBuild.core.constants.Proxy.ID] = this.cmfg('accordionBuildId', classObject[CMDBuild.core.constants.Proxy.ID]);
+							nodeObject[CMDBuild.core.constants.Proxy.ID] = this.accordionBuildId(classObject[CMDBuild.core.constants.Proxy.ID]);
 							nodeObject[CMDBuild.core.constants.Proxy.PARENT] = classObject[CMDBuild.core.constants.Proxy.PARENT];
 							nodeObject[CMDBuild.core.constants.Proxy.NAME] = classObject[CMDBuild.core.constants.Proxy.NAME];
 							nodeObject[CMDBuild.core.constants.Proxy.LEAF] = true;
@@ -129,12 +130,9 @@
 						}
 					}
 
-					// Alias of this.callParent(arguments), inside proxy function doesn't work
-					this.updateStoreCommonEndpoint(nodeIdToSelect);
+					this.accordionUpdateStore(arguments); // Custom callParent implementation
 				}
 			});
-
-			this.callParent(arguments);
 		}
 	});
 

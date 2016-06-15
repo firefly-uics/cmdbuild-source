@@ -12,16 +12,14 @@
 		 * @cfg {Array}
 		 */
 		cmfgCatchedFunctions: [
-			'accordionBuildId',
 			'accordionDeselect',
 			'accordionExpand',
 			'accordionFirstSelectableNodeSelect',
 			'accordionFirtsSelectableNodeGet',
-			'accordionIdentifierGet',
 			'accordionNodeByIdExists',
 			'accordionNodeByIdGet',
 			'accordionNodeByIdSelect',
-			'accordionUpdateStore',
+			'accordionGisUpdateStore = accordionUpdateStore',
 			'onAccordionBeforeSelect',
 			'onAccordionExpand',
 			'onAccordionSelectionChange'
@@ -50,17 +48,20 @@
 
 			this.view = Ext.create('CMDBuild.view.administration.accordion.Gis', { delegate: this });
 
-			this.cmfg('accordionUpdateStore');
+			this.cmfg('accordionGisUpdateStore');
 		},
 
 		/**
-		 * @param {Number} nodeIdToSelect
+		 * @param {Object} parameters
+		 * @param {Function} parameters.callback
+		 * @param {Number or String} parameters.nodeIdToSelect
+		 * @param {Object} parameters.scope
 		 *
 		 * @returns {Void}
 		 *
 		 * @override
 		 */
-		accordionUpdateStore: function (nodeIdToSelect) {
+		accordionGisUpdateStore: function (parameters) {
 			this.view.getStore().getRootNode().removeAll();
 			this.view.getStore().getRootNode().appendChild([
 				{
@@ -68,7 +69,7 @@
 					iconCls: 'cmdb-tree-gis-icon',
 					text: CMDBuild.Translation.manageIcons,
 					description: CMDBuild.Translation.manageIcons,
-					id: this.cmfg('accordionBuildId', 'gis-icons'),
+					id: this.accordionBuildId('gis-icons'),
 					sectionHierarchy: ['gis-icons'],
 					leaf: true
 				},
@@ -77,7 +78,7 @@
 					iconCls: 'cmdb-tree-gis-icon',
 					text: CMDBuild.Translation.externalServices,
 					description: CMDBuild.Translation.externalServices,
-					id: this.cmfg('accordionBuildId', 'gis-external-services'),
+					id: this.accordionBuildId('gis-external-services'),
 					sectionHierarchy: ['gis-external-services'],
 					leaf: true
 				},
@@ -86,7 +87,7 @@
 					iconCls: 'cmdb-tree-gis-icon',
 					text: CMDBuild.Translation.layersOrder,
 					description: CMDBuild.Translation.layersOrder,
-					id: this.cmfg('accordionBuildId', 'gis-layers-order'),
+					id: this.accordionBuildId('gis-layers-order'),
 					sectionHierarchy: ['gis-layers-order'],
 					leaf: true
 				},
@@ -95,7 +96,7 @@
 					iconCls: 'cmdb-tree-gis-icon',
 					text: CMDBuild.Translation.geoserverLayers,
 					description: CMDBuild.Translation.geoserverLayers,
-					id: this.cmfg('accordionBuildId', 'gis-geoserver'),
+					id: this.accordionBuildId('gis-geoserver'),
 					sectionHierarchy: ['gis-geoserver'],
 					leaf: true
 				},
@@ -104,16 +105,13 @@
 					iconCls: 'cmdb-tree-gis-icon',
 					text: CMDBuild.Translation.gisNavigation,
 					description: CMDBuild.Translation.gisNavigation,
-					id: this.cmfg('accordionBuildId', 'gis-filter-configuration'),
+					id: this.accordionBuildId('gis-filter-configuration'),
 					sectionHierarchy: ['gis-filter-configuration'],
 					leaf: true
 				}
 			]);
 
-			// Alias of this.callParent(arguments), inside proxy function doesn't work
-			this.updateStoreCommonEndpoint(nodeIdToSelect);
-
-			this.callParent(arguments);
+			this.accordionUpdateStore(arguments); // Custom callParent implementation
 		}
 	});
 
