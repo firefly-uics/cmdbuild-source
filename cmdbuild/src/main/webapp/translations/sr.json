@@ -1,6 +1,6 @@
 {
 	"description": "Srpski",
-	"release": "2.4.1 (16/06/2016)",
+	"release": "2.4-dev",
 	"administration": {
 		"description": "Administracioni modul",
 		"modClass": {
