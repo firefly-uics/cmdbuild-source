@@ -1,6 +1,6 @@
 (function () {
 
-	Ext.define('CMDBuild.proxy.classes.MasterDetail', {
+	Ext.define('CMDBuild.proxy.classes.tabs.MasterDetail', {
 
 		requires: [
 			'CMDBuild.core.constants.Proxy',

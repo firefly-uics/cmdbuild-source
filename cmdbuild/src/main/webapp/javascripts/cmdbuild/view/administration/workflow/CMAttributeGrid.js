@@ -1,5 +1,7 @@
 (function() {
 
+	Ext.require('CMDBuild.proxy.common.tabs.attribute.Attribute');
+
 	var ATTR = {
 		INDEX: CMDBuild.core.constants.Proxy.INDEX,
 		NAME: CMDBuild.core.constants.Proxy.NAME,

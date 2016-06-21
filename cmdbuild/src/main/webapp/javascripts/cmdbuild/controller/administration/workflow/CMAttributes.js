@@ -196,7 +196,7 @@
 
 	function buildOrderingWindow() {
 		if (this.currentClassId) {
-			var win = new CMDBuild.Administration.SetOrderWindow( {
+			var win = Ext.create('CMDBuild.view.administration.workflow.CMSetOrderWindow', {
 				idClass : this.currentClassId
 			}).show();
 		}

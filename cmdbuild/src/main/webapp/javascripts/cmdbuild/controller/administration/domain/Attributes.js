@@ -1,7 +1,6 @@
 (function() {
 
 	Ext.define('CMDBuild.controller.administration.domain.Attributes', {
-		extend: 'CMDBuild.controller.administration.CMBaseAttributesController',
 
 		requires: [
 			'CMDBuild.core.constants.Proxy',
@@ -49,9 +48,9 @@
 		constructor: function(configurationObject) {
 			Ext.apply(this, configurationObject); // Apply configuration to class
 
-			var view = Ext.create('CMDBuild.view.administration.domain.attributes.AttributesView');
+			this.view = Ext.create('CMDBuild.view.administration.domain.attributes.AttributesView');
 
-			this.callParent([view]);
+			this.getGrid().on("cm_attribute_moved", this.onAttributeMoved, this);
 
 			// Shorthands
 			this.form = this.view.form;

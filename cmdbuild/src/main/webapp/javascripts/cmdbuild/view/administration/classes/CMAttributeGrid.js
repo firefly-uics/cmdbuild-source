@@ -1,5 +1,7 @@
 (function() {
 
+	Ext.require('CMDBuild.proxy.common.tabs.attribute.Attribute');
+
 	var ATTR = {
 		INDEX: CMDBuild.core.constants.Proxy.INDEX,
 		NAME: CMDBuild.core.constants.Proxy.NAME,
@@ -22,7 +24,7 @@
 	var ATTR_TO_SKIP = 'Notes';
 	var translation = CMDBuild.Translation.administration.modClass.attributeProperties;
 
-	Ext.define('CMDBuild.view.administration.workflow.CMAttributeGrid', {
+	Ext.define('CMDBuild.view.administration.classes.CMAttributeGrid', {
 		extend: 'Ext.grid.Panel',
 
 		statics: {

@@ -1,6 +1,9 @@
 (function () {
 
-	Ext.require('CMDBuild.proxy.index.Json');
+	Ext.require([
+		'CMDBuild.proxy.common.tabs.attribute.Attribute',
+		'CMDBuild.proxy.index.Json'
+	]);
 
 	Ext.define("CMDBuild.view.management.utility.importCsv.CMCardGridDelegate", {
 		/**

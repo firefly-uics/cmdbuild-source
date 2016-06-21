@@ -2,7 +2,7 @@
 
 	Ext.require(['CMDBuild.proxy.common.tabs.attribute.Order']);
 
-	Ext.define('CMDBuild.Administration.SetOrderWindow', {
+	Ext.define('CMDBuild.view.administration.classes.CMSetOrderWindow', {
 		extend: 'CMDBuild.core.window.AbstractModal',
 
 		height: 300,
@@ -22,7 +22,7 @@
 				scope: this
 			});
 
-			this.grid = Ext.create('CMDBuild.view.administration.class.CMAttributeSortingGrid', {
+			this.grid = Ext.create('CMDBuild.view.administration.classes.CMAttributeSortingGrid', {
 				idClass: this.idClass,
 				border: false
 			});
