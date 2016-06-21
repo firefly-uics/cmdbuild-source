@@ -5,7 +5,7 @@
 
 		requires: [
 			'CMDBuild.core.constants.Proxy',
-			'CMDBuild.proxy.classes.Icon'
+			'CMDBuild.proxy.classes.tabs.Icons'
 		],
 
 		/**
@@ -62,7 +62,7 @@
 				this.view.imageIconDisplayField.setSrc(); // Field reset
 
 				// Find icon definition object
-				CMDBuild.proxy.classes.Icon.readAllIcons({
+				CMDBuild.proxy.classes.tabs.Icons.readAllIcons({
 					loadMask: false,
 					scope: this,
 					failure: function (response, options, decodedResponse) {
@@ -113,7 +113,7 @@
 		 * @private
 		 */
 		deleteImageAndIcon: function () {
-			CMDBuild.proxy.classes.Icon.remove({
+			CMDBuild.proxy.classes.tabs.Icons.remove({
 				restUrlParams: {
 					iconId: this.classIconObject._id,
 					folderId: this.classIconObject.image.details.folder,
@@ -130,7 +130,7 @@
 		uploadImageAndBindIcon: function (options, success, response) {
 			// Build target folder model
 			CMDBuild.core.LoadMask.show();
-			CMDBuild.proxy.classes.Icon.getFolders({
+			CMDBuild.proxy.classes.tabs.Icons.getFolders({
 				loadMask: false,
 				scope: this,
 				failure: function (response, options, decodedResponse) {
@@ -152,7 +152,7 @@
 						params['fileStore'] = 'images';
 						params['folder'] = targetFolderModel.get('_id');
 
-						CMDBuild.proxy.classes.Icon.createImage({
+						CMDBuild.proxy.classes.tabs.Icons.createImage({
 							form: this.view.getForm(),
 							params: params,
 							scope: this,
@@ -164,7 +164,7 @@
 
 								if (!Ext.isEmpty(uploadedIconName) && Ext.isString(uploadedIconName)) {
 									// Update uploaded image with class bind
-									CMDBuild.proxy.classes.Icon.update({
+									CMDBuild.proxy.classes.tabs.Icons.update({
 										jsonData: {
 											type: 'class',
 											details: {

@@ -1,3 +1,21 @@
+CMDBuild 2.4.2 (released YYYY/MM/DD)
+
+
+NEW FEATURES
+
+
+FIXES
+
+* Software version string visually displayed in half on login panel
+
+* Selected tab reset on class change in administration Classes module
+
+* Classes geographical attributes tab no zoom levels validation
+
+
+
+
+
 CMDBuild 2.4.1 (released 2016/06/16)
 
 
@@ -161,8 +179,6 @@ FIXES
  * The wizard connector synchronizes entries even if no values has been changed when a timestamp column is included within mapping
 
  * The Data Definition Log reports a wrong statement when creating a class with no parent
-
- * Error while selecting node with no children
 
 
 

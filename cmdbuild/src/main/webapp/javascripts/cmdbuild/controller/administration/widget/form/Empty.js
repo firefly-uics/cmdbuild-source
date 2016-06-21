@@ -14,7 +14,7 @@
 		parentDelegate: undefined,
 
 		/**
-		 * @cfg {CMDBuild.view.administration.widget.form.WorkflowPanel}
+		 * @cfg {CMDBuild.view.administration.widget.form.EmptyPanel}
 		 */
 		view: undefined,
 
@@ -27,7 +27,7 @@
 		constructor: function (configurationObject) {
 			this.callParent(arguments);
 
-			this.view = Ext.create('CMDBuild.view.administration.widget.form.WorkflowPanel', { delegate: this });
+			this.view = Ext.create('CMDBuild.view.administration.widget.form.EmptyPanel', { delegate: this });
 		}
 	});
 

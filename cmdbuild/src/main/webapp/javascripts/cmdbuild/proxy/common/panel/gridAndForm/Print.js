@@ -1,6 +1,6 @@
 (function () {
 
-	Ext.define('CMDBuild.proxy.report.Print', {
+	Ext.define('CMDBuild.proxy.common.panel.gridAndForm.Print', {
 
 		requires: [
 			'CMDBuild.core.constants.Proxy',

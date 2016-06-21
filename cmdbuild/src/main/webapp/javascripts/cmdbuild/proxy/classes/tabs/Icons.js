@@ -3,9 +3,9 @@
 	/**
 	 * REST proxy
 	 *
-	 * FIXME: future refactor for a correct implementation
+	 * FIXME: Waiting for a future full implementation as separate tab
 	 */
-	Ext.define('CMDBuild.proxy.classes.Icon', {
+	Ext.define('CMDBuild.proxy.classes.tabs.Icons', {
 
 		requires: [
 			'CMDBuild.core.constants.Proxy',

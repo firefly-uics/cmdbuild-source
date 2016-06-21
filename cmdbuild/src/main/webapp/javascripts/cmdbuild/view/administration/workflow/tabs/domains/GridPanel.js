@@ -1,5 +1,8 @@
 (function () {
 
+	/**
+	 * @link CMDBuild.view.administration.classes.tabs.domains.GridPanel
+	 */
 	Ext.define('CMDBuild.view.administration.workflow.tabs.domains.GridPanel', {
 		extend: 'Ext.grid.Panel',
 

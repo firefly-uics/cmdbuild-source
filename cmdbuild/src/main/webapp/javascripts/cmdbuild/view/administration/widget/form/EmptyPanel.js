@@ -1,6 +1,6 @@
 (function () {
 
-	Ext.define('CMDBuild.view.administration.widget.form.WorkflowPanel', {
+	Ext.define('CMDBuild.view.administration.widget.form.EmptyPanel', {
 		extend: 'CMDBuild.view.administration.widget.form.AbstractWidgetDefinitionPanel',
 
 		/**
