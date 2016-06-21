@@ -1,15 +1,15 @@
-(function() {
+(function () {
 
-	Ext.define('CMDBuild.controller.management.common.graph.Graph', {
+	Ext.define('CMDBuild.controller.common.panel.gridAndForm.graph.Window', {
 		extend: 'CMDBuild.controller.common.abstract.Base',
 
 		requires: [
 			'CMDBuild.core.constants.Proxy',
-			'CMDBuild.proxy.Classes'
+			'CMDBuild.proxy.common.panel.gridAndForm.Graph'
 		],
 
 		/**
-		 * @cfg {Mixed}
+		 * @cfg {Object}
 		 */
 		parentDelegate: undefined,
 
@@ -41,17 +41,21 @@
 		 * @cfg {Array}
 		 */
 		cmfgCatchedFunctions: [
-			'onGraphWindowShow'
+			'onPanelGridAndFormGraphWindowShow'
 		],
 
 		/**
-		 * @cfg {CMDBuild.view.management.common.graph.GraphWindow}
+		 * @cfg {CMDBuild.view.common.panel.gridAndForm.graph.WindowView}
 		 */
 		view: undefined,
 
 		/**
 		 * @param {Object} configurationObject
-		 * @param {Mixed} configurationObject.parentDelegate
+		 * @param {Object} configurationObject.cardId
+		 * @param {Object} configurationObject.classId
+		 * @param {Object} configurationObject.parentDelegate
+		 *
+		 * @returns {Void}
 		 *
 		 * @override
 		 */
@@ -59,8 +63,8 @@
 			this.callParent(arguments);
 
 			if (
-				!Ext.isEmpty(this.cardId) && Ext.isNumber(this.cardId)
-				&& !Ext.isEmpty(this.classId) && Ext.isNumber(this.classId)
+				Ext.isNumber(this.cardId) && !Ext.isEmpty(this.cardId)
+				&& Ext.isNumber(this.classId) && !Ext.isEmpty(this.classId)
 			) {
 				this.basePath = window.location.toString().split('/');
 				this.basePath = Ext.Array.slice(this.basePath, 0, this.basePath.length - 1).join('/');
@@ -68,7 +72,7 @@
 				var params = {};
 				params[CMDBuild.core.constants.Proxy.ACTIVE] = true;
 
-				CMDBuild.proxy.Classes.readAll({
+				CMDBuild.proxy.common.panel.gridAndForm.Graph.readAllClasses({
 					params: params,
 					scope: this,
 					success: function (response, options, decodedResponse) {
@@ -82,20 +86,23 @@
 							if (!Ext.isEmpty(targetClassObject)) {
 								this.className = targetClassObject[CMDBuild.core.constants.Proxy.NAME];
 
-								this.view = Ext.create('CMDBuild.view.management.common.graph.GraphWindow', { delegate: this });
+								this.view = Ext.create('CMDBuild.view.common.panel.gridAndForm.graph.WindowView', { delegate: this });
 								this.view.show();
 							} else {
-								_error('class with id ' + this.classId + ' not found', this);
+								_error('constructor(): class not found', this, this.classId);
 							}
 						}
 					}
 				});
 			} else {
-				_error('wrong classId or cardId parameters', this);
+				_error('constructor(): wrong parameters', this, configurationObject);
 			}
 		},
 
-		onGraphWindowShow: function () {
+		/**
+		 * @returns {Void}
+		 */
+		onPanelGridAndFormGraphWindowShow: function () {
 			this.view.removeAll();
 			this.view.add({
 				xtype: 'component',

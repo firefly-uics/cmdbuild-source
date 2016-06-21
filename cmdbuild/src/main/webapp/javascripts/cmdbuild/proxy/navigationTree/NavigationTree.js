@@ -1,6 +1,6 @@
 (function () {
 
-	Ext.define('CMDBuild.proxy.NavigationTree', {
+	Ext.define('CMDBuild.proxy.navigationTree.NavigationTree', {
 
 		requires: [
 			'CMDBuild.core.constants.Global',
@@ -79,6 +79,32 @@
 			Ext.apply(parameters, { url: CMDBuild.proxy.index.Json.navigationTree.readAll });
 
 			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.NAVIGATION_TREE, parameters);
+		},
+
+		/**
+		 * @param {Object} parameters
+		 *
+		 * @returns {Void}
+		 */
+		readAllClasses: function (parameters) {
+			parameters = Ext.isEmpty(parameters) ? {} : parameters;
+
+			Ext.apply(parameters, { url: CMDBuild.proxy.index.Json.classes.readAll });
+
+			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.CLASS, parameters);
+		},
+
+		/**
+		 * @param {Object} parameters
+		 *
+		 * @returns {Void}
+		 */
+		readAllDomains: function (parameters) {
+			parameters = Ext.isEmpty(parameters) ? {} : parameters;
+
+			Ext.apply(parameters, { url: CMDBuild.proxy.index.Json.domain.readAll });
+
+			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.DOMAIN, parameters);
 		},
 
 		/**

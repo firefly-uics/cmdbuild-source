@@ -6,8 +6,7 @@
 		requires: [
 			'CMDBuild.core.constants.Global',
 			'CMDBuild.core.constants.Proxy',
-			'CMDBuild.proxy.Classes',
-			'CMDBuild.model.Classes'
+			'CMDBuild.proxy.domain.tabs.EnabledClasses'
 		],
 
 		/**
@@ -102,8 +101,8 @@
 				var params = {};
 				params[CMDBuild.core.constants.Proxy.ACTIVE] = true;
 
-				// GetAllClasses data to get default translations
-				CMDBuild.proxy.Classes.readAll({
+				// Read all classes to get default translations
+				CMDBuild.proxy.domain.tabs.EnabledClasses.readAllClasses({
 					params: params,
 					scope: this,
 					success: function(response, options, decodedResponse) {
