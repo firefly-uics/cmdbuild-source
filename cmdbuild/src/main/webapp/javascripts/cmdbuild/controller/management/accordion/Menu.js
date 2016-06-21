@@ -101,8 +101,7 @@
 
 							if (
 								!Ext.isEmpty(menuItemsResponse)
-								&& !Ext.isEmpty(menuItemsResponse[CMDBuild.core.constants.Proxy.CHILDREN])
-								&& Ext.isArray(menuItemsResponse[CMDBuild.core.constants.Proxy.CHILDREN])
+								&& Ext.isArray(menuItemsResponse[CMDBuild.core.constants.Proxy.CHILDREN]) && !Ext.isEmpty(menuItemsResponse[CMDBuild.core.constants.Proxy.CHILDREN])
 								&& menuItemsResponse[CMDBuild.core.constants.Proxy.TYPE] == 'root'
 							) {
 								this.view.getStore().getRootNode().removeAll();
@@ -215,6 +214,7 @@
 
 					case 'folder': {
 						nodeStructure['cmName'] = 'folder';
+						nodeStructure['expandable'] = false;
 						nodeStructure[CMDBuild.core.constants.Proxy.SELECTABLE] = false;
 						nodeStructure[CMDBuild.core.constants.Proxy.LEAF] = false;
 					} break;
@@ -314,7 +314,8 @@
 				}
 
 				// Build children nodes
-				if (!Ext.isEmpty(menuNodeObject[CMDBuild.core.constants.Proxy.CHILDREN]) && Ext.isArray(menuNodeObject[CMDBuild.core.constants.Proxy.CHILDREN])) {
+				if (Ext.isArray(menuNodeObject[CMDBuild.core.constants.Proxy.CHILDREN]) && !Ext.isEmpty(menuNodeObject[CMDBuild.core.constants.Proxy.CHILDREN])) {
+					nodeStructure['expandable'] = true;
 					nodeStructure[CMDBuild.core.constants.Proxy.CHILDREN] = this.menuStructureChildrenBuilder(menuNodeObject);
 					nodeStructure[CMDBuild.core.constants.Proxy.LEAF] = false;
 				}

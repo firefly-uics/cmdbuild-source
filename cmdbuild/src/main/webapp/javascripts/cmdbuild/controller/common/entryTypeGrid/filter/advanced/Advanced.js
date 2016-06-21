@@ -340,9 +340,7 @@
 			if (!Ext.isEmpty(masterGrid)) {
 				this.controllerManager.cmfg('entryTypeGridFilterAdvancedManagerViewClose');
 
-				this.cmfg('onEntryTypeGridFilterAdvancedClearButtonClick');
 				this.cmfg('entryTypeGridFilterAdvancedAppliedFilterSet', { value: filter });
-
 				this.cmfg(
 					'entryTypeGridFilterAdvancedManageToggleButtonLabelSet',
 					this.cmfg('entryTypeGridFilterAdvancedAppliedFilterGet', CMDBuild.core.constants.Proxy.DESCRIPTION)
@@ -355,7 +353,7 @@
 				 *
 				 * FIXME: waiting for refactor (use cmfg)
 				 */
-				masterGrid.delegate.onFilterMenuButtonApplyActionClick(null, Ext.create('CMDBuild.model.CMFilterModel', filter.getData()));
+				masterGrid.delegate.onFilterMenuButtonApplyActionClick(Ext.create('CMDBuild.model.CMFilterModel', filter.getData()));
 			} else {
 				_error('onEntryTypeGridFilterAdvancedFilterSelect(): empty master grid', this, masterGrid);
 			}

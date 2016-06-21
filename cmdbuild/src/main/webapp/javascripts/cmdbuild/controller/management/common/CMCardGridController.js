@@ -289,17 +289,32 @@
 		_onGetPositionFailureWithoutForcingTheFilter: function() {
 			CMDBuild.core.Message.info(undefined, CMDBuild.Translation.cardNotMatchFilter);
 		},
+
 		// protected
 		unApplyFilter: unApplyFilter,
 
-		// As filterMentuButtonDelegate
+		// As CMDBuild.controller.common.entryTypeGrid.filter.advanced.Advanced delegate
 		/**
-		 * Called by the CMFilterMenuButton when click to on the apply icon on a row of the picker
+		 * Called by the CMDBuild.controller.common.entryTypeGrid.filter.advanced.Advanced when click to on the apply icon or on a row of the picker
 		 *
-		 * @param {object} filter, the filter to apply
+		 * @param {object} filter
+		 *
+		 * @returns {Void}
 		 */
-		onFilterMenuButtonApplyActionClick: function(button, filter) {
-			applyFilter(this, filter);
+		onFilterMenuButtonApplyActionClick: function (filter) {
+			if (filter.getRuntimeParameters().length > 0) {
+				showRuntimeParameterWindow(this, filter);
+			} else {
+				this.appliedFilter = filter;
+
+				if (filter.dirty)
+					addFilterToStore(this, filter, true);
+
+				this.view.setFilterButtonLabel(Ext.String.trim(filter.getDescription()) == '' ? filter.getName() : filter.getDescription());
+				this.view.applyFilterToStore(filter.getConfigurationMergedWithRuntimeAttributes());
+				this.view.enableClearFilterButton();
+				this.view.loadPage(1);
+			}
 		},
 
 		// as runtimeFilterParamsWindow
@@ -307,7 +322,6 @@
 			applyFilter(this, filter, runtimeParameterWindow.runtimeAttributes);
 			runtimeParameterWindow.destroy();
 		}
-
 	});
 
 	function getFilterStore(me) {

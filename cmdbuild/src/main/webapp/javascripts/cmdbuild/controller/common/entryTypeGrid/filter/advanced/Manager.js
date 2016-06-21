@@ -82,23 +82,22 @@
 		},
 
 		/**
-		 * @param {Boolean} enableApply
+		 * @param {Object} parameters
+		 * @param {Boolean} parameters.enableApply
+		 * @param {Boolean} parameters.enableSaveDialog
 		 *
 		 * @returns {Void}
 		 */
-		entryTypeGridFilterAdvancedManagerSave: function (enableApply) {
-			enableApply = Ext.isBoolean(enableApply) ? enableApply : false;
+		entryTypeGridFilterAdvancedManagerSave: function (parameters) {
+			parameters = Ext.isObject(parameters) ? parameters : {};
+			parameters.enableApply = Ext.isBoolean(parameters.enableApply) ? parameters.enableApply : false;
+			parameters.enableSaveDialog = Ext.isBoolean(parameters.enableSaveDialog) ? parameters.enableSaveDialog : true;
 
 			if (!this.cmfg('entryTypeGridFilterAdvancedManagerSelectedFilterIsEmpty')) {
-				// Evaluate to show or not save dialog to complete filter model data
-				if (
-					this.cmfg('entryTypeGridFilterAdvancedManagerSelectedFilterIsEmpty', CMDBuild.core.constants.Proxy.DESCRIPTION)
-					|| this.cmfg('entryTypeGridFilterAdvancedManagerSelectedFilterIsEmpty', CMDBuild.core.constants.Proxy.NAME)
-				) {
-					return this.controllerSaveDialog.cmfg('entryTypeGridFilterAdvancedSaveDialogShow', enableApply);
-				}
+				if (parameters.enableSaveDialog)
+					return this.controllerSaveDialog.cmfg('entryTypeGridFilterAdvancedSaveDialogShow', parameters.enableApply);
 
-				return this.saveActionManage(enableApply);
+				return this.saveActionManage(parameters.enableApply);
 			} else {
 				_error('entryTypeGridFilterAdvancedManagerSave(): cannot save empty filter', this, this.cmfg('entryTypeGridFilterAdvancedManagerSelectedFilterGet'));
 			}
@@ -344,7 +343,7 @@
 								this.controllerFilterEditor.cmfg('onEntryTypeGridFilterAdvancedFilterEditorAbortButtonClick'); // Close filter editor view
 								this.cmfg('entryTypeGridFilterAdvancedManagerViewClose'); // Close manager view
 
-								if (enableApply) {// Apply filter to store
+								if (enableApply) { // Apply filter to store
 									this.cmfg('onEntryTypeGridFilterAdvancedFilterSelect', Ext.create('CMDBuild.model.common.entryTypeGrid.filter.advanced.Filter', decodedResponse));
 									this.cmfg('entryTypeGridFilterAdvancedManagerSelectedFilterReset');
 								} else { // Otherwise reopen manager window

@@ -103,7 +103,12 @@
 		},
 
 		// wfStateDelegate
-		onActivityInstanceChange: function(activityInstance) {
+		/**
+		 * @param {Object} activityInstance
+		 *
+		 * @returns {Void}
+		 */
+		onActivityInstanceChange: function (activityInstance) {
 			var me = this;
 			var activityMetadata = activityInstance.data[CMDBuild.core.constants.Proxy.METADATA];
 			var processInstance = _CMWFState.getProcessInstance();
@@ -118,28 +123,23 @@
 
 			if (!activityInstance.nullObject && activityInstance.isNew()) {
 				/*
-				 * I could be in a tab different to the first one,
-				 * but to edit a new card is necessary to have the editing form.
+				 * I could be in a tab different to the first one, but to edit a new card is necessary to have the editing form.
 				 * So I force the view to go on the ActivityTab
 				 *
-				 * Do it here instead of in the CMModWorkflowController
-				 * because it must be done before all operation
-				 * over the form for rendering issues
+				 * Do it here instead of in the CMModWorkflowController because it must be done before all operation over the form for rendering issues
 				 */
 				this.superController.view.showActivityPanel();
 			}
 
-			me.view.updateInfo(activityInstance.getPerformerName(), activityInstance.getDescription());
+			this.view.updateInfo(activityInstance.getPerformerName(), activityInstance.getDescription());
 
-			// at first update the widget because they could depends
-			// to the form. The Template resolver starts when the form goes
-			// in edit mode, so the widgets must be already ready to done them works
-
+			// At first update the widget because they could depends to the form. The Template resolver starts when the form goes in edit mode,
+			// so the widgets must be already ready to done them works
 			var updateWidget = processInstance.isStateOpen() || activityInstance.isNew();
 			if (updateWidget) {
-				me.widgetControllerManager.buildControllers(activityInstance);
+				this.widgetControllerManager.buildControllers(activityInstance);
 			} else {
-				me.widgetControllerManager.buildControllers(null);
+				this.widgetControllerManager.buildControllers(null);
 			}
 
 			// Resume the layouts here because the form already suspend the layouts automatically
@@ -148,7 +148,7 @@
 			this.view.doLayout();
 
 			// Load always the fields
-			me.loadFields(processInstance.getClassId(), function loadFieldsCb() {
+			this.loadFields(processInstance.getClassId(), function (attributes) {
 				// Fill always the process to trigger the template resolver of filtered references
 				me.fillFormWithProcessInstanceData(processInstance);
 				manageEditability(me, activityInstance, processInstance);
@@ -160,20 +160,24 @@
 							switch (metadataObject[CMDBuild.core.constants.Proxy.NAME]) {
 								case CMDBuild.core.constants.Proxy.WORKFLOW_METADATA_SELECTED_ATTRIBUTES_GROUP: {
 									var preselectedTab = null;
-
-									this.view.form.tabPanel.items.each(function (item, index, len) {
-										if (item.title == metadataObject[CMDBuild.core.constants.Proxy.VALUE])
-											preselectedTab = item;
+									var markerAttribute = Ext.Array.findBy(attributes, function (item, index) {
+										return item[CMDBuild.core.constants.Proxy.NAME] == metadataObject[CMDBuild.core.constants.Proxy.VALUE];
 									}, this);
 
-									if (!Ext.isEmpty(preselectedTab))
-										this.view.form.tabPanel.setActiveTab(preselectedTab);
+									if (!Ext.isEmpty(markerAttribute)) {
+										this.view.form.tabPanel.items.each(function (item, index, len) {
+											if (item.title == markerAttribute[CMDBuild.core.constants.Proxy.GROUP])
+												preselectedTab = item;
+										}, this);
+
+										if (!Ext.isEmpty(preselectedTab))
+											this.view.form.tabPanel.setActiveTab(preselectedTab);
+									}
 								} break;
 							}
 					}, me);
 				}
 			});
-
 		},
 
 		/**
@@ -316,7 +320,7 @@
 				me.view.fillForm(attributes, editMode = false);
 
 				if (cb) {
-					cb();
+					cb(attributes);
 				}
 			}
 

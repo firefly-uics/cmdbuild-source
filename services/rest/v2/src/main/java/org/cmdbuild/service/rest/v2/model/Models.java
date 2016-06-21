@@ -760,6 +760,7 @@ public class Models {
 		private String descriptionDirect;
 		private String descriptionInverse;
 		private String descriptionMasterDetail;
+		private boolean active;
 
 		private DomainWithFullDetailsBuilder() {
 			// use factory method
@@ -779,6 +780,7 @@ public class Models {
 			output.setDescriptionDirect(descriptionDirect);
 			output.setDescriptionInverse(descriptionInverse);
 			output.setDescriptionMasterDetail(descriptionMasterDetail);
+			output.setActive(active);
 			return output;
 		}
 
@@ -834,6 +836,11 @@ public class Models {
 
 		public DomainWithFullDetailsBuilder withDescriptionMasterDetail(final String descriptionMasterDetail) {
 			this.descriptionMasterDetail = descriptionMasterDetail;
+			return this;
+		}
+
+		public DomainWithFullDetailsBuilder withActive(final boolean active) {
+			this.active = active;
 			return this;
 		}
 
