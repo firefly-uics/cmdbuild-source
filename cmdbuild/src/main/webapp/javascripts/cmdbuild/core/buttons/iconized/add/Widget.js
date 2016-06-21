@@ -4,7 +4,7 @@
 		extend: 'Ext.button.Split',
 
 		/**
-		 * @cfg {CMDBuild.controller.administration.widget.Widget}
+		 * @cfg {CMDBuild.controller.administration.classes.tabs.widgets.Widgets or CMDBuild.controller.administration.workflow.tabs.widgets.Widget}
 		 */
 		delegate: undefined,
 

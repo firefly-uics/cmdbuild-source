@@ -1,7 +1,7 @@
 (function () {
 
 	/**
-	 * This section doen't follow CMDBuild structure standards until refactor of classes administration module
+	 * This section don't follow CMDBuild structure standards until refactor of classes administration module
 	 */
 	Ext.define('CMDBuild.view.administration.class.IconForm', {
 		extend: 'Ext.form.Panel',

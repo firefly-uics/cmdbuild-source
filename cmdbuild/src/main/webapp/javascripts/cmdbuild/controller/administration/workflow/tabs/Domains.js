@@ -1,5 +1,8 @@
 (function () {
 
+	/**
+	 * @link CMDBuild.controller.administration.classes.tabs.Domains
+	 */
 	Ext.define('CMDBuild.controller.administration.workflow.tabs.Domains', {
 		extend: 'CMDBuild.controller.common.abstract.Base',
 
