@@ -174,7 +174,7 @@
 				var accordionDefinitionObjectsArray = [];
 
 				if (!CMDBuild.configuration.userInterface.get(CMDBuild.core.constants.Proxy.CLOUD_ADMIN))
-					accordionDefinitionObjectsArray.push({ className: 'CMDBuild.controller.administration.accordion.Classes', identifier: 'class' });
+					accordionDefinitionObjectsArray.push({ className: 'CMDBuild.controller.administration.accordion.Classes', identifier: CMDBuild.core.constants.ModuleIdentifiers.getClasses() });
 
 				if (!CMDBuild.configuration.userInterface.get(CMDBuild.core.constants.Proxy.CLOUD_ADMIN))
 					accordionDefinitionObjectsArray.push({ className: 'CMDBuild.controller.administration.accordion.Workflow', identifier: CMDBuild.core.constants.ModuleIdentifiers.getWorkflow() });
@@ -212,6 +212,7 @@
 					isAdministration: true,
 					accordion: accordionDefinitionObjectsArray,
 					module: [
+						{ className: 'CMDBuild.controller.administration.classes.Classes', identifier: CMDBuild.core.constants.ModuleIdentifiers.getClasses() },
 						{ className: 'CMDBuild.controller.administration.configuration.Configuration', identifier: CMDBuild.core.constants.ModuleIdentifiers.getConfiguration() },
 						{ className: 'CMDBuild.controller.administration.dataView.DataView', identifier: CMDBuild.core.constants.ModuleIdentifiers.getDataView() },
 						{ className: 'CMDBuild.controller.administration.domain.Domain', identifier: CMDBuild.core.constants.ModuleIdentifiers.getDomain() },
@@ -248,10 +249,10 @@
 							cmControllerType: CMDBuild.controller.common.CMUnconfiguredModPanelController,
 							cmName: 'notconfiguredpanel'
 						}),
-						new CMDBuild.view.administration.classes.CMModClass({
-							cmControllerType: CMDBuild.controller.administration.classes.CMModClassController,
-							cmName: 'class'
-						}),
+//						new CMDBuild.view.administration.classes.CMModClass({ // TODO: remove
+//							cmControllerType: CMDBuild.controller.administration.classes.CMModClassController,
+//							cmName: 'class'
+//						}),
 						new CMDBuild.Administration.ModIcons({
 							cmName: 'gis-icons'
 						}),

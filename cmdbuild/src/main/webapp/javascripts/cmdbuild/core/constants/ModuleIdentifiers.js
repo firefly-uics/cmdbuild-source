@@ -13,6 +13,7 @@
 		 * @private
 		 */
 		config: {
+			classes: 'class',
 			configuration: 'configuration',
 			customPage: 'custompage',
 			dataView: 'dataview',

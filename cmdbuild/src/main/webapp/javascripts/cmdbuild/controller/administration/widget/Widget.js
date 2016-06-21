@@ -22,7 +22,7 @@
 			'onClassTabWidgetAbortButtonClick',
 			'onClassTabWidgetAddButtonClick',
 			'onClassTabWidgetClassAddButtonClick = onAddClassButtonClick',
-			'onClassTabWidgetClassSelected = onClassSelected',
+			'onClassTabWidgetClassSelected = onClassesTabWidgetsClassSelection', // TODO: rename
 			'onClassTabWidgetItemDrop',
 			'onClassTabWidgetModifyButtonClick = onClassTabWidgetItemDoubleClick',
 			'onClassTabWidgetPanelShow',
@@ -48,7 +48,7 @@
 		grid: undefined,
 
 		/**
-		 * @property {CMDBuild.model.classes.Class}
+		 * @property {CMDBuild.model.widget.Class}
 		 *
 		 * @private
 		 */
@@ -397,7 +397,7 @@
 			 */
 			classTabWidgetSelectedClassSet: function (parameters) {
 				if (!Ext.Object.isEmpty(parameters)) {
-					parameters[CMDBuild.core.constants.Proxy.MODEL_NAME] = 'CMDBuild.model.classes.Class';
+					parameters[CMDBuild.core.constants.Proxy.MODEL_NAME] = 'CMDBuild.model.widget.Class';
 					parameters[CMDBuild.core.constants.Proxy.TARGET_VARIABLE_NAME] = 'selectedClass';
 
 					this.propertyManageSet(parameters);

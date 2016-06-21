@@ -42,6 +42,11 @@
 		controllerDomains: undefined,
 
 		/**
+		 * @property {CMDBuild.controller.common.panel.gridAndForm.print.Window}
+		 */
+		controllerPrintWindow: undefined,
+
+		/**
 		 * @property {CMDBuild.controller.administration.workflow.tabs.Properties}
 		 */
 		controllerProperties: undefined,
@@ -87,6 +92,7 @@
 				view: this.view.attributesPanel
 			});
 			this.controllerDomains = Ext.create('CMDBuild.controller.administration.workflow.tabs.Domains', { parentDelegate: this });
+			this.controllerPrintWindow = Ext.create('CMDBuild.controller.common.panel.gridAndForm.print.Window', { parentDelegate: this });
 			this.controllerProperties = Ext.create('CMDBuild.controller.administration.workflow.tabs.Properties', { parentDelegate: this });
 			this.controllerTasks = Ext.create('CMDBuild.controller.administration.workflow.tabs.TaskManager', { parentDelegate: this });
 
@@ -167,11 +173,10 @@
 				var params = {};
 				params[CMDBuild.core.constants.Proxy.FORMAT] = format;
 
-				Ext.create('CMDBuild.controller.common.entryTypeGrid.printTool.PrintWindow', {
-					parentDelegate: this,
+				this.controllerPrintWindow.cmfg('panelGridAndFormPrintWindowShow', {
 					format: format,
 					mode: 'schema',
-					parameters: params
+					params: params
 				});
 			}
 		},

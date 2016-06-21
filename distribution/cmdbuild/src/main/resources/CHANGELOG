@@ -8,6 +8,10 @@ FIXES
 
 * Software version string visually displayed in half on login panel
 
+* Selected tab reset on class change in administration Classes module
+
+* Classes geographical attributes tab no zoom levels validation
+
 
 
 

@@ -4,8 +4,6 @@
 
 	/**
 	 * TODO: waiting for refactor (rename + setup correct types)
-	 *
-	 * @administration
 	 */
 	Ext.define('CMDBuild.model.classes.tabs.domains.Domain', {
 		extend: 'Ext.data.Model',

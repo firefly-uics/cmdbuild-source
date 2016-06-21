@@ -34,6 +34,11 @@
 		],
 
 		/**
+		 * @property {CMDBuild.controller.common.panel.gridAndForm.print.Window}
+		 */
+		controllerPrintWindow: undefined,
+
+		/**
 		 * @property {CMDBuild.view.administration.workflow.tabs.properties.panel.DownloadXpdl}
 		 */
 		downloadXpdlPanel: undefined,
@@ -76,6 +81,9 @@
 			this.propertiesPanel = this.view.form.propertiesPanel;
 			this.downloadXpdlPanel = this.view.form.downloadXpdlPanel;
 			this.uploadXpdlPanel = this.view.form.uploadXpdlPanel;
+
+			// Build sub-controllers
+			this.controllerPrintWindow = Ext.create('CMDBuild.controller.common.panel.gridAndForm.print.Window', { parentDelegate: this });
 		},
 
 		/**
@@ -156,11 +164,10 @@
 				params[CMDBuild.core.constants.Proxy.CLASS_NAME] = this.cmfg('workflowSelectedWorkflowGet', CMDBuild.core.constants.Proxy.NAME);
 				params[CMDBuild.core.constants.Proxy.FORMAT] = format;
 
-				Ext.create('CMDBuild.controller.common.entryTypeGrid.printTool.PrintWindow', {
-					parentDelegate: this,
+				this.controllerPrintWindow.cmfg('panelGridAndFormPrintWindowShow', {
 					format: format,
 					mode: 'classSchema',
-					parameters: params
+					params: params
 				});
 			}
 		},
