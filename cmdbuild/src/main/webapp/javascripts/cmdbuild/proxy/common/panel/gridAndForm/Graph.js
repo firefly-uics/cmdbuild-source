@@ -1,6 +1,6 @@
 (function () {
 
-	Ext.define('CMDBuild.proxy.dataView.DataView', {
+	Ext.define('CMDBuild.proxy.common.panel.gridAndForm.Graph', {
 
 		requires: [
 			'CMDBuild.core.constants.Proxy',
@@ -8,21 +8,6 @@
 		],
 
 		singleton: true,
-
-		/**
-		 * Read all the data view available for the logged user
-		 *
-		 * @param {Object} parameters
-		 *
-		 * @returns {Void}
-		 */
-		readAll: function (parameters) {
-			parameters = Ext.isEmpty(parameters) ? {} : parameters;
-
-			Ext.apply(parameters, { url: CMDBuild.proxy.index.Json.dataView.readAll });
-
-			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.DATA_VIEW, parameters);
-		},
 
 		/**
 		 * @param {Object} parameters

@@ -10,7 +10,7 @@
 			'CMDBuild.core.constants.ModuleIdentifiers',
 			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.CookiesManager',
-			'CMDBuild.proxy.Classes',
+			'CMDBuild.proxy.classes.Classes',
 			'CMDBuild.proxy.dashboard.Dashboard',
 			'CMDBuild.proxy.domain.Domain',
 			'CMDBuild.proxy.lookup.Type',
@@ -54,13 +54,16 @@
 			params = {};
 			params[CMDBuild.core.constants.Proxy.ACTIVE] = false;
 
-			CMDBuild.proxy.Classes.readAll({
+			CMDBuild.proxy.classes.Classes.readAll({
 				params: params,
 				loadMask: false,
 				scope: this,
 				success: function (response, options, decodedResponse) {
 					decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.CLASSES];
 
+					/**
+					 * @deprecated
+					 */
 					_CMCache.addClasses(decodedResponse);
 				},
 				callback: requestBarrier.getCallback('administrationBuildCacheBarrier')
@@ -76,6 +79,9 @@
 					success: function (response, options, decodedResponse) {
 						decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.DOMAINS];
 
+						/**
+						 * @deprecated
+						 */
 						_CMCache.addDomains(decodedResponse);
 					},
 					callback: requestBarrier.getCallback('administrationBuildCacheBarrier')
@@ -97,6 +103,9 @@
 				loadMask: false,
 				scope: this,
 				success: function (response, options, decodedResponse) {
+					/**
+					 * @deprecated
+					 */
 					_CMCache.addLookupTypes(decodedResponse);
 				},
 				callback: requestBarrier.getCallback('administrationBuildCacheBarrier')
@@ -111,6 +120,9 @@
 				success: function (response, options, decodedResponse) {
 					decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.RESPONSE];
 
+					/**
+					 * @deprecated
+					 */
 					_CMCache.addDashboards(decodedResponse[CMDBuild.core.constants.Proxy.DASHBOARDS]);
 					_CMCache.setAvailableDataSources(decodedResponse[CMDBuild.core.constants.Proxy.DATA_SOURCES]);
 				},
@@ -126,6 +138,9 @@
 				success: function (response, options, decodedResponse) {
 					decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.RESPONSE];
 
+					/**
+					 * @deprecated
+					 */
 					_CMCache.addWidgetToEntryTypes(decodedResponse);
 				},
 				callback: requestBarrier.getCallback('administrationBuildCacheBarrier')

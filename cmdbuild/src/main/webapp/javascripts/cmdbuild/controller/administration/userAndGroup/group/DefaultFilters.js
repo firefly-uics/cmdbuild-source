@@ -7,7 +7,6 @@
 			'CMDBuild.core.constants.Global',
 			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.constants.Server',
-			'CMDBuild.proxy.Classes',
 			'CMDBuild.proxy.filter.Group',
 			'CMDBuild.proxy.userAndGroup.group.DefaultFilters',
 			'CMDBuild.core.Utils'
@@ -180,7 +179,7 @@
 
 				this.filtersBufferBuild();
 
-				CMDBuild.proxy.Classes.readAll({
+				CMDBuild.proxy.userAndGroup.group.DefaultFilters.readAllClasses({
 					params: params,
 					scope: this,
 					success: function (response, options, decodedResponse) {
