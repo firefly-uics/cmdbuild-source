@@ -18,7 +18,7 @@
 			<params>
 				<type>div</type>
 			</params>
-			<button text="Superclasses">
+			<button id="filterFormSuperclasses" text="Superclasses" class="right-button" i18nText="BUTTON_SUPERCLASSES" >
 				<params>
 					<condition>$cmdbuildvariables.filterClassOnlyClasses</condition>
 				</params>
@@ -30,7 +30,7 @@
 					<form>filterByClassFormGrid</form>
 				</onClick>
 			</button>
-			<button text="Only classes">
+			<button id="filterFormOnlyclasses" text="Only classes" class="right-button" i18nText="BUTTON_ONLYCLASSES">
 				<params>
 					<condition>$cmdbuildvariables.filterClassSuperclasses</condition>
 				</params>
