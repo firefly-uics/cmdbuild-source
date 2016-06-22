@@ -540,7 +540,7 @@
 		}
 
 		if (me.cmAdvancedFilter) {
-			me.controllerAdvancedFilterButtons = Ext.create('CMDBuild.controller.common.entryTypeGrid.filter.advanced.Advanced', { masterGrid: me });
+			me.controllerAdvancedFilterButtons = Ext.create('CMDBuild.controller.common.panel.gridAndForm.filter.advanced.Advanced', { masterGrid: me });
 			_CMUtils.forwardMethods(me, me.controllerAdvancedFilterButtons.getView(), [
 				"enableClearFilterButton",
 				"disableClearFilterButton",

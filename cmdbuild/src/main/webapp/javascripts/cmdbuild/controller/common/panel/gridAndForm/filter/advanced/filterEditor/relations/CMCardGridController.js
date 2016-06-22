@@ -1,4 +1,10 @@
-(function() {
+(function () {
+
+	/**
+	 * FIXME: build own controller
+	 *
+	 * @link CMDBuild.controller.management.common.CMCardGridController
+	 */
 
 	Ext.require([
 		'CMDBuild.core.Message',
@@ -6,7 +12,7 @@
 		'CMDBuild.core.Utils'
 	]);
 
-	Ext.define("CMDBuild.controller.management.common.CMCardGridController", {
+	Ext.define("CMDBuild.controller.common.panel.gridAndForm.filter.advanced.filterEditor.relations.CMCardGridController", {
 
 		mixins: {
 			observable: "Ext.util.Observable",
@@ -15,17 +21,9 @@
 			runtimeFilterParamsWindow: "CMDBuild.delegate.common.filter.CMRuntimeParameterWindowDelegate"
 		},
 
-		constructor: function(view, supercontroller) {
-
+		constructor: function (view, supercontroller) {
 			this.mixins.observable.constructor.call(this, arguments);
 
-			if (typeof view == "undefined") {
-				throw ("OOO snap, you have not passed a view to me");
-			} else {
-				this.view = view;
-			}
-
-			this.view.delegate = this;
 			this.supercontroller = supercontroller;
 			this.gridSM = this.view.getSelectionModel();
 
@@ -46,53 +44,13 @@
 			this.mon(this.view, "cmWrongSelection", this.onWrongSelection, this);
 			this.mon(this.view, "cmVisible", this.onGridIsVisible, this);
 			this.mon(this.view.printGridMenu, "click", this.onPrintGridMenuClick, this);
-
-			this.stateDelegate = this.buildStateDelegate();
 		},
 
-		buildStateDelegate: function() {
-			var sd = new CMDBuild.state.CMCardModuleStateDelegate();
-			var me = this;
-
-			sd.onEntryTypeDidChange = function(state, entryType, danglingCard, viewFilter) {
-				me.onEntryTypeSelected(entryType, danglingCard, viewFilter);
-			};
-
-			sd.onCardDidChange = function(state, card) {
-				if (!card) {
-					return;
-				}
-
-				var currentSelection = me.gridSM.getSelection();
-				if (Ext.isArray(currentSelection) && currentSelection.length>0) {
-					currentSelection = currentSelection[0];
-				}
-
-				if (
-					!Ext.isEmpty(currentSelection)
-					&& !Ext.isEmpty(currentSelection.get) && Ext.isFunction(currentSelection.get)
-				) {
-					var id = currentSelection.get("Id");
-
-					if (id && id == card.get("Id")) {
-						return;
-					} else {
-						me.openCard({
-							Id: card.get("Id"),
-							IdClass: card.get("IdClass")
-						});
-					}
-				}
-			};
-
-			_CMCardModuleState.addDelegate(sd);
-		},
-
-		getEntryType: function() {
+		getEntryType: function () {
 			return _CMCardModuleState.entryType;
 		},
 
-		onEntryTypeSelected : function(entryType, danglingCard, viewFilter) {
+		onEntryTypeSelected : function (entryType, danglingCard, viewFilter) {
 			if (!entryType) {
 				return;
 			}
@@ -103,11 +61,11 @@
 				afterStoreUpdated;
 
 			if (danglingCard) {
-				afterStoreUpdated = function() {
+				afterStoreUpdated = function () {
 					me.openCard(danglingCard, retryWithoutFilter = true);
 				};
 			} else {
-				afterStoreUpdated = function() {
+				afterStoreUpdated = function () {
 					if (viewFilter) {
 						var filter = {};
 
@@ -127,7 +85,7 @@
 						applyFilter(me, filter);
 					} else {
 						me.view.loadPage(1, {
-							cb: function(args) {
+							cb: function (args) {
 								var records = args[1];
 
 								if (records && records.length > 0) {
@@ -156,14 +114,14 @@
 
 		},
 
-		onAddCardButtonClick: function() {
+		onAddCardButtonClick: function () {
 			this.gridSM.deselectAll();
 		},
 
 		/**
 		 * @params {String} format
 		 */
-		onPrintGridMenuClick: function(format) {
+		onPrintGridMenuClick: function (format) {
 			if (!Ext.isEmpty(format)) {
 				var params = Ext.apply({}, this.view.getStore().proxy.extraParams);
 				params[CMDBuild.core.constants.Proxy.ATTRIBUTES] = Ext.encode(this.view.getVisibleColumns());
@@ -179,7 +137,7 @@
 			}
 		},
 
-		onCardSelected: function(sm, selection) {
+		onCardSelected: function (sm, selection) {
 			if (Ext.isArray(selection)) {
 				if (selection.length > 0) {
 					_CMCardModuleState.setCard(selection[0]);
@@ -187,11 +145,11 @@
 			}
 		},
 
-		onWrongSelection: function() {
+		onWrongSelection: function () {
 			this.fireEvent(this.CMEVENTS.wrongSelection);
 		},
 
-		onGridIsVisible: function(visible) {
+		onGridIsVisible: function (visible) {
 			if (visible) {
 				if (_CMCardModuleState.card) {
 					this.openCard({
@@ -205,16 +163,16 @@
 			this.fireEvent(this.CMEVENTS.gridVisible, visible, selection);
 		},
 
-		onCardSaved: function(c) {
+		onCardSaved: function (c) {
 			var retryIfTheCardIsNotInFilter = true;
 			this.openCard(c, retryIfTheCardIsNotInFilter);
 		},
 
-		onCardDeleted: function() {
+		onCardDeleted: function () {
 			this.view.reload();
 		},
 
-		onCloneCard: function() {
+		onCloneCard: function () {
 			this.gridSM.deselectAll();
 		},
 
@@ -225,7 +183,7 @@
 		 * @param {int} p.Id the id of the card to open
 		 * @param {boolean} retryWithoutFilter
 		 */
-		openCard: function(p, retryWithoutFilter) {
+		openCard: function (p, retryWithoutFilter) {
 			var me = this;
 			var store = this.view.getStore();
 
@@ -275,25 +233,24 @@
 			});
 		},
 
-		reload: function(reselect) {
+		reload: function (reselect) {
 			this.view.reload(reselect);
 		},
 
-		_onGetPositionSuccessForcingTheFilter: function(p, position, resText) {
+		_onGetPositionSuccessForcingTheFilter: function (p, position, resText) {
 			var me = this;
 			var view = me.view;
 			unApplyFilter(me);
 			updateStoreAndSelectGivenPosition(me, p.IdClass, position);
 		},
 
-		_onGetPositionFailureWithoutForcingTheFilter: function() {
+		_onGetPositionFailureWithoutForcingTheFilter: function () {
 			CMDBuild.core.Message.info(undefined, CMDBuild.Translation.cardNotMatchFilter);
 		},
-
 		// protected
 		unApplyFilter: unApplyFilter,
 
-		// As CMDBuild.controller.common.panel.gridAndForm.filter.advanced.Advanced delegate
+		// As filterMentuButtonDelegate
 		/**
 		 * Called by the CMDBuild.controller.common.panel.gridAndForm.filter.advanced.Advanced when click to on the apply icon or on a row of the picker
 		 *
@@ -301,9 +258,9 @@
 		 *
 		 * @returns {Void}
 		 */
-		onFilterMenuButtonApplyActionClick: function (filter) {
+		onFilterMenuButtonApplyActionClick: function (button, filter) {
 			if (filter.getRuntimeParameters().length > 0) {
-				showRuntimeParameterWindow(this, filter);
+				showRuntimeParameterWindow(me, filter);
 			} else {
 				this.appliedFilter = filter;
 
@@ -318,10 +275,11 @@
 		},
 
 		// as runtimeFilterParamsWindow
-		onRuntimeParameterWindowSaveButtonClick: function(runtimeParameterWindow, filter) {
+		onRuntimeParameterWindowSaveButtonClick: function (runtimeParameterWindow, filter) {
 			applyFilter(this, filter, runtimeParameterWindow.runtimeAttributes);
 			runtimeParameterWindow.destroy();
 		}
+
 	});
 
 	function getFilterStore(me) {
@@ -379,7 +337,7 @@
 
 			if (referredEntryType) {
 				_CMCache.getAttributeList(referredEntryType.getId(), //
-					function(attributes) { //
+					function (attributes) { //
 						for (var i=0; i<runtimeAttributeConfigurations.length; ++i) {
 							var runtimeAttributeToSearch = runtimeAttributeConfigurations[i];
 
@@ -453,7 +411,7 @@
 					relativeIndex = position % pageSize;
 
 				view.loadPage(pageNumber, {
-					cb: function() {
+					cb: function () {
 						var parameters = arguments[0];
 
 						try {
