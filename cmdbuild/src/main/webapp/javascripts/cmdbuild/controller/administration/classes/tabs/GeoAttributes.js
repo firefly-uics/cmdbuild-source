@@ -4,12 +4,8 @@
 		extend: 'CMDBuild.controller.common.abstract.Base',
 
 		requires: [
-//			'CMDBuild.core.constants.ModuleIdentifiers',
 			'CMDBuild.core.constants.Proxy',
-//			'CMDBuild.core.Message',
-			'CMDBuild.proxy.classes.tabs.GeoAttributes',
-//			'CMDBuild.proxy.workflow.Xpdl',
-//			'CMDBuild.view.common.field.translatable.Utils'
+			'CMDBuild.proxy.classes.tabs.GeoAttributes'
 		],
 
 		/**

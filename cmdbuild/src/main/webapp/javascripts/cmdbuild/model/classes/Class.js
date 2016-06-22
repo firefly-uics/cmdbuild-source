@@ -30,7 +30,7 @@
 			 * @returns {Object} data
 			 */
 			convertFromLegacy: function (data) {
-				data = data || {};
+				data = Ext.isObject(data) ? data : {};
 				data[CMDBuild.core.constants.Proxy.CAPABILITIES] = data['ui_card_edit_mode'];
 				data[CMDBuild.core.constants.Proxy.DESCRIPTION] = data['text'] || data[CMDBuild.core.constants.Proxy.DESCRIPTION];
 				data[CMDBuild.core.constants.Proxy.IS_SUPER_CLASS] = data['superclass'] || data[CMDBuild.core.constants.Proxy.IS_SUPER_CLASS];
@@ -51,6 +51,7 @@
 		 * @override
 		 */
 		constructor: function (data) {
+			data = Ext.isObject(data) ? data : {};
 			data = this.statics().convertFromLegacy(data);
 
 			this.callParent(arguments);
