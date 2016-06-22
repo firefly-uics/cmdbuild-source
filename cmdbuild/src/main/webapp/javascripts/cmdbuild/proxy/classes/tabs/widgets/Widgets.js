@@ -1,8 +1,5 @@
 (function () {
 
-	/**
-	 * @link CMDBuild.proxy.widget.Widget
-	 */
 	Ext.define('CMDBuild.proxy.classes.tabs.widgets.Widgets', {
 
 		requires: [

@@ -3,8 +3,6 @@
 	Ext.require('CMDBuild.core.constants.Proxy');
 
 	/**
-	 * @link CMDBuild.model.widget.ping.Definition
-	 *
 	 * TODO: waiting for refactor (rename)
 	 */
 	Ext.define('CMDBuild.model.classes.tabs.widgets.ping.Definition', {

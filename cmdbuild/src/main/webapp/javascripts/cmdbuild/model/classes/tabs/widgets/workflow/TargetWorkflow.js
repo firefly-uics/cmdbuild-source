@@ -2,9 +2,6 @@
 
 	Ext.require('CMDBuild.core.constants.Proxy');
 
-	/**
-	 * @link CMDBuild.model.widget.workflow.TargetWorkflow
-	 */
 	Ext.define('CMDBuild.model.classes.tabs.widgets.workflow.TargetWorkflow', {
 		extend: 'Ext.data.Model',
 

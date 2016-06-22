@@ -3,8 +3,6 @@
 	Ext.require('CMDBuild.core.constants.Proxy');
 
 	/**
-	 * @link CMDBuild.model.widget.workflow.Definition
-	 *
 	 * TODO: waiting for refactor (rename)
 	 */
 	Ext.define('CMDBuild.model.classes.tabs.widgets.workflow.Definition', {

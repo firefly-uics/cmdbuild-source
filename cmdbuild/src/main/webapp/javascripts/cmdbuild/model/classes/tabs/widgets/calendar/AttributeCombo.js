@@ -2,9 +2,6 @@
 
 	Ext.require('CMDBuild.core.constants.Proxy');
 
-	/**
-	 * @link CMDBuild.model.widget.calendar.AttributeCombo
-	 */
 	Ext.define('CMDBuild.model.classes.tabs.widgets.calendar.AttributeCombo', {
 		extend: 'Ext.data.Model',
 

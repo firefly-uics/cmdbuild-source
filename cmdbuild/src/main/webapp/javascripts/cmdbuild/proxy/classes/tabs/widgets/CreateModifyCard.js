@@ -1,8 +1,5 @@
 (function () {
 
-	/**
-	 * @link CMDBuild.proxy.widget.CreateModifyCard
-	 */
 	Ext.define('CMDBuild.proxy.classes.tabs.widgets.CreateModifyCard', {
 
 		requires: [

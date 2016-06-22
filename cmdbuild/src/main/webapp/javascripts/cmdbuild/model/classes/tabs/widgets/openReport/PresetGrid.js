@@ -2,9 +2,6 @@
 
 	Ext.require('CMDBuild.core.constants.Proxy');
 
-	/**
-	 * @link CMDBuild.model.widget.openReport.PresetGrid
-	 */
 	Ext.define('CMDBuild.model.classes.tabs.widgets.openReport.PresetGrid', {
 		extend: 'Ext.data.Model',
 
