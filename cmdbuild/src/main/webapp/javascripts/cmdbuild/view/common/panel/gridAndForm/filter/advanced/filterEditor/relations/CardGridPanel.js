@@ -1,49 +1,14 @@
-(function() {
+(function () {
+
+	/**
+	 * FIXME: build own class
+	 *
+	 * @link CMDBuild.view.management.common.CMCardGrid
+	 */
 
 	Ext.require('CMDBuild.proxy.index.Json');
 
-	Ext.define("CMDBuild.view.management.common.CMCardGridDelegate", {
-		/**
-		 *
-		 * @param {CMDBuild.view.management.common.CMCardGrid} grid
-		 * @param {Ext.data.Model} record
-		 */
-		onCMCardGridSelect: function(grid, record) {},
-
-		/**
-		 *
-		 * @param {CMDBuild.view.management.common.CMCardGrid} grid
-		 * @param {Ext.data.Model} record
-		 */
-		onCMCardGridDeselect: function(grid, record) {},
-
-		/**
-		 *
-		 * @param {CMDBuild.view.management.common.CMCardGrid} grid
-		 */
-		onCMCardGridBeforeLoad: function(grid) {},
-
-		/**
-		 *
-		 * @param {CMDBuild.view.management.common.CMCardGrid} grid
-		 */
-		onCMCardGridLoad: function(grid) {},
-
-		/**
-		 *
-		 * @param {CMDBuild.view.management.common.CMCardGrid} grid
-		 */
-		onCMCardGridColumnsReconfigured: function(grid) {},
-
-		/**
-		 *
-		 * @param {CMDBuild.view.management.common.CMCardGrid} grid
-		 */
-		onCMCardGridIconRowClick: function(grid, action, model) {}
-
-	});
-
-	Ext.define("CMDBuild.view.management.common.CMCardGridPagingBar", {
+	Ext.define("CMDBuild.view.common.panel.gridAndForm.filter.advanced.filterEditor.relations.CMCardGridPagingBar", {
 		extend: "Ext.toolbar.Paging",
 
 		// configuration
@@ -51,7 +16,7 @@
 		// configuration
 
 		// override
-		doRefresh: function(value) {
+		doRefresh: function (value) {
 			if (this.grid) {
 				var sm = this.grid.getSelectionModel();
 				if (sm) {
@@ -62,7 +27,7 @@
 		}
 	});
 
-	Ext.define("CMDBuild.view.management.common.CMCardGrid", {
+	Ext.define("CMDBuild.view.common.panel.gridAndForm.filter.advanced.filterEditor.relations.CardGridPanel", {
 		extend: "Ext.grid.Panel",
 
 		requires: ['CMDBuild.core.constants.Global'],
@@ -72,38 +37,33 @@
 		},
 
 		/**
-		 * @cfg {CMDBuild.controller.management.common.CMCardGridController}
+		 * @cfg {CMDBuild.controller.common.panel.gridAndForm.filter.advanced.filterEditor.relations.GridCard}
 		 */
 		delegate: undefined,
-
-		/**
-		 * @property {CMDBuild.controller.common.panel.gridAndForm.filter.advanced.Advanced}
-		 */
-		controllerAdvancedFilterButtons: undefined,
-
-		CLASS_COLUMN_DATA_INDEX: 'IdClass_value',	// for the header configuration
-													// the name is used for the server-side sorting
 
 		// configuration
 		columns: [],
 		extraParams: undefined, // extra params for the store
-		forceSelectionOfFirst: false, // listen load event and select the first row
-		skipSelectFirst: false,
 		cmPaginate: true, // to say if build or not a paging bar, default true
 		cmBasicFilter: true, // to add a basic search-field to the paging bar
-		cmAdvancedFilter: true, // to add a button to set an advanced filter
+//		cmAdvancedFilter: false, // to add a button to set an advanced filter
 		cmAddGraphColumn: true, // to say if build or not a column to open the mystical graph window, default true
 		cmAddPrintButton: true, // to add a button to set an chose the print format
 		// configuration
 
-		constructor: function(c) {
-			this.mixins.delegable.constructor.call(this,
-				"CMDBuild.view.management.common.CMCardGridDelegate");
+		cls: 'cmdb-border-top',
+		disabled: true,
+		multiSelect: true,
+		region: 'center',
+		selType: 'checkboxmodel',
+
+		constructor: function (c) {
+			this.mixins.delegable.constructor.call(this, "CMDBuild.view.common.panel.gridAndForm.filter.advanced.filterEditor.relations.CardGridPanelDelegate");
 
 			this.callParent(arguments);
 		},
 
-		initComponent: function() {
+		initComponent: function () {
 			this.loadMask = false;
 			this.store = this.getStoreForFields([]);
 
@@ -129,26 +89,20 @@
 			this.mon(this, 'beforeitemclick', cellclickHandler, this);
 
 			// register to events for delegates
-			this.mon(this, 'select', function(grid, record) {
+			this.mon(this, 'select', function (grid, record) {
 				this.callDelegates("onCMCardGridSelect", [grid, record]);
 			}, this);
 
-			this.mon(this, 'deselect', function(grid, record) {
+			this.mon(this, 'deselect', function (grid, record) {
 				this.callDelegates("onCMCardGridDeselect", [grid, record]);
+			}, this);
+
+			this.mon(this, 'show', function (panel, record) {
+				this.delegate.cmfg('onPanelGridAndFormFilterAdvancedFilterEditorRelationsGridCardViewShow');
 			}, this);
 		},
 
-		shouldSelectFirst: function() {
-			var out = this.forceSelectionOfFirst && !this.skipSelectFirst;
-			this.skipSelectFirst = false;
-			return out;
-		},
-
-		skipNextSelectFirst: function() {
-			this.skipSelectFirst = true;
-		},
-
-		updateStoreForClassId: function(classId, o) {
+		updateStoreForClassId: function (classId, o) {
 
 			var me = this;
 
@@ -169,8 +123,8 @@
 					this.gridSearchField.setValue(""); // clear only the field without reload the grid
 				}
 
-				if (this.cmAdvancedFilter)
-					this.controllerAdvancedFilterButtons.cmfg('entryTypeSet', { value: _CMCache.getEntryTypeById(classId).getData() });
+//				if (this.cmAdvancedFilter)
+//					this.controllerAdvancedFilterButtons.cmfg('entryTypeSet', { value: _CMCache.getEntryTypeById(classId).getData() });
 
 				if (me.printGridMenu) {
 					me.printGridMenu.setDisabled(!classId);
@@ -178,7 +132,7 @@
 
 				me.loadAttributes( //
 					classId, //
-					function(attributes) { //
+					function (attributes) { //
 						me.setColumnsForClass(attributes);
 						me.setGridSorting(attributes);
 						callCbOrLoadFirstPage(me);
@@ -189,7 +143,7 @@
 		},
 
 		// protected
-		loadAttributes: function(classId, cb) {
+		loadAttributes: function (classId, cb) {
 			_CMCache.getAttributeList(classId, cb);
 		},
 
@@ -197,10 +151,10 @@
 		 * @param {Number} pageNumber
 		 * @param {Object} options
 		 */
-		loadPage: function(pageNumber, options) {
+		loadPage: function (pageNumber, options) {
 			options = options || {};
 			scope = options.scope || this;
-			cb = options.cb || function(args) { // Not a good implementation but there isn't another way
+			cb = options.cb || function (args) { // Not a good implementation but there isn't another way
 				if (!args[2]) {
 					CMDBuild.core.Message.error(null, {
 						text: CMDBuild.Translation.errors.anErrorHasOccurred
@@ -216,12 +170,12 @@
 		/**
 		 * @param {Boolean} reselect
 		 */
-		reload: function(reselect) {
+		reload: function (reselect) {
 			reselect = Ext.isBoolean(reselect) && reselect;
 
 			this.getStore().load({
 				scope: this,
-				callback: function(records, operation, success) {
+				callback: function (records, operation, success) {
 					if (success) {
 						// If we have a start parameter greater than zero and no loaded records load first page to avoid to stick in empty page also if we have records
 						if (operation.start > 0 && Ext.isEmpty(records))
@@ -242,7 +196,7 @@
 			});
 		},
 
-		getVisibleColumns: function() {
+		getVisibleColumns: function () {
 			var columns = this.columns;
 			var visibleColumns = [];
 
@@ -267,7 +221,7 @@
 		},
 
 		// protected
-		setColumnsForClass: function(classAttributes) {
+		setColumnsForClass: function (classAttributes) {
 			var columns = this.buildColumnsForAttributes(classAttributes);
 			var s = this.getStoreForFields(columns.fields);
 
@@ -283,7 +237,7 @@
 		},
 
 		// protected
-		buildColumnsForAttributes: function(classAttributes) {
+		buildColumnsForAttributes: function (classAttributes) {
 			this.classAttributes = classAttributes;
 			var headers = [];
 			var fields = [];
@@ -297,7 +251,7 @@
 				var header = CMDBuild.Management.FieldManager.getHeaderForAttr(attribute);
 
 				if (header &&
-						header.dataIndex != this.CLASS_COLUMN_DATA_INDEX) {
+						header.dataIndex != 'IdClass_value') {
 
 					this.addRendererToHeader(header);
 					// There was a day in which I receved the order to skip the Notes attribute.
@@ -328,7 +282,7 @@
 		},
 
 		// protected
-		setGridSorting: function(attributes) {
+		setGridSorting: function (attributes) {
 			if (!this.store.sorters) {
 				return;
 			}
@@ -374,8 +328,8 @@
 		},
 
 		// protected
-		addRendererToHeader: function(h) {
-			h.renderer = function(value, metadata, record, rowIndex, colIndex, store, view) {
+		addRendererToHeader: function (h) {
+			h.renderer = function (value, metadata, record, rowIndex, colIndex, store, view) {
 				value = value || record.get(h.dataIndex);
 
 				if (typeof value == 'undefined' || value == null) {
@@ -397,31 +351,18 @@
 		},
 
 		// protected
-		getStoreForFields: function(fields) {
+		getStoreForFields: function (fields) {
 			var pageSize = CMDBuild.configuration.instance.get(CMDBuild.core.constants.Proxy.ROW_LIMIT);
 			var s = this.buildStore(fields, pageSize);
 
-			this.mon(s, "beforeload", function() {
+			this.mon(s, "beforeload", function () {
 				this.callDelegates("onCMCardGridBeforeLoad", this);
 				this.fireEvent("beforeload", arguments);  // TODO remove?
 			}, this);
 
-			this.mon(s, "load", function(store, records) {
+			this.mon(s, "load", function (store, records) {
 				this.callDelegates("onCMCardGridLoad", this);
 				this.fireEvent("load", arguments); // TODO remove?
-
-				if (this.shouldSelectFirst() && !this.getSelectionModel().hasSelection()
-						&& records && records.length > 0) {
-
-					try {
-						this.getSelectionModel().select(0);
-					} catch (e) {
-						this.fireEvent("cmWrongSelection");
-						CMDBuild.log.info("Not selected the first record");
-						_trace();
-					}
-				}
-
 			}, this);
 
 			return s;
@@ -437,10 +378,10 @@
 		 *
 		 * TODO: waiting for refactor (build grid proxy)
 		 */
-		buildStore: function(fields, pageSize) {
+		buildStore: function (fields, pageSize) {
 			fields.push({name: 'Id', type: 'int'});
 			fields.push({name: 'IdClass', type: 'int'});
-			fields.push(this.CLASS_COLUMN_DATA_INDEX);
+			fields.push('IdClass_value');
 
 			return CMDBuild.global.Cache.requestAsStore(CMDBuild.core.constants.Proxy.UNCACHED, {
 				autoLoad: false,
@@ -462,7 +403,7 @@
 		},
 
 		//protected
-		getStoreExtraParams: function() {
+		getStoreExtraParams: function () {
 			var p = {
 				className: ""
 			};
@@ -480,17 +421,17 @@
 		},
 
 		//protected
-		buildExtraColumns: function() {
+		buildExtraColumns: function () {
 			return [];
 		},
 
 		// protected
-		buildClassColumn: function() {
+		buildClassColumn: function () {
 			return {
 				header: CMDBuild.Translation.subClass,
 				width: 100,
 				sortable: false,
-				dataIndex: this.CLASS_COLUMN_DATA_INDEX
+				dataIndex: 'IdClass_value'
 			};
 		},
 
@@ -500,8 +441,8 @@
 		 * @returns {Void}
 		 */
 		disableFilterMenuButton: function () {
-			if (this.cmAdvancedFilter)
-				this.controllerAdvancedFilterButtons.getView().disable();
+//			if (this.cmAdvancedFilter)
+//				this.controllerAdvancedFilterButtons.getView().disable();
 		},
 
 		/**
@@ -510,11 +451,11 @@
 		 * @returns {Void}
 		 */
 		enableFilterMenuButton: function () {
-			if (this.cmAdvancedFilter)
-				this.controllerAdvancedFilterButtons.getView().enable();
+//			if (this.cmAdvancedFilter)
+//				this.controllerAdvancedFilterButtons.getView().enable();
 		},
 
-		applyFilterToStore: function(filter) {
+		applyFilterToStore: function (filter) {
 			try {
 				var encoded = filter;
 				if (typeof encoded != "string") {
@@ -536,15 +477,15 @@
 			items.push(me.gridSearchField);
 		}
 
-		if (me.cmAdvancedFilter) {
-			me.controllerAdvancedFilterButtons = Ext.create('CMDBuild.controller.common.panel.gridAndForm.filter.advanced.Advanced', { masterGrid: me });
-			_CMUtils.forwardMethods(me, me.controllerAdvancedFilterButtons.getView(), [
-				"enableClearFilterButton",
-				"disableClearFilterButton",
-				"setFilterButtonLabel"
-			]);
-			items.push(me.controllerAdvancedFilterButtons.getView());
-		}
+//		if (me.cmAdvancedFilter) {
+//			me.controllerAdvancedFilterButtons = Ext.create('CMDBuild.controller.common.panel.gridAndForm.filter.advanced.Advanced', { masterGrid: me });
+//			_CMUtils.forwardMethods(me, me.controllerAdvancedFilterButtons.getView(), [
+//				"enableClearFilterButton",
+//				"disableClearFilterButton",
+//				"setFilterButtonLabel"
+//			]);
+//			items.push(me.controllerAdvancedFilterButtons.getView());
+//		}
 
 		if (me.cmAddPrintButton) {
 			me.printGridMenu = Ext.create('CMDBuild.core.buttons.iconized.split.Print', {
@@ -559,7 +500,7 @@
 			items.push(me.printGridMenu);
 		}
 
-		me.pagingBar = new CMDBuild.view.management.common.CMCardGridPagingBar({
+		me.pagingBar = new CMDBuild.view.common.panel.gridAndForm.filter.advanced.filterEditor.relations.CMCardGridPagingBar({
 			grid: me,
 			store: me.store,
 			displayInfo: true,
@@ -599,7 +540,7 @@
 							scope: this,
 
 							// TODO: cmfg() controller call implementation  on controller refactor
-							handler: function(grid, rowIndex, colIndex, node, e, record, rowNode) {
+							handler: function (grid, rowIndex, colIndex, node, e, record, rowNode) {
 								Ext.create('CMDBuild.controller.common.panel.gridAndForm.graph.Window', {
 									parentDelegate: this,
 									classId: record.get('IdClass'),
