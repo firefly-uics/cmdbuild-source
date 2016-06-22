@@ -90,7 +90,6 @@
 <script type="text/javascript" src="javascripts/cmdbuild/view/common/field/CMToggleButtonToShowReferenceAttributes.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/view/common/field/ReferenceField.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/view/common/field/ForeignKeyField.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/form/IconsCombo.js"></script>
 
 <!-- DELEGATES -->
 	<!-- COMMON -->

@@ -42,7 +42,7 @@
 		fieldDashstyleStroke: undefined,
 
 		/**
-		 * @property {CMDBuild.IconsCombo}
+		 * @property {CMDBuild.view.common.field.comboBox.Icon}
 		 */
 		fieldExternalGraphic: undefined,
 
@@ -127,11 +127,11 @@
 						store: CMDBuild.proxy.classes.tabs.GeoAttributes.getStoreStrokeDashstyle(),
 						queryMode: 'local'
 					}),
-					fieldExternalGraphic: new CMDBuild.IconsCombo({
+					fieldExternalGraphic: Ext.create('CMDBuild.view.common.field.comboBox.Icon', {
 						name: CMDBuild.core.constants.Proxy.EXTERNAL_GRAPHIC,
 						fieldLabel: CMDBuild.Translation.administration.modClass.geo_attributes.externalGraphic,
 						labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
-						maxWidth: CMDBuild.core.constants.FieldWidths.ADMINISTRATION_MEDIUM,
+						maxWidth: CMDBuild.core.constants.FieldWidths.ADMINISTRATION_BIG,
 						valueField: CMDBuild.core.constants.Proxy.PATH,
 						displayField: CMDBuild.core.constants.Proxy.DESCRIPTION,
 

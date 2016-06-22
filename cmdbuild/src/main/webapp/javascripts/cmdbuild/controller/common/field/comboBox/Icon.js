@@ -1,9 +1,7 @@
 (function () {
 
-	Ext.define('CMDBuild.controller.common.field.comboBox.Erasable', {
+	Ext.define('CMDBuild.controller.common.field.comboBox.Icon', {
 		extend: 'CMDBuild.controller.common.abstract.Base',
-
-		requires: ['CMDBuild.core.constants.Proxy'],
 
 		/**
 		 * @cfg {Object}
@@ -14,12 +12,12 @@
 		 * @cfg {Array}
 		 */
 		cmfgCatchedFunctions: [
-			'onFieldComboBoxErasableTrigger1Click',
-			'onFieldComboBoxErasableTrigger2Click'
+			'onFieldComboBoxIconTrigger1Click',
+			'onFieldComboBoxIconTrigger2Click'
 		],
 
 		/**
-		 * @property {CMDBuild.view.common.field.comboBox.Erasable}
+		 * @property {CMDBuild.view.common.field.comboBox.Icon}
 		 */
 		view: undefined,
 
@@ -28,14 +26,14 @@
 		 *
 		 * @returns {Void}
 		 */
-		onFieldComboBoxErasableTrigger1Click: function () {
+		onFieldComboBoxIconTrigger1Click: function () {
 			this.view.onTriggerClick();
 		},
 
 		/**
 		 * @returns {Void}
 		 */
-		onFieldComboBoxErasableTrigger2Click: function () {
+		onFieldComboBoxIconTrigger2Click: function () {
 			if (!this.view.isDisabled())
 				this.view.setValue();
 		}
