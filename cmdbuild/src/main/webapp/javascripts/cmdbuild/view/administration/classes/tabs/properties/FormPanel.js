@@ -1,5 +1,8 @@
 (function () {
 
+	/**
+	 * @link CMDBuild.view.administration.workflow.tabs.properties.FormPanel
+	 */
 	Ext.define('CMDBuild.view.administration.classes.tabs.properties.FormPanel', {
 		extend: 'Ext.form.Panel',
 
@@ -65,6 +68,7 @@
 							Ext.create('CMDBuild.core.buttons.iconized.split.Print', {
 								delegate: this.delegate,
 								text: CMDBuild.Translation.printClass,
+								delegateEventPrefix: 'onClassesTabProperties',
 								formatList: [
 									CMDBuild.core.constants.Proxy.PDF,
 									CMDBuild.core.constants.Proxy.ODT

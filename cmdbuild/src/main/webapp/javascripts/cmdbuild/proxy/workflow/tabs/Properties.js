@@ -1,6 +1,6 @@
 (function () {
 
-	Ext.define('CMDBuild.proxy.workflow.Properties', {
+	Ext.define('CMDBuild.proxy.workflow.tabs.Properties', {
 
 		requires: [
 			'CMDBuild.core.constants.Global',

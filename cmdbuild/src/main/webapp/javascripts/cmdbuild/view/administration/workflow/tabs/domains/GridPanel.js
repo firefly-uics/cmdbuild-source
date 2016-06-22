@@ -8,7 +8,7 @@
 
 		requires: [
 			'CMDBuild.core.constants.Proxy',
-			'CMDBuild.proxy.workflow.Domains'
+			'CMDBuild.proxy.workflow.tabs.Domains'
 		],
 
 		/**
@@ -71,12 +71,13 @@
 						fixed: true
 					})
 				],
-				store: CMDBuild.proxy.workflow.Domains.getStore()
+				store: CMDBuild.proxy.workflow.tabs.Domains.getStore()
 			});
 
 			this.callParent(arguments);
 
 			this.getStore().on('load', function (store, records, successful, eOpts) {
+				this.delegate.cmfg('onWorkflowTabDomainsIncludeInheritedCheck');
 				this.delegate.cmfg('onWorkflowTabDomainsStoreLoad');
 			}, this);
 		},
@@ -85,7 +86,6 @@
 			itemdblclick: function (grid, record, item, index, e, eOpts) {
 				this.delegate.cmfg('onWorkflowTabDomainsItemDoubleClick');
 			},
-
 			select: function (row, record, index) {
 				this.delegate.cmfg('onWorkflowTabDomainsRowSelect');
 			}

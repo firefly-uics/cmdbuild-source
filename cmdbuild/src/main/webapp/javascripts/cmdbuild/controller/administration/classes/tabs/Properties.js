@@ -1,5 +1,8 @@
 (function () {
 
+	/**
+	 * @link CMDBuild.controller.administration.workflow.tabs.Properties
+	 */
 	Ext.define('CMDBuild.controller.administration.classes.tabs.Properties', {
 		extend: 'CMDBuild.controller.common.abstract.Base',
 
@@ -21,12 +24,12 @@
 		 */
 		cmfgCatchedFunctions: [
 			'onClassesTabPropertiesAbortButtonClick',
-			'onClassesTabPropertiesAddButtonClick',
+			'onClassesTabPropertiesAddClassButtonClick',
 			'onClassesTabPropertiesClassSelection',
 			'onClassesTabPropertiesIconsClassSelection', // FIXME: Waiting for a future full implementation as separate tab
 			'onClassesTabPropertiesIconsUploadButtonClick', // FIXME: Waiting for a future full implementation as separate tab
 			'onClassesTabPropertiesModifyButtonClick',
-			'onClassesTabPropertiesPrintButtonClick = onButtonPrintClick',
+			'onClassesTabPropertiesPrintButtonClick',
 			'onClassesTabPropertiesRemoveButtonClick',
 			'onClassesTabPropertiesSaveButtonClick',
 			'onClassesTabPropertiesShow',
@@ -111,7 +114,7 @@
 		/**
 		 * @returns {Void}
 		 */
-		onClassesTabPropertiesAddButtonClick: function () {
+		onClassesTabPropertiesAddClassButtonClick: function () {
 			// Base properties fieldset setup
 				this.form.reset();
 				this.form.loadRecord(Ext.create('CMDBuild.model.classes.Class'));

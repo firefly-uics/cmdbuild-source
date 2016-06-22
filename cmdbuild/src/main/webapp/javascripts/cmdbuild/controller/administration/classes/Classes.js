@@ -4,7 +4,6 @@
 		extend: 'CMDBuild.controller.common.abstract.Base',
 
 		requires: [
-			'CMDBuild.core.constants.Global',
 			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.proxy.classes.Classes'
 		],
@@ -25,7 +24,7 @@
 			'onClassesAddButtonClick',
 			'onClassesClassSelection',
 			'onClassesModuleInit = onModuleInit',
-			'onClassesPrintButtonClick = onButtonPrintClick'
+			'onClassesPrintButtonClick'
 		],
 
 		/**
@@ -138,7 +137,7 @@
 			this.controllerDomains.cmfg('onClassesTabDomainsAddClassButtonClick');
 			this.controllerGeoAttributes.cmfg('onClassesTabGeoAttributesAddClassButtonClick');
 			this.controllerLayers.cmfg('onClassesTabLayersAddClassButtonClick');
-			this.controllerProperties.cmfg('onClassesTabPropertiesAddButtonClick'); // Different behavior from others
+			this.controllerProperties.cmfg('onClassesTabPropertiesAddClassButtonClick');
 			this.controllerWidgets.cmfg('onClassesTabWidgetsAddClassButtonClick');
 		},
 
@@ -152,7 +151,7 @@
 		 * @override
 		 */
 		onClassesModuleInit: function (node) {
-			if (!Ext.Object.isEmpty(node)) {
+			if (Ext.isObject(node) && !Ext.Object.isEmpty(node)) {
 				var params = {};
 				params[CMDBuild.core.constants.Proxy.ACTIVE] = false;
 
@@ -180,7 +179,7 @@
 
 								this.tabPanel.getActiveTab().fireEvent('show'); // Manual show event fire because was already selected
 							} else {
-								_error('onClassesModuleInit(): class with id "' + node.get(CMDBuild.core.constants.Proxy.ENTITY_ID) + '" not found', this);
+								_error('onClassesModuleInit(): class not found', this, node.get(CMDBuild.core.constants.Proxy.ENTITY_ID));
 							}
 						}
 					}

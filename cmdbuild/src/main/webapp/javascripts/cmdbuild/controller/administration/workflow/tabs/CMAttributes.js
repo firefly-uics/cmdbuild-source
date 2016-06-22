@@ -7,16 +7,14 @@
 		'CMDBuild.view.common.field.translatable.Utils'
 	]);
 
-	var tr =  CMDBuild.Translation.administration.modClass.attributeProperties;
-
-	Ext.define("CMDBuild.controller.administration.workflow.CMAttributes", {
+	Ext.define("CMDBuild.controller.administration.workflow.tabs.CMAttributes", {
 
 		requires: ['CMDBuild.core.constants.Proxy'],
 
 		/**
 		 * @param {Object} configurationObject
 		 * @param {CMDBuild.controller.administration.workflow.Workflow} configurationObject.parentDelegate
-		 * @param {CMDBuild.view.administration.workflow.CMProcessAttributes} configurationObject.view
+		 * @param {CMDBuild.view.administration.workflow.CMAttributes} configurationObject.view
 		 */
 		constructor: function(configurationObject) {
 			Ext.apply(this, configurationObject); // Apply configuration properties
@@ -149,7 +147,7 @@
 
 	function onDeleteClick() {
 		Ext.Msg.show({
-			title: tr.delete_attribute,
+			title: CMDBuild.Translation.administration.modClass.attributeProperties.delete_attribute,
 			msg: CMDBuild.Translation.common.confirmpopup.areyousure,
 			scope: this,
 			buttons: Ext.Msg.YESNO,
