@@ -129,23 +129,6 @@
 				callback: requestBarrier.getCallback('administrationBuildCacheBarrier')
 			});
 
-			/**
-			 * Widget
-			 */
-			CMDBuild.proxy.widget.Widget.readAll({
-				loadMask: false,
-				scope: this,
-				success: function (response, options, decodedResponse) {
-					decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.RESPONSE];
-
-					/**
-					 * @deprecated
-					 */
-					_CMCache.addWidgetToEntryTypes(decodedResponse);
-				},
-				callback: requestBarrier.getCallback('administrationBuildCacheBarrier')
-			});
-
 			requestBarrier.finalize('administrationBuildCacheBarrier', true);
 		},
 
