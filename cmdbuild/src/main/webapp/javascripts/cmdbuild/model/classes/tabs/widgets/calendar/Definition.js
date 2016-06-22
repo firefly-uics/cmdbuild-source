@@ -3,8 +3,6 @@
 	Ext.require('CMDBuild.core.constants.Proxy');
 
 	/**
-	 * @link CMDBuild.model.widget.calendar.Definition
-	 *
 	 * TODO: waiting for refactor (rename)
 	 */
 	Ext.define('CMDBuild.model.classes.tabs.widgets.calendar.Definition', {

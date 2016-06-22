@@ -2,9 +2,6 @@
 
 	Ext.require('CMDBuild.core.constants.Proxy');
 
-	/**
-	 * @link CMDBuild.model.widget.workflow.PresetGrid
-	 */
 	Ext.define('CMDBuild.model.classes.tabs.widgets.workflow.PresetGrid', {
 		extend: 'Ext.data.Model',
 

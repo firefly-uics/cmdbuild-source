@@ -1,8 +1,5 @@
 (function () {
 
-	/**
-	 * @link CMDBuild.proxy.widget.Workflow
-	 */
 	Ext.define('CMDBuild.proxy.classes.tabs.widgets.Workflow', {
 
 		requires: [

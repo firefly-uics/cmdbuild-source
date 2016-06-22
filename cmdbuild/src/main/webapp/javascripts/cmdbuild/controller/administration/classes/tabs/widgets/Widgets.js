@@ -22,7 +22,7 @@
 		cmfgCatchedFunctions: [
 			'classesTabWidgetsTypeRenderer',
 			'onClassesTabWidgetsAbortButtonClick',
-			'onClassesTabWidgetsAddButtonClick = onClassTabWidgetAddButtonClick', // TODO: button refactor
+			'onClassesTabWidgetsAddButtonClick',
 			'onClassesTabWidgetsAddClassButtonClick',
 			'onClassesTabWidgetsClassSelection',
 			'onClassesTabWidgetsItemDrop',

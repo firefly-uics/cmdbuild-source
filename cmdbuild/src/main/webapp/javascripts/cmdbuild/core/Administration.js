@@ -264,10 +264,6 @@
 							cmControllerType: CMDBuild.controller.common.CMUnconfiguredModPanelController,
 							cmName: 'notconfiguredpanel'
 						}),
-//						new CMDBuild.view.administration.classes.CMModClass({ // TODO: remove
-//							cmControllerType: CMDBuild.controller.administration.classes.CMModClassController,
-//							cmName: 'class'
-//						}),
 						new CMDBuild.Administration.ModIcons({
 							cmName: 'gis-icons'
 						}),

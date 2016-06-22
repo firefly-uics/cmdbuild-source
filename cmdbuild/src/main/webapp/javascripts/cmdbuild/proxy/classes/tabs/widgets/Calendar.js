@@ -1,8 +1,5 @@
 (function () {
 
-	/**
-	 * @link CMDBuild.proxy.widget.Calendar
-	 */
 	Ext.define('CMDBuild.proxy.classes.tabs.widgets.Calendar', {
 
 		requires: [

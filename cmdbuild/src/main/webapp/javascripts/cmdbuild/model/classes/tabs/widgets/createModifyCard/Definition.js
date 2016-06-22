@@ -3,8 +3,6 @@
 	Ext.require('CMDBuild.core.constants.Proxy');
 
 	/**
-	 * @link CMDBuild.model.widget.createModifyCard.Definition
-	 *
 	 * TODO: waiting for refactor (rename)
 	 */
 	Ext.define('CMDBuild.model.classes.tabs.widgets.createModifyCard.Definition', {

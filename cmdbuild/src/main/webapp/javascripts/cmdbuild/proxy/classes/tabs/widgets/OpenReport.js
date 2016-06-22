@@ -1,8 +1,5 @@
 (function () {
 
-	/**
-	 * @link CMDBuild.proxy.widget.OpenReport
-	 */
 	Ext.define('CMDBuild.proxy.classes.tabs.widgets.OpenReport', {
 
 		requires: [

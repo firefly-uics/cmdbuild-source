@@ -2,9 +2,6 @@
 
 	Ext.require('CMDBuild.core.constants.Proxy');
 
-	/**
-	 * @link CMDBuild.model.widget.openReport.ReportCombo
-	 */
 	Ext.define('CMDBuild.model.classes.tabs.widgets.openReport.ReportCombo', {
 		extend: 'Ext.data.Model',
 
