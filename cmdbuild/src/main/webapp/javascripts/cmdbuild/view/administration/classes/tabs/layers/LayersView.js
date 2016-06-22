@@ -16,7 +16,7 @@
 		border: false,
 		frame: false,
 		layout: 'fit',
-		title: CMDBuild.Translation.administration.modClass.layers,
+		title: CMDBuild.Translation.layers,
 
 		/**
 		 * @returns {Void}

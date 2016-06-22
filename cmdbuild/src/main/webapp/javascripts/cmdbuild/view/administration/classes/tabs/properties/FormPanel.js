@@ -47,7 +47,7 @@
 
 						items: [
 							Ext.create('CMDBuild.core.buttons.iconized.Modify', {
-								text: CMDBuild.Translation.administration.modClass.classProperties.modify_class,
+								text: CMDBuild.Translation.modifyClass,
 								scope: this,
 
 								handler: function (button, e) {
@@ -55,7 +55,7 @@
 								}
 							}),
 							Ext.create('CMDBuild.core.buttons.iconized.Remove', {
-								text: CMDBuild.Translation.administration.modClass.classProperties.remove_class,
+								text: CMDBuild.Translation.removeClass,
 								scope: this,
 
 								handler: function (button, e) {
@@ -64,7 +64,7 @@
 							}),
 							Ext.create('CMDBuild.core.buttons.iconized.split.Print', {
 								delegate: this.delegate,
-								text: CMDBuild.Translation.administration.modClass.classProperties.print_class,
+								text: CMDBuild.Translation.printClass,
 								formatList: [
 									CMDBuild.core.constants.Proxy.PDF,
 									CMDBuild.core.constants.Proxy.ODT

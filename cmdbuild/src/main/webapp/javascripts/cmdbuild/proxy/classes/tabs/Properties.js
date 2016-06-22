@@ -52,8 +52,8 @@
 			return Ext.create('Ext.data.ArrayStore', {
 				fields: [CMDBuild.core.constants.Proxy.DESCRIPTION, CMDBuild.core.constants.Proxy.VALUE],
 				data: [
-					[CMDBuild.Translation.administration.modClass.classProperties.standard, CMDBuild.core.constants.Global.getTableTypeStandardTable()],
-					[CMDBuild.Translation.administration.modClass.classProperties.simple, CMDBuild.core.constants.Global.getTableTypeSimpleTable()]
+					[CMDBuild.Translation.standard, CMDBuild.core.constants.Global.getTableTypeStandardTable()],
+					[CMDBuild.Translation.simple, CMDBuild.core.constants.Global.getTableTypeSimpleTable()]
 				]
 			});
 		}
