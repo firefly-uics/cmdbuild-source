@@ -59,8 +59,8 @@
 						labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
 						maxWidth: CMDBuild.core.constants.FieldWidths.ADMINISTRATION_BIG,
 						allowBlank: false,
-						vtype: 'alphanum',
 						disableEnableFunctions: true,
+						vtype: 'alphanum',
 
 						enableKeyEvents: true,
 

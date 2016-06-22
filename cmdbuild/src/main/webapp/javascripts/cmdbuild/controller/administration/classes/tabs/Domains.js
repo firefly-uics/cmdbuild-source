@@ -228,7 +228,7 @@
 						decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.CLASSES];
 
 						if (Ext.isArray(decodedResponse) && !Ext.isEmpty(decodedResponse))
-							Ext.Array.forEach(records, function (gridRecord, i, allGridRecords) {
+							Ext.Array.each(records, function (gridRecord, i, allGridRecords) {
 								var foundClassObject = undefined;
 
 								// Translate class1 name to description

@@ -1,5 +1,8 @@
 (function () {
 
+	/**
+	 * @link CMDBuild.view.administration.workflow.tabs.properties.PropertiesView
+	 */
 	Ext.define('CMDBuild.view.administration.classes.tabs.properties.PropertiesView', {
 		extend: 'Ext.panel.Panel',
 

@@ -54,6 +54,7 @@
 							Ext.create('CMDBuild.core.buttons.iconized.split.Print', {
 								delegate: this.delegate,
 								text: CMDBuild.Translation.printSchema,
+								delegateEventPrefix: 'onClasses',
 								formatList: [
 									CMDBuild.core.constants.Proxy.PDF,
 									CMDBuild.core.constants.Proxy.ODT

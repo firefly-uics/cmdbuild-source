@@ -52,7 +52,7 @@
 		}
 	});
 
-	Ext.define("CMDBuild.view.administration.workflow.CMProcessAttributesForm", {
+	Ext.define("CMDBuild.view.administration.workflow.CMAttributesForm", {
 		extend: "Ext.form.Panel",
 
 		mixins: {

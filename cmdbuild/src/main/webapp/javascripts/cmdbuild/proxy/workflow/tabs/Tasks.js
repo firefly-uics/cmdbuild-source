@@ -1,6 +1,6 @@
 (function () {
 
-	Ext.define('CMDBuild.proxy.workflow.Tasks', {
+	Ext.define('CMDBuild.proxy.workflow.tabs.Tasks', {
 
 		requires: [
 			'CMDBuild.core.constants.Proxy',

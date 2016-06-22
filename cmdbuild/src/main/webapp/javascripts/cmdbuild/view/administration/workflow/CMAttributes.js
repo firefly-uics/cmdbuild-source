@@ -1,6 +1,6 @@
 (function () {
 
-	Ext.define('CMDBuild.view.administration.workflow.CMProcessAttributes', {
+	Ext.define('CMDBuild.view.administration.workflow.CMAttributes', {
 		extend: "Ext.panel.Panel",
 
 		constructor: function () {
@@ -9,7 +9,7 @@
 			this.gridPanel = Ext.create('CMDBuild.view.administration.workflow.CMAttributeGrid', {
 				region: "north",
 				split: true,
-				height: "40%",
+				height: "30%",
 				border: false
 			});
 
@@ -48,7 +48,7 @@
 		 * @private
 		 */
 		buildFormPanel: function () {
-			return Ext.create('CMDBuild.view.administration.workflow.CMProcessAttributesForm', {
+			return Ext.create('CMDBuild.view.administration.workflow.CMAttributesForm', {
 				region: 'center'
 			});
 		}

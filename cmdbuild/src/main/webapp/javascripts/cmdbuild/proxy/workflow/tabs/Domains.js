@@ -1,6 +1,6 @@
 (function () {
 
-	Ext.define('CMDBuild.proxy.workflow.Domains', {
+	Ext.define('CMDBuild.proxy.workflow.tabs.Domains', {
 
 		requires: [
 			'CMDBuild.core.constants.Proxy',

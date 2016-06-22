@@ -86,7 +86,6 @@
 			itemdblclick: function (grid, record, item, index, e, eOpts) {
 				this.delegate.cmfg('onClassesTabDomainsItemDoubleClick');
 			},
-
 			select: function (row, record, index) {
 				this.delegate.cmfg('onClassesTabDomainsRowSelect');
 			}
