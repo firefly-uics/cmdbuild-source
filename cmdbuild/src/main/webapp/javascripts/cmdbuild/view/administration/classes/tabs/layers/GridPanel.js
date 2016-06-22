@@ -31,27 +31,27 @@
 					},
 					{
 						dataIndex: CMDBuild.core.constants.Proxy.MASTER_TABLE_NAME,
-						text: CMDBuild.Translation.administration.modClass.geo_attributes.master,
+						text: CMDBuild.Translation.referenceClass,
 						flex: 1
 					},
 					{
 						dataIndex: CMDBuild.core.constants.Proxy.TYPE,
-						text: CMDBuild.Translation.administration.modClass.attributeProperties.type,
+						text: CMDBuild.Translation.type,
 						flex: 1
 					},
 					{
 						dataIndex: CMDBuild.core.constants.Proxy.MIN_ZOOM,
-						text: CMDBuild.Translation.administration.modClass.geo_attributes.min_zoom,
+						text: CMDBuild.Translation.maximumZoom,
 						flex: 1
 					},
 					{
 						dataIndex: CMDBuild.core.constants.Proxy.MAX_ZOOM,
-						text: CMDBuild.Translation.administration.modClass.geo_attributes.max_zoom,
+						text: CMDBuild.Translation.minimumZoom,
 						flex: 1
 					},
 					Ext.create('Ext.grid.column.CheckColumn', {
 						dataIndex: CMDBuild.core.constants.Proxy.IS_VISIBLE,
-						text: CMDBuild.Translation.administration.modClass.geo_attributes.visibility,
+						text: CMDBuild.Translation.visibility,
 						width: 60,
 						align: 'center',
 						hideable: false,

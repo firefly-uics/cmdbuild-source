@@ -21,7 +21,7 @@
 		border: false,
 		frame: false,
 		layout: 'border',
-		title: CMDBuild.Translation.administration.modClass.tabs.geo_attributes,
+		title: CMDBuild.Translation.geographicalAttributes,
 
 		/**
 		 * @returns {Void}
@@ -37,7 +37,7 @@
 
 						items: [
 							Ext.create('CMDBuild.core.buttons.iconized.add.Add', {
-								text: CMDBuild.Translation.administration.modClass.attributeProperties.add_attribute,
+								text: CMDBuild.Translation.addAttribute,
 								scope: this,
 
 								handler: function (button, e) {

@@ -11,7 +11,7 @@
 		/**
 		 * @cfg {String}
 		 */
-		baseTitle: CMDBuild.Translation.administration.modClass.title,
+		baseTitle: CMDBuild.Translation.classes,
 
 		/**
 		 * @property {Ext.tab.Panel}
@@ -22,7 +22,7 @@
 		border: true,
 		frame: false,
 		layout: 'fit',
-		title: CMDBuild.Translation.administration.modClass.title,
+		title: CMDBuild.Translation.classes,
 
 		/**
 		 * @returns {Void}
@@ -44,7 +44,7 @@
 
 						items: [
 							Ext.create('CMDBuild.core.buttons.iconized.add.Add', {
-								text: CMDBuild.Translation.administration.modClass.add_class,
+								text: CMDBuild.Translation.addClass,
 								scope: this,
 
 								handler: function (button, e) {

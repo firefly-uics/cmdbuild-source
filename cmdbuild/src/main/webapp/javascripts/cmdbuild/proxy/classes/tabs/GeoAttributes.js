@@ -83,12 +83,12 @@
 			return Ext.create('Ext.data.ArrayStore', {
 				fields: [CMDBuild.core.constants.Proxy.DESCRIPTION, CMDBuild.core.constants.Proxy.VALUE],
 				data: [
-					[CMDBuild.Translation.administration.modClass.geo_attributes.strokeStyles.dot, 'dot'],
-					[CMDBuild.Translation.administration.modClass.geo_attributes.strokeStyles.dash, 'dash'],
-					[CMDBuild.Translation.administration.modClass.geo_attributes.strokeStyles.dashdot, 'dashdot'],
-					[CMDBuild.Translation.administration.modClass.geo_attributes.strokeStyles.longdash, 'longdash'],
-					[CMDBuild.Translation.administration.modClass.geo_attributes.strokeStyles.longdashdot, 'longdashdot'],
-					[CMDBuild.Translation.administration.modClass.geo_attributes.strokeStyles.solid, 'solid'],
+					[CMDBuild.Translation.dot, 'dot'],
+					[CMDBuild.Translation.dash, 'dash'],
+					[CMDBuild.Translation.dashdot, 'dashdot'],
+					[CMDBuild.Translation.longdash, 'longdash'],
+					[CMDBuild.Translation.longdashdot, 'longdashdot'],
+					[CMDBuild.Translation.solid, 'solid'],
 				],
 				sorters: [
 					{ property: CMDBuild.core.constants.Proxy.DESCRIPTION, direction: 'ASC' }
@@ -103,9 +103,9 @@
 			return Ext.create('Ext.data.ArrayStore', {
 				fields: [CMDBuild.core.constants.Proxy.DESCRIPTION, CMDBuild.core.constants.Proxy.VALUE],
 				data: [
-					[CMDBuild.Translation.administration.modClass.geo_attributes.type.line, 'LINESTRING'],
-					[CMDBuild.Translation.administration.modClass.geo_attributes.type.point, 'POINT'],
-					[CMDBuild.Translation.administration.modClass.geo_attributes.type.polygon, 'POLYGON']
+					[CMDBuild.Translation.line, 'LINESTRING'],
+					[CMDBuild.Translation.point, 'POINT'],
+					[CMDBuild.Translation.polygon, 'POLYGON']
 				],
 				sorters: [
 					{ property: CMDBuild.core.constants.Proxy.DESCRIPTION, direction: 'ASC' }

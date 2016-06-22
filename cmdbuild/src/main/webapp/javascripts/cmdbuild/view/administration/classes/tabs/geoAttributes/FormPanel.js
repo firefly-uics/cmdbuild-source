@@ -104,19 +104,19 @@
 				Ext.apply(this, {
 					fieldColorFill: Ext.create('CMDBuild.view.common.field.picker.Color', {
 						name: CMDBuild.core.constants.Proxy.FILL_COLOR,
-						fieldLabel: CMDBuild.Translation.administration.modClass.geo_attributes.fillColor,
+						fieldLabel: CMDBuild.Translation.fillColor,
 						labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
 						maxWidth: CMDBuild.core.constants.FieldWidths.ADMINISTRATION_MEDIUM
 					}),
 					fieldColorStroke: Ext.create('CMDBuild.view.common.field.picker.Color', {
 						name: CMDBuild.core.constants.Proxy.STROKE_COLOR,
-						fieldLabel: CMDBuild.Translation.administration.modClass.geo_attributes.strokeColor,
+						fieldLabel: CMDBuild.Translation.strokeColor,
 						labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
 						maxWidth: CMDBuild.core.constants.FieldWidths.ADMINISTRATION_MEDIUM
 					}),
 					fieldDashstyleStroke: Ext.create('Ext.form.field.ComboBox', {
 						name: CMDBuild.core.constants.Proxy.STROKE_DASHSTYLE,
-						fieldLabel: CMDBuild.Translation.administration.modClass.geo_attributes.strokeDashstyle,
+						fieldLabel: CMDBuild.Translation.strokeDashstyle,
 						labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
 						maxWidth: CMDBuild.core.constants.FieldWidths.ADMINISTRATION_MEDIUM,
 						valueField: CMDBuild.core.constants.Proxy.VALUE,
@@ -129,7 +129,7 @@
 					}),
 					fieldExternalGraphic: Ext.create('CMDBuild.view.common.field.comboBox.Icon', {
 						name: CMDBuild.core.constants.Proxy.EXTERNAL_GRAPHIC,
-						fieldLabel: CMDBuild.Translation.administration.modClass.geo_attributes.externalGraphic,
+						fieldLabel: CMDBuild.Translation.icon,
 						labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
 						maxWidth: CMDBuild.core.constants.FieldWidths.ADMINISTRATION_BIG,
 						valueField: CMDBuild.core.constants.Proxy.PATH,
@@ -140,7 +140,7 @@
 					}),
 					fieldRadiusPoint: Ext.create('Ext.form.field.Number', {
 						name: CMDBuild.core.constants.Proxy.POINT_RADIUS,
-						fieldLabel: CMDBuild.Translation.administration.modClass.geo_attributes.pointRadius,
+						fieldLabel: CMDBuild.Translation.pointRadius,
 						labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
 						maxWidth: CMDBuild.core.constants.FieldWidths.ADMINISTRATION_SMALL,
 						minValue: 0,
@@ -148,7 +148,7 @@
 					}),
 					fieldOpacityFill: Ext.create('Ext.slider.Single', {
 						name: CMDBuild.core.constants.Proxy.FILL_OPACITY,
-						fieldLabel: CMDBuild.Translation.administration.modClass.geo_attributes.fillOpacity,
+						fieldLabel: CMDBuild.Translation.fillOpacity,
 						labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
 						maxWidth: CMDBuild.core.constants.FieldWidths.ADMINISTRATION_BIG,
 						minValue: 0,
@@ -162,7 +162,7 @@
 					}),
 					fieldOpacityStroke: Ext.create('Ext.slider.Single', {
 						name: CMDBuild.core.constants.Proxy.STROKE_OPACITY,
-						fieldLabel: CMDBuild.Translation.administration.modClass.geo_attributes.strokeOpacity,
+						fieldLabel: CMDBuild.Translation.strokeOpacity,
 						labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
 						maxWidth: CMDBuild.core.constants.FieldWidths.ADMINISTRATION_BIG,
 						minValue: 0,
@@ -176,7 +176,7 @@
 					}),
 					fieldWidthStroke: Ext.create('Ext.form.field.Number', {
 						name: CMDBuild.core.constants.Proxy.STROKE_WIDTH,
-						fieldLabel: CMDBuild.Translation.administration.modClass.geo_attributes.strokeWidth,
+						fieldLabel: CMDBuild.Translation.strokeWidth,
 						labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
 						maxWidth: CMDBuild.core.constants.FieldWidths.ADMINISTRATION_SMALL,
 						minValue: 0,
@@ -192,7 +192,7 @@
 
 						items: [
 							Ext.create('CMDBuild.core.buttons.iconized.Modify', {
-								text: CMDBuild.Translation.administration.modClass.attributeProperties.modify_attribute,
+								text: CMDBuild.Translation.modifyAttribute,
 								scope: this,
 
 								handler: function (button, e) {
@@ -200,7 +200,7 @@
 								}
 							}),
 							Ext.create('CMDBuild.core.buttons.iconized.Remove', {
-								text: CMDBuild.Translation.administration.modClass.attributeProperties.delete_attribute,
+								text: CMDBuild.Translation.removeAttribute,
 								scope: this,
 
 								handler: function (button, e) {
@@ -276,7 +276,7 @@
 							}),
 							this.minZoomField = Ext.create('Ext.slider.Single', {
 								name: CMDBuild.core.constants.Proxy.MIN_ZOOM,
-								fieldLabel: CMDBuild.Translation.administration.modClass.geo_attributes.min_zoom,
+								fieldLabel: CMDBuild.Translation.minimumZoom,
 								labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
 								maxWidth: CMDBuild.core.constants.FieldWidths.ADMINISTRATION_BIG,
 								minValue: 0,
@@ -292,7 +292,7 @@
 							}),
 							this.maxZoomField = Ext.create('Ext.slider.Single', {
 								name: CMDBuild.core.constants.Proxy.MAX_ZOOM,
-								fieldLabel: CMDBuild.Translation.administration.modClass.geo_attributes.max_zoom,
+								fieldLabel: CMDBuild.Translation.maximumZoom,
 								labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
 								maxWidth: CMDBuild.core.constants.FieldWidths.ADMINISTRATION_BIG,
 								minValue: 0,
@@ -309,7 +309,7 @@
 					}),
 					{ xtype: 'splitter' },
 					Ext.create('Ext.form.FieldSet', {
-						title: CMDBuild.Translation.administration.modClass.geo_attributes.style, // TODO: fix translation
+						title: CMDBuild.Translation.style,
 						flex: 1,
 
 						layout: {
@@ -320,7 +320,7 @@
 						items: [
 							this.typeField = Ext.create('Ext.form.field.ComboBox', {
 								name: CMDBuild.core.constants.Proxy.TYPE,
-								fieldLabel: CMDBuild.Translation.administration.modClass.attributeProperties.type,
+								fieldLabel: CMDBuild.Translation.type,
 								labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
 								maxWidth: CMDBuild.core.constants.FieldWidths.ADMINISTRATION_MEDIUM,
 								valueField: CMDBuild.core.constants.Proxy.VALUE,

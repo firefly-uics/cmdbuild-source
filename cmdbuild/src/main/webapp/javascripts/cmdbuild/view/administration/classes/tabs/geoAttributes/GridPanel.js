@@ -28,17 +28,17 @@
 				columns: [
 					{
 						dataIndex: CMDBuild.core.constants.Proxy.TYPE,
-						text: CMDBuild.Translation.administration.modClass.attributeProperties.type,
+						text: CMDBuild.Translation.type,
 						flex: 1
 					},
 					{
 						dataIndex: CMDBuild.core.constants.Proxy.NAME,
-						text: CMDBuild.Translation.administration.modClass.attributeProperties.name,
+						text: CMDBuild.Translation.name,
 						flex: 1
 					},
 					{
 						dataIndex: CMDBuild.core.constants.Proxy.DESCRIPTION,
-						text: CMDBuild.Translation.administration.modClass.attributeProperties.description,
+						text: CMDBuild.Translation.descriptionLabel,
 						flex: 1
 					}
 				],
