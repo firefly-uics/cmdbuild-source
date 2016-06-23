@@ -286,7 +286,7 @@
 		 * @private
 		 */
 		success: function (response, options, decodedResponse) {
-			decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.TABLE] || [];
+			decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.TABLE];
 
 			CMDBuild.view.common.field.translatable.Utils.commit(this.panelProperties);
 

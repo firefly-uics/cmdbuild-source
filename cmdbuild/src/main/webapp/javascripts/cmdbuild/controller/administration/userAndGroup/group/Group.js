@@ -4,9 +4,8 @@
 		extend: 'CMDBuild.controller.common.abstract.Base',
 
 		requires: [
-			'CMDBuild.core.constants.ModuleIdentifiers',
 			'CMDBuild.core.constants.Proxy',
-			'CMDBuild.model.userAndGroup.group.Group'
+			'CMDBuild.proxy.userAndGroup.group.Group'
 		],
 
 		/**
@@ -15,43 +14,43 @@
 		parentDelegate: undefined,
 
 		/**
-		 * @property {CMDBuild.controller.administration.userAndGroup.group.DefaultFilters}
-		 */
-		controllerDefaultFilters: undefined,
-
-		/**
-		 * @property {CMDBuild.controller.administration.userAndGroup.group.privileges.Privileges}
-		 */
-		controllerPrivileges: undefined,
-
-		/**
-		 * @property {CMDBuild.controller.administration.userAndGroup.group.Properties}
-		 */
-		controllerProperties: undefined,
-
-		/**
-		 * @property {CMDBuild.controller.administration.userAndGroup.group.UserInterface}
-		 */
-		controllerUserInterface: undefined,
-
-		/**
-		 * @property {CMDBuild.controller.administration.userAndGroup.group.Users}
-		 */
-		controllerUsers: undefined,
-
-		/**
 		 * @cfg {Array}
 		 */
 		cmfgCatchedFunctions: [
-			'onUserAndGroupGroupAccordionSelect = onUserAndGroupAccordionSelect',
+			'onUserAndGroupGroupAccordionSelected = onUserAndGroupAccordionSelected',
 			'onUserAndGroupGroupAddButtonClick',
-			'onUserAndGroupGroupSelected -> controllerProperties, controllerPrivileges, controllerUsers, controllerUserInterface, controllerDefaultFilters',
+			'onUserAndGroupGroupTabGroupSelected -> controllerProperties, controllerPrivileges, controllerUsers, controllerUserInterface, controllerDefaultFilters',
 			'onUserAndGroupGroupSetActiveTab',
 			'userAndGroupGroupSelectedGroupGet',
 			'userAndGroupGroupSelectedGroupIsEmpty',
 			'userAndGroupGroupSelectedGroupReset',
 			'userAndGroupGroupSelectedGroupSet'
 		],
+
+		/**
+		 * @property {CMDBuild.controller.administration.userAndGroup.group.tabs.DefaultFilters}
+		 */
+		controllerDefaultFilters: undefined,
+
+		/**
+		 * @property {CMDBuild.controller.administration.userAndGroup.group.tabs.privileges.Privileges}
+		 */
+		controllerPrivileges: undefined,
+
+		/**
+		 * @property {CMDBuild.controller.administration.userAndGroup.group.tabs.Properties}
+		 */
+		controllerProperties: undefined,
+
+		/**
+		 * @property {CMDBuild.controller.administration.userAndGroup.group.tabs.UserInterface}
+		 */
+		controllerUserInterface: undefined,
+
+		/**
+		 * @property {CMDBuild.controller.administration.userAndGroup.group.tabs.Users}
+		 */
+		controllerUsers: undefined,
 
 		/**
 		 * @property {CMDBuild.model.lookup.Type} or null
@@ -61,7 +60,12 @@
 		selectedGroup: undefined,
 
 		/**
-		 * @cfg {CMDBuild.view.administration.userAndGroup.group.GroupView}
+		 * @property {Ext.tab.Panel}
+		 */
+		tabPanel: undefined,
+
+		/**
+		 * @property {CMDBuild.view.administration.userAndGroup.group.GroupView}
 		 */
 		view: undefined,
 
@@ -78,59 +82,89 @@
 
 			this.view = Ext.create('CMDBuild.view.administration.userAndGroup.group.GroupView', { delegate: this });
 
-			this.view.tabPanel.removeAll();
+			// Shorthands
+			this.tabPanel = this.view.tabPanel;
 
-			// Controller build
-			this.controllerDefaultFilters = Ext.create('CMDBuild.controller.administration.userAndGroup.group.DefaultFilters', { parentDelegate: this });
-			this.controllerPrivileges = Ext.create('CMDBuild.controller.administration.userAndGroup.group.privileges.Privileges', { parentDelegate: this });
-			this.controllerProperties = Ext.create('CMDBuild.controller.administration.userAndGroup.group.Properties', { parentDelegate: this });
-			this.controllerUserInterface = Ext.create('CMDBuild.controller.administration.userAndGroup.group.UserInterface', { parentDelegate: this });
-			this.controllerUsers = Ext.create('CMDBuild.controller.administration.userAndGroup.group.Users', { parentDelegate: this });
+			this.tabPanel.removeAll();
+
+			// Build sub-controllers
+			this.controllerDefaultFilters = Ext.create('CMDBuild.controller.administration.userAndGroup.group.tabs.DefaultFilters', { parentDelegate: this });
+			this.controllerPrivileges = Ext.create('CMDBuild.controller.administration.userAndGroup.group.tabs.privileges.Privileges', { parentDelegate: this });
+			this.controllerProperties = Ext.create('CMDBuild.controller.administration.userAndGroup.group.tabs.Properties', { parentDelegate: this });
+			this.controllerUserInterface = Ext.create('CMDBuild.controller.administration.userAndGroup.group.tabs.UserInterface', { parentDelegate: this });
+			this.controllerUsers = Ext.create('CMDBuild.controller.administration.userAndGroup.group.tabs.Users', { parentDelegate: this });
 
 			// Inject tabs (sorted)
-			this.view.tabPanel.add(this.controllerProperties.getView());
-			this.view.tabPanel.add(this.controllerPrivileges.getView());
-			this.view.tabPanel.add(this.controllerUsers.getView());
-			this.view.tabPanel.add(this.controllerUserInterface.getView());
-			this.view.tabPanel.add(this.controllerDefaultFilters.getView());
+			this.tabPanel.add([
+				this.controllerProperties.getView(),
+				this.controllerPrivileges.getView(),
+				this.controllerUsers.getView(),
+				this.controllerUserInterface.getView(),
+				this.controllerDefaultFilters.getView()
+			]);
 
-			this.onUserAndGroupGroupSetActiveTab();
+			this.cmfg('onUserAndGroupGroupSetActiveTab');
 		},
 
 		/**
 		 * @returns {Void}
+		 *
+		 * TODO: waiting for refactor (crud)
 		 */
-		onUserAndGroupGroupAccordionSelect: function () {
-			if (!this.cmfg('userAndGroupSelectedAccordionIsEmpty'))
-				CMDBuild.proxy.userAndGroup.group.Group.read({ // TODO: waiting for refactor (crud)
+		onUserAndGroupGroupAccordionSelected: function () {
+			if (
+				!this.cmfg('userAndGroupSelectedAccordionIsEmpty')
+				&& this.cmfg('userAndGroupSelectedAccordionGet', CMDBuild.core.constants.Proxy.SECTION_HIERARCHY)[0] == 'group'
+			) {
+				CMDBuild.proxy.userAndGroup.group.Group.read({
 					scope: this,
 					success: function (response, options, decodedResponse) {
 						decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.GROUPS];
 
-						var selectedGroupModel = Ext.Array.findBy(decodedResponse, function (groupObject, i) {
-							return this.cmfg('userAndGroupSelectedAccordionGet', CMDBuild.core.constants.Proxy.ID) == groupObject[CMDBuild.core.constants.Proxy.ID];
-						}, this);
+						if (Ext.isArray(decodedResponse) && !Ext.isEmpty(decodedResponse)) {
+							var selectedGroup = Ext.Array.findBy(decodedResponse, function (groupObject, i) {
+								return this.cmfg('userAndGroupSelectedAccordionGet', CMDBuild.core.constants.Proxy.ID) == groupObject[CMDBuild.core.constants.Proxy.ID];
+							}, this);
 
-						if (!Ext.isEmpty(selectedGroupModel)) {
-							this.cmfg('userAndGroupGroupSelectedGroupSet', { value: selectedGroupModel });
-							this.cmfg('onUserAndGroupGroupSelected');
+							if (Ext.isObject(selectedGroup) && !Ext.Object.isEmpty(selectedGroup)) {
+								this.cmfg('userAndGroupGroupSelectedGroupSet', { value: selectedGroup });
 
-							if (Ext.isEmpty(this.view.tabPanel.getActiveTab()))
-								this.onUserAndGroupGroupSetActiveTab();
+								this.cmfg('onUserAndGroupGroupTabGroupSelected');
 
-							this.view.tabPanel.getActiveTab().fireEvent('show'); // Manual show event fire because was already selected
+								// Setup main view
+								var titleParts = [this.getBaseTitle()];
+
+								if (!this.cmfg('userAndGroupSelectedAccordionIsEmpty', CMDBuild.core.constants.Proxy.DESCRIPTION))
+									titleParts.push(this.cmfg('userAndGroupSelectedAccordionGet', CMDBuild.core.constants.Proxy.DESCRIPTION));
+
+								this.cmfg('userAndGroupViewTitleSet', titleParts);
+								this.cmfg('userAndGroupViewActiveItemSet', this.view);
+
+								// Manage tab selection
+								if (Ext.isEmpty(this.tabPanel.getActiveTab()))
+									this.tabPanel.setActiveTab(0);
+
+								this.tabPanel.getActiveTab().fireEvent('show'); // Manual show event fire because was already selected
+							} else {
+								_error('onUserAndGroupGroupAccordionSelected(): group not found', this, this.cmfg('userAndGroupSelectedAccordionGet', CMDBuild.core.constants.Proxy.ID));
+							}
 						}
 					}
 				});
+			}
 		},
 
 		/**
 		 * @returns {Void}
 		 */
 		onUserAndGroupGroupAddButtonClick: function () {
-			this.cmfg('mainViewportAccordionDeselect', CMDBuild.core.constants.ModuleIdentifiers.getUserAndGroup());
+			this.cmfg('onUserAndGroupGroupSetActiveTab');
 
-			// Forwarding
+			this.cmfg('mainViewportAccordionDeselect', this.cmfg('userAndGroupIdentifierGet'));
+			this.cmfg('userAndGroupGroupSelectedGroupReset');
+
+			this.cmfg('userAndGroupViewTitleSet', this.getBaseTitle());
+
 			this.controllerDefaultFilters.cmfg('onUserAndGroupGroupTabDefaultFiltersAddButtonClick');
 			this.controllerPrivileges.cmfg('onUserAndGroupGroupTabPrivilegesAddButtonClick');
 			this.controllerProperties.cmfg('onUserAndGroupGroupTabPropertiesAddButtonClick');
@@ -144,7 +178,9 @@
 		 * @returns {Void}
 		 */
 		onUserAndGroupGroupSetActiveTab: function (index) {
-			this.view.tabPanel.setActiveTab(index || 0);
+			index = Ext.isEmpty(index) ? 0 : index;
+
+			this.tabPanel.setActiveTab(index);
 		},
 
 		// SelectedGroup property methods
