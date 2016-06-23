@@ -12,6 +12,8 @@ FIXES
 
 * Classes geographical attributes tab no zoom levels validation
 
+* Selected tab reset on accordion selection change in administration modules
+
 
 
 
