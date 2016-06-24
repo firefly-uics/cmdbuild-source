@@ -1,12 +1,15 @@
-(function() {
+(function () {
 
-	Ext.define('CMDBuild.view.administration.domain.enabledClasses.TreePanel', {
+	Ext.define('CMDBuild.view.administration.domain.tabs.enabledClasses.TreePanel', {
 		extend: 'Ext.tree.Panel',
 
-		requires: ['CMDBuild.core.constants.Proxy'],
+		requires: [
+			'CMDBuild.core.constants.Proxy',
+			'CMDBuild.model.domain.tabs.enabledClasses.TreeStore'
+		],
 
 		/**
-		 * @cfg {CMDBuild.controller.administration.domain.EnabledClasses}
+		 * @cfg {CMDBuild.controller.administration.domain.tabs.EnabledClasses}
 		 */
 		delegate: undefined,
 
@@ -25,7 +28,12 @@
 			markDirty: false // Workaround to avoid dirty mark on hidden checkColumn cells
 		},
 
-		initComponent: function() {
+		/**
+		 * @returns {Void}
+		 *
+		 * @override
+		 */
+		initComponent: function () {
 			Ext.apply(this, {
 				columns: [
 					{
@@ -41,31 +49,19 @@
 						dataIndex: CMDBuild.core.constants.Proxy.ENABLED,
 						width: 60,
 						align: 'center',
+						enableCheckboxHide: true,
 						sortable: false,
 						hideable: false,
 						menuDisabled: true,
 						fixed: true,
 
-						renderer: function(value, meta, record, rowIndex, colIndex, store, view) {
-							if (record.childNodes.length > 0) {
-								return '';
-							} else {// HACK: to recreate original renderer method behaviour, callParent doesn't work
-								var cssPrefix = Ext.baseCSSPrefix;
-								var cls = [cssPrefix + 'grid-checkcolumn'];
-
-								if (this.disabled)
-									meta.tdCls += ' ' + this.disabledCls;
-
-								if (value)
-									cls.push(cssPrefix + 'grid-checkcolumn-checked');
-
-								return '<img class="' + cls.join(' ') + '" src="' + Ext.BLANK_IMAGE_URL + '"/>';
-							}
+						isCheckboxHidden: function (value, meta, record, rowIndex, colIndex, store, view) {
+							return record.childNodes.length > 0;
 						}
 					})
 				],
 				store: Ext.create('Ext.data.TreeStore', {
-					model: 'CMDBuild.model.Classes.domainsTreePanel',
+					model: 'CMDBuild.model.domain.tabs.enabledClasses.TreeStore',
 					root: {
 						text: 'ROOT',
 						expanded: true,
@@ -85,9 +81,11 @@
 		 *
 		 * @param {Boolean} state
 		 *
+		 * @returns {Void}
+		 *
 		 * @override
 		 */
-		setDisabled: function(state) {
+		setDisabled: function (state) {
 			if (
 				Ext.isEmpty(this.getStore().getRootNode().childNodes)
 				|| ( // if root has more than one child and that child is not a superclass

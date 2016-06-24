@@ -1,5 +1,10 @@
 (function () {
 
+	/**
+	 * @link CMDBuild.view.administration.domain.tabs.attributes.AttributesView
+	 * @link CMDBuild.view.administration.workflow.CMAttributes
+	 */
+
 	Ext.define('CMDBuild.view.administration.classes.CMAttributes', {
 		extend: "Ext.panel.Panel",
 

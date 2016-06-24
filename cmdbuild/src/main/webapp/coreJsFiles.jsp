@@ -5,11 +5,12 @@
 <!-- OVERRIDES -->
 <script type="text/javascript" src="javascripts/cmdbuild/override/data/proxy/Server.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/override/data/Store.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/override/form/field/Display.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/override/form/field/Checkbox.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/override/form/field/ComboBox.js"></script>
+<script type="text/javascript" src="javascripts/cmdbuild/override/form/field/Display.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/override/form/field/VTypes.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/override/form/FieldSet.js"></script>
+<script type="text/javascript" src="javascripts/cmdbuild/override/grid/column/CheckColumn.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/override/grid/plugin/RowExpander.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/override/JSON.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/override/layout/container/Editor.js"></script>

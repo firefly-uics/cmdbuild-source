@@ -1,5 +1,10 @@
 (function() {
 
+	/**
+	 * @link CMDBuild.controller.administration.domain.tabs.Attributes
+	 * @link CMDBuild.controller.administration.workflow.tabs.CMAttributes
+	 */
+
 	Ext.require([
 		'CMDBuild.core.Message',
 		'CMDBuild.proxy.common.tabs.attribute.Attribute',

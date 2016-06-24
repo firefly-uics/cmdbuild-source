@@ -1,8 +1,10 @@
 (function() {
 
 	/**
+	 * This class have some custom code different from linked ones
+	 *
 	 * @link CMDBuild.view.administration.classes.CMAttributesForm
-	 * @link CMDBuild.view.administration.domain.tabs.attributes.FormPanel
+	 * @link CMDBuild.view.administration.workflow.CMAttributesForm
 	 */
 
 	Ext.require('CMDBuild.proxy.common.tabs.attribute.Attribute');
@@ -57,8 +59,10 @@
 		}
 	});
 
-	Ext.define("CMDBuild.view.administration.workflow.CMAttributesForm", {
+	Ext.define("CMDBuild.view.administration.domain.tabs.attributes.FormPanel",{
 		extend: "Ext.form.Panel",
+
+		domainName: undefined,
 
 		mixins: {
 			cmFormFunctions: "CMDBUild.view.common.CMFormFunctions"
@@ -421,53 +425,41 @@
 			this.attributeName.on("change", function(fieldname, newValue, oldValue) {
 				this.autoComplete(this.attributeDescription, newValue, oldValue);
 			}, this);
+			this.comboType.getStore().load({
+				params: {
+					tableType: "DOMAIN"
+				}
+			});
 		},
 
-		onClassSelected: function(idClass, className) {
-			this.idClass = idClass;
-			this.classObj = this.takeDataFromCache(idClass);
+		onClassSelected: Ext.emptyFn,
 
-			if (this.classObj) {
-				var params = {};
-				params[CMDBuild.core.constants.Proxy.CLASS_NAME] = _CMCache.getEntryTypeNameById(idClass);
-
-				this.referenceDomains. getStore().load({ params: params });
-
-				params = {};
-				params[CMDBuild.core.constants.Proxy.TABLE_TYPE] = getTableType(this.classObj);
-
-				this.comboType.getStore().load({ params: params });
-
-				this.hideContextualFields();
-				this.attributeUnique.cmImmutable = cannotHaveUniqueAttributes(this.classObj);
-				this.attributeNotNull.cmImmutable = cannotHaveNotNullAttributes(this.classObj);
-			}
+		onDomainSelected: function(cmDomain) { // Probably not used
+			this.domainName = cmDomain.getName();
+			this.hideContextualFields();
 		},
 
 		// private and overridden in subclasses
 		takeDataFromCache: function(idClass) {
-			return _CMCache.getProcessById(idClass);
+			return _CMCache.getClassById(idClass);
 		},
 
-		/**
-		 * @param {Ext.data.Model} attribute
-		 */
-		onAttributeSelected: function(attribute) {
+		onAttributeSelected : function(attribute) {
 			this.reset();
 
 			if (attribute) {
-				this.selectedAttribute = attribute;
+				var attributeData = attribute.raw || attribute.data;
 
-				this.getForm().setValues(attribute.raw);
+				this.selectedAttribute = attributeData;
+
+				this.getForm().setValues(attributeData);
 				this.disableModify(enableCMTbar = true);
 				this.deleteButton.setDisabled(attribute.get("inherited"));
 				this.hideContextualFields();
 				this.showContextualFieldsByType(attribute.get("type"));
-
-				this.referenceFilterMetadata = attribute.raw.meta || {};
-				this.preselectIfUniqueCheckbox.setValue(attribute.raw.meta['system.type.reference.' + CMDBuild.core.constants.Proxy.PRESELECT_IF_UNIQUE]);
 			}
 		},
+
 
 		// override
 		reset: function() {
@@ -524,30 +516,43 @@
 		},
 
 		buildBasePropertiesPanel: function() {
-			this.baseProperties = Ext.create('Ext.form.FieldSet', {
+			this.baseProperties = new Ext.form.FieldSet({
 				title: tr.baseProperties,
 				margin: '0 3 0 0',
-				overflowY: 'auto',
+				autoScroll: true,
+				defaultType: "textfield",
 				flex: 1,
-
 				items: [
 					this.attributeName,
-					this.attributeDescription,
-					/*
-					 * Business roule 11/01/2013
-					 * The attributeGroup was removed because
-					 * considered useless for a process
-					 *
-					 * Now it is considered useful, so it
-					 * is enabled again
-					 */
-					this.attributeGroup,
+					this.attributeDescription = Ext.create('CMDBuild.view.common.field.translatable.Text', {
+						name: CMDBuild.core.constants.Proxy.DESCRIPTION,
+						fieldLabel: CMDBuild.Translation.descriptionLabel,
+						labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
+						width: CMDBuild.core.constants.FieldWidths.ADMINISTRATION_BIG,
+						allowBlank: false,
+						vtype: 'commentextended',
+
+						listeners: {
+							scope: this,
+							enable: function(field, eOpts) { // TODO: on creation, domainName should be already known (refactor)
+								field.translationFieldConfig = {
+									type: CMDBuild.core.constants.Proxy.ATTRIBUTE_DOMAIN,
+									owner: this.domainName,
+									identifier: { sourceType: 'form', key: CMDBuild.core.constants.Proxy.NAME, source: this },
+									field: CMDBuild.core.constants.Proxy.DESCRIPTION
+								};
+
+								field.translationsRead();
+							}
+						}
+					}),
 					this.isBasedsp,
 					this.attributeUnique,
+					this.attributeNotNull,
 					this.isActive,
 					{
-						xtype: 'hidden',
-						name: 'meta'
+						xtype: "hidden",
+						name: "meta"
 					},
 					this.fieldMode
 				]

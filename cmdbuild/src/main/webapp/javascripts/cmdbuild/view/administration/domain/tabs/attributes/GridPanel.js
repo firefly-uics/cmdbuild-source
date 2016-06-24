@@ -1,5 +1,14 @@
 (function() {
 
+	/**
+	 * This class have some custom code different from linked ones
+	 *
+	 * @link CMDBuild.view.administration.classes.CMAttributeGrid
+	 * @link CMDBuild.view.administration.workflow.CMAttributeGrid
+	 */
+
+	Ext.require('CMDBuild.proxy.common.tabs.attribute.Attribute');
+
 	var ATTRIBUTES = {
 		INDEX: CMDBuild.core.constants.Proxy.INDEX,
 		NAME: CMDBuild.core.constants.Proxy.NAME,
@@ -23,7 +32,7 @@
 
 	var translation = CMDBuild.Translation.administration.modClass.attributeProperties;
 
-	Ext.define("CMDBuild.view.administration.domain.attributes.GridPanel", {
+	Ext.define("CMDBuild.view.administration.domain.tabs.attributes.GridPanel", {
 		extend: 'Ext.grid.Panel',
 
 		cls: 'cmdb-border-bottom',
@@ -134,7 +143,25 @@
 		},
 
 		buildStore: function() {
-			this.store = _CMCache.getDomainAttributesStore();
+			this.store = Ext.create('Ext.data.ArrayStore', {
+				fields: [
+					CMDBuild.core.constants.Proxy.INDEX,
+					CMDBuild.core.constants.Proxy.NAME,
+					CMDBuild.core.constants.Proxy.DESCRIPTION,
+					CMDBuild.core.constants.Proxy.TYPE,
+					'isunique',
+					'isbasedsp',
+					'isnotnull',
+					"inherited",
+					CMDBuild.core.constants.Proxy.FIELD_MODE,
+					CMDBuild.core.constants.Proxy.ACTIVE,
+					CMDBuild.core.constants.Proxy.GROUP
+				],
+				data: [],
+				sorters: [
+					{ property: CMDBuild.core.constants.Proxy.INDEX, direction: "ASC" }
+				]
+			});
 		},
 
 		buildTBar: function() {
@@ -149,14 +176,14 @@
 			this.refreshStore(domain, indexAttributeToSelectAfter = null);
 		},
 
-		refreshStore: function(domain, indexAttributeToSelectAfter) {
-			if (!domain) {
-				return;
-			}
+		refreshStore: function (indexAttributeToSelectAfter) {
+			if (!this.delegate.cmfg('domainSelectedDomainIsEmpty')) {
+				if (Ext.isEmpty(this.delegate.cmfg('domainSelectedDomainGet', CMDBuild.core.constants.Proxy.ATTRIBUTES))) {
+					this.store.removeAll();
+				} else {
+					this.store.loadData(this.delegate.cmfg('domainSelectedDomainGet', CMDBuild.core.constants.Proxy.ATTRIBUTES));
+				}
 
-			this.store.loadForDomainId(domain.get("id"));
-
-			if (this.rendered) {
 				this.selectRecordAtIndexOrTheFirst(indexAttributeToSelectAfter);
 			}
 		},
@@ -189,7 +216,7 @@
 
 		selectRecordAtIndexOrTheFirst: function(indexAttributeToSelectAfter) {
 			if (indexAttributeToSelectAfter) {
-				var recordIndex = this.store.findRecord(ATTR.INDEX, indexAttributeToSelectAfter);
+				var recordIndex = this.store.findRecord(CMDBuild.core.constants.Proxy.INDEX, indexAttributeToSelectAfter);
 
 				if (recordIndex)
 					this.getSelectionModel().select(recordIndex);

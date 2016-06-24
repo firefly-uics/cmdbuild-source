@@ -1,6 +1,13 @@
 (function() {
 
-	Ext.define('CMDBuild.controller.administration.domain.Attributes', {
+	/**
+	 * This class have some custom code from linked ones
+	 *
+	 * @link CMDBuild.controller.administration.classes.tabs.CMAttributes
+	 * @link CMDBuild.controller.administration.workflow.tabs.CMAttributes
+	 */
+
+	Ext.define('CMDBuild.controller.administration.domain.tabs.Attributes', {
 
 		requires: [
 			'CMDBuild.core.constants.Proxy',
@@ -20,12 +27,12 @@
 		currentAttribute: undefined,
 
 		/**
-		 * @property {CMDBuild.view.administration.domain.attributes.FormPanel}
+		 * @property {CMDBuild.view.administration.domain.tabs.attributes.FormPanel}
 		 */
 		form: undefined,
 
 		/**
-		 * @property {CMDBuild.view.administration.domain.attributes.GridPanel}
+		 * @property {CMDBuild.view.administration.domain.tabs.attributes.GridPanel}
 		 */
 		grid: undefined,
 
@@ -35,7 +42,7 @@
 		gridSM: undefined,
 
 		/**
-		 * @property {CMDBuild.view.administration.domain.attributes.AttributesView}
+		 * @property {CMDBuild.view.administration.domain.tabs.attributes.AttributesView}
 		 */
 		view: undefined,
 
@@ -48,13 +55,17 @@
 		constructor: function(configurationObject) {
 			Ext.apply(this, configurationObject); // Apply configuration to class
 
-			this.view = Ext.create('CMDBuild.view.administration.domain.attributes.AttributesView');
+			this.view = Ext.create('CMDBuild.view.administration.domain.tabs.attributes.AttributesView');
 
 			this.getGrid().on("cm_attribute_moved", this.onAttributeMoved, this);
 
 			// Shorthands
 			this.form = this.view.form;
 			this.grid = this.view.grid;
+
+			// Handler excanche
+			this.form.delegate = this;
+			this.grid.delegate = this;
 
 			this.gridSM = this.grid.getSelectionModel();
 			this.gridSM.on('selectionchange', this.onSelectionChanged, this);
@@ -76,11 +87,11 @@
 		 */
 		cmfg: function(name, param, callBack) {
 			switch (name) {
-				case 'onDomainAddButtonClick':
-					return this.onDomainAddButtonClick();
+				case 'onDomainTabAttributesAddButtonClick':
+					return this.onDomainTabAttributesAddButtonClick();
 
-				case 'onDomainSelected':
-					return this.onDomainSelected();
+				case 'onDomainDomainSelected':
+					return this.onDomainDomainSelected();
 
 				default: {
 					if (!Ext.isEmpty(this.parentDelegate) && Ext.isFunction(this.parentDelegate.cmfg))
@@ -116,26 +127,40 @@
 
 		deleteAttribute: function() {
 			if (!this.cmfg('domainSelectedDomainIsEmpty') && !Ext.isEmpty(this.currentAttribute)) {
-				CMDBuild.core.LoadMask.show();
 				CMDBuild.proxy.common.tabs.attribute.Attribute.remove({
 					params: {
 						className: this.cmfg('domainSelectedDomainGet', CMDBuild.core.constants.Proxy.NAME),
 						name: this.currentAttribute.get(CMDBuild.core.constants.Proxy.NAME)
 					},
-					loadMask: false,
 					scope: this,
 					success: function(result, options, decodedResult) {
-						this.form.reset();
+						CMDBuild.proxy.domain.Domain.read({
+							scope: this,
+							success: function (response, options, decodedResponse) {
+								decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.DOMAINS];
 
-						_CMCache.onDomainAttributeDelete(
-							this.cmfg('domainSelectedDomainGet', CMDBuild.core.constants.Proxy.ID),
-							this.currentAttribute[CMDBuild.core.constants.Proxy.DATA]
-						);
+								if (Ext.isArray(decodedResponse) && !Ext.isEmpty(decodedResponse)) {
+									var selectedDomain = Ext.Array.findBy(decodedResponse, function (domainObject, i) {
+										return this.cmfg('domainSelectedDomainGet', CMDBuild.core.constants.Proxy.ID) == domainObject[CMDBuild.core.constants.Proxy.ID_DOMAIN];
+									}, this);
 
-						this.currentAttribute = null;
-					},
-					callback: function() {
-						CMDBuild.core.LoadMask.hide();
+									if (Ext.isObject(selectedDomain) && !Ext.Object.isEmpty(selectedDomain)) {
+										this.parentDelegate.domainSelectedDomainSet({
+											propertyName: CMDBuild.core.constants.Proxy.ATTRIBUTES,
+											value: selectedDomain[CMDBuild.core.constants.Proxy.ATTRIBUTES]
+										});
+
+										this.currentAttribute = null;
+										this.form.reset();
+										this.form.disableModify();
+
+										this.grid.refreshStore();
+									} else {
+										_error('deleteAttribute(): domain not found', this, this.cmfg('domainSelectedDomainGet', ID));
+									}
+								}
+							}
+						});
 					}
 				});
 			}
@@ -149,7 +174,7 @@
 		},
 
 		/**
-		 * @returns {CMDBuild.view.administration.domain.attributes.AttributesView}
+		 * @returns {CMDBuild.view.administration.domain.tabs.attributes.AttributesView}
 		 */
 		getView: function() {
 			return this.view;
@@ -222,11 +247,11 @@
 			});
 		},
 
-		onDomainAddButtonClick: function() {
+		onDomainTabAttributesAddButtonClick: function() {
 			this.view.disable();
 		},
 
-		onDomainSelected: function() {
+		onDomainDomainSelected: function() {
 			if (!this.cmfg('domainSelectedDomainIsEmpty')) {
 				this.view.enable();
 
@@ -239,9 +264,6 @@
 
 		onSaveButtonClick: function() {
 			var nonValid = this.form.getNonValidFields();
-			var data = this.form.getData(true);
-
-			data[CMDBuild.core.constants.Proxy.CLASS_NAME] = this.cmfg('domainSelectedDomainGet', CMDBuild.core.constants.Proxy.NAME);
 
 			if (nonValid.length > 0) {
 				CMDBuild.core.Message.error(CMDBuild.Translation.common.failure, CMDBuild.Translation.errors.invalid_fields, false);
@@ -249,25 +271,45 @@
 				return;
 			}
 
-			CMDBuild.core.LoadMask.show();
+			var data = this.form.getData(true);
+			data[CMDBuild.core.constants.Proxy.CLASS_NAME] = this.cmfg('domainSelectedDomainGet', CMDBuild.core.constants.Proxy.NAME);
+
 			CMDBuild.proxy.common.tabs.attribute.Attribute.update({
 				params: data,
-				loadMask: false,
 				scope: this,
 				success: function(result, options, decodedResult) {
-					var attribute = decodedResult.attribute;
+					var attribute = decodedResult['attribute'];
 
-					this.currentAttribute = null;
-					this.form.disableModify();
+					CMDBuild.proxy.domain.Domain.read({
+						scope: this,
+						success: function (response, options, decodedResponse) {
+							decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.DOMAINS];
 
-					_CMCache.onDomainAttributeSaved(this.cmfg('domainSelectedDomainGet', CMDBuild.core.constants.Proxy.ID), attribute);
+							if (Ext.isArray(decodedResponse) && !Ext.isEmpty(decodedResponse)) {
+								var selectedDomain = Ext.Array.findBy(decodedResponse, function (domainObject, i) {
+									return this.cmfg('domainSelectedDomainGet', CMDBuild.core.constants.Proxy.ID) == domainObject[CMDBuild.core.constants.Proxy.ID_DOMAIN];
+								}, this);
 
-					this.grid.selectAttributeByName(attribute[CMDBuild.core.constants.Proxy.NAME]);
+								if (Ext.isObject(selectedDomain) && !Ext.Object.isEmpty(selectedDomain)) {
+									this.parentDelegate.domainSelectedDomainSet({
+										propertyName: CMDBuild.core.constants.Proxy.ATTRIBUTES,
+										value: selectedDomain[CMDBuild.core.constants.Proxy.ATTRIBUTES]
+									});
 
-					CMDBuild.view.common.field.translatable.Utils.commit(this.form);
-				},
-				callback: function() {
-					CMDBuild.core.LoadMask.hide();
+									this.currentAttribute = null;
+									this.form.disableModify();
+
+									this.grid.refreshStore(attribute[CMDBuild.core.constants.Proxy.INDEX]);
+
+//									this.grid.selectAttributeByName(attribute[CMDBuild.core.constants.Proxy.NAME]);
+
+									CMDBuild.view.common.field.translatable.Utils.commit(this.form);
+								} else {
+									_error('onSaveButtonClick(): domain not found', this, this.cmfg('domainSelectedDomainGet', ID));
+								}
+							}
+						}
+					});
 				}
 			});
 		},

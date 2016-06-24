@@ -1,8 +1,8 @@
-(function() {
+(function () {
 
 	Ext.require('CMDBuild.core.constants.Proxy');
 
-	Ext.define('CMDBuild.model.Classes.domainsTreePanel', {
+	Ext.define('CMDBuild.model.domain.tabs.enabledClasses.TreeStore', {
 		extend: 'Ext.data.Model',
 
 		fields: [
