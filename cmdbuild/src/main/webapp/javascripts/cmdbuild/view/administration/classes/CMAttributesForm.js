@@ -1,5 +1,10 @@
 (function() {
 
+	/**
+	 * @link CMDBuild.view.administration.domain.tabs.attributes.FormPanel
+	 * @link CMDBuild.view.administration.workflow.CMAttributesForm
+	 */
+
 	Ext.require('CMDBuild.proxy.common.tabs.attribute.Attribute');
 
 	var tableTypeMap = {

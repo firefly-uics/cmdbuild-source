@@ -1,5 +1,10 @@
 (function() {
 
+	/**
+	 * @link CMDBuild.controller.administration.classes.tabs.CMAttributes
+	 * @link CMDBuild.controller.administration.domain.tabs.Attributes
+	 */
+
 	Ext.require([
 		'CMDBuild.core.Message',
 		'CMDBuild.proxy.common.tabs.attribute.Attribute',

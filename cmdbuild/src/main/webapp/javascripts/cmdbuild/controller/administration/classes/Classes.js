@@ -122,8 +122,6 @@
 
 		/**
 		 * @returns {Void}
-		 *
-		 * FIXME: use cmfg redirect functionalities (onClassesTabAddButtonClick)
 		 */
 		onClassesAddButtonClick: function () {
 			this.tabPanel.setActiveTab(0);
@@ -155,7 +153,7 @@
 				var params = {};
 				params[CMDBuild.core.constants.Proxy.ACTIVE] = false;
 
-				CMDBuild.proxy.classes.Classes.read({// FIXME: waiting for refactor (server endpoint)
+				CMDBuild.proxy.classes.Classes.read({ // FIXME: waiting for refactor (server endpoint)
 					params: params,
 					scope: this,
 					success: function (response, options, decodedResponse) {

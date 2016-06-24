@@ -1,25 +1,20 @@
-(function() {
+(function () {
 
-	Ext.define('CMDBuild.view.administration.domain.properties.FormPanel', {
+	Ext.define('CMDBuild.view.administration.domain.tabs.properties.FormPanel', {
 		extend: 'Ext.form.Panel',
 
 		requires: [
 			'CMDBuild.core.constants.FieldWidths',
 			'CMDBuild.core.constants.Proxy',
-			'CMDBuild.proxy.domain.Properties'
+			'CMDBuild.proxy.domain.tabs.Properties'
 		],
 
 		mixins: ['CMDBuild.view.common.PanelFunctions'],
 
 		/**
-		 * @cfg {CMDBuild.controller.administration.domain.Properties}
+		 * @cfg {CMDBuild.controller.administration.domain.tabs.Properties}
 		 */
 		delegate: undefined,
-
-		/**
-		 * @property {Ext.form.field.Checkbox}
-		 */
-		activeCheckbox: undefined,
 
 		/**
 		 * @property {Ext.form.field.ComboBox}
@@ -29,17 +24,7 @@
 		/**
 		 * @property {CMDBuild.view.common.field.translatable.Text}
 		 */
-		directDescription: undefined,
-
-		/**
-		 * @property {CMDBuild.view.common.field.translatable.Text}
-		 */
 		domainDescription: undefined,
-
-		/**
-		 * @property {CMDBuild.view.common.field.translatable.Text}
-		 */
-		inverseDescription: undefined,
 
 		/**
 		 * @property {Ext.form.field.Checkbox}
@@ -58,14 +43,15 @@
 
 		layout: {
 			type: 'vbox',
-			align:'stretch'
+			align: 'stretch'
 		},
 
-		defaults: {
-			maxWidth: CMDBuild.core.constants.FieldWidths.ADMINISTRATION_BIG
-		},
-
-		initComponent: function() {
+		/**
+		 * @returns {Void}
+		 *
+		 * @override
+		 */
+		initComponent: function () {
 			Ext.apply(this, {
 				dockedItems: [
 					Ext.create('Ext.toolbar.Toolbar', {
@@ -77,7 +63,7 @@
 								text: CMDBuild.Translation.modifyDomain,
 								scope: this,
 
-								handler: function(button, e) {
+								handler: function (button, e) {
 									this.delegate.cmfg('onDomainModifyButtonClick');
 								}
 							}),
@@ -85,7 +71,7 @@
 								text: CMDBuild.Translation.removeDomain,
 								scope: this,
 
-								handler: function(button, e) {
+								handler: function (button, e) {
 									this.delegate.cmfg('onDomainRemoveButtonClick');
 								}
 							})
@@ -106,14 +92,14 @@
 							Ext.create('CMDBuild.core.buttons.text.Save', {
 								scope: this,
 
-								handler: function(button, e) {
+								handler: function (button, e) {
 									this.delegate.cmfg('onDomainSaveButtonClick');
 								}
 							}),
 							Ext.create('CMDBuild.core.buttons.text.Abort', {
 								scope: this,
 
-								handler: function(button, e) {
+								handler: function (button, e) {
 									this.delegate.cmfg('onDomainAbortButtonClick');
 								}
 							})
@@ -125,17 +111,17 @@
 						name: CMDBuild.core.constants.Proxy.NAME,
 						fieldLabel: CMDBuild.Translation.name,
 						labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
+						maxWidth: CMDBuild.core.constants.FieldWidths.ADMINISTRATION_BIG,
 						allowBlank: false,
-						vtype: 'alphanum',
 						disableEnableFunctions: true,
+						vtype: 'alphanum',
+
+						enableKeyEvents: true,
 
 						listeners: {
 							scope: this,
-							change: function(field, newValue, oldValue, eOpts) {
-								this.delegate.cmfg('onDomainPropertiesNameChange', {
-									newValue: newValue,
-									oldValue: oldValue
-								});
+							change: function (field, newValue, oldValue, eOpts) {
+								this.fieldSynch(this.domainDescription, newValue, oldValue);
 							}
 						}
 					}),
@@ -143,6 +129,7 @@
 						name: CMDBuild.core.constants.Proxy.DESCRIPTION,
 						fieldLabel: CMDBuild.Translation.descriptionLabel,
 						labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
+						maxWidth: CMDBuild.core.constants.FieldWidths.ADMINISTRATION_BIG,
 						allowBlank: false,
 						vtype: 'commentextended',
 
@@ -156,6 +143,7 @@
 						name: CMDBuild.core.constants.Proxy.ORIGIN_CLASS_ID,
 						fieldLabel: CMDBuild.Translation.origin,
 						labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
+						maxWidth: CMDBuild.core.constants.FieldWidths.ADMINISTRATION_BIG,
 						valueField: CMDBuild.core.constants.Proxy.ID,
 						displayField: CMDBuild.core.constants.Proxy.TEXT,
 						allowBlank: false,
@@ -163,13 +151,14 @@
 						forceSelection: true,
 						editable: false,
 
-						store: CMDBuild.proxy.domain.Properties.getStoreClasses(),
+						store: CMDBuild.proxy.domain.tabs.Properties.getStoreClasses(),
 						queryMode: 'local'
 					}),
 					Ext.create('Ext.form.field.ComboBox', {
 						name: CMDBuild.core.constants.Proxy.DESTINATION_CLASS_ID,
 						fieldLabel: CMDBuild.Translation.destination,
 						labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
+						maxWidth: CMDBuild.core.constants.FieldWidths.ADMINISTRATION_BIG,
 						valueField: CMDBuild.core.constants.Proxy.ID,
 						displayField: CMDBuild.core.constants.Proxy.TEXT,
 						allowBlank: false,
@@ -177,13 +166,14 @@
 						forceSelection: true,
 						editable: false,
 
-						store: CMDBuild.proxy.domain.Properties.getStoreClasses(),
+						store: CMDBuild.proxy.domain.tabs.Properties.getStoreClasses(),
 						queryMode: 'local'
 					}),
-					this.directDescription = Ext.create('CMDBuild.view.common.field.translatable.Text', {
+					Ext.create('CMDBuild.view.common.field.translatable.Text', {
 						name: CMDBuild.core.constants.Proxy.DIRECT_DESCRIPTION,
 						fieldLabel: CMDBuild.Translation.directDescription,
 						labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
+						maxWidth: CMDBuild.core.constants.FieldWidths.ADMINISTRATION_BIG,
 						allowBlank: false,
 						vtype: 'commentextended',
 
@@ -193,10 +183,11 @@
 							field: CMDBuild.core.constants.Proxy.DIRECT_DESCRIPTION
 						}
 					}),
-					this.inverseDescription = Ext.create('CMDBuild.view.common.field.translatable.Text', {
+					Ext.create('CMDBuild.view.common.field.translatable.Text', {
 						name: CMDBuild.core.constants.Proxy.INVERSE_DESCRIPTION,
 						fieldLabel: CMDBuild.Translation.inverseDescription,
 						labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
+						maxWidth: CMDBuild.core.constants.FieldWidths.ADMINISTRATION_BIG,
 						allowBlank: false,
 						vtype: 'commentextended',
 
@@ -218,13 +209,13 @@
 						forceSelection: true,
 						editable: false,
 
-						store: CMDBuild.proxy.domain.Properties.getStoreCardinality(),
+						store: CMDBuild.proxy.domain.tabs.Properties.getStoreCardinality(),
 						queryMode: 'local',
 
 						listeners: {
 							scope: this,
-							select:	function(combo, records, eOpts) {
-								this.delegate.cmfg('onDomainPropertiesCardinalitySelect');
+							select:	function (combo, records, eOpts) {
+								this.delegate.cmfg('onDomainTabPropertiesCardinalitySelect');
 							}
 						}
 					}),
@@ -237,8 +228,8 @@
 
 						listeners: {
 							scope: this,
-							change: function(field, newValue, oldValue, eOpts) {
-								this.delegate.cmfg('onDomainPropertiesMasterDetailCheckboxChange');
+							change: function (field, newValue, oldValue, eOpts) {
+								this.delegate.cmfg('onDomainTabPropertiesMasterDetailCheckboxChange');
 							}
 						}
 					}),
@@ -246,6 +237,7 @@
 						name: CMDBuild.core.constants.Proxy.MASTER_DETAIL_LABEL,
 						fieldLabel: CMDBuild.Translation.masterDetailLabel,
 						labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
+						maxWidth: CMDBuild.core.constants.FieldWidths.ADMINISTRATION_BIG,
 						hidden: true, // Hidden by default
 
 						translationFieldConfig: {
@@ -254,17 +246,14 @@
 							field: CMDBuild.core.constants.Proxy.MASTER_DETAIL
 						}
 					}),
-					this.activeCheckbox = Ext.create('Ext.form.field.Checkbox', {
+					Ext.create('Ext.form.field.Checkbox', {
 						name: CMDBuild.core.constants.Proxy.ACTIVE,
 						fieldLabel: CMDBuild.Translation.active,
 						labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
 						inputValue: true,
 						uncheckedValue: false
 					}),
-					{
-						xtype: 'hiddenfield',
-						name: CMDBuild.core.constants.Proxy.ID
-					}
+					Ext.create('Ext.form.field.Hidden', { name: CMDBuild.core.constants.Proxy.ID })
 				]
 			});
 

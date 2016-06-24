@@ -1,6 +1,6 @@
-(function() {
+(function () {
 
-	Ext.define('CMDBuild.view.administration.domain.enabledClasses.EnabledClassesView', {
+	Ext.define('CMDBuild.view.administration.domain.tabs.enabledClasses.EnabledClassesView', {
 		extend: 'Ext.form.Panel',
 
 		requires: ['CMDBuild.core.constants.Proxy'],
@@ -8,17 +8,17 @@
 		mixins: ['CMDBuild.view.common.PanelFunctions'],
 
 		/**
-		 * @cfg {CMDBuild.controller.administration.domain.EnabledClasses}
+		 * @cfg {CMDBuild.controller.administration.domain.tabs.EnabledClasses}
 		 */
 		delegate: undefined,
 
 		/**
-		 * @property {CMDBuild.view.administration.domain.enabledClasses.TreePanel}
+		 * @property {CMDBuild.view.administration.domain.tabs.enabledClasses.TreePanel}
 		 */
 		destinationTree: undefined,
 
 		/**
-		 * @property {CMDBuild.view.administration.domain.enabledClasses.TreePanel}
+		 * @property {CMDBuild.view.administration.domain.tabs.enabledClasses.TreePanel}
 		 */
 		originTree: undefined,
 
@@ -29,7 +29,10 @@
 		layout: 'fit',
 		title: CMDBuild.Translation.enabledClasses,
 
-		initComponent: function() {
+		/**
+		 * @returns {Void}
+		 */
+		initComponent: function () {
 			Ext.apply(this, {
 				dockedItems: [
 					Ext.create('Ext.toolbar.Toolbar', {
@@ -41,7 +44,7 @@
 								text: CMDBuild.Translation.modifyDomain,
 								scope: this,
 
-								handler: function(button, e) {
+								handler: function (button, e) {
 									this.delegate.cmfg('onDomainModifyButtonClick');
 								}
 							})
@@ -62,14 +65,14 @@
 							Ext.create('CMDBuild.core.buttons.text.Save', {
 								scope: this,
 
-								handler: function(button, e) {
+								handler: function (button, e) {
 									this.delegate.cmfg('onDomainSaveButtonClick');
 								}
 							}),
 							Ext.create('CMDBuild.core.buttons.text.Abort', {
 								scope: this,
 
-								handler: function(button, e) {
+								handler: function (button, e) {
 									this.delegate.cmfg('onDomainAbortButtonClick');
 								}
 							})
@@ -88,12 +91,12 @@
 						},
 
 						items: [
-							this.originTree = Ext.create('CMDBuild.view.administration.domain.enabledClasses.TreePanel', {
+							this.originTree = Ext.create('CMDBuild.view.administration.domain.tabs.enabledClasses.TreePanel', {
 								delegate: this.delegate,
 								title: CMDBuild.Translation.origin
 							}),
 							{ xtype: 'splitter' },
-							this.destinationTree = Ext.create('CMDBuild.view.administration.domain.enabledClasses.TreePanel', {
+							this.destinationTree = Ext.create('CMDBuild.view.administration.domain.tabs.enabledClasses.TreePanel', {
 								delegate: this.delegate,
 								title: CMDBuild.Translation.destination
 							})
@@ -113,9 +116,11 @@
 		 * @param {Boolean} tBarState
 		 * @param {Boolean} bBarState
 		 *
+		 * @returns {Void}
+		 *
 		 * @override
 		 */
-		setDisabledModify: function(state, allFields, tBarState, bBarState) {
+		setDisabledModify: function (state, allFields, tBarState, bBarState) {
 			this.setDisableFields(state, allFields, true);
 			this.setDisabledTopBar(Ext.isBoolean(tBarState) ? tBarState : !state);
 			this.setDisabledBottomBar(Ext.isBoolean(bBarState) ? bBarState : state);
