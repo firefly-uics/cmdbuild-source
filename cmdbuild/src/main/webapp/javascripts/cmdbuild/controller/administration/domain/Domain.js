@@ -186,7 +186,7 @@
 							}
 						}
 
-						this.onModuleInit(arguments); // Custom callParent() implementation
+						this.onModuleInit(node); // Custom callParent() implementation
 					}
 				});
 			}

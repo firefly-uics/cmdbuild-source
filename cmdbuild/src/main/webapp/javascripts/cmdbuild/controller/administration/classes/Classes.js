@@ -180,10 +180,10 @@
 								_error('onClassesModuleInit(): class not found', this, node.get(CMDBuild.core.constants.Proxy.ENTITY_ID));
 							}
 						}
+
+						this.onModuleInit(node); // Custom callParent() implementation
 					}
 				});
-
-				this.onModuleInit(node); // Custom callParent() implementation
 			}
 		},
 
