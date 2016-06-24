@@ -42,6 +42,7 @@
 							this.classComboBox = Ext.create('Ext.form.field.ComboBox', {
 								fieldLabel: CMDBuild.Translation.selectAClass,
 								labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
+								width: CMDBuild.core.constants.FieldWidths.ADMINISTRATION_BIG,
 								labelAlign: 'right',
 								valueField: CMDBuild.core.constants.Proxy.ID,
 								displayField: CMDBuild.core.constants.Proxy.TEXT,
