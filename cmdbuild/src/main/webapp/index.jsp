@@ -3,7 +3,7 @@
 
 <%@page import="org.cmdbuild.logic.auth.StandardSessionLogic"%>
 <%@page import="org.cmdbuild.logic.auth.SessionLogic"%>
-<%@ taglib uri="/WEB-INF/tags/translations.tld" prefix="tr" %>
+<%@ taglib uri="/WEB-INF/tags/translations/implicit.tld" prefix="tr" %>
 
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%@ page import="org.cmdbuild.auth.UserStore" %>
