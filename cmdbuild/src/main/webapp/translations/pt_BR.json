@@ -108,7 +108,6 @@
 				"strokeColor": "Cor da Linha Tracejada",
 				"strokeDashstyle": "Estilo da Linha Tracejada",
 				"strokeOpacity": "Opacidade da Linha Tracejada",
-				"strokeWidth": "Largura do Traço",
 				"strokeStyles": {
 					"dash": "Traço",
 					"dashdot": "Traço-Ponto",
@@ -117,6 +116,7 @@
 					"longdashdot": "Traço Curto",
 					"solid": "Sólido"
 				},
+				"strokeWidth": "Largura do Traço",
 				"style": "Estilo",
 				"type": {
 					"line": "Linha",
@@ -1200,6 +1200,7 @@
 	"newPassword": "Senha Nova",
 	"newSearchFilter": "Novo Filtro de Pesquisa",
 	"next": "<em>Next</em>",
+	"no": "<em>No</em>",
 	"no_bim_project_for_card": "<em>There is no BIM project for this card</em>",
 	"noAvailableData": "<em>No available data</em>",
 	"noCardsToUpdate": "Nenhum cartão para atualizar",
@@ -1428,6 +1429,7 @@
 	"write": "Escrita",
 	"xpdlFile": "Arquivo XPDL",
 	"xpdlFileUploaded": "Arquivo XPDL enviado",
+	"yes": "<em>Yes</em>",
 	"zip": "ZIP",
 	"zoom": "<em>Zoom</em>"
 }

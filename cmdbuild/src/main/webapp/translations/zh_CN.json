@@ -108,7 +108,6 @@
 				"strokeColor": "划线颜色",
 				"strokeDashstyle": "划线线型",
 				"strokeOpacity": "划线透明度",
-				"strokeWidth": "划线宽度",
 				"strokeStyles": {
 					"dash": "删除线",
 					"dashdot": "点状删除线",
@@ -117,6 +116,7 @@
 					"longdashdot": "长点状删除线",
 					"solid": "实心的"
 				},
+				"strokeWidth": "划线宽度",
 				"style": "风格",
 				"type": {
 					"line": "线",
@@ -1200,6 +1200,7 @@
 	"newPassword": "新的密码",
 	"newSearchFilter": "新的搜索过滤器",
 	"next": "下一个",
+	"no": "<em>No</em>",
 	"no_bim_project_for_card": "此卡片没有BIM项目",
 	"noAvailableData": "<em>No available data</em>",
 	"noCardsToUpdate": "没有更新的卡片",
@@ -1428,6 +1429,7 @@
 	"write": "<em>Write</em>",
 	"xpdlFile": "XPDL文件",
 	"xpdlFileUploaded": "XPDL文件上传",
+	"yes": "<em>Yes</em>",
 	"zip": "ZIP",
 	"zoom": "缩放"
 }

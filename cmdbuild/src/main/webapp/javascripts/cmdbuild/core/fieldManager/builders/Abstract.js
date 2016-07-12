@@ -26,8 +26,8 @@
 		 *
 		 * @returns {String or Mixed}
 		 */
-		applyMandatoryLabelFlag: function(string) {
-			if (this.cmfg('attributeModelGet', CMDBuild.core.constants.Proxy.MANDATORY))
+		applyMandatoryLabelFlag: function (string) {
+			if (this.cmfg('fieldManagerAttributeModelGet', CMDBuild.core.constants.Proxy.MANDATORY))
 				return CMDBuild.core.Utils.prependMandatoryLabel(string);
 
 			return string;
@@ -49,10 +49,27 @@
 		buildField: Ext.emptyFn,
 
 		/**
+		 * @returns {Ext.form.field.Display}
+		 */
+		buildFieldReadOnly: function () {
+			return Ext.create('Ext.form.field.Display', {
+				allowBlank: !this.cmfg('fieldManagerAttributeModelGet', CMDBuild.core.constants.Proxy.MANDATORY),
+				fieldLabel: this.applyMandatoryLabelFlag(
+					this.cmfg('fieldManagerAttributeModelGet', CMDBuild.core.constants.Proxy.DESCRIPTION)
+					|| this.cmfg('fieldManagerAttributeModelGet', CMDBuild.core.constants.Proxy.NAME)
+				),
+				hidden: this.cmfg('fieldManagerAttributeModelGet', CMDBuild.core.constants.Proxy.HIDDEN),
+				labelAlign: 'right',
+				labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
+				name: this.cmfg('fieldManagerAttributeModelGet', CMDBuild.core.constants.Proxy.NAME)
+			});
+		},
+
+		/**
 		 * @returns {Object}
 		 */
-		buildStoreField: function() {
-			return { name: this.cmfg('attributeModelGet', CMDBuild.core.constants.Proxy.NAME), type: 'string' };
+		buildStoreField: function () {
+			return { name: this.cmfg('fieldManagerAttributeModelGet', CMDBuild.core.constants.Proxy.NAME), type: 'string' };
 		},
 
 		/**
@@ -65,9 +82,11 @@
 		 * @param {Number} colIndex
 		 * @param {Ext.data.Store} store
 		 * @param {Ext.view.View} view
+		 *
+		 * @returns {String}
 		 */
-		rendererColumn: function(value, metadata, record, rowIndex, colIndex, store, view) {
-			if (Ext.isEmpty(Ext.String.trim(String(value))) && this.cmfg('attributeModelGet', CMDBuild.core.constants.Proxy.MANDATORY))
+		rendererColumn: function (value, metadata, record, rowIndex, colIndex, store, view) {
+			if (Ext.isEmpty(Ext.String.trim(String(value))) && this.cmfg('fieldManagerAttributeModelGet', CMDBuild.core.constants.Proxy.MANDATORY))
 				metadata.tdCls += ' x-grid-invalid-cell-error';
 
 			return value;

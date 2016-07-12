@@ -1,4 +1,4 @@
-(function() {
+(function () {
 
 	Ext.require(['CMDBuild.core.constants.Proxy']);
 
@@ -33,7 +33,7 @@
 		 *
 		 * @returns {Object}
 		 */
-		getAdaptedData: function() {
+		getAdaptedData: function () {
 			var objectModel = this.getData();
 
 			objectModel['fieldmode'] = this.get(CMDBuild.core.constants.Proxy.WRITABLE) ? 'write' : 'read';
@@ -55,7 +55,7 @@
 					if (!Ext.isEmpty(this.get(CMDBuild.core.constants.Proxy.FILTER))) {
 						objectModel[CMDBuild.core.constants.Proxy.FILTER] = this.get(CMDBuild.core.constants.Proxy.FILTER)[CMDBuild.core.constants.Proxy.EXPRESSION];
 
-						Ext.Object.each(this.get(CMDBuild.core.constants.Proxy.FILTER)[CMDBuild.core.constants.Proxy.CONTEXT], function(key, value, myself) {
+						Ext.Object.each(this.get(CMDBuild.core.constants.Proxy.FILTER)[CMDBuild.core.constants.Proxy.CONTEXT], function (key, value, myself) {
 							objectModel[CMDBuild.core.constants.Proxy.META]['system.template.' + key] = value;
 						}, this);
 					}
@@ -70,7 +70,7 @@
 		/**
 		 * @returns {Boolean}
 		 */
-		isValid: function() {
+		isValid: function () {
 			var customValidationValue = false;
 
 			switch (this.get(CMDBuild.core.constants.Proxy.TYPE)) {

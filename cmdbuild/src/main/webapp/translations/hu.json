@@ -108,7 +108,6 @@
 				"strokeColor": "Vágás szín",
 				"strokeDashstyle": "Vágás vonalstílusa",
 				"strokeOpacity": "Vágás áttetszőség",
-				"strokeWidth": "Vágás szélesség",
 				"strokeStyles": {
 					"dash": "Vonal",
 					"dashdot": "Pont és vonal",
@@ -117,6 +116,7 @@
 					"longdashdot": "Pont és hosszú vonal",
 					"solid": "Szolid"
 				},
+				"strokeWidth": "Vágás szélesség",
 				"style": "Stílus",
 				"type": {
 					"line": "Vonal",
@@ -1200,6 +1200,7 @@
 	"newPassword": "Új jelszó",
 	"newSearchFilter": "Új keresési szűrő",
 	"next": "Következő",
+	"no": "<em>No</em>",
 	"no_bim_project_for_card": "Nincs BIM projekt ehhez a kártyához",
 	"noAvailableData": "<em>No available data</em>",
 	"noCardsToUpdate": "Nincs frissítendő kártya",
@@ -1428,6 +1429,7 @@
 	"write": "Írás",
 	"xpdlFile": "XPDL fájl",
 	"xpdlFileUploaded": "XPDL fájl feltöltve",
+	"yes": "<em>Yes</em>",
 	"zip": "ZIP",
 	"zoom": "Zoom"
 }

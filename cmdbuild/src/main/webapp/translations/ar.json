@@ -108,7 +108,6 @@
 				"strokeColor": "لون خط المحيط",
 				"strokeDashstyle": "نمط خط المحيط",
 				"strokeOpacity": "درجة تعتيم خط المحيط",
-				"strokeWidth": "عرض خط المحيط",
 				"strokeStyles": {
 					"dash": "شرطة",
 					"dashdot": "شرطة منقطة",
@@ -117,6 +116,7 @@
 					"longdashdot": "شرطة منقطة طويلة",
 					"solid": "صلب"
 				},
+				"strokeWidth": "عرض خط المحيط",
 				"style": "النمط",
 				"type": {
 					"line": "خط",
@@ -1200,6 +1200,7 @@
 	"newPassword": "كلمة السر الجديدة",
 	"newSearchFilter": "فرز بحث جديد",
 	"next": "التالي",
+	"no": "<em>No</em>",
 	"no_bim_project_for_card": "لا يوجد لهذه البطاقة مشروع BIM",
 	"noAvailableData": "ليس هناك بيانات",
 	"noCardsToUpdate": "ليس هناك من بطاقات لتحديثها",
@@ -1428,6 +1429,7 @@
 	"write": "كتابة",
 	"xpdlFile": "ملف XPDL",
 	"xpdlFileUploaded": "تم رفع ملف الـ XPDL",
+	"yes": "<em>Yes</em>",
 	"zip": "ZIP",
 	"zoom": "تكبير"
 }

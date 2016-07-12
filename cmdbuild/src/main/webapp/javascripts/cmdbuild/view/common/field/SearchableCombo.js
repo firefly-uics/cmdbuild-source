@@ -62,6 +62,10 @@
 		onTrigger2Click: function() {
 			if (!this.disabled) {
 				reset.call(this);
+
+				// Hack to force field lose of focus and relative TemplateResolver behaviour
+				this.focus();
+				this.blur();
 			}
 		},
 

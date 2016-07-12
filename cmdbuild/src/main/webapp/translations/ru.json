@@ -108,7 +108,6 @@
 				"strokeColor": "Цвет линии",
 				"strokeDashstyle": "Тип линии",
 				"strokeOpacity": "Прозрачность линии",
-				"strokeWidth": "Толщина линии",
 				"strokeStyles": {
 					"dash": "Короткие штрихи",
 					"dashdot": "Короткие штрихи и точки",
@@ -117,6 +116,7 @@
 					"longdashdot": "Длинные штрихи и точки",
 					"solid": "Непрерывная линия"
 				},
+				"strokeWidth": "Толщина линии",
 				"style": "Стиль",
 				"type": {
 					"line": "Линия",
@@ -1200,6 +1200,7 @@
 	"newPassword": "Новый пароль",
 	"newSearchFilter": "Новый фильтр",
 	"next": "Далее",
+	"no": "<em>No</em>",
 	"no_bim_project_for_card": "Для данной карточки не задан BIM-проект",
 	"noAvailableData": "<em>No available data</em>",
 	"noCardsToUpdate": "Нет обновляемых карточек",
@@ -1428,6 +1429,7 @@
 	"write": "Запись",
 	"xpdlFile": "XPDL файл",
 	"xpdlFileUploaded": "XPDL файл загружен",
+	"yes": "<em>Yes</em>",
 	"zip": "ZIP",
 	"zoom": "Масштабировать"
 }

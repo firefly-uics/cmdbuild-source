@@ -1200,6 +1200,7 @@
 	"newPassword": "New password",
 	"newSearchFilter": "New search filter",
 	"next": "Next",
+	"no": "No",
 	"no_bim_project_for_card": "There is no BIM project for this card",
 	"noAvailableData": "No available data",
 	"noCardsToUpdate": "No cards to update",
@@ -1428,6 +1429,7 @@
 	"write": "Write",
 	"xpdlFile": "XPDL file",
 	"xpdlFileUploaded": "XPDL file uploaded",
+	"yes": "Yes",
 	"zip": "ZIP",
 	"zoom": "Zoom"
 }

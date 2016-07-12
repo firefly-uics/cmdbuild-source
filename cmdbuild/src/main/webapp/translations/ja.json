@@ -108,7 +108,6 @@
 				"strokeColor": "線の色",
 				"strokeDashstyle": "線の種類",
 				"strokeOpacity": "線の不透明度",
-				"strokeWidth": "線幅",
 				"strokeStyles": {
 					"dash": "ダッシュ",
 					"dashdot": "ダッシュ　ドット",
@@ -117,6 +116,7 @@
 					"longdashdot": "長いダッシュ　ドット",
 					"solid": "実線"
 				},
+				"strokeWidth": "線幅",
 				"style": "スタイル",
 				"type": {
 					"line": "線",
@@ -1200,6 +1200,7 @@
 	"newPassword": "新しいパスワード",
 	"newSearchFilter": "新しい検索フィルター",
 	"next": "次",
+	"no": "<em>No</em>",
 	"no_bim_project_for_card": "このカードにはBMIプロジェクトがありません",
 	"noAvailableData": "<em>No available data</em>",
 	"noCardsToUpdate": "更新されるカードはありません",
@@ -1428,6 +1429,7 @@
 	"write": "書込権限",
 	"xpdlFile": "XPDL ファイル",
 	"xpdlFileUploaded": "XPDL ファイルアップロード",
+	"yes": "<em>Yes</em>",
 	"zip": "ZIP",
 	"zoom": "ズーム"
 }

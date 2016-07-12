@@ -108,7 +108,6 @@
 				"strokeColor": "Lijn kleur",
 				"strokeDashstyle": "Lijn streepstijl",
 				"strokeOpacity": "Lijn dekking",
-				"strokeWidth": "Lijn dikte",
 				"strokeStyles": {
 					"dash": "Streep",
 					"dashdot": "StreepPunt",
@@ -117,6 +116,7 @@
 					"longdashdot": "DubbeleStreepPunt",
 					"solid": "Ononderbroken"
 				},
+				"strokeWidth": "Lijn dikte",
 				"style": "Stijl",
 				"type": {
 					"line": "Lijn",
@@ -1200,6 +1200,7 @@
 	"newPassword": "Nieuw wachtwoord",
 	"newSearchFilter": "Nieuw zoek filter",
 	"next": "Volgende",
+	"no": "<em>No</em>",
 	"no_bim_project_for_card": "Er is geen BIM project voor deze kaart",
 	"noAvailableData": "<em>No available data</em>",
 	"noCardsToUpdate": "Geen kaarten bij te werken",
@@ -1428,6 +1429,7 @@
 	"write": "Schrijf",
 	"xpdlFile": "XPDL bestand",
 	"xpdlFileUploaded": "XPDL bestand ophalen",
+	"yes": "<em>Yes</em>",
 	"zip": "ZIP",
 	"zoom": "Zoom"
 }

@@ -108,7 +108,6 @@
 				"strokeColor": "Boja linije",
 				"strokeDashstyle": "Stil linije",
 				"strokeOpacity": "Providnost linije",
-				"strokeWidth": "Debljina linije",
 				"strokeStyles": {
 					"dash": "Crtice",
 					"dashdot": "Crta - tačka",
@@ -117,6 +116,7 @@
 					"longdashdot": "Duga crta - tačka",
 					"solid": "Puna linija"
 				},
+				"strokeWidth": "Debljina linije",
 				"style": "Stil",
 				"type": {
 					"line": "Linija",
@@ -1200,6 +1200,7 @@
 	"newPassword": "Nova lozinka",
 	"newSearchFilter": "Novi filter za pretraživanje",
 	"next": "Sledeća",
+	"no": "<em>No</em>",
 	"no_bim_project_for_card": "Ne postoji BIM projekat za ovu karticu",
 	"noAvailableData": "<em>No available data</em>",
 	"noCardsToUpdate": "Nijedna kartica nije izmenjena",
@@ -1428,6 +1429,7 @@
 	"write": "Pisanje",
 	"xpdlFile": "XPDL datoteka",
 	"xpdlFileUploaded": "XPDL datoteka postavljena na server",
+	"yes": "<em>Yes</em>",
 	"zip": "ZIP",
 	"zoom": "Uvećanje"
 }
