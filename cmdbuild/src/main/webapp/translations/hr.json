@@ -1186,6 +1186,7 @@
 	"newPassword": "Nova lozinka",
 	"newSearchFilter": "Novi filter za pretraživanje",
 	"next": "<em>Next</em>",
+	"no": "<em>No</em>",
 	"no_bim_project_for_card": "<em>There is no BIM project for this card</em>",
 	"noAvailableData": "<em>No available data</em>",
 	"noCardsToUpdate": "Nijedna kartica nije izmjenjena",
@@ -1401,6 +1402,7 @@
 	"write": "Pisanje",
 	"xpdlFile": "XPDL datoteka",
 	"xpdlFileUploaded": "XPDL datoteka postavljena na server",
+	"yes": "<em>Yes</em>",
 	"you_have_not_set_a_filter": "Niste postavili filter",
 	"zip": "ZIP",
 	"zoom": "<em>Zoom</em>"

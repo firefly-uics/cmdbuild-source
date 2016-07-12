@@ -1186,6 +1186,7 @@
 	"newPassword": "Новый пароль",
 	"newSearchFilter": "Новый фильтр",
 	"next": "Далее",
+	"no": "<em>No</em>",
 	"no_bim_project_for_card": "Для данной карточки не задан BIM-проект",
 	"noAvailableData": "<em>No available data</em>",
 	"noCardsToUpdate": "Нет обновляемых карточек",
@@ -1401,6 +1402,7 @@
 	"write": "Запись",
 	"xpdlFile": "XPDL файл",
 	"xpdlFileUploaded": "XPDL файл загружен",
+	"yes": "<em>Yes</em>",
 	"you_have_not_set_a_filter": "Фильтр не установлен",
 	"zip": "ZIP",
 	"zoom": "Масштабировать"
