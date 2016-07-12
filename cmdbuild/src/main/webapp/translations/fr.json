@@ -1186,6 +1186,7 @@
 	"newPassword": "Nouveau mot de passe",
 	"newSearchFilter": "Nouveau filtre de recherche",
 	"next": "Suivant",
+	"no": "<em>No</em>",
 	"no_bim_project_for_card": "Il n'existe pas de projet BIM pour cette fiche",
 	"noAvailableData": "Aucune donnée disponible",
 	"noCardsToUpdate": "Aucune fiche à mettre à jour",
@@ -1401,6 +1402,7 @@
 	"write": "Écrire",
 	"xpdlFile": "Fichier XPDL",
 	"xpdlFileUploaded": "Fichier XPDL enregistré",
+	"yes": "<em>Yes</em>",
 	"you_have_not_set_a_filter": "Vous n'avez pas de filtre",
 	"zip": "ZIP",
 	"zoom": "Zoom"

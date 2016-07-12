@@ -1186,6 +1186,7 @@
 	"newPassword": "كلمة السر الجديدة",
 	"newSearchFilter": "فرز بحث جديد",
 	"next": "التالي",
+	"no": "<em>No</em>",
 	"no_bim_project_for_card": "لا يوجد لهذه البطاقة مشروع BIM",
 	"noAvailableData": "ليس هناك بيانات",
 	"noCardsToUpdate": "ليس هناك من بطاقات لتحديثها",
@@ -1401,6 +1402,7 @@
 	"write": "كتابة",
 	"xpdlFile": "ملف XPDL",
 	"xpdlFileUploaded": "تم رفع ملف الـ XPDL",
+	"yes": "<em>Yes</em>",
 	"you_have_not_set_a_filter": "لم تحدد أي فرز",
 	"zip": "ZIP",
 	"zoom": "تكبير"
