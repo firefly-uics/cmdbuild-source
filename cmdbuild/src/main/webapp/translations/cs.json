@@ -108,7 +108,6 @@
 				"strokeColor": "Barva čáry",
 				"strokeDashstyle": "Styl čáry",
 				"strokeOpacity": "Míra krytí čáry",
-				"strokeWidth": "Tloušťka čáry",
 				"strokeStyles": {
 					"dash": "Čárkovaná",
 					"dashdot": "Čerchovaná",
@@ -117,6 +116,7 @@
 					"longdashdot": "Dlouhé čárky a tečky",
 					"solid": "Plná"
 				},
+				"strokeWidth": "Tloušťka čáry",
 				"style": "Styl",
 				"type": {
 					"line": "Čára",
@@ -1200,6 +1200,7 @@
 	"newPassword": "<em>New password</em>",
 	"newSearchFilter": "Nový vyhledávací filtr",
 	"next": "Následující",
+	"no": "<em>No</em>",
 	"no_bim_project_for_card": "Pro tento záznam neexistuje žádný BIM projekt",
 	"noAvailableData": "Žádná dostupná data",
 	"noCardsToUpdate": "<em>No cards to update</em>",
@@ -1428,6 +1429,7 @@
 	"write": "Zapsat",
 	"xpdlFile": "XPDL soubor",
 	"xpdlFileUploaded": "XPDL soubor byl nahrán",
+	"yes": "<em>Yes</em>",
 	"zip": "ZIP",
 	"zoom": "Měřítko"
 }

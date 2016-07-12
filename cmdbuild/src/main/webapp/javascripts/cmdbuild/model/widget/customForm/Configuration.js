@@ -1,4 +1,4 @@
-(function() {
+(function () {
 
 	Ext.require(['CMDBuild.core.constants.Proxy']);
 
@@ -22,8 +22,12 @@
 
 		/**
 		 * @param {Object} data
+		 *
+		 * @returns {Void}
+		 *
+		 * @override
 		 */
-		constructor: function(data) {
+		constructor: function (data) {
 			this.callParent(arguments);
 
 			// Apply form model attributes model
@@ -44,7 +48,7 @@
 		 *
 		 * @override
 		 */
-		set: function(fieldName, newValue) {
+		set: function (fieldName, newValue) {
 			if (!Ext.isEmpty(newValue)) {
 				switch (fieldName) {
 					case CMDBuild.core.constants.Proxy.CAPABILITIES: {
@@ -58,11 +62,11 @@
 						var attributesDataTypes = {};
 
 						// Build attributes dataTypes
-						Ext.Array.forEach(this.get(CMDBuild.core.constants.Proxy.MODEL), function(fieldModel, i, allfieldModels) {
+						Ext.Array.each(this.get(CMDBuild.core.constants.Proxy.MODEL), function (fieldModel, i, allfieldModels) {
 							attributesDataTypes[fieldModel.get(CMDBuild.core.constants.Proxy.NAME)] = fieldModel.get(CMDBuild.core.constants.Proxy.TYPE);
 						}, this);
 
-						Ext.Array.forEach(newValue, function(attributeObject, i, allAttributeObjects) {
+						Ext.Array.each(newValue, function (attributeObject, i, allAttributeObjects) {
 							attributesArray.push(Ext.create('CMDBuild.model.common.attributes.Generic', {
 								data: attributeObject,
 								dataTypes: attributesDataTypes
@@ -74,14 +78,13 @@
 
 					/**
 					 * Uses custom Attribute model to adapt to old FieldManager implementation
-					 * TODO: delete on full FieldManager implementation
 					 */
 					case CMDBuild.core.constants.Proxy.MODEL: {
 						newValue = Ext.isString(newValue) ? Ext.decode(newValue) : newValue;
 
 						var attributesArray = [];
 
-						Ext.Array.forEach(newValue, function(attributeObject, i, allAttributeObjects) {
+						Ext.Array.each(newValue, function (attributeObject, i, allAttributeObjects) {
 							attributesArray.push(Ext.create('CMDBuild.model.widget.customForm.Attribute', attributeObject));
 						}, this);
 

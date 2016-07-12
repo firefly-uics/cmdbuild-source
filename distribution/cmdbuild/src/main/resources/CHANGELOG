@@ -3,6 +3,8 @@ CMDBuild 2.4.2 (released YYYY/MM/DD)
 
 NEW FEATURES
 
+ * "Show language choice" configuration not readed at login page
+
 
 FIXES
 
@@ -13,6 +15,8 @@ FIXES
 * Classes geographical attributes tab no zoom levels validation
 
 * Selected tab reset on accordion selection change in administration modules
+
+ * UI not loading on Tomcat 8.0.36 (latest)
 
 
 

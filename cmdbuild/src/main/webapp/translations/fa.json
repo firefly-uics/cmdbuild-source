@@ -108,7 +108,6 @@
 				"strokeColor": "Stroke color",
 				"strokeDashstyle": "Stroke dashstyle",
 				"strokeOpacity": "Stroke opacity",
-				"strokeWidth": "Stroke width",
 				"strokeStyles": {
 					"dash": "Dash",
 					"dashdot": "Dashdot",
@@ -117,6 +116,7 @@
 					"longdashdot": "Longdashdot",
 					"solid": "Solid"
 				},
+				"strokeWidth": "Stroke width",
 				"style": "Stile",
 				"type": {
 					"line": "Line",
@@ -1199,6 +1199,7 @@
 	"newPassword": "رمز عبور جدید",
 	"newSearchFilter": "فیلتر جستجوی جدید",
 	"next": "بعدی",
+	"no": "<em>No</em>",
 	"no_bim_project_for_card": "There is no BIM project for this card",
 	"noAvailableData": "<em>No available data</em>",
 	"noCardsToUpdate": "هیچی کارتی آپدیت نشد",
@@ -1428,6 +1429,7 @@
 	"write": "نوشتن",
 	"xpdlFile": "XPDL file",
 	"xpdlFileUploaded": "<em>XPDL file uploaded</em>",
+	"yes": "<em>Yes</em>",
 	"zip": "ZIP",
 	"zoom": "زوم"
 }

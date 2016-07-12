@@ -6,7 +6,7 @@
 <%@ page import="org.cmdbuild.services.SessionVars" %>
 <%@ page import="org.cmdbuild.spring.SpringIntegrationUtils" %>
 <%@ page import="org.cmdbuild.filters.AuthFilter" %>
-<%@ taglib uri="/WEB-INF/tags/translations.tld" prefix="tr" %>
+<%@ taglib uri="/WEB-INF/tags/translations/implicit.tld" prefix="tr" %>
 
 <%
 	final String lang = SpringIntegrationUtils.applicationContext().getBean(SessionVars.class).getLanguage();

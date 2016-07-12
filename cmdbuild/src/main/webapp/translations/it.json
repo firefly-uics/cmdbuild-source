@@ -108,7 +108,6 @@
 				"strokeColor": "Colore linea",
 				"strokeDashstyle": "Stile linea",
 				"strokeOpacity": "Opacità linea",
-				"strokeWidth": "Spessore linea",
 				"strokeStyles": {
 					"dash": "Tratti",
 					"dashdot": "Punti e tratti",
@@ -117,6 +116,7 @@
 					"longdashdot": "Tratti lunghi e punti",
 					"solid": "Continua"
 				},
+				"strokeWidth": "Spessore linea",
 				"style": "Stile",
 				"type": {
 					"line": "Linea",
@@ -1200,6 +1200,7 @@
 	"newPassword": "Nuova password",
 	"newSearchFilter": "Nuovo filtro ricerca",
 	"next": "Successivo",
+	"no": "No",
 	"no_bim_project_for_card": "Non ho trovato un progetto BIM per questa card",
 	"noAvailableData": "Dati non disponibili",
 	"noCardsToUpdate": "Non ci sono schede da aggiornare",
@@ -1428,6 +1429,7 @@
 	"write": "Scrittura",
 	"xpdlFile": "File XPDL",
 	"xpdlFileUploaded": "File XPDL caricato",
+	"yes": "Si",
 	"zip": "ZIP",
 	"zoom": "Zoom"
 }

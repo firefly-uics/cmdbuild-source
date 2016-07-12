@@ -20,25 +20,23 @@
 		headerWidth: 60,
 
 		/**
-		 * @param {Boolean} withEditor
+		 * @param {Object} parameters
 		 *
 		 * @returns {Ext.grid.column.Date or Object}
 		 */
-		buildColumn: function(withEditor) {
-			withEditor = Ext.isBoolean(withEditor) ? withEditor : false;
-
-			return this.cmfg('attributeModelGet', CMDBuild.core.constants.Proxy.HIDDEN) ? {} : Ext.create('Ext.grid.column.Date', {
-				dataIndex: this.cmfg('attributeModelGet', CMDBuild.core.constants.Proxy.NAME),
-				disabled: !this.cmfg('attributeModelGet', CMDBuild.core.constants.Proxy.WRITABLE),
-				editor: withEditor ? this.buildEditor() : null,
+		buildColumn: function (parameters) {
+			return this.cmfg('fieldManagerAttributeModelGet', CMDBuild.core.constants.Proxy.HIDDEN) ? {} : Ext.create('Ext.grid.column.Date', {
+				dataIndex: this.cmfg('fieldManagerAttributeModelGet', CMDBuild.core.constants.Proxy.NAME),
+				disabled: !this.cmfg('fieldManagerAttributeModelGet', CMDBuild.core.constants.Proxy.WRITABLE),
+				editor: parameters.withEditor ? this.buildEditor() : null,
 				flex: 1,
 				format: CMDBuild.core.configurations.DataFormat.getTime(),
-				hidden: !this.cmfg('attributeModelGet', CMDBuild.core.constants.Proxy.SHOW_COLUMN),
+				hidden: !this.cmfg('fieldManagerAttributeModelGet', CMDBuild.core.constants.Proxy.SHOW_COLUMN),
 				hideTrigger: true, // Hides date picker
 				renderer: this.rendererColumn,
 				scope: this,
 				sortable: true,
-				text: this.applyMandatoryLabelFlag(this.cmfg('attributeModelGet', CMDBuild.core.constants.Proxy.DESCRIPTION)),
+				text: this.applyMandatoryLabelFlag(this.cmfg('fieldManagerAttributeModelGet', CMDBuild.core.constants.Proxy.DESCRIPTION)),
 				width: this.headerWidth
 			});
 		},
@@ -46,14 +44,14 @@
 		/**
 		 * @returns {Object}
 		 */
-		buildEditor: function() {
-			return this.cmfg('attributeModelGet', CMDBuild.core.constants.Proxy.HIDDEN) ? {} : {
+		buildEditor: function () {
+			return this.cmfg('fieldManagerAttributeModelGet', CMDBuild.core.constants.Proxy.HIDDEN) ? {} : {
 				xtype: 'datefield',
-				allowBlank: !this.cmfg('attributeModelGet', CMDBuild.core.constants.Proxy.MANDATORY),
-				disabled: !this.cmfg('attributeModelGet', CMDBuild.core.constants.Proxy.WRITABLE),
+				allowBlank: !this.cmfg('fieldManagerAttributeModelGet', CMDBuild.core.constants.Proxy.MANDATORY),
+				disabled: !this.cmfg('fieldManagerAttributeModelGet', CMDBuild.core.constants.Proxy.WRITABLE),
 				format: CMDBuild.core.configurations.DataFormat.getTime(),
-				name: this.cmfg('attributeModelGet', CMDBuild.core.constants.Proxy.NAME),
-				readOnly: !this.cmfg('attributeModelGet', CMDBuild.core.constants.Proxy.WRITABLE),
+				name: this.cmfg('fieldManagerAttributeModelGet', CMDBuild.core.constants.Proxy.NAME),
+				readOnly: !this.cmfg('fieldManagerAttributeModelGet', CMDBuild.core.constants.Proxy.WRITABLE),
 				vtype: 'time'
 			};
 		},
@@ -61,22 +59,22 @@
 		/**
 		 * @returns {Ext.form.field.Date}
 		 */
-		buildField: function() {
+		buildField: function () {
 			return Ext.create('Ext.form.field.Date', {
-				allowBlank: !this.cmfg('attributeModelGet', CMDBuild.core.constants.Proxy.MANDATORY),
-				disabled: !this.cmfg('attributeModelGet', CMDBuild.core.constants.Proxy.WRITABLE),
+				allowBlank: !this.cmfg('fieldManagerAttributeModelGet', CMDBuild.core.constants.Proxy.MANDATORY),
+				disabled: !this.cmfg('fieldManagerAttributeModelGet', CMDBuild.core.constants.Proxy.WRITABLE),
 				fieldLabel: this.applyMandatoryLabelFlag(
-					this.cmfg('attributeModelGet', CMDBuild.core.constants.Proxy.DESCRIPTION)
-					|| this.cmfg('attributeModelGet', CMDBuild.core.constants.Proxy.NAME)
+					this.cmfg('fieldManagerAttributeModelGet', CMDBuild.core.constants.Proxy.DESCRIPTION)
+					|| this.cmfg('fieldManagerAttributeModelGet', CMDBuild.core.constants.Proxy.NAME)
 				),
 				format: CMDBuild.core.configurations.DataFormat.getTime(),
-				hidden: this.cmfg('attributeModelGet', CMDBuild.core.constants.Proxy.HIDDEN),
+				hidden: this.cmfg('fieldManagerAttributeModelGet', CMDBuild.core.constants.Proxy.HIDDEN),
 				hideTrigger: true, // Hides date picker
 				labelAlign: 'right',
 				labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
 				maxWidth: CMDBuild.core.constants.FieldWidths.STANDARD_SMALL,
-				name: this.cmfg('attributeModelGet', CMDBuild.core.constants.Proxy.NAME),
-				readOnly: !this.cmfg('attributeModelGet', CMDBuild.core.constants.Proxy.WRITABLE),
+				name: this.cmfg('fieldManagerAttributeModelGet', CMDBuild.core.constants.Proxy.NAME),
+				readOnly: !this.cmfg('fieldManagerAttributeModelGet', CMDBuild.core.constants.Proxy.WRITABLE),
 				vtype: 'time'
 			});
 		},
@@ -84,8 +82,8 @@
 		/**
 		 * @returns {Object}
 		 */
-		buildStoreField: function() {
-			return { name: this.cmfg('attributeModelGet', CMDBuild.core.constants.Proxy.NAME), type: 'date', dateFormat: CMDBuild.core.configurations.DataFormat.getTime() };
+		buildStoreField: function () {
+			return { name: this.cmfg('fieldManagerAttributeModelGet', CMDBuild.core.constants.Proxy.NAME), type: 'date', dateFormat: CMDBuild.core.configurations.DataFormat.getTime() };
 		},
 
 		/**
@@ -101,7 +99,7 @@
 		 *
 		 * @override
 		 */
-		rendererColumn: function(value, metadata, record, rowIndex, colIndex, store, view) {
+		rendererColumn: function (value, metadata, record, rowIndex, colIndex, store, view) {
 			this.callParent(arguments);
 
 			if (Ext.isDate(value))

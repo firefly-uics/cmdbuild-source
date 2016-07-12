@@ -72,46 +72,68 @@
 
 			if (!this.cmfg('widgetCustomFormConfigurationIsEmpty',  CMDBuild.core.constants.Proxy.MODEL)) {
 				var fieldManager = Ext.create('CMDBuild.core.fieldManager.FieldManager', { parentDelegate: this });
+				var isWidgetReadOnly = this.cmfg('widgetCustomFormConfigurationGet', [CMDBuild.core.constants.Proxy.CAPABILITIES, CMDBuild.core.constants.Proxy.READ_ONLY]);
 
 				Ext.Array.forEach(this.cmfg('widgetCustomFormConfigurationGet', CMDBuild.core.constants.Proxy.MODEL), function (attribute, i, allAttributes) {
 					if (fieldManager.isAttributeManaged(attribute.get(CMDBuild.core.constants.Proxy.TYPE))) {
 						fieldManager.attributeModelSet(Ext.create('CMDBuild.model.common.attributes.Attribute', attribute.getData()));
-						fieldManager.push(itemsArray, fieldManager.buildField());
+						fieldManager.push(itemsArray, fieldManager.buildField({ readOnly: isWidgetReadOnly }));
 					} else { // @deprecated - Old field manager
 						var attribute = attribute.getAdaptedData();
 						var item = undefined;
 
-						if (attribute.type == 'REFERENCE') { // TODO: hack to force a templateResolver build for editor that haven't a form associated like other fields types
-							var xaVars = CMDBuild.Utils.Metadata.extractMetaByNS(attribute.meta, 'system.template.');
-							xaVars['_SystemFieldFilter'] = attribute.filter;
-
-							var templateResolver = new CMDBuild.Management.TemplateResolver({
-								clientForm: this.cmfg('widgetCustomFormControllerPropertyGet', 'clientForm'),
-								xaVars: xaVars,
-								serverVars: this.cmfg('widgetCustomFormGetTemplateResolverServerVars')
-							});
-
-							// Required label fix
-							if (attribute[CMDBuild.core.constants.Proxy.MANDATORY] || attribute['isnotnull']) {
-								attribute[CMDBuild.core.constants.Proxy.DESCRIPTION] = (!Ext.isEmpty(attribute['isnotnull']) && attribute['isnotnull'] ? '* ' : '')
-									+ attribute.description || attribute.name;
-							}
-
-							item = CMDBuild.Management.ReferenceField.buildEditor(attribute, templateResolver);
-
-							// Force execution of template resolver
-							if (!Ext.isEmpty(item) && Ext.isFunction(item.resolveTemplate))
-								item.resolveTemplate();
-
-							// Apply event for store load barrier
-							if (!Ext.isEmpty(item) && Ext.isFunction(item.getStore) && item.getStore().count() == 0)
-								item.getStore().on('load', requestBarrier.getCallback(barrierId), this);
+						if (
+							this.cmfg('widgetCustomFormConfigurationGet', [
+								CMDBuild.core.constants.Proxy.CAPABILITIES,
+								CMDBuild.core.constants.Proxy.READ_ONLY
+							])
+							|| attribute[CMDBuild.core.constants.Proxy.FIELD_MODE] == 'read'
+						) {
+							item = CMDBuild.Management.FieldManager.getFieldForAttr(
+								attribute,
+ 								this.cmfg('widgetCustomFormConfigurationGet', [
+									CMDBuild.core.constants.Proxy.CAPABILITIES,
+									CMDBuild.core.constants.Proxy.READ_ONLY
+								]),
+								false
+							);
 						} else {
-							item = CMDBuild.Management.FieldManager.getFieldForAttr(attribute, false, false);
-						}
+							if (attribute.type == 'REFERENCE') { // TODO: hack to force a templateResolver build for editor that haven't a form associated like other fields types
+								var xaVars = CMDBuild.Utils.Metadata.extractMetaByNS(attribute.meta, 'system.template.');
+								xaVars['_SystemFieldFilter'] = attribute.filter;
 
-						if (attribute[CMDBuild.core.constants.Proxy.FIELD_MODE] == 'read')
-							item.setDisabled(true);
+								var templateResolver = new CMDBuild.Management.TemplateResolver({
+									clientForm: this.cmfg('widgetCustomFormControllerPropertyGet', 'clientForm'),
+									xaVars: xaVars,
+									serverVars: this.cmfg('widgetCustomFormGetTemplateResolverServerVars')
+								});
+
+								// Required label fix
+								if (attribute[CMDBuild.core.constants.Proxy.MANDATORY] || attribute['isnotnull']) {
+									attribute[CMDBuild.core.constants.Proxy.DESCRIPTION] = (!Ext.isEmpty(attribute['isnotnull']) && attribute['isnotnull'] ? '* ' : '')
+										+ attribute.description || attribute.name;
+								}
+
+								item = CMDBuild.Management.ReferenceField.buildEditor(attribute, templateResolver);
+
+								// Force execution of template resolver
+								if (!Ext.isEmpty(item) && Ext.isFunction(item.resolveTemplate))
+									item.resolveTemplate();
+
+								// Apply event for store load barrier
+								if (!Ext.isEmpty(item) && Ext.isFunction(item.getStore) && item.getStore().count() == 0)
+									item.getStore().on('load', requestBarrier.getCallback(barrierId), this);
+							} else {
+								item = CMDBuild.Management.FieldManager.getFieldForAttr(
+									attribute,
+	 								this.cmfg('widgetCustomFormConfigurationGet', [
+										CMDBuild.core.constants.Proxy.CAPABILITIES,
+										CMDBuild.core.constants.Proxy.READ_ONLY
+									]),
+									false
+								);
+							}
+						}
 
 						itemsArray.push(item);
 					}
@@ -156,10 +178,6 @@
 				CMDBuild.core.constants.Proxy.CAPABILITIES,
 				CMDBuild.core.constants.Proxy.READ_ONLY
 			]);
-
-			// Setup fields state
-			if (isWidgetReadOnly)
-				this.view.setDisabledModify(true, true, true);
 
 			// Setup toolbar buttons
 			this.view.exportButton.setDisabled(
