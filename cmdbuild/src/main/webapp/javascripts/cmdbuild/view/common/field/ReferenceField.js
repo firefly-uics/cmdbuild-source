@@ -352,8 +352,6 @@
 						}
 					});
 				} else {
-					delete this.getStore().baseParams.filter; // Remove filter parameter from field store
-
 					var emptyDataSet = {};
 					emptyDataSet[this.getStore().root] = [];
 					emptyDataSet[this.getStore().totalProperty] = 0;
