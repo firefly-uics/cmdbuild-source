@@ -10,7 +10,7 @@
 		name="sharkdb"
 		type="javax.sql.DataSource"
 		driverClassName="org.postgresql.Driver"
-		url="jdbc:postgresql://localhost/cmdbuild"
+		url="jdbc:postgresql://localhost/${cmdbuild}"
 		username="shark"
 		password="shark"
 		maxIdle="10"
