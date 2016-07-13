@@ -41,6 +41,11 @@
 		],
 
 		/**
+		 * @property {CMDBuild.controller.management.common.tabs.email.EmailWindow}
+		 */
+		controllerEmailWindow: undefined,
+
+		/**
 		 * @property {CMDBuild.view.management.common.tabs.email.GridPanel}
 		 */
 		view: undefined,
@@ -55,6 +60,9 @@
 			this.callParent(arguments);
 
 			this.view = Ext.create('CMDBuild.view.management.common.tabs.email.GridPanel', { delegate: this });
+
+			// Build sub-controllers
+			this.controllerEmailWindow = Ext.create('CMDBuild.controller.management.common.tabs.email.EmailWindow', { parentDelegate: this });
 		},
 
 		/**
@@ -87,10 +95,11 @@
 
 					record.set(CMDBuild.core.constants.Proxy.ID, decodedResponse);
 
-					Ext.create('CMDBuild.controller.management.common.tabs.email.EmailWindow', {
-						parentDelegate: this,
-						record: record
-					});
+					this.controllerEmailWindow.cmfg('tabEmailEmailWindowConfigureAndShow', { record: record });
+//					Ext.create('CMDBuild.controller.management.common.tabs.email.EmailWindow', {
+//						parentDelegate: this,
+//						record: record
+//					});
 
 					this.cmfg('tabEmailGridStoreLoad');
 				}
@@ -116,11 +125,16 @@
 		 * @param {Mixed} record
 		 */
 		onTabEmailGridEditEmailButtonClick: function (record) {
-			Ext.create('CMDBuild.controller.management.common.tabs.email.EmailWindow', {
-				parentDelegate: this,
+			this.controllerEmailWindow.cmfg('tabEmailEmailWindowConfigureAndShow', {
 				record: record,
 				windowMode: 'edit'
 			});
+
+//			Ext.create('CMDBuild.controller.management.common.tabs.email.EmailWindow', {
+//				parentDelegate: this,
+//				record: record,
+//				windowMode: 'edit'
+//			});
 		},
 
 		/**
@@ -181,11 +195,15 @@
 
 						record.set(CMDBuild.core.constants.Proxy.ID, decodedResponse);
 
-						Ext.create('CMDBuild.controller.management.common.tabs.email.EmailWindow', {
-							parentDelegate: this,
+						this.controllerEmailWindow.cmfg('tabEmailEmailWindowConfigureAndShow', {
 							record: record,
 							windowMode: 'reply'
 						});
+//						Ext.create('CMDBuild.controller.management.common.tabs.email.EmailWindow', {
+//							parentDelegate: this,
+//							record: record,
+//							windowMode: 'reply'
+//						});
 
 						this.cmfg('tabEmailGridStoreLoad');
 					}
@@ -206,11 +224,15 @@
 		 * @param {Mixed} record
 		 */
 		onTabEmailGridViewEmailButtonClick: function (record) {
-			Ext.create('CMDBuild.controller.management.common.tabs.email.EmailWindow', {
-				parentDelegate: this,
+			this.controllerEmailWindow.cmfg('tabEmailEmailWindowConfigureAndShow', {
 				record: record,
 				windowMode: 'view'
 			});
+//			Ext.create('CMDBuild.controller.management.common.tabs.email.EmailWindow', {
+//				parentDelegate: this,
+//				record: record,
+//				windowMode: 'view'
+//			});
 		},
 
 		/**

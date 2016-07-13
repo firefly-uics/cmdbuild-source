@@ -10,6 +10,8 @@ FIXES
 
  * UI not loading on Tomcat 8.0.36 (latest)
 
+ * Double email delete server call on create/edit window close
+
 
 
 
