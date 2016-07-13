@@ -12,6 +12,8 @@ FIXES
 
  * Double email delete server call on create/edit window close
 
+ * CreateModifyCard widget with null Reference cannot be configured
+
 
 
 
