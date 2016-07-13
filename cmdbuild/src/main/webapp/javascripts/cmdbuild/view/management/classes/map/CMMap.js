@@ -1,181 +1,75 @@
-(function() {
-	/**
-	 * @class CMDBuild.Management.CMDBuildMap
-	 */
-	CMDBuild.Management.CMMap = OpenLayers.Class(OpenLayers.Map, {
+(function () {
+	Ext.define('CMDBuild.Management.CMMap', {
+		extend: 'CMDBuild.view.management.classes.map.geoextension.Map',
+		requires: ['CMDBuild.view.management.classes.map.geoextension.Map'],
+		
+		interactionDocument : undefined,
 
-		getEditableLayers: function() {
-			var layers = this.layers;
-			var editLayers = [];
-			for (var i=0, l=layers.length; i<l; ++i) {
+		/**
+		 * @returns {Void}
+		 *
+		 * @override
+		 */
+		configure : function() {
+			this.interactionDocument.setConfigurationMap(this);
+			this.interactionDocument.observe(this);
+		},
+
+		refresh : function() {
+			var currentClassId = (Ext.isEmpty(_CMCardModuleState.entryType)) ?
+					undefined : _CMCardModuleState.entryType.getId();
+			if (! currentClassId) {
+				return;
+			}
+			var currentClassName = (Ext.isEmpty(_CMCardModuleState.entryType)) ?
+					undefined : _CMCardModuleState.entryType.getName();
+			var currentCardId = (Ext.isEmpty(_CMCardModuleState.card)) ?
+					undefined : _CMCardModuleState.card.raw.Id;//getId();
+			var me = this;
+			this.interactionDocument.getAllLayers(function(layers) {
+				me.refreshAllLayers(layers, currentClassId, currentClassName, currentCardId);
+			}, this);
+		},
+		refreshAllLayers : function(layers, currentClassId, currentClassName, currentCardId) {
+			if (! currentCardId) {
+				return;
+			}
+			var visibleLayers = [];
+			for (var i = 0; i < layers.length; i++) {
 				var layer = layers[i];
-				if (layer.editLayer) {
-					editLayers.push(layer.editLayer);
+				var visible = this.interactionDocument.isVisible(layer, currentClassName, currentCardId);
+				var hide = this.interactionDocument.isHide(layer);
+				if (! hide && visible) {
+					var geoAttribute = {
+							description : layer.description,	
+							masterTableName : "_Geoserver",	
+							name : layer.name,
+							type : layer.type
+					};
+					var geoLayer = this.getLayerByName(layer.name);
+					if (! geoLayer) {
+						geoLayer = this.makeLayer(currentClassId, geoAttribute, true);
+					}
+					var adapter = geoLayer.get("adapter");
+					if (adapter && adapter.refresh) {
+						adapter.refresh(currentCardId);
+					}
+					visibleLayers.push(layer);
 				}
-			}
-			return editLayers;
+			}	
+			this.removeNotVisibleLayers(layers, visibleLayers)
 		},
-
-		activateStrategies: function(acvitate) {
-			var layers = this.layers;
-			for (var i=0, l=layers.length; i<l; ++i) {
-				var layer = layers[i];
-
-				if (typeof layer.activateStrategies == "function") {
-					layer.activateStrategies(acvitate);
-				}
-			}
-		},
-
-		refreshStrategies: function() {
-			var layers = this.layers;
-			for (var i=0, l=layers.length; i<l; ++i) {
-				var layer = layers[i];
-				if (typeof layer.refreshStrategies == "function") {
-					layer.refreshStrategies();
-				}
-			}
-		},
-
-		centerOnGeometry: function(geometry) {
-			// The geometry function getCentroid()
-			// give us some problems...
-			// So, take the first point of the geometry (a point return an array with
-			// only itself) to center the map.
-			try {
-				var geom = CMDBuild.GeoUtils.readGeoJSON(geometry.geometry);
-				var aPoint = a = geom.getVertices()[0];
-				var center = new OpenLayers.LonLat(aPoint.x, aPoint.y);
-				this.setCenter(center, this.getZoom());
-//				this.activateStrategies(true);
-			} catch (Error) {
-				_debug("Map: centerOnGeometry - Error");
-				/*
-				 * if the server doesn't return a feature
-				 * the readGeoJSON methods throw an error.Rightly!!
-				 */
-			}
-		},
-
-		getFeatureByMasterCard: function(id) {
-			var layers = this.layers;
-			for (var i=0, l=this.layers.length; i<l; ++i) {
-				var layer = layers[i];
-				if (layer) {
-					var feature = layer.getFeatureByMasterCard(id);
-					if (feature) {
-						return feature;
+		removeNotVisibleLayers: function(all, visibles) {
+			for (var i = 0; i < all.length; i++) {
+				if (! visibles.find(function(l) {
+					return l.name === all[i].name;
+				})) {
+					if (this.getLayerByName(all[i].name)) {
+						this.removeLayerByName(all[i].name);
 					}
 				}
-			}
-			return null;
-		},
-
-		getFeaturesInLonLat: function(lonlat) {
-			var layers = this.layers;
-			var features = [];
-			for (var i=0, l=this.layers.length; i<l; ++i) {
-				var layer = layers[i];
-				if (layer 
-						&& typeof layer.getFeaturesInLonLat == "function") {
-
-					features = features.concat(layer.getFeaturesInLonLat(lonlat));
-				}
-			}
-
-			return features;
-		},
-
-		clearSelection: function() {
-			var layers = this.layers;
-			for (var i=0, l=this.layers.length; i<l; ++i) {
-				var layer = layers[i];
-				if (layer 
-						&& typeof clearSelection == "function") {
-
-					layer.clearSelection();
-				}
-			}
-		},
-
-		getLayerByName: function(name) {
-			var l = this.getLayersByName(name);
-			if (l.length > 0) {
-				return l[0];
-			} else {
-				return null;
-			}
-		},
-
-		getLayersByTargetClassName: function(targetClassName) {
-			var layers = [];
-			for (var i=0, layer=null; i<this.layers.length; ++i) {
-				layer = this.layers[i];
-
-				if (layer.geoAttribute 
-						// TODO or an ancestor?
-						&& layer.geoAttribute.masterTableName == targetClassName) {
-
-					layers.push(layer);
-				}
-			}
-
-			return layers;
-		},
-
-		getGeoServerLayerByName: function(layerName) {
-			for (var i=0, layer=null; i<this.layers.length; ++i) {
-				layer = this.layers[i];
-				if (!layer.CM_geoserverLayer) {
-					continue;
-				}
-
-				if (layer.geoAttribute.name == layerName) {
-					return layer;
-				}
-			}
-			return null;
-		},
-
-		getEditedGeometries: function() {
-			var mapOfFeatures = {};
-			var layers = this.layers;
-			for (var i=0, l=layers.length; i<l; ++i) {
-				var layer = layers[i];
-				if (layer.editLayer) {
-					var geo = layer.getEditedGeometry();
-					if (geo != null) {
-						mapOfFeatures[layer.geoAttribute.name] = geo.toString();
-					} else {
-						mapOfFeatures[layer.geoAttribute.name] = "";
-					}
-				}
-			}
-			return mapOfFeatures;
-		},
-
-		getCmdbLayers: function() {
-			var out = [];
-			for (var i=0, l=this.layers.length; i<l; ++i) {
-				var layer = this.layers[i];
-				if (layer 
-						&& layer.geoAttribute
-						&& !layer.CM_EditLayer
-						&& !layer.CM_geoserverLayer) {
-
-					out.push(layer);
-				}
-			}
-
-			return out;
-		},
-
-		// called by the layers when a feature is added
-
-		featureWasAdded: function(feature) {
-			if (this.delegate) {
-				this.delegate.featureWasAdded(feature);
 			}
 		}
 	});
 })();
+						

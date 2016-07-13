@@ -141,7 +141,6 @@
 			var params = {};
 			params[CMDBuild.core.constants.Proxy.CARD_ID] = this.cloneCard ? -1 : this.card.get("Id");
 			params[CMDBuild.core.constants.Proxy.CLASS_NAME] = _CMCache.getEntryTypeNameById(this.card.get("IdClass"));
-
 			addDataFromCardDataPoviders(me, params);
 
 			if (thereAraNotWrongAttributes(me)) {
@@ -153,6 +152,12 @@
 		 * @param {Object} params
 		 */
 		doFormSubmit: function (params) {
+			params.geoAttributes = Ext.encode({
+					"origin" : "POINT(1329237.5330369 5684210.9437502)",
+					"poli" : "POLYGON((1328358.5072117 5684822.4399764,1331072.0217155 5685376.6084314,1331664.4086846 5683255.4808967,1329333.0793222 5682414.6735857,1326122.7241347 5683580.3382669,1326027.1778494 5684612.2381486,1328358.5072117 5684822.4399764))",
+					"line" : "LINESTRING(1326275.5981913 5682261.7995292,1331912.8290265 5681879.6143878,1333269.5862784 5684535.8011203)"
+				});
+
 			CMDBuild.proxy.Card.update({
 				params: Ext.Object.merge(params, this.view.getForm().getValues()),
 				loadMask: false,

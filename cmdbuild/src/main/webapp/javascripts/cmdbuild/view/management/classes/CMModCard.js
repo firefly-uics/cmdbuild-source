@@ -305,7 +305,8 @@
 			this.theMap = Ext.create('CMDBuild.view.management.classes.map.CMMapPanel', {
 				tbar: [this.mapAddCardButton, '->', this.showGridButton],
 				frame: false,
-				border: false
+				border: false,
+				mainGrid : this.cardGrid
 			});
 
 			this.centralPanelItems.push(this.theMap);

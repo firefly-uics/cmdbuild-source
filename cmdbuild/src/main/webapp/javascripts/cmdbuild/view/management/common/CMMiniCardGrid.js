@@ -68,7 +68,7 @@
 				icon : 'images/icons/bullet_go.png',
 				handler : function(grid, rowIndex, colIndex, actionItem,
 						event, record, row) {
-					askToOpenCardForRecord(me, record);
+					(me, record);
 				},
 				isDisabled : function(view, rowIdx, colIdx, item, record) {
 					return false;

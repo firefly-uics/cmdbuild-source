@@ -67,6 +67,13 @@
 				if (Ext.isArray(currentSelection) && currentSelection.length>0) {
 					currentSelection = currentSelection[0];
 				}
+				else if (currentSelection.length === 0) {
+					me.openCard({
+						Id: card.get("Id"),
+						IdClass: card.get("IdClass")
+					});
+					return;
+				}
 
 				if (
 					!Ext.isEmpty(currentSelection)

@@ -40,6 +40,9 @@
 	Ext.define("CMDBuild.view.management.classes.map.CMMapPanel", {
 		alternateClassName: 'CMDBuild.Management.MapPanel', // Legacy class name
 		extend: "Ext.panel.Panel",
+		requires: ['CMDBuild.controller.management.classes.map.CM16CardGrid',
+		           'CMDBuild.controller.management.classes.map.CM16LayerTree',
+		           'CMDBuild.view.management.classes.map.geoextension.CMDBuildGeoExt'],
 
 		mixins: {
 			delegable: "CMDBuild.core.CMDelegable"
@@ -48,15 +51,13 @@
 		lon: undefined,
 		lat: undefined,
 		initialZoomLevel: undefined,
+		
+		layout: 'border',
 
 		constructor: function() {
 			this.mixins.delegable.constructor.call(this, "CMDBuild.view.management.map.CMMapPanelDelegate");
 
 			this.callParent(arguments);
-
-			this.editingWindow = new CMDBuild.view.management.map.CMMapEditingToolsWindow({
-				owner: this
-			});
 
 			this.hideMode = "offsets";
 			this.cmAlreadyDisplayed = false;
@@ -65,22 +66,14 @@
 
 		initComponent: function() {
 			var me = this;
-
-			this.actualMapPanel = new Ext.panel.Panel({
-				region: "center",
-				frame: false,
-				border: false,
-				cls: "cmdb-border-right",
-				listeners: {
-					afterrender: function() {
-						initMap(me);
-					},
-					resize: function() {
-						me.getMap().updateSize();
-					}
-				}
+			this.geoExtension = Ext.create('CMDBuild.view.management.classes.map.geoextension.CMDBuildGeoExt');
+			this.interactionDocument = Ext.create('CMDBuild.view.management.classes.map.geoextension.InteractionDocument');
+			this.mapPanel = Ext.create('CMDBuild.Management.CMMap', {
+				geoExtension: this.geoExtension,
+				interactionDocument : this.interactionDocument
 			});
-
+			_CMMap = this.mapPanel;
+			
 			var tabs = [];
 
 			if (CMDBuild.configuration.gis.get('cardBrowserByDomainConfiguration')['root']) { // TODO: use proxy constants
@@ -96,23 +89,30 @@
 				tabs.push(this.cardBrowser);
 			}
 
-			this.layerSwitcher = new CMDBuild.view.management.map.CMMapLayerSwitcher({
-				title: CMDBuild.Translation.administration.modClass.layers,
-				frame: false,
-				border: false
+			this.editingWindow = new CMDBuild.view.management.map.CMMapEditingToolsWindow({
+				owner: this,
+				interactionDocument : this.interactionDocument
 			});
-			tabs.push(this.layerSwitcher);
 
-			this.miniCardGrid = new CMDBuild.view.management.CMMiniCardGrid({
-				title: CMDBuild.Translation.management.modcard.title,
-				frame: false,
-				border: false
+			this.layerGridController = new CMDBuild.controller.management.classes.map.CM16LayerTree({
+				title: CMDBuild.Translation.administration.modClass.layers,
+				interactionDocument : this.interactionDocument
 			});
-			tabs.push(this.miniCardGrid);
+			this.layerGridController.cmfg('onCardGridShow');
+			tabs.push(this.layerGridController.getView());
+
+			this.cardGridController = new CMDBuild.controller.management.classes.map.CM16CardGrid({
+				title: CMDBuild.Translation.management.modcard.title,
+				interactionDocument : this.interactionDocument,
+				parentDelegate : this.delegate,
+				mainGrid : this.mainGrid
+			});
+			this.cardGridController.cmfg('onCardGridShow');
+			tabs.push(this.cardGridController.getView());
 
 			this.layout = "border";
 			this.items = [
-				this.actualMapPanel,
+				this.mapPanel,
 				{
 					xtype: "tabpanel",
 					region: "east",
@@ -134,16 +134,14 @@
 			this.callParent(arguments);
 		},
 
+		updateSize : function() {
+		},
+		getMap : function() {
+			return this.mapPanel;
+		},
 		setCmVisible: function(visible) {
 			this.cmVisible = visible;
 			this.callDelegates("onMapPanelVisibilityChanged", [this, visible]);
-
-			if (!this.cmAlreadyDisplayed) {
-				var m = this.getMap();
-				m.initBaseLayers();
-				m.setCenter(m.center, m.zoom);
-				this.cmAlreadyDisplayed = true;
-			}
 		},
 
 		editMode: function() {
@@ -158,6 +156,9 @@
 			}
 		},
 
+		getGeoServerLayerByName : function() {
+			this.mapPanel.getGeoServerLayerByName(name);
+		},
 		updateMap: function(entryType) {
 			this.editingWindow.removeAllLayerBinding();
 		},
@@ -166,72 +167,16 @@
 			this.editingWindow.addLayer(layer);
 		},
 
-		getLayerSwitcherPanel: function() {
-			return this.layerSwitcher;
-		},
-
 		getCardBrowserPanel: function() {
 			return this.cardBrowser;
 		},
 
 		getMiniCardGrid: function() {
 			return this.miniCardGrid;
+		},
+		getCardGridController: function() {
+			return this.cardGridController;
 		}
 	});
-
-	function initMap(me) {
-		// I need the id of the internal div of the
-		// Ext generated panel that hosts the map
-		// Every F_____G version this structure change
-		// and I have found no way to retrieve this...
-		// So, this time is the only div child of the only span child
-		// of the target panel
-		var mapTargetDivId = "";
-		var innerSpan = me.actualMapPanel.body.child("span");
-		if (innerSpan) {
-			var innerDiv = innerSpan.child("div");
-			if (innerDiv) {
-				mapTargetDivId = innerDiv.id;
-			}
-		}
-
-		var map = CMDBuild.Management.MapBuilder.buildMap(mapTargetDivId);
-
-		_CMMap = map;
-		map.events.on({
-			addlayer: function(params) {
-				me.callDelegates("onLayerAdded", [me, params]);
-			},
-			removelayer: function(params) {
-				me.callDelegates("onLayerRemoved", [me, params]);
-			},
-			changelayer: function(params) {
-				me.callDelegates("onLayerChanged", [me, params]);
-			},
-			scope: me
-		});
-
-		setMapCenter(me, map);
-
-		/* expose the map ******/
-
-		me.getMap = function() {
-			return map;
-		};
-
-		me.updateSize = function() {
-			map.updateSize();
-		};
-	}
-
-	function setMapCenter(me, map) {
-		var lon = me.lon || CMDBuild.configuration.gis.get('centerLongitude') || 0; // TODO: use proxy constants
-		var lat = me.lat || CMDBuild.configuration.gis.get('centerLatitude') || 0; // TODO: use proxy constants
-		var center = new OpenLayers.LonLat(lon,lat);
-		var projectedCenter = center.transform(new OpenLayers.Projection("EPSG:4326"),map.getProjectionObject());
-		var initialZoomLevel = me.initialZoomLevel || CMDBuild.configuration.gis.get('zoomInitialLevel') || 0; // TODO: use proxy constants
-
-		map.setCenter(projectedCenter, initialZoomLevel);
-	}
 
 })();

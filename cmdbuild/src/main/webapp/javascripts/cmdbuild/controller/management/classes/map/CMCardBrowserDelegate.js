@@ -72,10 +72,10 @@
 		} else {
 			setGeoserverLayerVisibility(master, node, visibility);
 		}
-
+//
 		if (node.cmGeoServerNode) {
-			node.cmGeoServerNode.setChecked(visibility); // to sync the UI
-			setGeoserverLayerVisibility(master, node.cmGeoServerNode, visibility);
+//			node.cmGeoServerNode.setChecked(visibility); // to sync the UI
+//			setGeoserverLayerVisibility(master, node.cmGeoServerNode, visibility);
 		}
 	}
 

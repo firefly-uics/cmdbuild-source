@@ -220,7 +220,7 @@
 				return;
 			}
 
-			layer.setVisibility(geoAttribute.isUserVisible());
+			layer.setVisible(geoAttribute.isUserVisible());
 		};
 
 		/**
