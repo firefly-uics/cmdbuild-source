@@ -779,3 +779,28 @@ div.jqi .jqibuttons .ui-button {
 .commandPanelWindow {
 	overflow: auto;
 }
+
+/*
+* Filter on classes popup
+*/
+
+.right-button {
+	float: right;
+}
+/*
+* Filter on classes popup
+*/
+
+.right-button {
+	float: right;
+}
+
+/*
+* Filter on attributes popup
+*/
+.attribute-filter-row {
+	display: block;
+}
+.cell-filter-attribute {
+	display: inline;
+}

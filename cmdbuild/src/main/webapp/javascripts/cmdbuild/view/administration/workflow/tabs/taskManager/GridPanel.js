@@ -5,7 +5,7 @@
 
 		requires: [
 			'CMDBuild.core.constants.Proxy',
-			'CMDBuild.proxy.workflow.Tasks'
+			'CMDBuild.proxy.workflow.tabs.Tasks'
 		],
 
 		/**
@@ -41,7 +41,7 @@
 						fixed: true
 					})
 				],
-				store: CMDBuild.proxy.workflow.Tasks.getStore()
+				store: CMDBuild.proxy.workflow.tabs.Tasks.getStore()
 			});
 
 			this.callParent(arguments);
@@ -51,7 +51,6 @@
 			itemdblclick: function (grid, record, item, index, e, eOpts) {
 				this.delegate.cmfg('onWorkflowTabTasksItemDoubleClick');
 			},
-
 			select: function (row, record, index) {
 				this.delegate.cmfg('onWorkflowTabTasksRowSelect');
 			}

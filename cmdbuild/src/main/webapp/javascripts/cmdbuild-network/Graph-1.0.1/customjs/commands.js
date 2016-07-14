@@ -349,7 +349,7 @@
 			}
 			var key = classes[index].key;
 			var nodesForClass = $.Cmdbuild.customvariables.model
-					.getNodesByClassName(key);
+					.getNodesByClassName(key, true);
 			var attribute = $.Cmdbuild.g3d.backend.CmdbuildModel
 					.getJsonFilterAttributes(classes[index].data);
 			this.attributeCascade(key);
@@ -389,13 +389,16 @@
 				$.Cmdbuild.g3d.backend.CmdbuildModel.getFilteredCardList(
 						param.classId, jsonValues, attribute,
 						function(response) {
-							for (var i = 0; i < response.length; i++) {
-								$.Cmdbuild.customvariables.selected.select(
-										response[i]._id, true);
-							}
-							$.Cmdbuild.customvariables.selected.changed();
+							this.selectCards(response);
 						}, this);
 			}
+		},
+		selectCards : function(cards) {
+			for (var i = 0; i < cards.length; i++) {
+				$.Cmdbuild.customvariables.selected.select(
+						cards[i]._id, true);
+			}
+			$.Cmdbuild.customvariables.selected.changed();
 		},
 		applyFiltersByAttribute : function(param) {
 			var configuration = $.Cmdbuild.custom.configuration;

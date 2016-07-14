@@ -147,11 +147,11 @@
 				params[CMDBuild.core.constants.Proxy.CARD_ID] = this.card.get(CMDBuild.core.constants.Proxy.ID);
 				params[CMDBuild.core.constants.Proxy.FORMAT] = format;
 
-				Ext.create('CMDBuild.controller.common.entryTypeGrid.printTool.PrintWindow', {
-					parentDelegate: this,
+				this.controllerPrintWindow = Ext.create('CMDBuild.controller.common.panel.gridAndForm.print.Window', { parentDelegate: this });
+				this.controllerPrintWindow.cmfg('panelGridAndFormPrintWindowShow', {
 					format: format,
 					mode: 'cardDetails',
-					parameters: params
+					params: params
 				});
 			}
 		}

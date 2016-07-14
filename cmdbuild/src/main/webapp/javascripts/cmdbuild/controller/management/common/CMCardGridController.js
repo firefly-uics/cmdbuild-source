@@ -170,11 +170,11 @@
 				params[CMDBuild.core.constants.Proxy.SORT] = Ext.encode(this.view.getStore().getSorters());
 				params[CMDBuild.core.constants.Proxy.TYPE] = format;
 
-				Ext.create('CMDBuild.controller.common.entryTypeGrid.printTool.PrintWindow', {
-					parentDelegate: this,
+				this.controllerPrintWindow = Ext.create('CMDBuild.controller.common.panel.gridAndForm.print.Window', { parentDelegate: this });
+				this.controllerPrintWindow.cmfg('panelGridAndFormPrintWindowShow', {
 					format: format,
 					mode: 'view',
-					parameters: params
+					params: params
 				});
 			}
 		},
@@ -293,9 +293,9 @@
 		// protected
 		unApplyFilter: unApplyFilter,
 
-		// As CMDBuild.controller.common.entryTypeGrid.filter.advanced.Advanced delegate
+		// As CMDBuild.controller.common.panel.gridAndForm.filter.advanced.Advanced delegate
 		/**
-		 * Called by the CMDBuild.controller.common.entryTypeGrid.filter.advanced.Advanced when click to on the apply icon or on a row of the picker
+		 * Called by the CMDBuild.controller.common.panel.gridAndForm.filter.advanced.Advanced when click to on the apply icon or on a row of the picker
 		 *
 		 * @param {object} filter
 		 *

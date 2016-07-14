@@ -6,8 +6,7 @@
 		requires: [
 			'CMDBuild.core.constants.Global',
 			'CMDBuild.core.constants.Proxy',
-			'CMDBuild.core.Message',
-			'CMDBuild.proxy.workflow.Tasks'
+			'CMDBuild.proxy.workflow.tabs.Tasks'
 		],
 
 		/**
@@ -26,7 +25,7 @@
 			'onWorkflowTabTasksRemoveButtonClick',
 			'onWorkflowTabTasksRowSelect',
 			'onWorkflowTabTasksShow',
-			'workflowTabTasksInit = workflowTabInit'
+			'onWorkflowTabTasksWorkflowSelection'
 		],
 
 		/**
@@ -67,18 +66,18 @@
 
 		/**
 		 * @returns {Void}
+		 *
+		 * FIXME: refactor with external services standards
 		 */
 		onWorkflowTabTasksAddButtonClick: function () {
 			this.cmfg('mainViewportAccordionDeselect', 'task');
 			this.cmfg('mainViewportAccordionControllerGet', 'task').disableStoreLoad = true;
 			this.cmfg('mainViewportAccordionControllerExpand', 'task');
-
 			this.cmfg('mainViewportAccordionControllerGet', 'task').getView().on('storeload', function (accordion, eOpts) {
 				Ext.Function.createDelayed(function () {
 					this.cmfg('mainViewportModuleControllerGet', 'task').cmOn('onAddButtonClick', { type: 'workflow' });
 				}, 100, this)();
 			}, this, { single: true });
-
 			this.cmfg('mainViewportAccordionControllerUpdateStore', {
 				identifier: 'task',
 				nodeIdToSelect: 'accordion-task-workflow'
@@ -96,6 +95,8 @@
 		 * On this kind of grids item double click only selects row in relative target grid
 		 *
 		 * @returns {Void}
+		 *
+		 * FIXME: refactor with external services standards
 		 */
 		onWorkflowTabTasksItemDoubleClick: function () {
 			if (!this.selectedTaskIsEmpty()) {
@@ -154,6 +155,8 @@
 
 		/**
 		 * @returns {Void}
+		 *
+		 * FIXME: refactor with external services standards
 		 */
 		onWorkflowTabTasksModifyButtonClick: function () {
 			if (!this.selectedTaskIsEmpty()) {
@@ -228,6 +231,19 @@
 		},
 
 		/**
+		 * Enable/Disable tab on workflow selection
+		 *
+		 * @returns {Void}
+		 */
+		onWorkflowTabTasksWorkflowSelection: function () {
+			this.view.setDisabled(
+				this.cmfg('workflowSelectedWorkflowIsEmpty')
+				|| this.cmfg('workflowSelectedWorkflowGet', CMDBuild.core.constants.Proxy.IS_SUPER_CLASS)
+				|| this.cmfg('workflowSelectedWorkflowGet', CMDBuild.core.constants.Proxy.TABLE_TYPE) == CMDBuild.core.constants.Global.getTableTypeSimpleTable()
+			);
+		},
+
+		/**
 		 * @returns {Void}
 		 *
 		 * @private
@@ -237,10 +253,12 @@
 				var params = {};
 				params[CMDBuild.core.constants.Proxy.ID] = this.selectedTaskGet(CMDBuild.core.constants.Proxy.ID);
 
-				CMDBuild.proxy.workflow.Tasks.remove({
+				CMDBuild.proxy.workflow.tabs.Tasks.remove({
 					params: params,
 					scope: this,
 					success: function (response, options, decodedResponse) {
+						this.selectedTaskReset();
+
 						this.cmfg('onWorkflowTabTasksShow');
 					}
 				});
@@ -303,20 +321,7 @@
 
 					this.propertyManageSet(parameters);
 				}
-			},
-
-		/**
-		 * Enable/Disable tab on workflow selection
-		 *
-		 * @returns {Void}
-		 */
-		workflowTabTasksInit: function () {
-			this.view.setDisabled(
-				this.cmfg('workflowSelectedWorkflowIsEmpty')
-				|| this.cmfg('workflowSelectedWorkflowGet', CMDBuild.core.constants.Proxy.IS_SUPER_CLASS)
-				|| this.cmfg('workflowSelectedWorkflowGet', CMDBuild.core.constants.Proxy.TABLE_TYPE) == CMDBuild.core.constants.Global.getTableTypeSimpleTable()
-			);
-		}
+			}
 	});
 
 })();

@@ -94,7 +94,7 @@
 						labelWidth: CMDBuild.core.constants.FieldWidths.LABEL_CONFIGURATION,
 						disablePanelFunctions: true
 					}),
-					this.fieldSetAlfresco = Ext.create('Ext.form.FieldSet', {// Alfresco configuration
+					this.fieldSetAlfresco = Ext.create('Ext.form.FieldSet', { // Alfresco configuration
 						title: CMDBuild.Translation.alfresco,
 						checkboxName: CMDBuild.core.constants.Proxy.TYPE,
 						checkboxToggle: true,
@@ -204,7 +204,8 @@
 										name: CMDBuild.core.constants.Proxy.ALFRESCO_REPOSITORY_APPLICATION,
 										fieldLabel: CMDBuild.Translation.application,
 										labelAlign: 'left',
-										labelWidth: CMDBuild.core.constants.FieldWidths.LABEL_CONFIGURATION - 20
+										labelWidth: CMDBuild.core.constants.FieldWidths.LABEL_CONFIGURATION - 20,
+										maxWidth: CMDBuild.core.constants.FieldWidths.CONFIGURATION_BIG
 									})
 								]
 							})

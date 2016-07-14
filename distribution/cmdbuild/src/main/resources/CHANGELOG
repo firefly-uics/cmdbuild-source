@@ -8,6 +8,14 @@ NEW FEATURES
 
 FIXES
 
+* Software version string visually displayed in half on login panel
+
+* Selected tab reset on class change in administration Classes module
+
+* Classes geographical attributes tab no zoom levels validation
+
+* Selected tab reset on accordion selection change in administration modules
+
  * UI not loading on Tomcat 8.0.36 (latest)
 
  * Double email delete server call on create/edit window close
@@ -181,8 +189,6 @@ FIXES
  * The wizard connector synchronizes entries even if no values has been changed when a timestamp column is included within mapping
 
  * The Data Definition Log reports a wrong statement when creating a class with no parent
-
- * Error while selecting node with no children
 
 
 
