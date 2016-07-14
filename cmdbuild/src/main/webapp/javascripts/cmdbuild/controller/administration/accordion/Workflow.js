@@ -39,7 +39,7 @@
 		identifier: undefined,
 
 		/**
-		 * @property {CMDBuild.view.management.accordion.Workflow}
+		 * @property {CMDBuild.view.administration.accordion.Workflow}
 		 */
 		view: undefined,
 
@@ -54,7 +54,7 @@
 		constructor: function (configurationObject) {
 			this.callParent(arguments);
 
-			this.view = Ext.create('CMDBuild.view.management.accordion.Workflow', {
+			this.view = Ext.create('CMDBuild.view.administration.accordion.Workflow', {
 				delegate: this,
 				disabled: !CMDBuild.configuration.workflow.get(CMDBuild.core.constants.Proxy.ENABLED)
 			});

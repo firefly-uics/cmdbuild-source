@@ -13,6 +13,13 @@
 		/**
 		 * @cfg {String}
 		 */
+		delegateEventPrefix: 'onButtonPrint',
+
+		/**
+		 * @cfg {String}
+		 *
+		 * @legacy
+		 */
 		mode: undefined,
 
 		/**
@@ -76,7 +83,7 @@
 					scope: this,
 
 					handler: function(button, e) {
-						this.delegate.cmfg('onButtonPrintClick', button.format);
+						this.delegate.cmfg(this.delegateEventPrefix + 'PrintButtonClick', button.format);
 					}
 				});
 			}, this);

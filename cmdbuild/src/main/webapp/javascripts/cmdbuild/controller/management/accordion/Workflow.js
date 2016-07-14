@@ -7,7 +7,7 @@
 			'CMDBuild.core.constants.Global',
 			'CMDBuild.core.constants.ModuleIdentifiers',
 			'CMDBuild.core.constants.Proxy',
-			'CMDBuild.proxy.Classes' // FIXME: build own proxy (workflow)
+			'CMDBuild.proxy.workflow.Workflow'
 		],
 
 		/**
@@ -79,7 +79,7 @@
 			var params = {};
 			params[CMDBuild.core.constants.Proxy.ACTIVE] = true;
 
-			CMDBuild.proxy.Classes.readAll({
+			CMDBuild.proxy.workflow.Workflow.readAllClasses({
 				params: params,
 				loadMask: false,
 				scope: this,

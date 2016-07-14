@@ -558,26 +558,6 @@
 						node, cardId, children);
 			}
 		};
-		this.getFilterForDomain = function(classId) {
-			var filter = {
-				attribute : {
-					or : [ {
-						simple : {
-							attribute : "source",
-							operator : "contain",
-							value : [ classId ]
-						}
-					}, {
-						simple : {
-							attribute : "destination",
-							operator : "contain",
-							value : [ classId ]
-						}
-					} ]
-				}
-			};
-			return filter;
-		};
 		this.getRelationedClassFilterOnDomain = function(classId, cardId,
 				domain) {
 			var bFirstClass = $.Cmdbuild.customvariables.cacheClasses

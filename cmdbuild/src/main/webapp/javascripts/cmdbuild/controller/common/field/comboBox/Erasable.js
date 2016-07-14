@@ -1,4 +1,4 @@
-(function() {
+(function () {
 
 	Ext.define('CMDBuild.controller.common.field.comboBox.Erasable', {
 		extend: 'CMDBuild.controller.common.abstract.Base',
@@ -6,7 +6,7 @@
 		requires: ['CMDBuild.core.constants.Proxy'],
 
 		/**
-		 * @cfg {Mixed}
+		 * @cfg {Object}
 		 */
 		parentDelegate: undefined,
 
