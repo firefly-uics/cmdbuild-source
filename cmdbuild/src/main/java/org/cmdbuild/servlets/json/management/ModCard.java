@@ -26,6 +26,8 @@ import static org.cmdbuild.servlets.json.CommunicationConstants.CONFIRMED;
 import static org.cmdbuild.servlets.json.CommunicationConstants.COUNT;
 import static org.cmdbuild.servlets.json.CommunicationConstants.DESCRIPTION;
 import static org.cmdbuild.servlets.json.CommunicationConstants.DESTINATION;
+import static org.cmdbuild.servlets.json.CommunicationConstants.DESTINATION_CLASS;
+import static org.cmdbuild.servlets.json.CommunicationConstants.DESTINATION_CODE;
 import static org.cmdbuild.servlets.json.CommunicationConstants.DESTINATION_DESCRIPTION;
 import static org.cmdbuild.servlets.json.CommunicationConstants.DETAIL_CARD_ID;
 import static org.cmdbuild.servlets.json.CommunicationConstants.DETAIL_CLASS_NAME;
@@ -309,6 +311,20 @@ public class ModCard extends JSONBaseWithSpringContext {
 		 * @deprecated it's an example of client-oriented development.
 		 */
 		@Deprecated
+		@JsonProperty(DESTINATION_CLASS)
+		String getDestinationClass();
+
+		/**
+		 * @deprecated it's an example of client-oriented development.
+		 */
+		@Deprecated
+		@JsonProperty(DESTINATION_CODE)
+		String getDestinationCode();
+
+		/**
+		 * @deprecated it's an example of client-oriented development.
+		 */
+		@Deprecated
 		@JsonProperty(DESTINATION_DESCRIPTION)
 		String getDestinationDescription();
 
@@ -345,6 +361,16 @@ public class ModCard extends JSONBaseWithSpringContext {
 		@Override
 		public String getDomain() {
 			return delegate.getQueryDomain().getDomain().getName();
+		}
+
+		@Override
+		public String getDestinationClass() {
+			return delegate.getTargetType().getDescription();
+		}
+
+		@Override
+		public String getDestinationCode() {
+			return delegate.getTargetCode();
 		}
 
 		@Override
@@ -430,7 +456,7 @@ public class ModCard extends JSONBaseWithSpringContext {
 	 * the cards that match the filter are retrieved. The fetched cards are
 	 * sorted if a sorter is defined. Note that the max number of retrieved
 	 * cards is the 'limit' parameter
-	 * 
+	 *
 	 * @param className
 	 *            the name of the class for which I want to retrieve the cards
 	 * @param filter
@@ -459,7 +485,7 @@ public class ModCard extends JSONBaseWithSpringContext {
 	/**
 	 * Retrieves a list of cards for the specified class, returning only the
 	 * values for a subset of values
-	 * 
+	 *
 	 * @param filter
 	 *            null if no filter is specified
 	 * @param sorters
@@ -496,7 +522,7 @@ public class ModCard extends JSONBaseWithSpringContext {
 	 * the cards that match the filter are retrieved. The fetched cards are
 	 * sorted if a sorter is defined. Note that the max number of retrieved
 	 * cards is the 'limit' parameter
-	 * 
+	 *
 	 * @param className
 	 *            the name of the class for which I want to retrieve the cards
 	 * @param filter
@@ -906,7 +932,7 @@ public class ModCard extends JSONBaseWithSpringContext {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param domainName
 	 *            is the domain between the source class and the destination
 	 *            class
