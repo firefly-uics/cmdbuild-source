@@ -18,26 +18,11 @@
 
 	<!-- COMMON -->
 	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/common/LayerGrid.js"></script>
-	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/common/CMDomainGrid.js"></script>
 
 		<!-- BASE PANEL-->
 		<script type="text/javascript" src="javascripts/cmdbuild/view/administration/common/basepanel/CMGrid.js"></script>
 		<script type="text/javascript" src="javascripts/cmdbuild/view/administration/common/basepanel/CMForm.js"></script>
 		<script type="text/javascript" src="javascripts/cmdbuild/view/administration/common/basepanel/CMGridAndFormPanel.js"></script>
-
-	<!-- CLASSES -->
-	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/class/CMAttributeForm.js"></script>
-	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/class/CMAttributeGrid.js"></script>
-	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/class/CMSetOrderWindow.js"></script>
-	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/class/CMClassAttributesPanel.js"></script>
-	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/class/CMClassForm.js"></script>
-	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/class/CMModClass.js"></script>
-
-		<!-- GIS -->
-		<script type="text/javascript" src="javascripts/cmdbuild/view/administration/class/gis/LayerVisibilityGrid.js"></script>
-		<script type="text/javascript" src="javascripts/cmdbuild/view/administration/class/gis/CMGeoAttributesGrid.js"></script>
-		<script type="text/javascript" src="javascripts/cmdbuild/view/administration/class/gis/CMGeoAttributesForm.js"></script>
-		<script type="text/javascript" src="javascripts/cmdbuild/view/administration/class/gis/CMGeoAttributesPanel.js"></script>
 
 	<!-- DASHBOARD -->
 	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/dashboard/CMDashboardLayoutPanel.js"></script>
@@ -57,13 +42,6 @@
 	<!-- GIS -->
 	<script type="text/javascript" src="javascripts/cmdbuild/controller/administration/gis/CMModGISNavigationConfigurationController.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/controller/administration/gis/CMModLayerOrderController.js"></script>
-
-	<!-- CLASS -->
-	<script type="text/javascript" src="javascripts/cmdbuild/controller/administration/classes/CMDomainTabController.js"></script>
-	<script type="text/javascript" src="javascripts/cmdbuild/controller/administration/classes/CMGeoAttributePanelController.js"></script>
-	<script type="text/javascript" src="javascripts/cmdbuild/controller/administration/classes/CMClassAttributeController.js"></script>
-	<script type="text/javascript" src="javascripts/cmdbuild/controller/administration/classes/CMClassFormController.js"></script>
-	<script type="text/javascript" src="javascripts/cmdbuild/controller/administration/classes/CMModClassController.js"></script>
 
 	<!-- DASHBOARD -->
 	<script type="text/javascript" src="javascripts/cmdbuild/controller/administration/dashboard/CMDashboardLayoutPanelController.js"></script>

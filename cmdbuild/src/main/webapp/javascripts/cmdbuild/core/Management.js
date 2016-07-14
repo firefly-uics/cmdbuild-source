@@ -10,7 +10,7 @@
 			'CMDBuild.core.constants.ModuleIdentifiers',
 			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.CookiesManager',
-			'CMDBuild.proxy.Classes',
+			'CMDBuild.proxy.classes.Classes',
 			'CMDBuild.proxy.dashboard.Dashboard',
 			'CMDBuild.proxy.domain.Domain',
 			'CMDBuild.proxy.lookup.Type',
@@ -56,13 +56,16 @@
 
 			var readAllClassesCallback = requestBarrier.getCallback('managementBuildCacheBarrier'); // Avoid to getCallback too late
 
-			CMDBuild.proxy.Classes.readAll({
+			CMDBuild.proxy.classes.Classes.readAll({
 				params: params,
 				loadMask: false,
 				scope: this,
 				success: function (response, options, decodedResponse) {
 					decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.CLASSES];
 
+					/**
+					 * @deprecated
+					 */
 					_CMCache.addClasses(decodedResponse);
 
 					/**
@@ -76,7 +79,11 @@
 						success: function (response, options, decodedResponse) {
 							decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.RESPONSE];
 
-							// A day I'll can do a request to have only the active, now the cache discards the inactive if the flag onlyActive is true
+							/**
+							 * A day I'll can do a request to have only the active, now the cache discards the inactive if the flag onlyActive is true
+							 *
+							 * @deprecated
+							 */
 							_CMCache.addWidgetToEntryTypes(decodedResponse, true);
 						},
 						callback: readAllClassesCallback
@@ -93,6 +100,9 @@
 				success: function (response, options, decodedResponse) {
 					decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.RESPONSE];
 
+					/**
+					 * @deprecated
+					 */
 					_CMCache.addDashboards(decodedResponse[CMDBuild.core.constants.Proxy.DASHBOARDS]);
 					_CMCache.setAvailableDataSources(decodedResponse[CMDBuild.core.constants.Proxy.DATA_SOURCES]);
 				},
@@ -112,6 +122,9 @@
 				success: function (response, options, decodedResponse) {
 					decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.DOMAINS];
 
+					/**
+					 * @deprecated
+					 */
 					_CMCache.addDomains(decodedResponse);
 				},
 				callback: requestBarrier.getCallback('managementBuildCacheBarrier')
@@ -124,6 +137,9 @@
 				loadMask: false,
 				scope: this,
 				success: function (response, options, decodedResponse) {
+					/**
+					 * @deprecated
+					 */
 					_CMCache.addLookupTypes(decodedResponse);
 				},
 				callback: requestBarrier.getCallback('managementBuildCacheBarrier')
@@ -168,6 +184,9 @@
 			if (!CMDBuild.core.CookiesManager.authorizationIsEmpty()) {
 				Ext.suspendLayouts();
 
+				/**
+				 * @deprecated
+				 */
 				_CMCache.syncAttachmentCategories();
 
 				// Building accordion definitions object array (display order)

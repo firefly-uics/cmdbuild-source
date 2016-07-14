@@ -323,11 +323,11 @@
 
 			layer: {
 				create: '',
-				read: '',
+				read: 'services/json/gis/getalllayers', // TODO: waiting for refactor (CRUD)
 				update: '',
 				remove: '',
 
-				readAll: 'services/json/gis/getalllayers',
+				readAll: 'services/json/gis/getalllayers', // TODO: waiting for refactor (rename)
 
 				setOrder: 'services/json/gis/setlayersorder',
 				setVisibility: 'services/json/gis/setlayervisibility'

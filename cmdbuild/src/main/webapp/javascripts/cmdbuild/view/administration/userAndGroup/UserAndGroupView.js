@@ -16,7 +16,8 @@
 		bodyCls: 'cmdb-gray-panel-no-padding',
 		border: true,
 		frame: false,
-		layout: 'fit'
+		layout: 'card',
+		title: CMDBuild.Translation.usersAndGroups
 	});
 
 })();

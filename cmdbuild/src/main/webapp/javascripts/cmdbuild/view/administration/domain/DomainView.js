@@ -1,4 +1,4 @@
-(function() {
+(function () {
 
 	Ext.define('CMDBuild.view.administration.domain.DomainView', {
 		extend: 'Ext.panel.Panel',
@@ -22,8 +22,14 @@
 		border: true,
 		frame: false,
 		layout: 'fit',
+		title: CMDBuild.Translation.domains,
 
-		initComponent: function() {
+		/**
+		 * @returns {Void}
+		 *
+		 * @override
+		 */
+		initComponent: function () {
 			Ext.apply(this, {
 				dockedItems: [
 					Ext.create('Ext.toolbar.Toolbar', {
@@ -35,7 +41,7 @@
 								text: CMDBuild.Translation.addDomain,
 								scope: this,
 
-								handler: function(button, e) {
+								handler: function (button, e) {
 									this.delegate.cmfg('onDomainAddButtonClick');
 								}
 							})
@@ -46,7 +52,6 @@
 					this.tabPanel = Ext.create('Ext.tab.Panel', {
 						frame: false,
 						border: false,
-						activeTab: 0,
 
 						items: []
 					})

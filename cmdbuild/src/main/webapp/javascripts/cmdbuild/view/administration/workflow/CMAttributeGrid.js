@@ -1,5 +1,12 @@
 (function() {
 
+	/**
+	 * @link CMDBuild.view.administration.classes.CMAttributeGrid
+	 * @link CMDBuild.view.administration.domain.tabs.attributes.GridPanel
+	 */
+
+	Ext.require('CMDBuild.proxy.common.tabs.attribute.Attribute');
+
 	var ATTR = {
 		INDEX: CMDBuild.core.constants.Proxy.INDEX,
 		NAME: CMDBuild.core.constants.Proxy.NAME,
