@@ -5,8 +5,7 @@
 
 		requires: [
 			'CMDBuild.core.constants.Proxy',
-			'CMDBuild.proxy.Classes',
-			'CMDBuild.proxy.domain.Domain',
+			'CMDBuild.proxy.navigationTree.NavigationTree',
 			'CMDBuild.core.Utils'
 		],
 
@@ -413,7 +412,7 @@
 				var params = {};
 				params[CMDBuild.core.constants.Proxy.ACTIVE] = false; // Also inactive to get all processes if shark isn't on
 
-				CMDBuild.proxy.Classes.read({ // TODO: waiting for refactor (CRUD)
+				CMDBuild.proxy.navigationTree.NavigationTree.readAllClasses({ // TODO: waiting for refactor (CRUD)
 					params: params,
 					scope: this,
 					success: function (response, options, decodedResponse) {
@@ -437,7 +436,7 @@
 
 							this.tree.getStore().setRootNode(rootNodeObject);
 
-							CMDBuild.proxy.domain.Domain.readAll({
+							CMDBuild.proxy.navigationTree.NavigationTree.readAllDomains({
 								scope: this,
 								success: function (response, options, decodedResponse) {
 									decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.DOMAINS];

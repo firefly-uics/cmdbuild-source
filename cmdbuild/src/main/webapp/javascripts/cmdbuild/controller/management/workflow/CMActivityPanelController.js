@@ -347,7 +347,7 @@
 		onShowGraphClick: function() {
 			var pi = _CMWFState.getProcessInstance();
 
-			Ext.create('CMDBuild.controller.management.common.graph.Graph', {
+			Ext.create('CMDBuild.controller.common.panel.gridAndForm.graph.Window', {
 				parentDelegate: this,
 				classId: pi.getClassId(),
 				cardId: pi.getId()

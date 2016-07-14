@@ -1,6 +1,9 @@
 (function () {
 
-	Ext.require('CMDBuild.proxy.index.Json');
+	Ext.require([
+		'CMDBuild.proxy.common.tabs.attribute.Attribute',
+		'CMDBuild.proxy.index.Json'
+	]);
 
 	Ext.define("CMDBuild.view.management.utility.importCsv.CMCardGridDelegate", {
 		/**
@@ -626,7 +629,7 @@
 
 							// TODO: cmfg() controller call implementation  on controller refactor
 							handler: function(grid, rowIndex, colIndex, node, e, record, rowNode) {
-								Ext.create('CMDBuild.controller.management.common.graph.Graph', {
+								Ext.create('CMDBuild.controller.common.panel.gridAndForm.graph.Window', {
 									parentDelegate: this,
 									classId: record.get('IdClass'),
 									cardId: record.get('id')

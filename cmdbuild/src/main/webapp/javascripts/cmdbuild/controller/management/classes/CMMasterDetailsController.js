@@ -193,7 +193,7 @@
 		},
 
 		onOpenGraphClick: function(model) {
-			Ext.create('CMDBuild.controller.management.common.graph.Graph', {
+			Ext.create('CMDBuild.controller.common.panel.gridAndForm.graph.Window', {
 				parentDelegate: this,
 				classId: model.get('IdClass'),
 				cardId: model.get('id')
