@@ -38,6 +38,7 @@ public class Serialization {
 			CLUSTERING_THRESHOLD = "clusteringThreshold", //
 			CODE_CAPITALIZED = "Code", //
 			CODE = "code", //
+			CONFIGURATION = "configuration", //
 			CREATED = "created", //
 			DATA = "data", //
 			DATE = "date", //
@@ -74,6 +75,7 @@ public class Serialization {
 			EXTRA = "extra", //
 			FILE = "file", //
 			FILTER = "filter", //
+			FILTER_ID = FILTER + ID_CAPITALIZED, //
 			FROM = "from", //
 			FUNCTION = "function", //
 			FUNCTION_ID = FUNCTION + ID_CAPITALIZED, //
@@ -128,6 +130,7 @@ public class Serialization {
 			ROLE = "role", //
 			SCALE = "scale", //
 			SESSION = "session", //
+			SHARED = "shared", //
 			SORT = "sort", //
 			SOURCE = "source", //
 			SOURCE_PROCESS = SOURCE + PROCESS_CAPITAL, //
@@ -138,6 +141,7 @@ public class Serialization {
 			STEP_RADIUS = "stepRadius", //
 			STOPPABLE = "stoppable", //
 			SUBJECT = "subject", //
+			TARGET = "target", //
 			TARGET_CLASS = "targetClass", //
 			TARGET_TYPE = "targetType", //
 			TEMPLATE = "template", //

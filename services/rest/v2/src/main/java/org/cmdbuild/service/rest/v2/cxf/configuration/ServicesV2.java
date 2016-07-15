@@ -16,6 +16,7 @@ import org.cmdbuild.service.rest.v2.CardAttachments;
 import org.cmdbuild.service.rest.v2.CardEmails;
 import org.cmdbuild.service.rest.v2.Cards;
 import org.cmdbuild.service.rest.v2.ClassAttributes;
+import org.cmdbuild.service.rest.v2.ClassFilters;
 import org.cmdbuild.service.rest.v2.ClassPrivileges;
 import org.cmdbuild.service.rest.v2.Classes;
 import org.cmdbuild.service.rest.v2.Cql;
@@ -50,6 +51,7 @@ import org.cmdbuild.service.rest.v2.cxf.CxfCardAttachments;
 import org.cmdbuild.service.rest.v2.cxf.CxfCardEmails;
 import org.cmdbuild.service.rest.v2.cxf.CxfCards;
 import org.cmdbuild.service.rest.v2.cxf.CxfClassAttributes;
+import org.cmdbuild.service.rest.v2.cxf.CxfClassFilters;
 import org.cmdbuild.service.rest.v2.cxf.CxfClassPrivileges;
 import org.cmdbuild.service.rest.v2.cxf.CxfClasses;
 import org.cmdbuild.service.rest.v2.cxf.CxfCql;
@@ -111,8 +113,8 @@ public class ServicesV2 implements LoggingSupport {
 	@Bean
 	@Scope(value = SCOPE_REQUEST, proxyMode = TARGET_CLASS)
 	public CardAttachments v2_cardAttachments() {
-		final CxfCardAttachments service = new CxfCardAttachments(v2_errorHandler(), helper.systemDataAccessLogic(),
-				v2_attachmentsHelper());
+		final CxfCardAttachments service =
+				new CxfCardAttachments(v2_errorHandler(), helper.systemDataAccessLogic(), v2_attachmentsHelper());
 		return proxy(CardAttachments.class, service);
 	}
 
@@ -137,6 +139,14 @@ public class ServicesV2 implements LoggingSupport {
 		final CxfClassAttributes service = new CxfClassAttributes(v2_errorHandler(), helper.userDataAccessLogic(),
 				helper.systemDataView(), helper.metadataStoreFactory(), helper.lookupLogic());
 		return proxy(ClassAttributes.class, service);
+	}
+
+	@Bean
+	@Scope(value = SCOPE_REQUEST, proxyMode = TARGET_CLASS)
+	public ClassFilters v2_classFilters() {
+		final CxfClassFilters service =
+				new CxfClassFilters(v2_errorHandler(), helper.filterLogic(), helper.userDataAccessLogic());
+		return proxy(ClassFilters.class, service);
 	}
 
 	@Bean
@@ -177,8 +187,8 @@ public class ServicesV2 implements LoggingSupport {
 
 	@Bean
 	public Icons v2_icons() {
-		final CxfIcons service = new CxfIcons(v2_errorHandler(), helper.iconsLogic(),
-				new CxfIcons.ConverterImpl(v2_errorHandler()));
+		final CxfIcons service =
+				new CxfIcons(v2_errorHandler(), helper.iconsLogic(), new CxfIcons.ConverterImpl(v2_errorHandler()));
 		return proxy(Icons.class, service);
 	}
 
@@ -205,8 +215,8 @@ public class ServicesV2 implements LoggingSupport {
 
 	@Bean
 	public Impersonate v2_impersonate() {
-		final CxfImpersonate service = new CxfImpersonate(v2_errorHandler(), helper.sessionLogic(),
-				v2_operationUserAllowed());
+		final CxfImpersonate service =
+				new CxfImpersonate(v2_errorHandler(), helper.sessionLogic(), v2_operationUserAllowed());
 		return proxy(Impersonate.class, service);
 	}
 
@@ -291,8 +301,8 @@ public class ServicesV2 implements LoggingSupport {
 	@Bean
 	@Scope(value = SCOPE_REQUEST, proxyMode = TARGET_CLASS)
 	public ProcessInstanceActivities v2_processInstanceActivities() {
-		final CxfProcessInstanceActivities service = new CxfProcessInstanceActivities(v2_errorHandler(),
-				helper.userWorkflowLogic());
+		final CxfProcessInstanceActivities service =
+				new CxfProcessInstanceActivities(v2_errorHandler(), helper.userWorkflowLogic());
 		return proxy(ProcessInstanceActivities.class, service);
 	}
 
@@ -315,24 +325,24 @@ public class ServicesV2 implements LoggingSupport {
 	@Bean
 	@Scope(value = SCOPE_REQUEST, proxyMode = TARGET_CLASS)
 	public ProcessInstancePrivileges v2_processInstancePrivileges() {
-		final CxfProcessInstancePrivileges service = new CxfProcessInstancePrivileges(v2_errorHandler(),
-				helper.userWorkflowLogic());
+		final CxfProcessInstancePrivileges service =
+				new CxfProcessInstancePrivileges(v2_errorHandler(), helper.userWorkflowLogic());
 		return proxy(ProcessInstancePrivileges.class, service);
 	}
 
 	@Bean
 	@Scope(value = SCOPE_REQUEST, proxyMode = TARGET_CLASS)
 	public ProcessInstances v2_processInstances() {
-		final CxfProcessInstances service = new CxfProcessInstances(v2_errorHandler(), helper.userWorkflowLogic(),
-				helper.lookupHelper());
+		final CxfProcessInstances service =
+				new CxfProcessInstances(v2_errorHandler(), helper.userWorkflowLogic(), helper.lookupHelper());
 		return proxy(ProcessInstances.class, service);
 	}
 
 	@Bean
 	@Scope(value = SCOPE_REQUEST, proxyMode = TARGET_CLASS)
 	public ProcessStartActivities v2_processStartActivities() {
-		final CxfProcessStartActivities service = new CxfProcessStartActivities(v2_errorHandler(),
-				helper.userWorkflowLogic());
+		final CxfProcessStartActivities service =
+				new CxfProcessStartActivities(v2_errorHandler(), helper.userWorkflowLogic());
 		return proxy(ProcessStartActivities.class, service);
 	}
 
@@ -363,8 +373,8 @@ public class ServicesV2 implements LoggingSupport {
 
 	@Bean
 	public Reports v2_reports() {
-		final CxfReports service = new CxfReports(v2_errorHandler(), helper.reportLogic(), helper.systemDataView(),
-				helper.lookupLogic());
+		final CxfReports service =
+				new CxfReports(v2_errorHandler(), helper.reportLogic(), helper.systemDataView(), helper.lookupLogic());
 		return proxy(Reports.class, service);
 	}
 
