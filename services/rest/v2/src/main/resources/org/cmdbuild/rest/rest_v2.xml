@@ -35,6 +35,7 @@
 			<ref bean="v2_cards" />
 			<ref bean="v2_classes" />
 			<ref bean="v2_classAttributes" />
+			<ref bean="v2_classFilters" />
 			<ref bean="v2_classPrivileges" />
 			<ref bean="v2_cql" />
 			<ref bean="v2_domains" />
