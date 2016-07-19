@@ -3,7 +3,6 @@ package unit.logic.filter;
 import static com.google.common.collect.Iterables.size;
 import static com.google.common.collect.Lists.newArrayList;
 import static com.google.common.reflect.Reflection.newProxy;
-import static java.lang.Integer.MAX_VALUE;
 import static java.util.Arrays.asList;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.cmdbuild.common.utils.PagedElements.empty;
@@ -12,7 +11,6 @@ import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyInt;
 import static org.mockito.Matchers.anyLong;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
@@ -201,9 +199,9 @@ public class DefaultFilterLogicTest {
 		final FilterStore.Filter first = mock(FilterStore.Filter.class);
 		final FilterStore.Filter second = mock(FilterStore.Filter.class);
 		doReturn(new PagedElements<FilterStore.Filter>(asList(first, second), 123)) //
-				.when(store).readNonSharedFilters(anyString(), anyLong(), anyInt(), anyInt());
+				.when(store).readNonSharedFilters(anyString(), anyLong());
 		doReturn(empty()) //
-				.when(store).readSharedFilters(anyString(), anyInt(), anyInt());
+				.when(store).readSharedFilters(anyString());
 		final Filter _first = mock(Filter.class);
 		final Filter _second = mock(Filter.class);
 		doReturn(_first).doReturn(_second) //
@@ -222,8 +220,8 @@ public class DefaultFilterLogicTest {
 
 		verify(userStore).getUser();
 		verify(authenticatedUser).getId();
-		verify(store).readNonSharedFilters(eq("a classname"), eq(42L), eq(0), eq(MAX_VALUE));
-		verify(store).readSharedFilters(eq("a classname"), eq(0), eq(MAX_VALUE));
+		verify(store).readNonSharedFilters(eq("a classname"), eq(42L));
+		verify(store).readSharedFilters(eq("a classname"));
 		verify(converter, times(2)).storeToLogic(captor.capture());
 		verifyNoMoreInteractions(store, converter, userStore, authenticatedUser, privilegeContext);
 
@@ -236,11 +234,11 @@ public class DefaultFilterLogicTest {
 			throws Exception {
 		// given
 		doReturn(empty()) //
-				.when(store).readNonSharedFilters(anyString(), anyLong(), anyInt(), anyInt());
+				.when(store).readNonSharedFilters(anyString(), anyLong());
 		final FilterStore.Filter first = mock(FilterStore.Filter.class);
 		final FilterStore.Filter second = mock(FilterStore.Filter.class);
 		doReturn(new PagedElements<FilterStore.Filter>(asList(first, second), 123)) //
-				.when(store).readSharedFilters(anyString(), anyInt(), anyInt());
+				.when(store).readSharedFilters(anyString());
 		final Filter _first = mock(Filter.class);
 		final Filter _second = mock(Filter.class);
 		doReturn(_first).doReturn(_second) //
@@ -261,8 +259,8 @@ public class DefaultFilterLogicTest {
 
 		verify(userStore).getUser();
 		verify(authenticatedUser).getId();
-		verify(store).readNonSharedFilters(eq("a classname"), eq(42L), eq(0), eq(MAX_VALUE));
-		verify(store).readSharedFilters(eq("a classname"), eq(0), eq(MAX_VALUE));
+		verify(store).readNonSharedFilters(eq("a classname"), eq(42L));
+		verify(store).readSharedFilters(eq("a classname"));
 		verify(privilegeContext, times(2)).hasAdministratorPrivileges();
 		verify(converter, times(2)).storeToLogic(captor.capture());
 		verifyNoMoreInteractions(store, converter, userStore, authenticatedUser, privilegeContext);
@@ -276,11 +274,11 @@ public class DefaultFilterLogicTest {
 			throws Exception {
 		// given
 		doReturn(empty()) //
-				.when(store).readNonSharedFilters(anyString(), anyLong(), anyInt(), anyInt());
+				.when(store).readNonSharedFilters(anyString(), anyLong());
 		final FilterStore.Filter first = mock(FilterStore.Filter.class);
 		final FilterStore.Filter second = mock(FilterStore.Filter.class);
 		doReturn(new PagedElements<FilterStore.Filter>(asList(first, second), 123)) //
-				.when(store).readSharedFilters(anyString(), anyInt(), anyInt());
+				.when(store).readSharedFilters(anyString());
 		final Filter _first = mock(Filter.class);
 		final Filter _second = mock(Filter.class);
 		doReturn(_first).doReturn(_second) //
@@ -305,8 +303,8 @@ public class DefaultFilterLogicTest {
 
 		verify(userStore).getUser();
 		verify(authenticatedUser).getId();
-		verify(store).readNonSharedFilters(eq("a classname"), eq(42L), eq(0), eq(MAX_VALUE));
-		verify(store).readSharedFilters(eq("a classname"), eq(0), eq(MAX_VALUE));
+		verify(store).readNonSharedFilters(eq("a classname"), eq(42L));
+		verify(store).readSharedFilters(eq("a classname"));
 		verify(privilegeContext, times(2)).hasAdministratorPrivileges();
 		verify(privilegeContext, times(2)).hasReadAccess(privilegeContextCaptor.capture());
 		verify(converter, times(2)).storeToLogic(converterCaptor.capture());
@@ -325,22 +323,22 @@ public class DefaultFilterLogicTest {
 		final FilterStore.Filter first = mock(FilterStore.Filter.class);
 		final FilterStore.Filter second = mock(FilterStore.Filter.class);
 		doReturn(new PagedElements<FilterStore.Filter>(asList(first, second), 42)) //
-				.when(store).readSharedFilters(anyString(), anyInt(), anyInt());
-		final Filter _first = mock(Filter.class);
-		final Filter _second = mock(Filter.class);
+				.when(store).readSharedFilters(anyString());
+		final Filter _first = mock(Filter.class, "ss");
+		final Filter _second = mock(Filter.class, "dd");
 		doReturn(_first).doReturn(_second) //
 				.when(converter).storeToLogic(any(FilterStore.Filter.class));
 
 		// when
-		final PagedElements<Filter> output = defaultFilterLogic.readShared("foo", 123, 456);
+		final PagedElements<Filter> output = defaultFilterLogic.readShared("foo", 0, 2);
 
 		// then
 		assertThat(output.elements(), containsInAnyOrder(_first, _second));
-		assertThat(output.totalSize(), equalTo(42));
+		assertThat(output.totalSize(), equalTo(2));
 
 		final ArgumentCaptor<FilterStore.Filter> captor = ArgumentCaptor.forClass(FilterStore.Filter.class);
 
-		verify(store).readSharedFilters(eq("foo"), eq(123), eq(456));
+		verify(store).readSharedFilters(eq("foo"));
 		verify(converter, times(2)).storeToLogic(captor.capture());
 		verifyNoMoreInteractions(store, converter, userStore, authenticatedUser, privilegeContext);
 
@@ -354,22 +352,22 @@ public class DefaultFilterLogicTest {
 		final FilterStore.Filter first = mock(FilterStore.Filter.class);
 		final FilterStore.Filter second = mock(FilterStore.Filter.class);
 		doReturn(new PagedElements<FilterStore.Filter>(asList(first, second), 42)) //
-				.when(store).readNonSharedFilters(anyString(), anyLong(), anyInt(), anyInt());
+				.when(store).readNonSharedFilters(anyString(), anyLong());
 		final Filter _first = mock(Filter.class);
 		final Filter _second = mock(Filter.class);
 		doReturn(_first).doReturn(_second) //
 				.when(converter).storeToLogic(any(FilterStore.Filter.class));
 
 		// when
-		final PagedElements<Filter> output = defaultFilterLogic.readNotShared("a classname", 123, 456);
+		final PagedElements<Filter> output = defaultFilterLogic.readNotShared("a classname", 0, 2);
 
 		// then
 		assertThat(output.elements(), containsInAnyOrder(_first, _second));
-		assertThat(output.totalSize(), equalTo(42));
+		assertThat(output.totalSize(), equalTo(2));
 
 		final ArgumentCaptor<FilterStore.Filter> captor = ArgumentCaptor.forClass(FilterStore.Filter.class);
 
-		verify(store).readNonSharedFilters(eq("a classname"), isNull(Long.class), eq(123), eq(456));
+		verify(store).readNonSharedFilters(eq("a classname"), isNull(Long.class));
 		verify(converter, times(2)).storeToLogic(captor.capture());
 		verifyNoMoreInteractions(store, converter, userStore, authenticatedUser, privilegeContext);
 

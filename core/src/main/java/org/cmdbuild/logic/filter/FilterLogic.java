@@ -70,7 +70,7 @@ public interface FilterLogic extends Logic {
 
 	void delete(Filter filter);
 
-	PagedElements<Filter> readForCurrentUser(String className);
+	Iterable<Filter> readForCurrentUser(String className);
 
 	PagedElements<Filter> readShared(String className, int start, int limit);
 
