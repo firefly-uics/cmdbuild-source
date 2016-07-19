@@ -45,22 +45,22 @@
 		isGeoServerLayer : function(layer) {
 			return layer.type === "SHAPE";
 		},
-		centerOnCard : function(card) {///????????
+		centerOnCard : function(card) {
+			var map = this.getMap();
+			var me = this;
 			this.getLayersForCard(card, function(layers) {
-				if (layers.length <= 0) {
-					return;
-				}
-				var map = this.configurationMap.mapPanel.getMap();
-				me.getLayerByName(layer.name, function() {
-					if (geoLayer) {
-						var extent = geoLayer.source.getExtent();
-						if (extent) {
-							me.configurationMap.center = ol.extent.getCenter(extent);
+				for (var i = 0; i < layers.length; i++) {
+					var geoLayer = this.getGeoLayerByName(layers[i].name, map);
+					if (geoLayer && geoLayer.get("adapter") && geoLayer.get("adapter").getPosition) {
+						var center = geoLayer.get("adapter").getPosition(card);
+						if (center) {
+							me.configurationMap.center = center;
 							me.changed();
+							break;
+							
 						}
 					}
-					
-				}, this);
+				}
 			}, this);
 		},
 		clearSelection : function() {
@@ -79,6 +79,9 @@
 		},
 		getLayerByName : function(name, callback, callbackScope) {
 			layerByName(name, callback, callbackScope);
+		},
+		getGeoLayerByName : function(name, map) {
+			return geoLayerByName(name, map);
 		},
 		isVisible : function(layer, currentClassName, currentCardId) {
 			return isVisible(layer, currentClassName, currentCardId);
@@ -116,6 +119,17 @@
 			}
 			callback.apply(callbackScope, [retLayers]);
 		});
+	}
+
+	function geoLayerByName(name, map) {
+		var retLayer = null;
+		var layers = map.getLayers();
+		layers.forEach(function(layer) {
+			if (name === layer.get("name")) {
+				retLayer = layer;
+			}
+		});
+		return retLayer;
 	}
 
 	function layerByName(name, callback, callbackScope) {

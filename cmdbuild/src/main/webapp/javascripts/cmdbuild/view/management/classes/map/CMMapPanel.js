@@ -152,6 +152,8 @@
 
 		displayMode: function() {
 			if (this.editingWindow) {
+				this.interactionDocument.setCurrentFeature("", "", "Select");
+				this.interactionDocument.changedFeature();
 				this.editingWindow.hide();
 			}
 		},

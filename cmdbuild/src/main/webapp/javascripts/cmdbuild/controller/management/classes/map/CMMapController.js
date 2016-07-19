@@ -115,8 +115,8 @@
 
 						onAddCardButtonClick : function() {
 							this.mapPanel.getMap().clearSelection();
-							this.currentCardId = undefined;
-							this.mapPanel.getMap().refreshStrategies();
+//							this.currentCardId = undefined;
+//							this.mapPanel.getMap().refreshStrategies();
 						},
 						onCardZoom : function() {
 							console.log("-------------------------------");
@@ -153,7 +153,7 @@
 												// // change the zoom to the
 												// minimum to show the feature
 												// me.map.setCenter(me.map.getCenter(),
-												// layer.minZoom);
+												// layer.minZoom);d
 												// }
 												CMDBuild.proxy.gis.Gis
 														.getFeature({
@@ -185,8 +185,8 @@
 
 							if (this.mapPanel.cmVisible) {
 								this.mapPanel.displayMode();
-								this.editingWindowDelegate
-										.deactivateEditControls();
+//								this.editingWindowDelegate
+//										.deactivateEditControls();
 								this.activateSelectControl();
 							}
 						},
@@ -238,12 +238,6 @@
 
 						onLayerCheckChange : function(node, checked) {
 							var map = this.mapPanel.getMap();
-							// if (map) {
-							// var layer = map.getLayersBy("id", node.layerId);
-							// if (layer.length > 0) {
-							// layer[0].setVisibility(checked);
-							// }
-							// }
 						},
 
 						/* As CMCardModuleStateDelegate ************** */
@@ -262,34 +256,12 @@
 						/* As CMMap delegate *************** */
 
 						featureWasAdded : function(feature) {
-							if (feature.data) {
-								var data = feature.data;
-								var currentClassId = _CMCardModuleState.entryType ? _CMCardModuleState.entryType
-										.getId()
-										: null;
-								var currentCardId = _CMCardModuleState.card ? _CMCardModuleState.card
-										.get("Id")
-										: null;
-
-								if (data.master_card == currentCardId
-										&& data.master_class == currentClassId) {
-
-									feature.layer.selectFeature(feature);
-								}
-							}
 						},
 
 	
 						// As CMDBuild.state.CMMapStateDelegate
 
 						geoAttributeUsageChanged : function(geoAttribute) {
-							if (!geoAttribute.isUsed()) {
-								removeLayerForGeoAttribute(this.map,
-										geoAttribute, this);
-							} else {
-								addLayerForGeoAttribute(this.map, geoAttribute,
-										this);
-							}
 						},
 
 						geoAttributeZoomValidityChanged : function(geoAttribute) {
@@ -304,21 +276,6 @@
 
 						featureVisibilityChanged : function(className, cardId,
 								visible) {
-							var layers = this.map
-									.getLayersByTargetClassName(className);
-
-							for (var i = 0, layer = null; i < layers.length; ++i) {
-								layer = layers[i];
-								if (visible) {
-									if (typeof layer.showFeatureWithCardId == "function") {
-										layer.showFeatureWithCardId(cardId);
-									}
-								} else {
-									if (typeof layer.hideFeatureWithCardId == "function") {
-										layer.hideFeatureWithCardId(cardId);
-									}
-								}
-							}
 						},
 
 						getCurrentCardId : function() {
@@ -404,8 +361,13 @@
 		var prefix = CMDBuild.Translation.management.modcard.title;
 		grid.setTitle(prefix + entryType.get("name"));
 	}
-	function getCardData() {
-		return Ext.JSON.encode(this.mapPanel.getMap().getEditedGeometries());
+	function getCardData(params) {
+		if (params.cardId === -1) {
+			return "";
+		}
+		var cardId =  _CMCardModuleState.card.get("Id");
+		var className = _CMCardModuleState.card.get("className");
+		return Ext.JSON.encode(this.mapPanel.getMap().getGeometries(cardId, className));
 	}
 
 	function onEntryTypeSelected(entryType, danglingCard) {

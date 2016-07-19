@@ -26,6 +26,7 @@
 			var currentCardId = (Ext.isEmpty(_CMCardModuleState.card)) ?
 					undefined : _CMCardModuleState.card.raw.Id;//getId();
 			var me = this;
+			this.center(this.interactionDocument.getConfigurationMap());
 			this.interactionDocument.getAllLayers(function(layers) {
 				me.refreshAllLayers(layers, currentClassId, currentClassName, currentCardId);
 			}, this);
