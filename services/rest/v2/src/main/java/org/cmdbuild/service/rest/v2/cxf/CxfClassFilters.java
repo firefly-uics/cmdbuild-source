@@ -1,5 +1,6 @@
 package org.cmdbuild.service.rest.v2.cxf;
 
+import static com.google.common.collect.Iterables.size;
 import static java.lang.Integer.MAX_VALUE;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.StreamSupport.stream;
@@ -11,7 +12,6 @@ import static org.cmdbuild.service.rest.v2.model.Models.newResponseSingle;
 
 import java.util.Optional;
 
-import org.cmdbuild.common.utils.PagedElements;
 import org.cmdbuild.logic.data.access.DataAccessLogic;
 import org.cmdbuild.logic.filter.FilterLogic;
 import org.cmdbuild.service.rest.v2.ClassFilters;
@@ -112,7 +112,7 @@ public class CxfClassFilters implements ClassFilters {
 	@Override
 	public ResponseMultiple<Filter> readAll(final String classId, final Integer limit, final Integer offset) {
 		checkClass(classId);
-		final PagedElements<FilterLogic.Filter> elements = filterLogic.readForCurrentUser(classId);
+		final Iterable<FilterLogic.Filter> elements = filterLogic.readForCurrentUser(classId);
 		return newResponseMultiple(Filter.class) //
 				.withElements(stream(elements.spliterator(), false) //
 						.map(input -> wrapSimple(input)) //
@@ -120,7 +120,7 @@ public class CxfClassFilters implements ClassFilters {
 						.limit(defaultIfNull(limit, MAX_VALUE)) //
 						.collect(toList())) //
 				.withMetadata(newMetadata() //
-						.withTotal(elements.totalSize()) //
+						.withTotal(size(elements)) //
 						.build())
 				.build();
 	}

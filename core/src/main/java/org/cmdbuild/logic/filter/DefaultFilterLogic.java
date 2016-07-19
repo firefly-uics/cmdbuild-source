@@ -3,10 +3,10 @@ package org.cmdbuild.logic.filter;
 import static com.google.common.base.Functions.identity;
 import static com.google.common.collect.FluentIterable.from;
 import static com.google.common.collect.Iterables.concat;
+import static com.google.common.collect.Iterables.size;
 import static com.google.common.collect.Lists.newArrayList;
 import static com.google.common.collect.Maps.difference;
 import static com.google.common.collect.Maps.uniqueIndex;
-import static java.lang.Integer.MAX_VALUE;
 import static java.util.Optional.empty;
 import static java.util.Optional.of;
 import static java.util.stream.StreamSupport.stream;
@@ -209,10 +209,8 @@ public class DefaultFilterLogic implements FilterLogic {
 		logger.info(MARKER, "getting all filters for class '{}' for the currently logged user", className);
 		final OperationUser operationUser = userStore.getUser();
 		final CMUser user = operationUser.getAuthenticatedUser();
-		final PagedElements<FilterStore.Filter> userFilters =
-				store.readNonSharedFilters(className, user.getId(), 0, MAX_VALUE);
-		final PagedElements<org.cmdbuild.services.store.filter.FilterStore.Filter> fetchAllGroupsFilters =
-				store.readSharedFilters(className, 0, MAX_VALUE);
+		final Iterable<FilterStore.Filter> userFilters = store.readNonSharedFilters(className, user.getId());
+		final Iterable<FilterStore.Filter> fetchAllGroupsFilters = store.readSharedFilters(className);
 		final Iterable<FilterStore.Filter> groupFilters = from(fetchAllGroupsFilters) //
 				.filter(new Predicate<FilterStore.Filter>() {
 
@@ -232,22 +230,26 @@ public class DefaultFilterLogic implements FilterLogic {
 	@Override
 	public PagedElements<Filter> readShared(final String className, final int start, final int limit) {
 		logger.info(MARKER, "getting all filters starting from '{}' and with a limit of '{}'", start, limit);
-		final PagedElements<FilterStore.Filter> response = store.readSharedFilters(className, start, limit);
+		final Iterable<FilterStore.Filter> response = store.readSharedFilters(className);
 		return new PagedElements<Filter>(
 				from(response) //
-						.transform(toLogic()), //
-				response.totalSize());
+						.transform(toLogic()) //
+						.skip(start) //
+						.limit(limit), //
+				size(response));
 	}
 
 	@Override
 	public PagedElements<Filter> readNotShared(final String className, final int start, final int limit) {
 		logger.info(MARKER, "getting all filters for class '{}' starting from '{}' and with a limit of '{}'", className,
 				start, limit);
-		final PagedElements<FilterStore.Filter> response = store.readNonSharedFilters(className, null, start, limit);
+		final Iterable<FilterStore.Filter> response = store.readNonSharedFilters(className, null);
 		return new PagedElements<Filter>(
 				from(response) //
-						.transform(toLogic()), //
-				response.totalSize());
+						.transform(toLogic()) //
+						.skip(start) //
+						.limit(limit), //
+				size(response));
 	}
 
 	@Override

@@ -1,7 +1,6 @@
 package org.cmdbuild.services.store.filter;
 
 import org.cmdbuild.auth.acl.SerializablePrivilege;
-import org.cmdbuild.common.utils.PagedElements;
 import org.cmdbuild.data.store.Store;
 import org.cmdbuild.services.localization.LocalizableStorable;
 import org.slf4j.Logger;
@@ -49,7 +48,7 @@ public interface FilterStore {
 	 * @param userId
 	 *            the id of the user, {@code null} means all users.
 	 */
-	PagedElements<Filter> readNonSharedFilters(String className, Long userId, int start, int limit);
+	Iterable<Filter> readNonSharedFilters(String className, Long userId);
 
 	/**
 	 * Gets the all group filters.
@@ -57,7 +56,7 @@ public interface FilterStore {
 	 * @param className
 	 *            the name of the class, {@code null} means all classes.
 	 */
-	PagedElements<Filter> readSharedFilters(String className, int start, int limit);
+	Iterable<Filter> readSharedFilters(String className);
 
 	/**
 	 * Saves a new filter in the database

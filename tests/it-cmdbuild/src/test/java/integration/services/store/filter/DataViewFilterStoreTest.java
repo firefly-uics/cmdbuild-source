@@ -1,15 +1,12 @@
 package integration.services.store.filter;
 
 import static com.google.common.collect.Iterables.size;
-import static java.lang.Integer.MAX_VALUE;
 import static org.cmdbuild.common.Constants.ROLE_CLASS_NAME;
 import static org.cmdbuild.services.store.filter.DataViewFilterStore.CLASS_NAME;
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.equalTo;
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 
-import org.cmdbuild.common.utils.PagedElements;
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.services.store.filter.DataViewFilterStore;
 import org.cmdbuild.services.store.filter.FilterConverter;
@@ -20,9 +17,9 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import utils.IntegrationTestBase;
-
 import com.google.common.collect.Iterables;
+
+import utils.IntegrationTestBase;
 
 public class DataViewFilterStoreTest extends IntegrationTestBase {
 
@@ -51,7 +48,7 @@ public class DataViewFilterStoreTest extends IntegrationTestBase {
 		// given
 
 		// when
-		final Iterable<FilterStore.Filter> filters = filterStore.readNonSharedFilters(null, USER_ID, 0, MAX_VALUE);
+		final Iterable<FilterStore.Filter> filters = filterStore.readNonSharedFilters(null, USER_ID);
 
 		// then
 		assertThat(size(filters), equalTo(0));
@@ -64,7 +61,7 @@ public class DataViewFilterStoreTest extends IntegrationTestBase {
 		filterStore.create(groupFilter("group_filter", "value", ROLE_CLASS_NAME, EMPTY_ID));
 
 		// when
-		final Iterable<FilterStore.Filter> filters = filterStore.readNonSharedFilters(null, USER_ID, 0, MAX_VALUE);
+		final Iterable<FilterStore.Filter> filters = filterStore.readNonSharedFilters(null, USER_ID);
 
 		// then
 		assertThat(size(filters), equalTo(1));
@@ -77,7 +74,7 @@ public class DataViewFilterStoreTest extends IntegrationTestBase {
 		final Long createdId = filterStore.create(userFilter("foo", ROLE_CLASS_NAME, "bar"));
 
 		// when
-		Iterable<FilterStore.Filter> filters = filterStore.readNonSharedFilters(ROLE_CLASS_NAME, USER_ID, 0, MAX_VALUE);
+		Iterable<FilterStore.Filter> filters = filterStore.readNonSharedFilters(ROLE_CLASS_NAME, USER_ID);
 
 		// then
 		assertThat(size(filters), equalTo(1));
@@ -87,7 +84,7 @@ public class DataViewFilterStoreTest extends IntegrationTestBase {
 		filterStore.update(userFilter(createdId, "foo", ROLE_CLASS_NAME, "baz"));
 
 		// when
-		filters = filterStore.readNonSharedFilters(null, USER_ID, 0, MAX_VALUE);
+		filters = filterStore.readNonSharedFilters(null, USER_ID);
 
 		// then
 		assertThat(size(filters), equalTo(1));
@@ -100,7 +97,7 @@ public class DataViewFilterStoreTest extends IntegrationTestBase {
 		filterStore.create(filter("foo", "bar", "baz", ROLE_CLASS_NAME, EMPTY_ID, false));
 
 		// when
-		final Filter filter = filterStore.readNonSharedFilters(null, USER_ID, 0, MAX_VALUE).iterator().next();
+		final Filter filter = filterStore.readNonSharedFilters(null, USER_ID).iterator().next();
 
 		// then
 		assertThat(filter.getName(), equalTo("foo"));
@@ -115,7 +112,7 @@ public class DataViewFilterStoreTest extends IntegrationTestBase {
 		filterStore.create(userFilter("name", userClass.getIdentifier().getLocalName(), "value2"));
 
 		// when
-		final Iterable<Filter> userFilters = filterStore.readNonSharedFilters(null, USER_ID, 0, MAX_VALUE);
+		final Iterable<Filter> userFilters = filterStore.readNonSharedFilters(null, USER_ID);
 
 		// then
 		assertThat(Iterables.size(userFilters), equalTo(2));
@@ -126,23 +123,6 @@ public class DataViewFilterStoreTest extends IntegrationTestBase {
 		// when
 		filterStore.create(userFilter("name", ROLE_CLASS_NAME, "value"));
 		filterStore.create(userFilter("name", ROLE_CLASS_NAME, "value2"));
-	}
-
-	@Test
-	public void testPagination() throws Exception {
-		// given
-		filterStore.create(userFilter("foo1", ROLE_CLASS_NAME, "value1"));
-		filterStore.create(userFilter("foo2", ROLE_CLASS_NAME, "value2"));
-		filterStore.create(userFilter("foo3", ROLE_CLASS_NAME, "value3"));
-		filterStore.create(userFilter("foo4", ROLE_CLASS_NAME, "value4"));
-
-		// when
-		final PagedElements<Filter> userFilters = filterStore.readNonSharedFilters(roleClass.getIdentifier()
-				.getLocalName(), USER_ID, 0, 2);
-
-		// then
-		assertEquals(4, userFilters.totalSize());
-		assertEquals(2, Iterables.size(userFilters));
 	}
 
 	/*
