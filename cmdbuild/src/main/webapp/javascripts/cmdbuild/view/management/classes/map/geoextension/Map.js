@@ -58,6 +58,18 @@
 			this.geoExtension.setMap(this);
 			this.callParent(arguments);
 		},
+		getGeometries : function(cardId, className) {
+			var layers = this.getLayers();
+			var geoAttributes = {};
+			this.getLayers().forEach(function (layer) { 
+				var adapter = layer.get("adapter");
+				if (adapter && adapter.getGeometries) {
+					var layerName = layer.get("name");
+					geoAttributes[layerName] = adapter.getGeometries(cardId, className);
+				}
+			});
+			return geoAttributes;
+		},
 
 		/**
 		 * @returns {Void}
@@ -112,7 +124,6 @@
 			this.map.removeLayer(layer);
 		},
 		center: function(configuration) {
-	        var size = /** @type {ol.Size} */ (this.map.getSize());
 	        this.view.setCenter(configuration.center);
 		},
 		

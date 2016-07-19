@@ -197,8 +197,8 @@
 							this.layers = {};
 						},
 						onAddMenuitemSelect : function(item) {
-//							this.geoAttrMenuButton.setText(item.text);
-//							this.geoAttrMenuButton.setIconCls(item.iconCls);
+							this.geoAttrMenuButton.setText(item.text);
+							this.geoAttrMenuButton.setIconCls(item.iconCls);
 //							this.addButton.enable();
 //							this.addButton.toggle(false);
 							var layer = this.interactionDocument.getMapPanel().getLayerByName(item.text);
