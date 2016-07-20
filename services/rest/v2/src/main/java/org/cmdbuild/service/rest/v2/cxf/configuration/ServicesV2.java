@@ -86,10 +86,12 @@ import org.cmdbuild.service.rest.v2.cxf.CxfRelations;
 import org.cmdbuild.service.rest.v2.cxf.CxfReports;
 import org.cmdbuild.service.rest.v2.cxf.CxfSessions;
 import org.cmdbuild.service.rest.v2.cxf.DefaultEncoding;
+import org.cmdbuild.service.rest.v2.cxf.DefaultFilterLoader;
 import org.cmdbuild.service.rest.v2.cxf.DefaultFiltersHelper;
 import org.cmdbuild.service.rest.v2.cxf.DefaultIdGenerator;
 import org.cmdbuild.service.rest.v2.cxf.DefaultProcessStatusHelper;
 import org.cmdbuild.service.rest.v2.cxf.ErrorHandler;
+import org.cmdbuild.service.rest.v2.cxf.FilterLoader;
 import org.cmdbuild.service.rest.v2.cxf.FiltersHelper;
 import org.cmdbuild.service.rest.v2.cxf.HeaderResponseHandler;
 import org.cmdbuild.service.rest.v2.cxf.IdGenerator;
@@ -137,8 +139,14 @@ public class ServicesV2 implements LoggingSupport {
 	@Bean
 	@Scope(value = SCOPE_REQUEST, proxyMode = TARGET_CLASS)
 	public Cards v2_cards() {
-		final CxfCards service = new CxfCards(v2_errorHandler(), helper.userDataAccessLogic());
+		final CxfCards service = new CxfCards(v2_errorHandler(), helper.userDataAccessLogic(), v2_filterLoader());
 		return proxy(Cards.class, service);
+	}
+
+	@Bean
+	@Scope(value = SCOPE_REQUEST, proxyMode = TARGET_CLASS)
+	protected FilterLoader v2_filterLoader() {
+		return new DefaultFilterLoader(helper.filterLogic(), helper.temporaryfilterLogic(), v2_errorHandler());
 	}
 
 	@Bean
@@ -360,8 +368,8 @@ public class ServicesV2 implements LoggingSupport {
 	@Bean
 	@Scope(value = SCOPE_REQUEST, proxyMode = TARGET_CLASS)
 	public ProcessInstances v2_processInstances() {
-		final CxfProcessInstances service =
-				new CxfProcessInstances(v2_errorHandler(), helper.userWorkflowLogic(), helper.lookupHelper());
+		final CxfProcessInstances service = new CxfProcessInstances(v2_errorHandler(), helper.userWorkflowLogic(),
+				helper.lookupHelper(), v2_filterLoader());
 		return proxy(ProcessInstances.class, service);
 	}
 

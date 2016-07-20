@@ -1,7 +1,7 @@
 package org.cmdbuild.logic.filter;
 
 import static com.google.common.reflect.Reflection.newProxy;
-import static java.util.Optional.of;
+import static java.util.Optional.ofNullable;
 import static java.util.stream.Collectors.toList;
 import static org.cmdbuild.common.utils.Reflection.unsupported;
 
@@ -56,7 +56,7 @@ public class TemporaryFilterLogic extends ForwardingFilterLogic {
 
 	@Override
 	public Optional<Filter> read(final Filter filter) {
-		return of(filters().get(filter.getId()));
+		return ofNullable(filters().get(filter.getId()));
 	}
 
 	@Override
