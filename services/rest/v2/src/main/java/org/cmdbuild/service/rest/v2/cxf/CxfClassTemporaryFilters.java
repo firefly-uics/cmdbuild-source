@@ -1,15 +1,15 @@
 package org.cmdbuild.service.rest.v2.cxf;
 
-import org.cmdbuild.service.rest.v2.ClassFilters;
+import org.cmdbuild.service.rest.v2.ClassTemporaryFilters;
 import org.cmdbuild.service.rest.v2.model.Filter;
 import org.cmdbuild.service.rest.v2.model.ResponseMultiple;
 import org.cmdbuild.service.rest.v2.model.ResponseSingle;
 
-public class CxfClassFilters implements ClassFilters {
+public class CxfClassTemporaryFilters implements ClassTemporaryFilters {
 
 	private final FiltersHelper delegate;
 
-	public CxfClassFilters(final FiltersHelper delegate) {
+	public CxfClassTemporaryFilters(final FiltersHelper delegate) {
 		this.delegate = delegate;
 	}
 

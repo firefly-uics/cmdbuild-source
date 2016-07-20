@@ -23,6 +23,7 @@ import static org.cmdbuild.dao.query.clause.where.WhereClauses.and;
 import static org.cmdbuild.dao.query.clause.where.WhereClauses.condition;
 import static org.cmdbuild.dao.query.clause.where.WhereClauses.not;
 
+import org.cmdbuild.common.utils.PagedElements;
 import org.cmdbuild.dao.entry.CMCard;
 import org.cmdbuild.dao.entry.CMRelation;
 import org.cmdbuild.dao.entrytype.CMClass;
@@ -117,29 +118,39 @@ public class DataViewFilterStore implements FilterStore {
 	}
 
 	@Override
-	public Iterable<Filter> readNonSharedFilters(final String className, final Long userId) {
-		logger.debug("getting non-shared filters for class '{}' and user '{}'", className, userId);
-		return from(view.select(anyAttribute(F)) //
+	public PagedElements<Filter> readNonSharedFilters(final String className, final Long userId, final int offset,
+			final int limit) {
+		logger.debug("getting user filters for class '{}' starting from '{}' with a limit of '{}'", className, offset,
+				limit);
+		final CMQueryResult result = view.select(anyAttribute(F)) //
 				.from(filterClass(), as(F)) //
 				.where(and(not(isShared()), forUser(userId), forClass(className))) //
+				.offset(offset) //
+				.limit(limit) //
 				.orderBy(attribute(F, NAME), ASC) //
 				.count() //
-				.run()) //
-						.transform(toCard(F)) //
-						.transform(cardToFilter());
+				.run();
+		final Iterable<Filter> filters = from(result) //
+				.transform(toCard(F)) //
+				.transform(cardToFilter());
+		return new PagedElements<Filter>(filters, result.totalSize());
 	}
 
 	@Override
-	public Iterable<Filter> readSharedFilters(final String className) {
-		logger.debug("getting shared filters for class '{}'", className);
-		return from(view.select(anyAttribute(F)) //
+	public PagedElements<Filter> readSharedFilters(final String className, final int start, final int limit) {
+		logger.debug("getting all filter cards");
+		final CMQueryResult result = view.select(anyAttribute(F)) //
 				.from(filterClass(), as(F)) //
 				.where(and(isShared(), forClass(className))) //
+				.offset(start) //
+				.limit(limit) //
 				.orderBy(attribute(F, NAME), ASC) //
 				.count() //
-				.run()) //
-						.transform(toCard(F)) //
-						.transform(cardToFilter());
+				.run();
+		final Iterable<Filter> filters = from(result) //
+				.transform(toCard(F)) //
+				.transform(cardToFilter());
+		return new PagedElements<Filter>(filters, result.totalSize());
 	}
 
 	@Override
