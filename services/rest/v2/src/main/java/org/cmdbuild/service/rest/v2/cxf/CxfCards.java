@@ -53,10 +53,13 @@ public class CxfCards implements Cards, LoggingSupport {
 
 	private final ErrorHandler errorHandler;
 	private final DataAccessLogic dataAccessLogic;
+	private final FilterLoader filterLoader;
 
-	public CxfCards(final ErrorHandler errorHandler, final DataAccessLogic dataAccessLogic) {
+	public CxfCards(final ErrorHandler errorHandler, final DataAccessLogic dataAccessLogic,
+			final FilterLoader filterLoader) {
 		this.errorHandler = errorHandler;
 		this.dataAccessLogic = dataAccessLogic;
+		this.filterLoader = filterLoader;
 	}
 
 	@Override
@@ -112,7 +115,7 @@ public class CxfCards implements Cards, LoggingSupport {
 			final Integer limit, final Integer offset, final Set<Long> cardIds) {
 		final CMClass targetClass = assureClass(classId);
 		final QueryOptions queryOptions = QueryOptions.newQueryOption() //
-				.filter(safeJsonObject(filter)) //
+				.filter(safeJsonObject(filterLoader.load(filter))) //
 				.orderBy(safeJsonArray(sort)) //
 				.limit(limit) //
 				.offset(offset) //

@@ -17,6 +17,7 @@ import static org.mockito.Matchers.anyLong;
 import static org.mockito.Matchers.anyMapOf;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
@@ -39,6 +40,7 @@ import org.cmdbuild.logic.data.QueryOptions;
 import org.cmdbuild.logic.workflow.WorkflowLogic;
 import org.cmdbuild.service.rest.v2.cxf.CxfProcessInstances;
 import org.cmdbuild.service.rest.v2.cxf.ErrorHandler;
+import org.cmdbuild.service.rest.v2.cxf.FilterLoader;
 import org.cmdbuild.service.rest.v2.model.ProcessInstance;
 import org.cmdbuild.service.rest.v2.model.ResponseMultiple;
 import org.cmdbuild.service.rest.v2.model.ResponseSingle;
@@ -52,6 +54,8 @@ import org.cmdbuild.workflow.user.UserProcessInstance;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
+import org.mockito.invocation.InvocationOnMock;
+import org.mockito.stubbing.Answer;
 
 import com.google.common.base.Optional;
 
@@ -87,11 +91,12 @@ public class CxfProcessInstancesTest {
 			.chainablePut("widget 3", //
 					ChainablePutMap.of(new HashMap<String, Object>()) //
 							.chainablePut(SUBMISSION_PARAM, asList("foo", "bar", "baz")) //
-			);
+	);
 
 	private ErrorHandler errorHandler;
 	private WorkflowLogic workflowLogic;
 	private LookupHelper lookupHelper;
+	private FilterLoader filterLoader;
 
 	private CxfProcessInstances cxfProcessInstances;
 
@@ -100,7 +105,17 @@ public class CxfProcessInstancesTest {
 		errorHandler = mock(ErrorHandler.class);
 		workflowLogic = mock(WorkflowLogic.class);
 		lookupHelper = mock(LookupHelper.class);
-		cxfProcessInstances = new CxfProcessInstances(errorHandler, workflowLogic, lookupHelper);
+		filterLoader = mock(FilterLoader.class);
+		doAnswer(new Answer<String>() {
+
+			@Override
+			public String answer(final InvocationOnMock invocation) throws Throwable {
+				final Object first = invocation.getArguments()[0];
+				return (first == null) ? null : first.toString();
+			}
+
+		}).when(filterLoader).load(anyString());
+		cxfProcessInstances = new CxfProcessInstances(errorHandler, workflowLogic, lookupHelper, filterLoader);
 	}
 
 	@Test(expected = WebApplicationException.class)
