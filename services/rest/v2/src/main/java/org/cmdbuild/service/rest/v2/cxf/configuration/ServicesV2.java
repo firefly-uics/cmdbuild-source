@@ -34,12 +34,14 @@ import org.cmdbuild.service.rest.v2.LookupTypeValues;
 import org.cmdbuild.service.rest.v2.LookupTypes;
 import org.cmdbuild.service.rest.v2.Menu;
 import org.cmdbuild.service.rest.v2.ProcessAttributes;
+import org.cmdbuild.service.rest.v2.ProcessFilters;
 import org.cmdbuild.service.rest.v2.ProcessInstanceActivities;
 import org.cmdbuild.service.rest.v2.ProcessInstanceAttachments;
 import org.cmdbuild.service.rest.v2.ProcessInstanceEmails;
 import org.cmdbuild.service.rest.v2.ProcessInstancePrivileges;
 import org.cmdbuild.service.rest.v2.ProcessInstances;
 import org.cmdbuild.service.rest.v2.ProcessStartActivities;
+import org.cmdbuild.service.rest.v2.ProcessTemporaryFilters;
 import org.cmdbuild.service.rest.v2.Processes;
 import org.cmdbuild.service.rest.v2.ProcessesConfiguration;
 import org.cmdbuild.service.rest.v2.Relations;
@@ -70,12 +72,14 @@ import org.cmdbuild.service.rest.v2.cxf.CxfLookupTypeValues;
 import org.cmdbuild.service.rest.v2.cxf.CxfLookupTypes;
 import org.cmdbuild.service.rest.v2.cxf.CxfMenu;
 import org.cmdbuild.service.rest.v2.cxf.CxfProcessAttributes;
+import org.cmdbuild.service.rest.v2.cxf.CxfProcessFilters;
 import org.cmdbuild.service.rest.v2.cxf.CxfProcessInstanceActivities;
 import org.cmdbuild.service.rest.v2.cxf.CxfProcessInstanceAttachments;
 import org.cmdbuild.service.rest.v2.cxf.CxfProcessInstanceEmails;
 import org.cmdbuild.service.rest.v2.cxf.CxfProcessInstancePrivileges;
 import org.cmdbuild.service.rest.v2.cxf.CxfProcessInstances;
 import org.cmdbuild.service.rest.v2.cxf.CxfProcessStartActivities;
+import org.cmdbuild.service.rest.v2.cxf.CxfProcessTemporaryFilters;
 import org.cmdbuild.service.rest.v2.cxf.CxfProcesses;
 import org.cmdbuild.service.rest.v2.cxf.CxfProcessesConfiguration;
 import org.cmdbuild.service.rest.v2.cxf.CxfRelations;
@@ -303,6 +307,15 @@ public class ServicesV2 implements LoggingSupport {
 	}
 
 	@Bean
+	@Scope(value = SCOPE_REQUEST, proxyMode = TARGET_CLASS)
+	public ProcessFilters v2_processFilters() {
+		final FiltersHelper delegate =
+				new DefaultFiltersHelper(v2_errorHandler(), helper.filterLogic(), helper.userDataAccessLogic());
+		final CxfProcessFilters service = new CxfProcessFilters(delegate);
+		return proxy(ProcessFilters.class, service);
+	}
+
+	@Bean
 	protected ProcessStatusHelper v2_processStatusHelper() {
 		return new DefaultProcessStatusHelper(helper.lookupHelper());
 	}
@@ -358,6 +371,15 @@ public class ServicesV2 implements LoggingSupport {
 		final CxfProcessStartActivities service =
 				new CxfProcessStartActivities(v2_errorHandler(), helper.userWorkflowLogic());
 		return proxy(ProcessStartActivities.class, service);
+	}
+
+	@Bean
+	@Scope(value = SCOPE_REQUEST, proxyMode = TARGET_CLASS)
+	public ProcessTemporaryFilters v2_processTemporaryFilters() {
+		final FiltersHelper delegate = new DefaultFiltersHelper(v2_errorHandler(), helper.temporaryfilterLogic(),
+				helper.userDataAccessLogic());
+		final CxfProcessTemporaryFilters service = new CxfProcessTemporaryFilters(delegate);
+		return proxy(ProcessTemporaryFilters.class, service);
 	}
 
 	@Bean
