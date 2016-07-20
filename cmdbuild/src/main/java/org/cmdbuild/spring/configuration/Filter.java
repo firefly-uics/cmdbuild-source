@@ -52,7 +52,7 @@ public class Filter {
 
 	@Bean
 	protected StorableConverter<FilterStore.Filter> baseStorableConverter() {
-		return new FilterConverter(data.systemDataView());
+		return new FilterConverter(data.systemDataView(), userStore);
 	}
 
 	@Bean
