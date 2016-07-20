@@ -37,6 +37,7 @@
 			<ref bean="v2_classAttributes" />
 			<ref bean="v2_classFilters" />
 			<ref bean="v2_classPrivileges" />
+			<ref bean="v2_classTemporaryFilters" />
 			<ref bean="v2_cql" />
 			<ref bean="v2_domains" />
 			<ref bean="v2_domainAttributes" />

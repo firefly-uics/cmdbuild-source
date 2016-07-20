@@ -6,6 +6,7 @@ import static com.google.common.base.Predicates.or;
 import static com.google.common.collect.FluentIterable.from;
 import static com.google.common.collect.Lists.newArrayList;
 import static com.google.common.collect.Maps.newHashMap;
+import static java.lang.Integer.MAX_VALUE;
 import static org.apache.commons.lang3.ObjectUtils.defaultIfNull;
 import static org.cmdbuild.auth.privileges.constants.GrantConstants.ATTRIBUTES_PRIVILEGES_ATTRIBUTE;
 import static org.cmdbuild.auth.privileges.constants.GrantConstants.GRANT_CLASS_NAME;
@@ -177,7 +178,7 @@ public class DefaultSecurityLogic implements Logic, SecurityLogic {
 	@Override
 	public List<PrivilegeInfo> fetchFilterPrivilegesForGroup(final Long groupId) {
 		final List<PrivilegeInfo> fetchedFilterPrivileges = fetchStoredPrivilegesForGroup(groupId, FILTER);
-		final Iterable<Filter> allGroupsFilters = filterStore.readSharedFilters(null);
+		final Iterable<Filter> allGroupsFilters = filterStore.readSharedFilters(null, 0, MAX_VALUE);
 		for (final Filter filter : allGroupsFilters) {
 			final Long filterId = Long.valueOf(filter.getId());
 			if (!isPrivilegeAlreadyStored(filterId, fetchedFilterPrivileges)) {

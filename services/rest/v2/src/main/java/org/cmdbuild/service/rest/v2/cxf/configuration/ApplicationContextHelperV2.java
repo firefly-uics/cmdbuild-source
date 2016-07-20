@@ -17,7 +17,9 @@ import org.cmdbuild.logic.dms.PrivilegedDmsLogic;
 import org.cmdbuild.logic.email.EmailLogic;
 import org.cmdbuild.logic.email.EmailTemplateLogic;
 import org.cmdbuild.logic.files.FileLogic;
+import org.cmdbuild.logic.filter.DefaultFilterLogic;
 import org.cmdbuild.logic.filter.FilterLogic;
+import org.cmdbuild.logic.filter.TemporaryFilterLogic;
 import org.cmdbuild.logic.icon.IconsLogic;
 import org.cmdbuild.logic.menu.MenuLogic;
 import org.cmdbuild.logic.privileges.SecurityLogic;
@@ -67,7 +69,7 @@ public class ApplicationContextHelperV2 {
 	}
 
 	public FilterLogic filterLogic() {
-		return applicationContext.getBean(FilterLogic.class);
+		return applicationContext.getBean(DefaultFilterLogic.class);
 	}
 
 	public GraphConfiguration graphConfiguration() {
@@ -120,6 +122,10 @@ public class ApplicationContextHelperV2 {
 
 	public CMDataView systemDataView() {
 		return applicationContext.getBean("systemDataView", CMDataView.class);
+	}
+
+	public FilterLogic temporaryfilterLogic() {
+		return applicationContext.getBean(TemporaryFilterLogic.class);
 	}
 
 	public DataAccessLogic userDataAccessLogic() {
