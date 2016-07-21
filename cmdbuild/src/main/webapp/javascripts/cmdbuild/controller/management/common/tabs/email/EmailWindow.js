@@ -7,9 +7,9 @@
 			'CMDBuild.controller.common.abstract.Widget',
 			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.Message',
+			'CMDBuild.core.Utils',
 			'CMDBuild.proxy.common.tabs.email.Attachment',
-			'CMDBuild.proxy.email.Template',
-			'CMDBuild.core.Utils'
+			'CMDBuild.proxy.email.Template'
 		],
 
 		/**
@@ -28,10 +28,11 @@
 		cmfgCatchedFunctions: [
 			'getView = tabEmailEmailWindowGetView',
 			'onTabEmailEmailWindowAbortButtonClick',
-			'onTabEmailEmailWindowBeforeDestroy',
+			'onTabEmailEmailWindowBeforeClose',
 			'onTabEmailEmailWindowConfirmButtonClick',
 			'onTabEmailEmailWindowFieldChange',
-			'onTabEmailEmailWindowFillFromTemplateButtonClick'
+			'onTabEmailEmailWindowFillFromTemplateButtonClick',
+			'tabEmailEmailWindowConfigureAndShow'
 		],
 
 		/**
@@ -74,103 +75,6 @@
 		windowModeAvailable: ['create', 'edit', 'reply', 'view'],
 
 		/**
-		 * @param {Object} configurationObject
-		 * @param {CMDBuild.controller.management.common.tabs.email.Grid} configurationObject.parentDelegate
-		 * @param {Mixed} configurationObject.record
-		 * @param {String} configurationObject.windowMode
-		 *
-		 * @override
-		 */
-		constructor: function (configurationObject) {
-			var windowClassName = null;
-
-			this.callParent(arguments);
-
-			if (Ext.Array.contains(this.windowModeAvailable, this.windowMode)) {
-				switch (this.windowMode) {
-					case 'view': {
-						windowClassName = 'CMDBuild.view.management.common.tabs.email.emailWindow.ViewWindow';
-					} break;
-
-					default: { // Default window class to build
-						windowClassName = 'CMDBuild.view.management.common.tabs.email.emailWindow.EditWindow';
-					}
-				}
-
-				this.view = Ext.create(windowClassName, { delegate: this });
-
-				// Shorthands
-				this.form = this.view.form;
-
-				// Fill from template button store configuration
-				CMDBuild.proxy.email.Template.readAll({
-					scope: this,
-					success: function (response, options, decodedResponse) {
-						decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.RESPONSE][CMDBuild.core.constants.Proxy.ELEMENTS];
-
-						if (!Ext.isEmpty(decodedResponse) && Ext.isArray(decodedResponse)) {
-							// Sort templates by description ascending
-							CMDBuild.core.Utils.objectArraySort(decodedResponse, CMDBuild.core.constants.Proxy.DESCRIPTION);
-
-							Ext.Array.forEach(decodedResponse, function (template, i, allTemplates) {
-								this.view.fillFromTemplateButton.menu.add({
-									text: template[CMDBuild.core.constants.Proxy.DESCRIPTION],
-									templateName: template[CMDBuild.core.constants.Proxy.NAME],
-									scope: this,
-
-									handler: function (button, e) {
-										this.cmfg('onTabEmailEmailWindowFillFromTemplateButtonClick', button[CMDBuild.core.constants.Proxy.TEMPLATE_NAME]);
-									}
-								});
-							}, this);
-						} else { // To disable button if the aren't templates
-							this.view.fillFromTemplateButton.setDisabled(true);
-						}
-					}
-				});
-
-				if (CMDBuild.configuration.dms.get(CMDBuild.core.constants.Proxy.ENABLED)) {
-					// Build attachments controller
-					this.attachmentsDelegate = Ext.create('CMDBuild.controller.management.common.tabs.email.attachments.Attachments', {
-						parentDelegate: this,
-						record: this.record,
-						view: this.view.attachmentContainer
-					});
-
-					// Get all email attachments
-					var params = {};
-					params[CMDBuild.core.constants.Proxy.EMAIL_ID] = this.record.get(CMDBuild.core.constants.Proxy.ID);
-					params[CMDBuild.core.constants.Proxy.TEMPORARY] = this.record.get(CMDBuild.core.constants.Proxy.TEMPORARY);
-
-					CMDBuild.proxy.common.tabs.email.Attachment.readAll({
-						params: params,
-						loadMask: this.view,
-						scope: this,
-						success: function (response, options, decodedResponse) {
-							decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.RESPONSE];
-
-							if (!Ext.isEmpty(decodedResponse) && Ext.isArray(decodedResponse))
-								Ext.Array.forEach(decodedResponse, function (attachmentObject, i, allAttachmentObjects) {
-									if(!Ext.Object.isEmpty(attachmentObject))
-										this.attachmentsDelegate.cmfg('tabEmailAttachmentAddPanel', attachmentObject[CMDBuild.core.constants.Proxy.FILE_NAME]);
-								}, this);
-						}
-					});
-				}
-
-				this.form.loadRecord(this.record); // Fill view form with record data
-
-				// If email has template enable keep-synch checkbox
-				if (!Ext.isEmpty(this.record.get(CMDBuild.core.constants.Proxy.TEMPLATE)) && this.windowMode != 'view')
-					this.form.keepSynchronizationCheckbox.setDisabled(false);
-
-				// Show window
-				if (!Ext.isEmpty(this.view))
-					this.view.show();
-			}
-		},
-
-		/**
 		 * @returns {Boolean}
 		 *
 		 * @private
@@ -181,6 +85,8 @@
 
 		/**
 		 * @param {CMDBuild.model.common.tabs.email.Template} record
+		 *
+		 * @returns {Void}
 		 *
 		 * @private
 		 */
@@ -255,25 +161,31 @@
 		},
 
 		/**
-		 * Destroy email window object
+		 * @returns {Void}
 		 */
 		onTabEmailEmailWindowAbortButtonClick: function () {
-			this.cmfg('onTabEmailEmailWindowBeforeDestroy');
-
 			if (!Ext.isEmpty(this.view))
-				this.view.destroy();
+				this.view.close();
 		},
 
 		/**
-		 * Implements empty email deletion on window destroy
+		 * Implements empty email deletion on window close
+		 *
+		 * @returns {Void}
 		 */
-		onTabEmailEmailWindowBeforeDestroy: function () {
-			if (Ext.isFunction(this.form.getData) && CMDBuild.core.Utils.isObjectEmpty(this.form.getData()))
+		onTabEmailEmailWindowBeforeClose: function () {
+			if (
+				!Ext.isEmpty(this.form) && Ext.isFunction(this.form.getData)
+				&& CMDBuild.core.Utils.isObjectEmpty(this.form.getData())
+			) {
 				this.cmfg('tabEmailGridRecordRemove', this.record);
+			}
 		},
 
 		/**
 		 * Updates record object adding id (time in milliseconds), Description and attachments array and adds email record to grid store
+		 *
+		 * @returns {Void}
 		 */
 		onTabEmailEmailWindowConfirmButtonClick: function () {
 			// Validate before save
@@ -308,6 +220,8 @@
 
 		/**
 		 * Change event management to catch email content edit
+		 *
+		 * @returns {Void}
 		 */
 		onTabEmailEmailWindowFieldChange: function () {
 			if (!this.isAdvicePrompted && this.isKeepSynchronizationChecked()) {
@@ -321,6 +235,8 @@
 		 * Using FillFromTemplateButton I put only tempalteName in emailObject and get template data to fill email form
 		 *
 		 * @param {String} templateName
+		 *
+		 * @returns {Void}
 		 */
 		onTabEmailEmailWindowFillFromTemplateButtonClick: function (templateName) {
 			var params = {};
@@ -349,6 +265,104 @@
 					this.form.keepSynchronizationCheckbox.setDisabled(false);
 				}
 			});
+		},
+
+		/**
+		 * @param {Object} configurationObject
+		 * @param {String} configurationObject.windowMode
+		 * @param {Object} configurationObject.record
+		 *
+		 * @returns {Void}
+		 */
+		tabEmailEmailWindowConfigureAndShow: function (configurationObject) {
+			if (Ext.isObject(configurationObject) && !Ext.Object.isEmpty(configurationObject)) {
+				Ext.apply(this, configurationObject);
+
+				var windowClassName = null;
+
+				if (Ext.Array.contains(this.windowModeAvailable, this.windowMode)) {
+					switch (this.windowMode) {
+						case 'view': {
+							windowClassName = 'CMDBuild.view.management.common.tabs.email.emailWindow.ViewWindow';
+						} break;
+
+						default: { // Default window class to build
+							windowClassName = 'CMDBuild.view.management.common.tabs.email.emailWindow.EditWindow';
+						}
+					}
+
+					this.view = Ext.create(windowClassName, { delegate: this });
+
+					// Shorthands
+					this.form = this.view.form;
+
+					// Fill from template button store configuration
+					CMDBuild.proxy.email.Template.readAll({
+						scope: this,
+						success: function (response, options, decodedResponse) {
+							decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.RESPONSE][CMDBuild.core.constants.Proxy.ELEMENTS];
+
+							if (!Ext.isEmpty(decodedResponse) && Ext.isArray(decodedResponse)) {
+								// Sort templates by description ascending
+								CMDBuild.core.Utils.objectArraySort(decodedResponse, CMDBuild.core.constants.Proxy.DESCRIPTION);
+
+								Ext.Array.each(decodedResponse, function (template, i, allTemplates) {
+									this.view.fillFromTemplateButton.menu.add({
+										text: template[CMDBuild.core.constants.Proxy.DESCRIPTION],
+										templateName: template[CMDBuild.core.constants.Proxy.NAME],
+										scope: this,
+
+										handler: function (button, e) {
+											this.cmfg('onTabEmailEmailWindowFillFromTemplateButtonClick', button[CMDBuild.core.constants.Proxy.TEMPLATE_NAME]);
+										}
+									});
+								}, this);
+							} else { // To disable button if the aren't templates
+								this.view.fillFromTemplateButton.setDisabled(true);
+							}
+						}
+					});
+
+					if (CMDBuild.configuration.dms.get(CMDBuild.core.constants.Proxy.ENABLED)) {
+						// Build attachments controller
+						this.attachmentsDelegate = Ext.create('CMDBuild.controller.management.common.tabs.email.attachments.Attachments', {
+							parentDelegate: this,
+							record: this.record,
+							view: this.view.attachmentContainer
+						});
+
+						// Get all email attachments
+						var params = {};
+						params[CMDBuild.core.constants.Proxy.EMAIL_ID] = this.record.get(CMDBuild.core.constants.Proxy.ID);
+						params[CMDBuild.core.constants.Proxy.TEMPORARY] = this.record.get(CMDBuild.core.constants.Proxy.TEMPORARY);
+
+						CMDBuild.proxy.common.tabs.email.Attachment.readAll({
+							params: params,
+							loadMask: this.view,
+							scope: this,
+							success: function (response, options, decodedResponse) {
+								decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.RESPONSE];
+
+								if (!Ext.isEmpty(decodedResponse) && Ext.isArray(decodedResponse))
+									Ext.Array.each(decodedResponse, function (attachmentObject, i, allAttachmentObjects) {
+										if(!Ext.Object.isEmpty(attachmentObject))
+											this.attachmentsDelegate.cmfg('tabEmailAttachmentAddPanel', attachmentObject[CMDBuild.core.constants.Proxy.FILE_NAME]);
+									}, this);
+							}
+						});
+					}
+
+					this.form.loadRecord(this.record); // Fill view form with record data
+
+					// If email has template enable keep-synch checkbox
+					if (!Ext.isEmpty(this.record.get(CMDBuild.core.constants.Proxy.TEMPLATE)) && this.windowMode != 'view')
+						this.form.keepSynchronizationCheckbox.setDisabled(false);
+
+					// Show window
+					if (!Ext.isEmpty(this.view))
+						this.view.show();
+				}
+			}
 		}
 	});
 

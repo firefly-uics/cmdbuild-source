@@ -134,6 +134,28 @@
 
 			if (!CMDBuild.configuration.userInterface.get(CMDBuild.core.constants.Proxy.SIMPLE_HISTORY_MODE_FOR_PROCESS)) {
 				Ext.Array.push(columns, [
+					Ext.create('Ext.ux.grid.column.Tick', {
+						dataIndex: CMDBuild.core.constants.Proxy.IS_CARD,
+						text: CMDBuild.Translation.attributes,
+						iconAltText: CMDBuild.Translation.attributes,
+						width: 65,
+						align: 'center',
+						sortable: false,
+						hideable: false,
+						menuDisabled: true,
+						fixed: true
+					}),
+					Ext.create('Ext.ux.grid.column.Tick', {
+						dataIndex: CMDBuild.core.constants.Proxy.IS_RELATION,
+						text: CMDBuild.Translation.relation,
+						iconAltText: CMDBuild.Translation.relation,
+						width: 65,
+						align: 'center',
+						sortable: false,
+						hideable: false,
+						menuDisabled: true,
+						fixed: true
+					}),
 					{
 						dataIndex: CMDBuild.core.constants.Proxy.ACTIVITY_NAME,
 						text: CMDBuild.Translation.activityName,
