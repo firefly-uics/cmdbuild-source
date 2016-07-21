@@ -8,7 +8,7 @@ import static org.cmdbuild.common.utils.Reflection.unsupported;
 import static org.cmdbuild.dao.entrytype.CMAttribute.Mode.HIDDEN;
 import static org.cmdbuild.dao.entrytype.CMAttribute.Mode.WRITE;
 import static org.cmdbuild.service.rest.v2.model.Models.newAttribute;
-import static org.cmdbuild.service.rest.v2.model.Models.newFilter;
+import static org.cmdbuild.service.rest.v2.model.Models.newAttributeFilter;
 
 import java.util.Collection;
 import java.util.Map;
@@ -227,7 +227,7 @@ public class ToAttributeDetail implements Function<CMAttribute, Attribute> {
 				builder.withTargetClass(target.getName()) //
 						.withTargetType(dataView.getActivityClass().isAncestorOf(target) ? PROCESS : CLASS) //
 						.withDomainName(domain.getName()) //
-						.withFilter(newFilter() //
+						.withFilter(newAttributeFilter() //
 								.withText(attribute.getFilter()) //
 								.withParams(toMap(metadataStoreFactory.storeForAttribute(attribute).readAll())) //
 								.build());

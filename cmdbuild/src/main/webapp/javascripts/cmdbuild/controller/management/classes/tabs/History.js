@@ -1,5 +1,8 @@
 (function () {
 
+	/**
+	 * @link CMDBuild.controller.management.workflow.tabs.History
+	 */
 	Ext.define('CMDBuild.controller.management.classes.tabs.History', {
 		extend: 'CMDBuild.controller.common.abstract.Base',
 
@@ -347,7 +350,7 @@
 										}
 									});
 								} else {
-									this.valuesFormattingAndCompare(cardValuesObject);
+									this.valuesFormattingAndCompare(cardValuesObject); // Formats values only
 
 									// Setup record property with historic card details to use XTemplate functionalities to render
 									record.set(CMDBuild.core.constants.Proxy.VALUES, cardValuesObject);
@@ -363,12 +366,10 @@
 						params: params,
 						scope: this,
 						success: function (response, options, decodedResponse) {
-							var cardValuesObject = decodedResponse.response[CMDBuild.core.constants.Proxy.VALUES];
-
-							this.valuesFormattingAndCompare(cardValuesObject);
+							decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.RESPONSE];
 
 							// Setup record property with historic relation details to use XTemplate functionalities to render
-							record.set(CMDBuild.core.constants.Proxy.VALUES, cardValuesObject);
+							record.set(CMDBuild.core.constants.Proxy.VALUES, this.valuesFormattingAndCompareRelation(decodedResponse)); // Formats values only
 						}
 					});
 				}
@@ -508,12 +509,6 @@
 			},
 
 		/**
-		 * Formats all object1 values as objects:
-		 * 	{
-		 * 		{Boolean} changed
-		 * 		{Mixed} description
-		 * 	}
-		 *
 		 * If value1 is different than value2 modified is true, false otherwise. Strips also HTML tags from "description".
 		 *
 		 * @param {Object} object1 - currently expanded record
@@ -559,6 +554,56 @@
 					object1[key].set(CMDBuild.core.constants.Proxy.CHANGED, changed);
 				}, this);
 			}
+		},
+
+		/**
+		 * @param {Object} relationObject
+		 *
+		 * @returns {Object} formattedObject
+		 *
+		 * @private
+		 */
+		valuesFormattingAndCompareRelation: function (relationObject) {
+			var formattedObject = {};
+
+			if (Ext.isObject(relationObject) && !Ext.Object.isEmpty(relationObject)) {
+				formattedObject[CMDBuild.core.constants.Proxy.DOMAIN] = Ext.create('CMDBuild.model.common.tabs.history.Attribute', {
+					attributeDescription: CMDBuild.Translation.domain,
+					description: relationObject[CMDBuild.core.constants.Proxy.DOMAIN],
+					index: 0
+				});
+				formattedObject[CMDBuild.core.constants.Proxy.DESTINATION_CLASS] = Ext.create('CMDBuild.model.common.tabs.history.Attribute', {
+					attributeDescription: CMDBuild.Translation.classLabel,
+					description: relationObject[CMDBuild.core.constants.Proxy.DESTINATION_CLASS],
+					index: 1
+				});
+				formattedObject[CMDBuild.core.constants.Proxy.DESTINATION_CODE] = Ext.create('CMDBuild.model.common.tabs.history.Attribute', {
+					attributeDescription: CMDBuild.Translation.code,
+					description: relationObject[CMDBuild.core.constants.Proxy.DESTINATION_CODE],
+					index: 2
+				});
+				formattedObject[CMDBuild.core.constants.Proxy.DESTINATION_DESCRIPTION] = Ext.create('CMDBuild.model.common.tabs.history.Attribute', {
+					attributeDescription: CMDBuild.Translation.descriptionLabel,
+					description: relationObject[CMDBuild.core.constants.Proxy.DESTINATION_DESCRIPTION],
+					index: 3
+				});
+
+				// Merge values property to object
+				Ext.Object.each(relationObject[CMDBuild.core.constants.Proxy.VALUES], function (key, value, myself) {
+					// Get attribute's index and description
+					var attributeDescription = Ext.isEmpty(this.entryTypeAttributes[key]) ? null : this.entryTypeAttributes[key][CMDBuild.core.constants.Proxy.DESCRIPTION];
+					var attributeIndex = Ext.isEmpty(this.entryTypeAttributes[key]) ? 0 : this.entryTypeAttributes[key][CMDBuild.core.constants.Proxy.INDEX];
+
+					// Build object1 properties models
+					var attributeValues = Ext.isObject(value) ? value : { description: value };
+					attributeValues[CMDBuild.core.constants.Proxy.ATTRIBUTE_DESCRIPTION] = attributeDescription;
+					attributeValues[CMDBuild.core.constants.Proxy.INDEX] = attributeIndex;
+
+					formattedObject[key] = Ext.create('CMDBuild.model.common.tabs.history.Attribute', attributeValues);
+				}, this);
+			}
+
+			return Ext.Object.isEmpty(formattedObject) ? relationObject : formattedObject;
 		}
 	});
 

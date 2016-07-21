@@ -23,7 +23,6 @@ import java.util.Map.Entry;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
-import org.cmdbuild.service.rest.v2.model.Attribute.Filter;
 import org.cmdbuild.service.rest.v2.model.ClassWithFullDetails.AttributeOrder;
 import org.cmdbuild.service.rest.v2.model.DetailResponseMetadata.Reference;
 import org.cmdbuild.service.rest.v2.model.ProcessActivityWithFullDetails.AttributeStatus;
@@ -365,6 +364,35 @@ public class Models {
 
 		public AttributeBuilder withMetadata(final Map<String, String> metadata) {
 			this.metadata = metadata;
+			return this;
+		}
+
+	}
+
+	public static class AttributeFilterBuilder extends ModelBuilder<Attribute.Filter> {
+
+		private String text;
+		private Map<String, String> params;
+
+		private AttributeFilterBuilder() {
+			// use factory method
+		}
+
+		@Override
+		protected Attribute.Filter doBuild() {
+			final Attribute.Filter output = new Attribute.Filter();
+			output.setText(text);
+			output.setParams(params);
+			return output;
+		}
+
+		public AttributeFilterBuilder withText(final String text) {
+			this.text = text;
+			return this;
+		}
+
+		public AttributeFilterBuilder withParams(final Map<String, String> params) {
+			this.params = params;
 			return this;
 		}
 
@@ -1117,8 +1145,12 @@ public class Models {
 
 	public static class FilterBuilder extends ModelBuilder<Filter> {
 
-		private String text;
-		private Map<String, String> params;
+		private Long id;
+		private String name;
+		private String description;
+		private String target;
+		private String configuration;
+		private boolean shared;
 
 		private FilterBuilder() {
 			// use factory method
@@ -1127,18 +1159,42 @@ public class Models {
 		@Override
 		protected Filter doBuild() {
 			final Filter output = new Filter();
-			output.setText(text);
-			output.setParams(params);
+			output.setId(id);
+			output.setName(name);
+			output.setDescription(description);
+			output.setTarget(target);
+			output.setConfiguration(configuration);
+			output.setShared(shared);
 			return output;
 		}
 
-		public FilterBuilder withText(final String text) {
-			this.text = text;
+		public FilterBuilder withId(final Long id) {
+			this.id = id;
 			return this;
 		}
 
-		public FilterBuilder withParams(final Map<String, String> params) {
-			this.params = params;
+		public FilterBuilder withName(final String name) {
+			this.name = name;
+			return this;
+		}
+
+		public FilterBuilder withDescription(final String description) {
+			this.description = description;
+			return this;
+		}
+
+		public FilterBuilder withTarget(final String target) {
+			this.target = target;
+			return this;
+		}
+
+		public FilterBuilder withConfiguration(final String configuration) {
+			this.configuration = configuration;
+			return this;
+		}
+
+		public FilterBuilder withShared(final boolean shared) {
+			this.shared = shared;
 			return this;
 		}
 
@@ -2506,6 +2562,10 @@ public class Models {
 
 	public static AttributeBuilder newAttribute() {
 		return new AttributeBuilder();
+	}
+
+	public static AttributeFilterBuilder newAttributeFilter() {
+		return new AttributeFilterBuilder();
 	}
 
 	public static AttributeOrderBuilder newAttributeOrder() {

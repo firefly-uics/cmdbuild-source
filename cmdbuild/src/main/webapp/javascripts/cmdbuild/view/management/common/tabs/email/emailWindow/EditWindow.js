@@ -25,10 +25,15 @@
 		 */
 		form: undefined,
 
+		closeAction: 'hide',
+		layout: 'border',
 		title: CMDBuild.Translation.composeEmail,
 
-		layout: 'border',
-
+		/**
+		 * @returns {Void}
+		 *
+		 * @override
+		 */
 		initComponent: function () {
 			Ext.apply(this, {
 				dockedItems: [
@@ -95,8 +100,8 @@
 		},
 
 		listeners: {
-			beforedestroy: function (window, eOpts) {
-				return this.delegate.cmfg('onTabEmailEmailWindowBeforeDestroy');
+			beforeclose: function (window, eOpts) {
+				return this.delegate.cmfg('onTabEmailEmailWindowBeforeClose');
 			}
 		}
 	});

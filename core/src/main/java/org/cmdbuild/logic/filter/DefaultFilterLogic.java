@@ -7,7 +7,12 @@ import static com.google.common.collect.Lists.newArrayList;
 import static com.google.common.collect.Maps.difference;
 import static com.google.common.collect.Maps.uniqueIndex;
 import static java.lang.Integer.MAX_VALUE;
+import static java.util.Optional.empty;
+import static java.util.Optional.of;
 import static java.util.stream.StreamSupport.stream;
+
+import java.util.NoSuchElementException;
+import java.util.Optional;
 
 import org.apache.commons.lang3.Validate;
 import org.cmdbuild.auth.UserStore;
@@ -16,7 +21,6 @@ import org.cmdbuild.auth.user.OperationUser;
 import org.cmdbuild.common.utils.PagedElements;
 import org.cmdbuild.services.store.filter.FilterDTO;
 import org.cmdbuild.services.store.filter.FilterStore;
-import org.cmdbuild.services.store.filter.ForwardingFilter;
 import org.slf4j.Marker;
 import org.slf4j.MarkerFactory;
 
@@ -136,46 +140,60 @@ public class DefaultFilterLogic implements FilterLogic {
 	}
 
 	@Override
+	public Optional<Filter> read(final Filter filter) {
+		try {
+			logger.info(MARKER, "reading filter '{}'", filter);
+			Validate.notNull(filter.getId(), "missing id");
+			final FilterStore.Filter stored = store.read(filter.getId());
+			return of(converter.storeToLogic(stored));
+		} catch (final NoSuchElementException e) {
+			return empty();
+		}
+	}
+
+	@Override
 	public void update(final Filter filter) {
 		logger.info(MARKER, "updating filter '{}'", filter);
 		final FilterStore.Filter _filter = converter.logicToStore(filter);
 		final FilterStore.Filter stored = store.read(_filter.getId());
-		final FilterStore.Filter notAllAttributesCanBeUpdated = new ForwardingFilter() {
+		final FilterStore.Filter notAllAttributesCanBeUpdated =
+				new org.cmdbuild.services.store.filter.ForwardingFilter() {
 
-			@Override
-			protected FilterStore.Filter delegate() {
-				return stored;
-			}
+					@Override
+					protected FilterStore.Filter delegate() {
+						return stored;
+					}
 
-			@Override
-			public String getName() {
-				return _filter.getName();
-			}
+					@Override
+					public String getName() {
+						return _filter.getName();
+					}
 
-			@Override
-			public String getDescription() {
-				return _filter.getDescription();
-			}
+					@Override
+					public String getDescription() {
+						return _filter.getDescription();
+					}
 
-			@Override
-			public String getClassName() {
-				return _filter.getClassName();
-			}
+					@Override
+					public String getClassName() {
+						return _filter.getClassName();
+					}
 
-			@Override
-			public String getConfiguration() {
-				return _filter.getConfiguration();
-			}
+					@Override
+					public String getConfiguration() {
+						return _filter.getConfiguration();
+					}
 
-			@Override
-			public Long getUserId() {
-				/*
-				 * if shared updates the user, else keeps the already stored one
-				 */
-				return isShared() ? _filter.getUserId() : super.getUserId();
-			}
+					@Override
+					public Long getUserId() {
+						/*
+						 * if shared updates the user, else keeps the already
+						 * stored one
+						 */
+						return isShared() ? _filter.getUserId() : super.getUserId();
+					}
 
-		};
+				};
 		store.update(notAllAttributesCanBeUpdated);
 	}
 
@@ -191,10 +209,10 @@ public class DefaultFilterLogic implements FilterLogic {
 		logger.info(MARKER, "getting all filters for class '{}' for the currently logged user", className);
 		final OperationUser operationUser = userStore.getUser();
 		final CMUser user = operationUser.getAuthenticatedUser();
-		final PagedElements<FilterStore.Filter> userFilters = store.readNonSharedFilters(className, user.getId(), 0,
-				MAX_VALUE);
-		final PagedElements<org.cmdbuild.services.store.filter.FilterStore.Filter> fetchAllGroupsFilters = store
-				.readSharedFilters(className, 0, MAX_VALUE);
+		final PagedElements<FilterStore.Filter> userFilters =
+				store.readNonSharedFilters(className, user.getId(), 0, MAX_VALUE);
+		final PagedElements<org.cmdbuild.services.store.filter.FilterStore.Filter> fetchAllGroupsFilters =
+				store.readSharedFilters(className, 0, MAX_VALUE);
 		final Iterable<FilterStore.Filter> groupFilters = from(fetchAllGroupsFilters) //
 				.filter(new Predicate<FilterStore.Filter>() {
 

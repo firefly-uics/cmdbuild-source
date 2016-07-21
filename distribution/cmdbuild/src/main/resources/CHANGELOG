@@ -5,18 +5,26 @@ NEW FEATURES
 
  * "Show language choice" configuration not readed at login page
 
+ * Advanced filters management from REST web services
+
 
 FIXES
 
-* Software version string visually displayed in half on login panel
+ * Software version string visually displayed in half on login panel
 
-* Selected tab reset on class change in administration Classes module
+ * Selected tab reset on class change in administration Classes module
 
-* Classes geographical attributes tab no zoom levels validation
+ * Classes geographical attributes tab no zoom levels validation
 
-* Selected tab reset on accordion selection change in administration modules
+ * Selected tab reset on accordion selection change in administration modules
 
  * UI not loading on Tomcat 8.0.36 (latest)
+
+ * Double email delete server call on create/edit window close
+
+ * CreateModifyCard widget with null Reference cannot be configured
+
+ * History tab rows doesn't display relation attributes
 
 
 

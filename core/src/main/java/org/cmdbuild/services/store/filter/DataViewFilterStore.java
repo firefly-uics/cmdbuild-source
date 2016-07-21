@@ -156,6 +156,7 @@ public class DataViewFilterStore implements FilterStore {
 	@Override
 	public Long create(final Filter filter) {
 		return converter.fill(view.createCardFor(filterClass()), filter) //
+				.setUser(converter.getUser(filter)) //
 				.save() //
 				.getId();
 	}
@@ -163,6 +164,7 @@ public class DataViewFilterStore implements FilterStore {
 	@Override
 	public void update(final Filter filter) {
 		converter.fill(view.update(filterCard(filter.getId())), filter) //
+				.setUser(converter.getUser(filter)) //
 				.save();
 	}
 

@@ -69,6 +69,9 @@ public class CreateModifyCardWidgetFactory extends ValuePairWidgetFactory {
 	private void configureWidgetFromReference(final CreateModifyCard widget, final Map<String, Object> valueMap) {
 		final Long id = Long.class.cast(valueMap.get(OBJ_REF));
 
+		if (id == null) {
+			widget.setTargetClass(Validate.notEmpty(readString(valueMap.get(CLASS_NAME)), CLASS_NAME + " is required"));
+		} else {
 		final CMClass queryClass = dataView.findClass(Constants.BASE_CLASS_NAME);
 		final CMCard card = dataView.select(attribute(queryClass, DESCRIPTION_ATTRIBUTE)) //
 				.from(queryClass) //
@@ -81,5 +84,6 @@ public class CreateModifyCardWidgetFactory extends ValuePairWidgetFactory {
 
 		widget.setTargetClass(card.getType().getName());
 		widget.setIdcardcqlselector(card.getId().toString());
+		}
 	}
 }

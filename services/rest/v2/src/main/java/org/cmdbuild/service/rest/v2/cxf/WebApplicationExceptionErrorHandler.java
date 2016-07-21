@@ -93,6 +93,12 @@ public class WebApplicationExceptionErrorHandler implements ErrorHandler, Loggin
 	}
 
 	@Override
+	public void filterNotFound(final Long value) {
+		logger.error("filter not found '{}'", value);
+		notFound(value);
+	}
+
+	@Override
 	public void folderNotFound(final String value) {
 		logger.error("folder not found '{}'", value);
 		notFound(value);
