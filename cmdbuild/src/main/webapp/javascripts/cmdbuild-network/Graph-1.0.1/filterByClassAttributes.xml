@@ -32,6 +32,11 @@
 	</div> 
 	<h1 id="cmdbuildClassDescription" class="pageTitle">PAGE TITLE</h1>
 	<div id="filterByAttributesContainer">
+				<onInit>
+					<command>navigate</command>
+					<form>filterByAttributesForm</form>
+					<container>filterByAttributesContainer</container>
+				</onInit>
 		<form id="filterByAttributesForm" class="cmdbuildCard">
   			<params>
 				<type>formAttributesFilter</type>

@@ -5,8 +5,18 @@ NEW FEATURES
 
  * "Show language choice" configuration not readed at login page
 
+ * Advanced filters management from REST web services
+
 
 FIXES
+
+ * Software version string visually displayed in half on login panel
+
+ * Selected tab reset on class change in administration Classes module
+
+ * Classes geographical attributes tab no zoom levels validation
+
+ * Selected tab reset on accordion selection change in administration modules
 
  * UI not loading on Tomcat 8.0.36 (latest)
 
@@ -185,8 +195,6 @@ FIXES
  * The wizard connector synchronizes entries even if no values has been changed when a timestamp column is included within mapping
 
  * The Data Definition Log reports a wrong statement when creating a class with no parent
-
- * Error while selecting node with no children
 
 
 

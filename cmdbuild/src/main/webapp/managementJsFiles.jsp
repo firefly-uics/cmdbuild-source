@@ -6,9 +6,6 @@
 <script type="text/javascript" src="javascripts/cmdbuild/state/CMUIState.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/state/CMCardModuleState.js"></script>
 
-<!-- THE OTHERS -->
-<script type="text/javascript" src="javascripts/cmdbuild/view/administration/common/CMDomainGrid.js"></script> <!-- TODO move to common files -->
-
 <!-- MODELS -->
 <script type="text/javascript" src="javascripts/cmdbuild/model/widget/CMWidgetReaders.js"></script>
 

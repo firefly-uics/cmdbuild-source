@@ -5,7 +5,6 @@
 
 		requires: [
 			'CMDBuild.core.constants.Proxy',
-			'CMDBuild.proxy.Classes',
 			'CMDBuild.proxy.dataView.DataView'
 		],
 
@@ -78,7 +77,7 @@
 					var params = {};
 					params[CMDBuild.core.constants.Proxy.ACTIVE] = true;
 
-					CMDBuild.proxy.Classes.readAll({
+					CMDBuild.proxy.dataView.DataView.readAllClasses({
 						params: params,
 						loadMask: false,
 						scope: this,

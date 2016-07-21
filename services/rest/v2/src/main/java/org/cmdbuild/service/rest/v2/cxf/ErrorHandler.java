@@ -28,6 +28,8 @@ public interface ErrorHandler {
 
 	void fileNotFound(String value);
 
+	void filterNotFound(Long value);
+
 	void folderNotFound(String value);
 
 	void functionNotFound(Long value);

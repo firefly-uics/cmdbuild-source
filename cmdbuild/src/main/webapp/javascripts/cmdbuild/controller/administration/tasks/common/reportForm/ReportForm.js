@@ -114,11 +114,11 @@
 						attributeCustom.setAdaptedData(attribute);
 
 						fieldManager.attributeModelSet(attributeCustom);
-_debug('new', fieldManager.buildEditor());
+
 						column.setEditor(fieldManager.buildEditor());
 					} else { // @deprecated - Old field manager
 						var editor = CMDBuild.Management.FieldManager.getCellEditorForAttribute(attribute);
-_debug('old', editor);
+
 						if (!Ext.isEmpty(editor)) {
 							if (attribute.defaultvalue)
 								editor.setValue(attribute.defaultvalue);

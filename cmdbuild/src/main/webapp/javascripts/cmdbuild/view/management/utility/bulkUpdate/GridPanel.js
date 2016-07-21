@@ -540,7 +540,7 @@
 		}
 
 		if (me.cmAdvancedFilter) {
-			me.controllerAdvancedFilterButtons = Ext.create('CMDBuild.controller.common.entryTypeGrid.filter.advanced.Advanced', { masterGrid: me });
+			me.controllerAdvancedFilterButtons = Ext.create('CMDBuild.controller.common.panel.gridAndForm.filter.advanced.Advanced', { masterGrid: me });
 			_CMUtils.forwardMethods(me, me.controllerAdvancedFilterButtons.getView(), [
 				"enableClearFilterButton",
 				"disableClearFilterButton",
@@ -603,7 +603,7 @@
 
 							// TODO: cmfg() controller call implementation  on controller refactor
 							handler: function(grid, rowIndex, colIndex, node, e, record, rowNode) {
-								Ext.create('CMDBuild.controller.management.common.graph.Graph', {
+								Ext.create('CMDBuild.controller.common.panel.gridAndForm.graph.Window', {
 									parentDelegate: this,
 									classId: record.get('IdClass'),
 									cardId: record.get('id')

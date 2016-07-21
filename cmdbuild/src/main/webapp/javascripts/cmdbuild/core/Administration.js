@@ -10,7 +10,7 @@
 			'CMDBuild.core.constants.ModuleIdentifiers',
 			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.CookiesManager',
-			'CMDBuild.proxy.Classes',
+			'CMDBuild.proxy.classes.Classes',
 			'CMDBuild.proxy.dashboard.Dashboard',
 			'CMDBuild.proxy.domain.Domain',
 			'CMDBuild.proxy.lookup.Type',
@@ -54,13 +54,16 @@
 			params = {};
 			params[CMDBuild.core.constants.Proxy.ACTIVE] = false;
 
-			CMDBuild.proxy.Classes.readAll({
+			CMDBuild.proxy.classes.Classes.readAll({
 				params: params,
 				loadMask: false,
 				scope: this,
 				success: function (response, options, decodedResponse) {
 					decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.CLASSES];
 
+					/**
+					 * @deprecated
+					 */
 					_CMCache.addClasses(decodedResponse);
 				},
 				callback: requestBarrier.getCallback('administrationBuildCacheBarrier')
@@ -76,6 +79,9 @@
 					success: function (response, options, decodedResponse) {
 						decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.DOMAINS];
 
+						/**
+						 * @deprecated
+						 */
 						_CMCache.addDomains(decodedResponse);
 					},
 					callback: requestBarrier.getCallback('administrationBuildCacheBarrier')
@@ -97,6 +103,9 @@
 				loadMask: false,
 				scope: this,
 				success: function (response, options, decodedResponse) {
+					/**
+					 * @deprecated
+					 */
 					_CMCache.addLookupTypes(decodedResponse);
 				},
 				callback: requestBarrier.getCallback('administrationBuildCacheBarrier')
@@ -111,22 +120,11 @@
 				success: function (response, options, decodedResponse) {
 					decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.RESPONSE];
 
+					/**
+					 * @deprecated
+					 */
 					_CMCache.addDashboards(decodedResponse[CMDBuild.core.constants.Proxy.DASHBOARDS]);
 					_CMCache.setAvailableDataSources(decodedResponse[CMDBuild.core.constants.Proxy.DATA_SOURCES]);
-				},
-				callback: requestBarrier.getCallback('administrationBuildCacheBarrier')
-			});
-
-			/**
-			 * Widget
-			 */
-			CMDBuild.proxy.widget.Widget.readAll({
-				loadMask: false,
-				scope: this,
-				success: function (response, options, decodedResponse) {
-					decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.RESPONSE];
-
-					_CMCache.addWidgetToEntryTypes(decodedResponse);
 				},
 				callback: requestBarrier.getCallback('administrationBuildCacheBarrier')
 			});
@@ -174,7 +172,7 @@
 				var accordionDefinitionObjectsArray = [];
 
 				if (!CMDBuild.configuration.userInterface.get(CMDBuild.core.constants.Proxy.CLOUD_ADMIN))
-					accordionDefinitionObjectsArray.push({ className: 'CMDBuild.controller.administration.accordion.Classes', identifier: 'class' });
+					accordionDefinitionObjectsArray.push({ className: 'CMDBuild.controller.administration.accordion.Classes', identifier: CMDBuild.core.constants.ModuleIdentifiers.getClasses() });
 
 				if (!CMDBuild.configuration.userInterface.get(CMDBuild.core.constants.Proxy.CLOUD_ADMIN))
 					accordionDefinitionObjectsArray.push({ className: 'CMDBuild.controller.administration.accordion.Workflow', identifier: CMDBuild.core.constants.ModuleIdentifiers.getWorkflow() });
@@ -212,6 +210,7 @@
 					isAdministration: true,
 					accordion: accordionDefinitionObjectsArray,
 					module: [
+						{ className: 'CMDBuild.controller.administration.classes.Classes', identifier: CMDBuild.core.constants.ModuleIdentifiers.getClasses() },
 						{ className: 'CMDBuild.controller.administration.configuration.Configuration', identifier: CMDBuild.core.constants.ModuleIdentifiers.getConfiguration() },
 						{ className: 'CMDBuild.controller.administration.dataView.DataView', identifier: CMDBuild.core.constants.ModuleIdentifiers.getDataView() },
 						{ className: 'CMDBuild.controller.administration.domain.Domain', identifier: CMDBuild.core.constants.ModuleIdentifiers.getDomain() },
@@ -247,10 +246,6 @@
 						new CMDBuild.view.common.CMUnconfiguredModPanel({
 							cmControllerType: CMDBuild.controller.common.CMUnconfiguredModPanelController,
 							cmName: 'notconfiguredpanel'
-						}),
-						new CMDBuild.view.administration.classes.CMModClass({
-							cmControllerType: CMDBuild.controller.administration.classes.CMModClassController,
-							cmName: 'class'
 						}),
 						new CMDBuild.Administration.ModIcons({
 							cmName: 'gis-icons'

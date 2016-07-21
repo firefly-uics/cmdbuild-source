@@ -135,7 +135,6 @@
 							this.delegateStep[2].setData(record.get(CMDBuild.core.constants.Proxy.CONTEXT));
 
 							// Set step4 [3] data
-//							this.delegateStep[3].setValueEmailFieldsetCheckbox(record.get(CMDBuild.core.constants.Proxy.EMAIL_ACTIVE));
 							this.delegateStep[3].setValueEmailAccount(record.get(CMDBuild.core.constants.Proxy.EMAIL_ACCOUNT));
 							this.delegateStep[3].setValueEmailTemplate(record.get(CMDBuild.core.constants.Proxy.EMAIL_TEMPLATE));
 

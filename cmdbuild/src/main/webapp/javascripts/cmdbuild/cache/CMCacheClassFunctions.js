@@ -253,17 +253,6 @@
 			callCmFillForStores();
 
 			this.fireEvent("cm_process_deleted", idClass);
-		},
-
-		onWidgetSaved: function(idClass, widget) {
-			var et = this.getEntryTypeById(idClass);
-			et.removeWidgetById(widget.id);
-			et.addWidget(widget);
-		},
-
-		onWidgetDeleted: function(idClass, id) {
-			var et = this.getEntryTypeById(idClass);
-			et.removeWidgetById(id);
 		}
 	});
 

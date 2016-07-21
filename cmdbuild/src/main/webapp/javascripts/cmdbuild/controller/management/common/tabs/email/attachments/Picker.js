@@ -6,7 +6,6 @@
 		requires: [
 			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.Message',
-			'CMDBuild.proxy.Classes',
 			'CMDBuild.proxy.common.tabs.email.Attachment'
 		],
 
@@ -72,7 +71,7 @@
 			var params = {};
 			params[CMDBuild.core.constants.Proxy.ACTIVE] = true;
 
-			CMDBuild.proxy.Classes.readAll({
+			CMDBuild.proxy.common.tabs.email.Attachment.readAllClasses({
 				params: params,
 				scope: this,
 				success: function (response, options, decodedResponse) {
