@@ -3,18 +3,19 @@
 		observers : [],
 		featuresObserver : [],
 		editLayer : undefined,
-		feature: undefined,
+		feature : undefined,
+		currentCard : undefined,
 		configurationMap : {
-			center : [CMDBuild.configuration.gis.get(CMDBuild.gis.constants.CENTER_LONGITUDE) || 0, 
-			          CMDBuild.configuration.gis.get(CMDBuild.gis.constants.CENTER_LATITUDE) || 0],
+			center : [ CMDBuild.configuration.gis.get(CMDBuild.gis.constants.CENTER_LONGITUDE) || 0,
+					CMDBuild.configuration.gis.get(CMDBuild.gis.constants.CENTER_LATITUDE) || 0 ],
 			zoom : CMDBuild.configuration.gis.get(CMDBuild.gis.constants.ZOOM_INITIAL_LEVEL) || 0,
-			mapDivId :  CMDBuild.gis.constants.MAP_DIV || 0
+			mapDivId : CMDBuild.gis.constants.MAP_DIV || 0
 		},
-		setConfigurationMap: function(mapPanel) {
+		setConfigurationMap : function(mapPanel) {
 			this.configurationMap.mapPanel = mapPanel;
-			
+
 		},
-		getConfigurationMap: function() {
+		getConfigurationMap : function() {
 			return this.configurationMap;
 		},
 		observe : function(view) {
@@ -55,13 +56,18 @@
 						var center = geoLayer.get("adapter").getPosition(card);
 						if (center) {
 							me.configurationMap.center = center;
-							me.changed();
 							break;
-							
+
 						}
 					}
 				}
 			}, this);
+		},
+		setCurrentCard : function(card) {
+			this.currentCard = card;
+		},
+		getCurrentCard : function() {
+			return this.currentCard;
 		},
 		clearSelection : function() {
 			var mapPanel = this.getMapPanel();
@@ -69,12 +75,12 @@
 		},
 		getLayersForCard : function(card, callback, callbackScope) {
 			_CMCache.getAllLayers(function(layers) {
-				callback.apply(callbackScope, [layers]);
+				callback.apply(callbackScope, [ layers ]);
 			});
 		},
 		getAllLayers : function(callback, callbackScope) {
 			_CMCache.getAllLayers(function(layers) {
-				callback.apply(callbackScope, [layers]);
+				callback.apply(callbackScope, [ layers ]);
 			});
 		},
 		getLayerByName : function(name, callback, callbackScope) {
@@ -99,9 +105,9 @@
 		},
 		setCurrentFeature : function(name, geoType, operation) {
 			this.feature = {
-					nameAttribute : name,
-					geoType : geoType,
-					operation: operation
+				nameAttribute : name,
+				geoType : geoType,
+				operation : operation
 			};
 		},
 		getCurrentFeature : function() {
@@ -109,15 +115,15 @@
 		}
 	});
 
-	function layersByCard(card, callback, callbackScope) {//?????????
+	function layersByCard(card, callback, callbackScope) {// ?????????
 		var retLayers = [];
 		_CMCache.getAllLayers(function(layers) {
 			for (var i = 0; i < layers.length; i++) {
 				if (layer === card.cardId) {
-					
+
 				}
 			}
-			callback.apply(callbackScope, [retLayers]);
+			callback.apply(callbackScope, [ retLayers ]);
 		});
 	}
 
@@ -138,7 +144,7 @@
 		}
 		_CMCache.getAllLayers(function(layers) {
 			var layer = layers.find(checkName);
-			callback.apply(callbackScope, [layer]);
+			callback.apply(callbackScope, [ layer ]);
 		});
 	}
 
@@ -148,8 +154,7 @@
 		}
 		function checkCard(binding) {
 			// because an id can be a string or an integer have to be ==
-			return (binding.idCard == currentCardId &&
-					binding.className === currentClassName);
+			return (binding.idCard == currentCardId && binding.className === currentClassName);
 		}
 		if (layer.visibility.find(checkClass) !== undefined) {
 			return true;
