@@ -5,7 +5,7 @@
 
 		requires: [
 			'CMDBuild.core.constants.Proxy',
-			'CMDBuild.proxy.NavigationTree'
+			'CMDBuild.proxy.navigationTree.NavigationTree'
 		],
 
 		/**
@@ -188,7 +188,7 @@
 				var params = {};
 				params[CMDBuild.core.constants.Proxy.NAME] = node.get(CMDBuild.core.constants.Proxy.ENTITY_ID);
 
-				CMDBuild.proxy.NavigationTree.read({
+				CMDBuild.proxy.navigationTree.NavigationTree.read({
 					params: params,
 					scope: this,
 					success: function(response, options, decodedResponse) {
@@ -247,7 +247,7 @@
 
 					params[CMDBuild.core.constants.Proxy.STRUCTURE] = Ext.encode(structure);
 
-					CMDBuild.proxy.NavigationTree.create({
+					CMDBuild.proxy.navigationTree.NavigationTree.create({
 						params: params,
 						scope: this,
 						success: this.success
@@ -261,7 +261,7 @@
 
 					params[CMDBuild.core.constants.Proxy.STRUCTURE] = Ext.encode(structure);
 
-					CMDBuild.proxy.NavigationTree.update({
+					CMDBuild.proxy.navigationTree.NavigationTree.update({
 						params: params,
 						scope: this,
 						success: this.success
@@ -280,7 +280,7 @@
 				var params = {};
 				params[CMDBuild.core.constants.Proxy.NAME] = this.cmfg('navigationTreeSelectedTreeGet', CMDBuild.core.constants.Proxy.NAME);
 
-				CMDBuild.proxy.NavigationTree.remove({
+				CMDBuild.proxy.navigationTree.NavigationTree.remove({
 					params: params,
 					scope: this,
 					success: function (response, options, decodedResponse) {

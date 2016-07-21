@@ -14,10 +14,13 @@
 		 * @cfg {Array}
 		 */
 		cmfgCatchedFunctions: [
-			'onUserAndGroupAccordionSelect',
+			'identifierGet = userAndGroupIdentifierGet',
+			'onUserAndGroupAccordionSelected -> controllerGroups, controllerUsers',
 			'onUserAndGroupModuleInit = onModuleInit',
+			'setViewTitle = userAndGroupViewTitleSet',
 			'userAndGroupSelectedAccordionGet',
-			'userAndGroupSelectedAccordionIsEmpty'
+			'userAndGroupSelectedAccordionIsEmpty',
+			'userAndGroupViewActiveItemSet'
 		],
 
 		/**
@@ -33,9 +36,14 @@
 		selectedAccordion: undefined,
 
 		/**
-		 * @property {Object}
+		 * @property {CMDBuild.controller.administration.userAndGroup.group.Group}
 		 */
-		sectionController: undefined,
+		controllerGroups: undefined,
+
+		/**
+		 * @property {CMDBuild.controller.administration.userAndGroup.user.User}
+		 */
+		controllerUsers: undefined,
 
 		/**
 		 * @cfg {CMDBuild.view.administration.userAndGroup.UserAndGroupView}
@@ -54,6 +62,18 @@
 			this.callParent(arguments);
 
 			this.view = Ext.create('CMDBuild.view.administration.userAndGroup.UserAndGroupView', { delegate: this });
+
+			// Build sub-controllers
+			this.controllerGroups = Ext.create('CMDBuild.controller.administration.userAndGroup.group.Group', { parentDelegate: this });
+			this.controllerUsers = Ext.create('CMDBuild.controller.administration.userAndGroup.user.User', { parentDelegate: this });
+
+			// Inject tabs
+			this.view.add([
+				this.controllerGroups.getView(),
+				this.controllerUsers.getView()
+			]);
+
+			this.cmfg('userAndGroupViewActiveItemSet');
 		},
 
 		/**
@@ -66,39 +86,15 @@
 		 * @override
 		 */
 		onUserAndGroupModuleInit: function (node) {
-			if (!Ext.Object.isEmpty(node)) {
-				var titleParts = [];
+			if (Ext.isObject(node) && !Ext.Object.isEmpty(node)) {
 				var selectedAccordionData = node.getData();
 				selectedAccordionData[CMDBuild.core.constants.Proxy.ID] = selectedAccordionData[CMDBuild.core.constants.Proxy.ENTITY_ID];
 
 				this.userAndGroupSelectedAccordionSet({ value: selectedAccordionData });
 
-				this.view.removeAll(true);
+				this.cmfg('onUserAndGroupAccordionSelected');
 
-				switch (this.cmfg('userAndGroupSelectedAccordionGet', CMDBuild.core.constants.Proxy.SECTION_HIERARCHY)[0]) {
-					case 'user': {
-						this.sectionController = Ext.create('CMDBuild.controller.administration.userAndGroup.user.User', { parentDelegate: this });
-
-						titleParts = [this.sectionController.getBaseTitle()];
-					} break;
-
-					case 'group':
-					default: {
-						this.sectionController = Ext.create('CMDBuild.controller.administration.userAndGroup.group.Group', { parentDelegate: this });
-
-						titleParts = [this.sectionController.getBaseTitle()];
-
-						if (!this.cmfg('userAndGroupSelectedAccordionIsEmpty', CMDBuild.core.constants.Proxy.DESCRIPTION))
-							titleParts.push(this.cmfg('userAndGroupSelectedAccordionGet', CMDBuild.core.constants.Proxy.DESCRIPTION));
-					}
-				}
-
-				this.setViewTitle(titleParts);
-
-				this.view.add(this.sectionController.getView());
-
-				this.sectionController.cmfg('onUserAndGroupAccordionSelect');
-				this.sectionController.getView().fireEvent('show'); // Manual show event fire
+				this.view.getLayout().getActiveItem().fireEvent('show'); // Manual show event fire because was already selected
 
 				this.onModuleInit(node); // Custom callParent() implementation
 			}
@@ -145,7 +141,18 @@
 
 					this.propertyManageSet(parameters);
 				}
-			}
+			},
+
+		/**
+		 * @returns {Void}
+		 */
+		userAndGroupViewActiveItemSet: function (item) {
+			if (Ext.isObject(item) && !Ext.Object.isEmpty(item))
+				return this.view.getLayout().setActiveItem(item);
+
+			// Display group panel as default
+			return this.view.getLayout().setActiveItem(this.controllerGroups.getView());
+		}
 	});
 
 })();

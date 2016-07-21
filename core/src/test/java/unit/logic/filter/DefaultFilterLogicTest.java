@@ -18,10 +18,14 @@ import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Matchers.isNull;
 import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
+
+import java.util.NoSuchElementException;
+import java.util.Optional;
 
 import org.cmdbuild.auth.UserStore;
 import org.cmdbuild.auth.acl.CMGroup;
@@ -295,8 +299,8 @@ public class DefaultFilterLogicTest {
 		assertThat(output.elements(), containsInAnyOrder(_first, _second));
 		assertThat(output.totalSize(), equalTo(0));
 
-		final ArgumentCaptor<CMPrivilegedObject> privilegeContextCaptor = ArgumentCaptor
-				.forClass(CMPrivilegedObject.class);
+		final ArgumentCaptor<CMPrivilegedObject> privilegeContextCaptor =
+				ArgumentCaptor.forClass(CMPrivilegedObject.class);
 		final ArgumentCaptor<FilterStore.Filter> converterCaptor = ArgumentCaptor.forClass(FilterStore.Filter.class);
 
 		verify(userStore).getUser();
@@ -479,6 +483,66 @@ public class DefaultFilterLogicTest {
 
 		verify(store).joined(eq(42L));
 		verifyNoMoreInteractions(store);
+	}
+
+	@Test(expected = NullPointerException.class)
+	public void filterReadWithMissingId() throws Exception {
+		// given
+		final Filter input = mock(Filter.class);
+		doReturn(null) //
+				.when(input).getId();
+
+		// when
+		try {
+			defaultFilterLogic.read(input);
+		} catch (final NullPointerException e) {
+			verifyNoMoreInteractions(store, converter, userStore, authenticatedUser, privilegeContext);
+			throw e;
+		}
+	}
+
+	@Test
+	public void filterReadWhenMissing() throws Exception {
+		// given
+		final Filter input = mock(Filter.class);
+		doReturn(42L) //
+				.when(input).getId();
+		doThrow(NoSuchElementException.class) //
+				.when(store).read(anyLong());
+
+		// when
+		final Optional<Filter> output = defaultFilterLogic.read(input);
+
+		// then
+		assertThat(output.isPresent(), equalTo(false));
+
+		verify(store).read(eq(42L));
+		verifyNoMoreInteractions(store, converter, userStore, authenticatedUser, privilegeContext);
+	}
+
+	@Test
+	public void filterRead() throws Exception {
+		// given
+		final Filter input = mock(Filter.class);
+		doReturn(42L) //
+				.when(input).getId();
+		final FilterStore.Filter read = mock(FilterStore.Filter.class);
+		doReturn(read) //
+				.when(store).read(anyLong());
+		final Filter convertedForOutput = mock(Filter.class);
+		doReturn(convertedForOutput) //
+				.when(converter).storeToLogic(any(FilterStore.Filter.class));
+
+		// when
+		final Optional<Filter> output = defaultFilterLogic.read(input);
+
+		// then
+		assertThat(output.isPresent(), equalTo(true));
+		assertThat(output.get(), equalTo(convertedForOutput));
+
+		verify(store).read(eq(42L));
+		verify(converter).storeToLogic(eq(read));
+		verifyNoMoreInteractions(store, converter, userStore, authenticatedUser, privilegeContext);
 	}
 
 }

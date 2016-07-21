@@ -56,7 +56,6 @@
 			itemdblclick: function (grid, record, item, index, e, eOpts) {
 				this.delegate.cmfg('onUserAndGroupUserItemDoubleClick');
 			},
-
 			select: function (row, record, index) {
 				this.delegate.cmfg('onUserAndGroupUserRowSelected');
 			}

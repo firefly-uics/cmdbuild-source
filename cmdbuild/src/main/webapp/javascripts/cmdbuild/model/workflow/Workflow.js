@@ -1,6 +1,9 @@
 (function () {
 
-	Ext.require('CMDBuild.core.constants.Proxy');
+	Ext.require([
+		'CMDBuild.core.constants.Global',
+		'CMDBuild.core.constants.Proxy'
+	]);
 
 	Ext.define('CMDBuild.model.workflow.Workflow', { // TODO: waiting for refactor (rename and structure)
 		extend: 'Ext.data.Model',
@@ -15,8 +18,8 @@
 			{ name: CMDBuild.core.constants.Proxy.NAME, type: 'string' },
 			{ name: CMDBuild.core.constants.Proxy.PARENT, type: 'int', useNull: true },
 			{ name: CMDBuild.core.constants.Proxy.PERMISSIONS, type: 'auto', defaultValue: {} },
-			{ name: CMDBuild.core.constants.Proxy.TABLE_TYPE, type: 'string', defaultValue: 'standard' },
-			{ name: CMDBuild.core.constants.Proxy.TYPE, type: 'string', defaultValue: 'processclass' },
+			{ name: CMDBuild.core.constants.Proxy.TABLE_TYPE, type: 'string', defaultValue: CMDBuild.core.constants.Global.getTableTypeStandardTable() },
+			{ name: CMDBuild.core.constants.Proxy.TYPE, type: 'string', defaultValue: 'processclass' }, // TODO: probably useless, this model is for processes only
 			{ name: CMDBuild.core.constants.Proxy.USER_STOPPABLE, type: 'boolean' }
 		],
 
@@ -51,7 +54,7 @@
 		 * @override
 		 */
 		constructor: function (data) {
-			data = this.self.convertFromLegacy(data);
+			data = this.statics().convertFromLegacy(data);
 
 			this.callParent(arguments);
 		}
