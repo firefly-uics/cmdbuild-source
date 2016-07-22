@@ -78,6 +78,8 @@ public final class Constants {
 		public static final String RELATION_CARD_CLASSNAME_KEY = "className";
 		public static final String FUNCTION_NAME_KEY = "name";
 
+		public static final String _TYPE = "_type";
+
 	}
 
 	/**
