@@ -33,6 +33,7 @@ import static org.cmdbuild.dao.query.clause.where.SimpleWhereClause.condition;
 import static org.cmdbuild.logic.mapping.json.Constants.Filters.AND_KEY;
 import static org.cmdbuild.logic.mapping.json.Constants.Filters.ATTRIBUTE_KEY;
 import static org.cmdbuild.logic.mapping.json.Constants.Filters.CLASSNAME_KEY;
+import static org.cmdbuild.logic.mapping.json.Constants.Filters.NOT_KEY;
 import static org.cmdbuild.logic.mapping.json.Constants.Filters.OPERATOR_KEY;
 import static org.cmdbuild.logic.mapping.json.Constants.Filters.OR_KEY;
 import static org.cmdbuild.logic.mapping.json.Constants.Filters.SIMPLE_KEY;
@@ -164,6 +165,9 @@ public class JsonAttributeFilterBuilder implements Builder<WhereClause> {
 			return or(buildWhereClause(first), //
 					buildWhereClause(second), //
 					createOptionalWhereClauses(conditions));
+		} else if (filterObject.has(NOT_KEY)) {
+			final JSONObject condition = filterObject.getJSONObject(NOT_KEY);
+			return not(buildWhereClause(condition));
 		}
 		throw new IllegalArgumentException("The filter is malformed");
 	}

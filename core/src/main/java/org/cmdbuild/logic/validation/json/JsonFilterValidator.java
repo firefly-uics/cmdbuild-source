@@ -8,6 +8,7 @@ import static org.cmdbuild.logic.mapping.json.Constants.Filters.ATTRIBUTE_KEY;
 import static org.cmdbuild.logic.mapping.json.Constants.Filters.CQL_KEY;
 import static org.cmdbuild.logic.mapping.json.Constants.Filters.FULL_TEXT_QUERY_KEY;
 import static org.cmdbuild.logic.mapping.json.Constants.Filters.FUNCTION_KEY;
+import static org.cmdbuild.logic.mapping.json.Constants.Filters.NOT_KEY;
 import static org.cmdbuild.logic.mapping.json.Constants.Filters.OPERATOR_KEY;
 import static org.cmdbuild.logic.mapping.json.Constants.Filters.OR_KEY;
 import static org.cmdbuild.logic.mapping.json.Constants.Filters.RELATION_CARDS_KEY;
@@ -71,7 +72,7 @@ public class JsonFilterValidator implements Validator {
 	private void validateAttributeFilter(final JSONObject filterObject) throws JSONException {
 		if (filterObject.has(ATTRIBUTE_KEY)) {
 			final JSONObject attributeFilter = filterObject.getJSONObject(ATTRIBUTE_KEY);
-			Validate.isTrue(hasOneOfKeys(attributeFilter, SIMPLE_KEY, AND_KEY, OR_KEY), MALFORMED_MSG);
+			Validate.isTrue(hasOneOfKeys(attributeFilter, SIMPLE_KEY, AND_KEY, OR_KEY, NOT_KEY), MALFORMED_MSG);
 			if (attributeFilter.has(SIMPLE_KEY)) {
 				final JSONObject simpleClauseObject = attributeFilter.getJSONObject(SIMPLE_KEY);
 				Validate.isTrue(hasAllKeys(simpleClauseObject, //

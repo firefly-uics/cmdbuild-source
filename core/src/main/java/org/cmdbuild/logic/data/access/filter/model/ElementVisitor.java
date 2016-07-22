@@ -6,6 +6,8 @@ public interface ElementVisitor {
 
 	void visit(Attribute element);
 
+	void visit(Not element);
+
 	void visit(OneOf element);
 
 }
