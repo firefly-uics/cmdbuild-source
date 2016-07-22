@@ -2,6 +2,7 @@ package unit.logic.data.access.filter.json;
 
 import static org.cmdbuild.logic.data.access.filter.model.Elements.all;
 import static org.cmdbuild.logic.data.access.filter.model.Elements.attribute;
+import static org.cmdbuild.logic.data.access.filter.model.Elements.not;
 import static org.cmdbuild.logic.data.access.filter.model.Elements.oneOf;
 import static org.cmdbuild.logic.data.access.filter.model.Predicates.and;
 import static org.cmdbuild.logic.data.access.filter.model.Predicates.contains;
@@ -12,7 +13,6 @@ import static org.cmdbuild.logic.data.access.filter.model.Predicates.in;
 import static org.cmdbuild.logic.data.access.filter.model.Predicates.isNull;
 import static org.cmdbuild.logic.data.access.filter.model.Predicates.lessThan;
 import static org.cmdbuild.logic.data.access.filter.model.Predicates.like;
-import static org.cmdbuild.logic.data.access.filter.model.Predicates.not;
 import static org.cmdbuild.logic.data.access.filter.model.Predicates.startsWith;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
@@ -254,7 +254,7 @@ public class JsonParserTest {
 		final Filter filter = parser.parse();
 
 		// then
-		assertThat(filter, is(filterWith(attribute("foo", not(startsWith("bar"))))));
+		assertThat(filter, is(filterWith(not(attribute("foo", startsWith("bar"))))));
 	}
 
 	@Test
@@ -275,7 +275,7 @@ public class JsonParserTest {
 		final Filter filter = parser.parse();
 
 		// then
-		assertThat(filter, is(filterWith(attribute("foo", not(contains("bar"))))));
+		assertThat(filter, is(filterWith(not(attribute("foo", contains("bar"))))));
 	}
 
 	@Test
@@ -296,7 +296,7 @@ public class JsonParserTest {
 		final Filter filter = parser.parse();
 
 		// then
-		assertThat(filter, is(filterWith(attribute("foo", not(endsWith("bar"))))));
+		assertThat(filter, is(filterWith(not(attribute("foo", endsWith("bar"))))));
 	}
 
 	@Test
@@ -317,7 +317,7 @@ public class JsonParserTest {
 		final Filter filter = parser.parse();
 
 		// then
-		assertThat(filter, is(filterWith(attribute("foo", not(equalTo("bar"))))));
+		assertThat(filter, is(filterWith(not(attribute("foo", equalTo("bar"))))));
 	}
 
 	@Test
@@ -338,7 +338,7 @@ public class JsonParserTest {
 		final Filter filter = parser.parse();
 
 		// then
-		assertThat(filter, is(filterWith(attribute("foo", not(isNull())))));
+		assertThat(filter, is(filterWith(not(attribute("foo", isNull())))));
 	}
 
 	@Test
@@ -436,12 +436,43 @@ public class JsonParserTest {
 		final Filter filter = parser.parse();
 
 		// then
-		assertThat(
-				filter,
+		assertThat(filter,
 				is(filterWith(all(
 						oneOf(attribute("foo", equalTo("bar")),
-								all(attribute("bar", not(equalTo("baz"))), attribute("baz", equalTo("foo")))),
+								all(not(attribute("bar", equalTo("baz"))), attribute("baz", equalTo("foo")))),
 						attribute("bar", startsWith("baz"))))));
+	}
+
+	@Test
+	public void attributeWithNotCondition() {
+		// given
+		final String json = "{" //
+				+ "    \"attribute\": {" //
+				+ "        \"not\": {" //
+				+ "            \"or\": [" //
+				+ "                {\"not\": {" //
+				+ "                    \"simple\": {" //
+				+ "                        \"attribute\": \"foo\"," //
+				+ "                        \"operator\": \"equal\"," //
+				+ "                        \"value\": [\"bar\"]}" //
+				+ "                }}," //
+				+ "                {\"simple\": {" //
+				+ "                    \"attribute\": \"bar\"," //
+				+ "                    \"operator\": \"equal\"," //
+				+ "                    \"value\": [\"baz\"]}" //
+				+ "                }" //
+				+ "            ]" //
+				+ "        }" //
+				+ "    }" //
+				+ "}";
+		final JsonParser parser = new JsonParser(json);
+
+		// when
+		final Filter filter = parser.parse();
+
+		// then
+		assertThat(filter,
+				is(filterWith(not(oneOf(not(attribute("foo", equalTo("bar"))), attribute("bar", equalTo("baz")))))));
 	}
 
 	@Test
@@ -463,9 +494,10 @@ public class JsonParserTest {
 		final Filter filter = parser.parse();
 
 		// then
-		assertThat(filter, is(a(filter() //
-				.withAttribute(attribute("foo", equalTo("bar"))) //
-				.withFullTextQuery("blah blah blah") //
+		assertThat(filter,
+				is(a(filter() //
+						.withAttribute(attribute("foo", equalTo("bar"))) //
+						.withFullTextQuery("blah blah blah") //
 				)));
 	}
 

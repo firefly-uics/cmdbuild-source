@@ -63,6 +63,7 @@ public final class Constants {
 		public static final String SIMPLE_KEY = "simple";
 		public static final String AND_KEY = "and";
 		public static final String OR_KEY = "or";
+		public static final String NOT_KEY = "not";
 		public static final String OPERATOR_KEY = "operator";
 		public static final String VALUE_KEY = "value";
 		public static final String RELATION_DOMAIN_KEY = "domain";

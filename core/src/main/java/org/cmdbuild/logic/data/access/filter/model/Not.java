@@ -1,19 +1,18 @@
 package org.cmdbuild.logic.data.access.filter.model;
 
-public class Not extends AbstractPredicate {
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 
-	private final Predicate predicate;
+public class Not extends AbstractElement {
 
-	Not(final Predicate predicate) {
-		this.predicate = predicate;
-	}
+	private final Element element;
 
-	public Predicate getPredicate() {
-		return predicate;
+	Not(final Element element) {
+		this.element = element;
 	}
 
 	@Override
-	public void accept(final PredicateVisitor visitor) {
+	public void accept(final ElementVisitor visitor) {
 		visitor.visit(this);
 	}
 
@@ -26,12 +25,16 @@ public class Not extends AbstractPredicate {
 			return false;
 		}
 		final Not other = Not.class.cast(obj);
-		return this.predicate.equals(other.predicate);
+		return new EqualsBuilder() //
+				.append(this.element, other.element) //
+				.isEquals();
 	}
 
 	@Override
 	protected int doHashCode() {
-		return predicate.hashCode();
+		return new HashCodeBuilder() //
+				.append(element) //
+				.toHashCode();
 	}
 
 }

@@ -2,6 +2,7 @@ package org.cmdbuild.logic.mapping.json;
 
 import static org.cmdbuild.logic.mapping.json.Constants.Filters.AND_KEY;
 import static org.cmdbuild.logic.mapping.json.Constants.Filters.ATTRIBUTE_KEY;
+import static org.cmdbuild.logic.mapping.json.Constants.Filters.NOT_KEY;
 import static org.cmdbuild.logic.mapping.json.Constants.Filters.OR_KEY;
 import static org.cmdbuild.logic.mapping.json.Constants.Filters.SIMPLE_KEY;
 
@@ -64,14 +65,15 @@ public class JsonFilterHelper {
 			arrayWithFlowStatus.put(object(key, actual));
 			arrayWithFlowStatus.put(simple(additionalElement));
 			attribute.put(AND_KEY, arrayWithFlowStatus);
-		} else if (attribute.has(SIMPLE_KEY)) {
-			logger.debug(marker, "attribute element has 'simple' sub-element");
-			final JSONObject actual = attribute.getJSONObject(SIMPLE_KEY);
+		} else if (attribute.has(SIMPLE_KEY) || attribute.has(NOT_KEY)) {
+			logger.debug(marker, "attribute element has 'simple' or 'not' sub-elements");
+			final String key = attribute.has(SIMPLE_KEY) ? SIMPLE_KEY : NOT_KEY;
+			final JSONObject actual = attribute.getJSONObject(key);
 			final JSONArray arrayWithFlowStatus = new JSONArray();
-			arrayWithFlowStatus.put(simple(actual));
+			arrayWithFlowStatus.put(object(key, actual));
 			arrayWithFlowStatus.put(simple(additionalElement));
 			attribute.put(AND_KEY, arrayWithFlowStatus);
-			attribute.remove(SIMPLE_KEY);
+			attribute.remove(key);
 		} else {
 			logger.debug(marker, "attribute element is empty");
 			attribute.put(SIMPLE_KEY, additionalElement);
