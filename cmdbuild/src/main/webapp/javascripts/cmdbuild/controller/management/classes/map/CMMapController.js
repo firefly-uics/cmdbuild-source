@@ -95,7 +95,6 @@
 				className : className, 
 				cardId : cardId
 			});
-			this.interactionDocument.changed();
 		},
 
 		onAddCardButtonClick : function() {

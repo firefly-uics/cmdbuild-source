@@ -46,21 +46,33 @@
 		isGeoServerLayer : function(layer) {
 			return layer.type === "SHAPE";
 		},
+		centerOnLayer : function(card, map, layers, index, callback, callbackScope) {
+			if (index >= layers.length) {
+				callback.apply(callbackScope, [undefined])
+				return;
+			}
+			var geoLayer = this.getGeoLayerByName(layers[index].name, map);
+			if (geoLayer && geoLayer.get("adapter") && geoLayer.get("adapter").getPosition) {
+				geoLayer.get("adapter").getPosition(card, function(center) {
+					if (center) {
+						callback.apply(callbackScope, [center])
+					}
+					else {
+						this.centerOnLayer(card, map, layers, index + 1, callback, callbackScope)
+					}
+				}, this);
+			}
+		},
 		centerOnCard : function(card) {
 			var map = this.getMap();
 			var me = this;
 			this.getLayersForCard(card, function(layers) {
-				for (var i = 0; i < layers.length; i++) {
-					var geoLayer = this.getGeoLayerByName(layers[i].name, map);
-					if (geoLayer && geoLayer.get("adapter") && geoLayer.get("adapter").getPosition) {
-						var center = geoLayer.get("adapter").getPosition(card);
-						if (center) {
-							me.configurationMap.center = center;
-							break;
-
-						}
+				me.centerOnLayer(card, map, layers, 0, function(center) {
+					if (center) {
+						me.configurationMap.center = center;
+						me.changed();
 					}
-				}
+				}, this);
 			}, this);
 		},
 		setCurrentCard : function(card) {
@@ -75,7 +87,14 @@
 		},
 		getLayersForCard : function(card, callback, callbackScope) {
 			_CMCache.getAllLayers(function(layers) {
-				callback.apply(callbackScope, [ layers ]);
+				var retLayers = [];
+				for (var i = 0; i < layers.length; i++) {
+					var layer = layers[i];
+					if (layer.masterTableName === card.className)  {
+						retLayers.push(layer);
+					}
+				}
+				callback.apply(callbackScope, [ retLayers ]);
 			});
 		},
 		getAllLayers : function(callback, callbackScope) {
