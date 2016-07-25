@@ -24,6 +24,11 @@ public abstract class ForwardingElementVisitor extends ForwardingObject implemen
 	}
 
 	@Override
+	public void visit(final Not element) {
+		delegate().visit(element);
+	}
+
+	@Override
 	public void visit(final OneOf element) {
 		delegate().visit(element);
 	}

@@ -99,9 +99,9 @@
 				]
 			});
 
-			// Disable filter method to avoid filter parameter stack witch drive to get url overflow error (reason is unknown)
+			// Clear store filter property to avoid filter parameter stack witch drive to get url overflow error (reason is unknown)
 			if (baseParams.NoFilter)
-				store.filter = Ext.emptyFn;
+				store.filters.clear();
 
 			return store;
 		},

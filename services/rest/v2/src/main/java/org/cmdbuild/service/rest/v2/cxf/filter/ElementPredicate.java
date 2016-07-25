@@ -1,6 +1,7 @@
 package org.cmdbuild.service.rest.v2.cxf.filter;
 
 import static com.google.common.base.Predicates.and;
+import static com.google.common.base.Predicates.not;
 import static com.google.common.base.Predicates.or;
 import static com.google.common.collect.Lists.newArrayList;
 
@@ -11,6 +12,7 @@ import org.cmdbuild.logic.data.access.filter.model.Attribute;
 import org.cmdbuild.logic.data.access.filter.model.CompositeElement;
 import org.cmdbuild.logic.data.access.filter.model.Element;
 import org.cmdbuild.logic.data.access.filter.model.ElementVisitor;
+import org.cmdbuild.logic.data.access.filter.model.Not;
 import org.cmdbuild.logic.data.access.filter.model.OneOf;
 
 import com.google.common.base.Predicate;
@@ -36,6 +38,11 @@ public abstract class ElementPredicate<T> extends ForwardingPredicate<T> impleme
 	@Override
 	public void visit(final Attribute element) {
 		predicate = predicateOf(element);
+	}
+
+	@Override
+	public void visit(final Not element) {
+		predicate = not(predicateOf(element));
 	}
 
 	@Override

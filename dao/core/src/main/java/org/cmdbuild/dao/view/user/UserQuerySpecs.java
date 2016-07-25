@@ -12,6 +12,7 @@ import static org.cmdbuild.dao.query.clause.where.OrWhereClause.or;
 import static org.cmdbuild.dao.query.clause.where.SimpleWhereClause.condition;
 import static org.cmdbuild.dao.query.clause.where.StringArrayOverlapOperatorAndValue.stringArrayOverlap;
 import static org.cmdbuild.dao.query.clause.where.TrueWhereClause.trueWhereClause;
+import static org.cmdbuild.dao.query.clause.alias.Aliases.canonical;
 
 import java.util.List;
 import java.util.Map;
@@ -29,12 +30,12 @@ import org.cmdbuild.dao.query.ForwardingQuerySpecs;
 import org.cmdbuild.dao.query.QuerySpecs;
 import org.cmdbuild.dao.query.clause.QueryAliasAttribute;
 import org.cmdbuild.dao.query.clause.alias.Alias;
-import org.cmdbuild.dao.query.clause.alias.EntryTypeAlias;
 import org.cmdbuild.dao.query.clause.from.FromClause;
 import org.cmdbuild.dao.query.clause.join.DirectJoinClause;
 import org.cmdbuild.dao.query.clause.where.AndWhereClause;
 import org.cmdbuild.dao.query.clause.where.ForwardingWhereClauseVisitor;
 import org.cmdbuild.dao.query.clause.where.FunctionWhereClause;
+import org.cmdbuild.dao.query.clause.where.NotWhereClause;
 import org.cmdbuild.dao.query.clause.where.NullWhereClauseVisitor;
 import org.cmdbuild.dao.query.clause.where.OrWhereClause;
 import org.cmdbuild.dao.query.clause.where.SimpleWhereClause;
@@ -151,7 +152,7 @@ public class UserQuerySpecs extends ForwardingQuerySpecs {
 	 */
 	private WhereClause safeFilterFor(final Alias alias, final CMClass root, final CMClass type) {
 		try {
-			final WhereClause filter = filterFor(type, alias);
+			final WhereClause filter = filterFor(root, type, alias);
 			return (filter == null) ? trueWhereClause() : filter;
 		} catch (final Exception e) {
 			return trueWhereClause();
@@ -167,13 +168,14 @@ public class UserQuerySpecs extends ForwardingQuerySpecs {
 	 * @return the global {@link WhereClause} for the specified {@link CMClass}
 	 *         or {@code null} if the filter is not available.
 	 */
-	private WhereClause filterFor(final CMClass type, final Alias alias) {
+	private WhereClause filterFor(final CMClass root, final CMClass type, final Alias alias) {
+		final Alias _alias = type.equals(root) ? alias : canonical(type);
 		final Iterable<? extends WhereClause> currentWhereClauses = rowAndColumnPrivilegeFetcher
-				.fetchPrivilegeFiltersFor(type, alias);
+				.fetchPrivilegeFiltersFor(type, _alias);
 		final List<WhereClause> childrenWhereClauses = Lists.newArrayList();
 		final List<Long> childrenWithNoFilter = Lists.newArrayList();
 		for (final CMClass child : type.getChildren()) {
-			final WhereClause childWhereClause = filterFor(child, alias);
+			final WhereClause childWhereClause = filterFor(root, child, _alias);
 			if (childWhereClause != null) {
 				childrenWhereClauses.add(childWhereClause);
 			} else {
@@ -263,7 +265,7 @@ public class UserQuerySpecs extends ForwardingQuerySpecs {
 			@Override
 			public void visit(final CMClass type) {
 				for (final CMClass descendant : type.getDescendants()) {
-					final Alias alias = EntryTypeAlias.canonicalAlias(descendant);
+					final Alias alias = canonical(descendant);
 					descendantsByAlias.put(alias, descendant);
 				}
 			}
@@ -280,6 +282,13 @@ public class UserQuerySpecs extends ForwardingQuerySpecs {
 
 			@Override
 			public void visit(final AndWhereClause whereClause) {
+				for (final WhereClause subWhereClause : whereClause.getClauses()) {
+					subWhereClause.accept(this);
+				}
+			}
+			
+			@Override
+			public void visit(final NotWhereClause whereClause) {
 				for (final WhereClause subWhereClause : whereClause.getClauses()) {
 					subWhereClause.accept(this);
 				}
