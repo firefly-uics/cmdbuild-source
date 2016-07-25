@@ -199,18 +199,32 @@
 			this.interactionDocument.setCurrentFeature(this.layer.get("name"), "", "Modify");
 			this.interactionDocument.changedFeature();
 		},
-		getPosition : function(card) {
-			var position = undefined;
-			var features = this.getFeaturesByCardId(card.cardId);
-			features.forEach(function(feature) { // first found is good
-				if (! position) {
-					var extent = feature.getGeometry().getExtent();
-					var x = extent[0] + (extent[2] - extent[0]) / 2;
-					var y = extent[1] + (extent[3] - extent[1]) / 2;
-					position = [ x, y ];
+		getPosition : function(card, callback, callbackScope) {
+			var me = this;
+
+			function onSuccess(resp, req, feature) {
+				// the card could have no feature
+				if (! feature || ! feature.geometry || ! feature.geometry.coordinates) {
+					callback.apply(callbackScope, [undefined]);
 				}
+				var x = feature.geometry.coordinates[0];
+				var y = feature.geometry.coordinates[1];
+				callback.apply(callbackScope, [[ x, y ]]);
+			}
+			var cardId = card.cardId;
+			var className =  card.className;
+			_CMCache.getLayersForEntryTypeName(className, function(layers) {
+				CMDBuild.proxy.gis.Gis.getFeature({
+					params : {
+						"className" : className,
+						"cardId" : cardId
+					},
+					loadMask : false,
+					scope : this,
+					success : onSuccess
+				});
 			});
-			return position;
+
 		},
 		setStatus : function(status) {
 			var map = this.interactionDocument.getMap();
