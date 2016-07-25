@@ -50,10 +50,6 @@ public class Predicates {
 		return new Like(value);
 	}
 
-	public static Predicate not(final Predicate predicate) {
-		return new Not(predicate);
-	}
-
 	public static Predicate or(final Predicate... predicates) {
 		return or(asList(predicates));
 	}
