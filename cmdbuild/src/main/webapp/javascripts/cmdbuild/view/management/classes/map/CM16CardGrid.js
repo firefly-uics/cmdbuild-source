@@ -83,10 +83,6 @@
 
 			select: function (row, record, index) {
 				this.navigateOnCard(record);
-//				this.delegate.cmfg( 'onCardNavigation', {
-//					Id : record .get('Id'),
-//					IdClass : record .get('IdClass')
-//				});
 			}
 		},
 		
