@@ -124,6 +124,7 @@
 		},
 		center : function(configuration) {
 			this.view.setCenter(configuration.center);
+			this.view.changed();
 		},
 
 		getMap : function() {
