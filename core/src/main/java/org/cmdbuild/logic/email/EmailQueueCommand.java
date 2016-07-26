@@ -1,6 +1,7 @@
 package org.cmdbuild.logic.email;
 
 import static com.google.common.base.Optional.absent;
+import static com.google.common.base.Optional.of;
 import static com.google.common.base.Predicates.not;
 import static com.google.common.base.Splitter.on;
 import static com.google.common.collect.FluentIterable.from;
@@ -45,6 +46,14 @@ import com.google.common.collect.Multimap;
 
 public class EmailQueueCommand implements Command, Callback {
 
+	public static interface Notifier {
+
+		Logger logger = EmailQueueCommand.logger;
+
+		void dmsError(Email email, Attachment attachment);
+
+	}
+
 	private static final Logger logger = Log.EMAIL;
 	private static final Marker MARKER = MarkerFactory.getMarker(EmailQueueCommand.class.getName());
 
@@ -59,14 +68,15 @@ public class EmailQueueCommand implements Command, Callback {
 
 	private static final Optional<String> ABSENT = absent();
 
-	private static final Function<Email, Optional<String>> ACCOUNT_NAME_OR_ABSENT = new Function<Email, Optional<String>>() {
+	private static final Function<Email, Optional<String>> ACCOUNT_NAME_OR_ABSENT =
+			new Function<Email, Optional<String>>() {
 
-		@Override
-		public Optional<String> apply(final Email input) {
-			return isBlank(input.getAccount()) ? ABSENT : Optional.of(input.getAccount());
-		}
+				@Override
+				public Optional<String> apply(final Email input) {
+					return isBlank(input.getAccount()) ? ABSENT : of(input.getAccount());
+				}
 
-	};
+			};
 
 	private static class SentEmail extends ForwardingEmail {
 
@@ -130,10 +140,10 @@ public class EmailQueueCommand implements Command, Callback {
 						final boolean missingReference = (input.getReference() == null);
 						if (missingReference) {
 							try {
-								logger.debug("deleting e-mail '{}' since its reference is missing ", input);
+								logger.debug(MARKER, "deleting e-mail '{}' since its reference is missing ", input);
 								emailLogic.deleteWithNoChecks(input);
 							} catch (final Exception e) {
-								logger.debug("error deleting e-mail", e);
+								logger.debug(MARKER, "error deleting e-mail", e);
 							}
 						}
 						return missingReference;
@@ -178,14 +188,14 @@ public class EmailQueueCommand implements Command, Callback {
 						}
 						newMail.add();
 					} catch (final Exception e) {
-						logger.error("error adding e-mail, skipping", e);
+						logger.error(MARKER, "error adding e-mail, skipping", e);
 					}
 				}
 				try {
 					logger.debug(MARKER, "sending all queued e-mails");
 					queue.sendAll();
 				} catch (final Exception e) {
-					logger.error("error sending queued e-mails", e);
+					logger.error(MARKER, "error sending queued e-mails", e);
 				}
 			} else {
 				logger.warn(MARKER, "missing account (even default) going to next one");
