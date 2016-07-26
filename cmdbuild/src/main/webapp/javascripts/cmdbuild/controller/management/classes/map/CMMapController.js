@@ -73,20 +73,14 @@
 		 * Ext.model.Model
 		 */
 		onCardSelected : function(card) {
-			var cardId;
-			var className = "";
-			if (card === null) {
-				card = _CMCardModuleState.card;
-				cardId = -1;
-			} else {
-				cardId = card.get("Id");
-			}
-			className = card.get("className");
-			if (!className) {
-				var classId = card.get("IdClass");
-				var type = _CMCache.getEntryTypeById(classId);
-				className = type.get("name");
-			}
+			var cardId = card.cardId;
+			var className = card.className;
+			var type = _CMCache.getEntryTypeByName(className);
+			_CMCardModuleState.setCard({
+				Id : cardId,
+				className : className,
+				IdClass : type.get("id")
+			});
 			this.interactionDocument.setCurrentCard({
 				cardId : cardId,
 				className : className
@@ -95,6 +89,7 @@
 				className : className, 
 				cardId : cardId
 			});
+			this.interactionDocument.changed();
 		},
 
 		onAddCardButtonClick : function() {
@@ -191,9 +186,6 @@
 		},
 
 		onCardDidChange : function(state, card) {
-			if (card) {
-				this.onCardSelected(card);
-			}
 		},
 
 		/* As CMMap delegate *************** */
@@ -312,29 +304,23 @@
 		}
 
 		var newEntryTypeId = entryType.get("id");
+		var lastCard = _CMCardModuleState.card;
 		if (this.currentClassId != newEntryTypeId) {
 			this.currentClassId = newEntryTypeId;
-			// this.updateMap(entryType);
-			this.interactionDocument.changed();
-			// var cardGridController = this.mapPanel.getCardGridController();
-			// //
-			// <<<<----
-			// MINE
-			// loadCardGridStore(cardGridController);
-			// updateCardGridTitle(et, cardGridController);
+			lastCard = undefined;
 		}
 
 		if (danglingCard) {
-			_CMCardModuleState.setCard(danglingCard);
-		} else {
-			// check for card selected when update
-			// the map on show
-			var lastCard = _CMCardModuleState.card;
-			if (lastCard) {
-				this.onCardSelected(lastCard);
-			} else {
-				this.currentCardId = undefined;
-			}
+			this.onCardSelected({
+				cardId : danglingCard.Id,
+				className : entryType.get("name")
+			});
+		} 
+		else {
+			this.onCardSelected({
+				cardId : -1,
+				className : entryType.get("name")
+			});
 		}
 	}
 
@@ -389,7 +375,10 @@
 				if (lastCard && (!this.currentCardId || this.currentCardId != lastCard.get("Id"))) {
 
 					this.centerMapOnFeature(lastCard.data);
-					this.onCardSelected(lastCard);
+					this.onCardSelected({
+						cardId : lastCard.get("Id"), 
+						className : lastCard.get("className")
+					});
 				}
 			}
 

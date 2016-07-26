@@ -3,19 +3,19 @@
 	var TITLE_PREFIX = CMDBuild.Translation.management.modcard.title;
 
 	Ext.define("CMDBuild.view.management.classes.CMModCard", {
-		extend: "Ext.panel.Panel",
+		extend : "Ext.panel.Panel",
 
-		mixins: {
-			uistatedelegate: "CMDBuild.state.UIStateDelegate"
+		mixins : {
+			uistatedelegate : "CMDBuild.state.UIStateDelegate"
 		},
 
-		whitMap: true,
-		layout: "border",
-		border: true,
+		whitMap : true,
+		layout : "border",
+		border : true,
 
-		constructor: function() {
+		constructor : function() {
 			this.CMEVENTS = {
-				addButtonClick: "cm-addcard-click"
+				addButtonClick : "cm-addcard-click"
 			};
 
 			this.buildComponents();
@@ -26,29 +26,29 @@
 			}
 		},
 
-		initComponent: function() {
-			this.centralPanelItems = [this.cardGrid];
+		initComponent : function() {
+			this.centralPanelItems = [ this.cardGrid ];
 
 			buildMapPanel.call(this);
 
 			this.centralPanel = new Ext.panel.Panel({
-				region: "center",
-				layout: "card",
-				activeItem: 0,
-				hideMode: "offsets",
-				cls: "cmdb-border-bottom",
-				border: false,
-				frame: false,
-				cardGrid: this.cardGrid,
-				theMap: this.theMap,
-				items: this.centralPanelItems,
-				animCollapse: false,
-				showGrid: function() {
+				region : "center",
+				layout : "card",
+				activeItem : 0,
+				hideMode : "offsets",
+				cls : "cmdb-border-bottom",
+				border : false,
+				frame : false,
+				cardGrid : this.cardGrid,
+				theMap : this.theMap,
+				items : this.centralPanelItems,
+				animCollapse : false,
+				showGrid : function() {
 					this.getLayout().setActiveItem(this.cardGrid.id);
 					this.cardGrid.setCmVisible(true);
 					this.theMap.setCmVisible(false);
 				},
-				showMap: function() {
+				showMap : function() {
 					this.getLayout().setActiveItem(this.theMap.id);
 					// update the size of the map because
 					// it is not able to detect the change of its
@@ -61,37 +61,27 @@
 			});
 
 			Ext.apply(this, {
-				items: [this.centralPanel, this.cardTabPanel],
-				tools: [
-					Ext.create('CMDBuild.view.common.panel.gridAndForm.tools.Properties'),
-					Ext.create('CMDBuild.view.common.panel.gridAndForm.tools.Minimize'),
-					Ext.create('CMDBuild.view.common.panel.gridAndForm.tools.Maximize'),
-					Ext.create('CMDBuild.view.common.panel.gridAndForm.tools.Restore')
-				]
+				items : [ this.centralPanel, this.cardTabPanel ],
+				tools : [ Ext.create('CMDBuild.view.common.panel.gridAndForm.tools.Properties'),
+						Ext.create('CMDBuild.view.common.panel.gridAndForm.tools.Minimize'),
+						Ext.create('CMDBuild.view.common.panel.gridAndForm.tools.Maximize'),
+						Ext.create('CMDBuild.view.common.panel.gridAndForm.tools.Restore') ]
 			});
 
 			this.callParent(arguments);
 
-			_CMUtils.forwardMethods(this, this.cardTabPanel, [
-				"activateFirstTab",
-				"setActivateTab",
-				"getCardPanel",
-				"getNotePanel",
-				"getMDPanel",
-				"getAttachmentsPanel",
-				"getHistoryPanel",
-				"getRelationsPanel",
-				"getEmailPanel"
-			]);
+			_CMUtils.forwardMethods(this, this.cardTabPanel, [ "activateFirstTab", "setActivateTab", "getCardPanel",
+					"getNotePanel", "getMDPanel", "getAttachmentsPanel", "getHistoryPanel", "getRelationsPanel",
+					"getEmailPanel" ]);
 
 			// Defer map controller build after view render
-			this.on('afterrender', function (panel, eOpts) {
+			this.on('afterrender', function(panel, eOpts) {
 				if (Ext.isFunction(this.delegate.buildMapController))
 					this.delegate.buildMapController();
 			}, this);
 		},
 
-		minimize: function() {
+		minimize : function() {
 			Ext.suspendLayouts();
 
 			this.centralPanel.hide();
@@ -103,7 +93,7 @@
 			Ext.resumeLayouts(true);
 		},
 
-		maximize: function() {
+		maximize : function() {
 
 			Ext.suspendLayouts();
 
@@ -116,7 +106,7 @@
 			Ext.resumeLayouts(true);
 		},
 
-		restore: function() {
+		restore : function() {
 			Ext.suspendLayouts();
 			this.cardTabPanel.show();
 			this.cardTabPanel.region = "south";
@@ -127,24 +117,25 @@
 			Ext.resumeLayouts(true);
 		},
 
-		updateTitleForEntry: function(entry) {
+		updateTitleForEntry : function(entry) {
 			var description = "";
 			if (entry) {
 				description = entry.get("text") || entry.get("name");
 			}
 
-			this.setTitle(TITLE_PREFIX+description);
+			this.setTitle(TITLE_PREFIX + description);
 		},
 
 		// protected
-		buildComponents: function() {
-			var gridratio = CMDBuild.configuration.instance.get('cardFormRatio') || 50; // TODO: use proxy constants
-			var tbar = [
-				this.addCardButton = new CMDBuild.AddCardMenuButton({
-					classId: undefined,
-					disabled: true
-				})
-			];
+		buildComponents : function() {
+			var gridratio = CMDBuild.configuration.instance.get('cardFormRatio') || 50; // TODO:
+																						// use
+																						// proxy
+																						// constants
+			var tbar = [ this.addCardButton = new CMDBuild.AddCardMenuButton({
+				classId : undefined,
+				disabled : true
+			}) ];
 
 			this.mon(this.addCardButton, "cmClick", function(p) {
 				this.fireEvent(this.CMEVENTS.addButtonClick, p);
@@ -153,37 +144,38 @@
 			buildMapButton.call(this, tbar);
 
 			this.cardGrid = new CMDBuild.view.management.classes.CMModCard.Grid({
-				hideMode: "offsets",
-				filterCategory: this.cmName,
-				border: false,
-				tbar: tbar,
-				columns: [],
-				forceSelectionOfFirst: true
+				hideMode : "offsets",
+				filterCategory : this.cmName,
+				border : false,
+				tbar : tbar,
+				columns : [],
+				forceSelectionOfFirst : true
 			});
 
 			this.cardTabPanel = new CMDBuild.view.management.classes.CMCardTabPanel({
-				cls: "cmdb-border-top",
-				region: "south",
-				hideMode: "offsets",
-				border: false,
-				split: true,
-				height: gridratio + "%"
+				cls : "cmdb-border-top",
+				region : "south",
+				hideMode : "offsets",
+				border : false,
+				split : true,
+				height : gridratio + "%"
 			});
 
-			var widgetManager = new CMDBuild.view.management.common.widgets.CMWidgetManager(this.cardTabPanel.getCardPanel(), this.cardTabPanel);
+			var widgetManager = new CMDBuild.view.management.common.widgets.CMWidgetManager(this.cardTabPanel
+					.getCardPanel(), this.cardTabPanel);
 			this.getWidgetManager = function() {
 				return widgetManager;
 			};
 		},
 
-		getGrid: function() {
+		getGrid : function() {
 			return this.cardGrid;
 		},
 
 		/**
 		 * @deprecated
 		 */
-		reset: function(id) {
+		reset : function(id) {
 			_deprecated('reset', this);
 
 			this.cardTabPanel.reset(id);
@@ -192,15 +184,15 @@
 		/**
 		 * @deprecated
 		 */
-		onEntrySelected: function(entry) {
+		onEntrySelected : function(entry) {
 			_deprecated('onEntrySelected', this);
 
 			var id = entry.get("id");
 
 			this.cardGrid.updateStoreForClassId(id, {
-				cb: function cbUpdateStoreForClassId() {
+				cb : function cbUpdateStoreForClassId() {
 					this.loadPage(1, {
-						cb: function cbLoadPage() {
+						cb : function cbLoadPage() {
 							try {
 								this.getSelectionModel().select(0);
 							} catch (e) {
@@ -223,25 +215,25 @@
 		},
 
 		// as UIStateDelegate
-		onFullScreenChangeToGridOnly: function() {
+		onFullScreenChangeToGridOnly : function() {
 			this.maximize();
 		},
 
-		onFullScreenChangeToFormOnly: function() {
+		onFullScreenChangeToFormOnly : function() {
 			this.minimize();
 		},
 
-		onFullScreenChangeToOff: function() {
+		onFullScreenChangeToOff : function() {
 			this.restore();
 		}
 	});
 
 	Ext.define("CMDBuild.view.management.classes.CMModCard.Grid", {
-		extend: "CMDBuild.view.management.common.CMCardGrid",
+		extend : "CMDBuild.view.management.common.CMCardGrid",
 
-		cmVisible: true,
+		cmVisible : true,
 
-		setCmVisible: function(visible) {
+		setCmVisible : function(visible) {
 			this.cmVisible = visible;
 
 			if (this.paramsToLoadWhenVisible) {
@@ -252,14 +244,14 @@
 			this.fireEvent("cmVisible", visible);
 		},
 
-		updateStoreForClassId: function(classId, o) {
+		updateStoreForClassId : function(classId, o) {
 			if (this.cmVisible) {
 				this.callParent(arguments);
 				this.paramsToLoadWhenVisible = null;
 			} else {
 				this.paramsToLoadWhenVisible = {
-					classId:classId,
-					o: o
+					classId : classId,
+					o : o
 				};
 			}
 		}
@@ -267,13 +259,14 @@
 	});
 
 	function buildMapButton(tbar) {
-		if (CMDBuild.configuration.gis.get('enabled')) { // TODO: use proxy constants
+		if (CMDBuild.configuration.gis.get('enabled')) { // TODO: use proxy
+															// constants
 
 			this.showMapButton = new Ext.button.Button({
-				text: CMDBuild.Translation.management.modcard.tabs.map,
-				iconCls: 'map',
-				scope: this,
-				handler: function() {
+				text : CMDBuild.Translation.management.modcard.tabs.map,
+				iconCls : 'map',
+				scope : this,
+				handler : function() {
 					this.centralPanel.showMap();
 				}
 			});
@@ -283,29 +276,57 @@
 	}
 
 	function buildMapPanel() {
-		if (CMDBuild.configuration.gis.get('enabled') && this.whitMap) { // TODO: use proxy constants
+		if (CMDBuild.configuration.gis.get('enabled') && this.whitMap) { // TODO:
+																			// use
+																			// proxy
+																			// constants
 			this.showGridButton = new Ext.button.Button({
-				text: CMDBuild.Translation.management.modcard.add_relations_window.list_tab,
-				iconCls: 'table',
-				scope: this,
-				handler: function() {
+				text : CMDBuild.Translation.management.modcard.add_relations_window.list_tab,
+				iconCls : 'table',
+				scope : this,
+				handler : function() {
 					this.centralPanel.showGrid();
 				}
 			});
 
 			this.mapAddCardButton = new CMDBuild.AddCardMenuButton({
-				classId: undefined,
-				disabled: true
+				classId : undefined,
+				disabled : true
 			});
 
 			this.mapAddCardButton.on("cmClick", function(p) {
 				this.fireEvent(this.CMEVENTS.addButtonClick, p);
 			}, this);
 
+			var one = Ext.create('CMDBuild.core.buttons.gis.Thematism', {});/*
+				withSpacer : true,
+				tooltip : CMDBuild.Translation.management.modcard.open_relation,
+				scope : this,
+
+				handler : function(grid, rowIndex, colIndex, actionItem, event, record, row) {
+					me.zoomOnCard(record);
+				},
+				isDisabled : function(view, rowIdx, colIdx, item, record) {
+					console.log("i am disabled??", view, rowIdx, colIdx, item, record);
+				}
+			});*/
+
+//			var two = Ext.create('CMDBuild.core.buttons.gis.Navigate', {
+//				withSpacer : true,
+//				tooltip : CMDBuild.Translation.management.modcard.open_relation,
+//				scope : this,
+//
+//				handler : function(grid, rowIndex, colIndex, actionItem, event, record, row) {
+//					me.zoomOnCard(record);
+//				},
+//				isDisabled : function(view, rowIdx, colIdx, item, record) {
+//					console.log("i am disabled??", view, rowIdx, colIdx, item, record);
+//				}
+//			});
 			this.theMap = Ext.create('CMDBuild.view.management.classes.map.CMMapPanel', {
-				tbar: [this.mapAddCardButton, '->', this.showGridButton],
-				frame: false,
-				border: false,
+				tbar : [ this.mapAddCardButton, '->', one,  this.showGridButton ],
+				frame : false,
+				border : false,
 				mainGrid : this.cardGrid
 			});
 
@@ -316,7 +337,7 @@
 			};
 		} else {
 			this.mapAddCardButton = {
-				updateForEntry: Ext.emptyFn
+				updateForEntry : Ext.emptyFn
 			};
 		}
 	}
