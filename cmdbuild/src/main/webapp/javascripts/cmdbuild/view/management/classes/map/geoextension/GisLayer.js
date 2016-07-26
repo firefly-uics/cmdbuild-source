@@ -168,7 +168,7 @@
 				}
 				me.clearFeatures();
 				var selectedId = event.selected[0].get("master_card");
-				var currentId = _CMCardModuleState.card.raw.Id;
+				var currentId = (_CMCardModuleState.card) ? _CMCardModuleState.card.get("Id") : -1;
 				if (selectedId == currentId) {
 					return false;
 				}
@@ -206,6 +206,7 @@
 				// the card could have no feature
 				if (! feature || ! feature.geometry || ! feature.geometry.coordinates) {
 					callback.apply(callbackScope, [undefined]);
+					return;
 				}
 				var x = feature.geometry.coordinates[0];
 				var y = feature.geometry.coordinates[1];
