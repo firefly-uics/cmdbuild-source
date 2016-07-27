@@ -56,6 +56,7 @@ public class EmailNotifierTest {
 	@Test
 	public void templateNotFoundOrUnexpectedExceptionLookingForIt() throws Exception {
 		// given
+		doReturn("the account name").when(configuration).account();
 		doReturn("the template name").when(configuration).template();
 		doReturn("the destination address").when(configuration).destination();
 		doThrow(DummyException.class).when(emailTemplateLogic).read(anyString());
@@ -76,7 +77,7 @@ public class EmailNotifierTest {
 		assertThat(create.getToAddresses(), equalTo("the destination address"));
 		assertThat(create.getSubject(), equalTo(DEFAULT_SUBJECT));
 		assertThat(create.getContent(), equalTo(DEFAULT_CONTENT));
-		assertThat(create.getAccount(), equalTo(null));
+		assertThat(create.getAccount(), equalTo("the account name"));
 		assertThat(create.getReference(), equalTo(123L));
 
 		verify(emailLogic).update(captor.capture());
@@ -85,10 +86,11 @@ public class EmailNotifierTest {
 		assertThat(update.getToAddresses(), equalTo("the destination address"));
 		assertThat(update.getSubject(), equalTo(DEFAULT_SUBJECT));
 		assertThat(update.getContent(), equalTo(DEFAULT_CONTENT));
-		assertThat(update.getAccount(), equalTo(null));
+		assertThat(update.getAccount(), equalTo("the account name"));
 		assertThat(update.getStatus(), equalTo(outgoing()));
 		assertThat(update.getReference(), equalTo(123L));
 
+		verify(configuration, times(2)).account();
 		verify(configuration, times(4)).destination();
 		verifyNoMoreInteractions(configuration, emailTemplateLogic, emailLogic);
 	}
@@ -96,6 +98,7 @@ public class EmailNotifierTest {
 	@Test(expected = DummyException.class)
 	public void unexpectedExceptionCreatingEmail() throws Exception {
 		// given
+		doReturn("the account name").when(configuration).account();
 		doReturn("the template name").when(configuration).template();
 		doReturn("the destination address").when(configuration).destination();
 		doThrow(NoSuchElementException.class).when(emailTemplateLogic).read(anyString());
@@ -117,9 +120,10 @@ public class EmailNotifierTest {
 			assertThat(create.getToAddresses(), equalTo("the destination address"));
 			assertThat(create.getSubject(), equalTo(DEFAULT_SUBJECT));
 			assertThat(create.getContent(), equalTo(DEFAULT_CONTENT));
-			assertThat(create.getAccount(), equalTo(null));
+			assertThat(create.getAccount(), equalTo("the account name"));
 			assertThat(create.getReference(), equalTo(123L));
 
+			verify(configuration, times(1)).account();
 			verify(configuration, times(2)).destination();
 			verifyNoMoreInteractions(configuration, emailTemplateLogic, emailLogic);
 		}
@@ -128,6 +132,7 @@ public class EmailNotifierTest {
 	@Test(expected = DummyException.class)
 	public void unexpectedExceptionUpdatingEmail() throws Exception {
 		// given
+		doReturn("the account name").when(configuration).account();
 		doReturn("the template name").when(configuration).template();
 		doReturn("the destination address").when(configuration).destination();
 		doThrow(NoSuchElementException.class).when(emailTemplateLogic).read(anyString());
@@ -150,7 +155,7 @@ public class EmailNotifierTest {
 			assertThat(create.getToAddresses(), equalTo("the destination address"));
 			assertThat(create.getSubject(), equalTo(DEFAULT_SUBJECT));
 			assertThat(create.getContent(), equalTo(DEFAULT_CONTENT));
-			assertThat(create.getAccount(), equalTo(null));
+			assertThat(create.getAccount(), equalTo("the account name"));
 			assertThat(create.getReference(), equalTo(123L));
 
 			verify(emailLogic).update(captor.capture());
@@ -159,10 +164,11 @@ public class EmailNotifierTest {
 			assertThat(update.getToAddresses(), equalTo("the destination address"));
 			assertThat(update.getSubject(), equalTo(DEFAULT_SUBJECT));
 			assertThat(update.getContent(), equalTo(DEFAULT_CONTENT));
-			assertThat(update.getAccount(), equalTo(null));
+			assertThat(update.getAccount(), equalTo("the account name"));
 			assertThat(update.getStatus(), equalTo(outgoing()));
 			assertThat(update.getReference(), equalTo(123L));
 
+			verify(configuration, times(2)).account();
 			verify(configuration, times(4)).destination();
 			verifyNoMoreInteractions(configuration, emailTemplateLogic, emailLogic);
 		}
@@ -171,6 +177,7 @@ public class EmailNotifierTest {
 	@Test
 	public void templateFoundButMissesDestinationAddress() throws Exception {
 		// given
+		doReturn("the account name").when(configuration).account();
 		doReturn("the template name").when(configuration).template();
 		doReturn("the destination address").when(configuration).destination();
 		final Template template = mock(Template.class);
@@ -194,7 +201,7 @@ public class EmailNotifierTest {
 		assertThat(create.getToAddresses(), equalTo("the destination address"));
 		assertThat(create.getSubject(), equalTo("the template's subject"));
 		assertThat(create.getContent(), equalTo("the template's body"));
-		assertThat(create.getAccount(), equalTo(null));
+		assertThat(create.getAccount(), equalTo("the account name"));
 		assertThat(create.getReference(), equalTo(123L));
 
 		verify(emailLogic).update(captor.capture());
@@ -203,10 +210,11 @@ public class EmailNotifierTest {
 		assertThat(update.getToAddresses(), equalTo("the destination address"));
 		assertThat(update.getSubject(), equalTo("the template's subject"));
 		assertThat(update.getContent(), equalTo("the template's body"));
-		assertThat(update.getAccount(), equalTo(null));
+		assertThat(update.getAccount(), equalTo("the account name"));
 		assertThat(update.getStatus(), equalTo(outgoing()));
 		assertThat(update.getReference(), equalTo(123L));
 
+		verify(configuration, times(2)).account();
 		verify(configuration, times(2)).destination();
 		verifyNoMoreInteractions(configuration, emailTemplateLogic, emailLogic);
 	}
@@ -214,6 +222,7 @@ public class EmailNotifierTest {
 	@Test
 	public void templateFound() throws Exception {
 		// given
+		doReturn("the account name").when(configuration).account();
 		doReturn("the template name").when(configuration).template();
 		doReturn("the destination address").when(configuration).destination();
 		final Template template = mock(Template.class);
@@ -240,7 +249,7 @@ public class EmailNotifierTest {
 		assertThat(create.getToAddresses(), equalTo("the template's destination"));
 		assertThat(create.getSubject(), equalTo("the template's subject"));
 		assertThat(create.getContent(), equalTo("the template's body"));
-		assertThat(create.getAccount(), equalTo(null));
+		assertThat(create.getAccount(), equalTo("the account name"));
 		assertThat(create.getReference(), equalTo(123L));
 
 		final Email update = captor.getAllValues().get(1);
@@ -248,7 +257,7 @@ public class EmailNotifierTest {
 		assertThat(update.getToAddresses(), equalTo("the template's destination"));
 		assertThat(update.getSubject(), equalTo("the template's subject"));
 		assertThat(update.getContent(), equalTo("the template's body"));
-		assertThat(update.getAccount(), equalTo(null));
+		assertThat(update.getAccount(), equalTo("the account name"));
 		assertThat(update.getStatus(), equalTo(outgoing()));
 		assertThat(update.getReference(), equalTo(123L));
 	}

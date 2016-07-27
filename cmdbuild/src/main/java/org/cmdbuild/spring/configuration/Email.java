@@ -236,6 +236,11 @@ public class Email {
 			private final NotificationProperties delegate = properties.notificationProperties();
 
 			@Override
+			public String account() {
+				return delegate.getEmailDmsAccount();
+			}
+
+			@Override
 			public String template() {
 				return delegate.getEmailDmsTemplate();
 			}

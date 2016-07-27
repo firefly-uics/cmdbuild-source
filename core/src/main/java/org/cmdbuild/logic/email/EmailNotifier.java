@@ -22,14 +22,19 @@ public class EmailNotifier implements Notifier {
 
 	public static interface Configuration {
 
+		String account();
+
 		String template();
 
 		String destination();
 
 	}
 
-	public static final String DEFAULT_SUBJECT = "Error";
-	public static final String DEFAULT_CONTENT = "Error";
+	public static final String DEFAULT_SUBJECT = "DMS Service unavailable";
+	public static final String DEFAULT_CONTENT = //
+			"CMDBuild email service is unable to access the DMS service. " //
+					+ "Some emails could have been sent without attachments. " //
+					+ "Check logs for more information.";
 
 	private static class TemplateAdapter extends ForwardingEmail {
 
@@ -45,7 +50,7 @@ public class EmailNotifier implements Notifier {
 		protected Email delegate() {
 			return UNSUPPORTED;
 		}
-		
+
 		@Override
 		public Long getId() {
 			return null;
@@ -159,6 +164,11 @@ public class EmailNotifier implements Notifier {
 			@Override
 			public Long getReference() {
 				return email.getId();
+			}
+
+			@Override
+			public String getAccount() {
+				return defaultString(super.getAccount(), configuration.account());
 			}
 
 		};
