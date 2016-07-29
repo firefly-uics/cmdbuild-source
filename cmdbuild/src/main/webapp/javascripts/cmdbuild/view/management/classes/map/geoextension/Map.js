@@ -8,7 +8,15 @@
 			ENABLED : 'enabled',
 			ZOOM_INITIAL_LEVEL : 'zoomInitialLevel',
 			CENTER_LONGITUDE : 'centerLongitude',
-			CENTER_LATITUDE : 'centerLatitude'
+			CENTER_LATITUDE : 'centerLatitude',
+
+			layers : {
+				PUNTUAL_ANALYSIS : "puntual_analysis",
+				RANGES_ANALYSIS : "ranges_analysis",
+				DENSITY_ANALYSIS : "density_analysis",
+				TABLE_SOURCE : "table_source",
+				FUNCTION_SOURCE : "function_source"
+			}
 		}
 	};
 	Ext.define('CMDBuild.view.management.classes.map.geoextension.Map', {
