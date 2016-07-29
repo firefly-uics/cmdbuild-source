@@ -5,6 +5,7 @@ import static org.cmdbuild.spring.util.Constants.PROTOTYPE;
 import org.cmdbuild.auth.UserStore;
 import org.cmdbuild.common.api.mail.MailApiFactory;
 import org.cmdbuild.common.api.mail.javax.mail.JavaxMailBasedMailApiFactory;
+import org.cmdbuild.config.NotificationProperties;
 import org.cmdbuild.data.store.InMemoryStore;
 import org.cmdbuild.data.store.Store;
 import org.cmdbuild.data.store.dao.DataViewStore;
@@ -31,10 +32,17 @@ import org.cmdbuild.logic.email.DefaultSubjectHandler;
 import org.cmdbuild.logic.email.EmailAccountLogic;
 import org.cmdbuild.logic.email.EmailAttachmentsLogic;
 import org.cmdbuild.logic.email.EmailLogic;
+import org.cmdbuild.logic.email.EmailNotifier;
 import org.cmdbuild.logic.email.EmailQueueCommand;
+import org.cmdbuild.logic.email.EmailQueueCommand.Notifier;
 import org.cmdbuild.logic.email.EmailQueueLogic;
 import org.cmdbuild.logic.email.EmailTemplateLogic;
+import org.cmdbuild.logic.email.ForgivingNotifier;
+import org.cmdbuild.logic.email.NotifyingEmailAttachmentsLogic;
+import org.cmdbuild.logic.email.SilencedNotifier;
+import org.cmdbuild.logic.email.SilencedNotifier.Silence;
 import org.cmdbuild.logic.email.SubjectHandler;
+import org.cmdbuild.logic.email.TimeBasedSilence;
 import org.cmdbuild.logic.email.TransactionalEmailTemplateLogic;
 import org.cmdbuild.scheduler.command.Command;
 import org.cmdbuild.services.email.ConfigurableEmailServiceFactory;
@@ -148,7 +156,8 @@ public class Email {
 
 	@Bean
 	public EmailTemplateLogic emailTemplateLogic() {
-		return new TransactionalEmailTemplateLogic(new DefaultEmailTemplateLogic(templateStore(), emailAccountFacade()));
+		return new TransactionalEmailTemplateLogic(
+				new DefaultEmailTemplateLogic(templateStore(), emailAccountFacade()));
 	}
 
 	@Bean
@@ -172,8 +181,76 @@ public class Email {
 
 	@Bean
 	protected Command emailQueueCommand() {
-		return new EmailQueueCommand(emailAccountFacade(), mailApiFactory(), emailLogic(), emailAttachmentsLogic(),
+		return new EmailQueueCommand(emailAccountFacade(), mailApiFactory(), emailLogic(),
+				new NotifyingEmailAttachmentsLogic(emailAttachmentsLogic(), configurationBasedNotifier()),
 				subjectHandler());
+	}
+
+	@Bean
+	protected Notifier configurationBasedNotifier() {
+		return new SilencedNotifier(configurationBasedSilence(), forgivingNotifier());
+	}
+
+	@Bean
+	protected Silence configurationBasedSilence() {
+		return new Silence() {
+
+			private final NotificationProperties delegate = properties.notificationProperties();
+
+			@Override
+			public boolean keep() {
+				return !delegate.isEnable();
+			}
+
+		};
+	}
+
+	@Bean
+	protected Notifier forgivingNotifier() {
+		return new ForgivingNotifier(silencedNotifier());
+	}
+
+	@Bean
+	protected Notifier silencedNotifier() {
+		return new SilencedNotifier(timeBasedSilence(), emailNotifier());
+	}
+
+	@Bean
+	protected Silence timeBasedSilence() {
+		return new TimeBasedSilence(new TimeBasedSilence.Configuration() {
+
+			private final NotificationProperties delegate = properties.notificationProperties();
+
+			@Override
+			public long millis() {
+				return delegate.getEmailDmsSilence() * 1000;
+			}
+
+		});
+	}
+
+	@Bean
+	protected Notifier emailNotifier() {
+		return new EmailNotifier(new EmailNotifier.Configuration() {
+
+			private final NotificationProperties delegate = properties.notificationProperties();
+
+			@Override
+			public String account() {
+				return delegate.getEmailDmsAccount();
+			}
+
+			@Override
+			public String template() {
+				return delegate.getEmailDmsTemplate();
+			}
+
+			@Override
+			public String destination() {
+				return delegate.getEmailDmsDestination();
+			}
+
+		}, emailTemplateLogic(), emailLogic());
 	}
 
 }
