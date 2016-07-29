@@ -298,37 +298,18 @@
 				this.fireEvent(this.CMEVENTS.addButtonClick, p);
 			}, this);
 
-			var one = Ext.create('CMDBuild.core.buttons.gis.Thematism', {});/*
-				withSpacer : true,
-				tooltip : CMDBuild.Translation.management.modcard.open_relation,
-				scope : this,
-
-				handler : function(grid, rowIndex, colIndex, actionItem, event, record, row) {
-					me.zoomOnCard(record);
-				},
-				isDisabled : function(view, rowIdx, colIdx, item, record) {
-					console.log("i am disabled??", view, rowIdx, colIdx, item, record);
+			var one = Ext.create('CMDBuild.core.buttons.gis.Thematism', {
+				handler : function() {
+					this.theMap.initThematism();
 				}
-			});*/
-
-//			var two = Ext.create('CMDBuild.core.buttons.gis.Navigate', {
-//				withSpacer : true,
-//				tooltip : CMDBuild.Translation.management.modcard.open_relation,
-//				scope : this,
-//
-//				handler : function(grid, rowIndex, colIndex, actionItem, event, record, row) {
-//					me.zoomOnCard(record);
-//				},
-//				isDisabled : function(view, rowIdx, colIdx, item, record) {
-//					console.log("i am disabled??", view, rowIdx, colIdx, item, record);
-//				}
-//			});
+			});
 			this.theMap = Ext.create('CMDBuild.view.management.classes.map.CMMapPanel', {
 				tbar : [ this.mapAddCardButton, '->', one,  this.showGridButton ],
 				frame : false,
 				border : false,
 				mainGrid : this.cardGrid
 			});
+			one.theMap = this.theMap;
 
 			this.centralPanelItems.push(this.theMap);
 

@@ -73,22 +73,29 @@
 		 * Ext.model.Model
 		 */
 		onCardSelected : function(card) {
+			if (card === null) {
+				return;
+			}
 			var cardId = card.cardId;
 			var className = card.className;
 			var type = _CMCache.getEntryTypeByName(className);
-			_CMCardModuleState.setCard({
-				Id : cardId,
-				className : className,
-				IdClass : type.get("id")
-			});
+			if (cardId !== -1) {
+				_CMCardModuleState.setCard({
+					cardId : cardId,
+					className : className,
+//					IdClass : type.get("id")
+				});
+			}
 			this.interactionDocument.setCurrentCard({
 				cardId : cardId,
 				className : className
 			});
-			this.interactionDocument.centerOnCard({
-				className : className, 
-				cardId : cardId
-			});
+			if (cardId !== -1) {
+    			this.interactionDocument.centerOnCard({
+    				className : className, 
+    				cardId : cardId
+    			});
+			}
 			this.interactionDocument.changed();
 		},
 
@@ -377,16 +384,11 @@
 					this.centerMapOnFeature(lastCard.data);
 					this.onCardSelected({
 						cardId : lastCard.get("Id"), 
-						className : lastCard.get("className")
+						className : (lastCard.get("className")) ? lastCard.get("className") : lastCard.raw.className
 					});
 				}
 			}
 
-//			if (this.cmIsInEditing) {
-//				this.editMode();
-//			} else {
-//				this.displayMode();
-//			}
 		} else {
 			if (this.cmIsInEditing) {
 				this.mapPanel.displayMode();

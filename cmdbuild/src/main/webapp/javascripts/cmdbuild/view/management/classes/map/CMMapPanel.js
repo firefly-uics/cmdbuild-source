@@ -54,10 +54,11 @@
 
 	Ext.define("CMDBuild.view.management.classes.map.CMMapPanel", {
 		alternateClassName : 'CMDBuild.Management.MapPanel', // Legacy class
-																// name
+		// name
 		extend : "Ext.panel.Panel",
 		requires : [ 'CMDBuild.controller.management.classes.map.CM16CardGrid',
 				'CMDBuild.controller.management.classes.map.CM16LayerTree',
+				'CMDBuild.controller.management.classes.map.thematism.ThematismMainWindow',
 				'CMDBuild.view.management.classes.map.geoextension.CMDBuildGeoExt' ],
 
 		mixins : {
@@ -93,8 +94,14 @@
 
 			var tabs = [];
 
-			if (CMDBuild.configuration.gis.get('cardBrowserByDomainConfiguration')['root']) { // TODO: use proxy constants
-				var root = CMDBuild.configuration.gis.get('cardBrowserByDomainConfiguration')['root']; // TODO: use proxy constants
+			if (CMDBuild.configuration.gis.get('cardBrowserByDomainConfiguration')['root']) { // TODO:
+																								// use
+																								// proxy
+																								// constants
+				var root = CMDBuild.configuration.gis.get('cardBrowserByDomainConfiguration')['root']; // TODO:
+																										// use
+																										// proxy
+																										// constants
 
 				this.cardBrowser = new CMDBuild.view.management.CMCardBrowserTree({
 					title : CMDBuild.Translation.management.modcard.gis.gisNavigation,
@@ -104,8 +111,11 @@
 				});
 
 				tabs.push(this.cardBrowser);
-			}
+				this.thematicView = Ext.create('CMDBuild.controller.management.classes.map.thematism.ThematismMainWindow', {
+					interactionDocument : this.interactionDocument
+				});
 
+			}
 			this.editingWindow = new CMDBuild.view.management.map.CMMapEditingToolsWindow({
 				owner : this,
 				interactionDocument : this.interactionDocument
@@ -146,6 +156,9 @@
 			} ];
 
 			this.callParent(arguments);
+		},
+		initThematism : function() {
+			this.thematicView.show();
 		},
 		updateSize : function() {
 		},
