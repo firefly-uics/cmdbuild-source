@@ -46,19 +46,20 @@
 		isGeoServerLayer : function(layer) {
 			return layer.type === "SHAPE";
 		},
-		centerOnLayer : function(card, map, layers, index, callback, callbackScope) {
+		centerOnLayer : function(card, layers, index, callback, callbackScope) {
+			var map = this.getMap();
 			if (index >= layers.length) {
 				callback.apply(callbackScope, [undefined])
 				return;
 			}
-			var geoLayer = this.getGeoLayerByName(layers[index].name, map);
+			var geoLayer = this.getGeoLayerByName(layers[index].name);
 			if (geoLayer && geoLayer.get("adapter") && geoLayer.get("adapter").getPosition) {
 				geoLayer.get("adapter").getPosition(card, function(center) {
 					if (center) {
 						callback.apply(callbackScope, [center])
 					}
 					else {
-						this.centerOnLayer(card, map, layers, index + 1, callback, callbackScope)
+						this.centerOnLayer(card, layers, index + 1, callback, callbackScope)
 					}
 				}, this);
 			}
@@ -67,7 +68,7 @@
 			var map = this.getMap();
 			var me = this;
 			this.getLayersForCard(card, function(layers) {
-				me.centerOnLayer(card, map, layers, 0, function(center) {
+				me.centerOnLayer(card, layers, 0, function(center) {
 					if (center) {
 						me.configurationMap.center = center;
 						me.changed();
@@ -105,8 +106,9 @@
 		getLayerByName : function(name, callback, callbackScope) {
 			layerByName(name, callback, callbackScope);
 		},
-		getGeoLayerByName : function(name, map) {
-			return geoLayerByName(name, map);
+		getGeoLayerByName : function(name) {
+			var map = this.getMap();
+			return (! map) ? null : geoLayerByName(name, map);
 		},
 		isVisible : function(layer, currentClassName, currentCardId) {
 			return isVisible(layer, currentClassName, currentCardId);

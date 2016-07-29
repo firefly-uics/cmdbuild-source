@@ -35,10 +35,11 @@
 		dynamicTitleStep1 : undefined,
 		dynamicTitleStep2 : undefined,
 		dynamicTitleStep3 : undefined,
-		
+
 		analysisType : undefined,
 		sourceType : undefined,
 		attributeType : undefined,
+		gridResults : undefined,
 
 		/**
 		 * @returns {Void}
@@ -55,7 +56,6 @@
 
 		listeners : {
 			hide : function(panel, eOpts) {
-				// this.delegate.cmfg("onPanelGridAndFormFilterAdvancedFilterEditorViewHide");
 			},
 			show : function(panel, eOpts) {
 				this.wizard.getLayout().setActiveItem("step-1");
@@ -120,7 +120,7 @@
 								anchor : "100%"
 							},
 							items : this.getStepThreeItems(),
-								buttons : [ this.getAdvanceButton("@@ Previous", "step-2"),
+							buttons : [ this.getAdvanceButton("@@ Previous", "step-2"),
 									this.getShowButton("@@ Show", this) ]
 						} ],
 			});
@@ -139,23 +139,24 @@
 			return items;
 		},
 		getStepThreeItems : function() {
-			this.gridResults = this.getGridResults();
+			var panelGrid = this.getGridResults()
+			this.gridResults = panelGrid.theGrid;
 			this.dynamicTitleStep3 = this.getDynamicTitle("@@ Step 3 ", true, true, true);
-			var items = [ this.dynamicTitleStep3, this.gridResults ];
+			var items = [ this.dynamicTitleStep3, panelGrid ];
 			return items;
 		},
 		getDynamicTitle : function(step, withAnalysisType, withSourceType, withAttributeType) {
 			var me = this;
 			var item = new Ext.form.field.Display({
 				fieldLabel : step,
-				name : 'home_score',
+				name : "home_score",
 				border : 2,
 				style : {
-					borderColor : 'blue',
-					borderStyle : 'solid'
+					borderColor : "blue",
+					borderStyle : "solid"
 				},
-				fieldStyle : 'fontWeight: bold;color: blue;',
-				value : '',
+				fieldStyle : "fontWeight: bold;color: blue;",
+				value : "",
 				changeTitle : function(title) {
 					var analysisDescription = "";
 					var sourceDescription = "";
@@ -168,11 +169,13 @@
 						sourceDescription = getSourceDescription(me.sourceType);
 						sourceDescription = "  @@ Source Type : " + sourceDescription;
 					}
-					if (withAttributeType) {
-						attributeDescription = me.attributeType;
-						attributeDescription = "  @@ Source Type : " + attributeDescription;
+					if (withAttributeType && me.attributeType) {
+						attributeDescription = me.attributeType.description + " - " + me.attributeType.type + " - "
+								+ me.attributeType.name;
+						attributeDescription = "  @@ Attribute on table : " + attributeDescription;
 					}
-					title = "@@ Current Class is " + title + analysisDescription + sourceDescription + attributeDescription;
+					title = "@@ Current Class is " + title + analysisDescription + sourceDescription
+							+ attributeDescription;
 					this.setValue(title);
 				}
 			});
@@ -218,7 +221,7 @@
 				vertical : true,
 				border : true,
 				items : [ {
-					checked: true,
+					checked : true,
 					boxLabel : "@@ from table",
 					name : "source",
 					inputValue : CMDBuild.gis.constants.layers.TABLE_SOURCE
@@ -242,8 +245,8 @@
 				callback.apply(callbackScope, this);
 				return;
 			}
-			var layersStore = Ext.create('Ext.data.Store', {
-				fields : [ 'name', 'type' ],
+			var layersStore = Ext.create("Ext.data.Store", {
+				fields : [ "name", "type" ],
 				autoLoad : false,
 				data : []
 			});
@@ -267,17 +270,17 @@
 		},
 		getLayers : function() {
 			// Create the combo box, attached to the states data store
-			var store = Ext.create('Ext.data.Store', {
-				fields : [ 'name', 'type' ],
+			var store = Ext.create("Ext.data.Store", {
+				fields : [ "name", "type" ],
 				data : []
 			});
 
-			var item = Ext.create('Ext.form.ComboBox', {
-				fieldLabel : '@@ Choose Layer',
+			var item = Ext.create("Ext.form.ComboBox", {
+				fieldLabel : "@@ Choose Layer",
 				store : store,
-				queryMode : 'local',
-				displayField : 'name',
-				valueField : 'name'
+				queryMode : "local",
+				displayField : "name",
+				valueField : "name"
 			});
 			return item;
 		},
@@ -287,8 +290,8 @@
 				callback.apply(callbackScope, this);
 				return;
 			}
-			var attributesStore = Ext.create('Ext.data.Store', {
-				fields : [ 'name', 'type' ],
+			var attributesStore = Ext.create("Ext.data.Store", {
+				fields : [ "description", "name", "type" ],
 				autoLoad : false,
 				data : []
 			});
@@ -300,8 +303,9 @@
 				for (var i = 0; i < attributes.length; i++) {
 					var attribute = attributes[i];
 					attributesStore.add({
+						"description" : attribute.description,
 						"name" : attribute.name,
-						"type" : attribute.description
+						"type" : attribute.type
 					});
 				}
 				me.comboAttributes.store.loadData(attributesStore.getRange(), false);
@@ -310,21 +314,27 @@
 		},
 		getAttributes : function() {
 			var me = this;
-			var store = Ext.create('Ext.data.Store', {
-				fields : [ 'name', 'type' ],
+			var store = Ext.create("Ext.data.Store", {
+				fields : [ "description", "name", "type" ],
 				data : []
 			});
 
 			// Create the combo box, attached to the states data store
-			var item = Ext.create('Ext.form.ComboBox', {
-				fieldLabel : 'Choose Attribute',
+			var item = Ext.create("Ext.form.ComboBox", {
+				fieldLabel : "Choose Attribute",
 				store : store,
-				queryMode : 'local',
-				displayField : 'name',
-				valueField : 'name',
+				queryMode : "local",
+				displayField : "description",
+				valueField : "name",
 				listeners : {
 					change : function(field, newValue, oldValue) {
-						me.attributeType = newValue;
+						var attribute = this.store.getAt(this.store.find("name", newValue));
+						me.attributeType = {
+							name : attribute.get("name"),
+							description : attribute.get("description"),
+							type : attribute.get("type")
+						}
+
 						me.resetDynamics();
 					}
 				}
@@ -332,38 +342,88 @@
 			return item;
 		},
 		getGridResults : function() {
-			Ext.create('Ext.data.Store', {
-			    storeId:'simpsonsStore',
-			    fields:['name', 'email', 'phone'],
-			    data:{'items':[
-			        { 'name': 'Lisa',  "email":"lisa@simpsons.com",  "phone":"555-111-1224"  },
-			        { 'name': 'Bart',  "email":"bart@simpsons.com",  "phone":"555-222-1234" },
-			        { 'name': 'Homer', "email":"homer@simpsons.com",  "phone":"555-222-1244"  },
-			        { 'name': 'Marge', "email":"marge@simpsons.com", "phone":"555-222-1254"  }
-			    ]},
-			    proxy: {
-			        type: 'memory',
-			        reader: {
-			            type: 'json',
-			            root: 'items'
-			        }
-			    }
+			var store = Ext.create("Ext.data.Store", {
+				fields : [ "name", "description" ],
+				data : []
 			});
-
-			var item = Ext.create('Ext.grid.Panel', {
-			    title: 'Simpsons',
-			    store: Ext.data.StoreManager.lookup('simpsonsStore'),
-			    columns: [
-			        { text: 'Name',  dataIndex: 'name' },
-			        { text: 'Email', dataIndex: 'email', flex: 1 },
-			        { text: 'Phone', dataIndex: 'phone' }
-			    ],
-			    height: 200,
-			    width: 400,
+			var grid = Ext.create("Ext.grid.Panel", {
+				title : "Results",
+				store : store,
+				columns : [ {
+					text : "Code",
+					dataIndex : "code"
+				}, {
+					text : "Description",
+					dataIndex : "description",
+					flex : 1
+				}],
+				height : "100%",
+				width : "100%"
+			});
+			// this panel only for have scroolbars on the Grid
+			var item = Ext.create('Ext.panel.Panel', {
+			    title: 'parent container',
+			    width: 800,
+			    height: 600,
+				autoScroll : "true",
+			    layout: 'fit',
+			    items : [grid],
+			    theGrid : grid
 			});
 			return item;
 		},
+		refreshResultsCardByCard : function(cards, cardsStore, index, callback, callbackScope) {
+			if (index >= cards.length) {
+				callback.apply(callbackScope, []);
+				return;
+			}
+			var card = this.interactionDocument.getCurrentCard();
+			var currentClassName = (!card) ? "" : card.className;
+			var cardId = cards[index];
+			this.loadCard(cardId, currentClassName, function(response) {
+				cardsStore.add({
+					"description" : response.Description,
+					"code" : response.Code
+				});
+				this.refreshResultsCardByCard(cards, cardsStore, index + 1, callback, callbackScope);
+			}, this);
+		},
+		refreshResults : function(grid, callback, callbackScope) {
+			var layer = this.interactionDocument.getGeoLayerByName("poli");
+			var cards = [];
+			if (layer) {
+				cards = layer.get("adapter").getCardsOnLayer();
+			}
+			var card = this.interactionDocument.getCurrentCard();
+			var currentClassName = (!card) ? "" : card.className;
+			var cardsStore = Ext.create("Ext.data.Store", {
+				fields : [ "description", "code" ],
+				autoLoad : false,
+				data : []
+			});
+			this.refreshResultsCardByCard(cards, cardsStore, 0, function() {
+				grid.getStore().loadData(cardsStore.getRange(), false);
+				callback.apply(callbackScope, this);
+			});
+		},
+		loadCard : function(id, className, callback, callbackScope) {
+			if (!params) {
+				var params = {};
+				params[CMDBuild.core.constants.Proxy.CARD_ID] = id;
+				params[CMDBuild.core.constants.Proxy.CLASS_NAME] = className;
+			}
+
+			CMDBuild.proxy.Card.read({
+				params : params,
+				loadMask : false,
+				success : function(result, options, decodedResult) {
+					var data = decodedResult.card;
+					callback.apply(callbackScope, [ data ]);
+				}
+			});
+		},
 		getAdvanceButton : function(text, nextTab) {
+			var me = this;
 			var item = {
 				text : text,
 				handler : function() {
@@ -371,6 +431,10 @@
 					var form = this.up("form");
 
 					wizard.getLayout().setActiveItem(nextTab);
+					if ("step-3" === nextTab) {
+						me.refreshResults(me.gridResults, function() {
+						}, this);
+					}
 				}
 			};
 			return item;

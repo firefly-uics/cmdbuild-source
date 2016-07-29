@@ -32,6 +32,15 @@
 			});
 			return retFeatures;
 		},
+		getCardsOnLayer : function() {
+			var source = this.getSource();
+			var features = (source) ? source.getFeatures() : new ol.Collection();
+			var cards = [];
+			features.forEach(function(feature) {
+				cards.push(feature.get("master_card"));
+			});
+			return cards;
+		},
 		buildGisLayer : function(attributeName, options, map) {
 			var me = this;
 			var geoJSONFormat = new ol.format.GeoJSON();
@@ -85,7 +94,6 @@
 				loadMask : false,
 				scope : this,
 				success : function(param) {
-					console.log("----->", param);
 				}
 			});
 			this.interactionDocument.setCurrentFeature(options.geoAttribute.name, "", "Select");
@@ -204,16 +212,16 @@
 
 			function onSuccess(resp, req, feature) {
 				// the card could have no feature
-				if (! feature || ! feature.geometry || ! feature.geometry.coordinates) {
-					callback.apply(callbackScope, [undefined]);
+				if (!feature || !feature.geometry || !feature.geometry.coordinates) {
+					callback.apply(callbackScope, [ undefined ]);
 					return;
 				}
 				var x = feature.geometry.coordinates[0];
 				var y = feature.geometry.coordinates[1];
-				callback.apply(callbackScope, [[ x, y ]]);
+				callback.apply(callbackScope, [ [ x, y ] ]);
 			}
 			var cardId = card.cardId;
-			var className =  card.className;
+			var className = card.className;
 			_CMCache.getLayersForEntryTypeName(className, function(layers) {
 				CMDBuild.proxy.gis.Gis.getFeature({
 					params : {
@@ -260,7 +268,7 @@
 			} catch (e) {
 			}
 			var featuresOnLayer = this.getFeaturesByCardId(cardId);
-			featuresOnLayer.forEach(function(feature) { 
+			featuresOnLayer.forEach(function(feature) {
 				if (feature.get("master_card") == cardId) {
 					features.push(feature);
 					retFeatures.push(feature);
