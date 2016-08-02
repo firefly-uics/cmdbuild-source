@@ -18,6 +18,8 @@ FIXES
 
  * Error when trying to get cards from a superclass when there are row privileges defined on a subclass
 
+ * "Privileged" status for user invalidates "impersonate" operation of WorkflowAPI 
+
 
 
 
