@@ -1,6 +1,10 @@
 (function() {
 
-	Ext.require('CMDBuild.proxy.index.Json');
+	Ext.require([
+		'CMDBuild.core.constants.Global',
+		'CMDBuild.core.constants.Proxy',
+		'CMDBuild.proxy.index.Json'
+	]);
 
 	Ext.define("CMDBuild.Management.MasterDetailCardGrid", {
 		extend: "CMDBuild.view.management.common.CMCardGrid",
@@ -102,25 +106,26 @@
 	}
 
 	function getIconsToRender(record) {
-		var icons = ["showDetail", "note"];
+		var icons = ["showDetail"];
+		var entryType = _CMCache.getEntryTypeById(record.get('IdClass'));
 		var privileges = _CMUtils.getEntryTypePrivilegesByCard(record);
+
 		if (privileges.write && !(privileges.crudDisabled.modify || privileges.crudDisabled.remove)) {
-			icons = ["editDetail", "deleteDetail", "note"];
-		}
-		else if (privileges.write && ! privileges.crudDisabled.modify) {
-			icons = ["editDetail", "note"];
-		}
-		else if (privileges.write && ! privileges.crudDisabled.remove) {
-			icons = ["showDetail", "deleteDetail", "note"];
+			icons = ["editDetail", "deleteDetail"];
+		} else if (privileges.write && !privileges.crudDisabled.modify) {
+			icons = ["editDetail"];
+		} else if (privileges.write && !privileges.crudDisabled.remove) {
+			icons = ["showDetail", "deleteDetail"];
 		}
 
-		if (CMDBuild.configuration.graph.get(CMDBuild.core.constants.Proxy.ENABLED)) {
+		if (entryType.get(CMDBuild.core.constants.Proxy.TABLE_TYPE) != CMDBuild.core.constants.Global.getTableTypeSimpleTable())
+			icons.push('note');
+
+		if (CMDBuild.configuration.graph.get(CMDBuild.core.constants.Proxy.ENABLED))
 			icons.push("showGraph");
 
-		}
-		if (CMDBuild.configuration.dms.get(CMDBuild.core.constants.Proxy.ENABLED)) {
+		if (CMDBuild.configuration.dms.get(CMDBuild.core.constants.Proxy.ENABLED))
 			icons.push("attach");
-		}
 
 		return icons;
 	}
