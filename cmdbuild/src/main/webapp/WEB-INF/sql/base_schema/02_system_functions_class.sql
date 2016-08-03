@@ -38,6 +38,7 @@ BEGIN
 		) INHERITS ('||_cm_table_dbname(CMClassName)||');
 	';
 	PERFORM _cm_create_index(_cm_history_id(CMClassName), 'CurrentId');
+	EXECUTE 'ALTER TABLE '|| _cm_history_dbname_unsafe(CMClassName) ||' ADD CONSTRAINT "_Check_Status" CHECK ("Status" = ''U''::bpchar);';
 END;
 $$ LANGUAGE PLPGSQL;
 
