@@ -22,6 +22,8 @@ FIXES
 
  * Tab details errors whith simple class ForeignKey as source
 
+ * ForeignKey fields store URL errors
+
 
 
 
