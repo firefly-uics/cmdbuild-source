@@ -24,6 +24,8 @@ FIXES
 
  * ForeignKey fields store URL errors
 
+ * Widget buttons duplication while using direct routes on process instance with Firefox
+
 
 
 
