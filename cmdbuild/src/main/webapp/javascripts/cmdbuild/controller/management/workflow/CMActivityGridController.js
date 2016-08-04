@@ -82,7 +82,7 @@
 			if (!activityInfoId || (me.lastActivityInfoId && me.lastActivityInfoId == activityInfoId)) {
 				return;
 			} else {
-				me.lastActivityInfoId = null;
+				me.lastActivityInfoId = activityInfoId;
 			}
 
 			updateViewSelection(activityInfoId, me);
@@ -99,7 +99,6 @@
 				success: function (response, options, decodedResponse) {
 					var activity = new CMDBuild.model.CMActivityInstance(decodedResponse.response || {});
 
-					me.lastActivityInfoId = activityInfoId;
 					_CMWFState.setActivityInstance(activity);
 				}
 			});
@@ -109,35 +108,41 @@
 		 * @param {Ext.selection.RowModel} sm
 		 * @param {CMDBuild.model.CMProcessInstance} selection
 		 *
+		 * @returns {Void}
+		 *
 		 * @override
 		 */
-		onCardSelected: function(sm, selection) {
-			if (Ext.isArray(selection)) {
-				if (selection.length > 0) {
-					var me = this;
-					var pi = selection[0];
-					var activities = pi.getActivityInfoList();
+		onCardSelected: function (sm, selection) {
+			if (Ext.isArray(selection) && !Ext.isEmpty(selection)) {
+				var me = this;
+				var pi = selection[0];
+				var activities = pi.getActivityInfoList();
 
-					this.lastActivityInfoId = null;
+				CMDBuild.core.LoadMask.show();
 
-					CMDBuild.core.LoadMask.show();
+				_CMWFState.setProcessInstance(pi, function () {
+					if (activities.length > 0) {
+						toggleRow(pi, me);
 
-					_CMWFState.setProcessInstance(pi, function() {
-						if (activities.length > 0) {
-							toggleRow(pi, me);
-							if (activities.length == 1) {
-								var ai = activities[0];
+						if (activities.length == 1) {
+							var ai = activities[0];
 
-								if (ai && ai.id)
-									me.onActivityInfoSelect(ai.id);
+							if (ai && ai.id) {
+								me.onActivityInfoSelect(ai.id);
+							} else {
+								me.lastActivityInfoId = null;
 							}
 						} else {
-							_debug('A proces without activities', pi);
+							me.lastActivityInfoId = null;
 						}
+					} else {
+						_debug('A proces without activities', pi);
+					}
 
-						CMDBuild.core.LoadMask.hide();
-					});
-				}
+					CMDBuild.core.LoadMask.hide();
+				});
+			} else {
+				_error('onCardSelected(): wrong selection parameter', this, selection);
 			}
 		},
 
