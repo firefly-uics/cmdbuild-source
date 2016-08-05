@@ -25,6 +25,7 @@
 					CMDBuild.core.constants.Proxy.GEO_SERVER, 'url' ]); 
 			var source = new ol.source.TileWMS({
 				url : geoserver_url + "/" + GOESERVER_SERVICE_TYPE,
+				 strategy: ol.loadingstrategy.bbox,
 				params : {
 					layers : geoserver_ws + ":" + geoAttribute.name,
 					format : WMS_IMAGE_FORMAT,
@@ -40,7 +41,6 @@
 			layer.cmdb_maxZoom = geoAttribute.maxZoom || DEFAULT_MAX_ZOOM;
 			layer.geoAttribute = geoAttribute;
 			layer.editLayer = undefined;
-			layer.strategies = [new OpenLayers.Strategy.BBOX()];
 			layer.cmdb_index = geoAttribute.cmdb_index;
 			layer.set("name",  geoAttribute.name);
 
