@@ -13,7 +13,7 @@
 		/**
 		 * @cfg {Array}
 		 */
-		cmfgCatchedFunctions : [ "onPanelGridAndFormFilterAdvancedFilterEditorViewShow" ],
+		cmfgCatchedFunctions : [ "onShowThematism" ],
 
 		/**
 		 * @property {CMDBuild.view.administration.userAndGroup.user.UserView}
@@ -54,8 +54,9 @@
 		 * 
 		 * @returns {Void}
 		 */
-		onPanelGridAndFormFilterAdvancedFilterEditorViewShow : function(card) {
-			console.log("---->>>>>*****");
+		onShowThematism : function(thematism) {
+			var thematicDocument = this.interactionDocument.getThematicDocument();
+			thematicDocument.addThematism(thematism);
 		},
 		onCardZoom : function(card) {
 			this.interactionDocument.centerOnCard(card);
