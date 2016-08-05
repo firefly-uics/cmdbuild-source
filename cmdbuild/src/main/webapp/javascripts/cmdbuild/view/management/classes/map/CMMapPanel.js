@@ -59,6 +59,8 @@
 		requires : [ 'CMDBuild.controller.management.classes.map.CM16CardGrid',
 				'CMDBuild.controller.management.classes.map.CM16LayerTree',
 				'CMDBuild.controller.management.classes.map.thematism.ThematismMainWindow',
+				'CMDBuild.view.management.classes.map.thematism.ThematicDocument',
+				'CMDBuild.view.management.classes.map.thematism.ThematicStrategiesManager',
 				'CMDBuild.view.management.classes.map.geoextension.CMDBuildGeoExt' ],
 
 		mixins : {
@@ -84,8 +86,13 @@
 		initComponent : function() {
 			var me = this;
 			this.geoExtension = Ext.create('CMDBuild.view.management.classes.map.geoextension.CMDBuildGeoExt');
+			var thematicDocument = Ext.create('CMDBuild.view.management.classes.map.thematism.ThematicDocument');
+			var strategiesManager = Ext.create('CMDBuild.view.management.classes.map.thematism.ThematicStrategiesManager');
+			thematicDocument.configureStrategiesManager(strategiesManager);
 			this.interactionDocument = Ext
 					.create('CMDBuild.view.management.classes.map.geoextension.InteractionDocument');
+			thematicDocument.setInteractionDocument(this.interactionDocument)
+			this.interactionDocument.setThematicDocument(thematicDocument);
 			this.mapPanel = Ext.create('CMDBuild.Management.CMMap', {
 				geoExtension : this.geoExtension,
 				interactionDocument : this.interactionDocument
@@ -95,13 +102,13 @@
 			var tabs = [];
 
 			if (CMDBuild.configuration.gis.get('cardBrowserByDomainConfiguration')['root']) { // TODO:
-																								// use
-																								// proxy
-																								// constants
+				// use
+				// proxy
+				// constants
 				var root = CMDBuild.configuration.gis.get('cardBrowserByDomainConfiguration')['root']; // TODO:
-																										// use
-																										// proxy
-																										// constants
+				// use
+				// proxy
+				// constants
 
 				this.cardBrowser = new CMDBuild.view.management.CMCardBrowserTree({
 					title : CMDBuild.Translation.management.modcard.gis.gisNavigation,
@@ -111,9 +118,10 @@
 				});
 
 				tabs.push(this.cardBrowser);
-				this.thematicView = Ext.create('CMDBuild.controller.management.classes.map.thematism.ThematismMainWindow', {
-					interactionDocument : this.interactionDocument
-				});
+				this.thematicView = Ext.create(
+						'CMDBuild.controller.management.classes.map.thematism.ThematismMainWindow', {
+							interactionDocument : this.interactionDocument
+						});
 
 			}
 			this.editingWindow = new CMDBuild.view.management.map.CMMapEditingToolsWindow({
