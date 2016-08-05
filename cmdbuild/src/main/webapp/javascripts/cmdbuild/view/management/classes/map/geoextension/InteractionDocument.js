@@ -11,12 +11,39 @@
 			zoom : CMDBuild.configuration.gis.get(CMDBuild.gis.constants.ZOOM_INITIAL_LEVEL) || 0,
 			mapDivId : CMDBuild.gis.constants.MAP_DIV || 0
 		},
+		constructor : function(thematicDocument) {
+			this.thematicDocument = thematicDocument;
+			
+			this.callParent(arguments);
+		},
 		setConfigurationMap : function(mapPanel) {
 			this.configurationMap.mapPanel = mapPanel;
 
 		},
+		getFieldStrategies : function(callback, callbackScope) {
+			this.thematicDocument.getFieldStrategies(function(strategies) {
+				callback.apply(callbackScope, [strategies]);
+			}, this);
+		},
+		getFunctionStrategies : function(callback, callbackScope) {
+			this.thematicDocument.getFunctionStrategies(function(strategies) {
+				callback.apply(callbackScope, [strategies]);
+			}, this);
+		},
 		getConfigurationMap : function() {
 			return this.configurationMap;
+		},
+		setThematicDocument : function(thematicDocument) {
+			this.thematicDocument = thematicDocument;
+		},
+		getThematicDocument : function() {
+			return this.thematicDocument;
+		},
+		getThematicLayers : function() {
+			if (! this.thematicDocument) {
+				return [];
+			}
+			return this.thematicDocument.getLayers();
 		},
 		observe : function(view) {
 			if (this.observers.indexOf(view) === -1) {
@@ -31,6 +58,11 @@
 		observeFeatures : function(view) {
 			if (this.featuresObserver.indexOf(view) === -1) {
 				this.featuresObserver.push(view);
+			}
+		},
+		onLoadedfeatures : function(layerName, features) {
+			if (this.thematicDocument) {
+				this.thematicDocument.refreshFeatures(layerName, features);
 			}
 		},
 		changedFeature : function() {
@@ -105,6 +137,12 @@
 		},
 		getLayerByName : function(name, callback, callbackScope) {
 			layerByName(name, callback, callbackScope);
+		},
+		getThematicLayerByName : function(name) {
+			if (! this.thematicDocument) {
+				return null;
+			}
+			return this.thematicDocument.getLayerByName(name);
 		},
 		getGeoLayerByName : function(name) {
 			var map = this.getMap();
