@@ -15,11 +15,9 @@
 			cardStateDelegate : "CMDBuild.state.CMCardModuleStateDelegate"
 		},
 
-		cmfgCatchedFunctions : [ 'onCardZoom' ],
+		cmfgCatchedFunctions : [],
 
 		cardDataName : "geoAttributes", // CMCardDataProvider
-		// member, to say the
-		// name to use for given data
 
 		constructor : function(mapPanel, interactionDocument) {
 			var me = this;
@@ -30,8 +28,8 @@
 
 				// set me as delegate of the OpenLayers.Map
 				// (pimped in CMMap)
-				this.map = mapPanel.getMap();
-				this.map.delegate = this;
+//				this.map = mapPanel.getMap();
+//				this.map.delegate = this;
 
 				this.cmIsInEditing = false;
 
@@ -74,7 +72,6 @@
 				_CMCardModuleState.setCard({
 					cardId : cardId,
 					className : className,
-//					IdClass : type.get("id")
 				});
 			}
 			this.interactionDocument.setCurrentCard({
@@ -82,28 +79,12 @@
 				className : className
 			});
 			if (cardId !== -1) {
-    			this.interactionDocument.centerOnCard({
-    				className : className, 
-    				cardId : cardId
-    			});
+				this.interactionDocument.centerOnCard({
+					className : className,
+					cardId : cardId
+				});
 			}
 			this.interactionDocument.changed();
-		},
-
-		onAddCardButtonClick : function() {
-			this.mapPanel.getMap().clearSelection();
-			// this.currentCardId = undefined;
-			// this.mapPanel.getMap().refreshStrategies();
-		},
-		onCardZoom : function() {
-			console.log("-------------------------------");
-		},
-		centerMapOnFeature : function(params) {
-			var className = _CMCache.getEntryTypeNameById(params.IdClass);
-			this.interactionDocument.centerOnCard({
-				className : className, 
-				cardId : params.Id
-			});
 		},
 
 		editMode : function() {
@@ -156,10 +137,6 @@
 
 		activateSelectControl : function() {
 			// this.selectControl.activate();
-		},
-
-		selectFeature : function(feauture) {
-			// this.selectControl.select(feauture);
 		},
 
 		onEntryTypeSelected : onEntryTypeSelected,
@@ -227,7 +204,6 @@
 		return false;
 	}
 
-
 	function buildLongPressController(me) {
 		var map = me.map;
 		var longPressControl = new OpenLayers.Control.LongPress({
@@ -280,8 +256,7 @@
 				cardId : danglingCard.Id,
 				className : entryType.get("name")
 			});
-		} 
-		else {
+		} else {
 			this.onCardSelected({
 				cardId : -1,
 				className : entryType.get("name")
@@ -341,7 +316,7 @@
 
 					this.centerMapOnFeature(lastCard.data);
 					this.onCardSelected({
-						cardId : lastCard.get("Id"), 
+						cardId : lastCard.get("Id"),
 						className : (lastCard.get("className")) ? lastCard.get("className") : lastCard.raw.className
 					});
 				}

@@ -2,8 +2,19 @@
 	Ext.define('CMDBuild.view.management.classes.map.thematism.ThematicLayer', {
 
 		/**
+		 * @param {Object}
+		 *            thematism
+		 * @param {String}
+		 *            thematism.name
+		 * @param {ol.layer.Vector}
+		 *            thematism.layer
 		 * 
-		 * @returns {Object} CMDBuild.view.management.classes.map.thematism.ThematicLayer
+		 * @param
+		 * {CMDBuild.view.management.classes.map.geoextension.InteractionDocument}
+		 * interactionDocument
+		 * 
+		 * @returns {Object}
+		 *          CMDBuild.view.management.classes.map.thematism.ThematicLayer
 		 */
 		constructor : function(thematism, interactionDocument) {
 			this.callParent(arguments);
