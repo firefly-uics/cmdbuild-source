@@ -26,6 +26,8 @@ FIXES
 
  * Widget buttons duplication while using direct routes on process instance with Firefox
 
+ * Error while saving a search filter without selecting a default group
+
 
 
 
