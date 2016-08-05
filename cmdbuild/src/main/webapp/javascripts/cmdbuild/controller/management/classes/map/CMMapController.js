@@ -52,17 +52,8 @@
 						this, this.interactionDocument);
 				this.mapPanel.editingWindow.addDelegate(this.editingWindowDelegate);
 
-				this.map.addControl(this.selectControl);
-				// MINE NB this.selectControl.activate();
-
-				// build long press controller
-				// MINE NB buildLongPressController(this);
-
-				// add me to the CMCardModuleStateDelegates
 				_CMCardModuleState.addDelegate(this);
 
-				// MINE NB this.map.events.register("zoomend",
-				// this, onZoomEnd);
 			} else {
 				throw new Error("The map controller was instantiated without a map or the related form panel");
 			}
@@ -236,39 +227,6 @@
 		return false;
 	}
 
-	/**
-	 * Executed after zoomEvent to update mapState object and manually redraw
-	 * all map's layers
-	 */
-	function onZoomEnd() {
-		var map = this.map;
-		var zoom = map.getZoom();
-		this.mapState.updateForZoom(zoom);
-		var baseLayers = map.cmBaseLayers;
-		var haveABaseLayer = false;
-
-		// Manually force redraw of all layers to fix a problem with GoogleMaps
-		Ext.Array.each(map.layers, function(item, index, allItems) {
-			item.redraw();
-		});
-
-		for (var i = 0; i < baseLayers.length; ++i) {
-			var layer = baseLayers[i];
-
-			if (!layer || typeof layer.isInZoomRange != 'function')
-				continue;
-
-			if (layer.isInZoomRange(zoom)) {
-				map.setBaseLayer(layer);
-				haveABaseLayer = true;
-
-				break;
-			}
-		}
-
-		if (!haveABaseLayer)
-			map.setBaseLayer(map.cmFakeBaseLayer);
-	}
 
 	function buildLongPressController(me) {
 		var map = me.map;
