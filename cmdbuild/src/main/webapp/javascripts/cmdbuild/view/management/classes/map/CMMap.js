@@ -15,6 +15,11 @@
 			this.interactionDocument.observe(this);
 		},
 
+		/**
+		 * @returns {Void}
+		 * 
+		 * @override
+		 */
 		refresh : function() {
 			var card = this.interactionDocument.getCurrentCard();
 			var currentClassName = card.className;
@@ -26,7 +31,16 @@
 				me.refreshThematicLayers(currentClassName, currentCardId);
 			}, this);
 		},
-		refreshThematicLayers : function(layerscurrentClassName, currentCardId) {
+
+		/**
+		 * @param {String}
+		 *            currentClassName
+		 * @param {Integer}
+		 *            currentCardId
+		 * 
+		 * @returns {Void}
+		 */
+		refreshThematicLayers : function(currentClassName, currentCardId) {
 			var thematicLayers = this.interactionDocument.getThematicLayers();
 			var visibleLayers = [];
 			for (var i = 0; i < thematicLayers.length; i++) {
@@ -48,6 +62,24 @@
 			}
 			this.removeThematicsNotVisibleLayers(visibleLayers)
 		},
+
+		/**
+		 * @param {Array} : layers from _CMCACHE
+		 * @param {Array} : layers[n].visibility
+		 * @param {Array} : layers[n].cardBinding
+		 * @param {Integer} : layers[n].maxZoom
+		 * @param {Integer} : layers[n].minZoom
+		 * @param {String} : layers[n].name
+		 * @param {String} : layers[n].description
+		 * @param {String} : layers[n].masterTableName // className
+
+		 * @param {String}
+		 *            currentClassName
+		 * @param {Integer}
+		 *            currentCardId
+		 * 
+		 * @returns {Void}
+		 */
 		refreshAllLayers : function(layers, currentClassName, currentCardId) {
 			if (!currentCardId) {
 				return;
@@ -77,6 +109,15 @@
 			}
 			this.removeNotVisibleLayers(layers, visibleLayers);
 		},
+
+		/**
+		 * @param {Array} : 
+		 *            allLayers : layers from _CMCACHE
+		 * @param {Array}
+		 *            visibles : layers from _CMCACHE
+		 * 
+		 * @returns {Void}
+		 */
 		removeNotVisibleLayers : function(allLayers, visibles) {
 			for (var i = 0; i < allLayers.length; i++) {
 				if (!visibles.find(function(layer) {
@@ -88,6 +129,13 @@
 				}
 			}
 		},
+
+		/**
+		 * @param {Array}
+		 *            visibles : layers from _CMCACHE
+		 * 
+		 * @returns {Void}
+		 */
 		removeThematicsNotVisibleLayers : function(visibles) {
 			var allLayers = this.interactionDocument.getThematicLayers();
 			var me = this;
