@@ -17,7 +17,7 @@
 
 		cmfgCatchedFunctions : [],
 
-		cardDataName : "geoAttributes", // CMCardDataProvider
+		cardDataName : "geoAttributes",
 
 		constructor : function(mapPanel, interactionDocument) {
 			var me = this;
@@ -25,17 +25,7 @@
 			if (mapPanel) {
 				this.mapPanel = mapPanel;
 				this.mapPanel.addDelegate(this);
-
-				// set me as delegate of the OpenLayers.Map
-				// (pimped in CMMap)
-//				this.map = mapPanel.getMap();
-//				this.map.delegate = this;
-
 				this.cmIsInEditing = false;
-
-				// init the map state
-				this.mapState = new CMDBuild.state.CMMapState(this);
-				_CMMapState = this.mapState;
 
 				var cardbrowserPanel = this.mapPanel.getCardBrowserPanel();
 				if (cardbrowserPanel) {
@@ -144,15 +134,7 @@
 
 		/* As mapDelegate ******** */
 
-		onLayerAdded : onLayerAdded,
-		onLayerRemoved : onLayerRemoved,
 		onMapPanelVisibilityChanged : onVisibilityChanged,
-
-		/* As layerSwitcherDelegate ******** */
-
-		onLayerCheckChange : function(node, checked) {
-			var map = this.mapPanel.getMap();
-		},
 
 		/* As CMCardModuleStateDelegate ************** */
 
@@ -264,46 +246,6 @@
 		}
 	}
 
-	function onLayerAdded(map, params) {
-		var layer = params.layer;
-		var me = this;
-
-		if (layer == null) {
-			return;
-		}
-
-		if (this.interactionDocument.isGeoServerLayer(layer)) {
-			// layer.setVisibility(this.mapState.isGeoServerLayerVisible(layer.name));
-		}
-
-		else {
-			this.selectControl.addLayer(layer);
-
-			layer.events.on({
-				"beforefeatureadded" : beforefeatureadded,
-				"scope" : me
-			});
-		}
-	}
-
-	function onLayerRemoved(map, params) {
-		var layer = params.layer;
-		var me = this;
-
-		if (layer == null || !layer.CM_Layer) {
-			return;
-		}
-
-		layer.events.un({
-			"beforefeatureadded" : beforefeatureadded,
-			"scope" : me
-		});
-	}
-
-	function beforefeatureadded(o) {
-		return true;
-	}
-
 	function onVisibilityChanged(map, visible) {
 		if (visible) {
 			var lastClass = _CMCardModuleState.entryType, lastCard = _CMCardModuleState.card;
@@ -314,7 +256,6 @@
 			} else {
 				if (lastCard && (!this.currentCardId || this.currentCardId != lastCard.get("Id"))) {
 
-					this.centerMapOnFeature(lastCard.data);
 					this.onCardSelected({
 						cardId : lastCard.get("Id"),
 						className : (lastCard.get("className")) ? lastCard.get("className") : lastCard.raw.className
@@ -329,71 +270,8 @@
 		}
 	}
 
-	// ////*****************************************************************
-	// /////
-
-	function removeLayerForGeoAttribute(geoMap, geoAttribute, me) {
-		var map = geoMap;
-		var l = getLayerByGeoAttribute(map, geoAttribute);
-		if (l) {
-			if (!geoAttribute.isUsed() && l.editLayer) {
-
-				map.removeLayer(l.editLayer);
-			}
-
-			l.events.unregister("visibilitychanged", me, onLayerVisibilityChange);
-			l.destroyStrategies();
-			l.clearSelection();
-
-			map.removeLayer(l);
-		}
-	}
-
-	function addLayerForGeoAttribute(map, geoAttribute, me) {
-		if (!geoAttribute.isZoomValid()) {
-			return;
-		}
-
-		addLayerToMap(map, //
-		map.makeLayer(_CMCardModuleState.entryType.get("id"), geoAttribute.getValues(), true));
-	}
-
-	function addLayerToMap(map, layer, me) {
-		if (layer) {
-			// MINE layer.events.register("visibilitychanged", me,
-			// onLayerVisibilityChange);
-			me.mapState.addLayer(layer, map.getZoom());
-			map.addLayer(layer);
-
-			if (typeof layer.cmdb_index != "undefined") {
-				map.setLayerIndex(layer, layer.cmdb_index);
-			}
-
-			if (layer.editLayer) {
-				var el = map.getLayerByName(layer.editLayer.name);
-				if (!el) {
-					map.addLayers([ layer.editLayer ]);
-				}
-			}
-		}
-	}
-
-	function getLayerByGeoAttribute(map, geoAttribute) {
-		var layers = map.getLayers();
-		for (var i = 0; i < layers.getLength(); ++i) {
-			var layer = layers.item(i);
-			if (!layer.geoAttribute || layer.CM_EditLayer) {
-				continue;
-			} else if (CMDBuild.state.GeoAttributeState.getKey(layer.geoAttribute) == geoAttribute.getKey()) {
-				return layer;
-			}
-		}
-		return null;
-	}
-
 	function onLayerVisibilityChange(param) {
 		var layer = param.object;
-		this.mapState.updateLayerVisibility(layer, this.map.getZoom());
 
 		var cardBrowserPanel = this.mapPanel.getCardBrowserPanel();
 		if (layer.CM_geoserverLayer && cardBrowserPanel) {
