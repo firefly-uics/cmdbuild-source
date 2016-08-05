@@ -1,11 +1,10 @@
 (function() {
 	Ext.define('CMDBuild.view.management.classes.map.geoextension.GisLayer', {
-		status : "Select",
 
 		constructor : function(geoAttribute, withEditWindow, interactionDocument) {
 			var options = {
 				geoAttribute : geoAttribute,
-				targetClassName : "Building"
+				targetClassName : geoAttribute.masterTableName
 			};
 			this.interactionDocument = interactionDocument;
 			var map = this.interactionDocument.getMap();
@@ -61,6 +60,7 @@
 							}
 							var features = geoJSONFormat.readFeatures(data);
 							vectorSource.addFeatures(features);
+							me.interactionDocument.onLoadedfeatures(me.layer.get("name"), features);
 						},
 
 					});

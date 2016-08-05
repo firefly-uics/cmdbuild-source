@@ -97,7 +97,10 @@
 				});
 				var size = [ document.getElementById(this.id + "-body").offsetWidth,
 						document.getElementById(this.id + "-body").offsetHeight ];
+				  var divContainerControl =  document.createElement('div');
+				  divContainerControl.innerHTML = "<div style='position: absolute;'><h1>pippo</h1><input type='button' onClick='alert(1)'>pippo</input></div>";
 				this.map.setSize(size);
+				  document.getElementById(this.id + "-body").appendChild(divContainerControl); 
 			},
 			resize : function() {
 				var size = [ document.getElementById(this.id + "-body").offsetWidth,
@@ -166,31 +169,6 @@
 				if (adapter && adapter.changeId)
 					adapter.changeId(oldId, newId);
 			});
-		},
-		// end interface
-
-		// compatibility
-		addLayer : function(layer) {
-			return this.map.addLayer(layer);
-		},
-		getLayers : function() {
-			return (this.map) ? this.map.getLayers() : [];
-		},
-		getGeoServerLayerByName : function() {
-			console.log("getGeoServerLayerByName ");
-		},
-		getProjection : function() {
-			console.log("getProjection ");
-		},
-		addControl : function() {
-			console.log("addControl ");
-		},
-
-		getCmdbLayers : function() {
-			var out = [];
-			return out;
 		}
-	// end compatibility
 	});
-
 })();
