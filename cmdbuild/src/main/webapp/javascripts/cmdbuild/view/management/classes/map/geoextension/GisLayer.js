@@ -19,17 +19,14 @@
 		getSource : function() {
 			return this.layer.getSource();
 		},
+
+		/**
+		 * @param {Integer} cardId
+		 * 
+		 * @returns {Array[ol.feature]} features
+		 */
 		getFeaturesByCardId : function(cardId) {
-			var source = this.getSource();
-			var features = (source) ? source.getFeatures() : new ol.Collection();
-			var retFeatures = new ol.Collection();
-			features.forEach(function(feature) {
-				// always == on ids
-				if (feature.get("master_card") == cardId) {
-					retFeatures.push(feature);
-				}
-			});
-			return retFeatures;
+			return this.interactionDocument.getFeaturesOnLayerByCardId(cardId, this.layer);
 		},
 		getCardsOnLayer : function() {
 			var source = this.getSource();
@@ -96,6 +93,7 @@
 				success : function(param) {
 				}
 			});
+			this.status = "Select";
 			this.interactionDocument.setCurrentFeature(options.geoAttribute.name, "", "Select");
 			this.interactionDocument.changedFeature();
 			return gisLayer;
@@ -137,9 +135,7 @@
 					if (!layer) {
 						return false;
 					}
-					var nameLayer = layer.get("name");
-					var thisName = me.getLayer().get("name");
-					return (me.status === "Select")
+					return (me.status === "Select");
 				},
 				wrapX : false
 			});

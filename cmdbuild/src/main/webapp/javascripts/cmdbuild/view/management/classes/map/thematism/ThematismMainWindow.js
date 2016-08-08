@@ -533,7 +533,7 @@
 							}, this);
 						},
 						chargeCardByCard : function(groups, cardsArray, index, callback, callbackScope) {
-							if (index >= cardsArray.length) {
+							if (index >= cardsArray.length || ! this.currentStrategy) {
 								callback.apply(callbackScope, []);
 								return;
 							}
