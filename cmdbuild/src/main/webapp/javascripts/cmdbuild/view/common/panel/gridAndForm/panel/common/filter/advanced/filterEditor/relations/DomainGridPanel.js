@@ -3,7 +3,7 @@
 	/**
 	 * @link CMDBuild.view.management.common.filter.CMDomainGrid
 	 */
-	Ext.define('CMDBuild.view.common.panel.gridAndForm.filter.advanced.filterEditor.relations.DomainGridPanel', {
+	Ext.define('CMDBuild.view.common.panel.gridAndForm.panel.common.filter.advanced.filterEditor.relations.DomainGridPanel', {
 		extend: 'Ext.grid.Panel',
 
 		requires: [

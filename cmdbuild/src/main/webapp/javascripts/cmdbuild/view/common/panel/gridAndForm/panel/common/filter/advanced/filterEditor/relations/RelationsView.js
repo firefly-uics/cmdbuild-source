@@ -1,6 +1,6 @@
 (function () {
 
-	Ext.define('CMDBuild.view.common.panel.gridAndForm.filter.advanced.filterEditor.relations.RelationsView', {
+	Ext.define('CMDBuild.view.common.panel.gridAndForm.panel.common.filter.advanced.filterEditor.relations.RelationsView', {
 		extend: 'Ext.panel.Panel',
 
 		/**

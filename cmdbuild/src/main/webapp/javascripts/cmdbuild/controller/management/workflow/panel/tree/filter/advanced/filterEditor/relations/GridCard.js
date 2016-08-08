@@ -12,7 +12,7 @@
 
 		mixins: {
 			base: 'CMDBuild.controller.common.abstract.Base',
-			cardGridDelegate: 'CMDBuild.view.common.panel.gridAndForm.filter.advanced.filterEditor.relations.CardGridPanelDelegate'
+			cardGridDelegate: 'CMDBuild.view.common.panel.gridAndForm.panel.common.filter.advanced.filterEditor.relations.CardGridPanelDelegate'
 		},
 
 		/**
@@ -49,7 +49,7 @@
 			this.mixins.base.constructor.call(this, arguments);
 			Ext.apply(this, parameters);
 
-			this.view = Ext.create('CMDBuild.view.common.panel.gridAndForm.filter.advanced.filterEditor.relations.CardGridPanel', { delegate: this })
+			this.view = Ext.create('CMDBuild.view.common.panel.gridAndForm.panel.common.filter.advanced.filterEditor.relations.CardGridPanel', { delegate: this })
 
 			this.callParent([this.view, this.parentDelegate]);
 

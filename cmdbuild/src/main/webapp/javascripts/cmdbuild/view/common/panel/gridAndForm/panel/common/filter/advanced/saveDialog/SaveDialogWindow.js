@@ -3,7 +3,7 @@
 	/**
 	 * @link CMDBuild.view.management.common.filter.CMSaveFilterWindow
 	 */
-	Ext.define('CMDBuild.view.common.panel.gridAndForm.filter.advanced.saveDialog.SaveDialogWindow', {
+	Ext.define('CMDBuild.view.common.panel.gridAndForm.panel.common.filter.advanced.saveDialog.SaveDialogWindow', {
 		extend: 'CMDBuild.core.window.AbstractCustomModal',
 
 		/**
@@ -24,7 +24,7 @@
 		dimensionsMode: 'absolute',
 
 		/**
-		 * @property {CMDBuild.view.common.panel.gridAndForm.filter.advanced.saveDialog.FormPanel}
+		 * @property {CMDBuild.view.common.panel.gridAndForm.panel.common.filter.advanced.saveDialog.FormPanel}
 		 */
 		form: undefined,
 
@@ -42,7 +42,7 @@
 		initComponent: function () {
 			Ext.apply(this, {
 				items: [
-					this.form = Ext.create('CMDBuild.view.common.panel.gridAndForm.filter.advanced.saveDialog.FormPanel', { delegate: this.delegate })
+					this.form = Ext.create('CMDBuild.view.common.panel.gridAndForm.panel.common.filter.advanced.saveDialog.FormPanel', { delegate: this.delegate })
 				]
 			});
 

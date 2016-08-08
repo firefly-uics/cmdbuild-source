@@ -7,7 +7,7 @@
 		extend: 'Ext.panel.Panel',
 
 		/**
-		 * @cfg {CMDBuild.controller.common.panel.gridAndForm.panel.grid.GridAndForm}
+		 * @cfg {CMDBuild.controller.common.panel.gridAndForm.GridAndForm}
 		 */
 		delegate: undefined,
 

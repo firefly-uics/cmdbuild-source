@@ -1,6 +1,6 @@
 (function () {
 
-	Ext.define('CMDBuild.view.common.panel.gridAndForm.filter.advanced.manager.ManagerWindow', {
+	Ext.define('CMDBuild.view.common.panel.gridAndForm.panel.common.filter.advanced.manager.ManagerWindow', {
 		extend: 'CMDBuild.core.window.AbstractCustomModal',
 
 		/**
@@ -22,7 +22,7 @@
 		dimensionsMode: 'absolute',
 
 		/**
-		 * @property {CMDBuild.view.common.panel.gridAndForm.filter.advanced.manager.GridPanel}
+		 * @property {CMDBuild.view.common.panel.gridAndForm.panel.common.filter.advanced.manager.GridPanel}
 		 */
 		grid: undefined,
 
@@ -58,7 +58,7 @@
 					})
 				],
 				items: [
-					this.grid = Ext.create('CMDBuild.view.common.panel.gridAndForm.filter.advanced.manager.GridPanel', { delegate: this.delegate })
+					this.grid = Ext.create('CMDBuild.view.common.panel.gridAndForm.panel.common.filter.advanced.manager.GridPanel', { delegate: this.delegate })
 				]
 			});
 

@@ -37,7 +37,7 @@
 		filterConditions: {},
 
 		/**
-		 * @property {CMDBuild.view.common.panel.gridAndForm.filter.advanced.filterEditor.attributes.FormPanel}
+		 * @property {CMDBuild.view.common.panel.gridAndForm.panel.common.filter.advanced.filterEditor.attributes.FormPanel}
 		 */
 		form: undefined,
 
@@ -52,7 +52,7 @@
 		},
 
 		/**
-		 * @property {CMDBuild.view.common.panel.gridAndForm.filter.advanced.filterEditor.attributes.AttributesView}
+		 * @property {CMDBuild.view.common.panel.gridAndForm.panel.common.filter.advanced.filterEditor.attributes.AttributesView}
 		 */
 		view: undefined,
 
@@ -67,7 +67,7 @@
 		constructor: function (configurationObject) {
 			this.callParent(arguments);
 
-			this.view = Ext.create('CMDBuild.view.common.panel.gridAndForm.filter.advanced.filterEditor.attributes.AttributesView', { delegate: this });
+			this.view = Ext.create('CMDBuild.view.common.panel.gridAndForm.panel.common.filter.advanced.filterEditor.attributes.AttributesView', { delegate: this });
 
 			// Shorthands
 			this.form = this.view.form;
@@ -222,7 +222,7 @@
 					Ext.isObject(attribute) && !Ext.Object.isEmpty(attribute)
 					&& this.filterConditionsIsGroupEmpty(attribute[CMDBuild.core.constants.Proxy.NAME])
 				) {
-					var fieldset = Ext.create('CMDBuild.view.common.panel.gridAndForm.filter.advanced.filterEditor.attributes.FieldSet', {
+					var fieldset = Ext.create('CMDBuild.view.common.panel.gridAndForm.panel.common.filter.advanced.filterEditor.attributes.FieldSet', {
 						delegate: this,
 						attributeName: attribute[CMDBuild.core.constants.Proxy.NAME],
 						title: attribute[CMDBuild.core.constants.Proxy.DESCRIPTION]
@@ -238,7 +238,7 @@
 			 * @param {String} attributeName
 			 *
 			 * @returns
-			 * 		{CMDBuild.view.common.panel.gridAndForm.filter.advanced.filterEditor.attributes.FieldSet} if group not empty (single group)
+			 * 		{CMDBuild.view.common.panel.gridAndForm.panel.common.filter.advanced.filterEditor.attributes.FieldSet} if group not empty (single group)
 			 * 		{Object} if attributeName is empty (all groups)
 			 * 		{null} if group is empty
 			 *

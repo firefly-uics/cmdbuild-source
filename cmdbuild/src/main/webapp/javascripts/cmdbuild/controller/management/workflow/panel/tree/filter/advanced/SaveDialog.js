@@ -30,12 +30,12 @@
 		enableApply: false,
 
 		/**
-		 * @property {CMDBuild.view.common.panel.gridAndForm.filter.advanced.saveDialog.FormPanel}
+		 * @property {CMDBuild.view.common.panel.gridAndForm.panel.common.filter.advanced.saveDialog.FormPanel}
 		 */
 		form: undefined,
 
 		/**
-		 * @property {CMDBuild.view.common.panel.gridAndForm.filter.advanced.saveDialog.SaveDialogWindow}
+		 * @property {CMDBuild.view.common.panel.gridAndForm.panel.common.filter.advanced.saveDialog.SaveDialogWindow}
 		 */
 		view: undefined,
 
@@ -50,7 +50,7 @@
 		constructor: function (configurationObject) {
 			this.callParent(arguments);
 
-			this.view = Ext.create('CMDBuild.view.common.panel.gridAndForm.filter.advanced.saveDialog.SaveDialogWindow', { delegate: this });
+			this.view = Ext.create('CMDBuild.view.common.panel.gridAndForm.panel.common.filter.advanced.saveDialog.SaveDialogWindow', { delegate: this });
 
 			// Shorthands
 			this.form = this.view.form;
