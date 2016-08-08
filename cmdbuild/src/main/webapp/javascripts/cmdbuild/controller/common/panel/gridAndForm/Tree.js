@@ -1,6 +1,10 @@
 (function () {
 
 	/**
+	 * Required cmfg methods:
+	 * 	- panelGridAndFormGridStoreGet
+	 * 	- panelGridAndFormGridStoreLoad
+	 *
 	 * @abstract
 	 */
 	Ext.define('CMDBuild.controller.common.panel.gridAndForm.Tree', {

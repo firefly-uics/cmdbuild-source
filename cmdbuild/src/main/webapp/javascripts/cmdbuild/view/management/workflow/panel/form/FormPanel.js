@@ -25,7 +25,6 @@
 		 */
 		tabPanel: undefined,
 
-		height: CMDBuild.configuration.instance.get(CMDBuild.core.constants.Proxy.CARD_FORM_RATIO) + '%',
 		layout: 'border',
 
 		/**

@@ -1,5 +1,8 @@
 (function () {
 
+	/**
+	 * @abstract
+	 */
 	Ext.define('CMDBuild.view.common.panel.gridAndForm.GridAndFormView', {
 		extend: 'Ext.panel.Panel',
 
