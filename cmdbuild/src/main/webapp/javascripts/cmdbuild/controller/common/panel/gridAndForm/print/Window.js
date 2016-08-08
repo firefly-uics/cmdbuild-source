@@ -82,16 +82,6 @@
 			this.callParent(arguments);
 
 			this.view = Ext.create('CMDBuild.view.common.panel.gridAndForm.print.WindowView', { delegate: this });
-
-			// TODO: separate with parametrized show method
-//			if (!Ext.isEmpty(this.view) && Ext.isString(this.format))
-//				if (Ext.Array.contains(this.browserManagedFormats, this.format)) { // With browser managed formats show modal pop-up
-//					this.view.show();
-//				} else { // Otherwise force file download
-//					this.forceDownload = true;
-//
-//					this.createDocument();
-//				}
 		},
 
 		/**
@@ -132,7 +122,7 @@
 					return CMDBuild.proxy.common.panel.gridAndForm.Print.createView;
 
 				default: {
-					_error('createDocument(): unmanaged print window mode', this, this.mode);
+					_error('decodeMode(): unmanaged print window mode', this, this.mode);
 
 					return Ext.EmptyFn;
 				}
