@@ -1,4 +1,4 @@
-(function() {
+(function () {
 
 	Ext.define('CMDBuild.core.buttons.iconized.split.Print', {
 		extend: 'Ext.button.Split',
@@ -23,7 +23,7 @@
 		mode: undefined,
 
 		/**
-		 * Supported formats
+		 * Managed formats
 		 *
 		 * @cfg {Array}
 		 * */
@@ -37,11 +37,16 @@
 		iconCls: 'print',
 		text: CMDBuild.Translation.print,
 
-		initComponent: function() {
+		/**
+		 * @returns {Void}
+		 *
+		 * @override
+		 */
+		initComponent: function () {
 			Ext.apply(this, {
 				menu: Ext.create('Ext.menu.Menu'),
 
-				handler: function(button, e) {
+				handler: function (button, e) {
 					if (!button.isDisabled())
 						button.showMenu();
 				}
@@ -49,6 +54,7 @@
 
 			this.callParent(arguments);
 
+			// @legacy
 			switch (this.mode) {
 				case 'legacy':
 					return this.buildLegacyMenu();
@@ -58,31 +64,41 @@
 			}
 		},
 
-		buildLegacyMenu: function() {
-			var me = this;
-
-			Ext.Array.forEach(this.formatList, function(format, i, allFormats) {
-				this.menu.add({
-					text: CMDBuild.Translation.as + ' ' + format.toUpperCase(),
-					iconCls: format,
-					format: format,
-
-					handler: function(button, e) {
-						me.fireEvent('click', this.format);
-					}
-				});
-			}, this);
-		},
-
-		buildMenu: function() {
-			Ext.Array.forEach(this.formatList, function(format, i, allFormats) {
+		/**
+		 * @returns {Void}
+		 *
+		 * @legacy
+		 * @private
+		 */
+		buildLegacyMenu: function () {
+			Ext.Array.each(this.formatList, function (format, i, allFormats) {
 				this.menu.add({
 					text: CMDBuild.Translation.as + ' ' + format.toUpperCase(),
 					iconCls: format,
 					format: format,
 					scope: this,
 
-					handler: function(button, e) {
+					handler: function (button, e) {
+						this.fireEvent('click', button.format);
+					}
+				});
+			}, this);
+		},
+
+		/**
+		 * @returns {Void}
+		 *
+		 * @private
+		 */
+		buildMenu: function () {
+			Ext.Array.each(this.formatList, function (format, i, allFormats) {
+				this.menu.add({
+					text: CMDBuild.Translation.as + ' ' + format.toUpperCase(),
+					iconCls: format,
+					format: format,
+					scope: this,
+
+					handler: function (button, e) {
 						this.delegate.cmfg(this.delegateEventPrefix + 'PrintButtonClick', button.format);
 					}
 				});

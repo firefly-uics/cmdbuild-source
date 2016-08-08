@@ -139,7 +139,7 @@
 				return 1;
 
 			if (!Ext.isEmpty(cardPosition))
-				return (parseInt(cardPosition) / CMDBuild.configuration.instance.get(CMDBuild.core.constants.Proxy.ROW_LIMIT)) + 1;
+				return Math.floor((parseInt(cardPosition) / CMDBuild.configuration.instance.get(CMDBuild.core.constants.Proxy.ROW_LIMIT)) + 1);
 
 			return 2;
 		},
@@ -201,7 +201,7 @@
 		 * @returns {Boolean}
 		 */
 		isJsonString: function (string) {
-			if (Ext.isString(string))
+			if (Ext.isString(string) && !Ext.isEmpty(string))
 				return !(/[^,:{}\[\]0-9.\-+Eaeflnr-u \n\r\t]/.test(string.replace(/"(\\.|[^"\\])*"/g, ''))) && eval('(' + string + ')')
 
 			return false;

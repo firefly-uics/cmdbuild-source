@@ -19,6 +19,7 @@
 		gridEditorPlugin: undefined,
 
 		border: false,
+		forceFit: true,
 
 		initComponent: function() {
 			this.gridEditorPlugin = Ext.create('Ext.grid.plugin.CellEditing', {

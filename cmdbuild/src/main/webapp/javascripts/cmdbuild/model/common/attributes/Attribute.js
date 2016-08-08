@@ -5,6 +5,13 @@
 	Ext.define('CMDBuild.model.common.attributes.Attribute', {
 		extend: 'Ext.data.Model',
 
+		/**
+		 * Property used by field manager (CMDBuild.core.fieldManager.FieldManager) to check if model is compatible
+		 *
+		 * @cfg {Boolean}
+		 */
+		isFieldManagerCompatible: true,
+
 		fields: [
 			{ name: CMDBuild.core.constants.Proxy.DESCRIPTION, type: 'string' },
 			{ name: CMDBuild.core.constants.Proxy.EDITOR_TYPE, type: 'string' },

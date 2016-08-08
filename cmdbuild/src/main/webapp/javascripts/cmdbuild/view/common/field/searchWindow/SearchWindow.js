@@ -9,7 +9,7 @@
 		delegate: undefined,
 
 		/**
-		 * @property {CMDBuild.core.buttons.AddCardMenuButton}
+		 * @property {CMDBuild.core.buttons.iconized.split.add.Card}
 		 */
 		addCardButton: undefined,
 
@@ -38,7 +38,7 @@
 						itemId: CMDBuild.core.constants.Proxy.TOOLBAR_TOP,
 
 						items: [
-							this.addCardButton = Ext.create('CMDBuild.core.buttons.AddCardMenuButton')
+							this.addCardButton = Ext.create('CMDBuild.core.buttons.iconized.split.add.Card')
 						]
 					}),
 					Ext.create('Ext.toolbar.Toolbar', {
