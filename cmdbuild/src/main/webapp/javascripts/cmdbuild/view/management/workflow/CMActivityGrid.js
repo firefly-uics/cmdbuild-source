@@ -31,7 +31,7 @@
 				}
 			});
 
-			this.addCardButton = new CMDBuild.AddCardMenuButton({
+			this.addCardButton = Ext.create('CMDBuild.core.buttons.iconized.split.add.Card', {
 				classId: undefined,
 				baseText: tr.add_card,
 				textPrefix: tr.add_card
