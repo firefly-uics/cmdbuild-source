@@ -53,7 +53,7 @@
 		},
 
 		buildAddButton: function() {
-			var addCardButton = new CMDBuild.AddCardMenuButton();
+			var addCardButton = Ext.create('CMDBuild.core.buttons.iconized.split.add.Card');
 			var entry = _CMCache.getEntryTypeById(this.getIdClass());
 
 			addCardButton.updateForEntry(entry);

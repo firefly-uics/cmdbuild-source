@@ -3,8 +3,10 @@
 	var ARROW_ELEMENT_SELECTOR = '.x-btn-split';
 	var ARROW_CLASS = 'x-btn-split-right';
 
-	Ext.define('CMDBuild.core.buttons.AddCardMenuButton', {
-		alternateClassName: 'CMDBuild.AddCardMenuButton', // Legacy class name
+	/**
+	 * @link CMDBuild.core.buttons.iconized.split.add.Activity
+	 */
+	Ext.define('CMDBuild.core.buttons.iconized.split.add.Card', {
 		extend: 'Ext.button.Split',
 
 		translation: CMDBuild.Translation.management.moddetail,
@@ -18,7 +20,7 @@
 		//private
 		initComponent: function() {
 			this.subClasses = {};
-			Ext.apply(this, {
+			Ext.applyIf(this, {
 				text: this.baseText,
 				menu : {items :[]},
 				handler: onClick,
