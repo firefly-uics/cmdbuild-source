@@ -7,7 +7,7 @@
 		extend: 'CMDBuild.core.window.AbstractCustomModal',
 
 		/**
-		 * @cfg {CMDBuild.controller.common.panel.gridAndForm.filter.advanced.Manager}
+		 * @cfg {CMDBuild.controller.common.panel.gridAndForm.panel.common.filter.advanced.Manager}
 		 */
 		delegate: undefined,
 

@@ -1,7 +1,7 @@
 (function () {
 
 	Ext.define('CMDBuild.view.management.workflow.panel.tree.TreePanel', {
-		extend: 'CMDBuild.view.common.panel.gridAndForm.TreePanel',
+		extend: 'CMDBuild.view.common.panel.gridAndForm.panel.tree.TreePanel',
 
 		requires: [
 			'CMDBuild.core.constants.Proxy',

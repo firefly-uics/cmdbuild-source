@@ -1,7 +1,7 @@
 (function () {
 
 	/**
-	 * @link CMDBuild.controller.common.panel.gridAndForm.filter.advanced.SaveDialog
+	 * @link CMDBuild.controller.common.panel.gridAndForm.panel.common.filter.advanced.SaveDialog
 	 */
 	Ext.define('CMDBuild.controller.management.workflow.panel.tree.filter.advanced.SaveDialog', {
 		extend: 'CMDBuild.controller.common.abstract.Base',

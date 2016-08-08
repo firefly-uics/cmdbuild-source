@@ -1,7 +1,7 @@
 (function () {
 
 	Ext.define('CMDBuild.controller.management.workflow.panel.tree.Tree', {
-		extend: 'CMDBuild.controller.common.panel.gridAndForm.Tree',
+		extend: 'CMDBuild.controller.common.panel.gridAndForm.panel.tree.Tree',
 
 		requires: [
 			'CMDBuild.core.constants.Proxy',
@@ -41,7 +41,7 @@
 		],
 
 		/**
-		 * @property {CMDBuild.controller.common.panel.gridAndForm.print.Window}
+		 * @property {CMDBuild.controller.common.panel.gridAndForm.panel.common.print.Window}
 		 */
 		controllerPrintWindow: undefined,
 
@@ -79,7 +79,7 @@
 			this.view = Ext.create('CMDBuild.view.management.workflow.panel.tree.TreePanel', { delegate: this });
 
 			// Build sub-controllers
-			this.controllerPrintWindow = Ext.create('CMDBuild.controller.common.panel.gridAndForm.print.Window', { parentDelegate: this });
+			this.controllerPrintWindow = Ext.create('CMDBuild.controller.common.panel.gridAndForm.panel.common.print.Window', { parentDelegate: this });
 			this.controllerRuntimeParameters = Ext.create('CMDBuild.controller.common.field.filter.runtimeParameters.RuntimeParameters', { parentDelegate: this });
 			this.controllerToolbarPaging = Ext.create('CMDBuild.controller.management.workflow.panel.tree.toolbar.Paging', {
 				parentDelegate: this,
@@ -283,10 +283,6 @@
 									this.view.getSelectionModel().select(
 										position % CMDBuild.configuration.instance.get(CMDBuild.core.constants.Proxy.ROW_LIMIT)
 									);
-
-									// TODO: probably useless because of automated error/warning show on store load
-									if (!success)
-										CMDBuild.core.Message.error(CMDBuild.Translation.errors.error_message, CMDBuild.Translation.errors.anErrorHasOccurred);
 								}
 							});
 						} else { // Card not found

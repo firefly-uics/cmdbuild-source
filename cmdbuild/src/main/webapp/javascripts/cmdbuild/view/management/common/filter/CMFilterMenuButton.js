@@ -1,7 +1,7 @@
 (function() {
 
 	/**
-	 * @deprecated CMDBuild.controller.common.panel.gridAndForm.filter.advanced.Advanced
+	 * @deprecated CMDBuild.controller.common.panel.gridAndForm.panel.common.filter.advanced.Advanced
 	 */
 
 	// Constants to identify the icons that the user

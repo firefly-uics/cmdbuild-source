@@ -3,7 +3,7 @@
 	/**
 	 * @abstract
 	 */
-	Ext.define('CMDBuild.controller.common.panel.gridAndForm.GridAndForm', {
+	Ext.define('CMDBuild.controller.common.panel.gridAndForm.panel.grid.GridAndForm', {
 		extend: 'CMDBuild.controller.common.abstract.Base',
 
 		requires: ['CMDBuild.core.constants.Proxy'],
@@ -14,7 +14,7 @@
 		parentDelegate: undefined,
 
 		/**
-		 * @cfg {CMDBuild.view.common.panel.gridAndForm.GridAndFormView}
+		 * @property {CMDBuild.view.common.panel.gridAndForm.GridAndFormView}
 		 */
 		view: undefined
 	});
