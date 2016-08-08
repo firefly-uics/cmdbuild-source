@@ -20,8 +20,7 @@
 			this.callParent(arguments);
 			this.thematism = thematism;
 			this.interactionDocument = interactionDocument;
-			var map = this.interactionDocument.getMap();
-			this.layer = this.buildThematicLayer(this.thematism.name, map);
+			this.layer = this.buildThematicLayer(this.thematism.name);
 			this.layer.set("name", this.thematism.name);
 			this.layer.name = this.thematism.name;
 			this.charge(this.thematism.layer);
@@ -60,7 +59,7 @@
 		 * 
 		 * @returns {Void}
 		 */
-		buildThematicLayer : function(attributeName, map) {
+		buildThematicLayer : function(attributeName) {
 			var me = this;
 			var vectorSource = new ol.source.Vector({
 				strategy : ol.loadingstrategy.bbox
@@ -76,7 +75,6 @@
 				name : attributeName,
 				source : vectorSource,
 				view : view,
-				// style : styleFunction,
 				adapter : this
 			});
 			thematicLayer.masterTableName = "_Thematism";
@@ -94,14 +92,26 @@
 		 */
 		charge : function(originalLayer, strategy) {
 			var me = this;
+			var visibles = [];
 			originalLayer.getSource().forEachFeature(function(feature) {
-				me.newFeature({
-					master_card : feature.get("master_card"),
-					master_className : feature.get("master_className"),
-					master_class : feature.get("master_class"),
-					geometry : feature.clone().getGeometry(),
-					strategy : strategy
-				});
+				var cardId = feature.get("master_card");
+				var justHereFeatures = me.getFeaturesByCardId(cardId, this.layer);
+				visibles.push(cardId);
+				if (justHereFeatures.getLength() === 0) {
+    				me.newFeature({
+    					master_card : feature.get("master_card"),
+    					master_className : feature.get("master_className"),
+    					master_class : feature.get("master_class"),
+    					geometry : feature.clone().getGeometry(),
+    					strategy : strategy
+    				});
+				}
+			});
+			this.layer.getSource().forEachFeature(function(feature) {
+				var cardId = feature.get("master_card");
+				if (visibles.indexOf(cardId) === -1) {
+					me.layer.getSource().removeFeature(feature);
+				}
 			});
 		},
 
@@ -134,6 +144,15 @@
 					feature.setStyle(style);
 				}, this);
 			}, this);
+		},
+
+		/**
+		 * @param {Integer} cardId
+		 * 
+		 * @returns {Array[ol.feature]} features
+		 */
+		getFeaturesByCardId : function(cardId) {
+			return this.interactionDocument.getFeaturesOnLayerByCardId(cardId, this.layer);
 		},
 
 		/**

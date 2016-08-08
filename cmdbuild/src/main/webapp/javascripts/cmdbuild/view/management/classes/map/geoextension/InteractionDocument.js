@@ -118,6 +118,18 @@
 			var mapPanel = this.getMapPanel();
 			mapPanel.clearSelection();
 		},
+		getFeaturesOnLayerByCardId : function(cardId, layer) {
+			var source = layer.getSource();
+			var features = (source) ? source.getFeatures() : new ol.Collection();
+			var retFeatures = new ol.Collection();
+			features.forEach(function(feature) {
+				// always == on ids
+				if (feature.get("master_card") == cardId) {
+					retFeatures.push(feature);
+				}
+			});
+			return retFeatures;
+		},
 		getLayersForCard : function(card, callback, callbackScope) {
 			_CMCache.getAllLayers(function(layers) {
 				var retLayers = [];
