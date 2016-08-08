@@ -578,22 +578,22 @@
 				var toShow = false;
 
 				if (
-					!Ext.Object.isEmpty(parameters)
+					Ext.isObject(parameters) && !Ext.Object.isEmpty(parameters)
 					&& this.cmfg('mainViewportModuleControllerExists', parameters.identifier)
 				) {
 					parameters.parameters = Ext.isEmpty(parameters.parameters) ? null : parameters.parameters;
 
 					var modulePanel = this.cmfg('mainViewportModuleControllerGet', parameters.identifier);
 
-					if (!Ext.isEmpty(modulePanel) && Ext.isFunction(modulePanel.getView)) {
-						modulePanel = modulePanel.getView();
-					} else if (!Ext.isEmpty(modulePanel) && !Ext.isEmpty(modulePanel.view)) { // @deprecated
-						modulePanel = modulePanel.view;
-					}
+					if (Ext.isObject(modulePanel) && !Ext.Object.isEmpty(modulePanel)) {
+						if (Ext.isFunction(modulePanel.getView)) {
+							modulePanel = modulePanel.getView();
+						} else if (!Ext.isEmpty(modulePanel.view)) { // @deprecated
+							modulePanel = modulePanel.view;
+						}
 
-					toShow = !Ext.isFunction(modulePanel.beforeBringToFront) || modulePanel.beforeBringToFront(parameters.parameters) !== false; // @deprecated
+						toShow = !Ext.isFunction(modulePanel.beforeBringToFront) || modulePanel.beforeBringToFront(parameters.parameters) !== false; // @deprecated
 
-					if (!Ext.isEmpty(modulePanel)) {
 						if (toShow)
 							this.moduleContainer.layout.setActiveItem(modulePanel.getId());
 

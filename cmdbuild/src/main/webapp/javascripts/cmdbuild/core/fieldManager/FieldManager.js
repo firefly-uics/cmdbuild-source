@@ -112,7 +112,7 @@
 			attributeModelSet: function (attributeModel) {
 				if (
 					!Ext.isEmpty(attributeModel)
-					&& Ext.getClassName(attributeModel) == 'CMDBuild.model.common.attributes.Attribute'
+					&& attributeModel.isFieldManagerCompatible
 					&& attributeModel.isValid() // Validate attribute model
 				) {
 					this.attributeModel = attributeModel;

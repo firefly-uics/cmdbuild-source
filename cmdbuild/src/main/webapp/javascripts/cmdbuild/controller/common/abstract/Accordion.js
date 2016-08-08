@@ -130,6 +130,8 @@
 					} else { // Accordion needs to be expanded
 						this.view.on('expand', parameters.callback, parameters.scope, { single: true });
 					}
+
+					this.disableStoreLoad = true;
 				}
 
 				this.view.expand();

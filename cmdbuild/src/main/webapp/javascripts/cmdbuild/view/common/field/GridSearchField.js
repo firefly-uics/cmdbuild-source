@@ -1,5 +1,8 @@
 (function() {
 
+	/**
+	 * @deprecated CMDBuild.view.common.field.filter.basic.Basic
+	 */
 	Ext.define("CMDBuild.field.GridSearchField", {
 		extend: "Ext.form.field.Trigger",
 

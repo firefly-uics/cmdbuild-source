@@ -222,7 +222,7 @@
 
 						var header = CMDBuild.Management.FieldManager.getHeaderForAttr(attribute);
 
-						header.flex = 1; // Apply flex 1 by default to avoid unused empty space on grids
+						delete header.flex; // Remove flex property by default to be compatible with forceFit property
 
 						if (attribute.type == 'REFERENCE') { // TODO: hack to force a templateResolver build for editor that haven't a form associated like other fields types
 							var xaVars = CMDBuild.Utils.Metadata.extractMetaByNS(attribute.meta, 'system.template.');

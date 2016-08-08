@@ -127,15 +127,14 @@
 		},
 
 		// protected
-		buildComponents : function() {
-			var gridratio = CMDBuild.configuration.instance.get('cardFormRatio') || 50; // TODO:
-																						// use
-																						// proxy
-																						// constants
-			var tbar = [ this.addCardButton = new CMDBuild.AddCardMenuButton({
-				classId : undefined,
-				disabled : true
-			}) ];
+		buildComponents: function() {
+			var gridratio = CMDBuild.configuration.instance.get('cardFormRatio') || 50; // TODO: use proxy constants
+			var tbar = [
+				this.addCardButton = new CMDBuild.AddCardMenuButton({
+					classId: undefined,
+					disabled: true
+				})
+			];
 
 			this.mon(this.addCardButton, "cmClick", function(p) {
 				this.fireEvent(this.CMEVENTS.addButtonClick, p);
@@ -304,10 +303,9 @@
 				}
 			});
 			this.theMap = Ext.create('CMDBuild.view.management.classes.map.CMMapPanel', {
-				tbar : [ this.mapAddCardButton, '->', one,  this.showGridButton ],
-				frame : false,
-				border : false,
-				mainGrid : this.cardGrid
+				tbar: [this.mapAddCardButton, '->', this.showGridButton],
+				frame: false,
+				border: false
 			});
 			one.theMap = this.theMap;
 
