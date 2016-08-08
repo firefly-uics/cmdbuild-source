@@ -37,38 +37,139 @@
 		/**
 		 * @returns {Array}
 		 */
-		getRuntimeParameters: function () {
+		getEmptyRuntimeParameters: function () {
 			var configuration = this.get(CMDBuild.core.constants.Proxy.CONFIGURATION);
+			var parameters = [];
 
-			return this.runtimeParameterSearch(configuration[CMDBuild.core.constants.Proxy.ATTRIBUTE] || {}, []);
+			this.findParameters(
+				configuration[CMDBuild.core.constants.Proxy.ATTRIBUTE] || {},
+				CMDBuild.core.constants.Proxy.RUNTIME,
+				parameters,
+				true
+			);
+
+			return parameters;
 		},
 
 		/**
-		 * Recursive method to find all filter runtime parameters
+		 * Recursive method to find all filter parameters with parameterType
 		 *
 		 * @param {Object} configuration
-		 * @param {Array} runtimeParameters
+		 * @param {String} parameterType
+		 * @param {Array} parameters
+		 * @param {Boolean} onlyWithEmptyValue
 		 *
-		 * @returns {Array} runtimeParameters
+		 * @returns {Void}
 		 *
 		 * @private
 		 */
-		runtimeParameterSearch: function (configuration, runtimeParameters) {
-			if (Ext.isObject(configuration.simple)) {
-				var conf = configuration.simple;
+		findParameters: function (configuration, parameterType, parameters, onlyWithEmptyValue) {
+			onlyWithEmptyValue = Ext.isBoolean(onlyWithEmptyValue) ? onlyWithEmptyValue : false;
 
-				if (conf.parameterType == CMDBuild.core.constants.Proxy.RUNTIME)
-					runtimeParameters.push(conf);
-			} else if (Ext.isArray(configuration.and) || Ext.isArray(configuration.or)) {
-				var attributes = configuration.and || configuration.or;
+			if (
+				Ext.isObject(configuration) && !Ext.Object.isEmpty(configuration)
+				&& Ext.isString(parameterType) && !Ext.isEmpty(parameterType)
+				&& Ext.isArray(parameters)
+			) {
+				if (Ext.isObject(configuration.simple)) {
+					var configurationParameter = configuration.simple;
 
-				if (Ext.isArray(attributes) && !Ext.isEmpty(attributes))
-					Ext.Array.each(attributes, function (attributeObject, i, allAttributeObjects) {
-						this.runtimeParameterSearch(attributeObject, runtimeParameters);
-					}, this);
+					if (configurationParameter.parameterType == parameterType) {
+						if (onlyWithEmptyValue)
+							return Ext.Object.isEmpty(configurationParameter.value) ? parameters.push(configurationParameter) : null;
+
+						return parameters.push(configurationParameter);
+					}
+				} else if (Ext.isArray(configuration.and) || Ext.isArray(configuration.or)) {
+					var attributes = configuration.and || configuration.or;
+
+					if (Ext.isArray(attributes) && !Ext.isEmpty(attributes))
+						Ext.Array.each(attributes, function (attributeObject, i, allAttributeObjects) {
+							this.findParameters(attributeObject, parameterType, parameters, onlyWithEmptyValue);
+						}, this);
+				}
+			} else {
+				_error('findParameters(): wrong arguments', this, configuration, parameterType, parameters, onlyWithEmptyValue);
 			}
+		},
 
-			return runtimeParameters;
+		/**
+		 * @returns {Void}
+		 */
+		resolveCalculatedParameters: function () {
+			var configuration = this.get(CMDBuild.core.constants.Proxy.CONFIGURATION);
+			var parameters = [];
+
+			this.findParameters(
+				configuration[CMDBuild.core.constants.Proxy.ATTRIBUTE] || {},
+				CMDBuild.core.constants.Proxy.CALCULATED,
+				parameters
+			);
+
+			if (Ext.isArray(parameters) && !Ext.isEmpty(parameters)) {
+				Ext.Array.each(parameters, function (claculatedParameter, i, allCalculatedParameters) {
+					if (Ext.isObject(claculatedParameter) && !Ext.Object.isEmpty(claculatedParameter))
+						claculatedParameter = this.resolveCalculatedParameterValue(claculatedParameter);
+				}, this);
+
+				this.set(CMDBuild.core.constants.Proxy.CONFIGURATION, configuration);
+			}
+		},
+
+		/**
+		 * @param {Object} parameter
+		 *
+		 * @returns {String}
+		 *
+		 * @private
+		 */
+		resolveCalculatedParameterValue: function (parameter) {
+			if (Ext.isObject(parameter) && !Ext.Object.isEmpty(parameter))
+				switch (parameter.value[0]) {
+					case '@MY_USER': {
+						parameter.value[0] = String(CMDBuild.configuration.runtime.get(CMDBuild.core.constants.Proxy.USER_ID));
+					} break;
+
+					case '@MY_GROUP': {
+						parameter.value[0] = String(CMDBuild.configuration.runtime.get(CMDBuild.core.constants.Proxy.DEFAULT_GROUP_ID));
+					} break;
+				}
+
+			return parameter;
+		},
+
+		/**
+		 * @param {Object} valuesObject
+		 *
+		 * @returns {Void}
+		 */
+		setRuntimeParameterValue: function (valuesObject) {
+			if (Ext.isObject(valuesObject) && !Ext.Object.isEmpty(valuesObject)) {
+				var configuration = this.get(CMDBuild.core.constants.Proxy.CONFIGURATION);
+				var parameters = [];
+
+				this.findParameters(
+					configuration[CMDBuild.core.constants.Proxy.ATTRIBUTE] || {},
+					CMDBuild.core.constants.Proxy.RUNTIME,
+					parameters,
+					true
+				);
+
+				Ext.Array.each(parameters, function (parameterObject, i, allParameterObjects) {
+					var valueObject = valuesObject[parameterObject[CMDBuild.core.constants.Proxy.ATTRIBUTE]];
+
+					if (
+						Ext.isObject(parameterObject) && !Ext.Object.isEmpty(parameterObject)
+						&& !Ext.isEmpty(valueObject)
+					) {
+						parameterObject[CMDBuild.core.constants.Proxy.VALUE] = [valueObject];
+					}
+				}, this);
+
+				this.set(CMDBuild.core.constants.Proxy.CONFIGURATION, configuration);
+			} else {
+				_error('setRuntimeParameterValue(): unmanaged parameter', this, valuesObject);
+			}
 		}
 	});
 
