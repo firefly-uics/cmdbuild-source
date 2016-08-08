@@ -96,10 +96,6 @@
 					record.set(CMDBuild.core.constants.Proxy.ID, decodedResponse);
 
 					this.controllerEmailWindow.cmfg('tabEmailEmailWindowConfigureAndShow', { record: record });
-//					Ext.create('CMDBuild.controller.management.common.tabs.email.EmailWindow', {
-//						parentDelegate: this,
-//						record: record
-//					});
 
 					this.cmfg('tabEmailGridStoreLoad');
 				}
@@ -129,12 +125,6 @@
 				record: record,
 				windowMode: 'edit'
 			});
-
-//			Ext.create('CMDBuild.controller.management.common.tabs.email.EmailWindow', {
-//				parentDelegate: this,
-//				record: record,
-//				windowMode: 'edit'
-//			});
 		},
 
 		/**
@@ -199,11 +189,6 @@
 							record: record,
 							windowMode: 'reply'
 						});
-//						Ext.create('CMDBuild.controller.management.common.tabs.email.EmailWindow', {
-//							parentDelegate: this,
-//							record: record,
-//							windowMode: 'reply'
-//						});
 
 						this.cmfg('tabEmailGridStoreLoad');
 					}
@@ -228,11 +213,6 @@
 				record: record,
 				windowMode: 'view'
 			});
-//			Ext.create('CMDBuild.controller.management.common.tabs.email.EmailWindow', {
-//				parentDelegate: this,
-//				record: record,
-//				windowMode: 'view'
-//			});
 		},
 
 		/**
