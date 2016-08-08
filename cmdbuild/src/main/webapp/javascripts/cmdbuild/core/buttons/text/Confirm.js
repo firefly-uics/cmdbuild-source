@@ -1,4 +1,4 @@
-(function() {
+(function () {
 
 	Ext.define('CMDBuild.core.buttons.text.Confirm', {
 		extend: 'CMDBuild.core.buttons.Base',

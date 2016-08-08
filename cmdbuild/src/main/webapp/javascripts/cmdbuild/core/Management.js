@@ -221,13 +221,10 @@
 						{ className: 'CMDBuild.controller.management.report.Report', identifier: CMDBuild.core.constants.ModuleIdentifiers.getReport() },
 						{ className: 'CMDBuild.controller.management.report.Single', identifier: CMDBuild.core.constants.ModuleIdentifiers.getReportSingle() },
 						{ className: 'CMDBuild.controller.management.utility.Utility', identifier: CMDBuild.core.constants.ModuleIdentifiers.getUtility() },
+						{ className: 'CMDBuild.controller.management.workflow.Workflow', identifier: CMDBuild.core.constants.ModuleIdentifiers.getWorkflow() },
 						new CMDBuild.view.management.classes.CMModCard({
 							cmControllerType: CMDBuild.controller.management.classes.CMModCardController,
 							cmName: 'class'
-						}),
-						new CMDBuild.view.management.workflow.CMModProcess({
-							cmControllerType: CMDBuild.controller.management.workflow.CMModWorkflowController,
-							cmName: CMDBuild.core.constants.ModuleIdentifiers.getWorkflow()
 						}),
 						new CMDBuild.view.management.dashboard.CMModDashboard({
 							cmControllerType: CMDBuild.controller.management.dashboard.CMModDashboardController,

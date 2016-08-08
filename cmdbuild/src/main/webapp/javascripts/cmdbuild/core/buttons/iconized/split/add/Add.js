@@ -1,6 +1,6 @@
-(function() {
+(function () {
 
-	Ext.define('CMDBuild.core.buttons.iconized.split.Add', {
+	Ext.define('CMDBuild.core.buttons.iconized.split.add.Add', {
 		extend: 'Ext.button.Split',
 
 		/**
@@ -11,12 +11,17 @@
 		iconCls: 'add',
 		text: CMDBuild.Translation.add,
 
-		initComponent: function() {
+		/**
+		 * @returns {Void}
+		 *
+		 * @override
+		 */
+		initComponent: function () {
 			Ext.apply(this, {
 				scope: this,
 				menu: Ext.create('Ext.menu.Menu'),
 
-				handler: function(button, e) {
+				handler: function (button, e) {
 					this.showMenu();
 				}
 			});
