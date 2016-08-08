@@ -4,7 +4,7 @@
 		extend: 'CMDBuild.controller.common.abstract.Base',
 
 		/**
-		 * @cfg {Mixed}
+		 * @cfg {Object}
 		 */
 		parentDelegate: undefined,
 
@@ -76,7 +76,7 @@
 
 		/**
 		 * @param {Object} configurationObject
-		 * @param {Mixed} configurationObject.parentDelegate
+		 * @param {Object} configurationObject.parentDelegate
 		 *
 		 * @returns {Void}
 		 *

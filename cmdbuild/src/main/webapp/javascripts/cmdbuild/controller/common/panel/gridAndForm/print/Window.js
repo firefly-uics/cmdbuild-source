@@ -100,7 +100,7 @@
 		},
 
 		/**
-		 * @returns {Object}
+		 * @returns {Function}
 		 *
 		 * @private
 		 */
@@ -122,7 +122,7 @@
 					return CMDBuild.proxy.common.panel.gridAndForm.Print.createView;
 
 				default: {
-					_error('decodeMode(): unmanaged print window mode', this, this.mode);
+					_error('decodeMode(): unmanaged mode property', this, this.mode);
 
 					return Ext.EmptyFn;
 				}
