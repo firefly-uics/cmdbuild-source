@@ -1,6 +1,6 @@
 (function () {
 
-	Ext.define('CMDBuild.view.common.panel.gridAndForm.filter.advanced.filterEditor.attributes.FormPanel', {
+	Ext.define('CMDBuild.view.common.panel.gridAndForm.panel.common.filter.advanced.filterEditor.attributes.FormPanel', {
 		extend: 'Ext.form.Panel',
 
 		requires: ['CMDBuild.core.constants.Proxy'],

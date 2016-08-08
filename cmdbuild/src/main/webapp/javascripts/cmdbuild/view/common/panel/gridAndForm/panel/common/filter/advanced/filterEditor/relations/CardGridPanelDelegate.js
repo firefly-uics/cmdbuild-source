@@ -3,7 +3,7 @@
 	/**
 	 * @link CMDBuild.view.management.common.CMCardGridDelegate
 	 */
-	Ext.define("CMDBuild.view.common.panel.gridAndForm.filter.advanced.filterEditor.relations.CardGridPanelDelegate", {
+	Ext.define("CMDBuild.view.common.panel.gridAndForm.panel.common.filter.advanced.filterEditor.relations.CardGridPanelDelegate", {
 
 		/**
 		 * @param {CMDBuild.view.management.common.CMCardGrid} grid

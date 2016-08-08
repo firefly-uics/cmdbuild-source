@@ -24,7 +24,7 @@
 		],
 
 		/**
-		 * @property {CMDBuild.view.common.panel.gridAndForm.filter.advanced.filterEditor.relations.DomainGridPanel}
+		 * @property {CMDBuild.view.common.panel.gridAndForm.panel.common.filter.advanced.filterEditor.relations.DomainGridPanel}
 		 */
 		view: undefined,
 
@@ -39,7 +39,7 @@
 		constructor: function (configurationObject) {
 			this.callParent(arguments);
 
-			this.view = Ext.create('CMDBuild.view.common.panel.gridAndForm.filter.advanced.filterEditor.relations.DomainGridPanel', { delegate: this })
+			this.view = Ext.create('CMDBuild.view.common.panel.gridAndForm.panel.common.filter.advanced.filterEditor.relations.DomainGridPanel', { delegate: this })
 		},
 
 		/**

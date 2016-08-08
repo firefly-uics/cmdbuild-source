@@ -3,7 +3,7 @@
 	/**
 	 * @link CMDBuild.view.management.common.filter.CMSaveFilterWindow
 	 */
-	Ext.define('CMDBuild.view.common.panel.gridAndForm.filter.advanced.saveDialog.FormPanel', {
+	Ext.define('CMDBuild.view.common.panel.gridAndForm.panel.common.filter.advanced.saveDialog.FormPanel', {
 		extend: 'Ext.form.Panel',
 
 		requires: [

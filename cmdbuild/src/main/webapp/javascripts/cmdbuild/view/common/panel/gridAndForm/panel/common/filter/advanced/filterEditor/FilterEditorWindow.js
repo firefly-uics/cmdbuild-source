@@ -3,7 +3,7 @@
 	/**
 	 * @link CMDBuild.view.common.field.filter.advanced.window.Window
 	 */
-	Ext.define('CMDBuild.view.common.panel.gridAndForm.filter.advanced.filterEditor.FilterEditorWindow', {
+	Ext.define('CMDBuild.view.common.panel.gridAndForm.panel.common.filter.advanced.filterEditor.FilterEditorWindow', {
 		extend: 'CMDBuild.core.window.AbstractCustomModal',
 
 		/**

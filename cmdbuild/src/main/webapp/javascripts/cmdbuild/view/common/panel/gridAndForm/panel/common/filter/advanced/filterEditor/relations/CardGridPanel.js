@@ -8,7 +8,7 @@
 
 	Ext.require('CMDBuild.proxy.index.Json');
 
-	Ext.define("CMDBuild.view.common.panel.gridAndForm.filter.advanced.filterEditor.relations.CMCardGridPagingBar", {
+	Ext.define("CMDBuild.view.common.panel.gridAndForm.panel.common.filter.advanced.filterEditor.relations.CMCardGridPagingBar", {
 		extend: "Ext.toolbar.Paging",
 
 		// configuration
@@ -27,7 +27,7 @@
 		}
 	});
 
-	Ext.define("CMDBuild.view.common.panel.gridAndForm.filter.advanced.filterEditor.relations.CardGridPanel", {
+	Ext.define("CMDBuild.view.common.panel.gridAndForm.panel.common.filter.advanced.filterEditor.relations.CardGridPanel", {
 		extend: "Ext.grid.Panel",
 
 		requires: ['CMDBuild.core.constants.Global'],
@@ -58,7 +58,7 @@
 		selType: 'checkboxmodel',
 
 		constructor: function (c) {
-			this.mixins.delegable.constructor.call(this, "CMDBuild.view.common.panel.gridAndForm.filter.advanced.filterEditor.relations.CardGridPanelDelegate");
+			this.mixins.delegable.constructor.call(this, "CMDBuild.view.common.panel.gridAndForm.panel.common.filter.advanced.filterEditor.relations.CardGridPanelDelegate");
 
 			this.callParent(arguments);
 		},
@@ -500,7 +500,7 @@
 			items.push(me.printGridMenu);
 		}
 
-		me.pagingBar = new CMDBuild.view.common.panel.gridAndForm.filter.advanced.filterEditor.relations.CMCardGridPagingBar({
+		me.pagingBar = new CMDBuild.view.common.panel.gridAndForm.panel.common.filter.advanced.filterEditor.relations.CMCardGridPagingBar({
 			grid: me,
 			store: me.store,
 			displayInfo: true,

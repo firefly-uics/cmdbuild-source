@@ -9,7 +9,7 @@
 		requires: ['CMDBuild.core.constants.Proxy'],
 
 		/**
-		 * @cfg {CMDBuild.controller.common.panel.gridAndForm.panel.grid.GridAndForm}
+		 * @cfg {CMDBuild.controller.common.panel.gridAndForm.GridAndForm}
 		 */
 		parentDelegate: undefined,
 

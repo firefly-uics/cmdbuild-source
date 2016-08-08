@@ -5,7 +5,7 @@
 	 *
 	 * @adapter
 	 */
-	Ext.define('CMDBuild.view.common.panel.gridAndForm.filter.advanced.filterEditor.attributes.FieldSet', {
+	Ext.define('CMDBuild.view.common.panel.gridAndForm.panel.common.filter.advanced.filterEditor.attributes.FieldSet', {
 		extend: 'Ext.form.FieldSet',
 
 		mixins: { // TODO: implementation with new field manager

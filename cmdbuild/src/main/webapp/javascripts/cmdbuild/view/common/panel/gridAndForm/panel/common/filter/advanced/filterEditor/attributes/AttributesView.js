@@ -1,6 +1,6 @@
 (function () {
 
-	Ext.define('CMDBuild.view.common.panel.gridAndForm.filter.advanced.filterEditor.attributes.AttributesView', {
+	Ext.define('CMDBuild.view.common.panel.gridAndForm.panel.common.filter.advanced.filterEditor.attributes.AttributesView', {
 		extend: 'Ext.panel.Panel',
 
 		/**
@@ -9,7 +9,7 @@
 		delegate: undefined,
 
 		/**
-		 * @property {CMDBuild.view.common.panel.gridAndForm.filter.advanced.filterEditor.attributes.FormPanel}
+		 * @property {CMDBuild.view.common.panel.gridAndForm.panel.common.filter.advanced.filterEditor.attributes.FormPanel}
 		 */
 		form: undefined,
 
@@ -26,7 +26,7 @@
 		initComponent: function () {
 			Ext.apply(this, {
 				items: [
-					this.form = Ext.create('CMDBuild.view.common.panel.gridAndForm.filter.advanced.filterEditor.attributes.FormPanel', { delegate: this.delegate })
+					this.form = Ext.create('CMDBuild.view.common.panel.gridAndForm.panel.common.filter.advanced.filterEditor.attributes.FormPanel', { delegate: this.delegate })
 				]
 			});
 

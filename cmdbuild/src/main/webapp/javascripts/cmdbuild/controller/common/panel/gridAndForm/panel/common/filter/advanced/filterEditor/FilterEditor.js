@@ -35,7 +35,7 @@
 		controllerRelations: undefined,
 
 		/**
-		 * @property {CMDBuild.view.common.panel.gridAndForm.filter.advanced.filterEditor.FilterEditorWindow}
+		 * @property {CMDBuild.view.common.panel.gridAndForm.panel.common.filter.advanced.filterEditor.FilterEditorWindow}
 		 */
 		view: undefined,
 
@@ -50,7 +50,7 @@
 		constructor: function (configurationObject) {
 			this.callParent(arguments);
 
-			this.view = Ext.create('CMDBuild.view.common.panel.gridAndForm.filter.advanced.filterEditor.FilterEditorWindow', { delegate: this });
+			this.view = Ext.create('CMDBuild.view.common.panel.gridAndForm.panel.common.filter.advanced.filterEditor.FilterEditorWindow', { delegate: this });
 
 			// Build sub controllers
 			this.controllerAttributes = Ext.create('CMDBuild.controller.common.panel.gridAndForm.panel.common.filter.advanced.filterEditor.Attributes', { parentDelegate: this });

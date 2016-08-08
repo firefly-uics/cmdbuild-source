@@ -4,7 +4,7 @@
 	 * FIXME: build own class
 	 *
 	 * @link CMDBuild.view.management.common.CMCardGrid
-	 * @link CMDBuild.view.common.panel.gridAndForm.filter.advanced.filterEditor.relations.CMCardGridPagingBar
+	 * @link CMDBuild.view.common.panel.gridAndForm.panel.common.filter.advanced.filterEditor.relations.CMCardGridPagingBar
 	 */
 
 	Ext.require('CMDBuild.proxy.index.Json');
