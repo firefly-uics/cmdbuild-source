@@ -53,7 +53,7 @@
 		controllerLayers: undefined,
 
 		/**
-		 * @property {CMDBuild.controller.common.panel.gridAndForm.print.Window}
+		 * @property {CMDBuild.controller.common.panel.gridAndForm.panel.common.print.Window}
 		 */
 		controllerPrintWindow: undefined,
 
@@ -105,7 +105,7 @@
 			this.controllerDomains = Ext.create('CMDBuild.controller.administration.classes.tabs.Domains', { parentDelegate: this });
 			this.controllerGeoAttributes = Ext.create('CMDBuild.controller.administration.classes.tabs.GeoAttributes', { parentDelegate: this });
 			this.controllerLayers = Ext.create('CMDBuild.controller.administration.classes.tabs.Layers', { parentDelegate: this });
-			this.controllerPrintWindow = Ext.create('CMDBuild.controller.common.panel.gridAndForm.print.Window', { parentDelegate: this });
+			this.controllerPrintWindow = Ext.create('CMDBuild.controller.common.panel.gridAndForm.panel.common.print.Window', { parentDelegate: this });
 			this.controllerProperties = Ext.create('CMDBuild.controller.administration.classes.tabs.Properties', { parentDelegate: this });
 			this.controllerWidgets = Ext.create('CMDBuild.controller.administration.classes.tabs.widgets.Widgets', { parentDelegate: this });
 

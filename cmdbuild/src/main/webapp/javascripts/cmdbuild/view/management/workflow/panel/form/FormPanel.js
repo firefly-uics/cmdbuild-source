@@ -6,7 +6,7 @@
 	 * @legacy
 	 */
 	Ext.define('CMDBuild.view.management.workflow.panel.form.FormPanel', {
-		extend: 'CMDBuild.view.common.panel.gridAndForm.FormPanel',
+		extend: 'CMDBuild.view.common.panel.gridAndForm.panel.form.FormPanel',
 
 		requires: ['CMDBuild.core.constants.Proxy'],
 

@@ -43,7 +43,7 @@
 		controllerDomains: undefined,
 
 		/**
-		 * @property {CMDBuild.controller.common.panel.gridAndForm.print.Window}
+		 * @property {CMDBuild.controller.common.panel.gridAndForm.panel.common.print.Window}
 		 */
 		controllerPrintWindow: undefined,
 
@@ -93,7 +93,7 @@
 				view: this.view.attributesPanel
 			});
 			this.controllerDomains = Ext.create('CMDBuild.controller.administration.workflow.tabs.Domains', { parentDelegate: this });
-			this.controllerPrintWindow = Ext.create('CMDBuild.controller.common.panel.gridAndForm.print.Window', { parentDelegate: this });
+			this.controllerPrintWindow = Ext.create('CMDBuild.controller.common.panel.gridAndForm.panel.common.print.Window', { parentDelegate: this });
 			this.controllerProperties = Ext.create('CMDBuild.controller.administration.workflow.tabs.Properties', { parentDelegate: this });
 			this.controllerTasks = Ext.create('CMDBuild.controller.administration.workflow.tabs.TaskManager', { parentDelegate: this });
 

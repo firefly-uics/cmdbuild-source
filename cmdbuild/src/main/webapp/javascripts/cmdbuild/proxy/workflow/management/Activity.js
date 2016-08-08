@@ -1,8 +1,5 @@
 (function () {
 
-	/**
-	 * @link CMDBuild.proxy.workflow.Activity
-	 */
 	Ext.define('CMDBuild.proxy.workflow.management.Activity', {
 
 		requires: [
@@ -16,8 +13,6 @@
 		 * @param {Object} parameters
 		 *
 		 * @returns {Void}
-		 *
-		 * @management
 		 */
 		read: function (parameters) {
 			parameters = Ext.isEmpty(parameters) ? {} : parameters;

@@ -45,7 +45,6 @@
 
 			this.mixins.observable.constructor.call(this, arguments);
 
-//			this.superController = supercontroller; // TODO
 			this.card = null;
 			this.entryType = null;
 
@@ -365,7 +364,7 @@
 		},
 
 		defaultOperationSuccess: function() {
-			if (true) { // TODO Check if the modified relation was associated to a reference
+			if (true) { // FIXME: check if the modified relation was associated to a reference
 				this.fireEvent(this.CMEVENTS.serverOperationSuccess);
 			} else {
 				this.loadData();
@@ -508,10 +507,18 @@
 			}
 		},
 
-		onAddCardButtonClick: function(classIdOfNewCard) {}, // TODO
+		/**
+		 * @returns {Void}
+		 *
+		 * @legacy
+		 */
+		onAddCardButtonClick: function (classIdOfNewCard) {
+			this.view.disable();
+			this.view.clearStore();
+		},
 
 		onShowGraphClick: function() {
-			Ext.create('CMDBuild.controller.common.panel.gridAndForm.graph.Window', {
+			Ext.create('CMDBuild.controller.common.panel.gridAndForm.panel.common.graph.Window', {
 				parentDelegate: this,
 				classId: this.card.get("IdClass"),
 				cardId: this.card.get("Id")

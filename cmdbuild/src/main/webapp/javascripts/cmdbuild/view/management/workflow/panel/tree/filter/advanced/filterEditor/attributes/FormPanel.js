@@ -9,7 +9,7 @@
 		requires: ['CMDBuild.core.constants.Proxy'],
 
 		/**
-		 * @cfg {CMDBuild.controller.common.panel.gridAndForm.filter.advanced.filterEditor.Attributes}
+		 * @cfg {CMDBuild.controller.common.panel.gridAndForm.panel.common.filter.advanced.filterEditor.Attributes}
 		 */
 		delegate: undefined,
 

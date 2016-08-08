@@ -206,10 +206,10 @@
 		},
 
 		lockCard: function(success) {
-			if (CMDBuild.configuration.instance.get('enableCardLock')) { // TODO: use proxy constants
+			if (CMDBuild.configuration.instance.get(CMDBuild.core.constants.Proxy.ENABLE_CARD_LOCK)) {
 				if (this.card) {
 					var id = this.card.get('Id');
-					CMDBuild.proxy.Card.lock({ // TODO: probably must use activily proxy not card ones
+					CMDBuild.proxy.workflow.management.panel.form.tabs.Note.lockActivity({
 						params: {
 							id: id
 						},
@@ -223,10 +223,10 @@
 		},
 
 		unlockCard: function() {
-			if (CMDBuild.configuration.instance.get('enableCardLock')) { // TODO: use proxy constants
+			if (CMDBuild.configuration.instance.get(CMDBuild.core.constants.Proxy.ENABLE_CARD_LOCK)) {
 				if (this.card && this.view.isInEditing()) {
 					var id = this.card.get('Id');
-					CMDBuild.proxy.Card.unlock({ // TODO: probably must use activily proxy not card ones
+					CMDBuild.proxy.workflow.management.panel.form.tabs.Note.unlockActivity({
 						params: {
 							id: id
 						},

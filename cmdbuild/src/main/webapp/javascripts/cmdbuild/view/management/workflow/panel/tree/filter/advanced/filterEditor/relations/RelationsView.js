@@ -7,7 +7,7 @@
 		extend: 'Ext.panel.Panel',
 
 		/**
-		 * @cfg {CMDBuild.controller.common.panel.gridAndForm.filter.advanced.filterEditor.relations.Relations}
+		 * @cfg {CMDBuild.controller.common.panel.gridAndForm.panel.common.filter.advanced.filterEditor.relations.Relations}
 		 */
 		delegate: undefined,
 

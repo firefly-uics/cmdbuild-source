@@ -2,7 +2,7 @@
 
 	/**
 	 * @link CMDBuild.controller.common.field.filter.advanced.window.Window
-	 * @link CMDBuild.controller.common.panel.gridAndForm.filter.advanced.filterEditor.FilterEditor
+	 * @link CMDBuild.controller.common.panel.gridAndForm.panel.common.filter.advanced.filterEditor.FilterEditor
 	 */
 	Ext.define('CMDBuild.controller.management.workflow.panel.tree.filter.advanced.filterEditor.FilterEditor', {
 		extend: 'CMDBuild.controller.common.abstract.Base',

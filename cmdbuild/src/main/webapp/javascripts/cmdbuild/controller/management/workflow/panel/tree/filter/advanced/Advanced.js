@@ -1,7 +1,7 @@
 (function () {
 
 	/**
-	 * @link CMDBuild.controller.common.panel.gridAndForm.filter.advanced.Advanced
+	 * @link CMDBuild.controller.common.panel.gridAndForm.panel.common.filter.advanced.Advanced
 	 */
 	Ext.define('CMDBuild.controller.management.workflow.panel.tree.filter.advanced.Advanced', {
 		extend: 'CMDBuild.controller.common.abstract.Base',
@@ -49,7 +49,7 @@
 		selectedEntryType: undefined,
 
 		/**
-		 * @property {CMDBuild.view.common.panel.gridAndForm.filter.advanced.AdvancedView}
+		 * @property {CMDBuild.view.common.panel.gridAndForm.panel.common.filter.advanced.AdvancedView}
 		 */
 		view: undefined,
 
@@ -64,7 +64,7 @@
 		constructor: function (configurationObject) {
 			this.callParent(arguments);
 
-			this.view = Ext.create('CMDBuild.view.common.panel.gridAndForm.filter.advanced.AdvancedView', { delegate: this });
+			this.view = Ext.create('CMDBuild.view.common.panel.gridAndForm.panel.common.filter.advanced.AdvancedView', { delegate: this });
 
 			// Shorthands
 			this.grid = this.cmfg('panelGridAndFormGridGet');

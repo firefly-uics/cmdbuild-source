@@ -45,7 +45,6 @@
 			CMDBuild.proxy.workflow.management.panel.form.tabs.Attachment.confirm({
 				form: form,
 				params: me.forgeRequestParams(attachmentWindow),
-				url: CMDBuild.proxy.index.Json.attachment.update, // TODO: move in proxy
 				loadMask: false,
 				scope: me,
 				success: function(form, action) {
@@ -73,7 +72,7 @@
 			});
 		},
 
-		showError: function(response, error, options) { // TODO: use core interfaces messages classes
+		showError: function(response, error, options) { // FIXME: use core interfaces messages classes
 			var tr = CMDBuild.Translation.errors || {
 				error_message : "Error",
 				unknown_error : "Unknown error",

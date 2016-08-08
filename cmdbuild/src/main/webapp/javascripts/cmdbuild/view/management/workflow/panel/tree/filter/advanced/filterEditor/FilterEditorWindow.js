@@ -8,7 +8,7 @@
 		extend: 'CMDBuild.core.window.AbstractCustomModal',
 
 		/**
-		 * @cfg {CMDBuild.controller.common.panel.gridAndForm.filter.advanced.filterEditor.FilterEditor}
+		 * @cfg {CMDBuild.controller.common.panel.gridAndForm.panel.common.filter.advanced.filterEditor.FilterEditor}
 		 */
 		delegate: undefined,
 

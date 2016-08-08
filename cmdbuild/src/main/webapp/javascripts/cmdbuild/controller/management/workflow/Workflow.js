@@ -1,7 +1,7 @@
 (function () {
 
 	Ext.define('CMDBuild.controller.management.workflow.Workflow', {
-		extend: 'CMDBuild.controller.common.panel.gridAndForm.GridAndForm',
+		extend: 'CMDBuild.controller.common.panel.gridAndForm.panel.grid.GridAndForm',
 
 		requires: [
 			'CMDBuild.core.constants.Proxy',
