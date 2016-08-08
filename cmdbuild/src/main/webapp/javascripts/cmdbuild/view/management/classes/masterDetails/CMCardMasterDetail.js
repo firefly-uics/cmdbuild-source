@@ -13,7 +13,7 @@
 		eventmastertype: 'class',
 
 		constructor: function() {
-			this.addDetailButton = new CMDBuild.AddCardMenuButton({
+			this.addDetailButton = Ext.create('CMDBuild.core.buttons.iconized.split.add.Card', {
 				classId: undefined,
 				baseText: CMDBuild.Translation.management.moddetail.adddetail,
 				textPrefix: CMDBuild.Translation.management.moddetail.adddetail

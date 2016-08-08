@@ -4,9 +4,11 @@
 	var STATE_VALUE_OPEN = 'open.running';
 
 	Ext.define('CMDBuild.controller.management.workflow.CMModWorkflowController', {
-		extend: 'CMDBuild.controller.management.common.CMModController',
+		extend: 'CMDBuild.controller.CMBasePanelController',
 
 		mixins: {
+			commonFunctions: 'CMDBuild.controller.management.common.CMModClassAndWFCommons',
+			observable: 'Ext.util.Observable',
 			wfStateDelegate: 'CMDBuild.state.CMWorkflowStateDelegate'
 		},
 
@@ -62,6 +64,10 @@
 
 		constructor: function() {
 			this.callParent(arguments);
+
+			this.view.delegate = this;
+
+			this.buildSubControllers();
 
 			_CMWFState.addDelegate(this);
 
@@ -212,7 +218,34 @@
 				me.view.updateDocPanel(null);
 			}
 
-			me.callParent(arguments);
+			this.callForSubControllers('onCardSelected', this.card);
+		},
+
+		// private, call a given function for all the subcontrolles, and
+		// pass the arguments to them.
+		callForSubControllers: function(fnName, params) {
+			for (var i=0, l = this.subControllers.length, ct=null; i<l; ++i) {
+				ct = this.subControllers[i];
+				if (typeof fnName == 'string'
+					&& typeof ct[fnName] == 'function') {
+
+					params = Ext.isArray(params) ? params : [params];
+					ct[fnName].apply(ct, params);
+				}
+			}
+		},
+
+		onCardSelected: function onCardSelected(card) {
+			this.setCard(card);
+		},
+
+		setCard: function(card) {
+			this.card = card;
+			this.onCardChanged(card);
+		},
+
+		getCard: function() {
+			return this.card;
 		},
 
 		/**
@@ -257,6 +290,61 @@
 			this.view.updateTitleForEntry(entryType);
 
 			_CMUIState.onlyGridIfFullScreen();
+		},
+
+		getEntryType: function() {
+			return this.entryType || null;
+		},
+
+		getEntryTypeId: function() {
+			var id = null;
+			if (this.entryType) {
+				id = this.entryType.get('id');
+			}
+
+			return id;
+		},
+
+		/**
+		 * @param {Object} entryType
+		 */
+		onViewOnFront: function (entryType) {
+			if (!Ext.isEmpty(entryType)) {
+				var idPropertyName = Ext.isEmpty(entryType.get(CMDBuild.core.constants.Proxy.ENTITY_ID)) ? CMDBuild.core.constants.Proxy.ID : CMDBuild.core.constants.Proxy.ENTITY_ID;
+				var dc = CMDBuild.global.controller.MainViewport.cmfg('mainViewportDanglingCardGet');
+				var filter = entryType.get(CMDBuild.core.constants.Proxy.FILTER);
+				var newEntryId = entryType.get(idPropertyName);
+
+				// If we haven't a filter try to get default one from server
+				if (Ext.isEmpty(filter)) {
+					var params = {};
+					params[CMDBuild.core.constants.Proxy.CLASS_NAME] = entryType.get(CMDBuild.core.constants.Proxy.NAME);
+					params[CMDBuild.core.constants.Proxy.GROUP] = CMDBuild.configuration.runtime.get(CMDBuild.core.constants.Proxy.DEFAULT_GROUP_NAME);
+
+					CMDBuild.proxy.userAndGroup.group.tabs.DefaultFilters.read({
+						params: params,
+						scope: this,
+						success: function (response, options, decodedResponse) {
+							decodedResponse = decodedResponse.response.elements[0];
+
+							if (!Ext.isEmpty(decodedResponse)) {
+								if (
+									Ext.isString(decodedResponse[CMDBuild.core.constants.Proxy.CONFIGURATION])
+									&& CMDBuild.core.Utils.isJsonString(decodedResponse[CMDBuild.core.constants.Proxy.CONFIGURATION])
+								) {
+									decodedResponse[CMDBuild.core.constants.Proxy.CONFIGURATION] = Ext.decode(decodedResponse[CMDBuild.core.constants.Proxy.CONFIGURATION]);
+								}
+
+								filter = Ext.create('CMDBuild.model.CMFilterModel', decodedResponse);
+							}
+
+							this.setEntryType(newEntryId, dc, filter);
+						}
+					});
+				} else {
+					this.setEntryType(newEntryId, dc, filter);
+				}
+			}
 		}
 	});
 
