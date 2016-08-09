@@ -2,8 +2,9 @@ package integration.dao;
 
 import static com.google.common.collect.Iterables.size;
 import static org.cmdbuild.dao.query.clause.AnyAttribute.anyAttribute;
+import static org.cmdbuild.dao.query.clause.Attributes.named;
 import static org.cmdbuild.dao.query.clause.QueryAliasAttribute.attribute;
-import static org.cmdbuild.dao.query.clause.alias.Utils.as;
+import static org.cmdbuild.dao.query.clause.alias.Aliases.name;
 import static org.cmdbuild.dao.query.clause.where.EqualsOperatorAndValue.eq;
 import static org.cmdbuild.dao.query.clause.where.SimpleWhereClause.condition;
 import static org.hamcrest.Matchers.equalTo;
@@ -21,12 +22,11 @@ import org.cmdbuild.dao.entrytype.DBClass;
 import org.cmdbuild.dao.query.CMQueryResult;
 import org.cmdbuild.dao.query.CMQueryRow;
 import org.cmdbuild.dao.query.clause.alias.Alias;
-import org.cmdbuild.dao.query.clause.alias.NameAlias;
 import org.junit.Test;
 
-import utils.IntegrationTestBase;
-
 import com.google.common.collect.Iterables;
+
+import utils.IntegrationTestBase;
 
 public class SimpleQueryTest extends IntegrationTestBase {
 
@@ -43,7 +43,7 @@ public class SimpleQueryTest extends IntegrationTestBase {
 				.save();
 
 		final CMQueryResult result = dbDataView() //
-				.select(newClass.getCodeAttributeName()) //
+				.select(named(newClass.getCodeAttributeName())) //
 				.from(newClass) //
 				.run();
 
@@ -73,11 +73,11 @@ public class SimpleQueryTest extends IntegrationTestBase {
 					.save();
 		}
 
-		final Alias classAlias = NameAlias.as("foo");
+		final Alias classAlias = name("foo");
 
 		final CMQueryResult result = dbDataView() //
 				.select(anyAttribute(classAlias)) //
-				.from(newClass, as(classAlias)) //
+				.from(newClass, classAlias) //
 				.count() //
 				.run();
 
@@ -182,7 +182,7 @@ public class SimpleQueryTest extends IntegrationTestBase {
 		}
 
 		final CMQueryResult result = dbDataView() //
-				.select(newClass.getCodeAttributeName()) //
+				.select(named(newClass.getCodeAttributeName())) //
 				.from(newClass) //
 				.offset(OFFSET) //
 				.limit(LIMIT) //
@@ -206,7 +206,7 @@ public class SimpleQueryTest extends IntegrationTestBase {
 		final String codeAttributeName = newClass.getCodeAttributeName();
 
 		final CMQueryRow row = dbDataView() //
-				.select(codeAttributeName) //
+				.select(named(codeAttributeName)) //
 				.from(newClass) //
 				.where(condition(attribute(newClass, codeAttributeName), eq(codeValueToFind))) //
 				.limit(1) //
@@ -230,7 +230,7 @@ public class SimpleQueryTest extends IntegrationTestBase {
 		final String codeAttributeName = newClass.getCodeAttributeName();
 
 		final CMQueryResult result = dbDataView() //
-				.select(codeAttributeName) //
+				.select(named(codeAttributeName)) //
 				.from(newClass) //
 				.run();
 
@@ -250,7 +250,7 @@ public class SimpleQueryTest extends IntegrationTestBase {
 
 		// when
 		dbDataView() //
-				.select(newClass.getCodeAttributeName()) //
+				.select(named(newClass.getCodeAttributeName())) //
 				.from(newClass) //
 				.run() //
 				.getOnlyRow();
@@ -272,7 +272,7 @@ public class SimpleQueryTest extends IntegrationTestBase {
 
 		// when
 		dbDataView() //
-				.select(newClass.getCodeAttributeName()) //
+				.select(named(newClass.getCodeAttributeName())) //
 				.from(newClass) //
 				.limit(1) //
 				.skipDefaultOrdering() //
@@ -287,7 +287,7 @@ public class SimpleQueryTest extends IntegrationTestBase {
 	public void getOnlyRowShouldThrowExceptionBecauseOfNoResults() {
 		final DBClass newClass = dbDataView().create(newClass("foo"));
 		dbDataView() //
-				.select(newClass.getCodeAttributeName()) //
+				.select(named(newClass.getCodeAttributeName())) //
 				.from(newClass) //
 				.limit(1) //
 				.run() //
@@ -302,7 +302,7 @@ public class SimpleQueryTest extends IntegrationTestBase {
 		// when
 		final String codeAttributeName = newClass.getCodeAttributeName();
 		dbDataView() //
-				.select(codeAttributeName) //
+				.select(named(codeAttributeName)) //
 				.run();
 
 		// then
@@ -326,7 +326,7 @@ public class SimpleQueryTest extends IntegrationTestBase {
 
 		// when
 		final CMQueryResult result = dbDataView() //
-				.select("text") //
+				.select(named("text")) //
 				.from(clazz) //
 				.run();
 

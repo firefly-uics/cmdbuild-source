@@ -1,6 +1,7 @@
 package integration.dao.driver.postgres;
 
 import static com.google.common.collect.Iterables.isEmpty;
+import static org.cmdbuild.dao.query.clause.Attributes.named;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.is;
@@ -51,7 +52,7 @@ public class PostgresDriverTest extends IntegrationTestBase {
 				.save();
 
 		final CMQueryRow row = dbDataView() //
-				.select(REGCLASS_ATTRIBUTE) //
+				.select(named(REGCLASS_ATTRIBUTE)) //
 				.from(classWithRegClassAttribute) //
 				.limit(1) //
 				.skipDefaultOrdering() //

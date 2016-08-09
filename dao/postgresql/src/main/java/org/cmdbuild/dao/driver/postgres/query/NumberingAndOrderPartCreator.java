@@ -26,7 +26,7 @@ import org.cmdbuild.dao.entrytype.NullEntryTypeVisitor;
 import org.cmdbuild.dao.query.QuerySpecs;
 import org.cmdbuild.dao.query.clause.OrderByClause;
 import org.cmdbuild.dao.query.clause.OrderByClause.Direction;
-import org.cmdbuild.dao.query.clause.QueryAliasAttribute;
+import org.cmdbuild.dao.query.clause.QueryAttribute;
 
 public class NumberingAndOrderPartCreator extends PartCreator {
 
@@ -137,8 +137,8 @@ public class NumberingAndOrderPartCreator extends PartCreator {
 	static Map<String, Direction> quotedOrderClauses(final QuerySpecs querySpecs) {
 		final Map<String, Direction> output = new LinkedHashMap<>();
 		for (final OrderByClause clause : querySpecs.getOrderByClauses()) {
-			final QueryAliasAttribute attribute = clause.getAttribute();
-			output.put(quote(name(nameForUserAttribute(attribute.getEntryTypeAlias(), attribute.getName()))),
+			final QueryAttribute attribute = clause.getAttribute();
+			output.put(quote(name(nameForUserAttribute(attribute.getAlias(), attribute.getName()))),
 					clause.getDirection());
 		}
 		if ((!output.isEmpty() || !querySpecs.skipDefaultOrdering())

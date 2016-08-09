@@ -1,12 +1,15 @@
 package org.cmdbuild.dao.query;
 
+import static org.apache.commons.lang3.ObjectUtils.defaultIfNull;
 import static org.cmdbuild.common.Constants.LOOKUP_CLASS_NAME;
 import static org.cmdbuild.dao.entrytype.EntryTypeAnalyzer.inspect;
 import static org.cmdbuild.dao.query.clause.AnyClass.anyClass;
+import static org.cmdbuild.dao.query.clause.Attributes.named;
 import static org.cmdbuild.dao.query.clause.Functions.name;
 import static org.cmdbuild.dao.query.clause.Predicates.withAlias;
 import static org.cmdbuild.dao.query.clause.QueryAliasAttribute.attribute;
-import static org.cmdbuild.dao.query.clause.alias.NameAlias.as;
+import static org.cmdbuild.dao.query.clause.alias.Aliases.canonical;
+import static org.cmdbuild.dao.query.clause.alias.Aliases.name;
 import static org.cmdbuild.dao.query.clause.where.TrueWhereClause.trueWhereClause;
 
 import java.util.Collection;
@@ -15,8 +18,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.NoSuchElementException;
 import java.util.Set;
-
-import net.jcip.annotations.NotThreadSafe;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
@@ -40,11 +41,10 @@ import org.cmdbuild.dao.query.clause.OrderByClause;
 import org.cmdbuild.dao.query.clause.OrderByClause.Direction;
 import org.cmdbuild.dao.query.clause.QueryAliasAttribute;
 import org.cmdbuild.dao.query.clause.QueryAttribute;
+import org.cmdbuild.dao.query.clause.QueryAttributeVisitor;
 import org.cmdbuild.dao.query.clause.QueryDomain;
 import org.cmdbuild.dao.query.clause.QueryDomain.Source;
 import org.cmdbuild.dao.query.clause.alias.Alias;
-import org.cmdbuild.dao.query.clause.alias.EntryTypeAlias;
-import org.cmdbuild.dao.query.clause.alias.NameAlias;
 import org.cmdbuild.dao.query.clause.from.ClassFromClause;
 import org.cmdbuild.dao.query.clause.from.FromClause;
 import org.cmdbuild.dao.query.clause.from.FunctionFromClause;
@@ -66,6 +66,8 @@ import com.google.common.collect.FluentIterable;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
+
+import net.jcip.annotations.NotThreadSafe;
 
 @NotThreadSafe
 // TODO split build and run
@@ -122,7 +124,7 @@ public class QuerySpecsBuilderImpl implements QuerySpecsBuilder {
 		}
 	}
 
-	private static final Alias DEFAULT_ANYCLASS_ALIAS = NameAlias.as("_*");
+	private static final Alias DEFAULT_ANYCLASS_ALIAS = name("_*");
 
 	private List<QueryAttribute> attributes;
 	private final List<JoinClause> joinClauses;
@@ -147,7 +149,7 @@ public class QuerySpecsBuilderImpl implements QuerySpecsBuilder {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param viewForBuild
 	 *            is a the data view for building the query. It must be a system
 	 *            view because it must know all attributes, included those for
@@ -201,8 +203,7 @@ public class QuerySpecsBuilderImpl implements QuerySpecsBuilder {
 			final Alias entryTypeAlias) {
 		final CMClass lookupClass = viewForBuild.findClass(LOOKUP_CLASS_NAME);
 		for (final CMAttribute attribute : lookupAttributes) {
-			final Alias lookupClassAlias = NameAlias.as(new ExternalReferenceAliasHandler(entryType, attribute)
-					.forQuery());
+			final Alias lookupClassAlias = name(new ExternalReferenceAliasHandler(entryType, attribute).forQuery());
 			if (!aliases.containsAlias(lookupClassAlias)) {
 				aliases.addAlias(lookupClassAlias);
 			}
@@ -229,8 +230,7 @@ public class QuerySpecsBuilderImpl implements QuerySpecsBuilder {
 				referencedClass = viewForBuild.findClass(domain.getClass2().getName());
 			}
 
-			final Alias referencedClassAlias = NameAlias.as(new ExternalReferenceAliasHandler(entryType, attribute)
-					.forQuery());
+			final Alias referencedClassAlias = name(new ExternalReferenceAliasHandler(entryType, attribute).forQuery());
 			if (!aliases.containsAlias(referencedClassAlias)) {
 				aliases.addAlias(referencedClassAlias);
 			}
@@ -251,8 +251,7 @@ public class QuerySpecsBuilderImpl implements QuerySpecsBuilder {
 		for (final CMAttribute attribute : foreignKeyAttributes) {
 			final ForeignKeyAttributeType attributeType = (ForeignKeyAttributeType) attribute.getType();
 			final CMClass referencedClass = viewForBuild.findClass(attributeType.getForeignKeyDestinationClassName());
-			final Alias referencedClassAlias = NameAlias.as(new ExternalReferenceAliasHandler(entryType, attribute)
-					.forQuery());
+			final Alias referencedClassAlias = name(new ExternalReferenceAliasHandler(entryType, attribute).forQuery());
 			if (!aliases.containsAlias(referencedClassAlias)) {
 				aliases.addAlias(referencedClassAlias);
 			}
@@ -280,7 +279,7 @@ public class QuerySpecsBuilderImpl implements QuerySpecsBuilder {
 			@Override
 			public void visit(final CMClass type) {
 				for (final CMClass descendant : type.getDescendants()) {
-					final Alias alias = EntryTypeAlias.canonicalAlias(descendant);
+					final Alias alias = canonical(descendant);
 					if (!aliases.containsAlias(alias)) {
 						aliases.addAlias(alias);
 					}
@@ -315,7 +314,7 @@ public class QuerySpecsBuilderImpl implements QuerySpecsBuilder {
 			@Override
 			public void visit(final SimpleWhereClause whereClause) {
 				final QueryAliasAttribute attribute = whereClause.getAttribute();
-				final Alias alias = attribute.getEntryTypeAlias();
+				final Alias alias = attribute.getAlias();
 				if (!aliases.containsAlias(alias)) {
 					aliases.addAlias(alias);
 				}
@@ -337,7 +336,7 @@ public class QuerySpecsBuilderImpl implements QuerySpecsBuilder {
 
 	@Override
 	public QuerySpecsBuilder from(final CMClass cmClass) {
-		return from(transform(cmClass), EntryTypeAlias.canonicalAlias(cmClass));
+		return from(transform(cmClass), canonical(cmClass));
 	}
 
 	/*
@@ -345,7 +344,7 @@ public class QuerySpecsBuilderImpl implements QuerySpecsBuilder {
 	 */
 	@Override
 	public QuerySpecsBuilder join(final CMClass joinClass, final Over overClause) {
-		return join(joinClass, EntryTypeAlias.canonicalAlias(joinClass), overClause);
+		return join(joinClass, canonical(joinClass), overClause);
 	}
 
 	@Override
@@ -461,13 +460,13 @@ public class QuerySpecsBuilderImpl implements QuerySpecsBuilder {
 		final Alias fromAlias = fromClause.getAlias();
 		final EntryTypeAnalyzer entryTypeAnalyzer = inspect(fromEntryType, new Predicate<CMAttribute>() {
 
-			private final Iterable<QueryAliasAttribute> queryAliasAttributes = FluentIterable.from(attributes) //
-					.filter(QueryAliasAttribute.class) //
-					.filter(withAlias(fromAlias));
-			private final boolean anyAttribute = !FluentIterable.from(queryAliasAttributes) //
+			private final boolean anyAttribute = !FluentIterable.from(attributes) //
 					.filter(AnyAttribute.class) //
+					.filter(withAlias(fromAlias)) //
 					.isEmpty();
-			private final Collection<String> names = FluentIterable.from(queryAliasAttributes) //
+			private final Collection<String> names = FluentIterable.from(attributes) //
+					.filter(QueryAliasAttribute.class) //
+					.filter(withAlias(fromAlias)) //
 					.transform(name()) //
 					.toList();
 
@@ -501,8 +500,8 @@ public class QuerySpecsBuilderImpl implements QuerySpecsBuilder {
 		}
 		for (final DirectJoinClause directJoinClause : directJoinClauses) {
 			qs.addDirectJoin(directJoinClause);
-			final QueryAliasAttribute externalRefAttribute = attribute(directJoinClause.getTargetClassAlias(),
-					ExternalReferenceAliasHandler.EXTERNAL_ATTRIBUTE);
+			final QueryAliasAttribute externalRefAttribute =
+					attribute(directJoinClause.getTargetClassAlias(), ExternalReferenceAliasHandler.EXTERNAL_ATTRIBUTE);
 			qs.addSelectAttribute(aliasAttributeFrom(externalRefAttribute));
 		}
 		for (final QueryAttribute qa : attributes) {
@@ -526,32 +525,34 @@ public class QuerySpecsBuilderImpl implements QuerySpecsBuilder {
 		}
 	}
 
-	/**
-	 * Returns a {@link QueryAliasAttribute} from a {@link QueryAttribute} and
-	 * checks if the alias of the {@link CMEntryType} is valid.
-	 */
-	private QueryAliasAttribute aliasAttributeFrom(final QueryAttribute queryAttribute) {
-		QueryAliasAttribute queryAliasAttribute;
-		// FIXME: Implement it with a QueryAttribute visitor
-		if (queryAttribute instanceof NamedAttribute) {
-			final Alias alias = aliasForNamedAttribute((NamedAttribute) queryAttribute);
-			queryAliasAttribute = attribute(alias, queryAttribute.getName());
-		} else if (queryAttribute instanceof QueryAliasAttribute) {
-			queryAliasAttribute = (QueryAliasAttribute) queryAttribute;
-		} else {
-			throw new UnsupportedOperationException("Unsupported attribute class");
-		}
-		aliases.checkAlias(queryAliasAttribute.getEntryTypeAlias());
-		return queryAliasAttribute;
-	}
+	private QueryAttribute aliasAttributeFrom(final QueryAttribute queryAttribute) {
+		return new QueryAttributeVisitor() {
 
-	private Alias aliasForNamedAttribute(final NamedAttribute na) {
-		final String aliasName = na.getEntryTypeAliasName();
-		if (aliasName == null) {
-			return aliases.getDefaultAlias();
-		} else {
-			return as(aliasName);
-		}
+			private QueryAttribute output;
+
+			public QueryAttribute queryAliasAttribute() {
+				queryAttribute.accept(this);
+				aliases.checkAlias(output.getAlias());
+				return output;
+			}
+
+			@Override
+			public void accept(final AnyAttribute value) {
+				output = value;
+			}
+
+			@Override
+			public void visit(final NamedAttribute value) {
+				final Alias alias = defaultIfNull(queryAttribute.getAlias(), aliases.getDefaultAlias());
+				output = attribute(alias, queryAttribute.getName());
+			}
+
+			@Override
+			public void visit(final QueryAliasAttribute value) {
+				output = value;
+			}
+
+		}.queryAliasAttribute();
 	}
 
 	@Override
@@ -564,7 +565,7 @@ public class QuerySpecsBuilderImpl implements QuerySpecsBuilder {
 		if (attribute instanceof QueryAttribute) {
 			queryAttribute = (QueryAttribute) attribute;
 		} else if (attribute instanceof String) {
-			queryAttribute = new NamedAttribute((String) attribute);
+			queryAttribute = named((String) attribute);
 		} else {
 			throw new IllegalArgumentException("invalid attribute");
 		}

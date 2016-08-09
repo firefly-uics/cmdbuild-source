@@ -315,7 +315,7 @@ public class UserQuerySpecs extends ForwardingQuerySpecs {
 
 			private void add(final Set<DirectJoinClause> directJoins, final Map<Alias, CMClass> descendantsByAlias,
 					final QueryAliasAttribute attribute) {
-				final Alias alias = attribute.getEntryTypeAlias();
+				final Alias alias = attribute.getAlias();
 				if (descendantsByAlias.containsKey(alias)) {
 					final CMClass type = descendantsByAlias.get(alias);
 					final DirectJoinClause clause = DirectJoinClause.newInstance() //

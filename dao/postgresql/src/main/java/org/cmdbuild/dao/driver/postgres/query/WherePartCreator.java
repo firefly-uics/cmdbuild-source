@@ -245,7 +245,7 @@ public class WherePartCreator extends PartCreator implements WhereClauseVisitor 
 			public void visit(final StringArrayOverlapOperatorAndValue operatorAndValue) {
 				final String template = " %s && string_to_array('%s',',')::varchar[] ";
 				final QueryAliasAttribute attributeAlias = whereClause.getAttribute();
-				final String quotedAttributeName = Utils.quoteAttribute(attributeAlias.getEntryTypeAlias(),
+				final String quotedAttributeName = Utils.quoteAttribute(attributeAlias.getAlias(),
 						attributeAlias.getName());
 
 				append(String.format(template, quotedAttributeName, operatorAndValue.getValue()));
@@ -255,7 +255,7 @@ public class WherePartCreator extends PartCreator implements WhereClauseVisitor 
 			public void visit(final EmptyArrayOperatorAndValue operatorAndValue) {
 				final String template = " coalesce(array_length(%s, 1), 0) = 0 ";
 				final QueryAliasAttribute attributeAlias = whereClause.getAttribute();
-				final String quotedAttributeName = Utils.quoteAttribute(attributeAlias.getEntryTypeAlias(),
+				final String quotedAttributeName = Utils.quoteAttribute(attributeAlias.getAlias(),
 						attributeAlias.getName());
 
 				append(String.format(template, quotedAttributeName));
@@ -371,7 +371,7 @@ public class WherePartCreator extends PartCreator implements WhereClauseVisitor 
 
 	private String nameOf(final QueryAliasAttribute attribute, final String attributeNameCast) {
 		final boolean isAttributeNameCastSpecified = (attributeNameCast != NO_CAST);
-		final String attributeName = Utils.quoteAttribute(attribute.getEntryTypeAlias(), attribute.getName());
+		final String attributeName = Utils.quoteAttribute(attribute.getAlias(), attribute.getName());
 		return new StringBuilder(attributeName) //
 				.append(isAttributeNameCastSpecified ? (CAST_OPERATOR + attributeNameCast) : EMPTY) //
 				.toString();

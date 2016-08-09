@@ -23,7 +23,7 @@ import org.cmdbuild.dao.driver.postgres.query.NumberingAndOrderPartCreator;
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.query.QuerySpecs;
 import org.cmdbuild.dao.query.clause.OrderByClause;
-import org.cmdbuild.dao.query.clause.alias.NameAlias;
+import org.cmdbuild.dao.query.clause.alias.Alias;
 import org.cmdbuild.dao.query.clause.from.FromClause;
 import org.cmdbuild.dao.query.clause.where.WhereClause;
 import org.junit.Before;
@@ -41,7 +41,7 @@ public class NumberingAndOrderPartCreatorTest {
 		final CMClass target = mock(CMClass.class);
 		doReturn(target) //
 				.when(fromClause).getType();
-		final NameAlias alias = name("dummy");
+		final Alias alias = name("dummy");
 		doReturn(alias) //
 				.when(fromClause).getAlias();
 

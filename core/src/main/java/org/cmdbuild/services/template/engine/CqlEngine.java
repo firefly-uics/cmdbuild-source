@@ -19,7 +19,9 @@ import org.cmdbuild.dao.query.CMQueryResult;
 import org.cmdbuild.dao.query.CMQueryRow;
 import org.cmdbuild.dao.query.QuerySpecsBuilder;
 import org.cmdbuild.dao.query.clause.AnyAttribute;
+import org.cmdbuild.dao.query.clause.NamedAttribute;
 import org.cmdbuild.dao.query.clause.QueryAliasAttribute;
+import org.cmdbuild.dao.query.clause.QueryAttributeVisitor;
 import org.cmdbuild.dao.query.clause.alias.Alias;
 import org.cmdbuild.dao.query.clause.join.Over;
 import org.cmdbuild.dao.query.clause.where.WhereClause;
@@ -138,9 +140,22 @@ public class CqlEngine implements Engine {
 		final CMQueryResult result = callback.execute();
 		final CMQueryRow row = result.getOnlyRow();
 		final QueryAliasAttribute attribute = getOnlyElement(callback.attributes);
-		if (attribute instanceof AnyAttribute) {
-			throw new IllegalArgumentException();
-		}
+		attribute.accept(new QueryAttributeVisitor() {
+
+			@Override
+			public void accept(final AnyAttribute value) {
+				throw new IllegalArgumentException();
+			}
+
+			@Override
+			public void visit(final NamedAttribute value) {
+			}
+
+			@Override
+			public void visit(final QueryAliasAttribute value) {
+			}
+
+		});
 		final CMCard card = row.getCard(callback.source);
 		final Object value;
 		if (Const.ID_ATTRIBUTE.equals(attribute.getName())) {

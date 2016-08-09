@@ -3,7 +3,7 @@ package org.cmdbuild.dao.query;
 import java.util.List;
 
 import org.cmdbuild.dao.query.clause.OrderByClause;
-import org.cmdbuild.dao.query.clause.QueryAliasAttribute;
+import org.cmdbuild.dao.query.clause.QueryAttribute;
 import org.cmdbuild.dao.query.clause.from.FromClause;
 import org.cmdbuild.dao.query.clause.join.DirectJoinClause;
 import org.cmdbuild.dao.query.clause.join.JoinClause;
@@ -71,7 +71,7 @@ public class QuerySpecsImpl implements QuerySpecs {
 	private final FromClause fromClause;
 	private final List<JoinClause> joinClauses;
 	private final List<DirectJoinClause> directJoinClauses;
-	private final List<QueryAliasAttribute> attributes;
+	private final List<QueryAttribute> attributes;
 	private final List<OrderByClause> orderByClauses;
 	private Long offset;
 	private Long limit;
@@ -123,7 +123,7 @@ public class QuerySpecsImpl implements QuerySpecs {
 	}
 
 	@Override
-	public Iterable<QueryAliasAttribute> getAttributes() {
+	public Iterable<QueryAttribute> getAttributes() {
 		return this.attributes;
 	}
 
@@ -136,7 +136,7 @@ public class QuerySpecsImpl implements QuerySpecs {
 		return orderByClauses;
 	}
 
-	public void addSelectAttribute(final QueryAliasAttribute attribute) {
+	public void addSelectAttribute(final QueryAttribute attribute) {
 		attributes.add(attribute);
 	}
 

@@ -10,11 +10,11 @@ import com.google.common.base.Function;
 
 public class Functions {
 
-	public static final Function<QueryAliasAttribute, String> name() {
-		return new Function<QueryAliasAttribute, String>() {
+	public static final Function<QueryAttribute, String> name() {
+		return new Function<QueryAttribute, String>() {
 
 			@Override
-			public String apply(final QueryAliasAttribute input) {
+			public String apply(final QueryAttribute input) {
 				return input.getName();
 			}
 

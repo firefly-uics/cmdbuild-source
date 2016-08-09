@@ -61,6 +61,7 @@ import org.cmdbuild.dao.query.QuerySpecsBuilder;
 import org.cmdbuild.dao.query.clause.OrderByClause;
 import org.cmdbuild.dao.query.clause.OrderByClause.Direction;
 import org.cmdbuild.dao.query.clause.QueryAliasAttribute;
+import org.cmdbuild.dao.query.clause.QueryAttribute;
 import org.cmdbuild.dao.query.clause.QueryDomain.Source;
 import org.cmdbuild.dao.query.clause.alias.Alias;
 import org.cmdbuild.dao.query.clause.join.Over;
@@ -106,11 +107,11 @@ public class QuerySpecsBuilderFiller {
 				.transform(attribute(entryType)) //
 				.filter(CMAttribute.class) //
 				.transform(queryAliasAttribute(entryType));
-		final Object[] attributesArray;
+		final QueryAttribute[] attributesArray;
 		if (isEmpty(attributeSubsetForSelect)) {
-			attributesArray = new Object[] { anyAttribute(entryType) };
+			attributesArray = new QueryAttribute[] { anyAttribute(entryType) };
 		} else {
-			attributesArray = toArray(attributeSubsetForSelect, Object.class);
+			attributesArray = toArray(attributeSubsetForSelect, QueryAttribute.class);
 		}
 		final QuerySpecsBuilder querySpecsBuilder = dataView.select(attributesArray) //
 				.from(entryType, as(getAlias()));
@@ -153,8 +154,8 @@ public class QuerySpecsBuilderFiller {
 		final Optional<String> pattern = new ForwardingAttributeTypeVisitor() {
 
 			private final CMAttributeTypeVisitor DELEGATE = NullAttributeTypeVisitor.getInstance();
-			private final QueryAliasAttribute queryAttribute = clause.getAttribute();
-			private final String entryTypeAlias = queryAttribute.getEntryTypeAlias().toString();
+			private final QueryAttribute queryAttribute = clause.getAttribute();
+			private final String entryTypeAlias = queryAttribute.getAlias().toString();
 			private final String attributeName = queryAttribute.getName();
 			private final CMAttribute cmAttribute = entryType.getAttribute(attributeName);
 			private final CMAttributeType<?> cmAttributeType = (cmAttribute == null) ? null : cmAttribute.getType();

@@ -47,7 +47,7 @@ public class ConditionOnNumberedQueryPartCreator extends PartCreator {
 					@Override
 					public void visit(final EqualsOperatorAndValue operatorAndValue) {
 						final QueryAliasAttribute attribute = whereClause.getAttribute();
-						final String quotedName = quote(name(nameForSystemAttribute(attribute.getEntryTypeAlias(), Id)));
+						final String quotedName = quote(name(nameForSystemAttribute(attribute.getAlias(), Id)));
 						final String actual = main.toString();
 						main.setLength(0);
 						sb.append(format("SELECT * FROM (%s) AS numbered WHERE %s = %s", //

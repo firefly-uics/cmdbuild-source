@@ -3,7 +3,7 @@ package org.cmdbuild.dao.query;
 import java.util.List;
 
 import org.cmdbuild.dao.query.clause.OrderByClause;
-import org.cmdbuild.dao.query.clause.QueryAliasAttribute;
+import org.cmdbuild.dao.query.clause.QueryAttribute;
 import org.cmdbuild.dao.query.clause.from.FromClause;
 import org.cmdbuild.dao.query.clause.join.DirectJoinClause;
 import org.cmdbuild.dao.query.clause.join.JoinClause;
@@ -43,7 +43,7 @@ public abstract class ForwardingQuerySpecs extends ForwardingObject implements Q
 	}
 
 	@Override
-	public Iterable<QueryAliasAttribute> getAttributes() {
+	public Iterable<QueryAttribute> getAttributes() {
 		return delegate().getAttributes();
 	}
 
