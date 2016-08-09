@@ -746,64 +746,15 @@
 			"showgraph": "Zobrazit graf",
 			"shownotes": "Zobrazit poznámky"
 		},
-		"modworkflow": {
-			"abort_card": "Přerušit proces",
-			"abort_card_confirm": "Opravdu si přejete přerušit tento proces?",
-			"add_card": "Spustit",
-			"completed": "Dokončeno",
-			"custom_steps": "Vlastní kroky",
-			"delete_card": "Přerušit proces",
-			"delete_card_confirm": "Opravdu si přejete odstranit tento proces?",
-			"extattrs": {
-				"attachments": {
-					"must_save_to_add": "Před prvním uložením procesu nelze připojit přílohu"
-				},
-				"calendar": {
-					"wrong_config": "Kalendář není správně nakonfigurován"
-				},
-				"linkcards": {
-					"required": "Vyberte prosím nějaké záznamy - "
-				},
-				"managerelation": {
-					"required": "Vyberte prosím nějaké vazby - "
-				},
-				"notes": {
-					"must_save_to_modify": "Před prvním uložením procesu nelze vkládat poznámky"
-				}
-			},
-			"interrupted": "Přerušen",
-			"modify_card": "Upravit krok",
-			"modify_note": "Upravit poznámku",
-			"open_attachment": "Otevřít přílohy",
-			"open_note": "Otevřít poznámky",
-			"started": "Spuštěn",
-			"status": "Stav",
-			"statuses": {
-				"all": "Všechny",
-				"closed.aborted": "Přerušené",
-				"closed.completed": "Dokončené",
-				"open.not_running.suspended": "Pozastavené",
-				"open.running": "Spuštěné"
-			},
-			"tabs": {
-				"attachments": "Přílohy",
-				"card": "Krok procesu",
-				"detail": "Detaily",
-				"history": "Historie",
-				"notes": "Poznámka",
-				"options": "Možnosti",
-				"relations": "Vazby",
-				"sketch": "Náčrtek"
-			},
-			"title": "Seznam - ",
-			"treetitle": "Procesy"
-		},
 		"welcome": {
 			"body": "Modul pro správu dat.",
 			"title": "Vítejte"
 		}
 	},
 	"warnings": {
+		"calendarIsNotWellConfigured": "Kalendář není správně nakonfigurován",
+		"canNotAddAnAttachmentBeforeSavingTheActivity": "Před prvním uložením procesu nelze připojit přílohu",
+		"canNotModifyNotesBeforeSavingTheActivity": "Před prvním uložením procesu nelze vkládat poznámky",
 		"changeAppliedOnlyToFilteredCards": "Změny budou použity pouze na záznamy, které odpovídají aktuálnímu filtru",
 		"emailTemplateRelatedAttributeEdited": "Atribut svázaný s šablonou e-mailu se změnil, e-mail může být znovu vytvořen.",
 		"itemNotAvailable": "Položka není dostupná",
@@ -815,6 +766,8 @@
 		"thereAreNoEnabledLanguages": "Nejsou povoleny žádné jazyky",
 		"toSetAFilterYouMustBeforeSelectAClass": "Před nastavením filtru musí být vybrána třída"
 	},
+	"aborted": "Přerušené",
+	"abortProcess": "Přerušit proces",
 	"account": "Účet",
 	"accounts": "Účty",
 	"active": "Aktivní",
@@ -858,6 +811,7 @@
 	"apply": "Použít",
 	"applyDefaultSelection": "Použít implicitní výběr",
 	"archivingDate": "Datum archivace",
+	"areYouSureYouWantToAbortThisProcess": "Opravdu si přejete přerušit tento proces?",
 	"as": "jako",
 	"attachFile": "Přiložit soubor",
 	"attachments": "Přílohy",
@@ -925,6 +879,7 @@
 	"collapseAll": "Sbalit všechny",
 	"columnPrivilegesSaved": "<em>Column privileges saved</em>",
 	"columnsPrivileges": "Sloupcová oprávnění",
+	"completed": "Dokončené",
 	"composeEmail": "Vytvořit e-mail",
 	"composeFromTemplate": "Vytvořit z šablony",
 	"configuration": "Konfigurace",
@@ -1219,6 +1174,7 @@
 	"ok": "OK",
 	"oldPassword": "<em>Old password</em>",
 	"onDay": "V",
+	"open": "Spuštěné",
 	"open_3d_viewer": "Otevřít 3D prohlížeč",
 	"openRelationGraph": "Otevřít graf vazeb",
 	"operativeInstructions": "Nápověda ke kroku",
@@ -1372,6 +1328,7 @@
 	"success": "Provedeno úspěšně",
 	"superclass": "Nadtřída",
 	"superUser": "Superuživatel",
+	"suspended": "Pozastavené",
 	"tabPositioInCardPanel": "Pozice oušek pro skupiny atributů",
 	"targetClass": "Cílová třída",
 	"taskManager": "Správce úkolů",

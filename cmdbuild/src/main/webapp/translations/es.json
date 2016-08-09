@@ -746,64 +746,15 @@
 			"showgraph": "Visualizar el gráfico",
 			"shownotes": "Visualizar notas"
 		},
-		"modworkflow": {
-			"abort_card": "Interrumpir proceso",
-			"abort_card_confirm": "¿Está seguro de querer interrumpir este proceso?",
-			"add_card": "Inicia",
-			"completed": "Completo",
-			"custom_steps": "Pasos adicionales",
-			"delete_card": "Cierra proceso",
-			"delete_card_confirm": "¿Está seguro de querer eliminar este proceso?",
-			"extattrs": {
-				"attachments": {
-					"must_save_to_add": "No se puede agregar un adjunto antes de guardar la actividad"
-				},
-				"calendar": {
-					"wrong_config": "El calendario no ha sido configurado correctamente"
-				},
-				"linkcards": {
-					"required": "Es necesario seleccionar las tarjetas - "
-				},
-				"managerelation": {
-					"required": "Es necesario seleccionar las relaciones - "
-				},
-				"notes": {
-					"must_save_to_modify": "No se pueden modificar las notas antes de guardar la actividad"
-				}
-			},
-			"interrupted": "Interrumpido",
-			"modify_card": "Modificar actividad",
-			"modify_note": "Modificar nota",
-			"open_attachment": "Abre adjuntos",
-			"open_note": "Abre notas",
-			"started": "Iniciado",
-			"status": "Estado",
-			"statuses": {
-				"all": "Todos",
-				"closed.completed": "Completo",
-				"closed.aborted": "Abortado",
-				"open.not_running.suspended": "Suspendido",
-				"open.running": "Activo"
-			},
-			"tabs": {
-				"attachments": "Adjuntos",
-				"card": "Actividad",
-				"detail": "Detalles",
-				"history": "Historia",
-				"notes": "Notas",
-				"options": "Opciones",
-				"relations": "Relaciones",
-				"sketch": "Esquema gráfico"
-			},
-			"title": "Elenco - ",
-			"treetitle": "Procesos"
-		},
 		"welcome": {
 			"body": "Módulo gestión de datos.",
 			"title": "Bienvenido"
 		}
 	},
 	"warnings": {
+		"calendarIsNotWellConfigured": "El calendario no ha sido configurado correctamente",
+		"canNotAddAnAttachmentBeforeSavingTheActivity": "No se puede agregar un adjunto antes de guardar la actividad",
+		"canNotModifyNotesBeforeSavingTheActivity": "No se pueden modificar las notas antes de guardar la actividad",
 		"changeAppliedOnlyToFilteredCards": "Las modificaciones solo tendrán efecto sobre las tarjetas que respetan el filtro actual ",
 		"emailTemplateRelatedAttributeEdited": "Ha cambiado un atributo relacionado con la plantilla del email, deberá ser regenerado",
 		"itemNotAvailable": "<em>Item not available</em>",
@@ -815,6 +766,8 @@
 		"thereAreNoEnabledLanguages": "<em>There are no enabled languages</em>",
 		"toSetAFilterYouMustBeforeSelectAClass": "Para generar un filtro, primero debe seleccionar una clase"
 	},
+	"aborted": "Abortado",
+	"abortProcess": "Interrumpir proceso",
 	"account": "Cuenta",
 	"accounts": "Cuentas",
 	"active": "Activo",
@@ -858,6 +811,7 @@
 	"apply": "Aplica",
 	"applyDefaultSelection": "Aplicar selección por defecto",
 	"archivingDate": "Fecha de archivo",
+	"areYouSureYouWantToAbortThisProcess": "¿Está seguro de querer interrumpir este proceso?",
 	"as": "como",
 	"attachFile": "Adjunta archivo",
 	"attachments": "Adjuntos",
@@ -925,6 +879,7 @@
 	"collapseAll": "Contraer todos",
 	"columnPrivilegesSaved": "<em>Column privileges saved</em>",
 	"columnsPrivileges": "Privilegios en columnas",
+	"completed": "Completo",
 	"composeEmail": "Crear email",
 	"composeFromTemplate": "Crear email desde plantilla",
 	"configuration": "<em>Configuration</em>",
@@ -1219,6 +1174,7 @@
 	"ok": "Confirma",
 	"oldPassword": "Antigua clave",
 	"onDay": "El",
+	"open": "Activo",
 	"open_3d_viewer": "Abre visor 3D",
 	"openRelationGraph": "Abre el gráfico de las relaciones",
 	"operativeInstructions": "Información operativa",
@@ -1372,6 +1328,7 @@
 	"success": "Éxito",
 	"superclass": "Superclase",
 	"superUser": "Superusuario",
+	"suspended": "Suspendido",
 	"tabPositioInCardPanel": "Posición pestañas en el panel card",
 	"targetClass": "Clase de origen",
 	"taskManager": "Administrador de tareas",

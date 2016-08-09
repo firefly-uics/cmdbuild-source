@@ -746,64 +746,15 @@
 			"showgraph": "Ansicht Graph",
 			"shownotes": "Ansicht Notizen"
 		},
-		"modworkflow": {
-			"abort_card": "Vorgang abbrechen",
-			"abort_card_confirm": "Sind Sie sicher, dass Sie diesen Vorgang abbrechen möchten?",
-			"add_card": "Starten",
-			"completed": "Ergänzt",
-			"custom_steps": "Zusatzschritte",
-			"delete_card": "Vorgang herunterfahren",
-			"delete_card_confirm": "Sind Sie sicher, dass Sie diesen Vorgang abbrechen möchten?",
-			"extattrs": {
-				"attachments": {
-					"must_save_to_add": "Sie können die Anlage vor dem Speichern nicht hinzufügen"
-				},
-				"calendar": {
-					"wrong_config": "Der Kalender ist nicht richtig konfiguriert"
-				},
-				"linkcards": {
-					"required": "Dafür muss man einige Karten markieren - "
-				},
-				"managerelation": {
-					"required": "Dafür muss man die Beziehungen markieren - "
-				},
-				"notes": {
-					"must_save_to_modify": "Sie können die Notizen vor dem Speichern nicht bearbeiten"
-				}
-			},
-			"interrupted": "Unterbrochen",
-			"modify_card": "Aktivität bearbeiten",
-			"modify_note": "Notiz bearbeiten",
-			"open_attachment": "Anlagen öffnen",
-			"open_note": "Notizen öffnen",
-			"started": "Gestartet",
-			"status": " Status",
-			"statuses": {
-				"all": "Alle",
-				"closed.aborted": "Abgestürzt",
-				"closed.completed": "Beendet",
-				"open.not_running.suspended": "Unterbrochen",
-				"open.running": "Aktiv"
-			},
-			"tabs": {
-				"attachments": "Anlagen",
-				"card": "Aktivität",
-				"detail": "Details",
-				"history": "Chronologie",
-				"notes": "Notizen",
-				"options": "Optionen",
-				"relations": "Beziehungen",
-				"sketch": "Graphische Schema"
-			},
-			"title": "Liste - ",
-			"treetitle": "Vorgänge"
-		},
 		"welcome": {
 			"body": "Datenmanagement-Modul.",
 			"title": "Willkommen"
 		}
 	},
 	"warnings": {
+		"calendarIsNotWellConfigured": "Der Kalender ist nicht richtig konfiguriert",
+		"canNotAddAnAttachmentBeforeSavingTheActivity": "Sie können die Anlage vor dem Speichern nicht hinzufügen",
+		"canNotModifyNotesBeforeSavingTheActivity": "Sie können die Notizen vor dem Speichern nicht bearbeiten",
 		"changeAppliedOnlyToFilteredCards": "Die Abänderungen können nur in die das laufende Filter respektierenden Karten Wirkungen zeigen",
 		"emailTemplateRelatedAttributeEdited": "<em>Attribute related with email templates changed, some e-mail could be regenerated.</em>",
 		"itemNotAvailable": "<em>Item not available</em>",
@@ -815,6 +766,8 @@
 		"thereAreNoEnabledLanguages": "<em>There are no enabled languages</em>",
 		"toSetAFilterYouMustBeforeSelectAClass": "<em>To set a filter you must before select a class</em>"
 	},
+	"aborted": "Abgestürzt",
+	"abortProcess": "Vorgang abbrechen",
 	"account": "Benutzerkonto",
 	"accounts": "Benutzerkonten",
 	"active": "Aktiv",
@@ -858,6 +811,7 @@
 	"apply": "Anwenden",
 	"applyDefaultSelection": "<em>Apply default selection</em>",
 	"archivingDate": "Archivierungsdatum",
+	"areYouSureYouWantToAbortThisProcess": "Sind Sie sicher, dass Sie diesen Vorgang abbrechen möchten?",
 	"as": "als",
 	"attachFile": "File beilegen",
 	"attachments": "Anlagen",
@@ -925,6 +879,7 @@
 	"collapseAll": "<em>Collapse all<em>",
 	"columnPrivilegesSaved": "<em>Column privileges saved</em>",
 	"columnsPrivileges": "Spalten-Privilegien",
+	"completed": "Beendet",
 	"composeEmail": "E-Mail schreiben",
 	"composeFromTemplate": "<em>Compose from template</em>",
 	"configuration": "<em>Configuration</em>",
@@ -1219,6 +1174,7 @@
 	"ok": "Bestätigen",
 	"oldPassword": "Altes Passwort",
 	"onDay": "<em>On</em>",
+	"open": "Aktiv",
 	"open_3d_viewer": "3D-Ansicht öffnen",
 	"openRelationGraph": "Beziehungsgraph öffnen",
 	"operativeInstructions": "Betriebsanleitungen",
@@ -1372,6 +1328,7 @@
 	"success": "Erfolg",
 	"superclass": "Superklasse",
 	"superUser": "Super-User",
+	"suspended": "Unterbrochen",
 	"tabPositioInCardPanel": "Unterseiten TAB-Position in der Karte",
 	"targetClass": "Ursprungsklasse",
 	"taskManager": "Prozessmanager",

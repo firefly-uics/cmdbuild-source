@@ -746,64 +746,15 @@
 			"showgraph": "Visualizar gráfico",
 			"shownotes": "Visualizar notas"
 		},
-		"modworkflow": {
-			"abort_card": "Abortar Processo",
-			"abort_card_confirm": "Você tem certeza que deseja abortar este processo?",
-			"add_card": "Iniciar",
-			"completed": "Completado",
-			"custom_steps": "Passos Customizados",
-			"delete_card": "Abortar Processo",
-			"delete_card_confirm": "Você tem certeza que deseja remover este processo?",
-			"extattrs": {
-				"attachments": {
-					"must_save_to_add": "Você não pode adicionar um anexo antes de salvar a atividade"
-				},
-				"calendar": {
-					"wrong_config": "O calendário não está configurado corretamente"
-				},
-				"linkcards": {
-					"required": "Favor selecionar alguns cartões - "
-				},
-				"managerelation": {
-					"required": "Favor selecionar alguns relacionamentos - "
-				},
-				"notes": {
-					"must_save_to_modify": "Você não pode modificar as notas antes de salvar a atividade"
-				}
-			},
-			"interrupted": "Interrompida",
-			"modify_card": "Editar Atividade",
-			"modify_note": "Editar Nota",
-			"open_attachment": "Abrir Anexos",
-			"open_note": "Abrir Nota",
-			"started": "Iniciado",
-			"status": "Estado",
-			"statuses": {
-				"all": "Todos",
-				"closed.aborted": "Abortado",
-				"closed.completed": "Completado",
-				"open.not_running.suspended": "Suspenso",
-				"open.running": "Abrir"
-			},
-			"tabs": {
-				"attachments": "Anexos",
-				"card": "Atividade",
-				"detail": "Detalhes",
-				"history": "Histórico",
-				"notes": "Nota",
-				"options": "Opções",
-				"relations": "Relacionamentos",
-				"sketch": "Esboço"
-			},
-			"title": "Lista - ",
-			"treetitle": "Processos"
-		},
 		"welcome": {
 			"body": "`Módulo de Gerenciamento de Dados.",
 			"title": "Boas-Vindas"
 		}
 	},
 	"warnings": {
+		"calendarIsNotWellConfigured": "O calendário não está configurado corretamente",
+		"canNotAddAnAttachmentBeforeSavingTheActivity": "Você não pode adicionar um anexo antes de salvar a atividade",
+		"canNotModifyNotesBeforeSavingTheActivity": "Você não pode modificar as notas antes de salvar a atividade",
 		"changeAppliedOnlyToFilteredCards": "As mudanças serão aplicadas apenas para os cartões que atendem o filtro atual",
 		"emailTemplateRelatedAttributeEdited": "<em>Attribute related with email templates changed, some e-mail could be regenerated.</em>",
 		"itemNotAvailable": "<em>Item not available</em>",
@@ -815,6 +766,8 @@
 		"thereAreNoEnabledLanguages": "<em>There are no enabled languages</em>",
 		"toSetAFilterYouMustBeforeSelectAClass": "<em>To set a filter you must before select a class</em>"
 	},
+	"aborted": "Abortado",
+	"abortProcess": "Abortar Processo",
 	"account": "<em>Account</em>",
 	"accounts": "<em>Accounts</em>",
 	"active": "Ativo",
@@ -858,6 +811,7 @@
 	"apply": "Aplicar",
 	"applyDefaultSelection": "<em>Apply default selection</em>",
 	"archivingDate": "<em>Archiving date</em>",
+	"areYouSureYouWantToAbortThisProcess": "Você tem certeza que deseja abortar este processo?",
 	"as": "como",
 	"attachFile": "<em>Attach File</em>",
 	"attachments": "Anexos",
@@ -925,6 +879,7 @@
 	"collapseAll": "<em>Collapse all<em>",
 	"columnPrivilegesSaved": "<em>Column privileges saved</em>",
 	"columnsPrivileges": "Privilégios de Colunas",
+	"completed": "Completado",
 	"composeEmail": "Compor e-mail",
 	"composeFromTemplate": "<em>Compose from template</em>",
 	"configuration": "<em>Configuration</em>",
@@ -1219,6 +1174,7 @@
 	"ok": "OK",
 	"oldPassword": "Senha Antiga",
 	"onDay": "<em>On</em>",
+	"open": "Abrir",
 	"open_3d_viewer": "<em>Open 3D viewer</em>",
 	"openRelationGraph": "Abrir gráfico de relacionamento",
 	"operativeInstructions": "Instrução operatório",
@@ -1372,6 +1328,7 @@
 	"success": "Successo",
 	"superclass": "Superclasse",
 	"superUser": "Super user",
+	"suspended": "Suspenso",
 	"tabPositioInCardPanel": "Posição dos Tabs no painel do cartão",
 	"targetClass": "Classe Alvo",
 	"taskManager": "<em>Task manager</em>",

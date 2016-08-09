@@ -746,64 +746,15 @@
 			"showgraph": "Prikaži u grafu",
 			"shownotes": "Prikaži napomene"
 		},
-		"modworkflow": {
-			"abort_card": "Prekini proces",
-			"abort_card_confirm": "Da li ste sigurni da želite prekinuti proces?",
-			"add_card": "Napravi proces",
-			"completed": "Završen",
-			"custom_steps": "Dodatni koraci",
-			"delete_card": "Ukloni proces",
-			"delete_card_confirm": "Da li ste sigurni da želite ukloniti proces?",
-			"extattrs": {
-				"attachments": {
-					"must_save_to_add": "Ne možete postaviti prilog prije snimanja aktivnosti"
-				},
-				"calendar": {
-					"wrong_config": "Kalendar nije dobro postavljen"
-				},
-				"linkcards": {
-					"required": "Morate izabrati karticu - "
-				},
-				"managerelation": {
-					"required": "Morate izabrati relacije - "
-				},
-				"notes": {
-					"must_save_to_modify": "Ne možete urediti napomenu prije nego što snimite aktivnost"
-				}
-			},
-			"interrupted": "Prekinut",
-			"modify_card": "Izmjeni aktivnost",
-			"modify_note": "Izmjeni napomenu",
-			"open_attachment": "Otvori prilog",
-			"open_note": "Otvori napomenu",
-			"started": " Pokrenut",
-			"status": " Stanje",
-			"statuses": {
-				"all": "Sva",
-				"closed.aborted": "Prekinut",
-				"closed.completed": "Završen",
-				"open.not_running.suspended": "Suspendiran",
-				"open.running": "Aktivan"
-			},
-			"tabs": {
-				"attachments": "Prilozi",
-				"card": "Aktivnost",
-				"detail": "Detalji",
-				"history": "Povijest",
-				"notes": "Napomena",
-				"options": "Mogućnosti",
-				"relations": "Relacije",
-				"sketch": "Graf"
-			},
-			"title": "Lista - ",
-			"treetitle": "Kartice procesa"
-		},
 		"welcome": {
 			"body": "Modul za upravljanje podacima.",
 			"title": "Dobro došli"
 		}
 	},
 	"warnings": {
+		"calendarIsNotWellConfigured": "Kalendar nije dobro postavljen",
+		"canNotAddAnAttachmentBeforeSavingTheActivity": "Ne možete postaviti prilog prije snimanja aktivnosti",
+		"canNotModifyNotesBeforeSavingTheActivity": "Ne možete urediti napomenu prije nego što snimite aktivnost",
 		"changeAppliedOnlyToFilteredCards": "Izjmene će biti primjenjene samo na kartice podataka koje zadovoljavaju postavljeni filter.",
 		"emailTemplateRelatedAttributeEdited": "<em>Attribute related with email templates changed, some e-mail could be regenerated.</em>",
 		"itemNotAvailable": "<em>Item not available</em>",
@@ -815,6 +766,8 @@
 		"thereAreNoEnabledLanguages": "<em>There are no enabled languages</em>",
 		"toSetAFilterYouMustBeforeSelectAClass": "<em>To set a filter you must before select a class</em>"
 	},
+	"aborted": "Prekinut",
+	"abortProcess": "Prekini proces",
 	"account": "<em>Account</em>",
 	"accounts": "<em>Accounts</em>",
 	"active": "Aktivan",
@@ -858,6 +811,7 @@
 	"apply": "Primjeni",
 	"applyDefaultSelection": "<em>Apply default selection</em>",
 	"archivingDate": "Archiving date",
+	"areYouSureYouWantToAbortThisProcess": "Da li ste sigurni da želite prekinuti proces?",
 	"as": "kao",
 	"attachFile": "<em>Attach File</em>",
 	"attachments": "Prilozi",
@@ -925,6 +879,7 @@
 	"collapseAll": "<em>Collapse all<em>",
 	"columnPrivilegesSaved": "<em>Column privileges saved</em>",
 	"columnsPrivileges": "Prava nad kolumnama",
+	"completed": "Završen",
 	"composeEmail": "Pripremi email",
 	"composeFromTemplate": "<em>Compose from template</em>",
 	"configuration": "<em>Configuration</em>",
@@ -1219,6 +1174,7 @@
 	"ok": "Potvrdi",
 	"oldPassword": "Stara lozinka",
 	"onDay": "<em>On</em>",
+	"open": "Aktivan",
 	"open_3d_viewer": "<em>Open 3D viewer</em>",
 	"openRelationGraph": "Otvori graf relacija",
 	"operativeInstructions": "Dokumentacija o izvršenim aktivnostima",
@@ -1372,6 +1328,7 @@
 	"success": "Uspjeh",
 	"superclass": "Superklasa",
 	"superUser": "Administrator (Super user)",
+	"suspended": "Suspendiran",
 	"tabPositioInCardPanel": "Smještaj tab-a u panelu kartice",
 	"targetClass": "Ciljna klasa",
 	"taskManager": "<em>Task manager</em>",

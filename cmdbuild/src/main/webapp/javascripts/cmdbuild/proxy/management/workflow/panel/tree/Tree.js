@@ -41,11 +41,11 @@
 			return Ext.create('Ext.data.ArrayStore', {
 				fields: [CMDBuild.core.constants.Proxy.DESCRIPTION, CMDBuild.core.constants.Proxy.VALUE],
 				data: [
-					[CMDBuild.Translation.management.modworkflow.statuses['open.running'], 'open.running'],
-					[CMDBuild.Translation.management.modworkflow.statuses['open.not_running.suspended'], 'open.not_running.suspended'],
-					[CMDBuild.Translation.management.modworkflow.statuses['closed.completed'], 'closed.completed'],
-					[CMDBuild.Translation.management.modworkflow.statuses['closed.aborted'], 'closed.aborted'],
-					[CMDBuild.Translation.management.modworkflow.statuses['all'], 'all']
+					[CMDBuild.Translation.open, 'open.running'],
+					[CMDBuild.Translation.suspended, 'open.not_running.suspended'],
+					[CMDBuild.Translation.completed, 'closed.completed'],
+					[CMDBuild.Translation.aborted, 'closed.aborted'],
+					[CMDBuild.Translation.all, 'all']
 				]
 			});
 		},

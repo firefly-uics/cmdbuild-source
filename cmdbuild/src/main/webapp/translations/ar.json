@@ -746,64 +746,15 @@
 			"showgraph": "أظهر الرسمة",
 			"shownotes": "أظهر الملاحظات"
 		},
-		"modworkflow": {
-			"abort_card": "إجهاض الآلية",
-			"abort_card_confirm": "هل أنت متأكد من أنك تريد أن تجهض هذه الآلية؟",
-			"add_card": "بدء",
-			"completed": "مكتمل",
-			"custom_steps": "خطوات خيارية",
-			"delete_card": "حذف الآلية",
-			"delete_card_confirm": "هل أنت متأكد من أنك تريد حذف الآلية؟",
-			"extattrs": {
-				"attachments": {
-					"must_save_to_add": "لا يمكن إضافة مرفق قبل حفظ النشاط؟"
-				},
-				"calendar": {
-					"wrong_config": "لم يتم إعداد التقويم بشكل جيد"
-				},
-				"linkcards": {
-					"required": "فضلا انتقي البطاقات - "
-				},
-				"managerelation": {
-					"required": "فضلا انتقي العلاقات - "
-				},
-				"notes": {
-					"must_save_to_modify": "لا يمكنك تعديل الملاحظات قبل حفظ النشاط"
-				}
-			},
-			"interrupted": "قُوطِع",
-			"modify_card": "تحرير النشاط",
-			"modify_note": "تحرير الملاحظة",
-			"open_attachment": "فتح المرفقات",
-			"open_note": "فتح الملاحظة",
-			"started": "بدء",
-			"status": "الحالة",
-			"statuses": {
-				"all": "الكل",
-				"closed.aborted": "مجهض",
-				"closed.completed": "مكتمل",
-				"open.not_running.suspended": "معلق",
-				"open.running": "مفتوح"
-			},
-			"tabs": {
-				"attachments": "المرفقات",
-				"card": "النشاط",
-				"detail": "التفاصيل",
-				"history": "التاريخ",
-				"notes": "الملاحظة",
-				"options": "الخيارات",
-				"relations": "العلاقات",
-				"sketch": "الرسمة"
-			},
-			"title": "لائحة - ",
-			"treetitle": "الآليات"
-		},
 		"welcome": {
 			"body": "وحدة إدارة البيانات.",
 			"title": "مرحبا"
 		}
 	},
 	"warnings": {
+		"calendarIsNotWellConfigured": "لم يتم إعداد التقويم بشكل جيد",
+		"canNotAddAnAttachmentBeforeSavingTheActivity": "لا يمكن إضافة مرفق قبل حفظ النشاط؟",
+		"canNotModifyNotesBeforeSavingTheActivity": "لا يمكنك تعديل الملاحظات قبل حفظ النشاط",
 		"changeAppliedOnlyToFilteredCards": "التغييرات ستُعمَل فقط على البطاقات التي قابلت الفرز الحالي",
 		"emailTemplateRelatedAttributeEdited": "السمة المتعلقة بقوالب البريد الإلكتروني تغيرت، يمكن تجديد بعض البريدات الإلكترونية.",
 		"itemNotAvailable": "<em>Item not available</em>",
@@ -815,6 +766,8 @@
 		"thereAreNoEnabledLanguages": "<em>There are no enabled languages</em>",
 		"toSetAFilterYouMustBeforeSelectAClass": "<em>To set a filter you must before select a class</em>"
 	},
+	"aborted": "مجهض",
+	"abortProcess": "إجهاض الآلية",
 	"account": "الحساب",
 	"accounts": "الحسابات",
 	"active": "مفعل",
@@ -858,6 +811,7 @@
 	"apply": "إعمال",
 	"applyDefaultSelection": "إعمال الخيارات الافتراضية",
 	"archivingDate": "تاريخ الأرشفة",
+	"areYouSureYouWantToAbortThisProcess": "هل أنت متأكد من أنك تريد أن تجهض هذه الآلية؟",
 	"as": "كـ",
 	"attachFile": "أرفق ملف",
 	"attachments": "المرفقات",
@@ -925,6 +879,7 @@
 	"collapseAll": "<em>Collapse all</em>",
 	"columnPrivilegesSaved": "<em>Column privileges saved</em>",
 	"columnsPrivileges": "صلاحيات الأعمدة",
+	"completed": "مكتمل",
 	"composeEmail": "أنشئ بريد إلكتروني",
 	"composeFromTemplate": "أنشئ من قالب",
 	"configuration": "<em>Configuration</em>",
@@ -1219,6 +1174,7 @@
 	"ok": "حسنًا",
 	"oldPassword": "كلمة السر القديمة",
 	"onDay": "في",
+	"open": "مفتوح",
 	"open_3d_viewer": "فتح المنظر ثلاثي الأبعاد",
 	"openRelationGraph": "<em>Open relation graph</em>",
 	"operativeInstructions": "التعليمات",
@@ -1372,6 +1328,7 @@
 	"success": "نجاح",
 	"superclass": "صنف أب",
 	"superUser": "مدير",
+	"suspended": "معلق",
 	"tabPositioInCardPanel": "موضع التبويبات في لوحة البطاقة",
 	"targetClass": "الصنف المستهدف",
 	"taskManager": "إدارة المهمات",

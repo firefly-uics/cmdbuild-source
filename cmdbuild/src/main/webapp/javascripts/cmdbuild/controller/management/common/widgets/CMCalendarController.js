@@ -22,8 +22,7 @@
 			if (!this.reader.getStartDate(this.widgetConf) ||
 					!this.reader.getTitle(this.widgetConf)) {
 
-				CMDBuild.core.Message.error(CMDBuild.Translation.common.failure,
-						CMDBuild.Translation.management.modworkflow.extattrs.calendar.wrong_config);
+				CMDBuild.core.Message.error(CMDBuild.Translation.common.failure, CMDBuild.Translation.warnings.calendarIsNotWellConfigured);
 
 				this.skipLoading = true;
 				return;

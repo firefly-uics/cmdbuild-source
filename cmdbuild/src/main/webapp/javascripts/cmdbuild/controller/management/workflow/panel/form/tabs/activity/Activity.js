@@ -353,8 +353,8 @@
 		onRemoveCardClick: function() {
 			var me = this;
 			Ext.Msg.confirm(
-				CMDBuild.Translation.management.modworkflow.abort_card, // title
-				CMDBuild.Translation.management.modworkflow.abort_card_confirm, // message
+				CMDBuild.Translation.abortProcess, // title
+				CMDBuild.Translation.areYouSureYouWantToAbortThisProcess, // message
 				confirmCB);
 
 			function confirmCB(btn) {

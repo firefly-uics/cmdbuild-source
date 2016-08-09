@@ -746,64 +746,15 @@
 			"showgraph": "Hiện thị đồ thị",
 			"shownotes": "Hiện thị các ghi chú"
 		},
-		"modworkflow": {
-			"abort_card": "Hủy bỏ quá trình",
-			"abort_card_confirm": "Bạn có chắc là bạn muốn hủy bỏ quá trình?",
-			"add_card": "Bắt đầu",
-			"completed": "Hoàn thành",
-			"custom_steps": "Các bước tùy chỉnh",
-			"delete_card": "Hủy bỏ quá trình",
-			"delete_card_confirm": "Bạn có chắc là bạn muốn xoa quá trình nay?",
-			"extattrs": {
-				"attachments": {
-					"must_save_to_add": "Bạn không thể đính kèm thêm tập tin trước khi lưu các hoạt động"
-				},
-				"calendar": {
-					"wrong_config": "Lịch không được cấu hình tốt"
-				},
-				"linkcards": {
-					"required": "Xin vui lòng chọn một vài thẻ- "
-				},
-				"managerelation": {
-					"required": "Vui lòng chọn các mối quan hệ - "
-				},
-				"notes": {
-					"must_save_to_modify": "Bạn không thể sửa đổi các ghi chú trước khi lưu hoạt động"
-				}
-			},
-			"interrupted": "Bị gián đoạn",
-			"modify_card": "Chỉnh sửa hoạt đọng",
-			"modify_note": "Chỉnh sửa ghi chú",
-			"open_attachment": "Mở các tập tin đính kèm",
-			"open_note": "Mở ghi chú",
-			"started": "Đã bắt đầu",
-			"status": "Tình trạng",
-			"statuses": {
-				"all": "Tất cả",
-				"closed.aborted": "Bị hủy bỏ",
-				"closed.completed": "Hoàn thành",
-				"open.not_running.suspended": "Bị đình chỉ",
-				"open.running": "Mở"
-			},
-			"tabs": {
-				"attachments": "Các tập tin đính kèm",
-				"card": "Hoạt động",
-				"detail": "Các chi tiết",
-				"history": "Lịch sử",
-				"notes": "Ghi chú",
-				"options": "Các sự lựa chọn",
-				"relations": "Các mối quan hệ",
-				"sketch": "Phác thảo"
-			},
-			"title": "Danh sách - ",
-			"treetitle": "Các quy trình"
-		},
 		"welcome": {
 			"body": "Module quản lí cơ sở dữ liệu.",
 			"title": "Chào mừng"
 		}
 	},
 	"warnings": {
+		"calendarIsNotWellConfigured": "Lịch không được cấu hình tốt",
+		"canNotAddAnAttachmentBeforeSavingTheActivity": "Bạn không thể đính kèm thêm tập tin trước khi lưu các hoạt động",
+		"canNotModifyNotesBeforeSavingTheActivity": "Bạn không thể sửa đổi các ghi chú trước khi lưu hoạt động",
 		"changeAppliedOnlyToFilteredCards": "Những thay đổi chỉ sẽ được áp dụng cho các thẻ đáp ứng được bộ lọc hiện tại",
 		"emailTemplateRelatedAttributeEdited": "<em>Attribute related with email templates changed, some e-mail could be regenerated.</em>",
 		"itemNotAvailable": "<em>Item not available</em>",
@@ -815,6 +766,8 @@
 		"thereAreNoEnabledLanguages": "<em>There are no enabled languages</em>",
 		"toSetAFilterYouMustBeforeSelectAClass": "<em>To set a filter you must before select a class</em>"
 	},
+	"aborted": "Bị hủy bỏ",
+	"abortProcess": "Hủy bỏ quá trình",
 	"account": "<em>Account</em>",
 	"accounts": "<em>Accounts</em>",
 	"active": "Hoạt động",
@@ -858,6 +811,7 @@
 	"apply": "Áp dụng",
 	"applyDefaultSelection": "<em>Apply default selection</em>",
 	"archivingDate": "Ngày lưu trữ",
+	"areYouSureYouWantToAbortThisProcess": "Bạn có chắc là bạn muốn hủy bỏ quá trình?",
 	"as": "như là",
 	"attachFile": "<em>Attach File</em>",
 	"attachments": "Các tập tin đính kèm",
@@ -925,6 +879,7 @@
 	"collapseAll": "<em>Collapse all<em>",
 	"columnPrivilegesSaved": "<em>Column privileges saved</em>",
 	"columnsPrivileges": "Các đặc quyền của các cột",
+	"completed": "Hoàn thành",
 	"composeEmail": "Soạn email",
 	"composeFromTemplate": "<em>Compose from template</em>",
 	"configuration": "<em>Configuration</em>",
@@ -1219,6 +1174,7 @@
 	"ok": "OK",
 	"oldPassword": "Mật khẩu cũ",
 	"onDay": "<em>On</em>",
+	"open": "Mở",
 	"open_3d_viewer": "<em>Open 3D viewer</em>",
 	"openRelationGraph": "Mở rộng đồ thị mối quan hệ",
 	"operativeInstructions": "Hướng dẫn có ích",
@@ -1372,6 +1328,7 @@
 	"success": "Thành công",
 	"superclass": "Cao cấp",
 	"superUser": "Người dùng cấp cao",
+	"suspended": "Bị đình chỉ",
 	"tabPositioInCardPanel": "Vị trí các Tab trong bảng điều khiển thẻ",
 	"targetClass": "Class mục tiêu",
 	"taskManager": "<em>Task manager</em>",

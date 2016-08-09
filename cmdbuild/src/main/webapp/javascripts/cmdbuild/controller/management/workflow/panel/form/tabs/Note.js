@@ -163,9 +163,7 @@
 			var isNew = isANewActivity(card);
 
 			if (isNew) {
-				CMDBuild.core.Message.error(CMDBuild.Translation.common.failure,
-					CMDBuild.Translation.management.modworkflow.extattrs.notes.must_save_to_modify,
-					popup = false);
+				CMDBuild.core.Message.error(CMDBuild.Translation.common.failure, CMDBuild.Translation.warnings.canNotModifyNotesBeforeSavingTheActivity, false);
 			}
 
 			return !isNew;

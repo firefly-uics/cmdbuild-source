@@ -746,64 +746,15 @@
 			"showgraph": "Show graph",
 			"shownotes": "Show notes"
 		},
-		"modworkflow": {
-			"abort_card": "Abort process",
-			"abort_card_confirm": "Are you sure you want to abort this process?",
-			"add_card": "Start",
-			"completed": "Completed",
-			"custom_steps": "Custom steps",
-			"delete_card": "Abort process",
-			"delete_card_confirm": "Are you sure you want to delete this process?",
-			"extattrs": {
-				"attachments": {
-					"must_save_to_add": "You can not add an attachment before saving the activity"
-				},
-				"calendar": {
-					"wrong_config": "The calendar is not well configured"
-				},
-				"linkcards": {
-					"required": "Please select some cards - "
-				},
-				"managerelation": {
-					"required": "Please select some relations - "
-				},
-				"notes": {
-					"must_save_to_modify": "You can not modify the notes before saving the activity"
-				}
-			},
-			"interrupted": "Interrupted",
-			"modify_card": "Edit activity",
-			"modify_note": "Edit note",
-			"open_attachment": "Open attachments",
-			"open_note": "Open note",
-			"started": "Started",
-			"status": "Status",
-			"statuses": {
-				"all": "All",
-				"closed.aborted": "Aborted",
-				"closed.completed": "Completed",
-				"open.not_running.suspended": "Suspended",
-				"open.running": "Open"
-			},
-			"tabs": {
-				"attachments": "Attachments",
-				"card": "Activity",
-				"detail": "Details",
-				"history": "History",
-				"notes": "Note",
-				"options": "Options",
-				"relations": "Relations",
-				"sketch": "Sketch"
-			},
-			"title": "List - ",
-			"treetitle": "Processes"
-		},
 		"welcome": {
 			"body": "Data management module.",
 			"title": "Welcome"
 		}
 	},
 	"warnings": {
+		"calendarIsNotWellConfigured": "The calendar is not well configured",
+		"canNotAddAnAttachmentBeforeSavingTheActivity": "You can not add an attachment before saving the activity",
+		"canNotModifyNotesBeforeSavingTheActivity": "You can not modify the notes before saving the activity",
 		"changeAppliedOnlyToFilteredCards": "The changes will be applied only to cards that meet the current filter",
 		"emailTemplateRelatedAttributeEdited": "Attribute related with email templates changed, some e-mail could be regenerated.",
 		"itemNotAvailable": "Item not available",
@@ -815,6 +766,8 @@
 		"thereAreNoEnabledLanguages": "There are no enabled languages",
 		"toSetAFilterYouMustBeforeSelectAClass": "To set a filter you must before select a class"
 	},
+	"aborted": "Aborted",
+	"abortProcess": "Abort process",
 	"account": "Account",
 	"accounts": "Accounts",
 	"active": "Active",
@@ -858,6 +811,7 @@
 	"apply": "Apply",
 	"applyDefaultSelection": "Apply default selection",
 	"archivingDate": "Archiving date",
+	"areYouSureYouWantToAbortThisProcess": "Are you sure you want to abort this process?",
 	"as": "as",
 	"attachFile": "Attach file",
 	"attachments": "Attachments",
@@ -925,6 +879,7 @@
 	"collapseAll": "Collapse all",
 	"columnPrivilegesSaved": "Column privileges saved",
 	"columnsPrivileges": "Columns privileges",
+	"completed": "Completed",
 	"composeEmail": "Compose e-mail",
 	"composeFromTemplate": "Compose from template",
 	"configuration": "Configuration",
@@ -1219,6 +1174,7 @@
 	"ok": "OK",
 	"oldPassword": "Old password",
 	"onDay": "On",
+	"open": "Open",
 	"open_3d_viewer": "Open 3D viewer",
 	"openRelationGraph": "Open relation graph",
 	"operativeInstructions": "Operative instructions",
@@ -1372,6 +1328,7 @@
 	"success": "Success",
 	"superclass": "Superclass",
 	"superUser": "Super user",
+	"suspended": "Suspended",
 	"tabPositioInCardPanel": "Tabs position in card panel",
 	"targetClass": "Target class",
 	"taskManager": "Task manager",
