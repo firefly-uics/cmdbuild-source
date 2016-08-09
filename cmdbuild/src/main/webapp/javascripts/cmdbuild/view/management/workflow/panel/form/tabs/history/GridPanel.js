@@ -15,7 +15,7 @@
 		],
 
 		/**
-		 * @cfg {CMDBuild.controller.management.workflow.tabs.History}
+		 * @cfg {CMDBuild.controller.management.workflow.panel.form.tabs.History}
 		 */
 		delegate: undefined,
 

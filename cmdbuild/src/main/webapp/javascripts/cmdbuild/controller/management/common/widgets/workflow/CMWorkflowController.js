@@ -1,11 +1,10 @@
 (function() {
 
 	Ext.require([
-		'CMDBuild.controller.management.classes.StaticsController',
+		'CMDBuild.controller.management.common.widgets.workflow.StaticsController',
 		'CMDBuild.core.constants.Global',
 		'CMDBuild.core.Message',
-		'CMDBuild.proxy.widget.Workflow',
-		'CMDBuild.proxy.workflow.Activity'
+		'CMDBuild.proxy.widget.Workflow'
 	]);
 
 	var ERROR_TEMPLATE = "<p class=\"{0}\">{1}</p>";
@@ -162,7 +161,7 @@
 			},
 			scope: me,
 			success: function (response, options, decodedResponse) {
-				me.attributes = CMDBuild.controller.management.workflow.StaticsController.filterAttributesInStep(me.cardAttributes, decodedResponse.response.variables);
+				me.attributes = CMDBuild.controller.management.common.widgets.workflow.StaticsController.filterAttributesInStep(me.cardAttributes, decodedResponse.response.variables);
 				me.view.configureForm(me.attributes);
 				me.templateResolver = new CMDBuild.Management.TemplateResolver({
 					clientForm: me.clientForm,
@@ -209,7 +208,7 @@
 			requestParams.advance = advance;
 			requestParams.activityInstanceId = undefined;
 			requestParams.ww = Ext.JSON.encode(me.widgetControllerManager.getData(advance));
-			CMDBuild.proxy.workflow.Activity.update({
+			CMDBuild.proxy.widget.Workflow.updateActivity({
 				params: requestParams,
 				scope : me,
 				clientValidation: true, //to force the save request

@@ -109,7 +109,7 @@
 			// Base properties fieldset setup
 				this.form.reset();
 				this.form.setDisabledModify(false, true);
-				this.form.loadRecord(Ext.create('CMDBuild.model.workflow.Workflow'));
+				this.form.loadRecord(Ext.create('CMDBuild.model.workflow.administration.Workflow'));
 
 				// Set parent default selection
 				this.propertiesPanel.parentCombo.getStore().load({
@@ -204,7 +204,7 @@
 		 */
 		onWorkflowTabPropertiesSaveButtonClick: function () {
 			if (this.validate(this.propertiesPanel)) {
-				var formDataModel = Ext.create('CMDBuild.model.workflow.Workflow', this.propertiesPanel.getData(true));
+				var formDataModel = Ext.create('CMDBuild.model.workflow.administration.Workflow', this.propertiesPanel.getData(true));
 
 				var params = formDataModel.getData();
 				params['inherits'] = params[CMDBuild.core.constants.Proxy.PARENT];

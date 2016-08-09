@@ -1,5 +1,8 @@
 (function () {
 
+	/**
+	 * @administration
+	 */
 	Ext.define('CMDBuild.proxy.workflow.Workflow', {
 
 		requires: [

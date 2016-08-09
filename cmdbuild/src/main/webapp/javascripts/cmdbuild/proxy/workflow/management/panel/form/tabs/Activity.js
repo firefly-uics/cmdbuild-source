@@ -1,8 +1,5 @@
 (function () {
 
-	/**
-	 * @link CMDBuild.proxy.workflow.Activity
-	 */
 	Ext.define('CMDBuild.proxy.workflow.management.panel.form.tabs.Activity', {
 
 		requires: [

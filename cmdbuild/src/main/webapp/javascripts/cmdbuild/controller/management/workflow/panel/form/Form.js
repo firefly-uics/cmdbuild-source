@@ -12,7 +12,7 @@
 
 		requires: [
 			'CMDBuild.core.constants.Proxy',
-			'CMDBuild.controller.management.workflow.panel.form.tabs.Activity'
+			'CMDBuild.controller.management.workflow.panel.form.tabs.activity.Activity'
 		],
 
 		mixins: {
@@ -41,7 +41,7 @@
 		],
 
 		/**
-		 * @property {CMDBuild.controller.management.workflow.panel.form.tabs.Activity}
+		 * @property {CMDBuild.controller.management.workflow.panel.form.tabs.activity.Activity}
 		 */
 		controllerTabActivity: undefined,
 
@@ -127,7 +127,7 @@
 		},
 
 		/**
-		 * @returns {CMDBuild.controller.management.workflow.panel.form.tabs.Activity} activityPanelController
+		 * @returns {CMDBuild.controller.management.workflow.panel.form.tabs.activity.Activity} activityPanelController
 		 */
 		buildTabControllerActivity: function () {
 			var view = Ext.create('CMDBuild.view.management.workflow.panel.form.tabs.activity.ActivityView');
@@ -136,7 +136,7 @@
 				this.tabPanel // as CMTabbedWidgetDelegate
 			);
 			var widgetControllerManager = new CMDBuild.controller.management.common.CMWidgetManagerController(this.widgetManager);
-			var activityPanelController = new CMDBuild.controller.management.workflow.panel.form.tabs.Activity(view, this, widgetControllerManager);
+			var activityPanelController = new CMDBuild.controller.management.workflow.panel.form.tabs.activity.Activity(view, this, widgetControllerManager);
 
 			return activityPanelController;
 		},

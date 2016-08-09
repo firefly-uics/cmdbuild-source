@@ -241,7 +241,7 @@
 		 * Abstract constructor that must be extended implementing creation and setup of view
 		 *
 		 * @param {Object} configurationObject
-		 * @param {Object} configurationObject.parentDelegate - CMModCardController or CMModWorkflowController
+		 * @param {Object} configurationObject.parentDelegate
 		 *
 		 * @abstract
 		 * @override

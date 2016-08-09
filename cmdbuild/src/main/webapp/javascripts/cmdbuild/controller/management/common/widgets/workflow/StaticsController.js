@@ -2,7 +2,7 @@
 
 	Ext.require(['CMDBuild.core.constants.Global']);
 
-	Ext.define('CMDBuild.controller.management.workflow.StaticsController', {
+	Ext.define('CMDBuild.controller.management.common.widgets.workflow.StaticsController', {
 
 		singleton: true,
 
@@ -49,7 +49,7 @@
 		 * @returns {String or null} out
 		 */
 		getInvalidAttributeAsHTML: function(form) {
-			var invalidFields = CMDBuild.controller.management.workflow.StaticsController.getInvalidField(form);
+			var invalidFields = CMDBuild.controller.management.workflow.panel.form.tabs.activity.StaticsController.getInvalidField(form);
 			var out = null;
 
 			if (!Ext.Object.isEmpty(invalidFields) && Ext.isObject(invalidFields)) {

@@ -1,7 +1,6 @@
 (function () {
 
 	/**
-	 * @link CMDBuild.controller.management.workflow.CMNoteController
 	 * @link CMDBuild.controller.management.classes.CMNoteController
 	 *
 	 * @legacy

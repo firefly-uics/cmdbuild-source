@@ -19,7 +19,7 @@
 		},
 
 		/**
-		 * @cfg {CMDBuild.controller.management.workflow.CMModWorkflowController}
+		 * @cfg {CMDBuild.controller.management.workflow.panel.form.Form}
 		 */
 		parentDelegate: undefined,
 
@@ -60,7 +60,7 @@
 		entryTypeAttributes: {},
 
 		/**
-		 * @property {CMDBuild.view.management.workflow.tabs.history.GridPanel}
+		 * @property {CMDBuild.view.management.workflow.panel.form.tabs.history.GridPanel}
 		 */
 		grid: undefined,
 
@@ -94,13 +94,13 @@
 		selectedEntity: undefined,
 
 		/**
-		 * @property {CMDBuild.view.management.workflow.tabs.history.HistoryView}
+		 * @property {CMDBuild.view.management.workflow.panel.form.tabs.history.HistoryView}
 		 */
 		view: undefined,
 
 		/**
 		 * @param {Object} configurationObject
-		 * @param {CMDBuild.controller.management.workflow.CMModWorkflowController} configurationObject.parentDelegate
+		 * @param {CMDBuild.controller.management.workflow.panel.form.Form} configurationObject.parentDelegate
 		 *
 		 * @returns {Void}
 		 *
@@ -111,7 +111,7 @@
 
 			this.callParent(arguments);
 
-			this.view = Ext.create('CMDBuild.view.management.workflow.tabs.history.HistoryView', { delegate: this });
+			this.view = Ext.create('CMDBuild.view.management.workflow.panel.form.tabs.history.HistoryView', { delegate: this });
 
 			// Shorthands
 			this.grid = this.view.grid;
