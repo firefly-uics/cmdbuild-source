@@ -7,7 +7,7 @@
 			'CMDBuild.core.constants.Global',
 			'CMDBuild.core.constants.ModuleIdentifiers',
 			'CMDBuild.core.constants.Proxy',
-			'CMDBuild.proxy.workflow.management.Workflow'
+			'CMDBuild.proxy.management.workflow.Workflow'
 		],
 
 		/**
@@ -79,7 +79,7 @@
 			var params = {};
 			params[CMDBuild.core.constants.Proxy.ACTIVE] = true;
 
-			CMDBuild.proxy.workflow.management.Workflow.readAll({
+			CMDBuild.proxy.management.workflow.Workflow.readAll({
 				params: params,
 				loadMask: false,
 				scope: this,

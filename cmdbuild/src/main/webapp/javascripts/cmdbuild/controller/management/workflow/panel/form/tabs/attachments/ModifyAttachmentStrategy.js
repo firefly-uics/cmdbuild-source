@@ -12,7 +12,7 @@
 			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.LoadMask',
 			'CMDBuild.core.Message',
-			'CMDBuild.proxy.workflow.management.panel.form.tabs.Attachment'
+			'CMDBuild.proxy.management.workflow.panel.form.tabs.Attachment'
 		],
 
 		ownerController: undefined,
@@ -42,7 +42,7 @@
 			var form = attachmentWindow.form.getForm();
 			var me = this;
 
-			CMDBuild.proxy.workflow.management.panel.form.tabs.Attachment.confirm({
+			CMDBuild.proxy.management.workflow.panel.form.tabs.Attachment.confirm({
 				form: form,
 				params: me.forgeRequestParams(attachmentWindow),
 				loadMask: false,

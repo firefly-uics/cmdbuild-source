@@ -20,7 +20,7 @@
 			'CMDBuild.core.constants.Global',
 			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.Message',
-			'CMDBuild.proxy.workflow.management.panel.form.tabs.Activity'
+			'CMDBuild.proxy.management.workflow.panel.form.tabs.Activity'
 		],
 
 		mixins: {
@@ -180,7 +180,7 @@
 				_CMWFState.setProcessInstance(
 					Ext.create('CMDBuild.model.CMProcessInstance', { classId: id }),
 					function () {
-						CMDBuild.proxy.workflow.management.panel.form.tabs.Activity.readStart({
+						CMDBuild.proxy.management.workflow.panel.form.tabs.Activity.readStart({
 							params: {
 								classId: id
 							},
@@ -313,7 +313,7 @@
 				params[CMDBuild.core.constants.Proxy.ACTIVITY_INSTANCE_ID] = _CMWFState.getActivityInstance().data[CMDBuild.core.constants.Proxy.ID];
 				params[CMDBuild.core.constants.Proxy.PROCESS_INSTANCE_ID] = _CMWFState.getProcessInstance().data[CMDBuild.core.constants.Proxy.ID];
 
-				CMDBuild.proxy.workflow.management.panel.form.tabs.Activity.lock({
+				CMDBuild.proxy.management.workflow.panel.form.tabs.Activity.lock({
 					params: params,
 					loadMask: false,
 					scope: scope,
@@ -343,7 +343,7 @@
 				params[CMDBuild.core.constants.Proxy.ACTIVITY_INSTANCE_ID] = this.lastSelectedActivityInstance.data[CMDBuild.core.constants.Proxy.ID];
 				params[CMDBuild.core.constants.Proxy.PROCESS_INSTANCE_ID] = this.lastSelectedProcessInstance.data[CMDBuild.core.constants.Proxy.ID];
 
-				CMDBuild.proxy.workflow.management.panel.form.tabs.Activity.unlock({
+				CMDBuild.proxy.management.workflow.panel.form.tabs.Activity.unlock({
 					params: params,
 					loadMask: false
 				});
@@ -496,7 +496,7 @@
 
 		this.clearView();
 
-		CMDBuild.proxy.workflow.management.panel.form.tabs.Activity.abort({
+		CMDBuild.proxy.management.workflow.panel.form.tabs.Activity.abort({
 			params: {
 				classId: processInstance.getClassId(),
 				cardId: processInstance.getId()
@@ -525,7 +525,7 @@
 			beginDate: pi.get("beginDateAsLong")
 		}
 
-		CMDBuild.proxy.workflow.management.panel.form.tabs.Activity.isUpdated({
+		CMDBuild.proxy.management.workflow.panel.form.tabs.Activity.isUpdated({
 			params: requestParams,
 			loadMask: false,
 			success: function(operation, requestConfiguration, decodedResponse) {
@@ -576,7 +576,7 @@
 
 				_msg('Saving workflow with params', requestParams);
 
-				CMDBuild.proxy.workflow.management.panel.form.tabs.Activity.update({
+				CMDBuild.proxy.management.workflow.panel.form.tabs.Activity.update({
 					params: requestParams,
 					scope: this,
 					clientValidation: this.isAdvance, // Force save request
@@ -596,7 +596,7 @@
 
 						this.superController.cmfg(
 							'onWorkflowActivityUpdateCallback',
-							Ext.create('CMDBuild.model.workflow.management.panel.form.tabs.activity.SaveResponse', decodedResponse.response)
+							Ext.create('CMDBuild.model.management.workflow.panel.form.tabs.activity.SaveResponse', decodedResponse.response)
 						);
 					}
 				});

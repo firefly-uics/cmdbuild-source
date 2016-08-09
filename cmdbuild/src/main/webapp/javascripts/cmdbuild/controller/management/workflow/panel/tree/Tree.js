@@ -7,7 +7,7 @@
 			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.Message',
 			'CMDBuild.core.Utils',
-			'CMDBuild.proxy.workflow.management.panel.tree.Tree'
+			'CMDBuild.proxy.management.workflow.panel.tree.Tree'
 		],
 
 		/**
@@ -127,7 +127,7 @@
 		},
 
 		/**
-		 * Custom renderer to work with "CMDBuild.model.workflow.management.Node" custom get method
+		 * Custom renderer to work with "CMDBuild.model.management.workflow.Node" custom get method
 		 *
 		 * @param {Object} column
 		 *
@@ -260,7 +260,7 @@
 				if (Ext.isArray(sorters) && !Ext.isEmpty(sorters))
 					params[CMDBuild.core.constants.Proxy.SORT] = Ext.encode(sorters);
 
-				CMDBuild.proxy.workflow.management.panel.tree.Tree.readPosition({
+				CMDBuild.proxy.management.workflow.panel.tree.Tree.readPosition({
 					params: params,
 					scope: this,
 					success: function (response, options, decodedResponse) {
@@ -459,7 +459,7 @@
 		 *
 		 * @param {Object} parameters
 		 * @param {Object} parameters.metadata
-		 * @param {CMDBuild.model.workflow.management.Node} parameters.record
+		 * @param {CMDBuild.model.management.workflow.Node} parameters.record
 		 *
 		 * @returns {Void}
 		 */

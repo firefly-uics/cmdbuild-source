@@ -6,8 +6,8 @@
 		requires: [
 			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.Utils',
-			'CMDBuild.proxy.workflow.management.Activity',
-			'CMDBuild.proxy.workflow.management.Workflow'
+			'CMDBuild.proxy.management.workflow.Activity',
+			'CMDBuild.proxy.management.workflow.Workflow'
 		],
 
 		/**
@@ -57,21 +57,21 @@
 		controllerTree: undefined,
 
 		/**
-		 * @property {CMDBuild.model.workflow.management.Activity}
+		 * @property {CMDBuild.model.management.workflow.Activity}
 		 *
 		 * @private
 		 */
 		selectedActivity: undefined,
 
 		/**
-		 * @property {CMDBuild.model.workflow.management.Workflow}
+		 * @property {CMDBuild.model.management.workflow.Workflow}
 		 *
 		 * @private
 		 */
 		selectedWorkflow: undefined,
 
 		/**
-		 * Array of attribute models (CMDBuild.model.workflow.management.Attribute)
+		 * Array of attribute models (CMDBuild.model.management.workflow.Attribute)
 		 *
 		 * @property {Array}
 		 *
@@ -167,7 +167,7 @@
 					&& Ext.isNumber(params[CMDBuild.core.constants.Proxy.CARD_ID]) && !Ext.isEmpty(params[CMDBuild.core.constants.Proxy.CARD_ID])
 					&& Ext.isNumber(params[CMDBuild.core.constants.Proxy.CLASS_ID]) && !Ext.isEmpty(params[CMDBuild.core.constants.Proxy.CLASS_ID])
 				) {
-					CMDBuild.proxy.workflow.management.Activity.read({
+					CMDBuild.proxy.management.workflow.Activity.read({
 						params: params,
 						scope: this,
 						success: function (response, options, decodedResponse) {
@@ -199,7 +199,7 @@
 		},
 
 		/**
-		 * @param {CMDBuild.model.workflow.management.panel.form.tabs.activity.SaveResponse} responseModel
+		 * @param {CMDBuild.model.management.workflow.panel.form.tabs.activity.SaveResponse} responseModel
 		 *
 		 * @returns {Void}
 		 */
@@ -267,7 +267,7 @@ _debug('selectedWorkflow', this.cmfg('workflowSelectedWorkflowGet'));
 				var params = {};
 				params[CMDBuild.core.constants.Proxy.CLASS_NAME] = this.cmfg('workflowSelectedWorkflowGet', CMDBuild.core.constants.Proxy.NAME);
 
-				CMDBuild.proxy.workflow.management.Workflow.readAttributes({
+				CMDBuild.proxy.management.workflow.Workflow.readAttributes({
 					params: params,
 					scope: this,
 					success: function (response, options, decodedResponse) {
@@ -303,7 +303,7 @@ _debug('selectedWorkflow', this.cmfg('workflowSelectedWorkflowGet'));
 				var params = {};
 				params[CMDBuild.core.constants.Proxy.ACTIVE] = true;
 
-				CMDBuild.proxy.workflow.management.Workflow.read({
+				CMDBuild.proxy.management.workflow.Workflow.read({
 					params: params,
 					scope: this,
 					success: function (response, options, decodedResponse) {
@@ -350,7 +350,7 @@ _debug('selectedWorkflow', this.cmfg('workflowSelectedWorkflowGet'));
 					params[CMDBuild.core.constants.Proxy.CLASS_NAME] = this.cmfg('workflowSelectedWorkflowGet', CMDBuild.core.constants.Proxy.NAME);
 					params[CMDBuild.core.constants.Proxy.GROUP] = CMDBuild.configuration.runtime.get(CMDBuild.core.constants.Proxy.DEFAULT_GROUP_NAME);
 
-					CMDBuild.proxy.workflow.management.Workflow.readDefaultFilter({
+					CMDBuild.proxy.management.workflow.Workflow.readDefaultFilter({
 						params: params,
 						scope: this,
 						success: function (response, options, decodedResponse) {
@@ -414,7 +414,7 @@ _debug('selectedWorkflow', this.cmfg('workflowSelectedWorkflowGet'));
 			workflowSelectedActivitySet: function (parameters) {
 _debug('workflowSelectedActivitySet', parameters);
 				if (Ext.isObject(parameters) && !Ext.Object.isEmpty(parameters)) {
-					parameters[CMDBuild.core.constants.Proxy.MODEL_NAME] = 'CMDBuild.model.workflow.management.Activity';
+					parameters[CMDBuild.core.constants.Proxy.MODEL_NAME] = 'CMDBuild.model.management.workflow.Activity';
 					parameters[CMDBuild.core.constants.Proxy.TARGET_VARIABLE_NAME] = 'selectedActivity';
 
 					this.propertyManageSet(parameters);
@@ -457,7 +457,7 @@ _debug('workflowSelectedActivitySet', parameters);
 			 */
 			workflowSelectedWorkflowSet: function (parameters) {
 				if (Ext.isObject(parameters) && !Ext.Object.isEmpty(parameters)) {
-					parameters[CMDBuild.core.constants.Proxy.MODEL_NAME] = 'CMDBuild.model.workflow.management.Workflow';
+					parameters[CMDBuild.core.constants.Proxy.MODEL_NAME] = 'CMDBuild.model.management.workflow.Workflow';
 					parameters[CMDBuild.core.constants.Proxy.TARGET_VARIABLE_NAME] = 'selectedWorkflow';
 
 					this.propertyManageSet(parameters);
@@ -492,7 +492,7 @@ _debug('workflowSelectedActivitySet', parameters);
 				if (Ext.isArray(attributes) && !Ext.isEmpty(attributes))
 					Ext.Array.each(attributes, function (attributeObject, i, allAttributeObjects) {
 						if (Ext.isObject(attributeObject) && !Ext.Object.isEmpty(attributeObject))
-							this.selectedWorkflowAttributes.push(Ext.create('CMDBuild.model.workflow.management.Attribute', attributeObject));
+							this.selectedWorkflowAttributes.push(Ext.create('CMDBuild.model.management.workflow.Attribute', attributeObject));
 					}, this);
 			}
 	});
