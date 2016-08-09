@@ -3,6 +3,20 @@
 	Ext.define('CMDBuild.view.common.panel.gridAndForm.tools.Menu', {
 		extend: 'Ext.panel.Tool',
 
+		listeners: {
+			beforeshow: function (tool, eOpts) {
+				// BeforeShow event forwarding
+				if (
+					!Ext.isEmpty(this.menu)
+					&& !Ext.isEmpty(this.menu.items) && Ext.isFunction(this.menu.items.getRange)
+				) {
+					Ext.Array.each(this.menu.items.getRange(), function (item, i, allItems) {
+						item.fireEvent('beforeshow');
+					}, this);
+				}
+			}
+		},
+
 		/**
 		 * @param {Ext.EventObject} e
 		 * @param {HTMLElement} target
@@ -34,26 +48,14 @@
 		},
 
 		/**
+		 * @returns {Void}
+		 *
 		 * @override
 		 */
 		onDestroy: function () {
 			Ext.destroyMembers(this, 'menu');
 
 			this.callParent(arguments);
-		},
-
-		listeners: {
-			beforeshow: function (tool, eOpts) {
-				// BeforeShow event forwarding
-				if (
-					!Ext.isEmpty(this.menu)
-					&& !Ext.isEmpty(this.menu.items) && Ext.isFunction(this.menu.items.getRange)
-				) {
-					Ext.Array.forEach(this.menu.items.getRange(), function (item, i, allItems) {
-						item.fireEvent('beforeshow');
-					}, this);
-				}
-			}
 		}
 	});
 
