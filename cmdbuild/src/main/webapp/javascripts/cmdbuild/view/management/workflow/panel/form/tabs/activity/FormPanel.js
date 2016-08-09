@@ -101,7 +101,7 @@
 
 			this.cmTBar = [
 				this.modifyCardButton = Ext.create('CMDBuild.core.buttons.iconized.Modify', {
-					text: CMDBuild.Translation.management.modworkflow.modify_card,
+					text: CMDBuild.Translation.modifyActivity,
 					scope: this,
 
 					handler: function (button, e) {
@@ -109,7 +109,7 @@
 					}
 				}),
 				this.deleteCardButton = Ext.create('CMDBuild.core.buttons.iconized.Remove', {
-					text: CMDBuild.Translation.management.modworkflow.delete_card,
+					text: CMDBuild.Translation.removeProcess,
 					scope: this,
 
 					handler: function (button, e) {

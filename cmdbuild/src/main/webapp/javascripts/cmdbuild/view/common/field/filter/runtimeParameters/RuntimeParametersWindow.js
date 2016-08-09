@@ -26,7 +26,7 @@
 		 */
 		form: undefined,
 
-		baseTitle: '@@ Filter\'s input parameters', // TODO: translations (CMDBuild.Translation)
+		baseTitle: CMDBuild.Translation.filterInputParameters,
 		border: true,
 		closeAction: 'hide',
 		frame: false,

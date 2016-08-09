@@ -287,7 +287,7 @@
 				animCollapse: false,
 				split: true,
 				margin: "0 5 5 0",
-				title: CMDBuild.Translation.management.modworkflow.activitydocumentation,
+				title: CMDBuild.Translation.operativeInstructions,
 				html: ""
 			});
 

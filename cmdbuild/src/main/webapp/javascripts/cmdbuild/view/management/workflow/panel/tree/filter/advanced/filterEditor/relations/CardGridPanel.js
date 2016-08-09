@@ -505,8 +505,8 @@
 			grid: me,
 			store: me.store,
 			displayInfo: true,
-			displayMsg: ' {0} - {1} ' + CMDBuild.Translation.common.display_topic_of+' {2}',
-			emptyMsg: CMDBuild.Translation.common.display_topic_none,
+			displayMsg: '{0} - {1} ' + CMDBuild.Translation.of + ' {2}',
+			emptyMsg: CMDBuild.Translation.noTopicsToDisplay,
 			items: items
 		});
 

@@ -30,8 +30,8 @@ Ext.define("CMDBuild.view.administration.common.basepanel.CMGrid", {
 			this.pagingBar = new Ext.toolbar.Paging({
 				store: this.store,
 				displayInfo: true,
-				displayMsg: ' {0} - {1} ' + CMDBuild.Translation.common.display_topic_of+' {2}',
-				emptyMsg: CMDBuild.Translation.common.display_topic_none
+				displayMsg: '{0} - {1} ' + CMDBuild.Translation.of + ' {2}',
+				emptyMsg: CMDBuild.Translation.noTopicsToDisplay
 			});
 
 			this.bbar = this.pagingBar;
@@ -45,7 +45,7 @@ Ext.define("CMDBuild.view.administration.common.basepanel.CMGrid", {
 	},
 
 	/**
-	 * 
+	 *
 	 * @param {CMDBuild.delegate.administration.common.basepanel.CMGridConfigurator} gridConfigurator
 	 * configure the store and the columns of this grid asking for them to the
 	 * given configurator

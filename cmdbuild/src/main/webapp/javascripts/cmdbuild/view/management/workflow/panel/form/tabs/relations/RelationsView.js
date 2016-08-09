@@ -34,7 +34,7 @@
 
 		border: false,
 		frame: false,
-		title: CMDBuild.Translation.management.modworkflow.tabs.relations,
+		title: CMDBuild.Translation.relations,
 
 		cmWithAddButton: false,
 		cmWithEditRelationIcons: false,
