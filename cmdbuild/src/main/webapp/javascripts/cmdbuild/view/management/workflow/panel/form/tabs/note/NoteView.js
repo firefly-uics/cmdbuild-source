@@ -16,7 +16,7 @@
 
 		border: false,
 		frame: false,
-		title: CMDBuild.Translation.management.modworkflow.tabs.notes,
+		title: CMDBuild.Translation.note,
 
 		withButtons: true, // used in the windows to have specific buttons
 		withTbar: true, // used in the windows to have specific buttons
@@ -33,7 +33,7 @@
 			var me = this;
 
 			this.modifyNoteButton = Ext.create('CMDBuild.core.buttons.iconized.Modify', {
-				text: CMDBuild.Translation.management.modcard.modify_note,
+				text: CMDBuild.Translation.modifyNote,
 				scope: this,
 
 				handler: function() {

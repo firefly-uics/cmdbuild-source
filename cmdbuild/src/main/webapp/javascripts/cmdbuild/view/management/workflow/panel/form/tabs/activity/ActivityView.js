@@ -13,7 +13,7 @@
 		},
 
 		border: false,
-		title: CMDBuild.Translation.management.modworkflow.tabs.card,
+		title: CMDBuild.Translation.activity,
 		withButtons: true,
 		withToolBar: true,
 

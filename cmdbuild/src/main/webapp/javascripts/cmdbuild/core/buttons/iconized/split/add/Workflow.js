@@ -9,7 +9,7 @@
 		menu: undefined,
 
 		iconCls: 'add',
-		text: CMDBuild.Translation.management.modworkflow.add_card,
+		text: CMDBuild.Translation.start,
 
 		/**
 		 * @returns {Void}

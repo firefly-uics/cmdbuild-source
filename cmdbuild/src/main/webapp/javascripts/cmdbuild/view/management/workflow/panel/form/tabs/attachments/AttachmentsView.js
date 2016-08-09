@@ -21,7 +21,7 @@
 
 		border: false,
 		frame: false,
-		title: CMDBuild.Translation.management.modworkflow.tabs.attachments,
+		title: CMDBuild.Translation.attachments,
 
 		eventtype: 'card',
 		eventmastertype: 'class',

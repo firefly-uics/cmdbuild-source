@@ -79,7 +79,7 @@
 					this.buildMenuChildren(selectedWorkflowDescendants, menuItems);
 
 					return Ext.create('CMDBuild.core.buttons.iconized.split.add.Workflow', {
-						text: CMDBuild.Translation.management.modworkflow.add_card + ' ' + this.cmfg('workflowSelectedWorkflowGet', CMDBuild.core.constants.Proxy.DESCRIPTION),
+						text: CMDBuild.Translation.start + ' ' + this.cmfg('workflowSelectedWorkflowGet', CMDBuild.core.constants.Proxy.DESCRIPTION),
 						disabled: this.isAddButtonDisabled(menuItems),
 						scope: this,
 
@@ -96,7 +96,7 @@
 					});
 				} else {
 					return Ext.create('CMDBuild.core.buttons.iconized.add.Workflow', {
-						text: CMDBuild.Translation.management.modworkflow.add_card + ' ' + this.cmfg('workflowSelectedWorkflowGet', CMDBuild.core.constants.Proxy.DESCRIPTION),
+						text: CMDBuild.Translation.start + ' ' + this.cmfg('workflowSelectedWorkflowGet', CMDBuild.core.constants.Proxy.DESCRIPTION),
 						disabled: this.isAddButtonDisabled(),
 						scope: this,
 
