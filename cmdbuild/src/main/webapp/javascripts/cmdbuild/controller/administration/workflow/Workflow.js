@@ -58,7 +58,7 @@
 		controllerTaks: undefined,
 
 		/**
-		 * @property {CMDBuild.model.workflow.Workflow}
+		 * @property {CMDBuild.model.workflow.administration.Workflow}
 		 *
 		 * @private
 		 */
@@ -250,7 +250,7 @@
 			 */
 			workflowSelectedWorkflowSet: function (parameters) {
 				if (!Ext.Object.isEmpty(parameters)) {
-					parameters[CMDBuild.core.constants.Proxy.MODEL_NAME] = 'CMDBuild.model.workflow.Workflow';
+					parameters[CMDBuild.core.constants.Proxy.MODEL_NAME] = 'CMDBuild.model.workflow.administration.Workflow';
 					parameters[CMDBuild.core.constants.Proxy.TARGET_VARIABLE_NAME] = 'selectedWorkflow';
 
 					this.propertyManageSet(parameters);

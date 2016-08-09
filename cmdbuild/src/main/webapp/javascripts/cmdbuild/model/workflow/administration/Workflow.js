@@ -5,7 +5,7 @@
 		'CMDBuild.core.constants.Proxy'
 	]);
 
-	Ext.define('CMDBuild.model.workflow.Workflow', { // TODO: waiting for refactor (rename and structure)
+	Ext.define('CMDBuild.model.workflow.administration.Workflow', { // TODO: waiting for refactor (rename and structure)
 		extend: 'Ext.data.Model',
 
 		fields: [

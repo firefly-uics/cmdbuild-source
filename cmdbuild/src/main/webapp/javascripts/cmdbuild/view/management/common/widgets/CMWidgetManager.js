@@ -25,7 +25,7 @@
 		builders: {},
 
 		/**
-		 * @param {CMDBuild.view.management.classes.CMCardPanel or CMDBuild.view.management.workflow.CMActivityPanel} mainView
+		 * @param {CMDBuild.view.management.classes.CMCardPanel or CMDBuild.view.management.workflow.panel.form.tabs.activity.ActivityView} mainView
 		 * @param {Mixed} tabbedWidgetDelegate
 		 */
 		constructor: function(mainView, tabbedWidgetDelegate) {

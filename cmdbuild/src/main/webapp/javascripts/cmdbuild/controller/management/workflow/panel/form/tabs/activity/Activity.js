@@ -13,9 +13,10 @@
 	 * @merged CMDBuild.controller.management.classes.CMBaseCardPanelController
 	 * @merged CMDBuild.controller.management.classes.CMModCardSubController
 	 */
-	Ext.define("CMDBuild.controller.management.workflow.panel.form.tabs.Activity", {
+	Ext.define("CMDBuild.controller.management.workflow.panel.form.tabs.activity.Activity", {
 
 		requires: [
+			'CMDBuild.controller.management.workflow.panel.form.tabs.activity.StaticsController',
 			'CMDBuild.core.constants.Global',
 			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.Message',
@@ -38,8 +39,8 @@
 		lastSelectedProcessInstance: undefined,
 
 		/**
-		 * @param {CMDBuild.view.management.workflow.CMActivityPanel} view
-		 * @param {CMDBuild.controller.management.workflow.CMModWorkflowController} supercontroller
+		 * @param {CMDBuild.view.management.workflow.panel.form.tabs.activity.ActivityView} view
+		 * @param {CMDBuild.controller.management.workflow.panel.form.Form} supercontroller
 		 * @param {CMDBuild.controller.management.common.CMWidgetManagerController} widgetControllerManager
 		 * @param {???} delegate
 		 *
@@ -427,7 +428,7 @@
 					|| processInstance.isStateOpen()
 					|| processInstance.isStateSuspended()
 				) {
-					attributes = CMDBuild.controller.management.workflow.StaticsController.filterAttributesInStep(attributes, variables);
+					attributes = CMDBuild.controller.management.workflow.panel.form.tabs.activity.StaticsController.filterAttributesInStep(attributes, variables);
 				}
 
 				me.view.fillForm(attributes, editMode = false);
@@ -607,7 +608,7 @@
 
 	function validateForm(me) {
 		var form = me.view.getForm();
-		var invalidAttributes = CMDBuild.controller.management.workflow.StaticsController.getInvalidAttributeAsHTML(form);
+		var invalidAttributes = CMDBuild.controller.management.workflow.panel.form.tabs.activity.StaticsController.getInvalidAttributeAsHTML(form);
 
 		if (invalidAttributes != null) {
 			var msg = Ext.String.format("<p class=\"{0}\">{1}</p>", CMDBuild.core.constants.Global.getErrorMsgCss(), CMDBuild.Translation.errors.invalid_attributes);
