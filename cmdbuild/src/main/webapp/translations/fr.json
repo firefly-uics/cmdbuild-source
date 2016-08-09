@@ -746,64 +746,15 @@
 			"showgraph": "Voir le graphe",
 			"shownotes": "Voir les notes"
 		},
-		"modworkflow": {
-			"abort_card": "Abandonner le processus",
-			"abort_card_confirm": "Êtes-vous sûr de vouloir abandonner le processus ?",
-			"add_card": "Démarrer",
-			"completed": "Terminer",
-			"custom_steps": "Personnaliser les étapes",
-			"delete_card": "Supprimer le processus",
-			"delete_card_confirm": "Êtes-vous sûr de vouloir supprimer le processus ?",
-			"extattrs": {
-				"attachments": {
-					"must_save_to_add": "Vous ne pouvez pas ajouter une pièce jointe avant d'avoir sauvegardé l'activité"
-				},
-				"calendar": {
-					"wrong_config": "Le calendrier n'est pas correctement configuré"
-				},
-				"linkcards": {
-					"required": "Choisissez des fiches -"
-				},
-				"managerelation": {
-					"required": "Sélectionnez les relations -"
-				},
-				"notes": {
-					"must_save_to_modify": "Vous ne pouvez pas modifier les notes avant de sauvegarder votre activité"
-				}
-			},
-			"interrupted": "Interrompu",
-			"modify_card": "Modifier l'action",
-			"modify_note": "Modifier la note",
-			"open_attachment": "Ouvrir les fichiers joints",
-			"open_note": "Ouvrir la note",
-			"started": "Démarré",
-			"status": "Statut",
-			"statuses": {
-				"all": "Tous",
-				"closed.aborted": "Abandonnés",
-				"closed.completed": "Terminés",
-				"open.not_running.suspended": "Suspendus",
-				"open.running": "En cours"
-			},
-			"tabs": {
-				"attachments": "Pièces jointes",
-				"card": "Activité",
-				"detail": "Détails",
-				"history": "Historique",
-				"notes": "Notes",
-				"options": "Options",
-				"relations": "Relations",
-				"sketch": "Dessins"
-			},
-			"title": "Liste -",
-			"treetitle": "Processus"
-		},
 		"welcome": {
 			"body": "Module de gestion des données.",
 			"title": "Bienvenue"
 		}
 	},
 	"warnings": {
+		"calendarIsNotWellConfigured": "Le calendrier n'est pas correctement configuré",
+		"canNotAddAnAttachmentBeforeSavingTheActivity": "Vous ne pouvez pas ajouter une pièce jointe avant d'avoir sauvegardé l'activité",
+		"canNotModifyNotesBeforeSavingTheActivity": "Vous ne pouvez pas modifier les notes avant de sauvegarder votre activité",
 		"changeAppliedOnlyToFilteredCards": "Les changements seront appliqués sur les fiches avec le filtre en cours.",
 		"emailTemplateRelatedAttributeEdited": "Des attributs utilisés dans les modèles d'email ont été modifiés, certains emails pourraient être regénérés.",
 		"itemNotAvailable": "<em>Item not available</em>",
@@ -815,6 +766,8 @@
 		"thereAreNoEnabledLanguages": "<em>There are no enabled languages</em>",
 		"toSetAFilterYouMustBeforeSelectAClass": "Pour configurer un filtre, vous devez d'abord choisir une classe"
 	},
+	"aborted": "Abandonnés",
+	"abortProcess": "Abandonner le processus",
 	"account": "Compte",
 	"accounts": "Comptes",
 	"active": "Actif",
@@ -858,6 +811,7 @@
 	"apply": "Appliquer",
 	"applyDefaultSelection": "Appliquer la sélection par défaut",
 	"archivingDate": "Date d'archivage",
+	"areYouSureYouWantToAbortThisProcess": "Êtes-vous sûr de vouloir abandonner le processus ?",
 	"as": "Comme",
 	"attachFile": "Joindre un fichier",
 	"attachments": "Pièces jointes",
@@ -925,6 +879,7 @@
 	"collapseAll": "Tout masquer",
 	"columnPrivilegesSaved": "<em>Column privileges saved</em>",
 	"columnsPrivileges": "Droits sur les colonnes",
+	"completed": "Terminés",
 	"composeEmail": "Nouveau message",
 	"composeFromTemplate": "Créer à partir d'un modèle",
 	"configuration": "Configuration",
@@ -1219,6 +1174,7 @@
 	"ok": "Confirmer",
 	"oldPassword": "Ancien mot de passe",
 	"onDay": "Travaillé",
+	"open": "En cours",
 	"open_3d_viewer": "Ouvrir la visionneuse 3D",
 	"openRelationGraph": "Ouvrir le graphe de relations",
 	"operativeInstructions": "Instructions",
@@ -1372,6 +1328,7 @@
 	"success": "Succès",
 	"superclass": "Classe héritable",
 	"superUser": "Super utilisateur",
+	"suspended": "Suspendus",
 	"tabPositioInCardPanel": "Dans le panneau",
 	"targetClass": "Classe destination",
 	"taskManager": "Gestionnaire de tâches",

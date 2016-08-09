@@ -746,64 +746,15 @@
 			"showgraph": "Показать диаграмму связей",
 			"shownotes": "Показать комментарии"
 		},
-		"modworkflow": {
-			"abort_card": "Прервать процесс",
-			"abort_card_confirm": "Действительно удалить процесс?",
-			"add_card": "Запуск",
-			"completed": "Выполнено",
-			"custom_steps": "Настраиваемые шаги",
-			"delete_card": "Прервать процесс",
-			"delete_card_confirm": "Действительно удалить процесс?",
-			"extattrs": {
-				"attachments": {
-					"must_save_to_add": "Нельзя добавлять вложенный файл в карточку до сохранения процесса"
-				},
-				"calendar": {
-					"wrong_config": "<em>The calendar is not well configured</em>"
-				},
-				"linkcards": {
-					"required": "Пожалуйста, выберите карточки - "
-				},
-				"managerelation": {
-					"required": "Пожалуйста, выберите связи - "
-				},
-				"notes": {
-					"must_save_to_modify": "Нельзя редактировать комментарии до сохранения процесса"
-				}
-			},
-			"interrupted": "Прерван",
-			"modify_card": "Редактировать процесс",
-			"modify_note": "Редактировать комментарий",
-			"open_attachment": "Открыть вложенные файлы",
-			"open_note": "Открыть комментарий",
-			"started": "Запущен",
-			"status": "Статус",
-			"statuses": {
-				"all": "Все",
-				"closed.aborted": "Прерванные",
-				"closed.completed": "Завершенные",
-				"open.not_running.suspended": "Приостановленные",
-				"open.running": "Открытые"
-			},
-			"tabs": {
-				"attachments": "Вложенные файлы",
-				"card": "Процесс",
-				"detail": "Дополнительно",
-				"history": "История",
-				"notes": "Комментарии",
-				"options": "Параметры",
-				"relations": "Отношения",
-				"sketch": "Диаграмма"
-			},
-			"title": "Список - ",
-			"treetitle": "Рабочие процессы"
-		},
 		"welcome": {
 			"body": "Управление данными.",
 			"title": "Добро пожаловать!"
 		}
 	},
 	"warnings": {
+		"calendarIsNotWellConfigured": "<em>The calendar is not well configured</em>",
+		"canNotAddAnAttachmentBeforeSavingTheActivity": "Нельзя добавлять вложенный файл в карточку до сохранения процесса",
+		"canNotModifyNotesBeforeSavingTheActivity": "Нельзя редактировать комментарии до сохранения процесса",
 		"changeAppliedOnlyToFilteredCards": "Изменения будут применены только к карточкам, совпадающим с текущим фильтром",
 		"emailTemplateRelatedAttributeEdited": "<em>Attribute related with email templates changed, some e-mail could be regenerated.</em>",
 		"itemNotAvailable": "<em>Item not available</em>",
@@ -815,6 +766,8 @@
 		"thereAreNoEnabledLanguages": "<em>There are no enabled languages</em>",
 		"toSetAFilterYouMustBeforeSelectAClass": "<em>To set a filter you must before select a class</em>"
 	},
+	"aborted": "Прерванные",
+	"abortProcess": "Прервать процесс",
 	"account": "Учетная запись",
 	"accounts": "Учетные записи",
 	"active": "Активный",
@@ -858,6 +811,7 @@
 	"apply": "Применить",
 	"applyDefaultSelection": "<em>Apply default selection</em>",
 	"archivingDate": "Дата",
+	"areYouSureYouWantToAbortThisProcess": "Действительно удалить процесс?",
 	"as": "как",
 	"attachFile": "Вложить файл",
 	"attachments": "Вложенные файлы",
@@ -925,6 +879,7 @@
 	"collapseAll": "<em>Collapse all<em>",
 	"columnPrivilegesSaved": "<em>Column privileges saved</em>",
 	"columnsPrivileges": "Права доступа к колонкам",
+	"completed": "Завершенные",
 	"composeEmail": "Составление сообщения",
 	"composeFromTemplate": "<em>Compose from template</em>",
 	"configuration": "<em>Configuration</em>",
@@ -1219,6 +1174,7 @@
 	"ok": "ОК",
 	"oldPassword": "Старый пароль",
 	"onDay": "<em>On</em>",
+	"open": "Открытые",
 	"open_3d_viewer": "Открыть 3D просмотр",
 	"openRelationGraph": "Показать диаграмму связей",
 	"operativeInstructions": "Оперативные инструкции",
@@ -1372,6 +1328,7 @@
 	"success": "Успешно выполнено",
 	"superclass": "Суперкласс",
 	"superUser": "Администратор",
+	"suspended": "Приостановленные",
 	"tabPositioInCardPanel": "Положение закладок в панели карточек",
 	"targetClass": "Целевой класс",
 	"taskManager": "Диспетчер задач",

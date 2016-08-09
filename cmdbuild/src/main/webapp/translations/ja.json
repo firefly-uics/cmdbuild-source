@@ -746,64 +746,15 @@
 			"showgraph": "グラフ表示",
 			"shownotes": "ノート表示"
 		},
-		"modworkflow": {
-			"abort_card": "プロセスを中止",
-			"abort_card_confirm": "本当にこのプロセスを中止しますか?",
-			"add_card": "スタート",
-			"completed": "完了",
-			"custom_steps": "カスタムステップ",
-			"delete_card": "プロセス中止",
-			"delete_card_confirm": "本当にこのプロセスを削除していいですか?",
-			"extattrs": {
-				"attachments": {
-					"must_save_to_add": "アクティビティを保存する前に添付の追加は出来ません。"
-				},
-				"calendar": {
-					"wrong_config": "カレンダは正しく設定されていません"
-				},
-				"linkcards": {
-					"required": "カードを選択ください - "
-				},
-				"managerelation": {
-					"required": "リレーションを選択ください - "
-				},
-				"notes": {
-					"must_save_to_modify": "アクティビティの保存前は、ノートを変更出来ません。"
-				}
-			},
-			"interrupted": "中断",
-			"modify_card": "アクティビティ編集",
-			"modify_note": "ノート編集",
-			"open_attachment": "添付を開く",
-			"open_note": "ノートを開く",
-			"started": "開始",
-			"status": "ステータス",
-			"statuses": {
-				"all": "すべて",
-				"closed.aborted": "中止",
-				"closed.completed": "完了",
-				"open.not_running.suspended": "中断",
-				"open.running": "開いています"
-			},
-			"tabs": {
-				"attachments": "添付",
-				"card": "アクティビティ",
-				"detail": "詳細",
-				"history": "履歴",
-				"notes": "ノート",
-				"options": "オプション",
-				"relations": "リレーション",
-				"sketch": "スケッチ"
-			},
-			"title": "リスト - ",
-			"treetitle": "プロセス"
-		},
 		"welcome": {
 			"body": "データ管理モジュール",
 			"title": "ようこそ"
 		}
 	},
 	"warnings": {
+		"calendarIsNotWellConfigured": "カレンダは正しく設定されていません",
+		"canNotAddAnAttachmentBeforeSavingTheActivity": "アクティビティを保存する前に添付の追加は出来ません。",
+		"canNotModifyNotesBeforeSavingTheActivity": "アクティビティの保存前は、ノートを変更出来ません。",
 		"changeAppliedOnlyToFilteredCards": "現在のフィルターに一致しているカードにのみ変更は適用されます",
 		"emailTemplateRelatedAttributeEdited": "<em>Attribute related with email templates changed, some e-mail could be regenerated.</em>",
 		"itemNotAvailable": "<em>Item not available</em>",
@@ -815,6 +766,8 @@
 		"thereAreNoEnabledLanguages": "<em>There are no enabled languages</em>",
 		"toSetAFilterYouMustBeforeSelectAClass": "<em>To set a filter you must before select a class</em>"
 	},
+	"aborted": "中止",
+	"abortProcess": "プロセスを中止",
 	"account": "アカウント",
 	"accounts": "アカウント",
 	"active": "アクティブ",
@@ -858,6 +811,7 @@
 	"apply": "適用",
 	"applyDefaultSelection": "<em>Apply default selection</em>",
 	"archivingDate": "アーカイブ日",
+	"areYouSureYouWantToAbortThisProcess": "本当にこのプロセスを中止しますか?",
 	"as": "as",
 	"attachFile": "ファイルを添付",
 	"attachments": "添付",
@@ -925,6 +879,7 @@
 	"collapseAll": "<em>Collapse all<em>",
 	"columnPrivilegesSaved": "<em>Column privileges saved</em>",
 	"columnsPrivileges": "列の権限",
+	"completed": "完了",
 	"composeEmail": "email作成",
 	"composeFromTemplate": "テンプレートから作成",
 	"configuration": "<em>Configuration</em>",
@@ -1219,6 +1174,7 @@
 	"ok": "確認",
 	"oldPassword": "古いパスワード",
 	"onDay": "On",
+	"open": "開いています",
 	"open_3d_viewer": "3Dビューアを開く",
 	"openRelationGraph": "リレーショングラフを開く",
 	"operativeInstructions": "操作説明",
@@ -1372,6 +1328,7 @@
 	"success": "成功",
 	"superclass": "スーパークラス",
 	"superUser": "スーパーユーザー",
+	"suspended": "中断",
 	"tabPositioInCardPanel": "カードパネル中のタブ位置",
 	"targetClass": "ターゲットクラス",
 	"taskManager": "タスクマネージャ",
