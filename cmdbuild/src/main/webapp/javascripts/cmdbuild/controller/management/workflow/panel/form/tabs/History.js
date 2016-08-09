@@ -10,7 +10,7 @@
 
 		requires: [
 			'CMDBuild.core.constants.Proxy',
-			'CMDBuild.proxy.workflow.management.panel.form.tabs.History'
+			'CMDBuild.proxy.management.workflow.panel.form.tabs.History'
 		],
 
 		mixins: {
@@ -153,7 +153,7 @@
 		/**
 		 * @param {Object} entityAttributeData
 		 *
-		 * @returns {CMDBuild.model.workflow.management.panel.form.tabs.history.CardRecord} currentEntityModel
+		 * @returns {CMDBuild.model.management.workflow.panel.form.tabs.history.CardRecord} currentEntityModel
 		 *
 		 * @private
 		 */
@@ -166,7 +166,7 @@
 					performers.push(activityObject[CMDBuild.core.constants.Proxy.PERFORMER_NAME]);
 			}, this);
 
-			var currentEntityModel = Ext.create('CMDBuild.model.workflow.management.panel.form.tabs.history.CardRecord', this.selectedEntity.getData());
+			var currentEntityModel = Ext.create('CMDBuild.model.management.workflow.panel.form.tabs.history.CardRecord', this.selectedEntity.getData());
 			currentEntityModel.set(CMDBuild.core.constants.Proxy.ACTIVITY_NAME, this.selectedEntity.get(CMDBuild.core.constants.Proxy.VALUES)['Code']);
 			currentEntityModel.set(CMDBuild.core.constants.Proxy.PERFORMERS, performers);
 			currentEntityModel.set(CMDBuild.core.constants.Proxy.STATUS, this.statusTranslationGet(this.selectedEntity.get(CMDBuild.core.constants.Proxy.FLOW_STATUS)));
@@ -220,7 +220,7 @@
 				predecessorParams[CMDBuild.core.constants.Proxy.CARD_ID] = predecessorRecord.get(CMDBuild.core.constants.Proxy.ID); // Historic card ID
 				predecessorParams[CMDBuild.core.constants.Proxy.CLASS_NAME] = this.selectedEntity.get(CMDBuild.core.constants.Proxy.CLASS_NAME);
 
-				CMDBuild.proxy.workflow.management.panel.form.tabs.History.readHistoric({
+				CMDBuild.proxy.management.workflow.panel.form.tabs.History.readHistoric({
 					params: predecessorParams,
 					scope: this,
 					success: function (response, options, decodedResponse) {
@@ -236,9 +236,9 @@
 		/**
 		 * Finds same type (card or relation) current record predecessor
 		 *
-		 * @param {CMDBuild.model.workflow.management.panel.form.tabs.history.RelationRecord} record
+		 * @param {CMDBuild.model.management.workflow.panel.form.tabs.history.RelationRecord} record
 		 *
-		 * @returns {CMDBuild.model.workflow.management.panel.form.tabs.history.RelationRecord} predecessor or null
+		 * @returns {CMDBuild.model.management.workflow.panel.form.tabs.history.RelationRecord} predecessor or null
 		 *
 		 * @private
 		 */
@@ -369,7 +369,7 @@
 					params[CMDBuild.core.constants.Proxy.CLASS_NAME] = _CMCache.getEntryTypeNameById(this.selectedEntity.get('IdClass'));
 
 					// Request all class attributes
-					CMDBuild.proxy.workflow.management.panel.form.tabs.History.readAttributes({
+					CMDBuild.proxy.management.workflow.panel.form.tabs.History.readAttributes({
 						params: params,
 						scope: this,
 						success: function (response, options, decodedResponse) {
@@ -391,7 +391,7 @@
 									this.getRowExpanderPlugin().collapseAll();
 
 									if (this.grid.includeRelationsCheckbox.getValue()) {
-										CMDBuild.proxy.workflow.management.panel.form.tabs.History.readRelations({
+										CMDBuild.proxy.management.workflow.panel.form.tabs.History.readRelations({
 											params: params,
 											loadMask: false,
 											scope: this,
@@ -403,7 +403,7 @@
 
 												// Build reference models
 												Ext.Array.forEach(decodedResponse, function (element, i, allElements) {
-													referenceElementsModels.push(Ext.create('CMDBuild.model.workflow.management.panel.form.tabs.history.RelationRecord', element));
+													referenceElementsModels.push(Ext.create('CMDBuild.model.management.workflow.panel.form.tabs.history.RelationRecord', element));
 												});
 
 												this.clearStoreAdd(referenceElementsModels);
@@ -423,7 +423,7 @@
 		},
 
 		/**
-		 * @param {CMDBuild.model.classes.tabs.history.CardRecord or CMDBuild.model.workflow.management.panel.form.tabs.history.RelationRecord} record
+		 * @param {CMDBuild.model.classes.tabs.history.CardRecord or CMDBuild.model.management.workflow.panel.form.tabs.history.RelationRecord} record
 		 *
 		 * @returns {Void}
 		 */
@@ -438,7 +438,7 @@
 						params[CMDBuild.core.constants.Proxy.CARD_ID] = record.get(CMDBuild.core.constants.Proxy.ID); // Historic card ID
 						params[CMDBuild.core.constants.Proxy.CLASS_NAME] = record.get(CMDBuild.core.constants.Proxy.CLASS_NAME);
 
-						CMDBuild.proxy.workflow.management.panel.form.tabs.History.readHistoric({ // Get expanded card data
+						CMDBuild.proxy.management.workflow.panel.form.tabs.History.readHistoric({ // Get expanded card data
 							params: params,
 							scope: this,
 							success: function (response, options, decodedResponse) {
@@ -450,7 +450,7 @@
 									predecessorParams[CMDBuild.core.constants.Proxy.CARD_ID] = predecessorRecord.get(CMDBuild.core.constants.Proxy.ID); // Historic card ID
 									predecessorParams[CMDBuild.core.constants.Proxy.CLASS_NAME] = record.get(CMDBuild.core.constants.Proxy.CLASS_NAME);
 
-									CMDBuild.proxy.workflow.management.panel.form.tabs.History.readHistoric({ // Get expanded predecessor's card data
+									CMDBuild.proxy.management.workflow.panel.form.tabs.History.readHistoric({ // Get expanded predecessor's card data
 										params: predecessorParams,
 										scope: this,
 										success: function (response, options, decodedResponse) {
@@ -475,7 +475,7 @@
 					params[CMDBuild.core.constants.Proxy.ID] = record.get(CMDBuild.core.constants.Proxy.ID); // Historic relation ID
 					params[CMDBuild.core.constants.Proxy.DOMAIN] = record.get(CMDBuild.core.constants.Proxy.DOMAIN);
 
-					CMDBuild.proxy.workflow.management.panel.form.tabs.History.readHistoricRelation({
+					CMDBuild.proxy.management.workflow.panel.form.tabs.History.readHistoricRelation({
 						params: params,
 						scope: this,
 						success: function (response, options, decodedResponse) {
@@ -512,7 +512,7 @@
 				params[CMDBuild.core.constants.Proxy.ACTIVE] = true;
 				params[CMDBuild.core.constants.Proxy.SHORT] = false;
 
-				CMDBuild.proxy.workflow.management.panel.form.tabs.History.readLookups({
+				CMDBuild.proxy.management.workflow.panel.form.tabs.History.readLookups({
 					params: params,
 					loadMask: false,
 					scope: this,

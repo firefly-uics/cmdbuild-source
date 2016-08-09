@@ -5,7 +5,7 @@
 
 		requires: [
 			'CMDBuild.core.constants.Proxy',
-			'CMDBuild.proxy.workflow.management.panel.tree.Tree'
+			'CMDBuild.proxy.management.workflow.panel.tree.Tree'
 		],
 
 		/**
@@ -23,7 +23,7 @@
 		 */
 		initComponent: function () {
 			Ext.apply(this, {
-				store: CMDBuild.proxy.workflow.management.panel.tree.Tree.getStore()
+				store: CMDBuild.proxy.management.workflow.panel.tree.Tree.getStore()
 			});
 
 			this.callParent(arguments);

@@ -47,7 +47,7 @@
 		/**
 		 * Just the grid subset of domain properties, not a full domain object
 		 *
-		 * @property {CMDBuild.model.workflow.tabs.domains.Grid}
+		 * @property {CMDBuild.model.classes.tabs.domains.Grid}
 		 *
 		 * @private
 		 */

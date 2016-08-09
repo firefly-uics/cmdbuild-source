@@ -11,7 +11,7 @@
 		requires: [
 			'CMDBuild.core.configurations.DataFormat',
 			'CMDBuild.core.constants.Proxy',
-			'CMDBuild.proxy.workflow.management.panel.form.tabs.History'
+			'CMDBuild.proxy.management.workflow.panel.form.tabs.History'
 		],
 
 		/**
@@ -79,7 +79,7 @@
 					})
 				],
 				columns: this.buildColumns(),
-				store: CMDBuild.proxy.workflow.management.panel.form.tabs.History.getStore()
+				store: CMDBuild.proxy.management.workflow.panel.form.tabs.History.getStore()
 			});
 
 			this.callParent(arguments);

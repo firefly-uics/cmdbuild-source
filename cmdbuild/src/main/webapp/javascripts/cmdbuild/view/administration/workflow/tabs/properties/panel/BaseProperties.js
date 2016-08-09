@@ -6,7 +6,7 @@
 		requires: [
 			'CMDBuild.core.constants.FieldWidths',
 			'CMDBuild.core.constants.Proxy',
-			'CMDBuild.proxy.workflow.tabs.Properties'
+			'CMDBuild.proxy.administration.workflow.tabs.Properties'
 		],
 
 		mixins: ['CMDBuild.view.common.PanelFunctions'],
@@ -85,7 +85,7 @@
 						editable: false,
 						disableEnableFunctions: true,
 
-						store: CMDBuild.proxy.workflow.tabs.Properties.getStoreSuperProcesses(),
+						store: CMDBuild.proxy.administration.workflow.tabs.Properties.getStoreSuperProcesses(),
 						queryMode: 'local'
 					}),
 					Ext.create('Ext.form.field.Checkbox',{

@@ -11,8 +11,8 @@
 			'CMDBuild.core.constants.ModuleIdentifiers',
 			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.Message',
-			'CMDBuild.proxy.workflow.Workflow',
-			'CMDBuild.proxy.workflow.tabs.Xpdl',
+			'CMDBuild.proxy.administration.workflow.Workflow',
+			'CMDBuild.proxy.administration.workflow.tabs.Xpdl',
 			'CMDBuild.view.common.field.translatable.Utils'
 		],
 
@@ -109,7 +109,7 @@
 			// Base properties fieldset setup
 				this.form.reset();
 				this.form.setDisabledModify(false, true);
-				this.form.loadRecord(Ext.create('CMDBuild.model.workflow.administration.Workflow'));
+				this.form.loadRecord(Ext.create('CMDBuild.model.administration.workflow.Workflow'));
 
 				// Set parent default selection
 				this.propertiesPanel.parentCombo.getStore().load({
@@ -142,13 +142,13 @@
 				var params = {};
 				params['idClass'] = this.cmfg('workflowSelectedWorkflowGet', CMDBuild.core.constants.Proxy.ID);
 
-				CMDBuild.proxy.workflow.tabs.Xpdl.downloadTemplate({ params: params });
+				CMDBuild.proxy.administration.workflow.tabs.Xpdl.downloadTemplate({ params: params });
 			} else {
 				var params = {};
 				params['idClass'] = this.cmfg('workflowSelectedWorkflowGet', CMDBuild.core.constants.Proxy.ID);
 				params[CMDBuild.core.constants.Proxy.VERSION] = formData[CMDBuild.core.constants.Proxy.VERSION];
 
-				CMDBuild.proxy.workflow.tabs.Xpdl.download({ params: params });
+				CMDBuild.proxy.administration.workflow.tabs.Xpdl.download({ params: params });
 			}
 		},
 
@@ -204,7 +204,7 @@
 		 */
 		onWorkflowTabPropertiesSaveButtonClick: function () {
 			if (this.validate(this.propertiesPanel)) {
-				var formDataModel = Ext.create('CMDBuild.model.workflow.administration.Workflow', this.propertiesPanel.getData(true));
+				var formDataModel = Ext.create('CMDBuild.model.administration.workflow.Workflow', this.propertiesPanel.getData(true));
 
 				var params = formDataModel.getData();
 				params['inherits'] = params[CMDBuild.core.constants.Proxy.PARENT];
@@ -215,13 +215,13 @@
 				if (Ext.isEmpty(formDataModel.get(CMDBuild.core.constants.Proxy.ID))) {
 					params[CMDBuild.core.constants.Proxy.FORCE_CREATION] = true;
 
-					CMDBuild.proxy.workflow.Workflow.create({
+					CMDBuild.proxy.administration.workflow.Workflow.create({
 						params: params,
 						scope: this,
 						success: this.success
 					});
 				} else {
-					CMDBuild.proxy.workflow.Workflow.update({
+					CMDBuild.proxy.administration.workflow.Workflow.update({
 						params: params,
 						scope: this,
 						success: this.success
@@ -248,7 +248,7 @@
 						var params = {};
 						params['idClass'] = this.cmfg('workflowSelectedWorkflowGet', CMDBuild.core.constants.Proxy.ID);
 
-						CMDBuild.proxy.workflow.tabs.Xpdl.readVersions({
+						CMDBuild.proxy.administration.workflow.tabs.Xpdl.readVersions({
 							params: params,
 							scope: this,
 							success: function (response, options, decodedResponse) {
@@ -294,7 +294,7 @@
 			var params = {};
 			params['idClass'] = this.cmfg('workflowSelectedWorkflowGet', CMDBuild.core.constants.Proxy.ID);
 
-			CMDBuild.proxy.workflow.tabs.Xpdl.upload({
+			CMDBuild.proxy.administration.workflow.tabs.Xpdl.upload({
 				form: this.uploadXpdlPanel.getForm(),
 				params: params,
 				scope: this,
@@ -336,7 +336,7 @@
 				var params = {};
 				params[CMDBuild.core.constants.Proxy.CLASS_NAME] = this.cmfg('workflowSelectedWorkflowGet', CMDBuild.core.constants.Proxy.NAME);
 
-				CMDBuild.proxy.workflow.Workflow.remove({
+				CMDBuild.proxy.administration.workflow.Workflow.remove({
 					params: params,
 					scope: this,
 					success: function (response, options, decodedResponse) {

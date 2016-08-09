@@ -10,7 +10,7 @@
 			'CMDBuild.core.constants.Global',
 			'CMDBuild.core.constants.ModuleIdentifiers',
 			'CMDBuild.core.constants.Proxy',
-			'CMDBuild.proxy.workflow.tabs.Domains'
+			'CMDBuild.proxy.administration.workflow.tabs.Domains'
 		],
 
 		/**
@@ -42,7 +42,7 @@
 		/**
 		 * Just the grid subset of domain properties, not a full domain object
 		 *
-		 * @property {CMDBuild.model.workflow.tabs.domains.Grid}
+		 * @property {CMDBuild.model.administration.workflow.tabs.domains.Grid}
 		 *
 		 * @private
 		 */
@@ -202,7 +202,7 @@
 				var params = {};
 				params[CMDBuild.core.constants.Proxy.ACTIVE] = true;
 
-				CMDBuild.proxy.workflow.tabs.Domains.readAllClasses({
+				CMDBuild.proxy.administration.workflow.tabs.Domains.readAllClasses({
 					params: params,
 					scope: this,
 					success: function (response, options, decodedResponse) {
@@ -257,7 +257,7 @@
 				var params = {};
 				params[CMDBuild.core.constants.Proxy.DOMAIN_NAME] = this.selectedDomainGet(CMDBuild.core.constants.Proxy.NAME);
 
-				CMDBuild.proxy.workflow.tabs.Domains.remove({
+				CMDBuild.proxy.administration.workflow.tabs.Domains.remove({
 					params: params,
 					scope: this,
 					success: function (response, options, decodedResponse) {
@@ -316,7 +316,7 @@
 			 */
 			selectedDomainSet: function (parameters) {
 				if (!Ext.Object.isEmpty(parameters)) {
-					parameters[CMDBuild.core.constants.Proxy.MODEL_NAME] = 'CMDBuild.model.workflow.tabs.domains.Grid';
+					parameters[CMDBuild.core.constants.Proxy.MODEL_NAME] = 'CMDBuild.model.administration.workflow.tabs.domains.Grid';
 					parameters[CMDBuild.core.constants.Proxy.TARGET_VARIABLE_NAME] = 'selectedDomain';
 
 					this.propertyManageSet(parameters);

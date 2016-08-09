@@ -6,7 +6,7 @@
 		requires: [
 			'CMDBuild.core.constants.Global',
 			'CMDBuild.core.constants.Proxy',
-			'CMDBuild.proxy.workflow.tabs.Tasks'
+			'CMDBuild.proxy.administration.workflow.tabs.Tasks'
 		],
 
 		/**
@@ -36,7 +36,7 @@
 		/**
 		 * Just the grid subset of task properties, not a full task object
 		 *
-		 * @property {CMDBuild.model.workflow.tabs.taskManager.Grid}
+		 * @property {CMDBuild.model.administration.workflow.tabs.taskManager.Grid}
 		 *
 		 * @private
 		 */
@@ -253,7 +253,7 @@
 				var params = {};
 				params[CMDBuild.core.constants.Proxy.ID] = this.selectedTaskGet(CMDBuild.core.constants.Proxy.ID);
 
-				CMDBuild.proxy.workflow.tabs.Tasks.remove({
+				CMDBuild.proxy.administration.workflow.tabs.Tasks.remove({
 					params: params,
 					scope: this,
 					success: function (response, options, decodedResponse) {
@@ -316,7 +316,7 @@
 			 */
 			selectedTaskSet: function (parameters) {
 				if (!Ext.Object.isEmpty(parameters)) {
-					parameters[CMDBuild.core.constants.Proxy.MODEL_NAME] = 'CMDBuild.model.workflow.tabs.taskManager.Grid';
+					parameters[CMDBuild.core.constants.Proxy.MODEL_NAME] = 'CMDBuild.model.administration.workflow.tabs.taskManager.Grid';
 					parameters[CMDBuild.core.constants.Proxy.TARGET_VARIABLE_NAME] = 'selectedTask';
 
 					this.propertyManageSet(parameters);

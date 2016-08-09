@@ -286,7 +286,7 @@
 			var params = {};
 			params[CMDBuild.core.constants.Proxy.ACTIVE] = true;
 
-			CMDBuild.proxy.workflow.management.Workflow.read({
+			CMDBuild.proxy.management.workflow.Workflow.read({
 				params: params,
 				scope: this,
 				success: function (response, options, decodedResponse) {

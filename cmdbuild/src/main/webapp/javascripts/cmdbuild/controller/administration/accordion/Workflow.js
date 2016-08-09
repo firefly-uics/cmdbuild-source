@@ -6,7 +6,7 @@
 		requires: [
 			'CMDBuild.core.constants.Global',
 			'CMDBuild.core.constants.Proxy',
-			'CMDBuild.proxy.workflow.Workflow'
+			'CMDBuild.proxy.administration.workflow.Workflow'
 		],
 
 		/**
@@ -72,7 +72,7 @@
 		accordionUpdateStore: function (nodeIdToSelect) {
 			nodeIdToSelect = Ext.isNumber(nodeIdToSelect) ? nodeIdToSelect : null;
 
-			CMDBuild.proxy.workflow.Workflow.readAll({
+			CMDBuild.proxy.administration.workflow.Workflow.readAll({
 				scope: this,
 				success: function (response, options, decodedResponse) {
 					decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.CLASSES] || [];
