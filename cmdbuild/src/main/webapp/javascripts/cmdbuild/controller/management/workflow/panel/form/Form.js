@@ -8,7 +8,7 @@
 	 * @legacy
 	 */
 	Ext.define('CMDBuild.controller.management.workflow.panel.form.Form', {
-		extend: 'CMDBuild.controller.common.panel.gridAndForm.Form',
+		extend: 'CMDBuild.controller.common.panel.gridAndForm.panel.form.Form',
 
 		requires: [
 			'CMDBuild.core.constants.Proxy',
@@ -33,7 +33,7 @@
 			'onWorkflowFormActivitySelect',
 			'onWorkflowFormAddButtonClick',
 			'onWorkflowFormAdvanceButtonClick',
-			'onWorkflowFormModifyButtonClick',
+			'onWorkflowFormModifyButtonClick = onWorkflowFormActivityItemDoubleClick',
 			'onWorkflowFormRemoveButtonClick',
 			'onWorkflowFormReset',
 			'onWorkflowFormSaveButtonClick',
@@ -237,6 +237,11 @@
 
 			if (Ext.isObject(this.controllerTabEmail) && !Ext.Object.isEmpty(this.controllerTabEmail))
 				this.controllerTabEmail.cmfg('onModifyCardClick');
+
+			if (Ext.isObject(this.controllerTabNote) && !Ext.Object.isEmpty(this.controllerTabNote))
+				this.controllerTabNote.onModifyNoteClick();
+
+			_CMUIState.onlyFormIfFullScreen();
 		},
 
 		/**

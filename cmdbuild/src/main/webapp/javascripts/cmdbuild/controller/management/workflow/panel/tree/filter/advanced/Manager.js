@@ -1,7 +1,7 @@
 (function () {
 
 	/**
-	 * @link CMDBuild.controller.common.panel.gridAndForm.filter.advanced.Manager
+	 * @link CMDBuild.controller.common.panel.gridAndForm.panel.common.filter.advanced.Manager
 	 */
 	Ext.define('CMDBuild.controller.management.workflow.panel.tree.filter.advanced.Manager', {
 		extend: 'CMDBuild.controller.common.abstract.Base',
@@ -47,7 +47,7 @@
 		controllerSaveDialog: undefined,
 
 		/**
-		 * @property {CMDBuild.view.common.panel.gridAndForm.filter.advanced.manager.GridPanel}
+		 * @property {CMDBuild.view.common.panel.gridAndForm.panel.common.filter.advanced.manager.GridPanel}
 		 */
 		grid: undefined,
 
@@ -59,7 +59,7 @@
 		selectedFilter: undefined,
 
 		/**
-		 * @property {CMDBuild.view.common.panel.gridAndForm.filter.advanced.manager.ManagerWindow}
+		 * @property {CMDBuild.view.common.panel.gridAndForm.panel.common.filter.advanced.manager.ManagerWindow}
 		 */
 		view: undefined,
 
@@ -74,7 +74,7 @@
 		constructor: function (configurationObject) {
 			this.callParent(arguments);
 
-			this.view = Ext.create('CMDBuild.view.common.panel.gridAndForm.filter.advanced.manager.ManagerWindow', { delegate: this });
+			this.view = Ext.create('CMDBuild.view.common.panel.gridAndForm.panel.common.filter.advanced.manager.ManagerWindow', { delegate: this });
 
 			// Build sub controllers
 			this.controllerFilterEditor = Ext.create('CMDBuild.controller.management.workflow.panel.tree.filter.advanced.filterEditor.FilterEditor', { parentDelegate: this });

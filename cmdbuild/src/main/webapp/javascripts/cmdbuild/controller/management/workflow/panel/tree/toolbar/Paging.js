@@ -20,7 +20,7 @@
 		],
 
 		/**
-		 * @property {CMDBuild.controller.common.panel.gridAndForm.filter.advanced.Advanced}
+		 * @property {CMDBuild.controller.common.panel.gridAndForm.panel.common.filter.advanced.Advanced}
 		 */
 		controllerFilterAdvanced: undefined,
 

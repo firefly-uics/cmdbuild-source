@@ -5,14 +5,14 @@
 	 *
 	 * FIXME: refactor to build own grid card
 	 *
-	 * @link CMDBuild.controller.common.panel.gridAndForm.filter.advanced.filterEditor.relations.GridCard
+	 * @link CMDBuild.controller.common.panel.gridAndForm.panel.common.filter.advanced.filterEditor.relations.GridCard
 	 */
 	Ext.define('CMDBuild.controller.management.workflow.panel.tree.filter.advanced.filterEditor.relations.GridCard', {
 		extend: 'CMDBuild.controller.management.workflow.panel.tree.filter.advanced.filterEditor.relations.CMCardGridController',
 
 		mixins: {
 			base: 'CMDBuild.controller.common.abstract.Base',
-			cardGridDelegate: 'CMDBuild.view.common.panel.gridAndForm.filter.advanced.filterEditor.relations.CardGridPanelDelegate'
+			cardGridDelegate: 'CMDBuild.view.common.panel.gridAndForm.panel.common.filter.advanced.filterEditor.relations.CardGridPanelDelegate'
 		},
 
 		/**
@@ -49,7 +49,7 @@
 			this.mixins.base.constructor.call(this, arguments);
 			Ext.apply(this, parameters);
 
-			this.view = Ext.create('CMDBuild.view.common.panel.gridAndForm.filter.advanced.filterEditor.relations.CardGridPanel', { delegate: this })
+			this.view = Ext.create('CMDBuild.view.common.panel.gridAndForm.panel.common.filter.advanced.filterEditor.relations.CardGridPanel', { delegate: this })
 
 			this.callParent([this.view, this.parentDelegate]);
 

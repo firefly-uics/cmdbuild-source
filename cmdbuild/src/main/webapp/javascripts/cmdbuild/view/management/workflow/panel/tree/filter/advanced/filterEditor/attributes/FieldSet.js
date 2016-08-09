@@ -3,7 +3,7 @@
 	/**
 	 * Class with adapted functions to be compatible with old FieldManager
 	 *
-	 * @link CMDBuild.view.common.panel.gridAndForm.filter.advanced.filterEditor.attributes.FieldSet
+	 * @link CMDBuild.view.common.panel.gridAndForm.panel.common.filter.advanced.filterEditor.attributes.FieldSet
 	 *
 	 * @adapter
 	 */
@@ -16,7 +16,7 @@
 		},
 
 		/**
-		 * @cfg {CMDBuild.controller.common.panel.gridAndForm.filter.advanced.filterEditor.Attributes}
+		 * @cfg {CMDBuild.controller.common.panel.gridAndForm.panel.common.filter.advanced.filterEditor.Attributes}
 		 */
 		delegate: undefined,
 

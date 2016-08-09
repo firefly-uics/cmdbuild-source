@@ -4,7 +4,7 @@
 	 * FIXME: build own class
 	 *
 	 * @link CMDBuild.view.management.common.CMCardGrid
-	 * @link CMDBuild.view.common.panel.gridAndForm.filter.advanced.filterEditor.relations.CMCardGridPagingBar
+	 * @link CMDBuild.view.common.panel.gridAndForm.panel.common.filter.advanced.filterEditor.relations.CMCardGridPagingBar
 	 */
 
 	Ext.require('CMDBuild.proxy.index.Json');
@@ -38,7 +38,7 @@
 		},
 
 		/**
-		 * @cfg {CMDBuild.controller.common.panel.gridAndForm.filter.advanced.filterEditor.relations.GridCard}
+		 * @cfg {CMDBuild.controller.common.panel.gridAndForm.panel.common.filter.advanced.filterEditor.relations.GridCard}
 		 */
 		delegate: undefined,
 
@@ -479,7 +479,7 @@
 		}
 
 //		if (me.cmAdvancedFilter) {
-//			me.controllerAdvancedFilterButtons = Ext.create('CMDBuild.controller.common.panel.gridAndForm.filter.advanced.Advanced', { masterGrid: me });
+//			me.controllerAdvancedFilterButtons = Ext.create('CMDBuild.controller.common.panel.gridAndForm.panel.common.filter.advanced.Advanced', { masterGrid: me });
 //			_CMUtils.forwardMethods(me, me.controllerAdvancedFilterButtons.getView(), [
 //				"enableClearFilterButton",
 //				"disableClearFilterButton",
@@ -542,7 +542,7 @@
 
 							// TODO: cmfg() controller call implementation  on controller refactor
 							handler: function (grid, rowIndex, colIndex, node, e, record, rowNode) {
-								Ext.create('CMDBuild.controller.common.panel.gridAndForm.graph.Window', {
+								Ext.create('CMDBuild.controller.common.panel.gridAndForm.panel.common.graph.Window', {
 									parentDelegate: this,
 									classId: record.get('IdClass'),
 									cardId: record.get('id')

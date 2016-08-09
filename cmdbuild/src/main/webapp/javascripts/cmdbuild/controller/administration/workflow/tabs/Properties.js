@@ -38,7 +38,7 @@
 		],
 
 		/**
-		 * @property {CMDBuild.controller.common.panel.gridAndForm.print.Window}
+		 * @property {CMDBuild.controller.common.panel.gridAndForm.panel.common.print.Window}
 		 */
 		controllerPrintWindow: undefined,
 
@@ -87,7 +87,7 @@
 			this.uploadXpdlPanel = this.view.form.uploadXpdlPanel;
 
 			// Build sub-controllers
-			this.controllerPrintWindow = Ext.create('CMDBuild.controller.common.panel.gridAndForm.print.Window', { parentDelegate: this });
+			this.controllerPrintWindow = Ext.create('CMDBuild.controller.common.panel.gridAndForm.panel.common.print.Window', { parentDelegate: this });
 		},
 
 		/**

@@ -4,7 +4,7 @@
 	 * FIXME: build own controller
 	 *
 	 * @link CMDBuild.controller.management.common.CMCardGridController
-	 * @link CMDBuild.controller.common.panel.gridAndForm.filter.advanced.filterEditor.relations.CMCardGridController
+	 * @link CMDBuild.controller.common.panel.gridAndForm.panel.common.filter.advanced.filterEditor.relations.CMCardGridController
 	 */
 
 	Ext.require([

@@ -1,13 +1,13 @@
 (function () {
 
 	/**
-	 * @link CMDBuild.view.common.panel.gridAndForm.filter.advanced.filterEditor.attributes.AttributesView
+	 * @link CMDBuild.view.common.panel.gridAndForm.panel.common.filter.advanced.filterEditor.attributes.AttributesView
 	 */
 	Ext.define('CMDBuild.view.management.workflow.panel.tree.filter.advanced.filterEditor.attributes.AttributesView', {
 		extend: 'Ext.panel.Panel',
 
 		/**
-		 * @cfg {CMDBuild.controller.common.panel.gridAndForm.filter.advanced.filterEditor.Attributes}
+		 * @cfg {CMDBuild.controller.common.panel.gridAndForm.panel.common.filter.advanced.filterEditor.Attributes}
 		 */
 		delegate: undefined,
 

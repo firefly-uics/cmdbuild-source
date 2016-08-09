@@ -1,7 +1,7 @@
 (function () {
 
 	/**
-	 * @link CMDBuild.controller.common.panel.gridAndForm.filter.advanced.filterEditor.relations.Relations
+	 * @link CMDBuild.controller.common.panel.gridAndForm.panel.common.filter.advanced.filterEditor.relations.Relations
 	 */
 	Ext.define('CMDBuild.controller.management.workflow.panel.tree.filter.advanced.filterEditor.relations.Relations', {
 		extend: 'CMDBuild.controller.common.abstract.Base',
@@ -45,7 +45,7 @@
 		selectedDomain: undefined,
 
 		/**
-		 * @property {CMDBuild.view.common.panel.gridAndForm.filter.advanced.filterEditor.relations.RelationsView}
+		 * @property {CMDBuild.view.common.panel.gridAndForm.panel.common.filter.advanced.filterEditor.relations.RelationsView}
 		 */
 		view: undefined,
 
@@ -60,7 +60,7 @@
 		constructor: function (configurationObject) {
 			this.callParent(arguments);
 
-			this.view = Ext.create('CMDBuild.view.common.panel.gridAndForm.filter.advanced.filterEditor.relations.RelationsView', { delegate: this });
+			this.view = Ext.create('CMDBuild.view.common.panel.gridAndForm.panel.common.filter.advanced.filterEditor.relations.RelationsView', { delegate: this });
 
 			// Sub-controllers
 			this.controllerGridCard = Ext.create('CMDBuild.controller.management.workflow.panel.tree.filter.advanced.filterEditor.relations.GridCard', { parentDelegate: this });

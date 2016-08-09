@@ -1,7 +1,7 @@
 (function () {
 
 	Ext.define('CMDBuild.view.management.workflow.panel.tree.TreePanel', {
-		extend: 'CMDBuild.view.common.panel.gridAndForm.TreePanel',
+		extend: 'CMDBuild.view.common.panel.gridAndForm.panel.tree.TreePanel',
 
 		requires: [
 			'CMDBuild.core.constants.Proxy',
@@ -31,7 +31,7 @@
 
 		listeners: {
 			itemdblclick: function (grid, record, item, index, e, eOpts) {
-				this.delegate.cmfg('onWorkflowActivityItemDoubleClick');
+				this.delegate.cmfg('onWorkflowFormActivityItemDoubleClick');
 			},
 			select: function (row, record, index) {
 				this.delegate.cmfg('onWorkflowActivitySelect');

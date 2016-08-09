@@ -2,13 +2,13 @@
 
 	/**
 	 * @link CMDBuild.view.common.field.filter.advanced.window.Window
-	 * @link CMDBuild.view.common.panel.gridAndForm.filter.advanced.filterEditor.FilterEditorWindow
+	 * @link CMDBuild.view.common.panel.gridAndForm.panel.common.filter.advanced.filterEditor.FilterEditorWindow
 	 */
 	Ext.define('CMDBuild.view.management.workflow.panel.tree.filter.advanced.filterEditor.FilterEditorWindow', {
 		extend: 'CMDBuild.core.window.AbstractCustomModal',
 
 		/**
-		 * @cfg {CMDBuild.controller.common.panel.gridAndForm.filter.advanced.filterEditor.FilterEditor}
+		 * @cfg {CMDBuild.controller.common.panel.gridAndForm.panel.common.filter.advanced.filterEditor.FilterEditor}
 		 */
 		delegate: undefined,
 

@@ -1,5 +1,8 @@
 (function () {
 
+	/**
+	 * @deprecated
+	 */
 	Ext.define('CMDBuild.proxy.workflow.Activity', {
 
 		requires: [

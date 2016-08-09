@@ -1,13 +1,13 @@
 (function () {
 
 	/**
-	 * @link CMDBuild.view.common.panel.gridAndForm.filter.advanced.manager.ManagerWindow
+	 * @link CMDBuild.view.common.panel.gridAndForm.panel.common.filter.advanced.manager.ManagerWindow
 	 */
 	Ext.define('CMDBuild.view.management.workflow.panel.tree.filter.advanced.manager.ManagerWindow', {
 		extend: 'CMDBuild.core.window.AbstractCustomModal',
 
 		/**
-		 * @cfg {CMDBuild.controller.common.panel.gridAndForm.filter.advanced.Manager}
+		 * @cfg {CMDBuild.controller.common.panel.gridAndForm.panel.common.filter.advanced.Manager}
 		 */
 		delegate: undefined,
 

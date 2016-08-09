@@ -629,7 +629,7 @@
 
 							// TODO: cmfg() controller call implementation  on controller refactor
 							handler: function (grid, rowIndex, colIndex, node, e, record, rowNode) {
-								Ext.create('CMDBuild.controller.common.panel.gridAndForm.graph.Window', {
+								Ext.create('CMDBuild.controller.common.panel.gridAndForm.panel.common.graph.Window', {
 									parentDelegate: this,
 									classId: record.get('IdClass'),
 									cardId: record.get('id')

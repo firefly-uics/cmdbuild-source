@@ -23,6 +23,7 @@
 			'onWorkflowActivitySelect',
 			'onWorkflowActivityUpdateCallback',
 			'onWorkflowAddButtonClick',
+			'onWorkflowFormActivityItemDoubleClick -> controllerForm',
 			'onWorkflowFormReset -> controllerForm',
 			'onWorkflowModuleInit = onModuleInit',
 			'onWorkflowSaveFailure',
@@ -44,6 +45,11 @@
 		 * @property {CMDBuild.controller.management.workflow.panel.form.Form}
 		 */
 		controllerForm: undefined,
+
+		/**
+		 * @property {CMDBuild.view.management.workflow.panel.form.FormPanel}
+		 */
+		form: undefined,
 
 		/**
 		 * @property {CMDBuild.controller.management.workflow.panel.tree.Tree}
@@ -74,6 +80,11 @@
 		selectedWorkflowAttributes: undefined,
 
 		/**
+		 * @property {CMDBuild.view.management.workflow.panel.tree.TreePanel}
+		 */
+		tree: undefined,
+
+		/**
 		 * @property {CMDBuild.view.management.workflow.WorkflowView}
 		 */
 		view: undefined,
@@ -99,11 +110,12 @@
 			this.controllerForm = Ext.create('CMDBuild.controller.management.workflow.panel.form.Form', { parentDelegate: this });
 			this.controllerTree = Ext.create('CMDBuild.controller.management.workflow.panel.tree.Tree', { parentDelegate: this });
 
+			// Shorthands
+			this.tree = this.controllerTree.getView();
+			this.form = this.controllerForm.getView();
+
 			// View build
-			this.view.add([
-				this.controllerTree.getView(),
-				this.controllerForm.getView()
-			]);
+			this.view.add([this.tree, this.form]);
 		},
 
 		/**
@@ -142,8 +154,8 @@
 		onWorkflowActivitySelect: function () {
 			this.workflowSelectedActivityReset();
 
-			if (this.controllerTree.getView().getSelectionModel().hasSelection()) {
-				var selectedNode = this.controllerTree.getView().getSelectionModel().getSelection()[0];
+			if (this.tree.getSelectionModel().hasSelection()) {
+				var selectedNode = this.tree.getSelectionModel().getSelection()[0];
 
 				var params = {};
 				params[CMDBuild.core.constants.Proxy.ACTIVITY_INSTANCE_ID] = selectedNode.get(CMDBuild.core.constants.Proxy.ACTIVITY_ID);

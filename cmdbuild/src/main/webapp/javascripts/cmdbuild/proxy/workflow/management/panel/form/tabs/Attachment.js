@@ -20,6 +20,8 @@
 		confirm: function (parameters) {
 			parameters = Ext.isEmpty(parameters) ? {} : parameters;
 
+			Ext.apply(parameters, { url: CMDBuild.proxy.index.Json.attachment.update });
+
 			CMDBuild.core.interfaces.FormSubmit.submit(parameters);
 		},
 
