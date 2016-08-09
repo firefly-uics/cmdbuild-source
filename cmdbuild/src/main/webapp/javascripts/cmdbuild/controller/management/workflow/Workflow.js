@@ -23,6 +23,7 @@
 			'onWorkflowActivitySelect',
 			'onWorkflowActivityUpdateCallback',
 			'onWorkflowAddButtonClick',
+			'onWorkflowFormActivityItemDoubleClick -> controllerForm',
 			'onWorkflowFormReset -> controllerForm',
 			'onWorkflowModuleInit = onModuleInit',
 			'onWorkflowSaveFailure',
