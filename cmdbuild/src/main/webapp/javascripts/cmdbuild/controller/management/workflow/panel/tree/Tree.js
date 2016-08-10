@@ -4,6 +4,7 @@
 		extend: 'CMDBuild.controller.common.panel.gridAndForm.panel.tree.Tree',
 
 		requires: [
+			'CMDBuild.core.constants.Metadata',
 			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.Message',
 			'CMDBuild.core.Utils',
@@ -144,17 +145,23 @@
 		},
 
 		/**
-		 * @param {Array} records
-		 * @param {Object} operation
-		 * @param {Boolean} success
+		 * @param {CMDBuild.model.management.workflow.Node} node
 		 *
 		 * @returns {Void}
 		 *
 		 * @private
 		 */
-		defaultCallback: function (records, operation, success) {
-			if (!this.view.getSelectionModel().hasSelection())
-				this.view.getSelectionModel().select(0, true);
+		nodeRecursiveAnchestorsExpand: function (node) {
+			if (
+				Ext.isObject(node) && !Ext.Object.isEmpty(node)
+				&& Ext.isFunction(node.bubble)
+			) {
+				node.bubble(function () {
+					this.expand();
+				});
+			} else {
+				_warning('nodeRecursiveAnchestorsExpand(): unmanaged node parameter', this, node);
+			}
 		},
 
 		/**
@@ -233,10 +240,74 @@
 			this.controllerToolbarTop.cmfg('onWorkflowTreeToolbarTopWokflowSelect');
 		},
 
+		// Tree selection methods
+			/**
+			 * Select activity by metadata
+			 *
+			 * @param {String} medataValue
+			 *
+			 * @returns {Void}
+			 *
+			 * @private
+			 */
+			selectByMetadata: function (medataValue) {
+				if (
+					Ext.isString(medataValue) && !Ext.isEmpty(medataValue)
+					&& !this.view.getSelectionModel().hasSelection()
+				) {
+					var nodeToSelect = this.view.getStore().getRootNode().findChildBy(function (node) {
+						var nodeMetadata = node.get(CMDBuild.core.constants.Proxy.ACTIVITY_METADATA);
+						var activitySubsetIdObject = Ext.Array.findBy(nodeMetadata, function (metadata, i, allMetadata) {
+							return metadata[CMDBuild.core.constants.Proxy.NAME] == CMDBuild.core.constants.Metadata.getActivitySubsetId();
+						}, this);
+
+						if (Ext.isObject(activitySubsetIdObject) && !Ext.Object.isEmpty(activitySubsetIdObject))
+							return activitySubsetIdObject[CMDBuild.core.constants.Proxy.VALUE] == parameters.activitySubsetId;
+
+						return false;
+					}, this, true);
+
+					if (Ext.isObject(nodeToSelect) && !Ext.Object.isEmpty(nodeToSelect)) {
+						this.view.getSelectionModel().select(nodeToSelect);
+
+						this.nodeRecursiveAnchestorsExpand(nodeToSelect);
+					}
+				}
+			},
+
+			/**
+			 * @param {Number} position
+			 *
+			 * @returns {Void}
+			 *
+			 * @private
+			 */
+			selectByPosition: function (position) {
+				if (
+					Ext.isNumber(position) && !Ext.isEmpty(position)
+					&& !this.view.getSelectionModel().hasSelection()
+				) {
+					this.view.getSelectionModel().select(position);
+
+					this.nodeRecursiveAnchestorsExpand(this.view.getSelectionModel().getSelection()[0]);
+				}
+			},
+
+			/**
+			 * @returns {Void}
+			 *
+			 * @private
+			 */
+			selectFirst: function () {
+				if (!this.view.getSelectionModel().hasSelection())
+					this.view.getSelectionModel().select(0, true);
+			},
+
 		/**
 		 * Find an Activity in store and open
 		 *
 		 * @param {Object} parameters
+		 * @param {String} parameters.activitySubsetId
 		 * @param {String} parameters.flowStatus
 		 * @param {Number} parameters.id
 		 *
@@ -244,7 +315,7 @@
 		 */
 		workflowTreeActivityOpen: function (parameters) {
 			parameters = Ext.isObject(parameters) ? parameters : {};
-
+_debug('workflowTreeActivityOpen', parameters);
 			if (
 				!this.cmfg('workflowSelectedWorkflowIsEmpty')
 				&& Ext.isString(parameters[CMDBuild.core.constants.Proxy.FLOW_STATUS]) && !Ext.isEmpty(parameters[CMDBuild.core.constants.Proxy.FLOW_STATUS])
@@ -280,14 +351,14 @@
 								scope: this,
 								callback: function (records, operation, success) {
 									this.view.getSelectionModel().deselectAll();
-									this.view.getSelectionModel().select(
-										position % CMDBuild.configuration.instance.get(CMDBuild.core.constants.Proxy.ROW_LIMIT)
-									);
+_debug('tererer');
+									this.selectByMetadata(parameters[CMDBuild.core.constants.Proxy.ACTIVITY_SUBSET_ID]);
+									this.selectByPosition(position % CMDBuild.configuration.instance.get(CMDBuild.core.constants.Proxy.ROW_LIMIT));
 								}
 							});
 						} else { // Card not found
 							if (parameters[CMDBuild.core.constants.Proxy.FLOW_STATUS] == 'COMPLETED') {
-								_CMWFState.setProcessInstance(Ext.create('CMDBuild.model.CMProcessInstance')); // FIXME: remove WfState, resetselected process instance module
+								_CMWFState.setProcessInstance(Ext.create('CMDBuild.model.CMProcessInstance'));
 								_CMUIState.onlyGridIfFullScreen();
 							} else {
 								CMDBuild.core.Message.info(undefined, CMDBuild.Translation.cardNotMatchFilter);
@@ -495,7 +566,7 @@
 		workflowTreeStoreLoad: function (parameters) {
 			parameters = Ext.isObject(parameters) ? parameters : { page: 1 };
 			parameters.page = Ext.isNumber(parameters.page) ? parameters.page : 1;
-_debug('workflowTreeStoreLoad', parameters);
+
 			if (!this.cmfg('workflowSelectedWorkflowIsEmpty')) {
 				var params = Ext.isObject(parameters.params) ? parameters.params : {};
 				params[CMDBuild.core.constants.Proxy.CLASS_NAME] = this.cmfg('workflowSelectedWorkflowGet', CMDBuild.core.constants.Proxy.NAME);
@@ -505,7 +576,7 @@ _debug('workflowTreeStoreLoad', parameters);
 				this.cmfg('workflowTreeStoreGet').loadPage(parameters.page, {
 					params: params,
 					scope: Ext.isEmpty(parameters.scope) ? this : parameters.scope,
-					callback: Ext.isFunction(parameters.callback) ? parameters.callback : this.defaultCallback
+					callback: Ext.isFunction(parameters.callback) ? parameters.callback : this.selectFirst
 				});
 			}
 		}

@@ -465,7 +465,7 @@
 
 				this.getStore().proxy.extraParams.filter = encoded;
 			} catch (e) {
-				_debug("I'm not able to set the filter to the store", this, filter);
+				_error("I'm not able to set the filter to the store", this, filter);
 			}
 		}
 	});

@@ -4,7 +4,10 @@
 		extend: 'Ext.data.reader.Json',
 		alias: 'reader.workflowstore',
 
-		requires: ['CMDBuild.core.constants.Proxy'],
+		requires: [
+			'CMDBuild.core.constants.Metadata',
+			'CMDBuild.core.constants.Proxy'
+		],
 
 		/**
 		 * @param {Object} activityObject
@@ -66,7 +69,7 @@
 					Ext.Array.each(activityMetadata, function (metadataObject, i, allMetadataObjects) {
 						if (Ext.isObject(metadataObject) && !Ext.Object.isEmpty(metadataObject))
 							switch (metadataObject[CMDBuild.core.constants.Proxy.NAME]) {
-								case CMDBuild.core.constants.Proxy.WORKFLOW_METADATA_ADDITIONAL_ACTIVITY_LABEL: {
+								case CMDBuild.core.constants.Metadata.getAdditionalActivityLabel(): {
 									if (!Ext.isEmpty(values[metadataObject[CMDBuild.core.constants.Proxy.VALUE]]))
 										description += ' - ' + values[metadataObject[CMDBuild.core.constants.Proxy.VALUE]];
 								} break;
