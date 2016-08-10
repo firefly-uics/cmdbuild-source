@@ -18,6 +18,7 @@
 		requires: [
 			'CMDBuild.controller.management.workflow.panel.form.tabs.activity.StaticsController',
 			'CMDBuild.core.constants.Global',
+			'CMDBuild.core.constants.Metadata',
 			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.Message',
 			'CMDBuild.proxy.management.workflow.panel.form.tabs.Activity'
@@ -241,7 +242,7 @@
 					Ext.Array.each(activityMetadata, function (metadataObject, i, allMetadataObjects) {
 						if (Ext.isObject(metadataObject) && !Ext.Object.isEmpty(metadataObject))
 							switch (metadataObject[CMDBuild.core.constants.Proxy.NAME]) {
-								case CMDBuild.core.constants.Proxy.WORKFLOW_METADATA_SELECTED_ATTRIBUTES_GROUP: {
+								case CMDBuild.core.constants.Metadata.getSelectedAttributesGroup(): {
 									var preselectedTab = null;
 									var markerAttribute = Ext.Array.findBy(attributes, function (item, index) {
 										return item[CMDBuild.core.constants.Proxy.NAME] == metadataObject[CMDBuild.core.constants.Proxy.VALUE];
@@ -584,7 +585,12 @@
 						this.superController.cmfg('onWorkflowSaveFailure'); // Reload store also on failure
 					},
 					success: function(operation, requestConfiguration, decodedResponse) {
+						var activityMetadata = this.superController.cmfg('workflowSelectedActivityGet', CMDBuild.core.constants.Proxy.METADATA) || [];
+						var activitySubsetIdObject = Ext.Array.findBy(activityMetadata, function (metadata, i, allMetadata) {
+							return metadata[CMDBuild.core.constants.Proxy.NAME] == CMDBuild.core.constants.Metadata.getActivitySubsetId();
+						}, this);
 						var savedCardId = decodedResponse.response.Id;
+
 						this.view.displayMode();
 
 						// To enable the editing for the right processInstance
@@ -593,6 +599,9 @@
 						} else {
 							_CMUIState.onlyGridIfFullScreen();
 						}
+
+						// Metadata manage (ActivitySubsetId)
+						decodedResponse.response[CMDBuild.core.constants.Proxy.ACTIVITY_SUBSET_ID] = Ext.isObject(activitySubsetIdObject) ? activitySubsetIdObject[CMDBuild.core.constants.Proxy.VALUE] : '';
 
 						this.superController.cmfg(
 							'onWorkflowActivityUpdateCallback',
