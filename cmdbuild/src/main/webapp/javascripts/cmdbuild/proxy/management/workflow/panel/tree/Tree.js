@@ -21,7 +21,8 @@
 				pageSize: CMDBuild.configuration.instance.get(CMDBuild.core.constants.Proxy.ROW_LIMIT),
 				remoteSort: true,
 				root: {
-					expanded: true
+					expanded: true,
+					loaded: true // Avoid a store load call on root expand event
 				},
 				proxy: {
 					type: 'ajax',
