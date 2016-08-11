@@ -12,7 +12,7 @@
 		/**
 		 * @param {Mixed} value
 		 * @param {Object} metadata
-		 * @param {CMDBuild.model.workflow.management.Node} record
+		 * @param {CMDBuild.model.management.workflow.Node} record
 		 * @param {Number} rowIndex
 		 * @param {Number} colIndex
 		 * @param {Ext.data.NodeStore} store

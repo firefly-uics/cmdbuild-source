@@ -5,7 +5,7 @@
 
 		requires: [
 			'CMDBuild.core.constants.Proxy',
-			'CMDBuild.proxy.workflow.tabs.Tasks'
+			'CMDBuild.proxy.administration.workflow.tabs.Tasks'
 		],
 
 		/**
@@ -41,7 +41,7 @@
 						fixed: true
 					})
 				],
-				store: CMDBuild.proxy.workflow.tabs.Tasks.getStore()
+				store: CMDBuild.proxy.administration.workflow.tabs.Tasks.getStore()
 			});
 
 			this.callParent(arguments);

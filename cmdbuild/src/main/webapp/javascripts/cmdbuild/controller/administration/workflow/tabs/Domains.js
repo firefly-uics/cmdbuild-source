@@ -10,7 +10,7 @@
 			'CMDBuild.core.constants.Global',
 			'CMDBuild.core.constants.ModuleIdentifiers',
 			'CMDBuild.core.constants.Proxy',
-			'CMDBuild.proxy.workflow.tabs.Domains'
+			'CMDBuild.proxy.administration.workflow.tabs.Domains'
 		],
 
 		/**
@@ -42,7 +42,7 @@
 		/**
 		 * Just the grid subset of domain properties, not a full domain object
 		 *
-		 * @property {CMDBuild.model.workflow.tabs.domains.Grid}
+		 * @property {CMDBuild.model.administration.workflow.tabs.domains.Grid}
 		 *
 		 * @private
 		 */
@@ -82,7 +82,7 @@
 				this.cmfg('mainViewportModuleControllerGet', CMDBuild.core.constants.ModuleIdentifiers.getDomain()).cmfg('onDomainAddButtonClick');
 			}, this, { single: true });
 			this.cmfg('mainViewportAccordionControllerGet', CMDBuild.core.constants.ModuleIdentifiers.getDomain()).disableSelection = true;
-			this.cmfg('mainViewportAccordionControllerExpand', CMDBuild.core.constants.ModuleIdentifiers.getDomain());
+			this.cmfg('mainViewportAccordionControllerExpand', { identifier: CMDBuild.core.constants.ModuleIdentifiers.getDomain() });
 		},
 
 		/**
@@ -114,7 +114,7 @@
 			if (!this.selectedDomainIsEmpty()) {
 				this.cmfg('mainViewportAccordionDeselect', CMDBuild.core.constants.ModuleIdentifiers.getDomain());
 				this.cmfg('mainViewportAccordionControllerGet', CMDBuild.core.constants.ModuleIdentifiers.getDomain()).disableStoreLoad = true;
-				this.cmfg('mainViewportAccordionControllerExpand', CMDBuild.core.constants.ModuleIdentifiers.getDomain());
+				this.cmfg('mainViewportAccordionControllerExpand', { identifier: CMDBuild.core.constants.ModuleIdentifiers.getDomain() });
 				this.cmfg('mainViewportAccordionControllerUpdateStore', {
 					identifier: CMDBuild.core.constants.ModuleIdentifiers.getDomain(),
 					nodeIdToSelect: this.selectedDomainGet(CMDBuild.core.constants.Proxy.ID_DOMAIN)
@@ -131,7 +131,7 @@
 			if (!this.selectedDomainIsEmpty()) {
 				this.cmfg('mainViewportAccordionDeselect', CMDBuild.core.constants.ModuleIdentifiers.getDomain());
 				this.cmfg('mainViewportAccordionControllerGet', CMDBuild.core.constants.ModuleIdentifiers.getDomain()).disableStoreLoad = true;
-				this.cmfg('mainViewportAccordionControllerExpand', CMDBuild.core.constants.ModuleIdentifiers.getDomain());
+				this.cmfg('mainViewportAccordionControllerExpand', { identifier: CMDBuild.core.constants.ModuleIdentifiers.getDomain() });
 				this.cmfg('mainViewportAccordionControllerGet', CMDBuild.core.constants.ModuleIdentifiers.getDomain()).getView().on('storeload', function (accordion, eOpts) {
 					Ext.Function.createDelayed(function () {
 						this.cmfg('mainViewportModuleControllerGet', CMDBuild.core.constants.ModuleIdentifiers.getDomain()).cmfg('onDomainModifyButtonClick');
@@ -202,7 +202,7 @@
 				var params = {};
 				params[CMDBuild.core.constants.Proxy.ACTIVE] = true;
 
-				CMDBuild.proxy.workflow.tabs.Domains.readAllClasses({
+				CMDBuild.proxy.administration.workflow.tabs.Domains.readAllClasses({
 					params: params,
 					scope: this,
 					success: function (response, options, decodedResponse) {
@@ -257,7 +257,7 @@
 				var params = {};
 				params[CMDBuild.core.constants.Proxy.DOMAIN_NAME] = this.selectedDomainGet(CMDBuild.core.constants.Proxy.NAME);
 
-				CMDBuild.proxy.workflow.tabs.Domains.remove({
+				CMDBuild.proxy.administration.workflow.tabs.Domains.remove({
 					params: params,
 					scope: this,
 					success: function (response, options, decodedResponse) {
@@ -316,7 +316,7 @@
 			 */
 			selectedDomainSet: function (parameters) {
 				if (!Ext.Object.isEmpty(parameters)) {
-					parameters[CMDBuild.core.constants.Proxy.MODEL_NAME] = 'CMDBuild.model.workflow.tabs.domains.Grid';
+					parameters[CMDBuild.core.constants.Proxy.MODEL_NAME] = 'CMDBuild.model.administration.workflow.tabs.domains.Grid';
 					parameters[CMDBuild.core.constants.Proxy.TARGET_VARIABLE_NAME] = 'selectedDomain';
 
 					this.propertyManageSet(parameters);

@@ -1,7 +1,6 @@
 (function () {
 
 	/**
-	 * @link CMDBuild.controller.management.workflow.CMNoteController
 	 * @link CMDBuild.controller.management.classes.CMNoteController
 	 *
 	 * @legacy
@@ -13,7 +12,7 @@
 			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.Message',
 			'CMDBuild.proxy.Card',
-			'CMDBuild.proxy.workflow.management.panel.form.tabs.Note'
+			'CMDBuild.proxy.management.workflow.panel.form.tabs.Note'
 		],
 
 		mixins: {
@@ -104,7 +103,7 @@
 			var params = this._getSaveParams();
 
 			if (form.isValid() && this.beforeSave(this.card)) {
-				CMDBuild.proxy.workflow.management.panel.form.tabs.Note.update({
+				CMDBuild.proxy.management.workflow.panel.form.tabs.Note.update({
 					params: params,
 					scope: this,
 					success: function (response, options, decodedResponse) {
@@ -164,9 +163,7 @@
 			var isNew = isANewActivity(card);
 
 			if (isNew) {
-				CMDBuild.core.Message.error(CMDBuild.Translation.common.failure,
-					CMDBuild.Translation.management.modworkflow.extattrs.notes.must_save_to_modify,
-					popup = false);
+				CMDBuild.core.Message.error(CMDBuild.Translation.common.failure, CMDBuild.Translation.warnings.canNotModifyNotesBeforeSavingTheActivity, false);
 			}
 
 			return !isNew;
@@ -209,7 +206,7 @@
 			if (CMDBuild.configuration.instance.get(CMDBuild.core.constants.Proxy.ENABLE_CARD_LOCK)) {
 				if (this.card) {
 					var id = this.card.get('Id');
-					CMDBuild.proxy.workflow.management.panel.form.tabs.Note.lockActivity({
+					CMDBuild.proxy.management.workflow.panel.form.tabs.Note.lockActivity({
 						params: {
 							id: id
 						},
@@ -226,7 +223,7 @@
 			if (CMDBuild.configuration.instance.get(CMDBuild.core.constants.Proxy.ENABLE_CARD_LOCK)) {
 				if (this.card && this.view.isInEditing()) {
 					var id = this.card.get('Id');
-					CMDBuild.proxy.workflow.management.panel.form.tabs.Note.unlockActivity({
+					CMDBuild.proxy.management.workflow.panel.form.tabs.Note.unlockActivity({
 						params: {
 							id: id
 						},

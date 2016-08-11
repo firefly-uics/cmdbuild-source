@@ -394,8 +394,6 @@
 		},
 		"credits": "Info &amp; Support",
 		"display_topic": "Приказ објеката",
-		"display_topic_none": "Нема објеката за приказ",
-		"display_topic_of": "објекти",
 		"failure": "Грешка",
 		"group": "Група",
 		"loading": "Учитавање у току...",
@@ -748,65 +746,15 @@
 			"showgraph": "Прикажи у графу",
 			"shownotes": "Прикажи напомене"
 		},
-		"modworkflow": {
-			"abort_card": "Прекини процес",
-			"abort_card_confirm": "Да ли сте сигурни да желите прекинути процес?",
-			"activitydocumentation": "Документација о извршеним активностима",
-			"add_card": "Креирај процес",
-			"completed": "Завршен",
-			"custom_steps": "Додатни кораци",
-			"delete_card": "Уклони процес",
-			"delete_card_confirm": "Да ли сте сигурни да желите уклонити процес?",
-			"extattrs": {
-				"attachments": {
-					"must_save_to_add": "Не може поставити прилог пре него што снимите активност"
-				},
-				"calendar": {
-					"wrong_config": "Календар није добро подешен"
-				},
-				"linkcards": {
-					"required": "Морате изабрати картицу - "
-				},
-				"managerelation": {
-					"required": "Морате изабрати релације - "
-				},
-				"notes": {
-					"must_save_to_modify": "Не можете модификовати напомену пре него што снимите активност"
-				}
-			},
-			"interrupted": "Прекинут",
-			"modify_card": "Измени активност",
-			"modify_note": "Измени напомену",
-			"open_attachment": "Отвори прилог",
-			"open_note": "Отвори напомену",
-			"started": " Покренут",
-			"status": " Стање",
-			"statuses": {
-				"all": "Сва",
-				"closed.aborted": "Прекинут",
-				"closed.completed": "Завршен",
-				"open.not_running.suspended": "Суспендован",
-				"open.running": "Активан"
-			},
-			"tabs": {
-				"attachments": "Прилози",
-				"card": "Активност",
-				"detail": "Детаљи",
-				"history": "Историја",
-				"notes": "Напомена",
-				"options": "Опције",
-				"relations": "Релације",
-				"sketch": "Граф"
-			},
-			"title": "Листа - ",
-			"treetitle": "Картице процеса"
-		},
 		"welcome": {
 			"body": "Модул за управљање подацима.",
 			"title": "Добро дошли"
 		}
 	},
 	"warnings": {
+		"calendarIsNotWellConfigured": "Календар није добро подешен",
+		"canNotAddAnAttachmentBeforeSavingTheActivity": "Не може поставити прилог пре него што снимите активност",
+		"canNotModifyNotesBeforeSavingTheActivity": "Не можете модификовати напомену пре него што снимите активност",
 		"changeAppliedOnlyToFilteredCards": "Измене ће бити примењене само на картице података које задовољавају постављени филтер.",
 		"emailTemplateRelatedAttributeEdited": "<em>Attribute related with email templates changed, some e-mail could be regenerated.</em>",
 		"itemNotAvailable": "<em>Item not available</em>",
@@ -818,10 +766,13 @@
 		"thereAreNoEnabledLanguages": "<em>There are no enabled languages</em>",
 		"toSetAFilterYouMustBeforeSelectAClass": "<em>To set a filter you must before select a class</em>"
 	},
+	"aborted": "Прекинут",
+	"abortProcess": "Прекини процес",
 	"account": "Кориснички налог",
 	"accounts": "Кориснички налози",
 	"active": "Активан",
 	"activeOnly": "<em>Active only</em>",
+	"activity": "Активност",
 	"activityName": "Назив активности",
 	"activityPerformer": "Извршилац активности",
 	"add": "Додај",
@@ -860,6 +811,7 @@
 	"apply": "Примени",
 	"applyDefaultSelection": "<em>Apply default selection</em>",
 	"archivingDate": "Датум архивирања",
+	"areYouSureYouWantToAbortThisProcess": "Да ли сте сигурни да желите прекинути процес?",
 	"as": "као",
 	"attachFile": "Приложи датотеку",
 	"attachments": "Прилози",
@@ -927,6 +879,7 @@
 	"collapseAll": "<em>Collapse all<em>",
 	"columnPrivilegesSaved": "<em>Column privileges saved</em>",
 	"columnsPrivileges": "Права над колонама",
+	"completed": "Завршен",
 	"composeEmail": "Креирај е-пошту",
 	"composeFromTemplate": "Креирај из шаблона",
 	"configuration": "<em>Configuration</em>",
@@ -1060,6 +1013,7 @@
 	"fillColor": "Боја површине",
 	"fillOpacity": "Провидност површине",
 	"filter": "Филтер",
+	"filterInputParameters": "<em>Filter input parameters</em>",
 	"filterParameters": "<em>Filter parameters</em>",
 	"filtersForGroups": "Групни филтер",
 	"filterView": "Филтер од",
@@ -1171,6 +1125,7 @@
 	"mode": "Режим",
 	"modify": "Измени",
 	"modifyAccount": "Измени кор. налог",
+	"modifyActivity": "Измени активност",
 	"modifyAttribute": "Измени атрибут",
 	"modifyCard": "Измени картицу",
 	"modifyClass": "Измени класу",
@@ -1180,6 +1135,7 @@
 	"modifyLookup": "Измени ставку шифарника",
 	"modifyLookupType": "Измени тип у шифарнику",
 	"modifyNavigationTree": "Измени стабло",
+	"modifyNote": "Измени напомену",
 	"modifyProcess": "<em>Modify process</em>",
 	"modifyProject": "Измени пројекат",
 	"modifyReport": "Измени извештај",
@@ -1208,15 +1164,20 @@
 	"none": "Без икаквих права",
 	"noOne": "Ниједан",
 	"normal": "Нормално",
+	"note": "Напомена",
 	"notes": "Напомене",
+	"noTopicsToDisplay": "Нема објеката за приказ",
 	"notSet": "Није постављено",
 	"numberOfPings": "Број ping покушаја",
 	"odt": "ODT",
+	"of": "објекти",
 	"ok": "Потврди",
 	"oldPassword": "Стара лозинка",
 	"onDay": "Дана",
+	"open": "Активан",
 	"open_3d_viewer": "Open 3D viewer",
 	"openRelationGraph": "Отвори граф релација",
+	"operativeInstructions": "Документација о извршеним активностима",
 	"origin": "Полазна класа",
 	"otherOptions": "Остале опције",
 	"others": "<em>Others</em>",
@@ -1367,6 +1328,7 @@
 	"success": "Успех",
 	"superclass": "Суперкласа",
 	"superUser": "Администратор (Super user)",
+	"suspended": "Суспендован",
 	"tabPositioInCardPanel": "Позиција таб-а у панелу картице",
 	"targetClass": "Циљна класа",
 	"taskManager": "Управљање задацима",

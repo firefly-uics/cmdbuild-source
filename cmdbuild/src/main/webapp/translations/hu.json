@@ -394,8 +394,6 @@
 		},
 		"credits": "Információ &amp; Támogatás",
 		"display_topic": "Témák megjelenítése",
-		"display_topic_none": "Nincs megjeleníthető téma",
-		"display_topic_of": "-ból ",
 		"failure": "Hiba",
 		"group": "Csoport",
 		"loading": "Betöltés...",
@@ -748,65 +746,15 @@
 			"showgraph": "Gráf megjelenítése",
 			"shownotes": "Jegyzet megjelenítése"
 		},
-		"modworkflow": {
-			"abort_card": "Folyamat megszakítása",
-			"abort_card_confirm": "Biztos hogy meg akarja szakítani a folyamatot?",
-			"activitydocumentation": "Operatív utasítások",
-			"add_card": "Indítás",
-			"completed": "Befejezve",
-			"custom_steps": "Egyéni lépések",
-			"delete_card": "Folyamat törlése",
-			"delete_card_confirm": "Biztos hogy törölni akarja a folyamatot?",
-			"extattrs": {
-				"attachments": {
-					"must_save_to_add": "Nem adhat hozzá csatolmányt mielőtt elmentené az aktivitást"
-				},
-				"calendar": {
-					"wrong_config": "A naptár nincs megfelelően beállítva"
-				},
-				"linkcards": {
-					"required": "Kérem válasszon kártyákat - "
-				},
-				"managerelation": {
-					"required": "Kérem válasszon relációkat - "
-				},
-				"notes": {
-					"must_save_to_modify": "Nem módosíthat a jegyzeteken amíg el nem menti az aktivitást"
-				}
-			},
-			"interrupted": "Megszakadt",
-			"modify_card": "Aktivitás szerkesztése",
-			"modify_note": "Jegyzet szerkesztése",
-			"open_attachment": "Csatolmány megnyitása",
-			"open_note": "Jegyzet megnyitása",
-			"started": "Megkezdve",
-			"status": "Státusz",
-			"statuses": {
-				"all": "Mindegyik",
-				"closed.aborted": "Megszakítva",
-				"closed.completed": "Befejezve",
-				"open.not_running.suspended": "Felfüggesztve",
-				"open.running": "Nyitva"
-			},
-			"tabs": {
-				"attachments": "Csatolmányok",
-				"card": "Aktivitás",
-				"detail": "Részletek",
-				"history": "Történet",
-				"notes": "Jegyzetek",
-				"options": "Opciók",
-				"relations": "Relációk",
-				"sketch": "Vázlat"
-			},
-			"title": "Lista - ",
-			"treetitle": "Folyamatok"
-		},
 		"welcome": {
 			"body": "Adatkezelő modul.",
 			"title": "Üdvözlöm"
 		}
 	},
 	"warnings": {
+		"calendarIsNotWellConfigured": "A naptár nincs megfelelően beállítva",
+		"canNotAddAnAttachmentBeforeSavingTheActivity": "Nem adhat hozzá csatolmányt mielőtt elmentené az aktivitást",
+		"canNotModifyNotesBeforeSavingTheActivity": "Nem módosíthat a jegyzeteken amíg el nem menti az aktivitást",
 		"changeAppliedOnlyToFilteredCards": "A változtatások csak a szűrőre illeszkedő kártyákon lesznek végrehajtva",
 		"emailTemplateRelatedAttributeEdited": "Email sablonnal összefüggő attribútumok megváltoztak, néhány levelet újra kell generálni.",
 		"itemNotAvailable": "<em>Item not available</em>",
@@ -818,10 +766,13 @@
 		"thereAreNoEnabledLanguages": "<em>There are no enabled languages</em>",
 		"toSetAFilterYouMustBeforeSelectAClass": "<em>To set a filter you must before select a class</em>"
 	},
+	"aborted": "Megszakítva",
+	"abortProcess": "Folyamat megszakítása",
 	"account": "Fiók",
 	"accounts": "Fiókok",
 	"active": "Aktív",
 	"activeOnly": "<em>Active only</em>",
+	"activity": "Aktivitás",
 	"activityName": "Aktivitás neve",
 	"activityPerformer": "Aktivitás végzője",
 	"add": "Hozzáadás",
@@ -860,6 +811,7 @@
 	"apply": "Alkalmaz",
 	"applyDefaultSelection": "<em>Apply default selection</em>",
 	"archivingDate": "Archiválás dátuma",
+	"areYouSureYouWantToAbortThisProcess": "Biztos hogy meg akarja szakítani a folyamatot?",
 	"as": "mint",
 	"attachFile": "Fájl csatolása",
 	"attachments": "Csatolmányok",
@@ -927,6 +879,7 @@
 	"collapseAll": "<em>Collapse all<em>",
 	"columnPrivilegesSaved": "<em>Column privileges saved</em>",
 	"columnsPrivileges": "Oszlop kiváltságok",
+	"completed": "Befejezve",
 	"composeEmail": "E-mail írása",
 	"composeFromTemplate": "E-mail írása sablonból",
 	"configuration": "<em>Configuration</em>",
@@ -1060,6 +1013,7 @@
 	"fillColor": "Kitöltő szín",
 	"fillOpacity": "Kitöltő áttetszőség",
 	"filter": "Szűrő",
+	"filterInputParameters": "<em>Filter input parameters</em>",
 	"filterParameters": "<em>Filter parameters</em>",
 	"filtersForGroups": "Szűrők csoportoknak",
 	"filterView": "Szűrőkből",
@@ -1171,6 +1125,7 @@
 	"mode": "Mód",
 	"modify": "Módosítás",
 	"modifyAccount": "Fiók módosítása",
+	"modifyActivity": "Aktivitás szerkesztése",
 	"modifyAttribute": "Attribútum módosítása",
 	"modifyCard": "Kártya módosítása",
 	"modifyClass": "Osztály módosítása",
@@ -1180,6 +1135,7 @@
 	"modifyLookup": "Modify lookup",
 	"modifyLookupType": "Modify lookup type",
 	"modifyNavigationTree": "Fa módosítása",
+	"modifyNote": "Jegyzet szerkesztése",
 	"modifyProcess": "<em>Modify process</em>",
 	"modifyProject": "Projekt módosítása",
 	"modifyReport": "<em>Modify report</em>",
@@ -1208,15 +1164,20 @@
 	"none": "Semmi",
 	"noOne": "Semmi",
 	"normal": "Normál",
+	"note": "Jegyzetek",
 	"notes": "Jegyzetek",
+	"noTopicsToDisplay": "Nincs megjeleníthető téma",
 	"notSet": "Nincs beállítva",
 	"numberOfPings": "Ping mennyisége",
 	"odt": "ODT",
+	"of": "-ból",
 	"ok": "OK",
 	"oldPassword": "Eddigi jelszó",
 	"onDay": "Be",
+	"open": "Nyitva",
 	"open_3d_viewer": "3D megtekintő megnyitása",
 	"openRelationGraph": "Relációs gráf megnyitása",
+	"operativeInstructions": "Operatív utasítások",
 	"origin": "Eredet",
 	"otherOptions": "Más opciók",
 	"others": "<em>Others</em>",
@@ -1367,6 +1328,7 @@
 	"success": "<em>Success</em>",
 	"superclass": "Szuperosztály",
 	"superUser": "Super user",
+	"suspended": "Felfüggesztve",
 	"tabPositioInCardPanel": "Lapok pozíciója a kártya panelen",
 	"targetClass": "Célosztály",
 	"taskManager": "Feladat kezelő",

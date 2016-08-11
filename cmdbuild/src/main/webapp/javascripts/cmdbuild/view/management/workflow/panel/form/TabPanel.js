@@ -3,8 +3,6 @@
 	/**
 	 * Adapter
 	 *
-	 * @link CMDBuild.view.management.workflow.CMActivityTabPanel
-	 *
 	 * @legacy
 	 */
 	Ext.define('CMDBuild.view.management.workflow.panel.form.TabPanel', {

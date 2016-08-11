@@ -151,9 +151,11 @@
 			},
 
 		/**
+		 * @param {Boolean} silently
+		 *
 		 * @returns {Void}
 		 */
-		onPanelGridAndFormFilterAdvancedClearButtonClick: function () {
+		onPanelGridAndFormFilterAdvancedClearButtonClick: function (silently) {
 			if (Ext.isObject(this.grid) && !Ext.Object.isEmpty(this.grid)) {
 				if (this.grid.getSelectionModel().hasSelection())
 					this.grid.getSelectionModel().deselectAll();
@@ -162,7 +164,8 @@
 
 				this.view.clearButton.disable();
 
-				this.cmfg('panelGridAndFormGridFilterClear');
+				if (!silently)
+					this.cmfg('panelGridAndFormGridFilterClear');
 			} else {
 				_error('onPanelGridAndFormFilterAdvancedClearButtonClick(): grid not found', this, this.grid);
 			}

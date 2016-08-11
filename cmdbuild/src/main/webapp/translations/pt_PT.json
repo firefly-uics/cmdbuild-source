@@ -394,8 +394,6 @@
 		},
 		"credits": "Informação &amp; Suporte",
 		"display_topic": "A visualizar tópicos",
-		"display_topic_none": "Nenhum tópico para visualizar",
-		"display_topic_of": "de ",
 		"failure": "Falha",
 		"group": "Grupo",
 		"loading": "Por favor aguarde...",
@@ -748,65 +746,15 @@
 			"showgraph": "Visualizar gráfico",
 			"shownotes": "Visualizar notas"
 		},
-		"modworkflow": {
-			"abort_card": "Abortar processo",
-			"abort_card_confirm": "Tem a certeza que deseja abortar este processo?",
-			"activitydocumentation": "Instrução Operatório",
-			"add_card": "Iniciar",
-			"completed": "Completado",
-			"custom_steps": "Passos Customizados",
-			"delete_card": "Abortar Processo",
-			"delete_card_confirm": "Tem a certeza que deseja remover este processo?",
-			"extattrs": {
-				"attachments": {
-					"must_save_to_add": "Não é possível adicionar um anexo antes de guardar a atividade"
-				},
-				"calendar": {
-					"wrong_config": "O calendário não está configurado corretamente"
-				},
-				"linkcards": {
-					"required": "Por favor selecionar alguns cartões - "
-				},
-				"managerelation": {
-					"required": "Por favor selecionar alguns relacionamentos - "
-				},
-				"notes": {
-					"must_save_to_modify": "Não é possível modificar as notas antes de guardar a atividade"
-				}
-			},
-			"interrupted": "Interrompida",
-			"modify_card": "Editar Atividade",
-			"modify_note": "Editar Nota",
-			"open_attachment": "Abrir Anexos",
-			"open_note": "Abrir Nota",
-			"started": "Iniciado",
-			"status": "Estado",
-			"statuses": {
-				"all": "Todos",
-				"closed.aborted": "Abortado",
-				"closed.completed": "Completado",
-				"open.not_running.suspended": "Suspenso",
-				"open.running": "Abrir"
-			},
-			"tabs": {
-				"attachments": "Anexos",
-				"card": "Atividade",
-				"detail": "Detalhes",
-				"history": "Histórico",
-				"notes": "Nota",
-				"options": "Opções",
-				"relations": "Relacionamentos",
-				"sketch": "Esboço"
-			},
-			"title": "Lista - ",
-			"treetitle": "Processos"
-		},
 		"welcome": {
 			"body": "`Módulo de Gestão de Dados.",
 			"title": "Boas-Vindas"
 		}
 	},
 	"warnings": {
+		"calendarIsNotWellConfigured": "O calendário não está configurado corretamente",
+		"canNotAddAnAttachmentBeforeSavingTheActivity": "Não é possível adicionar um anexo antes de guardar a atividade",
+		"canNotModifyNotesBeforeSavingTheActivity": "Não é possível modificar as notas antes de guardar a atividade",
 		"changeAppliedOnlyToFilteredCards": "As mudanças serão aplicadas apenas para os cartões que correspondem ao filtro atual",
 		"emailTemplateRelatedAttributeEdited": "Atributo relacionado com modelos de email alterado, alguns emails poderão ser recriados.",
 		"itemNotAvailable": "Item não disponível",
@@ -818,10 +766,13 @@
 		"thereAreNoEnabledLanguages": "Não existem idiomas ativos",
 		"toSetAFilterYouMustBeforeSelectAClass": "Selecione uma classe antes de aplciar um filtro"
 	},
+	"aborted": "Abortado",
+	"abortProcess": "Abortar processo",
 	"account": "Conta",
 	"accounts": "Contas",
 	"active": "Ativo",
 	"activeOnly": "Apenas ativos",
+	"activity": "Atividade",
 	"activityName": "Nome da atividade",
 	"activityPerformer": "Executante da atividade",
 	"add": "Adicionar",
@@ -860,6 +811,7 @@
 	"apply": "Aplicar",
 	"applyDefaultSelection": "Aplicação seleção padrão",
 	"archivingDate": "Data de arquivo",
+	"areYouSureYouWantToAbortThisProcess": "Tem a certeza que deseja abortar este processo?",
 	"as": "como",
 	"attachFile": "Anexar ficheiro",
 	"attachments": "Anexos",
@@ -927,6 +879,7 @@
 	"collapseAll": "Colapsar todos",
 	"columnPrivilegesSaved": "<em>Column privileges saved</em>",
 	"columnsPrivileges": "Privilégios em colunas",
+	"completed": "Completado",
 	"composeEmail": "Compor e-mail",
 	"composeFromTemplate": "Compor a partir de modelo",
 	"configuration": "Configuração",
@@ -1060,6 +1013,7 @@
 	"fillColor": "Cor de preenchimento",
 	"fillOpacity": "Opacidade do Preenchimento",
 	"filter": "Filtro",
+	"filterInputParameters": "<em>Filter input parameters</em>",
 	"filterParameters": "<em>Filter parameters</em>",
 	"filtersForGroups": "Filtros para grupos",
 	"filterView": "A partir do filtro",
@@ -1171,6 +1125,7 @@
 	"mode": "Modo",
 	"modify": "Modificar",
 	"modifyAccount": "Modificar conta",
+	"modifyActivity": "Editar atividade",
 	"modifyAttribute": "Modificar atributos",
 	"modifyCard": "Modificar cartão",
 	"modifyClass": "Alterar classe",
@@ -1180,6 +1135,7 @@
 	"modifyLookup": "Modificar lista de valores",
 	"modifyLookupType": "Modificar tipo de lista de valores",
 	"modifyNavigationTree": "Modificar árvore de navegação",
+	"modifyNote": "Editar nota",
 	"modifyProcess": "Modificar processo",
 	"modifyProject": "Modificar projeto",
 	"modifyReport": "Modificar relatório",
@@ -1208,15 +1164,20 @@
 	"none": "Nenhum",
 	"noOne": "Ninguém",
 	"normal": "Normal",
+	"note": "Nota",
 	"notes": "Notes",
+	"noTopicsToDisplay": "Nenhum tópico para visualizar",
 	"notSet": "Não configurado",
 	"numberOfPings": "Número de pings",
 	"odt": "ODT",
+	"of": "de",
 	"ok": "OK",
 	"oldPassword": "Password Antiga",
 	"onDay": "No",
+	"open": "Abrir",
 	"open_3d_viewer": "Abrir visualizador 3D",
 	"openRelationGraph": "Abrir grafo de relacionamentos",
+	"operativeInstructions": "Instrução operatório",
 	"origin": "Origem",
 	"otherOptions": "Outras opções",
 	"others": "<em>Others</em>",
@@ -1367,6 +1328,7 @@
 	"success": "Successo",
 	"superclass": "Superclasse",
 	"superUser": "Super utilizador",
+	"suspended": "Suspenso",
 	"tabPositioInCardPanel": "Posição dos separadores no painel do cartão",
 	"targetClass": "Classe de destino",
 	"taskManager": "Gestor de tarefas",

@@ -394,8 +394,6 @@
 		},
 		"credits": "Info &amp; Support",
 		"display_topic": "موضوعات مورد نمایش",
-		"display_topic_none": "هیچ موضوعی برای نمایش وجود ندارد",
-		"display_topic_of": "از ",
 		"failure": "شکست",
 		"group": "گروه",
 		"loading": "در حال بارگیری",
@@ -748,65 +746,15 @@
 			"showgraph": "نمایش گراف",
 			"shownotes": "نمایش یاداشتها"
 		},
-		"modworkflow": {
-			"abort_card": "نگه داشتن پروسه",
-			"abort_card_confirm": "آیا مطمئنید که میخواهید این پروسه را نگه دارید؟",
-			"activitydocumentation": "Operative Instruction",
-			"add_card": "شروع",
-			"completed": "کامل شده",
-			"custom_steps": "مراحل دلخواه",
-			"delete_card": "Abort process",
-			"delete_card_confirm": "آیا مطمئنید که میخواهید این پروسه را حذف کنید؟",
-			"extattrs": {
-				"attachments": {
-					"must_save_to_add": "نمیتوانید پیش از ذخیره ی یک فعالیت به آن ضمیمه اضافه کنید"
-				},
-				"calendar": {
-					"wrong_config": "تقویم به درستی تنظیم نشده است"
-				},
-				"linkcards": {
-					"required": "لطفا چند کارت انتخاب کنید - "
-				},
-				"managerelation": {
-					"required": "لطفا چند رابطه انتخاب کنید - "
-				},
-				"notes": {
-					"must_save_to_modify": "شما نمیتوانید نت ها را پیش از ذخیره سازی فعالیت تغییر دهید"
-				}
-			},
-			"interrupted": "منقطع",
-			"modify_card": "ویرایش فعالیت",
-			"modify_note": "ویرایش یاداشت",
-			"open_attachment": "باز کردن ذخیره",
-			"open_note": "بازکردن یاداشت",
-			"started": "شروع شده",
-			"status": "وضعیت",
-			"statuses": {
-				"all": "همه",
-				"closed.aborted": "نگه داشته شده",
-				"closed.completed": "کامل شده",
-				"open.not_running.suspended": "معلق",
-				"open.running": "باز"
-			},
-			"tabs": {
-				"attachments": "ضمیمه",
-				"card": "فعالیت",
-				"detail": "جزئیات",
-				"history": "تاریخچه",
-				"notes": "یاداشت",
-				"options": "انتخابها",
-				"relations": "روابط",
-				"sketch": "طرح"
-			},
-			"title": "لیست - ",
-			"treetitle": "فرآیندها"
-		},
 		"welcome": {
 			"body": "ماژول مدیریت اطلاعات",
 			"title": "خوش آمدید"
 		}
 	},
 	"warnings": {
+		"calendarIsNotWellConfigured": "تقویم به درستی تنظیم نشده است",
+		"canNotAddAnAttachmentBeforeSavingTheActivity": "نمیتوانید پیش از ذخیره ی یک فعالیت به آن ضمیمه اضافه کنید",
+		"canNotModifyNotesBeforeSavingTheActivity": "شما نمیتوانید نت ها را پیش از ذخیره سازی فعالیت تغییر دهید",
 		"changeAppliedOnlyToFilteredCards": "تغییرات تنها در کارتهایی که با فیلتر کنونی سازگاری دارند اتفاق خواهد افتاد",
 		"emailTemplateRelatedAttributeEdited": "<em>Attribute related with email templates changed, some e-mail could be regenerated.</em>",
 		"itemNotAvailable": "<em>Item not available</em>",
@@ -818,10 +766,13 @@
 		"thereAreNoEnabledLanguages": "<em>There are no enabled languages</em>",
 		"toSetAFilterYouMustBeforeSelectAClass": "<em>To set a filter you must before select a class</em>"
 	},
+	"aborted": "نگه داشته شده",
+	"abortProcess": "نگه داشتن پروسه",
 	"account": "حساب",
 	"accounts": "حسابها",
 	"active": "فعال",
 	"activeOnly": "<em>Active only</em>",
+	"activity": "فعالیت",
 	"activityName": "نام فعالیت",
 	"activityPerformer": "انجام دهنده",
 	"add": "اضافه",
@@ -860,6 +811,7 @@
 	"apply": "اعمال کردن",
 	"applyDefaultSelection": "<em>Apply default selection</em>",
 	"archivingDate": "تاریخ آرشیو کردن",
+	"areYouSureYouWantToAbortThisProcess": "آیا مطمئنید که میخواهید این پروسه را نگه دارید؟",
 	"as": "به عنوان",
 	"attachFile": "ضمیمه کردن فایل",
 	"attachments": "ضمیمه",
@@ -927,6 +879,7 @@
 	"collapseAll": "<em>Collapse all<em>",
 	"columnPrivilegesSaved": "<em>Column privileges saved</em>",
 	"columnsPrivileges": "دسترسی ستونها",
+	"completed": "کامل شده",
 	"composeEmail": "نوشتن ایمیل",
 	"composeFromTemplate": "<em>Compose from template</em>",
 	"configuration": "<em>Configuration</em>",
@@ -1059,6 +1012,7 @@
 	"fillColor": "پر کردن رنگ",
 	"fillOpacity": "<em>Fill opacity</em>",
 	"filter": "فیلتر",
+	"filterInputParameters": "<em>Filter input parameters</em>",
 	"filterParameters": "<em>Filter parameters</em>",
 	"filtersForGroups": "فیلترها برای گروهها",
 	"filterView": "از فیلتر",
@@ -1170,6 +1124,7 @@
 	"mode": "مد",
 	"modify": "ویرایش",
 	"modifyAccount": "تغییر حساب",
+	"modifyActivity": "ویرایش فعالیت",
 	"modifyAttribute": "تغییر خاصیت",
 	"modifyCard": "ویرایش کارت",
 	"modifyClass": "تغییر کلاس",
@@ -1179,6 +1134,7 @@
 	"modifyLookup": "تغییر جستجو",
 	"modifyLookupType": "تغییر نوع جستجو",
 	"modifyNavigationTree": "تغییر درخت",
+	"modifyNote": "ویرایش یاداشت",
 	"modifyProcess": "<em>Modify process</em>",
 	"modifyProject": "ویرایش پروژه",
 	"modifyReport": "ویرایش گزارش",
@@ -1207,15 +1163,20 @@
 	"none": "هیچ",
 	"noOne": "هیچ کدام",
 	"normal": "نرمال",
+	"note": "یاداشت",
 	"notes": "یاداشتها",
+	"noTopicsToDisplay": "هیچ موضوعی برای نمایش وجود ندارد",
 	"notSet": "Not set",
 	"numberOfPings": "تعداد پینگها",
 	"odt": "ODT",
+	"of": "از",
 	"ok": "OK",
 	"oldPassword": "رمز عبور قدیمی",
 	"onDay": "<em>On</em>",
+	"open": "باز",
 	"open_3d_viewer": "Open 3D viewer",
 	"openRelationGraph": "باز کردن گراف رابطه",
+	"operativeInstructions": "<em>Operative instructions</em>",
 	"origin": "مبدا",
 	"otherOptions": "انتخابهای دیگر",
 	"others": "<em>Others</em>",
@@ -1366,6 +1327,7 @@
 	"success": "موفقیت",
 	"superclass": "کلاس بالایی",
 	"superUser": "<em>Super user</em>",
+	"suspended": "معلق",
 	"tabPositioInCardPanel": "Tabs position in card panel",
 	"targetClass": "کلاس مقصد",
 	"taskManager": "مدیریت کارها",

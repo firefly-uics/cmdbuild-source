@@ -6,21 +6,6 @@
 	/**
 	 * Common methods
 	 *
-	 * Required managed functions:
-	 * 	- accordionBuildId'
-	 * 	- accordionDeselect'
-	 * 	- accordionExpand'
-	 * 	- accordionFirstSelectableNodeSelect'
-	 * 	- accordionFirtsSelectableNodeGet'
-	 * 	- accordionIdentifierGet'
-	 * 	- accordionNodeByIdExists'
-	 * 	- accordionNodeByIdGet'
-	 * 	- accordionNodeByIdSelect'
-	 * 	- accordionUpdateStore'
-	 * 	- onAccordionBeforeSelect'
-	 * 	- onAccordionExpand
-	 * 	- onAccordionSelectionChange
-	 *
 	 * @abstract
 	 */
 	Ext.define('CMDBuild.controller.common.abstract.Accordion', {
@@ -80,6 +65,36 @@
 		view: undefined,
 
 		/**
+		 * @param {Object} configurationObject
+		 * @param {Object} configurationObject.parentDelegate
+		 *
+		 * @returns {Void}
+		 *
+		 * @override
+		 */
+		constructor: function (configurationObject) {
+			Ext.apply(this, { // Apply default managed methods
+				cmfgCatchedFunctions: Ext.Array.merge(this.cmfgCatchedFunctions, [
+					'accordionBuildId',
+					'accordionDeselect',
+					'accordionExpand',
+					'accordionFirstSelectableNodeSelect',
+					'accordionFirtsSelectableNodeGet',
+					'accordionIdentifierGet',
+					'accordionNodeByIdExists',
+					'accordionNodeByIdGet',
+					'accordionNodeByIdSelect',
+					'accordionUpdateStore',
+					'onAccordionBeforeSelect',
+					'onAccordionExpand',
+					'onAccordionSelectionChange'
+				])
+			});
+
+			this.callParent(arguments);
+		},
+
+		/**
 		 * Generates an unique id for the menu accordion, prepend to components array "accordion" string and identifier.
 		 *
 		 * @param {Array} components
@@ -99,6 +114,16 @@
 			}
 
 			return CMDBuild.core.constants.Proxy.ACCORDION + '-' + this.cmfg('accordionIdentifierGet') + '-' + new Date().valueOf(); // Compatibility mode with IE older than IE 9 (Date.now())
+		},
+
+		/**
+		 * @returns {Void}
+		 *
+		 * @private
+		 */
+		accordionCallbackReset: function () {
+			delete this.callback;
+			delete this.scope;
 		},
 
 		/**
@@ -362,7 +387,10 @@
 
 			// Accordion creation callback
 			if (!Ext.isEmpty(this.callback) && Ext.isFunction(this.callback))
-				Ext.callback(this.callback, this.scope);
+				Ext.callback(
+					Ext.Function.createInterceptor(this.accordionCallbackReset, this.callback, this.scope), // Create as interceptor to automatically reset accordion callback setup
+					this.scope
+				);
 
 			// DisableSelection flag reset
 			this.disableSelection = false;

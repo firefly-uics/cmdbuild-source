@@ -6,7 +6,7 @@
 		requires: [
 			'CMDBuild.core.constants.Global',
 			'CMDBuild.core.constants.Proxy',
-			'CMDBuild.proxy.workflow.tabs.Tasks'
+			'CMDBuild.proxy.administration.workflow.tabs.Tasks'
 		],
 
 		/**
@@ -36,7 +36,7 @@
 		/**
 		 * Just the grid subset of task properties, not a full task object
 		 *
-		 * @property {CMDBuild.model.workflow.tabs.taskManager.Grid}
+		 * @property {CMDBuild.model.administration.workflow.tabs.taskManager.Grid}
 		 *
 		 * @private
 		 */
@@ -72,7 +72,7 @@
 		onWorkflowTabTasksAddButtonClick: function () {
 			this.cmfg('mainViewportAccordionDeselect', 'task');
 			this.cmfg('mainViewportAccordionControllerGet', 'task').disableStoreLoad = true;
-			this.cmfg('mainViewportAccordionControllerExpand', 'task');
+			this.cmfg('mainViewportAccordionControllerExpand', { identifier: 'task' });
 			this.cmfg('mainViewportAccordionControllerGet', 'task').getView().on('storeload', function (accordion, eOpts) {
 				Ext.Function.createDelayed(function () {
 					this.cmfg('mainViewportModuleControllerGet', 'task').cmOn('onAddButtonClick', { type: 'workflow' });
@@ -102,7 +102,7 @@
 			if (!this.selectedTaskIsEmpty()) {
 				this.cmfg('mainViewportAccordionDeselect', 'task');
 				this.cmfg('mainViewportAccordionControllerGet', 'task').disableStoreLoad = true;
-				this.cmfg('mainViewportAccordionControllerExpand', 'task');
+				this.cmfg('mainViewportAccordionControllerExpand', { identifier: 'task' });
 
 				// Add action to act as expand callback
 				this.cmfg('mainViewportAccordionControllerGet', 'task').getView().on('selectionchange', function (accordion, eOpts) {
@@ -162,7 +162,7 @@
 			if (!this.selectedTaskIsEmpty()) {
 				this.cmfg('mainViewportAccordionDeselect', 'task');
 				this.cmfg('mainViewportAccordionControllerGet', 'task').disableStoreLoad = true;
-				this.cmfg('mainViewportAccordionControllerExpand', 'task');
+				this.cmfg('mainViewportAccordionControllerExpand', { identifier: 'task' });
 
 				// Add action to act as expand callback
 				this.cmfg('mainViewportAccordionControllerGet', 'task').getView().on('selectionchange', function (accordion, eOpts) {
@@ -253,7 +253,7 @@
 				var params = {};
 				params[CMDBuild.core.constants.Proxy.ID] = this.selectedTaskGet(CMDBuild.core.constants.Proxy.ID);
 
-				CMDBuild.proxy.workflow.tabs.Tasks.remove({
+				CMDBuild.proxy.administration.workflow.tabs.Tasks.remove({
 					params: params,
 					scope: this,
 					success: function (response, options, decodedResponse) {
@@ -316,7 +316,7 @@
 			 */
 			selectedTaskSet: function (parameters) {
 				if (!Ext.Object.isEmpty(parameters)) {
-					parameters[CMDBuild.core.constants.Proxy.MODEL_NAME] = 'CMDBuild.model.workflow.tabs.taskManager.Grid';
+					parameters[CMDBuild.core.constants.Proxy.MODEL_NAME] = 'CMDBuild.model.administration.workflow.tabs.taskManager.Grid';
 					parameters[CMDBuild.core.constants.Proxy.TARGET_VARIABLE_NAME] = 'selectedTask';
 
 					this.propertyManageSet(parameters);

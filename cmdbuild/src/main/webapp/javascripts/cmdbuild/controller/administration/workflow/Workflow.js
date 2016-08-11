@@ -5,7 +5,7 @@
 
 		requires: [
 			'CMDBuild.core.constants.Proxy',
-			'CMDBuild.proxy.workflow.Workflow'
+			'CMDBuild.proxy.administration.workflow.Workflow'
 		],
 
 		/**
@@ -58,7 +58,7 @@
 		controllerTaks: undefined,
 
 		/**
-		 * @property {CMDBuild.model.workflow.Workflow}
+		 * @property {CMDBuild.model.administration.workflow.Workflow}
 		 *
 		 * @private
 		 */
@@ -137,7 +137,7 @@
 				var params = {};
 				params[CMDBuild.core.constants.Proxy.ACTIVE] = false;
 
-				CMDBuild.proxy.workflow.Workflow.read({
+				CMDBuild.proxy.administration.workflow.Workflow.read({
 					params: params,
 					scope: this,
 					success: function (response, options, decodedResponse) {
@@ -250,7 +250,7 @@
 			 */
 			workflowSelectedWorkflowSet: function (parameters) {
 				if (!Ext.Object.isEmpty(parameters)) {
-					parameters[CMDBuild.core.constants.Proxy.MODEL_NAME] = 'CMDBuild.model.workflow.Workflow';
+					parameters[CMDBuild.core.constants.Proxy.MODEL_NAME] = 'CMDBuild.model.administration.workflow.Workflow';
 					parameters[CMDBuild.core.constants.Proxy.TARGET_VARIABLE_NAME] = 'selectedWorkflow';
 
 					this.propertyManageSet(parameters);

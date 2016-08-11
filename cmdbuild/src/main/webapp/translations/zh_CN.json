@@ -394,8 +394,6 @@
 		},
 		"credits": "Info &amp; 支持",
 		"display_topic": "显示主题",
-		"display_topic_none": "无主题可显示",
-		"display_topic_of": "of ",
 		"failure": "失败",
 		"group": "组",
 		"loading": "加载...",
@@ -748,65 +746,15 @@
 			"showgraph": "显示图表",
 			"shownotes": "显示注释"
 		},
-		"modworkflow": {
-			"abort_card": "放弃进程",
-			"abort_card_confirm": "你确定要放弃此进程吗?",
-			"activitydocumentation": "操作说明",
-			"add_card": "开始",
-			"completed": "完成",
-			"custom_steps": "自定义步长",
-			"delete_card": "放弃进程",
-			"delete_card_confirm": "你确定要删除此进程吗?",
-			"extattrs": {
-				"attachments": {
-					"must_save_to_add": "在保存活动之前你不能增加附件"
-				},
-				"calendar": {
-					"wrong_config": "日历未被设置好"
-				},
-				"linkcards": {
-					"required": "请选择卡片 - "
-				},
-				"managerelation": {
-					"required": "请选择关系 - "
-				},
-				"notes": {
-					"must_save_to_modify": "在保存活动前你不能变更注释"
-				}
-			},
-			"interrupted": "被中断",
-			"modify_card": "编辑活动",
-			"modify_note": "编辑注释",
-			"open_attachment": "打开附件",
-			"open_note": "打开注释",
-			"started": "已开始",
-			"status": "状态",
-			"statuses": {
-				"all": "所有",
-				"closed.aborted": "已中止",
-				"closed.completed": "已完成",
-				"open.not_running.suspended": "已挂起",
-				"open.running": "打开"
-			},
-			"tabs": {
-				"attachments": "附件",
-				"card": "活动",
-				"detail": "细节",
-				"history": "历史",
-				"notes": "注释",
-				"options": "选项",
-				"relations": "关系",
-				"sketch": "简图"
-			},
-			"title": "清单 - ",
-			"treetitle": "进程"
-		},
 		"welcome": {
 			"body": "数据管理模块。",
 			"title": "欢迎"
 		}
 	},
 	"warnings": {
+		"calendarIsNotWellConfigured": "日历未被设置好",
+		"canNotAddAnAttachmentBeforeSavingTheActivity": "在保存活动之前你不能增加附件",
+		"canNotModifyNotesBeforeSavingTheActivity": "在保存活动前你不能变更注释",
 		"changeAppliedOnlyToFilteredCards": "变更只能应用于满足当前过滤器的卡片",
 		"emailTemplateRelatedAttributeEdited": "与email模板相关联的属性变化, email不能生成.",
 		"itemNotAvailable": "<em>Item not available</em>",
@@ -818,10 +766,13 @@
 		"thereAreNoEnabledLanguages": "<em>There are no enabled languages</em>",
 		"toSetAFilterYouMustBeforeSelectAClass": "<em>To set a filter you must before select a class</em>"
 	},
+	"aborted": "已中止",
+	"abortProcess": "放弃进程",
 	"account": "帐户",
 	"accounts": "帐户",
 	"active": "活动状态",
 	"activeOnly": "<em>Active only</em>",
+	"activity": "活动",
 	"activityName": "活动名称",
 	"activityPerformer": "活动执行者",
 	"add": "增加",
@@ -860,6 +811,7 @@
 	"apply": "应用",
 	"applyDefaultSelection": "<em>Apply default selection</em>",
 	"archivingDate": "存档日期",
+	"areYouSureYouWantToAbortThisProcess": "你确定要放弃此进程吗?",
 	"as": "作为",
 	"attachFile": "附加文件",
 	"attachments": "<em>Attachments</em>",
@@ -927,6 +879,7 @@
 	"collapseAll": "<em>Collapse all</em>",
 	"columnPrivilegesSaved": "<em>Column privileges saved</em>",
 	"columnsPrivileges": "<em>Columns privileges</em>",
+	"completed": "已完成",
 	"composeEmail": "编辑 e-mail",
 	"composeFromTemplate": "Compose from template",
 	"configuration": "<em>Configuration</em>",
@@ -1060,6 +1013,7 @@
 	"fillColor": "填充颜色",
 	"fillOpacity": "填充不透明度",
 	"filter": "过滤器",
+	"filterInputParameters": "<em>Filter input parameters</em>",
 	"filterParameters": "<em>Filter parameters</em>",
 	"filtersForGroups": "组的过滤器",
 	"filterView": "从过滤器",
@@ -1171,6 +1125,7 @@
 	"mode": "模式",
 	"modify": "修改",
 	"modifyAccount": "改变帐户",
+	"modifyActivity": "编辑活动",
 	"modifyAttribute": "改变属性",
 	"modifyCard": "修改卡片",
 	"modifyClass": "变更类",
@@ -1180,6 +1135,7 @@
 	"modifyLookup": "<em>Modify lookup</em>",
 	"modifyLookupType": "<em>Modify lookup type</em>",
 	"modifyNavigationTree": "修改树",
+	"modifyNote": "编辑注释",
 	"modifyProcess": "<em>Modify process</em>",
 	"modifyProject": "改变项目",
 	"modifyReport": "<em>Modify report</em>",
@@ -1208,15 +1164,20 @@
 	"none": "<em>None</em>",
 	"noOne": "没人",
 	"normal": "<em>Normal</em>",
+	"note": "注释",
 	"notes": "<em>Notes</em>",
+	"noTopicsToDisplay": "无主题可显示",
 	"notSet": "未设置",
 	"numberOfPings": "pings的数量",
 	"odt": "ODT",
+	"of": "<em>of</em>",
 	"ok": "OK",
 	"oldPassword": "旧的密码",
 	"onDay": "On",
+	"open": "打开",
 	"open_3d_viewer": "打开3D浏览器",
 	"openRelationGraph": "打开关系图表",
+	"operativeInstructions": "操作说明",
 	"origin": "起源",
 	"otherOptions": "<em>Other options</em>",
 	"others": "<em>Others</em>",
@@ -1367,6 +1328,7 @@
 	"success": "<em>Success</em>",
 	"superclass": "超类",
 	"superUser": "高级用户",
+	"suspended": "已挂起",
 	"tabPositioInCardPanel": "Tabs在卡片面板的位置",
 	"targetClass": "目标类",
 	"taskManager": "任务管理者",

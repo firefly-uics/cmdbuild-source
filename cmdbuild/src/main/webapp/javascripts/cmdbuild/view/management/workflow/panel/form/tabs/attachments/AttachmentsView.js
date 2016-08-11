@@ -11,7 +11,7 @@
 
 		requires: [
 			'CMDBuild.core.constants.Proxy',
-			'CMDBuild.proxy.workflow.management.panel.form.tabs.Attachment'
+			'CMDBuild.proxy.management.workflow.panel.form.tabs.Attachment'
 		],
 
 		/**
@@ -21,7 +21,7 @@
 
 		border: false,
 		frame: false,
-		title: CMDBuild.Translation.management.modworkflow.tabs.attachments,
+		title: CMDBuild.Translation.attachments,
 
 		eventtype: 'card',
 		eventmastertype: 'class',
@@ -57,7 +57,7 @@
 					{header: CMDBuild.Translation.management.modcard.attachment_columns.description, sortable: true, dataIndex: 'Description', flex: 4},
 					{header: '&nbsp;', width: 80, sortable: false, renderer: this.renderAttachmentActions, align: 'center', tdCls: 'grid-button', dataIndex: 'Fake'}
 				],
-				store: CMDBuild.proxy.workflow.management.panel.form.tabs.Attachment.getStore()
+				store: CMDBuild.proxy.management.workflow.panel.form.tabs.Attachment.getStore()
 			});
 
 			this.callParent(arguments);

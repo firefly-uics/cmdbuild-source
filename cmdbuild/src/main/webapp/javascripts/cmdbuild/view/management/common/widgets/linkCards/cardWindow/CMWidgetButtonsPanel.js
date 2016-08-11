@@ -7,8 +7,7 @@
 		constructor: function() {
 			this.callParent(arguments);
 			this.margins ='0 0 5 0';
-			this.text = this.widgetDefinition.label
-					|| CMDBuild.Translation.management.modworkflow[this.widgetDefinition.labelId];
+			this.text = this.widgetDefinition.label;
 			this.disabled = !this.widgetDefinition.alwaysenabled;
 		},
 

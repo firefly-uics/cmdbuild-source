@@ -15,7 +15,7 @@
 			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.LoadMask',
 			'CMDBuild.core.Message',
-			'CMDBuild.proxy.workflow.management.panel.form.tabs.Attachment'
+			'CMDBuild.proxy.management.workflow.panel.form.tabs.Attachment'
 		],
 
 		mixins: {
@@ -169,16 +169,14 @@
 			params[CMDBuild.core.constants.Proxy.CARD_ID] = this.getCardId();
 			params[CMDBuild.core.constants.Proxy.CLASS_NAME] = _CMCache.getEntryTypeNameById(this.getClassId());
 
-			CMDBuild.proxy.workflow.management.panel.form.tabs.Attachment.download({ params: params });
+			CMDBuild.proxy.management.workflow.panel.form.tabs.Attachment.download({ params: params });
 		},
 
 		// It is not possible add an attachment at the first step of the process
 		onAddAttachmentButtonClick: function() {
 			var pi = _CMWFState.getProcessInstance();
 			if (pi && pi.isNew()) {
-				CMDBuild.core.Message.error(CMDBuild.Translation.common.failure,
-						CMDBuild.Translation.management.modworkflow.extattrs.attachments.must_save_to_add,
-						popup = false);
+				CMDBuild.core.Message.error(CMDBuild.Translation.common.failure, CMDBuild.Translation.canNotAddAnAttachmentBeforeSavingTheActivity, false);
 			} else {
 				var autocompletionRules = findAutocompletionRules(this);
 				var serverVars = CMDBuild.controller.management.common.widgets.CMWidgetController.getTemplateResolverServerVars(this.getCard());
@@ -314,7 +312,7 @@
 		params[CMDBuild.core.constants.Proxy.CARD_ID] = me.getCardId();
 
 		CMDBuild.core.LoadMask.show();
-		CMDBuild.proxy.workflow.management.panel.form.tabs.Attachment.remove({
+		CMDBuild.proxy.management.workflow.panel.form.tabs.Attachment.remove({
 			params: params,
 			loadMask: false,
 			scope: this,

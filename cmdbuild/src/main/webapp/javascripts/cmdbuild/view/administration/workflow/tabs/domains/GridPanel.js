@@ -8,7 +8,7 @@
 
 		requires: [
 			'CMDBuild.core.constants.Proxy',
-			'CMDBuild.proxy.workflow.tabs.Domains'
+			'CMDBuild.proxy.administration.workflow.tabs.Domains'
 		],
 
 		/**
@@ -71,7 +71,7 @@
 						fixed: true
 					})
 				],
-				store: CMDBuild.proxy.workflow.tabs.Domains.getStore()
+				store: CMDBuild.proxy.administration.workflow.tabs.Domains.getStore()
 			});
 
 			this.callParent(arguments);

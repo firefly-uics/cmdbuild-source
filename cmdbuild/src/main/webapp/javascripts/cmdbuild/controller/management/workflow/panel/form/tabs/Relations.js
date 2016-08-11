@@ -12,7 +12,7 @@
 
 		requires: [
 			'CMDBuild.core.constants.Proxy',
-			'CMDBuild.proxy.workflow.management.panel.form.tabs.Relations'
+			'CMDBuild.proxy.management.workflow.panel.form.tabs.Relations'
 		],
 
 		mixins: {
@@ -155,7 +155,7 @@
 					parameters[CMDBuild.core.constants.Proxy.CARDS] = Ext.encode(cardsIdArray);
 					parameters[CMDBuild.core.constants.Proxy.DOMAIN_DIRECTION] = destination;
 
-					CMDBuild.proxy.workflow.management.panel.form.tabs.Relations.getAlreadyRelatedCards({
+					CMDBuild.proxy.management.workflow.panel.form.tabs.Relations.getAlreadyRelatedCards({
 						params: parameters,
 						loadMask: false,
 						scope: this,
@@ -171,7 +171,7 @@
 									parameters['domainlimit'] = CMDBuild.configuration.instance.get(CMDBuild.core.constants.Proxy.RELATION_LIMIT);
 
 									// Get all domains of grid-card to check if it have relation with current-card
-									CMDBuild.proxy.workflow.management.panel.form.tabs.Relations.readAll({
+									CMDBuild.proxy.management.workflow.panel.form.tabs.Relations.readAll({
 										params: parameters,
 										loadMask: false,
 										scope: this,
@@ -345,7 +345,7 @@
 					params[CMDBuild.core.constants.Proxy.ATTRIBUTES] = Ext.encode(attributes);
 
 					CMDBuild.core.LoadMask.show();
-					CMDBuild.proxy.workflow.management.panel.form.tabs.Relations.remove({
+					CMDBuild.proxy.management.workflow.panel.form.tabs.Relations.remove({
 						params: params,
 						loadMask: false,
 						scope: this,
@@ -390,7 +390,7 @@
 				parameters[CMDBuild.core.constants.Proxy.SRC] = node.get('src');
 
 				this.view.setLoading(true);
-				CMDBuild.proxy.workflow.management.panel.form.tabs.Relations.readAll({
+				CMDBuild.proxy.management.workflow.panel.form.tabs.Relations.readAll({
 					params: parameters,
 					scope: this,
 					success: function (response, options, decodedResponse) {
@@ -494,7 +494,7 @@
 				parameters[CMDBuild.core.constants.Proxy.CLASS_NAME] = _CMCache.getEntryTypeNameById(pi.getClassId());
 				parameters['domainlimit'] = CMDBuild.configuration.instance.get(CMDBuild.core.constants.Proxy.RELATION_LIMIT);
 
-				CMDBuild.proxy.workflow.management.panel.form.tabs.Relations.readAll({
+				CMDBuild.proxy.management.workflow.panel.form.tabs.Relations.readAll({
 					params: parameters,
 					scope: this,
 					success: function(result, options, decodedResult) {

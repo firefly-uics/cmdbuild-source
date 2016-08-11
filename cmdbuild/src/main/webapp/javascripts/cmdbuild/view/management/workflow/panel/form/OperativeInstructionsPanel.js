@@ -17,7 +17,7 @@
 		overflowY: 'auto',
 		region: 'east',
 		split: true,
-		title: CMDBuild.Translation.management.modworkflow.activitydocumentation,
+		title: CMDBuild.Translation.operativeInstructions,
 		width: '30%'
 	});
 

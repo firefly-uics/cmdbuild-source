@@ -65,13 +65,6 @@
 	<!-- DASHBOARD -->
 	<script type="text/javascript" src="javascripts/cmdbuild/view/management/dashboard/CMModDashbaord.js"></script>
 
-	<!-- WORKFLOW -->
-	<script type="text/javascript" src="javascripts/cmdbuild/view/management/workflow/CMModWorkflow.js"></script>
-	<script type="text/javascript" src="javascripts/cmdbuild/view/management/workflow/CMActivityPanel.js"></script>
-	<script type="text/javascript" src="javascripts/cmdbuild/view/management/workflow/CMActivityTabPanel.js"></script>
-	<script type="text/javascript" src="javascripts/cmdbuild/view/management/workflow/CMMultipleActivityRowExpander.js"></script>
-	<script type="text/javascript" src="javascripts/cmdbuild/view/management/workflow/CMActivityGrid.js"></script>
-
 	<!-- WIDGET DERIVED -->
 	<script type="text/javascript" src="javascripts/cmdbuild/view/management/common/widgets/CMWorkflow.js"></script>
 
@@ -114,11 +107,3 @@
 		<script type="text/javascript" src="javascripts/cmdbuild/controller/management/common/CMCardWindowController.js"></script>
 		<script type="text/javascript" src="javascripts/cmdbuild/controller/management/common/CMDetailWindowController.js"></script>
 		<script type="text/javascript" src="javascripts/cmdbuild/controller/management/common/CMAddDetailWindowController.js"></script>
-
-	<!-- WORKFLOW -->
-	<script type="text/javascript" src="javascripts/cmdbuild/controller/management/workflow/CMModWorkflowController.js"></script>
-	<script type="text/javascript" src="javascripts/cmdbuild/controller/management/workflow/CMActivityPanelController.js"></script>
-	<script type="text/javascript" src="javascripts/cmdbuild/controller/management/workflow/CMActivityGridController.js"></script>
-
-	<!-- WIDGET DERIVED -->
-	<script type="text/javascript" src="javascripts/cmdbuild/controller/management/common/widgets/CMWorkflowController.js"></script>

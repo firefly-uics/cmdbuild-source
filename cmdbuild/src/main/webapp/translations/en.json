@@ -394,8 +394,6 @@
 		},
 		"credits": "Info &amp; Support",
 		"display_topic": "Displaying topics",
-		"display_topic_none": "No topics to display",
-		"display_topic_of": "of ",
 		"failure": "Failure",
 		"group": "Group",
 		"loading": "Loading...",
@@ -748,65 +746,15 @@
 			"showgraph": "Show graph",
 			"shownotes": "Show notes"
 		},
-		"modworkflow": {
-			"abort_card": "Abort process",
-			"abort_card_confirm": "Are you sure you want to abort this process?",
-			"activitydocumentation": "Operative Instruction",
-			"add_card": "Start",
-			"completed": "Completed",
-			"custom_steps": "Custom steps",
-			"delete_card": "Abort process",
-			"delete_card_confirm": "Are you sure you want to delete this process?",
-			"extattrs": {
-				"attachments": {
-					"must_save_to_add": "You can not add an attachment before saving the activity"
-				},
-				"calendar": {
-					"wrong_config": "The calendar is not well configured"
-				},
-				"linkcards": {
-					"required": "Please select some cards - "
-				},
-				"managerelation": {
-					"required": "Please select some relations - "
-				},
-				"notes": {
-					"must_save_to_modify": "You can not modify the notes before saving the activity"
-				}
-			},
-			"interrupted": "Interrupted",
-			"modify_card": "Edit activity",
-			"modify_note": "Edit note",
-			"open_attachment": "Open attachments",
-			"open_note": "Open note",
-			"started": "Started",
-			"status": "Status",
-			"statuses": {
-				"all": "All",
-				"closed.aborted": "Aborted",
-				"closed.completed": "Completed",
-				"open.not_running.suspended": "Suspended",
-				"open.running": "Open"
-			},
-			"tabs": {
-				"attachments": "Attachments",
-				"card": "Activity",
-				"detail": "Details",
-				"history": "History",
-				"notes": "Note",
-				"options": "Options",
-				"relations": "Relations",
-				"sketch": "Sketch"
-			},
-			"title": "List - ",
-			"treetitle": "Processes"
-		},
 		"welcome": {
 			"body": "Data management module.",
 			"title": "Welcome"
 		}
 	},
 	"warnings": {
+		"calendarIsNotWellConfigured": "The calendar is not well configured",
+		"canNotAddAnAttachmentBeforeSavingTheActivity": "You can not add an attachment before saving the activity",
+		"canNotModifyNotesBeforeSavingTheActivity": "You can not modify the notes before saving the activity",
 		"changeAppliedOnlyToFilteredCards": "The changes will be applied only to cards that meet the current filter",
 		"emailTemplateRelatedAttributeEdited": "Attribute related with email templates changed, some e-mail could be regenerated.",
 		"itemNotAvailable": "Item not available",
@@ -818,10 +766,13 @@
 		"thereAreNoEnabledLanguages": "There are no enabled languages",
 		"toSetAFilterYouMustBeforeSelectAClass": "To set a filter you must before select a class"
 	},
+	"aborted": "Aborted",
+	"abortProcess": "Abort process",
 	"account": "Account",
 	"accounts": "Accounts",
 	"active": "Active",
 	"activeOnly": "Active only",
+	"activity": "Activity",
 	"activityName": "Activity name",
 	"activityPerformer": "Activity performer",
 	"add": "Add",
@@ -860,6 +811,7 @@
 	"apply": "Apply",
 	"applyDefaultSelection": "Apply default selection",
 	"archivingDate": "Archiving date",
+	"areYouSureYouWantToAbortThisProcess": "Are you sure you want to abort this process?",
 	"as": "as",
 	"attachFile": "Attach file",
 	"attachments": "Attachments",
@@ -927,6 +879,7 @@
 	"collapseAll": "Collapse all",
 	"columnPrivilegesSaved": "Column privileges saved",
 	"columnsPrivileges": "Columns privileges",
+	"completed": "Completed",
 	"composeEmail": "Compose e-mail",
 	"composeFromTemplate": "Compose from template",
 	"configuration": "Configuration",
@@ -1060,6 +1013,7 @@
 	"fillColor": "Fill color",
 	"fillOpacity": "Fill opacity",
 	"filter": "Filter",
+	"filterInputParameters": "Filter input parameters",
 	"filterParameters": "Filter parameters",
 	"filtersForGroups": "Filters for groups",
 	"filterView": "From Filter",
@@ -1171,6 +1125,7 @@
 	"mode": "Mode",
 	"modify": "Modify",
 	"modifyAccount": "Modify account",
+	"modifyActivity": "Modify activity",
 	"modifyAttribute": "Modify attribute",
 	"modifyCard": "Modify card",
 	"modifyClass": "Modify class",
@@ -1180,6 +1135,7 @@
 	"modifyLookup": "Modify lookup",
 	"modifyLookupType": "Modify lookup type",
 	"modifyNavigationTree": "Modify navigation tree",
+	"modifyNote": "Modify note",
 	"modifyProcess": "Modify process",
 	"modifyProject": "Modify project",
 	"modifyReport": "Modify report",
@@ -1208,15 +1164,20 @@
 	"none": "None",
 	"noOne": "No one",
 	"normal": "Normal",
+	"note": "Note",
 	"notes": "Notes",
+	"noTopicsToDisplay": "No topics to display",
 	"notSet": "Not set",
 	"numberOfPings": "Number of pings",
 	"odt": "ODT",
+	"of": "of",
 	"ok": "OK",
 	"oldPassword": "Old password",
 	"onDay": "On",
+	"open": "Open",
 	"open_3d_viewer": "Open 3D viewer",
 	"openRelationGraph": "Open relation graph",
+	"operativeInstructions": "Operative instructions",
 	"origin": "Origin",
 	"otherOptions": "Other options",
 	"others": "Others",
@@ -1367,6 +1328,7 @@
 	"success": "Success",
 	"superclass": "Superclass",
 	"superUser": "Super user",
+	"suspended": "Suspended",
 	"tabPositioInCardPanel": "Tabs position in card panel",
 	"targetClass": "Target class",
 	"taskManager": "Task manager",

@@ -394,8 +394,6 @@
 		},
 		"credits": "Info &amp; Support",
 		"display_topic": "Toon onderwerpen",
-		"display_topic_none": "Geen onderwerpen om te tonen",
-		"display_topic_of": "of ",
 		"failure": "Fout",
 		"group": "Groep",
 		"loading": "Laden ...",
@@ -748,65 +746,15 @@
 			"showgraph": "Toon grafiek",
 			"shownotes": "Toon notities"
 		},
-		"modworkflow": {
-			"abort_card": "Proces afbreken",
-			"abort_card_confirm": "Weet je zeker dat je dit proces wilt afbreken?",
-			"activitydocumentation": "Operatieve Instructie",
-			"add_card": "Start",
-			"completed": "Klaar",
-			"custom_steps": "Gebruiker gedefinieerde stappen",
-			"delete_card": "Proces afbreken",
-			"delete_card_confirm": "Weet je zeker dat je dit proces wilt afbreken?",
-			"extattrs": {
-				"attachments": {
-					"must_save_to_add": "Je kan geen bijlage toevoegen voordat de aktiviteit is opgeslagen"
-				},
-				"calendar": {
-					"wrong_config": "De kalender is niet goed geconfigureerd"
-				},
-				"linkcards": {
-					"required": "Selecteer alstublieft een aantal kaarten - "
-				},
-				"managerelation": {
-					"required": "Selecteer alstublieft een aantal relaties - "
-				},
-				"notes": {
-					"must_save_to_modify": "Je kan geen notities aanpassen voordat de aktiviteiten zijn opgeslagen."
-				}
-			},
-			"interrupted": "Onderbroken",
-			"modify_card": "Aktiviteit aanpassen",
-			"modify_note": "Notitie aanpassen",
-			"open_attachment": "Open bijlagen",
-			"open_note": "Open notitie",
-			"started": "Gestart",
-			"status": "Status",
-			"statuses": {
-				"all": "Alles",
-				"closed.aborted": "Afgebroken",
-				"closed.completed": "Afgerond",
-				"open.not_running.suspended": "Onderbroken",
-				"open.running": "Open"
-			},
-			"tabs": {
-				"attachments": "Bijlage",
-				"card": "Aktiviteit",
-				"detail": "Details",
-				"history": "Geschiedenis",
-				"notes": "Notitie",
-				"options": "Opties",
-				"relations": "Relaties",
-				"sketch": "Schets"
-			},
-			"title": "Lijst - ",
-			"treetitle": "Processen"
-		},
 		"welcome": {
 			"body": "Gegevens beheer module.",
 			"title": "Welkom"
 		}
 	},
 	"warnings": {
+		"calendarIsNotWellConfigured": "De kalender is niet goed geconfigureerd",
+		"canNotAddAnAttachmentBeforeSavingTheActivity": "Je kan geen bijlage toevoegen voordat de aktiviteit is opgeslagen",
+		"canNotModifyNotesBeforeSavingTheActivity": "Je kan geen notities aanpassen voordat de aktiviteiten zijn opgeslagen",
 		"changeAppliedOnlyToFilteredCards": "De wijzigingen worden alleen toegepast bij kaarten welke bij het huidige filter passen",
 		"emailTemplateRelatedAttributeEdited": "<em>Attribute related with email templates changed, some e-mail could be regenerated.</em>",
 		"itemNotAvailable": "<em>Item not available</em>",
@@ -818,10 +766,13 @@
 		"thereAreNoEnabledLanguages": "<em>There are no enabled languages</em>",
 		"toSetAFilterYouMustBeforeSelectAClass": "<em>To set a filter you must before select a class</em>"
 	},
+	"aborted": "Afgebroken",
+	"abortProcess": "Proces afbreken",
 	"account": "Gebruiker",
 	"accounts": "Gebruikers",
 	"active": "Aktief",
 	"activeOnly": "<em>Active only</em>",
+	"activity": "Aktiviteit",
 	"activityName": "Aktiviteit naam",
 	"activityPerformer": "Activiteit uitvoerder",
 	"add": "Toevoegen",
@@ -860,6 +811,7 @@
 	"apply": "Toepassen",
 	"applyDefaultSelection": "<em>Apply default selection</em>",
 	"archivingDate": "Archiverings datum",
+	"areYouSureYouWantToAbortThisProcess": "Weet je zeker dat je dit proces wilt afbreken?",
 	"as": "als",
 	"attachFile": "Bestand toevoegen",
 	"attachments": "Bijlage",
@@ -927,6 +879,7 @@
 	"collapseAll": "<em>Collapse all<em>",
 	"columnPrivilegesSaved": "<em>Column privileges saved</em>",
 	"columnsPrivileges": "Kolom rechten",
+	"completed": "Afgerond",
 	"composeEmail": "Samenstellen email",
 	"composeFromTemplate": "Samenstellen vanaf sjabloon",
 	"configuration": "<em>Configuration</em>",
@@ -1060,6 +1013,7 @@
 	"fillColor": "Vulling kleur",
 	"fillOpacity": "Vul dekking",
 	"filter": "Filter",
+	"filterInputParameters": "<em>Filter input parameters</em>",
 	"filterParameters": "<em>Filter parameters</em>",
 	"filtersForGroups": "Filters for groepen",
 	"filterView": "Van Filter",
@@ -1171,6 +1125,7 @@
 	"mode": "Mode",
 	"modify": "Aanpassen",
 	"modifyAccount": "Gebruiker aanpassen",
+	"modifyActivity": "Aktiviteit aanpassen",
 	"modifyAttribute": "Aanpassen attribuut",
 	"modifyCard": "Kaart aanpassen",
 	"modifyClass": "Klas aanpassen",
@@ -1180,6 +1135,7 @@
 	"modifyLookup": "Aanpassen zoeklijst",
 	"modifyLookupType": "Aanpassen zoeklijst soort",
 	"modifyNavigationTree": "Aanpassen boomstructuur",
+	"modifyNote": "Notitie aanpassen",
 	"modifyProcess": "<em>Modify process</em>",
 	"modifyProject": "Project aanpassen",
 	"modifyReport": "Rapport aanpassen",
@@ -1208,15 +1164,20 @@
 	"none": "Geen",
 	"noOne": "Geen enkele",
 	"normal": "Normaal",
+	"note": "Notitie",
 	"notes": "Notities",
+	"noTopicsToDisplay": "Geen onderwerpen om te tonen",
 	"notSet": "Niet gezet",
 	"numberOfPings": "Aantal pings",
 	"odt": "ODT",
+	"of": "<em>of</em>",
 	"ok": "OK",
 	"oldPassword": "Oud wachtwoord",
 	"onDay": "Op",
+	"open": "Open",
 	"open_3d_viewer": "Start 3D viewer",
 	"openRelationGraph": "Open relatie grafiek",
+	"operativeInstructions": "Operatieve instructie",
 	"origin": "Beginpunt",
 	"otherOptions": "Andere opties",
 	"others": "<em>Others</em>",
@@ -1367,6 +1328,7 @@
 	"success": "Succes",
 	"superclass": "Superklas",
 	"superUser": "Super gebruiker",
+	"suspended": "Onderbroken",
 	"tabPositioInCardPanel": "Tabs positie in kaart paneel",
 	"targetClass": "Doel Klas",
 	"taskManager": "Taak beheerder",

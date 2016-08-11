@@ -4,7 +4,7 @@
 		extend: 'CMDBuild.core.buttons.Base',
 
 		iconCls: 'add',
-		textDefault: CMDBuild.Translation.management.modworkflow.add_card,
+		textDefault: CMDBuild.Translation.start,
 
 		/**
 		 * Enable only if is not superclass or if is superclass not empty

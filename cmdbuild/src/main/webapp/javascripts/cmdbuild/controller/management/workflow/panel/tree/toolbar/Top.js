@@ -7,7 +7,7 @@
 			'CMDBuild.core.constants.Global',
 			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.Utils',
-			'CMDBuild.proxy.workflow.management.panel.tree.Tree'
+			'CMDBuild.proxy.management.workflow.panel.tree.Tree'
 		],
 
 		/**
@@ -79,7 +79,7 @@
 					this.buildMenuChildren(selectedWorkflowDescendants, menuItems);
 
 					return Ext.create('CMDBuild.core.buttons.iconized.split.add.Workflow', {
-						text: CMDBuild.Translation.management.modworkflow.add_card + ' ' + this.cmfg('workflowSelectedWorkflowGet', CMDBuild.core.constants.Proxy.DESCRIPTION),
+						text: CMDBuild.Translation.start + ' ' + this.cmfg('workflowSelectedWorkflowGet', CMDBuild.core.constants.Proxy.DESCRIPTION),
 						disabled: this.isAddButtonDisabled(menuItems),
 						scope: this,
 
@@ -96,7 +96,7 @@
 					});
 				} else {
 					return Ext.create('CMDBuild.core.buttons.iconized.add.Workflow', {
-						text: CMDBuild.Translation.management.modworkflow.add_card + ' ' + this.cmfg('workflowSelectedWorkflowGet', CMDBuild.core.constants.Proxy.DESCRIPTION),
+						text: CMDBuild.Translation.start + ' ' + this.cmfg('workflowSelectedWorkflowGet', CMDBuild.core.constants.Proxy.DESCRIPTION),
 						disabled: this.isAddButtonDisabled(),
 						scope: this,
 
@@ -132,7 +132,7 @@
 				editable: false,
 				forceSelection: true,
 
-				store: CMDBuild.proxy.workflow.management.panel.tree.Tree.getStoreState(),
+				store: CMDBuild.proxy.management.workflow.panel.tree.Tree.getStoreState(),
 				queryMode: 'local',
 
 				value: 'open.running',
@@ -163,7 +163,7 @@
 		},
 
 		/**
-		 * @param {CMDBuild.model.workflow.management.panel.tree.toolbarTop.Parent} workflowObject
+		 * @param {CMDBuild.model.management.workflow.panel.tree.toolbarTop.Parent} workflowObject
 		 * @param {Object} parent
 		 *
 		 * @returns {void}
@@ -245,7 +245,7 @@
 			var params = {};
 			params[CMDBuild.core.constants.Proxy.ACTIVE] = true;
 
-			CMDBuild.proxy.workflow.management.panel.tree.Tree.readAllWorkflow({
+			CMDBuild.proxy.management.workflow.panel.tree.Tree.readAllWorkflow({
 				params: params,
 				scope: this,
 				success: function (response, options, decodedResponse) {
@@ -288,7 +288,7 @@
 		// WorkflowRelationshipTree property functions
 			/**
 			 * @param {Number} id
-			 * @param {CMDBuild.model.workflow.management.panel.tree.toolbarTop.Parent} child
+			 * @param {CMDBuild.model.management.workflow.panel.tree.toolbarTop.Parent} child
 			 *
 			 * @returns {Void}
 			 *
@@ -299,7 +299,7 @@
 					Ext.isNumber(id) && !Ext.isEmpty(id)
 					&& !Ext.isEmpty(this.workflowRelationshipTree[id])
 					&& Ext.isObject(child) && !Ext.Object.isEmpty(child)
-					&& Ext.getClassName(child) == 'CMDBuild.model.workflow.management.panel.tree.toolbarTop.Parent'
+					&& Ext.getClassName(child) == 'CMDBuild.model.management.workflow.panel.tree.toolbarTop.Parent'
 				) {
 					var children = this.workflowRelationshipTree[id].get(CMDBuild.core.constants.Proxy.CHILDREN);
 					children = Ext.Array.merge(children, [child]); // Merge with unique items
@@ -354,7 +354,7 @@
 					&& !Ext.isEmpty(parameters.value.id)
 					&& Ext.isObject(parameters.value) && !Ext.Object.isEmpty(parameters.value)
 				) {
-					this.workflowRelationshipTree[parameters.value.id] = Ext.create('CMDBuild.model.workflow.management.panel.tree.toolbarTop.Parent', parameters.value);
+					this.workflowRelationshipTree[parameters.value.id] = Ext.create('CMDBuild.model.management.workflow.panel.tree.toolbarTop.Parent', parameters.value);
 				}
 			},
 
@@ -365,6 +365,8 @@
 			workflowTreeToolbarTopStatusValueGet: function () {
 				if (!Ext.isEmpty(this.statusCombo))
 					return this.statusCombo.getValue();
+
+				return 'open.running';
 			},
 
 			/**
