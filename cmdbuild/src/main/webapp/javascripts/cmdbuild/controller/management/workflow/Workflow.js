@@ -37,7 +37,8 @@
 			'workflowSelectedWorkflowGet = panelGridAndFormSelectedEntryTypeGet',
 			'workflowSelectedWorkflowIsEmpty = panelGridAndFormSelectedEntryTypeIsEmpty',
 			'workflowTreeActivityOpen -> controllerTree',
-			'workflowTreeApplyStoreEvent -> controllerTree'
+			'workflowTreeApplyStoreEvent -> controllerTree',
+			'workflowTreeFilterApply -> controllerTree'
 		],
 
 		/**
