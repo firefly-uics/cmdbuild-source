@@ -96,15 +96,16 @@
 				}, this);
 			}
 		},
-		centerOnCard : function(card) {
+		centerOnCard : function(card, callback, callbackScope) {
 			var map = this.getMap();
 			var me = this;
 			this.getLayersForCard(card, function(layers) {
 				me.centerOnLayer(card, layers, 0, function(center) {
 					if (center) {
 						me.configurationMap.center = center;
-						me.changed();
+						//me.changed();
 					}
+					callback.apply(callbackScope, []);
 				}, this);
 			}, this);
 		},

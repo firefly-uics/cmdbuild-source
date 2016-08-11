@@ -56,7 +56,10 @@
 				}
 				var adapter = geoLayer.get("adapter");
 				if (adapter && adapter.refresh) {
-					adapter.refresh(currentCardId);
+					adapter.refresh({
+						cardId : currentCardId,
+						className : currentClassName
+					});
 				}
 				visibleLayers.push(layer);
 			}
@@ -64,15 +67,23 @@
 		},
 
 		/**
-		 * @param {Array} : layers from _CMCACHE
-		 * @param {Array} : layers[n].visibility
-		 * @param {Array} : layers[n].cardBinding
-		 * @param {Integer} : layers[n].maxZoom
-		 * @param {Integer} : layers[n].minZoom
-		 * @param {String} : layers[n].name
-		 * @param {String} : layers[n].description
-		 * @param {String} : layers[n].masterTableName // className
-
+		 * @param {Array} :
+		 *            layers from _CMCACHE
+		 * @param {Array} :
+		 *            layers[n].visibility
+		 * @param {Array} :
+		 *            layers[n].cardBinding
+		 * @param {Integer} :
+		 *            layers[n].maxZoom
+		 * @param {Integer} :
+		 *            layers[n].minZoom
+		 * @param {String} :
+		 *            layers[n].name
+		 * @param {String} :
+		 *            layers[n].description
+		 * @param {String} :
+		 *            layers[n].masterTableName // className
+		 * 
 		 * @param {String}
 		 *            currentClassName
 		 * @param {Integer}
@@ -89,29 +100,47 @@
 				var layer = layers[i];
 				var visible = this.interactionDocument.isVisible(layer, currentClassName, currentCardId);
 				var hide = this.interactionDocument.isHide(layer);
-				if (!hide && visible) {
-					var geoAttribute = {
-						description : layer.description,
-						masterTableName : layer.masterTableName,
-						name : layer.name,
-						type : layer.type
-					};
-					var geoLayer = this.getLayerByName(layer.name);
-					if (!geoLayer) {
-						geoLayer = this.makeLayer(geoAttribute, true);
-					}
-					var adapter = geoLayer.get("adapter");
-					if (adapter && adapter.refresh) {
-						adapter.refresh(currentCardId);
-					}
+				if (hide && visible) {
+					this.clearHideLayer(layer.name);
+				} else if (visible) {
+					this.showLayer(layer, currentClassName, currentCardId);
 					visibleLayers.push(layer);
 				}
 			}
 			this.removeNotVisibleLayers(layers, visibleLayers);
 		},
+		showLayer : function(layer, currentClassName, currentCardId)  {
+			var geoAttribute = {
+					description : layer.description,
+					masterTableName : layer.masterTableName,
+					name : layer.name,
+					type : layer.type
+				};
+				var geoLayer = this.getLayerByName(layer.name);
+				if (!geoLayer) {
+					geoLayer = this.makeLayer(geoAttribute, true);
+				}
+				var adapter = geoLayer.get("adapter");
+				if (adapter && adapter.refresh) {
+					adapter.refresh({
+						cardId : currentCardId,
+						className : currentClassName
+					});
+				}
+		},
+		clearHideLayer : function(nameLayer) {
+			var geoLayer = this.getLayerByName(nameLayer);
+			if (geoLayer) {
+				var adapter = geoLayer.get("adapter");
+				if (adapter && adapter.clearFeatures) {
+					adapter.clearFeatures();
+				}
+			}
+			
+		},
 
 		/**
-		 * @param {Array} : 
+		 * @param {Array} :
 		 *            allLayers : layers from _CMCACHE
 		 * @param {Array}
 		 *            visibles : layers from _CMCACHE

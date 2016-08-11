@@ -72,9 +72,14 @@
 				this.interactionDocument.centerOnCard({
 					className : className,
 					cardId : cardId
-				});
+				}, function() {
+					this.interactionDocument.changed();
+				}, this);
 			}
-			this.interactionDocument.changed();
+			else {
+				this.interactionDocument.changed();
+				
+			}
 		},
 
 		editMode : function() {
@@ -222,7 +227,7 @@
 	}
 
 	function onEntryTypeSelected(entryType, danglingCard) {
-		if (!entryType || !this.mapPanel.cmVisible) {
+		if (!entryType) {// || !this.mapPanel.cmVisible) {
 			return;
 		}
 
@@ -240,7 +245,7 @@
 			});
 		} else {
 			this.onCardSelected({
-				cardId : -1,
+				cardId : (lastCard) ? lastCard.get("Id") : -1,
 				className : entryType.get("name")
 			});
 		}
@@ -250,9 +255,11 @@
 		if (visible) {
 			var lastClass = _CMCardModuleState.entryType, lastCard = _CMCardModuleState.card;
 
-			if (lastClass && this.currentClassId != lastClass.get("id")) {
+			if (lastClass && this.currentClassId && this.currentClassId != lastClass.get("id")) {
 
-				this.onEntryTypeSelected(lastClass);
+				this.onEntryTypeSelected(lastClass, {
+					Id : lastCard.get("Id")
+				});
 			} else {
 				if (lastCard && (!this.currentCardId || this.currentCardId != lastCard.get("Id"))) {
 
