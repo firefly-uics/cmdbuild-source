@@ -33,10 +33,20 @@
 		 * @returns {Void}
 		 *
 		 * @private
-		 *
-		 * FIXME: future implementation
 		 */
-		applyClientFilter: Ext.emptyFn,
+		applyClientFilter: function() {
+			if (
+				Ext.isObject(this.paramsModel.get(CMDBuild.core.constants.Proxy.CLIENT_FILTER))
+				&& !Ext.Object.isEmpty(this.paramsModel.get(CMDBuild.core.constants.Proxy.CLIENT_FILTER))
+			) {
+				var moduleController = CMDBuild.global.controller.MainViewport.cmfg('mainViewportModuleControllerGet', CMDBuild.core.constants.ModuleIdentifiers.getWorkflow());
+				moduleController.cmfg('workflowTreeFilterApply', Ext.create('CMDBuild.model.common.panel.gridAndForm.filter.advanced.Filter', {
+					configuration: this.paramsModel.get(CMDBuild.core.constants.Proxy.CLIENT_FILTER)
+				}));
+			} else {
+				_error('applyClientFilter(): unmanaged clientFilter property', this, this.paramsModel.get(CMDBuild.core.constants.Proxy.CLIENT_FILTER));
+			}
+		},
 
 		/**
 		 * @param {Object} params - url parameters
