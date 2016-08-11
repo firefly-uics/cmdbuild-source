@@ -138,6 +138,8 @@
 		 * @param {Object} data
 		 *
 		 * @returns {Ext.data.ResultSet}
+		 *
+		 * @override
 		 */
 		readRecords: function (data) {
 			data = data[CMDBuild.core.constants.Proxy.RESPONSE][CMDBuild.core.constants.Proxy.ROWS];
