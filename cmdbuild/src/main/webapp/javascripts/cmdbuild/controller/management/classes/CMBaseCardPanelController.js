@@ -141,7 +141,6 @@
 			var params = {};
 			params[CMDBuild.core.constants.Proxy.CARD_ID] = this.cloneCard ? -1 : this.card.get("Id");
 			params[CMDBuild.core.constants.Proxy.CLASS_NAME] = _CMCache.getEntryTypeNameById(this.card.get("IdClass"));
-
 			addDataFromCardDataPoviders(me, params);
 
 			if (thereAraNotWrongAttributes(me)) {
@@ -153,6 +152,7 @@
 		 * @param {Object} params
 		 */
 		doFormSubmit: function (params) {
+
 			CMDBuild.proxy.Card.update({
 				params: Ext.Object.merge(params, this.view.getForm().getValues()),
 				loadMask: false,
@@ -383,7 +383,7 @@
 		for (var provider in me.cardDataProviders) {
 			provider = me.cardDataProviders[provider];
 			if (typeof provider.getCardData == "function") {
-				var values = provider.getCardData();
+				var values = provider.getCardData(params);
 				if (values) {
 					params[provider.getCardDataName()] = values;
 				}

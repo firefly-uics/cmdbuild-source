@@ -53,6 +53,9 @@
 	.email-send { background-image: url("../images/icons/email/email-send.png") !important; }
 	.email-view { background-image: url("../images/icons/email/email-view.png") !important; }
 
+/* Gis */
+	.navigate { background-image: url("../images/icons/gis/bullet_go.png") !important; }
+
 /* File formats */
 	.csv { background-image: url("../images/icons/fileFormats/csv.png") !important; }
 	.odt { background-image: url("../images/icons/fileFormats/odt.png") !important; }

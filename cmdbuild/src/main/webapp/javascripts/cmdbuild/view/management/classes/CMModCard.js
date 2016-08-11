@@ -302,12 +302,18 @@
 				this.fireEvent(this.CMEVENTS.addButtonClick, p);
 			}, this);
 
-			this.theMap = Ext.create('CMDBuild.view.management.classes.map.CMMapPanel', {
-				tbar: [this.mapAddCardButton, '->', this.showGridButton],
-				frame: false,
-				border: false
+			var thematismButton = Ext.create('CMDBuild.core.buttons.gis.Thematism', {
+				handler : function() {
+					this.theMap.initThematism();
+				}
 			});
-
+			this.theMap = Ext.create('CMDBuild.view.management.classes.map.CMMapPanel', {
+				tbar: [this.mapAddCardButton, '->', thematismButton, this.showGridButton],
+				frame: false,
+				border: false,
+				mainGrid : this.cardGrid
+			});
+			thematismButton.theMap = this.theMap;
 			this.centralPanelItems.push(this.theMap);
 
 			this.getMapPanel = function() {
