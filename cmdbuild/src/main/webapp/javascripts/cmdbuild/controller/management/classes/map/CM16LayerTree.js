@@ -53,10 +53,8 @@
 		 * @returns {Void}
 		 */
 		onVisibilityChange: function(event) {
-			console.log("a, b, c, d", event);
 			this.interactionDocument.setLayerVisibility(event.layer, event.checked);
 			this.interactionDocument.changed();
-			//CMDBuild.global.controller.MainViewport.cmfg('mainViewportCardSelect', card);
 		}
 	});
 
