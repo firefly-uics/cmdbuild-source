@@ -1,17 +1,23 @@
-(function() {
+(function () {
 
 	Ext.define('CMDBuild.routes.Routes', {
 
 		singleton: true,
 
 		/**
-		 * @cfg {String}
+		 * @property {String}
+		 *
+		 * @private
 		 */
 		route: undefined,
 
-		exec: function() {
-			if(!Ext.isEmpty(this.route)) {
+		/**
+		 * @returns {Void}
+		 */
+		exec: function () {
+			if (Ext.isString (this.route) && !Ext.isEmpty(this.route)) {
 				var route = this.route;
+
 				delete this.route;
 
 				Ext.Router.parse('exec/' + route);
@@ -19,24 +25,12 @@
 		},
 
 		/**
-		 * @return {Mixed} route or null
-		 */
-		getRoutePath: function() {
-			if(!Ext.isEmpty(this.route)) {
-				var route = this.route;
-				delete this.route;
-
-				return route;
-			}
-
-			return null;
-		},
-
-		/**
 		 * @param {String} path
+		 *
+		 * @returns {Void}
 		 */
-		setRoutePath: function(path) {
-			if(!Ext.isEmpty(path))
+		setRoutePath: function (path) {
+			if (Ext.isString (path) && !Ext.isEmpty(path))
 				this.route = path;
 		}
 	});
