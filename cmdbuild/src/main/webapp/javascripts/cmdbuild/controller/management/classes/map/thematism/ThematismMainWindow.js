@@ -46,21 +46,23 @@
 
 		/**
 		 * @param {Object}
-		 *            card
-		 * @param {Number}
-		 *            card.Id
-		 * @param {Number}
-		 *            card.IdClass
+		 *            thematism
+		 * @param {String}
+		 *            thematism.name
+		 * @param {ol.Layer}
+		 *            thematism.layer
+		 * @param {Object}
+		 *            thematism.strategy
 		 * 
 		 * @returns {Void}
 		 */
 		onShowThematism : function(thematism) {
 			var thematicDocument = this.interactionDocument.getThematicDocument();
 			thematicDocument.addThematism(thematism);
-		},
+		}/*,
 		onCardZoom : function(card) {
-			this.interactionDocument.centerOnCard(card);
-		}
+			this.interactionDocument.centerOnCard(card, function() {}, this);
+		}*/
 	});
 
 })();

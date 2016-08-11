@@ -57,7 +57,7 @@
 			CMDBuild.global.controller.MainViewport.cmfg('mainViewportCardSelect', card);
 		},
 		onCardZoom: function(card) {
-			this.interactionDocument.centerOnCard(card);
+			this.interactionDocument.centerOnCard(card, function() {}, this);
 		}
 	});
 
