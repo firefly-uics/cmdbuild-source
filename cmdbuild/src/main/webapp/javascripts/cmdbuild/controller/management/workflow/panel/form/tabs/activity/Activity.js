@@ -125,6 +125,8 @@
 		reset: function () {
 			this.view.displayMode();
 			this.view.clear();
+
+			this.changeClassUIConfigurationForGroup(true, true, true); // Mnually disable all buttons
 		},
 
 		setDelegate: function(d) {

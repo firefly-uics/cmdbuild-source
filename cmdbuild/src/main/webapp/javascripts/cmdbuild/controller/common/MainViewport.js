@@ -187,12 +187,16 @@
 			 * Forwarder method
 			 *
 			 * @param {Object} parameters
+			 * @param {Object} parameters.identifier
+			 * @param {Object} parameters.params - expand method parameters
 			 *
 			 * @returns {Void}
 			 */
-			mainViewportAccordionControllerExpand: function (identifier) {
-				if (this.cmfg('mainViewportAccordionControllerExists', identifier))
-					this.cmfg('mainViewportAccordionControllerGet', identifier).cmfg('accordionExpand');
+			mainViewportAccordionControllerExpand: function (parameters) {
+				parameters = Ext.isObject(parameters) ? parameters : {};
+
+				if (this.cmfg('mainViewportAccordionControllerExists', parameters.identifier))
+					this.cmfg('mainViewportAccordionControllerGet', parameters.identifier).cmfg('accordionExpand', parameters.params);
 			},
 
 			/**

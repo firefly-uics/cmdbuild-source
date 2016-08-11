@@ -365,6 +365,8 @@
 			workflowTreeToolbarTopStatusValueGet: function () {
 				if (!Ext.isEmpty(this.statusCombo))
 					return this.statusCombo.getValue();
+
+				return 'open.running';
 			},
 
 			/**

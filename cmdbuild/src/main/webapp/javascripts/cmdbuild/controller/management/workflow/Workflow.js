@@ -28,12 +28,16 @@
 			'onWorkflowModuleInit = onModuleInit',
 			'onWorkflowSaveFailure',
 			'onWorkflowStatusSelectionChange -> controllerTree',
+			'onWorkflowTreePrintButtonClick -> controllerTree',
 			'onWorkflowWokflowSelect -> controllerForm, controllerTree',
 			'workflowSelectedActivityGet',
+			'workflowSelectedActivityReset',
 			'workflowSelectedWorkflowAttributesGet',
 			'workflowSelectedWorkflowAttributesIsEmpty',
 			'workflowSelectedWorkflowGet = panelGridAndFormSelectedEntryTypeGet',
-			'workflowSelectedWorkflowIsEmpty = panelGridAndFormSelectedEntryTypeIsEmpty'
+			'workflowSelectedWorkflowIsEmpty = panelGridAndFormSelectedEntryTypeIsEmpty',
+			'workflowTreeActivityOpen -> controllerTree',
+			'workflowTreeApplyStoreEvent -> controllerTree'
 		],
 
 		/**
@@ -126,7 +130,7 @@
 		onWorkflowAddButtonClick: function (id) {
 			id = Ext.isNumber(id) && !Ext.isEmpty(id) ? id : this.cmfg('workflowSelectedWorkflowGet', CMDBuild.core.constants.Proxy.ID);
 
-			this.workflowSelectedActivityReset();
+			this.cmfg('workflowSelectedActivityReset');
 
 			this.setViewTitle();
 
@@ -139,7 +143,7 @@
 		 * @returns {Void}
 		 */
 		onWorkflowActivityRemoveCallback: function () {
-			this.workflowSelectedActivityReset();
+			this.cmfg('workflowSelectedActivityReset');
 
 			// Form setup
 			// FIXME: future implementation on tab controllers refactor
@@ -152,7 +156,7 @@
 		 * @returns {Void}
 		 */
 		onWorkflowActivitySelect: function () {
-			this.workflowSelectedActivityReset();
+			this.cmfg('workflowSelectedActivityReset');
 
 			if (this.tree.getSelectionModel().hasSelection()) {
 				var selectedNode = this.tree.getSelectionModel().getSelection()[0];
@@ -204,7 +208,7 @@
 		 * @returns {Void}
 		 */
 		onWorkflowActivityUpdateCallback: function (responseModel) {
-			this.workflowSelectedActivityReset();
+			this.cmfg('workflowSelectedActivityReset');
 
 			if (Ext.isObject(responseModel) && !Ext.Object.isEmpty(responseModel)) {
 				// Form setup
@@ -216,7 +220,7 @@
 				activityData[CMDBuild.core.constants.Proxy.ID] = responseModel.get(CMDBuild.core.constants.Proxy.ID);
 				activityData[CMDBuild.core.constants.Proxy.FLOW_STATUS] = responseModel.get(CMDBuild.core.constants.Proxy.FLOW_STATUS);
 
-				this.controllerTree.cmfg('workflowTreeActivityOpen', activityData);
+				this.cmfg('workflowTreeActivityOpen', activityData);
 			}
 		},
 
@@ -400,8 +404,6 @@
 			 * @param {Object} parameters
 			 *
 			 * @returns {Void}
-			 *
-			 * @private
 			 */
 			workflowSelectedActivityReset: function (parameters) {
 				this.propertyManageReset('selectedActivity');
