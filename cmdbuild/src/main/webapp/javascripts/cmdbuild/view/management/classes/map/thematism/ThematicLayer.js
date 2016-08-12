@@ -68,9 +68,6 @@
 				projection : "EPSG:900913"
 			});
 
-			var styleFunction = function(feature) {
-				return styles[feature.getGeometry().getType()];
-			};
 			var thematicLayer = new ol.layer.Vector({
 				name : attributeName,
 				source : vectorSource,
@@ -98,13 +95,13 @@
 				var justHereFeatures = me.getFeaturesByCardId(cardId, this.layer);
 				visibles.push(cardId);
 				if (justHereFeatures.getLength() === 0) {
-    				me.newFeature({
-    					master_card : feature.get("master_card"),
-    					master_className : feature.get("master_className"),
-    					master_class : feature.get("master_class"),
-    					geometry : feature.clone().getGeometry(),
-    					strategy : strategy
-    				});
+					me.newFeature({
+						master_card : feature.get("master_card"),
+						master_className : feature.get("master_className"),
+						master_class : feature.get("master_class"),
+						geometry : feature.clone().getGeometry(),
+						strategy : strategy
+					});
 				}
 			});
 			this.layer.getSource().forEachFeature(function(feature) {
@@ -128,26 +125,20 @@
 				master_class : originalFeature.master_class,
 			});
 			feature.setGeometry(originalFeature.geometry);
-			feature.style = styles.Polygon;
+			// feature.style = this.getStyle('Point', color);
 
 			this.layer.getSource().addFeature(feature);
 			this.loadCard(originalFeature.master_card, originalFeature.master_className, function(card) {
 				this.getThematicColor(card, function(color) {
-					var style = new ol.style.Style({
-						stroke : new ol.style.Stroke({
-							color : '#F00'
-						}),
-						fill : new ol.style.Fill({
-							color : color
-						})
-					});
+					var style = this.getStyle(feature.getGeometry().getType(), color);
 					feature.setStyle(style);
 				}, this);
 			}, this);
 		},
 
 		/**
-		 * @param {Integer} cardId
+		 * @param {Integer}
+		 *            cardId
 		 * 
 		 * @returns {Array[ol.feature]} features
 		 */
@@ -199,35 +190,51 @@
 				}
 			});
 		},
+		getStyle : function(shape, color) {
+			switch (shape) {
+			case 'LineString':
+				return new ol.style.Style({
+					stroke : new ol.style.Stroke({
+						color : 'green',
+						width : 1
+					})
+				});
+			case 'Polygon':
+				return new ol.style.Style({
+					stroke : new ol.style.Stroke({
+						color : 'blue',
+						lineDash : [ 4 ],
+						width : 3
+					}),
+					fill : new ol.style.Fill({
+						color : color
+					})
+				});
+			case 'Point':
+			case 'Circle':
+			default:
+				return new ol.style.Style({
+					fill : new ol.style.Fill({
+						color : 'rgba(255, 100, 50, 0.3)'
+					}),
+					stroke : new ol.style.Stroke({
+						width : 2,
+						color : 'rgba(255, 100, 50, 0.8)'
+					}),
+					image : new ol.style.Circle({
+						fill : new ol.style.Fill({
+							color : color
+						}),
+						stroke : new ol.style.Stroke({
+							width : 1,
+							color : color
+						}),
+						radius : 10
+					}),
+				});
+			}
+		}
 	});
-	var styles = {
-		'Point' : new ol.style.Style({}),
-		'LineString' : new ol.style.Style({
-			stroke : new ol.style.Stroke({
-				color : 'green',
-				width : 1
-			})
-		}),
-		'Polygon' : new ol.style.Style({
-			stroke : new ol.style.Stroke({
-				color : 'red',
-				lineDash : [ 4 ],
-				width : 20
-			}),
-			fill : new ol.style.Fill({
-				color : 'rgba(255, 0, 0, 1)'
-			})
-		}),
-		'Circle' : new ol.style.Style({
-			stroke : new ol.style.Stroke({
-				color : 'red',
-				width : 2
-			}),
-			fill : new ol.style.Fill({
-				color : 'rgba(255,0,0,0.2)'
-			})
-		})
-	};
 	function getColor(value) {
 		if (value === true)
 			return "rgb(255, 255, 255)";
