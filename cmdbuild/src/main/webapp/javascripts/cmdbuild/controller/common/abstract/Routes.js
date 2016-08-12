@@ -1,9 +1,12 @@
 (function () {
 
-	Ext.define('CMDBuild.routes.Base', {
-		extend: 'Ext.app.Controller',
+	Ext.require('CMDBuild.core.Routes');
 
-		requires: ['CMDBuild.routes.Routes'],
+	/**
+	 * @abstract
+	 */
+	Ext.define('CMDBuild.controller.common.abstract.Routes', {
+		extend: 'Ext.app.Controller',
 
 		/**
 		 * @param {Object} params
@@ -22,9 +25,11 @@
 		 * @param {Object} router
 		 *
 		 * @returns {Void}
+		 *
+		 * @private
 		 */
 		saveRoute: function (params, path, router) {
-			CMDBuild.routes.Routes.setRoutePath(path);
+			CMDBuild.core.Routes.setRoutePath(path);
 		}
 	});
 

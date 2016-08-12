@@ -1,23 +1,19 @@
 (function() {
 
-	Ext.define('CMDBuild.routes.management.Card', {
-		extend: 'CMDBuild.routes.Base',
+	Ext.define('CMDBuild.controller.management.routes.Card', {
+		extend: 'CMDBuild.controller.common.abstract.Routes',
 
 		requires: [
 			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.Message',
-			'CMDBuild.proxy.Card'
+			'CMDBuild.proxy.Card',
+			'CMDBuild.core.configurations.Routes'
 		],
 
 		/**
 		 * @cfg {String}
 		 */
 		cardIdentifier: undefined,
-
-		/**
-		 * @cfg {Char}
-		 */
-		cardIdentifierSplitter: '~',
 
 		/**
 		 * @cfg {String}
@@ -50,7 +46,7 @@
 			if (this.paramsValidation(params)) {
 				this.entryType = _CMCache.getEntryTypeByName(this.classIdentifier);
 
-				var splittedIdentifier = this.cardIdentifier.split(this.cardIdentifierSplitter);
+				var splittedIdentifier = this.cardIdentifier.split(CMDBuild.core.configurations.Routes.getSimpleFilterSeparator());
 
 				if (!isNaN(parseInt(this.cardIdentifier))) { // Single card selection
 					Ext.Function.createDelayed(function() {
@@ -60,7 +56,7 @@
 						});
 					}, 500, this)();
 				} else if (
-					this.cardIdentifier.indexOf(this.cardIdentifierSplitter) >= 0
+					this.cardIdentifier.indexOf(CMDBuild.core.configurations.Routes.getSimpleFilterSeparator()) >= 0
 					&& (splittedIdentifier.length == 2)
 					&& (splittedIdentifier[0].length > 0)
 					&& (splittedIdentifier[1].length > 0)

@@ -1,7 +1,7 @@
 (function() {
 
-	Ext.define('CMDBuild.routes.management.Classes', {
-		extend: 'CMDBuild.routes.Base',
+	Ext.define('CMDBuild.controller.management.routes.Classes', {
+		extend: 'CMDBuild.controller.common.abstract.Routes',
 
 		requires: [
 			'CMDBuild.core.constants.Proxy',

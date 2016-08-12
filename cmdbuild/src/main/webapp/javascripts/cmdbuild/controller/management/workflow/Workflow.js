@@ -27,7 +27,6 @@
 			'onWorkflowFormReset -> controllerForm',
 			'onWorkflowModuleInit = onModuleInit',
 			'onWorkflowSaveFailure',
-			'onWorkflowStatusSelectionChange -> controllerTree',
 			'onWorkflowTreePrintButtonClick -> controllerTree',
 			'onWorkflowWokflowSelect -> controllerForm, controllerTree',
 			'workflowSelectedActivityGet',
@@ -38,7 +37,8 @@
 			'workflowSelectedWorkflowIsEmpty = panelGridAndFormSelectedEntryTypeIsEmpty',
 			'workflowTreeActivityOpen -> controllerTree',
 			'workflowTreeApplyStoreEvent -> controllerTree',
-			'workflowTreeFilterApply -> controllerTree'
+			'workflowTreeFilterApply -> controllerTree',
+			'workflowTreeToolbarTopStatusValueSet -> controllerTree'
 		],
 
 		/**
