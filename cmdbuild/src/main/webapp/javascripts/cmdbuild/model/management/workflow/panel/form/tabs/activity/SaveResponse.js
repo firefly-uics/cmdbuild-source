@@ -6,10 +6,11 @@
 		extend: 'Ext.data.Model',
 
 		fields: [
+			{ name: CMDBuild.core.constants.Proxy.ACTIVITY_SUBSET_ID, type: 'string' },
 			{ name: CMDBuild.core.constants.Proxy.CLASS_ID, type: 'int', useNull: true },
 			{ name: CMDBuild.core.constants.Proxy.FLOW_STATUS, type: 'string' },
 			{ name: CMDBuild.core.constants.Proxy.ID, type: 'int', useNull: true },
-			{ name: CMDBuild.core.constants.Proxy.PROCESS_INSTANCE_ID, type: 'int', useNull: true }
+			{ name: CMDBuild.core.constants.Proxy.PROCESS_INSTANCE_ID, type: 'string' }
 		],
 
 		/**

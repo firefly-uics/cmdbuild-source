@@ -27,13 +27,18 @@
 			'onWorkflowFormReset -> controllerForm',
 			'onWorkflowModuleInit = onModuleInit',
 			'onWorkflowSaveFailure',
-			'onWorkflowStatusSelectionChange -> controllerTree',
+			'onWorkflowTreePrintButtonClick -> controllerTree',
 			'onWorkflowWokflowSelect -> controllerForm, controllerTree',
 			'workflowSelectedActivityGet',
+			'workflowSelectedActivityReset',
 			'workflowSelectedWorkflowAttributesGet',
 			'workflowSelectedWorkflowAttributesIsEmpty',
 			'workflowSelectedWorkflowGet = panelGridAndFormSelectedEntryTypeGet',
-			'workflowSelectedWorkflowIsEmpty = panelGridAndFormSelectedEntryTypeIsEmpty'
+			'workflowSelectedWorkflowIsEmpty = panelGridAndFormSelectedEntryTypeIsEmpty',
+			'workflowTreeActivityOpen -> controllerTree',
+			'workflowTreeApplyStoreEvent -> controllerTree',
+			'workflowTreeFilterApply -> controllerTree',
+			'workflowTreeToolbarTopStatusValueSet -> controllerTree'
 		],
 
 		/**
@@ -126,7 +131,7 @@
 		onWorkflowAddButtonClick: function (id) {
 			id = Ext.isNumber(id) && !Ext.isEmpty(id) ? id : this.cmfg('workflowSelectedWorkflowGet', CMDBuild.core.constants.Proxy.ID);
 
-			this.workflowSelectedActivityReset();
+			this.cmfg('workflowSelectedActivityReset');
 
 			this.setViewTitle();
 
@@ -139,7 +144,7 @@
 		 * @returns {Void}
 		 */
 		onWorkflowActivityRemoveCallback: function () {
-			this.workflowSelectedActivityReset();
+			this.cmfg('workflowSelectedActivityReset');
 
 			// Form setup
 			// FIXME: future implementation on tab controllers refactor
@@ -152,7 +157,7 @@
 		 * @returns {Void}
 		 */
 		onWorkflowActivitySelect: function () {
-			this.workflowSelectedActivityReset();
+			this.cmfg('workflowSelectedActivityReset');
 
 			if (this.tree.getSelectionModel().hasSelection()) {
 				var selectedNode = this.tree.getSelectionModel().getSelection()[0];
@@ -204,17 +209,19 @@
 		 * @returns {Void}
 		 */
 		onWorkflowActivityUpdateCallback: function (responseModel) {
-			this.workflowSelectedActivityReset();
+			this.cmfg('workflowSelectedActivityReset');
 
 			if (Ext.isObject(responseModel) && !Ext.Object.isEmpty(responseModel)) {
 				// Form setup
 				// FIXME: future implementation on tab controllers refactor
 
 				// Tree setup
-				this.controllerTree.cmfg('workflowTreeActivityOpen', {
-					flowStatus: responseModel.get(CMDBuild.core.constants.Proxy.FLOW_STATUS),
-					id: responseModel.get(CMDBuild.core.constants.Proxy.ID)
-				});
+				var activityData = {};
+				activityData[CMDBuild.core.constants.Proxy.ACTIVITY_SUBSET_ID] = responseModel.get(CMDBuild.core.constants.Proxy.ACTIVITY_SUBSET_ID);
+				activityData[CMDBuild.core.constants.Proxy.ID] = responseModel.get(CMDBuild.core.constants.Proxy.ID);
+				activityData[CMDBuild.core.constants.Proxy.FLOW_STATUS] = responseModel.get(CMDBuild.core.constants.Proxy.FLOW_STATUS);
+
+				this.cmfg('workflowTreeActivityOpen', activityData);
 			}
 		},
 
@@ -229,12 +236,11 @@
 		 */
 		onWorkflowModuleInit: function (node) {
 			if (Ext.isObject(node) && !Ext.Object.isEmpty(node)) {
-_debug('onWorkflowModuleInit', node);
 				this.readWorkflowData(
 					node,
 					function (records, operation, success) {
 						this.setViewTitle(this.cmfg('workflowSelectedWorkflowGet', CMDBuild.core.constants.Proxy.DESCRIPTION));
-_debug('selectedWorkflow', this.cmfg('workflowSelectedWorkflowGet'));
+
 						this.cmfg('onWorkflowWokflowSelect', node); // FIXME: node rawData property is for legacy mode with workflowState module
 
 						this.onModuleInit(node); // Custom callParent() implementation
@@ -247,6 +253,8 @@ _debug('selectedWorkflow', this.cmfg('workflowSelectedWorkflowGet'));
 		 * Forward to sub-controllers
 		 *
 		 * @returns {Void}
+		 *
+		 * FIXME: to fix on activity tab refactor
 		 */
 		onWorkflowSaveFailure: function () {
 			this.controllerTree.cmfg('onWorkflowTreeSaveFailure');
@@ -397,8 +405,6 @@ _debug('selectedWorkflow', this.cmfg('workflowSelectedWorkflowGet'));
 			 * @param {Object} parameters
 			 *
 			 * @returns {Void}
-			 *
-			 * @private
 			 */
 			workflowSelectedActivityReset: function (parameters) {
 				this.propertyManageReset('selectedActivity');
@@ -412,7 +418,6 @@ _debug('selectedWorkflow', this.cmfg('workflowSelectedWorkflowGet'));
 			 * @private
 			 */
 			workflowSelectedActivitySet: function (parameters) {
-_debug('workflowSelectedActivitySet', parameters);
 				if (Ext.isObject(parameters) && !Ext.Object.isEmpty(parameters)) {
 					parameters[CMDBuild.core.constants.Proxy.MODEL_NAME] = 'CMDBuild.model.management.workflow.Activity';
 					parameters[CMDBuild.core.constants.Proxy.TARGET_VARIABLE_NAME] = 'selectedActivity';

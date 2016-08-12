@@ -4,7 +4,10 @@
 		extend: 'Ext.data.reader.Json',
 		alias: 'reader.workflowstore',
 
-		requires: ['CMDBuild.core.constants.Proxy'],
+		requires: [
+			'CMDBuild.core.constants.Metadata',
+			'CMDBuild.core.constants.Proxy'
+		],
 
 		/**
 		 * @param {Object} activityObject
@@ -14,7 +17,7 @@
 		 * @private
 		 */
 		buildNodeActivity: function (activityObject, parentObject) {
-			if (Ext.isObject(activityObject) && !Ext.Object.isEmpty(activityObject)) {
+			if (Ext.isObject(activityObject)) {
 				var activityNewObject = {};
 
 				// Workflow attributes
@@ -66,7 +69,7 @@
 					Ext.Array.each(activityMetadata, function (metadataObject, i, allMetadataObjects) {
 						if (Ext.isObject(metadataObject) && !Ext.Object.isEmpty(metadataObject))
 							switch (metadataObject[CMDBuild.core.constants.Proxy.NAME]) {
-								case CMDBuild.core.constants.Proxy.WORKFLOW_METADATA_ADDITIONAL_ACTIVITY_LABEL: {
+								case CMDBuild.core.constants.Metadata.getAdditionalActivityLabel(): {
 									if (!Ext.isEmpty(values[metadataObject[CMDBuild.core.constants.Proxy.VALUE]]))
 										description += ' - ' + values[metadataObject[CMDBuild.core.constants.Proxy.VALUE]];
 								} break;
@@ -76,6 +79,8 @@
 
 				return description;
 			}
+
+			return '';
 		},
 
 		/**
@@ -108,6 +113,24 @@
 		},
 
 		/**
+		 * Completed or aborted processes
+		 *
+		 * @param {Object} rowObject
+		 *
+		 * @returns {Object} rowObject
+		 *
+		 * @private
+		 */
+		buildNodeWorkflowInstanceNoActivity: function (rowObject) {
+			if (Ext.isObject(rowObject) && !Ext.Object.isEmpty(rowObject)) {
+				var activityNewObject = this.buildNodeActivity({}, rowObject);
+				activityNewObject['rawData'] = rowObject; // FIXME: legacy mode to remove on complete Workflow UI and wofkflowState modeules refactor
+
+				return activityNewObject;
+			}
+		},
+
+		/**
 		 * Join activity data to workflow instance data
 		 *
 		 * @param {Object} rowObject
@@ -135,6 +158,8 @@
 		 * @param {Object} data
 		 *
 		 * @returns {Ext.data.ResultSet}
+		 *
+		 * @override
 		 */
 		readRecords: function (data) {
 			data = data[CMDBuild.core.constants.Proxy.RESPONSE][CMDBuild.core.constants.Proxy.ROWS];
@@ -145,11 +170,13 @@
 				Ext.Array.each(data, function (rowObject, i, allRowObjects) {
 					var activityInfoList = rowObject[CMDBuild.core.constants.Proxy.ACTIVITY_INSTANCE_INFO_LIST];
 
-					if (Ext.isArray(activityInfoList) && !Ext.isEmpty(activityInfoList))
+					if (Ext.isArray(activityInfoList))
 						if (activityInfoList.length == 1) {
 							structure.push(this.buildNodeWorkflowInstanceSingleActivity(rowObject));
-						} else {
+						} else if (activityInfoList.length > 1) {
 							structure.push(this.buildNodeWorkflowInstanceMultipleActivity(rowObject));
+						} else if (Ext.isEmpty(activityInfoList)) {
+							structure.push(this.buildNodeWorkflowInstanceNoActivity(rowObject));
 						}
 				}, this);
 

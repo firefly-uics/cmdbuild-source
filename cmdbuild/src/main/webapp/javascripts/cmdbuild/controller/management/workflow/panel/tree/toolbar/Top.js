@@ -4,6 +4,7 @@
 		extend: 'CMDBuild.controller.common.abstract.Base',
 
 		requires: [
+			'CMDBuild.core.configurations.WorkflowStates',
 			'CMDBuild.core.constants.Global',
 			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.Utils',
@@ -28,6 +29,13 @@
 			'workflowTreeToolbarTopStatusValueGet',
 			'workflowTreeToolbarTopStatusValueSet'
 		],
+
+		/**
+		 * @cfg {Boolean}
+		 *
+		 * @private
+		 */
+		disableNextStatusSelectionChangeEvent: false,
 
 		/**
 		 * @property {Ext.form.field.ComboBox}
@@ -135,12 +143,15 @@
 				store: CMDBuild.proxy.management.workflow.panel.tree.Tree.getStoreState(),
 				queryMode: 'local',
 
-				value: 'open.running',
+				value: CMDBuild.core.configurations.WorkflowStates.getOpen(),
 
 				listeners: {
 					scope: this,
 					change: function (field, newValue, oldValue, eOpts) {
-						this.cmfg('onWorkflowStatusSelectionChange', newValue);
+						if (!this.disableNextStatusSelectionChangeEvent)
+							this.cmfg('onWorkflowStatusSelectionChange', newValue);
+
+						this.disableNextStatusSelectionChangeEvent = false; // Reset flag value
 					}
 				}
 			});
@@ -365,13 +376,21 @@
 			workflowTreeToolbarTopStatusValueGet: function () {
 				if (!Ext.isEmpty(this.statusCombo))
 					return this.statusCombo.getValue();
+
+				return CMDBuild.core.configurations.WorkflowStates.getOpen();
 			},
 
 			/**
+			 * @param {Object} parameters
+			 * @param {Object} parameters.value
+			 * @param {Object} parameters.silently
+			 *
 			 * @returns {Void}
 			 */
-			workflowTreeToolbarTopStatusValueSet: function (value) {
-				this.statusCombo.setValue(value);
+			workflowTreeToolbarTopStatusValueSet: function (parameters) {
+				this.disableNextStatusSelectionChangeEvent = Ext.isBoolean(parameters.silently) ? parameters.silently : false;
+
+				this.statusCombo.setValue(parameters.value);
 			}
 	});
 

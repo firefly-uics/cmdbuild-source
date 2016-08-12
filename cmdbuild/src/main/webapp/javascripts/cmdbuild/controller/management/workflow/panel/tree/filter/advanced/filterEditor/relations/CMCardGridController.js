@@ -93,7 +93,7 @@
 									try {
 										me.gridSM.select(0);
 									} catch (e) {
-										_debug(e);
+										_error(e);
 									}
 								}
 

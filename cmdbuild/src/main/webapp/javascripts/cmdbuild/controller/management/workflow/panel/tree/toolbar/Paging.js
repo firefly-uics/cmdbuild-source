@@ -16,6 +16,7 @@
 		cmfgCatchedFunctions: [
 			'onWorkflowTreeToolbarPagingShow',
 			'onWorkflowTreeToolbarPagingWokflowSelect',
+			'workflowTreeToolbarPagingFilterAdvancedReset',
 			'workflowTreeToolbarPagingFilterBasicReset'
 		],
 
@@ -127,6 +128,14 @@
 			this.cmfg('workflowTreeToolbarPagingFilterBasicReset');
 
 			this.controllerFilterAdvanced.cmfg('onPanelGridAndFormFilterAdvancedFilterSelect', filter);
+		},
+
+		/**
+		 * @returns {Void}
+		 */
+		workflowTreeToolbarPagingFilterAdvancedReset: function () {
+			if (Ext.isObject(this.controllerFilterAdvanced) && !Ext.Object.isEmpty(this.controllerFilterAdvanced))
+				this.controllerFilterAdvanced.cmfg('onPanelGridAndFormFilterAdvancedClearButtonClick', true);
 		},
 
 		/**
