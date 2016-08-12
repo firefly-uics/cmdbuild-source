@@ -12,7 +12,10 @@ import static org.cmdbuild.dao.query.clause.Predicates.withAlias;
 import static org.cmdbuild.dao.query.clause.QueryAliasAttribute.attribute;
 import static org.cmdbuild.dao.query.clause.alias.Aliases.canonical;
 import static org.cmdbuild.dao.query.clause.alias.Aliases.name;
-import static org.cmdbuild.dao.query.clause.where.TrueWhereClause.trueWhereClause;
+import static org.cmdbuild.dao.query.clause.where.WhereClauses.alwaysTrue;
+import static org.cmdbuild.dao.query.clause.where.WhereClauses.and;
+import static org.cmdbuild.dao.query.clause.where.WhereClauses.not;
+import static org.cmdbuild.dao.query.clause.where.WhereClauses.or;
 
 import java.util.Collection;
 import java.util.HashSet;
@@ -59,6 +62,7 @@ import org.cmdbuild.dao.query.clause.join.Over;
 import org.cmdbuild.dao.query.clause.where.AndWhereClause;
 import org.cmdbuild.dao.query.clause.where.EmptyWhereClause;
 import org.cmdbuild.dao.query.clause.where.ForwardingWhereClauseVisitor;
+import org.cmdbuild.dao.query.clause.where.NotWhereClause;
 import org.cmdbuild.dao.query.clause.where.NullWhereClauseVisitor;
 import org.cmdbuild.dao.query.clause.where.OrWhereClause;
 import org.cmdbuild.dao.query.clause.where.SimpleWhereClause;
@@ -66,6 +70,7 @@ import org.cmdbuild.dao.query.clause.where.WhereClause;
 import org.cmdbuild.dao.query.clause.where.WhereClauseVisitor;
 import org.cmdbuild.dao.view.CMDataView;
 
+import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import com.google.common.collect.FluentIterable;
 import com.google.common.collect.Lists;
@@ -311,7 +316,7 @@ public class QuerySpecsBuilderImpl implements QuerySpecsBuilder {
 
 			@Override
 			public void visit(final SimpleWhereClause whereClause) {
-				final QueryAliasAttribute attribute = whereClause.getAttribute();
+				final QueryAttribute attribute = whereClause.getAttribute();
 				final Alias alias = attribute.getAlias();
 				if (!aliases.containsAlias(alias)) {
 					aliases.addAlias(alias);
@@ -403,7 +408,7 @@ public class QuerySpecsBuilderImpl implements QuerySpecsBuilder {
 
 	@Override
 	public QuerySpecsBuilder where(final WhereClause clause) {
-		whereClause = (clause == null) ? trueWhereClause() : clause;
+		whereClause = (clause == null) ? alwaysTrue() : clause;
 		return this;
 	}
 
@@ -503,7 +508,7 @@ public class QuerySpecsBuilderImpl implements QuerySpecsBuilder {
 			qs.addSelectAttribute(checkAlias(externalRefAttribute));
 		}
 
-		qs.setWhereClause(whereClause);
+		qs.setWhereClause(adapt(whereClause, fromClause, qs));
 		qs.setOffset(offset);
 		qs.setLimit(limit);
 		for (final QueryAttribute attribute : orderings.keySet()) {
@@ -609,7 +614,7 @@ public class QuerySpecsBuilderImpl implements QuerySpecsBuilder {
 							}
 						}
 
-						private Alias alias(final QueryAliasAttribute value) {
+						private Alias alias(final QueryAttribute value) {
 							final Alias alias =
 									name(new ExternalReferenceAliasHandler(value.getAlias().toString(), attribute)
 											.forQuery());
@@ -640,6 +645,136 @@ public class QuerySpecsBuilderImpl implements QuerySpecsBuilder {
 		}
 
 		return qs;
+	}
+
+	private WhereClause adapt(final WhereClause whereClause, final FromClause fromClause,
+			final QuerySpecsImpl querySpecsImpl) {
+		return new ForwardingWhereClauseVisitor() {
+
+			private final WhereClauseVisitor DELEGATE = NullWhereClauseVisitor.getInstance();
+
+			private WhereClause output = whereClause;
+
+			@Override
+			protected WhereClauseVisitor delegate() {
+				return DELEGATE;
+			}
+
+			public WhereClause adapt() {
+				output.accept(this);
+				return output;
+			}
+
+			@Override
+			public void visit(final AndWhereClause whereClause) {
+				output = and(adaptAll(whereClause.getClauses()));
+			}
+
+			@Override
+			public void visit(final NotWhereClause whereClause) {
+				output = not(adaptSingle(whereClause.getClause()));
+			}
+
+			@Override
+			public void visit(final OrWhereClause whereClause) {
+				output = or(adaptAll(whereClause.getClauses()));
+			}
+
+			@Override
+			public void visit(final SimpleWhereClause whereClause) {
+				output = new QueryAttributeVisitor() {
+
+					private WhereClause output = whereClause;
+
+					public WhereClause adapt() {
+						whereClause.getAttribute().accept(this);
+						return output;
+					}
+
+					@Override
+					public void accept(final AnyAttribute value) {
+						final Collection<WhereClause> elements = new HashSet<>();
+						for (final CMAttribute element : fromClause.getType().getActiveAttributes()) {
+							elements.add(new ForwardingAttributeTypeVisitor() {
+
+								private final CMAttributeTypeVisitor DELEGATE = NullAttributeTypeVisitor.getInstance();
+
+								private WhereClause output = SimpleWhereClause.newInstance() //
+										.withAttribute(attribute(value.getAlias(), element.getName())) //
+										.withOperatorAndValue(whereClause.getOperator()) //
+										.withAttributeNameCast(whereClause.getAttributeNameCast()) //
+										.build();
+
+								@Override
+								protected CMAttributeTypeVisitor delegate() {
+									return DELEGATE;
+								}
+
+								public WhereClause adapt() {
+									element.getType().accept(this);
+									return output;
+								}
+
+								@Override
+								public void visit(final LookupAttributeType attributeType) {
+									final Alias alias = alias(whereClause.getAttribute());
+									output = SimpleWhereClause.newInstance() //
+											.withAttribute(attribute(alias, EXTERNAL_ATTRIBUTE)) //
+											.withOperatorAndValue(whereClause.getOperator()) //
+											.withAttributeNameCast(whereClause.getAttributeNameCast()) //
+											.build();
+									addDirectJoin(LOOKUP_CLASS_NAME, alias);
+								};
+
+								private Alias alias(final QueryAttribute value) {
+									final Alias alias =
+											name(new ExternalReferenceAliasHandler(value.getAlias().toString(), element)
+													.forQuery());
+									if (!aliases.containsAlias(alias)) {
+										aliases.addAlias(alias);
+									}
+									return alias;
+								}
+
+								private void addDirectJoin(final String targetName, final Alias alias) {
+									querySpecsImpl.addDirectJoin(DirectJoinClause.newInstance() //
+											.leftJoin(viewForBuild.findClass(targetName)) //
+											.as(alias) //
+											.on(attribute(alias, "Id")) //
+											.equalsTo(attribute(fromClause.getAlias(), element.getName())) //
+											.build());
+								}
+
+							}.adapt());
+
+						}
+						output = or(elements);
+					}
+
+					@Override
+					public void visit(final QueryAliasAttribute value) {
+					}
+
+				}.adapt();
+			}
+
+			private Iterable<WhereClause> adaptAll(final Iterable<? extends WhereClause> inputs) {
+				return FluentIterable.from(inputs) //
+						.transform(new Function<WhereClause, WhereClause>() {
+
+							@Override
+							public WhereClause apply(final WhereClause input) {
+								return adaptSingle(input);
+							}
+
+						});
+			}
+
+			private WhereClause adaptSingle(final WhereClause input) {
+				return QuerySpecsBuilderImpl.this.adapt(input, fromClause, querySpecsImpl);
+			}
+
+		}.adapt();
 	}
 
 	private FromClause createFromClause() {
