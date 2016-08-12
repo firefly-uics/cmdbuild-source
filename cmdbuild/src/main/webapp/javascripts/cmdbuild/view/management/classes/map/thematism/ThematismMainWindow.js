@@ -28,8 +28,9 @@
 		layout : "fit",
 
 		thematismConfiguration : undefined,
-		sourceFunctionsConfiguration : undefined,
-		sourceFieldConfiguration : undefined,
+		functionsConfiguration : undefined,
+		individualLayoutConfiguration : undefined,
+		rangeLayoutConfiguration : undefined,
 
 		/**
 		 * @returns {Void}
@@ -56,6 +57,16 @@
 				interactionDocument : this.interactionDocument,
 				parentWindow : this
 			});
+			this.configureIndividualLayout = Ext.create(
+					"CMDBuild.view.management.classes.map.thematism.configurationSteps.ConfigureIndividualLayout", {
+						interactionDocument : this.interactionDocument,
+						parentWindow : this
+					});
+			this.configureRangeLayout = Ext.create(
+					"CMDBuild.view.management.classes.map.thematism.configurationSteps.ConfigureRangeLayout", {
+						interactionDocument : this.interactionDocument,
+						parentWindow : this
+					});
 			this.wizard = this.getWizard();
 			Ext.apply(this, {
 				items : [ this.wizard ]
@@ -85,7 +96,7 @@
 					bodyPadding : 20
 				},
 				items : [ this.configureThematism, this.configureSourceFunction, this.configureFieldFunction,
-						this.result ]
+						this.configureIndividualLayout, this.configureRangeLayout, this.result ]
 
 			});
 			return wizard;
@@ -101,6 +112,32 @@
 		},
 		close : function() {
 			this.hide();
+		},
+		getResultFormType : function() {
+			var sourceLayer = this.thematismConfiguration.sourceLayer;
+			return "result";
+		},
+		advanceResults : function() {
+			this.interactionDocument.getLayerByName(this.configureThematism.sourceLayer, function(layer) {
+				this.result.loadComponents(function() {
+					var resultsForm = this.getResultFormType();
+					this.wizard.getLayout().setActiveItem(resultsForm);
+				}, this);
+
+			}, this);
+		},
+		advanceConfigurationLayouts : function() {
+			if (this.thematismConfiguration.analysis === CMDBuild.gis.constants.layers.RANGES_ANALYSIS) {
+				this.configureRangeLayout.loadComponents(function() {
+					this.wizard.getLayout().setActiveItem("configureRangeLayout");
+
+				}, this);
+			} else {
+				this.configureIndividualLayout.loadComponents(function() {
+					this.wizard.getLayout().setActiveItem("configureIndividualLayout");
+
+				}, this);
+			}
 		},
 		advance : function(step, configurationObject) {
 			switch (step) {
@@ -119,13 +156,18 @@
 
 				}
 				break;
-			case "configureSourceFunction":
 			case "configureFieldFunction":
+			case "configureSourceFunction":
 				this.functionConfiguration = configurationObject;
-				this.result.loadComponents(function() {
-					this.wizard.getLayout().setActiveItem("result");
-
-				}, this);
+				this.advanceConfigurationLayouts();
+				break;
+			case "configureRangeLayout":
+				this.rangeLayoutConfiguration = configurationObject;
+				this.advanceResults();
+				break;
+			case "configureIndividualLayout":
+				this.individualLayoutConfiguration = configurationObject;
+				this.advanceResults();
 				break;
 			}
 		},
@@ -135,11 +177,20 @@
 			case "configureFieldFunction":
 				this.wizard.getLayout().setActiveItem("configureThematism");
 				break;
-			case "result":
+			case "configureRangeLayout":
+			case "configureIndividualLayout":
 				if (this.thematismConfiguration.source === CMDBuild.gis.constants.layers.FUNCTION_SOURCE) {
 					this.wizard.getLayout().setActiveItem("configureSourceFunction");
 				} else {
 					this.wizard.getLayout().setActiveItem("configureFieldFunction");
+				}
+				break;
+			case "result":
+				if (this.thematismConfiguration.analysis === CMDBuild.gis.constants.layers.RANGES_ANALYSIS) {
+					this.wizard.getLayout().setActiveItem("configureRangeLayout");
+				}
+				else {
+					this.wizard.getLayout().setActiveItem("configureIndividualLayout");
 				}
 				break;
 			}
@@ -151,7 +202,7 @@
 				strategy : this.getCurrentStrategy()
 			});
 			this.hide();
-			
+
 		}
 
 	});
