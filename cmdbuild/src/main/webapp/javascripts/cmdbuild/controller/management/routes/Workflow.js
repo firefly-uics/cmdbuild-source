@@ -28,9 +28,9 @@
 		],
 
 		/**
-		 * @param {Object} params - url parameters
-		 * @param {String} params.processIdentifier - process name
-		 * @param {String} params.clientFilter - advanced filter object serialized
+		 * @param {Object} params
+		 * @param {String} params.processIdentifier
+		 * @param {String} params.clientFilter
 		 * @param {String} path
 		 * @param {Object} router
 		 *
@@ -160,7 +160,7 @@
 		},
 
 		/**
-		 * @param {Object} params - url parameters
+		 * @param {Object} params
 		 * @param {String} params.format
 		 * @param {String} path
 		 * @param {Object} router
@@ -215,7 +215,7 @@
 		},
 
 		/**
-		 * @param {Object} params - url parameters
+		 * @param {Object} params
 		 * @param {String} path
 		 * @param {Object} router
 		 *
