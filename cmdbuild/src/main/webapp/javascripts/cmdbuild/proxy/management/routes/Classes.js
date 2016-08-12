@@ -1,6 +1,6 @@
 (function () {
 
-	Ext.define('CMDBuild.proxy.management.routes.Workflow', {
+	Ext.define('CMDBuild.proxy.management.routes.Classes', {
 
 		requires: [
 			'CMDBuild.core.constants.Proxy',
@@ -17,9 +17,9 @@
 		read: function (parameters) {
 			parameters = Ext.isEmpty(parameters) ? {} : parameters;
 
-			Ext.apply(parameters, { url: CMDBuild.proxy.index.Json.workflow.read });
+			Ext.apply(parameters, { url: CMDBuild.proxy.index.Json.classes.read });
 
-			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.WORKFLOW, parameters);
+			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.CLASS, parameters);
 		}
 	});
 
