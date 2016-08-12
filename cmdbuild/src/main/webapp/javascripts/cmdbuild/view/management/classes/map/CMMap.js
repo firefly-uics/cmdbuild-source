@@ -25,10 +25,17 @@
 			var currentClassName = card.className;
 			var currentCardId = card.cardId;
 			var me = this;
+			if (currentCardId !== -1) {
 			this.center(this.interactionDocument.getConfigurationMap());
+			}
 			this.interactionDocument.getAllLayers(function(layers) {
 				me.refreshAllLayers(layers, currentClassName, currentCardId);
 				me.refreshThematicLayers(currentClassName, currentCardId);
+				me.selectCard({
+					cardId : currentCardId,
+					className : currentClassName
+				});
+				this.map.render();		
 			}, this);
 		},
 
@@ -63,7 +70,7 @@
 				}
 				visibleLayers.push(layer);
 			}
-			this.removeThematicsNotVisibleLayers(visibleLayers)
+			this.removeThematicsNotVisibleLayers(visibleLayers);
 		},
 
 		/**
@@ -109,12 +116,23 @@
 			}
 			this.removeNotVisibleLayers(layers, visibleLayers);
 		},
+		selectCard: function(card) {
+			var geoLayers = this.getLayers();
+			geoLayers.forEach(function(geoLayer) {
+				var adapter = geoLayer.get("adapter");
+				if (adapter && adapter.selectCard) {
+					adapter.selectCard(card);
+				}
+			});			
+		},
 		showLayer : function(layer, currentClassName, currentCardId)  {
+			var style = Ext.decode(layer.style);
 			var geoAttribute = {
 					description : layer.description,
 					masterTableName : layer.masterTableName,
 					name : layer.name,
-					type : layer.type
+					type : layer.type,
+					iconUrl :style.externalGraphic
 				};
 				var geoLayer = this.getLayerByName(layer.name);
 				if (!geoLayer) {

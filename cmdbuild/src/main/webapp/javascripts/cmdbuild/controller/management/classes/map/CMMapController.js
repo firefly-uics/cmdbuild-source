@@ -52,11 +52,17 @@
 		 * Ext.model.Model
 		 */
 		onCardSelected : function(card) {
+			var oldCard = this.interactionDocument.getCurrentCard();
+			var cardId = -1;
+			var className = "";
 			if (card === null) {
-				return;
+				cardId = -1;
+				className = oldCard.className;
 			}
-			var cardId = card.cardId;
-			var className = card.className;
+			else {
+				cardId = card.cardId;
+				className = card.className;
+			}
 			var type = _CMCache.getEntryTypeByName(className);
 			if (cardId !== -1) {
 				_CMCardModuleState.setCard({
@@ -75,10 +81,9 @@
 				}, function() {
 					this.interactionDocument.changed();
 				}, this);
-			}
-			else {
+			} else {
 				this.interactionDocument.changed();
-				
+
 			}
 		},
 
@@ -116,12 +121,16 @@
 				}, function(card) {
 					me.mapPanel.getMap().changeIdOnLayers(-1, c.Id);
 					var type = _CMCache.getEntryTypeById(c.IdClass);
-					me.interactionDocument.setCurrentCard({
-						cardId : c.Id,
-						className : type.get("name")
-					});
-					me.interactionDocument.changed();
-					me.interactionDocument.changedFeature();
+					var card = {
+							cardId : c.Id,
+							className : type.get("name")
+						};
+					me.interactionDocument.setCurrentCard(card);
+					me.interactionDocument.centerOnCard(card, function() {
+						me.interactionDocument.changed();
+						me.interactionDocument.changedFeature();
+						
+					}, this);
 				});
 			}
 		},
@@ -245,7 +254,7 @@
 			});
 		} else {
 			this.onCardSelected({
-				cardId : (lastCard) ? lastCard.get("Id") : -1,
+				cardId : -1,
 				className : entryType.get("name")
 			});
 		}

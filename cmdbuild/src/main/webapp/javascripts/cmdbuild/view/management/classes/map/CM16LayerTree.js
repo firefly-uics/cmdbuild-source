@@ -19,8 +19,17 @@
 
 		map : undefined,
 
+		oldClassName : undefined,
+
 		constructor : function() {
 			var store = CMDBuild.proxy.gis.Layer.getStore();
+			CMDBuild.proxy.gis.Layer.readAll({
+				scope : this,
+				callback : function(a, b, response) {
+					var me = this;
+				}
+			});
+
 			this.store = store;
 			this.callParent(arguments);
 		},
@@ -33,19 +42,28 @@
 			this.interactionDocument.observe(this);
 			this.callParent(arguments);
 		},
-
-		listeners : {
-			checkchange : function(node, checked, eOpts) {
+		checkNode : function(node, checked) {
+			if (node.raw.leaf) {
 				this.interactionDocument.getLayerByName(node.raw.layerName, function(layer) {
-					if (! layer) {
+					if (!layer) {
 						layer = this.interactionDocument.getThematicLayerByName(node.raw.layerName);
 					}
 					this.delegate.cmfg('onVisibilityChange', {
 						checked : checked,
 						layer : layer
 					});
-					
+
 				}, this);
+			} else {
+				var nodes = node.childNodes;
+				for (var i = 0; i < nodes.length; i++) {
+					this.checkNode(nodes[i], checked);
+				}
+			}
+		},
+		listeners : {
+			checkchange : function(node, checked, eOpts) {
+				this.checkNode(node, checked);
 			}
 		},
 
@@ -66,23 +84,21 @@
 			});
 		},
 		refresh : function() {
-			var currentClassId = (Ext.isEmpty(_CMCardModuleState.entryType)) ? undefined : _CMCardModuleState.entryType
-					.getId();
+			var currentCard = this.interactionDocument.getCurrentCard();
+			var cl = _CMCache.getEntryTypeByName(currentCard.className);
+			var currentClassId = cl.get("id");
 			if (!currentClassId) {
 				return;
 			}
-			var currentCardId = (Ext.isEmpty(_CMCardModuleState.card)) ? undefined : _CMCardModuleState.card.raw.Id;// getId();
-			var currentClassName = (Ext.isEmpty(_CMCardModuleState.entryType)) ? undefined
-					: _CMCardModuleState.entryType.getName();
+			var currentCardId = currentCard.cardId;
+			var currentClassName = currentCard.className;
 			var me = this;
 			this.interactionDocument.getAllLayers(function(layers) {
 				var root = me.getRootNode();
 				for (var i = 0; i < layers.length; i++) {
 					var node = nodeByLayerName(root, layers[i].name);
 					if (!me.interactionDocument.isVisible(layers[i], currentClassName, currentCardId)) {
-						if (node) {
-							node.parentNode.removeChild(node);
-						}
+						; // nop
 					} else if (node) {
 						var hide = me.interactionDocument.isHide(layers[i]);
 						node.set('checked', !hide);
@@ -93,18 +109,24 @@
 				var thematicLayers = me.interactionDocument.getThematicLayers();
 				for (var i = 0; i < thematicLayers.length; i++) {
 					var node = nodeByLayerName(root, thematicLayers[i].name);
-					if (! node) {
+					if (!node) {
 						me.addLayerItem(thematicLayers[i]);
 					}
 				}
-				expandBaseFolders(me.getRootNode(), me);
+				if (this.oldClassName !== currentClassName) {
+					me.expandAll();
+					this.oldClassName = currentClassName;
+				}
 			});
 		},
+
 		/**
 		 * 
-		 * @param {OpenLayers.Layer}
+		 * @param {ol.Layer}
 		 *            layer Add a node to the tree that represent the given
 		 *            layer
+		 *            
+		 * @returns {Void}
 		 */
 		addLayerItem : function(layer) {
 			var targetFolder = retrieveTargetFolder(layer, this.getRootNode());
@@ -118,7 +140,8 @@
 					text : layer.name,
 					layerName : layer.name,
 					leaf : true,
-					checked : true,//this.interactionDocument.isVisible(layer, currentClassName, currentCardId),
+					checked : true,// this.interactionDocument.isVisible(layer,
+					// currentClassName, currentCardId),
 					iconCls : "cmdbuild-nodisplay"
 				});
 
@@ -130,12 +153,13 @@
 			} catch (e) {
 				console.log("Fail to add layer", layer);
 			}
+			this.expandNode(targetFolder);
 		},
 
 		/**
 		 * 
 		 * @param {OpenLayers.Layer}
-		 *            layer Removes from the tree the layer that representes the
+		 *            layer Removes from the tree the layer that represents the
 		 *            given layer
 		 */
 		removeLayerItem : function(layer) {
@@ -161,26 +185,6 @@
 		}
 
 		return targetFolder;
-	}
-
-	function expandBaseFolders(root, me) {
-		var externalServicesFolder = nodeByLayerName(root, EXTERNAL_LAYERS_FOLDER_NAME);
-		var cmdbuildFolder = nodeByLayerName(root, CMDBUILD_LAYERS_FOLDER_NAME);
-		var geoServerFolder = nodeByLayerName(root, GEOSERVER_LAYERS_FOLDER_NAME);
-		var thematismFolder = nodeByLayerName(root, THEMATISM_LAYERS_FOLDER_NAME);
-		if (externalServicesFolder && externalServicesFolder.childNodes.length > 0) {
-			me.expandNode(externalServicesFolder);
-		}
-		if (cmdbuildFolder && cmdbuildFolder.childNodes.length > 0) {
-			me.expandNode(cmdbuildFolder);
-		}
-		if (geoServerFolder && geoServerFolder.childNodes.length > 0) {
-			me.expandNode(geoServerFolder);
-		}
-		if (thematismFolder && thematismFolder.childNodes.length > 0) {
-			me.expandNode(thematismFolder);
-		}
-
 	}
 
 	function retrieveThematismFolder(root) {

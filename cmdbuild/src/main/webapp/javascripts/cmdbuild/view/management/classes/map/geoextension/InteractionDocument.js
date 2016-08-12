@@ -64,6 +64,7 @@
 			if (this.thematicDocument) {
 				this.thematicDocument.refreshFeatures(layerName, features);
 			}
+			this.getMapPanel().selectCard(this.getCurrentCard());
 		},
 		changedFeature : function() {
 			for (var i = 0; i < this.featuresObserver.length; i++) {
