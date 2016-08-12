@@ -10,13 +10,14 @@
 			'CMDBuild.core.constants.ModuleIdentifiers',
 			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.CookiesManager',
+			'CMDBuild.core.Routes',
+			'CMDBuild.core.Splash',
 			'CMDBuild.proxy.classes.Classes',
 			'CMDBuild.proxy.dashboard.Dashboard',
 			'CMDBuild.proxy.domain.Domain',
 			'CMDBuild.proxy.lookup.Type',
 			'CMDBuild.proxy.Menu',
-			'CMDBuild.proxy.widget.Widget',
-			'CMDBuild.core.Splash'
+			'CMDBuild.proxy.widget.Widget'
 		],
 
 		singleton: true,
@@ -239,7 +240,7 @@
 					CMDBuild.global.controller.MainViewport.cmfg('mainViewportInstanceNameSet', CMDBuild.configuration.instance.get(CMDBuild.core.constants.Proxy.INSTANCE_NAME));
 
 					// Execute routes
-					CMDBuild.routes.Routes.exec();
+					CMDBuild.core.Routes.exec();
 
 					CMDBuild.global.controller.MainViewport.cmfg('mainViewportStartingEntitySelect');
 				}, this);

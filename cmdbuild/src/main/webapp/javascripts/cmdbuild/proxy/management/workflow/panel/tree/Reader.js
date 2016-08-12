@@ -17,7 +17,7 @@
 		 * @private
 		 */
 		buildNodeActivity: function (activityObject, parentObject) {
-			if (Ext.isObject(activityObject) && !Ext.Object.isEmpty(activityObject)) {
+			if (Ext.isObject(activityObject)) {
 				var activityNewObject = {};
 
 				// Workflow attributes
@@ -79,6 +79,8 @@
 
 				return description;
 			}
+
+			return '';
 		},
 
 		/**
@@ -107,6 +109,24 @@
 				rowObject['rawData'] = rowObject; // FIXME: legacy mode to remove on complete Workflow UI and wofkflowState modeules refactor
 
 				return rowObject;
+			}
+		},
+
+		/**
+		 * Completed or aborted processes
+		 *
+		 * @param {Object} rowObject
+		 *
+		 * @returns {Object} rowObject
+		 *
+		 * @private
+		 */
+		buildNodeWorkflowInstanceNoActivity: function (rowObject) {
+			if (Ext.isObject(rowObject) && !Ext.Object.isEmpty(rowObject)) {
+				var activityNewObject = this.buildNodeActivity({}, rowObject);
+				activityNewObject['rawData'] = rowObject; // FIXME: legacy mode to remove on complete Workflow UI and wofkflowState modeules refactor
+
+				return activityNewObject;
 			}
 		},
 
@@ -150,11 +170,13 @@
 				Ext.Array.each(data, function (rowObject, i, allRowObjects) {
 					var activityInfoList = rowObject[CMDBuild.core.constants.Proxy.ACTIVITY_INSTANCE_INFO_LIST];
 
-					if (Ext.isArray(activityInfoList) && !Ext.isEmpty(activityInfoList))
+					if (Ext.isArray(activityInfoList))
 						if (activityInfoList.length == 1) {
 							structure.push(this.buildNodeWorkflowInstanceSingleActivity(rowObject));
-						} else {
+						} else if (activityInfoList.length > 1) {
 							structure.push(this.buildNodeWorkflowInstanceMultipleActivity(rowObject));
+						} else if (Ext.isEmpty(activityInfoList)) {
+							structure.push(this.buildNodeWorkflowInstanceNoActivity(rowObject));
 						}
 				}, this);
 

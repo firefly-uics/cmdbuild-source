@@ -34,12 +34,13 @@
 			'onWorkflowTreeWokflowSelect = onWorkflowWokflowSelect',
 			'workflowTreeActivityOpen',
 			'workflowTreeAppliedFilterGet = panelGridAndFormGridAppliedFilterGet',
+			'workflowTreeApplyStoreEvent',
 			'workflowTreeFilterApply = panelGridAndFormGridFilterApply',
 			'workflowTreeFilterClear = panelGridAndFormGridFilterClear',
 			'workflowTreeRendererTreeColumn',
 			'workflowTreeStoreGet = panelGridAndFormGridStoreGet',
 			'workflowTreeStoreLoad = panelGridAndFormGridStoreLoad, onWorkflowStatusSelectionChange',
-			'workflowTreeApplyStoreEvent'
+			'workflowTreeToolbarTopStatusValueSet -> controllerToolbarTop'
 		],
 
 		/**
@@ -155,7 +156,7 @@
 		 * @private
 		 */
 		buildLoadCallback: function (callback) {
-			return Ext.Function.createInterceptor(callback, function () {
+			return Ext.Function.createInterceptor(callback, function (records, options, success) {
 				if (this.workflowTreeAppliedFilterIsEmpty())
 					this.controllerToolbarPaging.cmfg('workflowTreeToolbarPagingFilterAdvancedReset');
 			}, this);
@@ -363,7 +364,7 @@
 
 							// Card is out of current filter so clear filter to select card
 							if (decodedResponse['outOfFilter']) {
-								this.controllerToolbarTop.cmfg('workflowTreeToolbarTopStatusValueSet', decodedResponse['FlowStatus']);
+								this.cmfg('workflowTreeToolbarTopStatusValueSet', { value: decodedResponse['FlowStatus'] });
 								this.controllerToolbarPaging.cmfg('workflowTreeToolbarPagingFilterBasicReset');
 
 								this.cmfg('workflowTreeFilterClear', { disableStoreLoad: true });
@@ -472,6 +473,32 @@
 					this.propertyManageSet(parameters);
 				}
 			},
+
+		/**
+		 * @param {Object} parameters
+		 * @param {String} parameters.eventName
+		 * @param {Function} parameters.fn
+		 * @param {Object} parameters.scope
+		 * @param {Object} parameters.options
+		 *
+		 * @returns {Void}
+		 */
+		workflowTreeApplyStoreEvent: function (parameters) {
+			if (
+				Ext.isObject(parameters) && !Ext.Object.isEmpty(parameters)
+				&& Ext.isString(parameters.eventName) && !Ext.isEmpty(parameters.eventName)
+				&& Ext.isFunction(parameters.fn)
+			) {
+				this.view.getStore().on(
+					parameters.eventName,
+					parameters.fn,
+					Ext.isObject(parameters.scope) ? parameters.scope : this,
+					Ext.isObject(parameters.options) ? parameters.options : {}
+				);
+			} else {
+				_error('workflowTreeApplyStoreEvent(): unmanaged parameters object', this, parameters);
+			}
+		},
 
 		/**
 		 * @returns {Array} columnsDefinition
@@ -636,32 +663,6 @@
 						Ext.isFunction(parameters.callback) ? parameters.callback : this.selectFirst
 					)
 				});
-			}
-		},
-
-		/**
-		 * @param {Object} parameters
-		 * @param {String} parameters.eventName
-		 * @param {Function} parameters.fn
-		 * @param {Object} parameters.scope
-		 * @param {Object} parameters.options
-		 *
-		 * @returns {Void}
-		 */
-		workflowTreeApplyStoreEvent: function (parameters) {
-			if (
-				Ext.isObject(parameters) && !Ext.Object.isEmpty(parameters)
-				&& Ext.isString(parameters.eventName) && !Ext.isEmpty(parameters.eventName)
-				&& Ext.isFunction(parameters.fn)
-			) {
-				this.view.getStore().on(
-					parameters.eventName,
-					parameters.fn,
-					Ext.isObject(parameters.scope) ? parameters.scope : this,
-					Ext.isObject(parameters.options) ? parameters.options : {}
-				);
-			} else {
-				_error('workflowTreeApplyStoreEvent(): unmanaged parameters object', this, parameters);
 			}
 		}
 	});
