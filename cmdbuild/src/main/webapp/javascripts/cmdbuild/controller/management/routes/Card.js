@@ -84,8 +84,6 @@
 		 * FIXME: waiting for module refactor
 		 */
 		manageFilterSimple: function (classObject, callback) {
-			callback = Ext.isFunction(callback) ? callback : Ext.emptyFn;
-
 			var simpleFilterDefinitionObject = this.paramsModel.get(CMDBuild.core.constants.Proxy.SIMPLE_FILTER);
 
 			var params = {};
@@ -127,8 +125,6 @@
 		 * @private
 		 */
 		manageIdentifierCard: function (classObject, cardIdentifier, callback) {
-			callback = Ext.isFunction(callback) ? callback : Ext.emptyFn;
-
 			if (!Ext.isNumber(cardIdentifier) || Ext.isEmpty(cardIdentifier))
 				return _error('manageIdentifierCard(): invalid cardIdentifier parameter', this, cardIdentifier);
 
@@ -138,7 +134,8 @@
 					IdClass: classObject[CMDBuild.core.constants.Proxy.ID]
 				});
 
-				Ext,callback(callback, this);
+				if (Ext.isFunction(callback))
+					Ext.callback(callback, this);
 			}, 500, this)();
 		},
 
