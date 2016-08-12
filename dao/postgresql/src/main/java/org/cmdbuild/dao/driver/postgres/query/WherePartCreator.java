@@ -31,6 +31,7 @@ import org.cmdbuild.dao.entrytype.attributetype.CMAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.UndefinedAttributeType;
 import org.cmdbuild.dao.query.QuerySpecs;
 import org.cmdbuild.dao.query.clause.QueryAliasAttribute;
+import org.cmdbuild.dao.query.clause.QueryAttribute;
 import org.cmdbuild.dao.query.clause.from.FromClause;
 import org.cmdbuild.dao.query.clause.where.AndWhereClause;
 import org.cmdbuild.dao.query.clause.where.BeginsWithOperatorAndValue;
@@ -244,9 +245,9 @@ public class WherePartCreator extends PartCreator implements WhereClauseVisitor 
 			@Override
 			public void visit(final StringArrayOverlapOperatorAndValue operatorAndValue) {
 				final String template = " %s && string_to_array('%s',',')::varchar[] ";
-				final QueryAliasAttribute attributeAlias = whereClause.getAttribute();
-				final String quotedAttributeName = Utils.quoteAttribute(attributeAlias.getAlias(),
-						attributeAlias.getName());
+				final QueryAttribute attributeAlias = whereClause.getAttribute();
+				final String quotedAttributeName =
+						Utils.quoteAttribute(attributeAlias.getAlias(), attributeAlias.getName());
 
 				append(String.format(template, quotedAttributeName, operatorAndValue.getValue()));
 			}
@@ -254,9 +255,9 @@ public class WherePartCreator extends PartCreator implements WhereClauseVisitor 
 			@Override
 			public void visit(final EmptyArrayOperatorAndValue operatorAndValue) {
 				final String template = " coalesce(array_length(%s, 1), 0) = 0 ";
-				final QueryAliasAttribute attributeAlias = whereClause.getAttribute();
-				final String quotedAttributeName = Utils.quoteAttribute(attributeAlias.getAlias(),
-						attributeAlias.getName());
+				final QueryAttribute attributeAlias = whereClause.getAttribute();
+				final String quotedAttributeName =
+						Utils.quoteAttribute(attributeAlias.getAlias(), attributeAlias.getName());
 
 				append(String.format(template, quotedAttributeName));
 			}
@@ -287,12 +288,12 @@ public class WherePartCreator extends PartCreator implements WhereClauseVisitor 
 
 			@Override
 			public void visit(final NetworkRelationed operatorAndValue) {
-				final QueryAliasAttribute attribute = whereClause.getAttribute();
+				final QueryAttribute attribute = whereClause.getAttribute();
 				final String cast = whereClause.getAttributeNameCast();
 				final Supplier<Object> valueOf = valueOf(operatorAndValue.getValue());
 				append("(" //
 						+ //
-						attributeFilter(attribute, cast, OPERATOR_INET_IS_CONTAINED_WITHIN_OR_EQUALS, valueOf) //
+				attributeFilter(attribute, cast, OPERATOR_INET_IS_CONTAINED_WITHIN_OR_EQUALS, valueOf) //
 						+ " OR " //
 						+ attributeFilter(attribute, cast, OPERATOR_EQ, valueOf) //
 						+ " OR " //
@@ -328,7 +329,7 @@ public class WherePartCreator extends PartCreator implements WhereClauseVisitor 
 	@Override
 	public void visit(final NotWhereClause whereClause) {
 		append("NOT (");
-		whereClause.getClauses().get(0).accept(this);
+		whereClause.getClause().accept(this);
 		append(")");
 	}
 
@@ -357,7 +358,7 @@ public class WherePartCreator extends PartCreator implements WhereClauseVisitor 
 		param(whereClause.entryType.getName());
 	}
 
-	private String attributeFilter(final QueryAliasAttribute attribute, final String attributeNameCast,
+	private String attributeFilter(final QueryAttribute attribute, final String attributeNameCast,
 			final String operator, final Supplier<Object> holder) {
 		final String attributeName = nameOf(attribute, attributeNameCast);
 		final String attributeCast = attributeCastOf(attribute, attributeNameCast);
@@ -369,7 +370,7 @@ public class WherePartCreator extends PartCreator implements WhereClauseVisitor 
 		return nameOf(attribute, NO_CAST);
 	}
 
-	private String nameOf(final QueryAliasAttribute attribute, final String attributeNameCast) {
+	private String nameOf(final QueryAttribute attribute, final String attributeNameCast) {
 		final boolean isAttributeNameCastSpecified = (attributeNameCast != NO_CAST);
 		final String attributeName = Utils.quoteAttribute(attribute.getAlias(), attribute.getName());
 		return new StringBuilder(attributeName) //
@@ -377,23 +378,23 @@ public class WherePartCreator extends PartCreator implements WhereClauseVisitor 
 				.toString();
 	}
 
-	private String attributeCastOf(final QueryAliasAttribute attribute, final String attributeNameCast) {
+	private String attributeCastOf(final QueryAttribute attribute, final String attributeNameCast) {
 		final boolean isAttributeNameCastSpecified = (attributeNameCast != null);
 		return isAttributeNameCastSpecified ? null : sqlTypeOf(attribute).sqlCast();
 	}
 
-	private Object sqlValueOf(final QueryAliasAttribute attribute, final Object value) {
+	private Object sqlValueOf(final QueryAttribute attribute, final Object value) {
 		if (value instanceof IdAndDescription) {
 			return IdAndDescription.class.cast(value).getId();
 		}
 		return sqlTypeOf(attribute).javaToSqlValue(value);
 	}
 
-	private SqlType sqlTypeOf(final QueryAliasAttribute attribute) {
+	private SqlType sqlTypeOf(final QueryAttribute attribute) {
 		return SqlType.getSqlType(typeOf(attribute));
 	}
 
-	private CMAttributeType<?> typeOf(final QueryAliasAttribute attribute) {
+	private CMAttributeType<?> typeOf(final QueryAttribute attribute) {
 		final CMAttribute _attribute = new CMEntryTypeVisitor() {
 
 			private CMAttribute _attribute;
