@@ -1,11 +1,22 @@
 (function() {
+	Ext.require([ 'CMDBuild.core.constants.Proxy', 'CMDBuild.proxy.gis.Icon' ]);
 	Ext.define('CMDBuild.view.management.classes.map.geoextension.GisLayer', {
+
+		/*
+		 * ol.style.Icon
+		 * 
+		 */
+		classBitmap : undefined,
 
 		constructor : function(geoAttribute, withEditWindow, interactionDocument) {
 			var options = {
 				geoAttribute : geoAttribute,
-				targetClassName : geoAttribute.masterTableName
+				targetClassName : geoAttribute.masterTableName,
+				iconUrl : geoAttribute.iconUrl
 			};
+			this.classBitmap = new ol.style.Icon({
+				src : options.iconUrl
+			});
 			this.interactionDocument = interactionDocument;
 			var map = this.interactionDocument.getMap();
 			this.layer = this.buildGisLayer(geoAttribute.name, options, map);
@@ -21,9 +32,10 @@
 		},
 
 		/**
-		 * @param {Integer} cardId
+		 * @param {Integer}
+		 *            cardId
 		 * 
-		 * @returns {Array[ol.feature]} features
+		 * @returns {Array[ol.Feature]} features
 		 */
 		getFeaturesByCardId : function(cardId) {
 			return this.interactionDocument.getFeaturesOnLayerByCardId(cardId, this.layer);
@@ -70,17 +82,19 @@
 			});
 
 			var styleFunction = function(feature) {
-				return styles[feature.getGeometry().getType()];
+				return me.getStyle(feature.getGeometry().getType());
 			};
 			this.createControls(map, vectorSource);
 			var gisLayer = new ol.layer.Vector({
 				name : options.geoAttribute.name,
 				source : vectorSource,
 				view : view,
-				style : styleFunction,
+				// style : styleFunction,
 				geoAttribute : options.geoAttribute,
 				adapter : this
 			});
+			gisLayer.setStyle(styleFunction);
+
 			CMDBuild.proxy.gis.Gis.getFeature({
 				params : {
 					"className" : options.targetClassName,
@@ -109,8 +123,8 @@
 			}
 			switch (feature.operation) {
 			case "Modify":
-				var cardId = this.interactionDocument.getCurrentCard().cardId;
-				var selected = this.selectFeaturesByCardId(cardId);
+				var card = this.interactionDocument.getCurrentCard();
+				var selected = this.selectFeaturesByCardId(card);
 				if (selected.length > 0) {
 					this.setStatus("Modify")
 					break;
@@ -130,15 +144,7 @@
 		},
 		createControls : function(map, vectorSource) {
 			var me = this;
-			this.select = new ol.interaction.Select({
-				filter : function(feature, layer) {
-					if (!layer) {
-						return false;
-					}
-					return (me.status === "Select");
-				},
-				wrapX : false
-			});
+			this.makeSelect();
 			this.modify = new ol.interaction.Modify({
 				features : this.select.getFeatures()
 			});
@@ -255,17 +261,32 @@
 				newFeatures[i].set("master_card", newId);
 				features.push(newFeatures[i]);
 			}
+			this.makeSelect();
 		},
-		selectFeaturesByCardId : function(cardId) {
+		makeSelect : function() {
+			var me = this;
+			this.select = new ol.interaction.Select({
+				filter : function(feature, layer) {
+					if (!layer) {
+						return false;
+					}
+					return (me.status === "Select");
+				},
+				wrapX : false
+			});
+
+		},
+		selectFeaturesByCardId : function(card) {
 			var retFeatures = [];
 			var features = this.select.getFeatures();
 			try {
 				features.clear();
 			} catch (e) {
+				console.log("Error on selectFeaturesByCardId ", card);
 			}
-			var featuresOnLayer = this.getFeaturesByCardId(cardId);
+			var featuresOnLayer = this.getFeaturesByCardId(card.cardId);
 			featuresOnLayer.forEach(function(feature) {
-				if (feature.get("master_card") == cardId) {
+				if (feature.get("master_card") == card.cardId) {
 					features.push(feature);
 					retFeatures.push(feature);
 				}
@@ -296,8 +317,45 @@
 				});
 			}
 		},
-		refresh : function(cardId) {
-			this.selectFeaturesByCardId(cardId);
+		selectCard : function(card) {
+			this.selectFeaturesByCardId(card);
+		},
+		getStyle : function(shape) {
+			switch (shape) {
+			case 'Point':
+				return new ol.style.Style({
+					image : this.classBitmap
+				});
+			case 'LineString':
+				return new ol.style.Style({
+					stroke : new ol.style.Stroke({
+						color : 'green',
+						width : 1
+					})
+				});
+			case 'Polygon':
+				return new ol.style.Style({
+					stroke : new ol.style.Stroke({
+						color : 'blue',
+						lineDash : [ 4 ],
+						width : 3
+					}),
+					fill : new ol.style.Fill({
+						color : 'rgba(0, 0, 255, 0.1)'
+					})
+				});
+			case 'Circle':
+			default:
+				return new ol.style.Style({
+					stroke : new ol.style.Stroke({
+						color : 'red',
+						width : 2
+					}),
+					fill : new ol.style.Fill({
+						color : 'rgba(255,0,0,0.2)'
+					})
+				});
+			}
 		}
 	});
 	function clearVectorSource(vectorSource) {
@@ -370,37 +428,4 @@
 			width : 1
 		})
 	});
-	var imageb = new ol.style.Icon({
-		src : 'upload/images/gis/puf.png'
-	});
-	var styles = {
-		'Point' : new ol.style.Style({
-			image : imageb
-		}),
-		'LineString' : new ol.style.Style({
-			stroke : new ol.style.Stroke({
-				color : 'green',
-				width : 1
-			})
-		}),
-		'Polygon' : new ol.style.Style({
-			stroke : new ol.style.Stroke({
-				color : 'blue',
-				lineDash : [ 4 ],
-				width : 3
-			}),
-			fill : new ol.style.Fill({
-				color : 'rgba(0, 0, 255, 0.1)'
-			})
-		}),
-		'Circle' : new ol.style.Style({
-			stroke : new ol.style.Stroke({
-				color : 'red',
-				width : 2
-			}),
-			fill : new ol.style.Fill({
-				color : 'rgba(255,0,0,0.2)'
-			})
-		})
-	};
 })();

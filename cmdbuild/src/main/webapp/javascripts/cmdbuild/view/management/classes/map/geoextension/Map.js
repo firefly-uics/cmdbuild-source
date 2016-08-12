@@ -135,7 +135,7 @@
 		},
 		center : function(configuration) {
 			this.view.setCenter(configuration.center);
-			this.view.changed();
+			this.map.renderSync();
 		},
 
 		getMap : function() {
