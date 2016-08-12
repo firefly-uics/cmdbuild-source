@@ -549,6 +549,7 @@
 		SHORT: 'short',
 		SHOW_COLUMN: 'showColumn',
 		SIMPLE: 'simple',
+		SIMPLE_FILTER: 'simpleFilter',
 		SIMPLE_HISTORY_MODE_FOR_CARD: 'simpleHistoryModeForCard',
 		SIMPLE_HISTORY_MODE_FOR_PROCESS: 'simpleHistoryModeForProcess',
 		SINGLE_SELECT: 'singleSelect',

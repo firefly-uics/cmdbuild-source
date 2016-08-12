@@ -3,6 +3,7 @@
 	Ext.define('CMDBuild.proxy.management.workflow.panel.tree.Tree', {
 
 		requires: [
+			'CMDBuild.core.configurations.WorkflowStates',
 			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.model.management.workflow.Node',
 			'CMDBuild.proxy.index.Json',
@@ -21,7 +22,8 @@
 				pageSize: CMDBuild.configuration.instance.get(CMDBuild.core.constants.Proxy.ROW_LIMIT),
 				remoteSort: true,
 				root: {
-					expanded: true
+					expanded: true,
+					loaded: true // Avoid a store load call on root expand event
 				},
 				proxy: {
 					type: 'ajax',
@@ -41,11 +43,11 @@
 			return Ext.create('Ext.data.ArrayStore', {
 				fields: [CMDBuild.core.constants.Proxy.DESCRIPTION, CMDBuild.core.constants.Proxy.VALUE],
 				data: [
-					[CMDBuild.Translation.open, 'open.running'],
-					[CMDBuild.Translation.suspended, 'open.not_running.suspended'],
-					[CMDBuild.Translation.completed, 'closed.completed'],
-					[CMDBuild.Translation.aborted, 'closed.aborted'],
-					[CMDBuild.Translation.all, 'all']
+					[CMDBuild.Translation.open, CMDBuild.core.configurations.WorkflowStates.getOpen()],
+					[CMDBuild.Translation.suspended, CMDBuild.core.configurations.WorkflowStates.getSuspended()],
+					[CMDBuild.Translation.completed, CMDBuild.core.configurations.WorkflowStates.getCompleted()],
+					[CMDBuild.Translation.aborted, CMDBuild.core.configurations.WorkflowStates.getAborted()],
+					[CMDBuild.Translation.all, CMDBuild.core.configurations.WorkflowStates.getAll()]
 				]
 			});
 		},
