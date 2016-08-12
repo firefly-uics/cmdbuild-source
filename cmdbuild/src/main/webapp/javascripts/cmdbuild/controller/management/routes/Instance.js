@@ -19,9 +19,9 @@
 		paramsModel: undefined,
 
 		/**
-		 * @param {Object} params - url parameters
-		 * @param {String} params.processIdentifier - process name
-		 * @param {Number} params.instanceIdentifier - instance id
+		 * @param {Object} params
+		 * @param {String} params.processIdentifier
+		 * @param {Number} params.instanceIdentifier
 		 * @param {String} path
 		 * @param {Object} router
 		 *
@@ -45,10 +45,10 @@
 
 							if (Ext.isObject(workflowObject) && !Ext.Object.isEmpty(workflowObject)) {
 								if (!Ext.isEmpty(this.paramsModel.get(CMDBuild.core.constants.Proxy.INSTANCE_IDENTIFIER))) // Single card selection
-									return this.manageIdentifierInstance(workflowObject);
+									return this.manageIdentifierInstance(workflowObject, this.paramsModel.get(CMDBuild.core.constants.Proxy.INSTANCE_IDENTIFIER));
 
 								if (!Ext.Object.isEmpty(this.paramsModel.get(CMDBuild.core.constants.Proxy.SIMPLE_FILTER))) // SimpleFilter
-									return this.manageFilterSimple(workflowObject, this.paramsModel.get(CMDBuild.core.constants.Proxy.INSTANCE_IDENTIFIER));
+									return this.manageFilterSimple(workflowObject);
 							}
 
 							return CMDBuild.core.Message.error(
