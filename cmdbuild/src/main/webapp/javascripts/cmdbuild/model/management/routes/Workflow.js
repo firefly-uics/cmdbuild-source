@@ -2,7 +2,7 @@
 
 	Ext.require('CMDBuild.core.constants.Proxy');
 
-	Ext.define('CMDBuild.model.routes.management.Workflow', {
+	Ext.define('CMDBuild.model.management.routes.Workflow', {
 		extend: 'Ext.data.Model',
 
 		fields: [
