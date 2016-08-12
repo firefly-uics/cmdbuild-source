@@ -4,6 +4,7 @@ import org.apache.commons.lang3.builder.Builder;
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.entrytype.CMEntryType;
 import org.cmdbuild.dao.query.clause.OrderByClause.Direction;
+import org.cmdbuild.dao.query.clause.QueryAttribute;
 import org.cmdbuild.dao.query.clause.QueryDomain.Source;
 import org.cmdbuild.dao.query.clause.alias.Alias;
 import org.cmdbuild.dao.query.clause.join.Over;
@@ -14,7 +15,7 @@ import org.cmdbuild.dao.query.clause.where.WhereClause;
  */
 public interface QuerySpecsBuilder extends Builder<QuerySpecs> {
 
-	QuerySpecsBuilder select(Object... attrDef);
+	QuerySpecsBuilder select(QueryAttribute... attrDef);
 
 	QuerySpecsBuilder distinct();
 
@@ -46,7 +47,7 @@ public interface QuerySpecsBuilder extends Builder<QuerySpecs> {
 
 	QuerySpecsBuilder limit(Number limit);
 
-	QuerySpecsBuilder orderBy(Object attribute, Direction direction);
+	QuerySpecsBuilder orderBy(QueryAttribute attribute, Direction direction);
 
 	QuerySpecsBuilder numbered();
 

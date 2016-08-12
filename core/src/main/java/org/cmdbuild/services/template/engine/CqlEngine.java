@@ -19,7 +19,6 @@ import org.cmdbuild.dao.query.CMQueryResult;
 import org.cmdbuild.dao.query.CMQueryRow;
 import org.cmdbuild.dao.query.QuerySpecsBuilder;
 import org.cmdbuild.dao.query.clause.AnyAttribute;
-import org.cmdbuild.dao.query.clause.NamedAttribute;
 import org.cmdbuild.dao.query.clause.QueryAliasAttribute;
 import org.cmdbuild.dao.query.clause.QueryAttributeVisitor;
 import org.cmdbuild.dao.query.clause.alias.Alias;
@@ -145,10 +144,6 @@ public class CqlEngine implements Engine {
 			@Override
 			public void accept(final AnyAttribute value) {
 				throw new IllegalArgumentException();
-			}
-
-			@Override
-			public void visit(final NamedAttribute value) {
 			}
 
 			@Override

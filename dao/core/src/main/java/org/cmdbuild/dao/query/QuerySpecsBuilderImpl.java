@@ -1,10 +1,12 @@
 package org.cmdbuild.dao.query;
 
-import static org.apache.commons.lang3.ObjectUtils.defaultIfNull;
+import static org.apache.commons.lang3.StringUtils.isNotEmpty;
 import static org.cmdbuild.common.Constants.LOOKUP_CLASS_NAME;
+import static org.cmdbuild.dao.constants.Cardinality.CARDINALITY_1N;
+import static org.cmdbuild.dao.constants.Cardinality.CARDINALITY_N1;
 import static org.cmdbuild.dao.entrytype.EntryTypeAnalyzer.inspect;
+import static org.cmdbuild.dao.query.ExternalReferenceAliasHandler.EXTERNAL_ATTRIBUTE;
 import static org.cmdbuild.dao.query.clause.AnyClass.anyClass;
-import static org.cmdbuild.dao.query.clause.Attributes.named;
 import static org.cmdbuild.dao.query.clause.Functions.name;
 import static org.cmdbuild.dao.query.clause.Predicates.withAlias;
 import static org.cmdbuild.dao.query.clause.QueryAliasAttribute.attribute;
@@ -13,9 +15,8 @@ import static org.cmdbuild.dao.query.clause.alias.Aliases.name;
 import static org.cmdbuild.dao.query.clause.where.TrueWhereClause.trueWhereClause;
 
 import java.util.Collection;
-import java.util.List;
+import java.util.HashSet;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.NoSuchElementException;
 import java.util.Set;
 
@@ -31,12 +32,16 @@ import org.cmdbuild.dao.entrytype.CMFunctionCall;
 import org.cmdbuild.dao.entrytype.EntryTypeAnalyzer;
 import org.cmdbuild.dao.entrytype.ForwardingEntryTypeVisitor;
 import org.cmdbuild.dao.entrytype.NullEntryTypeVisitor;
+import org.cmdbuild.dao.entrytype.attributetype.CMAttributeType;
+import org.cmdbuild.dao.entrytype.attributetype.CMAttributeTypeVisitor;
 import org.cmdbuild.dao.entrytype.attributetype.ForeignKeyAttributeType;
+import org.cmdbuild.dao.entrytype.attributetype.ForwardingAttributeTypeVisitor;
+import org.cmdbuild.dao.entrytype.attributetype.LookupAttributeType;
+import org.cmdbuild.dao.entrytype.attributetype.NullAttributeTypeVisitor;
 import org.cmdbuild.dao.entrytype.attributetype.ReferenceAttributeType;
 import org.cmdbuild.dao.query.clause.AnyAttribute;
 import org.cmdbuild.dao.query.clause.ClassHistory;
 import org.cmdbuild.dao.query.clause.DomainHistory;
-import org.cmdbuild.dao.query.clause.NamedAttribute;
 import org.cmdbuild.dao.query.clause.OrderByClause;
 import org.cmdbuild.dao.query.clause.OrderByClause.Direction;
 import org.cmdbuild.dao.query.clause.QueryAliasAttribute;
@@ -115,20 +120,13 @@ public class QuerySpecsBuilderImpl implements QuerySpecsBuilder {
 			return aliasSet.contains(alias);
 		}
 
-		public Alias getDefaultAlias() {
-			if (aliasSet.size() == 1) {
-				return aliasSet.iterator().next();
-			} else {
-				throw new IllegalStateException("Unable to determine the default alias");
-			}
-		}
 	}
 
 	private static final Alias DEFAULT_ANYCLASS_ALIAS = name("_*");
 
-	private List<QueryAttribute> attributes;
-	private final List<JoinClause> joinClauses;
-	private final List<DirectJoinClause> directJoinClauses;
+	private Collection<QueryAttribute> attributes;
+	private final Collection<JoinClause> joinClauses;
+	private final Collection<DirectJoinClause> directJoinClauses;
 	private final Map<QueryAttribute, OrderByClause.Direction> orderings;
 	private WhereClause whereClause;
 	private Long offset;
@@ -172,10 +170,10 @@ public class QuerySpecsBuilderImpl implements QuerySpecsBuilder {
 	}
 
 	@Override
-	public QuerySpecsBuilder select(final Object... attrDef) {
-		attributes = Lists.newArrayList();
-		for (final Object a : attrDef) {
-			attributes.add(attributeFrom(a));
+	public QuerySpecsBuilder select(final QueryAttribute... attrDef) {
+		attributes = new HashSet<>();
+		for (final QueryAttribute element : attrDef) {
+			attributes.add(element);
 		}
 		return this;
 	}
@@ -422,8 +420,8 @@ public class QuerySpecsBuilderImpl implements QuerySpecsBuilder {
 	}
 
 	@Override
-	public QuerySpecsBuilder orderBy(final Object attribute, final Direction direction) {
-		orderings.put(attributeFrom(attribute), direction);
+	public QuerySpecsBuilder orderBy(final QueryAttribute attribute, final Direction direction) {
+		orderings.put(attribute, direction);
 		return this;
 	}
 
@@ -501,75 +499,167 @@ public class QuerySpecsBuilderImpl implements QuerySpecsBuilder {
 		for (final DirectJoinClause directJoinClause : directJoinClauses) {
 			qs.addDirectJoin(directJoinClause);
 			final QueryAliasAttribute externalRefAttribute =
-					attribute(directJoinClause.getTargetClassAlias(), ExternalReferenceAliasHandler.EXTERNAL_ATTRIBUTE);
-			qs.addSelectAttribute(aliasAttributeFrom(externalRefAttribute));
-		}
-		for (final QueryAttribute qa : attributes) {
-			qs.addSelectAttribute(aliasAttributeFrom(qa));
+					attribute(directJoinClause.getTargetClassAlias(), EXTERNAL_ATTRIBUTE);
+			qs.addSelectAttribute(checkAlias(externalRefAttribute));
 		}
 
 		qs.setWhereClause(whereClause);
 		qs.setOffset(offset);
 		qs.setLimit(limit);
-		for (final Entry<QueryAttribute, Direction> entry : orderings.entrySet()) {
-			qs.addOrderByClause(new OrderByClause(aliasAttributeFrom(entry.getKey()), entry.getValue()));
+		for (final QueryAttribute attribute : orderings.keySet()) {
+			final QueryAttribute _attribute = new QueryAttributeVisitor() {
+
+				private QueryAttribute output = attribute;
+
+				public QueryAttribute adapt(final QueryAttribute attribute) {
+					attribute.accept(this);
+					return output;
+				}
+
+				@Override
+				public void accept(final AnyAttribute value) {
+					throw new IllegalArgumentException(value.toString());
+				}
+
+				@Override
+				public void visit(final QueryAliasAttribute value) {
+					output = new ForwardingAttributeTypeVisitor() {
+
+						private final CMAttributeTypeVisitor DELEGATE = NullAttributeTypeVisitor.getInstance();
+						private final CMAttribute attribute = fromEntryType.getAttribute(value.getName());
+						private final CMAttributeType<?> type = (attribute == null) ? null : attribute.getType();
+
+						private QueryAliasAttribute output = value;
+
+						@Override
+						protected CMAttributeTypeVisitor delegate() {
+							return DELEGATE;
+						}
+
+						public QueryAttribute adapt(final QueryAliasAttribute value) {
+							type.accept(this);
+							if (output.equals(value)) {
+								int candidates = 0;
+								for (final QueryAttribute element : attributes) {
+									if (new QueryAttributeVisitor() {
+
+										private final QueryAttribute _value = value;
+										private boolean output = false;
+
+										public boolean candidate() {
+											element.accept(this);
+											return output;
+										}
+
+										@Override
+										public void accept(final AnyAttribute value) {
+											output = value.getAlias().equals(_value.getAlias());
+										}
+
+										@Override
+										public void visit(final QueryAliasAttribute value) {
+											output = value.equals(_value);
+										}
+
+									}.candidate()) {
+										candidates++;
+									}
+								}
+								if (candidates == 0) {
+									attributes.add(output);
+								}
+							} else {
+								attributes.add(output);
+							}
+							return output;
+						}
+
+						@Override
+						public void visit(final ForeignKeyAttributeType attributeType) {
+							final Alias alias = alias(value);
+							output = attribute(alias, EXTERNAL_ATTRIBUTE);
+							addDirectJoin(attributeType.getForeignKeyDestinationClassName(), alias);
+						}
+
+						@Override
+						public void visit(final LookupAttributeType attributeType) {
+							final Alias alias = alias(value);
+							output = attribute(alias, EXTERNAL_ATTRIBUTE);
+							addDirectJoin(LOOKUP_CLASS_NAME, alias);
+						}
+
+						@Override
+						public void visit(final ReferenceAttributeType attributeType) {
+							final String domainName = attributeType.getDomainName();
+							final CMDomain domain = viewForBuild.findDomain(domainName);
+							final String target;
+							if (domain == null) {
+								target = null;
+							} else if (CARDINALITY_1N.value().equals(domain.getCardinality())) {
+								target = domain.getClass1().getName();
+							} else if (CARDINALITY_N1.value().equals(domain.getCardinality())) {
+								target = domain.getClass2().getName();
+							} else {
+								target = null;
+							}
+							if (isNotEmpty(target)) {
+								final Alias alias = alias(value);
+								output = attribute(alias, EXTERNAL_ATTRIBUTE);
+								addDirectJoin(target, alias);
+							}
+						}
+
+						private Alias alias(final QueryAliasAttribute value) {
+							final Alias alias =
+									name(new ExternalReferenceAliasHandler(value.getAlias().toString(), attribute)
+											.forQuery());
+							if (!aliases.containsAlias(alias)) {
+								aliases.addAlias(alias);
+							}
+							return alias;
+						}
+
+						private void addDirectJoin(final String targetName, final Alias alias) {
+							qs.addDirectJoin(DirectJoinClause.newInstance() //
+									.leftJoin(viewForBuild.findClass(targetName)) //
+									.as(alias) //
+									.on(attribute(alias, "Id")) //
+									.equalsTo(attribute(fromAlias, attribute.getName())) //
+									.build());
+						}
+
+					}.adapt(value);
+				}
+
+			}.adapt(attribute);
+			qs.addOrderByClause(new OrderByClause(_attribute, orderings.get(attribute)));
 		}
+
+		for (final QueryAttribute qa : attributes) {
+			qs.addSelectAttribute(checkAlias(qa));
+		}
+
 		return qs;
 	}
 
 	private FromClause createFromClause() {
+		final FromClause output;
 		if (aliases.getFrom() instanceof CMFunctionCall) {
-			return new FunctionFromClause(aliases.getFrom(), aliases.getFromAlias());
+			output = new FunctionFromClause(aliases.getFrom(), aliases.getFromAlias());
 		} else {
-			return new ClassFromClause(viewForRun, aliases.getFrom(), aliases.getFromAlias());
+			output = new ClassFromClause(viewForRun, aliases.getFrom(), aliases.getFromAlias());
 		}
+		return output;
 	}
 
-	private QueryAttribute aliasAttributeFrom(final QueryAttribute queryAttribute) {
-		return new QueryAttributeVisitor() {
-
-			private QueryAttribute output;
-
-			public QueryAttribute queryAliasAttribute() {
-				queryAttribute.accept(this);
-				aliases.checkAlias(output.getAlias());
-				return output;
-			}
-
-			@Override
-			public void accept(final AnyAttribute value) {
-				output = value;
-			}
-
-			@Override
-			public void visit(final NamedAttribute value) {
-				final Alias alias = defaultIfNull(queryAttribute.getAlias(), aliases.getDefaultAlias());
-				output = attribute(alias, queryAttribute.getName());
-			}
-
-			@Override
-			public void visit(final QueryAliasAttribute value) {
-				output = value;
-			}
-
-		}.queryAliasAttribute();
+	private QueryAttribute checkAlias(final QueryAttribute queryAttribute) {
+		aliases.checkAlias(queryAttribute.getAlias());
+		return queryAttribute;
 	}
 
 	@Override
 	public CMQueryResult run() {
 		return viewForRun.executeQuery(build());
-	}
-
-	private QueryAttribute attributeFrom(final Object attribute) {
-		QueryAttribute queryAttribute;
-		if (attribute instanceof QueryAttribute) {
-			queryAttribute = (QueryAttribute) attribute;
-		} else if (attribute instanceof String) {
-			queryAttribute = named((String) attribute);
-		} else {
-			throw new IllegalArgumentException("invalid attribute");
-		}
-		return queryAttribute;
 	}
 
 	/*

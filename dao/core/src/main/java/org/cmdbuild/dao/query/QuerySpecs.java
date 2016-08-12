@@ -17,7 +17,7 @@ public interface QuerySpecs {
 
 	List<DirectJoinClause> getDirectJoins();
 
-	List<OrderByClause> getOrderByClauses();
+	Iterable<OrderByClause> getOrderByClauses();
 
 	Iterable<QueryAttribute> getAttributes();
 

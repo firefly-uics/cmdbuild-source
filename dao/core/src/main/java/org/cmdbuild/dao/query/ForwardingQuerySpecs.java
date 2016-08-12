@@ -38,7 +38,7 @@ public abstract class ForwardingQuerySpecs extends ForwardingObject implements Q
 	}
 
 	@Override
-	public List<OrderByClause> getOrderByClauses() {
+	public Iterable<OrderByClause> getOrderByClauses() {
 		return delegate().getOrderByClauses();
 	}
 
