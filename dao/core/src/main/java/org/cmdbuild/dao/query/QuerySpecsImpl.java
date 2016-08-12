@@ -1,9 +1,11 @@
 package org.cmdbuild.dao.query;
 
+import java.util.Collection;
+import java.util.LinkedHashSet;
 import java.util.List;
 
 import org.cmdbuild.dao.query.clause.OrderByClause;
-import org.cmdbuild.dao.query.clause.QueryAliasAttribute;
+import org.cmdbuild.dao.query.clause.QueryAttribute;
 import org.cmdbuild.dao.query.clause.from.FromClause;
 import org.cmdbuild.dao.query.clause.join.DirectJoinClause;
 import org.cmdbuild.dao.query.clause.join.JoinClause;
@@ -71,8 +73,8 @@ public class QuerySpecsImpl implements QuerySpecs {
 	private final FromClause fromClause;
 	private final List<JoinClause> joinClauses;
 	private final List<DirectJoinClause> directJoinClauses;
-	private final List<QueryAliasAttribute> attributes;
-	private final List<OrderByClause> orderByClauses;
+	private final Collection<QueryAttribute> attributes;
+	private final Collection<OrderByClause> orderByClauses;
 	private Long offset;
 	private Long limit;
 	private WhereClause whereClause;
@@ -92,8 +94,8 @@ public class QuerySpecsImpl implements QuerySpecs {
 
 		this.joinClauses = Lists.newArrayList();
 		this.directJoinClauses = Lists.newArrayList();
-		this.attributes = Lists.newArrayList();
-		this.orderByClauses = Lists.newArrayList();
+		this.attributes = new LinkedHashSet<>();
+		this.orderByClauses = new LinkedHashSet<>();
 		this.offset = null;
 		this.limit = null;
 		this.whereClause = EmptyWhereClause.emptyWhereClause();
@@ -123,7 +125,7 @@ public class QuerySpecsImpl implements QuerySpecs {
 	}
 
 	@Override
-	public Iterable<QueryAliasAttribute> getAttributes() {
+	public Iterable<QueryAttribute> getAttributes() {
 		return this.attributes;
 	}
 
@@ -132,11 +134,11 @@ public class QuerySpecsImpl implements QuerySpecs {
 	}
 
 	@Override
-	public List<OrderByClause> getOrderByClauses() {
+	public Iterable<OrderByClause> getOrderByClauses() {
 		return orderByClauses;
 	}
 
-	public void addSelectAttribute(final QueryAliasAttribute attribute) {
+	public void addSelectAttribute(final QueryAttribute attribute) {
 		attributes.add(attribute);
 	}
 

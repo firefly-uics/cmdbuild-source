@@ -2,6 +2,7 @@ package unit.logic.mapping.json;
 
 import static com.google.common.collect.Iterables.get;
 import static com.google.common.collect.Iterables.size;
+import static org.cmdbuild.dao.query.clause.AnyAttribute.anyAttribute;
 import static org.hamcrest.Matchers.anyOf;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.instanceOf;
@@ -17,6 +18,7 @@ import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.entrytype.CMEntryType;
 import org.cmdbuild.dao.entrytype.DBAttribute;
 import org.cmdbuild.dao.entrytype.attributetype.IntegerAttributeType;
+import org.cmdbuild.dao.query.clause.where.ContainsOperatorAndValue;
 import org.cmdbuild.dao.query.clause.where.FunctionWhereClause;
 import org.cmdbuild.dao.query.clause.where.OrWhereClause;
 import org.cmdbuild.dao.query.clause.where.SimpleWhereClause;
@@ -87,8 +89,8 @@ public class JsonFilterMapperTest {
 	@Test
 	public void shouldSuccessfullyDeserializeGlobalFilter() throws Exception {
 		// given
-		final FilterMapper filterMapper = jsonFilterMapper(filter("{attribute: {simple: {attribute: attr1, operator: greater, value: [5]}}, "
-				+ "query: test}"));
+		final FilterMapper filterMapper = jsonFilterMapper(
+				filter("{attribute: {simple: {attribute: attr1, operator: greater, value: [5]}}, " + "query: test}"));
 
 		// when
 		final Iterable<WhereClause> whereClauses = filterMapper.whereClauses();
@@ -100,7 +102,7 @@ public class JsonFilterMapperTest {
 	}
 
 	@Test
-	public void globalFilterContainingOnlyFullTextQueryMustReturnOrWhereClauseIfMoreThanOneAttribute() throws Exception {
+	public void globalFilterContainingOnlyFullTextQueryMustReturnSingleWhereClauseForAnyAttribute() throws Exception {
 		// given
 		final String globalFilter = "{query: test}";
 		final JSONObject globalFilterObject = new JSONObject(globalFilter);
@@ -111,13 +113,20 @@ public class JsonFilterMapperTest {
 
 		// then
 		assertThat(size(whereClauses), equalTo(1));
-		assertThat(get(whereClauses, 0), instanceOf(OrWhereClause.class));
+		final WhereClause first = get(whereClauses, 0);
+		assertThat(first, instanceOf(SimpleWhereClause.class));
+		final SimpleWhereClause actual = SimpleWhereClause.class.cast(first);
+		assertThat(actual.getAttribute(), equalTo(anyAttribute(entryType)));
+		assertThat(actual.getOperator(), instanceOf(ContainsOperatorAndValue.class));
+		assertThat(ContainsOperatorAndValue.class.cast(actual.getOperator()).getValue(), equalTo("test"));
+		assertThat(actual.getAttributeNameCast(), equalTo("varchar"));
 	}
 
 	@Test
 	public void joinElementsSuccessfullyRead() throws Exception {
 		// given
-		final FilterMapper filterMapper = jsonFilterMapper(filter("{relation: [{domain: foo, source: bar_1, destination: baz_1, type: any}, {domain: bar, source: bar_2, destination: baz_2, type: any}]}"));
+		final FilterMapper filterMapper = jsonFilterMapper(filter(
+				"{relation: [{domain: foo, source: bar_1, destination: baz_1, type: any}, {domain: bar, source: bar_2, destination: baz_2, type: any}]}"));
 
 		// when
 		final Iterable<FilterMapper.JoinElement> joinElements = filterMapper.joinElements();

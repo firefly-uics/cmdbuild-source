@@ -7,13 +7,11 @@ import static com.google.common.collect.Iterables.toArray;
 import static com.google.common.collect.Lists.newArrayList;
 import static java.lang.String.format;
 import static org.apache.commons.lang3.RandomStringUtils.randomNumeric;
-import static org.apache.commons.lang3.StringUtils.isNotEmpty;
 import static org.cmdbuild.common.Constants.DESCRIPTION_ATTRIBUTE;
 import static org.cmdbuild.dao.constants.Cardinality.CARDINALITY_1N;
 import static org.cmdbuild.dao.constants.Cardinality.CARDINALITY_N1;
 import static org.cmdbuild.dao.driver.postgres.Const.SystemAttributes.Id;
 import static org.cmdbuild.dao.entrytype.Functions.attribute;
-import static org.cmdbuild.dao.query.ExternalReferenceAliasHandler.EXTERNAL_ATTRIBUTE;
 import static org.cmdbuild.dao.query.clause.AnyAttribute.anyAttribute;
 import static org.cmdbuild.dao.query.clause.Functions.queryAliasAttribute;
 import static org.cmdbuild.dao.query.clause.QueryAliasAttribute.attribute;
@@ -50,17 +48,12 @@ import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.entrytype.CMDomain;
 import org.cmdbuild.dao.entrytype.CMEntryType;
 import org.cmdbuild.dao.entrytype.attributetype.CMAttributeType;
-import org.cmdbuild.dao.entrytype.attributetype.CMAttributeTypeVisitor;
-import org.cmdbuild.dao.entrytype.attributetype.ForeignKeyAttributeType;
-import org.cmdbuild.dao.entrytype.attributetype.ForwardingAttributeTypeVisitor;
-import org.cmdbuild.dao.entrytype.attributetype.LookupAttributeType;
-import org.cmdbuild.dao.entrytype.attributetype.NullAttributeTypeVisitor;
 import org.cmdbuild.dao.entrytype.attributetype.ReferenceAttributeType;
-import org.cmdbuild.dao.query.ExternalReferenceAliasHandler;
 import org.cmdbuild.dao.query.QuerySpecsBuilder;
 import org.cmdbuild.dao.query.clause.OrderByClause;
 import org.cmdbuild.dao.query.clause.OrderByClause.Direction;
 import org.cmdbuild.dao.query.clause.QueryAliasAttribute;
+import org.cmdbuild.dao.query.clause.QueryAttribute;
 import org.cmdbuild.dao.query.clause.QueryDomain.Source;
 import org.cmdbuild.dao.query.clause.alias.Alias;
 import org.cmdbuild.dao.query.clause.join.Over;
@@ -106,11 +99,11 @@ public class QuerySpecsBuilderFiller {
 				.transform(attribute(entryType)) //
 				.filter(CMAttribute.class) //
 				.transform(queryAliasAttribute(entryType));
-		final Object[] attributesArray;
+		final QueryAttribute[] attributesArray;
 		if (isEmpty(attributeSubsetForSelect)) {
-			attributesArray = new Object[] { anyAttribute(entryType) };
+			attributesArray = new QueryAttribute[] { anyAttribute(entryType) };
 		} else {
-			attributesArray = toArray(attributeSubsetForSelect, Object.class);
+			attributesArray = toArray(attributeSubsetForSelect, QueryAttribute.class);
 		}
 		final QuerySpecsBuilder querySpecsBuilder = dataView.select(attributesArray) //
 				.from(entryType, as(getAlias()));
@@ -135,79 +128,9 @@ public class QuerySpecsBuilderFiller {
 			}
 		} else {
 			for (final OrderByClause clause : clauses) {
-				final Object attributeAlias = getAttributeAliasFromOrderClause(clause);
-				querySpecsBuilder.orderBy(attributeAlias, clause.getDirection());
+				querySpecsBuilder.orderBy(clause.getAttribute(), clause.getDirection());
 			}
 		}
-	}
-
-	/**
-	 * Sorting by lookup, reference and foreign key attributes must add column
-	 * the description of the relative card/lookup
-	 * 
-	 * @param entryType
-	 * @param clause
-	 * @return the alias to use to sort
-	 */
-	private Object getAttributeAliasFromOrderClause(final OrderByClause clause) {
-		final Optional<String> pattern = new ForwardingAttributeTypeVisitor() {
-
-			private final CMAttributeTypeVisitor DELEGATE = NullAttributeTypeVisitor.getInstance();
-			private final QueryAliasAttribute queryAttribute = clause.getAttribute();
-			private final String entryTypeAlias = queryAttribute.getEntryTypeAlias().toString();
-			private final String attributeName = queryAttribute.getName();
-			private final CMAttribute cmAttribute = entryType.getAttribute(attributeName);
-			private final CMAttributeType<?> cmAttributeType = (cmAttribute == null) ? null : cmAttribute.getType();
-
-			private Optional<String> pattern;
-
-			@Override
-			protected CMAttributeTypeVisitor delegate() {
-				return DELEGATE;
-			}
-
-			public Optional<String> pattern() {
-				pattern = absent();
-				if (cmAttributeType != null) {
-					cmAttributeType.accept(this);
-				}
-				return pattern;
-			}
-
-			@Override
-			public void visit(final ForeignKeyAttributeType attributeType) {
-				pattern = of(value());
-			}
-
-			@Override
-			public void visit(final LookupAttributeType attributeType) {
-				pattern = of(value());
-			}
-
-			@Override
-			public void visit(final ReferenceAttributeType attributeType) {
-				final Optional<String> referencedClassName = getReferencedClassName(cmAttributeType);
-				/*
-				 * if no referenced class name is found return only the
-				 * attribute name
-				 */
-				if (referencedClassName.isPresent() && isNotEmpty(referencedClassName.get())) {
-					pattern = of(value());
-				}
-			}
-
-			private String value() {
-				return new ExternalReferenceAliasHandler(entryTypeAlias, cmAttribute).forQuery();
-			}
-
-		}.pattern();
-		final Object attributeAlias;
-		if (pattern.isPresent()) {
-			attributeAlias = QueryAliasAttribute.attribute(name(pattern.get()), EXTERNAL_ATTRIBUTE);
-		} else {
-			attributeAlias = clause.getAttribute();
-		}
-		return attributeAlias;
 	}
 
 	private Optional<String> getReferencedClassName(final CMAttributeType<?> cmAttributeType) {

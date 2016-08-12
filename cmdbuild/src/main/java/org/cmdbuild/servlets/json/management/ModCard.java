@@ -634,7 +634,8 @@ public class ModCard extends JSONBaseWithSpringContext {
 		final JSONObject out = new JSONObject();
 		final DataAccessLogic dataAccessLogic = userDataAccessLogic();
 
-		QueryOptionsBuilder queryOptionsBuilder = QueryOptions.newQueryOption();
+		QueryOptionsBuilder queryOptionsBuilder = QueryOptions.newQueryOption() //
+				.onlyAttributes(asList(dataAccessLogic.findClass(className).getDescriptionAttributeName()));
 		addFilterToQueryOption(new JsonFilterHelper(filter) //
 				.merge(new FlowStatusFilterElementGetter(lookupHelper(), flowStatus)), queryOptionsBuilder);
 		addSortersToQueryOptions(sorters, queryOptionsBuilder);
@@ -643,7 +644,8 @@ public class ModCard extends JSONBaseWithSpringContext {
 
 		if (card.hasNoPosition() && retryWithoutFilter) {
 			out.put(OUT_OF_FILTER, true);
-			queryOptionsBuilder = QueryOptions.newQueryOption();
+			queryOptionsBuilder = QueryOptions.newQueryOption() //
+					.onlyAttributes(asList(dataAccessLogic.findClass(className).getDescriptionAttributeName()));
 			final CMCard expectedCard = dataAccessLogic.fetchCMCard(className, cardId);
 			final String flowStatusForExpectedCard = flowStatus(expectedCard);
 			if (flowStatusForExpectedCard != null) {

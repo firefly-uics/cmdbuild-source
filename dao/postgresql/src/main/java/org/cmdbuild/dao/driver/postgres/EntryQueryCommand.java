@@ -92,7 +92,8 @@ class EntryQueryCommand implements LoggingSupport {
 		@Override
 		public void processRow(final ResultSet rs) throws SQLException {
 			try {
-				result.setTotalSize(rs.getInt(nameForSystemAttribute(querySpecs.getFromClause().getAlias(), RowsCount)));
+				result.setTotalSize(
+						rs.getInt(nameForSystemAttribute(querySpecs.getFromClause().getAlias(), RowsCount)));
 			} catch (final SQLException e) {
 				result.setTotalSize(0);
 			}
@@ -181,20 +182,16 @@ class EntryQueryCommand implements LoggingSupport {
 			}
 		}
 
-		private DateTime getDateTime(final ResultSet rs, final String attributeAlias) throws SQLException {
+		private DateTime getDateTime(final ResultSet rs, final String attributeAlias) {
 			try {
 				final java.sql.Timestamp ts = rs.getTimestamp(attributeAlias);
-				if (ts != null) {
-					return new DateTime(ts.getTime());
-				} else {
-					return null;
-				}
+				return (ts != null) ? new DateTime(ts.getTime()) : null;
 			} catch (final SQLException ex) {
 				return null;
 			}
 		}
 
-		private Long getLong(final ResultSet rs, final String attributeAlias) throws SQLException {
+		private Long getLong(final ResultSet rs, final String attributeAlias) {
 			try {
 				return rs.getLong(attributeAlias);
 			} catch (final SQLException ex) {
@@ -269,8 +266,8 @@ class EntryQueryCommand implements LoggingSupport {
 		 * @return
 		 */
 		private String referenceAttributeAlias(final CMAttribute attribute) {
-			final String referenceAttributeAlias = new ExternalReferenceAliasHandler(querySpecs.getFromClause()
-					.getType(), attribute).forResult();
+			final String referenceAttributeAlias =
+					new ExternalReferenceAliasHandler(querySpecs.getFromClause().getType(), attribute).forResult();
 			return referenceAttributeAlias;
 		}
 

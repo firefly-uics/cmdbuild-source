@@ -5,6 +5,7 @@ import static com.google.common.base.Predicates.not;
 import static com.google.common.collect.FluentIterable.from;
 import static com.google.common.collect.Iterables.filter;
 import static com.google.common.collect.Iterables.size;
+import static com.google.common.collect.Iterables.toArray;
 import static com.google.common.collect.Maps.newHashMap;
 import static java.lang.String.format;
 import static java.util.Arrays.asList;
@@ -65,6 +66,7 @@ import org.cmdbuild.dao.function.CMFunction;
 import org.cmdbuild.dao.query.CMQueryResult;
 import org.cmdbuild.dao.query.CMQueryRow;
 import org.cmdbuild.dao.query.clause.QueryAliasAttribute;
+import org.cmdbuild.dao.query.clause.QueryAttribute;
 import org.cmdbuild.dao.query.clause.alias.Alias;
 import org.cmdbuild.dao.query.clause.where.WhereClause;
 import org.cmdbuild.dao.view.CMDataView;
@@ -313,8 +315,8 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 	public Iterable<? extends CMClass> findClasses(final boolean activeOnly) {
 		final Iterable<? extends CMClass> fetchedClasses = activeOnly ? findActiveClasses() : findAllClasses();
 		final Iterable<? extends CMClass> nonProcessClasses = filter(fetchedClasses, nonProcessClasses());
-		final Iterable<? extends CMClass> classesToBeReturned = activeOnly
-				? filter(nonProcessClasses, nonSystemButUsable()) : nonProcessClasses;
+		final Iterable<? extends CMClass> classesToBeReturned =
+				activeOnly ? filter(nonProcessClasses, nonSystemButUsable()) : nonProcessClasses;
 		return classesToBeReturned;
 	}
 
@@ -348,8 +350,8 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 	public PagedElements<CMAttribute> getAttributes(final String className, final boolean onlyActive,
 			final AttributesQuery attributesQuery) {
 		final CMClass target = findClass(className);
-		final Iterable<? extends CMAttribute> elements = onlyActive ? target.getActiveAttributes()
-				: target.getAttributes();
+		final Iterable<? extends CMAttribute> elements =
+				onlyActive ? target.getActiveAttributes() : target.getAttributes();
 		final Iterable<? extends CMAttribute> ordered = Ordering.from(NAME_ASC).sortedCopy(elements);
 		final Integer offset = attributesQuery.offset();
 		final Integer limit = attributesQuery.limit();
@@ -364,8 +366,8 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 	public PagedElements<CMAttribute> getDomainAttributes(final String className, final boolean onlyActive,
 			final AttributesQuery attributesQuery) {
 		final CMDomain target = findDomain(className);
-		final Iterable<? extends CMAttribute> elements = onlyActive ? target.getActiveAttributes()
-				: target.getAttributes();
+		final Iterable<? extends CMAttribute> elements =
+				onlyActive ? target.getActiveAttributes() : target.getAttributes();
 		final Iterable<? extends CMAttribute> ordered = Ordering.from(NAME_ASC).sortedCopy(elements);
 		final Integer offset = attributesQuery.offset();
 		final Integer limit = attributesQuery.limit();
@@ -410,17 +412,16 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 					.skipDefaultOrdering() //
 					.run() //
 					.getOnlyRow();
-					/**
-					 * FIXME: delete it when ForeignReferenceResolver will be
-					 * unused.
-					 */
-					final Iterable<CMCard> cards = ForeignReferenceResolver.<CMCard> newInstance() //
-							.withEntries(asList(row.getCard(entryType))) //
-							.withEntryFiller(CardEntryFiller.newInstance() //
-									.build()) //
-							.withSerializer(new CardSerializer<CMCard>()) //
-							.build() //
-							.resolve();
+			/**
+			 * FIXME: delete it when ForeignReferenceResolver will be unused.
+			 */
+			final Iterable<CMCard> cards = ForeignReferenceResolver.<CMCard> newInstance() //
+					.withEntries(asList(row.getCard(entryType))) //
+					.withEntryFiller(CardEntryFiller.newInstance() //
+							.build()) //
+					.withSerializer(new CardSerializer<CMCard>()) //
+					.build() //
+					.resolve();
 
 			return from(cards) //
 					.first() //
@@ -441,7 +442,7 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 		}
 
 		try {
-			final CMQueryRow row = dataView.select(attributesToDisplay.toArray()) //
+			final CMQueryRow row = dataView.select(toArray(attributesToDisplay, QueryAttribute.class)) //
 					.from(entryType) //
 					.where(condition(attribute(entryType, ID_ATTRIBUTE), eq(cardId))) //
 					.limit(1) //
@@ -582,10 +583,10 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 			final List<Card> emptyCardList = emptyList();
 			return new PagedElements<Card>(emptyCardList, 0);
 		}
-		final Map<String, Object> parameters = ChainablePutMap
-				.of(newHashMap(defaultIfNull(queryOptions.getParameters(), NO_PARAMETERS))) //
-				.chainablePut(USER, operationUser.getAuthenticatedUser().getId()) //
-				.chainablePut(ROLE, operationUser.getPreferredGroup().getId());
+		final Map<String, Object> parameters =
+				ChainablePutMap.of(newHashMap(defaultIfNull(queryOptions.getParameters(), NO_PARAMETERS))) //
+						.chainablePut(USER, operationUser.getAuthenticatedUser().getId()) //
+						.chainablePut(ROLE, operationUser.getPreferredGroup().getId());
 		final Alias functionAlias = name("f");
 		final CMQueryResult queryResult = new DataViewCardFetcher.SqlQuerySpecsBuilderBuilder() //
 				.withDataView(dataView) //
@@ -627,7 +628,8 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 			final PagedElements<CMCardWithPosition> cards = fetchCardsWithPosition(className, queryOptions, cardId);
 			return cards.iterator().next();
 		} catch (final Exception ex) {
-			Log.CMDBUILD.error("Cannot calculate the position for card with id " + cardId + " from class " + className);
+			Log.CMDBUILD.error("Cannot calculate the position for card with id " + cardId + " from class " + className,
+					ex);
 			return new CMCardWithPosition(null, -1L);
 		}
 	}
@@ -649,8 +651,8 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 							@Override
 							public CMCardWithPosition apply(final CMQueryRow input) {
 								final CMCard card = input.getCard(fetchedClass);
-								final Card _card = from(resolveCardForeignReferences(fetchedClass, asList(card)))
-										.get(0);
+								final Card _card =
+										from(resolveCardForeignReferences(fetchedClass, asList(card))).get(0);
 								return new CMCardWithPosition(_card, input.getNumber() - 1);
 							}
 
@@ -768,8 +770,8 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 				final CMDomain domain = dataView.findDomain(domainName);
 				final Map<String, Object> relationAttributes = Maps.newHashMap();
 				for (final CMAttribute domainAttribute : domain.getAttributes()) {
-					final String domainAttributeName = format("_%s_%s", referenceAttributeName,
-							domainAttribute.getName());
+					final String domainAttributeName =
+							format("_%s_%s", referenceAttributeName, domainAttribute.getName());
 					final Object domainAttributeValue = userGivenCardAttributes.get(domainAttributeName);
 					relationAttributes.put(domainAttribute.getName(), domainAttributeValue);
 				}
@@ -798,7 +800,7 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 						.where(and( //
 								condition(attribute(sourceClass, ID_ATTRIBUTE), eq(sourceCardId)), //
 								condition(attribute(DST, ID_ATTRIBUTE), eq(destinationCardId)) //
-				)) //
+						)) //
 						.limit(1) //
 						.skipDefaultOrdering() //
 						.run() //
@@ -807,8 +809,8 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 				final CMCard fetchedDestinationCard = row.getCard(DST);
 				final CMRelation relation = row.getRelation(DOM).getRelation();
 
-				final boolean updateRelationNeeded = areRelationAttributesModified(relation.getValues(),
-						relationAttributes, domain);
+				final boolean updateRelationNeeded =
+						areRelationAttributesModified(relation.getValues(), relationAttributes, domain);
 
 				if (updateRelationNeeded) {
 					final CMRelationDefinition mutableRelation = dataView.update(relation) //
@@ -1095,7 +1097,7 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 					and( //
 							condition(attribute(domainAlias, ID_ATTRIBUTE), eq(relationDTO.relationId)), //
 							condition(attribute(domainAlias, "_Src"), eq("_1")) //
-			));
+					));
 		} else {
 			directedSource = dstClass;
 			whereCondition = and( //
@@ -1171,7 +1173,7 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 				.where(and( //
 						condition(attribute(sourceClass, ID_ATTRIBUTE), eq(srcCardId)), //
 						condition(attribute(DST, ID_ATTRIBUTE), eq(dstCardId)) //
-		)) //
+				)) //
 				.limit(1) //
 				.skipDefaultOrdering() //
 				.run() //
