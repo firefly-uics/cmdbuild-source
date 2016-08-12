@@ -29,7 +29,6 @@ import org.cmdbuild.dao.entrytype.attributetype.CMAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.UndefinedAttributeType;
 import org.cmdbuild.dao.query.QuerySpecs;
 import org.cmdbuild.dao.query.clause.AnyAttribute;
-import org.cmdbuild.dao.query.clause.NamedAttribute;
 import org.cmdbuild.dao.query.clause.QueryAliasAttribute;
 import org.cmdbuild.dao.query.clause.QueryAttribute;
 import org.cmdbuild.dao.query.clause.QueryAttributeVisitor;
@@ -429,16 +428,7 @@ public class ColumnMapper implements LoggingSupport {
 			}
 
 			@Override
-			public void visit(final NamedAttribute value) {
-				single();
-			}
-
-			@Override
 			public void visit(final QueryAliasAttribute value) {
-				single();
-			}
-
-			private void single() {
 				final String attributeName = queryAttribute.getName();
 				final int index = ++currentIndex;
 				for (final CMEntryType entryType : aliasAttributes.getEntryTypes()) {

@@ -28,11 +28,11 @@ public class QueryAliasAttribute implements QueryAttribute {
 		return new QueryAliasAttribute(entryTypeAlias, name);
 	}
 
-	private final Alias entryType;
+	private final Alias alias;
 	private final String name;
 
-	QueryAliasAttribute(final Alias entryType, final String name) {
-		this.entryType = entryType;
+	QueryAliasAttribute(final Alias alias, final String name) {
+		this.alias = alias;
 		this.name = name;
 	}
 
@@ -43,7 +43,7 @@ public class QueryAliasAttribute implements QueryAttribute {
 
 	@Override
 	public Alias getAlias() {
-		return entryType;
+		return alias;
 	}
 
 	@Override
@@ -61,7 +61,7 @@ public class QueryAliasAttribute implements QueryAttribute {
 		}
 		final QueryAliasAttribute other = QueryAliasAttribute.class.cast(obj);
 		return new EqualsBuilder() //
-				.append(entryType, other.entryType) //
+				.append(alias, other.alias) //
 				.append(name, other.name) //
 				.isEquals();
 	}
@@ -69,7 +69,7 @@ public class QueryAliasAttribute implements QueryAttribute {
 	@Override
 	public int hashCode() {
 		return new HashCodeBuilder() //
-				.append(entryType) //
+				.append(alias) //
 				.append(name) //
 				.toHashCode();
 	}

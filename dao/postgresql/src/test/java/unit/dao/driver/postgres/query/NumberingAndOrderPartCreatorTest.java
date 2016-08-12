@@ -1,6 +1,7 @@
 package unit.dao.driver.postgres.query;
 
 import static com.google.common.collect.Lists.newArrayList;
+import static java.util.Collections.emptyList;
 import static org.apache.commons.lang3.StringUtils.replacePattern;
 import static org.cmdbuild.dao.query.clause.OrderByClause.Direction.ASC;
 import static org.cmdbuild.dao.query.clause.OrderByClause.Direction.DESC;
@@ -58,15 +59,18 @@ public class NumberingAndOrderPartCreatorTest {
 		final QuerySpecs querySpecs = mock(QuerySpecs.class);
 		doReturn(fromClause) //
 				.when(querySpecs).getFromClause();
+		doReturn(emptyList()) //
+				.when(querySpecs).getOrderByClauses();
 		final StringBuilder input = new StringBuilder("*** THIS IS THE MAIN ONE ***");
 
 		// when
 		final String part = new NumberingAndOrderPartCreator(querySpecs, input).getPart();
 
 		// then
-		assertThat(normalize(part), equalTo("" //
-				+ "*** THIS IS THE MAIN ONE *** " //
-				+ "ORDER BY \"_dummy_Id\""));
+		assertThat(normalize(part),
+				equalTo("" //
+						+ "*** THIS IS THE MAIN ONE *** " //
+						+ "ORDER BY \"_dummy_Id\""));
 
 		verify(querySpecs, atLeast(1)).getFromClause();
 		verify(querySpecs, atLeast(1)).count();
@@ -84,6 +88,8 @@ public class NumberingAndOrderPartCreatorTest {
 				.when(querySpecs).getFromClause();
 		doReturn(true) //
 				.when(querySpecs).skipDefaultOrdering();
+		doReturn(emptyList()) //
+				.when(querySpecs).getOrderByClauses();
 		final StringBuilder input = new StringBuilder("*** THIS IS THE MAIN ONE ***");
 
 		// when
@@ -108,16 +114,19 @@ public class NumberingAndOrderPartCreatorTest {
 				.when(querySpecs).getFromClause();
 		doReturn(true) //
 				.when(querySpecs).count();
+		doReturn(emptyList()) //
+				.when(querySpecs).getOrderByClauses();
 		final StringBuilder input = new StringBuilder("*** THIS IS THE MAIN ONE ***");
 
 		// when
 		final String part = new NumberingAndOrderPartCreator(querySpecs, input).getPart();
 
 		// then
-		assertThat(normalize(part), equalTo("" //
-				+ "SELECT *, count(*) over() AS _dummy__RowsCount " //
-				+ "FROM (*** THIS IS THE MAIN ONE ***) AS main " //
-				+ "ORDER BY \"_dummy_Id\""));
+		assertThat(normalize(part),
+				equalTo("" //
+						+ "SELECT *, count(*) over() AS _dummy__RowsCount " //
+						+ "FROM (*** THIS IS THE MAIN ONE ***) AS main " //
+						+ "ORDER BY \"_dummy_Id\""));
 
 		verify(querySpecs, atLeast(1)).getFromClause();
 		verify(querySpecs, atLeast(1)).count();
@@ -143,10 +152,11 @@ public class NumberingAndOrderPartCreatorTest {
 		final String part = new NumberingAndOrderPartCreator(querySpecs, input).getPart();
 
 		// then
-		assertThat(normalize(part), equalTo("" //
-				+ "SELECT *, count(*) over() AS _dummy__RowsCount " //
-				+ "FROM (*** THIS IS THE MAIN ONE ***) AS main " //
-				+ "ORDER BY \"dummy#foo\" DESC, \"dummy#bar\" ASC, \"_dummy_Id\""));
+		assertThat(normalize(part),
+				equalTo("" //
+						+ "SELECT *, count(*) over() AS _dummy__RowsCount " //
+						+ "FROM (*** THIS IS THE MAIN ONE ***) AS main " //
+						+ "ORDER BY \"dummy#foo\" DESC, \"dummy#bar\" ASC, \"_dummy_Id\""));
 
 		verify(querySpecs, atLeast(1)).getFromClause();
 		verify(querySpecs, atLeast(1)).count();
@@ -163,15 +173,18 @@ public class NumberingAndOrderPartCreatorTest {
 				.when(querySpecs).getFromClause();
 		doReturn(true) //
 				.when(querySpecs).numbered();
+		doReturn(emptyList()) //
+				.when(querySpecs).getOrderByClauses();
 		final StringBuilder input = new StringBuilder("*** THIS IS THE MAIN ONE ***");
 
 		// when
 		final String part = new NumberingAndOrderPartCreator(querySpecs, input).getPart();
 
 		// then
-		assertThat(normalize(part), equalTo("" //
-				+ "SELECT *, row_number() OVER (ORDER BY \"_dummy_Id\") AS _dummy__Row " //
-				+ "FROM (*** THIS IS THE MAIN ONE ***) AS main"));
+		assertThat(normalize(part),
+				equalTo("" //
+						+ "SELECT *, row_number() OVER (ORDER BY \"_dummy_Id\") AS _dummy__Row " //
+						+ "FROM (*** THIS IS THE MAIN ONE ***) AS main"));
 
 		verify(querySpecs, atLeast(1)).getFromClause();
 		verify(querySpecs, atLeast(1)).count();
@@ -198,11 +211,9 @@ public class NumberingAndOrderPartCreatorTest {
 		final String part = new NumberingAndOrderPartCreator(querySpecs, input).getPart();
 
 		// then
-		assertThat(
-				normalize(part),
-				equalTo("" //
-						+ "SELECT *, row_number() OVER (ORDER BY \"dummy#foo\" DESC, \"dummy#bar\" ASC, \"_dummy_Id\") AS _dummy__Row " //
-						+ "FROM (*** THIS IS THE MAIN ONE ***) AS main"));
+		assertThat(normalize(part), equalTo("" //
+				+ "SELECT *, row_number() OVER (ORDER BY \"dummy#foo\" DESC, \"dummy#bar\" ASC, \"_dummy_Id\") AS _dummy__Row " //
+				+ "FROM (*** THIS IS THE MAIN ONE ***) AS main"));
 
 		verify(querySpecs, atLeast(1)).getFromClause();
 		verify(querySpecs, atLeast(1)).count();
@@ -222,15 +233,18 @@ public class NumberingAndOrderPartCreatorTest {
 				.when(querySpecs).numbered();
 		doReturn(conditionOnNumberedQuery) //
 				.when(querySpecs).getConditionOnNumberedQuery();
+		doReturn(emptyList()) //
+				.when(querySpecs).getOrderByClauses();
 		final StringBuilder input = new StringBuilder("*** THIS IS THE MAIN ONE ***");
 
 		// when
 		final String part = new NumberingAndOrderPartCreator(querySpecs, input).getPart();
 
 		// then
-		assertThat(normalize(part), equalTo("" //
-				+ "SELECT * FROM (SELECT *, row_number() OVER (ORDER BY \"_dummy_Id\") AS _dummy__Row " //
-				+ "FROM (*** THIS IS THE MAIN ONE ***) AS main) AS numbered WHERE \"_dummy_Id\" = 42"));
+		assertThat(normalize(part),
+				equalTo("" //
+						+ "SELECT * FROM (SELECT *, row_number() OVER (ORDER BY \"_dummy_Id\") AS _dummy__Row " //
+						+ "FROM (*** THIS IS THE MAIN ONE ***) AS main) AS numbered WHERE \"_dummy_Id\" = 42"));
 
 		verify(querySpecs, atLeast(1)).getFromClause();
 		verify(querySpecs, atLeast(1)).count();
@@ -259,13 +273,11 @@ public class NumberingAndOrderPartCreatorTest {
 		final String part = new NumberingAndOrderPartCreator(querySpecs, input).getPart();
 
 		// then
-		assertThat(
-				normalize(part),
-				equalTo("" //
-						+ "SELECT * " //
-						+ "FROM (" //
-						+ "SELECT *, row_number() OVER (ORDER BY \"dummy#foo\" DESC, \"dummy#bar\" ASC, \"_dummy_Id\") AS _dummy__Row " //
-						+ "FROM (*** THIS IS THE MAIN ONE ***) AS main" + ") AS numbered " + "WHERE \"_dummy_Id\" = 42"));
+		assertThat(normalize(part), equalTo("" //
+				+ "SELECT * " //
+				+ "FROM (" //
+				+ "SELECT *, row_number() OVER (ORDER BY \"dummy#foo\" DESC, \"dummy#bar\" ASC, \"_dummy_Id\") AS _dummy__Row " //
+				+ "FROM (*** THIS IS THE MAIN ONE ***) AS main" + ") AS numbered " + "WHERE \"_dummy_Id\" = 42"));
 
 		verify(querySpecs, atLeast(1)).getFromClause();
 		verify(querySpecs, atLeast(1)).count();
@@ -285,17 +297,17 @@ public class NumberingAndOrderPartCreatorTest {
 				.when(querySpecs).count();
 		doReturn(true) //
 				.when(querySpecs).numbered();
+		doReturn(emptyList()) //
+				.when(querySpecs).getOrderByClauses();
 		final StringBuilder input = new StringBuilder("*** THIS IS THE MAIN ONE ***");
 
 		// when
 		final String part = new NumberingAndOrderPartCreator(querySpecs, input).getPart();
 
 		// then
-		assertThat(
-				normalize(part),
-				equalTo("" //
-						+ "SELECT *, count(*) over() AS _dummy__RowsCount, row_number() OVER (ORDER BY \"_dummy_Id\") AS _dummy__Row " //
-						+ "FROM (*** THIS IS THE MAIN ONE ***) AS main"));
+		assertThat(normalize(part), equalTo("" //
+				+ "SELECT *, count(*) over() AS _dummy__RowsCount, row_number() OVER (ORDER BY \"_dummy_Id\") AS _dummy__Row " //
+				+ "FROM (*** THIS IS THE MAIN ONE ***) AS main"));
 
 		verify(querySpecs, atLeast(1)).getFromClause();
 		verify(querySpecs, atLeast(1)).count();
@@ -324,11 +336,9 @@ public class NumberingAndOrderPartCreatorTest {
 		final String part = new NumberingAndOrderPartCreator(querySpecs, input).getPart();
 
 		// then
-		assertThat(
-				normalize(part),
-				equalTo("" //
-						+ "SELECT *, count(*) over() AS _dummy__RowsCount, row_number() OVER (ORDER BY \"dummy#foo\" DESC, \"dummy#bar\" ASC, \"_dummy_Id\") AS _dummy__Row " //
-						+ "FROM (*** THIS IS THE MAIN ONE ***) AS main"));
+		assertThat(normalize(part), equalTo("" //
+				+ "SELECT *, count(*) over() AS _dummy__RowsCount, row_number() OVER (ORDER BY \"dummy#foo\" DESC, \"dummy#bar\" ASC, \"_dummy_Id\") AS _dummy__Row " //
+				+ "FROM (*** THIS IS THE MAIN ONE ***) AS main"));
 
 		verify(querySpecs, atLeast(1)).getFromClause();
 		verify(querySpecs, atLeast(1)).count();
@@ -350,21 +360,21 @@ public class NumberingAndOrderPartCreatorTest {
 				.when(querySpecs).numbered();
 		doReturn(conditionOnNumberedQuery) //
 				.when(querySpecs).getConditionOnNumberedQuery();
+		doReturn(emptyList()) //
+				.when(querySpecs).getOrderByClauses();
 		final StringBuilder input = new StringBuilder("*** THIS IS THE MAIN ONE ***");
 
 		// when
 		final String part = new NumberingAndOrderPartCreator(querySpecs, input).getPart();
 
 		// then
-		assertThat(
-				normalize(part),
-				equalTo("" //
-						+ "SELECT * " //
-						+ "FROM (" //
-						+ "SELECT *, count(*) over() AS _dummy__RowsCount, row_number() OVER (ORDER BY \"_dummy_Id\") AS _dummy__Row " //
-						+ "FROM (*** THIS IS THE MAIN ONE ***) AS main" //
-						+ ") AS numbered " //
-						+ "WHERE \"_dummy_Id\" = 42"));
+		assertThat(normalize(part), equalTo("" //
+				+ "SELECT * " //
+				+ "FROM (" //
+				+ "SELECT *, count(*) over() AS _dummy__RowsCount, row_number() OVER (ORDER BY \"_dummy_Id\") AS _dummy__Row " //
+				+ "FROM (*** THIS IS THE MAIN ONE ***) AS main" //
+				+ ") AS numbered " //
+				+ "WHERE \"_dummy_Id\" = 42"));
 
 		verify(querySpecs, atLeast(1)).getFromClause();
 		verify(querySpecs, atLeast(1)).count();
@@ -396,15 +406,13 @@ public class NumberingAndOrderPartCreatorTest {
 		final String part = new NumberingAndOrderPartCreator(querySpecs, input).getPart();
 
 		// then
-		assertThat(
-				normalize(part),
-				equalTo("" //
-						+ "SELECT * " //
-						+ "FROM (" //
-						+ "SELECT *, count(*) over() AS _dummy__RowsCount, row_number() OVER (ORDER BY \"dummy#foo\" DESC, \"dummy#bar\" ASC, \"_dummy_Id\") AS _dummy__Row " //
-						+ "FROM (*** THIS IS THE MAIN ONE ***) AS main" //
-						+ ") AS numbered " //
-						+ "WHERE \"_dummy_Id\" = 42"));
+		assertThat(normalize(part), equalTo("" //
+				+ "SELECT * " //
+				+ "FROM (" //
+				+ "SELECT *, count(*) over() AS _dummy__RowsCount, row_number() OVER (ORDER BY \"dummy#foo\" DESC, \"dummy#bar\" ASC, \"_dummy_Id\") AS _dummy__Row " //
+				+ "FROM (*** THIS IS THE MAIN ONE ***) AS main" //
+				+ ") AS numbered " //
+				+ "WHERE \"_dummy_Id\" = 42"));
 
 		verify(querySpecs, atLeast(1)).getFromClause();
 		verify(querySpecs, atLeast(1)).count();
