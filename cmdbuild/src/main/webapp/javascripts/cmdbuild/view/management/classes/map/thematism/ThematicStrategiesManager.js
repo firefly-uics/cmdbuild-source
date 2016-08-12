@@ -16,7 +16,8 @@
 				 * @returns {generic value}
 				 */
 				value : function(parameters, callback, callbackScope) {
-					callback.apply(callbackScope, [ parameters.card.Description.length ]);
+					var length = (parameters.card.Description) ? parameters.card.Description.length : 0;
+					callback.apply(callbackScope, [ length ]);
 				}
 			},
 			strLenghtX2 : {
@@ -29,7 +30,8 @@
 				 * @returns {generic value}
 				 */
 				value : function(parameters, callback, callbackScope) {
-					callback.apply(callbackScope, [ parameters.card.Description.length ]);
+					var length = (parameters.card.Description) ? parameters.card.Description.length : 0;
+					callback.apply(callbackScope, [ length * 2 ]);
 				}
 			},
 			strLenghtX3 : {
@@ -42,7 +44,8 @@
 				 * @returns {generic value}
 				 */
 				value : function(parameters, callback, callbackScope) {
-					callback.apply(callbackScope, [ parameters.card.Description.length ]);
+					var length = (parameters.card.Description) ? parameters.card.Description.length : 0;
+					callback.apply(callbackScope, [ length * 3 ]);
 				}
 			}
 		},
