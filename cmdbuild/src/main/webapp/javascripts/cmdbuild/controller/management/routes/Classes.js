@@ -79,8 +79,6 @@
 		 * FIXME: waiting for module refactor
 		 */
 		manageFilterClient: function(classObject, callback) {
-			callback = Ext.isFunction(callback) ? callback : Ext.emptyFn;
-
 			if (
 				Ext.isObject(this.paramsModel.get(CMDBuild.core.constants.Proxy.CLIENT_FILTER))
 				&& !Ext.Object.isEmpty(this.paramsModel.get(CMDBuild.core.constants.Proxy.CLIENT_FILTER))
@@ -91,13 +89,13 @@
 
 					CMDBuild.global.controller.MainViewport.cmfg('mainViewportModuleControllerGet', 'class').onViewOnFront(classModel);
 
-					Ext.Function.createDelayed(function () {
-						Ext.callback(callback, this);
-					}, 500, this)();
+					if (Ext.isFunction(callback))
+						Ext.Function.createDelayed(callback, 500, this)();
 				}, 1500, this)();
-			} else {
-				Ext.callback(callback, this);
 			}
+
+			if (Ext.isFunction(callback))
+				Ext.callback(callback, this);
 		},
 
 		/**
@@ -111,8 +109,6 @@
 		 * FIXME: waiting for module refactor
 		 */
 		manageIdentifierClass: function (classObject, callback) {
-			callback = Ext.isFunction(callback) ? callback : Ext.emptyFn;
-
 			// Use runtime configuration to select class
 			CMDBuild.configuration.runtime.set(CMDBuild.core.constants.Proxy.STARTING_CLASS_ID, classObject[CMDBuild.core.constants.Proxy.ID]);
 
