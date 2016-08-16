@@ -349,6 +349,9 @@
 				params[CMDBuild.core.constants.Proxy.CLASS_NAME] = this.cmfg('workflowSelectedWorkflowGet', CMDBuild.core.constants.Proxy.NAME);
 				params[CMDBuild.core.constants.Proxy.RETRY_WITHOUT_FILTER] = false;
 
+				if (!Ext.isEmpty(parameters[CMDBuild.core.constants.Proxy.FLOW_STATUS]))
+					params[CMDBuild.core.constants.Proxy.STATE] = parameters[CMDBuild.core.constants.Proxy.FLOW_STATUS];
+
 				if (Ext.isArray(sorters) && !Ext.isEmpty(sorters))
 					params[CMDBuild.core.constants.Proxy.SORT] = Ext.encode(sorters);
 

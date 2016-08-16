@@ -143,7 +143,11 @@
 								moduleController.cmfg('workflowTreeApplyStoreEvent', {
 									eventName: 'load',
 									fn: function () {
-										moduleController.cmfg('workflowTreeActivityOpen', { id: instanceIdentifier });
+										var params = {};
+										params[CMDBuild.core.constants.Proxy.FLOW_STATUS] = forceState;
+										params[CMDBuild.core.constants.Proxy.ID] = instanceIdentifier;
+
+										moduleController.cmfg('workflowTreeActivityOpen', params);
 
 										if (Ext.isString(forceState) && !Ext.isEmpty(forceState))
 											moduleController.cmfg('workflowTreeToolbarTopStatusValueSet', {
