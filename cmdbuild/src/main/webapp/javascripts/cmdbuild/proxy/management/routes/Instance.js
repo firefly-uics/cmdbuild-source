@@ -14,7 +14,7 @@
 		 *
 		 * @returns {Void}
 		 */
-		readAllActivities: function (parameters) {
+		readAll: function (parameters) {
 			parameters = Ext.isEmpty(parameters) ? {} : parameters;
 
 			Ext.apply(parameters, { url: CMDBuild.proxy.index.Json.workflow.activity.readAll });
