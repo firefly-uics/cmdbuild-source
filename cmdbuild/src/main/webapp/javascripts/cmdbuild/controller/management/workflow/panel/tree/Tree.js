@@ -370,25 +370,18 @@
 								this.cmfg('workflowTreeFilterClear', { disableStoreLoad: true });
 							}
 
-							// Avoid to reload store if current loaded store page is same of calculated one
-							if (storeExtraParams.page != calculatedPage) {
-								this.cmfg('workflowTreeStoreLoad', {
-									page: calculatedPage,
-									params: storeExtraParams, // Take the current store configuration to have the sort and filter
-									scope: this,
-									callback: function (records, operation, success) {
-										this.view.getSelectionModel().deselectAll();
 
-										this.selectByMetadata(parameters[CMDBuild.core.constants.Proxy.ACTIVITY_SUBSET_ID]);
-										this.selectByPosition(position % CMDBuild.configuration.instance.get(CMDBuild.core.constants.Proxy.ROW_LIMIT));
-									}
-								});
-							} else {
-								this.view.getSelectionModel().deselectAll();
+							this.cmfg('workflowTreeStoreLoad', {
+								page: calculatedPage,
+								params: storeExtraParams, // Take the current store configuration to have the sort and filter
+								scope: this,
+								callback: function (records, operation, success) {
+									this.view.getSelectionModel().deselectAll();
 
-								this.selectByMetadata(parameters[CMDBuild.core.constants.Proxy.ACTIVITY_SUBSET_ID]);
-								this.selectByPosition(position % CMDBuild.configuration.instance.get(CMDBuild.core.constants.Proxy.ROW_LIMIT));
-							}
+									this.selectByMetadata(parameters[CMDBuild.core.constants.Proxy.ACTIVITY_SUBSET_ID]);
+									this.selectByPosition(position % CMDBuild.configuration.instance.get(CMDBuild.core.constants.Proxy.ROW_LIMIT));
+								}
+							});
 						} else { // Card not found
 							if (
 								Ext.isString(parameters[CMDBuild.core.constants.Proxy.FLOW_STATUS]) && !Ext.isEmpty(parameters[CMDBuild.core.constants.Proxy.FLOW_STATUS])
