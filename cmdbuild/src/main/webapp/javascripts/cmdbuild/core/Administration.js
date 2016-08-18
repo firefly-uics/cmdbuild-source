@@ -197,7 +197,7 @@
 					{ className: 'CMDBuild.controller.administration.accordion.Report', identifier: CMDBuild.core.constants.ModuleIdentifiers.getReport() },
 					{ className: 'CMDBuild.controller.administration.accordion.Menu', identifier: CMDBuild.core.constants.ModuleIdentifiers.getMenu() },
 					{ className: 'CMDBuild.controller.administration.accordion.UserAndGroup', identifier: CMDBuild.core.constants.ModuleIdentifiers.getUserAndGroup() },
-					{ className: 'CMDBuild.controller.administration.accordion.Task', identifier: 'task' },
+					{ className: 'CMDBuild.controller.administration.accordion.TaskManager', identifier: CMDBuild.core.constants.ModuleIdentifiers.getTaskManager() },
 					{ className: 'CMDBuild.controller.administration.accordion.Email', identifier: CMDBuild.core.constants.ModuleIdentifiers.getEmail() },
 					{ className: 'CMDBuild.controller.administration.accordion.Gis', identifier: 'gis' },
 					{ className: 'CMDBuild.controller.administration.accordion.Bim', identifier: 'bim' },
@@ -221,6 +221,7 @@
 						{ className: 'CMDBuild.controller.administration.menu.Menu', identifier: CMDBuild.core.constants.ModuleIdentifiers.getMenu() },
 						{ className: 'CMDBuild.controller.administration.navigationTree.NavigationTree', identifier: CMDBuild.core.constants.ModuleIdentifiers.getNavigationTree() },
 						{ className: 'CMDBuild.controller.administration.report.Report', identifier: CMDBuild.core.constants.ModuleIdentifiers.getReport() },
+						{ className: 'CMDBuild.controller.administration.taskManager.TaskManager', identifier: CMDBuild.core.constants.ModuleIdentifiers.getTaskManager() },
 						{ className: 'CMDBuild.controller.administration.userAndGroup.UserAndGroup', identifier: CMDBuild.core.constants.ModuleIdentifiers.getUserAndGroup() },
 						{ className: 'CMDBuild.controller.administration.workflow.Workflow', identifier: CMDBuild.core.constants.ModuleIdentifiers.getWorkflow() },
 						Ext.create('CMDBuild.view.administration.gis.CMModGeoServer', {
@@ -230,10 +231,6 @@
 						Ext.create('CMDBuild.view.administration.gis.ExternalServices', {
 							cmControllerType: 'CMDBuild.controller.administration.gis.ExternalServicesController',
 							cmName: 'gis-external-services'
-						}),
-						Ext.create('CMDBuild.view.administration.tasks.CMTasks', {
-							cmControllerType: 'CMDBuild.controller.administration.tasks.CMTasksController',
-							cmName: 'task'
 						}),
 						new CMDBuild.view.administration.bim.CMBIMPanel({
 							cmControllerType: CMDBuild.controller.administration.filter.CMBIMPanelController,
