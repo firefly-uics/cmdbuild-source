@@ -41,7 +41,7 @@
 
 						items: [
 							Ext.create('CMDBuild.core.buttons.iconized.Modify', {
-								text: CMDBuild.Translation.administration.tasks.modify,
+								text: CMDBuild.Translation.modifyTask,
 								scope: this,
 
 								handler: function (button, e) {
@@ -49,7 +49,7 @@
 								}
 							}),
 							Ext.create('CMDBuild.core.buttons.iconized.Remove', {
-								text: CMDBuild.Translation.administration.tasks.remove,
+								text: CMDBuild.Translation.removeTask,
 								scope: this,
 
 								handler: function (button, e) {
@@ -57,7 +57,7 @@
 								}
 							}),
 							Ext.create('CMDBuild.core.buttons.iconized.Clone', {
-								text: CMDBuild.Translation.administration.tasks.clone,
+								text: CMDBuild.Translation.cloneTask,
 								scope: this,
 
 								handler: function (button, e) {

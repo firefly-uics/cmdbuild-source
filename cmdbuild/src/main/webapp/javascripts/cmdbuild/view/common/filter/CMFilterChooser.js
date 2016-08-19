@@ -142,7 +142,7 @@
 							flex: 1
 						},
 						{
-							text: CMDBuild.Translation.description_,
+							text: CMDBuild.Translation.descriptionLabel,
 							dataIndex: CMDBuild.core.constants.Proxy.DESCRIPTION,
 							flex: 1
 						}

@@ -8,7 +8,7 @@
 		 */
 		delegate: undefined,
 
-		title: CMDBuild.Translation.administration.tasks.title,
+		title: CMDBuild.Translation.taskManager,
 
 		/**
 		 * @returns {Void}

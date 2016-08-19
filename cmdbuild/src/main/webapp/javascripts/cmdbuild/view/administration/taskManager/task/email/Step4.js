@@ -35,7 +35,7 @@
 			});
 
 			this.workflowFieldset = Ext.create('Ext.form.FieldSet', {
-				title: CMDBuild.Translation.administration.tasks.startWorkflow,
+				title: CMDBuild.Translation.startProcess,
 				checkboxName: CMDBuild.core.constants.Proxy.WORKFLOW_ACTIVE,
 				checkboxToggle: true,
 				collapsed: true,

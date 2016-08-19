@@ -36,7 +36,7 @@
 				});
 
 				this.notificationFieldset = Ext.create('Ext.form.FieldSet', {
-					title: CMDBuild.Translation.administration.tasks.notificationForm.title,
+					title: CMDBuild.Translation.sendNotificationEmail,
 					checkboxName: CMDBuild.core.constants.Proxy.NOTIFICATION_ACTIVE,
 					checkboxToggle: true,
 					collapsed: true,
@@ -58,7 +58,7 @@
 				});
 
 				this.workflowFieldset = Ext.create('Ext.form.FieldSet', {
-					title: CMDBuild.Translation.administration.tasks.startWorkflow,
+					title: CMDBuild.Translation.startProcess,
 					checkboxToggle: true,
 					collapsed: true,
 					collapsible: true,

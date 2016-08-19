@@ -323,7 +323,7 @@
 
 			// Class-mapping validation
 			if (Ext.isEmpty(this.controllerStep4.getData()) && enable) {
-				CMDBuild.core.Message.error(CMDBuild.Translation.common.failure, CMDBuild.Translation.administration.tasks.errorMessages.taskConnector.emptyClassLevelMapping, false);
+				CMDBuild.core.Message.error(CMDBuild.Translation.common.failure, CMDBuild.Translation.errors.classLevelMappingTableMustBeCorrectlyFilled, false);
 
 				this.controllerStep4.markInvalidTable("x-grid-invalid");
 
@@ -334,7 +334,7 @@
 
 			// Attribute-mapping validation
 			if (Ext.isEmpty(this.controllerStep5.getData()) && enable) {
-				CMDBuild.core.Message.error(CMDBuild.Translation.common.failure, CMDBuild.Translation.administration.tasks.errorMessages.taskConnector.emptyAttributeLevelMapping, false);
+				CMDBuild.core.Message.error(CMDBuild.Translation.common.failure, CMDBuild.Translation.errors.attributeLevelMappingTableMustBeCorrectlyFilledg, false);
 
 				this.controllerStep5.markInvalidTable("x-grid-invalid");
 
@@ -346,7 +346,7 @@
 			// Reference-mapping validation
 			// TODO: future implementation
 			// if (Ext.isEmpty(this.delegateStep[5].getData()) && enable) {
-			//		CMDBuild.core.Message.error(CMDBuild.Translation.common.failure, CMDBuild.Translation.administration.tasks.errorMessages.taskConnector.emptyReferenceLevelMapping, false);
+			//		CMDBuild.core.Message.error(CMDBuild.Translation.common.failure, CMDBuild.Translation.errors.referenceLevelMappingTableMustBeCorrectlyFilled, false);
 			//
 			//		return false;
 			// }

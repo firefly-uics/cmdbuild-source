@@ -12,7 +12,7 @@
 
 		border: false,
 		considerAsFieldToDisable: true,
-		fieldLabel: CMDBuild.Translation.administration.tasks.workflow,
+		fieldLabel: CMDBuild.Translation.workflow,
 		labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
 
 		layout: {

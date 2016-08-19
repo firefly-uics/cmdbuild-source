@@ -148,10 +148,10 @@
 			Ext.apply(this, {
 				items: [
 					this.typeField = Ext.create('Ext.form.field.Text', {
-						fieldLabel: CMDBuild.Translation.administration.tasks.type,
+						fieldLabel: CMDBuild.Translation.type,
 						labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
 						name: CMDBuild.core.constants.Proxy.TYPE,
-						value: CMDBuild.Translation.administration.tasks.tasksTypes.email,
+						value: CMDBuild.Translation.email,
 						disabled: true,
 						cmImmutable: true,
 						readOnly: true,
@@ -159,18 +159,18 @@
 					}),
 					this.descriptionField = Ext.create('Ext.form.field.Text', {
 						name: CMDBuild.core.constants.Proxy.DESCRIPTION,
-						fieldLabel: CMDBuild.Translation.description_,
+						fieldLabel: CMDBuild.Translation.descriptionLabel,
 						labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
 						allowBlank: false
 					}),
 					this.activeField = Ext.create('Ext.form.field.Checkbox', {
 						name: CMDBuild.core.constants.Proxy.ACTIVE,
-						fieldLabel: CMDBuild.Translation.administration.tasks.startOnSave,
+						fieldLabel: CMDBuild.Translation.startOnSave,
 						labelWidth: CMDBuild.core.constants.FieldWidths.LABEL
 					}),
 					this.emailAccountCombo = Ext.create('Ext.form.field.ComboBox', {
 						name: CMDBuild.core.constants.Proxy.EMAIL_ACCOUNT,
-						fieldLabel: CMDBuild.Translation.administration.tasks.taskEmail.emailAccount,
+						fieldLabel: CMDBuild.Translation.emailAccount,
 						labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
 						displayField: CMDBuild.core.constants.Proxy.NAME,
 						valueField: CMDBuild.core.constants.Proxy.NAME,

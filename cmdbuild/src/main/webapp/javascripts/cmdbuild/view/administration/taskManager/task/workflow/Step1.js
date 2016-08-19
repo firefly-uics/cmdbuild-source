@@ -29,10 +29,10 @@
 		 */
 		initComponent: function () {
 			this.typeField = Ext.create('Ext.form.field.Text', {
-				fieldLabel: CMDBuild.Translation.administration.tasks.type,
+				fieldLabel: CMDBuild.Translation.type,
 				labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
 				name: CMDBuild.core.constants.Proxy.TYPE,
-				value: CMDBuild.Translation.administration.tasks.tasksTypes.workflow,
+				value: CMDBuild.Translation.workflow,
 				maxWidth: CMDBuild.core.constants.FieldWidths.CONFIGURATION_BIG,
 				anchor: '100%',
 				disabled: true,
@@ -47,7 +47,7 @@
 
 			this.descriptionField = Ext.create('Ext.form.field.Text', {
 				name: CMDBuild.core.constants.Proxy.DESCRIPTION,
-				fieldLabel: CMDBuild.Translation.description_,
+				fieldLabel: CMDBuild.Translation.descriptionLabel,
 				labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
 				maxWidth: CMDBuild.core.constants.FieldWidths.CONFIGURATION_BIG,
 				anchor: '100%',
@@ -56,7 +56,7 @@
 
 			this.activeField = Ext.create('Ext.form.field.Checkbox', {
 				name: CMDBuild.core.constants.Proxy.ACTIVE,
-				fieldLabel: CMDBuild.Translation.administration.tasks.startOnSave,
+				fieldLabel: CMDBuild.Translation.startOnSave,
 				labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
 				maxWidth: CMDBuild.core.constants.FieldWidths.CONFIGURATION_BIG,
 				anchor: '100%'

@@ -62,7 +62,7 @@
 			// Buttons configuration
 				this.addRowButton = Ext.create('Ext.button.Button', {
 					iconCls: 'add',
-					text: CMDBuild.Translation.filterWindow.add,
+					text: CMDBuild.Translation.addFilter,
 					scope: this,
 
 					handler: function () {

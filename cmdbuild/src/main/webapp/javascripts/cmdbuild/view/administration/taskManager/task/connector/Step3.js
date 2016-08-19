@@ -79,7 +79,7 @@
 			// DataSource: relationa databases configuration
 				this.dbTypeCombo = Ext.create('Ext.form.field.ComboBox', {
 					name: CMDBuild.core.constants.Proxy.DATASOURCE_DB_TYPE,
-					fieldLabel: CMDBuild.Translation.administration.tasks.type,
+					fieldLabel: CMDBuild.Translation.type,
 					labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
 					displayField: CMDBuild.core.constants.Proxy.VALUE,
 					valueField: CMDBuild.core.constants.Proxy.KEY,
@@ -119,7 +119,7 @@
 
 				this.dbNameField = Ext.create('Ext.form.field.Text', {
 					name: CMDBuild.core.constants.Proxy.DATASOURCE_DB_NAME,
-					fieldLabel: CMDBuild.Translation.administration.tasks.taskConnector.dbName,
+					fieldLabel: CMDBuild.Translation.databaseName,
 					labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
 					maxWidth: CMDBuild.core.constants.FieldWidths.CONFIGURATION_BIG,
 					anchor: '100%'
@@ -127,7 +127,7 @@
 
 				this.dbInstanceNameField = Ext.create('Ext.form.field.Text', {
 					name: CMDBuild.core.constants.Proxy.DATASOURCE_DB_INSATANCE_NAME,
-					fieldLabel: CMDBuild.Translation.administration.tasks.taskConnector.instanceName,
+					fieldLabel: CMDBuild.Translation.instance,
 					labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
 					maxWidth: CMDBuild.core.constants.FieldWidths.CONFIGURATION_BIG,
 					anchor: '100%'
@@ -152,14 +152,14 @@
 
 				this.dbSourceFilterField = Ext.create('Ext.form.field.Text', {
 					name: CMDBuild.core.constants.Proxy.DATASOURCE_TABLE_VIEW_PREFIX,
-					fieldLabel: CMDBuild.Translation.administration.tasks.taskConnector.sourceFilter,
+					fieldLabel: CMDBuild.Translation.entityFilter,
 					labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
 					maxWidth: CMDBuild.core.constants.FieldWidths.CONFIGURATION_BIG,
 					anchor: '100%'
 				});
 
 				this.dbFieldset = Ext.create('Ext.form.FieldSet', {
-					title: CMDBuild.Translation.administration.tasks.taskConnector.dataSourceDbFieldset,
+					title: CMDBuild.Translation.datasourceRelationalDatabase,
 					checkboxToggle: true,
 					collapsed: true,
 					collapsible: true,
@@ -213,7 +213,7 @@
 				});
 
 				this.ldapFieldset = Ext.create('Ext.form.FieldSet', {
-					title: CMDBuild.Translation.administration.tasks.taskConnector.dataSourceLdapFieldset,
+					title: CMDBuild.Translation.datasourceLdapDirectory,
 					checkboxToggle: true,
 					collapsed: true,
 					collapsible: true,
