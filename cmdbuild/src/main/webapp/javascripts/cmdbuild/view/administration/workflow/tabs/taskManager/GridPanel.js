@@ -49,7 +49,7 @@
 
 		listeners: {
 			itemdblclick: function (grid, record, item, index, e, eOpts) {
-				this.delegate.cmfg('onWorkflowTabTasksItemDoubleClick');
+				this.delegate.cmfg('onWorkflowTabTasksItemDoubleClick', record);
 			},
 			select: function (row, record, index) {
 				this.delegate.cmfg('onWorkflowTabTasksRowSelect');

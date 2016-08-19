@@ -38,7 +38,7 @@
 
 
 		/**
-		 * @param {CMDBuild.model.taskManager.generic.Context} record
+		 * @param {CMDBuild.model.administration.taskManager.generic.Context} record
 		 *
 		 * @returns {Void}
 		 */
@@ -94,7 +94,7 @@
 
 		requires: [
 			'CMDBuild.core.constants.Proxy',
-			'CMDBuild.model.taskManager.generic.Context'
+			'CMDBuild.model.administration.taskManager.generic.Context'
 		],
 
 		/**
@@ -171,7 +171,7 @@
 						],
 
 						store: Ext.create('Ext.data.Store', {
-							model: 'CMDBuild.model.taskManager.generic.Context',
+							model: 'CMDBuild.model.administration.taskManager.generic.Context',
 							data: []
 						}),
 
@@ -185,7 +185,7 @@
 										scope: this,
 
 										handler: function (buttons, e) {
-											this.grid.getStore().insert(0, Ext.create('CMDBuild.model.taskManager.generic.Context'));
+											this.grid.getStore().insert(0, Ext.create('CMDBuild.model.administration.taskManager.generic.Context'));
 										}
 									})
 								]

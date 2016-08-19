@@ -128,7 +128,7 @@
 
 		requires: [
 			'CMDBuild.core.constants.Proxy',
-			'CMDBuild.proxy.taskManager.Connector'
+			'CMDBuild.proxy.administration.taskManager.Connector'
 		],
 
 		/**
@@ -198,7 +198,7 @@
 			// DataSource: relationa databases configuration
 				this.dbTypeCombo = Ext.create('Ext.form.field.ComboBox', {
 					name: CMDBuild.core.constants.Proxy.DATASOURCE_DB_TYPE,
-					fieldLabel: CMDBuild.Translation.administration.tasks.type,
+					fieldLabel: CMDBuild.Translation.type,
 					labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
 					displayField: CMDBuild.core.constants.Proxy.VALUE,
 					valueField: CMDBuild.core.constants.Proxy.KEY,
@@ -207,7 +207,7 @@
 					editable: false,
 					anchor: '100%',
 
-					store: CMDBuild.proxy.taskManager.Connector.getStoreDbTypes(),
+					store: CMDBuild.proxy.administration.taskManager.Connector.getStoreDbTypes(),
 					queryMode: 'local',
 
 					listeners: {

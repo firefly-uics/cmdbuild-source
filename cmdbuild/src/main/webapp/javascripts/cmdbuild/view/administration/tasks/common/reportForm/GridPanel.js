@@ -5,7 +5,7 @@
 
 		requires: [
 			'CMDBuild.core.constants.Proxy',
-			'CMDBuild.model.taskManager.common.reportForm.Grid'
+			'CMDBuild.model.administration.taskManager.common.reportForm.Grid'
 		],
 
 		/**
@@ -79,7 +79,7 @@
 					})
 				],
 				store: Ext.create('Ext.data.Store', {
-					model: 'CMDBuild.model.taskManager.common.reportForm.Grid',
+					model: 'CMDBuild.model.administration.taskManager.common.reportForm.Grid',
 					data: []
 				})
 			});

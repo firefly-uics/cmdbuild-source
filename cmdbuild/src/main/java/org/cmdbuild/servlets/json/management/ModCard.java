@@ -13,7 +13,6 @@ import static com.google.common.collect.Ordering.from;
 import static java.util.Arrays.asList;
 import static org.apache.commons.lang3.ObjectUtils.defaultIfNull;
 import static org.cmdbuild.common.Constants.DESCRIPTION_ATTRIBUTE;
-import static org.cmdbuild.common.Constants.ID_ATTRIBUTE;
 import static org.cmdbuild.dao.query.clause.DomainHistory.history;
 import static org.cmdbuild.servlets.json.CommunicationConstants.ACTIVITY_NAME;
 import static org.cmdbuild.servlets.json.CommunicationConstants.ATTRIBUTES;
@@ -380,14 +379,15 @@ public class ModCard extends JSONBaseWithSpringContext {
 
 	}
 
-	private static Function<RelationInfo, JsonRelationSimple> RELATION_INFO_TO_JSON_RELATION = new Function<RelationInfo, JsonRelationSimple>() {
+	private static Function<RelationInfo, JsonRelationSimple> RELATION_INFO_TO_JSON_RELATION =
+			new Function<RelationInfo, JsonRelationSimple>() {
 
-		@Override
-		public JsonRelationSimple apply(final RelationInfo input) {
-			return new JsonRelationSimple(input);
-		}
+				@Override
+				public JsonRelationSimple apply(final RelationInfo input) {
+					return new JsonRelationSimple(input);
+				}
 
-	};
+			};
 
 	private static class JsonElements<T> {
 
@@ -477,9 +477,11 @@ public class ModCard extends JSONBaseWithSpringContext {
 			@Parameter(LIMIT) final int limit, //
 			@Parameter(START) final int offset, //
 			@Parameter(value = SORT, required = false) final JSONArray sorters, //
+			@Parameter(value = ATTRIBUTES, required = false) final JSONArray attributes, //
 			final Map<String, Object> otherAttributes //
 	) throws JSONException {
-		return getCardList(className, filter, limit, offset, sorters, null, otherAttributes);
+		return getCardList(className, filter, limit, offset, sorters,
+				toIterable(defaultIfNull(attributes, new JSONArray())), otherAttributes);
 	}
 
 	/**
@@ -506,15 +508,8 @@ public class ModCard extends JSONBaseWithSpringContext {
 			@Parameter(value = ATTRIBUTES, required = false) final JSONArray attributes, //
 			final Map<String, Object> otherAttributes //
 	) throws JSONException, CMDBException {
-		JSONArray attributesToSerialize = new JSONArray();
-		if (attributes == null || attributes.length() == 0) {
-			attributesToSerialize.put(DESCRIPTION_ATTRIBUTE);
-			attributesToSerialize.put(ID_ATTRIBUTE);
-		} else {
-			attributesToSerialize = attributes;
-		}
-
-		return getCardList(className, filter, limit, offset, sorters, attributesToSerialize, otherAttributes);
+		return getCardList(className, filter, limit, offset, sorters,
+				toIterable(defaultIfNull(attributes, new JSONArray(asList(DESCRIPTION_ATTRIBUTE)))), otherAttributes);
 	}
 
 	/**
@@ -560,27 +555,25 @@ public class ModCard extends JSONBaseWithSpringContext {
 	}
 
 	private JSONObject getCardList(final String className, final JSONObject filter, final int limit, final int offset,
-			final JSONArray sorters, final JSONArray attributes, final Map<String, Object> otherAttributes)
+			final JSONArray sorters, final Iterable<String> attributes, final Map<String, Object> otherAttributes)
 			throws JSONException {
-
 		final DataAccessLogic dataLogic = userDataAccessLogic();
 		final QueryOptionsBuilder queryOptionsBuilder = QueryOptions.newQueryOption() //
 				.limit(limit) //
 				.offset(offset) //
 				.orderBy(sorters) //
-				.onlyAttributes(toIterable(attributes)) //
+				.onlyAttributes(attributes) //
 				.parameters(otherAttributes) //
 				.filter(filter);
-
 		final QueryOptions queryOptions = queryOptionsBuilder.build();
 		final PagedElements<Card> response = dataLogic.fetchCards(className, queryOptions);
 		return cardSerializer().toClient(removeUnwantedAttributes(response.elements(), attributes),
 				response.totalSize());
 	}
 
-	private Iterable<Card> removeUnwantedAttributes(final Iterable<Card> elements, final JSONArray attributes) {
+	private Iterable<Card> removeUnwantedAttributes(final Iterable<Card> elements, final Iterable<String> attributes) {
 		return from(elements) //
-				.transform(new FilterAttribute(toIterable(attributes)));
+				.transform(new FilterAttribute(attributes));
 	}
 
 	@JSONExported
@@ -634,7 +627,8 @@ public class ModCard extends JSONBaseWithSpringContext {
 		final JSONObject out = new JSONObject();
 		final DataAccessLogic dataAccessLogic = userDataAccessLogic();
 
-		QueryOptionsBuilder queryOptionsBuilder = QueryOptions.newQueryOption();
+		QueryOptionsBuilder queryOptionsBuilder = QueryOptions.newQueryOption() //
+				.onlyAttributes(asList(dataAccessLogic.findClass(className).getDescriptionAttributeName()));
 		addFilterToQueryOption(new JsonFilterHelper(filter) //
 				.merge(new FlowStatusFilterElementGetter(lookupHelper(), flowStatus)), queryOptionsBuilder);
 		addSortersToQueryOptions(sorters, queryOptionsBuilder);
@@ -643,12 +637,14 @@ public class ModCard extends JSONBaseWithSpringContext {
 
 		if (card.hasNoPosition() && retryWithoutFilter) {
 			out.put(OUT_OF_FILTER, true);
-			queryOptionsBuilder = QueryOptions.newQueryOption();
+			queryOptionsBuilder = QueryOptions.newQueryOption() //
+					.onlyAttributes(asList(dataAccessLogic.findClass(className).getDescriptionAttributeName()));
 			final CMCard expectedCard = dataAccessLogic.fetchCMCard(className, cardId);
 			final String flowStatusForExpectedCard = flowStatus(expectedCard);
 			if (flowStatusForExpectedCard != null) {
-				addFilterToQueryOption(new JsonFilterHelper(new JSONObject()) //
-						.merge(new FlowStatusFilterElementGetter(lookupHelper(), flowStatusForExpectedCard)),
+				addFilterToQueryOption(
+						new JsonFilterHelper(new JSONObject()) //
+								.merge(new FlowStatusFilterElementGetter(lookupHelper(), flowStatusForExpectedCard)),
 						queryOptionsBuilder);
 			}
 			addSortersToQueryOptions(sorters, queryOptionsBuilder);
@@ -728,8 +724,8 @@ public class ModCard extends JSONBaseWithSpringContext {
 			final Card card = dataLogic.fetchCard(className, cardId);
 			updateGisFeatures(card, attributes);
 		} catch (final NotFoundException ex) {
-			logger.warn("The card with id " + cardId
-					+ " is not present in the database or the logged user can not see it");
+			logger.warn(
+					"The card with id " + cardId + " is not present in the database or the logged user can not see it");
 		}
 
 		return out;
@@ -844,8 +840,8 @@ public class ModCard extends JSONBaseWithSpringContext {
 					}
 
 				}) //
-				.reverse() //
-				.immutableSortedCopy(response);
+						.reverse() //
+						.immutableSortedCopy(response);
 		return JsonResponse.success(new JsonElements<JsonCardSimple>(from(ordered).transform(CARD_JSON_CARD)));
 	}
 
@@ -868,10 +864,10 @@ public class ModCard extends JSONBaseWithSpringContext {
 					}
 
 				}) //
-				.reverse() //
-				.immutableSortedCopy(response);
-		return JsonResponse.success(new JsonElements<JsonInstanceSimple>(from(ordered).transform(
-				new CardToJsonInstance(lookupSerializer()))));
+						.reverse() //
+						.immutableSortedCopy(response);
+		return JsonResponse.success(new JsonElements<JsonInstanceSimple>(
+				from(ordered).transform(new CardToJsonInstance(lookupSerializer()))));
 	}
 
 	/*
@@ -915,10 +911,10 @@ public class ModCard extends JSONBaseWithSpringContext {
 					}
 
 				}) //
-				.reverse() //
-				.immutableSortedCopy(response);
-		return JsonResponse.success(new JsonElements<JsonRelationSimple>(from(ordered).transform(
-				RELATION_INFO_TO_JSON_RELATION)));
+						.reverse() //
+						.immutableSortedCopy(response);
+		return JsonResponse
+				.success(new JsonElements<JsonRelationSimple>(from(ordered).transform(RELATION_INFO_TO_JSON_RELATION)));
 	}
 
 	@JSONExported

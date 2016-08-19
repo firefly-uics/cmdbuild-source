@@ -140,7 +140,7 @@
 
 		requires: [
 			'CMDBuild.core.constants.Proxy',
-			'CMDBuild.proxy.taskManager.event.Synchronous'
+			'CMDBuild.proxy.administration.taskManager.event.Synchronous'
 		],
 
 		/**
@@ -184,7 +184,7 @@
 
 			this.descriptionField = Ext.create('Ext.form.field.Text', {
 				name: CMDBuild.core.constants.Proxy.DESCRIPTION,
-				fieldLabel: CMDBuild.Translation.description_,
+				fieldLabel: CMDBuild.Translation.descriptionLabel,
 				labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
 				allowBlank: false
 			});
@@ -199,7 +199,7 @@
 				name: CMDBuild.core.constants.Proxy.PHASE,
 				fieldLabel: tr.taskEvent.phase,
 				labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
-				store: CMDBuild.proxy.taskManager.event.Synchronous.getStorePhases(),
+				store: CMDBuild.proxy.administration.taskManager.event.Synchronous.getStorePhases(),
 				valueField: CMDBuild.core.constants.Proxy.VALUE,
 				displayField: CMDBuild.core.constants.Proxy.DESCRIPTION,
 				maxWidth: CMDBuild.core.constants.FieldWidths.ADMINISTRATION_BIG,

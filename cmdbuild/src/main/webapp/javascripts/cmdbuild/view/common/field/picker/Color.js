@@ -24,7 +24,7 @@
 
 		layout: {
 			type: 'hbox',
-			align:'stretch'
+			align: 'stretch'
 		},
 
 		initComponent: function() {

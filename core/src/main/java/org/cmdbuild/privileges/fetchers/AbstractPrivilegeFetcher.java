@@ -1,6 +1,12 @@
 package org.cmdbuild.privileges.fetchers;
 
-import static org.cmdbuild.auth.privileges.constants.GrantConstants.*;
+import static org.cmdbuild.auth.privileges.constants.GrantConstants.ATTRIBUTES_PRIVILEGES_ATTRIBUTE;
+import static org.cmdbuild.auth.privileges.constants.GrantConstants.GRANT_CLASS_NAME;
+import static org.cmdbuild.auth.privileges.constants.GrantConstants.GROUP_ID_ATTRIBUTE;
+import static org.cmdbuild.auth.privileges.constants.GrantConstants.PRIVILEGED_CLASS_ID_ATTRIBUTE;
+import static org.cmdbuild.auth.privileges.constants.GrantConstants.PRIVILEGE_FILTER_ATTRIBUTE;
+import static org.cmdbuild.auth.privileges.constants.GrantConstants.TYPE_ATTRIBUTE;
+import static org.cmdbuild.auth.privileges.constants.GrantConstants.UI_CARD_EDIT_MODE_ATTRIBUTE;
 import static org.cmdbuild.dao.query.clause.AnyAttribute.anyAttribute;
 import static org.cmdbuild.dao.query.clause.QueryAliasAttribute.attribute;
 import static org.cmdbuild.dao.query.clause.where.AndWhereClause.and;
@@ -48,12 +54,11 @@ public abstract class AbstractPrivilegeFetcher implements PrivilegeFetcher {
 	@Override
 	public Iterable<PrivilegePair> fetch() {
 		final CMClass privilegeClass = view.findClass(GRANT_CLASS_NAME);
-		final CMQueryResult result = view
-				.select(anyAttribute(privilegeClass))
-				.from(privilegeClass)
-				.where(and(condition(attribute(privilegeClass, GROUP_ID_ATTRIBUTE), eq(groupId)),
-						condition(attribute(privilegeClass, TYPE_ATTRIBUTE), eq(getPrivilegedObjectType().getValue()))))
-				.run();
+		final CMQueryResult result =
+				view.select(anyAttribute(privilegeClass)).from(privilegeClass)
+						.where(and(condition(attribute(privilegeClass, GROUP_ID_ATTRIBUTE), eq(groupId)), condition(
+								attribute(privilegeClass, TYPE_ATTRIBUTE), eq(getPrivilegedObjectType().getValue()))))
+						.run();
 
 		final List<PrivilegePair> privilegesForDefinedType = Lists.newArrayList();
 
@@ -64,8 +69,8 @@ public abstract class AbstractPrivilegeFetcher implements PrivilegeFetcher {
 				logger.warn(marker, "cannot get privilege object for privilege card '{}'", privilegeCard.getId());
 			} else {
 				final CMPrivilege privilege = extractPrivilegeMode(privilegeCard);
-				final PrivilegePair privilegePair = new PrivilegePair(privObject, getPrivilegedObjectType().getValue(),
-						privilege);
+				final PrivilegePair privilegePair =
+						new PrivilegePair(privObject, getPrivilegedObjectType().getValue(), privilege);
 				privilegePair.privilegeFilter = extractPrivilegeFilter(privilegeCard);
 				privilegePair.attributesPrivileges = extractAttributesPrivileges(privilegeCard);
 				privilegePair.cardEditMode = extractCardEditMode(privilegeCard);
@@ -74,7 +79,6 @@ public abstract class AbstractPrivilegeFetcher implements PrivilegeFetcher {
 		}
 		return privilegesForDefinedType;
 	}
-
 
 	private String extractPrivilegeFilter(final CMCard privilegeCard) {
 		if (getPrivilegedObjectType().getValue().equals(PrivilegedObjectType.CLASS.getValue())) {
@@ -85,7 +89,6 @@ public abstract class AbstractPrivilegeFetcher implements PrivilegeFetcher {
 		}
 		return null;
 	}
-	
 
 	private String extractCardEditMode(CMCard privilegeCard) {
 		return String.class.cast(privilegeCard.get(UI_CARD_EDIT_MODE_ATTRIBUTE));
@@ -139,7 +142,7 @@ public abstract class AbstractPrivilegeFetcher implements PrivilegeFetcher {
 	private Iterable<? extends CMAttribute> getClassAttributes(final CMCard privilegeCard) {
 		final CMClass cmClass = view.findClass( //
 				privilegeCard.get(PRIVILEGED_CLASS_ID_ATTRIBUTE, Long.class) //
-				);
+		);
 
 		/*
 		 * cmClass is null if the privilege card describes privileges over

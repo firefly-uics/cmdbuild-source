@@ -1,6 +1,7 @@
 package integration.dao.driver.postgres.query;
 
-import static org.cmdbuild.dao.query.clause.alias.NameAlias.as;
+import static org.cmdbuild.dao.query.clause.alias.Aliases.*;
+import static org.cmdbuild.dao.query.clause.Attributes.*;
 import static org.hamcrest.Matchers.containsString;
 import static org.junit.Assert.assertThat;
 import static utils.IntegrationTestUtils.newClass;
@@ -29,8 +30,8 @@ public class QueryCreatorTest extends IntegrationTestBase {
 
 		// when
 		final String generatedQuery = new QueryCreator(dbDataView() //
-				.select(codeAttributeName) //
-				.from(newClass, as(CLASS_ALIAS)) //
+				.select(named(codeAttributeName)) //
+				.from(newClass, name(CLASS_ALIAS)) //
 				.build()) //
 				.getQuery();
 
