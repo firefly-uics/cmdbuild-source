@@ -19,7 +19,7 @@
 		 */
 		gridEditorPlugin: undefined,
 
-		title: CMDBuild.Translation.administration.tasks.workflowForm.attributes,
+		title: CMDBuild.Translation.workflowAttributes,
 		considerAsFieldToDisable: true,
 		margin: '0 10 5 0',
 		minWidth: CMDBuild.core.constants.FieldWidths.ADMINISTRATION_BIG,

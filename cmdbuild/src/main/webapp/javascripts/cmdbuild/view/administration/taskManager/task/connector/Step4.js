@@ -50,7 +50,7 @@
 			});
 
 			this.classLevelMappingGrid = Ext.create('Ext.grid.Panel', {
-				title: CMDBuild.Translation.administration.tasks.taskConnector.classLevelMapping,
+				title: CMDBuild.Translation.classMapping,
 				considerAsFieldToDisable: true,
 				margin: '0 0 5 0',
 				minWidth: CMDBuild.core.constants.FieldWidths.ADMINISTRATION_BIG,
@@ -59,7 +59,7 @@
 
 				columns: [
 					{
-						header: CMDBuild.Translation.administration.tasks.taskConnector.sourceName,
+						header: CMDBuild.Translation.externalEntity,
 						dataIndex: CMDBuild.core.constants.Proxy.SOURCE_NAME,
 						editor: {
 							xtype: 'combo',
@@ -77,7 +77,7 @@
 						flex: 1
 					},
 					{
-						header: CMDBuild.Translation.administration.tasks.taskConnector.className,
+						header: CMDBuild.Translation.cmdBuildClass,
 						dataIndex: CMDBuild.core.constants.Proxy.CLASS_NAME,
 						editor: {
 							xtype: 'combo',
@@ -100,7 +100,7 @@
 					},
 					{
 						xtype: 'checkcolumn',
-						header: CMDBuild.Translation.administration.tasks.taskConnector.cudActions.createLabel,
+						header: CMDBuild.Translation.createLabel,
 						dataIndex: CMDBuild.core.constants.Proxy.CREATE,
 						width: 60,
 						align: 'center',
@@ -111,7 +111,7 @@
 					},
 					{
 						xtype: 'checkcolumn',
-						header: CMDBuild.Translation.administration.tasks.taskConnector.cudActions.updateLabel,
+						header: CMDBuild.Translation.updateLabel,
 						dataIndex: CMDBuild.core.constants.Proxy.UPDATE,
 						width: 60,
 						align: 'center',
@@ -122,7 +122,7 @@
 					},
 					{
 						xtype: 'checkcolumn',
-						header: CMDBuild.Translation.administration.tasks.taskConnector.cudActions.deleteLabel,
+						header: CMDBuild.Translation.deleteLabel,
 						dataIndex: CMDBuild.core.constants.Proxy.DELETE,
 						width: 60,
 						align: 'center',
@@ -142,7 +142,7 @@
 					},
 // TODO: future implementation
 //					{
-//						header: CMDBuild.Translation.administration.tasks.taskConnector.deletionType,
+//						header: CMDBuild.Translation.deletionType,
 //						dataIndex: CMDBuild.core.constants.Proxy.DELETE_TYPE,
 //						editor: {
 //							xtype: 'combo',

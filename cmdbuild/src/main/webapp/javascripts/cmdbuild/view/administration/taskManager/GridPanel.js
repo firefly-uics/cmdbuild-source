@@ -34,7 +34,7 @@
 					},
 					{
 						dataIndex: CMDBuild.core.constants.Proxy.TYPE,
-						text: CMDBuild.Translation.administration.tasks.type,
+						text: CMDBuild.Translation.type,
 						flex: 1,
 						scope: this,
 
@@ -58,15 +58,15 @@
 						}
 					},
 					{
-						text: CMDBuild.Translation.description_,
+						text: CMDBuild.Translation.descriptionLabel,
 						dataIndex: CMDBuild.core.constants.Proxy.DESCRIPTION,
 						flex: 4
 					},
 					Ext.create('Ext.ux.grid.column.Active', {
 						dataIndex: CMDBuild.core.constants.Proxy.ACTIVE,
 						text: CMDBuild.Translation.active,
-						iconAltTextActive: CMDBuild.Translation.administration.tasks.running,
-						iconAltTextNotActive: CMDBuild.Translation.administration.tasks.stopped,
+						iconAltTextActive: CMDBuild.Translation.running,
+						iconAltTextNotActive: CMDBuild.Translation.stopped,
 						width: 60,
 						align: 'center',
 						hideable: false,

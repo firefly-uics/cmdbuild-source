@@ -39,7 +39,7 @@
 			this.baseRadio = Ext.create('Ext.form.field.Radio', {
 				name: CMDBuild.core.constants.Proxy.CRON_INPUT_TYPE,
 				inputValue: CMDBuild.core.constants.Proxy.BASE,
-				boxLabel: CMDBuild.Translation.administration.tasks.cronForm.basic,
+				boxLabel: CMDBuild.Translation.basic,
 				width: CMDBuild.core.constants.FieldWidths.LABEL,
 
 				listeners: {
@@ -60,10 +60,10 @@
 				store: Ext.create('Ext.data.ArrayStore', {
 					fields: [CMDBuild.core.constants.Proxy.VALUE, CMDBuild.core.constants.Proxy.DESCRIPTION],
 					data: [
-						['0 * * * ?', CMDBuild.Translation.administration.tasks.cronForm.everyHour],
-						['0 0 * * ?', CMDBuild.Translation.administration.tasks.cronForm.everyDay],
-						['0 0 1 * ?', CMDBuild.Translation.administration.tasks.cronForm.everyMonth],
-						['0 0 1 1 ?', CMDBuild.Translation.administration.tasks.cronForm.everyYear]
+						['0 * * * ?', CMDBuild.Translation.everyHour],
+						['0 0 * * ?', CMDBuild.Translation.everyDay],
+						['0 0 1 * ?', CMDBuild.Translation.everyMonth],
+						['0 0 1 1 ?', CMDBuild.Translation.everyYear]
 					]
 				}),
 

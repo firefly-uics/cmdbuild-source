@@ -11,7 +11,7 @@
 		/**
 		 * @cfg {String}
 		 */
-		baseTitle: CMDBuild.Translation.administration.tasks.title,
+		baseTitle: CMDBuild.Translation.taskManager,
 
 		bodyCls: 'cmdb-gray-panel-no-padding',
 		border: true,

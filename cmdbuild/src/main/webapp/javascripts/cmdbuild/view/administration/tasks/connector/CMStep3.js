@@ -198,7 +198,7 @@
 			// DataSource: relationa databases configuration
 				this.dbTypeCombo = Ext.create('Ext.form.field.ComboBox', {
 					name: CMDBuild.core.constants.Proxy.DATASOURCE_DB_TYPE,
-					fieldLabel: CMDBuild.Translation.administration.tasks.type,
+					fieldLabel: CMDBuild.Translation.type,
 					labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
 					displayField: CMDBuild.core.constants.Proxy.VALUE,
 					valueField: CMDBuild.core.constants.Proxy.KEY,

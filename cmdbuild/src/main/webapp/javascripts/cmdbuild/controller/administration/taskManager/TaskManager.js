@@ -91,12 +91,12 @@
 					case 'all': {
 						this.view.getDockedComponent(CMDBuild.core.constants.Proxy.TOOLBAR_TOP).add(
 							Ext.create('CMDBuild.core.buttons.iconized.split.add.Add', {
-								text: CMDBuild.Translation.administration.tasks.add,
+								text: CMDBuild.Translation.addTask,
 
 								menu: Ext.create('Ext.menu.Menu', {
 									items: [
 										{
-											text: CMDBuild.Translation.administration.tasks.tasksTypes.connector,
+											text: CMDBuild.Translation.connector,
 											scope: this,
 
 											handler: function (button, e) {
@@ -104,7 +104,7 @@
 											}
 										},
 										{
-											text: CMDBuild.Translation.administration.tasks.tasksTypes.email,
+											text: CMDBuild.Translation.email,
 											scope: this,
 
 											handler: function (button, e) {
@@ -112,10 +112,10 @@
 											}
 										},
 										{
-											text: CMDBuild.Translation.administration.tasks.tasksTypes.event,
+											text: CMDBuild.Translation.event,
 											menu: [
 												{
-													text: CMDBuild.Translation.administration.tasks.tasksTypes.eventTypes.asynchronous,
+													text: CMDBuild.Translation.asynchronous,
 													scope: this,
 
 													handler: function (button, e) {
@@ -123,7 +123,7 @@
 													}
 												},
 												{
-													text: CMDBuild.Translation.administration.tasks.tasksTypes.eventTypes.synchronous,
+													text: CMDBuild.Translation.synchronous,
 													scope: this,
 
 													handler: function (button, e) {
@@ -133,7 +133,7 @@
 											]
 										},
 										{
-											text: CMDBuild.Translation.administration.tasks.tasksTypes.workflow,
+											text: CMDBuild.Translation.workflow,
 											scope: this,
 
 											handler: function (button, e) {
@@ -163,22 +163,22 @@
 						if (Ext.isEmpty(type[1])) {
 							this.view.getDockedComponent(CMDBuild.core.constants.Proxy.TOOLBAR_TOP).add(
 									Ext.create('CMDBuild.core.buttons.iconized.split.add.Add', {
-										text: CMDBuild.Translation.administration.tasks.add,
+										text: CMDBuild.Translation.addTask,
 
 										menu: Ext.create('Ext.menu.Menu', {
 											items: [
 												{
-													text: CMDBuild.Translation.administration.tasks.tasksTypes.event,
+													text: CMDBuild.Translation.event,
 													menu: [
 														{
-															text: CMDBuild.Translation.administration.tasks.tasksTypes.eventTypes.asynchronous,
+															text: CMDBuild.Translation.asynchronous,
 															scope: this,
 															handler: function () {
 																this.controllerForm.cmfg('onTaskManagerFormAddButtonClick', ['event', 'asynchronous']);
 															}
 														},
 														{
-															text: CMDBuild.Translation.administration.tasks.tasksTypes.eventTypes.synchronous,
+															text: CMDBuild.Translation.synchronous,
 															scope: this,
 															handler: function () {
 																this.controllerForm.cmfg('onTaskManagerFormAddButtonClick', ['event', 'synchronous']);
@@ -193,7 +193,7 @@
 						} else {
 							this.view.getDockedComponent(CMDBuild.core.constants.Proxy.TOOLBAR_TOP).add(
 								Ext.create('CMDBuild.core.buttons.iconized.add.Add', {
-									text: CMDBuild.Translation.administration.tasks.add,
+									text: CMDBuild.Translation.addTask,
 									scope: this,
 
 									handler: function (button, e) {
@@ -207,7 +207,7 @@
 					default: {
 						this.view.getDockedComponent(CMDBuild.core.constants.Proxy.TOOLBAR_TOP).add(
 							Ext.create('CMDBuild.core.buttons.iconized.add.Add', {
-								text: CMDBuild.Translation.administration.tasks.add,
+								text: CMDBuild.Translation.addTask,
 								scope: this,
 
 								handler: function (button, e) {

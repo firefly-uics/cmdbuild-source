@@ -51,10 +51,10 @@
 			return Ext.create('Ext.data.ArrayStore', {
 				fields: [CMDBuild.core.constants.Proxy.DESCRIPTION, CMDBuild.core.constants.Proxy.VALUE],
 				data: [
-					[CMDBuild.Translation.administration.tasks.taskEvent.eventPhases.afterCreate, CMDBuild.core.constants.Proxy.PHASE_AFTER_CREATE],
-					[CMDBuild.Translation.administration.tasks.taskEvent.eventPhases.afterUpdate, CMDBuild.core.constants.Proxy.PHASE_AFTER_UPDATE],
-					[CMDBuild.Translation.administration.tasks.taskEvent.eventPhases.beforeUpdate, CMDBuild.core.constants.Proxy.PHASE_BEFORE_UPDATE],
-					[CMDBuild.Translation.administration.tasks.taskEvent.eventPhases.beforeDelete, CMDBuild.core.constants.Proxy.PHASE_BEFORE_DELETE]
+					[CMDBuild.Translation.afterCreate, CMDBuild.core.constants.Proxy.PHASE_AFTER_CREATE],
+					[CMDBuild.Translation.afterUpdate, CMDBuild.core.constants.Proxy.PHASE_AFTER_UPDATE],
+					[CMDBuild.Translation.beforeUpdate, CMDBuild.core.constants.Proxy.PHASE_BEFORE_UPDATE],
+					[CMDBuild.Translation.beforeDelete, CMDBuild.core.constants.Proxy.PHASE_BEFORE_DELETE]
 				]
 			});
 		},

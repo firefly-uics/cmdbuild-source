@@ -38,9 +38,9 @@
 
 			this.typeField = Ext.create('Ext.form.field.Text', {
 				name: CMDBuild.core.constants.Proxy.TYPE,
-				fieldLabel: CMDBuild.Translation.administration.tasks.type,
+				fieldLabel: CMDBuild.Translation.type,
 				labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
-				value: CMDBuild.Translation.administration.tasks.tasksTypes.event + ' ' + CMDBuild.Translation.administration.tasks.tasksTypes.eventTypes.synchronous.toLowerCase(),
+				value: CMDBuild.Translation.eventSynchronous,
 				disabled: true,
 				cmImmutable: true,
 				readOnly: true,
@@ -53,20 +53,20 @@
 
 			this.descriptionField = Ext.create('Ext.form.field.Text', {
 				name: CMDBuild.core.constants.Proxy.DESCRIPTION,
-				fieldLabel: CMDBuild.Translation.description_,
+				fieldLabel: CMDBuild.Translation.descriptionLabel,
 				labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
 				allowBlank: false
 			});
 
 			this.activeField = Ext.create('Ext.form.field.Checkbox', {
 				name: CMDBuild.core.constants.Proxy.ACTIVE,
-				fieldLabel: CMDBuild.Translation.administration.tasks.startOnSave,
+				fieldLabel: CMDBuild.Translation.startOnSave,
 				labelWidth: CMDBuild.core.constants.FieldWidths.LABEL
 			});
 
 			this.phaseCombo = Ext.create('Ext.form.field.ComboBox', {
 				name: CMDBuild.core.constants.Proxy.PHASE,
-				fieldLabel: CMDBuild.Translation.administration.tasks.taskEvent.phase,
+				fieldLabel: CMDBuild.Translation.phase,
 				labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
 				store: CMDBuild.proxy.taskManager.task.event.Synchronous.getStorePhases(),
 				valueField: CMDBuild.core.constants.Proxy.VALUE,
@@ -79,7 +79,7 @@
 
 			this.groups = Ext.create('CMDBuild.view.common.field.CMGroupSelectionList', {
 				name: CMDBuild.core.constants.Proxy.GROUPS,
-				fieldLabel: CMDBuild.Translation.administration.tasks.taskEvent.groupsToApply,
+				fieldLabel: CMDBuild.Translation.groupsToApply,
 				height: 300,
 				valueField: CMDBuild.core.constants.Proxy.NAME,
 				labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,

@@ -28,7 +28,7 @@
 					},
 					{
 						dataIndex: CMDBuild.core.constants.Proxy.TYPE,
-						text: CMDBuild.Translation.administration.tasks.type,
+						text: CMDBuild.Translation.type,
 						flex: 1,
 						scope: this,
 
@@ -37,7 +37,7 @@
 						}
 					},
 					{
-						text: CMDBuild.Translation.description_,
+						text: CMDBuild.Translation.descriptionLabel,
 						dataIndex: CMDBuild.core.constants.Proxy.DESCRIPTION,
 						flex: 4
 					},

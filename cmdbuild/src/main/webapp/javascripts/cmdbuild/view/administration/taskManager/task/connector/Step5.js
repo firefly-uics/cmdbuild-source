@@ -52,7 +52,7 @@
 			});
 
 			this.attributeLevelMappingGrid = Ext.create('Ext.grid.Panel', {
-				title: CMDBuild.Translation.administration.tasks.taskConnector.attributeLevelMapping,
+				title: CMDBuild.Translation.attributeMapping,
 				considerAsFieldToDisable: true,
 				margin: '0 0 5 0',
 				minWidth: CMDBuild.core.constants.FieldWidths.ADMINISTRATION_BIG,
@@ -61,7 +61,7 @@
 
 				columns: [
 					{
-						header: CMDBuild.Translation.administration.tasks.taskConnector.sourceName,
+						header: CMDBuild.Translation.externalEntity,
 						dataIndex: CMDBuild.core.constants.Proxy.SOURCE_NAME,
 						editor: {
 							xtype: 'combo',
@@ -70,7 +70,7 @@
 						flex: 1
 					},
 					{
-						header: CMDBuild.Translation.administration.tasks.taskConnector.sourceAttribute,
+						header: CMDBuild.Translation.externalAttribute,
 						dataIndex: CMDBuild.core.constants.Proxy.SOURCE_ATTRIBUTE,
 						editor: {
 							xtype: 'combo',
@@ -79,7 +79,7 @@
 						flex: 1
 					},
 					{
-						header: CMDBuild.Translation.administration.tasks.taskConnector.className,
+						header: CMDBuild.Translation.cmdBuildClass,
 						dataIndex: CMDBuild.core.constants.Proxy.CLASS_NAME,
 						editor: {
 							xtype: 'combo',
@@ -88,7 +88,7 @@
 						flex: 1
 					},
 					{
-						header: CMDBuild.Translation.administration.tasks.taskConnector.classAttribute,
+						header: CMDBuild.Translation.cmdBuildAttribute,
 						dataIndex: CMDBuild.core.constants.Proxy.CLASS_ATTRIBUTE,
 						editor: {
 							xtype: 'combo',
@@ -98,7 +98,7 @@
 					},
 					{
 						xtype: 'checkcolumn',
-						header: CMDBuild.Translation.administration.tasks.taskConnector.isKey,
+						header: CMDBuild.Translation.isKey,
 						dataIndex: CMDBuild.core.constants.Proxy.IS_KEY,
 						width: 50,
 						align: 'center',

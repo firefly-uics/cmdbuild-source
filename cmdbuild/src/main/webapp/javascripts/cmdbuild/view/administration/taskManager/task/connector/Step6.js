@@ -50,7 +50,7 @@
 			});
 
 			this.referenceMappingGrid = Ext.create('Ext.grid.Panel', {
-				title: CMDBuild.Translation.administration.tasks.taskConnector.referenceMapping,
+				title: CMDBuild.Translation.referencesMapping,
 				considerAsFieldToDisable: true,
 				margin: '0 0 5 0',
 				minWidth: CMDBuild.core.constants.FieldWidths.ADMINISTRATION_BIG,
@@ -59,7 +59,7 @@
 
 				columns: [
 					{
-						header: CMDBuild.Translation.administration.tasks.taskConnector.className,
+						header: CMDBuild.Translation.cmdBuildClass,
 						dataIndex: CMDBuild.core.constants.Proxy.CLASS_NAME,
 						editor: {
 							xtype: 'combo',
@@ -68,7 +68,7 @@
 						flex: 1
 					},
 					{
-						header: CMDBuild.Translation.administration.tasks.taskConnector.domainName,
+						header: CMDBuild.Translation.domainName,
 						dataIndex: CMDBuild.core.constants.Proxy.DOMAIN_NAME,
 						editor: {
 							xtype: 'combo',

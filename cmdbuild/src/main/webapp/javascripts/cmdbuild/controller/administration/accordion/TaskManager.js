@@ -47,8 +47,8 @@
 				{
 					cmName: this.cmfg('accordionIdentifierGet'),
 					iconCls: 'cmdb-tree-taskGroup-icon',
-					text: CMDBuild.Translation.administration.tasks.all,
-					description: CMDBuild.Translation.administration.tasks.all,
+					text: CMDBuild.Translation.all,
+					description: CMDBuild.Translation.all,
 					id: this.cmfg('accordionBuildId', 'all'),
 					sectionHierarchy: ['all'],
 					leaf: false,
@@ -57,8 +57,8 @@
 						{
 							cmName: this.cmfg('accordionIdentifierGet'),
 							iconCls: 'cmdb-tree-tasks-icon',
-							text: CMDBuild.Translation.administration.tasks.tasksTypes.connector,
-							description: CMDBuild.Translation.administration.tasks.tasksTypes.connector,
+							text: CMDBuild.Translation.connector,
+							description: CMDBuild.Translation.connector,
 							id: this.cmfg('accordionBuildId', 'connector'),
 							sectionHierarchy: ['connector'],
 							leaf: true
@@ -66,8 +66,8 @@
 						{
 							cmName: this.cmfg('accordionIdentifierGet'),
 							iconCls: 'cmdb-tree-tasks-icon',
-							text: CMDBuild.Translation.administration.tasks.tasksTypes.email,
-							description: CMDBuild.Translation.administration.tasks.tasksTypes.email,
+							text: CMDBuild.Translation.email,
+							description: CMDBuild.Translation.email,
 							id: this.cmfg('accordionBuildId', 'email'),
 							sectionHierarchy: ['email'],
 							leaf: true
@@ -75,8 +75,8 @@
 						{
 							cmName: this.cmfg('accordionIdentifierGet'),
 							iconCls: 'cmdb-tree-taskGroup-icon',
-							text: CMDBuild.Translation.administration.tasks.tasksTypes.event,
-							description: CMDBuild.Translation.administration.tasks.tasksTypes.event,
+							text: CMDBuild.Translation.event,
+							description: CMDBuild.Translation.event,
 							expanded: true,
 							id: this.cmfg('accordionBuildId', 'event'),
 							sectionHierarchy: ['event'],
@@ -86,8 +86,8 @@
 								{
 									cmName: this.cmfg('accordionIdentifierGet'),
 									iconCls: 'cmdb-tree-tasks-icon',
-									text: CMDBuild.Translation.administration.tasks.tasksTypes.eventTypes.asynchronous,
-									description: CMDBuild.Translation.administration.tasks.tasksTypes.eventTypes.asynchronous,
+									text: CMDBuild.Translation.asynchronous,
+									description: CMDBuild.Translation.asynchronous,
 									id: this.cmfg('accordionBuildId', 'event_asynchronous'),
 									sectionHierarchy: ['event', 'asynchronous'],
 									leaf: true
@@ -95,8 +95,8 @@
 								{
 									cmName: this.cmfg('accordionIdentifierGet'),
 									iconCls: 'cmdb-tree-tasks-icon',
-									text: CMDBuild.Translation.administration.tasks.tasksTypes.eventTypes.synchronous,
-									description: CMDBuild.Translation.administration.tasks.tasksTypes.eventTypes.synchronous,
+									text: CMDBuild.Translation.synchronous,
+									description: CMDBuild.Translation.synchronous,
 									id: this.cmfg('accordionBuildId', 'event_synchronous'),
 									sectionHierarchy: ['event', 'synchronous'],
 									leaf: true
@@ -106,8 +106,8 @@
 						{
 							cmName: this.cmfg('accordionIdentifierGet'),
 							iconCls: 'cmdb-tree-tasks-icon',
-							text: CMDBuild.Translation.administration.tasks.tasksTypes.workflow,
-							description: CMDBuild.Translation.administration.tasks.tasksTypes.workflow,
+							text: CMDBuild.Translation.workflow,
+							description: CMDBuild.Translation.workflow,
 							id: this.cmfg('accordionBuildId', 'workflow'),
 							sectionHierarchy: ['workflow'],
 							leaf: true

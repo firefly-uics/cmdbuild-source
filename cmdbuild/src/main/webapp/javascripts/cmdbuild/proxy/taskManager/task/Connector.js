@@ -120,8 +120,8 @@
 			return Ext.create('Ext.data.ArrayStore', {
 				fields: [CMDBuild.core.constants.Proxy.DESCRIPTION, CMDBuild.core.constants.Proxy.VALUE],
 				data: [
-					[CMDBuild.Translation.administration.tasks.taskConnector.deletionTypes.deleteCard, CMDBuild.core.constants.Proxy.DELETE_CARD],
-					[CMDBuild.Translation.administration.tasks.taskConnector.deletionTypes.changeStatus, CMDBuild.core.constants.Proxy.CHANGE_STATUS]
+					[CMDBuild.Translation.deleteCard, CMDBuild.core.constants.Proxy.DELETE_CARD],
+					[CMDBuild.Translation.changeStatus, CMDBuild.core.constants.Proxy.CHANGE_STATUS]
 				]
 			});
 		},

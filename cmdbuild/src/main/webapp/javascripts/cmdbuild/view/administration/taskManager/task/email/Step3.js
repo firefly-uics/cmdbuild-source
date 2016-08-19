@@ -73,7 +73,7 @@
 
 			// Parsing configuration
 				this.parsingKeyStart = Ext.create('Ext.form.field.Text', {
-					fieldLabel: CMDBuild.Translation.administration.tasks.taskEmail.parsingKeyStart,
+					fieldLabel: CMDBuild.Translation.parsingKeyStart,
 					labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
 					maxWidth: CMDBuild.core.constants.FieldWidths.ADMINISTRATION_BIG,
 					name: CMDBuild.core.constants.Proxy.PARSING_KEY_INIT,
@@ -81,7 +81,7 @@
 				});
 
 				this.parsingKeyEnd = Ext.create('Ext.form.field.Text', {
-					fieldLabel: CMDBuild.Translation.administration.tasks.taskEmail.parsingKeyEnd,
+					fieldLabel: CMDBuild.Translation.parsingKeyEnd,
 					labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
 					maxWidth: CMDBuild.core.constants.FieldWidths.ADMINISTRATION_BIG,
 					name: CMDBuild.core.constants.Proxy.PARSING_KEY_END,
@@ -90,7 +90,7 @@
 				});
 
 				this.parsingValueStart = Ext.create('Ext.form.field.Text', {
-					fieldLabel: CMDBuild.Translation.administration.tasks.taskEmail.parsingValueStart,
+					fieldLabel: CMDBuild.Translation.parsingValueStart,
 					labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
 					maxWidth: CMDBuild.core.constants.FieldWidths.ADMINISTRATION_BIG,
 					name: CMDBuild.core.constants.Proxy.PARSING_VALUE_INIT,
@@ -98,7 +98,7 @@
 				});
 
 				this.parsingValueEnd = Ext.create('Ext.form.field.Text', {
-					fieldLabel: CMDBuild.Translation.administration.tasks.taskEmail.parsingValueEnd,
+					fieldLabel: CMDBuild.Translation.valueEndDelimiter,
 					labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
 					maxWidth: CMDBuild.core.constants.FieldWidths.ADMINISTRATION_BIG,
 					name: CMDBuild.core.constants.Proxy.PARSING_VALUE_END,
@@ -107,7 +107,7 @@
 				});
 
 				this.parsingFieldset = Ext.create('Ext.form.FieldSet', {
-					title: CMDBuild.Translation.administration.tasks.taskEmail.bodyParsing,
+					title: CMDBuild.Translation.bodyParsing,
 					checkboxName: CMDBuild.core.constants.Proxy.PARSING_ACTIVE,
 					checkboxToggle: true,
 					collapsed: true,
@@ -152,7 +152,7 @@
 				});
 
 				this.notificationFieldset = Ext.create('Ext.form.FieldSet', {
-					title: CMDBuild.Translation.administration.tasks.notificationForm.title,
+					title: CMDBuild.Translation.sendNotificationEmail,
 					checkboxName: CMDBuild.core.constants.Proxy.NOTIFICATION_ACTIVE,
 					checkboxToggle: true,
 					collapsed: true,
@@ -169,7 +169,7 @@
 			// Attachments configuration
 				this.attachmentsCombo = Ext.create('Ext.form.field.ComboBox', {
 					name: CMDBuild.core.constants.Proxy.ATTACHMENTS_CATEGORY,
-					fieldLabel: CMDBuild.Translation.administration.tasks.taskEmail.attachmentsCategory,
+					fieldLabel: CMDBuild.Translation.category,
 					labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
 					maxWidth: CMDBuild.core.constants.FieldWidths.ADMINISTRATION_BIG,
 					anchor: '100%',
@@ -183,7 +183,7 @@
 				});
 
 				this.attachmentsFieldset = Ext.create('Ext.form.FieldSet', {
-					title: CMDBuild.Translation.administration.tasks.taskEmail.saveToAlfresco,
+					title: CMDBuild.Translation.saveAttachmentsToDms,
 					checkboxName: CMDBuild.core.constants.Proxy.ATTACHMENTS_ACTIVE,
 					checkboxToggle: true,
 					collapsed: true,

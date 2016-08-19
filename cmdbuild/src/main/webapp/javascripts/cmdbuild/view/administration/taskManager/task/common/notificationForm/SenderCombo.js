@@ -15,7 +15,7 @@
 		delegate: undefined,
 
 		name: CMDBuild.core.constants.Proxy.NOTIFICATION_EMAIL_ACCOUNT,
-		fieldLabel: CMDBuild.Translation.administration.tasks.notificationForm.account,
+		fieldLabel: CMDBuild.Translation.account,
 		labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
 		valueField: CMDBuild.core.constants.Proxy.NAME,
 		displayField: CMDBuild.core.constants.Proxy.NAME,
