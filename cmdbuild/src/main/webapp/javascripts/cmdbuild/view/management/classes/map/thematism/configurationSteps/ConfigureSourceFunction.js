@@ -1,15 +1,8 @@
 (function() {
 	Ext.define("CMDBuild.view.management.classes.map.thematism.configurationSteps.ConfigureSourceFunction", {
-		extend : "Ext.form.Panel",
+		extend : "CMDBuild.view.management.classes.map.thematism.configurationSteps.ConfigureFunction",
 		itemId : "configureSourceFunction",
-		xtype : "form",
-		layout : "anchor",
 
-		defaults : {
-			anchor : "100%"
-		},
-		parentWindow : undefined,
-		interactionDocument : undefined,
 		strategiesStore : undefined,
 		comboStrategies : undefined,
 
@@ -34,36 +27,11 @@
 				allowBlank : false
 			});
 			Ext.apply(this, {
-				items : [ this.comboStrategies ],
-				buttons : [ {
-					text : '@@ Cancel',
-					handler : function() {
-						me.parentWindow.close();
-					}
-				}, {
-					text : '@@ Previous',
-					handler : function() {
-						var form = this.up('form').getForm();
-						me.parentWindow.previous(me.itemId);
-					}
-				}, {
-					text : '@@ Advance',
-					formBind : true, // only enabled once the form is valid
-					disabled : true,
-					handler : function() {
-						var form = this.up('form').getForm();
-						me.parentWindow.advance(me.itemId, form.getValues());
-					}
-				} ],
+				items : [ this.comboStrategies ]
 			});
 			this.callParent(arguments);
 		},
-		loadComponents : function(callback, callbackScope) {
-			this.loadFunctionStrategies(function() {
-				callback.apply(callbackScope, []);
-			}, this);
-		},
-		loadFunctionStrategies : function(callback, callbackScope) {
+		loadStrategies : function(callback, callbackScope) {
 			var strategiesStore = Ext.create("Ext.data.Store", {
 				fields : [ "description", "value" ],
 				autoLoad : false,

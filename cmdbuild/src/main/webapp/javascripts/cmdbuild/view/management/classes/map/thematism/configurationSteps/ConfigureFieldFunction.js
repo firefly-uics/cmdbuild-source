@@ -1,15 +1,9 @@
 (function() {
 	Ext.define("CMDBuild.view.management.classes.map.thematism.configurationSteps.ConfigureFieldFunction", {
-		extend : "Ext.form.Panel",
+		extend : "CMDBuild.view.management.classes.map.thematism.configurationSteps.ConfigureFunction",
+		requires : [ 'CMDBuild.view.management.classes.map.thematism.configurationSteps.ConfigureFunction' ],
 		itemId : "configureFieldFunction",
-		xtype : "form",
-		layout : "anchor",
 
-		defaults : {
-			anchor : "100%"
-		},
-		parentWindow : undefined,
-		interactionDocument : undefined,
 		strategiesStore : undefined,
 		comboStrategies : undefined,
 
@@ -47,30 +41,10 @@
 			});
 			Ext.apply(this, {
 				items : [ this.comboAttributes, this.comboStrategies ],
-				buttons : [ {
-					text : '@@ Cancel',
-					handler : function() {
-						me.parentWindow.close();
-					}
-				}, {
-					text : '@@ Previous',
-					handler : function() {
-						var form = this.up('form').getForm();
-						me.parentWindow.previous(me.itemId);
-					}
-				}, {
-					text : '@@ Advance',
-					formBind : true, // only enabled once the form is valid
-					disabled : true,
-					handler : function() {
-						var form = this.up('form').getForm();
-						me.parentWindow.advance(me.itemId, form.getValues());
-					}
-				} ],
 			});
 			this.callParent(arguments);
 		},
-		loadComponents : function(callback, callbackScope) {
+		loadStrategies : function(callback, callbackScope) {
 			this.loadFieldStrategies(function() {
 				this.loadAttributes(function() {
 					callback.apply(callbackScope, []);
@@ -122,5 +96,6 @@
 				callback.apply(callbackScope, this);
 			}, this);
 		}
+
 	});
 })();

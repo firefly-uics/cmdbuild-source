@@ -28,9 +28,8 @@
 		layout : "fit",
 
 		thematismConfiguration : undefined,
-		functionsConfiguration : undefined,
-		individualLayoutConfiguration : undefined,
-		rangeLayoutConfiguration : undefined,
+		functionConfiguration : undefined,
+		layoutConfiguration : undefined,
 
 		/**
 		 * @returns {Void}
@@ -53,20 +52,11 @@
 						interactionDocument : this.interactionDocument,
 						parentWindow : this
 					});
-			this.result = Ext.create("CMDBuild.view.management.classes.map.thematism.configurationSteps.Result", {
-				interactionDocument : this.interactionDocument,
-				parentWindow : this
-			});
-			this.configureIndividualLayout = Ext.create(
-					"CMDBuild.view.management.classes.map.thematism.configurationSteps.ConfigureIndividualLayout", {
-						interactionDocument : this.interactionDocument,
-						parentWindow : this
-					});
-			this.configureRangeLayout = Ext.create(
-					"CMDBuild.view.management.classes.map.thematism.configurationSteps.ConfigureRangeLayout", {
-						interactionDocument : this.interactionDocument,
-						parentWindow : this
-					});
+					this.configureLayout = Ext.create(
+							"CMDBuild.view.management.classes.map.thematism.configurationSteps.ConfigureLayout", {
+								interactionDocument : this.interactionDocument,
+								parentWindow : this
+							});
 			this.wizard = this.getWizard();
 			Ext.apply(this, {
 				items : [ this.wizard ]
@@ -96,7 +86,7 @@
 					bodyPadding : 20
 				},
 				items : [ this.configureThematism, this.configureSourceFunction, this.configureFieldFunction,
-						this.configureIndividualLayout, this.configureRangeLayout, this.result ]
+						this.configureLayout ]
 
 			});
 			return wizard;
@@ -104,8 +94,48 @@
 		getCurrentStrategy : function() {
 			return this.functionConfiguration.currentStrategy;
 		},
+		getCurrentSourceType : function() {
+			return this.thematismConfiguration.source;
+		},
 		getCurrentLayer : function() {
 			return this.thematismConfiguration.sourceLayer;
+		},
+		getCurrentLayout : function() {
+			return this.thematismConfiguration.sourceLayer;
+		},
+		getCurrentAnalysisType : function() {
+			return this.thematismConfiguration.analysis;
+		},
+		getThematismConfiguration : function() {
+			return this.thematismConfiguration;
+		},
+		getAnalysisDescription : function(analysisType) {
+			switch (analysisType) {
+			case CMDBuild.gis.constants.layers.RANGES_ANALYSIS:
+				return "@@ Ranges";
+			case CMDBuild.gis.constants.layers.PUNTUAL_ANALYSIS:
+				return "@@ Puntual";
+			case CMDBuild.gis.constants.layers.DENSITY_ANALYSIS:
+				return "@@ Density";
+			}
+			return "@@ Puntual";
+		},
+		 getSourceDescription : function(sourceType) {
+			switch (sourceType) {
+			case CMDBuild.gis.constants.layers.TABLE_SOURCE:
+				return "@@ Table";
+			case CMDBuild.gis.constants.layers.FUNCTION_SOURCE:
+				return "@@ Function";
+			}
+			return "@@ Table";
+		},
+		getCurrentLayerType : function() {
+			var layer = this.interactionDocument.getGeoLayerByName(this.getCurrentLayer());
+			var type = undefined;
+			if (layer) {
+				type = layer.get("adapter").getAttributeType();
+			}
+			return type;
 		},
 		getLayerName : function() {
 			return this.thematismConfiguration.layerName;
@@ -113,31 +143,11 @@
 		close : function() {
 			this.hide();
 		},
-		getResultFormType : function() {
-			var sourceLayer = this.thematismConfiguration.sourceLayer;
-			return "result";
-		},
-		advanceResults : function() {
-			this.interactionDocument.getLayerByName(this.configureThematism.sourceLayer, function(layer) {
-				this.result.loadComponents(function() {
-					var resultsForm = this.getResultFormType();
-					this.wizard.getLayout().setActiveItem(resultsForm);
-				}, this);
-
-			}, this);
-		},
 		advanceConfigurationLayouts : function() {
-			if (this.thematismConfiguration.analysis === CMDBuild.gis.constants.layers.RANGES_ANALYSIS) {
-				this.configureRangeLayout.loadComponents(function() {
-					this.wizard.getLayout().setActiveItem("configureRangeLayout");
+				this.configureLayout.loadComponents(function() {
+					this.wizard.getLayout().setActiveItem("configureLayout");
 
 				}, this);
-			} else {
-				this.configureIndividualLayout.loadComponents(function() {
-					this.wizard.getLayout().setActiveItem("configureIndividualLayout");
-
-				}, this);
-			}
 		},
 		advance : function(step, configurationObject) {
 			switch (step) {
@@ -161,14 +171,6 @@
 				this.functionConfiguration = configurationObject;
 				this.advanceConfigurationLayouts();
 				break;
-			case "configureRangeLayout":
-				this.rangeLayoutConfiguration = configurationObject;
-				this.advanceResults();
-				break;
-			case "configureIndividualLayout":
-				this.individualLayoutConfiguration = configurationObject;
-				this.advanceResults();
-				break;
 			}
 		},
 		previous : function(step) {
@@ -177,37 +179,34 @@
 			case "configureFieldFunction":
 				this.wizard.getLayout().setActiveItem("configureThematism");
 				break;
-			case "configureRangeLayout":
-			case "configureIndividualLayout":
+			case "configureLayout":
 				if (this.thematismConfiguration.source === CMDBuild.gis.constants.layers.FUNCTION_SOURCE) {
 					this.wizard.getLayout().setActiveItem("configureSourceFunction");
 				} else {
 					this.wizard.getLayout().setActiveItem("configureFieldFunction");
 				}
 				break;
-			case "result":
-				if (this.thematismConfiguration.analysis === CMDBuild.gis.constants.layers.RANGES_ANALYSIS) {
-					this.wizard.getLayout().setActiveItem("configureRangeLayout");
-				}
-				else {
-					this.wizard.getLayout().setActiveItem("configureIndividualLayout");
-				}
-				break;
 			}
 		},
-		showOnMap : function() {
+		showOnMap : function(configurationObject) {
+			this.layoutConfiguration = configurationObject;
 			this.delegate.cmfg('onShowThematism', {
 				name : this.getLayerName(),
 				layer : this.interactionDocument.getGeoLayerByName(this.getCurrentLayer()),
-				strategy : this.getCurrentStrategy()
+				strategy : this.getCurrentStrategy(),
+				configuration : {
+					thematismConfiguration : clone(this.thematismConfiguration),
+					functionConfiguration : clone(this.functionConfiguration),
+					layoutConfiguration : clone(this.layoutConfiguration),
+					 
+				}
 			});
 			this.hide();
 
 		}
 
 	});
-	// thematismConfiguration : undefined,
-	// sourceFunctionsConfiguration : undefined,
-	// sourceFieldConfiguration : undefined,
-
+	function clone(obj) {
+		return JSON.parse(JSON.stringify(obj));
+	}
 })();

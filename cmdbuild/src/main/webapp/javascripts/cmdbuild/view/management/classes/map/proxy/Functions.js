@@ -34,6 +34,22 @@
 		 * 
 		 * @returns {Void}
 		 */
+		readAttributes : function(parameters) {
+			parameters = Ext.isEmpty(parameters) ? {} : parameters;
+
+			Ext.apply(parameters, {
+				method : 'GET',
+				url : CMDBuild.proxy.index.Rest.functions + '/' + parameters._id + '/attributes/'
+			});
+
+			CMDBuild.core.interfaces.Rest.request(parameters);
+		},
+		/**
+		 * @param {Object}
+		 *            parameters
+		 * 
+		 * @returns {Void}
+		 */
 		readParameters : function(parameters) {
 			parameters = Ext.isEmpty(parameters) ? {} : parameters;
 

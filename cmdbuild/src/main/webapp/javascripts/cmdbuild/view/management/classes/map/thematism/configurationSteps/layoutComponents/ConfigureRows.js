@@ -1,8 +1,7 @@
 (function() {
-	Ext.define("CMDBuild.view.management.classes.map.thematism.configurationSteps.Result", {
-		extend : "Ext.form.Panel",
-		itemId : "result",
-		xtype : "form",
+	Ext.define("CMDBuild.view.management.classes.map.thematism.configurationSteps.layoutComponents.ConfigureRows", {
+		extend : "Ext.panel.Panel",
+		itemId : "configureRows",
 		layout : "anchor",
 
 		defaults : {
@@ -10,8 +9,7 @@
 		},
 		parentWindow : undefined,
 		interactionDocument : undefined,
-		strategiesStore : undefined,
-		comboStrategies : undefined,
+		comboFields : undefined,
 
 		/**
 		 * @returns {Void}
@@ -21,29 +19,52 @@
 		initComponent : function() {
 			var me = this;
 			var store = Ext.create("Ext.data.Store", {
+				fields : [ "value", "cardinality", "color" ],
+				data : []
+			});
+			this.fieldsStore = Ext.create("Ext.data.Store", {
 				fields : [ "name", "description" ],
 				data : []
 			});
+			this.comboFields = Ext.create("Ext.form.field.ComboBox", {
+				fieldLabel : "@@ Choose Field *",
+				store : this.fieldsStore,
+				name : "resultFieldName",
+				queryMode : "local",
+				displayField : "description",
+				valueField : "name",
+				allowBlank : false,
+
+				listeners : {
+					scope : this,
+					change : function(field, newValue, oldValue) {
+						this.refreshResults(this.grid, function() {
+						}, this);
+					}
+				}
+			});
+			var colorPicker = Ext.create('CMDBuild.view.common.field.picker.Color');
 			this.grid = Ext.create("Ext.grid.Panel", {
 				title : "Results",
 				store : store,
+				plugins : [ Ext.create('Ext.grid.plugin.CellEditing', {
+					clicksToEdit : 1
+				}) ],
 				columns : [ {
-					text : "Description",
-					dataIndex : "description"
-				}, {
-					text : "Value",
+					text : "@@ Value",
 					dataIndex : "value",
 					flex : 1
 				}, {
 					text : "Cardinality",
 					dataIndex : "cardinality"
 				}, {
-					text : "Color",
+					text : "@@ Color",
 					dataIndex : "color",
 					renderer : function(value, metaData) {
 						metaData.style = "background-color:" + value + ";";
 						return value;
-					}
+					},
+					editor : colorPicker
 				} ],
 				height : "100%",
 				width : "100%"
@@ -58,32 +79,16 @@
 				items : [ this.grid ]
 			});
 			Ext.apply(this, {
-				items : [item],
-				buttons : [ {
-					text : '@@ Cancel',
-					handler : function() {
-						me.parentWindow.close();
-					}
-				}, {
-					text : '@@ Previous',
-					handler : function() {
-						var form = this.up('form').getForm();
-						me.parentWindow.previous(me.itemId);
-					}
-				}, {
-					text : '@@ Show',
-					formBind : true, // only enabled once the form is valid
-					disabled : true,
-					handler : function() {
-						me.parentWindow.showOnMap();
-					}
-				} ],
+				items : [ this.comboFields, item ],
 			});
 			this.callParent(arguments);
 		},
 		loadComponents : function(callback, callbackScope) {
-			this.refreshResults(this.grid, function() {
-				callback.apply(callbackScope, []);
+			this.loadFields(function() {
+				this.comboFields.select(this.comboFields.getStore().getAt(0));
+				this.refreshResults(this.grid, function() {
+					callback.apply(callbackScope, []);
+				}, this);
 			}, this);
 		},
 		refreshResultsCardByCard : function(cards, cardsArray, index, callback, callbackScope) {
@@ -111,6 +116,10 @@
 				strategy : currentStrategy
 			}
 			currentStrategy.value(params, function(value) {
+				if (this.parentWindow.getCurrentSourceType() === CMDBuild.gis.constants.layers.FUNCTION_SOURCE) {
+					var field = this.comboFields.value;
+					value = value[field];
+				}
 				if (groups[value]) {
 					// can be different from the cards count?
 					groups[value].count++;
@@ -126,11 +135,9 @@
 		},
 		chargeStore : function(cardsStore, cardsArray, callback, callbackScope) {
 			var groups = {};
-			var currentStrategy = this.parentWindow.getCurrentStrategy();
 			this.chargeCardByCard(groups, cardsArray, 0, function() {
 				for ( var key in groups) {
 					cardsStore.add({
-						description : currentStrategy.description,
 						value : key,
 						cardinality : groups[key].count,
 						cards : groups[key].cards,
@@ -149,7 +156,7 @@
 			var card = this.interactionDocument.getCurrentCard();
 			var currentClassName = (!card) ? "" : card.className;
 			var currentResultsStore = Ext.create("Ext.data.Store", {
-				fields : [ "description", "value", "cardinality", "color" ],
+				fields : [ "value", "cardinality", "color" ],
 				autoLoad : false,
 				data : []
 			});
@@ -176,11 +183,52 @@
 					callback.apply(callbackScope, [ data ]);
 				}
 			});
+		},
+		loadFields : function(callback, callbackScope) {
+			var card = this.interactionDocument.getCurrentCard();
+			if (!card) {
+				callback.apply(callbackScope, this);
+				return;
+			}
+			var fieldsStore = Ext.create("Ext.data.Store", {
+				fields : [ "name", "description" ],
+				autoLoad : false,
+				data : []
+			});
+			var currentStrategy = this.parentWindow.getCurrentStrategy();
+			if (this.parentWindow.getCurrentSourceType() === CMDBuild.gis.constants.layers.FUNCTION_SOURCE) {
+				var attributes = currentStrategy.attributes;
+				for (var i = 0; i < attributes.length; i++) {
+					var attribute = attributes[i];
+					fieldsStore.add({
+						"description" : attribute.description,
+						"name" : attribute.name
+					});
+				}
+			} else {
+				fieldsStore.add({
+					"description" : "Value",
+					"name" : "value"
+				});
+
+			}
+			this.fieldsStore.loadData(fieldsStore.getRange(), false);
+			callback.apply(callbackScope, this);
 		}
 	});
+	function componentToHex(c) {
+	    var hex = c.toString(16);
+	    return hex.length == 1 ? "0" + hex : hex;
+	}
+	function rgbToHex(r, g, b) {
+	    return "#" + componentToHex(r) + componentToHex(g) + componentToHex(b);
+	}
 	function getColor(value) {
-		var red = value * 10;
-		var color = "rgb(" + red + ", 100, 100)";
-		return color;
+		if (value === "true")
+			return "#9999FF";
+		if (value === "false")
+			return "#FF0000";
+		var red = value;
+		return rgbToHex(parseInt(red), 0, 0);
 	}
 })();

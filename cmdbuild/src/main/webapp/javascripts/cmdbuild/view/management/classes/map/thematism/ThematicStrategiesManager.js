@@ -93,10 +93,33 @@
 				_id : parameters.strategy._id,
 				params : params,
 				success : function(response, options, decodedResponse) {
-					callback.apply(callbackScope, [ decodedResponse.data[0].boolean ]);
+					callback.apply(callbackScope, [ decodedResponse.data[0] ]);
 				}
 			});
 		},
+		/**
+		 * @param {Object}
+		 *            parameters
+		 * 
+		 * @returns {generic value}
+		 */
+//		functionAttributes : function(parameters, callback, callbackScope) {
+//			var params = {
+//				parameters : Ext.encode({
+//					ClassName : parameters.card.className,
+//					CardId : parameters.card.Id
+//				})
+//			};
+//
+//			CMDBuild.view.management.classes.map.proxy.Functions.readAttributes({
+//				scope : this,
+//				_id : parameters.strategy._id,
+//				params : params,
+//				success : function(response, options, decodedResponse) {
+//					callback.apply(callbackScope, [ decodedResponse.data[0] ]);
+//				}
+//			});
+//		},
 
 		/**
 		 * @param {Array}
@@ -111,15 +134,36 @@
 			}
 			var strategy = strategies[index];
 			strategy.value = this.functionValue;
+			CMDBuild.view.management.classes.map.proxy.Functions.readAttributes({
+				scope : this,
+				_id : strategy._id,
+				success : function(response, options, decodedResponse) {
+					var attributes = decodedResponse[CMDBuild.core.constants.Proxy.DATA];
+					strategy.attributes = attributes;
+					this.completeOneStrategy(strategy, function() {
+						this.completeStrategyByStrategy(strategies, index + 1, function() {
+							callback.apply(callbackScope, []);
+						}, this);
+					}, this);
+				}
+			});
+		},
+
+		/**
+		 * @param {Object}
+		 *            strategy
+		 * 
+		 * @returns {Void}
+		 */
+		completeOneStrategy : function(strategy, callback, callbackScope) {
+			strategy.value = this.functionValue;
 			CMDBuild.view.management.classes.map.proxy.Functions.readParameters({
 				scope : this,
 				_id : strategy._id,
 				success : function(response, options, decodedResponse) {
 					var parameters = decodedResponse[CMDBuild.core.constants.Proxy.DATA];
 					strategy.parameters = parameters;
-					this.completeStrategyByStrategy(strategies, index + 1, function() {
-						callback.apply(callbackScope, []);
-					});
+					callback.apply(callbackScope, []);
 				}
 			});
 		},

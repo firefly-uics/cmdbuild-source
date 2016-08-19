@@ -42,16 +42,16 @@
 					vertical : true,
 					border : true,
 					items : [ {
-						boxLabel : getAnalysisDescription(CMDBuild.gis.constants.layers.RANGES_ANALYSIS),
+						boxLabel : this.parentWindow.getAnalysisDescription(CMDBuild.gis.constants.layers.RANGES_ANALYSIS),
 						name : "analysis",
 						inputValue : CMDBuild.gis.constants.layers.RANGES_ANALYSIS
 					}, {
-						boxLabel : getAnalysisDescription(CMDBuild.gis.constants.layers.PUNTUAL_ANALYSIS),
+						boxLabel : this.parentWindow.getAnalysisDescription(CMDBuild.gis.constants.layers.PUNTUAL_ANALYSIS),
 						name : "analysis",
 						inputValue : CMDBuild.gis.constants.layers.PUNTUAL_ANALYSIS,
 						checked : true
 					}, {
-						boxLabel : getAnalysisDescription(CMDBuild.gis.constants.layers.DENSITY_ANALYSIS),
+						boxLabel : this.parentWindow.getAnalysisDescription(CMDBuild.gis.constants.layers.DENSITY_ANALYSIS),
 						name : "analysis",
 						inputValue : CMDBuild.gis.constants.layers.DENSITY_ANALYSIS
 					} ]
@@ -128,24 +128,4 @@
 			}, this);
 		}
 	});
-	function getAnalysisDescription(analysisType) {
-		switch (analysisType) {
-		case CMDBuild.gis.constants.layers.RANGES_ANALYSIS:
-			return "@@ Ranges";
-		case CMDBuild.gis.constants.layers.PUNTUAL_ANALYSIS:
-			return "@@ Puntual";
-		case CMDBuild.gis.constants.layers.DENSITY_ANALYSIS:
-			return "@@ Density";
-		}
-		return "@@ Puntual";
-	}
-	function getSourceDescription(sourceType) {
-		switch (sourceType) {
-		case CMDBuild.gis.constants.layers.TABLE_SOURCE:
-			return "@@ Table";
-		case CMDBuild.gis.constants.layers.FUNCTION_SOURCE:
-			return "@@ Function";
-		}
-		return "@@ Table";
-	}
 })();
