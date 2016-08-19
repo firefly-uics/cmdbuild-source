@@ -7,6 +7,7 @@
 		 * 
 		 */
 		classBitmap : undefined,
+		attributeType : undefined,
 
 		constructor : function(geoAttribute, withEditWindow, interactionDocument) {
 			var options = {
@@ -26,6 +27,9 @@
 		},
 		getLayer : function() {
 			return this.layer;
+		},
+		getAttributeType : function() {
+			return this.attributeType;
 		},
 		getSource : function() {
 			return this.layer.getSource();
@@ -51,6 +55,7 @@
 		},
 		buildGisLayer : function(attributeName, options, map) {
 			var me = this;
+			this.attributeType = options.geoAttribute.type;
 			var geoJSONFormat = new ol.format.GeoJSON();
 			var vectorSource = new ol.source.Vector({
 				loader : function(extent, resolution, projection) {

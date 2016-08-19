@@ -16,6 +16,11 @@
 				DENSITY_ANALYSIS : "density_analysis",
 				TABLE_SOURCE : "table_source",
 				FUNCTION_SOURCE : "function_source"
+			},
+			shapes : {
+				CIRCLE : "shape_circle",
+				RECTANGLE : "shape_rectangle",
+				STAR : "shape_star"
 			}
 		}
 	};

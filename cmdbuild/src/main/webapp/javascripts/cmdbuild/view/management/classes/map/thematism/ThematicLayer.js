@@ -159,7 +159,11 @@
 				card : card,
 				strategy : strategy
 			};
-			var value = strategy.value(parameters, function(value) {
+			strategy.value(parameters, function(value) {
+				if (this.thematism.configuration.thematismConfiguration.source === CMDBuild.gis.constants.layers.FUNCTION_SOURCE) {
+					var field = this.thematism.configuration.layoutConfiguration.resultFieldName;
+					value = value[field];
+				}
 				var color = getColor(value);
 				callback.apply(callbackScope, [ color ]);
 			}, this);
@@ -191,6 +195,7 @@
 			});
 		},
 		getStyle : function(shape, color) {
+			var configuration = this.thematism.configuration.layoutConfiguration;
 			switch (shape) {
 			case 'LineString':
 				return new ol.style.Style({
@@ -229,20 +234,26 @@
 							width : 1,
 							color : color
 						}),
-						radius : 10
+						radius : parseInt(configuration.firstValue)
 					}),
 				});
 			}
 		}
 	});
+	function componentToHex(c) {
+	    var hex = c.toString(16);
+	    return hex.length == 1 ? "0" + hex : hex;
+	}
+	function rgbToHex(r, g, b) {
+	    return "#" + componentToHex(r) + componentToHex(g) + componentToHex(b);
+	}
 	function getColor(value) {
 		if (value === true)
-			return "rgb(255, 255, 255)";
+			return "#9999FF";
 		if (value === false)
-			return "rgb(0, 0, 0)";
-		var red = value * 10;
-		var color = "rgb(" + red + ", 100, 100)";
-		return color;
+			return "#FF0000";
+		var red = value;
+		return rgbToHex(parseInt(red), 0, 0);
 	}
 
 })();
