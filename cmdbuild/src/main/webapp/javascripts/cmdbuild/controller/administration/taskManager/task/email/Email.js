@@ -5,7 +5,7 @@
 
 		requires: [
 			'CMDBuild.core.constants.Proxy',
-			'CMDBuild.proxy.taskManager.task.Email'
+			'CMDBuild.proxy.administration.taskManager.task.Email'
 		],
 
 		/**
@@ -104,14 +104,14 @@
 				var params = {};
 				params[CMDBuild.core.constants.Proxy.ID] = this.cmfg('taskManagerSelectedTaskGet', CMDBuild.core.constants.Proxy.ID);
 
-				CMDBuild.proxy.taskManager.task.Email.read({
+				CMDBuild.proxy.administration.taskManager.task.Email.read({
 					params: params,
 					scope: this,
 					success: function (rensponse, options, decodedResponse) {
 						decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.RESPONSE];
 
 						if (Ext.isObject(decodedResponse) && !Ext.Object.isEmpty(decodedResponse)) {
-							var record = Ext.create('CMDBuild.model.taskManager.task.email.Email', decodedResponse);
+							var record = Ext.create('CMDBuild.model.administration.taskManager.task.email.Email', decodedResponse);
 
 							// FIXME: loadRecord() fails with comboboxes, and i can't find a working fix, so i must set all fields manually
 
@@ -262,13 +262,13 @@
 				submitDatas[CMDBuild.core.constants.Proxy.PROCESSED_FOLDER] = formData[CMDBuild.core.constants.Proxy.PROCESSED_FOLDER];
 
 				if (Ext.isEmpty(formData[CMDBuild.core.constants.Proxy.ID])) {
-					CMDBuild.proxy.taskManager.task.Email.create({
+					CMDBuild.proxy.administration.taskManager.task.Email.create({
 						params: submitDatas,
 						scope: this,
 						success: this.success
 					});
 				} else {
-					CMDBuild.proxy.taskManager.task.Email.update({
+					CMDBuild.proxy.administration.taskManager.task.Email.update({
 						params: submitDatas,
 						scope: this,
 						success: this.success
@@ -290,7 +290,7 @@
 				var params = {};
 				params[CMDBuild.core.constants.Proxy.ID] = this.cmfg('taskManagerSelectedTaskGet', CMDBuild.core.constants.Proxy.ID);
 
-				CMDBuild.proxy.taskManager.task.Email.remove({
+				CMDBuild.proxy.administration.taskManager.task.Email.remove({
 					params: params,
 					scope: this,
 					success: this.success

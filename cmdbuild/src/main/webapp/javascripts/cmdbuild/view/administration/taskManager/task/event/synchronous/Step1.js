@@ -6,7 +6,7 @@
 		requires: [
 			'CMDBuild.core.constants.FieldWidths',
 			'CMDBuild.core.constants.Proxy',
-			'CMDBuild.proxy.taskManager.task.event.Synchronous'
+			'CMDBuild.proxy.administration.taskManager.task.event.Synchronous'
 		],
 
 		/**
@@ -68,7 +68,7 @@
 				name: CMDBuild.core.constants.Proxy.PHASE,
 				fieldLabel: CMDBuild.Translation.phase,
 				labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
-				store: CMDBuild.proxy.taskManager.task.event.Synchronous.getStorePhases(),
+				store: CMDBuild.proxy.administration.taskManager.task.event.Synchronous.getStorePhases(),
 				valueField: CMDBuild.core.constants.Proxy.VALUE,
 				displayField: CMDBuild.core.constants.Proxy.DESCRIPTION,
 				maxWidth: CMDBuild.core.constants.FieldWidths.ADMINISTRATION_BIG,

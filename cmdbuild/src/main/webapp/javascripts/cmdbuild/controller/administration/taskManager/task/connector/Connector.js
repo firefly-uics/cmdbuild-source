@@ -6,7 +6,7 @@
 		requires: [
 			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.Message',
-			'CMDBuild.proxy.taskManager.task.Connector'
+			'CMDBuild.proxy.administration.taskManager.task.Connector'
 		],
 
 		/**
@@ -145,14 +145,14 @@
 				var params = {};
 				params[CMDBuild.core.constants.Proxy.ID] = this.cmfg('taskManagerSelectedTaskGet', CMDBuild.core.constants.Proxy.ID);
 
-				CMDBuild.proxy.taskManager.task.Connector.read({
+				CMDBuild.proxy.administration.taskManager.task.Connector.read({
 					params: params,
 					scope: this,
 					success: function (rensponse, options, decodedResponse) {
 						decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.RESPONSE];
 
 						if (Ext.isObject(decodedResponse) && !Ext.Object.isEmpty(decodedResponse)) {
-							var record = Ext.create('CMDBuild.model.taskManager.task.connector.Connector', decodedResponse);
+							var record = Ext.create('CMDBuild.model.administration.taskManager.task.connector.Connector', decodedResponse);
 
 							// FIXME: loadRecord() fails with comboboxes, and i can't find a working fix, so i must set all fields manually
 
@@ -259,13 +259,13 @@
 				submitDatas[CMDBuild.core.constants.Proxy.ID] = formData[CMDBuild.core.constants.Proxy.ID];
 
 				if (Ext.isEmpty(formData[CMDBuild.core.constants.Proxy.ID])) {
-					CMDBuild.proxy.taskManager.task.Connector.create({
+					CMDBuild.proxy.administration.taskManager.task.Connector.create({
 						params: submitDatas,
 						scope: this,
 						success: this.success
 					});
 				} else {
-					CMDBuild.proxy.taskManager.task.Connector.update({
+					CMDBuild.proxy.administration.taskManager.task.Connector.update({
 						params: submitDatas,
 						scope: this,
 						success: this.success
@@ -287,7 +287,7 @@
 				var params = {};
 				params[CMDBuild.core.constants.Proxy.ID] = this.cmfg('taskManagerSelectedTaskGet', CMDBuild.core.constants.Proxy.ID);
 
-				CMDBuild.proxy.taskManager.task.Connector.remove({
+				CMDBuild.proxy.administration.taskManager.task.Connector.remove({
 					params: params,
 					scope: this,
 					success: this.success

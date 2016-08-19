@@ -6,7 +6,7 @@
 		requires: [
 			'CMDBuild.core.constants.FieldWidths',
 			'CMDBuild.core.constants.Proxy',
-			'CMDBuild.model.taskManager.task.connector.AttributeLevel'
+			'CMDBuild.model.administration.taskManager.task.connector.AttributeLevel'
 		],
 
 		/**
@@ -129,7 +129,7 @@
 				],
 
 				store: Ext.create('Ext.data.Store', {
-					model: 'CMDBuild.model.taskManager.task.connector.AttributeLevel',
+					model: 'CMDBuild.model.administration.taskManager.task.connector.AttributeLevel',
 					data: []
 				}),
 
@@ -143,7 +143,7 @@
 								text: CMDBuild.Translation.add,
 								iconCls: 'add',
 								handler: function () {
-									me.attributeLevelMappingGrid.store.insert(0, Ext.create('CMDBuild.model.taskManager.task.connector.AttributeLevel'));
+									me.attributeLevelMappingGrid.store.insert(0, Ext.create('CMDBuild.model.administration.taskManager.task.connector.AttributeLevel'));
 								}
 							}
 						]

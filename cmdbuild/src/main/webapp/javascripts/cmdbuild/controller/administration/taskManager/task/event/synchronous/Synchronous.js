@@ -5,7 +5,7 @@
 
 		requires: [
 			'CMDBuild.core.constants.Proxy',
-			'CMDBuild.proxy.taskManager.task.event.Synchronous'
+			'CMDBuild.proxy.administration.taskManager.task.event.Synchronous'
 		],
 
 		/**
@@ -116,14 +116,14 @@
 				var params = {};
 				params[CMDBuild.core.constants.Proxy.ID] = this.cmfg('taskManagerSelectedTaskGet', CMDBuild.core.constants.Proxy.ID);
 
-				CMDBuild.proxy.taskManager.task.event.Synchronous.read({
+				CMDBuild.proxy.administration.taskManager.task.event.Synchronous.read({
 					params: params,
 					scope: this,
 					success: function (rensponse, options, decodedResponse) {
 						decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.RESPONSE];
 
 						if (Ext.isObject(decodedResponse) && !Ext.Object.isEmpty(decodedResponse)) {
-							var record = Ext.create('CMDBuild.model.taskManager.task.event.synchronous.Synchronous', decodedResponse);
+							var record = Ext.create('CMDBuild.model.administration.taskManager.task.event.synchronous.Synchronous', decodedResponse);
 
 							// FIXME: loadRecord() fails with comboboxes, and i can't find good fix, so i must set all fields manually
 
@@ -207,13 +207,13 @@
 				submitDatas[CMDBuild.core.constants.Proxy.ID] = formData[CMDBuild.core.constants.Proxy.ID];
 
 				if (Ext.isEmpty(formData[CMDBuild.core.constants.Proxy.ID])) {
-					CMDBuild.proxy.taskManager.task.event.Synchronous.create({
+					CMDBuild.proxy.administration.taskManager.task.event.Synchronous.create({
 						params: submitDatas,
 						scope: this,
 						success: this.success
 					});
 				} else {
-					CMDBuild.proxy.taskManager.task.event.Synchronous.update({
+					CMDBuild.proxy.administration.taskManager.task.event.Synchronous.update({
 						params: submitDatas,
 						scope: this,
 						success: this.success
@@ -235,7 +235,7 @@
 				var params = {};
 				params[CMDBuild.core.constants.Proxy.ID] = this.cmfg('taskManagerSelectedTaskGet', CMDBuild.core.constants.Proxy.ID);
 
-				CMDBuild.proxy.taskManager.task.event.Synchronous.remove({
+				CMDBuild.proxy.administration.taskManager.task.event.Synchronous.remove({
 					params: params,
 					scope: this,
 					success: this.success

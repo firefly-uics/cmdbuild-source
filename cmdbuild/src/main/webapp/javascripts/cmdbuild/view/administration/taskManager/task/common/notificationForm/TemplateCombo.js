@@ -6,7 +6,7 @@
 		requires: [
 			'CMDBuild.core.constants.FieldWidths',
 			'CMDBuild.core.constants.Proxy',
-			'CMDBuild.proxy.taskManager.task.common.NotificationForm'
+			'CMDBuild.proxy.administration.taskManager.task.common.NotificationForm'
 		],
 
 		/**
@@ -31,7 +31,7 @@
 		 */
 		initComponent: function () {
 			Ext.apply(this, {
-				store: CMDBuild.proxy.taskManager.task.common.NotificationForm.getStoreTemplate(),
+				store: CMDBuild.proxy.administration.taskManager.task.common.NotificationForm.getStoreTemplate(),
 				queryMode: 'local'
 			});
 

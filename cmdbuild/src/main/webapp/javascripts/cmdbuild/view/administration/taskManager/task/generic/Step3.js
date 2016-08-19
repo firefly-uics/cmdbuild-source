@@ -6,7 +6,7 @@
 		requires: [
 			'CMDBuild.core.constants.FieldWidths',
 			'CMDBuild.core.constants.Proxy',
-			'CMDBuild.model.taskManager.task.generic.Context'
+			'CMDBuild.model.administration.taskManager.task.generic.Context'
 		],
 
 		/**
@@ -80,7 +80,7 @@
 						],
 
 						store: Ext.create('Ext.data.Store', {
-							model: 'CMDBuild.model.taskManager.task.generic.Context',
+							model: 'CMDBuild.model.administration.taskManager.task.generic.Context',
 							data: []
 						}),
 
@@ -94,7 +94,7 @@
 										scope: this,
 
 										handler: function (buttons, e) {
-											this.grid.getStore().insert(0, Ext.create('CMDBuild.model.taskManager.task.generic.Context'));
+											this.grid.getStore().insert(0, Ext.create('CMDBuild.model.administration.taskManager.task.generic.Context'));
 										}
 									})
 								]

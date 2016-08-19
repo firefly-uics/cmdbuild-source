@@ -6,7 +6,7 @@
 		requires: [
 			'CMDBuild.core.constants.FieldWidths',
 			'CMDBuild.core.constants.Proxy',
-			'CMDBuild.proxy.taskManager.task.common.WorkflowForm'
+			'CMDBuild.proxy.administration.taskManager.task.common.WorkflowForm'
 		],
 
 		/**
@@ -34,7 +34,7 @@
 		 */
 		initComponent: function () {
 			Ext.apply(this, {
-				store: CMDBuild.proxy.taskManager.task.common.WorkflowForm.getStore(),
+				store: CMDBuild.proxy.administration.taskManager.task.common.WorkflowForm.getStore(),
 				queryMode: 'local',
 			});
 

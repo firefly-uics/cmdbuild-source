@@ -128,7 +128,7 @@
 
 		requires: [
 			'CMDBuild.core.constants.Proxy',
-			'CMDBuild.proxy.taskManager.Connector'
+			'CMDBuild.proxy.administration.taskManager.Connector'
 		],
 
 		/**
@@ -207,7 +207,7 @@
 					editable: false,
 					anchor: '100%',
 
-					store: CMDBuild.proxy.taskManager.Connector.getStoreDbTypes(),
+					store: CMDBuild.proxy.administration.taskManager.Connector.getStoreDbTypes(),
 					queryMode: 'local',
 
 					listeners: {

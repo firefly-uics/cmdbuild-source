@@ -5,7 +5,7 @@
 
 		requires: [
 			'CMDBuild.core.constants.Proxy',
-			'CMDBuild.proxy.taskManager.task.common.ReportForm',
+			'CMDBuild.proxy.administration.taskManager.task.common.ReportForm',
 		],
 
 		/**
@@ -220,7 +220,7 @@
 							attributeModelObject[CMDBuild.core.constants.Proxy.VALUE] = gridRecord.get(CMDBuild.core.constants.Proxy.VALUE);
 					}
 
-					records.push(Ext.create('CMDBuild.model.taskManager.task.common.reportForm.Grid', attributeModelObject));
+					records.push(Ext.create('CMDBuild.model.administration.taskManager.task.common.reportForm.Grid', attributeModelObject));
 				}
 			}, this);
 
@@ -236,7 +236,7 @@
 		 * @param {Object} parameters
 		 * @param {String} parameters.columnName
 		 * @param {Object} parameters.column
-		 * @param {CMDBuild.model.taskManager.task.common.reportForm.Grid} parameters.record
+		 * @param {CMDBuild.model.administration.taskManager.task.common.reportForm.Grid} parameters.record
 		 *
 		 * @returns {Void}
 		 */
@@ -297,7 +297,7 @@
 		 *
 		 * @param {Object} parameters
 		 * @param {Boolean} parameters.merge
-		 * @param {CMDBuild.model.taskManager.task.common.reportForm.Report} parameters.record
+		 * @param {CMDBuild.model.administration.taskManager.task.common.reportForm.Report} parameters.record
 		 *
 		 * @returns {Void}
 		 */
@@ -315,7 +315,7 @@
 				params[CMDBuild.core.constants.Proxy.ID] = parameters.record.get(CMDBuild.core.constants.Proxy.ID);
 				params[CMDBuild.core.constants.Proxy.TYPE] = 'CUSTOM';
 
-				CMDBuild.proxy.taskManager.task.common.ReportForm.readParameters({
+				CMDBuild.proxy.administration.taskManager.task.common.ReportForm.readParameters({
 					params: params,
 					scope: this,
 					success: function (response, options, decodedResponse) {

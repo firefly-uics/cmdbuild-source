@@ -37,7 +37,7 @@
 		},
 
 		/**
-		 * @param {CMDBuild.model.taskManager.task.generic.Context} record
+		 * @param {CMDBuild.model.administration.taskManager.task.generic.Context} record
 		 *
 		 * @returns {Void}
 		 */
