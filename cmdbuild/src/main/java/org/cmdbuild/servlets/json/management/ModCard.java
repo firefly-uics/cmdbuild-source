@@ -14,6 +14,7 @@ import static java.util.Arrays.asList;
 import static org.apache.commons.lang3.ObjectUtils.defaultIfNull;
 import static org.cmdbuild.common.Constants.DESCRIPTION_ATTRIBUTE;
 import static org.cmdbuild.dao.query.clause.DomainHistory.history;
+import static org.cmdbuild.services.json.dto.JsonResponse.success;
 import static org.cmdbuild.servlets.json.CommunicationConstants.ACTIVITY_NAME;
 import static org.cmdbuild.servlets.json.CommunicationConstants.ATTRIBUTES;
 import static org.cmdbuild.servlets.json.CommunicationConstants.BEGIN_DATE;
@@ -39,23 +40,22 @@ import static org.cmdbuild.servlets.json.CommunicationConstants.DOMAIN_SOURCE;
 import static org.cmdbuild.servlets.json.CommunicationConstants.ELEMENTS;
 import static org.cmdbuild.servlets.json.CommunicationConstants.END_DATE;
 import static org.cmdbuild.servlets.json.CommunicationConstants.FILTER;
+import static org.cmdbuild.servlets.json.CommunicationConstants.FLOW_STATUS;
 import static org.cmdbuild.servlets.json.CommunicationConstants.FUNCTION;
+import static org.cmdbuild.servlets.json.CommunicationConstants.HAS_POSITION;
 import static org.cmdbuild.servlets.json.CommunicationConstants.ID;
 import static org.cmdbuild.servlets.json.CommunicationConstants.LIMIT;
 import static org.cmdbuild.servlets.json.CommunicationConstants.MASTER;
 import static org.cmdbuild.servlets.json.CommunicationConstants.MASTER_CARD_ID;
 import static org.cmdbuild.servlets.json.CommunicationConstants.MASTER_CLASS_NAME;
-import static org.cmdbuild.servlets.json.CommunicationConstants.OUT_OF_FILTER;
 import static org.cmdbuild.servlets.json.CommunicationConstants.PARAMS;
 import static org.cmdbuild.servlets.json.CommunicationConstants.PERFORMERS;
 import static org.cmdbuild.servlets.json.CommunicationConstants.POSITION;
 import static org.cmdbuild.servlets.json.CommunicationConstants.RELATION_ID;
-import static org.cmdbuild.servlets.json.CommunicationConstants.RETRY_WITHOUT_FILTER;
 import static org.cmdbuild.servlets.json.CommunicationConstants.SORT;
 import static org.cmdbuild.servlets.json.CommunicationConstants.SOURCE;
 import static org.cmdbuild.servlets.json.CommunicationConstants.SOURCE_DESCRIPTION;
 import static org.cmdbuild.servlets.json.CommunicationConstants.START;
-import static org.cmdbuild.servlets.json.CommunicationConstants.STATE;
 import static org.cmdbuild.servlets.json.CommunicationConstants.STATUS;
 import static org.cmdbuild.servlets.json.CommunicationConstants.USER;
 import static org.cmdbuild.servlets.json.CommunicationConstants.VALUES;
@@ -74,12 +74,10 @@ import java.util.Map.Entry;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import org.cmdbuild.common.utils.PagedElements;
-import org.cmdbuild.dao.entry.CMCard;
 import org.cmdbuild.dao.entry.IdAndDescription;
 import org.cmdbuild.dao.entry.LookupValue;
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.entrytype.CMDomain;
-import org.cmdbuild.data.store.lookup.Lookup;
 import org.cmdbuild.exception.CMDBException;
 import org.cmdbuild.exception.ConsistencyException;
 import org.cmdbuild.exception.NotFoundException;
@@ -93,6 +91,7 @@ import org.cmdbuild.logic.data.QueryOptions.QueryOptionsBuilder;
 import org.cmdbuild.logic.data.access.CMCardWithPosition;
 import org.cmdbuild.logic.data.access.DataAccessLogic;
 import org.cmdbuild.logic.data.access.RelationDTO;
+import org.cmdbuild.logic.data.lookup.LookupLogic;
 import org.cmdbuild.logic.mapping.json.JsonFilterHelper;
 import org.cmdbuild.model.data.Card;
 import org.cmdbuild.services.json.dto.JsonResponse;
@@ -615,68 +614,61 @@ public class ModCard extends JSONBaseWithSpringContext {
 		return JsonResponse.success(new JsonCardFull(card, lookupSerializer()));
 	}
 
+	private static class JsonCardPosition {
+
+		private final LookupLogic lookupLogic;
+		private final CMCardWithPosition delegate;
+
+		public JsonCardPosition(final LookupLogic lookupLogic, final CMCardWithPosition delegate) {
+			this.lookupLogic = lookupLogic;
+			this.delegate = delegate;
+		}
+
+		@JsonProperty(HAS_POSITION)
+		public boolean hasPosition() {
+			return !delegate.hasNoPosition();
+		}
+
+		@JsonProperty(POSITION)
+		public Long getPosition() {
+			return hasPosition() ? delegate.getPosition() : null;
+		}
+
+		@JsonProperty(FLOW_STATUS)
+		public String getFlowStatus() {
+			final String output;
+			if (delegate.isFound()) {
+				final LookupValue value = delegate.getAttribute(FlowStatus.dbColumnName(), LookupValue.class);
+				output = (value == null) ? null : lookupLogic.getLookup(value.getId()).code();
+			} else {
+				output = null;
+			}
+			return output;
+		}
+
+	}
+
 	@JSONExported
-	public JSONObject getCardPosition( //
-			@Parameter(value = RETRY_WITHOUT_FILTER, required = false) final boolean retryWithoutFilter, //
+	public JsonResponse getCardPosition( //
 			@Parameter(value = CLASS_NAME) final String className, //
 			@Parameter(value = CARD_ID) final Long cardId, //
 			@Parameter(value = FILTER, required = false) final JSONObject filter, //
 			@Parameter(value = SORT, required = false) final JSONArray sorters, //
-			@Parameter(value = STATE, required = false) final String flowStatus //
+			@Parameter(value = FLOW_STATUS, required = false) final String flowStatus //
 	) throws JSONException {
-		final JSONObject out = new JSONObject();
 		final DataAccessLogic dataAccessLogic = userDataAccessLogic();
-
-		QueryOptionsBuilder queryOptionsBuilder = QueryOptions.newQueryOption() //
+		final QueryOptionsBuilder queryOptionsBuilder = QueryOptions.newQueryOption() //
 				.onlyAttributes(asList(dataAccessLogic.findClass(className).getDescriptionAttributeName()));
 		addFilterToQueryOption(new JsonFilterHelper(filter) //
-				.merge(new FlowStatusFilterElementGetter(lookupHelper(), flowStatus)), queryOptionsBuilder);
+				.merge(FlowStatusFilterElementGetter.newInstance() //
+						.withLookupHelper(lookupHelper()) //
+						.withFlowStatus(flowStatus) //
+						.withMissingFlowStatusIsError(true) //
+						.build()),
+				queryOptionsBuilder);
 		addSortersToQueryOptions(sorters, queryOptionsBuilder);
-
-		CMCardWithPosition card = dataAccessLogic.getCardPosition(className, cardId, queryOptionsBuilder.build());
-
-		if (card.hasNoPosition() && retryWithoutFilter) {
-			out.put(OUT_OF_FILTER, true);
-			queryOptionsBuilder = QueryOptions.newQueryOption() //
-					.onlyAttributes(asList(dataAccessLogic.findClass(className).getDescriptionAttributeName()));
-			final CMCard expectedCard = dataAccessLogic.fetchCMCard(className, cardId);
-			final String flowStatusForExpectedCard = flowStatus(expectedCard);
-			if (flowStatusForExpectedCard != null) {
-				addFilterToQueryOption(
-						new JsonFilterHelper(new JSONObject()) //
-								.merge(new FlowStatusFilterElementGetter(lookupHelper(), flowStatusForExpectedCard)),
-						queryOptionsBuilder);
-			}
-			addSortersToQueryOptions(sorters, queryOptionsBuilder);
-			card = dataAccessLogic.getCardPosition(className, expectedCard.getId(), queryOptionsBuilder.build());
-		}
-
-		out.put(POSITION, card.getPosition());
-		/*
-		 * FIXME It's late. We need the flow status if ask for a process
-		 * position. Do it in a better way!
-		 */
-		if (card.isFound()) {
-			final Object retrievedFlowStatus = card.getAttribute(FlowStatus.dbColumnName());
-			if (retrievedFlowStatus != null) {
-				final Lookup lookupFlowStatus = lookupLogic().getLookup(((LookupValue) retrievedFlowStatus).getId());
-				out.put("FlowStatus", lookupFlowStatus.code());
-			}
-		}
-
-		return out;
-	}
-
-	private String flowStatus(final CMCard card) {
-		final Object retrievedFlowStatus = card.get(FlowStatus.dbColumnName());
-		final String output;
-		if (retrievedFlowStatus != null) {
-			final Lookup lookupFlowStatus = lookupLogic().getLookup(((LookupValue) retrievedFlowStatus).getId());
-			output = lookupFlowStatus.code();
-		} else {
-			output = null;
-		}
-		return output;
+		final CMCardWithPosition card = dataAccessLogic.getCardPosition(className, cardId, queryOptionsBuilder.build());
+		return success(new JsonCardPosition(lookupLogic(), card));
 	}
 
 	private void addFilterToQueryOption(final JSONObject filter, final QueryOptionsBuilder queryOptionsBuilder) {

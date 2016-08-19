@@ -343,13 +343,12 @@
 				!this.cmfg('workflowSelectedWorkflowIsEmpty')
 				&& Ext.isNumber(parameters[CMDBuild.core.constants.Proxy.ID]) && !Ext.isEmpty(parameters[CMDBuild.core.constants.Proxy.ID])
 			) {
-				var filter = this.cmfg('workflowTreeStoreGet').getProxy().extraParams[CMDBuild.core.constants.Proxy.FILTER];
-				var sorters = this.cmfg('workflowTreeStoreGet').getSorters();
+				var filter = this.cmfg('workflowTreeStoreGet').getProxy().extraParams[CMDBuild.core.constants.Proxy.FILTER],
+					sorters = this.cmfg('workflowTreeStoreGet').getSorters();
 
 				var params = {};
 				params[CMDBuild.core.constants.Proxy.CARD_ID] = parameters[CMDBuild.core.constants.Proxy.ID];
 				params[CMDBuild.core.constants.Proxy.CLASS_NAME] = this.cmfg('workflowSelectedWorkflowGet', CMDBuild.core.constants.Proxy.NAME);
-				params[CMDBuild.core.constants.Proxy.RETRY_WITHOUT_FILTER] = false;
 
 				if (Ext.isString(filter) && !Ext.isEmpty(filter))
 					params[CMDBuild.core.constants.Proxy.FILTER] = filter;
@@ -364,54 +363,53 @@
 					params: params,
 					scope: this,
 					success: function (response, options, decodedResponse) {
-						var position = decodedResponse[CMDBuild.core.constants.Proxy.POSITION];
-						var storeExtraParams = Ext.clone(this.cmfg('workflowTreeStoreGet').getProxy().extraParams);
+						decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.RESPONSE];
 
-						if (position >= 0) { // Card found
-							var calculatedPage = CMDBuild.core.Utils.getPageNumber(position);
+						if (Ext.isObject(decodedResponse) && !Ext.Object.isEmpty(decodedResponse)) {
+							var hasPosition = decodedResponse[CMDBuild.core.constants.Proxy.HAS_POSITION],
+								position = decodedResponse[CMDBuild.core.constants.Proxy.POSITION],
+								storeExtraParams = Ext.clone(this.cmfg('workflowTreeStoreGet').getProxy().extraParams);
 
-							// Card is out of current filter so clear filter to select card
-							if (decodedResponse['outOfFilter']) {
-								this.cmfg('workflowTreeToolbarTopStatusValueSet', { value: decodedResponse['FlowStatus'] });
-								this.controllerToolbarPaging.cmfg('workflowTreeToolbarPagingFilterBasicReset');
+							if (Ext.isBoolean(hasPosition) && hasPosition) { // Card found
+								var calculatedPage = CMDBuild.core.Utils.getPageNumber(position);
 
-								this.cmfg('workflowTreeFilterClear', { disableStoreLoad: true });
-							}
+								this.cmfg('workflowTreeStoreLoad', {
+									page: calculatedPage,
+									params: storeExtraParams, // Take the current store configuration to have the sort and filter
+									scope: this,
+									callback: function (records, operation, success) {
+										this.view.getSelectionModel().deselectAll();
 
-							this.cmfg('workflowTreeStoreLoad', {
-								page: calculatedPage,
-								params: storeExtraParams, // Take the current store configuration to have the sort and filter
-								scope: this,
-								callback: function (records, operation, success) {
-									this.view.getSelectionModel().deselectAll();
-
-									this.selectByMetadata(parameters[CMDBuild.core.constants.Proxy.ACTIVITY_SUBSET_ID]);
-									this.selectByPosition(position % CMDBuild.configuration.instance.get(CMDBuild.core.constants.Proxy.ROW_LIMIT));
+										this.selectByMetadata(parameters[CMDBuild.core.constants.Proxy.ACTIVITY_SUBSET_ID]);
+										this.selectByPosition(position % CMDBuild.configuration.instance.get(CMDBuild.core.constants.Proxy.ROW_LIMIT));
+									}
+								});
+							} else { // Card not found
+								if (
+									Ext.isString(parameters[CMDBuild.core.constants.Proxy.FLOW_STATUS]) && !Ext.isEmpty(parameters[CMDBuild.core.constants.Proxy.FLOW_STATUS])
+									&& parameters[CMDBuild.core.constants.Proxy.FLOW_STATUS] == 'COMPLETED'
+								) {
+									_CMWFState.setProcessInstance(Ext.create('CMDBuild.model.CMProcessInstance'));
+									_CMUIState.onlyGridIfFullScreen();
+								} else {
+									CMDBuild.core.Message.info(undefined, CMDBuild.Translation.cardNotMatchFilter);
 								}
-							});
-						} else { // Card not found
-							if (
-								Ext.isString(parameters[CMDBuild.core.constants.Proxy.FLOW_STATUS]) && !Ext.isEmpty(parameters[CMDBuild.core.constants.Proxy.FLOW_STATUS])
-								&& parameters[CMDBuild.core.constants.Proxy.FLOW_STATUS] == 'COMPLETED'
-							) {
-								_CMWFState.setProcessInstance(Ext.create('CMDBuild.model.CMProcessInstance'));
-								_CMUIState.onlyGridIfFullScreen();
-							} else {
-								CMDBuild.core.Message.info(undefined, CMDBuild.Translation.cardNotMatchFilter);
+
+								this.cmfg('workflowTreeStoreLoad', {
+									params: storeExtraParams, // Take the current store configuration to have the sort and filter
+									scope: this,
+									callback: function (records, operation, success) { // Avoid first row selection and reset form status
+										this.view.getSelectionModel().deselectAll();
+
+										_CMWFState.setActivityInstance(Ext.create('CMDBuild.model.CMActivityInstance'));
+
+										this.cmfg('workflowSelectedActivityReset');
+										this.cmfg('onWorkflowFormReset');
+									}
+								});
 							}
-
-							this.cmfg('workflowTreeStoreLoad', {
-								params: storeExtraParams, // Take the current store configuration to have the sort and filter
-								scope: this,
-								callback: function (records, operation, success) { // Avoid first row selection and reset form status
-									this.view.getSelectionModel().deselectAll();
-
-									_CMWFState.setActivityInstance(Ext.create('CMDBuild.model.CMActivityInstance'));
-
-									this.cmfg('workflowSelectedActivityReset');
-									this.cmfg('onWorkflowFormReset');
-								}
-							});
+						} else {
+							_error('workflowTreeActivityOpen(): unmanaged readPosition response', this, decodedResponse);
 						}
 					}
 				});

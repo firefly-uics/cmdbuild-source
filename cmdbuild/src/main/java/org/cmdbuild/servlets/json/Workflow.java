@@ -1,6 +1,6 @@
 package org.cmdbuild.servlets.json;
 
-import static org.cmdbuild.servlets.json.CommunicationConstants.*;
+import static org.cmdbuild.servlets.json.CommunicationConstants.ACTIVITY_INSTANCE_ID;
 import static org.cmdbuild.servlets.json.CommunicationConstants.ADVANCE;
 import static org.cmdbuild.servlets.json.CommunicationConstants.ATTRIBUTES;
 import static org.cmdbuild.servlets.json.CommunicationConstants.BEGIN_DATE;
@@ -92,7 +92,10 @@ public class Workflow extends JSONBaseWithSpringContext {
 				.offset(offset) //
 				.orderBy(sorters) //
 				.filter(new JsonFilterHelper(filter) //
-						.merge(new FlowStatusFilterElementGetter(lookupHelper(), flowStatus))) //
+						.merge(FlowStatusFilterElementGetter.newInstance() //
+								.withLookupHelper(lookupHelper()) //
+								.withFlowStatus(flowStatus) //
+								.build())) //
 				.build();
 
 		final List<JsonProcessCard> processInstances = Lists.newArrayList();
