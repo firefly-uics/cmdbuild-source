@@ -59,10 +59,7 @@
 		onShowThematism : function(thematism) {
 			var thematicDocument = this.interactionDocument.getThematicDocument();
 			thematicDocument.addThematism(thematism);
-		}/*,
-		onCardZoom : function(card) {
-			this.interactionDocument.centerOnCard(card, function() {}, this);
-		}*/
+		}
 	});
 
 })();
