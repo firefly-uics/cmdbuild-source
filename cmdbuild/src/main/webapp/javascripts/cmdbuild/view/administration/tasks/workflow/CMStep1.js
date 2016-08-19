@@ -166,7 +166,7 @@
 
 			this.descriptionField = Ext.create('Ext.form.field.Text', {
 				name: CMDBuild.core.constants.Proxy.DESCRIPTION,
-				fieldLabel: CMDBuild.Translation.description_,
+				fieldLabel: CMDBuild.Translation.descriptionLabel,
 				labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
 				maxWidth: CMDBuild.core.constants.FieldWidths.CONFIGURATION_BIG,
 				anchor: '100%',

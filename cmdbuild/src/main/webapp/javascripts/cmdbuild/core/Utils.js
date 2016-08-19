@@ -314,7 +314,7 @@
 		 * @returns {String} string
 		 */
 		toTitleCase: function (string) {
-			if (typeof string == 'string')
+			if (Ext.isString(string) && !Ext.isEmpty(string))
 				string = string.charAt(0).toUpperCase() + string.slice(1);
 
 			return string;

@@ -12,6 +12,7 @@
 
 		fields: [
 			{ name: CMDBuild.core.constants.Proxy.ALFRESCO_DELAY, type: 'int', defaultValue: 1000, useNull: true },
+			{ name: CMDBuild.core.constants.Proxy.ALFRESCO_LOOKUP_CATEGORY, type: 'string', defaultValue: 'AlfrescoCategory' },
 			{ name: CMDBuild.core.constants.Proxy.ENABLED, type: 'boolean' },
 			{ name: CMDBuild.core.constants.Proxy.TYPE, type: 'string' }
 		],
@@ -27,6 +28,7 @@
 			convertFromLegacy: function (data) {
 				data = data || {};
 				data[CMDBuild.core.constants.Proxy.ALFRESCO_DELAY] = data['delay'];
+				data[CMDBuild.core.constants.Proxy.ALFRESCO_LOOKUP_CATEGORY] = data['category.lookup'];
 				data[CMDBuild.core.constants.Proxy.TYPE] = data['dms.service.type'];
 
 				return data;
@@ -35,6 +37,8 @@
 
 		/**
 		 * @param {Object} data
+		 *
+		 * @returns {Void}
 		 *
 		 * @override
 		 */

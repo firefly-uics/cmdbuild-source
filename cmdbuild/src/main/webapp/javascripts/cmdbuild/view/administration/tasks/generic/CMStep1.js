@@ -129,7 +129,7 @@
 			Ext.apply(this, {
 				items: [
 					this.typeField = Ext.create('Ext.form.field.Text', {
-						fieldLabel: CMDBuild.Translation.administration.tasks.type,
+						fieldLabel: CMDBuild.Translation.type,
 						labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
 						name: CMDBuild.core.constants.Proxy.TYPE,
 						value: CMDBuild.Translation.others,
@@ -140,13 +140,13 @@
 					}),
 					this.descriptionField = Ext.create('Ext.form.field.Text', {
 						name: CMDBuild.core.constants.Proxy.DESCRIPTION,
-						fieldLabel: CMDBuild.Translation.description_,
+						fieldLabel: CMDBuild.Translation.descriptionLabel,
 						labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
 						allowBlank: false
 					}),
 					this.activeField = Ext.create('Ext.form.field.Checkbox', {
 						name: CMDBuild.core.constants.Proxy.ACTIVE,
-						fieldLabel: CMDBuild.Translation.administration.tasks.startOnSave,
+						fieldLabel: CMDBuild.Translation.startOnSave,
 						labelWidth: CMDBuild.core.constants.FieldWidths.LABEL
 					}),
 					this.idField = Ext.create('Ext.form.field.Hidden', { name: CMDBuild.core.constants.Proxy.ID })

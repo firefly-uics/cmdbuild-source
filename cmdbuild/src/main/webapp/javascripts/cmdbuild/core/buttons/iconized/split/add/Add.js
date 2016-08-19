@@ -17,7 +17,7 @@
 		 * @override
 		 */
 		initComponent: function () {
-			Ext.apply(this, {
+			Ext.applyIf(this, {
 				scope: this,
 				menu: Ext.create('Ext.menu.Menu'),
 

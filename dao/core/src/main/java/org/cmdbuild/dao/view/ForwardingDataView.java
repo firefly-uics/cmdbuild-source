@@ -15,6 +15,7 @@ import org.cmdbuild.dao.function.CMFunction;
 import org.cmdbuild.dao.query.CMQueryResult;
 import org.cmdbuild.dao.query.QuerySpecs;
 import org.cmdbuild.dao.query.QuerySpecsBuilder;
+import org.cmdbuild.dao.query.clause.QueryAttribute;
 import org.cmdbuild.dao.query.clause.where.WhereClause;
 
 import com.google.common.collect.ForwardingObject;
@@ -151,7 +152,7 @@ public abstract class ForwardingDataView extends ForwardingObject implements CMD
 	}
 
 	@Override
-	public QuerySpecsBuilder select(final Object... attrDef) {
+	public QuerySpecsBuilder select(final QueryAttribute... attrDef) {
 		return delegate().select(attrDef);
 	}
 

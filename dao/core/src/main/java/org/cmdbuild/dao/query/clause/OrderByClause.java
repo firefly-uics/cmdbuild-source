@@ -10,15 +10,15 @@ public class OrderByClause {
 
 	}
 
-	private final QueryAliasAttribute attribute;
+	private final QueryAttribute attribute;
 	private final Direction direction;
 
-	public OrderByClause(final QueryAliasAttribute attribute, final Direction direction) {
+	public OrderByClause(final QueryAttribute attribute, final Direction direction) {
 		this.attribute = attribute;
 		this.direction = direction;
 	}
 
-	public QueryAliasAttribute getAttribute() {
+	public QueryAttribute getAttribute() {
 		return attribute;
 	}
 

@@ -6,8 +6,8 @@
 		requires: [
 			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.LoadMask',
-			'CMDBuild.proxy.taskManager.event.Asynchronous',
-			'CMDBuild.proxy.taskManager.event.Synchronous',
+			'CMDBuild.proxy.administration.taskManager.event.Asynchronous',
+			'CMDBuild.proxy.administration.taskManager.event.Synchronous',
 			'CMDBuild.model.CMModelTasks'
 		],
 
@@ -107,7 +107,7 @@
 			if (!Ext.isEmpty(this.selectedId)) {
 				CMDBuild.core.LoadMask.show();
 
-				CMDBuild.proxy.taskManager.Event.remove({ // TODO
+				CMDBuild.proxy.administration.taskManager.Event.remove({ // TODO
 					params: {
 						id: this.selectedId
 					},
@@ -138,7 +138,7 @@
 				// Selected task asynchronous store query
 				switch (this.selectedType) {
 					case 'event_asynchronous': {
-						CMDBuild.proxy.taskManager.event.Asynchronous.read({
+						CMDBuild.proxy.administration.taskManager.event.Asynchronous.read({
 							params: {
 								id: this.selectedId
 							},
@@ -186,7 +186,7 @@
 					} break;
 
 					case 'event_synchronous': {
-						CMDBuild.proxy.taskManager.event.Synchronous.read({
+						CMDBuild.proxy.administration.taskManager.event.Synchronous.read({
 							params: {
 								id: this.selectedId
 							},
@@ -313,7 +313,7 @@
 				if (Ext.isEmpty(formData[CMDBuild.core.constants.Proxy.ID])) {
 					switch (taskType) {
 						case 'event_asynchronous': {
-							CMDBuild.proxy.taskManager.event.Asynchronous.create({
+							CMDBuild.proxy.administration.taskManager.event.Asynchronous.create({
 								params: submitDatas,
 								loadMask: false,
 								scope: this,
@@ -323,7 +323,7 @@
 						} break;
 
 						case 'event_synchronous': {
-							CMDBuild.proxy.taskManager.event.Synchronous.create({
+							CMDBuild.proxy.administration.taskManager.event.Synchronous.create({
 								params: submitDatas,
 								loadMask: false,
 								scope: this,
@@ -335,7 +335,7 @@
 				} else {
 					switch (taskType) {
 						case 'event_asynchronous': {
-							CMDBuild.proxy.taskManager.event.Asynchronous.update({
+							CMDBuild.proxy.administration.taskManager.event.Asynchronous.update({
 								params: submitDatas,
 								loadMask: false,
 								scope: this,
@@ -345,7 +345,7 @@
 						} break;
 
 						case 'event_synchronous': {
-							CMDBuild.proxy.taskManager.event.Synchronous.update({
+							CMDBuild.proxy.administration.taskManager.event.Synchronous.update({
 								params: submitDatas,
 								loadMask: false,
 								scope: this,
@@ -367,7 +367,7 @@
 
 				switch (this.selectedType) {
 					case 'event_asynchronous': {
-						CMDBuild.proxy.taskManager.event.Asynchronous.remove({
+						CMDBuild.proxy.administration.taskManager.event.Asynchronous.remove({
 							params: {
 								id: this.selectedId
 							},
@@ -379,7 +379,7 @@
 					} break;
 
 					case 'event_synchronous': {
-						CMDBuild.proxy.taskManager.event.Synchronous.remove({
+						CMDBuild.proxy.administration.taskManager.event.Synchronous.remove({
 							params: {
 								id: this.selectedId
 							},

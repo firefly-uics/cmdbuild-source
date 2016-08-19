@@ -4,6 +4,7 @@
 		extend: 'CMDBuild.controller.common.panel.gridAndForm.panel.tree.Tree',
 
 		requires: [
+			'CMDBuild.controller.management.workflow.Utils',
 			'CMDBuild.core.constants.Metadata',
 			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.Message',
@@ -342,12 +343,19 @@
 				!this.cmfg('workflowSelectedWorkflowIsEmpty')
 				&& Ext.isNumber(parameters[CMDBuild.core.constants.Proxy.ID]) && !Ext.isEmpty(parameters[CMDBuild.core.constants.Proxy.ID])
 			) {
+				var filter = this.cmfg('workflowTreeStoreGet').getProxy().extraParams[CMDBuild.core.constants.Proxy.FILTER];
 				var sorters = this.cmfg('workflowTreeStoreGet').getSorters();
 
-				var params = Ext.clone(this.cmfg('workflowTreeStoreGet').getProxy().extraParams); // Take the current store configuration to have the sort and filter
+				var params = {};
 				params[CMDBuild.core.constants.Proxy.CARD_ID] = parameters[CMDBuild.core.constants.Proxy.ID];
 				params[CMDBuild.core.constants.Proxy.CLASS_NAME] = this.cmfg('workflowSelectedWorkflowGet', CMDBuild.core.constants.Proxy.NAME);
 				params[CMDBuild.core.constants.Proxy.RETRY_WITHOUT_FILTER] = false;
+
+				if (Ext.isString(filter) && !Ext.isEmpty(filter))
+					params[CMDBuild.core.constants.Proxy.FILTER] = filter;
+
+				if (!Ext.isEmpty(parameters[CMDBuild.core.constants.Proxy.FLOW_STATUS]))
+					params[CMDBuild.core.constants.Proxy.STATE] = CMDBuild.controller.management.workflow.Utils.translateStatusFromCapitalizedMode(parameters[CMDBuild.core.constants.Proxy.FLOW_STATUS]);
 
 				if (Ext.isArray(sorters) && !Ext.isEmpty(sorters))
 					params[CMDBuild.core.constants.Proxy.SORT] = Ext.encode(sorters);
@@ -370,25 +378,17 @@
 								this.cmfg('workflowTreeFilterClear', { disableStoreLoad: true });
 							}
 
-							// Avoid to reload store if current loaded store page is same of calculated one
-							if (storeExtraParams.page != calculatedPage) {
-								this.cmfg('workflowTreeStoreLoad', {
-									page: calculatedPage,
-									params: storeExtraParams, // Take the current store configuration to have the sort and filter
-									scope: this,
-									callback: function (records, operation, success) {
-										this.view.getSelectionModel().deselectAll();
+							this.cmfg('workflowTreeStoreLoad', {
+								page: calculatedPage,
+								params: storeExtraParams, // Take the current store configuration to have the sort and filter
+								scope: this,
+								callback: function (records, operation, success) {
+									this.view.getSelectionModel().deselectAll();
 
-										this.selectByMetadata(parameters[CMDBuild.core.constants.Proxy.ACTIVITY_SUBSET_ID]);
-										this.selectByPosition(position % CMDBuild.configuration.instance.get(CMDBuild.core.constants.Proxy.ROW_LIMIT));
-									}
-								});
-							} else {
-								this.view.getSelectionModel().deselectAll();
-
-								this.selectByMetadata(parameters[CMDBuild.core.constants.Proxy.ACTIVITY_SUBSET_ID]);
-								this.selectByPosition(position % CMDBuild.configuration.instance.get(CMDBuild.core.constants.Proxy.ROW_LIMIT));
-							}
+									this.selectByMetadata(parameters[CMDBuild.core.constants.Proxy.ACTIVITY_SUBSET_ID]);
+									this.selectByPosition(position % CMDBuild.configuration.instance.get(CMDBuild.core.constants.Proxy.ROW_LIMIT));
+								}
+							});
 						} else { // Card not found
 							if (
 								Ext.isString(parameters[CMDBuild.core.constants.Proxy.FLOW_STATUS]) && !Ext.isEmpty(parameters[CMDBuild.core.constants.Proxy.FLOW_STATUS])

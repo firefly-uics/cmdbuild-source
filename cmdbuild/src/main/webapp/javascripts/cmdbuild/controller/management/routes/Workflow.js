@@ -74,15 +74,22 @@
 		 *
 		 * @private
 		 */
-		manageFilterClient: function() {
+		manageFilterClient: function () {
 			if (
 				Ext.isObject(this.paramsModel.get(CMDBuild.core.constants.Proxy.CLIENT_FILTER))
 				&& !Ext.Object.isEmpty(this.paramsModel.get(CMDBuild.core.constants.Proxy.CLIENT_FILTER))
 			) {
 				var moduleController = CMDBuild.global.controller.MainViewport.cmfg('mainViewportModuleControllerGet', CMDBuild.core.constants.ModuleIdentifiers.getWorkflow());
-				moduleController.cmfg('workflowTreeFilterApply', Ext.create('CMDBuild.model.common.panel.gridAndForm.filter.advanced.Filter', {
-					configuration: this.paramsModel.get(CMDBuild.core.constants.Proxy.CLIENT_FILTER)
-				}));
+				moduleController.cmfg('workflowTreeApplyStoreEvent', {
+					eventName: 'load',
+					fn: function () {
+						moduleController.cmfg('workflowTreeFilterApply', Ext.create('CMDBuild.model.common.panel.gridAndForm.filter.advanced.Filter', {
+							configuration: this.paramsModel.get(CMDBuild.core.constants.Proxy.CLIENT_FILTER)
+						}));
+					},
+					scope: this,
+					options: { single: true }
+				});
 			}
 		},
 
@@ -106,7 +113,7 @@
 					callback: function () {
 						Ext.apply(accordionController, { // Setup accordion update callback
 							scope: this,
-							callback: callback || Ext.emptyFn
+							callback: Ext.isFunction(callback) ? callback : Ext.emptyFn
 						});
 
 						accordionController.cmfg('accordionDeselect');
@@ -189,8 +196,6 @@
 								return this.manageIdentifierProcess(
 									workflowObject,
 									function () {
-										this.manageFilterClient();
-
 										moduleController.cmfg('workflowTreeApplyStoreEvent', {
 											eventName: 'load',
 											fn: function () {

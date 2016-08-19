@@ -6,7 +6,7 @@
 		requires: [
 			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.LoadMask',
-			'CMDBuild.proxy.taskManager.Generic'
+			'CMDBuild.proxy.administration.taskManager.Generic'
 		],
 
 		/**
@@ -85,7 +85,7 @@
 			if (!Ext.isEmpty(this.selectedId)) {
 				CMDBuild.core.LoadMask.show();
 
-				CMDBuild.proxy.taskManager.Generic.remove({
+				CMDBuild.proxy.administration.taskManager.Generic.remove({
 					params: {
 						id: this.selectedId
 					},
@@ -105,7 +105,7 @@
 				this.selectedId = this.selectionModel.getSelection()[0].get(CMDBuild.core.constants.Proxy.ID);
 
 				// Selected task asynchronous store query
-				CMDBuild.proxy.taskManager.Generic.read({
+				CMDBuild.proxy.administration.taskManager.Generic.read({
 					params: {
 						id: this.selectedId
 					},
@@ -115,7 +115,7 @@
 						decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.RESPONSE];
 
 						if (Ext.isObject(decodedResponse) && !Ext.Object.isEmpty(decodedResponse)) {
-							var record = Ext.create('CMDBuild.model.taskManager.generic.Generic', decodedResponse);
+							var record = Ext.create('CMDBuild.model.administration.taskManager.generic.Generic', decodedResponse);
 							record.set(CMDBuild.core.constants.Proxy.CONTEXT, record.get(CMDBuild.core.constants.Proxy.CONTEXT)['client']); // FIXME: multiple sub-context predisposition
 
 							this.parentDelegate.loadForm(this.taskType);
@@ -191,7 +191,7 @@
 					}
 
 				if (Ext.isEmpty(formData[CMDBuild.core.constants.Proxy.ID])) {
-					CMDBuild.proxy.taskManager.Generic.create({
+					CMDBuild.proxy.administration.taskManager.Generic.create({
 						params: submitDatas,
 						loadMask: false,
 						scope: this,
@@ -199,7 +199,7 @@
 						callback: this.callback
 					});
 				} else {
-					CMDBuild.proxy.taskManager.Generic.update({
+					CMDBuild.proxy.administration.taskManager.Generic.update({
 						params: submitDatas,
 						loadMask: false,
 						scope: this,

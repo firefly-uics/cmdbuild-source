@@ -198,7 +198,7 @@ public class JsonAttributeFilterBuilder implements Builder<WhereClause> {
 			final Iterable<Object> values, final CMAttributeType<?> type) {
 		final QueryAliasAttribute _attribute;
 		if (asList(_TYPE).contains(attribute.getName())) {
-			_attribute = attribute(attribute.getEntryTypeAlias(), IdClass.getDBName());
+			_attribute = attribute(attribute.getAlias(), IdClass.getDBName());
 		} else {
 			_attribute = attribute;
 		}

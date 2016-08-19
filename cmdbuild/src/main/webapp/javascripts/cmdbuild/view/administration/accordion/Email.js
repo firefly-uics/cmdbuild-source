@@ -4,7 +4,7 @@
 		extend: 'CMDBuild.view.common.abstract.Accordion',
 
 		/**
-		 * @cfg {CMDBuild.controller.administration.accordion.Task}
+		 * @cfg {CMDBuild.controller.administration.accordion.TaskManager}
 		 */
 		delegate: undefined,
 

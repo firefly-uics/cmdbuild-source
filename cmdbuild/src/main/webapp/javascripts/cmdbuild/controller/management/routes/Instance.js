@@ -4,6 +4,7 @@
 		extend: 'CMDBuild.controller.common.abstract.Routes',
 
 		requires: [
+			'CMDBuild.controller.management.workflow.Utils',
 			'CMDBuild.core.configurations.Routes',
 			'CMDBuild.core.configurations.WorkflowStates',
 			'CMDBuild.core.constants.Proxy',
@@ -45,7 +46,7 @@
 
 							if (Ext.isObject(workflowObject) && !Ext.Object.isEmpty(workflowObject)) {
 								if (!Ext.isEmpty(this.paramsModel.get(CMDBuild.core.constants.Proxy.INSTANCE_IDENTIFIER))) // Single card selection
-									return this.manageIdentifierInstance(workflowObject, this.paramsModel.get(CMDBuild.core.constants.Proxy.INSTANCE_IDENTIFIER));
+									return this.readInstanceDetails(workflowObject);
 
 								if (!Ext.Object.isEmpty(this.paramsModel.get(CMDBuild.core.constants.Proxy.SIMPLE_FILTER))) // SimpleFilter
 									return this.manageFilterSimple(workflowObject);
@@ -65,6 +66,8 @@
 		},
 
 		/**
+		 * Get instance id and flowStatus from filtered cards
+		 *
 		 * @param {Object} workflowObject
 		 *
 		 * @returns {Void}
@@ -81,19 +84,19 @@
 				+ simpleFilterDefinitionObject[CMDBuild.core.constants.Proxy.VALUE] + '"]}}}';
 			params[CMDBuild.core.constants.Proxy.STATE] = CMDBuild.core.configurations.WorkflowStates.getAll();
 
-			CMDBuild.proxy.management.routes.Instance.readAllActivities({
+			CMDBuild.proxy.management.routes.Instance.readAll({
 				params: params,
 				scope: this,
 				success: function (response, options, decodedResponse) {
 					decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.RESPONSE];
 
 					if (decodedResponse[CMDBuild.core.constants.Proxy.RESULTS] == 1) {
-						decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.ROWS];
+						decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.ROWS][0];
 
 						this.manageIdentifierInstance(
 							workflowObject,
-							decodedResponse[0][CMDBuild.core.constants.Proxy.ID],
-							CMDBuild.core.configurations.WorkflowStates.getAll()
+							decodedResponse[CMDBuild.core.constants.Proxy.ID],
+							CMDBuild.controller.management.workflow.Utils.translateStatusFromCapitalizedMode(decodedResponse[CMDBuild.core.constants.Proxy.FLOW_STATUS])
 						);
 					} else {
 						CMDBuild.core.Message.error(
@@ -140,7 +143,11 @@
 								moduleController.cmfg('workflowTreeApplyStoreEvent', {
 									eventName: 'load',
 									fn: function () {
-										moduleController.cmfg('workflowTreeActivityOpen', { id: instanceIdentifier });
+										var params = {};
+										params[CMDBuild.core.constants.Proxy.FLOW_STATUS] = forceState;
+										params[CMDBuild.core.constants.Proxy.ID] = instanceIdentifier;
+
+										moduleController.cmfg('workflowTreeActivityOpen', params);
 
 										if (Ext.isString(forceState) && !Ext.isEmpty(forceState))
 											moduleController.cmfg('workflowTreeToolbarTopStatusValueSet', {
@@ -200,6 +207,48 @@
 			}
 
 			return this.callParent(arguments);
+		},
+
+		/**
+		 * Get instance flowStatus
+		 *
+		 * @param {Object} workflowObject
+		 *
+		 * @returns {Void}
+		 *
+		 * @private
+		 */
+		readInstanceDetails: function (workflowObject) {
+			var params = {};
+			params[CMDBuild.core.constants.Proxy.CLASS_NAME] = this.paramsModel.get(CMDBuild.core.constants.Proxy.PROCESS_IDENTIFIER);
+			params[CMDBuild.core.constants.Proxy.STATE] = CMDBuild.core.configurations.WorkflowStates.getAll();
+
+			CMDBuild.proxy.management.routes.Instance.readAll({
+				params: params,
+				scope: this,
+				success: function (response, options, decodedResponse) {
+					decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.RESPONSE][CMDBuild.core.constants.Proxy.ROWS];
+
+					if (Ext.isArray(decodedResponse) && !Ext.isEmpty(decodedResponse)) {
+						var instanceObject = Ext.Array.findBy(decodedResponse, function (instanceObject, i) {
+							return this.paramsModel.get(CMDBuild.core.constants.Proxy.INSTANCE_IDENTIFIER) == instanceObject[CMDBuild.core.constants.Proxy.ID];
+						}, this);
+
+						if (Ext.isObject(instanceObject) && !Ext.Object.isEmpty(instanceObject))
+							this.manageIdentifierInstance(
+								workflowObject,
+								instanceObject[CMDBuild.core.constants.Proxy.ID],
+								CMDBuild.controller.management.workflow.Utils.translateStatusFromCapitalizedMode(instanceObject[CMDBuild.core.constants.Proxy.FLOW_STATUS])
+							);
+					} else {
+						CMDBuild.core.Message.error(
+							CMDBuild.Translation.common.failure,
+							CMDBuild.Translation.errors.routesInvalidSimpleFilter,
+							false
+						);
+					}
+				}
+			});
 		}
 	});
 

@@ -6,10 +6,14 @@
 
 		config: {
 			aborted: 'closed.aborted',
+			abortedCapitalized: 'ABORTED',
 			all: 'all',
 			completed: 'closed.completed',
+			completedCapitalized: 'COMPLETED',
 			open: 'open.running',
-			suspended: 'open.not_running.suspended'
+			openCapitalized: 'OPEN',
+			suspended: 'open.not_running.suspended',
+			suspendedCapitalized: 'SUSPENDED'
 		},
 
 		/**

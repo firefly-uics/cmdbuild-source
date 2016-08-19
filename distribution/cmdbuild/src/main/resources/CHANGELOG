@@ -13,7 +13,7 @@ NEW FEATURES
 
  * Preselection of workflow activities
 
- * Simple filter support for rocesses routes
+ * Simple filter support for processes routes
 
 
 FIXES
@@ -35,6 +35,10 @@ FIXES
  * History tab rows doesn't display relation attributes
 
  * Error when trying to get cards from a superclass when there are row privileges defined on a subclass
+
+ * Wrong selection when accessing closed processes from url
+
+ * Task manager UI behaviour errors
 
 
 
