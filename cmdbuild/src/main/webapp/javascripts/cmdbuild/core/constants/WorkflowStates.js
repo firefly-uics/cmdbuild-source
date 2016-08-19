@@ -1,6 +1,6 @@
 (function () {
 
-	Ext.define('CMDBuild.core.configurations.WorkflowStates', {
+	Ext.define('CMDBuild.core.constants.WorkflowStates', {
 
 		singleton: true,
 

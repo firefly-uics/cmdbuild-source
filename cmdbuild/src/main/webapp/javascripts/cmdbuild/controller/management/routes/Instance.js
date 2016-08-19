@@ -6,8 +6,8 @@
 		requires: [
 			'CMDBuild.controller.management.workflow.Utils',
 			'CMDBuild.core.configurations.Routes',
-			'CMDBuild.core.configurations.WorkflowStates',
 			'CMDBuild.core.constants.Proxy',
+			'CMDBuild.core.constants.WorkflowStates',
 			'CMDBuild.core.Message',
 			'CMDBuild.proxy.management.routes.Instance'
 		],
@@ -82,7 +82,7 @@
 			params[CMDBuild.core.constants.Proxy.FILTER] = '{"attribute":{"simple":{"attribute":"'
 				+ simpleFilterDefinitionObject[CMDBuild.core.constants.Proxy.KEY] + '","operator":"equal","value":["'
 				+ simpleFilterDefinitionObject[CMDBuild.core.constants.Proxy.VALUE] + '"]}}}';
-			params[CMDBuild.core.constants.Proxy.STATE] = CMDBuild.core.configurations.WorkflowStates.getAll();
+			params[CMDBuild.core.constants.Proxy.STATE] = CMDBuild.core.constants.WorkflowStates.getAll();
 
 			CMDBuild.proxy.management.routes.Instance.readAll({
 				params: params,
@@ -221,7 +221,7 @@
 		readInstanceDetails: function (workflowObject) {
 			var params = {};
 			params[CMDBuild.core.constants.Proxy.CLASS_NAME] = this.paramsModel.get(CMDBuild.core.constants.Proxy.PROCESS_IDENTIFIER);
-			params[CMDBuild.core.constants.Proxy.STATE] = CMDBuild.core.configurations.WorkflowStates.getAll();
+			params[CMDBuild.core.constants.Proxy.STATE] = CMDBuild.core.constants.WorkflowStates.getAll();
 
 			CMDBuild.proxy.management.routes.Instance.readAll({
 				params: params,
