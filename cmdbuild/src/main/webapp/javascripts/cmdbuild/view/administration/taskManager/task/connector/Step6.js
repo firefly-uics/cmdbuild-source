@@ -6,7 +6,7 @@
 		requires: [
 			'CMDBuild.core.constants.FieldWidths',
 			'CMDBuild.core.constants.Proxy',
-			'CMDBuild.model.taskManager.task.connector.ReferenceLevel'
+			'CMDBuild.model.administration.taskManager.task.connector.ReferenceLevel'
 		],
 
 		/**
@@ -98,7 +98,7 @@
 				],
 
 				store: Ext.create('Ext.data.Store', {
-					model: 'CMDBuild.model.taskManager.task.connector.ReferenceLevel',
+					model: 'CMDBuild.model.administration.taskManager.task.connector.ReferenceLevel',
 					data: []
 				}),
 
@@ -112,7 +112,7 @@
 								text: CMDBuild.Translation.add,
 								iconCls: 'add',
 								handler: function () {
-									me.referenceMappingGrid.store.insert(0, Ext.create('CMDBuild.model.taskManager.task.connector.ReferenceLevel'));
+									me.referenceMappingGrid.store.insert(0, Ext.create('CMDBuild.model.administration.taskManager.task.connector.ReferenceLevel'));
 								}
 							}
 						]

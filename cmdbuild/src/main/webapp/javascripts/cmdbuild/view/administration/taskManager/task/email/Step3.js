@@ -6,7 +6,7 @@
 		requires: [
 			'CMDBuild.core.constants.FieldWidths',
 			'CMDBuild.core.constants.Proxy',
-			'CMDBuild.proxy.taskManager.task.Email'
+			'CMDBuild.proxy.administration.taskManager.task.Email'
 		],
 
 		/**
@@ -178,7 +178,7 @@
 					forceSelection: true,
 					editable: false,
 
-					store: CMDBuild.proxy.taskManager.task.Email.getStoreLokup(),
+					store: CMDBuild.proxy.administration.taskManager.task.Email.getStoreLokup(),
 					queryMode: 'local'
 				});
 

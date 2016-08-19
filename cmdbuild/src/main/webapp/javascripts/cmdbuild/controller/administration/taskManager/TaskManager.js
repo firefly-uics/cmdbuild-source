@@ -47,7 +47,7 @@
 		controllerGrid: undefined,
 
 		/**
-		 * @property {CMDBuild.model.taskManager.Grid}
+		 * @property {CMDBuild.model.administration.taskManager.Grid}
 		 *
 		 * @private
 		 */
@@ -253,7 +253,7 @@
 		/**
 		 * Forwarder method
 		 *
-		 * @param {CMDBuild.model.taskManager.Grid} record
+		 * @param {CMDBuild.model.administration.taskManager.Grid} record
 		 *
 		 * @returns {Void}
 		 */
@@ -314,7 +314,7 @@
 			 */
 			taskManagerSelectedTaskSet: function (parameters) {
 				if (!Ext.Object.isEmpty(parameters)) {
-					parameters[CMDBuild.core.constants.Proxy.MODEL_NAME] = 'CMDBuild.model.taskManager.Grid';
+					parameters[CMDBuild.core.constants.Proxy.MODEL_NAME] = 'CMDBuild.model.administration.taskManager.Grid';
 					parameters[CMDBuild.core.constants.Proxy.TARGET_VARIABLE_NAME] = 'selectedTask';
 
 					this.propertyManageSet(parameters);

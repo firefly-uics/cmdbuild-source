@@ -5,7 +5,7 @@
 
 		requires: [
 			'CMDBuild.core.constants.Proxy',
-			'CMDBuild.proxy.taskManager.task.event.Asynchronous'
+			'CMDBuild.proxy.administration.taskManager.task.event.Asynchronous'
 		],
 
 		/**
@@ -119,14 +119,14 @@
 				var params = {};
 				params[CMDBuild.core.constants.Proxy.ID] = this.cmfg('taskManagerSelectedTaskGet', CMDBuild.core.constants.Proxy.ID);
 
-				CMDBuild.proxy.taskManager.task.event.Asynchronous.read({
+				CMDBuild.proxy.administration.taskManager.task.event.Asynchronous.read({
 					params: params,
 					scope: this,
 					success: function (rensponse, options, decodedResponse) {
 						decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.RESPONSE];
 
 						if (Ext.isObject(decodedResponse) && !Ext.Object.isEmpty(decodedResponse)) {
-							var record = Ext.create('CMDBuild.model.taskManager.task.event.asynchronous.Asynchronous', decodedResponse);
+							var record = Ext.create('CMDBuild.model.administration.taskManager.task.event.asynchronous.Asynchronous', decodedResponse);
 
 							// FIXME: loadRecord() fails with comboboxes, and i can't find good fix, so i must set all fields manually
 
@@ -212,13 +212,13 @@
 				submitDatas[CMDBuild.core.constants.Proxy.ID] = formData[CMDBuild.core.constants.Proxy.ID];
 
 				if (Ext.isEmpty(formData[CMDBuild.core.constants.Proxy.ID])) {
-					CMDBuild.proxy.taskManager.task.event.Asynchronous.create({
+					CMDBuild.proxy.administration.taskManager.task.event.Asynchronous.create({
 						params: submitDatas,
 						scope: this,
 						success: this.success
 					});
 				} else {
-					CMDBuild.proxy.taskManager.task.event.Asynchronous.update({
+					CMDBuild.proxy.administration.taskManager.task.event.Asynchronous.update({
 						params: submitDatas,
 						scope: this,
 						success: this.success
@@ -240,7 +240,7 @@
 				var params = {};
 				params[CMDBuild.core.constants.Proxy.ID] = this.cmfg('taskManagerSelectedTaskGet', CMDBuild.core.constants.Proxy.ID);
 
-				CMDBuild.proxy.taskManager.task.event.Asynchronous.remove({
+				CMDBuild.proxy.administration.taskManager.task.event.Asynchronous.remove({
 					params: params,
 					scope: this,
 					success: this.success

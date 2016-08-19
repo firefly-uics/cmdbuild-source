@@ -4,7 +4,7 @@
 
 		requires: [
 			'CMDBuild.core.constants.Proxy',
-			'CMDBuild.proxy.taskManager.task.common.WorkflowForm'
+			'CMDBuild.proxy.administration.taskManager.task.common.WorkflowForm'
 		],
 
 		/**
@@ -227,7 +227,7 @@
 				if (Ext.isEmpty(erase))
 					erase = false;
 
-				CMDBuild.proxy.taskManager.task.common.WorkflowForm.readAllAttributes({
+				CMDBuild.proxy.administration.taskManager.task.common.WorkflowForm.readAllAttributes({
 					params: {
 						className: className
 					},
@@ -238,7 +238,7 @@
 
 						if (erase) {
 							me.gridField.store.removeAll();
-							me.gridField.store.insert(0, Ext.create('CMDBuild.model.taskManager.task.common.workflowForm.Grid'));
+							me.gridField.store.insert(0, Ext.create('CMDBuild.model.administration.taskManager.task.common.workflowForm.Grid'));
 							me.gridEditorPlugin.startEditByPosition({ row: 0, column: 0 });
 							me.setDisabledAttributesGrid(false);
 						}

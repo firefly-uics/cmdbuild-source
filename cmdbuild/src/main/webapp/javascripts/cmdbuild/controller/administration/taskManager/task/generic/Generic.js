@@ -5,7 +5,7 @@
 
 		requires: [
 			'CMDBuild.core.constants.Proxy',
-			'CMDBuild.proxy.taskManager.task.Generic'
+			'CMDBuild.proxy.administration.taskManager.task.Generic'
 		],
 
 		/**
@@ -88,14 +88,14 @@
 				var params = {};
 				params[CMDBuild.core.constants.Proxy.ID] = this.cmfg('taskManagerSelectedTaskGet', CMDBuild.core.constants.Proxy.ID);
 
-				CMDBuild.proxy.taskManager.task.Generic.read({
+				CMDBuild.proxy.administration.taskManager.task.Generic.read({
 					params: params,
 					scope: this,
 					success: function (rensponse, options, decodedResponse) {
 						decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.RESPONSE];
 
 						if (Ext.isObject(decodedResponse) && !Ext.Object.isEmpty(decodedResponse)) {
-							var record = Ext.create('CMDBuild.model.taskManager.task.generic.Generic', decodedResponse);
+							var record = Ext.create('CMDBuild.model.administration.taskManager.task.generic.Generic', decodedResponse);
 							record.set(CMDBuild.core.constants.Proxy.CONTEXT, record.get(CMDBuild.core.constants.Proxy.CONTEXT)['client']); // FIXME: multiple sub-context predisposition
 
 							// FIXME: loadRecord() fails with comboboxes, and i can't find a working fix, so i must set all fields manually
@@ -173,13 +173,13 @@
 					}
 
 				if (Ext.isEmpty(formData[CMDBuild.core.constants.Proxy.ID])) {
-					CMDBuild.proxy.taskManager.task.Generic.create({
+					CMDBuild.proxy.administration.taskManager.task.Generic.create({
 						params: submitDatas,
 						scope: this,
 						success: this.success
 					});
 				} else {
-					CMDBuild.proxy.taskManager.task.Generic.update({
+					CMDBuild.proxy.administration.taskManager.task.Generic.update({
 						params: submitDatas,
 						scope: this,
 						success: this.success
@@ -201,7 +201,7 @@
 				var params = {};
 				params[CMDBuild.core.constants.Proxy.ID] = this.cmfg('taskManagerSelectedTaskGet', CMDBuild.core.constants.Proxy.ID);
 
-				CMDBuild.proxy.taskManager.task.Generic.remove({
+				CMDBuild.proxy.administration.taskManager.task.Generic.remove({
 					params: params,
 					scope: this,
 					success: this.success

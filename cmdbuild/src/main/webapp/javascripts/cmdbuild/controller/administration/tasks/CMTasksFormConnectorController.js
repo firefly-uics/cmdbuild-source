@@ -9,7 +9,7 @@
 			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.LoadMask',
 			'CMDBuild.core.Message',
-			'CMDBuild.proxy.taskManager.Connector',
+			'CMDBuild.proxy.administration.taskManager.Connector',
 			'CMDBuild.model.CMModelTasks'
 		],
 
@@ -140,7 +140,7 @@
 			if (!Ext.isEmpty(this.selectedId)) {
 				CMDBuild.core.LoadMask.show();
 
-				CMDBuild.proxy.taskManager.Connector.remove({
+				CMDBuild.proxy.administration.taskManager.Connector.remove({
 					params: {
 						id: this.selectedId
 					},
@@ -160,7 +160,7 @@
 				this.selectedId = this.selectionModel.getSelection()[0].get(CMDBuild.core.constants.Proxy.ID);
 
 				// Selected task asynchronous store query
-				CMDBuild.proxy.taskManager.Connector.read({
+				CMDBuild.proxy.administration.taskManager.Connector.read({
 					params: {
 						id: this.selectedId
 					},
@@ -273,7 +273,7 @@
 				submitDatas[CMDBuild.core.constants.Proxy.ID] = formData[CMDBuild.core.constants.Proxy.ID];
 
 				if (Ext.isEmpty(formData[CMDBuild.core.constants.Proxy.ID])) {
-					CMDBuild.proxy.taskManager.Connector.create({
+					CMDBuild.proxy.administration.taskManager.Connector.create({
 						params: submitDatas,
 						loadMask: false,
 						scope: this,
@@ -281,7 +281,7 @@
 						callback: this.callback
 					});
 				} else {
-					CMDBuild.proxy.taskManager.Connector.update({
+					CMDBuild.proxy.administration.taskManager.Connector.update({
 						params: submitDatas,
 						loadMask: false,
 						scope: this,

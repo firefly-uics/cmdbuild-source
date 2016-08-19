@@ -6,7 +6,7 @@
 		requires: [
 			'CMDBuild.core.constants.FieldWidths',
 			'CMDBuild.core.constants.Proxy',
-			'CMDBuild.model.taskManager.task.connector.ClassLevel'
+			'CMDBuild.model.administration.taskManager.task.connector.ClassLevel'
 		],
 
 		/**
@@ -66,7 +66,7 @@
 							displayField: CMDBuild.core.constants.Proxy.NAME,
 							valueField: CMDBuild.core.constants.Proxy.NAME,
 
-							store: CMDBuild.proxy.taskManager.task.Connector.getStoreSource(),
+							store: CMDBuild.proxy.administration.taskManager.task.Connector.getStoreSource(),
 
 							listeners: {
 								select: function (combo, records, eOpts) {
@@ -87,7 +87,7 @@
 							editable: false,
 							allowBlank: false,
 
-							store: CMDBuild.proxy.taskManager.task.Connector.getStoreClasses(),
+							store: CMDBuild.proxy.administration.taskManager.task.Connector.getStoreClasses(),
 							queryMode: 'local',
 
 							listeners: {
@@ -172,7 +172,7 @@
 				],
 
 				store: Ext.create('Ext.data.Store', {
-					model: 'CMDBuild.model.taskManager.task.connector.ClassLevel',
+					model: 'CMDBuild.model.administration.taskManager.task.connector.ClassLevel',
 					data: []
 				}),
 
@@ -186,7 +186,7 @@
 								text: CMDBuild.Translation.add,
 								iconCls: 'add',
 								handler: function () {
-									me.classLevelMappingGrid.store.insert(0, Ext.create('CMDBuild.model.taskManager.task.connector.ClassLevel'));
+									me.classLevelMappingGrid.store.insert(0, Ext.create('CMDBuild.model.administration.taskManager.task.connector.ClassLevel'));
 								}
 							}
 						]

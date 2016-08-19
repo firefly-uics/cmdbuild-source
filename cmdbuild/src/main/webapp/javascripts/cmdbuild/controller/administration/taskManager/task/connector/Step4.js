@@ -5,7 +5,7 @@
 
 		requires: [
 			'CMDBuild.core.constants.Proxy',
-			'CMDBuild.proxy.taskManager.task.Connector'
+			'CMDBuild.proxy.administration.taskManager.task.Connector'
 		],
 
 		/**
@@ -52,7 +52,7 @@
 				editable: false,
 				allowBlank: true,
 
-				store: CMDBuild.proxy.taskManager.task.Connector.getStoreDeletionTypes(),
+				store: CMDBuild.proxy.administration.taskManager.task.Connector.getStoreDeletionTypes(),
 				queryMode: 'local',
 
 				listeners: {

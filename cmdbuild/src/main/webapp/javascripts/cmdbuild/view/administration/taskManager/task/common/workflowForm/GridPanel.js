@@ -6,7 +6,7 @@
 		requires: [
 			'CMDBuild.core.constants.FieldWidths',
 			'CMDBuild.core.constants.Proxy',
-			'CMDBuild.model.taskManager.task.common.workflowForm.Grid'
+			'CMDBuild.model.administration.taskManager.task.common.workflowForm.Grid'
 		],
 
 		/**
@@ -56,7 +56,7 @@
 								text: CMDBuild.Translation.add,
 								iconCls: 'add',
 								handler: function () {
-									me.store.insert(0, Ext.create('CMDBuild.model.taskManager.task.common.workflowForm.Grid'));
+									me.store.insert(0, Ext.create('CMDBuild.model.administration.taskManager.task.common.workflowForm.Grid'));
 								}
 							}
 						]
@@ -98,7 +98,7 @@
 					}
 				],
 				store: Ext.create('Ext.data.Store', {
-					model: 'CMDBuild.model.taskManager.task.common.workflowForm.Grid',
+					model: 'CMDBuild.model.administration.taskManager.task.common.workflowForm.Grid',
 					data: []
 				}),
 				plugins: [this.gridEditorPlugin]

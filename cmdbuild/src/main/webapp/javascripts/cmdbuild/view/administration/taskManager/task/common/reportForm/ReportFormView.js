@@ -6,7 +6,7 @@
 		requires: [
 			'CMDBuild.core.constants.FieldWidths',
 			'CMDBuild.core.constants.Proxy',
-			'CMDBuild.proxy.taskManager.task.common.ReportForm'
+			'CMDBuild.proxy.administration.taskManager.task.common.ReportForm'
 		],
 
 		mixins: ['Ext.form.field.Field'], // To enable functionalities restricted to Ext.form.field.Field classes (loadRecord, etc.)
@@ -60,7 +60,7 @@
 						forceSelection: true,
 						editable: false,
 
-						store: CMDBuild.proxy.taskManager.task.common.ReportForm.getStore(),
+						store: CMDBuild.proxy.administration.taskManager.task.common.ReportForm.getStore(),
 						queryMode: 'local',
 
 						listeners: {
@@ -88,7 +88,7 @@
 						forceSelection: true,
 						editable: false,
 
-						store: CMDBuild.proxy.taskManager.task.common.ReportForm.getStoreExtension(),
+						store: CMDBuild.proxy.administration.taskManager.task.common.ReportForm.getStoreExtension(),
 						queryMode: 'local'
 					}),
 					this.grid = Ext.create('CMDBuild.view.administration.taskManager.task.common.reportForm.GridPanel', { delegate: this.delegate })

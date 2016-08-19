@@ -7,14 +7,14 @@
 			'CMDBuild.core.constants.Global',
 			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.LoadMask',
-			'CMDBuild.proxy.taskManager.Connector',
-			'CMDBuild.proxy.taskManager.Email',
-			'CMDBuild.proxy.taskManager.event.Asynchronous',
-			'CMDBuild.proxy.taskManager.event.Event',
-			'CMDBuild.proxy.taskManager.event.Synchronous',
-			'CMDBuild.proxy.taskManager.Generic',
-			'CMDBuild.proxy.taskManager.TaskManager',
-			'CMDBuild.proxy.taskManager.Workflow',
+			'CMDBuild.proxy.administration.taskManager.Connector',
+			'CMDBuild.proxy.administration.taskManager.Email',
+			'CMDBuild.proxy.administration.taskManager.event.Asynchronous',
+			'CMDBuild.proxy.administration.taskManager.event.Event',
+			'CMDBuild.proxy.administration.taskManager.event.Synchronous',
+			'CMDBuild.proxy.administration.taskManager.Generic',
+			'CMDBuild.proxy.administration.taskManager.TaskManager',
+			'CMDBuild.proxy.administration.taskManager.Workflow',
 			'CMDBuild.core.Utils'
 		],
 
@@ -116,28 +116,28 @@
 		geStoreByTaskType: function (type) {
 			switch (type) {
 				case 'all':
-					return CMDBuild.proxy.taskManager.TaskManager.getStore();
+					return CMDBuild.proxy.administration.taskManager.TaskManager.getStore();
 
 				case 'connector':
-					return CMDBuild.proxy.taskManager.Connector.getStore();
+					return CMDBuild.proxy.administration.taskManager.Connector.getStore();
 
 				case 'email':
-					return CMDBuild.proxy.taskManager.Email.getStore();
+					return CMDBuild.proxy.administration.taskManager.Email.getStore();
 
 				case 'event':
-					return CMDBuild.proxy.taskManager.event.Event.getStore();
+					return CMDBuild.proxy.administration.taskManager.event.Event.getStore();
 
 				case 'event_asynchronous':
-					return CMDBuild.proxy.taskManager.event.Asynchronous.getStore();
+					return CMDBuild.proxy.administration.taskManager.event.Asynchronous.getStore();
 
 				case 'event_synchronous':
-					return CMDBuild.proxy.taskManager.event.Synchronous.getStore();
+					return CMDBuild.proxy.administration.taskManager.event.Synchronous.getStore();
 
 				case 'generic':
-					return CMDBuild.proxy.taskManager.Generic.getStore();
+					return CMDBuild.proxy.administration.taskManager.Generic.getStore();
 
 				case 'workflow':
-					return CMDBuild.proxy.taskManager.Workflow.getStore();
+					return CMDBuild.proxy.administration.taskManager.Workflow.getStore();
 
 				default:
 					throw 'CMProxyTasks error: url type not recognized';
@@ -337,7 +337,7 @@
 
 			CMDBuild.core.LoadMask.show();
 
-			CMDBuild.proxy.taskManager.TaskManager.cyclicExecution({
+			CMDBuild.proxy.administration.taskManager.TaskManager.cyclicExecution({
 				params: params,
 				loadMask: false,
 				scope: this,
@@ -355,7 +355,7 @@
 			var params = {};
 			params[CMDBuild.core.constants.Proxy.ID] = record.get(CMDBuild.core.constants.Proxy.ID);
 
-			CMDBuild.proxy.taskManager.TaskManager.singleExecution({
+			CMDBuild.proxy.administration.taskManager.TaskManager.singleExecution({
 				params: params,
 				loadMask: false,
 				scope: this,
@@ -375,7 +375,7 @@
 
 			CMDBuild.core.LoadMask.show();
 
-			CMDBuild.proxy.taskManager.TaskManager.stop({
+			CMDBuild.proxy.administration.taskManager.TaskManager.stop({
 				params: params,
 				loadMask: false,
 				scope: this,

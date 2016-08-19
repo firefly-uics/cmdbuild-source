@@ -5,14 +5,14 @@
 
 		requires: [
 			'CMDBuild.core.constants.Proxy',
-			'CMDBuild.proxy.taskManager.Grid',
-			'CMDBuild.proxy.taskManager.task.Connector',
-			'CMDBuild.proxy.taskManager.task.Email',
-			'CMDBuild.proxy.taskManager.task.event.Asynchronous',
-			'CMDBuild.proxy.taskManager.task.event.Event',
-			'CMDBuild.proxy.taskManager.task.event.Synchronous',
-			'CMDBuild.proxy.taskManager.task.Generic',
-			'CMDBuild.proxy.taskManager.task.Workflow'
+			'CMDBuild.proxy.administration.taskManager.Grid',
+			'CMDBuild.proxy.administration.taskManager.task.Connector',
+			'CMDBuild.proxy.administration.taskManager.task.Email',
+			'CMDBuild.proxy.administration.taskManager.task.event.Asynchronous',
+			'CMDBuild.proxy.administration.taskManager.task.event.Event',
+			'CMDBuild.proxy.administration.taskManager.task.event.Synchronous',
+			'CMDBuild.proxy.administration.taskManager.task.Generic',
+			'CMDBuild.proxy.administration.taskManager.task.Workflow'
 		],
 
 		/**
@@ -72,7 +72,7 @@
 		},
 
 		/**
-		 * @param {CMDBuild.model.taskManager.Grid} record
+		 * @param {CMDBuild.model.administration.taskManager.Grid} record
 		 *
 		 * @returns {Void}
 		 */
@@ -82,7 +82,7 @@
 			var params = {};
 			params[CMDBuild.core.constants.Proxy.ID] = record.get(CMDBuild.core.constants.Proxy.ID);
 
-			CMDBuild.proxy.taskManager.Grid.cyclicExecution({
+			CMDBuild.proxy.administration.taskManager.Grid.cyclicExecution({
 				params: params,
 				scope: this,
 				callback: function (options, success, response) {
@@ -92,7 +92,7 @@
 		},
 
 		/**
-		 * @param {CMDBuild.model.taskManager.Grid} record
+		 * @param {CMDBuild.model.administration.taskManager.Grid} record
 		 *
 		 * @returns {Void}
 		 */
@@ -102,7 +102,7 @@
 			var params = {};
 			params[CMDBuild.core.constants.Proxy.ID] = record.get(CMDBuild.core.constants.Proxy.ID);
 
-			CMDBuild.proxy.taskManager.Grid.singleExecution({
+			CMDBuild.proxy.administration.taskManager.Grid.singleExecution({
 				params: params,
 				scope: this,
 				callback: function (options, success, response) {
@@ -112,7 +112,7 @@
 		},
 
 		/**
-		 * @param {CMDBuild.model.taskManager.Grid} record
+		 * @param {CMDBuild.model.administration.taskManager.Grid} record
 		 *
 		 * @returns {Void}
 		 */
@@ -122,7 +122,7 @@
 			var params = {};
 			params[CMDBuild.core.constants.Proxy.ID] = record.get(CMDBuild.core.constants.Proxy.ID);
 
-			CMDBuild.proxy.taskManager.Grid.stop({
+			CMDBuild.proxy.administration.taskManager.Grid.stop({
 				params: params,
 				scope: this,
 				callback: function (options, success, response) {
@@ -178,40 +178,40 @@
 			) {
 				switch (parameters.type[0]) {
 					case 'connector': {
-						this.view.reconfigure(CMDBuild.proxy.taskManager.task.Connector.getStore());
+						this.view.reconfigure(CMDBuild.proxy.administration.taskManager.task.Connector.getStore());
 					} break;
 
 					case 'email': {
-						this.view.reconfigure(CMDBuild.proxy.taskManager.task.Email.getStore());
+						this.view.reconfigure(CMDBuild.proxy.administration.taskManager.task.Email.getStore());
 					} break;
 
 					case 'event': {
 						switch (parameters.type[1]) {
 							case 'asynchronous': {
-								this.view.reconfigure(CMDBuild.proxy.taskManager.task.event.Asynchronous.getStore());
+								this.view.reconfigure(CMDBuild.proxy.administration.taskManager.task.event.Asynchronous.getStore());
 							} break;
 
 							case 'synchronous': {
-								this.view.reconfigure(CMDBuild.proxy.taskManager.task.event.Synchronous.getStore());
+								this.view.reconfigure(CMDBuild.proxy.administration.taskManager.task.event.Synchronous.getStore());
 							} break;
 
 							default: {
-								this.view.reconfigure(CMDBuild.proxy.taskManager.task.event.Event.getStore());
+								this.view.reconfigure(CMDBuild.proxy.administration.taskManager.task.event.Event.getStore());
 							}
 						}
 					} break;
 
 					case 'generic': {
-						this.view.reconfigure(CMDBuild.proxy.taskManager.task.Generic.getStore());
+						this.view.reconfigure(CMDBuild.proxy.administration.taskManager.task.Generic.getStore());
 					} break;
 
 					case 'workflow': {
-						this.view.reconfigure(CMDBuild.proxy.taskManager.task.Workflow.getStore());
+						this.view.reconfigure(CMDBuild.proxy.administration.taskManager.task.Workflow.getStore());
 					} break;
 
 					case 'all':
 					default: {
-						this.view.reconfigure(CMDBuild.proxy.taskManager.Grid.getStore());
+						this.view.reconfigure(CMDBuild.proxy.administration.taskManager.Grid.getStore());
 					}
 				}
 

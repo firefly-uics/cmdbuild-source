@@ -5,7 +5,7 @@
 
 		requires: [
 			'CMDBuild.core.constants.Proxy',
-			'CMDBuild.proxy.taskManager.task.Workflow'
+			'CMDBuild.proxy.administration.taskManager.task.Workflow'
 		],
 
 		/**
@@ -90,14 +90,14 @@
 				var params = {};
 				params[CMDBuild.core.constants.Proxy.ID] = this.cmfg('taskManagerSelectedTaskGet', CMDBuild.core.constants.Proxy.ID);
 
-				CMDBuild.proxy.taskManager.task.Workflow.read({
+				CMDBuild.proxy.administration.taskManager.task.Workflow.read({
 					params: params,
 					scope: this,
 					success: function (rensponse, options, decodedResponse) {
 						decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.RESPONSE];
 
 						if (Ext.isObject(decodedResponse) && !Ext.Object.isEmpty(decodedResponse)) {
-							var record = Ext.create('CMDBuild.model.taskManager.task.workflow.Workflow', decodedResponse);
+							var record = Ext.create('CMDBuild.model.administration.taskManager.task.workflow.Workflow', decodedResponse);
 
 							// FIXME: loadRecord() fails with comboboxes, and i can't find good fix, so i must set all fields manually
 
@@ -151,13 +151,13 @@
 				submitDatas[CMDBuild.core.constants.Proxy.WORKFLOW_CLASS_NAME] = formData[CMDBuild.core.constants.Proxy.WORKFLOW_CLASS_NAME];
 
 				if (Ext.isEmpty(formData[CMDBuild.core.constants.Proxy.ID])) {
-					CMDBuild.proxy.taskManager.task.Workflow.create({
+					CMDBuild.proxy.administration.taskManager.task.Workflow.create({
 						params: submitDatas,
 						scope: this,
 						success: this.success
 					});
 				} else {
-					CMDBuild.proxy.taskManager.task.Workflow.update({
+					CMDBuild.proxy.administration.taskManager.task.Workflow.update({
 						params: submitDatas,
 						scope: this,
 						success: this.success
@@ -179,7 +179,7 @@
 				var params = {};
 				params[CMDBuild.core.constants.Proxy.ID] = this.cmfg('taskManagerSelectedTaskGet', CMDBuild.core.constants.Proxy.ID);
 
-				CMDBuild.proxy.taskManager.task.Workflow.remove({
+				CMDBuild.proxy.administration.taskManager.task.Workflow.remove({
 					params: params,
 					scope: this,
 					success: this.success

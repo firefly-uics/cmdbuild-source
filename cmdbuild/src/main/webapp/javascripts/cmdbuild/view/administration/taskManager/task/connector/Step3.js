@@ -6,7 +6,7 @@
 		requires: [
 			'CMDBuild.core.constants.FieldWidths',
 			'CMDBuild.core.constants.Proxy',
-			'CMDBuild.proxy.taskManager.task.Connector'
+			'CMDBuild.proxy.administration.taskManager.task.Connector'
 		],
 
 		/**
@@ -88,7 +88,7 @@
 					editable: false,
 					anchor: '100%',
 
-					store: CMDBuild.proxy.taskManager.task.Connector.getStoreDbTypes(),
+					store: CMDBuild.proxy.administration.taskManager.task.Connector.getStoreDbTypes(),
 					queryMode: 'local',
 
 					listeners: {
