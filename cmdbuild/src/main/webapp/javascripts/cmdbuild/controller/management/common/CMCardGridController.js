@@ -249,14 +249,12 @@
 					decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.RESPONSE];
 
 					var position = decodedResponse[CMDBuild.core.constants.Proxy.POSITION],
-						found = decodedResponse[CMDBuild.core.constants.Proxy.HAS_POSITION],
-						foundButNotInFilter = decodedResponse.outOfFilter;
+						found = decodedResponse[CMDBuild.core.constants.Proxy.HAS_POSITION];
 
 					if (found) {
 						updateStoreAndSelectGivenPosition(me, p.IdClass, position);
 					} else {
 						if (retryWithoutFilter) {
-
 							me.view.gridSearchField.onUnapplyFilter();
 							unApplyFilter(me);
 
