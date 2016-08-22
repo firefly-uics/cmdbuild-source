@@ -265,9 +265,9 @@
 		 * @param {Object} parameters
 		 * @param {Function} parameters.failure
 		 * @param {Object} parameters.params
-		 * @param {Number} parameters.params.cardId
 		 * @param {String} parameters.params.filter
 		 * @param {String} parameters.params.flowStatus
+		 * @param {Number} parameters.params.instanceId
 		 * @param {Object} parameters.scope
 		 * @param {Function} parameters.success
 		 *
@@ -276,14 +276,17 @@
 		 * @private
 		 */
 		positionActivityGet: function (parameters) {
-			if (!this.cmfg('workflowSelectedWorkflowIsEmpty')) {
-				parameters = Ext.isObject(parameters) ? parameters : {};
-				parameters.params = Ext.isObject(parameters.params) ? parameters.params : {};
+			parameters = Ext.isObject(parameters) ? parameters : {};
+			parameters.params = Ext.isObject(parameters.params) ? parameters.params : {};
 
-				var cardId = parameters.params[CMDBuild.core.constants.Proxy.CARD_ID],
-					filter = parameters.params[CMDBuild.core.constants.Proxy.FILTER],
-					flowStatus = parameters.params[CMDBuild.core.constants.Proxy.FLOW_STATUS],
-					sort = this.cmfg('workflowTreeStoreGet').getSorters();
+			var filter = parameters.params[CMDBuild.core.constants.Proxy.FILTER],
+				flowStatus = parameters.params[CMDBuild.core.constants.Proxy.FLOW_STATUS],
+				instanceId = parameters.params[CMDBuild.core.constants.Proxy.INSTANCE_ID],
+				sort = this.cmfg('workflowTreeStoreGet').getSorters();
+
+			// Error handling
+				if (this.cmfg('workflowSelectedWorkflowIsEmpty'))
+					return _error('positionActivityGet(): empty selected workflow', this);
 
 				if (!Ext.isFunction(parameters.failure))
 					return _error('positionActivityGet(): wrong failure function parameter', this, parameters.failure);
@@ -291,51 +294,49 @@
 				if (!Ext.isFunction(parameters.success))
 					return _error('positionActivityGet(): wrong success function parameter', this, parameters.success);
 
-				if (!Ext.isNumber(cardId) || Ext.isEmpty(cardId))
-					return _error('positionActivityGet(): wrong cardId parameter', this, cardId);
+				if (!Ext.isNumber(instanceId) || Ext.isEmpty(instanceId))
+					return _error('positionActivityGet(): wrong instanceId parameter', this, instanceId);
+			// END: Error handling
 
-				var params = {};
-				params[CMDBuild.core.constants.Proxy.CARD_ID] = cardId;
-				params[CMDBuild.core.constants.Proxy.CLASS_NAME] = this.cmfg('workflowSelectedWorkflowGet', CMDBuild.core.constants.Proxy.NAME);
+			var params = {};
+			params[CMDBuild.core.constants.Proxy.CARD_ID] = instanceId;
+			params[CMDBuild.core.constants.Proxy.CLASS_NAME] = this.cmfg('workflowSelectedWorkflowGet', CMDBuild.core.constants.Proxy.NAME);
 
-				if (Ext.isString(filter) && !Ext.isEmpty(filter))
-					params[CMDBuild.core.constants.Proxy.FILTER] = filter;
+			if (Ext.isString(filter) && !Ext.isEmpty(filter))
+				params[CMDBuild.core.constants.Proxy.FILTER] = filter;
 
-				if (Ext.isString(flowStatus) && !Ext.isEmpty(flowStatus))
-					params[CMDBuild.core.constants.Proxy.FLOW_STATUS] = CMDBuild.controller.management.workflow.Utils.translateStatusFromCapitalizedMode(flowStatus);
+			if (Ext.isString(flowStatus) && !Ext.isEmpty(flowStatus))
+				params[CMDBuild.core.constants.Proxy.FLOW_STATUS] = CMDBuild.controller.management.workflow.Utils.translateStatusFromCapitalizedMode(flowStatus);
 
-				if (Ext.isArray(sort) && !Ext.isEmpty(sort))
-					params[CMDBuild.core.constants.Proxy.SORT] = Ext.encode(sort);
+			if (Ext.isArray(sort) && !Ext.isEmpty(sort))
+				params[CMDBuild.core.constants.Proxy.SORT] = Ext.encode(sort);
 
-				CMDBuild.proxy.management.workflow.panel.tree.Tree.readPosition({
-					params: params,
-					scope: Ext.isObject(parameters.scope) ? parameters.scope : this,
-					success: function (response, options, decodedResponse) {
-						decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.RESPONSE];
+			CMDBuild.proxy.management.workflow.panel.tree.Tree.readPosition({
+				params: params,
+				scope: Ext.isObject(parameters.scope) ? parameters.scope : this,
+				success: function (response, options, decodedResponse) {
+					decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.RESPONSE];
 
-						if (Ext.isObject(decodedResponse) && !Ext.Object.isEmpty(decodedResponse)) {
-							// Card found
-							if (Ext.isBoolean(decodedResponse[CMDBuild.core.constants.Proxy.HAS_POSITION]) && decodedResponse[CMDBuild.core.constants.Proxy.HAS_POSITION]) {
-								Ext.callback(
-									parameters.success,
-									Ext.isObject(parameters.scope) ? parameters.scope : this,
-									[response, options, decodedResponse]
-								);
-							} else { // Card not found
-								Ext.callback(
-									parameters.failure,
-									Ext.isObject(parameters.scope) ? parameters.scope : this,
-									[response, options, decodedResponse]
-								);
-							}
-						} else {
-							_error('positionActivityGet(): unmanaged response', this, decodedResponse);
-						}
+					// Error handling
+					if (!Ext.isObject(decodedResponse) || Ext.Object.isEmpty(decodedResponse))
+						return _error('positionActivityGet(): unmanaged response', this, decodedResponse);
+
+					// Card found
+					if (Ext.isBoolean(decodedResponse[CMDBuild.core.constants.Proxy.HAS_POSITION]) && decodedResponse[CMDBuild.core.constants.Proxy.HAS_POSITION]) {
+						Ext.callback(
+							parameters.success,
+							Ext.isObject(parameters.scope) ? parameters.scope : this,
+							[response, options, decodedResponse]
+						);
+					} else { // Card not found
+						Ext.callback(
+							parameters.failure,
+							Ext.isObject(parameters.scope) ? parameters.scope : this,
+							[response, options, decodedResponse]
+						);
 					}
-				});
-			} else {
-				_error('positionActivityGet(): empty selected workflow', this);
-			}
+				}
+			});
 		},
 
 		/**
@@ -381,11 +382,16 @@
 		 */
 		positionActivityGetSuccess: function (response, options, decodedResponse) {
 			if (Ext.isObject(decodedResponse) && !Ext.Object.isEmpty(decodedResponse)) {
-				var position = decodedResponse[CMDBuild.core.constants.Proxy.POSITION];
+				var extraParams = Ext.clone(this.storeExtraParamsGet()),
+					position = decodedResponse[CMDBuild.core.constants.Proxy.POSITION];
+
+				// Apply instance flowStatus to store parameters
+				if (Ext.isString(decodedResponse[CMDBuild.core.constants.Proxy.FLOW_STATUS]) && !Ext.isEmpty(decodedResponse[CMDBuild.core.constants.Proxy.FLOW_STATUS]))
+					extraParams[CMDBuild.core.constants.Proxy.FLOW_STATUS] = decodedResponse[CMDBuild.core.constants.Proxy.FLOW_STATUS];
 
 				this.cmfg('workflowTreeStoreLoad', {
 					page: CMDBuild.core.Utils.getPageNumber(position),
-					params: Ext.clone(this.storeExtraParamsGet()), // Take the current store configuration to have the sort and filter
+					params: extraParams, // Take the current store configuration to have the sort and filter
 					scope: this,
 					callback: function (records, operation, success) {
 						this.view.getSelectionModel().deselectAll();
@@ -534,9 +540,9 @@
 				// 1st try: with flow status and filter
 				this.positionActivityGet({
 					params: {
-						cardId: parameters[CMDBuild.core.constants.Proxy.ID],
 						filter: this.storeExtraParamsGet(CMDBuild.core.constants.Proxy.FILTER),
-						flowStatus: parameters[CMDBuild.core.constants.Proxy.FLOW_STATUS]
+						flowStatus: parameters[CMDBuild.core.constants.Proxy.FLOW_STATUS],
+						instanceId: parameters[CMDBuild.core.constants.Proxy.ID]
 					},
 					scope: this,
 					failure: function (response, options, decodedResponse) {
@@ -551,8 +557,8 @@
 							// 2nd try: without filter
 							this.positionActivityGet({
 								params: {
-									cardId: parameters[CMDBuild.core.constants.Proxy.ID],
-									flowStatus: parameters[CMDBuild.core.constants.Proxy.FLOW_STATUS]
+									flowStatus: parameters[CMDBuild.core.constants.Proxy.FLOW_STATUS],
+									instanceId: parameters[CMDBuild.core.constants.Proxy.ID]
 								},
 								scope: this,
 								failure: function (response, options, decodedResponse) {
@@ -566,7 +572,7 @@
 										// 3rd try: without filter and flowStatus
 										this.positionActivityGet({
 											params: {
-												cardId: parameters[CMDBuild.core.constants.Proxy.ID]
+												instanceId: parameters[CMDBuild.core.constants.Proxy.ID]
 											},
 											scope: this,
 											failure: this.positionActivityGetFailure, // Card not found and store reload
