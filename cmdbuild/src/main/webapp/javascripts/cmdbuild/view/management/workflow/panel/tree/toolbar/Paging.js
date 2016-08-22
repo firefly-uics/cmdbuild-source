@@ -26,7 +26,10 @@
 		 * @override
 		 */
 		customLoadMethod: function (page) {
-			return this.delegate.cmfg('panelGridAndFormGridStoreLoad', { page: page });
+			return this.delegate.cmfg('panelGridAndFormGridStoreLoad', {
+				page: page,
+				params: this.store.getProxy().extraParams
+			});
 		},
 
 		listeners: {

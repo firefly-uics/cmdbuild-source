@@ -64,6 +64,7 @@ import static org.cmdbuild.servlets.json.schema.Utils.toMap;
 import static org.cmdbuild.workflow.ProcessAttributes.CurrentActivityPerformers;
 import static org.cmdbuild.workflow.ProcessAttributes.FlowStatus;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.Iterator;
@@ -657,8 +658,13 @@ public class ModCard extends JSONBaseWithSpringContext {
 			@Parameter(value = FLOW_STATUS, required = false) final String flowStatus //
 	) throws JSONException {
 		final DataAccessLogic dataAccessLogic = userDataAccessLogic();
+		final Collection<String> attributes = new ArrayList<>();
+		attributes.add(dataAccessLogic.findClass(className).getDescriptionAttributeName());
+		if (workflowLogic().findProcessClass(className) != null) {
+			attributes.add(FlowStatus.dbColumnName());
+		}
 		final QueryOptionsBuilder queryOptionsBuilder = QueryOptions.newQueryOption() //
-				.onlyAttributes(asList(dataAccessLogic.findClass(className).getDescriptionAttributeName()));
+				.onlyAttributes(attributes);
 		addFilterToQueryOption(new JsonFilterHelper(filter) //
 				.merge(FlowStatusFilterElementGetter.newInstance() //
 						.withLookupHelper(lookupHelper()) //
