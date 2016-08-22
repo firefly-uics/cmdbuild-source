@@ -15,7 +15,7 @@
 		 *
 		 * @private
 		 */
-		paramsModel: undefined,
+		parametersModel: undefined,
 
 		/**
 		 * @property {Array}
@@ -49,7 +49,7 @@
 
 						if (Ext.isArray(decodedResponse) && !Ext.isEmpty(decodedResponse)) {
 							var workflowObject = Ext.Array.findBy(decodedResponse, function (workflowObject, i) {
-								return this.paramsModel.get(CMDBuild.core.constants.Proxy.PROCESS_IDENTIFIER) == workflowObject[CMDBuild.core.constants.Proxy.NAME];
+								return this.parametersModel.get(CMDBuild.core.constants.Proxy.PROCESS_IDENTIFIER) == workflowObject[CMDBuild.core.constants.Proxy.NAME];
 							}, this);
 
 							if (Ext.isObject(workflowObject) && !Ext.Object.isEmpty(workflowObject)) {
@@ -57,7 +57,7 @@
 							} else {
 								CMDBuild.core.Message.error(
 									CMDBuild.Translation.common.failure,
-									CMDBuild.Translation.errors.routesInvalidProcessIdentifier + ' (' + this.paramsModel.get(CMDBuild.core.constants.Proxy.PROCESS_IDENTIFIER) + ')',
+									CMDBuild.Translation.errors.routesInvalidProcessIdentifier + ' (' + this.parametersModel.get(CMDBuild.core.constants.Proxy.PROCESS_IDENTIFIER) + ')',
 									false
 								);
 							}
@@ -76,15 +76,15 @@
 		 */
 		manageFilterClient: function () {
 			if (
-				Ext.isObject(this.paramsModel.get(CMDBuild.core.constants.Proxy.CLIENT_FILTER))
-				&& !Ext.Object.isEmpty(this.paramsModel.get(CMDBuild.core.constants.Proxy.CLIENT_FILTER))
+				Ext.isObject(this.parametersModel.get(CMDBuild.core.constants.Proxy.CLIENT_FILTER))
+				&& !Ext.Object.isEmpty(this.parametersModel.get(CMDBuild.core.constants.Proxy.CLIENT_FILTER))
 			) {
 				var moduleController = CMDBuild.global.controller.MainViewport.cmfg('mainViewportModuleControllerGet', CMDBuild.core.constants.ModuleIdentifiers.getWorkflow());
 				moduleController.cmfg('workflowTreeApplyStoreEvent', {
 					eventName: 'load',
 					fn: function () {
 						moduleController.cmfg('workflowTreeFilterApply', Ext.create('CMDBuild.model.common.panel.gridAndForm.filter.advanced.Filter', {
-							configuration: this.paramsModel.get(CMDBuild.core.constants.Proxy.CLIENT_FILTER)
+							configuration: this.parametersModel.get(CMDBuild.core.constants.Proxy.CLIENT_FILTER)
 						}));
 					},
 					scope: this,
@@ -101,46 +101,47 @@
 		 * @private
 		 */
 		manageIdentifierProcess: function (workflowObject, callback) {
-			var accordionController = CMDBuild.global.controller.MainViewport.cmfg('mainViewportAccordionControllerGet', CMDBuild.core.constants.ModuleIdentifiers.getWorkflow());
+			var accordionController = CMDBuild.global.controller.MainViewport.cmfg('mainViewportAccordionControllerWithNodeWithIdGet', workflowObject[CMDBuild.core.constants.Proxy.ID]);
 
-			if (!Ext.isObject(workflowObject) || Ext.Object.isEmpty(workflowObject))
-				return _error('manageIdentifierProcess(): invalid workflowObject parameter', this, workflowObject);
+			// Error handling
+				if (!Ext.isObject(workflowObject) || Ext.Object.isEmpty(workflowObject))
+					return _error('manageIdentifierProcess(): invalid workflowObject parameter', this, workflowObject);
 
-			if (Ext.isObject(accordionController) && !Ext.Object.isEmpty(accordionController)) {
-				accordionController.disableStoreLoad = true;
-				accordionController.cmfg('accordionExpand', {
-					scope: this,
-					callback: function () {
-						Ext.apply(accordionController, { // Setup accordion update callback
-							scope: this,
-							callback: Ext.isFunction(callback) ? callback : Ext.emptyFn
-						});
+				if (!Ext.isObject(accordionController) || Ext.Object.isEmpty(accordionController) || !Ext.isFunction(accordionController.cmfg))
+					return _error('manageIdentifierInstance(): accordionController not found', this, accordionController);
+			// END: Error handling
 
-						accordionController.cmfg('accordionDeselect');
-						accordionController.cmfg('accordionUpdateStore', workflowObject[CMDBuild.core.constants.Proxy.ID]);
-					}
-				});
-			} else {
-				_error('manageIdentifierProcess(): accordion or module controllers not found', this, CMDBuild.core.constants.ModuleIdentifiers.getWorkflow());
-			}
+			accordionController.disableStoreLoad = true;
+			accordionController.cmfg('accordionExpand', {
+				scope: this,
+				callback: function () {
+					Ext.apply(accordionController, { // Setup accordion update callback
+						scope: this,
+						callback: Ext.isFunction(callback) ? callback : Ext.emptyFn
+					});
+
+					accordionController.cmfg('accordionDeselect');
+					accordionController.cmfg('accordionUpdateStore', workflowObject[CMDBuild.core.constants.Proxy.ID]);
+				}
+			});
 		},
 
 		/**
-		 * @param {Object} params
+		 * @param {Object} parameters
 		 *
 		 * @returns {Boolean}
 		 *
 		 * @override
 		 * @private
 		 */
-		paramsValidation: function (params) {
-			this.paramsModel = Ext.create('CMDBuild.model.management.routes.Workflow', params);
+		paramsValidation: function (parameters) {
+			this.parametersModel = Ext.create('CMDBuild.model.management.routes.Workflow', parameters);
 
 			// Process identifier validation
-			if (Ext.isEmpty(this.paramsModel.get(CMDBuild.core.constants.Proxy.PROCESS_IDENTIFIER))) {
+			if (Ext.isEmpty(this.parametersModel.get(CMDBuild.core.constants.Proxy.PROCESS_IDENTIFIER))) {
 				CMDBuild.core.Message.error(
 					CMDBuild.Translation.common.failure,
-					CMDBuild.Translation.errors.routesInvalidProcessIdentifier + ' (' + this.paramsModel.get(CMDBuild.core.constants.Proxy.PROCESS_IDENTIFIER) + ')',
+					CMDBuild.Translation.errors.routesInvalidProcessIdentifier + ' (' + this.parametersModel.get(CMDBuild.core.constants.Proxy.PROCESS_IDENTIFIER) + ')',
 					false
 				);
 
@@ -148,15 +149,15 @@
 			}
 
 			// Client filter validation
-			if (!Ext.isEmpty(this.paramsModel.get(CMDBuild.core.constants.Proxy.CLIENT_FILTER))) {
+			if (!Ext.isEmpty(this.parametersModel.get(CMDBuild.core.constants.Proxy.CLIENT_FILTER))) {
 				// FIXME: validate filter with server side call
 			}
 
 			// Print format validation
-			if (!Ext.Array.contains(this.supportedPrintFormats, this.paramsModel.get(CMDBuild.core.constants.Proxy.FORMAT))) {
+			if (!Ext.Array.contains(this.supportedPrintFormats, this.parametersModel.get(CMDBuild.core.constants.Proxy.FORMAT))) {
 				CMDBuild.core.Message.error(
 					CMDBuild.Translation.common.failure,
-					CMDBuild.Translation.errors.routesInvalidPrintFormat + ' (' + this.paramsModel.get(CMDBuild.core.constants.Proxy.FORMAT) + ')',
+					CMDBuild.Translation.errors.routesInvalidPrintFormat + ' (' + this.parametersModel.get(CMDBuild.core.constants.Proxy.FORMAT) + ')',
 					false
 				);
 
@@ -189,7 +190,7 @@
 
 						if (Ext.isArray(decodedResponse) && !Ext.isEmpty(decodedResponse)) {
 							var workflowObject = Ext.Array.findBy(decodedResponse, function (workflowObject, i) {
-								return this.paramsModel.get(CMDBuild.core.constants.Proxy.PROCESS_IDENTIFIER) == workflowObject[CMDBuild.core.constants.Proxy.NAME];
+								return this.parametersModel.get(CMDBuild.core.constants.Proxy.PROCESS_IDENTIFIER) == workflowObject[CMDBuild.core.constants.Proxy.NAME];
 							}, this);
 
 							if (Ext.isObject(workflowObject) && !Ext.Object.isEmpty(workflowObject)) {
@@ -199,7 +200,7 @@
 										moduleController.cmfg('workflowTreeApplyStoreEvent', {
 											eventName: 'load',
 											fn: function () {
-												moduleController.cmfg('onWorkflowTreePrintButtonClick', this.paramsModel.get(CMDBuild.core.constants.Proxy.FORMAT));
+												moduleController.cmfg('onWorkflowTreePrintButtonClick', this.parametersModel.get(CMDBuild.core.constants.Proxy.FORMAT));
 											},
 											scope: this,
 											options: { single: true }
@@ -209,7 +210,7 @@
 							} else {
 								CMDBuild.core.Message.error(
 									CMDBuild.Translation.common.failure,
-									CMDBuild.Translation.errors.routesInvalidProcessIdentifier + ' (' + this.paramsModel.get(CMDBuild.core.constants.Proxy.PROCESS_IDENTIFIER) + ')',
+									CMDBuild.Translation.errors.routesInvalidProcessIdentifier + ' (' + this.parametersModel.get(CMDBuild.core.constants.Proxy.PROCESS_IDENTIFIER) + ')',
 									false
 								);
 							}

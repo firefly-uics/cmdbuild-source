@@ -418,7 +418,7 @@
 									enableForceFilter: true,
 									enableForceFlowStatus: true,
 									flowStatus: parameters[CMDBuild.core.constants.Proxy.FLOW_STATUS],
-									id: parameters[CMDBuild.core.constants.Proxy.INSTANCE_ID]
+									instanceId: parameters[CMDBuild.core.constants.Proxy.INSTANCE_ID]
 								});
 							},
 							scope: this,
