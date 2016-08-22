@@ -35,9 +35,9 @@
 			'onWorkflowFormAdvanceButtonClick',
 			'onWorkflowFormModifyButtonClick = onWorkflowFormActivityItemDoubleClick',
 			'onWorkflowFormRemoveButtonClick',
-			'onWorkflowFormReset',
 			'onWorkflowFormSaveButtonClick',
-			'onWorkflowFormWokflowSelect = onWorkflowWokflowSelect'
+			'onWorkflowFormWokflowSelect = onWorkflowWokflowSelect',
+			'workflowFormReset'
 		],
 
 		/**
@@ -254,18 +254,6 @@
 		},
 
 		/**
-		 * @returns {Void}
-		 */
-		onWorkflowFormReset: function () {
-			this.controllerTabActivity.reset();
-			this.controllerTabNote.reset();
-			this.controllerTabRelations.reset();
-			this.controllerTabHistory.reset();
-			this.controllerTabEmail.reset();
-			this.controllerTabAttachments.reset();
-		},
-
-		/**
 		 * Forward to sub-controllers
 		 *
 		 * @returns {Void}
@@ -318,6 +306,18 @@
 					}
 				}
 			});
+		},
+
+		/**
+		 * @returns {Void}
+		 */
+		workflowFormReset: function () {
+			this.controllerTabActivity.reset();
+			this.controllerTabNote.reset();
+			this.controllerTabRelations.reset();
+			this.controllerTabHistory.reset();
+			this.controllerTabEmail.reset();
+			this.controllerTabAttachments.reset();
 		}
 	});
 
