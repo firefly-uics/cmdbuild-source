@@ -216,7 +216,7 @@
 						}
 					}, this);
 
-				var params = Ext.clone(this.cmfg('workflowTreeStoreGet').getProxy().extraParams);
+				var params = Ext.clone(this.storeExtraParamsGet());
 				params[CMDBuild.core.constants.Proxy.ATTRIBUTES] = Ext.encode(visibleColumnNames);
 				params[CMDBuild.core.constants.Proxy.TYPE] = format;
 
@@ -357,7 +357,7 @@
 				);
 
 				this.cmfg('workflowTreeStoreLoad', {
-					params: Ext.clone(this.cmfg('workflowTreeStoreGet').getProxy().extraParams), // Take the current store configuration to have the sort and filter
+					params: Ext.clone(this.storeExtraParamsGet()), // Take the current store configuration to have the sort and filter
 					scope: this,
 					callback: function (records, operation, success) { // Avoid first row selection and reset form status
 						this.view.getSelectionModel().deselectAll();
@@ -370,8 +370,8 @@
 				});
 //TODO: waiting for functional specifications
 //				if (
-//						Ext.isString(parameters[CMDBuild.core.constants.Proxy.FLOW_STATUS]) && !Ext.isEmpty(parameters[CMDBuild.core.constants.Proxy.FLOW_STATUS])
-//						&& parameters[CMDBuild.core.constants.Proxy.FLOW_STATUS] == 'COMPLETED'
+//					Ext.isString(parameters[CMDBuild.core.constants.Proxy.FLOW_STATUS]) && !Ext.isEmpty(parameters[CMDBuild.core.constants.Proxy.FLOW_STATUS])
+//					&& parameters[CMDBuild.core.constants.Proxy.FLOW_STATUS] == 'COMPLETED'
 //				) {
 //					_CMWFState.setProcessInstance(Ext.create('CMDBuild.model.CMProcessInstance'));
 //					_CMUIState.onlyGridIfFullScreen();
@@ -398,7 +398,7 @@
 
 				this.cmfg('workflowTreeStoreLoad', {
 					page: CMDBuild.core.Utils.getPageNumber(position),
-					params: Ext.clone(this.cmfg('workflowTreeStoreGet').getProxy().extraParams), // Take the current store configuration to have the sort and filter
+					params: Ext.clone(this.storeExtraParamsGet()), // Take the current store configuration to have the sort and filter
 					scope: this,
 					callback: function (records, operation, success) {
 						this.view.getSelectionModel().deselectAll();
@@ -411,6 +411,51 @@
 				_error('positionActivityGetSuccess(): unmanaged decodedResponse parameter', this, decodedResponse);
 			}
 		},
+
+		// Store extra params methods
+			/**
+			 * @param {String} name
+			 *
+			 * @returns {Mixed}
+			 *
+			 * @private
+			 */
+			storeExtraParamsGet: function (name) {
+				var extraParams = this.cmfg('workflowTreeStoreGet').getProxy().extraParams;
+
+				if (Ext.isString(name) && !Ext.isEmpty(name))
+					return extraParams[name];
+
+				return extraParams;
+			},
+
+			/**
+			 * @param {String} name
+			 *
+			 * @returns {Mixed}
+			 *
+			 * @private
+			 */
+			storeExtraParamsRemove: function (name) {
+				var extraParams = this.cmfg('workflowTreeStoreGet').getProxy().extraParams;
+
+				if (Ext.isString(name) && !Ext.isEmpty(name))
+					delete extraParams[name];
+			},
+
+			/**
+			 * @param {Object} valueObject
+			 *
+			 * @returns {Void}
+			 *
+			 * @private
+			 */
+			storeExtraParamsSet: function (valueObject) {
+				var extraParams = this.cmfg('workflowTreeStoreGet').getProxy().extraParams;
+
+				if (Ext.isObject(valueObject))
+					extraParams = valueObject;
+			},
 
 		// Tree selection methods
 			/**
@@ -496,13 +541,11 @@
 				!this.cmfg('workflowSelectedWorkflowIsEmpty')
 				&& Ext.isNumber(parameters[CMDBuild.core.constants.Proxy.ID]) && !Ext.isEmpty(parameters[CMDBuild.core.constants.Proxy.ID])
 			) {
-				var storeExtraParams = this.cmfg('workflowTreeStoreGet').getProxy().extraParams;
-
 				// 1st try: with flow status and filter
 				this.positionActivityGet({
 					params: {
 						cardId: parameters[CMDBuild.core.constants.Proxy.ID],
-						filter: storeExtraParams[CMDBuild.core.constants.Proxy.FILTER],
+						filter: this.storeExtraParamsGet(CMDBuild.core.constants.Proxy.FILTER),
 						flowStatus: parameters[CMDBuild.core.constants.Proxy.FLOW_STATUS]
 					},
 					scope: this,
@@ -512,7 +555,7 @@
 						this.cmfg('workflowTreeFilterClear', { disableStoreLoad: true });
 
 						// Removes filter from store extraParams object
-						delete storeExtraParams[CMDBuild.core.constants.Proxy.FILTER]; // TODO: management methods for extra params object
+						delete this.storeExtraParamsRemove(CMDBuild.core.constants.Proxy.FILTER);
 
 						// 2nd try: without filter
 						this.positionActivityGet({
@@ -786,7 +829,8 @@
 				params[CMDBuild.core.constants.Proxy.CLASS_NAME] = this.cmfg('workflowSelectedWorkflowGet', CMDBuild.core.constants.Proxy.NAME);
 				params[CMDBuild.core.constants.Proxy.STATE] = this.controllerToolbarTop.cmfg('workflowTreeToolbarTopStatusValueGet');
 
-				this.cmfg('workflowTreeStoreGet').getProxy().extraParams = params; // Setup extraParams to works also with sorters and print report
+				this.storeExtraParamsSet(params); // Setup extraParams to works also with sorters and print report
+
 				this.cmfg('workflowTreeStoreGet').loadPage(parameters.page, {
 					params: params,
 					scope: Ext.isEmpty(parameters.scope) ? this : parameters.scope,
