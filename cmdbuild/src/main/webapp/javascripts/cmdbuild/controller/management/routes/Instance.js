@@ -151,8 +151,8 @@
 
 										if (Ext.isString(forceState) && !Ext.isEmpty(forceState))
 											moduleController.cmfg('workflowTreeToolbarTopStatusValueSet', {
-												value: forceState,
-												silently: true // Useless server call optimization
+												silently: true, // Useless server call optimization
+												value: forceState
 											});
 									},
 									scope: this,

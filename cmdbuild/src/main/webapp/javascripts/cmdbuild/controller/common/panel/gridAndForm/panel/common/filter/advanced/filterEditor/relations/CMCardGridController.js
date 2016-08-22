@@ -195,6 +195,7 @@
 			var params = Ext.apply({}, store.proxy.extraParams);
 			params[CMDBuild.core.constants.Proxy.CARD_ID] = p.Id;
 			params[CMDBuild.core.constants.Proxy.CLASS_NAME] = _CMCache.getEntryTypeNameById(p.IdClass);
+			params[CMDBuild.core.constants.Proxy.FLOW_STATUS] = params[CMDBuild.core.constants.Proxy.STATE]; // fix creating alias to work with old implementations
 			params[CMDBuild.core.constants.Proxy.SORT] = Ext.encode(getSorting(store));
 
 			CMDBuild.proxy.Card.readPosition({
