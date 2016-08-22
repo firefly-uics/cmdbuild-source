@@ -149,7 +149,7 @@
 									var params = {};
 									params[CMDBuild.core.constants.Proxy.FLOW_STATUS] = forceState;
 									params[CMDBuild.core.constants.Proxy.INSTANCE_ID] = instanceIdentifier;
-_debug('params', params);
+
 									moduleController.cmfg('workflowTreeActivityOpen', params);
 
 									if (Ext.isString(forceState) && !Ext.isEmpty(forceState))

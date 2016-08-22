@@ -532,7 +532,7 @@
 			parameters = Ext.isObject(parameters) ? parameters : {};
 			parameters.enableForceFilter = Ext.isBoolean(parameters.enableForceFilter) ? parameters.enableForceFilter : true;
 			parameters.enableForceFlowStatus = Ext.isBoolean(parameters.enableForceFlowStatus) ? parameters.enableForceFlowStatus : false;
-_debug('workflowTreeActivityOpen', parameters);
+
 			// Error handling
 				if (this.cmfg('workflowSelectedWorkflowIsEmpty'))
 					return _error('workflowTreeActivityOpen(): no workflow is selected', this);
