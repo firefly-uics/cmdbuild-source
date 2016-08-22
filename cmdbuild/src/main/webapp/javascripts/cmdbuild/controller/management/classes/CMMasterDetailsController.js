@@ -260,8 +260,7 @@
 	function onDetailDoubleClick(grid, model, html, index, e, options) {
 		CMDBuild.global.controller.MainViewport.cmfg('mainViewportCardSelect', {
 			Id: model.get("Id"),
-			IdClass: model.get("IdClass"),
-			activateFirstTab: true
+			IdClass: model.get("IdClass")
 		});
 	}
 
