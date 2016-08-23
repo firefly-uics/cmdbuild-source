@@ -1,5 +1,8 @@
 (function() {
 
+	/**
+	 * @link CMDBuild.view.management.CMMiniCardGrid
+	 */
 	Ext.define("CMDBuild.view.management.common.widgets.linkCards.map.CMMiniCardGrid", {
 		extend: "Ext.grid.Panel",
 

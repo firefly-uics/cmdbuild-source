@@ -475,100 +475,16 @@ public class ModCard extends JSONBaseWithSpringContext {
 			@Parameter(value = ATTRIBUTES, required = false) final JSONArray attributes, //
 			final Map<String, Object> otherAttributes //
 	) throws JSONException {
-		return getCardList(className, filter, limit, offset, sorters,
-				toIterable(defaultIfNull(attributes, new JSONArray())), otherAttributes);
-	}
-
-	/**
-	 * Retrieves a list of cards for the specified class, returning only the
-	 * values for a subset of values
-	 *
-	 * @param filter
-	 *            null if no filter is specified
-	 * @param sorters
-	 *            null if no sorter is specified
-	 * @param attributes
-	 *            null if all attributes for the specified class are required
-	 *            (it is equivalent to the getCardList method)
-	 * @return
-	 */
-	@JSONExported
-	// TODO: check the input parameters and serialization
-	public JSONObject getCardListShort( //
-			@Parameter(value = CLASS_NAME) final String className, //
-			@Parameter(LIMIT) final int limit, //
-			@Parameter(START) final int offset, //
-			@Parameter(value = FILTER, required = false) final JSONObject filter, //
-			@Parameter(value = SORT, required = false) final JSONArray sorters, //
-			@Parameter(value = ATTRIBUTES, required = false) final JSONArray attributes, //
-			final Map<String, Object> otherAttributes //
-	) throws JSONException, CMDBException {
-		return getCardList(className, filter, limit, offset, sorters,
-				toIterable(defaultIfNull(attributes, new JSONArray(asList(DESCRIPTION_ATTRIBUTE)))), otherAttributes);
-	}
-
-	/**
-	 * Retrieves the cards for the specified class. If a filter is defined, only
-	 * the cards that match the filter are retrieved. The fetched cards are
-	 * sorted if a sorter is defined. Note that the max number of retrieved
-	 * cards is the 'limit' parameter
-	 *
-	 * @param className
-	 *            the name of the class for which I want to retrieve the cards
-	 * @param filter
-	 *            null if no filter is defined. It retrieves all the active
-	 *            cards for the specified class that match the filter
-	 * @param limit
-	 *            max number of retrieved cards (for pagination it is the max
-	 *            number of cards in a page)
-	 * @param offset
-	 *            is the offset from the first card (for pagination)
-	 * @param sorters
-	 *            null if no sorter is defined
-	 */
-	@JSONExported
-	public JSONObject getDetailList( //
-			@Parameter(value = CLASS_NAME) final String className, //
-			@Parameter(value = FILTER, required = false) final JSONObject filter, //
-			@Parameter(LIMIT) final int limit, //
-			@Parameter(START) final int offset, //
-			@Parameter(value = SORT, required = false) final JSONArray sorters, //
-			final Map<String, Object> otherAttributes //
-	) throws JSONException {
-
-		final DataAccessLogic dataLogic = userDataAccessLogic();
 		final QueryOptionsBuilder queryOptionsBuilder = QueryOptions.newQueryOption() //
 				.limit(limit) //
 				.offset(offset) //
 				.orderBy(sorters) //
-				.parameters(otherAttributes) //
-				.filter(filter); //
-
-		final QueryOptions queryOptions = queryOptionsBuilder.build();
-		final PagedElements<Card> response = dataLogic.fetchCards(className, queryOptions);
-		return cardSerializer().toClient(response.elements(), response.totalSize());
-	}
-
-	private JSONObject getCardList(final String className, final JSONObject filter, final int limit, final int offset,
-			final JSONArray sorters, final Iterable<String> attributes, final Map<String, Object> otherAttributes)
-			throws JSONException {
-		final DataAccessLogic dataLogic = userDataAccessLogic();
-		final QueryOptionsBuilder queryOptionsBuilder = QueryOptions.newQueryOption() //
-				.limit(limit) //
-				.offset(offset) //
-				.orderBy(sorters) //
-				.onlyAttributes(attributes) //
+				.onlyAttributes(toIterable(defaultIfNull(attributes, new JSONArray()))) //
 				.parameters(otherAttributes) //
 				.filter(filter);
 		final QueryOptions queryOptions = queryOptionsBuilder.build();
-		final PagedElements<Card> response = dataLogic.fetchCards(className, queryOptions);
-		return cardSerializer().toClient(removeUnwantedAttributes(response.elements(), attributes),
-				response.totalSize());
-	}
-
-	private Iterable<Card> removeUnwantedAttributes(final Iterable<Card> elements, final Iterable<String> attributes) {
-		return from(elements) //
-				.transform(new FilterAttribute(attributes));
+		final PagedElements<Card> response = userDataAccessLogic().fetchCards(className, queryOptions);
+		return cardSerializer().toClient(response.elements(), response.totalSize());
 	}
 
 	@JSONExported

@@ -170,7 +170,7 @@
 
 				if (!Ext.isEmpty(cardsCodesToManage)) {
 					var params = {};
-					params[CMDBuild.core.constants.Proxy.ATTRIBUTES] = Ext.encode(['Code', 'Description']);
+					params[CMDBuild.core.constants.Proxy.ATTRIBUTES] = Ext.encode(['Description']);
 					params[CMDBuild.core.constants.Proxy.CLASS_NAME] = attribute.get(CMDBuild.core.constants.Proxy.TARGET_CLASS);
 					params[CMDBuild.core.constants.Proxy.FILTER] = Ext.encode({ // Filters request to get only required cards
 						attribute: {

@@ -4,7 +4,7 @@
 	var FILTER_FIELD = "_SystemFieldFilter";
 	var cacheFields = [];
 
-	Ext.require('CMDBuild.proxy.Card');
+	Ext.require('CMDBuild.proxy.management.widget.NavigationTree');
 
 	Ext.define("CMDBuild.view.management.common.widgets.CMNavigationTree", {
 		extend: "Ext.panel.Panel",
@@ -127,7 +127,7 @@
 				var filterEncoded = (! callParams) ? "" : Ext.encode({
 					CQL: callParams.CQL
 				});
-				CMDBuild.proxy.Card.readAll({
+				CMDBuild.proxy.management.widget.NavigationTree.readAll({
 					params: {
 						className: className,
 						filter: filterEncoded

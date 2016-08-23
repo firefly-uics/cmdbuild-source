@@ -19,7 +19,7 @@
 			var masterCardClassName = _CMCache.getEntryTypeNameById(masterCardClassId); // needed if is a subclass of the domain master class
 
 			function setExtraParamsAndLoad(me) {
-				me.store.proxy.url = CMDBuild.proxy.index.Json.card.readAllDetails;
+				me.store.proxy.url = CMDBuild.proxy.index.Json.card.readAll;
 
 				var filter = {
 					relation: [{

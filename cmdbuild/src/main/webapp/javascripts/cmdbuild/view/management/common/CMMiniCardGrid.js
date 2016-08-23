@@ -97,7 +97,7 @@
 		},
 
 		/**
-		 * 
+		 *
 		 * @param {Ext.data.Model} row The row to select
 		 */
 		selectRecordSilently: function(row) {

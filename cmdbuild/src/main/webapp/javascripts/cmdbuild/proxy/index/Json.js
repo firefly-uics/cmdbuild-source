@@ -69,8 +69,6 @@
 			remove: 'services/json/management/modcard/deletecard',
 
 			readAll: 'services/json/management/modcard/getcardlist',
-			readAllDetails: 'services/json/management/modcard/getdetaillist',
-			readAllShort: 'services/json/management/modcard/getcardlistshort',
 
 			bulkUpdate: 'services/json/management/modcard/bulkupdate',
 			bulkUpdateFromFilter: 'services/json/management/modcard/bulkupdatefromfilter',
