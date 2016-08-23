@@ -2,6 +2,12 @@
 
 	Ext.define("CMDBuild.view.management.classes.map.thematism.ThematicStrategiesManager", {
 		requires : [ "CMDBuild.view.management.classes.map.proxy.Functions" ],
+		
+		/**
+		 * loaded function strategies; can be used only after a call of getFunctionStrategies on the class
+		 */
+		functionStrategies : undefined,
+		
 		/**
 		 * Custom client functions
 		 */
@@ -66,12 +72,26 @@
 			CMDBuild.view.management.classes.map.proxy.Functions.readAllFunctions({
 				scope : this,
 				success : function(response, options, decodedResponse) {
-					var strategies = decodedResponse[CMDBuild.core.constants.Proxy.DATA];
-					this.completeStrategyByStrategy(strategies, 0, function() {
-						callback.apply(callbackScope, [ strategies ]);
-					});
+					this.functionStrategies = decodedResponse[CMDBuild.core.constants.Proxy.DATA];
+					this.completeStrategyByStrategy(this.functionStrategies, 0, function() {
+						callback.apply(callbackScope, [ this.functionStrategies ]);
+					},this);
 				}
 			});
+		},
+		
+		getStrategyByDescription : function(description) {
+			for (var key in this.strategies) {
+				if (this.strategies[key].description === description) {
+					return this.strategies[key];
+				}
+			}
+			for (var i = 0; this.functionStrategies && i < this.functionStrategies.length; i++) {
+				if (this.functionStrategies[i].description === description) {
+					return this.functionStrategies[i];
+				}
+			}
+			return null;
 		},
 
 		/**
@@ -97,29 +117,6 @@
 				}
 			});
 		},
-		/**
-		 * @param {Object}
-		 *            parameters
-		 * 
-		 * @returns {generic value}
-		 */
-//		functionAttributes : function(parameters, callback, callbackScope) {
-//			var params = {
-//				parameters : Ext.encode({
-//					ClassName : parameters.card.className,
-//					CardId : parameters.card.Id
-//				})
-//			};
-//
-//			CMDBuild.view.management.classes.map.proxy.Functions.readAttributes({
-//				scope : this,
-//				_id : parameters.strategy._id,
-//				params : params,
-//				success : function(response, options, decodedResponse) {
-//					callback.apply(callbackScope, [ decodedResponse.data[0] ]);
-//				}
-//			});
-//		},
 
 		/**
 		 * @param {Array}

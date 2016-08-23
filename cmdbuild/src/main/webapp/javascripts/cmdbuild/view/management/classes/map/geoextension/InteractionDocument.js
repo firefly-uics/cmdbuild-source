@@ -5,6 +5,7 @@
 		editLayer : undefined,
 		feature : undefined,
 		currentCard : undefined,
+
 		configurationMap : {
 			center : [ CMDBuild.configuration.gis.get(CMDBuild.gis.constants.CENTER_LONGITUDE) || 0,
 					CMDBuild.configuration.gis.get(CMDBuild.gis.constants.CENTER_LATITUDE) || 0 ],
@@ -13,7 +14,6 @@
 		},
 		constructor : function(thematicDocument) {
 			this.thematicDocument = thematicDocument;
-			
 			this.callParent(arguments);
 		},
 		setConfigurationMap : function(mapPanel) {
@@ -29,6 +29,9 @@
 			this.thematicDocument.getFunctionStrategies(function(strategies) {
 				callback.apply(callbackScope, [strategies]);
 			}, this);
+		},
+		getStrategyByDescription : function(description) {
+			return this.thematicDocument.getStrategyByDescription(description);
 		},
 		getConfigurationMap : function() {
 			return this.configurationMap;

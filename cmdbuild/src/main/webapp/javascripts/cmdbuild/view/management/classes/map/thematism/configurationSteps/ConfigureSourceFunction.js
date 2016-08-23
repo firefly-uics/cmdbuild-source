@@ -14,7 +14,7 @@
 		initComponent : function() {
 			var me = this;
 			this.strategiesStore = Ext.create("Ext.data.Store", {
-				fields : [ "name", "type" ],
+				fields : [ "description", "value" ],
 				data : []
 			});
 			this.comboStrategies = Ext.create("Ext.form.field.ComboBox", {
@@ -45,7 +45,7 @@
 					var strategy = strategies[key];
 					strategiesStore.add({
 						"description" : strategy.description,
-						"value" : strategy
+						"value" : strategy.description
 					});
 				}
 				this.comboStrategies.store.loadData(strategiesStore.getRange(), false);

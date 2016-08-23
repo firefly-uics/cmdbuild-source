@@ -9,7 +9,7 @@
 		parentWindow : undefined,
 		interactionDocument : undefined,
 		comboLayers : undefined,
-		
+
 		/**
 		 * @returns {Void}
 		 * 
@@ -28,7 +28,9 @@
 				queryMode : "local",
 				displayField : "name",
 				valueField : "name",
-				allowBlank : false
+				allowBlank : false,
+				editable : false,
+				triggerAction : "all"
 			});
 			Ext.apply(this, {
 				items : [ {
@@ -38,54 +40,21 @@
 					allowBlank : false
 				}, {
 					xtype : "radiogroup",
+					name : "analysis",
 					fieldLabel : "@@ Analysis type",
 					vertical : true,
 					border : true,
-					items : [ {
-						boxLabel : this.parentWindow.getAnalysisDescription(CMDBuild.gis.constants.layers.RANGES_ANALYSIS),
-						name : "analysis",
-						inputValue : CMDBuild.gis.constants.layers.RANGES_ANALYSIS
-					}, {
-						boxLabel : this.parentWindow.getAnalysisDescription(CMDBuild.gis.constants.layers.PUNTUAL_ANALYSIS),
-						name : "analysis",
-						inputValue : CMDBuild.gis.constants.layers.PUNTUAL_ANALYSIS,
-						checked : true
-					}, {
-						boxLabel : this.parentWindow.getAnalysisDescription(CMDBuild.gis.constants.layers.DENSITY_ANALYSIS),
-						name : "analysis",
-						inputValue : CMDBuild.gis.constants.layers.DENSITY_ANALYSIS
-					} ]
+					items : getAnalysisItems(this.parentWindow)
 				}, {
 					xtype : "radiogroup",
+					name : "source",
 					fieldLabel : "@@ Source type",
 					columns : 1,
 					vertical : true,
 					border : true,
-					items : [ {
-						checked : true,
-						boxLabel : "@@ from table",
-						name : "source",
-						inputValue : CMDBuild.gis.constants.layers.TABLE_SOURCE
-					}, {
-						boxLabel : "@@ from function",
-						name : "source",
-						inputValue : CMDBuild.gis.constants.layers.FUNCTION_SOURCE,
-					} ]
+					items : getSourceItems()
 				}, this.comboLayers ],
-				buttons : [ {
-					text : '@@ Cancel',
-					handler : function() {
-						me.parentWindow.close();
-					}
-				}, {
-					text : '@@ Advance',
-					formBind : true, // only enabled once the form is valid
-					disabled : true,
-					handler : function() {
-						var form = this.up('form').getForm();
-						me.parentWindow.advance(me.itemId, form.getValues());
-					}
-				} ],
+				buttons : getButtons(this.parentWindow, this.itemId),
 			});
 			this.callParent(arguments);
 		},
@@ -94,9 +63,17 @@
 		},
 		loadComponents : function(callback, callbackScope) {
 			this.loadLayers(function() {
-				this.comboLayers.select(this.comboLayers.getStore().getAt(0));
+				var thematismConfiguration = this.parentWindow.getThematismConfiguration();
+				this.init();
+				if (!thematismConfiguration.sourceLayer) {
+					this.comboLayers.select(this.comboLayers.getStore().getAt(0));
+				}
 				callback.apply(callbackScope, []);
 			}, this);
+		},
+		init : function() {
+			var thematismConfiguration = this.parentWindow.getThematismConfiguration();
+			this.parentWindow.initForm(this, thematismConfiguration);
 		},
 		loadLayers : function(callback, callbackScope) {
 			var card = this.interactionDocument.getCurrentCard();
@@ -128,4 +105,59 @@
 			}, this);
 		}
 	});
+	function getAnalysisItems(parentWindow) {
+		return [ {
+			boxLabel : parentWindow.getAnalysisDescription(CMDBuild.gis.constants.layers.RANGES_ANALYSIS),
+			name : "analysis",
+			inputValue : CMDBuild.gis.constants.layers.RANGES_ANALYSIS
+		}, {
+			boxLabel : parentWindow.getAnalysisDescription(CMDBuild.gis.constants.layers.PUNTUAL_ANALYSIS),
+			name : "analysis",
+			inputValue : CMDBuild.gis.constants.layers.PUNTUAL_ANALYSIS,
+			checked : true
+		}, {
+			boxLabel : parentWindow.getAnalysisDescription(CMDBuild.gis.constants.layers.DENSITY_ANALYSIS),
+			name : "analysis",
+			inputValue : CMDBuild.gis.constants.layers.DENSITY_ANALYSIS
+		} ];
+	}
+	function getSourceItems() {
+		return [ {
+			checked : true,
+			boxLabel : "@@ from table",
+			name : "source",
+			inputValue : CMDBuild.gis.constants.layers.TABLE_SOURCE
+		}, {
+			boxLabel : "@@ from function",
+			name : "source",
+			inputValue : CMDBuild.gis.constants.layers.FUNCTION_SOURCE,
+		} ];
+	}
+
+	/**
+	 * @param
+	 * {CMDBuild.view.management.classes.map.thematism.ThematismMainWindow}
+	 * parentWindow
+	 * @param {String}
+	 *            itemId
+	 * 
+	 * @returns {Array} extjs items
+	 */
+	function getButtons(parentWindow, itemId) {
+		return [ {
+			text : '@@ Cancel',
+			handler : function() {
+				parentWindow.close();
+			}
+		}, {
+			text : '@@ Advance',
+			formBind : true,
+			disabled : true,
+			handler : function() {
+				var form = this.up('form').getForm();
+				parentWindow.advance(itemId, form.getValues());
+			}
+		} ];
+	}
+
 })();
