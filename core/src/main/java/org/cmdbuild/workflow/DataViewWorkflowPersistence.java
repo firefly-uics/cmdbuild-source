@@ -34,7 +34,6 @@ import org.cmdbuild.logic.data.access.DataViewCardFetcher;
 import org.cmdbuild.workflow.WorkflowUpdateHelper.WorkflowUpdateHelperBuilder;
 import org.cmdbuild.workflow.service.CMWorkflowService;
 import org.cmdbuild.workflow.service.WSProcessInstInfo;
-import org.cmdbuild.workflow.user.ForwardingUserProcessInstance;
 import org.cmdbuild.workflow.user.UserProcessClass;
 import org.cmdbuild.workflow.user.UserProcessInstance;
 import org.cmdbuild.workflow.user.UserProcessInstanceWithPosition;
@@ -152,29 +151,6 @@ public class DataViewWorkflowPersistence implements WorkflowPersistence {
 		return new DataViewWorkflowPersistenceBuilder();
 	}
 
-	private static class UserProcessInstanceWithPositionImpl extends ForwardingUserProcessInstance implements
-			UserProcessInstanceWithPosition {
-
-		private final UserProcessInstance delegate;
-		private final Long position;
-
-		public UserProcessInstanceWithPositionImpl(final UserProcessInstance delegate, final Long position) {
-			this.delegate = delegate;
-			this.position = position;
-		}
-
-		@Override
-		protected UserProcessInstance delegate() {
-			return delegate;
-		}
-
-		@Override
-		public Long getPosition() {
-			return position;
-		}
-
-	}
-
 	private static final Iterable<Long> NO_VALUE = emptyList();
 
 	private final PrivilegeContext privilegeContext;
@@ -220,8 +196,8 @@ public class DataViewWorkflowPersistence implements WorkflowPersistence {
 			@Override
 			public boolean apply(final CMClass input) {
 				return input.getName().equals(BASE_PROCESS_CLASS_NAME) || //
-						privilegeContext.hasAdministratorPrivileges() || //
-						privilegeContext.hasReadAccess(input);
+				privilegeContext.hasAdministratorPrivileges() || //
+				privilegeContext.hasReadAccess(input);
 			}
 		};
 	}
@@ -279,8 +255,8 @@ public class DataViewWorkflowPersistence implements WorkflowPersistence {
 		logger.info(marker, "creating process instance of '{}' '{}'", //
 				processInstInfo.getPackageId(), //
 				processInstInfo.getProcessDefinitionId());
-		final String processClassName = processDefinitionManager.getProcessClassName(processInstInfo
-				.getProcessDefinitionId());
+		final String processClassName =
+				processDefinitionManager.getProcessClassName(processInstInfo.getProcessDefinitionId());
 		final CMProcessClass processClass = wrap(dataView.findClass(processClassName));
 		return createProcessInstance(processClass, processInstInfo, processData);
 	}
@@ -332,8 +308,8 @@ public class DataViewWorkflowPersistence implements WorkflowPersistence {
 
 	@Override
 	public UserProcessInstance findProcessInstance(final WSProcessInstInfo processInstInfo) throws CMWorkflowException {
-		final String processClassName = processDefinitionManager.getProcessClassName(processInstInfo
-				.getProcessDefinitionId());
+		final String processClassName =
+				processDefinitionManager.getProcessClassName(processInstInfo.getProcessDefinitionId());
 		final CMProcessClass processClass = wrap(dataView.findClass(processClassName));
 		return wrap(findProcessCard(processClass, processInstInfo.getProcessInstanceId()));
 	}
@@ -402,7 +378,7 @@ public class DataViewWorkflowPersistence implements WorkflowPersistence {
 							public UserProcessInstanceWithPosition apply(final CMQueryRow input) {
 								final CMCard card = input.getCard(target);
 								final UserProcessInstance userProcessInstance = toUserProcessInstance().apply(card);
-								return new UserProcessInstanceWithPositionImpl(userProcessInstance,
+								return new UserProcessInstanceWithPosition(userProcessInstance,
 										input.getNumber() - 1);
 							}
 

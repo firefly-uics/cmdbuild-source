@@ -1,5 +1,6 @@
 package org.cmdbuild.logic.mapping.json;
 
+import static org.apache.commons.lang3.ObjectUtils.*;
 import static org.cmdbuild.logic.mapping.json.Constants.Filters.AND_KEY;
 import static org.cmdbuild.logic.mapping.json.Constants.Filters.ATTRIBUTE_KEY;
 import static org.cmdbuild.logic.mapping.json.Constants.Filters.NOT_KEY;
@@ -32,8 +33,12 @@ public class JsonFilterHelper {
 
 	private final JSONObject filter;
 
+	/**
+	 * @param filter
+	 *            JSON object representing a filter, can be {@code null}.
+	 */
 	public JsonFilterHelper(final JSONObject filter) {
-		this.filter = filter;
+		this.filter = defaultIfNull(filter, new JSONObject());
 	}
 
 	public JSONObject merge(final FilterElementGetter filterElementGetter) throws JSONException {
@@ -45,7 +50,7 @@ public class JsonFilterHelper {
 		final JSONObject additionalElement = filterElementGetter.getElement();
 		logger.info(marker, "adding condition '{}' to actual filter '{}'", additionalElement, filter);
 
-		final JSONObject alwaysValidJsonFilter = (filter == null) ? new JSONObject() : filter;
+		final JSONObject alwaysValidJsonFilter = filter;
 
 		final JSONObject attribute;
 		if (alwaysValidJsonFilter.has(ATTRIBUTE_KEY)) {

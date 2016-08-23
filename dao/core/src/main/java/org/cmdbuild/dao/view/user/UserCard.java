@@ -7,14 +7,14 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import org.cmdbuild.dao.entry.CMCard;
+import org.cmdbuild.dao.entry.ForwardingCard;
 import org.cmdbuild.dao.entrytype.CMAttribute;
 import org.cmdbuild.dao.entrytype.CMClass;
-import org.joda.time.DateTime;
 
 import com.google.common.base.Predicate;
 import com.google.common.collect.Maps;
 
-public class UserCard implements CMCard {
+public class UserCard extends ForwardingCard {
 
 	private final CMCard inner;
 	private final UserClass userClass;
@@ -48,28 +48,8 @@ public class UserCard implements CMCard {
 	}
 
 	@Override
-	public Long getId() {
-		return inner.getId();
-	}
-
-	@Override
-	public String getUser() {
-		return inner.getUser();
-	}
-
-	@Override
-	public DateTime getBeginDate() {
-		return inner.getBeginDate();
-	}
-
-	@Override
-	public DateTime getEndDate() {
-		return inner.getEndDate();
-	}
-
-	@Override
-	public Long getCurrentId() {
-		return inner.getCurrentId();
+	protected CMCard delegate() {
+		return inner;
 	}
 
 	@Override
@@ -108,16 +88,6 @@ public class UserCard implements CMCard {
 	@Override
 	public CMClass getType() {
 		return userClass;
-	}
-
-	@Override
-	public Object getCode() {
-		return inner.getCode();
-	}
-
-	@Override
-	public Object getDescription() {
-		return inner.getDescription();
 	}
 
 }
