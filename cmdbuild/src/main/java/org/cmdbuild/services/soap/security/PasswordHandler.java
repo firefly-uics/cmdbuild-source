@@ -1,6 +1,9 @@
 package org.cmdbuild.services.soap.security;
 
+import static org.apache.commons.lang3.StringUtils.defaultIfBlank;
 import static org.apache.commons.lang3.StringUtils.isNotEmpty;
+import static org.apache.commons.lang3.builder.ToStringBuilder.reflectionToString;
+import static org.apache.commons.lang3.builder.ToStringStyle.SHORT_PREFIX_STYLE;
 import static org.cmdbuild.auth.user.AuthenticatedUserImpl.ANONYMOUS_USER;
 
 import java.io.IOException;
@@ -11,8 +14,6 @@ import javax.security.auth.callback.Callback;
 import javax.security.auth.callback.CallbackHandler;
 import javax.security.auth.callback.UnsupportedCallbackException;
 
-import org.apache.commons.lang3.builder.ToStringBuilder;
-import org.apache.commons.lang3.builder.ToStringStyle;
 import org.apache.wss4j.common.ext.WSPasswordCallback;
 import org.cmdbuild.auth.AuthenticationService.PasswordCallback;
 import org.cmdbuild.auth.DefaultAuthenticationService;
@@ -31,11 +32,12 @@ public class PasswordHandler implements CallbackHandler {
 
 	public static class AuthenticationString {
 
-		private static final String PATTERN = "([^@#]+(@[^\\.]+\\.[^@#]+)?)(#([^@]+(@[^\\.]+\\.[^@]+)?))?(@([^@\\.]+))?";
+		private static final String PATTERN =
+				"([^@#!]+(@[^\\.]+\\.[^@#]+)?)((#|!)([^@]+(@[^\\.]+\\.[^@]+)?))?(@([^@\\.]+))?";
 
 		private final LoginAndGroup authenticationLogin;
 		private final LoginAndGroup impersonationLogin;
-		private final transient String toString;
+		private final boolean impersonateForcibly;
 
 		public AuthenticationString(final String username) {
 			final Pattern pattern = Pattern.compile(PATTERN);
@@ -45,23 +47,17 @@ public class PasswordHandler implements CallbackHandler {
 				throw AuthExceptionType.AUTH_LOGIN_WRONG.createException();
 			}
 			final String userOrServiceUser = matcher.group(1);
-			final String impersonatedUser = matcher.group(4);
-			final String group = matcher.group(7);
-			// final String usernameForAuthentication =
-			// isNotEmpty(userNotService) ? user :
-			// defaultIfBlank(userNotService,
-			// user);
+			final String impersonate = matcher.group(4);
+			final String impersonatedUser = matcher.group(5);
+			final String group = matcher.group(8);
 
 			authenticationLogin = LoginAndGroup.newInstance(Login.newInstance(userOrServiceUser), group);
+			impersonateForcibly = defaultIfBlank(impersonate, "#").equals("!");
 			if (isNotEmpty(impersonatedUser)) {
 				impersonationLogin = LoginAndGroup.newInstance(Login.newInstance(impersonatedUser), group);
 			} else {
 				impersonationLogin = null;
 			}
-			toString = new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE) //
-					.append("authentication login", authenticationLogin) //
-					.append("impersonation login", impersonationLogin) //
-					.toString();
 		}
 
 		public LoginAndGroup getAuthenticationLogin() {
@@ -76,9 +72,13 @@ public class PasswordHandler implements CallbackHandler {
 			return impersonationLogin != null;
 		}
 
+		public boolean impersonateForcibly() {
+			return impersonateForcibly;
+		}
+
 		@Override
 		public String toString() {
-			return toString;
+			return reflectionToString(this, SHORT_PREFIX_STYLE);
 		}
 
 	}

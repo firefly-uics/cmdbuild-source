@@ -42,6 +42,18 @@ FIXES
 
  * Task manager UI behaviour errors
 
+ * "Privileged" status for user invalidates "impersonate" operation of WorkflowAPI
+
+ * Tab details errors whith simple class ForeignKey as source
+
+ * ForeignKey fields store URL errors
+
+ * Widget buttons duplication while using direct routes on process instance with Firefox
+
+ * Error while saving a search filter without selecting a default group
+
+ * Wrong privileges management for reports from REST web services
+
 
 
 
