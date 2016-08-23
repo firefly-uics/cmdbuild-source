@@ -2,13 +2,13 @@
 
 	/**
 	 * FIXME: build own class
-	 *
-	 * @link CMDBuild.view.management.common.CMCardGrid
-	 * @link CMDBuild.view.common.panel.gridAndForm.panel.common.filter.advanced.filterEditor.relations.CMCardGridPagingBar
 	 */
 
 	Ext.require('CMDBuild.proxy.index.Json');
 
+	/**
+	 * @link CMDBuild.view.management.common.CMCardGridPagingBar
+	 */
 	Ext.define("CMDBuild.view.management.workflow.panel.tree.filter.advanced.filterEditor.relations.CMCardGridPagingBar", {
 		extend: "Ext.toolbar.Paging",
 
@@ -28,6 +28,9 @@
 		}
 	});
 
+	/**
+	 * @link CMDBuild.view.management.common.CMCardGrid
+	 */
 	Ext.define("CMDBuild.view.management.workflow.panel.tree.filter.advanced.filterEditor.relations.CardGridPanel", {
 		extend: "Ext.grid.Panel",
 
@@ -100,6 +103,15 @@
 
 			this.mon(this, 'show', function (panel, record) {
 				this.delegate.cmfg('onPanelGridAndFormFilterAdvancedFilterEditorRelationsGridCardViewShow');
+			}, this);
+
+			// Attributes property manage
+			this.on('columnhide', function (ct, column, eOpts) {
+				this.getStore().reload();
+			}, this);
+
+			this.on('columnshow', function (ct, column, eOpts) {
+				this.getStore().reload();
 			}, this);
 		},
 
@@ -356,9 +368,25 @@
 			var pageSize = CMDBuild.configuration.instance.get(CMDBuild.core.constants.Proxy.ROW_LIMIT);
 			var s = this.buildStore(fields, pageSize);
 
-			this.mon(s, "beforeload", function () {
+			this.mon(s, "beforeload", function (store, eOpts) {
 				this.callDelegates("onCMCardGridBeforeLoad", this);
 				this.fireEvent("beforeload", arguments);  // TODO remove?
+
+				// Attributes property manage
+				var extraParams = this.getStore().getProxy().extraParams;
+
+				if (
+					Ext.isObject(extraParams) && !Ext.Object.isEmpty(extraParams)
+					&& Ext.isString(extraParams[CMDBuild.core.constants.Proxy.CLASS_NAME]) && !Ext.isEmpty(extraParams[CMDBuild.core.constants.Proxy.CLASS_NAME])
+				) {
+					var currentPage = extraParams.page || 1;
+
+					extraParams[CMDBuild.core.constants.Proxy.ATTRIBUTES] = Ext.encode(this.getVisibleColumns());
+
+					return true;
+				}
+
+				return false;
 			}, this);
 
 			this.mon(s, "load", function (store, records) {
