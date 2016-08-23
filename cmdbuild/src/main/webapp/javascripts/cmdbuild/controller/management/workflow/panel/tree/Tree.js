@@ -370,7 +370,7 @@
 				if (Ext.isString(flowStatus) && !Ext.isEmpty(flowStatus))
 					this.cmfg('workflowTreeToolbarTopStatusValueSet', {
 						silently: true,
-						value: flowStatus
+						value: CMDBuild.controller.management.workflow.Utils.translateStatusFromCapitalizedMode(flowStatus)
 					});
 
 				this.cmfg('workflowTreeStoreLoad', {
@@ -410,7 +410,7 @@
 				if (Ext.isString(flowStatus) && !Ext.isEmpty(flowStatus))
 					this.cmfg('workflowTreeToolbarTopStatusValueSet', {
 						silently: true,
-						value: flowStatus
+						value: CMDBuild.controller.management.workflow.Utils.translateStatusFromCapitalizedMode(flowStatus)
 					});
 
 				this.cmfg('workflowTreeStoreLoad', {
