@@ -665,7 +665,7 @@
 
 			readAll: 'services/json/schema/modclass/getallclasses', // TODO: waiting for refactor (crud)
 
-			getPosition: 'services/json/management/modcard/getcardposition',
+			getPosition: 'services/json/workflow/getposition',
 			isProcessUpdated: 'services/json/workflow/isprocessupdated',
 			synchronize: 'services/json/workflow/sync',
 
