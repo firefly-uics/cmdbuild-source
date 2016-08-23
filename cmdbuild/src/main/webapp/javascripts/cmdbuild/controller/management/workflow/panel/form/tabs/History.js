@@ -9,8 +9,8 @@
 		extend: 'CMDBuild.controller.common.abstract.Base',
 
 		requires: [
-			'CMDBuild.core.configurations.WorkflowStates',
 			'CMDBuild.core.constants.Proxy',
+			'CMDBuild.core.constants.WorkflowStates',
 			'CMDBuild.proxy.management.workflow.panel.form.tabs.History'
 		],
 
@@ -523,19 +523,19 @@
 						if (!Ext.isEmpty(decodedResponse) && Ext.isArray(decodedResponse))
 							Ext.Array.forEach(decodedResponse, function (lookup, i, array) {
 								switch (lookup['Code']) {
-									case CMDBuild.core.configurations.WorkflowStates.getAborted(): {
+									case CMDBuild.core.constants.WorkflowStates.getAborted(): {
 										this.statusTranslationObject['ABORTED'] = lookup['Description'];
 									} break;
 
-									case CMDBuild.core.configurations.WorkflowStates.getCompleted(): {
+									case CMDBuild.core.constants.WorkflowStates.getCompleted(): {
 										this.statusTranslationObject['COMPLETED'] = lookup['Description'];
 									} break;
 
-									case CMDBuild.core.configurations.WorkflowStates.getOpen(): {
+									case CMDBuild.core.constants.WorkflowStates.getOpen(): {
 										this.statusTranslationObject['OPEN'] = lookup['Description'];
 									} break;
 
-									case CMDBuild.core.configurations.WorkflowStates.getSuspended(): {
+									case CMDBuild.core.constants.WorkflowStates.getSuspended(): {
 										this.statusTranslationObject['SUSPENDED'] = lookup['Description'];
 									} break;
 								}

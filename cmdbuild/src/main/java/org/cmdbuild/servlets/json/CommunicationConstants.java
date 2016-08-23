@@ -133,6 +133,7 @@ public class CommunicationConstants {
 			FILTER_SUBJECT = "filterSubject", //
 			FILTER_TYPE = "filterType", //
 			FK_DESTINATION = "fkDestination", //
+			FLOW_STATUS = "flowStatus", //
 			FORCE_CREATION = "forceCreation", //
 			FORMAT = "format", //
 			FROM = "from", //
@@ -141,6 +142,7 @@ public class CommunicationConstants {
 			GROUP_ID = "groupId", //
 			GROUP_NAME = "groupName", //
 			GROUPS = "groups", //
+			HAS_POSITION= "hasPosition", //
 			HEADERS = "headers", //
 			HOST = "host", //
 			ICONNAME = "iconName", //
@@ -253,7 +255,6 @@ public class CommunicationConstants {
 			REPORT_PARAMETERS = "reportParameters", //
 			RESULT = "result", //
 			RESULTS = "results", //
-			RETRY_WITHOUT_FILTER = "retryWithoutFilter", //
 			ROOT_REFERENCE = "rootreference", //
 			ROOT = "root", //
 			ROWS = "rows", //

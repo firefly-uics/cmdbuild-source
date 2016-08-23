@@ -4,9 +4,9 @@
 		extend: 'CMDBuild.controller.common.abstract.Base',
 
 		requires: [
-			'CMDBuild.core.configurations.WorkflowStates',
 			'CMDBuild.core.constants.Global',
 			'CMDBuild.core.constants.Proxy',
+			'CMDBuild.core.constants.WorkflowStates',
 			'CMDBuild.core.Utils',
 			'CMDBuild.proxy.management.workflow.panel.tree.Tree'
 		],
@@ -143,13 +143,13 @@
 				store: CMDBuild.proxy.management.workflow.panel.tree.Tree.getStoreState(),
 				queryMode: 'local',
 
-				value: CMDBuild.core.configurations.WorkflowStates.getOpen(),
+				value: CMDBuild.core.constants.WorkflowStates.getOpen(),
 
 				listeners: {
 					scope: this,
 					change: function (field, newValue, oldValue, eOpts) {
 						if (!this.disableNextStatusSelectionChangeEvent)
-							this.cmfg('onWorkflowStatusSelectionChange', newValue);
+							this.cmfg('workflowTreeStoreLoad');
 
 						this.disableNextStatusSelectionChangeEvent = false; // Reset flag value
 					}
@@ -377,13 +377,13 @@
 				if (!Ext.isEmpty(this.statusCombo))
 					return this.statusCombo.getValue();
 
-				return CMDBuild.core.configurations.WorkflowStates.getOpen();
+				return CMDBuild.core.constants.WorkflowStates.getOpen();
 			},
 
 			/**
 			 * @param {Object} parameters
-			 * @param {Object} parameters.value
 			 * @param {Object} parameters.silently
+			 * @param {Object} parameters.value
 			 *
 			 * @returns {Void}
 			 */

@@ -12,17 +12,20 @@
 
 		/**
 		 * @param {Object} parameters
+		 * @param {Object} parameters.extraParams
 		 *
 		 * @returns {Ext.data.Store or CMDBuild.core.cache.Store}
 		 */
 		getStore: function (parameters) {
+			parameters.extraParams[CMDBuild.core.constants.Proxy.ATTRIBUTES] = Ext.encode(['Description']);
+
 			return CMDBuild.global.Cache.requestAsStore(CMDBuild.core.constants.Proxy.UNCACHED, {
 				autoLoad: true,
 				model: 'CMDBuild.model.common.attributes.ForeignKeyStore',
 				pageSize: CMDBuild.configuration.instance.get(CMDBuild.core.constants.Proxy.REFERENCE_COMBO_STORE_LIMIT),
 				proxy: {
 					type: 'ajax',
-					url: CMDBuild.proxy.index.Json.card.readAllShort,
+					url: CMDBuild.proxy.index.Json.card.readAll,
 					reader: {
 						type: 'json',
 						root: CMDBuild.core.constants.Proxy.ROWS,

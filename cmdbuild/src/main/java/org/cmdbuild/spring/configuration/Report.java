@@ -5,6 +5,7 @@ import static org.cmdbuild.logic.report.Predicates.currentGroupAllowed;
 import javax.sql.DataSource;
 
 import org.cmdbuild.auth.UserStore;
+import org.cmdbuild.auth.UserStoreSupplier;
 import org.cmdbuild.logic.report.DefaultReportLogic;
 import org.cmdbuild.logic.report.ReportLogic;
 import org.cmdbuild.services.localization.LocalizedResultSetToReport;
@@ -33,7 +34,7 @@ public class Report {
 	@Bean
 	public ReportLogic reportLogic() {
 		return new DefaultReportLogic(reportStore(), dataSource, properties.cmdbuildProperties(),
-				currentGroupAllowed(userStore));
+				currentGroupAllowed(UserStoreSupplier.of(userStore)));
 	}
 
 	@Bean

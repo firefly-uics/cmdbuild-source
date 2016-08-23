@@ -35,9 +35,9 @@
 			'onWorkflowFormAdvanceButtonClick',
 			'onWorkflowFormModifyButtonClick = onWorkflowFormActivityItemDoubleClick',
 			'onWorkflowFormRemoveButtonClick',
-			'onWorkflowFormReset',
 			'onWorkflowFormSaveButtonClick',
-			'onWorkflowFormWokflowSelect = onWorkflowWokflowSelect'
+			'onWorkflowFormWokflowSelect = onWorkflowWokflowSelect',
+			'workflowFormReset'
 		],
 
 		/**
@@ -254,18 +254,6 @@
 		},
 
 		/**
-		 * @returns {Void}
-		 */
-		onWorkflowFormReset: function () {
-			this.controllerTabActivity.reset();
-			this.controllerTabNote.reset();
-			this.controllerTabRelations.reset();
-			this.controllerTabHistory.reset();
-			this.controllerTabEmail.reset();
-			this.controllerTabAttachments.reset();
-		},
-
-		/**
 		 * Forward to sub-controllers
 		 *
 		 * @returns {Void}
@@ -292,7 +280,8 @@
 				success: function (response, options, decodedResponse) {
 					decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.CLASSES];
 
-					var id = node.get(CMDBuild.core.constants.Proxy.ENTITY_ID);
+					var danglingCard = CMDBuild.global.controller.MainViewport.cmfg('mainViewportDanglingCardGet'),
+						id = node.get(CMDBuild.core.constants.Proxy.ENTITY_ID);
 
 					if (Ext.isArray(decodedResponse) && !Ext.isEmpty(decodedResponse)) {
 						var selectedWorkflow = Ext.Array.findBy(decodedResponse, function (workflowObject, i) {
@@ -302,14 +291,21 @@
 						if (Ext.isObject(selectedWorkflow) && !Ext.Object.isEmpty(selectedWorkflow)) {
 							_CMWFState.setProcessClassRef(
 								Ext.create('CMDBuild.cache.CMEntryTypeModel', selectedWorkflow),
-								CMDBuild.global.controller.MainViewport.cmfg('mainViewportDanglingCardGet'),
+								danglingCard,
 								false,
 								node.get(CMDBuild.core.constants.Proxy.FILTER)
 							);
 
 							// Manage tab selection
 							if (Ext.isEmpty(this.tabPanel.getActiveTab()))
-								this.tabPanel.setActiveTab(0);
+								if (
+									Ext.isObject(danglingCard) && !Ext.Object.isEmpty(danglingCard)
+									&& !Ext.isBoolean(danglingCard.activateFirstTab)
+								) {
+									this.tabPanel.setActiveTab(danglingCard.activateFirstTab)
+								} else {
+									this.tabPanel.setActiveTab(0);
+								}
 
 							this.tabPanel.getActiveTab().fireEvent('show'); // Manual show event fire because was already selected
 						} else {
@@ -318,6 +314,18 @@
 					}
 				}
 			});
+		},
+
+		/**
+		 * @returns {Void}
+		 */
+		workflowFormReset: function () {
+			this.controllerTabActivity.reset();
+			this.controllerTabNote.reset();
+			this.controllerTabRelations.reset();
+			this.controllerTabHistory.reset();
+			this.controllerTabEmail.reset();
+			this.controllerTabAttachments.reset();
 		}
 	});
 
