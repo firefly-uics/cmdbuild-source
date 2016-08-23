@@ -10,6 +10,7 @@ import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.exception.CMDBWorkflowException;
 import org.cmdbuild.logic.Logic;
 import org.cmdbuild.logic.data.QueryOptions;
+import org.cmdbuild.logic.data.access.CMCardWithPosition;
 import org.cmdbuild.workflow.CMActivity;
 import org.cmdbuild.workflow.CMWorkflowException;
 import org.cmdbuild.workflow.user.UserActivityInstance;
@@ -105,8 +106,8 @@ public interface WorkflowLogic extends Logic {
 	 * 
 	 * @throws CMWorkflowException
 	 */
-	UserProcessInstance startProcess(String processClassName, Map<String, ?> vars,
-			Map<String, Object> widgetSubmission, boolean advance) throws CMWorkflowException;
+	UserProcessInstance startProcess(String processClassName, Map<String, ?> vars, Map<String, Object> widgetSubmission,
+			boolean advance) throws CMWorkflowException;
 
 	/**
 	 * Starts the process, kills every activity except for the one that this

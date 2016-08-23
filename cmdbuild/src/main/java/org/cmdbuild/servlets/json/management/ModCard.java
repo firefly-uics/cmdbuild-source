@@ -40,7 +40,6 @@ import static org.cmdbuild.servlets.json.CommunicationConstants.DOMAIN_SOURCE;
 import static org.cmdbuild.servlets.json.CommunicationConstants.ELEMENTS;
 import static org.cmdbuild.servlets.json.CommunicationConstants.END_DATE;
 import static org.cmdbuild.servlets.json.CommunicationConstants.FILTER;
-import static org.cmdbuild.servlets.json.CommunicationConstants.FLOW_STATUS;
 import static org.cmdbuild.servlets.json.CommunicationConstants.FUNCTION;
 import static org.cmdbuild.servlets.json.CommunicationConstants.HAS_POSITION;
 import static org.cmdbuild.servlets.json.CommunicationConstants.ID;
@@ -64,7 +63,6 @@ import static org.cmdbuild.servlets.json.schema.Utils.toMap;
 import static org.cmdbuild.workflow.ProcessAttributes.CurrentActivityPerformers;
 import static org.cmdbuild.workflow.ProcessAttributes.FlowStatus;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.Iterator;
@@ -92,8 +90,6 @@ import org.cmdbuild.logic.data.QueryOptions.QueryOptionsBuilder;
 import org.cmdbuild.logic.data.access.CMCardWithPosition;
 import org.cmdbuild.logic.data.access.DataAccessLogic;
 import org.cmdbuild.logic.data.access.RelationDTO;
-import org.cmdbuild.logic.data.lookup.LookupLogic;
-import org.cmdbuild.logic.mapping.json.JsonFilterHelper;
 import org.cmdbuild.model.data.Card;
 import org.cmdbuild.services.json.dto.JsonResponse;
 import org.cmdbuild.servlets.json.JSONBaseWithSpringContext;
@@ -102,7 +98,6 @@ import org.cmdbuild.servlets.json.serializers.JsonGetRelationListResponse;
 import org.cmdbuild.servlets.json.serializers.LookupSerializer;
 import org.cmdbuild.servlets.json.serializers.RelationAttributeSerializer;
 import org.cmdbuild.servlets.json.serializers.RelationAttributeSerializer.Callback;
-import org.cmdbuild.servlets.json.util.FlowStatusFilterElementGetter;
 import org.cmdbuild.servlets.utils.Parameter;
 import org.codehaus.jackson.annotate.JsonProperty;
 import org.json.JSONArray;
@@ -617,11 +612,9 @@ public class ModCard extends JSONBaseWithSpringContext {
 
 	private static class JsonCardPosition {
 
-		private final LookupLogic lookupLogic;
 		private final CMCardWithPosition delegate;
 
-		public JsonCardPosition(final LookupLogic lookupLogic, final CMCardWithPosition delegate) {
-			this.lookupLogic = lookupLogic;
+		public JsonCardPosition(final CMCardWithPosition delegate) {
 			this.delegate = delegate;
 		}
 
@@ -635,18 +628,6 @@ public class ModCard extends JSONBaseWithSpringContext {
 			return hasPosition() ? delegate.getPosition() : null;
 		}
 
-		@JsonProperty(FLOW_STATUS)
-		public String getFlowStatus() {
-			final String output;
-			if (delegate.isFound()) {
-				final LookupValue value = delegate.getAttribute(FlowStatus.dbColumnName(), LookupValue.class);
-				output = (value == null) ? null : lookupLogic.getLookup(value.getId()).code();
-			} else {
-				output = null;
-			}
-			return output;
-		}
-
 	}
 
 	@JSONExported
@@ -654,39 +635,16 @@ public class ModCard extends JSONBaseWithSpringContext {
 			@Parameter(value = CLASS_NAME) final String className, //
 			@Parameter(value = CARD_ID) final Long cardId, //
 			@Parameter(value = FILTER, required = false) final JSONObject filter, //
-			@Parameter(value = SORT, required = false) final JSONArray sorters, //
-			@Parameter(value = FLOW_STATUS, required = false) final String flowStatus //
-	) throws JSONException {
+			@Parameter(value = SORT, required = false) final JSONArray sorters //
+	) {
 		final DataAccessLogic dataAccessLogic = userDataAccessLogic();
-		final Collection<String> attributes = new ArrayList<>();
-		attributes.add(dataAccessLogic.findClass(className).getDescriptionAttributeName());
-		if (workflowLogic().findProcessClass(className) != null) {
-			attributes.add(FlowStatus.dbColumnName());
-		}
-		final QueryOptionsBuilder queryOptionsBuilder = QueryOptions.newQueryOption() //
-				.onlyAttributes(attributes);
-		addFilterToQueryOption(new JsonFilterHelper(filter) //
-				.merge(FlowStatusFilterElementGetter.newInstance() //
-						.withLookupHelper(lookupHelper()) //
-						.withFlowStatus(flowStatus) //
-						.withMissingFlowStatusIsError(true) //
-						.build()),
-				queryOptionsBuilder);
-		addSortersToQueryOptions(sorters, queryOptionsBuilder);
-		final CMCardWithPosition card = dataAccessLogic.getCardPosition(className, cardId, queryOptionsBuilder.build());
-		return success(new JsonCardPosition(lookupLogic(), card));
-	}
-
-	private void addFilterToQueryOption(final JSONObject filter, final QueryOptionsBuilder queryOptionsBuilder) {
-		if (filter != null) {
-			queryOptionsBuilder.filter(filter);
-		}
-	}
-
-	private void addSortersToQueryOptions(final JSONArray sorters, final QueryOptionsBuilder queryOptionsBuilder) {
-		if (sorters != null) {
-			queryOptionsBuilder.orderBy(sorters); //
-		}
+		final QueryOptions queryOptions = QueryOptions.newQueryOption() //
+				.onlyAttributes(asList(dataAccessLogic.findClass(className).getDescriptionAttributeName())) //
+				.filter(filter) //
+				.orderBy(sorters) //
+				.build();
+		final CMCardWithPosition card = dataAccessLogic.getCardPosition(className, cardId, queryOptions);
+		return success(new JsonCardPosition(card));
 	}
 
 	@JSONExported
