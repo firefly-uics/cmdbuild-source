@@ -11,7 +11,7 @@ import org.cmdbuild.model.dashboard.DashboardDefinition;
 import org.cmdbuild.model.dashboard.DashboardObjectMapper;
 import org.cmdbuild.model.dashboard.DefaultDashboardDefinition;
 import org.cmdbuild.model.dashboard.DefaultDashboardDefinition.DashboardColumn;
-import org.cmdbuild.servlets.json.management.JsonResponse;
+import org.cmdbuild.services.json.dto.JsonResponse;
 import org.cmdbuild.servlets.json.serializers.JsonDashboardDTO.JsonDashboardListResponse;
 import org.cmdbuild.servlets.utils.Parameter;
 import org.codehaus.jackson.JsonParseException;
