@@ -2,7 +2,6 @@
 
 	/**
 	 * @link CMDBuild.view.management.common.CMCardGridDelegate
-	 * @link CMDBuild.view.common.panel.gridAndForm.panel.common.filter.advanced.filterEditor.relations.CardGridPanelDelegate
 	 */
 	Ext.define("CMDBuild.view.management.workflow.panel.tree.filter.advanced.filterEditor.relations.CardGridPanelDelegate", {
 
