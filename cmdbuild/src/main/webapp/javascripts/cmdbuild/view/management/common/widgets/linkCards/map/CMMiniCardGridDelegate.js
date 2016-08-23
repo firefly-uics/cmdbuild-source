@@ -1,5 +1,8 @@
 (function () {
 
+	/**
+	 * @link CMDBuild.view.management.CMMiniCardGridDelegate
+	 */
 	Ext.define('CMDBuild.view.management.common.widgets.linkCards.map.CMMiniCardGridDelegate', {
 
 		constructor: function (config) {

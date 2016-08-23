@@ -5,6 +5,7 @@
 
 		requires: [
 			'CMDBuild.core.constants.Proxy',
+			'CMDBuild.core.constants.WorkflowStates',
 			'CMDBuild.core.Utils',
 			'CMDBuild.proxy.management.workflow.Activity',
 			'CMDBuild.proxy.management.workflow.Workflow'
@@ -24,11 +25,11 @@
 			'onWorkflowActivityUpdateCallback',
 			'onWorkflowAddButtonClick',
 			'onWorkflowFormActivityItemDoubleClick -> controllerForm',
-			'onWorkflowFormReset -> controllerForm',
 			'onWorkflowModuleInit = onModuleInit',
 			'onWorkflowSaveFailure',
 			'onWorkflowTreePrintButtonClick -> controllerTree',
 			'onWorkflowWokflowSelect -> controllerForm, controllerTree',
+			'workflowFormReset -> controllerForm',
 			'workflowSelectedActivityGet',
 			'workflowSelectedActivityReset',
 			'workflowSelectedWorkflowAttributesGet',
@@ -147,7 +148,7 @@
 			this.cmfg('workflowSelectedActivityReset');
 
 			// Form setup
-			// FIXME: future implementation on tab controllers refactor
+			this.controllerTree.cmfg('workflowFormReset');
 
 			// Tree setup
 			this.controllerTree.cmfg('workflowTreeStoreLoad', { callback: Ext.emptyFn }); // Avoid first row selection
@@ -212,16 +213,31 @@
 			this.cmfg('workflowSelectedActivityReset');
 
 			if (Ext.isObject(responseModel) && !Ext.Object.isEmpty(responseModel)) {
-				// Form setup
-				// FIXME: future implementation on tab controllers refactor
+				if (
+					Ext.isString(responseModel.get(CMDBuild.core.constants.Proxy.FLOW_STATUS)) && !Ext.isEmpty(responseModel.get(CMDBuild.core.constants.Proxy.FLOW_STATUS))
+					&& responseModel.get(CMDBuild.core.constants.Proxy.FLOW_STATUS) == CMDBuild.core.constants.WorkflowStates.getCompletedCapitalized()
+				) {
+					_CMWFState.setProcessInstance(Ext.create('CMDBuild.model.CMProcessInstance'));
+					_CMUIState.onlyGridIfFullScreen();
 
-				// Tree setup
-				var activityData = {};
-				activityData[CMDBuild.core.constants.Proxy.ACTIVITY_SUBSET_ID] = responseModel.get(CMDBuild.core.constants.Proxy.ACTIVITY_SUBSET_ID);
-				activityData[CMDBuild.core.constants.Proxy.ID] = responseModel.get(CMDBuild.core.constants.Proxy.ID);
-				activityData[CMDBuild.core.constants.Proxy.FLOW_STATUS] = responseModel.get(CMDBuild.core.constants.Proxy.FLOW_STATUS);
+					// Form setup
+					this.controllerForm.cmfg('workflowFormReset');
 
-				this.cmfg('workflowTreeActivityOpen', activityData);
+					// Tree setup
+					this.controllerTree.cmfg('workflowTreeReset');
+				} else {
+					// Form setup
+					// FIXME: future implementation on tab controllers refactor
+
+					// Tree setup
+					var activityData = {};
+					activityData[CMDBuild.core.constants.Proxy.ACTIVITY_SUBSET_ID] = responseModel.get(CMDBuild.core.constants.Proxy.ACTIVITY_SUBSET_ID);
+					activityData[CMDBuild.core.constants.Proxy.INSTANCE_ID] = responseModel.get(CMDBuild.core.constants.Proxy.ID);
+
+					this.cmfg('workflowTreeActivityOpen', activityData);
+				}
+			} else {
+				_error('onWorkflowActivityUpdateCallback(): unmanaged responseModel parameter', this, responseModel);
 			}
 		},
 

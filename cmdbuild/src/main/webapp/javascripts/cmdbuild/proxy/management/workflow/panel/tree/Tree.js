@@ -3,8 +3,8 @@
 	Ext.define('CMDBuild.proxy.management.workflow.panel.tree.Tree', {
 
 		requires: [
-			'CMDBuild.core.configurations.WorkflowStates',
 			'CMDBuild.core.constants.Proxy',
+			'CMDBuild.core.constants.WorkflowStates',
 			'CMDBuild.model.management.workflow.Node',
 			'CMDBuild.proxy.index.Json',
 			'CMDBuild.proxy.management.workflow.panel.tree.Reader'
@@ -43,11 +43,11 @@
 			return Ext.create('Ext.data.ArrayStore', {
 				fields: [CMDBuild.core.constants.Proxy.DESCRIPTION, CMDBuild.core.constants.Proxy.VALUE],
 				data: [
-					[CMDBuild.Translation.open, CMDBuild.core.configurations.WorkflowStates.getOpen()],
-					[CMDBuild.Translation.suspended, CMDBuild.core.configurations.WorkflowStates.getSuspended()],
-					[CMDBuild.Translation.completed, CMDBuild.core.configurations.WorkflowStates.getCompleted()],
-					[CMDBuild.Translation.aborted, CMDBuild.core.configurations.WorkflowStates.getAborted()],
-					[CMDBuild.Translation.all, CMDBuild.core.configurations.WorkflowStates.getAll()]
+					[CMDBuild.Translation.open, CMDBuild.core.constants.WorkflowStates.getOpen()],
+					[CMDBuild.Translation.suspended, CMDBuild.core.constants.WorkflowStates.getSuspended()],
+					[CMDBuild.Translation.completed, CMDBuild.core.constants.WorkflowStates.getCompleted()],
+					[CMDBuild.Translation.aborted, CMDBuild.core.constants.WorkflowStates.getAborted()],
+					[CMDBuild.Translation.all, CMDBuild.core.constants.WorkflowStates.getAll()]
 				]
 			});
 		},

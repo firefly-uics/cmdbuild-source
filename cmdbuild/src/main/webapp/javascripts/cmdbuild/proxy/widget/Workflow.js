@@ -31,7 +31,7 @@
 		readWorkflowByFilter: function (parameters) {
 			parameters = Ext.isEmpty(parameters) ? {} : parameters;
 
-			Ext.apply(parameters, { url: CMDBuild.proxy.index.Json.card.readAllShort });
+			Ext.apply(parameters, { url: CMDBuild.proxy.index.Json.card.readAll });
 
 			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.WORKFLOW, parameters);
 		},

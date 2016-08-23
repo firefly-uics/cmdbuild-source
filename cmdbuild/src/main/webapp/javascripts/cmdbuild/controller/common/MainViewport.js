@@ -26,6 +26,7 @@
 			'mainViewportAccordionDeselect',
 			'mainViewportAccordionIsCollapsed',
 			'mainViewportAccordionSetDisabled',
+			'mainViewportActivitySelect',
 			'mainViewportCardSelect',
 			'mainViewportDanglingCardGet',
 			'mainViewportInstanceNameSet',
@@ -373,11 +374,68 @@
 		/**
 		 * @param {Object} parameters
 		 * @param {Boolean or Object} parameters.activateFirstTab - if object selects object as tab otherwise selects first one
+		 * @param {Number} parameters.instanceId
+		 * @param {Number} parameters.workflowId
+		 *
+		 * @returns {Void}
+		 */
+		mainViewportActivitySelect: function (parameters) {
+			parameters = Ext.isObject(parameters) ? parameters : {};
+			parameters.activateFirstTab = Ext.isEmpty(parameters.activateFirstTab) ? true : parameters.activateFirstTab;
+
+			var accordionController = this.cmfg('mainViewportAccordionControllerWithNodeWithIdGet', parameters[CMDBuild.core.constants.Proxy.WORKFLOW_ID]),
+				moduleController = this.cmfg('mainViewportModuleControllerGet', CMDBuild.core.constants.ModuleIdentifiers.getWorkflow());
+
+			// Error handling
+				if (!Ext.isNumber(parameters[CMDBuild.core.constants.Proxy.INSTANCE_ID]) || Ext.isEmpty(parameters[CMDBuild.core.constants.Proxy.INSTANCE_ID]))
+					return _error('mainViewportActivitySelect(): unmanaged instanceId parameter', this, parameters[CMDBuild.core.constants.Proxy.INSTANCE_ID]);
+
+				if (!Ext.isNumber(parameters[CMDBuild.core.constants.Proxy.WORKFLOW_ID]) || Ext.isEmpty(parameters[CMDBuild.core.constants.Proxy.WORKFLOW_ID]))
+					return _error('mainViewportActivitySelect(): unmanaged workflowId parameter', this, parameters[CMDBuild.core.constants.Proxy.WORKFLOW_ID]);
+
+				if (!Ext.isObject(moduleController) || Ext.Object.isEmpty(moduleController) || !Ext.isFunction(moduleController.cmfg))
+					return _error('mainViewportActivitySelect(): module controller retriving error', this, moduleController);
+
+				if (!Ext.isObject(accordionController) || Ext.Object.isEmpty(accordionController) || !Ext.isFunction(accordionController.cmfg))
+					return CMDBuild.core.Message.warning(CMDBuild.Translation.warning, CMDBuild.Translation.warnings.itemNotAvailable);
+			// END: Error handling
+
+			// Instruction required or selection doesn't work if exists another selection
+			this.cmfg('mainViewportAccordionDeselect', accordionController.cmfg('accordionIdentifierGet'));
+
+			this.cmfg('mainViewportAccordionControllerExpand', {
+				identifier: accordionController.cmfg('accordionIdentifierGet'),
+				params: {
+					scope: this,
+					callback: function () {
+						moduleController.cmfg('workflowTreeApplyStoreEvent', {
+							eventName: 'load',
+							fn: function (store, node, records, successful, eOpts) {
+								moduleController.cmfg('workflowTreeActivityOpen', {
+									enableForceFlowStatus: true,
+									instanceId: parameters[CMDBuild.core.constants.Proxy.INSTANCE_ID]
+								});
+							},
+							scope: this,
+							options: { single: true }
+						});
+
+						accordionController.cmfg('accordionNodeByIdSelect', { id: parameters[CMDBuild.core.constants.Proxy.WORKFLOW_ID] });
+					}
+				}
+			});
+		},
+
+		/**
+		 * @param {Object} parameters
+		 * @param {Boolean or Object} parameters.activateFirstTab - if object selects object as tab otherwise selects first one
 		 * @param {String} parameters.flowStatus
 		 * @param {Number} parameters.Id - card id
 		 * @param {Number} parameters.IdClass
 		 *
 		 * @returns {Void}
+		 *
+		 * FIXME: legacy implementation used from classes and all old implementation, to fix on classes module refactor
 		 */
 		mainViewportCardSelect: function (parameters) {
 			if (
@@ -385,23 +443,33 @@
 				&& !Ext.isEmpty(parameters['Id'])
 				&& !Ext.isEmpty(parameters['IdClass'])
 			) {
-				parameters.activateFirstTab = Ext.isEmpty(parameters.activateFirstTab) ? true : parameters.activateFirstTab;
+				if (_CMCache.isClassById(parameters['IdClass'])) { // @legacy
+					parameters.activateFirstTab = Ext.isEmpty(parameters.activateFirstTab) ? true : parameters.activateFirstTab;
 
-				var accordionController = this.cmfg('mainViewportAccordionControllerWithNodeWithIdGet', parameters['IdClass']);
+					var accordionController = this.cmfg('mainViewportAccordionControllerWithNodeWithIdGet', parameters['IdClass']);
 
-				this.danglingCardSet(parameters);
+					this.danglingCardSet(parameters);
 
-				if (!Ext.isEmpty(accordionController) && Ext.isFunction(accordionController.cmfg)) {
-					accordionController.cmfg('accordionExpand', {
-						scope: this,
-						callback: function (panel, eOpts) {
-							accordionController.cmfg('accordionDeselect'); // Instruction required or selection doesn't work if exists another selection
-							accordionController.cmfg('accordionNodeByIdSelect', { id: parameters['IdClass'] });
-						}
-					});
+					if (!Ext.isEmpty(accordionController) && Ext.isFunction(accordionController.cmfg)) {
+						accordionController.cmfg('accordionExpand', {
+							scope: this,
+							callback: function (panel, eOpts) {
+								accordionController.cmfg('accordionDeselect'); // Instruction required or selection doesn't work if exists another selection
+								accordionController.cmfg('accordionNodeByIdSelect', { id: parameters['IdClass'] });
+							}
+						});
+					} else {
+						CMDBuild.core.Message.warning(CMDBuild.Translation.warning, CMDBuild.Translation.warnings.itemNotAvailable);
+					}
 				} else {
-					CMDBuild.core.Message.warning(CMDBuild.Translation.warning, CMDBuild.Translation.warnings.itemNotAvailable);
+					var params = {};
+					params['activateFirstTab'] = Ext.isEmpty(parameters.activateFirstTab) ? true : parameters.activateFirstTab;
+					params[CMDBuild.core.constants.Proxy.INSTANCE_ID] = parameters['Id'];
+					params[CMDBuild.core.constants.Proxy.WORKFLOW_ID] = parameters['IdClass'];
+
+					this.cmfg('mainViewportActivitySelect', params);
 				}
+
 			} else {
 				_error('malformed openCard method parameters', this);
 			}

@@ -2,6 +2,9 @@
 
 	Ext.require('CMDBuild.proxy.index.Json');
 
+	/**
+	 * @link CMDBuild.view.common.field.searchWindow.GridPanelDelegate
+	 */
 	Ext.define("CMDBuild.view.management.common.CMCardGridDelegate", {
 		/**
 		 *
@@ -43,6 +46,9 @@
 
 	});
 
+	/**
+	 * @link CMDBuild.view.common.field.searchWindow.GridPanelPagingBar
+	 */
 	Ext.define("CMDBuild.view.management.common.CMCardGridPagingBar", {
 		extend: "Ext.toolbar.Paging",
 
@@ -62,6 +68,9 @@
 		}
 	});
 
+	/**
+	 * @link CMDBuild.view.common.field.searchWindow.GridPanel
+	 */
 	Ext.define("CMDBuild.view.management.common.CMCardGrid", {
 		extend: "Ext.grid.Panel",
 

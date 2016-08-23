@@ -69,8 +69,6 @@
 			remove: 'services/json/management/modcard/deletecard',
 
 			readAll: 'services/json/management/modcard/getcardlist',
-			readAllDetails: 'services/json/management/modcard/getdetaillist',
-			readAllShort: 'services/json/management/modcard/getcardlistshort',
 
 			bulkUpdate: 'services/json/management/modcard/bulkupdate',
 			bulkUpdateFromFilter: 'services/json/management/modcard/bulkupdatefromfilter',
@@ -665,7 +663,7 @@
 
 			readAll: 'services/json/schema/modclass/getallclasses', // TODO: waiting for refactor (crud)
 
-			getPosition: 'services/json/management/modcard/getcardposition',
+			getPosition: 'services/json/workflow/getposition',
 			isProcessUpdated: 'services/json/workflow/isprocessupdated',
 			synchronize: 'services/json/workflow/sync',
 
