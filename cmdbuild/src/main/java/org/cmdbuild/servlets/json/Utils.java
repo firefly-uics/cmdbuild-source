@@ -15,7 +15,7 @@ import java.util.UUID;
 
 import org.cmdbuild.exception.CMDBException;
 import org.cmdbuild.services.TranslationService;
-import org.cmdbuild.servlets.json.management.JsonResponse;
+import org.cmdbuild.services.json.dto.JsonResponse;
 import org.cmdbuild.servlets.utils.Parameter;
 import org.json.JSONException;
 import org.json.JSONObject;

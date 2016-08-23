@@ -1,5 +1,8 @@
 package org.cmdbuild.servlets.json;
 
+import static com.google.common.collect.FluentIterable.from;
+import static java.util.Arrays.asList;
+import static org.cmdbuild.services.json.dto.JsonResponse.success;
 import static org.cmdbuild.servlets.json.CommunicationConstants.ACTIVITY_INSTANCE_ID;
 import static org.cmdbuild.servlets.json.CommunicationConstants.ADVANCE;
 import static org.cmdbuild.servlets.json.CommunicationConstants.ATTRIBUTES;
@@ -8,8 +11,11 @@ import static org.cmdbuild.servlets.json.CommunicationConstants.CARD_ID;
 import static org.cmdbuild.servlets.json.CommunicationConstants.CLASS_ID;
 import static org.cmdbuild.servlets.json.CommunicationConstants.CLASS_NAME;
 import static org.cmdbuild.servlets.json.CommunicationConstants.FILTER;
+import static org.cmdbuild.servlets.json.CommunicationConstants.FLOW_STATUS;
+import static org.cmdbuild.servlets.json.CommunicationConstants.HAS_POSITION;
 import static org.cmdbuild.servlets.json.CommunicationConstants.ID_CLASS;
 import static org.cmdbuild.servlets.json.CommunicationConstants.LIMIT;
+import static org.cmdbuild.servlets.json.CommunicationConstants.POSITION;
 import static org.cmdbuild.servlets.json.CommunicationConstants.PROCESS_INSTANCE_ID;
 import static org.cmdbuild.servlets.json.CommunicationConstants.SORT;
 import static org.cmdbuild.servlets.json.CommunicationConstants.START;
@@ -17,6 +23,7 @@ import static org.cmdbuild.servlets.json.CommunicationConstants.STATE;
 import static org.cmdbuild.servlets.json.CommunicationConstants.VERSION;
 import static org.cmdbuild.servlets.json.CommunicationConstants.WW;
 import static org.cmdbuild.servlets.json.CommunicationConstants.XPDL;
+import static org.cmdbuild.workflow.ProcessAttributes.FlowStatus;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -36,9 +43,10 @@ import org.cmdbuild.common.template.TemplateResolver;
 import org.cmdbuild.common.utils.PagedElements;
 import org.cmdbuild.exception.ConsistencyException.ConsistencyExceptionType;
 import org.cmdbuild.logic.data.QueryOptions;
+import org.cmdbuild.logic.data.access.DataAccessLogic;
 import org.cmdbuild.logic.mapping.json.JsonFilterHelper;
 import org.cmdbuild.logic.workflow.WorkflowLogic;
-import org.cmdbuild.servlets.json.management.JsonResponse;
+import org.cmdbuild.services.json.dto.JsonResponse;
 import org.cmdbuild.servlets.json.serializers.JsonWorkflowDTOs.JsonActivityDefinition;
 import org.cmdbuild.servlets.json.serializers.JsonWorkflowDTOs.JsonActivityInstance;
 import org.cmdbuild.servlets.json.serializers.JsonWorkflowDTOs.JsonProcessCard;
@@ -52,6 +60,8 @@ import org.cmdbuild.workflow.CMProcessInstance;
 import org.cmdbuild.workflow.CMWorkflowException;
 import org.cmdbuild.workflow.user.UserActivityInstance;
 import org.cmdbuild.workflow.user.UserProcessInstance;
+import org.cmdbuild.workflow.user.UserProcessInstanceWithPosition;
+import org.codehaus.jackson.annotate.JsonProperty;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
@@ -60,6 +70,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import com.google.common.base.Optional;
 import com.google.common.collect.Lists;
 
 public class Workflow extends JSONBaseWithSpringContext {
@@ -113,6 +124,58 @@ public class Workflow extends JSONBaseWithSpringContext {
 
 	}
 
+	private static class JsonPosition {
+
+		private final Optional<UserProcessInstanceWithPosition> delegate;
+
+		public JsonPosition(final Optional<UserProcessInstanceWithPosition> delegate) {
+			this.delegate = delegate;
+		}
+
+		@JsonProperty(HAS_POSITION)
+		public boolean hasPosition() {
+			return delegate.isPresent();
+		}
+
+		@JsonProperty(POSITION)
+		public Long getPosition() {
+			return hasPosition() ? delegate.get().getPosition() : null;
+		}
+
+		@JsonProperty(FLOW_STATUS)
+		public String getFlowStatus() {
+			return hasPosition() ? delegate.get().getState().name() : null;
+		}
+
+	}
+
+	@JSONExported
+	public JsonResponse getPosition( //
+			@Parameter(value = CLASS_NAME) final String className, //
+			@Parameter(value = CARD_ID) final Long cardId, //
+			@Parameter(value = FILTER, required = false) final JSONObject filter, //
+			@Parameter(value = SORT, required = false) final JSONArray sorters, //
+			@Parameter(value = FLOW_STATUS, required = false) final String flowStatus //
+	) throws JSONException {
+		final DataAccessLogic dataAccessLogic = userDataAccessLogic();
+		final QueryOptions queryOptions = QueryOptions.newQueryOption() //
+				.onlyAttributes(asList(dataAccessLogic.findClass(className).getDescriptionAttributeName(),
+						FlowStatus.dbColumnName())) //
+				.filter(new JsonFilterHelper(filter) //
+						.merge(FlowStatusFilterElementGetter.newInstance() //
+								.withLookupHelper(lookupHelper()) //
+								.withFlowStatus(flowStatus) //
+								.withMissingFlowStatusIsError(true) //
+								.build())) //
+				.orderBy(sorters) //
+				.build();
+		final Optional<UserProcessInstanceWithPosition> found =
+				from(workflowLogic().queryWithPosition(className, queryOptions, asList(cardId))) //
+						.limit(1) //
+						.first();
+		return success(new JsonPosition(found));
+	}
+
 	@JSONExported
 	public JsonResponse getStartActivity( //
 			@Parameter(CLASS_ID) final Long processClassId) throws CMWorkflowException {
@@ -138,8 +201,8 @@ public class Workflow extends JSONBaseWithSpringContext {
 			final TemplateResolver templateResolver = activityPerformerTemplateResolverFactory().create();
 			final String resolvedExpression = templateResolver.resolve(expression);
 
-			final ActivityPerformerExpressionEvaluator evaluator = new BshActivityPerformerExpressionEvaluator(
-					resolvedExpression);
+			final ActivityPerformerExpressionEvaluator evaluator =
+					new BshActivityPerformerExpressionEvaluator(resolvedExpression);
 			final Set<String> names = evaluator.getNames();
 			performerName = names.contains(maybe) ? maybe : StringUtils.EMPTY;
 			break;

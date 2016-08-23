@@ -3,6 +3,7 @@ package org.cmdbuild.logic.data;
 import static com.google.common.base.Functions.identity;
 import static com.google.common.collect.Maps.newHashMap;
 import static com.google.common.collect.Maps.transformValues;
+import static java.lang.Integer.MAX_VALUE;
 import static java.util.Collections.emptyList;
 import static org.apache.commons.lang3.ObjectUtils.defaultIfNull;
 import static org.cmdbuild.logic.mapping.json.Constants.Filters.CQL_KEY;
@@ -25,7 +26,9 @@ public class QueryOptions {
 
 	public static class QueryOptionsBuilder implements Builder<QueryOptions> {
 
-		private static final Iterable<String> NO_ATTRIBUTES = emptyList();
+		private static final Iterable<String> EMPTY_ATTRIBUTES = emptyList();
+		private static final JSONObject EMPTY_FILTER = new JSONObject();
+		private static final JSONArray EMPTY_SORTERS = new JSONArray();
 
 		private Integer limit;
 		private Integer offset;
@@ -35,10 +38,10 @@ public class QueryOptions {
 		private Map<String, ? extends Object> parameters;
 
 		private QueryOptionsBuilder() {
-			limit = Integer.MAX_VALUE;
+			limit = MAX_VALUE;
 			offset = 0;
-			filter = new JSONObject();
-			sorters = new JSONArray();
+			filter = EMPTY_FILTER;
+			sorters = EMPTY_SORTERS;
 			parameters = newHashMap();
 		}
 
@@ -51,8 +54,8 @@ public class QueryOptions {
 		private void validate() {
 			preReleaseHackToFixCqlFilters();
 			offset = defaultIfNull(offset, 0);
-			limit = defaultIfNull(limit, Integer.MAX_VALUE);
-			attributeSubset = defaultIfNull(attributeSubset, NO_ATTRIBUTES);
+			limit = defaultIfNull(limit, MAX_VALUE);
+			attributeSubset = defaultIfNull(attributeSubset, EMPTY_ATTRIBUTES);
 		}
 
 		/*
@@ -91,21 +94,22 @@ public class QueryOptions {
 			return this;
 		}
 
+		/**
+		 * @param sorters
+		 *            JSON array representing sorting clauses, can be
+		 *            {@code null}.
+		 */
 		public QueryOptionsBuilder orderBy(final JSONArray sorters) {
-			if (sorters == null) {
-				this.sorters = new JSONArray();
-			} else {
-				this.sorters = sorters;
-			}
+			this.sorters = defaultIfNull(sorters, EMPTY_SORTERS);
 			return this;
 		}
 
+		/**
+		 * @param filter
+		 *            JSON object representing a filter, can be {@code null}.
+		 */
 		public QueryOptionsBuilder filter(final JSONObject filter) {
-			if (filter == null) {
-				this.filter = new JSONObject();
-			} else {
-				this.filter = filter;
-			}
+			this.filter = defaultIfNull(filter, EMPTY_FILTER);
 			return this;
 		}
 

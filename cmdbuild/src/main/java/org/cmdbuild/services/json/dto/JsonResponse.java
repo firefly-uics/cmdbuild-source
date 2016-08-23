@@ -2,7 +2,7 @@ package org.cmdbuild.services.json.dto;
 
 public class JsonResponse {
 
-	private boolean success;
+	private final boolean success;
 	private final Object response;
 
 	protected JsonResponse(boolean success, final Object response) {

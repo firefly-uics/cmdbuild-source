@@ -32,6 +32,7 @@ import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.logic.data.access.CardStorableConverter;
 import org.cmdbuild.logic.data.access.DataAccessLogic;
 import org.cmdbuild.model.data.Card;
+import org.cmdbuild.services.json.dto.JsonResponse;
 import org.cmdbuild.servlets.json.JSONBaseWithSpringContext;
 import org.cmdbuild.servlets.json.management.dataimport.CardFiller;
 import org.cmdbuild.servlets.json.management.dataimport.csv.CSVCard;
