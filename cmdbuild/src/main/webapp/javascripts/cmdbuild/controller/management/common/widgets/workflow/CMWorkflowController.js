@@ -85,7 +85,8 @@
 							className: CMDBuild.core.constants.Global.getRootNameWorkflows(),
 							limit: 1000,
 							start: 0,
-							filter: filter
+							filter: filter,
+							attributes: Ext.encode(['Description'])
 						},
 						loadMask: false,
 						scope: this,
