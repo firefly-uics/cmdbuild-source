@@ -389,12 +389,13 @@
 		 * @param {Object} response
 		 * @param {Object} options
 		 * @param {Object} decodedResponse
+		 * @param {String} activitySubsetId
 		 *
 		 * @returns {Void}
 		 *
 		 * @private
 		 */
-		positionActivityGetSuccess: function (response, options, decodedResponse) {
+		positionActivityGetSuccess: function (response, options, decodedResponse, activitySubsetId) {
 			if (Ext.isObject(decodedResponse) && !Ext.Object.isEmpty(decodedResponse)) {
 				var flowStatus = decodedResponse[CMDBuild.core.constants.Proxy.FLOW_STATUS],
 					filter = options.params[CMDBuild.core.constants.Proxy.FILTER],
@@ -419,7 +420,7 @@
 					callback: function (records, operation, success) {
 						this.view.getSelectionModel().deselectAll();
 
-						this.selectByMetadata(parameters[CMDBuild.core.constants.Proxy.ACTIVITY_SUBSET_ID]);
+						this.selectByMetadata(activitySubsetId);
 						this.selectByPosition(position % CMDBuild.configuration.instance.get(CMDBuild.core.constants.Proxy.ROW_LIMIT));
 					}
 				});
@@ -544,14 +545,16 @@
 		 *
 		 * @param {Object} parameters
 		 * @param {String} parameters.activitySubsetId
-		 * @param {String} parameters.forceFilter - false as default
-		 * @param {String} parameters.forceFlowStatus - false as default
+		 * @param {String} parameters.enableForceFlowStatus
+		 * @param {String} parameters.forceFilter - only for internal use, false as default
+		 * @param {String} parameters.forceFlowStatus - only for internal use, false as default
 		 * @param {Number} parameters.instanceId
 		 *
 		 * @returns {Void}
 		 */
 		workflowTreeActivityOpen: function (parameters) {
 			parameters = Ext.isObject(parameters) ? parameters : {};
+			parameters.enableForceFlowStatus = Ext.isBoolean(parameters.enableForceFlowStatus) ? parameters.enableForceFlowStatus : false;
 			parameters.forceFilter = Ext.isBoolean(parameters.forceFilter) ? parameters.forceFilter : false;
 			parameters.forceFlowStatus = Ext.isBoolean(parameters.forceFlowStatus) ? parameters.forceFlowStatus : false;
 
@@ -569,8 +572,12 @@
 			if (!parameters.forceFilter && !this.workflowTreeAppliedFilterIsEmpty())
 				params[CMDBuild.core.constants.Proxy.FILTER] = Ext.encode(this.workflowTreeAppliedFilterGet(CMDBuild.core.constants.Proxy.CONFIGURATION));
 
-			if (!parameters.forceFlowStatus)
+			if (parameters.enableForceFlowStatus) {
+				if (!parameters.forceFlowStatus)
+					params[CMDBuild.core.constants.Proxy.FLOW_STATUS] = this.controllerToolbarTop.cmfg('workflowTreeToolbarTopStatusValueGet');
+			} else {
 				params[CMDBuild.core.constants.Proxy.FLOW_STATUS] = this.controllerToolbarTop.cmfg('workflowTreeToolbarTopStatusValueGet');
+			}
 
 			this.positionActivityGet({ // Full call: with flow status and filter
 				params: params,
@@ -581,8 +588,9 @@
 
 						return this.workflowTreeActivityOpen(parameters);
 					} else if (
-						Ext.isString(params[CMDBuild.core.constants.Proxy.FLOW_STATUS]) && !Ext.isEmpty(parameters[CMDBuild.core.constants.Proxy.FLOW_STATUS])
+						Ext.isString(params[CMDBuild.core.constants.Proxy.FLOW_STATUS]) && !Ext.isEmpty(params[CMDBuild.core.constants.Proxy.FLOW_STATUS])
 						&& params[CMDBuild.core.constants.Proxy.FLOW_STATUS] != CMDBuild.core.constants.WorkflowStates.getAll()
+						&& parameters.enableForceFlowStatus
 					) {
 						parameters.forceFlowStatus = true;
 
@@ -591,7 +599,9 @@
 						return Ext.callback(this.positionActivityGetFailure, this, [response, options, decodedResponse]); // Card not found and store reload
 					}
 				},
-				success: this.positionActivityGetSuccess
+				success: function (response, options, decodedResponse) {
+					Ext.callback(this.positionActivityGetSuccess, this, [response, options, decodedResponse, parameters[CMDBuild.core.constants.Proxy.ACTIVITY_SUBSET_ID]]);
+				}
 			});
 		},
 

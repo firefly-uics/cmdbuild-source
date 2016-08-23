@@ -5,6 +5,7 @@
 
 		requires: [
 			'CMDBuild.core.constants.Proxy',
+			'CMDBuild.core.constants.WorkflowStates',
 			'CMDBuild.core.Utils',
 			'CMDBuild.proxy.management.workflow.Activity',
 			'CMDBuild.proxy.management.workflow.Workflow'
@@ -214,7 +215,7 @@
 			if (Ext.isObject(responseModel) && !Ext.Object.isEmpty(responseModel)) {
 				if (
 					Ext.isString(responseModel.get(CMDBuild.core.constants.Proxy.FLOW_STATUS)) && !Ext.isEmpty(responseModel.get(CMDBuild.core.constants.Proxy.FLOW_STATUS))
-					&& responseModel.get(CMDBuild.core.constants.Proxy.FLOW_STATUS) == 'COMPLETED'
+					&& responseModel.get(CMDBuild.core.constants.Proxy.FLOW_STATUS) == CMDBuild.core.constants.WorkflowStates.getCompletedCapitalized()
 				) {
 					_CMWFState.setProcessInstance(Ext.create('CMDBuild.model.CMProcessInstance'));
 					_CMUIState.onlyGridIfFullScreen();

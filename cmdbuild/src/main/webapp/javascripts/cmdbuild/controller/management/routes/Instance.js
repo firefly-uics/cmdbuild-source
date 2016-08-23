@@ -146,6 +146,7 @@
 								eventName: 'load',
 								fn: function () {
 									var params = {};
+									params['enableForceFlowStatus'] = true;
 									params[CMDBuild.core.constants.Proxy.INSTANCE_ID] = instanceIdentifier;
 
 									moduleController.cmfg('workflowTreeActivityOpen', params);
