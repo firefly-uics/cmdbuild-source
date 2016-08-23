@@ -149,7 +149,7 @@
 					scope: this,
 					change: function (field, newValue, oldValue, eOpts) {
 						if (!this.disableNextStatusSelectionChangeEvent)
-							this.cmfg('onWorkflowStatusSelectionChange', newValue);
+							this.cmfg('workflowTreeStoreLoad');
 
 						this.disableNextStatusSelectionChangeEvent = false; // Reset flag value
 					}
@@ -382,8 +382,8 @@
 
 			/**
 			 * @param {Object} parameters
-			 * @param {Object} parameters.value
 			 * @param {Object} parameters.silently
+			 * @param {Object} parameters.value
 			 *
 			 * @returns {Void}
 			 */

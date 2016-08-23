@@ -374,7 +374,6 @@
 		/**
 		 * @param {Object} parameters
 		 * @param {Boolean or Object} parameters.activateFirstTab - if object selects object as tab otherwise selects first one
-		 * @param {String} parameters.flowStatus
 		 * @param {Number} parameters.instanceId
 		 * @param {Number} parameters.workflowId
 		 *
@@ -383,8 +382,6 @@
 		mainViewportActivitySelect: function (parameters) {
 			parameters = Ext.isObject(parameters) ? parameters : {};
 			parameters.activateFirstTab = Ext.isEmpty(parameters.activateFirstTab) ? true : parameters.activateFirstTab;
-			parameters.flowStatus = Ext.isString(parameters.flowStatus) && !Ext.isEmpty(parameters.flowStatus)
-				? parameters.flowStatus : CMDBuild.core.constants.WorkflowStates.getOpenCapitalized();
 
 			var accordionController = this.cmfg('mainViewportAccordionControllerWithNodeWithIdGet', parameters[CMDBuild.core.constants.Proxy.WORKFLOW_ID]),
 				moduleController = this.cmfg('mainViewportModuleControllerGet', CMDBuild.core.constants.ModuleIdentifiers.getWorkflow());
@@ -414,12 +411,7 @@
 						moduleController.cmfg('workflowTreeApplyStoreEvent', {
 							eventName: 'load',
 							fn: function (store, node, records, successful, eOpts) {
-								moduleController.cmfg('workflowTreeActivityOpen', {
-									enableForceFilter: true,
-									enableForceFlowStatus: true,
-									flowStatus: parameters[CMDBuild.core.constants.Proxy.FLOW_STATUS],
-									instanceId: parameters[CMDBuild.core.constants.Proxy.INSTANCE_ID]
-								});
+								moduleController.cmfg('workflowTreeActivityOpen', { instanceId: parameters[CMDBuild.core.constants.Proxy.INSTANCE_ID] });
 							},
 							scope: this,
 							options: { single: true }

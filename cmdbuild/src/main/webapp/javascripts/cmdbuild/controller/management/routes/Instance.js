@@ -112,13 +112,12 @@
 		/**
 		 * @param {Object} workflowObject
 		 * @param {Number} instanceIdentifier
-		 * @param {String} forceState
 		 *
 		 * @returns {Void}
 		 *
 		 * @private
 		 */
-		manageIdentifierInstance: function (workflowObject, instanceIdentifier, forceState) {
+		manageIdentifierInstance: function (workflowObject, instanceIdentifier) {
 			var accordionController = CMDBuild.global.controller.MainViewport.cmfg('mainViewportAccordionControllerWithNodeWithIdGet', workflowObject[CMDBuild.core.constants.Proxy.ID]);
 			var moduleController = CMDBuild.global.controller.MainViewport.cmfg('mainViewportModuleControllerGet', CMDBuild.core.constants.ModuleIdentifiers.getWorkflow());
 
@@ -147,16 +146,9 @@
 								eventName: 'load',
 								fn: function () {
 									var params = {};
-									params[CMDBuild.core.constants.Proxy.FLOW_STATUS] = forceState;
 									params[CMDBuild.core.constants.Proxy.INSTANCE_ID] = instanceIdentifier;
 
 									moduleController.cmfg('workflowTreeActivityOpen', params);
-
-									if (Ext.isString(forceState) && !Ext.isEmpty(forceState))
-										moduleController.cmfg('workflowTreeToolbarTopStatusValueSet', {
-											silently: true, // Useless server call optimization
-											value: CMDBuild.controller.management.workflow.Utils.translateStatusFromCapitalizedMode(forceState)
-										});
 								},
 								scope: this,
 								options: { single: true }

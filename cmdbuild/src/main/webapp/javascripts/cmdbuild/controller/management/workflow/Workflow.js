@@ -231,7 +231,6 @@
 					// Tree setup
 					var activityData = {};
 					activityData[CMDBuild.core.constants.Proxy.ACTIVITY_SUBSET_ID] = responseModel.get(CMDBuild.core.constants.Proxy.ACTIVITY_SUBSET_ID);
-					activityData[CMDBuild.core.constants.Proxy.FLOW_STATUS] = responseModel.get(CMDBuild.core.constants.Proxy.FLOW_STATUS);
 					activityData[CMDBuild.core.constants.Proxy.INSTANCE_ID] = responseModel.get(CMDBuild.core.constants.Proxy.ID);
 
 					this.cmfg('workflowTreeActivityOpen', activityData);

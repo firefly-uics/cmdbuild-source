@@ -25,11 +25,8 @@
 				case CMDBuild.core.constants.WorkflowStates.getAbortedCapitalized():
 					return CMDBuild.core.constants.WorkflowStates.getAborted();
 
-				default: {
-					_error('translateStatusFromCapitalizedMode(): unmanaged status parameter', this, status);
-
-					return null;
-				}
+				default:
+					return status;
 			}
 		}
 	});
