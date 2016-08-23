@@ -7,6 +7,7 @@ import static org.cmdbuild.spring.SpringIntegrationUtils.applicationContext;
 
 import org.apache.commons.lang3.Validate;
 import org.cmdbuild.auth.UserStore;
+import org.cmdbuild.auth.UserStoreSupplier;
 import org.cmdbuild.auth.acl.CMGroup;
 import org.cmdbuild.auth.acl.PrivilegeContext;
 import org.cmdbuild.dao.entry.CMCard;
@@ -63,9 +64,11 @@ public class MenuCardPredicateFactory {
 		} else if (menuCard.get(TYPE_ATTRIBUTE).equals(MenuItemType.PROCESS.getValue())) {
 			return new IsReadableClass(dataView, privilegeContext.get());
 		} else if (menuCard.get(TYPE_ATTRIBUTE).equals(MenuItemType.REPORT_CSV.getValue())) {
-			return new IsReadableReport(applicationContext().getBean(ReportStore.class), currentGroupAllowed(userStore));
+			return new IsReadableReport(applicationContext().getBean(ReportStore.class),
+					currentGroupAllowed(UserStoreSupplier.of(userStore)));
 		} else if (menuCard.get(TYPE_ATTRIBUTE).equals(MenuItemType.REPORT_PDF.getValue())) {
-			return new IsReadableReport(applicationContext().getBean(ReportStore.class), currentGroupAllowed(userStore));
+			return new IsReadableReport(applicationContext().getBean(ReportStore.class),
+					currentGroupAllowed(UserStoreSupplier.of(userStore)));
 		} else if (menuCard.get(TYPE_ATTRIBUTE).equals(MenuItemType.DASHBOARD.getValue())) {
 			return new IsReadableDashboard(dataView, group);
 		} else if (menuCard.get(TYPE_ATTRIBUTE).equals(MenuItemType.VIEW.getValue())) {

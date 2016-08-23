@@ -28,6 +28,8 @@ FIXES
 
  * Error while saving a search filter without selecting a default group
 
+ * Wrong privileges management for reports from REST web services
+
 
 
 
