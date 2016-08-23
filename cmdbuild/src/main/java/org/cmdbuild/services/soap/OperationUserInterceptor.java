@@ -14,6 +14,8 @@ import org.cmdbuild.auth.AuthenticationStore;
 import org.cmdbuild.auth.DefaultAuthenticationService;
 import org.cmdbuild.auth.Login;
 import org.cmdbuild.auth.UserStore;
+import org.cmdbuild.auth.acl.CMGroup;
+import org.cmdbuild.auth.acl.NullGroup;
 import org.cmdbuild.auth.user.AuthenticatedUser;
 import org.cmdbuild.auth.user.CMUser;
 import org.cmdbuild.auth.user.ForwardingAuthenticatedUser;
@@ -200,10 +202,22 @@ public class OperationUserInterceptor extends AbstractPhaseInterceptor<Message> 
 			if (isPrivilegedServiceUser(authenticationString.getAuthenticationLogin())) {
 				logger.debug(marker, "wrapping operation user with extended username");
 				final String username = authenticationString.getImpersonationLogin().getLogin().getValue();
+				final CMGroup group;
+				if (authenticationString.impersonateForcibly()) {
+					final CMGroup _group = authenticationLogic()
+							.getGroupWithName(authenticationString.getImpersonationLogin().getGroup());
+					if (_group instanceof NullGroup) {
+						group = operationUser.getPreferredGroup();
+					} else {
+						group = _group;
+					}
+				} else {
+					group = operationUser.getPreferredGroup();
+				}
 				wrapperOperationUser = new OperationUser( //
 						AuthenticatedUserWithExtendedUsername.from(authenticatedUser, username), //
 						operationUser.getPrivilegeContext(), //
-						operationUser.getPreferredGroup());
+						group);
 			} else if (authenticationStore.getType() == UserType.DOMAIN) {
 				/*
 				 * we don't want that a User is represented by a Card of a user

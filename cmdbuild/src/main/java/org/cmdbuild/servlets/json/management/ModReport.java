@@ -27,6 +27,7 @@ import java.util.Map;
 import javax.activation.DataHandler;
 import javax.activation.DataSource;
 
+import org.cmdbuild.auth.UserStoreSupplier;
 import org.cmdbuild.common.utils.TempDataSource;
 import org.cmdbuild.dao.entrytype.CMAttribute;
 import org.cmdbuild.exception.ReportException.ReportExceptionType;
@@ -81,7 +82,7 @@ public class ModReport extends JSONBaseWithSpringContext {
 		final JSONArray rows = new JSONArray();
 		int numRecords = 0;
 		for (final Report report : reportStore().findReportsByType(ReportType.valueOf(reportType.toUpperCase()))) {
-			if (currentGroupAllowed(userStore()).apply(report)) {
+			if (currentGroupAllowed(UserStoreSupplier.of(userStore())).apply(report)) {
 				++numRecords;
 				if (numRecords > offset && numRecords <= offset + limit) {
 					rows.put(new ReportSerializer().toClient(report));
@@ -107,7 +108,7 @@ public class ModReport extends JSONBaseWithSpringContext {
 			throw ReportExceptionType.REPORT_NOTFOUND.createException(code);
 		}
 
-		if (!currentGroupAllowed(userStore()).apply(report)) {
+		if (!currentGroupAllowed(UserStoreSupplier.of(userStore())).apply(report)) {
 			throw ReportExceptionType.REPORT_GROUPNOTALLOWED.createException(report.getCode());
 		}
 
@@ -145,8 +146,8 @@ public class ModReport extends JSONBaseWithSpringContext {
 		final JSONObject out = new JSONObject();
 		if (ReportType.valueOf(type.toUpperCase()) == ReportType.CUSTOM) {
 			final ReportExtension reportExtension = ReportExtension.valueOf(extension.toUpperCase());
-			reportFactory = new ReportFactoryDB(dataSource(), cmdbuildConfiguration(), reportStore(), id,
-					reportExtension);
+			reportFactory =
+					new ReportFactoryDB(dataSource(), cmdbuildConfiguration(), reportStore(), id, reportExtension);
 
 			// if zip extension, do not compile
 			if (reportExtension == ReportExtension.ZIP) {
@@ -179,8 +180,8 @@ public class ModReport extends JSONBaseWithSpringContext {
 		final Collection<JSONObject> output = newArrayList();
 		for (final ReportParameter reportParameter : reportFactory.getReportParameters()) {
 			final CMAttribute attribute = ReportParameterConverter.of(reportParameter).toCMAttribute();
-			final Map<String, String> metadata = new CustomProperties(reportParameter.getJrParameter()
-					.getPropertiesMap()).getFilterParameters();
+			final Map<String, String> metadata =
+					new CustomProperties(reportParameter.getJrParameter().getPropertiesMap()).getFilterParameters();
 			output.add(AttributeSerializer.newInstance() //
 					.withDataView(systemDataView()) //
 					.build()//
@@ -201,8 +202,8 @@ public class ModReport extends JSONBaseWithSpringContext {
 
 		final ReportFactoryDB reportFactory = (ReportFactoryDB) sessionVars().getReportFactory();
 		if (formParameters.containsKey("reportExtension")) {
-			reportFactory.setReportExtension(ReportExtension.valueOf(formParameters.get("reportExtension")
-					.toUpperCase()));
+			reportFactory
+					.setReportExtension(ReportExtension.valueOf(formParameters.get("reportExtension").toUpperCase()));
 		}
 
 		for (final ReportParameter reportParameter : reportFactory.getReportParameters()) {

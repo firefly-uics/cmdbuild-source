@@ -1,4 +1,4 @@
-(function() {
+(function () {
 
 	Ext.define('CMDBuild.view.common.field.multiselect.Group', {
 		extend: 'Ext.ux.form.MultiSelect',
@@ -20,6 +20,11 @@
 		name: CMDBuild.core.constants.Proxy.GROUPS,
 		valueField: CMDBuild.core.constants.Proxy.ID,
 
+		/**
+		 * @returns {Void}
+		 *
+		 * @override
+		 */
 		initComponent: function () {
 			Ext.apply(this, {
 				delegate: Ext.create('CMDBuild.controller.common.field.multiselect.Group', { view: this }),
@@ -33,13 +38,28 @@
 		 * @returns {Ext.data.Store or CMDBuild.core.cache.Store}
 		 */
 		getStore: function () {
-			return this.delegate.cmfg('onFieldMultiselectGroupGetStore');
+			return this.delegate.cmfg('onFieldMultiselectGroupStoreGet');
 		},
 
+		/**
+		 * @returns {Array}
+		 *
+		 * @override
+		 */
+		getValue: function () {
+			return this.delegate.cmfg('onFieldMultiselectGroupValueGet', this.callParent(arguments));
+		},
+
+		/**
+		 * @returns {Void}
+		 */
 		reset: function () {
 			this.delegate.cmfg('onFieldMultiselectGroupReset');
 		},
 
+		/**
+		 * @returns {Void}
+		 */
 		selectAll: function () {
 			this.delegate.cmfg('onFieldMultiselectGroupSelectAll');
 		},

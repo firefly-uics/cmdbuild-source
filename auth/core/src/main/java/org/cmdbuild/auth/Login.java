@@ -1,6 +1,11 @@
 package org.cmdbuild.auth;
 
+import static org.apache.commons.lang3.builder.ToStringBuilder.reflectionToString;
+import static org.apache.commons.lang3.builder.ToStringStyle.SHORT_PREFIX_STYLE;
+
 import org.apache.commons.lang3.Validate;
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 public class Login {
 
@@ -9,26 +14,38 @@ public class Login {
 		USERNAME, EMAIL;
 
 		private static LoginType fromLoginString(final String loginString) {
-			if (loginString.contains("@")) {
-				return LoginType.EMAIL;
-			} else {
-				return LoginType.USERNAME;
-			}
+			return (loginString.contains("@")) ? LoginType.EMAIL : LoginType.USERNAME;
 		}
+
 	}
 
 	private final String value;
 	private final LoginType type;
 
+	/**
+	 * @deprecated Use {@code login(String)} instead.
+	 */
+	@Deprecated
 	public static Login newInstance(final String loginString) {
-		Validate.notNull(loginString, "Null login string");
-		return new Login(loginString, LoginType.fromLoginString(loginString));
+		return login(loginString);
 	}
 
-	/*
-	 * Basically used by the tests
+	public static Login login(final String loginString) {
+		return login(loginString, LoginType.fromLoginString(loginString));
+	}
+
+	/**
+	 * @deprecated Use {@code login(String)} instead.
 	 */
+	@Deprecated
 	public static Login newInstance(final String loginString, final LoginType type) {
+		return login(loginString, type);
+	}
+
+	/**
+	 * Basically used by the tests.
+	 */
+	public static Login login(final String loginString, final LoginType type) {
 		Validate.notNull(loginString, "Null login string");
 		Validate.notNull(type, "Null type");
 		return new Login(loginString, type);
@@ -49,26 +66,30 @@ public class Login {
 
 	@Override
 	public boolean equals(final Object obj) {
-		if (obj == null) {
-			return false;
-		}
 		if (obj == this) {
 			return true;
 		}
-		if (!getClass().isAssignableFrom(obj.getClass())) {
+		if (!(obj instanceof Login)) {
 			return false;
 		}
-		final Login login = Login.class.cast(obj);
-		return (getType() == login.getType() && getValue().equals(login.getValue()));
+		final Login other = Login.class.cast(obj);
+		return new EqualsBuilder() //
+				.append(this.value, other.value) //
+				.append(this.type, other.type) //
+				.isEquals();
 	}
 
 	@Override
 	public int hashCode() {
-		return toString().hashCode();
+		return new HashCodeBuilder() //
+				.append(value) //
+				.append(type) //
+				.toHashCode();
 	}
 
 	@Override
 	public String toString() {
-		return String.format("%s/%s", value, type);
+		return reflectionToString(this, SHORT_PREFIX_STYLE);
 	}
+
 }
