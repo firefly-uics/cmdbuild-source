@@ -301,18 +301,23 @@
 			this.mapAddCardButton.on("cmClick", function(p) {
 				this.fireEvent(this.CMEVENTS.addButtonClick, p);
 			}, this);
-
+			var me = this;
 			var thematismButton = Ext.create('CMDBuild.core.buttons.gis.Thematism', {
 				handler : function() {
-					this.theMap.initThematism();
+					me.theMap.initThematism(null);
 				}
 			});
 			this.theMap = Ext.create('CMDBuild.view.management.classes.map.CMMapPanel', {
 				tbar: [this.mapAddCardButton, '->', thematismButton, this.showGridButton],
 				frame: false,
 				border: false,
-				mainGrid : this.cardGrid
+				mainGrid : this.cardGrid,
+				thematismButton : thematismButton
 			});
+			this.initThematism = function(name) {
+				this.theMap.initThematism(name);
+			}
+			thematismButton.callback = this.initThematism;
 			thematismButton.theMap = this.theMap;
 			this.centralPanelItems.push(this.theMap);
 

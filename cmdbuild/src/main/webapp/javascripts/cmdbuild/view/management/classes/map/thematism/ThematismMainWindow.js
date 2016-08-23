@@ -52,11 +52,11 @@
 						interactionDocument : this.interactionDocument,
 						parentWindow : this
 					});
-					this.configureLayout = Ext.create(
-							"CMDBuild.view.management.classes.map.thematism.configurationSteps.ConfigureLayout", {
-								interactionDocument : this.interactionDocument,
-								parentWindow : this
-							});
+			this.configureLayout = Ext.create(
+					"CMDBuild.view.management.classes.map.thematism.configurationSteps.ConfigureLayout", {
+						interactionDocument : this.interactionDocument,
+						parentWindow : this
+					});
 			this.wizard = this.getWizard();
 			Ext.apply(this, {
 				items : [ this.wizard ]
@@ -91,8 +91,13 @@
 			});
 			return wizard;
 		},
+		configure : function(configuration) {
+			this.layoutConfiguration = clone(configuration.layoutConfiguration);
+			this.functionConfiguration = clone(configuration.functionConfiguration);
+			this.thematismConfiguration = clone(configuration.thematismConfiguration);
+		},
 		getCurrentStrategy : function() {
-			return this.functionConfiguration.currentStrategy;
+			return this.interactionDocument.getStrategyByDescription(this.functionConfiguration.currentStrategy);
 		},
 		getCurrentSourceType : function() {
 			return this.thematismConfiguration.source;
@@ -109,6 +114,12 @@
 		getThematismConfiguration : function() {
 			return this.thematismConfiguration;
 		},
+		getFunctionConfiguration : function() {
+			return this.functionConfiguration;
+		},
+		getLayoutConfiguration : function() {
+			return this.layoutConfiguration;
+		},
 		getAnalysisDescription : function(analysisType) {
 			switch (analysisType) {
 			case CMDBuild.gis.constants.layers.RANGES_ANALYSIS:
@@ -120,7 +131,7 @@
 			}
 			return "@@ Puntual";
 		},
-		 getSourceDescription : function(sourceType) {
+		getSourceDescription : function(sourceType) {
 			switch (sourceType) {
 			case CMDBuild.gis.constants.layers.TABLE_SOURCE:
 				return "@@ Table";
@@ -144,10 +155,10 @@
 			this.hide();
 		},
 		advanceConfigurationLayouts : function() {
-				this.configureLayout.loadComponents(function() {
-					this.wizard.getLayout().setActiveItem("configureLayout");
+			this.configureLayout.loadComponents(function() {
+				this.wizard.getLayout().setActiveItem("configureLayout");
 
-				}, this);
+			}, this);
 		},
 		advance : function(step, configurationObject) {
 			switch (step) {
@@ -198,10 +209,27 @@
 					thematismConfiguration : clone(this.thematismConfiguration),
 					functionConfiguration : clone(this.functionConfiguration),
 					layoutConfiguration : clone(this.layoutConfiguration),
-					 
+
 				}
 			});
 			this.hide();
+
+		},
+		initForm : function(form, values) {
+			if (!values) {
+				return;
+			}
+			form.items.each(function(item) {
+				var component = form.child("[name='" + item.name + "']");
+				if (item.xtype === "radiogroup") {
+					var val = {};
+					val[item.name] = values[item.name];
+					component.setValue(val);
+				} else if (component.setValue) {
+					component.setValue(values[item.name]);
+				}
+
+			});
 
 		}
 

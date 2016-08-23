@@ -48,6 +48,9 @@
 					if (!layer) {
 						layer = this.interactionDocument.getThematicLayerByName(node.raw.layerName);
 					}
+					var map = this.interactionDocument.getMap();
+					var configurationMap = this.interactionDocument.getConfigurationMap();
+					configurationMap.center = map.getView().getCenter();
 					this.delegate.cmfg('onVisibilityChange', {
 						checked : checked,
 						layer : layer

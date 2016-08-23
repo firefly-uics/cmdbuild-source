@@ -17,6 +17,7 @@
 						controlShape : undefined,
 						controlSegments : undefined,
 						controlRows : undefined,
+						configurationPanel : undefined,
 
 						/**
 						 * @returns {Void}
@@ -25,6 +26,21 @@
 						 */
 						initComponent : function() {
 							var me = this;
+							this.configurationPanel = Ext.create("Ext.panel.Panel", {
+								html : ""
+							});
+							this.initControls();
+							Ext.apply(this, {
+								items : [ this.configurationPanel, this.controlShape, this.controlSegments,
+										this.controlRows ],
+								buttons : getButtons(this.parentWindow, this.itemId),
+							});
+							this.callParent(arguments);
+						},
+						defaults : {
+							anchor : "100%"
+						},
+						initControls : function() {
 							this.controlShape = Ext
 									.create(
 											"CMDBuild.view.management.classes.map.thematism.configurationSteps.layoutComponents.ConfigureShape",
@@ -46,38 +62,10 @@
 												interactionDocument : this.interactionDocument,
 												parentWindow : this
 											});
-							Ext.apply(this, {
-								items : [ this.controlShape, this.controlSegments, this.controlRows ],
-								buttons : [ {
-									text : '@@ Cancel',
-									handler : function() {
-										me.parentWindow.close();
-									}
-								}, {
-									text : '@@ Previous',
-									handler : function() {
-										// var form = this.up('form').getForm();
-										me.parentWindow.previous(me.itemId);
-									}
-								}, {
-									text : '@@ Show',
-									formBind : true, // only enabled once the
-														// form is valid
-									disabled : true,
-									handler : function() {
-										var form = this.up('form').getForm();
-										var configurationObject = form.getValues();
 
-										me.showOnMap(configurationObject);
-									}
-								} ],
-							});
-							this.callParent(arguments);
-						},
-						defaults : {
-							anchor : "100%"
 						},
 						loadComponents : function(callback, callbackScope) {
+							this.configurationPanel.update(this.getHtmlTitle());
 							this.controlShape.loadComponents(function() {
 								this.controlSegments.loadComponents(function() {
 									this.controlRows.loadComponents(function() {
@@ -85,6 +73,10 @@
 									}, this);
 								}, this);
 							}, this);
+						},
+						init : function() {
+							var layoutConfiguration = this.parentWindow.getLayoutConfiguration();
+							this.parentWindow.initForm(this, layoutConfiguration);
 						},
 						getCurrentLayer : function() {
 							return this.parentWindow.getCurrentLayer();
@@ -101,9 +93,67 @@
 						getCurrentAnalysisType : function() {
 							return this.parentWindow.getCurrentAnalysisType();
 						},
-						showOnMap : function(configurationObject) {
-							return this.parentWindow.showOnMap(configurationObject);
+						getHtmlTitle : function() {
+							var configuration = this.parentWindow.getThematismConfiguration();
+							var strHtml = "<p>@@ Thematic Layer Name : ";
+							strHtml += configuration.layerName;
+							strHtml += "</p>";
+							strHtml += "<p>@@ Analysis Type : ";
+							strHtml += this.parentWindow.getAnalysisDescription(configuration.analysis);
+							strHtml += "</p>";
+							strHtml += "<p>@@ Source Type : ";
+							strHtml += this.parentWindow.getSourceDescription(configuration.source);
+							strHtml += "</p>";
+							var functionConfiguration = this.parentWindow.getFunctionConfiguration();
+							if (configuration.source === CMDBuild.gis.constants.layers.FUNCTION_SOURCE) {
+								strHtml += "<p>@@ Function Name : ";
+								strHtml += functionConfiguration.currentStrategy.description;
+								strHtml += "</p>";
+
+							} else {
+								strHtml += "<p>@@ Function Name : ";
+								strHtml += functionConfiguration.currentStrategy.description;
+								strHtml += "</p>";
+								strHtml += "<p>@@ Field : ";
+								strHtml += "/* TODO! */";
+								strHtml += "</p>";
+
+							}
+							return strHtml;
 						}
 
 					});
+
+	/**
+	 * @param
+	 * {CMDBuild.view.management.classes.map.thematism.ThematismMainWindow}
+	 * parentWindow
+	 * @param {String}
+	 *            itemId
+	 * 
+	 * @returns {Array} extjs items
+	 */
+	function getButtons(parentWindow, itemId) {
+		return [ {
+			text : '@@ Cancel',
+			handler : function() {
+				parentWindow.close();
+			}
+		}, {
+			text : '@@ Previous',
+			handler : function() {
+				parentWindow.previous(itemId);
+			}
+		}, {
+			text : '@@ Show',
+			formBind : true,
+			disabled : true,
+			handler : function() {
+				var form = this.up('form').getForm();
+				var configurationObject = form.getValues();
+
+				parentWindow.showOnMap(configurationObject);
+			}
+		} ];
+	}
 })();

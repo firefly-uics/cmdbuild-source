@@ -1,5 +1,19 @@
 (function() {
 	Ext.define('CMDBuild.view.management.classes.map.thematism.ThematicLayer', {
+		
+		/**
+		 * @property {Object} 
+		 * @property {String} thematism.name 
+		 * @property {ol.layer.Vector} thematism.layer 
+		 * @property {Object} thematism.strategy 
+		 * @property {String} thematism.strategy.description
+		 * @property {Function} thematism.strategy.value 
+		 * @property {Object} thematism.configuration (form fields CMDBuild.view.management.classes.map.thematism.ThematismMainWindow) 
+		 * @property {Object} thematism.configuration.thematismConfiguration 
+		 * @property {Object} thematism.configuration.functionConfiguration 
+		 * @property {Object} thematism.configuration.layoutConfiguration 
+		 */
+		thematism : undefined,
 
 		/**
 		 * @param {Object}
@@ -47,8 +61,17 @@
 		 * 
 		 * @returns {Void}
 		 */
-		refreshFeatures : function(features) {
+		refreshFeatures : function() {
 			this.charge(this.thematism.layer, this.thematism.strategy);
+		},
+
+		/**
+		 * 
+		 * @returns {Void}
+		 */
+		refresh : function() {
+			this.layer.getSource().clear();
+			this.refreshFeatures();
 		},
 
 		/**
@@ -80,7 +103,7 @@
 		},
 
 		/**
-		 * @param {ol.Layer}
+		 * @param {ol.layer.Vector}
 		 *            originalLayer
 		 * @param {Thematic
 		 *            Strategy} strategy
@@ -102,6 +125,9 @@
 						geometry : feature.clone().getGeometry(),
 						strategy : strategy
 					});
+				}
+				else {
+					
 				}
 			});
 			this.layer.getSource().forEachFeature(function(feature) {
@@ -125,7 +151,6 @@
 				master_class : originalFeature.master_class,
 			});
 			feature.setGeometry(originalFeature.geometry);
-			// feature.style = this.getStyle('Point', color);
 
 			this.layer.getSource().addFeature(feature);
 			this.loadCard(originalFeature.master_card, originalFeature.master_className, function(card) {
@@ -194,8 +219,11 @@
 				}
 			});
 		},
+		getConfiguration : function() {
+			return this.thematism.configuration;
+		},
 		getStyle : function(shape, color) {
-			var configuration = this.thematism.configuration.layoutConfiguration;
+			var configuration = this.getConfiguration().layoutConfiguration;
 			switch (shape) {
 			case 'LineString':
 				return new ol.style.Style({

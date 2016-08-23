@@ -73,6 +73,21 @@
 
 		layout : 'border',
 
+		/**
+		 * CMDBuild.core.buttons.gis.Thematism
+		 */
+		thematismButton : undefined,
+
+		/**
+		 * CMDBuild.view.management.classes.map.geoextension.InteractionDocument
+		 */
+		interactionDocument : undefined,
+
+		/**
+		 * CMDBuild.view.management.classes.map.geoextension.CMDBuildGeoExt
+		 */
+		geoExtension : undefined,
+		
 		constructor : function() {
 			this.mixins.delegable.constructor.call(this, "CMDBuild.view.management.map.CMMapPanelDelegate");
 
@@ -89,6 +104,7 @@
 			var thematicDocument = Ext.create('CMDBuild.view.management.classes.map.thematism.ThematicDocument');
 			var strategiesManager = Ext.create('CMDBuild.view.management.classes.map.thematism.ThematicStrategiesManager');
 			thematicDocument.configureStrategiesManager(strategiesManager);
+			thematicDocument.setThematismButton(this.thematismButton);
 			this.interactionDocument = Ext
 					.create('CMDBuild.view.management.classes.map.geoextension.InteractionDocument');
 			thematicDocument.setInteractionDocument(this.interactionDocument)
@@ -165,8 +181,8 @@
 
 			this.callParent(arguments);
 		},
-		initThematism : function() {
-			this.thematicView.show();
+		initThematism : function(layerName) {
+			this.thematicView.show(layerName);
 		},
 		updateSize : function() {
 		},

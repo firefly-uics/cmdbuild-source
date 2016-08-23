@@ -15,16 +15,17 @@
 		initComponent : function() {
 			var me = this;
 			this.attributesStore = Ext.create("Ext.data.Store", {
-				fields : [ "description", "name", "type" ],
+				fields : [ "description", "value", "type" ],
 				data : []
 			});
 			this.strategiesStore = Ext.create("Ext.data.Store", {
-				fields : [ "name", "type" ],
+				fields : [ "description", "value" ],
 				data : []
 			});
 			this.comboAttributes = Ext.create("Ext.form.field.ComboBox", {
 				fieldLabel : "@@ Choose Attribute *",
 				store : this.attributesStore,
+				name : "attribute",
 				queryMode : "local",
 				displayField : "description",
 				valueField : "value",
@@ -62,7 +63,7 @@
 					var strategy = strategies[key];
 					strategiesStore.add({
 						"description" : strategy.description,
-						"value" : strategy
+						"value" : strategy.description
 					});
 				}
 				this.comboStrategies.store.loadData(strategiesStore.getRange(), false);
@@ -75,7 +76,7 @@
 				return;
 			}
 			var attributesStore = Ext.create("Ext.data.Store", {
-				fields : [ "description", "name", "type" ],
+				fields : [ "description", "value", "type" ],
 				autoLoad : false,
 				data : []
 			});
@@ -88,7 +89,7 @@
 					var attribute = attributes[i];
 					attributesStore.add({
 						"description" : attribute.description,
-						"name" : attribute.name,
+						"value" : attribute.name,
 						"type" : attribute.type
 					});
 				}

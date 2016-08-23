@@ -19,6 +19,11 @@
 		 * @property {CMDBuild.view.administration.userAndGroup.user.UserView}
 		 */
 		view : undefined,
+		
+		/**
+		 * @property {CMDBuild.view.management.classes.map.geoextension.InteractionDocument}
+		 */
+		interactionDocument : undefined,
 
 		/**
 		 * @param {Object}
@@ -40,8 +45,19 @@
 			});
 
 		},
-		show : function() {
-			this.view.show();
+		show : function(layerName) {
+			var thematicDocument = this.interactionDocument.getThematicDocument();
+			var thematicLayer = thematicDocument.getLayerByName(layerName);
+			if (thematicLayer && thematicLayer.get("adapter")) {
+				var configuration = thematicLayer.get("adapter").getConfiguration();
+				this.view.configure(configuration);
+			}
+			else if (! thematicLayer) {
+				var configuration = thematicDocument.getDefaultThematismConfiguration();
+				this.view.configure(configuration.configuration);
+				
+			}
+			this.view.show(layerName);
 		},
 
 		/**
@@ -58,7 +74,11 @@
 		 */
 		onShowThematism : function(thematism) {
 			var thematicDocument = this.interactionDocument.getThematicDocument();
-			thematicDocument.addThematism(thematism);
+			if (thematicDocument.getLayerByName(thematism.name) !== null) {
+				thematicDocument.modifyThematism(thematism);
+			} else {
+				thematicDocument.addThematism(thematism);
+			}
 		}
 	});
 
