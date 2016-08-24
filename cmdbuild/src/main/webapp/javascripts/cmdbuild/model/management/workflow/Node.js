@@ -22,7 +22,7 @@
 
 			// Common
 			{ name: 'iconCls', type: 'string', defaultValue: 'cmdb-tree-no-icon', persist: false }, // ExtJs property to hide icon
-			{ name: 'rawData', type: 'auto', defaultValue: [] }, // FIXME: legacy mode to remove on complete Workflow UI and wofkflowState modeules refactor
+			{ name: 'rawData', type: 'auto', defaultValue: [] }, // FIXME: legacy mode to remove on complete Workflow UI and wofkflowState modules refactor
 		],
 
 		/**

@@ -223,7 +223,7 @@
 					var me = this;
 
 					if (!processInstance.isNew() && processClassRefIsASuperclass) {
-						CMDBuild.proxy.Card.read({
+						CMDBuild.proxy.Card.read({ // @deprecated getInstance
 							params: {
 								cardId: processInstance.getId(),
 								className: _CMCache.getEntryTypeNameById(processInstance.getClassId())
@@ -246,6 +246,18 @@
 							cb();
 						}
 					}
+				},
+
+				/**
+				 * Simplified method to avoid asynchronous call to get already owned data
+				 *
+				 * @returns {Void}
+				 */
+				setProcessInstanceSynchronous: function(pi) {
+					processInstance = pi;
+
+					this.setActivityInstance(new CMDBuild.model.CMActivityInstance());
+					this.notifyToDelegates("onProcessInstanceChange", [processInstance]);
 				},
 
 				getProcessInstance: function() {
