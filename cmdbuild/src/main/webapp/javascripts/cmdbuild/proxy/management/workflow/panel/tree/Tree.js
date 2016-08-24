@@ -66,7 +66,7 @@
 		},
 
 		/**
-		 * Get the position on the DB of the required card, considering the sorting and current filter applied on the grid
+		 * Get the position on the DB of the required activity, considering the sorting and current filter applied on the grid
 		 *
 		 * @param {Object} parameters
 		 *

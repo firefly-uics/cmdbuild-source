@@ -33,6 +33,7 @@
 			'onWorkflowTreeAddButtonClick',
 			'onWorkflowTreeColumnChanged',
 			'onWorkflowTreePrintButtonClick',
+			'onWorkflowTreeRecordSelect',
 			'onWorkflowTreeSaveFailure',
 			'onWorkflowTreeWokflowSelect = onWorkflowWokflowSelect',
 			'workflowTreeActivityOpen',
@@ -249,6 +250,47 @@
 				});
 			} else {
 				_error('onWorkflowTreePrintButtonClick(): unmanaged format property', this, format);
+			}
+		},
+
+		/**
+		 * Evaluates if is selected an activity or instance
+		 *
+		 * @param {CMDBuild.model.management.workflow.Node} record
+		 *
+		 * @returns {Void}
+		 */
+		onWorkflowTreeRecordSelect: function (record) {
+			if (
+				Ext.isObject(record) && !Ext.Object.isEmpty(record)
+				&& Ext.isFunction(record.get)
+			) {
+				var activityId = record.get(CMDBuild.core.constants.Proxy.ACTIVITY_ID),
+					cardId = record.get(CMDBuild.core.constants.Proxy.CARD_ID),
+					classId = record.get(CMDBuild.core.constants.Proxy.CLASS_ID);
+
+				if (
+					Ext.isString(activityId) && !Ext.isEmpty(activityId)
+					&& Ext.isNumber(cardId) && !Ext.isEmpty(cardId)
+					&& Ext.isNumber(classId) && !Ext.isEmpty(classId)
+				) { // Activity or instance with only one activity selected
+					this.cmfg('onWorkflowInstanceSelect', {
+						record: record,
+						scope: this,
+						success: function (response, options, decodedResponse) {
+							this.cmfg('onWorkflowActivitySelect', record);
+						}
+					});
+				} else if ( // Instance node selected
+					Ext.isNumber(cardId) && !Ext.isEmpty(cardId)
+					&& Ext.isNumber(classId) && !Ext.isEmpty(classId)
+				) {
+					this.cmfg('onWorkflowInstanceSelect', { record: record });
+				} else {
+					_error('onWorkflowTreeRecordSelect(): not correctly filled record model', this, record);
+				}
+			} else {
+				_error('onWorkflowTreeRecordSelect(): unmanaged record parameter', this, record);
 			}
 		},
 

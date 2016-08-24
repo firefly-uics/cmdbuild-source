@@ -33,6 +33,7 @@
 			'onWorkflowFormActivitySelect',
 			'onWorkflowFormAddButtonClick',
 			'onWorkflowFormAdvanceButtonClick',
+			'onWorkflowFormInstanceSelect',
 			'onWorkflowFormModifyButtonClick = onWorkflowFormActivityItemDoubleClick',
 			'onWorkflowFormRemoveButtonClick',
 			'onWorkflowFormSaveButtonClick',
@@ -170,28 +171,17 @@
 		 *
 		 * @returns {Void}
 		 */
-		onWorkflowFormActivitySelect: function (isSuperActivity) {
-			isSuperActivity = Ext.isBoolean(isSuperActivity) ? isSuperActivity : false;
+		onWorkflowFormActivitySelect: function () {
+			_CMWFState.setActivityInstance(
+				Ext.create('CMDBuild.model.CMActivityInstance', this.cmfg('workflowSelectedActivityGet').getData())
+			);
 
-			var selectedActivityObject = this.cmfg('workflowSelectedActivityGet').getData();
-			var selectedActivityRawData = this.cmfg('workflowSelectedActivityGet', 'rawData'); // FIXME: legacy mode to remove on complete Workflow UI and wofkflowState modeules refactor
+			var activityInstance = _CMWFState.getActivityInstance();
 
-			var me = this;
+			this.operativeInstructionsPanel.update(activityInstance.getInstructions() || '');
 
-			_CMWFState.setProcessInstance(Ext.create('CMDBuild.model.CMProcessInstance', selectedActivityRawData), function () {
-				if (!isSuperActivity) {
-					_CMWFState.setActivityInstance(
-						Ext.create('CMDBuild.model.CMActivityInstance', selectedActivityObject)
-					);
-
-					var activityInstance = _CMWFState.getActivityInstance();
-
-					me.operativeInstructionsPanel.update(activityInstance.getInstructions() || '');
-
-					if (!activityInstance.nullObject && activityInstance.isNew())
-						_CMUIState.onlyFormIfFullScreen();
-				}
-			});
+			if (!activityInstance.nullObject && activityInstance.isNew())
+				_CMUIState.onlyFormIfFullScreen();
 		},
 
 		/**
@@ -225,6 +215,14 @@
 		 */
 		onWorkflowFormAdvanceButtonClick: function () {
 			this.controllerTabActivity.onAdvanceCardButtonClick();
+		},
+
+		/**
+		 * @returns {Void}
+		 */
+		onWorkflowFormInstanceSelect: function () {
+			// FIXME: legacy mode to remove on complete Workflow UI and wofkflowState modules refactor
+			_CMWFState.setProcessInstanceSynchronous(Ext.create('CMDBuild.model.CMProcessInstance', this.cmfg('workflowSelectedInstanceGet', 'rawData')));
 		},
 
 		/**

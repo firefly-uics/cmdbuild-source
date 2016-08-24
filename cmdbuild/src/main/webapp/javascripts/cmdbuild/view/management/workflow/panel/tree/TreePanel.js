@@ -40,7 +40,7 @@
 				this.delegate.cmfg('onWorkflowFormActivityItemDoubleClick');
 			},
 			select: function (row, record, index) {
-				this.delegate.cmfg('onWorkflowActivitySelect');
+				this.delegate.cmfg('onWorkflowTreeRecordSelect', record);
 			}
 		}
 	});
