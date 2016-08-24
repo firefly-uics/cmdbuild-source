@@ -17,7 +17,7 @@
 		readAll: function (parameters) {
 			parameters = Ext.isEmpty(parameters) ? {} : parameters;
 
-			Ext.apply(parameters, { url: CMDBuild.proxy.index.Json.workflow.activity.readAll });
+			Ext.apply(parameters, { url: CMDBuild.proxy.index.Json.workflow.instance.readAll });
 
 			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.WORKFLOW, parameters);
 		},
