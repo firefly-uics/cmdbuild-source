@@ -27,7 +27,7 @@
 				},
 				proxy: {
 					type: 'ajax',
-					url: CMDBuild.proxy.index.Json.workflow.activity.readAll,
+					url: CMDBuild.proxy.index.Json.workflow.instance.readAll,
 					reader: {
 						type: 'workflowstore',
 						totalProperty: CMDBuild.core.constants.Proxy.RESULTS
@@ -66,7 +66,7 @@
 		},
 
 		/**
-		 * Get the position on the DB of the required card, considering the sorting and current filter applied on the grid
+		 * Get the position on the DB of the required activity, considering the sorting and current filter applied on the grid
 		 *
 		 * @param {Object} parameters
 		 *

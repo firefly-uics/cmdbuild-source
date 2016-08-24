@@ -1,5 +1,7 @@
 package org.cmdbuild.servlets.json.schema;
 
+import static com.google.common.collect.Lists.newArrayList;
+import static com.google.common.collect.Maps.newHashMap;
 import static org.apache.commons.lang3.ObjectUtils.defaultIfNull;
 
 import java.util.List;
@@ -15,9 +17,6 @@ import org.slf4j.Logger;
 import org.slf4j.Marker;
 import org.slf4j.MarkerFactory;
 
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
-
 public class Utils {
 
 	private static final Logger logger = Log.JSONRPC;
@@ -29,9 +28,13 @@ public class Utils {
 		// prevents instantiation
 	}
 
+	/**
+	 * @param json
+	 *            can be {@code null}.
+	 */
 	public static Map<String, String> toMap(final JSONObject json) {
 		try {
-			final Map<String, String> map = Maps.newHashMap();
+			final Map<String, String> map = newHashMap();
 			if (json != null && json.length() > 0) {
 				for (final String key : JSONObject.getNames(json)) {
 					map.put(key, json.getString(key));
@@ -76,6 +79,10 @@ public class Utils {
 
 	}
 
+	/**
+	 * @param json
+	 *            can be {@code null}.
+	 */
 	public static <T> Iterable<T> toIterable(final String json) {
 		try {
 			return OBJECT_MAPPER.readValue(json, new TypeReference<List<T>>() {
@@ -86,13 +93,21 @@ public class Utils {
 		}
 	}
 
+	/**
+	 * @param json
+	 *            can be {@code null}.
+	 */
 	public static Iterable<String> toIterable(final JSONArray json) {
 		return toIterable(json, JsonParser.DEFAULT);
 	}
 
+	/**
+	 * @param json
+	 *            can be {@code null}.
+	 */
 	public static <T> Iterable<T> toIterable(final JSONArray json, final JsonParser parser) {
 		try {
-			final List<T> values = Lists.newArrayList();
+			final List<T> values = newArrayList();
 			if (json != null && json.length() > 0) {
 				for (int index = 0; index < json.length(); index++) {
 					final T value = (T) defaultIfNull(parser, JsonParser.DEFAULT).serialize(json, index);

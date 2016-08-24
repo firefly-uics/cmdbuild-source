@@ -36,7 +36,7 @@
 
 				// Commons
 				activityNewObject[CMDBuild.core.constants.Proxy.LEAF] = true;
-				activityNewObject['rawData'] = parentObject; // FIXME: legacy mode to remove on complete Workflow UI and wofkflowState modeules refactor
+				activityNewObject['rawData'] = parentObject; // FIXME: legacy mode to remove on complete Workflow UI and wofkflowState modules refactor
 
 				return activityNewObject;
 			}
@@ -106,7 +106,7 @@
 				rowObject[CMDBuild.core.constants.Proxy.CARD_ID] = rowObject[CMDBuild.core.constants.Proxy.ID];
 				rowObject[CMDBuild.core.constants.Proxy.CHILDREN] = children; // Alias of activityInstanceInfoList
 				rowObject[CMDBuild.core.constants.Proxy.LEAF] = activityInfoList.length < 2;
-				rowObject['rawData'] = rowObject; // FIXME: legacy mode to remove on complete Workflow UI and wofkflowState modeules refactor
+				rowObject['rawData'] = rowObject; // FIXME: legacy mode to remove on complete Workflow UI and wofkflowState modules refactor
 
 				return rowObject;
 			}
@@ -124,7 +124,7 @@
 		buildNodeWorkflowInstanceNoActivity: function (rowObject) {
 			if (Ext.isObject(rowObject) && !Ext.Object.isEmpty(rowObject)) {
 				var activityNewObject = this.buildNodeActivity({}, rowObject);
-				activityNewObject['rawData'] = rowObject; // FIXME: legacy mode to remove on complete Workflow UI and wofkflowState modeules refactor
+				activityNewObject['rawData'] = rowObject; // FIXME: legacy mode to remove on complete Workflow UI and wofkflowState modules refactor
 
 				return activityNewObject;
 			}
@@ -148,7 +148,7 @@
 					rowObject[CMDBuild.core.constants.Proxy.ACTIVITY_INSTANCE_INFO_LIST][0],
 					rowObject
 				);
-				activityNewObject['rawData'] = rowObject; // FIXME: legacy mode to remove on complete Workflow UI and wofkflowState modeules refactor
+				activityNewObject['rawData'] = rowObject; // FIXME: legacy mode to remove on complete Workflow UI and wofkflowState modules refactor
 
 				return activityNewObject;
 			}

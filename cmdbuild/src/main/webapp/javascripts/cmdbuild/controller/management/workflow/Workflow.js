@@ -8,6 +8,7 @@
 			'CMDBuild.core.constants.WorkflowStates',
 			'CMDBuild.core.Utils',
 			'CMDBuild.proxy.management.workflow.Activity',
+			'CMDBuild.proxy.management.workflow.Instance',
 			'CMDBuild.proxy.management.workflow.Workflow'
 		],
 
@@ -25,6 +26,7 @@
 			'onWorkflowActivityUpdateCallback',
 			'onWorkflowAddButtonClick',
 			'onWorkflowFormActivityItemDoubleClick -> controllerForm',
+			'onWorkflowInstanceSelect',
 			'onWorkflowModuleInit = onModuleInit',
 			'onWorkflowSaveFailure',
 			'onWorkflowTreePrintButtonClick -> controllerTree',
@@ -32,6 +34,8 @@
 			'workflowFormReset -> controllerForm',
 			'workflowSelectedActivityGet',
 			'workflowSelectedActivityReset',
+			'workflowSelectedInstanceGet',
+			'workflowSelectedInstanceReset',
 			'workflowSelectedWorkflowAttributesGet',
 			'workflowSelectedWorkflowAttributesIsEmpty',
 			'workflowSelectedWorkflowGet = panelGridAndFormSelectedEntryTypeGet',
@@ -68,6 +72,13 @@
 		 * @private
 		 */
 		selectedActivity: undefined,
+
+		/**
+		 * @property {CMDBuild.model.management.workflow.Instance}
+		 *
+		 * @private
+		 */
+		selectedInstance: undefined,
 
 		/**
 		 * @property {CMDBuild.model.management.workflow.Workflow}
@@ -125,23 +136,6 @@
 		},
 
 		/**
-		 * @param {Number} id
-		 *
-		 * @returns {Void}
-		 */
-		onWorkflowAddButtonClick: function (id) {
-			id = Ext.isNumber(id) && !Ext.isEmpty(id) ? id : this.cmfg('workflowSelectedWorkflowGet', CMDBuild.core.constants.Proxy.ID);
-
-			this.cmfg('workflowSelectedActivityReset');
-
-			this.setViewTitle();
-
-			// Forward to sub-controllers
-			this.controllerForm.cmfg('onWorkflowFormAddButtonClick', id);
-			this.controllerTree.cmfg('onWorkflowTreeAddButtonClick', id);
-		},
-
-		/**
 		 * @returns {Void}
 		 */
 		onWorkflowActivityRemoveCallback: function () {
@@ -155,24 +149,28 @@
 		},
 
 		/**
+		 * @param {CMDBuild.model.management.workflow.Node} record
+		 *
 		 * @returns {Void}
 		 */
-		onWorkflowActivitySelect: function () {
-			this.cmfg('workflowSelectedActivityReset');
+		onWorkflowActivitySelect: function (record) {
+			if (Ext.isObject(record) && !Ext.Object.isEmpty(record) && Ext.isFunction(record.get)) {
+				this.cmfg('workflowSelectedActivityReset');
 
-			if (this.tree.getSelectionModel().hasSelection()) {
-				var selectedNode = this.tree.getSelectionModel().getSelection()[0];
+				var activityId = record.get(CMDBuild.core.constants.Proxy.ACTIVITY_ID),
+					cardId = record.get(CMDBuild.core.constants.Proxy.CARD_ID),
+					classId = record.get(CMDBuild.core.constants.Proxy.CLASS_ID);
 
-				var params = {};
-				params[CMDBuild.core.constants.Proxy.ACTIVITY_INSTANCE_ID] = selectedNode.get(CMDBuild.core.constants.Proxy.ACTIVITY_ID);
-				params[CMDBuild.core.constants.Proxy.CARD_ID] = selectedNode.get(CMDBuild.core.constants.Proxy.CARD_ID);
-				params[CMDBuild.core.constants.Proxy.CLASS_ID] = selectedNode.get(CMDBuild.core.constants.Proxy.CLASS_ID);
-
-				if ( // Sub-activity node or Workflow instance with only one activity
-					Ext.isString(params[CMDBuild.core.constants.Proxy.ACTIVITY_INSTANCE_ID]) && !Ext.isEmpty(params[CMDBuild.core.constants.Proxy.ACTIVITY_INSTANCE_ID])
-					&& Ext.isNumber(params[CMDBuild.core.constants.Proxy.CARD_ID]) && !Ext.isEmpty(params[CMDBuild.core.constants.Proxy.CARD_ID])
-					&& Ext.isNumber(params[CMDBuild.core.constants.Proxy.CLASS_ID]) && !Ext.isEmpty(params[CMDBuild.core.constants.Proxy.CLASS_ID])
+				if (
+					Ext.isString(activityId) && !Ext.isEmpty(activityId)
+					&& Ext.isNumber(cardId) && !Ext.isEmpty(cardId)
+					&& Ext.isNumber(classId) && !Ext.isEmpty(classId)
 				) {
+					var params = {};
+					params[CMDBuild.core.constants.Proxy.ACTIVITY_INSTANCE_ID] = activityId;
+					params[CMDBuild.core.constants.Proxy.CARD_ID] = cardId;
+					params[CMDBuild.core.constants.Proxy.CLASS_ID] = classId;
+
 					CMDBuild.proxy.management.workflow.Activity.read({
 						params: params,
 						scope: this,
@@ -180,27 +178,22 @@
 							decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.RESPONSE];
 
 							if (Ext.isObject(decodedResponse) && !Ext.Object.isEmpty(decodedResponse)) {
-								decodedResponse['rawData'] = selectedNode.get('rawData'); // FIXME: legacy mode to remove on complete Workflow UI and wofkflowState modeules refactor
+								decodedResponse['rawData'] = decodedResponse; // FIXME: legacy mode to remove on complete Workflow UI and wofkflowState modules refactor
 
 								this.workflowSelectedActivitySet({ value: decodedResponse });
 
-								// Forward event to sub controllers
+								// Forward to sub controllers
 								this.controllerForm.cmfg('onWorkflowFormActivitySelect');
+							} else {
+								_error('onWorkflowActivitySelect(): unmanaged read activity call response', this, record);
 							}
 						}
 					});
-				} else if ( // Super-activity node
-					Ext.isNumber(params[CMDBuild.core.constants.Proxy.CARD_ID]) && !Ext.isEmpty(params[CMDBuild.core.constants.Proxy.CARD_ID])
-					&& Ext.isNumber(params[CMDBuild.core.constants.Proxy.CLASS_ID]) && !Ext.isEmpty(params[CMDBuild.core.constants.Proxy.CLASS_ID])
-				) {
-					var activityObject = selectedNode.get('rawData');
-					activityObject['rawData'] = selectedNode.get('rawData'); // FIXME: legacy mode to remove on complete Workflow UI and wofkflowState modeules refactor
-
-					this.workflowSelectedActivitySet({ value: activityObject });
-
-					// Forward event to sub controllers
-					this.controllerForm.cmfg('onWorkflowFormActivitySelect', true);
+				} else {
+					_error('onWorkflowActivitySelect(): not correctly filled record model', this, record);
 				}
+			} else {
+				_error('onWorkflowActivitySelect(): unmanaged record parameter', this, record);
 			}
 		},
 
@@ -238,6 +231,79 @@
 				}
 			} else {
 				_error('onWorkflowActivityUpdateCallback(): unmanaged responseModel parameter', this, responseModel);
+			}
+		},
+
+		/**
+		 * @param {Number} id
+		 *
+		 * @returns {Void}
+		 */
+		onWorkflowAddButtonClick: function (id) {
+			id = Ext.isNumber(id) && !Ext.isEmpty(id) ? id : this.cmfg('workflowSelectedWorkflowGet', CMDBuild.core.constants.Proxy.ID);
+
+			this.cmfg('workflowSelectedActivityReset');
+
+			this.setViewTitle();
+
+			// Forward to sub-controllers
+			this.controllerForm.cmfg('onWorkflowFormAddButtonClick', id);
+			this.controllerTree.cmfg('onWorkflowTreeAddButtonClick', id);
+		},
+
+		/**
+		 * @param {Object} parameters
+		 * @param {CMDBuild.model.management.workflow.Node} parameters.record
+		 * @param {Object} parameters.scope
+		 * @param {Function} parameters.success
+		 *
+		 * @returns {Void}
+		 */
+		onWorkflowInstanceSelect: function (parameters) {
+			if (
+				Ext.isObject(parameters) && !Ext.Object.isEmpty(parameters)
+				&& Ext.isObject(parameters.record) && !Ext.Object.isEmpty(parameters.record) && Ext.isFunction(parameters.record.get)
+			) {
+				this.cmfg('workflowSelectedInstanceReset');
+
+				var cardId = parameters.record.get(CMDBuild.core.constants.Proxy.CARD_ID),
+					className = parameters.record.get(CMDBuild.core.constants.Proxy.CLASS_NAME);
+
+				if (
+					Ext.isNumber(cardId) && !Ext.isEmpty(cardId)
+					&& Ext.isString(className) && !Ext.isEmpty(className)
+				) {
+					var params = {};
+					params[CMDBuild.core.constants.Proxy.CARD_ID] = cardId;
+					params[CMDBuild.core.constants.Proxy.CLASS_NAME] = className;
+
+					CMDBuild.proxy.management.workflow.Instance.read({
+						params: params,
+						scope: this,
+						success: function (response, options, decodedResponse) {
+							decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.RESPONSE];
+
+							if (Ext.isObject(decodedResponse) && !Ext.Object.isEmpty(decodedResponse)) {
+								var instanceObject = decodedResponse;
+								instanceObject['rawData'] = decodedResponse; // FIXME: legacy mode to remove on complete Workflow UI and wofkflowState modules refactor
+
+								this.workflowSelectedInstanceSet({ value: instanceObject });
+
+								// Forward to sub controllers
+								this.controllerForm.cmfg('onWorkflowFormInstanceSelect');
+
+								if (!Ext.isEmpty(parameters.success) && Ext.isFunction(parameters.success))
+									Ext.callback(parameters.success, parameters.scope);
+							} else {
+								_error('onWorkflowInstanceSelect(): unmanaged read instance call response', this, parameters.record);
+							}
+						}
+					});
+				} else {
+					_error('onWorkflowInstanceSelect(): not correctly filled record model', this, parameters.record);
+				}
+			} else {
+				_error('onWorkflowInstanceSelect(): unmanaged parameters object', this, parameters);
 			}
 		},
 
@@ -437,6 +503,45 @@
 				if (Ext.isObject(parameters) && !Ext.Object.isEmpty(parameters)) {
 					parameters[CMDBuild.core.constants.Proxy.MODEL_NAME] = 'CMDBuild.model.management.workflow.Activity';
 					parameters[CMDBuild.core.constants.Proxy.TARGET_VARIABLE_NAME] = 'selectedActivity';
+
+					this.propertyManageSet(parameters);
+				}
+			},
+
+		// SelectedInstance property functions
+			/**
+			 * @param {Array or String} attributePath
+			 *
+			 * @returns {Mixed or undefined}
+			 */
+			workflowSelectedInstanceGet: function (attributePath) {
+				var parameters = {};
+				parameters[CMDBuild.core.constants.Proxy.TARGET_VARIABLE_NAME] = 'selectedInstance';
+				parameters[CMDBuild.core.constants.Proxy.ATTRIBUTE_PATH] = attributePath;
+
+				return this.propertyManageGet(parameters);
+			},
+
+			/**
+			 * @param {Object} parameters
+			 *
+			 * @returns {Void}
+			 */
+			workflowSelectedInstanceReset: function (parameters) {
+				this.propertyManageReset('selectedInstance');
+			},
+
+			/**
+			 * @param {Object} parameters
+			 *
+			 * @returns {Void}
+			 *
+			 * @private
+			 */
+			workflowSelectedInstanceSet: function (parameters) {
+				if (Ext.isObject(parameters) && !Ext.Object.isEmpty(parameters)) {
+					parameters[CMDBuild.core.constants.Proxy.MODEL_NAME] = 'CMDBuild.model.management.workflow.Instance';
+					parameters[CMDBuild.core.constants.Proxy.TARGET_VARIABLE_NAME] = 'selectedInstance';
 
 					this.propertyManageSet(parameters);
 				}

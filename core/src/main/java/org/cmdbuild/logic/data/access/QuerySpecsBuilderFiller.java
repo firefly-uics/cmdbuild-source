@@ -1,15 +1,15 @@
 package org.cmdbuild.logic.data.access;
 
-import static com.google.common.base.Optional.absent;
-import static com.google.common.base.Optional.of;
+import static com.google.common.collect.Iterables.addAll;
+import static com.google.common.collect.Iterables.concat;
 import static com.google.common.collect.Iterables.isEmpty;
 import static com.google.common.collect.Iterables.toArray;
 import static com.google.common.collect.Lists.newArrayList;
+import static com.google.common.collect.Sets.newHashSet;
 import static java.lang.String.format;
 import static org.apache.commons.lang3.RandomStringUtils.randomNumeric;
+import static org.cmdbuild.common.Constants.BASE_PROCESS_CLASS_NAME;
 import static org.cmdbuild.common.Constants.DESCRIPTION_ATTRIBUTE;
-import static org.cmdbuild.dao.constants.Cardinality.CARDINALITY_1N;
-import static org.cmdbuild.dao.constants.Cardinality.CARDINALITY_N1;
 import static org.cmdbuild.dao.driver.postgres.Const.SystemAttributes.Id;
 import static org.cmdbuild.dao.entrytype.Functions.attribute;
 import static org.cmdbuild.dao.query.clause.AnyAttribute.anyAttribute;
@@ -37,7 +37,9 @@ import static org.cmdbuild.logic.mapping.json.Constants.Filters.RELATION_TYPE_AN
 import static org.cmdbuild.logic.mapping.json.Constants.Filters.RELATION_TYPE_KEY;
 import static org.cmdbuild.logic.mapping.json.Constants.Filters.RELATION_TYPE_NOONE;
 import static org.cmdbuild.logic.mapping.json.Constants.Filters.RELATION_TYPE_ONEOF;
+import static org.cmdbuild.workflow.ProcessAttributes.columnNames;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -47,8 +49,9 @@ import org.cmdbuild.dao.entrytype.CMAttribute;
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.entrytype.CMDomain;
 import org.cmdbuild.dao.entrytype.CMEntryType;
-import org.cmdbuild.dao.entrytype.attributetype.CMAttributeType;
-import org.cmdbuild.dao.entrytype.attributetype.ReferenceAttributeType;
+import org.cmdbuild.dao.entrytype.CMEntryTypeVisitor;
+import org.cmdbuild.dao.entrytype.ForwardingEntryTypeVisitor;
+import org.cmdbuild.dao.entrytype.NullEntryTypeVisitor;
 import org.cmdbuild.dao.query.QuerySpecsBuilder;
 import org.cmdbuild.dao.query.clause.OrderByClause;
 import org.cmdbuild.dao.query.clause.OrderByClause.Direction;
@@ -70,7 +73,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.google.common.base.Optional;
 import com.google.common.collect.FluentIterable;
 
 public class QuerySpecsBuilderFiller {
@@ -95,7 +97,7 @@ public class QuerySpecsBuilderFiller {
 	}
 
 	public QuerySpecsBuilder create() {
-		final Iterable<QueryAliasAttribute> attributeSubsetForSelect = _from(queryOptions.getAttributes()) //
+		final Iterable<QueryAliasAttribute> attributeSubsetForSelect = _from(attributes(queryOptions)) //
 				.transform(attribute(entryType)) //
 				.filter(CMAttribute.class) //
 				.transform(queryAliasAttribute(entryType));
@@ -119,6 +121,37 @@ public class QuerySpecsBuilderFiller {
 		return querySpecsBuilder;
 	}
 
+	/**
+	 * Returns all attributes (explicitly required plus system ones when
+	 * needed).
+	 */
+	private Iterable<String> attributes(final QueryOptions queryOptions) {
+		return newHashSet(concat(queryOptions.getAttributes(), new ForwardingEntryTypeVisitor() {
+
+			private final CMEntryTypeVisitor DELEGATE = NullEntryTypeVisitor.getInstance();
+
+			private final Collection<String> output = newHashSet();
+
+			@Override
+			protected CMEntryTypeVisitor delegate() {
+				return DELEGATE;
+			}
+
+			public Iterable<String> systemAttributes() {
+				entryType.accept(this);
+				return output;
+			}
+
+			@Override
+			public void visit(final CMClass type) {
+				if (dataView.findClass(BASE_PROCESS_CLASS_NAME).isAncestorOf(type)) {
+					addAll(output, columnNames());
+				}
+			}
+
+		}.systemAttributes()));
+	}
+
 	private void addSortingOptions(final QuerySpecsBuilder querySpecsBuilder) {
 		final SorterMapper sorterMapper = new JsonSorterMapper(entryType, queryOptions.getSorters(), getAlias());
 		final List<OrderByClause> clauses = sorterMapper.deserialize();
@@ -131,22 +164,6 @@ public class QuerySpecsBuilderFiller {
 				querySpecsBuilder.orderBy(clause.getAttribute(), clause.getDirection());
 			}
 		}
-	}
-
-	private Optional<String> getReferencedClassName(final CMAttributeType<?> cmAttributeType) {
-		final String domainName = ((ReferenceAttributeType) cmAttributeType).getDomainName();
-		final CMDomain domain = dataView.findDomain(domainName);
-		final Optional<String> output;
-		if (domain == null) {
-			output = absent();
-		} else if (CARDINALITY_1N.value().equals(domain.getCardinality())) {
-			output = of(domain.getClass1().getName());
-		} else if (CARDINALITY_N1.value().equals(domain.getCardinality())) {
-			output = of(domain.getClass2().getName());
-		} else {
-			output = absent();
-		}
-		return output;
 	}
 
 	/**

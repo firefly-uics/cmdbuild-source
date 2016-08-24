@@ -31,7 +31,9 @@
 		cmfgCatchedFunctions: [
 			'getView = panelGridAndFormGridGet',
 			'onWorkflowTreeAddButtonClick',
+			'onWorkflowTreeColumnChanged',
 			'onWorkflowTreePrintButtonClick',
+			'onWorkflowTreeRecordSelect',
 			'onWorkflowTreeSaveFailure',
 			'onWorkflowTreeWokflowSelect = onWorkflowWokflowSelect',
 			'workflowTreeActivityOpen',
@@ -166,6 +168,29 @@
 		},
 
 		/**
+		 * @returns {Array} visibleColumnNames
+		 *
+		 * @private
+		 */
+		displayedParametersNamesGet: function () {
+			var visibleColumns = Ext.Array.slice(this.view.query('gridcolumn:not([hidden])'), 1); // Discard expander column
+			var visibleColumnNames = [];
+
+			// Build columns dataIndex array
+			if (Ext.isArray(visibleColumns) && !Ext.isEmpty(visibleColumns))
+				Ext.Array.each(visibleColumns, function (columnObject, i, allColumnObjects) {
+					if (
+						Ext.isObject(columnObject) && !Ext.Object.isEmpty(columnObject)
+						&& !Ext.isEmpty(columnObject.dataIndex)
+					) {
+						visibleColumnNames.push(columnObject.dataIndex);
+					}
+				}, this);
+
+			return visibleColumnNames;
+		},
+
+		/**
 		 * @param {CMDBuild.model.management.workflow.Node} node
 		 *
 		 * @returns {Void}
@@ -196,6 +221,13 @@
 		},
 
 		/**
+		 * @returns {Void}
+		 */
+		onWorkflowTreeColumnChanged: function () {
+			this.cmfg('workflowTreeStoreLoad');
+		},
+
+		/**
 		 * @param {String} format
 		 *
 		 * @returns {Void}
@@ -203,22 +235,9 @@
 		onWorkflowTreePrintButtonClick: function (format) {
 			if (Ext.isString(format) && !Ext.isEmpty(format)) {
 				var sorters = this.cmfg('workflowTreeStoreGet').getSorters();
-				var visibleColumns = Ext.Array.slice(this.view.query('gridcolumn:not([hidden])'), 1); // Discard expander column
-				var visibleColumnNames = [];
-
-				// Build columns dataIndex array
-				if (Ext.isArray(visibleColumns) && !Ext.isEmpty(visibleColumns))
-					Ext.Array.each(visibleColumns, function (columnObject, i, allColumnObjects) {
-						if (
-							Ext.isObject(columnObject) && !Ext.Object.isEmpty(columnObject)
-							&& !Ext.isEmpty(columnObject.dataIndex)
-						) {
-							visibleColumnNames.push(columnObject.dataIndex);
-						}
-					}, this);
 
 				var params = Ext.clone(this.storeExtraParamsGet());
-				params[CMDBuild.core.constants.Proxy.ATTRIBUTES] = Ext.encode(visibleColumnNames);
+				params[CMDBuild.core.constants.Proxy.ATTRIBUTES] = Ext.encode(this.displayedParametersNamesGet());
 				params[CMDBuild.core.constants.Proxy.TYPE] = format;
 
 				if (Ext.isArray(sorters) && !Ext.isEmpty(sorters))
@@ -231,6 +250,47 @@
 				});
 			} else {
 				_error('onWorkflowTreePrintButtonClick(): unmanaged format property', this, format);
+			}
+		},
+
+		/**
+		 * Evaluates if is selected an activity or instance
+		 *
+		 * @param {CMDBuild.model.management.workflow.Node} record
+		 *
+		 * @returns {Void}
+		 */
+		onWorkflowTreeRecordSelect: function (record) {
+			if (
+				Ext.isObject(record) && !Ext.Object.isEmpty(record)
+				&& Ext.isFunction(record.get)
+			) {
+				var activityId = record.get(CMDBuild.core.constants.Proxy.ACTIVITY_ID),
+					cardId = record.get(CMDBuild.core.constants.Proxy.CARD_ID),
+					classId = record.get(CMDBuild.core.constants.Proxy.CLASS_ID);
+
+				if (
+					Ext.isString(activityId) && !Ext.isEmpty(activityId)
+					&& Ext.isNumber(cardId) && !Ext.isEmpty(cardId)
+					&& Ext.isNumber(classId) && !Ext.isEmpty(classId)
+				) { // Activity or instance with only one activity selected
+					this.cmfg('onWorkflowInstanceSelect', {
+						record: record,
+						scope: this,
+						success: function (response, options, decodedResponse) {
+							this.cmfg('onWorkflowActivitySelect', record);
+						}
+					});
+				} else if ( // Instance node selected
+					Ext.isNumber(cardId) && !Ext.isEmpty(cardId)
+					&& Ext.isNumber(classId) && !Ext.isEmpty(classId)
+				) {
+					this.cmfg('onWorkflowInstanceSelect', { record: record });
+				} else {
+					_error('onWorkflowTreeRecordSelect(): not correctly filled record model', this, record);
+				}
+			} else {
+				_error('onWorkflowTreeRecordSelect(): unmanaged record parameter', this, record);
 			}
 		},
 
@@ -725,9 +785,12 @@
 						} else if (attributeModel.get(CMDBuild.core.constants.Proxy.TYPE) != 'ipaddress') { // FIXME: future implementation - @deprecated - Old field manager
 							var column = CMDBuild.Management.FieldManager.getHeaderForAttr(attributeModel.get(CMDBuild.core.constants.Proxy.SOURCE_OBJECT));
 
-							delete column.flex; // Remove flex property by default to be compatible with forceFit property
-
 							if (Ext.isObject(column) && !Ext.Object.isEmpty(column)) {
+								// Remove width properties by default to be compatible with forceFit property
+								delete column.flex;
+								delete column.width;
+								delete column.minWidth;
+
 								this.addRendererToHeader(column);
 
 								fieldManager.push(columnsDefinition, column);
@@ -841,6 +904,7 @@
 				var sorters = this.cmfg('workflowTreeStoreGet').getSorters();
 
 				var params = Ext.isObject(parameters.params) ? parameters.params : {};
+				params[CMDBuild.core.constants.Proxy.ATTRIBUTES] = Ext.encode(this.displayedParametersNamesGet());
 				params[CMDBuild.core.constants.Proxy.CLASS_NAME] = this.cmfg('workflowSelectedWorkflowGet', CMDBuild.core.constants.Proxy.NAME);
 				params[CMDBuild.core.constants.Proxy.STATE] = this.controllerToolbarTop.cmfg('workflowTreeToolbarTopStatusValueGet');
 

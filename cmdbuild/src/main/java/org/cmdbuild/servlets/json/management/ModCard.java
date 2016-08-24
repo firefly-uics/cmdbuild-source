@@ -1,18 +1,13 @@
 package org.cmdbuild.servlets.json.management;
 
-import static com.google.common.base.Predicates.in;
-import static com.google.common.base.Predicates.not;
 import static com.google.common.collect.FluentIterable.from;
 import static com.google.common.collect.Iterables.filter;
-import static com.google.common.collect.Iterables.isEmpty;
 import static com.google.common.collect.Lists.newArrayList;
-import static com.google.common.collect.Maps.filterKeys;
 import static com.google.common.collect.Maps.newHashMap;
 import static com.google.common.collect.Maps.transformValues;
 import static com.google.common.collect.Ordering.from;
 import static java.util.Arrays.asList;
 import static org.apache.commons.lang3.ObjectUtils.defaultIfNull;
-import static org.cmdbuild.common.Constants.DESCRIPTION_ATTRIBUTE;
 import static org.cmdbuild.dao.query.clause.DomainHistory.history;
 import static org.cmdbuild.services.json.dto.JsonResponse.success;
 import static org.cmdbuild.servlets.json.CommunicationConstants.ACTIVITY_NAME;
@@ -109,30 +104,6 @@ import com.google.common.base.Optional;
 import com.google.common.base.Predicate;
 
 public class ModCard extends JSONBaseWithSpringContext {
-
-	private static class FilterAttribute implements Function<Card, Card> {
-
-		private final Iterable<String> whitelist;
-
-		public FilterAttribute(final Iterable<String> whitelist) {
-			this.whitelist = whitelist;
-		}
-
-		@Override
-		public Card apply(final Card input) {
-			if (!isEmpty(whitelist)) {
-				final Collection<String> collection = newArrayList(whitelist);
-				final Map<String, Object> map = input.getAttributes();
-				final Map<String, Object> filteredMap = filterKeys(map, not(in(collection)));
-				final Collection<String> removed = newArrayList(filteredMap.keySet());
-				for (final String remove : removed) {
-					map.remove(remove);
-				}
-			}
-			return input;
-		}
-
-	}
 
 	private static interface JsonEntry {
 
@@ -479,7 +450,7 @@ public class ModCard extends JSONBaseWithSpringContext {
 				.limit(limit) //
 				.offset(offset) //
 				.orderBy(sorters) //
-				.onlyAttributes(toIterable(defaultIfNull(attributes, new JSONArray()))) //
+				.onlyAttributes(toIterable((attributes))) //
 				.parameters(otherAttributes) //
 				.filter(filter);
 		final QueryOptions queryOptions = queryOptionsBuilder.build();
