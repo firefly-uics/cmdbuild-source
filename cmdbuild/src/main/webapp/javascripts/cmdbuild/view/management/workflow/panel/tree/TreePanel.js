@@ -30,6 +30,12 @@
 		},
 
 		listeners: {
+			columnhide: function (ct, column, eOpts) {
+				this.delegate.cmfg('onWorkflowTreeColumnChanged');
+			},
+			columnshow: function (ct, column, eOpts) {
+				this.delegate.cmfg('onWorkflowTreeColumnChanged');
+			},
 			itemdblclick: function (grid, record, item, index, e, eOpts) {
 				this.delegate.cmfg('onWorkflowFormActivityItemDoubleClick');
 			},

@@ -78,6 +78,7 @@
 			var simpleFilterDefinitionObject = this.parametersModel.get(CMDBuild.core.constants.Proxy.SIMPLE_FILTER);
 
 			var params = {};
+			params[CMDBuild.core.constants.Proxy.ATTRIBUTES] = Ext.encode(['Description']);
 			params[CMDBuild.core.constants.Proxy.CLASS_NAME] = this.parametersModel.get(CMDBuild.core.constants.Proxy.PROCESS_IDENTIFIER);
 			params[CMDBuild.core.constants.Proxy.FILTER] = '{"attribute":{"simple":{"attribute":"'
 				+ simpleFilterDefinitionObject[CMDBuild.core.constants.Proxy.KEY] + '","operator":"equal","value":["'
@@ -213,6 +214,7 @@
 		 */
 		readInstanceDetails: function (workflowObject) {
 			var params = {};
+			params[CMDBuild.core.constants.Proxy.ATTRIBUTES] = Ext.encode(['Description']);
 			params[CMDBuild.core.constants.Proxy.CLASS_NAME] = this.parametersModel.get(CMDBuild.core.constants.Proxy.PROCESS_IDENTIFIER);
 			params[CMDBuild.core.constants.Proxy.STATE] = CMDBuild.core.constants.WorkflowStates.getAll();
 
