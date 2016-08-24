@@ -253,9 +253,15 @@
 			this.modify.setActive(status === "Modify");
 			this.status = status;
 		},
+		removeById : function(id) {
+			
+		},
 		changeId : function(oldId, newId) {
-			var features = this.getFeaturesByCardId(oldId);
 			var newFeatures = [];
+			var features = this.getFeaturesByCardId(oldId);
+			if (features.getLength() === 0) {
+				features = this.getFeaturesByCardId(newId);
+			}
 			features.forEach(function(feature) {
 				newFeatures.push(feature);
 			});
@@ -266,7 +272,8 @@
 				newFeatures[i].set("master_card", newId);
 				features.push(newFeatures[i]);
 			}
-			this.makeSelect();
+//			this.makeSelect();
+			this.setStatus("Select");
 		},
 		makeSelect : function() {
 			var me = this;
