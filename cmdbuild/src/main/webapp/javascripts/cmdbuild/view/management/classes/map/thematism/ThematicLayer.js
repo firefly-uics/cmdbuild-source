@@ -14,6 +14,8 @@
 		 * @property {Object} thematism.configuration.layoutConfiguration 
 		 */
 		thematism : undefined,
+		
+		interactionDocument : undefined,
 
 		/**
 		 * @param {Object}
@@ -185,11 +187,13 @@
 				strategy : strategy
 			};
 			strategy.value(parameters, function(value) {
-				if (this.thematism.configuration.thematismConfiguration.source === CMDBuild.gis.constants.layers.FUNCTION_SOURCE) {
-					var field = this.thematism.configuration.layoutConfiguration.resultFieldName;
+				var configuration = this.thematism.configuration;
+				if (configuration.thematismConfiguration.source === CMDBuild.gis.constants.layers.FUNCTION_SOURCE) {
+					var field = configuration.layoutConfiguration.resultFieldName;
 					value = value[field];
 				}
-				var color = getColor(value);
+				var thematicDocument = this.interactionDocument.getThematicDocument();
+				var color = thematicDocument.getColor(value, configuration.layoutConfiguration.colorsTable);
 				callback.apply(callbackScope, [ color ]);
 			}, this);
 		},
@@ -268,20 +272,5 @@
 			}
 		}
 	});
-	function componentToHex(c) {
-	    var hex = c.toString(16);
-	    return hex.length == 1 ? "0" + hex : hex;
-	}
-	function rgbToHex(r, g, b) {
-	    return "#" + componentToHex(r) + componentToHex(g) + componentToHex(b);
-	}
-	function getColor(value) {
-		if (value === true)
-			return "#9999FF";
-		if (value === false)
-			return "#FF0000";
-		var red = value;
-		return rgbToHex(parseInt(red), 0, 0);
-	}
 
 })();

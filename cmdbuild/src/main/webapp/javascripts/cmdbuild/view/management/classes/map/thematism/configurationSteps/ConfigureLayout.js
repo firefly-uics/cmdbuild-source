@@ -19,64 +19,11 @@
 						controlRows : undefined,
 						configurationPanel : undefined,
 
-						/**
-						 * @returns {Void}
-						 * 
-						 * @override
-						 */
-						initComponent : function() {
-							var me = this;
-							this.configurationPanel = Ext.create("Ext.panel.Panel", {
-								html : ""
-							});
-							this.initControls();
-							Ext.apply(this, {
-								items : [ this.configurationPanel, this.controlShape, this.controlSegments,
-										this.controlRows ],
-								buttons : getButtons(this.parentWindow, this.itemId),
-							});
-							this.callParent(arguments);
-						},
 						defaults : {
 							anchor : "100%"
 						},
-						initControls : function() {
-							this.controlShape = Ext
-									.create(
-											"CMDBuild.view.management.classes.map.thematism.configurationSteps.layoutComponents.ConfigureShape",
-											{
-												interactionDocument : this.interactionDocument,
-												parentWindow : this
-											});
-							this.controlSegments = Ext
-									.create(
-											"CMDBuild.view.management.classes.map.thematism.configurationSteps.layoutComponents.ConfigureSegments",
-											{
-												interactionDocument : this.interactionDocument,
-												parentWindow : this
-											});
-							this.controlRows = Ext
-									.create(
-											"CMDBuild.view.management.classes.map.thematism.configurationSteps.layoutComponents.ConfigureRows",
-											{
-												interactionDocument : this.interactionDocument,
-												parentWindow : this
-											});
-
-						},
-						loadComponents : function(callback, callbackScope) {
-							this.configurationPanel.update(this.getHtmlTitle());
-							this.controlShape.loadComponents(function() {
-								this.controlSegments.loadComponents(function() {
-									this.controlRows.loadComponents(function() {
-										callback.apply(callbackScope, []);
-									}, this);
-								}, this);
-							}, this);
-						},
-						init : function() {
-							var layoutConfiguration = this.parentWindow.getLayoutConfiguration();
-							this.parentWindow.initForm(this, layoutConfiguration);
+						getLayoutConfiguration : function() {
+							return this.parentWindow.getLayoutConfiguration();
 						},
 						getCurrentLayer : function() {
 							return this.parentWindow.getCurrentLayer();
@@ -120,40 +67,109 @@
 
 							}
 							return strHtml;
-						}
+						},
 
+						getColorsTable : function() {
+							var rows = this.controlRows.getColorsTable();
+							return rows;
+						},
+
+						/**
+						 * @param
+						 * {CMDBuild.view.management.classes.map.thematism.ThematismMainWindow}
+						 * parentWindow
+						 * @param {String}
+						 *            itemId
+						 * 
+						 * @returns {Array} extjs items
+						 */
+						getButtons : function() {
+							var itemId = this.itemId;
+							var parentWindow = this.parentWindow;
+							var me = this;
+							return [ {
+								text : '@@ Cancel',
+								handler : function() {
+									parentWindow.close();
+								}
+							}, {
+								text : '@@ Previous',
+								handler : function() {
+									parentWindow.previous(itemId);
+								}
+							}, {
+								text : '@@ Show',
+								formBind : true,
+								disabled : true,
+								handler : function() {
+									var form = this.up('form').getForm();
+									var configurationObject = form.getValues();
+									configurationObject.colorsTable = me.getColorsTable();
+									parentWindow.showOnMap(configurationObject);
+								}
+							} ];
+						},
+
+						init : function() {
+							var layoutConfiguration = this.getLayoutConfiguration();
+							this.parentWindow.initForm(this, layoutConfiguration);
+						},
+
+						/**
+						 * @returns {Void}
+						 * 
+						 * @override
+						 */
+						initComponent : function() {
+							var me = this;
+							this.configurationPanel = Ext.create("Ext.panel.Panel", {
+								html : ""
+							});
+							this.initControls();
+							Ext.apply(this, {
+								items : [ this.configurationPanel, this.controlShape, this.controlSegments,
+										this.controlRows ],
+								buttons : this.getButtons(),
+							});
+							this.callParent(arguments);
+						},
+						initForm : function(form, layoutConfiguration) {
+							this.parentWindow.initForm(form, layoutConfiguration);
+						},
+						initControls : function() {
+							this.controlShape = Ext
+									.create(
+											"CMDBuild.view.management.classes.map.thematism.configurationSteps.layoutComponents.ConfigureShape",
+											{
+												interactionDocument : this.interactionDocument,
+												parentWindow : this
+											});
+							this.controlSegments = Ext
+									.create(
+											"CMDBuild.view.management.classes.map.thematism.configurationSteps.layoutComponents.ConfigureSegments",
+											{
+												interactionDocument : this.interactionDocument,
+												parentWindow : this
+											});
+							this.controlRows = Ext
+									.create(
+											"CMDBuild.view.management.classes.map.thematism.configurationSteps.layoutComponents.ConfigureRows",
+											{
+												interactionDocument : this.interactionDocument,
+												parentWindow : this
+											});
+
+						},
+						loadComponents : function(callback, callbackScope) {
+							this.configurationPanel.update(this.getHtmlTitle());
+							this.controlShape.loadComponents(function() {
+								this.controlSegments.loadComponents(function() {
+									this.controlRows.loadComponents(function() {
+										callback.apply(callbackScope, []);
+									}, this);
+								}, this);
+							}, this);
+						}
 					});
 
-	/**
-	 * @param
-	 * {CMDBuild.view.management.classes.map.thematism.ThematismMainWindow}
-	 * parentWindow
-	 * @param {String}
-	 *            itemId
-	 * 
-	 * @returns {Array} extjs items
-	 */
-	function getButtons(parentWindow, itemId) {
-		return [ {
-			text : '@@ Cancel',
-			handler : function() {
-				parentWindow.close();
-			}
-		}, {
-			text : '@@ Previous',
-			handler : function() {
-				parentWindow.previous(itemId);
-			}
-		}, {
-			text : '@@ Show',
-			formBind : true,
-			disabled : true,
-			handler : function() {
-				var form = this.up('form').getForm();
-				var configurationObject = form.getValues();
-
-				parentWindow.showOnMap(configurationObject);
-			}
-		} ];
-	}
 })();
