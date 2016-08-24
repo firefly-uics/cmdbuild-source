@@ -24,51 +24,6 @@ public class JSONBase {
 
 	protected static final Logger logger = Log.JSONRPC;
 
-	public static class MultipleException extends Exception {
-
-		private static final long serialVersionUID = 6540036977691254944L;
-
-		private final List<Exception> exceptions;
-
-		public MultipleException() {
-			this.exceptions = new ArrayList<Exception>();
-		}
-
-		public MultipleException(final Exception e) {
-			this();
-			this.exceptions.add(e);
-		}
-
-		public Iterable<Exception> getExceptions() {
-			return exceptions;
-		}
-
-		public void addException(final Exception e) {
-			exceptions.add(e);
-		}
-	}
-
-	public static class PartialFailureException extends Exception {
-
-		private static final long serialVersionUID = 4651384443077293725L;
-
-		private final JSONObject out;
-		private final Exception e;
-
-		public PartialFailureException(final JSONObject out, final Exception e) {
-			this.out = out;
-			this.e = e;
-		}
-
-		public JSONObject getPartialOutput() {
-			return out;
-		}
-
-		public Exception getOriginalException() {
-			return e;
-		}
-	}
-
 	/**
 	 * Marker interface for exported JSON service methods
 	 */

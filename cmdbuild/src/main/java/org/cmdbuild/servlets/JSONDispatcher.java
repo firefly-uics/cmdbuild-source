@@ -2,6 +2,9 @@ package org.cmdbuild.servlets;
 
 import static java.lang.String.format;
 import static java.net.URLEncoder.encode;
+import static javax.servlet.http.HttpServletResponse.SC_FORBIDDEN;
+import static javax.servlet.http.HttpServletResponse.SC_INTERNAL_SERVER_ERROR;
+import static javax.servlet.http.HttpServletResponse.SC_NOT_FOUND;
 import static org.apache.commons.lang3.BooleanUtils.toBoolean;
 import static org.cmdbuild.logic.auth.AuthenticationLogicUtils.assureAdmin;
 import static org.cmdbuild.logic.auth.AuthenticationLogicUtils.isLoggedIn;
@@ -37,8 +40,6 @@ import org.cmdbuild.servlets.json.JSONBase;
 import org.cmdbuild.servlets.json.JSONBase.Admin;
 import org.cmdbuild.servlets.json.JSONBase.Admin.AdminAccess;
 import org.cmdbuild.servlets.json.JSONBase.Configuration;
-import org.cmdbuild.servlets.json.JSONBase.MultipleException;
-import org.cmdbuild.servlets.json.JSONBase.PartialFailureException;
 import org.cmdbuild.servlets.json.JSONBase.SkipExtSuccess;
 import org.cmdbuild.servlets.json.JSONBase.Unauthorized;
 import org.cmdbuild.servlets.utils.MethodParameterResolver;
@@ -53,7 +54,6 @@ import org.slf4j.Logger;
 import com.google.common.base.Optional;
 
 public class JSONDispatcher extends HttpServlet {
-
 	private static final long serialVersionUID = 1L;
 
 	private static final Logger logger = Log.JSONRPC;
@@ -76,8 +76,8 @@ public class JSONDispatcher extends HttpServlet {
 		final String url = getMethodUrl(httpRequest);
 		final MethodInfo methodInfo = JSONDispatcherService.getInstance().getMethodInfoFromURL(url);
 		if (methodInfo == null) {
-			Log.JSONRPC.warn("Method not found for URL " + url);
-			httpResponse.setStatus(HttpServletResponse.SC_NOT_FOUND);
+			logger.warn("Method not found for URL " + url);
+			httpResponse.setStatus(SC_NOT_FOUND);
 			return;
 		}
 		try {
@@ -99,8 +99,8 @@ public class JSONDispatcher extends HttpServlet {
 				final Class<?>[] types = methodInfo.getParamClasses();
 				final Annotation[][] paramsAnnots = methodInfo.getParamsAnnotations();
 
-				final Object[] params = MethodParameterResolver.getInstance().resolve(types, paramsAnnots, httpRequest,
-						httpResponse);
+				final Object[] params =
+						MethodParameterResolver.getInstance().resolve(types, paramsAnnots, httpRequest, httpResponse);
 				final Object methodResponse = methodInfo.getMethod().invoke(targetClass, params);
 
 				writeResponse(methodInfo, methodResponse, httpRequest, httpResponse);
@@ -113,9 +113,9 @@ public class JSONDispatcher extends HttpServlet {
 		}
 	}
 
-	private void logError(final MethodInfo methodInfo, final Throwable t) {
-		if (Log.JSONRPC.isDebugEnabled()) {
-			Log.JSONRPC.debug("Uncaught exception calling method " + methodInfo, t);
+	private static void logError(final MethodInfo methodInfo, final Throwable t) {
+		if (logger.isDebugEnabled()) {
+			logger.debug("Uncaught exception calling method " + methodInfo, t);
 		} else {
 			final StringBuffer message = new StringBuffer();
 			message.append("A ").append(t.getClass().getCanonicalName()).append(" occurred calling method ")
@@ -123,11 +123,11 @@ public class JSONDispatcher extends HttpServlet {
 			if (t.getMessage() != null) {
 				message.append(": ").append(t.getMessage());
 			}
-			Log.JSONRPC.error(message.toString(), t);
+			logger.error(message.toString(), t);
 		}
 	}
 
-	private void checkUnconfigured() {
+	private static void checkUnconfigured() {
 		if (DatabaseProperties.getInstance().isConfigured()) {
 			throw AuthExceptionType.AUTH_NOT_AUTHORIZED.createException();
 		}
@@ -136,7 +136,7 @@ public class JSONDispatcher extends HttpServlet {
 	/*
 	 * This method does not allow redirection
 	 */
-	private void checkAuthentication(final HttpServletRequest httpRequest) {
+	private static void checkAuthentication(final HttpServletRequest httpRequest) {
 		try {
 			if (isLoggedIn(httpRequest)) {
 				return;
@@ -146,29 +146,29 @@ public class JSONDispatcher extends HttpServlet {
 		throw AuthExceptionType.AUTH_NOT_LOGGED_IN.createException();
 	}
 
-	private void checkAdmin(final HttpServletRequest httpRequest, final AdminAccess adminAccess) {
+	private static void checkAdmin(final HttpServletRequest httpRequest, final AdminAccess adminAccess) {
 		assureAdmin(httpRequest, adminAccess);
 	}
 
-	private String getMethodUrl(final HttpServletRequest httpRequest) {
+	private static String getMethodUrl(final HttpServletRequest httpRequest) {
 		String url = httpRequest.getPathInfo();
 
 		// Legacy method call
 		final String legacyMethod = httpRequest.getParameter("method");
 		if (legacyMethod != null) {
 			url += "/" + legacyMethod.toLowerCase();
-			Log.JSONRPC.warn("Using legacy method specification for url " + url);
+			logger.warn("Using legacy method specification for url " + url);
 		} else {
-			Log.JSONRPC.info("Calling url " + url);
+			logger.info("Calling url " + url);
 		}
-		if (Log.JSONRPC.isDebugEnabled()) {
+		if (logger.isDebugEnabled()) {
 			printRequestParameters(httpRequest);
 		}
 		return url;
 	}
 
 	@SuppressWarnings("unchecked")
-	private void printRequestParameters(final HttpServletRequest httpRequest) {
+	private static void printRequestParameters(final HttpServletRequest httpRequest) {
 		final Map<String, String[]> parameterMap = httpRequest.getParameterMap();
 		for (final String parameterName : parameterMap.keySet()) {
 			if ("method".equals(parameterName)) {
@@ -176,16 +176,16 @@ public class JSONDispatcher extends HttpServlet {
 			}
 			final String[] parameterValues = parameterMap.get(parameterName);
 			String printableParameterValue;
-			if (!Log.JSONRPC.isTraceEnabled() && parameterName.toLowerCase().contains("password")) {
+			if (!logger.isTraceEnabled() && parameterName.toLowerCase().contains("password")) {
 				printableParameterValue = "***";
 			} else {
 				printableParameterValue = parameterValueToString(parameterValues);
 			}
-			Log.JSONRPC.debug(format("    parameter \"%s\": %s", parameterName, printableParameterValue));
+			logger.debug(format("    parameter \"%s\": %s", parameterName, printableParameterValue));
 		}
 	}
 
-	private String parameterValueToString(final String[] parameterValues) {
+	private static String parameterValueToString(final String[] parameterValues) {
 		String printValue;
 		if (parameterValues.length == 1) {
 			printValue = parameterValues[0];
@@ -204,14 +204,15 @@ public class JSONDispatcher extends HttpServlet {
 		return printValue;
 	}
 
-	private void writeResponse(final MethodInfo methodInfo, Object methodResponse, final HttpServletRequest httpRequest,
-			final HttpServletResponse httpResponse) throws JSONException, IOException {
+	private static void writeResponse(final MethodInfo methodInfo, Object methodResponse,
+			final HttpServletRequest httpRequest, final HttpServletResponse httpResponse)
+			throws JSONException, IOException {
 		methodResponse = addSuccessAndWarningsIfJSON(methodInfo, methodResponse);
 		setContentType(methodInfo, methodResponse, httpRequest, httpResponse);
-		writeResponseData(methodInfo, methodResponse, httpResponse);
+		writeResponseData(methodResponse, httpResponse);
 	}
 
-	private Object addSuccessAndWarningsIfJSON(final MethodInfo javaMethod, final Object methodResponse)
+	private static Object addSuccessAndWarningsIfJSON(final MethodInfo javaMethod, final Object methodResponse)
 			throws JSONException {
 		if (javaMethod.getMethod().getAnnotation(SkipExtSuccess.class) != null) {
 			return methodResponse;
@@ -229,17 +230,20 @@ public class JSONDispatcher extends HttpServlet {
 		}
 	}
 
-	private Object serializeJsonResponse(final Object methodResponse) {
+	private static Object serializeJsonResponse(final Object methodResponse) throws JSONException {
 		final ObjectMapper mapper = new ObjectMapper();
 		try {
 			return mapper.writeValueAsString(methodResponse);
 		} catch (final Exception e) {
 			logger.error("error mapping object", e);
-			return "{\"success\":false}";
+			return "{" //
+					+ "\"success\": false," //
+					+ "\"errors\": " + serializeException(e).toString() //
+					+ "}";
 		}
 	}
 
-	private Object addSuccessAndWarningsToJSONObject(final JSONObject jres) throws JSONException {
+	private static Object addSuccessAndWarningsToJSONObject(final JSONObject jres) throws JSONException {
 		addRequestWarnings(jres);
 		// Login.login() sets success to false instead of throwing the exception
 		if (!jres.has("success")) {
@@ -248,9 +252,9 @@ public class JSONDispatcher extends HttpServlet {
 		return jres;
 	}
 
-	private void setContentType(final MethodInfo methodInfo, final Object methodResponse,
+	private static void setContentType(final MethodInfo methodInfo, final Object methodResponse,
 			final HttpServletRequest httpRequest, final HttpServletResponse httpResponse)
-					throws UnsupportedEncodingException {
+			throws UnsupportedEncodingException {
 		if (methodResponse instanceof DataHandler) {
 			final String forceDownloadHeader = httpRequest.getHeader("force-download");
 			final String forceDownloadParameter = httpRequest.getParameter("force-download");
@@ -282,8 +286,8 @@ public class JSONDispatcher extends HttpServlet {
 		}
 	}
 
-	private void writeResponseData(final MethodInfo methodInfo, final Object methodResponse,
-			final HttpServletResponse httpResponse) throws IOException {
+	private static void writeResponseData(final Object methodResponse, final HttpServletResponse httpResponse)
+			throws IOException {
 		if (methodResponse instanceof DataHandler) {
 			final DataHandler dh = DataHandler.class.cast(methodResponse);
 			dh.writeTo(httpResponse.getOutputStream());
@@ -295,61 +299,38 @@ public class JSONDispatcher extends HttpServlet {
 		}
 	}
 
-	private void writeErrorMessage(final MethodInfo methodInfo, final Throwable exception,
+	private static void writeErrorMessage(final MethodInfo methodInfo, final Throwable exception,
 			final HttpServletRequest httpRequest, final HttpServletResponse httpResponse) throws IOException {
 		if (methodInfo == null) {
-			httpResponse.setStatus(HttpServletResponse.SC_NOT_FOUND);
+			httpResponse.setStatus(SC_NOT_FOUND);
 		}
 		final Class<?> returnType = methodInfo.getMethod().getReturnType();
 		if (DataHandler.class == returnType || methodInfo.getMethod().getAnnotation(SkipExtSuccess.class) != null) {
 			if (exception instanceof NotFoundException) {
-				httpResponse.setStatus(HttpServletResponse.SC_NOT_FOUND);
+				httpResponse.setStatus(SC_NOT_FOUND);
 			} else if (exception instanceof AuthException) {
-				httpResponse.setStatus(HttpServletResponse.SC_FORBIDDEN);
+				httpResponse.setStatus(SC_FORBIDDEN);
 			} else {
-				httpResponse.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+				httpResponse.setStatus(SC_INTERNAL_SERVER_ERROR);
 			}
 			return;
-		} else {
-			if (MethodParameterResolver.isMultipart(httpRequest)) {
-				httpResponse.setContentType("text/html");
-			} else {
-				httpResponse.setContentType("application/json");
-			}
-			try {
-				final JSONObject jsonOutput = getOutput(exception);
-				addErrors(jsonOutput, exception);
-				jsonOutput.put("success", false);
-				httpResponse.getWriter().write(jsonOutput.toString());
-			} catch (final JSONException e) {
-				Log.CMDBUILD.error("Can't serialize the exception", e);
-			}
 		}
-	}
-
-	public JSONObject getOutput(final Throwable exception) {
-		final JSONObject jsonOutput;
-		if (exception instanceof PartialFailureException) {
-			jsonOutput = ((PartialFailureException) exception).getPartialOutput();
+		if (MethodParameterResolver.isMultipart(httpRequest)) {
+			httpResponse.setContentType("text/html");
 		} else {
-			jsonOutput = new JSONObject();
+			httpResponse.setContentType("application/json");
 		}
-		return jsonOutput;
-	}
-
-	private void addErrors(final JSONObject jsonOutput, Throwable exception) throws JSONException {
-		if (exception instanceof PartialFailureException) {
-			exception = ((PartialFailureException) exception).getOriginalException();
-		}
-		if (exception instanceof MultipleException) {
-			final MultipleException me = (MultipleException) exception;
-			jsonOutput.put("errors", serializeExceptionArray(me.getExceptions()));
-		} else {
+		try {
+			final JSONObject jsonOutput = new JSONObject();
 			jsonOutput.append("errors", serializeException(exception));
+			jsonOutput.put("success", false);
+			httpResponse.getWriter().write(jsonOutput.toString());
+		} catch (final JSONException e) {
+			Log.CMDBUILD.error("Can't serialize the exception", e);
 		}
 	}
 
-	private void addRequestWarnings(final JSONObject jsonOutput) throws JSONException {
+	private static void addRequestWarnings(final JSONObject jsonOutput) throws JSONException {
 		final ContextStore contextStore = applicationContext().getBean(ContextStore.class);
 		final Optional<CMDBContext> context = contextStore.get();
 		final List<? extends Throwable> warnings = context.get().getWarnings();
@@ -358,7 +339,8 @@ public class JSONDispatcher extends HttpServlet {
 		}
 	}
 
-	public JSONArray serializeExceptionArray(final Iterable<? extends Throwable> exceptions) throws JSONException {
+	private static JSONArray serializeExceptionArray(final Iterable<? extends Throwable> exceptions)
+			throws JSONException {
 		final JSONArray exceptionArray = new JSONArray();
 		for (final Throwable t : exceptions) {
 			exceptionArray.put(serializeException(t));
@@ -366,7 +348,7 @@ public class JSONDispatcher extends HttpServlet {
 		return exceptionArray;
 	}
 
-	static private JSONObject serializeException(final Throwable e) throws JSONException {
+	private static JSONObject serializeException(final Throwable e) throws JSONException {
 		final JSONObject exceptionJson = new JSONObject();
 		if (e instanceof CMDBException) {
 			final CMDBException ce = (CMDBException) e;
@@ -378,7 +360,7 @@ public class JSONDispatcher extends HttpServlet {
 		return exceptionJson;
 	}
 
-	static private JSONArray serializeExceptionParameters(final String[] exceptionParameters) {
+	private static JSONArray serializeExceptionParameters(final String[] exceptionParameters) {
 		final JSONArray jsonParameters = new JSONArray();
 		if (exceptionParameters != null) {
 			for (final String exceptionParameter : exceptionParameters) {
