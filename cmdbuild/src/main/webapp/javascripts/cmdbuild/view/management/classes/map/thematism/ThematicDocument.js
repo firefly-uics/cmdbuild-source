@@ -7,9 +7,12 @@
 		 * CMDBuild.core.buttons.gis.Thematism
 		 */
 		thematismButton : undefined,
+		interactionDocument : undefined,
+		thematicColors : undefined,
 
-		setInteractionDocument : function(interactionDocument) {
+		init : function(interactionDocument, thematicColors) {
 			this.interactionDocument = interactionDocument;
+			this.thematicColors = thematicColors;
 		},
 		setThematismButton : function(thematismButton) {
 			this.thematismButton = thematismButton;
@@ -40,6 +43,9 @@
 				layers.push(thematism.thematicLayer.layer);
 			}
 			return layers;
+		},
+		getColor : function(value, colorsTable) {
+			return this.thematicColors.getColor(value, colorsTable);
 		},
 		getThematicLayersBySourceName : function(name) {
 			var thematicLayers = [];

@@ -28,7 +28,15 @@
 		defaults : {
 			anchor : "100%"
 		},
+		getLayoutConfiguration : function() {
+			return this.parentWindow.getLayoutConfiguration();
+		},
+		init : function() {
+			var layoutConfiguration = this.getLayoutConfiguration();
+			this.parentWindow.initForm(this, layoutConfiguration);
+		},
 		loadComponents : function(callback, callbackScope) {
+			this.init();
 			callback.apply(callbackScope, []);
 		}
 	});
