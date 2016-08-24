@@ -743,9 +743,12 @@
 						} else if (attributeModel.get(CMDBuild.core.constants.Proxy.TYPE) != 'ipaddress') { // FIXME: future implementation - @deprecated - Old field manager
 							var column = CMDBuild.Management.FieldManager.getHeaderForAttr(attributeModel.get(CMDBuild.core.constants.Proxy.SOURCE_OBJECT));
 
-							delete column.flex; // Remove flex property by default to be compatible with forceFit property
-
 							if (Ext.isObject(column) && !Ext.Object.isEmpty(column)) {
+								// Remove width properties by default to be compatible with forceFit property
+								delete column.flex;
+								delete column.width;
+								delete column.minWidth;
+
 								this.addRendererToHeader(column);
 
 								fieldManager.push(columnsDefinition, column);
