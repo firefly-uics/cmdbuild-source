@@ -27,7 +27,7 @@
 				},
 				proxy: {
 					type: 'ajax',
-					url: CMDBuild.proxy.index.Json.workflow.activity.readAll,
+					url: CMDBuild.proxy.index.Json.workflow.instance.readAll,
 					reader: {
 						type: 'workflowstore',
 						totalProperty: CMDBuild.core.constants.Proxy.RESULTS

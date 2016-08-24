@@ -31,6 +31,7 @@
 		cmfgCatchedFunctions: [
 			'getView = panelGridAndFormGridGet',
 			'onWorkflowTreeAddButtonClick',
+			'onWorkflowTreeColumnChanged',
 			'onWorkflowTreePrintButtonClick',
 			'onWorkflowTreeSaveFailure',
 			'onWorkflowTreeWokflowSelect = onWorkflowWokflowSelect',
@@ -166,6 +167,29 @@
 		},
 
 		/**
+		 * @returns {Array} visibleColumnNames
+		 *
+		 * @private
+		 */
+		displayedParametersNamesGet: function () {
+			var visibleColumns = Ext.Array.slice(this.view.query('gridcolumn:not([hidden])'), 1); // Discard expander column
+			var visibleColumnNames = [];
+
+			// Build columns dataIndex array
+			if (Ext.isArray(visibleColumns) && !Ext.isEmpty(visibleColumns))
+				Ext.Array.each(visibleColumns, function (columnObject, i, allColumnObjects) {
+					if (
+						Ext.isObject(columnObject) && !Ext.Object.isEmpty(columnObject)
+						&& !Ext.isEmpty(columnObject.dataIndex)
+					) {
+						visibleColumnNames.push(columnObject.dataIndex);
+					}
+				}, this);
+
+			return visibleColumnNames;
+		},
+
+		/**
 		 * @param {CMDBuild.model.management.workflow.Node} node
 		 *
 		 * @returns {Void}
@@ -196,6 +220,13 @@
 		},
 
 		/**
+		 * @returns {Void}
+		 */
+		onWorkflowTreeColumnChanged: function () {
+			this.cmfg('workflowTreeStoreLoad');
+		},
+
+		/**
 		 * @param {String} format
 		 *
 		 * @returns {Void}
@@ -203,22 +234,9 @@
 		onWorkflowTreePrintButtonClick: function (format) {
 			if (Ext.isString(format) && !Ext.isEmpty(format)) {
 				var sorters = this.cmfg('workflowTreeStoreGet').getSorters();
-				var visibleColumns = Ext.Array.slice(this.view.query('gridcolumn:not([hidden])'), 1); // Discard expander column
-				var visibleColumnNames = [];
-
-				// Build columns dataIndex array
-				if (Ext.isArray(visibleColumns) && !Ext.isEmpty(visibleColumns))
-					Ext.Array.each(visibleColumns, function (columnObject, i, allColumnObjects) {
-						if (
-							Ext.isObject(columnObject) && !Ext.Object.isEmpty(columnObject)
-							&& !Ext.isEmpty(columnObject.dataIndex)
-						) {
-							visibleColumnNames.push(columnObject.dataIndex);
-						}
-					}, this);
 
 				var params = Ext.clone(this.storeExtraParamsGet());
-				params[CMDBuild.core.constants.Proxy.ATTRIBUTES] = Ext.encode(visibleColumnNames);
+				params[CMDBuild.core.constants.Proxy.ATTRIBUTES] = Ext.encode(this.displayedParametersNamesGet());
 				params[CMDBuild.core.constants.Proxy.TYPE] = format;
 
 				if (Ext.isArray(sorters) && !Ext.isEmpty(sorters))
@@ -841,6 +859,7 @@
 				var sorters = this.cmfg('workflowTreeStoreGet').getSorters();
 
 				var params = Ext.isObject(parameters.params) ? parameters.params : {};
+				params[CMDBuild.core.constants.Proxy.ATTRIBUTES] = Ext.encode(this.displayedParametersNamesGet());
 				params[CMDBuild.core.constants.Proxy.CLASS_NAME] = this.cmfg('workflowSelectedWorkflowGet', CMDBuild.core.constants.Proxy.NAME);
 				params[CMDBuild.core.constants.Proxy.STATE] = this.controllerToolbarTop.cmfg('workflowTreeToolbarTopStatusValueGet');
 

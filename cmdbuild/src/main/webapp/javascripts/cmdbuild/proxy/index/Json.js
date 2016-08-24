@@ -673,12 +673,20 @@
 				update: 'services/json/workflow/saveactivity', // TODO: waiting for refactor (crud)
 				remove: '',
 
-				readAll: 'services/json/workflow/getprocessinstancelist',
 				readStart: 'services/json/workflow/getstartactivity',
 
 				abort: 'services/json/workflow/abortprocess',
 				lock: 'services/json/lock/lockactivity',
 				unlock: 'services/json/lock/unlockactivity'
+			},
+
+			instance: {
+				create: '',
+				read: 'services/json/workflow/getinstance', // TODO: to implementate
+				update: '',
+				remove: '',
+
+				readAll: 'services/json/workflow/getinstances'
 			},
 
 			xpdl: {
