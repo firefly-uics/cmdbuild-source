@@ -2,7 +2,6 @@ package org.cmdbuild.servlets.json;
 
 import static com.google.common.collect.FluentIterable.from;
 import static java.util.Arrays.asList;
-import static org.apache.commons.lang3.ObjectUtils.defaultIfNull;
 import static org.cmdbuild.services.json.dto.JsonResponse.success;
 import static org.cmdbuild.servlets.json.CommunicationConstants.ACTIVITY_INSTANCE_ID;
 import static org.cmdbuild.servlets.json.CommunicationConstants.ADVANCE;
@@ -110,17 +109,13 @@ public class Workflow extends JSONBaseWithSpringContext {
 								.withLookupHelper(lookupHelper()) //
 								.withFlowStatus(flowStatus) //
 								.build())) //
-				// TODO fix system attributes
-				// .onlyAttributes(toIterable(defaultIfNull(attributes, new
-				// JSONArray()))) //
+				.onlyAttributes(toIterable(attributes)) //
 				.build();
-
 		final List<JsonProcessCard> processInstances = Lists.newArrayList();
 		final PagedElements<UserProcessInstance> response = workflowLogic().query(className, queryOptions);
 		for (final UserProcessInstance pi : response) {
 			processInstances.add(new JsonProcessCard(pi, translationFacade(), lookupSerializer()));
 		}
-
 		return success(new HashMap<String, Object>() {
 			{
 				put("results", response.totalSize());
