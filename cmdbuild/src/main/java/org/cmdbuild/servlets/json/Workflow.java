@@ -2,6 +2,7 @@ package org.cmdbuild.servlets.json;
 
 import static com.google.common.collect.FluentIterable.from;
 import static java.util.Arrays.asList;
+import static org.apache.commons.lang3.ObjectUtils.defaultIfNull;
 import static org.cmdbuild.services.json.dto.JsonResponse.success;
 import static org.cmdbuild.servlets.json.CommunicationConstants.ACTIVITY_INSTANCE_ID;
 import static org.cmdbuild.servlets.json.CommunicationConstants.ADVANCE;
@@ -23,6 +24,7 @@ import static org.cmdbuild.servlets.json.CommunicationConstants.STATE;
 import static org.cmdbuild.servlets.json.CommunicationConstants.VERSION;
 import static org.cmdbuild.servlets.json.CommunicationConstants.WW;
 import static org.cmdbuild.servlets.json.CommunicationConstants.XPDL;
+import static org.cmdbuild.servlets.json.schema.Utils.toIterable;
 import static org.cmdbuild.workflow.ProcessAttributes.FlowStatus;
 
 import java.io.IOException;
@@ -90,12 +92,13 @@ public class Workflow extends JSONBaseWithSpringContext {
 	// TODO: but is the right name? It returns ProcessInstances
 	@JSONExported
 	@SuppressWarnings("serial")
-	public JsonResponse getProcessInstanceList( //
+	public JsonResponse getInstances( //
 			@Parameter(value = CLASS_NAME) final String className, //
 			@Parameter(value = FILTER, required = false) final JSONObject filter, //
 			@Parameter(LIMIT) final int limit, //
 			@Parameter(START) final int offset, //
 			@Parameter(value = SORT, required = false) final JSONArray sorters, //
+			@Parameter(value = ATTRIBUTES, required = false) final JSONArray attributes, //
 			@Parameter(STATE) final String flowStatus //
 	) throws JSONException, CMWorkflowException {
 		final QueryOptions queryOptions = QueryOptions.newQueryOption() //
@@ -107,6 +110,9 @@ public class Workflow extends JSONBaseWithSpringContext {
 								.withLookupHelper(lookupHelper()) //
 								.withFlowStatus(flowStatus) //
 								.build())) //
+				// TODO fix system attributes
+				// .onlyAttributes(toIterable(defaultIfNull(attributes, new
+				// JSONArray()))) //
 				.build();
 
 		final List<JsonProcessCard> processInstances = Lists.newArrayList();
@@ -115,13 +121,22 @@ public class Workflow extends JSONBaseWithSpringContext {
 			processInstances.add(new JsonProcessCard(pi, translationFacade(), lookupSerializer()));
 		}
 
-		return JsonResponse.success(new HashMap<String, Object>() {
+		return success(new HashMap<String, Object>() {
 			{
 				put("results", response.totalSize());
 				put("rows", processInstances);
 			}
 		});
 
+	}
+
+	@JSONExported
+	public JsonResponse getInstance( //
+			@Parameter(value = CLASS_NAME) final String className, //
+			@Parameter(value = CARD_ID) final Long cardId //
+	) {
+		final UserProcessInstance result = workflowLogic().getProcessInstance(className, cardId);
+		return success(new JsonProcessCard(result, translationFacade(), lookupSerializer()));
 	}
 
 	private static class JsonPosition {
@@ -181,7 +196,7 @@ public class Workflow extends JSONBaseWithSpringContext {
 			@Parameter(CLASS_ID) final Long processClassId) throws CMWorkflowException {
 		final CMActivity activityDefinition = workflowLogic().getStartActivityOrDie(processClassId);
 
-		return JsonResponse.success(new JsonActivityDefinition( //
+		return success(new JsonActivityDefinition( //
 				activityDefinition, //
 				performerFor(activityDefinition)));
 	}
@@ -224,7 +239,7 @@ public class Workflow extends JSONBaseWithSpringContext {
 		final UserActivityInstance activityInstance = workflowLogic().getActivityInstance( //
 				processClassId, processInstanceId, activityInstanceId);
 
-		return JsonResponse.success(new JsonActivityInstance(activityInstance));
+		return success(new JsonActivityInstance(activityInstance));
 	}
 
 	@JSONExported
@@ -242,7 +257,7 @@ public class Workflow extends JSONBaseWithSpringContext {
 			throw ConsistencyExceptionType.OUT_OF_DATE_PROCESS.createException();
 		}
 
-		return JsonResponse.success(new HashMap<String, Object>() {
+		return success(new HashMap<String, Object>() {
 			{
 				put("updated", isUpdated);
 			}
@@ -276,7 +291,7 @@ public class Workflow extends JSONBaseWithSpringContext {
 
 		final DateTimeFormatter formatter = DateTimeFormat.forPattern(Constants.DATETIME_FOUR_DIGIT_YEAR_FORMAT);
 		final DateTime beginDate = processInstance.getBeginDate();
-		return JsonResponse.success(new HashMap<String, Object>() {
+		return success(new HashMap<String, Object>() {
 			{
 				put("Id", processInstance.getCardId());
 				put("IdClass", processInstance.getType().getId());
@@ -295,7 +310,7 @@ public class Workflow extends JSONBaseWithSpringContext {
 	) throws CMWorkflowException {
 		workflowLogic().abortProcess(processClassId, processCardId);
 
-		return JsonResponse.success(null);
+		return success(null);
 	}
 
 	@Admin
@@ -315,7 +330,7 @@ public class Workflow extends JSONBaseWithSpringContext {
 	) throws CMWorkflowException {
 		final String[] versions = workflowLogic().getProcessDefinitionVersions(processClassId);
 
-		return JsonResponse.success(versions);
+		return success(versions);
 	}
 
 	@Admin
@@ -342,7 +357,7 @@ public class Workflow extends JSONBaseWithSpringContext {
 			messages.add("saved_xpdl");
 		}
 
-		return JsonResponse.success(messages);
+		return success(messages);
 	}
 
 	private DataSource wrapAsDataSource(final FileItem xpdlFile) {
