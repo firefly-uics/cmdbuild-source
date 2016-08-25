@@ -682,7 +682,7 @@
 
 			instance: {
 				create: '',
-				read: 'services/json/workflow/getinstance', // TODO: to implementate
+				read: 'services/json/workflow/getinstance',
 				update: '',
 				remove: '',
 

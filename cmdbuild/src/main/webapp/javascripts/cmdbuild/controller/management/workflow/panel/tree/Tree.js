@@ -763,7 +763,8 @@
 			];
 
 			if (!this.cmfg('workflowSelectedWorkflowIsEmpty') && !this.cmfg('workflowSelectedWorkflowAttributesIsEmpty')) {
-				var fieldManager = Ext.create('CMDBuild.core.fieldManager.FieldManager', { parentDelegate: this });
+				var fieldManager = Ext.create('CMDBuild.core.fieldManager.FieldManager', { parentDelegate: this }),
+					attributes = CMDBuild.core.Utils.objectArraySort(this.cmfg('workflowSelectedWorkflowAttributesGet'), CMDBuild.core.constants.Proxy.INDEX);
 
 				if (this.cmfg('workflowSelectedWorkflowGet', CMDBuild.core.constants.Proxy.IS_SUPER_CLASS))
 					columnsDefinition.push({
@@ -771,7 +772,7 @@
 						text: CMDBuild.Translation.subClass
 					});
 
-				Ext.Array.each(this.cmfg('workflowSelectedWorkflowAttributesGet'), function (attributeModel, i, allAttributeModels) {
+				Ext.Array.each(attributes, function (attributeModel, i, allAttributeModels) {
 					if (
 						Ext.isObject(attributeModel) && !Ext.Object.isEmpty(attributeModel)
 						&& attributeModel.get(CMDBuild.core.constants.Proxy.NAME) != CMDBuild.core.constants.Proxy.CLASS_DESCRIPTION
@@ -786,6 +787,8 @@
 							var column = CMDBuild.Management.FieldManager.getHeaderForAttr(attributeModel.get(CMDBuild.core.constants.Proxy.SOURCE_OBJECT));
 
 							if (Ext.isObject(column) && !Ext.Object.isEmpty(column)) {
+								column.text = column.header; // Create alias of header property because it's deprecated
+
 								// Remove width properties by default to be compatible with forceFit property
 								delete column.flex;
 								delete column.width;
