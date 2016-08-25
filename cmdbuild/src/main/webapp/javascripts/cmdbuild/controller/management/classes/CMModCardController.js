@@ -227,7 +227,7 @@
 
 		buildMapController: function () {
 			if (Ext.isFunction(this.view.getMapPanel)) {
-				this.controllerMap = new CMDBuild.controller.management.classes.CMMapController(this.view.getMapPanel(), this);
+				this.controllerMap = new CMDBuild.controller.management.classes.CMMapController(this.view.getMapPanel(), this.view.getMapPanel().interactionDocument);
 			} else { // FIXME: ugly code style, build fake map controller
 				this.controllerMap = {
 					onEntryTypeSelected: Ext.emptyFn,
