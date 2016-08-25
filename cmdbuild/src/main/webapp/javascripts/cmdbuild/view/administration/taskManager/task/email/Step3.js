@@ -73,7 +73,7 @@
 
 			// Parsing configuration
 				this.parsingKeyStart = Ext.create('Ext.form.field.Text', {
-					fieldLabel: CMDBuild.Translation.parsingKeyStart,
+					fieldLabel: CMDBuild.Translation.keyStartDelimeter,
 					labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
 					maxWidth: CMDBuild.core.constants.FieldWidths.ADMINISTRATION_BIG,
 					name: CMDBuild.core.constants.Proxy.PARSING_KEY_INIT,
@@ -81,7 +81,7 @@
 				});
 
 				this.parsingKeyEnd = Ext.create('Ext.form.field.Text', {
-					fieldLabel: CMDBuild.Translation.parsingKeyEnd,
+					fieldLabel: CMDBuild.Translation.keyEndDelimiter,
 					labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
 					maxWidth: CMDBuild.core.constants.FieldWidths.ADMINISTRATION_BIG,
 					name: CMDBuild.core.constants.Proxy.PARSING_KEY_END,
@@ -90,7 +90,7 @@
 				});
 
 				this.parsingValueStart = Ext.create('Ext.form.field.Text', {
-					fieldLabel: CMDBuild.Translation.parsingValueStart,
+					fieldLabel: CMDBuild.Translation.valueStartDelimeter,
 					labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
 					maxWidth: CMDBuild.core.constants.FieldWidths.ADMINISTRATION_BIG,
 					name: CMDBuild.core.constants.Proxy.PARSING_VALUE_INIT,
