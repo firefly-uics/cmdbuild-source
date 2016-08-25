@@ -17,6 +17,7 @@
 			{ name: CMDBuild.core.constants.Proxy.EDITOR_TYPE, type: 'string' },
 			{ name: CMDBuild.core.constants.Proxy.FILTER, type: 'auto' },
 			{ name: CMDBuild.core.constants.Proxy.HIDDEN, type: 'boolean' },
+			{ name: CMDBuild.core.constants.Proxy.INDEX, type: 'int', defaultValue: 0 },
 			{ name: CMDBuild.core.constants.Proxy.LENGTH, type: 'int', defaultValue: 0 },
 			{ name: CMDBuild.core.constants.Proxy.LOOKUP_TYPE, type: 'string' },
 			{ name: CMDBuild.core.constants.Proxy.MANDATORY, type: 'boolean' },
