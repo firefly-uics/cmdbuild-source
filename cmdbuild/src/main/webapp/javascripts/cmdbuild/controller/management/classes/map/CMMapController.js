@@ -119,7 +119,7 @@
 					Id : c.Id,
 					IdClass : c.IdClass
 				}, function(card) {
-					me.mapPanel.getMap().changeIdOnLayers(-1, c.Id);
+					me.mapPanel.getMap().changeFeatureOnLayers(c.Id);
 					var type = _CMCache.getEntryTypeById(c.IdClass);
 					var card = {
 							cardId : c.Id,

@@ -22,12 +22,12 @@
 		},
 		getFieldStrategies : function(callback, callbackScope) {
 			this.thematicDocument.getFieldStrategies(function(strategies) {
-				callback.apply(callbackScope, [strategies]);
+				callback.apply(callbackScope, [ strategies ]);
 			}, this);
 		},
 		getFunctionStrategies : function(callback, callbackScope) {
 			this.thematicDocument.getFunctionStrategies(function(strategies) {
-				callback.apply(callbackScope, [strategies]);
+				callback.apply(callbackScope, [ strategies ]);
 			}, this);
 		},
 		getStrategyByDescription : function(description) {
@@ -43,10 +43,13 @@
 			return this.thematicDocument;
 		},
 		getThematicLayers : function() {
-			if (! this.thematicDocument) {
+			if (!this.thematicDocument) {
 				return [];
 			}
 			return this.thematicDocument.getLayers();
+		},
+		forceRefreshThematism : function() {
+			this.thematicDocument.forceRefreshThematism();
 		},
 		observe : function(view) {
 			if (this.observers.indexOf(view) === -1) {
@@ -85,16 +88,15 @@
 		centerOnLayer : function(card, layers, index, callback, callbackScope) {
 			var map = this.getMap();
 			if (index >= layers.length) {
-				callback.apply(callbackScope, [undefined])
+				callback.apply(callbackScope, [ undefined ])
 				return;
 			}
 			var geoLayer = this.getGeoLayerByName(layers[index].name);
 			if (geoLayer && geoLayer.get("adapter") && geoLayer.get("adapter").getPosition) {
 				geoLayer.get("adapter").getPosition(card, function(center) {
 					if (center) {
-						callback.apply(callbackScope, [center])
-					}
-					else {
+						callback.apply(callbackScope, [ center ])
+					} else {
 						this.centerOnLayer(card, layers, index + 1, callback, callbackScope)
 					}
 				}, this);
@@ -107,7 +109,7 @@
 				me.centerOnLayer(card, layers, 0, function(center) {
 					if (center) {
 						me.configurationMap.center = center;
-						//me.changed();
+						// me.changed();
 					}
 					callback.apply(callbackScope, []);
 				}, this);
@@ -115,6 +117,7 @@
 		},
 		setCurrentCard : function(card) {
 			this.currentCard = card;
+			this.thematicDocument.setCurrentCard(card);
 		},
 		getCurrentCard : function() {
 			return this.currentCard;
@@ -140,7 +143,7 @@
 				var retLayers = [];
 				for (var i = 0; i < layers.length; i++) {
 					var layer = layers[i];
-					if (layer.masterTableName === card.className)  {
+					if (layer.masterTableName === card.className) {
 						retLayers.push(layer);
 					}
 				}
@@ -152,24 +155,15 @@
 				callback.apply(callbackScope, [ layers ]);
 			});
 		},
-		getLayerByName : function(name, callback, callbackScope) {
-			layerByName(name, callback, callbackScope);
-		},
-		getThematicLayerByName : function(name) {
-			if (! this.thematicDocument) {
-				return null;
-			}
-			return this.thematicDocument.getLayerByName(name);
+		getCurrentFeature : function() {
+			return this.feature;
 		},
 		getGeoLayerByName : function(name) {
 			var map = this.getMap();
-			return (! map) ? null : geoLayerByName(name, map);
+			return (!map) ? null : geoLayerByName(name, map);
 		},
-		isVisible : function(layer, currentClassName, currentCardId) {
-			return isVisible(layer, currentClassName, currentCardId);
-		},
-		isHide : function(layer) {
-			return (layer.unChecked === true);
+		getLayerByName : function(name, callback, callbackScope) {
+			layerByName(name, callback, callbackScope);
 		},
 		getMap : function() {
 			var map = this.configurationMap.mapPanel.getMap();
@@ -179,15 +173,24 @@
 			var mapPanel = this.configurationMap.mapPanel;
 			return mapPanel;
 		},
+		getThematicLayerByName : function(name) {
+			if (!this.thematicDocument) {
+				return null;
+			}
+			return this.thematicDocument.getLayerByName(name);
+		},
+		isVisible : function(layer, currentClassName, currentCardId) {
+			return isVisible(layer, currentClassName, currentCardId);
+		},
+		isHide : function(layer) {
+			return (layer.unChecked === true);
+		},
 		setCurrentFeature : function(name, geoType, operation) {
 			this.feature = {
 				nameAttribute : name,
 				geoType : geoType,
 				operation : operation
 			};
-		},
-		getCurrentFeature : function() {
-			return this.feature;
 		}
 	});
 
