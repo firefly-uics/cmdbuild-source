@@ -138,7 +138,9 @@ public class QuerySpecsBuilderFiller {
 			}
 
 			public Iterable<String> systemAttributes() {
-				entryType.accept(this);
+				if (!isEmpty(queryOptions.getAttributes())) {
+					entryType.accept(this);
+				}
 				return output;
 			}
 
