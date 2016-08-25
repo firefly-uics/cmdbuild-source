@@ -328,14 +328,6 @@
 		"user": "Пользователь",
 		"wait_msg": "Отправка данных..."
 	},
-	"cronTriggerField": {
-		"triggerFieldWindow": {
-			"every": "С интервалом в 1 ",
-			"exactly": "Точно в",
-			"inastepwith": "С интервалом",
-			"range": "В диапазоне"
-		}
-	},
 	"delayLabels": {
 		"day1": "<em>In 1 day</em>",
 		"days2": "<em>In 2 days</em>",
@@ -711,6 +703,7 @@
 	"areYouSureYouWantToAbortThisProcess": "Действительно удалить процесс?",
 	"as": "как",
 	"asynchronous": "Асинхронные",
+	"atAnExact": "Точно в",
 	"attachFile": "Вложить файл",
 	"attachments": "Вложенные файлы",
 	"attention": "Внимание",
@@ -922,6 +915,7 @@
 	"eventAsynchronous": "<em>Event asynchronous</em>",
 	"eventSynchronous": "<em>Event synchronous</em>",
 	"eventTitle": "Заголовок события",
+	"every": "С интервалом в 1",
 	"everyDay": "Каждый день",
 	"everyHour": "Каждый час",
 	"everyMonth": "Каждый месяц",
@@ -988,6 +982,8 @@
 	"importFromCSV": "<em>Import from CSV</em>",
 	"importJasperReport": "Импортировать отчет Jasper",
 	"importWasSuccessful": "Импорт выполнен успешно",
+	"inARange": "В диапазоне",
+	"inAStepWith": "С интервалом",
 	"includeInherited": "Показывать наследуемые",
 	"includeRelations": "<em>Include relations</em>",
 	"includeSystemActivities": "<em>Include system activities</em>",

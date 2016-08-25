@@ -328,14 +328,6 @@
 		"user": "Người dùng",
 		"wait_msg": "Đang gửi dữ liệu..."
 	},
-	"cronTriggerField": {
-		"triggerFieldWindow": {
-			"every": "<em>Every </em>",
-			"exactly": "<em>At an exact</em>",
-			"inastepwith": "<em>In a step width</em>",
-			"range": "<em>In a range</em>"
-		}
-	},
 	"delayLabels": {
 		"day1": "<em>In 1 day</em>",
 		"days2": "<em>In 2 days</em>",
@@ -711,6 +703,7 @@
 	"areYouSureYouWantToAbortThisProcess": "Bạn có chắc là bạn muốn hủy bỏ quá trình?",
 	"as": "như là",
 	"asynchronous": "<em>Asynchronous</em>",
+	"atAnExact": "<em>At an exact</em>",
 	"attachFile": "<em>Attach File</em>",
 	"attachments": "Các tập tin đính kèm",
 	"attention": "Chú ý",
@@ -922,6 +915,7 @@
 	"eventAsynchronous": "<em>Event asynchronous</em>",
 	"eventSynchronous": "<em>Event synchronous</em>",
 	"eventTitle": "Tên sự kiện",
+	"every": "<em>Every </em>",
 	"everyDay": "<em>Every day</em>",
 	"everyHour": "<em>Every hour</em>",
 	"everyMonth": "<em>Every month</em>",
@@ -988,6 +982,8 @@
 	"importFromCSV": "<em>Import from CSV</em>",
 	"importJasperReport": "Nhập báo cáo Jasper",
 	"importWasSuccessful": "Nhập đã được thành công",
+	"inARange": "<em>In a range</em>",
+	"inAStepWith": "<em>In a step width</em>",
 	"includeInherited": "Bao gồm các kế thừa",
 	"includeRelations": "<em>Include relations</em>",
 	"includeSystemActivities": "<em>Include system activities</em>",

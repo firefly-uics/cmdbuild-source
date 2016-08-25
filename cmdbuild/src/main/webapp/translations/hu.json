@@ -328,14 +328,6 @@
 		"user": "Felhasználó",
 		"wait_msg": "Adat küldése..."
 	},
-	"cronTriggerField": {
-		"triggerFieldWindow": {
-			"every": "Minden ",
-			"exactly": "Addig pontosan",
-			"inastepwith": "Lépés szélességben",
-			"range": "In a range"
-		}
-	},
 	"delayLabels": {
 		"day1": "1 nap alatt",
 		"days2": "2 nap alatt",
@@ -711,6 +703,7 @@
 	"areYouSureYouWantToAbortThisProcess": "Biztos hogy meg akarja szakítani a folyamatot?",
 	"as": "mint",
 	"asynchronous": "Aszinkron",
+	"atAnExact": "Addig pontosan",
 	"attachFile": "Fájl csatolása",
 	"attachments": "Csatolmányok",
 	"attention": "Figyelem",
@@ -922,6 +915,7 @@
 	"eventAsynchronous": "<em>Event asynchronous</em>",
 	"eventSynchronous": "<em>Event synchronous</em>",
 	"eventTitle": "Esemény címe",
+	"every": "Minden",
 	"everyDay": "Minden nap",
 	"everyHour": "Minden óra",
 	"everyMonth": "Minden hónap",
@@ -988,6 +982,8 @@
 	"importFromCSV": "CSV importálása",
 	"importJasperReport": "<em>Import Jasper report</em>",
 	"importWasSuccessful": "Az import sikeres",
+	"inARange": "In a range",
+	"inAStepWith": "Lépés szélességben",
 	"includeInherited": "Örököltek belefoglalása",
 	"includeRelations": "Relációk belefoglalása",
 	"includeSystemActivities": "Rendszer aktivitások belefoglalása",

@@ -328,14 +328,6 @@
 		"user": "Korisničko ime",
 		"wait_msg": "Šaljem podatke..."
 	},
-	"cronTriggerField": {
-		"triggerFieldWindow": {
-			"every": "<em>Every </em>",
-			"exactly": "<em>At an exact</em>",
-			"inastepwith": "<em>In a step width</em>",
-			"range": "<em>In a range</em>"
-		}
-	},
 	"delayLabels": {
 		"day1": "<em>In 1 day</em>",
 		"days2": "<em>In 2 days</em>",
@@ -711,6 +703,7 @@
 	"areYouSureYouWantToAbortThisProcess": "Da li ste sigurni da želite prekinuti proces?",
 	"as": "kao",
 	"asynchronous": "<em>Asynchronous</em>",
+	"atAnExact": "<em>At an exact</em>",
 	"attachFile": "<em>Attach File</em>",
 	"attachments": "Prilozi",
 	"attention": "Pažnja",
@@ -922,6 +915,7 @@
 	"eventAsynchronous": "<em>Event asynchronous</em>",
 	"eventSynchronous": "<em>Event synchronous</em>",
 	"eventTitle": "Naziv događaja",
+	"every": "<em>Every</em>",
 	"everyDay": "<em>Every day</em>",
 	"everyHour": "<em>Every hour</em>",
 	"everyMonth": "<em>Every month</em>",
@@ -988,6 +982,8 @@
 	"importFromCSV": "<em>Import from CSV</em>",
 	"importJasperReport": "Uvoz Jasper izvještaja",
 	"importWasSuccessful": "Uvoz podataka uspješno izvršen",
+	"inARange": "<em>In a range</em>",
+	"inAStepWith": "<em>In a step width</em>",
 	"includeInherited": "Uključujući naslijeđene",
 	"includeRelations": "<em>Include relations</em>",
 	"includeSystemActivities": "<em>Include system activities</em>",

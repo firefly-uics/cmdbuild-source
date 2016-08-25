@@ -328,14 +328,6 @@
 		"user": "Uživatel",
 		"wait_msg": "Odesílám data..."
 	},
-	"cronTriggerField": {
-		"triggerFieldWindow": {
-			"every": "Spouštět pro všechny ",
-			"exactly": "Spouštět přesně v",
-			"inastepwith": "Spouštět po krocích o délce",
-			"range": "Spouštět pro všechny v rozsahu"
-		}
-	},
 	"delayLabels": {
 		"day1": "1 den",
 		"days2": "2 dny",
@@ -711,6 +703,7 @@
 	"areYouSureYouWantToAbortThisProcess": "Opravdu si přejete přerušit tento proces?",
 	"as": "jako",
 	"asynchronous": "Asynchronní",
+	"atAnExact": "Spouštět přesně v",
 	"attachFile": "Přiložit soubor",
 	"attachments": "Přílohy",
 	"attention": "Pozor",
@@ -922,6 +915,7 @@
 	"eventAsynchronous": "<em>Event asynchronous</em>",
 	"eventSynchronous": "<em>Event synchronous</em>",
 	"eventTitle": "Název události",
+	"every": "Spouštět pro všechny",
 	"everyDay": "Každý den",
 	"everyHour": "Každou hodinu",
 	"everyMonth": "Každý měsíc",
@@ -988,6 +982,8 @@
 	"importFromCSV": "Import z CSV",
 	"importJasperReport": "Import sestavy Jasper",
 	"importWasSuccessful": "<em>Import was successful</em>",
+	"inARange": "Spouštět pro všechny v rozsahu",
+	"inAStepWith": "Spouštět po krocích o délce",
 	"includeInherited": "Včetně zděděných",
 	"includeRelations": "Včetně vazeb",
 	"includeSystemActivities": "Zahrnout systémové kroky procesu",
