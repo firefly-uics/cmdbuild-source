@@ -328,14 +328,6 @@
 		"user": "Korisničko ime",
 		"wait_msg": "Šaljem podatke..."
 	},
-	"cronTriggerField": {
-		"triggerFieldWindow": {
-			"every": "Svakih ",
-			"exactly": "Tačno u",
-			"inastepwith": "U koracima",
-			"range": "U rasponu"
-		}
-	},
 	"delayLabels": {
 		"day1": "<em>In 1 day</em>",
 		"days2": "<em>In 2 days</em>",
@@ -711,6 +703,7 @@
 	"areYouSureYouWantToAbortThisProcess": "Da li ste sigurni da želite prekinuti proces?",
 	"as": "kao",
 	"asynchronous": "Asinhrono",
+	"atAnExact": "Tačno u",
 	"attachFile": "Priloži datoteku",
 	"attachments": "Prilozi",
 	"attention": "Pažnja",
@@ -922,6 +915,7 @@
 	"eventAsynchronous": "<em>Event asynchronous</em>",
 	"eventSynchronous": "<em>Event synchronous</em>",
 	"eventTitle": "Naziv događaja",
+	"every": "Svakih",
 	"everyDay": "Svaki dan",
 	"everyHour": "Svaki sat",
 	"everyMonth": "Svaki mesec",
@@ -988,6 +982,8 @@
 	"importFromCSV": "Uvoz iz CSV",
 	"importJasperReport": "Uvoz Jasper izveštaja",
 	"importWasSuccessful": "Uvoz podataka uspešno izvršen",
+	"inARange": "U rasponu",
+	"inAStepWith": "U koracima",
 	"includeInherited": "Uključujući nasleđene",
 	"includeRelations": "<em>Include relations</em>",
 	"includeSystemActivities": "<em>Include system activities</em>",

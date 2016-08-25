@@ -328,14 +328,6 @@
 		"user": "用户",
 		"wait_msg": "发送数据..."
 	},
-	"cronTriggerField": {
-		"triggerFieldWindow": {
-			"every": "每一个",
-			"exactly": "At an exact",
-			"inastepwith": "在一个步长内",
-			"range": "在范围内"
-		}
-	},
 	"delayLabels": {
 		"day1": "在1天里",
 		"days2": "在2天里",
@@ -711,6 +703,7 @@
 	"areYouSureYouWantToAbortThisProcess": "你确定要放弃此进程吗?",
 	"as": "作为",
 	"asynchronous": "异步",
+	"atAnExact": "At an exact",
 	"attachFile": "附加文件",
 	"attachments": "<em>Attachments</em>",
 	"attention": "注意　",
@@ -922,6 +915,7 @@
 	"eventAsynchronous": "<em>Event asynchronous</em>",
 	"eventSynchronous": "<em>Event synchronous</em>",
 	"eventTitle": "事件题目",
+	"every": "每一个",
 	"everyDay": "每天",
 	"everyHour": "每小时",
 	"everyMonth": "每月",
@@ -988,6 +982,8 @@
 	"importFromCSV": "从CSV导入",
 	"importJasperReport": "<em>Import Jasper report</em>",
 	"importWasSuccessful": "导入已成功",
+	"inARange": "在范围内",
+	"inAStepWith": "在一个步长内",
 	"includeInherited": "包括继承的",
 	"includeRelations": "包括关系",
 	"includeSystemActivities": "包括系统活动",
