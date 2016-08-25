@@ -143,6 +143,11 @@
 			this.map.renderSync();
 		},
 
+		/**
+		 * 
+		 * @returns {ol.Map}
+		 * 
+		 */
 		getMap : function() {
 			return this.map;
 		},
@@ -168,11 +173,11 @@
 			this.map.addLayer(geoLayer);
 			return geoLayer;
 		},
-		changeIdOnLayers : function(oldId, newId) {
+		changeFeatureOnLayers : function(newId) {
 			this.map.getLayers().forEach(function(layer) {
 				var adapter = layer.get("adapter");
-				if (adapter && adapter.changeId)
-					adapter.changeId(oldId, newId);
+				if (adapter && adapter.changeFeaturegetMap)
+					adapter.changeFeature(newId);
 			});
 		}
 	});

@@ -7,9 +7,28 @@
 		 * CMDBuild.core.buttons.gis.Thematism
 		 */
 		thematismButton : undefined,
+
 		interactionDocument : undefined,
 		thematicColors : undefined,
+		
+		/**
+		 * 
+		 * @property {String}
+		 * 
+		 */
+		currentClassName : undefined,
 
+		addThematism : function(thematism, bModify) {
+			var thematicLayer = Ext.create('CMDBuild.view.management.classes.map.thematism.ThematicLayer', thematism,
+					this.interactionDocument);
+			if (!(bModify === true)) {
+				this.thematismButton.add([ thematism.name ]);
+			}
+			thematism.thematicLayer = thematicLayer;
+			this.thematisms.push(thematism);
+			this.interactionDocument.changed();
+		},
+		
 		init : function(interactionDocument, thematicColors) {
 			this.interactionDocument = interactionDocument;
 			this.thematicColors = thematicColors;
@@ -20,8 +39,11 @@
 		configureStrategiesManager : function(strategiesManager) {
 			this.strategiesManager = strategiesManager
 		},
-		getStrategyByDescription : function(description) {
-			return this.strategiesManager.getStrategyByDescription(description);
+		forceRefreshThematism : function() {
+			for (var i = 0; i < this.thematisms.length; i++) {
+				var thematism = this.thematisms[i];
+				thematism.thematicLayer.setDirty();
+			}
 		},
 		getFieldStrategies : function(callback, callbackScope) {
 			this.strategiesManager.getFieldStrategies(function(strategies) {
@@ -36,6 +58,15 @@
 		getDefaultThematismConfiguration : function() {
 			return clone(defaultConfiguration);
 		},
+		getLayerByName : function(name) {
+			for (var i = 0; i < this.thematisms.length; i++) {
+				var thematism = this.thematisms[i];
+				if (name === thematism.thematicLayer.layer.name) {
+					return thematism.thematicLayer.layer;
+				}
+			}
+			return null;
+		},
 		getLayers : function() {
 			var layers = [];
 			for (var i = 0; i < this.thematisms.length; i++) {
@@ -47,6 +78,9 @@
 		getColor : function(value, colorsTable) {
 			return this.thematicColors.getColor(value, colorsTable);
 		},
+		getStrategyByDescription : function(description) {
+			return this.strategiesManager.getStrategyByDescription(description);
+		},
 		getThematicLayersBySourceName : function(name) {
 			var thematicLayers = [];
 			for (var i = 0; i < this.thematisms.length; i++) {
@@ -56,15 +90,6 @@
 				}
 			}
 			return thematicLayers;
-		},
-		getLayerByName : function(name) {
-			for (var i = 0; i < this.thematisms.length; i++) {
-				var thematism = this.thematisms[i];
-				if (name === thematism.thematicLayer.layer.name) {
-					return thematism.thematicLayer.layer;
-				}
-			}
-			return null;
 		},
 		refreshFeatures : function(layerName, features) {
 			var thematicLayers = this.getThematicLayersBySourceName(layerName);
@@ -90,15 +115,7 @@
 			this.removeThematism(thematism);
 			this.addThematism(thematism, true);
 		},
-		addThematism : function(thematism, bModify) {
-			var thematicLayer = Ext.create('CMDBuild.view.management.classes.map.thematism.ThematicLayer', thematism,
-					this.interactionDocument);
-			if (!(bModify === true)) {
-				this.thematismButton.add([ thematism.name ]);
-			}
-			thematism.thematicLayer = thematicLayer;
-			this.thematisms.push(thematism);
-			this.interactionDocument.changed();
+		setCurrentCard : function(card) {
 		}
 	});
 

@@ -2,86 +2,41 @@
 	Ext.require([ 'CMDBuild.core.constants.Proxy', 'CMDBuild.proxy.gis.Icon' ]);
 	Ext.define('CMDBuild.view.management.classes.map.geoextension.GisLayer', {
 
-		/*
-		 * ol.style.Icon
+		/**
+		 * @property {ol.style.Icon}
 		 * 
 		 */
 		classBitmap : undefined,
-		attributeType : undefined,
-
-		constructor : function(geoAttribute, withEditWindow, interactionDocument) {
-			var options = {
-				geoAttribute : geoAttribute,
-				targetClassName : geoAttribute.masterTableName,
-				iconUrl : geoAttribute.iconUrl
-			};
-			this.classBitmap = new ol.style.Icon({
-				src : options.iconUrl
-			});
-			this.interactionDocument = interactionDocument;
-			var map = this.interactionDocument.getMap();
-			this.layer = this.buildGisLayer(geoAttribute.name, options, map);
-			this.layer.set("name", geoAttribute.name);
-			this.interactionDocument.observeFeatures(this);
-			this.callParent(arguments);
-		},
-		getLayer : function() {
-			return this.layer;
-		},
-		getAttributeType : function() {
-			return this.attributeType;
-		},
-		getSource : function() {
-			return this.layer.getSource();
-		},
 
 		/**
-		 * @param {Integer}
-		 *            cardId
 		 * 
-		 * @returns {Array[ol.Feature]} features
+		 * @property {String}
+		 * 
 		 */
-		getFeaturesByCardId : function(cardId) {
-			return this.interactionDocument.getFeaturesOnLayerByCardId(cardId, this.layer);
-		},
-		getCardsOnLayer : function() {
-			var source = this.getSource();
-			var features = (source) ? source.getFeatures() : new ol.Collection();
-			var cards = [];
-			features.forEach(function(feature) {
-				cards.push(feature.get("master_card"));
-			});
-			return cards;
-		},
+		attributeType : undefined,
+
+		/**
+		 * 
+		 * @property {String}
+		 * 
+		 */
+		status : undefined,
+
+		/**
+		 * @param {String}
+		 *            attributeName
+		 * @param {Object}
+		 *            options
+		 * @param {ol.Map}
+		 *            map
+		 * 
+		 * @returns {ol.layer.Vector}
+		 * 
+		 */
 		buildGisLayer : function(attributeName, options, map) {
 			var me = this;
 			this.attributeType = options.geoAttribute.type;
-			var geoJSONFormat = new ol.format.GeoJSON();
-			var vectorSource = new ol.source.Vector({
-				loader : function(extent, resolution, projection) {
-					$.ajax({
-						url : getGeoUrl(),
-						data : {
-							className : options.targetClassName,
-							attribute : options.geoAttribute.name,
-							bbox : extent.join(",")
-						},
-						type : "post",
-						success : function(data) {
-							clearVectorSource(vectorSource);
-							for (var i = 0; i < data.features.length; i++) {
-								data.features[i].geometry.type = changeType(data.features[i].geometry.type);
-							}
-							var features = geoJSONFormat.readFeatures(data);
-							vectorSource.addFeatures(features);
-							me.interactionDocument.onLoadedfeatures(me.layer.get("name"), features);
-						},
-
-					});
-				},
-
-				strategy : ol.loadingstrategy.bbox
-			});
+			var vectorSource = this.getVectorSource(options);
 			var view = new ol.View({
 				projection : "EPSG:900913"
 			});
@@ -117,36 +72,24 @@
 			this.interactionDocument.changedFeature();
 			return gisLayer;
 		},
-		refreshCurrentFeature : function() {
-			var feature = this.interactionDocument.getCurrentFeature();
-			var nameLayer = this.getLayer().get("name");
-			var nameAttribute = feature.nameAttribute;
-			if (nameAttribute && nameAttribute !== nameLayer) {
-				this.setStatus("None");
-				this.clearFeatures();
-				return;
-			}
-			switch (feature.operation) {
-			case "Modify":
-				var card = this.interactionDocument.getCurrentCard();
-				var selected = this.selectFeaturesByCardId(card);
-				if (selected.length > 0) {
-					this.setStatus("Modify")
-					break;
 
-				}
-				// no break because enters in Draw if and only
-				// if is new
-			case "Draw":
-				this.setStatus("Draw")
-				break;
-			case "Select":
-				this.setStatus("Select")
-				break;
-			default:
-				;
-			}
+		constructor : function(geoAttribute, withEditWindow, interactionDocument) {
+			var options = {
+				geoAttribute : geoAttribute,
+				targetClassName : geoAttribute.masterTableName,
+				iconUrl : geoAttribute.iconUrl
+			};
+			this.classBitmap = new ol.style.Icon({
+				src : options.iconUrl
+			});
+			this.interactionDocument = interactionDocument;
+			var map = this.interactionDocument.getMap();
+			this.layer = this.buildGisLayer(geoAttribute.name, options, map);
+			this.layer.set("name", geoAttribute.name);
+			this.interactionDocument.observeFeatures(this);
+			this.callParent(arguments);
 		},
+
 		createControls : function(map, vectorSource) {
 			var me = this;
 			this.makeSelect();
@@ -204,6 +147,149 @@
 			this.select.setActive(true);
 			this.modify.setActive(false);
 		},
+
+		/**
+		 * 
+		 * @returns {String}
+		 * 
+		 */
+		getAttributeType : function() {
+			return this.attributeType;
+		},
+
+		/**
+		 * 
+		 * @returns {Array} ids
+		 * 
+		 */
+		getCardsOnLayer : function() {
+			var source = this.getSource();
+			var features = (source) ? source.getFeatures() : new ol.Collection();
+			var cards = [];
+			features.forEach(function(feature) {
+				cards.push(feature.get("master_card"));
+			});
+			return cards;
+		},
+
+		/**
+		 * @param {Integer}
+		 *            cardId
+		 * 
+		 * @returns {Array[ol.Feature]} features
+		 * 
+		 */
+		getFeaturesByCardId : function(cardId) {
+			return this.interactionDocument.getFeaturesOnLayerByCardId(cardId, this.layer);
+		},
+
+		/**
+		 * 
+		 * @returns {ol.layer.Vector}
+		 * 
+		 */
+		getLayer : function() {
+			return this.layer;
+		},
+
+		/**
+		 * 
+		 * @returns {ol.Source}
+		 * 
+		 */
+		getSource : function() {
+			return this.layer.getSource();
+		},
+
+		getVectorSource : function(options) {
+			var me = this;
+			var geoJSONFormat = new ol.format.GeoJSON();
+			var vectorSource = new ol.source.Vector({
+				loader : function(extent, resolution, projection) {
+					$.ajax({
+						url : getGeoUrl(),
+						data : {
+							className : options.targetClassName,
+							attribute : options.geoAttribute.name,
+							bbox : extent.join(",")
+						},
+						type : "post",
+						success : function(data) {
+							clearVectorSource(vectorSource);
+							for (var i = 0; i < data.features.length; i++) {
+								data.features[i].geometry.type = changeType(data.features[i].geometry.type);
+							}
+							var features = geoJSONFormat.readFeatures(data);
+							vectorSource.addFeatures(features);
+							me.interactionDocument.onLoadedfeatures(me.layer.get("name"), features);
+						},
+
+					});
+				},
+
+				strategy : ol.loadingstrategy.bbox
+			});
+			return vectorSource;
+		},
+		/**
+		 * 
+		 * @param {String}
+		 *            status
+		 * 
+		 */
+		setStatus : function(status) {
+			var map = this.interactionDocument.getMap();
+			var feature = this.interactionDocument.getCurrentFeature();
+			var geoType = feature.geoType;
+			this.drawPoint.setActive(status === "Draw" && geoType === "POINT");
+			this.drawPolygon.setActive(status === "Draw" && geoType === "POLYGON");
+			this.drawLine.setActive(status === "Draw" && geoType === "LINESTRING");
+			this.select.setActive(status === "Select");
+			this.modify.setActive(status === "Modify");
+			this.status = status;
+		},
+
+		/**
+		 * 
+		 * @returns {Void}
+		 * 
+		 */
+		refreshCurrentFeature : function() {
+			var feature = this.interactionDocument.getCurrentFeature();
+			var nameLayer = this.getLayer().get("name");
+			var nameAttribute = feature.nameAttribute;
+			if (nameAttribute && nameAttribute !== nameLayer) {
+				this.setStatus("None");
+				this.clearFeatures();
+				return;
+			}
+			switch (feature.operation) {
+			case "Modify":
+				var card = this.interactionDocument.getCurrentCard();
+				var selected = this.selectFeaturesByCardId(card);
+				if (selected.length > 0) {
+					this.setStatus("Modify")
+					break;
+
+				}
+				// no break because enters in Draw if and only
+				// if is new
+			case "Draw":
+				this.setStatus("Draw")
+				break;
+			case "Select":
+				this.setStatus("Select")
+				break;
+			default:
+				;
+			}
+		},
+
+		/**
+		 * 
+		 * @returns {Void}
+		 * 
+		 */
 		newFeature : function(feature) {
 			var currentCard = this.interactionDocument.getCurrentCard();
 			feature.set("master_card", currentCard.cardId);
@@ -214,6 +300,12 @@
 			this.interactionDocument.setCurrentFeature(this.layer.get("name"), "", "Modify");
 			this.interactionDocument.changedFeature();
 		},
+
+		/**
+		 * 
+		 * @returns {Object} (x,y)
+		 * 
+		 */
 		getPosition : function(card, callback, callbackScope) {
 			var me = this;
 
@@ -242,24 +334,14 @@
 			});
 
 		},
-		setStatus : function(status) {
-			var map = this.interactionDocument.getMap();
-			var feature = this.interactionDocument.getCurrentFeature();
-			var geoType = feature.geoType;
-			this.drawPoint.setActive(status === "Draw" && geoType === "POINT");
-			this.drawPolygon.setActive(status === "Draw" && geoType === "POLYGON");
-			this.drawLine.setActive(status === "Draw" && geoType === "LINESTRING");
-			this.select.setActive(status === "Select");
-			this.modify.setActive(status === "Modify");
-			this.status = status;
-		},
+
 		removeById : function(id) {
-			
+
 		},
-		changeId : function(oldId, newId) {
+		changeFeature : function(newId) {
 			var newFeatures = [];
-			var features = this.getFeaturesByCardId(oldId);
-			if (features.getLength() === 0) {
+			var features = this.getFeaturesByCardId(-1); // can be an insert
+			if (features.getLength() === 0) { // or a modify
 				features = this.getFeaturesByCardId(newId);
 			}
 			features.forEach(function(feature) {
@@ -272,7 +354,7 @@
 				newFeatures[i].set("master_card", newId);
 				features.push(newFeatures[i]);
 			}
-//			this.makeSelect();
+			this.interactionDocument.forceRefreshThematism();
 			this.setStatus("Select");
 		},
 		makeSelect : function() {
@@ -432,12 +514,4 @@
 				+ CMDBuild.core.constants.Proxy.AUTHORIZATION_HEADER_KEY + '='
 				+ Ext.util.Cookies.get(CMDBuild.core.constants.Proxy.AUTHORIZATION_HEADER_KEY); // FIXME:
 	}
-	var image = new ol.style.Circle({
-		radius : 100,
-		fill : null,
-		stroke : new ol.style.Stroke({
-			color : 'red',
-			width : 1
-		})
-	});
 })();

@@ -14,7 +14,13 @@
 		 * @property {Object} thematism.configuration.layoutConfiguration 
 		 */
 		thematism : undefined,
-		
+
+		/**
+		 * @property {boolean}  beDirty (a thematic layer is dirty when a feature is modified)
+		 *
+		 * 
+		 */
+beDirty : undefined,
 		interactionDocument : undefined,
 
 		/**
@@ -72,10 +78,21 @@
 		 * @returns {Void}
 		 */
 		refresh : function() {
-			this.layer.getSource().clear();
+			if (this.beDirty === true) {
+				this.layer.getSource().clear();
+				this.beDirty = false;
+			}
 			this.refreshFeatures();
 		},
 
+		/**
+		 * 
+		 * @returns {Void}
+		 */
+		setDirty : function()  {
+			this.beDirty = true;
+		},
+		
 		/**
 		 * @param {String}
 		 *            attributeName
@@ -223,9 +240,28 @@
 				}
 			});
 		},
+
+		/**
+		 * 
+		 * @returns {Object} configuration
+		 * @property {Object} configuration.thematismConfiguration 
+		 * @property {Object} configuration.functionConfiguration 
+		 * @property {Object} configuration.layoutConfiguration 
+		 * 
+		 */
 		getConfiguration : function() {
 			return this.thematism.configuration;
 		},
+		
+		/**
+		 * @param {String}
+		 *            shape
+		 * @param {String}
+		 *            color
+		 * 
+		 * @returns {ol.style.Style} 
+		 * 
+		 */
 		getStyle : function(shape, color) {
 			var configuration = this.getConfiguration().layoutConfiguration;
 			switch (shape) {
