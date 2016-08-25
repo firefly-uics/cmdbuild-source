@@ -244,12 +244,6 @@
 					}
 				}
 			});
-
-			delete params[CMDBuild.core.constants.Proxy.ATTRIBUTES];
-
-			CMDBuild.proxy.management.routes.Instance.readAll({
-				params: params,
-			});
 		}
 	});
 
