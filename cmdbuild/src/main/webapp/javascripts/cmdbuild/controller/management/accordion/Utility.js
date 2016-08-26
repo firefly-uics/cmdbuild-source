@@ -42,14 +42,17 @@
 		},
 
 		/**
-		 * @param {Number} nodeIdToSelect
+		 * @param {Object} parameters
+		 * @param {Boolean} parameters.loadMask
+		 * @param {Number} parameters.selectionId
 		 *
 		 * @returns {Void}
 		 *
 		 * @override
 		 */
-		accordionUpdateStore: function (nodeIdToSelect) {
-			nodeIdToSelect = Ext.isNumber(nodeIdToSelect) ? nodeIdToSelect : null;
+		accordionUpdateStore: function (parameters) {
+			parameters = Ext.isObject(parameters) ? parameters : {};
+			parameters.selectionId = Ext.isNumber(parameters.selectionId) ? parameters.selectionId : null;
 
 			var nodes = [];
 
@@ -102,8 +105,7 @@
 				this.view.getStore().getRootNode().appendChild(nodes);
 			}
 
-			// Alias of this.callParent(arguments), inside proxy function doesn't work
-			this.updateStoreCommonEndpoint(nodeIdToSelect);
+			this.updateStoreCommonEndpoint(parameters); // CallParent alias
 
 			this.callParent(arguments);
 		},

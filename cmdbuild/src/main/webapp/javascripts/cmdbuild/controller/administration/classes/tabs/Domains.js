@@ -134,7 +134,9 @@
 				this.cmfg('mainViewportAccordionControllerExpand', { identifier: CMDBuild.core.constants.ModuleIdentifiers.getDomain() });
 				this.cmfg('mainViewportAccordionControllerUpdateStore', {
 					identifier: CMDBuild.core.constants.ModuleIdentifiers.getDomain(),
-					nodeIdToSelect: this.selectedDomainGet(CMDBuild.core.constants.Proxy.ID_DOMAIN)
+					params: {
+						selectionId: this.selectedDomainGet(CMDBuild.core.constants.Proxy.ID_DOMAIN)
+					}
 				});
 			}
 		},
@@ -156,7 +158,9 @@
 				}, this, { single: true });
 				this.cmfg('mainViewportAccordionControllerUpdateStore', {
 					identifier: CMDBuild.core.constants.ModuleIdentifiers.getDomain(),
-					nodeIdToSelect: this.selectedDomainGet(CMDBuild.core.constants.Proxy.ID_DOMAIN)
+					params: {
+						selectionId: this.selectedDomainGet(CMDBuild.core.constants.Proxy.ID_DOMAIN)
+					}
 				});
 			}
 		},

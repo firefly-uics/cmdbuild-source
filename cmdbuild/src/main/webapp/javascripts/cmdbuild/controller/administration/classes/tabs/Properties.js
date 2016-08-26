@@ -293,7 +293,9 @@
 			this.cmfg('mainViewportAccordionDeselect', this.cmfg('classesIdentifierGet'));
 			this.cmfg('mainViewportAccordionControllerUpdateStore', {
 				identifier: this.cmfg('classesIdentifierGet'),
-				nodeIdToSelect: decodedResponse[CMDBuild.core.constants.Proxy.ID]
+				params: {
+					selectionId: decodedResponse[CMDBuild.core.constants.Proxy.ID]
+				}
 			});
 
 			CMDBuild.core.Message.success();

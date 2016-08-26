@@ -307,7 +307,9 @@
 		success: function (response, options, decodedResponse) {
 			this.cmfg('mainViewportAccordionControllerUpdateStore', {
 				identifier: this.cmfg('identifierGet'),
-//				nodeIdToSelect: decodedResponse[CMDBuild.core.constants.Proxy.RESPONSE][CMDBuild.core.constants.Proxy.ID] // TODO: waiting for refactor
+				//params: { // TODO: waiting for refactor
+				//	selectionId: decodedResponse[CMDBuild.core.constants.Proxy.RESPONSE][CMDBuild.core.constants.Proxy.ID]
+				// }
 			});
 		}
 	});

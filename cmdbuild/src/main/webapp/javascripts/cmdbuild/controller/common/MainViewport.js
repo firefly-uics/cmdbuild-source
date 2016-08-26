@@ -18,7 +18,6 @@
 		 * @cfg {Array}
 		 */
 		cmfgCatchedFunctions: [
-			'mainViewportAccordionControllerExists',
 			'mainViewportAccordionControllerExpand',
 			'mainViewportAccordionControllerGet',
 			'mainViewportAccordionControllerUpdateStore',
@@ -171,6 +170,8 @@
 			 * @param {String} identifier
 			 *
 			 * @returns {Boolean} accordionExists
+			 *
+			 * @private
 			 */
 			mainViewportAccordionControllerExists: function (identifier) {
 				var accordionControllerExists = (
@@ -179,7 +180,7 @@
 				);
 
 				if (!accordionControllerExists)
-					_error('accordion controller with identifier "' + identifier + '" not found', this);
+					return _error('mainViewportAccordionControllerExists(): accordion controller with identifier "' + identifier + '" not found', this);
 
 				return accordionControllerExists;
 			},
@@ -196,7 +197,7 @@
 			mainViewportAccordionControllerExpand: function (parameters) {
 				parameters = Ext.isObject(parameters) ? parameters : {};
 
-				if (this.cmfg('mainViewportAccordionControllerExists', parameters.identifier))
+				if (this.mainViewportAccordionControllerExists(parameters.identifier))
 					this.cmfg('mainViewportAccordionControllerGet', parameters.identifier).cmfg('accordionExpand', parameters.params);
 			},
 
@@ -206,7 +207,7 @@
 			 * @returns {Mixed} or null
 			 */
 			mainViewportAccordionControllerGet: function (identifier) {
-				if (this.cmfg('mainViewportAccordionControllerExists', identifier))
+				if (this.mainViewportAccordionControllerExists(identifier))
 					return this.accordionControllers[identifier];
 
 				return null;
@@ -245,19 +246,25 @@
 			 *
 			 * @param {Object} parameters
 			 * @param {String} parameters.identifier
-			 * @param {Number} parameters.nodeIdToSelect
+			 * @param {Object} parameters.params
+			 * @param {Boolean} parameters.params.loadMask
+			 * @param {Number} parameters.params.selectionId
 			 *
 			 * @returns {Void}
 			 */
 			mainViewportAccordionControllerUpdateStore: function (parameters) {
-				if (
-					Ext.isObject(parameters) && !Ext.Object.isEmpty(parameters)
-					&& this.cmfg('mainViewportAccordionControllerExists', parameters.identifier)
-				) {
-					parameters.nodeIdToSelect = Ext.isEmpty(parameters.nodeIdToSelect) ? null : parameters.nodeIdToSelect;
+				parameters = Ext.isObject(parameters) ? parameters : {};
+				parameters.params = Ext.isObject(parameters.params) ? parameters.params : {};
+				parameters.params.selectionId = Ext.isEmpty(parameters.params.selectionId) ? null : parameters.params.selectionId;
 
-					this.cmfg('mainViewportAccordionControllerGet', parameters.identifier).cmfg('accordionUpdateStore', parameters.nodeIdToSelect);
-				}
+				var accordionController = this.cmfg('mainViewportAccordionControllerGet', parameters.identifier);
+
+				// Error handling
+					if (!Ext.isObject(accordionController) || Ext.Object.isEmpty(accordionController) || !Ext.isFunction(accordionController.cmfg))
+						return _error('mainViewportAccordionControllerUpdateStore(): accordion controller retriving error', this, accordionController);
+				// END: Error handling
+
+				accordionController.cmfg('accordionUpdateStore', parameters.params);
 			},
 
 			/**
@@ -268,7 +275,7 @@
 			 * @returns {Void}
 			 */
 			mainViewportAccordionDeselect: function (identifier) {
-				if (this.cmfg('mainViewportAccordionControllerExists', identifier))
+				if (this.mainViewportAccordionControllerExists(identifier))
 					this.cmfg('mainViewportAccordionControllerGet', identifier).cmfg('accordionDeselect');
 			},
 
@@ -291,7 +298,7 @@
 			mainViewportAccordionSetDisabled: function (parameters) {
 				if (
 					Ext.isObject(parameters) && !Ext.Object.isEmpty(parameters)
-					&& this.cmfg('mainViewportAccordionControllerExists', parameters.identifier)
+					&& this.mainViewportAccordionControllerExists(parameters.identifier)
 				) {
 					parameters.state = Ext.isBoolean(parameters.state) ? parameters.state : true;
 
