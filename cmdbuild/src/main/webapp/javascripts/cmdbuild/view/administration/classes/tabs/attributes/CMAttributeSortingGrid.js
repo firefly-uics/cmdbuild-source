@@ -1,6 +1,6 @@
 (function () {
 
-	Ext.define('CMDBuild.view.administration.classes.CMAttributeSortingGrid', {
+	Ext.define('CMDBuild.view.administration.classes.tabs.attributes.CMAttributeSortingGrid', {
 		extend: 'Ext.grid.Panel',
 
 

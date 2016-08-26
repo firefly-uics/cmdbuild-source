@@ -3,7 +3,7 @@
 	/**
 	 * This class have some custom code different from linked ones
 	 *
-	 * @link CMDBuild.view.administration.classes.CMAttributeGrid
+	 * @link CMDBuild.view.administration.classes.tabs.attributes.CMAttributeGrid
 	 * @link CMDBuild.view.administration.workflow.CMAttributeGrid
 	 */
 
@@ -32,7 +32,7 @@
 
 	var translation = CMDBuild.Translation.administration.modClass.attributeProperties;
 
-	Ext.define("CMDBuild.view.administration.domain.tabs.attributes.GridPanel", {
+	Ext.define("CMDBuild.view.administration.domain.tabs.attributes.CMAttributeGrid", {
 		extend: 'Ext.grid.Panel',
 
 		cls: 'cmdb-border-bottom',

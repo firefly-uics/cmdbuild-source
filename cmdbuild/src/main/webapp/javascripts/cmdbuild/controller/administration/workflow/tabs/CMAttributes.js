@@ -2,7 +2,7 @@
 
 	/**
 	 * @link CMDBuild.controller.administration.classes.tabs.CMAttributes
-	 * @link CMDBuild.controller.administration.domain.tabs.Attributes
+	 * @link CMDBuild.controller.administration.domain.tabs.CMAttributes
 	 */
 
 	Ext.require([

@@ -1,8 +1,8 @@
 (function() {
 
 	/**
-	 * @link CMDBuild.view.administration.classes.CMAttributeGrid
-	 * @link CMDBuild.view.administration.domain.tabs.attributes.GridPanel
+	 * @link CMDBuild.view.administration.classes.tabs.attributes.CMAttributeGrid
+	 * @link CMDBuild.view.administration.domain.tabs.attributes.CMAttributeGrid
 	 */
 
 	Ext.require('CMDBuild.proxy.common.tabs.attribute.Attribute');

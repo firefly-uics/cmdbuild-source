@@ -1,7 +1,7 @@
 (function() {
 
 	/**
-	 * @link CMDBuild.view.administration.domain.tabs.attributes.GridPanel
+	 * @link CMDBuild.view.administration.domain.tabs.attributes.CMAttributeGrid
 	 * @link CMDBuild.view.administration.workflow.CMAttributeGrid
 	 */
 
@@ -29,7 +29,7 @@
 	var ATTR_TO_SKIP = 'Notes';
 	var translation = CMDBuild.Translation.administration.modClass.attributeProperties;
 
-	Ext.define('CMDBuild.view.administration.classes.CMAttributeGrid', {
+	Ext.define('CMDBuild.view.administration.classes.tabs.attributes.CMAttributeGrid', {
 		extend: 'Ext.grid.Panel',
 
 		statics: {
