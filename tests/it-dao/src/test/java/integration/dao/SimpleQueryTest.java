@@ -2,7 +2,6 @@ package integration.dao;
 
 import static com.google.common.collect.Iterables.size;
 import static org.cmdbuild.dao.query.clause.AnyAttribute.anyAttribute;
-import static org.cmdbuild.dao.query.clause.Attributes.named;
 import static org.cmdbuild.dao.query.clause.QueryAliasAttribute.attribute;
 import static org.cmdbuild.dao.query.clause.alias.Aliases.name;
 import static org.cmdbuild.dao.query.clause.where.EqualsOperatorAndValue.eq;
@@ -43,7 +42,7 @@ public class SimpleQueryTest extends IntegrationTestBase {
 				.save();
 
 		final CMQueryResult result = dbDataView() //
-				.select(named(newClass.getCodeAttributeName())) //
+				.select(attribute(newClass, newClass.getCodeAttributeName())) //
 				.from(newClass) //
 				.run();
 
@@ -182,7 +181,7 @@ public class SimpleQueryTest extends IntegrationTestBase {
 		}
 
 		final CMQueryResult result = dbDataView() //
-				.select(named(newClass.getCodeAttributeName())) //
+				.select(attribute(newClass, newClass.getCodeAttributeName())) //
 				.from(newClass) //
 				.offset(OFFSET) //
 				.limit(LIMIT) //
@@ -206,7 +205,7 @@ public class SimpleQueryTest extends IntegrationTestBase {
 		final String codeAttributeName = newClass.getCodeAttributeName();
 
 		final CMQueryRow row = dbDataView() //
-				.select(named(codeAttributeName)) //
+				.select(attribute(newClass, codeAttributeName)) //
 				.from(newClass) //
 				.where(condition(attribute(newClass, codeAttributeName), eq(codeValueToFind))) //
 				.limit(1) //
@@ -230,7 +229,7 @@ public class SimpleQueryTest extends IntegrationTestBase {
 		final String codeAttributeName = newClass.getCodeAttributeName();
 
 		final CMQueryResult result = dbDataView() //
-				.select(named(codeAttributeName)) //
+				.select(attribute(newClass, codeAttributeName)) //
 				.from(newClass) //
 				.run();
 
@@ -250,7 +249,7 @@ public class SimpleQueryTest extends IntegrationTestBase {
 
 		// when
 		dbDataView() //
-				.select(named(newClass.getCodeAttributeName())) //
+				.select(attribute(newClass, newClass.getCodeAttributeName())) //
 				.from(newClass) //
 				.run() //
 				.getOnlyRow();
@@ -272,7 +271,7 @@ public class SimpleQueryTest extends IntegrationTestBase {
 
 		// when
 		dbDataView() //
-				.select(named(newClass.getCodeAttributeName())) //
+				.select(attribute(newClass, newClass.getCodeAttributeName())) //
 				.from(newClass) //
 				.limit(1) //
 				.skipDefaultOrdering() //
@@ -287,7 +286,7 @@ public class SimpleQueryTest extends IntegrationTestBase {
 	public void getOnlyRowShouldThrowExceptionBecauseOfNoResults() {
 		final DBClass newClass = dbDataView().create(newClass("foo"));
 		dbDataView() //
-				.select(named(newClass.getCodeAttributeName())) //
+				.select(attribute(newClass, newClass.getCodeAttributeName())) //
 				.from(newClass) //
 				.limit(1) //
 				.run() //
@@ -302,7 +301,7 @@ public class SimpleQueryTest extends IntegrationTestBase {
 		// when
 		final String codeAttributeName = newClass.getCodeAttributeName();
 		dbDataView() //
-				.select(named(codeAttributeName)) //
+				.select(attribute(newClass, codeAttributeName)) //
 				.run();
 
 		// then
@@ -326,7 +325,7 @@ public class SimpleQueryTest extends IntegrationTestBase {
 
 		// when
 		final CMQueryResult result = dbDataView() //
-				.select(named("text")) //
+				.select(attribute(clazz, "text")) //
 				.from(clazz) //
 				.run();
 
