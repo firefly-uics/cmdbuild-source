@@ -371,7 +371,9 @@
 			this.cmfg('mainViewportAccordionDeselect', this.cmfg('workflowIdentifierGet'));
 			this.cmfg('mainViewportAccordionControllerUpdateStore', {
 				identifier: CMDBuild.core.constants.ModuleIdentifiers.getWorkflow(),
-				nodeIdToSelect: decodedResponse[CMDBuild.core.constants.Proxy.ID]
+				params: {
+					selectionId: decodedResponse[CMDBuild.core.constants.Proxy.ID]
+				}
 			});
 
 			CMDBuild.core.Message.success();

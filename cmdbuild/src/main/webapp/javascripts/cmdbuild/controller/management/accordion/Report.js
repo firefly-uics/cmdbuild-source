@@ -45,17 +45,20 @@
 		},
 
 		/**
-		 * @param {Number} nodeIdToSelect
+		 * @param {Object} parameters
+		 * @param {Boolean} parameters.loadMask
+		 * @param {Number} parameters.selectionId
 		 *
 		 * @returns {Void}
 		 *
 		 * @override
 		 */
-		accordionUpdateStore: function (nodeIdToSelect) {
-			nodeIdToSelect = Ext.isNumber(nodeIdToSelect) ? nodeIdToSelect : null;
+		accordionUpdateStore: function (parameters) {
+			parameters = Ext.isObject(parameters) ? parameters : {};
+			parameters.selectionId = Ext.isNumber(parameters.selectionId) ? parameters.selectionId : null;
 
 			CMDBuild.proxy.report.Report.readTypesTree({
-				loadMask: false,
+				loadMask: Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : false,
 				scope: this,
 				success: function (response, options, decodedResponse) {
 					if (!Ext.isEmpty(decodedResponse) && Ext.isArray(decodedResponse)) {
@@ -83,8 +86,7 @@
 						}
 					}
 
-					// Alias of this.callParent(arguments), inside proxy function doesn't work
-					this.updateStoreCommonEndpoint(nodeIdToSelect);
+					this.updateStoreCommonEndpoint(parameters); // CallParent alias
 				}
 			});
 

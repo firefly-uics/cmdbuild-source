@@ -259,7 +259,12 @@
 						this.controllerProperties.cmfg('domainTabPropertiesFormGet').setDisabledModify(true, true, true, true);
 
 						this.cmfg('mainViewportAccordionDeselect', this.cmfg('domainIdentifierGet'));
-						this.cmfg('mainViewportAccordionControllerUpdateStore', { identifier: this.cmfg('domainIdentifierGet') });
+						this.cmfg('mainViewportAccordionControllerUpdateStore', {
+							identifier: this.cmfg('domainIdentifierGet'),
+							params: {
+								loadMask: true
+							}
+						});
 
 						CMDBuild.core.Message.success();
 					}
@@ -284,7 +289,10 @@
 			this.cmfg('mainViewportAccordionDeselect', this.cmfg('domainIdentifierGet'));
 			this.cmfg('mainViewportAccordionControllerUpdateStore', {
 				identifier: this.cmfg('domainIdentifierGet'),
-				nodeIdToSelect: decodedResponse[CMDBuild.core.constants.Proxy.ID_DOMAIN]
+				params: {
+					loadMask: true,
+					selectionId: decodedResponse[CMDBuild.core.constants.Proxy.ID_DOMAIN]
+				}
 			});
 
 			CMDBuild.core.Message.success();

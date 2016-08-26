@@ -118,7 +118,9 @@
 
 			this.cmfg('mainViewportAccordionControllerUpdateStore', {
 				identifier: this.cmfg('identifierGet'),
-				nodeIdToSelect: decodedResponse[CMDBuild.core.constants.Proxy.LOOKUP][CMDBuild.core.constants.Proxy.ID]
+				params: {
+					selectionId: decodedResponse[CMDBuild.core.constants.Proxy.LOOKUP][CMDBuild.core.constants.Proxy.ID]
+				}
 			});
 
 			this.form.setDisabledModify(true);
