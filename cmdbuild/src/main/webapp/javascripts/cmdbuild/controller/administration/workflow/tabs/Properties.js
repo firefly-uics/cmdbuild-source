@@ -368,7 +368,7 @@
 
 			CMDBuild.view.common.field.translatable.Utils.commit(this.propertiesPanel);
 
-			this.cmfg('mainViewportAccordionDeselect', this.cmfg('classesIdentifierGet'));
+			this.cmfg('mainViewportAccordionDeselect', this.cmfg('workflowIdentifierGet'));
 			this.cmfg('mainViewportAccordionControllerUpdateStore', {
 				identifier: CMDBuild.core.constants.ModuleIdentifiers.getWorkflow(),
 				nodeIdToSelect: decodedResponse[CMDBuild.core.constants.Proxy.ID]
