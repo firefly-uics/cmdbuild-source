@@ -7,7 +7,7 @@
 	 * @link CMDBuild.controller.administration.workflow.tabs.CMAttributes
 	 */
 
-	Ext.define('CMDBuild.controller.administration.domain.tabs.Attributes', {
+	Ext.define('CMDBuild.controller.administration.domain.tabs.CMAttributes', {
 
 		requires: [
 			'CMDBuild.core.constants.Proxy',
@@ -27,12 +27,12 @@
 		currentAttribute: undefined,
 
 		/**
-		 * @property {CMDBuild.view.administration.domain.tabs.attributes.FormPanel}
+		 * @property {CMDBuild.view.administration.domain.tabs.attributes.CMAttributesForm}
 		 */
 		form: undefined,
 
 		/**
-		 * @property {CMDBuild.view.administration.domain.tabs.attributes.GridPanel}
+		 * @property {CMDBuild.view.administration.domain.tabs.attributes.CMAttributeGrid}
 		 */
 		grid: undefined,
 
@@ -42,7 +42,7 @@
 		gridSM: undefined,
 
 		/**
-		 * @property {CMDBuild.view.administration.domain.tabs.attributes.AttributesView}
+		 * @property {CMDBuild.view.administration.domain.tabs.attributes.CMAttributes}
 		 */
 		view: undefined,
 
@@ -55,7 +55,7 @@
 		constructor: function(configurationObject) {
 			Ext.apply(this, configurationObject); // Apply configuration to class
 
-			this.view = Ext.create('CMDBuild.view.administration.domain.tabs.attributes.AttributesView');
+			this.view = Ext.create('CMDBuild.view.administration.domain.tabs.attributes.CMAttributes');
 
 			this.getGrid().on("cm_attribute_moved", this.onAttributeMoved, this);
 
@@ -174,7 +174,7 @@
 		},
 
 		/**
-		 * @returns {CMDBuild.view.administration.domain.tabs.attributes.AttributesView}
+		 * @returns {CMDBuild.view.administration.domain.tabs.attributes.CMAttributes}
 		 */
 		getView: function() {
 			return this.view;

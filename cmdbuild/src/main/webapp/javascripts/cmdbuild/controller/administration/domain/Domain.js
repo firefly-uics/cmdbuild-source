@@ -35,7 +35,7 @@
 		],
 
 		/**
-		 * @property {CMDBuild.controller.administration.domain.tabs.Attributes}
+		 * @property {CMDBuild.controller.administration.domain.tabs.CMAttributes}
 		 */
 		controllerAttributes: undefined,
 
@@ -85,7 +85,7 @@
 			this.view = Ext.create('CMDBuild.view.administration.domain.DomainView', { delegate: this });
 
 			// Build sub-controllers
-			this.controllerAttributes = Ext.create('CMDBuild.controller.administration.domain.tabs.Attributes', { parentDelegate: this }); // FIXME: legacy
+			this.controllerAttributes = Ext.create('CMDBuild.controller.administration.domain.tabs.CMAttributes', { parentDelegate: this }); // FIXME: legacy
 			this.controllerEnabledClasses = Ext.create('CMDBuild.controller.administration.domain.tabs.EnabledClasses', { parentDelegate: this });
 			this.controllerProperties = Ext.create('CMDBuild.controller.administration.domain.tabs.Properties', { parentDelegate: this });
 

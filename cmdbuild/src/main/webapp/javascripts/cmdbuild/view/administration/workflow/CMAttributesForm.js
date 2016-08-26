@@ -1,8 +1,8 @@
 (function() {
 
 	/**
-	 * @link CMDBuild.view.administration.classes.CMAttributesForm
-	 * @link CMDBuild.view.administration.domain.tabs.attributes.FormPanel
+	 * @link CMDBuild.view.administration.classes.tabs.attributes.CMAttributesForm
+	 * @link CMDBuild.view.administration.domain.tabs.attributes.CMAttributesForm
 	 */
 
 	Ext.require('CMDBuild.proxy.common.tabs.attribute.Attribute');

@@ -1,7 +1,7 @@
 (function() {
 
 	/**
-	 * @link CMDBuild.controller.administration.domain.tabs.Attributes
+	 * @link CMDBuild.controller.administration.domain.tabs.CMAttributes
 	 * @link CMDBuild.controller.administration.workflow.tabs.CMAttributes
 	 */
 
@@ -19,7 +19,7 @@
 		/**
 		 * @param {Object} configurationObject
 		 * @param {CMDBuild.controller.administration.classes.Classes} configurationObject.parentDelegate
-		 * @param {CMDBuild.view.administration.classes.CMAttributes} configurationObject.view
+		 * @param {CMDBuild.view.administration.classes.tabs.attributes.CMAttributes} configurationObject.view
 		 */
 		constructor: function(configurationObject) {
 			Ext.apply(this, configurationObject); // Apply configuration properties
@@ -199,7 +199,7 @@
 
 	function buildOrderingWindow() {
 		if (this.currentClassId) {
-			var win = Ext.create('CMDBuild.view.administration.classes.CMSetOrderWindow', {
+			var win = Ext.create('CMDBuild.view.administration.classes.tabs.attributes.CMSetOrderWindow', {
 				idClass : this.currentClassId
 			}).show();
 		}
