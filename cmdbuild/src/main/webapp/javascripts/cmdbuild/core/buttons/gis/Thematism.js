@@ -19,6 +19,9 @@
 				} ]);
 			}
 		},
+		removeAll : function() {
+			this.menu.removeAll();
+		},
 		getMenuItem : function() {
 			var me = this;
 			return new Ext.menu.Menu({

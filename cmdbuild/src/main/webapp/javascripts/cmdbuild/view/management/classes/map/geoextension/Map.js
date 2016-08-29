@@ -68,18 +68,6 @@
 			this.geoExtension.setMap(this);
 			this.callParent(arguments);
 		},
-		getGeometries : function(cardId, className) {
-			var layers = this.getLayers();
-			var geoAttributes = {};
-			this.getLayers().forEach(function(layer) {
-				var adapter = layer.get("adapter");
-				if (adapter && adapter.getGeometries) {
-					var layerName = layer.get("name");
-					geoAttributes[layerName] = adapter.getGeometries(cardId, className);
-				}
-			});
-			return geoAttributes;
-		},
 
 		/**
 		 * @returns {Void}
@@ -102,10 +90,8 @@
 				});
 				var size = [ document.getElementById(this.id + "-body").offsetWidth,
 						document.getElementById(this.id + "-body").offsetHeight ];
-				  var divContainerControl =  document.createElement('div');
-				  divContainerControl.innerHTML = "<div style='position: absolute;'><h1>pippo</h1><input type='button' onClick='alert(1)'>pippo</input></div>";
 				this.map.setSize(size);
-				  document.getElementById(this.id + "-body").appendChild(divContainerControl); 
+				this.createLegend();
 			},
 			resize : function() {
 				var size = [ document.getElementById(this.id + "-body").offsetWidth,
@@ -117,15 +103,12 @@
 			}
 		},
 		// interface
-		getLayerByName : function(name) {
-			var retLayer = undefined
-			this.map.getLayers().forEach(function(layer) {
-				if (layer.get("name") === name) {
-					retLayer = layer;
-				}
-			});
-			return retLayer;
-		},
+
+		/**
+		 * 
+		 * @returns {Void}
+		 * 
+		 */
 		clearSelection : function() {
 			this.map.getLayers().forEach(function(layer) {
 				var adapter = layer.get("adapter");
@@ -134,10 +117,76 @@
 				}
 			});
 		},
-		removeLayerByName : function(layerName) {
-			var layer = this.getLayerByName(layerName);
+
+		createLegend : function() {
+			var divContainerControl = document.createElement('div');
+			divContainerControl.innerHTML = composeLegend();
+			document.getElementById(this.id + "-body").appendChild(divContainerControl);
+		},
+		/**
+		 * @param {String}
+		 *            name
+		 * 
+		 * @returns {ol.Layer}
+		 * 
+		 */
+		getLayerByName : function(name, className) {
+			var retLayer = undefined
+			var currentCard = this.interactionDocument.getCurrentCard();
+			className = (className) ? className : currentCard.className;
+			this.map.getLayers().forEach(function(layer) {
+				//var geoAttribute = layer.get("geoAttribute");
+				if (/*geoAttribute && */layer.get("name") === name/* && className === geoAttribute.masterTableName*/) {
+					retLayer = layer;
+				}
+			});
+			return retLayer;
+		},
+
+		/**
+		 * @param {Integer}
+		 *            cardId
+		 * @param {String}
+		 *            className
+		 * 
+		 * @returns {Array} ol.Feature pay attention there is a translation of
+		 *          the feature's type (Point -> POINT)
+		 * 
+		 */
+		getGeometries : function(cardId, className) {
+			var layers = this.getLayers();
+			var geoAttributes = {};
+			this.getLayers().forEach(function(layer) {
+				var adapter = layer.get("adapter");
+				if (adapter && adapter.getGeometries) {
+					var layerName = layer.get("name");
+					geoAttributes[layerName] = adapter.getGeometries(cardId, className);
+				}
+			});
+			return geoAttributes;
+		},
+
+		/**
+		 * @param {String}
+		 *            layerName
+		 * 
+		 * @returns {Void}
+		 * 
+		 */
+		removeLayerByName : function(layerName, className) {
+			var layer = this.getLayerByName(layerName, className);
 			this.map.removeLayer(layer);
 		},
+
+		/**
+		 * @param {Object}
+		 *            configuration
+		 * @param {Array}
+		 *            configuration.center
+		 * 
+		 * @returns {Void}
+		 * 
+		 */
 		center : function(configuration) {
 			this.view.setCenter(configuration.center);
 			this.map.renderSync();
@@ -151,14 +200,50 @@
 		getMap : function() {
 			return this.map;
 		},
+
+		/**
+		 * 
+		 * @returns {Array} ol.Layer
+		 * 
+		 */
 		getLayers : function() {
 			return this.map.getLayers();
 		},
+
+		/**
+		 * @param {ol.Layer}
+		 *            layer
+		 * @param {Integer}
+		 *            index
+		 * 
+		 * @returns {Void}
+		 * 
+		 */
 		setLayerIndex : function(layer, index) {
 			this.map.addLayer(layer);
 
 			this.map.getLayers().insertAt(layer, 0);
 		},
+
+		/**
+		 * @param {Object}
+		 *            geoValues
+		 * @param {String}
+		 *            geoValues.type
+		 * @param {String}
+		 *            geoValues.name
+		 * @param {String}
+		 *            geoValues.description
+		 * @param {String}
+		 *            geoValues.masterTableName // class name
+		 * @param {String}
+		 *            geoValues.externalGraphic //icon url
+		 * @param {Boolean}
+		 *            withEditWindow
+		 * 
+		 * @returns {ol.Layer}
+		 * 
+		 */
 		makeLayer : function(geoValues, withEditWindow) {
 			var layer;
 			if (geoValues.type === "SHAPE") {
@@ -170,15 +255,28 @@
 
 			}
 			var geoLayer = layer.getLayer();
-			this.map.addLayer(geoLayer);
+			if (geoValues.type !== "SHAPE") {
+				this.map.addLayer(geoLayer);
+			}
 			return geoLayer;
 		},
+
+		/**
+		 * @param {Integer}
+		 *            newId
+		 * 
+		 * @returns {Void}
+		 * 
+		 */
 		changeFeatureOnLayers : function(newId) {
 			this.map.getLayers().forEach(function(layer) {
 				var adapter = layer.get("adapter");
-				if (adapter && adapter.changeFeaturegetMap)
+				if (adapter && adapter.changeFeature)
 					adapter.changeFeature(newId);
 			});
 		}
 	});
+	function composeLegend() {
+		return "<div style='position: absolute;'><h1>pippo</h1><input type='button' onClick='alert(1)'>pippo</input></div>";
+	}
 })();

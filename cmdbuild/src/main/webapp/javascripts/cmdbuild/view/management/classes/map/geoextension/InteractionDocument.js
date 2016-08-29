@@ -20,6 +20,9 @@
 			this.configurationMap.mapPanel = mapPanel;
 
 		},
+		getConfigurationMap : function() {
+			return this.configurationMap;
+		},
 		getFieldStrategies : function(callback, callbackScope) {
 			this.thematicDocument.getFieldStrategies(function(strategies) {
 				callback.apply(callbackScope, [ strategies ]);
@@ -33,11 +36,19 @@
 		getStrategyByDescription : function(description) {
 			return this.thematicDocument.getStrategyByDescription(description);
 		},
-		getConfigurationMap : function() {
-			return this.configurationMap;
-		},
 		setThematicDocument : function(thematicDocument) {
 			this.thematicDocument = thematicDocument;
+		},
+		getAllLayers : function(callback, callbackScope) {
+			_CMCache.getAllLayers(function(layers) {
+				callback.apply(callbackScope, [ layers ]);
+			});
+		},
+		getAllThematicLayers : function() {
+			if (!this.thematicDocument) {
+				return [];
+			}
+			return this.thematicDocument.getAllLayers();
 		},
 		getThematicDocument : function() {
 			return this.thematicDocument;
@@ -115,7 +126,23 @@
 				}, this);
 			}, this);
 		},
+		removeAllGisLayers : function() {
+			var me = this;
+			var map = this.getMap();
+			_CMCache.getAllLayers(function(layers) {
+				for (var i = 0; i < layers.length; i++) {
+					var layer = layers[i];
+					var geoLayer = me.getGeoLayerByName(layer.name);
+					if (geoLayer) {
+						var debug = map.removeLayer(geoLayer);
+					}
+				}
+			}, this);
+		},
 		setCurrentCard : function(card) {
+			if (this.currentCard && card.className !== this.currentCard.className) {
+				this.removeAllGisLayers();
+			}
 			this.currentCard = card;
 			this.thematicDocument.setCurrentCard(card);
 		},
@@ -150,17 +177,14 @@
 				callback.apply(callbackScope, [ retLayers ]);
 			});
 		},
-		getAllLayers : function(callback, callbackScope) {
-			_CMCache.getAllLayers(function(layers) {
-				callback.apply(callbackScope, [ layers ]);
-			});
-		},
 		getCurrentFeature : function() {
 			return this.feature;
 		},
 		getGeoLayerByName : function(name) {
 			var map = this.getMap();
-			return (!map) ? null : geoLayerByName(name, map);
+			var currentCard = this.getCurrentCard();
+
+			return (!map) ? null : geoLayerByName(name, map, currentCard);
 		},
 		getLayerByName : function(name, callback, callbackScope) {
 			layerByName(name, callback, callbackScope);
@@ -206,11 +230,12 @@
 		});
 	}
 
-	function geoLayerByName(name, map) {
+	function geoLayerByName(name, map, currentCard) {
 		var retLayer = null;
 		var layers = map.getLayers();
 		layers.forEach(function(layer) {
-			if (name === layer.get("name")) {
+			var geoAttribute = layer.get("geoAttribute");
+			if (geoAttribute && name === layer.get("name") && geoAttribute.masterTableName === currentCard.className) {
 				retLayer = layer;
 			}
 		});

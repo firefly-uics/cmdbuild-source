@@ -26,7 +26,7 @@
 			var currentCardId = card.cardId;
 			var me = this;
 			if (currentCardId !== -1) {
-			this.center(this.interactionDocument.getConfigurationMap());
+				this.center(this.interactionDocument.getConfigurationMap());
 			}
 			this.interactionDocument.getAllLayers(function(layers) {
 				me.refreshAllLayers(layers, currentClassName, currentCardId);
@@ -35,7 +35,7 @@
 					cardId : currentCardId,
 					className : currentClassName
 				});
-				this.map.render();		
+				this.map.render();
 			}, this);
 		},
 
@@ -75,21 +75,21 @@
 
 		/**
 		 * @param {Array} :
-		 *            layers from _CMCACHE
+		 *            layer layers from _CMCACHE
 		 * @param {Array} :
-		 *            layers[n].visibility
+		 *            layer.visibility
 		 * @param {Array} :
-		 *            layers[n].cardBinding
+		 *            layer.cardBinding
 		 * @param {Integer} :
-		 *            layers[n].maxZoom
+		 *            layer.maxZoom
 		 * @param {Integer} :
-		 *            layers[n].minZoom
+		 *            layer.minZoom
 		 * @param {String} :
-		 *            layers[n].name
+		 *            layer.name
 		 * @param {String} :
-		 *            layers[n].description
+		 *            layer.description
 		 * @param {String} :
-		 *            layers[n].masterTableName // className
+		 *            layer.masterTableName // className
 		 * 
 		 * @param {String}
 		 *            currentClassName
@@ -116,35 +116,35 @@
 			}
 			this.removeNotVisibleLayers(layers, visibleLayers);
 		},
-		selectCard: function(card) {
+		selectCard : function(card) {
 			var geoLayers = this.getLayers();
 			geoLayers.forEach(function(geoLayer) {
 				var adapter = geoLayer.get("adapter");
 				if (adapter && adapter.selectCard) {
 					adapter.selectCard(card);
 				}
-			});			
+			});
 		},
-		showLayer : function(layer, currentClassName, currentCardId)  {
+		showLayer : function(layer, currentClassName, currentCardId) {
 			var style = Ext.decode(layer.style);
 			var geoAttribute = {
-					description : layer.description,
-					masterTableName : layer.masterTableName,
-					name : layer.name,
-					type : layer.type,
-					iconUrl :style.externalGraphic
-				};
-				var geoLayer = this.getLayerByName(layer.name);
-				if (!geoLayer) {
-					geoLayer = this.makeLayer(geoAttribute, true);
-				}
-				var adapter = geoLayer.get("adapter");
-				if (adapter && adapter.refresh) {
-					adapter.refresh({
-						cardId : currentCardId,
-						className : currentClassName
-					});
-				}
+				description : layer.description,
+				masterTableName : layer.masterTableName,
+				name : layer.name,
+				type : layer.type,
+				iconUrl : style.externalGraphic
+			};
+			var geoLayer = this.getLayerByName(layer.name);
+			if (!geoLayer) {
+				geoLayer = this.makeLayer(geoAttribute, true);
+			}
+			var adapter = geoLayer.get("adapter");
+			if (adapter && adapter.refresh) {
+				adapter.refresh({
+					cardId : currentCardId,
+					className : currentClassName
+				});
+			}
 		},
 		clearHideLayer : function(nameLayer) {
 			var geoLayer = this.getLayerByName(nameLayer);
@@ -154,7 +154,7 @@
 					adapter.clearFeatures();
 				}
 			}
-			
+
 		},
 
 		/**
@@ -166,17 +166,26 @@
 		 * @returns {Void}
 		 */
 		removeNotVisibleLayers : function(allLayers, visibles) {
-			for (var i = 0; i < allLayers.length; i++) {
-				if (!visibles.find(function(layer) {
-					return layer.name === allLayers[i].name;
-				})) {
-					if (this.getLayerByName(allLayers[i].name)) {
-						this.removeLayerByName(allLayers[i].name);
-					}
+			var allLayers = this.map.getLayers();
+			var me = this;
+			allLayers.forEach(function(mapLayer) {
+				var geoAttribute = mapLayer.get("geoAttribute");
+				if (geoAttribute) {
+					me.remove4GeoAttribute(geoAttribute, visibles);
+				}
+			});
+		},
+		remove4GeoAttribute : function(geoAttribute, visibles) {
+			var mapLayerName = geoAttribute.name;
+			var mapClassName = geoAttribute.masterTableName;
+			if (!visibles.find(function(layer) {
+				return (layer.name === mapLayerName && layer.masterTableName === mapClassName);
+			})) {
+				if (this.getLayerByName(mapLayerName, mapClassName)) {
+					this.removeLayerByName(mapLayerName, mapClassName);
 				}
 			}
 		},
-
 		/**
 		 * @param {Array}
 		 *            visibles : layers from _CMCACHE
@@ -184,17 +193,23 @@
 		 * @returns {Void}
 		 */
 		removeThematicsNotVisibleLayers : function(visibles) {
-			var allLayers = this.interactionDocument.getThematicLayers();
+			var allLayers = this.interactionDocument.getAllThematicLayers();
 			var me = this;
 			allLayers.forEach(function(layer) {
-				if (!visibles.find(function(l) {
-					return layer.name === l.name;
-				})) {
-					if (me.getLayerByName(layer.name)) {
-						me.removeLayerByName(layer.name);
-					}
+				if (!isVisible(visibles, layer)) {
+					me.removeLayerByName(layer.name);
+
 				}
 			});
 		}
 	});
+	function isVisible(visibles, layer) {
+		for (var i = 0; i < visibles.length; i++) {
+			if (visibles[i].name === layer.name) {
+				return true;
+			}
+		}
+		return false;
+	}
+
 })();

@@ -1,26 +1,35 @@
 (function() {
 	Ext.define('CMDBuild.view.management.classes.map.thematism.ThematicLayer', {
-		
+
 		/**
-		 * @property {Object} 
-		 * @property {String} thematism.name 
-		 * @property {ol.layer.Vector} thematism.layer 
-		 * @property {Object} thematism.strategy 
+		 * @property {Object}
+		 * @property {String} thematism.name
+		 * @property {ol.layer.Vector} thematism.layer
+		 * @property {Object} thematism.strategy
 		 * @property {String} thematism.strategy.description
-		 * @property {Function} thematism.strategy.value 
-		 * @property {Object} thematism.configuration (form fields CMDBuild.view.management.classes.map.thematism.ThematismMainWindow) 
-		 * @property {Object} thematism.configuration.thematismConfiguration 
-		 * @property {Object} thematism.configuration.functionConfiguration 
-		 * @property {Object} thematism.configuration.layoutConfiguration 
+		 * @property {Function} thematism.strategy.value
+		 * @property {Object} thematism.configuration (form fields
+		 *           CMDBuild.view.management.classes.map.thematism.ThematismMainWindow)
+		 * @property {Object} thematism.configuration.thematismConfiguration
+		 * @property {Object} thematism.configuration.functionConfiguration
+		 * @property {Object} thematism.configuration.layoutConfiguration
 		 */
 		thematism : undefined,
 
 		/**
-		 * @property {boolean}  beDirty (a thematic layer is dirty when a feature is modified)
-		 *
+		 * @property {boolean} beDirty (a thematic layer is dirty when a feature
+		 *           is modified)
+		 * 
 		 * 
 		 */
-beDirty : undefined,
+		beDirty : undefined,
+
+		/**
+		 * @property {CMDBuild.view.management.classes.map.geoextension.InteractionDocument}
+		 *           interactionDocument
+		 * 
+		 * 
+		 */
 		interactionDocument : undefined,
 
 		/**
@@ -89,10 +98,10 @@ beDirty : undefined,
 		 * 
 		 * @returns {Void}
 		 */
-		setDirty : function()  {
+		setDirty : function() {
 			this.beDirty = true;
 		},
-		
+
 		/**
 		 * @param {String}
 		 *            attributeName
@@ -134,7 +143,7 @@ beDirty : undefined,
 			var visibles = [];
 			originalLayer.getSource().forEachFeature(function(feature) {
 				var cardId = feature.get("master_card");
-				var justHereFeatures = me.getFeaturesByCardId(cardId, this.layer);
+				var justHereFeatures = me.getFeaturesByCardId(cardId);
 				visibles.push(cardId);
 				if (justHereFeatures.getLength() === 0) {
 					me.newFeature({
@@ -144,9 +153,8 @@ beDirty : undefined,
 						geometry : feature.clone().getGeometry(),
 						strategy : strategy
 					});
-				}
-				else {
-					
+				} else {
+
 				}
 			});
 			this.layer.getSource().forEachFeature(function(feature) {
@@ -244,22 +252,22 @@ beDirty : undefined,
 		/**
 		 * 
 		 * @returns {Object} configuration
-		 * @property {Object} configuration.thematismConfiguration 
-		 * @property {Object} configuration.functionConfiguration 
-		 * @property {Object} configuration.layoutConfiguration 
+		 * @property {Object} configuration.thematismConfiguration
+		 * @property {Object} configuration.functionConfiguration
+		 * @property {Object} configuration.layoutConfiguration
 		 * 
 		 */
 		getConfiguration : function() {
 			return this.thematism.configuration;
 		},
-		
+
 		/**
 		 * @param {String}
 		 *            shape
 		 * @param {String}
 		 *            color
 		 * 
-		 * @returns {ol.style.Style} 
+		 * @returns {ol.style.Style}
 		 * 
 		 */
 		getStyle : function(shape, color) {
