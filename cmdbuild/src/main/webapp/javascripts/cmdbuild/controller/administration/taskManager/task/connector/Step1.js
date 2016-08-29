@@ -106,8 +106,8 @@
 			/**
 			 * @param {String} value
 			 */
-			setValueNotificationTemplateError: function (value) {
-				this.getNotificationDelegate().setValue('templateError', value);
+			setValueNotificationTemplate: function (value) {
+				this.getNotificationDelegate().setValue('template', value);
 			}
 	});
 
