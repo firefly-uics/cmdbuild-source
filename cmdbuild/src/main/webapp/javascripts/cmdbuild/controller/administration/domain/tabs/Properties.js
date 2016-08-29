@@ -117,11 +117,12 @@
 		 * @returns {Void}
 		 */
 		onDomainTabPropertiesDomainSelected: function () {
-			this.view.setDisabled(this.cmfg('domainSelectedDomainIsEmpty'));
+			this.view.enable();
+
+			this.form.reset();
 
 			// Works also as show event
 			if (!this.cmfg('domainSelectedDomainIsEmpty')) {
-				this.form.reset();
 				this.form.loadRecord(this.cmfg('domainSelectedDomainGet'));
 				this.form.setDisabledModify(true);
 			}
