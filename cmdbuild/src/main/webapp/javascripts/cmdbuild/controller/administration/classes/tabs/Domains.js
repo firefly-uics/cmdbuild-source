@@ -103,6 +103,7 @@
 		 * @returns {Void}
 		 */
 		onClassesTabDomainsClassSelection: function () {
+_debug('selectedClass', this.cmfg('classesSelectedClassGet'));
 			this.view.setDisabled(
 				this.cmfg('classesSelectedClassIsEmpty')
 				|| this.cmfg('classesSelectedClassGet', CMDBuild.core.constants.Proxy.TABLE_TYPE) == CMDBuild.core.constants.Global.getTableTypeSimpleTable()
