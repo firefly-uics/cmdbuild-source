@@ -174,8 +174,6 @@
 								this.domainSelectedDomainSet({ value: selectedDomain });
 
 								this.setViewTitle(node.get(CMDBuild.core.constants.Proxy.TEXT));
-
-								this.tabPanel.getActiveTab().fireEvent('show'); // Manual show event fire because was already selected
 							} else {
 								_error('onDomainModuleInit(): domain not found', this, node.get(CMDBuild.core.constants.Proxy.ENTITY_ID));
 							}
@@ -187,6 +185,8 @@
 						if (Ext.isEmpty(this.tabPanel.getActiveTab()))
 							this.tabPanel.setActiveTab(0);
 
+						this.tabPanel.getActiveTab().fireEvent('show'); // Manual show event fire because was already selected
+
 						this.onModuleInit(node); // Custom callParent() implementation
 					}
 				});
@@ -196,6 +196,8 @@
 				// Manage tab selection
 				if (Ext.isEmpty(this.tabPanel.getActiveTab()))
 					this.tabPanel.setActiveTab(0);
+
+				this.tabPanel.getActiveTab().fireEvent('show'); // Manual show event fire because was already selected
 			}
 		},
 

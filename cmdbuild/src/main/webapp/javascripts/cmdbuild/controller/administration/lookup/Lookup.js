@@ -172,6 +172,8 @@
 
 				if (Ext.isEmpty(this.view.tabPanel.getActiveTab()))
 					this.view.tabPanel.setActiveTab(0);
+
+				this.onModuleInit(node); // Custom callParent() implementation
 			}
 		}
 	});
