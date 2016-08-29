@@ -184,7 +184,9 @@
 		 * @override
 		 */
 		onNavigationTreeModuleInit: function (node) {
-			if (!Ext.isEmpty(node)) {
+			this.navigationTreeSelectedTreeReset();
+
+			if (Ext.isObject(node) && !Ext.Object.isEmpty(node)) {
 				var params = {};
 				params[CMDBuild.core.constants.Proxy.NAME] = node.get(CMDBuild.core.constants.Proxy.ENTITY_ID);
 
@@ -206,10 +208,13 @@
 						this.onModuleInit(node); // Custom callParent() implementation
 					}
 				});
-			} else { // Display title if no nodes are selected
+			} else {
 				this.setViewTitle();
 
 				this.cmfg('onNavigationTreeSelected');
+
+				if (Ext.isEmpty(this.tabPanel.getActiveTab()))
+					this.tabPanel.setActiveTab(0);
 			}
 		},
 
