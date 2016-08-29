@@ -716,6 +716,17 @@ public class QuerySpecsBuilderImpl implements QuerySpecsBuilder {
 								}
 
 								@Override
+								public void visit(final ForeignKeyAttributeType attributeType) {
+									final Alias alias = alias(whereClause.getAttribute());
+									output = SimpleWhereClause.newInstance() //
+											.withAttribute(attribute(alias, EXTERNAL_ATTRIBUTE)) //
+											.withOperatorAndValue(whereClause.getOperator()) //
+											.withAttributeNameCast(whereClause.getAttributeNameCast()) //
+											.build();
+									addDirectJoin(attributeType.getForeignKeyDestinationClassName(), alias);
+								}
+
+								@Override
 								public void visit(final LookupAttributeType attributeType) {
 									final Alias alias = alias(whereClause.getAttribute());
 									output = SimpleWhereClause.newInstance() //
@@ -725,6 +736,33 @@ public class QuerySpecsBuilderImpl implements QuerySpecsBuilder {
 											.build();
 									addDirectJoin(LOOKUP_CLASS_NAME, alias);
 								};
+
+								@Override
+								public void visit(final ReferenceAttributeType attributeType) {
+									final Alias alias = alias(whereClause.getAttribute());
+									output = SimpleWhereClause.newInstance() //
+											.withAttribute(attribute(alias, EXTERNAL_ATTRIBUTE)) //
+											.withOperatorAndValue(whereClause.getOperator()) //
+											.withAttributeNameCast(whereClause.getAttributeNameCast()) //
+											.build();
+									final CMClass target;
+									final CMDomain domain = viewForBuild.findDomain(attributeType.getDomainName());
+									switch (Cardinality.of(domain.getCardinality())) {
+
+									case CARDINALITY_1N:
+										target = domain.getClass1();
+										break;
+
+									case CARDINALITY_N1:
+										target = domain.getClass2();
+										break;
+
+									default:
+										throw new IllegalArgumentException(domain.getCardinality());
+
+									}
+									addDirectJoin(target.getName(), alias);
+								}
 
 								private Alias alias(final QueryAttribute value) {
 									final Alias alias =

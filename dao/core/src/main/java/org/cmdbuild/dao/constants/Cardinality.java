@@ -17,4 +17,13 @@ public enum Cardinality {
 		return toString;
 	}
 
+	public static Cardinality of(final String value) {
+		for (final Cardinality element : values()) {
+			if (element.toString.equals(value)) {
+				return element;
+			}
+		}
+		throw new IllegalArgumentException(value);
+	}
+
 }
