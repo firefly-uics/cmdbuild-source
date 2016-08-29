@@ -328,14 +328,6 @@
 		"user": "Utilizador",
 		"wait_msg": "A enviar dados..."
 	},
-	"cronTriggerField": {
-		"triggerFieldWindow": {
-			"every": "A cada ",
-			"exactly": "Exatamente em",
-			"inastepwith": "<em>In a step width</em>",
-			"range": "No intervalo"
-		}
-	},
 	"delayLabels": {
 		"day1": "1 dia",
 		"days2": "2 dias",
@@ -711,6 +703,7 @@
 	"areYouSureYouWantToAbortThisProcess": "Tem a certeza que deseja abortar este processo?",
 	"as": "como",
 	"asynchronous": "Assíncrono",
+	"atAnExact": "Exatamente em",
 	"attachFile": "Anexar ficheiro",
 	"attachments": "Anexos",
 	"attention": "Atenção",
@@ -922,6 +915,7 @@
 	"eventAsynchronous": "<em>Event asynchronous</em>",
 	"eventSynchronous": "<em>Event synchronous</em>",
 	"eventTitle": "Título do evento",
+	"every": "A cada",
 	"everyDay": "Todos os dias",
 	"everyHour": "Todas as horas",
 	"everyMonth": "Todos os meses",
@@ -988,6 +982,8 @@
 	"importFromCSV": "Importar de CSV",
 	"importJasperReport": "Importar Jasper report",
 	"importWasSuccessful": "Importação realizada com sucesso",
+	"inARange": "No intervalo",
+	"inAStepWith": "<em>In a step width</em>",
 	"includeInherited": "Incluir herdados",
 	"includeRelations": "Incluir relações",
 	"includeSystemActivities": "Incluir atividade de sistema",

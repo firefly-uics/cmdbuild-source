@@ -20,7 +20,7 @@
 			'onClassesTabGeoAttributesAbortButtonClick',
 			'onClassesTabGeoAttributesAddButtonClick',
 			'onClassesTabGeoAttributesAddClassButtonClick',
-			'onClassesTabGeoAttributesClassSelection',
+			'onClassesTabGeoAttributesClassSelected',
 			'onClassesTabGeoAttributesMaxZoomDrag',
 			'onClassesTabGeoAttributesMinZoomDrag',
 			'onClassesTabGeoAttributesModifyButtonClick = onClassesTabGeoAttributesItemDoubleClick',
@@ -178,7 +178,7 @@
 		/**
 		 * @returns {Void}
 		 */
-		onClassesTabGeoAttributesClassSelection: function () {
+		onClassesTabGeoAttributesClassSelected: function () {
 			this.view.setDisabled(
 				this.cmfg('classesSelectedClassIsEmpty')
 				|| this.cmfg('classesSelectedClassGet', CMDBuild.core.constants.Proxy.TABLE_TYPE) == CMDBuild.core.constants.Global.getTableTypeSimpleTable()

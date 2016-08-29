@@ -328,14 +328,6 @@
 		"user": "المستخدم",
 		"wait_msg": "إرسال البيانات..."
 	},
-	"cronTriggerField": {
-		"triggerFieldWindow": {
-			"every": "كل ",
-			"exactly": "بالضبط عند",
-			"inastepwith": "بخطوة قدرها",
-			"range": "بمدى"
-		}
-	},
 	"delayLabels": {
 		"day1": "في يوم واحد",
 		"days2": "في يومين",
@@ -711,6 +703,7 @@
 	"areYouSureYouWantToAbortThisProcess": "هل أنت متأكد من أنك تريد أن تجهض هذه الآلية؟",
 	"as": "كـ",
 	"asynchronous": "غير متزامن",
+	"atAnExact": "بالضبط عند",
 	"attachFile": "أرفق ملف",
 	"attachments": "المرفقات",
 	"attention": "انتباه",
@@ -922,6 +915,7 @@
 	"eventAsynchronous": "<em>Event asynchronous</em>",
 	"eventSynchronous": "<em>Event synchronous</em>",
 	"eventTitle": "<em>Event title</em>",
+	"every": "كل",
 	"everyDay": "كل يوم",
 	"everyHour": "كل ساعة",
 	"everyMonth": "كل شهر",
@@ -988,6 +982,8 @@
 	"importFromCSV": "استيراد من CSV",
 	"importJasperReport": "<em>Import Jasper report</em>",
 	"importWasSuccessful": "كان الاستيراد ناجح",
+	"inARange": "بمدى",
+	"inAStepWith": "بخطوة قدرها",
 	"includeInherited": "أدرج الموروث",
 	"includeRelations": "أدرج العلاقات",
 	"includeSystemActivities": "أدرج نشاطات النظام",

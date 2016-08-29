@@ -328,14 +328,6 @@
 		"user": "Usuário",
 		"wait_msg": "Enviando dados..."
 	},
-	"cronTriggerField": {
-		"triggerFieldWindow": {
-			"every": "<em>Every </em>",
-			"exactly": "<em>At an exact</em>",
-			"inastepwith": "<em>In a step width</em>",
-			"range": "<em>In a range</em>"
-		}
-	},
 	"delayLabels": {
 		"day1": "<em>In 1 day</em>",
 		"days2": "<em>In 2 days</em>",
@@ -711,6 +703,7 @@
 	"areYouSureYouWantToAbortThisProcess": "Você tem certeza que deseja abortar este processo?",
 	"as": "como",
 	"asynchronous": "<em>Asynchronous</em>",
+	"atAnExact": "<em>At an exact</em>",
 	"attachFile": "<em>Attach File</em>",
 	"attachments": "Anexos",
 	"attention": "Atenção",
@@ -922,6 +915,7 @@
 	"eventAsynchronous": "<em>Event asynchronous</em>",
 	"eventSynchronous": "<em>Event synchronous</em>",
 	"eventTitle": "Título do Evento",
+	"every": "<em>Every</em>",
 	"everyDay": "<em>Every day</em>",
 	"everyHour": "<em>Every hour</em>",
 	"everyMonth": "<em>Every month</em>",
@@ -988,6 +982,8 @@
 	"importFromCSV": "<em>Import from CSV</em>",
 	"importJasperReport": "Importar relatório Jasper",
 	"importWasSuccessful": "Importação Feita com sucesso",
+	"inARange": "<em>In a range</em>",
+	"inAStepWith": "<em>In a step width</em>",
 	"includeInherited": "Herança incluida",
 	"includeRelations": "<em>Include relations</em>",
 	"includeSystemActivities": "<em>Include system activities</em>",

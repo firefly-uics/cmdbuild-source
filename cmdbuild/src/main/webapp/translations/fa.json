@@ -328,14 +328,6 @@
 		"user": "کاربر",
 		"wait_msg": "ارسال اطلاعات"
 	},
-	"cronTriggerField": {
-		"triggerFieldWindow": {
-			"every": "همه ",
-			"exactly": "دقیقا در یک",
-			"inastepwith": "در طول یک گام",
-			"range": "در یک محدوده"
-		}
-	},
 	"delayLabels": {
 		"day1": "<em>In 1 day</em>",
 		"days2": "<em>In 2 days</em>",
@@ -711,6 +703,7 @@
 	"areYouSureYouWantToAbortThisProcess": "آیا مطمئنید که میخواهید این پروسه را نگه دارید؟",
 	"as": "به عنوان",
 	"asynchronous": "Asynchronous",
+	"atAnExact": "دقیقا در یک",
 	"attachFile": "ضمیمه کردن فایل",
 	"attachments": "ضمیمه",
 	"attention": "توجه",
@@ -921,6 +914,7 @@
 	"eventAsynchronous": "<em>Event asynchronous</em>",
 	"eventSynchronous": "<em>Event synchronous</em>",
 	"eventTitle": "نام رخداد",
+	"every": "همه",
 	"everyDay": "هر روز",
 	"everyHour": "هر ساعت",
 	"everyMonth": "هر ماه",
@@ -987,6 +981,8 @@
 	"importFromCSV": "<em>Import from CSV</em>",
 	"importJasperReport": "Import jasper report",
 	"importWasSuccessful": "با موفقیت ورودی داده شد",
+	"inARange": "در یک محدوده",
+	"inAStepWith": "در طول یک گام",
 	"includeInherited": "شامل وراثت شود",
 	"includeRelations": "<em>Include relations</em>",
 	"includeSystemActivities": "<em>Include system activities</em>",

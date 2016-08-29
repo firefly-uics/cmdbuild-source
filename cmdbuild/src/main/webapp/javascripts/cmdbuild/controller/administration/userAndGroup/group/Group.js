@@ -151,6 +151,14 @@
 						}
 					}
 				});
+			} else {
+				this.cmfg('onUserAndGroupGroupTabGroupSelected');
+
+				// Manage tab selection
+				if (Ext.isEmpty(this.tabPanel.getActiveTab()))
+					this.tabPanel.setActiveTab(0);
+
+				this.tabPanel.getActiveTab().fireEvent('show'); // Manual show event fire because was already selected
 			}
 		},
 

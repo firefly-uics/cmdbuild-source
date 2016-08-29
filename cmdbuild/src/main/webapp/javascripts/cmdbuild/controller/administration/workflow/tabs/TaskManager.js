@@ -26,7 +26,7 @@
 			'onWorkflowTabTasksRemoveButtonClick',
 			'onWorkflowTabTasksRowSelect',
 			'onWorkflowTabTasksShow',
-			'onWorkflowTabTasksWorkflowSelection'
+			'onWorkflowTabTasksWorkflowSelected'
 		],
 
 		/**
@@ -171,7 +171,7 @@
 		 *
 		 * @returns {Void}
 		 */
-		onWorkflowTabTasksWorkflowSelection: function () {
+		onWorkflowTabTasksWorkflowSelected: function () {
 			this.view.setDisabled(
 				this.cmfg('workflowSelectedWorkflowIsEmpty')
 				|| this.cmfg('workflowSelectedWorkflowGet', CMDBuild.core.constants.Proxy.IS_SUPER_CLASS)

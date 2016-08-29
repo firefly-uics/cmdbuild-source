@@ -19,7 +19,7 @@
 		 */
 		cmfgCatchedFunctions: [
 			'onClassesTabLayersAddClassButtonClick',
-			'onClassesTabLayersClassSelection',
+			'onClassesTabLayersClassSelected',
 			'onClassesTabLayersShow',
 			'onClassesTabLayersStoreLoad',
 			'onClassesTabLayersVisibilityChange'
@@ -78,7 +78,7 @@
 		/**
 		 * @returns {Void}
 		 */
-		onClassesTabLayersClassSelection: function () {
+		onClassesTabLayersClassSelected: function () {
 			this.view.setDisabled(
 				this.cmfg('classesSelectedClassIsEmpty')
 				|| this.cmfg('classesSelectedClassGet', CMDBuild.core.constants.Proxy.TABLE_TYPE) == CMDBuild.core.constants.Global.getTableTypeSimpleTable()

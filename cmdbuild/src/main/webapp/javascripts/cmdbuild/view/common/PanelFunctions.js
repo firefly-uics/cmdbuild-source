@@ -205,7 +205,7 @@
 		},
 
 		/**
-		 * Don't disable FieldSets, but only contained fields
+		 * Change state of fieldset's contained fields
 		 *
 		 * @param {Ext.form.FieldSet} fieldset
 		 * @param {Boolean} state

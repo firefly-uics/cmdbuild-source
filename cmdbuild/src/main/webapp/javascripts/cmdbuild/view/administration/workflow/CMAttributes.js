@@ -1,8 +1,8 @@
 (function () {
 
 	/**
-	 * @link CMDBuild.view.administration.classes.CMAttributes
-	 * @link CMDBuild.view.administration.domain.tabs.attributes.AttributesView
+	 * @link CMDBuild.view.administration.classes.tabs.attributes.CMAttributes
+	 * @link CMDBuild.view.administration.domain.tabs.attributes.CMAttributes
 	 */
 
 	Ext.define('CMDBuild.view.administration.workflow.CMAttributes', {

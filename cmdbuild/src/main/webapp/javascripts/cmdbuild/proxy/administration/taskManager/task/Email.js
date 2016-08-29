@@ -51,7 +51,7 @@
 		 */
 		getStoreAccount: function () {
 			return CMDBuild.global.Cache.requestAsStore(CMDBuild.core.constants.Proxy.EMAIL, {
-				autoLoad: false,
+				autoLoad: true,
 				model: 'CMDBuild.model.administration.taskManager.task.email.Account',
 				proxy: {
 					type: 'ajax',

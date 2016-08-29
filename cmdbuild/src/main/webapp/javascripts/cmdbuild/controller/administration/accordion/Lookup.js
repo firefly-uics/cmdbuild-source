@@ -40,16 +40,20 @@
 		},
 
 		/**
-		 * @param {Number} nodeIdToSelect
+		 * @param {Object} parameters
+		 * @param {Boolean} parameters.loadMask
+		 * @param {String} parameters.selectionId
 		 *
 		 * @returns {Void}
 		 *
 		 * @override
 		 */
-		accordionUpdateStore: function (nodeIdToSelect) {
-			nodeIdToSelect = Ext.isString(nodeIdToSelect) ? nodeIdToSelect : null;
+		accordionUpdateStore: function (parameters) {
+			parameters = Ext.isObject(parameters) ? parameters : {};
+			parameters.selectionId = Ext.isString(parameters.selectionId) ? parameters.selectionId : null;
 
 			CMDBuild.proxy.lookup.Type.readAll({
+				loadMask: Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : false,
 				scope: this,
 				success: function (response, options, decodedResponse) {
 					if (!Ext.isEmpty(decodedResponse)) {
@@ -96,8 +100,7 @@
 						}
 					}
 
-					// Alias of this.callParent(arguments), inside proxy function doesn't work
-					this.updateStoreCommonEndpoint(nodeIdToSelect);
+					this.updateStoreCommonEndpoint(parameters); // CallParent alias
 				}
 			});
 

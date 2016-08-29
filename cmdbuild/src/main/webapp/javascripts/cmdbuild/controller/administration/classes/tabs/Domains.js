@@ -24,7 +24,7 @@
 		cmfgCatchedFunctions: [
 			'onClassesTabDomainsAddButtonClick',
 			'onClassesTabDomainsAddClassButtonClick',
-			'onClassesTabDomainsClassSelection',
+			'onClassesTabDomainsClassSelected',
 			'onClassesTabDomainsIncludeInheritedCheck',
 			'onClassesTabDomainsItemDoubleClick',
 			'onClassesTabDomainsModifyButtonClick',
@@ -102,7 +102,7 @@
 		 *
 		 * @returns {Void}
 		 */
-		onClassesTabDomainsClassSelection: function () {
+		onClassesTabDomainsClassSelected: function () {
 			this.view.setDisabled(
 				this.cmfg('classesSelectedClassIsEmpty')
 				|| this.cmfg('classesSelectedClassGet', CMDBuild.core.constants.Proxy.TABLE_TYPE) == CMDBuild.core.constants.Global.getTableTypeSimpleTable()
@@ -134,7 +134,9 @@
 				this.cmfg('mainViewportAccordionControllerExpand', { identifier: CMDBuild.core.constants.ModuleIdentifiers.getDomain() });
 				this.cmfg('mainViewportAccordionControllerUpdateStore', {
 					identifier: CMDBuild.core.constants.ModuleIdentifiers.getDomain(),
-					nodeIdToSelect: this.selectedDomainGet(CMDBuild.core.constants.Proxy.ID_DOMAIN)
+					params: {
+						selectionId: this.selectedDomainGet(CMDBuild.core.constants.Proxy.ID_DOMAIN)
+					}
 				});
 			}
 		},
@@ -156,7 +158,9 @@
 				}, this, { single: true });
 				this.cmfg('mainViewportAccordionControllerUpdateStore', {
 					identifier: CMDBuild.core.constants.ModuleIdentifiers.getDomain(),
-					nodeIdToSelect: this.selectedDomainGet(CMDBuild.core.constants.Proxy.ID_DOMAIN)
+					params: {
+						selectionId: this.selectedDomainGet(CMDBuild.core.constants.Proxy.ID_DOMAIN)
+					}
 				});
 			}
 		},

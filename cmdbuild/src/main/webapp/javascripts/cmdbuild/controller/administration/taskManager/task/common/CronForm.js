@@ -68,7 +68,7 @@
 		createCronField: function (name, label) {
 			var me = this;
 
-			return Ext.create('CMDBuild.view.common.field.CMCronTriggerField', {
+			return Ext.create('CMDBuild.view.common.field.trigger.cron.Cron', {
 				name: name,
 				fieldLabel: label,
 				cmImmutable: true,
