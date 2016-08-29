@@ -90,12 +90,14 @@
 		},
 
 		/**
-		 * Enable/Disable tab evaluating selected group
+		 * Enable/Disable tab on group selection
 		 *
 		 * @returns {Void}
 		 */
 		onUserAndGroupGroupTabPropertiesGroupSelected: function () {
-			this.view.setDisabled(this.cmfg('userAndGroupGroupSelectedGroupIsEmpty'));
+			this.view.enable();
+
+			this.form.reset();
 		},
 
 		/**
