@@ -252,9 +252,9 @@
 		},
 
 		onDomainDomainSelected: function() {
-			if (!this.cmfg('domainSelectedDomainIsEmpty')) {
-				this.view.enable();
+			this.view.setDisabled(this.cmfg('domainSelectedDomainIsEmpty'));
 
+			if (!this.cmfg('domainSelectedDomainIsEmpty')) {
 				this.form.domainName = this.cmfg('domainSelectedDomainGet', CMDBuild.core.constants.Proxy.NAME);
 				this.form.hideContextualFields();
 
