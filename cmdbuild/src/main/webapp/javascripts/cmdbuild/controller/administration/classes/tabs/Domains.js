@@ -24,7 +24,7 @@
 		cmfgCatchedFunctions: [
 			'onClassesTabDomainsAddButtonClick',
 			'onClassesTabDomainsAddClassButtonClick',
-			'onClassesTabDomainsClassSelection',
+			'onClassesTabDomainsClassSelected',
 			'onClassesTabDomainsIncludeInheritedCheck',
 			'onClassesTabDomainsItemDoubleClick',
 			'onClassesTabDomainsModifyButtonClick',
@@ -102,7 +102,7 @@
 		 *
 		 * @returns {Void}
 		 */
-		onClassesTabDomainsClassSelection: function () {
+		onClassesTabDomainsClassSelected: function () {
 			this.view.setDisabled(
 				this.cmfg('classesSelectedClassIsEmpty')
 				|| this.cmfg('classesSelectedClassGet', CMDBuild.core.constants.Proxy.TABLE_TYPE) == CMDBuild.core.constants.Global.getTableTypeSimpleTable()

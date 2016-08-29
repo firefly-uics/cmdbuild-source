@@ -22,7 +22,7 @@
 			'classesSelectedClassReset',
 			'identifierGet = classesIdentifierGet',
 			'onClassesAddButtonClick',
-			'onClassesClassSelection',
+			'onClassesClassSelected',
 			'onClassesModuleInit = onModuleInit',
 			'onClassesPrintButtonClick'
 		],
@@ -177,7 +177,7 @@
 							}
 						}
 
-						this.cmfg('onClassesClassSelection');
+						this.cmfg('onClassesClassSelected');
 
 						// Manage tab selection
 						if (Ext.isEmpty(this.tabPanel.getActiveTab()))
@@ -187,7 +187,7 @@
 					}
 				});
 			} else {
-				this.cmfg('onClassesClassSelection');
+				this.cmfg('onClassesClassSelected');
 
 				// Manage tab selection
 				if (Ext.isEmpty(this.tabPanel.getActiveTab()))
@@ -198,18 +198,18 @@
 		/**
 		 * @returns {Void}
 		 *
-		 * FIXME: use cmfg redirect functionalities (onClassesTabClassSelection)
+		 * FIXME: use cmfg redirect functionalities (onClassesTabClassSelected)
 		 */
-		onClassesClassSelection: function () {
+		onClassesClassSelected: function () {
 			this.controllerAttributes.onClassSelected( // FIXME: legacy
 				this.cmfg('classesSelectedClassGet', CMDBuild.core.constants.Proxy.ID),
 				this.cmfg('classesSelectedClassGet', CMDBuild.core.constants.Proxy.NAME)
 			);
-			this.controllerDomains.cmfg('onClassesTabDomainsClassSelection');
-			this.controllerGeoAttributes.cmfg('onClassesTabGeoAttributesClassSelection');
-			this.controllerLayers.cmfg('onClassesTabLayersClassSelection');
-			this.controllerProperties.cmfg('onClassesTabPropertiesClassSelection');
-			this.controllerWidgets.cmfg('onClassesTabWidgetsClassSelection');
+			this.controllerDomains.cmfg('onClassesTabDomainsClassSelected');
+			this.controllerGeoAttributes.cmfg('onClassesTabGeoAttributesClassSelected');
+			this.controllerLayers.cmfg('onClassesTabLayersClassSelected');
+			this.controllerProperties.cmfg('onClassesTabPropertiesClassSelected');
+			this.controllerWidgets.cmfg('onClassesTabWidgetsClassSelected');
 		},
 
 		/**
