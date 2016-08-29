@@ -144,7 +144,7 @@
 		 * @returns {Void}
 		 */
 		onClassesTabPropertiesClassSelection: function () {
-			this.view.setDisabled(false);
+			this.view.enable();
 
 			if (!this.cmfg('classesSelectedClassIsEmpty'))
 				this.manageFieldsBySelectedTableType(this.cmfg('classesSelectedClassGet', CMDBuild.core.constants.Proxy.TABLE_TYPE));
