@@ -14,6 +14,11 @@
 		parentDelegate: undefined,
 
 		/**
+		 * @cfg {Boolean}
+		 */
+		hideIfEmpty: true,
+
+		/**
 		 * @cfg {String}
 		 */
 		identifier: undefined,
