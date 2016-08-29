@@ -31,7 +31,7 @@
 			'onWorkflowTabDomainsRowSelect',
 			'onWorkflowTabDomainsShow',
 			'onWorkflowTabDomainsStoreLoad',
-			'onWorkflowTabDomainsWorkflowSelection'
+			'onWorkflowTabDomainsWorkflowSelected'
 		],
 
 		/**
@@ -244,7 +244,7 @@
 		 *
 		 * @returns {Void}
 		 */
-		onWorkflowTabDomainsWorkflowSelection: function () {
+		onWorkflowTabDomainsWorkflowSelected: function () {
 			this.view.setDisabled(
 				this.cmfg('workflowSelectedWorkflowIsEmpty')
 				|| this.cmfg('workflowSelectedWorkflowGet', CMDBuild.core.constants.Proxy.TABLE_TYPE) == CMDBuild.core.constants.Global.getTableTypeSimpleTable()
