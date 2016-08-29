@@ -205,6 +205,8 @@
 						if (Ext.isEmpty(this.tabPanel.getActiveTab()))
 							this.tabPanel.setActiveTab(0);
 
+						this.tabPanel.getActiveTab().fireEvent('show'); // Manual show event fire because was already selected // TODO: to implement
+
 						this.onModuleInit(node); // Custom callParent() implementation
 					}
 				});
@@ -215,6 +217,10 @@
 
 				if (Ext.isEmpty(this.tabPanel.getActiveTab()))
 					this.tabPanel.setActiveTab(0);
+
+				this.tabPanel.getActiveTab().fireEvent('show'); // Manual show event fire because was already selected // TODO: to implement
+
+				this.onModuleInit(node); // Custom callParent() implementation
 			}
 		},
 
