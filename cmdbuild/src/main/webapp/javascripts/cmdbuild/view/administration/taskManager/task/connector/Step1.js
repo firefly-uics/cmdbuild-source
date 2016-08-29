@@ -97,7 +97,7 @@
 						type: 'sender',
 						disabled: false
 					},
-					templateError: {
+					template: {
 						type: 'template',
 						disabled: false,
 						fieldLabel: CMDBuild.Translation.errorEmailTemplate,
@@ -106,7 +106,7 @@
 				});
 
 				this.notificationFieldset = Ext.create('Ext.form.FieldSet', {
-					title: CMDBuild.Translation.sendNotificationEmailPlur,
+					title: CMDBuild.Translation.sendNotificationEmail,
 					checkboxName: CMDBuild.core.constants.Proxy.NOTIFICATION_ACTIVE,
 					checkboxToggle: true,
 					collapsed: true,
