@@ -21,7 +21,7 @@
 			'onWorkflowAddButtonClick',
 			'onWorkflowModuleInit = onModuleInit',
 			'onWorkflowPrintButtonClick',
-			'onWorkflowWokflowSelection',
+			'onWorkflowWokflowSelected',
 			'workflowSelectedWorkflowGet',
 			'workflowSelectedWorkflowIsEmpty',
 			'workflowSelectedWorkflowReset'
@@ -133,6 +133,8 @@
 		 * @override
 		 */
 		onWorkflowModuleInit: function (node) {
+			this.cmfg('workflowSelectedWorkflowReset');
+
 			if (Ext.isObject(node) && !Ext.Object.isEmpty(node)) {
 				var params = {};
 				params[CMDBuild.core.constants.Proxy.ACTIVE] = false;
@@ -153,21 +155,27 @@
 
 								this.setViewTitle(this.cmfg('workflowSelectedWorkflowGet', CMDBuild.core.constants.Proxy.DESCRIPTION));
 
-								this.cmfg('onWorkflowWokflowSelection');
-
-								// Manage tab selection
-								if (Ext.isEmpty(this.tabPanel.getActiveTab()))
-									this.tabPanel.setActiveTab(0);
-
 								this.tabPanel.getActiveTab().fireEvent('show'); // Manual show event fire because was already selected
 							} else {
 								_error('onWorkflowModuleInit(): workflow not found', this, node.get(CMDBuild.core.constants.Proxy.ENTITY_ID));
 							}
 						}
 
+						this.cmfg('onWorkflowWokflowSelected');
+
+						// Manage tab selection
+						if (Ext.isEmpty(this.tabPanel.getActiveTab()))
+							this.tabPanel.setActiveTab(0);
+
 						this.onModuleInit(node); // Custom callParent() implementation
 					}
 				});
+			} else {
+				this.cmfg('onWorkflowWokflowSelected');
+
+				// Manage tab selection
+				if (Ext.isEmpty(this.tabPanel.getActiveTab()))
+					this.tabPanel.setActiveTab(0);
 			}
 		},
 
@@ -196,13 +204,13 @@
 		 *
 		 * FIXME: use cmfg redirect functionalities (onWorkflowTabWokflowSelection)
 		 */
-		onWorkflowWokflowSelection: function () {
+		onWorkflowWokflowSelected: function () {
 			this.controllerAttributes.onClassSelected( // TODO: legacy
 				this.cmfg('workflowSelectedWorkflowGet', CMDBuild.core.constants.Proxy.ID),
 				this.cmfg('workflowSelectedWorkflowGet', CMDBuild.core.constants.Proxy.NAME));
-			this.controllerDomains.cmfg('onWorkflowTabDomainsWorkflowSelection');
-			this.controllerProperties.cmfg('onWorkflowTabPropertiesWorkflowSelection');
-			this.controllerTasks.cmfg('onWorkflowTabTasksWorkflowSelection');
+			this.controllerDomains.cmfg('onWorkflowTabDomainsWorkflowSelected');
+			this.controllerProperties.cmfg('onWorkflowTabPropertiesWorkflowSelected');
+			this.controllerTasks.cmfg('onWorkflowTabTasksWorkflowSelected');
 		},
 
 		// SelectedWorkflow property functions

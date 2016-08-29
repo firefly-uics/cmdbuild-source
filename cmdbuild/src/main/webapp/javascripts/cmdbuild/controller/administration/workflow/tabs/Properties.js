@@ -34,7 +34,7 @@
 			'onWorkflowTabPropertiesSaveButtonClick',
 			'onWorkflowTabPropertiesShow',
 			'onWorkflowTabPropertiesUploadXpdlPanelUploadButtonClick',
-			'onWorkflowTabPropertiesWorkflowSelection'
+			'onWorkflowTabPropertiesWorkflowSelected'
 		],
 
 		/**
@@ -322,8 +322,10 @@
 		 *
 		 * @returns {Void}
 		 */
-		onWorkflowTabPropertiesWorkflowSelection: function () {
-			this.view.setDisabled(this.cmfg('workflowSelectedWorkflowIsEmpty'));
+		onWorkflowTabPropertiesWorkflowSelected: function () {
+			this.view.enable();
+
+			this.form.reset();
 		},
 
 		/**
