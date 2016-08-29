@@ -4,7 +4,24 @@
 	var GEOSERVER = "_Geoserver";
 	var DEFAULT_MIN_ZOOM = 0;
 	var DEFAULT_MAX_ZOOM = 25;
+
 	Ext.define('CMDBuild.view.management.classes.map.geoextension.Layer', {
+
+		/**
+		 * @param {Object}
+		 *            geoAttribute
+		 * @param {String}
+		 *            geoAttribute.type
+		 * @param {String}
+		 *            geoAttribute.name
+		 * @param {String}
+		 *            geoAttribute.description
+		 * @param {String}
+		 *            geoAttribute.masterTableName // class name
+		 * @param {String}
+		 *            geoAttribute.externalGraphic //icon url
+		 * 
+		 */
 		constructor : function(geoAttribute, withEditWindow, interactionDocument) {
 			this.interactionDocument = interactionDocument;
 			this.layer = buildGeoserverLayer(geoAttribute);
@@ -18,6 +35,22 @@
 			return this.layer.getSource();
 		}
 	});
+
+	/**
+	 * @param {Object}
+	 *            geoAttribute
+	 * @param {String}
+	 *            geoAttribute.type
+	 * @param {String}
+	 *            geoAttribute.name
+	 * @param {String}
+	 *            geoAttribute.description
+	 * @param {String}
+	 *            geoAttribute.masterTableName // class name
+	 * @param {String}
+	 *            geoAttribute.externalGraphic //icon url
+	 * 
+	 */
 	function buildGeoserverLayer(geoAttribute) {
 		var geoserver_ws = CMDBuild.configuration.gis.get([ CMDBuild.core.constants.Proxy.GEO_SERVER, 'workspace' ]);
 		var geoserver_url = CMDBuild.configuration.gis.get([ CMDBuild.core.constants.Proxy.GEO_SERVER, 'url' ]);
