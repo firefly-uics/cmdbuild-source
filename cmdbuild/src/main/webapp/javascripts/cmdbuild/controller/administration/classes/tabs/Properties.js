@@ -25,7 +25,7 @@
 		cmfgCatchedFunctions: [
 			'onClassesTabPropertiesAbortButtonClick',
 			'onClassesTabPropertiesAddClassButtonClick',
-			'onClassesTabPropertiesClassSelection',
+			'onClassesTabPropertiesClassSelected',
 			'onClassesTabPropertiesIconsClassSelection', // FIXME: Waiting for a future full implementation as separate tab
 			'onClassesTabPropertiesIconsUploadButtonClick', // FIXME: Waiting for a future full implementation as separate tab
 			'onClassesTabPropertiesModifyButtonClick',
@@ -143,8 +143,10 @@
 		 *
 		 * @returns {Void}
 		 */
-		onClassesTabPropertiesClassSelection: function () {
+		onClassesTabPropertiesClassSelected: function () {
 			this.view.enable();
+
+			this.form.reset();
 
 			if (!this.cmfg('classesSelectedClassIsEmpty'))
 				this.manageFieldsBySelectedTableType(this.cmfg('classesSelectedClassGet', CMDBuild.core.constants.Proxy.TABLE_TYPE));
