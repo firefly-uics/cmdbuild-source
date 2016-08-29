@@ -150,7 +150,7 @@
 		 */
 		onClassesModuleInit: function (node) {
 			this.cmfg('classesSelectedClassReset');
-_debug('onClassesModuleInit',node);
+
 			if (Ext.isObject(node) && !Ext.Object.isEmpty(node)) {
 				var params = {};
 				params[CMDBuild.core.constants.Proxy.ACTIVE] = false;
@@ -201,7 +201,6 @@ _debug('onClassesModuleInit',node);
 		 * FIXME: use cmfg redirect functionalities (onClassesTabClassSelection)
 		 */
 		onClassesClassSelection: function () {
-_debug('onClassesClassSelection');
 			this.controllerAttributes.onClassSelected( // FIXME: legacy
 				this.cmfg('classesSelectedClassGet', CMDBuild.core.constants.Proxy.ID),
 				this.cmfg('classesSelectedClassGet', CMDBuild.core.constants.Proxy.NAME)
