@@ -24,7 +24,7 @@
 			'onClassesTabWidgetsAbortButtonClick',
 			'onClassesTabWidgetsAddButtonClick',
 			'onClassesTabWidgetsAddClassButtonClick',
-			'onClassesTabWidgetsClassSelection',
+			'onClassesTabWidgetsClassSelected',
 			'onClassesTabWidgetsItemDrop',
 			'onClassesTabWidgetsModifyButtonClick = onClassesTabWidgetsItemDoubleClick',
 			'onClassesTabWidgetsRemoveButtonClick',
@@ -203,7 +203,7 @@
 		 *
 		 * @returns {Void}
 		 */
-		onClassesTabWidgetsClassSelection: function () {
+		onClassesTabWidgetsClassSelected: function () {
 			this.view.setDisabled(
 				this.cmfg('classesSelectedClassIsEmpty')
 				|| this.cmfg('classesSelectedClassGet', CMDBuild.core.constants.Proxy.IS_SUPER_CLASS)

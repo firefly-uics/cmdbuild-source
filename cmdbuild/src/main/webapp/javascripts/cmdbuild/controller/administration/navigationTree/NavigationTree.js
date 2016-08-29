@@ -184,7 +184,9 @@
 		 * @override
 		 */
 		onNavigationTreeModuleInit: function (node) {
-			if (!Ext.isEmpty(node)) {
+			this.navigationTreeSelectedTreeReset();
+
+			if (Ext.isObject(node) && !Ext.Object.isEmpty(node)) {
 				var params = {};
 				params[CMDBuild.core.constants.Proxy.NAME] = node.get(CMDBuild.core.constants.Proxy.ENTITY_ID);
 
@@ -203,13 +205,22 @@
 						if (Ext.isEmpty(this.tabPanel.getActiveTab()))
 							this.tabPanel.setActiveTab(0);
 
+						this.tabPanel.getActiveTab().fireEvent('show'); // Manual show event fire because was already selected // TODO: to implement
+
 						this.onModuleInit(node); // Custom callParent() implementation
 					}
 				});
-			} else { // Display title if no nodes are selected
+			} else {
 				this.setViewTitle();
 
 				this.cmfg('onNavigationTreeSelected');
+
+				if (Ext.isEmpty(this.tabPanel.getActiveTab()))
+					this.tabPanel.setActiveTab(0);
+
+				this.tabPanel.getActiveTab().fireEvent('show'); // Manual show event fire because was already selected // TODO: to implement
+
+				this.onModuleInit(node); // Custom callParent() implementation
 			}
 		},
 
@@ -307,7 +318,9 @@
 		success: function (response, options, decodedResponse) {
 			this.cmfg('mainViewportAccordionControllerUpdateStore', {
 				identifier: this.cmfg('identifierGet'),
-//				nodeIdToSelect: decodedResponse[CMDBuild.core.constants.Proxy.RESPONSE][CMDBuild.core.constants.Proxy.ID] // TODO: waiting for refactor
+				//params: { // TODO: waiting for refactor
+				//	selectionId: decodedResponse[CMDBuild.core.constants.Proxy.RESPONSE][CMDBuild.core.constants.Proxy.ID]
+				// }
 			});
 		}
 	});

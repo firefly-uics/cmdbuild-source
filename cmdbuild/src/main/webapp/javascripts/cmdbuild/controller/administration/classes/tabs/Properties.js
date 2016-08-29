@@ -25,7 +25,7 @@
 		cmfgCatchedFunctions: [
 			'onClassesTabPropertiesAbortButtonClick',
 			'onClassesTabPropertiesAddClassButtonClick',
-			'onClassesTabPropertiesClassSelection',
+			'onClassesTabPropertiesClassSelected',
 			'onClassesTabPropertiesIconsClassSelection', // FIXME: Waiting for a future full implementation as separate tab
 			'onClassesTabPropertiesIconsUploadButtonClick', // FIXME: Waiting for a future full implementation as separate tab
 			'onClassesTabPropertiesModifyButtonClick',
@@ -143,8 +143,10 @@
 		 *
 		 * @returns {Void}
 		 */
-		onClassesTabPropertiesClassSelection: function () {
-			this.view.setDisabled(this.cmfg('classesSelectedClassIsEmpty'));
+		onClassesTabPropertiesClassSelected: function () {
+			this.view.enable();
+
+			this.form.reset();
 
 			if (!this.cmfg('classesSelectedClassIsEmpty'))
 				this.manageFieldsBySelectedTableType(this.cmfg('classesSelectedClassGet', CMDBuild.core.constants.Proxy.TABLE_TYPE));
@@ -293,7 +295,9 @@
 			this.cmfg('mainViewportAccordionDeselect', this.cmfg('classesIdentifierGet'));
 			this.cmfg('mainViewportAccordionControllerUpdateStore', {
 				identifier: this.cmfg('classesIdentifierGet'),
-				nodeIdToSelect: decodedResponse[CMDBuild.core.constants.Proxy.ID]
+				params: {
+					selectionId: decodedResponse[CMDBuild.core.constants.Proxy.ID]
+				}
 			});
 
 			CMDBuild.core.Message.success();

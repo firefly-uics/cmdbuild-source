@@ -267,7 +267,7 @@
 			},
 
 		/**
-		 * @param {Number or String} nodeIdToSelect
+		 * @param {Number or String} selectionId
 		 *
 		 * @returns {Void}
 		 *
@@ -362,16 +362,17 @@
 		},
 
 		/**
-		 * @param {Number or String} nodeIdToSelect
+		 * @param {Object} parameters
+		 * @param {Number or String} parameters.selectionId
 		 *
 		 * @returns {Void}
 		 *
 		 * @private
 		 */
-		updateStoreCommonEndpoint: function (nodeIdToSelect) {
+		updateStoreCommonEndpoint: function (parameters) {
 			if (!this.disableSelection) {
-				if (!Ext.isEmpty(nodeIdToSelect))
-					this.cmfg('accordionNodeByIdSelect', { id: nodeIdToSelect });
+				if (!Ext.isEmpty(parameters.selectionId))
+					this.cmfg('accordionNodeByIdSelect', { id: parameters.selectionId });
 
 				// Select first selectable item if no selection and expanded
 				if (!this.view.getSelectionModel().hasSelection() && this.view.getCollapsed() === false && this.view.isVisible())

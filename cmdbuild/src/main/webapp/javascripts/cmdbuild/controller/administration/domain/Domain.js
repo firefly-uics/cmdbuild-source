@@ -35,7 +35,7 @@
 		],
 
 		/**
-		 * @property {CMDBuild.controller.administration.domain.tabs.Attributes}
+		 * @property {CMDBuild.controller.administration.domain.tabs.CMAttributes}
 		 */
 		controllerAttributes: undefined,
 
@@ -85,7 +85,7 @@
 			this.view = Ext.create('CMDBuild.view.administration.domain.DomainView', { delegate: this });
 
 			// Build sub-controllers
-			this.controllerAttributes = Ext.create('CMDBuild.controller.administration.domain.tabs.Attributes', { parentDelegate: this }); // FIXME: legacy
+			this.controllerAttributes = Ext.create('CMDBuild.controller.administration.domain.tabs.CMAttributes', { parentDelegate: this }); // FIXME: legacy
 			this.controllerEnabledClasses = Ext.create('CMDBuild.controller.administration.domain.tabs.EnabledClasses', { parentDelegate: this });
 			this.controllerProperties = Ext.create('CMDBuild.controller.administration.domain.tabs.Properties', { parentDelegate: this });
 
@@ -129,11 +129,10 @@
 		/**
 		 * @returns {Void}
 		 *
-		 * FIXME: use cmfg redirect functionalities (onClassesTabClassSelection)
+		 * FIXME: use cmfg redirect functionalities (onClassesTabClassSelected)
 		 */
 		onDomainDomainSelected: function () {
-//			this.controllerAttributes.onClassSelected(); // FIXME: legacy
-			this.controllerAttributes.cmfg('onDomainDomainSelected');
+			this.controllerAttributes.cmfg('onDomainDomainSelected'); // FIXME: legacy
 			this.controllerEnabledClasses.cmfg('onDomainTabEnabledClassesDomainSelected');
 			this.controllerProperties.cmfg('onDomainTabPropertiesDomainSelected');
 		},
@@ -158,6 +157,8 @@
 		 * @override
 		 */
 		onDomainModuleInit: function (node) {
+			this.domainSelectedDomainReset();
+
 			if (Ext.isObject(node) && !Ext.Object.isEmpty(node)) {
 				CMDBuild.proxy.domain.Domain.read({ // FIXME: waiting for refactor (server endpoint)
 					scope: this,
@@ -173,22 +174,30 @@
 								this.domainSelectedDomainSet({ value: selectedDomain });
 
 								this.setViewTitle(node.get(CMDBuild.core.constants.Proxy.TEXT));
-
-								this.cmfg('onDomainDomainSelected');
-
-								// Manage tab selection
-								if (Ext.isEmpty(this.tabPanel.getActiveTab()))
-									this.tabPanel.setActiveTab(0);
-
-								this.tabPanel.getActiveTab().fireEvent('show'); // Manual show event fire because was already selected
 							} else {
 								_error('onDomainModuleInit(): domain not found', this, node.get(CMDBuild.core.constants.Proxy.ENTITY_ID));
 							}
 						}
 
+						this.cmfg('onDomainDomainSelected');
+
+						// Manage tab selection
+						if (Ext.isEmpty(this.tabPanel.getActiveTab()))
+							this.tabPanel.setActiveTab(0);
+
+						this.tabPanel.getActiveTab().fireEvent('show'); // Manual show event fire because was already selected
+
 						this.onModuleInit(node); // Custom callParent() implementation
 					}
 				});
+			} else {
+				this.cmfg('onDomainDomainSelected');
+
+				// Manage tab selection
+				if (Ext.isEmpty(this.tabPanel.getActiveTab()))
+					this.tabPanel.setActiveTab(0);
+
+				this.tabPanel.getActiveTab().fireEvent('show'); // Manual show event fire because was already selected
 			}
 		},
 
@@ -259,7 +268,12 @@
 						this.controllerProperties.cmfg('domainTabPropertiesFormGet').setDisabledModify(true, true, true, true);
 
 						this.cmfg('mainViewportAccordionDeselect', this.cmfg('domainIdentifierGet'));
-						this.cmfg('mainViewportAccordionControllerUpdateStore', { identifier: this.cmfg('domainIdentifierGet') });
+						this.cmfg('mainViewportAccordionControllerUpdateStore', {
+							identifier: this.cmfg('domainIdentifierGet'),
+							params: {
+								loadMask: true
+							}
+						});
 
 						CMDBuild.core.Message.success();
 					}
@@ -284,7 +298,10 @@
 			this.cmfg('mainViewportAccordionDeselect', this.cmfg('domainIdentifierGet'));
 			this.cmfg('mainViewportAccordionControllerUpdateStore', {
 				identifier: this.cmfg('domainIdentifierGet'),
-				nodeIdToSelect: decodedResponse[CMDBuild.core.constants.Proxy.ID_DOMAIN]
+				params: {
+					loadMask: true,
+					selectionId: decodedResponse[CMDBuild.core.constants.Proxy.ID_DOMAIN]
+				}
 			});
 
 			CMDBuild.core.Message.success();

@@ -328,14 +328,6 @@
 		"user": "Gebruiker",
 		"wait_msg": "Versturen van gegevens ..."
 	},
-	"cronTriggerField": {
-		"triggerFieldWindow": {
-			"every": "Iedere ",
-			"exactly": "Op een precies",
-			"inastepwith": "In een stap bereik",
-			"range": "In een bereik"
-		}
-	},
 	"delayLabels": {
 		"day1": "<em>In 1 day</em>",
 		"days2": "<em>In 2 days</em>",
@@ -711,6 +703,7 @@
 	"areYouSureYouWantToAbortThisProcess": "Weet je zeker dat je dit proces wilt afbreken?",
 	"as": "als",
 	"asynchronous": "Asynchroon",
+	"atAnExact": "Op een precies",
 	"attachFile": "Bestand toevoegen",
 	"attachments": "Bijlage",
 	"attention": "Attentie",
@@ -922,6 +915,7 @@
 	"eventAsynchronous": "<em>Event asynchronous</em>",
 	"eventSynchronous": "<em>Event synchronous</em>",
 	"eventTitle": "Aktiviteit titel",
+	"every": "Iedere",
 	"everyDay": "Iedere dag",
 	"everyHour": "Ieder uur",
 	"everyMonth": "Iedere maand",
@@ -988,6 +982,8 @@
 	"importFromCSV": "Importeer vanaf CSV",
 	"importJasperReport": "Ophalen Jasper rapport",
 	"importWasSuccessful": "Importeren is succesvol verlopen",
+	"inARange": "In een bereik",
+	"inAStepWith": "In een stap bereik",
 	"includeInherited": "Inclusief ge-erfte",
 	"includeRelations": "<em>Include relations</em>",
 	"includeSystemActivities": "<em>Include system activities</em>",

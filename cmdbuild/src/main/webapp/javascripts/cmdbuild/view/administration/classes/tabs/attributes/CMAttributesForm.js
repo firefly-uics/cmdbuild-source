@@ -1,7 +1,7 @@
 (function() {
 
 	/**
-	 * @link CMDBuild.view.administration.domain.tabs.attributes.FormPanel
+	 * @link CMDBuild.view.administration.domain.tabs.attributes.CMAttributesForm
 	 * @link CMDBuild.view.administration.workflow.CMAttributesForm
 	 */
 
@@ -57,7 +57,7 @@
 		}
 	});
 
-	Ext.define("CMDBuild.view.administration.classes.CMAttributesForm", {
+	Ext.define("CMDBuild.view.administration.classes.tabs.attributes.CMAttributesForm", {
 		extend: "Ext.form.Panel",
 
 		mixins: {
@@ -544,6 +544,7 @@
 					this.attributeGroup,
 					this.isBasedsp,
 					this.attributeUnique,
+					this.attributeNotNull,
 					this.isActive,
 					{
 						xtype: 'hidden',

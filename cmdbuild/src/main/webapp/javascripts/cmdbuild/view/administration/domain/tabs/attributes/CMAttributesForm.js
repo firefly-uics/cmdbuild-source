@@ -3,7 +3,7 @@
 	/**
 	 * This class have some custom code different from linked ones
 	 *
-	 * @link CMDBuild.view.administration.classes.CMAttributesForm
+	 * @link CMDBuild.view.administration.classes.tabs.attributes.CMAttributesForm
 	 * @link CMDBuild.view.administration.workflow.CMAttributesForm
 	 */
 
@@ -59,7 +59,7 @@
 		}
 	});
 
-	Ext.define("CMDBuild.view.administration.domain.tabs.attributes.FormPanel",{
+	Ext.define("CMDBuild.view.administration.domain.tabs.attributes.CMAttributesForm",{
 		extend: "Ext.form.Panel",
 
 		domainName: undefined,

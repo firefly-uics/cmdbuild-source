@@ -1,13 +1,15 @@
 package integration.dao.driver.postgres.query;
 
-import static org.cmdbuild.dao.query.clause.alias.Aliases.*;
-import static org.cmdbuild.dao.query.clause.Attributes.*;
+import static org.cmdbuild.dao.query.clause.QueryAliasAttribute.attribute;
+import static org.cmdbuild.dao.query.clause.alias.Aliases.as;
+import static org.cmdbuild.dao.query.clause.alias.Aliases.name;
 import static org.hamcrest.Matchers.containsString;
 import static org.junit.Assert.assertThat;
 import static utils.IntegrationTestUtils.newClass;
 
 import org.cmdbuild.dao.driver.postgres.query.QueryCreator;
 import org.cmdbuild.dao.entrytype.DBClass;
+import org.cmdbuild.dao.query.clause.alias.Alias;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -26,12 +28,12 @@ public class QueryCreatorTest extends IntegrationTestBase {
 	public void shouldBuildQueryWithDefinedAttributes() {
 		// given
 		final String codeAttributeName = newClass.getCodeAttributeName();
-		final String CLASS_ALIAS = "root";
+		final Alias CLASS_ALIAS = name("root");
 
 		// when
 		final String generatedQuery = new QueryCreator(dbDataView() //
-				.select(named(codeAttributeName)) //
-				.from(newClass, name(CLASS_ALIAS)) //
+				.select(attribute(CLASS_ALIAS,codeAttributeName)) //
+				.from(newClass, as(CLASS_ALIAS)) //
 				.build()) //
 				.getQuery();
 

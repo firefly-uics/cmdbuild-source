@@ -31,7 +31,7 @@
 			'onWorkflowTabDomainsRowSelect',
 			'onWorkflowTabDomainsShow',
 			'onWorkflowTabDomainsStoreLoad',
-			'onWorkflowTabDomainsWorkflowSelection'
+			'onWorkflowTabDomainsWorkflowSelected'
 		],
 
 		/**
@@ -117,7 +117,9 @@
 				this.cmfg('mainViewportAccordionControllerExpand', { identifier: CMDBuild.core.constants.ModuleIdentifiers.getDomain() });
 				this.cmfg('mainViewportAccordionControllerUpdateStore', {
 					identifier: CMDBuild.core.constants.ModuleIdentifiers.getDomain(),
-					nodeIdToSelect: this.selectedDomainGet(CMDBuild.core.constants.Proxy.ID_DOMAIN)
+					params: {
+						selectionId: this.selectedDomainGet(CMDBuild.core.constants.Proxy.ID_DOMAIN)
+					}
 				});
 			}
 		},
@@ -139,7 +141,9 @@
 				}, this, { single: true });
 				this.cmfg('mainViewportAccordionControllerUpdateStore', {
 					identifier: CMDBuild.core.constants.ModuleIdentifiers.getDomain(),
-					nodeIdToSelect: this.selectedDomainGet(CMDBuild.core.constants.Proxy.ID_DOMAIN)
+					params: {
+						selectionId: this.selectedDomainGet(CMDBuild.core.constants.Proxy.ID_DOMAIN)
+					}
 				});
 			}
 		},
@@ -240,7 +244,7 @@
 		 *
 		 * @returns {Void}
 		 */
-		onWorkflowTabDomainsWorkflowSelection: function () {
+		onWorkflowTabDomainsWorkflowSelected: function () {
 			this.view.setDisabled(
 				this.cmfg('workflowSelectedWorkflowIsEmpty')
 				|| this.cmfg('workflowSelectedWorkflowGet', CMDBuild.core.constants.Proxy.TABLE_TYPE) == CMDBuild.core.constants.Global.getTableTypeSimpleTable()

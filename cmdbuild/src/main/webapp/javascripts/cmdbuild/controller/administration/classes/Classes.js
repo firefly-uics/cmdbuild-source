@@ -22,7 +22,7 @@
 			'classesSelectedClassReset',
 			'identifierGet = classesIdentifierGet',
 			'onClassesAddButtonClick',
-			'onClassesClassSelection',
+			'onClassesClassSelected',
 			'onClassesModuleInit = onModuleInit',
 			'onClassesPrintButtonClick'
 		],
@@ -149,6 +149,8 @@
 		 * @override
 		 */
 		onClassesModuleInit: function (node) {
+			this.cmfg('classesSelectedClassReset');
+
 			if (Ext.isObject(node) && !Ext.Object.isEmpty(node)) {
 				var params = {};
 				params[CMDBuild.core.constants.Proxy.ACTIVE] = false;
@@ -168,40 +170,50 @@
 								this.classesSelectedClassSet({ value: selectedClass });
 
 								this.setViewTitle(this.cmfg('classesSelectedClassGet', CMDBuild.core.constants.Proxy.DESCRIPTION));
-
-								this.cmfg('onClassesClassSelection');
-
-								// Manage tab selection
-								if (Ext.isEmpty(this.tabPanel.getActiveTab()))
-									this.tabPanel.setActiveTab(0);
-
-								this.tabPanel.getActiveTab().fireEvent('show'); // Manual show event fire because was already selected
 							} else {
 								_error('onClassesModuleInit(): class not found', this, node.get(CMDBuild.core.constants.Proxy.ENTITY_ID));
 							}
 						}
 
+						this.cmfg('onClassesClassSelected');
+
+						// Manage tab selection
+						if (Ext.isEmpty(this.tabPanel.getActiveTab()))
+							this.tabPanel.setActiveTab(0);
+
+						this.tabPanel.getActiveTab().fireEvent('show'); // Manual show event fire because was already selected
+
 						this.onModuleInit(node); // Custom callParent() implementation
 					}
 				});
+			} else {
+				this.cmfg('onClassesClassSelected');
+
+				// Manage tab selection
+				if (Ext.isEmpty(this.tabPanel.getActiveTab()))
+					this.tabPanel.setActiveTab(0);
+
+				this.tabPanel.getActiveTab().fireEvent('show'); // Manual show event fire because was already selected
+
+				this.onModuleInit(node); // Custom callParent() implementation
 			}
 		},
 
 		/**
 		 * @returns {Void}
 		 *
-		 * FIXME: use cmfg redirect functionalities (onClassesTabClassSelection)
+		 * FIXME: use cmfg redirect functionalities (onClassesTabClassSelected)
 		 */
-		onClassesClassSelection: function () {
+		onClassesClassSelected: function () {
 			this.controllerAttributes.onClassSelected( // FIXME: legacy
 				this.cmfg('classesSelectedClassGet', CMDBuild.core.constants.Proxy.ID),
 				this.cmfg('classesSelectedClassGet', CMDBuild.core.constants.Proxy.NAME)
 			);
-			this.controllerDomains.cmfg('onClassesTabDomainsClassSelection');
-			this.controllerGeoAttributes.cmfg('onClassesTabGeoAttributesClassSelection');
-			this.controllerLayers.cmfg('onClassesTabLayersClassSelection');
-			this.controllerProperties.cmfg('onClassesTabPropertiesClassSelection');
-			this.controllerWidgets.cmfg('onClassesTabWidgetsClassSelection');
+			this.controllerDomains.cmfg('onClassesTabDomainsClassSelected');
+			this.controllerGeoAttributes.cmfg('onClassesTabGeoAttributesClassSelected');
+			this.controllerLayers.cmfg('onClassesTabLayersClassSelected');
+			this.controllerProperties.cmfg('onClassesTabPropertiesClassSelected');
+			this.controllerWidgets.cmfg('onClassesTabWidgetsClassSelected');
 		},
 
 		/**

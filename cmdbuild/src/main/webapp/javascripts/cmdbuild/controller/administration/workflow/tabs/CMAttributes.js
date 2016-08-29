@@ -2,7 +2,7 @@
 
 	/**
 	 * @link CMDBuild.controller.administration.classes.tabs.CMAttributes
-	 * @link CMDBuild.controller.administration.domain.tabs.Attributes
+	 * @link CMDBuild.controller.administration.domain.tabs.CMAttributes
 	 */
 
 	Ext.require([
@@ -84,12 +84,18 @@
 		onClassSelected: function(classId, className) {
 			this.currentClassId = classId;
 			this.currentClassName = className;
-			this.view.enable();
-			if (tabIsActive(this.view)) {
-				this.toLoad = false;
-				this.view.onClassSelected(this.currentClassId, this.currentClassName);
+
+			if (!Ext.isEmpty(classId) && !Ext.isEmpty(className)) {
+				this.view.enable();
+
+				if (tabIsActive(this.view)) {
+					this.toLoad = false;
+					this.view.onClassSelected(this.currentClassId, this.currentClassName);
+				} else {
+					this.toLoad = true;
+				}
 			} else {
-				this.toLoad = true;
+				this.view.disable();
 			}
 		},
 

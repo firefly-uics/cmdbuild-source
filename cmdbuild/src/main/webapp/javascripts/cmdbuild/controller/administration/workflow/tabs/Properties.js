@@ -34,7 +34,7 @@
 			'onWorkflowTabPropertiesSaveButtonClick',
 			'onWorkflowTabPropertiesShow',
 			'onWorkflowTabPropertiesUploadXpdlPanelUploadButtonClick',
-			'onWorkflowTabPropertiesWorkflowSelection'
+			'onWorkflowTabPropertiesWorkflowSelected'
 		],
 
 		/**
@@ -322,8 +322,10 @@
 		 *
 		 * @returns {Void}
 		 */
-		onWorkflowTabPropertiesWorkflowSelection: function () {
-			this.view.setDisabled(this.cmfg('workflowSelectedWorkflowIsEmpty'));
+		onWorkflowTabPropertiesWorkflowSelected: function () {
+			this.view.enable();
+
+			this.form.reset();
 		},
 
 		/**
@@ -368,10 +370,12 @@
 
 			CMDBuild.view.common.field.translatable.Utils.commit(this.propertiesPanel);
 
-			this.cmfg('mainViewportAccordionDeselect', this.cmfg('classesIdentifierGet'));
+			this.cmfg('mainViewportAccordionDeselect', this.cmfg('workflowIdentifierGet'));
 			this.cmfg('mainViewportAccordionControllerUpdateStore', {
 				identifier: CMDBuild.core.constants.ModuleIdentifiers.getWorkflow(),
-				nodeIdToSelect: decodedResponse[CMDBuild.core.constants.Proxy.ID]
+				params: {
+					selectionId: decodedResponse[CMDBuild.core.constants.Proxy.ID]
+				}
 			});
 
 			CMDBuild.core.Message.success();

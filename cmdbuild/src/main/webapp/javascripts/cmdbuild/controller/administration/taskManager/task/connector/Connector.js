@@ -162,7 +162,7 @@
 							this.controllerStep1.setValueId(record.get(CMDBuild.core.constants.Proxy.ID));
 							this.controllerStep1.setValueNotificationAccount(record.get(CMDBuild.core.constants.Proxy.NOTIFICATION_EMAIL_ACCOUNT));
 							this.controllerStep1.setValueNotificationFieldsetCheckbox(record.get(CMDBuild.core.constants.Proxy.NOTIFICATION_ACTIVE));
-							this.controllerStep1.setValueNotificationTemplateError(record.get(CMDBuild.core.constants.Proxy.NOTIFICATION_EMAIL_TEMPLATE_ERROR));
+							this.controllerStep1.setValueNotificationTemplate(record.get(CMDBuild.core.constants.Proxy.NOTIFICATION_EMAIL_TEMPLATE_ERROR));
 
 							// Setup step 2
 							this.controllerStep2.setValueAdvancedFields(record.get(CMDBuild.core.constants.Proxy.CRON_EXPRESSION));

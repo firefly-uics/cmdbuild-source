@@ -54,21 +54,24 @@
 		},
 
 		/**
-		 * @param {Number} nodeIdToSelect
+		 * @param {Object} parameters
+		 * @param {Boolean} parameters.loadMask
+		 * @param {Number} parameters.selectionId
 		 *
 		 * @returns {Void}
 		 *
 		 * @override
 		 */
-		accordionUpdateStore: function (nodeIdToSelect) {
-			nodeIdToSelect = Ext.isNumber(nodeIdToSelect) ? nodeIdToSelect : null;
+		accordionUpdateStore: function (parameters) {
+			parameters = Ext.isObject(parameters) ? parameters : {};
+			parameters.selectionId = Ext.isNumber(parameters.selectionId) ? parameters.selectionId : null;
 
 			var params = {};
 			params[CMDBuild.core.constants.Proxy.ACTIVE] = true;
 
 			CMDBuild.proxy.management.workflow.Workflow.readAll({
 				params: params,
-				loadMask: false,
+				loadMask: Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : false,
 				scope: this,
 				success: function (response, options, decodedResponse) {
 					decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.CLASSES] || [];
@@ -78,7 +81,10 @@
 
 					// Removes all processes and root class from response
 					decodedResponse = Ext.Array.filter(decodedResponse, function (item, i, array) {
-						return item[CMDBuild.core.constants.Proxy.TYPE] == CMDBuild.core.constants.Global.getTableTypeProcessClass(); // Discard processes
+						return (
+							item[CMDBuild.core.constants.Proxy.TYPE] == CMDBuild.core.constants.Global.getTableTypeProcessClass() // Discard classes
+							&& item[CMDBuild.core.constants.Proxy.NAME] != CMDBuild.core.constants.Global.getRootNameWorkflows() // Discard processes root class
+						);
 					}, this);
 
 					if (!Ext.isEmpty(decodedResponse)) {
@@ -121,8 +127,7 @@
 						}
 					}
 
-					// Alias of this.callParent(arguments), inside proxy function doesn't work
-					this.updateStoreCommonEndpoint(nodeIdToSelect);
+					this.updateStoreCommonEndpoint(parameters); // CallParent alias
 				}
 			});
 

@@ -328,14 +328,6 @@
 		"user": "ユーザー",
 		"wait_msg": "データ送信中..."
 	},
-	"cronTriggerField": {
-		"triggerFieldWindow": {
-			"every": "全ての",
-			"exactly": "正確に",
-			"inastepwith": "ステップ幅",
-			"range": "範囲"
-		}
-	},
 	"delayLabels": {
 		"day1": "<em>In 1 day</em>",
 		"days2": "<em>In 2 days</em>",
@@ -711,6 +703,7 @@
 	"areYouSureYouWantToAbortThisProcess": "本当にこのプロセスを中止しますか?",
 	"as": "as",
 	"asynchronous": "非同期",
+	"atAnExact": "正確に",
 	"attachFile": "ファイルを添付",
 	"attachments": "添付",
 	"attention": "注意",
@@ -922,6 +915,7 @@
 	"eventAsynchronous": "<em>Event asynchronous</em>",
 	"eventSynchronous": "<em>Event synchronous</em>",
 	"eventTitle": "イベント名",
+	"every": "全ての",
 	"everyDay": "毎日",
 	"everyHour": "毎時",
 	"everyMonth": "毎月",
@@ -988,6 +982,8 @@
 	"importFromCSV": "CSVからインポート",
 	"importJasperReport": "jasperレポートをインポート",
 	"importWasSuccessful": "インポート成功",
+	"inARange": "範囲",
+	"inAStepWith": "ステップ幅",
 	"includeInherited": "継承を含む",
 	"includeRelations": "<em>Include relations</em>",
 	"includeSystemActivities": "<em>Include system activities</em>",
