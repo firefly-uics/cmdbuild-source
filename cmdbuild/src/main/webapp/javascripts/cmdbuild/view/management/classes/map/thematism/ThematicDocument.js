@@ -1,16 +1,36 @@
 (function() {
 	Ext.define('CMDBuild.view.management.classes.map.thematism.ThematicDocument', {
+		thematisms4Classes : [],
 		thematisms : [],
+
+		/**
+		 * 
+		 * @property {CMDBuild.view.management.classes.map.thematism.ThematicStrategiesManager}
+		 * 
+		 */
 		strategiesManager : undefined,
 
 		/**
-		 * CMDBuild.core.buttons.gis.Thematism
+		 * 
+		 * @property {CMDBuild.core.buttons.gis.Thematism}
+		 * 
 		 */
 		thematismButton : undefined,
 
+		/**
+		 * 
+		 * @property {CMDBuild.view.management.classes.map.geoextension.InteractionDocument}
+		 * 
+		 */
 		interactionDocument : undefined,
+
+		/**
+		 * 
+		 * @property {CMDBuild.view.management.classes.map.thematism.ThematicColors}
+		 * 
+		 */
 		thematicColors : undefined,
-		
+
 		/**
 		 * 
 		 * @property {String}
@@ -18,6 +38,10 @@
 		 */
 		currentClassName : undefined,
 
+		/**
+		 * 
+		 * @returns {Void}
+		 */
 		addThematism : function(thematism, bModify) {
 			var thematicLayer = Ext.create('CMDBuild.view.management.classes.map.thematism.ThematicLayer', thematism,
 					this.interactionDocument);
@@ -28,22 +52,45 @@
 			this.thematisms.push(thematism);
 			this.interactionDocument.changed();
 		},
-		
-		init : function(interactionDocument, thematicColors) {
-			this.interactionDocument = interactionDocument;
-			this.thematicColors = thematicColors;
-		},
-		setThematismButton : function(thematismButton) {
-			this.thematismButton = thematismButton;
-		},
+
+		/**
+		 * @param
+		 * {CMDBuild.view.management.classes.map.thematism.ThematicStrategiesManager}
+		 * strategiesManager
+		 * 
+		 * @returns {Void}
+		 */
 		configureStrategiesManager : function(strategiesManager) {
 			this.strategiesManager = strategiesManager
 		},
+
+		/**
+		 * 
+		 * @returns {Void}
+		 */
 		forceRefreshThematism : function() {
 			for (var i = 0; i < this.thematisms.length; i++) {
 				var thematism = this.thematisms[i];
 				thematism.thematicLayer.setDirty();
 			}
+		},
+		getAllLayers : function() {
+			var layers = [];
+			var map = this.interactionDocument.getMap();
+			var mapLayers = map.getLayers();
+			mapLayers.forEach(function(layer) {
+				var geoAttribute = layer.get("geoAttribute");
+				if (layer.masterTableName === "_Thematism") {
+					layers.push(layer);
+				}
+			});
+			return layers;
+		},
+		getColor : function(value, colorsTable) {
+			return this.thematicColors.getColor(value, colorsTable);
+		},
+		getDefaultThematismConfiguration : function() {
+			return clone(defaultConfiguration);
 		},
 		getFieldStrategies : function(callback, callbackScope) {
 			this.strategiesManager.getFieldStrategies(function(strategies) {
@@ -55,9 +102,6 @@
 				callback.apply(callbackScope, [ strategies ]);
 			}, this);
 		},
-		getDefaultThematismConfiguration : function() {
-			return clone(defaultConfiguration);
-		},
 		getLayerByName : function(name) {
 			for (var i = 0; i < this.thematisms.length; i++) {
 				var thematism = this.thematisms[i];
@@ -67,6 +111,12 @@
 			}
 			return null;
 		},
+
+		/**
+		 * 
+		 * @returns {Array} ol.Layer
+		 * 
+		 */
 		getLayers : function() {
 			var layers = [];
 			for (var i = 0; i < this.thematisms.length; i++) {
@@ -75,12 +125,23 @@
 			}
 			return layers;
 		},
-		getColor : function(value, colorsTable) {
-			return this.thematicColors.getColor(value, colorsTable);
-		},
+
+		/**
+		 * @param {String}
+		 *            description
+		 * 
+		 * @returns {Object} strategy
+		 */
 		getStrategyByDescription : function(description) {
 			return this.strategiesManager.getStrategyByDescription(description);
 		},
+
+		/**
+		 * @param {String}
+		 *            name
+		 * 
+		 * @returns {Array} ol.Layer
+		 */
 		getThematicLayersBySourceName : function(name) {
 			var thematicLayers = [];
 			for (var i = 0; i < this.thematisms.length; i++) {
@@ -91,12 +152,60 @@
 			}
 			return thematicLayers;
 		},
+
+		/**
+		 * @param
+		 * {CMDBuild.view.management.classes.map.geoextension.InteractionDocument}
+		 * interactionDocument
+		 * @param {Object}
+		 *            thematicColors
+		 * @returns {Void}
+		 */
+		init : function(interactionDocument, thematicColors) {
+			this.interactionDocument = interactionDocument;
+			this.thematicColors = thematicColors;
+		},
+
+		/**
+		 * 
+		 * @returns {Void}
+		 */
+		modifyThematism : function(thematism) {
+			this.removeThematism(thematism);
+			this.addThematism(thematism, true);
+		},
+
+		/**
+		 * 
+		 * @returns {Void}
+		 */
 		refreshFeatures : function(layerName, features) {
 			var thematicLayers = this.getThematicLayersBySourceName(layerName);
 			for (var i = 0; i < thematicLayers.length; i++) {
 				thematicLayers[i].refreshFeatures(features);
 			}
 		},
+
+		/**
+		 * 
+		 * @returns {Void}
+		 */
+		removeAllThematicLayers : function() {
+			var map = this.interactionDocument.getMap();
+			var layers = map.getLayers();
+			layers.forEach(function(layer) {
+				var geoAttribute = layer.get("geoAttribute");
+				if (layer.masterTable === "_Thematism"
+						|| (geoAttribute && geoAttribute.masterTableName === "_Thematism")) {
+					var debug = map.removeLayer(layer);
+				}
+			});
+		},
+
+		/**
+		 * 
+		 * @returns {Void}
+		 */
 		removeThematism : function(thematism) {
 			var index = -1;
 			for (var i = 0; i < this.thematisms.length; i++) {
@@ -111,12 +220,62 @@
 				this.thematisms.splice(index, 1);
 			}
 		},
-		modifyThematism : function(thematism) {
-			this.removeThematism(thematism);
-			this.addThematism(thematism, true);
+
+		/**
+		 * 
+		 * @returns {Void}
+		 */
+		recover : function(thematisms4Class) {
+			for (var i = 0; i < thematisms4Class.length; i++) {
+				this.addThematism(thematisms4Class[i], true);
+			}
 		},
+
+		/**
+		 * 
+		 * @returns {Void}
+		 */
+		refreshLayerButton : function() {
+			this.thematismButton.removeAll();
+			var names = [];
+			for (var i = 0; i < this.thematisms.length; i++) {
+				var thematism = this.thematisms[i];
+				names.push(thematism.name);
+			}
+			this.thematismButton.add(names);
+		},
+
+		/**
+		 * @param {Object}
+		 *            card
+		 * @param {Integer}
+		 *            card.cardId
+		 * @param {String}
+		 *            card.className
+		 * 
+		 * @returns {Void}
+		 */
 		setCurrentCard : function(card) {
-		}
+			if (this.currentClassName && card.className !== this.currentClassName) {
+				this.removeAllThematicLayers();
+				this.thematisms4Classes[this.currentClassName] = this.thematisms;
+				this.thematisms = [];
+				if (this.thematisms4Classes[card.className]) {
+					this.recover(this.thematisms4Classes[card.className]);
+				}
+			}
+			this.refreshLayerButton();
+			this.currentClassName = card.className;
+		},
+
+		/**
+		 * @param {CMDBuild.core.buttons.gis.Thematism}
+		 *            thematismButton
+		 * @returns {Void}
+		 */
+		setThematismButton : function(thematismButton) {
+			this.thematismButton = thematismButton;
+		},
 	});
 
 	var defaultConfiguration = {

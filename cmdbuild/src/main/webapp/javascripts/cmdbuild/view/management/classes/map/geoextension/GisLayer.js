@@ -315,13 +315,12 @@
 					callback.apply(callbackScope, [ undefined ]);
 					return;
 				}
-				var x = feature.geometry.coordinates[0];
-				var y = feature.geometry.coordinates[1];
-				callback.apply(callbackScope, [ [ x, y ] ]);
+				var center = getCenter(feature.geometry);
+				callback.apply(callbackScope, [ center ]);
 			}
 			var cardId = card.cardId;
 			var className = card.className;
-			_CMCache.getLayersForEntryTypeName(className, function(layers) {
+//			_CMCache.getLayersForEntryTypeName(className, function(layers) {
 				CMDBuild.proxy.gis.Gis.getFeature({
 					params : {
 						"className" : className,
@@ -331,7 +330,7 @@
 					scope : this,
 					success : onSuccess
 				});
-			});
+//			});
 
 		},
 
@@ -396,7 +395,7 @@
 		getGeometries : function(cardId, className) {
 			var featuresOnLayer = this.getFeaturesByCardId(cardId);
 			var translation = undefined;
-			featuresOnLayer.forEach(function(feature) { // first found is good
+			featuresOnLayer.forEach(function(feature) { // first found is good <<<----NB!!
 				var geojson = new ol.format.GeoJSON();
 				var json = geojson.writeFeature(feature);
 				translation = translate2CMDBuild(feature);
@@ -513,5 +512,37 @@
 		return CMDBuild.proxy.index.Json.gis.getGeoCardList + '?'
 				+ CMDBuild.core.constants.Proxy.AUTHORIZATION_HEADER_KEY + '='
 				+ Ext.util.Cookies.get(CMDBuild.core.constants.Proxy.AUTHORIZATION_HEADER_KEY); // FIXME:
+	}
+	function getCenterOfExtent(extent) {
+		var x = extent[0] + (extent[2] - extent[0]) / 2;
+		var y = extent[1] + (extent[3] - extent[1]) / 2;
+		return [ x, y ];
+	}
+	function getPointCenter(geometry) {
+		return geometry.coordinates;
+	}
+	function getPolygonCenter(geometry) {
+		var minX = Number.MAX_VALUE;
+		var minY = Number.MAX_VALUE;
+		var maxX = Number.MIN_VALUE;
+		var maxY = Number.MIN_VALUE;
+		var coordinates = geometry.coordinates[0];
+		for (var i = 0; i < coordinates.length; i++) {
+			var coordinate = coordinates[i];
+			minX = Math.min(minX, coordinate[0]);
+			maxX = Math.max(maxX, coordinate[0]);
+			minY = Math.min(minY, coordinate[1]);
+			maxY = Math.max(maxY, coordinate[1]);
+		}
+		return getCenterOfExtent([minX, minY, maxX, maxY]);
+	}
+	function getCenter(geometry) {
+		switch(geometry.type) {
+		case "POLYGON" :
+			return getPolygonCenter(geometry);
+		case "POINT" :
+			return getPointCenter(geometry);
+		}
+		
 	}
 })();
