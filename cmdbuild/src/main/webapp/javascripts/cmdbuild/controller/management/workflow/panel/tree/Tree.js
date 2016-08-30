@@ -304,7 +304,9 @@
 		},
 
 		/**
-		 * NOTE: store loading is dove by paging toolbar
+		 * Setup store, columns and sorters
+		 *
+		 * NOTE: store loading is driven also by paging toolbar
 		 *
 		 * @param {CMDBuild.model.common.Accordion} node
 		 *
@@ -312,7 +314,7 @@
 		 */
 		onWorkflowTreeWokflowSelect: function (node) {
 			this.view.reconfigure(
-				this.cmfg('workflowTreeStoreGet'),
+				this.storeSortersSet(this.cmfg('workflowTreeStoreGet')),
 				this.workflowTreeBuildColumns()
 			);
 
@@ -489,47 +491,6 @@
 			}
 		},
 
-		// Store extra params methods
-			/**
-			 * @param {String} name
-			 *
-			 * @returns {Mixed}
-			 *
-			 * @private
-			 */
-			storeExtraParamsGet: function (name) {
-				var extraParams = this.cmfg('workflowTreeStoreGet').getProxy().extraParams;
-
-				if (Ext.isString(name) && !Ext.isEmpty(name))
-					return extraParams[name];
-
-				return extraParams;
-			},
-
-			/**
-			 * @param {String} name
-			 *
-			 * @returns {Mixed}
-			 *
-			 * @private
-			 */
-			storeExtraParamsRemove: function (name) {
-				if (Ext.isString(name) && !Ext.isEmpty(name))
-					delete this.storeExtraParamsGet()[name];
-			},
-
-			/**
-			 * @param {Object} valueObject
-			 *
-			 * @returns {Void}
-			 *
-			 * @private
-			 */
-			storeExtraParamsSet: function (valueObject) {
-				if (Ext.isObject(valueObject))
-					this.cmfg('workflowTreeStoreGet').getProxy().extraParams = valueObject;
-			},
-
 		// Tree selection methods
 			/**
 			 * Select activity by metadata
@@ -595,6 +556,114 @@
 			selectFirst: function () {
 				if (!this.view.getSelectionModel().hasSelection())
 					this.view.getSelectionModel().select(0, true);
+			},
+
+		// Store extra params methods
+			/**
+			 * @param {String} name
+			 *
+			 * @returns {Mixed}
+			 *
+			 * @private
+			 */
+			storeExtraParamsGet: function (name) {
+				var extraParams = this.cmfg('workflowTreeStoreGet').getProxy().extraParams;
+
+				if (Ext.isString(name) && !Ext.isEmpty(name))
+					return extraParams[name];
+
+				return extraParams;
+			},
+
+			/**
+			 * @param {String} name
+			 *
+			 * @returns {Mixed}
+			 *
+			 * @private
+			 */
+			storeExtraParamsRemove: function (name) {
+				if (Ext.isString(name) && !Ext.isEmpty(name))
+					delete this.storeExtraParamsGet()[name];
+			},
+
+			/**
+			 * @param {Object} valueObject
+			 *
+			 * @returns {Void}
+			 *
+			 * @private
+			 */
+			storeExtraParamsSet: function (valueObject) {
+				if (Ext.isObject(valueObject))
+					this.cmfg('workflowTreeStoreGet').getProxy().extraParams = valueObject;
+			},
+
+		// Store sorters
+			/**
+			 * @param {Ext.data.TreeStore} store
+			 * @param {Object} sorter
+			 *
+			 * @returns {Void}
+			 *
+			 * @private
+			 */
+			storeSortersAdd: function (store, sorter) {
+				// Error handling
+					if (Ext.isEmpty(store) || Ext.isEmpty(store.sorters) || !Ext.isFunction(store.sorters.add))
+						return _error('storeSortersClear(): unable to add store sorters', this, store, sorter);
+
+					if (
+						!Ext.isObject(sorter) || Ext.Object.isEmpty(sorter)
+						|| Ext.isEmpty(sorter.property)
+						|| Ext.isEmpty(sorter.direction)
+					) {
+						return _error('storeSortersClear(): unmanaged sorter object', this, store, sorter);
+					}
+				// END: Error handling
+
+				store.sorters.add(sorter);
+			},
+
+			/**
+			 * @param {Ext.data.TreeStore} store
+			 *
+			 * @returns {Void}
+			 *
+			 * @private
+			 */
+			storeSortersClear: function (store) {
+				if (!Ext.isEmpty(store) && !Ext.isEmpty(store.sorters) && Ext.isFunction(store.sorters.clear))
+					return store.sorters.clear();
+
+				return _error('storeSortersClear(): unable to clear store sorters', this, store);
+			},
+
+			/**
+			 * @param {Ext.data.TreeStore} store
+			 *
+			 * @returns {Ext.data.TreeStore} store
+			 *
+			 * @private
+			 */
+			storeSortersSet: function (store) {
+				var attributes = CMDBuild.core.Utils.objectArraySort(this.cmfg('workflowSelectedWorkflowAttributesGet'), CMDBuild.core.constants.Proxy.SORT_INDEX);
+
+				// Setup store sorters
+				this.storeSortersClear(store);
+
+				if (Ext.isArray(attributes) && !Ext.isEmpty(attributes))
+					Ext.Array.each(attributes, function (attributeModel, i, allAttributeModels) {
+						if (
+							Ext.isObject(attributeModel) && !Ext.Object.isEmpty(attributeModel)
+							&& !Ext.isEmpty(attributeModel.get(CMDBuild.core.constants.Proxy.SORT_DIRECTION))
+						) {
+							this.storeSortersAdd(store, {
+								property: attributeModel.get(CMDBuild.core.constants.Proxy.NAME),
+								direction: attributeModel.get(CMDBuild.core.constants.Proxy.SORT_DIRECTION)
+							});
+						}
+					}, this);
 			},
 
 		/**
@@ -888,6 +957,7 @@
 
 		/**
 		 * On load action sends by default node parameter witch isn't managed by server
+		 * Manages store configurations like: filter, sorters, attributes, class name and state (flowStatus)
 		 *
 		 * @param {Object} parameters
 		 * @param {Function} parameters.callback

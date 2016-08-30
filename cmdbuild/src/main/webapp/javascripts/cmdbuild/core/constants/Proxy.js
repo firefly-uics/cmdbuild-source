@@ -560,6 +560,7 @@
 		SMTP_SSL: 'smtpSsl',
 		SMTP_START_TLS: 'smtpStartTls',
 		SORT: 'sort',
+		SORT_DIRECTION: 'sortDirection',
 		SOURCE: 'source',
 		SOURCE_ATTRIBUTE: 'sourceAttribute',
 		SOURCE_CLASS_NAME: 'sourceClassName',
