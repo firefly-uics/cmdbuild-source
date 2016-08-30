@@ -10,6 +10,11 @@
 		override: 'Ext.data.TreeStore',
 
 		/**
+		 * @cfg {Boolean}
+		 */
+		clearOnPageLoad: true,
+
+		/**
 		 * @cfg {Number}
 		 */
 		currentPage: 1,
@@ -34,6 +39,11 @@
 		 * @property {Boolean}
 		 */
 		disableWarnings: false,
+
+		/**
+		 * @cfg {Number}
+		 */
+		pageSize: undefined,
 
 		/**
 		 * GetTotalCount implementation to use paging bar in tree 30/06/2016
