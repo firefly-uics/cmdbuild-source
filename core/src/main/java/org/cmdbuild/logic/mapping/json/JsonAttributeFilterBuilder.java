@@ -1,6 +1,7 @@
 package org.cmdbuild.logic.mapping.json;
 
 import static com.google.common.base.Functions.identity;
+import static com.google.common.collect.FluentIterable.from;
 import static com.google.common.collect.Iterables.get;
 import static com.google.common.collect.Iterables.size;
 import static java.util.Arrays.asList;
@@ -8,6 +9,7 @@ import static org.apache.commons.lang3.ObjectUtils.defaultIfNull;
 import static org.cmdbuild.dao.driver.postgres.Const.SystemAttributes.DomainId1;
 import static org.cmdbuild.dao.driver.postgres.Const.SystemAttributes.DomainId2;
 import static org.cmdbuild.dao.driver.postgres.Const.SystemAttributes.Id;
+import static org.cmdbuild.dao.driver.postgres.Const.SystemAttributes.IdClass;
 import static org.cmdbuild.dao.query.clause.QueryAliasAttribute.attribute;
 import static org.cmdbuild.dao.query.clause.where.AndWhereClause.and;
 import static org.cmdbuild.dao.query.clause.where.NotWhereClause.not;
@@ -31,10 +33,12 @@ import static org.cmdbuild.dao.query.clause.where.SimpleWhereClause.condition;
 import static org.cmdbuild.logic.mapping.json.Constants.Filters.AND_KEY;
 import static org.cmdbuild.logic.mapping.json.Constants.Filters.ATTRIBUTE_KEY;
 import static org.cmdbuild.logic.mapping.json.Constants.Filters.CLASSNAME_KEY;
+import static org.cmdbuild.logic.mapping.json.Constants.Filters.NOT_KEY;
 import static org.cmdbuild.logic.mapping.json.Constants.Filters.OPERATOR_KEY;
 import static org.cmdbuild.logic.mapping.json.Constants.Filters.OR_KEY;
 import static org.cmdbuild.logic.mapping.json.Constants.Filters.SIMPLE_KEY;
 import static org.cmdbuild.logic.mapping.json.Constants.Filters.VALUE_KEY;
+import static org.cmdbuild.logic.mapping.json.Constants.Filters._TYPE;
 
 import java.util.List;
 
@@ -43,6 +47,7 @@ import org.cmdbuild.common.Builder;
 import org.cmdbuild.dao.entrytype.CMAttribute;
 import org.cmdbuild.dao.entrytype.CMEntryType;
 import org.cmdbuild.dao.entrytype.attributetype.CMAttributeType;
+import org.cmdbuild.dao.entrytype.attributetype.EntryTypeAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.IntegerAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.UndefinedAttributeType;
 import org.cmdbuild.dao.query.clause.HistoricEntryType;
@@ -160,6 +165,9 @@ public class JsonAttributeFilterBuilder implements Builder<WhereClause> {
 			return or(buildWhereClause(first), //
 					buildWhereClause(second), //
 					createOptionalWhereClauses(conditions));
+		} else if (filterObject.has(NOT_KEY)) {
+			final JSONObject condition = filterObject.getJSONObject(NOT_KEY);
+			return not(buildWhereClause(condition));
 		}
 		throw new IllegalArgumentException("The filter is malformed");
 	}
@@ -168,7 +176,7 @@ public class JsonAttributeFilterBuilder implements Builder<WhereClause> {
 	 * NOTE: @parameter values is always an array of strings
 	 */
 	private WhereClause buildSimpleWhereClause(final QueryAliasAttribute attribute, final String operator,
-			final Iterable<Object> values) throws JSONException {
+			final Iterable<Object> values) {
 		/**
 		 * In this way if the user does not have privileges to read that
 		 * attributes, it is possible to fetch it to build the correct where
@@ -187,11 +195,54 @@ public class JsonAttributeFilterBuilder implements Builder<WhereClause> {
 	}
 
 	private WhereClause buildSimpleWhereClause(final QueryAliasAttribute attribute, final String operator,
-			final Iterable<Object> values, CMAttributeType<?> type) throws JSONException {
-		if (asList(Id.getDBName(), DomainId1.getDBName(), DomainId2.getDBName()).contains(attribute.getName())) {
-			type = new IntegerAttributeType();
+			final Iterable<Object> values, final CMAttributeType<?> type) {
+		final QueryAliasAttribute _attribute;
+		if (asList(_TYPE).contains(attribute.getName())) {
+			_attribute = attribute(attribute.getAlias(), IdClass.getDBName());
+		} else {
+			_attribute = attribute;
 		}
 
+		final CMAttributeType<?> _type;
+		if (asList(Id.getDBName(), DomainId1.getDBName(), DomainId2.getDBName()).contains(attribute.getName())) {
+			_type = new IntegerAttributeType();
+		} else if (asList(IdClass.getDBName()).contains(attribute.getName())) {
+			_type = new EntryTypeAttributeType();
+		} else if (asList(_TYPE).contains(attribute.getName())) {
+			_type = new EntryTypeAttributeType();
+		} else {
+			_type = type;
+		}
+
+		final Iterable<Object> _values;
+		if (asList(_TYPE).contains(attribute.getName())) {
+			_values = from(values) //
+					.transform(new Function<Object, Long>() {
+
+						@Override
+						public Long apply(final Object input) {
+							return dataView.findClass(String.class.cast(input)).getId();
+						}
+
+					}) //
+					.filter(Long.class) //
+					.transform(new Function<Long, Object>() {
+
+						@Override
+						public Object apply(final Long input) {
+							return input;
+						}
+
+					});
+		} else {
+			_values = values;
+		}
+
+		return buildSimpleWhereClause0(_attribute, operator, _values, _type);
+	}
+
+	private WhereClause buildSimpleWhereClause0(final QueryAliasAttribute attribute, final String operator,
+			final Iterable<Object> values, final CMAttributeType<?> type) {
 		if (operator.equals(FilterOperator.EQUAL.toString())) {
 			Validate.isTrue(size(values) == 1);
 			return condition(attribute, eq(type.convertValue(get(values, 0))));

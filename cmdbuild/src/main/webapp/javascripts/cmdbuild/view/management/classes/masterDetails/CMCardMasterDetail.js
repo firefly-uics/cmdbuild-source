@@ -1,6 +1,6 @@
 (function() {
 
-	Ext.require('CMDBuild.proxy.classes.MasterDetail');
+	Ext.require('CMDBuild.proxy.classes.tabs.MasterDetail');
 
 	var MD = "detail";
 	var FK = "foreignkey";
@@ -13,7 +13,7 @@
 		eventmastertype: 'class',
 
 		constructor: function() {
-			this.addDetailButton = new CMDBuild.AddCardMenuButton({
+			this.addDetailButton = Ext.create('CMDBuild.core.buttons.iconized.split.add.Card', {
 				classId: undefined,
 				baseText: CMDBuild.Translation.management.moddetail.adddetail,
 				textPrefix: CMDBuild.Translation.management.moddetail.adddetail
@@ -75,7 +75,7 @@
 			var params = {};
 			params[CMDBuild.core.constants.Proxy.CLASS_NAME] = _CMCache.getEntryTypeNameById(classId);
 
-			CMDBuild.proxy.classes.MasterDetail.readForeignKeyTargetingClass({
+			CMDBuild.proxy.classes.tabs.MasterDetail.readForeignKeyTargetingClass({
 				params: params,
 				loadMask: false,
 				scope: this,

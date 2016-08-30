@@ -193,7 +193,7 @@
 		},
 
 		onOpenGraphClick: function(model) {
-			Ext.create('CMDBuild.controller.management.common.graph.Graph', {
+			Ext.create('CMDBuild.controller.common.panel.gridAndForm.panel.common.graph.Window', {
 				parentDelegate: this,
 				classId: model.get('IdClass'),
 				cardId: model.get('id')
@@ -260,8 +260,7 @@
 	function onDetailDoubleClick(grid, model, html, index, e, options) {
 		CMDBuild.global.controller.MainViewport.cmfg('mainViewportCardSelect', {
 			Id: model.get("Id"),
-			IdClass: model.get("IdClass"),
-			activateFirstTab: true
+			IdClass: model.get("IdClass")
 		});
 	}
 

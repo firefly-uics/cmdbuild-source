@@ -1,7 +1,11 @@
 package org.cmdbuild.logic.filter;
 
+import java.util.Optional;
+
 import org.cmdbuild.common.utils.PagedElements;
 import org.cmdbuild.logic.Logic;
+
+import com.google.common.collect.ForwardingObject;
 
 public interface FilterLogic extends Logic {
 
@@ -21,13 +25,52 @@ public interface FilterLogic extends Logic {
 
 	}
 
+	abstract class ForwardingFilter extends ForwardingObject implements Filter {
+
+		@Override
+		protected abstract Filter delegate();
+
+		@Override
+		public Long getId() {
+			return delegate().getId();
+		}
+
+		@Override
+		public String getName() {
+			return delegate().getName();
+		}
+
+		@Override
+		public String getDescription() {
+			return delegate().getDescription();
+		}
+
+		@Override
+		public String getClassName() {
+			return delegate().getClassName();
+		}
+
+		@Override
+		public String getConfiguration() {
+			return delegate().getConfiguration();
+		}
+
+		@Override
+		public boolean isShared() {
+			return delegate().isShared();
+		}
+
+	}
+
 	Filter create(Filter filter);
+
+	Optional<Filter> read(Filter filter);
 
 	void update(Filter filter);
 
 	void delete(Filter filter);
 
-	PagedElements<Filter> readForCurrentUser(String className);
+	Iterable<Filter> readForCurrentUser(String className);
 
 	PagedElements<Filter> readShared(String className, int start, int limit);
 

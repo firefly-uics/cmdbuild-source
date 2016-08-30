@@ -5,7 +5,6 @@
 
 		requires: [
 			'CMDBuild.core.constants.Proxy',
-			'CMDBuild.proxy.Classes',
 			'CMDBuild.proxy.dataView.DataView'
 		],
 
@@ -15,23 +14,9 @@
 		parentDelegate: undefined,
 
 		/**
-		 * @cfg {Array}
+		 * @cfg {Boolean}
 		 */
-		cmfgCatchedFunctions: [
-			'accordionBuildId',
-			'accordionDeselect',
-			'accordionExpand',
-			'accordionFirstSelectableNodeSelect',
-			'accordionFirtsSelectableNodeGet',
-			'accordionIdentifierGet',
-			'accordionNodeByIdExists',
-			'accordionNodeByIdGet',
-			'accordionNodeByIdSelect',
-			'accordionUpdateStore',
-			'onAccordionBeforeSelect',
-			'onAccordionExpand',
-			'onAccordionSelectionChange'
-		],
+		hideIfEmpty: true,
 
 		/**
 		 * @cfg {String}
@@ -60,17 +45,20 @@
 		},
 
 		/**
-		 * @param {Number} nodeIdToSelect
+		 * @param {Object} parameters
+		 * @param {Boolean} parameters.loadMask
+		 * @param {Number} parameters.selectionId
 		 *
 		 * @returns {Void}
 		 *
 		 * @override
 		 */
-		accordionUpdateStore: function (nodeIdToSelect) {
-			nodeIdToSelect = Ext.isNumber(nodeIdToSelect) ? nodeIdToSelect : null;
+		accordionUpdateStore: function (parameters) {
+			parameters = Ext.isObject(parameters) ? parameters : {};
+			parameters.selectionId = Ext.isNumber(parameters.selectionId) ? parameters.selectionId : null;
 
 			CMDBuild.proxy.dataView.DataView.readAll({
-				loadMask: false,
+				loadMask: Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : false,
 				scope: this,
 				success: function (response, options, decodedResponse) {
 					var dataViews = decodedResponse[CMDBuild.core.constants.Proxy.VIEWS];
@@ -78,7 +66,7 @@
 					var params = {};
 					params[CMDBuild.core.constants.Proxy.ACTIVE] = true;
 
-					CMDBuild.proxy.Classes.readAll({
+					CMDBuild.proxy.dataView.DataView.readAllClasses({
 						params: params,
 						loadMask: false,
 						scope: this,
@@ -133,8 +121,7 @@
 								this.view.getStore().sort();
 							}
 
-							// Alias of this.callParent(arguments), inside proxy function doesn't work
-							this.updateStoreCommonEndpoint(nodeIdToSelect);
+							this.updateStoreCommonEndpoint(parameters); // CallParent alias
 						}
 					});
 				}

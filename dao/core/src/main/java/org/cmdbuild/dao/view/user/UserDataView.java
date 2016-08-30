@@ -25,6 +25,7 @@ import org.cmdbuild.dao.query.QuerySpecs;
 import org.cmdbuild.dao.query.QuerySpecsBuilder;
 import org.cmdbuild.dao.query.clause.ClassHistory;
 import org.cmdbuild.dao.query.clause.DomainHistory;
+import org.cmdbuild.dao.query.clause.QueryAttribute;
 import org.cmdbuild.dao.query.clause.from.FromClause;
 import org.cmdbuild.dao.query.clause.where.WhereClause;
 import org.cmdbuild.dao.view.AbstractDataView;
@@ -372,7 +373,7 @@ public class UserDataView extends AbstractDataView {
 	}
 
 	@Override
-	public QuerySpecsBuilder select(final Object... attrDef) {
+	public QuerySpecsBuilder select(final QueryAttribute... attrDef) {
 		return proxy(super.select(attrDef));
 	}
 

@@ -1,7 +1,7 @@
 (function () {
 
 	/**
-	 * @link CMDBuild.controller.management.workflow.tabs.History
+	 * @link CMDBuild.controller.management.workflow.panel.form.tabs.History
 	 */
 	Ext.define('CMDBuild.controller.management.classes.tabs.History', {
 		extend: 'CMDBuild.controller.common.abstract.Base',

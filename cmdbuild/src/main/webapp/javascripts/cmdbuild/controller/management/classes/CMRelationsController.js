@@ -232,8 +232,7 @@
 			if (model.getDepth() > 1)
 				CMDBuild.global.controller.MainViewport.cmfg('mainViewportCardSelect', {
 					Id: model.get('dst_id'),
-					IdClass: model.get('dst_cid'),
-					flowStatus: 'all'
+					IdClass: model.get('dst_cid')
 				});
 		},
 

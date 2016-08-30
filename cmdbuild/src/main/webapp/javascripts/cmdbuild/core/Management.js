@@ -10,13 +10,14 @@
 			'CMDBuild.core.constants.ModuleIdentifiers',
 			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.CookiesManager',
-			'CMDBuild.proxy.Classes',
+			'CMDBuild.core.Routes',
+			'CMDBuild.core.Splash',
+			'CMDBuild.proxy.classes.Classes',
 			'CMDBuild.proxy.dashboard.Dashboard',
 			'CMDBuild.proxy.domain.Domain',
 			'CMDBuild.proxy.lookup.Type',
 			'CMDBuild.proxy.Menu',
-			'CMDBuild.proxy.widget.Widget',
-			'CMDBuild.core.Splash'
+			'CMDBuild.proxy.widget.Widget'
 		],
 
 		singleton: true,
@@ -56,13 +57,16 @@
 
 			var readAllClassesCallback = requestBarrier.getCallback('managementBuildCacheBarrier'); // Avoid to getCallback too late
 
-			CMDBuild.proxy.Classes.readAll({
+			CMDBuild.proxy.classes.Classes.readAll({
 				params: params,
 				loadMask: false,
 				scope: this,
 				success: function (response, options, decodedResponse) {
 					decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.CLASSES];
 
+					/**
+					 * @deprecated
+					 */
 					_CMCache.addClasses(decodedResponse);
 
 					/**
@@ -76,7 +80,11 @@
 						success: function (response, options, decodedResponse) {
 							decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.RESPONSE];
 
-							// A day I'll can do a request to have only the active, now the cache discards the inactive if the flag onlyActive is true
+							/**
+							 * A day I'll can do a request to have only the active, now the cache discards the inactive if the flag onlyActive is true
+							 *
+							 * @deprecated
+							 */
 							_CMCache.addWidgetToEntryTypes(decodedResponse, true);
 						},
 						callback: readAllClassesCallback
@@ -93,6 +101,9 @@
 				success: function (response, options, decodedResponse) {
 					decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.RESPONSE];
 
+					/**
+					 * @deprecated
+					 */
 					_CMCache.addDashboards(decodedResponse[CMDBuild.core.constants.Proxy.DASHBOARDS]);
 					_CMCache.setAvailableDataSources(decodedResponse[CMDBuild.core.constants.Proxy.DATA_SOURCES]);
 				},
@@ -112,6 +123,9 @@
 				success: function (response, options, decodedResponse) {
 					decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.DOMAINS];
 
+					/**
+					 * @deprecated
+					 */
 					_CMCache.addDomains(decodedResponse);
 				},
 				callback: requestBarrier.getCallback('managementBuildCacheBarrier')
@@ -124,6 +138,9 @@
 				loadMask: false,
 				scope: this,
 				success: function (response, options, decodedResponse) {
+					/**
+					 * @deprecated
+					 */
 					_CMCache.addLookupTypes(decodedResponse);
 				},
 				callback: requestBarrier.getCallback('managementBuildCacheBarrier')
@@ -168,6 +185,9 @@
 			if (!CMDBuild.core.CookiesManager.authorizationIsEmpty()) {
 				Ext.suspendLayouts();
 
+				/**
+				 * @deprecated
+				 */
 				_CMCache.syncAttachmentCategories();
 
 				// Building accordion definitions object array (display order)
@@ -202,13 +222,10 @@
 						{ className: 'CMDBuild.controller.management.report.Report', identifier: CMDBuild.core.constants.ModuleIdentifiers.getReport() },
 						{ className: 'CMDBuild.controller.management.report.Single', identifier: CMDBuild.core.constants.ModuleIdentifiers.getReportSingle() },
 						{ className: 'CMDBuild.controller.management.utility.Utility', identifier: CMDBuild.core.constants.ModuleIdentifiers.getUtility() },
+						{ className: 'CMDBuild.controller.management.workflow.Workflow', identifier: CMDBuild.core.constants.ModuleIdentifiers.getWorkflow() },
 						new CMDBuild.view.management.classes.CMModCard({
 							cmControllerType: CMDBuild.controller.management.classes.CMModCardController,
 							cmName: 'class'
-						}),
-						new CMDBuild.view.management.workflow.CMModProcess({
-							cmControllerType: CMDBuild.controller.management.workflow.CMModWorkflowController,
-							cmName: CMDBuild.core.constants.ModuleIdentifiers.getWorkflow()
 						}),
 						new CMDBuild.view.management.dashboard.CMModDashboard({
 							cmControllerType: CMDBuild.controller.management.dashboard.CMModDashboardController,
@@ -223,7 +240,7 @@
 					CMDBuild.global.controller.MainViewport.cmfg('mainViewportInstanceNameSet', CMDBuild.configuration.instance.get(CMDBuild.core.constants.Proxy.INSTANCE_NAME));
 
 					// Execute routes
-					CMDBuild.routes.Routes.exec();
+					CMDBuild.core.Routes.exec();
 
 					CMDBuild.global.controller.MainViewport.cmfg('mainViewportStartingEntitySelect');
 				}, this);

@@ -14,25 +14,6 @@
 		parentDelegate: undefined,
 
 		/**
-		 * @cfg {Array}
-		 */
-		cmfgCatchedFunctions: [
-			'accordionBuildId',
-			'accordionDeselect',
-			'accordionExpand',
-			'accordionFirstSelectableNodeSelect',
-			'accordionFirtsSelectableNodeGet',
-			'accordionIdentifierGet',
-			'accordionNodeByIdExists',
-			'accordionNodeByIdGet',
-			'accordionNodeByIdSelect',
-			'accordionUpdateStore',
-			'onAccordionBeforeSelect',
-			'onAccordionExpand',
-			'onAccordionSelectionChange'
-		],
-
-		/**
 		 * @cfg {String}
 		 */
 		identifier: undefined,
@@ -59,16 +40,20 @@
 		},
 
 		/**
-		 * @param {Number} nodeIdToSelect
+		 * @param {Object} parameters
+		 * @param {Boolean} parameters.loadMask
+		 * @param {Number} parameters.selectionId
 		 *
 		 * @returns {Void}
 		 *
 		 * @override
 		 */
-		accordionUpdateStore: function (nodeIdToSelect) {
-			nodeIdToSelect = Ext.isNumber(nodeIdToSelect) ? nodeIdToSelect : null;
+		accordionUpdateStore: function (parameters) {
+			parameters = Ext.isObject(parameters) ? parameters : {};
+			parameters.selectionId = Ext.isNumber(parameters.selectionId) ? parameters.selectionId : null;
 
 			CMDBuild.proxy.userAndGroup.group.Group.readAll({
+				loadMask: Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : false,
 				scope: this,
 				success: function (result, options, decodedResult) {
 					decodedResult = decodedResult[CMDBuild.core.constants.Proxy.GROUPS];
@@ -116,8 +101,7 @@
 						this.view.getStore().sort();
 					}
 
-					// Alias of this.callParent(arguments), inside proxy function doesn't work
-					this.updateStoreCommonEndpoint(nodeIdToSelect);
+					this.updateStoreCommonEndpoint(parameters); // CallParent alias
 				}
 			});
 

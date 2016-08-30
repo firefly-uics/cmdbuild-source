@@ -28,6 +28,11 @@
 		],
 
 		/**
+		 * @property {CMDBuild.controller.common.panel.gridAndForm.panel.common.print.Window}
+		 */
+		controllerPrintWindow: undefined,
+
+		/**
 		 * @property {CMDBuild.view.management.dataView.sql.FormPanel}
 		 */
 		form: undefined,
@@ -59,6 +64,9 @@
 
 			if (!Ext.isEmpty(_CMUIState))
 				_CMUIState.addDelegate(this);
+
+			// Build sub-controllers
+			this.controllerPrintWindow = Ext.create('CMDBuild.controller.common.panel.gridAndForm.panel.common.print.Window', { parentDelegate: this });
 		},
 
 		/**
@@ -117,10 +125,11 @@
 				params[CMDBuild.core.constants.Proxy.SORT] = Ext.encode(this.grid.getStore().getSorters());
 				params[CMDBuild.core.constants.Proxy.TYPE] = format;
 
-				Ext.create('CMDBuild.controller.common.entryTypeGrid.printTool.PrintWindow', {
+				this.controllerPrintWindow = Ext.create('CMDBuild.controller.common.panel.gridAndForm.panel.common.print.Window', { parentDelegate: this });
+				this.controllerPrintWindow.cmfg('panelGridAndFormPrintWindowShow', {
 					format: format,
 					mode: 'dataViewSql',
-					parameters: params
+					params: params
 				});
 			}
 		},

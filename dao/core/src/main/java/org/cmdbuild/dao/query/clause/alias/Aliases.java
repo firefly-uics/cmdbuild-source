@@ -4,11 +4,11 @@ import org.cmdbuild.dao.entrytype.CMEntryType;
 
 public class Aliases {
 
-	public static EntryTypeAlias canonical(final CMEntryType entryType) {
+	public static Alias canonical(final CMEntryType entryType) {
 		return EntryTypeAlias.canonicalAlias(entryType);
 	}
 
-	public static NameAlias name(final String name) {
+	public static Alias name(final String name) {
 		return NameAlias.as(name);
 	}
 	

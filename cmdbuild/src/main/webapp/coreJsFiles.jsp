@@ -5,15 +5,18 @@
 <!-- OVERRIDES -->
 <script type="text/javascript" src="javascripts/cmdbuild/override/data/proxy/Server.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/override/data/Store.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/override/form/field/Display.js"></script>
+<script type="text/javascript" src="javascripts/cmdbuild/override/data/TreeStore.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/override/form/field/Checkbox.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/override/form/field/ComboBox.js"></script>
+<script type="text/javascript" src="javascripts/cmdbuild/override/form/field/Display.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/override/form/field/VTypes.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/override/form/FieldSet.js"></script>
+<script type="text/javascript" src="javascripts/cmdbuild/override/grid/column/CheckColumn.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/override/grid/plugin/RowExpander.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/override/JSON.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/override/layout/container/Editor.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/override/selection/CheckboxModel.js"></script>
+<script type="text/javascript" src="javascripts/cmdbuild/override/toolbar/Paging.js"></script>
 
 <!-- MODELS -->
 <script type="text/javascript" src="javascripts/cmdbuild/model/report/Cache.js"></script>
@@ -42,7 +45,6 @@
 <script type="text/javascript" src="javascripts/cmdbuild/core/CMDelegable.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/core/xml/XMLUtility.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/core/buttons/CMClassesMenuButton.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/core/buttons/AddCardMenuButton.js"></script>
 
 <!-- FORM STUFF -->
 <script type="text/javascript" src="javascripts/cmdbuild/form/CallbackPlugin.js"></script>
@@ -90,7 +92,6 @@
 <script type="text/javascript" src="javascripts/cmdbuild/view/common/field/CMToggleButtonToShowReferenceAttributes.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/view/common/field/ReferenceField.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/view/common/field/ForeignKeyField.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/form/IconsCombo.js"></script>
 
 <!-- DELEGATES -->
 	<!-- COMMON -->
@@ -125,7 +126,6 @@
 <script type="text/javascript" src="javascripts/cmdbuild/controller/common/CMBasePanelController.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/controller/common/CMUnconfiguredModPanelController.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/controller/management/classes/StaticsController.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/controller/management/workflow/StaticsController.js"></script>
 
 	<!-- DASHBOARD -->
 	<script type="text/javascript" src="javascripts/cmdbuild/controller/common/CMDashboardColumnController.js"></script>

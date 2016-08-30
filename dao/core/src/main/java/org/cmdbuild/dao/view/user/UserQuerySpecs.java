@@ -5,14 +5,14 @@ import static com.google.common.collect.Iterables.isEmpty;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.apache.commons.lang3.StringUtils.isEmpty;
 import static org.cmdbuild.dao.query.clause.QueryAliasAttribute.attribute;
-import static org.cmdbuild.dao.query.clause.where.AndWhereClause.and;
-import static org.cmdbuild.dao.query.clause.where.EmptyArrayOperatorAndValue.emptyArray;
-import static org.cmdbuild.dao.query.clause.where.InOperatorAndValue.in;
-import static org.cmdbuild.dao.query.clause.where.OrWhereClause.or;
-import static org.cmdbuild.dao.query.clause.where.SimpleWhereClause.condition;
-import static org.cmdbuild.dao.query.clause.where.StringArrayOverlapOperatorAndValue.stringArrayOverlap;
-import static org.cmdbuild.dao.query.clause.where.TrueWhereClause.trueWhereClause;
 import static org.cmdbuild.dao.query.clause.alias.Aliases.canonical;
+import static org.cmdbuild.dao.query.clause.where.OperatorAndValues.emptyArray;
+import static org.cmdbuild.dao.query.clause.where.OperatorAndValues.in;
+import static org.cmdbuild.dao.query.clause.where.OperatorAndValues.stringArrayOverlap;
+import static org.cmdbuild.dao.query.clause.where.WhereClauses.alwaysTrue;
+import static org.cmdbuild.dao.query.clause.where.WhereClauses.and;
+import static org.cmdbuild.dao.query.clause.where.WhereClauses.condition;
+import static org.cmdbuild.dao.query.clause.where.WhereClauses.or;
 
 import java.util.List;
 import java.util.Map;
@@ -29,6 +29,7 @@ import org.cmdbuild.dao.entrytype.NullEntryTypeVisitor;
 import org.cmdbuild.dao.query.ForwardingQuerySpecs;
 import org.cmdbuild.dao.query.QuerySpecs;
 import org.cmdbuild.dao.query.clause.QueryAliasAttribute;
+import org.cmdbuild.dao.query.clause.QueryAttribute;
 import org.cmdbuild.dao.query.clause.alias.Alias;
 import org.cmdbuild.dao.query.clause.from.FromClause;
 import org.cmdbuild.dao.query.clause.join.DirectJoinClause;
@@ -121,29 +122,29 @@ public class UserQuerySpecs extends ForwardingQuerySpecs {
 		try {
 			return filterForSuperclassesOf(alias, type);
 		} catch (final Exception e) {
-			return trueWhereClause();
+			return alwaysTrue();
 		}
 	}
 
 	/**
 	 * Returns the global {@link WhereClause} for the super-classes of the
 	 * specified {@link CMClass}.
-	 * 
+	 *
 	 * @param type
-	 * 
+	 *
 	 * @return the global {@link WhereClause} for the specified {@link CMClass}
 	 *         or {@link TrueWhereClause} if there is no filter available.
 	 */
 	private WhereClause filterForSuperclassesOf(final Alias alias, final CMClass type) {
 		final List<WhereClause> superClassesWhereClauses = Lists.newArrayList();
 		for (CMClass parentType = type.getParent(); parentType != null; parentType = parentType.getParent()) {
-			final Iterable<? extends WhereClause> privilegeWhereClause = rowAndColumnPrivilegeFetcher
-					.fetchPrivilegeFiltersFor(parentType, alias);
+			final Iterable<? extends WhereClause> privilegeWhereClause =
+					rowAndColumnPrivilegeFetcher.fetchPrivilegeFiltersFor(parentType, alias);
 			if (!isEmpty(privilegeWhereClause)) {
 				superClassesWhereClauses.add(or(privilegeWhereClause));
 			}
 		}
-		return isEmpty(superClassesWhereClauses) ? trueWhereClause() : and(superClassesWhereClauses);
+		return isEmpty(superClassesWhereClauses) ? alwaysTrue() : and(superClassesWhereClauses);
 	}
 
 	/**
@@ -153,25 +154,25 @@ public class UserQuerySpecs extends ForwardingQuerySpecs {
 	private WhereClause safeFilterFor(final Alias alias, final CMClass root, final CMClass type) {
 		try {
 			final WhereClause filter = filterFor(root, type, alias);
-			return (filter == null) ? trueWhereClause() : filter;
+			return (filter == null) ? alwaysTrue() : filter;
 		} catch (final Exception e) {
-			return trueWhereClause();
+			return alwaysTrue();
 		}
 	}
 
 	/**
 	 * Returns the global {@link WhereClause} for the specified {@link CMClass}
 	 * including sub-classes.
-	 * 
+	 *
 	 * @param type
-	 * 
+	 *
 	 * @return the global {@link WhereClause} for the specified {@link CMClass}
 	 *         or {@code null} if the filter is not available.
 	 */
 	private WhereClause filterFor(final CMClass root, final CMClass type, final Alias alias) {
 		final Alias _alias = type.equals(root) ? alias : canonical(type);
-		final Iterable<? extends WhereClause> currentWhereClauses = rowAndColumnPrivilegeFetcher
-				.fetchPrivilegeFiltersFor(type, _alias);
+		final Iterable<? extends WhereClause> currentWhereClauses =
+				rowAndColumnPrivilegeFetcher.fetchPrivilegeFiltersFor(type, _alias);
 		final List<WhereClause> childrenWhereClauses = Lists.newArrayList();
 		final List<Long> childrenWithNoFilter = Lists.newArrayList();
 		for (final CMClass child : type.getChildren()) {
@@ -190,8 +191,8 @@ public class UserQuerySpecs extends ForwardingQuerySpecs {
 			whereClause = null;
 		} else {
 			whereClause = and( //
-					isEmpty(currentWhereClauses) ? trueWhereClause() : or(currentWhereClauses), //
-					isEmpty(childrenWhereClauses) ? trueWhereClause() : or(childrenWhereClauses) //
+					isEmpty(currentWhereClauses) ? alwaysTrue() : or(currentWhereClauses), //
+					isEmpty(childrenWhereClauses) ? alwaysTrue() : or(childrenWhereClauses) //
 			);
 		}
 		return whereClause;
@@ -201,7 +202,7 @@ public class UserQuerySpecs extends ForwardingQuerySpecs {
 	 * Return a where clause to filter the processes: if there is a default
 	 * group check that the PrevExecutors is one of the user groups. Otherwise
 	 * check for the logged group only
-	 * 
+	 *
 	 * @param type
 	 * @return
 	 */
@@ -209,7 +210,7 @@ public class UserQuerySpecs extends ForwardingQuerySpecs {
 		final WhereClause whereClause;
 		final CMAttribute prevExecutors = type.getAttribute(PREV_EXECUTORS);
 		if (operationUser.hasAdministratorPrivileges()) {
-			whereClause = trueWhereClause();
+			whereClause = alwaysTrue();
 		} else if (prevExecutors != null) {
 			/*
 			 * read access is for those who wants only instances currently in
@@ -217,12 +218,12 @@ public class UserQuerySpecs extends ForwardingQuerySpecs {
 			 * to see all instances.
 			 */
 			if (operationUser.hasWriteAccess(type)) {
-				whereClause = trueWhereClause();
+				whereClause = alwaysTrue();
 			} else {
 				whereClause = precExecutorsWhereClause(alias, prevExecutors);
 			}
 		} else {
-			whereClause = trueWhereClause();
+			whereClause = alwaysTrue();
 		}
 
 		return whereClause;
@@ -286,12 +287,10 @@ public class UserQuerySpecs extends ForwardingQuerySpecs {
 					subWhereClause.accept(this);
 				}
 			}
-			
+
 			@Override
 			public void visit(final NotWhereClause whereClause) {
-				for (final WhereClause subWhereClause : whereClause.getClauses()) {
-					subWhereClause.accept(this);
-				}
+				whereClause.getClause().accept(this);
 			}
 
 			@Override
@@ -303,7 +302,7 @@ public class UserQuerySpecs extends ForwardingQuerySpecs {
 
 			@Override
 			public void visit(final SimpleWhereClause whereClause) {
-				final QueryAliasAttribute attribute = whereClause.getAttribute();
+				final QueryAttribute attribute = whereClause.getAttribute();
 				add(directJoins, descendantsByAlias, attribute);
 			}
 
@@ -314,8 +313,8 @@ public class UserQuerySpecs extends ForwardingQuerySpecs {
 			}
 
 			private void add(final Set<DirectJoinClause> directJoins, final Map<Alias, CMClass> descendantsByAlias,
-					final QueryAliasAttribute attribute) {
-				final Alias alias = attribute.getEntryTypeAlias();
+					final QueryAttribute attribute) {
+				final Alias alias = attribute.getAlias();
 				if (descendantsByAlias.containsKey(alias)) {
 					final CMClass type = descendantsByAlias.get(alias);
 					final DirectJoinClause clause = DirectJoinClause.newInstance() //

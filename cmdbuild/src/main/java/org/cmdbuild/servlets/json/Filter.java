@@ -425,8 +425,8 @@ public class Filter extends JSONBaseWithSpringContext {
 	public JSONObject readForUser( //
 			@Parameter(value = CLASS_NAME) final String className //
 	) throws JSONException {
-		final PagedElements<FilterLogic.Filter> filters = filterLogic().readForCurrentUser(className);
-		return serialize(filters);
+		final Iterable<FilterLogic.Filter> filters = filterLogic().readForCurrentUser(className);
+		return serialize(new PagedElements<>(filters, 0));
 	}
 
 	@JSONExported

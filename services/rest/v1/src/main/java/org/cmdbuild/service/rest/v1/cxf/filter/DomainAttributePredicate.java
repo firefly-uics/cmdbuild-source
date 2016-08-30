@@ -24,7 +24,6 @@ import org.cmdbuild.logic.data.access.filter.model.In;
 import org.cmdbuild.logic.data.access.filter.model.IsNull;
 import org.cmdbuild.logic.data.access.filter.model.LessThan;
 import org.cmdbuild.logic.data.access.filter.model.Like;
-import org.cmdbuild.logic.data.access.filter.model.Not;
 import org.cmdbuild.logic.data.access.filter.model.Or;
 import org.cmdbuild.logic.data.access.filter.model.PredicateVisitor;
 import org.cmdbuild.logic.data.access.filter.model.StartsWith;
@@ -138,11 +137,6 @@ public class DomainAttributePredicate implements Predicate<CMDomain>, PredicateV
 
 	@Override
 	public void visit(final Like predicate) {
-		logger.warn(marker, format("predicate '%s' not supported", predicate));
-	}
-
-	@Override
-	public void visit(final Not predicate) {
 		logger.warn(marker, format("predicate '%s' not supported", predicate));
 	}
 

@@ -85,12 +85,14 @@ public class CxfProcessInstances implements ProcessInstances {
 	private final ErrorHandler errorHandler;
 	private final WorkflowLogic workflowLogic;
 	private final LookupHelper lookupHelper;
+	private final FilterLoader filterLoader;
 
 	public CxfProcessInstances(final ErrorHandler errorHandler, final WorkflowLogic workflowLogic,
-			final LookupHelper lookupHelper) {
+			final LookupHelper lookupHelper, final FilterLoader filterLoader) {
 		this.errorHandler = errorHandler;
 		this.workflowLogic = workflowLogic;
 		this.lookupHelper = lookupHelper;
+		this.filterLoader = filterLoader;
 	}
 
 	@Override
@@ -177,7 +179,7 @@ public class CxfProcessInstances implements ProcessInstances {
 		// <<<<<
 		final String regex = "\"attribute\"[\\s]*:[\\s]*\"" + UNDERSCORED_STATUS + "\"";
 		final String replacement = "\"attribute\":\"" + FlowStatus.dbColumnName() + "\"";
-		final String _filter = defaultString(filter).replaceAll(regex, replacement);
+		final String _filter = defaultString(filterLoader.load(filter)).replaceAll(regex, replacement);
 		// <<<<<
 		final Iterable<String> attributes = activeAttributes(found);
 		final Iterable<String> _attributes = concat(attributes, asList(FlowStatus.dbColumnName()));

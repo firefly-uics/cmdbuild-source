@@ -6,6 +6,10 @@
 		'CMDBuild.core.Utils'
 	]);
 
+	/**
+	 * @link CMDBuild.controller.common.panel.gridAndForm.panel.common.filter.advanced.filterEditor.relations.CMCardGridController
+	 * @link CMDBuild.controller.management.workflow.panel.tree.filter.advanced.filterEditor.relations.CMCardGridController
+	 */
 	Ext.define("CMDBuild.controller.management.common.CMCardGridController", {
 
 		mixins: {
@@ -170,11 +174,11 @@
 				params[CMDBuild.core.constants.Proxy.SORT] = Ext.encode(this.view.getStore().getSorters());
 				params[CMDBuild.core.constants.Proxy.TYPE] = format;
 
-				Ext.create('CMDBuild.controller.common.entryTypeGrid.printTool.PrintWindow', {
-					parentDelegate: this,
+				this.controllerPrintWindow = Ext.create('CMDBuild.controller.common.panel.gridAndForm.panel.common.print.Window', { parentDelegate: this });
+				this.controllerPrintWindow.cmfg('panelGridAndFormPrintWindowShow', {
 					format: format,
 					mode: 'view',
-					parameters: params
+					params: params
 				});
 			}
 		},
@@ -219,7 +223,6 @@
 		},
 
 		/**
-		 *
 		 * @param {object} p
 		 * @param {int} p.IdClass the id of the class
 		 * @param {int} p.Id the id of the card to open
@@ -229,45 +232,44 @@
 			var me = this;
 			var store = this.view.getStore();
 
-			if (!store ||
-					!store.proxy ||
-						!store.proxy.extraParams) {
+			if (!store || !store.proxy || !store.proxy.extraParams)
 				return;
-			}
 
 			// Take the current store configuration
 			// to have the sort and filter
 			var params = Ext.apply({}, store.proxy.extraParams);
 			params[CMDBuild.core.constants.Proxy.CARD_ID] = p.Id;
 			params[CMDBuild.core.constants.Proxy.CLASS_NAME] = _CMCache.getEntryTypeNameById(p.IdClass);
-			params[CMDBuild.core.constants.Proxy.RETRY_WITHOUT_FILTER] = retryWithoutFilter;
+			params[CMDBuild.core.constants.Proxy.FLOW_STATUS] = params[CMDBuild.core.constants.Proxy.STATE]; // fix creating alias to work with old implementations
 			params[CMDBuild.core.constants.Proxy.SORT] = Ext.encode(getSorting(store));
 
 			CMDBuild.proxy.Card.readPosition({
 				params: params,
 				loadMask: false,
-				failure: function onGetPositionFailure(response, options, decoded) {
-					// reconfigure the store and blah blah blah
-				},
-				success: function onGetPositionSuccess(response, options, resText) {
-					var position = resText.position,
-						found = position >= 0,
-						foundButNotInFilter = resText.outOfFilter;
+				success: function (response, options, decodedResponse) {
+					decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.RESPONSE];
+
+					var position = decodedResponse[CMDBuild.core.constants.Proxy.POSITION],
+						found = decodedResponse[CMDBuild.core.constants.Proxy.HAS_POSITION];
 
 					if (found) {
-						if (foundButNotInFilter) {
-							me._onGetPositionSuccessForcingTheFilter(p, position, resText);
-							me.view.gridSearchField.onUnapplyFilter();
-						} else {
-							updateStoreAndSelectGivenPosition(me, p.IdClass, position);
-						}
+						updateStoreAndSelectGivenPosition(me, p.IdClass, position);
 					} else {
 						if (retryWithoutFilter) {
-							CMDBuild.core.Message.error(CMDBuild.Translation.common.failure,
-									Ext.String.format(CMDBuild.Translation.errors.reasons.CARD_NOTFOUND, p.IdClass));
+							me.view.gridSearchField.onUnapplyFilter();
+							unApplyFilter(me);
+
+							delete store.proxy.extraParams[CMDBuild.Translation.errors.reasons.FILTER];
+
+							return me.openCard(p, false);
 						} else {
-							me._onGetPositionFailureWithoutForcingTheFilter(resText);
+							me._onGetPositionFailureWithoutForcingTheFilter(decodedResponse);
 						}
+
+						CMDBuild.core.Message.error(
+							CMDBuild.Translation.common.failure,
+							Ext.String.format(CMDBuild.Translation.errors.reasons.CARD_NOTFOUND, p.IdClass)
+						);
 
 						me.view.store.loadPage(1);
 					}
@@ -293,9 +295,9 @@
 		// protected
 		unApplyFilter: unApplyFilter,
 
-		// As CMDBuild.controller.common.entryTypeGrid.filter.advanced.Advanced delegate
+		// As CMDBuild.controller.common.panel.gridAndForm.panel.common.filter.advanced.Advanced delegate
 		/**
-		 * Called by the CMDBuild.controller.common.entryTypeGrid.filter.advanced.Advanced when click to on the apply icon or on a row of the picker
+		 * Called by the CMDBuild.controller.common.panel.gridAndForm.panel.common.filter.advanced.Advanced when click to on the apply icon or on a row of the picker
 		 *
 		 * @param {object} filter
 		 *

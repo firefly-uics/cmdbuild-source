@@ -27,8 +27,7 @@
 					Ext.create('Ext.panel.Panel', {
 						border: false,
 						contentEl: 'release-box',
-						frame: false,
-						height: 30
+						frame: false
 					})
 				]
 			});

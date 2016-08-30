@@ -203,7 +203,7 @@
 		 * @returns {String or null}
 		 */
 		identifierGet: function () {
-			if (!Ext.isEmpty(this.identifier))
+			if (Ext.isString(this.identifier) && !Ext.isEmpty(this.identifier))
 				return this.identifier;
 
 			return null;

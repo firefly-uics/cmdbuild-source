@@ -281,7 +281,10 @@ public class ModReport extends JSONBaseWithSpringContext {
 				.orderBy(sorters);
 		if (flowStatus != null) {
 			queryOptionsBuilder.filter(new JsonFilterHelper(filter) //
-					.merge(new FlowStatusFilterElementGetter(lookupHelper(), flowStatus)));
+					.merge(FlowStatusFilterElementGetter.newInstance() //
+							.withLookupHelper(lookupHelper()) //
+							.withFlowStatus(flowStatus) //
+							.build()));
 		} else {
 			queryOptionsBuilder.filter(filter);
 		}

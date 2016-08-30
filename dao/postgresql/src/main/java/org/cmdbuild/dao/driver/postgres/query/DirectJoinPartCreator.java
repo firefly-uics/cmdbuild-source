@@ -35,13 +35,13 @@ public class DirectJoinPartCreator extends PartCreator {
 					input.isLeft() ? LEFT_JOIN : JOIN, //
 					quote(input.getTargetClass()),//
 					quote(input.getTargetClassAlias()), //
-					quoteAttribute(targetAttribute.getEntryTypeAlias(), targetAttribute.getName()), //
-					quoteAttribute(sourceAttribute.getEntryTypeAlias(), sourceAttribute.getName()) //
+					quoteAttribute(targetAttribute.getAlias(), targetAttribute.getName()), //
+					quoteAttribute(sourceAttribute.getAlias(), sourceAttribute.getName()) //
 			);
 			if (input.getTargetClass().holdsHistory() && !(input.getTargetClass() instanceof HistoricEntryType)) {
 				output = format("%s AND %s = '%s'", //
 						output, //
-						quoteAttribute(targetAttribute.getEntryTypeAlias(), Status), //
+						quoteAttribute(targetAttribute.getAlias(), Status), //
 						CardStatus.ACTIVE.value() //
 				);
 
