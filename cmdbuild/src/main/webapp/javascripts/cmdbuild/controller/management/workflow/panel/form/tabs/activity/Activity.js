@@ -126,12 +126,26 @@
 			this.view.displayMode();
 			this.view.clear();
 
-			this.changeClassUIConfigurationForGroup(true, true, true); // Mnually disable all buttons
+			// Manually disable all buttons
+			this.view.form.modifyCardButton.disable();
+			this.view.form.deleteCardButton.disable();
 		},
 
 		setDelegate: function(d) {
 			CMDBuild.validateInterface(d, "CMDBuild.controller.management.workflow.CMActivityPanelControllerDelegate");
 			this.delegate = d;
+		},
+
+		// wfStateDelegate
+		onProcessClassRefChange: function (pcr, danglingCard, filter) {
+			if (Ext.isObject(pcr) && !Ext.Object.isEmpty(pcr)) {
+				var classId = pcr.get(CMDBuild.core.constants.Proxy.ID);
+				var privileges = _CMUtils.getClassPrivileges(classId);
+
+				// Setup buttons flags
+				this.view.form.modifyCardButton.disabledForGroup = !(privileges.write && !privileges.crudDisabled.modify);
+				this.view.form.deleteCardButton.disabledForGroup = !(privileges.write && !privileges.crudDisabled.remove);
+			}
 		},
 
 		// wfStateDelegate
@@ -272,7 +286,7 @@
 			}
 		},
 
-		changeClassUIConfigurationForGroup: function(disabledModify, disabledClone, disabledRemove) {
+		changeClassUIConfigurationForGroup: function(disabledModify, disabledRemove) {
 			this.view.form.modifyCardButton.disabledForGroup = disabledModify;
 			this.view.form.deleteCardButton.disabledForGroup = disabledRemove;
 			if (this.view.form.modifyCardButton.disabledForGroup)

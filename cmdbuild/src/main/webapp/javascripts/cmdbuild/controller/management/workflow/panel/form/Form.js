@@ -269,6 +269,8 @@
 		 * @returns {Void}
 		 */
 		onWorkflowFormWokflowSelect: function (node) {
+			this.cmfg('workflowFormReset');
+
 			var params = {};
 			params[CMDBuild.core.constants.Proxy.ACTIVE] = true;
 
