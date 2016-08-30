@@ -118,13 +118,6 @@
 				CMDBuild.proxy.report.Report.create({
 					params: this.currentReportParametersGet({ callIdentifier: 'create' }),
 					scope: this,
-					failure: function(response, options, decodedResponse) {
-						CMDBuild.core.Message.error(
-							CMDBuild.Translation.error,
-							CMDBuild.Translation.errors.createReportFilure,
-							false
-						);
-					},
 					success: function(response, options, decodedResponse) {
 						if(decodedResponse.filled) { // Report with no parameters
 							this.cmfg('reportCustomShowReport', forceDownload);

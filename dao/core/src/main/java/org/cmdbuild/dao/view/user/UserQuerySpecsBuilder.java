@@ -6,6 +6,7 @@ import org.cmdbuild.dao.query.CMQueryResult;
 import org.cmdbuild.dao.query.QuerySpecs;
 import org.cmdbuild.dao.query.QuerySpecsBuilder;
 import org.cmdbuild.dao.query.clause.OrderByClause.Direction;
+import org.cmdbuild.dao.query.clause.QueryAttribute;
 import org.cmdbuild.dao.query.clause.QueryDomain.Source;
 import org.cmdbuild.dao.query.clause.alias.Alias;
 import org.cmdbuild.dao.query.clause.join.Over;
@@ -30,7 +31,7 @@ public class UserQuerySpecsBuilder implements QuerySpecsBuilder {
 	}
 
 	@Override
-	public QuerySpecsBuilder select(final Object... attrDef) {
+	public QuerySpecsBuilder select(final QueryAttribute... attrDef) {
 		delegate.select(attrDef);
 		return this;
 	}
@@ -110,7 +111,7 @@ public class UserQuerySpecsBuilder implements QuerySpecsBuilder {
 	}
 
 	@Override
-	public QuerySpecsBuilder orderBy(final Object attribute, final Direction direction) {
+	public QuerySpecsBuilder orderBy(final QueryAttribute attribute, final Direction direction) {
 		delegate.orderBy(attribute, direction);
 		return this;
 	}

@@ -1,5 +1,7 @@
 package unit.cxf;
 
+import static com.google.common.reflect.Reflection.newProxy;
+import static org.cmdbuild.common.utils.Reflection.unsupported;
 import static org.cmdbuild.service.rest.v2.model.Models.newCard;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasEntry;
@@ -19,6 +21,7 @@ import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.logic.data.access.DataAccessLogic;
 import org.cmdbuild.service.rest.v2.cxf.CxfCards;
 import org.cmdbuild.service.rest.v2.cxf.ErrorHandler;
+import org.cmdbuild.service.rest.v2.cxf.FilterLoader;
 import org.cmdbuild.service.rest.v2.model.ResponseSingle;
 import org.junit.Before;
 import org.junit.Test;
@@ -36,6 +39,7 @@ public class CxfCardsTest {
 
 	private ErrorHandler errorHandler;
 	private DataAccessLogic userDataAccessLogic;
+	private FilterLoader filterLoader;
 
 	private CxfCards cxfCards;
 
@@ -43,7 +47,8 @@ public class CxfCardsTest {
 	public void setUp() throws Exception {
 		errorHandler = mock(ErrorHandler.class);
 		userDataAccessLogic = mock(DataAccessLogic.class);
-		cxfCards = new CxfCards(errorHandler, userDataAccessLogic);
+		filterLoader =  newProxy(FilterLoader.class, unsupported("should not be used"));
+		cxfCards = new CxfCards(errorHandler, userDataAccessLogic, filterLoader);
 	}
 
 	@Test(expected = WebApplicationException.class)

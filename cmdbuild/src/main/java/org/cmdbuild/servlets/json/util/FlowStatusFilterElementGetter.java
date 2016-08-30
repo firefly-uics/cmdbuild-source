@@ -10,6 +10,7 @@ import static org.cmdbuild.logic.mapping.json.Constants.Filters.OPERATOR_KEY;
 import static org.cmdbuild.logic.mapping.json.Constants.Filters.VALUE_KEY;
 import static org.cmdbuild.workflow.ProcessAttributes.FlowStatus;
 
+import org.apache.commons.lang3.Validate;
 import org.cmdbuild.data.store.lookup.Lookup;
 import org.cmdbuild.logic.mapping.json.JsonFilterHelper.FilterElementGetter;
 import org.cmdbuild.workflow.LookupHelper;
@@ -21,12 +22,53 @@ import com.google.common.base.Optional;
 
 public class FlowStatusFilterElementGetter implements FilterElementGetter {
 
+	public static class Builder implements org.apache.commons.lang3.builder.Builder<FlowStatusFilterElementGetter> {
+
+		private LookupHelper lookupHelper;
+		private String flowStatus;
+		private boolean missingFlowStatusIsError;
+
+		/**
+		 * Use factory method.
+		 */
+		private Builder() {
+		}
+
+		@Override
+		public FlowStatusFilterElementGetter build() {
+			Validate.notNull(lookupHelper);
+			return new FlowStatusFilterElementGetter(this);
+		}
+
+		public Builder withLookupHelper(final LookupHelper value) {
+			lookupHelper = value;
+			return this;
+		}
+
+		public Builder withFlowStatus(final String value) {
+			flowStatus = value;
+			return this;
+		}
+
+		public Builder withMissingFlowStatusIsError(final boolean value) {
+			missingFlowStatusIsError = value;
+			return this;
+		}
+
+	}
+
+	public static Builder newInstance() {
+		return new Builder();
+	}
+
 	private final LookupHelper lookupHelper;
 	private final String flowStatus;
+	private final boolean missingFlowStatusIsError;
 
-	public FlowStatusFilterElementGetter(final LookupHelper lookupHelper, final String flowStatus) {
-		this.lookupHelper = lookupHelper;
-		this.flowStatus = flowStatus;
+	private FlowStatusFilterElementGetter(final Builder builder) {
+		this.lookupHelper = builder.lookupHelper;
+		this.flowStatus = builder.flowStatus;
+		this.missingFlowStatusIsError = builder.missingFlowStatusIsError;
 	}
 
 	@Override
@@ -42,6 +84,9 @@ public class FlowStatusFilterElementGetter implements FilterElementGetter {
 		if (lookup.isPresent()) {
 			ids = from(asList(lookup.get())).transform(toLookupId());
 		} else {
+			if (missingFlowStatusIsError) {
+				throw new IllegalArgumentException(flowStatus);
+			}
 			final Iterable<Lookup> allLookups = lookupHelper.allLookups();
 			ids = from(allLookups).transform(toLookupId());
 		}

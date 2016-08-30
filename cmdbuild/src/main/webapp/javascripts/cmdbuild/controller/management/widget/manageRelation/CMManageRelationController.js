@@ -298,7 +298,7 @@
 		},
 
 		onShowGraphClick: function () {
-			Ext.create('CMDBuild.controller.management.common.graph.Graph', {
+			Ext.create('CMDBuild.controller.common.panel.gridAndForm.panel.common.graph.Window', {
 				parentDelegate: this,
 				classId: parseInt(this.idClass),
 				cardId: parseInt(this.cardId)

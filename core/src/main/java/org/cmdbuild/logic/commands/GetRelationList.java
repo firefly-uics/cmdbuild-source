@@ -22,6 +22,7 @@ import org.cmdbuild.dao.query.CMQueryRow;
 import org.cmdbuild.dao.query.QuerySpecsBuilder;
 import org.cmdbuild.dao.query.clause.OrderByClause;
 import org.cmdbuild.dao.query.clause.QueryAliasAttribute;
+import org.cmdbuild.dao.query.clause.QueryAttribute;
 import org.cmdbuild.dao.query.clause.QueryDomain;
 import org.cmdbuild.dao.query.clause.QueryRelation;
 import org.cmdbuild.dao.query.clause.where.ForwardingWhereClauseVisitor;
@@ -164,9 +165,9 @@ public class GetRelationList extends AbstractGetRelation {
 
 							@Override
 							public void visit(final SimpleWhereClause whereClause) {
-								final QueryAliasAttribute attribute = whereClause.getAttribute();
+								final QueryAttribute attribute = whereClause.getAttribute();
 								final String name = attribute.getName();
-								final QueryAliasAttribute _attribute;
+								final QueryAttribute _attribute;
 								if (ID.equals(name)) {
 									_attribute = attribute(DOM_ALIAS, name);
 								} else if (IDOBJ1.equals(name)) {

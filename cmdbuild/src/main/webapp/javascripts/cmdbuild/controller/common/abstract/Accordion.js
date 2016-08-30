@@ -6,21 +6,6 @@
 	/**
 	 * Common methods
 	 *
-	 * Required managed functions:
-	 * 	- accordionBuildId'
-	 * 	- accordionDeselect'
-	 * 	- accordionExpand'
-	 * 	- accordionFirstSelectableNodeSelect'
-	 * 	- accordionFirtsSelectableNodeGet'
-	 * 	- accordionIdentifierGet'
-	 * 	- accordionNodeByIdExists'
-	 * 	- accordionNodeByIdGet'
-	 * 	- accordionNodeByIdSelect'
-	 * 	- accordionUpdateStore'
-	 * 	- onAccordionBeforeSelect'
-	 * 	- onAccordionExpand
-	 * 	- onAccordionSelectionChange
-	 *
 	 * @abstract
 	 */
 	Ext.define('CMDBuild.controller.common.abstract.Accordion', {
@@ -80,6 +65,36 @@
 		view: undefined,
 
 		/**
+		 * @param {Object} configurationObject
+		 * @param {Object} configurationObject.parentDelegate
+		 *
+		 * @returns {Void}
+		 *
+		 * @override
+		 */
+		constructor: function (configurationObject) {
+			Ext.apply(this, { // Apply default managed methods
+				cmfgCatchedFunctions: Ext.Array.merge(this.cmfgCatchedFunctions, [
+					'accordionBuildId',
+					'accordionDeselect',
+					'accordionExpand',
+					'accordionFirstSelectableNodeSelect',
+					'accordionFirtsSelectableNodeGet',
+					'accordionIdentifierGet',
+					'accordionNodeByIdExists',
+					'accordionNodeByIdGet',
+					'accordionNodeByIdSelect',
+					'accordionUpdateStore',
+					'onAccordionBeforeSelect',
+					'onAccordionExpand',
+					'onAccordionSelectionChange'
+				])
+			});
+
+			this.callParent(arguments);
+		},
+
+		/**
 		 * Generates an unique id for the menu accordion, prepend to components array "accordion" string and identifier.
 		 *
 		 * @param {Array} components
@@ -99,6 +114,16 @@
 			}
 
 			return CMDBuild.core.constants.Proxy.ACCORDION + '-' + this.cmfg('accordionIdentifierGet') + '-' + new Date().valueOf(); // Compatibility mode with IE older than IE 9 (Date.now())
+		},
+
+		/**
+		 * @returns {Void}
+		 *
+		 * @private
+		 */
+		accordionCallbackReset: function () {
+			delete this.callback;
+			delete this.scope;
 		},
 
 		/**
@@ -130,6 +155,8 @@
 					} else { // Accordion needs to be expanded
 						this.view.on('expand', parameters.callback, parameters.scope, { single: true });
 					}
+
+					this.disableStoreLoad = true;
 				}
 
 				this.view.expand();
@@ -240,7 +267,7 @@
 			},
 
 		/**
-		 * @param {Number or String} nodeIdToSelect
+		 * @param {Number or String} selectionId
 		 *
 		 * @returns {Void}
 		 *
@@ -335,16 +362,17 @@
 		},
 
 		/**
-		 * @param {Number or String} nodeIdToSelect
+		 * @param {Object} parameters
+		 * @param {Number or String} parameters.selectionId
 		 *
 		 * @returns {Void}
 		 *
 		 * @private
 		 */
-		updateStoreCommonEndpoint: function (nodeIdToSelect) {
+		updateStoreCommonEndpoint: function (parameters) {
 			if (!this.disableSelection) {
-				if (!Ext.isEmpty(nodeIdToSelect))
-					this.cmfg('accordionNodeByIdSelect', { id: nodeIdToSelect });
+				if (!Ext.isEmpty(parameters.selectionId))
+					this.cmfg('accordionNodeByIdSelect', { id: parameters.selectionId });
 
 				// Select first selectable item if no selection and expanded
 				if (!this.view.getSelectionModel().hasSelection() && this.view.getCollapsed() === false && this.view.isVisible())
@@ -360,7 +388,10 @@
 
 			// Accordion creation callback
 			if (!Ext.isEmpty(this.callback) && Ext.isFunction(this.callback))
-				Ext.callback(this.callback, this.scope);
+				Ext.callback(
+					Ext.Function.createInterceptor(this.accordionCallbackReset, this.callback, this.scope), // Create as interceptor to automatically reset accordion callback setup
+					this.scope
+				);
 
 			// DisableSelection flag reset
 			this.disableSelection = false;

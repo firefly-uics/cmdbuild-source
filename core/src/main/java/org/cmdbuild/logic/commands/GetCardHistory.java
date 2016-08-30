@@ -1,6 +1,7 @@
 package org.cmdbuild.logic.commands;
 
 import static com.google.common.collect.FluentIterable.from;
+import static com.google.common.collect.Iterables.toArray;
 import static com.google.common.collect.Lists.newArrayList;
 import static java.util.Arrays.asList;
 import static org.cmdbuild.dao.query.clause.AnyAttribute.anyAttribute;
@@ -20,7 +21,7 @@ import org.cmdbuild.dao.entrytype.CMAttribute;
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.query.CMQueryResult;
 import org.cmdbuild.dao.query.CMQueryRow;
-import org.cmdbuild.dao.query.clause.QueryAliasAttribute;
+import org.cmdbuild.dao.query.clause.QueryAttribute;
 import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.logic.data.access.CardEntryFiller;
 import org.cmdbuild.logic.data.access.CardStorableConverter;
@@ -45,7 +46,7 @@ public class GetCardHistory {
 		Validate.notNull(card);
 		final CMClass target = dataView.findClass(card.getClassName());
 		historyClass = history(target);
-		final Collection<QueryAliasAttribute> attributes;
+		final Collection<QueryAttribute> attributes;
 		if (allAttributes) {
 			attributes = asList(anyAttribute(historyClass));
 		} else {
@@ -80,7 +81,7 @@ public class GetCardHistory {
 				}
 			}
 		}
-		final CMQueryResult historyCardsResult = dataView.select(attributes.toArray()) //
+		final CMQueryResult historyCardsResult = dataView.select(toArray(attributes, QueryAttribute.class)) //
 				.from(historyClass) //
 				.where(condition(attribute(historyClass, "CurrentId"), eq(card.getId()))) //
 				.run();

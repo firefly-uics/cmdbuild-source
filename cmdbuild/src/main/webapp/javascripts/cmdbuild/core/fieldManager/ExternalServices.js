@@ -12,8 +12,6 @@
 		 * @param {Mixed or Array} components
 		 *
 		 * @returns {Void}
-		 *
-		 * @public
 		 */
 		add: function (target, components) {
 			components = Ext.isArray(components) ? components : [components];
@@ -22,8 +20,8 @@
 				Ext.isObject(target)
 				&& Ext.isFunction(target.add)
 			) {
-				components = Ext.Array.filter(components, function (item, i, array) {
-					return !Ext.isEmpty(item) && !Ext.Object.isEmpty(item);
+				components = Ext.Array.filter(components, function (item, i, array) { // Check items validity
+					return this.isItemValid(item);
 				}, this);
 
 				if (!Ext.isEmpty(components))
@@ -40,15 +38,13 @@
 		 * @param {Mixed or Array} elements
 		 *
 		 * @returns {Void}
-		 *
-		 * @public
 		 */
 		push: function (target, elements) {
 			elements = Ext.isArray(elements) ? elements : [elements];
 
 			if (Ext.isArray(target)) {
-				elements = Ext.Array.filter(elements, function (item, i, array) {
-					return !Ext.isEmpty(item) && !Ext.Object.isEmpty(item);
+				elements = Ext.Array.filter(elements, function (item, i, array) { // Check items validity
+					return this.isItemValid(item);
 				}, this);
 
 				if (!Ext.isEmpty(elements))
@@ -56,6 +52,22 @@
 			} else {
 				_error('push(): target in not array', this, target);
 			}
+		},
+
+		/**
+		 * Validate item verifying dataIndex property that filters also hidden columns
+		 *
+		 * @param {Object} item
+		 *
+		 * @returns {Boolean}
+		 *
+		 * @private
+		 */
+		isItemValid: function (item) {
+			return (
+				Ext.isObject(item) && !Ext.Object.isEmpty(item)
+				&& Ext.isString(item.dataIndex) && !Ext.isEmpty(item.dataIndex)
+			);
 		}
 	});
 

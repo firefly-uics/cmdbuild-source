@@ -2,6 +2,9 @@
 
 	Ext.require('CMDBuild.proxy.index.Json');
 
+	/**
+	 * @link CMDBuild.view.management.common.CMCardGridDelegate
+	 */
 	Ext.define("CMDBuild.view.common.field.searchWindow.GridPanelDelegate", {
 		/**
 		 *
@@ -43,6 +46,9 @@
 
 	});
 
+	/**
+	 * @link CMDBuild.view.management.common.CMCardGridPagingBar
+	 */
 	Ext.define("CMDBuild.view.common.field.searchWindow.GridPanelPagingBar", {
 		extend: "Ext.toolbar.Paging",
 
@@ -62,6 +68,9 @@
 		}
 	});
 
+	/**
+	 * @link CMDBuild.view.management.common.CMCardGrid
+	 */
 	Ext.define('CMDBuild.view.common.field.searchWindow.GridPanel', {
 		extend: 'Ext.grid.Panel',
 
@@ -127,6 +136,15 @@
 
 			this.mon(this, 'deselect', function(grid, record) {
 				this.callDelegates("onCMCardGridDeselect", [grid, record]);
+			}, this);
+
+			// Attributes property manage
+			this.on('columnhide', function (ct, column, eOpts) {
+				this.getStore().reload();
+			}, this);
+
+			this.on('columnshow', function (ct, column, eOpts) {
+				this.getStore().reload();
 			}, this);
 		},
 
@@ -396,9 +414,25 @@
 			var pageSize = CMDBuild.configuration.instance.get(CMDBuild.core.constants.Proxy.ROW_LIMIT);
 			var s = this.buildStore(fields, pageSize);
 
-			this.mon(s, "beforeload", function() {
+			this.mon(s, "beforeload", function (store, eOpts) {
 				this.callDelegates("onCMCardGridBeforeLoad", this);
 				this.fireEvent("beforeload", arguments);  // TODO remove?
+
+				// Attributes property manage
+				var extraParams = this.getStore().getProxy().extraParams;
+
+				if (
+					Ext.isObject(extraParams) && !Ext.Object.isEmpty(extraParams)
+					&& Ext.isString(extraParams[CMDBuild.core.constants.Proxy.CLASS_NAME]) && !Ext.isEmpty(extraParams[CMDBuild.core.constants.Proxy.CLASS_NAME])
+				) {
+					var currentPage = extraParams.page || 1;
+
+					extraParams[CMDBuild.core.constants.Proxy.ATTRIBUTES] = Ext.encode(this.getVisibleColumns());
+
+					return true;
+				}
+
+				return false;
 			}, this);
 
 			this.mon(s, "load", function(store, records) {
@@ -516,8 +550,8 @@
 			grid: me,
 			store: me.store,
 			displayInfo: true,
-			displayMsg: ' {0} - {1} ' + CMDBuild.Translation.common.display_topic_of+' {2}',
-			emptyMsg: CMDBuild.Translation.common.display_topic_none,
+			displayMsg: '{0} - {1} ' + CMDBuild.Translation.of + ' {2}',
+			emptyMsg: CMDBuild.Translation.noTopicsToDisplay,
 			items: items
 		});
 
@@ -553,7 +587,7 @@
 
 							// TODO: cmfg() controller call implementation  on controller refactor
 							handler: function(grid, rowIndex, colIndex, node, e, record, rowNode) {
-								Ext.create('CMDBuild.controller.management.common.graph.Graph', {
+								Ext.create('CMDBuild.controller.common.panel.gridAndForm.panel.common.graph.Window', {
 									parentDelegate: this,
 									classId: record.get('IdClass'),
 									cardId: record.get('id')

@@ -6,30 +6,9 @@
 		this.config = {};
 		this.backend = undefined;
 		this.xmlForm = undefined;
-		var defaultTranslations = {
-			FILTER_EQUALS : "Equals",
-			FILTER_DIFFERENT : "Different",
-			FILTER_ISNULL : "Is null",
-			FILTER_ISNOTNULL : "Is not null",
-			FILTER_BEGINSWITH : "Begins with",
-			FILTER_ENDSWITH : "Ends with",
-			FILTER_CONTAINS : "Contains",
-			FILTER_DOESNOTBEGINWITH : "Does not begin with",
-			FILTER_DOESNOTENDWITH : "Does not end with",
-			FILTER_DOESNOTCONTAIN : "Does not contain",
-			FILTER_BETWEEN : "Between",
-			FILTER_GREATERTHAN : "Greater than",
-			FILTER_LESSTHAN : "Less than",
-			FILTER_CONTAINED : "Contained",
-			FILTER_CONTAINSOREQUAL : "Contains or equal",
-			FILTER_CONTAINEDOREQUAL : "Contained or equal",
-			FILTER_RELATION : "Relation"
-
-		};
 
 		this.init = function(param) {
 			this.config = param;
-			$.Cmdbuild.custom.formAttributesFilter.initFilters();
 			if (!$.Cmdbuild.customvariables.selectObservers) {
 				$.Cmdbuild.customvariables.selectObservers = [];
 			}
@@ -100,7 +79,9 @@
 			var deleteImage = base_url + $.Cmdbuild.g3d.constants.ICON_DELETE;
 			for (var i = 0; i < attributeData.length; i++) {
 				var row = attributeData[i];
-				var selectId = attribute._id + "_operatorsSelect_" + i + "_" + this.config.idSuffix;
+				var selectId = attribute._id + "_operatorsSelect_" + i + "_"
+						+ this.config.idSuffix;
+				var $rowDiv = $("<div></div>").attr("class", "attribute-filter-row");
 				var $button = $("<input></input>").attr('type', 'image').attr(
 						"src", deleteImage).attr("indexData", i).on("click",
 						deleteAttributeOnClass);
@@ -114,9 +95,12 @@
 						selectId);
 				this.appendSpecificOperators($operatorsSelect, attribute);
 				$operatorsSelect.val(row.operator);
-				$fieldset.append($button);
-				$fieldset.append($operatorsSelect);
-				this.showOperatorsFields(row, attribute, $fieldset, i, formId);
+				$rowDiv.append($button);
+				$rowDiv.append($operatorsSelect);
+//				$button.attr("class", "cell-filter-attribute");
+//				$operatorsSelect.attr("class", "cell-filter-attribute");
+				$fieldset.append($rowDiv);
+				this.showOperatorsFields(row, attribute, $rowDiv, i, formId);
 				var operatorsList = $.Cmdbuild.custom.formAttributesFilter
 						.getSpecificOperators(attribute);
 				var param = {
@@ -136,8 +120,10 @@
 			var index = ev.currentTarget.getAttribute("indexData");
 			var attributeId = ev.currentTarget.getAttribute("attributeId");
 			var classId = ev.currentTarget.getAttribute("classId");
-			var navigationContainer = ev.currentTarget.getAttribute("navigationContainer");
-			var navigationForm = ev.currentTarget.getAttribute("navigationForm");
+			var navigationContainer = ev.currentTarget
+					.getAttribute("navigationContainer");
+			var navigationForm = ev.currentTarget
+					.getAttribute("navigationForm");
 			var rows = $.Cmdbuild.custom.configuration.temporaryFilterByAttributes[classId][attributeId].data;
 			if (rows.length > 1) {
 				rows.splice(index, 1);
@@ -169,6 +155,9 @@
 				if ($field.change) {
 					this.setChange($field, row);
 				}
+				$.each($field,function(k) {
+					$(this).attr("class", "cell-filter-attribute");
+				});				
 				$fieldset.append($field);
 			}
 		};
@@ -203,7 +192,7 @@
 					.getSpecificOperators(attribute);
 			for (var i = 0; i < options.length; i++) {
 				var t = $.Cmdbuild.translations.getTranslation(options[i][1],
-						defaultTranslations[options[i][1]]);
+						$.Cmdbuild.g3d.constants.DEFAULT_TRANSLATIONS_FOR_FILTER[options[i][1]]);
 				var $option = $("<option></option>").val(options[i][0]).text(t);
 				jqueryfield.append($option);
 			}
@@ -264,88 +253,9 @@
 	}
 	$.Cmdbuild.custom.formAttributesFilter.getSpecificOperators = function(
 			attribute) {
-		var fFilters = $.Cmdbuild.custom.formAttributesFilter;
-		switch (attribute.type) {
-		case "boolean":
-			return fFilters.FILTER_TEXTOPERATORS;
-		case "reference":
-		case "lookup":
-			return fFilters.FILTER_LOOKUPOPERATORS;
-		default:
-			return fFilters.FILTER_TEXTOPERATORS;
-		}
-	};
-	$.Cmdbuild.custom.formAttributesFilter.initFilters = function() {
-		// filter, entry for translations, the arguments number
-		$.Cmdbuild.custom.formAttributesFilter.FILTER_RANGEOPERATORS = [
-				[ $.Cmdbuild.g3d.constants.FILTER_OPERATORS.EQUAL,
-						"FILTER_EQUALS", 1 ],
-				[ $.Cmdbuild.g3d.constants.FILTER_OPERATORS.NULL,
-						"FILTER_ISNULL", 0 ],
-				[ $.Cmdbuild.g3d.constants.FILTER_OPERATORS.NOT_NULL,
-						"FILTER_ISNOTNULL", 0 ],
-				[ $.Cmdbuild.g3d.constants.FILTER_OPERATORS.NOT_EQUAL,
-						"FILTER_DIFFERENT", 1 ],
-				[ $.Cmdbuild.g3d.constants.FILTER_OPERATORS.GREATER_THAN,
-						"FILTER_GREATERTHAN", 1 ],
-				[ $.Cmdbuild.g3d.constants.FILTER_OPERATORS.LESS_THAN,
-						"FILTER_LESSTHAN", 1 ],
-				[ $.Cmdbuild.g3d.constants.FILTER_OPERATORS.BETWEEN,
-						"FILTER_BETWEEN", 2 ] ];
-		$.Cmdbuild.custom.formAttributesFilter.FILTER_TEXTOPERATORS = [
-				[ $.Cmdbuild.g3d.constants.FILTER_OPERATORS.BEGIN,
-						"FILTER_BEGINSWITH", 1 ],
-				[ $.Cmdbuild.g3d.constants.FILTER_OPERATORS.CONTAIN,
-						"FILTER_CONTAINS", 1 ],
-				[ $.Cmdbuild.g3d.constants.FILTER_OPERATORS.END,
-						"FILTER_ENDSWITH", 1 ],
-				[ $.Cmdbuild.g3d.constants.FILTER_OPERATORS.EQUAL,
-						"FILTER_EQUALS", 1 ],
-				[ $.Cmdbuild.g3d.constants.FILTER_OPERATORS.NOT_BEGIN,
-						"FILTER_ENDSWITH", 1 ],
-				[ $.Cmdbuild.g3d.constants.FILTER_OPERATORS.NOT_CONTAIN,
-						"FILTER_DOESNOTCONTAIN", 1 ],
-				[ $.Cmdbuild.g3d.constants.FILTER_OPERATORS.NOT_END,
-						"FILTER_DOESNOTENDWITH", 1 ],
-				[ $.Cmdbuild.g3d.constants.FILTER_OPERATORS.NOT_EQUAL,
-						"FILTER_DIFFERENT", 1 ],
-				[ $.Cmdbuild.g3d.constants.FILTER_OPERATORS.NOT_NULL,
-						"FILTER_ISNOTNULL", 0 ],
-				[ $.Cmdbuild.g3d.constants.FILTER_OPERATORS.NULL,
-						"FILTER_ISNULL", 0 ] ];
-		$.Cmdbuild.custom.formAttributesFilter.FILTER_LOOKUPOPERATORS = [
-				[ $.Cmdbuild.g3d.constants.FILTER_OPERATORS.EQUAL,
-						"FILTER_EQUALS", 1 ],
-				[ $.Cmdbuild.g3d.constants.FILTER_OPERATORS.NULL,
-						"FILTER_ISNULL", 0 ],
-				[ $.Cmdbuild.g3d.constants.FILTER_OPERATORS.NOT_NULL,
-						"FILTER_ISNOTNULL", 0 ],
-				[ $.Cmdbuild.g3d.constants.FILTER_OPERATORS.NOT_EQUAL,
-						"FILTER_DIFFERENT", 1 ] ];
-		$.Cmdbuild.custom.formAttributesFilter.FILTER_BOOLEANOPERATORS = [
-				[ $.Cmdbuild.g3d.constants.FILTER_OPERATORS.EQUAL,
-						"FILTER_EQUALS", 1 ],
-				[ $.Cmdbuild.g3d.constants.FILTER_OPERATORS.NULL,
-						"FILTER_ISNULL", 0 ],
-				[ $.Cmdbuild.g3d.constants.FILTER_OPERATORS.NOT_NULL,
-						"FILTER_ISNOTNULL", 0 ] ];
-		$.Cmdbuild.custom.formAttributesFilter.FILTER_INETOPERATORS = [
-				[ $.Cmdbuild.g3d.constants.FILTER_OPERATORS.EQUAL,
-						"FILTER_EQUALS", 1 ],
-				[ $.Cmdbuild.g3d.constants.FILTER_OPERATORS.NOT_NULL,
-						"FILTER_ISNOTNULL", 0 ],
-				[ $.Cmdbuild.g3d.constants.FILTER_OPERATORS.NET_CONTAINS,
-						"FILTER_CONTAINS", 1 ],
-				[ $.Cmdbuild.g3d.constants.FILTER_OPERATORS.NET_CONTAINED,
-						"FILTER_CONTAINED", 1 ],
-				[
-						$.Cmdbuild.g3d.constants.FILTER_OPERATORS.NET_CONTAINSOREQUAL,
-						"FILTER_CONTAINSOREQUAL", 1 ],
-				[
-						$.Cmdbuild.g3d.constants.FILTER_OPERATORS.NET_CONTAINEDOREQUAL,
-						"FILTER_CONTAINEDOREQUAL", 1 ],
-				[ $.Cmdbuild.g3d.constants.FILTER_OPERATORS.NET_RELATION,
-						"FILTER_RELATION", 2 ] ];
+		var fFilters = $.Cmdbuild.g3d.constants.FILTERS_FOR_TYPE;
+		var operator = $.Cmdbuild.g3d.constants.OPERATORS_FOR_TYPE[attribute.type];
+		return (operator) ? operator : fFilters.FILTER_TEXTOPERATORS;
 	};
 
 	$.Cmdbuild.custom.formAttributesFilter.getOrs = function(attributeId, rows) {

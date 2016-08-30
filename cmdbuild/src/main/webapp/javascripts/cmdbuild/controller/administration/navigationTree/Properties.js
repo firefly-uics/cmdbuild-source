@@ -92,7 +92,7 @@
 		 * @returns {Void}
 		 */
 		onNavigationTreeTabPropertiesTreeSelected: function () {
-			this.view.setDisabled(this.cmfg('navigationTreeSelectedTreeIsEmpty'));
+			this.view.enable();
 
 			this.form.reset();
 

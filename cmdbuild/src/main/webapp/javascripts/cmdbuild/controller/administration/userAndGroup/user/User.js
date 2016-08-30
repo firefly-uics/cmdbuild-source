@@ -18,7 +18,7 @@
 		 */
 		cmfgCatchedFunctions: [
 			'onUserAndGroupUserAbortButtonClick',
-			'onUserAndGroupUserAccordionSelect = onUserAndGroupAccordionSelect',
+			'onUserAndGroupUserAccordionSelected = onUserAndGroupAccordionSelected',
 			'onUserAndGroupUserAddButtonClick',
 			'onUserAndGroupUserChangePasswordButtonClick',
 			'onUserAndGroupUserDisableButtonClick',
@@ -83,9 +83,17 @@
 		},
 
 		/**
-		 * Empty function to avoid warning
+		 * @returns {Void}
 		 */
-		onUserAndGroupUserAccordionSelect: Ext.emptyFn,
+		onUserAndGroupUserAccordionSelected: function () {
+			if (
+				!this.cmfg('userAndGroupSelectedAccordionIsEmpty')
+				&& this.cmfg('userAndGroupSelectedAccordionGet', CMDBuild.core.constants.Proxy.SECTION_HIERARCHY)[0] == 'user'
+			) {
+				this.cmfg('userAndGroupViewTitleSet', this.getBaseTitle());
+				this.cmfg('userAndGroupViewActiveItemSet', this.view);
+			}
+		},
 
 		/**
 		 * @returns {Void}
@@ -318,7 +326,7 @@
 					}
 				});
 			} else {
-				_error('empty or unmanaged server response (' + decodedResponse + ')', this);
+				_error('success(): empty or unmanaged server response', this, decodedResponse);
 			}
 		}
 	});

@@ -6,7 +6,7 @@
 		requires: [
 			'CMDBuild.core.constants.FieldWidths',
 			'CMDBuild.core.constants.Proxy',
-			'CMDBuild.model.workflow.tabs.properties.XpdlVersion'
+			'CMDBuild.model.administration.workflow.tabs.properties.XpdlVersion'
 		],
 
 		mixins: ['CMDBuild.view.common.PanelFunctions'],
@@ -52,7 +52,7 @@
 						forceSelection: true,
 
 						store: Ext.create('Ext.data.ArrayStore', { // TODO: waiting for refactor (for a better version store build)
-							model: 'CMDBuild.model.workflow.tabs.properties.XpdlVersion',
+							model: 'CMDBuild.model.administration.workflow.tabs.properties.XpdlVersion',
 							data: [],
 							sorters: [
 								{ property : CMDBuild.core.constants.Proxy.INDEX, direction: 'DESC' }

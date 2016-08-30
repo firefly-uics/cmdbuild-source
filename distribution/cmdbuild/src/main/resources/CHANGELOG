@@ -5,8 +5,30 @@ NEW FEATURES
 
  * "Show language choice" configuration not readed at login page
 
+ * Advanced filters management from REST web services
+
+ * Notification of errors by email
+
+ * Performance improvements to queries
+
+ * Preselection of workflow activities
+
+ * Simple filter support for processes routes
+
+ * New GetCardPosition management
+
+ * Client performance improvements
+
 
 FIXES
+
+ * Software version string visually displayed in half on login panel
+
+ * Selected tab reset on class change in administration Classes module
+
+ * Classes geographical attributes tab no zoom levels validation
+
+ * Selected tab reset on accordion selection change in administration modules
 
  * UI not loading on Tomcat 8.0.36 (latest)
 
@@ -17,6 +39,10 @@ FIXES
  * History tab rows doesn't display relation attributes
 
  * Error when trying to get cards from a superclass when there are row privileges defined on a subclass
+
+ * Wrong selection when accessing closed processes from url
+
+ * Task manager UI behaviour errors
 
  * "Privileged" status for user invalidates "impersonate" operation of WorkflowAPI
 
@@ -197,8 +223,6 @@ FIXES
  * The wizard connector synchronizes entries even if no values has been changed when a timestamp column is included within mapping
 
  * The Data Definition Log reports a wrong statement when creating a class with no parent
-
- * Error while selecting node with no children
 
 
 

@@ -69,8 +69,6 @@
 			remove: 'services/json/management/modcard/deletecard',
 
 			readAll: 'services/json/management/modcard/getcardlist',
-			readAllDetails: 'services/json/management/modcard/getdetaillist',
-			readAllShort: 'services/json/management/modcard/getcardlistshort',
 
 			bulkUpdate: 'services/json/management/modcard/bulkupdate',
 			bulkUpdateFromFilter: 'services/json/management/modcard/bulkupdatefromfilter',
@@ -323,11 +321,11 @@
 
 			layer: {
 				create: '',
-				read: '',
+				read: 'services/json/gis/getalllayers', // TODO: waiting for refactor (CRUD)
 				update: '',
 				remove: '',
 
-				readAll: 'services/json/gis/getalllayers',
+				readAll: 'services/json/gis/getalllayers', // TODO: waiting for refactor (rename)
 
 				setOrder: 'services/json/gis/setlayersorder',
 				setVisibility: 'services/json/gis/setlayervisibility'
@@ -665,6 +663,7 @@
 
 			readAll: 'services/json/schema/modclass/getallclasses', // TODO: waiting for refactor (crud)
 
+			getPosition: 'services/json/workflow/getposition',
 			isProcessUpdated: 'services/json/workflow/isprocessupdated',
 			synchronize: 'services/json/workflow/sync',
 
@@ -674,12 +673,20 @@
 				update: 'services/json/workflow/saveactivity', // TODO: waiting for refactor (crud)
 				remove: '',
 
-				readAll: 'services/json/workflow/getprocessinstancelist',
 				readStart: 'services/json/workflow/getstartactivity',
 
 				abort: 'services/json/workflow/abortprocess',
 				lock: 'services/json/lock/lockactivity',
 				unlock: 'services/json/lock/unlockactivity'
+			},
+
+			instance: {
+				create: '',
+				read: 'services/json/workflow/getinstance',
+				update: '',
+				remove: '',
+
+				readAll: 'services/json/workflow/getinstances'
 			},
 
 			xpdl: {

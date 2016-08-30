@@ -4,8 +4,8 @@
 		extend: 'CMDBuild.controller.common.abstract.Base',
 
 		requires: [
-			'CMDBuild.core.constants.ModuleIdentifiers',
-			'CMDBuild.core.constants.Proxy'
+			'CMDBuild.core.constants.Proxy',
+			'CMDBuild.proxy.administration.workflow.Workflow'
 		],
 
 		/**
@@ -17,13 +17,14 @@
 		 * @cfg {Array}
 		 */
 		cmfgCatchedFunctions: [
+			'identifierGet = workflowIdentifierGet',
 			'onWorkflowAddButtonClick',
 			'onWorkflowModuleInit = onModuleInit',
-			'onWorkflowPrintSchemaButtonClick = onButtonPrintClick',
+			'onWorkflowPrintButtonClick',
+			'onWorkflowWokflowSelected',
 			'workflowSelectedWorkflowGet',
 			'workflowSelectedWorkflowIsEmpty',
-			'workflowSelectedWorkflowReset',
-			'workflowTabInit'
+			'workflowSelectedWorkflowReset'
 		],
 
 		/**
@@ -42,6 +43,11 @@
 		controllerDomains: undefined,
 
 		/**
+		 * @property {CMDBuild.controller.common.panel.gridAndForm.panel.common.print.Window}
+		 */
+		controllerPrintWindow: undefined,
+
+		/**
 		 * @property {CMDBuild.controller.administration.workflow.tabs.Properties}
 		 */
 		controllerProperties: undefined,
@@ -52,7 +58,7 @@
 		controllerTaks: undefined,
 
 		/**
-		 * @property {CMDBuild.model.workflow.Workflow}
+		 * @property {CMDBuild.model.administration.workflow.Workflow}
 		 *
 		 * @private
 		 */
@@ -82,28 +88,31 @@
 			this.tabPanel.removeAll();
 
 			// Controller build
-			this.controllerAttributes = Ext.create('CMDBuild.controller.administration.workflow.CMAttributes', { // TODO: legacy
+			this.controllerAttributes = Ext.create('CMDBuild.controller.administration.workflow.tabs.CMAttributes', { // TODO: legacy
 				parentDelegate: this,
 				view: this.view.attributesPanel
 			});
 			this.controllerDomains = Ext.create('CMDBuild.controller.administration.workflow.tabs.Domains', { parentDelegate: this });
+			this.controllerPrintWindow = Ext.create('CMDBuild.controller.common.panel.gridAndForm.panel.common.print.Window', { parentDelegate: this });
 			this.controllerProperties = Ext.create('CMDBuild.controller.administration.workflow.tabs.Properties', { parentDelegate: this });
 			this.controllerTasks = Ext.create('CMDBuild.controller.administration.workflow.tabs.TaskManager', { parentDelegate: this });
 
 			// Inject tabs (sorted)
-			this.tabPanel.add(this.controllerProperties.getView());
-			this.tabPanel.add(this.view.attributesPanel); // TODO: legacy
-			this.tabPanel.add(this.controllerDomains.getView());
-			this.tabPanel.add(this.controllerTasks.getView());
+			this.tabPanel.add([
+				this.controllerProperties.getView(),
+				this.view.attributesPanel, // TODO: legacy
+				this.controllerDomains.getView(),
+				this.controllerTasks.getView()
+			]);
 		},
 
 		/**
 		 * @returns {Void}
 		 */
 		onWorkflowAddButtonClick: function () {
-			this.tabPanel.setActiveTab(0); // Must be first to avoid tab show errors
+			this.tabPanel.setActiveTab(0);
 
-			this.cmfg('mainViewportAccordionDeselect', CMDBuild.core.constants.ModuleIdentifiers.getWorkflow());
+			this.cmfg('mainViewportAccordionDeselect', this.cmfg('workflowIdentifierGet'));
 			this.cmfg('workflowSelectedWorkflowReset');
 
 			this.setViewTitle();
@@ -124,34 +133,51 @@
 		 * @override
 		 */
 		onWorkflowModuleInit: function (node) {
-			if (!Ext.Object.isEmpty(node)) {
+			this.cmfg('workflowSelectedWorkflowReset');
+
+			if (Ext.isObject(node) && !Ext.Object.isEmpty(node)) {
 				var params = {};
 				params[CMDBuild.core.constants.Proxy.ACTIVE] = false;
 
-				CMDBuild.proxy.workflow.Workflow.read({
+				CMDBuild.proxy.administration.workflow.Workflow.read({
 					params: params,
 					scope: this,
 					success: function (response, options, decodedResponse) {
-						decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.CLASSES] || [];
+						decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.CLASSES];
 
-						var selectedWorkflow = Ext.Array.findBy(decodedResponse, function (workflowObject, i) {
-							return node.get(CMDBuild.core.constants.Proxy.ENTITY_ID) == workflowObject[CMDBuild.core.constants.Proxy.ID];
-						}, this);
+						if (Ext.isArray(decodedResponse) && !Ext.isEmpty(decodedResponse)) {
+							var selectedWorkflow = Ext.Array.findBy(decodedResponse, function (workflowObject, i) {
+								return node.get(CMDBuild.core.constants.Proxy.ENTITY_ID) == workflowObject[CMDBuild.core.constants.Proxy.ID];
+							}, this);
 
-						if (!Ext.isEmpty(selectedWorkflow)) {
-							this.workflowSelectedWorkflowSet({ value: selectedWorkflow });
+							if (Ext.isObject(selectedWorkflow) && !Ext.Object.isEmpty(selectedWorkflow)) {
+								this.workflowSelectedWorkflowSet({ value: selectedWorkflow });
 
-							this.setViewTitle(this.cmfg('workflowSelectedWorkflowGet', CMDBuild.core.constants.Proxy.DESCRIPTION));
-
-							this.cmfg('workflowTabInit');
-
-							this.tabPanel.setActiveTab(0);
-							this.tabPanel.getActiveTab().fireEvent('show'); // Manual show event fire because was already selected
-						} else {
-							_error('workflow with id "' + node.get(CMDBuild.core.constants.Proxy.ENTITY_ID) + '" not found', this);
+								this.setViewTitle(this.cmfg('workflowSelectedWorkflowGet', CMDBuild.core.constants.Proxy.DESCRIPTION));
+							} else {
+								_error('onWorkflowModuleInit(): workflow not found', this, node.get(CMDBuild.core.constants.Proxy.ENTITY_ID));
+							}
 						}
+
+						this.cmfg('onWorkflowWokflowSelected');
+
+						// Manage tab selection
+						if (Ext.isEmpty(this.tabPanel.getActiveTab()))
+							this.tabPanel.setActiveTab(0);
+
+						this.tabPanel.getActiveTab().fireEvent('show'); // Manual show event fire because was already selected
+
+						this.onModuleInit(node); // Custom callParent() implementation
 					}
 				});
+			} else {
+				this.cmfg('onWorkflowWokflowSelected');
+
+				// Manage tab selection
+				if (Ext.isEmpty(this.tabPanel.getActiveTab()))
+					this.tabPanel.setActiveTab(0);
+
+				this.tabPanel.getActiveTab().fireEvent('show'); // Manual show event fire because was already selected
 
 				this.onModuleInit(node); // Custom callParent() implementation
 			}
@@ -162,18 +188,33 @@
 		 *
 		 * @returns {Void}
 		 */
-		onWorkflowPrintSchemaButtonClick: function (format) {
-			if (!Ext.isEmpty(format)) {
+		onWorkflowPrintButtonClick: function (format) {
+			if (Ext.isString(format) && !Ext.isEmpty(format)) {
 				var params = {};
 				params[CMDBuild.core.constants.Proxy.FORMAT] = format;
 
-				Ext.create('CMDBuild.controller.common.entryTypeGrid.printTool.PrintWindow', {
-					parentDelegate: this,
+				this.controllerPrintWindow.cmfg('panelGridAndFormPrintWindowShow', {
 					format: format,
 					mode: 'schema',
-					parameters: params
+					params: params
 				});
+			} else {
+				_error('onWorkflowPrintButtonClick(): unmanaged format property', this, format);
 			}
+		},
+
+		/**
+		 * @returns {Void}
+		 *
+		 * FIXME: use cmfg redirect functionalities (onWorkflowTabWokflowSelection)
+		 */
+		onWorkflowWokflowSelected: function () {
+			this.controllerAttributes.onClassSelected( // TODO: legacy
+				this.cmfg('workflowSelectedWorkflowGet', CMDBuild.core.constants.Proxy.ID),
+				this.cmfg('workflowSelectedWorkflowGet', CMDBuild.core.constants.Proxy.NAME));
+			this.controllerDomains.cmfg('onWorkflowTabDomainsWorkflowSelected');
+			this.controllerProperties.cmfg('onWorkflowTabPropertiesWorkflowSelected');
+			this.controllerTasks.cmfg('onWorkflowTabTasksWorkflowSelected');
 		},
 
 		// SelectedWorkflow property functions
@@ -221,24 +262,12 @@
 			 */
 			workflowSelectedWorkflowSet: function (parameters) {
 				if (!Ext.Object.isEmpty(parameters)) {
-					parameters[CMDBuild.core.constants.Proxy.MODEL_NAME] = 'CMDBuild.model.workflow.Workflow';
+					parameters[CMDBuild.core.constants.Proxy.MODEL_NAME] = 'CMDBuild.model.administration.workflow.Workflow';
 					parameters[CMDBuild.core.constants.Proxy.TARGET_VARIABLE_NAME] = 'selectedWorkflow';
 
 					this.propertyManageSet(parameters);
 				}
-			},
-
-		/**
-		 * TODO: use AbstractController forwarding methods on controllerAttributes controller refactor
-		 */
-		workflowTabInit: function () {
-			this.controllerAttributes.onClassSelected( // TODO: legacy
-				this.cmfg('workflowSelectedWorkflowGet', CMDBuild.core.constants.Proxy.ID),
-				this.cmfg('workflowSelectedWorkflowGet', CMDBuild.core.constants.Proxy.NAME));
-			this.controllerDomains.cmfg('workflowTabInit');
-			this.controllerProperties.cmfg('workflowTabInit');
-			this.controllerTasks.cmfg('workflowTabInit');
-		}
+			}
 	});
 
 })();

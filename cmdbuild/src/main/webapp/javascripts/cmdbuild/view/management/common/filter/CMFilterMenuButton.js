@@ -1,7 +1,7 @@
 (function() {
 
 	/**
-	 * @deprecated CMDBuild.controller.common.entryTypeGrid.filter.advanced.Advanced
+	 * @deprecated CMDBuild.controller.common.panel.gridAndForm.panel.common.filter.advanced.Advanced
 	 */
 
 	// Constants to identify the icons that the user
@@ -213,6 +213,9 @@
 	var HTML_FIELD_HEIGHT = 200;
 	var SIMPLE_FIELD_HEIGHT = 50;
 
+	/**
+	 * @deprecated CMDBuild.controller.common.field.filter.runtimeParameters.RuntimeParameters
+	 */
 	Ext.define("CMDBuild.view.management.common.filter.CMRuntimeParameterWindow", {
 
 		extend: "Ext.window.Window",

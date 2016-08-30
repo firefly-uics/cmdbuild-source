@@ -133,7 +133,7 @@
 					dataIndex: CMDBuild.core.constants.Proxy.TEXT,
 					text: CMDBuild.Translation.translationObject,
 					width: 300,
-//					locked: true, // There is a performance issue in ExtJs 4.2.0 without locked columns all is fine
+					// locked: true, // There is a performance issue in ExtJs 4.2.0 without locked columns all is fine
 					sortable: false,
 					draggable: false,
 					hideable: false

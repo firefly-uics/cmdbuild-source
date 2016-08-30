@@ -142,7 +142,7 @@
 							flex: 1
 						},
 						{
-							text: CMDBuild.Translation.description_,
+							text: CMDBuild.Translation.descriptionLabel,
 							dataIndex: CMDBuild.core.constants.Proxy.DESCRIPTION,
 							flex: 1
 						}
@@ -173,8 +173,8 @@
 							itemId: CMDBuild.core.constants.Proxy.TOOLBAR_BOTTOM,
 							store: store,
 							displayInfo: true,
-							displayMsg: ' {0} - {1} ' + CMDBuild.Translation.common.display_topic_of+' {2}',
-							emptyMsg: CMDBuild.Translation.common.display_topic_none
+							displayMsg: '{0} - {1} ' + CMDBuild.Translation.of + ' {2}',
+							emptyMsg: CMDBuild.Translation.noTopicsToDisplay
 						})
 					],
 

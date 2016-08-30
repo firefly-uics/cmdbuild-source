@@ -11,6 +11,7 @@ import static org.cmdbuild.services.store.filter.DataViewFilterStore.USER_ID;
 
 import java.util.Map;
 
+import org.cmdbuild.auth.UserStore;
 import org.cmdbuild.dao.entry.CMCard;
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.view.CMDataView;
@@ -20,9 +21,11 @@ import org.cmdbuild.services.store.filter.FilterStore.Filter;
 public class FilterConverter extends BaseStorableConverter<Filter> {
 
 	private final CMDataView dataView;
+	private final UserStore userStore;
 
-	public FilterConverter(final CMDataView dataView) {
+	public FilterConverter(final CMDataView dataView, final UserStore userStore) {
 		this.dataView = dataView;
+		this.userStore = userStore;
 	}
 
 	@Override
@@ -55,6 +58,11 @@ public class FilterConverter extends BaseStorableConverter<Filter> {
 		values.put(SHARED, storable.isShared());
 		values.put(USER_ID, storable.getUserId());
 		return values;
+	}
+
+	@Override
+	public String getUser(final Filter storable) {
+		return userStore.getUser().getAuthenticatedUser().getUsername();
 	}
 
 }

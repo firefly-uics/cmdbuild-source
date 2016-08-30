@@ -18,7 +18,6 @@
 		 * @cfg {Array}
 		 */
 		cmfgCatchedFunctions: [
-			'mainViewportAccordionControllerExists',
 			'mainViewportAccordionControllerExpand',
 			'mainViewportAccordionControllerGet',
 			'mainViewportAccordionControllerUpdateStore',
@@ -26,6 +25,7 @@
 			'mainViewportAccordionDeselect',
 			'mainViewportAccordionIsCollapsed',
 			'mainViewportAccordionSetDisabled',
+			'mainViewportActivitySelect',
 			'mainViewportCardSelect',
 			'mainViewportDanglingCardGet',
 			'mainViewportInstanceNameSet',
@@ -170,6 +170,8 @@
 			 * @param {String} identifier
 			 *
 			 * @returns {Boolean} accordionExists
+			 *
+			 * @private
 			 */
 			mainViewportAccordionControllerExists: function (identifier) {
 				var accordionControllerExists = (
@@ -178,7 +180,7 @@
 				);
 
 				if (!accordionControllerExists)
-					_error('accordion controller with identifier "' + identifier + '" not found', this);
+					return _error('mainViewportAccordionControllerExists(): accordion controller with identifier "' + identifier + '" not found', this);
 
 				return accordionControllerExists;
 			},
@@ -187,12 +189,16 @@
 			 * Forwarder method
 			 *
 			 * @param {Object} parameters
+			 * @param {Object} parameters.identifier
+			 * @param {Object} parameters.params - expand method parameters
 			 *
 			 * @returns {Void}
 			 */
-			mainViewportAccordionControllerExpand: function (identifier) {
-				if (this.cmfg('mainViewportAccordionControllerExists', identifier))
-					this.cmfg('mainViewportAccordionControllerGet', identifier).cmfg('accordionExpand');
+			mainViewportAccordionControllerExpand: function (parameters) {
+				parameters = Ext.isObject(parameters) ? parameters : {};
+
+				if (this.mainViewportAccordionControllerExists(parameters.identifier))
+					this.cmfg('mainViewportAccordionControllerGet', parameters.identifier).cmfg('accordionExpand', parameters.params);
 			},
 
 			/**
@@ -201,7 +207,7 @@
 			 * @returns {Mixed} or null
 			 */
 			mainViewportAccordionControllerGet: function (identifier) {
-				if (this.cmfg('mainViewportAccordionControllerExists', identifier))
+				if (this.mainViewportAccordionControllerExists(identifier))
 					return this.accordionControllers[identifier];
 
 				return null;
@@ -240,19 +246,25 @@
 			 *
 			 * @param {Object} parameters
 			 * @param {String} parameters.identifier
-			 * @param {Number} parameters.nodeIdToSelect
+			 * @param {Object} parameters.params
+			 * @param {Boolean} parameters.params.loadMask
+			 * @param {Number} parameters.params.selectionId
 			 *
 			 * @returns {Void}
 			 */
 			mainViewportAccordionControllerUpdateStore: function (parameters) {
-				if (
-					Ext.isObject(parameters) && !Ext.Object.isEmpty(parameters)
-					&& this.cmfg('mainViewportAccordionControllerExists', parameters.identifier)
-				) {
-					parameters.nodeIdToSelect = Ext.isEmpty(parameters.nodeIdToSelect) ? null : parameters.nodeIdToSelect;
+				parameters = Ext.isObject(parameters) ? parameters : {};
+				parameters.params = Ext.isObject(parameters.params) ? parameters.params : {};
+				parameters.params.selectionId = Ext.isEmpty(parameters.params.selectionId) ? null : parameters.params.selectionId;
 
-					this.cmfg('mainViewportAccordionControllerGet', parameters.identifier).cmfg('accordionUpdateStore', parameters.nodeIdToSelect);
-				}
+				var accordionController = this.cmfg('mainViewportAccordionControllerGet', parameters.identifier);
+
+				// Error handling
+					if (!Ext.isObject(accordionController) || Ext.Object.isEmpty(accordionController) || !Ext.isFunction(accordionController.cmfg))
+						return _error('mainViewportAccordionControllerUpdateStore(): accordion controller retriving error', this, accordionController);
+				// END: Error handling
+
+				accordionController.cmfg('accordionUpdateStore', parameters.params);
 			},
 
 			/**
@@ -263,7 +275,7 @@
 			 * @returns {Void}
 			 */
 			mainViewportAccordionDeselect: function (identifier) {
-				if (this.cmfg('mainViewportAccordionControllerExists', identifier))
+				if (this.mainViewportAccordionControllerExists(identifier))
 					this.cmfg('mainViewportAccordionControllerGet', identifier).cmfg('accordionDeselect');
 			},
 
@@ -286,7 +298,7 @@
 			mainViewportAccordionSetDisabled: function (parameters) {
 				if (
 					Ext.isObject(parameters) && !Ext.Object.isEmpty(parameters)
-					&& this.cmfg('mainViewportAccordionControllerExists', parameters.identifier)
+					&& this.mainViewportAccordionControllerExists(parameters.identifier)
 				) {
 					parameters.state = Ext.isBoolean(parameters.state) ? parameters.state : true;
 
@@ -369,11 +381,68 @@
 		/**
 		 * @param {Object} parameters
 		 * @param {Boolean or Object} parameters.activateFirstTab - if object selects object as tab otherwise selects first one
+		 * @param {Number} parameters.instanceId
+		 * @param {Number} parameters.workflowId
+		 *
+		 * @returns {Void}
+		 */
+		mainViewportActivitySelect: function (parameters) {
+			parameters = Ext.isObject(parameters) ? parameters : {};
+			parameters.activateFirstTab = Ext.isEmpty(parameters.activateFirstTab) ? true : parameters.activateFirstTab;
+
+			var accordionController = this.cmfg('mainViewportAccordionControllerWithNodeWithIdGet', parameters[CMDBuild.core.constants.Proxy.WORKFLOW_ID]),
+				moduleController = this.cmfg('mainViewportModuleControllerGet', CMDBuild.core.constants.ModuleIdentifiers.getWorkflow());
+
+			// Error handling
+				if (!Ext.isNumber(parameters[CMDBuild.core.constants.Proxy.INSTANCE_ID]) || Ext.isEmpty(parameters[CMDBuild.core.constants.Proxy.INSTANCE_ID]))
+					return _error('mainViewportActivitySelect(): unmanaged instanceId parameter', this, parameters[CMDBuild.core.constants.Proxy.INSTANCE_ID]);
+
+				if (!Ext.isNumber(parameters[CMDBuild.core.constants.Proxy.WORKFLOW_ID]) || Ext.isEmpty(parameters[CMDBuild.core.constants.Proxy.WORKFLOW_ID]))
+					return _error('mainViewportActivitySelect(): unmanaged workflowId parameter', this, parameters[CMDBuild.core.constants.Proxy.WORKFLOW_ID]);
+
+				if (!Ext.isObject(moduleController) || Ext.Object.isEmpty(moduleController) || !Ext.isFunction(moduleController.cmfg))
+					return _error('mainViewportActivitySelect(): module controller retriving error', this, moduleController);
+
+				if (!Ext.isObject(accordionController) || Ext.Object.isEmpty(accordionController) || !Ext.isFunction(accordionController.cmfg))
+					return CMDBuild.core.Message.warning(CMDBuild.Translation.warning, CMDBuild.Translation.warnings.itemNotAvailable);
+			// END: Error handling
+
+			// Instruction required or selection doesn't work if exists another selection
+			this.cmfg('mainViewportAccordionDeselect', accordionController.cmfg('accordionIdentifierGet'));
+
+			this.cmfg('mainViewportAccordionControllerExpand', {
+				identifier: accordionController.cmfg('accordionIdentifierGet'),
+				params: {
+					scope: this,
+					callback: function () {
+						moduleController.cmfg('workflowTreeApplyStoreEvent', {
+							eventName: 'load',
+							fn: function (store, node, records, successful, eOpts) {
+								moduleController.cmfg('workflowTreeActivityOpen', {
+									enableForceFlowStatus: true,
+									instanceId: parameters[CMDBuild.core.constants.Proxy.INSTANCE_ID]
+								});
+							},
+							scope: this,
+							options: { single: true }
+						});
+
+						accordionController.cmfg('accordionNodeByIdSelect', { id: parameters[CMDBuild.core.constants.Proxy.WORKFLOW_ID] });
+					}
+				}
+			});
+		},
+
+		/**
+		 * @param {Object} parameters
+		 * @param {Boolean or Object} parameters.activateFirstTab - if object selects object as tab otherwise selects first one
 		 * @param {String} parameters.flowStatus
 		 * @param {Number} parameters.Id - card id
 		 * @param {Number} parameters.IdClass
 		 *
 		 * @returns {Void}
+		 *
+		 * FIXME: legacy implementation used from classes and all old implementation, to fix on classes module refactor
 		 */
 		mainViewportCardSelect: function (parameters) {
 			if (
@@ -381,23 +450,33 @@
 				&& !Ext.isEmpty(parameters['Id'])
 				&& !Ext.isEmpty(parameters['IdClass'])
 			) {
-				parameters.activateFirstTab = Ext.isEmpty(parameters.activateFirstTab) ? true : parameters.activateFirstTab;
+				if (_CMCache.isClassById(parameters['IdClass'])) { // @legacy
+					parameters.activateFirstTab = Ext.isEmpty(parameters.activateFirstTab) ? true : parameters.activateFirstTab;
 
-				var accordionController = this.cmfg('mainViewportAccordionControllerWithNodeWithIdGet', parameters['IdClass']);
+					var accordionController = this.cmfg('mainViewportAccordionControllerWithNodeWithIdGet', parameters['IdClass']);
 
-				this.danglingCardSet(parameters);
+					this.danglingCardSet(parameters);
 
-				if (!Ext.isEmpty(accordionController) && Ext.isFunction(accordionController.cmfg)) {
-					accordionController.cmfg('accordionExpand', {
-						scope: this,
-						callback: function (panel, eOpts) {
-							accordionController.cmfg('accordionDeselect'); // Instruction required or selection doesn't work if exists another selection
-							accordionController.cmfg('accordionNodeByIdSelect', { id: parameters['IdClass'] });
-						}
-					});
+					if (!Ext.isEmpty(accordionController) && Ext.isFunction(accordionController.cmfg)) {
+						accordionController.cmfg('accordionExpand', {
+							scope: this,
+							callback: function (panel, eOpts) {
+								accordionController.cmfg('accordionDeselect'); // Instruction required or selection doesn't work if exists another selection
+								accordionController.cmfg('accordionNodeByIdSelect', { id: parameters['IdClass'] });
+							}
+						});
+					} else {
+						CMDBuild.core.Message.warning(CMDBuild.Translation.warning, CMDBuild.Translation.warnings.itemNotAvailable);
+					}
 				} else {
-					CMDBuild.core.Message.warning(CMDBuild.Translation.warning, CMDBuild.Translation.warnings.itemNotAvailable);
+					var params = {};
+					params['activateFirstTab'] = Ext.isEmpty(parameters.activateFirstTab) ? true : parameters.activateFirstTab;
+					params[CMDBuild.core.constants.Proxy.INSTANCE_ID] = parameters['Id'];
+					params[CMDBuild.core.constants.Proxy.WORKFLOW_ID] = parameters['IdClass'];
+
+					this.cmfg('mainViewportActivitySelect', params);
 				}
+
 			} else {
 				_error('malformed openCard method parameters', this);
 			}
@@ -578,22 +657,22 @@
 				var toShow = false;
 
 				if (
-					!Ext.Object.isEmpty(parameters)
+					Ext.isObject(parameters) && !Ext.Object.isEmpty(parameters)
 					&& this.cmfg('mainViewportModuleControllerExists', parameters.identifier)
 				) {
 					parameters.parameters = Ext.isEmpty(parameters.parameters) ? null : parameters.parameters;
 
 					var modulePanel = this.cmfg('mainViewportModuleControllerGet', parameters.identifier);
 
-					if (!Ext.isEmpty(modulePanel) && Ext.isFunction(modulePanel.getView)) {
-						modulePanel = modulePanel.getView();
-					} else if (!Ext.isEmpty(modulePanel) && !Ext.isEmpty(modulePanel.view)) { // @deprecated
-						modulePanel = modulePanel.view;
-					}
+					if (Ext.isObject(modulePanel) && !Ext.Object.isEmpty(modulePanel)) {
+						if (Ext.isFunction(modulePanel.getView)) {
+							modulePanel = modulePanel.getView();
+						} else if (!Ext.isEmpty(modulePanel.view)) { // @deprecated
+							modulePanel = modulePanel.view;
+						}
 
-					toShow = !Ext.isFunction(modulePanel.beforeBringToFront) || modulePanel.beforeBringToFront(parameters.parameters) !== false; // @deprecated
+						toShow = !Ext.isFunction(modulePanel.beforeBringToFront) || modulePanel.beforeBringToFront(parameters.parameters) !== false; // @deprecated
 
-					if (!Ext.isEmpty(modulePanel)) {
 						if (toShow)
 							this.moduleContainer.layout.setActiveItem(modulePanel.getId());
 

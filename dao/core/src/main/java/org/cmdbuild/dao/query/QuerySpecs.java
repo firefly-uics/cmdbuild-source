@@ -3,7 +3,7 @@ package org.cmdbuild.dao.query;
 import java.util.List;
 
 import org.cmdbuild.dao.query.clause.OrderByClause;
-import org.cmdbuild.dao.query.clause.QueryAliasAttribute;
+import org.cmdbuild.dao.query.clause.QueryAttribute;
 import org.cmdbuild.dao.query.clause.from.FromClause;
 import org.cmdbuild.dao.query.clause.join.DirectJoinClause;
 import org.cmdbuild.dao.query.clause.join.JoinClause;
@@ -17,9 +17,9 @@ public interface QuerySpecs {
 
 	List<DirectJoinClause> getDirectJoins();
 
-	List<OrderByClause> getOrderByClauses();
+	Iterable<OrderByClause> getOrderByClauses();
 
-	Iterable<QueryAliasAttribute> getAttributes();
+	Iterable<QueryAttribute> getAttributes();
 
 	WhereClause getWhereClause();
 
