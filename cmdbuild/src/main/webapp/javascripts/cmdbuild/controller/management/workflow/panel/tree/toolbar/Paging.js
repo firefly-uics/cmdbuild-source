@@ -139,6 +139,8 @@
 		},
 
 		/**
+		 * Forwarder method
+		 *
 		 * @returns {Void}
 		 */
 		workflowTreeToolbarPagingFilterBasicReset: function () {
