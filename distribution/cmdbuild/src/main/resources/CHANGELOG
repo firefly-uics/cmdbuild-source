@@ -56,6 +56,8 @@ FIXES
 
  * Wrong privileges management for reports from REST web services
 
+ * When invoking a function and the function is not found, the call returns an empty result and no error
+
 
 
 

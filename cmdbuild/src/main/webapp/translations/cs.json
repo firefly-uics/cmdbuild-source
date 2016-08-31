@@ -395,6 +395,7 @@
 			"LOOKUP_TYPE_NOTFOUND": "Typ rozbalovacího seznamu {0} nebyl nalezen",
 			"MENU_NOTFOUND": "Nabídka nebyla nalezena",
 			"NOTFOUND": "Položka nebyla nalezena",
+			"NOTFOUND_FUNCTION": "<em>Function not found {0}</em>",
 			"ORM_ACTIVE_ATTRIBUTE": "Atribut \"{1}\" třídy / procesu \"{0}\" je aktivní",
 			"ORM_AMBIGUOUS_DIRECTION": "Nelze automaticky určit směr vazby",
 			"ORM_CANT_CREATE_DATABASE": "Nelze vytvořit databázi",

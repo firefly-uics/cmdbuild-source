@@ -395,6 +395,7 @@
 			"LOOKUP_TYPE_NOTFOUND": "Loại tra cứu {0} không tìm thấy",
 			"MENU_NOTFOUND": "Không tìm thấy lệnh đơn",
 			"NOTFOUND": "Mục không trùng khớp",
+			"NOTFOUND_FUNCTION": "<em>Function not found {0}</em>",
 			"ORM_ACTIVE_ATTRIBUTE": "<em>Attribute \"{1}\" for class/process \"{0}\" is active</em>",
 			"ORM_AMBIGUOUS_DIRECTION": "Không thể tự động xác định hướng chó các mối lien ket",
 			"ORM_CANT_CREATE_DATABASE": "Không thể tạo ra cơ sở dữ liệu",

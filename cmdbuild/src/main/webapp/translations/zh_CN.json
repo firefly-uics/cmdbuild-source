@@ -395,6 +395,7 @@
 			"LOOKUP_TYPE_NOTFOUND": "Lookup 类型 {0} 未被发现",
 			"MENU_NOTFOUND": "未发现菜单",
 			"NOTFOUND": "未发现项目",
+			"NOTFOUND_FUNCTION": "<em>Function not found {0}</em>",
 			"ORM_ACTIVE_ATTRIBUTE": "属性 \"{1}\" 对于类/进程\"{0}\" 是活动状态",
 			"ORM_AMBIGUOUS_DIRECTION": "不能自动确定关系方向",
 			"ORM_CANT_CREATE_DATABASE": "不能创建数据库",
