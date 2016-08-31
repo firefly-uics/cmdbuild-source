@@ -395,6 +395,7 @@
 			"LOOKUP_TYPE_NOTFOUND": "Перечень {0} не найден",
 			"MENU_NOTFOUND": "Меню не найдено",
 			"NOTFOUND": "Элемент не найден",
+			"NOTFOUND_FUNCTION": "<em>Function not found {0}</em>",
 			"ORM_ACTIVE_ATTRIBUTE": "<em>Attribute \"{1}\" for class/process \"{0}\" is active</em>",
 			"ORM_AMBIGUOUS_DIRECTION": "Невозможно определить направление связи",
 			"ORM_CANT_CREATE_DATABASE": "Ошибка создания базы данных",

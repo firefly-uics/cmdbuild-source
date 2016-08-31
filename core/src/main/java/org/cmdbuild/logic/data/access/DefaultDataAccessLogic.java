@@ -580,8 +580,8 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 	public PagedElements<Card> fetchSQLCards(final String functionName, final QueryOptions queryOptions) {
 		final CMFunction fetchedFunction = dataView.findFunctionByName(functionName);
 		if (fetchedFunction == null) {
-			final List<Card> emptyCardList = emptyList();
-			return new PagedElements<Card>(emptyCardList, 0);
+			throw NotFoundExceptionType.NOTFOUND_FUNCTION.createException(functionName);
+
 		}
 		final Map<String, Object> parameters =
 				ChainablePutMap.of(newHashMap(defaultIfNull(queryOptions.getParameters(), NO_PARAMETERS))) //

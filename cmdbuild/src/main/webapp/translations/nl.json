@@ -395,6 +395,7 @@
 			"LOOKUP_TYPE_NOTFOUND": "Zoeklijst type {0} niet gevonden",
 			"MENU_NOTFOUND": "Menu niet gevonden",
 			"NOTFOUND": "Item niet gevonden",
+			"NOTFOUND_FUNCTION": "<em>Function not found {0}</em>",
 			"ORM_ACTIVE_ATTRIBUTE": "<em>Attribute \"{1}\" for class/process \"{0}\" is active</em>",
 			"ORM_AMBIGUOUS_DIRECTION": "Kan niet automatisch de richting van de relatie bepalen",
 			"ORM_CANT_CREATE_DATABASE": "Kan geen database maken",

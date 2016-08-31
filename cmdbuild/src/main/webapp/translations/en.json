@@ -395,6 +395,7 @@
 			"LOOKUP_TYPE_NOTFOUND": "Lookup type {0} non found",
 			"MENU_NOTFOUND": "Menu not found",
 			"NOTFOUND": "Item not found",
+			"NOTFOUND_FUNCTION": "Function not found {0}",
 			"ORM_ACTIVE_ATTRIBUTE": "Attribute \"{1}\" for class/process \"{0}\" is active",
 			"ORM_AMBIGUOUS_DIRECTION": "Cannot automatically determine the direction for the relation",
 			"ORM_CANT_CREATE_DATABASE": "Cannot create the database",
