@@ -10,7 +10,6 @@
 			'CMDBuild.core.constants.ModuleIdentifiers',
 			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.CookiesManager',
-			'CMDBuild.core.Routes',
 			'CMDBuild.core.Splash',
 			'CMDBuild.proxy.classes.Classes',
 			'CMDBuild.proxy.dashboard.Dashboard',
@@ -239,10 +238,11 @@
 				CMDBuild.core.Splash.hide(function () {
 					CMDBuild.global.controller.MainViewport.cmfg('mainViewportInstanceNameSet', CMDBuild.configuration.instance.get(CMDBuild.core.constants.Proxy.INSTANCE_NAME));
 
-					// Execute routes
-					CMDBuild.core.Routes.exec();
-
-					CMDBuild.global.controller.MainViewport.cmfg('mainViewportStartingEntitySelect');
+					if (!CMDBuild.global.Routes.isRoutePathEmpty()) { // Execute routes
+						CMDBuild.global.Routes.exec();
+					} else { // Manage starting class
+						CMDBuild.global.controller.MainViewport.cmfg('mainViewportStartingEntitySelect');
+					}
 				}, this);
 
 				if (CMDBuild.configuration.userInterface.get(CMDBuild.core.constants.Proxy.FULL_SCREEN_MODE))

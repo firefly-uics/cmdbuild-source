@@ -124,7 +124,7 @@
 					});
 
 					accordionController.cmfg('accordionDeselect');
-					accordionController.cmfg('accordionUpdateStore', workflowObject[CMDBuild.core.constants.Proxy.ID]);
+					accordionController.cmfg('accordionUpdateStore', { selectionId: workflowObject[CMDBuild.core.constants.Proxy.ID] });
 				}
 			});
 		},
