@@ -146,7 +146,7 @@
 			this.controllerTree.cmfg('workflowFormReset');
 
 			// Tree setup
-			this.controllerTree.cmfg('workflowTreeStoreLoad', { callback: Ext.emptyFn }); // Avoid first row selection
+			this.controllerTree.cmfg('workflowTreeStoreLoad', { disableFirstRowSelection: true });
 		},
 
 		/**
@@ -219,6 +219,7 @@
 
 					// Tree setup
 					this.controllerTree.cmfg('workflowTreeReset');
+					this.controllerTree.cmfg('workflowTreeStoreLoad', { disableFirstRowSelection: true });
 				} else {
 					// Form setup
 					// FIXME: future implementation on tab controllers refactor
