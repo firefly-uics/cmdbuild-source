@@ -109,11 +109,13 @@
 		 *
 		 * @private
 		 */
-		buildActionColumns: function () {
+		buildActionColumn: function () {
 			return Ext.create('Ext.grid.column.Action', {
 				align: 'center',
-				width: 75,
+				maxWidth: 75,
+				minWidth: 75,
 				sortable: false,
+				resizable: false,
 				hideable: false,
 				menuDisabled: true,
 				fixed: true,
@@ -282,7 +284,7 @@
 				}, this);
 			}
 
-			columns.push(this.buildActionColumns());
+			columns.push(this.buildActionColumn());
 
 			return columns;
 		},
