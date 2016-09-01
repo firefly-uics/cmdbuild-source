@@ -45,6 +45,32 @@
 		},
 
 		/**
+		 * @param {Object} parameters
+		 *
+		 * @returns {Void}
+		 */
+		readCard: function (parameters) {
+			parameters = Ext.isEmpty(parameters) ? {} : parameters;
+
+			Ext.apply(parameters, { url: CMDBuild.proxy.index.Json.card.read });
+
+			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.CARD, parameters);
+		},
+
+		/**
+		 * @param {Object} parameters
+		 *
+		 * @returns {Void}
+		 */
+		readClass: function (parameters) {
+			parameters = Ext.isEmpty(parameters) ? {} : parameters;
+
+			Ext.apply(parameters, { url: CMDBuild.proxy.index.Json.classes.read });
+
+			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.CLASS, parameters);
+		},
+
+		/**
 		 * @property {Object} parameters
 		 *
 		 * @returns {Void}
