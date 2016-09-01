@@ -152,7 +152,7 @@
 		},
 
 		/**
-		 * Apply interceptor with default actions
+		 * Apply interceptor with default store load callback actions, if callback is empty will be replaced with Ext.emptyFn
 		 *
 		 * @param {Function} callback
 		 *
@@ -161,6 +161,8 @@
 		 * @private
 		 */
 		buildLoadCallback: function (callback) {
+			callback = Ext.isFunction(callback) ? callback : Ext.emptyFn;
+
 			return Ext.Function.createInterceptor(callback, function (records, options, success) {
 				if (this.workflowTreeAppliedFilterIsEmpty())
 					this.controllerToolbarPaging.cmfg('workflowTreeToolbarPagingFilterAdvancedReset');
@@ -300,7 +302,7 @@
 		 * @returns {Void}
 		 */
 		onWorkflowTreeSaveFailure: function () {
-			this.cmfg('workflowTreeStoreLoad');
+			this.cmfg('workflowTreeStoreLoad', { disableFirstRowSelection: true });
 		},
 
 		/**
@@ -435,13 +437,9 @@
 						value: CMDBuild.controller.management.workflow.Utils.translateStatusFromCapitalizedMode(flowStatus)
 					});
 
-				this.cmfg('workflowTreeStoreLoad', {
-					scope: this,
-					callback: function (records, operation, success) { // Avoid first row selection and reset form status
-						this.cmfg('workflowTreeReset');
-						this.cmfg('workflowFormReset');
-					}
-				});
+				this.cmfg('workflowFormReset');
+				this.cmfg('workflowTreeReset');
+				this.cmfg('workflowTreeStoreLoad', { disableFirstRowSelection: true });
 			} else {
 				_error('positionActivityGetFailure(): unmanaged decodedResponse parameter', this, decodedResponse);
 			}
@@ -1072,6 +1070,7 @@
 		 *
 		 * @param {Object} parameters
 		 * @param {Function} parameters.callback
+		 * @param {Boolean} parameters.disableFirstRowSelection
 		 * @param {Number} parameters.page
 		 * @param {Object} parameters.params - additional load custom parameters
 		 * @param {Object} parameters.scope
@@ -1079,7 +1078,9 @@
 		 * @returns {Void}
 		 */
 		workflowTreeStoreLoad: function (parameters) {
-			parameters = Ext.isObject(parameters) ? parameters : { page: 1 };
+			parameters = Ext.isObject(parameters) ? parameters : {};
+			parameters.callback = Ext.isFunction(parameters.callback) ? parameters.callback : undefined;
+			parameters.disableFirstRowSelection = Ext.isBoolean(parameters.disableFirstRowSelection) ? parameters.disableFirstRowSelection : false;
 			parameters.page = Ext.isNumber(parameters.page) ? parameters.page : 1;
 
 			// Error handling
@@ -1088,6 +1089,10 @@
 			// END: Error handling
 
 			var sorters = this.cmfg('workflowTreeStoreGet').getSorters();
+
+			// Manage callback
+			if (!parameters.disableFirstRowSelection)
+				parameters.callback = Ext.isEmpty(parameters.callback) ? this.selectFirst : parameters.callback;
 
 			this.cmfg('workflowTreeStoreGet').getRootNode().removeAll();
 
@@ -1107,9 +1112,7 @@
 			this.cmfg('workflowTreeStoreGet').loadPage(parameters.page, {
 				params: params,
 				scope: Ext.isEmpty(parameters.scope) ? this : parameters.scope,
-				callback: this.buildLoadCallback(
-					Ext.isFunction(parameters.callback) ? parameters.callback : this.selectFirst
-				)
+				callback: this.buildLoadCallback(parameters.callback)
 			});
 		}
 	});
