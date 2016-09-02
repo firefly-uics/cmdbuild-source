@@ -1,6 +1,6 @@
 (function() {
 	var WMS_IMAGE_FORMAT = 'image/png';
-	var GOESERVER_SERVICE_TYPE = "wms";
+	var GEOSERVER_SERVICE_TYPE = "wms";
 	var GEOSERVER = "_Geoserver";
 	var DEFAULT_MIN_ZOOM = 0;
 	var DEFAULT_MAX_ZOOM = 25;
@@ -55,13 +55,15 @@
 		var geoserver_ws = CMDBuild.configuration.gis.get([ CMDBuild.core.constants.Proxy.GEO_SERVER, 'workspace' ]);
 		var geoserver_url = CMDBuild.configuration.gis.get([ CMDBuild.core.constants.Proxy.GEO_SERVER, 'url' ]);
 		var source = new ol.source.TileWMS({
-			url : geoserver_url + "/" + GOESERVER_SERVICE_TYPE,
+			url : geoserver_url + "/" + GEOSERVER_SERVICE_TYPE,
 			strategy : ol.loadingstrategy.bbox,
 			params : {
 				layers : geoserver_ws + ":" + geoAttribute.name,
 				format : WMS_IMAGE_FORMAT,
-				transparent : true
-			}
+				transparent : true,
+				SRS : 'EPSG:3857'
+
+			},
 		});
 
 		var layer = new ol.layer.Tile({
@@ -74,6 +76,7 @@
 		layer.editLayer = undefined;
 		layer.cmdb_index = geoAttribute.cmdb_index;
 		layer.set("name", geoAttribute.name);
+		layer.set("geoAttribute", geoAttribute);
 
 		return layer;
 	}

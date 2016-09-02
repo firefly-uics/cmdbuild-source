@@ -36,7 +36,7 @@
 			});
 			this.callParent(arguments);
 		},
-		chargeCardByCard : function(groups, cardsArray, index, callback, callbackScope) {
+		chargeCardByCard : function(groups, cardsArray, attributeName,index, callback, callbackScope) {
 			var currentStrategy = this.parentWindow.getCurrentStrategy();
 			if (index >= cardsArray.length || !currentStrategy) {
 				callback.apply(callbackScope, []);
@@ -45,7 +45,8 @@
 			var card = cardsArray[index];
 			var params = {
 				card : card,
-				strategy : currentStrategy
+				strategy : currentStrategy,
+				attributeName : attributeName
 			}
 			currentStrategy.value(params, function(value) {
 				if (this.parentWindow.getCurrentSourceType() === CMDBuild.gis.constants.layers.FUNCTION_SOURCE) {
@@ -62,14 +63,15 @@
 						cards : [ card ]
 					};
 				}
-				this.chargeCardByCard(groups, cardsArray, index + 1, callback, callbackScope);
+				this.chargeCardByCard(groups, cardsArray, attributeName, index + 1, callback, callbackScope);
 			}, this);
 		},
 		chargeStore : function(cardsStore, cardsArray, callback, callbackScope) {
 			var groups = {};
 			var layoutConfiguration = this.getLayoutConfiguration();
 			var thematicDocument = this.interactionDocument.getThematicDocument();
-			this.chargeCardByCard(groups, cardsArray, 0, function() {
+			var attributeName = this.parentWindow.getCurrentAttribute();
+			this.chargeCardByCard(groups, cardsArray, attributeName, 0, function() {
 				for ( var key in groups) {
 					cardsStore.add({
 						value : key,

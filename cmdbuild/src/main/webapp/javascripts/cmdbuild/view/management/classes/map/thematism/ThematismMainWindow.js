@@ -96,6 +96,9 @@
 			this.functionConfiguration = clone(configuration.functionConfiguration);
 			this.thematismConfiguration = clone(configuration.thematismConfiguration);
 		},
+		getCurrentAttribute : function() {
+			return this.functionConfiguration.attribute;
+		},
 		getCurrentStrategy : function() {
 			return this.interactionDocument.getStrategyByDescription(this.functionConfiguration.currentStrategy);
 		},

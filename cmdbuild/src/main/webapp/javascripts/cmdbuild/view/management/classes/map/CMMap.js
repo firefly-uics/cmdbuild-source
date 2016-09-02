@@ -52,8 +52,8 @@
 			var visibleLayers = [];
 			for (var i = 0; i < thematicLayers.length; i++) {
 				var layer = thematicLayers[i];
-				var geoLayer = this.getLayerByName(layer.name);
-				var hide = this.interactionDocument.isHide(layer);
+				var geoLayer = this.getLayerByClassAndName(layer.masterTableName, layer.name);
+				var hide = ! this.interactionDocument.getLayerVisibility(layer);
 				if (hide) {
 					continue;
 				}
@@ -102,13 +102,17 @@
 			if (!currentCardId) {
 				return;
 			}
+			var zoom = this.getMap().getView().getZoom();
 			var visibleLayers = [];
 			for (var i = 0; i < layers.length; i++) {
 				var layer = layers[i];
+				if (layer.minZoom > zoom || zoom > layer.maxZoom) {
+					continue;
+				}
 				var visible = this.interactionDocument.isVisible(layer, currentClassName, currentCardId);
-				var hide = this.interactionDocument.isHide(layer);
+				var hide = ! this.interactionDocument.getLayerVisibility(layer);
 				if (hide && visible) {
-					this.clearHideLayer(layer.name);
+					this.clearHideLayer(layer.masterTableName, layer.name);
 				} else if (visible) {
 					this.showLayer(layer, currentClassName, currentCardId);
 					visibleLayers.push(layer);
@@ -134,7 +138,7 @@
 				type : layer.type,
 				iconUrl : style.externalGraphic
 			};
-			var geoLayer = this.getLayerByName(layer.name);
+			var geoLayer = this.getLayerByClassAndName(layer.masterTableName, layer.name);
 			if (!geoLayer) {
 				geoLayer = this.makeLayer(geoAttribute, true);
 			}
@@ -146,8 +150,8 @@
 				});
 			}
 		},
-		clearHideLayer : function(nameLayer) {
-			var geoLayer = this.getLayerByName(nameLayer);
+		clearHideLayer : function(className, nameLayer) {
+			var geoLayer = this.getLayerByClassAndName(className, nameLayer);
 			if (geoLayer) {
 				var adapter = geoLayer.get("adapter");
 				if (adapter && adapter.clearFeatures) {
@@ -175,17 +179,26 @@
 				}
 			});
 		},
+
+		/**
+		 * @param {Object} geoAttribute
+		 * @param {Array}
+		 *            visibles : layers from _CMCACHE
+		 * 
+		 * @returns {Void}
+		 */
 		remove4GeoAttribute : function(geoAttribute, visibles) {
 			var mapLayerName = geoAttribute.name;
 			var mapClassName = geoAttribute.masterTableName;
 			if (!visibles.find(function(layer) {
 				return (layer.name === mapLayerName && layer.masterTableName === mapClassName);
 			})) {
-				if (this.getLayerByName(mapLayerName, mapClassName)) {
-					this.removeLayerByName(mapLayerName, mapClassName);
+				if (this.getLayerByClassAndName(mapClassName, mapLayerName)) {
+					this.removeLayerByName(mapClassName, mapLayerName);
 				}
 			}
 		},
+
 		/**
 		 * @param {Array}
 		 *            visibles : layers from _CMCACHE
@@ -197,7 +210,7 @@
 			var me = this;
 			allLayers.forEach(function(layer) {
 				if (!isVisible(visibles, layer)) {
-					me.removeLayerByName(layer.name);
+					me.removeLayerByName(layer.masterTableName, layer.name);
 
 				}
 			});

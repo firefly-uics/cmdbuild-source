@@ -88,6 +88,14 @@
 					layers : [ this.geoExtension.getBaseLayer() ],
 					view : this.view
 				});
+				me = this;
+				this.map.getView().on('propertychange', function(e) {
+					switch (e.key) {
+					case 'resolution':
+						me.refresh();
+						break;
+					}
+				});
 				var size = [ document.getElementById(this.id + "-body").offsetWidth,
 						document.getElementById(this.id + "-body").offsetHeight ];
 				this.map.setSize(size);
@@ -123,6 +131,7 @@
 			divContainerControl.innerHTML = composeLegend();
 			document.getElementById(this.id + "-body").appendChild(divContainerControl);
 		},
+
 		/**
 		 * @param {String}
 		 *            name
@@ -130,13 +139,14 @@
 		 * @returns {ol.Layer}
 		 * 
 		 */
-		getLayerByName : function(name, className) {
+		getLayerByClassAndName : function(className, name) {
 			var retLayer = undefined
 			var currentCard = this.interactionDocument.getCurrentCard();
 			className = (className) ? className : currentCard.className;
 			this.map.getLayers().forEach(function(layer) {
-				//var geoAttribute = layer.get("geoAttribute");
-				if (/*geoAttribute && */layer.get("name") === name/* && className === geoAttribute.masterTableName*/) {
+				var geoAttribute = layer.get("geoAttribute");
+				var masterTableName = (geoAttribute) ? geoAttribute.masterTableName : layer.masterTableName;
+				if (layer.get("name") === name && className === masterTableName) {
 					retLayer = layer;
 				}
 			});
@@ -173,8 +183,8 @@
 		 * @returns {Void}
 		 * 
 		 */
-		removeLayerByName : function(layerName, className) {
-			var layer = this.getLayerByName(layerName, className);
+		removeLayerByName : function(className, layerName) {
+			var layer = this.getLayerByClassAndName(className, layerName);
 			this.map.removeLayer(layer);
 		},
 
@@ -255,9 +265,9 @@
 
 			}
 			var geoLayer = layer.getLayer();
-			if (geoValues.type !== "SHAPE") {
-				this.map.addLayer(geoLayer);
-			}
+			// if (geoValues.type !== "SHAPE") {
+			this.map.addLayer(geoLayer);
+			// }
 			return geoLayer;
 		},
 

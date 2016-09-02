@@ -15,6 +15,12 @@
 		cls: 'cmdb-border-bottom',
 		frame: false,
 		map: undefined,
+
+		/**
+		 * @property {String}
+		 */
+		oldClassName : undefined,
+		
 		/**
 		 * @returns {Void}
 		 * 
@@ -106,20 +112,25 @@
 			});
 		},
 		refresh : function() {
-			var currentClassId = (Ext.isEmpty(_CMCardModuleState.entryType)) ?
-					undefined : _CMCardModuleState.entryType.getId();
-			if (! currentClassId) {
+			var currentCard = this.interactionDocument.getCurrentCard();
+			var currentClassName = currentCard.className;
+			if (! currentClassName) {
 				return;
 			}
-//			this.getStore().getProxy().extraParams = this.mainGrid.getStore().getProxy().extraParams;
-			this.getStore().proxy.setExtraParam("className", _CMCache.getEntryTypeNameById(currentClassId));
-			this.getStore().load({
+			this.store.proxy.setExtraParam("className", currentClassName);
+			if (this.oldClassName !== currentClassName) {
+				this.store.loadPage(1);
+				this.oldClassName = currentClassName;
+			}
+			else {
+			this.store.load({
 				scope: this,
 				callback: function (records, operation, success) {
 //					if (!this.getSelectionModel().hasSelection())
 //						this.getSelectionModel().select(0, true);
 				}
 			});
+			}
 		}	
 	});
 
