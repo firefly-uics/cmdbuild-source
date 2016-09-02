@@ -25,36 +25,55 @@
 		constructor: function (configurationObject) {
 			Ext.apply(this, configurationObject); // Apply configurations
 
-			if (!Ext.isEmpty(CMDBuild)) {
-				var defaultHeaders = {};
-				defaultHeaders[CMDBuild.core.constants.Proxy.AUTHORIZATION_HEADER_KEY] = CMDBuild.core.CookiesManager.authorizationGet();
-				defaultHeaders[CMDBuild.core.constants.Proxy.LOCALIZED_HEADER_KEY] = this.enableLocalized;
+			var authorizationKey = CMDBuild.core.CookiesManager.authorizationGet();
 
-				Ext.Ajax.timeout = CMDBuild.core.configurations.Timeout.getBase() * 1000;
-				Ext.Ajax[CMDBuild.core.constants.Proxy.AUTHORIZATION_HEADER_KEY] = CMDBuild.core.CookiesManager.authorizationGet();
-				Ext.Ajax[CMDBuild.core.constants.Proxy.LOCALIZED_HEADER_KEY] = this.enableLocalized;
+			// Error handling
+				if (!Ext.isObject(CMDBuild) || Ext.isEmpty(CMDBuild))
+					return _error('constructor(): undefined CMDBuild object', this);
 
-				Ext.define('CMDBuild.data.Connection', {
-					override: 'Ext.data.Connection',
+				if (!Ext.isString(authorizationKey) || Ext.isEmpty(authorizationKey))
+					return _error('constructor(): invalid chooky authorization key value', this, authorizationKey);
+			// END: Error handling
 
-					timeout: CMDBuild.core.configurations.Timeout.getBase() * 1000,
-					defaultHeaders: defaultHeaders
-				});
+			Ext.Ajax.timeout = CMDBuild.core.configurations.Timeout.getBase() * 1000;
+			Ext.Ajax[CMDBuild.core.constants.Proxy.AUTHORIZATION_HEADER_KEY] = CMDBuild.core.CookiesManager.authorizationGet();
+			Ext.Ajax[CMDBuild.core.constants.Proxy.LOCALIZED_HEADER_KEY] = this.enableLocalized;
 
-				Ext.define('CMDBuild.data.proxy.Ajax', {
-					override: 'Ext.data.proxy.Ajax',
+			this.dataDefaultHeadersUpdate();
 
-					timeout: CMDBuild.core.configurations.Timeout.getBase() * 1000
-				});
+			Ext.define('CMDBuild.data.proxy.Ajax', {
+				override: 'Ext.data.proxy.Ajax',
 
-				Ext.define('CMDBuild.form.Basic', {
-					override: 'Ext.form.Basic',
+				timeout: CMDBuild.core.configurations.Timeout.getBase() * 1000
+			});
 
-					timeout: CMDBuild.core.configurations.Timeout.getBase()
-				});
-			} else {
-				_error('CMDBuild object is empty', this);
-			}
+			Ext.define('CMDBuild.form.Basic', {
+				override: 'Ext.form.Basic',
+
+				timeout: CMDBuild.core.configurations.Timeout.getBase()
+			});
+
+			// Setup global reference
+			Ext.ns('CMDBuild.global');
+			CMDBuild.global.Data = this;
+		},
+
+		/**
+		 * @returns {Void}
+		 */
+		dataDefaultHeadersUpdate: function () {
+			var defaultHeaders = {};
+			defaultHeaders[CMDBuild.core.constants.Proxy.AUTHORIZATION_HEADER_KEY] = CMDBuild.core.CookiesManager.authorizationGet();
+			defaultHeaders[CMDBuild.core.constants.Proxy.LOCALIZED_HEADER_KEY] = this.enableLocalized;
+
+			Ext.define('CMDBuild.data.Connection', {
+				override: 'Ext.data.Connection',
+
+				timeout: CMDBuild.core.configurations.Timeout.getBase() * 1000,
+				defaultHeaders: defaultHeaders
+			});
+
+			Ext.Ajax[CMDBuild.core.constants.Proxy.AUTHORIZATION_HEADER_KEY] = CMDBuild.core.CookiesManager.authorizationGet();
 		}
 	});
 
