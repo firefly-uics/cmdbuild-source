@@ -60,6 +60,8 @@ FIXES
 
  * Detail tab ForeignKeys appresentation problems
 
+ * Authorization header key not refreshed on subsequent calls
+
 
 
 
