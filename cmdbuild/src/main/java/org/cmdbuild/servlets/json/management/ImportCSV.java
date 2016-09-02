@@ -8,6 +8,7 @@ import static org.apache.commons.lang3.builder.ToStringBuilder.reflectionToStrin
 import static org.apache.commons.lang3.builder.ToStringStyle.SHORT_PREFIX_STYLE;
 import static org.cmdbuild.common.utils.guava.Functions.toKey;
 import static org.cmdbuild.common.utils.guava.Functions.toValue;
+import static org.cmdbuild.exception.NotFoundException.NotFoundExceptionType.ATTRIBUTE_NOTFOUND;
 import static org.cmdbuild.servlets.json.CommunicationConstants.ELEMENTS;
 import static org.cmdbuild.servlets.json.CommunicationConstants.ENTRIES;
 import static org.cmdbuild.servlets.json.CommunicationConstants.FILE;
@@ -15,7 +16,9 @@ import static org.cmdbuild.servlets.json.CommunicationConstants.ID_CLASS;
 import static org.cmdbuild.servlets.json.CommunicationConstants.SEPARATOR;
 
 import java.io.IOException;
+import java.util.Collection;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -29,6 +32,7 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.cmdbuild.dao.entry.CMCard;
 import org.cmdbuild.dao.entrytype.CMAttribute;
 import org.cmdbuild.dao.entrytype.CMClass;
+import org.cmdbuild.listeners.CMDBContext;
 import org.cmdbuild.logic.data.access.CardStorableConverter;
 import org.cmdbuild.logic.data.access.DataAccessLogic;
 import org.cmdbuild.model.data.Card;
@@ -50,6 +54,7 @@ import org.json.JSONObject;
 import org.supercsv.prefs.CsvPreference;
 
 import com.google.common.base.Function;
+import com.google.common.base.Optional;
 import com.google.common.collect.Lists;
 
 public class ImportCSV extends JSONBaseWithSpringContext {
@@ -234,9 +239,16 @@ public class ImportCSV extends JSONBaseWithSpringContext {
 			@Parameter(ID_CLASS) final Long classId //
 	) throws IOException, JSONException {
 		clearSession();
-		final DataAccessLogic dataAccessLogic = systemDataAccessLogic();
-		final CSVData importedCsvData = dataAccessLogic.importCsvFileFor(new DataHandler(FileItemDataSource.of(file)),
-				classId, separatorString);
+		final Collection<String> notFoundAttributes = new HashSet<>();
+		final CSVData importedCsvData = systemDataAccessLogic().importCsvFileFor(
+				new DataHandler(FileItemDataSource.of(file)), classId, separatorString, notFoundAttributes);
+		final CMClass target = systemDataAccessLogic().findClass(classId);
+		for (final String element : notFoundAttributes) {
+			final Optional<CMDBContext> context = contextStore().get();
+			if (context.isPresent()) {
+				context.get().pushWarning(ATTRIBUTE_NOTFOUND.createException(target.getName(), element));
+			}
+		}
 		sessionVars().setCsvData(importedCsvData);
 	}
 
