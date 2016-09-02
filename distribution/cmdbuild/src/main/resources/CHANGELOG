@@ -58,6 +58,8 @@ FIXES
 
  * When invoking a function and the function is not found, the call returns an empty result and no error
 
+ * Detail tab ForeignKeys appresentation problems
+
 
 
 
