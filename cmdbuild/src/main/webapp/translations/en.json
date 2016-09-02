@@ -366,7 +366,7 @@
 		"noSelectedCardToUpdate": "You have not selected any card to update",
 		"printReportFilure": "Print report failure",
 		"reasons": {
-			"ATTRIBUTE_NOTFOUND": "Attribute {1} of {0} non found",
+			"ATTRIBUTE_NOTFOUND": "Attribute {1} of {0} not found",
 			"AUTH_CLASS_NOT_AUTHORIZED": "Not enough privileges to access class {0}",
 			"AUTH_DEMO_MODE": "Operation not allowed in demo mode",
 			"AUTH_DOMAIN_NOT_AUTHORIZED": "Not enough privileges to access domain {0}",

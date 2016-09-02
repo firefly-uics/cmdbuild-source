@@ -62,6 +62,8 @@ FIXES
 
  * Authorization header key not refreshed on subsequent calls
 
+ * Import CSV should not fail if some non-existing attributes are specified
+
 
 
 
