@@ -88,6 +88,9 @@
 				this.featuresObserver[i].refreshCurrentFeature();
 			}
 		},
+		getLayerVisibility : function(layer) {
+			return ! (layer.unChecked === true);
+		},
 		setLayerVisibility : function(layer, checked) {
 			if (layer) {
 				layer.unChecked = !checked;
@@ -189,6 +192,9 @@
 		getLayerByName : function(name, callback, callbackScope) {
 			layerByName(name, callback, callbackScope);
 		},
+		getLayerByClassAndName : function(className, name, callback, callbackScope) {
+			layerByClassAndName(className, name, callback, callbackScope);
+		},
 		getMap : function() {
 			var map = this.configurationMap.mapPanel.getMap();
 			return map;
@@ -205,9 +211,6 @@
 		},
 		isVisible : function(layer, currentClassName, currentCardId) {
 			return isVisible(layer, currentClassName, currentCardId);
-		},
-		isHide : function(layer) {
-			return (layer.unChecked === true);
 		},
 		setCurrentFeature : function(name, geoType, operation) {
 			this.feature = {
@@ -245,6 +248,15 @@
 	function layerByName(name, callback, callbackScope) {
 		function checkName(layer) {
 			return (layer.name === name);
+		}
+		_CMCache.getAllLayers(function(layers) {
+			var layer = layers.find(checkName);
+			callback.apply(callbackScope, [ layer ]);
+		});
+	}
+	function layerByClassAndName(className, name, callback, callbackScope) {
+		function checkName(layer) {
+			return (layer.name === name && layer.masterTableName === className);
 		}
 		_CMCache.getAllLayers(function(layers) {
 			var layer = layers.find(checkName);

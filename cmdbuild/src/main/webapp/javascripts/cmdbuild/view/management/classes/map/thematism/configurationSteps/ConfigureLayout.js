@@ -40,6 +40,9 @@
 						getCurrentAnalysisType : function() {
 							return this.parentWindow.getCurrentAnalysisType();
 						},
+						getCurrentAttribute : function() {
+							return this.parentWindow.getCurrentAttribute();
+						},
 						getHtmlTitle : function() {
 							var configuration = this.parentWindow.getThematismConfiguration();
 							var strHtml = "<p>@@ Thematic Layer Name : ";

@@ -79,9 +79,7 @@
 				targetClassName : geoAttribute.masterTableName,
 				iconUrl : geoAttribute.iconUrl
 			};
-			this.classBitmap = new ol.style.Icon({
-				src : options.iconUrl
-			});
+			this.classBitmap = this.loadIcon(options.iconUrl);
 			this.interactionDocument = interactionDocument;
 			var map = this.interactionDocument.getMap();
 			this.layer = this.buildGisLayer(geoAttribute.name, options, map);
@@ -89,7 +87,20 @@
 			this.interactionDocument.observeFeatures(this);
 			this.callParent(arguments);
 		},
+		loadIcon : function(url) {
+			var icon = undefined;
+			try {
+				icon = new ol.style.Icon({
+					src : url
+				});
 
+			} catch (e) {
+				icon = new ol.style.Icon({
+					src : "upload/images/gis/Edificio.png"
+				});
+			}
+			return icon;
+		},
 		createControls : function(map, vectorSource) {
 			var me = this;
 			this.makeSelect();
@@ -320,17 +331,17 @@
 			}
 			var cardId = card.cardId;
 			var className = card.className;
-//			_CMCache.getLayersForEntryTypeName(className, function(layers) {
-				CMDBuild.proxy.gis.Gis.getFeature({
-					params : {
-						"className" : className,
-						"cardId" : cardId
-					},
-					loadMask : false,
-					scope : this,
-					success : onSuccess
-				});
-//			});
+			// _CMCache.getLayersForEntryTypeName(className, function(layers) {
+			CMDBuild.proxy.gis.Gis.getFeature({
+				params : {
+					"className" : className,
+					"cardId" : cardId
+				},
+				loadMask : false,
+				scope : this,
+				success : onSuccess
+			});
+			// });
 
 		},
 
@@ -395,7 +406,8 @@
 		getGeometries : function(cardId, className) {
 			var featuresOnLayer = this.getFeaturesByCardId(cardId);
 			var translation = undefined;
-			featuresOnLayer.forEach(function(feature) { // first found is good <<<----NB!!
+			featuresOnLayer.forEach(function(feature) { // first found is good
+														// <<<----NB!!
 				var geojson = new ol.format.GeoJSON();
 				var json = geojson.writeFeature(feature);
 				translation = translate2CMDBuild(feature);
@@ -534,15 +546,15 @@
 			minY = Math.min(minY, coordinate[1]);
 			maxY = Math.max(maxY, coordinate[1]);
 		}
-		return getCenterOfExtent([minX, minY, maxX, maxY]);
+		return getCenterOfExtent([ minX, minY, maxX, maxY ]);
 	}
 	function getCenter(geometry) {
-		switch(geometry.type) {
-		case "POLYGON" :
+		switch (geometry.type) {
+		case "POLYGON":
 			return getPolygonCenter(geometry);
-		case "POINT" :
+		case "POINT":
 			return getPointCenter(geometry);
 		}
-		
+
 	}
 })();

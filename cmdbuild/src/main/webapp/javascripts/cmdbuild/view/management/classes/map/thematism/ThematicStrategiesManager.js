@@ -12,6 +12,23 @@
 		 * Custom client functions
 		 */
 		strategies : {
+			valueData : {
+				description : "@@ value",
+
+				/**
+				 * @param {Object}
+				 *            parameters
+				 * 
+				 * @returns {generic value}
+				 */
+				value : function(parameters, callback, callbackScope) {
+					var value = parameters.card[parameters.attributeName];
+					if (typeof value === "object") {
+						value = value.description;
+					}
+					callback.apply(callbackScope, [ value ]);
+				}
+			},
 			strLenght : {
 				description : "@@ l. description",
 

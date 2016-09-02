@@ -19,6 +19,9 @@
 
 		map : undefined,
 
+		/**
+		 * @property {String}
+		 */
 		oldClassName : undefined,
 
 		constructor : function() {
@@ -44,7 +47,7 @@
 		},
 		checkNode : function(node, checked) {
 			if (node.raw.leaf) {
-				this.interactionDocument.getLayerByName(node.raw.layerName, function(layer) {
+				this.interactionDocument.getLayerByClassAndName(node.raw.className, node.raw.layerName, function(layer) {
 					if (!layer) {
 						layer = this.interactionDocument.getThematicLayerByName(node.raw.layerName);
 					}
@@ -88,37 +91,47 @@
 		},
 		refresh : function() {
 			var currentCard = this.interactionDocument.getCurrentCard();
-			var cl = _CMCache.getEntryTypeByName(currentCard.className);
-			var currentClassId = cl.get("id");
-			if (!currentClassId) {
-				return;
+			if (this.oldClassName !== currentCard.className) {
+				clearTree(this.getRootNode());
 			}
-			var currentCardId = currentCard.cardId;
-			var currentClassName = currentCard.className;
-			var me = this;
-			this.interactionDocument.getAllLayers(function(layers) {
-				var root = me.getRootNode();
-				for (var i = 0; i < layers.length; i++) {
-					var node = nodeByLayerName(root, layers[i].name);
-					if (!me.interactionDocument.isVisible(layers[i], currentClassName, currentCardId)) {
-						; // nop
-					} else if (node) {
-						var hide = me.interactionDocument.isHide(layers[i]);
-						node.set('checked', !hide);
-					} else {
-						me.addLayerItem(layers[i]);
+			CMDBuild.proxy.gis.Layer.readAll({
+				scope : this,
+				callback : function(a, b, response) {
+					var me = this;
+
+					var cl = _CMCache.getEntryTypeByName(currentCard.className);
+					var currentClassId = cl.get("id");
+					if (!currentClassId) {
+						return;
 					}
-				}
-				var thematicLayers = me.interactionDocument.getThematicLayers();
-				for (var i = 0; i < thematicLayers.length; i++) {
-					var node = nodeByLayerName(root, thematicLayers[i].name);
-					if (!node) {
-						me.addLayerItem(thematicLayers[i]);
-					}
-				}
-				if (this.oldClassName !== currentClassName) {
-					me.expandAll();
-					this.oldClassName = currentClassName;
+					var currentCardId = currentCard.cardId;
+					var currentClassName = currentCard.className;
+					var me = this;
+					this.interactionDocument.getAllLayers(function(layers) {
+						var root = me.getRootNode();
+						for (var i = 0; i < layers.length; i++) {
+							var node = nodeByNameAndClass(root, layers[i]);
+							if (!me.interactionDocument.isVisible(layers[i], currentClassName, currentCardId)) {
+								; // nop
+							} else if (node) {
+								var hide = !me.interactionDocument.getLayerVisibility(layers[i]);
+								node.set('checked', !hide);
+							} else {
+								me.addLayerItem(layers[i]);
+							}
+						}
+						var thematicLayers = me.interactionDocument.getThematicLayers();
+						for (var i = 0; i < thematicLayers.length; i++) {
+							var node = nodeByLayerName(root, thematicLayers[i].name);
+							if (!node) {
+								me.addLayerItem(thematicLayers[i]);
+							}
+						}
+						if (me.oldClassName !== currentClassName) {
+							me.oldClassName = currentClassName;
+							//me.expandAll();
+						}
+					});
 				}
 			});
 		},
@@ -128,7 +141,7 @@
 		 * @param {ol.Layer}
 		 *            layer Add a node to the tree that represent the given
 		 *            layer
-		 *            
+		 * 
 		 * @returns {Void}
 		 */
 		addLayerItem : function(layer) {
@@ -138,13 +151,13 @@
 			var currentCardId = (Ext.isEmpty(_CMCardModuleState.card)) ? undefined : _CMCardModuleState.card.raw.Id;
 
 			try {
-
+				var strClass = toShow(currentClassName, layer.masterTableName);
 				var child = targetFolder.appendChild({
-					text : layer.name,
+					text : layer.name + strClass,
 					layerName : layer.name,
+					className : layer.masterTableName,
 					leaf : true,
-					checked : true,// this.interactionDocument.isVisible(layer,
-					// currentClassName, currentCardId),
+					checked : true,
 					iconCls : "cmdbuild-nodisplay"
 				});
 
@@ -157,23 +170,34 @@
 				console.log("Fail to add layer", layer);
 			}
 			this.expandNode(targetFolder);
-		},
+		}
 
-		/**
-		 * 
-		 * @param {OpenLayers.Layer}
-		 *            layer Removes from the tree the layer that represents the
-		 *            given layer
-		 */
-		removeLayerItem : function(layer) {
-			var node = this.getNodeByLayerId(layer.id);
-
-			if (node) {
-				node.remove(true);
-			}
-		},
 	});
-
+	function toShow(currentClassName, onLayerClassName) {
+		if ("_Thematism" === onLayerClassName) {
+			return "";
+		}
+		if ("_Geoserver" === onLayerClassName) {
+			return "";
+		}
+		if (currentClassName === onLayerClassName) {
+			return "";
+		}
+		return " (" + onLayerClassName + ")";
+	}
+	function clearNode(node) {
+		while (node.firstChild) {
+			node.removeChild(node.firstChild);
+		}
+	}
+	function clearTree(root) {
+		var externalLayersFolder = nodeByLayerName(root, EXTERNAL_LAYERS_FOLDER_NAME);
+		var thematismFolder = retrieveThematismFolder(root);
+		var gisServerFolder = nodeByLayerName(root, CMDBUILD_LAYERS_FOLDER_NAME);
+		clearNode(externalLayersFolder);
+		clearNode(thematismFolder);
+		clearNode(gisServerFolder);
+	}
 	function retrieveTargetFolder(layer, root) {
 		var targetFolder = null;
 
@@ -225,6 +249,11 @@
 	function nodeByLayerName(root, layerName) {
 		return root.findChildBy(function(child) {
 			return child.raw.layerName === layerName;
+		}, null, true);
+	}
+	function nodeByNameAndClass(root, layer) {
+		return root.findChildBy(function(child) {
+			return child.raw.layerName === layer.name && child.raw.className === layer.masterTableName;
 		}, null, true);
 	}
 })();

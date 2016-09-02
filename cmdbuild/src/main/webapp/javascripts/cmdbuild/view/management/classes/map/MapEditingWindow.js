@@ -167,8 +167,8 @@
 		onAddMenuitemSelect : function(item) {
 			this.geoAttrMenuButton.setText(item.text);
 			this.geoAttrMenuButton.setIconCls(item.iconCls);
-			var layer = this.interactionDocument.getMapPanel().getLayerByName(item.text);
 			var currentCard = this.interactionDocument.getCurrentCard();
+			var layer = this.interactionDocument.getMapPanel().getLayerByClassAndName(currentCard.className, item.text);
 			var feature = this.searchFeature(layer, item.text, currentCard.cardId);
 			if (feature !== null) {
 				this.removeButton.enable();

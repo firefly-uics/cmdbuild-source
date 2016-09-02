@@ -179,11 +179,11 @@
 			});
 			feature.setGeometry(originalFeature.geometry);
 
-			this.layer.getSource().addFeature(feature);
 			this.loadCard(originalFeature.master_card, originalFeature.master_className, function(card) {
 				this.getThematicColor(card, function(color) {
 					var style = this.getStyle(feature.getGeometry().getType(), color);
 					feature.setStyle(style);
+					this.layer.getSource().addFeature(feature);
 				}, this);
 			}, this);
 		},
@@ -274,47 +274,61 @@
 			var configuration = this.getConfiguration().layoutConfiguration;
 			switch (shape) {
 			case 'LineString':
-				return new ol.style.Style({
-					stroke : new ol.style.Stroke({
-						color : 'green',
-						width : 1
-					})
-				});
+				return line(color);
 			case 'Polygon':
-				return new ol.style.Style({
-					stroke : new ol.style.Stroke({
-						color : 'blue',
-						lineDash : [ 4 ],
-						width : 3
-					}),
-					fill : new ol.style.Fill({
-						color : color
-					})
-				});
+				return polygon(color);
 			case 'Point':
 			case 'Circle':
 			default:
-				return new ol.style.Style({
-					fill : new ol.style.Fill({
-						color : 'rgba(255, 100, 50, 0.3)'
-					}),
-					stroke : new ol.style.Stroke({
-						width : 2,
-						color : 'rgba(255, 100, 50, 0.8)'
-					}),
-					image : new ol.style.Circle({
-						fill : new ol.style.Fill({
-							color : color
-						}),
-						stroke : new ol.style.Stroke({
-							width : 1,
-							color : color
-						}),
-						radius : parseInt(configuration.firstValue)
-					}),
-				});
+				var radius = parseInt(configuration.firstValue);
+				return point(color, radius);
 			}
 		}
 	});
+	function line(color) {
+		var line = new ol.style.Style({
+			stroke : new ol.style.Stroke({
+				color : 'green',
+				width : 1
+			})
+		});
+		return line;
+	}
+	function polygon(color) {
+		var polygon = new ol.style.Style({
+			stroke : new ol.style.Stroke({
+				color : 'blue',
+				lineDash : [ 4 ],
+				width : 3
+			}),
+			fill : new ol.style.Fill({
+				color : color
+			})
+		});
+		return polygon;
+	}
+	function point(color, radius) {
+		var point = new ol.style.Style({
+			fill : new ol.style.Fill({
+				color : 'rgba(255, 100, 50, 0.3)'
+			}),
+			stroke : new ol.style.Stroke({
+				width : 2,
+				color : 'rgba(255, 100, 50, 0.8)'
+			}),
+			image : new ol.style.Circle({
+				fill : new ol.style.Fill({
+					color : color
+				}),
+				stroke : new ol.style.Stroke({
+					width : 1,
+					color : color
+				}),
+				radius : radius
+			
+			}),
+		});
+		return point;
+	}
 
 })();
