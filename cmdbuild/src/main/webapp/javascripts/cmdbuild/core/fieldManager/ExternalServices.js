@@ -66,7 +66,10 @@
 		isItemValid: function (item) {
 			return (
 				Ext.isObject(item) && !Ext.Object.isEmpty(item)
-				&& Ext.isString(item.dataIndex) && !Ext.isEmpty(item.dataIndex)
+				&& (
+					(Ext.isString(item.dataIndex) && !Ext.isEmpty(item.dataIndex)) // Columns validation
+					|| (Ext.isString(item.name) && !Ext.isEmpty(item.name)) // Store fields/Fields validation
+				)
 			);
 		}
 	});
