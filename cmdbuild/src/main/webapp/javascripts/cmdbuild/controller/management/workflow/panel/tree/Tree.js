@@ -146,7 +146,7 @@
 		applyCustomRenderer: function (column) {
 			return Ext.apply(column, {
 				renderer: function (value, metadata, record, rowIndex, colIndex, store, view) {
-					return record.get(column.dataIndex);
+					return Ext.util.Format.stripTags(record.get(column.dataIndex));
 				}
 			});
 		},
@@ -315,10 +315,7 @@
 		 * @returns {Void}
 		 */
 		onWorkflowTreeWokflowSelect: function (node) {
-			this.view.reconfigure(
-				this.storeSortersSet(this.cmfg('workflowTreeStoreGet')),
-				this.workflowTreeBuildColumns()
-			);
+			this.view.reconfigure(null, this.workflowTreeBuildColumns());
 
 			// Forward to sub controllers
 			this.controllerToolbarPaging.cmfg('onWorkflowTreeToolbarPagingWokflowSelect', node.get(CMDBuild.core.constants.Proxy.FILTER));

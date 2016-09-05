@@ -11,15 +11,16 @@
 		 */
 		delegate: undefined,
 
-		autoScroll: true,
 		border: false,
 		cls: 'cmdb-border-bottom',
 		forceFit: true,
 		frame: false,
 		region: 'center',
 		rootVisible: false,
+		scroll: 'vertical',
 
 		viewConfig: {
+			loadMask: true,
 			stripeRows: true
 		}
 	});
