@@ -164,6 +164,8 @@
 			callback = Ext.isFunction(callback) ? callback : Ext.emptyFn;
 
 			return Ext.Function.createInterceptor(callback, function (records, options, success) {
+				this.cmfg('workflowFormReset');
+
 				if (this.workflowTreeAppliedFilterIsEmpty())
 					this.controllerToolbarPaging.cmfg('workflowTreeToolbarPagingFilterAdvancedReset');
 			}, this);
