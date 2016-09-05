@@ -1,8 +1,10 @@
 package org.cmdbuild.report;
 
+import static com.google.common.reflect.Reflection.newProxy;
 import static java.util.Arrays.asList;
 import static org.apache.commons.lang3.RandomStringUtils.randomNumeric;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
+import static org.cmdbuild.common.utils.Reflection.unsupported;
 import static org.cmdbuild.services.store.report.JDBCReportStore.REPORT_CLASS_NAME;
 
 import java.math.BigDecimal;
@@ -10,9 +12,6 @@ import java.sql.Time;
 import java.sql.Timestamp;
 import java.util.Date;
 
-import net.sf.jasperreports.engine.JRParameter;
-
-import org.cmdbuild.common.utils.UnsupportedProxyFactory;
 import org.cmdbuild.dao.entrytype.CMAttribute;
 import org.cmdbuild.dao.entrytype.CMEntryType;
 import org.cmdbuild.dao.entrytype.CMEntryTypeVisitor;
@@ -30,12 +29,15 @@ import org.cmdbuild.dao.entrytype.attributetype.StringAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.TimeAttributeType;
 import org.cmdbuild.exception.ReportException.ReportExceptionType;
 
+import net.sf.jasperreports.engine.JRParameter;
+
 public class ReportParameterConverter {
 
 	private static class ReportAttribute implements CMAttribute {
 
-		private static final CMEntryType UNSUPPORTED_ENTRY_TYPE = UnsupportedProxyFactory.of(CMEntryType.class)
-				.create();
+		private static final CMEntryType UNSUPPORTED =
+				newProxy(CMEntryType.class, unsupported("should not be used on this fake object"));
+
 		private static final CMEntryType OWNER = new ForwardingEntryType() {
 
 			private final long FAKE_ID = 0L;
@@ -64,12 +66,8 @@ public class ReportParameterConverter {
 
 			@Override
 			protected CMEntryType delegate() {
-				return UNSUPPORTED_ENTRY_TYPE;
+				return UNSUPPORTED;
 			}
-
-			/*
-			 * Should be the only methods called.
-			 */
 
 			@Override
 			public Long getId() {
@@ -79,6 +77,10 @@ public class ReportParameterConverter {
 			@Override
 			public CMIdentifier getIdentifier() {
 				return FAKE_IDENTIFIER;
+			};
+
+			public String getName() {
+				return FAKE_IDENTIFIER.getLocalName();
 			};
 
 			@Override
@@ -232,8 +234,8 @@ public class ReportParameterConverter {
 				final Class<?> valueClass = jrParameter.getValueClass();
 				if (asList(String.class).contains(valueClass)) {
 					attributeType = new StringAttributeType(100);
-				} else if (asList(Integer.class, Long.class, Short.class, BigDecimal.class, Number.class).contains(
-						valueClass)) {
+				} else if (asList(Integer.class, Long.class, Short.class, BigDecimal.class, Number.class)
+						.contains(valueClass)) {
 					attributeType = new IntegerAttributeType();
 				} else if (asList(Date.class).contains(valueClass)) {
 					attributeType = new DateAttributeType();
