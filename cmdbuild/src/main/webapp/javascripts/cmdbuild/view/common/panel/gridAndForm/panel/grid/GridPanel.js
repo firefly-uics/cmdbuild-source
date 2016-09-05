@@ -16,8 +16,10 @@
 		forceFit: true,
 		frame: false,
 		region: 'center',
+		scroll: 'vertical',
 
 		viewConfig: {
+			loadMask: true,
 			stripeRows: true
 		}
 	});
