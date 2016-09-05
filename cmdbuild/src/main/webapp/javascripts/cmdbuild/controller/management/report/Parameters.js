@@ -97,6 +97,8 @@
 						}
 					}
 				}, this);
+			} else {
+				_error('buildFields(): unmanaged attributeList configuration property', this, this.attributeList);
 			}
 		},
 
