@@ -2,6 +2,7 @@ package org.cmdbuild.service.rest.v2;
 
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
+import static org.cmdbuild.service.rest.v2.constants.Serialization.DETAILED;
 import static org.cmdbuild.service.rest.v2.constants.Serialization.FILTER;
 import static org.cmdbuild.service.rest.v2.constants.Serialization.FUNCTION_ID;
 import static org.cmdbuild.service.rest.v2.constants.Serialization.LIMIT;
@@ -15,8 +16,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 
 import org.cmdbuild.service.rest.v2.model.Attribute;
-import org.cmdbuild.service.rest.v2.model.FunctionWithBasicDetails;
-import org.cmdbuild.service.rest.v2.model.FunctionWithFullDetails;
+import org.cmdbuild.service.rest.v2.model.Function;
 import org.cmdbuild.service.rest.v2.model.ResponseMultiple;
 import org.cmdbuild.service.rest.v2.model.ResponseSingle;
 import org.cmdbuild.service.rest.v2.model.Values;
@@ -27,15 +27,16 @@ public interface Functions {
 
 	@GET
 	@Path(EMPTY)
-	ResponseMultiple<FunctionWithBasicDetails> readAll( //
+	ResponseMultiple<Function> readAll( //
 			@QueryParam(LIMIT) Integer limit, //
 			@QueryParam(START) Integer offset, //
-			@QueryParam(FILTER) String filter //
+			@QueryParam(FILTER) String filter, //
+			@QueryParam(DETAILED) boolean detailed //
 	);
 
 	@GET
 	@Path("{" + FUNCTION_ID + "}/")
-	ResponseSingle<FunctionWithFullDetails> read( //
+	ResponseSingle<Function> read( //
 			@PathParam(FUNCTION_ID) Long functionId //
 	);
 

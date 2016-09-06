@@ -14,8 +14,7 @@ import static org.cmdbuild.dao.guava.Functions.toValueSet;
 import static org.cmdbuild.dao.query.clause.AnyAttribute.anyAttribute;
 import static org.cmdbuild.dao.query.clause.alias.Aliases.name;
 import static org.cmdbuild.service.rest.v2.model.Models.newAttribute;
-import static org.cmdbuild.service.rest.v2.model.Models.newFunctionWithBasicDetails;
-import static org.cmdbuild.service.rest.v2.model.Models.newFunctionWithFullDetails;
+import static org.cmdbuild.service.rest.v2.model.Models.newFunction;
 import static org.cmdbuild.service.rest.v2.model.Models.newMetadata;
 import static org.cmdbuild.service.rest.v2.model.Models.newResponseMultiple;
 import static org.cmdbuild.service.rest.v2.model.Models.newResponseSingle;
@@ -44,14 +43,12 @@ import org.cmdbuild.service.rest.v2.cxf.serialization.AttributeTypeResolver;
 import org.cmdbuild.service.rest.v2.cxf.serialization.Converter.ValueConverter;
 import org.cmdbuild.service.rest.v2.cxf.serialization.DefaultConverter;
 import org.cmdbuild.service.rest.v2.model.Attribute;
-import org.cmdbuild.service.rest.v2.model.FunctionWithBasicDetails;
-import org.cmdbuild.service.rest.v2.model.FunctionWithFullDetails;
+import org.cmdbuild.service.rest.v2.model.Function;
 import org.cmdbuild.service.rest.v2.model.ResponseMultiple;
 import org.cmdbuild.service.rest.v2.model.ResponseSingle;
 import org.cmdbuild.service.rest.v2.model.Values;
 import org.codehaus.jackson.map.ObjectMapper;
 
-import com.google.common.base.Function;
 import com.google.common.base.Optional;
 import com.google.common.base.Predicate;
 
@@ -70,6 +67,35 @@ public class CxfFunctions implements Functions {
 	private static final Map<String, Object> NO_VALUES = emptyMap();
 	private static final Alias F = name("f");
 
+	private static final com.google.common.base.Function<CMFunction, Function> BASIC_DETAILS =
+			new com.google.common.base.Function<CMFunction, Function>() {
+
+				@Override
+				public Function apply(final CMFunction input) {
+					return newFunction() //
+							.withId(input.getId()) //
+							.withName(input.getName()) //
+							.withDescription(input.getName()) //
+							.build();
+				}
+
+			};
+
+	private static final com.google.common.base.Function<CMFunction, Function> FULL_DETAILS =
+			new com.google.common.base.Function<CMFunction, Function>() {
+
+				@Override
+				public Function apply(final CMFunction input) {
+					return newFunction() //
+							.withId(input.getId()) //
+							.withName(input.getName()) //
+							.withDescription(input.getName()) //
+							.withMetadata(input.getMetadata()) //
+							.build();
+				}
+
+			};
+
 	private final ErrorHandler errorHandler;
 	/**
 	 * @deprecated enclose within a logic
@@ -83,8 +109,8 @@ public class CxfFunctions implements Functions {
 	}
 
 	@Override
-	public ResponseMultiple<FunctionWithBasicDetails> readAll(final Integer limit, final Integer offset,
-			final String filter) {
+	public ResponseMultiple<Function> readAll(final Integer limit, final Integer offset, final String filter,
+			final boolean detailed) {
 		final Predicate<CMFunction> predicate;
 		if (isNotBlank(filter)) {
 			final Parser parser = new JsonParser(filter);
@@ -102,22 +128,11 @@ public class CxfFunctions implements Functions {
 		final Iterable<? extends CMFunction> ordered = from(ID_ASC).sortedCopy(all);
 		final Iterable<? extends CMFunction> filtered = from(ordered) //
 				.filter(predicate);
-		final Iterable<FunctionWithBasicDetails> elements = from(filtered) //
+		final Iterable<Function> elements = from(filtered) //
 				.skip((offset == null) ? 0 : offset) //
 				.limit((limit == null) ? Integer.MAX_VALUE : limit) //
-				.transform(new Function<CMFunction, FunctionWithBasicDetails>() {
-
-					@Override
-					public FunctionWithBasicDetails apply(final CMFunction input) {
-						return newFunctionWithBasicDetails() //
-								.withId(input.getId()) //
-								.withName(input.getName()) //
-								.withDescription(input.getName()) //
-								.build();
-					}
-
-				});
-		return newResponseMultiple(FunctionWithBasicDetails.class) //
+				.transform(detailed ? FULL_DETAILS : BASIC_DETAILS);
+		return newResponseMultiple(Function.class) //
 				.withElements(elements) //
 				.withMetadata(newMetadata() //
 						.withTotal(size(filtered)) //
@@ -126,27 +141,15 @@ public class CxfFunctions implements Functions {
 	}
 
 	@Override
-	public ResponseSingle<FunctionWithFullDetails> read(final Long functionId) {
+	public ResponseSingle<Function> read(final Long functionId) {
 		final Optional<? extends CMFunction> function = from(dataView.findAllFunctions()) //
 				.filter(functionId(equalTo(functionId))) //
 				.first();
 		if (!function.isPresent()) {
 			errorHandler.functionNotFound(functionId);
 		}
-		final FunctionWithFullDetails element = new Function<CMFunction, FunctionWithFullDetails>() {
-
-			@Override
-			public FunctionWithFullDetails apply(final CMFunction input) {
-				return newFunctionWithFullDetails() //
-						.withId(input.getId()) //
-						.withName(input.getName()) //
-						.withDescription(input.getName()) //
-						.withMetadata(input.getMetadata()) //
-						.build();
-			}
-
-		}.apply(function.get());
-		return newResponseSingle(FunctionWithFullDetails.class) //
+		final Function element = FULL_DETAILS.apply(function.get());
+		return newResponseSingle(Function.class) //
 				.withElement(element) //
 				.build();
 	}
@@ -182,7 +185,7 @@ public class CxfFunctions implements Functions {
 		final Iterable<Attribute> elements = from(parameters) //
 				.skip((offset == null) ? 0 : offset) //
 				.limit((limit == null) ? Integer.MAX_VALUE : limit) //
-				.transform(new Function<CMFunctionParameter, Attribute>() {
+				.transform(new com.google.common.base.Function<CMFunctionParameter, Attribute>() {
 
 					private long index = 0;
 
@@ -222,7 +225,7 @@ public class CxfFunctions implements Functions {
 				.run();
 		final Iterable<Values> elements = from(result) //
 				.transform(toValueSet(F)) //
-				.transform(new Function<CMValueSet, Map<String, Object>>() {
+				.transform(new com.google.common.base.Function<CMValueSet, Map<String, Object>>() {
 
 					@Override
 					public Map<String, Object> apply(final CMValueSet input) {
@@ -234,7 +237,7 @@ public class CxfFunctions implements Functions {
 					}
 
 				}) //
-				.transform(new Function<Map<String, Object>, Values>() {
+				.transform(new com.google.common.base.Function<Map<String, Object>, Values>() {
 
 					@Override
 					public Values apply(final Map<String, Object> input) {
@@ -244,7 +247,7 @@ public class CxfFunctions implements Functions {
 					}
 
 				}) //
-				.transform(new Function<Values, Values>() {
+				.transform(new com.google.common.base.Function<Values, Values>() {
 
 					private final ValueConverter converter = DefaultConverter.newInstance() //
 							.build() //

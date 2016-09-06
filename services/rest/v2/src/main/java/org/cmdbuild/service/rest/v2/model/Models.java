@@ -27,8 +27,6 @@ import org.cmdbuild.service.rest.v2.model.ClassWithFullDetails.AttributeOrder;
 import org.cmdbuild.service.rest.v2.model.DetailResponseMetadata.Reference;
 import org.cmdbuild.service.rest.v2.model.ProcessActivityWithFullDetails.AttributeStatus;
 
-import com.google.common.base.Function;
-
 public class Models {
 
 	private static final Collection<AttributeOrder> NO_ORDER = emptyList();
@@ -516,8 +514,8 @@ public class Models {
 		}
 
 		public CardBuilder withValues(final Iterable<? extends Entry<String, ? extends Object>> values) {
-			final Function<Entry<? extends String, ? extends Object>, String> key = toKey();
-			final Function<Entry<? extends String, ? extends Object>, Object> value = toValue();
+			final com.google.common.base.Function<Entry<? extends String, ? extends Object>, String> key = toKey();
+			final com.google.common.base.Function<Entry<? extends String, ? extends Object>, Object> value = toValue();
 			final Map<String, Object> allValues = transformValues(uniqueIndex(values, key), value);
 			return withValues(allValues);
 		}
@@ -1200,56 +1198,20 @@ public class Models {
 
 	}
 
-	public static class FunctionWithBasicDetailsBuilder extends ModelBuilder<FunctionWithBasicDetails> {
-
-		private Long id;
-		private String name;
-		private String description;
-
-		private FunctionWithBasicDetailsBuilder() {
-			// use factory method
-		}
-
-		@Override
-		protected FunctionWithBasicDetails doBuild() {
-			final FunctionWithBasicDetails output = new FunctionWithBasicDetails();
-			output.setId(id);
-			output.setName(name);
-			output.setDescription(description);
-			return output;
-		}
-
-		public FunctionWithBasicDetailsBuilder withId(final Long id) {
-			this.id = id;
-			return this;
-		}
-
-		public FunctionWithBasicDetailsBuilder withName(final String name) {
-			this.name = name;
-			return this;
-		}
-
-		public FunctionWithBasicDetailsBuilder withDescription(final String description) {
-			this.description = description;
-			return this;
-		}
-
-	}
-
-	public static class FunctionWithFullDetailsBuilder extends ModelBuilder<FunctionWithFullDetails> {
+	public static class FunctionBuilder extends ModelBuilder<Function> {
 
 		private Long id;
 		private String name;
 		private String description;
 		private Map<String, Object> metadata;
 
-		private FunctionWithFullDetailsBuilder() {
+		private FunctionBuilder() {
 			// use factory method
 		}
 
 		@Override
-		protected FunctionWithFullDetails doBuild() {
-			final FunctionWithFullDetails output = new FunctionWithFullDetails();
+		protected Function doBuild() {
+			final Function output = new Function();
 			output.setId(id);
 			output.setName(name);
 			output.setDescription(description);
@@ -1257,22 +1219,22 @@ public class Models {
 			return output;
 		}
 
-		public FunctionWithFullDetailsBuilder withId(final Long id) {
+		public FunctionBuilder withId(final Long id) {
 			this.id = id;
 			return this;
 		}
 
-		public FunctionWithFullDetailsBuilder withName(final String name) {
+		public FunctionBuilder withName(final String name) {
 			this.name = name;
 			return this;
 		}
 
-		public FunctionWithFullDetailsBuilder withDescription(final String description) {
+		public FunctionBuilder withDescription(final String description) {
 			this.description = description;
 			return this;
 		}
 
-		public FunctionWithFullDetailsBuilder withMetadata(final Map<String, Object> metadata) {
+		public FunctionBuilder withMetadata(final Map<String, Object> metadata) {
 			this.metadata = metadata;
 			return this;
 		}
@@ -1875,8 +1837,10 @@ public class Models {
 
 	public static class ProcessInstanceBuilder extends ModelBuilder<ProcessInstance> {
 
-		private static final Function<Entry<? extends String, ? extends Object>, String> KEY = toKey();
-		private static final Function<Entry<? extends String, ? extends Object>, Object> VALUE = toValue();
+		private static final com.google.common.base.Function<Entry<? extends String, ? extends Object>, String> KEY =
+				toKey();
+		private static final com.google.common.base.Function<Entry<? extends String, ? extends Object>, Object> VALUE =
+				toValue();
 
 		private String type;
 		private Long id;
@@ -1953,8 +1917,10 @@ public class Models {
 
 	public static class ProcessInstanceAdvanceBuilder extends ModelBuilder<ProcessInstanceAdvanceable> {
 
-		private static final Function<Entry<? extends String, ? extends Object>, String> KEY = toKey();
-		private static final Function<Entry<? extends String, ? extends Object>, Object> VALUE = toValue();
+		private static final com.google.common.base.Function<Entry<? extends String, ? extends Object>, String> KEY =
+				toKey();
+		private static final com.google.common.base.Function<Entry<? extends String, ? extends Object>, Object> VALUE =
+				toValue();
 
 		private static final Map<String, Object> EMPTY_MAP = emptyMap();
 		private static final Values NO_VALUES = newValues().withValues(EMPTY_MAP).build();
@@ -2298,8 +2264,8 @@ public class Models {
 		}
 
 		public RelationBuilder withValues(final Iterable<? extends Entry<String, ? extends Object>> values) {
-			final Function<Entry<? extends String, ? extends Object>, String> key = toKey();
-			final Function<Entry<? extends String, ? extends Object>, Object> value = toValue();
+			final com.google.common.base.Function<Entry<? extends String, ? extends Object>, String> key = toKey();
+			final com.google.common.base.Function<Entry<? extends String, ? extends Object>, Object> value = toValue();
 			final Map<String, Object> allValues = transformValues(uniqueIndex(values, key), value);
 			return withValues(allValues);
 		}
@@ -2627,12 +2593,8 @@ public class Models {
 		return new FilterBuilder();
 	}
 
-	public static FunctionWithBasicDetailsBuilder newFunctionWithBasicDetails() {
-		return new FunctionWithBasicDetailsBuilder();
-	}
-
-	public static FunctionWithFullDetailsBuilder newFunctionWithFullDetails() {
-		return new FunctionWithFullDetailsBuilder();
+	public static FunctionBuilder newFunction() {
+		return new FunctionBuilder();
 	}
 
 	public static GraphConfigurationBuilder newGraphConfiguration() {
