@@ -1,5 +1,6 @@
 package unit.auth;
 
+import static com.google.common.base.Suppliers.ofInstance;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
 import static org.junit.Assert.assertThat;
@@ -22,12 +23,15 @@ import org.cmdbuild.auth.ClientRequestAuthenticator.ClientRequest;
 import org.cmdbuild.auth.ClientRequestAuthenticator.Response;
 import org.cmdbuild.auth.DefaultAuthenticationService;
 import org.cmdbuild.auth.DefaultAuthenticationService.Configuration;
+import org.cmdbuild.auth.acl.NullGroup;
+import org.cmdbuild.auth.context.SystemPrivilegeContext;
 import org.cmdbuild.auth.Login;
 import org.cmdbuild.auth.PasswordAuthenticator;
 import org.cmdbuild.auth.UserFetcher;
 import org.cmdbuild.auth.user.AnonymousUser;
 import org.cmdbuild.auth.user.AuthenticatedUser;
 import org.cmdbuild.auth.user.CMUser;
+import org.cmdbuild.auth.user.OperationUser;
 import org.cmdbuild.dao.view.CMDataView;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -62,7 +66,7 @@ public class AuthenticationServiceTest {
 
 	@Test(expected = NullPointerException.class)
 	public void configurationMustBeNotNull() {
-		new DefaultAuthenticationService(null, dataView);
+		new DefaultAuthenticationService(null, dataView, ofInstance(operationAnonymousUser()));
 	}
 
 	@Test(expected = NullPointerException.class)
@@ -319,8 +323,8 @@ public class AuthenticationServiceTest {
 	@Test
 	public void configurationFiltersPasswordAuthenticators() {
 		// given
-		final PasswordAuthenticator namedAuthenticatorMock = mock(PasswordAuthenticator.class,
-				withSettings().name("b"));
+		final PasswordAuthenticator namedAuthenticatorMock =
+				mock(PasswordAuthenticator.class, withSettings().name("b"));
 		when(namedAuthenticatorMock.getName()).thenReturn("a");
 		final Configuration conf = mock(Configuration.class);
 		when(conf.getActiveAuthenticators()).thenReturn(Sets.newHashSet("a"));
@@ -338,8 +342,8 @@ public class AuthenticationServiceTest {
 	@Test
 	public void configurationFiltersPasswordCallbackAuthenticators() {
 		// given
-		final PasswordAuthenticator namedAuthenticatorMock = mock(PasswordAuthenticator.class,
-				withSettings().name("b"));
+		final PasswordAuthenticator namedAuthenticatorMock =
+				mock(PasswordAuthenticator.class, withSettings().name("b"));
 		when(namedAuthenticatorMock.getName()).thenReturn("a");
 		final Configuration conf = mock(Configuration.class);
 		when(conf.getActiveAuthenticators()).thenReturn(Sets.newHashSet("a"));
@@ -397,12 +401,16 @@ public class AuthenticationServiceTest {
 		return ANONYMOUS_USER;
 	}
 
+	private OperationUser operationAnonymousUser() {
+		return new OperationUser(anonymousUser(), new SystemPrivilegeContext(), new NullGroup());
+	}
+
 	private DefaultAuthenticationService authenticationService() {
-		return new DefaultAuthenticationService(dataView);
+		return new DefaultAuthenticationService(dataView, ofInstance(operationAnonymousUser()));
 	}
 
 	private DefaultAuthenticationService authenticationService(final Configuration conf) {
-		return new DefaultAuthenticationService(conf, dataView);
+		return new DefaultAuthenticationService(conf, dataView, ofInstance(operationAnonymousUser()));
 	}
 
 }
