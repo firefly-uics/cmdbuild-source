@@ -137,18 +137,6 @@
 		},
 
 		// wfStateDelegate
-		onProcessClassRefChange: function (pcr, danglingCard, filter) {
-			if (Ext.isObject(pcr) && !Ext.Object.isEmpty(pcr)) {
-				var classId = pcr.get(CMDBuild.core.constants.Proxy.ID);
-				var privileges = _CMUtils.getClassPrivileges(classId);
-
-				// Setup buttons flags
-				this.view.form.modifyCardButton.disabledForGroup = !(privileges.write && !privileges.crudDisabled.modify);
-				this.view.form.deleteCardButton.disabledForGroup = !(privileges.write && !privileges.crudDisabled.remove);
-			}
-		},
-
-		// wfStateDelegate
 		onProcessInstanceChange: function(processInstance) {
 			var me = this;
 
