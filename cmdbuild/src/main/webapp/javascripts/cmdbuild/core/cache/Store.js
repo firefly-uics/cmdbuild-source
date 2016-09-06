@@ -74,6 +74,8 @@
 		 * @param {Function or Object} options
 		 *
 		 * @returns {Void}
+		 *
+		 * @override
 		 */
 		load: function (options) {
 			options = Ext.isEmpty(options) ? {} : options;

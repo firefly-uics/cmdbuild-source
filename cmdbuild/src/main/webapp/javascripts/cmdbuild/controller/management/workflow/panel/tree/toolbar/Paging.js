@@ -139,11 +139,13 @@
 		},
 
 		/**
+		 * Forwarder method
+		 *
 		 * @returns {Void}
 		 */
 		workflowTreeToolbarPagingFilterBasicReset: function () {
 			if (Ext.isObject(this.controllerFilterBasic) && !Ext.Object.isEmpty(this.controllerFilterBasic))
-				this.controllerFilterBasic.cmfg('onFieldFilterBasicReset', false);
+				this.controllerFilterBasic.cmfg('onFieldFilterBasicReset', true);
 		}
 	});
 

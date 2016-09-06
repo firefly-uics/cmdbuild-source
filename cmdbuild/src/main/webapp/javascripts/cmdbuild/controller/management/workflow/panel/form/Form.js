@@ -173,7 +173,7 @@
 		 */
 		onWorkflowFormActivitySelect: function () {
 			_CMWFState.setActivityInstance(
-				Ext.create('CMDBuild.model.CMActivityInstance', this.cmfg('workflowSelectedActivityGet').getData())
+				Ext.create('CMDBuild.model.CMActivityInstance', this.cmfg('workflowSelectedActivityGet', 'rawData'))
 			);
 
 			var activityInstance = _CMWFState.getActivityInstance();
@@ -269,6 +269,8 @@
 		 * @returns {Void}
 		 */
 		onWorkflowFormWokflowSelect: function (node) {
+			this.cmfg('workflowFormReset');
+
 			var params = {};
 			params[CMDBuild.core.constants.Proxy.ACTIVE] = true;
 

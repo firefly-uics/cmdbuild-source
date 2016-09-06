@@ -1,8 +1,11 @@
 package unit.logic.data;
 
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.instanceOf;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyString;
+import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
@@ -12,6 +15,8 @@ import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.entrytype.CMClass.CMClassDefinition;
 import org.cmdbuild.dao.entrytype.CMIdentifier;
 import org.cmdbuild.dao.view.CMDataView;
+import org.cmdbuild.exception.CMDBException;
+import org.cmdbuild.exception.NotFoundException;
 import org.cmdbuild.logic.data.DataDefinitionLogic;
 import org.cmdbuild.logic.data.DefaultDataDefinitionLogic;
 import org.cmdbuild.model.data.Attribute;
@@ -25,7 +30,6 @@ import org.mockito.ArgumentCaptor;
 public class DefaultDataDefinitionLogicTest {
 
 	private static final String CLASS_NAME = "foo";
-	private static final Long CLASS_ID = 42L;
 	private static final String ATTRIBUTE_NAME = "bar";
 
 	private CMDataView dataView;
@@ -76,6 +80,25 @@ public class DefaultDataDefinitionLogicTest {
 		assertThat(identifierCaptor.getValue().getNameSpace(), equalTo(null));
 		verify(dataView).update(any(CMClassDefinition.class));
 		verifyNoMoreInteractions(dataView);
+	}
+
+	@Test
+	public void deletingUnexistingClassThrowsException() throws Exception {
+		// given
+		when(dataView.findClass(anyString())) //
+				.thenReturn(null);
+
+		// when
+		try {
+			dataDefinitionLogic.deleteOrDeactivate(CLASS_NAME);
+		} catch (final CMDBException e) {
+			// then
+			verify(dataView).findClass(eq(CLASS_NAME));
+			verifyNoMoreInteractions(dataView);
+
+			assertThat(e, instanceOf(NotFoundException.class));
+			assertThat(NotFoundException.class.cast(e).getExceptionParameters(), equalTo(new String[] { CLASS_NAME }));
+		}
 	}
 
 	@Test

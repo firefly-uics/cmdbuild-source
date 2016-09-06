@@ -212,6 +212,7 @@ public class CommunicationConstants {
 			ORIG_TYPE = "orig_type", //
 			OUTPUT_FOLDER = "outputFolder", //
 			OUT_OF_FILTER = "outOfFilter", //
+			OWNER = "owner", //
 			PARAMS = "params", //
 			PARENT_DESCRIPTION = "ParentDescription", //
 			PARENT_ID = "ParentId", //

@@ -66,6 +66,7 @@
 			delete Ext.tip.Tip.prototype.minWidth;
 
 			Ext.create('CMDBuild.core.LoggerManager'); // Logger configuration
+			Ext.create('CMDBuild.core.Routes');
 			Ext.create('CMDBuild.core.interfaces.Init'); // Interfaces configuration
 			Ext.create('CMDBuild.core.Data', { enableLocalized: true }); // Data connections configuration
 			Ext.create('CMDBuild.core.cache.Cache');

@@ -219,8 +219,6 @@
 
 		/**
 		 * @returns {Boolean}
-		 *
-		 * @public
 		 */
 		isEnabled: function () {
 			return this.enabled;
@@ -281,12 +279,13 @@
 		 * @param {Boolean} invalidateOnSuccess
 		 *
 		 * @returns {Void}
-		 *
-		 * @public
 		 */
 		request: function (groupId, parameters, invalidateOnSuccess) {
 			groupId = Ext.isString(groupId) ? groupId : CMDBuild.core.constants.Proxy.GENERIC;
 			invalidateOnSuccess = Ext.isBoolean(invalidateOnSuccess) ? invalidateOnSuccess : false;
+
+			if (!Ext.isEmpty(CMDBuild.global) && !Ext.isEmpty(CMDBuild.global.Data))
+				CMDBuild.global.Data.dataDefaultHeadersUpdate();
 
 			if (
 				!Ext.Object.isEmpty(parameters)
@@ -367,8 +366,6 @@
 		 * @param {Object} storeParameters - Store configuration object
 		 *
 		 * @returns {CMDBuild.core.cache.Store}
-		 *
-		 * @public
 		 */
 		requestAsStore: function (groupId, storeParameters) {
 			parameters = this.parametersValidate({ groupId: groupId }, [CMDBuild.core.constants.Proxy.GROUP_ID]);

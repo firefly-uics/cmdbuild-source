@@ -395,6 +395,7 @@
 			"LOOKUP_TYPE_NOTFOUND": "A {0} lista típus nem található",
 			"MENU_NOTFOUND": "A menü nem található",
 			"NOTFOUND": "A tétel nem található",
+			"NOTFOUND_FUNCTION": "<em>Function not found {0}</em>",
 			"ORM_ACTIVE_ATTRIBUTE": "Az \"{0}\" osztály/folyamat \"{1}\" attribútuma aktív",
 			"ORM_AMBIGUOUS_DIRECTION": "A reláció iránya nem állapítható meg automatikusan",
 			"ORM_CANT_CREATE_DATABASE": "Az adatbázis nem hozható létre",

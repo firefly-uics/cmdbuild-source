@@ -14,6 +14,19 @@
 		 *
 		 * @returns {Void}
 		 */
+		readAllClasses: function (parameters) {
+			parameters = Ext.isEmpty(parameters) ? {} : parameters;
+
+			Ext.apply(parameters, { url: CMDBuild.proxy.index.Json.classes.readAll });
+
+			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.CLASS, parameters);
+		},
+
+		/**
+		 * @param {Object} parameters
+		 *
+		 * @returns {Void}
+		 */
 		readForeignKeyTargetingClass: function (parameters) {
 			parameters = Ext.isEmpty(parameters) ? {} : parameters;
 

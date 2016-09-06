@@ -6,6 +6,7 @@
 		requires: [
 			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.constants.WorkflowStates',
+			'CMDBuild.core.interfaces.service.LoadMask',
 			'CMDBuild.core.Utils',
 			'CMDBuild.proxy.management.workflow.Activity',
 			'CMDBuild.proxy.management.workflow.Instance',
@@ -145,7 +146,7 @@
 			this.controllerTree.cmfg('workflowFormReset');
 
 			// Tree setup
-			this.controllerTree.cmfg('workflowTreeStoreLoad', { callback: Ext.emptyFn }); // Avoid first row selection
+			this.controllerTree.cmfg('workflowTreeStoreLoad', { disableFirstRowSelection: true });
 		},
 
 		/**
@@ -218,6 +219,7 @@
 
 					// Tree setup
 					this.controllerTree.cmfg('workflowTreeReset');
+					this.controllerTree.cmfg('workflowTreeStoreLoad', { disableFirstRowSelection: true });
 				} else {
 					// Form setup
 					// FIXME: future implementation on tab controllers refactor
@@ -321,6 +323,8 @@
 				this.readWorkflowData(
 					node,
 					function (records, operation, success) {
+						CMDBuild.core.interfaces.service.LoadMask.manage(true, false); // Manual loadMask manage
+
 						this.setViewTitle(this.cmfg('workflowSelectedWorkflowGet', CMDBuild.core.constants.Proxy.DESCRIPTION));
 
 						this.cmfg('onWorkflowWokflowSelect', node); // FIXME: node rawData property is for legacy mode with workflowState module
@@ -355,18 +359,21 @@
 		readWorkflowAttributes: function (node, callback) {
 			if (!this.cmfg('workflowSelectedWorkflowIsEmpty')) {
 				var params = {};
+				params[CMDBuild.core.constants.Proxy.ACTIVE] = true;
 				params[CMDBuild.core.constants.Proxy.CLASS_NAME] = this.cmfg('workflowSelectedWorkflowGet', CMDBuild.core.constants.Proxy.NAME);
 
 				CMDBuild.proxy.management.workflow.Workflow.readAttributes({
 					params: params,
+					loadMask: false,
 					scope: this,
 					success: function (response, options, decodedResponse) {
 						decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.ATTRIBUTES];
 
 						if (Ext.isArray(decodedResponse) && !Ext.isEmpty(decodedResponse)) {
 							this.workflowSelectedWorkflowAttributesSet(decodedResponse);
-
 							this.readWorkflowDefaultFilter(node, callback);
+						} else {
+							_error('readWorkflowAttributes(): unmanaged response', this, decodedResponse);
 						}
 					}
 				});
@@ -390,11 +397,14 @@
 				Ext.isObject(node) && !Ext.Object.isEmpty(node)
 				&& Ext.isNumber(node.get(CMDBuild.core.constants.Proxy.ENTITY_ID)) && !Ext.isEmpty(node.get(CMDBuild.core.constants.Proxy.ENTITY_ID))
 			) {
+				CMDBuild.core.interfaces.service.LoadMask.manage(true, true); // Manual loadMask manage
+
 				var params = {};
 				params[CMDBuild.core.constants.Proxy.ACTIVE] = true;
 
 				CMDBuild.proxy.management.workflow.Workflow.read({
 					params: params,
+					loadMask: false,
 					scope: this,
 					success: function (response, options, decodedResponse) {
 						decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.CLASSES];
@@ -442,6 +452,7 @@
 
 					CMDBuild.proxy.management.workflow.Workflow.readDefaultFilter({
 						params: params,
+						loadMask: false,
 						scope: this,
 						success: function (response, options, decodedResponse) {
 							decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.RESPONSE][CMDBuild.core.constants.Proxy.ELEMENTS][0];

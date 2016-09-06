@@ -58,6 +58,20 @@ FIXES
 
  * Wrong privileges management for reports from REST web services
 
+ * When invoking a function and the function is not found, the call returns an empty result and no error
+
+ * Detail tab ForeignKeys presentation problems
+
+ * Authorization header key not refreshed on subsequent calls
+
+ * Import CSV should not fail if some non-existing attributes are specified
+
+ * When deleting a class/process through JSON-RPC interface the respose is always a success even if the class/process is not found
+
+ * Empty reference columns in widget CustomForm grid
+
+ * When editing the definition of a group, the type shows "group" wrongly
+
 
 
 

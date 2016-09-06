@@ -395,6 +395,7 @@
 			"LOOKUP_TYPE_NOTFOUND": "نوع القائمة المنسدلة {0} لا توجد",
 			"MENU_NOTFOUND": "القائمة غير موجودة",
 			"NOTFOUND": "العنصر غير موجود",
+			"NOTFOUND_FUNCTION": "<em>Function not found {0}</em>",
 			"ORM_ACTIVE_ATTRIBUTE": "السمة \"{1}\" للصنف أو الآلية \"{0}\" مفعل",
 			"ORM_AMBIGUOUS_DIRECTION": "لا يمكن تلقائيا تحديد اتجاه العلاقة",
 			"ORM_CANT_CREATE_DATABASE": "لا يمكن إنشاء قاعدة البيانات",

@@ -16,8 +16,10 @@
 		forceFit: true,
 		frame: false,
 		region: 'center',
+		scroll: 'vertical', // Business rule: voluntarily hide the horizontal scroll-bar because probably no one want it
 
 		viewConfig: {
+			loadMask: true,
 			stripeRows: true
 		}
 	});

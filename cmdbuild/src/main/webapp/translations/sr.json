@@ -395,6 +395,7 @@
 			"LOOKUP_TYPE_NOTFOUND": "Tip {0} ne postoji u šifarniku",
 			"MENU_NOTFOUND": "Meni ne postoji",
 			"NOTFOUND": "Element nije pronađen",
+			"NOTFOUND_FUNCTION": "<em>Function not found {0}</em>",
 			"ORM_ACTIVE_ATTRIBUTE": "<em>Attribute \"{1}\" for class/process \"{0}\" is active</em>",
 			"ORM_AMBIGUOUS_DIRECTION": "Smer relacije nije moguće automatski utvrditi",
 			"ORM_CANT_CREATE_DATABASE": "Kreiranje baze podataka nije uspelo.",

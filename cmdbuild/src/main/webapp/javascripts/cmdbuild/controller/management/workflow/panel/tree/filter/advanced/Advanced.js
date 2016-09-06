@@ -156,19 +156,22 @@
 		 * @returns {Void}
 		 */
 		onPanelGridAndFormFilterAdvancedClearButtonClick: function (silently) {
-			if (Ext.isObject(this.grid) && !Ext.Object.isEmpty(this.grid)) {
-				if (this.grid.getSelectionModel().hasSelection())
-					this.grid.getSelectionModel().deselectAll();
+			silently = Ext.isBoolean(silently) ? silently : false;
 
-				this.cmfg('panelGridAndFormFilterAdvancedManageToggleButtonLabelSet');
+			// Error handling
+				if (!Ext.isObject(this.grid) || Ext.Object.isEmpty(this.grid))
+					return _error('onPanelGridAndFormFilterAdvancedClearButtonClick(): grid not found', this, this.grid);
+			// END: Error handling
 
-				this.view.clearButton.disable();
+			if (this.grid.getSelectionModel().hasSelection())
+				this.grid.getSelectionModel().deselectAll();
 
-				if (!silently)
-					this.cmfg('panelGridAndFormGridFilterClear');
-			} else {
-				_error('onPanelGridAndFormFilterAdvancedClearButtonClick(): grid not found', this, this.grid);
-			}
+			this.cmfg('panelGridAndFormFilterAdvancedManageToggleButtonLabelSet');
+
+			this.view.clearButton.disable();
+
+			if (!silently)
+				this.cmfg('panelGridAndFormGridFilterClear', { type: 'advanced' });
 		},
 
 		/**
@@ -195,22 +198,26 @@
 		 * @returns {Void}
 		 */
 		onPanelGridAndFormFilterAdvancedFilterSelect: function (filter) {
-			if (Ext.isObject(this.grid) && !Ext.Object.isEmpty(this.grid)) {
-				this.controllerManager.cmfg('panelGridAndFormFilterAdvancedManagerViewClose');
+			// Error handling
+				if (!Ext.isObject(this.grid) || Ext.Object.isEmpty(this.grid))
+					return _error('onPanelGridAndFormFilterAdvancedFilterSelect(): grid not found', this, this.grid);
+			// END: Error handling
 
-				this.view.clearButton.enable();
+			this.controllerManager.cmfg('panelGridAndFormFilterAdvancedManagerViewClose');
 
-				if (
-					Ext.isObject(filter) && !Ext.Object.isEmpty(filter)
-					&& Ext.getClassName(filter) == 'CMDBuild.model.common.panel.gridAndForm.filter.advanced.Filter'
-				) {
-					this.cmfg('panelGridAndFormFilterAdvancedManageToggleButtonLabelSet', filter.get(CMDBuild.core.constants.Proxy.DESCRIPTION));
-					this.cmfg('panelGridAndFormGridFilterApply', filter);
-				} else {
-					this.cmfg('onPanelGridAndFormFilterAdvancedClearButtonClick');
-				}
+			this.view.clearButton.enable();
+
+			if (
+				Ext.isObject(filter) && !Ext.Object.isEmpty(filter)
+				&& Ext.getClassName(filter) == 'CMDBuild.model.common.panel.gridAndForm.filter.advanced.Filter'
+			) {
+				this.cmfg('panelGridAndFormFilterAdvancedManageToggleButtonLabelSet', filter.get(CMDBuild.core.constants.Proxy.DESCRIPTION));
+				this.cmfg('panelGridAndFormGridFilterApply', {
+					filter: filter,
+					type: 'advanced'
+				});
 			} else {
-				_error('onPanelGridAndFormFilterAdvancedFilterSelect(): grid not found', this, this.grid);
+				this.cmfg('onPanelGridAndFormFilterAdvancedClearButtonClick');
 			}
 		},
 

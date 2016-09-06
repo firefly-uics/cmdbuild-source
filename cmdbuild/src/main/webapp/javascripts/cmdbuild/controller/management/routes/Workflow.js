@@ -83,9 +83,12 @@
 				moduleController.cmfg('workflowTreeApplyStoreEvent', {
 					eventName: 'load',
 					fn: function () {
-						moduleController.cmfg('workflowTreeFilterApply', Ext.create('CMDBuild.model.common.panel.gridAndForm.filter.advanced.Filter', {
-							configuration: this.parametersModel.get(CMDBuild.core.constants.Proxy.CLIENT_FILTER)
-						}));
+						moduleController.cmfg('workflowTreeFilterApply', {
+							filter: Ext.create('CMDBuild.model.common.panel.gridAndForm.filter.advanced.Filter', {
+								configuration: this.parametersModel.get(CMDBuild.core.constants.Proxy.CLIENT_FILTER)
+							}),
+							type: 'advanced'
+						});
 					},
 					scope: this,
 					options: { single: true }
@@ -121,7 +124,7 @@
 					});
 
 					accordionController.cmfg('accordionDeselect');
-					accordionController.cmfg('accordionUpdateStore', workflowObject[CMDBuild.core.constants.Proxy.ID]);
+					accordionController.cmfg('accordionUpdateStore', { selectionId: workflowObject[CMDBuild.core.constants.Proxy.ID] });
 				}
 			});
 		},

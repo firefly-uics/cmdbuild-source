@@ -235,7 +235,7 @@
 					 * @param {Ext.data.Model or CMDBuild.model.CMActivityInstance} card or activity
 					 */
 					'.Workflow': function(widget, card) {
-						var w = new CMDBuild.view.management.common.widgets.CMWorkflow();
+						var w = Ext.create('CMDBuild.view.management.common.widgets.workflow.CMWorkflow');
 
 						me.widgetsContainer.addWidgt(w);
 

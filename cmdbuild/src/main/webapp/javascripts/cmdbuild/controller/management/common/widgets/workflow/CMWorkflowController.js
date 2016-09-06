@@ -10,21 +10,14 @@
 	var ERROR_TEMPLATE = "<p class=\"{0}\">{1}</p>";
 	var FILTER_FIELD = "_SystemFieldFilter";
 
-	Ext.define("CMDBuild.controller.management.common.widgets.CMWorkflowControllerWidgetReader",{
-		getType: function(w) {return "Activity";},
-		getCode: function(w) {return w.workflowName;},
-		getPreset: function(w) {return w.preset;},
-		getFilter: function(w) {return w.filter;}
-	});
-
-	Ext.define("CMDBuild.controller.management.common.widgets.CMWorkflowController", {
+	Ext.define("CMDBuild.controller.management.common.widgets.workflow.CMWorkflowController", {
 		mixins: {
 			observable: "Ext.util.Observable",
 			widgetcontroller: "CMDBuild.controller.management.common.widgets.CMWidgetController"
 		},
 
 		statics: {
-			WIDGET_NAME: CMDBuild.view.management.common.widgets.CMWorkflow.WIDGET_NAME
+			WIDGET_NAME: ".Workflow"
 		},
 		processId: null,
 		processClassName: null,
@@ -34,7 +27,7 @@
 			this.mixins.observable.constructor.call(this);
 			this.mixins.widgetcontroller.constructor.apply(this, arguments);
 
-			this.widgetReader = new CMDBuild.controller.management.common.widgets.CMWorkflowControllerWidgetReader();
+			this.widgetReader = Ext.create('CMDBuild.controller.management.common.widgets.workflow.CMWorkflowControllerWidgetReader');
 			var widgetManager = new CMDBuild.view.management.common.widgets.CMWidgetManagerPopup(this.view);
 			this.widgetControllerManager = new CMDBuild.controller.management.common.CMWidgetManagerControllerPopup(widgetManager);
 			view.setDelegate(this);

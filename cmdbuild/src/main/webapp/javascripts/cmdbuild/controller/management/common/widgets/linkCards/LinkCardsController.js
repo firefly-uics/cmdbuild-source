@@ -609,10 +609,11 @@
 				scope: this,
 				callback: function (out, ctx) {
 					var defaultSelection = this.templateResolver.buildCQLQueryParameters(out[CMDBuild.core.constants.Proxy.DEFAULT_SELECTION], ctx);
-					defaultSelection[CMDBuild.core.constants.Proxy.ATTRIBUTES] = Ext.encode(['Description']);
 
 					// Do the request only if there are a default selection
-					if (!Ext.isEmpty(defaultSelection)) {
+					if (Ext.isObject(defaultSelection) && !Ext.Object.isEmpty(defaultSelection)) {
+						defaultSelection[CMDBuild.core.constants.Proxy.ATTRIBUTES] = Ext.encode(['Description']);
+
 						CMDBuild.proxy.widget.linkCards.LinkCards.readAllCards({
 							params: defaultSelection,
 							loadMask: false,

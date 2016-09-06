@@ -23,6 +23,7 @@ import org.cmdbuild.auth.user.AnonymousUser;
 import org.cmdbuild.auth.user.AuthenticatedUser;
 import org.cmdbuild.auth.user.AuthenticatedUserImpl;
 import org.cmdbuild.auth.user.CMUser;
+import org.cmdbuild.auth.user.OperationUser;
 import org.cmdbuild.common.digest.Base64Digester;
 import org.cmdbuild.common.digest.Digester;
 import org.cmdbuild.dao.Const.Role;
@@ -42,6 +43,7 @@ import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.logic.auth.GroupDTO;
 import org.cmdbuild.logic.auth.UserDTO;
 
+import com.google.common.base.Supplier;
 import com.google.common.collect.Lists;
 
 public class DefaultAuthenticationService implements AuthenticationService {
@@ -70,10 +72,10 @@ public class DefaultAuthenticationService implements AuthenticationService {
 	private UserFetcher[] userFetchers;
 	private GroupFetcher groupFetcher;
 	private final CMDataView view;
-
+	private final Supplier<OperationUser> currentUser;
 	private final Collection<String> authenticatorNames;
 
-	public DefaultAuthenticationService(final CMDataView dataView) {
+	public DefaultAuthenticationService(final CMDataView dataView, final Supplier<OperationUser> currentUser) {
 		this(new Configuration() {
 
 			@Override
@@ -81,16 +83,18 @@ public class DefaultAuthenticationService implements AuthenticationService {
 				return null;
 			}
 
-		}, dataView);
+		}, dataView, currentUser);
 	}
 
-	public DefaultAuthenticationService(final Configuration conf, final CMDataView dataView) {
+	public DefaultAuthenticationService(final Configuration conf, final CMDataView dataView,
+			final Supplier<OperationUser> currentUser) {
 		Validate.notNull(conf);
 		this.authenticatorNames = conf.getActiveAuthenticators();
 		passwordAuthenticators = new PasswordAuthenticator[0];
 		clientRequestAuthenticators = new ClientRequestAuthenticator[0];
 		userFetchers = new UserFetcher[0];
 		view = dataView;
+		this.currentUser = currentUser;
 	}
 
 	@Override
@@ -260,6 +264,7 @@ public class DefaultAuthenticationService implements AuthenticationService {
 				.set(User.ACTIVE, userDTO.isActive()) //
 				.set(User.SERVICE, userDTO.isService()) //
 				.set(User.PRIVILEGED, userDTO.isPrivileged()) //
+				.setUser(currentUser.get().getAuthenticatedUser().getUsername()) //
 				.save();
 		return fetchUserById(createdUserCard.getId());
 	}
@@ -271,7 +276,8 @@ public class DefaultAuthenticationService implements AuthenticationService {
 		final CMCardDefinition cardToBeUpdated = view.update(userCard) //
 				.set(User.ACTIVE, userDTO.isActive()) //
 				.set(User.SERVICE, userDTO.isService()) //
-				.set(User.PRIVILEGED, userDTO.isPrivileged());
+				.set(User.PRIVILEGED, userDTO.isPrivileged()) //
+				.setUser(currentUser.get().getAuthenticatedUser().getUsername());
 		if (userDTO.getDescription() != null) {
 			cardToBeUpdated.set(User.DESCRIPTION, userDTO.getDescription());
 		}
@@ -348,12 +354,12 @@ public class DefaultAuthenticationService implements AuthenticationService {
 	}
 
 	private List<CMRelation> fetchRelationsForUserWithId(final Long userId) {
-		final CMQueryResult result = view
-				.select(anyAttribute(userGroupDomain()), attribute(roleClass(), roleClass().getCodeAttributeName())) //
-				.from(userClass()) //
-				.join(roleClass(), over(userGroupDomain())) //
-				.where(condition(attribute(userClass(), ID), eq(userId))) //
-				.run();
+		final CMQueryResult result =
+				view.select(anyAttribute(userGroupDomain()), attribute(roleClass(), roleClass().getCodeAttributeName())) //
+						.from(userClass()) //
+						.join(roleClass(), over(userGroupDomain())) //
+						.where(condition(attribute(userClass(), ID), eq(userId))) //
+						.run();
 		final List<CMRelation> relations = Lists.newArrayList();
 		for (final CMQueryRow row : result) {
 			final CMRelation relation = row.getRelation(userGroupDomain()).getRelation();

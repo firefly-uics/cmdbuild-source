@@ -395,6 +395,7 @@
 			"LOOKUP_TYPE_NOTFOUND": "Tipo de Pesquisa {0} não localizada",
 			"MENU_NOTFOUND": "Menu não localizada",
 			"NOTFOUND": "Item não localizado",
+			"NOTFOUND_FUNCTION": "<em>Function not found {0}</em>",
 			"ORM_ACTIVE_ATTRIBUTE": "<em>Attribute \"{1}\" for class/process \"{0}\" is active</em>",
 			"ORM_AMBIGUOUS_DIRECTION": "Não se pode automaticamente determinar a direção do relacionamento",
 			"ORM_CANT_CREATE_DATABASE": "Não se pode criar o banco de dados",

@@ -22,7 +22,7 @@
 		parentDelegate: undefined,
 
 		/**
-		 * Attributes to hide from selectedEntity object
+		 * Attributes to hide from selected card object
 		 *
 		 * @cfg {Array}
 		 *
@@ -42,19 +42,10 @@
 		 * @cfg {Array}
 		 */
 		cmfgCatchedFunctions: [
-			'classesTabHistorySelectedEntityGet',
-			'classesTabHistorySelectedEntityIsEmpty',
-			'classesTabHistorySelectedEntitySet',
+			'classesTabHistorySelectedCardIsEmpty',
 			'onClassesTabHistoryPanelShow = onClassesTabHistoryIncludeRelationCheck', // Reloads store to be consistent with includeRelationsCheckbox state
 			'onClassesTabHistoryRowExpand'
 		],
-
-		/**
-		 * @property {CMDBuild.cache.CMEntryTypeModel}
-		 *
-		 * @private
-		 */
-		entryType: undefined,
 
 		/**
 		 * @property {Object}
@@ -69,11 +60,18 @@
 		grid: undefined,
 
 		/**
-		 * @property {Object}
+		 * @property {CMDBuild.model.classes.tabs.history.SelectedCard}
 		 *
 		 * @private
 		 */
-		selectedEntity: undefined,
+		selectedCard: undefined,
+
+		/**
+		 * @param {CMDBuild.model.classes.tabs.history.SelectedClass}
+		 *
+		 * @private
+		 */
+		selectedClass: undefined,
 
 		/**
 		 * @property {CMDBuild.view.management.classes.tabs.history.HistoryView}
@@ -115,19 +113,21 @@
 		 */
 		addCurrentCardToStore: function () {
 			var selectedEntityAttributes = {};
-			var selectedEntityMergedData = Ext.Object.merge(this.selectedEntity.raw, this.selectedEntity.getData());
+			var selectedEntityMergedData = this.classesTabHistorySelectedCardGet(CMDBuild.core.constants.Proxy.VALUES);
 
-			// Filter selectedEntity's attributes values to avoid the display of incorrect data
+			// Filter card's values to don't display unwanted data
 			Ext.Object.each(selectedEntityMergedData, function (key, value, myself) {
 				if (!Ext.Array.contains(this.attributesKeysToFilter, key) && key.indexOf('_') != 0)
 					selectedEntityAttributes[key] = value;
 			}, this);
 
-			selectedEntityMergedData[CMDBuild.core.constants.Proxy.ID] = this.selectedEntity.get(CMDBuild.core.constants.Proxy.ID);
-
 			this.valuesFormattingAndCompare(selectedEntityAttributes); // Formats values only
 
-			this.clearStoreAdd(this.buildCurrentEntityModel(selectedEntityMergedData, selectedEntityAttributes));
+			var currentCardObject = this.classesTabHistorySelectedCardGet(CMDBuild.core.constants.Proxy.VALUES);
+			currentCardObject[CMDBuild.core.constants.Proxy.ID] = this.classesTabHistorySelectedCardGet(CMDBuild.core.constants.Proxy.ID);
+			currentCardObject[CMDBuild.core.constants.Proxy.VALUES] = selectedEntityAttributes;
+
+			this.clearStoreAdd(Ext.create('CMDBuild.model.classes.tabs.history.CardRecord', currentCardObject));
 
 			this.getRowExpanderPlugin().collapseAll();
 		},
@@ -163,22 +163,6 @@
 		},
 
 		/**
-		 * @param {Object} entityData
-		 * @param {Object} entityAttributeData
-		 *
-		 * @returns {CMDBuild.model.classes.tabs.history.CardRecord} currentEntityModel
-		 *
-		 * @private
-		 */
-		buildCurrentEntityModel: function (entityData, entityAttributeData) {
-			var currentEntityModel = Ext.create('CMDBuild.model.classes.tabs.history.CardRecord', entityData);
-			currentEntityModel.set(CMDBuild.core.constants.Proxy.VALUES, entityAttributeData);
-			currentEntityModel.commit();
-
-			return currentEntityModel;
-		},
-
-		/**
 		 * Clear store and re-add all records to avoid RowExpander plugin bug that appens with store add action that won't manage correctly expand/collapse events
 		 *
 		 * @param {Array or Object} itemsToAdd
@@ -201,20 +185,18 @@
 		currentCardRowExpand: function (record) {
 			var predecessorRecord = this.getRecordPredecessor(record);
 			var selectedEntityAttributes = {};
-			var selectedEntityMergedData = Ext.Object.merge(this.selectedEntity.raw, this.selectedEntity.getData());
+			var selectedEntityMergedData = this.classesTabHistorySelectedCardGet(CMDBuild.core.constants.Proxy.VALUES);
 
-			// Filter selectedEntity's attributes values to avoid the display of incorrect data
+			// Filter card's values to don't display unwanted data
 			Ext.Object.each(selectedEntityMergedData, function (key, value, myself) {
 				if (!Ext.Array.contains(this.attributesKeysToFilter, key) && key.indexOf('_') != 0)
 					selectedEntityAttributes[key] = value;
 			}, this);
 
-			selectedEntityMergedData[CMDBuild.core.constants.Proxy.ID] = this.selectedEntity.get(CMDBuild.core.constants.Proxy.ID);
-
 			if (!Ext.isEmpty(predecessorRecord)) {
 				var predecessorParams = {};
 				predecessorParams[CMDBuild.core.constants.Proxy.CARD_ID] = predecessorRecord.get(CMDBuild.core.constants.Proxy.ID); // Historic card ID
-				predecessorParams[CMDBuild.core.constants.Proxy.CLASS_NAME] = selectedEntityMergedData[CMDBuild.core.constants.Proxy.CLASS_NAME];
+				predecessorParams[CMDBuild.core.constants.Proxy.CLASS_NAME] = this.classesTabHistorySelectedClassGet(CMDBuild.core.constants.Proxy.NAME);
 
 				CMDBuild.proxy.classes.tabs.History.readHistoric({
 					params: predecessorParams,
@@ -297,15 +279,65 @@
 		 * @returns {Void}
 		 *
 		 * @public
+		 *
+		 * FIXME: should be removed on complete refactor (will be replaced from tab show event)
 		 */
 		onCardSelected: function (card) {
-			if (!Ext.isEmpty(card)) {
-				this.cmfg('classesTabHistorySelectedEntitySet', card);
+			if (Ext.isObject(card) && !Ext.Object.isEmpty(card)) {
+				var requiredClassId = card.get('IdClass');
 
-				if (!Ext.isEmpty(this.entryType) && this.entryType.get(CMDBuild.core.constants.Proxy.TABLE_TYPE) != CMDBuild.core.constants.Global.getTableTypeSimpleTable()) // SimpleTables hasn't history
-					this.view.setDisabled(this.cmfg('classesTabHistorySelectedEntityIsEmpty'));
+				var params = {};
+				params[CMDBuild.core.constants.Proxy.ACTIVE] = true;
 
-				this.cmfg('onClassesTabHistoryPanelShow');
+				CMDBuild.proxy.classes.Classes.read({ // FIXME: waiting for refactor (server endpoint)
+					params: params,
+					scope: this,
+					success: function (response, options, decodedResponse) {
+						decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.CLASSES];
+
+						if (Ext.isArray(decodedResponse) && !Ext.isEmpty(decodedResponse)) {
+							var selectedClass = Ext.Array.findBy(decodedResponse, function (classObject, i) {
+								return requiredClassId == classObject[CMDBuild.core.constants.Proxy.ID];
+							}, this);
+
+							if (Ext.isObject(selectedClass) && !Ext.Object.isEmpty(selectedClass)) {
+								this.classesTabHistorySelectedClassSet({ value: selectedClass });
+
+								var params = {};
+								params[CMDBuild.core.constants.Proxy.CARD_ID] = card.get(CMDBuild.core.constants.Proxy.ID);
+								params[CMDBuild.core.constants.Proxy.CLASS_NAME] = this.classesTabHistorySelectedClassGet(CMDBuild.core.constants.Proxy.NAME);
+
+								CMDBuild.proxy.classes.tabs.History.readCard({
+									params: params,
+									loadMask: false,
+									scope: this,
+									success: function (response, options, decodedResponse) {
+										decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.CARD];
+
+										if (Ext.isObject(decodedResponse) && !Ext.Object.isEmpty(decodedResponse)) {
+											this.classesTabHistorySelectedCardSet({ value: decodedResponse });
+
+											if (
+												!this.classesTabHistorySelectedClassIsEmpty()
+												&& this.classesTabHistorySelectedClassGet(CMDBuild.core.constants.Proxy.TABLE_TYPE) != CMDBuild.core.constants.Global.getTableTypeSimpleTable() // SimpleTables hasn't history
+											) {
+												this.view.setDisabled(this.cmfg('classesTabHistorySelectedCardIsEmpty'));
+											}
+
+											this.cmfg('onClassesTabHistoryPanelShow');
+										} else {
+											_error('onCardSelected(): unmanaged response', this, decodedResponse);
+										}
+									}
+								});
+							} else {
+								_error('onCardSelected(): class not found', this, requiredClassId);
+							}
+						} else {
+							_error('onCardSelected(): unmanaged response', this, decodedResponse);
+						}
+					}
+				});
 			}
 		},
 
@@ -319,11 +351,11 @@
 				var params = {};
 
 				if (record.get(CMDBuild.core.constants.Proxy.IS_CARD)) { // Card row expand
-					if (this.selectedEntity.get(CMDBuild.core.constants.Proxy.ID) == record.get(CMDBuild.core.constants.Proxy.ID)) { // Expanding current card
+					if (this.classesTabHistorySelectedCardGet(CMDBuild.core.constants.Proxy.ID) == record.get(CMDBuild.core.constants.Proxy.ID)) { // Expanding current card
 						this.currentCardRowExpand(record);
 					} else {
 						params[CMDBuild.core.constants.Proxy.CARD_ID] = record.get(CMDBuild.core.constants.Proxy.ID); // Historic card ID
-						params[CMDBuild.core.constants.Proxy.CLASS_NAME] = record.get(CMDBuild.core.constants.Proxy.CLASS_NAME);
+						params[CMDBuild.core.constants.Proxy.CLASS_NAME] = this.classesTabHistorySelectedClassGet(CMDBuild.core.constants.Proxy.NAME);
 
 						CMDBuild.proxy.classes.tabs.History.readHistoric({ // Get expanded card data
 							params: params,
@@ -335,7 +367,7 @@
 								if (!Ext.isEmpty(predecessorRecord)) {
 									var predecessorParams = {};
 									predecessorParams[CMDBuild.core.constants.Proxy.CARD_ID] = predecessorRecord.get(CMDBuild.core.constants.Proxy.ID); // Historic card ID
-									predecessorParams[CMDBuild.core.constants.Proxy.CLASS_NAME] = record.get(CMDBuild.core.constants.Proxy.CLASS_NAME);
+									predecessorParams[CMDBuild.core.constants.Proxy.CLASS_NAME] = this.classesTabHistorySelectedClassGet(CMDBuild.core.constants.Proxy.NAME);
 
 									CMDBuild.proxy.classes.tabs.History.readHistoric({ // Get expanded predecessor's card data
 										params: predecessorParams,
@@ -405,10 +437,10 @@
 
 				this.grid.getStore().removeAll(); // Clear store before load new one
 
-				if (!Ext.isEmpty(this.selectedEntity)) {
+				if (!this.cmfg('classesTabHistorySelectedCardIsEmpty')) {
 					var params = {};
 					params[CMDBuild.core.constants.Proxy.ACTIVE] = true;
-					params[CMDBuild.core.constants.Proxy.CLASS_NAME] = _CMCache.getEntryTypeNameById(this.selectedEntity.get('IdClass'));
+					params[CMDBuild.core.constants.Proxy.CLASS_NAME] = this.classesTabHistorySelectedClassGet(CMDBuild.core.constants.Proxy.NAME);
 
 					// Request all class attributes
 					CMDBuild.proxy.classes.tabs.History.readAttributes({
@@ -423,8 +455,8 @@
 							}, this);
 
 							params = {};
-							params[CMDBuild.core.constants.Proxy.CARD_ID] = this.selectedEntity.get(CMDBuild.core.constants.Proxy.ID);
-							params[CMDBuild.core.constants.Proxy.CLASS_NAME] = _CMCache.getEntryTypeNameById(this.selectedEntity.get('IdClass'));
+							params[CMDBuild.core.constants.Proxy.CARD_ID] = this.classesTabHistorySelectedCardGet(CMDBuild.core.constants.Proxy.ID);
+							params[CMDBuild.core.constants.Proxy.CLASS_NAME] = this.classesTabHistorySelectedClassGet(CMDBuild.core.constants.Proxy.NAME);
 
 							this.grid.getStore().load({
 								params: params,
@@ -479,33 +511,113 @@
 		 * @returns {Void}
 		 *
 		 * @public
+		 *
+		 * FIXME: should be removed on complete refactor (will be replaced from tab show event)
 		 */
 		onEntryTypeSelected: function (entryType) {
-			this.entryType = entryType;
-
 			this.view.disable();
 		},
 
-		// SelectedEntity property functions
+		/**
+		 * SelectedCard property functions
+		 *
+		 * FIXME: move to parentDelegate on refactor
+		 */
 			/**
-			 * @returns {Mixed}
+			 * @param {Array or String} attributePath
+			 *
+			 * @returns {Mixed or undefined}
+			 *
+			 * @private
 			 */
-			classesTabHistorySelectedEntityGet: function () {
-				return this.selectedEntity;
+			classesTabHistorySelectedCardGet: function (attributePath) {
+				var parameters = {};
+				parameters[CMDBuild.core.constants.Proxy.TARGET_VARIABLE_NAME] = 'selectedCard';
+				parameters[CMDBuild.core.constants.Proxy.ATTRIBUTE_PATH] = attributePath;
+
+				return this.propertyManageGet(parameters);
 			},
 
 			/**
-			 * @returns {Mixed}
+			 * @param {Array or String} attributePath
+			 *
+			 * @returns {Boolean}
 			 */
-			classesTabHistorySelectedEntityIsEmpty: function () {
-				return Ext.isEmpty(this.selectedEntity);
+			classesTabHistorySelectedCardIsEmpty: function (attributePath) {
+				var parameters = {};
+				parameters[CMDBuild.core.constants.Proxy.TARGET_VARIABLE_NAME] = 'selectedCard';
+				parameters[CMDBuild.core.constants.Proxy.ATTRIBUTE_PATH] = attributePath;
+
+				return this.propertyManageIsEmpty(parameters);
 			},
 
 			/**
-			 * @param {Mixed} selectedEntity
+			 * @param {Object} parameters
+			 * @param {String} parameters.propertyName
+			 * @param {Object} parameters.value
+			 *
+			 * @returns {Void}
+			 *
+			 * @private
 			 */
-			classesTabHistorySelectedEntitySet: function (selectedEntity) {
-				this.selectedEntity = Ext.isEmpty(selectedEntity) ? undefined : selectedEntity;
+			classesTabHistorySelectedCardSet: function (parameters) {
+				if (Ext.isObject(parameters) && !Ext.Object.isEmpty(parameters)) {
+					parameters[CMDBuild.core.constants.Proxy.MODEL_NAME] = 'CMDBuild.model.classes.tabs.history.SelectedCard';
+					parameters[CMDBuild.core.constants.Proxy.TARGET_VARIABLE_NAME] = 'selectedCard';
+
+					this.propertyManageSet(parameters);
+				}
+			},
+
+		/**
+		 * SelectedClass property functions
+		 *
+		 * FIXME: move to parentDelegate on refactor
+		 */
+			/**
+			 * @param {Array or String} attributePath
+			 *
+			 * @returns {Mixed or undefined}
+			 *
+			 * @private
+			 */
+			classesTabHistorySelectedClassGet: function (attributePath) {
+				var parameters = {};
+				parameters[CMDBuild.core.constants.Proxy.TARGET_VARIABLE_NAME] = 'selectedClass';
+				parameters[CMDBuild.core.constants.Proxy.ATTRIBUTE_PATH] = attributePath;
+
+				return this.propertyManageGet(parameters);
+			},
+
+			/**
+			 * @param {Array or String} attributePath
+			 *
+			 * @returns {Boolean}
+			 *
+			 * @private
+			 */
+			classesTabHistorySelectedClassIsEmpty: function (attributePath) {
+				var parameters = {};
+				parameters[CMDBuild.core.constants.Proxy.TARGET_VARIABLE_NAME] = 'selectedClass';
+				parameters[CMDBuild.core.constants.Proxy.ATTRIBUTE_PATH] = attributePath;
+
+				return this.propertyManageIsEmpty(parameters);
+			},
+
+			/**
+			 * @param {Object} parameters
+			 *
+			 * @returns {Void}
+			 *
+			 * @private
+			 */
+			classesTabHistorySelectedClassSet: function (parameters) {
+				if (!Ext.Object.isEmpty(parameters)) {
+					parameters[CMDBuild.core.constants.Proxy.MODEL_NAME] = 'CMDBuild.model.classes.tabs.history.SelectedClass';
+					parameters[CMDBuild.core.constants.Proxy.TARGET_VARIABLE_NAME] = 'selectedClass';
+
+					this.propertyManageSet(parameters);
+				}
 			},
 
 		/**

@@ -28,6 +28,8 @@
 			{ name: CMDBuild.core.constants.Proxy.PRECISION, type: 'int', useNull: true },
 			{ name: CMDBuild.core.constants.Proxy.SCALE, type: 'int', defaultValue: 0 },
 			{ name: CMDBuild.core.constants.Proxy.SHOW_COLUMN, type: 'boolean', defaultValue: true },
+			{ name: CMDBuild.core.constants.Proxy.SORT_DIRECTION, type: 'string' },
+			{ name: CMDBuild.core.constants.Proxy.SORT_INDEX, type: 'int', defaultValue: 0 },
 			{ name: CMDBuild.core.constants.Proxy.SOURCE_OBJECT, type: 'auto', defaultValue: {} },
 			{ name: CMDBuild.core.constants.Proxy.TARGET_CLASS, type: 'string' },
 			{ name: CMDBuild.core.constants.Proxy.TYPE, type: 'string', convert: toLowerCase }, // Case insensitive types
@@ -53,6 +55,30 @@
 				data[CMDBuild.core.constants.Proxy.TARGET_CLASS] = data['fkDestination'] || data[CMDBuild.core.constants.Proxy.TARGET_CLASS];// ForeignKey's specific
 				data[CMDBuild.core.constants.Proxy.UNIQUE] = Ext.isBoolean(data['isunique']) ? data['isunique'] : data[CMDBuild.core.constants.Proxy.UNIQUE];
 
+				/*
+				 * Sort decode
+				 *	- classOrderSign: sorting direction
+				 *		-1: ASC
+				 *		0: not used
+				 *		1: DESC
+				 * 	- absoluteClassOrder: sorting criteria's index
+				 */
+				if (
+					Ext.isNumber(data['classOrderSign']) && !Ext.isEmpty(data['classOrderSign'])
+					&& Ext.isNumber(data['absoluteClassOrder']) && !Ext.isEmpty(data['absoluteClassOrder'])
+				) {
+					var sortIndex = data['classOrderSign'] * data['absoluteClassOrder'];
+
+					data[CMDBuild.core.constants.Proxy.SORT_INDEX] = sortIndex;
+
+					if (sortIndex > 0) {
+						data[CMDBuild.core.constants.Proxy.SORT_DIRECTION] = 'ASC';
+					} else if (sortIndex < 0) {
+						data[CMDBuild.core.constants.Proxy.SORT_DIRECTION] = 'DESC';
+					}
+				}
+
+				// Field mode decode
 				if (!Ext.isEmpty(data['fieldmode']))
 					if (data['fieldmode'] == CMDBuild.core.constants.Proxy.WRITE) {
 						data[CMDBuild.core.constants.Proxy.WRITABLE] = true;
