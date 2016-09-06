@@ -2,6 +2,9 @@ package org.cmdbuild.servlets.json.serializers;
 
 import static java.util.Collections.emptyList;
 import static org.apache.commons.lang3.ObjectUtils.defaultIfNull;
+import static org.cmdbuild.auth.acl.CMGroup.GroupType.admin;
+import static org.cmdbuild.auth.acl.CMGroup.GroupType.normal;
+import static org.cmdbuild.auth.acl.CMGroup.GroupType.restrictedAdmin;
 import static org.cmdbuild.servlets.json.CommunicationConstants.DESCRIPTION;
 import static org.cmdbuild.servlets.json.CommunicationConstants.EMAIL;
 import static org.cmdbuild.servlets.json.CommunicationConstants.IS_ACTIVE;
@@ -18,6 +21,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.cmdbuild.auth.acl.CMGroup;
+import org.cmdbuild.auth.acl.CMGroup.GroupType;
 import org.cmdbuild.auth.user.CMUser;
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dms.DmsConfiguration;
@@ -143,7 +147,15 @@ public class Serializer {
 		jsonGroup.put("isActive", group.isActive());
 		jsonGroup.put("text", group.getDescription());
 		jsonGroup.put("selectable", true);
-		jsonGroup.put("type", "group");
+		final GroupType type;
+		if (group.isAdmin() && group.isRestrictedAdmin()) {
+			type = restrictedAdmin;
+		} else if (group.isAdmin()) {
+			type = admin;
+		} else {
+			type = normal;
+		}
+		jsonGroup.put("type", type.name());
 		return jsonGroup;
 	}
 

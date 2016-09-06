@@ -68,6 +68,8 @@ FIXES
 
  * Empty reference columns in widget CustomForm grid
 
+ * When editing the definition of a group, the type shows "group" wrongly
+
 
 
 

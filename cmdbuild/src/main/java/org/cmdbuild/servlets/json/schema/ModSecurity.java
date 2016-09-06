@@ -1,5 +1,7 @@
 package org.cmdbuild.servlets.json.schema;
 
+import static org.cmdbuild.auth.acl.CMGroup.GroupType.admin;
+import static org.cmdbuild.auth.acl.CMGroup.GroupType.restrictedAdmin;
 import static org.cmdbuild.servlets.json.CommunicationConstants.ACTIVE;
 import static org.cmdbuild.servlets.json.CommunicationConstants.ALREADY_ASSOCIATED;
 import static org.cmdbuild.servlets.json.CommunicationConstants.ATTRIBUTES;
@@ -120,9 +122,9 @@ public class ModSecurity extends JSONBaseWithSpringContext {
 				.withStartingClassId(startingClass) //
 				.withActiveStatus(isActive);
 
-		if (CMGroup.GroupType.admin.name().equals(groupType)) {
+		if (admin.name().equals(groupType)) {
 			builder.withAdminFlag(true); //
-		} else if (CMGroup.GroupType.restrictedAdmin.name().equals(groupType)) {
+		} else if (restrictedAdmin.name().equals(groupType)) {
 			builder.withAdminFlag(true);
 			builder.withRestrictedAdminFlag(true);
 		}
