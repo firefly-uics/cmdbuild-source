@@ -64,6 +64,8 @@ FIXES
 
  * Import CSV should not fail if some non-existing attributes are specified
 
+ * When deleting a class/process through JSON-RPC interface the respose is always a success even if the class/process is not found
+
 
 
 
