@@ -236,7 +236,7 @@
 								serverVars: this.cmfg('widgetCustomFormGetTemplateResolverServerVars')
 							});
 
-							editor = CMDBuild.Management.ReferenceField.buildEditor(attribute, templateResolver);
+							editor = CMDBuild.Management.ReferenceField.buildEditor(attribute, templateResolver, this);
 
 							// Force execution of template resolver
 							if (!Ext.isEmpty(editor) && Ext.isFunction(editor.resolveTemplate))
@@ -378,12 +378,6 @@
 
 			if (this.cmfg('instancesDataStorageExists'))
 				this.cmfg('widgetCustomFormLayoutGridDataSet', this.cmfg('widgetCustomFormInstancesDataStorageGet'));
-
-			// Fixes reference field renderer to avoid blank cell content render
-			Ext.Function.createDelayed(function () {
-				if (this.view.getView().isVisible())
-					this.view.getView().refresh();
-			}, 100, this)();
 		},
 
 		/**

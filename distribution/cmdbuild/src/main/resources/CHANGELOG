@@ -66,6 +66,8 @@ FIXES
 
  * When deleting a class/process through JSON-RPC interface the respose is always a success even if the class/process is not found
 
+ * Empty reference columns in widget CustomForm grid
+
 
 
 
