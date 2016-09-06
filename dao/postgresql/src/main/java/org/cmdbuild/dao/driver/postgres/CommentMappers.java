@@ -62,6 +62,8 @@ class CommentMappers {
 	public static final CommentMapper FUNCTION_COMMENT_MAPPER = new EntryTypeCommentMapper() {
 		{
 			define("CATEGORIES", FunctionMetadata.CATEGORIES);
+			define("MASTERTABLE", FunctionMetadata.MASTERTABLE);
+			define("TAGS", FunctionMetadata.TAGS);
 		}
 	};
 
