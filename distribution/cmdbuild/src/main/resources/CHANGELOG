@@ -40,13 +40,13 @@ FIXES
 
  * Error when trying to get cards from a superclass when there are row privileges defined on a subclass
 
- * Wrong selection when accessing closed processes from url
+ * Wrong selection when accessing closed processes from URL
 
- * Task manager UI behaviour errors
+ * Task manager UI behavior errors
 
  * "Privileged" status for user invalidates "impersonate" operation of WorkflowAPI
 
- * Tab details errors whith simple class ForeignKey as source
+ * Tab details errors with simple class ForeignKey as source
 
  * ForeignKey fields store URL errors
 
@@ -64,7 +64,7 @@ FIXES
 
  * Import CSV should not fail if some non-existing attributes are specified
 
- * When deleting a class/process through JSON-RPC interface the respose is always a success even if the class/process is not found
+ * When deleting a class/process through JSON-RPC interface the response is always a success even if the class/process is not found
 
  * Empty reference columns in widget CustomForm grid
 
