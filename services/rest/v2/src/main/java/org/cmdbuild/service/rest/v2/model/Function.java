@@ -1,21 +1,26 @@
 package org.cmdbuild.service.rest.v2.model;
 
 import static org.cmdbuild.service.rest.v2.constants.Serialization.DESCRIPTION;
+import static org.cmdbuild.service.rest.v2.constants.Serialization.METADATA;
 import static org.cmdbuild.service.rest.v2.constants.Serialization.NAME;
 
+import java.util.Map;
+
 import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 @XmlRootElement
-public class FunctionWithBasicDetails extends ModelWithLongId {
+public class Function extends ModelWithLongId {
 
 	private String name;
 	private String description;
+	private Map<String, Object> metadata;
 
-	FunctionWithBasicDetails() {
+	Function() {
 		// package visibility
 	}
 
@@ -37,22 +42,32 @@ public class FunctionWithBasicDetails extends ModelWithLongId {
 		this.description = description;
 	}
 
+	@XmlElement(name = METADATA, nillable = true)
+	public Map<String, Object> getMetadata() {
+		return metadata;
+	}
+
+	protected void setMetadata(final Map<String, Object> metadata) {
+		this.metadata = metadata;
+	}
+
 	@Override
 	protected boolean doEquals(final Object obj) {
 		if (this == obj) {
 			return true;
 		}
 
-		if (!(obj instanceof FunctionWithBasicDetails)) {
+		if (!(obj instanceof Function)) {
 			return false;
 		}
 
-		final FunctionWithBasicDetails other = FunctionWithBasicDetails.class.cast(obj);
+		final Function other = Function.class.cast(obj);
 
 		return new EqualsBuilder() //
 				.append(this.getId(), other.getId()) //
 				.append(this.name, other.name) //
 				.append(this.description, other.description) //
+				.append(this.metadata, other.metadata) //
 				.isEquals();
 	}
 
@@ -62,6 +77,7 @@ public class FunctionWithBasicDetails extends ModelWithLongId {
 				.append(this.getId()) //
 				.append(this.name) //
 				.append(this.description) //
+				.append(this.metadata) //
 				.toHashCode();
 	}
 
