@@ -725,7 +725,8 @@ public class EntryTypeCommands implements LoggingSupport {
 						final boolean returnsSet = rs.getBoolean("returns_set");
 						final FunctionMetadata meta = functionCommentToMetadata(rs.getString("comment"));
 						final DBFunction function = new DBFunction(fromName(name), id, returnsSet);
-						function.addCategories(meta.getCategories());
+						function.setCategories(meta.getCategories());
+						function.setMetadata(meta.getMetadata());
 						addParameters(rs, function);
 						return function;
 					}

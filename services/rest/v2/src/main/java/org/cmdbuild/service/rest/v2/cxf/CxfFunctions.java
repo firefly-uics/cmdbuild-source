@@ -141,6 +141,7 @@ public class CxfFunctions implements Functions {
 						.withId(input.getId()) //
 						.withName(input.getName()) //
 						.withDescription(input.getName()) //
+						.withMetadata(input.getMetadata()) //
 						.build();
 			}
 

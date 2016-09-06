@@ -1241,6 +1241,7 @@ public class Models {
 		private Long id;
 		private String name;
 		private String description;
+		private Map<String, Object> metadata;
 
 		private FunctionWithFullDetailsBuilder() {
 			// use factory method
@@ -1252,6 +1253,7 @@ public class Models {
 			output.setId(id);
 			output.setName(name);
 			output.setDescription(description);
+			output.setMetadata(metadata);
 			return output;
 		}
 
@@ -1267,6 +1269,11 @@ public class Models {
 
 		public FunctionWithFullDetailsBuilder withDescription(final String description) {
 			this.description = description;
+			return this;
+		}
+
+		public FunctionWithFullDetailsBuilder withMetadata(final Map<String, Object> metadata) {
+			this.metadata = metadata;
 			return this;
 		}
 
