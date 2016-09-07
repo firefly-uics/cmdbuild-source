@@ -111,9 +111,10 @@
 				}
 				var visible = this.interactionDocument.isVisible(layer, currentClassName, currentCardId);
 				var hide = ! this.interactionDocument.getLayerVisibility(layer);
-				if (hide && visible) {
+				var navigable = this.interactionDocument.isANavigableLayer(layer);
+				if ((hide || ! navigable) && visible) {
 					this.clearHideLayer(layer.masterTableName, layer.name);
-				} else if (visible) {
+				} else if (visible && navigable) {
 					this.showLayer(layer, currentClassName, currentCardId);
 					visibleLayers.push(layer);
 				}

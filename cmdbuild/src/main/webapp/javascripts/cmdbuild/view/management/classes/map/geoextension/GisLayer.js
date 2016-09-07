@@ -161,6 +161,16 @@
 
 		/**
 		 * 
+		 * @returns {Void}
+		 * 
+		 */
+		refresh : function() {
+			var source = this.getSource();
+			source.clear(true);
+			//source.refresh();
+		},
+		/**
+		 * 
 		 * @returns {String}
 		 * 
 		 */
@@ -227,12 +237,10 @@
 						type : "post",
 						success : function(data) {
 							clearVectorSource(vectorSource);
-							for (var i = 0; i < data.features.length; i++) {
-								data.features[i].geometry.type = changeType(data.features[i].geometry.type);
-							}
-							var features = geoJSONFormat.readFeatures(data);
-							vectorSource.addFeatures(features);
-							me.interactionDocument.onLoadedfeatures(me.layer.get("name"), features);
+							data.features = me.onlyVisibleFeatures(data.features);
+							var jsonFeatures = geoJSONFormat.readFeatures(data);
+							vectorSource.addFeatures(jsonFeatures);
+							me.interactionDocument.onLoadedfeatures(me.layer.get("name"), jsonFeatures);
 						},
 
 					});
@@ -241,6 +249,31 @@
 				strategy : ol.loadingstrategy.bbox
 			});
 			return vectorSource;
+		},
+
+		onlyVisibleFeatures : function(featuresOnLayer) {
+			var features = [];
+			var geoAttribute = this.layer.get("geoAttribute");
+			var bControlledByNavigation = this.interactionDocument
+					.isControlledByNavigation(geoAttribute.masterTableName);
+			for (var i = 0; i < featuresOnLayer.length; i++) {
+				var feature = featuresOnLayer[i];
+				feature.geometry.type = changeType(feature.geometry.type);
+				if (!bControlledByNavigation) {
+					features.push(feature);
+
+				} else {
+					var card = {
+						className : feature.properties.master_className,
+						cardId : feature.properties.master_card,
+					};
+					if (this.interactionDocument.isANavigableCard(card)) {
+						features.push(feature);
+					}
+
+				}
+			}
+			return features;
 		},
 		/**
 		 * 
@@ -283,8 +316,7 @@
 					break;
 
 				}
-				// no break because enters in Draw if and only
-				// if is new
+				// no break because enters in Draw if and only if is new
 			case "Draw":
 				this.setStatus("Draw")
 				break;
@@ -307,7 +339,7 @@
 			feature.set("master_className", currentCard.className);
 			var cl = _CMCache.getEntryTypeByName(currentCard.className);
 			feature.set("master_class", cl.get("id"));
-			this.layer.getSource().addFeature(feature);
+			this.getSource().addFeature(feature);
 			this.interactionDocument.setCurrentFeature(this.layer.get("name"), "", "Modify");
 			this.interactionDocument.changedFeature();
 		},
@@ -407,7 +439,7 @@
 			var featuresOnLayer = this.getFeaturesByCardId(cardId);
 			var translation = undefined;
 			featuresOnLayer.forEach(function(feature) { // first found is good
-														// <<<----NB!!
+				// <<<----NB!!
 				var geojson = new ol.format.GeoJSON();
 				var json = geojson.writeFeature(feature);
 				translation = translate2CMDBuild(feature);

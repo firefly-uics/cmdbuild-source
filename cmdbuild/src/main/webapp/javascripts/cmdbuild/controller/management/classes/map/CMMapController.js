@@ -1,6 +1,7 @@
 (function() {
 
-	Ext.require([ 'CMDBuild.proxy.gis.Gis' ]);
+	Ext.require([ 'CMDBuild.proxy.gis.Gis',
+	              'CMDBuild.controller.management.classes.map.CM16NavigationTreeDelegate']);
 
 	Ext.define("CMDBuild.controller.management.classes.map.CMMapController", {
 		alternateClassName : "CMDBuild.controller.management.classes.CMMapController", // Legacy
@@ -27,12 +28,12 @@
 				this.mapPanel.addDelegate(this);
 				this.cmIsInEditing = false;
 
-				var cardbrowserPanel = this.mapPanel.getCardBrowserPanel();
-				if (cardbrowserPanel) {
-					new CMDBuild.controller.management.classes.CMCardBrowserTreeDataSource(cardbrowserPanel,
+				var navigationPanel = this.mapPanel.getCardBrowserPanel();
+				if (navigationPanel) {
+					new CMDBuild.controller.management.classes.CMCardBrowserTreeDataSource(navigationPanel,
 							this.mapState);
-					cardbrowserPanel.addDelegate(new CMDBuild.controller.management.classes.map.CMCardBrowserDelegate(
-							this));
+					navigationPanel.addDelegate(new CMDBuild.controller.management.classes.map.CM16NavigationTreeDelegate(
+							this, this.interactionDocument));
 				}
 
 				// initialize editing control
