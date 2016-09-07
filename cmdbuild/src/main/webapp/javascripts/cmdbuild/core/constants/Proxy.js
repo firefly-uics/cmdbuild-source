@@ -200,7 +200,7 @@
 		DESTINATION_CLASS: 'destinationClass',
 		DESTINATION_CLASS_ID: 'destinationClassId',
 		DESTINATION_CLASS_NAME: 'destinationClassName',
-		DESTINATION_CODE : 'destinationCode',
+		DESTINATION_CODE: 'destinationCode',
 		DESTINATION_DESCRIPTION: 'destinationDescription',
 		DESTINATION_DISABLED_CLASSES: 'destinationDisabledClasses',
 		DIRECT: 'direct',
