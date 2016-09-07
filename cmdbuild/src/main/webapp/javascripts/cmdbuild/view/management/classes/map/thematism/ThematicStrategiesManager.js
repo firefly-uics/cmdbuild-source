@@ -2,12 +2,13 @@
 
 	Ext.define("CMDBuild.view.management.classes.map.thematism.ThematicStrategiesManager", {
 		requires : [ "CMDBuild.view.management.classes.map.proxy.Functions" ],
-		
+
 		/**
-		 * loaded function strategies; can be used only after a call of getFunctionStrategies on the class
+		 * loaded function strategies; can be used only after a call of
+		 * getFunctionStrategies on the class
 		 */
 		functionStrategies : undefined,
-		
+
 		/**
 		 * Custom client functions
 		 */
@@ -86,19 +87,23 @@
 		 * Custom Sql functions
 		 */
 		getFunctionStrategies : function(callback, callbackScope) {
+			var params = {
+				detailed : true
+			};
 			CMDBuild.view.management.classes.map.proxy.Functions.readAllFunctions({
 				scope : this,
+				params : params,
 				success : function(response, options, decodedResponse) {
 					this.functionStrategies = decodedResponse[CMDBuild.core.constants.Proxy.DATA];
 					this.completeStrategyByStrategy(this.functionStrategies, 0, function() {
 						callback.apply(callbackScope, [ this.functionStrategies ]);
-					},this);
+					}, this);
 				}
 			});
 		},
-		
+
 		getStrategyByDescription : function(description) {
-			for (var key in this.strategies) {
+			for ( var key in this.strategies) {
 				if (this.strategies[key].description === description) {
 					return this.strategies[key];
 				}
