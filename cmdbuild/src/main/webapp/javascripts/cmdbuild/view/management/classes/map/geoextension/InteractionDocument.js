@@ -5,6 +5,12 @@
 		editLayer : undefined,
 		feature : undefined,
 		currentCard : undefined,
+		classesControlledByNavigation : undefined,
+		/**
+		 * @property {Object}
+		 * 
+		 */
+		navigables : {},
 
 		configurationMap : {
 			center : [ CMDBuild.configuration.gis.get(CMDBuild.gis.constants.CENTER_LONGITUDE) || 0,
@@ -19,6 +25,67 @@
 		setConfigurationMap : function(mapPanel) {
 			this.configurationMap.mapPanel = mapPanel;
 
+		},
+
+		setClassesControlledByNavigation : function(classes) {
+			this.classesControlledByNavigation = classes;
+		},
+
+		isControlledByNavigation : function(className) {
+			if (className === "_Geoserver") {
+				return true;
+			}
+			return (!this.classesControlledByNavigation) ? false : this.classesControlledByNavigation
+					.indexOf(className) != -1;
+		},
+
+		/**
+		 * @param {Array}
+		 *            arrayNavigables Ext.data.TreeModel
+		 */
+		setNavigables : function(arrayNavigables) {
+			this.navigables = {};
+			for (var i = 0; i < arrayNavigables.length; i++) {
+				var navigable = arrayNavigables[i];
+				var cardId = navigable.get("cardId");
+				var className = navigable.get("className");
+				if (!this.navigables[className]) {
+					this.navigables[className] = [];
+				}
+				this.navigables[className].push(parseInt(cardId));
+			}
+			this.changed();
+		},
+		isANavigableClass : function(className) {
+			return this.navigables[className];
+		},
+		isANavigableCard : function(card) {
+			if (! this.isControlledByNavigation(card.className)) {
+				return true;
+			}
+			var id = parseInt(card.cardId);
+			return (!this.navigables[card.className]) ? false : this.navigables[card.className].indexOf(id) != -1;
+		},
+		isANavigableLayer : function(layer) {
+			if (!this.isControlledByNavigation(layer.masterTableName)) {
+				return true;
+			}
+			if (layer.cardBinding.length > 0) {
+				for (var i = 0; i < layer.cardBinding.length; i++) {
+					var binding = layer.cardBinding[i];
+					var card = {
+						cardId : binding.idCard,
+						className : binding.className
+					};
+					if (this.isANavigableClass(binding.className) && this.isANavigableCard(card)) {
+						return true;
+					}
+				}
+				return false;
+			} else if (!this.isANavigableClass(layer.masterTableName)) {
+				return false;
+			}
+			return true;
 		},
 		getConfigurationMap : function() {
 			return this.configurationMap;
@@ -89,7 +156,7 @@
 			}
 		},
 		getLayerVisibility : function(layer) {
-			return ! (layer.unChecked === true);
+			return !(layer.unChecked === true);
 		},
 		setLayerVisibility : function(layer, checked) {
 			if (layer) {
@@ -114,6 +181,10 @@
 						this.centerOnLayer(card, layers, index + 1, callback, callbackScope)
 					}
 				}, this);
+			}
+			else {
+				this.centerOnLayer(card, layers, index + 1, callback, callbackScope)
+				
 			}
 		},
 		centerOnCard : function(card, callback, callbackScope) {

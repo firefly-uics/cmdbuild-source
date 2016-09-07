@@ -25,7 +25,6 @@
 	<script type="text/javascript" src="javascripts/cmdbuild/view/management/common/CMReferenceSearchWindow.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/view/management/common/CMNoteWindow.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/view/management/common/CMAttachmentsWindow.js"></script>
-	<script type="text/javascript" src="javascripts/cmdbuild/view/management/common/CMCardBrowserTree.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/view/management/common/widgets/CMWidgetManager.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/view/management/common/CMCardForm.js"></script>
 
