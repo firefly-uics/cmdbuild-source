@@ -1,6 +1,7 @@
 package org.cmdbuild.dao.entrytype;
 
 import static com.google.common.base.Predicates.alwaysTrue;
+import static com.google.common.base.Predicates.compose;
 import static com.google.common.collect.Iterables.contains;
 import static org.apache.commons.lang3.builder.ToStringStyle.SHORT_PREFIX_STYLE;
 import static org.cmdbuild.dao.constants.Cardinality.CARDINALITY_1N;
@@ -13,6 +14,7 @@ import org.cmdbuild.dao.entrytype.attributetype.CMAttributeType;
 import org.cmdbuild.dao.function.CMFunction;
 import org.cmdbuild.dao.function.CMFunction.CMFunctionParameter;
 
+import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import com.google.common.collect.ForwardingObject;
 
@@ -515,6 +517,24 @@ public class Predicates {
 
 	public static Predicate<CMClass> hasAnchestor(final CMClass value) {
 		return new HasAncestor(value);
+	}
+
+	/**
+	 * Syntactic sugar for
+	 * {@link org.cmdbuild.common.utils.guava.Predicates.compose}.
+	 */
+	public static <F extends CMClass, T> Predicate<F> clazz(final Function<F, T> function,
+			final Predicate<T> predicate) {
+		return compose(predicate, function);
+	}
+
+	/**
+	 * Syntactic sugar for
+	 * {@link org.cmdbuild.common.utils.guava.Predicates.compose}.
+	 */
+	public static <F extends CMDomain, T> Predicate<F> domain(final Function<F, T> function,
+			final Predicate<T> predicate) {
+		return compose(predicate, function);
 	}
 
 	private Predicates() {

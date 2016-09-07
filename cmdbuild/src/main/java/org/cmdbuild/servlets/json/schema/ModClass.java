@@ -1,5 +1,6 @@
 package org.cmdbuild.servlets.json.schema;
 
+import static com.google.common.base.Optional.fromNullable;
 import static com.google.common.base.Predicates.not;
 import static com.google.common.collect.FluentIterable.from;
 import static java.util.Collections.emptyList;
@@ -10,6 +11,7 @@ import static org.cmdbuild.servlets.json.CommunicationConstants.ATTRIBUTES;
 import static org.cmdbuild.servlets.json.CommunicationConstants.CLASS_NAME;
 import static org.cmdbuild.servlets.json.CommunicationConstants.DEFAULT_VALUE;
 import static org.cmdbuild.servlets.json.CommunicationConstants.DESCRIPTION;
+import static org.cmdbuild.servlets.json.CommunicationConstants.DESTINATION;
 import static org.cmdbuild.servlets.json.CommunicationConstants.DISABLED1;
 import static org.cmdbuild.servlets.json.CommunicationConstants.DISABLED2;
 import static org.cmdbuild.servlets.json.CommunicationConstants.DOMAIN;
@@ -23,6 +25,7 @@ import static org.cmdbuild.servlets.json.CommunicationConstants.DOMAIN_MASTER_DE
 import static org.cmdbuild.servlets.json.CommunicationConstants.DOMAIN_NAME;
 import static org.cmdbuild.servlets.json.CommunicationConstants.DOMAIN_SECOND_CLASS_ID;
 import static org.cmdbuild.servlets.json.CommunicationConstants.EDITOR_TYPE;
+import static org.cmdbuild.servlets.json.CommunicationConstants.EXCLUDE_PROCESSES;
 import static org.cmdbuild.servlets.json.CommunicationConstants.FIELD_MODE;
 import static org.cmdbuild.servlets.json.CommunicationConstants.FILTER;
 import static org.cmdbuild.servlets.json.CommunicationConstants.FK_DESTINATION;
@@ -42,6 +45,7 @@ import static org.cmdbuild.servlets.json.CommunicationConstants.PRECISION;
 import static org.cmdbuild.servlets.json.CommunicationConstants.SCALE;
 import static org.cmdbuild.servlets.json.CommunicationConstants.SHOW_IN_GRID;
 import static org.cmdbuild.servlets.json.CommunicationConstants.SKIP_DISABLED_CLASSES;
+import static org.cmdbuild.servlets.json.CommunicationConstants.SOURCE;
 import static org.cmdbuild.servlets.json.CommunicationConstants.SUPERCLASS;
 import static org.cmdbuild.servlets.json.CommunicationConstants.TABLE;
 import static org.cmdbuild.servlets.json.CommunicationConstants.TABLE_TYPE;
@@ -161,8 +165,8 @@ public class ModClass extends JSONBaseWithSpringContext {
 				try {
 					alertAdminIfNoStartActivity(userProcessClass);
 				} catch (final Exception ex) {
-					logger.error(String.format("Error retrieving start activity for process",
-							userProcessClass.getName()));
+					logger.error(
+							String.format("Error retrieving start activity for process", userProcessClass.getName()));
 				}
 			}
 		}
@@ -235,8 +239,8 @@ public class ModClass extends JSONBaseWithSpringContext {
 			@Parameter(value = CLASS_NAME) final String className //
 	) throws JSONException, AuthException {
 		final DataAccessLogic dataLogic = userDataAccessLogic();
-		final Iterable<? extends CMAttribute> attributes = dataLogic.getAttributes(className, activeOnly,
-				UNUSED_ATTRIBUTE_QUERY);
+		final Iterable<? extends CMAttribute> attributes =
+				dataLogic.getAttributes(className, activeOnly, UNUSED_ATTRIBUTE_QUERY);
 
 		final AttributeSerializer attributeSerializer = AttributeSerializer.newInstance() //
 				.withDataView(systemDataView()) //
@@ -260,7 +264,7 @@ public class ModClass extends JSONBaseWithSpringContext {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param tableTypeStirng
 	 *            can be CLASS or SIMPLECLASS
 	 * @return a list of attribute types that a class or superclass can have.
@@ -473,11 +477,30 @@ public class ModClass extends JSONBaseWithSpringContext {
 	) throws JSONException {
 		final JSONArray jsonDomains = new JSONArray();
 		// TODO system really needed
-		final Iterable<CMDomain> domains = from(
-				systemDataAccessLogic().findDomainsForClass(className, skipDisabledClasses)) //
-				.filter(not(isSystem(CMDomain.class)));
+		final Iterable<CMDomain> domains =
+				from(systemDataAccessLogic().findDomainsForClass(className, skipDisabledClasses)) //
+						.filter(not(isSystem(CMDomain.class)));
 		for (final CMDomain domain : domains) {
 			jsonDomains.put(domainSerializer().toClient(domain, className));
+		}
+		final JSONObject out = new JSONObject();
+		out.put(DOMAINS, jsonDomains);
+		return out;
+	}
+
+	@JSONExported
+	public JSONObject getDomains( //
+			@Parameter(value = SOURCE, required = false) final String source, //
+			@Parameter(value = DESTINATION, required = false) final String destination, //
+			@Parameter(value = ACTIVE, required = false) final boolean activeOnly, //
+			@Parameter(value = EXCLUDE_PROCESSES, required = false) final boolean excludeProcesses //
+	) throws JSONException {
+		final JSONArray jsonDomains = new JSONArray();
+		// TODO system really needed
+		final Iterable<CMDomain> domains = systemDataAccessLogic().findDomains(fromNullable(source),
+				fromNullable(destination), activeOnly, excludeProcesses);
+		for (final CMDomain domain : domains) {
+			jsonDomains.put(domainSerializer().toClient(domain));
 		}
 		final JSONObject out = new JSONObject();
 		out.put(DOMAINS, jsonDomains);
@@ -488,7 +511,7 @@ public class ModClass extends JSONBaseWithSpringContext {
 	 * Given a class name, this method retrieves all the attributes for all the
 	 * SIMPLE classes that have at least one attribute of type foreign key whose
 	 * target class is the specified class or an ancestor of it
-	 * 
+	 *
 	 * @param className
 	 * @return
 	 * @throws Exception
@@ -534,7 +557,7 @@ public class ModClass extends JSONBaseWithSpringContext {
 	/**
 	 * Retrieves all domains with cardinality 1:N or N:1 in which the class with
 	 * the specified name is on the 'N' side
-	 * 
+	 *
 	 * @param className
 	 * @return
 	 * @throws JSONException
@@ -544,8 +567,8 @@ public class ModClass extends JSONBaseWithSpringContext {
 	public JSONObject getReferenceableDomainList(@Parameter(CLASS_NAME) final String className) throws JSONException {
 		final JSONObject out = new JSONObject();
 		final JSONArray jsonDomains = new JSONArray();
-		final Iterable<? extends CMDomain> referenceableDomains = systemDataAccessLogic().findReferenceableDomains(
-				className);
+		final Iterable<? extends CMDomain> referenceableDomains =
+				systemDataAccessLogic().findReferenceableDomains(className);
 		for (final CMDomain domain : referenceableDomains) {
 			jsonDomains.put(domainSerializer().toClient(domain, false));
 		}
