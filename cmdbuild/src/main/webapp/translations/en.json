@@ -513,7 +513,7 @@
 		"routesInvalidClassIdentifier": "Route error: invalid class identifier",
 		"routesInvalidInstanceIdentifier": "Route error: invalid instance identifier",
 		"routesInvalidPrintFormat": "Route error: invalid print format",
-		"routesInvalidProcessIdentifier": "Routes error: invalid process identifier",
+		"routesInvalidProcessIdentifier": "Route error: invalid process identifier",
 		"routesInvalidSimpleFilter": "Route error: invalid card identifier (simple filter selection error)",
 		"server_error": "Server unreachable",
 		"server_error_code": "An error has occurred while sending data to the server: ",
