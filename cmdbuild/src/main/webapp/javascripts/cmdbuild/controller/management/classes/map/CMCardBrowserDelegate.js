@@ -68,14 +68,12 @@
 		var className = node.getCMDBuildClassName();
 		var cardId = node.getCardId();
 		if (node.data.className != tree.dataSource.GEOSERVER) {
-			master.mapState.setFeatureVisisbility(className, cardId, visibility);
 		} else {
-			setGeoserverLayerVisibility(master, node, visibility);
 		}
-
+//
 		if (node.cmGeoServerNode) {
-			node.cmGeoServerNode.setChecked(visibility); // to sync the UI
-			setGeoserverLayerVisibility(master, node.cmGeoServerNode, visibility);
+//			node.cmGeoServerNode.setChecked(visibility); // to sync the UI
+//			setGeoserverLayerVisibility(master, node.cmGeoServerNode, visibility);
 		}
 	}
 
@@ -89,7 +87,6 @@
 
 	function setGeoserverLayerVisibility(master, node, checked) {
 		var layerName = node.data.cardId;
-		master.mapState.setGeoServerLayerVisibility(layerName, checked);
 		var l = master.map.getGeoServerLayerByName(layerName);
 		if (l) {
 			l.setVisibility(checked);

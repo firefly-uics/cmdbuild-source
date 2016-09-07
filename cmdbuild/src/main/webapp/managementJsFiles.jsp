@@ -79,7 +79,6 @@
 		<script type="text/javascript" src="javascripts/cmdbuild/controller/management/classes/CMMasterDetailsController.js"></script>
 		<script type="text/javascript" src="javascripts/cmdbuild/controller/management/classes/CMNoteController.js"></script>
 		<script type="text/javascript" src="javascripts/cmdbuild/view/management/classes/map/CMMapPanel.js"></script>
-		<script type="text/javascript" src="javascripts/cmdbuild/view/management/classes/map/CMMapLayerSwitcher.js"></script>
 		<script type="text/javascript" src="javascripts/cmdbuild/view/management/classes/map/MapEditingWindow.js"></script>
 
 		<!-- WIDGETS -->
