@@ -207,12 +207,13 @@
 		 */
 		getThematicColor : function(card, callback, callbackScope) {
 			var strategy = this.thematism.strategy
+			var configuration = this.thematism.configuration;
 			var parameters = {
 				card : card,
-				strategy : strategy
+				strategy : strategy,
+				attributeName : configuration.functionConfiguration.attribute
 			};
 			strategy.value(parameters, function(value) {
-				var configuration = this.thematism.configuration;
 				if (configuration.thematismConfiguration.source === CMDBuild.gis.constants.layers.FUNCTION_SOURCE) {
 					var field = configuration.layoutConfiguration.resultFieldName;
 					value = value[field];
