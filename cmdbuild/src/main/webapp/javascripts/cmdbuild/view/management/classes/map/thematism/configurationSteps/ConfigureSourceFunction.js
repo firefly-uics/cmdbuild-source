@@ -38,19 +38,28 @@
 				data : []
 			});
 			this.interactionDocument.getFunctionStrategies(function(strategies) {
-				// a single strategy contains also the
-				// parameters but for now
-				// are irrelevant
-				for ( var key in strategies) {
-					var strategy = strategies[key];
-					strategiesStore.add({
-						"description" : strategy.description,
-						"value" : strategy.description
-					});
-				}
+				this.loadStore(strategies, strategiesStore);
 				this.comboStrategies.store.loadData(strategiesStore.getRange(), false);
 				callback.apply(callbackScope, this);
 			}, this);
+		},
+		loadStore : function(strategies, store) {
+			for ( var key in strategies) {
+				var strategy = strategies[key];
+				var strategyTypes = strategy.metadata[CMDBuild.gis.constants.metadata.TAGS];
+				var strategyClass = strategy.metadata[CMDBuild.gis.constants.metadata.MASTERTABLE];
+				if (!(strategyTypes && strategyClass)) {
+					continue;
+				}
+				if (strategyTypes.indexOf(CMDBuild.gis.constants.metadata.THEMATICFUNCTION) === -1) {
+					continue;
+				}
+				store.add({
+					"description" : strategy.description,
+					"value" : strategy.description
+				});
+			}
+
 		}
 	});
 })();

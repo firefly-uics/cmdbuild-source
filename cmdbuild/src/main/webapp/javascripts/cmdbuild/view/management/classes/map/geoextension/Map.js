@@ -21,7 +21,13 @@
 				CIRCLE : "shape_circle",
 				RECTANGLE : "shape_rectangle",
 				STAR : "shape_star"
+			},
+			metadata : {
+				TAGS : "system.entrytype.tags",
+				MASTERTABLE : "system.entrytype.mastertable",
+				THEMATICFUNCTION : "ThematicFunction"
 			}
+			
 		}
 	};
 	Ext.define('CMDBuild.view.management.classes.map.geoextension.Map', {
