@@ -16,8 +16,6 @@ import static org.apache.commons.lang3.ObjectUtils.defaultIfNull;
 import static org.apache.commons.lang3.RandomStringUtils.randomAlphanumeric;
 import static org.apache.commons.lang3.StringUtils.isEmpty;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
-import static org.apache.commons.lang3.builder.ToStringBuilder.reflectionToString;
-import static org.apache.commons.lang3.builder.ToStringStyle.SHORT_PREFIX_STYLE;
 import static org.cmdbuild.dao.constants.Cardinality.CARDINALITY_1N;
 import static org.cmdbuild.dao.constants.Cardinality.CARDINALITY_N1;
 import static org.cmdbuild.dao.entrytype.Deactivable.IsActivePredicate.activeOnes;
@@ -30,6 +28,7 @@ import static org.cmdbuild.dao.entrytype.Functions.disabled2;
 import static org.cmdbuild.dao.entrytype.Predicates.allDomains;
 import static org.cmdbuild.dao.entrytype.Predicates.attributeTypeInstanceOf;
 import static org.cmdbuild.dao.entrytype.Predicates.clazz;
+import static org.cmdbuild.dao.entrytype.Predicates.contains;
 import static org.cmdbuild.dao.entrytype.Predicates.disabledClass;
 import static org.cmdbuild.dao.entrytype.Predicates.domain;
 import static org.cmdbuild.dao.entrytype.Predicates.domainFor;
@@ -53,6 +52,7 @@ import static org.cmdbuild.data.store.Storables.storableOf;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
@@ -62,8 +62,6 @@ import java.util.NoSuchElementException;
 
 import javax.activation.DataHandler;
 
-import org.apache.commons.lang3.builder.EqualsBuilder;
-import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.cmdbuild.auth.user.OperationUser;
 import org.cmdbuild.common.Constants;
 import org.cmdbuild.common.collect.ChainablePutMap;
@@ -127,7 +125,6 @@ import com.google.common.base.Functions;
 import com.google.common.base.Optional;
 import com.google.common.base.Predicate;
 import com.google.common.collect.FluentIterable;
-import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Ordering;
@@ -318,10 +315,26 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 	@Override
 	public Iterable<? extends CMDomain> findReferenceableDomains(final String className) {
 		final CMClass fetchedClass = dataView.findClass(className);
-		return from(dataView.findDomains()) //
+		final Collection<CMDomain> output = new ArrayList<>();
+		for (final CMDomain element : from(dataView.findDomains()) //
 				.filter(domainFor(fetchedClass)) //
-				.filter(not(disabledClass(fetchedClass))) //
-				.filter(usableForReferences(fetchedClass));
+				.filter(usableForReferences(fetchedClass))) {
+			switch (element.getCardinality()) {
+			case "1:N":
+				if (domain(disabled2(), not(contains(className))).apply(element)) {
+					output.add(element);
+				}
+				break;
+			case "N:1":
+				if (domain(disabled1(), not(contains(className))).apply(element)) {
+					output.add(element);
+				}
+				break;
+			default:
+				throw new IllegalArgumentException(element.getName());
+			}
+		}
+		return output;
 	}
 
 	@Override
@@ -1010,51 +1023,6 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 						domain(class2(), not(hasAnchestor(dataView.getActivityClass())))) : alwaysTrue()) //
 				.filter(not(isSystem(CMDomain.class))) //
 				.filter(CMDomain.class);
-	}
-
-	private static class Contains implements Predicate<Iterable<String>> {
-
-		private final String value;
-
-		public Contains(final String value) {
-			this.value = value;
-		}
-
-		@Override
-		public boolean apply(final Iterable<String> input) {
-			return Iterables.contains(input, value);
-		}
-
-		@Override
-		public boolean equals(final Object obj) {
-			if (obj == this) {
-				return true;
-			}
-			if (!(obj instanceof Contains)) {
-				return false;
-			}
-			final Contains other = Contains.class.cast(obj);
-			return new EqualsBuilder() //
-					.append(this.value, other.value) //
-					.isEquals();
-		}
-
-		@Override
-		public int hashCode() {
-			return new HashCodeBuilder() //
-					.append(value) //
-					.toHashCode();
-		}
-
-		@Override
-		public final String toString() {
-			return reflectionToString(this, SHORT_PREFIX_STYLE);
-		}
-
-	}
-
-	private static Predicate<Iterable<String>> contains(final String value) {
-		return new Contains(value);
 	}
 
 	/**
