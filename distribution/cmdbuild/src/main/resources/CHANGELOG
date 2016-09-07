@@ -70,6 +70,8 @@ FIXES
 
  * When editing the definition of a group, the type shows "group" wrongly
 
+ * Missing relations when some domains are disabled on a hierarchy of classes
+
 
 
 

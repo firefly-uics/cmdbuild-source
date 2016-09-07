@@ -1,6 +1,8 @@
 package org.cmdbuild.logic.data.access;
 
+import static com.google.common.base.Predicates.alwaysTrue;
 import static com.google.common.base.Predicates.and;
+import static com.google.common.base.Predicates.equalTo;
 import static com.google.common.base.Predicates.not;
 import static com.google.common.collect.FluentIterable.from;
 import static com.google.common.collect.Iterables.filter;
@@ -14,13 +16,25 @@ import static org.apache.commons.lang3.ObjectUtils.defaultIfNull;
 import static org.apache.commons.lang3.RandomStringUtils.randomAlphanumeric;
 import static org.apache.commons.lang3.StringUtils.isEmpty;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
+import static org.apache.commons.lang3.builder.ToStringBuilder.reflectionToString;
+import static org.apache.commons.lang3.builder.ToStringStyle.SHORT_PREFIX_STYLE;
 import static org.cmdbuild.dao.constants.Cardinality.CARDINALITY_1N;
 import static org.cmdbuild.dao.constants.Cardinality.CARDINALITY_N1;
 import static org.cmdbuild.dao.entrytype.Deactivable.IsActivePredicate.activeOnes;
+import static org.cmdbuild.dao.entrytype.Functions.active;
+import static org.cmdbuild.dao.entrytype.Functions.anchestorOf;
+import static org.cmdbuild.dao.entrytype.Functions.class1;
+import static org.cmdbuild.dao.entrytype.Functions.class2;
+import static org.cmdbuild.dao.entrytype.Functions.disabled1;
+import static org.cmdbuild.dao.entrytype.Functions.disabled2;
 import static org.cmdbuild.dao.entrytype.Predicates.allDomains;
 import static org.cmdbuild.dao.entrytype.Predicates.attributeTypeInstanceOf;
+import static org.cmdbuild.dao.entrytype.Predicates.clazz;
 import static org.cmdbuild.dao.entrytype.Predicates.disabledClass;
+import static org.cmdbuild.dao.entrytype.Predicates.domain;
 import static org.cmdbuild.dao.entrytype.Predicates.domainFor;
+import static org.cmdbuild.dao.entrytype.Predicates.hasAnchestor;
+import static org.cmdbuild.dao.entrytype.Predicates.isSystem;
 import static org.cmdbuild.dao.entrytype.Predicates.usableForReferences;
 import static org.cmdbuild.dao.guava.Functions.toValueSet;
 import static org.cmdbuild.dao.query.clause.AnyAttribute.anyAttribute;
@@ -48,6 +62,8 @@ import java.util.NoSuchElementException;
 
 import javax.activation.DataHandler;
 
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.cmdbuild.auth.user.OperationUser;
 import org.cmdbuild.common.Constants;
 import org.cmdbuild.common.collect.ChainablePutMap;
@@ -111,6 +127,7 @@ import com.google.common.base.Functions;
 import com.google.common.base.Optional;
 import com.google.common.base.Predicate;
 import com.google.common.collect.FluentIterable;
+import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Ordering;
@@ -961,6 +978,83 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 				.filter(domainFor(fetchedClass)) //
 				.filter(skipDisabledClasses ? and(activeOnes(), not(disabledClass(fetchedClass))) : allDomains()) //
 				.filter(CMDomain.class);
+	}
+
+	@Override
+	public Iterable<CMDomain> findDomains(final Optional<String> source, final Optional<String> destination,
+			final boolean activeOnly, final boolean excludeProcesses) {
+		final CMClass _source = source.isPresent() ? dataView.findClass(source.get()) : null;
+		if (source.isPresent() && _source == null) {
+			throw NotFoundExceptionType.CLASS_NOTFOUND.createException(source.get());
+		}
+		final CMClass _destination = destination.isPresent() ? dataView.findClass(destination.get()) : null;
+		if (destination.isPresent() && _destination == null) {
+			throw NotFoundExceptionType.CLASS_NOTFOUND.createException(destination.get());
+		}
+
+		final Predicate<CMDomain> class1Contained =
+				source.isPresent() ? domain(class1(), clazz(anchestorOf(_source), equalTo(true))) : alwaysTrue();
+		final Predicate<CMDomain> class2Contained = destination.isPresent()
+				? domain(class2(), clazz(anchestorOf(_destination), equalTo(true))) : alwaysTrue();
+
+		final Predicate<CMDomain> class1NotDisabled =
+				source.isPresent() ? domain(disabled1(), not(contains(source.get()))) : alwaysTrue();
+		final Predicate<CMDomain> class2NotDisabled =
+				destination.isPresent() ? domain(disabled2(), not(contains(destination.get()))) : alwaysTrue();
+
+		return from(dataView.findDomains()) //
+				.filter(and(class1Contained, class2Contained)) //
+				.filter(and(class1NotDisabled, class2NotDisabled)) //
+				.filter(activeOnly ? domain(active(), equalTo(true)) : alwaysTrue()) //
+				.filter(excludeProcesses ? and(domain(class1(), not(hasAnchestor(dataView.getActivityClass()))),
+						domain(class2(), not(hasAnchestor(dataView.getActivityClass())))) : alwaysTrue()) //
+				.filter(not(isSystem(CMDomain.class))) //
+				.filter(CMDomain.class);
+	}
+
+	private static class Contains implements Predicate<Iterable<String>> {
+
+		private final String value;
+
+		public Contains(final String value) {
+			this.value = value;
+		}
+
+		@Override
+		public boolean apply(final Iterable<String> input) {
+			return Iterables.contains(input, value);
+		}
+
+		@Override
+		public boolean equals(final Object obj) {
+			if (obj == this) {
+				return true;
+			}
+			if (!(obj instanceof Contains)) {
+				return false;
+			}
+			final Contains other = Contains.class.cast(obj);
+			return new EqualsBuilder() //
+					.append(this.value, other.value) //
+					.isEquals();
+		}
+
+		@Override
+		public int hashCode() {
+			return new HashCodeBuilder() //
+					.append(value) //
+					.toHashCode();
+		}
+
+		@Override
+		public final String toString() {
+			return reflectionToString(this, SHORT_PREFIX_STYLE);
+		}
+
+	}
+
+	private static Predicate<Iterable<String>> contains(final String value) {
+		return new Contains(value);
 	}
 
 	/**
