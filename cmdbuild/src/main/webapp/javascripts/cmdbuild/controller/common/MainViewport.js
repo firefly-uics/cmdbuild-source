@@ -476,7 +476,6 @@
 
 					this.cmfg('mainViewportActivitySelect', params);
 				}
-
 			} else {
 				_error('malformed openCard method parameters', this);
 			}

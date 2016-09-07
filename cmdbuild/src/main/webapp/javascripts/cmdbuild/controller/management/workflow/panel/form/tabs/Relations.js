@@ -94,7 +94,7 @@
 						entryType = null;
 
 					this.lastEntryType = entryType;
-					this.view.addRelationButton.setDomainsForEntryType(entryType);
+					this.view.addRelationButton.onEntryTypeSelect(entryType.get(CMDBuild.core.constants.Proxy.NAME));
 				}
 			}
 		},
@@ -472,7 +472,7 @@
 					currentClass = null;
 
 				this.currentClass = currentClass;
-				this.view.addRelationButton.setDomainsForEntryType(currentClass);
+				this.view.addRelationButton.onEntryTypeSelect(currentClass.get(CMDBuild.core.constants.Proxy.NAME));
 			}
 		},
 

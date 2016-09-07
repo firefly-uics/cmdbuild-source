@@ -259,6 +259,7 @@
 		ERRORS: 'errors',
 		EVENT_CLASS: 'eventClass',
 		EVENT_TITLE: 'eventTitle',
+		EXCLUDE_PROCESSES: 'excludeProcesses',
 		EXECUTABLE: 'executable',
 		EXISTING: 'existing',
 		EXPORT_CSV: 'exportCsv',
