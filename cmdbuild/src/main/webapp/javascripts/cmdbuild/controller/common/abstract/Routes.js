@@ -1,7 +1,5 @@
 (function () {
 
-	Ext.require('CMDBuild.core.Routes');
-
 	/**
 	 * @abstract
 	 */
@@ -29,7 +27,7 @@
 		 * @private
 		 */
 		saveRoute: function (params, path, router) {
-			CMDBuild.core.Routes.setRoutePath(path);
+			CMDBuild.global.Routes.setRoutePath(path);
 		}
 	});
 

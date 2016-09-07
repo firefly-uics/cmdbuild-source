@@ -109,11 +109,13 @@
 		 *
 		 * @private
 		 */
-		buildActionColumns: function () {
+		buildActionColumn: function () {
 			return Ext.create('Ext.grid.column.Action', {
 				align: 'center',
-				width: 75,
+				maxWidth: 75,
+				minWidth: 75,
 				sortable: false,
+				resizable: false,
 				hideable: false,
 				menuDisabled: true,
 				fixed: true,
@@ -234,7 +236,7 @@
 								serverVars: this.cmfg('widgetCustomFormGetTemplateResolverServerVars')
 							});
 
-							editor = CMDBuild.Management.ReferenceField.buildEditor(attribute, templateResolver);
+							editor = CMDBuild.Management.ReferenceField.buildEditor(attribute, templateResolver, this);
 
 							// Force execution of template resolver
 							if (!Ext.isEmpty(editor) && Ext.isFunction(editor.resolveTemplate))
@@ -282,7 +284,7 @@
 				}, this);
 			}
 
-			columns.push(this.buildActionColumns());
+			columns.push(this.buildActionColumn());
 
 			return columns;
 		},
@@ -376,12 +378,6 @@
 
 			if (this.cmfg('instancesDataStorageExists'))
 				this.cmfg('widgetCustomFormLayoutGridDataSet', this.cmfg('widgetCustomFormInstancesDataStorageGet'));
-
-			// Fixes reference field renderer to avoid blank cell content render
-			Ext.Function.createDelayed(function () {
-				if (this.view.getView().isVisible())
-					this.view.getView().refresh();
-			}, 100, this)();
 		},
 
 		/**

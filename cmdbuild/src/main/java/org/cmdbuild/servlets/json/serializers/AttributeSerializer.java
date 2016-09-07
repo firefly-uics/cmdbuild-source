@@ -17,6 +17,7 @@ import static org.cmdbuild.servlets.json.CommunicationConstants.LOOKUP;
 import static org.cmdbuild.servlets.json.CommunicationConstants.META;
 import static org.cmdbuild.servlets.json.CommunicationConstants.NAME;
 import static org.cmdbuild.servlets.json.CommunicationConstants.NOT_NULL;
+import static org.cmdbuild.servlets.json.CommunicationConstants.OWNER;
 import static org.cmdbuild.servlets.json.CommunicationConstants.PRECISION;
 import static org.cmdbuild.servlets.json.CommunicationConstants.SCALE;
 import static org.cmdbuild.servlets.json.CommunicationConstants.SHOW_IN_GRID;
@@ -421,6 +422,7 @@ public class AttributeSerializer extends Serializer {
 			/*
 			 * common
 			 */
+			serialization.put(OWNER, attribute.getOwner().getName());
 			serialization.put(NAME, attribute.getName());
 			serialization.put(DESCRIPTION, defaultIfBlank(attribute.getDescription(), attribute.getName()));
 			serialization.put(TYPE,

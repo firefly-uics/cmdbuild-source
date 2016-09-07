@@ -2,6 +2,7 @@ package org.cmdbuild.logic.data.access;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
@@ -232,7 +233,8 @@ public interface DataAccessLogic extends Logic {
 
 	File exportClassAsCsvFile(String className, String separator);
 
-	CSVData importCsvFileFor(DataHandler csvFile, Long classId, String separator) throws IOException, JSONException;
+	CSVData importCsvFileFor(DataHandler csvFile, Long classId, String separator,
+			Collection<? super String> notFoundAttributes) throws IOException, JSONException;
 
 	CMCard resolveCardReferences(CMClass entryType, CMCard card);
 

@@ -1,5 +1,6 @@
 package integration.logic.auth;
 
+import static com.google.common.base.Suppliers.ofInstance;
 import static org.cmdbuild.auth.UserStores.inMemory;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.is;
@@ -73,7 +74,7 @@ public class DefaultAuthenticationLogicTest extends IntegrationTestBase {
 	public void setUp() {
 		fixture = new UserRolePrivilegeFixture(dbDriver());
 
-		final AuthenticationService service = new DefaultAuthenticationService(dbDataView());
+		final AuthenticationService service = new DefaultAuthenticationService(dbDataView(), ofInstance(anonymous()));
 		final LegacyDBAuthenticator dbAuthenticator = new LegacyDBAuthenticator(dbDataView());
 		service.setPasswordAuthenticators(dbAuthenticator);
 		service.setUserFetchers(dbAuthenticator);

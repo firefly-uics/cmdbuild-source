@@ -13,9 +13,18 @@ import static org.cmdbuild.dao.constants.Cardinality.CARDINALITY_N1;
 import static org.cmdbuild.dao.entrytype.Predicates.attributeTypeInstanceOf;
 import static org.cmdbuild.dao.query.clause.AnyAttribute.anyAttribute;
 import static org.cmdbuild.dao.query.clause.Clauses.call;
-import static org.cmdbuild.logic.data.Utils.withClassOrder;
+import static org.cmdbuild.exception.NotFoundException.NotFoundExceptionType.CLASS_NOTFOUND;
+import static org.cmdbuild.exception.NotFoundException.NotFoundExceptionType.DOMAIN_NOTFOUND;
+import static org.cmdbuild.exception.ORMException.ORMExceptionType.ORM_ACTIVE_ATTRIBUTE;
+import static org.cmdbuild.exception.ORMException.ORMExceptionType.ORM_CONTAINS_DATA;
+import static org.cmdbuild.exception.ORMException.ORMExceptionType.ORM_DOMAIN_HAS_REFERENCE;
+import static org.cmdbuild.exception.ORMException.ORMExceptionType.ORM_DUPLICATE_TABLE;
+import static org.cmdbuild.exception.ORMException.ORMExceptionType.ORM_ERROR_DOMAIN_CREATE;
+import static org.cmdbuild.exception.ORMException.ORMExceptionType.ORM_TABLE_HAS_CHILDREN;
+import static org.cmdbuild.exception.ORMException.ORMExceptionType.ORM_TYPE_ERROR;
 import static org.cmdbuild.logic.data.Utils.definitionForExisting;
 import static org.cmdbuild.logic.data.Utils.definitionForNew;
+import static org.cmdbuild.logic.data.Utils.withClassOrder;
 import static org.cmdbuild.logic.data.Utils.withIndex;
 
 import java.util.List;
@@ -49,9 +58,6 @@ import org.cmdbuild.data.store.metadata.Metadata;
 import org.cmdbuild.data.store.metadata.MetadataConverter;
 import org.cmdbuild.data.store.metadata.MetadataGroupable;
 import org.cmdbuild.data.store.metadata.MetadataImpl;
-import org.cmdbuild.exception.NotFoundException.NotFoundExceptionType;
-import org.cmdbuild.exception.ORMException;
-import org.cmdbuild.exception.ORMException.ORMExceptionType;
 import org.cmdbuild.model.data.Attribute;
 import org.cmdbuild.model.data.ClassOrder;
 import org.cmdbuild.model.data.Domain;
@@ -125,7 +131,7 @@ public class DefaultDataDefinitionLogic implements DataDefinitionLogic {
 	public CMClass createOrUpdate(final EntryType entryType, final boolean forceCreation) {
 		if (forceCreation && view.findClass(entryType.getName()) != null) {
 
-			throw ORMExceptionType.ORM_DUPLICATE_TABLE.createException();
+			throw ORM_DUPLICATE_TABLE.createException();
 		}
 
 		return createOrUpdate(entryType);
@@ -179,12 +185,11 @@ public class DefaultDataDefinitionLogic implements DataDefinitionLogic {
 		logger.info("deleting class '{}'", className);
 		final CMClass existingClass = view.findClass(className);
 		if (existingClass == null) {
-			logger.warn("class '{}' not found", className);
-			return;
+			throw CLASS_NOTFOUND.createException(className);
 		}
 		final boolean hasChildren = !isEmpty(existingClass.getChildren());
 		if (existingClass.isSuperclass() && hasChildren) {
-			throw ORMException.ORMExceptionType.ORM_TABLE_HAS_CHILDREN.createException();
+			throw ORM_TABLE_HAS_CHILDREN.createException();
 		}
 		try {
 			logger.warn("deleting existing class '{}'", className);
@@ -192,7 +197,7 @@ public class DefaultDataDefinitionLogic implements DataDefinitionLogic {
 		} catch (final Exception e) {
 			logger.error("error deleting class", e);
 			logger.warn("class contains data");
-			throw ORMException.ORMExceptionType.ORM_CONTAINS_DATA.createException();
+			throw ORM_CONTAINS_DATA.createException();
 		}
 
 	}
@@ -238,7 +243,7 @@ public class DefaultDataDefinitionLogic implements DataDefinitionLogic {
 						final String domainName = attributeType.getDomainName();
 						final CMDomain domain = view.findDomain(domainName);
 						if (domain == null) {
-							throw NotFoundExceptionType.DOMAIN_NOTFOUND.createException(domainName);
+							throw DOMAIN_NOTFOUND.createException(domainName);
 						}
 
 						logger.info("checking namespace");
@@ -247,8 +252,8 @@ public class DefaultDataDefinitionLogic implements DataDefinitionLogic {
 								"non-default namespaces not supported at this level");
 
 						logger.info("checking cardinality");
-						Validate.isTrue(asList(CARDINALITY_1N.value(), CARDINALITY_N1.value()).contains(
-								domain.getCardinality()));
+						Validate.isTrue(asList(CARDINALITY_1N.value(), CARDINALITY_N1.value())
+								.contains(domain.getCardinality()));
 					}
 
 				});
@@ -401,7 +406,7 @@ public class DefaultDataDefinitionLogic implements DataDefinitionLogic {
 		}
 
 		logger.warn("not found");
-		throw ORMExceptionType.ORM_TYPE_ERROR.createException();
+		throw ORM_TYPE_ERROR.createException();
 	}
 
 	@Override
@@ -434,7 +439,7 @@ public class DefaultDataDefinitionLogic implements DataDefinitionLogic {
 			 * exception, thrown from dao
 			 */
 			if (e.getMessage().contains("CM_CONTAINS_DATA")) {
-				throw ORMExceptionType.ORM_CONTAINS_DATA.createException();
+				throw ORM_CONTAINS_DATA.createException();
 			}
 		}
 	}
@@ -485,7 +490,7 @@ public class DefaultDataDefinitionLogic implements DataDefinitionLogic {
 		if (existing != null) {
 			logger.error("Error creating a domain with name {}. A domain with the same name already exists.",
 					domain.getName());
-			throw ORMExceptionType.ORM_ERROR_DOMAIN_CREATE.createException();
+			throw ORM_ERROR_DOMAIN_CREATE.createException();
 		}
 		logger.info("Domain not already created, creating a new one");
 		final CMClass class1 = view.findClass(domain.getIdClass1());
@@ -500,7 +505,7 @@ public class DefaultDataDefinitionLogic implements DataDefinitionLogic {
 		final CMDomain updatedDomain;
 		if (existing == null) {
 			logger.error("Cannot update the domain with name {}. It does not exist", domain.getName());
-			throw NotFoundExceptionType.DOMAIN_NOTFOUND.createException(domain.getName());
+			throw DOMAIN_NOTFOUND.createException(domain.getName());
 		}
 
 		validateActivationForReferences(domain);
@@ -511,12 +516,12 @@ public class DefaultDataDefinitionLogic implements DataDefinitionLogic {
 	}
 
 	private void validateActivationForReferences(final Domain domain) {
-		final Iterable<String> allDisabled = "N:1".equals(domain.getCardinality()) ? defaultIfNull(
-				domain.getDisabled1(), NO_DISABLED) : defaultIfNull(domain.getDisabled2(), NO_DISABLED);
+		final Iterable<String> allDisabled = "N:1".equals(domain.getCardinality())
+				? defaultIfNull(domain.getDisabled1(), NO_DISABLED) : defaultIfNull(domain.getDisabled2(), NO_DISABLED);
 		for (final String disabled : allDisabled) {
 			final CMClass target = view.findClass(disabled);
 			if (target == null) {
-				throw NotFoundExceptionType.CLASS_NOTFOUND.createException(disabled);
+				throw CLASS_NOTFOUND.createException(disabled);
 			}
 			for (final CMAttribute attribute : from(target.getActiveAttributes()) //
 					.filter(attributeTypeInstanceOf(ReferenceAttributeType.class))) {
@@ -532,8 +537,7 @@ public class DefaultDataDefinitionLogic implements DataDefinitionLogic {
 					@Override
 					public void visit(final ReferenceAttributeType attributeType) {
 						if (attributeType.getDomainName().equals(domain.getName()) && attribute.isActive()) {
-							throw ORMExceptionType.ORM_ACTIVE_ATTRIBUTE.createException(target.getName(),
-									attribute.getName());
+							throw ORM_ACTIVE_ATTRIBUTE.createException(target.getName(), attribute.getName());
 						}
 					}
 
@@ -563,7 +567,7 @@ public class DefaultDataDefinitionLogic implements DataDefinitionLogic {
 			}
 
 			if (hasReference) {
-				throw ORMExceptionType.ORM_DOMAIN_HAS_REFERENCE.createException();
+				throw ORM_DOMAIN_HAS_REFERENCE.createException();
 			} else {
 				view.delete(domain);
 			}

@@ -9,6 +9,10 @@ import java.util.WeakHashMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * @deprecated Use {@link com.google.common.reflect.Reflection} together with
+ *             {@link Reflection} instead.
+ */
 public class UnsupportedProxyFactory<T> {
 
 	private static final Logger logger = LoggerFactory.getLogger(UnsupportedProxyFactory.class);
@@ -26,8 +30,8 @@ public class UnsupportedProxyFactory<T> {
 			Object instance = cache.get(type);
 			if (instance == null) {
 				logger.trace("instance of '{}' not cached, creating new one", type);
-				instance = Proxy.newProxyInstance(type.getClassLoader(), new Class<?>[] { type },
-						new InvocationHandler() {
+				instance =
+						Proxy.newProxyInstance(type.getClassLoader(), new Class<?>[] { type }, new InvocationHandler() {
 							@Override
 							public Object invoke(final Object proxy, final Method method, final Object[] args)
 									throws Throwable {

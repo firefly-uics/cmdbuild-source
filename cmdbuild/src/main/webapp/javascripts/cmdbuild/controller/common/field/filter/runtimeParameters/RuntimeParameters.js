@@ -166,7 +166,10 @@
 				this.filter.setRuntimeParameterValue(this.form.getValues());
 
 				this.cmfg('onFieldFilterRuntimeParametersAbortButtonClick');
-				this.cmfg('workflowTreeFilterApply', this.filter);
+				this.cmfg('workflowTreeFilterApply', {
+					filter: this.filter,
+					type: 'advanced'
+				});
 			}
 		}
 	});

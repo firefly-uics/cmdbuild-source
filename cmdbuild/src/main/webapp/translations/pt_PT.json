@@ -395,6 +395,7 @@
 			"LOOKUP_TYPE_NOTFOUND": "Tipo de lista de valores {0} não localizada",
 			"MENU_NOTFOUND": "Menu não localizado",
 			"NOTFOUND": "Item não localizado",
+			"NOTFOUND_FUNCTION": "<em>Function not found {0}</em>",
 			"ORM_ACTIVE_ATTRIBUTE": "O atributo \"{1}\" da classe/processo \"{0}\" está ativo",
 			"ORM_AMBIGUOUS_DIRECTION": "Não foi possível determinar automaticamente a direção do relacionamento",
 			"ORM_CANT_CREATE_DATABASE": "Não foi possível criar a base de dados",

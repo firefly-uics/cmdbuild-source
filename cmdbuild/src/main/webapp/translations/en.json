@@ -366,7 +366,7 @@
 		"noSelectedCardToUpdate": "You have not selected any card to update",
 		"printReportFilure": "Print report failure",
 		"reasons": {
-			"ATTRIBUTE_NOTFOUND": "Attribute {1} of {0} non found",
+			"ATTRIBUTE_NOTFOUND": "Attribute {1} of {0} not found",
 			"AUTH_CLASS_NOT_AUTHORIZED": "Not enough privileges to access class {0}",
 			"AUTH_DEMO_MODE": "Operation not allowed in demo mode",
 			"AUTH_DOMAIN_NOT_AUTHORIZED": "Not enough privileges to access domain {0}",
@@ -395,6 +395,7 @@
 			"LOOKUP_TYPE_NOTFOUND": "Lookup type {0} non found",
 			"MENU_NOTFOUND": "Menu not found",
 			"NOTFOUND": "Item not found",
+			"NOTFOUND_FUNCTION": "Function not found {0}",
 			"ORM_ACTIVE_ATTRIBUTE": "Attribute \"{1}\" for class/process \"{0}\" is active",
 			"ORM_AMBIGUOUS_DIRECTION": "Cannot automatically determine the direction for the relation",
 			"ORM_CANT_CREATE_DATABASE": "Cannot create the database",

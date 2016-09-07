@@ -159,7 +159,6 @@
 				&& Ext.isArray(CMDBuild.configuration.runtime.get(CMDBuild.core.constants.Proxy.GROUPS))
 			) {
 				this.form.group.getStore().loadData(CMDBuild.configuration.runtime.get(CMDBuild.core.constants.Proxy.GROUPS));
-
 				this.form.group.show();
 				this.form.group.focus();
 			} else {

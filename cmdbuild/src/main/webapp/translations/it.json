@@ -395,6 +395,7 @@
 			"LOOKUP_TYPE_NOTFOUND": "Tipo lookup {0} non trovato",
 			"MENU_NOTFOUND": "Menu non trovato",
 			"NOTFOUND": "Elemento non trovato",
+			"NOTFOUND_FUNCTION": "Funzione {0} non trovata",
 			"ORM_ACTIVE_ATTRIBUTE": "L'attributo \"{1}\" della classe/processo \"{0}\" è attivo",
 			"ORM_AMBIGUOUS_DIRECTION": "Impossibile determinare automaticamente la direzione della relazione",
 			"ORM_CANT_CREATE_DATABASE": "Impossibile creare il database",

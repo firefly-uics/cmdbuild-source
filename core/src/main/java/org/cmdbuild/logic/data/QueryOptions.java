@@ -27,8 +27,6 @@ public class QueryOptions {
 	public static class QueryOptionsBuilder implements Builder<QueryOptions> {
 
 		private static final Iterable<String> EMPTY_ATTRIBUTES = emptyList();
-		private static final JSONObject EMPTY_FILTER = new JSONObject();
-		private static final JSONArray EMPTY_SORTERS = new JSONArray();
 
 		private Integer limit;
 		private Integer offset;
@@ -40,8 +38,8 @@ public class QueryOptions {
 		private QueryOptionsBuilder() {
 			limit = MAX_VALUE;
 			offset = 0;
-			filter = EMPTY_FILTER;
-			sorters = EMPTY_SORTERS;
+			filter = new JSONObject();
+			sorters = new JSONArray();
 			parameters = newHashMap();
 		}
 
@@ -100,7 +98,7 @@ public class QueryOptions {
 		 *            {@code null}.
 		 */
 		public QueryOptionsBuilder orderBy(final JSONArray sorters) {
-			this.sorters = defaultIfNull(sorters, EMPTY_SORTERS);
+			this.sorters = defaultIfNull(sorters, new JSONArray());
 			return this;
 		}
 
@@ -109,7 +107,7 @@ public class QueryOptions {
 		 *            JSON object representing a filter, can be {@code null}.
 		 */
 		public QueryOptionsBuilder filter(final JSONObject filter) {
-			this.filter = defaultIfNull(filter, EMPTY_FILTER);
+			this.filter = defaultIfNull(filter, new JSONObject());
 			return this;
 		}
 

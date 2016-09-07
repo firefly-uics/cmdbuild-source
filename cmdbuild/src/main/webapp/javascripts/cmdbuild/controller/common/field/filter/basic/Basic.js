@@ -23,7 +23,7 @@
 		 */
 		cmfgCatchedFunctions: [
 			'onFieldFilterBasicReset',
-			'onFieldFilterBasicTrigger1Click',
+			'onFieldFilterBasicTrigger1Click = onFieldFilterBasicEnterKeyPress',
 			'onFieldFilterBasicTrigger2Click'
 		],
 
@@ -47,24 +47,42 @@
 		},
 
 		/**
-		 * @param {Boolean} applyToStore
+		 * @param {Boolean} silently
 		 *
 		 * @returns {Void}
 		 */
-		onFieldFilterBasicReset: function (applyToStore) {
-			applyToStore = Ext.isBoolean(applyToStore) ? applyToStore : true;
+		onFieldFilterBasicReset: function (silently) {
+			silently = Ext.isBoolean(silently) ? silently : false;
+
+			// Error handling
+				if (!Ext.isObject(this.view) || Ext.Object.isEmpty(this.view))
+					return _error('onFieldFilterBasicReset(): view not found', this, this.view);
+			// END: Error handling
 
 			this.view.setValue();
 
-			if (applyToStore)
-				this.setQueryToStoreFilterAndLoad();
+			this.cmfg('panelGridAndFormGridFilterClear', {
+				disableStoreLoad: silently,
+				type: 'basic'
+			});
 		},
 
 		/**
 		 * @returns {Void}
 		 */
 		onFieldFilterBasicTrigger1Click: function () {
-			this.setQueryToStoreFilterAndLoad();
+			var value = Ext.String.trim(this.view.getValue());
+
+			if (Ext.isString(value) && !Ext.isEmpty(value)) { // Avoid to save empty filter string
+				var filterConfigurationObject = {};
+				filterConfigurationObject[CMDBuild.core.constants.Proxy.CONFIGURATION] = {};
+				filterConfigurationObject[CMDBuild.core.constants.Proxy.CONFIGURATION][CMDBuild.core.constants.Proxy.QUERY] = value;
+
+				this.cmfg('panelGridAndFormGridFilterApply', {
+					filter: Ext.create('CMDBuild.model.common.field.filter.basic.Filter', filterConfigurationObject),
+					type: 'basic'
+				});
+			}
 		},
 
 		/**
@@ -73,37 +91,6 @@
 		onFieldFilterBasicTrigger2Click: function () {
 			if (!this.view.isDisabled())
 				this.cmfg('onFieldFilterBasicReset');
-		},
-
-		/**
-		 * Decodes store filter JSON string and inject query parameter
-		 *
-		 * @returns {Void}
-		 *
-		 * @private
-		 */
-		setQueryToStoreFilterAndLoad: function () {
-			var filter = {};
-			var store = this.cmfg('panelGridAndFormGridStoreGet');
-
-			if (
-				Ext.isObject(store) && !Ext.Object.isEmpty(store)
-				&& !Ext.isEmpty(store.getProxy())
-				&& !Ext.isEmpty(store.getProxy().extraParams)
-				&& !Ext.isEmpty(store.getProxy().extraParams[CMDBuild.core.constants.Proxy.FILTER])
-			) {
-				filter = store.getProxy().extraParams[CMDBuild.core.constants.Proxy.FILTER];
-			}
-
-			if (CMDBuild.core.Utils.isJsonString(filter))
-				filter = Ext.decode(filter);
-
-			filter[CMDBuild.core.constants.Proxy.QUERY] = this.view.getValue();
-
-			var params = {};
-			params[CMDBuild.core.constants.Proxy.FILTER] = Ext.encode(filter);
-
-			this.cmfg('panelGridAndFormGridStoreLoad', { params: params });
 		}
 	});
 

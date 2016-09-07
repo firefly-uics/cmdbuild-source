@@ -9,7 +9,6 @@ import static com.google.common.collect.Iterables.toArray;
 import static com.google.common.collect.Maps.newHashMap;
 import static java.lang.String.format;
 import static java.util.Arrays.asList;
-import static java.util.Collections.emptyList;
 import static java.util.Collections.emptyMap;
 import static org.apache.commons.lang3.ObjectUtils.defaultIfNull;
 import static org.apache.commons.lang3.RandomStringUtils.randomAlphanumeric;
@@ -40,6 +39,7 @@ import static org.cmdbuild.data.store.Storables.storableOf;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
@@ -95,6 +95,7 @@ import org.cmdbuild.model.data.IdentifiedRelation;
 import org.cmdbuild.servlets.json.management.dataimport.csv.CSVData;
 import org.cmdbuild.servlets.json.management.dataimport.csv.CSVImporter;
 import org.cmdbuild.servlets.json.management.dataimport.csv.CsvReader;
+import org.cmdbuild.servlets.json.management.dataimport.csv.FilteredCsvReader;
 import org.cmdbuild.servlets.json.management.dataimport.csv.SuperCsvCsvReader;
 import org.cmdbuild.servlets.json.management.export.CMDataSource;
 import org.cmdbuild.servlets.json.management.export.DBDataSource;
@@ -580,8 +581,8 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 	public PagedElements<Card> fetchSQLCards(final String functionName, final QueryOptions queryOptions) {
 		final CMFunction fetchedFunction = dataView.findFunctionByName(functionName);
 		if (fetchedFunction == null) {
-			final List<Card> emptyCardList = emptyList();
-			return new PagedElements<Card>(emptyCardList, 0);
+			throw NotFoundExceptionType.NOTFOUND_FUNCTION.createException(functionName);
+
 		}
 		final Map<String, Object> parameters =
 				ChainablePutMap.of(newHashMap(defaultIfNull(queryOptions.getParameters(), NO_PARAMETERS))) //
@@ -1226,12 +1227,20 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 	}
 
 	@Override
-	public CSVData importCsvFileFor(final DataHandler csvFile, final Long classId, final String separator)
-			throws IOException, JSONException {
+	public CSVData importCsvFileFor(final DataHandler csvFile, final Long classId, final String separator,
+			final Collection<? super String> notFoundAttributes) throws IOException, JSONException {
 		final CMClass destinationClassForImport = dataView.findClass(classId);
 		final int separatorInt = separator.charAt(0);
 		final CsvPreference importCsvPreferences = new CsvPreference('"', separatorInt, "\n");
-		final CsvReader csvReader = new SuperCsvCsvReader(importCsvPreferences);
+		final CsvReader csvReader = new FilteredCsvReader(new SuperCsvCsvReader(importCsvPreferences),
+				destinationClassForImport, new FilteredCsvReader.Callback() {
+
+					@Override
+					public void attributeNotFound(final String name) {
+						notFoundAttributes.add(name);
+					}
+
+				});
 		final CSVImporter csvImporter = new CSVImporter(csvReader, dataView, lookupStore, destinationClassForImport);
 
 		final CSVData csvData = csvImporter.getCsvDataFrom(csvFile);

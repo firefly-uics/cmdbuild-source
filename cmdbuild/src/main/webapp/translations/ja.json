@@ -395,6 +395,7 @@
 			"LOOKUP_TYPE_NOTFOUND": "ルックアップタイプ{0} は見つかりません",
 			"MENU_NOTFOUND": "メニューが見つかりません",
 			"NOTFOUND": "アイテムが見つかりません",
+			"NOTFOUND_FUNCTION": "<em>Function not found {0}</em>",
 			"ORM_ACTIVE_ATTRIBUTE": "<em>Attribute \"{1}\" for class/process \"{0}\" is active</em>",
 			"ORM_AMBIGUOUS_DIRECTION": "リレーションの方向は自動的には決まりません",
 			"ORM_CANT_CREATE_DATABASE": "データベースを作成できません",

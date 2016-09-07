@@ -112,6 +112,8 @@
 			// Use runtime configuration to select class
 			CMDBuild.configuration.runtime.set(CMDBuild.core.constants.Proxy.STARTING_CLASS_ID, classObject[CMDBuild.core.constants.Proxy.ID]);
 
+			CMDBuild.global.controller.MainViewport.cmfg('mainViewportStartingEntitySelect');
+
 			this.manageFilterClient(classObject, callback);
 		},
 

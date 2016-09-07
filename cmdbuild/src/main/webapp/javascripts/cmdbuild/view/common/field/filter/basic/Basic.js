@@ -13,6 +13,7 @@
 		 */
 		grid: undefined,
 
+		enableKeyEvents: true,
 		hideTrigger1: false,
 		hideTrigger2: false,
 		trigger1Cls: Ext.baseCSSPrefix + 'form-search-trigger',
@@ -33,6 +34,13 @@
 			}, this);
 		},
 
+		listeners: {
+			specialkey: function (field, e, eOpts) {
+				if (e.getKey() == e.ENTER)
+					this.delegate.cmfg('onFieldFilterBasicEnterKeyPress');
+			}
+		},
+
 		/**
 		 * @returns {Void}
 		 */
@@ -48,12 +56,12 @@
 		},
 
 		/**
-		 * @param {Boolean} applyToStore
+		 * @param {Boolean} silently
 		 *
 		 * @returns {Void}
 		 */
-		reset: function (applyToStore) {
-			this.delegate.cmfg('onFieldFilterBasicReset', applyToStore);
+		reset: function (silently) {
+			this.delegate.cmfg('onFieldFilterBasicReset', silently);
 		}
 	});
 

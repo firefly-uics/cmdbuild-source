@@ -79,12 +79,9 @@
 					var nodes = [];
 					var nodesMap = {};
 
-					// Removes all processes and root class from response
+					// Removes all processes class from response
 					decodedResponse = Ext.Array.filter(decodedResponse, function (item, i, array) {
-						return (
-							item[CMDBuild.core.constants.Proxy.TYPE] == CMDBuild.core.constants.Global.getTableTypeProcessClass() // Discard classes
-							&& item[CMDBuild.core.constants.Proxy.NAME] != CMDBuild.core.constants.Global.getRootNameWorkflows() // Discard processes root class
-						);
+						return item[CMDBuild.core.constants.Proxy.TYPE] == CMDBuild.core.constants.Global.getTableTypeProcessClass(); // Discard processes
 					}, this);
 
 					if (!Ext.isEmpty(decodedResponse)) {

@@ -6,15 +6,20 @@ public class NotFoundException extends CMDBException {
 	private final NotFoundExceptionType type;
 
 	public enum NotFoundExceptionType {
-		NOTFOUND, CLASS_NOTFOUND, // class id or desc
+		NOTFOUND, //
+		CLASS_NOTFOUND, // class id or desc
 		DOMAIN_NOTFOUND, // domain id or desc
 		LOOKUP_TYPE_NOTFOUND, // lookup type name
 		ATTRIBUTE_NOTFOUND, // attribute name
 		CARD_NOTFOUND, // class desc
 		LOOKUP_NOTFOUND, // lookup name
-		MENU_NOTFOUND, PRIVILEGE_NOTFOUND, // group id, class id
+		MENU_NOTFOUND, //
+		PRIVILEGE_NOTFOUND, // group id, class id
 		PRIVILEGE_GROUP_NOTFOUND, // group id
-		PARAMETER_CLASS_UNAVAILABLE, SERVICE_UNAVAILABLE;
+		PARAMETER_CLASS_UNAVAILABLE, //
+		SERVICE_UNAVAILABLE, //
+		NOTFOUND_FUNCTION, //
+		;
 
 		public NotFoundException createException(final String... parameters) {
 			return new NotFoundException(this, parameters);

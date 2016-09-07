@@ -126,7 +126,9 @@
 			this.view.displayMode();
 			this.view.clear();
 
-			this.changeClassUIConfigurationForGroup(true, true, true); // Mnually disable all buttons
+			// Manually disable all buttons
+			this.view.form.modifyCardButton.disable();
+			this.view.form.deleteCardButton.disable();
 		},
 
 		setDelegate: function(d) {
@@ -272,7 +274,7 @@
 			}
 		},
 
-		changeClassUIConfigurationForGroup: function(disabledModify, disabledClone, disabledRemove) {
+		changeClassUIConfigurationForGroup: function(disabledModify, disabledRemove) {
 			this.view.form.modifyCardButton.disabledForGroup = disabledModify;
 			this.view.form.deleteCardButton.disabledForGroup = disabledRemove;
 			if (this.view.form.modifyCardButton.disabledForGroup)

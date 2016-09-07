@@ -96,10 +96,10 @@
 		 * @override
 		 */
 		onPagingKeyDown: function (field, e) {
-			var k = e.getKey();
-			var pageData = this.getPageData();
-			var increment = e.shiftKey ? 10 : 1;
-			var pageNum;
+			var k = e.getKey(),
+				pageData = this.getPageData(),
+				increment = e.shiftKey ? 10 : 1,
+				pageNum;
 
 			if (k == e.RETURN) {
 				e.stopEvent();

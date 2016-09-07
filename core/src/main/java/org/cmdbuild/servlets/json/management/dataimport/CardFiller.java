@@ -24,10 +24,14 @@ import org.cmdbuild.data.store.lookup.Lookup;
 import org.cmdbuild.data.store.lookup.LookupStore;
 import org.cmdbuild.data.store.lookup.LookupType;
 import org.cmdbuild.exception.NotFoundException.NotFoundExceptionType;
+import org.cmdbuild.logger.Log;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.slf4j.Logger;
 
 public class CardFiller {
+
+	private static final Logger logger = Log.CMDBUILD;
 
 	final private CMClass destinationClass;
 	final private CMDataView view;
@@ -82,8 +86,9 @@ public class CardFiller {
 		final CMAttribute attribute = destinationClass.getAttribute(attributeName);
 
 		if (attribute == null) {
-			throw NotFoundExceptionType.ATTRIBUTE_NOTFOUND.createException(destinationClass.getDescription(),
-					attributeName);
+			logger.warn("attribute '{}' not found");
+		} else if (!attribute.isActive()) {
+			logger.warn("attribute '{}' is not active");
 		}
 
 		if (value instanceof JSONObject) {

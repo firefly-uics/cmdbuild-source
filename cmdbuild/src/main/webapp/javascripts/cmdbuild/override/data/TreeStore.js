@@ -10,6 +10,11 @@
 		override: 'Ext.data.TreeStore',
 
 		/**
+		 * @cfg {Boolean}
+		 */
+		clearOnPageLoad: true,
+
+		/**
 		 * @cfg {Number}
 		 */
 		currentPage: 1,
@@ -36,34 +41,21 @@
 		disableWarnings: false,
 
 		/**
-		 * GetTotalCount implementation to use paging bar in tree 30/06/2016
-		 *
-		 * @param {Object} options
-		 *
-		 * @returns {Void}
-		 *
-		 * @override
+		 * @cfg {Number}
 		 */
-		load: function (options) {
-			options = options || {};
-			options.params = options.params || {};
-			options.node = options.node || this.tree.getRootNode();
+		pageSize: undefined,
 
-			options.params[this.proxy.limitParam] = options[this.proxy.limitParam] || this.pageSize
-			options.params[this.proxy.pageParam] = options[this.proxy.pageParam] || this.currentPage
-			options.params[this.nodeParam] = options.node ? options.node.getId() : 'root';
-
-			// Creates callback interceptor to print error message on store load - 02/10/2015
-			if (!Ext.isEmpty(options)) {
-				options.callback = Ext.isEmpty(options.callback) || !Ext.isFunction(options.callback) ? Ext.emptyFn : options.callback;
-				options.callback = Ext.Function.createInterceptor(options.callback, this.interceptorFunction, this);
-			}
-
-			this.callParent(arguments);
+		/**
+		 * Implementation to use paging bar in tree 30/06/2016
+		 *
+		 * @returns {Number}
+		 */
+		getCount: function() {
+			return this.tree.getRootNode().childNodes.length || 0;
 		},
 
 		/**
-		 * GetTotalCount implementation to use paging bar in tree 30/06/2016
+		 * Implementation to use paging bar in tree 30/06/2016
 		 *
 		 * @returns {Number}
 		 */
@@ -105,6 +97,33 @@
 		},
 
 		/**
+		 * @param {Object} options
+		 *
+		 * @returns {Void}
+		 *
+		 * @override
+		 */
+		load: function (options) {
+			options = options || {};
+			options.params = options.params || {};
+			options.node = options.node || this.tree.getRootNode();
+
+			options.params[this.proxy.limitParam] = options[this.proxy.limitParam] || this.pageSize
+			options.params[this.proxy.pageParam] = options[this.proxy.pageParam] || this.currentPage
+			options.params[this.nodeParam] = options.node ? options.node.getId() : 'root';
+
+			// Creates callback interceptor to print error message on store load - 02/10/2015
+			if (!Ext.isEmpty(options)) {
+				options.callback = Ext.isEmpty(options.callback) || !Ext.isFunction(options.callback) ? Ext.emptyFn : options.callback;
+				options.callback = Ext.Function.createInterceptor(options.callback, this.interceptorFunction, this);
+			}
+
+			this.callParent(arguments);
+		},
+
+		/**
+		 * Implementation to use paging bar in tree 30/06/2016
+		 *
 		 * @param {Number} page
 		 * @param {Object} options
 		 *
@@ -125,6 +144,8 @@
 		},
 
 		/**
+		 * Implementation to use paging bar in tree 30/06/2016
+		 *
 		 * @param {Object} options
 		 *
 		 * @returns {Void}
@@ -134,7 +155,7 @@
 		},
 
 		/**
-		 * GetTotalCount implementation to use paging bar in tree 30/06/2016
+		 * Implementation to use paging bar in tree 30/06/2016
 		 *
 		 * @param {Ext.data.Operation} operation
 		 *
@@ -171,6 +192,8 @@
 		},
 
 		/**
+		 * Implementation to use paging bar in tree 30/06/2016
+		 *
 		 * @param {Object} options
 		 *
 		 * @returns {Void}
