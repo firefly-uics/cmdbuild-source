@@ -80,6 +80,8 @@ FIXES
 
  * Process class treated as standard class if superclass has no privileges
 
+ * Default filter for class/process cannot be removed
+
 
 
 
