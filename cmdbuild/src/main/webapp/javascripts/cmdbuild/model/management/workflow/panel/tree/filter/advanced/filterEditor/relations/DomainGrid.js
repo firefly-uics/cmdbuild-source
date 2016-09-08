@@ -2,10 +2,7 @@
 
 	Ext.require('CMDBuild.core.constants.Proxy');
 
-	/**
-	 * @link CMDBuild.model.management.workflow.panel.tree.filter.advanced.filterEditor.relations.DomainGrid
-	 */
-	Ext.define('CMDBuild.model.common.panel.gridAndForm.filter.advanced.filterEditor.relations.DomainGrid', { // TODO: waiting for refactor (rename)
+	Ext.define('CMDBuild.model.management.workflow.panel.tree.filter.advanced.filterEditor.relations.DomainGrid', { // TODO: waiting for refactor (rename)
 		extend: 'Ext.data.Model',
 
 		fields: [
@@ -13,12 +10,12 @@
 			{ name: 'oneof', type: 'boolean', defaultValue: false },
 			{ name: CMDBuild.core.constants.Proxy.ANY, type: 'boolean', defaultValue: false },
 			{ name: CMDBuild.core.constants.Proxy.CHECKED_CARDS, type: 'auto', defaultValue: [] }, // {Array} [{Id: ..., ClassName: ''}, ...]
-			{ name: CMDBuild.core.constants.Proxy.DESTINATION, type: 'auto' }, // {CMDBuild.model.common.panel.gridAndForm.filter.advanced.filterEditor.relations.EntryType}
+			{ name: CMDBuild.core.constants.Proxy.DESTINATION, type: 'auto' }, // {CMDBuild.model.management.workflow.panel.tree.filter.advanced.filterEditor.relations.EntryType}
 			{ name: CMDBuild.core.constants.Proxy.DIRECTION, type: 'string' }, // '_1' if the source class is the first of the domain configuration, '_2' if the source class is the second of the domain configuration
-			{ name: CMDBuild.core.constants.Proxy.DOMAIN, type: 'auto' }, // {CMDBuild.model.common.panel.gridAndForm.filter.advanced.filterEditor.relations.Domain}
+			{ name: CMDBuild.core.constants.Proxy.DOMAIN, type: 'auto' }, // {CMDBuild.model.management.workflow.panel.tree.filter.advanced.filterEditor.relations.Domain}
 			{ name: CMDBuild.core.constants.Proxy.DOMAIN_DESCRIPTION, type: 'string', persist: false }, // Only to sort store
 			{ name: CMDBuild.core.constants.Proxy.ORIENTED_DESCRIPTION, type: 'string' },
-			{ name: CMDBuild.core.constants.Proxy.SOURCE, type: 'auto' } // {CMDBuild.model.common.panel.gridAndForm.filter.advanced.filterEditor.relations.EntryType}
+			{ name: CMDBuild.core.constants.Proxy.SOURCE, type: 'auto' } // {CMDBuild.model.management.workflow.panel.tree.filter.advanced.filterEditor.relations.EntryType}
 		],
 
 		/**

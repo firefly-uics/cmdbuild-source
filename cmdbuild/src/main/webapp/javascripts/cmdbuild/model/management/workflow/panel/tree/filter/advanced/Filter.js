@@ -2,7 +2,7 @@
 
 	Ext.require('CMDBuild.core.constants.Proxy');
 
-	Ext.define('CMDBuild.model.common.panel.gridAndForm.filter.advanced.Filter', {
+	Ext.define('CMDBuild.model.management.workflow.panel.tree.filter.advanced.Filter', {
 		extend: 'Ext.data.Model',
 
 		fields: [

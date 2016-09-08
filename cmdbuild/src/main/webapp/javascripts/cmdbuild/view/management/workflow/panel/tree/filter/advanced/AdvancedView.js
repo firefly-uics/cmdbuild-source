@@ -1,8 +1,5 @@
 (function () {
 
-	/**
-	 * @link CMDBuild.view.common.panel.gridAndForm.panel.common.filter.advanced.AdvancedView
-	 */
 	Ext.define('CMDBuild.view.management.workflow.panel.tree.filter.advanced.AdvancedView', {
 		extend: 'Ext.container.ButtonGroup',
 
@@ -38,7 +35,7 @@
 						scope: this,
 
 						toggleHandler: function (button, state) {
-							this.delegate.cmfg('onPanelGridAndFormFilterAdvancedManageToggleButtonClick', state);
+							this.delegate.cmfg('onWorkflowTreeFilterAdvancedManageToggleButtonClick', state);
 						}
 					}),
 					this.clearButton = Ext.create('CMDBuild.core.buttons.iconized.filter.SearchClear', {
@@ -46,7 +43,7 @@
 						scope: this,
 
 						handler: function (button, e) {
-							this.delegate.cmfg('onPanelGridAndFormFilterAdvancedClearButtonClick');
+							this.delegate.cmfg('onWorkflowTreeFilterAdvancedClearButtonClick');
 						}
 					})
 				]
@@ -63,7 +60,7 @@
 		 * @override
 		 */
 		disable: function () {
-			this.delegate.cmfg('onPanelGridAndFormFilterAdvancedDisable');
+			this.delegate.cmfg('onWorkflowTreeFilterAdvancedDisable');
 		},
 
 		/**
@@ -74,7 +71,7 @@
 		 * @override
 		 */
 		enable: function () {
-			this.delegate.cmfg('onPanelGridAndFormFilterAdvancedEnable');
+			this.delegate.cmfg('onWorkflowTreeFilterAdvancedEnable');
 		}
 	});
 

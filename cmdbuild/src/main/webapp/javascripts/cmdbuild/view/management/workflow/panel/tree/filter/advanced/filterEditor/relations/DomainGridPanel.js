@@ -2,18 +2,17 @@
 
 	/**
 	 * @link CMDBuild.view.management.common.filter.CMDomainGrid
-	 * @link CMDBuild.view.common.panel.gridAndForm.panel.common.filter.advanced.filterEditor.relations.DomainGridPanel
 	 */
 	Ext.define('CMDBuild.view.management.workflow.panel.tree.filter.advanced.filterEditor.relations.DomainGridPanel', {
 		extend: 'Ext.grid.Panel',
 
 		requires: [
 			'CMDBuild.core.constants.Proxy',
-			'CMDBuild.proxy.common.panel.gridAndForm.filter.advanced.filterEditor.Relations'
+			'CMDBuild.proxy.management.workflow.panel.tree.filter.advanced.filterEditor.Relations'
 		],
 
 		/**
-		 * @cfg {CMDBuild.controller.common.panel.gridAndForm.panel.common.filter.advanced.filterEditor.relations.Relations}
+		 * @cfg {CMDBuild.controller.management.workflow.panel.tree.filter.advanced.filterEditor.relations.GridDomain}
 		 */
 		delegate: undefined,
 
@@ -62,7 +61,7 @@
 							editable: false,
 							forceSelection: true,
 
-							store: CMDBuild.proxy.common.panel.gridAndForm.filter.advanced.filterEditor.Relations.getStoreDestination(),
+							store: CMDBuild.proxy.management.workflow.panel.tree.filter.advanced.filterEditor.Relations.getStoreDestination(),
 							queryMode: 'local'
 						},
 
@@ -92,7 +91,7 @@
 								listeners: {
 									scope: this,
 									checkchange: function (column, rowIndex, checked, eOpts) {
-										this.delegate.cmfg('onPanelGridAndFormFilterAdvancedFilterEditorRelationsCheckchange', {
+										this.delegate.cmfg('onWorkflowTreeFilterAdvancedFilterEditorRelationsCheckchange', {
 											checked: checked,
 											propertyName: column.dataIndex,
 											record: this.getStore().getAt(rowIndex)
@@ -114,7 +113,7 @@
 								listeners: {
 									scope: this,
 									checkchange: function (column, rowIndex, checked, eOpts) {
-										this.delegate.cmfg('onPanelGridAndFormFilterAdvancedFilterEditorRelationsCheckchange', {
+										this.delegate.cmfg('onWorkflowTreeFilterAdvancedFilterEditorRelationsCheckchange', {
 											checked: checked,
 											propertyName: column.dataIndex,
 											record: this.getStore().getAt(rowIndex)
@@ -136,7 +135,7 @@
 								listeners: {
 									scope: this,
 									checkchange: function (column, rowIndex, checked, eOpts) {
-										this.delegate.cmfg('onPanelGridAndFormFilterAdvancedFilterEditorRelationsCheckchange', {
+										this.delegate.cmfg('onWorkflowTreeFilterAdvancedFilterEditorRelationsCheckchange', {
 											checked: checked,
 											propertyName: column.dataIndex,
 											record: this.getStore().getAt(rowIndex)
@@ -147,7 +146,7 @@
 						]
 					})
 				],
-				store: CMDBuild.proxy.common.panel.gridAndForm.filter.advanced.filterEditor.Relations.getStoreDomain(),
+				store: CMDBuild.proxy.management.workflow.panel.tree.filter.advanced.filterEditor.Relations.getStoreDomain(),
 				plugins: [
 					Ext.create('Ext.grid.plugin.CellEditing', {
 						clicksToEdit: 1,
@@ -155,7 +154,7 @@
 						listeners: {
 							scope: this,
 							beforeedit: function (editor, e, eOpts) {
-								return this.delegate.cmfg('onPanelGridAndFormFilterAdvancedFilterEditorRelationsGridDomainBeforeEdit', e);
+								return this.delegate.cmfg('onWorkflowTreeFilterAdvancedFilterEditorRelationsGridDomainBeforeEdit', e);
 							}
 						}
 					})
@@ -167,10 +166,10 @@
 
 		listeners: {
 			select: function (panel, record, index, eOpts) {
-				this.delegate.cmfg('onPanelGridAndFormFilterAdvancedFilterEditorRelationsDomainSelect', record);
+				this.delegate.cmfg('onWorkflowTreeFilterAdvancedFilterEditorRelationsDomainSelect', record);
 			},
 			show: function (panel, eOpts) {
-				this.delegate.cmfg('onPanelGridAndFormFilterAdvancedFilterEditorRelationsGridDomainViewShow');
+				this.delegate.cmfg('onWorkflowTreeFilterAdvancedFilterEditorRelationsGridDomainViewShow');
 			}
 		}
 	});

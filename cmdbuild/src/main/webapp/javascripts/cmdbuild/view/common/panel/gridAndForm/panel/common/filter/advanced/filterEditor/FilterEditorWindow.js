@@ -2,6 +2,8 @@
 
 	/**
 	 * @link CMDBuild.view.common.field.filter.advanced.window.Window
+	 * @link CMDBuild.controller.common.panel.gridAndForm.panel.common.filter.advanced.filterEditor.FilterEditor
+	 * @link CMDBuild.view.management.workflow.panel.tree.filter.advanced.filterEditor.FilterEditorWindow
 	 */
 	Ext.define('CMDBuild.view.common.panel.gridAndForm.panel.common.filter.advanced.filterEditor.FilterEditorWindow', {
 		extend: 'CMDBuild.core.window.AbstractCustomModal',

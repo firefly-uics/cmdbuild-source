@@ -1,14 +1,11 @@
 (function () {
 
-	/**
-	 * @link CMDBuild.controller.common.panel.gridAndForm.panel.common.filter.advanced.Manager
-	 */
 	Ext.define('CMDBuild.controller.management.workflow.panel.tree.filter.advanced.Manager', {
 		extend: 'CMDBuild.controller.common.abstract.Base',
 
 		requires: [
 			'CMDBuild.core.constants.Proxy',
-			'CMDBuild.proxy.common.panel.gridAndForm.filter.advanced.Manager'
+			'CMDBuild.proxy.management.workflow.panel.tree.filter.advanced.Manager'
 		],
 
 		/**
@@ -20,20 +17,19 @@
 		 * @cfg {Array}
 		 */
 		cmfgCatchedFunctions: [
-			'panelGridAndFormFilterAdvancedManagerSave',
-			'panelGridAndFormFilterAdvancedManagerSelectedFilterGet',
-			'panelGridAndFormFilterAdvancedManagerSelectedFilterIsEmpty',
-			'panelGridAndFormFilterAdvancedManagerSelectedFilterReset',
-			'panelGridAndFormFilterAdvancedManagerSelectedFilterSet',
-			'panelGridAndFormFilterAdvancedManagerStoreIsEmpty',
-			'panelGridAndFormFilterAdvancedManagerViewClose',
-			'panelGridAndFormFilterAdvancedManagerViewShow',
-			'onPanelGridAndFormFilterAdvancedManagerAddButtonClick',
-			'onPanelGridAndFormFilterAdvancedManagerCloneButtonClick',
-			'onPanelGridAndFormFilterAdvancedManagerModifyButtonClick',
-			'onPanelGridAndFormFilterAdvancedManagerRemoveButtonClick',
-			'onPanelGridAndFormFilterAdvancedManagerSaveButtonClick',
-			'onPanelGridAndFormFilterAdvancedManagerViewShow'
+			'onWorkflowTreeFilterAdvancedManagerAddButtonClick',
+			'onWorkflowTreeFilterAdvancedManagerCloneButtonClick',
+			'onWorkflowTreeFilterAdvancedManagerModifyButtonClick',
+			'onWorkflowTreeFilterAdvancedManagerRemoveButtonClick',
+			'onWorkflowTreeFilterAdvancedManagerSaveButtonClick',
+			'onWorkflowTreeFilterAdvancedManagerViewShow',
+			'workflowTreeFilterAdvancedManagerSave',
+			'workflowTreeFilterAdvancedManagerSelectedFilterGet',
+			'workflowTreeFilterAdvancedManagerSelectedFilterIsEmpty',
+			'workflowTreeFilterAdvancedManagerSelectedFilterSet',
+			'workflowTreeFilterAdvancedManagerStoreIsEmpty',
+			'workflowTreeFilterAdvancedManagerViewClose',
+			'workflowTreeFilterAdvancedManagerViewShow'
 		],
 
 		/**
@@ -47,19 +43,19 @@
 		controllerSaveDialog: undefined,
 
 		/**
-		 * @property {CMDBuild.view.common.panel.gridAndForm.panel.common.filter.advanced.manager.GridPanel}
+		 * @property {CMDBuild.view.management.workflow.panel.tree.filter.advanced.manager.GridPanel}
 		 */
 		grid: undefined,
 
 		/**
-		 * @property {CMDBuild.model.common.panel.gridAndForm.filter.advanced.Filter}
+		 * @property {CMDBuild.model.management.workflow.panel.tree.filter.advanced.Filter}
 		 *
 		 * @private
 		 */
 		selectedFilter: undefined,
 
 		/**
-		 * @property {CMDBuild.view.common.panel.gridAndForm.panel.common.filter.advanced.manager.ManagerWindow}
+		 * @property {CMDBuild.view.management.workflow.panel.tree.filter.advanced.manager.ManagerWindow}
 		 */
 		view: undefined,
 
@@ -74,7 +70,7 @@
 		constructor: function (configurationObject) {
 			this.callParent(arguments);
 
-			this.view = Ext.create('CMDBuild.view.common.panel.gridAndForm.panel.common.filter.advanced.manager.ManagerWindow', { delegate: this });
+			this.view = Ext.create('CMDBuild.view.management.workflow.panel.tree.filter.advanced.manager.ManagerWindow', { delegate: this });
 
 			// Build sub controllers
 			this.controllerFilterEditor = Ext.create('CMDBuild.controller.management.workflow.panel.tree.filter.advanced.filterEditor.FilterEditor', { parentDelegate: this });
@@ -85,124 +81,58 @@
 		},
 
 		/**
-		 * @param {Object} parameters
-		 * @param {Boolean} parameters.enableApply
-		 * @param {Boolean} parameters.enableSaveDialog
-		 *
 		 * @returns {Void}
 		 */
-		panelGridAndFormFilterAdvancedManagerSave: function (parameters) {
-			parameters = Ext.isObject(parameters) ? parameters : {};
-			parameters.enableApply = Ext.isBoolean(parameters.enableApply) ? parameters.enableApply : false;
-			parameters.enableSaveDialog = Ext.isBoolean(parameters.enableSaveDialog) ? parameters.enableSaveDialog : true;
-
-			if (!this.cmfg('panelGridAndFormFilterAdvancedManagerSelectedFilterIsEmpty')) {
-				if (parameters.enableSaveDialog)
-					return this.controllerSaveDialog.cmfg('panelGridAndFormFilterAdvancedSaveDialogShow', parameters.enableApply);
-
-				return this.saveActionManage(parameters.enableApply);
-			} else {
-				_error('panelGridAndFormFilterAdvancedManagerSave(): cannot save empty filter', this, this.cmfg('panelGridAndFormFilterAdvancedManagerSelectedFilterGet'));
-			}
-		},
-
-		/**
-		 * @returns {Void}
-		 */
-		panelGridAndFormFilterAdvancedManagerStoreIsEmpty: function () {
-			return this.grid.getStore().count() == 0;
-		},
-
-		/**
-		 * @returns {Void}
-		 */
-		panelGridAndFormFilterAdvancedManagerViewClose: function () {
-			this.view.close();
-		},
-
-		/**
-		 * Shows and configures manager or filter window before evaluation after filter grid load (acts like beforeshow event)
-		 *
-		 * @returns {Void}
-		 */
-		panelGridAndFormFilterAdvancedManagerViewShow: function () {
-			var params = {};
-			params[CMDBuild.core.constants.Proxy.CLASS_NAME] = this.cmfg('panelGridAndFormSelectedEntryTypeGet', CMDBuild.core.constants.Proxy.NAME);
-
-			this.grid.getStore().load({
-				params: params,
-				scope: this,
-				callback: function (records, operation, success) {
-					if (success) {
-						// Add local cached filters to store
-						if (!this.cmfg('panelGridAndFormFilterAdvancedLocalFilterIsEmpty')) {
-							this.grid.getStore().add(this.cmfg('panelGridAndFormFilterAdvancedLocalFilterGet'));
-							this.grid.getStore().sort();
-						}
-
-						if (this.grid.getStore().count() == 0) {
-							this.cmfg('onPanelGridAndFormFilterAdvancedManagerAddButtonClick');
-						} else {
-							this.view.show();
-						}
-					}
-				}
-			});
-		},
-
-		/**
-		 * @returns {Void}
-		 */
-		onPanelGridAndFormFilterAdvancedManagerAddButtonClick: function () {
+		onWorkflowTreeFilterAdvancedManagerAddButtonClick: function () {
 			var emptyFilterObject = {};
-			emptyFilterObject[CMDBuild.core.constants.Proxy.ENTRY_TYPE] = this.cmfg('panelGridAndFormSelectedEntryTypeGet', CMDBuild.core.constants.Proxy.NAME);
+			emptyFilterObject[CMDBuild.core.constants.Proxy.ENTRY_TYPE] = this.cmfg('workflowSelectedWorkflowGet', CMDBuild.core.constants.Proxy.NAME);
 			emptyFilterObject[CMDBuild.core.constants.Proxy.NAME] = CMDBuild.Translation.newSearchFilter;
 
-			this.cmfg('panelGridAndFormFilterAdvancedManagerSelectedFilterSet', { value: emptyFilterObject }); // Manual save call (with empty data)
+			this.cmfg('workflowTreeFilterAdvancedManagerSelectedFilterSet', { value: emptyFilterObject }); // Manual save call (with empty data)
 
 			this.controllerFilterEditor.getView().show();
 		},
 
 		/**
-		 * @param {CMDBuild.model.common.panel.gridAndForm.filter.advanced.Filter} filter
+		 * @param {CMDBuild.model.management.workflow.panel.tree.filter.advanced.Filter} filter
 		 *
 		 * @returns {Void}
 		 */
-		onPanelGridAndFormFilterAdvancedManagerCloneButtonClick: function (filter) {
+		onWorkflowTreeFilterAdvancedManagerCloneButtonClick: function (filter) {
 			if (Ext.isObject(filter) && !Ext.Object.isEmpty(filter)) {
 				var clonedFilterObject = filter.getData();
 				clonedFilterObject[CMDBuild.core.constants.Proxy.ID] = null;
 				clonedFilterObject[CMDBuild.core.constants.Proxy.NAME] = CMDBuild.Translation.copyOf + ' ' + filter.get(CMDBuild.core.constants.Proxy.NAME);
 
-				this.cmfg('panelGridAndFormFilterAdvancedManagerSelectedFilterSet', { value: clonedFilterObject }); // Manual save call (with cloned data)
+				this.cmfg('workflowTreeFilterAdvancedManagerSelectedFilterSet', { value: clonedFilterObject }); // Manual save call (with cloned data)
 
 				this.controllerFilterEditor.getView().show();
 			} else {
-				_error('onPanelGridAndFormFilterAdvancedManagerCloneButtonClick(): wrong filter parameter', this, filter);
+				_error('onWorkflowTreeFilterAdvancedManagerCloneButtonClick(): wrong filter parameter', this, filter);
 			}
 		},
 
 		/**
-		 * @param {CMDBuild.model.common.panel.gridAndForm.filter.advanced.Filter} filter
+		 * @param {CMDBuild.model.management.workflow.panel.tree.filter.advanced.Filter} filter
 		 *
 		 * @returns {Void}
 		 */
-		onPanelGridAndFormFilterAdvancedManagerModifyButtonClick: function (filter) {
+		onWorkflowTreeFilterAdvancedManagerModifyButtonClick: function (filter) {
 			if (Ext.isObject(filter) && !Ext.Object.isEmpty(filter)) {
-				this.cmfg('panelGridAndFormFilterAdvancedManagerSelectedFilterSet', { value: filter }); // Manual save call (with filter data)
+				this.cmfg('workflowTreeFilterAdvancedManagerSelectedFilterSet', { value: filter }); // Manual save call (with filter data)
 
 				this.controllerFilterEditor.getView().show();
 			} else {
-				_error('onPanelGridAndFormFilterAdvancedManagerModifyButtonClick(): wrong filter parameter', this, filter);
+				_error('onWorkflowTreeFilterAdvancedManagerModifyButtonClick(): wrong filter parameter', this, filter);
 			}
 		},
 
 		/**
-		 * @param {CMDBuild.model.common.panel.gridAndForm.filter.advanced.Filter} filter
+		 * @param {CMDBuild.model.management.workflow.panel.tree.filter.advanced.Filter} filter
 		 *
 		 * @returns {Void}
 		 */
-		onPanelGridAndFormFilterAdvancedManagerRemoveButtonClick: function (filter) {
+		onWorkflowTreeFilterAdvancedManagerRemoveButtonClick: function (filter) {
 			Ext.MessageBox.confirm(
 				CMDBuild.Translation.attention,
 				CMDBuild.Translation.common.confirmpopup.areyousure,
@@ -215,22 +145,22 @@
 		},
 
 		/**
-		 * @param {CMDBuild.model.common.panel.gridAndForm.filter.advanced.Filter} filter
+		 * @param {CMDBuild.model.management.workflow.panel.tree.filter.advanced.Filter} filter
 		 *
 		 * @returns {Void}
 		 */
-		onPanelGridAndFormFilterAdvancedManagerSaveButtonClick: function (filter) {
+		onWorkflowTreeFilterAdvancedManagerSaveButtonClick: function (filter) {
 			if (Ext.isObject(filter) && !Ext.Object.isEmpty(filter)) {
 				// Remove name and description to force save dialog show
 				var filterObject = filter.getData();
 				delete filterObject[CMDBuild.core.constants.Proxy.DESCRIPTION];
 				delete filterObject[CMDBuild.core.constants.Proxy.NAME];
 
-				this.cmfg('panelGridAndFormFilterAdvancedLocalFilterRemove', filter);
-				this.cmfg('panelGridAndFormFilterAdvancedManagerSelectedFilterSet', { value: filterObject }); // Manual save call (with filter data)
-				this.cmfg('panelGridAndFormFilterAdvancedManagerSave');
+				this.cmfg('workflowTreeFilterAdvancedLocalFilterRemove', filter);
+				this.cmfg('workflowTreeFilterAdvancedManagerSelectedFilterSet', { value: filterObject }); // Manual save call (with filter data)
+				this.cmfg('workflowTreeFilterAdvancedManagerSave');
 			} else {
-				_error('onPanelGridAndFormFilterAdvancedManagerSaveButtonClick(): wrong filter parameter', this, filter);
+				_error('onWorkflowTreeFilterAdvancedManagerSaveButtonClick(): wrong filter parameter', this, filter);
 			}
 		},
 
@@ -242,11 +172,11 @@
 		 *
 		 * @returns {Void}
 		 */
-		onPanelGridAndFormFilterAdvancedManagerViewShow: function () {
+		onWorkflowTreeFilterAdvancedManagerViewShow: function () {
 			if (this.grid.getSelectionModel().hasSelection())
 				this.grid.getSelectionModel().deselectAll();
 
-			var buttonBox = this.cmfg('panelGridAndFormFilterAdvancedViewGet').getBox();
+			var buttonBox = this.cmfg('workflowTreeFilterAdvancedViewGet').getBox();
 
 			if (!Ext.isEmpty(buttonBox))
 				this.view.setPosition(buttonBox.x, buttonBox.y + buttonBox.height);
@@ -271,13 +201,13 @@
 			if (!(el.dom === t || el.contains(t))) {
 				Ext.getBody().un('click', this.onViewOutsideClick, this);
 
-				this.cmfg('panelGridAndFormFilterAdvancedManageToggleStateReset');
+				this.cmfg('workflowTreeFilterAdvancedManageToggleStateReset');
 				this.view.close();
 			}
 		},
 
 		/**
-		 * @param {CMDBuild.model.common.panel.gridAndForm.filter.advanced.Filter} filter
+		 * @param {CMDBuild.model.management.workflow.panel.tree.filter.advanced.Filter} filter
 		 *
 		 * @returns {Void}
 		 *
@@ -285,33 +215,33 @@
 		 */
 		removeItem: function (filter) {
 			if (Ext.isObject(filter) && !Ext.Object.isEmpty(filter)) {
-				this.cmfg('panelGridAndFormFilterAdvancedManagerViewClose');
+				this.cmfg('workflowTreeFilterAdvancedManagerViewClose');
 
 				if (Ext.isEmpty(filter.get(CMDBuild.core.constants.Proxy.ID))) { // Remove from local storage
-					if (filter.get(CMDBuild.core.constants.Proxy.ID) == this.cmfg('panelGridAndFormGridAppliedFilterGet', CMDBuild.core.constants.Proxy.ID))
-						this.cmfg('onPanelGridAndFormFilterAdvancedClearButtonClick');
+					if (filter.get(CMDBuild.core.constants.Proxy.ID) == this.cmfg('workflowTreeAppliedFilterGet', CMDBuild.core.constants.Proxy.ID))
+						this.cmfg('onWorkflowTreeFilterAdvancedClearButtonClick');
 
-					this.cmfg('panelGridAndFormFilterAdvancedLocalFilterRemove', filter);
-					this.cmfg('panelGridAndFormFilterAdvancedManageToggleButtonLabelSet');
-					this.cmfg('panelGridAndFormFilterAdvancedManagerViewShow');
+					this.cmfg('workflowTreeFilterAdvancedLocalFilterRemove', filter);
+					this.cmfg('workflowTreeFilterAdvancedManageToggleButtonLabelSet');
+					this.cmfg('workflowTreeFilterAdvancedManagerViewShow');
 				} else { // Remove from server
 					var params = {};
 					params[CMDBuild.core.constants.Proxy.ID] = filter.get(CMDBuild.core.constants.Proxy.ID);
 
-					CMDBuild.proxy.common.panel.gridAndForm.filter.advanced.Manager.remove({
+					CMDBuild.proxy.management.workflow.panel.tree.filter.advanced.Manager.remove({
 						params: params,
 						scope: this,
 						success: function (response, options, decodedResponse) {
-							if (filter.get(CMDBuild.core.constants.Proxy.ID) == this.cmfg('panelGridAndFormGridAppliedFilterGet', CMDBuild.core.constants.Proxy.ID))
-								this.cmfg('onPanelGridAndFormFilterAdvancedClearButtonClick');
+							if (filter.get(CMDBuild.core.constants.Proxy.ID) == this.cmfg('workflowTreeAppliedFilterGet', CMDBuild.core.constants.Proxy.ID))
+								this.cmfg('onWorkflowTreeFilterAdvancedClearButtonClick');
 
-							this.cmfg('panelGridAndFormFilterAdvancedManageToggleButtonLabelSet');
-							this.cmfg('panelGridAndFormFilterAdvancedManagerViewShow');
+							this.cmfg('workflowTreeFilterAdvancedManageToggleButtonLabelSet');
+							this.cmfg('workflowTreeFilterAdvancedManagerViewShow');
 						}
 					});
 				}
 			} else {
-				_error('removeItem(): wrong filter parameter', this, filter);
+				_error('removeItem(): unmanaged filter parameter', this, filter);
 			}
 		},
 
@@ -325,8 +255,8 @@
 		saveActionManage: function (enableApply) {
 			enableApply = Ext.isBoolean(enableApply) ? enableApply : false;
 
-			if (!this.cmfg('panelGridAndFormFilterAdvancedManagerSelectedFilterIsEmpty')) {
-				var filter = this.cmfg('panelGridAndFormFilterAdvancedManagerSelectedFilterGet');
+			if (!this.cmfg('workflowTreeFilterAdvancedManagerSelectedFilterIsEmpty')) {
+				var filter = this.cmfg('workflowTreeFilterAdvancedManagerSelectedFilterGet');
 				var params = {};
 				params[CMDBuild.core.constants.Proxy.CLASS_NAME] = filter.get(CMDBuild.core.constants.Proxy.ENTRY_TYPE); // FIXME: i read entryType and write className (rename)
 				params[CMDBuild.core.constants.Proxy.CONFIGURATION] = Ext.encode(filter.get(CMDBuild.core.constants.Proxy.CONFIGURATION));
@@ -335,22 +265,22 @@
 				params[CMDBuild.core.constants.Proxy.TEMPLATE] = filter.get(CMDBuild.core.constants.Proxy.TEMPLATE);
 
 				if (Ext.isEmpty(filter.get(CMDBuild.core.constants.Proxy.ID))) {
-					CMDBuild.proxy.common.panel.gridAndForm.filter.advanced.Manager.create({
+					CMDBuild.proxy.management.workflow.panel.tree.filter.advanced.Manager.create({
 						params: params,
 						scope: this,
 						success: function (response, options, decodedResponse) {
 							decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.FILTER];
 
 							if (Ext.isObject(decodedResponse) && !Ext.isEmpty(decodedResponse)) {
-								this.controllerSaveDialog.cmfg('onPanelGridAndFormFilterAdvancedSaveDialogAbortButtonClick'); // Close save dialog view
-								this.controllerFilterEditor.cmfg('onPanelGridAndFormFilterAdvancedFilterEditorAbortButtonClick'); // Close filter editor view
-								this.cmfg('panelGridAndFormFilterAdvancedManagerViewClose'); // Close manager view
+								this.controllerSaveDialog.cmfg('onWorkflowTreeFilterAdvancedSaveDialogAbortButtonClick'); // Close save dialog view
+								this.controllerFilterEditor.cmfg('onWorkflowTreeFilterAdvancedFilterEditorAbortButtonClick'); // Close filter editor view
+								this.cmfg('workflowTreeFilterAdvancedManagerViewClose'); // Close manager view
 
 								if (enableApply) { // Apply filter to store
-									this.cmfg('onPanelGridAndFormFilterAdvancedFilterSelect', Ext.create('CMDBuild.model.common.panel.gridAndForm.filter.advanced.Filter', decodedResponse));
-									this.cmfg('panelGridAndFormFilterAdvancedManagerSelectedFilterReset');
+									this.cmfg('onWorkflowTreeFilterAdvancedFilterSelect', Ext.create('CMDBuild.model.management.workflow.panel.tree.filter.advanced.Filter', decodedResponse));
+									this.workflowTreeFilterAdvancedManagerSelectedFilterReset();
 								} else { // Otherwise reopen manager window
-									this.cmfg('panelGridAndFormFilterAdvancedManagerViewShow');
+									this.cmfg('workflowTreeFilterAdvancedManagerViewShow');
 								}
 							}
 						}
@@ -358,7 +288,7 @@
 				} else {
 					params[CMDBuild.core.constants.Proxy.ID] = filter.get(CMDBuild.core.constants.Proxy.ID);
 
-					CMDBuild.proxy.common.panel.gridAndForm.filter.advanced.Manager.update({
+					CMDBuild.proxy.management.workflow.panel.tree.filter.advanced.Manager.update({
 						params: params,
 						scope: this,
 						success: function (response, options, decodedResponse) {
@@ -368,22 +298,22 @@
 							decodedResponse[CMDBuild.core.constants.Proxy.CONFIGURATION] = Ext.decode(decodedResponse[CMDBuild.core.constants.Proxy.CONFIGURATION]);
 
 							if (Ext.isObject(decodedResponse) && !Ext.isEmpty(decodedResponse)) {
-								this.controllerSaveDialog.cmfg('onPanelGridAndFormFilterAdvancedSaveDialogAbortButtonClick'); // Close save dialog view
-								this.controllerFilterEditor.cmfg('onPanelGridAndFormFilterAdvancedFilterEditorAbortButtonClick'); // Close filter editor view
-								this.cmfg('panelGridAndFormFilterAdvancedManagerViewClose'); // Close manager view
+								this.controllerSaveDialog.cmfg('onWorkflowTreeFilterAdvancedSaveDialogAbortButtonClick'); // Close save dialog view
+								this.controllerFilterEditor.cmfg('onWorkflowTreeFilterAdvancedFilterEditorAbortButtonClick'); // Close filter editor view
+								this.cmfg('workflowTreeFilterAdvancedManagerViewClose'); // Close manager view
 
 								if (enableApply) {// Apply filter to store
-									this.cmfg('onPanelGridAndFormFilterAdvancedFilterSelect', Ext.create('CMDBuild.model.common.panel.gridAndForm.filter.advanced.Filter', decodedResponse));
-									this.cmfg('panelGridAndFormFilterAdvancedManagerSelectedFilterReset');
+									this.cmfg('onWorkflowTreeFilterAdvancedFilterSelect', Ext.create('CMDBuild.model.management.workflow.panel.tree.filter.advanced.Filter', decodedResponse));
+									this.workflowTreeFilterAdvancedManagerSelectedFilterReset();
 								} else { // Otherwise reopen manager window
-									this.cmfg('panelGridAndFormFilterAdvancedManagerViewShow');
+									this.cmfg('workflowTreeFilterAdvancedManagerViewShow');
 								}
 							}
 						}
 					});
 				}
 			} else {
-				_error('saveActionManage(): wrong filter parameter', this, this.cmfg('panelGridAndFormFilterAdvancedManagerSelectedFilterGet'));
+				_error('saveActionManage(): unmanaged filter parameter', this, this.cmfg('workflowTreeFilterAdvancedManagerSelectedFilterGet'));
 			}
 		},
 
@@ -397,7 +327,7 @@
 			 *
 			 * @returns {Mixed or undefined}
 			 */
-			panelGridAndFormFilterAdvancedManagerSelectedFilterGet: function (attributePath) {
+			workflowTreeFilterAdvancedManagerSelectedFilterGet: function (attributePath) {
 				var parameters = {};
 				parameters[CMDBuild.core.constants.Proxy.TARGET_VARIABLE_NAME] = 'selectedFilter';
 				parameters[CMDBuild.core.constants.Proxy.ATTRIBUTE_PATH] = attributePath;
@@ -410,7 +340,7 @@
 			 *
 			 * @returns {Boolean}
 			 */
-			panelGridAndFormFilterAdvancedManagerSelectedFilterIsEmpty: function (attributePath) {
+			workflowTreeFilterAdvancedManagerSelectedFilterIsEmpty: function (attributePath) {
 				var parameters = {};
 				parameters[CMDBuild.core.constants.Proxy.TARGET_VARIABLE_NAME] = 'selectedFilter';
 				parameters[CMDBuild.core.constants.Proxy.ATTRIBUTE_PATH] = attributePath;
@@ -420,8 +350,10 @@
 
 			/**
 			 * @returns {Void}
+			 *
+			 * @private
 			 */
-			panelGridAndFormFilterAdvancedManagerSelectedFilterReset: function () {
+			workflowTreeFilterAdvancedManagerSelectedFilterReset: function () {
 				this.propertyManageReset('selectedFilter');
 			},
 
@@ -430,14 +362,80 @@
 			 *
 			 * @returns {Void}
 			 */
-			panelGridAndFormFilterAdvancedManagerSelectedFilterSet: function (parameters) {
+			workflowTreeFilterAdvancedManagerSelectedFilterSet: function (parameters) {
 				if (Ext.isObject(parameters) && !Ext.Object.isEmpty(parameters)) {
-					parameters[CMDBuild.core.constants.Proxy.MODEL_NAME] = 'CMDBuild.model.common.panel.gridAndForm.filter.advanced.Filter';
+					parameters[CMDBuild.core.constants.Proxy.MODEL_NAME] = 'CMDBuild.model.management.workflow.panel.tree.filter.advanced.Filter';
 					parameters[CMDBuild.core.constants.Proxy.TARGET_VARIABLE_NAME] = 'selectedFilter';
 
 					this.propertyManageSet(parameters);
 				}
+			},
+
+		/**
+		 * @param {Object} parameters
+		 * @param {Boolean} parameters.enableApply
+		 * @param {Boolean} parameters.enableSaveDialog
+		 *
+		 * @returns {Void}
+		 */
+		workflowTreeFilterAdvancedManagerSave: function (parameters) {
+			parameters = Ext.isObject(parameters) ? parameters : {};
+			parameters.enableApply = Ext.isBoolean(parameters.enableApply) ? parameters.enableApply : false;
+			parameters.enableSaveDialog = Ext.isBoolean(parameters.enableSaveDialog) ? parameters.enableSaveDialog : true;
+
+			if (!this.cmfg('workflowTreeFilterAdvancedManagerSelectedFilterIsEmpty')) {
+				if (parameters.enableSaveDialog)
+					return this.controllerSaveDialog.cmfg('workflowTreeFilterAdvancedSaveDialogShow', parameters.enableApply);
+
+				return this.saveActionManage(parameters.enableApply);
+			} else {
+				_error('workflowTreeFilterAdvancedManagerSave(): cannot save empty filter', this, this.cmfg('workflowTreeFilterAdvancedManagerSelectedFilterGet'));
 			}
+		},
+
+		/**
+		 * @returns {Void}
+		 */
+		workflowTreeFilterAdvancedManagerStoreIsEmpty: function () {
+			return this.grid.getStore().count() == 0;
+		},
+
+		/**
+		 * @returns {Void}
+		 */
+		workflowTreeFilterAdvancedManagerViewClose: function () {
+			this.view.close();
+		},
+
+		/**
+		 * Shows and configures manager or filter window before evaluation after filter grid load (acts like beforeshow event)
+		 *
+		 * @returns {Void}
+		 */
+		workflowTreeFilterAdvancedManagerViewShow: function () {
+			var params = {};
+			params[CMDBuild.core.constants.Proxy.CLASS_NAME] = this.cmfg('workflowSelectedWorkflowGet', CMDBuild.core.constants.Proxy.NAME);
+
+			this.grid.getStore().load({
+				params: params,
+				scope: this,
+				callback: function (records, operation, success) {
+					if (success) {
+						// Add local cached filters to store
+						if (!this.cmfg('workflowTreeFilterAdvancedLocalFilterIsEmpty')) {
+							this.grid.getStore().add(this.cmfg('workflowTreeFilterAdvancedLocalFilterGet'));
+							this.grid.getStore().sort();
+						}
+
+						if (this.grid.getStore().count() == 0) {
+							this.cmfg('onWorkflowTreeFilterAdvancedManagerAddButtonClick');
+						} else {
+							this.view.show();
+						}
+					}
+				}
+			});
+		}
 	});
 
 })();

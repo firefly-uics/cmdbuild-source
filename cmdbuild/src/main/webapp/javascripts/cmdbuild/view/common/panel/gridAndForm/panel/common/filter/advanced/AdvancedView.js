@@ -1,5 +1,8 @@
 (function () {
 
+	/**
+	 * @link CMDBuild.view.management.workflow.panel.tree.filter.advanced.AdvancedView
+	 */
 	Ext.define('CMDBuild.view.common.panel.gridAndForm.panel.common.filter.advanced.AdvancedView', {
 		extend: 'Ext.container.ButtonGroup',
 

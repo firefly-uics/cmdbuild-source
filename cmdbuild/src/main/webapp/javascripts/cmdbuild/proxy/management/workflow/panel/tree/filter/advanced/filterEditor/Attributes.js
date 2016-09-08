@@ -1,9 +1,6 @@
 (function () {
 
-	/**
-	 * @link CMDBuild.proxy.management.workflow.panel.tree.filter.advanced.filterEditor.Attributes
-	 */
-	Ext.define('CMDBuild.proxy.common.panel.gridAndForm.filter.advanced.filterEditor.Attributes', {
+	Ext.define('CMDBuild.proxy.management.workflow.panel.tree.filter.advanced.filterEditor.Attributes', {
 
 		requires: [
 			'CMDBuild.core.constants.Proxy',

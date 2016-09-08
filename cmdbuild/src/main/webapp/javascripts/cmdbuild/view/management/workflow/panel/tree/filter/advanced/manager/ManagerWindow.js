@@ -1,13 +1,10 @@
 (function () {
 
-	/**
-	 * @link CMDBuild.view.common.panel.gridAndForm.panel.common.filter.advanced.manager.ManagerWindow
-	 */
 	Ext.define('CMDBuild.view.management.workflow.panel.tree.filter.advanced.manager.ManagerWindow', {
 		extend: 'CMDBuild.core.window.AbstractCustomModal',
 
 		/**
-		 * @cfg {CMDBuild.controller.common.panel.gridAndForm.panel.common.filter.advanced.Manager}
+		 * @cfg {CMDBuild.controller.management.workflow.panel.tree.filter.advanced.Manager}
 		 */
 		delegate: undefined,
 
@@ -54,7 +51,7 @@
 								scope: this,
 
 								handler: function (button, e) {
-									this.delegate.cmfg('onPanelGridAndFormFilterAdvancedManagerAddButtonClick');
+									this.delegate.cmfg('onWorkflowTreeFilterAdvancedManagerAddButtonClick');
 								}
 							})
 						]
@@ -70,7 +67,7 @@
 
 		listeners: {
 			show: function (window, eOpts) {
-				this.delegate.cmfg('onPanelGridAndFormFilterAdvancedManagerViewShow');
+				this.delegate.cmfg('onWorkflowTreeFilterAdvancedManagerViewShow');
 			}
 		}
 	});

@@ -1,18 +1,15 @@
 (function () {
 
-	/**
-	 * @link CMDBuild.view.common.panel.gridAndForm.panel.common.filter.advanced.manager.GridPanel
-	 */
 	Ext.define('CMDBuild.view.management.workflow.panel.tree.filter.advanced.manager.GridPanel', {
 		extend: 'Ext.grid.Panel',
 
 		requires: [
 			'CMDBuild.core.constants.Proxy',
-			'CMDBuild.proxy.common.panel.gridAndForm.filter.advanced.Manager'
+			'CMDBuild.proxy.management.workflow.panel.tree.filter.advanced.Manager'
 		],
 
 		/**
-		 * @cfg {CMDBuild.controller.administration.workflow.tabs.Domains}
+		 * @cfg {CMDBuild.controller.management.workflow.panel.tree.filter.advanced.Manager}
 		 */
 		delegate: undefined,
 
@@ -57,7 +54,7 @@
 								},
 
 								handler: function (grid, rowIndex, colIndex, node, e, record, rowNode) {
-									this.delegate.cmfg('onPanelGridAndFormFilterAdvancedManagerSaveButtonClick', record);
+									this.delegate.cmfg('onWorkflowTreeFilterAdvancedManagerSaveButtonClick', record);
 								}
 							}),
 							Ext.create('CMDBuild.core.buttons.iconized.Modify', {
@@ -66,7 +63,7 @@
 								scope: this,
 
 								handler: function (grid, rowIndex, colIndex, node, e, record, rowNode) {
-									this.delegate.cmfg('onPanelGridAndFormFilterAdvancedManagerModifyButtonClick', record);
+									this.delegate.cmfg('onWorkflowTreeFilterAdvancedManagerModifyButtonClick', record);
 								}
 							}),
 							Ext.create('CMDBuild.core.buttons.iconized.Clone', {
@@ -75,7 +72,7 @@
 								scope: this,
 
 								handler: function (grid, rowIndex, colIndex, node, e, record, rowNode) {
-									this.delegate.cmfg('onPanelGridAndFormFilterAdvancedManagerCloneButtonClick', record);
+									this.delegate.cmfg('onWorkflowTreeFilterAdvancedManagerCloneButtonClick', record);
 								}
 							}),
 							Ext.create('CMDBuild.core.buttons.iconized.Remove', {
@@ -84,13 +81,13 @@
 								scope: this,
 
 								handler: function (grid, rowIndex, colIndex, node, e, record, rowNode) {
-									this.delegate.cmfg('onPanelGridAndFormFilterAdvancedManagerRemoveButtonClick', record);
+									this.delegate.cmfg('onWorkflowTreeFilterAdvancedManagerRemoveButtonClick', record);
 								}
 							})
 						]
 					})
 				],
-				store: CMDBuild.proxy.common.panel.gridAndForm.filter.advanced.Manager.getStoreUser()
+				store: CMDBuild.proxy.management.workflow.panel.tree.filter.advanced.Manager.getStoreUser()
 			});
 
 			this.callParent(arguments);
@@ -102,7 +99,7 @@
 				return cellIndex == 0;
 			},
 			select: function (grid, record, index, eOpts) {
-				this.delegate.cmfg('onPanelGridAndFormFilterAdvancedFilterSelect', record);
+				this.delegate.cmfg('onWorkflowTreeFilterAdvancedFilterSelect', record);
 			}
 		}
 	});

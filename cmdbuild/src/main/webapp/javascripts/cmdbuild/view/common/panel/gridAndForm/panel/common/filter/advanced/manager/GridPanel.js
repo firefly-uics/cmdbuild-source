@@ -1,5 +1,8 @@
 (function () {
 
+	/**
+	 * @link CMDBuild.view.management.workflow.panel.tree.filter.advanced.manager.GridPanel
+	 */
 	Ext.define('CMDBuild.view.common.panel.gridAndForm.panel.common.filter.advanced.manager.GridPanel', {
 		extend: 'Ext.grid.Panel',
 

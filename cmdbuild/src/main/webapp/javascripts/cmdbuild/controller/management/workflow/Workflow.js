@@ -39,8 +39,8 @@
 			'workflowSelectedInstanceReset',
 			'workflowSelectedWorkflowAttributesGet',
 			'workflowSelectedWorkflowAttributesIsEmpty',
-			'workflowSelectedWorkflowGet = panelGridAndFormSelectedEntryTypeGet',
-			'workflowSelectedWorkflowIsEmpty = panelGridAndFormSelectedEntryTypeIsEmpty',
+			'workflowSelectedWorkflowGet',
+			'workflowSelectedWorkflowIsEmpty',
 			'workflowTreeActivityOpen -> controllerTree',
 			'workflowTreeApplyStoreEvent -> controllerTree',
 			'workflowTreeFilterApply -> controllerTree',
@@ -467,7 +467,7 @@
 									decodedResponse[CMDBuild.core.constants.Proxy.CONFIGURATION] = Ext.decode(filterConfiguration);
 								}
 
-								node.set(CMDBuild.core.constants.Proxy.FILTER, Ext.create('CMDBuild.model.common.panel.gridAndForm.filter.advanced.Filter', decodedResponse));
+								node.set(CMDBuild.core.constants.Proxy.FILTER, Ext.create('CMDBuild.model.management.workflow.panel.tree.filter.advanced.Filter', decodedResponse));
 							}
 						},
 						callback: callback

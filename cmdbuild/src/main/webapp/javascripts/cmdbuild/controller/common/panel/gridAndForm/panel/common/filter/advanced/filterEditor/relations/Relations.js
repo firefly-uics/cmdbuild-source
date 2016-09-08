@@ -1,5 +1,8 @@
 (function () {
 
+	/**
+	 * @link CMDBuild.controller.management.workflow.panel.tree.filter.advanced.filterEditor.relations.Relations
+	 */
 	Ext.define('CMDBuild.controller.common.panel.gridAndForm.panel.common.filter.advanced.filterEditor.relations.Relations', {
 		extend: 'CMDBuild.controller.common.abstract.Base',
 

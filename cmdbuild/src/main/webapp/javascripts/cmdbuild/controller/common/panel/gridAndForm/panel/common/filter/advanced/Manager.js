@@ -1,5 +1,8 @@
 (function () {
 
+	/**
+	 * @link CMDBuild.controller.management.workflow.panel.tree.filter.advanced.Manager
+	 */
 	Ext.define('CMDBuild.controller.common.panel.gridAndForm.panel.common.filter.advanced.Manager', {
 		extend: 'CMDBuild.controller.common.abstract.Base',
 
@@ -20,7 +23,6 @@
 			'panelGridAndFormFilterAdvancedManagerSave',
 			'panelGridAndFormFilterAdvancedManagerSelectedFilterGet',
 			'panelGridAndFormFilterAdvancedManagerSelectedFilterIsEmpty',
-			'panelGridAndFormFilterAdvancedManagerSelectedFilterReset',
 			'panelGridAndFormFilterAdvancedManagerSelectedFilterSet',
 			'panelGridAndFormFilterAdvancedManagerStoreIsEmpty',
 			'panelGridAndFormFilterAdvancedManagerViewClose',
@@ -345,7 +347,7 @@
 
 								if (enableApply) { // Apply filter to store
 									this.cmfg('onPanelGridAndFormFilterAdvancedFilterSelect', Ext.create('CMDBuild.model.common.panel.gridAndForm.filter.advanced.Filter', decodedResponse));
-									this.cmfg('panelGridAndFormFilterAdvancedManagerSelectedFilterReset');
+									this.panelGridAndFormFilterAdvancedManagerSelectedFilterReset();
 								} else { // Otherwise reopen manager window
 									this.cmfg('panelGridAndFormFilterAdvancedManagerViewShow');
 								}
@@ -371,7 +373,7 @@
 
 								if (enableApply) {// Apply filter to store
 									this.cmfg('onPanelGridAndFormFilterAdvancedFilterSelect', Ext.create('CMDBuild.model.common.panel.gridAndForm.filter.advanced.Filter', decodedResponse));
-									this.cmfg('panelGridAndFormFilterAdvancedManagerSelectedFilterReset');
+									this.panelGridAndFormFilterAdvancedManagerSelectedFilterReset();
 								} else { // Otherwise reopen manager window
 									this.cmfg('panelGridAndFormFilterAdvancedManagerViewShow');
 								}
@@ -417,6 +419,8 @@
 
 			/**
 			 * @returns {Void}
+			 *
+			 * @private
 			 */
 			panelGridAndFormFilterAdvancedManagerSelectedFilterReset: function () {
 				this.propertyManageReset('selectedFilter');

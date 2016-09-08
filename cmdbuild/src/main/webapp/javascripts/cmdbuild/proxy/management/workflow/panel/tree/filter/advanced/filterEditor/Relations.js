@@ -1,14 +1,11 @@
 (function () {
 
-	/**
-	 * @link CMDBuild.proxy.management.workflow.panel.tree.filter
-	 */
-	Ext.define('CMDBuild.proxy.common.panel.gridAndForm.filter.advanced.filterEditor.Relations', {
+	Ext.define('CMDBuild.proxy.management.workflow.panel.tree.filter.advanced.filterEditor.Relations', {
 
 		requires: [
 			'CMDBuild.core.constants.Proxy',
-			'CMDBuild.model.common.panel.gridAndForm.filter.advanced.filterEditor.relations.DestinationEditorStore',
-			'CMDBuild.model.common.panel.gridAndForm.filter.advanced.filterEditor.relations.DomainGrid'
+			'CMDBuild.model.management.workflow.panel.tree.filter.advanced.filterEditor.relations.DestinationEditorStore',
+			'CMDBuild.model.management.workflow.panel.tree.filter.advanced.filterEditor.relations.DomainGrid'
 		],
 
 		singleton: true,
@@ -19,7 +16,7 @@
 		getStoreDestination: function () {
 			return CMDBuild.global.Cache.requestAsStore(CMDBuild.core.constants.Proxy.CLASS, {
 				autoLoad: true,
-				model: 'CMDBuild.model.common.panel.gridAndForm.filter.advanced.filterEditor.relations.DestinationEditorStore',
+				model: 'CMDBuild.model.management.workflow.panel.tree.filter.advanced.filterEditor.relations.DestinationEditorStore',
 				proxy: {
 					type: 'ajax',
 					url: CMDBuild.proxy.index.Json.classes.readAll,
@@ -44,7 +41,7 @@
 		 */
 		getStoreDomain: function () {
 			return Ext.create('Ext.data.ArrayStore', {
-				model: 'CMDBuild.model.common.panel.gridAndForm.filter.advanced.filterEditor.relations.DomainGrid',
+				model: 'CMDBuild.model.management.workflow.panel.tree.filter.advanced.filterEditor.relations.DomainGrid',
 				data: [],
 
 				sorters: [

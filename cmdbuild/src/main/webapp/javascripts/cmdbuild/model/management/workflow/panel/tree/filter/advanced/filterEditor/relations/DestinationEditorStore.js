@@ -2,10 +2,7 @@
 
 	Ext.require('CMDBuild.core.constants.Proxy');
 
-	/**
-	 * @link CMDBuild.model.management.workflow.panel.tree.filter.advanced.filterEditor.relations.DestinationEditorStore
-	 */
-	Ext.define('CMDBuild.model.common.panel.gridAndForm.filter.advanced.filterEditor.relations.DestinationEditorStore', {
+	Ext.define('CMDBuild.model.management.workflow.panel.tree.filter.advanced.filterEditor.relations.DestinationEditorStore', {
 		extend: 'Ext.data.Model',
 
 		fields: [

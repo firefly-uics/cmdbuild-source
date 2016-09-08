@@ -1,13 +1,10 @@
 (function () {
 
-	/**
-	 * @link CMDBuild.view.common.panel.gridAndForm.panel.common.filter.advanced.filterEditor.relations.RelationsView
-	 */
 	Ext.define('CMDBuild.view.management.workflow.panel.tree.filter.advanced.filterEditor.relations.RelationsView', {
 		extend: 'Ext.panel.Panel',
 
 		/**
-		 * @cfg {CMDBuild.controller.common.panel.gridAndForm.panel.common.filter.advanced.filterEditor.relations.Relations}
+		 * @cfg {CMDBuild.controller.management.workflow.panel.tree.filter.advanced.filterEditor.relations.Relations}
 		 */
 		delegate: undefined,
 
@@ -18,7 +15,7 @@
 
 		listeners: {
 			show: function (panel, eOpts) {
-				this.delegate.cmfg('onPanelGridAndFormFilterAdvancedFilterEditorRelationsViewShow');
+				this.delegate.cmfg('onWorkflowTreeFilterAdvancedFilterEditorRelationsViewShow');
 			}
 		}
 	});

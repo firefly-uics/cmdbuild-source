@@ -1,13 +1,10 @@
 (function () {
 
-	/**
-	 * @link CMDBuild.proxy.management.workflow.panel.tree.filter.advanced.Manager
-	 */
-	Ext.define('CMDBuild.proxy.common.panel.gridAndForm.filter.advanced.Manager', {
+	Ext.define('CMDBuild.proxy.management.workflow.panel.tree.filter.advanced.Manager', {
 
 		requires: [
 			'CMDBuild.core.constants.Proxy',
-			'CMDBuild.model.common.panel.gridAndForm.filter.advanced.Filter',
+			'CMDBuild.model.management.workflow.panel.tree.filter.advanced.Filter',
 			'CMDBuild.proxy.index.Json'
 		],
 
@@ -32,7 +29,7 @@
 		getStoreUser: function () {
 			return CMDBuild.global.Cache.requestAsStore(CMDBuild.core.constants.Proxy.FILTER, {
 				autoLoad: false,
-				model: 'CMDBuild.model.common.panel.gridAndForm.filter.advanced.Filter',
+				model: 'CMDBuild.model.management.workflow.panel.tree.filter.advanced.Filter',
 				proxy: {
 					type: 'ajax',
 					url: CMDBuild.proxy.index.Json.filter.user.readAll,

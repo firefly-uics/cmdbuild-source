@@ -2,13 +2,12 @@
 
 	/**
 	 * @link CMDBuild.view.management.common.filter.CMSaveFilterWindow
-	 * @link CMDBuild.view.common.panel.gridAndForm.panel.common.filter.advanced.saveDialog.SaveDialogWindow
 	 */
 	Ext.define('CMDBuild.view.management.workflow.panel.tree.filter.advanced.saveDialog.SaveDialogWindow', {
 		extend: 'CMDBuild.core.window.AbstractCustomModal',
 
 		/**
-		 * @cfg {CMDBuild.controller.common.panel.gridAndForm.panel.common.filter.advanced.SaveDialog}
+		 * @cfg {CMDBuild.controller.management.workflow.panel.tree.filter.advanced.SaveDialog}
 		 */
 		delegate: undefined,
 

@@ -19,7 +19,7 @@
 		parentDelegate: undefined,
 
 		/**
-		 * @property {CMDBuild.model.common.panel.gridAndForm.filter.advanced.Filter}
+		 * @property {CMDBuild.model.management.workflow.panel.tree.filter.advanced.Filter}
 		 *
 		 * @private
 		 */
@@ -29,7 +29,7 @@
 		 * @cfg {Array}
 		 */
 		cmfgCatchedFunctions: [
-			'getView = panelGridAndFormGridGet',
+			'getView = workflowTreeViewGet',
 			'onWorkflowTreeAddButtonClick',
 			'onWorkflowTreeColumnChanged',
 			'onWorkflowTreePrintButtonClick',
@@ -37,7 +37,7 @@
 			'onWorkflowTreeSaveFailure',
 			'onWorkflowTreeWokflowSelect = onWorkflowWokflowSelect',
 			'workflowTreeActivityOpen',
-			'workflowTreeAppliedFilterGet = panelGridAndFormGridAppliedFilterGet',
+			'workflowTreeAppliedFilterGet',
 			'workflowTreeApplyStoreEvent',
 			'workflowTreeFilterApply = panelGridAndFormGridFilterApply',
 			'workflowTreeFilterClear = panelGridAndFormGridFilterClear',
@@ -780,7 +780,7 @@
 			 */
 			workflowTreeAppliedFilterSet: function (parameters) {
 				if (Ext.isObject(parameters) && !Ext.Object.isEmpty(parameters)) {
-					parameters[CMDBuild.core.constants.Proxy.MODEL_NAME] = 'CMDBuild.model.common.panel.gridAndForm.filter.advanced.Filter';
+					parameters[CMDBuild.core.constants.Proxy.MODEL_NAME] = 'CMDBuild.model.management.workflow.panel.tree.filter.advanced.Filter';
 					parameters[CMDBuild.core.constants.Proxy.TARGET_VARIABLE_NAME] = 'appliedFilter';
 
 					this.propertyManageSet(parameters);
@@ -874,7 +874,7 @@
 
 		// Filter management methods
 			/**
-			 * @param {CMDBuild.model.common.panel.gridAndForm.filter.advanced.Filter} filter
+			 * @param {CMDBuild.model.management.workflow.panel.tree.filter.advanced.Filter} filter
 			 *
 			 * @returns {Void}
 			 *
@@ -912,7 +912,7 @@
 
 			/**
 			 * @param {Object} parameters
-			 * @param {CMDBuild.model.common.panel.gridAndForm.filter.advanced.Filter} parameters.filter
+			 * @param {CMDBuild.model.management.workflow.panel.tree.filter.advanced.Filter} parameters.filter
 			 * @param {Boolean} parameters.type
 			 *
 			 * @returns {Void}

@@ -2,10 +2,7 @@
 
 	Ext.require('CMDBuild.core.constants.Proxy');
 
-	/**
-	 * @link CMDBuild.model.management.workflow.panel.tree.filter.advanced.filterEditor.relations.EntryType
-	 */
-	Ext.define('CMDBuild.model.common.panel.gridAndForm.filter.advanced.filterEditor.relations.EntryType', { // TODO: waiting for refactor (rename and structure)
+	Ext.define('CMDBuild.model.management.workflow.panel.tree.filter.advanced.filterEditor.relations.EntryType', { // TODO: waiting for refactor (rename and structure)
 		extend: 'Ext.data.Model',
 
 		fields: [
