@@ -3,20 +3,21 @@
 	Ext.require('CMDBuild.core.constants.Proxy');
 
 	/**
-	 * TODO: waiting for refactor (rename)
+	 * @link CMDBuild.model.widget.openReport.Configuration
 	 */
-	Ext.define('CMDBuild.model.classes.tabs.widgets.createModifyCard.Definition', {
+	Ext.define('CMDBuild.model.administration.classes.tabs.widgets.openReport.Definition', {
 		extend: 'Ext.data.Model',
 
 		fields: [
 			{ name: CMDBuild.core.constants.Proxy.ACTIVE, type: 'boolean', defaultValue: true },
 			{ name: CMDBuild.core.constants.Proxy.ALWAYS_ENABLED, type: 'boolean' },
-			{ name: CMDBuild.core.constants.Proxy.FILTER, type: 'string' },
+			{ name: CMDBuild.core.constants.Proxy.FORCE_FORMAT, type: 'string' },
 			{ name: CMDBuild.core.constants.Proxy.ID, type: 'int', useNull: true },
 			{ name: CMDBuild.core.constants.Proxy.LABEL, type: 'string' },
-			{ name: CMDBuild.core.constants.Proxy.READ_ONLY, type: 'boolean' },
-			{ name: CMDBuild.core.constants.Proxy.TARGET_CLASS, type: 'string' },
-			{ name: CMDBuild.core.constants.Proxy.TYPE, type: 'string', defaultValue: '.CreateModifyCard' }
+			{ name: CMDBuild.core.constants.Proxy.PRESET, type: 'auto', defaultValue: {} },
+			{ name: CMDBuild.core.constants.Proxy.READ_ONLY_ATTRIBUTES, type: 'auto', defaultValue: [] },
+			{ name: CMDBuild.core.constants.Proxy.REPORT_CODE, type: 'string' },
+			{ name: CMDBuild.core.constants.Proxy.TYPE, type: 'string', defaultValue: '.OpenReport' }
 		],
 
 		statics: {
@@ -33,12 +34,6 @@
 				if (Ext.isEmpty(data[CMDBuild.core.constants.Proxy.ALWAYS_ENABLED]))
 					data[CMDBuild.core.constants.Proxy.ALWAYS_ENABLED] = data['alwaysenabled'];
 
-				if (Ext.isEmpty(data[CMDBuild.core.constants.Proxy.FILTER]))
-					data[CMDBuild.core.constants.Proxy.FILTER] = data['idcardcqlselector'];
-
-				if (Ext.isEmpty(data[CMDBuild.core.constants.Proxy.READ_ONLY]))
-					data[CMDBuild.core.constants.Proxy.READ_ONLY] = data['readonly'];
-
 				return data;
 			},
 
@@ -51,11 +46,12 @@
 				return {
 					active: data[CMDBuild.core.constants.Proxy.ACTIVE],
 					alwaysenabled: data[CMDBuild.core.constants.Proxy.ALWAYS_ENABLED],
+					forceFormat: data[CMDBuild.core.constants.Proxy.FORCE_FORMAT],
 					id: data[CMDBuild.core.constants.Proxy.ID],
-					idcardcqlselector: data[CMDBuild.core.constants.Proxy.FILTER],
 					label: data[CMDBuild.core.constants.Proxy.LABEL],
-					readonly: data[CMDBuild.core.constants.Proxy.READ_ONLY],
-					targetClass: data[CMDBuild.core.constants.Proxy.TARGET_CLASS],
+					preset: data[CMDBuild.core.constants.Proxy.PRESET],
+					readOnlyAttributes: data[CMDBuild.core.constants.Proxy.READ_ONLY_ATTRIBUTES],
+					reportCode: data[CMDBuild.core.constants.Proxy.REPORT_CODE],
 					type: data[CMDBuild.core.constants.Proxy.TYPE]
 				};
 			}

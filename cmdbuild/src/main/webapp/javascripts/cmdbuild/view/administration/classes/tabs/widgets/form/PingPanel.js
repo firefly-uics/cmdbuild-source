@@ -1,15 +1,12 @@
 (function () {
 
-	/**
-	 * @link CMDBuild.view.administration.widget.form.PingPanel
-	 */
 	Ext.define('CMDBuild.view.administration.classes.tabs.widgets.form.PingPanel', {
 		extend: 'CMDBuild.view.administration.classes.tabs.widgets.form.AbstractWidgetDefinitionPanel',
 
 		requires: [
 			'CMDBuild.core.constants.FieldWidths',
 			'CMDBuild.core.constants.Proxy',
-			'CMDBuild.model.classes.tabs.widgets.ping.PresetGrid'
+			'CMDBuild.model.administration.classes.tabs.widgets.ping.PresetGrid'
 		],
 
 		/**
@@ -60,7 +57,7 @@
 							keyAttributeName: CMDBuild.core.constants.Proxy.NAME,
 							keyLabel: CMDBuild.Translation.attribute,
 							margin: '8 0 9 0',
-							modelName: 'CMDBuild.model.classes.tabs.widgets.ping.PresetGrid',
+							modelName: 'CMDBuild.model.administration.classes.tabs.widgets.ping.PresetGrid',
 							title: CMDBuild.Translation.templates
 						})
 					]

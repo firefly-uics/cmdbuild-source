@@ -1,11 +1,11 @@
 (function () {
 
-	Ext.define('CMDBuild.proxy.classes.tabs.widgets.Widgets', {
+	Ext.define('CMDBuild.proxy.administration.classes.tabs.widgets.Widgets', {
 
 		requires: [
 			'CMDBuild.core.constants.Proxy',
-			'CMDBuild.proxy.index.Json',
-			'CMDBuild.model.classes.tabs.widgets.Grid'
+			'CMDBuild.model.administration.classes.tabs.widgets.Grid',
+			'CMDBuild.proxy.index.Json'
 		],
 
 		singleton: true,
@@ -29,7 +29,7 @@
 		getStore: function () {
 			return CMDBuild.global.Cache.requestAsStore(CMDBuild.core.constants.Proxy.WIDGET, {
 				autoLoad: false,
-				model: 'CMDBuild.model.classes.tabs.widgets.Grid',
+				model: 'CMDBuild.model.administration.classes.tabs.widgets.Grid',
 				proxy: {
 					type: 'ajax',
 					url: CMDBuild.proxy.index.Json.widget.readAllForClass,

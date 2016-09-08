@@ -2,7 +2,7 @@
 
 	Ext.require('CMDBuild.core.constants.Proxy');
 
-	Ext.define('CMDBuild.model.classes.tabs.widgets.ping.PresetGrid', {
+	Ext.define('CMDBuild.model.administration.classes.tabs.widgets.ping.PresetGrid', {
 		extend: 'Ext.data.Model',
 
 		fields: [

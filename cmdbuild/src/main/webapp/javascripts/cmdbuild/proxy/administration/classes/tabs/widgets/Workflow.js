@@ -1,12 +1,12 @@
 (function () {
 
-	Ext.define('CMDBuild.proxy.classes.tabs.widgets.Workflow', {
+	Ext.define('CMDBuild.proxy.administration.classes.tabs.widgets.Workflow', {
 
 		requires: [
 			'CMDBuild.core.constants.Global',
 			'CMDBuild.core.constants.Proxy',
-			'CMDBuild.proxy.index.Json',
-			'CMDBuild.model.classes.tabs.widgets.workflow.TargetWorkflow'
+			'CMDBuild.model.administration.classes.tabs.widgets.workflow.TargetWorkflow',
+			'CMDBuild.proxy.index.Json'
 		],
 
 		singleton: true,
@@ -30,7 +30,7 @@
 		getStoreTargetWorkflow: function () {
 			return CMDBuild.global.Cache.requestAsStore(CMDBuild.core.constants.Proxy.WORKFLOW, {
 				autoLoad: true,
-				model: 'CMDBuild.model.classes.tabs.widgets.workflow.TargetWorkflow',
+				model: 'CMDBuild.model.administration.classes.tabs.widgets.workflow.TargetWorkflow',
 				proxy: {
 					type: 'ajax',
 					url: CMDBuild.proxy.index.Json.classes.readAll,

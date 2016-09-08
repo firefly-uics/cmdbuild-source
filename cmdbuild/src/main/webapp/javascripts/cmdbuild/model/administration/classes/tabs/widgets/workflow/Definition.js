@@ -5,21 +5,19 @@
 	/**
 	 * TODO: waiting for refactor (rename)
 	 */
-	Ext.define('CMDBuild.model.classes.tabs.widgets.calendar.Definition', {
+	Ext.define('CMDBuild.model.administration.classes.tabs.widgets.workflow.Definition', {
 		extend: 'Ext.data.Model',
 
 		fields: [
 			{ name: CMDBuild.core.constants.Proxy.ACTIVE, type: 'boolean', defaultValue: true },
 			{ name: CMDBuild.core.constants.Proxy.ALWAYS_ENABLED, type: 'boolean' },
-			{ name: CMDBuild.core.constants.Proxy.DEFAULT_DATE, type: 'string' },
-			{ name: CMDBuild.core.constants.Proxy.END_DATE, type: 'string' },
-			{ name: CMDBuild.core.constants.Proxy.EVENT_CLASS, type: 'string' },
-			{ name: CMDBuild.core.constants.Proxy.EVENT_TITLE, type: 'string' },
 			{ name: CMDBuild.core.constants.Proxy.FILTER, type: 'string' },
+			{ name: CMDBuild.core.constants.Proxy.FILTER_TYPE, type: 'string' },
 			{ name: CMDBuild.core.constants.Proxy.ID, type: 'int', useNull: true },
 			{ name: CMDBuild.core.constants.Proxy.LABEL, type: 'string' },
-			{ name: CMDBuild.core.constants.Proxy.START_DATE, type: 'string' },
-			{ name: CMDBuild.core.constants.Proxy.TYPE, type: 'string', defaultValue: '.Calendar' }
+			{ name: CMDBuild.core.constants.Proxy.PRESET, type: 'auto', defaultValue: {} },
+			{ name: CMDBuild.core.constants.Proxy.TYPE, type: 'string', defaultValue: '.Workflow' },
+			{ name: CMDBuild.core.constants.Proxy.WORKFLOW_NAME, type: 'string' }
 		],
 
 		statics: {
@@ -48,15 +46,13 @@
 				return {
 					active: data[CMDBuild.core.constants.Proxy.ACTIVE],
 					alwaysenabled: data[CMDBuild.core.constants.Proxy.ALWAYS_ENABLED],
-					defaultDate: data[CMDBuild.core.constants.Proxy.DEFAULT_DATE],
-					endDate: data[CMDBuild.core.constants.Proxy.END_DATE],
-					eventClass: data[CMDBuild.core.constants.Proxy.EVENT_CLASS],
-					eventTitle: data[CMDBuild.core.constants.Proxy.EVENT_TITLE],
 					filter: data[CMDBuild.core.constants.Proxy.FILTER],
+					filterType: data[CMDBuild.core.constants.Proxy.FILTER_TYPE],
 					id: data[CMDBuild.core.constants.Proxy.ID],
 					label: data[CMDBuild.core.constants.Proxy.LABEL],
-					startDate: data[CMDBuild.core.constants.Proxy.START_DATE],
-					type: data[CMDBuild.core.constants.Proxy.TYPE]
+					preset: data[CMDBuild.core.constants.Proxy.PRESET],
+					type: data[CMDBuild.core.constants.Proxy.TYPE],
+					workflowName: data[CMDBuild.core.constants.Proxy.WORKFLOW_NAME]
 				};
 			}
 		},

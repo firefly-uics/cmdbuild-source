@@ -5,19 +5,18 @@
 	/**
 	 * TODO: waiting for refactor (rename)
 	 */
-	Ext.define('CMDBuild.model.classes.tabs.widgets.workflow.Definition', {
+	Ext.define('CMDBuild.model.administration.classes.tabs.widgets.createModifyCard.Definition', {
 		extend: 'Ext.data.Model',
 
 		fields: [
 			{ name: CMDBuild.core.constants.Proxy.ACTIVE, type: 'boolean', defaultValue: true },
 			{ name: CMDBuild.core.constants.Proxy.ALWAYS_ENABLED, type: 'boolean' },
 			{ name: CMDBuild.core.constants.Proxy.FILTER, type: 'string' },
-			{ name: CMDBuild.core.constants.Proxy.FILTER_TYPE, type: 'string' },
 			{ name: CMDBuild.core.constants.Proxy.ID, type: 'int', useNull: true },
 			{ name: CMDBuild.core.constants.Proxy.LABEL, type: 'string' },
-			{ name: CMDBuild.core.constants.Proxy.PRESET, type: 'auto', defaultValue: {} },
-			{ name: CMDBuild.core.constants.Proxy.TYPE, type: 'string', defaultValue: '.Workflow' },
-			{ name: CMDBuild.core.constants.Proxy.WORKFLOW_NAME, type: 'string' }
+			{ name: CMDBuild.core.constants.Proxy.READ_ONLY, type: 'boolean' },
+			{ name: CMDBuild.core.constants.Proxy.TARGET_CLASS, type: 'string' },
+			{ name: CMDBuild.core.constants.Proxy.TYPE, type: 'string', defaultValue: '.CreateModifyCard' }
 		],
 
 		statics: {
@@ -34,6 +33,12 @@
 				if (Ext.isEmpty(data[CMDBuild.core.constants.Proxy.ALWAYS_ENABLED]))
 					data[CMDBuild.core.constants.Proxy.ALWAYS_ENABLED] = data['alwaysenabled'];
 
+				if (Ext.isEmpty(data[CMDBuild.core.constants.Proxy.FILTER]))
+					data[CMDBuild.core.constants.Proxy.FILTER] = data['idcardcqlselector'];
+
+				if (Ext.isEmpty(data[CMDBuild.core.constants.Proxy.READ_ONLY]))
+					data[CMDBuild.core.constants.Proxy.READ_ONLY] = data['readonly'];
+
 				return data;
 			},
 
@@ -46,13 +51,12 @@
 				return {
 					active: data[CMDBuild.core.constants.Proxy.ACTIVE],
 					alwaysenabled: data[CMDBuild.core.constants.Proxy.ALWAYS_ENABLED],
-					filter: data[CMDBuild.core.constants.Proxy.FILTER],
-					filterType: data[CMDBuild.core.constants.Proxy.FILTER_TYPE],
 					id: data[CMDBuild.core.constants.Proxy.ID],
+					idcardcqlselector: data[CMDBuild.core.constants.Proxy.FILTER],
 					label: data[CMDBuild.core.constants.Proxy.LABEL],
-					preset: data[CMDBuild.core.constants.Proxy.PRESET],
-					type: data[CMDBuild.core.constants.Proxy.TYPE],
-					workflowName: data[CMDBuild.core.constants.Proxy.WORKFLOW_NAME]
+					readonly: data[CMDBuild.core.constants.Proxy.READ_ONLY],
+					targetClass: data[CMDBuild.core.constants.Proxy.TARGET_CLASS],
+					type: data[CMDBuild.core.constants.Proxy.TYPE]
 				};
 			}
 		},

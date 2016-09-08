@@ -3,21 +3,20 @@
 	Ext.require('CMDBuild.core.constants.Proxy');
 
 	/**
-	 * @link CMDBuild.model.widget.openReport.Configuration
+	 * TODO: waiting for refactor (rename)
 	 */
-	Ext.define('CMDBuild.model.classes.tabs.widgets.openReport.Definition', {
+	Ext.define('CMDBuild.model.administration.classes.tabs.widgets.ping.Definition', {
 		extend: 'Ext.data.Model',
 
 		fields: [
 			{ name: CMDBuild.core.constants.Proxy.ACTIVE, type: 'boolean', defaultValue: true },
+			{ name: CMDBuild.core.constants.Proxy.ADDRESS, type: 'string' },
 			{ name: CMDBuild.core.constants.Proxy.ALWAYS_ENABLED, type: 'boolean' },
-			{ name: CMDBuild.core.constants.Proxy.FORCE_FORMAT, type: 'string' },
+			{ name: CMDBuild.core.constants.Proxy.COUNT, type: 'int', defaultValue: 3 },
 			{ name: CMDBuild.core.constants.Proxy.ID, type: 'int', useNull: true },
 			{ name: CMDBuild.core.constants.Proxy.LABEL, type: 'string' },
-			{ name: CMDBuild.core.constants.Proxy.PRESET, type: 'auto', defaultValue: {} },
-			{ name: CMDBuild.core.constants.Proxy.READ_ONLY_ATTRIBUTES, type: 'auto', defaultValue: [] },
-			{ name: CMDBuild.core.constants.Proxy.REPORT_CODE, type: 'string' },
-			{ name: CMDBuild.core.constants.Proxy.TYPE, type: 'string', defaultValue: '.OpenReport' }
+			{ name: CMDBuild.core.constants.Proxy.TEMPLATES, type: 'auto', defaultValue: {} },
+			{ name: CMDBuild.core.constants.Proxy.TYPE, type: 'string', defaultValue: '.Ping' }
 		],
 
 		statics: {
@@ -45,13 +44,12 @@
 			convertToLegacy: function (data) {
 				return {
 					active: data[CMDBuild.core.constants.Proxy.ACTIVE],
+					address: data[CMDBuild.core.constants.Proxy.ADDRESS],
 					alwaysenabled: data[CMDBuild.core.constants.Proxy.ALWAYS_ENABLED],
-					forceFormat: data[CMDBuild.core.constants.Proxy.FORCE_FORMAT],
+					count: data[CMDBuild.core.constants.Proxy.COUNT],
 					id: data[CMDBuild.core.constants.Proxy.ID],
 					label: data[CMDBuild.core.constants.Proxy.LABEL],
-					preset: data[CMDBuild.core.constants.Proxy.PRESET],
-					readOnlyAttributes: data[CMDBuild.core.constants.Proxy.READ_ONLY_ATTRIBUTES],
-					reportCode: data[CMDBuild.core.constants.Proxy.REPORT_CODE],
+					templates: data[CMDBuild.core.constants.Proxy.TEMPLATES],
 					type: data[CMDBuild.core.constants.Proxy.TYPE]
 				};
 			}
