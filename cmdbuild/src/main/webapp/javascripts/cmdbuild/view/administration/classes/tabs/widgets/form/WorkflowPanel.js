@@ -1,8 +1,5 @@
 (function () {
 
-	/**
-	 * @link CMDBuild.view.administration.widget.form.WorkflowPanel
-	 */
 	Ext.define('CMDBuild.view.administration.classes.tabs.widgets.form.WorkflowPanel', {
 		extend: 'CMDBuild.view.administration.classes.tabs.widgets.form.AbstractWidgetDefinitionPanel',
 
@@ -90,7 +87,7 @@
 							listeners: {
 								scope: this,
 								change: function (combo, newValue, oldValue, eOpts) {
-									this.delegate.cmfg('onClassTabWidgetWorkflowSelectedWorkflowChange', combo.findRecordByValue(newValue));
+									this.delegate.cmfg('onClassesTabWidgetsWidgetWorkflowSelectedWorkflowChange', combo.findRecordByValue(newValue));
 								}
 							}
 						}),

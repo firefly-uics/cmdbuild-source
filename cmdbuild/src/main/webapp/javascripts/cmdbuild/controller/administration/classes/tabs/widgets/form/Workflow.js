@@ -1,8 +1,5 @@
 (function () {
 
-	/**
-	 * @link CMDBuild.controller.administration.widget.form.Workflow
-	 */
 	Ext.define('CMDBuild.controller.administration.classes.tabs.widgets.form.Workflow', {
 		extend: 'CMDBuild.controller.administration.classes.tabs.widgets.form.Abstract',
 
