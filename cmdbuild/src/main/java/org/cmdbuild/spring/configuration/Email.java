@@ -10,6 +10,7 @@ import org.cmdbuild.data.store.InMemoryStore;
 import org.cmdbuild.data.store.Store;
 import org.cmdbuild.data.store.dao.DataViewStore;
 import org.cmdbuild.data.store.dao.StorableConverter;
+import org.cmdbuild.data.store.email.DelayConverter;
 import org.cmdbuild.data.store.email.EmailAccount;
 import org.cmdbuild.data.store.email.EmailAccountFacade;
 import org.cmdbuild.data.store.email.EmailAccountStorableConverter;
@@ -106,7 +107,7 @@ public class Email {
 
 	@Bean
 	protected StorableConverter<org.cmdbuild.data.store.email.Email> emailStorableConverter() {
-		return new EmailConverter(emailStatusConverter());
+		return new EmailConverter(emailStatusConverter(), delayConverter());
 	}
 
 	@Bean
@@ -129,7 +130,12 @@ public class Email {
 
 	@Bean
 	protected EmailTemplateStorableConverter emailTemplateStorableConverter() {
-		return new EmailTemplateStorableConverter();
+		return new EmailTemplateStorableConverter(delayConverter());
+	}
+
+	@Bean
+	protected DelayConverter delayConverter() {
+		return new DelayConverter();
 	}
 
 	@Bean
