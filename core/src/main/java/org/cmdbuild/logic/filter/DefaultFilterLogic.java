@@ -9,10 +9,10 @@ import static com.google.common.collect.Maps.uniqueIndex;
 import static java.lang.Integer.MAX_VALUE;
 import static java.util.Optional.empty;
 import static java.util.Optional.of;
-import static java.util.stream.StreamSupport.stream;
 
 import java.util.NoSuchElementException;
 import java.util.Optional;
+import java.util.function.Consumer;
 
 import org.apache.commons.lang3.Validate;
 import org.cmdbuild.auth.UserStore;
@@ -266,23 +266,26 @@ public class DefaultFilterLogic implements FilterLogic {
 
 	@Override
 	public void setDefault(final Iterable<Long> filters, final Iterable<String> groups) {
-		logger.info(MARKER, "setting default filter '{}' for groups '{}'", filters, groups);
-		stream(filters.spliterator(), false) //
-				.forEach(filterId -> {
-					final FilterStore.Filter filter = store.read(filterId);
-					final MapDifference<String, String> difference = difference(uniqueIndex(groups, identity()),
-							uniqueIndex(store.joined(filterId), identity()));
-					difference.entriesOnlyOnRight().keySet().stream() //
-							.forEach(group -> store.disjoin(group, store.read(filter.getClassName(), group)));
-					difference.entriesOnlyOnLeft().keySet().stream() //
-							.forEach(group -> store.join(group, newArrayList(filter)));
-				});
+		logger.info(MARKER, "setting default filters '{}' for groups '{}'", filters, groups);
+		groups.forEach(new Consumer<String>() {
+
+			@Override
+			public void accept(final String group) {
+				final MapDifference<Long, Long> difference = difference(uniqueIndex(filters, identity()),
+						uniqueIndex(store.joinedFilters(group), identity()));
+				difference.entriesOnlyOnRight().keySet().stream() //
+						.forEach(filter -> store.disjoin(group, newArrayList(store.read(filter))));
+				difference.entriesOnlyOnLeft().keySet().stream() //
+						.forEach(filter -> store.join(group, newArrayList(store.read(filter))));
+			}
+
+		});
 	}
 
 	@Override
 	public Iterable<String> getGroups(final Long filter) {
 		logger.info(MARKER, "getting groups which filter '{}' is default", filter);
-		return store.joined(filter);
+		return store.joinedGroups(filter);
 	}
 
 	private Function<FilterStore.Filter, Filter> toLogic() {
