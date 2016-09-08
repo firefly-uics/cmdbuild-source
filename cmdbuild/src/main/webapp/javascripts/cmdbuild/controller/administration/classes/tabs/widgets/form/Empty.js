@@ -2,8 +2,6 @@
 
 	/**
 	 * Placeholder class to build empty form if no widget is selected from grid
-	 *
-	 * @link CMDBuild.controller.administration.widget.form.Empty
 	 */
 	Ext.define('CMDBuild.controller.administration.classes.tabs.widgets.form.Empty', {
 		extend: 'CMDBuild.controller.administration.classes.tabs.widgets.form.Abstract',

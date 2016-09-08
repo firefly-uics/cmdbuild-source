@@ -1,15 +1,12 @@
 (function () {
 
-	/**
-	 * @link CMDBuild.controller.administration.widget.form.CreateModifyCard
-	 */
 	Ext.define('CMDBuild.controller.administration.classes.tabs.widgets.form.CreateModifyCard', {
 		extend: 'CMDBuild.controller.administration.classes.tabs.widgets.form.Abstract',
 
 		requires: [
 			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.Message',
-			'CMDBuild.model.classes.tabs.widgets.createModifyCard.Definition'
+			'CMDBuild.model.administration.classes.tabs.widgets.createModifyCard.Definition'
 		],
 
 		/**
@@ -33,7 +30,7 @@
 		 *
 		 * @private
 		 */
-		definitionModelName: 'CMDBuild.model.classes.tabs.widgets.createModifyCard.Definition',
+		definitionModelName: 'CMDBuild.model.administration.classes.tabs.widgets.createModifyCard.Definition',
 
 		/**
 		 * @property {CMDBuild.view.administration.classes.tabs.widgets.form.CreateModifyCardPanel}
@@ -58,7 +55,7 @@
 		 * @returns {Object}
 		 */
 		classesTabWidgetsWidgetCreateModifyCardDefinitionGet: function () {
-			return CMDBuild.model.classes.tabs.widgets.createModifyCard.Definition.convertToLegacy(
+			return CMDBuild.model.administration.classes.tabs.widgets.createModifyCard.Definition.convertToLegacy(
 				Ext.create(this.cmfg('classesTabWidgetsWidgetDefinitionModelNameGet'), this.view.getData(true)).getData()
 			);
 		},
@@ -66,7 +63,7 @@
 		/**
 		 * Fills form with widget data
 		 *
-		 * @param {CMDBuild.model.classes.tabs.widgets.createModifyCard.Definition} record
+		 * @param {CMDBuild.model.administration.classes.tabs.widgets.createModifyCard.Definition} record
 		 *
 		 * @returns {Void}
 		 */

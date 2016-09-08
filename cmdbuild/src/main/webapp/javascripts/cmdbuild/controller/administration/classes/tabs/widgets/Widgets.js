@@ -1,14 +1,11 @@
 (function () {
 
-	/**
-	 * @link CMDBuild.controller.administration.widget.Widget
-	 */
 	Ext.define('CMDBuild.controller.administration.classes.tabs.widgets.Widgets', {
 		extend: 'CMDBuild.controller.common.abstract.Base',
 
 		requires: [
 			'CMDBuild.core.constants.Proxy',
-			'CMDBuild.proxy.classes.tabs.widgets.Widgets'
+			'CMDBuild.proxy.administration.classes.tabs.widgets.Widgets'
 		],
 
 		/**
@@ -223,7 +220,7 @@
 						params['sortedArray'].push(widgetRowModel.get(CMDBuild.core.constants.Proxy.ID));
 				}, this);
 
-				CMDBuild.proxy.classes.tabs.widgets.Widgets.setSorting({
+				CMDBuild.proxy.administration.classes.tabs.widgets.Widgets.setSorting({
 					params: params,
 					scope: this,
 					success: function (response, options, decodedResponse) {
@@ -297,7 +294,7 @@
 				params[CMDBuild.core.constants.Proxy.CLASS_NAME] = this.cmfg('classesSelectedClassGet', CMDBuild.core.constants.Proxy.NAME);
 				params[CMDBuild.core.constants.Proxy.ID] = this.grid.getSelectionModel().getSelection()[0].get(CMDBuild.core.constants.Proxy.ID);
 
-				CMDBuild.proxy.classes.tabs.widgets.Widgets.read({
+				CMDBuild.proxy.administration.classes.tabs.widgets.Widgets.read({
 					params: params,
 					scope: this,
 					success: function (response, options, decodedResponse) {
@@ -338,7 +335,7 @@
 				params[CMDBuild.core.constants.Proxy.WIDGET] = Ext.encode(widgetDefinition);
 
 				if (Ext.isEmpty(widgetDefinition[CMDBuild.core.constants.Proxy.ID])) {
-					CMDBuild.proxy.classes.tabs.widgets.Widgets.create({
+					CMDBuild.proxy.administration.classes.tabs.widgets.Widgets.create({
 						params: params,
 						scope: this,
 						success: function (response, options, decodedResponse) {
@@ -348,7 +345,7 @@
 						}
 					});
 				} else {
-					CMDBuild.proxy.classes.tabs.widgets.Widgets.update({
+					CMDBuild.proxy.administration.classes.tabs.widgets.Widgets.update({
 						params: params,
 						scope: this,
 						success: function (response, options, decodedResponse) {
@@ -370,7 +367,7 @@
 				params[CMDBuild.core.constants.Proxy.CLASS_NAME] = this.cmfg('classesSelectedClassGet', CMDBuild.core.constants.Proxy.NAME);
 				params[CMDBuild.core.constants.Proxy.ID] = this.classesTabWidgetsSelectedWidgetGet(CMDBuild.core.constants.Proxy.ID);
 
-				CMDBuild.proxy.classes.tabs.widgets.Widgets.remove({
+				CMDBuild.proxy.administration.classes.tabs.widgets.Widgets.remove({
 					params: params,
 					scope: this,
 					success: function (response, options, decodedResponse) {

@@ -1,8 +1,8 @@
-(function() {
+(function () {
 
 	Ext.require('CMDBuild.core.constants.Proxy');
 
-	Ext.define('CMDBuild.model.classes.tabs.widgets.workflow.PresetGrid', {
+	Ext.define('CMDBuild.model.administration.classes.tabs.widgets.openReport.PresetGrid', {
 		extend: 'Ext.data.Model',
 
 		fields: [

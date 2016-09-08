@@ -1,14 +1,11 @@
 (function () {
 
-	/**
-	 * @link CMDBuild.view.administration.widget.GridPanel
-	 */
 	Ext.define('CMDBuild.view.administration.classes.tabs.widgets.GridPanel', {
 		extend: 'Ext.grid.Panel',
 
 		requires: [
 			'CMDBuild.core.constants.Proxy',
-			'CMDBuild.proxy.classes.tabs.widgets.Widgets'
+			'CMDBuild.proxy.administration.classes.tabs.widgets.Widgets'
 		],
 
 		/**
@@ -68,7 +65,7 @@
 						fixed: true
 					})
 				],
-				store: CMDBuild.proxy.classes.tabs.widgets.Widgets.getStore()
+				store: CMDBuild.proxy.administration.classes.tabs.widgets.Widgets.getStore()
 			});
 
 			this.callParent(arguments);
@@ -78,7 +75,6 @@
 			itemdblclick: function (grid, record, item, index, e, eOpts) {
 				this.delegate.cmfg('onClassesTabWidgetsItemDoubleClick');
 			},
-
 			select: function (row, record, index) {
 				this.delegate.cmfg('onClassesTabWidgetsRowSelected');
 			}

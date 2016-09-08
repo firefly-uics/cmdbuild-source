@@ -1,12 +1,12 @@
 (function () {
 
-	Ext.define('CMDBuild.proxy.classes.tabs.widgets.OpenReport', {
+	Ext.define('CMDBuild.proxy.administration.classes.tabs.widgets.OpenReport', {
 
 		requires: [
 			'CMDBuild.core.configurations.Timeout',
 			'CMDBuild.core.constants.Proxy',
-			'CMDBuild.proxy.index.Json',
-			'CMDBuild.model.classes.tabs.widgets.openReport.ReportCombo'
+			'CMDBuild.model.administration.classes.tabs.widgets.openReport.ReportCombo',
+			'CMDBuild.proxy.index.Json'
 		],
 
 		singleton: true,
@@ -33,7 +33,7 @@
 		getStore: function () {
 			return CMDBuild.global.Cache.requestAsStore(CMDBuild.core.constants.Proxy.REPORT, {
 				autoLoad: true,
-				model: 'CMDBuild.model.classes.tabs.widgets.openReport.ReportCombo',
+				model: 'CMDBuild.model.administration.classes.tabs.widgets.openReport.ReportCombo',
 				proxy: {
 					type: 'ajax',
 					url: CMDBuild.proxy.index.Json.report.readByType,

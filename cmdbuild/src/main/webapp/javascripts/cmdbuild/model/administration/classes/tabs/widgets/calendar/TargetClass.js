@@ -2,7 +2,7 @@
 
 	Ext.require('CMDBuild.core.constants.Proxy');
 
-	Ext.define('CMDBuild.model.classes.tabs.widgets.calendar.TargetClass', {
+	Ext.define('CMDBuild.model.administration.classes.tabs.widgets.calendar.TargetClass', {
 		extend: 'Ext.data.Model',
 
 		fields: [

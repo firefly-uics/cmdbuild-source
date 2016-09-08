@@ -2,10 +2,7 @@
 
 	Ext.require('CMDBuild.core.constants.Proxy');
 
-	/**
-	 * @link CMDBuild.model.widget.DefinitionGrid
-	 */
-	Ext.define('CMDBuild.model.classes.tabs.widgets.Grid', {
+	Ext.define('CMDBuild.model.administration.classes.tabs.widgets.Grid', {
 		extend: 'Ext.data.Model',
 
 		fields: [

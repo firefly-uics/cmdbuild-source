@@ -1,14 +1,11 @@
 (function () {
 
-	/**
-	 * @link CMDBuild.controller.administration.widget.form.Ping
-	 */
 	Ext.define('CMDBuild.controller.administration.classes.tabs.widgets.form.Ping', {
 		extend: 'CMDBuild.controller.administration.classes.tabs.widgets.form.Abstract',
 
 		requires: [
 			'CMDBuild.core.constants.Proxy',
-			'CMDBuild.model.classes.tabs.widgets.ping.Definition'
+			'CMDBuild.model.administration.classes.tabs.widgets.ping.Definition'
 		],
 
 		/**
@@ -31,7 +28,7 @@
 		 *
 		 * @private
 		 */
-		definitionModelName: 'CMDBuild.model.classes.tabs.widgets.ping.Definition',
+		definitionModelName: 'CMDBuild.model.administration.classes.tabs.widgets.ping.Definition',
 
 		/**
 		 * @cfg {CMDBuild.view.administration.classes.tabs.widgets.form.PingPanel}
@@ -56,7 +53,7 @@
 		 * @returns {Object} widgetDefinition
 		 */
 		classesTabWidgetsWidgetPingDefinitionGet: function () {
-			var widgetDefinition = CMDBuild.model.classes.tabs.widgets.ping.Definition.convertToLegacy(
+			var widgetDefinition = CMDBuild.model.administration.classes.tabs.widgets.ping.Definition.convertToLegacy(
 				Ext.create(this.cmfg('classesTabWidgetsWidgetDefinitionModelNameGet'), this.view.getData(true)).getData()
 			);
 			widgetDefinition[CMDBuild.core.constants.Proxy.TEMPLATES] = this.view.presetGrid.getData(CMDBuild.core.constants.Proxy.DATA);
@@ -67,7 +64,7 @@
 		/**
 		 * Fills form with widget data
 		 *
-		 * @param {CMDBuild.model.classes.tabs.widgets.ping.Definition} record
+		 * @param {CMDBuild.model.administration.classes.tabs.widgets.ping.Definition} record
 		 *
 		 * @returns {Void}
 		 */

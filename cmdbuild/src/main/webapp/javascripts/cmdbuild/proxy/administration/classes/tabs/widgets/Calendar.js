@@ -1,12 +1,12 @@
 (function () {
 
-	Ext.define('CMDBuild.proxy.classes.tabs.widgets.Calendar', {
+	Ext.define('CMDBuild.proxy.administration.classes.tabs.widgets.Calendar', {
 
 		requires: [
 			'CMDBuild.core.constants.Global',
 			'CMDBuild.core.constants.Proxy',
-			'CMDBuild.model.classes.tabs.widgets.calendar.AttributeCombo',
-			'CMDBuild.model.classes.tabs.widgets.calendar.TargetClass',
+			'CMDBuild.model.administration.classes.tabs.widgets.calendar.AttributeCombo',
+			'CMDBuild.model.administration.classes.tabs.widgets.calendar.TargetClass',
 			'CMDBuild.proxy.index.Json'
 		],
 
@@ -18,7 +18,7 @@
 		getStoreTargetClass: function () {
 			return CMDBuild.global.Cache.requestAsStore(CMDBuild.core.constants.Proxy.CLASS, {
 				autoLoad: true,
-				model: 'CMDBuild.model.classes.tabs.widgets.calendar.TargetClass',
+				model: 'CMDBuild.model.administration.classes.tabs.widgets.calendar.TargetClass',
 				proxy: {
 					type: 'ajax',
 					url: CMDBuild.proxy.index.Json.classes.readAll,
@@ -50,7 +50,7 @@
 		getStoreAttributesDate: function () {
 			return CMDBuild.global.Cache.requestAsStore(CMDBuild.core.constants.Proxy.ATTRIBUTE, {
 				autoLoad: false,
-				model: 'CMDBuild.model.classes.tabs.widgets.calendar.AttributeCombo',
+				model: 'CMDBuild.model.administration.classes.tabs.widgets.calendar.AttributeCombo',
 				proxy: {
 					type: 'ajax',
 					url: CMDBuild.proxy.index.Json.attribute.read,
@@ -81,7 +81,7 @@
 		getStoreAttributesString: function () {
 			return CMDBuild.global.Cache.requestAsStore(CMDBuild.core.constants.Proxy.ATTRIBUTE, {
 				autoLoad: false,
-				model: 'CMDBuild.model.classes.tabs.widgets.calendar.AttributeCombo',
+				model: 'CMDBuild.model.administration.classes.tabs.widgets.calendar.AttributeCombo',
 				proxy: {
 					type: 'ajax',
 					url: CMDBuild.proxy.index.Json.attribute.read,

@@ -2,10 +2,7 @@
 
 	Ext.require('CMDBuild.core.constants.Proxy');
 
-	/**
-	 * @link CMDBuild.model.widget.createModifyCard.TargetClass
-	 */
-	Ext.define('CMDBuild.model.classes.tabs.widgets.createModifyCard.TargetClass', {
+	Ext.define('CMDBuild.model.administration.classes.tabs.widgets.createModifyCard.TargetClass', {
 		extend: 'Ext.data.Model',
 
 		fields: [

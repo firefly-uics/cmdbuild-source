@@ -5,18 +5,21 @@
 	/**
 	 * TODO: waiting for refactor (rename)
 	 */
-	Ext.define('CMDBuild.model.classes.tabs.widgets.ping.Definition', {
+	Ext.define('CMDBuild.model.administration.classes.tabs.widgets.calendar.Definition', {
 		extend: 'Ext.data.Model',
 
 		fields: [
 			{ name: CMDBuild.core.constants.Proxy.ACTIVE, type: 'boolean', defaultValue: true },
-			{ name: CMDBuild.core.constants.Proxy.ADDRESS, type: 'string' },
 			{ name: CMDBuild.core.constants.Proxy.ALWAYS_ENABLED, type: 'boolean' },
-			{ name: CMDBuild.core.constants.Proxy.COUNT, type: 'int', defaultValue: 3 },
+			{ name: CMDBuild.core.constants.Proxy.DEFAULT_DATE, type: 'string' },
+			{ name: CMDBuild.core.constants.Proxy.END_DATE, type: 'string' },
+			{ name: CMDBuild.core.constants.Proxy.EVENT_CLASS, type: 'string' },
+			{ name: CMDBuild.core.constants.Proxy.EVENT_TITLE, type: 'string' },
+			{ name: CMDBuild.core.constants.Proxy.FILTER, type: 'string' },
 			{ name: CMDBuild.core.constants.Proxy.ID, type: 'int', useNull: true },
 			{ name: CMDBuild.core.constants.Proxy.LABEL, type: 'string' },
-			{ name: CMDBuild.core.constants.Proxy.TEMPLATES, type: 'auto', defaultValue: {} },
-			{ name: CMDBuild.core.constants.Proxy.TYPE, type: 'string', defaultValue: '.Ping' }
+			{ name: CMDBuild.core.constants.Proxy.START_DATE, type: 'string' },
+			{ name: CMDBuild.core.constants.Proxy.TYPE, type: 'string', defaultValue: '.Calendar' }
 		],
 
 		statics: {
@@ -44,12 +47,15 @@
 			convertToLegacy: function (data) {
 				return {
 					active: data[CMDBuild.core.constants.Proxy.ACTIVE],
-					address: data[CMDBuild.core.constants.Proxy.ADDRESS],
 					alwaysenabled: data[CMDBuild.core.constants.Proxy.ALWAYS_ENABLED],
-					count: data[CMDBuild.core.constants.Proxy.COUNT],
+					defaultDate: data[CMDBuild.core.constants.Proxy.DEFAULT_DATE],
+					endDate: data[CMDBuild.core.constants.Proxy.END_DATE],
+					eventClass: data[CMDBuild.core.constants.Proxy.EVENT_CLASS],
+					eventTitle: data[CMDBuild.core.constants.Proxy.EVENT_TITLE],
+					filter: data[CMDBuild.core.constants.Proxy.FILTER],
 					id: data[CMDBuild.core.constants.Proxy.ID],
 					label: data[CMDBuild.core.constants.Proxy.LABEL],
-					templates: data[CMDBuild.core.constants.Proxy.TEMPLATES],
+					startDate: data[CMDBuild.core.constants.Proxy.START_DATE],
 					type: data[CMDBuild.core.constants.Proxy.TYPE]
 				};
 			}

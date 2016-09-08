@@ -5,8 +5,8 @@
 
 		requires: [
 			'CMDBuild.core.constants.Proxy',
-			'CMDBuild.proxy.classes.tabs.widgets.Workflow',
-			'CMDBuild.model.classes.tabs.widgets.workflow.Definition'
+			'CMDBuild.proxy.administration.classes.tabs.widgets.Workflow',
+			'CMDBuild.model.administration.classes.tabs.widgets.workflow.Definition'
 		],
 
 		/**
@@ -31,7 +31,7 @@
 		 *
 		 * @private
 		 */
-		definitionModelName: 'CMDBuild.model.classes.tabs.widgets.workflow.Definition',
+		definitionModelName: 'CMDBuild.model.administration.classes.tabs.widgets.workflow.Definition',
 
 		/**
 		 * @cfg {CMDBuild.view.administration.classes.tabs.widgets.form.WorkflowPanel}
@@ -56,7 +56,7 @@
 		 * @returns {Object} widgetDefinition
 		 */
 		classesTabWidgetsWidgetWorkflowDefinitionGet: function () {
-			var widgetDefinition = CMDBuild.model.classes.tabs.widgets.workflow.Definition.convertToLegacy(
+			var widgetDefinition = CMDBuild.model.administration.classes.tabs.widgets.workflow.Definition.convertToLegacy(
 				Ext.create(this.cmfg('classesTabWidgetsWidgetDefinitionModelNameGet'), this.view.getData(true)).getData()
 			);
 
@@ -72,7 +72,7 @@
 		/**
 		 * Fills form with widget data
 		 *
-		 * @param {CMDBuild.model.classes.tabs.widgets.workflow.Definition} record
+		 * @param {CMDBuild.model.administration.classes.tabs.widgets.workflow.Definition} record
 		 *
 		 * @returns {Void}
 		 */
@@ -87,7 +87,7 @@
 				case CMDBuild.core.constants.Proxy.NAME: {
 					this.view.workflow.setValue(record.get(CMDBuild.core.constants.Proxy.WORKFLOW_NAME));
 					this.view.presetGrid.setData(record.get(CMDBuild.core.constants.Proxy.PRESET));
-				}
+				} break;
 			}
 		},
 
@@ -106,12 +106,12 @@
 				case CMDBuild.core.constants.Proxy.NAME: {
 					this.view.additionalProperties.removeAll();
 					this.view.additionalProperties.add(this.view.widgetDefinitionFormAdditionalPropertiesByNameGet());
-				}
+				} break;
 			}
 		},
 
 		/**
-		 * @param {CMDBuild.model.classes.tabs.widgets.workflow.TargetWorkflow} selectedRecord
+		 * @param {CMDBuild.model.administration.classes.tabs.widgets.workflow.TargetWorkflow} selectedRecord
 		 *
 		 * @returns {Void}
 		 */
@@ -120,7 +120,7 @@
 				var params = {};
 				params[CMDBuild.core.constants.Proxy.CLASS_ID] = selectedRecord.get(CMDBuild.core.constants.Proxy.ID);
 
-				CMDBuild.proxy.classes.tabs.widgets.Workflow.readStartActivity({
+				CMDBuild.proxy.administration.classes.tabs.widgets.Workflow.readStartActivity({
 					params: params,
 					scope: this,
 					success: function (response, options, decodedResponse) {

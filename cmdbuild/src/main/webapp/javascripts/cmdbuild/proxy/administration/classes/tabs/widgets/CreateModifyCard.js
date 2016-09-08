@@ -1,12 +1,12 @@
 (function () {
 
-	Ext.define('CMDBuild.proxy.classes.tabs.widgets.CreateModifyCard', {
+	Ext.define('CMDBuild.proxy.administration.classes.tabs.widgets.CreateModifyCard', {
 
 		requires: [
 			'CMDBuild.core.constants.Global',
 			'CMDBuild.core.constants.Proxy',
-			'CMDBuild.proxy.index.Json',
-			'CMDBuild.model.classes.tabs.widgets.createModifyCard.TargetClass'
+			'CMDBuild.model.administration.classes.tabs.widgets.createModifyCard.TargetClass',
+			'CMDBuild.proxy.index.Json'
 		],
 
 		singleton: true,
@@ -17,7 +17,7 @@
 		getStoreTargetClass: function () {
 			return CMDBuild.global.Cache.requestAsStore(CMDBuild.core.constants.Proxy.CLASS, {
 				autoLoad: true,
-				model: 'CMDBuild.model.classes.tabs.widgets.createModifyCard.TargetClass',
+				model: 'CMDBuild.model.administration.classes.tabs.widgets.createModifyCard.TargetClass',
 				proxy: {
 					type: 'ajax',
 					url: CMDBuild.proxy.index.Json.classes.readAll,

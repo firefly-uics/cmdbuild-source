@@ -1,16 +1,13 @@
 (function () {
 
-	/**
-	 * @link CMDBuild.view.administration.widget.form.OpenReportPanel
-	 */
 	Ext.define('CMDBuild.view.administration.classes.tabs.widgets.form.OpenReportPanel', {
 		extend: 'CMDBuild.view.administration.classes.tabs.widgets.form.AbstractWidgetDefinitionPanel',
 
 		requires: [
 			'CMDBuild.core.constants.FieldWidths',
 			'CMDBuild.core.constants.Proxy',
-			'CMDBuild.proxy.classes.tabs.widgets.OpenReport',
-			'CMDBuild.model.classes.tabs.widgets.openReport.PresetGrid'
+			'CMDBuild.proxy.administration.classes.tabs.widgets.OpenReport',
+			'CMDBuild.model.administration.classes.tabs.widgets.openReport.PresetGrid'
 		],
 
 		/**
@@ -60,7 +57,7 @@
 							forceSelection: true,
 							editable: false,
 
-							store: CMDBuild.proxy.classes.tabs.widgets.OpenReport.getStore(),
+							store: CMDBuild.proxy.administration.classes.tabs.widgets.OpenReport.getStore(),
 							queryMode: 'local',
 
 							listeners: {
@@ -78,7 +75,7 @@
 							displayField: CMDBuild.core.constants.Proxy.DESCRIPTION,
 							valueField: CMDBuild.core.constants.Proxy.VALUE,
 
-							store: CMDBuild.proxy.classes.tabs.widgets.OpenReport.getStoreForceFormat()
+							store: CMDBuild.proxy.administration.classes.tabs.widgets.OpenReport.getStoreForceFormat()
 						}),
 						this.presetGrid = Ext.create('CMDBuild.view.common.field.grid.KeyValue', {
 							additionalColumns: [
@@ -96,7 +93,7 @@
 							keyAttributeName: CMDBuild.core.constants.Proxy.NAME,
 							keyLabel: CMDBuild.Translation.attribute,
 							margin: '8 0 9 0',
-							modelName: 'CMDBuild.model.classes.tabs.widgets.openReport.PresetGrid',
+							modelName: 'CMDBuild.model.administration.classes.tabs.widgets.openReport.PresetGrid',
 							title: CMDBuild.Translation.reportAttributes
 						})
 					]
