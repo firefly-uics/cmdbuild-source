@@ -72,6 +72,8 @@ FIXES
 
  * Missing relations when some domains are disabled on a hierarchy of classes
 
+ * Default group not correctly selected in administration interface combobox field
+
 
 
 
