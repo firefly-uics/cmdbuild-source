@@ -43,7 +43,7 @@ public interface FilterStore {
 
 	/**
 	 * Gets the all user filters.
-	 * 
+	 *
 	 * @param className
 	 *            the name of the class, {@code null} means all classes.
 	 * @param userId
@@ -53,7 +53,7 @@ public interface FilterStore {
 
 	/**
 	 * Gets the all group filters.
-	 * 
+	 *
 	 * @param className
 	 *            the name of the class, {@code null} means all classes.
 	 */
@@ -61,21 +61,21 @@ public interface FilterStore {
 
 	/**
 	 * Saves a new filter in the database
-	 * 
+	 *
 	 * @return the saved filter
 	 */
 	Long create(Filter filter);
 
 	/**
 	 * Update an existent filter
-	 * 
+	 *
 	 * @return
 	 */
 	void update(Filter filter);
 
 	/**
 	 * Deletes the filter from the database
-	 * 
+	 *
 	 * @param filter
 	 *            is the filter that will be deleted from database
 	 */
@@ -89,6 +89,8 @@ public interface FilterStore {
 
 	void disjoin(String groupName, Iterable<Filter> filters);
 
-	Iterable<String> joined(Long filter);
+	Iterable<String> joinedGroups(Long filter);
+
+	Iterable<Long> joinedFilters(String group);
 
 }

@@ -446,26 +446,22 @@ public class DefaultFilterLogicTest {
 	@Test
 	public void defaultFilterIsSettedForSingleFilterAndSingleGroup() throws Exception {
 		// given
-		final FilterStore.Filter filterForSpecifiedId = mock(FilterStore.Filter.class);
-		doReturn("a classname") //
-				.when(filterForSpecifiedId).getClassName();
-		doReturn(filterForSpecifiedId) //
+		doReturn(asList(2L)) //
+				.when(store).joinedFilters(anyString());
+		final FilterStore.Filter first = mock(FilterStore.Filter.class);
+		final FilterStore.Filter second = mock(FilterStore.Filter.class);
+		doReturn(first).doReturn(second) //
 				.when(store).read(anyLong());
-		doReturn(asList("already existing group")) //
-				.when(store).joined(anyLong());
-		final FilterStore.Filter filterForClassAndGroup = mock(FilterStore.Filter.class);
-		doReturn(asList(filterForClassAndGroup)) //
-				.when(store).read(anyString(), anyString());
 
 		// when
 		defaultFilterLogic.setDefault(asList(1L), asList("a group"));
 
 		// then
+		verify(store).joinedFilters(eq("a group"));
+		verify(store).read(eq(2L));
+		verify(store).disjoin(eq("a group"), eq(asList(first)));
 		verify(store).read(eq(1L));
-		verify(store).joined(eq(1L));
-		verify(store).read(eq("a classname"), eq("already existing group"));
-		verify(store).disjoin(eq("already existing group"), eq(asList(filterForClassAndGroup)));
-		verify(store).join(eq("a group"), eq(asList(filterForSpecifiedId)));
+		verify(store).join(eq("a group"), eq(asList(second)));
 		verifyNoMoreInteractions(store, converter, userStore, authenticatedUser, privilegeContext);
 	}
 
@@ -473,7 +469,7 @@ public class DefaultFilterLogicTest {
 	public void getGroupsWhichTheSpecifiedFilterIsDefault() throws Exception {
 		// given
 		doReturn(asList("foo", "bar", "baz")) //
-				.when(store).joined(anyLong());
+				.when(store).joinedGroups(anyLong());
 
 		// when
 		final Iterable<String> output = defaultFilterLogic.getGroups(42L);
@@ -481,7 +477,7 @@ public class DefaultFilterLogicTest {
 		// then
 		assertThat(output, containsInAnyOrder("foo", "bar", "baz"));
 
-		verify(store).joined(eq(42L));
+		verify(store).joinedGroups(eq(42L));
 		verifyNoMoreInteractions(store);
 	}
 
