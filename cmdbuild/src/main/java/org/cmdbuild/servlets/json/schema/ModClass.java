@@ -150,13 +150,13 @@ public class ModClass extends JSONBaseWithSpringContext {
 		final JSONArray serializedClasses = new JSONArray();
 		for (final CMClass cmClass : classesToBeReturned) {
 			final JSONObject classObject = classSerializer().toClient(cmClass);
-			Serializer.addAttachmentsData(classObject, cmClass, dmsLogic(), notifier());
+			new Serializer(authLogic()).addAttachmentsData(classObject, cmClass, dmsLogic(), notifier());
 			serializedClasses.put(classObject);
 		}
 
 		for (final UserProcessClass userProcessClass : processClasses) {
 			final JSONObject classObject = classSerializer().toClient(userProcessClass, activeOnly);
-			Serializer.addAttachmentsData(classObject, userProcessClass, dmsLogic(), notifier());
+			new Serializer(authLogic()).addAttachmentsData(classObject, userProcessClass, dmsLogic(), notifier());
 			serializedClasses.put(classObject);
 
 			// do this check only for the request

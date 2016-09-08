@@ -68,7 +68,8 @@ import org.json.JSONObject;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Ordering;
 
-public class AttributeSerializer extends Serializer {
+@_Serializer
+public class AttributeSerializer {
 
 	public static enum JsonModeMapper {
 

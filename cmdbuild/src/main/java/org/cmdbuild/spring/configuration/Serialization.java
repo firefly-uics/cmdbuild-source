@@ -67,7 +67,7 @@ public class Serialization {
 	public DomainSerializer domainSerializer() {
 		return new DomainSerializer( //
 				data.systemDataView(), //
-				privilegeManagement.userPrivilegeContext(), translation.translationFacade());
+				privilegeManagement.userPrivilegeContext());
 	}
 
 	@Bean

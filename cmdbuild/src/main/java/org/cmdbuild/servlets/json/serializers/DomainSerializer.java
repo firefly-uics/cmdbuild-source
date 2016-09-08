@@ -11,17 +11,16 @@ import org.cmdbuild.auth.acl.PrivilegeContext;
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.entrytype.CMDomain;
 import org.cmdbuild.dao.view.CMDataView;
-import org.cmdbuild.logic.translation.TranslationFacade;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public class DomainSerializer extends Serializer {
+@_Serializer
+public class DomainSerializer {
 
 	private final CMDataView dataView;
 	private final PrivilegeContext privilegeContext;
 
-	public DomainSerializer(final CMDataView dataView, final PrivilegeContext privilegeContext,
-			final TranslationFacade translationFacade) {
+	public DomainSerializer(final CMDataView dataView, final PrivilegeContext privilegeContext) {
 		this.dataView = dataView;
 		this.privilegeContext = privilegeContext;
 	}
