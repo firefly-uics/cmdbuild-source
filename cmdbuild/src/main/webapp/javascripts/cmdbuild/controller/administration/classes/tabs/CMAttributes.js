@@ -17,6 +17,11 @@
 		requires: ['CMDBuild.core.constants.Proxy'],
 
 		/**
+		 * @cfg {CMDBuild.controller.administration.classes.Classes}
+		 */
+		parentDelegate: undefined,
+
+		/**
 		 * @param {Object} configurationObject
 		 * @param {CMDBuild.controller.administration.classes.Classes} configurationObject.parentDelegate
 		 * @param {CMDBuild.view.administration.classes.tabs.attributes.CMAttributes} configurationObject.view
@@ -82,21 +87,39 @@
 		},
 
 		onClassSelected: function(classId, className) {
-			this.currentClassId = classId;
-			this.currentClassName = className;
+			var params = {};
+			params[CMDBuild.core.constants.Proxy.ACTIVE] = false;
 
-			if (!Ext.isEmpty(classId) && !Ext.isEmpty(className)) {
-				this.view.enable();
+			CMDBuild.proxy.classes.Classes.readAll({ // Read all classes to refresh cache state (waiting for refactor)
+				params: params,
+				loadMask: false,
+				scope: this,
+				success: function (response, options, decodedResponse) {
+					decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.CLASSES];
 
-				if (tabIsActive(this.view)) {
-					this.toLoad = false;
-					this.view.onClassSelected(this.currentClassId, this.currentClassName);
-				} else {
-					this.toLoad = true;
+					/**
+					 * @deprecated
+					 */
+					_CMCache.addClasses(decodedResponse);
+
+					// OnClassSelected old implementation
+					this.currentClassId = classId;
+					this.currentClassName = className;
+
+					if (!Ext.isEmpty(classId) && !Ext.isEmpty(className)) {
+						this.view.enable();
+
+						if (tabIsActive(this.view)) {
+							this.toLoad = false;
+							this.view.onClassSelected(this.currentClassId, this.currentClassName);
+						} else {
+							this.toLoad = true;
+						}
+					} else {
+						this.view.disable();
+					}
 				}
-			} else {
-				this.view.disable();
-			}
+			});
 		},
 
 		onAddClassButtonClick: function() {
