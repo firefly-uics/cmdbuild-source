@@ -1,9 +1,6 @@
 (function () {
 
-	Ext.require([
-		'CMDBuild.core.constants.Global',
-		'CMDBuild.core.constants.Proxy'
-	]);
+	Ext.require('CMDBuild.core.constants.Proxy');
 
 	/**
 	 * Full workflow model
