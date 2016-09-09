@@ -135,7 +135,9 @@
 					currentClass = null;
 
 				this.currentClass = currentClass;
-				this.view.addRelationButton.onEntryTypeSelect(currentClass.get(CMDBuild.core.constants.Proxy.NAME));
+
+				if (!Ext.isEmpty(currentClass) && Ext.isFunction(currentClass.get))
+					this.view.addRelationButton.onEntryTypeSelect(currentClass.get(CMDBuild.core.constants.Proxy.NAME));
 			}
 		},
 
