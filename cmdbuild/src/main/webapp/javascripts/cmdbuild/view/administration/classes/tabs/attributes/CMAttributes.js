@@ -8,6 +8,11 @@
 	Ext.define('CMDBuild.view.administration.classes.tabs.attributes.CMAttributes', {
 		extend: "Ext.panel.Panel",
 
+		/**
+		 * @cfg {CMDBuild.controller.administration.classes.Classes}
+		 */
+		delegate: undefined,
+
 		constructor: function () {
 			this.formPanel = this.buildFormPanel();
 
@@ -35,6 +40,9 @@
 			});
 
 			this.callParent(arguments);
+
+			this.formPanel.delegate = this.delegate;
+			this.gridPanel.delegate = this.delegate;
 		},
 
 		/**
