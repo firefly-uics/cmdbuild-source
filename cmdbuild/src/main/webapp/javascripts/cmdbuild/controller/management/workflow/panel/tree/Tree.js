@@ -36,7 +36,7 @@
 			'onWorkflowTreeRecordSelect',
 			'onWorkflowTreeSaveFailure',
 			'onWorkflowTreeWokflowSelect = onWorkflowWokflowSelect',
-			'workflowTreeActivityOpen',
+			'workflowTreeActivitySelect',
 			'workflowTreeAppliedFilterGet',
 			'workflowTreeApplyStoreEvent',
 			'workflowTreeFilterApply = panelGridAndFormGridFilterApply',
@@ -678,7 +678,7 @@
 		 *
 		 * @returns {Void}
 		 */
-		workflowTreeActivityOpen: function (parameters) {
+		workflowTreeActivitySelect: function (parameters) {
 			parameters = Ext.isObject(parameters) ? parameters : {};
 			parameters.enableForceFlowStatus = Ext.isBoolean(parameters.enableForceFlowStatus) ? parameters.enableForceFlowStatus : false;
 			parameters.forceFilter = Ext.isBoolean(parameters.forceFilter) ? parameters.forceFilter : false;
@@ -686,10 +686,10 @@
 
 			// Error handling
 				if (this.cmfg('workflowSelectedWorkflowIsEmpty'))
-					return _error('workflowTreeActivityOpen(): no selected workflow found', this);
+					return _error('workflowTreeActivitySelect(): no selected workflow found', this);
 
 				if (!Ext.isNumber(parameters[CMDBuild.core.constants.Proxy.INSTANCE_ID]) || Ext.isEmpty(parameters[CMDBuild.core.constants.Proxy.INSTANCE_ID]))
-					return _error('workflowTreeActivityOpen(): unmanaged instanceId parameter', this, parameters[CMDBuild.core.constants.Proxy.INSTANCE_ID]);
+					return _error('workflowTreeActivitySelect(): unmanaged instanceId parameter', this, parameters[CMDBuild.core.constants.Proxy.INSTANCE_ID]);
 			// END: Error handling
 
 			var params = {};
@@ -712,7 +712,7 @@
 					if (Ext.isString(params[CMDBuild.core.constants.Proxy.FILTER]) && !Ext.isEmpty(params[CMDBuild.core.constants.Proxy.FILTER])) {
 						parameters.forceFilter = true;
 
-						return this.workflowTreeActivityOpen(parameters);
+						return this.workflowTreeActivitySelect(parameters);
 					} else if (
 						Ext.isString(params[CMDBuild.core.constants.Proxy.FLOW_STATUS]) && !Ext.isEmpty(params[CMDBuild.core.constants.Proxy.FLOW_STATUS])
 						&& params[CMDBuild.core.constants.Proxy.FLOW_STATUS] != CMDBuild.core.constants.WorkflowStates.getAll()
@@ -720,7 +720,7 @@
 					) {
 						parameters.forceFlowStatus = true;
 
-						return this.workflowTreeActivityOpen(parameters);
+						return this.workflowTreeActivitySelect(parameters);
 					} else {
 						return Ext.callback(this.positionActivityGetFailure, this, [response, options, decodedResponse]); // Card not found and store reload
 					}
