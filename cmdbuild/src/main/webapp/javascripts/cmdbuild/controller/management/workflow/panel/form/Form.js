@@ -155,7 +155,7 @@
 		},
 
 		/**
-		 * Manage previous activity select
+		 * Manage previous selected activity (only before add button action)
 		 *
 		 * @returns {Void}
 		 */
