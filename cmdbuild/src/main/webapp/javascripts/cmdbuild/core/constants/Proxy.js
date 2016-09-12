@@ -610,6 +610,7 @@
 		TEMPORARY_ID: 'temporaryId',
 		TEXT: 'text',
 		TIME: 'time',
+		TIME_INTERVAL: 'timeInterval',
 		TITLE: 'title',
 		TO: 'to',
 		TO_ADDRESSES: 'toAddresses',
