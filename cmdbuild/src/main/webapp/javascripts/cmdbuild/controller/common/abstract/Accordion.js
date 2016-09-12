@@ -316,7 +316,7 @@
 					var selection = this.view.getSelectionModel().getSelection()[0];
 
 					this.cmfg('accordionDeselect');
-					this.cmfg('accordionUpdateStore', { selectionId: selection.get(CMDBuild.core.constants.Proxy.ENTITY_ID) });
+					this.cmfg('accordionUpdateStore', { selectionId: selection.get(CMDBuild.core.constants.Proxy.ID) || selection.get(CMDBuild.core.constants.Proxy.ENTITY_ID) });
 				} else {
 					this.cmfg('accordionUpdateStore');
 				}

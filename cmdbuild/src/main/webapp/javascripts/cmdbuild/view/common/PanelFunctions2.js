@@ -48,7 +48,7 @@
 
 				this.cascade(function (item) {
 					if (
-						!Ext.isEmpty(item)
+						Ext.isObject(item) && !Ext.Object.isEmpty(item)
 						&& Ext.isFunction(item.getValue) && Ext.isFunction(item.getName)
 						&& this.isManagedField(item)
 						&& !item.disablePanelFunctions
