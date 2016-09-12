@@ -86,7 +86,7 @@
 		 * @override
 		 */
 		onConfigurationModuleInit: function (node) {
-			if (!Ext.Object.isEmpty(node)) {
+			if (Ext.isObject(node) && !Ext.Object.isEmpty(node)) {
 				this.view.removeAll(true);
 
 				this.sectionController = this.buildSectionController(node.get(CMDBuild.core.constants.Proxy.SECTION_HIERARCHY)[0]);

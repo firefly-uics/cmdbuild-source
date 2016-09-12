@@ -30,7 +30,7 @@
 			Ext.apply(this, configurationObject); // Apply configurations
 
 			Ext.ns('CMDBuild.configuration');
-			CMDBuild.configuration.dms = Ext.create('CMDBuild.model.core.configurations.builder.Dms'); // Setup configuration with defaults
+			CMDBuild.configuration.dms = Ext.create('CMDBuild.model.core.configuration.builder.Dms'); // Setup configuration with defaults
 
 			CMDBuild.proxy.core.configurations.builder.Dms.read({
 				loadMask: false,
@@ -38,7 +38,7 @@
 				success: function (response, options, decodedResponse) {
 					decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.DATA];
 
-					CMDBuild.configuration.dms = Ext.create('CMDBuild.model.core.configurations.builder.Dms', decodedResponse); // DMS configuration model
+					CMDBuild.configuration.dms = Ext.create('CMDBuild.model.core.configuration.builder.Dms', decodedResponse); // DMS configuration model
 				},
 				callback: this.callback
 			});

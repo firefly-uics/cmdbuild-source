@@ -5,7 +5,7 @@
 
 		requires: [
 			'CMDBuild.core.constants.Proxy',
-			'CMDBuild.proxy.configuration.Bim'
+			'CMDBuild.proxy.administration.configuration.Bim'
 		],
 
 		/**
@@ -44,8 +44,10 @@
 		 * @returns {Void}
 		 */
 		onConfigurationBimSaveButtonClick: function () {
-			CMDBuild.proxy.configuration.Bim.update({
-				params: this.view.getData(true),
+			var configurationModel = Ext.create('CMDBuild.model.administration.configuration.Bim', this.view.panelFunctionDataGet({ includeDisabled: true }));
+
+			CMDBuild.proxy.administration.configuration.Bim.update({
+				params: configurationModel.getParamsObject(),
 				scope: this,
 				success: function (response, options, decodedResponse) {
 					this.cmfg('onConfigurationBimTabShow');
@@ -59,13 +61,13 @@
 		 * @returns {Void}
 		 */
 		onConfigurationBimTabShow: function () {
-			CMDBuild.proxy.configuration.Bim.read({
+			CMDBuild.proxy.administration.configuration.Bim.read({
 				scope: this,
 				success: function (response, options, decodedResponse) {
 					decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.DATA];
 
-					if (!Ext.isEmpty(decodedResponse)) {
-						this.view.loadRecord(Ext.create('CMDBuild.model.configuration.Bim', decodedResponse));
+					if (Ext.isObject(decodedResponse) && !Ext.Object.isEmpty(decodedResponse)) {
+						this.view.loadRecord(Ext.create('CMDBuild.model.administration.configuration.Bim', decodedResponse));
 
 						Ext.create('CMDBuild.core.configurations.builder.Bim', { // Rebuild configuration model
 							scope: this,

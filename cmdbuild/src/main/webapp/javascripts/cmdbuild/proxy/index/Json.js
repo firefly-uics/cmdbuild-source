@@ -96,8 +96,6 @@
 			update: 'services/json/schema/setup/saveconfiguration', // TODO: waiting for refactor (rename)
 			remove: '',
 
-			readAll: 'services/json/schema/setup/getconfigurations',
-
 			apply: 'services/json/configure/apply',
 			connectionTest: 'services/json/configure/testconnection',
 

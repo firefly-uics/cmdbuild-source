@@ -6,7 +6,7 @@
 		requires: [
 			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.Message',
-			'CMDBuild.proxy.configuration.GeneralOptions',
+			'CMDBuild.proxy.administration.configuration.GeneralOptions',
 			'CMDBuild.proxy.localization.Export',
 			'CMDBuild.proxy.localization.Import'
 		],
@@ -51,7 +51,7 @@
 		 * @private
 		 */
 		configurationRead: function () {
-			CMDBuild.proxy.configuration.GeneralOptions.read({
+			CMDBuild.proxy.administration.configuration.GeneralOptions.read({
 				scope: this,
 				success: function (response, options, decodedResponse) {
 					var decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.DATA];
@@ -73,7 +73,7 @@
 		 * TODO: refactor to save directly only language configuration on another endpoint
 		 */
 		onLocalizationConfigurationSaveButtonClick: function () {
-			CMDBuild.proxy.configuration.GeneralOptions.read({
+			CMDBuild.proxy.administration.configuration.GeneralOptions.read({
 				scope: this,
 				success: function (response, options, decodedResponse) {
 					var params = decodedResponse[CMDBuild.core.constants.Proxy.DATA];
@@ -81,7 +81,7 @@
 					params['languageprompt'] = this.view.languagePromptCheckbox.getValue();
 					params['enabled_languages'] = this.view.enabledLanguagesGrid.getValue().join(', ');
 
-					CMDBuild.proxy.configuration.GeneralOptions.update({
+					CMDBuild.proxy.administration.configuration.GeneralOptions.update({
 						params: params,
 						scope: this,
 						success: function (response, options, decodedResponse) {

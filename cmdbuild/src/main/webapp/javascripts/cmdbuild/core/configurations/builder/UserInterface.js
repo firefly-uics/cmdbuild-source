@@ -30,7 +30,7 @@
 			Ext.apply(this, configurationObject); // Apply configuration
 
 			Ext.ns('CMDBuild.configuration');
-			CMDBuild.configuration.userInterface = Ext.create('CMDBuild.model.core.configurations.builder.userInterface.UserInterface'); // Setup configuration with defaults
+			CMDBuild.configuration.userInterface = Ext.create('CMDBuild.model.core.configuration.builder.userInterface.UserInterface'); // Setup configuration with defaults
 
 			CMDBuild.proxy.core.configurations.builder.UserInterface.read({
 				loadMask: false,
@@ -38,7 +38,7 @@
 				success: function (response, options, decodedResponse) {
 					decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.RESPONSE];
 
-					CMDBuild.configuration.userInterface = Ext.create('CMDBuild.model.core.configurations.builder.userInterface.UserInterface', decodedResponse);
+					CMDBuild.configuration.userInterface = Ext.create('CMDBuild.model.core.configuration.builder.userInterface.UserInterface', decodedResponse);
 				},
 				callback: this.callback
 			});
