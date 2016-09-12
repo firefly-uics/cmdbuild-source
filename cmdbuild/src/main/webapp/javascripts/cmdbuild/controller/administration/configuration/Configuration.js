@@ -58,6 +58,9 @@
 				case 'gis':
 					return Ext.create('CMDBuild.controller.administration.configuration.Gis', { parentDelegate: this });
 
+				case 'notifications':
+					return Ext.create('CMDBuild.controller.administration.configuration.notifications.Notifications', { parentDelegate: this });
+
 				case 'relationGraph':
 					return Ext.create('CMDBuild.controller.administration.configuration.RelationGraph', { parentDelegate: this });
 
