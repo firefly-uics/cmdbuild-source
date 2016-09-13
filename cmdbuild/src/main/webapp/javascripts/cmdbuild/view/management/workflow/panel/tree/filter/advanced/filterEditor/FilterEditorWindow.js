@@ -66,7 +66,7 @@
 								scope: this,
 
 								handler: function (button, e) {
-									this.delegate.cmfg('onPanelGridAndFormFilterAdvancedFilterEditorAbortButtonClick');
+									this.delegate.cmfg('onWorkflowTreeFilterAdvancedFilterEditorAbortButtonClick');
 								}
 							})
 						]

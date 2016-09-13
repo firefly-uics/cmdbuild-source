@@ -11,7 +11,7 @@
 			{ name: CMDBuild.core.constants.Proxy.ENTRY_TYPE, type: 'string' }, // Entry type name
 			{ name: CMDBuild.core.constants.Proxy.ID, type: 'int', useNull: true },
 			{ name: CMDBuild.core.constants.Proxy.NAME, type: 'string' },
-			{ name: CMDBuild.core.constants.Proxy.TEMPLATE, type: 'boolean' }
+			{ name: CMDBuild.core.constants.Proxy.TEMPLATE, type: 'boolean' } // Filter is marked as template if it's defined in administration side
 		],
 
 		/**
