@@ -1,4 +1,5 @@
 (function() {
+	var DEFAULT_RADIUS = 50;
 	Ext.define('CMDBuild.view.management.classes.map.thematism.ThematicLayer', {
 
 		/**
@@ -242,20 +243,17 @@
 		 * 
 		 */
 		loadCard : function(id, className, callback, callbackScope) {
-			if (!params) {
-				var params = {};
-				params[CMDBuild.core.constants.Proxy.CARD_ID] = id;
-				params[CMDBuild.core.constants.Proxy.CLASS_NAME] = className;
-			}
-
-			CMDBuild.proxy.Card.read({
-				params : params,
-				loadMask : false,
-				success : function(result, options, decodedResult) {
-					var data = decodedResult.card;
-					callback.apply(callbackScope, [ data ]);
+			var colorsTable = this.thematism.configuration.layoutConfiguration.colorsTable
+			for (var i = 0; i < colorsTable.length; i++) {
+				for (var j = 0; j < colorsTable[i].cards.length; j++) {
+					if (id === colorsTable[i].cards[j].Id) {
+						callback.apply(callbackScope, [colorsTable[i].cards[j]]);
+						return;
+					}
 				}
-			});
+			} 
+			callback.apply(callbackScope, []);
+
 		},
 
 		/**
@@ -289,7 +287,7 @@
 			case 'Point':
 			case 'Circle':
 			default:
-				var radius = parseInt(configuration.firstValue);
+				var radius = (configuration.firstValue) ? parseInt(configuration.firstValue) : DEFAULT_RADIUS;
 				return point(color, radius);
 			}
 		}

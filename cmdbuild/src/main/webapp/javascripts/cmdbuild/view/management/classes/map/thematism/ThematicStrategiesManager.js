@@ -122,6 +122,15 @@
 		 * 
 		 * @returns {generic value}
 		 */
+		value4Function : function(parameters, callback, callbackScope) {
+			callback.apply(callbackScope, [parameters.card]);
+		},
+		/**
+		 * @param {Object}
+		 *            parameters
+		 * 
+		 * @returns {generic value}
+		 */
 		functionValue : function(parameters, callback, callbackScope) {
 			var params = {
 				parameters : Ext.encode({
@@ -151,7 +160,6 @@
 				return;
 			}
 			var strategy = strategies[index];
-			strategy.value = this.functionValue;
 			CMDBuild.view.management.classes.map.proxy.Functions.readAttributes({
 				scope : this,
 				_id : strategy._id,
@@ -174,7 +182,7 @@
 		 * @returns {Void}
 		 */
 		completeOneStrategy : function(strategy, callback, callbackScope) {
-			strategy.value = this.functionValue;
+			strategy.value = this.value4Function;
 			CMDBuild.view.management.classes.map.proxy.Functions.readParameters({
 				scope : this,
 				_id : strategy._id,
