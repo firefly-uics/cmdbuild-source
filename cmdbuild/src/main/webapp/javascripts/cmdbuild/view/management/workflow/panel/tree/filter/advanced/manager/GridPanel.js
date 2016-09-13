@@ -19,6 +19,8 @@
 		menuDisabled: true,
 
 		/**
+		 * Action columns are disabled if record is marked as template
+		 *
 		 * @returns {Void}
 		 *
 		 * @override
@@ -39,10 +41,6 @@
 						width: 100,
 						fixed: true,
 
-						renderer: function (value, metadata, record, rowIndex, colIndex, store, view) { // Hide if record isTemplate
-							return record.get(CMDBuild.core.constants.Proxy.TEMPLATE) ? '' : value;
-						},
-
 						items: [
 							Ext.create('CMDBuild.core.buttons.iconized.Save', {
 								withSpacer: true,
@@ -50,7 +48,10 @@
 								scope: this,
 
 								isDisabled: function (grid, rowIndex, colIndex, item, record) {
-									return !Ext.isEmpty(record.get(CMDBuild.core.constants.Proxy.ID));
+									return (
+										!Ext.isEmpty(record.get(CMDBuild.core.constants.Proxy.ID))
+										|| record.get(CMDBuild.core.constants.Proxy.TEMPLATE)
+									);
 								},
 
 								handler: function (grid, rowIndex, colIndex, node, e, record, rowNode) {
@@ -61,6 +62,10 @@
 								withSpacer: true,
 								tooltip: CMDBuild.Translation.modify,
 								scope: this,
+
+								isDisabled: function (grid, rowIndex, colIndex, item, record) {
+									return record.get(CMDBuild.core.constants.Proxy.TEMPLATE);
+								},
 
 								handler: function (grid, rowIndex, colIndex, node, e, record, rowNode) {
 									this.delegate.cmfg('onWorkflowTreeFilterAdvancedManagerModifyButtonClick', record);
@@ -79,6 +84,10 @@
 								withSpacer: true,
 								tooltip: CMDBuild.Translation.remove,
 								scope: this,
+
+								isDisabled: function (grid, rowIndex, colIndex, item, record) {
+									return record.get(CMDBuild.core.constants.Proxy.TEMPLATE);
+								},
 
 								handler: function (grid, rowIndex, colIndex, node, e, record, rowNode) {
 									this.delegate.cmfg('onWorkflowTreeFilterAdvancedManagerRemoveButtonClick', record);

@@ -255,65 +255,70 @@
 		saveActionManage: function (enableApply) {
 			enableApply = Ext.isBoolean(enableApply) ? enableApply : false;
 
-			if (!this.cmfg('workflowTreeFilterAdvancedManagerSelectedFilterIsEmpty')) {
-				var filter = this.cmfg('workflowTreeFilterAdvancedManagerSelectedFilterGet');
-				var params = {};
-				params[CMDBuild.core.constants.Proxy.CLASS_NAME] = filter.get(CMDBuild.core.constants.Proxy.ENTRY_TYPE); // FIXME: i read entryType and write className (rename)
-				params[CMDBuild.core.constants.Proxy.CONFIGURATION] = Ext.encode(filter.get(CMDBuild.core.constants.Proxy.CONFIGURATION));
-				params[CMDBuild.core.constants.Proxy.DESCRIPTION] = filter.get(CMDBuild.core.constants.Proxy.DESCRIPTION);
-				params[CMDBuild.core.constants.Proxy.NAME] = filter.get(CMDBuild.core.constants.Proxy.NAME);
-				params[CMDBuild.core.constants.Proxy.TEMPLATE] = filter.get(CMDBuild.core.constants.Proxy.TEMPLATE);
+			// Error handling
+				if (this.cmfg('workflowTreeFilterAdvancedManagerSelectedFilterIsEmpty'))
+					return _error('saveActionManage(): empty selected filter', this, this.cmfg('workflowTreeFilterAdvancedManagerSelectedFilterGet'));
+			// END: Error handling
 
-				if (Ext.isEmpty(filter.get(CMDBuild.core.constants.Proxy.ID))) {
-					CMDBuild.proxy.management.workflow.panel.tree.filter.advanced.Manager.create({
-						params: params,
-						scope: this,
-						success: function (response, options, decodedResponse) {
-							decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.FILTER];
+			var filter = this.cmfg('workflowTreeFilterAdvancedManagerSelectedFilterGet');
 
-							if (Ext.isObject(decodedResponse) && !Ext.isEmpty(decodedResponse)) {
-								this.controllerSaveDialog.cmfg('onWorkflowTreeFilterAdvancedSaveDialogAbortButtonClick'); // Close save dialog view
-								this.controllerFilterEditor.cmfg('onWorkflowTreeFilterAdvancedFilterEditorAbortButtonClick'); // Close filter editor view
-								this.cmfg('workflowTreeFilterAdvancedManagerViewClose'); // Close manager view
+			var params = {};
+			params[CMDBuild.core.constants.Proxy.CLASS_NAME] = filter.get(CMDBuild.core.constants.Proxy.ENTRY_TYPE); // FIXME: i read entryType and write className (rename)
+			params[CMDBuild.core.constants.Proxy.CONFIGURATION] = Ext.encode(filter.get(CMDBuild.core.constants.Proxy.CONFIGURATION));
+			params[CMDBuild.core.constants.Proxy.DESCRIPTION] = filter.get(CMDBuild.core.constants.Proxy.DESCRIPTION);
+			params[CMDBuild.core.constants.Proxy.NAME] = filter.get(CMDBuild.core.constants.Proxy.NAME);
 
-								if (enableApply) { // Apply filter to store
-									this.cmfg('onWorkflowTreeFilterAdvancedFilterSelect', Ext.create('CMDBuild.model.management.workflow.panel.tree.filter.advanced.Filter', decodedResponse));
-									this.workflowTreeFilterAdvancedManagerSelectedFilterReset();
-								} else { // Otherwise reopen manager window
-									this.cmfg('workflowTreeFilterAdvancedManagerViewShow');
-								}
+			if (Ext.isEmpty(filter.get(CMDBuild.core.constants.Proxy.ID))) {
+				CMDBuild.proxy.management.workflow.panel.tree.filter.advanced.Manager.create({
+					params: params,
+					scope: this,
+					success: function (response, options, decodedResponse) {
+						decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.FILTER];
+
+						if (Ext.isObject(decodedResponse) && !Ext.isEmpty(decodedResponse)) {
+							this.controllerSaveDialog.cmfg('onWorkflowTreeFilterAdvancedSaveDialogAbortButtonClick'); // Close save dialog view
+							this.controllerFilterEditor.cmfg('onWorkflowTreeFilterAdvancedFilterEditorAbortButtonClick'); // Close filter editor view
+							this.cmfg('workflowTreeFilterAdvancedManagerViewClose'); // Close manager view
+
+							if (enableApply) { // Apply filter to store
+								this.cmfg('onWorkflowTreeFilterAdvancedFilterSelect', Ext.create('CMDBuild.model.management.workflow.panel.tree.filter.advanced.Filter', decodedResponse));
+								this.workflowTreeFilterAdvancedManagerSelectedFilterReset();
+							} else { // Otherwise reopen manager window
+								this.cmfg('workflowTreeFilterAdvancedManagerViewShow');
 							}
+						} else {
+							_error('saveActionManage(): unmanaged create response', this, decodedResponse);
 						}
-					});
-				} else {
-					params[CMDBuild.core.constants.Proxy.ID] = filter.get(CMDBuild.core.constants.Proxy.ID);
-
-					CMDBuild.proxy.management.workflow.panel.tree.filter.advanced.Manager.update({
-						params: params,
-						scope: this,
-						success: function (response, options, decodedResponse) {
-							// FIXME: hack as workaround, should be fixed on server side returning all saved filter object
-							decodedResponse = params;
-							decodedResponse[CMDBuild.core.constants.Proxy.ENTRY_TYPE] = decodedResponse[CMDBuild.core.constants.Proxy.CLASS_NAME];
-							decodedResponse[CMDBuild.core.constants.Proxy.CONFIGURATION] = Ext.decode(decodedResponse[CMDBuild.core.constants.Proxy.CONFIGURATION]);
-
-							if (Ext.isObject(decodedResponse) && !Ext.isEmpty(decodedResponse)) {
-								this.controllerSaveDialog.cmfg('onWorkflowTreeFilterAdvancedSaveDialogAbortButtonClick'); // Close save dialog view
-								this.controllerFilterEditor.cmfg('onWorkflowTreeFilterAdvancedFilterEditorAbortButtonClick'); // Close filter editor view
-								this.cmfg('workflowTreeFilterAdvancedManagerViewClose'); // Close manager view
-
-								if (enableApply) {// Apply filter to store
-									this.cmfg('onWorkflowTreeFilterAdvancedFilterSelect', Ext.create('CMDBuild.model.management.workflow.panel.tree.filter.advanced.Filter', decodedResponse));
-									this.workflowTreeFilterAdvancedManagerSelectedFilterReset();
-								} else { // Otherwise reopen manager window
-									this.cmfg('workflowTreeFilterAdvancedManagerViewShow');
-								}
-							}
-						}
-					});
-				}
+					}
+				});
 			} else {
-				_error('saveActionManage(): unmanaged filter parameter', this, this.cmfg('workflowTreeFilterAdvancedManagerSelectedFilterGet'));
+				params[CMDBuild.core.constants.Proxy.ID] = filter.get(CMDBuild.core.constants.Proxy.ID);
+
+				CMDBuild.proxy.management.workflow.panel.tree.filter.advanced.Manager.update({
+					params: params,
+					scope: this,
+					success: function (response, options, decodedResponse) {
+						// FIXME: hack as workaround, should be fixed on server side returning all saved filter object
+						decodedResponse = params;
+						decodedResponse[CMDBuild.core.constants.Proxy.ENTRY_TYPE] = decodedResponse[CMDBuild.core.constants.Proxy.CLASS_NAME];
+						decodedResponse[CMDBuild.core.constants.Proxy.CONFIGURATION] = Ext.decode(decodedResponse[CMDBuild.core.constants.Proxy.CONFIGURATION]);
+
+						if (Ext.isObject(decodedResponse) && !Ext.isEmpty(decodedResponse)) {
+							this.controllerSaveDialog.cmfg('onWorkflowTreeFilterAdvancedSaveDialogAbortButtonClick'); // Close save dialog view
+							this.controllerFilterEditor.cmfg('onWorkflowTreeFilterAdvancedFilterEditorAbortButtonClick'); // Close filter editor view
+							this.cmfg('workflowTreeFilterAdvancedManagerViewClose'); // Close manager view
+
+							if (enableApply) {// Apply filter to store
+								this.cmfg('onWorkflowTreeFilterAdvancedFilterSelect', Ext.create('CMDBuild.model.management.workflow.panel.tree.filter.advanced.Filter', decodedResponse));
+								this.workflowTreeFilterAdvancedManagerSelectedFilterReset();
+							} else { // Otherwise reopen manager window
+								this.cmfg('workflowTreeFilterAdvancedManagerViewShow');
+							}
+						} else {
+							_error('saveActionManage(): unmanaged update response', this, decodedResponse);
+						}
+					}
+				});
 			}
 		},
 
