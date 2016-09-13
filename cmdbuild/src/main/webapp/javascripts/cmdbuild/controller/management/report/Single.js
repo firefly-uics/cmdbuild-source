@@ -28,6 +28,11 @@
 		],
 
 		/**
+		 * @property {CMDBuild.controller.management.report.Parameters}
+		 */
+		controllerParametersWindow: undefined,
+
+		/**
 		 * All server calls parameters
 		 *
 		 * @property {Object}
@@ -75,6 +80,9 @@
 			this.callParent(arguments);
 
 			this.view = Ext.create('CMDBuild.view.management.report.SinglePanel', { delegate: this });
+
+			// Build sub-controllers
+			this.controllerParametersWindow = Ext.create('CMDBuild.controller.management.report.Parameters', { parentDelegate: this });
 		},
 
 		/**
@@ -102,9 +110,8 @@
 								this.view.removeAll();
 
 							if (this.currentReportParametersIsEmpty('update')) {
-								Ext.create('CMDBuild.controller.management.report.Parameters', {
-									parentDelegate: this,
-									attributeList: decodedResponse.attribute,
+								this.controllerParametersWindow.cmfg('reportParametersWindowReconfigureAndShow', {
+									attributes: decodedResponse.attribute,
 									forceDownload: forceDownload
 								});
 							} else {

@@ -3,12 +3,7 @@
 	Ext.define('CMDBuild.controller.management.report.Parameters', {
 		extend: 'CMDBuild.controller.common.abstract.Base',
 
-		requires: [
-			'CMDBuild.core.Message',
-			'CMDBuild.core.constants.Proxy',
-			'CMDBuild.proxy.index.Json',
-			'CMDBuild.proxy.report.Report'
-		],
+		requires: ['CMDBuild.core.constants.Proxy'],
 
 		/**
 		 * @cfg {Mixed}
@@ -18,12 +13,8 @@
 		/**
 		 * @cfg {Array}
 		 */
-		attributeList: undefined,
-
-		/**
-		 * @cfg {Array}
-		 */
 		cmfgCatchedFunctions: [
+			'reportParametersWindowReconfigureAndShow',
 			'onReportParametersWindowAbortButtonClick',
 			'onReportParametersWindowPrintButtonClick'
 		],
@@ -47,6 +38,8 @@
 		 * @param {Object} configurationObject
 		 * @param {Mixed} configurationObject.parentDelegate
 		 *
+		 * @returns {Void}
+		 *
 		 * @override
 		 */
 		constructor: function (configurationObject) {
@@ -56,56 +49,62 @@
 
 			// ShortHands
 			this.form = this.view.form;
-
-			// Show window
-			if (!Ext.isEmpty(this.view)) {
-				this.buildFields();
-
-				this.setViewTitle(this.cmfg('selectedReportRecordGet', CMDBuild.core.constants.Proxy.DESCRIPTION));
-
-				this.view.show();
-			}
 		},
 
 		/**
+		 * @param {Array} attributes
+		 *
+		 * @returns {Void}
+		 *
 		 * @private
 		 */
-		buildFields: function () {
-			if (this.attributeList.length > 0) {
-				var fieldManager = Ext.create('CMDBuild.core.fieldManager.FieldManager', {
+		buildFields: function (attributes) {
+			// Error handling
+				if (!Ext.isArray(attributes) || Ext.isEmpty(attributes))
+					return _error('buildFields(): unmanaged attributes parameter', this, attributes);
+			// END: Error handling
+
+			var fieldManager = Ext.create('CMDBuild.core.fieldManager.FieldManager', {
 					parentDelegate: this,
 					targetForm: this.form
-				});
+				}),
+				fields = [];
 
-				Ext.Array.each(this.attributeList, function (attribute, i, allAttributes) {
-					if (fieldManager.isAttributeManaged(attribute[CMDBuild.core.constants.Proxy.TYPE])) {
-						var attributeCustom = Ext.create('CMDBuild.model.common.attributes.Attribute', attribute);
-						attributeCustom.setAdaptedData(attribute);
+			Ext.Array.each(attributes, function (attribute, i, allAttributes) {
+				if (fieldManager.isAttributeManaged(attribute[CMDBuild.core.constants.Proxy.TYPE])) {
+					var attributeCustom = Ext.create('CMDBuild.model.common.attributes.Attribute', attribute);
+					attributeCustom.setAdaptedData(attribute);
 
-						fieldManager.attributeModelSet(attributeCustom);
-						fieldManager.add(this.form, fieldManager.buildField());
-					} else { // @deprecated - Old field manager
-						var field = CMDBuild.Management.FieldManager.getFieldForAttr(attribute, false, false);
+					fieldManager.attributeModelSet(attributeCustom);
+					fieldManager.push(fields, fieldManager.buildField());
+				} else { // @deprecated - Old field manager
+					var field = CMDBuild.Management.FieldManager.getFieldForAttr(attribute, false, false);
 
-						if (!Ext.isEmpty(field)) {
-							field.maxWidth = field.width || CMDBuild.core.constants.FieldWidths.STANDARD_BIG;
+					if (!Ext.isEmpty(field)) {
+						field.maxWidth = field.width || CMDBuild.core.constants.FieldWidths.STANDARD_BIG;
 
-							if (attribute.defaultvalue)
-								field.setValue(attribute.defaultvalue);
+						if (attribute.defaultvalue)
+							field.setValue(attribute.defaultvalue);
 
-							this.form.add(field);
-						}
+						fields.push(field);
 					}
-				}, this);
-			} else {
-				_error('buildFields(): unmanaged attributeList configuration property', this, this.attributeList);
-			}
+				}
+			}, this);
+
+			this.form.removeAll();
+			this.form.add(fields);
 		},
 
+		/**
+		 * @returns {Void}
+		 */
 		onReportParametersWindowAbortButtonClick: function () {
-			this.view.destroy();
+			this.view.close();
 		},
 
+		/**
+		 * @returns {Void}
+		 */
 		onReportParametersWindowPrintButtonClick: function () {
 			if (this.view.form.getForm().isValid()) {
 				this.cmfg('selectedReportParametersSet', {
@@ -115,8 +114,28 @@
 
 				this.cmfg('updateReport', this.forceDownload);
 
-				this.onReportParametersWindowAbortButtonClick();
+				this.cmfg('onReportParametersWindowAbortButtonClick');
 			}
+		},
+
+		/**
+		 * @param {Object} parameters
+		 * @param {Array} parameters.attributes
+		 * @param {Boolean} parameters.forceDownload
+		 *
+		 * @returns {Void}
+		 */
+		reportParametersWindowReconfigureAndShow: function (parameters) {
+			parameters = Ext.isObject(parameters) ? parameters : {};
+			parameters.forceDownload = Ext.isBoolean(parameters.forceDownload) ? parameters.forceDownload : false;
+
+			this.forceDownload = parameters.forceDownload;
+
+			this.setViewTitle(this.cmfg('selectedReportRecordGet', CMDBuild.core.constants.Proxy.DESCRIPTION));
+
+			this.buildFields(parameters.attributes);
+
+			this.view.show();
 		}
 	});
 
