@@ -54,6 +54,9 @@
 		 * @returns {Void}
 		 */
 		onCardNavigation: function(card) {
+			if (!card.id) {
+				card.id = card.Id;
+			}
 			CMDBuild.global.controller.MainViewport.cmfg('mainViewportCardSelect', card);
 		},
 		onCardZoom: function(card) {
