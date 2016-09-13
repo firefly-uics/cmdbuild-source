@@ -1,5 +1,8 @@
 (function () {
 
+	/**
+	 * @link CMDBuild.controller.management.workflow.panel.tree.filter.advanced.Advanced
+	 */
 	Ext.define('CMDBuild.controller.common.panel.gridAndForm.panel.common.filter.advanced.Advanced', {
 		extend: 'CMDBuild.controller.common.abstract.Base',
 
@@ -238,6 +241,8 @@
 						filterIdentifier = new Date().valueOf(); // Compatibility mode with IE older than IE 9 (Date.now())
 
 					this.localFilterCache[filterIdentifier] = filterModel;
+				} else {
+					_error('panelGridAndFormFilterAdvancedLocalFilterAdd(): unmanaged filterModel parameter', this, filterModel);
 				}
 			},
 
@@ -245,7 +250,16 @@
 			 * @returns {Array}
 			 */
 			panelGridAndFormFilterAdvancedLocalFilterGet: function () {
-				return Ext.Object.getValues(this.localFilterCache);
+				var localFilterModels = Ext.Object.getValues(this.localFilterCache)
+					selectedEntryTypeName = this.cmfg('panelGridAndFormFilterAdvancedEntryTypeGet', CMDBuild.core.constants.Proxy.NAME);
+
+				// Remove filter models not related with selected entrytype
+				if (Ext.isArray(localFilterModels) && !Ext.isEmpty(localFilterModels))
+					localFilterModels = Ext.Array.filter(localFilterModels, function (filterModel, i, allFilterModels) {
+						return filterModel.get(CMDBuild.core.constants.Proxy.ENTRY_TYPE) == selectedEntryTypeName;
+					}, this);
+
+				return localFilterModels;
 			},
 
 			/**
@@ -281,6 +295,8 @@
 
 					if (!Ext.isEmpty(identifierToDelete))
 						delete this.localFilterCache[identifierToDelete];
+				} else {
+					_error('panelGridAndFormFilterAdvancedLocalFilterRemove(): unmanaged filterModel parameter', this, filterModel);
 				}
 			},
 

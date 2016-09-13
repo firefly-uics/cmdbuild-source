@@ -2,6 +2,9 @@
 
 	Ext.require('CMDBuild.core.constants.Proxy');
 
+	/**
+	 * @link CMDBuild.model.management.workflow.panel.tree.filter.advanced.Filter
+	 */
 	Ext.define('CMDBuild.model.common.panel.gridAndForm.filter.advanced.Filter', {
 		extend: 'Ext.data.Model',
 
@@ -11,7 +14,7 @@
 			{ name: CMDBuild.core.constants.Proxy.ENTRY_TYPE, type: 'string' }, // Entry type name
 			{ name: CMDBuild.core.constants.Proxy.ID, type: 'int', useNull: true },
 			{ name: CMDBuild.core.constants.Proxy.NAME, type: 'string' },
-			{ name: CMDBuild.core.constants.Proxy.TEMPLATE, type: 'boolean' }
+			{ name: CMDBuild.core.constants.Proxy.TEMPLATE, type: 'boolean' } // Filter is marked as template if it's defined in administration side
 		],
 
 		/**
@@ -88,8 +91,6 @@
 							this.findParameters(attributeObject, parameterType, parameters, onlyWithEmptyValue);
 						}, this);
 				}
-			} else {
-				_error('findParameters(): wrong arguments', this, configuration, parameterType, parameters, onlyWithEmptyValue);
 			}
 		},
 

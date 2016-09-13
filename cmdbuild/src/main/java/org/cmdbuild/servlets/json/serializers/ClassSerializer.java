@@ -4,6 +4,7 @@ import static org.apache.commons.lang3.ObjectUtils.defaultIfNull;
 import static org.cmdbuild.servlets.json.CommunicationConstants.ACTIVE;
 import static org.cmdbuild.servlets.json.CommunicationConstants.CLASS_DESCRIPTION;
 import static org.cmdbuild.servlets.json.CommunicationConstants.ID;
+import static org.cmdbuild.servlets.json.CommunicationConstants.META;
 import static org.cmdbuild.servlets.json.CommunicationConstants.NAME;
 import static org.cmdbuild.servlets.json.CommunicationConstants.PARENT;
 import static org.cmdbuild.servlets.json.CommunicationConstants.SUPERCLASS;
@@ -30,7 +31,8 @@ import org.cmdbuild.workflow.user.UserProcessClass;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public class ClassSerializer extends Serializer {
+@_Serializer
+public class ClassSerializer {
 
 	private static final String WRITE_PRIVILEGE = "priv_write", CREATE_PRIVILEGE = "priv_create";
 
@@ -127,16 +129,21 @@ public class ClassSerializer extends Serializer {
 		}
 	}
 
+	private void addMetadata(final JSONObject serializer) throws JSONException {
+		final JSONObject jsonMetadata = new JSONObject();
+		serializer.put(META, jsonMetadata);
+	}
+
 	private void addUiCardModePrivileges(final CMClass cmClass, final JSONObject json) throws JSONException {
 		final OperationUser user = userStore.getUser();
-		CardEditMode cardEditMode = securityLogic.fetchCardEditModeForGroupAndClass(user.getPreferredGroup().getId(),
-				cmClass.getId());
+		CardEditMode cardEditMode =
+				securityLogic.fetchCardEditModeForGroupAndClass(user.getPreferredGroup().getId(), cmClass.getId());
 		cardEditMode = defaultIfNull(cardEditMode, CardEditMode.ALLOW_ALL);
 		json.put(UI_CARD_EDIT_MODE, LOGIC_TO_JSON.apply(cardEditMode));
 	}
 
-	public JSONObject toClient(final UserProcessClass element, final boolean addManagementInfo) throws JSONException,
-			CMWorkflowException {
+	public JSONObject toClient(final UserProcessClass element, final boolean addManagementInfo)
+			throws JSONException, CMWorkflowException {
 		return toClient(element, null, addManagementInfo);
 	}
 

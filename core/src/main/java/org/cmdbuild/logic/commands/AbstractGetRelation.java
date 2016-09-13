@@ -67,10 +67,6 @@ public class AbstractGetRelation {
 		this.view = view;
 	}
 
-	protected QuerySpecsBuilder getRelationQuery(final Card src, final CMDomain domain) {
-		return getRelationQuerySpecsBuilder(src, domain, null);
-	}
-
 	protected QuerySpecsBuilder getRelationQuerySpecsBuilder(final Card src, final CMDomain domain,
 			final WhereClause whereClause) {
 		final CMClass srcCardType = getCardType(src);

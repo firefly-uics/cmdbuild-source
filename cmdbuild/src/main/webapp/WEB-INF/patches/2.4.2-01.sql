@@ -28,6 +28,8 @@ $$ LANGUAGE PLPGSQL;
 
 SELECT apply_patch();
 
+DROP FUNCTION IF EXISTS apply_patch();
+
 CREATE OR REPLACE FUNCTION _cm_create_class_history(CMClassName text)
 	RETURNS void AS $$
 BEGIN

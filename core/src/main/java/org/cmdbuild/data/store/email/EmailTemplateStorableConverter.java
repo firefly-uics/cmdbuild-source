@@ -29,6 +29,12 @@ public class EmailTemplateStorableConverter extends BaseStorableConverter<EmailT
 
 	private static final IdAndDescription NULL_ACCOUNT = new IdAndDescription(null, null);
 
+	private final DelayConverter delayConverter;
+
+	public EmailTemplateStorableConverter(final DelayConverter delayConverter) {
+		this.delayConverter = delayConverter;
+	}
+
 	@Override
 	public String getClassName() {
 		return TABLE_NAME;
@@ -54,7 +60,7 @@ public class EmailTemplateStorableConverter extends BaseStorableConverter<EmailT
 				.withAccount(defaultIfNull(card.get(ACCOUNT, IdAndDescription.class), NULL_ACCOUNT).getId()) //
 				.withKeepSynchronization(defaultIfNull(card.get(KEEP_SYNCHRONIZATION, Boolean.class), true)) //
 				.withPromptSynchronization(defaultIfNull(card.get(PROMPT_SYNCHRONIZATION, Boolean.class), false)) //
-				.withDelay(defaultIfNull(card.get(DELAY, Integer.class), 0).longValue()) //
+				.withDelay(delayConverter.convert(defaultIfNull(card.get(DELAY, Integer.class), 0))) //
 				.build();
 	}
 
@@ -72,7 +78,7 @@ public class EmailTemplateStorableConverter extends BaseStorableConverter<EmailT
 		values.put(ACCOUNT, emailTemplate.getAccount());
 		values.put(KEEP_SYNCHRONIZATION, emailTemplate.isKeepSynchronization());
 		values.put(PROMPT_SYNCHRONIZATION, emailTemplate.isPromptSynchronization());
-		values.put(DELAY, emailTemplate.getDelay());
+		values.put(DELAY, delayConverter.reverse().convert(emailTemplate.getDelay()));
 		return values;
 	}
 

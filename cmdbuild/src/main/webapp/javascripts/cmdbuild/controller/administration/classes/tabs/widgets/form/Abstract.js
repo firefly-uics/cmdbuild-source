@@ -4,7 +4,7 @@
 	Ext.require(['CMDBuild.core.constants.Proxy']);
 
 	/**
-	 * @link CMDBuild.controller.administration.widget.form.Abstract
+	 * @abstract
 	 */
 	Ext.define('CMDBuild.controller.administration.classes.tabs.widgets.form.Abstract', {
 		extend: 'CMDBuild.controller.common.abstract.Base',

@@ -109,7 +109,7 @@
 					}
 				}),
 				this.deleteCardButton = Ext.create('CMDBuild.core.buttons.iconized.Remove', {
-					text: CMDBuild.Translation.removeProcess,
+					text: CMDBuild.Translation.abortProcess,
 					scope: this,
 
 					handler: function (button, e) {

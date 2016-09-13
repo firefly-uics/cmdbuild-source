@@ -3,8 +3,6 @@
 	/**
 	 * Class with adapted functions to be compatible with old FieldManager
 	 *
-	 * @link CMDBuild.view.common.panel.gridAndForm.panel.common.filter.advanced.filterEditor.attributes.FieldSet
-	 *
 	 * @adapter
 	 */
 	Ext.define('CMDBuild.view.management.workflow.panel.tree.filter.advanced.filterEditor.attributes.FieldSet', {
@@ -16,7 +14,7 @@
 		},
 
 		/**
-		 * @cfg {CMDBuild.controller.common.panel.gridAndForm.panel.common.filter.advanced.filterEditor.Attributes}
+		 * @cfg {CMDBuild.controller.management.workflow.panel.tree.filter.advanced.filterEditor.Attributes}
 		 */
 		delegate: undefined,
 
@@ -82,7 +80,7 @@
 			if (count > 0) {
 				this.items.last().hideOr();
 			} else {
-				this.delegate.cmfg('onPanelGridAndFormFilterAdvancedFilterEditorAttributesFieldSetEmptied', this.attributeName);
+				this.delegate.cmfg('onWorkflowTreeFilterAdvancedFilterEditorAttributesFieldSetEmptied', this.attributeName);
 			}
 		}
 	});

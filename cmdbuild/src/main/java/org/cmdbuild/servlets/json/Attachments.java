@@ -64,7 +64,7 @@ public class Attachments extends JSONBaseWithSpringContext {
 		final List<StoredDocument> attachments = dmsLogic().search(className, cardId);
 		final JSONArray rows = new JSONArray();
 		for (final StoredDocument attachment : attachments) {
-			rows.put(Serializer.serializeAttachment(attachment));
+			rows.put(new Serializer(authLogic()).serializeAttachment(attachment));
 		}
 
 		final JSONObject out = new JSONObject();

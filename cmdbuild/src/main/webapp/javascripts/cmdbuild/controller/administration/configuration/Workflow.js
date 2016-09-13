@@ -6,8 +6,7 @@
 		requires: [
 			'CMDBuild.core.constants.ModuleIdentifiers',
 			'CMDBuild.core.constants.Proxy',
-			'CMDBuild.proxy.configuration.Workflow',
-			'CMDBuild.model.configuration.Workflow'
+			'CMDBuild.proxy.administration.configuration.Workflow'
 		],
 
 		/**
@@ -46,8 +45,10 @@
 		 * @returns {Void}
 		 */
 		onConfigurationWorkflowSaveButtonClick: function () {
-			CMDBuild.proxy.configuration.Workflow.update({
-				params: CMDBuild.model.configuration.Workflow.convertToLegacy(this.view.getData(true)),
+			var configurationModel = Ext.create('CMDBuild.model.administration.configuration.Workflow', this.view.panelFunctionDataGet({ includeDisabled: true }));
+
+			CMDBuild.proxy.administration.configuration.Workflow.update({
+				params: configurationModel.getParamsObject(),
 				scope: this,
 				success: function (response, options, decodedResponse) {
 					this.cmfg('onConfigurationWorkflowTabShow');
@@ -61,13 +62,13 @@
 		 * @returns {Void}
 		 */
 		onConfigurationWorkflowTabShow: function () {
-			CMDBuild.proxy.configuration.Workflow.read({
+			CMDBuild.proxy.administration.configuration.Workflow.read({
 				scope: this,
 				success: function (response, options, decodedResponse) {
 					decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.DATA];
 
-					if (!Ext.isEmpty(decodedResponse)) {
-						this.view.loadRecord(Ext.create('CMDBuild.model.configuration.Workflow', CMDBuild.model.configuration.Workflow.convertFromLegacy(decodedResponse)));
+					if (Ext.isObject(decodedResponse) && !Ext.Object.isEmpty(decodedResponse)) {
+						this.view.loadRecord(Ext.create('CMDBuild.model.administration.configuration.Workflow', decodedResponse));
 
 						Ext.create('CMDBuild.core.configurations.builder.Workflow', { // Rebuild configuration model
 							scope: this,

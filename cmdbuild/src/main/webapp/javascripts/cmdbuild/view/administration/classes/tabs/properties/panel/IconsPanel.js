@@ -54,6 +54,7 @@
 					Ext.create('Ext.form.FieldContainer', {
 						fieldLabel: CMDBuild.Translation.current,
 						labelWidth: CMDBuild.core.constants.FieldWidths.LABEL,
+						considerAsFieldToDisable: true,
 
 						items: [
 							this.imageIconDisplayField = Ext.create('Ext.Img', {

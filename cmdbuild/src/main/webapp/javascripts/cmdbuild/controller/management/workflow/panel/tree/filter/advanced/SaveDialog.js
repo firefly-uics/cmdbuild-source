@@ -1,8 +1,5 @@
 (function () {
 
-	/**
-	 * @link CMDBuild.controller.common.panel.gridAndForm.panel.common.filter.advanced.SaveDialog
-	 */
 	Ext.define('CMDBuild.controller.management.workflow.panel.tree.filter.advanced.SaveDialog', {
 		extend: 'CMDBuild.controller.common.abstract.Base',
 
@@ -17,9 +14,9 @@
 		 * @cfg {Array}
 		 */
 		cmfgCatchedFunctions: [
-			'panelGridAndFormFilterAdvancedSaveDialogShow',
-			'onPanelGridAndFormFilterAdvancedSaveDialogAbortButtonClick',
-			'onPanelGridAndFormFilterAdvancedSaveDialogSaveButtonClick'
+			'onWorkflowTreeFilterAdvancedSaveDialogAbortButtonClick',
+			'onWorkflowTreeFilterAdvancedSaveDialogSaveButtonClick',
+			'workflowTreeFilterAdvancedSaveDialogShow'
 		],
 
 		/**
@@ -30,12 +27,12 @@
 		enableApply: false,
 
 		/**
-		 * @property {CMDBuild.view.common.panel.gridAndForm.panel.common.filter.advanced.saveDialog.FormPanel}
+		 * @property {CMDBuild.view.management.workflow.panel.tree.filter.advanced.saveDialog.FormPanel}
 		 */
 		form: undefined,
 
 		/**
-		 * @property {CMDBuild.view.common.panel.gridAndForm.panel.common.filter.advanced.saveDialog.SaveDialogWindow}
+		 * @property {CMDBuild.view.management.workflow.panel.tree.filter.advanced.saveDialog.SaveDialogWindow}
 		 */
 		view: undefined,
 
@@ -50,10 +47,42 @@
 		constructor: function (configurationObject) {
 			this.callParent(arguments);
 
-			this.view = Ext.create('CMDBuild.view.common.panel.gridAndForm.panel.common.filter.advanced.saveDialog.SaveDialogWindow', { delegate: this });
+			this.view = Ext.create('CMDBuild.view.management.workflow.panel.tree.filter.advanced.saveDialog.SaveDialogWindow', { delegate: this });
 
 			// Shorthands
 			this.form = this.view.form;
+		},
+
+		/**
+		 * @returns {Void}
+		 */
+		onWorkflowTreeFilterAdvancedSaveDialogAbortButtonClick: function () {
+			this.view.close();
+		},
+
+		/**
+		 * @returns {Void}
+		 */
+		onWorkflowTreeFilterAdvancedSaveDialogSaveButtonClick: function () {
+			if (this.validate(this.form)) {
+				var formData = this.form.getData();
+
+				this.cmfg('workflowTreeFilterAdvancedManagerSelectedFilterSet', {
+					propertyName: CMDBuild.core.constants.Proxy.DESCRIPTION,
+					value: formData[CMDBuild.core.constants.Proxy.DESCRIPTION]
+				});
+				this.cmfg('workflowTreeFilterAdvancedManagerSelectedFilterSet', {
+					propertyName: CMDBuild.core.constants.Proxy.NAME,
+					value: formData[CMDBuild.core.constants.Proxy.NAME]
+				});
+
+				this.cmfg('workflowTreeFilterAdvancedManagerSave', {
+					enableApply: this.enableApply,
+					enableSaveDialog: false
+				});
+
+				this.cmfg('onWorkflowTreeFilterAdvancedSaveDialogAbortButtonClick');
+			}
 		},
 
 		/**
@@ -61,47 +90,15 @@
 		 *
 		 * @returns {Void}
 		 */
-		panelGridAndFormFilterAdvancedSaveDialogShow: function (enableApply) {
-			if (!this.cmfg('panelGridAndFormFilterAdvancedManagerSelectedFilterIsEmpty')) {
+		workflowTreeFilterAdvancedSaveDialogShow: function (enableApply) {
+			if (!this.cmfg('workflowTreeFilterAdvancedManagerSelectedFilterIsEmpty')) {
 				this.enableApply = Ext.isBoolean(enableApply) ? enableApply : false;
 
-				this.form.loadRecord(this.cmfg('panelGridAndFormFilterAdvancedManagerSelectedFilterGet'));
+				this.form.loadRecord(this.cmfg('workflowTreeFilterAdvancedManagerSelectedFilterGet'));
 
 				this.view.show();
 			} else {
-				_error('panelGridAndFormFilterAdvancedSaveDialogShow(): cannot manage empty filter', this, this.cmfg('panelGridAndFormFilterAdvancedManagerSelectedFilterGet'));
-			}
-		},
-
-		/**
-		 * @returns {Void}
-		 */
-		onPanelGridAndFormFilterAdvancedSaveDialogAbortButtonClick: function () {
-			this.view.close();
-		},
-
-		/**
-		 * @returns {Void}
-		 */
-		onPanelGridAndFormFilterAdvancedSaveDialogSaveButtonClick: function () {
-			if (this.validate(this.form)) {
-				var formData = this.form.getData();
-
-				this.cmfg('panelGridAndFormFilterAdvancedManagerSelectedFilterSet', {
-					propertyName: CMDBuild.core.constants.Proxy.DESCRIPTION,
-					value: formData[CMDBuild.core.constants.Proxy.DESCRIPTION]
-				});
-				this.cmfg('panelGridAndFormFilterAdvancedManagerSelectedFilterSet', {
-					propertyName: CMDBuild.core.constants.Proxy.NAME,
-					value: formData[CMDBuild.core.constants.Proxy.NAME]
-				});
-
-				this.cmfg('panelGridAndFormFilterAdvancedManagerSave', {
-					enableApply: this.enableApply,
-					enableSaveDialog: false
-				});
-
-				this.cmfg('onPanelGridAndFormFilterAdvancedSaveDialogAbortButtonClick');
+				_error('workflowTreeFilterAdvancedSaveDialogShow(): cannot manage empty filter', this, this.cmfg('workflowTreeFilterAdvancedManagerSelectedFilterGet'));
 			}
 		}
 	});

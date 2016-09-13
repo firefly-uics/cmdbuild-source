@@ -1,8 +1,5 @@
 (function () {
 
-	/**
-	 * @link CMDBuild.controller.common.panel.gridAndForm.panel.common.filter.advanced.filterEditor.relations.Relations
-	 */
 	Ext.define('CMDBuild.controller.management.workflow.panel.tree.filter.advanced.filterEditor.relations.Relations', {
 		extend: 'CMDBuild.controller.common.abstract.Base',
 
@@ -17,14 +14,14 @@
 		 * @cfg {Array}
 		 */
 		cmfgCatchedFunctions: [
-			'panelGridAndFormFilterAdvancedFilterEditorRelationsDataGet',
-			'panelGridAndFormFilterAdvancedFilterEditorRelationsSelectedDomainGet',
-			'panelGridAndFormFilterAdvancedFilterEditorRelationsSelectedDomainIsEmpty',
-			'panelGridAndFormFilterAdvancedFilterEditorRelationsSelectedDomainSet',
-			'panelGridAndFormFilterAdvancedFilterEditorRelationsSelectionManage',
-			'onPanelGridAndFormFilterAdvancedFilterEditorRelationsCheckchange',
-			'onPanelGridAndFormFilterAdvancedFilterEditorRelationsDomainSelect',
-			'onPanelGridAndFormFilterAdvancedFilterEditorRelationsViewShow'
+			'onWorkflowTreeFilterAdvancedFilterEditorRelationsCheckchange',
+			'onWorkflowTreeFilterAdvancedFilterEditorRelationsDomainSelect',
+			'onWorkflowTreeFilterAdvancedFilterEditorRelationsViewShow',
+			'workflowTreeFilterAdvancedFilterEditorRelationsDataGet',
+			'workflowTreeFilterAdvancedFilterEditorRelationsSelectedDomainGet',
+			'workflowTreeFilterAdvancedFilterEditorRelationsSelectedDomainIsEmpty',
+			'workflowTreeFilterAdvancedFilterEditorRelationsSelectedDomainSet',
+			'workflowTreeFilterAdvancedFilterEditorRelationsSelectionManage'
 		],
 
 		/**
@@ -38,14 +35,14 @@
 		controllerGridCard: undefined,
 
 		/**
-		 * @property {CMDBuild.model.common.field.filter.advanced.window.relations.DomainGrid}
+		 * @property {CMDBuild.model.management.workflow.panel.tree.filter.advanced.filterEditor.relations.DomainGrid}
 		 *
 		 * @private
 		 */
 		selectedDomain: undefined,
 
 		/**
-		 * @property {CMDBuild.view.common.panel.gridAndForm.panel.common.filter.advanced.filterEditor.relations.RelationsView}
+		 * @property {CMDBuild.view.management.workflow.panel.tree.filter.advanced.filterEditor.relations.RelationsView}
 		 */
 		view: undefined,
 
@@ -60,7 +57,7 @@
 		constructor: function (configurationObject) {
 			this.callParent(arguments);
 
-			this.view = Ext.create('CMDBuild.view.common.panel.gridAndForm.panel.common.filter.advanced.filterEditor.relations.RelationsView', { delegate: this });
+			this.view = Ext.create('CMDBuild.view.management.workflow.panel.tree.filter.advanced.filterEditor.relations.RelationsView', { delegate: this });
 
 			// Sub-controllers
 			this.controllerGridCard = Ext.create('CMDBuild.controller.management.workflow.panel.tree.filter.advanced.filterEditor.relations.GridCard', { parentDelegate: this });
@@ -70,32 +67,6 @@
 				this.controllerGridCard.getView(),
 				this.controllerGridDomain.getView()
 			]);
-		},
-
-		/**
-		 * @param {Object} parameters
-		 * @param {Boolean} parameters.checked
-		 * @param {String} parameters.propertyName
-		 * @param {CMDBuild.model.common.panel.gridAndForm.filter.advanced.filterEditor.relations.DomainGrid} parameters.record
-		 *
-		 * @returns {Void}
-		 */
-		onPanelGridAndFormFilterAdvancedFilterEditorRelationsCheckchange: function (parameters) {
-			this.controllerGridDomain.cmfg('onPanelGridAndFormFilterAdvancedFilterEditorRelationsGridDomainCheckchange', parameters);
-			this.controllerGridCard.cmfg('onPanelGridAndFormFilterAdvancedFilterEditorRelationsGridCardCheckchange');
-		},
-
-		/**
-		 * @param {CMDBuild.model.common.panel.gridAndForm.filter.advanced.filterEditor.relations.DomainGrid} record
-		 *
-		 * @returns {Void}
-		 */
-		onPanelGridAndFormFilterAdvancedFilterEditorRelationsDomainSelect: function (record) {
-			if (Ext.isObject(record) && !Ext.Object.isEmpty(record)) {
-				this.cmfg('panelGridAndFormFilterAdvancedFilterEditorRelationsSelectedDomainSet', { value: record });
-
-				this.controllerGridCard.cmfg('onPanelGridAndFormFilterAdvancedFilterEditorRelationsGridCardDomainSelect');
-			}
 		},
 
 		/**
@@ -135,31 +106,119 @@
 		},
 
 		/**
+		 * @param {Object} parameters
+		 * @param {Boolean} parameters.checked
+		 * @param {String} parameters.propertyName
+		 * @param {CMDBuild.model.management.workflow.panel.tree.filter.advanced.filterEditor.relations.DomainGrid} parameters.record
+		 *
+		 * @returns {Void}
+		 */
+		onWorkflowTreeFilterAdvancedFilterEditorRelationsCheckchange: function (parameters) {
+			this.controllerGridDomain.cmfg('onWorkflowTreeFilterAdvancedFilterEditorRelationsGridDomainCheckchange', parameters);
+			this.controllerGridCard.cmfg('onWorkflowTreeFilterAdvancedFilterEditorRelationsGridCardCheckchange');
+		},
+
+		/**
+		 * @param {CMDBuild.model.management.workflow.panel.tree.filter.advanced.filterEditor.relations.DomainGrid} record
+		 *
+		 * @returns {Void}
+		 */
+		onWorkflowTreeFilterAdvancedFilterEditorRelationsDomainSelect: function (record) {
+			if (Ext.isObject(record) && !Ext.Object.isEmpty(record)) {
+				this.cmfg('workflowTreeFilterAdvancedFilterEditorRelationsSelectedDomainSet', { value: record });
+
+				this.controllerGridCard.cmfg('onWorkflowTreeFilterAdvancedFilterEditorRelationsGridCardDomainSelect');
+			}
+		},
+
+		/**
+		 * @returns {Void}
+		 */
+		onWorkflowTreeFilterAdvancedFilterEditorRelationsViewShow: function () {
+			if (!this.cmfg('workflowSelectedWorkflowIsEmpty')) {
+				this.workflowTreeFilterAdvancedFilterEditorRelationsSelectedDomainReset();
+
+				this.controllerGridCard.getView().fireEvent('show');
+				this.controllerGridDomain.getView().fireEvent('show');
+			}
+		},
+
+		// SelectedDomain property methods
+			/**
+			 * @param {Array or String} attributePath
+			 *
+			 * @returns {Mixed or undefined}
+			 */
+			workflowTreeFilterAdvancedFilterEditorRelationsSelectedDomainGet: function (attributePath) {
+				var parameters = {};
+				parameters[CMDBuild.core.constants.Proxy.TARGET_VARIABLE_NAME] = 'selectedDomain';
+				parameters[CMDBuild.core.constants.Proxy.ATTRIBUTE_PATH] = attributePath;
+
+				return this.propertyManageGet(parameters);
+			},
+
+			/**
+			 * @param {Array or String} attributePath
+			 *
+			 * @returns {Boolean}
+			 */
+			workflowTreeFilterAdvancedFilterEditorRelationsSelectedDomainIsEmpty: function (attributePath) {
+				var parameters = {};
+				parameters[CMDBuild.core.constants.Proxy.TARGET_VARIABLE_NAME] = 'selectedDomain';
+				parameters[CMDBuild.core.constants.Proxy.ATTRIBUTE_PATH] = attributePath;
+
+				return this.propertyManageIsEmpty(parameters);
+			},
+
+			/**
+			 * @returns {Void}
+			 *
+			 * @private
+			 */
+			workflowTreeFilterAdvancedFilterEditorRelationsSelectedDomainReset: function () {
+				this.propertyManageReset('selectedDomain');
+			},
+
+			/**
+			 * @param {Object} parameters
+			 *
+			 * @returns {Void}
+			 */
+			workflowTreeFilterAdvancedFilterEditorRelationsSelectedDomainSet: function (parameters) {
+				if (Ext.isObject(parameters) && !Ext.Object.isEmpty(parameters)) {
+					parameters[CMDBuild.core.constants.Proxy.MODEL_NAME] = 'CMDBuild.model.management.workflow.panel.tree.filter.advanced.filterEditor.relations.DomainGrid';
+					parameters[CMDBuild.core.constants.Proxy.TARGET_VARIABLE_NAME] = 'selectedDomain';
+
+					this.propertyManageSet(parameters);
+				}
+			},
+
+		/**
 		 * Manages view's filter configuration
 		 *
 		 * @returns {Void}
 		 */
-		panelGridAndFormFilterAdvancedFilterEditorRelationsSelectionManage: function () {
-			if (!this.cmfg('panelGridAndFormFilterAdvancedManagerSelectedFilterIsEmpty')) {
-				var filterConfigurationObject = this.cmfg('panelGridAndFormFilterAdvancedManagerSelectedFilterGet', CMDBuild.core.constants.Proxy.CONFIGURATION);
+		workflowTreeFilterAdvancedFilterEditorRelationsSelectionManage: function () {
+			if (!this.cmfg('workflowTreeFilterAdvancedManagerSelectedFilterIsEmpty')) {
+				var filterConfigurationObject = this.cmfg('workflowTreeFilterAdvancedManagerSelectedFilterGet', CMDBuild.core.constants.Proxy.CONFIGURATION);
 
 				if (
-					!this.cmfg('panelGridAndFormFilterAdvancedManagerSelectedFilterIsEmpty', CMDBuild.core.constants.Proxy.CONFIGURATION)
-					&& !this.cmfg('panelGridAndFormFilterAdvancedManagerSelectedFilterIsEmpty', [CMDBuild.core.constants.Proxy.CONFIGURATION, CMDBuild.core.constants.Proxy.RELATION])
+					!this.cmfg('workflowTreeFilterAdvancedManagerSelectedFilterIsEmpty', CMDBuild.core.constants.Proxy.CONFIGURATION)
+					&& !this.cmfg('workflowTreeFilterAdvancedManagerSelectedFilterIsEmpty', [CMDBuild.core.constants.Proxy.CONFIGURATION, CMDBuild.core.constants.Proxy.RELATION])
 				) {
 					this.decodeFilterConfigurationObject(
-						this.cmfg('panelGridAndFormFilterAdvancedManagerSelectedFilterGet', [CMDBuild.core.constants.Proxy.CONFIGURATION, CMDBuild.core.constants.Proxy.RELATION])
+						this.cmfg('workflowTreeFilterAdvancedManagerSelectedFilterGet', [CMDBuild.core.constants.Proxy.CONFIGURATION, CMDBuild.core.constants.Proxy.RELATION])
 					);
 				}
 			} else {
-				_error('panelGridAndFormFilterAdvancedFilterEditorRelationsSelectionManage(): selected filter is empty', this, this.cmfg('panelGridAndFormFilterAdvancedManagerSelectedFilterGet'));
+				_error('workflowTreeFilterAdvancedFilterEditorRelationsSelectionManage(): selected filter is empty', this, this.cmfg('workflowTreeFilterAdvancedManagerSelectedFilterGet'));
 			}
 		},
 
 		/**
 		 * @returns {Object} out
 		 */
-		panelGridAndFormFilterAdvancedFilterEditorRelationsDataGet: function () {
+		workflowTreeFilterAdvancedFilterEditorRelationsDataGet: function () {
 			var out = {};
 
 			if (this.controllerGridDomain.getView().getSelectionModel().hasSelection()) {
@@ -203,69 +262,7 @@
 			}
 
 			return out;
-		},
-
-		/**
-		 * Forwarder function
-		 *
-		 * @returns {Void}
-		 */
-		onPanelGridAndFormFilterAdvancedFilterEditorRelationsViewShow: function () {
-			if (!this.cmfg('panelGridAndFormSelectedEntryTypeIsEmpty')) {
-				this.selectedDomainReset();
-
-				this.controllerGridCard.getView().fireEvent('show');
-				this.controllerGridDomain.getView().fireEvent('show');
-			}
-		},
-
-		// SelectedDomain property methods
-			/**
-			 * @param {Array or String} attributePath
-			 *
-			 * @returns {Mixed or undefined}
-			 */
-			panelGridAndFormFilterAdvancedFilterEditorRelationsSelectedDomainGet: function (attributePath) {
-				var parameters = {};
-				parameters[CMDBuild.core.constants.Proxy.TARGET_VARIABLE_NAME] = 'selectedDomain';
-				parameters[CMDBuild.core.constants.Proxy.ATTRIBUTE_PATH] = attributePath;
-
-				return this.propertyManageGet(parameters);
-			},
-
-			/**
-			 * @param {Array or String} attributePath
-			 *
-			 * @returns {Boolean}
-			 */
-			panelGridAndFormFilterAdvancedFilterEditorRelationsSelectedDomainIsEmpty: function (attributePath) {
-				var parameters = {};
-				parameters[CMDBuild.core.constants.Proxy.TARGET_VARIABLE_NAME] = 'selectedDomain';
-				parameters[CMDBuild.core.constants.Proxy.ATTRIBUTE_PATH] = attributePath;
-
-				return this.propertyManageIsEmpty(parameters);
-			},
-
-			/**
-			 * @private
-			 */
-			selectedDomainReset: function () {
-				this.propertyManageReset('selectedDomain');
-			},
-
-			/**
-			 * @param {Object} parameters
-			 *
-			 * @returns {Void}
-			 */
-			panelGridAndFormFilterAdvancedFilterEditorRelationsSelectedDomainSet: function (parameters) {
-				if (Ext.isObject(parameters) && !Ext.Object.isEmpty(parameters)) {
-					parameters[CMDBuild.core.constants.Proxy.MODEL_NAME] = 'CMDBuild.model.common.panel.gridAndForm.filter.advanced.filterEditor.relations.DomainGrid';
-					parameters[CMDBuild.core.constants.Proxy.TARGET_VARIABLE_NAME] = 'selectedDomain';
-
-					this.propertyManageSet(parameters);
-				}
-			}
+		}
 	});
 
 })();

@@ -5,8 +5,7 @@
 
 		requires: [
 			'CMDBuild.core.constants.Proxy',
-			'CMDBuild.proxy.configuration.GeneralOptions',
-			'CMDBuild.model.configuration.generalOptions.GeneralOptions'
+			'CMDBuild.proxy.administration.configuration.GeneralOptions'
 		],
 
 		/**
@@ -45,8 +44,10 @@
 		 * @returns {Void}
 		 */
 		onConfigurationGeneralOptionsSaveButtonClick: function () {
-			CMDBuild.proxy.configuration.GeneralOptions.update({
-				params: CMDBuild.model.configuration.generalOptions.GeneralOptions.convertToLegacy(this.view.getData(true)),
+			var configurationModel = Ext.create('CMDBuild.model.administration.configuration.generalOptions.GeneralOptions', this.view.panelFunctionDataGet({ includeDisabled: true }));
+
+			CMDBuild.proxy.administration.configuration.GeneralOptions.update({
+				params: configurationModel.getParamsObject(),
 				scope: this,
 				success: function (response, options, decodedResponse) {
 					this.cmfg('onConfigurationGeneralOptionsTabShow');
@@ -62,13 +63,13 @@
 		 * @returns {Void}
 		 */
 		onConfigurationGeneralOptionsTabShow: function () {
-			CMDBuild.proxy.configuration.GeneralOptions.read({
+			CMDBuild.proxy.administration.configuration.GeneralOptions.read({
 				scope: this,
 				success: function (response, options, decodedResponse) {
 					decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.DATA];
 
-					if (!Ext.isEmpty(decodedResponse)) {
-						this.view.loadRecord(Ext.create('CMDBuild.model.configuration.generalOptions.GeneralOptions', CMDBuild.model.configuration.generalOptions.GeneralOptions.convertFromLegacy(decodedResponse)));
+					if (Ext.isObject(decodedResponse) && !Ext.Object.isEmpty(decodedResponse)) {
+						this.view.loadRecord(Ext.create('CMDBuild.model.administration.configuration.generalOptions.GeneralOptions', decodedResponse));
 
 						this.cmfg('mainViewportInstanceNameSet', decodedResponse[CMDBuild.core.constants.Proxy.INSTANCE_NAME]);
 

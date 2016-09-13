@@ -131,8 +131,6 @@
 		 */
 		accordionDeselect: function () {
 			this.view.getSelectionModel().deselectAll();
-
-			this.cmfg('onAccordionSelectionChange');
 		},
 
 		/**
@@ -155,8 +153,6 @@
 					} else { // Accordion needs to be expanded
 						this.view.on('expand', parameters.callback, parameters.scope, { single: true });
 					}
-
-					this.disableStoreLoad = true;
 				}
 
 				this.view.expand();
@@ -315,19 +311,15 @@
 			this.cmfg('mainViewportModuleShow', { identifier: this.cmfg('accordionIdentifierGet') });
 
 			// Update store
-			if (!this.disableStoreLoad) {
+			if (!this.disableStoreLoad)
 				if (this.view.getSelectionModel().hasSelection()) {
 					var selection = this.view.getSelectionModel().getSelection()[0];
 
 					this.cmfg('accordionDeselect');
-					this.cmfg('accordionUpdateStore', { selectionId: selection.get(CMDBuild.core.constants.Proxy.ENTITY_ID) });
+					this.cmfg('accordionUpdateStore', { selectionId: selection.get(CMDBuild.core.constants.Proxy.ID) || selection.get(CMDBuild.core.constants.Proxy.ENTITY_ID) });
 				} else {
 					this.cmfg('accordionUpdateStore');
 				}
-			}
-
-			// DisableStoreLoad flag reset
-			this.disableStoreLoad = false;
 		},
 
 		/**
@@ -393,8 +385,9 @@
 					this.scope
 				);
 
-			// DisableSelection flag reset
+			// Flag reset
 			this.disableSelection = false;
+			this.disableStoreLoad = false;
 		}
 	});
 

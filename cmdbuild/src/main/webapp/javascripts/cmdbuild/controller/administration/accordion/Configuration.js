@@ -113,6 +113,15 @@
 						id: this.cmfg('accordionBuildId', 'server'),
 						sectionHierarchy: ['server'],
 						leaf: true
+					},
+					{
+						cmName: this.cmfg('accordionIdentifierGet'),
+						iconCls: 'cmdb-tree-configuration-icon',
+						text: CMDBuild.Translation.notifications,
+						description: CMDBuild.Translation.notifications,
+						id: this.cmfg('accordionBuildId', 'notifications'),
+						sectionHierarchy: ['notifications'],
+						leaf: true
 					}
 				]);
 

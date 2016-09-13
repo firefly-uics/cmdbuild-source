@@ -102,7 +102,7 @@
 			}, this);
 
 			this.mon(this, 'show', function (panel, record) {
-				this.delegate.cmfg('onPanelGridAndFormFilterAdvancedFilterEditorRelationsGridCardViewShow');
+				this.delegate.cmfg('onWorkflowTreeFilterAdvancedFilterEditorRelationsGridCardViewShow');
 			}, this);
 
 			// Attributes property manage

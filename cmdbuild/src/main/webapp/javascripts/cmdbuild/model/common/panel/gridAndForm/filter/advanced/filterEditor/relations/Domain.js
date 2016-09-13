@@ -2,6 +2,9 @@
 
 	Ext.require('CMDBuild.core.constants.Proxy');
 
+	/**
+	 * @link CMDBuild.model.management.workflow.panel.tree.filter.advanced.filterEditor.relations.Domain
+	 */
 	Ext.define('CMDBuild.model.common.panel.gridAndForm.filter.advanced.filterEditor.relations.Domain', { // TODO: waiting for refactor (rename)
 		extend: 'Ext.data.Model',
 

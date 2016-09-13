@@ -96,8 +96,6 @@
 			update: 'services/json/schema/setup/saveconfiguration', // TODO: waiting for refactor (rename)
 			remove: '',
 
-			readAll: 'services/json/schema/setup/getconfigurations',
-
 			apply: 'services/json/configure/apply',
 			connectionTest: 'services/json/configure/testconnection',
 
@@ -191,8 +189,9 @@
 			update: 'services/json/schema/modclass/savedomain', // TODO: waiting for refactor (crud)
 			remove: 'services/json/schema/modclass/deletedomain',
 
+			getDomains: 'services/json/schema/modclass/getdomains',
 			readAll: 'services/json/schema/modclass/getalldomains',
-			readAllByClass: 'services/json/schema/modclass/getdomainlist'
+			readAllByClass: 'services/json/schema/modclass/getdomainlist' // @deprecated
 		},
 
 		email: {

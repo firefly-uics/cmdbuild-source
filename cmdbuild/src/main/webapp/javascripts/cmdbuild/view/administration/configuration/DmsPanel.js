@@ -6,7 +6,7 @@
 		requires: [
 			'CMDBuild.core.constants.FieldWidths',
 			'CMDBuild.core.constants.Proxy',
-			'CMDBuild.proxy.configuration.Dms'
+			'CMDBuild.proxy.administration.configuration.Dms'
 		],
 
 		mixins: ['CMDBuild.view.common.PanelFunctions'],
@@ -86,7 +86,7 @@
 						valueField: CMDBuild.core.constants.Proxy.ID,
 						displayField: CMDBuild.core.constants.Proxy.TEXT, // TODO: waiting for refactor (rename)
 
-						store: CMDBuild.proxy.configuration.Dms.getStoreLookups(),
+						store: CMDBuild.proxy.administration.configuration.Dms.getStoreLookups(),
 						queryMode: 'local'
 					}),
 					Ext.create('Ext.form.field.Display', {
@@ -271,7 +271,7 @@
 								valueField: CMDBuild.core.constants.Proxy.ID,
 								displayField: CMDBuild.core.constants.Proxy.DESCRIPTION,
 
-								store: CMDBuild.proxy.configuration.Dms.getStorePresets(),
+								store: CMDBuild.proxy.administration.configuration.Dms.getStorePresets(),
 								queryMode: 'local'
 							})
 						],
@@ -298,7 +298,7 @@
 		/**
 		 * Custom fields set value manage
 		 *
-		 * @param {CMDBuild.model.configuration.dms.Dms} record
+		 * @param {CMDBuild.model.administration.configuration.dms.Dms} record
 		 *
 		 * @override
 		 */

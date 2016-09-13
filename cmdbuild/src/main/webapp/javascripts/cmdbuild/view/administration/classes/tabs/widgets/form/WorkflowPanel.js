@@ -1,16 +1,13 @@
 (function () {
 
-	/**
-	 * @link CMDBuild.view.administration.widget.form.WorkflowPanel
-	 */
 	Ext.define('CMDBuild.view.administration.classes.tabs.widgets.form.WorkflowPanel', {
 		extend: 'CMDBuild.view.administration.classes.tabs.widgets.form.AbstractWidgetDefinitionPanel',
 
 		requires: [
 			'CMDBuild.core.constants.FieldWidths',
 			'CMDBuild.core.constants.Proxy',
-			'CMDBuild.proxy.classes.tabs.widgets.Workflow',
-			'CMDBuild.model.classes.tabs.widgets.workflow.PresetGrid'
+			'CMDBuild.proxy.administration.classes.tabs.widgets.Workflow',
+			'CMDBuild.model.administration.classes.tabs.widgets.workflow.PresetGrid'
 		],
 
 		/**
@@ -84,13 +81,13 @@
 							forceSelection: true,
 							editable: false,
 
-							store: CMDBuild.proxy.classes.tabs.widgets.Workflow.getStoreTargetWorkflow(),
+							store: CMDBuild.proxy.administration.classes.tabs.widgets.Workflow.getStoreTargetWorkflow(),
 							queryMode: 'local',
 
 							listeners: {
 								scope: this,
 								change: function (combo, newValue, oldValue, eOpts) {
-									this.delegate.cmfg('onClassTabWidgetWorkflowSelectedWorkflowChange', combo.findRecordByValue(newValue));
+									this.delegate.cmfg('onClassesTabWidgetsWidgetWorkflowSelectedWorkflowChange', combo.findRecordByValue(newValue));
 								}
 							}
 						}),
@@ -99,7 +96,7 @@
 							keyAttributeName: CMDBuild.core.constants.Proxy.NAME,
 							keyLabel: CMDBuild.Translation.attribute,
 							margin: '8 0 9 0',
-							modelName: 'CMDBuild.model.classes.tabs.widgets.workflow.PresetGrid',
+							modelName: 'CMDBuild.model.administration.classes.tabs.widgets.workflow.PresetGrid',
 							title: CMDBuild.Translation.workflowAttributes
 						})
 					]
@@ -124,7 +121,7 @@
 					forceSelection: true,
 					editable: false,
 
-					store: CMDBuild.proxy.classes.tabs.widgets.Workflow.getStoreSelectionType(),
+					store: CMDBuild.proxy.administration.classes.tabs.widgets.Workflow.getStoreSelectionType(),
 					queryMode: 'local',
 
 					listeners: {

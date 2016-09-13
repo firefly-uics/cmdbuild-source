@@ -150,7 +150,7 @@
 									params['enableForceFlowStatus'] = true;
 									params[CMDBuild.core.constants.Proxy.INSTANCE_ID] = instanceIdentifier;
 
-									moduleController.cmfg('workflowTreeActivityOpen', params);
+									moduleController.cmfg('workflowTreeActivitySelect', params);
 								},
 								scope: this,
 								options: { single: true }

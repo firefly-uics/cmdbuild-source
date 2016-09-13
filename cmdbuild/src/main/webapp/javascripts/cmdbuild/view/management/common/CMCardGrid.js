@@ -459,7 +459,7 @@
 		 * @param {Array} fields
 		 * @param {Number} pageSize
 		 *
-		 * @returns {Ext.data.Store or CMDBuild.core.cache.Store} store
+		 * @returns {Ext.data.Store or CMDBuild.core.cache.Store}
 		 *
 		 * @private
 		 *

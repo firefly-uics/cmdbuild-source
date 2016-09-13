@@ -1,15 +1,12 @@
 (function () {
 
-	/**
-	 * @link CMDBuild.controller.common.panel.gridAndForm.panel.common.filter.advanced.filterEditor.relations.GridDomain
-	 */
 	Ext.define('CMDBuild.controller.management.workflow.panel.tree.filter.advanced.filterEditor.relations.GridDomain', {
 		extend: 'CMDBuild.controller.common.abstract.Base',
 
 		requires: [
 			'CMDBuild.core.constants.Global',
 			'CMDBuild.core.constants.Proxy',
-			'CMDBuild.proxy.common.panel.gridAndForm.filter.advanced.filterEditor.Relations'
+			'CMDBuild.proxy.management.workflow.panel.tree.filter.advanced.filterEditor.Relations'
 		],
 
 		/**
@@ -21,13 +18,13 @@
 		 * @cfg {Array}
 		 */
 		cmfgCatchedFunctions: [
-			'onPanelGridAndFormFilterAdvancedFilterEditorRelationsGridDomainBeforeEdit',
-			'onPanelGridAndFormFilterAdvancedFilterEditorRelationsGridDomainCheckchange',
-			'onPanelGridAndFormFilterAdvancedFilterEditorRelationsGridDomainViewShow'
+			'onWorkflowTreeFilterAdvancedFilterEditorRelationsGridDomainBeforeEdit',
+			'onWorkflowTreeFilterAdvancedFilterEditorRelationsGridDomainCheckchange',
+			'onWorkflowTreeFilterAdvancedFilterEditorRelationsGridDomainViewShow'
 		],
 
 		/**
-		 * @property {CMDBuild.view.common.panel.gridAndForm.panel.common.filter.advanced.filterEditor.relations.DomainGridPanel}
+		 * @property {CMDBuild.view.management.workflow.panel.tree.filter.advanced.filterEditor.relations.DomainGridPanel}
 		 */
 		view: undefined,
 
@@ -42,7 +39,7 @@
 		constructor: function (configurationObject) {
 			this.callParent(arguments);
 
-			this.view = Ext.create('CMDBuild.view.common.panel.gridAndForm.panel.common.filter.advanced.filterEditor.relations.DomainGridPanel', { delegate: this })
+			this.view = Ext.create('CMDBuild.view.management.workflow.panel.tree.filter.advanced.filterEditor.relations.DomainGridPanel', { delegate: this })
 		},
 
 		/**
@@ -51,11 +48,11 @@
 		 * @param {Object} parameters
 		 * @param {Number} parameters.colIdx
 		 * @param {Object} parameters.column
-		 * @param {CMDBuild.model.common.panel.gridAndForm.filter.advanced.filterEditor.relations.DomainGrid} parameters.record
+		 * @param {CMDBuild.model.management.workflow.panel.tree.filter.advanced.filterEditor.relations.DomainGrid} parameters.record
 		 *
 		 * @returns {Boolean}
 		 */
-		onPanelGridAndFormFilterAdvancedFilterEditorRelationsGridDomainBeforeEdit: function (parameters) {
+		onWorkflowTreeFilterAdvancedFilterEditorRelationsGridDomainBeforeEdit: function (parameters) {
 			if (Ext.isObject(parameters) && !Ext.Object.isEmpty(parameters)) {
 				var colIdx = parameters.colIdx;
 				var column = parameters.column;
@@ -89,11 +86,11 @@
 		 * @param {Object} parameters
 		 * @param {Boolean} parameters.checked
 		 * @param {String} parameters.propertyName
-		 * @param {CMDBuild.model.common.panel.gridAndForm.filter.advanced.filterEditor.relations.DomainGrid} parameters.record
+		 * @param {CMDBuild.model.management.workflow.panel.tree.filter.advanced.filterEditor.relations.DomainGrid} parameters.record
 		 *
 		 * @returns {Void}
 		 */
-		onPanelGridAndFormFilterAdvancedFilterEditorRelationsGridDomainCheckchange: function (parameters) {
+		onWorkflowTreeFilterAdvancedFilterEditorRelationsGridDomainCheckchange: function (parameters) {
 			if (Ext.isObject(parameters) && !Ext.Object.isEmpty(parameters)) {
 				var checked = Ext.isBoolean(parameters.checked) ? parameters.checked : false;
 				var propertyName = parameters.propertyName;
@@ -115,15 +112,15 @@
 		/**
 		 * @returns {Void}
 		 */
-		onPanelGridAndFormFilterAdvancedFilterEditorRelationsGridDomainViewShow: function () {
+		onWorkflowTreeFilterAdvancedFilterEditorRelationsGridDomainViewShow: function () {
 			this.view.getStore().removeAll();
 			this.view.getSelectionModel().clearSelections();
 
-			if (!this.cmfg('panelGridAndFormSelectedEntryTypeIsEmpty')) {
+			if (!this.cmfg('workflowSelectedWorkflowIsEmpty')) {
 				var params = {};
 				params[CMDBuild.core.constants.Proxy.ACTIVE] = true;
 
-				CMDBuild.proxy.common.panel.gridAndForm.filter.advanced.filterEditor.Relations.readAllEntryTypes({
+				CMDBuild.proxy.management.workflow.panel.tree.filter.advanced.filterEditor.Relations.readAllEntryTypes({
 					params: params,
 					scope: this,
 					success: function (response, options, decodedResponse) {
@@ -138,17 +135,17 @@
 							}, this);
 
 							// CMCache.getDirectedDomainsByEntryType alias code
-							var anchestorsId = CMDBuild.core.Utils.getEntryTypeAncestorsId(this.cmfg('panelGridAndFormSelectedEntryTypeGet'));
+							var anchestorsId = CMDBuild.core.Utils.getEntryTypeAncestorsId(this.cmfg('workflowSelectedWorkflowGet'));
 
 							params = {};
-							params[CMDBuild.core.constants.Proxy.CLASS_NAME] = this.cmfg('panelGridAndFormSelectedEntryTypeGet', CMDBuild.core.constants.Proxy.NAME);
+							params[CMDBuild.core.constants.Proxy.CLASS_NAME] = this.cmfg('workflowSelectedWorkflowGet', CMDBuild.core.constants.Proxy.NAME);
 							params[CMDBuild.core.constants.Proxy.SKIP_DISABLED_CLASSES] = true;
 
-							CMDBuild.proxy.common.panel.gridAndForm.filter.advanced.filterEditor.Relations.readAllDomainsByClass({
+							CMDBuild.proxy.management.workflow.panel.tree.filter.advanced.filterEditor.Relations.readAllDomainsByClass({
 								params: params,
 								scope: this,
 								callback: function (options, success, decodedResponse) {
-									this.cmfg('panelGridAndFormFilterAdvancedFilterEditorRelationsSelectionManage');
+									this.cmfg('workflowTreeFilterAdvancedFilterEditorRelationsSelectionManage');
 								},
 								success: function (response, options, decodedResponse) {
 									decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.DOMAINS];
@@ -162,17 +159,17 @@
 											// Also filters EntryTypes with no read permission
 											if (Ext.Array.contains(anchestorsId, domainObject['class1id']) && !Ext.isEmpty(localCacheClasses[domainObject['class2id']]))
 												domainGridStoreRecords.push(
-													Ext.create('CMDBuild.model.common.panel.gridAndForm.filter.advanced.filterEditor.relations.DomainGrid', {
+													Ext.create('CMDBuild.model.management.workflow.panel.tree.filter.advanced.filterEditor.relations.DomainGrid', {
 														destination: Ext.create(
-															'CMDBuild.model.common.panel.gridAndForm.filter.advanced.filterEditor.relations.EntryType',
+															'CMDBuild.model.management.workflow.panel.tree.filter.advanced.filterEditor.relations.EntryType',
 															localCacheClasses[domainObject['class2id']]
 														),
 														direction: '_1',
-														domain: Ext.create('CMDBuild.model.common.panel.gridAndForm.filter.advanced.filterEditor.relations.Domain', domainObject),
+														domain: Ext.create('CMDBuild.model.management.workflow.panel.tree.filter.advanced.filterEditor.relations.Domain', domainObject),
 														domainDescription: domainObject[CMDBuild.core.constants.Proxy.DESCRIPTION],
 														orientedDescription: domainObject['descrdir'],
 														source: Ext.create(
-															'CMDBuild.model.common.panel.gridAndForm.filter.advanced.filterEditor.relations.EntryType',
+															'CMDBuild.model.management.workflow.panel.tree.filter.advanced.filterEditor.relations.EntryType',
 															localCacheClasses[domainObject['class1id']]
 														)
 													})
@@ -181,17 +178,17 @@
 											// Also filters EntryTypes with no read permission
 											if (Ext.Array.contains(anchestorsId, domainObject['class2id']) && !Ext.isEmpty(localCacheClasses[domainObject['class2id']]))
 												domainGridStoreRecords.push(
-													Ext.create('CMDBuild.model.common.panel.gridAndForm.filter.advanced.filterEditor.relations.DomainGrid', {
+													Ext.create('CMDBuild.model.management.workflow.panel.tree.filter.advanced.filterEditor.relations.DomainGrid', {
 														destination: Ext.create(
-															'CMDBuild.model.common.panel.gridAndForm.filter.advanced.filterEditor.relations.EntryType',
+															'CMDBuild.model.management.workflow.panel.tree.filter.advanced.filterEditor.relations.EntryType',
 															localCacheClasses[domainObject['class1id']]
 														),
 														direction: '_2',
-														domain: Ext.create('CMDBuild.model.common.panel.gridAndForm.filter.advanced.filterEditor.relations.Domain', domainObject),
+														domain: Ext.create('CMDBuild.model.management.workflow.panel.tree.filter.advanced.filterEditor.relations.Domain', domainObject),
 														domainDescription: domainObject[CMDBuild.core.constants.Proxy.DESCRIPTION],
 														orientedDescription: domainObject['descrinv'],
 														source: Ext.create(
-															'CMDBuild.model.common.panel.gridAndForm.filter.advanced.filterEditor.relations.EntryType',
+															'CMDBuild.model.management.workflow.panel.tree.filter.advanced.filterEditor.relations.EntryType',
 															localCacheClasses[domainObject['class2id']]
 														)
 													})

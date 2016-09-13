@@ -20,20 +20,6 @@
 		trigger2Cls: Ext.baseCSSPrefix + 'form-clear-trigger',
 		validateOnBlur: false,
 
-		/**
-		 * @returns {Void}
-		 *
-		 * @override
-		 */
-		initComponent: function () {
-			this.callParent(arguments);
-
-			this.on('specialkey', function (f, e) {
-				if (e.getKey() == e.ENTER)
-					this.delegate.cmfg('onFieldFilterBasicTrigger1Click');
-			}, this);
-		},
-
 		listeners: {
 			specialkey: function (field, e, eOpts) {
 				if (e.getKey() == e.ENTER)

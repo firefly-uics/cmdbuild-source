@@ -3,6 +3,8 @@
 	Ext.require('CMDBuild.core.constants.Proxy');
 
 	/**
+	 * @link CMDBuild.model.core.buttons.iconized.add.relation.Domain
+	 *
 	 * TODO: waiting for refactor (rename)
 	 */
 	Ext.define('CMDBuild.model.domain.Domain', {
