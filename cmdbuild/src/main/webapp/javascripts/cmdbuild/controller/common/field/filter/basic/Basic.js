@@ -73,7 +73,7 @@
 		onFieldFilterBasicTrigger1Click: function () {
 			var value = Ext.String.trim(this.view.getValue());
 
-			if (Ext.isString(value) && !Ext.isEmpty(value)) { // Avoid to save empty filter string
+			if (Ext.isString(value) && !Ext.isEmpty(value)) { // Apply action on NON empty filter string
 				var filterConfigurationObject = {};
 				filterConfigurationObject[CMDBuild.core.constants.Proxy.CONFIGURATION] = {};
 				filterConfigurationObject[CMDBuild.core.constants.Proxy.CONFIGURATION][CMDBuild.core.constants.Proxy.QUERY] = value;
@@ -82,6 +82,8 @@
 					filter: Ext.create('CMDBuild.model.common.field.filter.basic.Filter', filterConfigurationObject),
 					type: 'basic'
 				});
+			} else { // Reset action on empty filter string
+				this.cmfg('onFieldFilterBasicReset');
 			}
 		},
 
