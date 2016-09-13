@@ -184,14 +184,14 @@
 				isWidgetReadOnly
 				|| this.cmfg('widgetCustomFormConfigurationGet', [
 					CMDBuild.core.constants.Proxy.CAPABILITIES,
-					CMDBuild.core.constants.Proxy.IMPORT_DISABLED
+					CMDBuild.core.constants.Proxy.EXPORT_DISABLED
 				])
 			);
 			this.view.importButton.setDisabled(
 				isWidgetReadOnly
 				|| this.cmfg('widgetCustomFormConfigurationGet', [
 					CMDBuild.core.constants.Proxy.CAPABILITIES,
-					CMDBuild.core.constants.Proxy.EXPORT_DISABLED
+					CMDBuild.core.constants.Proxy.IMPORT_DISABLED
 				])
 			);
 		},
