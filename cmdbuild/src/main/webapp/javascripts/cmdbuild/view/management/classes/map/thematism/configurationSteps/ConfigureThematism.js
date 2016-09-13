@@ -92,7 +92,7 @@
 			this.interactionDocument.getAllLayers(function(layers) {
 				for (var i = 0; i < layers.length; i++) {
 					var layer = layers[i];
-					var visible = me.interactionDocument.isVisible(layer, currentClassName, currentCardId);
+					var visible = (layer.masterTableName === currentClassName);
 					if (visible && !me.interactionDocument.isGeoServerLayer(layer)) {
 						layersStore.add({
 							"name" : layer.name,

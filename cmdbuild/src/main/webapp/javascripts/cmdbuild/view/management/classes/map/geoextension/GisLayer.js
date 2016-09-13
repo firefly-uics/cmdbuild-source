@@ -87,20 +87,6 @@
 			this.interactionDocument.observeFeatures(this);
 			this.callParent(arguments);
 		},
-		loadIcon : function(url) {
-			var icon = undefined;
-			try {
-				icon = new ol.style.Icon({
-					src : url
-				});
-
-			} catch (e) {
-				icon = new ol.style.Icon({
-					src : "upload/images/gis/Edificio.png"
-				});
-			}
-			return icon;
-		},
 		createControls : function(map, vectorSource) {
 			var me = this;
 			this.makeSelect();
@@ -135,7 +121,7 @@
 				if (event.selected.length === 0) {
 					return false;
 				}
-				me.clearFeatures();
+				me.clearSelections();
 				var selectedId = event.selected[0].get("master_card");
 				var currentId = (_CMCardModuleState.card) ? _CMCardModuleState.card.get("Id") : -1;
 				if (selectedId == currentId) {
@@ -159,16 +145,6 @@
 			this.modify.setActive(false);
 		},
 
-		/**
-		 * 
-		 * @returns {Void}
-		 * 
-		 */
-		refresh : function() {
-			var source = this.getSource();
-			source.clear(true);
-			//source.refresh();
-		},
 		/**
 		 * 
 		 * @returns {String}
@@ -221,7 +197,27 @@
 		getSource : function() {
 			return this.layer.getSource();
 		},
+		onlyToAddFeatures : function(visibleFeatures) {
+			var features = [];
+			var layerFeatures = this.layer.getSource().getFeatures();
+			for (var i = 0; i < visibleFeatures.length; i++) {
+				var visibleFeature = visibleFeatures[i];
+				if (!inLayerFeatures(visibleFeature, layerFeatures)) {
+					features.push(visibleFeature);
+				}
+			}
+			return features;
 
+		},
+		removeNotVisibleFeatures : function(visibleFeatures) {
+			var layerFeatures = this.layer.getSource().getFeatures();
+			for (var i = 0; i < layerFeatures.length; i++) {
+				var layerFeature = layerFeatures[i];
+				if (!inVisibleFeatures(layerFeature, visibleFeatures)) {
+					this.layer.getSource().removeFeature(layerFeature);
+				}
+			}
+		},
 		getVectorSource : function(options) {
 			var me = this;
 			var geoJSONFormat = new ol.format.GeoJSON();
@@ -236,11 +232,13 @@
 						},
 						type : "post",
 						success : function(data) {
-							clearVectorSource(vectorSource);
-							data.features = me.onlyVisibleFeatures(data.features);
+							// clearVectorSource(vectorSource);
+							var visibleFeatures = me.onlyVisibleFeatures(data.features);
+							data.features = me.onlyToAddFeatures(visibleFeatures);
 							var jsonFeatures = geoJSONFormat.readFeatures(data);
 							vectorSource.addFeatures(jsonFeatures);
 							me.interactionDocument.onLoadedfeatures(me.layer.get("name"), jsonFeatures);
+							me.removeNotVisibleFeatures(visibleFeatures);
 						},
 
 					});
@@ -249,6 +247,21 @@
 				strategy : ol.loadingstrategy.bbox
 			});
 			return vectorSource;
+		},
+
+		loadIcon : function(url) {
+			var icon = undefined;
+			try {
+				icon = new ol.style.Icon({
+					src : url
+				});
+
+			} catch (e) {
+				icon = new ol.style.Icon({
+					src : "upload/images/gis/Edificio.png"
+				});
+			}
+			return icon;
 		},
 
 		onlyVisibleFeatures : function(featuresOnLayer) {
@@ -275,6 +288,35 @@
 			}
 			return features;
 		},
+
+		/**
+		 * 
+		 * @returns {Void}
+		 * 
+		 */
+		refresh : function() {
+			this.getSource().clear();
+//			var featuresOnLayer = this.getSource().getFeatures();
+//			var features = [];
+//			for (var i = 0; i < featuresOnLayer.length; i++) {
+//				var feature = featuresOnLayer[i];
+//				var card = {
+//					className : feature.get("master_className"),
+//					cardId : feature.get("master_card"),
+//				};
+//				if (this.interactionDocument.isANavigableCard(card)) {
+//					features.push(feature);
+//				}
+//
+//			}
+//			for (var i = 0; i < featuresOnLayer.length; i++) {
+//				var feature = featuresOnLayer[i];
+//				if (searchFeature(feature, features) === -1) {
+//					this.layer.getSource().removeFeature(feature);
+//				}
+//			}
+		},
+
 		/**
 		 * 
 		 * @param {String}
@@ -304,7 +346,7 @@
 			var nameAttribute = feature.nameAttribute;
 			if (nameAttribute && nameAttribute !== nameLayer) {
 				this.setStatus("None");
-				this.clearFeatures();
+				this.clearSelections();
 				return;
 			}
 			switch (feature.operation) {
@@ -363,7 +405,6 @@
 			}
 			var cardId = card.cardId;
 			var className = card.className;
-			// _CMCache.getLayersForEntryTypeName(className, function(layers) {
 			CMDBuild.proxy.gis.Gis.getFeature({
 				params : {
 					"className" : className,
@@ -373,8 +414,6 @@
 				scope : this,
 				success : onSuccess
 			});
-			// });
-
 		},
 
 		removeById : function(id) {
@@ -446,13 +485,17 @@
 			});
 			return translation;
 		},
-		clearFeatures : function() {
+		clearSelections : function() {
 			var features = this.select.getFeatures();
 			if (features) {
 				features.forEach(function(feature) {
 					features.remove(feature);
 				});
 			}
+		},
+		clearAllFeatures : function() {
+			this.clearSelections();
+			this.layer.getSource().clear();
 		},
 		selectCard : function(card) {
 			this.selectFeaturesByCardId(card);
@@ -552,6 +595,17 @@
 			return type;
 		}
 	}
+	function searchFeature(feature, featuresArray) {
+		for (var i = 0; i < featuresArray.length; i++) {
+			var className = featuresArray[i].get("master_className");
+			var cardId = featuresArray[i].get("master_card");
+			if (className === feature.get("master_className") && cardId === feature.get("master_card")) {
+				return i;
+			}
+		}
+		console.log(feature.get("master_className") +"&&"+ feature.get("master_card"));
+		return -1;
+	}
 	function getGeoUrl() {
 		return CMDBuild.proxy.index.Json.gis.getGeoCardList + '?'
 				+ CMDBuild.core.constants.Proxy.AUTHORIZATION_HEADER_KEY + '='
@@ -588,5 +642,21 @@
 			return getPointCenter(geometry);
 		}
 
+	}
+	function inLayerFeatures(feature, features) {
+		for (var i = 0; i < features.length; i++) {
+			if (features[i].get("master_card") === feature.properties.master_card) {
+				return true;
+			}
+		}
+		return false;
+	}
+	function inVisibleFeatures(feature, features) {
+		for (var i = 0; i < features.length; i++) {
+			if (feature.get("master_card") === features[i].properties.master_card) {
+				return true;
+			}
+		}
+		return false;
 	}
 })();

@@ -66,9 +66,9 @@
 			}
 			var type = _CMCache.getEntryTypeByName(className);
 			if (cardId !== -1) {
-				_CMCardModuleState.setCard({
+				this.setCard({
 					cardId : cardId,
-					className : className,
+					className : className
 				});
 			}
 			this.interactionDocument.setCurrentCard({
@@ -88,6 +88,27 @@
 			}
 		},
 
+		setCard : function(card, callback, callbackScope) {
+			CMDBuild.proxy.Card.read({
+				params: card,
+				loadMask: false,
+				scope: this,
+				success: function(a, b, response) {
+					var raw = response.card;
+
+					if (raw) {
+						var c = new CMDBuild.DummyModel(response.card);
+
+						c.raw = raw;
+						c.set("id", c.get("Id"));
+						_CMCardModuleState.setCard(c);
+						if (callback) {
+							callback.apply(callbackScope, [ c ]);
+						}
+					}
+				}
+			});
+		},
 		editMode : function() {
 			this.cmIsInEditing = true;
 
@@ -116,12 +137,12 @@
 			if (this.mapPanel.cmVisible) {
 				var me = this;
 
-				_CMCardModuleState.setCard({
-					Id : c.Id,
-					IdClass : c.IdClass
+				var type = _CMCache.getEntryTypeById(c.IdClass);
+				this.setCard({
+					cardId : c.Id,
+					className : type.get("name")
 				}, function(card) {
 					me.mapPanel.getMap().changeFeatureOnLayers(c.Id);
-					var type = _CMCache.getEntryTypeById(c.IdClass);
 					var card = {
 							cardId : c.Id,
 							className : type.get("name")
@@ -254,6 +275,7 @@
 				className : entryType.get("name")
 			});
 		} else {
+			
 			this.onCardSelected({
 				cardId : -1,
 				className : entryType.get("name")

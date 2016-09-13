@@ -20,7 +20,7 @@
 					xtype : "textfield",
 					fieldLabel : "@@ Segments",
 					name : 'segmentsConfiguration',
-					allowBlank : false
+					allowBlank : true
 				} ]
 			});
 			this.callParent(arguments);
