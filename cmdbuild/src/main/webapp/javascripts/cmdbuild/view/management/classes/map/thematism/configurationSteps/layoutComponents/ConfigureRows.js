@@ -1,6 +1,7 @@
 (function() {
 	Ext.define("CMDBuild.view.management.classes.map.thematism.configurationSteps.layoutComponents.ConfigureRows", {
 		extend : "Ext.panel.Panel",
+		requires : [ 'CMDBuild.view.management.classes.map.proxy.Cards' ],
 		itemId : "configureRows",
 		layout : "anchor",
 
@@ -36,52 +37,23 @@
 			});
 			this.callParent(arguments);
 		},
-		chargeCardByCard : function(groups, cardsArray, attributeName,index, callback, callbackScope) {
-			var currentStrategy = this.parentWindow.getCurrentStrategy();
-			if (index >= cardsArray.length || !currentStrategy) {
-				callback.apply(callbackScope, []);
-				return;
-			}
-			var card = cardsArray[index];
-			var params = {
-				card : card,
-				strategy : currentStrategy,
-				attributeName : attributeName
-			}
-			currentStrategy.value(params, function(value) {
-				if (this.parentWindow.getCurrentSourceType() === CMDBuild.gis.constants.layers.FUNCTION_SOURCE) {
-					var field = this.comboFields.value;
-					value = value[field];
-				}
-				if (groups[value]) {
-					// can be different from cards count?
-					groups[value].count++;
-					groups[value].cards.push(card);
-				} else {
-					groups[value] = {
-						count : 1,
-						cards : [ card ]
-					};
-				}
-				this.chargeCardByCard(groups, cardsArray, attributeName, index + 1, callback, callbackScope);
-			}, this);
-		},
 		chargeStore : function(cardsStore, cardsArray, callback, callbackScope) {
-			var groups = {};
 			var layoutConfiguration = this.getLayoutConfiguration();
 			var thematicDocument = this.interactionDocument.getThematicDocument();
 			var attributeName = this.parentWindow.getCurrentAttribute();
-			this.chargeCardByCard(groups, cardsArray, attributeName, 0, function() {
-				for ( var key in groups) {
-					cardsStore.add({
-						value : key,
-						cardinality : groups[key].count,
-						cards : groups[key].cards,
-						color : thematicDocument.getColor(key, layoutConfiguration.colorsTable)
-					});
-				}
-				callback.apply(callbackScope, []);
-			}, this);
+			var currentStrategy = this.parentWindow.getCurrentStrategy();
+			var field = this.comboFields.value;
+			var groups = thematicDocument.groupData(field, currentStrategy, this.parentWindow.getCurrentSourceType(), cardsArray, attributeName);
+			var index = 0;
+			for ( var key in groups) {
+				cardsStore.add({
+					value : key,
+					cardinality : groups[key].count,
+					cards : groups[key].cards,
+					color : thematicDocument.getColor(key, layoutConfiguration.colorsTable, index++)
+				});
+			}
+			callback.apply(callbackScope, []);
 		},
 		createControls : function() {
 			this.colorsStore = Ext.create("Ext.data.Store", {
@@ -99,7 +71,9 @@
 				queryMode : "local",
 				displayField : "description",
 				valueField : "name",
+				editable : false,
 				allowBlank : false,
+				triggerAction : "all",
 
 				listeners : {
 					scope : this,
@@ -135,7 +109,6 @@
 				height : "100%",
 				width : "100%"
 			});
-
 		},
 		getColorsTable : function() {
 			var rows = [];
@@ -159,38 +132,11 @@
 			this.loadFields(function() {
 				this.refreshResults(this.grid, function() {
 					this.init();
+					this.comboFields.select(this.comboFields.getStore().getAt(0));
+
 					callback.apply(callbackScope, []);
 				}, this);
 			}, this);
-		},
-		refreshResultsCardByCard : function(cards, cardsArray, index, callback, callbackScope) {
-			if (index >= cards.length) {
-				callback.apply(callbackScope, []);
-				return;
-			}
-			var card = this.interactionDocument.getCurrentCard();
-			var currentClassName = (!card) ? "" : card.className;
-			var cardId = cards[index];
-			this.loadCard(cardId, currentClassName, function(response) {
-				cardsArray.push(response);
-				this.refreshResultsCardByCard(cards, cardsArray, index + 1, callback, callbackScope);
-			}, this);
-		},
-		loadCard : function(id, className, callback, callbackScope) {
-			if (!params) {
-				var params = {};
-				params[CMDBuild.core.constants.Proxy.CARD_ID] = id;
-				params[CMDBuild.core.constants.Proxy.CLASS_NAME] = className;
-			}
-
-			CMDBuild.proxy.Card.read({
-				params : params,
-				loadMask : false,
-				success : function(result, options, decodedResult) {
-					var data = decodedResult.card;
-					callback.apply(callbackScope, [ data ]);
-				}
-			});
 		},
 		loadFields : function(callback, callbackScope) {
 			var card = this.interactionDocument.getCurrentCard();
@@ -237,12 +183,34 @@
 				data : []
 			});
 			var cardsArray = [];
-			this.refreshResultsCardByCard(cards, cardsArray, 0, function() {
-				this.chargeStore(currentResultsStore, cardsArray, function() {
+			this.loadCards(currentClassName, function(cards) {
+				this.chargeStore(currentResultsStore, cards, function() {
 					grid.getStore().loadData(currentResultsStore.getRange(), false);
-					callback.apply(callbackScope, this);
+					callback.apply(callbackScope, []);
 				}, this);
 			}, this);
+		},
+	 loadCards:function(className, callback, callbackScope) {
+		var params = {};
+		params[CMDBuild.core.constants.Proxy.CLASS_NAME] = className;
+		if (this.parentWindow.getCurrentSourceType() === CMDBuild.gis.constants.layers.FUNCTION_SOURCE) {
+			var currentStrategy = this.parentWindow.getCurrentStrategy();
+			params["strategy"] = currentStrategy;
+			var strategiesManager = this.interactionDocument.getStrategiesManager();
+			strategiesManager.functionValue(params, function(data) {
+				callback.apply(callbackScope, [ data ]);
+				
+			});
+		} else {
+			CMDBuild.view.management.classes.map.proxy.Cards.read({
+				params : params,
+				loadMask : false,
+				success : function(result, options, decodedResult) {
+					var data = decodedResult.rows;
+					callback.apply(callbackScope, [ data ]);
+				}
+			});
 		}
+	}
 	});
 })();

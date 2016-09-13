@@ -28,6 +28,12 @@
 		 */
 		initComponent: function () {
 			var store = CMDBuild.proxy.gis.Card.getStore();
+			var thisGrid = this;
+			store.load({
+			    callback: function(records, operation, success) {
+			        thisGrid.getSelectionModel().select(0);
+			    }
+			});
 			var me = this;
 			Ext.apply(this, {
 			    dockedItems: [{
@@ -119,7 +125,12 @@
 			}
 			this.store.proxy.setExtraParam("className", currentClassName);
 			if (this.oldClassName !== currentClassName) {
-				this.store.loadPage(1);
+				this.store.loadPage(1, {
+				    scope: this,
+				    callback: function(records, operation, success) {
+				        this.getSelectionModel().select(0);
+				    }
+				});
 				this.oldClassName = currentClassName;
 			}
 			else {

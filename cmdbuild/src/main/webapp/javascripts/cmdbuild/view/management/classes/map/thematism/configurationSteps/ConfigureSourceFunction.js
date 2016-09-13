@@ -54,6 +54,11 @@
 				if (strategyTypes.indexOf(CMDBuild.gis.constants.metadata.THEMATICFUNCTION) === -1) {
 					continue;
 				}
+				var currentCard = this.interactionDocument.getCurrentCard();
+				var currentClassName = currentCard.className;
+				if (strategyClass !== currentClassName) {
+					continue;
+				}
 				store.add({
 					"description" : strategy.description,
 					"value" : strategy.description

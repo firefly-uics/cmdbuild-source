@@ -64,7 +64,7 @@
 				return true;
 			}
 			var id = parseInt(card.cardId);
-			return (!this.navigables[card.className]) ? false : this.navigables[card.className].indexOf(id) != -1;
+			return (!this.navigables[card.className]) ? false : this.navigables[card.className].indexOf(id) !== -1;
 		},
 		isANavigableLayer : function(layer) {
 			if (!this.isControlledByNavigation(layer.masterTableName)) {
@@ -102,6 +102,9 @@
 		},
 		getStrategyByDescription : function(description) {
 			return this.thematicDocument.getStrategyByDescription(description);
+		},
+		getStrategiesManager : function() {
+			return this.thematicDocument.getStrategiesManager();
 		},
 		setThematicDocument : function(thematicDocument) {
 			this.thematicDocument = thematicDocument;
@@ -193,8 +196,10 @@
 			this.getLayersForCard(card, function(layers) {
 				me.centerOnLayer(card, layers, 0, function(center) {
 					if (center) {
+						var mapPanel = me.getMapPanel();
 						me.configurationMap.center = center;
-						// me.changed();
+						mapPanel.center(me.configurationMap);
+						//me.changed();
 					}
 					callback.apply(callbackScope, []);
 				}, this);

@@ -61,7 +61,18 @@
 		 * @returns {Void}
 		 */
 		configureStrategiesManager : function(strategiesManager) {
-			this.strategiesManager = strategiesManager
+			this.strategiesManager = strategiesManager;
+		},
+
+		/**
+		 * 
+		 * @returns
+		 * {CMDBuild.view.management.classes.map.thematism.ThematicStrategiesManager}
+		 * strategiesManager
+		 * 
+		 */
+		getStrategiesManager : function() {
+			return this.strategiesManager;
 		},
 
 		/**
@@ -86,8 +97,8 @@
 			});
 			return layers;
 		},
-		getColor : function(value, colorsTable) {
-			return this.thematicColors.getColor(value, colorsTable);
+		getColor : function(value, colorsTable, index) {
+			return this.thematicColors.getColor(value, colorsTable, index);
 		},
 		getDefaultThematismConfiguration : function() {
 			return clone(defaultConfiguration);
@@ -146,7 +157,7 @@
 			var thematicLayers = [];
 			for (var i = 0; i < this.thematisms.length; i++) {
 				var thematism = this.thematisms[i];
-				if (name === thematism.layer.get("name")) {
+				if (thematism.layer && name === thematism.layer.get("name")) {
 					thematicLayers.push(thematism.thematicLayer);
 				}
 			}
@@ -276,6 +287,9 @@
 		setThematismButton : function(thematismButton) {
 			this.thematismButton = thematismButton;
 		},
+		groupData : function(field, strategy, sourceType, cardsArray, attributeName) {
+			return groupData(field, strategy, sourceType, cardsArray, attributeName);
+		},
 	});
 
 	var defaultConfiguration = {
@@ -290,6 +304,36 @@
 	};
 	function clone(obj) {
 		return JSON.parse(JSON.stringify(obj));
+	}
+	function groupData(field, strategy, sourceType, cardsArray, attributeName) {
+		var groups = {};
+		for (var i = 0; i < cardsArray.length; i++) {
+			var card = cardsArray[i];
+			chargeCardByCard(field, strategy, sourceType, groups, card, attributeName);
+		}
+		return groups;
+	}
+	function chargeCardByCard(field, strategy, sourceType, groups, card, attributeName) {
+		var params = {
+			card : card,
+			strategy : strategy,
+			attributeName : attributeName
+		}
+		strategy.value(params, function(value) {
+			if (sourceType === CMDBuild.gis.constants.layers.FUNCTION_SOURCE) {
+				value = value[field];
+			}
+			if (groups[value]) {
+				// can be different from cards count?
+				groups[value].count++;
+				groups[value].cards.push(card);
+			} else {
+				groups[value] = {
+					count : 1,
+					cards : [ card ]
+				};
+			}
+		}, this);
 	}
 
 })();

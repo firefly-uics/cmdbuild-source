@@ -54,7 +54,7 @@
 				sortable : false,
 				icon : 'images/icons/bullet_go.png',
 				handler : function(grid, rowIndex, colIndex, actionItem, event, record, row) {
-					me.zoomOnCard(record);
+					me.navigateOnCard(record);
 				},
 				isDisabled : function(view, rowIdx, colIdx, item, record) {
 					return false;
@@ -72,11 +72,8 @@
 			this.callParent(arguments);
 
 			// Force to not select via UI
-			// this.mon(this, "beforeselect", function() {
-			// return false;
-			// }, this);
-			this.mon(this, "select", function(panel, record) {
-				this.navigateOnCard(record);
+			this.mon(this, "beforeselect", function() {
+				return false;
 			}, this);
 
 			this.mon(this, "checkchange", function(node, checked) {
@@ -113,7 +110,7 @@
 		navigateOnCard : function(record) {
 			var className = record.get('className');
 			var type = _CMCache.getEntryTypeByName(className);
-			if (! type) {
+			if (!type) {
 				return;
 			}
 			var classId = type.get("id");

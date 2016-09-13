@@ -27,7 +27,7 @@
 				MASTERTABLE : "system.entrytype.mastertable",
 				THEMATICFUNCTION : "ThematicFunction"
 			}
-			
+
 		}
 	};
 	Ext.define('CMDBuild.view.management.classes.map.geoextension.Map', {
@@ -126,16 +126,19 @@
 		clearSelection : function() {
 			this.map.getLayers().forEach(function(layer) {
 				var adapter = layer.get("adapter");
-				if (adapter && adapter.clearFeatures) {
-					adapter.clearFeatures();
+				if (adapter && adapter.clearSelections) {
+					adapter.clearSelections();
 				}
 			});
 		},
 
 		createLegend : function() {
 			var divContainerControl = document.createElement('div');
-			divContainerControl.innerHTML = composeLegend();
 			document.getElementById(this.id + "-body").appendChild(divContainerControl);
+			var legend = Ext.create("CMDBuild.view.management.classes.map.thematism.Legend", {
+				parentDiv : divContainerControl
+			});
+			legend.compose();
 		},
 
 		/**
@@ -191,6 +194,7 @@
 		 */
 		removeLayerByName : function(className, layerName) {
 			var layer = this.getLayerByClassAndName(className, layerName);
+
 			this.map.removeLayer(layer);
 		},
 
@@ -292,7 +296,4 @@
 			});
 		}
 	});
-	function composeLegend() {
-		return "<div style='position: absolute;'><h1>pippo</h1><input type='button' onClick='alert(1)'>pippo</input></div>";
-	}
 })();

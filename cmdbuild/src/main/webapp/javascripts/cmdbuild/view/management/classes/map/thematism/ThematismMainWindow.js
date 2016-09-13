@@ -204,11 +204,17 @@
 		},
 		showOnMap : function(configurationObject) {
 			this.layoutConfiguration = configurationObject;
+			var currentCard = this.interactionDocument.getCurrentCard();
+			var currentClassName =  currentCard.className;
 			this.delegate.cmfg('onShowThematism', {
 				name : this.getLayerName(),
 				layer : this.interactionDocument.getGeoLayerByName(this.getCurrentLayer()),
 				strategy : this.getCurrentStrategy(),
 				configuration : {
+					originalLayer : {
+						className :currentClassName,
+						name:this.thematismConfiguration.sourceLayer
+					},
 					thematismConfiguration : clone(this.thematismConfiguration),
 					functionConfiguration : clone(this.functionConfiguration),
 					layoutConfiguration : clone(this.layoutConfiguration),

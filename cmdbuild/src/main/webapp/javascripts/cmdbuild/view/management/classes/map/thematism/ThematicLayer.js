@@ -54,7 +54,6 @@
 			this.layer = this.buildThematicLayer(this.thematism.name);
 			this.layer.set("name", this.thematism.name);
 			this.layer.name = this.thematism.name;
-			this.charge(this.thematism.layer);
 			this.interactionDocument.changed();
 		},
 
@@ -74,6 +73,13 @@
 			return this.layer.getSource();
 		},
 
+		/**
+		 * 
+		 * @returns {ol.Source}
+		 */
+		getThematism : function() {
+			return this.thematism;
+		},
 		/**
 		 * 
 		 * @returns {Void}
@@ -141,22 +147,24 @@
 		charge : function(originalLayer, strategy) {
 			var me = this;
 			var visibles = [];
-			originalLayer.getSource().forEachFeature(function(feature) {
-				var cardId = feature.get("master_card");
-				var justHereFeatures = me.getFeaturesByCardId(cardId);
-				visibles.push(cardId);
-				if (justHereFeatures.getLength() === 0) {
-					me.newFeature({
-						master_card : feature.get("master_card"),
-						master_className : feature.get("master_className"),
-						master_class : feature.get("master_class"),
-						geometry : feature.clone().getGeometry(),
-						strategy : strategy
-					});
-				} else {
+			if (originalLayer) {
+				originalLayer.getSource().forEachFeature(function(feature) {
+					var cardId = feature.get("master_card");
+					var justHereFeatures = me.getFeaturesByCardId(cardId);
+					visibles.push(cardId);
+					if (justHereFeatures.getLength() === 0) {
+						me.newFeature({
+							master_card : feature.get("master_card"),
+							master_className : feature.get("master_className"),
+							master_class : feature.get("master_class"),
+							geometry : feature.clone().getGeometry(),
+							strategy : strategy
+						});
+					} else {
 
-				}
-			});
+					}
+				});
+			}
 			this.layer.getSource().forEachFeature(function(feature) {
 				var cardId = feature.get("master_card");
 				if (visibles.indexOf(cardId) === -1) {
@@ -219,7 +227,7 @@
 					value = value[field];
 				}
 				var thematicDocument = this.interactionDocument.getThematicDocument();
-				var color = thematicDocument.getColor(value, configuration.layoutConfiguration.colorsTable);
+				var color = thematicDocument.getColor(value, configuration.layoutConfiguration.colorsTable, 0);
 				callback.apply(callbackScope, [ color ]);
 			}, this);
 		},
@@ -326,7 +334,7 @@
 					color : color
 				}),
 				radius : radius
-			
+
 			}),
 		});
 		return point;

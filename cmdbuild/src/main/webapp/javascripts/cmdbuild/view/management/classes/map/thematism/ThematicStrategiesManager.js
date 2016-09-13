@@ -125,8 +125,7 @@
 		functionValue : function(parameters, callback, callbackScope) {
 			var params = {
 				parameters : Ext.encode({
-					ClassName : parameters.card.className,
-					CardId : parameters.card.Id
+					ClassName : parameters.className
 				})
 			};
 
@@ -135,7 +134,7 @@
 				_id : parameters.strategy._id,
 				params : params,
 				success : function(response, options, decodedResponse) {
-					callback.apply(callbackScope, [ decodedResponse.data[0] ]);
+					callback.apply(callbackScope, [ decodedResponse.data ]);
 				}
 			});
 		},
