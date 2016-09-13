@@ -116,6 +116,7 @@ public class CommunicationConstants {
 			END_DATE = "endDate", //
 			ENTRIES = "entries", //
 			ENTRY_TYPE = "entryType", //
+			EXCLUDE_PROCESSES = "excludeProcesses", //
 			EXECUTABLE = "executable", //
 			EXPORTED = "exported", //
 			EXPORT_MAPPING = "ExportMapping", //
@@ -142,7 +143,7 @@ public class CommunicationConstants {
 			GROUP_ID = "groupId", //
 			GROUP_NAME = "groupName", //
 			GROUPS = "groups", //
-			HAS_POSITION= "hasPosition", //
+			HAS_POSITION = "hasPosition", //
 			HEADERS = "headers", //
 			HOST = "host", //
 			ICONNAME = "iconName", //

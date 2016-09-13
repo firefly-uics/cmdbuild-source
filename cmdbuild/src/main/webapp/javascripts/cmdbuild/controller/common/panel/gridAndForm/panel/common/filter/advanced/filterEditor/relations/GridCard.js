@@ -4,6 +4,8 @@
 	 * Adapter class to use CMCardGrid
 	 *
 	 * FIXME: refactor to build own grid card
+	 *
+	 * @link CMDBuild.controller.management.workflow.panel.tree.filter.advanced.filterEditor.relations.GridCard
 	 */
 	Ext.define('CMDBuild.controller.common.panel.gridAndForm.panel.common.filter.advanced.filterEditor.relations.GridCard', {
 		extend: 'CMDBuild.controller.common.panel.gridAndForm.panel.common.filter.advanced.filterEditor.relations.CMCardGridController',

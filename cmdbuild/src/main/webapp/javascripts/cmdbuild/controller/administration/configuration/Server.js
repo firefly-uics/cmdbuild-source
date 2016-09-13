@@ -5,7 +5,7 @@
 
 		requires: [
 			'CMDBuild.core.Message',
-			'CMDBuild.proxy.configuration.Server'
+			'CMDBuild.proxy.administration.configuration.Server'
 		],
 
 		/**
@@ -45,7 +45,7 @@
 		 * @returns {Void}
 		 */
 		onConfigurationServerClearCacheButtonClick: function () {
-			CMDBuild.proxy.configuration.Server.clearCache({
+			CMDBuild.proxy.administration.configuration.Server.clearCache({
 				success: CMDBuild.core.Message.success
 			});
 		},
@@ -54,7 +54,7 @@
 		 * @returns {Void}
 		 */
 		onConfigurationServerServiceSynchButtonClick: function () {
-			CMDBuild.proxy.configuration.Server.synchronize({
+			CMDBuild.proxy.administration.configuration.Server.synchronize({
 				success: CMDBuild.core.Message.success
 			});
 		},
@@ -65,7 +65,7 @@
 		 * @returns {Void}
 		 */
 		onConfigurationServerUnlockCardsButtonClick: function () {
-			CMDBuild.proxy.configuration.Server.unlockAllCards({
+			CMDBuild.proxy.administration.configuration.Server.unlockAllCards({
 				success: CMDBuild.core.Message.success
 			});
 		}

@@ -1,5 +1,8 @@
 (function () {
 
+	/**
+	 * @link CMDBuild.view.management.workflow.panel.tree.filter.advanced.filterEditor.attributes.FormPanel
+	 */
 	Ext.define('CMDBuild.view.common.panel.gridAndForm.panel.common.filter.advanced.filterEditor.attributes.FormPanel', {
 		extend: 'Ext.form.Panel',
 

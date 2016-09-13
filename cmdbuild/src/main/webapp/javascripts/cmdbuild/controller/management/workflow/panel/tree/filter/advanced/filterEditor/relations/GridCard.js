@@ -4,19 +4,17 @@
 	 * Adapter class to use CMCardGrid
 	 *
 	 * FIXME: refactor to build own grid card
-	 *
-	 * @link CMDBuild.controller.common.panel.gridAndForm.panel.common.filter.advanced.filterEditor.relations.GridCard
 	 */
 	Ext.define('CMDBuild.controller.management.workflow.panel.tree.filter.advanced.filterEditor.relations.GridCard', {
 		extend: 'CMDBuild.controller.management.workflow.panel.tree.filter.advanced.filterEditor.relations.CMCardGridController',
 
 		mixins: {
 			base: 'CMDBuild.controller.common.abstract.Base',
-			cardGridDelegate: 'CMDBuild.view.common.panel.gridAndForm.panel.common.filter.advanced.filterEditor.relations.CardGridPanelDelegate'
+			cardGridDelegate: 'CMDBuild.view.management.workflow.panel.tree.filter.advanced.filterEditor.relations.CardGridPanelDelegate'
 		},
 
 		/**
-		 * @property {CMDBuild.controller.common.field.filter.advanced.window.panels.relations.Relations}
+		 * @cfg {CMDBuild.controller.management.workflow.panel.tree.filter.advanced.filterEditor.relations.Relations}
 		 */
 		parentDelegate: undefined,
 
@@ -24,15 +22,15 @@
 		 * @cfg {Array}
 		 */
 		cmfgCatchedFunctions: [
-			'onPanelGridAndFormFilterAdvancedFilterEditorRelationsGridCardCheckchange',
-			'onPanelGridAndFormFilterAdvancedFilterEditorRelationsGridCardDomainSelect',
-			'onPanelGridAndFormFilterAdvancedFilterEditorRelationsGridCardLoad',
-			'onPanelGridAndFormFilterAdvancedFilterEditorRelationsGridCardSelectionChange',
-			'onPanelGridAndFormFilterAdvancedFilterEditorRelationsGridCardViewShow'
+			'onWorkflowTreeFilterAdvancedFilterEditorRelationsGridCardCheckchange',
+			'onWorkflowTreeFilterAdvancedFilterEditorRelationsGridCardDomainSelect',
+			'onWorkflowTreeFilterAdvancedFilterEditorRelationsGridCardLoad',
+			'onWorkflowTreeFilterAdvancedFilterEditorRelationsGridCardSelectionChange',
+			'onWorkflowTreeFilterAdvancedFilterEditorRelationsGridCardViewShow'
 		],
 
 		/**
-		 * @property {CMDBuild.view.common.field.filter.advanced.window.panels.relations.CardGridPanel}
+		 * @property {CMDBuild.view.management.workflow.panel.tree.filter.advanced.filterEditor.relations.CardGridPanel}
 		 */
 		view: undefined,
 
@@ -49,7 +47,7 @@
 			this.mixins.base.constructor.call(this, arguments);
 			Ext.apply(this, parameters);
 
-			this.view = Ext.create('CMDBuild.view.common.panel.gridAndForm.panel.common.filter.advanced.filterEditor.relations.CardGridPanel', { delegate: this })
+			this.view = Ext.create('CMDBuild.view.management.workflow.panel.tree.filter.advanced.filterEditor.relations.CardGridPanel', { delegate: this })
 
 			this.callParent([this.view, this.parentDelegate]);
 
@@ -59,9 +57,9 @@
 		/**
 		 * @returns {Void}
 		 */
-		onPanelGridAndFormFilterAdvancedFilterEditorRelationsGridCardCheckchange: function () {
-			if (!this.cmfg('panelGridAndFormFilterAdvancedFilterEditorRelationsSelectedDomainIsEmpty'))
-				return this.view.setDisabled(!this.cmfg('panelGridAndFormFilterAdvancedFilterEditorRelationsSelectedDomainGet', 'oneof'));
+		onWorkflowTreeFilterAdvancedFilterEditorRelationsGridCardCheckchange: function () {
+			if (!this.cmfg('workflowTreeFilterAdvancedFilterEditorRelationsSelectedDomainIsEmpty'))
+				return this.view.setDisabled(!this.cmfg('workflowTreeFilterAdvancedFilterEditorRelationsSelectedDomainGet', 'oneof'));
 
 			return this.view.setDisabled(true);
 		},
@@ -69,14 +67,14 @@
 		/**
 		 * @returns {Void}
 		 */
-		onPanelGridAndFormFilterAdvancedFilterEditorRelationsGridCardDomainSelect: function () {
+		onWorkflowTreeFilterAdvancedFilterEditorRelationsGridCardDomainSelect: function () {
 			this.view.getSelectionModel().clearSelections();
 
 			this.view.updateStoreForClassId( // FIXME: implementation of own card grid
-				this.cmfg('panelGridAndFormFilterAdvancedFilterEditorRelationsSelectedDomainGet', [CMDBuild.core.constants.Proxy.DESTINATION, CMDBuild.core.constants.Proxy.ID])
+				this.cmfg('workflowTreeFilterAdvancedFilterEditorRelationsSelectedDomainGet', [CMDBuild.core.constants.Proxy.DESTINATION, CMDBuild.core.constants.Proxy.ID])
 			);
 
-			this.cmfg('onPanelGridAndFormFilterAdvancedFilterEditorRelationsGridCardCheckchange');
+			this.cmfg('onWorkflowTreeFilterAdvancedFilterEditorRelationsGridCardCheckchange');
 		},
 
 		/**
@@ -84,9 +82,9 @@
 		 *
 		 * @returns {Void}
 		 */
-		onPanelGridAndFormFilterAdvancedFilterEditorRelationsGridCardLoad: function () {
-			if (!this.cmfg('panelGridAndFormFilterAdvancedFilterEditorRelationsSelectedDomainIsEmpty')) {
-				var checkedCards = this.cmfg('panelGridAndFormFilterAdvancedFilterEditorRelationsSelectedDomainGet', CMDBuild.core.constants.Proxy.CHECKED_CARDS);
+		onWorkflowTreeFilterAdvancedFilterEditorRelationsGridCardLoad: function () {
+			if (!this.cmfg('workflowTreeFilterAdvancedFilterEditorRelationsSelectedDomainIsEmpty')) {
+				var checkedCards = this.cmfg('workflowTreeFilterAdvancedFilterEditorRelationsSelectedDomainGet', CMDBuild.core.constants.Proxy.CHECKED_CARDS);
 
 				if (Ext.isArray(checkedCards) && !Ext.isEmpty(checkedCards))
 					Ext.Array.each(checkedCards, function (selectedCardObject, i, allSelectedCardObject) {
@@ -106,7 +104,7 @@
 		/**
 		 * @returns {Void}
 		 */
-		onPanelGridAndFormFilterAdvancedFilterEditorRelationsGridCardSelectionChange: function () {
+		onWorkflowTreeFilterAdvancedFilterEditorRelationsGridCardSelectionChange: function () {
 			var checkedCards = [];
 
 			if (this.view.getSelectionModel().hasSelection())
@@ -120,7 +118,7 @@
 					}
 				}, this);
 
-			this.cmfg('panelGridAndFormFilterAdvancedFilterEditorRelationsSelectedDomainSet', {
+			this.cmfg('workflowTreeFilterAdvancedFilterEditorRelationsSelectedDomainSet', {
 				propertyName: CMDBuild.core.constants.Proxy.CHECKED_CARDS,
 				value: checkedCards
 			});
@@ -129,11 +127,11 @@
 		/**
 		 * @returns {Void}
 		 */
-		onPanelGridAndFormFilterAdvancedFilterEditorRelationsGridCardViewShow: function () {
+		onWorkflowTreeFilterAdvancedFilterEditorRelationsGridCardViewShow: function () {
 			this.view.getStore().removeAll();
 			this.view.getSelectionModel().clearSelections();
 
-			this.cmfg('onPanelGridAndFormFilterAdvancedFilterEditorRelationsGridCardCheckchange');
+			this.cmfg('onWorkflowTreeFilterAdvancedFilterEditorRelationsGridCardCheckchange');
 		},
 
 		// Overrides
@@ -146,7 +144,7 @@
 			 * @override
 			 */
 			onCMCardGridDeselect: function (grid, record) {
-				this.cmfg('onPanelGridAndFormFilterAdvancedFilterEditorRelationsGridCardSelectionChange');
+				this.cmfg('onWorkflowTreeFilterAdvancedFilterEditorRelationsGridCardSelectionChange');
 			},
 
 			/**
@@ -158,7 +156,7 @@
 			 * @override
 			 */
 			onCMCardGridSelect: function (grid, record) {
-				this.cmfg('onPanelGridAndFormFilterAdvancedFilterEditorRelationsGridCardSelectionChange');
+				this.cmfg('onWorkflowTreeFilterAdvancedFilterEditorRelationsGridCardSelectionChange');
 			},
 
 			/**
@@ -176,7 +174,7 @@
 			 * @override
 			 */
 			onCMCardGridLoad: function (grid) {
-				this.cmfg('onPanelGridAndFormFilterAdvancedFilterEditorRelationsGridCardLoad');
+				this.cmfg('onWorkflowTreeFilterAdvancedFilterEditorRelationsGridCardLoad');
 			}
 	});
 

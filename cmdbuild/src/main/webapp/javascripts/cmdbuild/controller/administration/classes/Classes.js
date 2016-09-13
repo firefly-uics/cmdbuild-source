@@ -170,12 +170,12 @@
 								this.classesSelectedClassSet({ value: selectedClass });
 
 								this.setViewTitle(this.cmfg('classesSelectedClassGet', CMDBuild.core.constants.Proxy.DESCRIPTION));
+
+								this.cmfg('onClassesClassSelected');
 							} else {
 								_error('onClassesModuleInit(): class not found', this, node.get(CMDBuild.core.constants.Proxy.ENTITY_ID));
 							}
 						}
-
-						this.cmfg('onClassesClassSelected');
 
 						// Manage tab selection
 						if (Ext.isEmpty(this.tabPanel.getActiveTab()))

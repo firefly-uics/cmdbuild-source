@@ -120,14 +120,14 @@
 		},
 
 		/**
-		 * @param {CMDBuild.model.common.panel.gridAndForm.filter.advanced.Filter} filter
+		 * @param {CMDBuild.model.management.workflow.panel.tree.filter.advanced.Filter} filter
 		 *
 		 * @returns {Void}
 		 */
 		onWorkflowTreeToolbarPagingWokflowSelect: function (filter) {
 			this.cmfg('workflowTreeToolbarPagingFilterBasicReset');
 
-			this.controllerFilterAdvanced.cmfg('onPanelGridAndFormFilterAdvancedFilterSelect', filter);
+			this.controllerFilterAdvanced.cmfg('onWorkflowTreeFilterAdvancedFilterSelect', filter);
 		},
 
 		/**
@@ -135,7 +135,7 @@
 		 */
 		workflowTreeToolbarPagingFilterAdvancedReset: function () {
 			if (Ext.isObject(this.controllerFilterAdvanced) && !Ext.Object.isEmpty(this.controllerFilterAdvanced))
-				this.controllerFilterAdvanced.cmfg('onPanelGridAndFormFilterAdvancedClearButtonClick', true);
+				this.controllerFilterAdvanced.cmfg('onWorkflowTreeFilterAdvancedClearButtonClick', true);
 		},
 
 		/**

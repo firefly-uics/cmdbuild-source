@@ -115,7 +115,8 @@ public interface DataAccessLogic extends Logic {
 
 	PagedElements<CMAttribute> getAttributes(String className, boolean onlyActive, AttributesQuery attributesQuery);
 
-	PagedElements<CMAttribute> getDomainAttributes(String className, boolean onlyActive, AttributesQuery attributesQuery);
+	PagedElements<CMAttribute> getDomainAttributes(String className, boolean onlyActive,
+			AttributesQuery attributesQuery);
 
 	/**
 	 * Fetches the card with the specified Id from the class with the specified
@@ -208,6 +209,8 @@ public interface DataAccessLogic extends Logic {
 	 */
 	Iterable<CMDomain> findDomainsForClass(String className, boolean skipDisabledClasses);
 
+	Iterable<CMDomain> findDomains(Optional<String> source, Optional<String> destination, boolean activeOnly, boolean excludeProcesses);
+
 	/**
 	 * Tells if the given class is a subclass of Activity
 	 * 
@@ -229,7 +232,8 @@ public interface DataAccessLogic extends Logic {
 
 	void deleteDetail(Card master, Card detail, String domainName);
 
-	public void deleteRelation(String srcClassName, Long srcCardId, String dstClassName, Long dstCardId, CMDomain domain);
+	public void deleteRelation(String srcClassName, Long srcCardId, String dstClassName, Long dstCardId,
+			CMDomain domain);
 
 	File exportClassAsCsvFile(String className, String separator);
 

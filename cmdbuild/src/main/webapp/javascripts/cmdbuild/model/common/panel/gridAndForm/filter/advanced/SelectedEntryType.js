@@ -2,7 +2,7 @@
 
 	Ext.require('CMDBuild.core.constants.Proxy');
 
-	Ext.define('CMDBuild.model.common.panel.gridAndForm.filter.advanced.SelectedEntryType', { // TODO: waiting for refactor (renameddd)
+	Ext.define('CMDBuild.model.common.panel.gridAndForm.filter.advanced.SelectedEntryType', { // TODO: waiting for refactor (rename)
 		extend: 'Ext.data.Model',
 
 		fields: [

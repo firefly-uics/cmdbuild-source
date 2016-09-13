@@ -30,7 +30,7 @@
 			Ext.apply(this, configurationObject); // Apply configurations
 
 			Ext.ns('CMDBuild.configuration');
-			CMDBuild.configuration.graph = Ext.create('CMDBuild.model.core.configurations.builder.RelationGraph'); // Setup configuration with defaults
+			CMDBuild.configuration.graph = Ext.create('CMDBuild.model.core.configuration.builder.RelationGraph'); // Setup configuration with defaults
 
 			CMDBuild.proxy.core.configurations.builder.RelationGraph.read({
 				loadMask: false,
@@ -38,7 +38,7 @@
 				success: function (response, options, decodedResponse) {
 					decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.DATA];
 
-					CMDBuild.configuration.graph = Ext.create('CMDBuild.model.core.configurations.builder.RelationGraph', decodedResponse); // Configuration model
+					CMDBuild.configuration.graph = Ext.create('CMDBuild.model.core.configuration.builder.RelationGraph', decodedResponse); // Configuration model
 				},
 				callback: this.callback
 			});

@@ -5,7 +5,7 @@
 
 		requires: [
 			'CMDBuild.core.constants.Proxy',
-			'CMDBuild.proxy.configuration.RelationGraph'
+			'CMDBuild.proxy.administration.configuration.RelationGraph'
 		],
 
 		/**
@@ -44,8 +44,10 @@
 		 * @returns {Void}
 		 */
 		onConfigurationRelationGraphSaveButtonClick: function () {
-			CMDBuild.proxy.configuration.RelationGraph.update({
-				params: Ext.create('CMDBuild.model.configuration.RelationGraph', this.view.getData(true)).getData(),
+			var configurationModel = Ext.create('CMDBuild.model.administration.configuration.RelationGraph', this.view.panelFunctionDataGet({ includeDisabled: true }));
+
+			CMDBuild.proxy.administration.configuration.RelationGraph.update({
+				params: configurationModel.getParamsObject(),
 				scope: this,
 				success: function (response, options, decodedResponse) {
 					this.cmfg('onConfigurationRelationGraphTabShow');
@@ -59,13 +61,13 @@
 		 * @returns {Void}
 		 */
 		onConfigurationRelationGraphTabShow: function () {
-			CMDBuild.proxy.configuration.RelationGraph.read({
+			CMDBuild.proxy.administration.configuration.RelationGraph.read({
 				scope: this,
 				success: function (response, options, decodedResponse) {
 					decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.DATA];
 
-					if (!Ext.isEmpty(decodedResponse)) {
-						this.view.loadRecord(Ext.create('CMDBuild.model.configuration.RelationGraph', decodedResponse));
+					if (Ext.isObject(decodedResponse) && !Ext.Object.isEmpty(decodedResponse)) {
+						this.view.loadRecord(Ext.create('CMDBuild.model.administration.configuration.RelationGraph', decodedResponse));
 
 						Ext.create('CMDBuild.core.configurations.builder.RelationGraph'); // Rebuild configuration model
 					}

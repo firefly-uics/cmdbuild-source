@@ -1,8 +1,5 @@
 (function () {
 
-	/**
-	 * @link CMDBuild.view.administration.widget.form.EmptyPanel
-	 */
 	Ext.define('CMDBuild.view.administration.classes.tabs.widgets.form.EmptyPanel', {
 		extend: 'CMDBuild.view.administration.classes.tabs.widgets.form.AbstractWidgetDefinitionPanel',
 

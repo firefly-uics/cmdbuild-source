@@ -1,6 +1,6 @@
 (function () {
 
-	Ext.require(['CMDBuild.core.constants.Proxy']);
+	Ext.require('CMDBuild.core.constants.Proxy');
 
 	/**
 	 * @link CMDBuild.model.CMActivityInstance

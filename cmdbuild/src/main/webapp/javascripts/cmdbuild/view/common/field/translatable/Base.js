@@ -45,7 +45,7 @@
 		initComponent: function() {
 			this.field = this.createField();
 
-			if (CMDBuild.configuration.localization.hasEnabledLanguages()) {
+			if (CMDBuild.configuration.localization.hasEnabledLanguages())
 				this.translationButton = Ext.create('CMDBuild.core.buttons.FieldTranslation', {
 					margin: '0 0 0 5',
 					scope: this,
@@ -54,7 +54,6 @@
 						Ext.create('CMDBuild.controller.common.field.translatable.Window', { ownerField: this });
 					}
 				});
-			}
 
 			Ext.apply(this, {
 				items: [this.field, this.translationButton]

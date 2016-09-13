@@ -34,14 +34,17 @@
 			'onWorkflowWokflowSelect -> controllerForm, controllerTree',
 			'workflowFormReset -> controllerForm',
 			'workflowSelectedActivityGet',
+			'workflowSelectedActivityIsEmpty',
 			'workflowSelectedActivityReset',
 			'workflowSelectedInstanceGet',
 			'workflowSelectedInstanceReset',
+			'workflowSelectedPreviousActivityGet',
+			'workflowSelectedPreviousActivityIsEmpty',
 			'workflowSelectedWorkflowAttributesGet',
 			'workflowSelectedWorkflowAttributesIsEmpty',
-			'workflowSelectedWorkflowGet = panelGridAndFormSelectedEntryTypeGet',
-			'workflowSelectedWorkflowIsEmpty = panelGridAndFormSelectedEntryTypeIsEmpty',
-			'workflowTreeActivityOpen -> controllerTree',
+			'workflowSelectedWorkflowGet',
+			'workflowSelectedWorkflowIsEmpty',
+			'workflowTreeActivitySelect -> controllerTree',
 			'workflowTreeApplyStoreEvent -> controllerTree',
 			'workflowTreeFilterApply -> controllerTree',
 			'workflowTreeToolbarTopStatusValueSet -> controllerTree'
@@ -80,6 +83,13 @@
 		 * @private
 		 */
 		selectedInstance: undefined,
+
+		/**
+		 * @property {CMDBuild.model.management.workflow.PreviousActivity}
+		 *
+		 * @private
+		 */
+		selectedPreviousActivity: undefined,
 
 		/**
 		 * @property {CMDBuild.model.management.workflow.Workflow}
@@ -229,7 +239,7 @@
 					activityData[CMDBuild.core.constants.Proxy.ACTIVITY_SUBSET_ID] = responseModel.get(CMDBuild.core.constants.Proxy.ACTIVITY_SUBSET_ID);
 					activityData[CMDBuild.core.constants.Proxy.INSTANCE_ID] = responseModel.get(CMDBuild.core.constants.Proxy.ID);
 
-					this.cmfg('workflowTreeActivityOpen', activityData);
+					this.cmfg('workflowTreeActivitySelect', activityData);
 				}
 			} else {
 				_error('onWorkflowActivityUpdateCallback(): unmanaged responseModel parameter', this, responseModel);
@@ -467,7 +477,7 @@
 									decodedResponse[CMDBuild.core.constants.Proxy.CONFIGURATION] = Ext.decode(filterConfiguration);
 								}
 
-								node.set(CMDBuild.core.constants.Proxy.FILTER, Ext.create('CMDBuild.model.common.panel.gridAndForm.filter.advanced.Filter', decodedResponse));
+								node.set(CMDBuild.core.constants.Proxy.FILTER, Ext.create('CMDBuild.model.management.workflow.panel.tree.filter.advanced.Filter', decodedResponse));
 							}
 						},
 						callback: callback
@@ -495,11 +505,34 @@
 			},
 
 			/**
+			 * @param {Array or String} attributePath
+			 *
+			 * @returns {Boolean}
+			 */
+			workflowSelectedActivityIsEmpty: function (attributePath) {
+				var parameters = {};
+				parameters[CMDBuild.core.constants.Proxy.TARGET_VARIABLE_NAME] = 'selectedActivity';
+				parameters[CMDBuild.core.constants.Proxy.ATTRIBUTE_PATH] = attributePath;
+
+				return this.propertyManageIsEmpty(parameters);
+			},
+
+			/**
 			 * @param {Object} parameters
 			 *
 			 * @returns {Void}
 			 */
 			workflowSelectedActivityReset: function (parameters) {
+				// Manage previous selected activity
+				if (!this.cmfg('workflowSelectedActivityIsEmpty')) {
+					var selectedPreviousActivityObject = {};
+					selectedPreviousActivityObject[CMDBuild.core.constants.Proxy.ACTIVITY_SUBSET_ID] = this.cmfg('workflowSelectedWorkflowGet', CMDBuild.core.constants.Proxy.NAME);
+					selectedPreviousActivityObject[CMDBuild.core.constants.Proxy.INSTANCE_ID] = this.cmfg('workflowSelectedInstanceGet', CMDBuild.core.constants.Proxy.ID);
+					selectedPreviousActivityObject[CMDBuild.core.constants.Proxy.WORKFLOW_NAME] = this.cmfg('workflowSelectedWorkflowGet', CMDBuild.core.constants.Proxy.NAME);
+
+					this.workflowSelectedPreviousActivitySet({ value: selectedPreviousActivityObject });
+				}
+
 				this.propertyManageReset('selectedActivity');
 			},
 
@@ -553,6 +586,49 @@
 				if (Ext.isObject(parameters) && !Ext.Object.isEmpty(parameters)) {
 					parameters[CMDBuild.core.constants.Proxy.MODEL_NAME] = 'CMDBuild.model.management.workflow.Instance';
 					parameters[CMDBuild.core.constants.Proxy.TARGET_VARIABLE_NAME] = 'selectedInstance';
+
+					this.propertyManageSet(parameters);
+				}
+			},
+
+		// SelectedPreviousActivity property functions
+			/**
+			 * @param {Array or String} attributePath
+			 *
+			 * @returns {Mixed or undefined}
+			 */
+			workflowSelectedPreviousActivityGet: function (attributePath) { // TODO: check workflow relation
+				var parameters = {};
+				parameters[CMDBuild.core.constants.Proxy.TARGET_VARIABLE_NAME] = 'selectedPreviousActivity';
+				parameters[CMDBuild.core.constants.Proxy.ATTRIBUTE_PATH] = attributePath;
+
+				return this.propertyManageGet(parameters);
+			},
+
+			/**
+			 * @param {Array or String} attributePath
+			 *
+			 * @returns {Boolean}
+			 */
+			workflowSelectedPreviousActivityIsEmpty: function (attributePath) {
+				var parameters = {};
+				parameters[CMDBuild.core.constants.Proxy.TARGET_VARIABLE_NAME] = 'selectedPreviousActivity';
+				parameters[CMDBuild.core.constants.Proxy.ATTRIBUTE_PATH] = attributePath;
+
+				return this.propertyManageIsEmpty(parameters);
+			},
+
+			/**
+			 * @param {Object} parameters
+			 *
+			 * @returns {Void}
+			 *
+			 * @private
+			 */
+			workflowSelectedPreviousActivitySet: function (parameters) {
+				if (Ext.isObject(parameters) && !Ext.Object.isEmpty(parameters)) {
+					parameters[CMDBuild.core.constants.Proxy.MODEL_NAME] = 'CMDBuild.model.management.workflow.PreviousActivity';
+					parameters[CMDBuild.core.constants.Proxy.TARGET_VARIABLE_NAME] = 'selectedPreviousActivity';
 
 					this.propertyManageSet(parameters);
 				}

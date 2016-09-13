@@ -8,11 +8,7 @@ public class UserClass extends UserEntryType implements CMClass {
 
 	static UserClass newInstance(final UserDataView view, final CMClass inner) {
 		final PrivilegeContext privilegeContext = view.getPrivilegeContext();
-		if (isUserAccessible(privilegeContext, inner)) {
-			return new UserClass(view, inner);
-		} else {
-			return null;
-		}
+		return isUserAccessible(privilegeContext, inner) ? new UserClass(view, inner) : null;
 	}
 
 	public static boolean isUserAccessible(final PrivilegeContext privilegeContext, final CMClass inner) {
@@ -47,7 +43,13 @@ public class UserClass extends UserEntryType implements CMClass {
 
 	@Override
 	public UserClass getParent() {
-		return UserClass.newInstance(view, inner.getParent());
+		for (CMClass parent = inner.getParent(); parent != null; parent = parent.getParent()) {
+			final UserClass output = UserClass.newInstance(view, parent);
+			if (output != null) {
+				return output;
+			}
+		}
+		return null;
 	}
 
 	@Override

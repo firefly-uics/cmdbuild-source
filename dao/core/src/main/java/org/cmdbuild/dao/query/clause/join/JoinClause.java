@@ -5,7 +5,10 @@ import static com.google.common.collect.FluentIterable.from;
 import static com.google.common.collect.Iterables.isEmpty;
 import static com.google.common.collect.Maps.newHashMap;
 import static com.google.common.collect.Sets.newHashSet;
-import static org.cmdbuild.dao.entrytype.Predicates.disabledClass;
+import static org.cmdbuild.dao.entrytype.Functions.disabled1;
+import static org.cmdbuild.dao.entrytype.Functions.disabled2;
+import static org.cmdbuild.dao.entrytype.Predicates.contains;
+import static org.cmdbuild.dao.entrytype.Predicates.domain;
 import static org.cmdbuild.dao.entrytype.Predicates.domainFor;
 import static org.cmdbuild.dao.query.clause.where.OrWhereClause.or;
 import static org.cmdbuild.dao.query.clause.where.TrueWhereClause.trueWhereClause;
@@ -61,7 +64,8 @@ public class JoinClause {
 			if (domain instanceof AnyDomain) {
 				addAllDomains();
 			} else {
-				addDomain(domain);
+				addQueryDomain(new QueryDomain(domain, Source._1));
+				addQueryDomain(new QueryDomain(domain, Source._2));
 			}
 			this.domainAlias = domainAlias;
 			return this;
@@ -103,14 +107,14 @@ public class JoinClause {
 		private final void addAllDomains() {
 			for (final CMDomain domain : from(viewForBuild.findDomains()) //
 					.filter(domainFor(source)) //
-					.filter(not(disabledClass(source)))) {
-				addDomain(domain);
+					.filter(domain(disabled1(), not(contains(source.getName()))))) {
+				addQueryDomain(new QueryDomain(domain, Source._1));
 			}
-		}
-
-		private final void addDomain(final CMDomain domain) {
-			addQueryDomain(new QueryDomain(domain, Source._1));
-			addQueryDomain(new QueryDomain(domain, Source._2));
+			for (final CMDomain domain : from(viewForBuild.findDomains()) //
+					.filter(domainFor(source)) //
+					.filter(domain(disabled2(), not(contains(source.getName()))))) {
+				addQueryDomain(new QueryDomain(domain, Source._2));
+			}
 		}
 
 		private final void addQueryDomain(final QueryDomain queryDomain) {

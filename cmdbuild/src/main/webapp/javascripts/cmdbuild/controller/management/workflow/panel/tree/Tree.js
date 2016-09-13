@@ -19,7 +19,7 @@
 		parentDelegate: undefined,
 
 		/**
-		 * @property {CMDBuild.model.common.panel.gridAndForm.filter.advanced.Filter}
+		 * @property {CMDBuild.model.management.workflow.panel.tree.filter.advanced.Filter}
 		 *
 		 * @private
 		 */
@@ -29,15 +29,15 @@
 		 * @cfg {Array}
 		 */
 		cmfgCatchedFunctions: [
-			'getView = panelGridAndFormGridGet',
+			'getView = workflowTreeViewGet',
 			'onWorkflowTreeAddButtonClick',
 			'onWorkflowTreeColumnChanged',
 			'onWorkflowTreePrintButtonClick',
 			'onWorkflowTreeRecordSelect',
 			'onWorkflowTreeSaveFailure',
 			'onWorkflowTreeWokflowSelect = onWorkflowWokflowSelect',
-			'workflowTreeActivityOpen',
-			'workflowTreeAppliedFilterGet = panelGridAndFormGridAppliedFilterGet',
+			'workflowTreeActivitySelect',
+			'workflowTreeAppliedFilterGet',
 			'workflowTreeApplyStoreEvent',
 			'workflowTreeFilterApply = panelGridAndFormGridFilterApply',
 			'workflowTreeFilterClear = panelGridAndFormGridFilterClear',
@@ -678,7 +678,7 @@
 		 *
 		 * @returns {Void}
 		 */
-		workflowTreeActivityOpen: function (parameters) {
+		workflowTreeActivitySelect: function (parameters) {
 			parameters = Ext.isObject(parameters) ? parameters : {};
 			parameters.enableForceFlowStatus = Ext.isBoolean(parameters.enableForceFlowStatus) ? parameters.enableForceFlowStatus : false;
 			parameters.forceFilter = Ext.isBoolean(parameters.forceFilter) ? parameters.forceFilter : false;
@@ -686,10 +686,10 @@
 
 			// Error handling
 				if (this.cmfg('workflowSelectedWorkflowIsEmpty'))
-					return _error('workflowTreeActivityOpen(): no selected workflow found', this);
+					return _error('workflowTreeActivitySelect(): no selected workflow found', this);
 
 				if (!Ext.isNumber(parameters[CMDBuild.core.constants.Proxy.INSTANCE_ID]) || Ext.isEmpty(parameters[CMDBuild.core.constants.Proxy.INSTANCE_ID]))
-					return _error('workflowTreeActivityOpen(): unmanaged instanceId parameter', this, parameters[CMDBuild.core.constants.Proxy.INSTANCE_ID]);
+					return _error('workflowTreeActivitySelect(): unmanaged instanceId parameter', this, parameters[CMDBuild.core.constants.Proxy.INSTANCE_ID]);
 			// END: Error handling
 
 			var params = {};
@@ -712,7 +712,7 @@
 					if (Ext.isString(params[CMDBuild.core.constants.Proxy.FILTER]) && !Ext.isEmpty(params[CMDBuild.core.constants.Proxy.FILTER])) {
 						parameters.forceFilter = true;
 
-						return this.workflowTreeActivityOpen(parameters);
+						return this.workflowTreeActivitySelect(parameters);
 					} else if (
 						Ext.isString(params[CMDBuild.core.constants.Proxy.FLOW_STATUS]) && !Ext.isEmpty(params[CMDBuild.core.constants.Proxy.FLOW_STATUS])
 						&& params[CMDBuild.core.constants.Proxy.FLOW_STATUS] != CMDBuild.core.constants.WorkflowStates.getAll()
@@ -720,7 +720,7 @@
 					) {
 						parameters.forceFlowStatus = true;
 
-						return this.workflowTreeActivityOpen(parameters);
+						return this.workflowTreeActivitySelect(parameters);
 					} else {
 						return Ext.callback(this.positionActivityGetFailure, this, [response, options, decodedResponse]); // Card not found and store reload
 					}
@@ -780,7 +780,7 @@
 			 */
 			workflowTreeAppliedFilterSet: function (parameters) {
 				if (Ext.isObject(parameters) && !Ext.Object.isEmpty(parameters)) {
-					parameters[CMDBuild.core.constants.Proxy.MODEL_NAME] = 'CMDBuild.model.common.panel.gridAndForm.filter.advanced.Filter';
+					parameters[CMDBuild.core.constants.Proxy.MODEL_NAME] = 'CMDBuild.model.management.workflow.panel.tree.filter.advanced.Filter';
 					parameters[CMDBuild.core.constants.Proxy.TARGET_VARIABLE_NAME] = 'appliedFilter';
 
 					this.propertyManageSet(parameters);
@@ -874,7 +874,7 @@
 
 		// Filter management methods
 			/**
-			 * @param {CMDBuild.model.common.panel.gridAndForm.filter.advanced.Filter} filter
+			 * @param {CMDBuild.model.management.workflow.panel.tree.filter.advanced.Filter} filter
 			 *
 			 * @returns {Void}
 			 *
@@ -912,7 +912,7 @@
 
 			/**
 			 * @param {Object} parameters
-			 * @param {CMDBuild.model.common.panel.gridAndForm.filter.advanced.Filter} parameters.filter
+			 * @param {CMDBuild.model.management.workflow.panel.tree.filter.advanced.Filter} parameters.filter
 			 * @param {Boolean} parameters.type
 			 *
 			 * @returns {Void}

@@ -1,15 +1,12 @@
 (function () {
 
-	/**
-	 * @link CMDBuild.controller.common.panel.gridAndForm.panel.common.filter.advanced.filterEditor.Attributes
-	 */
 	Ext.define('CMDBuild.controller.management.workflow.panel.tree.filter.advanced.filterEditor.Attributes', {
 		extend: 'CMDBuild.controller.common.abstract.Base',
 
 		requires: [
 			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.Utils',
-			'CMDBuild.proxy.common.panel.gridAndForm.filter.advanced.filterEditor.Attributes'
+			'CMDBuild.proxy.management.workflow.panel.tree.filter.advanced.filterEditor.Attributes'
 		],
 
 		/**
@@ -21,10 +18,9 @@
 		 * @cfg {Array}
 		 */
 		cmfgCatchedFunctions: [
-			'panelGridAndFormFilterAdvancedFilterEditorAttributesDataGet',
-			'filterConditionsGroupsRemove = onPanelGridAndFormFilterAdvancedFilterEditorAttributesFieldSetEmptied',
-			'onPanelGridAndFormFilterAdvancedFilterEditorAttributesAddButtonSelect',
-			'onPanelGridAndFormFilterAdvancedFilterEditorAttributesViewShow'
+			'filterConditionsGroupsRemove = onWorkflowTreeFilterAdvancedFilterEditorAttributesFieldSetEmptied', // FIXME: waiting for refactor
+			'onWorkflowTreeFilterAdvancedFilterEditorAttributesViewShow',
+			'workflowTreeFilterAdvancedFilterEditorAttributesDataGet'
 		],
 
 		/**
@@ -37,7 +33,7 @@
 		filterConditions: {},
 
 		/**
-		 * @property {CMDBuild.view.common.panel.gridAndForm.panel.common.filter.advanced.filterEditor.attributes.FormPanel}
+		 * @property {CMDBuild.view.management.workflow.panel.tree.filter.advanced.filterEditor.attributes.FormPanel}
 		 */
 		form: undefined,
 
@@ -52,7 +48,7 @@
 		},
 
 		/**
-		 * @property {CMDBuild.view.common.panel.gridAndForm.panel.common.filter.advanced.filterEditor.attributes.AttributesView}
+		 * @property {CMDBuild.view.management.workflow.panel.tree.filter.advanced.filterEditor.attributes.AttributesView}
 		 */
 		view: undefined,
 
@@ -67,7 +63,7 @@
 		constructor: function (configurationObject) {
 			this.callParent(arguments);
 
-			this.view = Ext.create('CMDBuild.view.common.panel.gridAndForm.panel.common.filter.advanced.filterEditor.attributes.AttributesView', { delegate: this });
+			this.view = Ext.create('CMDBuild.view.management.workflow.panel.tree.filter.advanced.filterEditor.attributes.AttributesView', { delegate: this });
 
 			// Shorthands
 			this.form = this.view.form;
@@ -95,7 +91,7 @@
 							scope: this,
 
 							handler: function (item, e) {
-								this.cmfg('onPanelGridAndFormFilterAdvancedFilterEditorAttributesAddButtonSelect', item[CMDBuild.core.constants.Proxy.ATTRIBUTE]);
+								this.onWorkflowTreeFilterEditorAttributesAddButtonSelect(item[CMDBuild.core.constants.Proxy.ATTRIBUTE]);
 							}
 						});
 					}, this);
@@ -159,33 +155,6 @@
 			}
 		},
 
-		/**
-		 * @returns {Object or null}
-		 */
-		panelGridAndFormFilterAdvancedFilterEditorAttributesDataGet: function () {
-			var out = {};
-
-			if (!this.filterConditionsIsEmpty()) {
-				var data = [];
-				var filterObject = {};
-
-				Ext.Object.each(this.filterConditionsGroupGet(), function (attributeName, fieldset, myself) {
-					if (!Ext.isEmpty(fieldset) && Ext.isFunction(fieldset.getData))
-						data.push(fieldset.getData());
-				}, this);
-
-				if (data.length == 1) {
-					filterObject = data[0];
-				} else if (data.length > 1) {
-					filterObject[CMDBuild.core.constants.Proxy.AND] = data;
-				}
-
-				out[CMDBuild.core.constants.Proxy.ATTRIBUTE] = filterObject;
-			}
-
-			return out;
-		},
-
 		// FilterConditions manage methods
 			/**
 			 * @param {Object} attribute
@@ -222,7 +191,7 @@
 					Ext.isObject(attribute) && !Ext.Object.isEmpty(attribute)
 					&& this.filterConditionsIsGroupEmpty(attribute[CMDBuild.core.constants.Proxy.NAME])
 				) {
-					var fieldset = Ext.create('CMDBuild.view.common.panel.gridAndForm.panel.common.filter.advanced.filterEditor.attributes.FieldSet', {
+					var fieldset = Ext.create('CMDBuild.view.management.workflow.panel.tree.filter.advanced.filterEditor.attributes.FieldSet', {
 						delegate: this,
 						attributeName: attribute[CMDBuild.core.constants.Proxy.NAME],
 						title: attribute[CMDBuild.core.constants.Proxy.DESCRIPTION]
@@ -238,7 +207,7 @@
 			 * @param {String} attributeName
 			 *
 			 * @returns
-			 * 		{CMDBuild.view.common.panel.gridAndForm.panel.common.filter.advanced.filterEditor.attributes.FieldSet} if group not empty (single group)
+			 * 		{CMDBuild.view.management.workflow.panel.tree.filter.advanced.filterEditor.attributes.FieldSet} if group not empty (single group)
 			 * 		{Object} if attributeName is empty (all groups)
 			 * 		{null} if group is empty
 			 *
@@ -307,8 +276,10 @@
 		 * @param {Object} attribute
 		 *
 		 * @returns {Void}
+		 *
+		 * @private
 		 */
-		onPanelGridAndFormFilterAdvancedFilterEditorAttributesAddButtonSelect: function (attribute) {
+		onWorkflowTreeFilterEditorAttributesAddButtonSelect: function (attribute) {
 			this.filterConditionsConditionAdd(attribute);
 
 			this.form.doLayout(); // Fixes FieldManager implementation problems
@@ -317,13 +288,13 @@
 		/**
 		 * @returns {Void}
 		 */
-		onPanelGridAndFormFilterAdvancedFilterEditorAttributesViewShow: function () {
-			if (!this.cmfg('panelGridAndFormSelectedEntryTypeIsEmpty')) {
+		onWorkflowTreeFilterAdvancedFilterEditorAttributesViewShow: function () {
+			if (!this.cmfg('workflowSelectedWorkflowIsEmpty')) {
 				var params = {};
 				params[CMDBuild.core.constants.Proxy.ACTIVE] = true;
-				params[CMDBuild.core.constants.Proxy.CLASS_NAME] = this.cmfg('panelGridAndFormSelectedEntryTypeGet', CMDBuild.core.constants.Proxy.NAME);
+				params[CMDBuild.core.constants.Proxy.CLASS_NAME] = this.cmfg('workflowSelectedWorkflowGet', CMDBuild.core.constants.Proxy.NAME);
 
-				CMDBuild.proxy.common.panel.gridAndForm.filter.advanced.filterEditor.Attributes.read({
+				CMDBuild.proxy.management.workflow.panel.tree.filter.advanced.filterEditor.Attributes.read({
 					params: params,
 					scope: this,
 					success: function (response, options, decodedResponse) {
@@ -331,7 +302,7 @@
 
 						this.attributeButtonReset();
 
-						if (!Ext.isEmpty(decodedResponse) && Ext.isArray(decodedResponse)) {
+						if (Ext.isArray(decodedResponse) && !Ext.isEmpty(decodedResponse)) {
 							this.selectedEntityAttributesSet(decodedResponse);
 							this.attributeButtonBuild();
 							this.viewBuild();
@@ -339,7 +310,7 @@
 					}
 				});
 			} else {
-				_error('onPanelGridAndFormFilterAdvancedFilterEditorAttributesViewShow(): entryType is empty', this, this.cmfg('panelGridAndFormSelectedEntryTypeGet'));
+				_error('onWorkflowTreeFilterAdvancedFilterEditorAttributesViewShow(): empty selected entryType', this, this.cmfg('workflowSelectedWorkflowGet'));
 			}
 		},
 
@@ -398,22 +369,49 @@
 		 * @private
 		 */
 		viewBuild: function () {
-			if (!this.cmfg('panelGridAndFormFilterAdvancedManagerSelectedFilterIsEmpty')) {
-				var filterConfigurationObject = this.cmfg('panelGridAndFormFilterAdvancedManagerSelectedFilterGet', CMDBuild.core.constants.Proxy.CONFIGURATION);
+			if (!this.cmfg('workflowTreeFilterAdvancedManagerSelectedFilterIsEmpty')) {
+				var filterConfigurationObject = this.cmfg('workflowTreeFilterAdvancedManagerSelectedFilterGet', CMDBuild.core.constants.Proxy.CONFIGURATION);
 
 				this.filterConditionsGroupsReset();
 
 				if (
-					!this.cmfg('panelGridAndFormFilterAdvancedManagerSelectedFilterIsEmpty', CMDBuild.core.constants.Proxy.CONFIGURATION)
-					&& !this.cmfg('panelGridAndFormFilterAdvancedManagerSelectedFilterIsEmpty', [CMDBuild.core.constants.Proxy.CONFIGURATION, CMDBuild.core.constants.Proxy.ATTRIBUTE])
+					!this.cmfg('workflowTreeFilterAdvancedManagerSelectedFilterIsEmpty', CMDBuild.core.constants.Proxy.CONFIGURATION)
+					&& !this.cmfg('workflowTreeFilterAdvancedManagerSelectedFilterIsEmpty', [CMDBuild.core.constants.Proxy.CONFIGURATION, CMDBuild.core.constants.Proxy.ATTRIBUTE])
 				) {
 					this.decodeFilterConfigurationObject(
-						this.cmfg('panelGridAndFormFilterAdvancedManagerSelectedFilterGet', [CMDBuild.core.constants.Proxy.CONFIGURATION, CMDBuild.core.constants.Proxy.ATTRIBUTE])
+						this.cmfg('workflowTreeFilterAdvancedManagerSelectedFilterGet', [CMDBuild.core.constants.Proxy.CONFIGURATION, CMDBuild.core.constants.Proxy.ATTRIBUTE])
 					);
 				}
 			} else {
-				_error('viewBuild(): selected filter is empty', this, this.cmfg('panelGridAndFormFilterAdvancedManagerSelectedFilterGet'));
+				_error('viewBuild(): empty selected filter', this, this.cmfg('workflowTreeFilterAdvancedManagerSelectedFilterGet'));
 			}
+		},
+
+		/**
+		 * @returns {Object or null}
+		 */
+		workflowTreeFilterAdvancedFilterEditorAttributesDataGet: function () {
+			var out = {};
+
+			if (!this.filterConditionsIsEmpty()) {
+				var data = [];
+				var filterObject = {};
+
+				Ext.Object.each(this.filterConditionsGroupGet(), function (attributeName, fieldset, myself) {
+					if (!Ext.isEmpty(fieldset) && Ext.isFunction(fieldset.getData))
+						data.push(fieldset.getData());
+				}, this);
+
+				if (data.length == 1) {
+					filterObject = data[0];
+				} else if (data.length > 1) {
+					filterObject[CMDBuild.core.constants.Proxy.AND] = data;
+				}
+
+				out[CMDBuild.core.constants.Proxy.ATTRIBUTE] = filterObject;
+			}
+
+			return out;
 		}
 	});
 

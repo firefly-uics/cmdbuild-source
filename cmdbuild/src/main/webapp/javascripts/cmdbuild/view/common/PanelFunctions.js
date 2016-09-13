@@ -8,10 +8,16 @@
 	 * 	- {Boolean} disableEnableFunctions: disable enable/setDisabled(false) on processed item (ex. cmImmutable)
 	 * 	- {Boolean} disablePanelFunctions: disable PanelFunctions class actions on processed item
 	 * 	- {Boolean} forceDisabledState: force item to be disabled
+	 *
+	 * @version 1
+	 *
+	 * @deprecated CMDBuild.view.common.PanelFunctions2
 	 */
 	Ext.define('CMDBuild.view.common.PanelFunctions', {
 
 		requires: ['CMDBuild.core.constants.Proxy'],
+
+		mixins: ['CMDBuild.view.common.PanelFunctions2'],
 
 		/**
 		 * Keeps in sync two fields, usually name and description. If the master field changes and the slave is empty, or it has the same

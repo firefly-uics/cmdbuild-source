@@ -135,7 +135,9 @@
 					currentClass = null;
 
 				this.currentClass = currentClass;
-				this.view.addRelationButton.setDomainsForEntryType(currentClass);
+
+				if (!Ext.isEmpty(currentClass) && Ext.isFunction(currentClass.get))
+					this.view.addRelationButton.onEntryTypeSelect(currentClass.get(CMDBuild.core.constants.Proxy.NAME));
 			}
 		},
 
@@ -563,7 +565,7 @@
 						entryType = null;
 
 					this.lastEntryType = entryType;
-					this.view.addRelationButton.setDomainsForEntryType(entryType);
+					this.view.addRelationButton.onEntryTypeSelect(entryType.get(CMDBuild.core.constants.Proxy.NAME));
 				}
 			}
 		},
