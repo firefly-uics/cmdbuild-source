@@ -12,7 +12,7 @@
 
 	function getColorFromTable(value, colorsTable) {
 		for (var i = 0; colorsTable && i < colorsTable.length; i++) {
-			if (colorsTable[i].value === value) {
+			if (colorsTable[i].value === value || parseInt(colorsTable[i].value) === parseInt(value)) {
 				return colorsTable[i].color;
 			}
 		}

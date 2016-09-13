@@ -117,6 +117,7 @@
 					value : row.get("value"),
 					cardinality : row.get("cardinality"),
 					color : row.get("color"),
+					cards : row.get("cards")
 				});
 			});
 			return rows;
@@ -171,14 +172,10 @@
 		},
 		refreshResults : function(grid, callback, callbackScope) {
 			var layer = this.interactionDocument.getGeoLayerByName(this.parentWindow.getCurrentLayer());
-			var cards = [];
-			if (layer) {
-				cards = layer.get("adapter").getCardsOnLayer();
-			}
 			var card = this.interactionDocument.getCurrentCard();
 			var currentClassName = (!card) ? "" : card.className;
 			var currentResultsStore = Ext.create("Ext.data.Store", {
-				fields : [ "value", "cardinality", "color" ],
+				fields : [ "value", "cardinality", "color", "cards" ],
 				autoLoad : false,
 				data : []
 			});

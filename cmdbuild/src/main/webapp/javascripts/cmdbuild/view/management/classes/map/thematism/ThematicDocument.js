@@ -317,7 +317,7 @@
 		var params = {
 			card : card,
 			strategy : strategy,
-			attributeName : attributeName
+			attributeName : (attributeName) ? attributeName : field
 		}
 		strategy.value(params, function(value) {
 			if (sourceType === CMDBuild.gis.constants.layers.FUNCTION_SOURCE) {
