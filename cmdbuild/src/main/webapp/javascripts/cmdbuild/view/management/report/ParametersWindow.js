@@ -1,7 +1,7 @@
 (function () {
 
 	Ext.define('CMDBuild.view.management.report.ParametersWindow', {
-		extend: 'CMDBuild.core.window.AbstractModal',
+		extend: 'CMDBuild.core.window.AbstractCustomModal',
 
 		requires: ['CMDBuild.core.constants.Proxy'],
 
@@ -11,27 +11,34 @@
 		delegate: undefined,
 
 		/**
-		 * @cfg {String}
+		 * @cfg {Object}
 		 */
-		baseTitle: CMDBuild.Translation.reportParameters,
+		dimensions: {
+			height: 'auto',
+			width: 60
+		},
 
 		/**
-		 * @cfg {Number}
+		 * @cfg {String}
 		 */
-		defaultSizeW: 0.60,
+		dimensionsMode: 'percentage',
 
 		/**
 		 * @property {Ext.form.Panel}
 		 */
 		form: undefined,
 
-		autoScroll: true,
-		autoHeight: true,
-		border: false,
+		baseTitle: CMDBuild.Translation.reportParameters,
+		border: true,
+		closeAction: 'hide',
 		frame: false,
 		layout: 'fit',
 
-
+		/**
+		 * @returns {Void}
+		 *
+		 * @override
+		 */
 		initComponent: function () {
 			Ext.apply(this, {
 				dockedItems: [
@@ -66,9 +73,9 @@
 				],
 				items: [
 					this.form = Ext.create('Ext.form.Panel', {
+						bodyCls: 'cmdb-blue-panel',
 						border: false,
-						frame: true,
-						labelAlign: 'right',
+						frame: false,
 
 						layout: {
 							type: 'vbox',
@@ -79,9 +86,6 @@
 			});
 
 			this.callParent(arguments);
-
-			// Resize window, smaller than default size
-			this.width = this.width * this.defaultSizeW;
 		}
 	});
 
