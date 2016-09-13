@@ -1,181 +1,258 @@
 (function() {
-	/**
-	 * @class CMDBuild.Management.CMDBuildMap
-	 */
-	CMDBuild.Management.CMMap = OpenLayers.Class(OpenLayers.Map, {
+	Ext.define('CMDBuild.Management.CMMap', {
+		extend : 'CMDBuild.view.management.classes.map.geoextension.Map',
+		requires : [ 'CMDBuild.view.management.classes.map.geoextension.Map' ],
 
-		getEditableLayers: function() {
-			var layers = this.layers;
-			var editLayers = [];
-			for (var i=0, l=layers.length; i<l; ++i) {
-				var layer = layers[i];
-				if (layer.editLayer) {
-					editLayers.push(layer.editLayer);
-				}
-			}
-			return editLayers;
+		interactionDocument : undefined,
+
+		/**
+		 * @returns {Void}
+		 * 
+		 * @override
+		 */
+		configure : function() {
+			this.interactionDocument.setConfigurationMap(this);
+			this.interactionDocument.observe(this);
 		},
 
-		activateStrategies: function(acvitate) {
-			var layers = this.layers;
-			for (var i=0, l=layers.length; i<l; ++i) {
-				var layer = layers[i];
-
-				if (typeof layer.activateStrategies == "function") {
-					layer.activateStrategies(acvitate);
-				}
+		/**
+		 * @returns {Void}
+		 * 
+		 * @override
+		 */
+		refresh : function() {
+			// when the refresh is called more times it takes the last
+			var me = this;
+			if (this.operation) {
+				clearTimeout(this.operation);
 			}
+			this.operation = setTimeout(function() {
+				me._refresh();
+				me.operation = undefined;
+			}, 500);
 		},
 
-		refreshStrategies: function() {
-			var layers = this.layers;
-			for (var i=0, l=layers.length; i<l; ++i) {
-				var layer = layers[i];
-				if (typeof layer.refreshStrategies == "function") {
-					layer.refreshStrategies();
-				}
-			}
+		/**
+		 * @returns {Void}
+		 * 
+		 * @override
+		 */
+		_refresh : function() {
+			var card = this.interactionDocument.getCurrentCard();
+			var currentClassName = card.className;
+			var currentCardId = card.cardId;
+			var me = this;
+			this.interactionDocument.getAllLayers(function(layers) {
+				me.refreshAllLayers(layers, currentClassName, currentCardId);
+				me.refreshThematicLayers(currentClassName, currentCardId);
+				me.selectCard({
+					cardId : currentCardId,
+					className : currentClassName
+				});
+			}, this);
 		},
 
-		centerOnGeometry: function(geometry) {
-			// The geometry function getCentroid()
-			// give us some problems...
-			// So, take the first point of the geometry (a point return an array with
-			// only itself) to center the map.
-			try {
-				var geom = CMDBuild.GeoUtils.readGeoJSON(geometry.geometry);
-				var aPoint = a = geom.getVertices()[0];
-				var center = new OpenLayers.LonLat(aPoint.x, aPoint.y);
-				this.setCenter(center, this.getZoom());
-//				this.activateStrategies(true);
-			} catch (Error) {
-				_debug("Map: centerOnGeometry - Error");
-				/*
-				 * if the server doesn't return a feature
-				 * the readGeoJSON methods throw an error.Rightly!!
-				 */
-			}
-		},
-
-		getFeatureByMasterCard: function(id) {
-			var layers = this.layers;
-			for (var i=0, l=this.layers.length; i<l; ++i) {
-				var layer = layers[i];
-				if (layer) {
-					var feature = layer.getFeatureByMasterCard(id);
-					if (feature) {
-						return feature;
-					}
-				}
-			}
-			return null;
-		},
-
-		getFeaturesInLonLat: function(lonlat) {
-			var layers = this.layers;
-			var features = [];
-			for (var i=0, l=this.layers.length; i<l; ++i) {
-				var layer = layers[i];
-				if (layer 
-						&& typeof layer.getFeaturesInLonLat == "function") {
-
-					features = features.concat(layer.getFeaturesInLonLat(lonlat));
-				}
-			}
-
-			return features;
-		},
-
-		clearSelection: function() {
-			var layers = this.layers;
-			for (var i=0, l=this.layers.length; i<l; ++i) {
-				var layer = layers[i];
-				if (layer 
-						&& typeof clearSelection == "function") {
-
-					layer.clearSelection();
-				}
-			}
-		},
-
-		getLayerByName: function(name) {
-			var l = this.getLayersByName(name);
-			if (l.length > 0) {
-				return l[0];
-			} else {
-				return null;
-			}
-		},
-
-		getLayersByTargetClassName: function(targetClassName) {
-			var layers = [];
-			for (var i=0, layer=null; i<this.layers.length; ++i) {
-				layer = this.layers[i];
-
-				if (layer.geoAttribute 
-						// TODO or an ancestor?
-						&& layer.geoAttribute.masterTableName == targetClassName) {
-
-					layers.push(layer);
-				}
-			}
-
-			return layers;
-		},
-
-		getGeoServerLayerByName: function(layerName) {
-			for (var i=0, layer=null; i<this.layers.length; ++i) {
-				layer = this.layers[i];
-				if (!layer.CM_geoserverLayer) {
+		/**
+		 * @param {String}
+		 *            currentClassName
+		 * @param {Integer}
+		 *            currentCardId
+		 * 
+		 * @returns {Void}
+		 */
+		refreshThematicLayers : function(currentClassName, currentCardId) {
+			var thematicLayers = this.interactionDocument.getThematicLayers();
+			var visibleLayers = [];
+			for (var i = 0; i < thematicLayers.length; i++) {
+				var layer = thematicLayers[i];
+				var mapThematicLayer = this.getLayerByClassAndName(layer.masterTableName, layer.name);
+				var hide = !this.interactionDocument.getLayerVisibility(layer);
+				if (hide) {
 					continue;
 				}
-
-				if (layer.geoAttribute.name == layerName) {
-					return layer;
+				if (!mapThematicLayer) {
+					this.map.addLayer(layer);
+					mapThematicLayer = layer;
 				}
+				var adapter = mapThematicLayer.get("adapter");
+				if (adapter && adapter.refresh) {
+					var thematism = adapter.getThematism();
+					var originalLayer = thematism.configuration.originalLayer;
+					var className = originalLayer.className;
+					var name = originalLayer.name;
+					thematism.layer = this.getLayerByClassAndName(className, name);
+					adapter.refresh({
+						cardId : currentCardId,
+						className : currentClassName
+					});
+				}
+				visibleLayers.push(layer);
 			}
-			return null;
+			this.removeThematicsNotVisibleLayers(visibleLayers);
 		},
 
-		getEditedGeometries: function() {
-			var mapOfFeatures = {};
-			var layers = this.layers;
-			for (var i=0, l=layers.length; i<l; ++i) {
+		/**
+		 * @param {Array} :
+		 *            layer layers from _CMCACHE
+		 * @param {Array} :
+		 *            layer.visibility
+		 * @param {Array} :
+		 *            layer.cardBinding
+		 * @param {Integer} :
+		 *            layer.maxZoom
+		 * @param {Integer} :
+		 *            layer.minZoom
+		 * @param {String} :
+		 *            layer.name
+		 * @param {String} :
+		 *            layer.description
+		 * @param {String} :
+		 *            layer.masterTableName // className
+		 * 
+		 * @param {String}
+		 *            currentClassName
+		 * @param {Integer}
+		 *            currentCardId
+		 * 
+		 * @returns {Void}
+		 */
+		refreshAllLayers : function(layers, currentClassName, currentCardId) {
+			layers.sort(sortLayers);
+			var zoom = this.getMap().getView().getZoom();
+			var visibleLayers = [];
+			for (var i = 0; i < layers.length; i++) {
 				var layer = layers[i];
-				if (layer.editLayer) {
-					var geo = layer.getEditedGeometry();
-					if (geo != null) {
-						mapOfFeatures[layer.geoAttribute.name] = geo.toString();
-					} else {
-						mapOfFeatures[layer.geoAttribute.name] = "";
-					}
+				if (zoom < layer.minZoom || zoom > layer.maxZoom) {
+					continue;
+				}
+				var visible = this.interactionDocument.isVisible(layer, currentClassName, currentCardId);
+				var hide = !this.interactionDocument.getLayerVisibility(layer);
+				var navigable = this.interactionDocument.isANavigableLayer(layer);
+				if ((hide || !navigable) && visible) {
+					this.clearHideLayer(layer.masterTableName, layer.name);
+				} else if (visible && navigable) {
+					this.showLayer(layer, currentClassName, currentCardId);
+					visibleLayers.push(layer);
 				}
 			}
-			return mapOfFeatures;
+			this.removeNotVisibleLayers(layers, visibleLayers);
+		},
+		selectCard : function(card) {
+			var geoLayers = this.getLayers();
+			geoLayers.forEach(function(geoLayer) {
+				var adapter = geoLayer.get("adapter");
+				if (adapter && adapter.selectCard) {
+					adapter.selectCard(card);
+				}
+			});
+		},
+		showLayer : function(layer, currentClassName, currentCardId) {
+			var style = Ext.decode(layer.style);
+			var geoAttribute = {
+				description : layer.description,
+				masterTableName : layer.masterTableName,
+				name : layer.name,
+				type : layer.type,
+				iconUrl : style.externalGraphic
+			};
+			var geoLayer = this.getLayerByClassAndName(layer.masterTableName, layer.name);
+			if (!geoLayer) {
+				geoLayer = this.makeLayer(geoAttribute, true);
+			}
+			var adapter = geoLayer.get("adapter");
+			if (adapter && adapter.refresh) {
+				adapter.refresh({
+					cardId : currentCardId,
+					className : currentClassName
+				});
+			}
+		},
+		clearHideLayer : function(className, nameLayer) {
+			var geoLayer = this.getLayerByClassAndName(className, nameLayer);
+			if (geoLayer) {
+				var adapter = geoLayer.get("adapter");
+				if (adapter && adapter.clearAllFeatures) {
+					adapter.clearAllFeatures();
+				}
+				this.map.removeLayer(geoLayer);
+			}
 		},
 
-		getCmdbLayers: function() {
-			var out = [];
-			for (var i=0, l=this.layers.length; i<l; ++i) {
-				var layer = this.layers[i];
-				if (layer 
-						&& layer.geoAttribute
-						&& !layer.CM_EditLayer
-						&& !layer.CM_geoserverLayer) {
+		/**
+		 * @param {Array} :
+		 *            allLayers : layers from _CMCACHE
+		 * @param {Array}
+		 *            visibles : layers from _CMCACHE
+		 * 
+		 * @returns {Void}
+		 */
+		removeNotVisibleLayers : function(allLayers, visibles) {
+			var allLayers = [];
+			var mapLayers = this.map.getLayers();
+			mapLayers.forEach(function(mapLayer) {
+				allLayers.push(mapLayer);
+			});
 
-					out.push(layer);
+			var me = this;
+			var index = 0;
+			for(var i = 0; i < allLayers.length; i++) {
+				var mapLayer = allLayers[i];
+				var geoAttribute = mapLayer.get("geoAttribute");
+				if (geoAttribute) {
+					me.remove4GeoAttribute(mapLayer, geoAttribute, visibles);
 				}
 			}
-
-			return out;
 		},
 
-		// called by the layers when a feature is added
-
-		featureWasAdded: function(feature) {
-			if (this.delegate) {
-				this.delegate.featureWasAdded(feature);
+		/**
+		 * @param {Object}
+		 *            geoAttribute
+		 * @param {Array}
+		 *            visibles : layers from _CMCACHE
+		 * 
+		 * @returns {Void}
+		 */
+		remove4GeoAttribute : function(mapLayer, geoAttribute, visibles) {
+			var mapLayerName = geoAttribute.name;
+			var mapClassName = geoAttribute.masterTableName;
+			function compare(layer) {
+				return (layer.name === mapLayerName && layer.masterTableName === mapClassName);
+				
 			}
+			var zoom = this.getMap().getView().getZoom();
+			if (!visibles.find(compare)) {
+				this.clearHideLayer(mapClassName, mapLayerName);
+				this.map.removeLayer(mapLayer);
+			}
+		},
+
+		/**
+		 * @param {Array}
+		 *            visibles : layers from _CMCACHE
+		 * 
+		 * @returns {Void}
+		 */
+		removeThematicsNotVisibleLayers : function(visibles) {
+			var allLayers = this.interactionDocument.getAllThematicLayers();
+			var me = this;
+			allLayers.forEach(function(layer) {
+				if (!isVisible(visibles, layer)) {
+					me.removeLayerByName(layer.masterTableName, layer.name);
+
+				}
+			});
 		}
 	});
+	function isVisible(visibles, layer) {
+		for (var i = 0; i < visibles.length; i++) {
+			if (visibles[i].name === layer.name) {
+				return true;
+			}
+		}
+		return false;
+	}
+	function sortLayers(l1, l2) {
+		return parseInt(l1.index) - parseInt(l2.index);
+	}
+
 })();
