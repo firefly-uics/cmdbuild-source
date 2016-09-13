@@ -418,7 +418,7 @@
 						moduleController.cmfg('workflowTreeApplyStoreEvent', {
 							eventName: 'load',
 							fn: function (store, node, records, successful, eOpts) {
-								moduleController.cmfg('workflowTreeActivityOpen', {
+								moduleController.cmfg('workflowTreeActivitySelect', {
 									enableForceFlowStatus: true,
 									instanceId: parameters[CMDBuild.core.constants.Proxy.INSTANCE_ID]
 								});
@@ -476,7 +476,6 @@
 
 					this.cmfg('mainViewportActivitySelect', params);
 				}
-
 			} else {
 				_error('malformed openCard method parameters', this);
 			}

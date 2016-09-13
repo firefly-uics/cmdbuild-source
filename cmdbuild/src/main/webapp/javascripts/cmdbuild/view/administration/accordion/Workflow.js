@@ -1,4 +1,4 @@
-(function() {
+(function () {
 
 	Ext.define('CMDBuild.view.administration.accordion.Workflow', {
 		extend: 'CMDBuild.view.common.abstract.Accordion',

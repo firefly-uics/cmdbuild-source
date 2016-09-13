@@ -65,6 +65,11 @@
 		},
 
 		/**
+		 * @cfg {CMDBuild.controller.administration.classes.Classes}
+		 */
+		delegate: undefined,
+
+		/**
 		 * @property {CMDBuild.cache.CMEntryTypeModel}
 		 */
 		classObj: undefined,

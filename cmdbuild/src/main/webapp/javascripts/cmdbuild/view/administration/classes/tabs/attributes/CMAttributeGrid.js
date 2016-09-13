@@ -36,6 +36,11 @@
 			ATTRIBUTES: ATTR
 		},
 
+		/**
+		 * @cfg {CMDBuild.controller.administration.classes.Classes}
+		 */
+		delegate: undefined,
+
 		cls: 'cmdb-border-bottom',
 		includeInherited: true,
 		eventtype: 'class',

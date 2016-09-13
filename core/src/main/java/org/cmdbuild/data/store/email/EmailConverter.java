@@ -30,9 +30,11 @@ import com.google.common.collect.Maps;
 public class EmailConverter extends BaseStorableConverter<Email> {
 
 	private final EmailStatusConverter converter;
+	private final DelayConverter delayConverter;
 
-	public EmailConverter(final EmailStatusConverter converter) {
+	public EmailConverter(final EmailStatusConverter converter, final DelayConverter delayConverter) {
 		this.converter = converter;
+		this.delayConverter = delayConverter;
 	}
 
 	@Override
@@ -55,7 +57,7 @@ public class EmailConverter extends BaseStorableConverter<Email> {
 		email.setTemplate(defaultIfBlank(card.get(TEMPLATE_ATTRIBUTE, String.class), null));
 		email.setKeepSynchronization(defaultIfNull(card.get(KEEP_SYNCHRONIZATION_ATTRIBUTE, Boolean.class), true));
 		email.setPromptSynchronization(defaultIfNull(card.get(PROMPT_SYNCHRONIZATION_ATTRIBUTE, Boolean.class), false));
-		email.setDelay(defaultIfNull(card.get(DELAY_ATTRIBUTE, Integer.class), 0).longValue());
+		email.setDelay(delayConverter.convert(defaultIfNull(card.get(DELAY_ATTRIBUTE, Integer.class), 0)));
 		email.setDate((card.getBeginDate()));
 		email.setStatus(converter.fromId(card.get(EMAIL_STATUS_ATTRIBUTE, IdAndDescription.class).getId()));
 		email.setReference((card.get(CARD_ATTRIBUTE) != null) ? card.get(CARD_ATTRIBUTE, IdAndDescription.class)
@@ -79,7 +81,7 @@ public class EmailConverter extends BaseStorableConverter<Email> {
 		values.put(TEMPLATE_ATTRIBUTE, email.getTemplate());
 		values.put(KEEP_SYNCHRONIZATION_ATTRIBUTE, email.isKeepSynchronization());
 		values.put(PROMPT_SYNCHRONIZATION_ATTRIBUTE, email.isPromptSynchronization());
-		values.put(DELAY_ATTRIBUTE, email.getDelay());
+		values.put(DELAY_ATTRIBUTE, delayConverter.reverse().convert(email.getDelay()));
 		values.put(EMAIL_STATUS_ATTRIBUTE, converter.toId(email.getStatus()));
 		return values;
 	}

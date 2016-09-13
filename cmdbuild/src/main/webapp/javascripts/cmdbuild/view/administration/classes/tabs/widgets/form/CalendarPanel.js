@@ -1,15 +1,12 @@
 (function () {
 
-	/**
-	 * @link CMDBuild.view.administration.widget.form.CalendarPanel
-	 */
 	Ext.define('CMDBuild.view.administration.classes.tabs.widgets.form.CalendarPanel', {
 		extend: 'CMDBuild.view.administration.classes.tabs.widgets.form.AbstractWidgetDefinitionPanel',
 
 		requires: [
 			'CMDBuild.core.constants.FieldWidths',
 			'CMDBuild.core.constants.Proxy',
-			'CMDBuild.proxy.classes.tabs.widgets.Calendar'
+			'CMDBuild.proxy.administration.classes.tabs.widgets.Calendar'
 		],
 
 		/**
@@ -64,7 +61,7 @@
 							editable: false,
 							forceSelection: true,
 
-							store: CMDBuild.proxy.classes.tabs.widgets.Calendar.getStoreTargetClass(),
+							store: CMDBuild.proxy.administration.classes.tabs.widgets.Calendar.getStoreTargetClass(),
 							queryMode: 'local',
 
 							listeners: {
@@ -84,7 +81,7 @@
 							editable: false,
 							forceSelection: true,
 
-							store: CMDBuild.proxy.classes.tabs.widgets.Calendar.getStoreAttributesDate(),
+							store: CMDBuild.proxy.administration.classes.tabs.widgets.Calendar.getStoreAttributesDate(),
 							queryMode: 'local'
 						}),
 						this.endDate = Ext.create('CMDBuild.view.common.field.comboBox.Erasable', {
@@ -97,7 +94,7 @@
 							editable: false,
 							forceSelection: true,
 
-							store: CMDBuild.proxy.classes.tabs.widgets.Calendar.getStoreAttributesDate(),
+							store: CMDBuild.proxy.administration.classes.tabs.widgets.Calendar.getStoreAttributesDate(),
 							queryMode: 'local'
 						}),
 						this.defaultDate = Ext.create('CMDBuild.view.common.field.comboBox.Erasable', {
@@ -110,7 +107,7 @@
 							editable: false,
 							forceSelection: true,
 
-							store: CMDBuild.proxy.classes.tabs.widgets.Calendar.getStoreAttributesDate(),
+							store: CMDBuild.proxy.administration.classes.tabs.widgets.Calendar.getStoreAttributesDate(),
 							queryMode: 'local'
 						}),
 						this.eventTitle = Ext.create('CMDBuild.view.common.field.comboBox.Erasable', {
@@ -123,7 +120,7 @@
 							editable: false,
 							forceSelection: true,
 
-							store: CMDBuild.proxy.classes.tabs.widgets.Calendar.getStoreAttributesString(),
+							store: CMDBuild.proxy.administration.classes.tabs.widgets.Calendar.getStoreAttributesString(),
 							queryMode: 'local'
 						}),
 						Ext.create('Ext.form.field.TextArea', {

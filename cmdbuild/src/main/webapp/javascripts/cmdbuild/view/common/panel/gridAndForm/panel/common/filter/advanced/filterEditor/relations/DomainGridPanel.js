@@ -2,6 +2,7 @@
 
 	/**
 	 * @link CMDBuild.view.management.common.filter.CMDomainGrid
+	 * @link CMDBuild.view.management.workflow.panel.tree.filter.advanced.filterEditor.relations.DomainGridPanel
 	 */
 	Ext.define('CMDBuild.view.common.panel.gridAndForm.panel.common.filter.advanced.filterEditor.relations.DomainGridPanel', {
 		extend: 'Ext.grid.Panel',

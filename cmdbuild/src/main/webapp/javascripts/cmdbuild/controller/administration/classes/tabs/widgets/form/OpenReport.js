@@ -1,15 +1,12 @@
 (function () {
 
-	/**
-	 * @link CMDBuild.controller.administration.widget.form.OpenReport
-	 */
 	Ext.define('CMDBuild.controller.administration.classes.tabs.widgets.form.OpenReport', {
 		extend: 'CMDBuild.controller.administration.classes.tabs.widgets.form.Abstract',
 
 		requires: [
 			'CMDBuild.core.constants.Proxy',
-			'CMDBuild.proxy.classes.tabs.widgets.OpenReport',
-			'CMDBuild.model.classes.tabs.widgets.openReport.Definition'
+			'CMDBuild.proxy.administration.classes.tabs.widgets.OpenReport',
+			'CMDBuild.model.administration.classes.tabs.widgets.openReport.Definition'
 		],
 
 		/**
@@ -33,7 +30,7 @@
 		 *
 		 * @private
 		 */
-		definitionModelName: 'CMDBuild.model.classes.tabs.widgets.openReport.Definition',
+		definitionModelName: 'CMDBuild.model.administration.classes.tabs.widgets.openReport.Definition',
 
 		/**
 		 * @cfg {CMDBuild.view.administration.classes.tabs.widgets.form.OpenReportPanel}
@@ -58,7 +55,7 @@
 		 * @returns {Object} widgetDefinition
 		 */
 		classesTabWidgetsWidgetOpenReportDefinitionGet: function () {
-			var widgetDefinition = CMDBuild.model.classes.tabs.widgets.openReport.Definition.convertToLegacy(
+			var widgetDefinition = CMDBuild.model.administration.classes.tabs.widgets.openReport.Definition.convertToLegacy(
 				Ext.create(this.cmfg('classesTabWidgetsWidgetDefinitionModelNameGet'), this.view.getData(true)).getData()
 			);
 			widgetDefinition[CMDBuild.core.constants.Proxy.PRESET] = this.presetGridGet(CMDBuild.core.constants.Proxy.DATA);
@@ -70,7 +67,7 @@
 		/**
 		 * Fills form with widget data
 		 *
-		 * @param {CMDBuild.model.classes.tabs.widgets.openReport.Definition} record
+		 * @param {CMDBuild.model.administration.classes.tabs.widgets.openReport.Definition} record
 		 *
 		 * @returns {Void}
 		 */
@@ -125,8 +122,8 @@
 		 */
 		onClassesTabWidgetsWidgetOpenReportReportSelect: function (parameters) {
 			if (
-				!Ext.Object.isEmpty(parameters)
-				&& !Ext.isEmpty(parameters.selectedReport)
+				Ext.isObject(parameters) && !Ext.Object.isEmpty(parameters)
+				&& Ext.isObject(parameters.selectedReport) && !Ext.Object.isEmpty(parameters.selectedReport)
 				&& Ext.isFunction(parameters.selectedReport.get)
 			) {
 				parameters.presets = Ext.isEmpty(parameters.presets) ? {} : parameters.presets;
@@ -137,9 +134,9 @@
 				params[CMDBuild.core.constants.Proxy.ID] = parameters.selectedReport.get(CMDBuild.core.constants.Proxy.ID);
 				params[CMDBuild.core.constants.Proxy.TYPE] = 'CUSTOM';
 
-				CMDBuild.proxy.classes.tabs.widgets.OpenReport.create({
-					scope: this,
+				CMDBuild.proxy.administration.classes.tabs.widgets.OpenReport.create({
 					params: params,
+					scope: this,
 					success: function (response, options, decodedResponse) {
 						var data = decodedResponse['filled'] ? {} : this.cleanServerAttributes(decodedResponse[CMDBuild.core.constants.Proxy.ATTRIBUTE]);
 
@@ -234,7 +231,7 @@
 					modelObject[CMDBuild.core.constants.Proxy.READ_ONLY] = Ext.Array.contains(readOnlyAttributes, key);
 					modelObject[CMDBuild.core.constants.Proxy.VALUE] = value;
 
-					formattedDataObject.push(Ext.create('CMDBuild.model.classes.tabs.widgets.openReport.PresetGrid', modelObject));
+					formattedDataObject.push(Ext.create('CMDBuild.model.administration.classes.tabs.widgets.openReport.PresetGrid', modelObject));
 				}, this);
 
 				this.view.presetGrid.getStore().loadRecords(formattedDataObject, { addRecords: true });

@@ -1,14 +1,10 @@
 (function () {
 
-	/**
-	 * @link CMDBuild.view.common.field.filter.advanced.window.Window
-	 * @link CMDBuild.view.common.panel.gridAndForm.panel.common.filter.advanced.filterEditor.FilterEditorWindow
-	 */
 	Ext.define('CMDBuild.view.management.workflow.panel.tree.filter.advanced.filterEditor.FilterEditorWindow', {
 		extend: 'CMDBuild.core.window.AbstractCustomModal',
 
 		/**
-		 * @cfg {CMDBuild.controller.common.panel.gridAndForm.panel.common.filter.advanced.filterEditor.FilterEditor}
+		 * @cfg {CMDBuild.controller.management.workflow.panel.tree.filter.advanced.filterEditor.FilterEditor}
 		 */
 		delegate: undefined,
 
@@ -56,21 +52,21 @@
 								scope: this,
 
 								handler: function (button, e) {
-									this.delegate.cmfg('onPanelGridAndFormFilterAdvancedFilterEditorApplyButtonClick');
+									this.delegate.cmfg('onWorkflowTreeFilterAdvancedFilterEditorApplyButtonClick');
 								}
 							}),
 							Ext.create('CMDBuild.core.buttons.text.SaveAndApply', {
 								scope: this,
 
 								handler: function (button, e) {
-									this.delegate.cmfg('onPanelGridAndFormFilterAdvancedFilterEditorSaveAndApplyButtonClick');
+									this.delegate.cmfg('onWorkflowTreeFilterAdvancedFilterEditorSaveAndApplyButtonClick');
 								}
 							}),
 							Ext.create('CMDBuild.core.buttons.text.Abort', {
 								scope: this,
 
 								handler: function (button, e) {
-									this.delegate.cmfg('onPanelGridAndFormFilterAdvancedFilterEditorAbortButtonClick');
+									this.delegate.cmfg('onWorkflowTreeFilterAdvancedFilterEditorAbortButtonClick');
 								}
 							})
 						]
@@ -89,10 +85,10 @@
 
 		listeners: {
 			hide: function (panel, eOpts) {
-				this.delegate.cmfg('onPanelGridAndFormFilterAdvancedFilterEditorViewHide');
+				this.delegate.cmfg('onWorkflowTreeFilterAdvancedFilterEditorViewHide');
 			},
 			show: function (panel, eOpts) {
-				this.delegate.cmfg('onPanelGridAndFormFilterAdvancedFilterEditorViewShow');
+				this.delegate.cmfg('onWorkflowTreeFilterAdvancedFilterEditorViewShow');
 			}
 		}
 	});

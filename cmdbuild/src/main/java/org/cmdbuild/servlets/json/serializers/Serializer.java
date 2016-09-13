@@ -2,9 +2,11 @@ package org.cmdbuild.servlets.json.serializers;
 
 import static java.util.Collections.emptyList;
 import static org.apache.commons.lang3.ObjectUtils.defaultIfNull;
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.cmdbuild.auth.acl.CMGroup.GroupType.admin;
 import static org.cmdbuild.auth.acl.CMGroup.GroupType.normal;
 import static org.cmdbuild.auth.acl.CMGroup.GroupType.restrictedAdmin;
+import static org.cmdbuild.servlets.json.CommunicationConstants.DEFAULT_GROUP;
 import static org.cmdbuild.servlets.json.CommunicationConstants.DESCRIPTION;
 import static org.cmdbuild.servlets.json.CommunicationConstants.EMAIL;
 import static org.cmdbuild.servlets.json.CommunicationConstants.IS_ACTIVE;
@@ -30,6 +32,7 @@ import org.cmdbuild.dms.MetadataGroup;
 import org.cmdbuild.dms.StoredDocument;
 import org.cmdbuild.exception.DmsException;
 import org.cmdbuild.logger.Log;
+import org.cmdbuild.logic.auth.AuthenticationLogic;
 import org.cmdbuild.logic.auth.AuthenticationLogic.GroupInfo;
 import org.cmdbuild.logic.dms.DmsLogic;
 import org.cmdbuild.notification.Notifier;
@@ -38,19 +41,26 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+@_Serializer
 public class Serializer {
 
 	// TODO use constants
 	private static final SimpleDateFormat ATTACHMENT_DATE_FOMAT = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
 
-	public static final String AVAILABLE_CLASS = "availableclass";
-	public static final String AVAILABLE_PROCESS_CLASS = "availableprocessclass";
-	public static final String AVAILABLE_REPORT = "availablereport";
-	public static final String AVAILABLE_DASHBOARDS = "availabledashboards";
+	private static final String AVAILABLE_CLASS = "availableclass";
+	private static final String AVAILABLE_PROCESS_CLASS = "availableprocessclass";
+	private static final String AVAILABLE_REPORT = "availablereport";
+	private static final String AVAILABLE_DASHBOARDS = "availabledashboards";
 
 	private static final Iterable<MetadataGroup> NO_METADATA_GROUPS = emptyList();
 
-	public static JSONObject serializeAttachment(final StoredDocument attachment) {
+	private final AuthenticationLogic authenticationLogic;
+
+	public Serializer(final AuthenticationLogic authenticationLogic) {
+		this.authenticationLogic = authenticationLogic;
+	}
+
+	public JSONObject serializeAttachment(final StoredDocument attachment) {
 		final JSONObject serializer = new JSONObject();
 		try {
 			serializer.put("Category", attachment.getCategory());
@@ -67,7 +77,7 @@ public class Serializer {
 		return serializer;
 	}
 
-	private static JSONObject serialize(final Iterable<MetadataGroup> metadataGroups) throws JSONException {
+	private JSONObject serialize(final Iterable<MetadataGroup> metadataGroups) throws JSONException {
 		final JSONObject jsonMetadata = new JSONObject();
 		for (final MetadataGroup metadataGroup : defaultIfNull(metadataGroups, NO_METADATA_GROUPS)) {
 			final JSONObject jsonAllMetadata = new JSONObject();
@@ -79,13 +89,7 @@ public class Serializer {
 		return jsonMetadata;
 	}
 
-	// FIXME: implement it reading the metadata for the class
-	protected static void addMetadata(final JSONObject serializer) throws JSONException {
-		final JSONObject jsonMetadata = new JSONObject();
-		serializer.put(META, jsonMetadata);
-	}
-
-	public static JSONArray buildJsonAvaiableMenuItems() throws JSONException {
+	public JSONArray buildJsonAvaiableMenuItems() throws JSONException {
 		final JSONArray jsonAvaiableItems = new JSONArray();
 
 		final JSONObject jsonClassesFolder = new JSONObject();
@@ -121,7 +125,7 @@ public class Serializer {
 		return jsonAvaiableItems;
 	}
 
-	public static JSONObject serializeReportForMenu(final Report report, final String type) throws JSONException {
+	public JSONObject serializeReportForMenu(final Report report, final String type) throws JSONException {
 		final JSONObject jsonReport = new JSONObject();
 		jsonReport.put("text", report.getDescription());
 		jsonReport.put("parent", AVAILABLE_REPORT);
@@ -134,7 +138,7 @@ public class Serializer {
 		return jsonReport;
 	}
 
-	public static JSONObject serialize(final CMGroup group) throws JSONException {
+	public JSONObject serialize(final CMGroup group) throws JSONException {
 		final JSONObject jsonGroup = new JSONObject();
 		jsonGroup.put("id", group.getId());
 		jsonGroup.put("name", group.getName());
@@ -159,8 +163,7 @@ public class Serializer {
 		return jsonGroup;
 	}
 
-	public static JSONArray serializeGroupsForUser(final CMUser user, final List<GroupInfo> groups)
-			throws JSONException {
+	public JSONArray serializeGroupsForUser(final CMUser user, final List<GroupInfo> groups) throws JSONException {
 		final JSONArray jsonGroupList = new JSONArray();
 		for (final GroupInfo group : groups) {
 			final JSONObject row = new JSONObject();
@@ -177,7 +180,7 @@ public class Serializer {
 		return jsonGroupList;
 	}
 
-	public static JSONObject serialize(final CMUser user) throws JSONException {
+	public JSONObject serialize(final CMUser user) throws JSONException {
 		final JSONObject row = new JSONObject();
 		row.put(USER_ID, user.getId());
 		row.put(USER_NAME, user.getUsername());
@@ -186,18 +189,22 @@ public class Serializer {
 		row.put(IS_ACTIVE, user.isActive());
 		row.put(SERVICE, user.isService());
 		row.put(PRIVILEGED, user.isPrivileged());
+		final String defaultGroupName = user.getDefaultGroupName();
+		if (isNotBlank(defaultGroupName)) {
+			row.put(DEFAULT_GROUP, authenticationLogic.getGroupInfoForGroup(defaultGroupName).getId());
+		}
 		return row;
 	}
 
-	public static JSONArray serializeUsers(final Iterable<CMUser> users) throws JSONException {
+	public JSONArray serializeUsers(final Iterable<CMUser> users) throws JSONException {
 		final JSONArray userList = new JSONArray();
 		for (final CMUser user : users) {
-			userList.put(Serializer.serialize(user));
+			userList.put(serialize(user));
 		}
 		return userList;
 	}
 
-	public static void addAttachmentsData(final JSONObject jsonTable, final CMClass cmClass, final DmsLogic dmsLogic,
+	public void addAttachmentsData(final JSONObject jsonTable, final CMClass cmClass, final DmsLogic dmsLogic,
 			final Notifier notifier) throws JSONException {
 		final DmsConfiguration dmsConfiguration = applicationContext().getBean(DmsConfiguration.class);
 		if (!dmsConfiguration.isEnabled()) {
@@ -220,7 +227,7 @@ public class Serializer {
 		}
 	}
 
-	private static Map<String, Map<String, String>> rulesByGroup(final CMClass cmClass, final DmsLogic dmsLogic,
+	private Map<String, Map<String, String>> rulesByGroup(final CMClass cmClass, final DmsLogic dmsLogic,
 			final Notifier notifier) {
 		try {
 			return dmsLogic.getAutoCompletionRulesByClass(cmClass.getIdentifier().getLocalName());

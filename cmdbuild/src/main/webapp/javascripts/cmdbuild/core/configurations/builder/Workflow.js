@@ -30,7 +30,7 @@
 			Ext.apply(this, configurationObject); // Apply configurations
 
 			Ext.ns('CMDBuild.configuration');
-			CMDBuild.configuration.workflow = Ext.create('CMDBuild.model.core.configurations.builder.Workflow'); // Setup configuration with defaults
+			CMDBuild.configuration.workflow = Ext.create('CMDBuild.model.core.configuration.builder.Workflow'); // Setup configuration with defaults
 
 			CMDBuild.proxy.core.configurations.builder.Workflow.read({
 				loadMask: false,
@@ -38,7 +38,7 @@
 				success: function (response, options, decodedResponse) {
 					decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.DATA];
 
-					CMDBuild.configuration.workflow = Ext.create('CMDBuild.model.core.configurations.builder.Workflow', decodedResponse); // Configuration model
+					CMDBuild.configuration.workflow = Ext.create('CMDBuild.model.core.configuration.builder.Workflow', decodedResponse); // Configuration model
 				},
 				callback: this.callback
 			});

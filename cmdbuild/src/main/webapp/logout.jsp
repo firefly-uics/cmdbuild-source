@@ -37,7 +37,7 @@
 		<!-- 3. Runtime configuration -->
 		<script type="text/javascript">
 			Ext.ns('CMDBuild.configuration.runtime'); // Runtime configurations
-			CMDBuild.configuration.runtime = Ext.create('CMDBuild.model.configuration.Runtime');
+			CMDBuild.configuration.runtime = Ext.create('CMDBuild.model.core.configuration.runtime.Runtime');
 		</script>
 
 		<!-- 4. Logout script -->

@@ -224,7 +224,9 @@
 
 						var header = CMDBuild.Management.FieldManager.getHeaderForAttr(attribute);
 
-						delete header.flex; // Remove flex property by default to be compatible with forceFit property
+						// Remove flex property by default to be compatible with forceFit property
+						if (Ext.isObject(header) && !Ext.Object.isEmpty(header) && !Ext.isEmpty(header.flex))
+							delete header.flex;
 
 						if (attribute.type == 'REFERENCE') { // TODO: hack to force a templateResolver build for editor that haven't a form associated like other fields types
 							var xaVars = CMDBuild.Utils.Metadata.extractMetaByNS(attribute.meta, 'system.template.');
@@ -403,14 +405,14 @@
 				isWidgetReadOnly
 				|| this.cmfg('widgetCustomFormConfigurationGet', [
 					CMDBuild.core.constants.Proxy.CAPABILITIES,
-					CMDBuild.core.constants.Proxy.IMPORT_DISABLED
+					CMDBuild.core.constants.Proxy.EXPORT_DISABLED
 				])
 			);
 			this.view.importButton.setDisabled(
 				isWidgetReadOnly
 				|| this.cmfg('widgetCustomFormConfigurationGet', [
 					CMDBuild.core.constants.Proxy.CAPABILITIES,
-					CMDBuild.core.constants.Proxy.EXPORT_DISABLED
+					CMDBuild.core.constants.Proxy.IMPORT_DISABLED
 				])
 			);
 		},

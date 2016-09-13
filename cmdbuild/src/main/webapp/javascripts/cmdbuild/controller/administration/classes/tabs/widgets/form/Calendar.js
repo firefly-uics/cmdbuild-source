@@ -1,14 +1,11 @@
 (function () {
 
-	/**
-	 * @link CMDBuild.controller.administration.widget.form.Calendar
-	 */
 	Ext.define('CMDBuild.controller.administration.classes.tabs.widgets.form.Calendar', {
 		extend: 'CMDBuild.controller.administration.classes.tabs.widgets.form.Abstract',
 
 		requires: [
 			'CMDBuild.core.constants.Proxy',
-			'CMDBuild.model.classes.tabs.widgets.calendar.Definition'
+			'CMDBuild.model.administration.classes.tabs.widgets.calendar.Definition'
 		],
 
 		/**
@@ -32,7 +29,7 @@
 		 *
 		 * @private
 		 */
-		definitionModelName: 'CMDBuild.model.classes.tabs.widgets.calendar.Definition',
+		definitionModelName: 'CMDBuild.model.administration.classes.tabs.widgets.calendar.Definition',
 
 		/**
 		 * @property {CMDBuild.view.administration.classes.tabs.widgets.form.CalendarPanel}
@@ -75,7 +72,7 @@
 		 * @returns {Object}
 		 */
 		classesTabWidgetsWidgetCalendarDefinitionGet: function () {
-			return CMDBuild.model.classes.tabs.widgets.calendar.Definition.convertToLegacy(
+			return CMDBuild.model.administration.classes.tabs.widgets.calendar.Definition.convertToLegacy(
 				Ext.create(this.cmfg('classesTabWidgetsWidgetDefinitionModelNameGet'), this.view.getData(true)).getData()
 			);
 		},
@@ -83,7 +80,7 @@
 		/**
 		 * Fills form with widget data
 		 *
-		 * @param {CMDBuild.model.classes.tabs.widgets.calendar.Definition} record
+		 * @param {CMDBuild.model.administration.classes.tabs.widgets.calendar.Definition} record
 		 *
 		 * @returns {Void}
 		 */

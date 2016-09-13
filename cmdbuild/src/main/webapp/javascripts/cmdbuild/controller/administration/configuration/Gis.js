@@ -5,8 +5,7 @@
 
 		requires: [
 			'CMDBuild.core.constants.Proxy',
-			'CMDBuild.proxy.configuration.Gis',
-			'CMDBuild.model.configuration.Gis'
+			'CMDBuild.proxy.administration.configuration.Gis'
 		],
 
 		/**
@@ -45,8 +44,10 @@
 		 * @returns {Void}
 		 */
 		onConfigurationGisSaveButtonClick: function () {
-			CMDBuild.proxy.configuration.Gis.update({
-				params: CMDBuild.model.configuration.Gis.convertToLegacy(this.view.getData(true)),
+			var configurationModel = Ext.create('CMDBuild.model.administration.configuration.Gis', this.view.panelFunctionDataGet());
+
+			CMDBuild.proxy.administration.configuration.Gis.update({
+				params: configurationModel.getParamsObject(),
 				scope: this,
 				callback: function (options, success, response) {
 					this.cmfg('onConfigurationGisTabShow');
@@ -61,13 +62,13 @@
 		 * @returns {Void}
 		 */
 		onConfigurationGisTabShow: function () {
-			CMDBuild.proxy.configuration.Gis.read({
+			CMDBuild.proxy.administration.configuration.Gis.read({
 				scope: this,
 				success: function (response, options, decodedResponse) {
 					decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.DATA];
 
-					if (!Ext.isEmpty(decodedResponse)) {
-						this.view.loadRecord(Ext.create('CMDBuild.model.configuration.Gis', CMDBuild.model.configuration.Gis.convertFromLegacy(decodedResponse)));
+					if (Ext.isObject(decodedResponse) && !Ext.Object.isEmpty(decodedResponse)) {
+						this.view.loadRecord(Ext.create('CMDBuild.model.administration.configuration.Gis', decodedResponse));
 
 						Ext.create('CMDBuild.core.configurations.builder.Gis', { // Rebuild configuration model
 							scope: this,

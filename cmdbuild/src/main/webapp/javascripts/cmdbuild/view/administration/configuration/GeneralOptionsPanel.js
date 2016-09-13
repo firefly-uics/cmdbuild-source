@@ -6,7 +6,7 @@
 		requires: [
 			'CMDBuild.core.constants.FieldWidths',
 			'CMDBuild.core.constants.Proxy',
-			'CMDBuild.proxy.configuration.GeneralOptions'
+			'CMDBuild.proxy.administration.configuration.GeneralOptions'
 		],
 
 		mixins: ['CMDBuild.view.common.PanelFunctions'],
@@ -99,7 +99,7 @@
 								displayField: CMDBuild.core.constants.Proxy.TEXT,
 								forceSelection: true,
 
-								store: CMDBuild.proxy.configuration.GeneralOptions.getStoreStartingClass(),
+								store: CMDBuild.proxy.administration.configuration.GeneralOptions.getStoreStartingClass(),
 								queryMode: 'local'
 							}),
 							{

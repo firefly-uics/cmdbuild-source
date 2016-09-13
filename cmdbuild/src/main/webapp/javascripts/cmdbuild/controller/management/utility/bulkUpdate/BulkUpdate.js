@@ -217,10 +217,10 @@
 
 			if (!this.grid.getSelectionModel().cmReverse && !this.grid.getSelectionModel().hasSelection()) {
 				return CMDBuild.core.Message.error(
-						CMDBuild.Translation.common.failure,
-						'<p class="' + CMDBuild.core.constants.Global.getErrorMsgCss() + '">' + CMDBuild.Translation.errors.noSelectedCardToUpdate + '</p>',
-						false
-					);
+					CMDBuild.Translation.common.failure,
+					'<p class="' + CMDBuild.core.constants.Global.getErrorMsgCss() + '">' + CMDBuild.Translation.errors.noSelectedCardToUpdate + '</p>',
+					false
+				);
 			} else {
 				var selectedCardsArray = [];
 				Ext.Array.each(this.grid.getSelectionModel().getSelection(), function (selectedCard, i, allSelectedCards) {
@@ -244,9 +244,7 @@
 						scope: this,
 						success: function (response, options, decordedResponse) {
 							if (confirmed) {
-								this.grid.reload(false);
-
-								this.cmfg('onUtilityBulkUpdateAbortButtonClick')
+								this.cmfg('onUtilityBulkUpdateAbortButtonClick');
 							} else {
 								this.utilityBulkUpdateConfirmationModalShow(
 									'<p>' + CMDBuild.Translation.warnings.changeAppliedOnlyToFilteredCards + '.</p>'
@@ -264,9 +262,7 @@
 						scope: this,
 						success: function (response, options, decordedResponse) {
 							if (confirmed) {
-								this.grid.reload(false);
-
-								this.cmfg('onUtilityBulkUpdateAbortButtonClick')
+								this.cmfg('onUtilityBulkUpdateAbortButtonClick');
 							} else {
 								this.utilityBulkUpdateConfirmationModalShow(
 									Ext.String.format(

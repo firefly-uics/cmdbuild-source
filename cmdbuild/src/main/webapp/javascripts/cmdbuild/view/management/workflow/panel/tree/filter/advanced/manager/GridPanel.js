@@ -1,18 +1,15 @@
 (function () {
 
-	/**
-	 * @link CMDBuild.view.common.panel.gridAndForm.panel.common.filter.advanced.manager.GridPanel
-	 */
 	Ext.define('CMDBuild.view.management.workflow.panel.tree.filter.advanced.manager.GridPanel', {
 		extend: 'Ext.grid.Panel',
 
 		requires: [
 			'CMDBuild.core.constants.Proxy',
-			'CMDBuild.proxy.common.panel.gridAndForm.filter.advanced.Manager'
+			'CMDBuild.proxy.management.workflow.panel.tree.filter.advanced.Manager'
 		],
 
 		/**
-		 * @cfg {CMDBuild.controller.administration.workflow.tabs.Domains}
+		 * @cfg {CMDBuild.controller.management.workflow.panel.tree.filter.advanced.Manager}
 		 */
 		delegate: undefined,
 
@@ -22,6 +19,8 @@
 		menuDisabled: true,
 
 		/**
+		 * Action columns are disabled if record is marked as template
+		 *
 		 * @returns {Void}
 		 *
 		 * @override
@@ -42,10 +41,6 @@
 						width: 100,
 						fixed: true,
 
-						renderer: function (value, metadata, record, rowIndex, colIndex, store, view) { // Hide if record isTemplate
-							return record.get(CMDBuild.core.constants.Proxy.TEMPLATE) ? '' : value;
-						},
-
 						items: [
 							Ext.create('CMDBuild.core.buttons.iconized.Save', {
 								withSpacer: true,
@@ -53,11 +48,14 @@
 								scope: this,
 
 								isDisabled: function (grid, rowIndex, colIndex, item, record) {
-									return !Ext.isEmpty(record.get(CMDBuild.core.constants.Proxy.ID));
+									return (
+										!Ext.isEmpty(record.get(CMDBuild.core.constants.Proxy.ID))
+										|| record.get(CMDBuild.core.constants.Proxy.TEMPLATE)
+									);
 								},
 
 								handler: function (grid, rowIndex, colIndex, node, e, record, rowNode) {
-									this.delegate.cmfg('onPanelGridAndFormFilterAdvancedManagerSaveButtonClick', record);
+									this.delegate.cmfg('onWorkflowTreeFilterAdvancedManagerSaveButtonClick', record);
 								}
 							}),
 							Ext.create('CMDBuild.core.buttons.iconized.Modify', {
@@ -65,8 +63,12 @@
 								tooltip: CMDBuild.Translation.modify,
 								scope: this,
 
+								isDisabled: function (grid, rowIndex, colIndex, item, record) {
+									return record.get(CMDBuild.core.constants.Proxy.TEMPLATE);
+								},
+
 								handler: function (grid, rowIndex, colIndex, node, e, record, rowNode) {
-									this.delegate.cmfg('onPanelGridAndFormFilterAdvancedManagerModifyButtonClick', record);
+									this.delegate.cmfg('onWorkflowTreeFilterAdvancedManagerModifyButtonClick', record);
 								}
 							}),
 							Ext.create('CMDBuild.core.buttons.iconized.Clone', {
@@ -75,7 +77,7 @@
 								scope: this,
 
 								handler: function (grid, rowIndex, colIndex, node, e, record, rowNode) {
-									this.delegate.cmfg('onPanelGridAndFormFilterAdvancedManagerCloneButtonClick', record);
+									this.delegate.cmfg('onWorkflowTreeFilterAdvancedManagerCloneButtonClick', record);
 								}
 							}),
 							Ext.create('CMDBuild.core.buttons.iconized.Remove', {
@@ -83,14 +85,18 @@
 								tooltip: CMDBuild.Translation.remove,
 								scope: this,
 
+								isDisabled: function (grid, rowIndex, colIndex, item, record) {
+									return record.get(CMDBuild.core.constants.Proxy.TEMPLATE);
+								},
+
 								handler: function (grid, rowIndex, colIndex, node, e, record, rowNode) {
-									this.delegate.cmfg('onPanelGridAndFormFilterAdvancedManagerRemoveButtonClick', record);
+									this.delegate.cmfg('onWorkflowTreeFilterAdvancedManagerRemoveButtonClick', record);
 								}
 							})
 						]
 					})
 				],
-				store: CMDBuild.proxy.common.panel.gridAndForm.filter.advanced.Manager.getStoreUser()
+				store: CMDBuild.proxy.management.workflow.panel.tree.filter.advanced.Manager.getStoreUser()
 			});
 
 			this.callParent(arguments);
@@ -102,7 +108,7 @@
 				return cellIndex == 0;
 			},
 			select: function (grid, record, index, eOpts) {
-				this.delegate.cmfg('onPanelGridAndFormFilterAdvancedFilterSelect', record);
+				this.delegate.cmfg('onWorkflowTreeFilterAdvancedFilterSelect', record);
 			}
 		}
 	});

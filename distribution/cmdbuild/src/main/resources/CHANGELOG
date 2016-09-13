@@ -42,13 +42,13 @@ FIXES
 
  * Error when trying to get cards from a superclass when there are row privileges defined on a subclass
 
- * Wrong selection when accessing closed processes from url
+ * Wrong selection when accessing closed processes from URL
 
- * Task manager UI behaviour errors
+ * Task manager UI behavior errors
 
  * "Privileged" status for user invalidates "impersonate" operation of WorkflowAPI
 
- * Tab details errors whith simple class ForeignKey as source
+ * Tab details errors with simple class ForeignKey as source
 
  * ForeignKey fields store URL errors
 
@@ -66,11 +66,27 @@ FIXES
 
  * Import CSV should not fail if some non-existing attributes are specified
 
- * When deleting a class/process through JSON-RPC interface the respose is always a success even if the class/process is not found
+ * When deleting a class/process through JSON-RPC interface the response is always a success even if the class/process is not found
 
  * Empty reference columns in widget CustomForm grid
 
  * When editing the definition of a group, the type shows "group" wrongly
+
+ * Missing relations when some domains are disabled on a hierarchy of classes
+
+ * Default group not correctly selected in administration interface combobox field
+
+ * Widget calendar widget style problems
+
+ * E-mails with a delay of one month are sent immediatly
+
+ * Process class treated as standard class if superclass has no privileges
+
+ * Default filter for class/process cannot be removed
+
+ * Lookup field too narrow in report attribute window
+
+ * CustomForm widget minor fixes
 
 
 

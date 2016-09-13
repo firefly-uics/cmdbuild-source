@@ -4,25 +4,41 @@ import com.google.common.base.Function;
 
 public class Functions {
 
-	private static class ToAttributeValue<T> implements Function<CMCard, T> {
+	private static class ToAttributeValue<T extends CMValueSet, V> implements Function<T, V> {
 
 		private final String name;
-		private final Class<T> type;
+		private final Class<V> type;
 
-		public ToAttributeValue(final String name, final Class<T> type) {
+		private ToAttributeValue(final String name, final Class<V> type) {
 			this.name = name;
 			this.type = type;
 		}
 
 		@Override
-		public T apply(final CMCard input) {
+		public V apply(final T input) {
 			return input.get(name, type);
 		}
 
 	}
 
-	public static <T> Function<CMCard, T> toAttributeValue(final String name, final Class<T> type) {
-		return new ToAttributeValue<T>(name, type);
+	public static <T extends CMValueSet, V> Function<T, V> toAttributeValue(final String name, final Class<V> type) {
+		return new ToAttributeValue<T, V>(name, type);
+	}
+
+	private static class ToId<T extends CMEntry> implements Function<T, Long> {
+
+		private ToId() {
+		}
+
+		@Override
+		public Long apply(final T input) {
+			return input.getId();
+		}
+
+	}
+
+	public static <T extends CMEntry> Function<T, Long> toId() {
+		return new ToId<T>();
 	}
 
 	private Functions() {

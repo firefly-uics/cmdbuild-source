@@ -3,6 +3,8 @@
 	/**
 	 * Class with adapted functions to be compatible with old FieldManager
 	 *
+	 * @link CMDBuild.view.management.workflow.panel.tree.filter.advanced.filterEditor.attributes.FieldSet
+	 *
 	 * @adapter
 	 */
 	Ext.define('CMDBuild.view.common.panel.gridAndForm.panel.common.filter.advanced.filterEditor.attributes.FieldSet', {

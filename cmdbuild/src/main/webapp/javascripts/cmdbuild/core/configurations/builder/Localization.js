@@ -7,7 +7,7 @@
 
 		requires: [
 			'CMDBuild.core.constants.Proxy',
-			'CMDBuild.proxy.configuration.GeneralOptions',
+			'CMDBuild.proxy.administration.configuration.GeneralOptions',
 			'CMDBuild.proxy.core.configurations.builder.Localization'
 		],
 
@@ -42,7 +42,7 @@
 			Ext.apply(this, configurationObject); // Apply configurations
 
 			Ext.ns('CMDBuild.configuration');
-			CMDBuild.configuration.localization = Ext.create('CMDBuild.model.core.configurations.builder.Localization'); // Setup configuration with defaults
+			CMDBuild.configuration.localization = Ext.create('CMDBuild.model.core.configuration.builder.Localization'); // Setup configuration with defaults
 
 			CMDBuild.proxy.core.configurations.builder.Localization.readAllAvailableTranslations({
 				loadMask: false,
@@ -54,7 +54,7 @@
 						CMDBuild.configuration.localization.set(CMDBuild.core.constants.Proxy.LANGUAGES, decodedResponse); // Build all languages array
 
 						if (this.enableServerCalls) {// Read configurations and complete model data
-							CMDBuild.proxy.configuration.GeneralOptions.read({ // TODO: waiting for refactor (server configuration refactoring)
+							CMDBuild.proxy.administration.configuration.GeneralOptions.read({ // TODO: waiting for refactor (server configuration refactoring)
 								loadMask: false,
 								scope: this.scope || this,
 								success: function (response, options, decodedResponse) {

@@ -7,8 +7,6 @@
 	]);
 
 	/**
-	 * @link CMDBuild.view.administration.widget.form.AbstractWidgetDefinitionPanel
-	 *
 	 * @abstract
 	 */
 	Ext.define('CMDBuild.view.administration.classes.tabs.widgets.form.AbstractWidgetDefinitionPanel', {
@@ -46,8 +44,8 @@
 		cls: 'x-panel-body-default-framed cmdb-border-top',
 		frame: false,
 		overflowY: 'auto',
-		split: true,
 		region: 'center',
+		split: true,
 
 		layout: {
 			type: 'hbox',

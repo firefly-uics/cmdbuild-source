@@ -1,5 +1,8 @@
 (function () {
 
+	/**
+	 * @link CMDBuild.proxy.management.workflow.panel.tree.filter.advanced.Manager
+	 */
 	Ext.define('CMDBuild.proxy.common.panel.gridAndForm.filter.advanced.Manager', {
 
 		requires: [

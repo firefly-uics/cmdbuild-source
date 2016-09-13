@@ -1,15 +1,12 @@
 (function () {
 
-	/**
-	 * @link CMDBuild.view.administration.widget.form.CreateModifyCardPanel
-	 */
 	Ext.define('CMDBuild.view.administration.classes.tabs.widgets.form.CreateModifyCardPanel', {
 		extend: 'CMDBuild.view.administration.classes.tabs.widgets.form.AbstractWidgetDefinitionPanel',
 
 		requires: [
 			'CMDBuild.core.constants.FieldWidths',
 			'CMDBuild.core.constants.Proxy',
-			'CMDBuild.proxy.classes.tabs.widgets.CreateModifyCard'
+			'CMDBuild.proxy.administration.classes.tabs.widgets.CreateModifyCard'
 		],
 
 		/**
@@ -59,7 +56,7 @@
 							editable: false,
 							forceSelection: true,
 
-							store: CMDBuild.proxy.classes.tabs.widgets.CreateModifyCard.getStoreTargetClass(),
+							store: CMDBuild.proxy.administration.classes.tabs.widgets.CreateModifyCard.getStoreTargetClass(),
 							queryMode: 'local'
 						}),
 						this.filter = Ext.create('Ext.form.field.TextArea', {

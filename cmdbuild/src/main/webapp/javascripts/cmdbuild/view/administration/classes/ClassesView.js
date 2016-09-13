@@ -33,6 +33,7 @@
 			Ext.apply(this, {
 				// FIXME: legacy waiting for refactor (attribute module)
 				attributesPanel: Ext.create('CMDBuild.view.administration.classes.tabs.attributes.CMAttributes', {
+					delegate: this.delegate,
 					title: CMDBuild.Translation.attributes,
 					border: false,
 					disabled: true

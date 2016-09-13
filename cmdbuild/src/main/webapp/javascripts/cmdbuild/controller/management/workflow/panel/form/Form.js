@@ -155,7 +155,7 @@
 		},
 
 		/**
-		 * Forward to sub-controllers
+		 * Manage previous selected activity (only before add button action)
 		 *
 		 * @returns {Void}
 		 */
@@ -164,6 +164,14 @@
 
 			if (Ext.isObject(this.controllerTabEmail) && !Ext.Object.isEmpty(this.controllerTabEmail))
 				this.controllerTabEmail.onAbortCardClick();
+
+			// Manage previous selected activity
+			if (this.cmfg('workflowSelectedActivityIsEmpty') && !this.cmfg('workflowSelectedPreviousActivityIsEmpty'))
+				this.cmfg('workflowTreeActivitySelect', {
+					activitySubsetId: this.cmfg('workflowSelectedPreviousActivityGet', [CMDBuild.core.constants.Proxy.METADATA, CMDBuild.core.constants.Proxy.ACTIVITY_SUBSET_ID]),
+					forceFilter: true,
+					instanceId: this.cmfg('workflowSelectedPreviousActivityGet', CMDBuild.core.constants.Proxy.INSTANCE_ID)
+				});
 		},
 
 		/**

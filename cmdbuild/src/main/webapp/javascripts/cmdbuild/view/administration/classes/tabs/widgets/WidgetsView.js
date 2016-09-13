@@ -1,8 +1,5 @@
 (function () {
 
-	/**
-	 * @link CMDBuild.view.administration.widget.WidgetView
-	 */
 	Ext.define('CMDBuild.view.administration.classes.tabs.widgets.WidgetsView', {
 		extend: 'Ext.panel.Panel',
 

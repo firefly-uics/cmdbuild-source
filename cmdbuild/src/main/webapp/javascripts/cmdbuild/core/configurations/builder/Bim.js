@@ -30,7 +30,7 @@
 			Ext.apply(this, configurationObject); // Apply configuration
 
 			Ext.ns('CMDBuild.configuration');
-			CMDBuild.configuration.bim = Ext.create('CMDBuild.model.core.configurations.builder.Bim'); // Setup configuration with defaults
+			CMDBuild.configuration.bim = Ext.create('CMDBuild.model.core.configuration.builder.Bim'); // Setup configuration with defaults
 
 			CMDBuild.proxy.core.configurations.builder.Bim.read({
 				loadMask: false,
@@ -47,7 +47,7 @@
 						success: function (response, options, decodedResponse) {
 							bimConfigurationObject[CMDBuild.core.constants.Proxy.ROOT_CLASS] = decodedResponse[CMDBuild.core.constants.Proxy.ROOT];
 
-							CMDBuild.configuration.bim = Ext.create('CMDBuild.model.core.configurations.builder.Bim', bimConfigurationObject); // Configuration model
+							CMDBuild.configuration.bim = Ext.create('CMDBuild.model.core.configuration.builder.Bim', bimConfigurationObject); // Configuration model
 						},
 						callback: this.callback
 					});
