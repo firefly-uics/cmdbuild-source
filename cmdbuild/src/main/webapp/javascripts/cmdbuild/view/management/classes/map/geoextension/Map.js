@@ -48,6 +48,12 @@
 		frame : false,
 		layout : 'border',
 		baseLayer : undefined,
+
+		/**
+		 * @property {"CMDBuild.view.management.classes.map.thematism.Legend"}
+		 * 
+		 */
+		legend : undefined,
 		configuration : {
 			center : undefined,
 			zoom : undefined
@@ -106,6 +112,7 @@
 						document.getElementById(this.id + "-body").offsetHeight ];
 				this.map.setSize(size);
 				this.createLegend();
+
 			},
 			resize : function() {
 				var size = [ document.getElementById(this.id + "-body").offsetWidth,
@@ -135,10 +142,18 @@
 		createLegend : function() {
 			var divContainerControl = document.createElement('div');
 			document.getElementById(this.id + "-body").appendChild(divContainerControl);
-			var legend = Ext.create("CMDBuild.view.management.classes.map.thematism.Legend", {
+			this.legend = Ext.create("CMDBuild.view.management.classes.map.thematism.Legend", {
 				parentDiv : divContainerControl
 			});
-			legend.compose();
+			this.legend.compose();
+		},
+		refreshLegend : function() {
+			var arrLayers = this.interactionDocument.getThematicLayers();
+			if (arrLayers.length > 0) {
+				this.legend.refreshResults(arrLayers);
+			} else {
+				this.legend.hide();
+			}
 		},
 
 		/**
