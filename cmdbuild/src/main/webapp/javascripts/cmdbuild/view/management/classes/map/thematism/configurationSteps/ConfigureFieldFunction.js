@@ -29,6 +29,7 @@
 				queryMode : "local",
 				displayField : "description",
 				valueField : "value",
+				editable : false,
 				allowBlank : false
 			});
 			this.comboStrategies = Ext.create("Ext.form.field.ComboBox", {
@@ -38,6 +39,7 @@
 				queryMode : "local",
 				displayField : "description",
 				valueField : "value",
+				editable : false,
 				allowBlank : false
 			});
 			Ext.apply(this, {
