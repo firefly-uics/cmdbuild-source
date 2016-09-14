@@ -43,7 +43,8 @@
 			var attributeName = this.parentWindow.getCurrentAttribute();
 			var currentStrategy = this.parentWindow.getCurrentStrategy();
 			var field = this.comboFields.value;
-			var groups = thematicDocument.groupData(field, currentStrategy, this.parentWindow.getCurrentSourceType(), cardsArray, attributeName);
+			var groups = thematicDocument.groupData(field, currentStrategy, this.parentWindow.getCurrentSourceType(),
+					cardsArray, attributeName);
 			var index = 0;
 			for ( var key in groups) {
 				cardsStore.add({
@@ -155,10 +156,12 @@
 				var attributes = currentStrategy.attributes;
 				for (var i = 0; i < attributes.length; i++) {
 					var attribute = attributes[i];
-					fieldsStore.add({
-						"description" : attribute.description,
-						"name" : attribute.name
-					});
+					if (attribute.name !== "Id") {
+						fieldsStore.add({
+							"description" : attribute.description,
+							"name" : attribute.name
+						});
+					}
 				}
 			} else {
 				fieldsStore.add({
@@ -187,27 +190,27 @@
 				}, this);
 			}, this);
 		},
-	 loadCards:function(className, callback, callbackScope) {
-		var params = {};
-		params[CMDBuild.core.constants.Proxy.CLASS_NAME] = className;
-		if (this.parentWindow.getCurrentSourceType() === CMDBuild.gis.constants.layers.FUNCTION_SOURCE) {
-			var currentStrategy = this.parentWindow.getCurrentStrategy();
-			params["strategy"] = currentStrategy;
-			var strategiesManager = this.interactionDocument.getStrategiesManager();
-			strategiesManager.functionValue(params, function(data) {
-				callback.apply(callbackScope, [ data ]);
-				
-			});
-		} else {
-			CMDBuild.view.management.classes.map.proxy.Cards.read({
-				params : params,
-				loadMask : false,
-				success : function(result, options, decodedResult) {
-					var data = decodedResult.rows;
+		loadCards : function(className, callback, callbackScope) {
+			var params = {};
+			params[CMDBuild.core.constants.Proxy.CLASS_NAME] = className;
+			if (this.parentWindow.getCurrentSourceType() === CMDBuild.gis.constants.layers.FUNCTION_SOURCE) {
+				var currentStrategy = this.parentWindow.getCurrentStrategy();
+				params["strategy"] = currentStrategy;
+				var strategiesManager = this.interactionDocument.getStrategiesManager();
+				strategiesManager.functionValue(params, function(data) {
 					callback.apply(callbackScope, [ data ]);
-				}
-			});
+
+				});
+			} else {
+				CMDBuild.view.management.classes.map.proxy.Cards.read({
+					params : params,
+					loadMask : false,
+					success : function(result, options, decodedResult) {
+						var data = decodedResult.rows;
+						callback.apply(callbackScope, [ data ]);
+					}
+				});
+			}
 		}
-	}
 	});
 })();

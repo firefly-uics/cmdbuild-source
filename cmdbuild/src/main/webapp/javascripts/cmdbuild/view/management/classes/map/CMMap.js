@@ -49,6 +49,7 @@
 					cardId : currentCardId,
 					className : currentClassName
 				});
+				me.refreshLegend();
 			}, this);
 		},
 

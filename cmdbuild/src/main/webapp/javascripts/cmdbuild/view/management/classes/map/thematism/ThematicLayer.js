@@ -247,13 +247,23 @@
 			for (var i = 0; i < colorsTable.length; i++) {
 				for (var j = 0; j < colorsTable[i].cards.length; j++) {
 					if (id === colorsTable[i].cards[j].Id) {
-						callback.apply(callbackScope, [colorsTable[i].cards[j]]);
+						callback.apply(callbackScope, [ colorsTable[i].cards[j] ]);
 						return;
 					}
 				}
-			} 
+			}
 			callback.apply(callbackScope, []);
 
+		},
+
+		/**
+		 * 
+		 * @returns {Thematic Table} 
+		 * 
+		 */
+		getColorsTable : function() {
+			var colorsTable = this.thematism.configuration.layoutConfiguration.colorsTable
+			return colorsTable;
 		},
 
 		/**
