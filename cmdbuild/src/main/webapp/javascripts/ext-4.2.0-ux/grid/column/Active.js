@@ -1,4 +1,4 @@
-(function() {
+(function () {
 
 	Ext.define('Ext.ux.grid.column.Active', {
 		extend: 'Ext.grid.column.Column',
@@ -24,9 +24,11 @@
 		 *
 		 * @returns {String}
 		 */
-		renderer: function(value, metaData, record, rowIndex, colIndex, store, view) {
+		renderer: function (value, metaData, record, rowIndex, colIndex, store, view) {
+			var me = this.columns[colIndex];
+
 			if (Ext.isBoolean(value))
-				return value ? '<img src="images/icons/accept.png" alt="' + this.iconAltTextActive + '" />' : '<img src="images/icons/cancel.png" alt="' + this.iconAltTextNotActive + '" />';
+				return value ? '<img src="images/icons/accept.png" alt="' + me.iconAltTextActive + '" />' : '<img src="images/icons/cancel.png" alt="' + me.iconAltTextNotActive + '" />';
 
 			return value;
 		}
