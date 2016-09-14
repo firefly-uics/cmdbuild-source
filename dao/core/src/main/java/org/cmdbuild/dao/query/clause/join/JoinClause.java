@@ -13,6 +13,7 @@ import static org.cmdbuild.dao.entrytype.Predicates.domainFor;
 import static org.cmdbuild.dao.query.clause.where.OrWhereClause.or;
 import static org.cmdbuild.dao.query.clause.where.TrueWhereClause.trueWhereClause;
 
+import java.util.Collection;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
@@ -44,6 +45,7 @@ public class JoinClause {
 		private final Set<QueryDomain> queryDomains;
 		private boolean domainHistory;
 		private boolean left;
+		private final Map<CMDomain, Iterable<CMClass>> disabled;
 
 		private JoinClauseBuilder(final CMDataView viewForRun, final CMDataView viewForBuild, final CMClass source) {
 			Validate.notNull(source);
@@ -52,6 +54,7 @@ public class JoinClause {
 			this.source = source;
 			this.queryDomains = newHashSet();
 			this.targetsWithFilters = newHashMap();
+			this.disabled = newHashMap();
 		}
 
 		public JoinClauseBuilder withDomain(CMDomain domain, final Alias domainAlias) {
@@ -109,11 +112,21 @@ public class JoinClause {
 					.filter(domainFor(source)) //
 					.filter(domain(disabled1(), not(contains(source.getName()))))) {
 				addQueryDomain(new QueryDomain(domain, Source._1));
+				final Collection<CMClass> _disabled = newHashSet();
+				domain.getDisabled1().forEach(input -> {
+					_disabled.add(viewForBuild.findClass(input));
+				});
+				disabled.put(domain, _disabled);
 			}
 			for (final CMDomain domain : from(viewForBuild.findDomains()) //
 					.filter(domainFor(source)) //
 					.filter(domain(disabled2(), not(contains(source.getName()))))) {
 				addQueryDomain(new QueryDomain(domain, Source._2));
+				final Collection<CMClass> _disabled = newHashSet();
+				domain.getDisabled2().forEach(input -> {
+					_disabled.add(viewForBuild.findClass(input));
+				});				
+				disabled.put(domain, _disabled);
 			}
 		}
 
@@ -157,6 +170,7 @@ public class JoinClause {
 
 	private final Map<CMClass, WhereClause> targetsWithFilters;
 	private final Set<QueryDomain> queryDomains;
+	private final Map<CMDomain, Iterable<CMClass>> disabled;
 
 	private JoinClause(final JoinClauseBuilder builder) {
 		this.targetAlias = builder.targetAlias;
@@ -165,6 +179,7 @@ public class JoinClause {
 		this.queryDomains = builder.queryDomains;
 		this.domainHistory = builder.domainHistory;
 		this.left = builder.left;
+		this.disabled = builder.disabled;
 	}
 
 	public Alias getTargetAlias() {
@@ -197,6 +212,10 @@ public class JoinClause {
 
 	public boolean isLeft() {
 		return left;
+	}
+
+	public Map<CMDomain, Iterable<CMClass>> getDisabled() {
+		return disabled;
 	}
 
 }
