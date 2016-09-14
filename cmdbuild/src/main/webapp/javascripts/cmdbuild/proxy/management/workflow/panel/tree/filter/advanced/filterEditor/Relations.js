@@ -11,6 +11,19 @@
 		singleton: true,
 
 		/**
+		 * @param {Object} parameters
+		 *
+		 * @returns {Void}
+		 */
+		getDomains: function (parameters) {
+			parameters = Ext.isEmpty(parameters) ? {} : parameters;
+
+			Ext.apply(parameters, { url: CMDBuild.proxy.index.Json.domain.getDomains });
+
+			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.DOMAIN, parameters);
+		},
+
+		/**
 		 * @returns {Ext.data.Store or CMDBuild.core.cache.Store}
 		 */
 		getStoreDestination: function () {
@@ -61,19 +74,6 @@
 			Ext.apply(parameters, { url: CMDBuild.proxy.index.Json.classes.readAll });
 
 			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.CLASS, parameters);
-		},
-
-		/**
-		 * @param {Object} parameters
-		 *
-		 * @returns {Void}
-		 */
-		readAllDomainsByClass: function (parameters) {
-			parameters = Ext.isEmpty(parameters) ? {} : parameters;
-
-			Ext.apply(parameters, { url: CMDBuild.proxy.index.Json.domain.readAllByClass });
-
-			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.DOMAIN, parameters);
 		}
 	});
 

@@ -1,5 +1,8 @@
 (function() {
 
+	/**
+	 * @deprecated CMDBuild.view.management.workflow.panel.tree.filter.advanced.filterEditor.relations.CardGridPanel
+	 */
 	Ext.define('CMDBuild.view.common.field.filter.advanced.window.panels.relations.CardGridPanel', {
 		extend: 'CMDBuild.view.management.common.CMCardGrid',
 
