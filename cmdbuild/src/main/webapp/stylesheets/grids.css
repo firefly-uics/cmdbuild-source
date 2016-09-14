@@ -85,7 +85,11 @@
 	.grid-row-disabled { color: #666666 !important; }
 
 /* Grid icons */
-	.x-grid-cell-inner { overflow: hidden !important; }
+	.x-grid-cell-inner {
+		height: 18px !important;
+		line-height: 18px !important;
+		overflow: hidden !important;
+	}
 	.x-grid-cell-inner .x-item-disabled { cursor: default !important; }
 	.x-grid-group-hd .x-grid-cell-inner { height: 30px !important; } /* Overrides the height of x-grid-cell-inner*/
 	.cm-grid-autoheight .x-grid-cell-inner { height: auto !important; }
