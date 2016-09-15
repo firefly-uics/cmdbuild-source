@@ -164,6 +164,10 @@
 			return thematicLayers;
 		},
 
+		groupData : function(field, strategy, analysisType, sourceType, cardsArray, attributeName) {
+			return groupData(field, strategy, analysisType, sourceType, cardsArray, attributeName);
+		},
+
 		/**
 		 * @param
 		 * {CMDBuild.view.management.classes.map.geoextension.InteractionDocument}
@@ -287,9 +291,6 @@
 		setThematismButton : function(thematismButton) {
 			this.thematismButton = thematismButton;
 		},
-		groupData : function(field, strategy, analysisType, sourceType, cardsArray, attributeName) {
-			return groupData(field, strategy, analysisType, sourceType, cardsArray, attributeName);
-		},
 	});
 
 	var defaultConfiguration = {
@@ -309,31 +310,36 @@
 		var groups = {};
 		for (var i = 0; i < cardsArray.length; i++) {
 			var card = cardsArray[i];
-			chargeCardByCard(field, strategy, sourceType, groups, card, attributeName);
+			valorizeCard(field, strategy, sourceType, groups, card, attributeName);
+			if (analysisType === CMDBuild.gis.constants.layers.RANGES_ANALYSIS) {
+			}
+			chargeCardByCard(groups, card);
 		}
 		return groups;
 	}
-	function chargeCardByCard(field, strategy, sourceType, groups, card, attributeName) {
+	function valorizeCard(field, strategy, sourceType, groups, card, attributeName) {
 		var params = {
 			card : card,
 			strategy : strategy,
 			attributeName : (attributeName) ? attributeName : field
 		}
-		strategy.value(params, function(value) {
-			if (sourceType === CMDBuild.gis.constants.layers.FUNCTION_SOURCE) {
-				value = value[field];
-			}
-			if (groups[value]) {
+		value = strategy.value(params);
+		if (sourceType === CMDBuild.gis.constants.layers.FUNCTION_SOURCE) {
+			value = value[field];
+		}
+		card.value = value;
+	}
+	function chargeCardByCard(groups, card) {
+			if (groups[card.value]) {
 				// can be different from cards count?
-				groups[value].count++;
-				groups[value].cards.push(card);
+				groups[card.value].count++;
+				groups[card.value].cards.push(card);
 			} else {
-				groups[value] = {
+				groups[card.value] = {
 					count : 1,
 					cards : [ card ]
 				};
 			}
-		}, this);
 	}
 
 })();

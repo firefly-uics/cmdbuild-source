@@ -49,24 +49,11 @@
 				name : options.geoAttribute.name,
 				source : vectorSource,
 				view : view,
-				// style : styleFunction,
 				geoAttribute : options.geoAttribute,
 				adapter : this
 			});
 			gisLayer.setStyle(styleFunction);
 
-			CMDBuild.proxy.gis.Gis.getFeature({
-				params : {
-					"className" : options.targetClassName,
-					"cardId" : -1
-				// taking icons. there is one for all cards in a
-				// class
-				},
-				loadMask : false,
-				scope : this,
-				success : function(param) {
-				}
-			});
 			this.status = "Select";
 			this.interactionDocument.setCurrentFeature(options.geoAttribute.name, "", "Select");
 			this.interactionDocument.changedFeature();
@@ -232,7 +219,6 @@
 						},
 						type : "post",
 						success : function(data) {
-							// clearVectorSource(vectorSource);
 							var visibleFeatures = me.onlyVisibleFeatures(data.features);
 							data.features = me.onlyToAddFeatures(visibleFeatures);
 							var jsonFeatures = geoJSONFormat.readFeatures(data);
@@ -257,9 +243,7 @@
 				});
 
 			} catch (e) {
-				icon = new ol.style.Icon({
-					src : "upload/images/gis/Edificio.png"
-				});
+				icon = null;
 			}
 			return icon;
 		},
@@ -295,26 +279,7 @@
 		 * 
 		 */
 		refresh : function() {
-			this.getSource().clear();
-//			var featuresOnLayer = this.getSource().getFeatures();
-//			var features = [];
-//			for (var i = 0; i < featuresOnLayer.length; i++) {
-//				var feature = featuresOnLayer[i];
-//				var card = {
-//					className : feature.get("master_className"),
-//					cardId : feature.get("master_card"),
-//				};
-//				if (this.interactionDocument.isANavigableCard(card)) {
-//					features.push(feature);
-//				}
-//
-//			}
-//			for (var i = 0; i < featuresOnLayer.length; i++) {
-//				var feature = featuresOnLayer[i];
-//				if (searchFeature(feature, features) === -1) {
-//					this.layer.getSource().removeFeature(feature);
-//				}
-//			}
+//			this.getSource().clear();
 		},
 
 		/**
@@ -331,7 +296,7 @@
 			this.drawPolygon.setActive(status === "Draw" && geoType === "POLYGON");
 			this.drawLine.setActive(status === "Draw" && geoType === "LINESTRING");
 			this.select.setActive(status === "Select");
-			this.modify.setActive(status === "Modify");
+			this.modify.setActive(status === "Modify" && feature);
 			this.status = status;
 		},
 
@@ -473,9 +438,26 @@
 		getStyle : function(shape) {
 			switch (shape) {
 			case 'Point':
-				return new ol.style.Style({
-					image : this.classBitmap
-				});
+				if (!this.classBitmap) {
+					return new ol.style.Style({
+						image : new ol.style.Circle({
+							fill : new ol.style.Fill({
+								color : '#FFCC00'
+							}),
+							stroke : new ol.style.Stroke({
+								width : 2,
+								color : '#FF9966'
+							}),
+							radius : 7
+
+						})
+					})
+				} else {
+					return new ol.style.Style({
+						image : this.classBitmap
+					});
+
+				}
 			case 'LineString':
 				return new ol.style.Style({
 					stroke : new ol.style.Stroke({
@@ -487,7 +469,6 @@
 				return new ol.style.Style({
 					stroke : new ol.style.Stroke({
 						color : 'blue',
-						lineDash : [ 4 ],
 						width : 3
 					}),
 					fill : new ol.style.Fill({
@@ -573,7 +554,6 @@
 				return i;
 			}
 		}
-		console.log(feature.get("master_className") +"&&"+ feature.get("master_card"));
 		return -1;
 	}
 	function getGeoUrl() {
