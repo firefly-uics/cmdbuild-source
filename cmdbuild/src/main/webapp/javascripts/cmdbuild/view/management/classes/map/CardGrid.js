@@ -29,11 +29,6 @@
 		initComponent: function () {
 			var store = CMDBuild.proxy.gis.Card.getStore();
 			var thisGrid = this;
-			store.load({
-			    callback: function(records, operation, success) {
-			        thisGrid.getSelectionModel().select(0);
-			    }
-			});
 			var me = this;
 			Ext.apply(this, {
 			    dockedItems: [{
