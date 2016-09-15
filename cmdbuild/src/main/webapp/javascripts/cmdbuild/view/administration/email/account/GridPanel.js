@@ -22,8 +22,8 @@
 			Ext.apply(this, {
 				columns: [
 					Ext.create('Ext.ux.grid.column.Tick', {
-						text: CMDBuild.Translation.defaultLabel,
 						dataIndex: CMDBuild.core.constants.Proxy.IS_DEFAULT,
+						text: CMDBuild.Translation.defaultLabel,
 						iconAltText: CMDBuild.Translation.defaultLabel,
 						align: 'center',
 						width: 50,

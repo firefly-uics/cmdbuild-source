@@ -14,6 +14,8 @@
 
 		/**
 		 * @property {Object}
+		 *
+		 * @private
 		 */
 		bufferEntryTypes: {},
 
@@ -66,31 +68,32 @@
 			 * @private
 			 */
 			bufferEntryTypesSet: function (callback) {
-				if (Ext.isFunction(callback)) {
-					var params = {};
-					params[CMDBuild.core.constants.Proxy.ACTIVE] = true;
+				// Error handling
+					if (!Ext.isFunction(callback))
+						return _error('bufferEntryTypesSet(): unmanaged callback parameter', this, callback);
+				// END: Error handling
 
-					CMDBuild.proxy.core.buttons.iconized.add.Relation.readClass({ // FIXME: waiting for refactor (server endpoint)
-						params: params,
-						scope: this,
-						success: function (response, options, decodedResponse) {
-							decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.CLASSES];
+				var params = {};
+				params[CMDBuild.core.constants.Proxy.ACTIVE] = true;
 
-							if (Ext.isArray(decodedResponse) && !Ext.isEmpty(decodedResponse)) {
-								Ext.Array.each(decodedResponse, function (entryTypeObject, i, allEntryTypeObjects) {
-									if (Ext.isObject(entryTypeObject) && !Ext.Object.isEmpty(entryTypeObject))
-										this.bufferEntryTypes[entryTypeObject[CMDBuild.core.constants.Proxy.NAME]] = Ext.create('CMDBuild.model.core.buttons.iconized.add.relation.EntryType', entryTypeObject);
-								}, this);
+				CMDBuild.proxy.core.buttons.iconized.add.Relation.readClass({ // FIXME: waiting for refactor (server endpoint)
+					params: params,
+					scope: this,
+					success: function (response, options, decodedResponse) {
+						decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.CLASSES];
 
-								Ext.callback(callback, this);
-							} else {
-								_error('bufferEntryTypesSet(): unmanaged response', this, decodedResponse);
-							}
+						if (Ext.isArray(decodedResponse) && !Ext.isEmpty(decodedResponse)) {
+							Ext.Array.each(decodedResponse, function (entryTypeObject, i, allEntryTypeObjects) {
+								if (Ext.isObject(entryTypeObject) && !Ext.Object.isEmpty(entryTypeObject))
+									this.bufferEntryTypes[entryTypeObject[CMDBuild.core.constants.Proxy.NAME]] = Ext.create('CMDBuild.model.core.buttons.iconized.add.relation.EntryType', entryTypeObject);
+							}, this);
+
+							Ext.callback(callback, this);
+						} else {
+							_error('bufferEntryTypesSet(): unmanaged response', this, decodedResponse);
 						}
-					});
-				} else {
-					_error('bufferEntryTypesSet(): unmanaged callback parameter', this, callback);
-				}
+					}
+				});
 			},
 
 		/**
@@ -146,7 +149,7 @@
 												domainsDestination.push(Ext.create('CMDBuild.model.core.buttons.iconized.add.relation.Domain', domainObject));
 										}, this);
 
-									if (Ext.isEmpty(domainsSource) || !Ext.isEmpty(domainsDestination)) {
+									if (!Ext.isEmpty(domainsSource) || !Ext.isEmpty(domainsDestination)) {
 										this.enable();
 
 										// Domains where entryType is source manage

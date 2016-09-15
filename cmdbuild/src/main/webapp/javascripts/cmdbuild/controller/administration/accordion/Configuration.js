@@ -108,19 +108,19 @@
 					{
 						cmName: this.cmfg('accordionIdentifierGet'),
 						iconCls: 'cmdb-tree-configuration-icon',
-						text: CMDBuild.Translation.serverManagement,
-						description: CMDBuild.Translation.serverManagement,
-						id: this.cmfg('accordionBuildId', 'server'),
-						sectionHierarchy: ['server'],
+						text: CMDBuild.Translation.notifications,
+						description: CMDBuild.Translation.notifications,
+						id: this.cmfg('accordionBuildId', 'notifications'),
+						sectionHierarchy: ['notifications'],
 						leaf: true
 					},
 					{
 						cmName: this.cmfg('accordionIdentifierGet'),
 						iconCls: 'cmdb-tree-configuration-icon',
-						text: CMDBuild.Translation.notifications,
-						description: CMDBuild.Translation.notifications,
-						id: this.cmfg('accordionBuildId', 'notifications'),
-						sectionHierarchy: ['notifications'],
+						text: CMDBuild.Translation.serverManagement,
+						description: CMDBuild.Translation.serverManagement,
+						id: this.cmfg('accordionBuildId', 'server'),
+						sectionHierarchy: ['server'],
 						leaf: true
 					}
 				]);
