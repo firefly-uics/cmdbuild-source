@@ -65,7 +65,7 @@
 					Ext.create('Ext.ux.grid.column.Tick', {
 						dataIndex: 'md',
 						text: CMDBuild.Translation.masterDetailInitials,
-						iconLabel: CMDBuild.Translation.masterDetail,
+						iconAltText: CMDBuild.Translation.masterDetail,
 						align: 'center',
 						width: 30,
 						fixed: true

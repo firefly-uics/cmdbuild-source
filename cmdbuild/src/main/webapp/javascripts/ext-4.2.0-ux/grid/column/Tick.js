@@ -1,4 +1,4 @@
-(function() {
+(function () {
 
 	Ext.define('Ext.ux.grid.column.Tick', {
 		extend: 'Ext.grid.column.Column',
@@ -19,9 +19,11 @@
 		 *
 		 * @returns {String}
 		 */
-		renderer: function(value, metaData, record, rowIndex, colIndex, store, view) {
+		renderer: function (value, metaData, record, rowIndex, colIndex, store, view) {
+			var me = this.columns[colIndex];
+
 			if (Ext.isBoolean(value))
-				return value ? '<img src="images/icons/tick.png" alt="' + this.iconAltText + '" />' : null;
+				return value ? '<img src="images/icons/tick.png" alt="' + me.iconAltText + '" />' : null;
 
 			return value;
 		}
