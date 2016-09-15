@@ -188,12 +188,10 @@
 			});
 			feature.setGeometry(originalFeature.geometry);
 
-			this.loadCard(originalFeature.master_card, originalFeature.master_className, function(card) {
-				this.getThematicColor(card, function(color) {
-					var style = this.getStyle(feature.getGeometry().getType(), color);
-					feature.setStyle(style);
-					this.layer.getSource().addFeature(feature);
-				}, this);
+			this.loadCard(originalFeature.master_card, originalFeature.master_className, function(rowColor, card) {
+				var style = this.getStyle(feature.getGeometry().getType(), rowColor.color);
+				feature.setStyle(style);
+				this.layer.getSource().addFeature(feature);
 			}, this);
 		},
 
@@ -205,32 +203,6 @@
 		 */
 		getFeaturesByCardId : function(cardId) {
 			return this.interactionDocument.getFeaturesOnLayerByCardId(cardId, this.layer);
-		},
-
-		/**
-		 * @param {Object}
-		 *            card : complete card from server
-		 * 
-		 * @returns {Rgb} color
-		 * 
-		 */
-		getThematicColor : function(card, callback, callbackScope) {
-			var strategy = this.thematism.strategy
-			var configuration = this.thematism.configuration;
-			var parameters = {
-				card : card,
-				strategy : strategy,
-				attributeName : configuration.functionConfiguration.attribute
-			};
-			strategy.value(parameters, function(value) {
-				if (configuration.thematismConfiguration.source === CMDBuild.gis.constants.layers.FUNCTION_SOURCE) {
-					var field = configuration.layoutConfiguration.resultFieldName;
-					value = value[field];
-				}
-				var thematicDocument = this.interactionDocument.getThematicDocument();
-				var color = thematicDocument.getColor(value, configuration.layoutConfiguration.colorsTable, 0);
-				callback.apply(callbackScope, [ color ]);
-			}, this);
 		},
 
 		/**
@@ -246,8 +218,9 @@
 			var colorsTable = this.thematism.configuration.layoutConfiguration.colorsTable
 			for (var i = 0; i < colorsTable.length; i++) {
 				for (var j = 0; j < colorsTable[i].cards.length; j++) {
-					if (id === colorsTable[i].cards[j].Id) {
-						callback.apply(callbackScope, [ colorsTable[i].cards[j] ]);
+					if (id === colorsTable[i].cards[j].Id) {// Id! no constants
+															// for me
+						callback.apply(callbackScope, [ colorsTable[i], colorsTable[i].cards[j] ]);
 						return;
 					}
 				}
@@ -258,7 +231,7 @@
 
 		/**
 		 * 
-		 * @returns {Thematic Table} 
+		 * @returns {Thematic Table}
 		 * 
 		 */
 		getColorsTable : function() {
@@ -302,6 +275,7 @@
 			}
 		}
 	});
+
 	function line(color) {
 		var line = new ol.style.Style({
 			stroke : new ol.style.Stroke({
@@ -315,7 +289,6 @@
 		var polygon = new ol.style.Style({
 			stroke : new ol.style.Stroke({
 				color : 'blue',
-				lineDash : [ 4 ],
 				width : 3
 			}),
 			fill : new ol.style.Fill({
@@ -335,11 +308,13 @@
 			}),
 			image : new ol.style.Circle({
 				fill : new ol.style.Fill({
-					color : color
+					color : color,
+					 opacity: 0.5,
 				}),
 				stroke : new ol.style.Stroke({
 					width : 1,
-					color : color
+					color : color,
+					 opacity: 0.5,
 				}),
 				radius : radius
 

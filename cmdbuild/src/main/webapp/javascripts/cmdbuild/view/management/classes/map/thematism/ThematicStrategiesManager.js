@@ -27,7 +27,7 @@
 					if (typeof value === "object") {
 						value = value.description;
 					}
-					callback.apply(callbackScope, [ value ]);
+					return value;
 				}
 			},
 			strLenght : {
@@ -41,7 +41,7 @@
 				 */
 				value : function(parameters, callback, callbackScope) {
 					var length = (parameters.card.Description) ? parameters.card.Description.length : 0;
-					callback.apply(callbackScope, [ length ]);
+					return length;
 				}
 			},
 			strLenghtX2 : {
@@ -55,7 +55,7 @@
 				 */
 				value : function(parameters, callback, callbackScope) {
 					var length = (parameters.card.Description) ? parameters.card.Description.length : 0;
-					callback.apply(callbackScope, [ length * 2 ]);
+					return length * 2;
 				}
 			},
 			strLenghtX3 : {
@@ -69,7 +69,7 @@
 				 */
 				value : function(parameters, callback, callbackScope) {
 					var length = (parameters.card.Description) ? parameters.card.Description.length : 0;
-					callback.apply(callbackScope, [ length * 3 ]);
+					return length * 3;
 				}
 			}
 		},
@@ -122,8 +122,8 @@
 		 * 
 		 * @returns {generic value}
 		 */
-		value4Function : function(parameters, callback, callbackScope) {
-			callback.apply(callbackScope, [parameters.card]);
+		value4Function : function(parameters) {
+			return parameters.card;
 		},
 		/**
 		 * @param {Object}
