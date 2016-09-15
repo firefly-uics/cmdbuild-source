@@ -43,7 +43,8 @@
 			var attributeName = this.parentWindow.getCurrentAttribute();
 			var currentStrategy = this.parentWindow.getCurrentStrategy();
 			var field = this.comboFields.value;
-			var groups = thematicDocument.groupData(field, currentStrategy, this.parentWindow.getCurrentSourceType(),
+			var analysis = this.parentWindow.getCurrentAnalysisType();
+			var groups = thematicDocument.groupData(field, currentStrategy, analysis, this.parentWindow.getCurrentSourceType(),
 					cardsArray, attributeName);
 			var index = 0;
 			for ( var key in groups) {
