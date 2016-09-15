@@ -287,8 +287,8 @@
 		setThematismButton : function(thematismButton) {
 			this.thematismButton = thematismButton;
 		},
-		groupData : function(field, strategy, sourceType, cardsArray, attributeName) {
-			return groupData(field, strategy, sourceType, cardsArray, attributeName);
+		groupData : function(field, strategy, analysisType, sourceType, cardsArray, attributeName) {
+			return groupData(field, strategy, analysisType, sourceType, cardsArray, attributeName);
 		},
 	});
 
@@ -305,7 +305,7 @@
 	function clone(obj) {
 		return JSON.parse(JSON.stringify(obj));
 	}
-	function groupData(field, strategy, sourceType, cardsArray, attributeName) {
+	function groupData(field, strategy, analysisType, sourceType, cardsArray, attributeName) {
 		var groups = {};
 		for (var i = 0; i < cardsArray.length; i++) {
 			var card = cardsArray[i];
