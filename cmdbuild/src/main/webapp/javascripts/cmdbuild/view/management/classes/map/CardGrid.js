@@ -1,5 +1,5 @@
 (function () {
-	Ext.define('CMDBuild.view.management.classes.map.CM16CardGrid', {
+	Ext.define('CMDBuild.view.management.classes.map.CardGrid', {
 		extend: 'Ext.grid.Panel',
 
 		requires: [
@@ -7,7 +7,7 @@
 		],
 
 		/**
-		 * @cfg {CMDBuild.controller.management.classes.map.CM16CardGrid}
+		 * @cfg {CMDBuild.controller.management.classes.map.CardGrid}
 		 */
 		delegate: undefined,
 

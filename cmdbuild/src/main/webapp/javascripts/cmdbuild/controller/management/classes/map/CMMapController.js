@@ -1,7 +1,7 @@
 (function() {
 
 	Ext.require([ 'CMDBuild.proxy.gis.Gis',
-	              'CMDBuild.controller.management.classes.map.CM16NavigationTreeDelegate']);
+	              'CMDBuild.controller.management.classes.map.NavigationTreeDelegate']);
 
 	Ext.define("CMDBuild.controller.management.classes.map.CMMapController", {
 		alternateClassName : "CMDBuild.controller.management.classes.CMMapController", // Legacy
@@ -32,7 +32,7 @@
 				if (navigationPanel) {
 					new CMDBuild.controller.management.classes.CMCardBrowserTreeDataSource(navigationPanel,
 							this.mapState);
-					navigationPanel.addDelegate(new CMDBuild.controller.management.classes.map.CM16NavigationTreeDelegate(
+					navigationPanel.addDelegate(new CMDBuild.controller.management.classes.map.NavigationTreeDelegate(
 							this, this.interactionDocument));
 				}
 

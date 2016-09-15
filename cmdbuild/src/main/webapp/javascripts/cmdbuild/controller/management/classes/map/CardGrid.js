@@ -1,10 +1,10 @@
 (function () {
 
-	Ext.define('CMDBuild.controller.management.classes.map.CM16CardGrid', {
+	Ext.define('CMDBuild.controller.management.classes.map.CardGrid', {
 		extend: 'CMDBuild.controller.common.abstract.Base',
 
 		requires: [
-			'CMDBuild.view.management.classes.map.CM16CardGrid'
+			'CMDBuild.view.management.classes.map.CardGrid'
 		],
 
 		/**
@@ -37,9 +37,9 @@
 		constructor: function (configurationObject) {
 			this.callParent(arguments);
 
-			this.view = Ext.create('CMDBuild.view.management.classes.map.CM16CardGrid', { 
+			this.view = Ext.create('CMDBuild.view.management.classes.map.CardGrid', { 
 				delegate: this,
-				title : "CM16-" + configurationObject.title,
+				title : configurationObject.title,
 				interactionDocument : this.interactionDocument,
 				mainGrid : this.mainGrid
 			});

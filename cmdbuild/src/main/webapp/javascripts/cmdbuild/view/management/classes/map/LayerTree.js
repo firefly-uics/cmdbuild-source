@@ -3,13 +3,13 @@
 	var CMDBUILD_LAYERS_FOLDER_NAME = "cm_cmdbuild_layers_folder";
 	var GEOSERVER_LAYERS_FOLDER_NAME = "cm_geoserver_layers_folder";
 	var THEMATISM_LAYERS_FOLDER_NAME = "cm_thematism_layers_folder";
-	Ext.define('CMDBuild.view.management.classes.map.CM16LayerTree', {
+	Ext.define('CMDBuild.view.management.classes.map.LayerTree', {
 		extend : "Ext.tree.Panel",
 
 		requires : [ 'CMDBuild.proxy.gis.Layer' ],
 
 		/**
-		 * @cfg {CMDBuild.controller.management.classes.map.CM16LayerTree}
+		 * @cfg {CMDBuild.controller.management.classes.map.LayerTree}
 		 */
 		delegate : undefined,
 

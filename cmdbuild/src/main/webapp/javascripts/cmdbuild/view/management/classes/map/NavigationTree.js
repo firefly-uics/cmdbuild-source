@@ -1,8 +1,8 @@
 (function() {
 
-	Ext.define("CMDBuild.view.management.classes.map.CM16NavigationTreeDelegate", {});
+	Ext.define("CMDBuild.view.management.classes.map.NavigationTreeDelegate", {});
 
-	Ext.define("CMDBuild.view.management.classes.map.CM16NavigationTree", {
+	Ext.define("CMDBuild.view.management.classes.map.NavigationTree", {
 		extend : "Ext.tree.Panel",
 
 		mixins : {
@@ -11,7 +11,7 @@
 
 		constructor : function(ds) {
 			this.mixins.delegable.constructor.call(this,
-					"CMDBuild.view.management.classes.map.CM16NavigationTreeDelegate");
+					"CMDBuild.view.management.classes.map.NavigationTreeDelegate");
 
 			this.dataSource = ds || null;
 			this.callParent(arguments);
