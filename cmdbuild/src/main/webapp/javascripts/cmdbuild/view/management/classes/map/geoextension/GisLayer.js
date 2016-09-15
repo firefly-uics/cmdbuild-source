@@ -386,36 +386,6 @@
 			this.interactionDocument.changedFeature();
 		},
 
-		/**
-		 * 
-		 * @returns {Object} (x,y)
-		 * 
-		 */
-		getPosition : function(card, callback, callbackScope) {
-			var me = this;
-
-			function onSuccess(resp, req, feature) {
-				// the card could have no feature
-				if (!feature || !feature.geometry || !feature.geometry.coordinates) {
-					callback.apply(callbackScope, [ undefined ]);
-					return;
-				}
-				var center = getCenter(feature.geometry);
-				callback.apply(callbackScope, [ center ]);
-			}
-			var cardId = card.cardId;
-			var className = card.className;
-			CMDBuild.proxy.gis.Gis.getFeature({
-				params : {
-					"className" : className,
-					"cardId" : cardId
-				},
-				loadMask : false,
-				scope : this,
-				success : onSuccess
-			});
-		},
-
 		removeById : function(id) {
 
 		},
@@ -610,38 +580,6 @@
 		return CMDBuild.proxy.index.Json.gis.getGeoCardList + '?'
 				+ CMDBuild.core.constants.Proxy.AUTHORIZATION_HEADER_KEY + '='
 				+ Ext.util.Cookies.get(CMDBuild.core.constants.Proxy.AUTHORIZATION_HEADER_KEY); // FIXME:
-	}
-	function getCenterOfExtent(extent) {
-		var x = extent[0] + (extent[2] - extent[0]) / 2;
-		var y = extent[1] + (extent[3] - extent[1]) / 2;
-		return [ x, y ];
-	}
-	function getPointCenter(geometry) {
-		return geometry.coordinates;
-	}
-	function getPolygonCenter(geometry) {
-		var minX = Number.MAX_VALUE;
-		var minY = Number.MAX_VALUE;
-		var maxX = Number.MIN_VALUE;
-		var maxY = Number.MIN_VALUE;
-		var coordinates = geometry.coordinates[0];
-		for (var i = 0; i < coordinates.length; i++) {
-			var coordinate = coordinates[i];
-			minX = Math.min(minX, coordinate[0]);
-			maxX = Math.max(maxX, coordinate[0]);
-			minY = Math.min(minY, coordinate[1]);
-			maxY = Math.max(maxY, coordinate[1]);
-		}
-		return getCenterOfExtent([ minX, minY, maxX, maxY ]);
-	}
-	function getCenter(geometry) {
-		switch (geometry.type) {
-		case "POLYGON":
-			return getPolygonCenter(geometry);
-		case "POINT":
-			return getPointCenter(geometry);
-		}
-
 	}
 	function inLayerFeatures(feature, features) {
 		for (var i = 0; i < features.length; i++) {
