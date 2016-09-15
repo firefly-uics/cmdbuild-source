@@ -1,10 +1,10 @@
 (function () {
 
-	Ext.define('CMDBuild.controller.management.classes.map.CM16LayerTree', {
+	Ext.define('CMDBuild.controller.management.classes.map.LayerTree', {
 		extend: 'CMDBuild.controller.common.abstract.Base',
 
 		requires: [
-			'CMDBuild.view.management.classes.map.CM16LayerTree'
+			'CMDBuild.view.management.classes.map.LayerTree'
 		],
 
 		/**
@@ -37,9 +37,9 @@
 		constructor: function (configurationObject) {
 			this.callParent(arguments);
 
-			this.view = Ext.create('CMDBuild.view.management.classes.map.CM16LayerTree', { 
+			this.view = Ext.create('CMDBuild.view.management.classes.map.LayerTree', { 
 				delegate: this,
-				title : "CM16-" + configurationObject.title,
+				title : configurationObject.title,
 				interactionDocument : this.interactionDocument
 			});
 

@@ -57,9 +57,9 @@
 		// class
 		// name
 		extend : "Ext.panel.Panel",
-		requires : [ 'CMDBuild.controller.management.classes.map.CM16CardGrid',
-				'CMDBuild.controller.management.classes.map.CM16LayerTree',
-				'CMDBuild.view.management.classes.map.CM16NavigationTree',
+		requires : [ 'CMDBuild.controller.management.classes.map.CardGrid',
+				'CMDBuild.controller.management.classes.map.LayerTree',
+				'CMDBuild.view.management.classes.map.NavigationTree',
 				'CMDBuild.controller.management.classes.map.thematism.ThematismMainWindow',
 				'CMDBuild.view.management.classes.map.thematism.ThematicDocument',
 				'CMDBuild.view.management.classes.map.thematism.ThematicStrategiesManager',
@@ -125,7 +125,7 @@
 			if (CMDBuild.configuration.gis.get('cardBrowserByDomainConfiguration')['root']) { 
 				var root = CMDBuild.configuration.gis.get('cardBrowserByDomainConfiguration')['root']; 
 
-				this.cardBrowser = new CMDBuild.view.management.classes.map.CM16NavigationTree({
+				this.cardBrowser = new CMDBuild.view.management.classes.map.NavigationTree({
 					title : CMDBuild.Translation.management.modcard.gis.gisNavigation,
 					frame : false,
 					border : false,
@@ -145,14 +145,14 @@
 				interactionDocument : this.interactionDocument
 			});
 
-			this.layerGridController = new CMDBuild.controller.management.classes.map.CM16LayerTree({
+			this.layerGridController = new CMDBuild.controller.management.classes.map.LayerTree({
 				title : CMDBuild.Translation.administration.modClass.layers,
 				interactionDocument : this.interactionDocument
 			});
 			this.layerGridController.cmfg('onCardGridShow');
 			tabs.push(this.layerGridController.getView());
 
-			this.cardGridController = new CMDBuild.controller.management.classes.map.CM16CardGrid({
+			this.cardGridController = new CMDBuild.controller.management.classes.map.CardGrid({
 				title : CMDBuild.Translation.management.modcard.title,
 				interactionDocument : this.interactionDocument,
 				parentDelegate : this.delegate,

@@ -4,8 +4,8 @@
 	 * This is the implementation of the CMCardBrowserTreeDelegate for the
 	 * CMMapController.
 	 */
-	Ext.define("CMDBuild.controller.management.classes.map.CM16NavigationTreeDelegate", {
-		extend: "CMDBuild.view.management.classes.map.CM16NavigationTreeDelegate",
+	Ext.define("CMDBuild.controller.management.classes.map.NavigationTreeDelegate", {
+		extend: "CMDBuild.view.management.classes.map.NavigationTreeDelegate",
 		master : undefined,
 		interactionDocument : undefined,
 		constructor: function(master, interactionDocument) {
