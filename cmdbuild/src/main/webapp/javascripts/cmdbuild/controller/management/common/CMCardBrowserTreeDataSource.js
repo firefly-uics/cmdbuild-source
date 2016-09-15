@@ -6,9 +6,8 @@
 
 	Ext.define("CMDBuild.controller.management.classes.CMCardBrowserTreeDataSource", {
 		GEOSERVER: GEOSERVER,
-		constructor: function(cardBrowserTree, mapState) {
-			this.cardBrowserTree = cardBrowserTree;
-			this.cardBrowserTree.setDataSource(this);
+		constructor: function(navigationPanel, mapState) {
+			this.navigationPanel = navigationPanel;
 			this.mapState = mapState;
 			this.configuration = CMDBuild.configuration.gis.get('cardBrowserByDomainConfiguration'); // TODO: use proxy constants
 			this.refresh();
@@ -17,7 +16,7 @@
 
 		refresh: function() {
 			var me = this;
-			me.cardBrowserTree.setRootNode({
+			me.navigationPanel.setRootNode({
 				loading: true,
 				text: CMDBuild.Translation.common.loading
 			});
@@ -29,7 +28,8 @@
 				loadMask: false,
 				success: function successGetCardBasicInfoList(operation, options, response) {
 					addGeoserverLayersToTree(response.root, me);
-					me.cardBrowserTree.setRootNode(response.root);
+					me.navigationPanel.setRootNode(response.root);
+					me.navigationPanel.loaded();
 				}
 			});
 		}
