@@ -26,12 +26,6 @@
 
 		constructor : function() {
 			var store = CMDBuild.proxy.gis.Layer.getStore();
-			CMDBuild.proxy.gis.Layer.readAll({
-				scope : this,
-				callback : function(a, b, response) {
-					var me = this;
-				}
-			});
 
 			this.store = store;
 			this.callParent(arguments);
@@ -47,19 +41,20 @@
 		},
 		checkNode : function(node, checked) {
 			if (node.raw.leaf) {
-				this.interactionDocument.getLayerByClassAndName(node.raw.className, node.raw.layerName, function(layer) {
-					if (!layer) {
-						layer = this.interactionDocument.getThematicLayerByName(node.raw.layerName);
-					}
-					var map = this.interactionDocument.getMap();
-					var configurationMap = this.interactionDocument.getConfigurationMap();
-					configurationMap.center = map.getView().getCenter();
-					this.delegate.cmfg('onVisibilityChange', {
-						checked : checked,
-						layer : layer
-					});
+				this.interactionDocument.getLayerByClassAndName(node.raw.className, node.raw.layerName,
+						function(layer) {
+							if (!layer) {
+								layer = this.interactionDocument.getThematicLayerByName(node.raw.layerName);
+							}
+							var map = this.interactionDocument.getMap();
+							var configurationMap = this.interactionDocument.getConfigurationMap();
+							configurationMap.center = map.getView().getCenter();
+							this.delegate.cmfg('onVisibilityChange', {
+								checked : checked,
+								layer : layer
+							});
 
-				}, this);
+						}, this);
 			} else {
 				var nodes = node.childNodes;
 				for (var i = 0; i < nodes.length; i++) {
@@ -94,44 +89,36 @@
 			if (this.oldClassName !== currentCard.className) {
 				clearTree(this.getRootNode());
 			}
-			CMDBuild.proxy.gis.Layer.readAll({
-				scope : this,
-				callback : function(a, b, response) {
-					var me = this;
-
-					var cl = _CMCache.getEntryTypeByName(currentCard.className);
-					var currentClassId = cl.get("id");
-					if (!currentClassId) {
-						return;
+			var cl = _CMCache.getEntryTypeByName(currentCard.className);
+			var currentClassId = cl.get("id");
+			if (!currentClassId) {
+				return;
+			}
+			var currentCardId = currentCard.cardId;
+			var currentClassName = currentCard.className;
+			var me = this;
+			this.interactionDocument.getAllLayers(function(layers) {
+				var root = me.getRootNode();
+				for (var i = 0; i < layers.length; i++) {
+					var node = nodeByNameAndClass(root, layers[i]);
+					if (!me.interactionDocument.isVisible(layers[i], currentClassName, currentCardId)) {
+						; // nop
+					} else if (node) {
+						var hide = !me.interactionDocument.getLayerVisibility(layers[i]);
+						node.set('checked', !hide);
+					} else {
+						me.addLayerItem(layers[i]);
 					}
-					var currentCardId = currentCard.cardId;
-					var currentClassName = currentCard.className;
-					var me = this;
-					this.interactionDocument.getAllLayers(function(layers) {
-						var root = me.getRootNode();
-						for (var i = 0; i < layers.length; i++) {
-							var node = nodeByNameAndClass(root, layers[i]);
-							if (!me.interactionDocument.isVisible(layers[i], currentClassName, currentCardId)) {
-								; // nop
-							} else if (node) {
-								var hide = !me.interactionDocument.getLayerVisibility(layers[i]);
-								node.set('checked', !hide);
-							} else {
-								me.addLayerItem(layers[i]);
-							}
-						}
-						var thematicLayers = me.interactionDocument.getThematicLayers();
-						for (var i = 0; i < thematicLayers.length; i++) {
-							var node = nodeByLayerName(root, thematicLayers[i].name);
-							if (!node) {
-								me.addLayerItem(thematicLayers[i]);
-							}
-						}
-						if (me.oldClassName !== currentClassName) {
-							me.oldClassName = currentClassName;
-							//me.expandAll();
-						}
-					});
+				}
+				var thematicLayers = me.interactionDocument.getThematicLayers();
+				for (var i = 0; i < thematicLayers.length; i++) {
+					var node = nodeByLayerName(root, thematicLayers[i].name);
+					if (!node) {
+						me.addLayerItem(thematicLayers[i]);
+					}
+				}
+				if (me.oldClassName !== currentClassName) {
+					me.oldClassName = currentClassName;
 				}
 			});
 		},
