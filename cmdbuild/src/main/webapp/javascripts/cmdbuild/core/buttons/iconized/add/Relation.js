@@ -51,8 +51,12 @@
 			 */
 			bufferEntryTypesGet: function (name, propertyName) {
 				if (Ext.isString(name) && !Ext.isEmpty(name)) {
-					if (Ext.isString(propertyName) && !Ext.isEmpty(propertyName))
+					if (
+						Ext.isString(propertyName) && !Ext.isEmpty(propertyName)
+						&& Ext.isObject(this.bufferEntryTypes[name]) && !Ext.Object.isEmpty(this.bufferEntryTypes[name])
+					) {
 						return this.bufferEntryTypes[name].get(propertyName);
+					}
 
 					return this.bufferEntryTypes[name];
 				} else {
