@@ -1,5 +1,8 @@
 (function() {
 
+	/**
+	 * @deprecated
+	 */
 	Ext.define('CMDBuild.view.common.field.filter.advanced.window.GridPanel', {
 		extend: 'Ext.grid.Panel',
 

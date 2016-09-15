@@ -15,6 +15,13 @@
 		parentDelegate: undefined,
 
 		/**
+		 * @property {Object}
+		 *
+		 * @private
+		 */
+		bufferEntryTypes: {},
+
+		/**
 		 * @cfg {Array}
 		 */
 		cmfgCatchedFunctions: [
@@ -41,6 +48,66 @@
 
 			this.view = Ext.create('CMDBuild.view.management.workflow.panel.tree.filter.advanced.filterEditor.relations.DomainGridPanel', { delegate: this })
 		},
+
+		// BufferEntryTypes property methods
+			/**
+			 * @param {String} name
+			 * @param {String} propertyName
+			 *
+			 * @returns {CMDBuild.model.core.buttons.iconized.add.relation.EntryType or mixed}
+			 *
+			 * @private
+			 */
+			bufferEntryTypesGet: function (name, propertyName) {
+				// Error handling
+					if (!Ext.isString(name) || Ext.isEmpty(name))
+						return _error('bufferEntryTypesGet(): unmanaged name parameter', this, name);
+				// END: Error handling
+
+				if (Ext.isString(propertyName) && !Ext.isEmpty(propertyName))
+					return this.bufferEntryTypes[name].get(propertyName);
+
+				return this.bufferEntryTypes[name];
+			},
+
+			/**
+			 * @param {Function} callback
+			 *
+			 * @returns {Void}
+			 *
+			 * @private
+			 */
+			bufferEntryTypesSet: function (callback) {
+				// Error handling
+					if (!Ext.isFunction(callback))
+						return _error('bufferEntryTypesSet(): unmanaged callback parameter', this, callback);
+				// END: Error handling
+
+				var params = {};
+				params[CMDBuild.core.constants.Proxy.ACTIVE] = true;
+
+				CMDBuild.proxy.management.workflow.panel.tree.filter.advanced.filterEditor.Relations.readAllEntryTypes({ // FIXME: waiting for refactor (server endpoint)
+					params: params,
+					scope: this,
+					success: function (response, options, decodedResponse) {
+						decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.CLASSES];
+
+						if (Ext.isArray(decodedResponse) && !Ext.isEmpty(decodedResponse)) {
+							Ext.Array.each(decodedResponse, function (entryTypeObject, i, allEntryTypeObjects) {
+								if (Ext.isObject(entryTypeObject) && !Ext.Object.isEmpty(entryTypeObject))
+									this.bufferEntryTypes[entryTypeObject[CMDBuild.core.constants.Proxy.NAME]] = Ext.create(
+										'CMDBuild.model.management.workflow.panel.tree.filter.advanced.filterEditor.relations.EntryType',
+										entryTypeObject
+									);
+							}, this);
+
+							Ext.callback(callback, this);
+						} else {
+							_error('bufferEntryTypesSet(): unmanaged response', this, decodedResponse);
+						}
+					}
+				});
+			},
 
 		/**
 		 * Apply filter to classes store to display only related items (no simple classes)
@@ -113,97 +180,92 @@
 		 * @returns {Void}
 		 */
 		onWorkflowTreeFilterAdvancedFilterEditorRelationsGridDomainViewShow: function () {
+			// Error handling
+				if (this.cmfg('workflowSelectedWorkflowIsEmpty'))
+					return _error('onWorkflowTreeFilterAdvancedFilterEditorRelationsGridDomainViewShow(): empty selected entryType', this, this.cmfg('workflowSelectedWorkflowGet'));
+			// END: Error handling
+
 			this.view.getStore().removeAll();
 			this.view.getSelectionModel().clearSelections();
 
-			if (!this.cmfg('workflowSelectedWorkflowIsEmpty')) {
-				var params = {};
-				params[CMDBuild.core.constants.Proxy.ACTIVE] = true;
+			this.bufferEntryTypesSet(function (options, success, response) {
+				var domainsDestination = [],
+					domainsSource = [],
+					records = [];
 
-				CMDBuild.proxy.management.workflow.panel.tree.filter.advanced.filterEditor.Relations.readAllEntryTypes({
+				var params = {};
+				params[CMDBuild.core.constants.Proxy.ACTIVE_ONLY] = true;
+				params[CMDBuild.core.constants.Proxy.SOURCE] = this.cmfg('workflowSelectedWorkflowGet', CMDBuild.core.constants.Proxy.NAME);
+
+				CMDBuild.proxy.management.workflow.panel.tree.filter.advanced.filterEditor.Relations.getDomains({
 					params: params,
 					scope: this,
 					success: function (response, options, decodedResponse) {
-						decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.CLASSES];
+						decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.DOMAINS];
 
-						if (!Ext.isEmpty(decodedResponse) && Ext.isArray(decodedResponse)) {
-							var localCacheClasses = {};
-
-							Ext.Array.each(decodedResponse, function (classObject, i, allClassObjects) {
-								if (Ext.isObject(classObject) && !Ext.Object.isEmpty(classObject))
-									localCacheClasses[classObject[CMDBuild.core.constants.Proxy.ID]] = classObject;
+						if (Ext.isArray(decodedResponse) && !Ext.isEmpty(decodedResponse))
+							Ext.Array.each(decodedResponse, function (domainObject, i, allDomainObjects) {
+								if (Ext.isObject(domainObject) && !Ext.Object.isEmpty(domainObject))
+									domainsSource.push(Ext.create('CMDBuild.model.management.workflow.panel.tree.filter.advanced.filterEditor.relations.Domain', domainObject));
 							}, this);
 
-							// CMCache.getDirectedDomainsByEntryType alias code
-							var anchestorsId = CMDBuild.core.Utils.getEntryTypeAncestorsId(this.cmfg('workflowSelectedWorkflowGet'));
+						var params = {};
+						params[CMDBuild.core.constants.Proxy.ACTIVE_ONLY] = true;
+						params[CMDBuild.core.constants.Proxy.DESTINATION] = this.cmfg('workflowSelectedWorkflowGet', CMDBuild.core.constants.Proxy.NAME);
 
-							params = {};
-							params[CMDBuild.core.constants.Proxy.CLASS_NAME] = this.cmfg('workflowSelectedWorkflowGet', CMDBuild.core.constants.Proxy.NAME);
-							params[CMDBuild.core.constants.Proxy.SKIP_DISABLED_CLASSES] = true;
+						CMDBuild.proxy.management.workflow.panel.tree.filter.advanced.filterEditor.Relations.getDomains({
+							params: params,
+							scope: this,
+							success: function (response, options, decodedResponse) {
+								decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.DOMAINS];
 
-							CMDBuild.proxy.management.workflow.panel.tree.filter.advanced.filterEditor.Relations.readAllDomainsByClass({
-								params: params,
-								scope: this,
-								callback: function (options, success, decodedResponse) {
-									this.cmfg('workflowTreeFilterAdvancedFilterEditorRelationsSelectionManage');
-								},
-								success: function (response, options, decodedResponse) {
-									decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.DOMAINS];
+								if (Ext.isArray(decodedResponse) && !Ext.isEmpty(decodedResponse))
+									Ext.Array.each(decodedResponse, function (domainObject, i, allDomainObjects) {
+										if (Ext.isObject(domainObject) && !Ext.Object.isEmpty(domainObject))
+											domainsDestination.push(Ext.create('CMDBuild.model.management.workflow.panel.tree.filter.advanced.filterEditor.relations.Domain', domainObject));
+									}, this);
 
-									var domainGridStoreRecords = [];
-
-									if (!Ext.isEmpty(decodedResponse) && Ext.isArray(decodedResponse)) {
-										Ext.Array.forEach(decodedResponse, function (domainObject, i, allDomainObjects) {
-											var domainCMObject = {};
-
-											// Also filters EntryTypes with no read permission
-											if (Ext.Array.contains(anchestorsId, domainObject['class1id']) && !Ext.isEmpty(localCacheClasses[domainObject['class2id']]))
-												domainGridStoreRecords.push(
+								if (!Ext.isEmpty(domainsSource) || !Ext.isEmpty(domainsDestination)) {
+									// Domains where entryType is source manage
+									if (Ext.isArray(domainsSource) && !Ext.isEmpty(domainsSource))
+										Ext.Array.each(domainsSource, function (domainModel, i, allDomainModels) {
+											if (Ext.isObject(domainModel) && !Ext.Object.isEmpty(domainModel))
+												records.push(
 													Ext.create('CMDBuild.model.management.workflow.panel.tree.filter.advanced.filterEditor.relations.DomainGrid', {
-														destination: Ext.create(
-															'CMDBuild.model.management.workflow.panel.tree.filter.advanced.filterEditor.relations.EntryType',
-															localCacheClasses[domainObject['class2id']]
-														),
+														destination: this.bufferEntryTypesGet(domainModel.get(CMDBuild.core.constants.Proxy.DESTINATION_CLASS_NAME)),
 														direction: '_1',
-														domain: Ext.create('CMDBuild.model.management.workflow.panel.tree.filter.advanced.filterEditor.relations.Domain', domainObject),
-														domainDescription: domainObject[CMDBuild.core.constants.Proxy.DESCRIPTION],
-														orientedDescription: domainObject['descrdir'],
-														source: Ext.create(
-															'CMDBuild.model.management.workflow.panel.tree.filter.advanced.filterEditor.relations.EntryType',
-															localCacheClasses[domainObject['class1id']]
-														)
-													})
-												);
-
-											// Also filters EntryTypes with no read permission
-											if (Ext.Array.contains(anchestorsId, domainObject['class2id']) && !Ext.isEmpty(localCacheClasses[domainObject['class2id']]))
-												domainGridStoreRecords.push(
-													Ext.create('CMDBuild.model.management.workflow.panel.tree.filter.advanced.filterEditor.relations.DomainGrid', {
-														destination: Ext.create(
-															'CMDBuild.model.management.workflow.panel.tree.filter.advanced.filterEditor.relations.EntryType',
-															localCacheClasses[domainObject['class1id']]
-														),
-														direction: '_2',
-														domain: Ext.create('CMDBuild.model.management.workflow.panel.tree.filter.advanced.filterEditor.relations.Domain', domainObject),
-														domainDescription: domainObject[CMDBuild.core.constants.Proxy.DESCRIPTION],
-														orientedDescription: domainObject['descrinv'],
-														source: Ext.create(
-															'CMDBuild.model.management.workflow.panel.tree.filter.advanced.filterEditor.relations.EntryType',
-															localCacheClasses[domainObject['class2id']]
-														)
+														domain: domainModel,
+														domainDescription: domainModel.get(CMDBuild.core.constants.Proxy.DESCRIPTION),
+														orientedDescription: domainModel.get(CMDBuild.core.constants.Proxy.DIRECT_DESCRIPTION),
+														source: this.bufferEntryTypesGet(CMDBuild.core.constants.Proxy.ORIGIN_CLASS_ID)
 													})
 												);
 										}, this);
 
-										if (!Ext.isEmpty(domainGridStoreRecords))
-											this.view.getStore().add(domainGridStoreRecords);
-									}
+									// Domains where entryType is destination manage
+									if (Ext.isArray(domainsDestination) && !Ext.isEmpty(domainsDestination))
+										Ext.Array.each(domainsDestination, function (domainModel, i, allDomainModels) {
+											if (Ext.isObject(domainModel) && !Ext.Object.isEmpty(domainModel))
+												records.push(
+													Ext.create('CMDBuild.model.management.workflow.panel.tree.filter.advanced.filterEditor.relations.DomainGrid', {
+														destination: this.bufferEntryTypesGet(domainModel.get(CMDBuild.core.constants.Proxy.ORIGIN_CLASS_NAME)),
+														direction: '_2',
+														domain: domainModel,
+														domainDescription: domainModel.get(CMDBuild.core.constants.Proxy.DESCRIPTION),
+														orientedDescription: domainModel.get(CMDBuild.core.constants.Proxy.INVERSE_DESCRIPTION),
+														source: this.bufferEntryTypesGet(CMDBuild.core.constants.Proxy.DESTINATION_CLASS_NAME)
+													})
+												);
+										}, this);
+
+									if (!Ext.isEmpty(records))
+										this.view.getStore().add(CMDBuild.core.Utils.objectArraySort(records, CMDBuild.core.constants.Proxy.DOMAIN_DESCRIPTION)); // Ascending items sort
 								}
-							});
-						}
+							}
+						});
 					}
 				});
-			}
+			});
 		}
 	});
 

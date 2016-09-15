@@ -82,11 +82,19 @@
 		 * FIXME: refactor with external services standards
 		 */
 		onClassesTabDomainsAddButtonClick: function () {
+			var accordionController = this.cmfg('mainViewportAccordionControllerGet', CMDBuild.core.constants.ModuleIdentifiers.getDomain()),
+				moduleController = this.cmfg('mainViewportModuleControllerGet', CMDBuild.core.constants.ModuleIdentifiers.getDomain());
+
 			this.cmfg('mainViewportAccordionDeselect', CMDBuild.core.constants.ModuleIdentifiers.getDomain());
-			this.cmfg('mainViewportAccordionControllerGet', CMDBuild.core.constants.ModuleIdentifiers.getDomain()).getView().on('storeload', function (accordion, eOpts) {
-				this.cmfg('mainViewportModuleControllerGet', CMDBuild.core.constants.ModuleIdentifiers.getDomain()).cmfg('onDomainAddButtonClick');
-			}, this, { single: true });
-			this.cmfg('mainViewportAccordionControllerGet', CMDBuild.core.constants.ModuleIdentifiers.getDomain()).disableSelection = true;
+
+			Ext.apply(accordionController, {
+				disableSelection: true,
+				scope: this,
+				callback: function () {
+					moduleController.cmfg('onDomainAddButtonClick');
+				}
+			});
+
 			this.cmfg('mainViewportAccordionControllerExpand', { identifier: CMDBuild.core.constants.ModuleIdentifiers.getDomain() });
 		},
 
@@ -129,13 +137,26 @@
 		 */
 		onClassesTabDomainsItemDoubleClick: function () {
 			if (!this.selectedDomainIsEmpty()) {
+				var accordionController = this.cmfg('mainViewportAccordionControllerGet', CMDBuild.core.constants.ModuleIdentifiers.getDomain());
+
 				this.cmfg('mainViewportAccordionDeselect', CMDBuild.core.constants.ModuleIdentifiers.getDomain());
-				this.cmfg('mainViewportAccordionControllerGet', CMDBuild.core.constants.ModuleIdentifiers.getDomain()).disableStoreLoad = true;
-				this.cmfg('mainViewportAccordionControllerExpand', { identifier: CMDBuild.core.constants.ModuleIdentifiers.getDomain() });
-				this.cmfg('mainViewportAccordionControllerUpdateStore', {
+
+				Ext.apply(accordionController, {
+					disableStoreLoad: true
+				});
+
+				this.cmfg('mainViewportAccordionControllerExpand', {
 					identifier: CMDBuild.core.constants.ModuleIdentifiers.getDomain(),
 					params: {
-						selectionId: this.selectedDomainGet(CMDBuild.core.constants.Proxy.ID_DOMAIN)
+						scope: this,
+						callback: function () {
+							this.cmfg('mainViewportAccordionControllerUpdateStore', {
+								identifier: CMDBuild.core.constants.ModuleIdentifiers.getDomain(),
+								params: {
+									selectionId: this.selectedDomainGet(CMDBuild.core.constants.Proxy.ID_DOMAIN)
+								}
+							});
+						}
 					}
 				});
 			}
@@ -148,18 +169,33 @@
 		 */
 		onClassesTabDomainsModifyButtonClick: function () {
 			if (!this.selectedDomainIsEmpty()) {
+				var accordionController = this.cmfg('mainViewportAccordionControllerGet', CMDBuild.core.constants.ModuleIdentifiers.getDomain()),
+					moduleController = this.cmfg('mainViewportModuleControllerGet', CMDBuild.core.constants.ModuleIdentifiers.getDomain());
+
 				this.cmfg('mainViewportAccordionDeselect', CMDBuild.core.constants.ModuleIdentifiers.getDomain());
-				this.cmfg('mainViewportAccordionControllerGet', CMDBuild.core.constants.ModuleIdentifiers.getDomain()).disableStoreLoad = true;
-				this.cmfg('mainViewportAccordionControllerExpand', { identifier: CMDBuild.core.constants.ModuleIdentifiers.getDomain() });
-				this.cmfg('mainViewportAccordionControllerGet', CMDBuild.core.constants.ModuleIdentifiers.getDomain()).getView().on('storeload', function (accordion, eOpts) {
-					Ext.Function.createDelayed(function () {
-						this.cmfg('mainViewportModuleControllerGet', CMDBuild.core.constants.ModuleIdentifiers.getDomain()).cmfg('onDomainModifyButtonClick');
-					}, 100, this)();
-				}, this, { single: true });
-				this.cmfg('mainViewportAccordionControllerUpdateStore', {
+
+				Ext.apply(accordionController, {
+					disableStoreLoad: true,
+					scope: this,
+					callback: function () {
+						Ext.Function.createDelayed(function () { // TODO: fix me avoid delay
+							moduleController.cmfg('onDomainModifyButtonClick');
+						}, 100, this)();
+					}
+				});
+
+				this.cmfg('mainViewportAccordionControllerExpand', {
 					identifier: CMDBuild.core.constants.ModuleIdentifiers.getDomain(),
 					params: {
-						selectionId: this.selectedDomainGet(CMDBuild.core.constants.Proxy.ID_DOMAIN)
+						scope: this,
+						callback: function () {
+							this.cmfg('mainViewportAccordionControllerUpdateStore', {
+								identifier: CMDBuild.core.constants.ModuleIdentifiers.getDomain(),
+								params: {
+									selectionId: this.selectedDomainGet(CMDBuild.core.constants.Proxy.ID_DOMAIN)
+								}
+							});
+						}
 					}
 				});
 			}

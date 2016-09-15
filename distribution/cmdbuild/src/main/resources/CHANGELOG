@@ -88,6 +88,8 @@ FIXES
 
  * CustomForm widget minor fixes
 
+ * Domains not correctly displayed on advanced filter relation tab grid
+
 
 
 

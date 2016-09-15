@@ -329,6 +329,17 @@ public class JoinCreator extends PartCreator {
 		sb.append(" AS ").append(AliasQuoter.quote(joinClause.getTargetAlias())).append(" ON ")
 				.append(quoteAttribute(joinClause.getDomainAlias(), DomainId2)).append(OPERATOR_EQ)
 				.append(quoteAttribute(joinClause.getTargetAlias(), Id));
+		for (final Entry<CMDomain, Iterable<CMClass>> element : joinClause.getDisabled().entrySet()) {
+			for (final CMClass _element : element.getValue()) {
+				sb.append(" AND NOT (") //
+						.append(quoteAttribute(joinClause.getDomainAlias(), DomainId)).append(OPERATOR_EQ)
+						.append(element.getKey().getId()) //
+						.append(" AND ") //
+						.append(quoteAttribute(joinClause.getTargetAlias(), IdClass)).append(OPERATOR_EQ)
+						.append(_element.getId()) //
+						.append(")");
+			}
+		}
 	}
 
 	private void appendClassUnion(final JoinClause joinClause) {
