@@ -1,5 +1,5 @@
 (function() {
-	var DEFAULT_RADIUS = 50;
+	var DEFAULT_RADIUS = 20;
 	Ext.define('CMDBuild.view.management.classes.map.thematism.ThematicLayer', {
 
 		/**
