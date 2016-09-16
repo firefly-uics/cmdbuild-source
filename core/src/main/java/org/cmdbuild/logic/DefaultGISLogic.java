@@ -1,9 +1,12 @@
 package org.cmdbuild.logic;
 
+import static com.google.common.collect.Maps.immutableEntry;
+
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import org.apache.commons.fileupload.FileItem;
@@ -151,27 +154,20 @@ public class DefaultGISLogic implements GISLogic {
 		layerMetadataStore.deleteLayer(fullName(masterTableName, attributeName));
 	}
 
-	/**
-	 * Retrieve the geoFeature for the given card. If more than one layer are
-	 * defined, take the first
-	 * 
-	 * @param card
-	 * @return
-	 * @throws Exception
-	 */
 	@Override
-	public GeoFeature getFeature(final Card card) throws Exception {
+	public Entry<String, GeoFeature> getFeature(final Card card) throws Exception {
 		ensureGisIsEnabled();
 
 		final List<LayerMetadata> layers = layerMetadataStore.list(card.getClassName());
-		GeoFeature geoFeature = null;
+		Entry<String, GeoFeature> output = null;
 
 		if (layers.size() > 0) {
 			final LayerMetadata layer = layers.get(0);
-			geoFeature = geoFeatureStore.readGeoFeature(layer, card);
+			final GeoFeature geoFeature = geoFeatureStore.readGeoFeature(layer, card);
+			output = (geoFeature == null) ? null : immutableEntry(layer.getName(), geoFeature);
 		}
 
-		return geoFeature;
+		return output;
 	}
 
 	@Override
@@ -205,8 +201,8 @@ public class DefaultGISLogic implements GISLogic {
 
 			if (geoAttributesName != null) {
 				for (final String name : geoAttributesName) {
-					final LayerMetadata layerMetaData = layerMetadataStore.get(fullName(masterTable.getIdentifier()
-							.getLocalName(), name));
+					final LayerMetadata layerMetaData =
+							layerMetadataStore.get(fullName(masterTable.getIdentifier().getLocalName(), name));
 					final String value = geoAttributesObject.getString(name);
 
 					final GeoFeature geoFeature = geoFeatureStore.readGeoFeature(layerMetaData, ownerCard);
@@ -269,8 +265,8 @@ public class DefaultGISLogic implements GISLogic {
 		ensureGisIsEnabled();
 		ensureGeoServerIsEnabled();
 
-		final LayerMetadata layerMetadata = modifyLayerMetadata(GEOSERVER, name, description, minimumZoom, maximumZoom,
-				null, cardBinding);
+		final LayerMetadata layerMetadata =
+				modifyLayerMetadata(GEOSERVER, name, description, minimumZoom, maximumZoom, null, cardBinding);
 
 		if (file != null && file.getSize() > 0) {
 			geoServerService.modifyStoreData(layerMetadata, file.getInputStream());
@@ -397,7 +393,7 @@ public class DefaultGISLogic implements GISLogic {
 			final PagedElements<Card> domainTreeCards = dataAccesslogic.fetchCards( //
 					root.getTargetClassName(), //
 					QueryOptions.newQueryOption().build() //
-					);
+			);
 
 			for (final Card card : domainTreeCards) {
 				final DomainTreeCardNode node = new DomainTreeCardNode();
@@ -443,14 +439,15 @@ public class DefaultGISLogic implements GISLogic {
 	private void fetchRelationsByDomain(final DataAccessLogic dataAccesslogic, final Map<String, Long> domainIds,
 			final DomainTreeNode root, final Map<Long, DomainTreeCardNode> nodes) {
 
-		final Map<Object, Map<Object, List<RelationInfo>>> relationsByDomain = new HashMap<Object, Map<Object, List<RelationInfo>>>();
+		final Map<Object, Map<Object, List<RelationInfo>>> relationsByDomain =
+				new HashMap<Object, Map<Object, List<RelationInfo>>>();
 
 		for (final DomainTreeNode domainTreeNode : root.getChildNodes()) {
 			final Long domainId = domainIds.get(domainTreeNode.getDomainName());
 			final String querySource = domainTreeNode.isDirect() ? "_1" : "_2";
 			final DomainWithSource dom = DomainWithSource.create(domainId, querySource);
-			final Map<Object, List<RelationInfo>> relations = dataAccesslogic.relationsBySource(
-					root.getTargetClassName(), dom);
+			final Map<Object, List<RelationInfo>> relations =
+					dataAccesslogic.relationsBySource(root.getTargetClassName(), dom);
 			relationsByDomain.put(domainId, relations);
 			final boolean leaf = domainTreeNode.getChildNodes().size() == 0;
 			final boolean baseNode = domainTreeNode.isBaseNode();
@@ -502,9 +499,8 @@ public class DefaultGISLogic implements GISLogic {
 		return geoFeatureStore.createGeoTable(targetClassName, layerMetadata);
 	}
 
-	private LayerMetadata modifyLayerMetadata(final String targetTableName, final String name,
-			final String description, final int minimumZoom, final int maximumZoom, final String style,
-			final Set<String> cardBinding) {
+	private LayerMetadata modifyLayerMetadata(final String targetTableName, final String name, final String description,
+			final int minimumZoom, final int maximumZoom, final String style, final Set<String> cardBinding) {
 
 		final String fullName = fullName(targetTableName, name);
 		final LayerMetadata changes = new LayerMetadata();

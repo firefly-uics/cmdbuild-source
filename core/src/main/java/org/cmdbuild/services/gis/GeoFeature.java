@@ -1,48 +1,15 @@
 package org.cmdbuild.services.gis;
 
-import org.cmdbuild.model.data.Card;
 import org.postgis.Geometry;
 
-public class GeoFeature {
+public interface GeoFeature {
 
-	final Geometry geometry;
-	final Long ownerCardId;
-	final Long classIdOfOwnerCard;
-	final String classNameOfOwnerCard;
+	Geometry getGeometry();
 
-	public GeoFeature(final Geometry geometry, final Card ownerCard) {
-		super();
-		this.geometry = geometry;
-		this.ownerCardId = ownerCard.getId();
-		this.classIdOfOwnerCard = ownerCard.getClassId();
-		this.classNameOfOwnerCard = ownerCard.getClassName();
-	}
+	Long getOwnerCardId();
 
-	public GeoFeature( //
-			final Geometry geometry, //
-			final Long ownerCardId, //
-			final Long classIdOfOwnerCard, //
-			final String classNameOfOwnerCard) {
-		this.geometry = geometry;
-		this.ownerCardId = ownerCardId;
-		this.classIdOfOwnerCard = classIdOfOwnerCard;
-		this.classNameOfOwnerCard = classNameOfOwnerCard;
-	}
+	Long getClassIdOfOwnerCard();
 
-	public Geometry getGeometry() {
-		return geometry;
-	}
-
-	public Long getOwnerCardId() {
-		return ownerCardId;
-	}
-
-	public Long getClassIdOfOwnerCard() {
-		return classIdOfOwnerCard;
-	}
-
-	public String getClassNameOfOwnerCard() {
-		return classNameOfOwnerCard;
-	}
+	String getClassNameOfOwnerCard();
 
 }

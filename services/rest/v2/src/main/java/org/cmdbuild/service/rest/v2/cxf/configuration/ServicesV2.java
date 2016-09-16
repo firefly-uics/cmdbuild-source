@@ -27,6 +27,7 @@ import org.cmdbuild.service.rest.v2.Domains;
 import org.cmdbuild.service.rest.v2.EmailTemplates;
 import org.cmdbuild.service.rest.v2.FileStores;
 import org.cmdbuild.service.rest.v2.Functions;
+import org.cmdbuild.service.rest.v2.Geometries;
 import org.cmdbuild.service.rest.v2.GraphConfiguration;
 import org.cmdbuild.service.rest.v2.Icons;
 import org.cmdbuild.service.rest.v2.Impersonate;
@@ -65,6 +66,7 @@ import org.cmdbuild.service.rest.v2.cxf.CxfDomains;
 import org.cmdbuild.service.rest.v2.cxf.CxfEmailTemplates;
 import org.cmdbuild.service.rest.v2.cxf.CxfFileStores;
 import org.cmdbuild.service.rest.v2.cxf.CxfFunctions;
+import org.cmdbuild.service.rest.v2.cxf.CxfGeometries;
 import org.cmdbuild.service.rest.v2.cxf.CxfGraphConfiguration;
 import org.cmdbuild.service.rest.v2.cxf.CxfIcons;
 import org.cmdbuild.service.rest.v2.cxf.CxfImpersonate;
@@ -91,6 +93,8 @@ import org.cmdbuild.service.rest.v2.cxf.DefaultFiltersHelper;
 import org.cmdbuild.service.rest.v2.cxf.DefaultIdGenerator;
 import org.cmdbuild.service.rest.v2.cxf.DefaultProcessStatusHelper;
 import org.cmdbuild.service.rest.v2.cxf.ErrorHandler;
+import org.cmdbuild.service.rest.v2.cxf.ErrorHandlerFacade;
+import org.cmdbuild.service.rest.v2.cxf.ErrorHandlerFacadeImpl;
 import org.cmdbuild.service.rest.v2.cxf.FilterLoader;
 import org.cmdbuild.service.rest.v2.cxf.FiltersHelper;
 import org.cmdbuild.service.rest.v2.cxf.HeaderResponseHandler;
@@ -447,6 +451,12 @@ public class ServicesV2 implements LoggingSupport {
 	}
 
 	@Bean
+	@Scope(value = SCOPE_REQUEST, proxyMode = TARGET_CLASS)
+	protected ErrorHandlerFacade v2_errorHandlerFacade() {
+		return new ErrorHandlerFacadeImpl(v2_errorHandler(), helper.userDataView());
+	}
+
+	@Bean
 	public HeaderResponseHandler v2_headerResponseHandler() {
 		return new HeaderResponseHandler();
 	}
@@ -461,6 +471,13 @@ public class ServicesV2 implements LoggingSupport {
 	public FileStores v2_fileStores() {
 		final CxfFileStores service = new CxfFileStores(v2_errorHandler(), helper.fileLogic());
 		return proxy(FileStores.class, service);
+	}
+
+	@Bean
+	@Scope(value = SCOPE_REQUEST, proxyMode = TARGET_CLASS)
+	public Geometries v2_geometries() {
+		final CxfGeometries service = new CxfGeometries(v2_errorHandlerFacade(), helper.gisLogic());
+		return proxy(Geometries.class, service);
 	}
 
 }

@@ -14,6 +14,7 @@ public class Serialization {
 			ACTIVE = "active", //
 			ACTIVITY = "activity", //
 			ADVANCE = "advance", //
+			AREA = "area", //
 			ASCENDING = "ascending", //
 			ATTACHMENT = "attachment", //
 			ATTACHMENT_ID = ATTACHMENT + ID_CAPITALIZED, //
@@ -79,6 +80,7 @@ public class Serialization {
 			FROM = "from", //
 			FUNCTION = "function", //
 			FUNCTION_ID = FUNCTION + ID_CAPITALIZED, //
+			GEOMETRY = "geometry", //
 			GROUP = "group", //
 			HIDDEN = "hidden", //
 			ICON = "icon", //
@@ -113,6 +115,7 @@ public class Serialization {
 			PARENT = "parent", //
 			PARENT_TYPE = "parent_type", //
 			PASSWORD = "password", //
+			POINT = "point", //
 			POSITION_OF = "positionOf", //
 			POSITIONS = "positions", //
 			PRECISION = "precision", //
@@ -141,6 +144,7 @@ public class Serialization {
 			STEP_RADIUS = "stepRadius", //
 			STOPPABLE = "stoppable", //
 			SUBJECT = "subject", //
+			SUBTYPE = "subtype", //
 			TARGET = "target", //
 			TARGET_CLASS = "targetClass", //
 			TARGET_TYPE = "targetType", //
@@ -159,7 +163,9 @@ public class Serialization {
 			VIEW_POINT_DISTANCE = "viewPointDistance", //
 			VIEW_POINT_HEIGHT = "viewPointHeight", //
 			WIDGETS = "widgets", //
-			WRITABLE = "writable";
+			WRITABLE = "writable", //
+			X = "x", // ;
+			Y = "y";
 
 	public static final String //
 	LOOKUP = "lookup", //

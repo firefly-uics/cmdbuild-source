@@ -4,6 +4,7 @@ import org.cmdbuild.auth.UserStore;
 import org.cmdbuild.config.CmdbuildConfiguration;
 import org.cmdbuild.config.GraphConfiguration;
 import org.cmdbuild.dao.view.CMDataView;
+import org.cmdbuild.logic.GISLogic;
 import org.cmdbuild.logic.NavigationTreeLogic;
 import org.cmdbuild.logic.auth.AuthenticationLogic;
 import org.cmdbuild.logic.auth.RestSessionLogic;
@@ -70,6 +71,10 @@ public class ApplicationContextHelperV2 {
 
 	public FilterLogic filterLogic() {
 		return applicationContext.getBean(DefaultFilterLogic.class);
+	}
+
+	public GISLogic gisLogic() {
+		return applicationContext.getBean(GISLogic.class);
 	}
 
 	public GraphConfiguration graphConfiguration() {
