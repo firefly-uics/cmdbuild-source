@@ -17,7 +17,7 @@
 			{ name: CMDBuild.core.constants.Proxy.GOOGLE, type: 'auto' }, // {CMDBuild.model.core.configuration.builder.gis.Google}
 			{ name: CMDBuild.core.constants.Proxy.OSM, type: 'auto' }, // {CMDBuild.model.core.configuration.builder.gis.Osm}
 			{ name: CMDBuild.core.constants.Proxy.YAHOO, type: 'auto' }, // {CMDBuild.model.core.configuration.builder.gis.Yahoo}
-			{ name: CMDBuild.core.constants.Proxy.ZOOM_INITIAL_LEVEL, type: 'int', defaultValue: 3 }
+			{ name: CMDBuild.core.constants.Proxy.INITIAL_ZOOM_LEVEL, type: 'int', defaultValue: 3 }
 		],
 
 		statics: {
@@ -32,7 +32,7 @@
 				data = data || {};
 				data[CMDBuild.core.constants.Proxy.CENTER_LATITUDE] = data['center.lat'];
 				data[CMDBuild.core.constants.Proxy.CENTER_LONGITUDE] = data['center.lon'];
-				data[CMDBuild.core.constants.Proxy.ZOOM_INITIAL_LEVEL] = data['initialZoomLevel'];
+				data[CMDBuild.core.constants.Proxy.INITIAL_ZOOM_LEVEL] = data['initialZoomLevel'];
 
 				return data;
 			}
