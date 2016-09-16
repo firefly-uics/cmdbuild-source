@@ -10,6 +10,7 @@ import javax.sql.DataSource;
 import org.cmdbuild.dao.driver.postgres.logging.LoggingSupport;
 import org.cmdbuild.model.data.Card;
 import org.cmdbuild.model.gis.LayerMetadata;
+import org.postgis.Geometry;
 import org.postgis.PGgeometry;
 import org.slf4j.Logger;
 import org.slf4j.Marker;
@@ -18,6 +19,51 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowCallbackHandler;
 
 public class GeoFeatureStore {
+
+	private static class GeoFeatureImpl implements GeoFeature {
+
+		final Geometry geometry;
+		final Long ownerCardId;
+		final Long classIdOfOwnerCard;
+		final String classNameOfOwnerCard;
+
+		private GeoFeatureImpl(final Geometry geometry, final Card ownerCard) {
+			super();
+			this.geometry = geometry;
+			this.ownerCardId = ownerCard.getId();
+			this.classIdOfOwnerCard = ownerCard.getClassId();
+			this.classNameOfOwnerCard = ownerCard.getClassName();
+		}
+
+		private GeoFeatureImpl(final Geometry geometry, final Long ownerCardId, final Long classIdOfOwnerCard,
+				final String classNameOfOwnerCard) {
+			this.geometry = geometry;
+			this.ownerCardId = ownerCardId;
+			this.classIdOfOwnerCard = classIdOfOwnerCard;
+			this.classNameOfOwnerCard = classNameOfOwnerCard;
+		}
+
+		@Override
+		public Geometry getGeometry() {
+			return geometry;
+		}
+
+		@Override
+		public Long getOwnerCardId() {
+			return ownerCardId;
+		}
+
+		@Override
+		public Long getClassIdOfOwnerCard() {
+			return classIdOfOwnerCard;
+		}
+
+		@Override
+		public String getClassNameOfOwnerCard() {
+			return classNameOfOwnerCard;
+		}
+
+	}
 
 	private static final Marker marker = MarkerFactory.getMarker(GeoFeatureStore.class.getName());
 	private static final Logger logger = LoggingSupport.sqlLogger;
@@ -45,41 +91,39 @@ public class GeoFeatureStore {
 		this.databaseService = databaseService;
 	}
 
-	/* *******************************************
-	 * 
+	/*
+	 * *******************************************
+	 *
 	 * Manage the Geometric table
-	 * 
+	 *
 	 * *******************************************
 	 */
 
 	private static final String GEO_TABLESPACE = "gis";
 	private static final String GEO_ATTRIBUTE_TABLE_NAME_FORMAT = "Detail_%s_%s";
 	private static final String GEO_TABLE_NAME_FORMAT = GEO_TABLESPACE + "." + GEO_ATTRIBUTE_TABLE_NAME_FORMAT;
-	private static final String GEO_TABLE_COMMENT_TEMPLATE = "DESCR: %s|MODE: write|STATUS: active|SUPERCLASS: false|TYPE: simpleclass"; // attribute
-																																			// description
-	private static final String CREATE_GEO_TABLE_TEMPLATE = "SELECT cm_create_class('%s', NULL, '%s')"; // class
-																										// name,
-																										// comment
-	private static final String DELETE_GEO_TABLE_TEMPLATE = "SELECT cm_delete_class('%s')"; // class
-																							// name
-	private static final String GEO_TABLE_MASTER_ATTRIBUTE_COMMENT_TEMPLATE = "FKTARGETCLASS: %s|STATUS: active|BASEDSP: false|CLASSORDER: 0|DESCR: Master|GROUP: |INDEX: -1|MODE: write|FIELDMODE: write|NOTNULL: false|UNIQUE: false";
-	private static final String GEO_TABLE_GEOMETRY_ATTRIBUTE_COMMENT_TEMPLATE = "STATUS: active|BASEDSP: false|CLASSORDER: 0|DESCR: Geometry|GROUP: |INDEX: -1|MODE: write|FIELDMODE: write|NOTNULL: false|UNIQUE: false";
+	private static final String GEO_TABLE_COMMENT_TEMPLATE =
+			"DESCR: %s|MODE: write|STATUS: active|SUPERCLASS: false|TYPE: simpleclass";
+	private static final String CREATE_GEO_TABLE_TEMPLATE = "SELECT cm_create_class('%s', NULL, '%s')";
+	private static final String DELETE_GEO_TABLE_TEMPLATE = "SELECT cm_delete_class('%s')";
+	private static final String GEO_TABLE_MASTER_ATTRIBUTE_COMMENT_TEMPLATE =
+			"FKTARGETCLASS: %s|STATUS: active|BASEDSP: false|CLASSORDER: 0|DESCR: Master|GROUP: |INDEX: -1|MODE: write|FIELDMODE: write|NOTNULL: false|UNIQUE: false";
+	private static final String GEO_TABLE_GEOMETRY_ATTRIBUTE_COMMENT_TEMPLATE =
+			"STATUS: active|BASEDSP: false|CLASSORDER: 0|DESCR: Geometry|GROUP: |INDEX: -1|MODE: write|FIELDMODE: write|NOTNULL: false|UNIQUE: false";
 
-	// cm_create_class_attribute(cmclass text, attributename text, sqltype text,
-	// attributedefault text,
-	// attributenotnull boolean, attributeunique boolean, attributecomment text)
-	private static final String CREATE_ATTRIBUTE_TEMPLATE = "SELECT cm_create_class_attribute('%s','%s','%s',%s,%s,%s,'%s')";
+	private static final String CREATE_ATTRIBUTE_TEMPLATE =
+			"SELECT cm_create_class_attribute('%s','%s','%s',%s,%s,%s,'%s')";
 
 	public String createGeoTable( //
 			final String targetClassName, //
 			final LayerMetadata layerMetadata) {
 
-		final String geoAttributeTableName = String.format(GEO_TABLE_NAME_FORMAT, targetClassName,
-				layerMetadata.getName());
-		final String geoAttributeTableComment = String.format(GEO_TABLE_COMMENT_TEMPLATE,
-				layerMetadata.getDescription());
-		final String createGeoTableQuery = String.format(CREATE_GEO_TABLE_TEMPLATE, geoAttributeTableName,
-				geoAttributeTableComment);
+		final String geoAttributeTableName =
+				String.format(GEO_TABLE_NAME_FORMAT, targetClassName, layerMetadata.getName());
+		final String geoAttributeTableComment =
+				String.format(GEO_TABLE_COMMENT_TEMPLATE, layerMetadata.getDescription());
+		final String createGeoTableQuery =
+				String.format(CREATE_GEO_TABLE_TEMPLATE, geoAttributeTableName, geoAttributeTableComment);
 		logger.debug(marker, "Create GIS Table: {}", createGeoTableQuery);
 
 		jdbcTemplate.query(createGeoTableQuery, new RowCallbackHandler() {
@@ -97,7 +141,7 @@ public class GeoFeatureStore {
 				false, //
 				false, //
 				String.format(GEO_TABLE_MASTER_ATTRIBUTE_COMMENT_TEMPLATE, targetClassName) //
-				);
+		);
 		logger.debug(marker, "Add Master attribute to GIS Table: {}", createGeoTableQuery);
 		jdbcTemplate.query(masterAttribute, new RowCallbackHandler() {
 			@Override
@@ -114,7 +158,7 @@ public class GeoFeatureStore {
 				false, //
 				false, //
 				GEO_TABLE_GEOMETRY_ATTRIBUTE_COMMENT_TEMPLATE //
-				);
+		);
 
 		logger.debug(marker, "Add Geometry attribute to GIS Table: {}", geometryAttribute);
 		jdbcTemplate.query(geometryAttribute, new RowCallbackHandler() {
@@ -140,10 +184,11 @@ public class GeoFeatureStore {
 		});
 	}
 
-	/* *******************************************
-	 * 
+	/*
+	 * *******************************************
+	 *
 	 * Manage the features
-	 * 
+	 *
 	 * *******************************************
 	 */
 
@@ -169,8 +214,8 @@ public class GeoFeatureStore {
 				layerMetaData, //
 				value, //
 				ownerCardId //
-				) //
-				);
+		) //
+		);
 	}
 
 	public GeoFeature readGeoFeature( //
@@ -181,18 +226,18 @@ public class GeoFeatureStore {
 		final List<GeoFeature> geoFeature = new LinkedList<GeoFeature>();
 		jdbcTemplate.query(readGeoFeatureQuery(layerMetaData, //
 				ownerCard.getId() //
-				), new RowCallbackHandler() {
-					@Override
-					public void processRow(final ResultSet rs) throws SQLException {
-						final String geometryAsString = rs.getString(GEOMETRY_ATTRIBUTE);
-						if (geometryAsString != null && !geometryAsString.equals("")) {
-							geoFeature.add(new GeoFeature( //
-									PGgeometry.geomFromString(geometryAsString), //
-									ownerCard //
-									));
-						}
-					}
-				});
+		), new RowCallbackHandler() {
+			@Override
+			public void processRow(final ResultSet rs) throws SQLException {
+				final String geometryAsString = rs.getString(GEOMETRY_ATTRIBUTE);
+				if (geometryAsString != null && !geometryAsString.equals("")) {
+					geoFeature.add(new GeoFeatureImpl( //
+							PGgeometry.geomFromString(geometryAsString), //
+							ownerCard //
+					));
+				}
+			}
+		});
 
 		if (geoFeature.size() == 0) {
 			return null;
@@ -219,7 +264,7 @@ public class GeoFeatureStore {
 
 						final String geometryAsString = rs.getString(GEOMETRY_ATTRIBUTE);
 						if (geometryAsString != null && !geometryAsString.equals("")) {
-							geoFeatures.add(new GeoFeature( //
+							geoFeatures.add(new GeoFeatureImpl( //
 									PGgeometry.geomFromString(geometryAsString), //
 									rs.getLong(MASTER_ATTRIBUTE), //
 									rs.getLong(MASTER_CLASS_ID_ALIAS), //
@@ -236,7 +281,7 @@ public class GeoFeatureStore {
 		jdbcTemplate.update(deleteGeoFeatureQuery( //
 				layerMetaData, //
 				ownerCardId //
-				));
+		));
 	}
 
 	// THE QUERIES
@@ -253,7 +298,7 @@ public class GeoFeatureStore {
 				value, //
 				MASTER_ATTRIBUTE, //
 				ownerCardId //
-				);
+		);
 
 		logger.debug(marker, "Update geo feature query: {}", updateFeatureQuery);
 		return updateFeatureQuery;
@@ -272,7 +317,7 @@ public class GeoFeatureStore {
 				ownerCardId, //
 				value, //
 				PROJECTION //
-				);
+		);
 
 		logger.debug(marker, "Create geo feature query: {}", createFeatureQuery);
 		return createFeatureQuery;
@@ -289,7 +334,7 @@ public class GeoFeatureStore {
 				geoAttributeTable(layerMetaData), //
 				MASTER_ATTRIBUTE, //
 				ownerCardId //
-				);
+		);
 
 		logger.debug(marker, "Read single feature query: {}", readFeatureQuery);
 		return readFeatureQuery;
@@ -303,7 +348,7 @@ public class GeoFeatureStore {
 				geoAttributeTable(layerMetaData), //
 				MASTER_ATTRIBUTE, //
 				ownerCardId //
-				);
+		);
 
 		logger.debug(marker, "Delete feature query: {}", deleteGeoFeatureQuery);
 		return deleteGeoFeatureQuery;
@@ -323,7 +368,7 @@ public class GeoFeatureStore {
 				readGeoFeatureQuerySelectPart(), //
 				readGeoFeatureQueryFromPart(layerMetaData), //
 				getGeoFeaturesQueryWherePart(bbox) //
-				);
+		);
 
 		logger.debug(marker, "Read features query: {}", readGeoFeaturesQuery);
 		return readGeoFeaturesQuery;
@@ -345,12 +390,12 @@ public class GeoFeatureStore {
 				OWNER_CARD_TABLE_ALIAS, //
 				ID_CLASS_ATTRIBUTE, //
 				MASTER_CLASS_NAME_ALIAS //
-				);
+		);
 	}
 
 	private String readGeoFeatureQueryFromPart(final LayerMetadata layerMetadata) {
-		final String fromTemplate = "FROM %s AS \"%s\" " + "JOIN \"%s\" AS \"%s\" "
-				+ "ON \"%s\".\"%s\" = \"%s\".\"%s\" ";
+		final String fromTemplate =
+				"FROM %s AS \"%s\" " + "JOIN \"%s\" AS \"%s\" " + "ON \"%s\".\"%s\" = \"%s\".\"%s\" ";
 
 		return String.format(fromTemplate, //
 				geoAttributeTable(layerMetadata), //
@@ -360,13 +405,13 @@ public class GeoFeatureStore {
 				FEATURE_TABLE_ALIAS, //
 				MASTER_ATTRIBUTE, //
 				OWNER_CARD_TABLE_ALIAS, ID_ATTRIBUTE //
-				);
+		);
 	}
 
 	/**
 	 * Check the version of postGIS because from 2.0.0 the function to set a
 	 * SRID changed the signature
-	 * 
+	 *
 	 * @return the string format for the bbox filter
 	 */
 	private String getGeoFeaturesQueryWherePart(final String bbox) {
@@ -390,7 +435,7 @@ public class GeoFeatureStore {
 				postgisFuntion, //
 				clearBBoxString(bbox), //
 				PROJECTION //
-				);
+		);
 	}
 
 	/*
