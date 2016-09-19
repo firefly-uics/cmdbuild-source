@@ -202,16 +202,14 @@
 		 * @private
 		 */
 		nodeRecursiveAnchestorsExpand: function (node) {
-			if (
-				Ext.isObject(node) && !Ext.Object.isEmpty(node)
-				&& Ext.isFunction(node.bubble)
-			) {
-				node.bubble(function () {
-					this.expand();
-				});
-			} else {
-				_warning('nodeRecursiveAnchestorsExpand(): unmanaged node parameter', this, node);
-			}
+			// Error handling
+				if (!Ext.isObject(node) || Ext.Object.isEmpty(node) || !Ext.isFunction(node.bubble))
+					return _error('nodeRecursiveAnchestorsExpand(): unmanaged node parameter', this, node);
+			// END: Error handling
+
+			node.bubble(function () {
+				this.expand();
+			});
 		},
 
 		/**
@@ -237,24 +235,25 @@
 		 * @returns {Void}
 		 */
 		onWorkflowTreePrintButtonClick: function (format) {
-			if (Ext.isString(format) && !Ext.isEmpty(format)) {
-				var sorters = this.cmfg('workflowTreeStoreGet').getSorters();
+			// Error handling
+				if (!Ext.isString(format) || Ext.isEmpty(format))
+					return _error('onWorkflowTreePrintButtonClick(): unmanaged format property', this, format);
+			// END: Error handling
 
-				var params = Ext.clone(this.storeExtraParamsGet());
-				params[CMDBuild.core.constants.Proxy.ATTRIBUTES] = Ext.encode(this.displayedParametersNamesGet());
-				params[CMDBuild.core.constants.Proxy.TYPE] = format;
+			var sorters = this.cmfg('workflowTreeStoreGet').getSorters();
 
-				if (Ext.isArray(sorters) && !Ext.isEmpty(sorters))
-					params[CMDBuild.core.constants.Proxy.SORT] = Ext.encode(sorters);
+			var params = Ext.clone(this.storeExtraParamsGet());
+			params[CMDBuild.core.constants.Proxy.ATTRIBUTES] = Ext.encode(this.displayedParametersNamesGet());
+			params[CMDBuild.core.constants.Proxy.TYPE] = format;
 
-				this.controllerPrintWindow.cmfg('panelGridAndFormPrintWindowShow', {
-					format: format,
-					mode: 'view',
-					params: params
-				});
-			} else {
-				_error('onWorkflowTreePrintButtonClick(): unmanaged format property', this, format);
-			}
+			if (Ext.isArray(sorters) && !Ext.isEmpty(sorters))
+				params[CMDBuild.core.constants.Proxy.SORT] = Ext.encode(sorters);
+
+			this.controllerPrintWindow.cmfg('panelGridAndFormPrintWindowShow', {
+				format: format,
+				mode: 'view',
+				params: params
+			});
 		},
 
 		/**
@@ -265,37 +264,35 @@
 		 * @returns {Void}
 		 */
 		onWorkflowTreeRecordSelect: function (record) {
-			if (
-				Ext.isObject(record) && !Ext.Object.isEmpty(record)
-				&& Ext.isFunction(record.get)
-			) {
-				var activityId = record.get(CMDBuild.core.constants.Proxy.ACTIVITY_ID),
-					cardId = record.get(CMDBuild.core.constants.Proxy.CARD_ID),
-					classId = record.get(CMDBuild.core.constants.Proxy.CLASS_ID);
+			// Error handling
+				if (!Ext.isObject(record) || Ext.Object.isEmpty(record) || !Ext.isFunction(record.get))
+					return _error('onWorkflowTreeRecordSelect(): unmanaged record parameter', this, record);
+			// END: Error handling
 
-				if (
-					Ext.isString(activityId) && !Ext.isEmpty(activityId)
-					&& Ext.isNumber(cardId) && !Ext.isEmpty(cardId)
-					&& Ext.isNumber(classId) && !Ext.isEmpty(classId)
-				) { // Activity or instance with only one activity selected
-					this.cmfg('onWorkflowInstanceSelect', {
-						record: record,
-						scope: this,
-						success: function (response, options, decodedResponse) {
-							this.cmfg('onWorkflowActivitySelect', record);
-						}
-					});
-				} else if ( // Instance node selected
-					Ext.isNumber(cardId) && !Ext.isEmpty(cardId)
-					&& Ext.isNumber(classId) && !Ext.isEmpty(classId)
-				) {
-					this.cmfg('onWorkflowInstanceSelect', { record: record });
-				} else {
-					_error('onWorkflowTreeRecordSelect(): not correctly filled record model', this, record);
-				}
-			} else {
-				_error('onWorkflowTreeRecordSelect(): unmanaged record parameter', this, record);
+			var activityId = record.get(CMDBuild.core.constants.Proxy.ACTIVITY_ID),
+				cardId = record.get(CMDBuild.core.constants.Proxy.CARD_ID),
+				classId = record.get(CMDBuild.core.constants.Proxy.CLASS_ID);
+
+			if (
+				Ext.isString(activityId) && !Ext.isEmpty(activityId)
+				&& Ext.isNumber(cardId) && !Ext.isEmpty(cardId)
+				&& Ext.isNumber(classId) && !Ext.isEmpty(classId)
+			) { // Activity or instance with only one activity selected
+				return this.cmfg('onWorkflowInstanceSelect', {
+					record: record,
+					scope: this,
+					success: function (response, options, decodedResponse) {
+						this.cmfg('onWorkflowActivitySelect', record);
+					}
+				});
+			} else if ( // Instance node selected
+				Ext.isNumber(cardId) && !Ext.isEmpty(cardId)
+				&& Ext.isNumber(classId) && !Ext.isEmpty(classId)
+			) {
+				return this.cmfg('onWorkflowInstanceSelect', { record: record });
 			}
+
+			return _error('onWorkflowTreeRecordSelect(): not correctly filled record model', this, record);
 		},
 
 		/**
@@ -685,7 +682,7 @@
 			parameters.enableForceFlowStatus = Ext.isBoolean(parameters.enableForceFlowStatus) ? parameters.enableForceFlowStatus : false;
 			parameters.forceFilter = Ext.isBoolean(parameters.forceFilter) ? parameters.forceFilter : false;
 			parameters.forceFlowStatus = Ext.isBoolean(parameters.forceFlowStatus) ? parameters.forceFlowStatus : false;
-_debug('workflowTreeActivitySelect', parameters);
+
 			// Error handling
 				if (this.cmfg('workflowSelectedWorkflowIsEmpty'))
 					return _error('workflowTreeActivitySelect(): no selected workflow found', this);
