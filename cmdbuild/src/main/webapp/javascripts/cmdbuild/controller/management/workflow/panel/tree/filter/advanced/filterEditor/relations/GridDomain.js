@@ -237,7 +237,7 @@
 														domain: domainModel,
 														domainDescription: domainModel.get(CMDBuild.core.constants.Proxy.DESCRIPTION),
 														orientedDescription: domainModel.get(CMDBuild.core.constants.Proxy.DIRECT_DESCRIPTION),
-														source: this.bufferEntryTypesGet(CMDBuild.core.constants.Proxy.ORIGIN_CLASS_ID)
+														source: this.bufferEntryTypesGet(domainModel.get(CMDBuild.core.constants.Proxy.ORIGIN_CLASS_NAME))
 													})
 												);
 										}, this);
@@ -253,7 +253,7 @@
 														domain: domainModel,
 														domainDescription: domainModel.get(CMDBuild.core.constants.Proxy.DESCRIPTION),
 														orientedDescription: domainModel.get(CMDBuild.core.constants.Proxy.INVERSE_DESCRIPTION),
-														source: this.bufferEntryTypesGet(CMDBuild.core.constants.Proxy.DESTINATION_CLASS_NAME)
+														source: this.bufferEntryTypesGet(domainModel.get(CMDBuild.core.constants.Proxy.DESTINATION_CLASS_NAME))
 													})
 												);
 										}, this);
