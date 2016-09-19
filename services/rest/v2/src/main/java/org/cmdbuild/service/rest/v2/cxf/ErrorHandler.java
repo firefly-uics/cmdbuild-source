@@ -6,6 +6,8 @@ public interface ErrorHandler {
 
 	void attachmentNotFound(String value);
 
+	void attributeNotFound(String value);
+
 	void cardNotFound(Long value);
 
 	void classNotFound(String value);

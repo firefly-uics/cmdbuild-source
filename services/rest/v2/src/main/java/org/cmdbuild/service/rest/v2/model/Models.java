@@ -25,6 +25,7 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import org.cmdbuild.service.rest.v2.model.ClassWithFullDetails.AttributeOrder;
 import org.cmdbuild.service.rest.v2.model.DetailResponseMetadata.Reference;
+import org.cmdbuild.service.rest.v2.model.Geometry.Point;
 import org.cmdbuild.service.rest.v2.model.ProcessActivityWithFullDetails.AttributeStatus;
 
 public class Models {
@@ -469,6 +470,72 @@ public class Models {
 
 		public AttributeStatusBuilder withIndex(final Long index) {
 			this.index = index;
+			return this;
+		}
+
+	}
+
+	public static class Attribute2Builder extends ModelBuilder<Attribute2> {
+
+		private static final Map<String, Object> NO_METADATA = emptyMap();
+
+		private String id;
+		private String name;
+		private String description;
+		private String type;
+		private String subtype;
+		private Integer index;
+		private Map<String, Object> metadata;
+
+		private Attribute2Builder() {
+			// use factory method
+		}
+
+		@Override
+		protected Attribute2 doBuild() {
+			final Attribute2 output = new Attribute2();
+			output.setId(id);
+			output.setName(name);
+			output.setDescription(description);
+			output.setType(type);
+			output.setSubtype(subtype);
+			output.setIndex(index);
+			output.setMetadata(new HashMap<>(defaultIfNull(metadata, NO_METADATA)));
+			return output;
+		}
+
+		public Attribute2Builder withId(final String id) {
+			this.id = id;
+			return this;
+		}
+
+		public Attribute2Builder withName(final String name) {
+			this.name = name;
+			return this;
+		}
+
+		public Attribute2Builder withDescription(final String description) {
+			this.description = description;
+			return this;
+		}
+
+		public Attribute2Builder withType(final String type) {
+			this.type = type;
+			return this;
+		}
+
+		public Attribute2Builder withSubtype(final String subtype) {
+			this.subtype = subtype;
+			return this;
+		}
+
+		public Attribute2Builder withIndex(final int index) {
+			this.index = index;
+			return this;
+		}
+
+		public Attribute2Builder withMetadata(final Map<String, Object> metadata) {
+			this.metadata = metadata;
 			return this;
 		}
 
@@ -1241,6 +1308,37 @@ public class Models {
 
 	}
 
+	public static class GeometryBuilder extends ModelBuilder<Geometry> {
+
+		private static final Map<String, Object> NO_VALUES = emptyMap();
+
+		private Long id;
+		private Map<String, Object> values;
+
+		private GeometryBuilder() {
+			// use factory method
+		}
+
+		@Override
+		protected Geometry doBuild() {
+			final Geometry output = new Geometry();
+			output.setId(id);
+			output.setValues(defaultIfNull(values, NO_VALUES));
+			return output;
+		}
+
+		public GeometryBuilder withId(final Long id) {
+			this.id = id;
+			return this;
+		}
+
+		public GeometryBuilder withValues(final Map<String, Object> values) {
+			this.values = values;
+			return this;
+		}
+
+	}
+
 	public static class GraphConfigurationBuilder extends ModelBuilder<GraphConfiguration> {
 
 		private boolean enabled;
@@ -1723,6 +1821,35 @@ public class Models {
 
 		public NodeBuilder withMetadata(final String key, final Object value) {
 			metadata.put(key, value);
+			return this;
+		}
+
+	}
+
+	public static class PointBuilder extends ModelBuilder<Geometry.Point> {
+
+		private double x;
+		private double y;
+
+		private PointBuilder() {
+			// use factory method
+		}
+
+		@Override
+		protected Point doBuild() {
+			final Point output = new Point();
+			output.setX(x);
+			output.setY(y);
+			return output;
+		}
+
+		public PointBuilder withX(final double x) {
+			this.x = x;
+			return this;
+		}
+
+		public PointBuilder withY(final double y) {
+			this.y = y;
 			return this;
 		}
 
@@ -2549,6 +2676,10 @@ public class Models {
 		return new AttributeStatusBuilder();
 	}
 
+	public static Attribute2Builder newAttribute2() {
+		return new Attribute2Builder();
+	}
+
 	public static CardBuilder newCard() {
 		return new CardBuilder();
 	}
@@ -2597,6 +2728,10 @@ public class Models {
 		return new FunctionBuilder();
 	}
 
+	public static GeometryBuilder newGeometry() {
+		return new GeometryBuilder();
+	}
+
 	public static GraphConfigurationBuilder newGraphConfiguration() {
 		return new GraphConfigurationBuilder();
 	}
@@ -2635,6 +2770,10 @@ public class Models {
 
 	public static NodeBuilder newNode() {
 		return new NodeBuilder();
+	}
+
+	public static PointBuilder newPoint() {
+		return new PointBuilder();
 	}
 
 	public static ProcessActivityWithBasicDetailsBuilder newProcessActivityWithBasicDetails() {

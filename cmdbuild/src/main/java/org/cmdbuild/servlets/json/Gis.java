@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import org.apache.commons.fileupload.FileItem;
@@ -120,7 +121,7 @@ public class Gis extends JSONBaseWithSpringContext {
 		JSONObject jsonFeature = new JSONObject();
 		final GeoJSONSerializer geoSerializer = new GeoJSONSerializer();
 		final GISLogic logic = gisLogic();
-		final GeoFeature feature = logic.getFeature( //
+		final Entry<String, GeoFeature> feature = logic.getFeature( //
 				Card.newInstance() //
 						.withClassName(className) //
 						.withId(cardId) //
@@ -128,7 +129,7 @@ public class Gis extends JSONBaseWithSpringContext {
 				);
 
 		if (feature != null) {
-			jsonFeature = geoSerializer.serialize(feature);
+			jsonFeature = geoSerializer.serialize(feature.getValue());
 		}
 
 		return jsonFeature;
