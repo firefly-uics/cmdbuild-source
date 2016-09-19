@@ -1,6 +1,7 @@
 package unit.cxf;
 
 import static com.google.common.collect.Maps.immutableEntry;
+import static com.google.common.collect.Sets.newHashSet;
 import static java.lang.String.format;
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
@@ -129,9 +130,11 @@ public class CxfGeometriesTest {
 				contains(
 						newAttribute2() //
 								.withId("2") //
+								.withIndex(0) //
 								.build(),
 						newAttribute2() //
 								.withId("3") //
+								.withIndex(0) //
 								.build()));
 		assertThat(response.getMetadata(),
 				equalTo(newMetadata() //
@@ -223,7 +226,7 @@ public class CxfGeometriesTest {
 
 		// when
 		try {
-			underTest.readAllGeometries("foo", "bar", "baz", 456, 123, true);
+			underTest.readAllGeometries("foo", newHashSet("bar"), newHashSet("baz"), 456, 123, true);
 		} catch (final Exception e) {
 			// then
 			verify(errorHandlerFacade).checkClass(eq("foo"));
@@ -236,7 +239,8 @@ public class CxfGeometriesTest {
 	@Test
 	public void gettingAllGeometriesWithBlankAttributeReturnsNoElements() throws Exception {
 		// when
-		final ResponseMultiple<Geometry> response = underTest.readAllGeometries("foo", " ", "baz", 456, 123, true);
+		final ResponseMultiple<Geometry> response =
+				underTest.readAllGeometries("foo", newHashSet(" "), newHashSet("baz"), 456, 123, true);
 
 		// then
 		verify(errorHandlerFacade).checkClass(eq("foo"));
@@ -259,7 +263,7 @@ public class CxfGeometriesTest {
 
 		// when
 		try {
-			underTest.readAllGeometries("foo", "bar", "baz", 456, 123, true);
+			underTest.readAllGeometries("foo", newHashSet("bar"), newHashSet("baz"), 456, 123, true);
 		} catch (final Exception e) {
 			// then
 			verify(errorHandlerFacade).checkClass(eq("foo"));
@@ -274,7 +278,8 @@ public class CxfGeometriesTest {
 	@Test
 	public void gettingAllGeometriesWithBlankAreaReturnsNoElements() throws Exception {
 		// when
-		final ResponseMultiple<Geometry> response = underTest.readAllGeometries("foo", "bar", " ", 456, 123, true);
+		final ResponseMultiple<Geometry> response =
+				underTest.readAllGeometries("foo", newHashSet("bar"), newHashSet(" "), 456, 123, true);
 
 		// then
 		verify(errorHandlerFacade).checkClass(eq("foo"));
@@ -299,7 +304,7 @@ public class CxfGeometriesTest {
 
 		// when
 		try {
-			underTest.readAllGeometries("foo", "bar", "baz", 456, 123, true);
+			underTest.readAllGeometries("foo", newHashSet("bar"), newHashSet("baz"), 456, 123, true);
 		} catch (final Exception e) {
 			// then
 			verify(errorHandlerFacade).checkClass(eq("foo"));
@@ -325,7 +330,8 @@ public class CxfGeometriesTest {
 		)).when(gisLogic).getFeatures(anyString(), anyString(), anyString());
 
 		// when
-		final ResponseMultiple<Geometry> response = underTest.readAllGeometries("foo", "bar", "baz", 1, 2, false);
+		final ResponseMultiple<Geometry> response =
+				underTest.readAllGeometries("foo", newHashSet("bar"), newHashSet("baz"), 1, 2, false);
 
 		// then
 		verify(errorHandlerFacade).checkClass(eq("foo"));

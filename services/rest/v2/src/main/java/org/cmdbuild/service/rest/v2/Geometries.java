@@ -9,6 +9,8 @@ import static org.cmdbuild.service.rest.v2.constants.Serialization.DETAILED;
 import static org.cmdbuild.service.rest.v2.constants.Serialization.LIMIT;
 import static org.cmdbuild.service.rest.v2.constants.Serialization.START;
 
+import java.util.Set;
+
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
@@ -20,12 +22,12 @@ import org.cmdbuild.service.rest.v2.model.Geometry;
 import org.cmdbuild.service.rest.v2.model.ResponseMultiple;
 import org.cmdbuild.service.rest.v2.model.ResponseSingle;
 
-@Path("geometries/{" + CLASS + "}/")
+@Path("classes/{" + CLASS + "}/")
 @Produces(APPLICATION_JSON)
 public interface Geometries {
 
 	@GET
-	@Path("attributes/")
+	@Path("geoattributes/")
 	ResponseMultiple<Attribute2> readAllAttributes( //
 			@PathParam(CLASS) String classId, //
 			@QueryParam(START) Integer offset, //
@@ -34,25 +36,25 @@ public interface Geometries {
 	);
 
 	@GET
-	@Path("attributes/{" + ATTRIBUTE + "}/")
+	@Path("geoattributes/{" + ATTRIBUTE + "}/")
 	ResponseSingle<Attribute2> readAttribute( //
 			@PathParam(CLASS) String classId, //
 			@PathParam(ATTRIBUTE) String attributeId //
 	);
 
 	@GET
-	@Path("elements/")
+	@Path("geocards/")
 	ResponseMultiple<Geometry> readAllGeometries( //
 			@PathParam(CLASS) String classId, //
-			@QueryParam(ATTRIBUTE) String attributeId, //
-			@QueryParam(AREA) String area, //
+			@QueryParam(ATTRIBUTE) Set<? extends String> attributeId, //
+			@QueryParam(AREA) Set<? extends String> area, //
 			@QueryParam(START) Integer offset, //
 			@QueryParam(LIMIT) Integer limit, //
 			@QueryParam(DETAILED) boolean detailed //
 	);
 
 	@GET
-	@Path("elements/{" + CARD + "}/")
+	@Path("geocards/{" + CARD + "}/")
 	ResponseSingle<Geometry> readGeometry( //
 			@PathParam(CLASS) String classId, //
 			@PathParam(CARD) Long cardId //
