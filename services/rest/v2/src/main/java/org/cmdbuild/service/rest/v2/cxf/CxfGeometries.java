@@ -36,6 +36,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import org.cmdbuild.common.collect.ChainablePutMap;
 import org.cmdbuild.logic.ForwardingGisLogic;
@@ -142,6 +143,8 @@ public class CxfGeometries implements Geometries {
 			public Attribute2 apply(final LayerMetadata input) {
 				return newAttribute2() //
 						.withId(input.getName()) //
+						.withDescription(input.getDescription()) //
+						.withIndex(input.getIndex()) //
 						.build();
 			}
 
@@ -338,9 +341,13 @@ public class CxfGeometries implements Geometries {
 	}
 
 	@Override
-	public ResponseMultiple<Geometry> readAllGeometries(final String classId, final String attributeId,
-			final String area, final Integer offset, final Integer limit, final boolean detailed) {
+	public ResponseMultiple<Geometry> readAllGeometries(final String classId, final Set<? extends String> attributeIds,
+			final Set<? extends String> areas, final Integer offset, final Integer limit, final boolean detailed) {
 		errorHandlerFacade.checkClass(classId);
+		// *** TEMPORARY IMPLEMENTATION ***
+		final String attributeId = from(attributeIds).first().orNull();
+		final String area = from(areas).first().orNull();
+		//
 		final Iterable<GeoFeature> elements;
 		if (isBlank(area)) {
 			elements = emptyList();

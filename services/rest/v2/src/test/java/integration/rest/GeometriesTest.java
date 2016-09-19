@@ -19,6 +19,7 @@ import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.anyBoolean;
 import static org.mockito.Matchers.anyInt;
 import static org.mockito.Matchers.anyLong;
+import static org.mockito.Matchers.anySetOf;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
@@ -26,6 +27,8 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
@@ -43,6 +46,7 @@ import org.cmdbuild.service.rest.v2.model.ResponseSingle;
 import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Test;
+import org.mockito.ArgumentCaptor;
 
 public class GeometriesTest {
 
@@ -97,10 +101,10 @@ public class GeometriesTest {
 				.thenReturn(expectedResponse);
 
 		// when
-		final HttpGet get = new HttpGet(new URIBuilder(server.resource("geometries/foo/attributes/")) //
-				.setParameter(LIMIT, "123") //
-				.setParameter(START, "456") //
-				.setParameter(DETAILED, "true") //
+		final HttpGet get = new HttpGet(new URIBuilder(server.resource("classes/foo/geoattributes/")) //
+				.addParameter(LIMIT, "123") //
+				.addParameter(START, "456") //
+				.addParameter(DETAILED, "true") //
 				.build());
 		final HttpResponse response = httpclient.execute(get);
 
@@ -134,7 +138,7 @@ public class GeometriesTest {
 				.thenReturn(expectedResponse);
 
 		// when
-		final HttpGet get = new HttpGet(new URIBuilder(server.resource("geometries/foo/attributes/bar/")) //
+		final HttpGet get = new HttpGet(new URIBuilder(server.resource("classes/foo/geoattributes/bar/")) //
 				.build());
 		final HttpResponse response = httpclient.execute(get);
 
@@ -160,16 +164,19 @@ public class GeometriesTest {
 						.withTotal(2L) //
 						.build()) //
 				.build();
-		when(service.readAllGeometries(anyString(), anyString(), anyString(), anyInt(), anyInt(), anyBoolean())) //
-				.thenReturn(expectedResponse);
+		when(service.readAllGeometries(anyString(), anySetOf(String.class), anySetOf(String.class), anyInt(), anyInt(),
+				anyBoolean())) //
+						.thenReturn(expectedResponse);
 
 		// when
-		final HttpGet get = new HttpGet(new URIBuilder(server.resource("geometries/foo/elements/")) //
-				.setParameter(ATTRIBUTE, "bar") //
-				.setParameter(AREA, "baz") //
-				.setParameter(LIMIT, "123") //
-				.setParameter(START, "456") //
-				.setParameter(DETAILED, "true") //
+		final HttpGet get = new HttpGet(new URIBuilder(server.resource("classes/foo/geocards/")) //
+				.addParameter(ATTRIBUTE, "bar") //
+				.addParameter(ATTRIBUTE, "BAR") //
+				.addParameter(AREA, "baz") //
+				.addParameter(AREA, "BAZ") //
+				.addParameter(LIMIT, "123") //
+				.addParameter(START, "456") //
+				.addParameter(DETAILED, "true") //
 				.build());
 		final HttpResponse response = httpclient.execute(get);
 
@@ -177,7 +184,11 @@ public class GeometriesTest {
 		assertThat(statusCodeOf(response), equalTo(200));
 		assertThat(json.from(contentOf(response)), equalTo(json.from(expectedResponse)));
 
-		verify(service).readAllGeometries(eq("foo"), eq("bar"), eq("baz"), eq(456), eq(123), eq(true));
+		final ArgumentCaptor<Set> attributes = ArgumentCaptor.forClass(Set.class);
+		final ArgumentCaptor<Set> areas = ArgumentCaptor.forClass(Set.class);
+		verify(service).readAllGeometries(eq("foo"), attributes.capture(), areas.capture(), eq(456), eq(123), eq(true));
+		assertThat(attributes.getValue(), equalTo(new HashSet(asList("bar", "BAR"))));
+		assertThat(areas.getValue(), equalTo(new HashSet(asList("baz", "BAZ"))));
 	}
 
 	@Test
@@ -195,7 +206,7 @@ public class GeometriesTest {
 				.thenReturn(expectedResponse);
 
 		// when
-		final HttpGet get = new HttpGet(new URIBuilder(server.resource("geometries/foo/elements/42/")) //
+		final HttpGet get = new HttpGet(new URIBuilder(server.resource("classes/foo/geocards/42/")) //
 				.build());
 		final HttpResponse response = httpclient.execute(get);
 
