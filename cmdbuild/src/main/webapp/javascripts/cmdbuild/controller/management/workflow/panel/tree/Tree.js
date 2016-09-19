@@ -412,36 +412,37 @@
 		 * @private
 		 */
 		positionActivityGetFailure: function (response, options, decodedResponse) {
-			if (Ext.isObject(decodedResponse) && !Ext.Object.isEmpty(decodedResponse)) {
-				var flowStatus = decodedResponse[CMDBuild.core.constants.Proxy.FLOW_STATUS];
+			// Error handling
+				if (!Ext.isObject(decodedResponse) || Ext.Object.isEmpty(decodedResponse))
+					return _error('positionActivityGetFailure(): unmanaged decodedResponse parameter', this, decodedResponse);
+			// END: Error handling
 
-				CMDBuild.core.Message.error(
-					CMDBuild.Translation.common.failure,
-					Ext.String.format(
-						CMDBuild.Translation.errors.reasons.CARD_NOTFOUND,
-						this.cmfg('workflowSelectedWorkflowGet', CMDBuild.core.constants.Proxy.ID)
-					)
-				);
+			var flowStatus = decodedResponse[CMDBuild.core.constants.Proxy.FLOW_STATUS];
 
-				// Sync UI with parameter filter property value
-				if (Ext.isEmpty(options.params[CMDBuild.core.constants.Proxy.FILTER])) {
-					this.controllerToolbarPaging.cmfg('workflowTreeToolbarPagingFilterBasicReset');
-					this.cmfg('workflowTreeFilterClear', { disableStoreLoad: true });
-				}
+			CMDBuild.core.Message.error(
+				CMDBuild.Translation.common.failure,
+				Ext.String.format(
+					CMDBuild.Translation.errors.reasons.CARD_NOTFOUND,
+					this.cmfg('workflowSelectedWorkflowGet', CMDBuild.core.constants.Proxy.ID)
+				)
+			);
 
-				// Sync UI with flow status returned value
-				if (Ext.isString(flowStatus) && !Ext.isEmpty(flowStatus))
-					this.cmfg('workflowTreeToolbarTopStatusValueSet', {
-						silently: true,
-						value: CMDBuild.controller.management.workflow.Utils.translateStatusFromCapitalizedMode(flowStatus)
-					});
-
-				this.cmfg('workflowFormReset');
-				this.cmfg('workflowTreeReset');
-				this.cmfg('workflowTreeStoreLoad', { disableFirstRowSelection: true });
-			} else {
-				_error('positionActivityGetFailure(): unmanaged decodedResponse parameter', this, decodedResponse);
+			// Sync UI with parameter filter property value
+			if (Ext.isEmpty(options.params[CMDBuild.core.constants.Proxy.FILTER])) {
+				this.controllerToolbarPaging.cmfg('workflowTreeToolbarPagingFilterBasicReset');
+				this.cmfg('workflowTreeFilterClear', { disableStoreLoad: true });
 			}
+
+			// Sync UI with flow status returned value
+			if (Ext.isString(flowStatus) && !Ext.isEmpty(flowStatus) && flowStatus != CMDBuild.core.constants.WorkflowStates.getOpenCapitalized())
+				this.cmfg('workflowTreeToolbarTopStatusValueSet', {
+					silently: true,
+					value: CMDBuild.core.constants.WorkflowStates.getAll()
+				});
+
+			this.cmfg('workflowFormReset');
+			this.cmfg('workflowTreeReset');
+			this.cmfg('workflowTreeStoreLoad', { disableFirstRowSelection: true });
 		},
 
 		/**
@@ -455,37 +456,38 @@
 		 * @private
 		 */
 		positionActivityGetSuccess: function (response, options, decodedResponse, activitySubsetId) {
-			if (Ext.isObject(decodedResponse) && !Ext.Object.isEmpty(decodedResponse)) {
-				var flowStatus = decodedResponse[CMDBuild.core.constants.Proxy.FLOW_STATUS],
-					filter = options.params[CMDBuild.core.constants.Proxy.FILTER],
-					position = decodedResponse[CMDBuild.core.constants.Proxy.POSITION];
+			// Error handling
+				if (!Ext.isObject(decodedResponse) || Ext.Object.isEmpty(decodedResponse))
+					return _error('positionActivityGetSuccess(): unmanaged response', this, decodedResponse);
+			// END: Error handling
 
-				// Sync UI with parameter filter property value
-				if (!Ext.isString(filter) || Ext.isEmpty(filter)) {
-					this.controllerToolbarPaging.cmfg('workflowTreeToolbarPagingFilterBasicReset');
-					this.cmfg('workflowTreeFilterClear', { disableStoreLoad: true });
-				}
+			var flowStatus = decodedResponse[CMDBuild.core.constants.Proxy.FLOW_STATUS],
+				filter = options.params[CMDBuild.core.constants.Proxy.FILTER],
+				position = decodedResponse[CMDBuild.core.constants.Proxy.POSITION];
 
-				// Sync UI with flowStatus returned value
-				if (Ext.isString(flowStatus) && !Ext.isEmpty(flowStatus))
-					this.cmfg('workflowTreeToolbarTopStatusValueSet', {
-						silently: true,
-						value: CMDBuild.controller.management.workflow.Utils.translateStatusFromCapitalizedMode(flowStatus)
-					});
-
-				this.cmfg('workflowTreeStoreLoad', {
-					page: CMDBuild.core.Utils.getPageNumber(position),
-					scope: this,
-					callback: function (records, operation, success) {
-						this.view.getSelectionModel().deselectAll();
-
-						this.selectByMetadata(activitySubsetId);
-						this.selectByPosition(position % CMDBuild.configuration.instance.get(CMDBuild.core.constants.Proxy.ROW_LIMIT));
-					}
-				});
-			} else {
-				_error('positionActivityGetSuccess(): unmanaged decodedResponse parameter', this, decodedResponse);
+			// Sync UI with parameter filter property value
+			if (!Ext.isString(filter) || Ext.isEmpty(filter)) {
+				this.controllerToolbarPaging.cmfg('workflowTreeToolbarPagingFilterBasicReset');
+				this.cmfg('workflowTreeFilterClear', { disableStoreLoad: true });
 			}
+
+			// Sync UI with flowStatus returned value
+			if (Ext.isString(flowStatus) && !Ext.isEmpty(flowStatus) && flowStatus != CMDBuild.core.constants.WorkflowStates.getOpenCapitalized())
+				this.cmfg('workflowTreeToolbarTopStatusValueSet', {
+					silently: true,
+					value: CMDBuild.core.constants.WorkflowStates.getAll()
+				});
+
+			this.cmfg('workflowTreeStoreLoad', {
+				page: CMDBuild.core.Utils.getPageNumber(position),
+				scope: this,
+				callback: function (records, operation, success) {
+					this.view.getSelectionModel().deselectAll();
+
+					this.selectByMetadata(activitySubsetId);
+					this.selectByPosition(position % CMDBuild.configuration.instance.get(CMDBuild.core.constants.Proxy.ROW_LIMIT));
+				}
+			});
 		},
 
 		// Tree selection methods
@@ -683,7 +685,7 @@
 			parameters.enableForceFlowStatus = Ext.isBoolean(parameters.enableForceFlowStatus) ? parameters.enableForceFlowStatus : false;
 			parameters.forceFilter = Ext.isBoolean(parameters.forceFilter) ? parameters.forceFilter : false;
 			parameters.forceFlowStatus = Ext.isBoolean(parameters.forceFlowStatus) ? parameters.forceFlowStatus : false;
-
+_debug('workflowTreeActivitySelect', parameters);
 			// Error handling
 				if (this.cmfg('workflowSelectedWorkflowIsEmpty'))
 					return _error('workflowTreeActivitySelect(): no selected workflow found', this);
@@ -691,6 +693,8 @@
 				if (!Ext.isNumber(parameters[CMDBuild.core.constants.Proxy.INSTANCE_ID]) || Ext.isEmpty(parameters[CMDBuild.core.constants.Proxy.INSTANCE_ID]))
 					return _error('workflowTreeActivitySelect(): unmanaged instanceId parameter', this, parameters[CMDBuild.core.constants.Proxy.INSTANCE_ID]);
 			// END: Error handling
+
+			var flowStatusComboBoxValue = this.controllerToolbarTop.cmfg('workflowTreeToolbarTopStatusValueGet');
 
 			var params = {};
 			params[CMDBuild.core.constants.Proxy.INSTANCE_ID] = parameters[CMDBuild.core.constants.Proxy.INSTANCE_ID];
@@ -700,9 +704,11 @@
 
 			if (parameters.enableForceFlowStatus) {
 				if (!parameters.forceFlowStatus)
-					params[CMDBuild.core.constants.Proxy.FLOW_STATUS] = this.controllerToolbarTop.cmfg('workflowTreeToolbarTopStatusValueGet');
+					if (flowStatusComboBoxValue != CMDBuild.core.constants.WorkflowStates.getAll())
+						params[CMDBuild.core.constants.Proxy.FLOW_STATUS] = flowStatusComboBoxValue;
 			} else {
-				params[CMDBuild.core.constants.Proxy.FLOW_STATUS] = this.controllerToolbarTop.cmfg('workflowTreeToolbarTopStatusValueGet');
+				if (flowStatusComboBoxValue != CMDBuild.core.constants.WorkflowStates.getAll())
+					params[CMDBuild.core.constants.Proxy.FLOW_STATUS] = flowStatusComboBoxValue;
 			}
 
 			this.positionActivityGet({ // Full call: with flow status and filter
@@ -712,7 +718,7 @@
 					if (Ext.isString(params[CMDBuild.core.constants.Proxy.FILTER]) && !Ext.isEmpty(params[CMDBuild.core.constants.Proxy.FILTER])) {
 						parameters.forceFilter = true;
 
-						return this.workflowTreeActivitySelect(parameters);
+						return this.cmfg('workflowTreeActivitySelect', parameters);
 					} else if (
 						Ext.isString(params[CMDBuild.core.constants.Proxy.FLOW_STATUS]) && !Ext.isEmpty(params[CMDBuild.core.constants.Proxy.FLOW_STATUS])
 						&& params[CMDBuild.core.constants.Proxy.FLOW_STATUS] != CMDBuild.core.constants.WorkflowStates.getAll()
@@ -720,7 +726,7 @@
 					) {
 						parameters.forceFlowStatus = true;
 
-						return this.workflowTreeActivitySelect(parameters);
+						return this.cmfg('workflowTreeActivitySelect', parameters);
 					} else {
 						return Ext.callback(this.positionActivityGetFailure, this, [response, options, decodedResponse]); // Card not found and store reload
 					}
