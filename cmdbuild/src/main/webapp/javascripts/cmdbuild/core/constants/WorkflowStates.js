@@ -21,7 +21,7 @@
 		 *
 		 * @returns {Void}
 		 */
-		constructor: function(config) {
+		constructor: function (config) {
 			this.initConfig(config);
 		}
 	});
