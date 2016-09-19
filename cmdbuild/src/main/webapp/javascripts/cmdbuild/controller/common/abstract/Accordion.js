@@ -362,7 +362,6 @@
 		 * @private
 		 */
 		updateStoreCommonEndpoint: function (parameters) {
-_debug('updateStoreCommonEndpoint', this.view.title);
 			if (!this.disableSelection) {
 				if (!Ext.isEmpty(parameters.selectionId))
 					this.cmfg('accordionNodeByIdSelect', { id: parameters.selectionId });
