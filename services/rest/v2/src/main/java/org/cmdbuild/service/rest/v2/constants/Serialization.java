@@ -94,6 +94,7 @@ public class Serialization {
 			LENGTH = "length", //
 			LIMIT = "limit", //
 			MANDATORY = "mandatory", //
+			MAP_STYLE = "mapStyle", //
 			MENU = "menu", //
 			MENU_TYPE = MENU + "Type", //
 			METADATA = "metadata", //
@@ -165,7 +166,10 @@ public class Serialization {
 			WIDGETS = "widgets", //
 			WRITABLE = "writable", //
 			X = "x", // ;
-			Y = "y";
+			Y = "y", //
+			ZOOM = "zoom", //
+			ZOOM_MAX = ZOOM + "Max", //
+			ZOOM_MIN = ZOOM + "Min";
 
 	public static final String //
 	LOOKUP = "lookup", //

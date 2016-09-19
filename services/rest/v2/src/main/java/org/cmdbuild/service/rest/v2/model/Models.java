@@ -477,14 +477,15 @@ public class Models {
 
 	public static class Attribute2Builder extends ModelBuilder<Attribute2> {
 
-		private static final Map<String, String> NO_METADATA = emptyMap();
+		private static final Map<String, Object> NO_METADATA = emptyMap();
 
 		private String id;
 		private String name;
 		private String description;
 		private String type;
 		private String subtype;
-		private Map<String, String> metadata;
+		private Integer index;
+		private Map<String, Object> metadata;
 
 		private Attribute2Builder() {
 			// use factory method
@@ -498,6 +499,7 @@ public class Models {
 			output.setDescription(description);
 			output.setType(type);
 			output.setSubtype(subtype);
+			output.setIndex(index);
 			output.setMetadata(new HashMap<>(defaultIfNull(metadata, NO_METADATA)));
 			return output;
 		}
@@ -527,7 +529,12 @@ public class Models {
 			return this;
 		}
 
-		public Attribute2Builder withMetadata(final Map<String, String> metadata) {
+		public Attribute2Builder withIndex(final int index) {
+			this.index = index;
+			return this;
+		}
+
+		public Attribute2Builder withMetadata(final Map<String, Object> metadata) {
 			this.metadata = metadata;
 			return this;
 		}

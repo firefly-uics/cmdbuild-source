@@ -4,6 +4,9 @@ import static com.google.common.collect.Maps.immutableEntry;
 import static java.lang.String.format;
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
+import static org.cmdbuild.service.rest.v2.constants.Serialization.MAP_STYLE;
+import static org.cmdbuild.service.rest.v2.constants.Serialization.ZOOM_MAX;
+import static org.cmdbuild.service.rest.v2.constants.Serialization.ZOOM_MIN;
 import static org.cmdbuild.service.rest.v2.model.Models.newAttribute2;
 import static org.cmdbuild.service.rest.v2.model.Models.newGeometry;
 import static org.cmdbuild.service.rest.v2.model.Models.newMetadata;
@@ -181,7 +184,7 @@ public class CxfGeometriesTest {
 		// given
 		doReturn(asList( //
 				layerMetadata("foo", "1"), //
-				layerMetadata("foo", "2", "this is 2"), //
+				layerMetadata("foo", "2", "this is 2", 1, 2, 3, "{\"a\": \"A\", \"b\": 42}"), //
 				layerMetadata("bar", "3"), //
 				layerMetadata("baz", "4")) //
 		).when(gisLogic).list();
@@ -201,7 +204,14 @@ public class CxfGeometriesTest {
 						.withDescription("this is 2") //
 						.withType("geometry") //
 						.withSubtype("point") //
-						// TODO metadata
+						.withIndex(1) //
+						.withMetadata(ChainablePutMap.of(new HashMap<String, Object>()) //
+								.chainablePut(ZOOM_MIN, 2) //
+								.chainablePut(ZOOM_MAX, 3) //
+								.chainablePut(MAP_STYLE,
+										ChainablePutMap.of(new HashMap<String, Object>()) //
+												.chainablePut("a", "A") //
+												.chainablePut("b", 42))) //
 						.build()));
 	}
 
@@ -500,16 +510,21 @@ public class CxfGeometriesTest {
 	 */
 
 	private static LayerMetadata layerMetadata(final String clazz, final String attribute) {
-		return layerMetadata(clazz, attribute, null);
+		return layerMetadata(clazz, attribute, null, 0, 0, 0, null);
 	}
 
-	private static LayerMetadata layerMetadata(final String clazz, final String attribute, final String description) {
+	private static LayerMetadata layerMetadata(final String clazz, final String attribute, final String description,
+			final int index, final int minZoom, final int maxZoom, final String style) {
 		return new LayerMetadata() {
 			{
 				setFullName(format(TARGET_TABLE_FORMAT + "_%s", clazz, attribute));
 				setName(attribute);
 				setDescription(description);
 				setType("POINT");
+				setIndex(index);
+				setMinimumZoom(minZoom);
+				setMaximumzoom(maxZoom);
+				setMapStyle(style);
 			}
 		};
 	}

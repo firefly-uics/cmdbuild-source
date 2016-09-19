@@ -2,6 +2,7 @@ package org.cmdbuild.service.rest.v2.model;
 
 import static org.cmdbuild.service.rest.v2.constants.Serialization.ATTRIBUTE;
 import static org.cmdbuild.service.rest.v2.constants.Serialization.DESCRIPTION;
+import static org.cmdbuild.service.rest.v2.constants.Serialization.INDEX;
 import static org.cmdbuild.service.rest.v2.constants.Serialization.METADATA;
 import static org.cmdbuild.service.rest.v2.constants.Serialization.NAME;
 import static org.cmdbuild.service.rest.v2.constants.Serialization.SUBTYPE;
@@ -23,7 +24,8 @@ public class Attribute2 extends ModelWithStringId {
 	private String description;
 	private String type;
 	private String subtype;
-	private Map<String, String> metadata;
+	private Integer index;
+	private Map<String, Object> metadata;
 
 	Attribute2() {
 		// package visibility
@@ -65,12 +67,22 @@ public class Attribute2 extends ModelWithStringId {
 		this.subtype = subtype;
 	}
 
+	@XmlAttribute(name = INDEX)
+	public Integer getIndex() {
+		return index;
+	}
+
+	void setIndex(final Integer index) {
+		this.index = index;
+
+	}
+
 	@XmlElement(name = METADATA, nillable = true)
-	public Map<String, String> getMetadata() {
+	public Map<String, Object> getMetadata() {
 		return metadata;
 	}
 
-	void setMetadata(final Map<String, String> metadata) {
+	void setMetadata(final Map<String, Object> metadata) {
 		this.metadata = metadata;
 	}
 
@@ -91,6 +103,7 @@ public class Attribute2 extends ModelWithStringId {
 				.append(this.description, other.description) //
 				.append(this.type, other.type) //
 				.append(this.subtype, other.subtype) //
+				.append(this.index, other.index) //
 				.append(this.metadata, other.metadata) //
 				.isEquals();
 	}
@@ -103,6 +116,7 @@ public class Attribute2 extends ModelWithStringId {
 				.append(description) //
 				.append(type) //
 				.append(subtype) //
+				.append(index) //
 				.append(metadata) //
 				.toHashCode();
 	}
