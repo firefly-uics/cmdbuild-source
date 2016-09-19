@@ -524,18 +524,18 @@
 		 */
 		mainViewportStartingEntitySelect: function () {
 			var startingClassId = (
-				CMDBuild.configuration.runtime.get(CMDBuild.core.constants.Proxy.STARTING_CLASS_ID) // Group's starting class
-				|| CMDBuild.configuration.instance.get(CMDBuild.core.constants.Proxy.STARTING_CLASS) // Main configuration's starting class
-			);
-			var accordionWithNodeController = Ext.isEmpty(startingClassId) ? null : this.cmfg('mainViewportAccordionControllerWithNodeWithIdGet', startingClassId);
-			var node = null;
+					CMDBuild.configuration.runtime.get(CMDBuild.core.constants.Proxy.STARTING_CLASS_ID) // Group's starting class
+					|| CMDBuild.configuration.instance.get(CMDBuild.core.constants.Proxy.STARTING_CLASS) // Main configuration's starting class
+				),
+				accordionWithNodeController = Ext.isEmpty(startingClassId) ? null : this.cmfg('mainViewportAccordionControllerWithNodeWithIdGet', startingClassId),
+				node = null;
 
 			if (!Ext.isEmpty(accordionWithNodeController)) {
-				accordionWithNodeController.disableSelection = true; // Disable first accordion selection to avoid double node selection
+				accordionWithNodeController.disableStoreLoad = true; // Disable store load to optimize
 				accordionWithNodeController.cmfg('accordionExpand', {
 					scope: this,
 					callback: function (panel, eOpts) {
-						accordionWithNodeController.cmfg('accordionNodeByIdSelect', { id: startingClassId });
+						accordionWithNodeController.cmfg('accordionUpdateStore', { selectionId: startingClassId });
 					}
 				});
 

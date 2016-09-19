@@ -141,7 +141,7 @@
 		 * @returns {Void}
 		 */
 		accordionExpand: function (parameters) {
-			if (!Ext.isEmpty(this.view)) {
+			if (Ext.isObject(this.view) && !Ext.Object.isEmpty(this.view) && Ext.isFunction(this.view.expand)) {
 				if (
 					Ext.isObject(parameters) && !Ext.Object.isEmpty(parameters)
 					&& !Ext.isEmpty(parameters.callback) && Ext.isFunction(parameters.callback)
