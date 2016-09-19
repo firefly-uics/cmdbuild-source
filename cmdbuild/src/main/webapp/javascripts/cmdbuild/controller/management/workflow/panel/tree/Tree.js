@@ -317,7 +317,7 @@
 		 * @returns {Void}
 		 */
 		onWorkflowTreeWokflowSelect: function (node) {
-			this.view.reconfigure(null, this.workflowTreeBuildColumns());
+			this.view.reconfigure(this.storeSortersSet(this.cmfg('workflowTreeStoreGet')), this.workflowTreeBuildColumns());
 
 			// Forward to sub controllers
 			this.controllerToolbarPaging.cmfg('onWorkflowTreeToolbarPagingWokflowSelect', node.get(CMDBuild.core.constants.Proxy.FILTER));
@@ -608,14 +608,14 @@
 			storeSortersAdd: function (store, sorter) {
 				// Error handling
 					if (Ext.isEmpty(store) || Ext.isEmpty(store.sorters) || !Ext.isFunction(store.sorters.add))
-						return _error('storeSortersClear(): unable to add store sorters', this, store, sorter);
+						return _error('storeSortersAdd(): unable to add store sorters', this, store, sorter);
 
 					if (
 						!Ext.isObject(sorter) || Ext.Object.isEmpty(sorter)
 						|| Ext.isEmpty(sorter.property)
 						|| Ext.isEmpty(sorter.direction)
 					) {
-						return _error('storeSortersClear(): unmanaged sorter object', this, store, sorter);
+						return _error('storeSortersAdd(): unmanaged sorter object', this, store, sorter);
 					}
 				// END: Error handling
 
