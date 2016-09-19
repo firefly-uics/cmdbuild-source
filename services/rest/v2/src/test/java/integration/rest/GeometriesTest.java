@@ -25,11 +25,14 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.util.HashMap;
+
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.utils.URIBuilder;
 import org.apache.http.impl.client.HttpClientBuilder;
+import org.cmdbuild.common.collect.ChainablePutMap;
 import org.cmdbuild.service.rest.test.JsonSupport;
 import org.cmdbuild.service.rest.test.ServerResource;
 import org.cmdbuild.service.rest.v2.Geometries;
@@ -70,6 +73,10 @@ public class GeometriesTest {
 								.withDescription("this is Bar") //
 								.withType("the type of Bar") //
 								.withSubtype("the subtype of Bar") //
+								.withIndex(1) //
+								.withMetadata(ChainablePutMap.of(new HashMap<String, Object>()) //
+										.chainablePut("a", "A") //
+										.chainablePut("b", 1)) //
 								.build(), //
 						newAttribute2() //
 								.withId("baz") //
@@ -77,6 +84,10 @@ public class GeometriesTest {
 								.withDescription("this is Baz") //
 								.withType("the type of Baz") //
 								.withSubtype("the subtype of Baz") //
+								.withIndex(2) //
+								.withMetadata(ChainablePutMap.of(new HashMap<String, Object>()) //
+										.chainablePut("c", "C") //
+										.chainablePut("d", 2)) //
 								.build())) //
 				.withMetadata(newMetadata() //
 						.withTotal(2L) //
@@ -110,6 +121,10 @@ public class GeometriesTest {
 						.withDescription("this is Baz") //
 						.withType("the type of Baz") //
 						.withSubtype("the subtype of Baz") //
+						.withIndex(1) //
+						.withMetadata(ChainablePutMap.of(new HashMap<String, Object>()) //
+								.chainablePut("a", "A") //
+								.chainablePut("b", 1)) //
 						.build()) //
 				.withMetadata(newMetadata() //
 						// nothing to add, just needed for simplify assertions

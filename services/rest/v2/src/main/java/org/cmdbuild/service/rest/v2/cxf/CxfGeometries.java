@@ -16,6 +16,9 @@ import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.cmdbuild.common.utils.Reflection.unsupported;
 import static org.cmdbuild.model.gis.Functions.masterTableName;
 import static org.cmdbuild.model.gis.Functions.name;
+import static org.cmdbuild.service.rest.v2.constants.Serialization.MAP_STYLE;
+import static org.cmdbuild.service.rest.v2.constants.Serialization.ZOOM_MAX;
+import static org.cmdbuild.service.rest.v2.constants.Serialization.ZOOM_MIN;
 import static org.cmdbuild.service.rest.v2.model.Models.newAttribute2;
 import static org.cmdbuild.service.rest.v2.model.Models.newGeometry;
 import static org.cmdbuild.service.rest.v2.model.Models.newMetadata;
@@ -46,6 +49,7 @@ import org.cmdbuild.service.rest.v2.model.ResponseMultiple;
 import org.cmdbuild.service.rest.v2.model.ResponseSingle;
 import org.cmdbuild.services.gis.ForwardingGeoFeature;
 import org.cmdbuild.services.gis.GeoFeature;
+import org.codehaus.jackson.map.ObjectMapper;
 import org.postgis.LineString;
 import org.postgis.LinearRing;
 import org.postgis.Point;
@@ -145,6 +149,7 @@ public class CxfGeometries implements Geometries {
 		DETAILED {
 
 			private static final String TYPE_GEOMETRY = "geometry";
+			private final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
 
 			@Override
 			public Attribute2 apply(final LayerMetadata input) {
@@ -154,6 +159,7 @@ public class CxfGeometries implements Geometries {
 						.withDescription(input.getDescription()) //
 						.withType(typeOf(input)) //
 						.withSubtype(subtypeOf(input)) //
+						.withIndex(input.getIndex()) //
 						.withMetadata(metadataOf(input)) //
 						.build();
 			}
@@ -166,9 +172,20 @@ public class CxfGeometries implements Geometries {
 				return Subtype.of(input.getType()).id();
 			}
 
-			private Map<String, String> metadataOf(final LayerMetadata input) {
-				// TODO Auto-generated method stub
-				return null;
+			private Map<String, Object> metadataOf(final LayerMetadata input) {
+				return ChainablePutMap.of(new HashMap<String, Object>()) //
+						.chainablePut(ZOOM_MIN, input.getMinimumZoom()) //
+						.chainablePut(ZOOM_MAX, input.getMaximumzoom()) //
+						.chainablePut(MAP_STYLE, mapStyle(input.getMapStyle()));
+			}
+
+			@SuppressWarnings("unchecked")
+			private Map<String, Object> mapStyle(final String value) {
+				try {
+					return OBJECT_MAPPER.readValue(value, Map.class);
+				} catch (final Exception e) {
+					throw new RuntimeException(e);
+				}
 			}
 
 		}, //
