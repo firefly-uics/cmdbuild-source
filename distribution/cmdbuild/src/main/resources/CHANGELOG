@@ -25,6 +25,8 @@ NEW FEATURES
 
  * Management of geometric attributes through REST API
 
+ * Management of relation attributes through SOAP API
+
 
 FIXES
 
