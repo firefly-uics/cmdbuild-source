@@ -1,6 +1,7 @@
 package org.cmdbuild.services.soap;
 
 import java.security.NoSuchAlgorithmException;
+import java.util.Collection;
 import java.util.List;
 
 import javax.activation.DataHandler;
@@ -85,6 +86,9 @@ public interface Private {
 			@WebParam(name = "className") String className, @WebParam(name = "cardId") int cardId);
 
 	public List<Attribute> getRelationAttributes(@WebParam(name = "relation") Relation relation);
+
+	void updateRelationAttributes(@WebParam(name = "relation") Relation relation,
+			@WebParam(name = "attributes") Collection<Attribute> attributes);
 
 	public Relation[] getRelationHistory(@WebParam(name = "relation") Relation relation);
 
@@ -177,7 +181,7 @@ public interface Private {
 
 	/**
 	 * Notify CMDBuild of an external event.
-	 * 
+	 *
 	 * @param event
 	 *            a generic event
 	 */
@@ -189,7 +193,7 @@ public interface Private {
 	public List<FunctionSchema> getFunctionList();
 
 	/**
-	 * 
+	 *
 	 * @param plainText
 	 * @param digestAlgorithm
 	 *            for now three algorithms are allowed: "SHA1", "MD5", "BASE64"

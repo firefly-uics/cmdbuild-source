@@ -14,6 +14,7 @@ import static org.cmdbuild.services.soap.utils.SoapToJsonUtils.createJsonFilterF
 import static org.cmdbuild.services.soap.utils.SoapToJsonUtils.toJsonArray;
 
 import java.io.OutputStream;
+import java.util.Collection;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
@@ -23,8 +24,7 @@ import java.util.Map.Entry;
 import javax.activation.DataHandler;
 import javax.activation.DataSource;
 
-import net.sf.jasperreports.engine.util.ObjectUtils;
-
+import org.apache.commons.lang3.ObjectUtils;
 import org.cmdbuild.auth.AuthenticationStore;
 import org.cmdbuild.auth.user.OperationUser;
 import org.cmdbuild.common.Constants;
@@ -117,14 +117,15 @@ public class DataAccessLogicHelper implements SoapLogicHelper {
 
 	};
 
-	private static final Function<Card, org.cmdbuild.services.soap.types.Card> TO_SOAP_CARD = new Function<Card, org.cmdbuild.services.soap.types.Card>() {
+	private static final Function<Card, org.cmdbuild.services.soap.types.Card> TO_SOAP_CARD =
+			new Function<Card, org.cmdbuild.services.soap.types.Card>() {
 
-		@Override
-		public org.cmdbuild.services.soap.types.Card apply(final Card input) {
-			return new org.cmdbuild.services.soap.types.Card(input);
-		}
+				@Override
+				public org.cmdbuild.services.soap.types.Card apply(final Card input) {
+					return new org.cmdbuild.services.soap.types.Card(input);
+				}
 
-	};
+			};
 
 	private static final Function<Attribute, String> ATTRIBUTE_NAME = new Function<Attribute, String>() {
 
@@ -245,11 +246,8 @@ public class DataAccessLogicHelper implements SoapLogicHelper {
 
 	public List<Attribute> getRelationAttributes(final Relation relation) {
 		final List<Attribute> relationAttributes = Lists.newArrayList();
-		final CMClass sourceClass = dataView.findClass(relation.getClass1Name());
-		final CMClass destinationClass = dataView.findClass(relation.getClass2Name());
 		final CMDomain domain = dataView.findDomain(relation.getDomainName());
-		final CMRelation fetchedRelation = dataAccessLogic.getRelation(Long.valueOf(relation.getCard1Id()),
-				Long.valueOf(relation.getCard2Id()), domain, sourceClass, destinationClass);
+		final CMRelation fetchedRelation = fetch(relation);
 		for (final Entry<String, Object> entry : fetchedRelation.getAllValues()) {
 			final CMAttributeType<?> attributeType = domain.getAttribute(entry.getKey()).getType();
 			final Attribute attribute = new Attribute();
@@ -273,6 +271,31 @@ public class DataAccessLogicHelper implements SoapLogicHelper {
 			relationAttributes.add(attribute);
 		}
 		return relationAttributes;
+	}
+
+	public void setRelationAttributes(final Relation relation, final Collection<Attribute> attributes) {
+		final CMRelation _relation = fetch(relation);
+		final RelationDTO relationDTO = new RelationDTO();
+		relationDTO.relationId = _relation.getId();
+		relationDTO.domainName = relation.getDomainName();
+		relationDTO.master = "_1";
+		relationDTO.addSourceCard(Long.valueOf(relation.getCard1Id()), relation.getClass1Name());
+		relationDTO.addDestinationCard(Long.valueOf(relation.getCard2Id()), relation.getClass2Name());
+		relationDTO.relationAttributeToValue =
+				transformValues(uniqueIndex(attributes, input -> input.getName()), input -> input.getValue());
+		dataAccessLogic.updateRelation(relationDTO);
+	}
+
+	/**
+	 * {@link Relation} does not have an {@code id} attribute, so that, just for not
+	 * change it, we must fetch relation according with {@link Relation} data.
+	 */
+	private CMRelation fetch(final Relation relation) {
+		final CMClass sourceClass = dataView.findClass(relation.getClass1Name());
+		final CMClass destinationClass = dataView.findClass(relation.getClass2Name());
+		final CMDomain domain = dataView.findDomain(relation.getDomainName());
+		return dataAccessLogic.getRelation(Long.valueOf(relation.getCard1Id()), Long.valueOf(relation.getCard2Id()),
+				domain, sourceClass, destinationClass);
 	}
 
 	public boolean deleteRelation(final Relation relation) {
@@ -515,8 +538,9 @@ public class DataAccessLogicHelper implements SoapLogicHelper {
 	private CardExt transformToCardExt(final Card card, final Attribute[] attributeList,
 			final boolean enableLongDateFormat) {
 		final CardExt cardExt;
-		final ValueSerializer valueSerializer = enableLongDateFormat ? org.cmdbuild.services.soap.types.Card.HACK_VALUE_SERIALIZER
-				: org.cmdbuild.services.soap.types.Card.LEGACY_VALUE_SERIALIZER;
+		final ValueSerializer valueSerializer =
+				enableLongDateFormat ? org.cmdbuild.services.soap.types.Card.HACK_VALUE_SERIALIZER
+						: org.cmdbuild.services.soap.types.Card.LEGACY_VALUE_SERIALIZER;
 		if (attributeList == null || attributeList.length == 0) {
 			cardExt = new CardExt(card, valueSerializer);
 		} else {
@@ -529,10 +553,10 @@ public class DataAccessLogicHelper implements SoapLogicHelper {
 	private void addExtras(final Card card, final CardExt cardExt) {
 		final CMClass activityClass = dataAccessLogic.findClass(Constants.BASE_PROCESS_CLASS_NAME);
 		if (activityClass.isAncestorOf(card.getType())) {
-			final UserProcessInstance processInstance = workflowLogic.getProcessInstance(card.getClassName(),
-					card.getId());
-			final WorkflowLogicHelper workflowLogicHelper = new WorkflowLogicHelper(workflowLogic, dataView,
-					metadataStoreFactory, cardAdapter);
+			final UserProcessInstance processInstance =
+					workflowLogic.getProcessInstance(card.getClassName(), card.getId());
+			final WorkflowLogicHelper workflowLogicHelper =
+					new WorkflowLogicHelper(workflowLogic, dataView, metadataStoreFactory, cardAdapter);
 			UserActivityInstance activityInstance = null;
 			try {
 				activityInstance = workflowLogicHelper.selectActivityInstanceFor(processInstance);
@@ -607,32 +631,34 @@ public class DataAccessLogicHelper implements SoapLogicHelper {
 	public CardList getCardList(final String className, final Attribute[] attributeList, final Query queryType,
 			final Order[] orderType, final Integer limit, final Integer offset, final String fullTextQuery,
 			final CQLQuery cqlQuery, final boolean enableLongDateFormat) {
-		final PagedElements<Card> response = cardList(className, attributeList, queryType, orderType, limit, offset,
-				fullTextQuery, cqlQuery);
+		final PagedElements<Card> response =
+				cardList(className, attributeList, queryType, orderType, limit, offset, fullTextQuery, cqlQuery);
 		return toCardList(response, attributeList, enableLongDateFormat);
 	}
 
 	public CardListExt getCardListExt(final String className, final Attribute[] attributeList, final Query queryType,
 			final Order[] orderType, final Integer limit, final Integer offset, final String fullTextQuery,
 			final CQLQuery cqlQuery) {
-		final PagedElements<Card> response = cardList(className, attributeList, queryType, orderType, limit, offset,
-				fullTextQuery, cqlQuery);
+		final PagedElements<Card> response =
+				cardList(className, attributeList, queryType, orderType, limit, offset, fullTextQuery, cqlQuery);
 		return toCardListExt(response);
 	}
 
-	private PagedElements<Card> cardList(final String className, final Attribute[] attributeList,
-			final Query queryType, final Order[] orderType, final Integer limit, final Integer offset,
-			final String fullTextQuery, final CQLQuery cqlQuery) {
+	private PagedElements<Card> cardList(final String className, final Attribute[] attributeList, final Query queryType,
+			final Order[] orderType, final Integer limit, final Integer offset, final String fullTextQuery,
+			final CQLQuery cqlQuery) {
 		final CMClass targetClass = dataView.findClass(className);
 		final QueryOptions queryOptions = new GuestFilter(authenticationStore, dataView) //
-				.apply(targetClass, QueryOptions.newQueryOption() //
-						.limit(limit != null ? limit : Integer.MAX_VALUE) //
-						.offset(offset != null ? offset : 0) //
-						.filter(createJsonFilterFrom(queryType, fullTextQuery, cqlQuery, targetClass, lookupStore)) //
-						.orderBy(toJsonArray(orderType, attributeList)) //
-						.onlyAttributes(namesOf(attributeList)) //
-						.parameters(parametersOf(cqlQuery)) //
-						.build());
+				.apply(targetClass,
+						QueryOptions.newQueryOption() //
+								.limit(limit != null ? limit : Integer.MAX_VALUE) //
+								.offset(offset != null ? offset : 0) //
+								.filter(createJsonFilterFrom(queryType, fullTextQuery, cqlQuery, targetClass,
+										lookupStore)) //
+								.orderBy(toJsonArray(orderType, attributeList)) //
+								.onlyAttributes(namesOf(attributeList)) //
+								.parameters(parametersOf(cqlQuery)) //
+								.build());
 		return dataAccessLogic.fetchCards(className, queryOptions);
 	}
 
@@ -647,10 +673,11 @@ public class DataAccessLogicHelper implements SoapLogicHelper {
 		final int totalNumberOfCards = response.totalSize();
 		cardList.setTotalRows(totalNumberOfCards);
 		for (final Card card : response.elements()) {
-			final ValueSerializer valueSerializer = enableLongDateFormat ? org.cmdbuild.services.soap.types.Card.HACK_VALUE_SERIALIZER
-					: org.cmdbuild.services.soap.types.Card.LEGACY_VALUE_SERIALIZER;
-			final org.cmdbuild.services.soap.types.Card soapCard = new org.cmdbuild.services.soap.types.Card(card,
-					valueSerializer);
+			final ValueSerializer valueSerializer =
+					enableLongDateFormat ? org.cmdbuild.services.soap.types.Card.HACK_VALUE_SERIALIZER
+							: org.cmdbuild.services.soap.types.Card.LEGACY_VALUE_SERIALIZER;
+			final org.cmdbuild.services.soap.types.Card soapCard =
+					new org.cmdbuild.services.soap.types.Card(card, valueSerializer);
 			removeNotSelectedAttributesFrom(soapCard, subsetAttributesForSelect);
 			cardList.addCard(soapCard);
 		}
@@ -700,8 +727,8 @@ public class DataAccessLogicHelper implements SoapLogicHelper {
 		return parameters;
 	}
 
-	public Reference[] getReference(final String classname, final Query query, final Order[] order,
-			final Integer limit, final Integer offset, final String fullText, final CQLQuery cqlQuery) {
+	public Reference[] getReference(final String classname, final Query query, final Order[] order, final Integer limit,
+			final Integer offset, final String fullText, final CQLQuery cqlQuery) {
 		final CardListExt cardList = getCardListExt(classname, null, query, order, limit, offset, fullText, cqlQuery);
 		return from(cardList.getCards()) //
 				.transform(new Function<CardExt, Reference>() {
@@ -727,7 +754,8 @@ public class DataAccessLogicHelper implements SoapLogicHelper {
 		return EMPTY;
 	}
 
-	public CardList getCardHistory(final String className, final int cardId, final Integer limit, final Integer offset) {
+	public CardList getCardHistory(final String className, final int cardId, final Integer limit,
+			final Integer offset) {
 		logger.info(marker, "getting history for '{}' card with id '{}'", className, cardId);
 		final CardList cardList = new CardList();
 		final Card card = Card.newInstance() //
@@ -773,21 +801,21 @@ public class DataAccessLogicHelper implements SoapLogicHelper {
 
 	public MenuSchema getVisibleClassesTree() {
 		final CMClass rootClass = dataView.findClass("Class");
-		final MenuSchemaSerializer serializer = new MenuSchemaSerializer(menuStore, operationUser, dataAccessLogic,
-				workflowLogic);
+		final MenuSchemaSerializer serializer =
+				new MenuSchemaSerializer(menuStore, operationUser, dataAccessLogic, workflowLogic);
 		return serializer.serializeVisibleClassesFromRoot(rootClass);
 	}
 
 	public MenuSchema getVisibleProcessesTree() {
 		final CMClass rootClass = dataView.findClass("Activity");
-		final MenuSchemaSerializer serializer = new MenuSchemaSerializer(menuStore, operationUser, dataAccessLogic,
-				workflowLogic);
+		final MenuSchemaSerializer serializer =
+				new MenuSchemaSerializer(menuStore, operationUser, dataAccessLogic, workflowLogic);
 		return serializer.serializeVisibleClassesFromRoot(rootClass);
 	}
 
 	public MenuSchema getMenuSchemaForPreferredGroup() {
-		final MenuSchemaSerializer serializer = new MenuSchemaSerializer(menuStore, operationUser, dataAccessLogic,
-				workflowLogic);
+		final MenuSchemaSerializer serializer =
+				new MenuSchemaSerializer(menuStore, operationUser, dataAccessLogic, workflowLogic);
 		return serializer.serializeMenuTree();
 	}
 
