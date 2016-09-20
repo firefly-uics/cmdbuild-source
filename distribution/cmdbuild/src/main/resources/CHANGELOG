@@ -96,6 +96,8 @@ FIXES
 
  * Domains not correctly displayed on advanced filter relation tab grid
 
+ * When the password for accessing the database is not specified because it's not required, CMDBuild cannot be accessed
+
 
 
 
