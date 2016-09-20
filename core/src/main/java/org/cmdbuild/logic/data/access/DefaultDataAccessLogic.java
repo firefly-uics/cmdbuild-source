@@ -1018,7 +1018,10 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 		return from(dataView.findDomains()) //
 				.filter(and(class1Contained, class2Contained)) //
 				.filter(and(class1NotDisabled, class2NotDisabled)) //
-				.filter(activeOnly ? domain(active(), equalTo(true)) : alwaysTrue()) //
+				.filter(activeOnly
+						? and(domain(active(), equalTo(true)), domain(class1(), clazz(active(), equalTo(true))),
+								domain(class2(), clazz(active(), equalTo(true))))
+						: alwaysTrue()) //
 				.filter(excludeProcesses ? and(domain(class1(), not(hasAnchestor(dataView.getActivityClass()))),
 						domain(class2(), not(hasAnchestor(dataView.getActivityClass())))) : alwaysTrue()) //
 				.filter(not(isSystem(CMDomain.class))) //
