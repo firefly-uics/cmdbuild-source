@@ -23,6 +23,8 @@ NEW FEATURES
 
  * Added Greek translation
 
+ * Management of geometric attributes through REST API
+
 
 FIXES
 
