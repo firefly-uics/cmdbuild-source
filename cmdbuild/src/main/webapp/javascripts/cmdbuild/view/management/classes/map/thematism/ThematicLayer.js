@@ -1,5 +1,4 @@
 (function() {
-	var DEFAULT_RADIUS = 20;
 	Ext.define('CMDBuild.view.management.classes.map.thematism.ThematicLayer', {
 
 		/**
@@ -16,6 +15,13 @@
 		 * @property {Object} thematism.configuration.layoutConfiguration
 		 */
 		thematism : undefined,
+
+		/**
+		 * 
+		 * @property {CMDBuild.view.management.classes.map.thematism.ThematicColors}
+		 * 
+		 */
+		thematicColors : undefined,
 
 		/**
 		 * @property {boolean} beDirty (a thematic layer is dirty when a feature
@@ -48,10 +54,11 @@
 		 * @returns {Object}
 		 *          CMDBuild.view.management.classes.map.thematism.ThematicLayer
 		 */
-		constructor : function(thematism, interactionDocument) {
+		constructor : function(thematism, interactionDocument, thematicColors) {
 			this.callParent(arguments);
 			this.thematism = thematism;
 			this.interactionDocument = interactionDocument;
+			this.thematicColors = thematicColors;
 			this.layer = this.buildThematicLayer(this.thematism.name);
 			this.layer.set("name", this.thematism.name);
 			this.layer.name = this.thematism.name;
@@ -215,7 +222,7 @@
 		 * 
 		 */
 		loadCard : function(id, className, callback, callbackScope) {
-			var colorsTable = this.thematism.configuration.layoutConfiguration.colorsTable
+			var colorsTable = this.thematicColors.tableToExa(this.thematism.configuration.layoutConfiguration.colorsTable)
 			for (var i = 0; i < colorsTable.length; i++) {
 				for (var j = 0; j < colorsTable[i].cards.length; j++) {
 					if (id === colorsTable[i].cards[j].Id) {// Id! no constants
@@ -270,7 +277,7 @@
 			case 'Point':
 			case 'Circle':
 			default:
-				var radius = (configuration.firstValue) ? parseInt(configuration.firstValue) : DEFAULT_RADIUS;
+				var radius = (configuration.firstValue) ? parseInt(configuration.firstValue) : CMDBuild.gis.constants.layers.DEFAULT_RADIUS;
 				return point(color, radius);
 			}
 		}

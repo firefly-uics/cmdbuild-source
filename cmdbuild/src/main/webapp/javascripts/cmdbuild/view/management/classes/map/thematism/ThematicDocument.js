@@ -44,7 +44,7 @@
 		 */
 		addThematism : function(thematism, bModify) {
 			var thematicLayer = Ext.create('CMDBuild.view.management.classes.map.thematism.ThematicLayer', thematism,
-					this.interactionDocument);
+					this.interactionDocument, this.thematicColors);
 			if (!(bModify === true)) {
 				this.thematismButton.add([ thematism.name ]);
 			}
