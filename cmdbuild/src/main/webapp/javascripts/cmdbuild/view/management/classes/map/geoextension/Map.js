@@ -6,16 +6,18 @@
 			MAP_YAHOO : 'yahoo',
 			MAP_GOOGLE : 'google',
 			ENABLED : 'enabled',
-			ZOOM_INITIAL_LEVEL : 'zoomInitialLevel',
 			CENTER_LONGITUDE : 'centerLongitude',
 			CENTER_LATITUDE : 'centerLatitude',
+			ICON_SIZE : .7,
 
 			layers : {
 				PUNTUAL_ANALYSIS : "puntual_analysis",
 				RANGES_ANALYSIS : "ranges_analysis",
 				DENSITY_ANALYSIS : "density_analysis",
 				TABLE_SOURCE : "table_source",
-				FUNCTION_SOURCE : "function_source"
+				FUNCTION_SOURCE : "function_source",
+				DEFAULT_RADIUS : 15
+
 			},
 			shapes : {
 				CIRCLE : "shape_circle",
@@ -26,6 +28,13 @@
 				TAGS : "system.entrytype.tags",
 				MASTERTABLE : "system.entrytype.mastertable",
 				THEMATICFUNCTION : "ThematicFunction"
+			},
+			colors : {
+				POINT_FILL :  '#FFCC00',
+				POINT_LINE:'#FF9966',
+				POLYGON_FILL :  'rgba(0, 0, 255, 0.1)',
+				POLYGON_LINE:'blue',
+				LINE_LINE:'green',
 			}
 
 		}
@@ -71,6 +80,7 @@
 		initComponent : function() {
 			this.configure();
 			var configuration = this.interactionDocument.getConfigurationMap();
+			configuration.center = ol.proj.transform(configuration.center, 'EPSG:4326', 'EPSG:3857')
 			Ext.apply(this, {
 				items : [ Ext.create('Ext.container.Container', {
 					region : 'center',
@@ -90,9 +100,15 @@
 		listeners : {
 			afterrender : function() {
 				var configuration = this.interactionDocument.getConfigurationMap();
+				var extent = ol.proj.get("EPSG:900913").getExtent();
+				var center = ol.proj.transform(configuration.center, 'EPSG:3857', 'EPSG:4326')
 				this.view = new ol.View({
-					center : configuration.center,
-					zoom : configuration.zoom
+					center : center,
+					zoom : configuration.zoom,
+					maxZoom: 50,
+					minZoom: 2,
+					extent:extent
+
 				});
 				this.map = new ol.Map({
 					target : configuration.mapDivId,
@@ -135,6 +151,19 @@
 				var adapter = layer.get("adapter");
 				if (adapter && adapter.clearSelections) {
 					adapter.clearSelections();
+				}
+			});
+		},
+		/**
+		 * 
+		 * @returns {Void}
+		 * 
+		 */
+		clearSource : function() {
+			this.map.getLayers().forEach(function(layer) {
+				var adapter = layer.get("adapter");
+				if (adapter && adapter.clearSource) {
+					adapter.clearSource();
 				}
 			});
 		},
