@@ -139,8 +139,8 @@
 				masterTableName : layer.masterTableName,
 				name : layer.name,
 				type : layer.type,
-				iconUrl : style.externalGraphic
-			};
+				style : style
+				};
 			var geoLayer = this.getLayerByClassAndName(layer.masterTableName, layer.name);
 			if (!geoLayer) {
 				geoLayer = this.makeLayer(geoAttribute, true);

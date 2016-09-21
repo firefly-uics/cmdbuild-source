@@ -65,7 +65,7 @@
 			var options = {
 				geoAttribute : geoAttribute,
 				targetClassName : geoAttribute.masterTableName,
-				iconUrl : geoAttribute.iconUrl
+				iconUrl : geoAttribute.style.externalGraphic
 			};
 			this.classBitmap = (options.iconUrl) ? this.loadIcon(options.iconUrl) : null;
 			this.interactionDocument = interactionDocument;
@@ -78,7 +78,7 @@
 		createControls : function(map, vectorSource, options) {
 			var me = this;
 			this.makeSelect();
-			this.modify = new ol.interaction.Modify({
+			this.modify = new ol.interaction.Modify({	
 				features : this.select.getFeatures()
 			});
 			this.makeDrawPoint(map, vectorSource);
@@ -266,12 +266,21 @@
 
 		loadIcon : function(url) {
 			var icon = undefined;
+			function UrlExists(url)
+			{
+			    var http = new XMLHttpRequest();
+			    http.open('HEAD', url, false);
+			    http.send();
+			    return http.status!=404;
+			}
+			if (! UrlExists(url)) {
+				return null;
+			}
 			try {
 				icon = new ol.style.Icon({
 					src : url,
 					// size : [ ICON_SIZE, ICON_SIZE ]
 					scale : CMDBuild.gis.constants.ICON_SIZE
-
 				});
 
 			} catch (e) {
@@ -559,12 +568,11 @@
 							radius : 7
 
 						})
-					})
+					});
 				} else {
 					return new ol.style.Style({
 						image : this.classBitmap,
 					});
-
 				}
 			case 'LineString':
 				return new ol.style.Style({
