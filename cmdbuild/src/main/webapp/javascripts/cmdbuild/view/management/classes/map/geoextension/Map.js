@@ -253,6 +253,7 @@
 		 */
 		center : function(configuration) {
 			this.view.setCenter(configuration.center);
+			this.clearSource();
 			this.map.renderSync();
 		},
 
