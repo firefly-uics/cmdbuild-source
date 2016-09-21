@@ -4,6 +4,7 @@
 		extend: 'CMDBuild.controller.common.abstract.Widget',
 
 		requires: [
+			'CMDBuild.core.constants.Global',
 			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.interfaces.service.LoadMask',
 			'CMDBuild.core.Message',
@@ -14,6 +15,16 @@
 		 * @cfg {CMDBuild.controller.management.common.CMWidgetManagerController}
 		 */
 		parentDelegate: undefined,
+
+		/**
+		 * @property {Array}
+		 *
+		 * @private
+		 */
+		bufferClasses: {
+			byId: {},
+			byName: {}
+		},
 
 		/**
 		 * @property {Array}
@@ -107,8 +118,46 @@
 		 * @private
 		 */
 		buildBuffer: function (callback) {
-			this.buildBufferDomain(function () {
-				this.buildBufferNavigationTree(callback);
+			this.buildBufferClasses(function () {
+				this.buildBufferDomain(function () {
+					this.buildBufferNavigationTree(callback);
+				});
+			});
+		},
+
+		/**
+		 * @param {Function} callback
+		 *
+		 * @returns {Void}
+		 *
+		 * @private
+		 */
+		buildBufferClasses: function (callback) {
+			// Error handling
+				if (!Ext.isFunction(callback))
+					return _error('buildBufferClasses(): unmanaged callback parameter', this, callback);
+			// END: Error handling
+
+			this.widgetNavigationTreeBufferClassesReset();
+
+			var params = {};
+			params[CMDBuild.core.constants.Proxy.ACTIVE] = true;
+
+			CMDBuild.proxy.management.widget.NavigationTree.readAllClasses({
+				params: params,
+				loadMask: false,
+				scope: this,
+				success: function (response, options, decodedResponse) {
+					decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.CLASSES];
+
+					if (Ext.isArray(decodedResponse) && !Ext.isEmpty(decodedResponse)) {
+						this.widgetNavigationTreeBufferClassesSet(decodedResponse);
+
+						Ext.callback(callback, this);
+					} else {
+						_error('buildBufferClasses(): unmanaged response', this, decodedResponse);
+					}
+				}
 			});
 		},
 
@@ -304,15 +353,17 @@
 				Ext.isObject(navigationTreeNode) && !Ext.Object.isEmpty(navigationTreeNode)
 				&& Ext.isObject(domainModel) && !Ext.Object.isEmpty(domainModel)
 			) {
-				if (cardObject[CMDBuild.core.constants.Proxy.CLASS_NAME] == domainModel.get(CMDBuild.core.constants.Proxy.DESTINATION_CLASS_NAME)) {
+				var classAnchestorsNames = this.widgetNavigationTreeBufferClassesAnchestorsNamesGet(cardObject[CMDBuild.core.constants.Proxy.CLASS_NAME]);
+
+				if (Ext.Array.contains(classAnchestorsNames, domainModel.get(CMDBuild.core.constants.Proxy.DESTINATION_CLASS_NAME))) {
 					nodeStructureObject[CMDBuild.core.constants.Proxy.DESCRIPTION] =
-						domainModel.get(CMDBuild.core.constants.Proxy.INVERSE_DESCRIPTION)
+						domainModel.get(CMDBuild.core.constants.Proxy.DIRECT_DESCRIPTION)
 						+ ' '
 						+ nodeStructureObject[CMDBuild.core.constants.Proxy.DESCRIPTION]
 					;
 				} else {
 					nodeStructureObject[CMDBuild.core.constants.Proxy.DESCRIPTION] =
-						domainModel.get(CMDBuild.core.constants.Proxy.DIRECT_DESCRIPTION)
+						domainModel.get(CMDBuild.core.constants.Proxy.INVERSE_DESCRIPTION)
 						+ ' '
 						+ nodeStructureObject[CMDBuild.core.constants.Proxy.DESCRIPTION]
 					;
@@ -553,6 +604,89 @@
 
 			return resolvedFilter;
 		},
+
+		// BufferClasses property functions
+			/**
+			 * @param {String} name
+			 *
+			 * @returns {Array} anchestorsNames
+			 *
+			 * @private
+			 */
+			widgetNavigationTreeBufferClassesAnchestorsNamesGet: function (name) {
+				var anchestorsNames = [],
+					classModel = this.widgetNavigationTreeBufferClassesGet({ name: name });
+
+				if (!Ext.isEmpty(classModel)) {
+					anchestorsNames.push(classModel.get(CMDBuild.core.constants.Proxy.NAME));
+
+					while (!Ext.isEmpty(classModel.get(CMDBuild.core.constants.Proxy.PARENT))) {
+						classModel = this.widgetNavigationTreeBufferClassesGet({ id: classModel.get(CMDBuild.core.constants.Proxy.PARENT) });
+
+						if (!Ext.isEmpty(classModel))
+							anchestorsNames.push(classModel.get(CMDBuild.core.constants.Proxy.NAME));
+					}
+				}
+
+				return anchestorsNames;
+			},
+
+			/**
+			 * @param {String} name
+			 *
+			 * @returns {Boolean}
+			 *
+			 * @private
+			 */
+			widgetNavigationTreeBufferClassesReset: function (name) {
+				this.bufferClasses = {
+					byId: {},
+					byName: {}
+				};
+			},
+
+			/**
+			 * @param {Object} parameters
+			 * @param {Number} parameters.id
+			 * @param {String} parameters.name
+			 *
+			 * @returns {CMDBuild.model.management.widget.navigationTree.Class or null}
+			 *
+			 * @private
+			 */
+			widgetNavigationTreeBufferClassesGet: function (parameters) {
+				parameters = Ext.isObject(parameters) ? parameters : {};
+
+				if (Ext.isNumber(parameters.id) && !Ext.isEmpty(parameters.id))
+					return this.bufferClasses.byId[parameters.id];
+
+				if (Ext.isString(parameters.name) && !Ext.isEmpty(parameters.name))
+					return this.bufferClasses.byName[parameters.name];
+
+				return null;
+			},
+
+			/**
+			 * @param {Array} classes
+			 *
+			 * @returns {Void}
+			 *
+			 * @private
+			 */
+			widgetNavigationTreeBufferClassesSet: function (classes) {
+				if (Ext.isArray(classes) && !Ext.isEmpty(classes))
+					Ext.Array.each(classes, function (classObject, i, allClassObjects) {
+						if (
+							Ext.isObject(classObject) && !Ext.Object.isEmpty(classObject)
+							&& classObject[CMDBuild.core.constants.Proxy.TYPE] == CMDBuild.core.constants.Global.getTableTypeClass() // Get only classes
+						) {
+							var model = Ext.create('CMDBuild.model.management.widget.navigationTree.Class', classObject);
+
+							this.bufferClasses.byId[model.get(CMDBuild.core.constants.Proxy.ID)] = model;
+							this.bufferClasses.byName[model.get(CMDBuild.core.constants.Proxy.NAME)] = model;
+						}
+					}, this);
+			},
 
 		// BufferDomains property functions
 			/**
