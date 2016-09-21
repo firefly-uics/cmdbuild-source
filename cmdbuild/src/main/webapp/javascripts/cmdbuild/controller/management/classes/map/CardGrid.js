@@ -16,7 +16,6 @@
 		 * @cfg {Array}
 		 */
 		cmfgCatchedFunctions: [
-			'onCardGridShow',
 			'onCardNavigation',
 			'onCardZoom'
 		],

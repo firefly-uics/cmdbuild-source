@@ -149,7 +149,6 @@
 				title : CMDBuild.Translation.administration.modClass.layers,
 				interactionDocument : this.interactionDocument
 			});
-			this.layerGridController.cmfg('onCardGridShow');
 			tabs.push(this.layerGridController.getView());
 
 			this.cardGridController = new CMDBuild.controller.management.classes.map.CardGrid({
@@ -158,7 +157,6 @@
 				parentDelegate : this.delegate,
 				mainGrid : this.mainGrid
 			});
-			this.cardGridController.cmfg('onCardGridShow');
 			tabs.push(this.cardGridController.getView());
 
 			this.layout = "border";
@@ -224,9 +222,6 @@
 			return this.cardBrowser;
 		},
 
-		// getMiniCardGrid : function() {
-		// return this.miniCardGrid;
-		// },
 		getCardGridController : function() {
 			return this.cardGridController;
 		}
