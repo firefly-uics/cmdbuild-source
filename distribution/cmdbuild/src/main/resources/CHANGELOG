@@ -98,6 +98,8 @@ FIXES
 
  * When the password for accessing the database is not specified because it's not required, CMDBuild cannot be accessed
 
+ * NavigationTree widget behaviour errors
+
 
 
 

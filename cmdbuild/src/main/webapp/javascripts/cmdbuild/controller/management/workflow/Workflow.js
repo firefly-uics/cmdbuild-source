@@ -332,7 +332,7 @@
 				this.readWorkflowData(
 					node,
 					function (records, operation, success) {
-						CMDBuild.core.interfaces.service.LoadMask.manage(true, false); // Manual loadMask manage
+						CMDBuild.core.interfaces.service.LoadMask.manage(true, false); // Manual loadMask manage (hide)
 
 						this.setViewTitle(this.cmfg('workflowSelectedWorkflowGet', CMDBuild.core.constants.Proxy.DESCRIPTION));
 
@@ -411,7 +411,7 @@
 					return _error('readWorkflowData(): unmanaged entityId property', this, node.get(CMDBuild.core.constants.Proxy.ENTITY_ID));
 			// END: Error handling
 
-			CMDBuild.core.interfaces.service.LoadMask.manage(true, true); // Manual loadMask manage
+			CMDBuild.core.interfaces.service.LoadMask.manage(true, true); // Manual loadMask manage (show)
 
 			var params = {};
 			params[CMDBuild.core.constants.Proxy.ACTIVE] = true;
@@ -599,7 +599,7 @@
 			 *
 			 * @returns {Mixed or undefined}
 			 */
-			workflowSelectedPreviousActivityGet: function (attributePath) { // TODO: check workflow relation
+			workflowSelectedPreviousActivityGet: function (attributePath) {
 				var parameters = {};
 				parameters[CMDBuild.core.constants.Proxy.TARGET_VARIABLE_NAME] = 'selectedPreviousActivity';
 				parameters[CMDBuild.core.constants.Proxy.ATTRIBUTE_PATH] = attributePath;
