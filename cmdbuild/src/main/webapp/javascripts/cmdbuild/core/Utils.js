@@ -64,8 +64,6 @@
 		 * FIXME: to avoid to use cache just wrap this function in readAllClasses server call
 		 */
 		getEntryTypeAncestorsId: function (entryType) {
-			_deprecated('getEntryTypeAncestorsId', this);
-
 			var out = [];
 
 			if (!Ext.Object.isEmpty(entryType)) {
@@ -90,8 +88,6 @@
 		 * @deprecated
 		 */
 		getEntryTypePrivilegesByName: function (className) {
-			_deprecated('getEntryTypePrivilegesByName', this);
-
 			return _CMUtils.getEntryTypePrivileges(
 				_CMCache.getEntryTypeByName(className || '')
 			);
@@ -531,8 +527,6 @@
 			 * @deprecated (CMDBuild.core.Utils.getEntryTypeAncestorsId())
 			 */
 			getAncestorsId: function (entryTypeId) {
-				_deprecated('getAncestorsId', this);
-
 				var et = null;
 				var out = [];
 
