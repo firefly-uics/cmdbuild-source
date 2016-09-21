@@ -175,7 +175,7 @@
 					 * @param {CMDBuild.model.CMActivityInstance} card or activity
 					 */
 					'.NavigationTree': function(widget, card) {
-						var w = new CMDBuild.view.management.common.widgets.CMNavigationTree();
+						var w = Ext.create('CMDBuild.view.management.widget.navigationTree.NavigationTreeView');
 
 						me.widgetsContainer.addWidgt(w);
 

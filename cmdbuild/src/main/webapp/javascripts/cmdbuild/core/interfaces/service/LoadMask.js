@@ -1,5 +1,8 @@
-(function() {
+(function () {
 
+	/**
+	 * Manage parameter to display global loadMask or specific panel's one
+	 */
 	Ext.define('CMDBuild.core.interfaces.service.LoadMask', {
 
 		requires: ['CMDBuild.core.LoadMask'],
@@ -7,12 +10,12 @@
 		singleton: true,
 
 		/**
-		 * Manage parameter to display global loadMask or specific panel's one
-		 *
 		 * @param {Object or Boolean} param
 		 * @param {Boolean} show
+		 *
+		 * @returns {Void}
 		 */
-		manage: function(param, show) {
+		manage: function (param, show) {
 			show = Ext.isBoolean(show) ? show : false;
 
 			if (!Ext.isEmpty(param)) {
@@ -31,9 +34,11 @@
 		 * @param {Object or Boolean} param
 		 * @param {Boolean} show
 		 *
+		 * @returns {Void}
+		 *
 		 * @private
 		 */
-		manageBoolean: function(param, show) {
+		manageBoolean: function (param, show) {
 			show = Ext.isBoolean(show) ? show : false;
 
 			if (param)
@@ -48,9 +53,11 @@
 		 * @param {Object or Boolean} param
 		 * @param {Boolean} show
 		 *
+		 * @returns {Void}
+		 *
 		 * @private
 		 */
-		manageObject: function(param, show) {
+		manageObject: function (param, show) {
 			show = Ext.isBoolean(show) ? show : false;
 
 			if (Ext.isFunction(param.setLoading))

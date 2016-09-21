@@ -1,5 +1,8 @@
 (function() {
 
+	/**
+	 * @link CMDBuild.view.management.common.widgets.CMWidgetManager
+	 */
 	Ext.define("CMDBuild.view.management.common.widgets.linkCards.cardWindow.CMWidgetManager", {
 
 		/**
@@ -161,7 +164,7 @@
 					 * @param {CMDBuild.model.CMActivityInstance} card or activity
 					 */
 					'.NavigationTree': function(widget, card) {
-						var w = new CMDBuild.view.management.common.widgets.CMNavigationTree();
+						var w = Ext.create('CMDBuild.view.management.widget.navigationTree.NavigationTreeView');
 
 						me.widgetsContainer.addWidgt(w);
 

@@ -6,6 +6,9 @@
 		'CMDBuild.core.Message'
 	]);
 
+	/**
+	 * @link CMDBuild.controller.management.common.CMWidgetManagerController
+	 */
 	Ext.define("CMDBuild.controller.management.common.widgets.linkCards.cardWindow.CMWidgetManagerController", {
 
 		/**
@@ -28,7 +31,7 @@
 					'.LinkCards': CMDBuild.controller.management.common.widgets.linkCards.LinkCardsController,
 					'.ManageEmail': 'CMDBuild.controller.management.widget.ManageEmail',
 					'.ManageRelation': CMDBuild.controller.management.widget.manageRelation.CMManageRelationController,
-					'.NavigationTree': CMDBuild.controller.management.common.widgets.CMNavigationTreeController,
+					'.NavigationTree': 'CMDBuild.controller.management.widget.navigationTree.NavigationTree',
 					'.OpenAttachment': CMDBuild.controller.management.common.widgets.CMOpenAttachmentController,
 					'.OpenNote': CMDBuild.controller.management.common.widgets.CMOpenNoteController,
 					'.OpenReport': 'CMDBuild.controller.management.widget.openReport.OpenReport',
