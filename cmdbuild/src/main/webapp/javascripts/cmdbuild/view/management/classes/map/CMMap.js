@@ -21,34 +21,19 @@
 		 * @override
 		 */
 		refresh : function() {
-			// when the refresh is called more times it takes the last
-			var me = this;
-			if (this.operation) {
-				clearTimeout(this.operation);
-			}
-			this.operation = setTimeout(function() {
-				me._refresh();
-				me.operation = undefined;
-			}, 500);
-		},
-
-		/**
-		 * @returns {Void}
-		 * 
-		 * @override
-		 */
-		_refresh : function() {
 			var card = this.interactionDocument.getCurrentCard();
 			var currentClassName = card.className;
 			var currentCardId = card.cardId;
 			var me = this;
 			this.interactionDocument.getAllLayers(function(layers) {
+				me.clearSelections();//Adding has a different refresh on gis layer
 				me.refreshAllLayers(layers, currentClassName, currentCardId);
 				me.refreshThematicLayers(currentClassName, currentCardId);
 				me.selectCard({
 					cardId : currentCardId,
 					className : currentClassName
 				});
+//				me.setSelections();
 				me.refreshLegend();
 			}, this);
 		},
@@ -162,10 +147,7 @@
 			}
 			var adapter = geoLayer.get("adapter");
 			if (adapter && adapter.refresh) {
-				adapter.refresh({
-					cardId : currentCardId,
-					className : currentClassName
-				});
+				adapter.refresh();
 			}
 		},
 		clearHideLayer : function(className, nameLayer) {
@@ -178,7 +160,27 @@
 				this.map.removeLayer(geoLayer);
 			}
 		},
+		setSelections : function() {
+			var card = this.interactionDocument.getCurrentCard();
+			this.map.getLayers().forEach(function(layer) {
+				var adapter = layer.get("adapter");
+				if (adapter && adapter.setStatus) {
+					var geoAttribute = layer.get("geoAttribute");
+					adapter.setStatus((geoAttribute && geoAttribute.masterTableName === card.className ) ? "Select" : "None");
+				}
+			});
 
+		},
+		clearSelections : function() {
+			var gisLayers = this.interactionDocument.getGisAdapters();
+			for ( var key in gisLayers) {
+				var namedAdapters = gisLayers[key];
+				for (var i = 0; i < namedAdapters.length; i++) {
+					namedAdapters[i].adapter.refresh();
+				}
+			}
+
+		},
 		/**
 		 * @param {Array} :
 		 *            allLayers : layers from _CMCACHE
@@ -218,10 +220,15 @@
 			var mapClassName = geoAttribute.masterTableName;
 			function compare(layer) {
 				return (layer.name === mapLayerName && layer.masterTableName === mapClassName);
-				
+
 			}
 			var zoom = this.getMap().getView().getZoom();
 			if (!visibles.find(compare)) {
+				var adapter = mapLayer.get("adapter");
+				if (adapter) {
+					adapter.refresh();
+
+				}
 				this.clearHideLayer(mapClassName, mapLayerName);
 				this.map.removeLayer(mapLayer);
 			}

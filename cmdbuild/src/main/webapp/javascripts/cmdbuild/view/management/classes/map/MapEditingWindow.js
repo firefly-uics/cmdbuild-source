@@ -71,12 +71,13 @@
 				text : this.translation.add,
 				creationControl : undefined,
 				iconCls : 'add',
-				enableToggle : true,
+				enableToggle : false,
 				allowDepress : true,
 				disabled : true,
 				scope : this,
-				toggleHandler : function(button, state) {
-					this.callDelegates("addFeatureButtonHasBeenToggled", state);
+				handler : function(button) {
+					this.callDelegates("addFeatureButtonHasBeenToggled");
+					button.disable();
 				}
 			});
 
@@ -143,10 +144,26 @@
 				}
 			}
 		},
-
+		closeAllEditings : function() {
+			var card = this.interactionDocument.getCurrentCard();
+			var currentClassName = card.className;
+			this.interactionDocument.changed();
+			for (var key in this.layers) {
+				var geoLayer = this.interactionDocument.getGeoLayerByName(key);
+				if (!geoLayer) {
+					continue;
+				}
+				var adapter = geoLayer.get("adapter");
+				if (adapter && adapter.closeAllEditings) {
+					adapter.closeAllEditings();
+				}
+			}
+		},
 		addLayer : function(layer) {
 			if (layer && !this.interactionDocument.isGeoServerLayer(layer)) {
-				if (!this.layers[layer.name]) {
+				var card = this.interactionDocument.getCurrentCard();
+				var currentClassName = card.className;
+				if (!this.layers[layer.name] && layer.masterTableName === currentClassName) {
 					this.layers[layer.name] = this.geoAttrMenuButton.menu.add({
 						iconCls : ICON_CLS[layer.type],
 						text : layer.description,
@@ -170,6 +187,8 @@
 			var currentCard = this.interactionDocument.getCurrentCard();
 			var layer = this.interactionDocument.getMapPanel().getLayerByClassAndName(currentCard.className, item.text);
 			var feature = this.searchFeature(layer, item.text, currentCard.cardId);
+			if (currentCard.cardId == -1)
+				feature = null;
 			if (feature !== null) {
 				this.removeButton.enable();
 				this.addButton.disable();
@@ -181,6 +200,9 @@
 			this.callDelegates("geoAttributeMenuItemHasBeenClicked", item);
 		},
 		searchFeature : function(layer, description, cardId) {
+			if (! layer || ! layer.getSource()) {
+				return null;
+			}
 			var features = layer.getSource().getFeatures();// ById(cardId);
 			for (var i = 0; i < features.length; i++) {
 				if (features[i].get("master_card") == cardId) {

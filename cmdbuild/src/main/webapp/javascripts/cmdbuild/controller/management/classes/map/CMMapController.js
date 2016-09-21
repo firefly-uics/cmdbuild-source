@@ -1,7 +1,6 @@
 (function() {
 
-	Ext.require([ 'CMDBuild.proxy.gis.Gis',
-	              'CMDBuild.controller.management.classes.map.NavigationTreeDelegate']);
+	Ext.require([ 'CMDBuild.proxy.gis.Gis', 'CMDBuild.controller.management.classes.map.NavigationTreeDelegate' ]);
 
 	Ext.define("CMDBuild.controller.management.classes.map.CMMapController", {
 		alternateClassName : "CMDBuild.controller.management.classes.CMMapController", // Legacy
@@ -59,8 +58,7 @@
 			if (card === null) {
 				cardId = -1;
 				className = oldCard.className;
-			}
-			else {
+			} else {
 				cardId = card.cardId;
 				className = card.className;
 			}
@@ -83,6 +81,10 @@
 					this.interactionDocument.changed();
 				}, this);
 			} else {
+				if (!oldCard || className !== oldCard.className) {
+					this.interactionDocument.getMapPanel().center(this.interactionDocument.configurationMap);
+					
+				}
 				this.interactionDocument.changed();
 
 			}
@@ -90,10 +92,10 @@
 
 		setCard : function(card, callback, callbackScope) {
 			CMDBuild.proxy.Card.read({
-				params: card,
-				loadMask: false,
-				scope: this,
-				success: function(a, b, response) {
+				params : card,
+				loadMask : false,
+				scope : this,
+				success : function(a, b, response) {
 					var raw = response.card;
 
 					if (raw) {
@@ -144,14 +146,14 @@
 				}, function(card) {
 					me.mapPanel.getMap().changeFeatureOnLayers(c.Id);
 					var card = {
-							cardId : c.Id,
-							className : type.get("name")
-						};
+						cardId : c.Id,
+						className : type.get("name")
+					};
 					me.interactionDocument.setCurrentCard(card);
 					me.interactionDocument.centerOnCard(card, function() {
 						me.interactionDocument.changed();
 						me.interactionDocument.changedFeature();
-						
+
 					}, this);
 				});
 			}
@@ -275,7 +277,7 @@
 				className : entryType.get("name")
 			});
 		} else {
-			
+
 			this.onCardSelected({
 				cardId : -1,
 				className : entryType.get("name")
