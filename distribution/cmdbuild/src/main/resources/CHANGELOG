@@ -27,6 +27,8 @@ NEW FEATURES
 
  * Management of relation attributes through SOAP API
 
+ * Information about the filter of the nodes of domain trees through REST API
+
 
 FIXES
 
