@@ -117,10 +117,10 @@
 		 *
 		 * @private
 		 */
-		buildBuffer: function (callback) {
-			this.buildBufferClasses(function () {
-				this.buildBufferDomain(function () {
-					this.buildBufferNavigationTree(callback);
+		buildLocalCache: function (callback) {
+			this.buildLocalCacheClasses(function () {
+				this.buildLocalCacheDomains(function () {
+					this.buildLocalCacheNavigationTree(callback);
 				});
 			});
 		},
@@ -132,10 +132,10 @@
 		 *
 		 * @private
 		 */
-		buildBufferClasses: function (callback) {
+		buildLocalCacheClasses: function (callback) {
 			// Error handling
 				if (!Ext.isFunction(callback))
-					return _error('buildBufferClasses(): unmanaged callback parameter', this, callback);
+					return _error('buildLocalCacheClasses(): unmanaged callback parameter', this, callback);
 			// END: Error handling
 
 			this.widgetNavigationTreeBufferClassesReset();
@@ -155,7 +155,7 @@
 
 						Ext.callback(callback, this);
 					} else {
-						_error('buildBufferClasses(): unmanaged response', this, decodedResponse);
+						_error('buildLocalCacheClasses(): unmanaged response', this, decodedResponse);
 					}
 				}
 			});
@@ -168,10 +168,10 @@
 		 *
 		 * @private
 		 */
-		buildBufferDomain: function (callback) {
+		buildLocalCacheDomains: function (callback) {
 			// Error handling
 				if (!Ext.isFunction(callback))
-					return _error('buildBufferDomain(): unmanaged callback parameter', this, callback);
+					return _error('buildLocalCacheDomains(): unmanaged callback parameter', this, callback);
 			// END: Error handling
 
 			this.widgetNavigationTreeBufferDomainsReset();
@@ -191,7 +191,7 @@
 
 						Ext.callback(callback, this);
 					} else {
-						_error('buildBufferDomain(): unmanaged response', this, decodedResponse);
+						_error('buildLocalCacheDomains(): unmanaged response', this, decodedResponse);
 					}
 				}
 			});
@@ -204,10 +204,10 @@
 		 *
 		 * @private
 		 */
-		buildBufferNavigationTree: function (callback) {
+		buildLocalCacheNavigationTree: function (callback) {
 			// Error handling
 				if (!Ext.isFunction(callback))
-					return _error('buildBufferNavigationTree(): unmanaged callback parameter', this, callback);
+					return _error('buildLocalCacheNavigationTree(): unmanaged callback parameter', this, callback);
 			// END: Error handling
 
 			this.widgetNavigationTreeBufferNodesReset();
@@ -227,7 +227,7 @@
 
 						Ext.callback(callback, this, [this.widgetNavigationTreeBufferNodesGet(decodedResponse[CMDBuild.core.constants.Proxy.ID])]);
 					} else {
-						_error('buildBufferNavigationTree(): unmanaged response', this, decodedResponse);
+						_error('buildLocalCacheNavigationTree(): unmanaged response', this, decodedResponse);
 					}
 				}
 			});
@@ -539,7 +539,7 @@
 
 			CMDBuild.core.interfaces.service.LoadMask.manage(this.view, true); // Manually manage LoadMask (show)
 
-			this.buildBuffer(function (navigationTreeRootNode) {
+			this.buildLocalCache(function (navigationTreeRootNode) {
 				root.set(CMDBuild.core.constants.Proxy.NAVIGATION_TREE_NODE_ID, navigationTreeRootNode.get(CMDBuild.core.constants.Proxy.ID));
 
 				this.buildNodeRoot();
