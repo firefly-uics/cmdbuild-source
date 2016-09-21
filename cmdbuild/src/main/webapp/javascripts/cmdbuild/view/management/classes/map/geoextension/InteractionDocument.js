@@ -6,6 +6,7 @@
 		feature : undefined,
 		currentCard : undefined,
 		classesControlledByNavigation : undefined,
+		gisAdapters:{},
 		/**
 		 * @property {Object}
 		 * 
@@ -15,7 +16,7 @@
 		configurationMap : {
 			center : [ CMDBuild.configuration.gis.get(CMDBuild.gis.constants.CENTER_LONGITUDE) || 0,
 					CMDBuild.configuration.gis.get(CMDBuild.gis.constants.CENTER_LATITUDE) || 0 ],
-			zoom : CMDBuild.configuration.gis.get(CMDBuild.gis.constants.ZOOM_INITIAL_LEVEL) || 0,
+			zoom : CMDBuild.configuration.gis.get(CMDBuild.core.constants.Proxy.INITIAL_ZOOM_LEVEL) || 0,
 			mapDivId : CMDBuild.gis.constants.MAP_DIV || 0
 		},
 		constructor : function(thematicDocument) {
@@ -54,13 +55,14 @@
 				}
 				this.navigables[className].push(parseInt(cardId));
 			}
+			this.getMapPanel().clearSource();
 			this.changed();
 		},
 		isANavigableClass : function(className) {
 			return this.navigables[className];
 		},
 		isANavigableCard : function(card) {
-			if (! this.isControlledByNavigation(card.className)) {
+			if (!this.isControlledByNavigation(card.className)) {
 				return true;
 			}
 			var id = parseInt(card.cardId);
@@ -137,7 +139,29 @@
 				this.observers.push(view);
 			}
 		},
-		changed : function() {
+		getGisAdapters : function() {
+			return this.gisAdapters;
+		},
+		pushGisLayerAdapter : function(name, className, adapterGisLayer) {
+			if (this.gisAdapters[className]) {
+				var newAdapter = true;
+				for (var i = 0; i < this.gisAdapters[className].length; i++) {
+					var namedAdapter = this.gisAdapters[className][i];
+					if (namedAdapter.name === name) {
+						namedAdapter.adapter = adapterGisLayer;
+						newAdapter = false;
+						break;
+					}
+				}
+			}
+			else {
+				this.gisAdapters[className] = [{
+					name : name,
+					adapter : adapterGisLayer
+				}];
+			}
+		},
+		changed : function(bForced) {
 			for (var i = 0; i < this.observers.length; i++) {
 				this.observers[i].refresh();
 			}
@@ -175,21 +199,13 @@
 				callback.apply(callbackScope, [ undefined ])
 				return;
 			}
-//			var geoLayer = this.getGeoLayerByName(layers[index].name);
-//			if (geoLayer && geoLayer.get("adapter") && geoLayer.get("adapter").getPosition) {
-//				geoLayer.get("adapter").getPosition(card, function(center) {
-				this.getPosition(card, function(center) {
-					if (center) {
-						callback.apply(callbackScope, [ center ])
-					} else {
-						this.centerOnLayer(card, layers, index + 1, callback, callbackScope)
-					}
-				}, this);
-//			}
-//			else {
-//				this.centerOnLayer(card, layers, index + 1, callback, callbackScope)
-//				
-//			}
+			this.getPosition(card, function(center) {
+				if (center) {
+					callback.apply(callbackScope, [ center ])
+				} else {
+					this.centerOnLayer(card, layers, index + 1, callback, callbackScope)
+				}
+			}, this);
 		},
 		/**
 		 * 
@@ -224,13 +240,13 @@
 			var map = this.getMap();
 			var me = this;
 			this.getLayersForCard(card, function(layers) {
+				var mapPanel = me.getMapPanel();
 				me.centerOnLayer(card, layers, 0, function(center) {
 					if (center) {
-						var mapPanel = me.getMapPanel();
 						me.configurationMap.center = center;
-						mapPanel.center(me.configurationMap);
-						//me.changed();
+						// me.changed();
 					}
+					mapPanel.center(me.configurationMap);
 					callback.apply(callbackScope, []);
 				}, this);
 			}, this);
@@ -249,9 +265,6 @@
 			}, this);
 		},
 		setCurrentCard : function(card) {
-			if (this.currentCard && card.className !== this.currentCard.className) {
-				this.removeAllGisLayers();
-			}
 			this.currentCard = card;
 			this.thematicDocument.setCurrentCard(card);
 		},

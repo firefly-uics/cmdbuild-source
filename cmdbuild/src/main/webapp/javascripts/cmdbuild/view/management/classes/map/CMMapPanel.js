@@ -134,12 +134,12 @@
 				});
 
 				tabs.push(this.cardBrowser);
-				this.thematicView = Ext.create(
-						'CMDBuild.controller.management.classes.map.thematism.ThematismMainWindow', {
-							interactionDocument : this.interactionDocument
-						});
 
 			}
+			this.thematicView = Ext.create(
+					'CMDBuild.controller.management.classes.map.thematism.ThematismMainWindow', {
+						interactionDocument : this.interactionDocument
+					});
 			this.editingWindow = new CMDBuild.view.management.map.CMMapEditingToolsWindow({
 				owner : this,
 				interactionDocument : this.interactionDocument
@@ -204,6 +204,7 @@
 			if (this.editingWindow) {
 				this.interactionDocument.setCurrentFeature("", "", "Select");
 				this.interactionDocument.changedFeature();
+				this.editingWindow.closeAllEditings();
 				this.editingWindow.hide();
 			}
 		},

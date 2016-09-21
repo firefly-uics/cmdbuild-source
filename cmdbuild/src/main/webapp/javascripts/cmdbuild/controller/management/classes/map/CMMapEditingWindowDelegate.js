@@ -8,7 +8,7 @@
 			this.callParent(arguments);
 		},
 
-		addFeatureButtonHasBeenToggled : function onAddFeatureButtonToggle(toggled) {
+		addFeatureButtonHasBeenToggled : function onAddFeatureButtonToggle() {
 			this.interactionDocument.feature.operation = "Draw";
 			this.interactionDocument.changedFeature();
 		},
