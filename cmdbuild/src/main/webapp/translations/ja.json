@@ -496,6 +496,7 @@
 			"WF_PACKAGE_ERROR": "パッケージでのエラー",
 			"WF_PROCESSINFO_NOT_FOUND": "プロセスのためのXPDLファイルが見つかりません",
 			"WF_START_ACTIVITY_NOT_FOUND": "プロセス {0} の開始アクティビティが見つかりません",
+			"WF_ACTIVITY_NOT_FOUND": "<em>Process was not congruent, reload the list</em>",
 			"WF_WAPI_CONNECTION_ERROR": "ワークフローサーバに接続できません",
 			"WF_WORKITEM_VARIABLES_REQUIRED": "フィールドに必要: {0}",
 			"WF_WRONG_CREDENTIALS": "ワークフロー使用時の間違った資格情報",

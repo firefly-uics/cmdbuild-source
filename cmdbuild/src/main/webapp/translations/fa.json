@@ -496,6 +496,7 @@
 			"WF_PACKAGE_ERROR": "خطا در بسته",
 			"WF_PROCESSINFO_NOT_FOUND": "XPDL file missing for process",
 			"WF_START_ACTIVITY_NOT_FOUND": "فعالیت آغازین برای پروسه {0} پیدا نشد",
+			"WF_ACTIVITY_NOT_FOUND": "<em>Process was not congruent, reload the list</em>",
 			"WF_WAPI_CONNECTION_ERROR": "Cannot connect to the workflow server",
 			"WF_WORKITEM_VARIABLES_REQUIRED": "Field required: {0}",
 			"WF_WRONG_CREDENTIALS": "Wrong credentials using workflow",

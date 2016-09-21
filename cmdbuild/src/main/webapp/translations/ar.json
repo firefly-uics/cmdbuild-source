@@ -496,6 +496,7 @@
 			"WF_PACKAGE_ERROR": "خطأ في الحزمة",
 			"WF_PROCESSINFO_NOT_FOUND": "ملف الـ XPDL مفقود للآلية",
 			"WF_START_ACTIVITY_NOT_FOUND": "لم أجد نشاط بدء للآلية {0}",
+			"WF_ACTIVITY_NOT_FOUND": "<em>Process was not congruent, reload the list</em>",
 			"WF_WAPI_CONNECTION_ERROR": "لا يمكن الاتصال بخادم آليات العمل",
 			"WF_WORKITEM_VARIABLES_REQUIRED": "حقل مطلوب: {0}",
 			"WF_WRONG_CREDENTIALS": "آلية العمل تستعمل اسم أو كلمة سر خاطئة",

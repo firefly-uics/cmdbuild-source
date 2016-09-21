@@ -496,6 +496,7 @@
 			"WF_PACKAGE_ERROR": "Hiba a csomagban",
 			"WF_PROCESSINFO_NOT_FOUND": "XPDL fájl hiányzik a folyamathoz",
 			"WF_START_ACTIVITY_NOT_FOUND": "A {0} folyamathoz nem tartozik kezdő aktivitás",
+			"WF_ACTIVITY_NOT_FOUND": "<em>Process was not congruent, reload the list</em>",
 			"WF_WAPI_CONNECTION_ERROR": "Nem lehet a workflow serverhez kapcsolódni",
 			"WF_WORKITEM_VARIABLES_REQUIRED": "A következő mező kötelező: {0}",
 			"WF_WRONG_CREDENTIALS": "Hibás azonosító a workflow használata közben",

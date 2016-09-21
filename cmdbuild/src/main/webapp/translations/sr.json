@@ -496,6 +496,7 @@
 			"WF_PACKAGE_ERROR": "Greška u XPDL paketu",
 			"WF_PROCESSINFO_NOT_FOUND": "XPDL datoteka procesa ne postoji.",
 			"WF_START_ACTIVITY_NOT_FOUND": "Nije pronađena početna aktivnost procesa {0}",
+			"WF_ACTIVITY_NOT_FOUND": "<em>Process was not congruent, reload the list</em>",
 			"WF_WAPI_CONNECTION_ERROR": "Nije moguće uspostaviti vezu sa serverom",
 			"WF_WORKITEM_VARIABLES_REQUIRED": "Obavezno polje: {0}",
 			"WF_WRONG_CREDENTIALS": "Nedovoljna prava",

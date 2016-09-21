@@ -496,6 +496,7 @@
 			"WF_PACKAGE_ERROR": "Chyba v balíčku",
 			"WF_PROCESSINFO_NOT_FOUND": "XPDL soubor procesu nebyl nalezen",
 			"WF_START_ACTIVITY_NOT_FOUND": "Nebyl nalezen počáteční krok procesu {0}",
+			"WF_ACTIVITY_NOT_FOUND": "<em>Process was not congruent, reload the list</em>",
 			"WF_WAPI_CONNECTION_ERROR": "Nelze se připojit k procesnímu serveru",
 			"WF_WORKITEM_VARIABLES_REQUIRED": "Povinné pole: {0}",
 			"WF_WRONG_CREDENTIALS": "Chybné přihlašovací údaje pro použití procesního serveru",

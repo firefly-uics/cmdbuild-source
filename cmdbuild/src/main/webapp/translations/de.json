@@ -496,6 +496,7 @@
 			"WF_PACKAGE_ERROR": "Fehler im XPDL Paket",
 			"WF_PROCESSINFO_NOT_FOUND": "XPDL Datei für das Vorgang nicht geladen.",
 			"WF_START_ACTIVITY_NOT_FOUND": "Ich habe keine Anfangsaktivität für den Prozess gefunden {0}",
+			"WF_ACTIVITY_NOT_FOUND": "<em>Process was not congruent, reload the list</em>",
 			"WF_WAPI_CONNECTION_ERROR": "Der Vorgangsserver kann nicht in Verbindung gesetzt werden",
 			"WF_WORKITEM_VARIABLES_REQUIRED": "Mussfeld: {0}",
 			"WF_WRONG_CREDENTIALS": "Falsche Ausstellung von Berechtigungsnachweisen",

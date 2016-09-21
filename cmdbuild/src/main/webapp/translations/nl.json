@@ -496,6 +496,7 @@
 			"WF_PACKAGE_ERROR": "Fout in pakket",
 			"WF_PROCESSINFO_NOT_FOUND": "XPDL bestand ontbreekt voor proces",
 			"WF_START_ACTIVITY_NOT_FOUND": "Er is geen start activiteit gevonden voor het proces {0}",
+			"WF_ACTIVITY_NOT_FOUND": "<em>Process was not congruent, reload the list</em>",
 			"WF_WAPI_CONNECTION_ERROR": "Kan geen verbinding maken met de werkstroom server",
 			"WF_WORKITEM_VARIABLES_REQUIRED": "Veld vereist: {0}",
 			"WF_WRONG_CREDENTIALS": "Verkeerde kredenties voor gebruik werkstroom",

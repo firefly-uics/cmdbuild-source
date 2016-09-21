@@ -496,6 +496,7 @@
 			"WF_PACKAGE_ERROR": "Пакет поврежден",
 			"WF_PROCESSINFO_NOT_FOUND": "XPDL файл для процесса не найден",
 			"WF_START_ACTIVITY_NOT_FOUND": "Для процесса {0} не найдено начальное действие",
+			"WF_ACTIVITY_NOT_FOUND": "<em>Process was not congruent, reload the list</em>",
 			"WF_WAPI_CONNECTION_ERROR": "Ошибка подключения к серверу workflow",
 			"WF_WORKITEM_VARIABLES_REQUIRED": "Требуемое поле: {0}",
 			"WF_WRONG_CREDENTIALS": "Неверные учетные данные",

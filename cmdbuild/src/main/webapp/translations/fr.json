@@ -496,6 +496,7 @@
 			"WF_PACKAGE_ERROR": "Erreur dans le package",
 			"WF_PROCESSINFO_NOT_FOUND": "Fichier XPDL manquant pour le processus",
 			"WF_START_ACTIVITY_NOT_FOUND": "Activité de démarrage pour le processus {0} introuvable",
+			"WF_ACTIVITY_NOT_FOUND": "<em>Process was not congruent, reload the list</em>",
 			"WF_WAPI_CONNECTION_ERROR": "Impossible de se connecter au serveur de processus",
 			"WF_WORKITEM_VARIABLES_REQUIRED": "Champ obligatoire: {0}",
 			"WF_WRONG_CREDENTIALS": "Mauvais identifiant/mot de passe pour utiliser le processus",

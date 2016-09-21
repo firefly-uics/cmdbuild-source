@@ -496,6 +496,7 @@
 			"WF_PACKAGE_ERROR": "包中有错误",
 			"WF_PROCESSINFO_NOT_FOUND": "进程的XPDL文件丢失",
 			"WF_START_ACTIVITY_NOT_FOUND": "我未发现进程{0}的开始活动",
+			"WF_ACTIVITY_NOT_FOUND": "<em>Process was not congruent, reload the list</em>",
 			"WF_WAPI_CONNECTION_ERROR": "不能连接工作流服务器",
 			"WF_WORKITEM_VARIABLES_REQUIRED": "所需的字段: {0}",
 			"WF_WRONG_CREDENTIALS": "使用的工作流证书错误",

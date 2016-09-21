@@ -496,6 +496,7 @@
 			"WF_PACKAGE_ERROR": "Erro no pacote",
 			"WF_PROCESSINFO_NOT_FOUND": "Arquivo XPDL faltando para o processo",
 			"WF_START_ACTIVITY_NOT_FOUND": "<em>I have not found a start activity for process {0}</em>",
+			"WF_ACTIVITY_NOT_FOUND": "<em>Process was not congruent, reload the list</em>",
 			"WF_WAPI_CONNECTION_ERROR": "Não é possível se conectar ao servidor de WorkFlow",
 			"WF_WORKITEM_VARIABLES_REQUIRED": "Campo Obrigatório: {0}",
 			"WF_WRONG_CREDENTIALS": "Credenciais Incorretas na utilização do workflow",

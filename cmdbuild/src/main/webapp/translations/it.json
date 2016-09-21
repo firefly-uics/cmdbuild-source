@@ -496,6 +496,7 @@
 			"WF_PACKAGE_ERROR": "Errore nel package XPDL",
 			"WF_PROCESSINFO_NOT_FOUND": "File XPDL non caricato per il processo.",
 			"WF_START_ACTIVITY_NOT_FOUND": "Non ho trovato un'attività di avvio per il processo {0}",
+			"WF_ACTIVITY_NOT_FOUND": "Stato processo non congruente, ricarica la lista",
 			"WF_WAPI_CONNECTION_ERROR": "Impossibile contattare il server dei processi",
 			"WF_WORKITEM_VARIABLES_REQUIRED": "Campo obbligatorio: {0}",
 			"WF_WRONG_CREDENTIALS": "Credenziali sbagliate",
