@@ -1,15 +1,27 @@
 (function() {
-
+//this object is wrong: the colorsTable must be a member here.
 	Ext.define('CMDBuild.view.management.classes.map.thematism.ThematicColors', {
 		getColor : function(value, colorsTable, index) {
 			var color = getColorFromTable(value, colorsTable);
 			if (color) {
-				return color;
+				return genericToRgba(color);
 			}
-			return "#" + colors[parseInt(index % 8) * 8 + (index % 8)];
-		}
+			var exa = colors[parseInt(index % 8) * 8 + (index % 8)];
+			return toRgba(exa);
+		},
+		tableToExa : function(colorsTable) {
+			for (var i = 0; i < colorsTable.length; i++) {
+				for (var j = 0; j < colorsTable[i].cards.length; j++) {
+					colorsTable[i].color = genericToRgba(colorsTable[i].color);
+				}
+			}
+			return colorsTable;
+		},
 	});
-
+	function genericToRgba(color) {
+		return (color.substr(0, 1) === "#") ? toRgba(color.substr(1)) : color;
+	
+	}
 	function getColorFromTable(value, colorsTable) {
 		for (var i = 0; colorsTable && i < colorsTable.length; i++) {
 			if (colorsTable[i].value === value || parseInt(colorsTable[i].value) === parseInt(value)) {
@@ -18,10 +30,11 @@
 		}
 		return null;
 	}
-	function sameValue(first, second) {
-		return (first === second || (first === "true" && second === true) || (first === "false" && second === false)
-				|| (first === "null" && second === null) || (first === null && second === "null") || parseInt(first) === parseInt(second));
-
+	function toRgba(exa) {
+			var r = parseInt(exa.substr(0, 2), 16);
+			var g = parseInt(exa.substr(2, 2), 16);
+			var b = parseInt(exa.substr(4, 2), 16);
+			return "rgba(" + r + ", " + g + "," + b + "," + .7 + ")";
 	}
 	var colors = [ '000000', '444444', '666666', '999999', 'CCCCCC', 'EEEEEE', 'F3F3F3', 'FFFFFF', 'FF0000', 'FF9900',
 			'FFFF00', '00FF00', '00FFFF', '0000FF', '9900FF', 'FF00FF', 'F4CCCC', 'FCE5CD', 'FFF2CC', 'D9EAD3',
