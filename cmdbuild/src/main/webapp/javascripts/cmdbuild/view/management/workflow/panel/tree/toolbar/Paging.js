@@ -26,7 +26,7 @@
 		 * @override
 		 */
 		customLoadMethod: function (page) {
-			return this.delegate.cmfg('panelGridAndFormGridStoreLoad', {
+			return this.delegate.cmfg('workflowTreeStoreLoad', {
 				page: page,
 				params: this.store.getProxy().extraParams
 			});
