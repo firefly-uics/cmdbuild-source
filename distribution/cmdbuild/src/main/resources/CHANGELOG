@@ -104,6 +104,8 @@ FIXES
 
  * When updating an activity of a process instance and the activity is not found an unclear error is returned
 
+ * DataViews from filter clear filter fixes
+
 
 
 
