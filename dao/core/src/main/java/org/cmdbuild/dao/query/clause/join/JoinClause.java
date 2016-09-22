@@ -113,7 +113,7 @@ public class JoinClause {
 					.filter(domain(disabled1(), not(contains(source.getName()))))) {
 				addQueryDomain(new QueryDomain(domain, Source._1));
 				final Collection<CMClass> _disabled = newHashSet();
-				domain.getDisabled1().forEach(input -> {
+				domain.getDisabled2().forEach(input -> {
 					_disabled.add(viewForBuild.findClass(input));
 				});
 				disabled.put(domain, _disabled);
@@ -123,7 +123,7 @@ public class JoinClause {
 					.filter(domain(disabled2(), not(contains(source.getName()))))) {
 				addQueryDomain(new QueryDomain(domain, Source._2));
 				final Collection<CMClass> _disabled = newHashSet();
-				domain.getDisabled2().forEach(input -> {
+				domain.getDisabled1().forEach(input -> {
 					_disabled.add(viewForBuild.findClass(input));
 				});				
 				disabled.put(domain, _disabled);
