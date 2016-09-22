@@ -632,13 +632,11 @@
 			},
 
 			/**
-			 * @param {String} name
-			 *
 			 * @returns {Boolean}
 			 *
 			 * @private
 			 */
-			widgetNavigationTreeBufferClassesReset: function (name) {
+			widgetNavigationTreeBufferClassesReset: function () {
 				this.bufferClasses = {
 					byId: {},
 					byName: {}
