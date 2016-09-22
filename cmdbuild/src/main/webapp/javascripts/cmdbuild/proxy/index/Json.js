@@ -85,9 +85,12 @@
 			update: 'services/json/schema/modclass/savetable', // TODO: waiting for refactor (crud)
 			remove: 'services/json/schema/modclass/deletetable',
 
-			readAll: 'services/json/schema/modclass/getallclasses',
+			readAll: 'services/json/schema/modclass/readall',
+			readById: 'services/json/schema/modclass/readbyid',
+			readByName: 'services/json/schema/modclass/readbyname',
 
-			foreignKeyTargetClass: 'services/json/schema/modclass/getfktargetingclass'
+			foreignKeyTargetClass: 'services/json/schema/modclass/getfktargetingclass',
+			getAll: 'services/json/schema/modclass/getallclasses' /** @deprecated */
 		},
 
 		configuration: {
@@ -656,12 +659,15 @@
 
 		workflow: {
 			create: 'services/json/schema/modclass/savetable', // TODO: waiting for refactor (crud)
-			read: 'services/json/schema/modclass/getallclasses', // TODO: waiting for refactor (crud)
+			read: 'services/json/schema/modclass/getallclasses', /** @deprecated */
 			update: 'services/json/schema/modclass/savetable', // TODO: waiting for refactor (crud)
 			remove: 'services/json/schema/modclass/deletetable', // TODO: waiting for refactor (crud)
 
-			readAll: 'services/json/schema/modclass/getallclasses', // TODO: waiting for refactor (crud)
+			readAll: 'services/json/workflow/readall',
+			readById: 'services/json/workflow/readbyid',
+			readByName: 'services/json/workflow/readbyname',
 
+			getAll: 'services/json/schema/modclass/getallclasses', /** @deprecated */
 			getPosition: 'services/json/workflow/getposition',
 			isProcessUpdated: 'services/json/workflow/isprocessupdated',
 			synchronize: 'services/json/workflow/sync',

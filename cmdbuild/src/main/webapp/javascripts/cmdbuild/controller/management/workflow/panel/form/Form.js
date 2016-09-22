@@ -276,52 +276,30 @@
 		 *
 		 * @returns {Void}
 		 */
-		onWorkflowFormWokflowSelect: function (node) {
+		onWorkflowFormWokflowSelect: function (node) { // TODO: useless just get from module workflow cache
 			this.cmfg('workflowFormReset');
 
-			var params = {};
-			params[CMDBuild.core.constants.Proxy.ACTIVE] = true;
+			var danglingCard = CMDBuild.global.controller.MainViewport.cmfg('mainViewportDanglingCardGet');
 
-			CMDBuild.proxy.management.workflow.Workflow.read({
-				params: params,
-				scope: this,
-				success: function (response, options, decodedResponse) {
-					decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.CLASSES];
+			_CMWFState.setProcessClassRef(
+				Ext.create('CMDBuild.cache.CMEntryTypeModel', this.cmfg('workflowSelectedWorkflowGet', 'rawData')),
+				danglingCard,
+				false,
+				node.get(CMDBuild.core.constants.Proxy.FILTER)
+			);
 
-					var danglingCard = CMDBuild.global.controller.MainViewport.cmfg('mainViewportDanglingCardGet'),
-						id = node.get(CMDBuild.core.constants.Proxy.ENTITY_ID);
-
-					if (Ext.isArray(decodedResponse) && !Ext.isEmpty(decodedResponse)) {
-						var selectedWorkflow = Ext.Array.findBy(decodedResponse, function (workflowObject, i) {
-							return id == workflowObject[CMDBuild.core.constants.Proxy.ID];
-						}, this);
-
-						if (Ext.isObject(selectedWorkflow) && !Ext.Object.isEmpty(selectedWorkflow)) {
-							_CMWFState.setProcessClassRef(
-								Ext.create('CMDBuild.cache.CMEntryTypeModel', selectedWorkflow),
-								danglingCard,
-								false,
-								node.get(CMDBuild.core.constants.Proxy.FILTER)
-							);
-
-							// Manage tab selection
-							if (Ext.isEmpty(this.tabPanel.getActiveTab()))
-								if (
-									Ext.isObject(danglingCard) && !Ext.Object.isEmpty(danglingCard)
-									&& !Ext.isBoolean(danglingCard.activateFirstTab)
-								) {
-									this.tabPanel.setActiveTab(danglingCard.activateFirstTab)
-								} else {
-									this.tabPanel.setActiveTab(0);
-								}
-
-							this.tabPanel.getActiveTab().fireEvent('show'); // Manual show event fire because was already selected
-						} else {
-							_error('readWorkflowData(): workflow not found', this, id);
-						}
-					}
+			// Manage tab selection
+			if (Ext.isEmpty(this.tabPanel.getActiveTab()))
+				if (
+					Ext.isObject(danglingCard) && !Ext.Object.isEmpty(danglingCard)
+					&& !Ext.isBoolean(danglingCard.activateFirstTab)
+				) {
+					this.tabPanel.setActiveTab(danglingCard.activateFirstTab)
+				} else {
+					this.tabPanel.setActiveTab(0);
 				}
-			});
+
+			this.tabPanel.getActiveTab().fireEvent('show'); // Manual show event fire because was already selected
 		},
 
 		/**

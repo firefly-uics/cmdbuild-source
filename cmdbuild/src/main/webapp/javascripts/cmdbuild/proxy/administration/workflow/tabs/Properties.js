@@ -20,7 +20,7 @@
 				model: 'CMDBuild.model.administration.workflow.tabs.properties.Parent',
 				proxy: {
 					type: 'ajax',
-					url: CMDBuild.proxy.index.Json.classes.readAll,
+					url: CMDBuild.proxy.index.Json.classes.getAll,
 					reader: {
 						type: 'json',
 						root: CMDBuild.core.constants.Proxy.CLASSES
