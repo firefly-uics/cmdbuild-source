@@ -1,6 +1,6 @@
 (function () {
 
-	Ext.define('CMDBuild.proxy.classes.tabs.Properties', {
+	Ext.define('CMDBuild.proxy.administration.classes.tabs.Properties', {
 
 		requires: [
 			'CMDBuild.core.constants.Global',
@@ -20,10 +20,10 @@
 				model: 'CMDBuild.model.classes.tabs.properties.Parent',
 				proxy: {
 					type: 'ajax',
-					url: CMDBuild.proxy.index.Json.classes.getAll,
+					url: CMDBuild.proxy.index.Json.classes.readAll,
 					reader: {
 						type: 'json',
-						root: CMDBuild.core.constants.Proxy.CLASSES
+						root: CMDBuild.core.constants.Proxy.RESPONSE
 					},
 					extraParams: {
 						limitParam: undefined,
@@ -32,11 +32,8 @@
 					}
 				},
 				filters: [
-					function (record) { // Filters processes and all non superclass classes
-						return (
-							record.get(CMDBuild.core.constants.Proxy.TYPE) == CMDBuild.core.constants.Global.getTableTypeClass()
-							&& record.get('superclass')
-						);
+					function (record) { // Filters all non superclass classes
+						return record.get('superclass');
 					}
 				],
 				sorters: [

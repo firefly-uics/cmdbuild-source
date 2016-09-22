@@ -11,7 +11,7 @@
 			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.CookiesManager',
 			'CMDBuild.core.Splash',
-			'CMDBuild.proxy.classes.Classes',
+			'CMDBuild.proxy.core.Management',
 			'CMDBuild.proxy.dashboard.Dashboard',
 			'CMDBuild.proxy.domain.Domain',
 			'CMDBuild.proxy.lookup.Type',
@@ -49,14 +49,14 @@
 			});
 
 			/**
-			 * Class and process
+			 * Entry types
 			 */
 			params = {};
 			params[CMDBuild.core.constants.Proxy.ACTIVE] = true;
 
 			var readAllClassesCallback = requestBarrier.getCallback('managementBuildCacheBarrier'); // Avoid to getCallback too late
 
-			CMDBuild.proxy.classes.Classes.readAll({
+			CMDBuild.proxy.core.Management.readAllEntryTypes({
 				params: params,
 				loadMask: false,
 				scope: this,

@@ -1,6 +1,6 @@
 (function () {
 
-	Ext.define('CMDBuild.proxy.classes.tabs.History', {
+	Ext.define('CMDBuild.proxy.management.classes.tabs.History', {
 
 		requires: [
 			'CMDBuild.core.constants.Proxy',

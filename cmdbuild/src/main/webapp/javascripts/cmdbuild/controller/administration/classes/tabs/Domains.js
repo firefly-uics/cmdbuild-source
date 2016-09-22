@@ -10,7 +10,7 @@
 			'CMDBuild.core.constants.Global',
 			'CMDBuild.core.constants.ModuleIdentifiers',
 			'CMDBuild.core.constants.Proxy',
-			'CMDBuild.proxy.classes.tabs.Domains'
+			'CMDBuild.proxy.administration.classes.tabs.Domains'
 		],
 
 		/**
@@ -261,7 +261,7 @@
 				var params = {};
 				params[CMDBuild.core.constants.Proxy.ACTIVE] = true;
 
-				CMDBuild.proxy.classes.tabs.Domains.readAllClasses({
+				CMDBuild.proxy.administration.classes.tabs.Domains.readAllEntryTypes({
 					params: params,
 					scope: this,
 					success: function (response, options, decodedResponse) {
@@ -304,7 +304,7 @@
 				var params = {};
 				params[CMDBuild.core.constants.Proxy.DOMAIN_NAME] = this.selectedDomainGet(CMDBuild.core.constants.Proxy.NAME);
 
-				CMDBuild.proxy.classes.tabs.Domains.remove({
+				CMDBuild.proxy.administration.classes.tabs.Domains.remove({
 					params: params,
 					scope: this,
 					success: function (response, options, decodedResponse) {

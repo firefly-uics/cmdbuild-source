@@ -7,6 +7,7 @@
 
 	Ext.require([
 		'CMDBuild.core.Message',
+		'CMDBuild.proxy.administration.classes.tabs.Attributes',
 		'CMDBuild.proxy.common.tabs.attribute.Attribute',
 		'CMDBuild.proxy.common.tabs.attribute.Order',
 		'CMDBuild.view.common.field.translatable.Utils'
@@ -90,7 +91,7 @@
 			var params = {};
 			params[CMDBuild.core.constants.Proxy.ACTIVE] = false;
 
-			CMDBuild.proxy.classes.Classes.readAll({ // Read all classes to refresh cache state (waiting for refactor)
+			CMDBuild.proxy.administration.classes.tabs.Attributes.readAllEntryTypes({ // Read all classes to refresh cache state (waiting for refactor)
 				params: params,
 				loadMask: false,
 				scope: this,

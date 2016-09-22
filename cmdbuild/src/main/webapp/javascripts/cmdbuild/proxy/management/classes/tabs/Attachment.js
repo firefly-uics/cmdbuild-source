@@ -1,9 +1,6 @@
 (function () {
 
-	/**
-	 * @management
-	 */
-	Ext.define('CMDBuild.proxy.classes.tabs.Attachment', {
+	Ext.define('CMDBuild.proxy.management.classes.tabs.Attachment', {
 
 		requires: [
 			'CMDBuild.core.constants.Proxy',

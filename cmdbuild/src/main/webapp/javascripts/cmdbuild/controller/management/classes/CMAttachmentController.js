@@ -7,7 +7,7 @@
 		'CMDBuild.core.constants.Proxy',
 		'CMDBuild.core.interfaces.messages.Error',
 		'CMDBuild.core.Message',
-		'CMDBuild.proxy.classes.tabs.Attachment',
+		'CMDBuild.proxy.management.classes.tabs.Attachment',
 		'CMDBuild.proxy.index.Json'
 	]);
 
@@ -130,7 +130,7 @@
 			params[CMDBuild.core.constants.Proxy.CARD_ID] = this.getCardId();
 			params[CMDBuild.core.constants.Proxy.CLASS_NAME] = _CMCache.getEntryTypeNameById(this.getClassId());
 
-			CMDBuild.proxy.classes.tabs.Attachment.download({ params: params });
+			CMDBuild.proxy.management.classes.tabs.Attachment.download({ params: params });
 		},
 
 		onAddAttachmentButtonClick: function() {
@@ -245,7 +245,7 @@
 		params[CMDBuild.core.constants.Proxy.CARD_ID] = me.getCardId();
 
 		CMDBuild.core.LoadMask.show();
-		CMDBuild.proxy.classes.tabs.Attachment.remove({
+		CMDBuild.proxy.management.classes.tabs.Attachment.remove({
 			params: params,
 			loadMask: false,
 			scope: this,
@@ -288,7 +288,7 @@
 			var form = attachmentWindow.form.getForm();
 			var me = this;
 
-			CMDBuild.proxy.classes.tabs.Attachment.confirm({
+			CMDBuild.proxy.management.classes.tabs.Attachment.confirm({
 				form: form,
 				params: me.forgeRequestParams(attachmentWindow),
 				url: me.url,

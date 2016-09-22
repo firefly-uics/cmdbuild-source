@@ -2,7 +2,7 @@
 
 	Ext.require([
 		'CMDBuild.proxy.Card',
-		'CMDBuild.proxy.classes.tabs.Note'
+		'CMDBuild.proxy.management.classes.tabs.Note'
 	]);
 
 	Ext.define("CMDBuild.controller.management.classes.CMNoteController", {
@@ -66,7 +66,7 @@
 			var params = this._getSaveParams();
 
 			if (this.view.getForm().isValid() && this.beforeSave(this.card)) {
-				CMDBuild.proxy.classes.tabs.Note.update({
+				CMDBuild.proxy.management.classes.tabs.Note.update({
 					params: params,
 					scope: this,
 					success: function (response, options, decodedResponse) {

@@ -9,7 +9,8 @@
 		requires: [
 			'CMDBuild.core.constants.Global',
 			'CMDBuild.core.constants.Proxy',
-			'CMDBuild.core.Message'
+			'CMDBuild.core.Message',
+			'CMDBuild.proxy.administration.classes.Classes'
 		],
 
 		mixins: ['CMDBuild.controller.administration.classes.tabs.Icons'], // FIXME: Waiting for a future full implementation as separate tab
@@ -213,13 +214,13 @@
 				if (Ext.isEmpty(formDataModel.get(CMDBuild.core.constants.Proxy.ID))) {
 					params[CMDBuild.core.constants.Proxy.FORCE_CREATION] = true;
 
-					CMDBuild.proxy.classes.Classes.create({
+					CMDBuild.proxy.administration.classes.Classes.create({
 						params: params,
 						scope: this,
 						success: this.success
 					});
 				} else {
-					CMDBuild.proxy.classes.Classes.update({
+					CMDBuild.proxy.administration.classes.Classes.update({
 						params: params,
 						scope: this,
 						success: this.success
@@ -260,7 +261,7 @@
 				var params = {};
 				params[CMDBuild.core.constants.Proxy.CLASS_NAME] = this.cmfg('classesSelectedClassGet', CMDBuild.core.constants.Proxy.NAME);
 
-				CMDBuild.proxy.classes.Classes.remove({
+				CMDBuild.proxy.administration.classes.Classes.remove({
 					params: params,
 					scope: this,
 					success: function (response, options, decodedResponse) {

@@ -1,6 +1,6 @@
 (function () {
 
-	Ext.define('CMDBuild.proxy.classes.tabs.Note', {
+	Ext.define('CMDBuild.proxy.core.Administration', {
 
 		requires: [
 			'CMDBuild.core.constants.Proxy',
@@ -13,15 +13,13 @@
 		 * @param {Object} parameters
 		 *
 		 * @returns {Void}
-		 *
-		 * @management
 		 */
-		update: function (parameters) {
+		readAllEntryTypes: function (parameters) {
 			parameters = Ext.isEmpty(parameters) ? {} : parameters;
 
-			Ext.apply(parameters, { url: CMDBuild.proxy.index.Json.card.update });
+			Ext.apply(parameters, { url: CMDBuild.proxy.index.Json.entryType.readAll });
 
-			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.CLASS, parameters, true);
+			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.ENTRY_TYPE, parameters);
 		}
 	});
 

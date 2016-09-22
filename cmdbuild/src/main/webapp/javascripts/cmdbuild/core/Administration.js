@@ -10,7 +10,7 @@
 			'CMDBuild.core.constants.ModuleIdentifiers',
 			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.CookiesManager',
-			'CMDBuild.proxy.classes.Classes',
+			'CMDBuild.proxy.core.Administration',
 			'CMDBuild.proxy.dashboard.Dashboard',
 			'CMDBuild.proxy.domain.Domain',
 			'CMDBuild.proxy.lookup.Type',
@@ -49,12 +49,12 @@
 			});
 
 			/**
-			 * Class and process
+			 * Entry types
 			 */
 			params = {};
 			params[CMDBuild.core.constants.Proxy.ACTIVE] = false;
 
-			CMDBuild.proxy.classes.Classes.readAll({
+			CMDBuild.proxy.core.Administration.readAllEntryTypes({
 				params: params,
 				loadMask: false,
 				scope: this,
