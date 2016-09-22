@@ -42,23 +42,10 @@
 		 *
 		 * @returns {Void}
 		 */
-		read: function (parameters) {
-			parameters = Ext.isEmpty(parameters) ? {} : parameters;
-
-			Ext.apply(parameters, { url: CMDBuild.proxy.index.Json.workflow.read });
-
-			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.WORKFLOW, parameters);
-		},
-
-		/**
-		 * @param {Object} parameters
-		 *
-		 * @returns {Void}
-		 */
 		readAll: function (parameters) {
 			parameters = Ext.isEmpty(parameters) ? {} : parameters;
 
-			Ext.apply(parameters, { url: CMDBuild.proxy.index.Json.workflow.getAll });
+			Ext.apply(parameters, { url: CMDBuild.proxy.index.Json.workflow.readAll });
 
 			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.WORKFLOW, parameters);
 		},
@@ -68,12 +55,12 @@
 		 *
 		 * @returns {Void}
 		 */
-		readAllClasses: function (parameters) {
+		readById: function (parameters) {
 			parameters = Ext.isEmpty(parameters) ? {} : parameters;
 
-			Ext.apply(parameters, { url: CMDBuild.proxy.index.Json.classes.getAll });
+			Ext.apply(parameters, { url: CMDBuild.proxy.index.Json.workflow.readById });
 
-			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.CLASS, parameters);
+			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.WORKFLOW, parameters);
 		},
 
 		/**
