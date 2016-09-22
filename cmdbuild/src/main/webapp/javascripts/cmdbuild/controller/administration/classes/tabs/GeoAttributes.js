@@ -5,7 +5,7 @@
 
 		requires: [
 			'CMDBuild.core.constants.Proxy',
-			'CMDBuild.proxy.classes.tabs.GeoAttributes'
+			'CMDBuild.proxy.administration.classes.tabs.GeoAttributes'
 		],
 
 		/**
@@ -232,23 +232,29 @@
 		 */
 		onClassesTabGeoAttributesRowSelected: function () {
 			if (this.grid.getSelectionModel().hasSelection()) {
-				CMDBuild.proxy.classes.tabs.GeoAttributes.read({
+				CMDBuild.proxy.administration.classes.tabs.GeoAttributes.read({
 					scope: this,
 					success: function (response, options, decodedResponse) {
 						decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.LAYERS];
 
 						if (Ext.isArray(decodedResponse) && !Ext.isEmpty(decodedResponse)) {
-							var layerObject = Ext.Array.findBy(decodedResponse, function (layer, index) {
-								return layer[CMDBuild.core.constants.Proxy.NAME] == this.grid.getSelectionModel().getSelection()[0].get(CMDBuild.core.constants.Proxy.NAME);
+							var selectedRecord = this.grid.getSelectionModel().getSelection()[0],
+								layerObject = Ext.Array.findBy(decodedResponse, function (layer, index) {
+								return (
+									layer[CMDBuild.core.constants.Proxy.MASTER_TABLE_NAME] == selectedRecord.get(CMDBuild.core.constants.Proxy.MASTER_TABLE_NAME)
+									&& layer[CMDBuild.core.constants.Proxy.NAME] == selectedRecord.get(CMDBuild.core.constants.Proxy.NAME)
+								);
 							}, this);
 
-							if (!Ext.isEmpty(layerObject)) {
+							if (Ext.isObject(layerObject) && !Ext.Object.isEmpty(layerObject)) {
 								this.classesTabGeoAttributesSelectedAttributeSet({ value: layerObject });
 
 								this.form.loadRecord(this.classesTabGeoAttributesSelectedAttributeGet());
 								this.form.loadRecord(this.classesTabGeoAttributesSelectedAttributeGet(CMDBuild.core.constants.Proxy.STYLE)); // Load style data
 
 								this.form.setDisabledModify(true, true);
+							} else {
+								_error('onClassesTabGeoAttributesRowSelected(): layer not found', this, this.grid.getSelectionModel().getSelection()[0].get(CMDBuild.core.constants.Proxy.NAME));
 							}
 						}
 					}
@@ -283,13 +289,13 @@
 				if (this.classesTabGeoAttributesSelectedAttributeIsEmpty()) {
 					params[CMDBuild.core.constants.Proxy.FORCE_CREATION] = true;
 
-					CMDBuild.proxy.classes.tabs.GeoAttributes.create({
+					CMDBuild.proxy.administration.classes.tabs.GeoAttributes.create({
 						params: params,
 						scope: this,
 						success: this.success
 					});
 				} else {
-					CMDBuild.proxy.classes.tabs.GeoAttributes.update({
+					CMDBuild.proxy.administration.classes.tabs.GeoAttributes.update({
 						params: params,
 						scope: this,
 						success: this.success
@@ -351,7 +357,7 @@
 				params[CMDBuild.core.constants.Proxy.MASTER_TABLE_NAME] = this.classesTabGeoAttributesSelectedAttributeGet(CMDBuild.core.constants.Proxy.MASTER_TABLE_NAME);
 				params[CMDBuild.core.constants.Proxy.NAME] = this.classesTabGeoAttributesSelectedAttributeGet(CMDBuild.core.constants.Proxy.NAME);
 
-				CMDBuild.proxy.classes.tabs.GeoAttributes.remove({
+				CMDBuild.proxy.administration.classes.tabs.GeoAttributes.remove({
 					params: params,
 					scope: this,
 					success: function (response, options, decodedResponse) {

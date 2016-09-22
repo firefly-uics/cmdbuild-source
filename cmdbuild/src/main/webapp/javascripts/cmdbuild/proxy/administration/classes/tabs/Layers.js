@@ -1,6 +1,6 @@
 (function () {
 
-	Ext.define('CMDBuild.proxy.classes.tabs.Layers', {
+	Ext.define('CMDBuild.proxy.administration.classes.tabs.Layers', {
 
 		requires: [
 			'CMDBuild.core.constants.Proxy',

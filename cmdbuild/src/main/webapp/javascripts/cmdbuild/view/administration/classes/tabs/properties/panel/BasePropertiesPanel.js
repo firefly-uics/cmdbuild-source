@@ -6,7 +6,7 @@
 		requires: [
 			'CMDBuild.core.constants.FieldWidths',
 			'CMDBuild.core.constants.Proxy',
-			'CMDBuild.proxy.classes.tabs.Properties'
+			'CMDBuild.proxy.administration.classes.tabs.Properties'
 		],
 
 		mixins: ['CMDBuild.view.common.PanelFunctions'],
@@ -95,7 +95,7 @@
 						disableEnableFunctions: true,
 						editable: false,
 
-						store: CMDBuild.proxy.classes.tabs.Properties.getStoreType(),
+						store: CMDBuild.proxy.administration.classes.tabs.Properties.getStoreType(),
 						queryMode: 'local',
 
 						listeners: {
@@ -118,7 +118,7 @@
 						disableEnableFunctions: true,
 						editable: false,
 
-						store: CMDBuild.proxy.classes.tabs.Properties.getStoreSuperClasses(),
+						store: CMDBuild.proxy.administration.classes.tabs.Properties.getStoreSuperClasses(),
 						queryMode: 'local'
 					}),
 					this.isSuperClassField = Ext.create('Ext.form.field.Checkbox',{

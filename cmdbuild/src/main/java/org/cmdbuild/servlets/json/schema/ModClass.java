@@ -181,7 +181,7 @@ public class ModClass extends JSONBaseWithSpringContext {
 	}
 
 	@JSONExported
-	public JSONObject readAllClasses( //
+	public JSONObject readAll( //
 			@Parameter(value = ACTIVE, required = false) final boolean activeOnly //
 	) throws JSONException, AuthException, CMWorkflowException {
 		final Iterable<? extends CMClass> classesToBeReturned = userDataAccessLogic().findClasses(activeOnly);

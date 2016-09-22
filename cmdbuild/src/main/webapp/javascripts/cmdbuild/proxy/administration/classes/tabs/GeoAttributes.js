@@ -1,6 +1,6 @@
 (function () {
 
-	Ext.define('CMDBuild.proxy.classes.tabs.GeoAttributes', {
+	Ext.define('CMDBuild.proxy.administration.classes.tabs.GeoAttributes', {
 
 		requires: [
 			'CMDBuild.core.constants.Proxy',

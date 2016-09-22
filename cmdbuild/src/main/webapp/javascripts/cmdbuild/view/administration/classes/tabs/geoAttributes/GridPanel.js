@@ -5,7 +5,7 @@
 
 		requires: [
 			'CMDBuild.core.constants.Proxy',
-			'CMDBuild.proxy.classes.tabs.GeoAttributes'
+			'CMDBuild.proxy.administration.classes.tabs.GeoAttributes'
 		],
 
 		/**
@@ -42,7 +42,7 @@
 						flex: 1
 					}
 				],
-				store: CMDBuild.proxy.classes.tabs.GeoAttributes.getStore()
+				store: CMDBuild.proxy.administration.classes.tabs.GeoAttributes.getStore()
 			});
 
 			this.callParent(arguments);

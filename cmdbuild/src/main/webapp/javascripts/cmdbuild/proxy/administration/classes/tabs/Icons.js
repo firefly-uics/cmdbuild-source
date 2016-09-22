@@ -5,7 +5,7 @@
 	 *
 	 * FIXME: Waiting for a future full implementation as separate tab
 	 */
-	Ext.define('CMDBuild.proxy.classes.tabs.Icons', {
+	Ext.define('CMDBuild.proxy.administration.classes.tabs.Icons', {
 
 		requires: [
 			'CMDBuild.core.constants.Proxy',
