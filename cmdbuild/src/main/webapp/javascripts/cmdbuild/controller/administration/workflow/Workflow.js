@@ -137,37 +137,31 @@
 
 			if (Ext.isObject(node) && !Ext.Object.isEmpty(node)) {
 				var params = {};
-				params[CMDBuild.core.constants.Proxy.ACTIVE] = false;
+				params[CMDBuild.core.constants.Proxy.ID] = node.get(CMDBuild.core.constants.Proxy.ENTITY_ID);
 
-				CMDBuild.proxy.administration.workflow.Workflow.read({
+				CMDBuild.proxy.administration.workflow.Workflow.readById({
 					params: params,
 					scope: this,
 					success: function (response, options, decodedResponse) {
-						decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.CLASSES];
+						decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.RESPONSE];
 
-						if (Ext.isArray(decodedResponse) && !Ext.isEmpty(decodedResponse)) {
-							var selectedWorkflow = Ext.Array.findBy(decodedResponse, function (workflowObject, i) {
-								return node.get(CMDBuild.core.constants.Proxy.ENTITY_ID) == workflowObject[CMDBuild.core.constants.Proxy.ID];
-							}, this);
+						if (Ext.isObject(decodedResponse) && !Ext.Object.isEmpty(decodedResponse)) {
+							this.workflowSelectedWorkflowSet({ value: decodedResponse });
 
-							if (Ext.isObject(selectedWorkflow) && !Ext.Object.isEmpty(selectedWorkflow)) {
-								this.workflowSelectedWorkflowSet({ value: selectedWorkflow });
+							this.setViewTitle(this.cmfg('workflowSelectedWorkflowGet', CMDBuild.core.constants.Proxy.DESCRIPTION));
 
-								this.setViewTitle(this.cmfg('workflowSelectedWorkflowGet', CMDBuild.core.constants.Proxy.DESCRIPTION));
-							} else {
-								_error('onWorkflowModuleInit(): workflow not found', this, node.get(CMDBuild.core.constants.Proxy.ENTITY_ID));
-							}
+							this.cmfg('onWorkflowWokflowSelected');
+
+							// Manage tab selection
+							if (Ext.isEmpty(this.tabPanel.getActiveTab()))
+								this.tabPanel.setActiveTab(0);
+
+							this.tabPanel.getActiveTab().fireEvent('show'); // Manual show event fire because was already selected
+
+							this.onModuleInit(node); // Custom callParent() implementation
+						} else {
+							_error('onWorkflowModuleInit(): unmanaged response', this, decodedResponse);
 						}
-
-						this.cmfg('onWorkflowWokflowSelected');
-
-						// Manage tab selection
-						if (Ext.isEmpty(this.tabPanel.getActiveTab()))
-							this.tabPanel.setActiveTab(0);
-
-						this.tabPanel.getActiveTab().fireEvent('show'); // Manual show event fire because was already selected
-
-						this.onModuleInit(node); // Custom callParent() implementation
 					}
 				});
 			} else {
