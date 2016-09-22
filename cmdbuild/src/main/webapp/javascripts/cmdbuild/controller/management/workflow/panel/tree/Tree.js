@@ -43,8 +43,8 @@
 			'workflowTreeFilterClear = panelGridAndFormGridFilterClear',
 			'workflowTreeRendererTreeColumn',
 			'workflowTreeReset',
-			'workflowTreeStoreGet = panelGridAndFormGridStoreGet',
-			'workflowTreeStoreLoad = panelGridAndFormGridStoreLoad',
+			'workflowTreeStoreGet',
+			'workflowTreeStoreLoad',
 			'workflowTreeToolbarTopStatusValueSet -> controllerToolbarTop'
 		],
 
@@ -1090,8 +1090,6 @@
 					return _error('workflowTreeStoreLoad(): selected workflow object empty', this, this.cmfg('workflowSelectedWorkflowGet'));
 			// END: Error handling
 
-			var sorters = this.cmfg('workflowTreeStoreGet').getSorters();
-
 			// Manage callback
 			if (!parameters.disableFirstRowSelection)
 				parameters.callback = Ext.isEmpty(parameters.callback) ? this.selectFirst : parameters.callback;
@@ -1105,9 +1103,6 @@
 
 			if (!this.workflowTreeAppliedFilterIsEmpty())
 				params[CMDBuild.core.constants.Proxy.FILTER] = Ext.encode(this.cmfg('workflowTreeAppliedFilterGet', CMDBuild.core.constants.Proxy.CONFIGURATION));
-
-			if (Ext.isArray(sorters) && !Ext.isEmpty(sorters))
-				params[CMDBuild.core.constants.Proxy.SORT] = Ext.encode(sorters);
 
 			this.storeExtraParamsSet(params); // Setup extraParams to work also with sorters and print report
 
