@@ -32,6 +32,8 @@
 				var filter = entryType.get(CMDBuild.core.constants.Proxy.FILTER);
 				var newEntryId = entryType.get(idPropertyName);
 
+				this.selectedAccordionNode = entryType; // FIXME: hack to temporary fix DataView bug
+
 				// If we haven't a filter try to get default one from server
 				if (Ext.isEmpty(filter)) {
 					var params = {};
@@ -470,6 +472,17 @@
 			_CMUIState.onlyGridIfFullScreen();
 
 			this.changeClassUIConfigurationForGroup(entryTypeId);
+
+			// FIXME: hack to temporary fix DataView bug
+			if (
+				Ext.isString(filter) && !Ext.isEmpty(filter)
+				&& Ext.Array.contains(this.selectedAccordionNode.get(CMDBuild.core.constants.Proxy.SECTION_HIERARCHY), 'filter')
+			) {
+				CMDBuild.global.dataViewHack = {
+					filter: filter,
+					entryType: entryType
+				};
+			}
 		}
 	});
 
