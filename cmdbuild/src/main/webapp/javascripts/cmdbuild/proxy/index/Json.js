@@ -249,6 +249,10 @@
 			}
 		},
 
+		entryType: {
+			readAll: 'services/json/schema/modclass/getallclasses'
+		},
+
 		filter: {
 			defaults: {
 				create: '',
