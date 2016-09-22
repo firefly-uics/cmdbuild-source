@@ -286,77 +286,78 @@
 			if (!Ext.isEmpty(CMDBuild.global) && !Ext.isEmpty(CMDBuild.global.Data))
 				CMDBuild.global.Data.dataDefaultHeadersUpdate();
 
+			// Error handling
+				if (!Ext.isObject(parameters) || Ext.Object.isEmpty(parameters))
+					return _error('request(): unmanaged parameters', this, parameters);
+
+				if (!Ext.isString(parameters.url)|| Ext.isEmpty(parameters.url))
+					return _error('request(): unmanaged url parameter', this, parameters.url);
+			// END: Error handling
+
+			// Apply defaults
+			Ext.applyIf(parameters, {
+				mode: 'ajax',
+				method: 'POST',
+				loadMask: true,
+				scope: this,
+				callback: Ext.emptyFn,
+				failure: Ext.emptyFn,
+				success: Ext.emptyFn
+			});
+
 			if (
-				!Ext.Object.isEmpty(parameters)
-				&& !Ext.isEmpty(parameters.url)
-			) {
-				// Apply defaults
-				Ext.applyIf(parameters, {
-					mode: 'ajax',
-					method: 'POST',
-					loadMask: true,
-					scope: this,
-					callback: Ext.emptyFn,
-					failure: Ext.emptyFn,
-					success: Ext.emptyFn
-				});
-
+				this.isEnabled()
+				&& this.isCacheable(groupId)
+			) { // Cacheable endpoints manage
 				if (
-					this.isEnabled()
-					&& this.isCacheable(groupId)
-				) { // Cacheable endpoints manage
-					if (
-						!this.isExpired({
-							groupId: groupId,
-							serviceEndpoint: parameters.url,
-							params: parameters.params
-						})
-						&& !invalidateOnSuccess
-					) { // Emulation of success and callback execution
-						var cachedValues = this.get({
-							groupId: groupId,
-							serviceEndpoint: parameters.url,
-							params: parameters.params
-						});
+					!this.isExpired({
+						groupId: groupId,
+						serviceEndpoint: parameters.url,
+						params: parameters.params
+					})
+					&& !invalidateOnSuccess
+				) { // Emulation of success and callback execution
+					var cachedValues = this.get({
+						groupId: groupId,
+						serviceEndpoint: parameters.url,
+						params: parameters.params
+					});
 
-						Ext.Function.createSequence(
-							Ext.bind(parameters.success, parameters.scope, [
-								cachedValues.response,
-								cachedValues.options,
-								cachedValues.decodedResponse
-							]),
-							Ext.bind(parameters.callback, parameters.scope, [
-								cachedValues.options,
-								true,
-								cachedValues.response
-							]),
-							parameters.scope
-						)();
-					} else { // Execute real AJAX call
-						parameters.success = Ext.Function.createSequence(function (response, options, decodedResponse) {
-							if (invalidateOnSuccess) { // Don't cache if want to invalidate
-								CMDBuild.global.Cache.invalidate({ groupId: groupId });
-							} else {
-								CMDBuild.global.Cache.set({
-									groupId: groupId,
-									serviceEndpoint: parameters.url,
-									params: parameters.params,
-									values: {
-										response: response,
-										options: options,
-										decodedResponse: decodedResponse
-									}
-								});
-							}
-						}, parameters.success);
+					Ext.Function.createSequence(
+						Ext.bind(parameters.success, parameters.scope, [
+							cachedValues.response,
+							cachedValues.options,
+							cachedValues.decodedResponse
+						]),
+						Ext.bind(parameters.callback, parameters.scope, [
+							cachedValues.options,
+							true,
+							cachedValues.response
+						]),
+						parameters.scope
+					)();
+				} else { // Execute real AJAX call
+					parameters.success = Ext.Function.createSequence(function (response, options, decodedResponse) {
+						if (invalidateOnSuccess) { // Don't cache if want to invalidate
+							CMDBuild.global.Cache.invalidate({ groupId: groupId });
+						} else {
+							CMDBuild.global.Cache.set({
+								groupId: groupId,
+								serviceEndpoint: parameters.url,
+								params: parameters.params,
+								values: {
+									response: response,
+									options: options,
+									decodedResponse: decodedResponse
+								}
+							});
+						}
+					}, parameters.success);
 
-						this.executeRequest(parameters);
-					}
-				} else { // Uncacheable endpoints manage
 					this.executeRequest(parameters);
 				}
-			} else {
-				_error('invalid request parameters', this);
+			} else { // Uncacheable endpoints manage
+				this.executeRequest(parameters);
 			}
 		},
 

@@ -2,7 +2,7 @@
 
 	Ext.require('CMDBuild.core.constants.Proxy');
 
-	Ext.define('CMDBuild.model.management.workflow.panel.tree.toolbarTop.Parent', { // TODO: waiting for refactor (rename and structure)
+	Ext.define('CMDBuild.model.management.workflow.panel.tree.toolbar.top.Parent', { // TODO: waiting for refactor (rename and structure)
 		extend: 'Ext.data.Model',
 
 		fields: [
@@ -26,9 +26,9 @@
 		constructor: function (data) {
 			data = Ext.isObject(data) ? data : {};
 			data[CMDBuild.core.constants.Proxy.DESCRIPTION] = data[CMDBuild.core.constants.Proxy.TEXT] || data[CMDBuild.core.constants.Proxy.DESCRIPTION];
-			data[CMDBuild.core.constants.Proxy.CAPABILITIES] = Ext.decode(data['ui_card_edit_mode']);
+			data[CMDBuild.core.constants.Proxy.CAPABILITIES] = Ext.decode(data['ui_card_edit_mode']) || data[CMDBuild.core.constants.Proxy.CAPABILITIES];
 			data[CMDBuild.core.constants.Proxy.IS_STARTABLE] = data['startable'] || data[CMDBuild.core.constants.Proxy.IS_STARTABLE];
-			data[CMDBuild.core.constants.Proxy.IS_SUPER_CLASS] = Ext.isBoolean(data['superclass']) ? data['superclass'] : data[CMDBuild.core.constants.Proxy.IS_SUPER_CLASS];
+			data[CMDBuild.core.constants.Proxy.IS_SUPER_CLASS] = data['superclass'] || data[CMDBuild.core.constants.Proxy.IS_SUPER_CLASS];
 
 			this.callParent(arguments);
 		}

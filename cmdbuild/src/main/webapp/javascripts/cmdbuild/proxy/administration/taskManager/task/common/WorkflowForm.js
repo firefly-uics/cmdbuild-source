@@ -20,7 +20,7 @@
 				model: 'CMDBuild.model.administration.taskManager.task.common.workflowForm.Workflow',
 				proxy: {
 					type: 'ajax',
-					url: CMDBuild.proxy.index.Json.classes.readAll,
+					url: CMDBuild.proxy.index.Json.classes.getAll,
 					reader: {
 						type: 'json',
 						root: CMDBuild.core.constants.Proxy.CLASSES

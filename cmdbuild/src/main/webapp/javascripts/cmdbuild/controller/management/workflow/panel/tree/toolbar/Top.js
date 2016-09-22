@@ -174,7 +174,7 @@
 		},
 
 		/**
-		 * @param {CMDBuild.model.management.workflow.panel.tree.toolbarTop.Parent} workflowObject
+		 * @param {CMDBuild.model.management.workflow.panel.tree.toolbar.top.Parent} workflowObject
 		 * @param {Object} parent
 		 *
 		 * @returns {void}
@@ -253,53 +253,36 @@
 		onWorkflowTreeToolbarTopWokflowSelect: function () {
 			this.view.removeAll();
 
-			var params = {};
-			params[CMDBuild.core.constants.Proxy.ACTIVE] = true;
+			this.workflowToolbarTopWorkflowRelationshipTreeReset();
 
-			CMDBuild.proxy.management.workflow.panel.tree.Tree.readAllWorkflow({
-				params: params,
-				scope: this,
-				success: function (response, options, decodedResponse) {
-					decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.CLASSES];
+			// Build workflow map
+			Ext.Array.each(this.cmfg('workflowLocalCacheWorkflowGetAll'), function (workflowObject, i, allWorkflowObjects) {
+				if (Ext.isObject(workflowObject) && !Ext.Object.isEmpty(workflowObject))
+					this.workflowToolbarTopWorkflowRelationshipTreeSet({ value: workflowObject.getData() });
+			}, this);
 
-					if (Ext.isArray(decodedResponse) && !Ext.isEmpty(decodedResponse)) {
-						decodedResponse = Ext.Array.filter(decodedResponse, function (workflowObject, i, allWorkflowObjects) {
-							return workflowObject[CMDBuild.core.constants.Proxy.TYPE] == CMDBuild.core.constants.Global.getTableTypeProcessClass();
-						}, this);
-
-						this.workflowToolbarTopWorkflowRelationshipTreeReset();
-
-						// Build workflow map
-						Ext.Array.each(decodedResponse, function (workflowObject, i, allWorkflowObjects) {
-							if (Ext.isObject(workflowObject) && !Ext.Object.isEmpty(workflowObject))
-								this.workflowToolbarTopWorkflowRelationshipTreeSet({ value: workflowObject });
-						}, this);
-
-						// Build relationship tree
-						Ext.Object.each(this.workflowToolbarTopWorkflowRelationshipTreeGet(), function (id, workflowObject, myself) {
-							if (
-								Ext.isObject(workflowObject) && !Ext.Object.isEmpty(workflowObject)
-								&& !Ext.isEmpty(workflowObject.get(CMDBuild.core.constants.Proxy.PARENT))
-								&& workflowObject.get(CMDBuild.core.constants.Proxy.NAME) != CMDBuild.core.constants.Global.getRootNameWorkflows()
-							){
-								this.workflowToolbarTopWorkflowRelationshipTreeAppendChild(workflowObject.get(CMDBuild.core.constants.Proxy.PARENT), workflowObject);
-							}
-						}, this);
-
-						// Build toolbar items
-						this.view.add([
-							this.addButton = this.buildButtonAdd(),
-							this.statusCombo = this.buildComboboxStatus()
-						]);
-					}
+			// Build relationship tree
+			Ext.Object.each(this.workflowToolbarTopWorkflowRelationshipTreeGet(), function (id, workflowObject, myself) {
+				if (
+					Ext.isObject(workflowObject) && !Ext.Object.isEmpty(workflowObject)
+					&& !Ext.isEmpty(workflowObject.get(CMDBuild.core.constants.Proxy.PARENT))
+					&& workflowObject.get(CMDBuild.core.constants.Proxy.NAME) != CMDBuild.core.constants.Global.getRootNameWorkflows()
+				){
+					this.workflowToolbarTopWorkflowRelationshipTreeAppendChild(workflowObject.get(CMDBuild.core.constants.Proxy.PARENT), workflowObject);
 				}
-			});
+			}, this);
+
+			// Build toolbar items
+			this.view.add([
+				this.addButton = this.buildButtonAdd(),
+				this.statusCombo = this.buildComboboxStatus()
+			]);
 		},
 
 		// WorkflowRelationshipTree property functions
 			/**
 			 * @param {Number} id
-			 * @param {CMDBuild.model.management.workflow.panel.tree.toolbarTop.Parent} child
+			 * @param {CMDBuild.model.management.workflow.panel.tree.toolbar.top.Parent} child
 			 *
 			 * @returns {Void}
 			 *
@@ -310,7 +293,7 @@
 					Ext.isNumber(id) && !Ext.isEmpty(id)
 					&& !Ext.isEmpty(this.workflowRelationshipTree[id])
 					&& Ext.isObject(child) && !Ext.Object.isEmpty(child)
-					&& Ext.getClassName(child) == 'CMDBuild.model.management.workflow.panel.tree.toolbarTop.Parent'
+					&& Ext.getClassName(child) == 'CMDBuild.model.management.workflow.panel.tree.toolbar.top.Parent'
 				) {
 					var children = this.workflowRelationshipTree[id].get(CMDBuild.core.constants.Proxy.CHILDREN);
 					children = Ext.Array.merge(children, [child]); // Merge with unique items
@@ -362,10 +345,13 @@
 			workflowToolbarTopWorkflowRelationshipTreeSet: function (parameters) {
 				if (
 					Ext.isObject(parameters) && !Ext.Object.isEmpty(parameters)
-					&& !Ext.isEmpty(parameters.value.id)
+					&& !Ext.isEmpty(parameters.value[CMDBuild.core.constants.Proxy.ID])
 					&& Ext.isObject(parameters.value) && !Ext.Object.isEmpty(parameters.value)
 				) {
-					this.workflowRelationshipTree[parameters.value.id] = Ext.create('CMDBuild.model.management.workflow.panel.tree.toolbarTop.Parent', parameters.value);
+					this.workflowRelationshipTree[parameters.value[CMDBuild.core.constants.Proxy.ID]] = Ext.create(
+						'CMDBuild.model.management.workflow.panel.tree.toolbar.top.Parent',
+						parameters.value
+					);
 				}
 			},
 
