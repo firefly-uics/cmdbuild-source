@@ -189,14 +189,24 @@
 			accordionFirstSelectableNodeSelect: function () {
 				var firstSelectableNode = this.cmfg('accordionFirtsSelectableNodeGet');
 
-				if (!Ext.isEmpty(firstSelectableNode)) {
-					this.cmfg('accordionExpand', {
-						scope: this,
-						callback: function (panel, eOpts) {
-							this.cmfg('accordionNodeByIdSelect', { id: firstSelectableNode.get(CMDBuild.core.constants.Proxy.ID) });
-						}
-					});
-				}
+				// Error handling
+					if (!Ext.isObject(firstSelectableNode) || Ext.Object.isEmpty(firstSelectableNode) || !Ext.isFunction(firstSelectableNode.get))
+						return _error('accordionFirstSelectableNodeSelect(): unmanaged firstSelectableNode variable', this, firstSelectableNode);
+				// END: Error handling
+
+				this.disableStoreLoad = true;
+
+				this.cmfg('accordionExpand', {
+					scope: this,
+					callback: function (panel, eOpts) {
+						this.disableStoreLoad = false;
+
+						this.cmfg('accordionDeselect');
+						this.cmfg('accordionUpdateStore', {
+							selectionId: firstSelectableNode.get(CMDBuild.core.constants.Proxy.ENTITY_ID) || firstSelectableNode.get(CMDBuild.core.constants.Proxy.ID)
+						});
+					}
+				});
 			},
 
 		/**
@@ -246,7 +256,7 @@
 				if (!Ext.Object.isEmpty(parameters) && !Ext.isEmpty(parameters.id)) {
 					var node = this.cmfg('accordionNodeByIdGet', parameters.id);
 
-					if (!Ext.isEmpty(node)) {
+					if (Ext.isObject(node) && !Ext.Object.isEmpty(node)) {
 						node.bubble(function () {
 							this.expand();
 						});
@@ -263,7 +273,9 @@
 			},
 
 		/**
-		 * @param {Number or String} selectionId
+		 * @param {Object} parameters
+		 * @param {Boolean} parameters.loadMask
+		 * @param {Number} parameters.selectionId
 		 *
 		 * @returns {Void}
 		 *

@@ -266,7 +266,7 @@
 
 				CMDBuild.core.Splash.hide(function () {
 					CMDBuild.global.controller.MainViewport.cmfg('mainViewportInstanceNameSet', CMDBuild.configuration.instance.get(CMDBuild.core.constants.Proxy.INSTANCE_NAME));
-					CMDBuild.global.controller.MainViewport.cmfg('mainViewportSelectFirstExpandedAccordionSelectableNode');
+					CMDBuild.global.controller.MainViewport.cmfg('mainViewportAccordionStartingSelect', { disableManageStartingClass: true });
 				}, this);
 			}
 		}

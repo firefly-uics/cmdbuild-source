@@ -241,7 +241,7 @@
 					if (!CMDBuild.global.Routes.isRoutePathEmpty()) { // Execute routes
 						CMDBuild.global.Routes.exec();
 					} else { // Manage starting class
-						CMDBuild.global.controller.MainViewport.cmfg('mainViewportStartingEntitySelect');
+						CMDBuild.global.controller.MainViewport.cmfg('mainViewportAccordionStartingSelect');
 					}
 				}, this);
 
