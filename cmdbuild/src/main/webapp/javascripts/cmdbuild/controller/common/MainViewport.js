@@ -25,6 +25,7 @@
 			'mainViewportAccordionDeselect',
 			'mainViewportAccordionIsCollapsed',
 			'mainViewportAccordionSetDisabled',
+			'mainViewportAccordionStartingSelect',
 			'mainViewportActivitySelect',
 			'mainViewportCardSelect',
 			'mainViewportDanglingCardGet',
@@ -32,8 +33,6 @@
 			'mainViewportModuleControllerExists',
 			'mainViewportModuleControllerGet',
 			'mainViewportModuleShow',
-			'mainViewportSelectFirstExpandedAccordionSelectableNode',
-			'mainViewportStartingEntitySelect',
 			'onMainViewportAccordionSelect',
 			'onMainViewportCreditsClick'
 		],
@@ -307,6 +306,95 @@
 			},
 
 			/**
+			 * Select accordion evaluating configuration
+			 *
+			 * @param {Object} parameters
+			 * @param {Object} parameters.disableManageStartingClass
+			 *
+			 * @returns {Void}
+			 */
+			mainViewportAccordionStartingSelect: function (parameters) {
+				parameters = Ext.isObject(parameters) ? parameters : {};
+				parameters.disableManageStartingClass = Ext.isBoolean(parameters.disableManageStartingClass) ? parameters.disableManageStartingClass : false;
+
+				var node = this.mainViewportAccordionStartingSelectManageStartigClass(parameters.disableManageStartingClass)
+					|| this.mainViewportAccordionStartingSelectManageFirstAvailable(); // If no statingClass to select try to select fist selectable node
+
+				// Manage selection if accordion are collapsed
+				if (
+					this.cmfg('mainViewportAccordionIsCollapsed')
+					&& Ext.isObject(node) && !Ext.Object.isEmpty(node) && Ext.isFunction(node.get)
+				) {
+					this.cmfg('mainViewportModuleShow', {
+						identifier: node.get('cmName'),
+						parameters: node
+					});
+				}
+			},
+
+			/**
+			 * @returns {CMDBuild.model.common.Accordion or null} node
+			 *
+			 * @private
+			 */
+			mainViewportAccordionStartingSelectManageFirstAvailable: function () {
+				var accordionController = this.accordionControllerWithSelectableNodeGet(),
+					node = null;
+
+				if (
+					Ext.isObject(accordionController) && !Ext.Object.isEmpty(accordionController)
+					&& Ext.isFunction(accordionController.cmfg)
+				) {
+					accordionController.cmfg('accordionFirstSelectableNodeSelect');
+
+					node = accordionController.cmfg('accordionFirtsSelectableNodeGet');
+				}
+
+				return node;
+			},
+
+			/**
+			 * @param {Boolean} disableManageStartingClass
+			 *
+			 * @returns {CMDBuild.model.common.Accordion or null} node
+			 *
+			 * @private
+			 */
+			mainViewportAccordionStartingSelectManageStartigClass: function (disableManageStartingClass) {
+				disableManageStartingClass = Ext.isBoolean(disableManageStartingClass) ? disableManageStartingClass : false;
+
+				var node = null,
+					startingClassId = CMDBuild.configuration.runtime.get(CMDBuild.core.constants.Proxy.STARTING_CLASS_ID) // Group's starting class
+						|| CMDBuild.configuration.instance.get(CMDBuild.core.constants.Proxy.STARTING_CLASS); // Main configuration's starting class
+
+				if (
+					Ext.isNumber(startingClassId) && !Ext.isEmpty(startingClassId)
+					&& !disableManageStartingClass
+				) {
+					var accordionController = this.cmfg('mainViewportAccordionControllerWithNodeWithIdGet', startingClassId);
+
+					if (
+						Ext.isObject(accordionController) && !Ext.Object.isEmpty(accordionController)
+						&& Ext.isFunction(accordionController.cmfg)
+					) {
+						accordionController.disableStoreLoad = true; // Disable store load to optimize
+						accordionController.cmfg('accordionExpand', {
+							scope: this,
+							callback: function (panel, eOpts) {
+								accordionController.disableStoreLoad = false; // Reset store load disable flag
+								accordionController.cmfg('accordionDeselect');
+								accordionController.cmfg('accordionUpdateStore', { selectionId: startingClassId });
+							}
+						});
+
+						node = accordionController.cmfg('accordionNodeByIdGet', startingClassId); // To manage selection if accordion are collapsed
+					}
+				}
+
+				return node;
+			},
+
+			/**
 			 * Returns expanded accordion's controller
 			 *
 			 * @returns {Mixed or null} expandedAccordionController
@@ -445,39 +533,39 @@
 		 * FIXME: legacy implementation used from classes and all old implementation, to fix on classes module refactor
 		 */
 		mainViewportCardSelect: function (parameters) {
-			if (
-				Ext.isObject(parameters) && !Ext.Object.isEmpty(parameters)
-				&& !Ext.isEmpty(parameters['Id'])
-				&& !Ext.isEmpty(parameters['IdClass'])
-			) {
-				if (_CMCache.isClassById(parameters['IdClass'])) { // @legacy
-					parameters.activateFirstTab = Ext.isEmpty(parameters.activateFirstTab) ? true : parameters.activateFirstTab;
+			// Error handling
+				if (!Ext.isObject(parameters) || Ext.Object.isEmpty(parameters))
+					return _error('mainViewportCardSelect(): unmanaged parameters object', this, parameters);
 
-					var accordionController = this.cmfg('mainViewportAccordionControllerWithNodeWithIdGet', parameters['IdClass']);
+				if (Ext.isEmpty(parameters['Id']) || Ext.isEmpty(parameters['IdClass']))
+					return _error('mainViewportActivitySelect(): unmanaged parameter', this, parameters);
+			// END: Error handling
 
-					this.danglingCardSet(parameters);
+			if (_CMCache.isClassById(parameters['IdClass'])) { // @legacy
+				parameters.activateFirstTab = Ext.isEmpty(parameters.activateFirstTab) ? true : parameters.activateFirstTab;
 
-					if (!Ext.isEmpty(accordionController) && Ext.isFunction(accordionController.cmfg)) {
-						accordionController.cmfg('accordionExpand', {
-							scope: this,
-							callback: function (panel, eOpts) {
-								accordionController.cmfg('accordionDeselect'); // Instruction required or selection doesn't work if exists another selection
-								accordionController.cmfg('accordionNodeByIdSelect', { id: parameters['IdClass'] });
-							}
-						});
-					} else {
-						CMDBuild.core.Message.warning(CMDBuild.Translation.warning, CMDBuild.Translation.warnings.itemNotAvailable);
-					}
+				var accordionController = this.cmfg('mainViewportAccordionControllerWithNodeWithIdGet', parameters['IdClass']);
+
+				this.danglingCardSet(parameters);
+
+				if (!Ext.isEmpty(accordionController) && Ext.isFunction(accordionController.cmfg)) {
+					accordionController.cmfg('accordionExpand', {
+						scope: this,
+						callback: function (panel, eOpts) {
+							accordionController.cmfg('accordionDeselect'); // Instruction required or selection doesn't work if exists another selection
+							accordionController.cmfg('accordionNodeByIdSelect', { id: parameters['IdClass'] });
+						}
+					});
 				} else {
-					var params = {};
-					params['activateFirstTab'] = Ext.isEmpty(parameters.activateFirstTab) ? true : parameters.activateFirstTab;
-					params[CMDBuild.core.constants.Proxy.INSTANCE_ID] = parameters['Id'];
-					params[CMDBuild.core.constants.Proxy.WORKFLOW_ID] = parameters['IdClass'];
-
-					this.cmfg('mainViewportActivitySelect', params);
+					CMDBuild.core.Message.warning(CMDBuild.Translation.warning, CMDBuild.Translation.warnings.itemNotAvailable);
 				}
 			} else {
-				_error('malformed openCard method parameters', this);
+				var params = {};
+				params['activateFirstTab'] = Ext.isEmpty(parameters.activateFirstTab) ? true : parameters.activateFirstTab;
+				params[CMDBuild.core.constants.Proxy.INSTANCE_ID] = parameters['Id'];
+				params[CMDBuild.core.constants.Proxy.WORKFLOW_ID] = parameters['IdClass'];
+
+				this.cmfg('mainViewportActivitySelect', params);
 			}
 		},
 
@@ -498,64 +586,6 @@
 					// Prevents some Explorer error
 				}
 			}
-		},
-
-		/**
-		 * @returns {Void}
-		 *
-		 * @administration
-		 */
-		mainViewportSelectFirstExpandedAccordionSelectableNode: function () {
-			var expandedAccordionController = this.accordionControllerExpandedGet();
-
-			if (!Ext.isEmpty(expandedAccordionController)) {
-				this.cmfg('mainViewportModuleShow', { identifier: expandedAccordionController.cmfg('accordionIdentifierGet') });
-
-				expandedAccordionController.cmfg('accordionFirstSelectableNodeSelect');
-			}
-		},
-
-		/**
-		 * Select selected entity at first page load
-		 *
-		 * @returns {Void}
-		 *
-		 * @management
-		 */
-		mainViewportStartingEntitySelect: function () {
-			var startingClassId = (
-					CMDBuild.configuration.runtime.get(CMDBuild.core.constants.Proxy.STARTING_CLASS_ID) // Group's starting class
-					|| CMDBuild.configuration.instance.get(CMDBuild.core.constants.Proxy.STARTING_CLASS) // Main configuration's starting class
-				),
-				accordionWithNodeController = Ext.isEmpty(startingClassId) ? null : this.cmfg('mainViewportAccordionControllerWithNodeWithIdGet', startingClassId),
-				node = null;
-
-			if (!Ext.isEmpty(accordionWithNodeController)) {
-				accordionWithNodeController.disableStoreLoad = true; // Disable store load to optimize
-				accordionWithNodeController.cmfg('accordionExpand', {
-					scope: this,
-					callback: function (panel, eOpts) {
-						accordionWithNodeController.cmfg('accordionUpdateStore', { selectionId: startingClassId });
-					}
-				});
-
-				node = accordionWithNodeController.cmfg('accordionNodeByIdGet', startingClassId); // To manage selection if accordion are collapsed
-			} else { // If no statingClass to select try to select fist selectable node
-				var accordionController = this.accordionControllerWithSelectableNodeGet();
-
-				if (!Ext.isEmpty(accordionController)) {
-					accordionController.cmfg('accordionFirstSelectableNodeSelect');
-
-					node = accordionController.cmfg('accordionFirtsSelectableNodeGet'); // To manage selection if accordion are collapsed
-				}
-			}
-
-			// Manage selection if accordion are collapsed
-			if (this.cmfg('mainViewportAccordionIsCollapsed') && !Ext.isEmpty(node))
-				this.cmfg('mainViewportModuleShow', {
-					identifier: node.get('cmName'),
-					parameters: node
-				});
 		},
 
 		// Module manage methods
