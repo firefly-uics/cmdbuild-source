@@ -8,6 +8,7 @@
 		fields: [
 			{ name: CMDBuild.core.constants.Proxy.CHILD_NODES_ID, type: 'auto', defaultValue: [] },
 			{ name: CMDBuild.core.constants.Proxy.DOMAIN_NAME, type: 'string' },
+			{ name: CMDBuild.core.constants.Proxy.FILTER, type: 'string' },
 			{ name: CMDBuild.core.constants.Proxy.ID, type: 'int', useNull: true },
 			{ name: CMDBuild.core.constants.Proxy.PARENT_ID, type: 'int', useNull: true },
 			{ name: CMDBuild.core.constants.Proxy.TARGET_CLASS_NAME, type: 'string' }
