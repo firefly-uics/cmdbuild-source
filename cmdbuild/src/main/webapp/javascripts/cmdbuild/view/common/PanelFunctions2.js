@@ -57,7 +57,7 @@
 					}
 				}, this);
 
-				return data;
+				return Ext.apply(this.getForm().getValues(), data);
 			}
 
 			if (Ext.isFunction(this.getForm))
