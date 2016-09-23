@@ -43,6 +43,8 @@
 			parameters = Ext.isObject(parameters) ? parameters : {};
 			parameters.includeDisabled = Ext.isBoolean(parameters.includeDisabled) ? parameters.includeDisabled : false;
 
+			var values = Ext.isFunction(this.getForm) ? this.getForm().getValues() : {};
+
 			if (parameters.includeDisabled) {
 				var data = {};
 
@@ -57,13 +59,10 @@
 					}
 				}, this);
 
-				return Ext.apply(this.getForm().getValues(), data);
+				return Ext.apply(values, data);
 			}
 
-			if (Ext.isFunction(this.getForm))
-				return this.getForm().getValues();
-
-			return {};
+			return values;
 		},
 
 		/**
