@@ -41,6 +41,9 @@
 			},
 			select: function (row, record, index) {
 				this.delegate.cmfg('onWorkflowTreeRecordSelect', record);
+			},
+			sortchange: function (ct, column, direction, eOpts) {
+				this.delegate.cmfg('onWorkflowTreeSortChange');
 			}
 		}
 	});
