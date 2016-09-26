@@ -35,6 +35,7 @@
 			'onWorkflowTreePrintButtonClick',
 			'onWorkflowTreeRecordSelect',
 			'onWorkflowTreeSaveFailure',
+			'onWorkflowTreeSortChange',
 			'onWorkflowTreeWokflowSelect = onWorkflowWokflowSelect',
 			'workflowTreeActivitySelect',
 			'workflowTreeAppliedFilterGet',
@@ -302,6 +303,16 @@
 		 */
 		onWorkflowTreeSaveFailure: function () {
 			this.cmfg('workflowTreeStoreLoad', { disableFirstRowSelection: true });
+		},
+
+		/**
+		 * Reset tree and form on column sort change
+		 *
+		 * @returns {Void}
+		 */
+		onWorkflowTreeSortChange: function () {
+			this.cmfg('workflowFormReset');
+			this.cmfg('workflowTreeReset');
 		},
 
 		/**
