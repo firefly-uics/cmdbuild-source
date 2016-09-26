@@ -394,8 +394,6 @@
 					Ext.isObject(extraParams) && !Ext.Object.isEmpty(extraParams)
 					&& Ext.isString(extraParams[CMDBuild.core.constants.Proxy.CLASS_NAME]) && !Ext.isEmpty(extraParams[CMDBuild.core.constants.Proxy.CLASS_NAME])
 				) {
-					var currentPage = extraParams.page || 1;
-
 					extraParams[CMDBuild.core.constants.Proxy.ATTRIBUTES] = Ext.encode(this.getVisibleColumns());
 
 					return true;
@@ -574,35 +572,40 @@
 			if (this.cmVisible) {
 				var me = this;
 
-				function callCbOrLoadFirstPage(me) {
-					if (o && o.cb) {
-						o.cb.call(o.scope || me);
-					} else {
-						me.store.loadPage(1);
-					}
-				}
+				me.loadAttributes(
+					classId,
+					function (attributes) {
+						function callCbOrLoadFirstPage(me) {
+							if (o && o.cb) {
+								o.cb.call(o.scope || me);
+							} else {
+								me.store.loadPage(1);
+							}
+						}
 
-				if (me.currentClassId == classId) {
-					callCbOrLoadFirstPage(me);
-				} else {
-					me.currentClassId = classId;
-
-					if (this.gridSearchField) {
-						this.gridSearchField.setValue(""); // clear only the field without reload the grid
-					}
-
-					me.loadAttributes( //
-						classId, //
-						function (attributes) { //
-							me.setColumnsForClass(attributes);
-							me.setGridSorting(attributes);
+						if (me.currentClassId == classId) {
 							callCbOrLoadFirstPage(me);
-						} //
-					);
+						} else {
+							me.currentClassId = classId;
 
-				}
+							if (this.gridSearchField) {
+								this.gridSearchField.setValue(""); // clear only the field without reload the grid
+							}
 
-				this.paramsToLoadWhenVisible = null;
+							me.loadAttributes( //
+								classId, //
+								function (attributes) { //
+									me.setColumnsForClass(attributes);
+									me.setGridSorting(attributes);
+									callCbOrLoadFirstPage(me);
+								} //
+							);
+
+						}
+
+						this.paramsToLoadWhenVisible = null;
+					}
+				);
 			} else {
 				this.paramsToLoadWhenVisible = {};
 				this.paramsToLoadWhenVisible[CMDBuild.core.constants.Proxy.CLASS_ID] = classId;
