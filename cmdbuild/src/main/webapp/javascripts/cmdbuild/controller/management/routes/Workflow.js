@@ -114,19 +114,19 @@
 					return _error('manageIdentifierInstance(): accordionController not found', this, accordionController);
 			// END: Error handling
 
-			accordionController.disableStoreLoad = true;
-			accordionController.cmfg('accordionExpand', {
+			Ext.apply(accordionController, {
+				disableSelection: true,
 				scope: this,
 				callback: function () {
-					Ext.apply(accordionController, { // Setup accordion update callback
-						scope: this,
-						callback: Ext.isFunction(callback) ? callback : Ext.emptyFn
-					});
-
 					accordionController.cmfg('accordionDeselect');
-					accordionController.cmfg('accordionUpdateStore', { selectionId: workflowObject[CMDBuild.core.constants.Proxy.ID] });
+					accordionController.cmfg('accordionNodeByIdSelect', { id: workflowObject[CMDBuild.core.constants.Proxy.ID] });
+
+					if (Ext.isFunction(callback))
+						Ext.callback(callback, this);
 				}
 			});
+
+			accordionController.cmfg('accordionExpand');
 		},
 
 		/**
@@ -231,7 +231,11 @@
 		 * @returns {Void}
 		 */
 		showAll: function (params, path, router) {
-			CMDBuild.global.controller.MainViewport.cmfg('mainViewportAccordionControllerExpand', { identifier: CMDBuild.core.constants.ModuleIdentifiers.getWorkflow() });
+			if (CMDBuild.global.controller.MainViewport.cmfg('mainViewportAccordionControllerExists', CMDBuild.core.constants.ModuleIdentifiers.getWorkflow())) {
+				var accordionController = CMDBuild.global.controller.MainViewport.cmfg('mainViewportAccordionControllerGet', CMDBuild.core.constants.ModuleIdentifiers.getWorkflow());
+
+				accordionController.cmfg('accordionExpand');
+			}
 		}
 	});
 

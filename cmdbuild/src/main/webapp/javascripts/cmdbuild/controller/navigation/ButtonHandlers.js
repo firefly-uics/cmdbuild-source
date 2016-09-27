@@ -77,13 +77,16 @@
 				);
 
 				if (!Ext.isEmpty(accordionController) && Ext.isFunction(accordionController.cmfg)) {
-					accordionController.cmfg('accordionExpand', {
+					Ext.apply(accordionController, {
+						disableSelection: true,
 						scope: this,
-						callback: function (panel, eOpts) {
+						callback: function () {
 							accordionController.cmfg('accordionDeselect'); // Instruction required or selection doesn't work if exists another selection
 							accordionController.cmfg('accordionNodeByIdSelect', { id: record.get([CMDBuild.core.constants.Proxy.ENTRY_TYPE, CMDBuild.core.constants.Proxy.ID]) });
 						}
 					});
+
+					accordionController.cmfg('accordionExpand');
 				}
 			}
 		},
