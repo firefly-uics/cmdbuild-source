@@ -1066,7 +1066,7 @@
 
 			this.cmfg('workflowSelectedActivityReset');
 
-			_CMWFState.setActivityInstance(Ext.create('CMDBuild.model.CMActivityInstance'));
+			_CMWFState.setProcessInstanceSynchronous(Ext.create('CMDBuild.model.CMProcessInstance', this.cmfg('workflowSelectedInstanceGet', 'rawData')));
 			_CMUIState.onlyGridIfFullScreen();
 		},
 
