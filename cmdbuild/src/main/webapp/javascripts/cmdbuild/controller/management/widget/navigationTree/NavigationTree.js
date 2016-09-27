@@ -336,39 +336,39 @@
 					return _error('buildNodeFromCard(): unmanaged cardObject parameter', this, cardObject);
 			// END: Error handling
 
-			var navigationTreeNode = this.widgetNavigationTreeBufferNodesGet(navigationTreeNodeId),
+			var nodeDescriptionComponents = [],
+				navigationTreeNode = this.widgetNavigationTreeBufferNodesGet(navigationTreeNodeId),
 				domainModel = this.widgetNavigationTreeBufferDomainsGet(navigationTreeNode.get(CMDBuild.core.constants.Proxy.DOMAIN_NAME));
+
+			// Build node description
+				if (
+					Ext.isObject(navigationTreeNode) && !Ext.Object.isEmpty(navigationTreeNode)
+					&& Ext.isObject(domainModel) && !Ext.Object.isEmpty(domainModel)
+				) {
+					var classAnchestorsNames = this.widgetNavigationTreeBufferClassesAnchestorsNamesGet(cardObject[CMDBuild.core.constants.Proxy.CLASS_NAME]);
+
+					if (Ext.Array.contains(classAnchestorsNames, domainModel.get(CMDBuild.core.constants.Proxy.DESTINATION_CLASS_NAME))) {
+						nodeDescriptionComponents.push(domainModel.get(CMDBuild.core.constants.Proxy.DIRECT_DESCRIPTION));
+					} else {
+						nodeDescriptionComponents.push(domainModel.get(CMDBuild.core.constants.Proxy.INVERSE_DESCRIPTION));
+					}
+				}
+
+				if (!Ext.isEmpty(cardObject['Code']))
+					nodeDescriptionComponents.push('[' + cardObject['Code'] + ']');
+
+				if (!Ext.isEmpty(cardObject['Description']))
+					nodeDescriptionComponents.push(cardObject['Description']);
 
 			var nodeStructureObject = {};
 			nodeStructureObject['iconCls'] = 'cmdb-tree-class-icon'; // FIXME: use own icon
 			nodeStructureObject[CMDBuild.core.constants.Proxy.CARD_ID] = cardObject['Id'];
 			nodeStructureObject[CMDBuild.core.constants.Proxy.CHECKED] = this.selectionModel.isSelected(cardObject['Id']);
 			nodeStructureObject[CMDBuild.core.constants.Proxy.CLASS_NAME] = cardObject[CMDBuild.core.constants.Proxy.CLASS_NAME];
-			nodeStructureObject[CMDBuild.core.constants.Proxy.DESCRIPTION] = '[' + cardObject['Code'] + '] ' + cardObject['Description'];
+			nodeStructureObject[CMDBuild.core.constants.Proxy.DESCRIPTION] = Ext.isEmpty(nodeDescriptionComponents) ? '' : nodeDescriptionComponents.join(' ');
 			nodeStructureObject[CMDBuild.core.constants.Proxy.LEAF] = true;
 			nodeStructureObject[CMDBuild.core.constants.Proxy.NAVIGATION_TREE_NODE_ID] = navigationTreeNodeId;
 			nodeStructureObject[CMDBuild.core.constants.Proxy.PARENT] = parentNode;
-
-			if (
-				Ext.isObject(navigationTreeNode) && !Ext.Object.isEmpty(navigationTreeNode)
-				&& Ext.isObject(domainModel) && !Ext.Object.isEmpty(domainModel)
-			) {
-				var classAnchestorsNames = this.widgetNavigationTreeBufferClassesAnchestorsNamesGet(cardObject[CMDBuild.core.constants.Proxy.CLASS_NAME]);
-
-				if (Ext.Array.contains(classAnchestorsNames, domainModel.get(CMDBuild.core.constants.Proxy.DESTINATION_CLASS_NAME))) {
-					nodeStructureObject[CMDBuild.core.constants.Proxy.DESCRIPTION] =
-						domainModel.get(CMDBuild.core.constants.Proxy.DIRECT_DESCRIPTION)
-						+ ' '
-						+ nodeStructureObject[CMDBuild.core.constants.Proxy.DESCRIPTION]
-					;
-				} else {
-					nodeStructureObject[CMDBuild.core.constants.Proxy.DESCRIPTION] =
-						domainModel.get(CMDBuild.core.constants.Proxy.INVERSE_DESCRIPTION)
-						+ ' '
-						+ nodeStructureObject[CMDBuild.core.constants.Proxy.DESCRIPTION]
-					;
-				}
-			}
 
 			// Reconfigure parentNode
 			parentNode.set('iconCls', null);
