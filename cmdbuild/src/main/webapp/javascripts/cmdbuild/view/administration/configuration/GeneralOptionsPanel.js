@@ -95,6 +95,7 @@
 							Ext.create('CMDBuild.view.common.field.comboBox.Erasable', {
 								name: CMDBuild.core.constants.Proxy.STARTING_CLASS,
 								fieldLabel: CMDBuild.Translation.defaultClass,
+								maxWidth: CMDBuild.core.constants.FieldWidths.CONFIGURATION_BIG,
 								valueField: CMDBuild.core.constants.Proxy.ID,
 								displayField: CMDBuild.core.constants.Proxy.TEXT,
 								forceSelection: true,
