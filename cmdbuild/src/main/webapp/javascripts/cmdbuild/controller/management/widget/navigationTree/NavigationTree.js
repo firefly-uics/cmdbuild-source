@@ -283,7 +283,7 @@
 							filterObject[CMDBuild.core.constants.Proxy.ATTRIBUTE] = {
 								simple: {
 									attribute: 'Id',
-									operator: 'oneof',
+									operator: 'in',
 									value: cardsIds,
 									parameterType: 'fixed'
 								}
@@ -385,7 +385,8 @@
 		 * @private
 		 */
 		buildNodeRoot: function () {
-			var node = this.treePanel.getStore().getRootNode(),
+			var filterObject = {},
+				node = this.treePanel.getStore().getRootNode(),
 				navigationTreeNode = this.widgetNavigationTreeBufferNodesGet(node.get(CMDBuild.core.constants.Proxy.NAVIGATION_TREE_NODE_ID)),
 				navigationTreeParentNode = this.widgetNavigationTreeBufferNodesGet(navigationTreeNode.get(CMDBuild.core.constants.Proxy.PARENT_ID));
 
@@ -394,7 +395,7 @@
 					filterObject[CMDBuild.core.constants.Proxy.ATTRIBUTE] = {
 						simple: {
 							attribute: 'Id',
-							operator: 'oneof',
+							operator: 'in',
 							value: cardsIds,
 							parameterType: 'fixed'
 						}
@@ -403,6 +404,9 @@
 				var params = {};
 				params[CMDBuild.core.constants.Proxy.ATTRIBUTES] = Ext.encode(['Code', 'Description']);
 				params[CMDBuild.core.constants.Proxy.CLASS_NAME] = navigationTreeNode.get(CMDBuild.core.constants.Proxy.TARGET_CLASS_NAME);
+
+				if (Ext.isObject(filterObject) && !Ext.Object.isEmpty(filterObject))
+					params[CMDBuild.core.constants.Proxy.FILTER] = Ext.encode(filterObject);
 
 				CMDBuild.proxy.management.widget.NavigationTree.readAllCards({
 					params: params,
