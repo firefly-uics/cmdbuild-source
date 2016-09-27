@@ -376,7 +376,6 @@
 		LIMIT: 'limit',
 		LOCAL: 'local',
 		LOCALIZATION: 'localization',
-		LOCALIZED: 'localized',
 		LOCALIZED_HEADER_KEY: 'CMDBuild-Localized',
 		LOOKUP: 'lookup',
 		LOOKUP_TYPE: 'lookupType',

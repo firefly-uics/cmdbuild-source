@@ -90,7 +90,8 @@
 		 * @returns {Void}
 		 */
 		onClassesTabLayersShow: function () {
-			this.grid.getStore().load();
+			if (!this.cmfg('classesSelectedClassIsEmpty'))
+				this.grid.getStore().load();
 		},
 
 		/**

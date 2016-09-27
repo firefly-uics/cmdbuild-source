@@ -205,19 +205,21 @@
 		 * @returns {Void}
 		 */
 		onWorkflowTabDomainsShow: function () {
-			var params = {};
-			params[CMDBuild.core.constants.Proxy.CLASS_NAME] = this.cmfg('workflowSelectedWorkflowGet', CMDBuild.core.constants.Proxy.NAME);
+			if (!this.cmfg('workflowSelectedWorkflowIsEmpty')) {
+				var params = {};
+				params[CMDBuild.core.constants.Proxy.CLASS_NAME] = this.cmfg('workflowSelectedWorkflowGet', CMDBuild.core.constants.Proxy.NAME);
 
-			this.grid.getStore().load({
-				params: params,
-				scope: this,
-				callback: function (records, operation, success) {
-					if (!this.grid.getSelectionModel().hasSelection())
-						this.grid.getSelectionModel().select(0, true);
+				this.grid.getStore().load({
+					params: params,
+					scope: this,
+					callback: function (records, operation, success) {
+						if (!this.grid.getSelectionModel().hasSelection())
+							this.grid.getSelectionModel().select(0, true);
 
-					this.cmfg('onWorkflowTabDomainsRowSelect');
-				}
-			});
+						this.cmfg('onWorkflowTabDomainsRowSelect');
+					}
+				});
+			}
 		},
 
 		/**

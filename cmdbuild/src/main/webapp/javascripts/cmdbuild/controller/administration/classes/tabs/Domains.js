@@ -222,19 +222,21 @@
 		 * @returns {Void}
 		 */
 		onClassesTabDomainsShow: function () {
-			var params = {};
-			params[CMDBuild.core.constants.Proxy.CLASS_NAME] = this.cmfg('classesSelectedClassGet', CMDBuild.core.constants.Proxy.NAME);
+			if (!this.cmfg('classesSelectedClassIsEmpty')) {
+				var params = {};
+				params[CMDBuild.core.constants.Proxy.CLASS_NAME] = this.cmfg('classesSelectedClassGet', CMDBuild.core.constants.Proxy.NAME);
 
-			this.grid.getStore().load({
-				params: params,
-				scope: this,
-				callback: function (records, operation, success) {
-					if (!this.grid.getSelectionModel().hasSelection())
-						this.grid.getSelectionModel().select(0, true);
+				this.grid.getStore().load({
+					params: params,
+					scope: this,
+					callback: function (records, operation, success) {
+						if (!this.grid.getSelectionModel().hasSelection())
+							this.grid.getSelectionModel().select(0, true);
 
-					this.cmfg('onClassesTabDomainsRowSelect');
-				}
-			});
+						this.cmfg('onClassesTabDomainsRowSelect');
+					}
+				});
+			}
 		},
 
 		/**

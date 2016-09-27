@@ -310,26 +310,27 @@
 		 * @returns {Void}
 		 */
 		onClassesTabGeoAttributesShow: function (recordNameToSelect) {
-			this.grid.getStore().load({
-				scope: this,
-				callback: function (records, operation, success) {
-					this.grid.getStore().clearFilter();
-					this.grid.getStore().filterBy(function (record, id) {
-						return (
-							Ext.isObject(record) && !Ext.Object.isEmpty(record)
-							&& record.get(CMDBuild.core.constants.Proxy.MASTER_TABLE_NAME) == this.cmfg('classesSelectedClassGet', CMDBuild.core.constants.Proxy.NAME)
+			if (!this.cmfg('classesSelectedClassIsEmpty'))
+				this.grid.getStore().load({
+					scope: this,
+					callback: function (records, operation, success) {
+						this.grid.getStore().clearFilter();
+						this.grid.getStore().filterBy(function (record, id) {
+							return (
+								Ext.isObject(record) && !Ext.Object.isEmpty(record)
+								&& record.get(CMDBuild.core.constants.Proxy.MASTER_TABLE_NAME) == this.cmfg('classesSelectedClassGet', CMDBuild.core.constants.Proxy.NAME)
+							);
+						}, this);
+
+						// Record selection
+						var selectedRecordIndex = this.grid.getStore().find(CMDBuild.core.constants.Proxy.NAME, recordNameToSelect);
+
+						this.grid.getSelectionModel().select(
+							selectedRecordIndex > 0 ? selectedRecordIndex : 0,
+							true
 						);
-					}, this);
-
-					// Record selection
-					var selectedRecordIndex = this.grid.getStore().find(CMDBuild.core.constants.Proxy.NAME, recordNameToSelect);
-
-					this.grid.getSelectionModel().select(
-						selectedRecordIndex > 0 ? selectedRecordIndex : 0,
-						true
-					);
-				}
-			});
+					}
+				});
 		},
 
 		/**
