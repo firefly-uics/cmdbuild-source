@@ -136,32 +136,29 @@
 					return _error('manageIdentifierInstance(): moduleController not found', this, moduleController);
 			// END: Error handling
 
-			accordionController.disableStoreLoad = true;
-			accordionController.cmfg('accordionExpand', {
+			Ext.apply(accordionController, {
+				disableSelection: true,
 				scope: this,
 				callback: function () {
-					Ext.apply(accordionController, { // Setup accordion update callback
-						scope: this,
-						callback: function () {
-							moduleController.cmfg('workflowTreeApplyStoreEvent', {
-								eventName: 'load',
-								fn: function () {
-									var params = {};
-									params['enableForceFlowStatus'] = true;
-									params[CMDBuild.core.constants.Proxy.INSTANCE_ID] = instanceIdentifier;
-
-									moduleController.cmfg('workflowTreeActivitySelect', params);
-								},
-								scope: this,
-								options: { single: true }
-							});
-						}
-					});
-
 					accordionController.cmfg('accordionDeselect');
-					accordionController.cmfg('accordionUpdateStore', { selectionId: workflowObject[CMDBuild.core.constants.Proxy.ID] });
+					accordionController.cmfg('accordionNodeByIdSelect', { id: workflowObject[CMDBuild.core.constants.Proxy.ID] });
+
+					moduleController.cmfg('workflowTreeApplyStoreEvent', {
+						eventName: 'load',
+						fn: function () {
+							var params = {};
+							params['enableForceFlowStatus'] = true;
+							params[CMDBuild.core.constants.Proxy.INSTANCE_ID] = instanceIdentifier;
+
+							moduleController.cmfg('workflowTreeActivitySelect', params);
+						},
+						scope: this,
+						options: { single: true }
+					});
 				}
 			});
+
+			accordionController.cmfg('accordionExpand');
 		},
 
 		/**

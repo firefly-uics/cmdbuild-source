@@ -28,7 +28,7 @@
 		 *
 		 * @cfg {Boolean}
 		 */
-		disableSelection: false,
+		disableSelection: true,
 
 		/**
 		 * Flag to disable next storeLoad, will be reset on next expand
@@ -142,20 +142,12 @@
 		 */
 		accordionExpand: function (parameters) {
 			if (Ext.isObject(this.view) && !Ext.Object.isEmpty(this.view) && Ext.isFunction(this.view.expand)) {
-				if (
-					Ext.isObject(parameters) && !Ext.Object.isEmpty(parameters)
-					&& !Ext.isEmpty(parameters.callback) && Ext.isFunction(parameters.callback)
-				) {
-					parameters.scope = Ext.isEmpty(parameters.scope) ? this : parameters.scope;
-
-					if (this.view.getCollapsed() === false && this.view.isVisible()) { // Accordion already expanded
-						Ext.callback(parameters.callback, parameters.scope);
-					} else { // Accordion needs to be expanded
-						this.view.on('expand', parameters.callback, parameters.scope, { single: true });
-					}
-				}
+				var wasExpanded = this.view.getCollapsed() === false && this.view.isVisible();
 
 				this.view.expand();
+
+				if (wasExpanded)
+					this.view.fireEvent('expand');
 			}
 		},
 
@@ -189,24 +181,18 @@
 			accordionFirstSelectableNodeSelect: function () {
 				var firstSelectableNode = this.cmfg('accordionFirtsSelectableNodeGet');
 
-				// Error handling
-					if (!Ext.isObject(firstSelectableNode) || Ext.Object.isEmpty(firstSelectableNode) || !Ext.isFunction(firstSelectableNode.get))
-						return _error('accordionFirstSelectableNodeSelect(): unmanaged firstSelectableNode variable', this, firstSelectableNode);
-				// END: Error handling
+				if (Ext.isObject(firstSelectableNode) && !Ext.Object.isEmpty(firstSelectableNode)) {
+					Ext.apply(this, {
+						disableSelection: true,
+						scope: this,
+						callback: function () {
+							this.cmfg('accordionDeselect');
+							this.cmfg('accordionNodeByIdSelect', { id: firstSelectableNode.get(CMDBuild.core.constants.Proxy.ID) });
+						}
+					});
 
-				this.disableStoreLoad = true;
-
-				this.cmfg('accordionExpand', {
-					scope: this,
-					callback: function (panel, eOpts) {
-						this.disableStoreLoad = false;
-
-						this.cmfg('accordionDeselect');
-						this.cmfg('accordionUpdateStore', {
-							selectionId: firstSelectableNode.get(CMDBuild.core.constants.Proxy.ENTITY_ID) || firstSelectableNode.get(CMDBuild.core.constants.Proxy.ID)
-						});
-					}
-				});
+					this.cmfg('accordionExpand');
+				}
 			},
 
 		/**
@@ -359,8 +345,8 @@
 
 				// Notify accordion selection event to mainViewport's controller (accordion selection synchronizations)
 				this.cmfg('onMainViewportAccordionSelect', {
-					sourceAccordionIdentifier: this.cmfg('accordionIdentifierGet'),
-					selectedNodeModel: selection
+					id: this.cmfg('accordionIdentifierGet'),
+					node: selection
 				});
 			}
 		},
@@ -382,9 +368,6 @@
 				if (!this.view.getSelectionModel().hasSelection() && this.view.getCollapsed() === false && this.view.isVisible())
 					this.cmfg('accordionFirstSelectableNodeSelect');
 			}
-
-			// Accordion store update end event fire
-			this.view.fireEvent('storeload');
 
 			// Hide if accordion is empty
 			if (this.hideIfEmpty && this.isEmpty())
