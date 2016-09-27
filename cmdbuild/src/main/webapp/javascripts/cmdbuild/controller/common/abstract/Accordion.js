@@ -182,16 +182,8 @@
 				var firstSelectableNode = this.cmfg('accordionFirtsSelectableNodeGet');
 
 				if (Ext.isObject(firstSelectableNode) && !Ext.Object.isEmpty(firstSelectableNode)) {
-					Ext.apply(this, {
-						disableSelection: true,
-						scope: this,
-						callback: function () {
-							this.cmfg('accordionDeselect');
-							this.cmfg('accordionNodeByIdSelect', { id: firstSelectableNode.get(CMDBuild.core.constants.Proxy.ID) });
-						}
-					});
-
-					this.cmfg('accordionExpand');
+					this.cmfg('accordionDeselect');
+					this.cmfg('accordionNodeByIdSelect', { id: firstSelectableNode.get(CMDBuild.core.constants.Proxy.ID) });
 				}
 			},
 
@@ -242,19 +234,20 @@
 				if (!Ext.Object.isEmpty(parameters) && !Ext.isEmpty(parameters.id)) {
 					var node = this.cmfg('accordionNodeByIdGet', parameters.id);
 
-					if (Ext.isObject(node) && !Ext.Object.isEmpty(node)) {
-						node.bubble(function () {
-							this.expand();
-						});
+					// Error handling
+						if (!Ext.isObject(node) || Ext.Object.isEmpty(node))
+							return _error('accordionNodeByIdSelect(): unmanaged node', this, node);
+					// END: Error handling
 
-						this.view.getSelectionModel().select(
-							node,
-							false,
-							Ext.isString(parameters.mode) && parameters.mode == 'silently' // Silently mode
-						);
-					} else {
-						this.cmfg('accordionFirstSelectableNodeSelect');
-					}
+					node.bubble(function () {
+						this.expand();
+					});
+
+					this.view.getSelectionModel().select(
+						node,
+						false,
+						Ext.isString(parameters.mode) && parameters.mode == 'silently' // Silently mode
+					);
 				}
 			},
 
