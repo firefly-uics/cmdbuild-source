@@ -526,7 +526,7 @@
 				accordionWithNodeController = Ext.isEmpty(startingClassId) ? null : this.cmfg('mainViewportAccordionControllerWithNodeWithIdGet', startingClassId),
 				node = null;
 
-			if (!Ext.isEmpty(accordionWithNodeController)) {
+			if (Ext.isObject(accordionWithNodeController) && !Ext.Object.isEmpty(accordionWithNodeController)) {
 				Ext.apply(accordionWithNodeController, {
 					disableSelection: true,
 					scope: this,
@@ -542,8 +542,8 @@
 			} else { // If no statingClass to select try to select fist selectable node
 				var accordionController = this.accordionControllerWithSelectableNodeGet();
 
-				if (!Ext.isEmpty(accordionController)) {
-					accordionController.cmfg('accordionFirstSelectableNodeSelect');
+				if (Ext.isObject(accordionController) && !Ext.Object.isEmpty(accordionController)) {
+					accordionController.cmfg('accordionExpand');
 
 					node = accordionController.cmfg('accordionFirtsSelectableNodeGet'); // To manage selection if accordion are collapsed
 				}
