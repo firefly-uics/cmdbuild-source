@@ -118,16 +118,6 @@
 
 		/**
 		 * @returns {Void}
-		 *
-		 * @private
-		 */
-		accordionCallbackReset: function () {
-			delete this.callback;
-			delete this.scope;
-		},
-
-		/**
-		 * @returns {Void}
 		 */
 		accordionDeselect: function () {
 			this.view.getSelectionModel().deselectAll();
@@ -367,15 +357,19 @@
 				this.view.hide();
 
 			// Accordion creation callback
-			if (!Ext.isEmpty(this.callback) && Ext.isFunction(this.callback))
+			if (Ext.isFunction(this.callback))
 				Ext.callback(
-					Ext.Function.createInterceptor(this.accordionCallbackReset, this.callback, this.scope), // Create as interceptor to automatically reset accordion callback setup
-					this.scope
+					this.callback,
+					Ext.isObject(this.scope) ? this.scope : this
 				);
 
 			// Flag reset
-			this.disableSelection = false;
-			this.disableStoreLoad = false;
+			Ext.apply(this, {
+				callback: undefined,
+				disableSelection: false,
+				disableStoreLoad: false,
+				scope: this
+			});
 		}
 	});
 
