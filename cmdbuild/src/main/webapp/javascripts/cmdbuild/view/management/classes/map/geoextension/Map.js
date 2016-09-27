@@ -16,7 +16,11 @@
 				DENSITY_ANALYSIS : "density_analysis",
 				TABLE_SOURCE : "table_source",
 				FUNCTION_SOURCE : "function_source",
-				DEFAULT_RADIUS : 15
+				DEFAULT_RADIUS : 8,
+				ICON_SCALE : 1.5,
+				GEO_MIN_ZINDEX : 1000,
+				GIS_MIN_ZINDEX : 10000,
+				THEMATIC_MIN_ZINDEX : 100000
 
 			},
 			shapes : {
@@ -106,7 +110,7 @@
 					center : center,
 					zoom : configuration.zoom,
 					maxZoom: 50,
-					minZoom: 2,
+					minZoom: 1,
 					extent:extent
 
 				});
@@ -178,8 +182,16 @@
 		},
 		refreshLegend : function() {
 			var arrLayers = this.interactionDocument.getThematicLayers();
-			if (arrLayers.length > 0) {
-				this.legend.refreshResults(arrLayers);
+			var visibles = [];
+			for (var i = 0; i < arrLayers.length; i++)  {
+				var layer = arrLayers[i];
+				var visible = this.interactionDocument.getLayerVisibility(layer);
+				if (visible) {
+					visibles.push(layer);
+				}
+			}
+			if (visibles.length > 0) {
+				this.legend.refreshResults(visibles);
 			} else {
 				this.legend.hide();
 			}
@@ -255,6 +267,10 @@
 			this.view.setCenter(configuration.center);
 			this.clearSource();
 			this.map.renderSync();
+		},
+		resetZoom : function() {
+			var configuration = this.interactionDocument.getConfigurationMap();
+			this.view.setZoom(configuration.zoom);
 		},
 
 		/**
