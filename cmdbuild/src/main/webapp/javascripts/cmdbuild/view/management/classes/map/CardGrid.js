@@ -89,6 +89,7 @@
 			},
 
 			select: function (row, record, index) {
+				this.interactionDocument.setNoZoom(true);
 				this.navigateOnCard(record);
 			}
 		},
@@ -114,6 +115,9 @@
 		},
 		refresh : function() {
 			var currentCard = this.interactionDocument.getCurrentCard();
+			if (!currentCard) {
+				return;
+			}
 			var currentClassName = currentCard.className;
 			if (! currentClassName) {
 				return;

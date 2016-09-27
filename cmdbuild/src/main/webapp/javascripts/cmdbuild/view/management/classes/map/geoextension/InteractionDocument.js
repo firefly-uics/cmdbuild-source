@@ -6,12 +6,20 @@
 		feature : undefined,
 		currentCard : undefined,
 		classesControlledByNavigation : undefined,
-		gisAdapters:{},
+		gisAdapters : {},
 		/**
 		 * @property {Object}
 		 * 
 		 */
 		navigables : {},
+
+		/**
+		 * @property {Array} Ext.tree.Model
+		 * 
+		 */
+		navigableToOpen : undefined,
+
+		noZoom : false,
 
 		configurationMap : {
 			center : [ CMDBuild.configuration.gis.get(CMDBuild.gis.constants.CENTER_LONGITUDE) || 0,
@@ -48,25 +56,42 @@
 			this.navigables = {};
 			for (var i = 0; i < arrayNavigables.length; i++) {
 				var navigable = arrayNavigables[i];
-				var cardId = navigable.get("cardId");
+				var cardId = parseInt(navigable.get("cardId"));
 				var className = navigable.get("className");
 				if (!this.navigables[className]) {
 					this.navigables[className] = [];
 				}
-				this.navigables[className].push(parseInt(cardId));
+				this.navigables[className][cardId] = navigable;
 			}
 			this.getMapPanel().clearSource();
 			this.changed();
 		},
+		resetZoom : function() {
+			this.getMapPanel().resetZoom();
+		},
 		isANavigableClass : function(className) {
 			return this.navigables[className];
 		},
+		getNavigableCard : function(card) {
+			var className = card.className;
+			if (!this.isControlledByNavigation(className)) {
+				return null;
+			}
+			var cardId = card.cardId;
+			var node = this.navigables[className][cardId];
+			return (!node) ? null : node;
+		},
 		isANavigableCard : function(card) {
-			if (!this.isControlledByNavigation(card.className)) {
+			var className = card.className;
+			if (!this.isControlledByNavigation(className)) {
 				return true;
 			}
-			var id = parseInt(card.cardId);
-			return (!this.navigables[card.className]) ? false : this.navigables[card.className].indexOf(id) !== -1;
+			var cardId = card.cardId;
+			var node = this.navigables[className][cardId];
+			if (!node) {
+				return false;
+			}
+			return node.get("checked");
 		},
 		isANavigableLayer : function(layer) {
 			if (!this.isControlledByNavigation(layer.masterTableName)) {
@@ -88,6 +113,9 @@
 				return false;
 			}
 			return true;
+		},
+		getStoppingRefresh : function() {
+			this.getMapPanel().getStoppingRefresh();
 		},
 		getConfigurationMap : function() {
 			return this.configurationMap;
@@ -142,6 +170,16 @@
 		getGisAdapters : function() {
 			return this.gisAdapters;
 		},
+		setNavigableToOpen : function(cardToOpen) {
+			var navigableToOpen = this.getNavigableCard(cardToOpen);
+			this.navigableToOpen = navigableToOpen;
+		},
+		resetNavigableToOpen : function() {
+			this.navigableToOpen = null;
+		},
+		getNavigableToOpen : function() {
+			return this.navigableToOpen;
+		},
 		pushGisLayerAdapter : function(name, className, adapterGisLayer) {
 			if (this.gisAdapters[className]) {
 				var newAdapter = true;
@@ -153,12 +191,11 @@
 						break;
 					}
 				}
-			}
-			else {
-				this.gisAdapters[className] = [{
+			} else {
+				this.gisAdapters[className] = [ {
 					name : name,
 					adapter : adapterGisLayer
-				}];
+				} ];
 			}
 		},
 		changed : function(bForced) {
@@ -247,7 +284,7 @@
 						// me.changed();
 					}
 					mapPanel.center(me.configurationMap);
-					callback.apply(callbackScope, []);
+					callback.apply(callbackScope, [ center ]);
 				}, this);
 			}, this);
 		},
@@ -270,6 +307,12 @@
 		},
 		getCurrentCard : function() {
 			return this.currentCard;
+		},
+		setNoZoom : function(noZoom) {
+			this.noZoom = noZoom;
+		},
+		getNoZoom : function() {
+			return this.noZoom;
 		},
 		clearSelection : function() {
 			var mapPanel = this.getMapPanel();
@@ -338,9 +381,10 @@
 				operation : operation
 			};
 		}
+
 	});
 
-	function layersByCard(card, callback, callbackScope) {// ?????????
+	function layersByCard(card, callback, callbackScope) {
 		var retLayers = [];
 		_CMCache.getAllLayers(function(layers) {
 			for (var i = 0; i < layers.length; i++) {
@@ -407,12 +451,17 @@
 	function getPointCenter(geometry) {
 		return geometry.coordinates;
 	}
+	function getLineCenter(geometry) {
+		return getGenericPolygonCenter(geometry.coordinates);
+	}
 	function getPolygonCenter(geometry) {
+		return getGenericPolygonCenter(geometry.coordinates[0]);
+	}
+	function getGenericPolygonCenter(coordinates) {
 		var minX = Number.MAX_VALUE;
 		var minY = Number.MAX_VALUE;
 		var maxX = Number.MIN_VALUE;
 		var maxY = Number.MIN_VALUE;
-		var coordinates = geometry.coordinates[0];
 		for (var i = 0; i < coordinates.length; i++) {
 			var coordinate = coordinates[i];
 			minX = Math.min(minX, coordinate[0]);
@@ -424,6 +473,8 @@
 	}
 	function getCenter(geometry) {
 		switch (geometry.type) {
+		case "LINESTRING":
+			return getLineCenter(geometry);
 		case "POLYGON":
 			return getPolygonCenter(geometry);
 		case "POINT":
