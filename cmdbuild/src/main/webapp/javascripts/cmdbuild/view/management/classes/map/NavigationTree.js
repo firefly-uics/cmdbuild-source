@@ -69,6 +69,8 @@
 				}
 			});
 
+			this.interactionDocument.observe(this);
+
 			this.callParent(arguments);
 
 			// Force to not select via UI
@@ -78,8 +80,8 @@
 
 			this.mon(this, "checkchange", function(node, checked) {
 				checkNodeChildren(node, checked);
-				var checkedNodes = this.getChecked();
-				this.interactionDocument.setNavigables(checkedNodes);
+				var allNodes = getAllNodes(this.getRootNode());;
+				this.interactionDocument.setNavigables(allNodes);
 			}, this);
 
 			this.mon(this, "activate", function(treePanel) {
@@ -100,12 +102,16 @@
 				this.getNavigationClasses(children[i], classes);
 			}
 		},
+		refresh : function() {
+			checkParents(this.interactionDocument.getNavigableToOpen());
+			this.interactionDocument.resetNavigableToOpen();
+		},
 		loaded : function() {
-			var checkedNodes = this.getChecked();
+			var allNodes = getAllNodes(this.getRootNode());
 			var classesControlledByNavigation = [];
 			this.getNavigationClasses(this.getRootNode(), classesControlledByNavigation);
 			this.interactionDocument.setClassesControlledByNavigation(classesControlledByNavigation);
-			this.interactionDocument.setNavigables(checkedNodes);
+			this.interactionDocument.setNavigables(allNodes);
 		},
 		navigateOnCard : function(record) {
 			var className = record.get('className');
@@ -155,10 +161,29 @@
 	function checkNodeChildren(node, checked) {
 		var children = node.childNodes || node.children || [];
 		for (var i = 0, l = children.length; i < l; ++i) {
-			var c = children[i];
-			c.set("checked", checked);
-			checkNodeChildren(c, checked)
+			var child = children[i];
+			child.set("checked", checked);
+			checkNodeChildren(child, checked)
 		}
 
+	}
+	function checkParents(node) {
+		if (node) {
+			node.set("checked", true);
+			checkParents(node.parentNode);
+		}
+	}
+	function getAllNodes(node) {
+		var allNodes = [];
+		getAllNodesRecursive(node, allNodes);
+		return allNodes;
+	}
+	function getAllNodesRecursive(node, allNodes) {
+		var children = node.childNodes || node.children || [];
+		for (var i = 0, l = children.length; i < l; ++i) {
+			var child = children[i];
+			allNodes.push(child);
+			getAllNodesRecursive(child, allNodes);
+		}
 	}
 })();
