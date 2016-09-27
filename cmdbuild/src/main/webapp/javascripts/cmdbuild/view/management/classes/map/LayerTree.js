@@ -86,6 +86,9 @@
 		},
 		refresh : function() {
 			var currentCard = this.interactionDocument.getCurrentCard();
+			if (!currentCard) {
+				return;
+			}
 			if (this.oldClassName !== currentCard.className) {
 				clearTree(this.getRootNode());
 			}
