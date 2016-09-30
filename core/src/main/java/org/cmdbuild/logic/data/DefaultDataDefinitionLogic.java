@@ -520,10 +520,10 @@ public class DefaultDataDefinitionLogic implements DataDefinitionLogic {
 		final Iterable<String> elements;
 		if (domain.getCardinality().equals(CARDINALITY_1N.value())) {
 			elements =
-					concat(defaultIfNull(domain.getDisabled1(), NO_DISABLED), asList(existing.getClass1().getName()));
+					concat(defaultIfNull(domain.getDisabled2(), NO_DISABLED), asList(existing.getClass2().getName()));
 		} else if (domain.getCardinality().equals(CARDINALITY_N1.value())) {
 			elements =
-					concat(defaultIfNull(domain.getDisabled2(), NO_DISABLED), asList(existing.getClass2().getName()));
+					concat(defaultIfNull(domain.getDisabled1(), NO_DISABLED), asList(existing.getClass1().getName()));
 		} else {
 			elements = NO_DISABLED;
 		}
