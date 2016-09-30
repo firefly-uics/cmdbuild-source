@@ -398,10 +398,7 @@
 		 * Reload store every time panel is showed
 		 */
 		onTabEmailPanelShow: function () {
-			this.view.setDisabled(
-				this.cmfg('tabEmailSelectedEntityIsEmpty', CMDBuild.core.constants.Proxy.ENTITY)
-				&& !this.cmfg('tabEmailEditModeGet') // Evaluate also editMode to enable onAddCardButtonClick
-			);
+			this.view.setDisabled(this.cmfg('tabEmailSelectedEntityIsEmpty', CMDBuild.core.constants.Proxy.ENTITY));
 
 			if (this.view.isVisible()) {
 				this.controllerGrid.cmfg('tabEmailGridUiStateSet');
