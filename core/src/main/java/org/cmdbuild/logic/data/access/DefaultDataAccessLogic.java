@@ -317,6 +317,7 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 		final CMClass fetchedClass = dataView.findClass(className);
 		final Collection<CMDomain> output = new ArrayList<>();
 		for (final CMDomain element : from(dataView.findDomains()) //
+				.filter(activeOnes()) //
 				.filter(domainFor(fetchedClass)) //
 				.filter(usableForReferences(fetchedClass))) {
 			switch (element.getCardinality()) {
