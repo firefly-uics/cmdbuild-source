@@ -162,8 +162,6 @@
 		 */
 		reset: function () {
 			this.grid.getStore().removeAll();
-
-			this.view.disable();
 		}
 	});
 
