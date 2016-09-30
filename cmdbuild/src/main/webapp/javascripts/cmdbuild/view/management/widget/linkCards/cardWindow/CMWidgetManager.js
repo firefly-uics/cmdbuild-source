@@ -1,18 +1,9 @@
 (function() {
 
-	Ext.define("CMDBuild.view.management.common.widgets.CMWidgetManagerDelegate", {
-		getFormForTemplateResolver: Ext.emptyFn,
-		getWidgetButtonsPanel: Ext.emptyFn
-	});
-
-	Ext.define("CMDBuild.view.management.common.widgets.CMTabbedWidgetDelegate", {
-		getNotesPanel: Ext.emptyFn,
-		getAttachmentsPanel: Ext.emptyFn,
-		showWidget: Ext.emptyFn,
-		activateFirstTab: Ext.emptyFn
-	});
-
-	Ext.define("CMDBuild.view.management.common.widgets.CMWidgetManager", {
+	/**
+	 * @link CMDBuild.view.management.common.widgets.CMWidgetManager
+	 */
+	Ext.define("CMDBuild.view.management.widget.linkCards.cardWindow.CMWidgetManager", {
 
 		/**
 		 * @cfg {CMDBuild.controller.management.common.CMWidgetManagerController}
@@ -28,12 +19,10 @@
 		 * @param {CMDBuild.view.management.classes.CMCardPanel or CMDBuild.view.management.workflow.panel.form.tabs.activity.ActivityView} mainView
 		 * @param {Mixed} tabbedWidgetDelegate
 		 */
-		constructor: function(mainView, tabbedWidgetDelegate) {
+		constructor: function(configurationObject) {
 			var me = this;
 
-			this.mainView = mainView;
-
-			this.tabbedWidgetDelegate = tabbedWidgetDelegate || null;
+			Ext.apply(this, configurationObject);
 
 			Ext.apply(this, {
 				builders: {
@@ -308,14 +297,6 @@
 			} else {
 				return null;
 			}
-		}
-	});
-
-	Ext.define("CMDBuild.view.management.common.widgets.CMWidgetManagerPopup", {
-		extend: "CMDBuild.view.management.common.widgets.CMWidgetManager",
-
-		buildWidgetsContainer: function() {
-			return new CMDBuild.view.management.common.widgets.CMWidgetsWindowPopup();
 		}
 	});
 
