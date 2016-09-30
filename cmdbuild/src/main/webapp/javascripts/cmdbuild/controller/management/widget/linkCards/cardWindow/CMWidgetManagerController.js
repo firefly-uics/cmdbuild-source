@@ -1,14 +1,15 @@
 (function() {
 
 	Ext.require([ // Legacy
-		'CMDBuild.controller.management.common.widgets.workflow.CMWorkflowController',
-		'CMDBuild.controller.management.widget.linkCards.LinkCardsController',
 		'CMDBuild.controller.management.widget.manageRelation.CMManageRelationController',
 		'CMDBuild.core.configurations.Timeout',
 		'CMDBuild.core.Message'
 	]);
 
-	Ext.define("CMDBuild.controller.management.common.CMWidgetManagerController", {
+	/**
+	 * @link CMDBuild.controller.management.common.CMWidgetManagerController
+	 */
+	Ext.define("CMDBuild.controller.management.widget.linkCards.cardWindow.CMWidgetManagerController", {
 
 		/**
 		 * @property {Object}
@@ -55,9 +56,6 @@
 		 * @param {Object} controller
 		 */
 		beforeHideView: function(controller) {
-			if (!Ext.isEmpty(controller.widgetConfiguration) && controller.widgetConfiguration['type'] == '.OpenReport') // FIXME: hack to hide errors on OpenReport widget button click because of row permissions
-				CMDBuild.global.interfaces.Configurations.set('disableAllMessages', false);
-
 			if (!Ext.isEmpty(controller)) {
 				// cmfg() implementation adapter
 				if (!Ext.isEmpty(controller.cmfg) && Ext.isFunction(controller.cmfg)) {
@@ -74,7 +72,6 @@
 
 			if (card) {
 				var definitions = me.takeWidgetFromCard(card);
-				var controllers = {};
 				for (var i=0, l=definitions.length, w=null, ui=null; i<l; ++i) {
 					w = definitions[i];
 					ui = me.view.buildWidget(w, card);
@@ -82,55 +79,38 @@
 					if (ui) {
 						var wc = me.buildWidgetController(ui, w, card);
 						if (wc) {
-							controllers[me.getWidgetId(w)] = wc;
+							me.controllers[me.getWidgetId(w)] = wc;
 						}
 					}
 				}
-
-				this.controllers = Ext.clone(controllers); // Fixes problem of multiple instantiation of this class and losing controller pointers
 			}
 		},
 
-		/**
-		 * @param {Object} widgetConfigurationObject
-		 *
-		 * @returns {Void}
-		 *
-		 * @public
-		 */
-		onWidgetButtonClick: function (widgetConfigurationObject) {
-			var controller = this.controllers[this.getWidgetId(widgetConfigurationObject)];
+		onWidgetButtonClick: function(w) {
+			this.delegate.ensureEditPanel();
+			var me = this;
+			Ext.defer(function() {
+				var wc = me.controllers[me.getWidgetId(w)];
+				if (wc) {
+					me.view.showWidget(wc.view, me.getWidgetLable(w));
 
-			if (!Ext.Object.isEmpty(widgetConfigurationObject) && widgetConfigurationObject['type'] == '.OpenReport') // FIXME: hack to hide errors on OpenReport widget button click because of row permissions
-				CMDBuild.global.interfaces.Configurations.set('disableAllMessages', true);
-
-			this.delegate.ensureEditPanel(); // Creates editPanel with relative form fields
-
-			if (!Ext.isEmpty(controller)) {
-				this.view.showWidget(controller.view, this.getWidgetLable(widgetConfigurationObject));
-
-				// cmfg() implementation adapter
-				if (!Ext.isEmpty(controller.cmfg) && Ext.isFunction(controller.cmfg)) {
-					controller.cmfg('beforeActiveView');
-				} else if (Ext.isFunction(controller.beforeActiveView)) {
-					controller.beforeActiveView();
+					// cmfg() implementation adapter
+					if (!Ext.isEmpty(wc.cmfg) && Ext.isFunction(wc.cmfg)) {
+						wc.cmfg('beforeActiveView');
+					} else if (Ext.isFunction(wc.beforeActiveView)) {
+						wc.beforeActiveView();
+					}
 				}
-			}
+			}, 1);
 		},
 
 		/**
 		 * Forwarder method
 		 *
-		 * @returns {Void}
-		 *
 		 * @public
 		 */
 		onCardGoesInEdit: function() {
 			Ext.Object.each(this.controllers, function(id, controller, myself) {
-				// FIXME: widget instance data storage should be implemented inside this class
-				if (!Ext.isEmpty(controller.instancesDataStorageReset) && Ext.isFunction(controller.instancesDataStorageReset))
-					controller.instancesDataStorageReset();
-
 				// cmfg() implementation adapter
 				if (!Ext.isEmpty(controller.cmfg) && Ext.isFunction(controller.cmfg)) {
 					controller.cmfg('onEditMode');
@@ -167,7 +147,7 @@
 				}
 			}, this);
 
-			return widgetsAreValid ? null : '<ul style="text-align: left;">' + out + '</ul>';
+			return widgetsAreValid ? null : '<ul>' + out + '</ul>';
 		},
 
 		removeAll: function clearWidgetControllers() {
@@ -188,7 +168,7 @@
 		 */
 		waitForBusyWidgets: function (callback, scope) {
 			var requestBarrier = Ext.create('CMDBuild.core.RequestBarrier', {
-				id: 'widgetManagerBeforeSaveBarrier',
+				id: 'widgetLinkCardBeforeSaveBarrier',
 				executionTimeout: CMDBuild.core.configurations.Timeout.getWorkflowWidgetsExecutionTimeout(),
 				scope: scope,
 				callback: callback,
@@ -307,25 +287,6 @@
 
 		activateFirstTab: function() {
 			this.view.activateFirstTab();
-		}
-	});
-
-	Ext.define("CMDBuild.controller.management.common.CMWidgetManagerControllerPopup", {
-		extend: "CMDBuild.controller.management.common.CMWidgetManagerController",
-		buildControllers: function(widgets, card) {
-			var me = this;
-			me.removeAll();
-
-			for (var w in widgets) {
-				ui = me.view.buildWidget(widgets[w], card);
-
-				if (ui) {
-					var wc = me.buildWidgetController(ui, widgets[w], card);
-					if (wc) {
-						me.controllers[me.getWidgetId(widgets[w])] = wc;
-					}
-				}
-			}
 		}
 	});
 
