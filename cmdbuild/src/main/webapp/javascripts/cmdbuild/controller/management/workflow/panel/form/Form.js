@@ -239,6 +239,7 @@
 		 * @returns {Void}
 		 */
 		onWorkflowFormModifyButtonClick: function () {
+			// Forward to sub-controllers
 			this.controllerTabActivity.onModifyCardClick();
 
 			if (Ext.isObject(this.controllerTabEmail) && !Ext.Object.isEmpty(this.controllerTabEmail))
@@ -267,6 +268,7 @@
 		onWorkflowFormSaveButtonClick: function () {
 			this.controllerTabActivity.onSaveCardClick();
 
+			// Forward to sub-controllers
 			if (Ext.isObject(this.controllerTabEmail) && !Ext.Object.isEmpty(this.controllerTabEmail))
 				this.controllerTabEmail.onSaveCardClick();
 		},
@@ -306,12 +308,23 @@
 		 * @returns {Void}
 		 */
 		workflowFormReset: function () {
+			// Forward to sub-controllers
 			this.controllerTabActivity.reset();
-			this.controllerTabNote.reset();
-			this.controllerTabRelations.reset();
-			this.controllerTabHistory.reset();
-			this.controllerTabEmail.reset();
-			this.controllerTabAttachments.reset();
+
+			if (Ext.isObject(this.controllerTabAttachments) && !Ext.Object.isEmpty(this.controllerTabAttachments))
+				this.controllerTabAttachments.reset();
+
+			if (Ext.isObject(this.controllerTabEmail) && !Ext.Object.isEmpty(this.controllerTabEmail))
+				this.controllerTabEmail.reset();
+
+			if (Ext.isObject(this.controllerTabHistory) && !Ext.Object.isEmpty(this.controllerTabHistory))
+				this.controllerTabHistory.reset();
+
+			if (Ext.isObject(this.controllerTabNote) && !Ext.Object.isEmpty(this.controllerTabNote))
+				this.controllerTabNote.reset();
+
+			if (Ext.isObject(this.controllerTabRelations) && !Ext.Object.isEmpty(this.controllerTabRelations))
+				this.controllerTabRelations.reset();
 		}
 	});
 
