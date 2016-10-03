@@ -109,23 +109,30 @@ public class JoinClause {
 
 		private final void addAllDomains() {
 			for (final CMDomain domain : from(viewForBuild.findDomains()) //
-					.filter(domainFor(source)) //
-					.filter(domain(disabled1(), not(contains(source.getName()))))) {
-				addQueryDomain(new QueryDomain(domain, Source._1));
+					.filter(domainFor(source))) {
 				final Collection<CMClass> _disabled = newHashSet();
-				domain.getDisabled2().forEach(input -> {
-					_disabled.add(viewForBuild.findClass(input));
-				});
-				disabled.put(domain, _disabled);
-			}
-			for (final CMDomain domain : from(viewForBuild.findDomains()) //
-					.filter(domainFor(source)) //
-					.filter(domain(disabled2(), not(contains(source.getName()))))) {
-				addQueryDomain(new QueryDomain(domain, Source._2));
-				final Collection<CMClass> _disabled = newHashSet();
-				domain.getDisabled1().forEach(input -> {
-					_disabled.add(viewForBuild.findClass(input));
-				});				
+				if (domain(disabled1(), not(contains(source.getName()))).apply(domain)) {
+					addQueryDomain(new QueryDomain(domain, Source._1));
+					domain.getClass2().getLeaves().forEach(input -> {
+						if (!input.isActive()) {
+							_disabled.add(input);
+						}
+					});
+					domain.getDisabled2().forEach(input -> {
+						_disabled.add(viewForBuild.findClass(input));
+					});
+				}
+				if (domain(disabled2(), not(contains(source.getName()))).apply(domain)) {
+					addQueryDomain(new QueryDomain(domain, Source._2));
+					domain.getClass1().getLeaves().forEach(input -> {
+						if (!input.isActive()) {
+							_disabled.add(input);
+						}
+					});
+					domain.getDisabled1().forEach(input -> {
+						_disabled.add(viewForBuild.findClass(input));
+					});
+				}
 				disabled.put(domain, _disabled);
 			}
 		}
