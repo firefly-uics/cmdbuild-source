@@ -8,6 +8,7 @@ import static com.google.common.collect.Maps.newHashMap;
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
 import static org.apache.commons.lang3.ObjectUtils.defaultIfNull;
+import static org.apache.commons.lang3.StringUtils.defaultString;
 import static org.cmdbuild.dao.constants.Cardinality.CARDINALITY_11;
 import static org.cmdbuild.dao.constants.Cardinality.CARDINALITY_1N;
 import static org.cmdbuild.dao.constants.Cardinality.CARDINALITY_N1;
@@ -517,11 +518,12 @@ public class DefaultDataDefinitionLogic implements DataDefinitionLogic {
 	}
 
 	private void validateActivationForReferences(final CMDomain existing, final Domain domain) {
+		final String cardinality = defaultString(domain.getCardinality());
 		final Iterable<String> elements;
-		if (domain.getCardinality().equals(CARDINALITY_1N.value())) {
+		if (cardinality.equals(CARDINALITY_1N.value())) {
 			elements =
 					concat(defaultIfNull(domain.getDisabled2(), NO_DISABLED), asList(existing.getClass2().getName()));
-		} else if (domain.getCardinality().equals(CARDINALITY_N1.value())) {
+		} else if (cardinality.equals(CARDINALITY_N1.value())) {
 			elements =
 					concat(defaultIfNull(domain.getDisabled1(), NO_DISABLED), asList(existing.getClass1().getName()));
 		} else {
