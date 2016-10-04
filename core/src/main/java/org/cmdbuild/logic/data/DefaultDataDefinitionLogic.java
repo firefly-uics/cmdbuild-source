@@ -547,7 +547,8 @@ public class DefaultDataDefinitionLogic implements DataDefinitionLogic {
 
 						@Override
 						public void visit(final ReferenceAttributeType attributeType) {
-							if (attributeType.getDomainName().equals(domain.getName()) && input.isActive()) {
+							if (attributeType.getDomainName().equals(domain.getName()) && !domain.isActive()
+									&& input.isActive()) {
 								throw ORM_ACTIVE_ATTRIBUTE.createException(target.getName(), input.getName());
 							}
 						}
