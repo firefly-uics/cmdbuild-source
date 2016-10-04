@@ -160,24 +160,4 @@
 		return _CMUtils.getEntryTypePrivilegesByCard(card).write;
 	}
 
-	Ext.define("CMDBuild.view.management.common.CMNoteWindowController", {
-		extend: "CMDBuild.controller.management.classes.CMNoteController",
-		constructor: function() {
-			this.callParent(arguments);
-		},
-
-		onCardSelected: function(card) {
-			this.callParent(arguments);
-			var title = "";
-
-			if (this.card) {
-				title = Ext.String.format("{0} - {1}"
-					, CMDBuild.Translation.management.modcard.tabs.notes
-					, this.card.get("Description"));
-			}
-
-			this.view.setTitle(title);
-		}
-	});
-
 })();
