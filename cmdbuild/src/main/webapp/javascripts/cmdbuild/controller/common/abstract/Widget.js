@@ -143,7 +143,10 @@
 			// END: Error handling
 
 			// Add default managed functions
-			this.cmfgCatchedFunctions.push('getLabel');
+			this.cmfgCatchedFunctions = Ext.Array.merge(this.cmfgCatchedFunctions, [
+				'getLabel',
+				'widgetConfigurationGet'
+			]);
 
 			this.callParent(arguments);
 

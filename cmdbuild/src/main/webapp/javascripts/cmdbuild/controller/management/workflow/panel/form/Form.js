@@ -38,7 +38,9 @@
 			'onWorkflowFormRemoveButtonClick',
 			'onWorkflowFormSaveButtonClick',
 			'onWorkflowFormWokflowSelect = onWorkflowWokflowSelect',
-			'workflowFormReset'
+			'workflowFormPanelTabActiveSet',
+			'workflowFormReset',
+			'workflowFormWidgetExists'
 		],
 
 		/**
@@ -136,8 +138,8 @@
 				view, // as CMWidgetManagerDelegate
 				this.tabPanel // as CMTabbedWidgetDelegate
 			);
-			var widgetControllerManager = new CMDBuild.controller.management.common.CMWidgetManagerController(this.widgetManager);
-			var activityPanelController = new CMDBuild.controller.management.workflow.panel.form.tabs.activity.Activity(view, this, widgetControllerManager);
+			this.widgetControllerManager = new CMDBuild.controller.management.common.CMWidgetManagerController(this.widgetManager);
+			var activityPanelController = new CMDBuild.controller.management.workflow.panel.form.tabs.activity.Activity(view, this, this.widgetControllerManager);
 
 			return activityPanelController;
 		},
@@ -155,23 +157,17 @@
 		},
 
 		/**
-		 * Manage previous selected activity (only before add button action)
-		 *
 		 * @returns {Void}
 		 */
 		onWorkflowFormAbortButtonClick: function () {
+			// Forward to sub-controllers
 			this.controllerTabActivity.onAbortCardClick();
 
 			if (Ext.isObject(this.controllerTabEmail) && !Ext.Object.isEmpty(this.controllerTabEmail))
 				this.controllerTabEmail.onAbortCardClick();
 
-			// Manage previous selected activity
-			if (this.cmfg('workflowSelectedActivityIsEmpty') && !this.cmfg('workflowSelectedPreviousActivityIsEmpty'))
-				this.cmfg('workflowTreeActivitySelect', {
-					activitySubsetId: this.cmfg('workflowSelectedPreviousActivityGet', [CMDBuild.core.constants.Proxy.METADATA, CMDBuild.core.constants.Proxy.ACTIVITY_SUBSET_ID]),
-					forceFilter: true,
-					instanceId: this.cmfg('workflowSelectedPreviousActivityGet', CMDBuild.core.constants.Proxy.INSTANCE_ID)
-				});
+			if (Ext.isObject(this.controllerTabNote) && !Ext.Object.isEmpty(this.controllerTabNote))
+				this.controllerTabNote.cmfg('onWorkflowFormTabNoteAbortActivityButtonClick');
 		},
 
 		/**
@@ -188,8 +184,14 @@
 
 			this.operativeInstructionsPanel.update(activityInstance.getInstructions() || '');
 
+			this.workflowFormPanelTabSelectionManage();
+
 			if (!activityInstance.nullObject && activityInstance.isNew())
 				_CMUIState.onlyFormIfFullScreen();
+
+			// Forward to sub-controllers
+			if (Ext.isObject(this.controllerTabNote) && !Ext.Object.isEmpty(this.controllerTabNote))
+				this.controllerTabNote.cmfg('onWorkflowFormTabNoteActivitySelect');
 		},
 
 		/**
@@ -198,7 +200,7 @@
 		 * @returns {Void}
 		 */
 		onWorkflowFormAddButtonClick: function (id) {
-			this.tabPanel.setActiveTab(0);
+			this.cmfg('workflowFormPanelTabActiveSet');
 
 			// Forward to sub-controllers
 			this.controllerTabActivity.onAddCardClick(id);
@@ -210,7 +212,7 @@
 				this.controllerTabHistory.cmfg('onWorkflowFormTabHistoryAddWorkflowButtonClick', id);
 
 			if (Ext.isObject(this.controllerTabNote) && !Ext.Object.isEmpty(this.controllerTabNote))
-				this.controllerTabNote.onAddCardClick(id);
+				this.controllerTabNote.cmfg('onWorkflowFormTabNoteAddButtonClick');
 
 			if (Ext.isObject(this.controllerTabRelations) && !Ext.Object.isEmpty(this.controllerTabRelations))
 				this.controllerTabRelations.onAddCardClick(id);
@@ -231,6 +233,12 @@
 		onWorkflowFormInstanceSelect: function () {
 			// FIXME: legacy mode to remove on complete Workflow UI and wofkflowState modules refactor
 			_CMWFState.setProcessInstanceSynchronous(Ext.create('CMDBuild.model.CMProcessInstance', this.cmfg('workflowSelectedInstanceGet', 'rawData')));
+
+			this.workflowFormPanelTabSelectionManage();
+
+			// Forward to sub-controllers
+			if (Ext.isObject(this.controllerTabNote) && !Ext.Object.isEmpty(this.controllerTabNote))
+				this.controllerTabNote.cmfg('onWorkflowFormTabNoteInstanceSelect');
 		},
 
 		/**
@@ -244,9 +252,6 @@
 
 			if (Ext.isObject(this.controllerTabEmail) && !Ext.Object.isEmpty(this.controllerTabEmail))
 				this.controllerTabEmail.cmfg('onModifyCardClick');
-
-			if (Ext.isObject(this.controllerTabNote) && !Ext.Object.isEmpty(this.controllerTabNote))
-				this.controllerTabNote.onModifyNoteClick();
 
 			_CMUIState.onlyFormIfFullScreen();
 		},
@@ -278,7 +283,7 @@
 		 *
 		 * @returns {Void}
 		 */
-		onWorkflowFormWokflowSelect: function (node) { // TODO: useless just get from module workflow cache
+		onWorkflowFormWokflowSelect: function (node) {
 			this.cmfg('workflowFormReset');
 
 			var danglingCard = CMDBuild.global.controller.MainViewport.cmfg('mainViewportDanglingCardGet');
@@ -287,22 +292,54 @@
 				Ext.create('CMDBuild.cache.CMEntryTypeModel', this.cmfg('workflowSelectedWorkflowGet', 'rawData')),
 				danglingCard,
 				false,
-				node.get(CMDBuild.core.constants.Proxy.FILTER)
+				Ext.isEmpty(node) ? null : node.get(CMDBuild.core.constants.Proxy.FILTER)
 			);
 
-			// Manage tab selection
-			if (Ext.isEmpty(this.tabPanel.getActiveTab()))
+			this.workflowFormPanelTabSelectionManage(true);
+		},
+
+		// Tab panel manage methods
+			/**
+			 * @param {Boolean} enableDagglingCard
+			 *
+			 * @returns {Void}
+			 *
+			 * @private
+			 */
+			workflowFormPanelTabSelectionManage: function (enableDagglingCard) {
+				enableDagglingCard = Ext.isBoolean(enableDagglingCard) ? enableDagglingCard : false;
+
+				var danglingCard = CMDBuild.global.controller.MainViewport.cmfg('mainViewportDanglingCardGet');
+
+				if (Ext.isEmpty(this.tabPanel.getActiveTab()))
+					if (
+						enableDagglingCard
+						&& Ext.isObject(danglingCard) && !Ext.Object.isEmpty(danglingCard)
+						&& !Ext.isBoolean(danglingCard.activateFirstTab)
+					) {
+						this.cmfg('workflowFormPanelTabActiveSet', danglingCard.activateFirstTab)
+					} else {
+						this.cmfg('workflowFormPanelTabActiveSet');
+					}
+
+				this.tabPanel.getActiveTab().fireEvent('show'); // Manual show event fire because was already selected
+			},
+
+			/**
+			 * @param {Object} panelToDisplay
+			 *
+			 * @returns {Void}
+			 */
+			workflowFormPanelTabActiveSet: function (panelToDisplay) {
 				if (
-					Ext.isObject(danglingCard) && !Ext.Object.isEmpty(danglingCard)
-					&& !Ext.isBoolean(danglingCard.activateFirstTab)
+					(Ext.isObject(panelToDisplay) && !Ext.Object.isEmpty(panelToDisplay))
+					|| (Ext.isNumber(panelToDisplay) && !Ext.isEmpty(panelToDisplay))
 				) {
-					this.tabPanel.setActiveTab(danglingCard.activateFirstTab)
-				} else {
-					this.tabPanel.setActiveTab(0);
+					return this.tabPanel.setActiveTab(panelToDisplay);
 				}
 
-			this.tabPanel.getActiveTab().fireEvent('show'); // Manual show event fire because was already selected
-		},
+				this.tabPanel.setActiveTab(0);
+			},
 
 		/**
 		 * @returns {Void}
@@ -321,10 +358,36 @@
 				this.controllerTabHistory.reset();
 
 			if (Ext.isObject(this.controllerTabNote) && !Ext.Object.isEmpty(this.controllerTabNote))
-				this.controllerTabNote.reset();
+				this.controllerTabNote.cmfg('workflowFormTabNoteReset');
 
 			if (Ext.isObject(this.controllerTabRelations) && !Ext.Object.isEmpty(this.controllerTabRelations))
 				this.controllerTabRelations.reset();
+		},
+
+		/**
+		 * @param {String} type
+		 *
+		 * @returns {Boolean} exists
+		 */
+		workflowFormWidgetExists: function (type) {
+			var exists = false;
+
+			if (
+				Ext.isObject(this.widgetControllerManager) && !Ext.Object.isEmpty(this.widgetControllerManager)
+				&& Ext.isObject(this.widgetControllerManager.controllers) && !Ext.Object.isEmpty(this.widgetControllerManager.controllers)
+				&& Ext.isString(type) && !Ext.isEmpty(type)
+			) {
+				Ext.Object.each(this.widgetControllerManager.controllers, function (id, controller, myself) {
+					if (
+						Ext.isObject(controller) && !Ext.Object.isEmpty(controller)
+						&& Ext.isFunction(controller.cmfg) && controller.cmfg('widgetConfigurationGet', CMDBuild.core.constants.Proxy.TYPE) == type
+					) {
+						exists = true;
+					}
+				}, this);
+			}
+
+			return exists;
 		}
 	});
 

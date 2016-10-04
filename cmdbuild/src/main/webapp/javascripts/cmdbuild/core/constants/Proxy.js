@@ -28,6 +28,7 @@
 		ADMIN: 'admin',
 		ADMINISTRATOR_PASSWORD: 'administratorPassword',
 		ADMINISTRATOR_USER_NAME: 'administratorUserName',
+		ADVANCE: 'advance',
 		ADVANCED: 'advanced',
 		ALFRESCO: 'alfresco',
 		ALFRESCO_DELAY: 'alfrescoDelay',

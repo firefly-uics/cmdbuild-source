@@ -80,7 +80,6 @@
 
 		<!-- WIDGETS -->
 		<script type="text/javascript" src="javascripts/cmdbuild/controller/management/common/widgets/CMWidgetController.js"></script>
-		<script type="text/javascript" src="javascripts/cmdbuild/controller/management/common/widgets/CMOpenNoteController.js"></script>
 		<script type="text/javascript" src="javascripts/cmdbuild/controller/management/common/widgets/CMOpenAttachmentController.js"></script>
 		<script type="text/javascript" src="javascripts/cmdbuild/controller/management/common/widgets/CMCalendarController.js"></script>
 		<script type="text/javascript" src="javascripts/cmdbuild/controller/management/common/widgets/CMWebServiceController.js"></script>
