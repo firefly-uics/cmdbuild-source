@@ -7,6 +7,12 @@
 
 	Ext.define("CMDBuild.controller.management.classes.masterDetails.CMMasterDetailsController", {
 		extend: "CMDBuild.controller.management.classes.CMModCardSubController",
+
+		/**
+		 * @property {CMDBuild.controller.management.classes.panel.form.tabs.masterDetail.window.Note}
+		 */
+		controllerWindowNote: undefined,
+
 		constructor: function(v, sc) {
 
 			this.mixins.observable.constructor.call(this, arguments);
@@ -41,6 +47,9 @@
 				'action-masterdetail-note': this.onOpenNoteClick,
 				'action-masterdetail-attach': this.onOpenAttachmentClick
 			};
+
+			// Build sub-controllers
+			this.controllerWindowNote = Ext.create('CMDBuild.controller.management.classes.panel.form.tabs.masterDetail.window.Note', { parentDelegate: this });
 		},
 
 		/**
@@ -200,26 +209,16 @@
 			});
 		},
 
-		onOpenNoteClick: function(model) {
-			var editable = (model && model.raw && model.raw.priv_write);
-
-			var noteWindow = new CMDBuild.view.management.common.CMNoteWindow({
-				withButtons: editable,
-				withTbar: false
-			}).show();
-
-			var noteWindowController = new CMDBuild.view.management.common.CMNoteWindowController(noteWindow);
-			noteWindowController.onCardSelected(model);
-
-			noteWindow.mon(
-				noteWindow,
-				'destroy',
-				function() {
-					this.view.reload();
-				},
-				this,
-				{ single: true }
-			);
+		/**
+		 * @param {Ext.data.Store.ImplicitModel} model
+		 *
+		 * @returns {Void}
+		 */
+		onOpenNoteClick: function (model) {
+			this.controllerWindowNote.cmfg('classesFormTabMasterDetailWindowNoteConfigureAndShow', {
+				cardId: model.get(CMDBuild.core.constants.Proxy.ID),
+				className: _CMCache.getEntryTypeNameById(model.get('IdClass'))
+			});
 		},
 
 		onOpenAttachmentClick: function(model) {
