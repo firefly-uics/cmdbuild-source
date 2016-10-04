@@ -13,8 +13,8 @@
 		 */
 		delegate: undefined,
 
-		cls: 'cmdb-border-right',
 		border: false,
+		cls: 'cmdb-border-right',
 		frame: false,
 		region: 'center',
 
@@ -30,21 +30,30 @@
 			 * @returns {CMDBuild.view.management.workflow.panel.form.tabs.attachments.AttachmentsView}
 			 */
 			getAttachmentsPanel: function() {
-				return this.delegate.controllerTabAttachments.getView();
+				if (!Ext.isEmpty(this.delegate) && !Ext.isEmpty(this.delegate.controllerTabAttachments))
+					return this.delegate.controllerTabAttachments.getView();
+
+				return null;
 			},
 
 			/**
 			 * @returns {CMDBuild.view.management.workflow.panel.form.tabs.note.NoteView}
 			 */
 			getNotesPanel: function() {
-				return this.delegate.controllerTabNote.getView();
+				if (!Ext.isEmpty(this.delegate) && !Ext.isEmpty(this.delegate.controllerTabNote))
+					return this.delegate.controllerTabNote.getView();
+
+				return null;
 			},
 
 			/**
 			 * @returns {CMDBuild.view.management.workflow.panel.form.tabs.email.Email}
 			 */
 			getEmailPanel: function() {
-				return this.delegate.controllerTabEmail.getView();
+				if (!Ext.isEmpty(this.delegate) && !Ext.isEmpty(this.delegate.controllerTabEmail))
+					return this.delegate.controllerTabEmail.getView();
+
+				return null;
 			},
 
 			/**
