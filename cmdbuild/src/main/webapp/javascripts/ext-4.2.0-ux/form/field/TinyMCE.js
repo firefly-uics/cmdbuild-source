@@ -26,7 +26,7 @@
 			height: 170
 		},
 
-		hideBorder: false,
+		border: true,
 		inProgress: false,
 		lastWidth: 0,
 		lastHeight: 0,
@@ -143,7 +143,7 @@
 					me.edToolbar = me.tableEl.down('.mceToolbar');
 					me.edStatusbar = me.tableEl.down('.mceStatusbar');
 
-					if (me.hideBorder)
+					if (!me.border)
 						me.tableEl.setStyle('border', '0px');
 
 					Ext.Function.defer(function() {
