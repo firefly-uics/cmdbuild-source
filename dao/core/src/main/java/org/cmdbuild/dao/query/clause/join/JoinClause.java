@@ -1,10 +1,12 @@
 package org.cmdbuild.dao.query.clause.join;
 
+import static com.google.common.base.Predicates.and;
 import static com.google.common.base.Predicates.not;
 import static com.google.common.collect.FluentIterable.from;
 import static com.google.common.collect.Iterables.isEmpty;
 import static com.google.common.collect.Maps.newHashMap;
 import static com.google.common.collect.Sets.newHashSet;
+import static org.cmdbuild.dao.entrytype.Deactivable.IsActivePredicate.activeOnes;
 import static org.cmdbuild.dao.entrytype.Functions.disabled1;
 import static org.cmdbuild.dao.entrytype.Functions.disabled2;
 import static org.cmdbuild.dao.entrytype.Predicates.contains;
@@ -45,7 +47,7 @@ public class JoinClause {
 		private final Set<QueryDomain> queryDomains;
 		private boolean domainHistory;
 		private boolean left;
-		private final Map<CMDomain, Iterable<CMClass>> disabled;
+		private final Map<QueryDomain, Iterable<CMClass>> disabled;
 
 		private JoinClauseBuilder(final CMDataView viewForRun, final CMDataView viewForBuild, final CMClass source) {
 			Validate.notNull(source);
@@ -109,31 +111,35 @@ public class JoinClause {
 
 		private final void addAllDomains() {
 			for (final CMDomain domain : from(viewForBuild.findDomains()) //
-					.filter(domainFor(source))) {
-				final Collection<CMClass> _disabled = newHashSet();
+					.filter(and(activeOnes(), domainFor(source)))) {
 				if (domain(disabled1(), not(contains(source.getName()))).apply(domain)) {
-					addQueryDomain(new QueryDomain(domain, Source._1));
+					final QueryDomain queryDomain = new QueryDomain(domain, Source._1);
+					addQueryDomain(queryDomain);
+					final Collection<CMClass> targets = newHashSet();
 					domain.getClass2().getLeaves().forEach(input -> {
 						if (!input.isActive()) {
-							_disabled.add(input);
+							targets.add(input);
 						}
 					});
 					domain.getDisabled2().forEach(input -> {
-						_disabled.add(viewForBuild.findClass(input));
+						targets.add(viewForBuild.findClass(input));
 					});
+					disabled.put(queryDomain, targets);
 				}
 				if (domain(disabled2(), not(contains(source.getName()))).apply(domain)) {
-					addQueryDomain(new QueryDomain(domain, Source._2));
+					final QueryDomain queryDomain = new QueryDomain(domain, Source._2);
+					addQueryDomain(queryDomain);
+					final Collection<CMClass> targets = newHashSet();
 					domain.getClass1().getLeaves().forEach(input -> {
 						if (!input.isActive()) {
-							_disabled.add(input);
+							targets.add(input);
 						}
 					});
 					domain.getDisabled1().forEach(input -> {
-						_disabled.add(viewForBuild.findClass(input));
+						targets.add(viewForBuild.findClass(input));
 					});
+					disabled.put(queryDomain, targets);
 				}
-				disabled.put(domain, _disabled);
 			}
 		}
 
@@ -177,7 +183,7 @@ public class JoinClause {
 
 	private final Map<CMClass, WhereClause> targetsWithFilters;
 	private final Set<QueryDomain> queryDomains;
-	private final Map<CMDomain, Iterable<CMClass>> disabled;
+	private final Map<QueryDomain, Iterable<CMClass>> disabled;
 
 	private JoinClause(final JoinClauseBuilder builder) {
 		this.targetAlias = builder.targetAlias;
@@ -221,7 +227,7 @@ public class JoinClause {
 		return left;
 	}
 
-	public Map<CMDomain, Iterable<CMClass>> getDisabled() {
+	public Map<QueryDomain, Iterable<CMClass>> getDisabled() {
 		return disabled;
 	}
 
