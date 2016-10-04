@@ -20,7 +20,7 @@
 		 */
 		fieldNote: undefined,
 
-		baseTitle: CMDBuild.Translation.management.modcard.tabs.notes,
+		baseTitle: CMDBuild.Translation.notes,
 		border: true,
 		bodyCls: 'cmdb-blue-panel',
 		closeAction: 'hide',
