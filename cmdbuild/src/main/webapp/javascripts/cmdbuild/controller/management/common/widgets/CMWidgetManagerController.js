@@ -32,7 +32,7 @@
 					'.ManageRelation': CMDBuild.controller.management.widget.manageRelation.CMManageRelationController,
 					'.NavigationTree': 'CMDBuild.controller.management.widget.navigationTree.NavigationTree',
 					'.OpenAttachment': CMDBuild.controller.management.common.widgets.CMOpenAttachmentController,
-					'.OpenNote': CMDBuild.controller.management.common.widgets.CMOpenNoteController,
+					'.OpenNote': 'CMDBuild.controller.management.widget.OpenNote',
 					'.OpenReport': 'CMDBuild.controller.management.widget.openReport.OpenReport',
 					'.Ping': 'CMDBuild.controller.management.widget.Ping',
 					'.PresetFromCard': CMDBuild.controller.management.common.widgets.CMPresetFromCardController,

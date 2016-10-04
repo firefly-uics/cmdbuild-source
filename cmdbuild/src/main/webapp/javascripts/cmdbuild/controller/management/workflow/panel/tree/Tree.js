@@ -30,6 +30,7 @@
 		 */
 		cmfgCatchedFunctions: [
 			'getView = workflowTreeViewGet',
+			'onWorkflowTreeAbortButtonClick',
 			'onWorkflowTreeAddButtonClick',
 			'onWorkflowTreeColumnChanged',
 			'onWorkflowTreePrintButtonClick',
@@ -214,6 +215,20 @@
 		},
 
 		/**
+		 * Manage previous selected activity
+		 *
+		 * @returns {Void}
+		 */
+		onWorkflowTreeAbortButtonClick: function () {
+			if (this.cmfg('workflowSelectedActivityIsEmpty') && !this.cmfg('workflowSelectedPreviousActivityIsEmpty'))
+				this.cmfg('workflowTreeActivitySelect', {
+					activitySubsetId: this.cmfg('workflowSelectedPreviousActivityGet', CMDBuild.core.constants.Proxy.ACTIVITY_SUBSET_ID),
+					forceFilter: true,
+					instanceId: this.cmfg('workflowSelectedPreviousActivityGet', CMDBuild.core.constants.Proxy.INSTANCE_ID)
+				});
+		},
+
+		/**
 		 * @param {Number} id
 		 *
 		 * @returns {Void}
@@ -282,8 +297,8 @@
 				return this.cmfg('onWorkflowInstanceSelect', {
 					record: record,
 					scope: this,
-					success: function (response, options, decodedResponse) {
-						this.cmfg('onWorkflowActivitySelect', record);
+					callback: function () {
+						this.cmfg('onWorkflowActivitySelect', { record: record });
 					}
 				});
 			} else if ( // Instance node selected

@@ -14,7 +14,7 @@
 		 *
 		 * @returns {Void}
 		 */
-		lockActivity: function (parameters) {
+		lock: function (parameters) {
 			parameters = Ext.isEmpty(parameters) ? {} : parameters;
 
 			Ext.apply(parameters, { url: CMDBuild.proxy.index.Json.workflow.activity.lock });
@@ -27,7 +27,7 @@
 		 *
 		 * @returns {Void}
 		 */
-		unlockActivity: function (parameters) {
+		unlock: function (parameters) {
 			parameters = Ext.isEmpty(parameters) ? {} : parameters;
 
 			Ext.apply(parameters, { url: CMDBuild.proxy.index.Json.workflow.activity.unlock });

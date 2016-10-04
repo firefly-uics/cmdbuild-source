@@ -185,7 +185,7 @@
 				_CMWFState.setProcessInstance(
 					Ext.create('CMDBuild.model.CMProcessInstance', { classId: id }),
 					function () {
-						CMDBuild.proxy.management.workflow.panel.form.tabs.Activity.readStart({
+						CMDBuild.proxy.management.workflow.panel.form.tabs.Activity.readStart({ // FIXME: moved to main module controller
 							params: {
 								classId: id
 							},
