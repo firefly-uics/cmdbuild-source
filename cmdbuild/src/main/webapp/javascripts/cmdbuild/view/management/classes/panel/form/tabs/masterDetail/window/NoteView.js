@@ -13,6 +13,11 @@
 		/**
 		 * @cfg {String}
 		 */
+		baseTitle: CMDBuild.Translation.notes,
+
+		/**
+		 * @cfg {String}
+		 */
 		dimensionsMode: 'percentage',
 
 		/**
@@ -20,7 +25,6 @@
 		 */
 		fieldNote: undefined,
 
-		baseTitle: CMDBuild.Translation.notes,
 		border: true,
 		bodyCls: 'cmdb-blue-panel',
 		closeAction: 'hide',
