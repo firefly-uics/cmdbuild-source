@@ -70,6 +70,7 @@
 						items: [
 							this.htmlField = Ext.create('CMDBuild.view.common.field.HtmlEditor', {
 								name: 'Notes',
+								border: false,
 								hideLabel: true
 							})
 						]
