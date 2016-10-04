@@ -110,6 +110,8 @@ FIXES
 
  * View note details tab grid button doesn't show card notes
 
+ * Switching from tab to tab in advanced filter builder window content is erased
+
 
 
 

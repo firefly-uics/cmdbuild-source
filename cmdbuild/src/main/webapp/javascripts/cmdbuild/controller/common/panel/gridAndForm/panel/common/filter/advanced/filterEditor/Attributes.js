@@ -24,7 +24,7 @@
 			'panelGridAndFormFilterAdvancedFilterEditorAttributesDataGet',
 			'filterConditionsGroupsRemove = onPanelGridAndFormFilterAdvancedFilterEditorAttributesFieldSetEmptied',
 			'onPanelGridAndFormFilterAdvancedFilterEditorAttributesAddButtonSelect',
-			'onPanelGridAndFormFilterAdvancedFilterEditorAttributesViewShow'
+			'onPanelGridAndFormFilterAdvancedFilterEditorAttributesInit'
 		],
 
 		/**
@@ -315,32 +315,42 @@
 		},
 
 		/**
+		 * @param {Object} parameters
+		 * @param {Function} parameters.callback
+		 *
 		 * @returns {Void}
 		 */
-		onPanelGridAndFormFilterAdvancedFilterEditorAttributesViewShow: function () {
-			if (!this.cmfg('panelGridAndFormFilterAdvancedEntryTypeIsEmpty')) {
-				var params = {};
-				params[CMDBuild.core.constants.Proxy.ACTIVE] = true;
-				params[CMDBuild.core.constants.Proxy.CLASS_NAME] = this.cmfg('panelGridAndFormFilterAdvancedEntryTypeGet', CMDBuild.core.constants.Proxy.NAME);
+		onPanelGridAndFormFilterAdvancedFilterEditorAttributesInit: function (parameters) {
+			parameters = Ext.isObject(parameters) ? parameters : {};
 
-				CMDBuild.proxy.common.panel.gridAndForm.filter.advanced.filterEditor.Attributes.read({
-					params: params,
-					scope: this,
-					success: function (response, options, decodedResponse) {
-						decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.ATTRIBUTES];
+			// Error handling
+				if (this.cmfg('panelGridAndFormFilterAdvancedEntryTypeIsEmpty'))
+					return _error('onPanelGridAndFormFilterAdvancedFilterEditorAttributesInit(): entryType is empty', this, this.cmfg('panelGridAndFormFilterAdvancedEntryTypeGet'));
+			// END: Error handling
 
-						this.attributeButtonReset();
+			var params = {};
+			params[CMDBuild.core.constants.Proxy.ACTIVE] = true;
+			params[CMDBuild.core.constants.Proxy.CLASS_NAME] = this.cmfg('panelGridAndFormFilterAdvancedEntryTypeGet', CMDBuild.core.constants.Proxy.NAME);
 
-						if (!Ext.isEmpty(decodedResponse) && Ext.isArray(decodedResponse)) {
-							this.selectedEntityAttributesSet(decodedResponse);
-							this.attributeButtonBuild();
-							this.viewBuild();
-						}
+			CMDBuild.proxy.common.panel.gridAndForm.filter.advanced.filterEditor.Attributes.read({
+				params: params,
+				loadMask: this.view,
+				scope: this,
+				callback: parameters.callback,
+				success: function (response, options, decodedResponse) {
+					decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.ATTRIBUTES];
+
+					this.attributeButtonReset();
+
+					if (!Ext.isEmpty(decodedResponse) && Ext.isArray(decodedResponse)) {
+						this.selectedEntityAttributesSet(decodedResponse);
+						this.attributeButtonBuild();
+						this.viewBuild();
+					} else {
+						_error('onPanelGridAndFormFilterAdvancedFilterEditorAttributesInit(): unmanaged response', this, decodedResponse);
 					}
-				});
-			} else {
-				_error('onPanelGridAndFormFilterAdvancedFilterEditorAttributesViewShow(): entryType is empty', this, this.cmfg('panelGridAndFormFilterAdvancedEntryTypeGet'));
-			}
+				}
+			});
 		},
 
 		// SelectedEntityAttributes manage methods

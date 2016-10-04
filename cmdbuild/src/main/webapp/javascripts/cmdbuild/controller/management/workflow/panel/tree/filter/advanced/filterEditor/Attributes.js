@@ -19,7 +19,7 @@
 		 */
 		cmfgCatchedFunctions: [
 			'filterConditionsGroupsRemove = onWorkflowTreeFilterAdvancedFilterEditorAttributesFieldSetEmptied', // FIXME: waiting for refactor
-			'onWorkflowTreeFilterAdvancedFilterEditorAttributesViewShow',
+			'onWorkflowTreeFilterAdvancedFilterEditorAttributesInit',
 			'workflowTreeFilterAdvancedFilterEditorAttributesDataGet'
 		],
 
@@ -286,32 +286,42 @@
 		},
 
 		/**
+		 * @param {Object} parameters
+		 * @param {Function} parameters.callback
+		 *
 		 * @returns {Void}
 		 */
-		onWorkflowTreeFilterAdvancedFilterEditorAttributesViewShow: function () {
-			if (!this.cmfg('workflowSelectedWorkflowIsEmpty')) {
-				var params = {};
-				params[CMDBuild.core.constants.Proxy.ACTIVE] = true;
-				params[CMDBuild.core.constants.Proxy.CLASS_NAME] = this.cmfg('workflowSelectedWorkflowGet', CMDBuild.core.constants.Proxy.NAME);
+		onWorkflowTreeFilterAdvancedFilterEditorAttributesInit: function (parameters) {
+			parameters = Ext.isObject(parameters) ? parameters : {};
 
-				CMDBuild.proxy.management.workflow.panel.tree.filter.advanced.filterEditor.Attributes.read({
-					params: params,
-					scope: this,
-					success: function (response, options, decodedResponse) {
-						decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.ATTRIBUTES];
+			// Error handling
+				if (this.cmfg('workflowSelectedWorkflowIsEmpty'))
+					return _error('onWorkflowTreeFilterAdvancedFilterEditorAttributesInit(): empty selected entryType', this, this.cmfg('workflowSelectedWorkflowGet'));
+			// END: Error handling
 
-						this.attributeButtonReset();
+			var params = {};
+			params[CMDBuild.core.constants.Proxy.ACTIVE] = true;
+			params[CMDBuild.core.constants.Proxy.CLASS_NAME] = this.cmfg('workflowSelectedWorkflowGet', CMDBuild.core.constants.Proxy.NAME);
 
-						if (Ext.isArray(decodedResponse) && !Ext.isEmpty(decodedResponse)) {
-							this.selectedEntityAttributesSet(decodedResponse);
-							this.attributeButtonBuild();
-							this.viewBuild();
-						}
+			CMDBuild.proxy.management.workflow.panel.tree.filter.advanced.filterEditor.Attributes.read({
+				params: params,
+				loadMask: this.view,
+				scope: this,
+				callback: parameters.callback,
+				success: function (response, options, decodedResponse) {
+					decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.ATTRIBUTES];
+
+					this.attributeButtonReset();
+
+					if (Ext.isArray(decodedResponse) && !Ext.isEmpty(decodedResponse)) {
+						this.selectedEntityAttributesSet(decodedResponse);
+						this.attributeButtonBuild();
+						this.viewBuild();
+					} else {
+						_error('onWorkflowTreeFilterAdvancedFilterEditorAttributesInit(): unmanaged response', this, decodedResponse);
 					}
-				});
-			} else {
-				_error('onWorkflowTreeFilterAdvancedFilterEditorAttributesViewShow(): empty selected entryType', this, this.cmfg('workflowSelectedWorkflowGet'));
-			}
+				}
+			});
 		},
 
 		// SelectedEntityAttributes manage methods
