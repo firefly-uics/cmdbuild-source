@@ -693,7 +693,7 @@
 	"advanced": "Advanced",
 	"afterCreate": "After creation",
 	"afterUpdate": "After update",
-	"alfresco": "Alfresco",
+	"alfrescoVersion34OrLower": "Alfresco (version 3.4 or lower)",
 	"all": "All",
 	"alwaysEnabled": "Always enabled",
 	"any": "Any",
