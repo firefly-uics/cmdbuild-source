@@ -253,69 +253,74 @@
 
 			node.removeAll();
 
-			this.getCardsFromFilter(node, function (cardsIds) {
-				if (Ext.isArray(navigationTreeNodeChildIds) && !Ext.isEmpty(navigationTreeNodeChildIds))
-					Ext.Array.each(navigationTreeNodeChildIds, function (childId, i, allChildIds) {
-						var filterObject = {},
-							navigationTreeChildNode = this.widgetNavigationTreeBufferNodesGet(childId),
-							navigationTreeChildNodeDomainName = navigationTreeChildNode.get(CMDBuild.core.constants.Proxy.DOMAIN_NAME),
-							navigationTreeChildNodeTargetClassName = navigationTreeChildNode.get(CMDBuild.core.constants.Proxy.TARGET_CLASS_NAME);
+			if (Ext.isArray(navigationTreeNodeChildIds) && !Ext.isEmpty(navigationTreeNodeChildIds))
+				Ext.Array.each(navigationTreeNodeChildIds, function (childId, i, allChildIds) {
+					var filterObject = {},
+						navigationTreeChildNode = this.widgetNavigationTreeBufferNodesGet(childId),
+						navigationTreeChildNodeDomainName = navigationTreeChildNode.get(CMDBuild.core.constants.Proxy.DOMAIN_NAME),
+						navigationTreeChildNodeTargetClassName = navigationTreeChildNode.get(CMDBuild.core.constants.Proxy.TARGET_CLASS_NAME);
 
-						if (Ext.isString(navigationTreeChildNodeDomainName) && !Ext.isEmpty(navigationTreeChildNodeDomainName)) {
-							var domainModel = this.widgetNavigationTreeBufferDomainsGet(navigationTreeChildNodeDomainName),
-								domainModelDestinationClassName = domainModel.get(CMDBuild.core.constants.Proxy.DESTINATION_CLASS_NAME);
+					this.getCardsFromFilter({
+						className: navigationTreeChildNodeTargetClassName,
+						filter: navigationTreeChildNode.get(CMDBuild.core.constants.Proxy.FILTER),
+						scope: this,
+						callback: function (cardsIds) {
+							if (Ext.isString(navigationTreeChildNodeDomainName) && !Ext.isEmpty(navigationTreeChildNodeDomainName)) {
+								var domainModel = this.widgetNavigationTreeBufferDomainsGet(navigationTreeChildNodeDomainName),
+									domainModelDestinationClassName = domainModel.get(CMDBuild.core.constants.Proxy.DESTINATION_CLASS_NAME);
 
-							filterObject[CMDBuild.core.constants.Proxy.RELATION] = [{
-								domain: domainModel.get(CMDBuild.core.constants.Proxy.NAME),
-								type: 'oneof',
-								destination: navigationTreeChildNodeTargetClassName == domainModelDestinationClassName
-									? domainModel.get(CMDBuild.core.constants.Proxy.ORIGIN_CLASS_NAME) : domainModelDestinationClassName,
-								source: navigationTreeChildNodeTargetClassName,
-								direction:  navigationTreeChildNodeTargetClassName == domainModelDestinationClassName ? '_2' : '_1',
-								cards: [{
-									className: node.get(CMDBuild.core.constants.Proxy.CLASS_NAME),
-									id: node.get(CMDBuild.core.constants.Proxy.CARD_ID)
-								}]
-							}];
-						}
-
-						if (Ext.isArray(cardsIds) && !Ext.isEmpty(cardsIds))
-							filterObject[CMDBuild.core.constants.Proxy.ATTRIBUTE] = {
-								simple: {
-									attribute: 'Id',
-									operator: 'in',
-									value: cardsIds,
-									parameterType: 'fixed'
-								}
-							};
-
-						var params = {};
-						params[CMDBuild.core.constants.Proxy.ATTRIBUTES] = Ext.encode(['Code', 'Description']);
-						params[CMDBuild.core.constants.Proxy.CLASS_NAME] = navigationTreeNode.get(CMDBuild.core.constants.Proxy.TARGET_CLASS_NAME);
-
-						if (Ext.isObject(filterObject) && !Ext.Object.isEmpty(filterObject)) {
-							params[CMDBuild.core.constants.Proxy.CLASS_NAME] = navigationTreeChildNodeTargetClassName;
-							params[CMDBuild.core.constants.Proxy.FILTER] = Ext.encode(filterObject);
-						}
-
-						CMDBuild.proxy.management.widget.NavigationTree.readAllCards({
-							params: params,
-							loadMask: this.view,
-							scope: this,
-							success: function (response, options, decodedResponse) {
-								decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.ROWS];
-
-								if (Ext.isArray(decodedResponse) && !Ext.isEmpty(decodedResponse)) {
-									Ext.Array.each(decodedResponse, function (cardObject, i, allCardObjects) {
-										this.buildNodeFromCard(node, cardObject, childId);
-									}, this);
-
-									this.treePanel.getStore().sort(CMDBuild.core.constants.Proxy.DESCRIPTION, 'ASC');
-								}
+								filterObject[CMDBuild.core.constants.Proxy.RELATION] = [{
+									domain: domainModel.get(CMDBuild.core.constants.Proxy.NAME),
+									type: 'oneof',
+									destination: navigationTreeChildNodeTargetClassName == domainModelDestinationClassName
+										? domainModel.get(CMDBuild.core.constants.Proxy.ORIGIN_CLASS_NAME) : domainModelDestinationClassName,
+									source: navigationTreeChildNodeTargetClassName,
+									direction:  navigationTreeChildNodeTargetClassName == domainModelDestinationClassName ? '_2' : '_1',
+									cards: [{
+										className: node.get(CMDBuild.core.constants.Proxy.CLASS_NAME),
+										id: node.get(CMDBuild.core.constants.Proxy.CARD_ID)
+									}]
+								}];
 							}
-						});
-					}, this);
-			});
+
+							if (Ext.isArray(cardsIds) && !Ext.isEmpty(cardsIds))
+								filterObject[CMDBuild.core.constants.Proxy.ATTRIBUTE] = {
+									simple: {
+										attribute: 'Id',
+										operator: 'in',
+										value: cardsIds,
+										parameterType: 'fixed'
+									}
+								};
+
+							var params = {};
+							params[CMDBuild.core.constants.Proxy.ATTRIBUTES] = Ext.encode(['Code', 'Description']);
+							params[CMDBuild.core.constants.Proxy.CLASS_NAME] = navigationTreeNode.get(CMDBuild.core.constants.Proxy.TARGET_CLASS_NAME);
+
+							if (Ext.isObject(filterObject) && !Ext.Object.isEmpty(filterObject)) {
+								params[CMDBuild.core.constants.Proxy.CLASS_NAME] = navigationTreeChildNodeTargetClassName;
+								params[CMDBuild.core.constants.Proxy.FILTER] = Ext.encode(filterObject);
+							}
+
+							CMDBuild.proxy.management.widget.NavigationTree.readAllCards({
+								params: params,
+								loadMask: this.view,
+								scope: this,
+								success: function (response, options, decodedResponse) {
+									decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.ROWS];
+
+									if (Ext.isArray(decodedResponse) && !Ext.isEmpty(decodedResponse)) {
+										Ext.Array.each(decodedResponse, function (cardObject, i, allCardObjects) {
+											this.buildNodeFromCard(node, cardObject, childId);
+										}, this);
+
+										this.treePanel.getStore().sort(CMDBuild.core.constants.Proxy.DESCRIPTION, 'ASC');
+									}
+								}
+							});
+						}
+					});
+				}, this);
 		},
 
 		/**
@@ -385,80 +390,85 @@
 		 * @private
 		 */
 		buildNodeRoot: function () {
-			var filterObject = {},
-				node = this.treePanel.getStore().getRootNode(),
-				navigationTreeNode = this.widgetNavigationTreeBufferNodesGet(node.get(CMDBuild.core.constants.Proxy.NAVIGATION_TREE_NODE_ID)),
-				navigationTreeParentNode = this.widgetNavigationTreeBufferNodesGet(navigationTreeNode.get(CMDBuild.core.constants.Proxy.PARENT_ID));
+			var node = this.treePanel.getStore().getRootNode(),
+				navigationTreeNode = this.widgetNavigationTreeBufferNodesGet(node.get(CMDBuild.core.constants.Proxy.NAVIGATION_TREE_NODE_ID));
 
-			this.getCardsFromFilter(node, function (cardsIds) {
-				if (Ext.isArray(cardsIds) && !Ext.isEmpty(cardsIds))
-					filterObject[CMDBuild.core.constants.Proxy.ATTRIBUTE] = {
-						simple: {
-							attribute: 'Id',
-							operator: 'in',
-							value: cardsIds,
-							parameterType: 'fixed'
-						}
-					};
+			this.getCardsFromFilter({
+				className: navigationTreeNode.get(CMDBuild.core.constants.Proxy.TARGET_CLASS_NAME),
+				filter: navigationTreeNode.get(CMDBuild.core.constants.Proxy.FILTER),
+				scope: this,
+				callback: function (cardsIds) {
+					var params = {};
+					params[CMDBuild.core.constants.Proxy.ATTRIBUTES] = Ext.encode(['Code', 'Description']);
+					params[CMDBuild.core.constants.Proxy.CLASS_NAME] = navigationTreeNode.get(CMDBuild.core.constants.Proxy.TARGET_CLASS_NAME);
 
-				var params = {};
-				params[CMDBuild.core.constants.Proxy.ATTRIBUTES] = Ext.encode(['Code', 'Description']);
-				params[CMDBuild.core.constants.Proxy.CLASS_NAME] = navigationTreeNode.get(CMDBuild.core.constants.Proxy.TARGET_CLASS_NAME);
-
-				if (Ext.isObject(filterObject) && !Ext.Object.isEmpty(filterObject))
-					params[CMDBuild.core.constants.Proxy.FILTER] = Ext.encode(filterObject);
-
-				CMDBuild.proxy.management.widget.NavigationTree.readAllCards({
-					params: params,
-					loadMask: false,
-					scope: this,
-					callback: function (options, success, response) {
-						CMDBuild.core.interfaces.service.LoadMask.manage(this.view, false); // Manually manage LoadMask (hide)
-					},
-					success: function (response, options, decodedResponse) {
-						decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.ROWS];
-
-						if (Ext.isArray(decodedResponse) && !Ext.isEmpty(decodedResponse)) {
-							Ext.Array.each(decodedResponse, function (cardObject, i, allCardObjects) {
-								var childNode = this.buildNodeFromCard(node, cardObject, navigationTreeNode.get(CMDBuild.core.constants.Proxy.ID));
-
-								if (Ext.isObject(childNode) && !Ext.Object.isEmpty(childNode)) {
-									this.buildNode(childNode);
+					if (Ext.isArray(cardsIds) && !Ext.isEmpty(cardsIds))
+						params[CMDBuild.core.constants.Proxy.FILTER] = Ext.encode({
+							attribute: {
+								simple: {
+									attribute: 'Id',
+									operator: 'in',
+									value: cardsIds,
+									parameterType: 'fixed'
 								}
-							}, this);
+							}
+						});
 
-							this.treePanel.getStore().sort(CMDBuild.core.constants.Proxy.DESCRIPTION, 'ASC');
+					CMDBuild.proxy.management.widget.NavigationTree.readAllCards({
+						params: params,
+						loadMask: false,
+						scope: this,
+						callback: function (options, success, response) {
+							CMDBuild.core.interfaces.service.LoadMask.manage(this.view, false); // Manually manage LoadMask (hide)
+						},
+						success: function (response, options, decodedResponse) {
+							decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.ROWS];
+
+							if (Ext.isArray(decodedResponse) && !Ext.isEmpty(decodedResponse)) {
+								Ext.Array.each(decodedResponse, function (cardObject, i, allCardObjects) {
+									var childNode = this.buildNodeFromCard(node, cardObject, navigationTreeNode.get(CMDBuild.core.constants.Proxy.ID));
+
+									if (Ext.isObject(childNode) && !Ext.Object.isEmpty(childNode))
+										this.buildNode(childNode);
+								}, this);
+
+								this.treePanel.getStore().sort(CMDBuild.core.constants.Proxy.DESCRIPTION, 'ASC');
+							}
 						}
-					}
-				});
+					});
+				}
 			});
 		},
 
 		/**
-		 * @param {CMDBuild.model.management.widget.navigationTree.Node} node
-		 * @param {Function} callback
+		 * @param {Object} parameters
+		 * @param {Function} parameters.callback
+		 * @param {String} parameters.className
+		 * @param {String} parameters.filter
+		 * @param {Object} parameters.scope
 		 *
 		 * @returns {Void}
 		 *
 		 * @private
 		 */
-		getCardsFromFilter: function (node, callback) {
-			// Error handling
-				if (!Ext.isObject(node) || Ext.Object.isEmpty(node))
-					return _error('getCardsFromFilter(): unmanaged node parameter', this, node);
+		getCardsFromFilter: function (parameters) {
+			parameters = Ext.isObject(parameters) ? parameters : {};
+			parameters.scope = Ext.isObject(parameters.scope) ? parameters.scope : this;
 
-				if (!Ext.isFunction(callback))
-					return _error('getCardsFromFilter(): unmanaged callback parameter', this, callback);
+			// Error handling
+				if (!Ext.isFunction(parameters.callback))
+					return _error('getCardsFromFilter(): unmanaged callback parameter', this, parameters.callback);
 			// END: Error handling
 
-			var filterObject = {},
-				navigationTreeNode = this.widgetNavigationTreeBufferNodesGet(node.get(CMDBuild.core.constants.Proxy.NAVIGATION_TREE_NODE_ID)),
-				resolvedFilter = this.resolveNodeFilter(navigationTreeNode.get(CMDBuild.core.constants.Proxy.FILTER));
+			if (
+				Ext.isString(parameters.className) && !Ext.isEmpty(parameters.className)
+				&& Ext.isString(parameters.filter) && !Ext.isEmpty(parameters.filter)
+			) {
+				var resolvedFilter = this.resolveNodeFilter(parameters.filter);
 
-			if (Ext.isString(resolvedFilter) && !Ext.isEmpty(resolvedFilter)) {
 				var params = {};
 				params[CMDBuild.core.constants.Proxy.ATTRIBUTES] = Ext.encode(['Description']);
-				params[CMDBuild.core.constants.Proxy.CLASS_NAME] = navigationTreeNode.get(CMDBuild.core.constants.Proxy.TARGET_CLASS_NAME);
+				params[CMDBuild.core.constants.Proxy.CLASS_NAME] = parameters.className;
 
 				if (Ext.isString(resolvedFilter) && !Ext.isEmpty(resolvedFilter))
 					params[CMDBuild.core.constants.Proxy.FILTER] = Ext.encode({ CQL: resolvedFilter });
@@ -472,18 +482,18 @@
 
 						var filteredCardsIds = [];
 
-						if (Ext.isArray(decodedResponse) && !Ext.isEmpty(decodedResponse)) {
+						if (Ext.isArray(decodedResponse) && !Ext.isEmpty(decodedResponse))
 							Ext.Array.each(decodedResponse, function (cardObject, i, allCardObjects) {
 								if (Ext.isObject(cardObject) && !Ext.Object.isEmpty(cardObject))
 									filteredCardsIds.push(cardObject['Id']);
 							}, this);
 
-							Ext.callback(callback, this, [filteredCardsIds]);
-						}
+						if (!Ext.isEmpty(filteredCardsIds))
+							Ext.callback(parameters.callback, parameters.scope, [filteredCardsIds]);
 					}
 				});
 			} else {
-				Ext.callback(callback, this);
+				Ext.callback(parameters.callback, parameters.scope);
 			}
 		},
 
