@@ -693,7 +693,7 @@
 	"advanced": "Напредно",
 	"afterCreate": "Након креирања",
 	"afterUpdate": "Након измене",
-	"alfresco": "Alfresco",
+	"alfrescoVersion34OrLower": "<em>Alfresco (version 3.4 or lower)</em>",
 	"all": "<em>All</em>",
 	"alwaysEnabled": "Увек укључен",
 	"any": "Било који",

@@ -693,7 +693,7 @@
 	"advanced": "Pokročilý",
 	"afterCreate": "Po vytvoření",
 	"afterUpdate": "Po úpravě",
-	"alfresco": "Alfresco",
+	"alfrescoVersion34OrLower": "<em>Alfresco (version 3.4 or lower)</em>",
 	"all": "Všechny",
 	"alwaysEnabled": "Vždy povoleno",
 	"any": "Jakýkoliv",

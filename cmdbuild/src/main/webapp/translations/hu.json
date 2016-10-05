@@ -693,7 +693,7 @@
 	"advanced": "Bővített",
 	"afterCreate": "Létrehozás után",
 	"afterUpdate": "Frissítés után",
-	"alfresco": "Alfresco",
+	"alfrescoVersion34OrLower": "<em>Alfresco (version 3.4 or lower)</em>",
 	"all": "<em>All</em>",
 	"alwaysEnabled": "Mindig engedélyezett",
 	"any": "Bármely",

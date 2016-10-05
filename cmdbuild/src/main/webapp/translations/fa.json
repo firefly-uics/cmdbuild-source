@@ -693,7 +693,7 @@
 	"advanced": "جلو",
 	"afterCreate": "بعد از ایجاد",
 	"afterUpdate": "بعد از آپدیت",
-	"alfresco": "Alfresco",
+	"alfrescoVersion34OrLower": "<em>Alfresco (version 3.4 or lower)</em>",
 	"all": "<em>All</em>",
 	"alwaysEnabled": "همیشه فعال",
 	"any": "همه",
