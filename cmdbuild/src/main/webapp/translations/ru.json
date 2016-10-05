@@ -693,7 +693,7 @@
 	"advanced": "Сложное расписание",
 	"afterCreate": "После создания",
 	"afterUpdate": "После обновления",
-	"alfresco": "Документы Alfresco",
+	"alfrescoVersion34OrLower": "<em>Alfresco (version 3.4 or lower)</em>",
 	"all": "<em>All</em>",
 	"alwaysEnabled": "Всегда включен",
 	"any": "Любой",

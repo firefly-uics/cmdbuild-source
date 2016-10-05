@@ -693,7 +693,7 @@
 	"advanced": "高级的",
 	"afterCreate": "创建后",
 	"afterUpdate": "更新后",
-	"alfresco": "Alfresco",
+	"alfrescoVersion34OrLower": "<em>Alfresco (version 3.4 or lower)</em>",
 	"all": "<em>All</em>",
 	"alwaysEnabled": "总是允许",
 	"any": "任何",

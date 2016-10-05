@@ -95,7 +95,7 @@
 						disablePanelFunctions: true
 					}),
 					this.fieldSetAlfresco = Ext.create('Ext.form.FieldSet', { // Alfresco configuration
-						title: CMDBuild.Translation.alfresco,
+						title: CMDBuild.Translation.alfrescoVersion34OrLower,
 						checkboxName: CMDBuild.core.constants.Proxy.TYPE,
 						checkboxToggle: true,
 						checkboxValue: CMDBuild.core.constants.Proxy.ALFRESCO,
