@@ -4,7 +4,7 @@
 
 	Ext.define("CMDBuild.controller.management.classes.map.CMMapController", {
 		// Legacy class name
-		alternateClassName : "CMDBuild.controller.management.classes.CMMapController", 
+		alternateClassName : "CMDBuild.controller.management.classes.CMMapController",
 		extend : "CMDBuild.controller.management.classes.CMCardDataProvider",
 
 		mixins : {
@@ -77,18 +77,14 @@
 				cardId : cardId,
 				className : className
 			});
-			// if (! this.interactionDocument.getNoZoom()) {
 			if (!this.mapPanel.cmVisible) {
 				this.interactionDocument.resetZoom();
 			}
-			if (cardId !== -1) {
+			else if (cardId !== -1) {
 				var card = {
 					className : className,
 					cardId : cardId
 				};
-				if (!this.interactionDocument.isANavigableCard(card)) {
-					this.interactionDocument.setNavigableToOpen(card);
-				}
 				this.interactionDocument.centerOnCard(card, function(center) {
 					if (!center) {
 						var mapPanel = this.interactionDocument.getMapPanel();
