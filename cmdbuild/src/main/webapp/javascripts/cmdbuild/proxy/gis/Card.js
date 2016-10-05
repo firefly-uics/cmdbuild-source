@@ -42,10 +42,7 @@
 						totalProperty: 'results'
 					},
 					extraParams: this.getStoreExtraParams()
-				},
-				sorters: [
-					{ property: 'Code', direction: 'ASC' }
-				]
+				}
 			});
 		},
 
