@@ -340,11 +340,11 @@
 		 * @returns {Void}
 		 */
 		onWorkflowTreeWokflowSelect: function (node) {
-			this.view.reconfigure(this.storeSortersSet(this.cmfg('workflowTreeStoreGet')), this.workflowTreeBuildColumns());
-
 			// Forward to sub controllers
 			this.controllerToolbarPaging.cmfg('onWorkflowTreeToolbarPagingWokflowSelect', node.get(CMDBuild.core.constants.Proxy.FILTER));
 			this.controllerToolbarTop.cmfg('onWorkflowTreeToolbarTopWokflowSelect');
+
+			this.view.reconfigure(this.storeSortersSet(this.cmfg('workflowTreeStoreGet')), this.workflowTreeBuildColumns());
 		},
 
 		/**
@@ -446,7 +446,8 @@
 				CMDBuild.Translation.common.failure,
 				Ext.String.format(
 					CMDBuild.Translation.errors.reasons.CARD_NOTFOUND,
-					this.cmfg('workflowSelectedWorkflowGet', CMDBuild.core.constants.Proxy.ID)
+					this.cmfg('workflowSelectedWorkflowGet', CMDBuild.core.constants.Proxy.DESCRIPTION)
+					+ ' [' +this.cmfg('workflowSelectedWorkflowGet', CMDBuild.core.constants.Proxy.NAME) + ']'
 				)
 			);
 
