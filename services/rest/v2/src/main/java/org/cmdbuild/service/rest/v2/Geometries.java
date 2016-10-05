@@ -22,12 +22,11 @@ import org.cmdbuild.service.rest.v2.model.Geometry;
 import org.cmdbuild.service.rest.v2.model.ResponseMultiple;
 import org.cmdbuild.service.rest.v2.model.ResponseSingle;
 
-@Path("classes/{" + CLASS + "}/")
 @Produces(APPLICATION_JSON)
 public interface Geometries {
 
 	@GET
-	@Path("geoattributes/")
+	@Path("classes/{" + CLASS + "}/geoattributes/")
 	ResponseMultiple<Attribute2> readAllAttributes( //
 			@PathParam(CLASS) String classId, //
 			@QueryParam(START) Integer offset, //
@@ -36,14 +35,14 @@ public interface Geometries {
 	);
 
 	@GET
-	@Path("geoattributes/{" + ATTRIBUTE + "}/")
+	@Path("classes/{" + CLASS + "}/geoattributes/{" + ATTRIBUTE + "}/")
 	ResponseSingle<Attribute2> readAttribute( //
 			@PathParam(CLASS) String classId, //
 			@PathParam(ATTRIBUTE) String attributeId //
 	);
 
 	@GET
-	@Path("geocards/")
+	@Path("classes/{" + CLASS + "}/geocards/")
 	ResponseMultiple<Geometry> readAllGeometries( //
 			@PathParam(CLASS) String classId, //
 			@QueryParam(ATTRIBUTE) Set<? extends String> attributeId, //
@@ -54,7 +53,7 @@ public interface Geometries {
 	);
 
 	@GET
-	@Path("geocards/{" + CARD + "}/")
+	@Path("classes/{" + CLASS + "}/geocards/{" + CARD + "}/")
 	ResponseSingle<Geometry> readGeometry( //
 			@PathParam(CLASS) String classId, //
 			@PathParam(CARD) Long cardId //
