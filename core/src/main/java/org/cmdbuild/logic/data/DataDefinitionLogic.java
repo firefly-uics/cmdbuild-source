@@ -1,7 +1,5 @@
 package org.cmdbuild.logic.data;
 
-import java.util.List;
-
 import org.cmdbuild.dao.entrytype.CMAttribute;
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.entrytype.CMDomain;
@@ -41,7 +39,7 @@ public interface DataDefinitionLogic extends Logic {
 
 	void reorder(Attribute attribute);
 
-	void changeClassOrders(String className, List<ClassOrder> classOrders);
+	void changeClassOrders(String className, Iterable<ClassOrder> classOrders);
 
 	CMDomain create(Domain domain);
 
