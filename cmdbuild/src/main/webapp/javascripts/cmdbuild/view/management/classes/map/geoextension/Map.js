@@ -109,8 +109,8 @@
 				this.view = new ol.View({
 					center : center,
 					zoom : configuration.zoom,
-					maxZoom: 50,
-					minZoom: 1,
+					maxZoom: 25,
+					minZoom: 2,
 					extent:extent
 
 				});
@@ -125,6 +125,7 @@
 					switch (e.key) {
 					case 'resolution':
 						me.refresh();
+						me.interactionDocument.changedLayers();
 						break;
 					}
 				});
@@ -155,19 +156,6 @@
 				var adapter = layer.get("adapter");
 				if (adapter && adapter.clearSelections) {
 					adapter.clearSelections();
-				}
-			});
-		},
-		/**
-		 * 
-		 * @returns {Void}
-		 * 
-		 */
-		clearSource : function() {
-			this.map.getLayers().forEach(function(layer) {
-				var adapter = layer.get("adapter");
-				if (adapter && adapter.clearSource) {
-					adapter.clearSource();
 				}
 			});
 		},
@@ -265,12 +253,14 @@
 		 */
 		center : function(configuration) {
 			this.view.setCenter(configuration.center);
-			this.clearSource();
 			this.map.renderSync();
 		},
 		resetZoom : function() {
 			var configuration = this.interactionDocument.getConfigurationMap();
 			this.view.setZoom(configuration.zoom);
+		},
+		getZoom : function() {
+			return this.view.getZoom();
 		},
 
 		/**

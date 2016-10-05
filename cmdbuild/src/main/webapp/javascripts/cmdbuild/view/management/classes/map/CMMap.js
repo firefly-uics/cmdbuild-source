@@ -18,8 +18,10 @@
 						configure : function() {
 							this.interactionDocument.setConfigurationMap(this);
 							this.interactionDocument.observe(this);
+							this.current = this.makePointSelect();
+							this.current.setActive(false);
 						},
-						
+
 						/**
 						 * @returns {Void}
 						 * 
@@ -29,14 +31,14 @@
 							// when the refresh is called more times it takes
 							// the last
 							var me = this;
+							
 							if (this.operation) {
 								clearTimeout(this.operation);
 							}
-							this.stoppingRefresh = true;
 							this.operation = setTimeout(function() {
 								me._refresh();
 								me.operation = undefined;
-							}, 100);
+							}, 200);
 						},
 						/**
 						 * @returns {Void}
@@ -50,6 +52,7 @@
 							}
 							var currentClassName = card.className;
 							var currentCardId = card.cardId;
+							this.interactionDocument.prepareNavigables();
 							this.interactionDocument.getAllLayers(function(layers) {
 								this.completeStyle(layers, 0, function() {
 									this.clearSelections();
@@ -59,6 +62,7 @@
 										cardId : currentCardId,
 										className : currentClassName
 									});
+									this.showCurrent(card);
 									this.refreshLegend();
 
 								}, this);
@@ -129,11 +133,7 @@
 						refreshThematicLayers : function(currentClassName, currentCardId) {
 							var thematicLayers = this.interactionDocument.getThematicLayers();
 							var visibleLayers = [];
-							this.stoppingRefresh = false;
 							for (var i = 0; i < thematicLayers.length; i++) {
-								if (this.stoppingRefresh) {
-									break;
-								}
 								var layer = thematicLayers[i];
 								var mapThematicLayer = this.getLayerByClassAndName(layer.masterTableName, layer.name);
 								var hide = !this.interactionDocument.getLayerVisibility(layer);
@@ -188,15 +188,10 @@
 						 * @returns {Void}
 						 */
 						refreshAllLayers : function(layers, currentClassName, currentCardId) {
-							// layers.sort(sortLayers);
-							var zoom = this.getMap().getView().getZoom();
 							var visibleLayers = [];
-							this.stoppingRefresh = false;
 							for (var i = 0; i < layers.length; i++) {
-								if (this.stoppingRefresh) {
-									break;
-								}
 								var layer = layers[i];
+								var zoom = this.interactionDocument.getZoom();
 								if (zoom < layer.minZoom || zoom > layer.maxZoom) {
 									continue;
 								}
@@ -237,9 +232,6 @@
 								adapter.refresh();
 							}
 
-						},
-						getStoppingRefresh : function() {
-							this.stoppingRefresh;
 						},
 						clearHideLayer : function(className, nameLayer) {
 							var geoLayer = this.getLayerByClassAndName(className, nameLayer);
@@ -344,7 +336,45 @@
 
 								}
 							});
-						}
+						},
+						showCurrent : function(card) {
+							if (this.interactionDocument.isCardOnMap(card)) {
+								var features = this.current.getFeatures();
+								features.clear();
+							} else {
+								this.interactionDocument.getPosition(card, function(center) {
+									if (!center) {
+										return;
+									}
+									var thing = new ol.Feature({
+										geometry : new ol.geom.Point(center)
+									});
+									var features = this.current.getFeatures();
+									features.clear();
+									this.map.addInteraction(this.current);
+									features.push(thing);
+
+								}, this);
+							}
+						},
+						makePointSelect : function() {
+							var selectPoints = new ol.style.Style({
+								image : new ol.style.Circle({
+									fill : new ol.style.Fill({
+										color : 'orange'
+									}),
+									stroke : new ol.style.Stroke({
+										color : 'yellow'
+									}),
+									radius : CMDBuild.gis.constants.layers.DEFAULT_RADIUS
+								})
+							});
+							var me = this;
+							return new ol.interaction.Select({
+								style : [ selectPoints ],
+								wrapX : false
+							})
+						},
 					});
 	function isVisible(visibles, layer) {
 		for (var i = 0; i < visibles.length; i++) {
@@ -353,9 +383,6 @@
 			}
 		}
 		return false;
-	}
-	function sortLayers(l1, l2) {
-		return parseInt(l1.index) - parseInt(l2.index);
 	}
 
 })();

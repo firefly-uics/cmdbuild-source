@@ -1,7 +1,9 @@
 (function() {
 	Ext.define('CMDBuild.view.management.classes.map.geoextension.InteractionDocument', {
 		observers : [],
-		featuresObserver : [],
+		layerObservers : [],
+		featureObservers : [],
+		navigablesObservers : [],
 		editLayer : undefined,
 		feature : undefined,
 		currentCard : undefined,
@@ -11,13 +13,7 @@
 		 * @property {Object}
 		 * 
 		 */
-		navigables : {},
-
-		/**
-		 * @property {Array} Ext.tree.Model
-		 * 
-		 */
-		navigableToOpen : undefined,
+		navigable : {},
 
 		noZoom : false,
 
@@ -29,6 +25,8 @@
 		},
 		constructor : function(thematicDocument) {
 			this.thematicDocument = thematicDocument;
+			this.navigable = Ext.create('CMDBuild.view.management.classes.map.geoextension.Navigable',  this);
+			
 			this.callParent(arguments);
 		},
 		setConfigurationMap : function(mapPanel) {
@@ -36,65 +34,39 @@
 
 		},
 
-		setClassesControlledByNavigation : function(classes) {
-			this.classesControlledByNavigation = classes;
-		},
-
-		isControlledByNavigation : function(className) {
-			if (className === "_Geoserver") {
-				return true;
-			}
-			return (!this.classesControlledByNavigation) ? false : this.classesControlledByNavigation
-					.indexOf(className) != -1;
+		resetZoom : function() {
+			this.getMapPanel().resetZoom();
 		},
 
 		/**
 		 * @param {Array}
 		 *            arrayNavigables Ext.data.TreeModel
 		 */
+		prepareNavigables : function() {
+			this.navigable.prepareNavigables();
+		},
 		setNavigables : function(arrayNavigables) {
-			this.navigables = {};
-			for (var i = 0; i < arrayNavigables.length; i++) {
-				var navigable = arrayNavigables[i];
-				var cardId = parseInt(navigable.get("cardId"));
-				var className = navigable.get("className");
-				if (!this.navigables[className]) {
-					this.navigables[className] = [];
-				}
-				this.navigables[className][cardId] = navigable;
-			}
-			this.getMapPanel().clearSource();
+			this.navigable.setNavigables(arrayNavigables);
+			//this.getMapPanel().clearSource();
 			this.changed();
 		},
-		resetZoom : function() {
-			this.getMapPanel().resetZoom();
-		},
 		isANavigableClass : function(className) {
-			return this.navigables[className];
+			return this.navigable.isANavigableClass(className) || className === "_Geoserver";
 		},
-		getNavigableCard : function(card) {
-			var className = card.className;
-			if (!this.isControlledByNavigation(className)) {
-				return null;
-			}
-			var cardId = card.cardId;
-			var node = this.navigables[className][cardId];
-			return (!node) ? null : node;
+		getNavigableNode : function(card) {
+			return this.navigable.getNavigableNode(card);
+		},
+		getNavigable : function(card) {
+			return this.navigable.getNavigable(card);
+		},
+		getNavigablesToChange : function() {
+			return this.navigable.getNavigablesToChange();
 		},
 		isANavigableCard : function(card) {
-			var className = card.className;
-			if (!this.isControlledByNavigation(className)) {
-				return true;
-			}
-			var cardId = card.cardId;
-			var node = this.navigables[className][cardId];
-			if (!node) {
-				return false;
-			}
-			return node.get("checked");
+			return this.navigable.isANavigableCard(card);
 		},
 		isANavigableLayer : function(layer) {
-			if (!this.isControlledByNavigation(layer.masterTableName)) {
+			if (!this.isANavigableClass(layer.masterTableName)) {
 				return true;
 			}
 			if (layer.cardBinding.length > 0) {
@@ -109,13 +81,8 @@
 					}
 				}
 				return false;
-			} else if (!this.isANavigableClass(layer.masterTableName)) {
-				return false;
-			}
+			} 
 			return true;
-		},
-		getStoppingRefresh : function() {
-			this.getMapPanel().getStoppingRefresh();
 		},
 		getConfigurationMap : function() {
 			return this.configurationMap;
@@ -167,18 +134,18 @@
 				this.observers.push(view);
 			}
 		},
+		observeLayers : function(view) {
+			if (this.layerObservers.indexOf(view) === -1) {
+				this.layerObservers.push(view);
+			}
+		},
+		observeNavigables : function(view) {
+			if (this.navigablesObservers.indexOf(view) === -1) {
+				this.navigablesObservers.push(view);
+			}
+		},
 		getGisAdapters : function() {
 			return this.gisAdapters;
-		},
-		setNavigableToOpen : function(cardToOpen) {
-			var navigableToOpen = this.getNavigableCard(cardToOpen);
-			this.navigableToOpen = navigableToOpen;
-		},
-		resetNavigableToOpen : function() {
-			this.navigableToOpen = null;
-		},
-		getNavigableToOpen : function() {
-			return this.navigableToOpen;
 		},
 		pushGisLayerAdapter : function(name, className, adapterGisLayer) {
 			if (this.gisAdapters[className]) {
@@ -198,14 +165,24 @@
 				} ];
 			}
 		},
-		changed : function(bForced) {
+		changed : function() {
 			for (var i = 0; i < this.observers.length; i++) {
 				this.observers[i].refresh();
 			}
 		},
+		changedNavigables : function() {
+			for (var i = 0; i < this.navigablesObservers.length; i++) {
+				this.navigablesObservers[i].refreshNavigables();
+			}
+		},
+		changedLayers : function() {
+			for (var i = 0; i < this.layerObservers.length; i++) {
+				this.layerObservers[i].refreshLayers();
+			}
+		},
 		observeFeatures : function(view) {
-			if (this.featuresObserver.indexOf(view) === -1) {
-				this.featuresObserver.push(view);
+			if (this.featureObservers.indexOf(view) === -1) {
+				this.featureObservers.push(view);
 			}
 		},
 		onLoadedfeatures : function(layerName, features) {
@@ -215,8 +192,8 @@
 			this.getMapPanel().selectCard(this.getCurrentCard());
 		},
 		changedFeature : function() {
-			for (var i = 0; i < this.featuresObserver.length; i++) {
-				this.featuresObserver[i].refreshCurrentFeature();
+			for (var i = 0; i < this.featureObservers.length; i++) {
+				this.featureObservers[i].refreshCurrentFeature();
 			}
 		},
 		getLayerVisibility : function(layer) {
@@ -314,6 +291,10 @@
 		getNoZoom : function() {
 			return this.noZoom;
 		},
+		getZoom : function() {
+			var mapPanel = this.getMapPanel();
+			return mapPanel.getZoom();
+		},
 		clearSelection : function() {
 			var mapPanel = this.getMapPanel();
 			mapPanel.clearSelection();
@@ -374,6 +355,17 @@
 		isVisible : function(layer, currentClassName, currentCardId) {
 			return isVisible(layer, currentClassName, currentCardId);
 		},
+		isCardOnMap : function(currentCard) {
+			var layers = this.getMap().getLayers();
+			var found = false;
+			layers.forEach(function(layer) {
+				var geoAttribute = layer.get("geoAttribute");
+				if (geoAttribute && geoAttribute.masterTableName === currentCard.className) {
+					found = true;
+				}
+			});
+			return found;
+		},
 		setCurrentFeature : function(name, geoType, operation) {
 			this.feature = {
 				nameAttribute : name,
@@ -383,18 +375,6 @@
 		}
 
 	});
-
-	function layersByCard(card, callback, callbackScope) {
-		var retLayers = [];
-		_CMCache.getAllLayers(function(layers) {
-			for (var i = 0; i < layers.length; i++) {
-				if (layer === card.cardId) {
-
-				}
-			}
-			callback.apply(callbackScope, [ retLayers ]);
-		});
-	}
 
 	function geoLayerByName(name, map, currentCard) {
 		var retLayer = null;
@@ -408,6 +388,15 @@
 		return retLayer;
 	}
 
+	function layerByName(name, callback, callbackScope) {
+		function checkName(layer) {
+			return (layer.name === name);
+		}
+		_CMCache.getAllLayers(function(layers) {
+			var layer = layers.find(checkName);
+			callback.apply(callbackScope, [ layer ]);
+		});
+	}
 	function layerByName(name, callback, callbackScope) {
 		function checkName(layer) {
 			return (layer.name === name);
