@@ -179,8 +179,8 @@
 		 * @private
 		 */
 		displayedParametersNamesGet: function () {
-			var visibleColumns = Ext.Array.slice(this.view.query('gridcolumn:not([hidden])'), 1); // Discard expander column
-			var visibleColumnNames = [];
+			var visibleColumns = Ext.Array.slice(this.view.query('gridcolumn:not([hidden])'), 1), // Discard expander column
+				visibleColumnNames = [];
 
 			// Build columns dataIndex array
 			if (Ext.isArray(visibleColumns) && !Ext.isEmpty(visibleColumns))
@@ -340,11 +340,11 @@
 		 * @returns {Void}
 		 */
 		onWorkflowTreeWokflowSelect: function (node) {
+			this.view.reconfigure(this.storeSortersSet(this.cmfg('workflowTreeStoreGet')), this.workflowTreeBuildColumns());
+
 			// Forward to sub controllers
 			this.controllerToolbarPaging.cmfg('onWorkflowTreeToolbarPagingWokflowSelect', node.get(CMDBuild.core.constants.Proxy.FILTER));
 			this.controllerToolbarTop.cmfg('onWorkflowTreeToolbarTopWokflowSelect');
-
-			this.view.reconfigure(this.storeSortersSet(this.cmfg('workflowTreeStoreGet')), this.workflowTreeBuildColumns());
 		},
 
 		/**
