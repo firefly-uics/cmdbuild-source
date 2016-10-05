@@ -60,8 +60,7 @@
 			var cardId = -1;
 			var className = "";
 			if (card === null) {
-				cardId = -1;
-				className = oldCard.className;
+				return;
 			} else {
 				cardId = card.cardId;
 				className = card.className;
@@ -263,7 +262,7 @@
 		if (visible) {
 			var lastClass = _CMCardModuleState.entryType, lastCard = _CMCardModuleState.card;
 
-			if (lastClass && this.currentClassId && this.currentClassId != lastClass.get("id")) {
+			if (lastCard && lastClass && this.currentClassId && this.currentClassId != lastClass.get("id")) {
 
 				this.onEntryTypeSelected(lastClass, {
 					Id : lastCard.get("Id")
