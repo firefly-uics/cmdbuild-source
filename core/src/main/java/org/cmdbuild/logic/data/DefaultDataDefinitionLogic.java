@@ -35,7 +35,6 @@ import java.util.Map.Entry;
 
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.Validate;
-import org.cmdbuild.annotations.VisibleForTesting;
 import org.cmdbuild.dao.entrytype.CMAttribute;
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.entrytype.CMDomain;
@@ -107,9 +106,7 @@ public class DefaultDataDefinitionLogic implements DataDefinitionLogic {
 
 	};
 
-	@VisibleForTesting
-	public static final String UPDATE_CLASS_INDEXES_FUNCTION_NAME = "_cm_create_class_default_order_indexes";
-	private static final Iterable<ClassOrder> NO_CLASS_ORDERS = emptyList();
+	private static final String UPDATE_CLASS_INDEXES_FUNCTION_NAME = "_cm_create_class_default_order_indexes";
 
 	private static final NameAlias FUNCTION_ALIAS = NameAlias.as("f");
 
@@ -155,7 +152,6 @@ public class DefaultDataDefinitionLogic implements DataDefinitionLogic {
 		if (existingClass == null) {
 			logger.info("class not already created, creating a new one");
 			createdOrUpdatedClass = view.create(definitionForNew(entryType, parentClass));
-			changeClassOrders(entryType.getName(), NO_CLASS_ORDERS);
 		} else {
 			logger.info("class already created, updating existing one");
 			createdOrUpdatedClass = view.update(definitionForExisting(entryType, existingClass));
@@ -465,7 +461,7 @@ public class DefaultDataDefinitionLogic implements DataDefinitionLogic {
 	}
 
 	@Override
-	public void changeClassOrders(final String className, final Iterable<ClassOrder> classOrders) {
+	public void changeClassOrders(final String className, final List<ClassOrder> classOrders) {
 		logger.info("changing classorders '{}' for class '{}'", classOrders, className);
 
 		final Map<String, ClassOrder> mappedClassOrders = Maps.uniqueIndex(classOrders, ATTRIBUTE_NAME_AS_KEY);
