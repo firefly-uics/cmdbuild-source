@@ -1,14 +1,11 @@
 package unit.logic.data;
 
-import static java.util.Collections.emptyList;
-import static org.cmdbuild.logic.data.DefaultDataDefinitionLogic.UPDATE_CLASS_INDEXES_FUNCTION_NAME;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.instanceOf;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
@@ -48,29 +45,22 @@ public class DefaultDataDefinitionLogicTest {
 	public void createUnexistingClass() {
 		// given
 		final CMClass createdClass = mockClass(CLASS_NAME);
-		doReturn(emptyList()) //
-				.when(createdClass).getAttributes();
-		doReturn(null).doReturn(createdClass) //
-				.when(dataView).findClass(any(CMIdentifier.class));
-		doReturn(createdClass) //
-				.when(dataView).create(any(CMClassDefinition.class));
-		doReturn(createdClass) //
-				.when(dataView).findClass(anyString());
+		final ArgumentCaptor<CMIdentifier> identifierCaptor = ArgumentCaptor.forClass(CMIdentifier.class);
+		when(dataView.findClass(identifierCaptor.capture())) //
+				.thenReturn(null, createdClass);
+		when(dataView.create(any(CMClassDefinition.class))) //
+				.thenReturn(createdClass);
 
 		// when
 		final CMClass returnedClass = dataDefinitionLogic.createOrUpdate(a(newClass(CLASS_NAME)));
 
 		// then
-		final ArgumentCaptor<CMIdentifier> identifierCaptor = ArgumentCaptor.forClass(CMIdentifier.class);
-		verify(dataView).findClass(identifierCaptor.capture());
-		verify(dataView).create(any(CMClassDefinition.class));
-		verify(dataView).findClass(eq(CLASS_NAME));
-		verify(dataView).findFunctionByName(eq(UPDATE_CLASS_INDEXES_FUNCTION_NAME));
-		verifyNoMoreInteractions(dataView);
-
 		assertThat(returnedClass.getName(), equalTo(createdClass.getName()));
+		verify(dataView).findClass(any(CMIdentifier.class));
 		assertThat(identifierCaptor.getValue().getLocalName(), equalTo(CLASS_NAME));
 		assertThat(identifierCaptor.getValue().getNameSpace(), equalTo(null));
+		verify(dataView).create(any(CMClassDefinition.class));
+		verifyNoMoreInteractions(dataView);
 	}
 
 	@Test
