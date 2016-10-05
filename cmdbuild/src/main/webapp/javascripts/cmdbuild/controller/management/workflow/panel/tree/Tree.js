@@ -140,17 +140,30 @@
 		 * Custom renderer to work with "CMDBuild.model.management.workflow.Node" custom get method
 		 *
 		 * @param {Object} column
+		 * @param {CMDBuild.model.management.workflow.Attribute} columnModel
 		 *
 		 * @returns {Object} column
 		 *
 		 * @private
 		 */
-		applyCustomRenderer: function (column) {
-			return Ext.apply(column, {
-				renderer: function (value, metadata, record, rowIndex, colIndex, store, view) {
-					return Ext.util.Format.stripTags(record.get(column.dataIndex));
-				}
-			});
+		applyCustomRenderer: function (column, columnModel) {
+			switch (columnModel.get(CMDBuild.core.constants.Proxy.TYPE)) {
+				case 'boolean':
+					return Ext.apply(column, {
+						renderer: function (value, metadata, record, rowIndex, colIndex, store, view) {
+							value = record.get(column.dataIndex);
+
+							return value ? CMDBuild.Translation.yes : CMDBuild.Translation.no; // Translate value
+						}
+					});
+
+				default:
+					return Ext.apply(column, {
+						renderer: function (value, metadata, record, rowIndex, colIndex, store, view) {
+							return Ext.util.Format.stripTags(record.get(column.dataIndex));
+						}
+					});
+			}
 		},
 
 		/**
@@ -877,7 +890,7 @@
 							fieldManager.attributeModelSet(attributeModel);
 							fieldManager.push(
 								columnsDefinition,
-								this.applyCustomRenderer(fieldManager.buildColumn())
+								this.applyCustomRenderer(fieldManager.buildColumn(), attributeModel)
 							);
 						} else if (attributeModel.get(CMDBuild.core.constants.Proxy.TYPE) != 'ipaddress') { // FIXME: future implementation - @deprecated - Old field manager
 							var column = CMDBuild.Management.FieldManager.getHeaderForAttr(attributeModel.get(CMDBuild.core.constants.Proxy.SOURCE_OBJECT));

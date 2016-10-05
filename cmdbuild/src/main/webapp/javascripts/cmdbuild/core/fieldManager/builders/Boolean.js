@@ -5,7 +5,8 @@
 
 		requires: [
 			'CMDBuild.core.constants.FieldWidths',
-			'CMDBuild.core.constants.Proxy'
+			'CMDBuild.core.constants.Proxy',
+			'CMDBuild.core.Utils'
 		],
 
 		/**
@@ -16,13 +17,14 @@
 		/**
 		 * @param {Object} parameters
 		 *
-		 * @returns {Ext.grid.column.CheckColumn or Object}
+		 * @returns {Ext.grid.column.Column or Object}
 		 */
 		buildColumn: function (parameters) {
-			return this.cmfg('fieldManagerAttributeModelGet', CMDBuild.core.constants.Proxy.HIDDEN) ? {} : Ext.create('Ext.grid.column.CheckColumn', {
+			return this.cmfg('fieldManagerAttributeModelGet', CMDBuild.core.constants.Proxy.HIDDEN) ? {} : Ext.create('Ext.grid.column.Column', {
 				dataIndex: this.cmfg('fieldManagerAttributeModelGet', CMDBuild.core.constants.Proxy.NAME),
 				disabled: !this.cmfg('fieldManagerAttributeModelGet', CMDBuild.core.constants.Proxy.WRITABLE),
 				hidden: !this.cmfg('fieldManagerAttributeModelGet', CMDBuild.core.constants.Proxy.SHOW_COLUMN),
+				renderer: this.rendererColumn,
 				scope: this,
 				sortable: true,
 				text: this.applyMandatoryLabelFlag(this.cmfg('fieldManagerAttributeModelGet', CMDBuild.core.constants.Proxy.DESCRIPTION)),
@@ -73,6 +75,28 @@
 		 */
 		buildStoreField: function () {
 			return { name: this.cmfg('fieldManagerAttributeModelGet', CMDBuild.core.constants.Proxy.NAME), type: 'boolean' };
+		},
+
+		/**
+		 * @param {Object} value
+		 * @param {Object} metadata
+		 * @param {Ext.data.Model} record
+		 * @param {Number} rowIndex
+		 * @param {Number} colIndex
+		 * @param {Ext.data.Store} store
+		 * @param {Ext.view.View} view
+		 *
+		 * @returns {String}
+		 *
+		 * @override
+		 */
+		rendererColumn: function (value, metadata, record, rowIndex, colIndex, store, view) {
+			value = CMDBuild.core.Utils.decodeAsBoolean(value);
+
+			if (Ext.isEmpty(Ext.String.trim(String(value))) && this.cmfg('fieldManagerAttributeModelGet', CMDBuild.core.constants.Proxy.MANDATORY))
+				metadata.tdCls += ' x-grid-invalid-cell-error';
+
+			return value ? CMDBuild.Translation.yes : CMDBuild.Translation.no; // Translate value
 		}
 	});
 
