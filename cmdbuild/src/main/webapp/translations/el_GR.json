@@ -894,6 +894,7 @@
 	"enabledClasses": "Ενεργοποιημένες κλάσεις",
 	"enabledGroups": "<em>Enabled groups</em>",
 	"enabledLanguages": "Ενεργοποιημένες γλώσσες",
+	"enabledOnly": "<em>Enabled only</em>",
 	"enableEdgeTooltip": "<em>Enable edge tooltip</em>",
 	"enableGridFilter": "Ενεργοποίηση φίλτρου πλέγματος",
 	"enableGroup": "<em>Enable group</em>",

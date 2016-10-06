@@ -894,6 +894,7 @@
 	"enabledClasses": "<em>Enabled classes</em>",
 	"enabledGroups": "Groepen toestaan",
 	"enabledLanguages": "Aktieve talen",
+	"enabledOnly": "<em>Enabled only</em>",
 	"enableEdgeTooltip": "<em>Enable edge tooltip</em>",
 	"enableGridFilter": "Instellen raster filter",
 	"enableGroup": "Deblokkeer groep",

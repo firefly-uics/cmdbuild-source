@@ -894,6 +894,7 @@
 	"enabledClasses": "Classes ativas",
 	"enabledGroups": "Grupos ativos",
 	"enabledLanguages": "Idiomas ativos",
+	"enabledOnly": "<em>Enabled only</em>",
 	"enableEdgeTooltip": "Ativar legenda dos arcos",
 	"enableGridFilter": "Ativar filtro de grelha",
 	"enableGroup": "Ativar grupo",

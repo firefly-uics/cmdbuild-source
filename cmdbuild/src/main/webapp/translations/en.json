@@ -894,6 +894,7 @@
 	"enabledClasses": "Enabled classes",
 	"enabledGroups": "Enabled groups",
 	"enabledLanguages": "Enabled languages",
+	"enabledOnly": "Enabled only",
 	"enableEdgeTooltip": "Enable edge tooltip",
 	"enableGridFilter": "Enable grid filter",
 	"enableGroup": "Enable group",

@@ -229,7 +229,7 @@
 		 */
 		onUserAndGroupUserShow: function () {
 			var params = {};
-			params[CMDBuild.core.constants.Proxy.ACTIVE] = this.view.includeUnactiveUsers.getValue();
+			params[CMDBuild.core.constants.Proxy.ACTIVE] = this.view.includeDisabledUsers.getValue();
 
 			this.grid.getStore().load({
 				params: params,
@@ -314,10 +314,10 @@
 					return _error('success(): unmanaged response', this, decodedResponse);
 			// END: Error handling
 
-			this.view.includeUnactiveUsers.reset(); // Reset checkbox value to load all users on save
+			this.view.includeDisabledUsers.reset(); // Reset checkbox value to load all users on save
 
 			var params = {};
-			params[CMDBuild.core.constants.Proxy.ACTIVE] = this.view.includeUnactiveUsers.getValue();
+			params[CMDBuild.core.constants.Proxy.ACTIVE] = this.view.includeDisabledUsers.getValue();
 
 			this.grid.getStore().load({
 				params: params,

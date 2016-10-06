@@ -894,6 +894,7 @@
 	"enabledClasses": "<em>Enabled classes</em>",
 	"enabledGroups": "Одобрене групе",
 	"enabledLanguages": "Омогућени језици",
+	"enabledOnly": "<em>Enabled only</em>",
 	"enableEdgeTooltip": "<em>Enable edge tooltip</em>",
 	"enableGridFilter": "Укључи филтрирање табеле",
 	"enableGroup": "Укључи групу",

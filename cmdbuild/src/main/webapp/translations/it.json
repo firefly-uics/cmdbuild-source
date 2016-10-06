@@ -894,6 +894,7 @@
 	"enabledClasses": "Classi abilitate",
 	"enabledGroups": "Gruppi abilitati",
 	"enabledLanguages": "Lingue abilitate",
+	"enabledOnly": "Solo abilitati",
 	"enableEdgeTooltip": "Abilita tooltip archi",
 	"enableGridFilter": "Abilita filtro griglia",
 	"enableGroup": "Abilita gruppo",

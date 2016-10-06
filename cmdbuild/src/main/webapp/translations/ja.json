@@ -894,6 +894,7 @@
 	"enabledClasses": "<em>Enabled classes</em>",
 	"enabledGroups": "可能なグループ",
 	"enabledLanguages": "利用可能な言語",
+	"enabledOnly": "<em>Enabled only</em>",
 	"enableEdgeTooltip": "<em>Enable edge tooltip</em>",
 	"enableGridFilter": "グリッドフィルターを有効に",
 	"enableGroup": "グループの有効化",

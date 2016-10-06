@@ -894,6 +894,7 @@
 	"enabledClasses": "生效的类",
 	"enabledGroups": "<em>Enabled groups</em>",
 	"enabledLanguages": "生效的语言",
+	"enabledOnly": "<em>Enabled only</em>",
 	"enableEdgeTooltip": "<em>Enable edge tooltip</em>",
 	"enableGridFilter": "使方格过滤器生效",
 	"enableGroup": "<em>Enable group</em>",

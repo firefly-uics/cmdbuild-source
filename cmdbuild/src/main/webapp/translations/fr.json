@@ -894,6 +894,7 @@
 	"enabledClasses": "Classes activées",
 	"enabledGroups": "Groupes activés",
 	"enabledLanguages": "Langues disponibles",
+	"enabledOnly": "<em>Enabled only</em>",
 	"enableEdgeTooltip": "Activer les infobulles des liens",
 	"enableGridFilter": "Activer le filtre de table",
 	"enableGroup": "Activer le groupe",

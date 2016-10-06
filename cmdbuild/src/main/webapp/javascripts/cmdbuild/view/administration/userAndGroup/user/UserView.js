@@ -23,7 +23,7 @@
 		/**
 		 * @property {Ext.form.field.Checkbox}
 		 */
-		includeUnactiveUsers: undefined,
+		includeDisabledUsers: undefined,
 
 		baseTitle: CMDBuild.Translation.users,
 		bodyCls: 'cmdb-gray-panel-no-padding',
@@ -52,8 +52,8 @@
 								}
 							}),
 							'->',
-							this.includeUnactiveUsers = Ext.create('Ext.form.field.Checkbox', {
-								boxLabel: CMDBuild.Translation.activeOnly,
+							this.includeDisabledUsers = Ext.create('Ext.form.field.Checkbox', {
+								boxLabel: CMDBuild.Translation.enabledOnly,
 								boxLabelCls: 'cmdb-toolbar-item',
 								inputValue: true,
 								uncheckedValue: false,
