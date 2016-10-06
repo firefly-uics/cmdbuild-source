@@ -75,7 +75,7 @@
 		 */
 		onUserAndGroupUserAbortButtonClick: function () {
 			if (!this.userAndGroupUserSelectedUserIsEmpty()) {
-				this.onUserAndGroupUserRowSelected();
+				this.cmfg('onUserAndGroupUserRowSelected');
 			} else {
 				this.form.reset();
 				this.form.setDisabledModify(true, true, true);
@@ -309,25 +309,26 @@
 		success: function (response, options, decodedResponse) {
 			decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.ROWS];
 
-			if (Ext.isObject(decodedResponse) && !Ext.Object.isEmpty(decodedResponse)) {
-				this.view.includeUnactiveUsers.reset(); // Reset checkbox value to load all users on save
+			// Error handling
+				if (!Ext.isObject(decodedResponse) || Ext.Object.isEmpty(decodedResponse))
+					return _error('success(): unmanaged response', this, decodedResponse);
+			// END: Error handling
 
-				var params = {};
-				params[CMDBuild.core.constants.Proxy.ACTIVE] = this.view.includeUnactiveUsers.getValue();
+			this.view.includeUnactiveUsers.reset(); // Reset checkbox value to load all users on save
 
-				this.grid.getStore().load({
-					params: params,
-					scope: this,
-					callback: function (records, operation, success) {
-						var rowIndex = this.grid.getStore().find('userid', decodedResponse['userid']);
+			var params = {};
+			params[CMDBuild.core.constants.Proxy.ACTIVE] = this.view.includeUnactiveUsers.getValue();
 
-						this.grid.getSelectionModel().select(rowIndex, true);
-						this.form.setDisabledModify(true);
-					}
-				});
-			} else {
-				_error('success(): empty or unmanaged server response', this, decodedResponse);
-			}
+			this.grid.getStore().load({
+				params: params,
+				scope: this,
+				callback: function (records, operation, success) {
+					var rowIndex = this.grid.getStore().find('userid', decodedResponse['userid']);
+
+					this.grid.getSelectionModel().select(rowIndex, true);
+					this.form.setDisabledModify(true);
+				}
+			});
 		}
 	});
 

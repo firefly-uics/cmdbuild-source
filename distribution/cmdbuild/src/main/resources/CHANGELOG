@@ -112,6 +112,8 @@ FIXES
 
  * Switching from tab to tab in advanced filter builder window content is erased
 
+ * Change password button still enabled after the further action to cancel an add
+
 
 
 
