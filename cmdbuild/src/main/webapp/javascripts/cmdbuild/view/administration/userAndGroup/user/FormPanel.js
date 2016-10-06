@@ -183,7 +183,7 @@
 							}),
 							Ext.create('Ext.form.field.Checkbox', {
 								name: CMDBuild.core.constants.Proxy.IS_ACTIVE,
-								fieldLabel: CMDBuild.Translation.active,
+								fieldLabel: CMDBuild.Translation.enabled,
 								labelWidth: CMDBuild.core.constants.FieldWidths.LABEL
 							}),
 							this.serviceCheckbox = Ext.create('Ext.form.field.Checkbox', {

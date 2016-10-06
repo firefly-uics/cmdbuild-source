@@ -894,6 +894,7 @@
 	"enabledClasses": "Clases habilitadas",
 	"enabledGroups": "Grupos habilitados",
 	"enabledLanguages": "Idiomas activados",
+	"enabledOnly": "<em>Enabled only</em>",
 	"enableEdgeTooltip": "<em>Enable edge tooltip</em>",
 	"enableGridFilter": "Habilitar filtro de tabla",
 	"enableGroup": "Habilitar Grupo",

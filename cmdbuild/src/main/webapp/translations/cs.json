@@ -894,6 +894,7 @@
 	"enabledClasses": "Povolené třídy",
 	"enabledGroups": "Povoleno pro role",
 	"enabledLanguages": "Povolené jazyky",
+	"enabledOnly": "<em>Enabled only</em>",
 	"enableEdgeTooltip": "Povolit okraje nástrojů",
 	"enableGridFilter": "Povolit filtr v mřížkách",
 	"enableGroup": "Povolit roli",

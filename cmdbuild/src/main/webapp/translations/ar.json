@@ -894,6 +894,7 @@
 	"enabledClasses": "الأصناف الممكنة",
 	"enabledGroups": "<em>Enabled groups</em>",
 	"enabledLanguages": "اللغات الممكنة",
+	"enabledOnly": "<em>Enabled only</em>",
 	"enableEdgeTooltip": "<em>Enable edge tooltip</em>",
 	"enableGridFilter": "تمكين الفرز على لائحة البطاقات",
 	"enableGroup": "تمكين مجموعة",

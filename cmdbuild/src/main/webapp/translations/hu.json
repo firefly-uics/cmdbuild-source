@@ -894,6 +894,7 @@
 	"enabledClasses": "Engedélyezett osztályok",
 	"enabledGroups": "<em>Enabled groups</em>",
 	"enabledLanguages": "Engedélyezett nyelvek",
+	"enabledOnly": "<em>Enabled only</em>",
 	"enableEdgeTooltip": "<em>Enable edge tooltip</em>",
 	"enableGridFilter": "<em>Rács szűrő engedélyezése</em>",
 	"enableGroup": "Csoport engedélyezése",
