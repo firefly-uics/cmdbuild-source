@@ -363,7 +363,7 @@
 			var me = this, selModel = me.boundList.getSelectionModel();
 
 			// Store not loaded yet - we cannot set the value
-			if (!me.store.getCount()) {
+			if (!Ext.isEmpty(me.store) && !me.store.getCount()) {
 				me.store.on({
 					load: Ext.Function.bind(me.setValue, me, [value]),
 					single: true
