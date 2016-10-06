@@ -114,6 +114,8 @@ FIXES
 
  * Change password button still enabled after the further action to cancel an add
 
+ * Modify and Change password buttons are not exclusive in enable fieldset functionalities
+
 
 
 
