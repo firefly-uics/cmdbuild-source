@@ -30,7 +30,7 @@
 			Ext.apply(this, configurationObject); // Apply configuration
 
 			Ext.ns('CMDBuild.configuration');
-			CMDBuild.configuration.gis = Ext.create('CMDBuild.model.core.configurations.builder.gis.Gis'); // Setup configuration with defaults
+			CMDBuild.configuration.gis = Ext.create('CMDBuild.model.core.configuration.builder.gis.Gis'); // Setup configuration with defaults
 
 			CMDBuild.proxy.core.configurations.builder.Gis.read({
 				loadMask: false,
@@ -50,7 +50,7 @@
 								root: decodedResponse[CMDBuild.core.constants.Proxy.ROOT]
 							};
 
-							CMDBuild.configuration.gis = Ext.create('CMDBuild.model.core.configurations.builder.gis.Gis', gisConfigurationObject); // Configuration model
+							CMDBuild.configuration.gis = Ext.create('CMDBuild.model.core.configuration.builder.gis.Gis', gisConfigurationObject); // Configuration model
 						},
 						callback: this.callback
 					});

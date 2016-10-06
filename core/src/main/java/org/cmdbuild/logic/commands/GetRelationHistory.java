@@ -1,9 +1,5 @@
 package org.cmdbuild.logic.commands;
 
-import static com.google.common.base.Predicates.not;
-import static com.google.common.collect.FluentIterable.from;
-import static org.cmdbuild.dao.entrytype.Predicates.disabledClass;
-import static org.cmdbuild.dao.entrytype.Predicates.domainFor;
 import static org.cmdbuild.dao.query.clause.AnyDomain.anyDomain;
 import static org.cmdbuild.dao.query.clause.DomainHistory.history;
 
@@ -13,7 +9,6 @@ import java.util.List;
 
 import org.apache.commons.lang3.Validate;
 import org.cmdbuild.dao.entry.CMCard;
-import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.entrytype.CMDomain;
 import org.cmdbuild.dao.query.CMQueryResult;
 import org.cmdbuild.dao.query.CMQueryRow;
@@ -33,16 +28,7 @@ public class GetRelationHistory extends AbstractGetRelation {
 
 	public GetRelationHistoryResponse exec(final Card source, final CMDomain domain) {
 		Validate.notNull(source);
-		final CMClass sourceClass = view.findClass(source.getClassName());
-		final CMQueryResult relationList;
-		if (from(view.findDomains()) //
-				.filter(domainFor(sourceClass)) //
-				.filter(not(disabledClass(sourceClass))) //
-				.isEmpty()) {
-			relationList = CMQueryResult.EMPTY;
-		} else {
-			relationList = getRelationQuery(source, history(domain)).run();
-		}
+		final CMQueryResult relationList = getRelationQuerySpecsBuilder(source, history(domain), null).run();
 		return createResponse(relationList);
 	}
 

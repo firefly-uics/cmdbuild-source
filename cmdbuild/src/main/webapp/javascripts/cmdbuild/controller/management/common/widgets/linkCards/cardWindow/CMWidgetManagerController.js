@@ -35,7 +35,7 @@
 					'.Ping': 'CMDBuild.controller.management.widget.Ping',
 					'.PresetFromCard': CMDBuild.controller.management.common.widgets.CMPresetFromCardController,
 					'.WebService': CMDBuild.controller.management.common.widgets.CMWebServiceController,
-					'.Workflow': CMDBuild.controller.management.common.widgets.CMWorkflowController
+					'.Workflow': CMDBuild.controller.management.common.widgets.workflow.CMWorkflowController
 				},
 				view: view
 			});

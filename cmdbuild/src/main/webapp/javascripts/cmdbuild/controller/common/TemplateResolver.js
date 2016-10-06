@@ -122,7 +122,7 @@ CMDBuild.Management.TemplateResolver.prototype = {
 			return undefined;
 		}
 
-		var v = sv[splitLocalname.name];
+		var v = sv[splitLocalname.name] || ''; // To be compatible with empty field's getValue(), so with getActivityFormVariable()
 		if (v != null &&
 				typeof v == "object") {
 

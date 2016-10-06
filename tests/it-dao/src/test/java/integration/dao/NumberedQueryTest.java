@@ -68,7 +68,7 @@ public class NumberedQueryTest extends IntegrationTestBase {
 		final Iterable<CMQueryRow> rows = dbDataView() //
 				.select(anyAttribute(foo)) //
 				.from(foo) //
-				.orderBy(foo.getCodeAttributeName(), Direction.DESC) //
+				.orderBy(attribute(foo, foo.getCodeAttributeName()), Direction.DESC) //
 				.numbered() //
 				.run();
 

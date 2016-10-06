@@ -1,5 +1,3 @@
-.cmdb-tree-no-icon { background-image: url("../images/icons/tree/transparentPixel.png") !important; }
-
 /* Defaults overrides */
 	.x-tree-icon-parent { background-image: url("../images/icons/tree/folderCollapsed.png") !important; }
 	.x-grid-tree-node-expanded .x-tree-icon-parent { background-image: url("../images/icons/tree/folderExpanded.png") !important; }
@@ -74,3 +72,7 @@
 	.x-grid-tree-node-expanded .cmdb-tree-superprocessclass-icon { background-image: url("../images/icons/tree/superWorkflowExpanded.png") !important; }
 
 	.cmdb-tree-processclass-icon { background-image: url("../images/icons/tree/workflow.png") !important; }
+
+/* Service styles */
+	.x-grid-tree-node-expanded .cmdb-tree-no-icon,
+	.cmdb-tree-no-icon { background-image: url("../images/icons/tree/transparentPixel.png") !important; }

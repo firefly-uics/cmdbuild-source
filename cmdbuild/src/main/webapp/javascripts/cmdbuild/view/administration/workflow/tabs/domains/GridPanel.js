@@ -1,11 +1,14 @@
 (function () {
 
+	/**
+	 * @link CMDBuild.view.administration.classes.tabs.domains.GridPanel
+	 */
 	Ext.define('CMDBuild.view.administration.workflow.tabs.domains.GridPanel', {
 		extend: 'Ext.grid.Panel',
 
 		requires: [
 			'CMDBuild.core.constants.Proxy',
-			'CMDBuild.proxy.workflow.Domains'
+			'CMDBuild.proxy.administration.workflow.tabs.Domains'
 		],
 
 		/**
@@ -62,18 +65,19 @@
 					Ext.create('Ext.ux.grid.column.Tick', {
 						dataIndex: 'md',
 						text: CMDBuild.Translation.masterDetailInitials,
-						iconLabel: CMDBuild.Translation.masterDetail,
+						iconAltText: CMDBuild.Translation.masterDetail,
 						align: 'center',
 						width: 30,
 						fixed: true
 					})
 				],
-				store: CMDBuild.proxy.workflow.Domains.getStore()
+				store: CMDBuild.proxy.administration.workflow.tabs.Domains.getStore()
 			});
 
 			this.callParent(arguments);
 
 			this.getStore().on('load', function (store, records, successful, eOpts) {
+				this.delegate.cmfg('onWorkflowTabDomainsIncludeInheritedCheck');
 				this.delegate.cmfg('onWorkflowTabDomainsStoreLoad');
 			}, this);
 		},
@@ -82,7 +86,6 @@
 			itemdblclick: function (grid, record, item, index, e, eOpts) {
 				this.delegate.cmfg('onWorkflowTabDomainsItemDoubleClick');
 			},
-
 			select: function (row, record, index) {
 				this.delegate.cmfg('onWorkflowTabDomainsRowSelect');
 			}

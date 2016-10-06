@@ -78,7 +78,9 @@
 
 						CMDBuild.global.controller.MainViewport.cmfg('mainViewportAccordionControllerUpdateStore', {
 							identifier: 'dashboard',
-							nodeIdToSelect: data.id
+							params: {
+								selectionId: data.id
+							}
 						});
 
 						/**
@@ -102,7 +104,9 @@
 
 						CMDBuild.global.controller.MainViewport.cmfg('mainViewportAccordionControllerUpdateStore', {
 							identifier: 'dashboard',
-							nodeIdToSelect: data.id
+							params: {
+								selectionId: data.id
+							}
 						});
 
 						/**

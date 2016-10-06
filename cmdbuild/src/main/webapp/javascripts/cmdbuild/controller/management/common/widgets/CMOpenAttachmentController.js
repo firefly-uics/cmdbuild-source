@@ -41,9 +41,7 @@
 		onAddAttachmentButtonClick: function() {
 			var pi = _CMWFState.getProcessInstance();
 			if (pi && pi.isNew()) {
-				CMDBuild.core.Message.error(CMDBuild.Translation.common.failure,
-						CMDBuild.Translation.management.modworkflow.extattrs.attachments.must_save_to_add,
-						popup = false);
+				CMDBuild.core.Message.error(CMDBuild.Translation.common.failure, CMDBuild.Translation.warnings.canNotAddAnAttachmentBeforeSavingTheActivity, false);
 
 			} else {
 				this.callParent(arguments);

@@ -223,7 +223,8 @@ public class DefaultReportLogic implements ReportLogic {
 	private final Predicate<org.cmdbuild.services.store.report.Report> readAllPredicate;
 
 	public DefaultReportLogic(final ReportStore reportStore, final DataSource dataSource,
-			final CmdbuildConfiguration configuration, final Predicate<org.cmdbuild.services.store.report.Report> readAllPredicate) {
+			final CmdbuildConfiguration configuration,
+			final Predicate<org.cmdbuild.services.store.report.Report> readAllPredicate) {
 		this.reportStore = reportStore;
 		this.dataSource = dataSource;
 		this.configuration = configuration;
@@ -267,14 +268,15 @@ public class DefaultReportLogic implements ReportLogic {
 	}
 
 	@Override
-	public DataHandler download(final int reportId, final Extension extension, final Map<String, Object> parameters) {
+	public DataHandler download(final int reportId, final Extension extension,
+			final Map<String, ? extends Object> parameters) {
 		try {
 			final ReportExtension reportExtension = ExtensionConverter.of(extension).reportExtension();
 			final ReportFactoryDB reportFactory = reportFactory(reportId, reportExtension);
 
 			// parameters management
 			for (final ReportParameter reportParameter : reportFactory.getReportParameters()) {
-				for (final Entry<String, Object> param : parameters.entrySet()) {
+				for (final Entry<String, ? extends Object> param : parameters.entrySet()) {
 					if (param.getKey().equals(reportParameter.getFullName())) {
 						// update parameter
 						reportParameter.parseValue(param.getValue());

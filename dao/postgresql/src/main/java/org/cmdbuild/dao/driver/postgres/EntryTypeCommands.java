@@ -169,8 +169,8 @@ public class EntryTypeCommands implements LoggingSupport {
 		final String classComment = commentFrom(definition);
 		final CMIdentifier identifier = definition.getIdentifier();
 		final String name = nameFrom(identifier);
-		dataDefinitionSqlLogger.info(String.format("SELECT * FROM cm_create_class('%s', '%s', '%s');", name,
-				parentName, classComment));
+		dataDefinitionSqlLogger.info(String.format("SELECT * FROM cm_create_class('%s', %s, '%s');", name,
+				parentName == null ? "null" : "'" + parentName + "'", classComment));
 		final long id = jdbcTemplate.queryForObject( //
 				"SELECT * FROM cm_create_class(?, ?, ?)", //
 				Long.class, //
@@ -725,7 +725,8 @@ public class EntryTypeCommands implements LoggingSupport {
 						final boolean returnsSet = rs.getBoolean("returns_set");
 						final FunctionMetadata meta = functionCommentToMetadata(rs.getString("comment"));
 						final DBFunction function = new DBFunction(fromName(name), id, returnsSet);
-						function.addCategories(meta.getCategories());
+						function.setCategories(meta.getCategories());
+						function.setMetadata(meta.getMetadata());
 						addParameters(rs, function);
 						return function;
 					}

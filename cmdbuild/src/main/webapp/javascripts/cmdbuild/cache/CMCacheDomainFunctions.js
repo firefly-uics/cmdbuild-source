@@ -23,7 +23,6 @@
 				nameClass2: d.class2,
 				idClass1: d.class1id,
 				idClass2: d.class2id,
-				classType: d.classType,
 				name: d.name,
 				createPrivileges: d.priv_create,
 				writePrivileges: d.priv_write,

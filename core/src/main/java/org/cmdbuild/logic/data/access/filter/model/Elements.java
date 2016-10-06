@@ -16,6 +16,10 @@ public class Elements {
 		return new Attribute(name, predicate);
 	}
 
+	public static Element not(final Element element) {
+		return new Not(element);
+	}
+
 	public static Element oneOf(final Element... elements) {
 		return oneOf(asList(elements));
 	}

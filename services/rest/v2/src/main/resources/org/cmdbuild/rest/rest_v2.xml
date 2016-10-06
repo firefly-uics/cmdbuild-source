@@ -35,7 +35,9 @@
 			<ref bean="v2_cards" />
 			<ref bean="v2_classes" />
 			<ref bean="v2_classAttributes" />
+			<ref bean="v2_classFilters" />
 			<ref bean="v2_classPrivileges" />
+			<ref bean="v2_classTemporaryFilters" />
 			<ref bean="v2_cql" />
 			<ref bean="v2_domains" />
 			<ref bean="v2_domainAttributes" />
@@ -43,6 +45,7 @@
 			<ref bean="v2_emailTemplates" />
 			<ref bean="v2_fileStores" />
 			<ref bean="v2_functions" />
+			<ref bean="v2_geometries" />
 			<ref bean="v2_graphConfiguration" />
 			<ref bean="v2_icons" />
 			<ref bean="v2_impersonate" />
@@ -52,12 +55,14 @@
 			<ref bean="v2_processAttributes" />
 			<ref bean="v2_processes" />
 			<ref bean="v2_processesConfiguration" />
+			<ref bean="v2_processFilters" />
 			<ref bean="v2_processInstanceActivities" />
 			<ref bean="v2_processInstanceAttachments" />
-			<ref bean="v2_processInstanceEmails" />			
+			<ref bean="v2_processInstanceEmails" />
 			<ref bean="v2_processInstancePrivileges" />
 			<ref bean="v2_processInstances" />
 			<ref bean="v2_processStartActivities" />
+			<ref bean="v2_processTemporaryFilters" />
 			<ref bean="v2_relations" />
 			<ref bean="v2_reports" />
 			<ref bean="v2_sessions" />

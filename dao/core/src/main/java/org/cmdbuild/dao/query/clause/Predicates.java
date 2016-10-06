@@ -1,12 +1,15 @@
 package org.cmdbuild.dao.query.clause;
 
+import static org.apache.commons.lang3.builder.ToStringBuilder.reflectionToString;
+import static org.apache.commons.lang3.builder.ToStringStyle.SHORT_PREFIX_STYLE;
+
 import org.cmdbuild.dao.query.clause.alias.Alias;
 
 import com.google.common.base.Predicate;
 
 public class Predicates {
 
-	private static class WithAlias implements Predicate<QueryAliasAttribute> {
+	private static class WithAlias implements Predicate<QueryAttribute> {
 
 		private final Alias alias;
 
@@ -15,8 +18,8 @@ public class Predicates {
 		}
 
 		@Override
-		public boolean apply(final QueryAliasAttribute input) {
-			return input.getEntryTypeAlias().equals(alias);
+		public boolean apply(final QueryAttribute input) {
+			return input.getAlias().equals(alias);
 		}
 
 		@Override
@@ -38,12 +41,12 @@ public class Predicates {
 
 		@Override
 		public String toString() {
-			return "WithAlias(" + alias + ")";
+			return reflectionToString(this, SHORT_PREFIX_STYLE);
 		}
 
 	}
 
-	public static Predicate<QueryAliasAttribute> withAlias(final Alias alias) {
+	public static Predicate<QueryAttribute> withAlias(final Alias alias) {
 		return new WithAlias(alias);
 	}
 

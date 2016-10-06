@@ -1,5 +1,6 @@
 package org.cmdbuild.cmdbf.cmdbmdr;
 
+import static com.google.common.collect.Iterables.toArray;
 import static org.cmdbuild.dao.query.clause.AnyAttribute.anyAttribute;
 import static org.cmdbuild.dao.query.clause.AnyClass.anyClass;
 import static org.cmdbuild.dao.query.clause.ClassHistory.history;
@@ -1379,7 +1380,7 @@ public class CmdbMDR implements ManagementDataRepository {
 					isSatisfiable &= applyPropertyFilter(type, null, filters, conditions);
 				}
 				if (isSatisfiable) {
-					final QuerySpecsBuilder queryBuilder = dataAccessLogic.getView().select(attributes.toArray())
+					final QuerySpecsBuilder queryBuilder = dataAccessLogic.getView().select(toArray(attributes, QueryAttribute.class))
 							.from(type);
 					if (!conditions.isEmpty()) {
 						if (conditions.size() == 1) {
@@ -1442,7 +1443,7 @@ public class CmdbMDR implements ManagementDataRepository {
 			isSatisfiable &= applyPropertyFilter(type, DOMAIN_ALIAS, filters, conditions);
 		}
 		if (isSatisfiable) {
-			final QuerySpecsBuilder queryBuilder = dataAccessLogic.getView().select(attributes.toArray());
+			final QuerySpecsBuilder queryBuilder = dataAccessLogic.getView().select(toArray(attributes, QueryAttribute.class));
 			queryBuilder.from(type.getClass1());
 			queryBuilder.join(
 					type.getClass2(),

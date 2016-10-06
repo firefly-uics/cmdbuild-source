@@ -154,7 +154,10 @@
 
 			this.cascade(function(item) {
 				if (item
-					&& (item instanceof Ext.form.Field)
+					&& (
+						item instanceof Ext.form.Field
+						|| item instanceof Ext.form.field.Field
+					)
 					&& !item.disabled
 				) {
 					if (!item.isValid()) {

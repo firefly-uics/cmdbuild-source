@@ -470,7 +470,6 @@
 				var params = {};
 				params[CMDBuild.core.constants.Proxy.CARD_ID] = lastSelectionId;
 				params[CMDBuild.core.constants.Proxy.CLASS_NAME] = this.widgetConf[CMDBuild.core.constants.Proxy.CLASS_NAME];
-				params[CMDBuild.core.constants.Proxy.RETRY_WITHOUT_FILTER] = false;
 				params[CMDBuild.core.constants.Proxy.SORT] = Ext.encode(this.grid.getStore().sorters.getRange());
 
 				if (this.view.toggleGridFilterButton.getActiveState() == CMDBuild.core.constants.Proxy.ENABLE)
@@ -482,10 +481,12 @@
 					params: params,
 					loadMask: false,
 					scope: this,
-					success: function (result, options, decodedResult) {
-						var position = decodedResult.position;
+					success: function (response, options, decodedResponse) {
+						decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.RESPONSE];
 
-						if (position >= 0) {
+						var position = decodedResponse[CMDBuild.core.constants.Proxy.POSITION];
+
+						if (Ext.isBoolean(decodedResponse[CMDBuild.core.constants.Proxy.HAS_POSITION]) && decodedResponse[CMDBuild.core.constants.Proxy.HAS_POSITION]) {
 							this.grid.loadPage(
 								CMDBuild.core.Utils.getPageNumber(position),
 								{
@@ -610,7 +611,9 @@
 					var defaultSelection = this.templateResolver.buildCQLQueryParameters(out[CMDBuild.core.constants.Proxy.DEFAULT_SELECTION], ctx);
 
 					// Do the request only if there are a default selection
-					if (!Ext.isEmpty(defaultSelection)) {
+					if (Ext.isObject(defaultSelection) && !Ext.Object.isEmpty(defaultSelection)) {
+						defaultSelection[CMDBuild.core.constants.Proxy.ATTRIBUTES] = Ext.encode(['Description']);
+
 						CMDBuild.proxy.widget.linkCards.LinkCards.readAllCards({
 							params: defaultSelection,
 							loadMask: false,

@@ -23,12 +23,10 @@ import java.util.Map.Entry;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
-import org.cmdbuild.service.rest.v2.model.Attribute.Filter;
 import org.cmdbuild.service.rest.v2.model.ClassWithFullDetails.AttributeOrder;
 import org.cmdbuild.service.rest.v2.model.DetailResponseMetadata.Reference;
+import org.cmdbuild.service.rest.v2.model.Geometry.Point;
 import org.cmdbuild.service.rest.v2.model.ProcessActivityWithFullDetails.AttributeStatus;
-
-import com.google.common.base.Function;
 
 public class Models {
 
@@ -370,6 +368,35 @@ public class Models {
 
 	}
 
+	public static class AttributeFilterBuilder extends ModelBuilder<Attribute.Filter> {
+
+		private String text;
+		private Map<String, String> params;
+
+		private AttributeFilterBuilder() {
+			// use factory method
+		}
+
+		@Override
+		protected Attribute.Filter doBuild() {
+			final Attribute.Filter output = new Attribute.Filter();
+			output.setText(text);
+			output.setParams(params);
+			return output;
+		}
+
+		public AttributeFilterBuilder withText(final String text) {
+			this.text = text;
+			return this;
+		}
+
+		public AttributeFilterBuilder withParams(final Map<String, String> params) {
+			this.params = params;
+			return this;
+		}
+
+	}
+
 	public static class AttributeOrderBuilder extends ModelBuilder<AttributeOrder> {
 
 		private String attribute;
@@ -448,6 +475,72 @@ public class Models {
 
 	}
 
+	public static class Attribute2Builder extends ModelBuilder<Attribute2> {
+
+		private static final Map<String, Object> NO_METADATA = emptyMap();
+
+		private String id;
+		private String name;
+		private String description;
+		private String type;
+		private String subtype;
+		private Integer index;
+		private Map<String, Object> metadata;
+
+		private Attribute2Builder() {
+			// use factory method
+		}
+
+		@Override
+		protected Attribute2 doBuild() {
+			final Attribute2 output = new Attribute2();
+			output.setId(id);
+			output.setName(name);
+			output.setDescription(description);
+			output.setType(type);
+			output.setSubtype(subtype);
+			output.setIndex(index);
+			output.setMetadata(new HashMap<>(defaultIfNull(metadata, NO_METADATA)));
+			return output;
+		}
+
+		public Attribute2Builder withId(final String id) {
+			this.id = id;
+			return this;
+		}
+
+		public Attribute2Builder withName(final String name) {
+			this.name = name;
+			return this;
+		}
+
+		public Attribute2Builder withDescription(final String description) {
+			this.description = description;
+			return this;
+		}
+
+		public Attribute2Builder withType(final String type) {
+			this.type = type;
+			return this;
+		}
+
+		public Attribute2Builder withSubtype(final String subtype) {
+			this.subtype = subtype;
+			return this;
+		}
+
+		public Attribute2Builder withIndex(final int index) {
+			this.index = index;
+			return this;
+		}
+
+		public Attribute2Builder withMetadata(final Map<String, Object> metadata) {
+			this.metadata = metadata;
+			return this;
+		}
+
+	}
+
 	public static class CardBuilder extends ModelBuilder<Card> {
 
 		private static final Values NO_VALUES = newValues().build();
@@ -488,8 +581,8 @@ public class Models {
 		}
 
 		public CardBuilder withValues(final Iterable<? extends Entry<String, ? extends Object>> values) {
-			final Function<Entry<? extends String, ? extends Object>, String> key = toKey();
-			final Function<Entry<? extends String, ? extends Object>, Object> value = toValue();
+			final com.google.common.base.Function<Entry<? extends String, ? extends Object>, String> key = toKey();
+			final com.google.common.base.Function<Entry<? extends String, ? extends Object>, Object> value = toValue();
 			final Map<String, Object> allValues = transformValues(uniqueIndex(values, key), value);
 			return withValues(allValues);
 		}
@@ -760,6 +853,7 @@ public class Models {
 		private String descriptionDirect;
 		private String descriptionInverse;
 		private String descriptionMasterDetail;
+		private boolean active;
 
 		private DomainWithFullDetailsBuilder() {
 			// use factory method
@@ -779,6 +873,7 @@ public class Models {
 			output.setDescriptionDirect(descriptionDirect);
 			output.setDescriptionInverse(descriptionInverse);
 			output.setDescriptionMasterDetail(descriptionMasterDetail);
+			output.setActive(active);
 			return output;
 		}
 
@@ -834,6 +929,11 @@ public class Models {
 
 		public DomainWithFullDetailsBuilder withDescriptionMasterDetail(final String descriptionMasterDetail) {
 			this.descriptionMasterDetail = descriptionMasterDetail;
+			return this;
+		}
+
+		public DomainWithFullDetailsBuilder withActive(final boolean active) {
+			this.active = active;
 			return this;
 		}
 
@@ -1110,8 +1210,12 @@ public class Models {
 
 	public static class FilterBuilder extends ModelBuilder<Filter> {
 
-		private String text;
-		private Map<String, String> params;
+		private Long id;
+		private String name;
+		private String description;
+		private String target;
+		private String configuration;
+		private boolean shared;
 
 		private FilterBuilder() {
 			// use factory method
@@ -1120,90 +1224,116 @@ public class Models {
 		@Override
 		protected Filter doBuild() {
 			final Filter output = new Filter();
-			output.setText(text);
-			output.setParams(params);
+			output.setId(id);
+			output.setName(name);
+			output.setDescription(description);
+			output.setTarget(target);
+			output.setConfiguration(configuration);
+			output.setShared(shared);
 			return output;
 		}
 
-		public FilterBuilder withText(final String text) {
-			this.text = text;
+		public FilterBuilder withId(final Long id) {
+			this.id = id;
 			return this;
 		}
 
-		public FilterBuilder withParams(final Map<String, String> params) {
-			this.params = params;
+		public FilterBuilder withName(final String name) {
+			this.name = name;
+			return this;
+		}
+
+		public FilterBuilder withDescription(final String description) {
+			this.description = description;
+			return this;
+		}
+
+		public FilterBuilder withTarget(final String target) {
+			this.target = target;
+			return this;
+		}
+
+		public FilterBuilder withConfiguration(final String configuration) {
+			this.configuration = configuration;
+			return this;
+		}
+
+		public FilterBuilder withShared(final boolean shared) {
+			this.shared = shared;
 			return this;
 		}
 
 	}
 
-	public static class FunctionWithBasicDetailsBuilder extends ModelBuilder<FunctionWithBasicDetails> {
+	public static class FunctionBuilder extends ModelBuilder<Function> {
 
 		private Long id;
 		private String name;
 		private String description;
+		private Map<String, Object> metadata;
 
-		private FunctionWithBasicDetailsBuilder() {
+		private FunctionBuilder() {
 			// use factory method
 		}
 
 		@Override
-		protected FunctionWithBasicDetails doBuild() {
-			final FunctionWithBasicDetails output = new FunctionWithBasicDetails();
+		protected Function doBuild() {
+			final Function output = new Function();
 			output.setId(id);
 			output.setName(name);
 			output.setDescription(description);
+			output.setMetadata(metadata);
 			return output;
 		}
 
-		public FunctionWithBasicDetailsBuilder withId(final Long id) {
+		public FunctionBuilder withId(final Long id) {
 			this.id = id;
 			return this;
 		}
 
-		public FunctionWithBasicDetailsBuilder withName(final String name) {
+		public FunctionBuilder withName(final String name) {
 			this.name = name;
 			return this;
 		}
 
-		public FunctionWithBasicDetailsBuilder withDescription(final String description) {
+		public FunctionBuilder withDescription(final String description) {
 			this.description = description;
+			return this;
+		}
+
+		public FunctionBuilder withMetadata(final Map<String, Object> metadata) {
+			this.metadata = metadata;
 			return this;
 		}
 
 	}
 
-	public static class FunctionWithFullDetailsBuilder extends ModelBuilder<FunctionWithFullDetails> {
+	public static class GeometryBuilder extends ModelBuilder<Geometry> {
+
+		private static final Map<String, Object> NO_VALUES = emptyMap();
 
 		private Long id;
-		private String name;
-		private String description;
+		private Map<String, Object> values;
 
-		private FunctionWithFullDetailsBuilder() {
+		private GeometryBuilder() {
 			// use factory method
 		}
 
 		@Override
-		protected FunctionWithFullDetails doBuild() {
-			final FunctionWithFullDetails output = new FunctionWithFullDetails();
+		protected Geometry doBuild() {
+			final Geometry output = new Geometry();
 			output.setId(id);
-			output.setName(name);
-			output.setDescription(description);
+			output.setValues(defaultIfNull(values, NO_VALUES));
 			return output;
 		}
 
-		public FunctionWithFullDetailsBuilder withId(final Long id) {
+		public GeometryBuilder withId(final Long id) {
 			this.id = id;
 			return this;
 		}
 
-		public FunctionWithFullDetailsBuilder withName(final String name) {
-			this.name = name;
-			return this;
-		}
-
-		public FunctionWithFullDetailsBuilder withDescription(final String description) {
-			this.description = description;
+		public GeometryBuilder withValues(final Map<String, Object> values) {
+			this.values = values;
 			return this;
 		}
 
@@ -1696,6 +1826,35 @@ public class Models {
 
 	}
 
+	public static class PointBuilder extends ModelBuilder<Geometry.Point> {
+
+		private double x;
+		private double y;
+
+		private PointBuilder() {
+			// use factory method
+		}
+
+		@Override
+		protected Point doBuild() {
+			final Point output = new Point();
+			output.setX(x);
+			output.setY(y);
+			return output;
+		}
+
+		public PointBuilder withX(final double x) {
+			this.x = x;
+			return this;
+		}
+
+		public PointBuilder withY(final double y) {
+			this.y = y;
+			return this;
+		}
+
+	}
+
 	public static class ProcessActivityWithBasicDetailsBuilder extends ModelBuilder<ProcessActivityWithBasicDetails> {
 
 		private String id;
@@ -1805,8 +1964,10 @@ public class Models {
 
 	public static class ProcessInstanceBuilder extends ModelBuilder<ProcessInstance> {
 
-		private static final Function<Entry<? extends String, ? extends Object>, String> KEY = toKey();
-		private static final Function<Entry<? extends String, ? extends Object>, Object> VALUE = toValue();
+		private static final com.google.common.base.Function<Entry<? extends String, ? extends Object>, String> KEY =
+				toKey();
+		private static final com.google.common.base.Function<Entry<? extends String, ? extends Object>, Object> VALUE =
+				toValue();
 
 		private String type;
 		private Long id;
@@ -1883,8 +2044,10 @@ public class Models {
 
 	public static class ProcessInstanceAdvanceBuilder extends ModelBuilder<ProcessInstanceAdvanceable> {
 
-		private static final Function<Entry<? extends String, ? extends Object>, String> KEY = toKey();
-		private static final Function<Entry<? extends String, ? extends Object>, Object> VALUE = toValue();
+		private static final com.google.common.base.Function<Entry<? extends String, ? extends Object>, String> KEY =
+				toKey();
+		private static final com.google.common.base.Function<Entry<? extends String, ? extends Object>, Object> VALUE =
+				toValue();
 
 		private static final Map<String, Object> EMPTY_MAP = emptyMap();
 		private static final Values NO_VALUES = newValues().withValues(EMPTY_MAP).build();
@@ -2228,8 +2391,8 @@ public class Models {
 		}
 
 		public RelationBuilder withValues(final Iterable<? extends Entry<String, ? extends Object>> values) {
-			final Function<Entry<? extends String, ? extends Object>, String> key = toKey();
-			final Function<Entry<? extends String, ? extends Object>, Object> value = toValue();
+			final com.google.common.base.Function<Entry<? extends String, ? extends Object>, String> key = toKey();
+			final com.google.common.base.Function<Entry<? extends String, ? extends Object>, Object> value = toValue();
 			final Map<String, Object> allValues = transformValues(uniqueIndex(values, key), value);
 			return withValues(allValues);
 		}
@@ -2501,12 +2664,20 @@ public class Models {
 		return new AttributeBuilder();
 	}
 
+	public static AttributeFilterBuilder newAttributeFilter() {
+		return new AttributeFilterBuilder();
+	}
+
 	public static AttributeOrderBuilder newAttributeOrder() {
 		return new AttributeOrderBuilder();
 	}
 
 	public static AttributeStatusBuilder newAttributeStatus() {
 		return new AttributeStatusBuilder();
+	}
+
+	public static Attribute2Builder newAttribute2() {
+		return new Attribute2Builder();
 	}
 
 	public static CardBuilder newCard() {
@@ -2553,12 +2724,12 @@ public class Models {
 		return new FilterBuilder();
 	}
 
-	public static FunctionWithBasicDetailsBuilder newFunctionWithBasicDetails() {
-		return new FunctionWithBasicDetailsBuilder();
+	public static FunctionBuilder newFunction() {
+		return new FunctionBuilder();
 	}
 
-	public static FunctionWithFullDetailsBuilder newFunctionWithFullDetails() {
-		return new FunctionWithFullDetailsBuilder();
+	public static GeometryBuilder newGeometry() {
+		return new GeometryBuilder();
 	}
 
 	public static GraphConfigurationBuilder newGraphConfiguration() {
@@ -2599,6 +2770,10 @@ public class Models {
 
 	public static NodeBuilder newNode() {
 		return new NodeBuilder();
+	}
+
+	public static PointBuilder newPoint() {
+		return new PointBuilder();
 	}
 
 	public static ProcessActivityWithBasicDetailsBuilder newProcessActivityWithBasicDetails() {

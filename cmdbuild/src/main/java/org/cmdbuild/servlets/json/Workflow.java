@@ -1,6 +1,9 @@
 package org.cmdbuild.servlets.json;
 
-import static org.cmdbuild.servlets.json.CommunicationConstants.*;
+import static com.google.common.collect.FluentIterable.from;
+import static java.util.Arrays.asList;
+import static org.cmdbuild.services.json.dto.JsonResponse.success;
+import static org.cmdbuild.servlets.json.CommunicationConstants.ACTIVITY_INSTANCE_ID;
 import static org.cmdbuild.servlets.json.CommunicationConstants.ADVANCE;
 import static org.cmdbuild.servlets.json.CommunicationConstants.ATTRIBUTES;
 import static org.cmdbuild.servlets.json.CommunicationConstants.BEGIN_DATE;
@@ -8,8 +11,11 @@ import static org.cmdbuild.servlets.json.CommunicationConstants.CARD_ID;
 import static org.cmdbuild.servlets.json.CommunicationConstants.CLASS_ID;
 import static org.cmdbuild.servlets.json.CommunicationConstants.CLASS_NAME;
 import static org.cmdbuild.servlets.json.CommunicationConstants.FILTER;
+import static org.cmdbuild.servlets.json.CommunicationConstants.FLOW_STATUS;
+import static org.cmdbuild.servlets.json.CommunicationConstants.HAS_POSITION;
 import static org.cmdbuild.servlets.json.CommunicationConstants.ID_CLASS;
 import static org.cmdbuild.servlets.json.CommunicationConstants.LIMIT;
+import static org.cmdbuild.servlets.json.CommunicationConstants.POSITION;
 import static org.cmdbuild.servlets.json.CommunicationConstants.PROCESS_INSTANCE_ID;
 import static org.cmdbuild.servlets.json.CommunicationConstants.SORT;
 import static org.cmdbuild.servlets.json.CommunicationConstants.START;
@@ -17,6 +23,8 @@ import static org.cmdbuild.servlets.json.CommunicationConstants.STATE;
 import static org.cmdbuild.servlets.json.CommunicationConstants.VERSION;
 import static org.cmdbuild.servlets.json.CommunicationConstants.WW;
 import static org.cmdbuild.servlets.json.CommunicationConstants.XPDL;
+import static org.cmdbuild.servlets.json.schema.Utils.toIterable;
+import static org.cmdbuild.workflow.ProcessAttributes.FlowStatus;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -36,9 +44,10 @@ import org.cmdbuild.common.template.TemplateResolver;
 import org.cmdbuild.common.utils.PagedElements;
 import org.cmdbuild.exception.ConsistencyException.ConsistencyExceptionType;
 import org.cmdbuild.logic.data.QueryOptions;
+import org.cmdbuild.logic.data.access.DataAccessLogic;
 import org.cmdbuild.logic.mapping.json.JsonFilterHelper;
 import org.cmdbuild.logic.workflow.WorkflowLogic;
-import org.cmdbuild.servlets.json.management.JsonResponse;
+import org.cmdbuild.services.json.dto.JsonResponse;
 import org.cmdbuild.servlets.json.serializers.JsonWorkflowDTOs.JsonActivityDefinition;
 import org.cmdbuild.servlets.json.serializers.JsonWorkflowDTOs.JsonActivityInstance;
 import org.cmdbuild.servlets.json.serializers.JsonWorkflowDTOs.JsonProcessCard;
@@ -52,6 +61,8 @@ import org.cmdbuild.workflow.CMProcessInstance;
 import org.cmdbuild.workflow.CMWorkflowException;
 import org.cmdbuild.workflow.user.UserActivityInstance;
 import org.cmdbuild.workflow.user.UserProcessInstance;
+import org.cmdbuild.workflow.user.UserProcessInstanceWithPosition;
+import org.codehaus.jackson.annotate.JsonProperty;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
@@ -60,6 +71,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import com.google.common.base.Optional;
 import com.google.common.collect.Lists;
 
 public class Workflow extends JSONBaseWithSpringContext {
@@ -79,12 +91,13 @@ public class Workflow extends JSONBaseWithSpringContext {
 	// TODO: but is the right name? It returns ProcessInstances
 	@JSONExported
 	@SuppressWarnings("serial")
-	public JsonResponse getProcessInstanceList( //
+	public JsonResponse getInstances( //
 			@Parameter(value = CLASS_NAME) final String className, //
 			@Parameter(value = FILTER, required = false) final JSONObject filter, //
 			@Parameter(LIMIT) final int limit, //
 			@Parameter(START) final int offset, //
 			@Parameter(value = SORT, required = false) final JSONArray sorters, //
+			@Parameter(value = ATTRIBUTES, required = false) final JSONArray attributes, //
 			@Parameter(STATE) final String flowStatus //
 	) throws JSONException, CMWorkflowException {
 		final QueryOptions queryOptions = QueryOptions.newQueryOption() //
@@ -92,16 +105,18 @@ public class Workflow extends JSONBaseWithSpringContext {
 				.offset(offset) //
 				.orderBy(sorters) //
 				.filter(new JsonFilterHelper(filter) //
-						.merge(new FlowStatusFilterElementGetter(lookupHelper(), flowStatus))) //
+						.merge(FlowStatusFilterElementGetter.newInstance() //
+								.withLookupHelper(lookupHelper()) //
+								.withFlowStatus(flowStatus) //
+								.build())) //
+				.onlyAttributes(toIterable(attributes)) //
 				.build();
-
 		final List<JsonProcessCard> processInstances = Lists.newArrayList();
 		final PagedElements<UserProcessInstance> response = workflowLogic().query(className, queryOptions);
 		for (final UserProcessInstance pi : response) {
 			processInstances.add(new JsonProcessCard(pi, translationFacade(), lookupSerializer()));
 		}
-
-		return JsonResponse.success(new HashMap<String, Object>() {
+		return success(new HashMap<String, Object>() {
 			{
 				put("results", response.totalSize());
 				put("rows", processInstances);
@@ -111,11 +126,72 @@ public class Workflow extends JSONBaseWithSpringContext {
 	}
 
 	@JSONExported
+	public JsonResponse getInstance( //
+			@Parameter(value = CLASS_NAME) final String className, //
+			@Parameter(value = CARD_ID) final Long cardId //
+	) {
+		final UserProcessInstance result = workflowLogic().getProcessInstance(className, cardId);
+		return success(new JsonProcessCard(result, translationFacade(), lookupSerializer()));
+	}
+
+	private static class JsonPosition {
+
+		private final Optional<UserProcessInstanceWithPosition> delegate;
+
+		public JsonPosition(final Optional<UserProcessInstanceWithPosition> delegate) {
+			this.delegate = delegate;
+		}
+
+		@JsonProperty(HAS_POSITION)
+		public boolean hasPosition() {
+			return delegate.isPresent();
+		}
+
+		@JsonProperty(POSITION)
+		public Long getPosition() {
+			return hasPosition() ? delegate.get().getPosition() : null;
+		}
+
+		@JsonProperty(FLOW_STATUS)
+		public String getFlowStatus() {
+			return hasPosition() ? delegate.get().getState().name() : null;
+		}
+
+	}
+
+	@JSONExported
+	public JsonResponse getPosition( //
+			@Parameter(value = CLASS_NAME) final String className, //
+			@Parameter(value = CARD_ID) final Long cardId, //
+			@Parameter(value = FILTER, required = false) final JSONObject filter, //
+			@Parameter(value = SORT, required = false) final JSONArray sorters, //
+			@Parameter(value = FLOW_STATUS, required = false) final String flowStatus //
+	) throws JSONException {
+		final DataAccessLogic dataAccessLogic = userDataAccessLogic();
+		final QueryOptions queryOptions = QueryOptions.newQueryOption() //
+				.onlyAttributes(asList(dataAccessLogic.findClass(className).getDescriptionAttributeName(),
+						FlowStatus.dbColumnName())) //
+				.filter(new JsonFilterHelper(filter) //
+						.merge(FlowStatusFilterElementGetter.newInstance() //
+								.withLookupHelper(lookupHelper()) //
+								.withFlowStatus(flowStatus) //
+								.withMissingFlowStatusIsError(true) //
+								.build())) //
+				.orderBy(sorters) //
+				.build();
+		final Optional<UserProcessInstanceWithPosition> found =
+				from(workflowLogic().queryWithPosition(className, queryOptions, asList(cardId))) //
+						.limit(1) //
+						.first();
+		return success(new JsonPosition(found));
+	}
+
+	@JSONExported
 	public JsonResponse getStartActivity( //
 			@Parameter(CLASS_ID) final Long processClassId) throws CMWorkflowException {
 		final CMActivity activityDefinition = workflowLogic().getStartActivityOrDie(processClassId);
 
-		return JsonResponse.success(new JsonActivityDefinition( //
+		return success(new JsonActivityDefinition( //
 				activityDefinition, //
 				performerFor(activityDefinition)));
 	}
@@ -135,8 +211,8 @@ public class Workflow extends JSONBaseWithSpringContext {
 			final TemplateResolver templateResolver = activityPerformerTemplateResolverFactory().create();
 			final String resolvedExpression = templateResolver.resolve(expression);
 
-			final ActivityPerformerExpressionEvaluator evaluator = new BshActivityPerformerExpressionEvaluator(
-					resolvedExpression);
+			final ActivityPerformerExpressionEvaluator evaluator =
+					new BshActivityPerformerExpressionEvaluator(resolvedExpression);
 			final Set<String> names = evaluator.getNames();
 			performerName = names.contains(maybe) ? maybe : StringUtils.EMPTY;
 			break;
@@ -158,7 +234,7 @@ public class Workflow extends JSONBaseWithSpringContext {
 		final UserActivityInstance activityInstance = workflowLogic().getActivityInstance( //
 				processClassId, processInstanceId, activityInstanceId);
 
-		return JsonResponse.success(new JsonActivityInstance(activityInstance));
+		return success(new JsonActivityInstance(activityInstance));
 	}
 
 	@JSONExported
@@ -176,7 +252,7 @@ public class Workflow extends JSONBaseWithSpringContext {
 			throw ConsistencyExceptionType.OUT_OF_DATE_PROCESS.createException();
 		}
 
-		return JsonResponse.success(new HashMap<String, Object>() {
+		return success(new HashMap<String, Object>() {
 			{
 				put("updated", isUpdated);
 			}
@@ -210,7 +286,7 @@ public class Workflow extends JSONBaseWithSpringContext {
 
 		final DateTimeFormatter formatter = DateTimeFormat.forPattern(Constants.DATETIME_FOUR_DIGIT_YEAR_FORMAT);
 		final DateTime beginDate = processInstance.getBeginDate();
-		return JsonResponse.success(new HashMap<String, Object>() {
+		return success(new HashMap<String, Object>() {
 			{
 				put("Id", processInstance.getCardId());
 				put("IdClass", processInstance.getType().getId());
@@ -229,7 +305,7 @@ public class Workflow extends JSONBaseWithSpringContext {
 	) throws CMWorkflowException {
 		workflowLogic().abortProcess(processClassId, processCardId);
 
-		return JsonResponse.success(null);
+		return success(null);
 	}
 
 	@Admin
@@ -249,7 +325,7 @@ public class Workflow extends JSONBaseWithSpringContext {
 	) throws CMWorkflowException {
 		final String[] versions = workflowLogic().getProcessDefinitionVersions(processClassId);
 
-		return JsonResponse.success(versions);
+		return success(versions);
 	}
 
 	@Admin
@@ -276,7 +352,7 @@ public class Workflow extends JSONBaseWithSpringContext {
 			messages.add("saved_xpdl");
 		}
 
-		return JsonResponse.success(messages);
+		return success(messages);
 	}
 
 	private DataSource wrapAsDataSource(final FileItem xpdlFile) {

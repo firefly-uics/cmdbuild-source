@@ -6,6 +6,8 @@ public interface ErrorHandler {
 
 	void attachmentNotFound(String value);
 
+	void attributeNotFound(String value);
+
 	void cardNotFound(Long value);
 
 	void classNotFound(String value);
@@ -27,6 +29,8 @@ public interface ErrorHandler {
 	void fileNotCreated();
 
 	void fileNotFound(String value);
+
+	void filterNotFound(Long value);
 
 	void folderNotFound(String value);
 

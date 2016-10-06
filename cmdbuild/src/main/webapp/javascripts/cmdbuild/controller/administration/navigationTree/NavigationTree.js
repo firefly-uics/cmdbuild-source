@@ -5,7 +5,7 @@
 
 		requires: [
 			'CMDBuild.core.constants.Proxy',
-			'CMDBuild.proxy.NavigationTree'
+			'CMDBuild.proxy.navigationTree.NavigationTree'
 		],
 
 		/**
@@ -184,11 +184,13 @@
 		 * @override
 		 */
 		onNavigationTreeModuleInit: function (node) {
-			if (!Ext.isEmpty(node)) {
+			this.navigationTreeSelectedTreeReset();
+
+			if (Ext.isObject(node) && !Ext.Object.isEmpty(node)) {
 				var params = {};
 				params[CMDBuild.core.constants.Proxy.NAME] = node.get(CMDBuild.core.constants.Proxy.ENTITY_ID);
 
-				CMDBuild.proxy.NavigationTree.read({
+				CMDBuild.proxy.navigationTree.NavigationTree.read({
 					params: params,
 					scope: this,
 					success: function(response, options, decodedResponse) {
@@ -203,13 +205,22 @@
 						if (Ext.isEmpty(this.tabPanel.getActiveTab()))
 							this.tabPanel.setActiveTab(0);
 
+						this.tabPanel.getActiveTab().fireEvent('show'); // Manual show event fire because was already selected // TODO: to implement
+
 						this.onModuleInit(node); // Custom callParent() implementation
 					}
 				});
-			} else { // Display title if no nodes are selected
+			} else {
 				this.setViewTitle();
 
 				this.cmfg('onNavigationTreeSelected');
+
+				if (Ext.isEmpty(this.tabPanel.getActiveTab()))
+					this.tabPanel.setActiveTab(0);
+
+				this.tabPanel.getActiveTab().fireEvent('show'); // Manual show event fire because was already selected // TODO: to implement
+
+				this.onModuleInit(node); // Custom callParent() implementation
 			}
 		},
 
@@ -247,7 +258,7 @@
 
 					params[CMDBuild.core.constants.Proxy.STRUCTURE] = Ext.encode(structure);
 
-					CMDBuild.proxy.NavigationTree.create({
+					CMDBuild.proxy.navigationTree.NavigationTree.create({
 						params: params,
 						scope: this,
 						success: this.success
@@ -261,7 +272,7 @@
 
 					params[CMDBuild.core.constants.Proxy.STRUCTURE] = Ext.encode(structure);
 
-					CMDBuild.proxy.NavigationTree.update({
+					CMDBuild.proxy.navigationTree.NavigationTree.update({
 						params: params,
 						scope: this,
 						success: this.success
@@ -280,7 +291,7 @@
 				var params = {};
 				params[CMDBuild.core.constants.Proxy.NAME] = this.cmfg('navigationTreeSelectedTreeGet', CMDBuild.core.constants.Proxy.NAME);
 
-				CMDBuild.proxy.NavigationTree.remove({
+				CMDBuild.proxy.navigationTree.NavigationTree.remove({
 					params: params,
 					scope: this,
 					success: function (response, options, decodedResponse) {
@@ -307,7 +318,9 @@
 		success: function (response, options, decodedResponse) {
 			this.cmfg('mainViewportAccordionControllerUpdateStore', {
 				identifier: this.cmfg('identifierGet'),
-//				nodeIdToSelect: decodedResponse[CMDBuild.core.constants.Proxy.RESPONSE][CMDBuild.core.constants.Proxy.ID] // TODO: waiting for refactor
+				//params: { // TODO: waiting for refactor
+				//	selectionId: decodedResponse[CMDBuild.core.constants.Proxy.RESPONSE][CMDBuild.core.constants.Proxy.ID]
+				// }
 			});
 		}
 	});

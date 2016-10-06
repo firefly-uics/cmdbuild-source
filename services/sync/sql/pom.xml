@@ -5,7 +5,7 @@
 	<parent>
 		<groupId>org.cmdbuild</groupId>
 		<artifactId>cmdbuild-parent</artifactId>
-		<version>2.4.1-SNAPSHOT</version>
+		<version>2.4.2-SNAPSHOT</version>
 		<relativePath>../../../parent</relativePath>
 	</parent>
 	<artifactId>cmdbuild-services-sync-sql</artifactId>
@@ -24,6 +24,10 @@
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-jdbc</artifactId>
 			<version>${spring.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>joda-time</groupId>
+			<artifactId>joda-time</artifactId>
 		</dependency>
 	</dependencies>
 </project>

@@ -29,9 +29,8 @@
 			Ext.create('CMDBuild.core.interfaces.Init'); // Interfaces configuration
 			Ext.create('CMDBuild.core.Data', { enableLocalized: true }); // Data connections configuration
 			Ext.create('CMDBuild.core.cache.Cache');
-			Ext.create('CMDBuild.core.configurations.builder.Instance', { enableServerCalls: false }); // CMDBuild instance configuration
+			Ext.create('CMDBuild.core.configurations.builder.Instance'); // CMDBuild instance configuration
 			Ext.create('CMDBuild.core.configurations.builder.Localization', { // CMDBuild localization configuration
-				enableServerCalls: false,
 				callback: function (options, success, response) {
 					Ext.create('CMDBuild.controller.login.Login');
 				}

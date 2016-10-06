@@ -85,7 +85,7 @@ public class SoapSharkWorkflowApiFactory implements SharkWorkflowApiFactory {
 
 	@Override
 	public WorkflowApi createWorkflowApi() {
-		return new WorkflowApiImpl(context(proxy()));
+		return new WorkflowApiImpl(context(defaultProxy()));
 	}
 
 	private Context context(final Private proxy) {
@@ -129,20 +129,24 @@ public class SoapSharkWorkflowApiFactory implements SharkWorkflowApiFactory {
 
 			@Override
 			public Context impersonate(final String username, final String group) {
-				return context(SoapSharkWorkflowApiFactory.this.proxy(username, group));
+				return context(SoapSharkWorkflowApiFactory.this.impersonatedProxy(username, group));
 			}
 
 		};
 	}
 
-	private Private proxy() {
-		return proxy(currentUserOrEmptyOnError(), currentGroupOrEmptyOnError());
+	private Private defaultProxy() {
+		return new CusSoapProxyBuilder(cus) //
+				.withUsername(defaultString(currentUserOrEmptyOnError(), currentUserOrEmptyOnError())) //
+				.withGroup(defaultString(currentGroupOrEmptyOnError(), currentGroupOrEmptyOnError())) //
+				.build();
 	}
 
-	private Private proxy(final String username, final String group) {
+	private Private impersonatedProxy(final String username, final String group) {
 		return new CusSoapProxyBuilder(cus) //
-				.withUsername(defaultString(username)) //
-				.withGroup(defaultString(group)) //
+				.withUsername(defaultString(username, currentUserOrEmptyOnError())) //
+				.withGroup(defaultString(group, currentGroupOrEmptyOnError())) //
+				.forciblyImpersonate(true) //
 				.build();
 	}
 

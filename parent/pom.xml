@@ -5,7 +5,7 @@
 	<parent>
 		<groupId>org.cmdbuild</groupId>
 		<artifactId>cmdbuild-main</artifactId>
-		<version>2.4.1-SNAPSHOT</version>
+		<version>2.4.2-SNAPSHOT</version>
 	</parent>
 	<artifactId>cmdbuild-parent</artifactId>
 	<packaging>pom</packaging>
@@ -406,10 +406,6 @@
 			<id>javanet</id> <!-- for JTA -->
 			<url>http://download.java.net/maven/2</url>
 		</repository>
-		<repository>
-			<id>jstd-maven-plugin google code repo</id>
-			<url>http://jstd-maven-plugin.googlecode.com/svn/maven2</url>
-		</repository>
 		<repository> <!-- For xercesImpl till XERCESJ-1454 is fixed -->
 			<id>atlassian</id>
 			<url>https://maven.atlassian.com/content/groups/public</url>
@@ -428,10 +424,6 @@
 		<pluginRepository>
 			<id>cukes</id>
 			<url>http://cukes.info/maven</url>
-		</pluginRepository>
-		<pluginRepository>
-			<id>croche-releases</id>
-			<url>http://croche.googlecode.com/svn/repository/releases</url>
 		</pluginRepository>
 	</pluginRepositories>
 

@@ -46,7 +46,7 @@
 		 * @returns {Void}
 		 */
 		reset: function () {
-			this.setDisabled(this.delegate.cmfg('classesTabHistorySelectedEntityIsEmpty'));
+			this.setDisabled(this.delegate.cmfg('classesTabHistorySelectedCardIsEmpty'));
 		}
 	});
 

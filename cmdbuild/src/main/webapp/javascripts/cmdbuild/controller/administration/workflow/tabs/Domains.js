@@ -1,5 +1,8 @@
 (function () {
 
+	/**
+	 * @link CMDBuild.controller.administration.classes.tabs.Domains
+	 */
 	Ext.define('CMDBuild.controller.administration.workflow.tabs.Domains', {
 		extend: 'CMDBuild.controller.common.abstract.Base',
 
@@ -7,7 +10,7 @@
 			'CMDBuild.core.constants.Global',
 			'CMDBuild.core.constants.ModuleIdentifiers',
 			'CMDBuild.core.constants.Proxy',
-			'CMDBuild.proxy.domain.Domain'
+			'CMDBuild.proxy.administration.workflow.tabs.Domains'
 		],
 
 		/**
@@ -28,7 +31,7 @@
 			'onWorkflowTabDomainsRowSelect',
 			'onWorkflowTabDomainsShow',
 			'onWorkflowTabDomainsStoreLoad',
-			'workflowTabDomainsInit = workflowTabInit'
+			'onWorkflowTabDomainsWorkflowSelected'
 		],
 
 		/**
@@ -39,7 +42,7 @@
 		/**
 		 * Just the grid subset of domain properties, not a full domain object
 		 *
-		 * @property {CMDBuild.model.workflow.tabs.domains.Grid}
+		 * @property {CMDBuild.model.administration.workflow.tabs.domains.Grid}
 		 *
 		 * @private
 		 */
@@ -65,24 +68,29 @@
 
 			// Shorthands
 			this.grid = this.view.grid;
-
-			this.grid.getStore().on('load', function (store, records, successful, eOpts) {
-				this.cmfg('onWorkflowTabDomainsIncludeInheritedCheck');
-			}, this);
+			this.includeInheritedCheckbox = this.view.includeInheritedCheckbox;
 		},
 
 		/**
 		 * @returns {Void}
+		 *
+		 * FIXME: refactor with external services standards
 		 */
 		onWorkflowTabDomainsAddButtonClick: function () {
+			var accordionController = this.cmfg('mainViewportAccordionControllerGet', CMDBuild.core.constants.ModuleIdentifiers.getDomain()),
+				moduleController = this.cmfg('mainViewportModuleControllerGet', CMDBuild.core.constants.ModuleIdentifiers.getDomain());
+
 			this.cmfg('mainViewportAccordionDeselect', CMDBuild.core.constants.ModuleIdentifiers.getDomain());
 
-			this.cmfg('mainViewportAccordionControllerGet', CMDBuild.core.constants.ModuleIdentifiers.getDomain()).getView().on('storeload', function (accordion, eOpts) {
-				this.cmfg('mainViewportModuleControllerGet', CMDBuild.core.constants.ModuleIdentifiers.getDomain()).cmfg('onDomainAddButtonClick');
-			}, this, { single: true });
+			Ext.apply(accordionController, {
+				disableSelection: true,
+				scope: this,
+				callback: function () {
+					moduleController.cmfg('onDomainAddButtonClick');
+				}
+			});
 
-			this.cmfg('mainViewportAccordionControllerGet', CMDBuild.core.constants.ModuleIdentifiers.getDomain()).disableSelection = true;
-			this.cmfg('mainViewportAccordionControllerExpand', CMDBuild.core.constants.ModuleIdentifiers.getDomain());
+			this.cmfg('mainViewportAccordionControllerExpand', { identifier: CMDBuild.core.constants.ModuleIdentifiers.getDomain() });
 		},
 
 		/**
@@ -96,7 +104,7 @@
 		 * @returns {Void}
 		 */
 		onWorkflowTabDomainsIncludeInheritedCheck: function () {
-			if (this.view.includeInheritedCheckbox.getValue()) {
+			if (this.includeInheritedCheckbox.getValue()) {
 				this.grid.getStore().clearFilter();
 			} else {
 				this.grid.getStore().filterBy(function (record) {
@@ -107,37 +115,71 @@
 
 		/**
 		 * @returns {Void}
+		 *
+		 * FIXME: refactor with external services standards
 		 */
 		onWorkflowTabDomainsItemDoubleClick: function () {
 			if (!this.selectedDomainIsEmpty()) {
+				var accordionController = this.cmfg('mainViewportAccordionControllerGet', CMDBuild.core.constants.ModuleIdentifiers.getDomain());
+
 				this.cmfg('mainViewportAccordionDeselect', CMDBuild.core.constants.ModuleIdentifiers.getDomain());
-				this.cmfg('mainViewportAccordionControllerGet', CMDBuild.core.constants.ModuleIdentifiers.getDomain()).disableStoreLoad = true;
-				this.cmfg('mainViewportAccordionControllerExpand', CMDBuild.core.constants.ModuleIdentifiers.getDomain());
-				this.cmfg('mainViewportAccordionControllerUpdateStore', {
+
+				Ext.apply(accordionController, {
+					disableStoreLoad: true
+				});
+
+				this.cmfg('mainViewportAccordionControllerExpand', {
 					identifier: CMDBuild.core.constants.ModuleIdentifiers.getDomain(),
-					nodeIdToSelect: this.selectedDomainGet(CMDBuild.core.constants.Proxy.ID_DOMAIN)
+					params: {
+						scope: this,
+						callback: function () {
+							this.cmfg('mainViewportAccordionControllerUpdateStore', {
+								identifier: CMDBuild.core.constants.ModuleIdentifiers.getDomain(),
+								params: {
+									selectionId: this.selectedDomainGet(CMDBuild.core.constants.Proxy.ID_DOMAIN)
+								}
+							});
+						}
+					}
 				});
 			}
 		},
 
 		/**
 		 * @returns {Void}
+		 *
+		 * FIXME: refactor with external services standards
 		 */
 		onWorkflowTabDomainsModifyButtonClick: function () {
 			if (!this.selectedDomainIsEmpty()) {
+				var accordionController = this.cmfg('mainViewportAccordionControllerGet', CMDBuild.core.constants.ModuleIdentifiers.getDomain()),
+					moduleController = this.cmfg('mainViewportModuleControllerGet', CMDBuild.core.constants.ModuleIdentifiers.getDomain());
+
 				this.cmfg('mainViewportAccordionDeselect', CMDBuild.core.constants.ModuleIdentifiers.getDomain());
-				this.cmfg('mainViewportAccordionControllerGet', CMDBuild.core.constants.ModuleIdentifiers.getDomain()).disableStoreLoad = true;
-				this.cmfg('mainViewportAccordionControllerExpand', CMDBuild.core.constants.ModuleIdentifiers.getDomain());
 
-				this.cmfg('mainViewportAccordionControllerGet', CMDBuild.core.constants.ModuleIdentifiers.getDomain()).getView().on('storeload', function (accordion, eOpts) {
-					Ext.Function.createDelayed(function () {
-						this.cmfg('mainViewportModuleControllerGet', CMDBuild.core.constants.ModuleIdentifiers.getDomain()).cmfg('onDomainModifyButtonClick');
-					}, 100, this)();
-				}, this, { single: true });
+				Ext.apply(accordionController, {
+					disableStoreLoad: true,
+					scope: this,
+					callback: function () {
+						Ext.Function.createDelayed(function () { // TODO: fix me avoid delay
+							moduleController.cmfg('onDomainModifyButtonClick');
+						}, 100, this)();
+					}
+				});
 
-				this.cmfg('mainViewportAccordionControllerUpdateStore', {
+				this.cmfg('mainViewportAccordionControllerExpand', {
 					identifier: CMDBuild.core.constants.ModuleIdentifiers.getDomain(),
-					nodeIdToSelect: this.selectedDomainGet(CMDBuild.core.constants.Proxy.ID_DOMAIN)
+					params: {
+						scope: this,
+						callback: function () {
+							this.cmfg('mainViewportAccordionControllerUpdateStore', {
+								identifier: CMDBuild.core.constants.ModuleIdentifiers.getDomain(),
+								params: {
+									selectionId: this.selectedDomainGet(CMDBuild.core.constants.Proxy.ID_DOMAIN)
+								}
+							});
+						}
+					}
 				});
 			}
 		},
@@ -192,42 +234,57 @@
 		 * Translations of grid records domain's class name to description
 		 *
 		 * @returns {Void}
+		 *
+		 * FIXME: waiting for refactor (rename)
 		 */
 		onWorkflowTabDomainsStoreLoad: function () {
 			if (!Ext.isEmpty(this.grid.getStore().getRange()) && Ext.isArray(this.grid.getStore().getRange())) {
 				var params = {};
 				params[CMDBuild.core.constants.Proxy.ACTIVE] = true;
 
-				CMDBuild.proxy.Classes.readAll({
+				CMDBuild.proxy.administration.workflow.tabs.Domains.readAllClasses({
 					params: params,
 					scope: this,
 					success: function (response, options, decodedResponse) {
-						decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.CLASSES] || [];
+						decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.CLASSES];
 
-						Ext.Array.forEach(this.grid.getStore().getRange(), function (gridRecord, i, allGridRecords) {
-							var foundClassObject = undefined;
+						if (Ext.isArray(decodedResponse) && !Ext.isEmpty(decodedResponse))
+							Ext.Array.each(this.grid.getStore().getRange(), function (gridRecord, i, allGridRecords) {
+								var foundClassObject = undefined;
 
-							// Translate class1 name to description
-							foundClassObject = Ext.Array.findBy(decodedResponse, function (record, i) {
-								return gridRecord.get('class1') == record[CMDBuild.core.constants.Proxy.NAME];
+								// Translate class1 name to description
+								foundClassObject = Ext.Array.findBy(decodedResponse, function (record, i) {
+									return gridRecord.get('class1') == record[CMDBuild.core.constants.Proxy.NAME];
+								}, this);
+
+								if (!Ext.isEmpty(foundClassObject))
+									gridRecord.set('class1', foundClassObject[CMDBuild.core.constants.Proxy.TEXT]);
+
+								// Translate class2 name to description
+								foundClassObject = Ext.Array.findBy(decodedResponse, function (record, i) {
+									return gridRecord.get('class2') == record[CMDBuild.core.constants.Proxy.NAME];
+								}, this);
+
+								if (!Ext.isEmpty(foundClassObject))
+									gridRecord.set('class2', foundClassObject[CMDBuild.core.constants.Proxy.TEXT]);
+
+								gridRecord.commit();
 							}, this);
-
-							if (!Ext.isEmpty(foundClassObject))
-								gridRecord.set('class1', foundClassObject[CMDBuild.core.constants.Proxy.TEXT]);
-
-							// Translate class2 name to description
-							foundClassObject = Ext.Array.findBy(decodedResponse, function (record, i) {
-								return gridRecord.get('class2') == record[CMDBuild.core.constants.Proxy.NAME];
-							}, this);
-
-							if (!Ext.isEmpty(foundClassObject))
-								gridRecord.set('class2', foundClassObject[CMDBuild.core.constants.Proxy.TEXT]);
-
-							gridRecord.commit();
-						}, this);
 					}
 				});
 			}
+		},
+
+		/**
+		 * Enable/Disable tab on workflow selection
+		 *
+		 * @returns {Void}
+		 */
+		onWorkflowTabDomainsWorkflowSelected: function () {
+			this.view.setDisabled(
+				this.cmfg('workflowSelectedWorkflowIsEmpty')
+				|| this.cmfg('workflowSelectedWorkflowGet', CMDBuild.core.constants.Proxy.TABLE_TYPE) == CMDBuild.core.constants.Global.getTableTypeSimpleTable()
+			);
 		},
 
 		/**
@@ -240,7 +297,7 @@
 				var params = {};
 				params[CMDBuild.core.constants.Proxy.DOMAIN_NAME] = this.selectedDomainGet(CMDBuild.core.constants.Proxy.NAME);
 
-				CMDBuild.proxy.domain.Domain.remove({
+				CMDBuild.proxy.administration.workflow.tabs.Domains.remove({
 					params: params,
 					scope: this,
 					success: function (response, options, decodedResponse) {
@@ -299,24 +356,12 @@
 			 */
 			selectedDomainSet: function (parameters) {
 				if (!Ext.Object.isEmpty(parameters)) {
-					parameters[CMDBuild.core.constants.Proxy.MODEL_NAME] = 'CMDBuild.model.workflow.tabs.domains.Grid';
+					parameters[CMDBuild.core.constants.Proxy.MODEL_NAME] = 'CMDBuild.model.administration.workflow.tabs.domains.Grid';
 					parameters[CMDBuild.core.constants.Proxy.TARGET_VARIABLE_NAME] = 'selectedDomain';
 
 					this.propertyManageSet(parameters);
 				}
-			},
-
-		/**
-		 * Enable/Disable tab on workflow selection
-		 *
-		 * @returns {Void}
-		 */
-		workflowTabDomainsInit: function () {
-			this.view.setDisabled(
-				this.cmfg('workflowSelectedWorkflowIsEmpty')
-				|| this.cmfg('workflowSelectedWorkflowGet', CMDBuild.core.constants.Proxy.TABLE_TYPE) == CMDBuild.core.constants.Global.getTableTypeSimpleTable()
-			);
-		}
+			}
 	});
 
 })();

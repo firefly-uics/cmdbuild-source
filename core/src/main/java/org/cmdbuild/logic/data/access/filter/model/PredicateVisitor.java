@@ -20,8 +20,6 @@ public interface PredicateVisitor {
 
 	void visit(Like predicate);
 
-	void visit(Not predicate);
-
 	void visit(Or predicate);
 
 	void visit(StartsWith predicate);

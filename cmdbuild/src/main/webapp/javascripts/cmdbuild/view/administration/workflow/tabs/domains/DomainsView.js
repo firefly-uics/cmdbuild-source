@@ -1,5 +1,8 @@
 (function () {
 
+	/**
+	 * @link CMDBuild.view.administration.classes.tabs.domains.DomainsView
+	 */
 	Ext.define('CMDBuild.view.administration.workflow.tabs.domains.DomainsView', {
 		extend: 'Ext.panel.Panel',
 

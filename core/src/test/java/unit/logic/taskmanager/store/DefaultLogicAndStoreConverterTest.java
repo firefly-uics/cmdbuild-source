@@ -21,9 +21,11 @@ import static org.hamcrest.Matchers.nullValue;
 import static org.junit.Assert.assertThat;
 
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.cmdbuild.common.collect.ChainablePutMap;
 import org.cmdbuild.logic.taskmanager.Task;
 import org.cmdbuild.logic.taskmanager.store.DefaultLogicAndStoreConverter;
 import org.cmdbuild.logic.taskmanager.store.ParameterNames.AsynchronousEvent;
@@ -612,10 +614,26 @@ public class DefaultLogicAndStoreConverterTest {
 				.withDescription("description") //
 				.withActiveStatus(true) //
 				.withCronExpression("cron expression") //
+				.withContext(ChainablePutMap.of(new HashMap<String, Map<String, String>>()) //
+						.chainablePut("foo",
+								ChainablePutMap.of(new HashMap<String, String>()) //
+										.chainablePut("f", "o") //
+										.chainablePut("o", "!")) //
+						.chainablePut("bar",
+								ChainablePutMap.of(new HashMap<String, String>()) //
+										.chainablePut("b", "a") //
+										.chainablePut("r", "!"))) //
 				.withLastExecution(NOW) //
 				.withEmailActive(true) //
 				.withEmailTemplate("email template") //
 				.withEmailAccount("email account") //
+				.withReportActive(true) //
+				.withReportName("report name") //
+				.withReportExtension("report extension") //
+				.withReportParameters(ChainablePutMap.of(new HashMap<String, String>()) //
+						.chainablePut("foo", "oof") //
+						.chainablePut("bar", "rab") //
+						.chainablePut("baz", "zab")) //
 		);
 
 		// when
@@ -630,9 +648,19 @@ public class DefaultLogicAndStoreConverterTest {
 						.withRunningStatus(true) //
 						.withCronExpression("cron expression") //
 						.withLastExecution(NOW) //
+						.withParameter(Generic.context("foo", "f"), "o") //
+						.withParameter(Generic.context("foo", "o"), "!") //
+						.withParameter(Generic.context("bar", "b"), "a") //
+						.withParameter(Generic.context("bar", "r"), "!") //
 						.withParameter(Generic.EMAIL_ACTIVE, "true") //
 						.withParameter(Generic.EMAIL_TEMPLATE, "email template") //
 						.withParameter(Generic.EMAIL_ACCOUNT, "email account") //
+						.withParameter(Generic.REPORT_ACTIVE, "true") //
+						.withParameter(Generic.REPORT_NAME, "report name") //
+						.withParameter(Generic.REPORT_EXTENSION, "report extension") //
+						.withParameter(Generic.REPORT_PARAMETERS_PREFIX + "foo", "oof") //
+						.withParameter(Generic.REPORT_PARAMETERS_PREFIX + "bar", "rab") //
+						.withParameter(Generic.REPORT_PARAMETERS_PREFIX + "baz", "zab") //
 		)));
 	}
 
@@ -645,9 +673,19 @@ public class DefaultLogicAndStoreConverterTest {
 				.withRunningStatus(true) //
 				.withCronExpression("cron expression") //
 				.withLastExecution(NOW) //
+				.withParameter(Generic.context("foo", "f"), "o") //
+				.withParameter(Generic.context("foo", "o"), "!") //
+				.withParameter(Generic.context("bar", "b"), "a") //
+				.withParameter(Generic.context("bar", "r"), "!") //
 				.withParameter(Generic.EMAIL_ACTIVE, "true") //
 				.withParameter(Generic.EMAIL_TEMPLATE, "email template") //
 				.withParameter(Generic.EMAIL_ACCOUNT, "email account") //
+				.withParameter(Generic.REPORT_ACTIVE, "true") //
+				.withParameter(Generic.REPORT_NAME, "report name") //
+				.withParameter(Generic.REPORT_EXTENSION, "report extension") //
+				.withParameter(Generic.REPORT_PARAMETERS_PREFIX + "foo", "oof") //
+				.withParameter(Generic.REPORT_PARAMETERS_PREFIX + "bar", "rab") //
+				.withParameter(Generic.REPORT_PARAMETERS_PREFIX + "baz", "zab") //
 		);
 
 		// when
@@ -663,9 +701,25 @@ public class DefaultLogicAndStoreConverterTest {
 						.withActiveStatus(true) //
 						.withCronExpression("cron expression") //
 						.withLastExecution(NOW) //
-						.withEmailActive(true) //
-						.withEmailTemplate("email template") //
-						.withEmailAccount("email account") //
+						.withContext(ChainablePutMap.of(new HashMap<String, Map<String, String>>()) //
+								.chainablePut("foo",
+										ChainablePutMap.of(new HashMap<String, String>()) //
+												.chainablePut("f", "o") //
+												.chainablePut("o", "!")) //
+								.chainablePut("bar",
+										ChainablePutMap.of(new HashMap<String, String>()) //
+												.chainablePut("b", "a") //
+												.chainablePut("r", "!"))) //
+				.withEmailActive(true) //
+				.withEmailTemplate("email template") //
+				.withEmailAccount("email account") //
+				.withReportActive(true) //
+				.withReportName("report name") //
+				.withReportExtension("report extension") //
+				.withReportParameters(ChainablePutMap.of(new HashMap<String, String>()) //
+						.chainablePut("foo", "oof") //
+						.chainablePut("bar", "rab") //
+						.chainablePut("baz", "zab")) //
 		)));
 	}
 

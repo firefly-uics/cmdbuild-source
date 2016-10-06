@@ -7,7 +7,15 @@
 		extend: 'Ext.window.Window',
 
 		/**
+		 * Dimensions managed values:
+		 * - Number
+		 * - 'auto'
+		 *
 		 * @cfg {Object}
+		 * 	Ex: {
+		 * 		{Number or String} height,
+		 * 		{Number or String} width
+		 * 	}
 		 */
 		dimensions: {},
 
@@ -30,29 +38,30 @@
 			switch (this.dimensionsMode) {
 				case 'absolute': {
 					if (Ext.Object.isEmpty(this.dimensions)) // Apply defaults
-						Ext.apply(this, {
-							dimensions: {
-								height: 600,
-								width: 800
-							}
+						Ext.apply(this.dimensions, {
+							height: 600,
+							width: 800
 						});
 
-					Ext.apply(this, this.dimensions);
+					if (Ext.isNumber(this.dimensions.height))
+						this.height = this.dimensions.height;
+
+					if (Ext.isNumber(this.dimensions.width))
+						this.width = this.dimensions.width;
 				} break;
 
 				case 'percentage': {
 					if (Ext.Object.isEmpty(this.dimensions)) // Apply defaults
-						Ext.apply(this, {
-							dimensions: {
-								height: CMDBuild.configuration.instance.get(CMDBuild.core.constants.Proxy.POPUP_HEIGHT_PERCENTAGE),
-								width: CMDBuild.configuration.instance.get(CMDBuild.core.constants.Proxy.POPUP_WIDTH_PERCENTAGE)
-							}
+						Ext.apply(this.dimensions, {
+							height: CMDBuild.configuration.instance.get(CMDBuild.core.constants.Proxy.POPUP_HEIGHT_PERCENTAGE),
+							width: CMDBuild.configuration.instance.get(CMDBuild.core.constants.Proxy.POPUP_WIDTH_PERCENTAGE)
 						});
 
-					Ext.apply(this, {
-						height: Ext.getBody().getHeight() * (this.dimensions.height / 100),
-						width: Ext.getBody().getWidth() * (this.dimensions.width / 100)
-					});
+					if (Ext.isNumber(this.dimensions.height))
+						this.height = Ext.getBody().getHeight() * (this.dimensions.height / 100);
+
+					if (Ext.isNumber(this.dimensions.width))
+						this.width = Ext.getBody().getWidth() * (this.dimensions.width / 100);
 				} break;
 
 				case 'none':

@@ -59,11 +59,6 @@ public abstract class ForwardingPredicateVisitor extends ForwardingObject implem
 	}
 
 	@Override
-	public void visit(final Not predicate) {
-		delegate().visit(predicate);
-	}
-
-	@Override
 	public void visit(final Or predicate) {
 		delegate().visit(predicate);
 	}

@@ -9,10 +9,10 @@
 		requires: [
 			'Ext.tip.QuickTipManager', // Avoid core override
 			'Ext.ux.Router',
-			'CMDBuild.routes.management.Card',
-			'CMDBuild.routes.management.Classes',
-			'CMDBuild.routes.management.Instance',
-			'CMDBuild.routes.management.Workflow',
+			'CMDBuild.controller.management.routes.Card',
+			'CMDBuild.controller.management.routes.Classes',
+			'CMDBuild.controller.management.routes.Instance',
+			'CMDBuild.controller.management.routes.Workflow',
 			'CMDBuild.core.Management'
 		],
 
@@ -21,36 +21,36 @@
 
 		routes: {
 			// Classes
-			'classes/:classIdentifier/cards': 'CMDBuild.routes.management.Classes#saveRoute', // Alias (wrong implementation, to delete in future)
-			'classes/:classIdentifier/cards/': 'CMDBuild.routes.management.Classes#saveRoute',
-			'classes/:classIdentifier/print': 'CMDBuild.routes.management.Classes#saveRoute',
+			'classes/:classIdentifier/cards': 'CMDBuild.controller.management.routes.Classes#saveRoute', // Alias (wrong implementation, to delete in future)
+			'classes/:classIdentifier/cards/': 'CMDBuild.controller.management.routes.Classes#saveRoute',
+			'classes/:classIdentifier/print': 'CMDBuild.controller.management.routes.Classes#saveRoute',
 
-			'exec/classes/:classIdentifier/cards': 'CMDBuild.routes.management.Classes#detail', // Alias (wrong implementation, to delete in future)
-			'exec/classes/:classIdentifier/cards/': 'CMDBuild.routes.management.Classes#detail',
-			'exec/classes/:classIdentifier/print': 'CMDBuild.routes.management.Classes#print',
+			'exec/classes/:classIdentifier/cards': 'CMDBuild.controller.management.routes.Classes#detail', // Alias (wrong implementation, to delete in future)
+			'exec/classes/:classIdentifier/cards/': 'CMDBuild.controller.management.routes.Classes#detail',
+			'exec/classes/:classIdentifier/print': 'CMDBuild.controller.management.routes.Classes#print',
 
 			// Cards
-			'classes/:classIdentifier/cards/:cardIdentifier': 'CMDBuild.routes.management.Card#saveRoute', // Alias (wrong implementation, to delete in future)
-			'classes/:classIdentifier/cards/:cardIdentifier/': 'CMDBuild.routes.management.Card#saveRoute',
-			'classes/:classIdentifier/cards/:cardIdentifier/print': 'CMDBuild.routes.management.Card#saveRoute',
+			'classes/:classIdentifier/cards/:cardIdentifier': 'CMDBuild.controller.management.routes.Card#saveRoute', // Alias (wrong implementation, to delete in future)
+			'classes/:classIdentifier/cards/:cardIdentifier/': 'CMDBuild.controller.management.routes.Card#saveRoute',
+			'classes/:classIdentifier/cards/:cardIdentifier/print': 'CMDBuild.controller.management.routes.Card#saveRoute',
 
-			'exec/classes/:classIdentifier/cards/:cardIdentifier': 'CMDBuild.routes.management.Card#detail', // Alias (wrong implementation, to delete in future)
-			'exec/classes/:classIdentifier/cards/:cardIdentifier/': 'CMDBuild.routes.management.Card#detail',
-			'exec/classes/:classIdentifier/cards/:cardIdentifier/print': 'CMDBuild.routes.management.Card#print',
+			'exec/classes/:classIdentifier/cards/:cardIdentifier': 'CMDBuild.controller.management.routes.Card#detail', // Alias (wrong implementation, to delete in future)
+			'exec/classes/:classIdentifier/cards/:cardIdentifier/': 'CMDBuild.controller.management.routes.Card#detail',
+			'exec/classes/:classIdentifier/cards/:cardIdentifier/print': 'CMDBuild.controller.management.routes.Card#print',
 
 			// Processes
-			'processes/:processIdentifier/instances/': 'CMDBuild.routes.management.Workflow#saveRoute',
-			'processes/:processIdentifier/print': 'CMDBuild.routes.management.Workflow#saveRoute',
-			'processes/': 'CMDBuild.routes.management.Workflow#saveRoute',
+			'processes/:processIdentifier/instances/': 'CMDBuild.controller.management.routes.Workflow#saveRoute',
+			'processes/:processIdentifier/print': 'CMDBuild.controller.management.routes.Workflow#saveRoute',
+			'processes/': 'CMDBuild.controller.management.routes.Workflow#saveRoute',
 
-			'exec/processes/:processIdentifier/instances/': 'CMDBuild.routes.management.Workflow#detail',
-			'exec/processes/:processIdentifier/print': 'CMDBuild.routes.management.Workflow#print',
-			'exec/processes/': 'CMDBuild.routes.management.Workflow#showAll',
+			'exec/processes/:processIdentifier/instances/': 'CMDBuild.controller.management.routes.Workflow#detail',
+			'exec/processes/:processIdentifier/print': 'CMDBuild.controller.management.routes.Workflow#print',
+			'exec/processes/': 'CMDBuild.controller.management.routes.Workflow#showAll',
 
 			// Instances
-			'processes/:processIdentifier/instances/:instanceIdentifier/': 'CMDBuild.routes.management.Instance#saveRoute',
+			'processes/:processIdentifier/instances/:instanceIdentifier/': 'CMDBuild.controller.management.routes.Instance#saveRoute',
 
-			'exec/processes/:processIdentifier/instances/:instanceIdentifier/': 'CMDBuild.routes.management.Instance#detail'
+			'exec/processes/:processIdentifier/instances/:instanceIdentifier/': 'CMDBuild.controller.management.routes.Instance#detail'
 		},
 
 		/**
@@ -66,6 +66,7 @@
 			delete Ext.tip.Tip.prototype.minWidth;
 
 			Ext.create('CMDBuild.core.LoggerManager'); // Logger configuration
+			Ext.create('CMDBuild.core.Routes');
 			Ext.create('CMDBuild.core.interfaces.Init'); // Interfaces configuration
 			Ext.create('CMDBuild.core.Data', { enableLocalized: true }); // Data connections configuration
 			Ext.create('CMDBuild.core.cache.Cache');

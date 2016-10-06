@@ -109,11 +109,13 @@
 		 *
 		 * @private
 		 */
-		buildActionColumns: function () {
+		buildActionColumn: function () {
 			return Ext.create('Ext.grid.column.Action', {
 				align: 'center',
-				width: 75,
+				maxWidth: 75,
+				minWidth: 75,
 				sortable: false,
+				resizable: false,
 				hideable: false,
 				menuDisabled: true,
 				fixed: true,
@@ -211,7 +213,7 @@
 				Ext.Array.forEach(this.cmfg('widgetCustomFormConfigurationGet', CMDBuild.core.constants.Proxy.MODEL), function (attribute, i, allAttributes) {
 					if (fieldManager.isAttributeManaged(attribute.get(CMDBuild.core.constants.Proxy.TYPE))) {
 						fieldManager.attributeModelSet(Ext.create('CMDBuild.model.common.attributes.Attribute', attribute.getData()));
-						fieldManager.push(columns, fieldManager.buildColumn(true));
+						fieldManager.push(columns, fieldManager.buildColumn({ withEditor: true }));
 					} else if (attribute.get(CMDBuild.core.constants.Proxy.TYPE) != 'ipaddress') { // TODO: future implementation - @deprecated - Old field manager
 						var attribute = attribute.getAdaptedData();
 						var attributesMap = CMDBuild.Management.FieldManager.getAttributesMap();
@@ -222,7 +224,9 @@
 
 						var header = CMDBuild.Management.FieldManager.getHeaderForAttr(attribute);
 
-						header.flex = 1; // Apply flex 1 by default to avoid unused empty space on grids
+						// Remove flex property by default to be compatible with forceFit property
+						if (Ext.isObject(header) && !Ext.Object.isEmpty(header) && !Ext.isEmpty(header.flex))
+							delete header.flex;
 
 						if (attribute.type == 'REFERENCE') { // TODO: hack to force a templateResolver build for editor that haven't a form associated like other fields types
 							var xaVars = CMDBuild.Utils.Metadata.extractMetaByNS(attribute.meta, 'system.template.');
@@ -234,7 +238,7 @@
 								serverVars: this.cmfg('widgetCustomFormGetTemplateResolverServerVars')
 							});
 
-							editor = CMDBuild.Management.ReferenceField.buildEditor(attribute, templateResolver);
+							editor = CMDBuild.Management.ReferenceField.buildEditor(attribute, templateResolver, this);
 
 							// Force execution of template resolver
 							if (!Ext.isEmpty(editor) && Ext.isFunction(editor.resolveTemplate))
@@ -282,7 +286,7 @@
 				}, this);
 			}
 
-			columns.push(this.buildActionColumns());
+			columns.push(this.buildActionColumn());
 
 			return columns;
 		},
@@ -376,12 +380,6 @@
 
 			if (this.cmfg('instancesDataStorageExists'))
 				this.cmfg('widgetCustomFormLayoutGridDataSet', this.cmfg('widgetCustomFormInstancesDataStorageGet'));
-
-			// Fixes reference field renderer to avoid blank cell content render
-			Ext.Function.createDelayed(function () {
-				if (this.view.getView().isVisible())
-					this.view.getView().refresh();
-			}, 100, this)();
 		},
 
 		/**
@@ -407,14 +405,14 @@
 				isWidgetReadOnly
 				|| this.cmfg('widgetCustomFormConfigurationGet', [
 					CMDBuild.core.constants.Proxy.CAPABILITIES,
-					CMDBuild.core.constants.Proxy.IMPORT_DISABLED
+					CMDBuild.core.constants.Proxy.EXPORT_DISABLED
 				])
 			);
 			this.view.importButton.setDisabled(
 				isWidgetReadOnly
 				|| this.cmfg('widgetCustomFormConfigurationGet', [
 					CMDBuild.core.constants.Proxy.CAPABILITIES,
-					CMDBuild.core.constants.Proxy.EXPORT_DISABLED
+					CMDBuild.core.constants.Proxy.IMPORT_DISABLED
 				])
 			);
 		},

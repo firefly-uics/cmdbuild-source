@@ -9,7 +9,6 @@ import static org.cmdbuild.logic.data.access.filter.model.Predicates.in;
 import static org.cmdbuild.logic.data.access.filter.model.Predicates.isNull;
 import static org.cmdbuild.logic.data.access.filter.model.Predicates.lessThan;
 import static org.cmdbuild.logic.data.access.filter.model.Predicates.like;
-import static org.cmdbuild.logic.data.access.filter.model.Predicates.not;
 import static org.cmdbuild.logic.data.access.filter.model.Predicates.or;
 import static org.cmdbuild.logic.data.access.filter.model.Predicates.startsWith;
 import static org.junit.Assert.assertThat;
@@ -136,20 +135,6 @@ public class PredicatesTest {
 		final Predicate first = like("foo");
 		final Predicate second = like("foo");
 		final Predicate third = like("bar");
-
-		// then
-		assertThat(first, _equalTo(second));
-		assertThat(first.hashCode(), _equalTo(second.hashCode()));
-		assertThat(first, _not(_equalTo(third)));
-		assertThat(first.hashCode(), _not(_equalTo(third.hashCode())));
-	}
-
-	@Test
-	public void notTest() throws Exception {
-		// given
-		final Predicate first = not(like("foo"));
-		final Predicate second = not(like("foo"));
-		final Predicate third = not(like("bar"));
 
 		// then
 		assertThat(first, _equalTo(second));

@@ -15,6 +15,7 @@ import org.cmdbuild.dao.function.CMFunction;
 import org.cmdbuild.dao.query.CMQueryResult;
 import org.cmdbuild.dao.query.QuerySpecs;
 import org.cmdbuild.dao.query.QuerySpecsBuilder;
+import org.cmdbuild.dao.query.clause.QueryAttribute;
 import org.cmdbuild.dao.query.clause.where.WhereClause;
 
 /**
@@ -145,7 +146,7 @@ public interface CMDataView {
 	 *            select parameters
 	 * @return the builder for a new query
 	 */
-	QuerySpecsBuilder select(Object... attrDef);
+	QuerySpecsBuilder select(QueryAttribute... attrDef);
 
 	/**
 	 * Executes a query returning its result.

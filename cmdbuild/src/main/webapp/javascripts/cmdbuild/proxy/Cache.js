@@ -20,6 +20,9 @@
 		 * @returns {Ext.data.Store or CMDBuild.core.cache.Store}
 		 */
 		getStoreForeignKey: function (baseParams) {
+			baseParams = Ext.isObject(baseParams) ? baseParams : {};
+			baseParams[CMDBuild.core.constants.Proxy.ATTRIBUTES] = Ext.encode(['Description']);
+
 			return CMDBuild.global.Cache.requestAsStore(CMDBuild.core.constants.Proxy.UNCACHED, {
 				autoLoad: true,
 				model: 'CMDBuild.cache.CMReferenceStoreModel',
@@ -27,7 +30,7 @@
 				pageSize: CMDBuild.configuration.instance.get(CMDBuild.core.constants.Proxy.REFERENCE_COMBO_STORE_LIMIT),
 				proxy: {
 					type: 'ajax',
-					url: CMDBuild.proxy.index.Json.card.getListShort,
+					url: CMDBuild.proxy.index.Json.card.readAll,
 					reader: {
 						type: 'json',
 						root: CMDBuild.core.constants.Proxy.ROWS,
@@ -78,6 +81,9 @@
 		 * @returns {Ext.data.Store or CMDBuild.core.cache.Store} store
 		 */
 		getStoreReference: function (isOneTime, baseParams) {
+			baseParams = Ext.isObject(baseParams) ? baseParams : {};
+			baseParams[CMDBuild.core.constants.Proxy.ATTRIBUTES] = Ext.encode(['Description']);
+
 			var store = CMDBuild.global.Cache.requestAsStore(CMDBuild.core.constants.Proxy.UNCACHED, {
 				autoLoad: !isOneTime,
 				model: 'CMDBuild.cache.CMReferenceStoreModel',
@@ -86,7 +92,7 @@
 				pageSize: CMDBuild.configuration.instance.get(CMDBuild.core.constants.Proxy.REFERENCE_COMBO_STORE_LIMIT),
 				proxy: {
 					type: 'ajax',
-					url: CMDBuild.proxy.index.Json.card.readAllShort,
+					url: CMDBuild.proxy.index.Json.card.readAll,
 					reader: {
 						type: 'json',
 						root: CMDBuild.core.constants.Proxy.ROWS,
@@ -99,9 +105,9 @@
 				]
 			});
 
-			// Disable filter method to avoid filter parameter stack witch drive to get url overflow error (reason is unknown)
+			// Clear store filter property to avoid filter parameter stack witch drive to get url overflow error (reason is unknown)
 			if (baseParams.NoFilter)
-				store.filter = Ext.emptyFn;
+				store.filters.clear();
 
 			return store;
 		},

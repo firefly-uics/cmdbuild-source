@@ -1,6 +1,10 @@
 (function() {
 
-	Ext.require('CMDBuild.proxy.classes.MasterDetail');
+	Ext.require([
+		'CMDBuild.core.constants.Global',
+		'CMDBuild.core.constants.Proxy',
+		'CMDBuild.proxy.classes.tabs.MasterDetail'
+	]);
 
 	var MD = "detail";
 	var FK = "foreignkey";
@@ -8,12 +12,41 @@
 	Ext.define("CMDBuild.view.management.classes.masterDetails.CMCardMasterDetail", {
 		extend: "Ext.panel.Panel",
 
+		/**
+		 * @property {Array}
+		 */
+		localCacheSimpleTables: [],
+
 		editable: true,
 		eventType: 'card',
 		eventmastertype: 'class',
 
 		constructor: function() {
-			this.addDetailButton = new CMDBuild.AddCardMenuButton({
+			// Build local class cache
+			var params = {};
+			params[CMDBuild.core.constants.Proxy.ACTIVE] = true;
+
+			CMDBuild.proxy.classes.tabs.MasterDetail.readAllClasses({
+				params: params,
+				scope: this,
+				success: function (response, options, decodedResponse) {
+					decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.CLASSES];
+
+					if (Ext.isArray(decodedResponse) && !Ext.isEmpty(decodedResponse)) {
+						decodedResponse = Ext.Array.filter(decodedResponse, function (item, index, allItems) {
+							return item[CMDBuild.core.constants.Proxy.TABLE_TYPE] == CMDBuild.core.constants.Global.getTableTypeSimpleTable();
+						}, this);
+
+						if (Ext.isArray(decodedResponse) && !Ext.isEmpty(decodedResponse))
+							Ext.Array.each(decodedResponse, function (classObject, i, allClassObjects) {
+								if (Ext.isObject(classObject) && !Ext.Object.isEmpty(classObject))
+									this.localCacheSimpleTables[classObject[CMDBuild.core.constants.Proxy.NAME]] = classObject;
+							}, this);
+					}
+				}
+			});
+
+			this.addDetailButton = Ext.create('CMDBuild.core.buttons.iconized.split.add.Card', {
 				classId: undefined,
 				baseText: CMDBuild.Translation.management.moddetail.adddetail,
 				textPrefix: CMDBuild.Translation.management.moddetail.adddetail
@@ -75,7 +108,7 @@
 			var params = {};
 			params[CMDBuild.core.constants.Proxy.CLASS_NAME] = _CMCache.getEntryTypeNameById(classId);
 
-			CMDBuild.proxy.classes.MasterDetail.readForeignKeyTargetingClass({
+			CMDBuild.proxy.classes.tabs.MasterDetail.readForeignKeyTargetingClass({
 				params: params,
 				loadMask: false,
 				scope: this,
@@ -213,8 +246,13 @@
 
 				if (typeof t.get == "undefined") {
 					// there is a FK and t is the server serialization of the fk-attribute
+					var foreignKeySourceClass = {};
+
+					if (Ext.isString(t.owner) && !Ext.isEmpty(t.owner) && !Ext.isEmpty(this.localCacheSimpleTables[t.owner]))
+						foreignKeySourceClass = this.localCacheSimpleTables[t.owner];
+
 					type = FK;
-					detailLabel = t.description;
+					detailLabel = Ext.Object.isEmpty(foreignKeySourceClass) ? t.description : foreignKeySourceClass[CMDBuild.core.constants.Proxy.TEXT];
 				} else {
 					// there is a MD and t is the Ext model of the domain
 					type = MD;

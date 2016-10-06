@@ -140,7 +140,7 @@
 		buildComponents: function() {
 			var gridratio = CMDBuild.configuration.instance.get('cardFormRatio') || 50; // TODO: use proxy constants
 			var tbar = [
-				this.addCardButton = new CMDBuild.AddCardMenuButton({
+				this.addCardButton = Ext.create('CMDBuild.core.buttons.iconized.split.add.Card', {
 					classId: undefined,
 					disabled: true
 				})
@@ -293,7 +293,7 @@
 				}
 			});
 
-			this.mapAddCardButton = new CMDBuild.AddCardMenuButton({
+			this.mapAddCardButton = Ext.create('CMDBuild.core.buttons.iconized.split.add.Card', {
 				classId: undefined,
 				disabled: true
 			});
@@ -301,13 +301,24 @@
 			this.mapAddCardButton.on("cmClick", function(p) {
 				this.fireEvent(this.CMEVENTS.addButtonClick, p);
 			}, this);
-
-			this.theMap = Ext.create('CMDBuild.view.management.classes.map.CMMapPanel', {
-				tbar: [this.mapAddCardButton, '->', this.showGridButton],
-				frame: false,
-				border: false
+			var me = this;
+			var thematismButton = Ext.create('CMDBuild.core.buttons.gis.Thematism', {
+				handler : function() {
+					me.theMap.initThematism(null);
+				}
 			});
-
+			this.theMap = Ext.create('CMDBuild.view.management.classes.map.CMMapPanel', {
+				tbar: [this.mapAddCardButton, '->', thematismButton, this.showGridButton],
+				frame: false,
+				border: false,
+				mainGrid : this.cardGrid,
+				thematismButton : thematismButton
+			});
+			this.initThematism = function(name) {
+				this.theMap.initThematism(name);
+			}
+			thematismButton.callback = this.initThematism;
+			thematismButton.theMap = this.theMap;
 			this.centralPanelItems.push(this.theMap);
 
 			this.getMapPanel = function() {

@@ -2,6 +2,8 @@
 
 	/**
 	 * To get the result of filter window you need to implement "onFieldFilterAdvancedWindowgetEndpoint" in cmfg structure
+	 *
+	 * @link CMDBuild.controller.management.workflow.panel.tree.filter.advanced.filterEditor.FilterEditor
 	 */
 	Ext.define('CMDBuild.controller.common.field.filter.advanced.window.Window', {
 		extend: 'CMDBuild.controller.common.abstract.Base',
@@ -305,16 +307,32 @@
 		 * Fill filter model with tab's data
 		 */
 		onFieldFilterAdvancedWindowConfirmButtonClick: function() {
-			var activeTab = this.view.windowTabPanel.getActiveTab()
-			var columnPrivilegesArray = [];
-			var filterObject = {};
+			if (this.cmfg('fieldFilterAdvancedConfigurationIsPanelEnabled', 'columnPrivileges')) {
+				var activeTab = this.view.windowTabPanel.getActiveTab();
+				var columnPrivilegesArray = [];
+				var filterObject = {};
 
-			if (Ext.getClassName(activeTab) == 'CMDBuild.view.common.field.filter.advanced.window.panels.columnPrivileges.ColumnPrivilegesView') {
-				if (this.cmfg('fieldFilterAdvancedConfigurationIsPanelEnabled', 'columnPrivileges'))
-					columnPrivilegesArray = this.controllerTabColumnPrivileges.cmfg('onFieldFilterAdvancedWindowColumnPrivilegesGetData');
+				if (Ext.getClassName(activeTab) == 'CMDBuild.view.common.field.filter.advanced.window.panels.columnPrivileges.ColumnPrivilegesView') {
+					if (this.cmfg('fieldFilterAdvancedConfigurationIsPanelEnabled', 'columnPrivileges'))
+						columnPrivilegesArray = this.controllerTabColumnPrivileges.cmfg('onFieldFilterAdvancedWindowColumnPrivilegesGetData');
 
-				this.cmfg('onFieldFilterAdvancedWindowgetEndpoint', { columnPrivileges: columnPrivilegesArray });
-			} else if (Ext.getClassName(activeTab) == 'Ext.panel.Panel') {
+					this.cmfg('onFieldFilterAdvancedWindowgetEndpoint', { columnPrivileges: columnPrivilegesArray });
+				} else if (Ext.getClassName(activeTab) == 'Ext.panel.Panel') {
+					if (this.cmfg('fieldFilterAdvancedConfigurationIsPanelEnabled', 'attribute'))
+						Ext.apply(filterObject, this.controllerTabAttributes.cmfg('onFieldFilterAdvancedWindowAttributesGetData'));
+
+					if (this.cmfg('fieldFilterAdvancedConfigurationIsPanelEnabled', 'function'))
+						Ext.apply(filterObject, this.controllerTabFunctions.cmfg('onFieldFilterAdvancedWindowFunctionsGetData'));
+
+					if (this.cmfg('fieldFilterAdvancedConfigurationIsPanelEnabled', 'relation'))
+						Ext.apply(filterObject, this.controllerTabRelations.cmfg('onFieldFilterAdvancedWindowRelationsGetData'));
+
+					this.cmfg('onFieldFilterAdvancedWindowgetEndpoint', { filter: filterObject });
+				}
+			} else {
+				var columnPrivilegesArray = [];
+				var filterObject = {};
+
 				if (this.cmfg('fieldFilterAdvancedConfigurationIsPanelEnabled', 'attribute'))
 					Ext.apply(filterObject, this.controllerTabAttributes.cmfg('onFieldFilterAdvancedWindowAttributesGetData'));
 
@@ -326,7 +344,6 @@
 
 				this.cmfg('onFieldFilterAdvancedWindowgetEndpoint', { filter: filterObject });
 			}
-
 
 			this.onFieldFilterAdvancedWindowAbortButtonClick();
 		},

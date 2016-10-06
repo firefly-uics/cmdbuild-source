@@ -59,16 +59,20 @@
 		widgetConfigurationModelClassName: 'CMDBuild.model.widget.manageEmail.Configuration',
 
 		/**
-		 * @param {CMDBuild.view.management.workflow.tabs.Email} configurationObject.view
+		 * @param {CMDBuild.view.management.workflow.panel.form.tabs.email.Email} configurationObject.view
 		 * @param {CMDBuild.controller.management.common.CMWidgetManagerController} configurationObject.parentDelegate
 		 * @param {Object} configurationObject.widgetConfiguration
 		 * @param {Ext.form.Basic} configurationObject.clientForm
 		 * @param {CMDBuild.model.CMActivityInstance or Ext.data.Model} configurationObject.card
 		 *
+		 * @returns {Void}
+		 *
 		 * @override
 		 */
 		constructor: function (configurationObject) {
 			this.callParent(arguments);
+
+			this.view.enable(); // Enable email tab
 
 			// Shorthands
 			this.tabDelegate = this.view.delegate;
@@ -85,6 +89,8 @@
 
 		/**
 		 * Create event manager and show toolbar
+		 *
+		 * @returns {Void}
 		 *
 		 * @private
 		 */
@@ -110,6 +116,8 @@
 
 		/**
 		 * Delete event and hide toolbar on widget destroy
+		 *
+		 * @returns {Void}
 		 */
 		destroy: function () {
 			this.tabDelegate.getView().un('show', this.showEventManager, this);
@@ -123,6 +131,8 @@
 		/**
 		 * @param {CMDBuild.view.management.common.tabs.email.EmailView} panel
 		 * @param {Object} eOpts
+		 *
+		 * @returns {Void}
 		 *
 		 * @private
 		 */
@@ -167,6 +177,8 @@
 		},
 
 		/**
+		 * @returns {Void}
+		 *
 		 * @override
 		 */
 		widgetManageEmailBeforeActiveView: function () {
@@ -174,6 +186,8 @@
 		},
 
 		/**
+		 * @returns {Void}
+		 *
 		 * @override
 		 */
 		widgetManageEmailEditMode: function () {

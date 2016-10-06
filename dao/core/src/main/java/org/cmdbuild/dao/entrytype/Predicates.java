@@ -1,10 +1,18 @@
 package org.cmdbuild.dao.entrytype;
 
 import static com.google.common.base.Predicates.alwaysTrue;
-import static com.google.common.collect.Iterables.contains;
+import static com.google.common.base.Predicates.compose;
+import static com.google.common.base.Predicates.equalTo;
+import static com.google.common.base.Predicates.or;
+import static org.apache.commons.lang3.builder.ToStringBuilder.reflectionToString;
 import static org.apache.commons.lang3.builder.ToStringStyle.SHORT_PREFIX_STYLE;
 import static org.cmdbuild.dao.constants.Cardinality.CARDINALITY_1N;
 import static org.cmdbuild.dao.constants.Cardinality.CARDINALITY_N1;
+import static org.cmdbuild.dao.entrytype.Functions.anchestorOf;
+import static org.cmdbuild.dao.entrytype.Functions.class1;
+import static org.cmdbuild.dao.entrytype.Functions.class2;
+import static org.cmdbuild.dao.entrytype.Functions.disabled1;
+import static org.cmdbuild.dao.entrytype.Functions.disabled2;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
@@ -13,8 +21,10 @@ import org.cmdbuild.dao.entrytype.attributetype.CMAttributeType;
 import org.cmdbuild.dao.function.CMFunction;
 import org.cmdbuild.dao.function.CMFunction.CMFunctionParameter;
 
+import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import com.google.common.collect.ForwardingObject;
+import com.google.common.collect.Iterables;
 
 public class Predicates {
 
@@ -59,94 +69,62 @@ public class Predicates {
 		return new AttributeTypeIsInstanceOf(clazz);
 	}
 
-	private static class DomainForClass implements Predicate<CMDomain> {
-
-		private final CMClass target;
-
-		private DomainForClass(final CMClass target) {
-			this.target = target;
-		}
-
-		@Override
-		public boolean apply(final CMDomain input) {
-			return input.getClass1().isAncestorOf(target) || input.getClass2().isAncestorOf(target);
-		};
-
-		@Override
-		public boolean equals(final Object obj) {
-			if (obj == this) {
-				return true;
-			}
-			if (!(obj instanceof DomainForClass)) {
-				return false;
-			}
-			final DomainForClass other = DomainForClass.class.cast(obj);
-			return new EqualsBuilder() //
-					.append(this.target, other.target) //
-					.isEquals();
-		}
-
-		@Override
-		public int hashCode() {
-			return new HashCodeBuilder() //
-					.append(target) //
-					.toHashCode();
-		}
-
-		@Override
-		public String toString() {
-			return ToStringBuilder.reflectionToString(this, SHORT_PREFIX_STYLE);
-		}
-
-	}
-
 	public static Predicate<CMDomain> domainFor(final CMClass target) {
-		return new DomainForClass(target);
+		return or(domain(class1(), clazz(anchestorOf(target), equalTo(true))),
+				domain(class2(), clazz(anchestorOf(target), equalTo(true))));
 	}
 
-	private static class DisabledClass implements Predicate<CMDomain> {
+	/**
+	 * @deprecated Use basic predicates instead.
+	 */
+	@Deprecated
+	public static Predicate<CMDomain> disabledClass(final CMClass target) {
+		return or(domain(disabled1(), contains(target.getName())), domain(disabled2(), contains(target.getName())));
+	}
 
-		private final String target;
+	private static class Contains implements Predicate<Iterable<String>> {
 
-		private DisabledClass(final CMClass target) {
-			this.target = target.getName();
+		private final String value;
+
+		public Contains(final String value) {
+			this.value = value;
 		}
 
 		@Override
-		public boolean apply(final CMDomain input) {
-			return contains(input.getDisabled1(), target) || contains(input.getDisabled2(), target);
-		};
+		public boolean apply(final Iterable<String> input) {
+			return Iterables.contains(input, value);
+		}
 
 		@Override
 		public boolean equals(final Object obj) {
 			if (obj == this) {
 				return true;
 			}
-			if (!(obj instanceof DisabledClass)) {
+			if (!(obj instanceof Contains)) {
 				return false;
 			}
-			final DisabledClass other = DisabledClass.class.cast(obj);
+			final Contains other = Contains.class.cast(obj);
 			return new EqualsBuilder() //
-					.append(this.target, other.target) //
+					.append(this.value, other.value) //
 					.isEquals();
 		}
 
 		@Override
 		public int hashCode() {
 			return new HashCodeBuilder() //
-					.append(target) //
+					.append(value) //
 					.toHashCode();
 		}
 
 		@Override
-		public String toString() {
-			return ToStringBuilder.reflectionToString(this, SHORT_PREFIX_STYLE);
+		public final String toString() {
+			return reflectionToString(this, SHORT_PREFIX_STYLE);
 		}
 
 	}
 
-	public static Predicate<CMDomain> disabledClass(final CMClass target) {
-		return new DisabledClass(target);
+	public static Predicate<Iterable<String>> contains(final String value) {
+		return new Contains(value);
 	}
 
 	private static class UsableForReferences implements Predicate<CMDomain> {
@@ -173,10 +151,10 @@ public class Predicates {
 			if (obj == this) {
 				return true;
 			}
-			if (!(obj instanceof DomainForClass)) {
+			if (!(obj instanceof UsableForReferences)) {
 				return false;
 			}
-			final DomainForClass other = DomainForClass.class.cast(obj);
+			final UsableForReferences other = UsableForReferences.class.cast(obj);
 			return new EqualsBuilder() //
 					.append(this.target, other.target) //
 					.isEquals();
@@ -515,6 +493,24 @@ public class Predicates {
 
 	public static Predicate<CMClass> hasAnchestor(final CMClass value) {
 		return new HasAncestor(value);
+	}
+
+	/**
+	 * Syntactic sugar for
+	 * {@link org.cmdbuild.common.utils.guava.Predicates.compose}.
+	 */
+	public static <F extends CMClass, T> Predicate<F> clazz(final Function<F, T> function,
+			final Predicate<T> predicate) {
+		return compose(predicate, function);
+	}
+
+	/**
+	 * Syntactic sugar for
+	 * {@link org.cmdbuild.common.utils.guava.Predicates.compose}.
+	 */
+	public static <F extends CMDomain, T> Predicate<F> domain(final Function<F, T> function,
+			final Predicate<T> predicate) {
+		return compose(predicate, function);
 	}
 
 	private Predicates() {

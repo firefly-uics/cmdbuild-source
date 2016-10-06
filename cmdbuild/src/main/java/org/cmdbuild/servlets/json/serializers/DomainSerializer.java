@@ -11,17 +11,16 @@ import org.cmdbuild.auth.acl.PrivilegeContext;
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.entrytype.CMDomain;
 import org.cmdbuild.dao.view.CMDataView;
-import org.cmdbuild.logic.translation.TranslationFacade;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public class DomainSerializer extends Serializer {
+@_Serializer
+public class DomainSerializer {
 
 	private final CMDataView dataView;
 	private final PrivilegeContext privilegeContext;
 
-	public DomainSerializer(final CMDataView dataView, final PrivilegeContext privilegeContext,
-			final TranslationFacade translationFacade) {
+	public DomainSerializer(final CMDataView dataView, final PrivilegeContext privilegeContext) {
 		this.dataView = dataView;
 		this.privilegeContext = privilegeContext;
 	}
@@ -34,9 +33,7 @@ public class DomainSerializer extends Serializer {
 			throws JSONException {
 		final JSONObject jsonDomain = new JSONObject();
 		jsonDomain.put("idDomain", domain.getId());
-		final String localName = domain.getIdentifier().getLocalName();
-		jsonDomain.put("name", localName);
-		jsonDomain.put("origName", localName);
+		jsonDomain.put("name", domain.getIdentifier().getLocalName());
 
 		jsonDomain.put(DESCRIPTION, domain.getDescription());
 		jsonDomain.put(DIRECT_DESCRIPTION, domain.getDescription1());
@@ -58,7 +55,6 @@ public class DomainSerializer extends Serializer {
 
 		jsonDomain.put("md", domain.isMasterDetail());
 		jsonDomain.put("md_label", domain.getMasterDetailDescription());
-		jsonDomain.put("classType", getClassType(domain.getIdentifier().getLocalName()));
 		jsonDomain.put("active", domain.isActive());
 		jsonDomain.put("cardinality", domain.getCardinality());
 
@@ -67,7 +63,7 @@ public class DomainSerializer extends Serializer {
 		final AttributeSerializer attributeSerializer = AttributeSerializer.newInstance() //
 				.withDataView(dataView) //
 				.build();
-		
+
 		jsonDomain.put("attributes", attributeSerializer.toClient(domain.getAttributes(), activeOnly));
 		jsonDomain.put("system", domain.isSystemButUsable());
 
@@ -84,16 +80,6 @@ public class DomainSerializer extends Serializer {
 		}
 	}
 
-	private String getClassType(final String className) {
-		// TODO do it better
-		final CMClass target = dataView.findClass(className);
-		if (dataView.getActivityClass().isAncestorOf(target)) {
-			return "processclass";
-		} else {
-			return "class";
-		}
-	}
-
 	private void addAccessPrivileges(final JSONObject jsonObject, final CMDomain domain) throws JSONException {
 		final boolean writePrivilege = privilegeContext.hasWriteAccess(domain);
 		final boolean createPrivilege = writePrivilege;
@@ -105,6 +91,10 @@ public class DomainSerializer extends Serializer {
 		final JSONObject jsonDomain = toClient(domain, false);
 		jsonDomain.put("inherited", !isDomainDefinedForClass(domain, className));
 		return jsonDomain;
+	}
+
+	public JSONObject toClient(final CMDomain domain) throws JSONException {
+		return toClient(domain, false);
 	}
 
 	/**

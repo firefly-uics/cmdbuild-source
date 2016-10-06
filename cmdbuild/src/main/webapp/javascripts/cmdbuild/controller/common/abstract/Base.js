@@ -82,10 +82,13 @@
 		 * @returns {Mixed}
 		 */
 		cmfg: function (name, param) {
+			// Error handling
+				if (!Ext.isString(name) || Ext.isEmpty(name))
+					return _error('cmfg(): unmanaged name parameter', this, name);
+			// END: Error handling
+
 			if (
-				!Ext.isEmpty(name)
-				&& Ext.isArray(this.cmfgCatchedFunctions)
-				&& this.stringToFunctionNameMap.hasOwnProperty(name)
+				Ext.isArray(this.cmfgCatchedFunctions) && !Ext.isEmpty(this.cmfgCatchedFunctions)
 				&& !Ext.isEmpty(this.stringToFunctionNameMap[name])
 			) {
 				// Normal function manage
@@ -93,7 +96,7 @@
 					return this[this.stringToFunctionNameMap[name]](param);
 
 				// Wildcard manage
-				if (Ext.isObject(this.stringToFunctionNameMap[name])) {
+				if (Ext.isObject(this.stringToFunctionNameMap[name]))
 					switch (this.stringToFunctionNameMap[name].action) {
 						// Forwarded function manage with multiple controller forwarding management
 						case 'forward': {
@@ -115,14 +118,13 @@
 							return values;
 						}
 					}
-				}
 			}
 
 			// If function is not managed from this controller forward to parentDelegate
 			if (!Ext.isEmpty(this.parentDelegate) && Ext.isFunction(this.parentDelegate.cmfg))
 				return this.parentDelegate.cmfg(name, param);
 
-			_warning('unmanaged function with name "' + name + '"', this);
+			return _warning('cmfg(): unmanaged function with name "' + name + '"', this);
 		},
 
 		/**
@@ -133,7 +135,7 @@
 		 * @private
 		 */
 		decodeCatchedFunctionsArray: function () {
-			Ext.Array.forEach(this.cmfgCatchedFunctions, function (managedFnString, i, allManagedFnString) {
+			Ext.Array.each(this.cmfgCatchedFunctions, function (managedFnString, i, allManagedFnString) {
 				if (Ext.isString(managedFnString)) {
 					// Forward inline tag
 					if (managedFnString.indexOf('->') >= 0) {
@@ -163,7 +165,7 @@
 						if (splittedString.length == 2 && Ext.String.trim(splittedString[0]).indexOf(' ') < 0) {
 							var aliasesArray = Ext.String.trim(splittedString[1]).split(',');
 
-							Ext.Array.forEach(aliasesArray, function (alias, i, allAliases) {
+							Ext.Array.each(aliasesArray, function (alias, i, allAliases) {
 								this.stringToFunctionNameMap[Ext.String.trim(alias)] = Ext.String.trim(splittedString[0]);
 							}, this);
 						}
@@ -203,7 +205,7 @@
 		 * @returns {String or null}
 		 */
 		identifierGet: function () {
-			if (!Ext.isEmpty(this.identifier))
+			if (Ext.isString(this.identifier) && !Ext.isEmpty(this.identifier))
 				return this.identifier;
 
 			return null;
@@ -223,7 +225,7 @@
 		 *
 		 * Parameters in a single object to be compatible with cmfg functions.
 		 * These methods operates only with local variables (this...) hasn't able to manage other classe's variables. A good implementation with cmfg functionalities
-		 * is to use these method's alieas.
+		 * is to use these method's alias.
 		 */
 			/**
 			 * @param {Object} parameters
@@ -233,40 +235,41 @@
 			 * @returns {Mixed} full model object or single property
 			 */
 			propertyManageGet: function (parameters) {
-				if (
-					!Ext.Object.isEmpty(parameters)
-					&& !Ext.isEmpty(parameters[CMDBuild.core.constants.Proxy.TARGET_VARIABLE_NAME]) && Ext.isString(parameters[CMDBuild.core.constants.Proxy.TARGET_VARIABLE_NAME])
-				) {
-					var attributePath = undefined;
-					var requiredAttribute = this[parameters[CMDBuild.core.constants.Proxy.TARGET_VARIABLE_NAME]];
+				// Error handling
+					if (!Ext.isObject(parameters) || Ext.Object.isEmpty(parameters))
+						return _error('propertyManageGet(): unmanaged parameters', this, parameters);
 
-					// AttributePath variable setup (only Array or String are managed)
-					if (!Ext.isEmpty(parameters[CMDBuild.core.constants.Proxy.ATTRIBUTE_PATH]) && Ext.isArray(parameters[CMDBuild.core.constants.Proxy.ATTRIBUTE_PATH])) {
-						attributePath = parameters[CMDBuild.core.constants.Proxy.ATTRIBUTE_PATH];
-					} else if (!Ext.isEmpty(parameters[CMDBuild.core.constants.Proxy.ATTRIBUTE_PATH]) && Ext.isString(parameters[CMDBuild.core.constants.Proxy.ATTRIBUTE_PATH])) {
-						attributePath = [parameters[CMDBuild.core.constants.Proxy.ATTRIBUTE_PATH]];
-					}
+					if (!Ext.isString(parameters[CMDBuild.core.constants.Proxy.TARGET_VARIABLE_NAME]) || Ext.isEmpty(parameters[CMDBuild.core.constants.Proxy.TARGET_VARIABLE_NAME]))
+						return _error('propertyManageGet(): unmanaged targetVariableName parameter', this, parameters[CMDBuild.core.constants.Proxy.TARGET_VARIABLE_NAME]);
+				// END: Error handling
 
-					if (!Ext.isEmpty(attributePath) && Ext.isArray(attributePath))
-						Ext.Array.each(attributePath, function (attributeName, i, allAttributeNames) {
-							if (
-								Ext.isString(attributeName) && !Ext.isEmpty(attributeName)
-								&& Ext.isObject(requiredAttribute) && !Ext.Object.isEmpty(requiredAttribute)
-							) {
-								if (Ext.isFunction(requiredAttribute.get)) { // Manage model object
-									requiredAttribute = requiredAttribute.get(attributeName);
-								} else if (!Ext.isEmpty(requiredAttribute[attributeName])) { // Manage simple object
-									requiredAttribute = requiredAttribute[attributeName];
-								} else { // Object hasn't required property
-									requiredAttribute = undefined;
-								}
-							}
-						}, this);
+				var attributePath = undefined;
+				var requiredAttribute = this[parameters[CMDBuild.core.constants.Proxy.TARGET_VARIABLE_NAME]];
 
-					return requiredAttribute;
+				// AttributePath variable setup (only Array or String are managed)
+				if (!Ext.isEmpty(parameters[CMDBuild.core.constants.Proxy.ATTRIBUTE_PATH]) && Ext.isArray(parameters[CMDBuild.core.constants.Proxy.ATTRIBUTE_PATH])) {
+					attributePath = parameters[CMDBuild.core.constants.Proxy.ATTRIBUTE_PATH];
+				} else if (!Ext.isEmpty(parameters[CMDBuild.core.constants.Proxy.ATTRIBUTE_PATH]) && Ext.isString(parameters[CMDBuild.core.constants.Proxy.ATTRIBUTE_PATH])) {
+					attributePath = [parameters[CMDBuild.core.constants.Proxy.ATTRIBUTE_PATH]];
 				}
 
-				_error('malformed propertyManageGet parameters', this);
+				if (!Ext.isEmpty(attributePath) && Ext.isArray(attributePath))
+					Ext.Array.each(attributePath, function (attributeName, i, allAttributeNames) {
+						if (
+							Ext.isString(attributeName) && !Ext.isEmpty(attributeName)
+							&& Ext.isObject(requiredAttribute) && !Ext.Object.isEmpty(requiredAttribute)
+						) {
+							if (Ext.isFunction(requiredAttribute.get)) { // Manage model object
+								requiredAttribute = requiredAttribute.get(attributeName);
+							} else if (!Ext.isEmpty(requiredAttribute[attributeName])) { // Manage simple object
+								requiredAttribute = requiredAttribute[attributeName];
+							} else { // Object hasn't required property
+								requiredAttribute = undefined;
+							}
+						}
+					}, this);
+
+				return requiredAttribute;
 			},
 
 			/**

@@ -13,7 +13,7 @@
 
 			// Force store load on enable to avoid store's data incongruences - 01/04/2016
 			this.on('enable', function (field, eOpts) {
-				if (Ext.isBoolean(field.getStore().autoLoad) && field.getStore().autoLoad)
+				if (Ext.isBoolean(field.getStore().autoLoad) && field.getStore().autoLoad && !field.getStore().isLoading())
 					field.getStore().load();
 			}, this);
 		},

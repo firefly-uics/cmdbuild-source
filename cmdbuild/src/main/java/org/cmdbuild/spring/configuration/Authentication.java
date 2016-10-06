@@ -18,6 +18,7 @@ import org.cmdbuild.auth.LdapAuthenticator;
 import org.cmdbuild.auth.LegacyDBAuthenticator;
 import org.cmdbuild.auth.NotSystemUserFetcher;
 import org.cmdbuild.auth.UserStore;
+import org.cmdbuild.auth.UserStoreSupplier;
 import org.cmdbuild.auth.user.OperationUser;
 import org.cmdbuild.config.CmdbuildConfiguration;
 import org.cmdbuild.config.CmdbuildConfiguration.ChangeListener;
@@ -118,9 +119,9 @@ public class Authentication {
 
 	@Bean
 	public DBGroupFetcher dbGroupFetcher() {
-		return new DBGroupFetcher(data.systemDataView(),
-				asList(new CMClassPrivilegeFetcherFactory(data.systemDataView()), new ViewPrivilegeFetcherFactory(
-						data.systemDataView(), view.viewConverter()),
+		return new DBGroupFetcher(data.systemDataView(), asList(
+				new CMClassPrivilegeFetcherFactory(data.systemDataView()),
+				new ViewPrivilegeFetcherFactory(data.systemDataView(), view.viewConverter()),
 				new FilterPrivilegeFetcherFactory(data.systemDataView(), filter.dataViewFilterStore()),
 				new CustomPagePrivilegeFetcherFactory(data.systemDataView(), customPages.defaultCustomPagesLogic())));
 	}
@@ -128,7 +129,7 @@ public class Authentication {
 	@Bean
 	public AuthenticationService defaultAuthenticationService() {
 		final DefaultAuthenticationService authenticationService = new DefaultAuthenticationService(
-				properties.authConf(), data.systemDataView());
+				properties.authConf(), data.systemDataView(), UserStoreSupplier.of(userStore));
 		authenticationService.setPasswordAuthenticators(dbAuthenticator(), ldapAuthenticator());
 		authenticationService.setClientRequestAuthenticators(headerAuthenticator(), casAuthenticator());
 		authenticationService.setUserFetchers(dbAuthenticator());
@@ -139,7 +140,7 @@ public class Authentication {
 	@Bean
 	protected AuthenticationService soapAuthenticationService() {
 		final DefaultAuthenticationService authenticationService = new DefaultAuthenticationService(soapConfiguration,
-				data.systemDataView());
+				data.systemDataView(), UserStoreSupplier.of(userStore));
 		authenticationService.setPasswordAuthenticators(soapPasswordAuthenticator());
 		authenticationService.setUserFetchers(dbAuthenticator(), notSystemUserFetcher());
 		authenticationService.setGroupFetcher(dbGroupFetcher());
@@ -149,7 +150,7 @@ public class Authentication {
 	@Bean
 	protected AuthenticationService restAuthenticationService() {
 		final DefaultAuthenticationService authenticationService = new DefaultAuthenticationService(
-				properties.authConf(), data.systemDataView());
+				properties.authConf(), data.systemDataView(), UserStoreSupplier.of(userStore));
 		authenticationService.setPasswordAuthenticators(dbAuthenticator(), ldapAuthenticator());
 		authenticationService.setClientRequestAuthenticators(headerAuthenticator(), casAuthenticator());
 		authenticationService.setUserFetchers(dbAuthenticator(), notSystemUserFetcher());
@@ -160,7 +161,7 @@ public class Authentication {
 	@Bean
 	public StandardSessionLogic standardSessionLogic() {
 		final DefaultAuthenticationLogic delegate = new DefaultAuthenticationLogic(defaultAuthenticationService(),
-				privilegeManagement.privilegeContextFactory(), data.systemDataView());
+				privilegeManagement.privilegeContextFactory(), data.systemDataView(), userStore);
 		return new StandardSessionLogic(new DefaultSessionLogic(delegate, sessionStore(), userStore,
 				defaultSessionStore(), web.simpleTokenGenerator(), canImpersonate()));
 	}
@@ -168,7 +169,7 @@ public class Authentication {
 	@Bean
 	public SoapSessionLogic soapSessionLogic() {
 		final AuthenticationLogic delegate = new DefaultAuthenticationLogic(soapAuthenticationService(),
-				privilegeManagement.privilegeContextFactory(), data.systemDataView());
+				privilegeManagement.privilegeContextFactory(), data.systemDataView(), userStore);
 		return new SoapSessionLogic(new DefaultSessionLogic(delegate, sessionStore(), userStore, defaultSessionStore(),
 				web.simpleTokenGenerator(), canImpersonate()));
 	}
@@ -176,7 +177,7 @@ public class Authentication {
 	@Bean
 	public RestSessionLogic restSessionLogic() {
 		final AuthenticationLogic delegate = new DefaultAuthenticationLogic(restAuthenticationService(),
-				privilegeManagement.privilegeContextFactory(), data.systemDataView());
+				privilegeManagement.privilegeContextFactory(), data.systemDataView(), userStore);
 		return new RestSessionLogic(new DefaultSessionLogic(delegate, sessionStore(), userStore, defaultSessionStore(),
 				web.simpleTokenGenerator(), canImpersonate()));
 	}

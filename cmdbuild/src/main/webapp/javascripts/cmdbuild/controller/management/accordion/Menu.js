@@ -16,25 +16,6 @@
 		parentDelegate: undefined,
 
 		/**
-		 * @cfg {Array}
-		 */
-		cmfgCatchedFunctions: [
-			'accordionBuildId',
-			'accordionDeselect',
-			'accordionExpand',
-			'accordionFirstSelectableNodeSelect',
-			'accordionFirtsSelectableNodeGet',
-			'accordionIdentifierGet',
-			'accordionNodeByIdExists',
-			'accordionNodeByIdGet',
-			'accordionNodeByIdSelect',
-			'accordionUpdateStore',
-			'onAccordionBeforeSelect',
-			'onAccordionExpand',
-			'onAccordionSelectionChange'
-		],
-
-		/**
 		 * Used as a hack to get all customPages data from server
 		 *
 		 * @property {Array}
@@ -73,14 +54,17 @@
 		},
 
 		/**
-		 * @param {Number} nodeIdToSelect
+		 * @param {Object} parameters
+		 * @param {Boolean} parameters.loadMask
+		 * @param {Number} parameters.selectionId
 		 *
 		 * @returns {Void}
 		 *
 		 * @override
 		 */
-		accordionUpdateStore: function (nodeIdToSelect) {
-			nodeIdToSelect = Ext.isNumber(nodeIdToSelect) ? nodeIdToSelect : null;
+		accordionUpdateStore: function (parameters) {
+			parameters = Ext.isObject(parameters) ? parameters : {};
+			parameters.selectionId = Ext.isNumber(parameters.selectionId) ? parameters.selectionId : null;
 
 			var params = {};
 			params[CMDBuild.core.constants.Proxy.GROUP_NAME] = CMDBuild.configuration.runtime.get(CMDBuild.core.constants.Proxy.DEFAULT_GROUP_NAME);
@@ -88,7 +72,7 @@
 
 			CMDBuild.proxy.Menu.read({
 				params: params,
-				loadMask: false,
+				loadMask: Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : false,
 				scope: this,
 				success: function (response, options, decodedResponse) {
 					var menuItemsResponse = decodedResponse[CMDBuild.core.constants.Proxy.MENU];
@@ -101,8 +85,7 @@
 
 							if (
 								!Ext.isEmpty(menuItemsResponse)
-								&& !Ext.isEmpty(menuItemsResponse[CMDBuild.core.constants.Proxy.CHILDREN])
-								&& Ext.isArray(menuItemsResponse[CMDBuild.core.constants.Proxy.CHILDREN])
+								&& Ext.isArray(menuItemsResponse[CMDBuild.core.constants.Proxy.CHILDREN]) && !Ext.isEmpty(menuItemsResponse[CMDBuild.core.constants.Proxy.CHILDREN])
 								&& menuItemsResponse[CMDBuild.core.constants.Proxy.TYPE] == 'root'
 							) {
 								this.view.getStore().getRootNode().removeAll();
@@ -110,8 +93,7 @@
 								this.view.getStore().sort();
 							}
 
-							// Alias of this.callParent(arguments), inside proxy function doesn't work
-							this.updateStoreCommonEndpoint(nodeIdToSelect);
+							this.updateStoreCommonEndpoint(parameters); // CallParent alias
 						}
 					});
 				}
@@ -215,6 +197,7 @@
 
 					case 'folder': {
 						nodeStructure['cmName'] = 'folder';
+						nodeStructure['expandable'] = false;
 						nodeStructure[CMDBuild.core.constants.Proxy.SELECTABLE] = false;
 						nodeStructure[CMDBuild.core.constants.Proxy.LEAF] = false;
 					} break;
@@ -314,7 +297,8 @@
 				}
 
 				// Build children nodes
-				if (!Ext.isEmpty(menuNodeObject[CMDBuild.core.constants.Proxy.CHILDREN]) && Ext.isArray(menuNodeObject[CMDBuild.core.constants.Proxy.CHILDREN])) {
+				if (Ext.isArray(menuNodeObject[CMDBuild.core.constants.Proxy.CHILDREN]) && !Ext.isEmpty(menuNodeObject[CMDBuild.core.constants.Proxy.CHILDREN])) {
+					nodeStructure['expandable'] = true;
 					nodeStructure[CMDBuild.core.constants.Proxy.CHILDREN] = this.menuStructureChildrenBuilder(menuNodeObject);
 					nodeStructure[CMDBuild.core.constants.Proxy.LEAF] = false;
 				}
