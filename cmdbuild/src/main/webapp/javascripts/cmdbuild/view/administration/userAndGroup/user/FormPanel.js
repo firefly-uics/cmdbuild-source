@@ -17,12 +17,12 @@
 		delegate: undefined,
 
 		/**
-		 * @param {CMDBuild.core.buttons.iconized.state.Double}
+		 * @property {CMDBuild.core.buttons.iconized.state.Double}
 		 */
 		toggleEnableDisableButton: undefined,
 
 		/**
-		 * @param {CMDBuild.view.common.field.CMErasableCombo}
+		 * @property {CMDBuild.view.common.field.CMErasableCombo}
 		 */
 		defaultGroupCombo: undefined,
 
@@ -37,17 +37,17 @@
 		serviceCheckbox: undefined,
 
 		/**
-		 * @param {Ext.form.FieldSet}
+		 * @property {Ext.form.FieldSet}
 		 */
 		userInfoFieldSet: undefined,
 
 		/**
-		 * @param {Ext.form.FieldSet}
+		 * @property {Ext.form.FieldSet}
 		 */
 		userPasswordFieldSet: undefined,
 
 		/**
-		 * @param {Ext.form.Panel}
+		 * @property {Ext.form.Panel}
 		 */
 		wrapper: undefined,
 
