@@ -135,18 +135,6 @@ public class ClassDefinitionTest extends DataDefinitionLogicTest {
 	}
 
 	@Test
-	public void deletingUnexistingClassDoesNothing() throws Exception {
-		// given
-		// nothing
-
-		// when
-		dataDefinitionLogic().deleteOrDeactivate(CLASS_NAME);
-
-		// then
-		// nothing happens, but at least no errors
-	}
-
-	@Test
 	public void deletingExistingClassWithNoData() throws Exception {
 		// given
 		dataDefinitionLogic().createOrUpdate(a(newClass(CLASS_NAME)));

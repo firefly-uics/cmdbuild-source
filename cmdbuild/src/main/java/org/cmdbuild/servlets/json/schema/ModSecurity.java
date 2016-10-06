@@ -1,5 +1,7 @@
 package org.cmdbuild.servlets.json.schema;
 
+import static org.cmdbuild.auth.acl.CMGroup.GroupType.admin;
+import static org.cmdbuild.auth.acl.CMGroup.GroupType.restrictedAdmin;
 import static org.cmdbuild.servlets.json.CommunicationConstants.ACTIVE;
 import static org.cmdbuild.servlets.json.CommunicationConstants.ALREADY_ASSOCIATED;
 import static org.cmdbuild.servlets.json.CommunicationConstants.ATTRIBUTES;
@@ -56,9 +58,9 @@ import org.cmdbuild.logic.privileges.PrivilegeInfo;
 import org.cmdbuild.logic.privileges.SecurityLogic;
 import org.cmdbuild.model.profile.UIConfiguration;
 import org.cmdbuild.model.profile.UIConfigurationObjectMapper;
+import org.cmdbuild.services.json.dto.JsonResponse;
 import org.cmdbuild.servlets.json.JSONBase.Admin.AdminAccess;
 import org.cmdbuild.servlets.json.JSONBaseWithSpringContext;
-import org.cmdbuild.servlets.json.management.JsonResponse;
 import org.cmdbuild.servlets.json.serializers.PrivilegeSerializer;
 import org.cmdbuild.servlets.json.serializers.Serializer;
 import org.cmdbuild.servlets.utils.Parameter;
@@ -92,7 +94,7 @@ public class ModSecurity extends JSONBaseWithSpringContext {
 		final JSONArray groups = new JSONArray();
 
 		for (final CMGroup group : allGroups) {
-			final JSONObject jsonGroup = Serializer.serialize(group);
+			final JSONObject jsonGroup = new Serializer(authLogic()).serialize(group);
 			groups.put(jsonGroup);
 		}
 
@@ -120,9 +122,9 @@ public class ModSecurity extends JSONBaseWithSpringContext {
 				.withStartingClassId(startingClass) //
 				.withActiveStatus(isActive);
 
-		if (CMGroup.GroupType.admin.name().equals(groupType)) {
+		if (admin.name().equals(groupType)) {
 			builder.withAdminFlag(true); //
-		} else if (CMGroup.GroupType.restrictedAdmin.name().equals(groupType)) {
+		} else if (restrictedAdmin.name().equals(groupType)) {
 			builder.withAdminFlag(true);
 			builder.withRestrictedAdminFlag(true);
 		}
@@ -136,7 +138,7 @@ public class ModSecurity extends JSONBaseWithSpringContext {
 		}
 
 		final JSONObject out = new JSONObject();
-		out.put(GROUP, Serializer.serialize(createdOrUpdatedGroup));
+		out.put(GROUP, new Serializer(authLogic()).serialize(createdOrUpdatedGroup));
 		return out;
 	}
 
@@ -149,7 +151,7 @@ public class ModSecurity extends JSONBaseWithSpringContext {
 		final CMGroup group = groupsLogic().setGroupActive(groupId, active);
 
 		final JSONObject out = new JSONObject();
-		out.put(GROUP, Serializer.serialize(group));
+		out.put(GROUP, new Serializer(authLogic()).serialize(group));
 		return out;
 	}
 
@@ -171,9 +173,9 @@ public class ModSecurity extends JSONBaseWithSpringContext {
 				}
 				notAssociatedUsers.add(user);
 			}
-			out.put(USERS, Serializer.serializeUsers(notAssociatedUsers));
+			out.put(USERS, new Serializer(authLogic()).serializeUsers(notAssociatedUsers));
 		} else {
-			out.put(USERS, Serializer.serializeUsers(associatedUsers));
+			out.put(USERS, new Serializer(authLogic()).serializeUsers(associatedUsers));
 		}
 
 		return out;
@@ -421,7 +423,7 @@ public class ModSecurity extends JSONBaseWithSpringContext {
 			@Parameter(value = ACTIVE, required = false) final boolean activeOnly //
 	) throws JSONException, AuthException {
 		final JSONObject out = new JSONObject();
-		out.put(ROWS, Serializer.serializeUsers(authLogic().getAllUsers(activeOnly)));
+		out.put(ROWS, new Serializer(authLogic()).serializeUsers(authLogic().getAllUsers(activeOnly)));
 		return out;
 	}
 
@@ -471,7 +473,7 @@ public class ModSecurity extends JSONBaseWithSpringContext {
 		}
 
 		final JSONObject out = new JSONObject();
-		out.put(ROWS, Serializer.serialize(createdOrUpdatedUser));
+		out.put(ROWS, new Serializer(authLogic()).serialize(createdOrUpdatedUser));
 		return out;
 	}
 
@@ -493,7 +495,7 @@ public class ModSecurity extends JSONBaseWithSpringContext {
 		for (final String name : user.getGroupNames()) {
 			groupsForLogin.add(authLogic.getGroupInfoForGroup(name));
 		}
-		final JSONArray jsonGroupList = Serializer.serializeGroupsForUser(user, groupsForLogin);
+		final JSONArray jsonGroupList = new Serializer(authLogic()).serializeGroupsForUser(user, groupsForLogin);
 
 		final JSONObject out = new JSONObject();
 		out.put(RESULT, jsonGroupList);
@@ -515,7 +517,7 @@ public class ModSecurity extends JSONBaseWithSpringContext {
 		}
 
 		final JSONObject out = new JSONObject();
-		out.put(ROWS, Serializer.serialize(user));
+		out.put(ROWS, new Serializer(authLogic()).serialize(user));
 		return out;
 	}
 

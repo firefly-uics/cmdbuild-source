@@ -101,12 +101,19 @@
 				return this.propertyManageIsEmpty(parameters);
 			},
 
+			/**
+			 * @returns {Void}
+			 *
+			 * @private
+			 */
 			lookupSelectedLookupTypeReset: function() {
 				this.propertyManageReset('selectedLookupType');
 			},
 
 			/**
 			 * @param {Object} parameters
+			 *
+			 * @private
 			 */
 			lookupSelectedLookupTypeSet: function(parameters) {
 				parameters[CMDBuild.core.constants.Proxy.MODEL_NAME] = 'CMDBuild.model.lookup.Type';
@@ -135,7 +142,9 @@
 		 * @override
 		 */
 		onLookupModuleInit: function(node) {
-			if (!Ext.isEmpty(node)) {
+			this.lookupSelectedLookupTypeReset();
+
+			if (Ext.isObject(node) && !Ext.Object.isEmpty(node)) {
 				CMDBuild.proxy.lookup.Type.read({ // TODO: waiting for refactor (crud + rename)
 					scope: this,
 					success: function(response, options, decodedResponse) {
@@ -156,6 +165,15 @@
 						this.onModuleInit(node); // Custom callParent() implementation
 					}
 				});
+			} else {
+				this.cmfg('onLookupSelected');
+
+				this.setViewTitle();
+
+				if (Ext.isEmpty(this.view.tabPanel.getActiveTab()))
+					this.view.tabPanel.setActiveTab(0);
+
+				this.onModuleInit(node); // Custom callParent() implementation
 			}
 		}
 	});

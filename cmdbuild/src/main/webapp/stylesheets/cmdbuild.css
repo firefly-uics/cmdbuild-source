@@ -1,3 +1,5 @@
+@import url("./calendar.css");
+@import url("./fields.css");
 @import url("./flags.css");
 @import url("./footer.css");
 @import url("./grids.css");
@@ -448,27 +450,6 @@ em { font-style: oblique !important; }
 		margin-top: 0.5em;
 	}
 
-/* CMDBuild.IconsCombo*/
-	.cm-icon-list-item,
-	.cm-icon-list li,
-	.cm-icon-list-item-label,
-	.cm-icon-list-item-img {
-		float: left;
-	}
-
-	.cm-icon-list-item,
-	.cm-icon-list li {
-		clear: left;
-		width: 100%
-	}
-
-	.cm-icon-list-item-label {
-		padding: 0.5em 0.5em 0.5em 0;
-		line-height: 1.5em;
-	}
-
-	.cm-icon-list-item-img { margin: 0.5em; }
-
 /* Other */
 	.cmdbuild-nodisplay { display: none !important; }
 
@@ -484,9 +465,6 @@ em { font-style: oblique !important; }
 
 /* FIX: Fieldset label CheckBox */
 	.x-form-cb-wrap { height: auto !important; }
-
-/* Grid icons */
-	.x-grid-cell-inner .x-item-disabled { cursor: default !important; }
 
 /* FIX: empty ending row in grids */
 	.x-grid-row-summary { display: none; }

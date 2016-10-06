@@ -7,10 +7,17 @@
 	 * 	- {Boolean} considerAsFieldToDisable: enable setDisable function on processed item also if it's not inherits from Ext.form.Field
 	 * 	- {Boolean} disableEnableFunctions: disable enable/setDisabled(false) on processed item (ex. cmImmutable)
 	 * 	- {Boolean} disablePanelFunctions: disable PanelFunctions class actions on processed item
+	 * 	- {Boolean} forceDisabledState: force item to be disabled
+	 *
+	 * @version 1
+	 *
+	 * @deprecated CMDBuild.view.common.PanelFunctions2
 	 */
 	Ext.define('CMDBuild.view.common.PanelFunctions', {
 
 		requires: ['CMDBuild.core.constants.Proxy'],
+
+		mixins: ['CMDBuild.view.common.PanelFunctions2'],
 
 		/**
 		 * Keeps in sync two fields, usually name and description. If the master field changes and the slave is empty, or it has the same
@@ -144,7 +151,7 @@
 						&& Ext.isFunction(button.setDisabled)
 						&& !button.disablePanelFunctions
 					) {
-						button.setDisabled(state);
+						button.setDisabled(Ext.isBoolean(button.forceDisabledState) ? button.forceDisabledState : state);
 					}
 				}, this);
 		},
@@ -204,7 +211,7 @@
 		},
 
 		/**
-		 * Don't disable FieldSets, but only contained fields
+		 * Change state of fieldset's contained fields
 		 *
 		 * @param {Ext.form.FieldSet} fieldset
 		 * @param {Boolean} state
@@ -269,10 +276,7 @@
 						&& Ext.isFunction(button.setDisabled)
 						&& !button.disablePanelFunctions
 					) {
-						if (Ext.isBoolean(button.forceDisabledState)) // Force disabled state implementation
-							state = button.forceDisabledState;
-
-						button.setDisabled(state);
+						button.setDisabled(Ext.isBoolean(button.forceDisabledState) ? button.forceDisabledState : state);
 					}
 				}, this);
 		}

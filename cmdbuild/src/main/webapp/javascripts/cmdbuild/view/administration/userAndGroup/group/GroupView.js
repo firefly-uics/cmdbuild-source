@@ -1,4 +1,4 @@
-(function() {
+(function () {
 
 	Ext.define('CMDBuild.view.administration.userAndGroup.group.GroupView', {
 		extend: 'Ext.form.Panel',
@@ -20,12 +20,16 @@
 		 */
 		tabPanel: undefined,
 
-		bodyCls: 'cmdb-gray-panel-no-padding',
 		border: false,
 		frame: false,
 		layout: 'fit',
 
-		initComponent: function() {
+		/**
+		 * @returns {Void}
+		 *
+		 * @override
+		 */
+		initComponent: function () {
 			Ext.apply(this, {
 				dockedItems: [
 					Ext.create('Ext.toolbar.Toolbar', {
@@ -37,7 +41,7 @@
 								text: CMDBuild.Translation.addGroup,
 								scope: this,
 
-								handler: function(button, e) {
+								handler: function (button, e) {
 									this.delegate.cmfg('onUserAndGroupGroupAddButtonClick');
 								}
 							})

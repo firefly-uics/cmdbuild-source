@@ -22,11 +22,13 @@ public class CusSoapProxyBuilder implements Builder<Private> {
 	private static final String URL_SUFFIX = "services/soap/Private";
 
 	private static final String USER_SEPARATOR = "#";
+	private static final String USER_SEPARATOR_2 = "!";
 	private static final String GROUP_SEPARATOR = "@";
 
 	private final CallbackUtilities cus;
 	private String username;
 	private String group;
+	private boolean forciblyImpersonate;
 
 	public CusSoapProxyBuilder(final CallbackUtilities cus) {
 		this.cus = cus;
@@ -41,6 +43,11 @@ public class CusSoapProxyBuilder implements Builder<Private> {
 
 	public CusSoapProxyBuilder withGroup(final String group) {
 		this.group = group;
+		return this;
+	}
+
+	public CusSoapProxyBuilder forciblyImpersonate(final boolean forciblyImpersonate) {
+		this.forciblyImpersonate = forciblyImpersonate;
 		return this;
 	}
 
@@ -73,8 +80,9 @@ public class CusSoapProxyBuilder implements Builder<Private> {
 	}
 
 	private String completeUsername(final String wsUsername, final String currentUser, final String currentGroup) {
+		final String userSeparator = forciblyImpersonate ? USER_SEPARATOR_2 : USER_SEPARATOR;
 		return new StringBuilder(wsUsername) //
-				.append(isNotBlank(currentUser) ? USER_SEPARATOR + currentUser : EMPTY) //
+				.append(isNotBlank(currentUser) ? userSeparator + currentUser : EMPTY) //
 				.append(isNotBlank(currentGroup) ? GROUP_SEPARATOR + currentGroup : EMPTY) //
 				.toString();
 	}

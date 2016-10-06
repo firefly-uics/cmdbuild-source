@@ -9,14 +9,14 @@
 	<script
 		src="<%=request.getParameter("basePath")%>/javascripts/cmdbuild-gui-framework-<%=request.getParameter("frameworkVersion")%>/api/libraries/js/jquery-2.1.1.min.js"></script>
 	<script
-		src="<%=request.getParameter("basePath")%>/javascripts/cmdbuild-gui-framework-<%=request.getParameter("frameworkVersion")%>/api/cmdbuildAP.js"></script>
+		src="http://localhost/cmdbuild-gui-framework/api/cmdbuildAP.js"></script>
 	<script type="text/javascript">
 		$(document).ready(function() {
 			$("#cmdbuilForm").cmdbuildAP({
 				debug: true,
 				apiUrl : '<%=request.getParameter("basePath")%>/services/rest/v2/',
-				appRootUrl : '<%=request.getParameter("basePath")%>/javascripts/cmdbuild-gui-framework-<%=request.getParameter("frameworkVersion")%>/',
-				appConfigUrl: '<%=request.getParameter("basePath")%>/javascripts/cmdbuild-network/Graph/',
+				appRootUrl : 'http://localhost/cmdbuild-gui-framework/',
+				appConfigUrl: '<%=request.getParameter("basePath")%>/javascripts/cmdbuild-network/Graph-1.0.1/',
 				access_token: 'CMDBuild-Authorization',
 				language:'<%=request.getParameter("language")%>',
 				customjs: [

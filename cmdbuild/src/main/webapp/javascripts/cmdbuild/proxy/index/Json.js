@@ -69,8 +69,6 @@
 			remove: 'services/json/management/modcard/deletecard',
 
 			readAll: 'services/json/management/modcard/getcardlist',
-			readAllDetails: 'services/json/management/modcard/getdetaillist',
-			readAllShort: 'services/json/management/modcard/getcardlistshort',
 
 			bulkUpdate: 'services/json/management/modcard/bulkupdate',
 			bulkUpdateFromFilter: 'services/json/management/modcard/bulkupdatefromfilter',
@@ -97,8 +95,6 @@
 			read: 'services/json/schema/setup/getconfiguration',
 			update: 'services/json/schema/setup/saveconfiguration', // TODO: waiting for refactor (rename)
 			remove: '',
-
-			readAll: 'services/json/schema/setup/getconfigurations',
 
 			apply: 'services/json/configure/apply',
 			connectionTest: 'services/json/configure/testconnection',
@@ -193,8 +189,9 @@
 			update: 'services/json/schema/modclass/savedomain', // TODO: waiting for refactor (crud)
 			remove: 'services/json/schema/modclass/deletedomain',
 
+			getDomains: 'services/json/schema/modclass/getdomains',
 			readAll: 'services/json/schema/modclass/getalldomains',
-			readAllByClass: 'services/json/schema/modclass/getdomainlist'
+			readAllByClass: 'services/json/schema/modclass/getdomainlist' // @deprecated
 		},
 
 		email: {
@@ -323,11 +320,11 @@
 
 			layer: {
 				create: '',
-				read: '',
+				read: 'services/json/gis/getalllayers', // TODO: waiting for refactor (CRUD)
 				update: '',
 				remove: '',
 
-				readAll: 'services/json/gis/getalllayers',
+				readAll: 'services/json/gis/getalllayers', // TODO: waiting for refactor (rename)
 
 				setOrder: 'services/json/gis/setlayersorder',
 				setVisibility: 'services/json/gis/setlayervisibility'
@@ -600,6 +597,15 @@
 				}
 			},
 
+			generic: {
+				create: 'services/json/schema/taskmanager/generic/create',
+				read: 'services/json/schema/taskmanager/generic/read',
+				update: 'services/json/schema/taskmanager/generic/update',
+				remove: 'services/json/schema/taskmanager/generic/delete',
+
+				readAll: 'services/json/schema/taskmanager/generic/readall'
+			},
+
 			workflow: {
 				create: 'services/json/schema/taskmanager/startworkflow/create',
 				read: 'services/json/schema/taskmanager/startworkflow/read',
@@ -656,6 +662,7 @@
 
 			readAll: 'services/json/schema/modclass/getallclasses', // TODO: waiting for refactor (crud)
 
+			getPosition: 'services/json/workflow/getposition',
 			isProcessUpdated: 'services/json/workflow/isprocessupdated',
 			synchronize: 'services/json/workflow/sync',
 
@@ -665,12 +672,20 @@
 				update: 'services/json/workflow/saveactivity', // TODO: waiting for refactor (crud)
 				remove: '',
 
-				readAll: 'services/json/workflow/getprocessinstancelist',
 				readStart: 'services/json/workflow/getstartactivity',
 
 				abort: 'services/json/workflow/abortprocess',
 				lock: 'services/json/lock/lockactivity',
 				unlock: 'services/json/lock/unlockactivity'
+			},
+
+			instance: {
+				create: '',
+				read: 'services/json/workflow/getinstance',
+				update: '',
+				remove: '',
+
+				readAll: 'services/json/workflow/getinstances'
 			},
 
 			xpdl: {

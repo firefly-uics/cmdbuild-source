@@ -279,8 +279,8 @@
 	};
 
 	function addDomainAttributesIfNeeded(me, view, attributes) {
-		var domainAttributes = view.detail.getAttributes() || [],
-			out = [];
+		var domainAttributes = !Ext.isEmpty(view) && !Ext.isEmpty(view.detail) ? view.detail.getAttributes() || [] : [];
+		var out = [];
 
 		if (domainAttributes.length > 0) {
 

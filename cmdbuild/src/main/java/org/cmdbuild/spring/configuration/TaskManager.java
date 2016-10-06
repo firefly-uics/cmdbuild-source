@@ -66,6 +66,9 @@ public class TaskManager {
 	private Other other;
 
 	@Autowired
+	private Report report;
+
+	@Autowired
 	private Scheduler scheduler;
 
 	@Autowired
@@ -194,6 +197,9 @@ public class TaskManager {
 		return new GenericTaskJobFactory( //
 				email.emailAccountFacade(), //
 				email.emailTemplateLogic(), //
+				report.reportLogic(), //
+				data.systemDataView(), //
+				template.databaseTemplateEngine(), //
 				emailTemplateSenderFactory() //
 		);
 	}
@@ -253,7 +259,8 @@ public class TaskManager {
 
 	@Bean
 	protected EmailTemplateSenderFactory emailTemplateSenderFactory() {
-		return new DefaultEmailTemplateSenderFactory(email.emailServiceFactory(), email.emailLogic());
+		return new DefaultEmailTemplateSenderFactory(email.emailServiceFactory(), email.emailLogic(),
+				email.emailAttachmentsLogic());
 	}
 
 }

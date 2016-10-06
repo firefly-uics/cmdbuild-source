@@ -51,6 +51,7 @@ public class CommunicationConstants {
 			CONFIGURATION = "configuration", //
 			CONFIRMED = "confirmed", //
 			CONTAINER = "container", //
+			CONTEXT = "context", //
 			COUNT = "count", //
 			CREATE = "create", //
 			CRON_EXPRESSION = "cronExpression", //
@@ -79,6 +80,8 @@ public class CommunicationConstants {
 			DESCRIPTION_CAPITAL = "Description", //
 			DESCRIPTION = "description", //
 			DESTINATION = "destination", //
+			DESTINATION_CLASS = "destinationClass", //
+			DESTINATION_CODE = "destinationCode", //
 			DESTINATION_DESCRIPTION = "destinationDescription", //
 			DETAIL_CARD_ID = "detailCardId", //
 			DETAIL_CLASS_NAME = "detailClassName", //
@@ -113,6 +116,7 @@ public class CommunicationConstants {
 			END_DATE = "endDate", //
 			ENTRIES = "entries", //
 			ENTRY_TYPE = "entryType", //
+			EXCLUDE_PROCESSES = "excludeProcesses", //
 			EXECUTABLE = "executable", //
 			EXPORTED = "exported", //
 			EXPORT_MAPPING = "ExportMapping", //
@@ -130,6 +134,7 @@ public class CommunicationConstants {
 			FILTER_SUBJECT = "filterSubject", //
 			FILTER_TYPE = "filterType", //
 			FK_DESTINATION = "fkDestination", //
+			FLOW_STATUS = "flowStatus", //
 			FORCE_CREATION = "forceCreation", //
 			FORMAT = "format", //
 			FROM = "from", //
@@ -138,6 +143,7 @@ public class CommunicationConstants {
 			GROUP_ID = "groupId", //
 			GROUP_NAME = "groupName", //
 			GROUPS = "groups", //
+			HAS_POSITION = "hasPosition", //
 			HEADERS = "headers", //
 			HOST = "host", //
 			ICONNAME = "iconName", //
@@ -207,6 +213,7 @@ public class CommunicationConstants {
 			ORIG_TYPE = "orig_type", //
 			OUTPUT_FOLDER = "outputFolder", //
 			OUT_OF_FILTER = "outOfFilter", //
+			OWNER = "owner", //
 			PARAMS = "params", //
 			PARENT_DESCRIPTION = "ParentDescription", //
 			PARENT_ID = "ParentId", //
@@ -243,11 +250,13 @@ public class CommunicationConstants {
 			REJECTED_FOLDER = "rejectedFolder", //
 			REJECT_NOT_MATCHING = "rejectNotMatching", //
 			RELATION_ID = "relationId", //
+			REPORT_ACTIVE = "reportActive", //
+			REPORT_EXTENSION = "reportExtension", //
 			REPORT_ID = "reportId", //
 			REPORTNAME = "reportName", //
+			REPORT_PARAMETERS = "reportParameters", //
 			RESULT = "result", //
 			RESULTS = "results", //
-			RETRY_WITHOUT_FILTER = "retryWithoutFilter", //
 			ROOT_REFERENCE = "rootreference", //
 			ROOT = "root", //
 			ROWS = "rows", //

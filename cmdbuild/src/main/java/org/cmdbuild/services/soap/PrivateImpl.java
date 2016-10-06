@@ -7,6 +7,7 @@ import static org.cmdbuild.dao.query.clause.Clauses.call;
 
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -111,7 +112,8 @@ public class PrivateImpl extends AbstractWebservice implements Private {
 	}
 
 	@Override
-	public CardList getCardHistory(final String className, final int cardId, final Integer limit, final Integer offset) {
+	public CardList getCardHistory(final String className, final int cardId, final Integer limit,
+			final Integer offset) {
 		return dataAccessLogicHelper().getCardHistory(className, cardId, limit, offset);
 	}
 
@@ -191,6 +193,11 @@ public class PrivateImpl extends AbstractWebservice implements Private {
 	}
 
 	@Override
+	public void updateRelationAttributes(final Relation relation, final Collection<Attribute> attributes) {
+		dataAccessLogicHelper().setRelationAttributes(relation, attributes);
+	}
+
+	@Override
 	public Relation[] getRelationHistory(final Relation relation) {
 		return dataAccessLogicHelper().getRelationHistory(relation);
 	}
@@ -224,7 +231,8 @@ public class PrivateImpl extends AbstractWebservice implements Private {
 	}
 
 	@Override
-	public Workflow updateWorkflow(final Card card, final boolean completeTask, final WorkflowWidgetSubmission[] widgets) {
+	public Workflow updateWorkflow(final Card card, final boolean completeTask,
+			final WorkflowWidgetSubmission[] widgets) {
 		return workflowLogicHelper().updateProcess(card, widgets, completeTask);
 	}
 
@@ -246,8 +254,8 @@ public class PrivateImpl extends AbstractWebservice implements Private {
 	@Override
 	public Reference[] getReference(final String className, final Query query, final Order[] orderType,
 			final Integer limit, final Integer offset, final String fullTextQuery, final CQLQuery cqlQuery) {
-		return dataAccessLogicHelper()
-				.getReference(className, query, orderType, limit, offset, fullTextQuery, cqlQuery);
+		return dataAccessLogicHelper().getReference(className, query, orderType, limit, offset, fullTextQuery,
+				cqlQuery);
 	}
 
 	@Override
@@ -266,7 +274,8 @@ public class PrivateImpl extends AbstractWebservice implements Private {
 	}
 
 	@Override
-	public org.cmdbuild.services.soap.types.Report[] getReportList(final String type, final int limit, final int offset) {
+	public org.cmdbuild.services.soap.types.Report[] getReportList(final String type, final int limit,
+			final int offset) {
 		return dataAccessLogicHelper().getReportsByType(type, limit, offset);
 	}
 
@@ -291,8 +300,8 @@ public class PrivateImpl extends AbstractWebservice implements Private {
 		logger.debug("xml message:" + xml);
 		final ConnectorParser parser = new XmlConnectorParser(xml);
 		final Document document = parser.parse();
-		final ConnectorJobIntrospector introspector = new ConnectorJobIntrospector(document, userDataAccessLogic(),
-				userDataView(), lookupStore());
+		final ConnectorJobIntrospector introspector =
+				new ConnectorJobIntrospector(document, userDataAccessLogic(), userDataView(), lookupStore());
 		return introspector.submitJobs();
 	}
 
@@ -401,25 +410,25 @@ public class PrivateImpl extends AbstractWebservice implements Private {
 	}
 
 	private String nativeValueToWsString(final CMAttributeType<?> type, final Object value) {
-		return (value == null) ? EMPTY : new AbstractAttributeValueVisitor(type, value, translationFacade,
-				lookupSerializer()) {
+		return (value == null) ? EMPTY
+				: new AbstractAttributeValueVisitor(type, value, translationFacade, lookupSerializer()) {
 
-			@Override
-			public void visit(final EntryTypeAttributeType attributeType) {
-				throw new UnsupportedOperationException("regclasses not supported");
-			}
+					@Override
+					public void visit(final EntryTypeAttributeType attributeType) {
+						throw new UnsupportedOperationException("regclasses not supported");
+					}
 
-			@Override
-			public void visit(final LookupAttributeType attributeType) {
-				throw new UnsupportedOperationException("lookups not supported");
-			}
+					@Override
+					public void visit(final LookupAttributeType attributeType) {
+						throw new UnsupportedOperationException("lookups not supported");
+					}
 
-			@Override
-			public void visit(final ReferenceAttributeType attributeType) {
-				throw new UnsupportedOperationException("references not supported");
-			}
+					@Override
+					public void visit(final ReferenceAttributeType attributeType) {
+						throw new UnsupportedOperationException("references not supported");
+					}
 
-		}.convertValue().toString();
+				}.convertValue().toString();
 	}
 
 	@Override

@@ -36,13 +36,13 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.slf4j.Logger;
 
-import utils.IntegrationTestBase;
-import utils.LoggingSupport;
-import utils.ProfilerRule;
-
 import com.google.common.base.Predicate;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+
+import utils.IntegrationTestBase;
+import utils.LoggingSupport;
+import utils.ProfilerRule;
 
 public class AnotherQueryStressTest extends IntegrationTestBase {
 

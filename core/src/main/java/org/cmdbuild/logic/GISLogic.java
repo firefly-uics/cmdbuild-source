@@ -3,6 +3,7 @@ package org.cmdbuild.logic;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import org.apache.commons.fileupload.FileItem;
@@ -44,13 +45,16 @@ public interface GISLogic extends Logic {
 
 	/**
 	 * Retrieve the geoFeature for the given card. If more than one layer are
-	 * defined, take the first
-	 * 
+	 * defined, take the first.
+	 *
 	 * @param card
-	 * @return
+	 *
+	 * @return an {@link Entry} where the key is the name of the layer and the
+	 *         value is the {@link GeoFeature}.
+	 *
 	 * @throws Exception
 	 */
-	GeoFeature getFeature(Card card) throws Exception;
+	Entry<String, GeoFeature> getFeature(Card card) throws Exception;
 
 	List<GeoFeature> getFeatures(String masterClassName, String layerName, String bbox) throws Exception;
 

@@ -22,6 +22,7 @@
 		border: true,
 		frame: false,
 		layout: 'fit',
+		title: CMDBuild.Translation.processes,
 
 		/**
 		 * @returns {Void}
@@ -31,7 +32,7 @@
 		initComponent: function () {
 			Ext.apply(this, {
 				// TODO: legacy waiting for refactor (attribute module refactor)
-				attributesPanel: Ext.create('CMDBuild.view.administration.workflow.CMProcessAttributes', {
+				attributesPanel: Ext.create('CMDBuild.view.administration.workflow.CMAttributes', {
 					title: CMDBuild.Translation.attributes,
 					border: false,
 					disabled: true
@@ -53,6 +54,7 @@
 							Ext.create('CMDBuild.core.buttons.iconized.split.Print', {
 								delegate: this.delegate,
 								text: CMDBuild.Translation.printSchema,
+								delegateEventPrefix: 'onWorkflow',
 								formatList: [
 									CMDBuild.core.constants.Proxy.PDF,
 									CMDBuild.core.constants.Proxy.ODT

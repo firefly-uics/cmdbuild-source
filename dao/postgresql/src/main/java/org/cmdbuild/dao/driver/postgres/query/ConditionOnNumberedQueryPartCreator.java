@@ -9,7 +9,7 @@ import static org.cmdbuild.dao.query.clause.alias.Aliases.name;
 import static org.cmdbuild.dao.query.clause.where.EmptyWhereClause.emptyWhereClause;
 
 import org.cmdbuild.dao.query.QuerySpecs;
-import org.cmdbuild.dao.query.clause.QueryAliasAttribute;
+import org.cmdbuild.dao.query.clause.QueryAttribute;
 import org.cmdbuild.dao.query.clause.where.EqualsOperatorAndValue;
 import org.cmdbuild.dao.query.clause.where.ForwardingOperatorAndValueVisitor;
 import org.cmdbuild.dao.query.clause.where.ForwardingWhereClauseVisitor;
@@ -46,8 +46,8 @@ public class ConditionOnNumberedQueryPartCreator extends PartCreator {
 
 					@Override
 					public void visit(final EqualsOperatorAndValue operatorAndValue) {
-						final QueryAliasAttribute attribute = whereClause.getAttribute();
-						final String quotedName = quote(name(nameForSystemAttribute(attribute.getEntryTypeAlias(), Id)));
+						final QueryAttribute attribute = whereClause.getAttribute();
+						final String quotedName = quote(name(nameForSystemAttribute(attribute.getAlias(), Id)));
 						final String actual = main.toString();
 						main.setLength(0);
 						sb.append(format("SELECT * FROM (%s) AS numbered WHERE %s = %s", //

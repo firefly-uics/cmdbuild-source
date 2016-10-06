@@ -38,7 +38,7 @@
 			Ext.apply(this, configuration); // Apply configurations
 
 			Ext.ns('CMDBuild.configuration');
-			CMDBuild.configuration.instance = Ext.create('CMDBuild.model.core.configurations.builder.Instance'); // Instance configuration model with defaults
+			CMDBuild.configuration.instance = Ext.create('CMDBuild.model.core.configuration.builder.Instance'); // Instance configuration model with defaults
 
 			if (this.enableServerCalls) {
 				CMDBuild.proxy.core.configurations.builder.Instance.read({
@@ -47,7 +47,7 @@
 					success: function (response, options, decodedResponse) {
 						decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.DATA];
 
-						CMDBuild.configuration.instance = Ext.create('CMDBuild.model.core.configurations.builder.Instance', decodedResponse);
+						CMDBuild.configuration.instance = Ext.create('CMDBuild.model.core.configuration.builder.Instance', decodedResponse);
 					},
 					callback: this.callback
 				});

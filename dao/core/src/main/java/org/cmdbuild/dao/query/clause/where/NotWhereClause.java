@@ -1,13 +1,11 @@
 package org.cmdbuild.dao.query.clause.where;
 
-import java.util.List;
+public class NotWhereClause implements WhereClause {
 
-import com.google.common.collect.Lists;
+	private final WhereClause clause;
 
-public class NotWhereClause extends CompositeWhereClause {
-
-	private NotWhereClause(final List<? extends WhereClause> clauses) {
-		super(clauses);
+	private NotWhereClause(final WhereClause clause) {
+		this.clause = clause;
 	}
 
 	@Override
@@ -15,10 +13,12 @@ public class NotWhereClause extends CompositeWhereClause {
 		visitor.visit(this);
 	}
 
-	public static WhereClause not(final WhereClause single) {
-		final List<WhereClause> clauses = Lists.newArrayList();
-		clauses.add(single);
-		return new NotWhereClause(clauses);
+	public WhereClause getClause() {
+		return clause;
+	}
+
+	public static WhereClause not(final WhereClause clause) {
+		return new NotWhereClause(clause);
 	}
 
 }

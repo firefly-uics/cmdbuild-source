@@ -5,6 +5,7 @@ import static com.google.common.collect.Iterables.get;
 import static com.google.common.collect.Iterables.size;
 import static org.cmdbuild.logic.data.access.filter.model.Elements.all;
 import static org.cmdbuild.logic.data.access.filter.model.Elements.attribute;
+import static org.cmdbuild.logic.data.access.filter.model.Elements.not;
 import static org.cmdbuild.logic.data.access.filter.model.Elements.oneOf;
 import static org.cmdbuild.logic.data.access.filter.model.Predicates.and;
 import static org.cmdbuild.logic.data.access.filter.model.Predicates.contains;
@@ -15,12 +16,12 @@ import static org.cmdbuild.logic.data.access.filter.model.Predicates.in;
 import static org.cmdbuild.logic.data.access.filter.model.Predicates.isNull;
 import static org.cmdbuild.logic.data.access.filter.model.Predicates.lessThan;
 import static org.cmdbuild.logic.data.access.filter.model.Predicates.like;
-import static org.cmdbuild.logic.data.access.filter.model.Predicates.not;
 import static org.cmdbuild.logic.data.access.filter.model.Predicates.startsWith;
 import static org.cmdbuild.logic.mapping.json.Constants.Filters.AND_KEY;
 import static org.cmdbuild.logic.mapping.json.Constants.Filters.ATTRIBUTE_KEY;
 import static org.cmdbuild.logic.mapping.json.Constants.Filters.FULL_TEXT_QUERY_KEY;
 import static org.cmdbuild.logic.mapping.json.Constants.Filters.FUNCTION_KEY;
+import static org.cmdbuild.logic.mapping.json.Constants.Filters.NOT_KEY;
 import static org.cmdbuild.logic.mapping.json.Constants.Filters.OPERATOR_KEY;
 import static org.cmdbuild.logic.mapping.json.Constants.Filters.OR_KEY;
 import static org.cmdbuild.logic.mapping.json.Constants.Filters.RELATION_KEY;
@@ -37,7 +38,6 @@ import org.cmdbuild.logic.data.access.filter.model.BuildableFilter.Builder;
 import org.cmdbuild.logic.data.access.filter.model.Element;
 import org.cmdbuild.logic.data.access.filter.model.Filter;
 import org.cmdbuild.logic.data.access.filter.model.Parser;
-import org.cmdbuild.logic.data.access.filter.model.Predicate;
 import org.cmdbuild.logic.mapping.json.Constants.FilterOperator;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.JsonProcessingException;
@@ -112,12 +112,11 @@ public class JsonParser implements Parser, LoggingSupport {
 
 						@Override
 						public Object apply(final JsonNode input) {
-							return input.isTextual() ?input.getTextValue():input.getNumberValue().longValue();
+							return input.isTextual() ? input.getTextValue() : input.getNumberValue().longValue();
 						}
 
 					});
-			final Predicate predicate = PredicateFactory.of(operator).create(values);
-			output = attribute(name, predicate);
+			output = ElementFactory.of(operator).create(name, values);
 		} else if (node.has(AND_KEY)) {
 			final JsonNode and = node.get(AND_KEY);
 			final Iterable<Element> elements = from(and) //
@@ -128,6 +127,9 @@ public class JsonParser implements Parser, LoggingSupport {
 			final Iterable<Element> elements = from(or) //
 					.transform(TO_ELEMENT);
 			output = oneOf(elements);
+		} else if (node.has(NOT_KEY)) {
+			final JsonNode not = node.get(NOT_KEY);
+			output = not(parseAttribute(not));
 		} else {
 			logger.error(marker, "unknown content for node");
 			output = UnsupportedProxyFactory.of(Element.class).create();
@@ -135,76 +137,76 @@ public class JsonParser implements Parser, LoggingSupport {
 		return output;
 	}
 
-	private static enum PredicateFactory {
+	private static enum ElementFactory {
 		BEGIN(FilterOperator.BEGIN.toString()) {
 
 			@Override
-			public Predicate create(final Iterable<Object> values) {
-				return startsWith(firstOf(values));
+			public Element create(String name, final Iterable<Object> values) {
+				return attribute(name, startsWith(firstOf(values)));
 			}
 
 		}, //
 		BETWEEN(FilterOperator.BETWEEN.toString()) {
 
 			@Override
-			public Predicate create(final Iterable<Object> values) {
-				return and(greaterThan(firstOf(values)), lessThan(secondOf(values)));
+			public Element create(String name, final Iterable<Object> values) {
+				return attribute(name, and(greaterThan(firstOf(values)), lessThan(secondOf(values))));
 			}
 
 		},
 		CONTAIN(FilterOperator.CONTAIN.toString()) {
 
 			@Override
-			public Predicate create(final Iterable<Object> values) {
-				return contains(firstOf(values));
+			public Element create(String name, final Iterable<Object> values) {
+				return attribute(name, contains(firstOf(values)));
 			}
 
 		},
 		END(FilterOperator.END.toString()) {
 
 			@Override
-			public Predicate create(final Iterable<Object> values) {
-				return endsWith(firstOf(values));
+			public Element create(String name, final Iterable<Object> values) {
+				return attribute(name, endsWith(firstOf(values)));
 			}
 
 		}, //
 		EQUAL(FilterOperator.EQUAL.toString()) {
 
 			@Override
-			public Predicate create(final Iterable<Object> values) {
-				return equalTo(firstOf(values));
+			public Element create(String name, final Iterable<Object> values) {
+				return attribute(name, equalTo(firstOf(values)));
 			}
 
 		}, //
 		GREATER_THAN(FilterOperator.GREATER_THAN.toString()) {
 
 			@Override
-			public Predicate create(final Iterable<Object> values) {
-				return greaterThan(firstOf(values));
+			public Element create(String name, final Iterable<Object> values) {
+				return attribute(name, greaterThan(firstOf(values)));
 			}
 
 		}, //
 		IN(FilterOperator.IN.toString()) {
 
 			@Override
-			public Predicate create(final Iterable<Object> values) {
-				return in(values);
+			public Element create(String name, final Iterable<Object> values) {
+				return attribute(name, in(values));
 			}
 
 		}, //
 		LIKE(FilterOperator.LIKE.toString()) {
 
 			@Override
-			public Predicate create(final Iterable<Object> values) {
-				return like(firstOf(values));
+			public Element create(String name, final Iterable<Object> values) {
+				return attribute(name, like(firstOf(values)));
 			}
 
 		}, //
 		LOWER_THAN(FilterOperator.LESS_THAN.toString()) {
 
 			@Override
-			public Predicate create(final Iterable<Object> values) {
-				return lessThan(firstOf(values));
+			public Element create(String name, final Iterable<Object> values) {
+				return attribute(name, lessThan(firstOf(values)));
 			}
 
 		},
@@ -216,48 +218,48 @@ public class JsonParser implements Parser, LoggingSupport {
 		NOT_BEGIN(FilterOperator.NOT_BEGIN.toString()) {
 
 			@Override
-			public Predicate create(final Iterable<Object> values) {
-				return not(BEGIN.create(values));
+			public Element create(String name, final Iterable<Object> values) {
+				return not(BEGIN.create(name, values));
 			}
 
 		},
 		NOT_CONTAIN(FilterOperator.NOT_CONTAIN.toString()) {
 
 			@Override
-			public Predicate create(final Iterable<Object> values) {
-				return not(CONTAIN.create(values));
+			public Element create(String name, final Iterable<Object> values) {
+				return not(CONTAIN.create(name, values));
 			}
 
 		},
 		NOT_END(FilterOperator.NOT_END.toString()) {
 
 			@Override
-			public Predicate create(final Iterable<Object> values) {
-				return not(END.create(values));
+			public Element create(String name, final Iterable<Object> values) {
+				return not(END.create(name, values));
 			}
 
 		}, //
 		NOT_EQUAL(FilterOperator.NOT_EQUAL.toString()) {
 
 			@Override
-			public Predicate create(final Iterable<Object> values) {
-				return not(EQUAL.create(values));
+			public Element create(String name, final Iterable<Object> values) {
+				return not(EQUAL.create(name, values));
 			}
 
 		}, //
 		NOT_NULL(FilterOperator.NOT_NULL.toString()) {
 
 			@Override
-			public Predicate create(final Iterable<Object> values) {
-				return not(NULL.create(values));
+			public Element create(String name, final Iterable<Object> values) {
+				return not(NULL.create(name, values));
 			}
 
 		}, //
 		NULL(FilterOperator.NULL.toString()) {
 
 			@Override
-			public Predicate create(final Iterable<Object> values) {
-				return isNull();
+			public Element create(String name, final Iterable<Object> values) {
+				return attribute(name, isNull());
 			}
 
 		}, //
@@ -273,8 +275,8 @@ public class JsonParser implements Parser, LoggingSupport {
 			return get(values, 1);
 		}
 
-		public static PredicateFactory of(final String operator) {
-			for (final PredicateFactory value : values()) {
+		public static ElementFactory of(final String operator) {
+			for (final ElementFactory value : values()) {
 				if (value.text.equals(operator.toLowerCase())) {
 					return value;
 				}
@@ -285,11 +287,11 @@ public class JsonParser implements Parser, LoggingSupport {
 
 		private final String text;
 
-		private PredicateFactory(final String text) {
+		private ElementFactory(final String text) {
 			this.text = text;
 		}
 
-		public abstract Predicate create(Iterable<Object> values);
+		public abstract Element create(String name, Iterable<Object> values);
 
 	}
 

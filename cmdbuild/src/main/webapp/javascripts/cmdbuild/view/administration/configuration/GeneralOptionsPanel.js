@@ -6,7 +6,7 @@
 		requires: [
 			'CMDBuild.core.constants.FieldWidths',
 			'CMDBuild.core.constants.Proxy',
-			'CMDBuild.proxy.configuration.GeneralOptions'
+			'CMDBuild.proxy.administration.configuration.GeneralOptions'
 		],
 
 		mixins: ['CMDBuild.view.common.PanelFunctions'],
@@ -99,26 +99,29 @@
 								displayField: CMDBuild.core.constants.Proxy.TEXT,
 								forceSelection: true,
 
-								store: CMDBuild.proxy.configuration.GeneralOptions.getStoreStartingClass(),
+								store: CMDBuild.proxy.administration.configuration.GeneralOptions.getStoreStartingClass(),
 								queryMode: 'local'
 							}),
 							{
 								xtype: 'numberfield',
 								name: CMDBuild.core.constants.Proxy.ROW_LIMIT,
 								fieldLabel: CMDBuild.Translation.rowLimit,
-								allowBlank: false
+								allowBlank: false,
+								minValue: 0
 							},
 							{
 								xtype: 'numberfield',
 								name: CMDBuild.core.constants.Proxy.REFERENCE_COMBO_STORE_LIMIT,
 								fieldLabel: CMDBuild.Translation.referenceComboLimit,
-								allowBlank: false
+								allowBlank: false,
+								minValue: 0
 							},
 							{
 								xtype: 'numberfield',
 								name: CMDBuild.core.constants.Proxy.RELATION_LIMIT,
 								fieldLabel: CMDBuild.Translation.relationLimit,
-								allowBlank: false
+								allowBlank: false,
+								minValue: 0
 							},
 							{
 								xtype: 'numberfield',
@@ -168,6 +171,7 @@
 								name: CMDBuild.core.constants.Proxy.POPUP_HEIGHT_PERCENTAGE,
 								fieldLabel: CMDBuild.Translation.popupPercentageHeight,
 								maxValue: 100,
+								minValue: 0,
 								allowBlank: false
 							},
 							{
@@ -175,6 +179,7 @@
 								name: CMDBuild.core.constants.Proxy.POPUP_WIDTH_PERCENTAGE,
 								fieldLabel: CMDBuild.Translation.popupPercentageWidth,
 								maxValue: 100,
+								minValue: 0,
 								allowBlank: false
 							}
 						]
@@ -205,7 +210,8 @@
 							{
 								xtype: 'numberfield',
 								name: CMDBuild.core.constants.Proxy.CARD_LOCK_TIMEOUT,
-								fieldLabel: CMDBuild.Translation.lockTimeout
+								fieldLabel: CMDBuild.Translation.lockTimeout,
+								minValue: 0
 							}
 						]
 					})

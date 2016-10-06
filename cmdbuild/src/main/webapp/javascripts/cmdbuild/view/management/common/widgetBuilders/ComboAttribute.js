@@ -35,9 +35,9 @@ CMDBuild.WidgetBuilders.ComboAttribute.prototype.buildReadOnlyField = function(a
 CMDBuild.WidgetBuilders.ComboAttribute.prototype.getQueryOptions = function() {
 	var operator = CMDBuild.WidgetBuilders.BaseAttribute.FilterOperator;
 	return [
-		[operator.EQUAL, translation.equals],
-		[operator.NULL, translation.nullo],
-		[operator.NOT_NULL, translation.notnull],
-		[operator.NOT_EQUAL, translation.different]
+		[operator.EQUAL, CMDBuild.Translation.equals],
+		[operator.NULL, CMDBuild.Translation.isNull],
+		[operator.NOT_NULL, CMDBuild.Translation.isNotNull],
+		[operator.NOT_EQUAL, CMDBuild.Translation.different]
 	];
 };

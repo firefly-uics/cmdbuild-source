@@ -5,9 +5,9 @@
 
 		requires: [
 			'CMDBuild.core.constants.Global',
+			'CMDBuild.core.constants.ModuleIdentifiers',
 			'CMDBuild.core.constants.Proxy',
-			'CMDBuild.core.Message',
-			'CMDBuild.proxy.workflow.Tasks'
+			'CMDBuild.proxy.administration.workflow.tabs.Tasks'
 		],
 
 		/**
@@ -26,7 +26,7 @@
 			'onWorkflowTabTasksRemoveButtonClick',
 			'onWorkflowTabTasksRowSelect',
 			'onWorkflowTabTasksShow',
-			'workflowTabTasksInit = workflowTabInit'
+			'onWorkflowTabTasksWorkflowSelected'
 		],
 
 		/**
@@ -37,7 +37,7 @@
 		/**
 		 * Just the grid subset of task properties, not a full task object
 		 *
-		 * @property {CMDBuild.model.workflow.tabs.taskManager.Grid}
+		 * @property {CMDBuild.model.administration.workflow.tabs.taskManager.Grid}
 		 *
 		 * @private
 		 */
@@ -69,20 +69,10 @@
 		 * @returns {Void}
 		 */
 		onWorkflowTabTasksAddButtonClick: function () {
-			this.cmfg('mainViewportAccordionDeselect', 'task');
-			this.cmfg('mainViewportAccordionControllerGet', 'task').disableStoreLoad = true;
-			this.cmfg('mainViewportAccordionControllerExpand', 'task');
+			var moduleController = this.cmfg('mainViewportModuleControllerGet', CMDBuild.core.constants.ModuleIdentifiers.getTaskManager());
 
-			this.cmfg('mainViewportAccordionControllerGet', 'task').getView().on('storeload', function (accordion, eOpts) {
-				Ext.Function.createDelayed(function () {
-					this.cmfg('mainViewportModuleControllerGet', 'task').cmOn('onAddButtonClick', { type: 'workflow' });
-				}, 100, this)();
-			}, this, { single: true });
-
-			this.cmfg('mainViewportAccordionControllerUpdateStore', {
-				identifier: 'task',
-				nodeIdToSelect: 'accordion-task-workflow'
-			});
+			if (Ext.isObject(moduleController) && !Ext.Object.isEmpty(moduleController)	&& Ext.isFunction(moduleController.cmfg))
+				moduleController.cmfg('taskManagerExternalServicesAddButtonClick', { type: ['workflow'] });
 		},
 
 		/**
@@ -93,45 +83,21 @@
 		},
 
 		/**
-		 * On this kind of grids item double click only selects row in relative target grid
+		 * @param {CMDBuild.model.administration.workflow.tabs.taskManager.Grid} record
 		 *
 		 * @returns {Void}
 		 */
-		onWorkflowTabTasksItemDoubleClick: function () {
-			if (!this.selectedTaskIsEmpty()) {
-				this.cmfg('mainViewportAccordionDeselect', 'task');
-				this.cmfg('mainViewportAccordionControllerGet', 'task').disableStoreLoad = true;
-				this.cmfg('mainViewportAccordionControllerExpand', 'task');
+		onWorkflowTabTasksItemDoubleClick: function (record) {
+			if (Ext.isObject(record) && !Ext.Object.isEmpty(record)) {
+				var moduleController = this.cmfg('mainViewportModuleControllerGet', CMDBuild.core.constants.ModuleIdentifiers.getTaskManager());
 
-				// Add action to act as expand callback
-				this.cmfg('mainViewportAccordionControllerGet', 'task').getView().on('selectionchange', function (accordion, eOpts) {
-					Ext.Function.createDelayed(function () { // Delay needed because of server asynchronous call to get domain data
-						if (!Ext.isEmpty(this.cmfg('mainViewportModuleControllerGet', 'task').form.delegate))
-							this.cmfg('mainViewportModuleControllerGet', 'task').grid.getStore().load({
-								scope: this,
-								callback: function (records, operation, success) {
-									var selectionIndex = this.cmfg('mainViewportModuleControllerGet', 'task').grid.getStore().find(
-										CMDBuild.core.constants.Proxy.ID,
-										this.selectedTaskGet(CMDBuild.core.constants.Proxy.ID)
-									);
-
-									if (selectionIndex >= 0) {
-										this.cmfg('mainViewportModuleControllerGet', 'task').grid.getSelectionModel().select(selectionIndex, true);
-									} else {
-										_error('cannot find taks with id ' + this.selectedTaskGet(CMDBuild.core.constants.Proxy.ID) + ' in store', this);
-
-										this.cmfg('mainViewportModuleControllerGet', 'task').form.delegate.selectedId = null;
-										this.cmfg('mainViewportModuleControllerGet', 'task').form.disableModify();
-									}
-								}
-							});
-					}, 100, this)();
-				}, this, { single: true });
-
-				this.cmfg('mainViewportAccordionControllerUpdateStore', {
-					identifier: 'task',
-					nodeIdToSelect: 'accordion-task-workflow'
-				});
+				if (Ext.isObject(moduleController) && !Ext.Object.isEmpty(moduleController)	&& Ext.isFunction(moduleController.cmfg))
+					moduleController.cmfg('taskManagerExternalServicesItemDoubleClick', {
+						id: record.get(CMDBuild.core.constants.Proxy.ID),
+						type: ['workflow']
+					});
+			} else {
+				_error('onWorkflowTabTasksItemDoubleClick(): unmanaged record parameter', this, record);
 			}
 		},
 
@@ -156,44 +122,17 @@
 		 * @returns {Void}
 		 */
 		onWorkflowTabTasksModifyButtonClick: function () {
-			if (!this.selectedTaskIsEmpty()) {
-				this.cmfg('mainViewportAccordionDeselect', 'task');
-				this.cmfg('mainViewportAccordionControllerGet', 'task').disableStoreLoad = true;
-				this.cmfg('mainViewportAccordionControllerExpand', 'task');
+			if (this.grid.getSelectionModel().hasSelection()) {
+				var moduleController = this.cmfg('mainViewportModuleControllerGet', CMDBuild.core.constants.ModuleIdentifiers.getTaskManager());
+				var selectedRecord = this.grid.getSelectionModel().getSelection()[0];
 
-				// Add action to act as expand callback
-				this.cmfg('mainViewportAccordionControllerGet', 'task').getView().on('selectionchange', function (accordion, eOpts) {
-					Ext.Function.createDelayed(function () { // Delay needed because of server asynchronous call to get domain data
-						if (!Ext.isEmpty(this.cmfg('mainViewportModuleControllerGet', 'task').form.delegate))
-							this.cmfg('mainViewportModuleControllerGet', 'task').grid.getStore().load({
-								scope: this,
-								callback: function (records, operation, success) {
-									var selectionIndex = this.cmfg('mainViewportModuleControllerGet', 'task').grid.getStore().find(
-										CMDBuild.core.constants.Proxy.ID,
-										this.selectedTaskGet(CMDBuild.core.constants.Proxy.ID)
-									);
-
-									if (selectionIndex >= 0) {
-										this.cmfg('mainViewportModuleControllerGet', 'task').grid.getSelectionModel().select(selectionIndex, true);
-
-										Ext.Function.createDelayed(function () {
-											this.cmfg('mainViewportModuleControllerGet', 'task').form.delegate.cmOn('onModifyButtonClick');
-										}, 100, this)();
-									} else {
-										_error('cannot find taks with id ' + this.selectedTaskGet(CMDBuild.core.constants.Proxy.ID) + ' in store', this);
-
-										this.cmfg('mainViewportModuleControllerGet', 'task').form.delegate.selectedId = null;
-										this.cmfg('mainViewportModuleControllerGet', 'task').form.disableModify();
-									}
-								}
-							});
-					}, 100, this)();
-				}, this, { single: true });
-
-				this.cmfg('mainViewportAccordionControllerUpdateStore', {
-					identifier: 'task',
-					nodeIdToSelect: 'accordion-task-workflow'
-				});
+				if (Ext.isObject(moduleController) && !Ext.Object.isEmpty(moduleController)	&& Ext.isFunction(moduleController.cmfg))
+					moduleController.cmfg('taskManagerExternalServicesModifyButtonClick', {
+						id: selectedRecord.get(CMDBuild.core.constants.Proxy.ID),
+						type: ['workflow']
+					});
+			} else {
+				_error('onWorkflowTabTasksModifyButtonClick(): unmanaged record parameter', this, record);
 			}
 		},
 
@@ -228,6 +167,19 @@
 		},
 
 		/**
+		 * Enable/Disable tab on workflow selection
+		 *
+		 * @returns {Void}
+		 */
+		onWorkflowTabTasksWorkflowSelected: function () {
+			this.view.setDisabled(
+				this.cmfg('workflowSelectedWorkflowIsEmpty')
+				|| this.cmfg('workflowSelectedWorkflowGet', CMDBuild.core.constants.Proxy.IS_SUPER_CLASS)
+				|| this.cmfg('workflowSelectedWorkflowGet', CMDBuild.core.constants.Proxy.TABLE_TYPE) == CMDBuild.core.constants.Global.getTableTypeSimpleTable()
+			);
+		},
+
+		/**
 		 * @returns {Void}
 		 *
 		 * @private
@@ -237,10 +189,12 @@
 				var params = {};
 				params[CMDBuild.core.constants.Proxy.ID] = this.selectedTaskGet(CMDBuild.core.constants.Proxy.ID);
 
-				CMDBuild.proxy.workflow.Tasks.remove({
+				CMDBuild.proxy.administration.workflow.tabs.Tasks.remove({
 					params: params,
 					scope: this,
 					success: function (response, options, decodedResponse) {
+						this.selectedTaskReset();
+
 						this.cmfg('onWorkflowTabTasksShow');
 					}
 				});
@@ -298,25 +252,12 @@
 			 */
 			selectedTaskSet: function (parameters) {
 				if (!Ext.Object.isEmpty(parameters)) {
-					parameters[CMDBuild.core.constants.Proxy.MODEL_NAME] = 'CMDBuild.model.workflow.tabs.taskManager.Grid';
+					parameters[CMDBuild.core.constants.Proxy.MODEL_NAME] = 'CMDBuild.model.administration.workflow.tabs.taskManager.Grid';
 					parameters[CMDBuild.core.constants.Proxy.TARGET_VARIABLE_NAME] = 'selectedTask';
 
 					this.propertyManageSet(parameters);
 				}
-			},
-
-		/**
-		 * Enable/Disable tab on workflow selection
-		 *
-		 * @returns {Void}
-		 */
-		workflowTabTasksInit: function () {
-			this.view.setDisabled(
-				this.cmfg('workflowSelectedWorkflowIsEmpty')
-				|| this.cmfg('workflowSelectedWorkflowGet', CMDBuild.core.constants.Proxy.IS_SUPER_CLASS)
-				|| this.cmfg('workflowSelectedWorkflowGet', CMDBuild.core.constants.Proxy.TABLE_TYPE) == CMDBuild.core.constants.Global.getTableTypeSimpleTable()
-			);
-		}
+			}
 	});
 
 })();

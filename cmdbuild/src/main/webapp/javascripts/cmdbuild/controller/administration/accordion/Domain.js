@@ -14,25 +14,6 @@
 		parentDelegate: undefined,
 
 		/**
-		 * @cfg {Array}
-		 */
-		cmfgCatchedFunctions: [
-			'accordionBuildId',
-			'accordionDeselect',
-			'accordionExpand',
-			'accordionFirstSelectableNodeSelect',
-			'accordionFirtsSelectableNodeGet',
-			'accordionIdentifierGet',
-			'accordionNodeByIdExists',
-			'accordionNodeByIdGet',
-			'accordionNodeByIdSelect',
-			'accordionUpdateStore',
-			'onAccordionBeforeSelect',
-			'onAccordionExpand',
-			'onAccordionSelectionChange'
-		],
-
-		/**
 		 * @cfg {String}
 		 */
 		identifier: undefined,
@@ -56,16 +37,20 @@
 		},
 
 		/**
-		 * @param {Number} nodeIdToSelect
+		 * @param {Object} parameters
+		 * @param {Boolean} parameters.loadMask
+		 * @param {Number} parameters.selectionId
 		 *
 		 * @returns {Void}
 		 *
 		 * @override
 		 */
-		accordionUpdateStore: function (nodeIdToSelect) {
-			nodeIdToSelect = Ext.isEmpty(nodeIdToSelect) ? null : nodeIdToSelect;
+		accordionUpdateStore: function (parameters) {
+			parameters = Ext.isObject(parameters) ? parameters : {};
+			parameters.selectionId = Ext.isNumber(parameters.selectionId) ? parameters.selectionId : null;
 
 			CMDBuild.proxy.domain.Domain.readAll({
+				loadMask: Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : false,
 				scope: this,
 				success: function (response, options, decodedResponse) {
 					decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.DOMAINS];
@@ -80,7 +65,7 @@
 					if (!Ext.isEmpty(decodedResponse)) {
 						var nodes = [];
 
-						Ext.Array.forEach(decodedResponse, function (domainObject, i, allDomainObjects) {
+						Ext.Array.each(decodedResponse, function (domainObject, i, allDomainObjects) {
 							var nodeObject = {};
 							nodeObject['cmName'] = this.cmfg('accordionIdentifierGet');
 							nodeObject['iconCls'] = 'cmdb-tree-domain-icon';
@@ -99,8 +84,7 @@
 						}
 					}
 
-					// Alias of this.callParent(arguments), inside proxy function doesn't work
-					this.updateStoreCommonEndpoint(nodeIdToSelect);
+					this.updateStoreCommonEndpoint(parameters); // CallParent alias
 				}
 			});
 

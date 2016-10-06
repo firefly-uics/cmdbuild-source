@@ -57,7 +57,7 @@
 			var params = {};
 			params[CMDBuild.core.constants.Proxy.ACTIVE] = true;
 
-			CMDBuild.proxy.Classes.readAll({
+			CMDBuild.proxy.utility.BulkUpdate.readAllClasses({
 				params: params,
 				loadMask: false,
 				scope: this,
@@ -120,6 +120,19 @@
 			});
 
 			return store;
+		},
+
+		/**
+		 * @param {Object} parameters
+		 *
+		 * @returns {Void}
+		 */
+		readAllClasses: function (parameters) {
+			parameters = Ext.isEmpty(parameters) ? {} : parameters;
+
+			Ext.apply(parameters, { url: CMDBuild.proxy.index.Json.classes.readAll });
+
+			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.CLASS, parameters);
 		},
 
 		/**

@@ -1,6 +1,7 @@
 (function() {
 
 	Ext.require([ // Legacy
+		'CMDBuild.controller.management.common.widgets.workflow.CMWorkflowController',
 		'CMDBuild.controller.management.widget.manageRelation.CMManageRelationController',
 		'CMDBuild.core.configurations.Timeout',
 		'CMDBuild.core.Message'
@@ -35,7 +36,7 @@
 					'.Ping': 'CMDBuild.controller.management.widget.Ping',
 					'.PresetFromCard': CMDBuild.controller.management.common.widgets.CMPresetFromCardController,
 					'.WebService': CMDBuild.controller.management.common.widgets.CMWebServiceController,
-					'.Workflow': CMDBuild.controller.management.common.widgets.CMWorkflowController
+					'.Workflow': CMDBuild.controller.management.common.widgets.workflow.CMWorkflowController
 				},
 				view: view
 			});

@@ -1,5 +1,8 @@
 (function() {
 
+	/**
+	 * @deprecated CMDBuild.view.management.workflow.panel.tree.filter.advanced.filterEditor.FilterEditorWindow
+	 */
 	Ext.define('CMDBuild.view.common.field.filter.advanced.window.Window', {
 		extend: 'CMDBuild.core.window.AbstractModal',
 

@@ -1,5 +1,8 @@
 (function() {
 
+	/**
+	 * @deprecated CMDBuild.model.common.panel.gridAndForm.filter.advanced.Filter
+	 */
 	Ext.define('CMDBuild.model.CMFilterModel', {
 		extend: 'Ext.data.Model',
 

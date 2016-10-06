@@ -1,5 +1,8 @@
 (function() {
 
+	/**
+	 * @deprecated CMDBuild.view.management.workflow.panel.tree.filter.advanced.AdvancedView
+	 */
 	Ext.define('CMDBuild.view.common.field.filter.advanced.Advanced', {
 		extend: 'Ext.form.FieldContainer',
 

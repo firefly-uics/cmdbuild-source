@@ -68,10 +68,11 @@
 		},
 
 		onLookupPropertiesLookupSelected: function() {
-			this.view.setDisabled(this.cmfg('lookupSelectedLookupTypeIsEmpty'));
+			this.view.enable();
+
+			this.form.reset();
 
 			if (!this.cmfg('lookupSelectedLookupTypeIsEmpty')) {
-				this.form.reset();
 				this.form.setDisabledModify(true);
 				this.form.loadRecord(this.cmfg('lookupSelectedLookupTypeGet'));
 			}
@@ -118,7 +119,9 @@
 
 			this.cmfg('mainViewportAccordionControllerUpdateStore', {
 				identifier: this.cmfg('identifierGet'),
-				nodeIdToSelect: decodedResponse[CMDBuild.core.constants.Proxy.LOOKUP][CMDBuild.core.constants.Proxy.ID]
+				params: {
+					selectionId: decodedResponse[CMDBuild.core.constants.Proxy.LOOKUP][CMDBuild.core.constants.Proxy.ID]
+				}
 			});
 
 			this.form.setDisabledModify(true);

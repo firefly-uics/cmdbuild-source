@@ -15,35 +15,40 @@
 		parentDelegate: undefined,
 
 		/**
-		 * @param {Boolean} withEditor
+		 * @param {Object} parameters
 		 *
 		 * @returns {Ext.grid.column.Column or Object}
 		 */
-		buildColumn: function(withEditor) {
-			withEditor = Ext.isBoolean(withEditor) ? withEditor : false;
-
-			return this.buildSubFieldClass().buildColumn(withEditor);
+		buildColumn: function (parameters) {
+			return this.buildSubFieldClass().buildColumn(parameters);
 		},
 
 		/**
 		 * @returns {Object}
 		 */
-		buildEditor: function() {
+		buildEditor: function () {
 			return this.buildSubFieldClass().buildEditor();
 		},
 
 		/**
-		 * @returns {Mixed}
+		 * @returns {Object}
 		 */
-		buildField: function() {
+		buildField: function () {
 			return this.buildSubFieldClass().buildField();
+		},
+
+		/**
+		 * @returns {Object}
+		 */
+		buildFieldReadOnly: function () {
+			return this.buildSubFieldClass().buildFieldReadOnly();
 		},
 
 		/**
 		 * @returns {Mixed}
 		 */
-		buildSubFieldClass: function() {
-			switch (this.cmfg('attributeModelGet', CMDBuild.core.constants.Proxy.EDITOR_TYPE)) {
+		buildSubFieldClass: function () {
+			switch (this.cmfg('fieldManagerAttributeModelGet', CMDBuild.core.constants.Proxy.EDITOR_TYPE)) {
 				case 'HTML':
 					return Ext.create('CMDBuild.core.fieldManager.builders.text.HtmlEditor', { parentDelegate: this });
 

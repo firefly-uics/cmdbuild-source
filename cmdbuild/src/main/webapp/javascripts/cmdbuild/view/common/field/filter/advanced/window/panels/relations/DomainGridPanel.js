@@ -1,5 +1,8 @@
 (function() {
 
+	/**
+	 * @deprecated CMDBuild.view.management.workflow.panel.tree.filter.advanced.filterEditor.relations.DomainGridPanel
+	 */
 	Ext.define('CMDBuild.view.common.field.filter.advanced.window.panels.relations.DomainGridPanel', {
 		extend: 'Ext.grid.Panel',
 
@@ -14,6 +17,7 @@
 		delegate: undefined,
 
 		border: false,
+		cls: 'cmdb-border-bottom',
 		frame: false,
 
 		initComponent: function() {

@@ -11,25 +11,6 @@
 		parentDelegate: undefined,
 
 		/**
-		 * @cfg {Array}
-		 */
-		cmfgCatchedFunctions: [
-			'accordionBuildId',
-			'accordionDeselect',
-			'accordionExpand',
-			'accordionFirstSelectableNodeSelect',
-			'accordionFirtsSelectableNodeGet',
-			'accordionIdentifierGet',
-			'accordionNodeByIdExists',
-			'accordionNodeByIdGet',
-			'accordionNodeByIdSelect',
-			'accordionUpdateStore',
-			'onAccordionBeforeSelect',
-			'onAccordionExpand',
-			'onAccordionSelectionChange'
-		],
-
-		/**
 		 * @cfg {String}
 		 */
 		identifier: undefined,
@@ -56,13 +37,17 @@
 		},
 
 		/**
-		 * @param {Number} nodeIdToSelect
+		 * @param {Object} parameters
+		 * @param {Boolean} parameters.loadMask
+		 * @param {Number} parameters.selectionId
 		 *
 		 * @returns {Void}
 		 *
 		 * @override
 		 */
-		accordionUpdateStore: function (nodeIdToSelect) {
+		accordionUpdateStore: function (parameters) {
+			parameters = Ext.isObject(parameters) ? parameters : {};
+
 			var nodes = [{
 				cmName: this.cmfg('accordionIdentifierGet'),
 				iconCls: 'cmdb-tree-configuration-icon',
@@ -123,6 +108,15 @@
 					{
 						cmName: this.cmfg('accordionIdentifierGet'),
 						iconCls: 'cmdb-tree-configuration-icon',
+						text: CMDBuild.Translation.notifications,
+						description: CMDBuild.Translation.notifications,
+						id: this.cmfg('accordionBuildId', 'notifications'),
+						sectionHierarchy: ['notifications'],
+						leaf: true
+					},
+					{
+						cmName: this.cmfg('accordionIdentifierGet'),
+						iconCls: 'cmdb-tree-configuration-icon',
 						text: CMDBuild.Translation.serverManagement,
 						description: CMDBuild.Translation.serverManagement,
 						id: this.cmfg('accordionBuildId', 'server'),
@@ -134,8 +128,7 @@
 			this.view.getStore().getRootNode().removeAll();
 			this.view.getStore().getRootNode().appendChild(nodes);
 
-			// Alias of this.callParent(arguments), inside proxy function doesn't work
-			this.updateStoreCommonEndpoint(nodeIdToSelect);
+			this.updateStoreCommonEndpoint(parameters); // CallParent alias
 
 			this.callParent(arguments);
 		}

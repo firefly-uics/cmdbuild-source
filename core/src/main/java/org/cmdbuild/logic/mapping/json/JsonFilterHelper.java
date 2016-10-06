@@ -1,7 +1,9 @@
 package org.cmdbuild.logic.mapping.json;
 
+import static org.apache.commons.lang3.ObjectUtils.*;
 import static org.cmdbuild.logic.mapping.json.Constants.Filters.AND_KEY;
 import static org.cmdbuild.logic.mapping.json.Constants.Filters.ATTRIBUTE_KEY;
+import static org.cmdbuild.logic.mapping.json.Constants.Filters.NOT_KEY;
 import static org.cmdbuild.logic.mapping.json.Constants.Filters.OR_KEY;
 import static org.cmdbuild.logic.mapping.json.Constants.Filters.SIMPLE_KEY;
 
@@ -31,8 +33,12 @@ public class JsonFilterHelper {
 
 	private final JSONObject filter;
 
+	/**
+	 * @param filter
+	 *            JSON object representing a filter, can be {@code null}.
+	 */
 	public JsonFilterHelper(final JSONObject filter) {
-		this.filter = filter;
+		this.filter = defaultIfNull(filter, new JSONObject());
 	}
 
 	public JSONObject merge(final FilterElementGetter filterElementGetter) throws JSONException {
@@ -44,7 +50,7 @@ public class JsonFilterHelper {
 		final JSONObject additionalElement = filterElementGetter.getElement();
 		logger.info(marker, "adding condition '{}' to actual filter '{}'", additionalElement, filter);
 
-		final JSONObject alwaysValidJsonFilter = (filter == null) ? new JSONObject() : filter;
+		final JSONObject alwaysValidJsonFilter = filter;
 
 		final JSONObject attribute;
 		if (alwaysValidJsonFilter.has(ATTRIBUTE_KEY)) {
@@ -64,14 +70,15 @@ public class JsonFilterHelper {
 			arrayWithFlowStatus.put(object(key, actual));
 			arrayWithFlowStatus.put(simple(additionalElement));
 			attribute.put(AND_KEY, arrayWithFlowStatus);
-		} else if (attribute.has(SIMPLE_KEY)) {
-			logger.debug(marker, "attribute element has 'simple' sub-element");
-			final JSONObject actual = attribute.getJSONObject(SIMPLE_KEY);
+		} else if (attribute.has(SIMPLE_KEY) || attribute.has(NOT_KEY)) {
+			logger.debug(marker, "attribute element has 'simple' or 'not' sub-elements");
+			final String key = attribute.has(SIMPLE_KEY) ? SIMPLE_KEY : NOT_KEY;
+			final JSONObject actual = attribute.getJSONObject(key);
 			final JSONArray arrayWithFlowStatus = new JSONArray();
-			arrayWithFlowStatus.put(simple(actual));
+			arrayWithFlowStatus.put(object(key, actual));
 			arrayWithFlowStatus.put(simple(additionalElement));
 			attribute.put(AND_KEY, arrayWithFlowStatus);
-			attribute.remove(SIMPLE_KEY);
+			attribute.remove(key);
 		} else {
 			logger.debug(marker, "attribute element is empty");
 			attribute.put(SIMPLE_KEY, additionalElement);

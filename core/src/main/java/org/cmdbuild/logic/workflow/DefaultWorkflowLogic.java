@@ -46,7 +46,6 @@ import org.cmdbuild.workflow.CMProcessClass;
 import org.cmdbuild.workflow.CMProcessInstance;
 import org.cmdbuild.workflow.CMWorkflowException;
 import org.cmdbuild.workflow.QueryableUserWorkflowEngine;
-import org.cmdbuild.workflow.user.ForwardingUserProcessInstance;
 import org.cmdbuild.workflow.user.UserActivityInstance;
 import org.cmdbuild.workflow.user.UserProcessClass;
 import org.cmdbuild.workflow.user.UserProcessInstance;
@@ -60,29 +59,6 @@ import com.google.common.base.Predicate;
 import net.jcip.annotations.NotThreadSafe;
 
 class DefaultWorkflowLogic implements WorkflowLogic {
-
-	private static class UserProcessInstanceWithPositionImpl extends ForwardingUserProcessInstance
-			implements UserProcessInstanceWithPosition {
-
-		private final UserProcessInstance delegate;
-		private final Long position;
-
-		public UserProcessInstanceWithPositionImpl(final UserProcessInstance delegate, final Long position) {
-			this.delegate = delegate;
-			this.position = position;
-		}
-
-		@Override
-		protected UserProcessInstance delegate() {
-			return delegate;
-		}
-
-		@Override
-		public Long getPosition() {
-			return position;
-		}
-
-	}
 
 	private static final UserActivityInstance NULL_ACTIVITY_INSTANCE = null;
 
@@ -133,8 +109,8 @@ class DefaultWorkflowLogic implements WorkflowLogic {
 
 	@Override
 	public PagedElements<UserProcessInstance> query(final CMClass processClass, final QueryOptions queryOptions) {
-		final PagedElements<UserProcessInstance> fetchedProcesses = workflowEngine.query(processClass.getName(),
-				queryOptions);
+		final PagedElements<UserProcessInstance> fetchedProcesses =
+				workflowEngine.query(processClass.getName(), queryOptions);
 		final Iterable<UserProcessInstance> processes = resolve(fetchedProcesses);
 		return new PagedElements<UserProcessInstance>(processes, fetchedProcesses.totalSize());
 	}
@@ -142,8 +118,8 @@ class DefaultWorkflowLogic implements WorkflowLogic {
 	@Override
 	public PagedElements<UserProcessInstanceWithPosition> queryWithPosition(final String className,
 			final QueryOptions queryOptions, final Iterable<Long> cardId) {
-		final PagedElements<UserProcessInstanceWithPosition> fetchedProcesses = workflowEngine
-				.queryWithPosition(className, queryOptions, cardId);
+		final PagedElements<UserProcessInstanceWithPosition> fetchedProcesses =
+				workflowEngine.queryWithPosition(className, queryOptions, cardId);
 		return new PagedElements<UserProcessInstanceWithPosition>( //
 				from(fetchedProcesses) //
 						.transform(new Function<UserProcessInstanceWithPosition, UserProcessInstanceWithPosition>() {
@@ -151,7 +127,7 @@ class DefaultWorkflowLogic implements WorkflowLogic {
 							@Override
 							public UserProcessInstanceWithPosition apply(final UserProcessInstanceWithPosition input) {
 								final UserProcessInstance resolved = from(resolve(asList(input))).get(0);
-								return new UserProcessInstanceWithPositionImpl(resolved, input.getPosition());
+								return new UserProcessInstanceWithPosition(resolved, input.getPosition());
 							}
 
 						}), //

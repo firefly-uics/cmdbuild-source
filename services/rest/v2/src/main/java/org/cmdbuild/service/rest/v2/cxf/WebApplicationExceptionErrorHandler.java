@@ -27,6 +27,12 @@ public class WebApplicationExceptionErrorHandler implements ErrorHandler, Loggin
 	}
 
 	@Override
+	public void attributeNotFound(final String value) {
+		logger.error("attribute not found '{}'", value);
+		notFound(value);
+	}
+
+	@Override
 	public void cardNotFound(final Long value) {
 		logger.error("card not found '{}'", value);
 		notFound(value);
@@ -89,6 +95,12 @@ public class WebApplicationExceptionErrorHandler implements ErrorHandler, Loggin
 	@Override
 	public void fileNotFound(final String value) {
 		logger.error("file not found '{}'", value);
+		notFound(value);
+	}
+
+	@Override
+	public void filterNotFound(final Long value) {
+		logger.error("filter not found '{}'", value);
 		notFound(value);
 	}
 

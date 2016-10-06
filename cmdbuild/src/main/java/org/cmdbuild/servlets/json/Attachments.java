@@ -22,7 +22,7 @@ import org.cmdbuild.dms.MetadataGroupDefinition;
 import org.cmdbuild.dms.StoredDocument;
 import org.cmdbuild.exception.CMDBException;
 import org.cmdbuild.exception.DmsException;
-import org.cmdbuild.servlets.json.management.JsonResponse;
+import org.cmdbuild.services.json.dto.JsonResponse;
 import org.cmdbuild.servlets.json.serializers.Attachments.JsonAttachmentsContext;
 import org.cmdbuild.servlets.json.serializers.Attachments.JsonCategoryDefinition;
 import org.cmdbuild.servlets.json.serializers.Serializer;
@@ -64,7 +64,7 @@ public class Attachments extends JSONBaseWithSpringContext {
 		final List<StoredDocument> attachments = dmsLogic().search(className, cardId);
 		final JSONArray rows = new JSONArray();
 		for (final StoredDocument attachment : attachments) {
-			rows.put(Serializer.serializeAttachment(attachment));
+			rows.put(new Serializer(authLogic()).serializeAttachment(attachment));
 		}
 
 		final JSONObject out = new JSONObject();

@@ -30,6 +30,11 @@
 		],
 
 		/**
+		 * @property {CMDBuild.controller.management.report.Parameters}
+		 */
+		controllerParametersWindow: undefined,
+
+		/**
 		 * All server calls parameters
 		 *
 		 * @property {Object}
@@ -97,6 +102,9 @@
 
 			// Shorthands
 			this.grid = this.view.grid;
+
+			// Build sub-controllers
+			this.controllerParametersWindow = Ext.create('CMDBuild.controller.management.report.Parameters', { parentDelegate: this });
 		},
 
 		/**
@@ -118,20 +126,12 @@
 				CMDBuild.proxy.report.Report.create({
 					params: this.currentReportParametersGet({ callIdentifier: 'create' }),
 					scope: this,
-					failure: function(response, options, decodedResponse) {
-						CMDBuild.core.Message.error(
-							CMDBuild.Translation.error,
-							CMDBuild.Translation.errors.createReportFilure,
-							false
-						);
-					},
 					success: function(response, options, decodedResponse) {
 						if(decodedResponse.filled) { // Report with no parameters
 							this.cmfg('reportCustomShowReport', forceDownload);
 						} else { // Show parameters window
-							Ext.create('CMDBuild.controller.management.report.Parameters', {
-								parentDelegate: this,
-								attributeList: decodedResponse.attribute,
+							this.controllerParametersWindow.cmfg('reportParametersWindowReconfigureAndShow', {
+								attributes: decodedResponse.attribute,
 								forceDownload: forceDownload
 							});
 						}

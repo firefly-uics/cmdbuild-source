@@ -1,6 +1,7 @@
 package org.cmdbuild.dao.function;
 
 import java.util.List;
+import java.util.Map;
 
 import org.cmdbuild.dao.CMTypeObject;
 import org.cmdbuild.dao.entrytype.attributetype.CMAttributeType;
@@ -36,5 +37,7 @@ public interface CMFunction extends CMTypeObject {
 	boolean returnsSet();
 
 	Iterable<Category> getCategories();
+
+	Map<String, Object> getMetadata();
 
 }

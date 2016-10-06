@@ -6,7 +6,7 @@
 <%@ page import="org.cmdbuild.services.SessionVars" %>
 <%@ page import="org.cmdbuild.spring.SpringIntegrationUtils" %>
 <%@ page import="org.cmdbuild.filters.AuthFilter" %>
-<%@ taglib uri="/WEB-INF/tags/translations.tld" prefix="tr" %>
+<%@ taglib uri="/WEB-INF/tags/translations/implicit.tld" prefix="tr" %>
 
 <%
 	final String lang = SpringIntegrationUtils.applicationContext().getBean(SessionVars.class).getLanguage();
@@ -37,7 +37,7 @@
 		<!-- 3. Runtime configuration -->
 		<script type="text/javascript">
 			Ext.ns('CMDBuild.configuration.runtime'); // Runtime configurations
-			CMDBuild.configuration.runtime = Ext.create('CMDBuild.model.configuration.Runtime');
+			CMDBuild.configuration.runtime = Ext.create('CMDBuild.model.core.configuration.runtime.Runtime');
 		</script>
 
 		<!-- 4. Logout script -->

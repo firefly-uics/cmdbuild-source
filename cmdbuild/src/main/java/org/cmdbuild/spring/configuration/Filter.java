@@ -5,6 +5,7 @@ import org.cmdbuild.data.store.dao.StorableConverter;
 import org.cmdbuild.logic.filter.DefaultFilterLogic;
 import org.cmdbuild.logic.filter.DefaultFilterLogic.Converter;
 import org.cmdbuild.logic.filter.FilterLogic;
+import org.cmdbuild.logic.filter.TemporaryFilterLogic;
 import org.cmdbuild.services.localization.LocalizedStorableConverter;
 import org.cmdbuild.services.store.filter.DataViewFilterStore;
 import org.cmdbuild.services.store.filter.FilterConverter;
@@ -13,8 +14,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import com.google.common.base.Supplier;
+
 @Configuration
 public class Filter {
+
+	@Autowired
+	private Authentication authentication;
 
 	@Autowired
 	private Data data;
@@ -29,7 +35,7 @@ public class Filter {
 	private UserStore userStore;
 
 	@Bean
-	public FilterLogic defaultFilterLogic() {
+	public DefaultFilterLogic defaultFilterLogic() {
 		return new DefaultFilterLogic(dataViewFilterStore(), defaultFilterLogicConverter(), userStore);
 	}
 
@@ -46,7 +52,7 @@ public class Filter {
 
 	@Bean
 	protected StorableConverter<FilterStore.Filter> baseStorableConverter() {
-		return new FilterConverter(data.systemDataView());
+		return new FilterConverter(data.systemDataView(), userStore);
 	}
 
 	@Bean
@@ -57,6 +63,25 @@ public class Filter {
 	@Bean
 	protected com.google.common.base.Converter<FilterLogic.Filter, FilterStore.Filter> filterConverter() {
 		return new DefaultFilterLogic.FilterConverter(userStore);
+	}
+
+	@Bean
+	public TemporaryFilterLogic temporaryFilterLogic() {
+		return new TemporaryFilterLogic(authentication.standardSessionLogic(), defaultIdSupplier());
+	}
+
+	@Bean
+	protected Supplier<Long> defaultIdSupplier() {
+		return new Supplier<Long>() {
+
+			private long value = 0;
+
+			@Override
+			public Long get() {
+				return ++value;
+			}
+
+		};
 	}
 
 }

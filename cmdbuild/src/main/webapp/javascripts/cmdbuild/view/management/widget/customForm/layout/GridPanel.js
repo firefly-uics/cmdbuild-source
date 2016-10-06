@@ -36,6 +36,7 @@
 		importButton: undefined,
 
 		border: false,
+		forceFit: true,
 		frame: false,
 
 		/**

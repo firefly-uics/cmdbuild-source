@@ -50,6 +50,7 @@ import org.cmdbuild.logic.email.EmailLogic;
 import org.cmdbuild.logic.email.EmailQueueLogic;
 import org.cmdbuild.logic.email.EmailTemplateLogic;
 import org.cmdbuild.logic.files.FileLogic;
+import org.cmdbuild.logic.filter.DefaultFilterLogic;
 import org.cmdbuild.logic.filter.FilterLogic;
 import org.cmdbuild.logic.menu.MenuLogic;
 import org.cmdbuild.logic.privileges.SecurityLogic;
@@ -227,7 +228,7 @@ public class JSONBaseWithSpringContext extends JSONBase {
 	}
 
 	protected FilterLogic filterLogic() {
-		return applicationContext().getBean(FilterLogic.class);
+		return applicationContext().getBean(DefaultFilterLogic.class);
 	}
 
 	protected GISLogic gisLogic() {

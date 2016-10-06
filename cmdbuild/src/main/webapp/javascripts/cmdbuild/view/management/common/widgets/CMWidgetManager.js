@@ -25,7 +25,7 @@
 		builders: {},
 
 		/**
-		 * @param {CMDBuild.view.management.classes.CMCardPanel or CMDBuild.view.management.workflow.CMActivityPanel} mainView
+		 * @param {CMDBuild.view.management.classes.CMCardPanel or CMDBuild.view.management.workflow.panel.form.tabs.activity.ActivityView} mainView
 		 * @param {Mixed} tabbedWidgetDelegate
 		 */
 		constructor: function(mainView, tabbedWidgetDelegate) {
@@ -235,7 +235,7 @@
 					 * @param {Ext.data.Model or CMDBuild.model.CMActivityInstance} card or activity
 					 */
 					'.Workflow': function(widget, card) {
-						var w = new CMDBuild.view.management.common.widgets.CMWorkflow();
+						var w = Ext.create('CMDBuild.view.management.common.widgets.workflow.CMWorkflow');
 
 						me.widgetsContainer.addWidgt(w);
 

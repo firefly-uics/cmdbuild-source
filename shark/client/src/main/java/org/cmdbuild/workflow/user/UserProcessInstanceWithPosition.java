@@ -1,7 +1,22 @@
 package org.cmdbuild.workflow.user;
 
-public interface UserProcessInstanceWithPosition extends UserProcessInstance {
+public class UserProcessInstanceWithPosition extends ForwardingUserProcessInstance {
 
-	Long getPosition();
+	private final UserProcessInstance delegate;
+	private final Long position;
+
+	public UserProcessInstanceWithPosition(final UserProcessInstance delegate, final Long position) {
+		this.delegate = delegate;
+		this.position = position;
+	}
+
+	@Override
+	protected UserProcessInstance delegate() {
+		return delegate;
+	}
+
+	public Long getPosition() {
+		return position;
+	}
 
 }

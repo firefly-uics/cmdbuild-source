@@ -13,6 +13,7 @@ import org.cmdbuild.config.EmailProperties;
 import org.cmdbuild.config.GisConfiguration;
 import org.cmdbuild.config.GisProperties;
 import org.cmdbuild.config.GraphProperties;
+import org.cmdbuild.config.NotificationProperties;
 import org.cmdbuild.config.WorkflowConfiguration;
 import org.cmdbuild.config.WorkflowProperties;
 import org.cmdbuild.services.soap.security.SoapConfiguration;
@@ -56,6 +57,11 @@ public class Properties {
 	@Bean
 	public GraphProperties graphProperties() {
 		return GraphProperties.getInstance();
+	}
+
+	@Bean
+	public NotificationProperties notificationProperties() {
+		return NotificationProperties.getInstance();
 	}
 
 	@Bean

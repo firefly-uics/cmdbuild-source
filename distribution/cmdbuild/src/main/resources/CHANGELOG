@@ -1,4 +1,102 @@
-CMDBuild 2.4.1 (released YYYY/MM/DD)
+CMDBuild 2.4.2 (released YYYY/MM/DD)
+
+
+NEW FEATURES
+
+ * "Show language choice" configuration not readed at login page
+
+ * Advanced filters management from REST web services
+
+ * Notification of errors by email
+
+ * Performance improvements to queries
+
+ * Preselection of workflow activities
+
+ * Simple filter support for processes routes
+
+ * New GetCardPosition management
+
+ * Client performance improvements
+
+ * Metadata for functions through REST interface
+
+ * Added Greek translation
+
+
+FIXES
+
+ * Software version string visually displayed in half on login panel
+
+ * Selected tab reset on class change in administration Classes module
+
+ * Classes geographical attributes tab no zoom levels validation
+
+ * Selected tab reset on accordion selection change in administration modules
+
+ * UI not loading on Tomcat 8.0.36 (latest)
+
+ * Double email delete server call on create/edit window close
+
+ * CreateModifyCard widget with null Reference cannot be configured
+
+ * History tab rows doesn't display relation attributes
+
+ * Error when trying to get cards from a superclass when there are row privileges defined on a subclass
+
+ * Wrong selection when accessing closed processes from URL
+
+ * Task manager UI behavior errors
+
+ * "Privileged" status for user invalidates "impersonate" operation of WorkflowAPI
+
+ * Tab details errors with simple class ForeignKey as source
+
+ * ForeignKey fields store URL errors
+
+ * Widget buttons duplication while using direct routes on process instance with Firefox
+
+ * Error while saving a search filter without selecting a default group
+
+ * Wrong privileges management for reports from REST web services
+
+ * When invoking a function and the function is not found, the call returns an empty result and no error
+
+ * Detail tab ForeignKeys presentation problems
+
+ * Authorization header key not refreshed on subsequent calls
+
+ * Import CSV should not fail if some non-existing attributes are specified
+
+ * When deleting a class/process through JSON-RPC interface the response is always a success even if the class/process is not found
+
+ * Empty reference columns in widget CustomForm grid
+
+ * When editing the definition of a group, the type shows "group" wrongly
+
+ * Missing relations when some domains are disabled on a hierarchy of classes
+
+ * Default group not correctly selected in administration interface combobox field
+
+ * Widget calendar widget style problems
+
+ * E-mails with a delay of one month are sent immediatly
+
+ * Process class treated as standard class if superclass has no privileges
+
+ * Default filter for class/process cannot be removed
+
+ * Lookup field too narrow in report attribute window
+
+ * CustomForm widget minor fixes
+
+ * Domains not correctly displayed on advanced filter relation tab grid
+
+
+
+
+
+CMDBuild 2.4.1 (released 2016/06/16)
 
 
 NEW FEATURES
@@ -153,6 +251,14 @@ FIXES
  * Unlock cards or processes on accordion change
 
  * Wrong sort attribute in getcardlist server call with starting class
+
+ * A user logged in as a limited administrator can change the passwords of other users
+
+ * "TranslationUUID" for "LookUp" table always valid
+
+ * The wizard connector synchronizes entries even if no values has been changed when a timestamp column is included within mapping
+
+ * The Data Definition Log reports a wrong statement when creating a class with no parent
 
 
 

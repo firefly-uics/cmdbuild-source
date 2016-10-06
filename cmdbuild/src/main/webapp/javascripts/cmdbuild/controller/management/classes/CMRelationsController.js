@@ -135,7 +135,9 @@
 					currentClass = null;
 
 				this.currentClass = currentClass;
-				this.view.addRelationButton.setDomainsForEntryType(currentClass);
+
+				if (!Ext.isEmpty(currentClass) && Ext.isFunction(currentClass.get))
+					this.view.addRelationButton.onEntryTypeSelect(currentClass.get(CMDBuild.core.constants.Proxy.NAME));
 			}
 		},
 
@@ -232,8 +234,7 @@
 			if (model.getDepth() > 1)
 				CMDBuild.global.controller.MainViewport.cmfg('mainViewportCardSelect', {
 					Id: model.get('dst_id'),
-					IdClass: model.get('dst_cid'),
-					flowStatus: 'all'
+					IdClass: model.get('dst_cid')
 				});
 		},
 
@@ -564,7 +565,7 @@
 						entryType = null;
 
 					this.lastEntryType = entryType;
-					this.view.addRelationButton.setDomainsForEntryType(entryType);
+					this.view.addRelationButton.onEntryTypeSelect(entryType.get(CMDBuild.core.constants.Proxy.NAME));
 				}
 			}
 		},

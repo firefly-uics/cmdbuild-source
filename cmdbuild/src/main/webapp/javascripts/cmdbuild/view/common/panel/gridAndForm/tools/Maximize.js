@@ -12,6 +12,8 @@
 		 * @param {Ext.panel.Header} owner
 		 * @param {Ext.panel.Tool} tool
 		 *
+		 * @returns {Void}
+		 *
 		 * @override
 		 */
 		handler: function (event, target, owner, tool) {

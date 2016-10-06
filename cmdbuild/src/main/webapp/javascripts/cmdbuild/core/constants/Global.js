@@ -17,6 +17,7 @@
 			tableTypeClass: 'class',
 			tableTypeProcessClass: 'processclass',
 			tableTypeSimpleTable: 'simpletable',
+			tableTypeStandardTable: 'standard',
 			titleSeparator: ' - '
 		},
 

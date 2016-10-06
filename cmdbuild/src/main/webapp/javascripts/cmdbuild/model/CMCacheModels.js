@@ -193,7 +193,6 @@
 			{name: "nameClass2", type: "string"},
 			{name: "idClass1", type: "string"},
 			{name: "idClass2", type: "string"},
-			{name: "classType", type: "string"},
 			{name: "name", type: "string"},
 			{name: "createPrivileges", type: "boolean"},
 			{name: "writePrivileges", type: "boolean"},

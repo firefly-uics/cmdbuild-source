@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 
-<%@ taglib uri="/WEB-INF/tags/translations.tld" prefix="tr" %>
+<%@ taglib uri="/WEB-INF/tags/translations/implicit.tld" prefix="tr" %>
 
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%@ page import="org.cmdbuild.services.SessionVars" %>
@@ -38,7 +38,7 @@
 		<!-- 3. Runtime configuration -->
 		<script type="text/javascript">
 			Ext.ns('CMDBuild.configuration.runtime');
-			CMDBuild.configuration.runtime = Ext.create('CMDBuild.model.configuration.Configure');
+			CMDBuild.configuration.runtime = Ext.create('CMDBuild.model.core.configuration.runtime.Configure');
 			CMDBuild.configuration.runtime.set(CMDBuild.core.constants.Proxy.JDBC_DRIVER_VERSION, '<%= StringEscapeUtils.escapeEcmaScript(jdbcDriverVersion) %>');
 			CMDBuild.configuration.runtime.set(CMDBuild.core.constants.Proxy.LANGUAGE, '<%= StringEscapeUtils.escapeEcmaScript(lang) %>');
 		</script>

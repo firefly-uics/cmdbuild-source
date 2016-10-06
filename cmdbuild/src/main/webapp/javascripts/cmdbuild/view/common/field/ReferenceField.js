@@ -48,15 +48,15 @@
 			 *
 			 * @param {Object} attribute
 			 * @param {CMDBuild.Management.TemplateResolver} templateResolver
+			 * @param {Object} parentDelegate
 			 *
 			 * @return {CMDBuild.Management.ReferenceField.Field} field
-			 *
-			 * TODO: refactor all field building implementations
 			 */
-			buildEditor: function(attribute, templateResolver) {
+			buildEditor: function(attribute, templateResolver, parentDelegate) {
 				templateResolver = templateResolver || null;
 
 				return Ext.create("CMDBuild.Management.ReferenceField.Field", {
+					parentDelegate: parentDelegate,
 					attribute: attribute,
 					templateResolver: templateResolver
 				});
@@ -111,6 +111,11 @@
 		mixins: {
 			observable: 'Ext.util.Observable'
 		},
+
+		/**
+		 * @cfg {Object}
+		 */
+		parentDelegate: undefined,
 
 		attribute: undefined,
 
@@ -229,16 +234,23 @@
 
 				CMDBuild.proxy.Card.read({
 					params: params,
-					loadMask: false,
 					scope: this,
 					success: function (response, options, decodedResponse) {
-						if (!Ext.isEmpty(this.getStore()))
+						if (
+							!Ext.isEmpty(this.getStore())
+							&& this.getStore().find(this.valueField, value) == -1
+						) {
 							this.getStore().add({
 								Id: value,
 								Description: decodedResponse.card['Description']
 							});
+						}
 
 						this.setValue(value);
+
+						// Fixes renderer problems to avoid blank cell content in cell editors
+						if (!Ext.isEmpty(this.parentDelegate) && !Ext.isEmpty(this.parentDelegate.view) && this.parentDelegate.view.getView().isVisible())
+							this.parentDelegate.view.getView().refresh();
 					}
 				});
 

@@ -36,10 +36,10 @@
 					{ value: 172800000, description: CMDBuild.Translation.delayLabels.days2 },
 					{ value: 345600000, description: CMDBuild.Translation.delayLabels.days4 },
 					{ value: null, description: null }, // Separator
-					{ value: 604800017, description: CMDBuild.Translation.delayLabels.week1 },
-					{ value: 1209600033, description: CMDBuild.Translation.delayLabels.weeks2 },
+					{ value: 604800000, description: CMDBuild.Translation.delayLabels.week1 },
+					{ value: 1209600000, description: CMDBuild.Translation.delayLabels.weeks2 },
 					{ value: null, description: null }, // Separator
-					{ value: 2629800000, description: CMDBuild.Translation.delayLabels.month1 }
+					{ value: 2592000000, description: CMDBuild.Translation.delayLabels.month1 }
 				]
 			});
 		},
