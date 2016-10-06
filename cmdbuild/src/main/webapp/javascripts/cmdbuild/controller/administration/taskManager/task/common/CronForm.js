@@ -213,6 +213,7 @@
 				if (
 					!Ext.isEmpty(this.baseField)
 					&& !Ext.isEmpty(this.baseField.baseCombo)
+					&& !Ext.isEmpty(this.baseField.baseCombo.getStore())
 				) {
 					var index = this.baseField.baseCombo.getStore().find(CMDBuild.core.constants.Proxy.VALUE, value);
 

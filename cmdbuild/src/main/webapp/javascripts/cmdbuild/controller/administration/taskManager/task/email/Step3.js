@@ -69,7 +69,10 @@
 		 * Read CMDBuild's alfresco configuration from server and set Combobox store
 		 */
 		onCheckedAttachmentsFieldset: function () {
-			if (this.view.attachmentsCombo.getStore().getCount() == 0) {
+			if (
+				!Ext.isEmpty(this.view.attachmentsCombo.getStore())
+				&& this.view.attachmentsCombo.getStore().getCount() == 0
+			) {
 				var params = {};
 				params[CMDBuild.core.constants.Proxy.ACTIVE] = true;
 				params[CMDBuild.core.constants.Proxy.SHORT] = true;
