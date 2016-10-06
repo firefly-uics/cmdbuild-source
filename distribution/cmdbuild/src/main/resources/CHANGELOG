@@ -116,6 +116,8 @@ FIXES
 
  * Modify and Change password buttons are not exclusive in enable fieldset functionalities
 
+ * Modify task button not disabled if task is running
+
 
 
 

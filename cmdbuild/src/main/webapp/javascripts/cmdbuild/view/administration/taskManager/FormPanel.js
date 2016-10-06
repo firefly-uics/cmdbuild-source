@@ -15,6 +15,11 @@
 		 */
 		delegate: undefined,
 
+		/**
+		 * @property {CMDBuild.core.buttons.iconized.Modify}
+		 */
+		modifyButton: undefined,
+
 		activeItem: 0,
 		bodyCls: 'cmdb-gray-panel',
 		border: false,
@@ -40,7 +45,7 @@
 						itemId: CMDBuild.core.constants.Proxy.TOOLBAR_TOP,
 
 						items: [
-							Ext.create('CMDBuild.core.buttons.iconized.Modify', {
+							this.modifyButton = Ext.create('CMDBuild.core.buttons.iconized.Modify', {
 								text: CMDBuild.Translation.modifyTask,
 								scope: this,
 
