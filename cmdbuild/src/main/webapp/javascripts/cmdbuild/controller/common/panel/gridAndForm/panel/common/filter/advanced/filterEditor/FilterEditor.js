@@ -159,11 +159,11 @@
 				}
 			});
 
-			this.controllerAttributes.cmfg('onWorkflowTreeFilterAdvancedFilterEditorAttributesInit', {
+			this.controllerAttributes.cmfg('onPanelGridAndFormFilterAdvancedFilterEditorAttributesInit', {
 				callback: requestBarrier.getCallback('panelGridAndFormFilterAdvancedFilterEditorBarrier')
 			});
 
-			this.controllerRelations.cmfg('onWorkflowTreeFilterAdvancedFilterEditorRelationsInit', {
+			this.controllerRelations.cmfg('onPanelGridAndFormFilterAdvancedFilterEditorRelationsInit', {
 				callback: requestBarrier.getCallback('panelGridAndFormFilterAdvancedFilterEditorBarrier')
 			});
 
