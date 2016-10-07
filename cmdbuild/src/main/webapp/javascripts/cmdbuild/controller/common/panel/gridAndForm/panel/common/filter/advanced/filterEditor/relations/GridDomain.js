@@ -88,9 +88,9 @@
 				// END: Error handling
 
 				var params = {};
-				params[CMDBuild.core.constants.Proxy.ACTIVE] = true;
+				params[CMDBuild.core.constants.Proxy.ACTIVE] = false;
 
-				CMDBuild.proxy.common.panel.gridAndForm.filter.advanced.filterEditor.Relations.readAllEntryTypes({ // FIXME: waiting for refactor (server endpoint)
+				CMDBuild.proxy.common.panel.gridAndForm.filter.advanced.filterEditor.Relations.readAllEntryTypes({
 					params: params,
 					scope: this,
 					success: function (response, options, decodedResponse) {
@@ -261,7 +261,7 @@
 													})
 												);
 										}, this);
-
+_debug('records', records);
 									if (!Ext.isEmpty(records))
 										this.view.getStore().add(CMDBuild.core.Utils.objectArraySort(records, CMDBuild.core.constants.Proxy.DOMAIN_DESCRIPTION)); // Ascending items sort
 								}
