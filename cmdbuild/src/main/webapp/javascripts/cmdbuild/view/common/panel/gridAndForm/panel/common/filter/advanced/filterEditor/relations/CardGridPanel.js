@@ -118,39 +118,44 @@
 		updateStoreForClassId: function(classId, o) {
 			var me = this;
 
-			this.loadAttributes(
-				classId,
-				function(attributes) {
-					function callCbOrLoadFirstPage(me) {
-						if (o && o.cb) {
-							o.cb.call(o.scope || me);
+			if (!Ext.isEmpty(classId)) {
+				this.loadAttributes(
+					classId,
+					function(attributes) {
+						function callCbOrLoadFirstPage(me) {
+							if (o && o.cb) {
+								o.cb.call(o.scope || me);
+							} else {
+								me.store.loadPage(1);
+							}
+						}
+
+						if (me.currentClassId == classId) {
+							callCbOrLoadFirstPage(me);
 						} else {
-							me.store.loadPage(1);
+							me.currentClassId = classId;
+
+							if (me.gridSearchField) {
+								me.gridSearchField.setValue(""); // clear only the field without reload the grid
+							}
+
+	//						if (me.cmAdvancedFilter)
+	//							me.controllerAdvancedFilterButtons.cmfg('entryTypeSet', { value: _CMCache.getEntryTypeById(classId).getData() });
+
+							if (me.printGridMenu) {
+								me.printGridMenu.setDisabled(!classId);
+							}
+
+							me.setColumnsForClass(attributes);
+							me.setGridSorting(attributes);
+							callCbOrLoadFirstPage(me);
 						}
 					}
-
-					if (me.currentClassId == classId) {
-						callCbOrLoadFirstPage(me);
-					} else {
-						me.currentClassId = classId;
-
-						if (me.gridSearchField) {
-							me.gridSearchField.setValue(""); // clear only the field without reload the grid
-						}
-
-//						if (me.cmAdvancedFilter)
-//							me.controllerAdvancedFilterButtons.cmfg('entryTypeSet', { value: _CMCache.getEntryTypeById(classId).getData() });
-
-						if (me.printGridMenu) {
-							me.printGridMenu.setDisabled(!classId);
-						}
-
-						me.setColumnsForClass(attributes);
-						me.setGridSorting(attributes);
-						callCbOrLoadFirstPage(me);
-					}
-				}
-			);
+				);
+			} else {
+				me.store.removeAll();
+				me.setColumnsForClass([]);
+			}
 		},
 
 		// protected
