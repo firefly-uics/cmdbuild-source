@@ -301,7 +301,7 @@ public class DefaultObserverFactory implements ObserverFactory {
 					}
 
 				});
-				final Optional<EmailAccount> account = emailAccountFacade.firstOf(asList(emailTemplateSupplier.get()
+				final Optional<EmailAccount> account = emailAccountFacade.firstOfOrDefault(asList(emailTemplateSupplier.get()
 						.getAccount(), task.getEmailAccount()));
 				final Supplier<EmailAccount> emailAccountSupplier = account.isPresent() ? ofInstance(account.get())
 						: null;
