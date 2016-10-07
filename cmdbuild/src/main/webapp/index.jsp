@@ -1,17 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 
-<%@page import="org.cmdbuild.logic.auth.StandardSessionLogic"%>
-<%@page import="org.cmdbuild.logic.auth.SessionLogic"%>
-<%@ taglib uri="/WEB-INF/tags/translations/implicit.tld" prefix="tr" %>
-
-<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
-<%@ page import="org.cmdbuild.auth.UserStore" %>
 <%@ page import="org.apache.commons.lang3.StringEscapeUtils" %>
 <%@ page import="org.cmdbuild.auth.user.OperationUser" %>
+<%@ page import="org.cmdbuild.auth.UserStore" %>
+<%@ page import="org.cmdbuild.logic.auth.SessionLogic" %>
+<%@ page import="org.cmdbuild.logic.auth.StandardSessionLogic" %>
 <%@ page import="org.cmdbuild.services.SessionVars" %>
 <%@ page import="org.cmdbuild.servlets.json.Session" %>
 <%@ page import="org.cmdbuild.spring.SpringIntegrationUtils" %>
+
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
+
+<%@ taglib uri="/WEB-INF/tags/translations/implicit.tld" prefix="tr" %>
 
 <%
 	final SessionLogic sessionLogic = SpringIntegrationUtils.applicationContext().getBean(StandardSessionLogic.class);

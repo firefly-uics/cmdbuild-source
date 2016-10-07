@@ -298,11 +298,6 @@ em { font-style: oblique !important; }
 		text-decoration: underline;
 	}
 
-/*trigger fields*/
-	.trigger-edit { background-image: url("../images/form/trigger-edit.png") !important; }
-
-	.trigger-add { background-image: url("../images/form/trigger-add.png") !important; }
-
 /* Custom rule to fix collapsible tab panel tool */
 	.x-tab-panel-header .x-tool { display: none; }
 
@@ -430,12 +425,6 @@ em { font-style: oblique !important; }
 	}
 
 	.cmcenter { text-align: center; }
-
-	.empty_panel {
-		background: url("../images/emptyPageBg.png");
-		background-position: bottom right;
-		background-repeat: no-repeat;
-	}
 
 .cm-bold { font-weight: bold; }
 

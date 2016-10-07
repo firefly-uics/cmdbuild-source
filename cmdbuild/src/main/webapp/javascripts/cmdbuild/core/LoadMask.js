@@ -35,20 +35,17 @@
 			return CMDBuild.core.LoadMask.instance;
 		},
 
+		/**
+		 * @returns {Void}
+		 */
 		hide: function () {
 			CMDBuild.core.LoadMask.build().hide();
-
-			if (
-				!Ext.isEmpty(CMDBuild.core.Splash)
-				&& Ext.isFunction(CMDBuild.core.Splash.build)
-				&& !CMDBuild.core.Splash.build().isHidden()
-			) {
-				CMDBuild.core.Splash.build().hide();
-			}
 		},
 
 		/**
 		 * @param {String} message
+		 *
+		 * @returns {Void}
 		 */
 		show: function (message) {
 			if (
