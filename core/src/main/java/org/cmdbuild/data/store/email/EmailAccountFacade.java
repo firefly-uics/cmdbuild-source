@@ -8,8 +8,6 @@ public interface EmailAccountFacade extends Store<EmailAccount> {
 
 	Optional<EmailAccount> defaultAccount();
 
-	Optional<EmailAccount> firstOf(Iterable<String> names);
-
 	Optional<EmailAccount> firstOfOrDefault(Iterable<String> names);
 
 	Optional<EmailAccount> fromId(Long id);

@@ -178,7 +178,7 @@ public class ReadEmailTaskJobFactory extends AbstractJobFactory<ReadEmailTask> {
 
 	private Optional<EmailAccount> emailAccountFor(final String name) {
 		logger.debug(marker, "getting email account for name '{}'", name);
-		return emailAccountFacade.firstOf(asList(name));
+		return emailAccountFacade.firstOfOrDefault(asList(name));
 	}
 
 	private Action sendNotification(final ReadEmailTask task) {
@@ -218,7 +218,7 @@ public class ReadEmailTaskJobFactory extends AbstractJobFactory<ReadEmailTask> {
 							}
 
 						});
-						final Optional<EmailAccount> account = emailAccountFacade.firstOf(asList(emailTemplateSupplier
+						final Optional<EmailAccount> account = emailAccountFacade.firstOfOrDefault(asList(emailTemplateSupplier
 								.get().getAccount(), task.getEmailAccount()));
 						final Supplier<EmailAccount> emailAccountSupplier = account.isPresent() ? ofInstance(account
 								.get()) : null;
