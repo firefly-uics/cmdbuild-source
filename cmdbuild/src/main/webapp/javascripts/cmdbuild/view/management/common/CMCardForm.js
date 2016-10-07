@@ -415,7 +415,8 @@
 			});
 
 			this.mon(this.printCardMenu, "click", function(format) {
-				me.fireEvent(me.CMEVENTS.printCardButtonClick, format);
+				if (Ext.isString(format))
+					me.fireEvent(me.CMEVENTS.printCardButtonClick, format);
 			});
 
 			this.cmTBar = [

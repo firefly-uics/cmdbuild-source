@@ -54,7 +54,7 @@
 
 			this.callParent(arguments);
 
-			// @legacy
+			/** @legacy */
 			switch (this.mode) {
 				case 'legacy':
 					return this.buildLegacyMenu();
