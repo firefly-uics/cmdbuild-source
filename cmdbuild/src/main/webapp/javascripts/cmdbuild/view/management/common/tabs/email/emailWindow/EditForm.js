@@ -78,7 +78,6 @@
 					{
 						xtype: 'textfield',
 						name: CMDBuild.core.constants.Proxy.TO,
-						allowBlank: false,
 						fieldLabel: CMDBuild.Translation.to,
 						vtype: 'multiemail',
 
