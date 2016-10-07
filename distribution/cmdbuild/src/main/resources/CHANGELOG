@@ -29,6 +29,8 @@ NEW FEATURES
 
  * Information about the filter of the nodes of domain trees through REST API
 
+ * To field no more required in create/edit email tab window
+
 
 FIXES
 
