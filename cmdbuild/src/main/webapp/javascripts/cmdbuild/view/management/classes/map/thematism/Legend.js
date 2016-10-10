@@ -35,6 +35,7 @@
 			this.createControls();
 			Ext.apply(this, {
 				items : [ this.grid ],
+				hidden: true,
 			});
 			this.callParent(arguments);
 		},
