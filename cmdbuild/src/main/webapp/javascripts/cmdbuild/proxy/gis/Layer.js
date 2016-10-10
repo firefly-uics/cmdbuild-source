@@ -45,6 +45,32 @@
 
 			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.GIS, parameters);
 		},
+
+		/**
+		 * @param {Object} parameters
+		 *
+		 * @returns {Void}
+		 */
+		setOrder: function (parameters) {
+			parameters = Ext.isEmpty(parameters) ? {} : parameters;
+
+			Ext.apply(parameters, { url: CMDBuild.proxy.index.Json.gis.layer.setOrder });
+
+			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.GIS, parameters, true);
+		},
+
+		/**
+		 * @param {Object} parameters
+		 *
+		 * @returns {Void}
+		 */
+		setVisibility: function (parameters) {
+			parameters = Ext.isEmpty(parameters) ? {} : parameters;
+
+			Ext.apply(parameters, { url: CMDBuild.proxy.index.Json.gis.layer.setVisibility });
+
+			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.GIS, parameters, true);
+		}
 	});
 
 })();

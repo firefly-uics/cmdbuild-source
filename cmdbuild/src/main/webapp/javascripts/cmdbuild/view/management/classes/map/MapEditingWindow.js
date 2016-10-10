@@ -132,7 +132,7 @@
 
 				show : function() {
 					if (this.geoAttrMenuButton.menu.items.length > 0) {
-
+						this.interactionDocument.setEditing(true);
 						this.callParent(arguments);
 
 						var firstItemOfMenu = this.geoAttrMenuButton.menu.items.first();
@@ -142,6 +142,7 @@
 					}
 				},
 				closeAllEditings : function() {
+					this.interactionDocument.setEditing(false);
 					var card = this.interactionDocument.getCurrentCard();
 					var currentClassName = card.className;
 					for ( var key in this.layers) {
