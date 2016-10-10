@@ -72,8 +72,6 @@
 		constructor: function (configurationObject) {
 			this.callParent(arguments);
 
-			this.view.enable(); // Enable email tab
-
 			// Shorthands
 			this.tabDelegate = this.view.delegate;
 

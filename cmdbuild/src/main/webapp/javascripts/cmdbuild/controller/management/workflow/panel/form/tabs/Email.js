@@ -63,11 +63,14 @@
 			this.callParent(arguments);
 
 			// Reset selected entity, regenerate email and load store
-			this.cmfg('tabEmailSelectedEntityInit', {
+			this.cmfg('tabEmailSelectedEntitySet', {
+				selectedEntity: Ext.create('CMDBuild.model.CMProcessInstance', this.cmfg('workflowSelectedWorkflowGet', 'rawData')),
 				scope: this,
 				callbackFunction: function (options, success, response) {
 					this.cmfg('tabEmailRegenerateAllEmailsSet', true);
+
 					this.forceRegenerationSet(true);
+
 					this.cmfg('onTabEmailPanelShow');
 				}
 			});
