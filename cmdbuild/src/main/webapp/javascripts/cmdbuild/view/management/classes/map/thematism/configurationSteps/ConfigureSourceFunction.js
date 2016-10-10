@@ -6,6 +6,8 @@
 		strategiesStore : undefined,
 		comboStrategies : undefined,
 
+		attributes : undefined,
+
 		/**
 		 * @returns {Void}
 		 * 
@@ -44,6 +46,7 @@
 			}, this);
 		},
 		loadStore : function(strategies, store) {
+			this.attributes = {};
 			for ( var key in strategies) {
 				var strategy = strategies[key];
 				var strategyTypes = strategy.metadata[CMDBuild.gis.constants.metadata.TAGS];
@@ -63,6 +66,7 @@
 					"description" : strategy.description,
 					"value" : strategy.description
 				});
+				this.attributes[strategy.description] = strategy.attributes;
 			}
 
 		}

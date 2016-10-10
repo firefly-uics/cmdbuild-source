@@ -39,12 +39,20 @@
 		},
 		chargeStore : function(cardsStore, cardsArray, callback, callbackScope) {
 			var layoutConfiguration = this.getLayoutConfiguration();
+			var functionConfiguration = this.getFunctionConfiguration();
 			var thematicDocument = this.interactionDocument.getThematicDocument();
 			var attributeName = this.parentWindow.getCurrentAttribute();
 			var currentStrategy = this.parentWindow.getCurrentStrategy();
-			var field = this.comboFields.value;
-			var analysis = this.parentWindow.getCurrentAnalysisType();
-			var groups = thematicDocument.groupData(field, currentStrategy, analysis, this.parentWindow.getCurrentSourceType(),
+			var field = {
+					value :this.comboFields.value,
+					type : functionConfiguration.attributeType
+			};
+			var analysis = {
+					type : this.parentWindow.getCurrentAnalysisType(),
+					segments : 10, // NB.!!
+					strategy : currentStrategy
+			};
+			var groups = thematicDocument.groupData(field, analysis, this.parentWindow.getCurrentSourceType(),
 					cardsArray, attributeName);
 			var index = 0;
 			for ( var key in groups) {
@@ -80,6 +88,12 @@
 				listeners : {
 					scope : this,
 					change : function(field, newValue, oldValue) {
+						var currentStrategy = this.parentWindow.getCurrentStrategy();
+						var functionConfiguration = this.getFunctionConfiguration();
+						if (this.parentWindow.getCurrentSourceType() === CMDBuild.gis.constants.layers.FUNCTION_SOURCE) {
+							var attributeType = getAttributeType(newValue, currentStrategy.attributes);
+							functionConfiguration.attributeType = attributeType;
+						}
 						this.refreshResults(this.grid, function() {
 						}, this);
 					}
@@ -126,6 +140,9 @@
 		},
 		getLayoutConfiguration : function() {
 			return this.parentWindow.getLayoutConfiguration();
+		},
+		getFunctionConfiguration : function() {
+			return this.parentWindow.getFunctionConfiguration();
 		},
 		init : function() {
 			var layoutConfiguration = this.getLayoutConfiguration();
@@ -214,4 +231,13 @@
 			}
 		}
 	});
+	function getAttributeType(key, attributes) {
+		for (var i = 0; i < attributes.length; i++) {
+			var attribute = attributes[i];
+			if (attribute._id === key) {
+				return attribute.type;
+			}
+		}
+		return "STRING";
+	}
 })();

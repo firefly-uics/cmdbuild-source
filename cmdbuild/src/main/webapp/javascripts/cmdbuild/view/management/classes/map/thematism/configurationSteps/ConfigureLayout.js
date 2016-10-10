@@ -22,6 +22,9 @@
 						defaults : {
 							anchor : "100%"
 						},
+						getFunctionConfiguration : function() {
+							return this.parentWindow.getFunctionConfiguration();
+						},
 						getLayoutConfiguration : function() {
 							return this.parentWindow.getLayoutConfiguration();
 						},

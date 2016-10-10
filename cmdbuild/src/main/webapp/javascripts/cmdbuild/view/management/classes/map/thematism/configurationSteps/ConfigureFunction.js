@@ -87,8 +87,29 @@
 			disabled : true,
 			handler : function() {
 				var form = this.up('form').getForm();
-				parentWindow.advance(itemId, form.getValues());
+				var values = form.getValues();
+				var field = values.attribute;
+				var configuration = parentWindow.getThematismConfiguration();
+				if (configuration.source === CMDBuild.gis.constants.layers.TABLE_SOURCE) {
+					values["attributeType"] = parentWindow.configureFieldFunction.attributes[field];
+				}
+				else {
+					var source = parentWindow.configureSourceFunction;
+					var attributeType = getAttributeType(values.currentStrategy, parentWindow.configureSourceFunction.attributes);
+					values["attributeType"] = attributeType;
+				}
+				parentWindow.advance(itemId, values);
 			}
 		} ];
+	}
+	function getAttributeType(strategy, attributes) {
+		var functionAttributes = attributes[strategy];
+		for (var i = 0; i < functionAttributes.length; i++) {
+			var attribute = functionAttributes[i];
+			if (attribute._id !== "Id") {
+				return attribute.type;
+			}
+		}
+		return "STRING";
 	}
 })();
