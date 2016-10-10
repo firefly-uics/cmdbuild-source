@@ -456,13 +456,14 @@
 				return false;
 			}
 			var geoAttribute = layer.get("geoAttribute");
-			if (! geoAttribute) {
+			if (!geoAttribute) {
 				return false;
 			}
+			var currentCard = this.interactionDocument.getCurrentCard();
 			var layerClassName = geoAttribute.masterTableName;
 			var featureClassName = feature.get("master_className");
-			return (layerClassName === featureClassName);
-			
+			return (currentCard.className === featureClassName);
+
 		},
 		makePointSelect : function(feature, layer) {
 			var selectPoints = new ol.style.Style({
@@ -487,11 +488,18 @@
 		},
 		makeLineSelect : function(feature, layer) {
 			var me = this;
+			var styleLine = new ol.style.Style({
+				stroke : new ol.style.Stroke({
+					width : this.style.strokeWidth,
+					color : 'rgba(255, 100, 0, .5)'
+				})
+			});
 			return new ol.interaction.Select({
 				filter : function(feature, layer) {
 					return me.inFilterSelect(feature, layer);
 				},
-				wrapX : false
+				wrapX : false,
+				style : styleLine
 			})
 		},
 		makePolygonSelect : function(feature, layer) {

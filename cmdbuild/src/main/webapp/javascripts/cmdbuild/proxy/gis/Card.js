@@ -4,7 +4,8 @@
 
 		requires: [
 			'CMDBuild.core.constants.Proxy',
-			'CMDBuild.model.gis.Card',
+			//'CMDBuild.model.gis.Card',
+			'CMDBuild.view.management.CMMiniCardGridModel',
 			'CMDBuild.proxy.index.Json'
 		],
 
@@ -30,7 +31,8 @@
 			var pageSize = CMDBuild.configuration.instance.get(CMDBuild.core.constants.Proxy.ROW_LIMIT);
 			return CMDBuild.global.Cache.requestAsStore(CMDBuild.core.constants.Proxy.UNCACHED, {
 				autoLoad: false,
-				model: 'CMDBuild.model.gis.Card',
+				//model: 'CMDBuild.model.gis.Card',
+				model: 'CMDBuild.view.management.CMMiniCardGridModel',
 				remoteSort: true,
 				pageSize: pageSize,
 				proxy: {

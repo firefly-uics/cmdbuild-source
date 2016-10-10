@@ -34,11 +34,11 @@
 				THEMATICFUNCTION : "ThematicFunction"
 			},
 			colors : {
-				POINT_FILL :  '#FFCC00',
-				POINT_LINE:'#FF9966',
-				POLYGON_FILL :  'rgba(0, 0, 255, 0.1)',
-				POLYGON_LINE:'blue',
-				LINE_LINE:'green',
+				POINT_FILL : '#FFCC00',
+				POINT_LINE : '#FF9966',
+				POLYGON_FILL : 'rgba(0, 0, 255, 0.1)',
+				POLYGON_LINE : 'blue',
+				LINE_LINE : 'green',
 			}
 
 		}
@@ -92,6 +92,8 @@
 				}) ]
 			});
 			this.geoExtension.setMap(this);
+			this.miniCardGridWindowController = Ext.create('CMDBuild.controller.management.classes.map.CMMiniCardGridWindowFeaturesController');
+
 			this.callParent(arguments);
 		},
 
@@ -109,9 +111,9 @@
 				this.view = new ol.View({
 					center : center,
 					zoom : configuration.zoom,
-					maxZoom: 25,
-					minZoom: 2,
-					extent:extent
+					maxZoom : 25,
+					minZoom : 2,
+					extent : extent
 
 				});
 				this.map = new ol.Map({
@@ -132,6 +134,7 @@
 				var size = [ document.getElementById(this.id + "-body").offsetWidth,
 						document.getElementById(this.id + "-body").offsetHeight ];
 				this.map.setSize(size);
+				this.setLongPress();
 				this.createLegend();
 
 			},
@@ -171,7 +174,7 @@
 		refreshLegend : function() {
 			var arrLayers = this.interactionDocument.getThematicLayers();
 			var visibles = [];
-			for (var i = 0; i < arrLayers.length; i++)  {
+			for (var i = 0; i < arrLayers.length; i++) {
 				var layer = arrLayers[i];
 				var visible = this.interactionDocument.getLayerVisibility(layer);
 				if (visible) {
@@ -297,6 +300,20 @@
 		},
 
 		/**
+		 * @param {Integer}
+		 *            newId
+		 * 
+		 * @returns {Void}
+		 * 
+		 */
+		changeFeatureOnLayers : function(newId) {
+			this.map.getLayers().forEach(function(layer) {
+				var adapter = layer.get("adapter");
+				if (adapter && adapter.changeFeature)
+					adapter.changeFeature(newId);
+			});
+		},
+		/**
 		 * @param {Object}
 		 *            geoValues
 		 * @param {String}
@@ -339,12 +356,65 @@
 		 * @returns {Void}
 		 * 
 		 */
-		changeFeatureOnLayers : function(newId) {
-			this.map.getLayers().forEach(function(layer) {
-				var adapter = layer.get("adapter");
-				if (adapter && adapter.changeFeature)
-					adapter.changeFeature(newId);
+		setLongPress : function() {
+			var startPixel = undefined;
+			var timeoutId = undefined;
+			var map = this.getMap();
+			var me = this;
+			
+			map.on('pointerdown', function(event) {
+				clearTimeout(timeoutId);
+				startPixel = map.getEventPixel(event);
+				timeoutId = setTimeout(function() {
+					me.openMiniCard(event);
+				}, 1000, false);
 			});
+			map.on('pointerup', function(event) {
+				clearTimeout(timeoutId);
+				startPixel = undefined;
+			});
+			map.on('pointermove', function(event) {
+				if (startPixel) {
+					var pixel = map.getEventPixel(event);
+					var deltaX = Math.abs(startPixel[0] - pixel[0]);
+					var deltaY = Math.abs(startPixel[1] - pixel[1]);
+					if (deltaX + deltaY > 6) {
+						clearTimeout(timeoutId);
+						startPixel = undefined;
+					}
+				}
+			});
+		},
+		openMiniCard : function(event) {
+			if (this.interactionDocument.getEditing()) {
+				return;
+			}
+			var map = this.getMap();
+			var me = this;
+			//var pixel = map.getEventPixel(event);
+			var features = [];
+			map.forEachFeatureAtPixel(event.pixel, function(feature) {
+				features.push(feature);
+			});
+			if (features.length === 0) {
+				return;
+			}
+			me.miniCardGridWindowController.setFeatures(features);
+			if (me.miniCardGridWindow) {
+				me.miniCardGridWindow.close();
+			}
+
+			me.miniCardGridWindow = Ext.create('CMDBuild.view.management.common.CMMiniCardGridWindow', {
+				width : me.getWidth() / 100 * 40,
+				height : me.getHeight() / 100 * 80,
+				x : event.pixel.x,
+				y : event.pixel.y,
+				dataSource : me.miniCardGridWindowController.getDataSource()
+			});
+
+			me.miniCardGridWindowController.bindMiniCardGridWindow(me.miniCardGridWindow);
+			me.miniCardGridWindow.show();
 		}
+
 	});
 })();

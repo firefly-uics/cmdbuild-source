@@ -9,12 +9,18 @@
 		currentCard : undefined,
 		classesControlledByNavigation : undefined,
 		gisAdapters : {},
+
 		/**
 		 * @property {Object}
 		 * 
 		 */
 		navigable : {},
 
+		/**
+		 * @property {Boolean}
+		 * 
+		 */
+		inEditing : false,
 		noZoom : false,
 
 		configurationMap : {
@@ -49,6 +55,12 @@
 			this.navigable.setNavigables(arrayNavigables);
 			//this.getMapPanel().clearSource();
 			this.changed();
+		},
+		setEditing : function(inEditing) {
+			this.inEditing = inEditing;
+		},
+		getEditing : function(inEditing) {
+			return this.inEditing;
 		},
 		isANavigableClass : function(className) {
 			return this.navigable.isANavigableClass(className) || className === "_Geoserver";

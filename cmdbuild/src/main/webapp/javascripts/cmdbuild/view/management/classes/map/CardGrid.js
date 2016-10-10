@@ -38,7 +38,7 @@
 					displayInfo : true
 				} ],
 				columns : [ {
-					dataIndex : 'Code',
+					dataIndex : 'Name',
 					text : CMDBuild.Translation.code,
 					flex : 1
 				}, {
@@ -121,7 +121,7 @@
 				this.store.loadPage(1, {
 					scope : this,
 					callback : function(records, operation, success) {
-						this.getSelectionModel().select(0);
+						//this.getSelectionModel().select(0);
 					}
 				});
 				this.oldClassName = currentClassName;

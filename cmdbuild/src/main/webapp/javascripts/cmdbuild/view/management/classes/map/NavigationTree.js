@@ -166,7 +166,7 @@
 			type : 'boolean'
 		}, {
 			name : 'cardId',
-			type : 'string'
+			type : 'int'
 		}, {
 			name : 'className',
 			type : 'string'
@@ -228,14 +228,30 @@
 
 	}
 	function selectNode(tree, node) {
+		if (!node) {
+			return;
+		}
+		var navigableNode = tree.interactionDocument.getNavigableNode({
+			className : node.get("className"),
+			cardId : node.get("cardId")
+		});
+		if (navigableNode === null) {
+			return;
+		}
+		if (navigableNode.parentNode && navigableNode.parentNode.childNodes) {
+			var children = navigableNode.parentNode.childNodes || navigableNode.parentNode.children || [];
+			if (children.length > 1000) {
+				node = navigableNode.parentNode;
+			}
+		}
 		var cb = Ext.Function.createDelayed(function() {
-			//deselectAllSilently(tree);
+			deselectAllSilently(tree);
 			var nodeEl = Ext.get(tree.view.getNode(node));
-			nodeEl.scrollIntoView(tree.view.el, false, true);
+			nodeEl.scrollIntoView(tree.view.el, false, false);
 			selectNodeSilently(tree, node);
 		}, 500);
-
-		tree.selectPath(node.getPath(), null, null, cb);
+		var path = node.getPath();
+		tree.selectPath(path, undefined, undefined, cb);
 	}
 	function deselectAllSilently(me) {
 		try {

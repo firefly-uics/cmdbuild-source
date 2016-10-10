@@ -11,7 +11,8 @@
 			observable : "Ext.util.Observable",
 			mapDelegate : "CMDBuild.view.management.map.CMMapPanelDelegate",
 			editingWindowDelegate : "CMDBuild.controller.management.classes.map.CMMapEditingWindowDelegate",
-			cardStateDelegate : "CMDBuild.state.CMCardModuleStateDelegate"
+			cardStateDelegate : "CMDBuild.state.CMCardModuleStateDelegate",
+			miniCardGridDelegate: "CMDBuild.view.management.common.CMMiniCardGridDelegate"
 		},
 
 		cmfgCatchedFunctions : [],
@@ -59,13 +60,12 @@
 			var oldCard = this.interactionDocument.getCurrentCard();
 			var cardId = -1;
 			var className = "";
-			if (card === null) {
+			if (card === null && oldCard === null) {
 				return;
 			} else {
-				cardId = card.cardId;
-				className = card.className;
+				cardId = (card) ? card.cardId : -1;
+				className = (card) ? card.className : oldCard.className;
 			}
-			var type = _CMCache.getEntryTypeByName(className);
 			if (cardId !== -1) {
 				this.setCard({
 					cardId : cardId,

@@ -31,7 +31,9 @@
 							// when the refresh is called more times it takes
 							// the last
 							var me = this;
-							
+							if (this.interactionDocument.getEditing()) {
+								return;
+							}
 							if (this.operation) {
 								clearTimeout(this.operation);
 							}
