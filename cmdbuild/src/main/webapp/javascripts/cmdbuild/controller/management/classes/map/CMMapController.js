@@ -60,7 +60,7 @@
 			var oldCard = this.interactionDocument.getCurrentCard();
 			var cardId = -1;
 			var className = "";
-			if (card === null && oldCard === null) {
+			if (!card && !oldCard) {
 				return;
 			} else {
 				cardId = (card) ? card.cardId : -1;
