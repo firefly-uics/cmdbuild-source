@@ -257,7 +257,7 @@
 			defaults: {
 				create: '',
 				read: 'services/json/filter/getdefault',
-				update: 'services/json/filter/setdefault',
+				update: 'services/json/filter/setdefaultsforgroup',
 				remove: ''
 			},
 
@@ -272,7 +272,7 @@
 				defaults: {
 					create: '',
 					read: 'services/json/filter/getgroups',
-					update: 'services/json/filter/setdefault',
+					update: 'services/json/filter/setdefaultgroups',
 					remove: ''
 				}
 			},

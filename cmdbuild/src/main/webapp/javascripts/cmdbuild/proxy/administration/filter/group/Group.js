@@ -1,6 +1,6 @@
 (function () {
 
-	Ext.define('CMDBuild.proxy.filter.Group', {
+	Ext.define('CMDBuild.proxy.administration.filter.group.Group', {
 
 		requires: [
 			'CMDBuild.core.constants.Global',
@@ -112,19 +112,6 @@
 		 *
 		 * @returns {Void}
 		 */
-		readDefaults: function (parameters) {
-			parameters = Ext.isEmpty(parameters) ? {} : parameters;
-
-			Ext.apply(parameters, { url: CMDBuild.proxy.index.Json.filter.group.defaults.read });
-
-			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.FILTER, parameters);
-		},
-
-		/**
-		 * @param {Object} parameters
-		 *
-		 * @returns {Void}
-		 */
 		remove: function (parameters) {
 			parameters = Ext.isEmpty(parameters) ? {} : parameters;
 
@@ -142,19 +129,6 @@
 			parameters = Ext.isEmpty(parameters) ? {} : parameters;
 
 			Ext.apply(parameters, { url: CMDBuild.proxy.index.Json.filter.group.update });
-
-			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.FILTER, parameters, true);
-		},
-
-		/**
-		 * @param {Object} parameters
-		 *
-		 * @returns {Void}
-		 */
-		updateDefaults: function (parameters) {
-			parameters = Ext.isEmpty(parameters) ? {} : parameters;
-
-			Ext.apply(parameters, { url: CMDBuild.proxy.index.Json.filter.group.defaults.update });
 
 			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.FILTER, parameters, true);
 		}
