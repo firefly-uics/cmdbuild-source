@@ -233,12 +233,16 @@
 		 * @returns {Void}
 		 */
 		onWorkflowTreeAbortButtonClick: function () {
-			if (this.cmfg('workflowSelectedActivityIsEmpty') && !this.cmfg('workflowSelectedPreviousActivityIsEmpty'))
+			if (
+				this.cmfg('workflowSelectedActivityIsEmpty') && !this.cmfg('workflowSelectedPreviousActivityIsEmpty')
+				&& !Ext.isEmpty(this.cmfg('workflowSelectedPreviousActivityGet', CMDBuild.core.constants.Proxy.INSTANCE_ID))
+			) {
 				this.cmfg('workflowTreeActivitySelect', {
 					activitySubsetId: this.cmfg('workflowSelectedPreviousActivityGet', CMDBuild.core.constants.Proxy.ACTIVITY_SUBSET_ID),
 					forceFilter: true,
 					instanceId: this.cmfg('workflowSelectedPreviousActivityGet', CMDBuild.core.constants.Proxy.INSTANCE_ID)
 				});
+			}
 		},
 
 		/**
