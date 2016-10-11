@@ -58,8 +58,13 @@ public abstract class ForwardingFilterLogic extends ForwardingObject implements 
 	}
 
 	@Override
-	public void setDefault(final Iterable<Long> filters, final Iterable<String> groups) {
-		delegate().setDefault(filters, groups);
+	public void setDefaultGroups(final Long filter, final Iterable<String> groups) {
+		delegate().setDefaultGroups(filter, groups);
+	}
+
+	@Override
+	public void setDefaultsForGroup(final String group, final Iterable<Long> filters) {
+		delegate().setDefaultsForGroup(group, filters);
 	}
 
 	@Override
