@@ -151,7 +151,7 @@
 
 				var params = {};
 				params[CMDBuild.core.constants.Proxy.FILTERS] = Ext.encode(defaultFiltersIds);
-				params[CMDBuild.core.constants.Proxy.GROUPS] = Ext.encode([this.cmfg('userAndGroupGroupSelectedGroupGet', CMDBuild.core.constants.Proxy.NAME)]);
+				params[CMDBuild.core.constants.Proxy.GROUP] = this.cmfg('userAndGroupGroupSelectedGroupGet', CMDBuild.core.constants.Proxy.NAME);
 
 				CMDBuild.proxy.userAndGroup.group.tabs.DefaultFilters.update({
 					params: params,

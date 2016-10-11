@@ -6,7 +6,8 @@
 		requires: [
 			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.Message',
-			'CMDBuild.proxy.filter.Group',
+			'CMDBuild.proxy.administration.filter.group.Default',
+			'CMDBuild.proxy.administration.filter.group.Group',
 			'CMDBuild.view.common.field.translatable.Utils'
 		],
 
@@ -108,7 +109,7 @@
 			var params = {};
 			params[CMDBuild.core.constants.Proxy.ID] = selectedRecord.get(CMDBuild.core.constants.Proxy.ID);
 
-			CMDBuild.proxy.filter.Group.read({ // TODO: waiting for refactor (CRUD)
+			CMDBuild.proxy.administration.filter.group.Group.read({ // TODO: waiting for refactor (CRUD)
 				params: params,
 				scope: this,
 				success: function(response, options, decodedResponse) {
@@ -120,7 +121,7 @@
 						}, this)
 					});
 
-					CMDBuild.proxy.filter.Group.readDefaults({
+					CMDBuild.proxy.administration.filter.group.Default.read({
 						params: params,
 						scope: this,
 						success: function(response, options, decodedResponse) {
@@ -148,13 +149,13 @@
 				params[CMDBuild.core.constants.Proxy.CLASS_NAME] = params[CMDBuild.core.constants.Proxy.ENTRY_TYPE]; // TODO: waiting for refactor (reads a entryType parameter but i write as className)
 
 				if (Ext.isEmpty(formDataModel.get(CMDBuild.core.constants.Proxy.ID))) {
-					CMDBuild.proxy.filter.Group.create({
+					CMDBuild.proxy.administration.filter.group.Group.create({
 						params: params,
 						scope: this,
 						success: this.success
 					});
 				} else {
-					CMDBuild.proxy.filter.Group.update({
+					CMDBuild.proxy.administration.filter.group.Group.update({
 						params: params,
 						scope: this,
 						success: this.success
@@ -168,7 +169,7 @@
 				var params = {};
 				params[CMDBuild.core.constants.Proxy.ID] = this.filterGroupsSelectedFilterGet(CMDBuild.core.constants.Proxy.ID);
 
-				CMDBuild.proxy.filter.Group.remove({
+				CMDBuild.proxy.administration.filter.group.Group.remove({
 					params: params,
 					scope: this,
 					success: function(response, options, decodedResponse) {
@@ -237,31 +238,38 @@
 		 * @param {Object} options
 		 * @param {Object} decodedResult
 		 *
+		 * @returns {Void}
+		 *
+		 * @private
+		 *
 		 * TODO: waiting for refactor (save all group attributes in one call)
 		 */
-		success: function(result, options, decodedResult) {
-			var me = this;
-			var savedFilterObject = decodedResult[CMDBuild.core.constants.Proxy.FILTER] || options.params;
+		success: function (result, options, decodedResult) {
+			decodedResult = decodedResult[CMDBuild.core.constants.Proxy.FILTER] || options.params;
 
 			CMDBuild.view.common.field.translatable.Utils.commit(this.view.form);
 
-			CMDBuild.core.Message.success();
-
 			var params = {};
-			params[CMDBuild.core.constants.Proxy.FILTERS] = Ext.encode([savedFilterObject[CMDBuild.core.constants.Proxy.ID]]);
+			params[CMDBuild.core.constants.Proxy.FILTER] = decodedResult[CMDBuild.core.constants.Proxy.ID];
 			params[CMDBuild.core.constants.Proxy.GROUPS] = Ext.encode(this.form.defaultForGroupsField.getValue());
 
-			CMDBuild.proxy.filter.Group.updateDefaults({ params: params });
+			CMDBuild.proxy.administration.filter.group.Default.update({
+				params: params,
+				scope: this,
+				success: function (response, options, decodedResponse) {
+					this.grid.getStore().load({
+						scope: this,
+						callback: function (records, operation, success) {
+							var rowIndex = this.grid.getStore().find(
+								CMDBuild.core.constants.Proxy.NAME,
+								this.form.getForm().findField(CMDBuild.core.constants.Proxy.NAME).getValue()
+							);
 
-			this.grid.getStore().load({
-				callback: function(records, operation, success) {
-					var rowIndex = this.find(
-						CMDBuild.core.constants.Proxy.NAME,
-						me.form.getForm().findField(CMDBuild.core.constants.Proxy.NAME).getValue()
-					);
+							this.grid.getSelectionModel().select(rowIndex, true);
 
-					me.grid.getSelectionModel().select(rowIndex, true);
-					me.form.setDisabledModify(true);
+							this.form.setDisabledModify(true);
+						}
+					});
 				}
 			});
 		}
