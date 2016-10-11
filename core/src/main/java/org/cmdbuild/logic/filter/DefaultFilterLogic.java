@@ -12,7 +12,6 @@ import static java.util.Optional.of;
 
 import java.util.NoSuchElementException;
 import java.util.Optional;
-import java.util.function.Consumer;
 
 import org.apache.commons.lang3.Validate;
 import org.cmdbuild.auth.UserStore;
@@ -265,21 +264,26 @@ public class DefaultFilterLogic implements FilterLogic {
 	}
 
 	@Override
-	public void setDefault(final Iterable<Long> filters, final Iterable<String> groups) {
-		logger.info(MARKER, "setting default filters '{}' for groups '{}'", filters, groups);
-		groups.forEach(new Consumer<String>() {
+	public void setDefaultsForGroup(final String group, final Iterable<Long> filters) {
+		logger.info(MARKER, "setting default filters '{}' for group '{}'", filters, group);
+		final MapDifference<Long, Long> difference =
+				difference(uniqueIndex(filters, identity()), uniqueIndex(store.joinedFilters(group), identity()));
+		difference.entriesOnlyOnRight().keySet().stream() //
+				.forEach(filter -> store.disjoin(group, newArrayList(store.read(filter))));
+		difference.entriesOnlyOnLeft().keySet().stream() //
+				.forEach(filter -> store.join(group, newArrayList(store.read(filter))));
+	}
 
-			@Override
-			public void accept(final String group) {
-				final MapDifference<Long, Long> difference = difference(uniqueIndex(filters, identity()),
-						uniqueIndex(store.joinedFilters(group), identity()));
-				difference.entriesOnlyOnRight().keySet().stream() //
-						.forEach(filter -> store.disjoin(group, newArrayList(store.read(filter))));
-				difference.entriesOnlyOnLeft().keySet().stream() //
-						.forEach(filter -> store.join(group, newArrayList(store.read(filter))));
-			}
-
-		});
+	@Override
+	public void setDefaultGroups(final Long filter, final Iterable<String> groups) {
+		logger.info(MARKER, "setting default filter '{}' for groups '{}'", filter, groups);
+		final FilterStore.Filter stored = store.read(filter);
+		final MapDifference<String, String> difference =
+				difference(uniqueIndex(groups, identity()), uniqueIndex(store.joinedGroups(filter), identity()));
+		difference.entriesOnlyOnRight().keySet().stream() //
+				.forEach(group -> store.disjoin(group, newArrayList(stored)));
+		difference.entriesOnlyOnLeft().keySet().stream() //
+				.forEach(group -> store.join(group, newArrayList(stored)));
 	}
 
 	@Override

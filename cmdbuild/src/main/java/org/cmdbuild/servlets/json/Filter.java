@@ -187,14 +187,15 @@ public class Filter extends JSONBaseWithSpringContext {
 
 	private static class JsonFilter {
 
-		private static final Function<FilterLogic.Filter, JsonFilter> FUNCTION = new Function<FilterLogic.Filter, Filter.JsonFilter>() {
+		private static final Function<FilterLogic.Filter, JsonFilter> FUNCTION =
+				new Function<FilterLogic.Filter, Filter.JsonFilter>() {
 
-			@Override
-			public JsonFilter apply(final FilterLogic.Filter input) {
-				return new JsonFilter(input);
-			}
+					@Override
+					public JsonFilter apply(final FilterLogic.Filter input) {
+						return new JsonFilter(input);
+					}
 
-		};
+				};
 
 		public static Function<FilterLogic.Filter, JsonFilter> function() {
 			return FUNCTION;
@@ -487,13 +488,20 @@ public class Filter extends JSONBaseWithSpringContext {
 
 	@JSONExported
 	@Admin
-	public void setDefault( //
-			@Parameter(value = FILTERS) final JSONArray filters, //
+	public void setDefaultGroups( //
+			@Parameter(value = FILTER) final Long filter, //
 			@Parameter(value = GROUPS) final JSONArray groups //
 	) {
-		final Iterable<Long> _filters = toIterable(filters, AS_LONG);
-		final Iterable<String> _groups = toIterable(groups);
-		filterLogic().setDefault(_filters, _groups);
+		filterLogic().setDefaultGroups(filter, toIterable(groups));
+	}
+
+	@JSONExported
+	@Admin
+	public void setDefaultsForGroup( //
+			@Parameter(value = GROUP) final String group, //
+			@Parameter(value = FILTERS) final JSONArray filters//
+	) {
+		filterLogic().setDefaultsForGroup(group, toIterable(filters, AS_LONG));
 	}
 
 	@JSONExported
@@ -533,7 +541,8 @@ public class Filter extends JSONBaseWithSpringContext {
 	 * @deprecated do it using JSON mapping.
 	 */
 	@Deprecated
-	private static JSONObject serialize(final FilterLogic.Filter filter, final String wrapperName) throws JSONException {
+	private static JSONObject serialize(final FilterLogic.Filter filter, final String wrapperName)
+			throws JSONException {
 		final JSONObject jsonFilter = new JSONObject();
 		jsonFilter.put(ID, filter.getId());
 		jsonFilter.put(NAME, filter.getName());
