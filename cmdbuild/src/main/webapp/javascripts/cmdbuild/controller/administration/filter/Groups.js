@@ -39,7 +39,7 @@
 		grid: undefined,
 
 		/**
-		 * @property {CMDBuild.model.filter.group.SelectedFilter}
+		 * @property {CMDBuild.model.administration.filter.group.SelectedFilter}
 		 *
 		 * @private
 		 */
@@ -82,7 +82,7 @@
 
 			this.form.reset();
 			this.form.setDisabledModify(false, true);
-			this.form.loadRecord(Ext.create('CMDBuild.model.filter.group.Store'));
+			this.form.loadRecord(Ext.create('CMDBuild.model.administration.filter.group.Store'));
 		},
 
 		onFilterGroupsModifyButtonClick: function() {
@@ -142,7 +142,7 @@
 
 		onFilterGroupsSaveButtonClick: function() {
 			if (this.validate(this.form)) {
-				var formDataModel = Ext.create('CMDBuild.model.filter.group.Store', this.form.getData(true));
+				var formDataModel = Ext.create('CMDBuild.model.administration.filter.group.Store', this.form.getData(true));
 
 				var params = formDataModel.getData();
 				params[CMDBuild.core.constants.Proxy.CONFIGURATION] = Ext.encode(params[CMDBuild.core.constants.Proxy.CONFIGURATION]);
@@ -226,7 +226,7 @@
 			 */
 			filterGroupsSelectedFilterSet: function(parameters) {
 				if (!Ext.Object.isEmpty(parameters)) {
-					parameters[CMDBuild.core.constants.Proxy.MODEL_NAME] = 'CMDBuild.model.filter.group.SelectedFilter';
+					parameters[CMDBuild.core.constants.Proxy.MODEL_NAME] = 'CMDBuild.model.administration.filter.group.SelectedFilter';
 					parameters[CMDBuild.core.constants.Proxy.TARGET_VARIABLE_NAME] = 'selectedFilter';
 
 					this.propertyManageSet(parameters);

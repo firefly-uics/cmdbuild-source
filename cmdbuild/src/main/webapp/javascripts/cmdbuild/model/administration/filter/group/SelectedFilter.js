@@ -1,8 +1,8 @@
-(function() {
+(function () {
 
 	Ext.require('CMDBuild.core.constants.Proxy');
 
-	Ext.define('CMDBuild.model.filter.group.Store', {
+	Ext.define('CMDBuild.model.administration.filter.group.SelectedFilter', {
 		extend: 'Ext.data.Model',
 
 		fields: [
