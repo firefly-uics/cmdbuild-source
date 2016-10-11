@@ -5,9 +5,9 @@
 		requires: [
 			'CMDBuild.core.constants.Global',
 			'CMDBuild.core.constants.Proxy',
-			'CMDBuild.proxy.index.Json',
-			'CMDBuild.model.filter.group.Store',
-			'CMDBuild.model.filter.group.TargetClass'
+			'CMDBuild.model.administration.filter.group.Store',
+			'CMDBuild.model.administration.filter.group.TargetClass',
+			'CMDBuild.proxy.index.Json'
 		],
 
 		singleton: true,
@@ -33,7 +33,7 @@
 		getStore: function () {
 			return CMDBuild.global.Cache.requestAsStore(CMDBuild.core.constants.Proxy.FILTER, {
 				autoLoad: false,
-				model: 'CMDBuild.model.filter.group.Store',
+				model: 'CMDBuild.model.administration.filter.group.Store',
 				pageSize: CMDBuild.configuration.instance.get(CMDBuild.core.constants.Proxy.ROW_LIMIT),
 				proxy: {
 					type: 'ajax',
@@ -56,7 +56,7 @@
 		getStoreTargetClass: function () {
 			return CMDBuild.global.Cache.requestAsStore(CMDBuild.core.constants.Proxy.CLASS, {
 				autoLoad: true,
-				model: 'CMDBuild.model.filter.group.TargetClass',
+				model: 'CMDBuild.model.administration.filter.group.TargetClass',
 				proxy: {
 					type: 'ajax',
 					url: CMDBuild.proxy.index.Json.classes.getAll,
