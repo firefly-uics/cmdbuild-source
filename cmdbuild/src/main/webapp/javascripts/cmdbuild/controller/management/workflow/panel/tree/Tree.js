@@ -744,9 +744,8 @@
 				params[CMDBuild.core.constants.Proxy.FILTER] = Ext.encode(this.cmfg('workflowTreeAppliedFilterGet', CMDBuild.core.constants.Proxy.CONFIGURATION));
 
 			if (parameters.enableForceFlowStatus) {
-				if (!parameters.forceFlowStatus)
-					if (flowStatusComboBoxValue != CMDBuild.core.constants.WorkflowStates.getAll())
-						params[CMDBuild.core.constants.Proxy.FLOW_STATUS] = flowStatusComboBoxValue;
+				if (!parameters.forceFlowStatus && flowStatusComboBoxValue != CMDBuild.core.constants.WorkflowStates.getAll())
+					params[CMDBuild.core.constants.Proxy.FLOW_STATUS] = flowStatusComboBoxValue;
 			} else {
 				if (flowStatusComboBoxValue != CMDBuild.core.constants.WorkflowStates.getAll())
 					params[CMDBuild.core.constants.Proxy.FLOW_STATUS] = flowStatusComboBoxValue;

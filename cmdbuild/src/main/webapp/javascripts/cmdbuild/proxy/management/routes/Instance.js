@@ -14,6 +14,19 @@
 		 *
 		 * @returns {Void}
 		 */
+		read: function (parameters) {
+			parameters = Ext.isEmpty(parameters) ? {} : parameters;
+
+			Ext.apply(parameters, { url: CMDBuild.proxy.index.Json.workflow.instance.read });
+
+			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.WORKFLOW, parameters);
+		},
+
+		/**
+		 * @param {Object} parameters
+		 *
+		 * @returns {Void}
+		 */
 		readAll: function (parameters) {
 			parameters = Ext.isEmpty(parameters) ? {} : parameters;
 
@@ -27,10 +40,10 @@
 		 *
 		 * @returns {Void}
 		 */
-		readWorkflow: function (parameters) {
+		readWorkflowByName: function (parameters) {
 			parameters = Ext.isEmpty(parameters) ? {} : parameters;
 
-			Ext.apply(parameters, { url: CMDBuild.proxy.index.Json.workflow.read });
+			Ext.apply(parameters, { url: CMDBuild.proxy.index.Json.workflow.readByName });
 
 			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.WORKFLOW, parameters);
 		}
