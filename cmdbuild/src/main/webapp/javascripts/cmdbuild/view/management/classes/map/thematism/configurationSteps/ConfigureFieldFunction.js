@@ -28,7 +28,7 @@
 				data : []
 			});
 			this.comboAttributes = Ext.create("Ext.form.field.ComboBox", {
-				fieldLabel : "@@ Choose Attribute *",
+				fieldLabel : CMDBuild.Translation.attribute,
 				store : this.attributesStore,
 				name : "attribute",
 				queryMode : "local",
@@ -38,7 +38,7 @@
 				allowBlank : false
 			});
 			this.comboStrategies = Ext.create("Ext.form.field.ComboBox", {
-				fieldLabel : "@@ Choose Field Strategy *",
+				fieldLabel : CMDBuild.Translation.thematicField,
 				store : this.strategiesStore,
 				name : "currentStrategy",
 				queryMode : "local",

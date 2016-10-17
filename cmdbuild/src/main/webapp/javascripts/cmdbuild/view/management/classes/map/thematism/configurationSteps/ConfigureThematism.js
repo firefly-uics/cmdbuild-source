@@ -22,7 +22,7 @@
 				data : []
 			});
 			this.comboLayers = Ext.create("Ext.form.field.ComboBox", {
-				fieldLabel : "@@ Choose Layer *",
+				fieldLabel : CMDBuild.Translation.thematicLayer,
 				store : this.layersStore,
 				name : "sourceLayer",
 				queryMode : "local",
@@ -35,20 +35,20 @@
 			Ext.apply(this, {
 				items : [ {
 					xtype : "textfield",
-					fieldLabel : "@@ Layer name *",
+					fieldLabel : CMDBuild.Translation.name,
 					name : 'layerName',
 					allowBlank : false
 				}, {
 					xtype : "radiogroup",
 					name : "analysis",
-					fieldLabel : "@@ Analysis type",
+					fieldLabel : CMDBuild.Translation.thematicAnalysis,
 					vertical : true,
 					border : true,
 					items : getAnalysisItems(this.parentWindow)
 				}, {
 					xtype : "radiogroup",
 					name : "source",
-					fieldLabel : "@@ Source type",
+					fieldLabel : CMDBuild.Translation.thematicSource,
 					columns : 1,
 					vertical : true,
 					border : true,
@@ -115,20 +115,20 @@
 			name : "analysis",
 			inputValue : CMDBuild.gis.constants.layers.PUNTUAL_ANALYSIS,
 			checked : true
-		}, {
+		}/*, { //TODO
 			boxLabel : parentWindow.getAnalysisDescription(CMDBuild.gis.constants.layers.DENSITY_ANALYSIS),
 			name : "analysis",
 			inputValue : CMDBuild.gis.constants.layers.DENSITY_ANALYSIS
-		} ];
+		}*/ ];
 	}
 	function getSourceItems() {
 		return [ {
 			checked : true,
-			boxLabel : "@@ from table",
+			boxLabel : CMDBuild.Translation.thematicTable,
 			name : "source",
 			inputValue : CMDBuild.gis.constants.layers.TABLE_SOURCE
 		}, {
-			boxLabel : "@@ from function",
+			boxLabel : CMDBuild.Translation.thematicFunction,
 			name : "source",
 			inputValue : CMDBuild.gis.constants.layers.FUNCTION_SOURCE,
 		} ];
@@ -145,12 +145,12 @@
 	 */
 	function getButtons(parentWindow, itemId) {
 		return [ {
-			text : '@@ Cancel',
+			text : CMDBuild.Translation.cancel,
 			handler : function() {
 				parentWindow.close();
 			}
 		}, {
-			text : '@@ Advance',
+			text : CMDBuild.Translation.advance,
 			formBind : true,
 			disabled : true,
 			handler : function() {

@@ -20,7 +20,7 @@
 				data : []
 			});
 			this.comboStrategies = Ext.create("Ext.form.field.ComboBox", {
-				fieldLabel : "@@ Choose Strategy *",
+				fieldLabel : CMDBuild.Translation.thematicStrategy,
 				store : this.strategiesStore,
 				queryMode : "local",
 				displayField : "description",
