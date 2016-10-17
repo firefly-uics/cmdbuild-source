@@ -9,6 +9,11 @@
 		currentCard : undefined,
 		classesControlledByNavigation : undefined,
 		gisAdapters : {},
+		/**
+		 * @property {Boolean} wait if there is a navigation tree
+		 */
+		started : true,
+		visible : false,
 
 		/**
 		 * @property {Object}
@@ -31,8 +36,8 @@
 		},
 		constructor : function(thematicDocument) {
 			this.thematicDocument = thematicDocument;
-			this.navigable = Ext.create('CMDBuild.view.management.classes.map.geoextension.Navigable',  this);
-			
+			this.navigable = Ext.create('CMDBuild.view.management.classes.map.geoextension.Navigable', this);
+
 			this.callParent(arguments);
 		},
 		setConfigurationMap : function(mapPanel) {
@@ -44,6 +49,22 @@
 			this.getMapPanel().resetZoom();
 		},
 
+		setStarted : function(started) {
+			this.started = started;
+		},
+
+		getStarted : function() {
+			return this.started;
+		},
+
+		setVisible : function(visible) {
+			this.visible = visible;
+		},
+
+		getVisible : function() {
+			return this.visible;
+		},
+
 		/**
 		 * @param {Array}
 		 *            arrayNavigables Ext.data.TreeModel
@@ -53,7 +74,6 @@
 		},
 		setNavigables : function(arrayNavigables) {
 			this.navigable.setNavigables(arrayNavigables);
-			//this.getMapPanel().clearSource();
 			this.changed();
 		},
 		setEditing : function(inEditing) {
@@ -93,7 +113,7 @@
 					}
 				}
 				return false;
-			} 
+			}
 			return true;
 		},
 		getConfigurationMap : function() {
@@ -365,7 +385,21 @@
 			return this.thematicDocument.getLayerByName(name);
 		},
 		isVisible : function(layer, currentClassName, currentCardId) {
-			return isVisible(layer, currentClassName, currentCardId);
+			var me = this;
+			function checkClass(visibility) {
+				return me.sameClass(currentClassName, visibility);
+			}
+			function checkCard(binding) {
+				// because an id can be a string or an integer have to be ==
+				return (binding.idCard == currentCardId && this.sameClass(binding.className, currentClassName));
+			}
+			if (layer.visibility.find(checkClass) !== undefined) {
+				return true;
+			}
+			if (layer.cardBinding.find(checkCard) !== undefined) {
+				return true;
+			}
+			return false;
 		},
 		isCardOnMap : function(currentCard) {
 			var layers = this.getMap().getLayers();
@@ -384,8 +418,31 @@
 				geoType : geoType,
 				operation : operation
 			};
-		}
+		},
+		sameClass : function(classNameOne, classNameTwo) {
+			return this.isDescendant(classNameOne, classNameTwo) || this.isDescendant(classNameTwo, classNameOne);
+		},
 
+		isDescendant : function(subClassName, superClassName) {
+			var etSub = _CMCache.getEntryTypeByName(subClassName)
+			var etSuper = _CMCache.getEntryTypeByName(superClassName)
+			if (!(etSub && etSuper)) {
+				return false;
+			}
+			var idSub = etSub.get("id");
+			var idSuper = etSuper.get("id");
+			var classes = _CMCache.getClasses();
+			while (true) {
+				if (!idSub) {
+					return false;
+				}
+				if (idSub === idSuper) {
+					return true;
+				}
+				var type = classes[idSub];
+				idSub = type.get("parent");
+			}
+		}
 	});
 
 	function geoLayerByName(name, map, currentCard) {
@@ -428,22 +485,6 @@
 		});
 	}
 
-	function isVisible(layer, currentClassName, currentCardId) {
-		function checkClass(visibility) {
-			return (currentClassName === visibility);
-		}
-		function checkCard(binding) {
-			// because an id can be a string or an integer have to be ==
-			return (binding.idCard == currentCardId && binding.className === currentClassName);
-		}
-		if (layer.visibility.find(checkClass) !== undefined) {
-			return true;
-		}
-		if (layer.cardBinding.find(checkCard) !== undefined) {
-			return true;
-		}
-		return false;
-	}
 	function getCenterOfExtent(extent) {
 		var x = extent[0] + (extent[2] - extent[0]) / 2;
 		var y = extent[1] + (extent[3] - extent[1]) / 2;
@@ -483,4 +524,5 @@
 		}
 
 	}
+
 })();

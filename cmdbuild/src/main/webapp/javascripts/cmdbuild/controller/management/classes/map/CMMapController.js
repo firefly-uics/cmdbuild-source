@@ -12,7 +12,7 @@
 			mapDelegate : "CMDBuild.view.management.map.CMMapPanelDelegate",
 			editingWindowDelegate : "CMDBuild.controller.management.classes.map.CMMapEditingWindowDelegate",
 			cardStateDelegate : "CMDBuild.state.CMCardModuleStateDelegate",
-			miniCardGridDelegate: "CMDBuild.view.management.common.CMMiniCardGridDelegate"
+			miniCardGridDelegate : "CMDBuild.view.management.common.CMMiniCardGridDelegate"
 		},
 
 		cmfgCatchedFunctions : [],
@@ -57,6 +57,10 @@
 		 * Ext.model.Model
 		 */
 		onCardSelected : function(card) {
+			var et = _CMCache.getEntryTypeById(this.currentClassId);
+			if (!et) {
+				return;
+			}
 			var oldCard = this.interactionDocument.getCurrentCard();
 			var cardId = -1;
 			var className = "";
@@ -64,7 +68,7 @@
 				return;
 			} else {
 				cardId = (card) ? card.cardId : -1;
-				className = (card) ? card.className : oldCard.className;
+				className = (card) ? et.get("name") : oldCard.className;
 			}
 			if (cardId !== -1) {
 				this.setCard({
@@ -76,10 +80,11 @@
 				cardId : cardId,
 				className : className
 			});
-			if (!this.mapPanel.cmVisible) {
+			if (!(oldCard && card) || (oldCard.className !== card.className)) {
 				this.interactionDocument.resetZoom();
 			}
-			else if (cardId !== -1) {
+			if (!this.mapPanel.cmVisible) {
+			} else if (cardId !== -1) {
 				var card = {
 					className : className,
 					cardId : cardId
@@ -118,8 +123,13 @@
 			this.cmIsInEditing = false;
 
 			if (this.mapPanel.cmVisible) {
+				this.interactionDocument.setVisible(true);
 				this.mapPanel.displayMode();
 				this.activateSelectControl();
+				this.interactionDocument.changed();
+			} else {
+				this.interactionDocument.setVisible(false);
+				this.mapPanel.getMap().removeAllLayers();
 			}
 		},
 
@@ -142,6 +152,7 @@
 		callBackSetCard : function(card) {
 			this.mapPanel.getMap().changeFeatureOnLayers(card.cardId);
 			this.interactionDocument.setCurrentCard(card);
+			// this.interactionDocument.resetZoom();
 			this.interactionDocument.centerOnCard(card, this.callBackCenter, this);
 
 		},
@@ -153,17 +164,27 @@
 			// this.selectControl.activate();
 		},
 
-		onEntryTypeSelected : onEntryTypeSelected,
+		onEntryTypeSelected : this.onEntryTypeSelected,
 		getCardData : getCardData,
 
 		/* As mapDelegate ******** */
 
-		onMapPanelVisibilityChanged : onVisibilityChanged,
+		onMapPanelVisibilityChanged : this.onVisibilityChanged,
 
 		/* As CMCardModuleStateDelegate ************** */
 
 		onEntryTypeDidChange : function(state, entryType, danglingCard) {
-			this.onEntryTypeSelected(entryType, danglingCard);
+			if (!entryType) {
+				return;
+			}
+
+			var newEntryTypeId = entryType.get("id");
+			var lastCard = _CMCardModuleState.card;
+			if (this.currentClassId != newEntryTypeId) {
+				this.currentClassId = newEntryTypeId;
+				lastCard = undefined;
+			}
+
 		},
 
 		onCardDidChange : function(state, card) {
@@ -204,7 +225,25 @@
 
 		getCurrentMap : function() {
 			return this.map;
+		},
+		onVisibilityChanged : function(map, visible) {
+			if (visible) {
+				var lastClass = _CMCardModuleState.entryType, lastCard = _CMCardModuleState.card;
+
+				if (lastCard && lastClass && this.currentClassId && this.currentClassId != lastClass.get("id")) {
+
+					this.onEntryTypeSelected(lastClass, {
+						Id : lastCard.get("Id")
+					});
+				}
+
+			} else {
+				if (this.cmIsInEditing) {
+					this.mapPanel.displayMode();
+				}
+			}
 		}
+
 	});
 
 	function getLayerVisibility(id, bindings, visibles) {
@@ -239,50 +278,9 @@
 
 	function getCardData(params) {
 		var cardId = params.cardId;
-		var className = params.cardIdclassName;
+		var className = params.className;
 		var geo = this.mapPanel.getMap().getGeometries(cardId, className);
 		return Ext.JSON.encode(geo);
-	}
-
-	function onEntryTypeSelected(entryType, danglingCard) {
-		if (!entryType || !this.mapPanel.cmVisible) {
-			return;
-		}
-
-		var newEntryTypeId = entryType.get("id");
-		var lastCard = _CMCardModuleState.card;
-		if (this.currentClassId != newEntryTypeId) {
-			this.currentClassId = newEntryTypeId;
-			lastCard = undefined;
-		}
-
-	}
-
-	function onVisibilityChanged(map, visible) {
-		if (visible) {
-			var lastClass = _CMCardModuleState.entryType, lastCard = _CMCardModuleState.card;
-
-			if (lastCard && lastClass && this.currentClassId && this.currentClassId != lastClass.get("id")) {
-
-				this.onEntryTypeSelected(lastClass, {
-					Id : lastCard.get("Id")
-				});
-			}
-
-		} else {
-			if (this.cmIsInEditing) {
-				this.mapPanel.displayMode();
-			}
-		}
-	}
-
-	function onLayerVisibilityChange(param) {
-		var layer = param.object;
-
-		var cardBrowserPanel = this.mapPanel.getCardBrowserPanel();
-		if (layer.CM_geoserverLayer && cardBrowserPanel) {
-			cardBrowserPanel.udpateCheckForLayer(layer);
-		}
 	}
 
 })();
