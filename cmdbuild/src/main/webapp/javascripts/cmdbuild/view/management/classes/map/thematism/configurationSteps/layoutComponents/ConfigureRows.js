@@ -60,7 +60,7 @@
 					value : key,
 					cardinality : groups[key].count,
 					cards : groups[key].cards,
-					color : thematicDocument.getColor(key, layoutConfiguration.colorsTable, index++)
+					color : thematicDocument.getColor(key, layoutConfiguration.colorsTable, analysis.type, index++)
 				});
 			}
 			callback.apply(callbackScope, []);
