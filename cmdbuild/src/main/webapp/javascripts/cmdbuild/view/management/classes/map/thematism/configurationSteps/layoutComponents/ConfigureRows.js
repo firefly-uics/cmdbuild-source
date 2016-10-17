@@ -75,7 +75,7 @@
 				data : []
 			});
 			this.comboFields = Ext.create("Ext.form.field.ComboBox", {
-				fieldLabel : "@@ Choose Field *",
+				fieldLabel : CMDBuild.Translation.thematicField,
 				store : this.fieldsStore,
 				name : "resultFieldName",
 				queryMode : "local",
@@ -107,14 +107,14 @@
 					clicksToEdit : 1
 				}) ],
 				columns : [ {
-					text : "@@ Value",
+					text : CMDBuild.Translation.value,
 					dataIndex : "value",
 					flex : 1
 				}, {
 					text : "Cardinality",
 					dataIndex : "cardinality"
 				}, {
-					text : "@@ Color",
+					text : CMDBuild.Translation.thematicColor,
 					dataIndex : "color",
 					renderer : function(value, metaData) {
 						metaData.style = "background-color:" + value + ";";

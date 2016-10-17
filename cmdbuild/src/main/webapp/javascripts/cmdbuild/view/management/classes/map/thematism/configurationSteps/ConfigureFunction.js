@@ -47,13 +47,13 @@
 						},
 						getHtmlTitle : function() {
 							var configuration = this.parentWindow.getThematismConfiguration();
-							var strHtml = "<p>@@ Thematic Layer Name : ";
+							var strHtml = "<p>" + CMDBuild.Translation.name + " : ";
 							strHtml += configuration.layerName;
 							strHtml += "</p>";
-							strHtml += "<p>@@ Analysis Type : ";
+							strHtml += "<p>" + CMDBuild.Translation.thematicAnalysis + " : ";
 							strHtml += this.parentWindow.getAnalysisDescription(configuration.analysis);
 							strHtml += "</p>";
-							strHtml += "<p>@@ Source Type : ";
+							strHtml += "<p>" + CMDBuild.Translation.thematicSource + " : ";
 							strHtml += this.parentWindow.getSourceDescription(configuration.source);
 							strHtml += "</p>";
 							return strHtml;
@@ -71,18 +71,18 @@
 	 */
 	function getButtons(parentWindow, itemId) {
 		return [ {
-			text : '@@ Cancel',
+			text : CMDBuild.Translation.cancel,
 			handler : function() {
 				parentWindow.close();
 			}
 		}, {
-			text : '@@ Previous',
+			text : CMDBuild.Translation.previous,
 			handler : function() {
 				var form = this.up('form').getForm();
 				parentWindow.previous(itemId);
 			}
 		}, {
-			text : '@@ Advance',
+			text : CMDBuild.Translation.advance,
 			formBind : true,
 			disabled : true,
 			handler : function() {
