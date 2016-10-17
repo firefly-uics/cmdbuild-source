@@ -88,6 +88,10 @@
 						scope : this,
 						disabled : true,
 						handler : function() {
+							var attribute = this.geoAttrMenuButton.getText();
+							if (attribute) {
+								this.onRemoveMenuitemSelect.call(this, attribute);
+							}
 							this.callDelegates("removeFeatureButtonHasBeenClicked");
 						}
 					});
@@ -95,7 +99,7 @@
 					this.callParent(arguments);
 				},
 
-				refresh : function() {
+				refresh : function(callback, callbackScope) {
 					// refreshing the edit combo that has to be filled
 					// with the layers postgis that are owned by the
 					// class
@@ -142,6 +146,9 @@
 					}
 				},
 				closeAllEditings : function() {
+					if (! this.interactionDocument.getEditing()) {
+						return;
+					}
 					this.interactionDocument.setEditing(false);
 					var card = this.interactionDocument.getCurrentCard();
 					var currentClassName = card.className;
@@ -155,6 +162,7 @@
 							adapter.closeAllEditings();
 						}
 					}
+					this.interactionDocument.changed();
 				},
 				addLayer : function(layer) {
 					if (layer && !this.interactionDocument.isGeoServerLayer(layer)) {
@@ -178,16 +186,38 @@
 					this.geoAttrMenuButton.menu.removeAll(true);
 					this.layers = {};
 				},
+				onRemoveMenuitemSelect : function(attribute) {
+					var currentCard = this.interactionDocument.getCurrentCard();
+					var layer = this.interactionDocument.getMapPanel().getLayerByClassAndName(currentCard.className,
+							attribute);
+					var feature = this.searchFeature(layer, attribute, currentCard.cardId);
+					layer.getSource().removeFeature(feature);
+					this.removeButton.disable();
+					this.addButton.enable();
+					
+				},
 				onAddMenuitemSelect : function(item) {
 					this.geoAttrMenuButton.setText(item.text);
 					this.geoAttrMenuButton.setIconCls(item.iconCls);
 					var currentCard = this.interactionDocument.getCurrentCard();
 					var layer = this.interactionDocument.getMapPanel().getLayerByClassAndName(currentCard.className,
 							item.text);
-					var feature = this.searchFeature(layer, item.text, currentCard.cardId);
+					var notInZoom = true;
+					var feature = null;
+					if (layer) {
+						var cmdbuildLayer = layer.get("cmdbuildLayer");
+						var zoom = this.interactionDocument.getZoom();
+						notInZoom =  (zoom < cmdbuildLayer.minZoom || zoom > cmdbuildLayer.maxZoom);
+						feature = this.searchFeature(layer, item.text, currentCard.cardId);
+						
+					}
 					if (currentCard.cardId == -1)
 						feature = null;
-					if (feature !== null) {
+					if (notInZoom) {
+						this.removeButton.disable();
+						this.addButton.disable();
+					}
+					else if (feature !== null) {
 						this.removeButton.enable();
 						this.addButton.disable();
 					} else {

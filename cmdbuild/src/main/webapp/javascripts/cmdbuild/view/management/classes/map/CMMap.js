@@ -21,7 +21,7 @@
 							this.current = this.makePointSelect();
 							this.current.setActive(false);
 						},
-
+						baseLayer: false,
 						/**
 						 * @returns {Void}
 						 * 
@@ -31,7 +31,8 @@
 							// when the refresh is called more times it takes
 							// the last
 							var me = this;
-							if (this.interactionDocument.getEditing()) {
+							if (this.interactionDocument.getEditing() || !this.interactionDocument.getStarted()
+									|| !this.interactionDocument.getVisible()) {
 								return;
 							}
 							if (this.operation) {
@@ -48,6 +49,11 @@
 						 * @override
 						 */
 						_refresh : function() {
+							if (this.baseLayer === false) {
+								this.map.addLayer(this.geoExtension.getBaseLayer());
+								this.baseLayer = true;
+							}
+
 							var card = this.interactionDocument.getCurrentCard();
 							if (!card) {
 								return;
@@ -69,6 +75,20 @@
 
 								}, this);
 							}, this);
+						},
+						removeAllLayers : function() {
+							var gisLayers = this.interactionDocument.getGisAdapters();
+							for ( var key in gisLayers) {
+								var namedAdapters = gisLayers[key];
+								for (var i = 0; i < namedAdapters.length; i++) {
+									namedAdapters[i].adapter.closeAllEditings();
+								}
+							}
+							var mapLayers = this.map.getLayers();
+							if (mapLayers.getLength() > 0) {
+								mapLayers.clear();
+								this.baseLayer = false;
+							}
 						},
 
 						completeSingleLayerStyle : function(layer, callback, callbackScope) {
@@ -224,6 +244,7 @@
 							if (!geoLayer) {
 								geoLayer = this.makeLayer(layer.geoAttribute, true);
 							}
+							geoLayer.set("cmdbuildLayer", layer);
 							var index = CMDBuild.gis.constants.layers.GIS_MIN_ZINDEX + layer.index;
 							if (layer.geoAttribute.type === "SHAPE") {
 								index = CMDBuild.gis.constants.layers.GEO_MIN_ZINDEX;
@@ -316,6 +337,7 @@
 								var adapter = mapLayer.get("adapter");
 								if (adapter) {
 									adapter.refresh();
+									adapter.closeAllEditings();
 
 								}
 								this.clearHideLayer(mapClassName, mapLayerName);

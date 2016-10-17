@@ -105,13 +105,6 @@
 			this.makeDrawLine(map, vectorSource);
 			this.select.on('select', function(event) {
 				me.interactionDocument.setNoZoom(true);
-				if (event.selected.length > 0) {
-					var classSelectedCard = event.selected[0].get("master_className");
-					if (options.geoAttribute.masterTableName !== classSelectedCard) {
-						me.interactionDocument.changed();
-						return false;
-					}
-				}
 				if (event.selected.length === 0) {
 					me.interactionDocument.changed();
 					return false;
@@ -130,7 +123,7 @@
 			map.addInteraction(this.select);
 			map.addInteraction(this.modify);
 			var card = this.interactionDocument.getCurrentCard();
-			this.select.setActive(options.geoAttribute.masterTableName === card.className);
+			this.select.setActive(this.interactionDocument.sameClass(options.geoAttribute.masterTableName, card.className));
 			this.modify.setActive(false);
 		},
 		makeDrawLine : function(map, vectorSource) {
@@ -361,10 +354,10 @@
 			var geoAttribute = this.layer.get("geoAttribute");
 			var currentCard = this.interactionDocument.getCurrentCard();
 			this.drawPoint.setActive(status === "Draw" && geoType === "POINT"
-					&& geoAttribute.masterTableName === currentCard.className);
+					&& this.interactionDocument.sameClass(geoAttribute.masterTableName, currentCard.className));
 			this.drawPolygon.setActive(status === "Draw" && geoType === "POLYGON");
 			this.drawLine.setActive(status === "Draw" && geoType === "LINESTRING");
-			this.select.setActive(status === "Select" && geoAttribute.masterTableName === currentCard.className);
+			this.select.setActive(status === "Select" && this.interactionDocument.sameClass(geoAttribute.masterTableName, currentCard.className));
 			this.modify.setActive(status === "Modify");
 			this.status = status;
 		},
@@ -419,6 +412,13 @@
 			this.select.setActive(false);
 		},
 		closeAllEditings : function() {
+			this.clearAllFeatures();
+			this.clearSelections();
+			this.drawPoint.setActive(false);
+			this.drawPolygon.setActive(false);
+			this.drawLine.setActive(false);
+			this.modify.setActive(false);
+			this.select.setActive(false);
 		},
 		removeById : function(id) {
 
@@ -449,6 +449,9 @@
 			this.setStatus("Select");
 		},
 		inFilterSelect : function(feature, layer) {
+			if ( this.interactionDocument.getEditing()) {
+				return false;
+			}
 			if (!layer) {
 				return false;
 			}
@@ -462,7 +465,7 @@
 			var currentCard = this.interactionDocument.getCurrentCard();
 			var layerClassName = geoAttribute.masterTableName;
 			var featureClassName = feature.get("master_className");
-			return (currentCard.className === featureClassName);
+			return this.interactionDocument.sameClass(currentCard.className, featureClassName);
 
 		},
 		makePointSelect : function(feature, layer) {
@@ -712,7 +715,7 @@
 		for (var i = 0; i < featuresArray.length; i++) {
 			var className = featuresArray[i].get("master_className");
 			var cardId = featuresArray[i].get("master_card");
-			if (className === feature.get("master_className") && cardId === feature.get("master_card")) {
+			if (this.interactionDocument.sameClass(className, feature.get("master_className")) && cardId === feature.get("master_card")) {
 				return i;
 			}
 		}

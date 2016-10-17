@@ -124,7 +124,7 @@
 
 			if (CMDBuild.configuration.gis.get('cardBrowserByDomainConfiguration')['root']) { 
 				var root = CMDBuild.configuration.gis.get('cardBrowserByDomainConfiguration')['root']; 
-
+				this.interactionDocument.setStarted(false);
 				this.cardBrowser = new CMDBuild.view.management.classes.map.NavigationTree({
 					title : CMDBuild.Translation.management.modcard.gis.gisNavigation,
 					frame : false,
@@ -200,10 +200,10 @@
 
 		displayMode : function() {
 			if (this.editingWindow) {
-				this.interactionDocument.setCurrentFeature("", "", "Select");
-				this.interactionDocument.changedFeature();
 				this.editingWindow.closeAllEditings();
 				this.editingWindow.hide();
+				this.interactionDocument.setCurrentFeature("", "", "Select");
+				this.interactionDocument.changedFeature();
 			}
 		},
 
