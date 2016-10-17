@@ -98,8 +98,8 @@
 			});
 			return layers;
 		},
-		getColor : function(value, colorsTable, index) {
-			return this.thematicColors.getColor(value, colorsTable, index);
+		getColor : function(value, colorsTable, analysisType, index) {
+			return this.thematicColors.getColor(value, colorsTable, analysisType, index);
 		},
 		getDefaultThematismConfiguration : function() {
 			return clone(defaultConfiguration);
