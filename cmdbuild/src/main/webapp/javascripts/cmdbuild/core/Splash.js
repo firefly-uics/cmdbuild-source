@@ -1,6 +1,6 @@
 (function () {
 
-	Ext.require('CMDBuild.locale');
+	// Ext.require('CMDBuild.locale'); // FIXME: should be included a class that creates translations object
 
 	Ext.define('CMDBuild.core.Splash', {
 

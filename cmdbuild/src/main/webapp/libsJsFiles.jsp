@@ -1,5 +1,4 @@
 <script type="text/javascript" src="javascripts/ext-<%= extVersion %>/ext-all.js"></script>
-<script type="text/javascript" src="javascripts/ext-<%= extVersion %>/locale/ext-lang-<%= lang %>.js"></script>
 
 <script type="text/javascript" src="javascripts/log/log4javascript.js"></script>
 
