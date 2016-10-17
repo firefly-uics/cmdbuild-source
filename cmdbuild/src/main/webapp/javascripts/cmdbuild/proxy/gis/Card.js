@@ -4,8 +4,6 @@
 
 		requires: [
 			'CMDBuild.core.constants.Proxy',
-			//'CMDBuild.model.gis.Card',
-			'CMDBuild.view.management.CMMiniCardGridModel',
 			'CMDBuild.proxy.index.Json'
 		],
 
