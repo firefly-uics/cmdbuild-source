@@ -1,4 +1,6 @@
 (function() {
+	var numbers = [ "INTEGER", "integer", "DECIMAL", "decimal", "double", "numeric" ];
+
 	Ext.define('CMDBuild.view.management.classes.map.thematism.ThematicDocument', {
 		thematisms4Classes : [],
 		thematisms : [],
@@ -334,18 +336,19 @@
 		return (min < value) ? min : value;
 	}
 	function generateGroups(min, max, segments) {
-		var groups = {};
+		var groups = [];
 		var range = (max - min) / segments;
 		for (var i = 0; i < segments; i++) {
-			groups[min + i * range] = {
+			groups.push({
+				range : min + i * range,
 				count : 0,
 				cards : []
-			};
+			});
 		}
 		return groups;
 	}
 	function groupRangesData(field, analysisType, sourceType, cardsArray, attributeName) {
-		var groups = {};
+		var groups = [];
 		var max = undefined;
 		var min = undefined;
 		for (var i = 0; i < cardsArray.length; i++) {
@@ -360,7 +363,15 @@
 			var card = cardsArray[i];
 			disposeCardByCard(groups, card, range);
 		}
-		return groups;
+		var keyGroups = {};
+		for (var i = 0; i < groups.length; i++) {
+			var suffix = (i < groups.length - 1) ? "- < " + parseInt(groups[i + 1].range) : "";
+			keyGroups[(i + 1) + ") " + parseInt(groups[i].range) + " <= " + suffix] = {
+				count : groups[i].count,
+				cards : groups[i].cards
+			};
+		}
+		return keyGroups;
 	}
 	function groupSingleData(field, analysisType, sourceType, cardsArray, attributeName) {
 		var groups = {};
@@ -396,24 +407,18 @@
 		}
 	}
 	function disposeCardByCard(groups, card, range) {
-		for ( var key in groups) {
+		for (var i = 0; i < groups.length; i++) {
 			var value = .0 + card.value;
-			if (value - key <= range) {
-				groups[key].count++;
-				groups[key].cards.push(card);
+			if (value - groups[i].range < range) {
+				groups[i].count++;
+				groups[i].cards.push(card);
 				break;
 			}
 		}
 	}
 	function isANumber(type) {
-		switch (type) {
-		case "DECIMAL":
-			return true;
-		case "INTEGER":
-			return true;
-		default:
-			return false;
-		}
+		var ret = numbers.indexOf(type);
+		return ret != -1;
 	}
 
 })();

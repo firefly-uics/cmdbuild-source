@@ -14,6 +14,7 @@
 		},
 
 		removeFeatureButtonHasBeenClicked : function onRemoveFeatureButtonClick() {
+			this.interactionDocument.changed();
 		},
 
 		geoAttributeMenuItemHasBeenClicked : function(item) {

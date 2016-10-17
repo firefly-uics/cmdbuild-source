@@ -196,6 +196,8 @@
 			feature.setGeometry(originalFeature.geometry);
 
 			this.loadCard(originalFeature.master_card, originalFeature.master_className, function(rowColor, card) {
+				if (! rowColor)
+					return;
 				var style = this.getStyle(feature.getGeometry().getType(), rowColor.color);
 				feature.setStyle(style);
 				this.layer.getSource().addFeature(feature);
@@ -225,7 +227,7 @@
 			var colorsTable = this.thematicColors.tableToExa(this.thematism.configuration.layoutConfiguration.colorsTable)
 			for (var i = 0; i < colorsTable.length; i++) {
 				for (var j = 0; j < colorsTable[i].cards.length; j++) {
-					if (id === colorsTable[i].cards[j].Id) {// Id! no constants
+					if (id == colorsTable[i].cards[j].Id) {// Id! no constants
 															// for me
 						callback.apply(callbackScope, [ colorsTable[i], colorsTable[i].cards[j] ]);
 						return;

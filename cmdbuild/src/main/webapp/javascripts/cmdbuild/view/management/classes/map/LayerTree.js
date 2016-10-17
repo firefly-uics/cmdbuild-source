@@ -224,9 +224,9 @@
 
 		if (!thematismFolder) {
 			thematismFolder = root.appendChild({
-				text : "@@ Thematism",
-				leaf : false,
-				expanded : false,
+				text : CMDBuild.Translation.thematismTitle,
+//				leaf : false,
+//				expanded : false,
 				layerName : THEMATISM_LAYERS_FOLDER_NAME,
 				checked : true
 			});
@@ -241,8 +241,8 @@
 		if (!geoserverFolder) {
 			geoserverFolder = externalServicesFolder.appendChild({
 				text : CMDBuild.Translation.administration.modcartography.geoserver.title,
-				leaf : false,
-				expanded : false,
+//				leaf : false,
+//				expanded : false,
 				layerName : GEOSERVER_LAYERS_FOLDER_NAME,
 				checked : true
 			});
