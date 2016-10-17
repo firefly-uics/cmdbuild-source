@@ -6,7 +6,7 @@
 		requires: [
 			'CMDBuild.core.constants.FieldWidths',
 			'CMDBuild.core.constants.Proxy',
-			'CMDBuild.proxy.grid.Csv'
+			'CMDBuild.proxy.widget.grid.Csv'
 		],
 
 		/**
@@ -70,7 +70,7 @@
 				editable: false,
 				allowBlank: false,
 
-				store: CMDBuild.proxy.grid.Csv.getStoreSeparator(),
+				store: CMDBuild.proxy.widget.grid.Csv.getStoreSeparator(),
 				queryMode: 'local'
 			});
 
@@ -86,7 +86,7 @@
 				editable: false,
 				allowBlank: false,
 
-				store: CMDBuild.proxy.grid.Csv.getStoreImportMode(),
+				store: CMDBuild.proxy.widget.grid.Csv.getStoreImportMode(),
 				queryMode: 'local'
 			});
 
