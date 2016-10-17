@@ -14,7 +14,7 @@
 		 */
 		strategies : {
 			valueData : {
-				description : "@@ value",
+				description : CMDBuild.Translation.value,
 
 				/**
 				 * @param {Object}

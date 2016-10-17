@@ -21,13 +21,13 @@
 					expanded: true,
 					children : [{
 						text: CMDBuild.Translation.administration.modClass.tabs.geo_attributes,
-						leaf: false,
+//						leaf: false,
 //						expanded: true,
 						layerName: CMDBUILD_LAYERS_FOLDER_NAME,
 						checked: true
 					}, {
 						text: CMDBuild.Translation.administration.modcartography.external_services.title,
-						leaf: false,
+//						leaf: false,
 //						expanded: true,
 						layerName: EXTERNAL_LAYERS_FOLDER_NAME,
 						checked: true

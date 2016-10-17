@@ -23,14 +23,16 @@
 						},
 						getNavigable : function(card) {
 							var className = card.className;
-							if (!this.isANavigableClass(className)) {
-								return null;
+							if (this.isANavigableClass(className)) {
+								var cardId = card.cardId;
+								if (!this.navigables[className][cardId]) {
+									return null;
+								}
+								return this.navigables[className][cardId];
 							}
-							var cardId = card.cardId;
-							if (!this.navigables[className][cardId]) {
-								return null;
+							else {
+								return null;//this.getNavigableSuperClassCard(card);
 							}
-							return this.navigables[className][cardId];
 						},
 						getNavigableNode : function(card) {
 							var navigable = this.getNavigable(card);

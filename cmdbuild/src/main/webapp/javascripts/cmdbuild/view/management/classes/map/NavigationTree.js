@@ -132,6 +132,7 @@
 						},
 						loaded : function() {
 							var allNodes = getAllNodes(this.getRootNode());
+							this.interactionDocument.setStarted(true);
 							this.interactionDocument.setNavigables(allNodes);
 						},
 						navigateOnCard : function(record) {
@@ -240,7 +241,7 @@
 		}
 		if (navigableNode.parentNode && navigableNode.parentNode.childNodes) {
 			var children = navigableNode.parentNode.childNodes || navigableNode.parentNode.children || [];
-			if (children.length > 1000) {
+			if (children.length > CMDBuild.gis.constants.navigationTree.limitSelection) {
 				node = navigableNode.parentNode;
 			}
 		}

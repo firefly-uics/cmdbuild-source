@@ -23,6 +23,10 @@
 				THEMATIC_MIN_ZINDEX : 100000
 
 			},
+			
+			navigationTree : {
+				limitSelection : 300
+			},
 			shapes : {
 				CIRCLE : "shape_circle",
 				RECTANGLE : "shape_rectangle",
@@ -119,7 +123,7 @@
 				this.map = new ol.Map({
 					target : configuration.mapDivId,
 					renderer : 'canvas',
-					layers : [ this.geoExtension.getBaseLayer() ],
+					layers : [],// this.geoExtension.getBaseLayer() ],
 					view : this.view
 				});
 				me = this;
