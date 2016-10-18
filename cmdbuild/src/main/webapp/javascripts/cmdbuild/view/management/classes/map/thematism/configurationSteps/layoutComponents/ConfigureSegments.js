@@ -18,11 +18,20 @@
 					var me = this;
 					Ext.apply(this, {
 						items : [ {
-							xtype : "textfield",
-							fieldLabel : CMDBuild.Translation.thematicSegment,
+							xtype : "numberfield",
+							fieldLabel : CMDBuild.Translation.thematicSegments,
 							name : 'segmentsConfiguration',
-							allowBlank : true,
-							value : 10
+							allowBlank : false,
+							maxValue : 10,
+							minValue : 1,
+							listeners : {
+								change : function(field, newValue, oldValue, eOpts) {
+									var layoutConfiguration = me.getLayoutConfiguration();
+									layoutConfiguration.segmentsConfiguration = newValue;
+									me.parentWindow.refreshGridColors();
+								}
+							}
+
 						} ]
 					});
 					this.callParent(arguments);
@@ -35,6 +44,16 @@
 				},
 				init : function() {
 					var layoutConfiguration = this.getLayoutConfiguration();
+					var analysisType = this.parentWindow.getCurrentAnalysisType();
+					var isPuntual = (analysisType === CMDBuild.gis.constants.layers.PUNTUAL_ANALYSIS);
+					if (isPuntual) {
+						this.items.getAt(0).hide();
+					} else {
+						this.items.getAt(0).show();
+					}
+					if (!layoutConfiguration.segmentsConfiguration) {
+						layoutConfiguration.segmentsConfiguration = CMDBuild.gis.constants.DEFAULT_SEGMENTS;
+					}
 					this.parentWindow.initForm(this, layoutConfiguration);
 				},
 				loadComponents : function(callback, callbackScope) {

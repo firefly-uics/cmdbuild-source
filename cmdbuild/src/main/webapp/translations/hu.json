@@ -1156,6 +1156,7 @@
 	"promptSync": "Azonnali szinkronizálás",
 	"properties": "Tulajdonságok",
 	"queue": "Sor",
+	"rangeTo": "<em>to</em>",
 	"read": "Olvasás",
 	"readOnly": "Csak olvasható",
 	"record": "<em>Record</em>",

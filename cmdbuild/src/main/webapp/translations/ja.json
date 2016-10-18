@@ -1156,6 +1156,7 @@
 	"promptSync": "<em>Prompt sync</em>",
 	"properties": "プロパティ",
 	"queue": "<em>Queue</em>",
+	"rangeTo": "<em>to</em>",
 	"read": "読取権限",
 	"readOnly": "読み取り専用",
 	"record": "<em>Record</em>",

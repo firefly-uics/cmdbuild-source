@@ -9,7 +9,7 @@
 			CENTER_LONGITUDE : 'centerLongitude',
 			CENTER_LATITUDE : 'centerLatitude',
 			ICON_SIZE : .7,
-
+			DEFAULT_SEGMENTS : 10,
 			layers : {
 				PUNTUAL_ANALYSIS : "puntual_analysis",
 				RANGES_ANALYSIS : "ranges_analysis",

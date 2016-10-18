@@ -349,8 +349,8 @@
 	}
 	function groupRangesData(field, analysisType, sourceType, cardsArray, attributeName) {
 		var groups = [];
-		var max = undefined;
-		var min = undefined;
+		var max = Number.MIN_VALUE;
+		var min = Number.MAX_VALUE;
 		for (var i = 0; i < cardsArray.length; i++) {
 			var card = cardsArray[i];
 			valorizeCard(field, analysisType.strategy, sourceType, card, attributeName);
@@ -365,8 +365,9 @@
 		}
 		var keyGroups = {};
 		for (var i = 0; i < groups.length; i++) {
-			var suffix = (i < groups.length - 1) ? "- < " + parseInt(groups[i + 1].range) : "";
-			keyGroups[(i + 1) + ") " + parseInt(groups[i].range) + " <= " + suffix] = {
+			var suffix = (i < groups.length - 1) ? " " + CMDBuild.Translation.rangeTo + " "
+					+ parseInt(groups[i + 1].range) : "";
+			keyGroups[(i + 1) + ") " + parseInt(groups[i].range) + suffix] = {
 				count : groups[i].count,
 				cards : groups[i].cards
 			};
@@ -409,7 +410,10 @@
 	function disposeCardByCard(groups, card, range) {
 		for (var i = 0; i < groups.length; i++) {
 			var value = .0 + card.value;
-			if (value - groups[i].range < range) {
+			if (i === groups.length - 1 && groups[i].range <= value) {
+				groups[i].count++;
+				groups[i].cards.push(card);
+			} else if (groups[i].range <= value && value < groups[i].range + range) {
 				groups[i].count++;
 				groups[i].cards.push(card);
 				break;

@@ -8,14 +8,14 @@
 						xtype : "form",
 						layout : "anchor",
 						requires : [
-//								'CMDBuild.view.management.classes.map.thematism.configurationSteps.layoutComponents.ConfigureShape',
-//								'CMDBuild.view.management.classes.map.thematism.configurationSteps.layoutComponents.ConfigureSegments',
+								// 'CMDBuild.view.management.classes.map.thematism.configurationSteps.layoutComponents.ConfigureShape',
+								'CMDBuild.view.management.classes.map.thematism.configurationSteps.layoutComponents.ConfigureSegments',
 								'CMDBuild.view.management.classes.map.thematism.configurationSteps.layoutComponents.ConfigureRows' ],
 
 						parentWindow : undefined,
 						interactionDocument : undefined,
-//						controlShape : undefined,
-//						controlSegments : undefined,
+						// controlShape : undefined,
+						controlSegments : undefined,
 						controlRows : undefined,
 						configurationPanel : undefined,
 
@@ -45,6 +45,9 @@
 						},
 						getCurrentAttribute : function() {
 							return this.parentWindow.getCurrentAttribute();
+						},
+						refreshGridColors : function() {
+							return this.controlRows.refreshGridColors();
 						},
 						getHtmlTitle : function() {
 							var configuration = this.parentWindow.getThematismConfiguration();
@@ -118,7 +121,7 @@
 							});
 							this.initControls();
 							Ext.apply(this, {
-								items : [ this.configurationPanel, /*this.controlShape, this.controlSegments,*/
+								items : [ this.configurationPanel, /* this.controlShape, */this.controlSegments,
 										this.controlRows ],
 								buttons : this.getButtons(),
 							});
@@ -128,20 +131,13 @@
 							this.parentWindow.initForm(form, layoutConfiguration);
 						},
 						initControls : function() {
-//							this.controlShape = Ext
-//									.create(
-//											"CMDBuild.view.management.classes.map.thematism.configurationSteps.layoutComponents.ConfigureShape",
-//											{
-//												interactionDocument : this.interactionDocument,
-//												parentWindow : this
-//											});
-//							this.controlSegments = Ext
-//									.create(
-//											"CMDBuild.view.management.classes.map.thematism.configurationSteps.layoutComponents.ConfigureSegments",
-//											{
-//												interactionDocument : this.interactionDocument,
-//												parentWindow : this
-//											});
+							this.controlSegments = Ext
+									.create(
+											"CMDBuild.view.management.classes.map.thematism.configurationSteps.layoutComponents.ConfigureSegments",
+											{
+												interactionDocument : this.interactionDocument,
+												parentWindow : this
+											});
 							this.controlRows = Ext
 									.create(
 											"CMDBuild.view.management.classes.map.thematism.configurationSteps.layoutComponents.ConfigureRows",
@@ -153,13 +149,13 @@
 						},
 						loadComponents : function(callback, callbackScope) {
 							this.configurationPanel.update(this.getHtmlTitle());
-//							this.controlShape.loadComponents(function() {
-//								this.controlSegments.loadComponents(function() {
-									this.controlRows.loadComponents(function() {
-										callback.apply(callbackScope, []);
-									}, this);
-//								}, this);
-//							}, this);
+							// this.controlShape.loadComponents(function() {
+							this.controlSegments.loadComponents(function() {
+								this.controlRows.loadComponents(function() {
+									callback.apply(callbackScope, []);
+								}, this);
+							}, this);
+							// }, this);
 						}
 					});
 

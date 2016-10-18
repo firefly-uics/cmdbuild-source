@@ -1156,6 +1156,7 @@
 	"promptSync": "立即同步",
 	"properties": "<em>Properties</em>",
 	"queue": "队列",
+	"rangeTo": "<em>to</em>",
 	"read": "<em>Read</em>",
 	"readOnly": "只读",
 	"record": "<em>Record</em>",

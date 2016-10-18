@@ -1156,6 +1156,7 @@
 	"promptSync": "فورية التزامن",
 	"properties": "الخواص",
 	"queue": "الطابور",
+	"rangeTo": "<em>to</em>",
 	"read": "قراءة",
 	"readOnly": "للقراءة فقط",
 	"record": "<em>Record</em>",

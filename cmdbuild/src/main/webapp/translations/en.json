@@ -1156,6 +1156,7 @@
 	"promptSync": "Prompt sync",
 	"properties": "Properties",
 	"queue": "Queue",
+	"rangeTo": "to",
 	"read": "Read",
 	"readOnly": "Read only",
 	"record": "Record",

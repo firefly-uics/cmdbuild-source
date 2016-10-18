@@ -1156,6 +1156,7 @@
 	"promptSync": "Invite de synchronisation",
 	"properties": "Propriétés",
 	"queue": "File",
+	"rangeTo": "<em>to</em>",
 	"read": "Lire",
 	"readOnly": "Lecture seule",
 	"record": "<em>Record</em>",
