@@ -1,4 +1,4 @@
-CMDBuild 2.4.2 (released YYYY/MM/DD)
+CMDBuild 2.4.2 (released 2016/10/18)
 
 
 NEW FEATURES
@@ -15,8 +15,6 @@ NEW FEATURES
 
  * Simple filter support for processes routes
 
- * New GetCardPosition management
-
  * Client performance improvements
 
  * Metadata for functions through REST interface
@@ -30,6 +28,12 @@ NEW FEATURES
  * Information about the filter of the nodes of domain trees through REST API
 
  * To field no more required in create/edit email tab window
+
+ * GIS thematisms: puntual and range thematic analysis
+
+ * GIS performance's improvements
+
+ * Printing of relation graph
 
 
 FIXES
