@@ -126,7 +126,7 @@
 									text : CMDBuild.Translation.thematicColor,
 									dataIndex : "color",
 									renderer : function(value, metaData) {
-										metaData.style = "background-color:" + value + ";";
+										metaData.style = "background-color:" + value + ";font-size:" + 0;
 										return value;
 									},
 									editor : colorPicker
