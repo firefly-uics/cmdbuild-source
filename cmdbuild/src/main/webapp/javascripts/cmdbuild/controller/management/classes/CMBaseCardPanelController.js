@@ -90,19 +90,12 @@
 			// The right way it should work is to execute the getCard query to the server every time i select a new card in grid
 			var loadRemoteData = true;
 
-			// If the entryType id and the id of the card are different the fields are not right, refill the form before the loadCard
-			var reloadFields = this.entryType.get(CMDBuild.core.constants.Proxy.ID) != this.card.get("IdClass");
-
 			// Defer this call to release the UI event manage
 			Ext.defer(buildWidgetControllers, 1, this, [card]);
 
-			if (reloadFields) {
-				this.loadFields(this.card.get("IdClass"), function() {
-					me.loadCard(loadRemoteData);
-				});
-			} else {
+			this.loadFields(this.card.get("IdClass"), function() {
 				me.loadCard(loadRemoteData);
-			}
+			});
 
 			// History record save
 			if (!Ext.isEmpty(_CMCardModuleState.entryType) && !Ext.isEmpty(card))
