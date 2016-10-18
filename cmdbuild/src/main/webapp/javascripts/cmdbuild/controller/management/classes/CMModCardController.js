@@ -395,14 +395,26 @@
 		/**
 		 * To clear view if there are no loaded records
 		 *
-		 * @param (Object) args
-		 * @param (Array) args[1] - loaded records array
+		 * @param {CMDBuild.core.cache.Store} store
+		 * @param {Array} records - loaded records array
+		 * @param {Boolean} successful
+		 *
+		 * @returns {Void}
 		 */
-		onGridLoad: function (args) {
+		onGridLoad: function (store, records, successful) {
 			// TODO notify to sub-controllers?
-			if (Ext.isEmpty(args[1])) {
+			if (Ext.isEmpty(records)) {
+				this.view.cardTabPanel.items.each(function (item) {
+					if (Ext.isFunction(item.reset))
+						item.reset();
+
+					if (Ext.isFunction(item.disable))
+						item.disable();
+				});
+
+				this.view.getCardPanel().enable();
 				this.view.getCardPanel().displayMode();
-				this.view.cardTabPanel.reset();
+				this.view.getCardPanel().form.removeAll(false);
 			}
 		},
 
