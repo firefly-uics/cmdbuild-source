@@ -30,6 +30,9 @@
 		},
 
 		listeners: {
+			beforeitemclick: function (view, record, item, index, e, eOpts) {
+				this.delegate.cmfg('onWorkflowTreeBeforeItemClick', record);
+			},
 			columnhide: function (ct, column, eOpts) {
 				this.delegate.cmfg('onWorkflowTreeColumnChanged');
 			},

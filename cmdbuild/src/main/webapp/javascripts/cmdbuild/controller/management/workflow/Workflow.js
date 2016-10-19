@@ -158,12 +158,11 @@
 			this.controllerForm = Ext.create('CMDBuild.controller.management.workflow.panel.form.Form', { parentDelegate: this });
 			this.controllerTree = Ext.create('CMDBuild.controller.management.workflow.panel.tree.Tree', { parentDelegate: this });
 
-			// Shorthands
-			this.tree = this.controllerTree.getView();
-			this.form = this.controllerForm.getView();
-
-			// View build
-			this.view.add([this.tree, this.form]);
+			// Build view (shorthands)
+			this.view.add([
+				this.tree = this.controllerTree.getView(),
+				this.form = this.controllerForm.getView()
+			]);
 		},
 
 		/**
@@ -337,7 +336,7 @@
 			this.cmfg('workflowSelectedActivityReset');
 
 			// Form setup
-			this.controllerTree.cmfg('workflowFormReset');
+			this.controllerForm.cmfg('workflowFormReset');
 
 			// Tree setup
 			this.controllerTree.cmfg('workflowTreeStoreLoad', { disableFirstRowSelection: true });
@@ -347,11 +346,15 @@
 		 * @param {Object} parameters
 		 * @param {CMDBuild.model.management.workflow.Node} parameters.record
 		 * @param {Function} parameters.callback
+		 * @param {Boolean} parameters.loadMask
 		 * @param {Object} parameters.scope
 		 *
 		 * @returns {Void}
 		 */
 		onWorkflowActivitySelect: function (parameters) {
+			parameters = Ext.isObject(parameters) ? parameters : {};
+			parameters.loadMask = Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : true;
+
 			// Error handling
 				if (!Ext.isObject(parameters.record) || Ext.Object.isEmpty(parameters.record) || !Ext.isFunction(parameters.record.get))
 					return _error('onWorkflowActivitySelect(): unmanaged record parameter', this, record);
@@ -375,6 +378,7 @@
 
 			CMDBuild.proxy.management.workflow.Activity.read({
 				params: params,
+				loadMask: parameters.loadMask,
 				scope: this,
 				success: function (response, options, decodedResponse) {
 					decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.RESPONSE];
@@ -484,18 +488,19 @@
 		 * @param {Object} parameters
 		 * @param {CMDBuild.model.management.workflow.Node} parameters.record
 		 * @param {Function} parameters.callback
+		 * @param {Boolean} parameters.loadMask
 		 * @param {Object} parameters.scope
 		 *
 		 * @returns {Void}
 		 */
 		onWorkflowInstanceSelect: function (parameters) {
+			parameters = Ext.isObject(parameters) ? parameters : {};
+			parameters.loadMask = Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : true;
+
 			this.cmfg('workflowSelectedInstanceReset');
 			this.workflowIsStartActivityReset();
 
 			// Error handling
-				if (!Ext.isObject(parameters) || Ext.Object.isEmpty(parameters))
-					return _error('onWorkflowInstanceSelect(): unmanaged parameters object', this, parameters);
-
 				if (!Ext.isObject(parameters.record) || Ext.Object.isEmpty(parameters.record) || !Ext.isFunction(parameters.record.get))
 					return _error('onWorkflowInstanceSelect(): unmanaged record parameter', this, parameters.record);
 
@@ -513,6 +518,7 @@
 
 			CMDBuild.proxy.management.workflow.Instance.read({
 				params: params,
+				loadMask: parameters.loadMask,
 				scope: this,
 				success: function (response, options, decodedResponse) {
 					decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.RESPONSE];

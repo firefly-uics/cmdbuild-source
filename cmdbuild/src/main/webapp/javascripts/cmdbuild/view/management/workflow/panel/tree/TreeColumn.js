@@ -18,17 +18,16 @@
 		 * @param {Ext.data.NodeStore} store
 		 * @param {Ext.tree.View} view
 		 *
-		 * @returns {Mixed} value
+		 * @returns {String}
 		 *
 		 * @override
 		 */
 		defaultRenderer: function (value, metadata, record, rowIndex, colIndex, store, view) {
-			this.cmfg('workflowTreeRendererTreeColumn', {
+			return this.cmfg('workflowTreeRendererTreeColumn', {
 				metadata: metadata,
-				record: record
+				record: record,
+				value: value
 			});
-
-			return value;
 		}
 	});
 
