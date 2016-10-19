@@ -1,6 +1,6 @@
 (function () {
 
-	Ext.define('CMDBuild.controller.management.accordion.Menu', {
+	Ext.define('CMDBuild.controller.management.accordion.Navigation', {
 		extend: 'CMDBuild.controller.common.abstract.Accordion',
 
 		requires: [
@@ -33,7 +33,7 @@
 		identifier: undefined,
 
 		/**
-		 * @property {CMDBuild.view.management.accordion.Menu}
+		 * @property {CMDBuild.view.management.accordion.Navigation}
 		 */
 		view: undefined,
 
@@ -48,7 +48,7 @@
 		constructor: function (configurationObject) {
 			this.callParent(arguments);
 
-			this.view = Ext.create('CMDBuild.view.management.accordion.Menu', { delegate: this });
+			this.view = Ext.create('CMDBuild.view.management.accordion.Navigation', { delegate: this });
 
 			this.cmfg('accordionUpdateStore');
 		},
