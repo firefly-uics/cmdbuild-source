@@ -1,25 +1,43 @@
 (function() {
 	Ext.define('CMDBuild.view.management.classes.map.geoextension.InteractionDocument', {
 		observers : [],
-		featuresObserver : [],
+		layerObservers : [],
+		featureObservers : [],
+		navigablesObservers : [],
 		editLayer : undefined,
 		feature : undefined,
 		currentCard : undefined,
 		classesControlledByNavigation : undefined,
+		gisAdapters : {},
+		/**
+		 * @property {Boolean} wait if there is a navigation tree
+		 */
+		started : true,
+		visible : false,
+
 		/**
 		 * @property {Object}
 		 * 
 		 */
-		navigables : {},
+		navigable : {},
+
+		/**
+		 * @property {Boolean}
+		 * 
+		 */
+		inEditing : false,
+		noZoom : false,
 
 		configurationMap : {
 			center : [ CMDBuild.configuration.gis.get(CMDBuild.gis.constants.CENTER_LONGITUDE) || 0,
 					CMDBuild.configuration.gis.get(CMDBuild.gis.constants.CENTER_LATITUDE) || 0 ],
-			zoom : CMDBuild.configuration.gis.get(CMDBuild.gis.constants.ZOOM_INITIAL_LEVEL) || 0,
+			zoom : CMDBuild.configuration.gis.get(CMDBuild.core.constants.Proxy.INITIAL_ZOOM_LEVEL) || 0,
 			mapDivId : CMDBuild.gis.constants.MAP_DIV || 0
 		},
 		constructor : function(thematicDocument) {
 			this.thematicDocument = thematicDocument;
+			this.navigable = Ext.create('CMDBuild.view.management.classes.map.geoextension.Navigable', this);
+
 			this.callParent(arguments);
 		},
 		setConfigurationMap : function(mapPanel) {
@@ -27,47 +45,60 @@
 
 		},
 
-		setClassesControlledByNavigation : function(classes) {
-			this.classesControlledByNavigation = classes;
+		resetZoom : function() {
+			this.getMapPanel().resetZoom();
 		},
 
-		isControlledByNavigation : function(className) {
-			if (className === "_Geoserver") {
-				return true;
-			}
-			return (!this.classesControlledByNavigation) ? false : this.classesControlledByNavigation
-					.indexOf(className) != -1;
+		setStarted : function(started) {
+			this.started = started;
+		},
+
+		getStarted : function() {
+			return this.started;
+		},
+
+		setVisible : function(visible) {
+			this.visible = visible;
+		},
+
+		getVisible : function() {
+			return this.visible;
 		},
 
 		/**
 		 * @param {Array}
 		 *            arrayNavigables Ext.data.TreeModel
 		 */
+		prepareNavigables : function() {
+			this.navigable.prepareNavigables();
+		},
 		setNavigables : function(arrayNavigables) {
-			this.navigables = {};
-			for (var i = 0; i < arrayNavigables.length; i++) {
-				var navigable = arrayNavigables[i];
-				var cardId = navigable.get("cardId");
-				var className = navigable.get("className");
-				if (!this.navigables[className]) {
-					this.navigables[className] = [];
-				}
-				this.navigables[className].push(parseInt(cardId));
-			}
+			this.navigable.setNavigables(arrayNavigables);
 			this.changed();
 		},
+		setEditing : function(inEditing) {
+			this.inEditing = inEditing;
+		},
+		getEditing : function(inEditing) {
+			return this.inEditing;
+		},
 		isANavigableClass : function(className) {
-			return this.navigables[className];
+			return this.navigable.isANavigableClass(className) || className === "_Geoserver";
+		},
+		getNavigableNode : function(card) {
+			return this.navigable.getNavigableNode(card);
+		},
+		getNavigable : function(card) {
+			return this.navigable.getNavigable(card);
+		},
+		getNavigablesToChange : function() {
+			return this.navigable.getNavigablesToChange();
 		},
 		isANavigableCard : function(card) {
-			if (! this.isControlledByNavigation(card.className)) {
-				return true;
-			}
-			var id = parseInt(card.cardId);
-			return (!this.navigables[card.className]) ? false : this.navigables[card.className].indexOf(id) !== -1;
+			return this.navigable.isANavigableCard(card);
 		},
 		isANavigableLayer : function(layer) {
-			if (!this.isControlledByNavigation(layer.masterTableName)) {
+			if (!this.isANavigableClass(layer.masterTableName)) {
 				return true;
 			}
 			if (layer.cardBinding.length > 0) {
@@ -81,8 +112,6 @@
 						return true;
 					}
 				}
-				return false;
-			} else if (!this.isANavigableClass(layer.masterTableName)) {
 				return false;
 			}
 			return true;
@@ -137,14 +166,55 @@
 				this.observers.push(view);
 			}
 		},
+		observeLayers : function(view) {
+			if (this.layerObservers.indexOf(view) === -1) {
+				this.layerObservers.push(view);
+			}
+		},
+		observeNavigables : function(view) {
+			if (this.navigablesObservers.indexOf(view) === -1) {
+				this.navigablesObservers.push(view);
+			}
+		},
+		getGisAdapters : function() {
+			return this.gisAdapters;
+		},
+		pushGisLayerAdapter : function(name, className, adapterGisLayer) {
+			if (this.gisAdapters[className]) {
+				var newAdapter = true;
+				for (var i = 0; i < this.gisAdapters[className].length; i++) {
+					var namedAdapter = this.gisAdapters[className][i];
+					if (namedAdapter.name === name) {
+						namedAdapter.adapter = adapterGisLayer;
+						newAdapter = false;
+						break;
+					}
+				}
+			} else {
+				this.gisAdapters[className] = [ {
+					name : name,
+					adapter : adapterGisLayer
+				} ];
+			}
+		},
 		changed : function() {
 			for (var i = 0; i < this.observers.length; i++) {
 				this.observers[i].refresh();
 			}
 		},
+		changedNavigables : function() {
+			for (var i = 0; i < this.navigablesObservers.length; i++) {
+				this.navigablesObservers[i].refreshNavigables();
+			}
+		},
+		changedLayers : function() {
+			for (var i = 0; i < this.layerObservers.length; i++) {
+				this.layerObservers[i].refreshLayers();
+			}
+		},
 		observeFeatures : function(view) {
-			if (this.featuresObserver.indexOf(view) === -1) {
-				this.featuresObserver.push(view);
+			if (this.featureObservers.indexOf(view) === -1) {
+				this.featureObservers.push(view);
 			}
 		},
 		onLoadedfeatures : function(layerName, features) {
@@ -154,8 +224,8 @@
 			this.getMapPanel().selectCard(this.getCurrentCard());
 		},
 		changedFeature : function() {
-			for (var i = 0; i < this.featuresObserver.length; i++) {
-				this.featuresObserver[i].refreshCurrentFeature();
+			for (var i = 0; i < this.featureObservers.length; i++) {
+				this.featureObservers[i].refreshCurrentFeature();
 			}
 		},
 		getLayerVisibility : function(layer) {
@@ -175,21 +245,13 @@
 				callback.apply(callbackScope, [ undefined ])
 				return;
 			}
-//			var geoLayer = this.getGeoLayerByName(layers[index].name);
-//			if (geoLayer && geoLayer.get("adapter") && geoLayer.get("adapter").getPosition) {
-//				geoLayer.get("adapter").getPosition(card, function(center) {
-				this.getPosition(card, function(center) {
-					if (center) {
-						callback.apply(callbackScope, [ center ])
-					} else {
-						this.centerOnLayer(card, layers, index + 1, callback, callbackScope)
-					}
-				}, this);
-//			}
-//			else {
-//				this.centerOnLayer(card, layers, index + 1, callback, callbackScope)
-//				
-//			}
+			this.getPosition(card, function(center) {
+				if (center) {
+					callback.apply(callbackScope, [ center ])
+				} else {
+					this.centerOnLayer(card, layers, index + 1, callback, callbackScope)
+				}
+			}, this);
 		},
 		/**
 		 * 
@@ -224,14 +286,14 @@
 			var map = this.getMap();
 			var me = this;
 			this.getLayersForCard(card, function(layers) {
+				var mapPanel = me.getMapPanel();
 				me.centerOnLayer(card, layers, 0, function(center) {
 					if (center) {
-						var mapPanel = me.getMapPanel();
 						me.configurationMap.center = center;
-						mapPanel.center(me.configurationMap);
-						//me.changed();
+						// me.changed();
 					}
-					callback.apply(callbackScope, []);
+					mapPanel.center(me.configurationMap);
+					callback.apply(callbackScope, [ center ]);
 				}, this);
 			}, this);
 		},
@@ -249,14 +311,21 @@
 			}, this);
 		},
 		setCurrentCard : function(card) {
-			if (this.currentCard && card.className !== this.currentCard.className) {
-				this.removeAllGisLayers();
-			}
 			this.currentCard = card;
 			this.thematicDocument.setCurrentCard(card);
 		},
 		getCurrentCard : function() {
 			return this.currentCard;
+		},
+		setNoZoom : function(noZoom) {
+			this.noZoom = noZoom;
+		},
+		getNoZoom : function() {
+			return this.noZoom;
+		},
+		getZoom : function() {
+			var mapPanel = this.getMapPanel();
+			return mapPanel.getZoom();
 		},
 		clearSelection : function() {
 			var mapPanel = this.getMapPanel();
@@ -316,7 +385,32 @@
 			return this.thematicDocument.getLayerByName(name);
 		},
 		isVisible : function(layer, currentClassName, currentCardId) {
-			return isVisible(layer, currentClassName, currentCardId);
+			var me = this;
+			function checkClass(visibility) {
+				return me.sameClass(currentClassName, visibility);
+			}
+			function checkCard(binding) {
+				// because an id can be a string or an integer have to be ==
+				return (binding.idCard == currentCardId && this.sameClass(binding.className, currentClassName));
+			}
+			if (layer.visibility.find(checkClass) !== undefined) {
+				return true;
+			}
+			if (layer.cardBinding.find(checkCard) !== undefined) {
+				return true;
+			}
+			return false;
+		},
+		isCardOnMap : function(currentCard) {
+			var layers = this.getMap().getLayers();
+			var found = false;
+			layers.forEach(function(layer) {
+				var geoAttribute = layer.get("geoAttribute");
+				if (geoAttribute && geoAttribute.masterTableName === currentCard.className) {
+					found = true;
+				}
+			});
+			return found;
 		},
 		setCurrentFeature : function(name, geoType, operation) {
 			this.feature = {
@@ -324,20 +418,32 @@
 				geoType : geoType,
 				operation : operation
 			};
+		},
+		sameClass : function(classNameOne, classNameTwo) {
+			return this.isDescendant(classNameOne, classNameTwo) || this.isDescendant(classNameTwo, classNameOne);
+		},
+
+		isDescendant : function(subClassName, superClassName) {
+			var etSub = _CMCache.getEntryTypeByName(subClassName)
+			var etSuper = _CMCache.getEntryTypeByName(superClassName)
+			if (!(etSub && etSuper)) {
+				return false;
+			}
+			var idSub = etSub.get("id");
+			var idSuper = etSuper.get("id");
+			var classes = _CMCache.getClasses();
+			while (true) {
+				if (!idSub) {
+					return false;
+				}
+				if (idSub === idSuper) {
+					return true;
+				}
+				var type = classes[idSub];
+				idSub = type.get("parent");
+			}
 		}
 	});
-
-	function layersByCard(card, callback, callbackScope) {// ?????????
-		var retLayers = [];
-		_CMCache.getAllLayers(function(layers) {
-			for (var i = 0; i < layers.length; i++) {
-				if (layer === card.cardId) {
-
-				}
-			}
-			callback.apply(callbackScope, [ retLayers ]);
-		});
-	}
 
 	function geoLayerByName(name, map, currentCard) {
 		var retLayer = null;
@@ -360,6 +466,15 @@
 			callback.apply(callbackScope, [ layer ]);
 		});
 	}
+	function layerByName(name, callback, callbackScope) {
+		function checkName(layer) {
+			return (layer.name === name);
+		}
+		_CMCache.getAllLayers(function(layers) {
+			var layer = layers.find(checkName);
+			callback.apply(callbackScope, [ layer ]);
+		});
+	}
 	function layerByClassAndName(className, name, callback, callbackScope) {
 		function checkName(layer) {
 			return (layer.name === name && layer.masterTableName === className);
@@ -370,22 +485,6 @@
 		});
 	}
 
-	function isVisible(layer, currentClassName, currentCardId) {
-		function checkClass(visibility) {
-			return (currentClassName === visibility);
-		}
-		function checkCard(binding) {
-			// because an id can be a string or an integer have to be ==
-			return (binding.idCard == currentCardId && binding.className === currentClassName);
-		}
-		if (layer.visibility.find(checkClass) !== undefined) {
-			return true;
-		}
-		if (layer.cardBinding.find(checkCard) !== undefined) {
-			return true;
-		}
-		return false;
-	}
 	function getCenterOfExtent(extent) {
 		var x = extent[0] + (extent[2] - extent[0]) / 2;
 		var y = extent[1] + (extent[3] - extent[1]) / 2;
@@ -394,12 +493,17 @@
 	function getPointCenter(geometry) {
 		return geometry.coordinates;
 	}
+	function getLineCenter(geometry) {
+		return getGenericPolygonCenter(geometry.coordinates);
+	}
 	function getPolygonCenter(geometry) {
+		return getGenericPolygonCenter(geometry.coordinates[0]);
+	}
+	function getGenericPolygonCenter(coordinates) {
 		var minX = Number.MAX_VALUE;
 		var minY = Number.MAX_VALUE;
 		var maxX = Number.MIN_VALUE;
 		var maxY = Number.MIN_VALUE;
-		var coordinates = geometry.coordinates[0];
 		for (var i = 0; i < coordinates.length; i++) {
 			var coordinate = coordinates[i];
 			minX = Math.min(minX, coordinate[0]);
@@ -411,6 +515,8 @@
 	}
 	function getCenter(geometry) {
 		switch (geometry.type) {
+		case "LINESTRING":
+			return getLineCenter(geometry);
 		case "POLYGON":
 			return getPolygonCenter(geometry);
 		case "POINT":
@@ -418,4 +524,5 @@
 		}
 
 	}
+
 })();

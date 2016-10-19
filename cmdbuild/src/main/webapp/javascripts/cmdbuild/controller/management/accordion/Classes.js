@@ -6,7 +6,7 @@
 		requires: [
 			'CMDBuild.core.constants.Global',
 			'CMDBuild.core.constants.Proxy',
-			'CMDBuild.proxy.classes.Classes'
+			'CMDBuild.proxy.management.classes.Classes'
 		],
 
 		/**
@@ -68,7 +68,7 @@
 			var params = {};
 			params[CMDBuild.core.constants.Proxy.ACTIVE] = true;
 
-			CMDBuild.proxy.classes.Classes.readAll({
+			CMDBuild.proxy.management.classes.Classes.readAll({
 				params: params,
 				loadMask: Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : false,
 				scope: this,

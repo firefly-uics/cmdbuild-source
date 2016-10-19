@@ -38,20 +38,17 @@
 			Ext.apply(this, {
 				builders: {
 				// OpenTabs widgets: they have to open a tab in the activityTabPanel, and not a separate window
-					'.OpenNote': function(widget, card) {
-						var widgetUI = null;
-						if (me.tabbedWidgetDelegate) {
-							widgetUI = me.tabbedWidgetDelegate.getNotesPanel() || null;
+					/**
+					 * @param {Object} widget
+					 * @param {Ext.data.Model or CMDBuild.model.CMActivityInstance} card
+					 *
+					 * @returns {Void}
+					 */
+					'.ManageEmail': function (widget, card) {
+						if (!Ext.isEmpty(me.tabbedWidgetDelegate) && !Ext.isEmpty(me.tabbedWidgetDelegate.getEmailPanel()))
+							return me.tabbedWidgetDelegate.getEmailPanel();
 
-							if (widgetUI != null) {
-								widgetUI.configure({
-									widget: widget,
-									activityInstance: card
-								});
-							}
-						}
-
-						return widgetUI;
+						return null;
 					},
 
 					'.OpenAttachment': function(widget, card) {
@@ -72,13 +69,13 @@
 
 					/**
 					 * @param {Object} widget
-					 * @param {Ext.data.Model or CMDBuild.model.CMActivityInstance} card or activity
+					 * @param {CMDBuild.model.CMActivityInstance} activity
 					 *
-					 * @returns {Null}
+					 * @returns {Void}
 					 */
-					'.ManageEmail': function(widget, card) {
+					'.OpenNote': function (widget, card) {
 						if (!Ext.isEmpty(me.tabbedWidgetDelegate) && !Ext.isEmpty(me.tabbedWidgetDelegate.getEmailPanel()))
-							return me.tabbedWidgetDelegate.getEmailPanel();
+							return me.tabbedWidgetDelegate.getNotesPanel();
 
 						return null;
 					},
@@ -147,7 +144,7 @@
 					 * @param {CMDBuild.model.CMActivityInstance} card or activity
 					 */
 					'.LinkCards': function(widget, card) {
-						var w = Ext.create('CMDBuild.view.management.common.widgets.linkCards.LinkCards', {
+						var w = Ext.create('CMDBuild.view.management.widget.linkCards.LinkCards', {
 							widgetConf: widget // TODO: this dependency should be deleted
 						});
 
@@ -175,7 +172,7 @@
 					 * @param {CMDBuild.model.CMActivityInstance} card or activity
 					 */
 					'.NavigationTree': function(widget, card) {
-						var w = new CMDBuild.view.management.common.widgets.CMNavigationTree();
+						var w = Ext.create('CMDBuild.view.management.widget.navigationTree.NavigationTreeView');
 
 						me.widgetsContainer.addWidgt(w);
 

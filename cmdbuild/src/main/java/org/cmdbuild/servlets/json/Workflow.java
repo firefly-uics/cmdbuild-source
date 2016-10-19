@@ -3,6 +3,7 @@ package org.cmdbuild.servlets.json;
 import static com.google.common.collect.FluentIterable.from;
 import static java.util.Arrays.asList;
 import static org.cmdbuild.services.json.dto.JsonResponse.success;
+import static org.cmdbuild.servlets.json.CommunicationConstants.ACTIVE;
 import static org.cmdbuild.servlets.json.CommunicationConstants.ACTIVITY_INSTANCE_ID;
 import static org.cmdbuild.servlets.json.CommunicationConstants.ADVANCE;
 import static org.cmdbuild.servlets.json.CommunicationConstants.ATTRIBUTES;
@@ -13,8 +14,10 @@ import static org.cmdbuild.servlets.json.CommunicationConstants.CLASS_NAME;
 import static org.cmdbuild.servlets.json.CommunicationConstants.FILTER;
 import static org.cmdbuild.servlets.json.CommunicationConstants.FLOW_STATUS;
 import static org.cmdbuild.servlets.json.CommunicationConstants.HAS_POSITION;
+import static org.cmdbuild.servlets.json.CommunicationConstants.ID;
 import static org.cmdbuild.servlets.json.CommunicationConstants.ID_CLASS;
 import static org.cmdbuild.servlets.json.CommunicationConstants.LIMIT;
+import static org.cmdbuild.servlets.json.CommunicationConstants.NAME;
 import static org.cmdbuild.servlets.json.CommunicationConstants.POSITION;
 import static org.cmdbuild.servlets.json.CommunicationConstants.PROCESS_INSTANCE_ID;
 import static org.cmdbuild.servlets.json.CommunicationConstants.SORT;
@@ -42,6 +45,9 @@ import org.apache.commons.lang3.StringUtils;
 import org.cmdbuild.common.Constants;
 import org.cmdbuild.common.template.TemplateResolver;
 import org.cmdbuild.common.utils.PagedElements;
+import org.cmdbuild.exception.AuthException;
+import org.cmdbuild.exception.CMDBWorkflowException;
+import org.cmdbuild.exception.CMDBWorkflowException.WorkflowExceptionType;
 import org.cmdbuild.exception.ConsistencyException.ConsistencyExceptionType;
 import org.cmdbuild.logic.data.QueryOptions;
 import org.cmdbuild.logic.data.access.DataAccessLogic;
@@ -51,6 +57,7 @@ import org.cmdbuild.services.json.dto.JsonResponse;
 import org.cmdbuild.servlets.json.serializers.JsonWorkflowDTOs.JsonActivityDefinition;
 import org.cmdbuild.servlets.json.serializers.JsonWorkflowDTOs.JsonActivityInstance;
 import org.cmdbuild.servlets.json.serializers.JsonWorkflowDTOs.JsonProcessCard;
+import org.cmdbuild.servlets.json.serializers.Serializer;
 import org.cmdbuild.servlets.json.util.FlowStatusFilterElementGetter;
 import org.cmdbuild.servlets.utils.Parameter;
 import org.cmdbuild.workflow.ActivityPerformer;
@@ -60,6 +67,7 @@ import org.cmdbuild.workflow.CMActivity;
 import org.cmdbuild.workflow.CMProcessInstance;
 import org.cmdbuild.workflow.CMWorkflowException;
 import org.cmdbuild.workflow.user.UserActivityInstance;
+import org.cmdbuild.workflow.user.UserProcessClass;
 import org.cmdbuild.workflow.user.UserProcessInstance;
 import org.cmdbuild.workflow.user.UserProcessInstanceWithPosition;
 import org.codehaus.jackson.annotate.JsonProperty;
@@ -75,6 +83,82 @@ import com.google.common.base.Optional;
 import com.google.common.collect.Lists;
 
 public class Workflow extends JSONBaseWithSpringContext {
+
+	@JSONExported
+	public JSONObject readAll( //
+			@Parameter(value = ACTIVE, required = false) final boolean activeOnly //
+	) throws JSONException, AuthException, CMWorkflowException {
+		final Iterable<? extends UserProcessClass> processClasses = workflowLogic().findProcessClasses(activeOnly);
+		final JSONArray serializedClasses = new JSONArray();
+		for (final UserProcessClass userProcessClass : processClasses) {
+			serializedClasses.put(serialize(userProcessClass));
+
+			// do this check only for the request
+			// of active classes AKA the management module
+			if (activeOnly) {
+				try {
+					alertAdminIfNoStartActivity(userProcessClass);
+				} catch (final Exception ex) {
+					logger.error(
+							String.format("Error retrieving start activity for process", userProcessClass.getName()));
+				}
+			}
+		}
+		return new JSONObject() {
+			{
+				put("response", serializedClasses);
+			}
+		};
+	}
+
+	@JSONExported
+	public JSONObject readByName( //
+			@Parameter(value = NAME) final String className //
+	) throws JSONException, AuthException, CMWorkflowException {
+		final UserProcessClass output = workflowLogic().findProcessClass(className);
+		return new JSONObject() {
+			{
+				put("response", serialize(output));
+			}
+		};
+	}
+
+	@JSONExported
+	public JSONObject readById( //
+			@Parameter(value = ID) final Long classId //
+	) throws JSONException, AuthException, CMWorkflowException {
+		final UserProcessClass output = workflowLogic().findProcessClass(classId);
+		return new JSONObject() {
+			{
+				put("response", serialize(output));
+			}
+		};
+	}
+
+	private JSONObject serialize(final UserProcessClass value) throws JSONException, CMWorkflowException {
+		final JSONObject output = classSerializer().toClient(value, true);
+		new Serializer(authLogic()).addAttachmentsData(output, value, dmsLogic(), notifier());
+		return output;
+	}
+
+	/**
+	 * @param element
+	 * @throws CMWorkflowException
+	 */
+	private void alertAdminIfNoStartActivity(final UserProcessClass element) throws CMWorkflowException {
+		try {
+			workflowLogic().getStartActivityOrDie(element.getName());
+		} catch (final CMDBWorkflowException ex) {
+			// throw an exception to say to the user
+			// that the XPDL has no adminStart
+			if (WorkflowExceptionType.WF_START_ACTIVITY_NOT_FOUND.equals(ex.getExceptionType())
+					&& !element.isSuperclass() && userStore().getUser().hasAdministratorPrivileges()) {
+				notifier().warn(ex);
+			} else {
+				throw ex;
+			}
+		}
+	}
 
 	/**
 	 * Get the workItems OR closed processes, depending on the state required.

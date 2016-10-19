@@ -3,7 +3,7 @@
 	Ext.define('CMDBuild.core.buttons.gis.Thematism', {
 		extend : 'Ext.button.Split',
 		iconCls : 'add',
-		text : "@@ Thematism",
+		text : CMDBuild.Translation.thematismTitle,
 		callback : undefined,
 		interactionDocument : undefined,
 		initComponent : function() {

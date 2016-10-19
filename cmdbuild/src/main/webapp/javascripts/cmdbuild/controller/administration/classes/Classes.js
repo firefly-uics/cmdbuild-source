@@ -5,7 +5,7 @@
 
 		requires: [
 			'CMDBuild.core.constants.Proxy',
-			'CMDBuild.proxy.classes.Classes'
+			'CMDBuild.proxy.administration.classes.Classes'
 		],
 
 		/**
@@ -153,37 +153,31 @@
 
 			if (Ext.isObject(node) && !Ext.Object.isEmpty(node)) {
 				var params = {};
-				params[CMDBuild.core.constants.Proxy.ACTIVE] = false;
+				params[CMDBuild.core.constants.Proxy.ID] = node.get(CMDBuild.core.constants.Proxy.ENTITY_ID);
 
-				CMDBuild.proxy.classes.Classes.read({ // FIXME: waiting for refactor (server endpoint)
+				CMDBuild.proxy.administration.classes.Classes.readById({
 					params: params,
 					scope: this,
 					success: function (response, options, decodedResponse) {
-						decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.CLASSES];
+						decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.RESPONSE];
 
-						if (Ext.isArray(decodedResponse) && !Ext.isEmpty(decodedResponse)) {
-							var selectedClass = Ext.Array.findBy(decodedResponse, function (classObject, i) {
-								return node.get(CMDBuild.core.constants.Proxy.ENTITY_ID) == classObject[CMDBuild.core.constants.Proxy.ID];
-							}, this);
+						if (Ext.isObject(decodedResponse) && !Ext.Object.isEmpty(decodedResponse)) {
+							this.classesSelectedClassSet({ value: decodedResponse });
 
-							if (Ext.isObject(selectedClass) && !Ext.Object.isEmpty(selectedClass)) {
-								this.classesSelectedClassSet({ value: selectedClass });
+							this.setViewTitle(this.cmfg('classesSelectedClassGet', CMDBuild.core.constants.Proxy.DESCRIPTION));
 
-								this.setViewTitle(this.cmfg('classesSelectedClassGet', CMDBuild.core.constants.Proxy.DESCRIPTION));
+							this.cmfg('onClassesClassSelected');
 
-								this.cmfg('onClassesClassSelected');
-							} else {
-								_error('onClassesModuleInit(): class not found', this, node.get(CMDBuild.core.constants.Proxy.ENTITY_ID));
-							}
+							// Manage tab selection
+							if (Ext.isEmpty(this.tabPanel.getActiveTab()))
+								this.tabPanel.setActiveTab(0);
+
+							this.tabPanel.getActiveTab().fireEvent('show'); // Manual show event fire because was already selected
+
+							this.onModuleInit(node); // Custom callParent() implementation
+						} else {
+							_error('onClassesModuleInit(): unmanaged response', this, decodedResponse);
 						}
-
-						// Manage tab selection
-						if (Ext.isEmpty(this.tabPanel.getActiveTab()))
-							this.tabPanel.setActiveTab(0);
-
-						this.tabPanel.getActiveTab().fireEvent('show'); // Manual show event fire because was already selected
-
-						this.onModuleInit(node); // Custom callParent() implementation
 					}
 				});
 			} else {

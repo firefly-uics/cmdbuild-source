@@ -68,7 +68,6 @@
 
 			var params = {};
 			params[CMDBuild.core.constants.Proxy.GROUP_NAME] = CMDBuild.configuration.runtime.get(CMDBuild.core.constants.Proxy.DEFAULT_GROUP_NAME);
-			params[CMDBuild.core.constants.Proxy.LOCALIZED] = true;
 
 			CMDBuild.proxy.Menu.read({
 				params: params,

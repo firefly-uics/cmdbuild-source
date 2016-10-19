@@ -123,7 +123,7 @@
 		 * @params {String} format
 		 */
 		onPrintGridMenuClick: function (format) {
-			if (!Ext.isEmpty(format)) {
+			if (Ext.isString(format) && !Ext.isEmpty(format)) {
 				var params = Ext.apply({}, this.view.getStore().proxy.extraParams);
 				params[CMDBuild.core.constants.Proxy.ATTRIBUTES] = Ext.encode(this.view.getVisibleColumns());
 				params[CMDBuild.core.constants.Proxy.SORT] = Ext.encode(this.view.getStore().getSorters());

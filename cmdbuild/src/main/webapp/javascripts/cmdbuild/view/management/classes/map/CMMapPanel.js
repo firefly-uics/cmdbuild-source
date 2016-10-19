@@ -124,7 +124,7 @@
 
 			if (CMDBuild.configuration.gis.get('cardBrowserByDomainConfiguration')['root']) { 
 				var root = CMDBuild.configuration.gis.get('cardBrowserByDomainConfiguration')['root']; 
-
+				this.interactionDocument.setStarted(false);
 				this.cardBrowser = new CMDBuild.view.management.classes.map.NavigationTree({
 					title : CMDBuild.Translation.management.modcard.gis.gisNavigation,
 					frame : false,
@@ -134,12 +134,12 @@
 				});
 
 				tabs.push(this.cardBrowser);
-				this.thematicView = Ext.create(
-						'CMDBuild.controller.management.classes.map.thematism.ThematismMainWindow', {
-							interactionDocument : this.interactionDocument
-						});
 
 			}
+			this.thematicView = Ext.create(
+					'CMDBuild.controller.management.classes.map.thematism.ThematismMainWindow', {
+						interactionDocument : this.interactionDocument
+					});
 			this.editingWindow = new CMDBuild.view.management.map.CMMapEditingToolsWindow({
 				owner : this,
 				interactionDocument : this.interactionDocument
@@ -149,7 +149,6 @@
 				title : CMDBuild.Translation.administration.modClass.layers,
 				interactionDocument : this.interactionDocument
 			});
-			this.layerGridController.cmfg('onCardGridShow');
 			tabs.push(this.layerGridController.getView());
 
 			this.cardGridController = new CMDBuild.controller.management.classes.map.CardGrid({
@@ -158,7 +157,6 @@
 				parentDelegate : this.delegate,
 				mainGrid : this.mainGrid
 			});
-			this.cardGridController.cmfg('onCardGridShow');
 			tabs.push(this.cardGridController.getView());
 
 			this.layout = "border";
@@ -202,9 +200,10 @@
 
 		displayMode : function() {
 			if (this.editingWindow) {
+				this.editingWindow.closeAllEditings();
+				this.editingWindow.hide();
 				this.interactionDocument.setCurrentFeature("", "", "Select");
 				this.interactionDocument.changedFeature();
-				this.editingWindow.hide();
 			}
 		},
 
@@ -223,9 +222,6 @@
 			return this.cardBrowser;
 		},
 
-		// getMiniCardGrid : function() {
-		// return this.miniCardGrid;
-		// },
 		getCardGridController : function() {
 			return this.cardGridController;
 		}

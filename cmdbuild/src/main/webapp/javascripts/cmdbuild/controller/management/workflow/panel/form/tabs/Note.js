@@ -1,29 +1,36 @@
 (function () {
 
-	/**
-	 * @link CMDBuild.controller.management.classes.CMNoteController
-	 *
-	 * @legacy
-	 */
 	Ext.define('CMDBuild.controller.management.workflow.panel.form.tabs.Note', {
 		extend: 'CMDBuild.controller.common.abstract.Base',
 
 		requires: [
 			'CMDBuild.core.constants.Proxy',
+			'CMDBuild.core.constants.WidgetType',
 			'CMDBuild.core.Message',
-			'CMDBuild.proxy.Card',
 			'CMDBuild.proxy.management.workflow.panel.form.tabs.Note'
 		],
-
-		mixins: {
-			observable: 'Ext.util.Observable',
-			wfStateDelegate: 'CMDBuild.state.CMWorkflowStateDelegate'
-		},
 
 		/**
 		 * @cfg {CMDBuild.controller.management.workflow.panel.form.Form}
 		 */
 		parentDelegate: undefined,
+
+		/**
+		 * @cfg {Array}
+		 */
+		cmfgCatchedFunctions: [
+			'onWorkflowFormTabNoteAbortActivityButtonClick',
+			'onWorkflowFormTabNoteAbortButtonClick',
+			'onWorkflowFormTabNoteActivitySelect',
+			'onWorkflowFormTabNoteAddButtonClick',
+			'onWorkflowFormTabNoteInstanceSelect',
+			'onWorkflowFormTabNoteModifyButtonClick',
+			'onWorkflowFormTabNoteSaveButtonClick',
+			'onWorkflowFormTabNoteShow',
+			'workflowFormTabNoteReset',
+			'workflowFormTabNoteToolbarBottomBuild',
+			'workflowFormTabNoteToolbarTopBuild'
+		],
 
 		/**
 		 * @property {CMDBuild.view.management.workflow.panel.form.tabs.note.NoteView}
@@ -43,200 +50,345 @@
 
 			this.view = Ext.create('CMDBuild.view.management.workflow.panel.form.tabs.note.NoteView', { delegate: this });
 
-			this.mixins.observable.constructor.call(this, arguments);
-
-			this.card = null;
-			this.entryType = null;
-
-			this.CMEVENTS = {
-				noteWasSaved: 'cm-note-saved'
-			};
-
-			this.addEvents(this.addEvents.noteWasSaved);
-
-			_CMWFState.addDelegate(this);
+			this.cmfg('workflowFormTabNoteToolbarBottomBuild');
+			this.cmfg('workflowFormTabNoteToolbarTopBuild');
 		},
 
 		/**
-		 * @param {Number} id
+		 * @param {Object} parameters
+		 * @param {Function} parameters.callback
+		 * @param {Object} parameters.scope
 		 *
 		 * @returns {Void}
+		 *
+		 * @private
 		 */
-		onAddCardClick: function (id) {
-			this.view.disable();
-		},
+		itemLock: function (parameters) {
+			parameters = Ext.isObject(parameters) ? parameters : {};
+			parameters.callback = Ext.isFunction(parameters.callback) ? parameters.callback : Ext.emptyFn;
+			parameters.scope = Ext.isObject(parameters.scope) ? parameters.scope : this;
 
-		// override to deny to add a note to a new process
-		disableTheTabBeforeCardSelection: function(processInstance) {
-			if (!processInstance || processInstance.isNew()) {
-				return true;
+			if (
+				CMDBuild.configuration.instance.get(CMDBuild.core.constants.Proxy.ENABLE_CARD_LOCK)
+				&& !this.cmfg('workflowSelectedInstanceIsEmpty')
+			) {
+				var params = {};
+				params[CMDBuild.core.constants.Proxy.ACTIVITY_INSTANCE_ID] = this.cmfg('workflowSelectedActivityGet', CMDBuild.core.constants.Proxy.ID);
+				params[CMDBuild.core.constants.Proxy.PROCESS_INSTANCE_ID] = this.cmfg('workflowSelectedInstanceGet', CMDBuild.core.constants.Proxy.ID);
+
+				CMDBuild.proxy.management.workflow.panel.form.tabs.Note.lock({
+					params: params,
+					scope: parameters.scope,
+					success: parameters.callback
+				});
 			} else {
-				return CMDBuild.Utils.isSimpleTable(processInstance.getClassId());
+				Ext.callback(parameters.callback, parameters.scope);
 			}
 		},
 
-		reset: function(card) {
-			this.view.reset();
-			this.view.disable();
-		},
+		/**
+		 * @param {Object} parameters
+		 * @param {Function} parameters.callback
+		 * @param {Object} parameters.scope
+		 *
+		 * @returns {Void}
+		 *
+		 * @private
+		 */
+		itemUnlock: function (parameters) {
+			parameters = Ext.isObject(parameters) ? parameters : {};
+			parameters.callback = Ext.isFunction(parameters.callback) ? parameters.callback : Ext.emptyFn;
+			parameters.scope = Ext.isObject(parameters.scope) ? parameters.scope : this;
 
-		updateView: function(card) {
-			this.updateViewPrivilegesForCard(card);
-			this.view.reset();
-			this.view.disableModify();
-		},
+			if (
+				CMDBuild.configuration.instance.get(CMDBuild.core.constants.Proxy.ENABLE_CARD_LOCK)
+				&& !this.cmfg('workflowSelectedInstanceIsEmpty')
+			) {
+				var params = {};
+				params[CMDBuild.core.constants.Proxy.ACTIVITY_INSTANCE_ID] = this.cmfg('workflowSelectedActivityGet', CMDBuild.core.constants.Proxy.ID);
+				params[CMDBuild.core.constants.Proxy.PROCESS_INSTANCE_ID] = this.cmfg('workflowSelectedInstanceGet', CMDBuild.core.constants.Proxy.ID);
 
-		// override: return always false because we want that
-		// in process the user could modify the notes only if
-		// there is an openNote extended attribute defined.
-		updateViewPrivilegesForCard: function(card) {
-			this.view.updateWritePrivileges(false);
+				CMDBuild.proxy.management.workflow.panel.form.tabs.Note.unlock({
+					params: params,
+					scope: parameters.scope,
+					success: parameters.callback
+				});
+			} else {
+				Ext.callback(parameters.callback, parameters.scope);
+			}
 		},
 
 		/**
 		 * @returns {Void}
 		 *
-		 * @override
+		 * @private
 		 */
-		onSaveNoteClick: function () {
-			var form = this.view.getForm();
-			var params = this._getSaveParams();
+		navigationChronologyRecordSave: function () {
+			if (!this.cmfg('workflowSelectedWorkflowIsEmpty') && !this.cmfg('workflowSelectedInstanceIsEmpty'))
+				CMDBuild.global.navigation.Chronology.cmfg('navigationChronologyRecordSave', {
+					moduleId: 'workflow',
+					entryType: {
+						description: this.cmfg('workflowSelectedWorkflowGet', CMDBuild.core.constants.Proxy.DESCRIPTION),
+						id: this.cmfg('workflowSelectedWorkflowGet', CMDBuild.core.constants.Proxy.ID),
+						object: this.cmfg('workflowSelectedWorkflowGet')
+					},
+					item: {
+						description: null, // Instances hasn't description property so display ID and no description
+						id: this.cmfg('workflowSelectedInstanceGet', CMDBuild.core.constants.Proxy.ID),
+						object: this.cmfg('workflowSelectedInstanceGet')
+					},
+					section: {
+						description: this.view.title,
+						object: this.view
+					}
+				});
+		},
 
-			if (form.isValid() && this.beforeSave(this.card)) {
-				CMDBuild.proxy.management.workflow.panel.form.tabs.Note.update({
-					params: params,
+		/**
+		 * Disable tab on instance creation abort button click
+		 *
+		 * @returns {Void}
+		 */
+		onWorkflowFormTabNoteAbortActivityButtonClick: function () {
+			this.view.disable();
+		},
+
+		/**
+		 * @returns {Void}
+		 */
+		onWorkflowFormTabNoteAbortButtonClick: function () {
+			if (!this.cmfg('workflowSelectedActivityIsEmpty') && !this.cmfg('workflowIsStartActivityGet')) {
+				this.cmfg('onWorkflowFormTabNoteShow');
+			} else {
+				this.itemUnlock({
 					scope: this,
-					success: function (response, options, decodedResponse) {
-						decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.RESPONSE];
+					callback: function () {
+						this.viewModeSet('read');
 
-						this.view.disableModify(enableToolbar = true);
-
-						this.syncSavedNoteWithModel(
-							this.card,
-							this.view.syncForms(),
-							decodedResponse
-						);
-
-						this.fireEvent(this.CMEVENTS.noteWasSaved);
+						this.view.reset();
+						this.view.setDisabledModify(true, true, !this.cmfg('workflowFormWidgetExists', CMDBuild.core.constants.WidgetType.getOpenNote()));
 					}
 				});
 			}
 		},
 
-		// override
-		// use the process instance
-		onCancelNoteClick: function() {
-			this.onProcessInstanceChange(_CMWFState.getProcessInstance());
+		/**
+		 * @returns {Void}
+		 */
+		onWorkflowFormTabNoteActivitySelect: function () {
+			this.view.enable();
 		},
 
-		// wfStateDelegate
-		onProcessClassRefChange: function() {
-			this.view.disable();
+		/**
+		 * @returns {Void}
+		 */
+		onWorkflowFormTabNoteAddButtonClick: function () {
+			this.view.setDisabled(!this.cmfg('workflowFormWidgetExists', CMDBuild.core.constants.WidgetType.getOpenNote()));
 		},
 
-		onProcessInstanceChange: function(pi) {
-			this.updateView(pi);
-			this.view.loadCard(new CMDBuild.DummyModel(pi.getValues()));
-
-			if (this.disableTheTabBeforeCardSelection(pi)) {
-				this.view.disable();
-			} else {
-				this.view.enable();
-			}
+		/**
+		 * @returns {Void}
+		 */
+		onWorkflowFormTabNoteInstanceSelect: function () {
+			this.view.enable();
 		},
 
-		onActivityInstanceChange: Ext.emptyFn,
+		/**
+		 * @returns {Void}
+		 */
+		onWorkflowFormTabNoteModifyButtonClick: function () {
+			// Error handling
+				if (!this.cmfg('workflowSelectedActivityGet', CMDBuild.core.constants.Proxy.WRITABLE)) // Verify workflow privileges
+					return _warning('onWorkflowFormTabNoteModifyButtonClick(): no write privileges on activity', this, this.cmfg('workflowSelectedActivityGet'));
 
-		onModifyNoteClick: function() {
-			if (isEditable(this.card)) {
-				var me = this;
+				if (!this.cmfg('workflowFormWidgetExists', CMDBuild.core.constants.WidgetType.getOpenNote()))
+					return _error('onWorkflowFormTabNoteModifyButtonClick(): widget not configured (permission denied)', this);
+			// END: Error handling
 
-				this.lockCard(function() {
-					me.view.enableModify();
+			this.itemLock({
+				scope: this,
+				callback: function () {
+					this.viewModeSet('edit');
+
+					this.view.setDisabledModify(false);
+				}
+			});
+		},
+
+		/**
+		 * @returns {Void}
+		 */
+		onWorkflowFormTabNoteSaveButtonClick: function () {
+			// Error handling
+				if (this.cmfg('workflowIsStartActivityGet'))
+					return CMDBuild.core.Message.warning(null, CMDBuild.Translation.warnings.canNotModifyNotesBeforeSavingTheActivity, false);
+			// END: Error handling
+
+			if (this.validate(this.view)) {
+				var notesValue = this.view.htmlField.getValue();
+
+				var params = {};
+				params['ww'] = '{}';
+				params[CMDBuild.core.constants.Proxy.ACTIVITY_INSTANCE_ID] = this.cmfg('workflowSelectedActivityGet', CMDBuild.core.constants.Proxy.ID);
+				params[CMDBuild.core.constants.Proxy.ADVANCE] = false;
+				params[CMDBuild.core.constants.Proxy.ATTRIBUTES] = Ext.encode({ Notes: notesValue });
+				params[CMDBuild.core.constants.Proxy.CARD_ID] = this.cmfg('workflowSelectedInstanceGet', CMDBuild.core.constants.Proxy.ID);
+				params[CMDBuild.core.constants.Proxy.CLASS_ID] = this.cmfg('workflowSelectedInstanceGet', CMDBuild.core.constants.Proxy.CLASS_ID);
+
+				CMDBuild.proxy.management.workflow.panel.form.tabs.Note.update({
+					params: params,
+					scope: this,
+					success: function (response, options, decodedResponse) {
+						var recordStructure = {};
+						recordStructure[CMDBuild.core.constants.Proxy.ACTIVITY_ID] = this.cmfg('workflowSelectedActivityGet', CMDBuild.core.constants.Proxy.ID);
+						recordStructure[CMDBuild.core.constants.Proxy.CARD_ID] = this.cmfg('workflowSelectedInstanceGet', CMDBuild.core.constants.Proxy.ID);
+						recordStructure[CMDBuild.core.constants.Proxy.CLASS_ID] = this.cmfg('workflowSelectedWorkflowGet', CMDBuild.core.constants.Proxy.ID);
+						recordStructure[CMDBuild.core.constants.Proxy.CLASS_NAME] = this.cmfg('workflowSelectedWorkflowGet', CMDBuild.core.constants.Proxy.NAME);
+
+						var record = Ext.create('CMDBuild.model.management.workflow.Node', recordStructure); // Fake node as parameter to read instance
+
+						this.cmfg('onWorkflowInstanceSelect', {
+							record: record,
+							scope: this,
+							callback: function () {
+								this.cmfg('onWorkflowActivitySelect', {
+									record: record,
+									scope: this,
+									callback: function () {
+										this.cmfg('onWorkflowFormTabNoteShow');
+									}
+								});
+							}
+						});
+					}
 				});
 			}
 		},
 
-		// is not possible to save the note if the
-		// activity is not already saved
-		beforeSave: function(card) {
-			var isNew = isANewActivity(card);
+		/**
+		 * @returns {Void}
+		 */
+		onWorkflowFormTabNoteShow: function () {
+			this.view.reset();
 
-			if (isNew) {
-				CMDBuild.core.Message.error(CMDBuild.Translation.common.failure, CMDBuild.Translation.warnings.canNotModifyNotesBeforeSavingTheActivity, false);
-			}
+			this.itemUnlock({
+				scope: this,
+				callback: function () {
+					if (!this.cmfg('workflowFormWidgetExists', CMDBuild.core.constants.WidgetType.getOpenNote()))
+						this.cmfg('workflowFormTabNoteToolbarBottomBuild');
 
-			return !isNew;
-		},
+					if (this.cmfg('workflowIsStartActivityGet')) {
+						this.viewModeSet('edit');
 
-		// override to retrieve the activityInstance
-		// from the WorkflowState
-		_getSaveParams: function() {
-			var params = {};
-			var form = this.view.getForm();
- 			var pi = _CMWFState.getProcessInstance();
-			var ai = _CMWFState.getActivityInstance();
+						this.navigationChronologyRecordSave();
 
-			if (pi && ai) {
-				params['Notes'] = this.view.getForm().getValues()['Notes'];
-				params.classId = pi.getClassId();
-				params.cardId = pi.getId();
-				params.activityInstanceId = ai.getId();
-				params.advance = false;
-				params.ww = '{}';
-				params.attributes = Ext.encode(form.getValues());
- 			}
+						return this.view.setDisabledModify(false);
+					}
 
-			return params;
-		},
+					if (!this.cmfg('workflowSelectedActivityIsEmpty')) {
+						var notes = this.cmfg('workflowSelectedInstanceGet', [CMDBuild.core.constants.Proxy.VALUES, 'Notes']);
 
-		// override
-		// don't use the card passed by superclass success
-		// after save request. Use the processInstance instead
-		syncSavedNoteWithModel: function(card, noteValue, processData) {
-			var pi = _CMWFState.getProcessInstance();
+						this.view.htmlField.setValue(notes);
+						this.view.displayField.setValue(notes);
 
-			if (pi) {
-				pi.setNotes(noteValue);
-				pi.updateBeginDate(processData);
-			}
-		},
+						this.viewModeSet('read');
 
-		lockCard: function(success) {
-			if (CMDBuild.configuration.instance.get(CMDBuild.core.constants.Proxy.ENABLE_CARD_LOCK)) {
-				if (this.card) {
-					var id = this.card.get('Id');
-					CMDBuild.proxy.management.workflow.panel.form.tabs.Note.lockActivity({
-						params: {
-							id: id
-						},
-						loadMask: false,
-						success: success
-					});
+						this.navigationChronologyRecordSave();
+
+						return this.view.setDisabledModify(
+							true,
+							true,
+							(
+								!this.cmfg('workflowFormWidgetExists', CMDBuild.core.constants.WidgetType.getOpenNote()) // Verify widget presence
+								|| !this.cmfg('workflowSelectedActivityGet', CMDBuild.core.constants.Proxy.WRITABLE) // Verify workflow privileges
+							)
+						);
+					}
+
+					// By default disable tab
+					this.cmfg('workflowFormPanelTabSelectionManage');
+
+					this.view.disable();
+
+					return _error('onWorkflowFormTabNoteShow(): activity not selected', this);
 				}
-			} else {
-				success();
+			});
+		},
+
+		/**
+		 * @param {String} mode
+		 *
+		 * @returns {Void}
+		 *
+		 * @private
+		 */
+		viewModeSet: function (mode) {
+			switch (mode) {
+				case 'edit':
+					return this.view.getLayout().setActiveItem(this.view.panelModeEdit);
+
+				case 'read':
+				default:
+					return this.view.getLayout().setActiveItem(this.view.panelModeRead);
 			}
 		},
 
-		unlockCard: function() {
-			if (CMDBuild.configuration.instance.get(CMDBuild.core.constants.Proxy.ENABLE_CARD_LOCK)) {
-				if (this.card && this.view.isInEditing()) {
-					var id = this.card.get('Id');
-					CMDBuild.proxy.management.workflow.panel.form.tabs.Note.unlockActivity({
-						params: {
-							id: id
-						},
-						loadMask: false
-					});
-				}
-			}
+		/**
+		 * @returns {Void}
+		 */
+		workflowFormTabNoteReset: function () {
+			this.view.reset();
+			this.view.disable();
+		},
+
+		/**
+		 * Adds to toolbar items param otherwise adds a disabled save and abort placeholder buttons
+		 *
+		 * @param {Array} items
+		 *
+		 * @returns {Void}
+		 */
+		workflowFormTabNoteToolbarBottomBuild: function (items) {
+			items = Ext.isArray(items) ? items : [];
+
+			var componentToolbar = this.view.getDockedComponent(CMDBuild.core.constants.Proxy.TOOLBAR_BOTTOM);
+
+			componentToolbar.removeAll();
+			componentToolbar.add(
+				!Ext.isEmpty(items) ? items : [
+					Ext.create('CMDBuild.core.buttons.text.Save', {
+						disablePanelFunctions: true,
+						disabled: true
+					}),
+					Ext.create('CMDBuild.core.buttons.text.Abort', {
+						disablePanelFunctions: true,
+						disabled: true
+					})
+				]
+			);
+		},
+
+		/**
+		 * Adds to toolbar items param otherwise adds a disabled modify placeholder button
+		 *
+		 * @param {Array} items
+		 *
+		 * @returns {Void}
+		 */
+		workflowFormTabNoteToolbarTopBuild: function (items) {
+			items = Ext.isArray(items) ? items : [];
+
+			var componentToolbar = this.view.getDockedComponent(CMDBuild.core.constants.Proxy.TOOLBAR_TOP);
+
+			componentToolbar.removeAll();
+			componentToolbar.add(
+				!Ext.isEmpty(items) ? items : Ext.create('CMDBuild.core.buttons.iconized.Modify', {
+					text: CMDBuild.Translation.modifyNote,
+					disablePanelFunctions: true,
+					disabled: true
+				})
+			);
 		}
 	});
-
-
-	function isEditable(card) {
-		return _CMUtils.getEntryTypePrivilegesByCard(card).write;
-	}
 
 })();

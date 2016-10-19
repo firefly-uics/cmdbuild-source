@@ -31,7 +31,7 @@ public class DatabaseProperties extends DefaultProperties implements DatabaseCon
 
 	@Override
 	public boolean isConfigured() {
-		return !("".equals(getDatabaseUrl()) || "".equals(getDatabasePassword()) || "".equals(getDatabaseUser()));
+		return !("".equals(getDatabaseUrl()) || "".equals(getDatabaseUser()));
 	}
 
 	@Override

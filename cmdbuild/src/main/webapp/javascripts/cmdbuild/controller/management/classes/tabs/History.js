@@ -9,7 +9,7 @@
 		requires: [
 			'CMDBuild.core.constants.Global',
 			'CMDBuild.core.constants.Proxy',
-			'CMDBuild.proxy.classes.tabs.History'
+			'CMDBuild.proxy.management.classes.tabs.History'
 		],
 
 		mixins: {
@@ -198,7 +198,7 @@
 				predecessorParams[CMDBuild.core.constants.Proxy.CARD_ID] = predecessorRecord.get(CMDBuild.core.constants.Proxy.ID); // Historic card ID
 				predecessorParams[CMDBuild.core.constants.Proxy.CLASS_NAME] = this.classesTabHistorySelectedClassGet(CMDBuild.core.constants.Proxy.NAME);
 
-				CMDBuild.proxy.classes.tabs.History.readHistoric({
+				CMDBuild.proxy.management.classes.tabs.History.readHistoric({
 					params: predecessorParams,
 					scope: this,
 					success: function (response, options, decodedResponse) {
@@ -289,7 +289,7 @@
 				var params = {};
 				params[CMDBuild.core.constants.Proxy.ACTIVE] = true;
 
-				CMDBuild.proxy.classes.Classes.read({ // FIXME: waiting for refactor (server endpoint)
+				CMDBuild.proxy.management.classes.Classes.read({ // FIXME: waiting for refactor (server endpoint)
 					params: params,
 					scope: this,
 					success: function (response, options, decodedResponse) {
@@ -307,7 +307,7 @@
 								params[CMDBuild.core.constants.Proxy.CARD_ID] = card.get(CMDBuild.core.constants.Proxy.ID);
 								params[CMDBuild.core.constants.Proxy.CLASS_NAME] = this.classesTabHistorySelectedClassGet(CMDBuild.core.constants.Proxy.NAME);
 
-								CMDBuild.proxy.classes.tabs.History.readCard({
+								CMDBuild.proxy.management.classes.tabs.History.readCard({
 									params: params,
 									loadMask: false,
 									scope: this,
@@ -357,7 +357,7 @@
 						params[CMDBuild.core.constants.Proxy.CARD_ID] = record.get(CMDBuild.core.constants.Proxy.ID); // Historic card ID
 						params[CMDBuild.core.constants.Proxy.CLASS_NAME] = this.classesTabHistorySelectedClassGet(CMDBuild.core.constants.Proxy.NAME);
 
-						CMDBuild.proxy.classes.tabs.History.readHistoric({ // Get expanded card data
+						CMDBuild.proxy.management.classes.tabs.History.readHistoric({ // Get expanded card data
 							params: params,
 							scope: this,
 							success: function (response, options, decodedResponse) {
@@ -369,7 +369,7 @@
 									predecessorParams[CMDBuild.core.constants.Proxy.CARD_ID] = predecessorRecord.get(CMDBuild.core.constants.Proxy.ID); // Historic card ID
 									predecessorParams[CMDBuild.core.constants.Proxy.CLASS_NAME] = this.classesTabHistorySelectedClassGet(CMDBuild.core.constants.Proxy.NAME);
 
-									CMDBuild.proxy.classes.tabs.History.readHistoric({ // Get expanded predecessor's card data
+									CMDBuild.proxy.management.classes.tabs.History.readHistoric({ // Get expanded predecessor's card data
 										params: predecessorParams,
 										scope: this,
 										success: function (response, options, decodedResponse) {
@@ -394,7 +394,7 @@
 					params[CMDBuild.core.constants.Proxy.ID] = record.get(CMDBuild.core.constants.Proxy.ID); // Historic relation ID
 					params[CMDBuild.core.constants.Proxy.DOMAIN] = record.get(CMDBuild.core.constants.Proxy.DOMAIN);
 
-					CMDBuild.proxy.classes.tabs.History.readHistoricRelation({
+					CMDBuild.proxy.management.classes.tabs.History.readHistoricRelation({
 						params: params,
 						scope: this,
 						success: function (response, options, decodedResponse) {
@@ -443,7 +443,7 @@
 					params[CMDBuild.core.constants.Proxy.CLASS_NAME] = this.classesTabHistorySelectedClassGet(CMDBuild.core.constants.Proxy.NAME);
 
 					// Request all class attributes
-					CMDBuild.proxy.classes.tabs.History.readAttributes({
+					CMDBuild.proxy.management.classes.tabs.History.readAttributes({
 						params: params,
 						scope: this,
 						success: function (response, options, decodedResponse) {
@@ -465,7 +465,7 @@
 									this.getRowExpanderPlugin().collapseAll();
 
 									if (this.grid.includeRelationsCheckbox.getValue()) {
-										CMDBuild.proxy.classes.tabs.History.readRelations({
+										CMDBuild.proxy.management.classes.tabs.History.readRelations({
 											params: params,
 											loadMask: false,
 											scope: this,

@@ -25,6 +25,7 @@
 			'onTaskManagerFormRowSelected',
 			'onTaskManagerFormSaveButtonClick',
 			'taskManagerFormClearSelection',
+			'taskManagerFormModifyButtonStateManage',
 			'taskManagerFormNavigationSetDisableNextButton',
 			'taskManagerFormPanelForwarder',
 			'taskManagerFormPanelsAdd',
@@ -141,14 +142,15 @@
 		onTaskManagerFormAddButtonClick: function (type) {
 			this.cmfg('taskManagerClearSelection');
 
-			if (Ext.isArray(type) && !Ext.isEmpty(type)) {
-				this.controllerTask = this.buildControllerTask(type);
+			// Error handling
+				if (!Ext.isArray(type) || Ext.isEmpty(type))
+					return _error('onTaskManagerFormAddButtonClick(): unmanaged type parameter', this, type);
+			// END: Error handling
 
-				if (Ext.isObject(this.controllerTask) && !Ext.Object.isEmpty(this.controllerTask))
-					this.controllerTask.cmfg('onTaskManagerFormTaskAddButtonClick');
-			} else {
-				_error('onTaskManagerFormAddButtonClick(): empty or wrong type parameter', this, type);
-			}
+			this.controllerTask = this.buildControllerTask(type);
+
+			if (Ext.isObject(this.controllerTask) && !Ext.Object.isEmpty(this.controllerTask))
+				this.controllerTask.cmfg('onTaskManagerFormTaskAddButtonClick');
 		},
 
 		/**
@@ -177,36 +179,37 @@
 		 * @returns {Void}
 		 */
 		onTaskManagerFormNavigationButtonClick: function (action) {
-			if (Ext.isString(action) && !Ext.isEmpty(action)) {
-				switch (action) {
-					case 'first': {
-						if (!Ext.isEmpty(this.view.getLayout().getLayoutItems()))
-							this.view.getLayout().setActiveItem(0);
-					} break;
+			// Error handling
+				if (!Ext.isString(action) || Ext.isEmpty(action))
+					return _error('onTaskManagerFormNavigationButtonClick(): unmanaged action parameter', this, action);
+			// END: Error handling
 
-					case 'next': {
-						if (this.hasNext())
-							this.view.getLayout().next();
-					} break;
+			switch (action) {
+				case 'first': {
+					if (!Ext.isEmpty(this.view.getLayout().getLayoutItems()))
+						this.view.getLayout().setActiveItem(0);
+				} break;
 
-					case 'previous': {
-						if (this.hasPrevious())
-							this.view.getLayout().prev();
-					} break;
+				case 'next': {
+					if (this.hasNext())
+						this.view.getLayout().next();
+				} break;
 
-					default: {
-						_error('onTaskManagerFormNavigationButtonClick(): action parameter invalid value', this, action);
-					}
+				case 'previous': {
+					if (this.hasPrevious())
+						this.view.getLayout().prev();
+				} break;
+
+				default: {
+					_error('onTaskManagerFormNavigationButtonClick(): wrong action parameter value', this, action);
 				}
-
-				this.manageButtonsDisabledState();
-
-				// Fires show event on first item
-				if (!Ext.isEmpty(this.view.getLayout().getActiveItem()) && !this.view.getLayout().getPrev())
-					this.view.getLayout().getActiveItem().fireEvent('show');
-			} else {
-				_error('onTaskManagerFormNavigationButtonClick(): empty or unmanaged action parameter', this, action);
 			}
+
+			this.manageButtonsDisabledState();
+
+			// Fires show event on first item
+			if (!Ext.isEmpty(this.view.getLayout().getActiveItem()) && !this.view.getLayout().getPrev())
+				this.view.getLayout().getActiveItem().fireEvent('show');
 		},
 
 		/**
@@ -222,14 +225,15 @@
 		 * @returns {Void}
 		 */
 		onTaskManagerFormRowSelected: function () {
-			if (!this.cmfg('taskManagerSelectedTaskIsEmpty')) {
-				this.controllerTask = this.buildControllerTask(this.cmfg('taskManagerSelectedTaskGet', CMDBuild.core.constants.Proxy.TYPE));
+			// Error handling
+				if (this.cmfg('taskManagerSelectedTaskIsEmpty'))
+					return _error('onTaskManagerFormRowSelected(): empty selected task property', this, this.cmfg('taskManagerSelectedTaskGet'));
+			// END: Error handling
 
-				if (Ext.isObject(this.controllerTask) && !Ext.Object.isEmpty(this.controllerTask))
-					this.controllerTask.cmfg('onTaskManagerFormTaskRowSelected');
-			} else {
-				_error('onTaskManagerFormRowSelected(): empty or wrong selected grid task', this, this.cmfg('taskManagerSelectedTaskGet'));
-			}
+			this.controllerTask = this.buildControllerTask(this.cmfg('taskManagerSelectedTaskGet', CMDBuild.core.constants.Proxy.TYPE));
+
+			if (Ext.isObject(this.controllerTask) && !Ext.Object.isEmpty(this.controllerTask))
+				this.controllerTask.cmfg('onTaskManagerFormTaskRowSelected');
 		},
 
 		/**
@@ -255,6 +259,13 @@
 				params: true
 			});
 			this.cmfg('taskManagerFormPanelForwarder', { functionName: 'disableCMTbar' });
+		},
+
+		/**
+		 * @returns {Void}
+		 */
+		taskManagerFormModifyButtonStateManage: function () {
+			this.view.modifyButton.setDisabled(this.cmfg('taskManagerSelectedTaskGet', CMDBuild.core.constants.Proxy.ACTIVE));
 		},
 
 		/**
@@ -306,11 +317,12 @@
 		taskManagerFormPanelsAdd: function (panels) {
 			this.view.removeAll();
 
-			if (Ext.isArray(panels) && !Ext.isEmpty(panels)) {
-				this.view.add(panels);
-			} else {
-				_error('taskManagerFormPanelsAdd(): unmanaged panels parameter', this, panels);
-			}
+			// Error handling
+				if (!Ext.isArray(panels) || Ext.isEmpty(panels))
+					return _error('taskManagerFormPanelsAdd(): unmanaged panels parameter', this, panels);
+			// END: Error handling
+
+			this.view.add(panels);
 		},
 
 		/**

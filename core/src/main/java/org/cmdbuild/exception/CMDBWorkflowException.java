@@ -41,10 +41,13 @@ public class CMDBWorkflowException extends CMDBException {
 		WF_XPDL_USERSTOP_MISSING, //
 		WF_PACKAGE_ERROR, //
 		WF_START_ACTIVITY_NOT_FOUND, //
+		WF_ACTIVITY_NOT_FOUND, //
 		WF_WAPI_CONNECTION_ERROR, //
 		WF_WORKITEM_VARIABLES_REQUIRED, //
 		WF_WRONG_CREDENTIALS, //
-		WF_WRONG_SUPERCLASS_OPERATION, WF_WRONG_XPDL_CLASSNAME; //
+		WF_WRONG_SUPERCLASS_OPERATION, //
+		WF_WRONG_XPDL_CLASSNAME, //
+		; //
 
 		public CMDBWorkflowException createException(final String... parameters) {
 			return new CMDBWorkflowException(this, parameters);

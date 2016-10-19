@@ -5,7 +5,7 @@
 
 		requires: [
 			'CMDBuild.core.constants.Proxy',
-			'CMDBuild.proxy.classes.tabs.Layers'
+			'CMDBuild.proxy.administration.classes.tabs.Layers'
 		],
 
 		/**
@@ -70,7 +70,7 @@
 						}
 					})
 				],
-				store: CMDBuild.proxy.classes.tabs.Layers.getStore()
+				store: CMDBuild.proxy.administration.classes.tabs.Layers.getStore()
 			});
 
 			this.callParent(arguments);

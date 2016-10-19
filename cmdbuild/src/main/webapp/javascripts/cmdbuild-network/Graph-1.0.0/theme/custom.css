@@ -129,6 +129,9 @@ a {
 .filter {
 	background:transparent url("images/icons/icon_filter.png") right 50% no-repeat;
 }
+.print {
+	background:transparent url("images/icons/icon_print.png") right 50% no-repeat;
+}
 .btn-lessdetails {
 	background:transparent url("images/icons/icon_show_less.png") right 50% no-repeat;
 }

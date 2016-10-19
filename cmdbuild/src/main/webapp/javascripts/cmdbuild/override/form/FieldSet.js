@@ -110,11 +110,12 @@
 				if (checkboxCmp)
 					checkboxCmp.setValue(expanded);
 
-				if (expanded) {
-					me.removeCls(me.baseCls + '-collapsed');
-				} else {
-					me.addCls(me.baseCls + '-collapsed');
-				}
+				if (me.rendered)
+					if (expanded) {
+						me.removeCls(me.baseCls + '-collapsed');
+					} else {
+						me.addCls(me.baseCls + '-collapsed');
+					}
 
 				me.collapsed = !expanded;
 

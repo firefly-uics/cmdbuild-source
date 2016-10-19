@@ -2,9 +2,12 @@
 
 	Ext.require([
 		'CMDBuild.proxy.Card',
-		'CMDBuild.proxy.classes.tabs.Note'
+		'CMDBuild.proxy.management.classes.tabs.Note'
 	]);
 
+	/**
+	 * @link CMDBuild.controller.management.workflow.panel.form.tabs.Note
+	 */
 	Ext.define("CMDBuild.controller.management.classes.CMNoteController", {
 		extend: "CMDBuild.controller.management.classes.CMModCardSubController",
 
@@ -66,7 +69,7 @@
 			var params = this._getSaveParams();
 
 			if (this.view.getForm().isValid() && this.beforeSave(this.card)) {
-				CMDBuild.proxy.classes.tabs.Note.update({
+				CMDBuild.proxy.management.classes.tabs.Note.update({
 					params: params,
 					scope: this,
 					success: function (response, options, decodedResponse) {
@@ -156,25 +159,5 @@
 	function isEditable(card) {
 		return _CMUtils.getEntryTypePrivilegesByCard(card).write;
 	}
-
-	Ext.define("CMDBuild.view.management.common.CMNoteWindowController", {
-		extend: "CMDBuild.controller.management.classes.CMNoteController",
-		constructor: function() {
-			this.callParent(arguments);
-		},
-
-		onCardSelected: function(card) {
-			this.callParent(arguments);
-			var title = "";
-
-			if (this.card) {
-				title = Ext.String.format("{0} - {1}"
-					, CMDBuild.Translation.management.modcard.tabs.notes
-					, this.card.get("Description"));
-			}
-
-			this.view.setTitle(title);
-		}
-	});
 
 })();

@@ -104,6 +104,13 @@
 							</params>
 						</navigationTreesBtnMenu>
 					</div>
+					<div class="toolbarButton border-box">
+						<span class="print" i18nTooltip="TOOLTIP_PRINT" tooltip="Print the image">
+							<onClick>
+								<command>print</command>
+							</onClick>
+						</span>
+					</div>
 				</div>
 			</div>
 			<!-- BODY -->

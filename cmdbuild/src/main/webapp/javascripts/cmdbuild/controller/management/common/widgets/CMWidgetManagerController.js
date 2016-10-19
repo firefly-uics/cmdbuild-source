@@ -2,6 +2,7 @@
 
 	Ext.require([ // Legacy
 		'CMDBuild.controller.management.common.widgets.workflow.CMWorkflowController',
+		'CMDBuild.controller.management.widget.linkCards.LinkCardsController',
 		'CMDBuild.controller.management.widget.manageRelation.CMManageRelationController',
 		'CMDBuild.core.configurations.Timeout',
 		'CMDBuild.core.Message'
@@ -26,12 +27,12 @@
 					'.CreateModifyCard': CMDBuild.controller.management.common.widgets.CMCreateModifyCardController,
 					'.CustomForm': 'CMDBuild.controller.management.widget.customForm.CustomForm',
 					'.Grid': 'CMDBuild.controller.management.common.widgets.grid.Grid',
-					'.LinkCards': CMDBuild.controller.management.common.widgets.linkCards.LinkCardsController,
+					'.LinkCards': CMDBuild.controller.management.widget.linkCards.LinkCardsController,
 					'.ManageEmail': 'CMDBuild.controller.management.widget.ManageEmail',
 					'.ManageRelation': CMDBuild.controller.management.widget.manageRelation.CMManageRelationController,
-					'.NavigationTree': CMDBuild.controller.management.common.widgets.CMNavigationTreeController,
+					'.NavigationTree': 'CMDBuild.controller.management.widget.navigationTree.NavigationTree',
 					'.OpenAttachment': CMDBuild.controller.management.common.widgets.CMOpenAttachmentController,
-					'.OpenNote': CMDBuild.controller.management.common.widgets.CMOpenNoteController,
+					'.OpenNote': 'CMDBuild.controller.management.widget.OpenNote',
 					'.OpenReport': 'CMDBuild.controller.management.widget.openReport.OpenReport',
 					'.Ping': 'CMDBuild.controller.management.widget.Ping',
 					'.PresetFromCard': CMDBuild.controller.management.common.widgets.CMPresetFromCardController,

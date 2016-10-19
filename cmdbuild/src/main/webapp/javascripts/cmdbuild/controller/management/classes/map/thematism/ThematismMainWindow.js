@@ -40,7 +40,7 @@
 
 			this.view = Ext.create('CMDBuild.view.management.classes.map.thematism.ThematismMainWindow', {
 				delegate : this,
-				title : "@@ Thematism",
+				title : CMDBuild.Translation.thematismTitle,
 				interactionDocument : this.interactionDocument
 			});
 

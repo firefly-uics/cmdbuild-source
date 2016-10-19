@@ -1,14 +1,15 @@
 (function() {
-	Ext.define("CMDBuild.view.management.CMMiniCardGridWindowDelegate", {
+	Ext.define("CMDBuild.view.management.common.CMMiniCardGridWindowDelegate", {
 		/**
 		 * @param {CMDBuild.view.management.CMMiniCardGridWindow} window this window
 		 */
-		miniCardGridWindowDidShown: Ext.emptyFn
+		miniCardGridWindowDidShown: function() {
+		}
 	});
 
 	var LI_TAG_FORMAT = '<li><span class="cm-bold">{0}:</span> {1}</li>';
 
-	Ext.define("CMDBuild.view.management.CMMiniCardGridWindow", {
+	Ext.define("CMDBuild.view.management.common.CMMiniCardGridWindow", {
 		extend: "Ext.window.Window",
 
 		mixins: {
@@ -17,7 +18,7 @@
 
 		constructor: function() {
 			this.mixins.delegable.constructor.call(this,
-					"CMDBuild.view.management.CMMiniCardGridWindowDelegate");
+					"CMDBuild.view.management.common.CMMiniCardGridWindowDelegate");
 
 			this.callParent(arguments);
 		},
@@ -34,7 +35,7 @@
 			this.ghost = false;
 			this.layout = "border",
 
-			this.miniCardGrid = new CMDBuild.view.management.CMMiniCardGrid({
+			this.miniCardGrid = Ext.create("CMDBuild.view.management.common.CMMiniCardGrid", {
 				frame: false,
 				border: false,
 				withPagingBar: false,

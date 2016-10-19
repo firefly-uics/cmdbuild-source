@@ -76,7 +76,7 @@
 				model: 'CMDBuild.model.common.tabs.email.attachments.TargetClass',
 				proxy: {
 					type: 'ajax',
-					url: CMDBuild.proxy.index.Json.classes.readAll,
+					url: CMDBuild.proxy.index.Json.classes.getAll,
 					reader: {
 						type: 'json',
 						root: CMDBuild.core.constants.Proxy.CLASSES
@@ -122,7 +122,7 @@
 		readAllClasses: function (parameters) {
 			parameters = Ext.isEmpty(parameters) ? {} : parameters;
 
-			Ext.apply(parameters, { url: CMDBuild.proxy.index.Json.classes.readAll });
+			Ext.apply(parameters, { url: CMDBuild.proxy.index.Json.classes.getAll });
 
 			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.CLASS, parameters);
 		},

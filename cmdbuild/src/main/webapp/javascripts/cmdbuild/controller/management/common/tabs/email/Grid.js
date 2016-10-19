@@ -95,7 +95,10 @@
 
 					record.set(CMDBuild.core.constants.Proxy.ID, decodedResponse);
 
-					this.controllerEmailWindow.cmfg('tabEmailEmailWindowConfigureAndShow', { record: record });
+					this.controllerEmailWindow.cmfg('tabEmailEmailWindowConfigureAndShow', {
+						record: record,
+						windowMode: 'create'
+					});
 
 					this.cmfg('tabEmailGridStoreLoad');
 				}

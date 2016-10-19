@@ -12,12 +12,14 @@
 		extend: 'Ext.data.Model',
 
 		fields: [
+			{ name: 'rawData', type: 'auto', defaultValue: {} }, // FIXME: legacy mode to remove on complete Workflow UI and wofkflowState modules refactor
 			{ name: CMDBuild.core.constants.Proxy.CAPABILITIES, type: 'auto', defaultValue: {} },
 			{ name: CMDBuild.core.constants.Proxy.DESCRIPTION, type: 'string' },
 			{ name: CMDBuild.core.constants.Proxy.ID, type: 'int', useNull: true },
 			{ name: CMDBuild.core.constants.Proxy.IS_STARTABLE, type: 'boolean' },
 			{ name: CMDBuild.core.constants.Proxy.IS_SUPER_CLASS, type: 'boolean' },
-			{ name: CMDBuild.core.constants.Proxy.NAME, type: 'string' }
+			{ name: CMDBuild.core.constants.Proxy.NAME, type: 'string' },
+			{ name: CMDBuild.core.constants.Proxy.PARENT, type: 'int', useNull: true }
 		],
 
 		/**
@@ -33,10 +35,6 @@
 			data[CMDBuild.core.constants.Proxy.DESCRIPTION] = Ext.isString(data[CMDBuild.core.constants.Proxy.TEXT]) ? data[CMDBuild.core.constants.Proxy.TEXT] : data[CMDBuild.core.constants.Proxy.DESCRIPTION];
 			data[CMDBuild.core.constants.Proxy.IS_STARTABLE] = Ext.isBoolean(data['startable']) ? data['startable'] : data[CMDBuild.core.constants.Proxy.IS_STARTABLE];
 			data[CMDBuild.core.constants.Proxy.IS_SUPER_CLASS] = Ext.isBoolean(data['superclass']) ? data['superclass'] : data[CMDBuild.core.constants.Proxy.IS_SUPER_CLASS];
-			data[CMDBuild.core.constants.Proxy.PERMISSIONS] = {
-				create: data['priv_create'],
-				write: data['priv_write']
-			};
 
 			this.callParent(arguments);
 		},

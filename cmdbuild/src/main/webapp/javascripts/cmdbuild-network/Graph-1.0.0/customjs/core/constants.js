@@ -6,6 +6,8 @@
 		SELECTION_SHAPE : "cmdbuildSelectionShape",
 		SPRITES_PATH : "theme/images/sprites/",
 		LABELS_ON_SELECTED : "selected",
+		TEMPLATES_PATH : "theme/templates/",
+		PRINT_TEMPLATE : "print.html",
 		NO_LABELS : "none",
 		RANGE_VIEWPOINTDISTANCE : 100,
 		EXPANDING_THRESHOLD : 30,

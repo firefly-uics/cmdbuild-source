@@ -30,11 +30,13 @@
 		 */
 		cmfgCatchedFunctions: [
 			'getView = workflowTreeViewGet',
+			'onWorkflowTreeAbortButtonClick',
 			'onWorkflowTreeAddButtonClick',
 			'onWorkflowTreeColumnChanged',
 			'onWorkflowTreePrintButtonClick',
 			'onWorkflowTreeRecordSelect',
 			'onWorkflowTreeSaveFailure',
+			'onWorkflowTreeSortChange',
 			'onWorkflowTreeWokflowSelect = onWorkflowWokflowSelect',
 			'workflowTreeActivitySelect',
 			'workflowTreeAppliedFilterGet',
@@ -43,8 +45,8 @@
 			'workflowTreeFilterClear = panelGridAndFormGridFilterClear',
 			'workflowTreeRendererTreeColumn',
 			'workflowTreeReset',
-			'workflowTreeStoreGet = panelGridAndFormGridStoreGet',
-			'workflowTreeStoreLoad = panelGridAndFormGridStoreLoad',
+			'workflowTreeStoreGet',
+			'workflowTreeStoreLoad',
 			'workflowTreeToolbarTopStatusValueSet -> controllerToolbarTop'
 		],
 
@@ -138,17 +140,30 @@
 		 * Custom renderer to work with "CMDBuild.model.management.workflow.Node" custom get method
 		 *
 		 * @param {Object} column
+		 * @param {CMDBuild.model.management.workflow.Attribute} columnModel
 		 *
 		 * @returns {Object} column
 		 *
 		 * @private
 		 */
-		applyCustomRenderer: function (column) {
-			return Ext.apply(column, {
-				renderer: function (value, metadata, record, rowIndex, colIndex, store, view) {
-					return Ext.util.Format.stripTags(record.get(column.dataIndex));
-				}
-			});
+		applyCustomRenderer: function (column, columnModel) {
+			switch (columnModel.get(CMDBuild.core.constants.Proxy.TYPE)) {
+				case 'boolean':
+					return Ext.apply(column, {
+						renderer: function (value, metadata, record, rowIndex, colIndex, store, view) {
+							value = record.get(column.dataIndex);
+
+							return value ? CMDBuild.Translation.yes : CMDBuild.Translation.no; // Translate value
+						}
+					});
+
+				default:
+					return Ext.apply(column, {
+						renderer: function (value, metadata, record, rowIndex, colIndex, store, view) {
+							return Ext.util.Format.stripTags(record.get(column.dataIndex));
+						}
+					});
+			}
 		},
 
 		/**
@@ -177,8 +192,8 @@
 		 * @private
 		 */
 		displayedParametersNamesGet: function () {
-			var visibleColumns = Ext.Array.slice(this.view.query('gridcolumn:not([hidden])'), 1); // Discard expander column
-			var visibleColumnNames = [];
+			var visibleColumns = Ext.Array.slice(this.view.query('gridcolumn:not([hidden])'), 1), // Discard expander column
+				visibleColumnNames = [];
 
 			// Build columns dataIndex array
 			if (Ext.isArray(visibleColumns) && !Ext.isEmpty(visibleColumns))
@@ -210,6 +225,24 @@
 			node.bubble(function () {
 				this.expand();
 			});
+		},
+
+		/**
+		 * Manage previous selected activity
+		 *
+		 * @returns {Void}
+		 */
+		onWorkflowTreeAbortButtonClick: function () {
+			if (
+				this.cmfg('workflowSelectedActivityIsEmpty') && !this.cmfg('workflowSelectedPreviousActivityIsEmpty')
+				&& !Ext.isEmpty(this.cmfg('workflowSelectedPreviousActivityGet', CMDBuild.core.constants.Proxy.INSTANCE_ID))
+			) {
+				this.cmfg('workflowTreeActivitySelect', {
+					activitySubsetId: this.cmfg('workflowSelectedPreviousActivityGet', CMDBuild.core.constants.Proxy.ACTIVITY_SUBSET_ID),
+					forceFilter: true,
+					instanceId: this.cmfg('workflowSelectedPreviousActivityGet', CMDBuild.core.constants.Proxy.INSTANCE_ID)
+				});
+			}
 		},
 
 		/**
@@ -281,8 +314,8 @@
 				return this.cmfg('onWorkflowInstanceSelect', {
 					record: record,
 					scope: this,
-					success: function (response, options, decodedResponse) {
-						this.cmfg('onWorkflowActivitySelect', record);
+					callback: function () {
+						this.cmfg('onWorkflowActivitySelect', { record: record });
 					}
 				});
 			} else if ( // Instance node selected
@@ -302,6 +335,16 @@
 		 */
 		onWorkflowTreeSaveFailure: function () {
 			this.cmfg('workflowTreeStoreLoad', { disableFirstRowSelection: true });
+		},
+
+		/**
+		 * Reset tree and form on column sort change
+		 *
+		 * @returns {Void}
+		 */
+		onWorkflowTreeSortChange: function () {
+			this.cmfg('workflowFormReset');
+			this.cmfg('workflowTreeReset');
 		},
 
 		/**
@@ -420,7 +463,8 @@
 				CMDBuild.Translation.common.failure,
 				Ext.String.format(
 					CMDBuild.Translation.errors.reasons.CARD_NOTFOUND,
-					this.cmfg('workflowSelectedWorkflowGet', CMDBuild.core.constants.Proxy.ID)
+					this.cmfg('workflowSelectedWorkflowGet', CMDBuild.core.constants.Proxy.DESCRIPTION)
+					+ ' [' +this.cmfg('workflowSelectedWorkflowGet', CMDBuild.core.constants.Proxy.NAME) + ']'
 				)
 			);
 
@@ -700,9 +744,8 @@
 				params[CMDBuild.core.constants.Proxy.FILTER] = Ext.encode(this.cmfg('workflowTreeAppliedFilterGet', CMDBuild.core.constants.Proxy.CONFIGURATION));
 
 			if (parameters.enableForceFlowStatus) {
-				if (!parameters.forceFlowStatus)
-					if (flowStatusComboBoxValue != CMDBuild.core.constants.WorkflowStates.getAll())
-						params[CMDBuild.core.constants.Proxy.FLOW_STATUS] = flowStatusComboBoxValue;
+				if (!parameters.forceFlowStatus && flowStatusComboBoxValue != CMDBuild.core.constants.WorkflowStates.getAll())
+					params[CMDBuild.core.constants.Proxy.FLOW_STATUS] = flowStatusComboBoxValue;
 			} else {
 				if (flowStatusComboBoxValue != CMDBuild.core.constants.WorkflowStates.getAll())
 					params[CMDBuild.core.constants.Proxy.FLOW_STATUS] = flowStatusComboBoxValue;
@@ -850,7 +893,7 @@
 							fieldManager.attributeModelSet(attributeModel);
 							fieldManager.push(
 								columnsDefinition,
-								this.applyCustomRenderer(fieldManager.buildColumn())
+								this.applyCustomRenderer(fieldManager.buildColumn(), attributeModel)
 							);
 						} else if (attributeModel.get(CMDBuild.core.constants.Proxy.TYPE) != 'ipaddress') { // FIXME: future implementation - @deprecated - Old field manager
 							var column = CMDBuild.Management.FieldManager.getHeaderForAttr(attributeModel.get(CMDBuild.core.constants.Proxy.SOURCE_OBJECT));
@@ -1055,7 +1098,7 @@
 
 			this.cmfg('workflowSelectedActivityReset');
 
-			_CMWFState.setActivityInstance(Ext.create('CMDBuild.model.CMActivityInstance'));
+			_CMWFState.setProcessInstanceSynchronous(Ext.create('CMDBuild.model.CMProcessInstance', this.cmfg('workflowSelectedInstanceGet', 'rawData')));
 			_CMUIState.onlyGridIfFullScreen();
 		},
 
@@ -1090,8 +1133,6 @@
 					return _error('workflowTreeStoreLoad(): selected workflow object empty', this, this.cmfg('workflowSelectedWorkflowGet'));
 			// END: Error handling
 
-			var sorters = this.cmfg('workflowTreeStoreGet').getSorters();
-
 			// Manage callback
 			if (!parameters.disableFirstRowSelection)
 				parameters.callback = Ext.isEmpty(parameters.callback) ? this.selectFirst : parameters.callback;
@@ -1105,9 +1146,6 @@
 
 			if (!this.workflowTreeAppliedFilterIsEmpty())
 				params[CMDBuild.core.constants.Proxy.FILTER] = Ext.encode(this.cmfg('workflowTreeAppliedFilterGet', CMDBuild.core.constants.Proxy.CONFIGURATION));
-
-			if (Ext.isArray(sorters) && !Ext.isEmpty(sorters))
-				params[CMDBuild.core.constants.Proxy.SORT] = Ext.encode(sorters);
 
 			this.storeExtraParamsSet(params); // Setup extraParams to work also with sorters and print report
 

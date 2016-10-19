@@ -145,7 +145,7 @@
 					scope: this,
 
 					handler: function (button, e) {
-						this.delegate.superController.cmfg('onWorkflowFormAbortButtonClick');
+						this.delegate.superController.cmfg('onWorkflowAbortButtonClick');
 					}
 				})
 			];

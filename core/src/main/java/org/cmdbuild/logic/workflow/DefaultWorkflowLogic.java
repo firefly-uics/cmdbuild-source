@@ -4,6 +4,11 @@ import static com.google.common.collect.FluentIterable.from;
 import static com.google.common.collect.Iterables.filter;
 import static java.lang.String.format;
 import static java.util.Arrays.asList;
+import static org.cmdbuild.common.utils.guava.Suppliers.exception;
+import static org.cmdbuild.exception.CMDBWorkflowException.WorkflowExceptionType.WF_ACTIVITY_NOT_FOUND;
+import static org.cmdbuild.exception.CMDBWorkflowException.WorkflowExceptionType.WF_CANNOT_ABORT_PROCESS;
+import static org.cmdbuild.exception.CMDBWorkflowException.WorkflowExceptionType.WF_START_ACTIVITY_NOT_FOUND;
+import static org.cmdbuild.exception.ConsistencyException.ConsistencyExceptionType.OUT_OF_DATE_PROCESS;
 import static org.cmdbuild.logic.PrivilegeUtils.assure;
 
 import java.io.File;
@@ -33,8 +38,6 @@ import org.cmdbuild.dao.entrytype.attributetype.ReferenceAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.TimeAttributeType;
 import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.exception.CMDBWorkflowException;
-import org.cmdbuild.exception.CMDBWorkflowException.WorkflowExceptionType;
-import org.cmdbuild.exception.ConsistencyException.ConsistencyExceptionType;
 import org.cmdbuild.logic.data.LockLogic;
 import org.cmdbuild.logic.data.QueryOptions;
 import org.cmdbuild.logic.data.access.ProcessEntryFiller;
@@ -237,7 +240,7 @@ class DefaultWorkflowLogic implements WorkflowLogic {
 		final UserProcessClass theProess = workflowEngine.findProcessClassByName(processClassName);
 		final CMActivity theActivity = theProess.getStartActivity();
 		if (theActivity == null) {
-			throw WorkflowExceptionType.WF_START_ACTIVITY_NOT_FOUND.createException(theProess.getDescription());
+			throw WF_START_ACTIVITY_NOT_FOUND.createException(theProess.getDescription());
 		}
 
 		return theActivity;
@@ -251,7 +254,7 @@ class DefaultWorkflowLogic implements WorkflowLogic {
 		final UserProcessClass theProess = workflowEngine.findProcessClassById(processClassId);
 		final CMActivity theActivity = theProess.getStartActivity();
 		if (theActivity == null) {
-			throw WorkflowExceptionType.WF_START_ACTIVITY_NOT_FOUND.createException(theProess.getDescription());
+			throw WF_START_ACTIVITY_NOT_FOUND.createException(theProess.getDescription());
 		}
 
 		return theActivity;
@@ -276,7 +279,7 @@ class DefaultWorkflowLogic implements WorkflowLogic {
 			final String activityInstanceId) {
 		logger.debug("getting activity instance '{}' for process '{}'", activityInstanceId, processClassName);
 		final UserProcessInstance processInstance = getProcessInstance(processClassName, processCardId);
-		return getActivityInstance(processInstance, activityInstanceId);
+		return activityInstance(processInstance, activityInstanceId);
 	}
 
 	@Override
@@ -284,18 +287,16 @@ class DefaultWorkflowLogic implements WorkflowLogic {
 			final String activityInstanceId) {
 		logger.debug("getting activity instance '{}' for process '{}'", activityInstanceId, processClassId);
 		final UserProcessInstance processInstance = getProcessInstance(processClassId, processCardId);
-		return getActivityInstance(processInstance, activityInstanceId);
+		return activityInstance(processInstance, activityInstanceId);
 	}
 
-	private UserActivityInstance getActivityInstance(final UserProcessInstance processInstance,
+	private UserActivityInstance activityInstance(final UserProcessInstance processInstance,
 			final String activityInstanceId) {
-		for (final UserActivityInstance activityInstance : processInstance.getActivities()) {
-			if (activityInstance.getId().equals(activityInstanceId)) {
-				return activityInstance;
-			}
-		}
-		logger.error("activity instance '{}' not found", activityInstanceId);
-		return NULL_ACTIVITY_INSTANCE;
+		return from(processInstance.getActivities()) //
+				.filter(input -> input.getId().equals(activityInstanceId)) //
+				.first() //
+				.or(exception(WF_ACTIVITY_NOT_FOUND.createException(processInstance.getCardId().toString(),
+						processInstance.getProcessInstanceId(), activityInstanceId)));
 	}
 
 	/**
@@ -516,7 +517,7 @@ class DefaultWorkflowLogic implements WorkflowLogic {
 			final Long givenBeginDateAsLong = (Long) vars.get(BEGIN_DATE_ATTRIBUTE);
 			final DateTime givenBeginDate = new DateTime(givenBeginDateAsLong);
 			if (!isProcessUpdated(processInstance, givenBeginDate)) {
-				throw ConsistencyExceptionType.OUT_OF_DATE_PROCESS.createException();
+				throw OUT_OF_DATE_PROCESS.createException();
 			}
 
 			/*
@@ -525,12 +526,7 @@ class DefaultWorkflowLogic implements WorkflowLogic {
 			vars.remove(BEGIN_DATE_ATTRIBUTE);
 		}
 
-		updateProcess( //
-				processInstance, //
-				activityInstanceId, //
-				vars, //
-				widgetSubmission, //
-				advance);
+		updateProcess(activityInstance(processInstance, activityInstanceId), vars, widgetSubmission, advance);
 
 		lockLogic.unlockActivity(processCardId, activityInstanceId);
 
@@ -541,10 +537,8 @@ class DefaultWorkflowLogic implements WorkflowLogic {
 		return workflowEngine.findProcessInstance(processClass, processCardId);
 	}
 
-	private UserProcessInstance updateProcess(final UserProcessInstance processInstance,
-			final String activityInstanceId, final Map<String, ?> vars, final Map<String, Object> widgetSubmission,
-			final boolean advance) throws CMWorkflowException {
-		final UserActivityInstance activityInstance = processInstance.getActivityInstance(activityInstanceId);
+	private UserProcessInstance updateProcess(final UserActivityInstance activityInstance, final Map<String, ?> vars,
+			final Map<String, Object> widgetSubmission, final boolean advance) throws CMWorkflowException {
 		workflowEngine.updateActivity(activityInstance, vars, widgetSubmission);
 		final UserProcessInstance output;
 		if (advance) {
@@ -626,7 +620,7 @@ class DefaultWorkflowLogic implements WorkflowLogic {
 		logger.info("aborting process with id '{}' for class '{}'", processCardId, processClassName);
 		if (processCardId < 0) {
 			logger.error("invalid card id '{}'", processCardId);
-			throw WorkflowExceptionType.WF_CANNOT_ABORT_PROCESS.createException();
+			throw WF_CANNOT_ABORT_PROCESS.createException();
 		}
 		final CMProcessClass process = workflowEngine.findProcessClassByName(processClassName);
 		final UserProcessInstance pi = workflowEngine.findProcessInstance(process, processCardId);

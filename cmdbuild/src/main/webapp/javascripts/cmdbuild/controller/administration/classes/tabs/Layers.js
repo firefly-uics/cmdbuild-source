@@ -6,7 +6,7 @@
 		requires: [
 			'CMDBuild.core.constants.Global',
 			'CMDBuild.core.constants.Proxy',
-			'CMDBuild.proxy.classes.tabs.Layers'
+			'CMDBuild.proxy.administration.classes.tabs.Layers'
 		],
 
 		/**
@@ -90,7 +90,8 @@
 		 * @returns {Void}
 		 */
 		onClassesTabLayersShow: function () {
-			this.grid.getStore().load();
+			if (!this.cmfg('classesSelectedClassIsEmpty'))
+				this.grid.getStore().load();
 		},
 
 		/**
@@ -118,7 +119,7 @@
 				params[CMDBuild.core.constants.Proxy.TABLE_NAME] = this.cmfg('classesSelectedClassGet', CMDBuild.core.constants.Proxy.NAME);
 				params[CMDBuild.core.constants.Proxy.VISIBLE] = parameters.checked;
 
-				CMDBuild.proxy.classes.tabs.Layers.setVisibility({
+				CMDBuild.proxy.administration.classes.tabs.Layers.setVisibility({
 					params: params,
 					scope: this,
 					success: function (response, options, decodedResponse) {

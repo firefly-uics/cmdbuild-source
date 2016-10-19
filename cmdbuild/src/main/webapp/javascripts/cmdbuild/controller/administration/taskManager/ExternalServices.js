@@ -61,39 +61,41 @@
 			if (
 				Ext.isObject(parameters) && !Ext.Object.isEmpty(parameters)
 				&& Ext.isArray(parameters.type) && !Ext.isEmpty(parameters.type)
+				&& this.cmfg('mainViewportAccordionControllerExists', this.identifierGet())
 			) {
-				this.cmfg('mainViewportAccordionDeselect', this.identifierGet());
-				this.cmfg('mainViewportAccordionControllerExpand', {
-					identifier: this.identifierGet(),
-					params: {
-						scope: this,
-						callback: function () {
-							var accordionController = this.cmfg('mainViewportAccordionControllerGet', this.identifierGet());
-							var targetAccordionNode = accordionController.cmfg('accordionNodeByIdGet', 'accordion-taskManager-workflow');
+				var accordionController = this.cmfg('mainViewportAccordionControllerGet', this.identifierGet()),
+					targetAccordionNode = accordionController.cmfg('accordionNodeByIdGet', 'accordion-taskManager-workflow');
 
-							// Select workflow task accordion node silently
-							accordionController.cmfg('accordionNodeByIdSelect', {
-								mode: 'silently',
-								id: 'accordion-taskManager-workflow'
-							});
+				Ext.apply(accordionController, {
+					disableSelection: true,
+					scope: this,
+					callback: function () {
+						accordionController.cmfg('accordionDeselect');
 
-							// Load grid store
-							this.controllerGrid.cmfg('taskManagerGridConfigure', {
-								type: parameters.type,
-								storeLoadParameters: {
-									scope: this,
-									callback: function (records, operation, success) {
-										this.controllerForm.cmfg('onTaskManagerFormAddButtonClick', parameters.type); // Setup form in add mode
-									}
+						// Select workflow task accordion node silently
+						accordionController.cmfg('accordionNodeByIdSelect', {
+							mode: 'silently',
+							id: 'accordion-taskManager-workflow'
+						});
+
+						// Load grid store
+						this.controllerGrid.cmfg('taskManagerGridConfigure', {
+							type: parameters.type,
+							storeLoadParameters: {
+								scope: this,
+								callback: function (records, operation, success) {
+									this.controllerForm.cmfg('onTaskManagerFormAddButtonClick', parameters.type); // Setup form in add mode
 								}
-							});
+							}
+						});
 
-							this.configureAddButton(targetAccordionNode.get(CMDBuild.core.constants.Proxy.SECTION_HIERARCHY));
+						this.configureAddButton(targetAccordionNode.get(CMDBuild.core.constants.Proxy.SECTION_HIERARCHY));
 
-							this.setViewTitle(targetAccordionNode.get(CMDBuild.core.constants.Proxy.TEXT));
-						}
+						this.setViewTitle(targetAccordionNode.get(CMDBuild.core.constants.Proxy.TEXT));
 					}
 				});
+
+				accordionController.cmfg('accordionExpand');
 			} else {
 				_error('taskManagerExternalExecutionAddButtonClick(): wrong parameters object', this, parameters);
 			}
@@ -125,39 +127,41 @@
 				Ext.isObject(parameters) && !Ext.Object.isEmpty(parameters)
 				&& Ext.isNumber(parameters.id) && !Ext.isEmpty(parameters.id)
 				&& Ext.isArray(parameters.type) && !Ext.isEmpty(parameters.type)
+				&& this.cmfg('mainViewportAccordionControllerExists', this.identifierGet())
 			) {
-				this.cmfg('mainViewportAccordionDeselect', this.identifierGet());
-				this.cmfg('mainViewportAccordionControllerExpand', {
-					identifier: this.identifierGet(),
-					params: {
-						scope: this,
-						callback: function () {
-							var accordionController = this.cmfg('mainViewportAccordionControllerGet', this.identifierGet());
-							var targetAccordionNode = accordionController.cmfg('accordionNodeByIdGet', 'accordion-taskManager-workflow');
+				var accordionController = this.cmfg('mainViewportAccordionControllerGet', this.identifierGet()),
+					targetAccordionNode = accordionController.cmfg('accordionNodeByIdGet', 'accordion-taskManager-workflow');
 
-							// Select workflow task accordion node silently
-							accordionController.cmfg('accordionNodeByIdSelect', {
-								mode: 'silently',
-								id: 'accordion-taskManager-workflow'
-							});
+				Ext.apply(accordionController, {
+					disableSelection: true,
+					scope: this,
+					callback: function () {
+						accordionController.cmfg('accordionDeselect');
 
-							// Load grid store
-							this.controllerGrid.cmfg('taskManagerGridConfigure', {
-								type: parameters.type,
-								storeLoadParameters: {
-									scope: this,
-									callback: function (records, operation, success) {
-										this.cmfg('taskManagerRecordSelect', parameters.id);
-									}
+						// Select workflow task accordion node silently
+						accordionController.cmfg('accordionNodeByIdSelect', {
+							mode: 'silently',
+							id: 'accordion-taskManager-workflow'
+						});
+
+						// Load grid store
+						this.controllerGrid.cmfg('taskManagerGridConfigure', {
+							type: parameters.type,
+							storeLoadParameters: {
+								scope: this,
+								callback: function (records, operation, success) {
+									this.cmfg('taskManagerRecordSelect', parameters.id);
 								}
-							});
+							}
+						});
 
-							this.configureAddButton(targetAccordionNode.get(CMDBuild.core.constants.Proxy.SECTION_HIERARCHY));
+						this.configureAddButton(targetAccordionNode.get(CMDBuild.core.constants.Proxy.SECTION_HIERARCHY));
 
-							this.setViewTitle(targetAccordionNode.get(CMDBuild.core.constants.Proxy.TEXT));
-						}
+						this.setViewTitle(targetAccordionNode.get(CMDBuild.core.constants.Proxy.TEXT));
 					}
 				});
+
+				accordionController.cmfg('accordionExpand');
 			} else {
 				_error('taskManagerExternalServicesItemDoubleClick(): wrong parameters object', this, parameters);
 			}
@@ -175,41 +179,43 @@
 				Ext.isObject(parameters) && !Ext.Object.isEmpty(parameters)
 				&& Ext.isNumber(parameters.id) && !Ext.isEmpty(parameters.id)
 				&& Ext.isArray(parameters.type) && !Ext.isEmpty(parameters.type)
+				&& this.cmfg('mainViewportAccordionControllerExists', this.identifierGet())
 			) {
-				this.cmfg('mainViewportAccordionDeselect', this.identifierGet());
-				this.cmfg('mainViewportAccordionControllerExpand', {
-					identifier: this.identifierGet(),
-					params: {
-						scope: this,
-						callback: function () {
-							var accordionController = this.cmfg('mainViewportAccordionControllerGet', this.identifierGet());
-							var targetAccordionNode = accordionController.cmfg('accordionNodeByIdGet', 'accordion-taskManager-workflow');
+				var accordionController = this.cmfg('mainViewportAccordionControllerGet', this.identifierGet()),
+					targetAccordionNode = accordionController.cmfg('accordionNodeByIdGet', 'accordion-taskManager-workflow');
 
-							// Select workflow task accordion node silently
-							accordionController.cmfg('accordionNodeByIdSelect', {
-								mode: 'silently',
-								id: 'accordion-taskManager-workflow'
-							});
+				Ext.apply(accordionController, {
+					disableSelection: true,
+					scope: this,
+					callback: function () {
+						accordionController.cmfg('accordionDeselect');
 
-							// Load grid store
-							this.controllerGrid.cmfg('taskManagerGridConfigure', {
-								type: parameters.type,
-								storeLoadParameters: {
-									scope: this,
-									callback: function (records, operation, success) {
-										this.cmfg('taskManagerRecordSelect', parameters.id);
+						// Select workflow task accordion node silently
+						accordionController.cmfg('accordionNodeByIdSelect', {
+							mode: 'silently',
+							id: 'accordion-taskManager-workflow'
+						});
 
-										this.formStateSet('editMode');
-									}
+						// Load grid store
+						this.controllerGrid.cmfg('taskManagerGridConfigure', {
+							type: parameters.type,
+							storeLoadParameters: {
+								scope: this,
+								callback: function (records, operation, success) {
+									this.cmfg('taskManagerRecordSelect', parameters.id);
+
+									this.formStateSet('editMode');
 								}
-							});
+							}
+						});
 
-							this.configureAddButton(targetAccordionNode.get(CMDBuild.core.constants.Proxy.SECTION_HIERARCHY));
+						this.configureAddButton(targetAccordionNode.get(CMDBuild.core.constants.Proxy.SECTION_HIERARCHY));
 
-							this.setViewTitle(targetAccordionNode.get(CMDBuild.core.constants.Proxy.TEXT));
-						}
+						this.setViewTitle(targetAccordionNode.get(CMDBuild.core.constants.Proxy.TEXT));
 					}
 				});
+
+				accordionController.cmfg('accordionExpand');
 			} else {
 				_error('taskManagerExternalServicesItemDoubleClick(): wrong parameters object', this, parameters);
 			}

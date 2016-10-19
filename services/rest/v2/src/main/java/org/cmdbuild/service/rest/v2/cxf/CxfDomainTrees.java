@@ -6,8 +6,10 @@ import static com.google.common.collect.Iterables.size;
 import static com.google.common.collect.Lists.newArrayList;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.cmdbuild.service.rest.v2.constants.Serialization.DOMAIN;
+import static org.cmdbuild.service.rest.v2.constants.Serialization.FILTER;
 import static org.cmdbuild.service.rest.v2.constants.Serialization.RECURSION_ENABLED;
 import static org.cmdbuild.service.rest.v2.constants.Serialization.TARGET_CLASS;
+import static org.cmdbuild.service.rest.v2.model.Models.newAttributeFilter;
 import static org.cmdbuild.service.rest.v2.model.Models.newDomainTree;
 import static org.cmdbuild.service.rest.v2.model.Models.newMetadata;
 import static org.cmdbuild.service.rest.v2.model.Models.newNode;
@@ -102,6 +104,9 @@ public class CxfDomainTrees implements DomainTrees {
 												.withMetadata(DOMAIN, input.getDomainName()) //
 												.withMetadata(TARGET_CLASS, input.getTargetClassName()) //
 												.withMetadata(RECURSION_ENABLED, input.isEnableRecursion()) //
+												.withMetadata(FILTER, newAttributeFilter() //
+														.withText(input.getTargetFilter()) //
+														.build()) //
 												.build();
 									}
 

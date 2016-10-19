@@ -56,12 +56,12 @@
 		},
 
 		/**
-		 * @param {String} value
+		 * @param {Array} value
 		 *
 		 * @returns {Array}
 		 */
 		onFieldMultiselectGroupValueGet: function (value) {
-			return Ext.isString(value[0]) ? value : [];
+			return Ext.isArray(value) ? value : [];
 		}
 	});
 

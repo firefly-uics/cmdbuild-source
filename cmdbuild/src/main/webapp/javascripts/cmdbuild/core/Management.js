@@ -11,7 +11,7 @@
 			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.CookiesManager',
 			'CMDBuild.core.Splash',
-			'CMDBuild.proxy.classes.Classes',
+			'CMDBuild.proxy.core.Management',
 			'CMDBuild.proxy.dashboard.Dashboard',
 			'CMDBuild.proxy.domain.Domain',
 			'CMDBuild.proxy.lookup.Type',
@@ -49,14 +49,14 @@
 			});
 
 			/**
-			 * Class and process
+			 * Entry types
 			 */
 			params = {};
 			params[CMDBuild.core.constants.Proxy.ACTIVE] = true;
 
 			var readAllClassesCallback = requestBarrier.getCallback('managementBuildCacheBarrier'); // Avoid to getCallback too late
 
-			CMDBuild.proxy.classes.Classes.readAll({
+			CMDBuild.proxy.core.Management.readAllEntryTypes({
 				params: params,
 				loadMask: false,
 				scope: this,
@@ -182,8 +182,6 @@
 		 */
 		buildUserInterface: function () {
 			if (!CMDBuild.core.CookiesManager.authorizationIsEmpty()) {
-				Ext.suspendLayouts();
-
 				/**
 				 * @deprecated
 				 */
@@ -230,23 +228,23 @@
 							cmControllerType: CMDBuild.controller.management.dashboard.CMModDashboardController,
 							cmName: 'dashboard'
 						})
-					]
-				});
+					],
+					scope: this,
+					callback: function () {
+						CMDBuild.core.Splash.hide(function () {
+							CMDBuild.global.controller.MainViewport.cmfg('mainViewportInstanceNameSet', CMDBuild.configuration.instance.get(CMDBuild.core.constants.Proxy.INSTANCE_NAME));
 
-				Ext.resumeLayouts(true);
+							if (!CMDBuild.global.Routes.isRoutePathEmpty()) { // Execute routes
+								CMDBuild.global.Routes.exec();
+							} else { // Manage starting class
+								CMDBuild.global.controller.MainViewport.cmfg('mainViewportStartingEntitySelect');
+							}
+						}, this);
 
-				CMDBuild.core.Splash.hide(function () {
-					CMDBuild.global.controller.MainViewport.cmfg('mainViewportInstanceNameSet', CMDBuild.configuration.instance.get(CMDBuild.core.constants.Proxy.INSTANCE_NAME));
-
-					if (!CMDBuild.global.Routes.isRoutePathEmpty()) { // Execute routes
-						CMDBuild.global.Routes.exec();
-					} else { // Manage starting class
-						CMDBuild.global.controller.MainViewport.cmfg('mainViewportStartingEntitySelect');
+						if (CMDBuild.configuration.userInterface.get(CMDBuild.core.constants.Proxy.FULL_SCREEN_MODE))
+							_CMUIState.onlyGrid();
 					}
-				}, this);
-
-				if (CMDBuild.configuration.userInterface.get(CMDBuild.core.constants.Proxy.FULL_SCREEN_MODE))
-					_CMUIState.onlyGrid();
+				});
 			}
 		}
 	});

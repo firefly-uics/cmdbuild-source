@@ -8,12 +8,13 @@
 			this.callParent(arguments);
 		},
 
-		addFeatureButtonHasBeenToggled : function onAddFeatureButtonToggle(toggled) {
+		addFeatureButtonHasBeenToggled : function onAddFeatureButtonToggle() {
 			this.interactionDocument.feature.operation = "Draw";
 			this.interactionDocument.changedFeature();
 		},
 
 		removeFeatureButtonHasBeenClicked : function onRemoveFeatureButtonClick() {
+			this.interactionDocument.changed();
 		},
 
 		geoAttributeMenuItemHasBeenClicked : function(item) {

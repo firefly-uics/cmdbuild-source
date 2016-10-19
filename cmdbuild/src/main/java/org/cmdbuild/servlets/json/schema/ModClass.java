@@ -6,8 +6,10 @@ import static com.google.common.collect.FluentIterable.from;
 import static java.util.Collections.emptyList;
 import static org.cmdbuild.dao.entrytype.Predicates.isSystem;
 import static org.cmdbuild.servlets.json.CommunicationConstants.ACTIVE;
+import static org.cmdbuild.servlets.json.CommunicationConstants.ACTIVE_ONLY;
 import static org.cmdbuild.servlets.json.CommunicationConstants.ATTRIBUTE;
 import static org.cmdbuild.servlets.json.CommunicationConstants.ATTRIBUTES;
+import static org.cmdbuild.servlets.json.CommunicationConstants.CLASS_ID;
 import static org.cmdbuild.servlets.json.CommunicationConstants.CLASS_NAME;
 import static org.cmdbuild.servlets.json.CommunicationConstants.DEFAULT_VALUE;
 import static org.cmdbuild.servlets.json.CommunicationConstants.DESCRIPTION;
@@ -176,6 +178,52 @@ public class ModClass extends JSONBaseWithSpringContext {
 				put("classes", serializedClasses);
 			}
 		};
+	}
+
+	@JSONExported
+	public JSONObject readAll( //
+			@Parameter(value = ACTIVE, required = false) final boolean activeOnly //
+	) throws JSONException, AuthException, CMWorkflowException {
+		final Iterable<? extends CMClass> classesToBeReturned = userDataAccessLogic().findClasses(activeOnly);
+		final JSONArray serializedClasses = new JSONArray();
+		for (final CMClass cmClass : classesToBeReturned) {
+			serializedClasses.put(serialize(cmClass));
+		}
+		return new JSONObject() {
+			{
+				put("response", serializedClasses);
+			}
+		};
+	}
+
+	@JSONExported
+	public JSONObject readByName( //
+			@Parameter(value = NAME) final String className //
+	) throws JSONException, AuthException {
+		final CMClass output = userDataAccessLogic().findClass(className);
+		return new JSONObject() {
+			{
+				put("response", serialize(output));
+			}
+		};
+	}
+
+	@JSONExported
+	public JSONObject readById( //
+			@Parameter(value = ID) final Long classId //
+	) throws JSONException, AuthException {
+		final CMClass output = userDataAccessLogic().findClass(classId);
+		return new JSONObject() {
+			{
+				put("response", serialize(output));
+			}
+		};
+	}
+
+	private JSONObject serialize(final CMClass value) throws JSONException {
+		final JSONObject output = classSerializer().toClient(value);
+		new Serializer(authLogic()).addAttachmentsData(output, value, dmsLogic(), notifier());
+		return output;
 	}
 
 	/**
@@ -492,7 +540,7 @@ public class ModClass extends JSONBaseWithSpringContext {
 	public JSONObject getDomains( //
 			@Parameter(value = SOURCE, required = false) final String source, //
 			@Parameter(value = DESTINATION, required = false) final String destination, //
-			@Parameter(value = ACTIVE, required = false) final boolean activeOnly, //
+			@Parameter(value = ACTIVE_ONLY, required = false) final boolean activeOnly, //
 			@Parameter(value = EXCLUDE_PROCESSES, required = false) final boolean excludeProcesses //
 	) throws JSONException {
 		final JSONArray jsonDomains = new JSONArray();

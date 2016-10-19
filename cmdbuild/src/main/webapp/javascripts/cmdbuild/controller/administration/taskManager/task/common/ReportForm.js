@@ -280,9 +280,11 @@
 		 * @returns {Void}
 		 */
 		onTaskManagerReportFormEnable: function () {
-			this.view.combo.enable();
-			this.view.extension.enable();
-			this.view.grid.setDisabled(Ext.isEmpty(this.view.combo.getValue()));
+			if (this.view.combo.rendered) {
+				this.view.combo.enable();
+				this.view.extension.enable();
+				this.view.grid.setDisabled(Ext.isEmpty(this.view.combo.getValue()));
+			}
 		},
 
 		/**

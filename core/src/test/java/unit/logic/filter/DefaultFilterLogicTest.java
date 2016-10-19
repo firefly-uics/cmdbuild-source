@@ -444,9 +444,29 @@ public class DefaultFilterLogicTest {
 	}
 
 	@Test
-	public void defaultFilterIsSettedForSingleFilterAndSingleGroup() throws Exception {
+	public void defaultFilterIsSettedForGroups() throws Exception {
 		// given
-		doReturn(asList(2L)) //
+		final FilterStore.Filter stored = mock(FilterStore.Filter.class);
+		doReturn(stored) //
+				.when(store).read(anyLong());
+		doReturn(asList("foo", "baz")) //
+				.when(store).joinedGroups(anyLong());
+
+		// when
+		defaultFilterLogic.setDefaultGroups(1L, asList("foo", "bar"));
+
+		// then
+		verify(store).read(eq(1L));
+		verify(store).joinedGroups(eq(1L));
+		verify(store).disjoin(eq("baz"), eq(asList(stored)));
+		verify(store).join(eq("bar"), eq(asList(stored)));
+		verifyNoMoreInteractions(store, converter, userStore, authenticatedUser, privilegeContext);
+	}
+
+	@Test
+	public void defaultGroupIsSettedForFilters() throws Exception {
+		// given
+		doReturn(asList(1L, 3L)) //
 				.when(store).joinedFilters(anyString());
 		final FilterStore.Filter first = mock(FilterStore.Filter.class);
 		final FilterStore.Filter second = mock(FilterStore.Filter.class);
@@ -454,14 +474,14 @@ public class DefaultFilterLogicTest {
 				.when(store).read(anyLong());
 
 		// when
-		defaultFilterLogic.setDefault(asList(1L), asList("a group"));
+		defaultFilterLogic.setDefaultsForGroup("group", asList(1L, 2L));
 
 		// then
-		verify(store).joinedFilters(eq("a group"));
+		verify(store).joinedFilters("group");
+		verify(store).read(eq(3L));
+		verify(store).disjoin(eq("group"), eq(asList(first)));
 		verify(store).read(eq(2L));
-		verify(store).disjoin(eq("a group"), eq(asList(first)));
-		verify(store).read(eq(1L));
-		verify(store).join(eq("a group"), eq(asList(second)));
+		verify(store).join(eq("group"), eq(asList(second)));
 		verifyNoMoreInteractions(store, converter, userStore, authenticatedUser, privilegeContext);
 	}
 

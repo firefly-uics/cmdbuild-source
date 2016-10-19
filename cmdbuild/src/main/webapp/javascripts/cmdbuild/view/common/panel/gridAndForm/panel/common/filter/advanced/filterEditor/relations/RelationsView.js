@@ -14,13 +14,7 @@
 		border: false,
 		frame: false,
 		layout: 'border',
-		title: CMDBuild.Translation.relations,
-
-		listeners: {
-			show: function (panel, eOpts) {
-				this.delegate.cmfg('onPanelGridAndFormFilterAdvancedFilterEditorRelationsViewShow');
-			}
-		}
+		title: CMDBuild.Translation.relations
 	});
 
 })();

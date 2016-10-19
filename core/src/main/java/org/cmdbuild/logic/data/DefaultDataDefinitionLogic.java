@@ -1,12 +1,14 @@
 package org.cmdbuild.logic.data;
 
 import static com.google.common.collect.FluentIterable.from;
+import static com.google.common.collect.Iterables.concat;
 import static com.google.common.collect.Iterables.isEmpty;
 import static com.google.common.collect.Iterables.size;
 import static com.google.common.collect.Maps.newHashMap;
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
 import static org.apache.commons.lang3.ObjectUtils.defaultIfNull;
+import static org.apache.commons.lang3.StringUtils.defaultString;
 import static org.cmdbuild.dao.constants.Cardinality.CARDINALITY_11;
 import static org.cmdbuild.dao.constants.Cardinality.CARDINALITY_1N;
 import static org.cmdbuild.dao.constants.Cardinality.CARDINALITY_N1;
@@ -508,41 +510,50 @@ public class DefaultDataDefinitionLogic implements DataDefinitionLogic {
 			throw DOMAIN_NOTFOUND.createException(domain.getName());
 		}
 
-		validateActivationForReferences(domain);
+		validateActivationForReferences(existing, domain);
 
 		logger.info("Updating domain with name {}", domain.getName());
 		updatedDomain = view.update(definitionForExisting(domain, existing));
 		return updatedDomain;
 	}
 
-	private void validateActivationForReferences(final Domain domain) {
-		final Iterable<String> allDisabled = "N:1".equals(domain.getCardinality())
-				? defaultIfNull(domain.getDisabled1(), NO_DISABLED) : defaultIfNull(domain.getDisabled2(), NO_DISABLED);
-		for (final String disabled : allDisabled) {
-			final CMClass target = view.findClass(disabled);
+	private void validateActivationForReferences(final CMDomain existing, final Domain domain) {
+		final String cardinality = defaultString(domain.getCardinality());
+		final Iterable<String> elements;
+		if (cardinality.equals(CARDINALITY_1N.value())) {
+			elements =
+					concat(defaultIfNull(domain.getDisabled2(), NO_DISABLED), asList(existing.getClass2().getName()));
+		} else if (cardinality.equals(CARDINALITY_N1.value())) {
+			elements =
+					concat(defaultIfNull(domain.getDisabled1(), NO_DISABLED), asList(existing.getClass1().getName()));
+		} else {
+			elements = NO_DISABLED;
+		}
+		for (final String element : elements) {
+			final CMClass target = view.findClass(element);
 			if (target == null) {
-				throw CLASS_NOTFOUND.createException(disabled);
+				throw CLASS_NOTFOUND.createException(element);
 			}
-			for (final CMAttribute attribute : from(target.getActiveAttributes()) //
-					.filter(attributeTypeInstanceOf(ReferenceAttributeType.class))) {
-				attribute.getType().accept(new ForwardingAttributeTypeVisitor() {
+			from(target.getActiveAttributes()) //
+					.filter(attributeTypeInstanceOf(ReferenceAttributeType.class)) //
+					.forEach(input -> input.getType().accept(new ForwardingAttributeTypeVisitor() {
 
-					private final CMAttributeTypeVisitor DELEGATE = NullAttributeTypeVisitor.getInstance();
+						private final CMAttributeTypeVisitor DELEGATE = NullAttributeTypeVisitor.getInstance();
 
-					@Override
-					protected CMAttributeTypeVisitor delegate() {
-						return DELEGATE;
-					}
-
-					@Override
-					public void visit(final ReferenceAttributeType attributeType) {
-						if (attributeType.getDomainName().equals(domain.getName()) && attribute.isActive()) {
-							throw ORM_ACTIVE_ATTRIBUTE.createException(target.getName(), attribute.getName());
+						@Override
+						protected CMAttributeTypeVisitor delegate() {
+							return DELEGATE;
 						}
-					}
 
-				});
-			}
+						@Override
+						public void visit(final ReferenceAttributeType attributeType) {
+							if (attributeType.getDomainName().equals(domain.getName()) && !domain.isActive()
+									&& input.isActive()) {
+								throw ORM_ACTIVE_ATTRIBUTE.createException(target.getName(), input.getName());
+							}
+						}
+
+					}));
 		}
 	}
 

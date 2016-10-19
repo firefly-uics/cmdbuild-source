@@ -4,7 +4,6 @@
 		extend: 'CMDBuild.controller.common.abstract.Accordion',
 
 		requires: [
-			'CMDBuild.core.constants.Global',
 			'CMDBuild.core.constants.ModuleIdentifiers',
 			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.proxy.management.workflow.Workflow'
@@ -74,17 +73,12 @@
 				loadMask: Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : false,
 				scope: this,
 				success: function (response, options, decodedResponse) {
-					decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.CLASSES] || [];
+					decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.RESPONSE];
 
 					var nodes = [];
 					var nodesMap = {};
 
-					// Removes all processes class from response
-					decodedResponse = Ext.Array.filter(decodedResponse, function (item, i, array) {
-						return item[CMDBuild.core.constants.Proxy.TYPE] == CMDBuild.core.constants.Global.getTableTypeProcessClass(); // Discard processes
-					}, this);
-
-					if (!Ext.isEmpty(decodedResponse)) {
+					if (Ext.isArray(decodedResponse) && !Ext.isEmpty(decodedResponse)) {
 						Ext.Array.forEach(decodedResponse, function (classObject, i, allClassObjects) {
 							var nodeObject = {};
 							nodeObject['cmName'] = this.cmfg('accordionIdentifierGet');

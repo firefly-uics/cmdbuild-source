@@ -6,16 +6,26 @@
 			MAP_YAHOO : 'yahoo',
 			MAP_GOOGLE : 'google',
 			ENABLED : 'enabled',
-			ZOOM_INITIAL_LEVEL : 'zoomInitialLevel',
 			CENTER_LONGITUDE : 'centerLongitude',
 			CENTER_LATITUDE : 'centerLatitude',
-
+			ICON_SIZE : .7,
+			DEFAULT_SEGMENTS : 10,
 			layers : {
 				PUNTUAL_ANALYSIS : "puntual_analysis",
 				RANGES_ANALYSIS : "ranges_analysis",
 				DENSITY_ANALYSIS : "density_analysis",
 				TABLE_SOURCE : "table_source",
-				FUNCTION_SOURCE : "function_source"
+				FUNCTION_SOURCE : "function_source",
+				DEFAULT_RADIUS : 8,
+				ICON_SCALE : 1.5,
+				GEO_MIN_ZINDEX : 1000,
+				GIS_MIN_ZINDEX : 10000,
+				THEMATIC_MIN_ZINDEX : 100000
+
+			},
+			
+			navigationTree : {
+				limitSelection : 300
 			},
 			shapes : {
 				CIRCLE : "shape_circle",
@@ -26,6 +36,13 @@
 				TAGS : "system.entrytype.tags",
 				MASTERTABLE : "system.entrytype.mastertable",
 				THEMATICFUNCTION : "ThematicFunction"
+			},
+			colors : {
+				POINT_FILL : '#FFCC00',
+				POINT_LINE : '#FF9966',
+				POLYGON_FILL : 'rgba(0, 0, 255, 0.1)',
+				POLYGON_LINE : 'blue',
+				LINE_LINE : 'green',
 			}
 
 		}
@@ -71,6 +88,7 @@
 		initComponent : function() {
 			this.configure();
 			var configuration = this.interactionDocument.getConfigurationMap();
+			configuration.center = ol.proj.transform(configuration.center, 'EPSG:4326', 'EPSG:3857')
 			Ext.apply(this, {
 				items : [ Ext.create('Ext.container.Container', {
 					region : 'center',
@@ -78,6 +96,8 @@
 				}) ]
 			});
 			this.geoExtension.setMap(this);
+			this.miniCardGridWindowController = Ext.create('CMDBuild.controller.management.classes.map.CMMiniCardGridWindowFeaturesController');
+
 			this.callParent(arguments);
 		},
 
@@ -90,14 +110,20 @@
 		listeners : {
 			afterrender : function() {
 				var configuration = this.interactionDocument.getConfigurationMap();
+				var extent = ol.proj.get("EPSG:900913").getExtent();
+				var center = ol.proj.transform(configuration.center, 'EPSG:3857', 'EPSG:4326')
 				this.view = new ol.View({
-					center : configuration.center,
-					zoom : configuration.zoom
+					center : center,
+					zoom : configuration.zoom,
+					maxZoom : 25,
+					minZoom : 2,
+					extent : extent
+
 				});
 				this.map = new ol.Map({
 					target : configuration.mapDivId,
 					renderer : 'canvas',
-					layers : [ this.geoExtension.getBaseLayer() ],
+					layers : [],// this.geoExtension.getBaseLayer() ],
 					view : this.view
 				});
 				me = this;
@@ -105,12 +131,14 @@
 					switch (e.key) {
 					case 'resolution':
 						me.refresh();
+						me.interactionDocument.changedLayers();
 						break;
 					}
 				});
 				var size = [ document.getElementById(this.id + "-body").offsetWidth,
 						document.getElementById(this.id + "-body").offsetHeight ];
 				this.map.setSize(size);
+				this.setLongPress();
 				this.createLegend();
 
 			},
@@ -149,8 +177,16 @@
 		},
 		refreshLegend : function() {
 			var arrLayers = this.interactionDocument.getThematicLayers();
-			if (arrLayers.length > 0) {
-				this.legend.refreshResults(arrLayers);
+			var visibles = [];
+			for (var i = 0; i < arrLayers.length; i++) {
+				var layer = arrLayers[i];
+				var visible = this.interactionDocument.getLayerVisibility(layer);
+				if (visible) {
+					visibles.push(layer);
+				}
+			}
+			if (visibles.length > 0) {
+				this.legend.refreshResults(visibles);
 			} else {
 				this.legend.hide();
 			}
@@ -226,6 +262,13 @@
 			this.view.setCenter(configuration.center);
 			this.map.renderSync();
 		},
+		resetZoom : function() {
+			var configuration = this.interactionDocument.getConfigurationMap();
+			this.view.setZoom(configuration.zoom);
+		},
+		getZoom : function() {
+			return this.view.getZoom();
+		},
 
 		/**
 		 * 
@@ -260,6 +303,20 @@
 			this.map.getLayers().insertAt(layer, 0);
 		},
 
+		/**
+		 * @param {Integer}
+		 *            newId
+		 * 
+		 * @returns {Void}
+		 * 
+		 */
+		changeFeatureOnLayers : function(newId) {
+			this.map.getLayers().forEach(function(layer) {
+				var adapter = layer.get("adapter");
+				if (adapter && adapter.changeFeature)
+					adapter.changeFeature(newId);
+			});
+		},
 		/**
 		 * @param {Object}
 		 *            geoValues
@@ -303,12 +360,65 @@
 		 * @returns {Void}
 		 * 
 		 */
-		changeFeatureOnLayers : function(newId) {
-			this.map.getLayers().forEach(function(layer) {
-				var adapter = layer.get("adapter");
-				if (adapter && adapter.changeFeature)
-					adapter.changeFeature(newId);
+		setLongPress : function() {
+			var startPixel = undefined;
+			var timeoutId = undefined;
+			var map = this.getMap();
+			var me = this;
+			
+			map.on('pointerdown', function(event) {
+				clearTimeout(timeoutId);
+				startPixel = map.getEventPixel(event);
+				timeoutId = setTimeout(function() {
+					me.openMiniCard(event);
+				}, 1000, false);
 			});
+			map.on('pointerup', function(event) {
+				clearTimeout(timeoutId);
+				startPixel = undefined;
+			});
+			map.on('pointermove', function(event) {
+				if (startPixel) {
+					var pixel = map.getEventPixel(event);
+					var deltaX = Math.abs(startPixel[0] - pixel[0]);
+					var deltaY = Math.abs(startPixel[1] - pixel[1]);
+					if (deltaX + deltaY > 6) {
+						clearTimeout(timeoutId);
+						startPixel = undefined;
+					}
+				}
+			});
+		},
+		openMiniCard : function(event) {
+			if (this.interactionDocument.getEditing()) {
+				return;
+			}
+			var map = this.getMap();
+			var me = this;
+			//var pixel = map.getEventPixel(event);
+			var features = [];
+			map.forEachFeatureAtPixel(event.pixel, function(feature) {
+				features.push(feature);
+			});
+			if (features.length === 0) {
+				return;
+			}
+			me.miniCardGridWindowController.setFeatures(features);
+			if (me.miniCardGridWindow) {
+				me.miniCardGridWindow.close();
+			}
+
+			me.miniCardGridWindow = Ext.create('CMDBuild.view.management.common.CMMiniCardGridWindow', {
+				width : me.getWidth() / 100 * 40,
+				height : me.getHeight() / 100 * 80,
+				x : event.pixel.x,
+				y : event.pixel.y,
+				dataSource : me.miniCardGridWindowController.getDataSource()
+			});
+
+			me.miniCardGridWindowController.bindMiniCardGridWindow(me.miniCardGridWindow);
+			me.miniCardGridWindow.show();
 		}
+
 	});
 })();

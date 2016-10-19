@@ -6,6 +6,11 @@
 
 		strategiesStore : undefined,
 		comboStrategies : undefined,
+		/*
+		 * @property
+		 * Object [name attribute: type]
+		 */
+		attributes : undefined,
 
 		/**
 		 * @returns {Void}
@@ -23,7 +28,7 @@
 				data : []
 			});
 			this.comboAttributes = Ext.create("Ext.form.field.ComboBox", {
-				fieldLabel : "@@ Choose Attribute *",
+				fieldLabel : CMDBuild.Translation.attribute,
 				store : this.attributesStore,
 				name : "attribute",
 				queryMode : "local",
@@ -33,14 +38,15 @@
 				allowBlank : false
 			});
 			this.comboStrategies = Ext.create("Ext.form.field.ComboBox", {
-				fieldLabel : "@@ Choose Field Strategy *",
+				fieldLabel : CMDBuild.Translation.thematicField,
 				store : this.strategiesStore,
 				name : "currentStrategy",
 				queryMode : "local",
 				displayField : "description",
 				valueField : "value",
 				editable : false,
-				allowBlank : false
+				allowBlank : false,
+				triggerAction : "all"
 			});
 			Ext.apply(this, {
 				items : [ this.comboAttributes, this.comboStrategies ],
@@ -50,6 +56,7 @@
 		loadStrategies : function(callback, callbackScope) {
 			this.loadFieldStrategies(function() {
 				this.loadAttributes(function() {
+					//this.comboStrategies.select(this.comboStrategies.getStore().getAt(0));
 					callback.apply(callbackScope, []);
 				}, this);
 			}, this);
@@ -86,15 +93,17 @@
 			var type = _CMCache.getEntryTypeByName(currentClassName);
 			var currentClassId = type.get("id");
 			var me = this;
+			this.attributes = {};
 			_CMCache.getAttributeList(currentClassId, function(attributes) {
 				for (var i = 0; i < attributes.length; i++) {
 					var attribute = attributes[i];
 					attributesStore.add({
 						"description" : attribute.description,
-						"value" : attribute.name,
-						"type" : attribute.type
+						"value" : attribute.name
 					});
+					me.attributes[attribute.name] = attribute.type;
 				}
+				
 				me.comboAttributes.store.loadData(attributesStore.getRange(), false);
 				callback.apply(callbackScope, this);
 			}, this);

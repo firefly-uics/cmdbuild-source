@@ -24,7 +24,7 @@
 			'panelGridAndFormFilterAdvancedFilterEditorRelationsSelectionManage',
 			'onPanelGridAndFormFilterAdvancedFilterEditorRelationsCheckchange',
 			'onPanelGridAndFormFilterAdvancedFilterEditorRelationsDomainSelect',
-			'onPanelGridAndFormFilterAdvancedFilterEditorRelationsViewShow'
+			'onPanelGridAndFormFilterAdvancedFilterEditorRelationsInit'
 		],
 
 		/**
@@ -206,17 +206,26 @@
 		},
 
 		/**
-		 * Forwarder function
+		 * @param {Object} parameters
+		 * @param {Function} parameters.callback
 		 *
 		 * @returns {Void}
 		 */
-		onPanelGridAndFormFilterAdvancedFilterEditorRelationsViewShow: function () {
-			if (!this.cmfg('panelGridAndFormFilterAdvancedEntryTypeIsEmpty')) {
-				this.selectedDomainReset();
+		onPanelGridAndFormFilterAdvancedFilterEditorRelationsInit: function (parameters) {
+			parameters = Ext.isObject(parameters) ? parameters : {};
 
-				this.controllerGridCard.getView().fireEvent('show');
-				this.controllerGridDomain.getView().fireEvent('show');
-			}
+			// Error handling
+				if (this.cmfg('panelGridAndFormFilterAdvancedEntryTypeIsEmpty'))
+					return _error('onPanelGridAndFormFilterAdvancedFilterEditorRelationsInit(): empty selected entryType', this, this.cmfg('panelGridAndFormFilterAdvancedEntryTypeGet'));
+			// END: Error handling
+
+			this.selectedDomainReset();
+
+			this.controllerGridCard.getView().fireEvent('show');
+			this.controllerGridDomain.getView().fireEvent('show');
+
+			if (!Ext.isEmpty(parameters.callback) && Ext.isFunction(parameters.callback))
+				Ext.callback(parameters.callback, this);
 		},
 
 		// SelectedDomain property methods

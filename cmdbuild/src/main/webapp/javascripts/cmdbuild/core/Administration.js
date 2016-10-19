@@ -10,7 +10,7 @@
 			'CMDBuild.core.constants.ModuleIdentifiers',
 			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.CookiesManager',
-			'CMDBuild.proxy.classes.Classes',
+			'CMDBuild.proxy.core.Administration',
 			'CMDBuild.proxy.dashboard.Dashboard',
 			'CMDBuild.proxy.domain.Domain',
 			'CMDBuild.proxy.lookup.Type',
@@ -49,12 +49,12 @@
 			});
 
 			/**
-			 * Class and process
+			 * Entry types
 			 */
 			params = {};
 			params[CMDBuild.core.constants.Proxy.ACTIVE] = false;
 
-			CMDBuild.proxy.classes.Classes.readAll({
+			CMDBuild.proxy.core.Administration.readAllEntryTypes({
 				params: params,
 				loadMask: false,
 				scope: this,
@@ -166,8 +166,6 @@
 		 */
 		buildUserInterface: function () {
 			if (!CMDBuild.core.CookiesManager.authorizationIsEmpty()) {
-				Ext.suspendLayouts();
-
 				// Building accordion definitions object array (display order)
 				var accordionDefinitionObjectsArray = [];
 
@@ -259,15 +257,15 @@
 							cmControllerType: CMDBuild.controller.administration.dashboard.CMModDashboardController,
 							cmName: 'dashboard'
 						})
-					]
+					],
+					scope: this,
+					callback: function () {
+						CMDBuild.core.Splash.hide(function () {
+							CMDBuild.global.controller.MainViewport.cmfg('mainViewportInstanceNameSet', CMDBuild.configuration.instance.get(CMDBuild.core.constants.Proxy.INSTANCE_NAME));
+							CMDBuild.global.controller.MainViewport.cmfg('mainViewportSelectFirstExpandedAccordionSelectableNode');
+						}, this);
+					}
 				});
-
-				Ext.resumeLayouts(true);
-
-				CMDBuild.core.Splash.hide(function () {
-					CMDBuild.global.controller.MainViewport.cmfg('mainViewportInstanceNameSet', CMDBuild.configuration.instance.get(CMDBuild.core.constants.Proxy.INSTANCE_NAME));
-					CMDBuild.global.controller.MainViewport.cmfg('mainViewportSelectFirstExpandedAccordionSelectableNode');
-				}, this);
 			}
 		}
 	});

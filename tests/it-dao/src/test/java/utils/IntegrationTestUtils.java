@@ -91,6 +91,7 @@ public class IntegrationTestUtils {
 		when(definition.getIdentifier()).thenReturn(identifier);
 		when(definition.getClass1()).thenReturn(class1);
 		when(definition.getClass2()).thenReturn(class2);
+		when(definition.isActive()).thenReturn(true);
 		return definition;
 	}
 

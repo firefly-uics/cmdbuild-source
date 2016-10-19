@@ -36,11 +36,6 @@ public class StoreBasedEmailAccountFacade extends ForwardingStore<EmailAccount> 
 	}
 
 	@Override
-	public Optional<EmailAccount> firstOf(final Iterable<String> names) {
-		return firstOf(names, ABSENT);
-	}
-
-	@Override
 	public Optional<EmailAccount> firstOfOrDefault(final Iterable<String> names) {
 		return firstOf(names, defaultAccount());
 	}

@@ -1,4 +1,4 @@
-(function() {
+(function () {
 
 	Ext.define('CMDBuild.locale', {
 
@@ -15,6 +15,7 @@
 		needYouHelp: 'Hai bisogno di aiuto?',
 		participatesInTheLinkedInGroup: 'Partecipa al gruppo <a href="http://www.linkedin.com/groups/CMDBuild-network-1929617" target="_blank">LinkedIn</a>',
 		requestTecnicalSupport: 'Richiedi il nostro <a href="http://www.tecnoteca.com/it/cmdbuild/supporto/servizi-cmdbuild/" target="_blank">supporto tecnico</a>',
+		splashDescription: 'Open Source Configuration and Management Database',
 		subscribeToNewsLetter: 'Iscriviti alla <a href="http://www.cmdbuild.org/it/diffusione/newsletter/" target="_blank">newsletter</a>',
 		version: 'Versione',
 		wouldYouFollowCMDBuild: 'Vuoi seguire CMDBuild?'

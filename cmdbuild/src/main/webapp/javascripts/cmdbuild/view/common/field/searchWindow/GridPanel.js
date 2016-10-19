@@ -169,40 +169,41 @@
 		},
 
 		updateStoreForClassId: function(classId, o) {
-
 			var me = this;
 
-			function callCbOrLoadFirstPage(me) {
-				if (o && o.cb) {
-					o.cb.call(o.scope || me);
-				} else {
-					me.store.loadPage(1);
-				}
-			}
+			this.loadAttributes(
+				classId,
+				function(attributes) {
+					function callCbOrLoadFirstPage(me) {
+						if (o && o.cb) {
+							o.cb.call(o.scope || me);
+						} else {
+							me.store.loadPage(1);
+						}
+					}
 
-			if (me.currentClassId == classId) {
-				callCbOrLoadFirstPage(me);
-			} else {
-				me.currentClassId = classId;
+					if (me.currentClassId == classId) {
+						callCbOrLoadFirstPage(me);
+					} else {
+						me.currentClassId = classId;
 
-				if (this.gridSearchField) {
-					this.gridSearchField.setValue(""); // clear only the field without reload the grid
-				}
+						if (me.gridSearchField) {
+							me.gridSearchField.setValue(""); // clear only the field without reload the grid
+						}
 
-				if (me.printGridMenu) {
-					me.printGridMenu.setDisabled(!classId);
-				}
+						if (me.cmAdvancedFilter)
+							me.controllerAdvancedFilterButtons.cmfg('entryTypeSet', { value: _CMCache.getEntryTypeById(classId).getData() });
 
-				me.loadAttributes( //
-					classId, //
-					function(attributes) { //
+						if (me.printGridMenu) {
+							me.printGridMenu.setDisabled(!classId);
+						}
+
 						me.setColumnsForClass(attributes);
 						me.setGridSorting(attributes);
 						callCbOrLoadFirstPage(me);
-					} //
-				);
-
-			}
+					}
+				}
+			);
 		},
 
 		// protected
@@ -425,8 +426,6 @@
 					Ext.isObject(extraParams) && !Ext.Object.isEmpty(extraParams)
 					&& Ext.isString(extraParams[CMDBuild.core.constants.Proxy.CLASS_NAME]) && !Ext.isEmpty(extraParams[CMDBuild.core.constants.Proxy.CLASS_NAME])
 				) {
-					var currentPage = extraParams.page || 1;
-
 					extraParams[CMDBuild.core.constants.Proxy.ATTRIBUTES] = Ext.encode(this.getVisibleColumns());
 
 					return true;

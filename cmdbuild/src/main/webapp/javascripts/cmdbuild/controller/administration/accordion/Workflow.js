@@ -56,39 +56,40 @@
 			parameters = Ext.isObject(parameters) ? parameters : {};
 			parameters.selectionId = Ext.isNumber(parameters.selectionId) ? parameters.selectionId : null;
 
+			this.view.getStore().getRootNode().removeAll();
+
+			var params = {};
+			params[CMDBuild.core.constants.Proxy.ACTIVE] = false;
+
 			CMDBuild.proxy.administration.workflow.Workflow.readAll({
+				params: params,
 				loadMask: Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : false,
 				scope: this,
 				success: function (response, options, decodedResponse) {
-					decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.CLASSES] || [];
+					decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.RESPONSE];
 
 					var nodes = [];
 					var nodesMap = {};
 
-					// Removes all processes and root class from response
-					decodedResponse = Ext.Array.filter(decodedResponse, function (item, i, array) {
-						return (
-							item[CMDBuild.core.constants.Proxy.TYPE] == CMDBuild.core.constants.Global.getTableTypeProcessClass() // Discard processes
-							&& item[CMDBuild.core.constants.Proxy.NAME] != 'Activity' // Discard root workflow of all Workflows
-						);
-					}, this);
-
-					this.view.getStore().getRootNode().removeAll();
-
-					if (!Ext.isEmpty(decodedResponse)) {
+					if (Ext.isArray(decodedResponse) && !Ext.isEmpty(decodedResponse)) {
 						Ext.Array.forEach(decodedResponse, function (classObject, i, allClassObjects) {
-							var nodeObject = {};
-							nodeObject['cmName'] = this.cmfg('accordionIdentifierGet');
-							nodeObject['iconCls'] = classObject['superclass'] ? 'cmdb-tree-superprocessclass-icon' : 'cmdb-tree-processclass-icon';
-							nodeObject[CMDBuild.core.constants.Proxy.TEXT] = classObject[CMDBuild.core.constants.Proxy.TEXT];
-							nodeObject[CMDBuild.core.constants.Proxy.DESCRIPTION] = classObject[CMDBuild.core.constants.Proxy.TEXT];
-							nodeObject[CMDBuild.core.constants.Proxy.ENTITY_ID] = classObject[CMDBuild.core.constants.Proxy.ID];
-							nodeObject[CMDBuild.core.constants.Proxy.ID] = this.cmfg('accordionBuildId', classObject[CMDBuild.core.constants.Proxy.ID]);
-							nodeObject[CMDBuild.core.constants.Proxy.PARENT] = classObject[CMDBuild.core.constants.Proxy.PARENT];
-							nodeObject[CMDBuild.core.constants.Proxy.NAME] = classObject[CMDBuild.core.constants.Proxy.NAME];
-							nodeObject[CMDBuild.core.constants.Proxy.LEAF] = true;
+							if (
+								Ext.isObject(classObject) && !Ext.Object.isEmpty(classObject)
+								&& classObject[CMDBuild.core.constants.Proxy.NAME] != CMDBuild.core.constants.Global.getRootNameWorkflows() // Discard root workflow of all Workflows
+							) {
+								var nodeObject = {};
+								nodeObject['cmName'] = this.cmfg('accordionIdentifierGet');
+								nodeObject['iconCls'] = classObject['superclass'] ? 'cmdb-tree-superprocessclass-icon' : 'cmdb-tree-processclass-icon';
+								nodeObject[CMDBuild.core.constants.Proxy.TEXT] = classObject[CMDBuild.core.constants.Proxy.TEXT];
+								nodeObject[CMDBuild.core.constants.Proxy.DESCRIPTION] = classObject[CMDBuild.core.constants.Proxy.TEXT];
+								nodeObject[CMDBuild.core.constants.Proxy.ENTITY_ID] = classObject[CMDBuild.core.constants.Proxy.ID];
+								nodeObject[CMDBuild.core.constants.Proxy.ID] = this.cmfg('accordionBuildId', classObject[CMDBuild.core.constants.Proxy.ID]);
+								nodeObject[CMDBuild.core.constants.Proxy.PARENT] = classObject[CMDBuild.core.constants.Proxy.PARENT];
+								nodeObject[CMDBuild.core.constants.Proxy.NAME] = classObject[CMDBuild.core.constants.Proxy.NAME];
+								nodeObject[CMDBuild.core.constants.Proxy.LEAF] = true;
 
-							nodesMap[nodeObject[CMDBuild.core.constants.Proxy.ENTITY_ID]] = nodeObject;
+								nodesMap[nodeObject[CMDBuild.core.constants.Proxy.ENTITY_ID]] = nodeObject;
+							}
 						}, this);
 
 						// Builds full standard/simple classes trees

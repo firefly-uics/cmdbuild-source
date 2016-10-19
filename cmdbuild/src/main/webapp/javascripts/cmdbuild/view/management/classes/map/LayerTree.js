@@ -37,6 +37,7 @@
 		 */
 		initComponent : function() {
 			this.interactionDocument.observe(this);
+			this.interactionDocument.observeLayers(this);
 			this.callParent(arguments);
 		},
 		checkNode : function(node, checked) {
@@ -84,14 +85,9 @@
 				IdClass : record.get('IdClass')
 			});
 		},
-		refresh : function() {
+		refreshLayers : function(bHiding) {
 			var currentCard = this.interactionDocument.getCurrentCard();
-			if (this.oldClassName !== currentCard.className) {
-				clearTree(this.getRootNode());
-			}
-			var cl = _CMCache.getEntryTypeByName(currentCard.className);
-			var currentClassId = cl.get("id");
-			if (!currentClassId) {
+			if (!currentCard) {
 				return;
 			}
 			var currentCardId = currentCard.cardId;
@@ -101,13 +97,20 @@
 				var root = me.getRootNode();
 				for (var i = 0; i < layers.length; i++) {
 					var node = nodeByNameAndClass(root, layers[i]);
-					if (!me.interactionDocument.isVisible(layers[i], currentClassName, currentCardId)) {
+					var visible = me.interactionDocument.isVisible(layers[i], currentClassName, currentCardId);
+					var inZoom = me.inZoom(layers[i]);
+					if (!visible) {
 						; // nop
-					} else if (node) {
-						var hide = !me.interactionDocument.getLayerVisibility(layers[i]);
-						node.set('checked', !hide);
-					} else {
+					} else if (visible && node && inZoom && bHiding === true) {
+						var visibleLayer = me.interactionDocument.getLayerVisibility(layers[i]);
+						node.set('checked', visibleLayer);
+					} else if (visible && node && ! inZoom) {
+							node.remove();
+					} else if (visible && inZoom && !node) {
 						me.addLayerItem(layers[i]);
+					}
+					else if (!visible && node) {
+						node.remove();
 					}
 				}
 				var thematicLayers = me.interactionDocument.getThematicLayers();
@@ -117,10 +120,25 @@
 						me.addLayerItem(thematicLayers[i]);
 					}
 				}
-				if (me.oldClassName !== currentClassName) {
-					me.oldClassName = currentClassName;
-				}
 			});
+		},
+		inZoom : function(layer) {
+			var zoom = this.interactionDocument.getZoom();
+			if (zoom < layer.minZoom || zoom > layer.maxZoom) {
+				return false;
+			}
+			return true;
+		},
+		refresh : function() {
+			var currentCard = this.interactionDocument.getCurrentCard();
+			if (!currentCard) {
+				return;
+			}
+			if (this.oldClassName !== currentCard.className) {
+				clearTree(this.getRootNode());
+			}
+			this.oldClassName = currentCard.className;
+			this.refreshLayers(true);
 		},
 
 		/**
@@ -206,9 +224,9 @@
 
 		if (!thematismFolder) {
 			thematismFolder = root.appendChild({
-				text : "@@ Thematism",
-				leaf : false,
-				expanded : false,
+				text : CMDBuild.Translation.thematismTitle,
+//				leaf : false,
+//				expanded : false,
 				layerName : THEMATISM_LAYERS_FOLDER_NAME,
 				checked : true
 			});
@@ -223,8 +241,8 @@
 		if (!geoserverFolder) {
 			geoserverFolder = externalServicesFolder.appendChild({
 				text : CMDBuild.Translation.administration.modcartography.geoserver.title,
-				leaf : false,
-				expanded : false,
+//				leaf : false,
+//				expanded : false,
 				layerName : GEOSERVER_LAYERS_FOLDER_NAME,
 				checked : true
 			});

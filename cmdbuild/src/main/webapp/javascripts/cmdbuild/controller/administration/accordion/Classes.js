@@ -6,7 +6,7 @@
 		requires: [
 			'CMDBuild.core.constants.Global',
 			'CMDBuild.core.constants.Proxy',
-			'CMDBuild.proxy.classes.Classes'
+			'CMDBuild.proxy.administration.classes.Classes'
 		],
 
 		/**
@@ -53,31 +53,37 @@
 			parameters = Ext.isObject(parameters) ? parameters : {};
 			parameters.selectionId = Ext.isNumber(parameters.selectionId) ? parameters.selectionId : null;
 
-			CMDBuild.proxy.classes.Classes.readAll({
+			this.view.getStore().getRootNode().removeAll();
+
+			var params = {};
+			params[CMDBuild.core.constants.Proxy.ACTIVE] = false;
+
+			CMDBuild.proxy.administration.classes.Classes.readAll({
+				params: params,
 				loadMask: Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : false,
 				scope: this,
 				success: function (response, options, decodedResponse) {
-					decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.CLASSES];
+					decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.RESPONSE];
+
+					var nodes = [];
+					var standard = [];
+					var simple = [];
+					var standardNodesMap = {};
 
 					if (Ext.isArray(decodedResponse) && !Ext.isEmpty(decodedResponse)) {
-						var nodes = [];
-						var standard = [];
-						var simple = [];
-						var standardNodesMap = {};
-
-						// Removes all processes and root class from response
+						// Removes root and system classes from response
 						decodedResponse = Ext.Array.filter(decodedResponse, function (item, i, array) {
 							return (
-								item[CMDBuild.core.constants.Proxy.TYPE] != CMDBuild.core.constants.Global.getTableTypeProcessClass() // Discard processes
-								&& item[CMDBuild.core.constants.Proxy.NAME] != CMDBuild.core.constants.Global.getRootNameClasses() // Discard root class of all classes
+								item[CMDBuild.core.constants.Proxy.NAME] != CMDBuild.core.constants.Global.getRootNameClasses() // Discard root class of all classes
 								&& !item[CMDBuild.core.constants.Proxy.SYSTEM] // Discard system classes
 							);
 						}, this);
 
-						this.view.getStore().getRootNode().removeAll();
-
-						if (Ext.isArray(decodedResponse) && !Ext.isEmpty(decodedResponse)) {
-							Ext.Array.each(decodedResponse, function (classObject, i, allClassObjects) {
+						Ext.Array.each(decodedResponse, function (classObject, i, allClassObjects) {
+							if (
+								Ext.isObject(classObject) && !Ext.Object.isEmpty(classObject)
+								&& classObject[CMDBuild.core.constants.Proxy.NAME] != CMDBuild.core.constants.Global.getRootNameClasses() // Discard root class of all classes
+							) {
 								var nodeObject = {};
 								nodeObject['cmName'] = this.cmfg('accordionIdentifierGet');
 								nodeObject[CMDBuild.core.constants.Proxy.TEXT] = classObject[CMDBuild.core.constants.Proxy.TEXT];
@@ -97,64 +103,62 @@
 
 									standardNodesMap[nodeObject[CMDBuild.core.constants.Proxy.ENTITY_ID]] = nodeObject;
 								}
-							}, this);
-
-							// Builds full standard/simple classes trees
-							for (var id in standardNodesMap) {
-								var node = standardNodesMap[id];
-
-								if (
-									!Ext.isEmpty(node[CMDBuild.core.constants.Proxy.PARENT])
-									&& !Ext.isEmpty(standardNodesMap[node[CMDBuild.core.constants.Proxy.PARENT]])
-								) {
-									var parentNode = standardNodesMap[node[CMDBuild.core.constants.Proxy.PARENT]];
-									parentNode.children = parentNode.children || [];
-									parentNode.children.push(node);
-									parentNode[CMDBuild.core.constants.Proxy.LEAF] = false;
-								} else {
-									standard.push(node);
-								}
 							}
+						}, this);
 
-							// Manually sorting to avoid main classes group sorting
-							CMDBuild.core.Utils.objectArraySort(standard, CMDBuild.core.constants.Proxy.TEXT);
-							CMDBuild.core.Utils.objectArraySort(simple, CMDBuild.core.constants.Proxy.TEXT);
+						// Builds full standard/simple classes trees
+						for (var id in standardNodesMap) {
+							var node = standardNodesMap[id];
 
-							if (Ext.isEmpty(simple)) {
-								nodes = standard;
+							if (
+								!Ext.isEmpty(node[CMDBuild.core.constants.Proxy.PARENT])
+								&& !Ext.isEmpty(standardNodesMap[node[CMDBuild.core.constants.Proxy.PARENT]])
+							) {
+								var parentNode = standardNodesMap[node[CMDBuild.core.constants.Proxy.PARENT]];
+								parentNode.children = parentNode.children || [];
+								parentNode.children.push(node);
+								parentNode[CMDBuild.core.constants.Proxy.LEAF] = false;
 							} else {
-								nodes = [
-									{
-										iconCls: 'cmdb-tree-superclass-icon',
-										text: CMDBuild.Translation.standard,
-										description: CMDBuild.Translation.standard,
-										expanded: true,
-										selectable: false,
-										leaf: false,
-
-										children: standard
-									},
-									{
-										iconCls: 'cmdb-tree-superclass-icon',
-										text: CMDBuild.Translation.simple,
-										description: CMDBuild.Translation.simple,
-										expanded: true,
-										selectable: false,
-										leaf: false,
-
-										children: simple
-									}
-								];
+								standard.push(node);
 							}
-
-							if (!Ext.isEmpty(nodes))
-								this.view.getStore().getRootNode().appendChild(nodes);
 						}
 
-						this.updateStoreCommonEndpoint(parameters); // CallParent alias
-					} else {
-						_error('accordionUpdateStore(): unmanaged response', this, decodedResponse);
+						// Manually sorting to avoid main classes group sorting
+						CMDBuild.core.Utils.objectArraySort(standard, CMDBuild.core.constants.Proxy.TEXT);
+						CMDBuild.core.Utils.objectArraySort(simple, CMDBuild.core.constants.Proxy.TEXT);
+
+						if (Ext.isEmpty(simple)) {
+							nodes = standard;
+						} else {
+							nodes = [
+								{
+									iconCls: 'cmdb-tree-superclass-icon',
+									text: CMDBuild.Translation.standard,
+									description: CMDBuild.Translation.standard,
+									expanded: true,
+									selectable: false,
+									leaf: false,
+
+									children: standard
+								},
+								{
+									iconCls: 'cmdb-tree-superclass-icon',
+									text: CMDBuild.Translation.simple,
+									description: CMDBuild.Translation.simple,
+									expanded: true,
+									selectable: false,
+									leaf: false,
+
+									children: simple
+								}
+							];
+						}
+
+						if (!Ext.isEmpty(nodes))
+							this.view.getStore().getRootNode().appendChild(nodes);
 					}
+
+					this.updateStoreCommonEndpoint(parameters); // CallParent alias
 				}
 			});
 
