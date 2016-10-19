@@ -1,4 +1,4 @@
-(function() {
+(function () {
 
 	Ext.require(['CMDBuild.core.constants.Proxy']);
 
@@ -38,7 +38,7 @@
 		 *
 		 * @param {Object} data
 		 */
-		setAdaptedData: function(data) {
+		setAdaptedData: function (data) {
 			if (!Ext.isEmpty(data) && Ext.isObject(data)) {
 				this.set(CMDBuild.core.constants.Proxy.LENGTH, data['len']);
 				this.set(CMDBuild.core.constants.Proxy.LOOKUP_TYPE, data[CMDBuild.core.constants.Proxy.LOOKUP]);
@@ -86,7 +86,7 @@
 		/**
 		 * @returns {Boolean}
 		 */
-		isValid: function() {
+		isValid: function () {
 			var customValidationValue = true;
 
 			switch (this.get(CMDBuild.core.constants.Proxy.TYPE)) {
