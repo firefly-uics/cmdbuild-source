@@ -23,6 +23,8 @@
 		attributeModel: undefined,
 
 		/**
+		 * Template resolver target form
+		 *
 		 * @cfg {Ext.form.Panel}
 		 */
 		targetForm: undefined,
