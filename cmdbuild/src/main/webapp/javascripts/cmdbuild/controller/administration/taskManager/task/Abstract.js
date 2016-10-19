@@ -97,6 +97,7 @@
 		 * @abstract
 		 */
 		onTaskManagerFormTaskRowSelected: function () {
+			this.cmfg('taskManagerFormModifyButtonStateManage');
 			this.cmfg('taskManagerExternalServicesFormStateManager'); // External services endpoint to correctly set form state
 		},
 

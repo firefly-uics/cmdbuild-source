@@ -28,7 +28,7 @@
 		 *
 		 * @cfg {Boolean}
 		 */
-		disableSelection: false,
+		disableSelection: true,
 
 		/**
 		 * Flag to disable next storeLoad, will be reset on next expand
@@ -118,16 +118,6 @@
 
 		/**
 		 * @returns {Void}
-		 *
-		 * @private
-		 */
-		accordionCallbackReset: function () {
-			delete this.callback;
-			delete this.scope;
-		},
-
-		/**
-		 * @returns {Void}
 		 */
 		accordionDeselect: function () {
 			this.view.getSelectionModel().deselectAll();
@@ -142,20 +132,12 @@
 		 */
 		accordionExpand: function (parameters) {
 			if (Ext.isObject(this.view) && !Ext.Object.isEmpty(this.view) && Ext.isFunction(this.view.expand)) {
-				if (
-					Ext.isObject(parameters) && !Ext.Object.isEmpty(parameters)
-					&& !Ext.isEmpty(parameters.callback) && Ext.isFunction(parameters.callback)
-				) {
-					parameters.scope = Ext.isEmpty(parameters.scope) ? this : parameters.scope;
-
-					if (this.view.getCollapsed() === false && this.view.isVisible()) { // Accordion already expanded
-						Ext.callback(parameters.callback, parameters.scope);
-					} else { // Accordion needs to be expanded
-						this.view.on('expand', parameters.callback, parameters.scope, { single: true });
-					}
-				}
+				var wasExpanded = this.view.getCollapsed() === false && this.view.isVisible();
 
 				this.view.expand();
+
+				if (wasExpanded)
+					this.view.fireEvent('expand');
 			}
 		},
 
@@ -189,13 +171,9 @@
 			accordionFirstSelectableNodeSelect: function () {
 				var firstSelectableNode = this.cmfg('accordionFirtsSelectableNodeGet');
 
-				if (!Ext.isEmpty(firstSelectableNode)) {
-					this.cmfg('accordionExpand', {
-						scope: this,
-						callback: function (panel, eOpts) {
-							this.cmfg('accordionNodeByIdSelect', { id: firstSelectableNode.get(CMDBuild.core.constants.Proxy.ID) });
-						}
-					});
+				if (Ext.isObject(firstSelectableNode) && !Ext.Object.isEmpty(firstSelectableNode)) {
+					this.cmfg('accordionDeselect');
+					this.cmfg('accordionNodeByIdSelect', { id: firstSelectableNode.get(CMDBuild.core.constants.Proxy.ID) });
 				}
 			},
 
@@ -246,24 +224,27 @@
 				if (!Ext.Object.isEmpty(parameters) && !Ext.isEmpty(parameters.id)) {
 					var node = this.cmfg('accordionNodeByIdGet', parameters.id);
 
-					if (!Ext.isEmpty(node)) {
-						node.bubble(function () {
-							this.expand();
-						});
+					// Error handling
+						if (!Ext.isObject(node) || Ext.Object.isEmpty(node))
+							return _error('accordionNodeByIdSelect(): unmanaged node', this, node);
+					// END: Error handling
 
-						this.view.getSelectionModel().select(
-							node,
-							false,
-							Ext.isString(parameters.mode) && parameters.mode == 'silently' // Silently mode
-						);
-					} else {
-						this.cmfg('accordionFirstSelectableNodeSelect');
-					}
+					node.bubble(function () {
+						this.expand();
+					});
+
+					this.view.getSelectionModel().select(
+						node,
+						false,
+						Ext.isString(parameters.mode) && parameters.mode == 'silently' // Silently mode
+					);
 				}
 			},
 
 		/**
-		 * @param {Number or String} selectionId
+		 * @param {Object} parameters
+		 * @param {Boolean} parameters.loadMask
+		 * @param {Number} parameters.selectionId
 		 *
 		 * @returns {Void}
 		 *
@@ -316,7 +297,7 @@
 					var selection = this.view.getSelectionModel().getSelection()[0];
 
 					this.cmfg('accordionDeselect');
-					this.cmfg('accordionUpdateStore', { selectionId: selection.get(CMDBuild.core.constants.Proxy.ID) || selection.get(CMDBuild.core.constants.Proxy.ENTITY_ID) });
+					this.cmfg('accordionUpdateStore', { selectionId: selection.get(CMDBuild.core.constants.Proxy.ENTITY_ID) || selection.get(CMDBuild.core.constants.Proxy.ID) });
 				} else {
 					this.cmfg('accordionUpdateStore');
 				}
@@ -347,8 +328,8 @@
 
 				// Notify accordion selection event to mainViewport's controller (accordion selection synchronizations)
 				this.cmfg('onMainViewportAccordionSelect', {
-					sourceAccordionIdentifier: this.cmfg('accordionIdentifierGet'),
-					selectedNodeModel: selection
+					id: this.cmfg('accordionIdentifierGet'),
+					node: selection
 				});
 			}
 		},
@@ -371,23 +352,24 @@
 					this.cmfg('accordionFirstSelectableNodeSelect');
 			}
 
-			// Accordion store update end event fire
-			this.view.fireEvent('storeload');
-
 			// Hide if accordion is empty
 			if (this.hideIfEmpty && this.isEmpty())
 				this.view.hide();
 
 			// Accordion creation callback
-			if (!Ext.isEmpty(this.callback) && Ext.isFunction(this.callback))
+			if (Ext.isFunction(this.callback))
 				Ext.callback(
-					Ext.Function.createInterceptor(this.accordionCallbackReset, this.callback, this.scope), // Create as interceptor to automatically reset accordion callback setup
-					this.scope
+					this.callback,
+					Ext.isObject(this.scope) ? this.scope : this
 				);
 
 			// Flag reset
-			this.disableSelection = false;
-			this.disableStoreLoad = false;
+			Ext.apply(this, {
+				callback: undefined,
+				disableSelection: false,
+				disableStoreLoad: false,
+				scope: this
+			});
 		}
 	});
 

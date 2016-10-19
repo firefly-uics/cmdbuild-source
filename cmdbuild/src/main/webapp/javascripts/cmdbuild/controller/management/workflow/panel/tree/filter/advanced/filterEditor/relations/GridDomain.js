@@ -84,9 +84,9 @@
 				// END: Error handling
 
 				var params = {};
-				params[CMDBuild.core.constants.Proxy.ACTIVE] = true;
+				params[CMDBuild.core.constants.Proxy.ACTIVE] = false;
 
-				CMDBuild.proxy.management.workflow.panel.tree.filter.advanced.filterEditor.Relations.readAllEntryTypes({ // FIXME: waiting for refactor (server endpoint)
+				CMDBuild.proxy.management.workflow.panel.tree.filter.advanced.filterEditor.Relations.readAllEntryTypes({
 					params: params,
 					scope: this,
 					success: function (response, options, decodedResponse) {

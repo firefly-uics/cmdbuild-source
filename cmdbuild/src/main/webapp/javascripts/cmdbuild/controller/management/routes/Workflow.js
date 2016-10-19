@@ -39,28 +39,22 @@
 		detail: function (params, path, router) {
 			if (this.paramsValidation(params)) {
 				var params = {};
-				params[CMDBuild.core.constants.Proxy.ACTIVE] = false;
+				params[CMDBuild.core.constants.Proxy.NAME] = this.parametersModel.get(CMDBuild.core.constants.Proxy.PROCESS_IDENTIFIER);
 
-				CMDBuild.proxy.management.routes.Workflow.read({ // FIXME: waiting for refactor (server endpoint)
+				CMDBuild.proxy.management.routes.Workflow.readByName({
 					params: params,
 					scope: this,
 					success: function (response, options, decodedResponse) {
-						decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.CLASSES];
+						decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.RESPONSE];
 
-						if (Ext.isArray(decodedResponse) && !Ext.isEmpty(decodedResponse)) {
-							var workflowObject = Ext.Array.findBy(decodedResponse, function (workflowObject, i) {
-								return this.parametersModel.get(CMDBuild.core.constants.Proxy.PROCESS_IDENTIFIER) == workflowObject[CMDBuild.core.constants.Proxy.NAME];
-							}, this);
-
-							if (Ext.isObject(workflowObject) && !Ext.Object.isEmpty(workflowObject)) {
-								return this.manageIdentifierProcess(workflowObject, this.manageFilterClient);
-							} else {
-								CMDBuild.core.Message.error(
-									CMDBuild.Translation.common.failure,
-									CMDBuild.Translation.errors.routesInvalidProcessIdentifier + ' (' + this.parametersModel.get(CMDBuild.core.constants.Proxy.PROCESS_IDENTIFIER) + ')',
-									false
-								);
-							}
+						if (Ext.isObject(decodedResponse) && !Ext.Object.isEmpty(decodedResponse)) {
+							return this.manageIdentifierProcess(decodedResponse, this.manageFilterClient);
+						} else {
+							CMDBuild.core.Message.error(
+								CMDBuild.Translation.common.failure,
+								CMDBuild.Translation.errors.routesInvalidProcessIdentifier + ' (' + this.parametersModel.get(CMDBuild.core.constants.Proxy.PROCESS_IDENTIFIER) + ')',
+								false
+							);
 						}
 					}
 				});
@@ -114,19 +108,19 @@
 					return _error('manageIdentifierInstance(): accordionController not found', this, accordionController);
 			// END: Error handling
 
-			accordionController.disableStoreLoad = true;
-			accordionController.cmfg('accordionExpand', {
+			Ext.apply(accordionController, {
+				disableSelection: true,
 				scope: this,
 				callback: function () {
-					Ext.apply(accordionController, { // Setup accordion update callback
-						scope: this,
-						callback: Ext.isFunction(callback) ? callback : Ext.emptyFn
-					});
-
 					accordionController.cmfg('accordionDeselect');
-					accordionController.cmfg('accordionUpdateStore', { selectionId: workflowObject[CMDBuild.core.constants.Proxy.ID] });
+					accordionController.cmfg('accordionNodeByIdSelect', { id: workflowObject[CMDBuild.core.constants.Proxy.ID] });
+
+					if (Ext.isFunction(callback))
+						Ext.callback(callback, this);
 				}
 			});
+
+			accordionController.cmfg('accordionExpand');
 		},
 
 		/**
@@ -183,40 +177,34 @@
 				var moduleController = CMDBuild.global.controller.MainViewport.cmfg('mainViewportModuleControllerGet', CMDBuild.core.constants.ModuleIdentifiers.getWorkflow());
 
 				var params = {};
-				params[CMDBuild.core.constants.Proxy.ACTIVE] = false;
+				params[CMDBuild.core.constants.Proxy.NAME] = this.parametersModel.get(CMDBuild.core.constants.Proxy.PROCESS_IDENTIFIER);
 
-				CMDBuild.proxy.management.routes.Workflow.read({ // FIXME: waiting for refactor (server endpoint)
+				CMDBuild.proxy.management.routes.Workflow.readByName({
 					params: params,
 					scope: this,
 					success: function (response, options, decodedResponse) {
-						decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.CLASSES];
+						decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.RESPONSE];
 
-						if (Ext.isArray(decodedResponse) && !Ext.isEmpty(decodedResponse)) {
-							var workflowObject = Ext.Array.findBy(decodedResponse, function (workflowObject, i) {
-								return this.parametersModel.get(CMDBuild.core.constants.Proxy.PROCESS_IDENTIFIER) == workflowObject[CMDBuild.core.constants.Proxy.NAME];
-							}, this);
-
-							if (Ext.isObject(workflowObject) && !Ext.Object.isEmpty(workflowObject)) {
-								return this.manageIdentifierProcess(
-									workflowObject,
-									function () {
-										moduleController.cmfg('workflowTreeApplyStoreEvent', {
-											eventName: 'load',
-											fn: function () {
-												moduleController.cmfg('onWorkflowTreePrintButtonClick', this.parametersModel.get(CMDBuild.core.constants.Proxy.FORMAT));
-											},
-											scope: this,
-											options: { single: true }
-										});
-									}
-								);
-							} else {
-								CMDBuild.core.Message.error(
-									CMDBuild.Translation.common.failure,
-									CMDBuild.Translation.errors.routesInvalidProcessIdentifier + ' (' + this.parametersModel.get(CMDBuild.core.constants.Proxy.PROCESS_IDENTIFIER) + ')',
-									false
-								);
-							}
+						if (Ext.isObject(decodedResponse) && !Ext.Object.isEmpty(decodedResponse)) {
+							return this.manageIdentifierProcess(
+								decodedResponse,
+								function () {
+									moduleController.cmfg('workflowTreeApplyStoreEvent', {
+										eventName: 'load',
+										fn: function () {
+											moduleController.cmfg('onWorkflowTreePrintButtonClick', this.parametersModel.get(CMDBuild.core.constants.Proxy.FORMAT));
+										},
+										scope: this,
+										options: { single: true }
+									});
+								}
+							);
+						} else {
+							CMDBuild.core.Message.error(
+								CMDBuild.Translation.common.failure,
+								CMDBuild.Translation.errors.routesInvalidProcessIdentifier + ' (' + this.parametersModel.get(CMDBuild.core.constants.Proxy.PROCESS_IDENTIFIER) + ')',
+								false
+							);
 						}
 					}
 				});
@@ -231,7 +219,11 @@
 		 * @returns {Void}
 		 */
 		showAll: function (params, path, router) {
-			CMDBuild.global.controller.MainViewport.cmfg('mainViewportAccordionControllerExpand', { identifier: CMDBuild.core.constants.ModuleIdentifiers.getWorkflow() });
+			if (CMDBuild.global.controller.MainViewport.cmfg('mainViewportAccordionControllerExists', CMDBuild.core.constants.ModuleIdentifiers.getWorkflow())) {
+				var accordionController = CMDBuild.global.controller.MainViewport.cmfg('mainViewportAccordionControllerGet', CMDBuild.core.constants.ModuleIdentifiers.getWorkflow());
+
+				accordionController.cmfg('accordionExpand');
+			}
 		}
 	});
 

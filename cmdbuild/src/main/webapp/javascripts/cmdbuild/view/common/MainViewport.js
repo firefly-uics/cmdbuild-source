@@ -3,17 +3,12 @@
 	Ext.define('CMDBuild.view.common.MainViewport', {
 		extend: 'Ext.container.Viewport',
 
-		requires: ['CMDBuild.core.Splash'],
+		requires: ['CMDBuild.core.constants.Proxy'],
 
 		/**
 		 * @cfg {CMDBuild.controller.common.MainViewport}
 		 */
 		delegate: undefined,
-
-		/**
-		 * @property {Ext.panel.Panel}
-		 */
-		accordionContainer: undefined,
 
 		/**
 		 * @property {Ext.panel.Panel}
@@ -39,7 +34,7 @@
 						frame: false,
 						height: 45
 					}),
-					this.accordionContainer = Ext.create('Ext.panel.Panel', {
+					Ext.create('Ext.panel.Panel', {
 						region: 'west',
 						border: true,
 						collapsed: this.delegate.cmfg('mainViewportAccordionIsCollapsed'),
@@ -51,7 +46,7 @@
 						split: true,
 						width: 200,
 
-						items: []
+						items: this.delegate.cmfg('mainViewportAccordionViewsGet')
 					}),
 					this.moduleContainer = Ext.create('Ext.panel.Panel', {
 						region: 'center',
@@ -64,7 +59,7 @@
 							border: '0px'
 						},
 
-						items: []
+						items: this.delegate.cmfg('mainViewportModuleViewsGet')
 					}),
 					Ext.create('Ext.panel.Panel', {
 						region: 'south',

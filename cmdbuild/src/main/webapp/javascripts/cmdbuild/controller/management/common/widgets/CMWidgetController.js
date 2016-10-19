@@ -33,7 +33,7 @@
 		templateResolver: undefined,
 
 		/**
-		 * @property {CMDBuild.view.management.common.widgets.linkCards.LinkCards}
+		 * @property {CMDBuild.view.management.widget.linkCards.LinkCards}
 		 */
 		view: undefined,
 

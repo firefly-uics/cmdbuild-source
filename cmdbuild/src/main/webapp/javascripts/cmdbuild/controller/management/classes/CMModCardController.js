@@ -32,6 +32,8 @@
 				var filter = entryType.get(CMDBuild.core.constants.Proxy.FILTER);
 				var newEntryId = entryType.get(idPropertyName);
 
+				this.selectedAccordionNode = entryType; // FIXME: hack to temporary fix DataView bug
+
 				// If we haven't a filter try to get default one from server
 				if (Ext.isEmpty(filter)) {
 					var params = {};
@@ -393,14 +395,27 @@
 		/**
 		 * To clear view if there are no loaded records
 		 *
-		 * @param (Object) args
-		 * @param (Array) args[1] - loaded records array
+		 * @param {Array} args
+		 * @param {CMDBuild.core.cache.Store} args[0]
+		 * @param {Array} args[1] - loaded records array
+		 * @param {Boolean} args[2]
+		 *
+		 * @returns {Void}
 		 */
 		onGridLoad: function (args) {
 			// TODO notify to sub-controllers?
 			if (Ext.isEmpty(args[1])) {
+				this.view.cardTabPanel.items.each(function (item) {
+					if (Ext.isFunction(item.reset))
+						item.reset();
+
+					if (Ext.isFunction(item.disable))
+						item.disable();
+				});
+
+				this.view.getCardPanel().enable();
 				this.view.getCardPanel().displayMode();
-				this.view.cardTabPanel.reset();
+				this.view.getCardPanel().form.removeAll(false);
 			}
 		},
 
@@ -470,6 +485,17 @@
 			_CMUIState.onlyGridIfFullScreen();
 
 			this.changeClassUIConfigurationForGroup(entryTypeId);
+
+			// FIXME: hack to temporary fix DataView bug
+			if (
+				Ext.isString(filter) && !Ext.isEmpty(filter)
+				&& Ext.Array.contains(this.selectedAccordionNode.get(CMDBuild.core.constants.Proxy.SECTION_HIERARCHY), 'filter')
+			) {
+				CMDBuild.global.dataViewHack = {
+					filter: filter,
+					entryType: entryType
+				};
+			}
 		}
 	});
 

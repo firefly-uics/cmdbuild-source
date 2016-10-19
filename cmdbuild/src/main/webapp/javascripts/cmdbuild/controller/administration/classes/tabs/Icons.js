@@ -3,7 +3,7 @@
 	Ext.require([
 		'CMDBuild.core.constants.Proxy',
 		'CMDBuild.core.LoadMask',
-		'CMDBuild.proxy.classes.tabs.Icons'
+		'CMDBuild.proxy.administration.classes.tabs.Icons'
 	]);
 
 	Ext.define('CMDBuild.controller.administration.classes.tabs.Icons', {
@@ -56,7 +56,7 @@
 				this.panelIcons.imageIconDisplayField.setSrc(); // Field reset
 
 				// Find icon definition object
-				CMDBuild.proxy.classes.tabs.Icons.readAllIcons({
+				CMDBuild.proxy.administration.classes.tabs.Icons.readAllIcons({
 					scope: this,
 					success: function (response, options, decodedResponse) {
 						decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.DATA];
@@ -106,7 +106,7 @@
 		 * @private
 		 */
 		deleteImageAndIcon: function () {
-			CMDBuild.proxy.classes.tabs.Icons.remove({
+			CMDBuild.proxy.administration.classes.tabs.Icons.remove({
 				restUrlParams: {
 					iconId: this.classIconObject._id,
 					folderId: this.classIconObject.image.details.folder,
@@ -125,7 +125,7 @@
 		uploadImageAndBindIcon: function (options, success, response) {
 			// Build target folder model
 			CMDBuild.core.LoadMask.show();
-			CMDBuild.proxy.classes.tabs.Icons.getFolders({
+			CMDBuild.proxy.administration.classes.tabs.Icons.getFolders({
 				loadMask: false,
 				scope: this,
 				failure: function (response, options, decodedResponse) {
@@ -147,7 +147,7 @@
 						params['fileStore'] = 'images';
 						params['folder'] = targetFolderModel.get('_id');
 
-						CMDBuild.proxy.classes.tabs.Icons.createImage({
+						CMDBuild.proxy.administration.classes.tabs.Icons.createImage({
 							form: this.panelIcons.getForm(),
 							params: params,
 							scope: this,
@@ -159,7 +159,7 @@
 
 								if (!Ext.isEmpty(uploadedIconName) && Ext.isString(uploadedIconName)) {
 									// Update uploaded image with class bind
-									CMDBuild.proxy.classes.tabs.Icons.update({
+									CMDBuild.proxy.administration.classes.tabs.Icons.update({
 										jsonData: {
 											type: 'class',
 											details: {

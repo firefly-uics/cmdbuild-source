@@ -1,5 +1,7 @@
 (function () {
 
+	// Ext.require('CMDBuild.locale'); // FIXME: should be included a class that creates translations object
+
 	Ext.define('CMDBuild.core.Splash', {
 
 		singleton: true,
@@ -30,7 +32,7 @@
 					contentEl: Ext.create('Ext.dom.Element', {
 						html: '<div class="splash-screen' + (isAdministration ? '-administration' : '') + '">'
 								+ '<div class="text-container">'
-									+ '<div class="description">Open Source Configuration and Management Database</div>'
+									+ '<div class="description">' + CMDBuild.locale.splashDescription + '</div>'
 									+ '<span class="copyright">Copyright &copy; Tecnoteca srl</span>'
 								+ '</div>'
 								+ '<div class="version">' + CMDBuild.Translation.release + '</div>'

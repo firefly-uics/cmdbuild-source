@@ -11,13 +11,7 @@
 		border: false,
 		frame: false,
 		layout: 'border',
-		title: CMDBuild.Translation.relations,
-
-		listeners: {
-			show: function (panel, eOpts) {
-				this.delegate.cmfg('onWorkflowTreeFilterAdvancedFilterEditorRelationsViewShow');
-			}
-		}
+		title: CMDBuild.Translation.relations
 	});
 
 })();

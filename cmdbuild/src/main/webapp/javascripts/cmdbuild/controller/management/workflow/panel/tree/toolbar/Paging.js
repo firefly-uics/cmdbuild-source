@@ -107,7 +107,7 @@
 
 			this.view = Ext.create('CMDBuild.view.management.workflow.panel.tree.toolbar.Paging', {
 				delegate: this,
-				store: this.cmfg('panelGridAndFormGridStoreGet'),
+				store: this.cmfg('workflowTreeStoreGet'),
 				items: items
 			});
 		},

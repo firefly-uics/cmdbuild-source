@@ -22,6 +22,7 @@
 
 	<TITLEPOPUP_PROPERTIES>Proprietà</TITLEPOPUP_PROPERTIES>
 	<TITLEPOPUP_FILTERS>Filtri</TITLEPOPUP_FILTERS>
+	<TITLEPOPUP_ATTRIBUTES>Attributi</TITLEPOPUP_ATTRIBUTES>
 	<TITLEPOPUP_TREES>Possibili posizioni nell'albero</TITLEPOPUP_TREES>
 
 	<TITLE_NOSELECTION>Nessun elemento selezionato</TITLE_NOSELECTION>
@@ -51,6 +52,7 @@
 	<TOOLTIP_REOPEN>Riapre il grafo dal nodo corrente</TOOLTIP_REOPEN>
 	<TOOLTIP_SUBGRAPH>Seleziona il sottografo che contiene i nodi selezionati</TOOLTIP_SUBGRAPH>
 	<TOOLTIP_TREE>Seleziona l&apos;albero di navigazione</TOOLTIP_TREE>
+	<TOOLTIP_PRINT>Stampa l'immagine</TOOLTIP_PRINT>
 
 
 	<TOOLTIP_SHOWSELECTED>Mostra le schede selezionate</TOOLTIP_SHOWSELECTED>

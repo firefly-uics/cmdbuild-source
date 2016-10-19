@@ -1,19 +1,18 @@
 (function() {
 
-	Ext.require([ 'CMDBuild.proxy.gis.Gis',
-	              'CMDBuild.controller.management.classes.map.NavigationTreeDelegate']);
+	Ext.require([ 'CMDBuild.proxy.gis.Gis', 'CMDBuild.controller.management.classes.map.NavigationTreeDelegate' ]);
 
 	Ext.define("CMDBuild.controller.management.classes.map.CMMapController", {
-		alternateClassName : "CMDBuild.controller.management.classes.CMMapController", // Legacy
-		// class
-		// name
+		// Legacy class name
+		alternateClassName : "CMDBuild.controller.management.classes.CMMapController",
 		extend : "CMDBuild.controller.management.classes.CMCardDataProvider",
 
 		mixins : {
 			observable : "Ext.util.Observable",
 			mapDelegate : "CMDBuild.view.management.map.CMMapPanelDelegate",
 			editingWindowDelegate : "CMDBuild.controller.management.classes.map.CMMapEditingWindowDelegate",
-			cardStateDelegate : "CMDBuild.state.CMCardModuleStateDelegate"
+			cardStateDelegate : "CMDBuild.state.CMCardModuleStateDelegate",
+			miniCardGridDelegate : "CMDBuild.view.management.common.CMMiniCardGridDelegate"
 		},
 
 		cmfgCatchedFunctions : [],
@@ -30,15 +29,11 @@
 
 				var navigationPanel = this.mapPanel.getCardBrowserPanel();
 				if (navigationPanel) {
-					new CMDBuild.controller.management.classes.CMCardBrowserTreeDataSource(navigationPanel,
-							this.mapState);
-					navigationPanel.addDelegate(new CMDBuild.controller.management.classes.map.NavigationTreeDelegate(
-							this, this.interactionDocument));
+					this.makeNavigationTree(navigationPanel);
 				}
 
 				// initialize editing control
-				this.editingWindowDelegate = new CMDBuild.controller.management.classes.map.CMMapEditingWindowDelegate(
-						this, this.interactionDocument);
+				this.makeEditingDelegate();
 				this.mapPanel.editingWindow.addDelegate(this.editingWindowDelegate);
 
 				_CMCardModuleState.addDelegate(this);
@@ -47,24 +42,34 @@
 				throw new Error("The map controller was instantiated without a map or the related form panel");
 			}
 		},
+		makeEditingDelegate : function() {
+			this.editingWindowDelegate = new CMDBuild.controller.management.classes.map.CMMapEditingWindowDelegate(
+					this, this.interactionDocument);
+		},
+		makeNavigationTree : function(navigationPanel) {
+			new CMDBuild.controller.management.classes.CMCardBrowserTreeDataSource(navigationPanel, this.mapState);
+			navigationPanel.addDelegate(new CMDBuild.controller.management.classes.map.NavigationTreeDelegate(this,
+					this.interactionDocument));
+		},
 
 		/*
 		 * card could be either a String (the id of the card) or a
 		 * Ext.model.Model
 		 */
 		onCardSelected : function(card) {
+			var et = _CMCache.getEntryTypeById(this.currentClassId);
+			if (!et) {
+				return;
+			}
 			var oldCard = this.interactionDocument.getCurrentCard();
 			var cardId = -1;
 			var className = "";
-			if (card === null) {
-				cardId = -1;
-				className = oldCard.className;
+			if (!card && !oldCard) {
+				return;
+			} else {
+				cardId = (card) ? card.cardId : -1;
+				className = (card) ? et.get("name") : oldCard.className;
 			}
-			else {
-				cardId = card.cardId;
-				className = card.className;
-			}
-			var type = _CMCache.getEntryTypeByName(className);
 			if (cardId !== -1) {
 				this.setCard({
 					cardId : cardId,
@@ -75,39 +80,35 @@
 				cardId : cardId,
 				className : className
 			});
-			if (cardId !== -1) {
-				this.interactionDocument.centerOnCard({
+			if (!(oldCard && card) || (oldCard.className !== card.className)) {
+				this.interactionDocument.resetZoom();
+			}
+			if (!this.mapPanel.cmVisible) {
+			} else if (cardId !== -1) {
+				var card = {
 					className : className,
 					cardId : cardId
-				}, function() {
+				};
+				this.interactionDocument.centerOnCard(card, function(center) {
+					if (!center) {
+						var mapPanel = this.interactionDocument.getMapPanel();
+						mapPanel.center(this.interactionDocument.configurationMap);
+					}
 					this.interactionDocument.changed();
 				}, this);
 			} else {
+				if (!oldCard || className !== oldCard.className) {
+					var mapPanel = this.interactionDocument.getMapPanel();
+					mapPanel.center(this.interactionDocument.configurationMap);
+
+				}
 				this.interactionDocument.changed();
 
 			}
+			this.interactionDocument.setNoZoom(false);
 		},
 
 		setCard : function(card, callback, callbackScope) {
-			CMDBuild.proxy.Card.read({
-				params: card,
-				loadMask: false,
-				scope: this,
-				success: function(a, b, response) {
-					var raw = response.card;
-
-					if (raw) {
-						var c = new CMDBuild.DummyModel(response.card);
-
-						c.raw = raw;
-						c.set("id", c.get("Id"));
-						_CMCardModuleState.setCard(c);
-						if (callback) {
-							callback.apply(callbackScope, [ c ]);
-						}
-					}
-				}
-			});
 		},
 		editMode : function() {
 			this.cmIsInEditing = true;
@@ -122,41 +123,39 @@
 			this.cmIsInEditing = false;
 
 			if (this.mapPanel.cmVisible) {
+				this.interactionDocument.setVisible(true);
 				this.mapPanel.displayMode();
 				this.activateSelectControl();
+				this.interactionDocument.changed();
+			} else {
+				this.interactionDocument.setVisible(false);
+				this.mapPanel.getMap().removeAllLayers();
 			}
 		},
 
 		onCardSaved : function(c) {
-			/*
-			 * Normally after the save, the main controller say to the grid to
-			 * reload it, and select the new card. If the map is visible on
-			 * save, this could not be done, so say to this controller to
-			 * refresh the features loaded, and set the new card as selected
-			 */
 			if (this.mapPanel.cmVisible) {
 				var me = this;
 
 				var type = _CMCache.getEntryTypeById(c.IdClass);
-				this.setCard({
+				var card = {
 					cardId : c.Id,
 					className : type.get("name")
-				}, function(card) {
-					me.mapPanel.getMap().changeFeatureOnLayers(c.Id);
-					var card = {
-							cardId : c.Id,
-							className : type.get("name")
-						};
-					me.interactionDocument.setCurrentCard(card);
-					me.interactionDocument.centerOnCard(card, function() {
-						me.interactionDocument.changed();
-						me.interactionDocument.changedFeature();
-						
-					}, this);
-				});
+				};
+				this.setCard(card, this.callBackSetCard);
 			}
 		},
+		callBackCenter : function() {
+			this.interactionDocument.changed();
+			this.interactionDocument.changedFeature();
+		},
+		callBackSetCard : function(card) {
+			this.mapPanel.getMap().changeFeatureOnLayers(card.cardId);
+			this.interactionDocument.setCurrentCard(card);
+			// this.interactionDocument.resetZoom();
+			this.interactionDocument.centerOnCard(card, this.callBackCenter, this);
 
+		},
 		deactivateSelectControl : function() {
 			// this.selectControl.deactivate();
 		},
@@ -165,20 +164,38 @@
 			// this.selectControl.activate();
 		},
 
-		onEntryTypeSelected : onEntryTypeSelected,
+		onEntryTypeSelected : this.onEntryTypeSelected,
 		getCardData : getCardData,
 
 		/* As mapDelegate ******** */
 
-		onMapPanelVisibilityChanged : onVisibilityChanged,
+		onMapPanelVisibilityChanged : this.onVisibilityChanged,
 
 		/* As CMCardModuleStateDelegate ************** */
 
 		onEntryTypeDidChange : function(state, entryType, danglingCard) {
-			this.onEntryTypeSelected(entryType, danglingCard);
+			if (!entryType) {
+				return;
+			}
+
+			var newEntryTypeId = entryType.get("id");
+			var lastCard = _CMCardModuleState.card;
+			if (this.currentClassId != newEntryTypeId) {
+				this.currentClassId = newEntryTypeId;
+				lastCard = undefined;
+			}
+
 		},
 
 		onCardDidChange : function(state, card) {
+			if (card != null) {
+				var type = _CMCache.getEntryTypeById(card.get("IdClass"));
+				this.onCardSelected({
+					cardId : card.get("Id"),
+					className : type.get("name")
+
+				});
+			}
 		},
 
 		/* As CMMap delegate *************** */
@@ -208,7 +225,25 @@
 
 		getCurrentMap : function() {
 			return this.map;
+		},
+		onVisibilityChanged : function(map, visible) {
+			if (visible) {
+				var lastClass = _CMCardModuleState.entryType, lastCard = _CMCardModuleState.card;
+
+				if (lastCard && lastClass && this.currentClassId && this.currentClassId != lastClass.get("id")) {
+
+					this.onEntryTypeSelected(lastClass, {
+						Id : lastCard.get("Id")
+					});
+				}
+
+			} else {
+				if (this.cmIsInEditing) {
+					this.mapPanel.displayMode();
+				}
+			}
 		}
+
 	});
 
 	function getLayerVisibility(id, bindings, visibles) {
@@ -241,97 +276,11 @@
 		longPressControl.activate();
 	}
 
-	function loadCardGridStore(gridController) {
-		gridController.onCardGridShow();
-	}
-
-	function updateCardGridTitle(entryType, gridController) {
-		var grid = gridController.getView();
-		var prefix = CMDBuild.Translation.management.modcard.title;
-		grid.setTitle(prefix + entryType.get("name"));
-	}
 	function getCardData(params) {
 		var cardId = params.cardId;
-		var className = params.cardIdclassName;
+		var className = params.className;
 		var geo = this.mapPanel.getMap().getGeometries(cardId, className);
 		return Ext.JSON.encode(geo);
-	}
-
-	function onEntryTypeSelected(entryType, danglingCard) {
-		if (!entryType) {// || !this.mapPanel.cmVisible) {
-			return;
-		}
-
-		var newEntryTypeId = entryType.get("id");
-		var lastCard = _CMCardModuleState.card;
-		if (this.currentClassId != newEntryTypeId) {
-			this.currentClassId = newEntryTypeId;
-			lastCard = undefined;
-		}
-
-		if (danglingCard) {
-			this.onCardSelected({
-				cardId : danglingCard.Id,
-				className : entryType.get("name")
-			});
-		} else {
-			
-			this.onCardSelected({
-				cardId : -1,
-				className : entryType.get("name")
-			});
-		}
-	}
-
-	function onVisibilityChanged(map, visible) {
-		if (visible) {
-			var lastClass = _CMCardModuleState.entryType, lastCard = _CMCardModuleState.card;
-
-			if (lastClass && this.currentClassId && this.currentClassId != lastClass.get("id")) {
-
-				this.onEntryTypeSelected(lastClass, {
-					Id : lastCard.get("Id")
-				});
-			} else {
-				if (lastCard && (!this.currentCardId || this.currentCardId != lastCard.get("Id"))) {
-
-					this.onCardSelected({
-						cardId : lastCard.get("Id"),
-						className : (lastCard.get("className")) ? lastCard.get("className") : lastCard.raw.className
-					});
-				}
-			}
-
-		} else {
-			if (this.cmIsInEditing) {
-				this.mapPanel.displayMode();
-			}
-		}
-	}
-
-	function onLayerVisibilityChange(param) {
-		var layer = param.object;
-
-		var cardBrowserPanel = this.mapPanel.getCardBrowserPanel();
-		if (layer.CM_geoserverLayer && cardBrowserPanel) {
-			cardBrowserPanel.udpateCheckForLayer(layer);
-		}
-	}
-	;
-
-	function sortAttributesByIndex(geoAttributes) {
-		var cmdbuildLayers = [];
-		var geoserverLayers = [];
-		for (var i = 0, l = geoAttributes.length; i < l; ++i) {
-			var attr = geoAttributes[i];
-			if (attr.masterTableId) {
-				cmdbuildLayers[attr.index] = attr;
-			} else {
-				geoserverLayers[attr.index] = attr;
-			}
-		}
-
-		return cmdbuildLayers.concat(geoserverLayers);
 	}
 
 })();

@@ -27,6 +27,7 @@
 		floatable: false,
 		layout: 'border',
 		rootVisible: false,
+		collapsed: false,
 
 		bodyStyle: {
 			background: '#ffffff'

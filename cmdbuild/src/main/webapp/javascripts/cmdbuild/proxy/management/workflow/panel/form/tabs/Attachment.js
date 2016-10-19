@@ -1,7 +1,7 @@
 (function () {
 
 	/**
-	 * @link CMDBuild.proxy.classes.tabs.Attachment
+	 * @link CMDBuild.proxy.management.classes.tabs.Attachment
 	 */
 	Ext.define('CMDBuild.proxy.management.workflow.panel.form.tabs.Attachment', {
 

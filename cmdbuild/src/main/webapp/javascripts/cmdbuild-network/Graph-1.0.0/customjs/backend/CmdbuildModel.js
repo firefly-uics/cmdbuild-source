@@ -11,46 +11,37 @@
 			this.model = model;
 		};
 		this.getInitModel = function(params, callback, callbackScope) {
-			var navigationTree = $.Cmdbuild.customvariables.cacheTrees
-					.getRootNavigationTree();
-			var nodeOnNavigationTree = (navigationTree) ? navigationTree._id
-					: null;
+			var navigationTree = $.Cmdbuild.customvariables.cacheTrees.getRootNavigationTree();
+			var nodeOnNavigationTree = (navigationTree) ? navigationTree._id : null;
 			if (params) {
-				$.Cmdbuild.g3d.proxy
-						.getCardData(
-								params.classId,
-								params.cardId,
-								{},
-								function(card) {
-									var elements = {
-										nodes : [ {
-											data : {
-												label : card.Description,
-												classId : params.classId,
-												id : params.cardId,
-												position : {
-													x : 0,
-													y : 0,
-													z : 0
-												},
-												nodeOnNavigationTree : nodeOnNavigationTree
-											}
-										} ],
-										edges : []
-									};
-									callback.apply(callbackScope, [ elements ]);
-								}, this);
+				$.Cmdbuild.g3d.proxy.getCardData(params.classId, params.cardId, {}, function(card) {
+					var elements = {
+						nodes : [ {
+							data : {
+								label : card.Description,
+								classId : params.classId,
+								id : params.cardId,
+								position : {
+									x : 0,
+									y : 0,
+									z : 0
+								},
+								nodeOnNavigationTree : nodeOnNavigationTree
+							}
+						} ],
+						edges : []
+					};
+					callback.apply(callbackScope, [ elements ]);
+				}, this);
 			} else {
 				callback.apply(callbackScope, []);
 			}
 		};
-		this.chargeModel = function(elements, domainId, nodeOnNavigationTree,
-				relation, sourceId, targetId, targetDescription,
-				targetClassName, compoundData, parentNode, isNew) {
+		this.chargeModel = function(elements, domainId, nodeOnNavigationTree, relation, sourceId, targetId,
+				targetDescription, targetClassName, compoundData, parentNode, isNew) {
 			sourceId = "" + sourceId;
 			targetId = "" + targetId;
-			var domain = $.Cmdbuild.customvariables.cacheDomains
-					.getDomain(domainId);
+			var domain = $.Cmdbuild.customvariables.cacheDomains.getDomain(domainId);
 			if (!domain) {
 				console.log("Error :", Error().stack);
 			}
@@ -95,40 +86,32 @@
 			var newNode = this.model.getNode(targetId);
 			return newNode;
 		};
-		this.getANodesBunch = function(id, domainList, callback, callbackScope) {
+		this.getGraphicNodes = function(id, domainList, callback, callbackScope) {
 			var node = this.model.getNode(id);
 			var classId = $.Cmdbuild.g3d.Model.getGraphData(node, "classId");
-			this.getAllDomains(node, classId, id, domainList, callback,
-					callbackScope);
+			this.getAllDomains(node, classId, id, domainList, callback, callbackScope);
 		};
-		this.loadFilteredDomains = function(index, domains, filteredDomains,
-				callback, callbackScope) {
+		this.loadFilteredDomains = function(index, domains, filteredDomains, callback, callbackScope) {
 			if (!domains || index >= domains.length) {
 				callback.apply(callbackScope, [ filteredDomains ]);
 				return;
 			}
-			$.Cmdbuild.customvariables.cacheDomains.loadSingleDomain(
-					domains[index].domainId, function(domain) {
-						domain.nodeOnNavigationTree = domains[index]._id;
-						filteredDomains.push(domain);
-						this.loadFilteredDomains(++index, domains,
-								filteredDomains, callback, callbackScope);
-					}, this);
+			$.Cmdbuild.customvariables.cacheDomains.loadSingleDomain(domains[index].domainId, function(domain) {
+				domain.nodeOnNavigationTree = domains[index]._id;
+				filteredDomains.push(domain);
+				this.loadFilteredDomains(++index, domains, filteredDomains, callback, callbackScope);
+			}, this);
 		};
-		this.filteredDomains = function(node, domainList, classId, callback,
-				callbackScope) {
+		this.filteredDomains = function(node, domainList, classId, callback, callbackScope) {
 			var domains = [];
-			var navigationTree = $.Cmdbuild.customvariables.cacheTrees
-					.getCurrentNavigationTree();
+			var navigationTree = $.Cmdbuild.customvariables.cacheTrees.getCurrentNavigationTree();
 			if (navigationTree) {
 				// this overrides other filters on domains
-				domains = $.Cmdbuild.customvariables.cacheTrees
-						.getClassPathInTree(node);
+				domains = $.Cmdbuild.customvariables.cacheTrees.getClassPathInTree(node);
 				var filteredDomains = [];
-				this.loadFilteredDomains(0, domains, filteredDomains,
-						function() {
-							callback.apply(callbackScope, [ filteredDomains ]);
-						}, this);
+				this.loadFilteredDomains(0, domains, filteredDomains, function() {
+					callback.apply(callbackScope, [ filteredDomains ]);
+				}, this);
 				return;
 			}
 			// -------------------------------------
@@ -137,73 +120,62 @@
 				callback.apply(callbackScope, [ null ]);
 				return;
 			}
-			domains = $.Cmdbuild.customvariables.cacheDomains
-					.getDomains4Class(classId);
+			domains = $.Cmdbuild.customvariables.cacheDomains.getDomains4Class(classId);
 			var ret = [];
-			$.Cmdbuild.customvariables.cacheDomains.getLoadingDomains4Class(
-					classId, function(response) {
-						for (var j = 0; j < response.length; j++) {
-							var insert = true;
-							for (var i = 0; i < domains.length; i++) {
-								if (response[j]._id === domains[i]._id
-										&& domains[i].active === false) {
-									insert = false;
-									break;
-								}
-							}
-							if (insert) {
-								ret.push(response[j]);
-							}
+			$.Cmdbuild.customvariables.cacheDomains.getLoadingDomains4Class(classId, function(response) {
+				for (var j = 0; j < response.length; j++) {
+					var insert = true;
+					for (var i = 0; i < domains.length; i++) {
+						if (response[j]._id === domains[i]._id && domains[i].active === false) {
+							insert = false;
+							break;
 						}
-						callback.apply(callbackScope, [ ret ]); // this
-						// overrides
-						// other
-						// filters on domains
-					}, this);
+					}
+					if (insert) {
+						ret.push(response[j]);
+					}
+				}
+				callback.apply(callbackScope, [ ret ]); // this
+				// overrides
+				// other
+				// filters on domains
+			}, this);
 		};
-		this.getAllDomains = function(node, classId, cardId, domainList,
-				callback, callbackScope) {
+		this.getAllDomains = function(node, classId, cardId, domainList, callback, callbackScope) {
 			var elements = {
 				nodes : [],
 				edges : []
 			};
 			var configuration = $.Cmdbuild.custom.configuration;
-			this.filteredDomains(node, configuration.filterClassesDomains,
-					classId, function(filteredDomains) {
-						this.getRelations(node, classId, cardId, domainList,
-								filteredDomains, elements, callback,
+			this.filteredDomains(node, configuration.filterClassesDomains, classId, function(filteredDomains) {
+				this
+						.getRelations(node, classId, cardId, domainList, filteredDomains, elements, callback,
 								callbackScope);
-					}, this);
+			}, this);
 		};
-		this.getRelations = function(node, classId, cardId, domainList,
-				filteredDomains, elements, callback, callbackScope) {
+		this.getRelations = function(node, classId, cardId, domainList, filteredDomains, elements, callback,
+				callbackScope) {
 			if (filteredDomains) {
 				// /------------------------------------------------
-				this.getAllRelations(node, filteredDomains, domainList,
-						classId, parseInt(cardId), elements, callback,
+				this.getAllRelations(node, filteredDomains, domainList, classId, parseInt(cardId), elements, callback,
 						callbackScope);
 			} else {
-				$.Cmdbuild.customvariables.cacheDomains
-						.getLoadingDomains4Class(classId, function(response) {
-							this.getAllRelations(node, response, domainList,
-									classId, parseInt(cardId), elements,
-									callback, callbackScope);
-						}, this);
+				$.Cmdbuild.customvariables.cacheDomains.getLoadingDomains4Class(classId, function(response) {
+					this.getAllRelations(node, response, domainList, classId, parseInt(cardId), elements, callback,
+							callbackScope);
+				}, this);
 			}
 		};
-		this.pushAnOpeningChild = function(elements, domainId,
-				nodeOnNavigationTree, relation, id, description, classId, data,
-				node, parentId, children) {
+		this.pushAnOpeningChild = function(elements, domainId, nodeOnNavigationTree, relation, id, description,
+				classId, data, node, parentId, children) {
 			var cyNode = this.model.getNode(id);
 			if (cyNode.length === 0) {
 				children.push(id);
 			}
-			this.chargeModel(elements, domainId, nodeOnNavigationTree,
-					relation, parentId, id, description, classId, data, node,
-					cyNode.length === 0);
+			this.chargeModel(elements, domainId, nodeOnNavigationTree, relation, parentId, id, description, classId,
+					data, node, cyNode.length === 0);
 		};
-		this.getAllRelations = function(node, domains, domainList, classId,
-				cardId, elements, callback, callbackScope) {
+		this.getAllRelations = function(node, domains, domainList, classId, cardId, elements, callback, callbackScope) {
 			if (!domains || domains.length === 0) {
 				callback.apply(callbackScope, [ elements ]);
 				return;
@@ -215,8 +187,7 @@
 					return (value.domainId == domain._id);
 				});
 				if (arDomains.length <= 0) {
-					this.getAllRelations(node, domains, domainList, classId,
-							cardId, elements, callback, callbackScope);
+					this.getAllRelations(node, domains, domainList, classId, cardId, elements, callback, callbackScope);
 					return;
 				}
 			}
@@ -228,85 +199,66 @@
 				start : 0,
 				limit : $.Cmdbuild.customvariables.options.clusteringThreshold
 			};
-			$.Cmdbuild.utilities.proxy.getRelations(domainId, param, function(
-					relations, metadata) {
-				if (relations.length <= 0) {
-					this.getAllRelations(node, domains, domainList, classId,
-							cardId, elements, callback, callbackScope);
-					return;
-				}
-				if (this.isCompound(relations)) {
-					var compoundData = {
-						domainId : domainId,
-						filter : filter
-					};
-					this
-							.pushCompound(relations[0], compoundData,
-									domain.nodeOnNavigationTree,
-									metadata.total, classId, elements,
-									domainId, node, cardId, children);
-				} else {
-					this.explodeChildren(elements, domainId,
-							domain.nodeOnNavigationTree, node, classId, cardId,
-							children, relations);
-				}
-				node.data.children = children;
-				this.getAllRelations(node, domains, domainList, classId,
-						cardId, elements, callback, callbackScope);
-			}, this);
+			$.Cmdbuild.utilities.proxy.getRelations(domainId, param,
+					function(relations, metadata) {
+						if (relations.length <= 0) {
+							this.getAllRelations(node, domains, domainList, classId, cardId, elements, callback,
+									callbackScope);
+							return;
+						}
+						if (this.isCompound(relations)) {
+							var compoundData = {
+								domainId : domainId,
+								filter : filter
+							};
+							this.pushCompound(relations[0], compoundData, domain.nodeOnNavigationTree, metadata.total,
+									classId, elements, domainId, node, cardId, children);
+						} else {
+							this.explodeChildren(elements, domainId, domain.nodeOnNavigationTree, node, classId,
+									cardId, children, relations);
+						}
+						node.data.children = children;
+						this.getAllRelations(node, domains, domainList, classId, cardId, elements, callback,
+								callbackScope);
+					}, this);
 		};
-		this.pushCompound = function(relationSample, compoundData,
-				nodeOnNavigationTree, total, classId, elements, domainId, node,
-				cardId, children) {
+		this.pushCompound = function(relationSample, compoundData, nodeOnNavigationTree, total, classId, elements,
+				domainId, node, cardId, children) {
 			var destinationDescription = $.Cmdbuild.customvariables.cacheClasses
 					.getDescription(relationSample._destinationType);
 			destinationDescription = (destinationDescription) ? destinationDescription
 					: relationSample._destinationType;
-			var sourceDescription = $.Cmdbuild.customvariables.cacheClasses
-					.getDescription(relationSample._sourceType);
-			sourceDescription = (sourceDescription) ? sourceDescription
-					: relationSample._sourceType;
-			var domain = $.Cmdbuild.customvariables.cacheDomains
-					.getDomain(domainId);
+			var sourceDescription = $.Cmdbuild.customvariables.cacheClasses.getDescription(relationSample._sourceType);
+			sourceDescription = (sourceDescription) ? sourceDescription : relationSample._sourceType;
+			var domain = $.Cmdbuild.customvariables.cacheDomains.getDomain(domainId);
 			var direction = (relationSample._sourceId == cardId && relationSample._sourceType == classId);
-			var rDescription = direction ? domain.descriptionDirect
-					: domain.descriptionInverse;
-			var sDescription = ! direction ? destinationDescription
-					: sourceDescription;
-			var dDescription = direction ? destinationDescription
-					: sourceDescription;
-			var description = sDescription + " " + rDescription + " " + total + " "
-					+ dDescription;
-			var id = "CN" + relationSample._type + relationSample._sourceId
-					+ relationSample._destinationId;
-			this.pushAnOpeningChild(elements, domainId, nodeOnNavigationTree,
-					relationSample, id, description,
-					$.Cmdbuild.g3d.constants.GUICOMPOUNDNODE, compoundData,
-					node, cardId, children);
+			var rDescription = direction ? domain.descriptionDirect : domain.descriptionInverse;
+			var sDescription = !direction ? destinationDescription : sourceDescription;
+			var dDescription = direction ? destinationDescription : sourceDescription;
+			var description = sDescription + " " + rDescription + " " + total + " " + dDescription;
+			var id = "CN" + relationSample._type + relationSample._sourceId + relationSample._destinationId;
+			this.pushAnOpeningChild(elements, domainId, nodeOnNavigationTree, relationSample, id, description,
+					$.Cmdbuild.g3d.constants.GUICOMPOUNDNODE, compoundData, node, cardId, children);
 		};
 		this.isCompound = function(relations) {
 			var clusteringThreshold = $.Cmdbuild.customvariables.options.clusteringThreshold;
 			return (relations.length >= clusteringThreshold);
 		};
-		this.openCompoundNode = function(id, data, domainId, callback,
-				callbackScope) {
+		this.openCompoundNode = function(id, data, domainId, callback, callbackScope) {
 			var node = this.model.getNode(id);
-			var parentId = $.Cmdbuild.g3d.Model.getGraphData(node,
-					"previousPathNode");
+			var parentId = $.Cmdbuild.g3d.Model.getGraphData(node, "previousPathNode");
 			var parentNode = this.model.getNode(parentId);
 			var children = [];
 			var elements = {
 				nodes : [],
 				edges : []
 			};
-			var classId = $.Cmdbuild.g3d.Model.getGraphData(parentNode,
-					"classId");
+			var classId = $.Cmdbuild.g3d.Model.getGraphData(parentNode, "classId");
 			this.explodeChildren(elements, domainId, null,// nodeOnNavigationTree,
 			parentNode, classId, parentId, children, data);
 			callback.apply(callbackScope, [ elements ]);
 		};
-		this.explodeChildren = function(elements, domainId,
-				nodeOnNavigationTree, node, classId, cardId, children,
+		this.explodeChildren = function(elements, domainId, nodeOnNavigationTree, node, classId, cardId, children,
 				relations) {
 			var destinationId;
 			var destinationDescription;
@@ -321,8 +273,7 @@
 					continue;
 
 				}
-				if (relation._sourceId == cardId
-						&& relation._sourceType == classId) {
+				if (relation._sourceId == cardId && relation._sourceType == classId) {
 					destinationId = relation._destinationId;
 					destinationDescription = relation._destinationDescription;
 					destinationType = relation._destinationType;
@@ -331,10 +282,8 @@
 					destinationDescription = relation._sourceDescription;
 					destinationType = relation._sourceType;
 				}
-				this.pushAnOpeningChild(elements, domainId,
-						nodeOnNavigationTree, relation, destinationId,
-						destinationDescription, destinationType, {}, node,
-						cardId, children);
+				this.pushAnOpeningChild(elements, domainId, nodeOnNavigationTree, relation, destinationId,
+						destinationDescription, destinationType, {}, node, cardId, children);
 			}
 		};
 		this.getFilterForDomain = function(classId) {

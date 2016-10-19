@@ -1,4 +1,4 @@
-CMDBuild 2.4.2 (released YYYY/MM/DD)
+CMDBuild 2.4.2 (released 2016/10/18)
 
 
 NEW FEATURES
@@ -15,13 +15,25 @@ NEW FEATURES
 
  * Simple filter support for processes routes
 
- * New GetCardPosition management
-
  * Client performance improvements
 
  * Metadata for functions through REST interface
 
  * Added Greek translation
+
+ * Management of geometric attributes through REST API
+
+ * Management of relation attributes through SOAP API
+
+ * Information about the filter of the nodes of domain trees through REST API
+
+ * To field no more required in create/edit email tab window
+
+ * GIS thematisms: puntual and range thematic analysis
+
+ * GIS performance's improvements
+
+ * Printing of relation graph
 
 
 FIXES
@@ -91,6 +103,30 @@ FIXES
  * CustomForm widget minor fixes
 
  * Domains not correctly displayed on advanced filter relation tab grid
+
+ * When the password for accessing the database is not specified because it's not required, CMDBuild cannot be accessed
+
+ * NavigationTree widget behaviour errors
+
+ * When updating an activity of a process instance and the activity is not found an unclear error is returned
+
+ * DataViews from filter clear filter fixes
+
+ * Tab Note: differences in behavior than other tab
+
+ * View note details tab grid button doesn't show card notes
+
+ * Switching from tab to tab in advanced filter builder window content is erased
+
+ * Change password button still enabled after the further action to cancel an add
+
+ * Modify and Change password buttons are not exclusive in enable fieldset functionalities
+
+ * Modify task button not disabled if task is running
+
+ * Grid or card print button click error
+
+ * Error of email account not specified when emails are sent using tasks
 
 
 

@@ -6,7 +6,7 @@
 		requires: [
 			'CMDBuild.core.configurations.DataFormat',
 			'CMDBuild.core.constants.Proxy',
-			'CMDBuild.proxy.classes.tabs.History'
+			'CMDBuild.proxy.management.classes.tabs.History'
 		],
 
 		/**
@@ -59,7 +59,7 @@
 					})
 				],
 				columns: this.buildColumns(),
-				store: CMDBuild.proxy.classes.tabs.History.getStore()
+				store: CMDBuild.proxy.management.classes.tabs.History.getStore()
 			});
 
 			this.callParent(arguments);

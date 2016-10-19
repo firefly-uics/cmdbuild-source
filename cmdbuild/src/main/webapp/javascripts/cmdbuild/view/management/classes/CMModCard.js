@@ -56,7 +56,8 @@
 					this.theMap.updateSize();
 
 					this.theMap.setCmVisible(true);
-					this.cardGrid.setCmVisible(false);
+//					this.cardGrid.setCmVisible(false);
+					this.cardGrid.setCmVisible(true);
 				}
 			});
 

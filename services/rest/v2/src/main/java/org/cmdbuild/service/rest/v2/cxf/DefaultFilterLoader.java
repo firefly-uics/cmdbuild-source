@@ -33,11 +33,11 @@ public class DefaultFilterLoader implements FilterLoader {
 				final JSONObject jsonFilter = safeJsonObject(value);
 				final FilterLogic filterLogic;
 				final Long filterId;
-				if (jsonFilter.has("_filterId")) {
-					filterId = jsonFilter.getLong("_filterId");
+				if (jsonFilter.has("_id")) {
+					filterId = jsonFilter.getLong("_id");
 					filterLogic = this.filterLogic;
 				} else if (jsonFilter.has("_temporaryId")) {
-					filterId = jsonFilter.getLong("_temporaryFilterId");
+					filterId = jsonFilter.getLong("_temporaryId");
 					filterLogic = this.temporaryFilterLogic;
 				} else {
 					filterId = null;

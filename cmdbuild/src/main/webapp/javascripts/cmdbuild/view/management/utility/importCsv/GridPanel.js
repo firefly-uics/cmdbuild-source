@@ -65,6 +65,9 @@
 		}
 	});
 
+	/**
+	 * @link CMDBuild.view.management.common.CMCardGrid
+	 */
 	Ext.define('CMDBuild.view.management.utility.importCsv.GridPanel', {
 		extend: "Ext.grid.Panel",
 
@@ -240,40 +243,38 @@
 		},
 
 		updateStoreForClassId: function(classId, o) {
-
 			var me = this;
 
-			function callCbOrLoadFirstPage(me) {
-				if (o && o.cb) {
-					o.cb.call(o.scope || me);
-				} else {
-					me.store.loadPage(1);
-				}
-			}
+			this.loadAttributes(
+				classId,
+				function(attributes) {
+					function callCbOrLoadFirstPage(me) {
+						if (o && o.cb) {
+							o.cb.call(o.scope || me);
+						} else {
+							me.store.loadPage(1);
+						}
+					}
 
-			if (me.currentClassId == classId) {
-				callCbOrLoadFirstPage(me);
-			} else {
-				me.currentClassId = classId;
+					if (me.currentClassId == classId) {
+						callCbOrLoadFirstPage(me);
+					} else {
+						me.currentClassId = classId;
 
-				if (this.gridSearchField) {
-					this.gridSearchField.setValue(""); // clear only the field without reload the grid
-				}
+						if (me.gridSearchField) {
+							me.gridSearchField.setValue(""); // clear only the field without reload the grid
+						}
 
-				if (me.printGridMenu) {
-					me.printGridMenu.setDisabled(!classId);
-				}
+						if (me.printGridMenu) {
+							me.printGridMenu.setDisabled(!classId);
+						}
 
-				me.loadAttributes( //
-					classId, //
-					function(attributes) { //
 						me.setColumnsForClass(attributes);
 						me.setGridSorting(attributes);
 						callCbOrLoadFirstPage(me);
-					} //
-				);
-
-			}
+					}
+				}
+			);
 		},
 
 		// protected

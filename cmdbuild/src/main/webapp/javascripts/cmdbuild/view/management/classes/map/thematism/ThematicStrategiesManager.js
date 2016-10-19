@@ -14,7 +14,7 @@
 		 */
 		strategies : {
 			valueData : {
-				description : "@@ value",
+				description : CMDBuild.Translation.value,
 
 				/**
 				 * @param {Object}
@@ -28,48 +28,6 @@
 						value = value.description;
 					}
 					return value;
-				}
-			},
-			strLenght : {
-				description : "@@ l. description",
-
-				/**
-				 * @param {Object}
-				 *            parameters
-				 * 
-				 * @returns {generic value}
-				 */
-				value : function(parameters, callback, callbackScope) {
-					var length = (parameters.card.Description) ? parameters.card.Description.length : 0;
-					return length;
-				}
-			},
-			strLenghtX2 : {
-				description : "@@ l. description X 2",
-
-				/**
-				 * @param {Object}
-				 *            parameters
-				 * 
-				 * @returns {generic value}
-				 */
-				value : function(parameters, callback, callbackScope) {
-					var length = (parameters.card.Description) ? parameters.card.Description.length : 0;
-					return length * 2;
-				}
-			},
-			strLenghtX3 : {
-				description : "@@ l. description X 3",
-
-				/**
-				 * @param {Object}
-				 *            parameters
-				 * 
-				 * @returns {generic value}
-				 */
-				value : function(parameters, callback, callbackScope) {
-					var length = (parameters.card.Description) ? parameters.card.Description.length : 0;
-					return length * 3;
 				}
 			}
 		},

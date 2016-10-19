@@ -5,10 +5,10 @@
 	 * CMMapController.
 	 */
 	Ext.define("CMDBuild.controller.management.classes.map.NavigationTreeDelegate", {
-		extend: "CMDBuild.view.management.classes.map.NavigationTreeDelegate",
+		extend : "CMDBuild.view.management.classes.map.NavigationTreeDelegate",
 		master : undefined,
 		interactionDocument : undefined,
-		constructor: function(master, interactionDocument) {
+		constructor : function(master, interactionDocument) {
 			this.interactionDocument = interactionDocument;
 			this.master = master;
 		},
@@ -21,8 +21,8 @@
 		// there aren't the info to show/hide the features.
 		// For this reason, act like an expand, loading the
 		// branch at all, and then show/hide the features.
-		onCardBrowserTreeCheckChange: function(tree, node, checked, deeply) {
-			if(! (checked || node.raw.checked))
+		onCardBrowserTreeCheckChange : function(tree, node, checked, deeply) {
+			if (!(checked || node.raw.checked))
 				return;
 			node.raw.checked = true;
 			if (deeply) {
@@ -32,17 +32,14 @@
 			}
 		},
 
-
-		onCardBrowserTreeCardSelected: function(cardBaseInfo) {
+		onCardBrowserTreeCardSelected : function(cardBaseInfo) {
 			if (cardBaseInfo.IdClass > 0) {
 				CMDBuild.global.controller.MainViewport.cmfg('mainViewportCardSelect', cardBaseInfo);
 			}
 		},
 
-
-		onCardBrowserTreeNodeAppend: function(cardBrowserTree, node) {
-			if (cardBrowserTree
-					&& node.getCMDBuildClassName() == cardBrowserTree.dataSource.GEOSERVER
+		onCardBrowserTreeNodeAppend : function(cardBrowserTree, node) {
+			if (cardBrowserTree && node.getCMDBuildClassName() == cardBrowserTree.dataSource.GEOSERVER
 					&& node.parentNode != null) {
 				// add a reference to the geoServer node to be
 				// able to check this node when check its parent
@@ -51,24 +48,30 @@
 			}
 		},
 
-		onCardBrowserTreeActivate: function(cardBrowserTree, activationCount) {},
-		onCardBrowserTreeItemExpand: function(tree, node) {},
+		onCardBrowserTreeActivate : function(cardBrowserTree, activationCount) {
+		},
+		onCardBrowserTreeItemExpand : function(tree, node) {
+		},
 
 		/**
-		 * @param {Object} card
-		 * @param {Number} card.Id
-		 * @param {Number} card.IdClass
+		 * @param {Object}
+		 *            card
+		 * @param {Number}
+		 *            card.Id
+		 * @param {Number}
+		 *            card.IdClass
 		 * 
 		 * @returns {Void}
 		 */
-		onCardNavigation: function(card) {
+		onCardNavigation : function(card) {
 			if (!card.id) {
 				card.id = card.Id;
 			}
 			CMDBuild.global.controller.MainViewport.cmfg('mainViewportCardSelect', card);
 		},
-		onCardZoom: function(card) {
-			this.interactionDocument.centerOnCard(card, function() {}, this);
+		onCardZoom : function(card) {
+			this.interactionDocument.centerOnCard(card, function() {
+			}, this);
 		}
 	});
 
@@ -84,20 +87,10 @@
 	}
 
 	function setCardFeaturesVisibility(tree, master, node, visibility) {
-		var className = node.getCMDBuildClassName();
-		var cardId = node.getCardId();
-		if (node.data.className != tree.dataSource.GEOSERVER) {
-		} else {
-		}
-//
-		if (node.cmGeoServerNode) {
-//			node.cmGeoServerNode.setChecked(visibility); // to sync the UI
-//			setGeoserverLayerVisibility(master, node.cmGeoServerNode, visibility);
-		}
 	}
 
 	function setChildrenFeaturesVisibility(tree, master, checked, children) {
-		for (var i=0, child=null; i<children.length; ++i) {
+		for (var i = 0, child = null; i < children.length; ++i) {
 			child = children[i];
 			child.setChecked(checked);
 			setFeatureVisibilityForAllBranch(tree, master, child, checked);

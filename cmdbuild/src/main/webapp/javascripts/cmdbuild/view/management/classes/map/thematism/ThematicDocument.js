@@ -1,4 +1,6 @@
 (function() {
+	var numbers = [ "INTEGER", "integer", "DECIMAL", "decimal", "double", "numeric" ];
+
 	Ext.define('CMDBuild.view.management.classes.map.thematism.ThematicDocument', {
 		thematisms4Classes : [],
 		thematisms : [],
@@ -44,7 +46,7 @@
 		 */
 		addThematism : function(thematism, bModify) {
 			var thematicLayer = Ext.create('CMDBuild.view.management.classes.map.thematism.ThematicLayer', thematism,
-					this.interactionDocument);
+					this.interactionDocument, this.thematicColors);
 			if (!(bModify === true)) {
 				this.thematismButton.add([ thematism.name ]);
 			}
@@ -66,9 +68,8 @@
 
 		/**
 		 * 
-		 * @returns
-		 * {CMDBuild.view.management.classes.map.thematism.ThematicStrategiesManager}
-		 * strategiesManager
+		 * @returns {CMDBuild.view.management.classes.map.thematism.ThematicStrategiesManager}
+		 *          strategiesManager
 		 * 
 		 */
 		getStrategiesManager : function() {
@@ -97,8 +98,8 @@
 			});
 			return layers;
 		},
-		getColor : function(value, colorsTable, index) {
-			return this.thematicColors.getColor(value, colorsTable, index);
+		getColor : function(value, colorsTable, analysisType, index) {
+			return this.thematicColors.getColor(value, colorsTable, analysisType, index);
 		},
 		getDefaultThematismConfiguration : function() {
 			return clone(defaultConfiguration);
@@ -164,8 +165,8 @@
 			return thematicLayers;
 		},
 
-		groupData : function(field, strategy, analysisType, sourceType, cardsArray, attributeName) {
-			return groupData(field, strategy, analysisType, sourceType, cardsArray, attributeName);
+		groupData : function(field, analysisType, sourceType, cardsArray, attributeName) {
+			return groupData(field, analysisType, sourceType, cardsArray, attributeName);
 		},
 
 		/**
@@ -306,40 +307,122 @@
 	function clone(obj) {
 		return JSON.parse(JSON.stringify(obj));
 	}
-	function groupData(field, strategy, analysisType, sourceType, cardsArray, attributeName) {
+	function groupData(field, analysisType, sourceType, cardsArray, attributeName) {
+		var groups = undefined;
+		var isNumerable = isANumber(field.type);
+		if (analysisType.type === CMDBuild.gis.constants.layers.RANGES_ANALYSIS && isNumerable) {
+			groups = groupRangesData(field, analysisType, sourceType, cardsArray, attributeName);
+		} else {
+			groups = groupSingleData(field, analysisType, sourceType, cardsArray, attributeName);
+		}
+		return groups;
+	}
+	function getMax(max, value) {
+		if (!max) {
+			return value;
+		}
+		if (isNaN(value)) {
+			return max;
+		}
+		return (max > value) ? max : value;
+	}
+	function getMin(min, value) {
+		if (!min) {
+			return value;
+		}
+		if (isNaN(value)) {
+			return min;
+		}
+		return (min < value) ? min : value;
+	}
+	function generateGroups(min, max, segments) {
+		var groups = [];
+		var range = (max - min) / segments;
+		for (var i = 0; i < segments; i++) {
+			groups.push({
+				range : min + i * range,
+				count : 0,
+				cards : []
+			});
+		}
+		return groups;
+	}
+	function groupRangesData(field, analysisType, sourceType, cardsArray, attributeName) {
+		var groups = [];
+		var max = Number.MIN_VALUE;
+		var min = Number.MAX_VALUE;
+		for (var i = 0; i < cardsArray.length; i++) {
+			var card = cardsArray[i];
+			valorizeCard(field, analysisType.strategy, sourceType, card, attributeName);
+			max = getMax(max, .0 + card.value);
+			min = getMin(min, .0 + card.value);
+		}
+		groups = generateGroups(min, max, analysisType.segments);
+		var range = (max - min) / analysisType.segments;
+		for (var i = 0; i < cardsArray.length; i++) {
+			var card = cardsArray[i];
+			disposeCardByCard(groups, card, range);
+		}
+		var keyGroups = {};
+		for (var i = 0; i < groups.length; i++) {
+			var suffix = (i < groups.length - 1) ? " " + CMDBuild.Translation.rangeTo + " "
+					+ parseInt(groups[i + 1].range) : "";
+			keyGroups[(i + 1) + ") " + parseInt(groups[i].range) + suffix] = {
+				count : groups[i].count,
+				cards : groups[i].cards
+			};
+		}
+		return keyGroups;
+	}
+	function groupSingleData(field, analysisType, sourceType, cardsArray, attributeName) {
 		var groups = {};
 		for (var i = 0; i < cardsArray.length; i++) {
 			var card = cardsArray[i];
-			valorizeCard(field, strategy, sourceType, groups, card, attributeName);
-			if (analysisType === CMDBuild.gis.constants.layers.RANGES_ANALYSIS) {
-			}
+			valorizeCard(field, analysisType.strategy, sourceType, card, attributeName);
 			chargeCardByCard(groups, card);
 		}
 		return groups;
 	}
-	function valorizeCard(field, strategy, sourceType, groups, card, attributeName) {
+	function valorizeCard(field, strategy, sourceType, card, attributeName) {
 		var params = {
 			card : card,
 			strategy : strategy,
-			attributeName : (attributeName) ? attributeName : field
+			attributeName : (attributeName) ? attributeName : field.value
 		}
 		value = strategy.value(params);
 		if (sourceType === CMDBuild.gis.constants.layers.FUNCTION_SOURCE) {
-			value = value[field];
+			value = value[field.value];
 		}
 		card.value = value;
 	}
 	function chargeCardByCard(groups, card) {
-			if (groups[card.value]) {
-				// can be different from cards count?
-				groups[card.value].count++;
-				groups[card.value].cards.push(card);
-			} else {
-				groups[card.value] = {
-					count : 1,
-					cards : [ card ]
-				};
+		if (groups[card.value]) {
+			// can be different from cards count?
+			groups[card.value].count++;
+			groups[card.value].cards.push(card);
+		} else {
+			groups[card.value] = {
+				count : 1,
+				cards : [ card ]
+			};
+		}
+	}
+	function disposeCardByCard(groups, card, range) {
+		for (var i = 0; i < groups.length; i++) {
+			var value = .0 + card.value;
+			if (i === groups.length - 1 && groups[i].range <= value) {
+				groups[i].count++;
+				groups[i].cards.push(card);
+			} else if (groups[i].range <= value && value < groups[i].range + range) {
+				groups[i].count++;
+				groups[i].cards.push(card);
+				break;
 			}
+		}
+	}
+	function isANumber(type) {
+		var ret = numbers.indexOf(type);
+		return ret != -1;
 	}
 
 })();

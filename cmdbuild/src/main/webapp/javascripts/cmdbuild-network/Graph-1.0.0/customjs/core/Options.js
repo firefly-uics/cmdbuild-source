@@ -46,4 +46,13 @@
 					callback.apply(callbackScope, [ graphConfiguration ]);
 				}, this);
 	};
+	$.Cmdbuild.g3d.Options.getFileFromServer = function(url, doneCallback) {
+		$.ajax({
+			url : url,
+			cache : false,
+			success : function(data) {
+				doneCallback(data);
+			}
+		});
+	};
 })(jQuery);

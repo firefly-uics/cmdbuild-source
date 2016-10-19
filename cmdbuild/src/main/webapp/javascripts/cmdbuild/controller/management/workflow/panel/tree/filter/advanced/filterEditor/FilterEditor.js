@@ -144,12 +144,28 @@
 		 * @returns {Void}
 		 */
 		onWorkflowTreeFilterAdvancedFilterEditorViewShow: function () {
-			this.setViewTitle([
-				this.cmfg('workflowTreeFilterAdvancedManagerSelectedFilterGet', CMDBuild.core.constants.Proxy.NAME),
-				this.cmfg('workflowSelectedWorkflowGet', CMDBuild.core.constants.Proxy.DESCRIPTION)
-			]);
+			var requestBarrier = Ext.create('CMDBuild.core.RequestBarrier', {
+				id: 'workflowTreeFilterAdvancedFilterEditorBarrier',
+				scope: this,
+				callback: function () {
+					this.setViewTitle([
+						this.cmfg('workflowTreeFilterAdvancedManagerSelectedFilterGet', CMDBuild.core.constants.Proxy.NAME),
+						this.cmfg('workflowSelectedWorkflowGet', CMDBuild.core.constants.Proxy.DESCRIPTION)
+					]);
 
-			this.manageActiveTabSet();
+					this.manageActiveTabSet();
+				}
+			});
+
+			this.controllerAttributes.cmfg('onWorkflowTreeFilterAdvancedFilterEditorAttributesInit', {
+				callback: requestBarrier.getCallback('workflowTreeFilterAdvancedFilterEditorBarrier')
+			});
+
+			this.controllerRelations.cmfg('onWorkflowTreeFilterAdvancedFilterEditorRelationsInit', {
+				callback: requestBarrier.getCallback('workflowTreeFilterAdvancedFilterEditorBarrier')
+			});
+
+			requestBarrier.finalize('workflowTreeFilterAdvancedFilterEditorBarrier', true);
 		}
 	});
 

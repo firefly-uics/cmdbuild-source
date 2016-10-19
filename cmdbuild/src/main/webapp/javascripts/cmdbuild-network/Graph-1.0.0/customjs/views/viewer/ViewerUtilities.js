@@ -46,9 +46,10 @@
 		},
 		webGlRender : function(container) {
 			var renderer = new THREE.WebGLRenderer({
-				antialias : false
+				antialias : false,
+				 preserveDrawingBuffer: true
 			});
-			renderer.setClearColor(0xf0f0f0);
+			renderer.setClearColor(0xffffff);
 			renderer.setPixelRatio(1.0);
 			renderer.setSize(container.clientWidth, container.clientHeight,
 					true);

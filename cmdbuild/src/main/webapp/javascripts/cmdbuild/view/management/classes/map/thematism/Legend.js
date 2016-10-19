@@ -35,6 +35,7 @@
 			this.createControls();
 			Ext.apply(this, {
 				items : [ this.grid ],
+				hidden: true,
 			});
 			this.callParent(arguments);
 		},
@@ -53,20 +54,20 @@
 					clicksToEdit : 1
 				}) ],
 				columns : [ {
-					text : "@@ Value",
+					text : CMDBuild.Translation.value,
 					dataIndex : "value",
 					flex : 1
 				}, {
 					text : "Cardinality",
 					dataIndex : "cardinality"
 				}, {
-					text : "@@ Color",
+					text : CMDBuild.Translation.thematicColor,
 					dataIndex : "color",
+					disabled: true,
 					renderer : function(value, metaData) {
-						metaData.style = "background-color:" + value + ";";
+						metaData.style = "background-color:" + value + ";font-size:" + 0;
 						return value;
-					},
-					editor : colorPicker
+					}
 				} ],
 				height : "100%",
 				width : "100%"

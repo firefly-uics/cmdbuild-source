@@ -321,9 +321,22 @@
 				 * @legacy
 				 *
 				 * FIXME: waiting for refactor (use cmfg)
+				 * FIXME: hack to temporary fix DataView bug
 				 */
-				masterGrid.applyFilterToStore({});
-				masterGrid.reload();
+				if (
+					Ext.isObject(CMDBuild.global.dataViewHack) && !Ext.Object.isEmpty(CMDBuild.global.dataViewHack)
+					&& Ext.isString(CMDBuild.global.dataViewHack.filter) && !Ext.isEmpty(CMDBuild.global.dataViewHack.filter)
+					&& CMDBuild.global.dataViewHack.entryType.get(CMDBuild.core.constants.Proxy.ID) == this.cmfg('panelGridAndFormFilterAdvancedEntryTypeGet', CMDBuild.core.constants.Proxy.ID)
+				) {
+					masterGrid.applyFilterToStore(Ext.decode(CMDBuild.global.dataViewHack.filter));
+					masterGrid.reload();
+				} else {
+					if (!Ext.isEmpty(CMDBuild.global.dataViewHack))
+						delete CMDBuild.global.dataViewHack;
+
+					masterGrid.applyFilterToStore({});
+					masterGrid.reload();
+				}
 			} else {
 				_error('onPanelGridAndFormFilterAdvancedClearButtonClick(): empty master grid', this, masterGrid);
 			}

@@ -58,6 +58,8 @@
 		 *
 		 * @returns {Array} out
 		 *
+		 * @deprecated
+		 *
 		 * FIXME: parseInt will be useless when model will be refactored
 		 * FIXME: to avoid to use cache just wrap this function in readAllClasses server call
 		 */
@@ -82,6 +84,8 @@
 		 * @param {String} className
 		 *
 		 * @returns {Object}
+		 *
+		 * @deprecated
 		 */
 		getEntryTypePrivilegesByName: function (className) {
 			return _CMUtils.getEntryTypePrivileges(

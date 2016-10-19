@@ -6,7 +6,7 @@
 		requires: [
 			'CMDBuild.core.constants.FieldWidths',
 			'CMDBuild.core.constants.Proxy',
-			'CMDBuild.proxy.classes.tabs.GeoAttributes'
+			'CMDBuild.proxy.administration.classes.tabs.GeoAttributes'
 		],
 
 		mixins: ['CMDBuild.view.common.PanelFunctions'],
@@ -124,7 +124,7 @@
 						forceSelection: true,
 						editable: false,
 
-						store: CMDBuild.proxy.classes.tabs.GeoAttributes.getStoreStrokeDashstyle(),
+						store: CMDBuild.proxy.administration.classes.tabs.GeoAttributes.getStoreStrokeDashstyle(),
 						queryMode: 'local'
 					}),
 					fieldExternalGraphic: Ext.create('CMDBuild.view.common.field.comboBox.Icon', {
@@ -135,7 +135,7 @@
 						valueField: CMDBuild.core.constants.Proxy.PATH,
 						displayField: CMDBuild.core.constants.Proxy.DESCRIPTION,
 
-						store: CMDBuild.proxy.classes.tabs.GeoAttributes.getStoreExternalGraphic(),
+						store: CMDBuild.proxy.administration.classes.tabs.GeoAttributes.getStoreExternalGraphic(),
 						queryMode: 'local'
 					}),
 					fieldRadiusPoint: Ext.create('Ext.form.field.Number', {
@@ -330,7 +330,7 @@
 								forceSelection: true,
 								editable: false,
 
-								store: CMDBuild.proxy.classes.tabs.GeoAttributes.getStoreType(),
+								store: CMDBuild.proxy.administration.classes.tabs.GeoAttributes.getStoreType(),
 								queryMode: 'local',
 
 								listeners: {

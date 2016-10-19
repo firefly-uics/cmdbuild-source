@@ -1,7 +1,7 @@
 (function () {
 
 	// External implementation to avoid overrides
-	Ext.require(['CMDBuild.core.constants.Proxy']);
+	Ext.require('CMDBuild.core.constants.Proxy');
 
 	/**
 	 * Class to be extended in widget controllers to adapt CMDBuild.controller.common.abstract.Base functionalities
@@ -24,12 +24,12 @@
 		parentDelegate: undefined,
 
 		/**
-		 * @property {Ext.data.Model or CMDBuild.model.CMActivityInstance}
+		 * @cfg {Ext.data.Model or CMDBuild.model.CMActivityInstance}
 		 */
 		card: undefined,
 
 		/**
-		 * @property {Ext.form.Basic}
+		 * @cfg {Ext.form.Basic}
 		 */
 		clientForm: undefined,
 
@@ -58,7 +58,7 @@
 		templateResolver: undefined,
 
 		/**
-		 * @property {Object}
+		 * @cfg {Object} // FIXME: future implementation (controllers will generate their own view)
 		 */
 		view: undefined,
 
@@ -121,9 +121,9 @@
 		/**
 		 * @param {Object} configurationObject
 		 * @param {CMDBuild.controller.management.common.CMWidgetManagerController} configurationObject.parentDelegate
-		 * @param {CMDBuild.model.CMActivityInstance} configurationObject.card
+		 * @param {Ext.data.Model or CMDBuild.model.CMActivityInstance} configurationObject.card
 		 * @param {Ext.form.Basic} configurationObject.clientForm
-		 * @param {Mixed} configurationObject.view
+		 * @param {Object} configurationObject.view
 		 * @param {Object} configurationObject.widgetConfiguration
 		 *
 		 * @returns {Void}
@@ -131,26 +131,32 @@
 		 * @override
 		 */
 		constructor: function (configurationObject) {
-			if (
-				!Ext.Object.isEmpty(configurationObject)
-				&& !Ext.isEmpty(configurationObject.view)
-				&& !Ext.Object.isEmpty(configurationObject.widgetConfiguration)
-			) {
-				// Add default managed functions
-				this.cmfgCatchedFunctions.push('getLabel');
+			// Error handling
+				if (!Ext.isObject(configurationObject) || Ext.Object.isEmpty(configurationObject))
+					return _error('constructor(): unmanaged configurationObject parameter', this, configurationObject);
 
-				this.callParent(arguments);
+				if (!Ext.isObject(configurationObject.view) || Ext.Object.isEmpty(configurationObject.view))
+					return _error('constructor(): unmanaged view parameter', this, configurationObject.view);
 
-				// Setup widget configuration
-				if (this.enableWidgetConfigurationSetup)
-					this.widgetConfigurationSet({ value: this.widgetConfiguration }); // Setup widget configuration model
+				if (!Ext.isObject(configurationObject.widgetConfiguration) || Ext.Object.isEmpty(configurationObject.widgetConfiguration))
+					return _error('constructor(): unmanaged configuration parameter', this, configurationObject.widgetConfiguration);
+			// END: Error handling
 
-				// Inject delegate to view
-				if (this.enableDelegateApply)
-					this.view.delegate = this;
-			} else {
-				_error('wrong configuration object or empty widget view', this, configurationObject);
-			}
+			// Add default managed functions
+			this.cmfgCatchedFunctions = Ext.Array.merge(this.cmfgCatchedFunctions, [
+				'getLabel',
+				'widgetConfigurationGet'
+			]);
+
+			this.callParent(arguments);
+
+			// Setup widget configuration
+			if (this.enableWidgetConfigurationSetup)
+				this.widgetConfigurationSet({ value: this.widgetConfiguration });
+
+			// Inject delegate to view
+			if (this.enableDelegateApply)
+				this.view.delegate = this;
 		},
 
 		/**
@@ -191,9 +197,13 @@
 		 */
 		getId: function (mode) {
 			switch (mode) {
-				// Generates a unique ID for widget related to card data. This mode is mainly used from InstancesDataStorage methods.
-				case 'unique':
-					return this.card.data[CMDBuild.core.constants.Proxy.ID] + '-' + this.widgetConfigurationGet(CMDBuild.core.constants.Proxy.ID);
+				// Generates a unique ID for widget related to card data, mode mainly used in InstancesDataStorage methods
+				case 'unique': {
+					if (!Ext.isEmpty(this.card.data[CMDBuild.core.constants.Proxy.ID]))
+						return this.card.data[CMDBuild.core.constants.Proxy.ID] + '-' + this.widgetConfigurationGet(CMDBuild.core.constants.Proxy.ID);
+
+					return this.widgetConfigurationGet(CMDBuild.core.constants.Proxy.ID);
+				}
 
 				// Original widget ID generated from server
 				case 'strict':
@@ -231,7 +241,7 @@
 			},
 
 			/**
-			 * @returns {Mixed} or null
+			 * @returns {Object or null}
 			 */
 			instancesDataStorageGet: function () {
 				if (!Ext.isEmpty(this.getId('unique')) && !Ext.isEmpty(this.instancesDataStorage[this.getId('unique')]))
@@ -256,7 +266,7 @@
 			 * @returns {Void}
 			 */
 			instancesDataStorageReset: function (mode) {
-				mode = !Ext.isEmpty(mode) && Ext.isString(mode) ? mode : 'full';
+				mode = Ext.isString(mode) ? mode : 'full';
 
 				switch (mode) {
 					case 'single':
@@ -269,7 +279,7 @@
 			},
 
 			/**
-			 * @param {Mixed} instanceData
+			 * @param {Object} instanceData
 			 *
 			 * @returns {Void}
 			 */
@@ -295,17 +305,18 @@
 		 * @returns {Void}
 		 */
 		onBeforeSave: function (parameters) {
-			if (
-				Ext.isObject(parameters) && !Ext.Object.isEmpty(parameters)
-				&& Ext.isFunction(parameters.callback)
-			) {
-				Ext.callback(
-					parameters.callback,
-					Ext.isEmpty(parameters.scope) ? this : parameters.scope
-				);
-			} else {
-				_error('[' + this.getLabel() + '] onBeforeSave invalid parameters', this, parameters);
-			}
+			// Error handling
+				if (!Ext.isObject(parameters) || Ext.Object.isEmpty(parameters))
+					return _error('onBeforeSave(): unmanaged parameters object', this, parameters);
+
+				if (!Ext.isFunction(parameters.callback))
+					return _error('onBeforeSave(): unmanaged callback parameter', this, parameters.callback);
+			// END: Error handling
+
+			Ext.callback(
+				parameters.callback,
+				Ext.isEmpty(parameters.scope) ? this : parameters.scope
+			);
 		},
 
 		/**
@@ -319,7 +330,7 @@
 			/**
 			 * @param {Array or String} attributePath
 			 *
-			 * @returns {Mixed}
+			 * @returns {Object or null}
 			 */
 			widgetConfigurationGet: function (attributePath) {
 				var parameters = {};
@@ -348,26 +359,28 @@
 			 * @param {Object} parameters.value
 			 * @param {String} parameters.propertyName
 			 *
-			 * @returns {Mixed}
+			 * @returns {Object or null}
 			 *
 			 * @abstract
 			 */
 			widgetConfigurationSet: function (parameters) {
-				if (Ext.isEmpty(this.widgetConfigurationModelClassName) || !Ext.isString(this.widgetConfigurationModelClassName))
-					return _error('widgetConfigurationModelClassName parameter not configured', this);
+				// Error handling
+					if (!Ext.isString(this.widgetConfigurationModelClassName) || Ext.isEmpty(this.widgetConfigurationModelClassName))
+						return _error('widgetConfigurationSet(): unmanaged widgetConfigurationModelClassName configuration property', this, this.widgetConfigurationModelClassName);
+				// END: Error handling
 
-				parameters[CMDBuild.core.constants.Proxy.TARGET_VARIABLE_NAME] = 'widgetConfigurationModel';
 				parameters[CMDBuild.core.constants.Proxy.MODEL_NAME] = this.widgetConfigurationModelClassName;
+				parameters[CMDBuild.core.constants.Proxy.TARGET_VARIABLE_NAME] = 'widgetConfigurationModel';
 				parameters[CMDBuild.core.constants.Proxy.VALUE] = Ext.clone(parameters[CMDBuild.core.constants.Proxy.VALUE]);
 
 				return this.propertyManageSet(parameters);
 			},
 
-		// WidgetCntroller methods
+		// WidgetController methods
 			/**
 			 * @param {String} propertyName
 			 *
-			 * @returns {Mixed}
+			 * @returns {Object or null}
 			 */
 			widgetControllerPropertyGet: function (propertyName) {
 				if (!Ext.isEmpty(this[propertyName]))

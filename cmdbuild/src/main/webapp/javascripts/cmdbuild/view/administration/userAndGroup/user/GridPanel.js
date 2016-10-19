@@ -37,7 +37,7 @@
 					},
 					Ext.create('Ext.ux.grid.column.Active', {
 						dataIndex: CMDBuild.core.constants.Proxy.IS_ACTIVE,
-						text: CMDBuild.Translation.active,
+						text: CMDBuild.Translation.enabled,
 						width: 60,
 						align: 'center',
 						sortable: false,

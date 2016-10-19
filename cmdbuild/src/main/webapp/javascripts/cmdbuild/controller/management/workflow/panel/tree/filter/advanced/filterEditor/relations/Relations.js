@@ -16,7 +16,7 @@
 		cmfgCatchedFunctions: [
 			'onWorkflowTreeFilterAdvancedFilterEditorRelationsCheckchange',
 			'onWorkflowTreeFilterAdvancedFilterEditorRelationsDomainSelect',
-			'onWorkflowTreeFilterAdvancedFilterEditorRelationsViewShow',
+			'onWorkflowTreeFilterAdvancedFilterEditorRelationsInit',
 			'workflowTreeFilterAdvancedFilterEditorRelationsDataGet',
 			'workflowTreeFilterAdvancedFilterEditorRelationsSelectedDomainGet',
 			'workflowTreeFilterAdvancedFilterEditorRelationsSelectedDomainIsEmpty',
@@ -132,15 +132,26 @@
 		},
 
 		/**
+		 * @param {Object} parameters
+		 * @param {Function} parameters.callback
+		 *
 		 * @returns {Void}
 		 */
-		onWorkflowTreeFilterAdvancedFilterEditorRelationsViewShow: function () {
-			if (!this.cmfg('workflowSelectedWorkflowIsEmpty')) {
-				this.workflowTreeFilterAdvancedFilterEditorRelationsSelectedDomainReset();
+		onWorkflowTreeFilterAdvancedFilterEditorRelationsInit: function (parameters) {
+			parameters = Ext.isObject(parameters) ? parameters : {};
 
-				this.controllerGridCard.getView().fireEvent('show');
-				this.controllerGridDomain.getView().fireEvent('show');
-			}
+			// Error handling
+				if (this.cmfg('workflowSelectedWorkflowIsEmpty'))
+					return _error('onWorkflowTreeFilterAdvancedFilterEditorRelationsInit(): empty selected entryType', this, this.cmfg('workflowSelectedWorkflowGet'));
+			// END: Error handling
+
+			this.workflowTreeFilterAdvancedFilterEditorRelationsSelectedDomainReset();
+
+			this.controllerGridCard.getView().fireEvent('show');
+			this.controllerGridDomain.getView().fireEvent('show');
+
+			if (!Ext.isEmpty(parameters.callback) && Ext.isFunction(parameters.callback))
+				Ext.callback(parameters.callback, this);
 		},
 
 		// SelectedDomain property methods

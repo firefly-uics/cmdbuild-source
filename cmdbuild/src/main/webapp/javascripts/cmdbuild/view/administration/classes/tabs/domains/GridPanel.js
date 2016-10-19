@@ -8,7 +8,7 @@
 
 		requires: [
 			'CMDBuild.core.constants.Proxy',
-			'CMDBuild.proxy.classes.tabs.Domains'
+			'CMDBuild.proxy.administration.classes.tabs.Domains'
 		],
 
 		/**
@@ -71,7 +71,7 @@
 						fixed: true
 					})
 				],
-				store: CMDBuild.proxy.classes.tabs.Domains.getStore()
+				store: CMDBuild.proxy.administration.classes.tabs.Domains.getStore()
 			});
 
 			this.callParent(arguments);

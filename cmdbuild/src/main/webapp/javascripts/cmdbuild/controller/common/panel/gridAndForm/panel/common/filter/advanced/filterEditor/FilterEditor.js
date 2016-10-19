@@ -146,12 +146,28 @@
 		 * @returns {Void}
 		 */
 		onPanelGridAndFormFilterAdvancedFilterEditorViewShow: function () {
-			this.setViewTitle([
-				this.cmfg('panelGridAndFormFilterAdvancedManagerSelectedFilterGet', CMDBuild.core.constants.Proxy.NAME),
-				this.cmfg('panelGridAndFormFilterAdvancedEntryTypeGet', CMDBuild.core.constants.Proxy.DESCRIPTION)
-			]);
+			var requestBarrier = Ext.create('CMDBuild.core.RequestBarrier', {
+				id: 'panelGridAndFormFilterAdvancedFilterEditorBarrier',
+				scope: this,
+				callback: function () {
+					this.setViewTitle([
+						this.cmfg('panelGridAndFormFilterAdvancedManagerSelectedFilterGet', CMDBuild.core.constants.Proxy.NAME),
+						this.cmfg('panelGridAndFormFilterAdvancedEntryTypeGet', CMDBuild.core.constants.Proxy.DESCRIPTION)
+					]);
 
-			this.manageActiveTabSet();
+					this.manageActiveTabSet();
+				}
+			});
+
+			this.controllerAttributes.cmfg('onPanelGridAndFormFilterAdvancedFilterEditorAttributesInit', {
+				callback: requestBarrier.getCallback('panelGridAndFormFilterAdvancedFilterEditorBarrier')
+			});
+
+			this.controllerRelations.cmfg('onPanelGridAndFormFilterAdvancedFilterEditorRelationsInit', {
+				callback: requestBarrier.getCallback('panelGridAndFormFilterAdvancedFilterEditorBarrier')
+			});
+
+			requestBarrier.finalize('panelGridAndFormFilterAdvancedFilterEditorBarrier', true);
 		}
 	});
 

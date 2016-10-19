@@ -21,6 +21,22 @@
 		 * 
 		 */
 		status : undefined,
+		visibleFeatures : [],
+		notVisibleFeatures : [],
+
+		/**
+		 * 
+		 * @property {Style}
+		 * @property {String} externalGraphic
+		 * @property {String} fillColor
+		 * @property {Number} fillOpacity
+		 * @property {Integer} pointRadius
+		 * @property {String} strokeColor
+		 * @property {Number} strokeOpacity
+		 * @property {Integer} strokeWidth
+		 * 
+		 */
+		style : undefined,
 
 		/**
 		 * @param {String}
@@ -41,10 +57,7 @@
 				projection : "EPSG:900913"
 			});
 
-			var styleFunction = function(feature) {
-				return me.getStyle(feature.getGeometry().getType());
-			};
-			this.createControls(map, vectorSource);
+			this.createControls(map, vectorSource, options);
 			var gisLayer = new ol.layer.Vector({
 				name : options.geoAttribute.name,
 				source : vectorSource,
@@ -52,8 +65,12 @@
 				geoAttribute : options.geoAttribute,
 				adapter : this
 			});
+			var styleFunction = function(feature) {
+				return me.getStyle(feature.getGeometry().getType());
+			};
 			gisLayer.setStyle(styleFunction);
-
+			this.interactionDocument.pushGisLayerAdapter(options.geoAttribute.name,
+					options.geoAttribute.masterTableName, this)
 			this.status = "Select";
 			this.interactionDocument.setCurrentFeature(options.geoAttribute.name, "", "Select");
 			this.interactionDocument.changedFeature();
@@ -64,51 +81,34 @@
 			var options = {
 				geoAttribute : geoAttribute,
 				targetClassName : geoAttribute.masterTableName,
-				iconUrl : geoAttribute.iconUrl
+				iconUrl : geoAttribute.style.externalGraphic
 			};
-			this.classBitmap = this.loadIcon(options.iconUrl);
+			this.style = geoAttribute.style;
 			this.interactionDocument = interactionDocument;
 			var map = this.interactionDocument.getMap();
+			this.classBitmap = (geoAttribute.iconSize && geoAttribute.iconSize[0] > 0) ? this.loadIcon(options.iconUrl,
+					geoAttribute.iconSize) : null;
 			this.layer = this.buildGisLayer(geoAttribute.name, options, map);
 			this.layer.set("name", geoAttribute.name);
 			this.interactionDocument.observeFeatures(this);
+			this.interactionDocument.observeNavigables(this);
 			this.callParent(arguments);
 		},
-		createControls : function(map, vectorSource) {
+		createControls : function(map, vectorSource, options) {
 			var me = this;
 			this.makeSelect();
 			this.modify = new ol.interaction.Modify({
 				features : this.select.getFeatures()
 			});
-			this.drawPoint = new ol.interaction.Draw({
-				source : vectorSource,
-				type : ('Point')
-			});
-			this.drawPolygon = new ol.interaction.Draw({
-				source : vectorSource,
-				type : ('Polygon')
-			});
-			this.drawLine = new ol.interaction.Draw({
-				source : vectorSource,
-				type : ('LineString')
-			});
-			this.drawPoint.on('drawend', function(event) {
-				me.newFeature(event.feature);
-			});
-			this.drawPolygon.on('drawend', function(event) {
-				me.newFeature(event.feature);
-			});
-			this.drawLine.on('drawend', function(event) {
-				me.newFeature(event.feature);
-			});
+			this.makeDrawPoint(map, vectorSource);
+			this.makeDrawPolygon(map, vectorSource);
+			this.makeDrawLine(map, vectorSource);
 			this.select.on('select', function(event) {
-				if (me.status !== "Select") {
-					return false;
-				}
+				me.interactionDocument.setNoZoom(true);
 				if (event.selected.length === 0) {
+					me.interactionDocument.changed();
 					return false;
 				}
-				me.clearSelections();
 				var selectedId = event.selected[0].get("master_card");
 				var currentId = (_CMCardModuleState.card) ? _CMCardModuleState.card.get("Id") : -1;
 				if (selectedId == currentId) {
@@ -122,14 +122,55 @@
 			});
 			map.addInteraction(this.select);
 			map.addInteraction(this.modify);
-			map.addInteraction(this.drawPoint);
-			map.addInteraction(this.drawLine);
-			map.addInteraction(this.drawPolygon);
-			this.drawPoint.setActive(false);
-			this.drawLine.setActive(false);
-			this.drawPolygon.setActive(false);
-			this.select.setActive(true);
+			var card = this.interactionDocument.getCurrentCard();
+			this.select.setActive(this.interactionDocument.sameClass(options.geoAttribute.masterTableName, card.className));
 			this.modify.setActive(false);
+		},
+		makeDrawLine : function(map, vectorSource) {
+			var me = this;
+			this.drawLine = new ol.interaction.Draw({
+				source : vectorSource,
+				type : ('LineString')
+			});
+			this.drawLine.on('drawend', function(event) {
+				me.newFeature(event.feature);
+				map.removeInteraction(me.drawLine);
+				me.makeDrawLine(map, me.getSource());
+			});
+			this.drawLine.setActive(false);
+			map.addInteraction(this.drawLine);
+
+		},
+		makeDrawPolygon : function(map, vectorSource) {
+			var me = this;
+			this.drawPolygon = new ol.interaction.Draw({
+				source : vectorSource,
+				type : ('Polygon')
+			});
+			this.drawPolygon.on('drawend', function(event) {
+				me.newFeature(event.feature);
+				map.removeInteraction(me.drawPolygon);
+				me.makeDrawPolygon(map, me.getSource());
+			});
+			this.drawPolygon.setActive(false);
+			map.addInteraction(this.drawPolygon);
+
+		},
+		makeDrawPoint : function(map, vectorSource) {
+			var me = this;
+			this.drawPoint = new ol.interaction.Draw({
+				source : vectorSource,
+				type : ('Point')
+			});
+			this.drawPoint.on('drawend', function(event) {
+				me.drawPoint.setActive(false);
+				me.newFeature(event.feature);
+				map.removeInteraction(me.drawPoint);
+				me.makeDrawPoint(map, me.getSource());
+			});
+			this.drawPoint.setActive(false);
+			map.addInteraction(this.drawPoint);
+
 		},
 
 		/**
@@ -186,7 +227,7 @@
 		},
 		onlyToAddFeatures : function(visibleFeatures) {
 			var features = [];
-			var layerFeatures = this.layer.getSource().getFeatures();
+			var layerFeatures = this.getSource().getFeatures();
 			for (var i = 0; i < visibleFeatures.length; i++) {
 				var visibleFeature = visibleFeatures[i];
 				if (!inLayerFeatures(visibleFeature, layerFeatures)) {
@@ -197,11 +238,11 @@
 
 		},
 		removeNotVisibleFeatures : function(visibleFeatures) {
-			var layerFeatures = this.layer.getSource().getFeatures();
+			var layerFeatures = this.getSource().getFeatures();
 			for (var i = 0; i < layerFeatures.length; i++) {
 				var layerFeature = layerFeatures[i];
 				if (!inVisibleFeatures(layerFeature, visibleFeatures)) {
-					this.layer.getSource().removeFeature(layerFeature);
+					this.getSource().removeFeature(layerFeature);
 				}
 			}
 		},
@@ -235,11 +276,12 @@
 			return vectorSource;
 		},
 
-		loadIcon : function(url) {
+		loadIcon : function(url, naturalSize) {
 			var icon = undefined;
 			try {
 				icon = new ol.style.Icon({
-					src : url
+					src : url,
+					scale : CMDBuild.gis.constants.layers.ICON_SCALE * this.style.pointRadius / naturalSize[0]
 				});
 
 			} catch (e) {
@@ -250,27 +292,37 @@
 
 		onlyVisibleFeatures : function(featuresOnLayer) {
 			var features = [];
+			this.visibleFeatues = [];
+			this.notVisibleFeatures = [];
 			var geoAttribute = this.layer.get("geoAttribute");
-			var bControlledByNavigation = this.interactionDocument
-					.isControlledByNavigation(geoAttribute.masterTableName);
+			var bControlledByNavigation = this.interactionDocument.isANavigableClass(geoAttribute.masterTableName);
 			for (var i = 0; i < featuresOnLayer.length; i++) {
 				var feature = featuresOnLayer[i];
 				feature.geometry.type = changeType(feature.geometry.type);
-				if (!bControlledByNavigation) {
+				if (!bControlledByNavigation || this.isAVisibleFeature(feature)) {
 					features.push(feature);
+					this.visibleFeatures.push(feature);
 
 				} else {
-					var card = {
-						className : feature.properties.master_className,
-						cardId : feature.properties.master_card,
-					};
-					if (this.interactionDocument.isANavigableCard(card)) {
-						features.push(feature);
-					}
-
+					this.notVisibleFeatures.push(feature);
 				}
 			}
 			return features;
+		},
+
+		isAVisibleFeature : function(feature) {
+			if (!(feature && feature.properties)) {
+				return false;
+			}
+			var card = {
+				className : feature.properties.master_className,
+				cardId : feature.properties.master_card,
+			};
+			if (this.interactionDocument.isANavigableCard(card)) {
+				return true;
+			} else {
+				return false;
+			}
 		},
 
 		/**
@@ -279,7 +331,14 @@
 		 * 
 		 */
 		refresh : function() {
-//			this.getSource().clear();
+		},
+		/**
+		 * 
+		 * @returns {Void}
+		 * 
+		 */
+		refreshNavigables : function() {
+			this.layer.getSource().clear();
 		},
 
 		/**
@@ -292,11 +351,14 @@
 			var map = this.interactionDocument.getMap();
 			var feature = this.interactionDocument.getCurrentFeature();
 			var geoType = feature.geoType;
-			this.drawPoint.setActive(status === "Draw" && geoType === "POINT");
+			var geoAttribute = this.layer.get("geoAttribute");
+			var currentCard = this.interactionDocument.getCurrentCard();
+			this.drawPoint.setActive(status === "Draw" && geoType === "POINT"
+					&& this.interactionDocument.sameClass(geoAttribute.masterTableName, currentCard.className));
 			this.drawPolygon.setActive(status === "Draw" && geoType === "POLYGON");
 			this.drawLine.setActive(status === "Draw" && geoType === "LINESTRING");
-			this.select.setActive(status === "Select");
-			this.modify.setActive(status === "Modify" && feature);
+			this.select.setActive(status === "Select" && this.interactionDocument.sameClass(geoAttribute.masterTableName, currentCard.className));
+			this.modify.setActive(status === "Modify");
 			this.status = status;
 		},
 
@@ -309,21 +371,21 @@
 			var feature = this.interactionDocument.getCurrentFeature();
 			var nameLayer = this.getLayer().get("name");
 			var nameAttribute = feature.nameAttribute;
-			if (nameAttribute && nameAttribute !== nameLayer) {
+			if (feature.operation === "Draw" && nameAttribute && nameAttribute !== nameLayer) {
 				this.setStatus("None");
-				this.clearSelections();
 				return;
 			}
 			switch (feature.operation) {
 			case "Modify":
 				var card = this.interactionDocument.getCurrentCard();
-				var selected = this.selectFeaturesByCardId(card);
-				if (selected.length > 0) {
-					this.setStatus("Modify")
-					break;
+				if (card.cardId !== -1) {
+					var selected = this.selectFeaturesByCardId(card);
+					if (selected.length > 0) {
+						this.setStatus("Modify")
 
+					}
 				}
-				// no break because enters in Draw if and only if is new
+				break;
 			case "Draw":
 				this.setStatus("Draw")
 				break;
@@ -346,11 +408,18 @@
 			feature.set("master_className", currentCard.className);
 			var cl = _CMCache.getEntryTypeByName(currentCard.className);
 			feature.set("master_class", cl.get("id"));
-			this.getSource().addFeature(feature);
-			this.interactionDocument.setCurrentFeature(this.layer.get("name"), "", "Modify");
-			this.interactionDocument.changedFeature();
+			this.clearSelections();
+			this.select.setActive(false);
 		},
-
+		closeAllEditings : function() {
+			this.clearAllFeatures();
+			this.clearSelections();
+			this.drawPoint.setActive(false);
+			this.drawPolygon.setActive(false);
+			this.drawLine.setActive(false);
+			this.modify.setActive(false);
+			this.select.setActive(false);
+		},
 		removeById : function(id) {
 
 		},
@@ -363,28 +432,111 @@
 			features.forEach(function(feature) {
 				newFeatures.push(feature);
 			});
+			var toRemove = [];
 			features.forEach(function(feature) {
-				features.remove(feature);
+				toRemove.push(feature);
 			});
+			var source = this.getSource();
+			features = source.getFeatures();
+			for (var i = 0; i < toRemove.length; i++) {
+				source.removeFeature(toRemove[i]);
+			}
 			for (var i = 0; i < newFeatures.length; i++) {
 				newFeatures[i].set("master_card", newId);
 				features.push(newFeatures[i]);
 			}
-			this.interactionDocument.forceRefreshThematism();
+			this.interactionDocument.changed();
 			this.setStatus("Select");
 		},
-		makeSelect : function() {
-			var me = this;
-			this.select = new ol.interaction.Select({
-				filter : function(feature, layer) {
-					if (!layer) {
-						return false;
-					}
-					return (me.status === "Select");
-				},
-				wrapX : false
-			});
+		inFilterSelect : function(feature, layer) {
+			if ( this.interactionDocument.getEditing()) {
+				return false;
+			}
+			if (!layer) {
+				return false;
+			}
+			if (this.status !== "Select") {
+				return false;
+			}
+			var geoAttribute = layer.get("geoAttribute");
+			if (!geoAttribute) {
+				return false;
+			}
+			var currentCard = this.interactionDocument.getCurrentCard();
+			var layerClassName = geoAttribute.masterTableName;
+			var featureClassName = feature.get("master_className");
+			return this.interactionDocument.sameClass(currentCard.className, featureClassName);
 
+		},
+		makePointSelect : function(feature, layer) {
+			var selectPoints = new ol.style.Style({
+				image : new ol.style.Circle({
+					fill : new ol.style.Fill({
+						color : 'orange'
+					}),
+					stroke : new ol.style.Stroke({
+						color : 'yellow'
+					}),
+					radius : CMDBuild.gis.constants.layers.DEFAULT_RADIUS
+				})
+			});
+			var me = this;
+			return new ol.interaction.Select({
+				filter : function(feature, layer) {
+					return me.inFilterSelect(feature, layer);
+				},
+				style : [ this.getStyle("Point"), selectPoints ],
+				wrapX : false
+			})
+		},
+		makeLineSelect : function(feature, layer) {
+			var me = this;
+			var styleLine = new ol.style.Style({
+				stroke : new ol.style.Stroke({
+					width : this.style.strokeWidth,
+					color : 'rgba(255, 100, 0, .5)'
+				})
+			});
+			return new ol.interaction.Select({
+				filter : function(feature, layer) {
+					return me.inFilterSelect(feature, layer);
+				},
+				wrapX : false,
+				style : styleLine
+			})
+		},
+		makePolygonSelect : function(feature, layer) {
+			var me = this;
+			var stylePoligon = new ol.style.Style({
+				stroke : new ol.style.Stroke({
+					color : 'yellow'
+				}),
+				fill : new ol.style.Fill({
+					color : 'rgba(255, 100, 0, .5)'
+				}),
+			});
+			return new ol.interaction.Select({
+				filter : function(feature, layer) {
+					return me.inFilterSelect(feature, layer);
+				},
+				wrapX : false,
+				style : stylePoligon
+			})
+		},
+		makeSelect : function() {
+
+			var me = this;
+			switch (this.attributeType) {
+			case "POINT":
+				this.select = this.makePointSelect();
+				break;
+			case "POLYGON":
+				this.select = this.makePolygonSelect();
+				break;
+			case "LINESTRING":
+				this.select = this.makeLineSelect();
+				break;
+			}
 		},
 		selectFeaturesByCardId : function(card) {
 			var retFeatures = [];
@@ -412,21 +564,24 @@
 		getGeometries : function(cardId, className) {
 			var featuresOnLayer = this.getFeaturesByCardId(cardId);
 			var translation = undefined;
-			featuresOnLayer.forEach(function(feature) { // first found is good
-				// <<<----NB!!
+			featuresOnLayer.forEach(function(feature) {
 				var geojson = new ol.format.GeoJSON();
 				var json = geojson.writeFeature(feature);
 				translation = translate2CMDBuild(feature);
 			});
 			return translation;
 		},
-		clearSelections : function() {
-			var features = this.select.getFeatures();
+		clearFeatures : function(features) {
 			if (features) {
 				features.forEach(function(feature) {
 					features.remove(feature);
 				});
 			}
+		},
+		clearSelections : function() {
+			var features = this.select.getFeatures();
+			features.clear();
+			this.clearFeatures(features);
 		},
 		clearAllFeatures : function() {
 			this.clearSelections();
@@ -436,57 +591,67 @@
 			this.selectFeaturesByCardId(card);
 		},
 		getStyle : function(shape) {
+			var fillColor = ol.color.asArray(this.style.fillColor);
+			if (fillColor) { // can be a line
+				fillColor = fillColor.slice();
+				fillColor[3] = this.style.fillOpacity; // change the alpha
+
+			}
+			var strokeColor = ol.color.asArray(this.style.strokeColor);
+			strokeColor = strokeColor.slice();
+			strokeColor[3] = this.style.strokeOpacity;
 			switch (shape) {
 			case 'Point':
 				if (!this.classBitmap) {
 					return new ol.style.Style({
 						image : new ol.style.Circle({
 							fill : new ol.style.Fill({
-								color : '#FFCC00'
+								color : fillColor
 							}),
 							stroke : new ol.style.Stroke({
-								width : 2,
-								color : '#FF9966'
+								width : this.style.strokeWidth,
+								color : strokeColor
 							}),
-							radius : 7
+							radius : this.style.pointRadius
 
 						})
-					})
+					});
 				} else {
 					return new ol.style.Style({
 						image : this.classBitmap
 					});
-
 				}
 			case 'LineString':
 				return new ol.style.Style({
 					stroke : new ol.style.Stroke({
-						color : 'green',
-						width : 1
+						color : strokeColor,
+						width : this.style.strokeWidth
 					})
 				});
 			case 'Polygon':
 				return new ol.style.Style({
 					stroke : new ol.style.Stroke({
-						color : 'blue',
-						width : 3
+						color : strokeColor,
+						width : this.style.strokeWidth,
+						lineDash : undefined
 					}),
 					fill : new ol.style.Fill({
-						color : 'rgba(0, 0, 255, 0.1)'
-					})
+						color : fillColor,
+					}),
 				});
 			case 'Circle':
 			default:
 				return new ol.style.Style({
 					stroke : new ol.style.Stroke({
-						color : 'red',
-						width : 2
+						color : strokeColor,
+						width : this.style.strokeWidth
 					}),
 					fill : new ol.style.Fill({
-						color : 'rgba(255,0,0,0.2)'
+						color : fillColor
 					})
 				});
 			}
+			;
 		}
 	});
 	function clearVectorSource(vectorSource) {
@@ -550,7 +715,7 @@
 		for (var i = 0; i < featuresArray.length; i++) {
 			var className = featuresArray[i].get("master_className");
 			var cardId = featuresArray[i].get("master_card");
-			if (className === feature.get("master_className") && cardId === feature.get("master_card")) {
+			if (this.interactionDocument.sameClass(className, feature.get("master_className")) && cardId === feature.get("master_card")) {
 				return i;
 			}
 		}
@@ -571,10 +736,12 @@
 	}
 	function inVisibleFeatures(feature, features) {
 		for (var i = 0; i < features.length; i++) {
-			if (feature.get("master_card") === features[i].properties.master_card) {
+			var id = feature.get("master_card");
+			if (id === features[i].properties.master_card) {
 				return true;
 			}
 		}
 		return false;
 	}
+
 })();

@@ -126,22 +126,22 @@
 		getAnalysisDescription : function(analysisType) {
 			switch (analysisType) {
 			case CMDBuild.gis.constants.layers.RANGES_ANALYSIS:
-				return "@@ Ranges";
+				return CMDBuild.Translation.thematismRanges;
 			case CMDBuild.gis.constants.layers.PUNTUAL_ANALYSIS:
-				return "@@ Puntual";
+				return CMDBuild.Translation.thematismPuntual;
 			case CMDBuild.gis.constants.layers.DENSITY_ANALYSIS:
-				return "@@ Density";
+				return CMDBuild.Translation.thematismDensity;
 			}
-			return "@@ Puntual";
+			return CMDBuild.Translation.thematismPuntual;
 		},
 		getSourceDescription : function(sourceType) {
 			switch (sourceType) {
 			case CMDBuild.gis.constants.layers.TABLE_SOURCE:
-				return "@@ Table";
+				return CMDBuild.Translation.thematicTable;
 			case CMDBuild.gis.constants.layers.FUNCTION_SOURCE:
-				return "@@ Function";
+				return CMDBuild.Translation.thematicFunction;
 			}
-			return "@@ Table";
+			return CMDBuild.Translation.thematicTable;
 		},
 		getCurrentLayerType : function() {
 			var layer = this.interactionDocument.getGeoLayerByName(this.getCurrentLayer());
@@ -158,7 +158,10 @@
 			this.hide();
 		},
 		advanceConfigurationLayouts : function() {
+			CMDBuild.core.LoadMask.show();
+
 			this.configureLayout.loadComponents(function() {
+				CMDBuild.core.LoadMask.hide();
 				this.wizard.getLayout().setActiveItem("configureLayout");
 
 			}, this);

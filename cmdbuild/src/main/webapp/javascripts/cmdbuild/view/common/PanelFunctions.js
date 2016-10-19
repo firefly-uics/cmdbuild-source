@@ -151,7 +151,7 @@
 						&& Ext.isFunction(button.setDisabled)
 						&& !button.disablePanelFunctions
 					) {
-						button.setDisabled(Ext.isBoolean(button.forceDisabledState) ? button.forceDisabledState : state);
+						button.setDisabled(Ext.isBoolean(button.forceDisabledState) && button.forceDisabledState ? true : state);
 					}
 				}, this);
 		},
@@ -276,7 +276,7 @@
 						&& Ext.isFunction(button.setDisabled)
 						&& !button.disablePanelFunctions
 					) {
-						button.setDisabled(Ext.isBoolean(button.forceDisabledState) ? button.forceDisabledState : state);
+						button.setDisabled(Ext.isBoolean(button.forceDisabledState) && button.forceDisabledState ? true : state);
 					}
 				}, this);
 		}

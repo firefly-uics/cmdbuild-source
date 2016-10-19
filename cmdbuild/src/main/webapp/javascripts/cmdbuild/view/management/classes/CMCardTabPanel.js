@@ -41,7 +41,7 @@
 
 			this.cardNotesPanel = CMDBuild.configuration.userInterface.isDisabledCardTab(CMDBuild.core.constants.Proxy.CLASS_NOTE_TAB) ? null
 				: new CMDBuild.view.management.classes.CMCardNotesPanel({
-					title: tr.tabs.notes,
+					title: CMDBuild.Translation.notes,
 					disabled: true,
 
 					listeners: {
