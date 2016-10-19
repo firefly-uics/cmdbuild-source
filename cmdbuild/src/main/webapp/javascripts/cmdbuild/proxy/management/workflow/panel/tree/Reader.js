@@ -28,7 +28,7 @@
 				activityNewObject[CMDBuild.core.constants.Proxy.VALUES] = parentObject[CMDBuild.core.constants.Proxy.VALUES];
 
 				// Activity attributes
-				activityNewObject[CMDBuild.core.constants.Proxy.ACTIVITY_DESCRIPTION] = this.buildNodeActivityDescription(activityObject, parentObject);
+				activityNewObject[CMDBuild.core.constants.Proxy.ACTIVITY_DESCRIPTION] = activityObject[CMDBuild.core.constants.Proxy.DESCRIPTION];
 				activityNewObject[CMDBuild.core.constants.Proxy.ACTIVITY_ID] = activityObject[CMDBuild.core.constants.Proxy.ID];
 				activityNewObject[CMDBuild.core.constants.Proxy.ACTIVITY_METADATA] = activityObject[CMDBuild.core.constants.Proxy.METADATA];
 				activityNewObject[CMDBuild.core.constants.Proxy.ACTIVITY_PERFORMER_NAME] = activityObject[CMDBuild.core.constants.Proxy.PERFORMER_NAME];
@@ -40,73 +40,6 @@
 
 				return activityNewObject;
 			}
-		},
-
-		/**
-		 * Build Activity node description (manages AdditionalActivityLabel metadata value)
-		 *
-		 * @param {Object} activityObject
-		 * @param {Object} parentObject
-		 *
-		 * @returns {String} description
-		 *
-		 * @private
-		 */
-		buildNodeActivityDescription: function (activityObject, parentObject) {
-			var description = '<b>' + activityObject[CMDBuild.core.constants.Proxy.PERFORMER_NAME] + ':</b> ' + activityObject[CMDBuild.core.constants.Proxy.DESCRIPTION];
-
-			if (
-				Ext.isObject(parentObject) && !Ext.Object.isEmpty(parentObject)
-				&& Ext.isObject(activityObject) && !Ext.Object.isEmpty(activityObject)
-			) {
-				var activityMetadata = activityObject[CMDBuild.core.constants.Proxy.METADATA],
-					values = parentObject[CMDBuild.core.constants.Proxy.VALUES];
-
-				if (
-					Ext.isArray(activityMetadata) && !Ext.isEmpty(activityMetadata)
-					&& Ext.isObject(values) && !Ext.Object.isEmpty(values)
-				) {
-					Ext.Array.forEach(activityMetadata, function (metadataObject, i, allMetadataObjects) {
-						if (Ext.isObject(metadataObject) && !Ext.Object.isEmpty(metadataObject))
-							switch (metadataObject[CMDBuild.core.constants.Proxy.NAME]) {
-								case CMDBuild.core.constants.Metadata.getAdditionalActivityLabel(): {
-									if (!Ext.isEmpty(values[metadataObject[CMDBuild.core.constants.Proxy.VALUE]]))
-										description += this.manageMetadataAditionalActivityLabel(values[metadataObject[CMDBuild.core.constants.Proxy.VALUE]]);
-								} break;
-							}
-					}, this);
-				}
-
-				return description;
-			}
-
-			return '';
-		},
-
-		/**
-		 * @param {Object or String} additionalLabelValue
-		 *
-		 * @returns {String}
-		 *
-		 * @private
-		 */
-		manageMetadataAditionalActivityLabel: function (additionalLabelValue) {
-			switch (Ext.typeOf(additionalLabelValue)) {
-				case 'object':
-					if (!Ext.Object.isEmpty(additionalLabelValue))
-						if (Ext.isString(additionalLabelValue[CMDBuild.core.constants.Proxy.DESCRIPTION]) && !Ext.isEmpty(additionalLabelValue[CMDBuild.core.constants.Proxy.DESCRIPTION])) {
-							return ' - ' + additionalLabelValue[CMDBuild.core.constants.Proxy.DESCRIPTION];
-						} else if (Ext.isNumber(additionalLabelValue[CMDBuild.core.constants.Proxy.ID]) && !Ext.isEmpty(additionalLabelValue[CMDBuild.core.constants.Proxy.ID])) {
-							return ' - ' + additionalLabelValue[CMDBuild.core.constants.Proxy.ID];
-						}
-
-				case 'string':
-				default:
-					if (!Ext.isEmpty(additionalLabelValue))
-						return ' - ' + additionalLabelValue;
-			}
-
-			return '';
 		},
 
 		/**

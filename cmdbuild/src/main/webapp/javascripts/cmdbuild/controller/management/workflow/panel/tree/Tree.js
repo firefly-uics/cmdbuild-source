@@ -8,6 +8,7 @@
 			'CMDBuild.core.constants.Metadata',
 			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.constants.WorkflowStates',
+			'CMDBuild.core.interfaces.service.LoadMask',
 			'CMDBuild.core.Message',
 			'CMDBuild.core.Utils',
 			'CMDBuild.proxy.management.workflow.panel.tree.Tree'
@@ -32,6 +33,7 @@
 			'getView = workflowTreeViewGet',
 			'onWorkflowTreeAbortButtonClick',
 			'onWorkflowTreeAddButtonClick',
+			'onWorkflowTreeBeforeItemClick',
 			'onWorkflowTreeColumnChanged',
 			'onWorkflowTreePrintButtonClick',
 			'onWorkflowTreeRecordSelect',
@@ -256,6 +258,22 @@
 		},
 
 		/**
+		 * Auto-select expanded node
+		 *
+		 * @param {CMDBuild.model.management.workflow.Node} record
+		 *
+		 * @returns {Boolean}
+		 */
+		onWorkflowTreeBeforeItemClick: function (record) {
+			// Error handling
+				if (!Ext.isObject(record) || Ext.Object.isEmpty(record))
+					return _error('onWorkflowTreeBeforeItemClick(): unmanaged record parameter', this, record);
+			// END: Error handling
+
+			this.view.getSelectionModel().select(record);
+		},
+
+		/**
 		 * @returns {Void}
 		 */
 		onWorkflowTreeColumnChanged: function () {
@@ -270,7 +288,7 @@
 		onWorkflowTreePrintButtonClick: function (format) {
 			// Error handling
 				if (!Ext.isString(format) || Ext.isEmpty(format))
-					return _error('onWorkflowTreePrintButtonClick(): unmanaged format property', this, format);
+					return _error('onWorkflowTreePrintButtonClick(): unmanaged format parameter', this, format);
 			// END: Error handling
 
 			var sorters = this.cmfg('workflowTreeStoreGet').getSorters();
@@ -290,8 +308,6 @@
 		},
 
 		/**
-		 * Evaluates if is selected an activity or instance
-		 *
 		 * @param {CMDBuild.model.management.workflow.Node} record
 		 *
 		 * @returns {Void}
@@ -306,6 +322,9 @@
 				cardId = record.get(CMDBuild.core.constants.Proxy.CARD_ID),
 				classId = record.get(CMDBuild.core.constants.Proxy.CLASS_ID);
 
+			CMDBuild.core.interfaces.service.LoadMask.manage(true, true); // Manually manage LoadMask (show)
+
+			// Evaluates if is selected an activity or instance
 			if (
 				Ext.isString(activityId) && !Ext.isEmpty(activityId)
 				&& Ext.isNumber(cardId) && !Ext.isEmpty(cardId)
@@ -313,16 +332,27 @@
 			) { // Activity or instance with only one activity selected
 				return this.cmfg('onWorkflowInstanceSelect', {
 					record: record,
+					loadMask: false,
 					scope: this,
 					callback: function () {
-						this.cmfg('onWorkflowActivitySelect', { record: record });
+						this.cmfg('onWorkflowActivitySelect', {
+							record: record,
+							loadMask: false,
+							scope: this,
+							callback: Ext.bind(this.recordSelectionCallback, this, [record])
+						});
 					}
 				});
 			} else if ( // Instance node selected
 				Ext.isNumber(cardId) && !Ext.isEmpty(cardId)
 				&& Ext.isNumber(classId) && !Ext.isEmpty(classId)
 			) {
-				return this.cmfg('onWorkflowInstanceSelect', { record: record });
+				return this.cmfg('onWorkflowInstanceSelect', {
+					record: record,
+					loadMask: false,
+					scope: this,
+					callback: Ext.bind(this.recordSelectionCallback, this, [record])
+				});
 			}
 
 			return _error('onWorkflowTreeRecordSelect(): not correctly filled record model', this, record);
@@ -531,6 +561,30 @@
 			});
 		},
 
+		/**
+		 * @param {CMDBuild.model.management.workflow.Node} record
+		 *
+		 * @returns {Void}
+		 *
+		 * @private
+		 */
+		recordSelectionCallback: function (record) {
+			// Error handling
+				if (!Ext.isObject(record) || Ext.Object.isEmpty(record))
+					return _error('recordSelectionCallback(): unmanaged record parameter', this, record);
+			// END: Error handling
+
+			CMDBuild.core.interfaces.service.LoadMask.manage(true, false); // Manually manage LoadMask (hide)
+
+			var instanceValues = this.cmfg('workflowSelectedInstanceGet', CMDBuild.core.constants.Proxy.VALUES);
+
+			// Complete record and children models with additional values (to correctly manage AdditionalActivityLabel metadata also if relative column is not displayed)
+			record.set(CMDBuild.core.constants.Proxy.VALUES, instanceValues);
+			record.eachChild(function (childNode) {
+				childNode.set(CMDBuild.core.constants.Proxy.VALUES, instanceValues);
+			}, this);
+		},
+
 		// Tree selection methods
 			/**
 			 * Select activity by metadata
@@ -546,7 +600,7 @@
 					Ext.isString(medataValue) && !Ext.isEmpty(medataValue)
 					&& !this.view.getSelectionModel().hasSelection()
 				) {
-					var nodeToSelect = this.view.getStore().getRootNode().findChildBy(function (node) {
+					var nodeToSelect = this.cmfg('workflowTreeStoreGet').getRootNode().findChildBy(function (node) {
 						var nodeMetadata = node.get(CMDBuild.core.constants.Proxy.ACTIVITY_METADATA);
 						var activitySubsetIdObject = Ext.Array.findBy(nodeMetadata, function (metadata, i, allMetadata) {
 							return metadata[CMDBuild.core.constants.Proxy.NAME] == CMDBuild.core.constants.Metadata.getActivitySubsetId();
@@ -853,7 +907,7 @@
 					return _error('workflowTreeApplyStoreEvent(): unmanaged fn parameter', this, parameters.fn);
 			// END: Error handling
 
-			this.view.getStore().on(
+			this.cmfg('workflowTreeStoreGet').on(
 				parameters.eventName,
 				parameters.fn,
 				Ext.isObject(parameters.scope) ? parameters.scope : this,
@@ -869,8 +923,8 @@
 		workflowTreeBuildColumns: function () {
 			var columnsDefinition = [
 				Ext.create('CMDBuild.view.management.workflow.panel.tree.TreeColumn', {
-					scope: this,
-					dataIndex: CMDBuild.core.constants.Proxy.ACTIVITY_DESCRIPTION
+					dataIndex: CMDBuild.core.constants.Proxy.ACTIVITY_DESCRIPTION,
+					scope: this
 				})
 			];
 
@@ -1071,23 +1125,75 @@
 			},
 
 		/**
-		 * Apply colspan property to be visually equal to old grid
-		 *
 		 * @param {Object} parameters
 		 * @param {Object} parameters.metadata
 		 * @param {CMDBuild.model.management.workflow.Node} parameters.record
+		 * @param {String} parameters.value
 		 *
-		 * @returns {Void}
+		 * @returns {String}
 		 */
 		workflowTreeRendererTreeColumn: function (parameters) {
+			parameters = Ext.isObject(parameters) ? parameters : {};
+
+			var metadata = parameters.metadata,
+				record = parameters.record;
+
 			if (
-				Ext.isObject(parameters) && !Ext.Object.isEmpty(parameters)
-				&& Ext.isObject(parameters.metadata) && !Ext.Object.isEmpty(parameters.metadata)
-				&& Ext.isObject(parameters.record) && !Ext.Object.isEmpty(parameters.record)
-				&& !parameters.record.parentNode.isRoot()
+				Ext.isObject(metadata) && !Ext.Object.isEmpty(metadata)
+				&& Ext.isObject(record) && !Ext.Object.isEmpty(record)
+				&& !record.parentNode.isRoot()
 			) {
-				parameters.metadata.tdAttr = 'colspan="' + this.view.columns.length + '"' ;
+				// Apply colspan property to be visually equal to old grid
+				metadata.tdAttr = 'colspan="' + this.view.columns.length + '"' ;
+
+				// Build activities node description
+				var activityMetadata = record.get(CMDBuild.core.constants.Proxy.ACTIVITY_METADATA),
+					description = '<b>'+ record.get(CMDBuild.core.constants.Proxy.ACTIVITY_PERFORMER_NAME) + ':</b> '
+						+ record.get(CMDBuild.core.constants.Proxy.ACTIVITY_DESCRIPTION);
+
+				if (Ext.isArray(activityMetadata) && !Ext.isEmpty(activityMetadata))
+					Ext.Array.forEach(activityMetadata, function (metadataObject, i, allMetadataObjects) {
+						if (Ext.isObject(metadataObject) && !Ext.Object.isEmpty(metadataObject))
+							switch (metadataObject[CMDBuild.core.constants.Proxy.NAME]) {
+								case CMDBuild.core.constants.Metadata.getAdditionalActivityLabel(): {
+									if (!Ext.isEmpty(record.get(metadataObject[CMDBuild.core.constants.Proxy.VALUE])))
+										description += this.workflowTreeRendererTreeColumnManageMetadataAdditionalActivityLabel(
+											record.get(metadataObject[CMDBuild.core.constants.Proxy.VALUE])
+										);
+								} break;
+							}
+					}, this);
+
+				return description;
 			}
+
+			return parameters.value;
+		},
+
+		/**
+		 * @param {Object or String} additionalLabelValue
+		 *
+		 * @returns {String}
+		 *
+		 * @private
+		 */
+		workflowTreeRendererTreeColumnManageMetadataAdditionalActivityLabel: function (additionalLabelValue) {
+			switch (Ext.typeOf(additionalLabelValue)) {
+				case 'object':
+					if (!Ext.Object.isEmpty(additionalLabelValue))
+						if (Ext.isString(additionalLabelValue[CMDBuild.core.constants.Proxy.DESCRIPTION]) && !Ext.isEmpty(additionalLabelValue[CMDBuild.core.constants.Proxy.DESCRIPTION])) {
+							return ' - ' + additionalLabelValue[CMDBuild.core.constants.Proxy.DESCRIPTION];
+						} else if (Ext.isNumber(additionalLabelValue[CMDBuild.core.constants.Proxy.ID]) && !Ext.isEmpty(additionalLabelValue[CMDBuild.core.constants.Proxy.ID])) {
+							return ' - ' + additionalLabelValue[CMDBuild.core.constants.Proxy.ID];
+						}
+
+				case 'string':
+				default:
+					if (!Ext.isEmpty(additionalLabelValue))
+						return ' - ' + additionalLabelValue;
+			}
+
+			return '';
 		},
 
 		/**
