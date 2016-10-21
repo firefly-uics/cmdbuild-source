@@ -20,8 +20,8 @@
 				ICON_SCALE : 1.5,
 				GEO_MIN_ZINDEX : 1000,
 				GIS_MIN_ZINDEX : 10000,
-				THEMATIC_MIN_ZINDEX : 100000
-
+				THEMATIC_MIN_ZINDEX : 100000,
+				GEOSERVER_LAYER : "_Geoserver"
 			},
 			
 			navigationTree : {
@@ -338,7 +338,7 @@
 		 */
 		makeLayer : function(geoValues, withEditWindow) {
 			var layer;
-			if (geoValues.type === "SHAPE") {
+			if (geoValues.masterTableName === "_Geoserver") {
 				layer = Ext.create('CMDBuild.view.management.classes.map.geoextension.Layer', geoValues,
 						withEditWindow, this.interactionDocument);
 			} else {
