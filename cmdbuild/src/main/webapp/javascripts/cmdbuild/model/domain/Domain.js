@@ -29,51 +29,33 @@
 			{ name: CMDBuild.core.constants.Proxy.ORIGIN_DISABLED_CLASSES, type: 'auto', defaultValue: [] }
 		],
 
-		statics: {
-			/**
-			 * Static function to convert from legacy object to model's one
-			 *
-			 * @param {Object} data
-			 *
-			 * @returns {Object} data
-			 */
-			convertFromLegacy: function (data) {
-				data = Ext.isObject(data) ? data : {};
-				data[CMDBuild.core.constants.Proxy.DESTINATION_CLASS_ID] = data['class2id'] || data[CMDBuild.core.constants.Proxy.DESTINATION_CLASS_ID];
-				data[CMDBuild.core.constants.Proxy.DESTINATION_CLASS_NAME] = data['class2'] || data[CMDBuild.core.constants.Proxy.DESTINATION_CLASS_NAME];
-				data[CMDBuild.core.constants.Proxy.DESTINATION_DISABLED_CLASSES] = data['disabled2'] || data[CMDBuild.core.constants.Proxy.DESTINATION_DISABLED_CLASSES];
-				data[CMDBuild.core.constants.Proxy.DIRECT_DESCRIPTION] = data['descrdir'] || data[CMDBuild.core.constants.Proxy.DIRECT_DESCRIPTION];
-				data[CMDBuild.core.constants.Proxy.ID] = data['idDomain'] || data[CMDBuild.core.constants.Proxy.ID];
-				data[CMDBuild.core.constants.Proxy.INVERSE_DESCRIPTION] = data['descrinv'] || data[CMDBuild.core.constants.Proxy.INVERSE_DESCRIPTION];
-				data[CMDBuild.core.constants.Proxy.IS_MASTER_DETAIL] = data['md'] || data[CMDBuild.core.constants.Proxy.IS_MASTER_DETAIL];
-				data[CMDBuild.core.constants.Proxy.MASTER_DETAIL_LABEL] = data['md_label'] || data[CMDBuild.core.constants.Proxy.MASTER_DETAIL_LABEL];
-				data[CMDBuild.core.constants.Proxy.ORIGIN_CLASS_ID] = data['class1id'] || data[CMDBuild.core.constants.Proxy.ORIGIN_CLASS_ID];
-				data[CMDBuild.core.constants.Proxy.ORIGIN_CLASS_NAME] = data['class1'] || data[CMDBuild.core.constants.Proxy.ORIGIN_CLASS_NAME];
-				data[CMDBuild.core.constants.Proxy.ORIGIN_DISABLED_CLASSES] = data['disabled1'] || data[CMDBuild.core.constants.Proxy.ORIGIN_DISABLED_CLASSES];
-
-				return data;
-			}
-		},
-
 		/**
 		 * @returns {Object}
 		 */
-		getDataForSubmit: function () {
-			return {
-				active: this.get(CMDBuild.core.constants.Proxy.ACTIVE),
-				cardinality: this.get(CMDBuild.core.constants.Proxy.CARDINALITY),
-				descr_1: this.get(CMDBuild.core.constants.Proxy.DIRECT_DESCRIPTION),
-				descr_2: this.get(CMDBuild.core.constants.Proxy.INVERSE_DESCRIPTION),
-				description: this.get(CMDBuild.core.constants.Proxy.DESCRIPTION),
-				disabled1: this.get(CMDBuild.core.constants.Proxy.ORIGIN_DISABLED_CLASSES),
-				disabled2: this.get(CMDBuild.core.constants.Proxy.DESTINATION_DISABLED_CLASSES),
-				id: this.get(CMDBuild.core.constants.Proxy.ID) || -1,
-				idClass1: this.get(CMDBuild.core.constants.Proxy.ORIGIN_CLASS_ID),
-				idClass2: this.get(CMDBuild.core.constants.Proxy.DESTINATION_CLASS_ID),
-				isMasterDetail: this.get(CMDBuild.core.constants.Proxy.IS_MASTER_DETAIL),
-				md_label: this.get(CMDBuild.core.constants.Proxy.MASTER_DETAIL_LABEL),
-				name: this.get(CMDBuild.core.constants.Proxy.NAME)
+		getSubmitData: function () {
+			var data = this.getData()
+				outputObject = {};
+
+			outputObject = {
+				active: data[CMDBuild.core.constants.Proxy.ACTIVE],
+				cardinality: data[CMDBuild.core.constants.Proxy.CARDINALITY],
+				descr_1: data[CMDBuild.core.constants.Proxy.DIRECT_DESCRIPTION],
+				descr_2: data[CMDBuild.core.constants.Proxy.INVERSE_DESCRIPTION],
+				description: data[CMDBuild.core.constants.Proxy.DESCRIPTION],
+				disabled1: data[CMDBuild.core.constants.Proxy.ORIGIN_DISABLED_CLASSES],
+				disabled2: data[CMDBuild.core.constants.Proxy.DESTINATION_DISABLED_CLASSES],
+				id: data[CMDBuild.core.constants.Proxy.ID] || -1,
+				idClass1: data[CMDBuild.core.constants.Proxy.ORIGIN_CLASS_ID],
+				idClass2: data[CMDBuild.core.constants.Proxy.DESTINATION_CLASS_ID],
+				isMasterDetail: data[CMDBuild.core.constants.Proxy.IS_MASTER_DETAIL],
+				md_label: data[CMDBuild.core.constants.Proxy.MASTER_DETAIL_LABEL],
+				name: data[CMDBuild.core.constants.Proxy.NAME]
 			};
+
+			if (!data[CMDBuild.core.constants.Proxy.IS_MASTER_DETAIL])
+				delete outputObject['md_label'];
+
+			return outputObject;
 		},
 
 		/**
@@ -85,7 +67,17 @@
 		 */
 		constructor: function (data) {
 			data = Ext.isObject(data) ? data : {};
-			data = this.statics().convertFromLegacy(data);
+			data[CMDBuild.core.constants.Proxy.DESTINATION_CLASS_ID] = data['class2id'] || data[CMDBuild.core.constants.Proxy.DESTINATION_CLASS_ID];
+			data[CMDBuild.core.constants.Proxy.DESTINATION_CLASS_NAME] = data['class2'] || data[CMDBuild.core.constants.Proxy.DESTINATION_CLASS_NAME];
+			data[CMDBuild.core.constants.Proxy.DESTINATION_DISABLED_CLASSES] = data['disabled2'] || data[CMDBuild.core.constants.Proxy.DESTINATION_DISABLED_CLASSES];
+			data[CMDBuild.core.constants.Proxy.DIRECT_DESCRIPTION] = data['descrdir'] || data[CMDBuild.core.constants.Proxy.DIRECT_DESCRIPTION];
+			data[CMDBuild.core.constants.Proxy.ID] = data['idDomain'] || data[CMDBuild.core.constants.Proxy.ID];
+			data[CMDBuild.core.constants.Proxy.INVERSE_DESCRIPTION] = data['descrinv'] || data[CMDBuild.core.constants.Proxy.INVERSE_DESCRIPTION];
+			data[CMDBuild.core.constants.Proxy.IS_MASTER_DETAIL] = data['md'] || data[CMDBuild.core.constants.Proxy.IS_MASTER_DETAIL];
+			data[CMDBuild.core.constants.Proxy.MASTER_DETAIL_LABEL] = data['md_label'] || data[CMDBuild.core.constants.Proxy.MASTER_DETAIL_LABEL];
+			data[CMDBuild.core.constants.Proxy.ORIGIN_CLASS_ID] = data['class1id'] || data[CMDBuild.core.constants.Proxy.ORIGIN_CLASS_ID];
+			data[CMDBuild.core.constants.Proxy.ORIGIN_CLASS_NAME] = data['class1'] || data[CMDBuild.core.constants.Proxy.ORIGIN_CLASS_NAME];
+			data[CMDBuild.core.constants.Proxy.ORIGIN_DISABLED_CLASSES] = data['disabled1'] || data[CMDBuild.core.constants.Proxy.ORIGIN_DISABLED_CLASSES];
 
 			this.callParent(arguments);
 		}

@@ -19,6 +19,14 @@
 		parentDelegate: undefined,
 
 		/**
+		 * @property {Array}
+		 *
+		 * @private
+		 */
+		bufferEntryTypes: {},
+
+
+		/**
 		 * @cfg {Array}
 		 */
 		cmfgCatchedFunctions: [
@@ -31,7 +39,8 @@
 			'onWorkflowTabDomainsRowSelect',
 			'onWorkflowTabDomainsShow',
 			'onWorkflowTabDomainsStoreLoad',
-			'onWorkflowTabDomainsWorkflowSelected'
+			'onWorkflowTabDomainsWorkflowSelected',
+			'workflowTabDomainsBufferEntryTypesGet'
 		],
 
 		/**
@@ -71,31 +80,55 @@
 			this.includeInheritedCheckbox = this.view.includeInheritedCheckbox;
 		},
 
+		// BufferEntryTypes property functions
+			/**
+			 * @param {Object} parameters
+			 * @param {String} parameters.attributeName
+			 * @param {String} parameters.name
+			 *
+			 * @returns {CMDBuild.model.administration.workflow.tabs.domains.EntryType or null} selectedEntryType
+			 */
+			workflowTabDomainsBufferEntryTypesGet: function (parameters) {
+				parameters = Ext.isObject(parameters) ? parameters : {};
+
+				var selectedEntryType = null;
+
+				if (Ext.isString(parameters.name) && !Ext.isEmpty(parameters.name)) {
+					selectedEntryType = this.bufferEntryTypes[parameters.name];
+
+					if (Ext.isString(parameters.attributeName) && !Ext.isEmpty(parameters.attributeName))
+						return selectedEntryType.get(parameters.attributeName);
+				}
+
+				return selectedEntryType;
+			},
+
+			/**
+			 * @param {Array} classes
+			 *
+			 * @returns {Void}
+			 *
+			 * @private
+			 */
+			workflowTabDomainsBufferEntryTypesSet: function (entryTypes) {
+				if (Ext.isArray(entryTypes) && !Ext.isEmpty(entryTypes))
+					Ext.Array.each(entryTypes, function (entryTypeObject, i, allEntryTypeObjects) {
+						if (Ext.isObject(entryTypeObject) && !Ext.Object.isEmpty(entryTypeObject)) {
+							var model = Ext.create('CMDBuild.model.administration.workflow.tabs.domains.EntryType', entryTypeObject);
+
+							this.bufferEntryTypes[model.get(CMDBuild.core.constants.Proxy.NAME)] = model;
+						}
+					}, this);
+			},
+
 		/**
 		 * @returns {Void}
-		 *
-		 * FIXME: refactor with external services standards
 		 */
 		onWorkflowTabDomainsAddButtonClick: function () {
-			if (
-				this.cmfg('mainViewportAccordionControllerExists', CMDBuild.core.constants.ModuleIdentifiers.getDomain())
-				&& this.cmfg('mainViewportModuleControllerExists', CMDBuild.core.constants.ModuleIdentifiers.getDomain())
-			) {
-				var accordionController = this.cmfg('mainViewportAccordionControllerGet', CMDBuild.core.constants.ModuleIdentifiers.getDomain()),
-					moduleController = this.cmfg('mainViewportModuleControllerGet', CMDBuild.core.constants.ModuleIdentifiers.getDomain());
+			var moduleController = this.cmfg('mainViewportModuleControllerGet', CMDBuild.core.constants.ModuleIdentifiers.getDomain());
 
-				Ext.apply(accordionController, {
-					disableSelection: true,
-					scope: this,
-					callback: function () {
-						accordionController.cmfg('accordionDeselect');
-
-						moduleController.cmfg('onDomainAddButtonClick');
-					}
-				});
-
-				accordionController.cmfg('accordionExpand');
-			}
+			if (Ext.isObject(moduleController) && !Ext.Object.isEmpty(moduleController)	&& Ext.isFunction(moduleController.cmfg))
+				moduleController.cmfg('domainExternalServicesAddButtonClick');
 		},
 
 		/**
@@ -119,58 +152,39 @@
 		},
 
 		/**
-		 * @returns {Void}
+		 * @param {CMDBuild.model.administration.workflow.tabs.domains.Grid} record
 		 *
-		 * FIXME: refactor with external services standards
+		 * @returns {Void}
 		 */
-		onWorkflowTabDomainsItemDoubleClick: function () {
-			if (
-				!this.selectedDomainIsEmpty()
-				&& this.cmfg('mainViewportAccordionControllerExists', CMDBuild.core.constants.ModuleIdentifiers.getDomain())
-			) {
-				var accordionController = this.cmfg('mainViewportAccordionControllerGet', CMDBuild.core.constants.ModuleIdentifiers.getDomain());
+		onWorkflowTabDomainsItemDoubleClick: function (record) {
+			// Error handling
+			if (!Ext.isObject(record) || Ext.Object.isEmpty(record))
+				return _error('onWorkflowTabDomainsItemDoubleClick(): unmanaged record parameter', this, record);
+		// END: Error handling
 
-				Ext.apply(accordionController, {
-					disableSelection: true,
-					scope: this,
-					callback: function () {
-						accordionController.cmfg('accordionDeselect');
-						accordionController.cmfg('accordionNodeByIdSelect', { id: this.selectedDomainGet(CMDBuild.core.constants.Proxy.ID_DOMAIN) });
-					}
-				});
+		var moduleController = this.cmfg('mainViewportModuleControllerGet', CMDBuild.core.constants.ModuleIdentifiers.getDomain());
 
-				accordionController.cmfg('accordionExpand');
-			}
+		if (Ext.isObject(moduleController) && !Ext.Object.isEmpty(moduleController)	&& Ext.isFunction(moduleController.cmfg))
+			moduleController.cmfg('domainExternalServicesItemDoubleClick', { id: record.get(CMDBuild.core.constants.Proxy.ID_DOMAIN) });
 		},
 
 		/**
 		 * @returns {Void}
-		 *
-		 * FIXME: refactor with external services standards
 		 */
 		onWorkflowTabDomainsModifyButtonClick: function () {
+			// Error handling
+				if (this.selectedDomainIsEmpty())
+					return _error('onClassesTabDomainsModifyButtonClick(): unmanaged selectedDomain parameter', this, this.selectedDomainGet());
+			// END: Error handling
+
 			if (
-				!this.selectedDomainIsEmpty()
-				&& this.cmfg('mainViewportAccordionControllerExists', CMDBuild.core.constants.ModuleIdentifiers.getDomain())
+				this.cmfg('mainViewportAccordionControllerExists', CMDBuild.core.constants.ModuleIdentifiers.getDomain())
 				&& this.cmfg('mainViewportModuleControllerExists', CMDBuild.core.constants.ModuleIdentifiers.getDomain())
 			) {
-				var accordionController = this.cmfg('mainViewportAccordionControllerGet', CMDBuild.core.constants.ModuleIdentifiers.getDomain()),
-					moduleController = this.cmfg('mainViewportModuleControllerGet', CMDBuild.core.constants.ModuleIdentifiers.getDomain());
+				var moduleController = this.cmfg('mainViewportModuleControllerGet', CMDBuild.core.constants.ModuleIdentifiers.getDomain());
 
-				Ext.apply(accordionController, {
-					disableSelection: true,
-					scope: this,
-					callback: function () {
-						accordionController.cmfg('accordionDeselect');
-						accordionController.cmfg('accordionNodeByIdSelect', { id: this.selectedDomainGet(CMDBuild.core.constants.Proxy.ID_DOMAIN) });
-
-						Ext.Function.createDelayed(function () { // FIXME: fix me avoid delay
-							moduleController.cmfg('onDomainModifyButtonClick');
-						}, 100, this)();
-					}
-				});
-
-				accordionController.cmfg('accordionExpand');
+				if (Ext.isObject(moduleController) && !Ext.Object.isEmpty(moduleController)	&& Ext.isFunction(moduleController.cmfg))
+					moduleController.cmfg('domainExternalServicesModifyButtonClick', { id: this.selectedDomainGet(CMDBuild.core.constants.Proxy.ID_DOMAIN) });
 			}
 		},
 
@@ -223,60 +237,28 @@
 		},
 
 		/**
-		 * Translations of grid records domain's class name to description
-		 *
-		 * @returns {Void}
-		 *
-		 * FIXME: waiting for refactor (rename)
-		 */
-		onWorkflowTabDomainsStoreLoad: function () {
-			if (!Ext.isEmpty(this.grid.getStore().getRange()) && Ext.isArray(this.grid.getStore().getRange())) {
-				var params = {};
-				params[CMDBuild.core.constants.Proxy.ACTIVE] = true;
-
-				CMDBuild.proxy.administration.workflow.tabs.Domains.readAllEntryTypes({
-					params: params,
-					scope: this,
-					success: function (response, options, decodedResponse) {
-						decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.CLASSES];
-
-						if (Ext.isArray(decodedResponse) && !Ext.isEmpty(decodedResponse))
-							Ext.Array.each(this.grid.getStore().getRange(), function (gridRecord, i, allGridRecords) {
-								var foundClassObject = undefined;
-
-								// Translate class1 name to description
-								foundClassObject = Ext.Array.findBy(decodedResponse, function (record, i) {
-									return gridRecord.get('class1') == record[CMDBuild.core.constants.Proxy.NAME];
-								}, this);
-
-								if (!Ext.isEmpty(foundClassObject))
-									gridRecord.set('class1', foundClassObject[CMDBuild.core.constants.Proxy.TEXT]);
-
-								// Translate class2 name to description
-								foundClassObject = Ext.Array.findBy(decodedResponse, function (record, i) {
-									return gridRecord.get('class2') == record[CMDBuild.core.constants.Proxy.NAME];
-								}, this);
-
-								if (!Ext.isEmpty(foundClassObject))
-									gridRecord.set('class2', foundClassObject[CMDBuild.core.constants.Proxy.TEXT]);
-
-								gridRecord.commit();
-							}, this);
-					}
-				});
-			}
-		},
-
-		/**
 		 * Enable/Disable tab on workflow selection
 		 *
 		 * @returns {Void}
 		 */
 		onWorkflowTabDomainsWorkflowSelected: function () {
-			this.view.setDisabled(
-				this.cmfg('workflowSelectedWorkflowIsEmpty')
-				|| this.cmfg('workflowSelectedWorkflowGet', CMDBuild.core.constants.Proxy.TABLE_TYPE) == CMDBuild.core.constants.Global.getTableTypeSimpleTable()
-			);
+			var params = {};
+			params[CMDBuild.core.constants.Proxy.ACTIVE] = true;
+
+			CMDBuild.proxy.administration.workflow.tabs.Domains.readAllEntryTypes({
+				params: params,
+				scope: this,
+				success: function (response, options, decodedResponse) {
+					decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.CLASSES];
+
+					this.workflowTabDomainsBufferEntryTypesSet(decodedResponse);
+
+					this.view.setDisabled(
+						this.cmfg('workflowSelectedWorkflowIsEmpty')
+						|| this.cmfg('workflowSelectedWorkflowGet', CMDBuild.core.constants.Proxy.TABLE_TYPE) == CMDBuild.core.constants.Global.getTableTypeSimpleTable()
+					);
+				}
+			});
 		},
 
 		/**

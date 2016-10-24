@@ -131,6 +131,7 @@
 
 			this.setViewTitle();
 
+			// Forward to sub-controllers
 			this.controllerAttributes.onAddClassButtonClick(); // FIXME: legacy
 			this.controllerDomains.cmfg('onClassesTabDomainsAddClassButtonClick');
 			this.controllerGeoAttributes.cmfg('onClassesTabGeoAttributesAddClassButtonClick');
@@ -194,6 +195,8 @@
 		},
 
 		/**
+		 * Forwarder method
+		 *
 		 * @returns {Void}
 		 *
 		 * FIXME: use cmfg redirect functionalities (onClassesTabClassSelected)
@@ -216,18 +219,19 @@
 		 * @returns {Void}
 		 */
 		onClassesPrintButtonClick: function (format) {
-			if (Ext.isString(format) && !Ext.isEmpty(format)) {
-				var params = {};
-				params[CMDBuild.core.constants.Proxy.FORMAT] = format;
+			// Error handling
+				if (!Ext.isString(format) || Ext.isEmpty(format))
+					return _error('onClassesPrintButtonClick(): unmanaged format parameter', this, format);
+			// END: Error handling
 
-				this.controllerPrintWindow.cmfg('panelGridAndFormPrintWindowShow', {
-					format: format,
-					mode: 'schema',
-					params: params
-				});
-			} else {
-				_error('onClassesPrintButtonClick(): unmanaged format property', this, format);
-			}
+			var params = {};
+			params[CMDBuild.core.constants.Proxy.FORMAT] = format;
+
+			this.controllerPrintWindow.cmfg('panelGridAndFormPrintWindowShow', {
+				format: format,
+				mode: 'schema',
+				params: params
+			});
 		},
 
 		// SelectedClass property functions
