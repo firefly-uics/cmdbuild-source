@@ -278,6 +278,7 @@
 		FILE_NAME: 'fileName',
 		FILL_COLOR: 'fillColor',
 		FILL_OPACITY: 'fillOpacity',
+		FILLED: 'filled',
 		FILTER: 'filter',
 		FILTER_FROM_ADDRESS: 'filterFromAddress',
 		FILTER_FUNCTION: 'filterFunction',

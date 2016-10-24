@@ -20,6 +20,11 @@
 		layout: 'fit',
 		overflowY: true,
 
+		/**
+		 * @returns {Void}
+		 *
+		 * @override
+		 */
 		initComponent: function () {
 			Ext.apply(this, {
 				dockedItems: [
@@ -33,7 +38,7 @@
 								scope: this,
 
 								handler: function (button, e) {
-									this.delegate.cmfg('onWidgetOpenReportDownloadButtonClick');
+									this.delegate.cmfg('onWidgetOpenReportModalWindowDownloadButtonClick');
 								}
 							})
 						]
@@ -42,12 +47,6 @@
 			});
 
 			this.callParent(arguments);
-		},
-
-		listeners: {
-			show: function (window, eOpts) {
-				this.delegate.cmfg('onWidgetOpenReportModalWindowShow');
-			}
 		}
 	});
 
