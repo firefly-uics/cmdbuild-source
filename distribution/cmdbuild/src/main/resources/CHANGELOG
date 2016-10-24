@@ -10,6 +10,8 @@ FIXES
 
  * Origin and destination comboboxes no more searchable in domains UI
 
+ * OpenReport widget error on RTF or ODT format print
+
 
 
 
