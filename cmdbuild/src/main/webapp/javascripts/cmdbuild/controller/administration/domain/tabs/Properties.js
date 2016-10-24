@@ -22,7 +22,7 @@
 			'onDomainTabPropertiesAbortButtonClick',
 			'onDomainTabPropertiesAddButtonClick',
 			'onDomainTabPropertiesCardinalitySelect',
-			'onDomainTabPropertiesDomainSelected',
+			'onDomainTabPropertiesDomainSelected = onDomainDomainSelected',
 			'onDomainTabPropertiesMasterDetailCheckboxChange',
 			'onDomainTabPropertiesModifyButtonClick',
 			'onDomainTabPropertiesNameChange'

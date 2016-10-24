@@ -24,7 +24,7 @@
 			'domainTabEnabledClassesDataGet',
 			'onDomainTabEnabledClassesAbortButtonClick',
 			'onDomainTabEnabledClassesAddButtonClick',
-			'onDomainTabEnabledClassesDomainSelected',
+			'onDomainTabEnabledClassesDomainSelected = onDomainDomainSelected',
 			'onDomainTabEnabledClassesModifyButtonClick'
 		],
 

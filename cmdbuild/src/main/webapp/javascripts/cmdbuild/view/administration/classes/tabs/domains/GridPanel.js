@@ -50,12 +50,26 @@
 					{
 						dataIndex: 'class1',
 						text: CMDBuild.Translation.origin,
-						flex: 1
+						flex: 1,
+
+						renderer: function (value, metadata, record, rowIndex, colIndex, store, view) {
+							return this.delegate.cmfg('classesTabDomainsBufferEntryTypesGet', { // Translations of grid records domain's class name to description
+								name: value,
+								attributeName: CMDBuild.core.constants.Proxy.DESCRIPTION
+							});
+						}
 					},
 					{
 						dataIndex: 'class2',
 						text: CMDBuild.Translation.destination,
-						flex: 1
+						flex: 1,
+
+						renderer: function (value, metadata, record, rowIndex, colIndex, store, view) {
+							return this.delegate.cmfg('classesTabDomainsBufferEntryTypesGet', { // Translations of grid records domain's class name to description
+								name: value,
+								attributeName: CMDBuild.core.constants.Proxy.DESCRIPTION
+							});
+						}
 					},
 					{
 						dataIndex: CMDBuild.core.constants.Proxy.CARDINALITY,
@@ -78,13 +92,12 @@
 
 			this.getStore().on('load', function (store, records, successful, eOpts) {
 				this.delegate.cmfg('onClassesTabDomainsIncludeInheritedCheck');
-				this.delegate.cmfg('onClassesTabDomainsStoreLoad');
 			}, this);
 		},
 
 		listeners: {
 			itemdblclick: function (grid, record, item, index, e, eOpts) {
-				this.delegate.cmfg('onClassesTabDomainsItemDoubleClick');
+				this.delegate.cmfg('onClassesTabDomainsItemDoubleClick', record);
 			},
 			select: function (row, record, index) {
 				this.delegate.cmfg('onClassesTabDomainsRowSelect');

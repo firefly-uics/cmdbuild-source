@@ -13,6 +13,8 @@
 			'CMDBuild.view.common.field.translatable.Utils'
 		],
 
+		mixins: ['CMDBuild.controller.administration.domain.ExternalServices'],
+
 		/**
 		 * @cfg {CMDBuild.controller.common.MainViewport}
 		 */
@@ -22,12 +24,15 @@
 		 * @cfg {Array}
 		 */
 		cmfgCatchedFunctions: [
+			'domainExternalServicesAddButtonClick',
+			'domainExternalServicesItemDoubleClick',
+			'domainExternalServicesModifyButtonClick',
 			'domainSelectedDomainGet',
 			'domainSelectedDomainIsEmpty',
 			'identifierGet = domainIdentifierGet',
 			'onDomainAbortButtonClick',
 			'onDomainAddButtonClick',
-			'onDomainDomainSelected',
+			'onDomainDomainSelected -> controllerAttributes, controllerEnabledClasses, controllerProperties',
 			'onDomainModifyButtonClick',
 			'onDomainModuleInit = onModuleInit',
 			'onDomainRemoveButtonClick',
@@ -101,7 +106,7 @@
 		},
 
 		/**
-		 * Method forwarder
+		 * Forwarder method
 		 *
 		 * @returns {Void}
 		 */
@@ -121,20 +126,10 @@
 
 			this.setViewTitle();
 
+			// Forward to sub-controllers
 			this.controllerAttributes.cmfg('onDomainTabAttributesAddButtonClick'); // FIXME: legacy
 			this.controllerEnabledClasses.cmfg('onDomainTabEnabledClassesAddButtonClick');
 			this.controllerProperties.cmfg('onDomainTabPropertiesAddButtonClick');
-		},
-
-		/**
-		 * @returns {Void}
-		 *
-		 * FIXME: use cmfg redirect functionalities (onClassesTabClassSelected)
-		 */
-		onDomainDomainSelected: function () {
-			this.controllerAttributes.cmfg('onDomainDomainSelected'); // FIXME: legacy
-			this.controllerEnabledClasses.cmfg('onDomainTabEnabledClassesDomainSelected');
-			this.controllerProperties.cmfg('onDomainTabPropertiesDomainSelected');
 		},
 
 		/**
@@ -198,6 +193,8 @@
 					this.tabPanel.setActiveTab(0);
 
 				this.tabPanel.getActiveTab().fireEvent('show'); // Manual show event fire because was already selected
+
+				this.onModuleInit(node); // Custom callParent() implementation
 			}
 		},
 
@@ -223,24 +220,22 @@
 		 */
 		onDomainSaveButtonClick: function () {
 			if (this.validate(this.controllerProperties.cmfg('domainTabPropertiesFormGet'))) {
-				var dataObject = Ext.create('CMDBuild.model.domain.Domain',
+				var formData = Ext.create('CMDBuild.model.domain.Domain',
 					Ext.Object.merge(
 						this.controllerProperties.cmfg('domainTabPropertiesDataGet'),
 						this.controllerEnabledClasses.cmfg('domainTabEnabledClassesDataGet')
 					)
-				).getDataForSubmit();
+				);
 
-				var params = dataObject;
-
-				if (Ext.isEmpty(params[CMDBuild.core.constants.Proxy.ID])) {
+				if (Ext.isEmpty(formData.get(CMDBuild.core.constants.Proxy.ID))) {
 					CMDBuild.proxy.domain.Domain.create({
-						params: params,
+						params: formData.getSubmitData(),
 						scope: this,
 						success: this.success
 					});
 				} else {
 					CMDBuild.proxy.domain.Domain.update({
-						params: params,
+						params: formData.getSubmitData(),
 						scope: this,
 						success: this.success
 					});
