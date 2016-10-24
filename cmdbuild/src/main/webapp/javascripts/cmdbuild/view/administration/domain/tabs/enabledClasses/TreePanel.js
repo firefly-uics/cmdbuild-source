@@ -5,7 +5,7 @@
 
 		requires: [
 			'CMDBuild.core.constants.Proxy',
-			'CMDBuild.model.domain.tabs.enabledClasses.TreeStore'
+			'CMDBuild.model.administration.domain.tabs.enabledClasses.TreeStore'
 		],
 
 		/**
@@ -61,7 +61,7 @@
 					})
 				],
 				store: Ext.create('Ext.data.TreeStore', {
-					model: 'CMDBuild.model.domain.tabs.enabledClasses.TreeStore',
+					model: 'CMDBuild.model.administration.domain.tabs.enabledClasses.TreeStore',
 					root: {
 						text: 'ROOT',
 						expanded: true,
