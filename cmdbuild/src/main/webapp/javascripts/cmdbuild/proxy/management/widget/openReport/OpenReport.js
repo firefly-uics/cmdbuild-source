@@ -1,6 +1,6 @@
 (function () {
 
-	Ext.define('CMDBuild.proxy.widget.OpenReport', {
+	Ext.define('CMDBuild.proxy.management.widget.openReport.OpenReport', {
 
 		requires: [
 			'CMDBuild.core.configurations.Timeout',
