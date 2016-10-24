@@ -1,6 +1,6 @@
 (function () {
 
-	Ext.define('CMDBuild.proxy.domain.tabs.EnabledClasses', {
+	Ext.define('CMDBuild.proxy.administration.domain.tabs.EnabledClasses', {
 
 		requires: [
 			'CMDBuild.core.constants.Proxy',

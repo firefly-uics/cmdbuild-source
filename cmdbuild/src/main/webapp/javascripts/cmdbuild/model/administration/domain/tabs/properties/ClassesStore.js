@@ -2,7 +2,7 @@
 
 	Ext.require('CMDBuild.core.constants.Proxy');
 
-	Ext.define('CMDBuild.model.domain.tabs.properties.ClassesStore', {
+	Ext.define('CMDBuild.model.administration.domain.tabs.properties.ClassesStore', {
 		extend: 'Ext.data.Model',
 
 		fields: [

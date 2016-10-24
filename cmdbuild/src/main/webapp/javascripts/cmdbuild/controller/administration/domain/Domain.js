@@ -9,7 +9,7 @@
 		requires: [
 			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.Message',
-			'CMDBuild.proxy.domain.Domain',
+			'CMDBuild.proxy.administration.domain.Domain',
 			'CMDBuild.view.common.field.translatable.Utils'
 		],
 
@@ -60,7 +60,7 @@
 		identifier: undefined,
 
 		/**
-		 * @property {CMDBuild.model.domain.Domain}
+		 * @property {CMDBuild.model.administration.domain.Domain}
 		 *
 		 * @private
 		 */
@@ -155,7 +155,7 @@
 			this.domainSelectedDomainReset();
 
 			if (Ext.isObject(node) && !Ext.Object.isEmpty(node)) {
-				CMDBuild.proxy.domain.Domain.read({ // FIXME: waiting for refactor (server endpoint)
+				CMDBuild.proxy.administration.domain.Domain.read({ // FIXME: waiting for refactor (server endpoint)
 					scope: this,
 					success: function (response, options, decodedResponse) {
 						decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.DOMAINS];
@@ -220,7 +220,7 @@
 		 */
 		onDomainSaveButtonClick: function () {
 			if (this.validate(this.controllerProperties.cmfg('domainTabPropertiesFormGet'))) {
-				var formData = Ext.create('CMDBuild.model.domain.Domain',
+				var formData = Ext.create('CMDBuild.model.administration.domain.Domain',
 					Ext.Object.merge(
 						this.controllerProperties.cmfg('domainTabPropertiesDataGet'),
 						this.controllerEnabledClasses.cmfg('domainTabEnabledClassesDataGet')
@@ -228,13 +228,13 @@
 				);
 
 				if (Ext.isEmpty(formData.get(CMDBuild.core.constants.Proxy.ID))) {
-					CMDBuild.proxy.domain.Domain.create({
+					CMDBuild.proxy.administration.domain.Domain.create({
 						params: formData.getSubmitData(),
 						scope: this,
 						success: this.success
 					});
 				} else {
-					CMDBuild.proxy.domain.Domain.update({
+					CMDBuild.proxy.administration.domain.Domain.update({
 						params: formData.getSubmitData(),
 						scope: this,
 						success: this.success
@@ -253,7 +253,7 @@
 				var params = {};
 				params[CMDBuild.core.constants.Proxy.DOMAIN_NAME] = this.cmfg('domainSelectedDomainGet', CMDBuild.core.constants.Proxy.NAME);
 
-				CMDBuild.proxy.domain.Domain.remove({
+				CMDBuild.proxy.administration.domain.Domain.remove({
 					params: params,
 					scope: this,
 					success: function (response, options, decodedResponse) {
@@ -345,7 +345,7 @@
 			 */
 			domainSelectedDomainSet: function (parameters) {
 				if (!Ext.Object.isEmpty(parameters)) {
-					parameters[CMDBuild.core.constants.Proxy.MODEL_NAME] = 'CMDBuild.model.domain.Domain';
+					parameters[CMDBuild.core.constants.Proxy.MODEL_NAME] = 'CMDBuild.model.administration.domain.Domain';
 					parameters[CMDBuild.core.constants.Proxy.TARGET_VARIABLE_NAME] = 'selectedDomain';
 
 					this.propertyManageSet(parameters);

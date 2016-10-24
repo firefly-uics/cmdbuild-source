@@ -9,7 +9,7 @@
 		requires: [
 			'CMDBuild.core.constants.Global',
 			'CMDBuild.core.constants.Proxy',
-			'CMDBuild.proxy.domain.tabs.EnabledClasses'
+			'CMDBuild.proxy.administration.domain.tabs.EnabledClasses'
 		],
 
 		/**
@@ -266,7 +266,7 @@
 			var params = {};
 			params[CMDBuild.core.constants.Proxy.ACTIVE] = true;
 
-			CMDBuild.proxy.domain.tabs.EnabledClasses.readAllClasses({
+			CMDBuild.proxy.administration.domain.tabs.EnabledClasses.readAllClasses({
 				params: params,
 				scope: this,
 				success: function (response, options, decodedResponse) {

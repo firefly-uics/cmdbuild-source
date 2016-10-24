@@ -7,7 +7,7 @@
 	 *
 	 * TODO: waiting for refactor (rename)
 	 */
-	Ext.define('CMDBuild.model.domain.Domain', {
+	Ext.define('CMDBuild.model.administration.domain.Domain', {
 		extend: 'Ext.data.Model',
 
 		fields: [
