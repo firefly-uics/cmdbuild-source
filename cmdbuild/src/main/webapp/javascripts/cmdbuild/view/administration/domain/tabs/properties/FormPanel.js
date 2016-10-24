@@ -149,7 +149,6 @@
 						allowBlank: false,
 						disableEnableFunctions: true,
 						forceSelection: true,
-						editable: false,
 
 						store: CMDBuild.proxy.domain.tabs.Properties.getStoreClasses(),
 						queryMode: 'local'
@@ -164,7 +163,6 @@
 						allowBlank: false,
 						disableEnableFunctions: true,
 						forceSelection: true,
-						editable: false,
 
 						store: CMDBuild.proxy.domain.tabs.Properties.getStoreClasses(),
 						queryMode: 'local'
