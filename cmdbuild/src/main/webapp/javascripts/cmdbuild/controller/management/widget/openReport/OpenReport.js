@@ -5,7 +5,7 @@
 
 		requires: [
 			'CMDBuild.core.constants.Proxy',
-			'CMDBuild.proxy.widget.OpenReport'
+			'CMDBuild.proxy.management.widget.openReport.OpenReport'
 		],
 
 		/**
@@ -46,7 +46,7 @@
 		/**
 		 * @cfg {String}
 		 */
-		widgetConfigurationModelClassName: 'CMDBuild.model.widget.openReport.Configuration',
+		widgetConfigurationModelClassName: 'CMDBuild.model.management.widget.openReport.Configuration',
 
 		/**
 		 * @param {Object} configurationObject
@@ -80,7 +80,7 @@
 				params[CMDBuild.core.constants.Proxy.CODE] = this.cmfg('widgetOpenReportConfigurationGet', CMDBuild.core.constants.Proxy.REPORT_CODE);
 				params[CMDBuild.core.constants.Proxy.TYPE] = CMDBuild.core.constants.Proxy.CUSTOM;
 
-				CMDBuild.proxy.widget.OpenReport.createFactory({
+				CMDBuild.proxy.management.widget.openReport.OpenReport.createFactory({
 					params: params,
 					loadMask: this.view,
 					scope: this,
@@ -115,7 +115,7 @@
 				var params = Ext.apply(this.view.getData(true), this.view.getValues()); // Cannot use only getData() because of date field format errors
 				params[CMDBuild.core.constants.Proxy.REPORT_EXTENSION] = this.view.formatCombo.getValue();
 
-				CMDBuild.proxy.widget.OpenReport.update({
+				CMDBuild.proxy.management.widget.openReport.OpenReport.update({
 					params: params,
 					loadMask: this.view,
 					scope: this,

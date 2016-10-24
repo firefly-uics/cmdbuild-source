@@ -6,7 +6,7 @@
 		requires: [
 			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.proxy.index.Json',
-			'CMDBuild.proxy.management.widget.openReport.ParametersWindow'
+			'CMDBuild.proxy.management.widget.openReport.Modal'
 		],
 
 		/**
@@ -63,7 +63,7 @@
 			var params = {};
 			params[CMDBuild.core.constants.Proxy.FORCE_DOWNLOAD_PARAM_KEY] = true;
 
-			CMDBuild.proxy.management.widget.openReport.ParametersWindow.download({
+			CMDBuild.proxy.management.widget.openReport.Modal.download({
 				buildRuntimeForm: true,
 				params: params,
 				loadMask: this.view
