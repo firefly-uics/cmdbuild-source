@@ -1,9 +1,10 @@
 package org.cmdbuild.privileges.fetchers;
 
 import static com.google.common.collect.Iterables.isEmpty;
-import static java.util.Collections.emptyList;
+import static java.util.Arrays.asList;
 import static org.cmdbuild.dao.query.clause.alias.Aliases.canonical;
 import static org.cmdbuild.dao.query.clause.where.AndWhereClause.and;
+import static org.cmdbuild.dao.query.clause.where.WhereClauses.alwaysTrue;
 
 import java.util.HashMap;
 import java.util.List;
@@ -30,8 +31,6 @@ public class DataViewRowAndColumnPrivilegeFetcher implements RowAndColumnPrivile
 
 	private static final Logger logger = Log.PERSISTENCE;
 
-	private static final Iterable<WhereClause> EMPTY_WHERE_CLAUSES = emptyList();
-
 	private final CMDataView dataView;
 	private final PrivilegeContext privilegeContext;
 	private final UserStore userStore;
@@ -56,26 +55,33 @@ public class DataViewRowAndColumnPrivilegeFetcher implements RowAndColumnPrivile
 
 	@Override
 	public Iterable<WhereClause> fetchPrivilegeFiltersFor(final CMEntryType entryType, final Alias alias) {
-		if (privilegeContext.hasAdministratorPrivileges() && entryType.isActive()) {
-			return EMPTY_WHERE_CLAUSES;
-		}
-		final PrivilegedObjectMetadata metadata = privilegeContext.getMetadata(entryType);
-		if (metadata == null) {
-			return EMPTY_WHERE_CLAUSES;
-		}
-		final List<String> privilegeFilters = metadata.getFilters();
-		final List<WhereClause> whereClauseFilters = Lists.newArrayList();
-		for (final String privilegeFilter : privilegeFilters) {
-			try {
-				final Iterable<WhereClause> whereClauses = createWhereClausesFrom(privilegeFilter, entryType, alias);
-				if (!isEmpty(whereClauses)) {
-					whereClauseFilters.add(and(whereClauses));
-				}
-			} catch (final JSONException e) {
-				logger.warn("error creating where clause", e);
+		final List<WhereClause> output = Lists.newArrayList();
+		do {
+			if (privilegeContext.hasAdministratorPrivileges() && entryType.isActive()) {
+				break;
 			}
-		}
-		return whereClauseFilters;
+
+			final PrivilegedObjectMetadata metadata = privilegeContext.getMetadata(entryType);
+			if (metadata == null) {
+				break;
+			}
+
+			final List<String> privilegeFilters = metadata.getFilters();
+			for (final String privilegeFilter : privilegeFilters) {
+				try {
+					if (privilegeFilter == null) {
+						output.add(alwaysTrue());
+					} else {
+						final Iterable<WhereClause> whereClauses =
+								createWhereClausesFrom(privilegeFilter, entryType, alias);
+						output.add(isEmpty(whereClauses) ? alwaysTrue() : and(whereClauses));
+					}
+				} catch (final JSONException e) {
+					logger.warn("error creating where clause", e);
+				}
+			}
+		} while (false);
+		return output.isEmpty() ? asList(alwaysTrue()) : output;
 	}
 
 	private Iterable<WhereClause> createWhereClausesFrom(final String privilegeFilter, final CMEntryType entryType,
@@ -93,7 +99,7 @@ public class DataViewRowAndColumnPrivilegeFetcher implements RowAndColumnPrivile
 
 	/**
 	 * If superUser return write privilege for all the attributes
-	 * 
+	 *
 	 * If not superUser, looking for some attributes privilege definition, if
 	 * there is no one return the attributes mode defined globally
 	 */
