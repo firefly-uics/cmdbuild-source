@@ -1,10 +1,9 @@
-CMDBuild 2.4.3 (released 2016/XX/XX)
-
-
-NEW FEATURES
+CMDBuild 2.4.3 (released YYYY/MM/DD)
 
 
 FIXES
+
+ * Cannot see all cards using a default group between two groups when one has row privileges and the other no one
 
  * AdditionalActivityLabel metadata not correctly managed if relative attribute is not displayed in grid
 
