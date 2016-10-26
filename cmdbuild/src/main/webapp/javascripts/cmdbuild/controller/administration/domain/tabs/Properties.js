@@ -22,7 +22,7 @@
 			'onDomainTabPropertiesAbortButtonClick',
 			'onDomainTabPropertiesAddButtonClick',
 			'onDomainTabPropertiesCardinalitySelect',
-			'onDomainTabPropertiesDomainSelected',
+			'onDomainTabPropertiesDomainSelected = onDomainDomainSelected',
 			'onDomainTabPropertiesMasterDetailCheckboxChange',
 			'onDomainTabPropertiesModifyButtonClick',
 			'onDomainTabPropertiesNameChange'
@@ -86,7 +86,7 @@
 		 */
 		onDomainTabPropertiesAddButtonClick: function () {
 			this.form.reset();
-			this.form.loadRecord(Ext.create('CMDBuild.model.domain.Domain'));
+			this.form.loadRecord(Ext.create('CMDBuild.model.administration.domain.Domain'));
 			this.form.setDisabledModify(false, true);
 
 			this.cmfg('onDomainTabPropertiesCardinalitySelect'); // Execute cardinality selection event actions to disable masterDetailCheckbox

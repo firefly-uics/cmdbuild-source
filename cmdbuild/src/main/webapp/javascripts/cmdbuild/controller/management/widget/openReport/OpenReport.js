@@ -5,7 +5,7 @@
 
 		requires: [
 			'CMDBuild.core.constants.Proxy',
-			'CMDBuild.proxy.widget.OpenReport'
+			'CMDBuild.proxy.management.widget.openReport.OpenReport'
 		],
 
 		/**
@@ -28,11 +28,15 @@
 			'onBeforeSave',
 			'onEditMode',
 			'onWidgetOpenReportBeforeActiveView = beforeActiveView',
-			'onWidgetOpenReportDownloadButtonClick',
 			'onWidgetOpenReportSaveButtonClick',
 			'widgetConfigurationGet = widgetOpenReportConfigurationGet',
 			'widgetConfigurationIsEmpty = widgetOpenReportConfigurationIsEmpty'
 		],
+
+		/**
+		 * @property {CMDBuild.controller.management.widget.openReport.Modal}
+		 */
+		controllerWindowModal: undefined,
 
 		/**
 		 * @property {CMDBuild.view.management.widget.openReport.OpenReportView}
@@ -42,7 +46,26 @@
 		/**
 		 * @cfg {String}
 		 */
-		widgetConfigurationModelClassName: 'CMDBuild.model.widget.openReport.Configuration',
+		widgetConfigurationModelClassName: 'CMDBuild.model.management.widget.openReport.Configuration',
+
+		/**
+		 * @param {Object} configurationObject
+		 * @param {CMDBuild.controller.management.common.CMWidgetManagerController} configurationObject.parentDelegate
+		 * @param {Ext.data.Model or CMDBuild.model.CMActivityInstance} configurationObject.card
+		 * @param {Ext.form.Basic} configurationObject.clientForm
+		 * @param {CMDBuild.view.management.widget.openReport.OpenReportView} configurationObject.view
+		 * @param {Object} configurationObject.widgetConfiguration
+		 *
+		 * @returns {Void}
+		 *
+		 * @override
+		 */
+		constructor: function (configurationObject) {
+			this.callParent(arguments);
+
+			// Build sub-controllers
+			this.controllerWindowModal = Ext.create('CMDBuild.controller.management.widget.openReport.Modal', { parentDelegate: this });
+		},
 
 		/**
 		 * @returns {Void}
@@ -57,11 +80,12 @@
 				params[CMDBuild.core.constants.Proxy.CODE] = this.cmfg('widgetOpenReportConfigurationGet', CMDBuild.core.constants.Proxy.REPORT_CODE);
 				params[CMDBuild.core.constants.Proxy.TYPE] = CMDBuild.core.constants.Proxy.CUSTOM;
 
-				CMDBuild.proxy.widget.OpenReport.createFactory({
+				CMDBuild.proxy.management.widget.openReport.OpenReport.createFactory({
 					params: params,
+					loadMask: this.view,
 					scope: this,
 					success: function (response, options, decodedResponse) {
-						if (!decodedResponse['filled'])
+						if (!decodedResponse[CMDBuild.core.constants.Proxy.FILLED])
 							this.configureForm(decodedResponse[CMDBuild.core.constants.Proxy.ATTRIBUTE]);
 
 						new CMDBuild.Management.TemplateResolver({
@@ -89,16 +113,14 @@
 		onWidgetOpenReportSaveButtonClick: function () {
 			if (this.validate(this.view)) {
 				var params = Ext.apply(this.view.getData(true), this.view.getValues()); // Cannot use only getData() because of date field format errors
-				params['reportExtension'] = this.view.formatCombo.getValue();
+				params[CMDBuild.core.constants.Proxy.REPORT_EXTENSION] = this.view.formatCombo.getValue();
 
-				CMDBuild.proxy.widget.OpenReport.update({
+				CMDBuild.proxy.management.widget.openReport.OpenReport.update({
 					params: params,
+					loadMask: this.view,
 					scope: this,
-					success: function (response, options, decodedResponse) { // Pop-up display mode
-						Ext.create('CMDBuild.controller.management.widget.openReport.Modal', {
-							parentDelegate: this,
-							extension: this.view.formatCombo.getValue()
-						});
+					success: function (response, options, decodedResponse) { // Pop-up display mode or force download
+						this.controllerWindowModal.cmfg('widgetOpenReportModalWindowConfigureAndShow', { extension: this.view.formatCombo.getValue() });
 					}
 				});
 			}
@@ -114,21 +136,32 @@
 		 * @private
 		 */
 		configureForm: function (attributes) {
-			this.view.fieldContainer.removeAll();
-
 			if (!Ext.isEmpty(attributes) && Ext.isArray(attributes)) {
-				var fieldManager = Ext.create('CMDBuild.core.fieldManager.FieldManager', { parentDelegate: this });
+				var fieldManager = Ext.create('CMDBuild.core.fieldManager.FieldManager', { parentDelegate: this }),
+					fields = [];
 
-				Ext.Array.each(attributes, function (attribute, i, allAttributes) {
+				Ext.Array.forEach(attributes, function (attribute, i, allAttributes) {
 					if (fieldManager.isAttributeManaged(attribute[CMDBuild.core.constants.Proxy.TYPE])) {
 						var attributeCustom = Ext.create('CMDBuild.model.common.attributes.Attribute', attribute);
 						attributeCustom.setAdaptedData(attribute);
 
 						fieldManager.attributeModelSet(attributeCustom);
 
-						var field = fieldManager.buildField();
+						fieldManager.push(fields, fieldManager.buildField({
+							readOnly: Ext.Array.contains( // Disable if field name is contained in widgetConfiguration.readOnlyAttributes
+								this.cmfg('widgetOpenReportConfigurationGet', CMDBuild.core.constants.Proxy.READ_ONLY_ATTRIBUTES),
+								attribute[CMDBuild.core.constants.Proxy.NAME]
+							)
+						}));
 					} else { // @deprecated - Old field manager
-						var field = CMDBuild.Management.FieldManager.getFieldForAttr(attribute, false, false);
+						var field = CMDBuild.Management.FieldManager.getFieldForAttr(
+							attribute,
+							Ext.Array.contains( // Disable if field name is contained in widgetConfiguration.readOnlyAttributes
+								this.cmfg('widgetOpenReportConfigurationGet', CMDBuild.core.constants.Proxy.READ_ONLY_ATTRIBUTES),
+								attribute[CMDBuild.core.constants.Proxy.NAME]
+							),
+							false
+						);
 
 						if (!Ext.isEmpty(field)) {
 							field.maxWidth = field.width || CMDBuild.core.constants.FieldWidths.STANDARD_MEDIUM;
@@ -137,16 +170,12 @@
 								field.setValue(attribute.defaultvalue);
 						}
 					}
-
-					if (!Ext.isEmpty(field)) {
-						// Disable if field name is contained in widgetConfiguration.readOnlyAttributes
-						field.setDisabled(
-							Ext.Array.contains(this.cmfg('widgetOpenReportConfigurationGet', CMDBuild.core.constants.Proxy.READ_ONLY_ATTRIBUTES), attribute[CMDBuild.core.constants.Proxy.NAME])
-						);
-
-						this.view.fieldContainer.add(field);
-					}
 				}, this);
+
+				this.view.fieldContainer.removeAll();
+
+				if (Ext.isArray(fields) && !Ext.isEmpty(fields))
+					this.view.fieldContainer.add(fields);
 			}
 		},
 
@@ -184,21 +213,6 @@
 			} else {
 				this.view.formatCombo.enable();
 			}
-		},
-
-		/**
-		 * @param {Boolean} forceDownload
-		 *
-		 * @returns {Void}
-		 */
-		onWidgetOpenReportDownloadButtonClick: function () {
-			var params = {};
-			params[CMDBuild.core.constants.Proxy.FORCE_DOWNLOAD_PARAM_KEY] = true;
-
-			CMDBuild.proxy.widget.OpenReport.download({
-				buildRuntimeForm: true,
-				params: params
-			});
 		}
 	});
 

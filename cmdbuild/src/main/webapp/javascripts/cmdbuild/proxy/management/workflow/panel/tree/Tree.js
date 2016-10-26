@@ -53,6 +53,19 @@
 		},
 
 		/**
+		 * @param {Object} parameters
+		 *
+		 * @returns {Void}
+		 */
+		readInstance: function (parameters) {
+			parameters = Ext.isEmpty(parameters) ? {} : parameters;
+
+			Ext.apply(parameters, { url: CMDBuild.proxy.index.Json.workflow.instance.read });
+
+			CMDBuild.global.Cache.request(CMDBuild.core.constants.Proxy.WORKFLOW, parameters);
+		},
+
+		/**
 		 * Get the position on the DB of the required activity, considering the sorting and current filter applied on the grid
 		 *
 		 * @param {Object} parameters

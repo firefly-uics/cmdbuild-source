@@ -25,6 +25,7 @@
 		 */
 		cmfgCatchedFunctions: [
 			'beforeHideView',
+			'getData',
 			'isValid',
 			'onBeforeSave',
 			'onEditMode',

@@ -88,7 +88,7 @@
 			this.tabPanel.removeAll();
 
 			// Controller build
-			this.controllerAttributes = Ext.create('CMDBuild.controller.administration.workflow.tabs.CMAttributes', { // TODO: legacy
+			this.controllerAttributes = Ext.create('CMDBuild.controller.administration.workflow.tabs.CMAttributes', { // FIXME: legacy
 				parentDelegate: this,
 				view: this.view.attributesPanel
 			});
@@ -100,7 +100,7 @@
 			// Inject tabs (sorted)
 			this.tabPanel.add([
 				this.controllerProperties.getView(),
-				this.view.attributesPanel, // TODO: legacy
+				this.view.attributesPanel, // FIXME: legacy
 				this.controllerDomains.getView(),
 				this.controllerTasks.getView()
 			]);
@@ -117,7 +117,8 @@
 
 			this.setViewTitle();
 
-			this.controllerAttributes.onAddClassButtonClick(); // TODO: legacy
+			// Forward to sub-controllers
+			this.controllerAttributes.onAddClassButtonClick(); // FIXME: legacy
 			this.controllerDomains.cmfg('onWorkflowTabDomainsAddWorkflowButtonClick');
 			this.controllerProperties.cmfg('onWorkflowTabPropertiesAddWorkflowButtonClick');
 			this.controllerTasks.cmfg('onWorkflowTabTasksAddWorkflowButtonClick');
@@ -211,27 +212,30 @@
 		 * @returns {Void}
 		 */
 		onWorkflowPrintButtonClick: function (format) {
-			if (Ext.isString(format) && !Ext.isEmpty(format)) {
-				var params = {};
-				params[CMDBuild.core.constants.Proxy.FORMAT] = format;
+			// Error handling
+				if (!Ext.isString(format) || Ext.isEmpty(format))
+					return _error('onWorkflowPrintButtonClick(): unmanaged format parameter', this, format);
+			// END: Error handling
 
-				this.controllerPrintWindow.cmfg('panelGridAndFormPrintWindowShow', {
-					format: format,
-					mode: 'schema',
-					params: params
-				});
-			} else {
-				_error('onWorkflowPrintButtonClick(): unmanaged format property', this, format);
-			}
+			var params = {};
+			params[CMDBuild.core.constants.Proxy.FORMAT] = format;
+
+			this.controllerPrintWindow.cmfg('panelGridAndFormPrintWindowShow', {
+				format: format,
+				mode: 'schema',
+				params: params
+			});
 		},
 
 		/**
+		 * Forwarder method
+		 *
 		 * @returns {Void}
 		 *
 		 * FIXME: use cmfg redirect functionalities (onWorkflowTabWokflowSelection)
 		 */
 		onWorkflowWokflowSelected: function () {
-			this.controllerAttributes.onClassSelected( // TODO: legacy
+			this.controllerAttributes.onClassSelected( // FIXME: legacy
 				this.cmfg('workflowSelectedWorkflowGet', CMDBuild.core.constants.Proxy.ID),
 				this.cmfg('workflowSelectedWorkflowGet', CMDBuild.core.constants.Proxy.NAME));
 			this.controllerDomains.cmfg('onWorkflowTabDomainsWorkflowSelected');

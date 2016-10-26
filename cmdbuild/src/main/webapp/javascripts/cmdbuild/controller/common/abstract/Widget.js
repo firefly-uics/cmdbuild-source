@@ -9,6 +9,7 @@
 	 * @requires Mandatory managed methods:
 	 * 	- beforeActiveView
 	 * 	- beforeHideView
+	 * 	- getData
 	 * 	- isValid
 	 * 	- onBeforeSave
 	 * 	- onEditMode

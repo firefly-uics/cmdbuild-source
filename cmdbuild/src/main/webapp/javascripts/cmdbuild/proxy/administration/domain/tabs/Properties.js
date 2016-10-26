@@ -1,12 +1,12 @@
 (function () {
 
-	Ext.define('CMDBuild.proxy.domain.tabs.Properties', {
+	Ext.define('CMDBuild.proxy.administration.domain.tabs.Properties', {
 
 		requires: [
 			'CMDBuild.core.constants.Global',
 			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.proxy.index.Json',
-			'CMDBuild.model.domain.tabs.properties.ClassesStore'
+			'CMDBuild.model.administration.domain.tabs.properties.ClassesStore'
 		],
 
 		singleton: true,
@@ -32,7 +32,7 @@
 		getStoreClasses: function () {
 			return CMDBuild.global.Cache.requestAsStore(CMDBuild.core.constants.Proxy.CLASS, {
 				autoLoad: true,
-				model: 'CMDBuild.model.domain.tabs.properties.ClassesStore',
+				model: 'CMDBuild.model.administration.domain.tabs.properties.ClassesStore',
 				proxy: {
 					type: 'ajax',
 					url: CMDBuild.proxy.index.Json.classes.getAll,

@@ -13,7 +13,6 @@
 			'CMDBuild.core.Splash',
 			'CMDBuild.proxy.core.Management',
 			'CMDBuild.proxy.dashboard.Dashboard',
-			'CMDBuild.proxy.domain.Domain',
 			'CMDBuild.proxy.lookup.Type',
 			'CMDBuild.proxy.Menu',
 			'CMDBuild.proxy.widget.Widget'
@@ -115,7 +114,7 @@
 			params = {};
 			params[CMDBuild.core.constants.Proxy.ACTIVE] = true;
 
-			CMDBuild.proxy.domain.Domain.readAll({
+			CMDBuild.proxy.core.Management.readAllDomains({
 				params: params,
 				loadMask: false,
 				scope: this,

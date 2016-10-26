@@ -134,7 +134,7 @@
 					},
 					scope: this,
 					success: function(result, options, decodedResult) {
-						CMDBuild.proxy.domain.Domain.read({
+						CMDBuild.proxy.administration.domain.Domain.read({
 							scope: this,
 							success: function (response, options, decodedResponse) {
 								decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.DOMAINS];
@@ -280,7 +280,7 @@
 				success: function(result, options, decodedResult) {
 					var attribute = decodedResult['attribute'];
 
-					CMDBuild.proxy.domain.Domain.read({
+					CMDBuild.proxy.administration.domain.Domain.read({
 						scope: this,
 						success: function (response, options, decodedResponse) {
 							decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.DOMAINS];

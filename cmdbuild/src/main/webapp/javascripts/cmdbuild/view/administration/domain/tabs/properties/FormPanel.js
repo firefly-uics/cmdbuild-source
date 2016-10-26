@@ -6,7 +6,7 @@
 		requires: [
 			'CMDBuild.core.constants.FieldWidths',
 			'CMDBuild.core.constants.Proxy',
-			'CMDBuild.proxy.domain.tabs.Properties'
+			'CMDBuild.proxy.administration.domain.tabs.Properties'
 		],
 
 		mixins: ['CMDBuild.view.common.PanelFunctions'],
@@ -149,9 +149,8 @@
 						allowBlank: false,
 						disableEnableFunctions: true,
 						forceSelection: true,
-						editable: false,
 
-						store: CMDBuild.proxy.domain.tabs.Properties.getStoreClasses(),
+						store: CMDBuild.proxy.administration.domain.tabs.Properties.getStoreClasses(),
 						queryMode: 'local'
 					}),
 					Ext.create('Ext.form.field.ComboBox', {
@@ -164,9 +163,8 @@
 						allowBlank: false,
 						disableEnableFunctions: true,
 						forceSelection: true,
-						editable: false,
 
-						store: CMDBuild.proxy.domain.tabs.Properties.getStoreClasses(),
+						store: CMDBuild.proxy.administration.domain.tabs.Properties.getStoreClasses(),
 						queryMode: 'local'
 					}),
 					Ext.create('CMDBuild.view.common.field.translatable.Text', {
@@ -209,7 +207,7 @@
 						forceSelection: true,
 						editable: false,
 
-						store: CMDBuild.proxy.domain.tabs.Properties.getStoreCardinality(),
+						store: CMDBuild.proxy.administration.domain.tabs.Properties.getStoreCardinality(),
 						queryMode: 'local',
 
 						listeners: {
