@@ -342,9 +342,7 @@
 	},
 	"errors": {
 		"anErrorHasOccurred": "An error has occurred",
-		"attributeLevelMappingTableMustBeCorrectlyFilled": "Attribute level mapping table must be correctly filled",
 		"busyVisualControls": "The visual controls are busy, check the status of the server before trying again.",
-		"classLevelMappingTableMustBeCorrectlyFilled": "Class level mapping table must be correctly filled",
 		"copyAttachmentFailure": "Copy attachment with name \"{0}\" failure",
 		"csvUploadOrDecodeFailure": "CSV upload or decode error",
 		"detail": "Details",
@@ -811,6 +809,7 @@
 	"createRestrictedDatabaseUser": "Create restricted database user",
 	"createSharkSchema": "Create a Shark schema",
 	"credentials": "Credentials",
+	"cronExpression": "Cron expression",
 	"csv": "CSV",
 	"csvFile": "CSV file",
 	"current": "Current",

@@ -342,9 +342,7 @@
 	},
 	"errors": {
 		"anErrorHasOccurred": "Hiba történt",
-		"attributeLevelMappingTableMustBeCorrectlyFilled": "Attribute level mapping table must be correctly filled",
 		"busyVisualControls": "A vizuális vezérlők elfoglaltak, ellenőrizze a szervert mielőtt újra próbálkozik.",
-		"classLevelMappingTableMustBeCorrectlyFilled": "Class level mapping table must be correctly filled",
 		"copyAttachmentFailure": "Hiba a \"{0}\" nevű csatolmány másolása közben",
 		"csvUploadOrDecodeFailure": "CSV feltöltési vagy dekódolási hiba",
 		"detail": "Részletek",
@@ -811,6 +809,7 @@
 	"createRestrictedDatabaseUser": "Korlátozott adatbázis felhasználó létrehozása",
 	"createSharkSchema": "Shark séma készítése",
 	"credentials": "Ajánlók",
+	"cronExpression": "<em>Cron expression</em>",
 	"csv": "CSV",
 	"csvFile": "CSV fájl",
 	"current": "<em>Current</em>",

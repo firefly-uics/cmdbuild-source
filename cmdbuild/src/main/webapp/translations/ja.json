@@ -342,9 +342,7 @@
 	},
 	"errors": {
 		"anErrorHasOccurred": "未知のエラーが発生しました",
-		"attributeLevelMappingTableMustBeCorrectlyFilled": "属性レベルマッピングテーブルは、正しく入力されている必要があります。",
 		"busyVisualControls": "画面コントロールがビジーです、再実行する前にサーバのステータスをチェックください。",
-		"classLevelMappingTableMustBeCorrectlyFilled": "クラスレベルマッピングテーブルは、正しく入力されている必要があります。",
 		"copyAttachmentFailure": "<em>Copy attachment with name \"{0}\" failure</em>",
 		"csvUploadOrDecodeFailure": "<em>CSV upload or decode error</em>",
 		"detail": "詳細",
@@ -811,6 +809,7 @@
 	"createRestrictedDatabaseUser": "データベースユーザーの作成",
 	"createSharkSchema": "Sharkスキーマを作成",
 	"credentials": "資格",
+	"cronExpression": "<em>Cron expression</em>",
 	"csv": "CSV",
 	"csvFile": "CSV ファイル",
 	"current": "<em>Current</em>",

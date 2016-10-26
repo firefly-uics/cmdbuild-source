@@ -39,7 +39,7 @@
 									this.delegate.cmfg('onWorkflowTabTasksAddButtonClick');
 								}
 							}),
-							Ext.create('CMDBuild.core.buttons.iconized.Modify', {
+							Ext.create('CMDBuild.core.buttons.iconized.modify.Modify', {
 								text: CMDBuild.Translation.modifyTask,
 								scope: this,
 

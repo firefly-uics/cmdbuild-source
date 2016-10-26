@@ -342,9 +342,7 @@
 	},
 	"errors": {
 		"anErrorHasOccurred": "حدث خطأ",
-		"attributeLevelMappingTableMustBeCorrectlyFilled": "يجب ملء جدول مقابلة السمة بشكل صحيح",
 		"busyVisualControls": "أدوات التحكم المرئية مشغولة، أفحص حالة الخادم قبل إعادة المحاولة.",
-		"classLevelMappingTableMustBeCorrectlyFilled": "يجب ملء جدول مقابلة الصنف بشكل صحيح",
 		"copyAttachmentFailure": "فشل في نسخ المرفق ذا الاسم \"{0}\"",
 		"csvUploadOrDecodeFailure": "خطأ في رفع أو فك ملف الإكسل",
 		"detail": "التفاصيل",
@@ -811,6 +809,7 @@
 	"createRestrictedDatabaseUser": "أنشئ مستخدم قاعدة بيانات محدود الصلاحية",
 	"createSharkSchema": "أنشئ مخطط Shark",
 	"credentials": "الاسم وكلمة السر",
+	"cronExpression": "<em>Cron expression</em>",
 	"csv": "CSV",
 	"csvFile": "ملف CSV",
 	"current": "<em>Current</em>",

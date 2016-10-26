@@ -1,7 +1,7 @@
 (function () {
 
 	/**
-	 * @link CMDBuild.view.management.workflow.panel.tree.filter.advanced.filterEditor.attributes.AttributesView
+	 * @link CMDBuild.view.common.field.filter.advanced.configurator.tabs.attributes.AttributesView
 	 */
 	Ext.define('CMDBuild.view.common.panel.gridAndForm.panel.common.filter.advanced.filterEditor.attributes.AttributesView', {
 		extend: 'Ext.panel.Panel',

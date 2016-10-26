@@ -1,7 +1,7 @@
 (function() {
 
 	/**
-	 * @deprecated CMDBuild.controller.management.workflow.panel.tree.filter.advanced.filterEditor.relations.Relations
+	 * @deprecated CMDBuild.controller.common.field.filter.advanced.configurator.tabs.relations.Relations
 	 */
 	Ext.define('CMDBuild.controller.common.field.filter.advanced.window.panels.relations.Relations', {
 		extend: 'CMDBuild.controller.common.abstract.Base',

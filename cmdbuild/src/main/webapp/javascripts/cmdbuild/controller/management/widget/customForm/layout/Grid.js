@@ -146,7 +146,7 @@
 							});
 						}
 					}),
-					Ext.create('CMDBuild.core.buttons.iconized.Modify', {
+					Ext.create('CMDBuild.core.buttons.iconized.modify.Modify', {
 						withSpacer: true,
 						tooltip: CMDBuild.Translation.editRow,
 						scope: this,

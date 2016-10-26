@@ -61,7 +61,7 @@
 									this.delegate.cmfg('onPanelGridAndFormFilterAdvancedManagerSaveButtonClick', record);
 								}
 							}),
-							Ext.create('CMDBuild.core.buttons.iconized.Modify', {
+							Ext.create('CMDBuild.core.buttons.iconized.modify.Modify', {
 								withSpacer: true,
 								tooltip: CMDBuild.Translation.modify,
 								scope: this,

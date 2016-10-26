@@ -342,9 +342,7 @@
 	},
 	"errors": {
 		"anErrorHasOccurred": "خطایی رخ داد",
-		"attributeLevelMappingTableMustBeCorrectlyFilled": "Attribute level mapping table must be correctly filled",
 		"busyVisualControls": "کنترل های تصویری شلوغ اند، لطفا قبل از اینکه دوباره تکرار کنید وضعیت سرور را چک کنید",
-		"classLevelMappingTableMustBeCorrectlyFilled": "Class level mapping table must be correctly filled",
 		"copyAttachmentFailure": "<em>Copy attachment with name \"{0}\" failure</em>",
 		"csvUploadOrDecodeFailure": "<em>CSV upload or decode error</em>",
 		"detail": "جزئیات",
@@ -811,6 +809,7 @@
 	"createRestrictedDatabaseUser": "<em>Create restricted database user</em>",
 	"createSharkSchema": "<em>Create a Shark schema</em>",
 	"credentials": "اعتبارات",
+	"cronExpression": "<em>Cron expression</em>",
 	"csv": "CSV",
 	"csvFile": "<em>CSV file</em>",
 	"current": "<em>Current</em>",

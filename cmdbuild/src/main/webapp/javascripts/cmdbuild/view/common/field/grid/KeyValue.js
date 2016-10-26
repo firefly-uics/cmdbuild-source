@@ -1,9 +1,14 @@
-(function() {
+(function () {
+
+	Ext.require([
+		'CMDBuild.core.constants.Proxy',
+		'CMDBuild.model.common.field.grid.KeyValue'
+	]);
 
 	Ext.define('CMDBuild.view.common.field.grid.KeyValue', {
 		extend: 'Ext.grid.Panel',
 
-		requres: ['CMDBuild.model.common.field.grid.KeyValue'],
+		mixins: ['Ext.form.field.Field'], // To enable functionalities restricted to Ext.form.field.Field classes (loadRecord, etc.)
 
 		/**
 		 * @cfg {CMDBuild.controller.common.field.grid.KeyValue}
@@ -79,11 +84,16 @@
 		 */
 		valueLabel: CMDBuild.Translation.value,
 
-		considerAsFieldToDisable: true,
+		enablePanelFunctions: true,
 		flex: 1,
 		frame: false,
 
-		initComponent: function() {
+		/**
+		 * @returns {Void}
+		 *
+		 * @override
+		 */
+		initComponent: function () {
 			this.delegate = Ext.create('CMDBuild.controller.common.field.grid.KeyValue', { view: this });
 
 			if (this.enableCellEditing)
@@ -99,11 +109,12 @@
 						Ext.create('Ext.toolbar.Toolbar', {
 							dock: 'top',
 							itemId: CMDBuild.core.constants.Proxy.TOOLBAR_TOP,
+
 							items: [
 								Ext.create('CMDBuild.core.buttons.iconized.add.Add', {
 									scope: this,
 
-									handler: function(button, e) {
+									handler: function (button, e) {
 										this.delegate.cmfg('onFieldGridKeyValueAddButtonClick');
 									}
 								})
@@ -129,26 +140,42 @@
 		/**
 		 * @returns {Array}
 		 */
-		getColumns: function() {
+		getColumns: function () {
 			return this.delegate.cmfg('fieldGridKeyValueColumnsGet');
 		},
 
 		/**
-		 * @param {Boolean} validatedData
+		 * @param {Boolean} enableValidation
 		 *
-		 * @returns {Object} data
+		 * @returns {Object}
 		 */
-		getData: function(validatedData) {
-			validatedData = Ext.isBoolean(validatedData) ? validatedData : true;
+		getValue: function (enableValidation) {
+			enableValidation = Ext.isBoolean(enableValidation) ? enableValidation : true;
 
-			return this.delegate.cmfg('fieldGridKeyValueDataGet', validatedData);
+			return this.delegate.cmfg('fieldGridKeyValueValueGet', enableValidation);
 		},
 
 		/**
-		 * @param {Object} data
+		 * @returns {Boolean}
 		 */
-		setData: function(data) {
-			this.delegate.cmfg('fieldGridKeyValueDataSet', data);
+		isValid: function () {
+			return true;
+		},
+
+		/**
+		 * @returns {Void}
+		 */
+		reset: function () {
+			this.delegate.cmfg('fieldGridKeyValueReset');
+		},
+
+		/**
+		 * @param {Object} value
+		 *
+		 * @returns {Void}
+		 */
+		setValue: function (value) {
+			this.delegate.cmfg('fieldGridKeyValueValueSet', value);
 		}
 	});
 

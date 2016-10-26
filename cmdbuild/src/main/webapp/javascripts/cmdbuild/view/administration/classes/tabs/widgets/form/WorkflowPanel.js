@@ -92,6 +92,7 @@
 							}
 						}),
 						this.presetGrid = Ext.create('CMDBuild.view.common.field.grid.KeyValue', {
+							considerAsFieldToDisable: true,
 							enableCellEditing: true,
 							keyAttributeName: CMDBuild.core.constants.Proxy.NAME,
 							keyLabel: CMDBuild.Translation.attribute,

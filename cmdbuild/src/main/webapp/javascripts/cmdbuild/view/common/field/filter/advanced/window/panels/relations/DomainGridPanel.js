@@ -1,7 +1,7 @@
 (function() {
 
 	/**
-	 * @deprecated CMDBuild.view.management.workflow.panel.tree.filter.advanced.filterEditor.relations.DomainGridPanel
+	 * @deprecated CMDBuild.view.common.field.filter.advanced.configurator.tabs.relations.DomainGridPanel
 	 */
 	Ext.define('CMDBuild.view.common.field.filter.advanced.window.panels.relations.DomainGridPanel', {
 		extend: 'Ext.grid.Panel',

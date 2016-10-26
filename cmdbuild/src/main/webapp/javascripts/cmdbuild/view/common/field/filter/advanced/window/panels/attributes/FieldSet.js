@@ -3,8 +3,9 @@
 	/**
 	 * Class with adapted functions to be compatible with old FieldManager
 	 *
+	 * @deprecated CMDBuild.view.common.field.filter.advanced.configurator.tabs.attributes.FieldSet
+	 *
 	 * @adapter
-	 * @deprecated CMDBuild.view.management.workflow.panel.tree.filter.advanced.filterEditor.attributes.FieldSet
 	 */
 	Ext.define('CMDBuild.view.common.field.filter.advanced.window.panels.attributes.FieldSet', {
 		extend: 'Ext.form.FieldSet',

@@ -3,10 +3,7 @@
 	Ext.define('CMDBuild.view.administration.taskManager.GridPanel', {
 		extend: 'Ext.grid.Panel',
 
-		requires: [
-			'CMDBuild.core.constants.Proxy',
-			'CMDBuild.core.Utils'
-		],
+		requires: ['CMDBuild.core.constants.Proxy'],
 
 		/**
 		 * @cfg {CMDBuild.controller.administration.taskManager.Grid}
@@ -38,23 +35,8 @@
 						flex: 1,
 						scope: this,
 
-						renderer: function (value, meta, record, rowIndex, colIndex, store, view) { // Convert to camelcase
-							if (Ext.isArray(value) && !Ext.isEmpty(value)) {
-								var translationKey = '';
-
-								Ext.Array.each(value, function (typeSection, i, allTypeSections) {
-									if (Ext.isString(typeSection) && !Ext.isEmpty(typeSection))
-										if (i > 0) {
-											translationKey += CMDBuild.core.Utils.toTitleCase(typeSection);
-										} else {
-											translationKey += typeSection;
-										}
-								}, this);
-
-								return CMDBuild.Translation[translationKey];
-							}
-
-							return value;
+						renderer: function (value, meta, record, rowIndex, colIndex, store, view) {
+							return this.delegate.cmfg('taskManagerGridRendererColumnType', value);
 						}
 					},
 					{

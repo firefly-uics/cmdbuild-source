@@ -342,9 +342,7 @@
 	},
 	"errors": {
 		"anErrorHasOccurred": "<em>An error has occurred</em>",
-		"attributeLevelMappingTableMustBeCorrectlyFilled": "Tabulka mapování na úrovni atributu musí být správně vyplněna",
 		"busyVisualControls": "Uživatelské rozhraní nástrojů je zaneprázdněno, před dalším pokusem prověřte stav serveru.",
-		"classLevelMappingTableMustBeCorrectlyFilled": "Tabulka mapování na úrovni třídy musí být správně vyplněna",
 		"copyAttachmentFailure": "Kopírování přílohy s názvem \"{0}\" se nezdařilo.",
 		"csvUploadOrDecodeFailure": "Chyba při načtení nebo dekódování CSV souboru",
 		"detail": "Detaily",
@@ -811,6 +809,7 @@
 	"createRestrictedDatabaseUser": "Vytvořit databázového uživatele s omezenými právy",
 	"createSharkSchema": "Vytvořit DB schéma pro procesní server Shark",
 	"credentials": "Přihlašovací údaje",
+	"cronExpression": "<em>Cron expression</em>",
 	"csv": "CSV",
 	"csvFile": "CSV soubor",
 	"current": "Aktuální",

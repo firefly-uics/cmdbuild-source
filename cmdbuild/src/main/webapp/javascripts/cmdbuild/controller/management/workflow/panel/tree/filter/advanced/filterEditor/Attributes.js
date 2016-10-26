@@ -1,5 +1,8 @@
 (function () {
 
+	/**
+	 * @link CMDBuild.controller.common.field.filter.advanced.configurator.tabs.Attributes
+	 */
 	Ext.define('CMDBuild.controller.management.workflow.panel.tree.filter.advanced.filterEditor.Attributes', {
 		extend: 'CMDBuild.controller.common.abstract.Base',
 
@@ -380,8 +383,6 @@
 		 */
 		viewBuild: function () {
 			if (!this.cmfg('workflowTreeFilterAdvancedManagerSelectedFilterIsEmpty')) {
-				var filterConfigurationObject = this.cmfg('workflowTreeFilterAdvancedManagerSelectedFilterGet', CMDBuild.core.constants.Proxy.CONFIGURATION);
-
 				this.filterConditionsGroupsReset();
 
 				if (

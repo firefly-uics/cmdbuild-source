@@ -41,7 +41,7 @@
 						itemId: CMDBuild.core.constants.Proxy.TOOLBAR_TOP,
 
 						items: [
-							Ext.create('CMDBuild.core.buttons.iconized.Modify', {
+							Ext.create('CMDBuild.core.buttons.iconized.modify.Modify', {
 								text: CMDBuild.Translation.modifyReport,
 								scope: this,
 
