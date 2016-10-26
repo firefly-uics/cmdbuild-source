@@ -9,10 +9,7 @@
 			'CMDBuild.proxy.administration.configuration.notifications.tabs.Email'
 		],
 
-		mixins: [
-			'CMDBuild.view.common.PanelFunctions',
-			'CMDBuild.view.common.PanelFunctions2'
-		],
+		mixins: ['CMDBuild.view.common.PanelFunctions2'],
 
 		/**
 		 * @cfg {CMDBuild.controller.administration.configuration.notifications.tabs.Email}

@@ -1,4 +1,4 @@
-(function() {
+(function () {
 
 	Ext.define('CMDBuild.view.administration.configuration.RelationGraphPanel', {
 		extend: 'Ext.form.Panel',
@@ -8,10 +8,7 @@
 			'CMDBuild.core.constants.Proxy'
 		],
 
-		mixins: [
-			'CMDBuild.view.common.PanelFunctions',
-			'CMDBuild.view.common.PanelFunctions2'
-		],
+		mixins: ['CMDBuild.view.common.PanelFunctions2'],
 
 		/**
 		 * @cfg {CMDBuild.controller.administration.configuration.RelationGraph}
@@ -25,7 +22,7 @@
 
 		layout: {
 			type: 'vbox',
-			align:'stretch'
+			align: 'stretch'
 		},
 
 		fieldDefaults: {
@@ -34,7 +31,12 @@
 			maxWidth: CMDBuild.core.constants.FieldWidths.CONFIGURATION_MEDIUM
 		},
 
-		initComponent: function() {
+		/**
+		 * @returns {Void}
+		 *
+		 * @override
+		 */
+		initComponent: function () {
 			Ext.apply(this, {
 				dockedItems: [
 					Ext.create('Ext.toolbar.Toolbar', {
@@ -52,14 +54,14 @@
 							Ext.create('CMDBuild.core.buttons.text.Save', {
 								scope: this,
 
-								handler: function(button, e) {
+								handler: function (button, e) {
 									this.delegate.cmfg('onConfigurationRelationGraphSaveButtonClick');
 								}
 							}),
 							Ext.create('CMDBuild.core.buttons.text.Abort', {
 								scope: this,
 
-								handler: function(button, e) {
+								handler: function (button, e) {
 									this.delegate.cmfg('onConfigurationRelationGraphAbortButtonClick');
 								}
 							})
@@ -72,7 +74,7 @@
 
 						layout: {
 							type: 'vbox',
-							align:'stretch'
+							align: 'stretch'
 						},
 
 						items: [
@@ -102,7 +104,7 @@
 
 						layout: {
 							type: 'vbox',
-							align:'stretch'
+							align: 'stretch'
 						},
 
 						items: [
@@ -143,7 +145,7 @@
 
 						layout: {
 							type: 'vbox',
-							align:'stretch'
+							align: 'stretch'
 						},
 
 						items: [
@@ -187,7 +189,7 @@
 
 						layout: {
 							type: 'vbox',
-							align:'stretch'
+							align: 'stretch'
 						},
 
 						items: [
@@ -204,7 +206,7 @@
 		},
 
 		listeners: {
-			show: function(panel, eOpts) {
+			show: function (panel, eOpts) {
 				this.delegate.cmfg('onConfigurationRelationGraphTabShow');
 			}
 		}
